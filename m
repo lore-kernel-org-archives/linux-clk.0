@@ -1,44 +1,45 @@
 Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3972B37105B;
-	Wed, 28 Jan 2026 18:40:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9785737105F;
+	Wed, 28 Jan 2026 18:40:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769625612; cv=pass; b=RHVuwpryx0mRt781Ns+E/g9b0UBIWQNmk4uitFv+P25o2xyhnkM5ycV6Ps1Sk5Bl0PB0sA5rUFPyHN3rTriw70obyexW7+B7PoA53asEiN32MoeICD8NBzvS2eztxx2rmzMlhenQ8nmg3NJzrqLyqq0m23fCzVemLmrIBBrZXqI=
+	t=1769625612; cv=pass; b=suJTf9Iq7chIYyVORWVsp1vnzOaaof63DqHRpq/c/0Ufx7PNhIaJYNc5P59pxq2R7VIkHBM+4dR0Qka+f8x0JwPBRyUgRWo9rx8gNMia1CxzFbgEcLKEsrGqufhByPofKZ2/iSRYfSu/s8fVi39gSG7JbOvB9TxwKTHVnxlecq8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1769625612; c=relaxed/simple;
-	bh=DjicpDGhvRkUFCtsY2UZa1ghKZK00ic02RXECM5InMM=;
+	bh=OAdFrquKGDp7XiFTYgdbCRkM6pgcnhMKBE/waj03ZcY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RmDzWwj0gfNSZuTI+HGaEjJ8BbR4LWhMW94jEx8g8J0unNvlbVVA6zMzc5X20SuTy4ZuRShWOwY0BBWZlmBIH/9dztp5zs6RrkX8mwCO6NXyR72s2wdH51onORSVszwC5ivzjTGUpRQ6Zs2gxHYYsbt6D62rZA6c9Qz/LIHqZDg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=MRp5K8mz; arc=pass smtp.client-ip=136.143.188.112
+	 In-Reply-To:To:Cc; b=UBKUaLmmeys2PrbpuoqxBY2clYV/erEG5TG9bWwfBlbbJDwpg6B5VJZBM4Z4/UbgXN8dHYlNsOr1LNqZ5LogV9HDAUdIB7WenBsSfW9ktU9vMnGXAOrrTHJ05c4GLhpdXCiz6Fw4M1ET6fhDfLgv0U2m3wrYK5PtU/kUTXKOfAc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=IrlW0Kai; arc=pass smtp.client-ip=136.143.188.112
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="MRp5K8mz"
-ARC-Seal: i=1; a=rsa-sha256; t=1769625583; cv=none; 
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="IrlW0Kai"
+ARC-Seal: i=1; a=rsa-sha256; t=1769625579; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=R++kYFz7gCfMdJMHUcVO2B3uN2gmHB0yIcDza4Rf3UliSC5Ao/2sxbpS2P8j4CCUBALZLflkdQ/ip3fPL400fYRU2djpHiEtUMU5TOP4axFpWahn5qO9MKc3bEIaA1ETeBbsQvTDr2Srhb2PP3bVrWw+SzGikLsRXoOX/TCYI1w=
+	b=KbAx9IzY0rH4cAFTkoJqpMnfyC15wZ/HtckXt5ZSLOIywlF6f4efzb70C42alVDrV8KfiK3A0GftAwqlvY2BLZXXC14TWsP80rD/32IaC6au2J6T8/Tg5K44RQdNrfBmlVF5uv+noJCIOosA9JkNFWzxRpapGK6zZNjMJ52EDog=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1769625583; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=X/4xNgZc1irIgWz2/dXYtoRGvJYT5RtuSmiXMRgYKOM=; 
-	b=CGzyu1Tl/RcMSxBQ7bdKYz2TR7FYWJevUKhvA5v1NG7oMRBIazhs8IRU/MrzJ93+nwulpDCV78ms1TLV2LBdl6pfU23LJg18Lqf46sq1a8pE/ei5/OxcZ4N/3R0lGzljIL7v8ZXOVWJ8H1HJQE1xeiEglRLtcVGi39+J9+Atn4E=
+	t=1769625579; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ZkPh6rEGGj5EfY6a9YgmvYuB+fZaCezIbVUYx4CZTr4=; 
+	b=RwQYRfKeJrKWZC5OiVk2X5cu16M9KcM7e0R1NcUs6np2RzQOtruFFnoxTb2a/BcZnn9ZaBTv1MhHHIykB2xvyu7U4B+JdYHSdzzqDoPsY4K+8wmxUj5rhwyWqHckZyDlpLvXTKcEZpX2zv3f5T9Z1Tb1RZrk2WlzTVYRUuGQ72k=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=collabora.com;
 	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
 	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1769625583;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1769625579;
 	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
 	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=X/4xNgZc1irIgWz2/dXYtoRGvJYT5RtuSmiXMRgYKOM=;
-	b=MRp5K8mzfg8OF/g/+voqgixFXJN+bIP9cpHNWJwE0xdj4h0Yt/0BwdlFAnAPXBmo
-	OCf9l06Y3IBPnb4QgMvRB3KCSvDFXoMXhQaiRZyaicQ2ROqkGtuYKfJdxKtYllYsOgA
-	ezQrCvPJLaTsR9cdGUbfIW+9m8kRKUQ/l4Lrrcmw=
-Received: by mx.zohomail.com with SMTPS id 1769625582177877.4278006459197;
-	Wed, 28 Jan 2026 10:39:42 -0800 (PST)
+	bh=ZkPh6rEGGj5EfY6a9YgmvYuB+fZaCezIbVUYx4CZTr4=;
+	b=IrlW0KairsALp3RcHiCJWnsIOZrLuPIuFBPhO04FIYnIXIwStOza0Rcyxl8D59ZX
+	0xerhfmizOxka/AQcywYOvnnG8egqgwb6M5obCLhAMQImhYSoL/RjpbftK5fENTXAoN
+	qEXyTP8XeyEXWXXtUoIJ8Bielo/N5jyBzfa6cfeI=
+Received: by mx.zohomail.com with SMTPS id 176962557768244.502411600919686;
+	Wed, 28 Jan 2026 10:39:37 -0800 (PST)
 From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Date: Wed, 28 Jan 2026 19:38:51 +0100
-Subject: [PATCH 2/2] clk: imx8mp: Mark arm_a53_div as critical
+Date: Wed, 28 Jan 2026 19:38:50 +0100
+Subject: [PATCH 1/2] clk: Disable CLK_OPS_PARENT_ENABLED parent only after
+ CRITICAL check
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,7 +48,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260128-ops-parent-enable-fix-v1-2-ff39cc37f98d@collabora.com>
+Message-Id: <20260128-ops-parent-enable-fix-v1-1-ff39cc37f98d@collabora.com>
 References: <20260128-ops-parent-enable-fix-v1-0-ff39cc37f98d@collabora.com>
 In-Reply-To: <20260128-ops-parent-enable-fix-v1-0-ff39cc37f98d@collabora.com>
 To: Mark Brown <broonie@kernel.org>, 
@@ -66,58 +67,50 @@ Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
  Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 X-Mailer: b4 0.14.3
 
-It appears the i.MX8MP does not like when arm_a53_div, or rather the
-parent it depends on, sys_pll2_500m, is briefly turned off during
-__clk_core_init.
+The call to clk_core_enable_lock done by __clk_core_init after checking
+the clock flags for CLK_IS_CRITICAL enables the parent clock.
 
-In the past, this clock driver could get away with not declaring the
-clock as critical, as nothing ever fiddled with its parent that early
-on. However, after Commit 669917676e93 ("clk: Respect
-CLK_OPS_PARENT_ENABLE during recalc"), this changed.
+In Commit 669917676e93 ("clk: Respect CLK_OPS_PARENT_ENABLE during
+recalc"), the parent gets disabled before this check, if the flag
+CLK_OPS_PARENT_ENABLED is set on the clock. This results in a situation
+where critical clocks have their parent briefly disabled, which kills
+the system.
 
-In order to guarantee that it keeps its parent enabled during
-__clk_core_init if it sets the flag CLK_OPS_PARENT_ENABLE, the clock
-must be marked as critical.
+Fix this by moving the balancing operation to after the CLK_IS_CRITICAL
+check, which should resolve the problem.
 
 Fixes: 669917676e93 ("clk: Respect CLK_OPS_PARENT_ENABLE during recalc")
-Reported-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-Closes: https://lore.kernel.org/r/6239343.lOV4Wx5bFT@steina-w/
+Reported-by: Mark Brown <broonie@kernel.org>
+Closes: https://lore.kernel.org/r/036da7ce-6487-4a6e-9b15-97c6d3bcdcec@sirena.org.uk/
 Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 ---
- drivers/clk/imx/clk-imx8mp.c | 4 +++-
- drivers/clk/imx/clk.h        | 4 ++++
- 2 files changed, 7 insertions(+), 1 deletion(-)
+ drivers/clk/clk.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-index fe6dac70f1a1..ee10f845faff 100644
---- a/drivers/clk/imx/clk-imx8mp.c
-+++ b/drivers/clk/imx/clk-imx8mp.c
-@@ -655,7 +655,9 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MP_CLK_CLKOUT2_DIV] = imx_clk_hw_divider("clkout2_div", "clkout2_sel", anatop_base + 0x128, 16, 4);
- 	hws[IMX8MP_CLK_CLKOUT2] = imx_clk_hw_gate("clkout2", "clkout2_div", anatop_base + 0x128, 24);
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 1b0f9d567f48..8f5ef9ce77d2 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -4056,9 +4056,6 @@ static int __clk_core_init(struct clk_core *core)
+ 		rate = 0;
+ 	core->rate = core->req_rate = rate;
  
--	hws[IMX8MP_CLK_A53_DIV] = imx8m_clk_hw_composite_core("arm_a53_div", imx8mp_a53_sels, ccm_base + 0x8000);
-+	hws[IMX8MP_CLK_A53_DIV] = imx8m_clk_hw_composite_core_critical("arm_a53_div",
-+								       imx8mp_a53_sels,
-+								       ccm_base + 0x8000);
- 	hws[IMX8MP_CLK_A53_SRC] = hws[IMX8MP_CLK_A53_DIV];
- 	hws[IMX8MP_CLK_A53_CG] = hws[IMX8MP_CLK_A53_DIV];
- 	hws[IMX8MP_CLK_M7_CORE] = imx8m_clk_hw_composite_core("m7_core", imx8mp_m7_sels, ccm_base + 0x8080);
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index aa5202f284f3..97cac1d623ca 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -454,6 +454,10 @@ struct clk_hw *__imx8m_clk_hw_composite(const char *name,
- 	_imx8m_clk_hw_composite(name, parent_names, reg, \
- 			IMX_COMPOSITE_CORE, IMX_COMPOSITE_CLK_FLAGS_DEFAULT)
+-	if (core->flags & CLK_OPS_PARENT_ENABLE)
+-		clk_core_disable_unprepare(core->parent);
+-
+ 	/*
+ 	 * Enable CLK_IS_CRITICAL clocks so newly added critical clocks
+ 	 * don't get accidentally disabled when walking the orphan tree and
+@@ -4081,6 +4078,9 @@ static int __clk_core_init(struct clk_core *core)
+ 		}
+ 	}
  
-+#define imx8m_clk_hw_composite_core_critical(name, parent_names, reg)	\
-+	_imx8m_clk_hw_composite(name, parent_names, reg, \
-+			IMX_COMPOSITE_CORE, IMX_COMPOSITE_CLK_FLAGS_CRITICAL)
++	if (core->flags & CLK_OPS_PARENT_ENABLE)
++		clk_core_disable_unprepare(core->parent);
 +
- #define imx8m_clk_hw_fw_managed_composite(name, parent_names, reg) \
- 	_imx8m_clk_hw_composite(name, parent_names, reg, \
- 			IMX_COMPOSITE_FW_MANAGED, \
+ 	clk_core_reparent_orphans_nolock();
+ out:
+ 	clk_pm_runtime_put(core);
 
 -- 
 2.52.0
