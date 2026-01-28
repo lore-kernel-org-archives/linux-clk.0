@@ -1,147 +1,149 @@
-Received: from mx-relay49-hz1.antispameurope.com (mx-relay49-hz1.antispameurope.com [94.100.132.225])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66ED33644BC
-	for <linux-clk@vger.kernel.org>; Wed, 28 Jan 2026 14:58:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=94.100.132.225
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769612291; cv=pass; b=CdAoQbBrI85CMcH9EHocNWnMlhIgY8h6rv0AP8wEfaIDhoWjCdiA3j4Xvfs652RARsJXes6sirQSq/CY708ay4ACJt5tZkwgKf8lys13i9JWsD1dqsc4lX3JMRfbErgwZiEgr03UhijgenaVirXSVG0bahANDwt6bB9C6bqLm+g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769612291; c=relaxed/simple;
-	bh=YBAIi7V/c3JHaAKdykP4Yq2lWyyXCj0OGyBjgzyQLtI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GTch3nGOMcbllJ42rZEcvUkQdMFOngUg75CX4DZBIEQJ7y76tBdUSPfM9iKkrfZWIB/urNX1Q51F5B4kJtj0enKq+9mHbXqkaU8HFsM/KjvkjIl7MEZjqyRgMnaQ4RBoJvkf7EjE8lMrQraliXjGGF2p+PHVnjX4st637zPaU28=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=LKErPGXs; arc=pass smtp.client-ip=94.100.132.225
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23170369209;
+	Wed, 28 Jan 2026 15:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769612562; cv=none; b=qq+lGsTbo/NtAc2l3DpN9gLhJoKDW7RxssmOe3yMzF98AyCBjFYJh6O3HqIjGIBqL05dr3d4AhsfsyaHYQn/PlYGe6KWwCLHdqJl6cS2IuC5ZgVxzGfrAI5Rs2Oj5ggEuELYBAJmvTfEfm2WdvoNDHJ9OL/F3GUWnVQ+BIhrfC4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769612562; c=relaxed/simple;
+	bh=OzclO5ndo/wL4JKiiZcq354jGTZGzW1qFKtfJyb0gAw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T05lydtZgwii7XoYe+h0l53MdhccbzhWk1vXBu5RGPsnp7R3SdPNNUVpMic+kdUMVk8jXVqeJPQEC9Nz3ba3AMfzYv5gccwBrva045JYwH2o2fNDA96+lnvyvTiWr3X6PFXHAKDBamJU/fwKAXp7hDJp/xuBFPyJIQE/71hAcbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WOkEASV7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="LKErPGXs"
-ARC-Authentication-Results: i=1; mx-gate49-hz1.hornetsecurity.com 1; spf=pass
- reason=mailfrom (ip=94.100.132.6, headerfrom=ew.tq-group.com)
- smtp.mailfrom=ew.tq-group.com
- smtp.helo=hmail-p-smtp01-out03-hz1.hornetsecurity.com; dmarc=pass
- header.from=ew.tq-group.com orig.disposition=pass
-ARC-Message-Signature: a=rsa-sha256;
- bh=ONpXfF3lQToQjK7rRSj7gTOlaNKqcczWPw9kZFHHahw=; c=relaxed/relaxed;
- d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=1; s=hse1;
- t=1769612205;
- b=PFVHtB3N5G3e5IaUg7FCA6YDsn8KhI2SdQO1/U8FSjArPoH/o6Y2YlxARQzABGHfhEiOPW5S
- h1CP1hCR6u+R6d/Q7xsoQTSgSExdGZlg/njqsepQrGDZ8GouEQxH9lsclH7HEAATXN3rYg/EGmz
- y5Qd9QHOAh9uuPPC6mwquDCPZ8RW6CDaiQtnCKSo1dlX9//J1M1q92LAUtfhq+tGWedWrCcJV2i
- Cx7tHOA/I1oNP5TnqM2jRKVt19ay0KtM8rgOV1NND66/p9L8CxsqRqnHa/o1O8PS0C0v3N61gmc
- Qg8DehVlu8PkBS6buVtzbGNveieQnFc6+m/8TCVO946iQ==
-ARC-Seal: a=rsa-sha256; cv=none; d=hornetsecurity.com; i=1; s=hse1;
- t=1769612205;
- b=d4I5YxpFuWU7N9zkb4BVqYnN1A75W/BJFG2e9Ood/4QiLsf5kC0Hw1wFMUlQs5sTK7XEBtbB
- j4gR+UsjtOYAu/evVoE1+QbM156U0uQXK9lfWckH0Jyv5E3afbM4vcX3YbFvu9BxtnpKxPYOpg8
- eOr+4WB3hsSfXYViOlXzNEiqDLgfBYEgxwC+ScUulQBuozOmAN+3Ie71Ex/Eo0qmeN5gMe0bB5H
- upNxK/W+XnULUgs46IOGBxUPhV0avLJR5cL4jRLgMG+LSED+NnkQX0za+2J4eqbAm9utCGQE9Nf
- bmFM6AjzckgfZ7wbej5T7CDEhL/OZsaFwW5SZoEx4zn5A==
-Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay49-hz1.antispameurope.com;
- Wed, 28 Jan 2026 15:56:45 +0100
-Received: from steina-w.localnet (host-82-135-125-110.customer.m-online.net [82.135.125.110])
-	(Authenticated sender: alexander.stein@ew.tq-group.com)
-	by hmail-p-smtp01-out03-hz1.hornetsecurity.com (Postfix) with ESMTPSA id 1625ECC0CB8;
-	Wed, 28 Jan 2026 15:56:31 +0100 (CET)
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
- Mark Brown <broonie@kernel.org>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Dong Aisheng <aisheng.dong@nxp.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Yassine Oudjana <y.oudjana@protonmail.com>,
- Laura Nao <laura.nao@collabora.com>,
- =?ISO-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>,
- Chia-I Wu <olvaffe@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>,
- kernel@collabora.com, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v3 1/5] clk: Respect CLK_OPS_PARENT_ENABLE during recalc
-Date: Wed, 28 Jan 2026 15:55:54 +0100
-Message-ID: <5050249.GXAFRqVoOG@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <daa1906b-a112-4158-aec2-ad1d29b4fe35@sirena.org.uk>
-References:
- <20251010-mtk-pll-rpm-v3-0-fb1bd15d734a@collabora.com>
- <6678782.DvuYhMxLoT@workhorse>
- <daa1906b-a112-4158-aec2-ad1d29b4fe35@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WOkEASV7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A34C3C4CEF1;
+	Wed, 28 Jan 2026 15:02:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769612561;
+	bh=OzclO5ndo/wL4JKiiZcq354jGTZGzW1qFKtfJyb0gAw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WOkEASV7ibh5p2CTehKsxUlE7iWPQh6t3N9IIV18m943CgEZsfVqkIH1Qcs/o130f
+	 PvPAbMt0XeeM53VxPKmbpTTB7hPkatQ+GB71XvKQ47Eq/eXlt04RQ6TARr+i7Y2/Hd
+	 +XgQKms/Sa75wU//zIu4QRijBigKycVuT6LoKjYbgA8UaKqMaK63ufodBzRPZtRCKs
+	 GsGst1ucHn8JkHkdzc6Rci3Vz+YkCNlSpenNyXVPAkAq3eSeoUTvjDTqWDSHXeRVYv
+	 mkV+DkqZujyVS1VFXeeJ1mkq7tJze8T3tSBxr3EcoT9k9F1wCwafKTsLzCYpPFR/1i
+	 vs2fdXqG7tO6w==
+Date: Wed, 28 Jan 2026 15:02:35 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
+Cc: Drew Fustini <dfustini@oss.tenstorrent.com>,
+	Joel Stanley <jms@oss.tenstorrent.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	joel@jms.id.au, fustini@kernel.org, mpe@kernel.org,
+	mpe@oss.tenstorrent.com, npiggin@oss.tenstorrent.com,
+	agross@kernel.org, agross@oss.tenstorrent.com, bmasney@redhat.com
+Subject: Re: [PATCH v3 1/3] dt-bindings: clk: tenstorrent: Add
+ tenstorrent,atlantis-prcm
+Message-ID: <20260128-duckling-confess-88e64fabe752@spud>
+References: <20260126-atlantis-clocks-v3-0-b016135551b7@oss.tenstorrent.com>
+ <20260126-atlantis-clocks-v3-1-b016135551b7@oss.tenstorrent.com>
+ <20260127-mystify-carmaker-150aa3fcd6c6@spud>
+ <CAEev2e-p28J_H2oWdrtgGJ0Z=2iGn8FjFBN8ggU0t_Wtbi62rA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="br2m+ehppYMnSZbO"
+Content-Disposition: inline
+In-Reply-To: <CAEev2e-p28J_H2oWdrtgGJ0Z=2iGn8FjFBN8ggU0t_Wtbi62rA@mail.gmail.com>
+
+
+--br2m+ehppYMnSZbO
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-cloud-security-sender:alexander.stein@ew.tq-group.com
-X-cloud-security-recipient:linux-clk@vger.kernel.org
-X-cloud-security-crypt: load encryption module
-X-cloud-security-Mailarchiv: E-Mail archived for: alexander.stein@ew.tq-group.com
-X-cloud-security-Mailarchivtype:outbound
-X-cloud-security-Virusscan:CLEAN
-X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay49-hz1.antispameurope.com with 4f1QMg6GcFz28ym5
-X-cloud-security-connect: he-nlb01-hz1.hornetsecurity.com[94.100.132.6], TLS=1, IP=94.100.132.6
-X-cloud-security-Digest:3cf64e51d346abca35efec810fea2612
-X-cloud-security:scantime:1.873
-DKIM-Signature: a=rsa-sha256;
- bh=ONpXfF3lQToQjK7rRSj7gTOlaNKqcczWPw9kZFHHahw=; c=relaxed/relaxed;
- d=ew.tq-group.com;
- h=content-type:mime-version:subject:from:to:message-id:date; s=hse1;
- t=1769612205; v=1;
- b=LKErPGXsuTRRg8pE0nqdyBvRrsczNiWbml4LUxgT6iXpy1klbn5/R8UjYWbk2oaO/U0UX+V+
- YWe+chYSsqvchKsegBBOC881KG1sxt3i0ASRZcBt2ihzxjusvmCbQL/qBLkEt4Zcno8YedWPCxv
- SOAPE8iKuzzOHsS696wUfPPYGZslHp7utWu/NwbGDyt8kBartS2vMhk9ydSYpED/YNhrumXNTRv
- +tjRKHvFBYQNgwGopqlAkfQEof4Xf1dpcZBukaVfC4w/KcOogWmcoWkqfvU9EZoL1YFE3cc3qRd
- T/HOKb5vQCCXi+GVpN9X9/EDzzd8Gug+bSFZOx9WhHi2A==
 
-Hi everyone,
-
-Am Mittwoch, 28. Januar 2026, 15:47:08 CET schrieb Mark Brown:
-> On Wed, Jan 28, 2026 at 03:09:46PM +0100, Nicolas Frattaroli wrote:
-> > On Wednesday, 28 January 2026 00:14:29 Central European Standard Time M=
-ark Brown wrote:
+On Tue, Jan 27, 2026 at 05:39:33PM -0600, Anirudh Srinivasan wrote:
+> Hi Conor,
 >=20
-> > > Do you have a debugging patch we could run which would say which cloc=
-ks
-> > > are impacted?  I guess it's more of an issue for the platforms that g=
-ive
-> > > no output but for at least Avenger96 I was getting earlycon output.
+> On Tue, Jan 27, 2026 at 1:58=E2=80=AFPM Conor Dooley <conor@kernel.org> w=
+rote:
+> >
+> > On Mon, Jan 26, 2026 at 03:07:14PM -0600, Anirudh Srinivasan wrote:
+> > > Document bindings for Tenstorrent Atlantis PRCM that manages clocks
+> > > and resets. This block is instantiated 4 times in the SoC.
+> > > This commit documents the clocks from the RCPU PRCM block.
+> > >
+> > > Signed-off-by: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
+> > > ---
+> > >  .../bindings/clock/tenstorrent,atlantis-prcm.yaml  |  82 +++++++++++=
++++++
+> > >  MAINTAINERS                                        |   2 +
+> > >  .../dt-bindings/clock/tenstorrent,atlantis-prcm.h  | 103 +++++++++++=
+++++++++++
+> > >  3 files changed, 187 insertions(+)
+> > >
+> > > +
+> > > +  tenstorrent,prcm-rcpu:
+> > > +    $ref: /schemas/types.yaml#/definitions/phandle
+> > > +    description:
+> > > +      Phandle reference to RCPU prcm, needed by other 3 prcms (PCIe,=
+ MM, HSIO)
+> > > +      as the control registers for the PLLs that drive these subsyst=
+ems are in
+> > > +      RCPU prcm's range
+> >
+> > This is pretty suspect sounding, if the PLLs for !rcpu are controlled in
+> > the rcpu register region, why is it not a clock parent for the !rcpu
+> > prcms?
 >=20
-> > Try this one
+> I saw another clock driver doing it in the manner I did [1], and
+
+The example is using it just to check lock status, which I think is
+different than what you've got here? What you wrote implies that the
+whole configuration for these PLLs is in that register region.
+
+> thought that it would make writing the bindings and the clock driver
+> simpler. Each prcm node would have a single input clock (otherwise
+> there would be a differing number of input clocks for each prcm node).
 >=20
-> For the Avenger96 that says:
->=20
-> [    0.347816] __clk_core_init: enabling parent ck_hse for ck_per
-> [    0.352230] __clk_core_init: disabling parent ck_hse for ck_per
-> [    0.358207] __clk_core_init: enabling parent pll1_p for ck_mpu
-> [    0.364005] __clk_core_init: disabling parent pll1_p for ck_mpu
->=20
-> https://lava.sirena.org.uk/scheduler/job/2412562#L563
->=20
+> What would you suggest that I do?
 
-This is for TQMa8MPxL/MBa8MPxL:
+I suggest that you model the clock tree correctly in devicetree, even if
+that makes things more complicated. One prcm node having more input
+clocks isn't something to be afraid of, it should be pretty
+straightforward to handle in both devicetree and driver, and is not any
+more complicated than having to deal with the syscon phandle that you
+use at the moment.
 
-[    1.452788] __clk_core_init: enabling parent audio_pll1_out for clkout1_=
-sel
-[    1.457677] __clk_core_init: disabling parent audio_pll1_out for clkout1=
-_sel
-[    1.464270] __clk_core_init: enabling parent audio_pll1_out for clkout2_=
-sel
-[    1.471760] __clk_core_init: disabling parent audio_pll1_out for clkout2=
-_sel
-[    1.478360] __clk_core_init: enabling parent sys_pll2_500m for arm_a53_d=
-iv
-[    1.485259] __clk_core_init: disabling parent sys_pll2_500m for arm_a53_=
-div
+btw, where is the code for the !rcpu clock controllers? AFAICT, this
+series only has the rcpu portion and I can't find the code that actually
+uses the phandle. Why is the patch documenting stuff that has no user?
 
-Best regards,
-Alexander
+> This would also avoid having the clock tree in the driver contain
+> multiple entries for some of the PLLs (one in the rcpu subsystem where
+> it is defined and another where the same clock is referred with {
+> .index =3D 0 }) which could become confusing.
 
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
+I don't really understand what you mean by this. Can you elaborate?
+If you mean that multiple clocks produced by the prcm would all use
+index =3D 0 as their parent, that does not sound abnormal to me. Without
+being able to see the !rcpu driver implementations, I can't even make
+guesses as to what the clock tree looks like.
 
 
+--br2m+ehppYMnSZbO
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaXolCwAKCRB4tDGHoIJi
+0rw0AQCdOeRioPlgzz56UBWH3uR/Xsa7xMRZG6htp+xFGP3KfQD9HiJzVLnZWBa6
+2Q+cUcXOAJr0fH9Po/fYWMqWfseCbgA=
+=QOLe
+-----END PGP SIGNATURE-----
+
+--br2m+ehppYMnSZbO--
