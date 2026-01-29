@@ -1,48 +1,45 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC2A2C3248
-	for <linux-clk@vger.kernel.org>; Thu, 29 Jan 2026 20:10:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812A02EB5A6;
+	Thu, 29 Jan 2026 21:42:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769717411; cv=none; b=gUDFjMDiDW/pDscqRrCK4NqxZ/8pKaWexBV+cecfsluk1s8PI5fyW/7bMCLKMRoiChzPzaqZnaeVnt+PR++jx74oJBiK/83rbGfltUhbG+vulKej4fepoZZfh1Kcj71+sgwJBVJO28k9V3J3+Z1nDp6n2I9Zr4cHoD2SBCISSWw=
+	t=1769722926; cv=none; b=P3szJdPmNGUWcqva+FfMYDbTlb9je1yGPlZxtTJYOcXV1Fy3ANENcxmyZ3iXRm5f05xfrqonxuSXjrA57VwfpUIArqtKwp5IVIideO754/3N0SMeQLuhS/IAfCTxUjd434Ds1Ej1Br7dlw5PL+ABZ1hU03JPo8HEHO2YsCimsj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769717411; c=relaxed/simple;
-	bh=HTjfiMkq8RWWWUv9jdTxS8NVwKGdN0hsGAeGh5zdU9w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=it8HWzzsqfjurA1Xdi3KzkGzhBrhUDtmQkvnOUTfaiJOcXGq2D1RvMsySzbf3oUR78YJ0Uu082X5xmJxUaVmqhtB1XU/LLopYh3QlpLxPfQIBzfaldZBAR40HmO9s9sPFBvkOvzSbpDqP3lzr9/w25wXmD9mWCUPJKFlX3sAb+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=l26n+1al; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="l26n+1al"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id BF6331A2AEB
-	for <linux-clk@vger.kernel.org>; Thu, 29 Jan 2026 20:10:07 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 8939D60746;
-	Thu, 29 Jan 2026 20:10:07 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 13886119A880F;
-	Thu, 29 Jan 2026 21:10:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1769717407; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=kfgnhySIfhTldLCk3EcEzLPPD58B6WtDCE5MTj3qFJU=;
-	b=l26n+1al9VwsTTslKF0cExQ4FYlsd9PDGj8d5lba+I5kumQKNwD8Hs16i/VnCDXHflvlX/
-	TRsF15NCPopAOSsURC34s+i80xVt1HMvTzNRqKpFSTMFjCeWuX3CFnpOA9uEgB3G3yMrCU
-	61ouO1zFZVlgwNVZaafPAaijKW2/kV6qX4nC1Zo2w4P5Abffy9gAP6pOftsG9p4s+svtim
-	Cza9ZzI7Uajn04uLPwG6QgUT1cw+n7Sm7ANPHRWp9oicxJio46WBWVvo5WM5fVjYqpVsuw
-	fLCS3QUSmfrF9BeMwEsarZQB9v4tImsuB4euw+5AUoaSjsSNi5+4/1Y1kKYy9g==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org,
-	Pascal Eberhard <pascal.eberhard@se.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH] clk: Add support for clock nexus dt bindings
-Date: Thu, 29 Jan 2026 21:10:03 +0100
-Message-ID: <20260129201003.288605-1-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.51.1
+	s=arc-20240116; t=1769722926; c=relaxed/simple;
+	bh=N4DinjPv1RntLkFwtr3UPGDJtSNdOcgdxTAFMnbQrAc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=By4nV+nhi5KjXS9hDE4+WMjY32YGB8oD82vKtnIE+kXKxMvRkjX/xIxFeaeukXLEgPGgWDV4VJh1G6pWTmnKyJidplVsw1qNmvJS4jIknZBhLwOPK+fxo7YTdg4b8YpCwLDZSR4J73Ka3R41FffVsAXo17JpgzgshPf4WDdzZfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: gOX9L7pbTMqBumd/jltjvg==
+X-CSE-MsgGUID: +4oDu4dCTTqgHvqwJ6ZXNg==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 30 Jan 2026 06:42:02 +0900
+Received: from ubuntu.adwin.renesas.com (unknown [10.226.92.73])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 4535A410CB72;
+	Fri, 30 Jan 2026 06:41:57 +0900 (JST)
+From: John Madieu <john.madieu.xa@bp.renesas.com>
+To: claudiu.beznea.uj@bp.renesas.com,
+	lpieralisi@kernel.org,
+	kwilczynski@kernel.org,
+	mani@kernel.org,
+	geert+renesas@glider.be,
+	krzk+dt@kernel.org
+Cc: robh@kernel.org,
+	bhelgaas@google.com,
+	conor+dt@kernel.org,
+	magnus.damm@gmail.com,
+	biju.das.jz@bp.renesas.com,
+	linux-pci@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	john.madieu@gmail.com,
+	John Madieu <john.madieu.xa@bp.renesas.com>
+Subject: [PATCH v4 00/15] PCI: renesas: Add RZ/G3E PCIe controller support
+Date: Thu, 29 Jan 2026 22:41:14 +0100
+Message-ID: <20260129214130.16067-1-john.madieu.xa@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,115 +47,99 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-From: Miquel Raynal (Schneider Electric) <miquel.raynal@bootlin.com>
+The Renesas RZ/G3E SoC features a PCIe controller that shares similarities with
+the existing RZ/G3S PCIe controller, but with several key differences.
+This series adds support for the RZ/G3E PCIe controller by extending the existing
+RZ/G3S driver and device tree bindings.
 
-A nexus node is some kind of parent device abstracting the outer
-connexions. They are particularly useful for describing connectors-like
-interfaces but not only. Certain IP blocks will typically include inner
-blocks and distribute resources to them.
+Key differences between RZ/G3E and RZ/G3S PCIe controllers:
 
-In the case of clocks, there is already the concept of clock controller,
-but this usually indicates some kind of control over the said clock,
-ie. gate or rate control. When there is none of this, an existing
-approach is to reference the upper clock, which is wrong from a hardware
-point of view.
+Link Speed Support:
+ - RZ/G3E: Supports PCIe Gen3 (8.0 GT/s) alongside Gen2 (5.0 GT/s)
+ - RZ/G3S: Supports PCIe Gen2 (5.0 GT/s) only
 
-Nexus nodes are already part of the device-tree specification and clocks
-are already mentioned:
-https://github.com/devicetree-org/devicetree-specification/blob/v0.4/source/chapter2-devicetree-basics.rst#nexus-nodes-and-specifier-mapping
+Reset Control:
+ - RZ/G3E: Uses register-based reset control mechanism
+ - RZ/G3S: Uses exclusively external reset control signals
 
-Following the introductions of nexus nodes support for interrupts, gpios
-and pwms, here is the same logic applied again to the clk subsystem,
-just by transitioning from of_parse_phandle_with_args() to
-of_parse_phandle_with_args_map():
+Inbound Window Configuration:
+ - RZ/G3E: Requires precise power-of-2 window coverage with strict address
+   alignment constraints. Non-power-of-2 memory regions must be split into
+   multiple windows to avoid over-mapping, ensuring proper hardware address
+   decoding for DMA operations.
+ - RZ/G3S: Uses a simpler approach that rounds up to the next power-of-2,
+   creating single larger windows. The hardware tolerates over-mapped regions.
 
-* Nexus OF support:
-bd6f2fd5a1d5 ("of: Support parsing phandle argument lists through a nexus node")
-* GPIO adoption:
-c11e6f0f04db ("gpio: Support gpio nexus dt bindings")
-* PWM adoption:
-e71e46a6f19c ("pwm: Add support for pwm nexus dt bindings")
+Class/Revision IDs:
+ - RZ/G3E: Requires explicit setting of class/revision values
+ - RZ/G3S: Has default values in hardware
 
-Expected Nexus properties supported:
-- clock-map: maps inner clocks to inlet clocks,
-- clock-map-mask: specifier cell(s) which will be remapped,
-- clock-map-pass-thru: specifier cell(s) not used for remapping,
-  forwarded as-is.
+Clock Naming:
+ - RZ/G3E: Uses "clkpmu" clock for power management
+ - RZ/G3S: Uses "clkl1pm" PM control clock while CLKREQ_B is deasserting
 
-In my own usage I had to deal with controllers where clock-map-mask and
-clock-map-pass-thru were not relevant, but here is a made up example
-showing how all these properties could go together:
+Phy Settings:
+ - RZ/G3E: Does not need PHY settings as it works with default hw values
+ - RZ/G3S: Requires explicit PHY settings
 
-Example:
-    soc_clk: clock-controller {
-        #clock-cells = <2>;
-    };
+This series extends the existing driver to detect the SoC type from the device
+tree compatible string and configure the controller appropriately. The updates
+are minimal and focused on the hardware-specific differences while keeping the
+common code paths unified.
 
-    container: container {
-        #clock-cells = <2>;
-        clock-map = <0 0 &soc_clk 2 0>,
-                    <1 0 &soc_clk 6 0>;
-        clock-map-mask = <0xffffffff 0x0>;
-        clock-map-pass-thru = <0x0 0xffffffff>;
+Changes:
 
-        child_device {
-            clocks = <&container 1 0>;
-	    /* This is equivalent to <&soc_clk 6 0> */
-        };
-    };
+v4:
+ - Collected Ab tag
+ - Fixed binding clock name constraint
 
-The child device does not need to know about the outer implementation,
-and only knows about what the nexus provides. The nexus acts as a
-pass-through, with no extra control.
+v3:
+ - Removed extra MaxItems in binding causing warnings
+ - Fix potential crash for non-initialized rcdev in CPG driver
+ - Fix binding contraints replacing 'description' with 'const' as per
+   Geert and Rob's comment
 
-Signed-off-by: Miquel Raynal (Schneider Electric) <miquel.raynal@bootlin.com>
----
- drivers/clk/clk.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+v2:
+ - Address Bjorn typo comments
+ - Address Claidiu's comment on stylish
+ - Use single inbound-window-configuration function for both G3E/G3S
+ - Refactor goto laballing as per Claudiu's comments
+ - Update bindings and reused G3S's interrupt ordering
+   * This involves reordering interrupts in dt
+ - Remove Board-specific PCIe dma-range.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 85d2f2481acf..bb52837a9f76 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -5213,13 +5213,13 @@ static int of_parse_clkspec(const struct device_node *np, int index,
- 		/*
- 		 * For named clocks, first look up the name in the
- 		 * "clock-names" property.  If it cannot be found, then index
--		 * will be an error code and of_parse_phandle_with_args() will
-+		 * will be an error code and of_parse_phandle_with_args_map() will
- 		 * return -EINVAL.
- 		 */
- 		if (name)
- 			index = of_property_match_string(np, "clock-names", name);
--		ret = of_parse_phandle_with_args(np, "clocks", "#clock-cells",
--						 index, out_args);
-+		ret = of_parse_phandle_with_args_map(np, "clocks", "clock",
-+						     index, out_args);
- 		if (!ret)
- 			break;
- 		if (name && index >= 0)
-@@ -5286,7 +5286,7 @@ of_clk_get_hw_from_clkspec(struct of_phandle_args *clkspec)
-  *
-  * This function looks up a struct clk from the registered list of clock
-  * providers, an input is a clock specifier data structure as returned
-- * from the of_parse_phandle_with_args() function call.
-+ * from the of_parse_phandle_with_args_map() function call.
-  */
- struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec)
- {
-@@ -5374,8 +5374,8 @@ const char *of_clk_get_parent_name(const struct device_node *np, int index)
- 	int count;
- 	struct clk *clk;
- 
--	rc = of_parse_phandle_with_args(np, "clocks", "#clock-cells", index,
--					&clkspec);
-+	rc = of_parse_phandle_with_args_map(np, "clocks", "clock", index,
-+					    &clkspec);
- 	if (rc)
- 		return NULL;
- 
+John Madieu (15):
+  PCI: rzg3s-host: Fix reset handling in probe error path
+  PCI: renesas: rzg3s: Rework inbound window algorithm for multi-SoC
+    support
+  clk: renesas: rzv2h-cpg: Add support for init_{off|asserted}
+    clocks/resets
+  clk: renesas: r9a09g047: Add PCIe clocks and reset
+  dt-bindings: PCI: renesas,r9a08g045s33-pcie: Fix naming properties
+  dt-bindings: PCI: renesas,r9a08g045s33-pcie: Document RZ/G3E SoC
+  PCI: rzg3s-host: Make SYSC register offsets SoC-specific
+  PCI: rzg3s-host: Make configuration reset lines optional
+  PCI: rzg3s-host: Add SoC-specific configuration and initialization
+    callbacks
+  PCI: rzg3s-host: Explicitly set class code for RZ/G3E compatibility
+  PCI: rzg3s-host: Add PCIe Gen3 (8.0 GT/s) link speed support
+  PCI: rzg3s-host: Add support for RZ/G3E PCIe controller
+  arm64: dts: renesas: r9a09g047: Add PCIe node
+  arm64: dts: renesas: r9a09g047e57-smarc-som: Add PCIe reference clock
+  arm64: dts: renesas: r9a09g047e57-smarc: Enable PCIe
+
+ .../bindings/pci/renesas,r9a08g045-pcie.yaml  | 121 ++++--
+ arch/arm64/boot/dts/renesas/r9a09g047.dtsi    |  69 ++++
+ .../boot/dts/renesas/r9a09g047e57-smarc.dts   |  16 +
+ .../boot/dts/renesas/renesas-smarc2.dtsi      |   4 +
+ .../boot/dts/renesas/rzg3e-smarc-som.dtsi     |  11 +
+ drivers/clk/renesas/r9a09g047-cpg.c           |   5 +
+ drivers/clk/renesas/rzv2h-cpg.c               |  24 +-
+ drivers/clk/renesas/rzv2h-cpg.h               |  34 +-
+ drivers/pci/controller/pcie-rzg3s-host.c      | 387 ++++++++++++++----
+ 9 files changed, 549 insertions(+), 122 deletions(-)
+
 -- 
-2.51.1
+2.25.1
 
