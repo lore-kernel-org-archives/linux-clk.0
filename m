@@ -1,261 +1,164 @@
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010057.outbound.protection.outlook.com [52.101.228.57])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233132D46B3;
-	Thu, 29 Jan 2026 18:09:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769710163; cv=fail; b=s2ATYzAGftJWjp8mLR5MYyeS8LHjGi8sdyE0pF9lGre01TrT+veks76VIPg2iyAz0Q5jkm4IsdmL4IgOtURFbBZRL1eCVZ2hod+RJx41nOzh5Mm+yexjnRRlGWyySt2/s7MFsdEYTXYHV98pJxJ7nyFu3WzN6+udiqNSkvKhy+s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769710163; c=relaxed/simple;
-	bh=j5M7f3m88qxsXyxa8mTNpay2FFp43VmUpro+Z36QYI8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=R4sRJeIjlLzCTvCPsnxV8pYNzQjH9WWNBI5yUNcl30dhrYY0K33TEyMXTjJT+1wCcCptHKaehTTtvIsK8Z5p/Z4fhQWK3jrp5UWX/TUrSSXLUjj/EB7k2rJLhMoIlnJaSOhXLxsfAR0Za106qhMVSqKiJsxhfUBP3hDMCrmuSLw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=ZoTemHRi; arc=fail smtp.client-ip=52.101.228.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC2A2C3248
+	for <linux-clk@vger.kernel.org>; Thu, 29 Jan 2026 20:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769717411; cv=none; b=gUDFjMDiDW/pDscqRrCK4NqxZ/8pKaWexBV+cecfsluk1s8PI5fyW/7bMCLKMRoiChzPzaqZnaeVnt+PR++jx74oJBiK/83rbGfltUhbG+vulKej4fepoZZfh1Kcj71+sgwJBVJO28k9V3J3+Z1nDp6n2I9Zr4cHoD2SBCISSWw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769717411; c=relaxed/simple;
+	bh=HTjfiMkq8RWWWUv9jdTxS8NVwKGdN0hsGAeGh5zdU9w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=it8HWzzsqfjurA1Xdi3KzkGzhBrhUDtmQkvnOUTfaiJOcXGq2D1RvMsySzbf3oUR78YJ0Uu082X5xmJxUaVmqhtB1XU/LLopYh3QlpLxPfQIBzfaldZBAR40HmO9s9sPFBvkOvzSbpDqP3lzr9/w25wXmD9mWCUPJKFlX3sAb+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=l26n+1al; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="ZoTemHRi"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=llIDg+qlG6PA2amojdbZo9eFS1i2YxzcWcNctzTWaP21h8cveM+8xAxcpioCNUpgpJ6OGxMuL3Y+CrLqDnw+TyaiPsxsmnDjICVDLYkjdubZjvqnPWxZK6nDnOsL1k5pDpJsgApHaqPHRfZgMU/+lr6h5XFUMIzHq6inanIc2ldrAC9+HXJoMK21d6qCX7ffGtMtGS9DKA3++IkDjZhDi+DRD1p2JVACXbYdDAKjQ1cpjRlUfxSJKP8fRmbL+Z9P4j2H1jpMdZ5poM4z7fgUciIKHDcTCI0wlhvTb80kBvSQblUe9rFV7DiGPj80O9pxWih/duRZ3LUAhDGmla4Rtg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xb2rBxbvZpqft1hIrSuoO6gzn9K+Lv/Z5crr4HC+2Mg=;
- b=JVAvAYbtVkbgHQkzzeuBH63CPrUmih9VxvmbMqqhKiX3nISyoPnSfky+u3cX1RC2SgJsRjhNxpbJ4BTUqziBRtVbTsuuzg5A+KMA81f7Uw9p3DXTpklf8A8hWst8MK4+nFwJlWjJS1Ku0/prShijF1idAxGNFB/NBdHZOzVTPmi1rTyouK12wt28DlacU6OrGkl8v3JOaTRwOSTDxQnaN4OtDHQXiL0uMCG1r2AsrO3RxAgGG63/9JJuqrOfNCH0SvcEvfaaNVCZx6iAj/n6MKW0ea3iTbTonq5hO8QR8CLd13s3QCJl4Lhyb/s8xgfM3ofujCG2pAjmm12MGdGV4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xb2rBxbvZpqft1hIrSuoO6gzn9K+Lv/Z5crr4HC+2Mg=;
- b=ZoTemHRiqAT2mk4agcWPq676p38zcRTkbchnYDZ8e1XFczRmS3wedk3qUxH8Wp2NV/avApE9G+rarxNO7F1EnPjJiSBXHOsixWk4m2UgU3hcrDczJuUv/yEiRXL6EUiUDl2VS5Kk12Xuoi3qknaZ8K+20lFqkItuq8uz2gr9Efo=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by OSZPR01MB8529.jpnprd01.prod.outlook.com (2603:1096:604:18a::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9564.7; Thu, 29 Jan
- 2026 18:09:16 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1%6]) with mapi id 15.20.9564.010; Thu, 29 Jan 2026
- 18:09:16 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Conor Dooley <conor@kernel.org>
-CC: biju.das.au <biju.das.au@gmail.com>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>, Geert Uytterhoeven
-	<geert+renesas@glider.be>, Linus Walleij <linusw@kernel.org>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, magnus.damm <magnus.damm@gmail.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Prabhakar Mahadev
- Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, "linux-gpio@vger.kernel.org"
-	<linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>
-Subject: RE: [PATCH RESEND 1/9] dt-bindings: pinctrl: renesas: Document
- reset-names
-Thread-Topic: [PATCH RESEND 1/9] dt-bindings: pinctrl: renesas: Document
- reset-names
-Thread-Index: AQHckQhl2WiS89m9YE2u3b4jm6jmu7VpaquAgAAAcTCAAAEWgIAAADYAgAAGC0A=
-Date: Thu, 29 Jan 2026 18:09:16 +0000
-Message-ID:
- <TY3PR01MB11346221862DCD11BB6D6FFA0869EA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <cover.1769681553.git.biju.das.jz@bp.renesas.com>
- <e70c010cb8c599d342807af146bd5c2a6d6cb4c5.1769681553.git.biju.das.jz@bp.renesas.com>
- <20260129-skyline-romp-e81f8ec9ae1f@spud>
- <TY3PR01MB11346C5187C5A0A3745B6F870869EA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <20260129-snort-maroon-c0478598c227@spud>
- <20260129-cherub-prenatal-7882029a9027@spud>
-In-Reply-To: <20260129-cherub-prenatal-7882029a9027@spud>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OSZPR01MB8529:EE_
-x-ms-office365-filtering-correlation-id: 3b4b39f2-1dc5-49b8-b5f1-08de5f61842e
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|7416014|376014|38070700021;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?gJYcQOmM8kH2MLwfiqcnGzaYa5+CT7WViTVIQVHYGlfx43NmQorx5CD/2Z3W?=
- =?us-ascii?Q?ZIQaNXKKD2se/afFspeiy7UH4z7Op4gjFXNDxk1pOIDSYQc4kLm0MCWR5oK5?=
- =?us-ascii?Q?SqtfqO3pO1LPFpuP26sHg4XsExTlEIcJpJcrjPrsr1C/bDYnEanx/7v2FD9N?=
- =?us-ascii?Q?TCmb6xDjD8UgEL4ahiigRhvZLVyJE1Rvw9Yne8Q6p6f4d+rmbwxsppyBNVP4?=
- =?us-ascii?Q?Vsh3ZmypB+XyVh/tKRTl/4YlWBNgRcxpmY6URbChYsbOvllbHK4VzdJCfJ3F?=
- =?us-ascii?Q?iVfx2boKIcadaFFKmwFSzM5tU7whd1znr+WVWBdQwT5WoMR40jOJTi+hKzo+?=
- =?us-ascii?Q?k5duCagioDxtzAfpnhvd9wdVqj5hivjLZZfIY9K2k+sOZ4ZFdS054XbthUgT?=
- =?us-ascii?Q?mnBn5gkXOChosX45rk0J53uLKFnY4PMtSgevuW3TcvtgQEbDWlnEd+R5LC1N?=
- =?us-ascii?Q?BZ4jAEjf/REPVxhbj9jqYVW3D8UsRQ7otAfmMY6JzCpcT1ffSmJl3yim74gG?=
- =?us-ascii?Q?gEUNBlSkJ8vnLYt/CXctGZ+igyCDjNQ23jOkSSti0rgqj+zo9ydWx7/XZlpU?=
- =?us-ascii?Q?M+lUaTW5Y6VaSpX0szyQP6Y6hs5X/qEgkXZ4c2lKjPYo/11DPYhZYZkHe+fi?=
- =?us-ascii?Q?B6+VjZE+o+dL/xHCq3SxD70BFpt0/U139nEUaLb2Ksj3fVbMMPRyeVeqKXC3?=
- =?us-ascii?Q?xgbvrZ84Kk26lmutmtMzvrto7FlQJZ1B/u5968a9Utyxg2raeDpk7Zt+G4wl?=
- =?us-ascii?Q?V5jilHgPDiN6qNFJKoNdpeGzHSMnA4HNCZMkyK+rj35pJ4+BG1BmkOo768YO?=
- =?us-ascii?Q?pYEBdsJe+HlWb+S4HVl3BgTQQ6NyIydKwHHfKiC6qsEj4DMeO/WCISO4nYdZ?=
- =?us-ascii?Q?kThhO2RcaumIvkNPHH8s8KpJWB3BZsYyPiBoCGdwzJL3k7v2VeA3QgufsnrB?=
- =?us-ascii?Q?hStm0cETbydyyjZznBEnAGCQvNJ7u0RJnmLsU2oqOhNJq6zPdhMOa5R8U7Wn?=
- =?us-ascii?Q?xfWx3EO4EP5BQN8ybbtqIYYmGiDQ9tyb6x5WpFXqwpsySV22wtFgj2JY8yK4?=
- =?us-ascii?Q?ziAok9kFT/Uy2uxES8OK/gH6R1A3320BWPftjSBFgB9DeWXquuc7E0XmBBef?=
- =?us-ascii?Q?H38GWSZ8jVybVSMhMlzC12d9tgV6aPjhiuhhHZVYTnLJu5c07Dcdd1IqC3iq?=
- =?us-ascii?Q?SCEi7np9oMyPJGSC1vj1DRVXfZKn09IKiOeuHCCggbGeB0DPDXZpAFFWt3wl?=
- =?us-ascii?Q?yw097tHaE0zt28im0n/mp9xZYqYulKZAvzQ0KjRffqEeBwEZ0s6wNzhCv7rr?=
- =?us-ascii?Q?ZMdeMWtgxrZT9Co8n9x8RZFmYsv8ykKqhH7JEg6UoI18S29PFdT9gs3COCuY?=
- =?us-ascii?Q?PgbuW4EWKpvWq1ju052/Hzc9wbm2u7v9fFcQii79lvSWCQ9fnS3r06M+wHyL?=
- =?us-ascii?Q?sUcP7JhCGq95MQqIaKPwrZ4I2UkI1Yb3lnmMjGkzL+r12tyKDAmOxOvTEDb3?=
- =?us-ascii?Q?czaM4HbyYXH1lmR2lg/tR4jt5SugmuShroFxd0j/2eOOwxlLzh6YCV5VJ57Y?=
- =?us-ascii?Q?kUUqlAlUGfxBs9envpIBPtdODoEC7bDGhBi4T76KKNV5omZciFWItvDYEAwS?=
- =?us-ascii?Q?jH4OLEj6IIVsSoQThmuznLc=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?M6TaTI349pYHznzjs1ql+iDNF1MbygSgYJ0NAfC5mgelb55jUsyNflUyKnzf?=
- =?us-ascii?Q?/BlHrBUE4yu2PqxXf76O5RNtgOQ/Rx85EyIMm6QjA1w6yG745xRs39MFoizM?=
- =?us-ascii?Q?CudKTW9NCt5ND7tBc4TeEh1riLh6WsBSzLQWfa7Ry1osFrCzokDtaYw9MhZm?=
- =?us-ascii?Q?FO0LNE5Qn1XBGPJCHyJfQ4LxuxMExzHwtxJFeq1loZeyco0hHkk2E/JFcdZL?=
- =?us-ascii?Q?CqXP3oOuzb6bGcyLnuyUfLd4vciJzdKs7PNrX2WOPLJPOXk9SM+tbSr9tQtD?=
- =?us-ascii?Q?iT1y17E78eY8tA/LsTZZKujsAlj+dFM+cb08EyTLaYXama93k/DG9bdowslg?=
- =?us-ascii?Q?9VIM248vScj499QoAWvKIFpf5ZgscPBDaTRwa4VYzByOCnJWEOrLXR5Ch5W9?=
- =?us-ascii?Q?UYhhNoc5M5thgZd6SqTX3MO9qKeYRstf94Yp6UsZvQ/05l/QcxoEShDoaJq4?=
- =?us-ascii?Q?IexlBw3QzLny4aBR1cgPx/W4olLyNciUq/oqphC5dZoxM41+7fDTvoGx1Oob?=
- =?us-ascii?Q?Z5uVvyBAMW1jCmn396sQroWbZX8e7AOb9AMOhtC5dXGwdxYLXTMAfizEPC2k?=
- =?us-ascii?Q?lBwx6NupG8Mk8coqteSK9GYSrDD1vQeXMnH2tcmAX5pli/AsgXK5ZNeOk92L?=
- =?us-ascii?Q?rz01O4VpheZPxUzqXB9X2ymkmMwFvcvKzBSbMMJePvQdoicBZvOnifFAUAVN?=
- =?us-ascii?Q?d7icjfztm01gajLFvXdx7f0xNTFBRSO0GFRXRB51omn96Yu84hc0XFnhyA9p?=
- =?us-ascii?Q?Oh8iMPM6CBVie7/UtFtcNxmulB6i+NAOwHGXORunGQZsA1tSYkDWc6qA9LIL?=
- =?us-ascii?Q?YdpxiH/61oEu3aoDDwGpOyNiz0GGWPVA1asy34sOD+EmcBoTIqVYsBNUVp6s?=
- =?us-ascii?Q?2CX/f07usXiqGjsoxSFvv29EGnTnH8q+ZhowQuwWyzL3yFHSoezRQ06fECYp?=
- =?us-ascii?Q?CnL5J3WxJdKMa9oTdtp0Bw9tKEimKYmrXwgYTiDmQFeXHXBbixkgnO8E9SXg?=
- =?us-ascii?Q?r2SSr8ZDYX8vl0ekKX/SRVopSREN/uHxeud/8FJmPGpwvt5nfYMip5Eck9iy?=
- =?us-ascii?Q?b/EcGxUzvVdQOJSkixE7l+QpGQPDQGxa2v68i6g7ONkEUb1j/ozbwomNYfLC?=
- =?us-ascii?Q?l81J4/KgufHQ4MQoBaSEN26fZ+DONTdoej03yNtMdrnoJNIE+J09WhELHNlR?=
- =?us-ascii?Q?VjcA4jBvTiIXf8hkoomLf7AZq7kOhBEGU2s0ADsuqVo9VkE6h+DdMxrDT0S4?=
- =?us-ascii?Q?mST72oDsO9q4xyDztZGq/jpE1kXcrTyrcHTeckScdBC4yGCjo0JR/PtaGXlc?=
- =?us-ascii?Q?qoDx9/jvxixz8I2xDQJ3sG3LVk/tugMGJwPxrGHANQ4clmd64TlQ3V/3bzLS?=
- =?us-ascii?Q?Q71mjJej1cqrkplWw884bKFqEIVWqPKx7UAgaNpdScUWenuSdtpMhIpS1Xi1?=
- =?us-ascii?Q?5k/3OJlKBV6Pkun0RsE0qf+zCkB6TFtaJYPROGz1J3QwLAlYmA+4ZmAz6jp+?=
- =?us-ascii?Q?NaE0uzhhAuTP7DtgrG/Th2JEa8iYTs80gt8v7wKtxZ3P6ua1OOHiMMgIvucj?=
- =?us-ascii?Q?ZZTr/JlkH48llcpkATJ+Vnk/8pOhC4J4OmQ5EptzqPXmieFKf6B/raaDQIiX?=
- =?us-ascii?Q?BYV97MtcsbhhqQjZAm7apwIuiZ64Etp+5nV8xUXDtUsMeZ9UX/cOCmoickLu?=
- =?us-ascii?Q?Ja2mmwPV1f/j9v/P9ogvOnJhbyercOK1IV0DZcoD90Nf4pPLNqeRyJKw/V+0?=
- =?us-ascii?Q?A5nS2EoygQ=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="l26n+1al"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id BF6331A2AEB
+	for <linux-clk@vger.kernel.org>; Thu, 29 Jan 2026 20:10:07 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 8939D60746;
+	Thu, 29 Jan 2026 20:10:07 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 13886119A880F;
+	Thu, 29 Jan 2026 21:10:04 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1769717407; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=kfgnhySIfhTldLCk3EcEzLPPD58B6WtDCE5MTj3qFJU=;
+	b=l26n+1al9VwsTTslKF0cExQ4FYlsd9PDGj8d5lba+I5kumQKNwD8Hs16i/VnCDXHflvlX/
+	TRsF15NCPopAOSsURC34s+i80xVt1HMvTzNRqKpFSTMFjCeWuX3CFnpOA9uEgB3G3yMrCU
+	61ouO1zFZVlgwNVZaafPAaijKW2/kV6qX4nC1Zo2w4P5Abffy9gAP6pOftsG9p4s+svtim
+	Cza9ZzI7Uajn04uLPwG6QgUT1cw+n7Sm7ANPHRWp9oicxJio46WBWVvo5WM5fVjYqpVsuw
+	fLCS3QUSmfrF9BeMwEsarZQB9v4tImsuB4euw+5AUoaSjsSNi5+4/1Y1kKYy9g==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org,
+	Pascal Eberhard <pascal.eberhard@se.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH] clk: Add support for clock nexus dt bindings
+Date: Thu, 29 Jan 2026 21:10:03 +0100
+Message-ID: <20260129201003.288605-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3b4b39f2-1dc5-49b8-b5f1-08de5f61842e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jan 2026 18:09:16.6875
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: YaIM9W7btu3MPVjeVmA5wytaGW5L0PlHD8CtujDFfwaXY2TOIFdei25m2es3Uqg6i9iyKM9DwN1wLYKQJgmMAvMev4wa40Wp4EbY2K4MUzk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZPR01MB8529
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Conor,
+From: Miquel Raynal (Schneider Electric) <miquel.raynal@bootlin.com>
 
-> -----Original Message-----
-> From: Conor Dooley <conor@kernel.org>
-> Sent: 29 January 2026 17:47
-> Subject: Re: [PATCH RESEND 1/9] dt-bindings: pinctrl: renesas: Document r=
-eset-names
->=20
-> On Thu, Jan 29, 2026 at 05:46:01PM +0000, Conor Dooley wrote:
-> > On Thu, Jan 29, 2026 at 05:43:09PM +0000, Biju Das wrote:
-> > > Hi Conor,
-> > >
-> > > Thanks for the feedback.
-> > >
-> > > > -----Original Message-----
-> > > > From: Conor Dooley <conor@kernel.org>
-> > > > Sent: 29 January 2026 17:41
-> > > > Subject: Re: [PATCH RESEND 1/9] dt-bindings: pinctrl: renesas:
-> > > > Document reset-names
-> > > >
-> > > > On Thu, Jan 29, 2026 at 10:16:36AM +0000, Biju wrote:
-> > > > > From: Biju Das <biju.das.jz@bp.renesas.com>
-> > > > >
-> > > > > All SoCs has multiple resets. Document reset-names property.
-> > > > >
-> > > > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> > > > > ---
-> > > > >  .../bindings/pinctrl/renesas,rzg2l-pinctrl.yaml   | 15 +++++++++=
-++++++
-> > > > >  arch/arm64/boot/dts/renesas/r9a07g043.dtsi        |  1 +
-> > > > >  arch/arm64/boot/dts/renesas/r9a07g044.dtsi        |  1 +
-> > > > >  arch/arm64/boot/dts/renesas/r9a07g054.dtsi        |  1 +
-> > > > >  arch/arm64/boot/dts/renesas/r9a08g045.dtsi        |  1 +
-> > > > >  arch/arm64/boot/dts/renesas/r9a09g047.dtsi        |  1 +
-> > > > >  arch/arm64/boot/dts/renesas/r9a09g056.dtsi        |  1 +
-> > > > >  arch/arm64/boot/dts/renesas/r9a09g057.dtsi        |  1 +
-> > > > >  8 files changed, 22 insertions(+)
-> > > > >
-> > > > > diff --git
-> > > > > a/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctr
-> > > > > l.yaml
-> > > > b/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.
-> > > > yaml
-> > > > > index 00c05243b9a4..fbbba53cde9b 100644
-> > > > > ---
-> > > > > a/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctr
-> > > > > l.yaml
-> > > > > +++ b/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pi
-> > > > > +++ nctrl.yaml
-> > > > > @@ -78,6 +78,16 @@ properties:
-> > > > >            - description: PFC main reset
-> > > > >            - description: Reset for the control register related
-> > > > > to WDTUDFCA and WDTUDFFCM pins
-> > > > >
-> > > > > +  reset-names:
-> > > > > +    oneOf:
-> > > > > +      - items:
-> > > > > +          - const: rstn
-> > > > > +          - const: port
-> > > > > +          - const: spare
-> > > > > +      - items:
-> > > > > +          - const: main
-> > > > > +          - const: error
-> > > > > +
-> > > > >  additionalProperties:
-> > > > >    anyOf:
-> > > > >      - type: object
-> > > > > @@ -152,10 +162,14 @@ allOf:
-> > > > >        properties:
-> > > > >          resets:
-> > > > >            maxItems: 2
-> > > > > +        reset-names:
-> > > > > +          maxItems: 2
-> > > > >      else:
-> > > > >        properties:
-> > > > >          resets:
-> > > > >            minItems: 3
-> > > > > +        reset-names:
-> > > > > +          maxItems: 3
-> > > >
-> > > > This is minItems, no?
-> > >
-> > > Oops, Will fix it in next version.
-> >
-> > w/ minItems
-> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
->=20
-> Actually, can you remove the dtsi changes from the binding patch? I forgo=
-t they were in here.
+A nexus node is some kind of parent device abstracting the outer
+connexions. They are particularly useful for describing connectors-like
+interfaces but not only. Certain IP blocks will typically include inner
+blocks and distribute resources to them.
 
-OK, I will make it separate in next version
+In the case of clocks, there is already the concept of clock controller,
+but this usually indicates some kind of control over the said clock,
+ie. gate or rate control. When there is none of this, an existing
+approach is to reference the upper clock, which is wrong from a hardware
+point of view.
 
-Cheers,
-Biju
+Nexus nodes are already part of the device-tree specification and clocks
+are already mentioned:
+https://github.com/devicetree-org/devicetree-specification/blob/v0.4/source/chapter2-devicetree-basics.rst#nexus-nodes-and-specifier-mapping
+
+Following the introductions of nexus nodes support for interrupts, gpios
+and pwms, here is the same logic applied again to the clk subsystem,
+just by transitioning from of_parse_phandle_with_args() to
+of_parse_phandle_with_args_map():
+
+* Nexus OF support:
+bd6f2fd5a1d5 ("of: Support parsing phandle argument lists through a nexus node")
+* GPIO adoption:
+c11e6f0f04db ("gpio: Support gpio nexus dt bindings")
+* PWM adoption:
+e71e46a6f19c ("pwm: Add support for pwm nexus dt bindings")
+
+Expected Nexus properties supported:
+- clock-map: maps inner clocks to inlet clocks,
+- clock-map-mask: specifier cell(s) which will be remapped,
+- clock-map-pass-thru: specifier cell(s) not used for remapping,
+  forwarded as-is.
+
+In my own usage I had to deal with controllers where clock-map-mask and
+clock-map-pass-thru were not relevant, but here is a made up example
+showing how all these properties could go together:
+
+Example:
+    soc_clk: clock-controller {
+        #clock-cells = <2>;
+    };
+
+    container: container {
+        #clock-cells = <2>;
+        clock-map = <0 0 &soc_clk 2 0>,
+                    <1 0 &soc_clk 6 0>;
+        clock-map-mask = <0xffffffff 0x0>;
+        clock-map-pass-thru = <0x0 0xffffffff>;
+
+        child_device {
+            clocks = <&container 1 0>;
+	    /* This is equivalent to <&soc_clk 6 0> */
+        };
+    };
+
+The child device does not need to know about the outer implementation,
+and only knows about what the nexus provides. The nexus acts as a
+pass-through, with no extra control.
+
+Signed-off-by: Miquel Raynal (Schneider Electric) <miquel.raynal@bootlin.com>
+---
+ drivers/clk/clk.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 85d2f2481acf..bb52837a9f76 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -5213,13 +5213,13 @@ static int of_parse_clkspec(const struct device_node *np, int index,
+ 		/*
+ 		 * For named clocks, first look up the name in the
+ 		 * "clock-names" property.  If it cannot be found, then index
+-		 * will be an error code and of_parse_phandle_with_args() will
++		 * will be an error code and of_parse_phandle_with_args_map() will
+ 		 * return -EINVAL.
+ 		 */
+ 		if (name)
+ 			index = of_property_match_string(np, "clock-names", name);
+-		ret = of_parse_phandle_with_args(np, "clocks", "#clock-cells",
+-						 index, out_args);
++		ret = of_parse_phandle_with_args_map(np, "clocks", "clock",
++						     index, out_args);
+ 		if (!ret)
+ 			break;
+ 		if (name && index >= 0)
+@@ -5286,7 +5286,7 @@ of_clk_get_hw_from_clkspec(struct of_phandle_args *clkspec)
+  *
+  * This function looks up a struct clk from the registered list of clock
+  * providers, an input is a clock specifier data structure as returned
+- * from the of_parse_phandle_with_args() function call.
++ * from the of_parse_phandle_with_args_map() function call.
+  */
+ struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec)
+ {
+@@ -5374,8 +5374,8 @@ const char *of_clk_get_parent_name(const struct device_node *np, int index)
+ 	int count;
+ 	struct clk *clk;
+ 
+-	rc = of_parse_phandle_with_args(np, "clocks", "#clock-cells", index,
+-					&clkspec);
++	rc = of_parse_phandle_with_args_map(np, "clocks", "clock", index,
++					    &clkspec);
+ 	if (rc)
+ 		return NULL;
+ 
+-- 
+2.51.1
+
