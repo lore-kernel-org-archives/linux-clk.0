@@ -1,32 +1,30 @@
 Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D06137D137;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0F737E2EC;
 	Thu, 29 Jan 2026 10:02:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.251.229.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769680951; cv=none; b=OgrisKaw1iwgbG6Do4LxYQx5067FAKl9OjNWlbnTQ5LnwFm/45esXuoir6a/emRF6xpgVIjORyLyBW8rNMBuuBKcaJDiK1uR7HtlMmolxohyA++pCLZoM/Gzflw263sOwUrN2EsddiKvxNJRMaxC23YbKovaM9x1GgEuXUbA2ho=
+	t=1769680951; cv=none; b=fEWIlcEvZ8/3bAtdnAXV9YNXpzedqI7JzL3O8nazEGYoR0pQT1IWoZkMBYt7gjhML2LT90f9JLMlQCZw7KHwWWl/IBboMCgW9e/UuzaWM9Oo2B/6exAOb5HRgsuXZUg0xrW0+KVbXJe2AvHkMDq0sZB2TQQLguQ9tGkJyBIqZhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1769680951; c=relaxed/simple;
-	bh=nMvp7sq8ZZjQy/P5kCejyFLZpXtKta6haVWRdm941Ro=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kTGx/HUPS8+SJ/nthhX6vcyn9cG1DPfro16Ql9gY94OGcQx8pMOpUM5wWY5NDFvu7nxuiMCUBonw3xtQr88xHtzDnZj8p9adOz31vDBvgC7/00E+NWHDOQ3MziFMBAzOSsOUv4vnomTbTtIRcUCS4n5/kfv+dUe/fI9p8b/LMXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com; spf=pass smtp.mailfrom=nabladev.com; dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b=A5AXGlCp; arc=none smtp.client-ip=178.251.229.89
+	bh=YPXowlMRj5xHqun6D/AYKPRcLJcRYokVA1SxHCq14+c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=plzGu02xO2fINIudDSQjKT3Bb5hLs3wAH/k2FHjJlov/Tfauco0cAamN9YBdyMDq5wnm/tjkfoSQKepXIcaI1OfSdSMA0FA5v2gHR1jVrwF+5f+VtdwEpD5F6cZrpJldJ521t5ZRVn7v/CQLIH9Z1TP/15N+ATFbHe0DKc3PbbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com; spf=pass smtp.mailfrom=nabladev.com; dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b=fEbSVsxw; arc=none smtp.client-ip=178.251.229.89
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nabladev.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b="A5AXGlCp"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 03A0A10F7B1;
-	Thu, 29 Jan 2026 10:55:04 +0100 (CET)
+	dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b="fEbSVsxw"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E680810F4FD;
+	Thu, 29 Jan 2026 10:54:56 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1769680505; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=Ua4dzCHRVlTur4dFIV0XO2jMj61CEAysss6aVhB7hN8=;
-	b=A5AXGlCpIvEkBSLGCNlNqlnDtfn//hfnk8wIN5HD2wNh5sm4m80V+9+wxLXic4xSwHDyf4
-	EJXXyoNBlKeDsjjP9l/oAjIdfv/QPy7MolmLXIRr7M7XCTLH/NBuyNnNNpe0X4RYy/usqv
-	MjJDRx6Fj7AdiJEW9Is2INMooWZC2uhUZMnIauhc4JJJvrhlxcs7qtkX0IT+9EddeCZfWw
-	JNViMT5h9CZCkSSoTMkdzuTNSg9P5RELz+/kA1avq/HKAVcAzJ1f25QH6ojBOJLc8/TQKU
-	gfexMP60K3sMBGRdpRxIALjxnSjGJskJ7FxCRRZD/jARmHp8vt4eXoZ0KcC7fw==
+	s=dkim; t=1769680500; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=TNf7l43MX55crtLyATkZX7s/kbESvyujXOEVyv/5/Yc=;
+	b=fEbSVsxwx5FJdG0tkvHTWRAJdGY72k44WhwRUeb6ayrhzX85DL6K30IPTbc31xy5rFoFhq
+	osVlRlOfEUCno5Gtung0eSw9X+vTbu7Q5AcyJnrpVdmF++wZhWXDKJOPoJqxolHwQIk25c
+	TrNH0H7dy9M+KVPKVzg9wWkXalIu6ZC9B+u5Cr1ND9cI/WHbmaVS5OppXJgAnLLQr/TQj4
+	Ajm9EF3GmUBfiLukKLFVOcSsuRQ+kYTpeGPmONkXoVClgM9kABA3ulewJY+u3vpXFchxg1
+	G0LHj9wv5d+t5Whsy/g4vp2mcPZB6tCVKZ+/QzIzqYY/j6RpMfcsT0DGxEijYQ==
 From: Lukasz Majewski <lukma@nabladev.com>
 To: Abel Vesa <abelvesa@kernel.org>,
 	Peng Fan <peng.fan@nxp.com>,
@@ -45,12 +43,10 @@ Cc: Rob Herring <robh@kernel.org>,
 	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
 	Lukasz Majewski <lukma@nabladev.com>
-Subject: [PATCH v4 4/4] clk: vf610: Add support for the Ethernet switch clocks
-Date: Thu, 29 Jan 2026 10:54:42 +0100
-Message-Id: <20260129095442.1646748-5-lukma@nabladev.com>
+Subject: [PATCH v4 0/4] clk: vf610: Add clocks to support MTIP L2 switch
+Date: Thu, 29 Jan 2026 10:54:38 +0100
+Message-Id: <20260129095442.1646748-1-lukma@nabladev.com>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20260129095442.1646748-1-lukma@nabladev.com>
-References: <20260129095442.1646748-1-lukma@nabladev.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -60,50 +56,21 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-The vf610 device has built in the MoreThanIP L2 switch. For proper
-operation it is required to enable ESW and MAC table lookup
-clocks.
+This patch series:
+- cleans up clocks' setup on vf610 by moving VF610_CLK_END define
+  to driver code
+- introduces support for several clocks required by MTIP switch IP block
 
-The MAC table spans from 0x400E_C000 for 0x4000 and it is necessary
-to provide clocks for each AIPS1-"slot", which size is 0x1000
-(hence four separate entries).
+Lukasz Majewski (4):
+  clk: vf610: Move VF610_CLK_END define to clk-vf610 driver
+  dt-bindings: clock: vf610: Drop VF610_CLK_END define
+  dt-bindings: clock: vf610: Add definitions for MTIP L2 switch
+  clk: vf610: Add support for the Ethernet switch clocks
 
-Those can be enabled via clock gating CCM_CCGR10 register
-(0x4006_B068).
+ drivers/clk/imx/clk-vf610.c             | 12 ++++++++++++
+ include/dt-bindings/clock/vf610-clock.h |  6 +++++-
+ 2 files changed, 17 insertions(+), 1 deletion(-)
 
-Signed-off-by: Lukasz Majewski <lukma@nabladev.com>
----
-Changes for v4:
-- Adjust VF610_CLK_END
----
- drivers/clk/imx/clk-vf610.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/imx/clk-vf610.c b/drivers/clk/imx/clk-vf610.c
-index 457156944c67..766119a86841 100644
---- a/drivers/clk/imx/clk-vf610.c
-+++ b/drivers/clk/imx/clk-vf610.c
-@@ -16,7 +16,7 @@
-  * include/dt-bindings/clock/vf610-clock.h
-  * It shall be the value of the last defined clock +1
-  */
--#define VF610_CLK_END 191
-+#define VF610_CLK_END 196
- 
- #define CCM_CCR			(ccm_base + 0x00)
- #define CCM_CSR			(ccm_base + 0x04)
-@@ -316,6 +316,11 @@ static void __init vf610_clocks_init(struct device_node *ccm_node)
- 	clk[VF610_CLK_ENET_TS] = imx_clk_gate("enet_ts", "enet_ts_sel", CCM_CSCDR1, 23);
- 	clk[VF610_CLK_ENET0] = imx_clk_gate2("enet0", "ipg_bus", CCM_CCGR9, CCM_CCGRx_CGn(0));
- 	clk[VF610_CLK_ENET1] = imx_clk_gate2("enet1", "ipg_bus", CCM_CCGR9, CCM_CCGRx_CGn(1));
-+	clk[VF610_CLK_ESW] = imx_clk_gate2("esw", "ipg_bus", CCM_CCGR10, CCM_CCGRx_CGn(8));
-+	clk[VF610_CLK_ESW_MAC_TAB0] = imx_clk_gate2("esw_tab0", "ipg_bus", CCM_CCGR10, CCM_CCGRx_CGn(12));
-+	clk[VF610_CLK_ESW_MAC_TAB1] = imx_clk_gate2("esw_tab1", "ipg_bus", CCM_CCGR10, CCM_CCGRx_CGn(13));
-+	clk[VF610_CLK_ESW_MAC_TAB2] = imx_clk_gate2("esw_tab2", "ipg_bus", CCM_CCGR10, CCM_CCGRx_CGn(14));
-+	clk[VF610_CLK_ESW_MAC_TAB3] = imx_clk_gate2("esw_tab3", "ipg_bus", CCM_CCGR10, CCM_CCGRx_CGn(15));
- 
- 	clk[VF610_CLK_PIT] = imx_clk_gate2("pit", "ipg_bus", CCM_CCGR1, CCM_CCGRx_CGn(7));
- 
 -- 
 2.39.5
 
