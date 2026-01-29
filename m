@@ -1,111 +1,94 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52DBE3803E9;
-	Thu, 29 Jan 2026 14:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD22313E39;
+	Thu, 29 Jan 2026 16:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769695677; cv=none; b=GzIZk6A6n1pPWEZsnqs8cATD5wwrcwuU7YnTS0bFHf5nOvB9dvzi757nLom5BeWedR0G/yI0lsEwQXci0nIVzrXtVwHfP621cGRkNcu/RVqnjb2lcuHzbQrgBg61VmP8RXvfiDkeEvggUWEDxNkkqY5yV6KSOCZE3kNnEWIn/NE=
+	t=1769702823; cv=none; b=q36QKkibKD75TfBNbOX5FlcTcHgUOCp5pdJa0LY/wSDl1gNA926qsDL266H6Hw6R/3KFF3E8vkeu6AEAlGzsEjpYKFGZqycfpgXoCZpF5bohgBCAYaPuZ+ljAl2eA0pj6U8hjzgwJwotov9oowgp6DfwTgmvE5fc9mJunWPAIJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769695677; c=relaxed/simple;
-	bh=9AdNRmTLv2TBYasRLPF96bHBRA1VsfdKQApevADhUhs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=P9o9uKyT6l0YRLF80XhwVcm8lt8wwQ1oP+rgu9MjIYkCHImrMW8RmJnTjuym4EAQEbcYvms2nK9lwIdaVHrGqb5pmRKM6xU8QwHEcFz9PsK0Htdlr/CyTyXn5glO1eb/ph8i71RpmnAc3WAjtpjrGBE6ciATjSv0f9UBA+bhmPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-X-CSE-ConnectionGUID: rDlCGX/uRO2/2VuTpoy3XA==
-X-CSE-MsgGUID: dAeBYHMeSrOd+yNW/vRa+A==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 29 Jan 2026 23:07:54 +0900
-Received: from mind-2s.example.org (unknown [10.226.36.118])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 5DDBE41AE66A;
-	Thu, 29 Jan 2026 23:07:49 +0900 (JST)
-From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-To: Rob Herring <robh@kernel.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	s=arc-20240116; t=1769702823; c=relaxed/simple;
+	bh=tXLZf586UMlopidhDPd+PLHMkBbfoB3yGad7HOETBIQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p8a+5aytUV/09e94Ail4LXEciXvCP99ywqsdP0z3Uqpus+TdCtiAX2ybrhIyzvm0kumJhQBpnKlbkUAaGwbXOotSRgahPXHypoS7EsFDXjOEmJOcP40gqKTV/NFpg5E0bYunxq9KblnhoyzzIkIsbmpv2Ud7X5dJH9nY+NdneOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ze3bCGG/; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ze3bCGG/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3ECA5C4CEF7;
+	Thu, 29 Jan 2026 16:07:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769702823;
+	bh=tXLZf586UMlopidhDPd+PLHMkBbfoB3yGad7HOETBIQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ze3bCGG/Hi5NgiKNzxsqJo1h+thuZE83AJGM3VOwqqyq9zuyxXz1YYh0gYxoXT3b6
+	 5rY3/sq21LyoYekh9tWhU4sCw6G7n2xC7gZNRDPxvXWQDCMyvm4UA0YCBICNtKOyCf
+	 2zIHGuAMaurWjAoyxsWEqvNiePG3VPrRrqrXIpg/IokMcjzzxPcchNHetQ0D3AIOn4
+	 Py3Qk6YDAgnMyHZjYBqqv69Jhnjv6DRP7pNDHnM1PCmccf2Hel4JL8iqHSk3cFBkyb
+	 l5quNXdS50Oemjhyk8xvtBIFjfpzr7KLzowBh7dJm8pXRot48elOiivmf6Z/asjzic
+	 722agsrP7ELAg==
+Date: Thu, 29 Jan 2026 10:07:02 -0600
+From: Rob Herring <robh@kernel.org>
+To: Jiebing Chen <jiebing.chen@amlogic.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	linux-watchdog@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-clk@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH mainline-linux 3/3] clk: renesas: r9a09g057: Remove entries for WDT{0,2,3}
-Date: Thu, 29 Jan 2026 14:07:31 +0000
-Message-ID: <20260129140731.12633-4-fabrizio.castro.jz@renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260129140731.12633-1-fabrizio.castro.jz@renesas.com>
-References: <20260129140731.12633-1-fabrizio.castro.jz@renesas.com>
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+	jian.xu@amlogic.com, shuai.li@amlogic.com, zhe.wang@amlogic.com
+Subject: Re: [PATCH v6 1/5] dt-bindings: clock: meson: Add audio power domain
+ for S4 soc
+Message-ID: <20260129160702.GA1111873-robh@kernel.org>
+References: <20260126-audio_drvier-v6-0-99e350855bc2@amlogic.com>
+ <20260126-audio_drvier-v6-1-99e350855bc2@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260126-audio_drvier-v6-1-99e350855bc2@amlogic.com>
 
-The HW user manual for the Renesas RZ/V2H(P) SoC specifies
-that only the WDT1 IP is supposed to be used by Linux,
-while the WDT{0,2,3} IPs are supposed to be used by the CM33
-and CR8 cores.
+On Mon, Jan 26, 2026 at 06:01:42AM +0000, Jiebing Chen wrote:
+> The audio power domain has been found on S4 device.
+> It must be enabled prior to audio operations.
+> 
+> Signed-off-by: Jiebing Chen <jiebing.chen@amlogic.com>
+> ---
+>  .../bindings/clock/amlogic,axg-audio-clkc.yaml         | 18 ++++++++++++++++--
+>  1 file changed, 16 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+> index fd7982dd4cea..1cd9a99e5ff3 100644
+> --- a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+> @@ -20,6 +20,7 @@ properties:
+>      enum:
+>        - amlogic,axg-audio-clkc
+>        - amlogic,g12a-audio-clkc
+> +      - amlogic,s4-audio-clkc
+>        - amlogic,sm1-audio-clkc
+>  
+>    '#clock-cells':
+> @@ -99,7 +100,8 @@ properties:
+>  
+>    resets:
+>      description: internal reset line
+> -
+> +  power-domains:
+> +    maxItems: 1
 
-Remove the clock and reset entries for WDT{0,2,3} to prevent
-interfering with the CM33 and CR8 cores.
+blank line
 
-This change is harmless as only WDT1 is used by Linux, there
-are no users for the WDT{0,2,3} cores.
-
-Fixes: 3aeccbe08171 ("clk: renesas: r9a09g057: Add clock and reset entries for GTM/RIIC/SDHI/WDT")
-Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
----
- drivers/clk/renesas/r9a09g057-cpg.c | 15 ---------------
- 1 file changed, 15 deletions(-)
-
-diff --git a/drivers/clk/renesas/r9a09g057-cpg.c b/drivers/clk/renesas/r9a09g057-cpg.c
-index 6943cad318b5..07803e0c91de 100644
---- a/drivers/clk/renesas/r9a09g057-cpg.c
-+++ b/drivers/clk/renesas/r9a09g057-cpg.c
-@@ -280,22 +280,10 @@ static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst = {
- 						BUS_MSTOP(11, BIT(15))),
- 	DEF_MOD("gtm_7_pclk",			CLK_PLLCLN_DIV16, 4, 10, 2, 10,
- 						BUS_MSTOP(12, BIT(0))),
--	DEF_MOD("wdt_0_clkp",			CLK_PLLCM33_DIV16, 4, 11, 2, 11,
--						BUS_MSTOP(3, BIT(10))),
--	DEF_MOD("wdt_0_clk_loco",		CLK_QEXTAL, 4, 12, 2, 12,
--						BUS_MSTOP(3, BIT(10))),
- 	DEF_MOD("wdt_1_clkp",			CLK_PLLCLN_DIV16, 4, 13, 2, 13,
- 						BUS_MSTOP(1, BIT(0))),
- 	DEF_MOD("wdt_1_clk_loco",		CLK_QEXTAL, 4, 14, 2, 14,
- 						BUS_MSTOP(1, BIT(0))),
--	DEF_MOD("wdt_2_clkp",			CLK_PLLCLN_DIV16, 4, 15, 2, 15,
--						BUS_MSTOP(5, BIT(12))),
--	DEF_MOD("wdt_2_clk_loco",		CLK_QEXTAL, 5, 0, 2, 16,
--						BUS_MSTOP(5, BIT(12))),
--	DEF_MOD("wdt_3_clkp",			CLK_PLLCLN_DIV16, 5, 1, 2, 17,
--						BUS_MSTOP(5, BIT(13))),
--	DEF_MOD("wdt_3_clk_loco",		CLK_QEXTAL, 5, 2, 2, 18,
--						BUS_MSTOP(5, BIT(13))),
- 	DEF_MOD("rsci0_pclk",			CLK_PLLCLN_DIV16, 5, 13, 2, 29,
- 						BUS_MSTOP(11, BIT(3))),
- 	DEF_MOD("rsci0_tclk",			CLK_PLLCLN_DIV16, 5, 14, 2, 30,
-@@ -598,10 +586,7 @@ static const struct rzv2h_reset r9a09g057_resets[] __initconst = {
- 	DEF_RST(7, 2, 3, 3),		/* GTM_5_PRESETZ */
- 	DEF_RST(7, 3, 3, 4),		/* GTM_6_PRESETZ */
- 	DEF_RST(7, 4, 3, 5),		/* GTM_7_PRESETZ */
--	DEF_RST(7, 5, 3, 6),		/* WDT_0_RESET */
- 	DEF_RST(7, 6, 3, 7),		/* WDT_1_RESET */
--	DEF_RST(7, 7, 3, 8),		/* WDT_2_RESET */
--	DEF_RST(7, 8, 3, 9),		/* WDT_3_RESET */
- 	DEF_RST(8, 1, 3, 18),		/* RSCI0_PRESETN */
- 	DEF_RST(8, 2, 3, 19),		/* RSCI0_TRESETN */
- 	DEF_RST(8, 3, 3, 20),		/* RSCI1_PRESETN */
--- 
-2.34.1
-
+Looks fine otherwise except for the DTB warning, so something here 
+doesn't match.
