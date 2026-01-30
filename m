@@ -1,208 +1,138 @@
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+Received: from mail-pf1-f196.google.com (mail-pf1-f196.google.com [209.85.210.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6828136B064
-	for <linux-clk@vger.kernel.org>; Fri, 30 Jan 2026 15:15:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D30923446C7
+	for <linux-clk@vger.kernel.org>; Fri, 30 Jan 2026 15:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769786102; cv=none; b=JOtPRHi87gLMhlcjnIlmGCR3+M1KWAoLHq13xex/8vQdUStoHXMHLqUr4V0t0PEfrHX9y+qK3rTEDAqayiIeOHhzfMQPKCh1qrBdJ5jvRK0ax2Uc3BOG3IepdIOMPaoQJIKA7gIc4x+e/59bAPMO0Gex1nDzbdnmSCVteUMHwEE=
+	t=1769788596; cv=none; b=jfWftC3qWKX2o+sH7fA0DSVi0bO0IkByVCuK+GY24JbsKiiBmaVulD9n4MRdcVPZgcGIHgrZO4a61ACBUTkF6WF+eMPL30H2gLJsFj8ZaKhulWABFD/+6T5xQJTAtGuiN19SyG1DxfXggH1QQuagMXMX9eWpYAWzKAc6D4rJ16o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769786102; c=relaxed/simple;
-	bh=SCFTBM65OjdnEPSOyA/r/B8nbJZrxArFeaTdSVVDLVk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nNdeUlTir+OJsr+haQxuMaxWXVNQnV4oybPyg0KI5zKqkKczW9WTgiIeyKzVNJw7QgSkEwf8q+81th6/j0d65rMBbPcYBO/b2gdD/JnkFuDdbpWcF1/NAeuBVRndWGcxA9XuXLSFgI5LvEjvecon09XP32ZPdftwLoMzGI+p27Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1769788596; c=relaxed/simple;
+	bh=SpffUkjliwaKx4GCJ0zzoKE4MJf/13e/7G80/BLtTt8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XuuL1G3wUbBKtjRur4HmHbFzKy+O/5Ca7dMVC5ndI2/2NJIIhqJ0Tk4/DSmjF5zc8NA+Re+U284hRGqKerrwwgxQeiIMKLHV9BaGfJzQk9HloDmUQfJi0eOz17wSGUmFSlsu4CZ8YIyvQTlYSKqgHc3svi8UXW6L/jRCtyLzvVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wl+8NVsT; arc=none smtp.client-ip=209.85.210.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-5664340e14fso601872e0c.1
-        for <linux-clk@vger.kernel.org>; Fri, 30 Jan 2026 07:15:01 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wl+8NVsT"
+Received: by mail-pf1-f196.google.com with SMTP id d2e1a72fcca58-81f4dfa82edso1303226b3a.0
+        for <linux-clk@vger.kernel.org>; Fri, 30 Jan 2026 07:56:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769788594; x=1770393394; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zBCSSoRoE8bVuHZUQ0AtCJQPfPq1ZSOXtwQ+4NnM5Ps=;
+        b=Wl+8NVsTrWpfnwzzXEj1U6H3kCi6X2kNKdNwLDrBJSwjl00vi9aw2FD3nmp1DYZeSp
+         rM4rw2xMtUK3riGc4rK0i/BkSP2OUaBzJmTlFOpPLtFx4bQoertDFLPlGtbMae7PbaRE
+         s8qf271f84EHRdggqwqenGOQbhqkrA+k3D5sW9tRhmh9o7JjeRvuFYzmlL8YqxOTph9m
+         b0KMbvW+m0M53BOzVs6XBaSgi1hNUN4JQMla8aBwRGKnr+JvsJF8g4YB3gLkFSLK34Mp
+         1pG08faMqL+5r2hKAJZgor+UgX4a8dbfm6aw3l5vnQb3IIXOytzSe10tazsClGhFyJFq
+         e/xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769786100; x=1770390900;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=O5GxIpMewJabp2FPSWHiEBeFWfyS29PfJrKQD476a5o=;
-        b=BFchjPmzXO2TvcCJ0gF8B4sIudeLUzJ6FFZH+hkwoVcQSofZlITAJ8vmO4lryHSGet
-         1Kvp7K/HoGqCaY0zx4VQLEAE9OygZR0wVIyhcm9Olc8D/YItSyZs63xNmpimruE3FmK/
-         t3k3sZ98OsNZVPoujT/CncNgDm+ACrXB2IwVrZ9FAzTK7r7JHIq3huJ/v9Wildmcg0sr
-         5Lrr14AgRbkx2gVTnhf+QQEDI4Qn9F5ImjqMLSgATaHe8k7qorgjQIcDwPVZiolNC/BT
-         KMOtEH9vsba88RZCIPqVrPUJfnYFQP/npteQ9Fel6zKvLxg6g1j1rYoi2W60KWvp+mRL
-         hDrw==
-X-Forwarded-Encrypted: i=1; AJvYcCVQjSA3lU6pbsmD+2OtMyN/Q2Rcje80hxlPRh/KL5a+iKS3HMynY2vN+qc4I7f8BuFci6Y/s0Q6TMs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx73TazL2g0rEK6uAND9YG2ap8xGUbGoPOvbdEXo7ikAH7HxQfV
-	nmBPn9BK6gYR8+dWVRtWKBVs8c5HBfbOMga9aGFE7TF/ezHUwKn4PNSL/McyL6Ww
-X-Gm-Gg: AZuq6aJzoLlKicgf66pSDh3BnonFZ1Fz3X1FVsRS1cMnyti94Fexmzs12D61aLvQQpV
-	1maEW7/g6K9LzWXW41OWddgJaQ2rYnYV9sZQOAZgarzAeZKedOaL92ntQYEBvW7M+OhQsuq9MNh
-	HUUxHpTPylBybLp4SzBRtsyuHMs/rO7fCECck8GRR8AR4ZcdHtkELRTfAeCfTmCb7TjCZHVmLPp
-	Fyvp4dHdopWaNS471AFnZqyUZByOZmxhHV6auy07df4x2fimt4WJ9j17C74eyJ7Ni24XR0Ok7id
-	NVmh9cKbJBWx5ROKeYHiTgt7jr9b014jjiKQi3Z2nh9qUE1X6t0CsS6x041s25MOPgebJACn0Qg
-	q1ZETtTi5oGB5luHTO95hUsj0X4M6asfaEausNP7faKpQ6QE/9rquewK3DzLZqjJXnzgcw9xW7/
-	Mx8ZoTrArhTLAh8fB6a8frfMKoWzTjlxUV5xf5nKpi3+1oOYAL
-X-Received: by 2002:a05:6122:32c2:b0:566:2494:39d7 with SMTP id 71dfb90a1353d-566a0136965mr899845e0c.18.1769786098453;
-        Fri, 30 Jan 2026 07:14:58 -0800 (PST)
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56685bed029sm2224097e0c.13.2026.01.30.07.14.55
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 Jan 2026 07:14:55 -0800 (PST)
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-9412cb281acso654121241.2
-        for <linux-clk@vger.kernel.org>; Fri, 30 Jan 2026 07:14:55 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVlWeEtK3EE3tAExrXl3syyl/JJPkkJhFEvaFO3FYJ/05ZoQtUv5BSHCET2MN2HpFgd9hk0eZVYhCo=@vger.kernel.org
-X-Received: by 2002:a05:6102:c0f:b0:4e6:a338:a421 with SMTP id
- ada2fe7eead31-5f8e245a613mr777546137.6.1769786093798; Fri, 30 Jan 2026
- 07:14:53 -0800 (PST)
+        d=1e100.net; s=20230601; t=1769788594; x=1770393394;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zBCSSoRoE8bVuHZUQ0AtCJQPfPq1ZSOXtwQ+4NnM5Ps=;
+        b=QfBaOBJC/f/J653dq4f4plHtqdWxhzA/RrP3Hz8x/Zt2vYOdTTsEi1MaJWN5eSTaVB
+         5FEre0SBW4iFQkCIMzi4LbQWcAo6cgCTJpngvgjldM2XmyrhkgYrhT19hKZ9qtthh03O
+         72QphXFKdlN6FyF/PJGSatbMYO2Ekj6cjT2S3O02ULF58VWb3m0KQLQlaQQgP3e5dpda
+         lvwg2PToOaKU3TwhbOrwLLy7CR9uxDUVWsVpr66qCaYL6CeOQmI5JDtLoikvXh3e6NXD
+         Q2dfNkEkauEHXZQTj2TeHTDNegaAR/ss6PGrpojfOLd1eKL9zPhNsqoiuyyqpyG/9i/s
+         JPzg==
+X-Gm-Message-State: AOJu0Yz1fm+2BxeenJUK/THrWXzwmH7LVN/bNaJqU8b2mH+DLKtwGTSm
+	XCdvXnK/12XTgw/wnxB5izka+6Then/mbFj6ElVekcI8/i6AIJYly9PqltOlVI+wRxI0Gw==
+X-Gm-Gg: AZuq6aK68gPOKJyJIxCShlgeLaVKQmXTx1NG6TnpHNEaL7coGhYKwpb9ljmi6onLz5W
+	9R/KAVPcIcGAaxCGV0DWqj27UM0Xl2pLqgBBda2c3+tI5zp6jdksYtRaZXy73NZdu8Fd+P0AmIP
+	QPdPVdznKtVSgtcT/U+WxNfGtd+LJ7EUPsiMMzwT4VHIvOG9u6CNZuz8Tyi/tng7K43CwYsn+b/
+	FaaXADH3pDhyo78VQpdkffOs5Zsx5qUJ+LLW7CG3pRUCZ6BoIqdlMa7AMyTHW3oy5+3KX92JrZC
+	18zu5eUk25NWJTFn3XmzZPnnUxMNlRsXsC9Goo0+5499D4lnDWijWl86DAPuF8rXvwjK8V95RN2
+	BIV4PGi56vHQ6mkN7JSSSyg21WpqvEqI/gwO6vpB35UyhD1FOof6pGLj2J54pAPy8AOM81sDOdU
+	rPwnmbonyXAaQuNjPNtCjNVsZT
+X-Received: by 2002:a05:6a21:6490:b0:2dc:40f5:3c6c with SMTP id adf61e73a8af0-392e0145956mr2877751637.54.1769788593981;
+        Fri, 30 Jan 2026 07:56:33 -0800 (PST)
+Received: from junjungu-PC.localdomain ([2408:820c:9008:ba52:53f:14bb:e0fe:f839])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a88b5d94c5sm80540015ad.71.2026.01.30.07.56.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Jan 2026 07:56:33 -0800 (PST)
+From: Felix Gu <ustc.gu@gmail.com>
+Date: Fri, 30 Jan 2026 23:56:28 +0800
+Subject: [PATCH] clk: imx: imx6q: Fix device node reference leak in
+ pll6_bypassed()
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260120150606.7356-1-ovidiu.panait.rb@renesas.com>
- <20260120150606.7356-5-ovidiu.panait.rb@renesas.com> <CAMuHMdVOCFS-31HA2Uxiu7CSmiOf_XwPk1kijYf_WkD0aJJJMw@mail.gmail.com>
- <TY7P301MB1984CB3A92C79442592B045DD39FA@TY7P301MB1984.JPNP301.PROD.OUTLOOK.COM>
-In-Reply-To: <TY7P301MB1984CB3A92C79442592B045DD39FA@TY7P301MB1984.JPNP301.PROD.OUTLOOK.COM>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 30 Jan 2026 16:14:42 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUwsC96cnsZqkV63hnG=C86G5ymScY3qnLR9v830D4m4Q@mail.gmail.com>
-X-Gm-Features: AZwV_Qi6n9e2kcogpnHrc6feOuUgDWyZ2jOoQdQQziRL-Ylwm9-bZFnrkPgSJg0
-Message-ID: <CAMuHMdUwsC96cnsZqkV63hnG=C86G5ymScY3qnLR9v830D4m4Q@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Add
- versa3 clock generator node
-To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-Cc: "magnus.damm" <magnus.damm@gmail.com>, "robh@kernel.org" <robh@kernel.org>, 
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260130-clk-imx6q-v1-1-2fa4da5dab85@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAKvUfGkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIzMDQ2MD3eScbN3M3AqzQl3LZJMkCwtj07RkIzMloPqCotS0zAqwWdGxtbU
+ ABfTUf1sAAAA=
+X-Change-ID: 20260130-clk-imx6q-9c4b8835fc26
+To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Lucas Stach <l.stach@pengutronix.de>
+Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Felix Gu <ustc.gu@gmail.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1769788589; l=1401;
+ i=ustc.gu@gmail.com; h=from:subject:message-id;
+ bh=SpffUkjliwaKx4GCJ0zzoKE4MJf/13e/7G80/BLtTt8=;
+ b=RenJYBVdy/Ov1ruNAsJl/+5Atz9o7oZITqzqfuFckxK2XcbQReo5YwVM9xuKAyR0SSGv96MM3
+ NctQ2VuE+pNCrMSbJ7AHd/nF0J8oRW4968bGtYuOEoGHg8D4lH7rp6s
+X-Developer-Key: i=ustc.gu@gmail.com; a=ed25519;
+ pk=fjUXwmjchVN7Ja6KGP55IXOzFeCl9edaHoQIEUA+/hw=
 
-Hi Ovidiu,
+The function pll6_bypassed() calls of_parse_phandle_with_args()
+but never calls of_node_put() to release the reference, causing
+a memory leak.
 
-On Fri, 30 Jan 2026 at 14:43, Ovidiu Panait
-<ovidiu.panait.rb@renesas.com> wrote:
-> > On Tue, 20 Jan 2026 at 16:06, Ovidiu Panait
-> > <ovidiu.panait.rb@renesas.com> wrote:
-> > > Add versa3 clock generator node. It provides clocks for the RTC, PCIe
-> > > and audio devices.
-> > >
-> > > Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-> >
-> > Thanks for your patch!
-> >
-> > > --- a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-> > > +++ b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-> > > @@ -108,6 +108,12 @@ vqmmc_sdhi1: regulator-vccq-sdhi1 {
-> > >                 states =3D <3300000 0>, <1800000 1>;
-> > >         };
-> > >
-> > > +       x1: x1-clock {
-> > > +               compatible =3D "fixed-clock";
-> > > +               #clock-cells =3D <0>;
-> > > +               clock-frequency =3D <24000000>;
-> > > +       };
-> > > +
-> > >         /* 32.768kHz crystal */
-> > >         x6: x6-clock {
-> > >                 compatible =3D "fixed-clock";
-> > > @@ -277,6 +283,25 @@ raa215300: pmic@12 {
-> > >                 clocks =3D <&x6>;
-> > >                 clock-names =3D "xin";
-> > >         };
-> > > +
-> > > +       versa3: clock-generator@69 {
-> > > +               compatible =3D "renesas,5l35023";
-> > > +               reg =3D <0x69>;
-> > > +               clocks =3D <&x1>;
-> > > +               #clock-cells =3D <1>;
-> > > +               assigned-clocks =3D <&versa3 0>,
-> > > +                                 <&versa3 1>,
-> > > +                                 <&versa3 2>,
-> > > +                                 <&versa3 3>,
-> > > +                                 <&versa3 4>,
-> > > +                                 <&versa3 5>;
-> > > +               assigned-clock-rates =3D <24000000>,
-> >
-> > Shouldn't (at least) qextal_clk and
-> >
-> > > +                                      <24576000>,
-> > > +                                      <32768>,
-> >
-> > rtxin_clk be overridden to point to the corresponding versa3 outputs?
-> > Same comment for [PATCH v2 5/5].
-> >
->
-> I tried implementing this by overriding qextal_clk and rtxin_clk with
-> fixed-factor-clock nodes that reference the versa3 outputs as parents:
->
-> --- a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-> +++ b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-> @@ -504,7 +504,11 @@ io {
->  };
-> =C2=B7
->  &qextal_clk {
-> -       clock-frequency =3D <24000000>;
-> +       compatible =3D "fixed-factor-clock";
-> +       clocks =3D <&versa3 0>;
-> +       #clock-cells =3D <0>;
-> +       clock-mult =3D <1>;
-> +       clock-div =3D <1>;
->  };
-> =C2=B7
->  &rtc {
-> @@ -512,7 +516,11 @@ &rtc {
->  };
-> =C2=B7
->  &rtxin_clk {
-> -       clock-frequency =3D <32768>;
-> +       compatible =3D "fixed-factor-clock";
-> +       clocks =3D <&versa3 2>;
-> +       #clock-cells =3D <0>;
-> +       clock-mult =3D <1>;
-> +       clock-div =3D <1>;
->  };
->
-> However, this breaks the boot. The problem seems to be probe
-> ordering:
-> 1. fixed-factor-clock uses CLK_OF_DECLARE, so it registers very early
-> 2. At that point, versa3 clocks are not yet available (since versa3 is
-> an I2C device, it is probed much later)
-> 3. The clock framework registers the fixed-factor-clock with rate =3D 0
-> 4. Consumers (RTC, timers, etc) probe and see rate =3D 0, causing failure=
-s
->
-> I'm also concerned that if qextal_clk (the main SoC clock) depends on
-> versa3, nearly everything would need to defer until the I2C subsystem
-> and versa3 driver are ready.
->
-> Could you please provide any suggestions on how to handle this?
+Fix this by adding proper cleanup calls on all exit paths.
 
-I meant to override the references to qextal_clk and rtxin_clk, i.e.
+Fixes: 3cc48976e9763 ("clk: imx6q: handle ENET PLL bypass")
+Signed-off-by: Felix Gu <ustc.gu@gmail.com>
+---
+ drivers/clk/imx/clk-imx6q.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-    &cpg {
-            clocks =3D <&audio_extal_clk>, <&versa3 2>, <&versa3 0>;
-    };
+diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+index bf4c1d9c9928..1d8e8f0891a3 100644
+--- a/drivers/clk/imx/clk-imx6q.c
++++ b/drivers/clk/imx/clk-imx6q.c
+@@ -238,8 +238,11 @@ static bool pll6_bypassed(struct device_node *node)
+ 			return false;
+ 
+ 		if (clkspec.np == node &&
+-		    clkspec.args[0] == IMX6QDL_PLL6_BYPASS)
++		    clkspec.args[0] == IMX6QDL_PLL6_BYPASS) {
++			of_node_put(clkspec.np);
+ 			break;
++		}
++		of_node_put(clkspec.np);
+ 	}
+ 
+ 	/* PLL6 bypass is not part of the assigned clock list */
+@@ -249,6 +252,7 @@ static bool pll6_bypassed(struct device_node *node)
+ 	ret = of_parse_phandle_with_args(node, "assigned-clock-parents",
+ 					 "#clock-cells", index, &clkspec);
+ 
++	of_node_put(clkspec.np);
+ 	if (clkspec.args[0] != IMX6QDL_CLK_PLL6)
+ 		return true;
+ 
 
-However, that could still delay everything, in which case we should
-just document the routing in the DTS using comments.
+---
+base-commit: 33a647c659ffa5bdb94abc345c8c86768ff96215
+change-id: 20260130-clk-imx6q-9c4b8835fc26
 
-Can you please give it a try?
-Thanks!
+Best regards,
+-- 
+Felix Gu <ustc.gu@gmail.com>
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
