@@ -1,66 +1,66 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4023A30EF94
-	for <linux-clk@vger.kernel.org>; Fri, 30 Jan 2026 13:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC3E30FC11
+	for <linux-clk@vger.kernel.org>; Fri, 30 Jan 2026 13:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769781208; cv=none; b=tUavOa5G1sptcMz+iCTmLe0gnPJjadvHFKZ8ez9ZaHTqpQOIMc/4tbAyF4nv6qbODF7oOgssKQUtvA0Col/T1nVhZKACpEkBHZ1ipSofBj8N6CEiS+t+Z3p4VkoTe2FyzYAcjZGUAAhQpULSoe7OTNvtQ/N1pueu4KK60hk1bgg=
+	t=1769781282; cv=none; b=o/e7BpDL7n4Ua67sp8JQCTbp+w7dxLrwepS2FRvrCEok97bW3tPl94wLCrUzj+sl358rivA4t7Y2yICAQGN8qmKVsKtOz3fcAC9/5is2+IeJUiBeR7kRizBAEXHXoB/JgDq1b6Z7XQuDZDAltP19MWIXVP6colWeMkrDss9//Lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769781208; c=relaxed/simple;
-	bh=zXXCIiWd1aTcZ02PDg2t9frtKz0qB1Gapb4nnXth2zQ=;
+	s=arc-20240116; t=1769781282; c=relaxed/simple;
+	bh=/46oDN82LjogzmORyHLOarRQ21fOzhCRXiwBNpC4pgc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T4IEHe58fBPT4sbh+Te8VC8wKKNx+5uyxi1tWlkg3qvhTz3ikzVdi8Rm0RWyFpExBS7p5TJcUvTU1rpLTIhD6TLCym954xJRkXNwdp7XVKG25wd0HHDjGoXIHQIFlJdFGCWGd+XnrG9Nv+xE9P+AL6L7QEi4fUDURUEz4WRwmhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=ebWxdQAx; arc=none smtp.client-ip=209.85.128.50
+	 In-Reply-To:Content-Type; b=aQOeJeOP4GSohy0qHDeCNwNp3vlpfkgXYArVlu/nF/8hprwksjE9J2Aqbczz6gaFa5dt3jhgbdaS5b+H8oYK3fzml66BaST2FwjtK1IsM94/BI+NcdpVtdaBm3HQbvFLXDEuPDkhMYAV1leevm5ADvpZ1zUfQdoQlDmZF3pXwIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=l67TSPRg; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="ebWxdQAx"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-47ee07570deso18314025e9.1
-        for <linux-clk@vger.kernel.org>; Fri, 30 Jan 2026 05:53:26 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="l67TSPRg"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-47ee76e8656so28421595e9.0
+        for <linux-clk@vger.kernel.org>; Fri, 30 Jan 2026 05:54:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1769781205; x=1770386005; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1769781278; x=1770386078; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=4o04psgLUgXFpASZX7kNJzQcWYqB5cygy+rbJIoQuwI=;
-        b=ebWxdQAxmXB1uKGQ+VwDCzICNWBdd2wVb+i7lLKS5ozbaz9SW4TzE9B37zhS9yrpsj
-         YzJ9UsQGtwWOYP1oTc5+h+27gxpkvYxee/2o14kjpraR44v4PV3WMIG0U7hfNg833jcS
-         w+h6BGb3Eo3d2uZj05tM9wIhFPQkmgGWu/0qACZiI4kgSqbyz+JJTqhefNiZH3fDNipx
-         g6veTx+wH2w+hX+K+6tyDEooi1SbSPleCTAHCCMMDRdybXkwzm7ReT0MB//WN1knEqVt
-         OWmLMIixxCD/YdnEpWloZ8MNSxJgNVVUgkEIIrR9KcExcZJwU8ugk4ZDddY/l6vc/Fm5
-         hRNg==
+        bh=G2fnMBaIl3iqJIAy71Kiwyskd4MUnQ9YmeCSljhkZAw=;
+        b=l67TSPRgA9OweFGD6z2maoe0ltMhaURwDY+hLfIyS/8/zfoOdumGFpZDrXzfNoFHlc
+         bZRpxL95X30rTYcTyzgT2gm+FTnbM1nGV7Kpj+DbmP0ZNXia+qVAhtxsxGQIcPXuuAX9
+         PmDrk3mKu4qqW0DGLH8sYQeXbhsCD9RhLj7DgQ0n3HKN8UJhRB9fdeN+Q9/mTG/2qMED
+         yKkGuPT96QTj+n1EEAIgwPqfV1RXECUpSpC3PRUgkU3YYUS2zcWhI4FqRuPamiiEldRD
+         P/+ekRFzeKhETYoDSS6SqHQ2AmFevXwlajZ1WOxRSg3+Xfh+C9Ny1CLBEAwY3LPuP8cU
+         jkEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769781205; x=1770386005;
+        d=1e100.net; s=20230601; t=1769781278; x=1770386078;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=4o04psgLUgXFpASZX7kNJzQcWYqB5cygy+rbJIoQuwI=;
-        b=c4DW9Qt9W9q2Y8Md/t9dL8zTXlToBw9JdL9eCYhF9niNGVEEi6/i3g9EhDPL37bDaa
-         4tnO8AAl9vAyBqVp8M30GZ+iqcFKHvWjzXofilMU7NONjjnbL58rYBPUGPrfAMVNmyii
-         E1fx75Cz3TOYXKmrmyrl+zxMjbbJlp+Udl0hMVQsFTRWzjZcQ9sjo1QqutlXiCa8u8dj
-         1vCVhX0D24VPZ9EVn4bqLl0UZEMcbV7aukUu2b21MAlYDQOo5j5DA3/SawJc8ode2yOb
-         WQ8hXIYnh0T3QKO4IAZlhcSsaqWDg5XeOmQpa9ddmO8aXqQK+cootBH6zRRhbY41S0P7
-         CriQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWLa+Dd7EonaTPFDUEbUWheGpfOoUIKI+c0wbdR7x11c9v/u2GwLiMHJ/+EIJr09jQufCl/4wUavc4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlupUE8GJ7lwnqRTxBZysJsCiEyxNLl73PcuPK2h0kkLkdLJdb
-	jf19yfgtaJybDXH+j1FTsPGV6Ud4XDUCWPA/8FFgdNSBEsYs96hr7EA99C/YPJkm0WM=
-X-Gm-Gg: AZuq6aJMdezNLztvWiZHo7tT52gEJInuHD0JgKdpdjMa/Sow4n1JA0t4Dil2lQv9IUu
-	pQbvuIHry6S1IaMrMEoHElcCu+dQyHzimbQQyLbEPUFo40Gn8UrPp071g9fVhHbjlHk685jK4Wa
-	jeQ6qx3s9x8l+K9XWxDCibWH8mCGUtip7jfJ1akRX6kR42sWDFX8QgEhZHLH324RAMu9cCCGHEO
-	Ru2QdmAR1WmaktN8+m0OzNkzaDEeIFNMjw4akQwCPdQyhNzb72zPS+GcLioDLPXM5LidunmIbtB
-	R0FZ81ouLTgjl5Ca1jKeGAbBsukLZdU9OzbglEZ83ViggxW3WlgcRyAF4T3/WQcDBzQQ3geqb2X
-	56EKoBv9Edbnxz75X4m3D7j1AteQUy4hO5TMTAHe5peSw4HpxvIXwDSEnd5sVNIXpuNLeDwvBB+
-	CuhQoOLLfNPL1rOcuCcA==
-X-Received: by 2002:a05:600c:3586:b0:477:582e:7a81 with SMTP id 5b1f17b1804b1-482db45237cmr39757035e9.4.1769781205391;
-        Fri, 30 Jan 2026 05:53:25 -0800 (PST)
+        bh=G2fnMBaIl3iqJIAy71Kiwyskd4MUnQ9YmeCSljhkZAw=;
+        b=VV0ACWgfxBJplI1ux4uUkoQzGIVwrxqNtxgUdGsE7f8K4eiapocaYpRrIBDQiTVvaX
+         K5WY6vw8vlGJ9l69kDSb7aza3ZfbNHF1S1zmQWzcoeg+Vnkd0clT9A8FQLB1r+w1vlFj
+         cIeLCgPw0qSTXH5VrFPxnD9yBNuPZ/tm2Hb954VMjTNKCrjc+1scFSakUyLX7IlfZWOo
+         AKZ1XmEkAItwPtpS9xWL7Ho3hZXTYQNmwwb86vAaZsbYURxSfrrn5WmBRmpezd7vEChW
+         g1XdHj4RKc5wrSJ2DbQzFvLkDHXppLGwdfd5DuJr65fck6PeUR5FGTw2cPAO8Wqmofa5
+         1ctw==
+X-Forwarded-Encrypted: i=1; AJvYcCXDL8mrpYdnfLgHDRzIx3+sd53K4h52lEiQ/9jBdBBIgwaefjXN0i2c+uYMZE2dyEGdYjw3ve9INQs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLi03olkQn6CdAddI/dTu1UhRFs0hrEDZ16zd4vJN/MElFcv73
+	RL75PwLvHBQHk49kisSSdRNcp42cAsoWipyT2oxD0fnZw590kh9is2oeZ2UX2CFWAT0=
+X-Gm-Gg: AZuq6aJsQke/dsezfuRIBw10TRWszlyPkbMHzUl/xCx02vLeKweGXYoawEvx4hO10Uf
+	NAaslS2ZZPJZxG2jOEwBVGGsXXQArR0CKLJiZfq8mDCK5F8odg6aDphqcv0AmU3Bq/xiwLyxAIz
+	bisdgKn4EJGAkkAIbeUg4NiUeH4BOQjSpWPxP8MTxfqTLDIPRPNemS2JQEe5eeZfKm3dBNPq435
+	0+1eroRbKpKAzi/oaqr4KivyoNCl3zW+rdgqwmw7kp9AMlprlC7n2ClgiX1fBZKH9G52mGMhvka
+	xFOSLl7TbKRB77gRDXZTjjeRdIhC/HBIWBWifXBqlQUCi2Djt2IKM2pQ39RT5QZSwWfjzI/C8rL
+	rl7/OnIh71TlAndLvoW6cJSWBA4cHjS9evRgDNCVJcErvZIdsgurGTWDiuWJR5wMC6DvJHsh8/x
+	aosx1gejlIMIQldhhr2w==
+X-Received: by 2002:a05:6000:1a8f:b0:430:f68f:ee97 with SMTP id ffacd0b85a97d-435f3aa7800mr4427461f8f.40.1769781278225;
+        Fri, 30 Jan 2026 05:54:38 -0800 (PST)
 Received: from [192.168.50.4] ([82.78.167.31])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48066beeaf9sm281652035e9.6.2026.01.30.05.53.23
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-435e1322eefsm23255962f8f.30.2026.01.30.05.54.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 Jan 2026 05:53:24 -0800 (PST)
-Message-ID: <377dfea9-83fd-4e76-b469-c2336118f964@tuxon.dev>
-Date: Fri, 30 Jan 2026 15:53:22 +0200
+        Fri, 30 Jan 2026 05:54:37 -0800 (PST)
+Message-ID: <2fb06fb9-eaf3-4911-8d3e-5d5c554e5f5d@tuxon.dev>
+Date: Fri, 30 Jan 2026 15:54:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,8 +68,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 07/15] PCI: rzg3s-host: Make SYSC register offsets
- SoC-specific
+Subject: Re: [PATCH v4 09/15] PCI: rzg3s-host: Add SoC-specific configuration
+ and initialization callbacks
 To: John Madieu <john.madieu.xa@bp.renesas.com>,
  claudiu.beznea.uj@bp.renesas.com, lpieralisi@kernel.org,
  kwilczynski@kernel.org, mani@kernel.org, geert+renesas@glider.be,
@@ -79,25 +79,225 @@ Cc: robh@kernel.org, bhelgaas@google.com, conor+dt@kernel.org,
  linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
  devicetree@vger.kernel.org, linux-clk@vger.kernel.org, john.madieu@gmail.com
 References: <20260129214130.16067-1-john.madieu.xa@bp.renesas.com>
- <20260129214130.16067-8-john.madieu.xa@bp.renesas.com>
+ <20260129214130.16067-10-john.madieu.xa@bp.renesas.com>
 Content-Language: en-US
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20260129214130.16067-8-john.madieu.xa@bp.renesas.com>
+In-Reply-To: <20260129214130.16067-10-john.madieu.xa@bp.renesas.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-
+Hi, John,
 
 On 1/29/26 23:41, John Madieu wrote:
-> In preparation for adding RZ/G3E support, move the RST_RSM_B register
-> offset and mask into a SoC-specific data structure. Compared with RZ/G3S,
-> the RZ/G3E SYSC controls different functionalities for the PCIe controller.
+> Add optional cfg_pre_init, cfg_post_init, and cfg_deinit callbacks
+> to handle SoC-specific configuration methods. While RZ/G3S uses the Linux
+> reset framework with dedicated reset lines, other SoC variants like RZ/G3E
+> control configuration resets through PCIe AXI registers.
 > 
-> Make SYSC operations conditional on the presence of register offset
-> information, allowing the driver to handle SoCs that don't use the
-> RST_RSM_B signal.
+> As Linux reset bulk API gracefully handles optional NULL reset lines
+> (num_cfg_resets = 0 for RZ/G3E), the driver continues to use the standard
+> reset framework when reset lines are available, while custom callbacks
+> are only invoked when provided.
 > 
-> Signed-off-by: John Madieu<john.madieu.xa@bp.renesas.com>
+> This provides a balanced pattern where:
+> - RZ/G3S: Uses reset framework only, no callbacks needed
+> - RZ/G3E: Sets num_cfg_resets=0, provides cfg_pre_init/cfg_post_init/cfg_deinit
+> - In addition to that, RZ/G3E requires explicit cfg reset and clock turned off
+>    to put the PCIe IP in a known state.
+> 
+> Add cfg_pre_init, cfg_post_init, and cfg_deinit callbacks to support
+> custom configuration mechanism in preparation to RZ/G3E PCIe support.
+> 
+> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+> ---
+> 
+> Changes:
+> 
+> v4: No changes
+> 
+> v3: No changes
+> 
+> v2:
+>   - Renamed callbacks as per Claudiu's comments
+>   - Reworded goto labels to be consistents with callbacks
+> 
+>   drivers/pci/controller/pcie-rzg3s-host.c | 66 +++++++++++++++++-------
+>   1 file changed, 46 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/controller/pcie-rzg3s-host.c
+> index a6fb2ec4a341..15ccd9095a3e 100644
+> --- a/drivers/pci/controller/pcie-rzg3s-host.c
+> +++ b/drivers/pci/controller/pcie-rzg3s-host.c
+> @@ -223,6 +223,9 @@ struct rzg3s_pcie_host;
+>   /**
+>    * struct rzg3s_pcie_soc_data - SoC specific data
+>    * @init_phy: PHY initialization function
+> + * @config_pre_init: Optional callback for SoC-specific pre-configuration
+> + * @config_post_init: Callback for SoC-specific post-configuration
+> + * @config_deinit: Callback for SoC-specific de-initialization
+>    * @power_resets: array with the resets that need to be de-asserted after
+>    *                power-on
+>    * @cfg_resets: array with the resets that need to be de-asserted after
+> @@ -233,6 +236,9 @@ struct rzg3s_pcie_host;
+>    */
+>   struct rzg3s_pcie_soc_data {
+>   	int (*init_phy)(struct rzg3s_pcie_host *host);
+> +	void (*config_pre_init)(struct rzg3s_pcie_host *host);
+> +	int (*config_post_init)(struct rzg3s_pcie_host *host);
+> +	int (*config_deinit)(struct rzg3s_pcie_host *host);
+>   	const char * const *power_resets;
+>   	const char * const *cfg_resets;
+>   	struct rzg3s_sysc_info sysc_info;
+> @@ -1082,6 +1088,18 @@ static int rzg3s_pcie_config_init(struct rzg3s_pcie_host *host)
+>   	return 0;
+>   }
+>   
+> +static int rzg3s_config_post_init(struct rzg3s_pcie_host *host)
+> +{
+> +	return reset_control_bulk_deassert(host->data->num_cfg_resets,
+> +					   host->cfg_resets);
+> +}
+> +
+> +static int rzg3s_config_deinit(struct rzg3s_pcie_host *host)
+> +{
+> +	return reset_control_bulk_assert(host->data->num_cfg_resets,
+> +					 host->cfg_resets);
+> +}
+> +
+>   static void rzg3s_pcie_irq_init(struct rzg3s_pcie_host *host)
+>   {
+>   	/*
+> @@ -1229,20 +1247,24 @@ static int rzg3s_pcie_host_init(struct rzg3s_pcie_host *host)
+>   	u32 val;
+>   	int ret;
+>   
+> +	/* SoC-specific pre-configuration */
+> +	if (host->data->config_pre_init)
+> +		host->data->config_pre_init(host);
+> +
+>   	/* Initialize the PCIe related registers */
+>   	ret = rzg3s_pcie_config_init(host);
+>   	if (ret)
+> -		return ret;
+> +		goto config_deinit;
+>   
+>   	ret = rzg3s_pcie_host_init_port(host);
+>   	if (ret)
+> -		return ret;
+> +		goto config_deinit;
+>   
+>   	/* Initialize the interrupts */
+>   	rzg3s_pcie_irq_init(host);
+>   
+> -	ret = reset_control_bulk_deassert(host->data->num_cfg_resets,
+> -					  host->cfg_resets);
+> +	/* SoC-specific post-configuration */
+> +	ret = host->data->config_post_init(host);
+>   	if (ret)
+>   		goto disable_port_refclk;
 
-Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+This will have to jump to the config_deinit_and_reclk label (see below).
 
+>   
+> @@ -1253,19 +1275,22 @@ static int rzg3s_pcie_host_init(struct rzg3s_pcie_host *host)
+>   				 PCIE_LINK_WAIT_SLEEP_MS * MILLI *
+>   				 PCIE_LINK_WAIT_MAX_RETRIES);
+>   	if (ret)
+> -		goto cfg_resets_deassert;
+> +		goto config_deinit_post;
+>   
+>   	val = readl_relaxed(host->axi + RZG3S_PCI_PCSTAT2);
+>   	dev_info(host->dev, "PCIe link status [0x%x]\n", val);
+>   
+>   	return 0;
+>   
+> -cfg_resets_deassert:
+> -	reset_control_bulk_assert(host->data->num_cfg_resets,
+> -				  host->cfg_resets);
+> +config_deinit_post:
+> +	host->data->config_deinit(host);
+>   disable_port_refclk:
+>   	clk_disable_unprepare(host->port.refclk);
+>   	return ret;
+> +
+> +config_deinit:
+> +	host->data->config_deinit(host);
+
+This should be like:
+
+config_deinit_and_reclk:
+	clk_disable_unprepare(host->port.refclk);
+config_deinit:
+	if (host->data->config_pre_init)
+		host->data->config_deinit(host);
+
+To avoid asserting CFG resets on RZ/G3S when they weren't configured.
+
+> +	return ret;
+>   }
+>   
+>   static void rzg3s_pcie_set_inbound_window(struct rzg3s_pcie_host *host,
+> @@ -1631,7 +1656,7 @@ static int rzg3s_pcie_probe(struct platform_device *pdev)
+>   
+>   host_probe_teardown:
+>   	rzg3s_pcie_teardown_irqdomain(host);
+> -	reset_control_bulk_assert(host->data->num_cfg_resets, host->cfg_resets);
+> +	host->data->config_deinit(host);
+>   rpm_put:
+>   	pm_runtime_put_sync(dev);
+>   rpm_disable:
+> @@ -1666,32 +1691,31 @@ static int rzg3s_pcie_suspend_noirq(struct device *dev)
+>   
+>   	clk_disable_unprepare(port->refclk);
+>   
+> -	ret = reset_control_bulk_assert(data->num_power_resets,
+> -					host->power_resets);
+> +	/* SoC-specific de-initialization */
+> +	ret = data->config_deinit(host);
+>   	if (ret)
+> -		goto refclk_restore;
+> +		goto config_reinit;
+
+Shouldn't this jump to clk_prepare_enable(port->refclk) ?
+
+Also, you've changed the reset order here. Please mention it in the patch 
+description or add a separate patch for that.
+
+Thank you,
+Claudiu
+
+>   
+> -	ret = reset_control_bulk_assert(data->num_cfg_resets,
+> -					host->cfg_resets);
+> +	ret = reset_control_bulk_assert(data->num_power_resets,
+> +					host->power_resets);
+>   	if (ret)
+> -		goto power_resets_restore;
+> +		goto config_reinit;
+>   
+>   	ret = regmap_update_bits(sysc->regmap, sysc->info->rst_rsm_b.offset,
+>   				 sysc->info->rst_rsm_b.mask,
+>   				 field_prep(sysc->info->rst_rsm_b.mask, 0));
+>   	if (ret)
+> -		goto cfg_resets_restore;
+> +		goto power_resets_restore;
+>   
+>   	return 0;
+>   
+>   	/* Restore the previous state if any error happens */
+> -cfg_resets_restore:
+> -	reset_control_bulk_deassert(data->num_cfg_resets,
+> -				    host->cfg_resets);
+>   power_resets_restore:
+>   	reset_control_bulk_deassert(data->num_power_resets,
+>   				    host->power_resets);
+> -refclk_restore:
+> +config_reinit:
+> +	data->config_post_init(host);
+> +
+
+Here
+
+>   	clk_prepare_enable(port->refclk);
+>   	pm_runtime_resume_and_get(dev);
+>   	return ret;
