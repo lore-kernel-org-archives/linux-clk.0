@@ -1,66 +1,66 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB43A2DF133
-	for <linux-clk@vger.kernel.org>; Fri, 30 Jan 2026 07:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80AC12D2491
+	for <linux-clk@vger.kernel.org>; Fri, 30 Jan 2026 07:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769757272; cv=none; b=Ttc3XBFzAuFjpZo+Hx9afAsVEfEbOYIVYnMp0cSFGvM+wyrF5wwgAFaJTPkeyn2S+A1HPWzZmBA6NEDuuf7AJxSydqN0c9yp0DoFEq0TM9rDZ1LK78EGK5dved1kdiZn+zpgm8AYCVttwnAzaGociMX8x2I/37OvM3o834s+Vyw=
+	t=1769757503; cv=none; b=Cx7FvJQNiKl+C0oGtCu68/0RgsT/K1A7QZE+FuaUpjJmq5XeEae+K4i3MYZlb+6BM/z4mMa/+6WzshNTYhNXBrUrbTJxcTlGmOgiCIaOGBT/LYGFEuPlcvLoW5cyqCwPQa9MRWMxfgEPdUJTJ+HpdRLseWJIuXlmmg4V7p1S6g8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769757272; c=relaxed/simple;
-	bh=OplTqmIMIM55ZfwfwEcAuJ5L5iBbYKJ6neWziiR8WtA=;
+	s=arc-20240116; t=1769757503; c=relaxed/simple;
+	bh=syzUWbn6SzahDC0HW4fIVoN/5tzrTHP9OvalWI0p7Zw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P40izBiNrostx4dGWEcWesIbEKLl8BPb9Xo+3QeAkc6apzhW7+BDnexSbnO225E7DBi6vY8a7n9DvQpoSwMh/7k8YDb0H3SHnlAjCsC6VFT+y43SChvXXoDTrwT1R10ZubfHM3KQHWk9uKpRNdBcQWGpCCJFb22utnlmiGFjRtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=oGfzyLUX; arc=none smtp.client-ip=209.85.128.41
+	 In-Reply-To:Content-Type; b=byK9gefoLQRI0GboMbhgoR9cPLsIMDXlLJL204bLom+w3JkPdkkTb6xbS/cQ5Y6Ev0yFgO+nfraeZkkTTPR+TjWlylvqYdPkdd9a4DtC4+oGmIf4jCz6RVej++Q7ro0eA42dfXx0o4UHL8ShVKyUkWYZTVTPiOgVPyNwDEg2554=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=V+YrKMq6; arc=none smtp.client-ip=209.85.221.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="oGfzyLUX"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-481188b7760so11305155e9.0
-        for <linux-clk@vger.kernel.org>; Thu, 29 Jan 2026 23:14:29 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="V+YrKMq6"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-432d2c7a8b9so1643755f8f.2
+        for <linux-clk@vger.kernel.org>; Thu, 29 Jan 2026 23:18:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1769757268; x=1770362068; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1769757501; x=1770362301; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=kIS7Tv8+p6x2LqhRC/mSoQut0LYtAOWTBCiN5CGoQbo=;
-        b=oGfzyLUXjD9rv5XmbBWQY+LbsUYknpugpUdon34MGwcjIpx7R2PxFR5ma1WQpofRVU
-         2DjRT6P75rL2yXgBlLcndLohg8vEWkJfjPlHBgwOM6qkgeZjh55vYpVaz/3a8bMjjglE
-         6q7zFm/V8lanKLOL9nbbjybWh9T9TpPSQwJv0uWStqOEfN10i4gVmN96pBB8uYK4F78x
-         pGe0iPQaFeWYlubEoVYOehojkCtWNlQrbm0/jywkPEkpoQ+aZdOItHAa7fbhyOw5yXT/
-         FqItzSQuRZNYKOtCF61wRbCwYiaVckfO4pl3VlD3b14xfFKKlJ/WriAd+m8513GOHa+a
-         xuvw==
+        bh=xpxkN9CzPqlfY/w02rIxvFlrDNaXNReJDm117rqc8w4=;
+        b=V+YrKMq69JXfuUb3ectcIxNRPkTiYETPNroTwyLy3JqfhagwNAlmuB8XFHve/cSehO
+         VtS9j2zjbhwC7VUnhpSzIigey3STDcQsPVk5WBr1lougVXmKKSwdQ0ya6Nwb9ESgMZhX
+         wA998P7wSLSg2Hb2ojANIimQH/zhNYDPIHZ7lTdTFA9UE+Vmi8rIkzMTySOhYjYjoGL3
+         EjvSQcDmmAZ8xxrNCZrx5zC4LmyPy0QFDPYaNFCmQEpLRxeYQK11HuKYJHpYUCKh8mi5
+         0VVLP0c/DMbQmQAYCfJWVm1HMTC22M08lP2LL5eeVFD7v4z5gv+TWS0F00RI+a4C6wTC
+         Jb1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769757268; x=1770362068;
+        d=1e100.net; s=20230601; t=1769757501; x=1770362301;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=kIS7Tv8+p6x2LqhRC/mSoQut0LYtAOWTBCiN5CGoQbo=;
-        b=s76j5T8Lzoel/n7yqe8lfAi4xNRcIDRPY0b4nvoR2PrawGHck+aPQs6wG5fC2BoHgW
-         IAlBpQ2qsqw7oPvA1JlCpAYRZC2ngSeSDJpyqET42pUBNHbk6x7P4iPHSwx3mZhINHzi
-         wUwssurr9a8220pjky9kFYjv4mS5oWUSDuKFMADEmCB1LnsAWAPeUusTp1U+Fn2v5JgD
-         xF4b0ItMosJ83C9Ue6s5YvP0ALgD2a1obrjRcrECr3K5DOi8FRMYmfmMGtYyxG6KlShG
-         i+Satwej3Ihq38J4Noc3KkfsctWA6WuwLmORGkqfAb3/w1TSHqjLtzQEa+jgF0zNsYov
-         rTog==
-X-Forwarded-Encrypted: i=1; AJvYcCWAg3IlpcNuhLNjdS8iD7hKVMEQcKU/CkTpIp+zvSqyKXGs8opBG2H4UF0UzzkkO/eBRQSx7VKKElY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxN/TMf+Y6Jt9mm5lImtNr4dUuCEKoEJpg7yvBU1R7lUktNxiZw
-	5BoGKDILq4bnY0csj7keJD83pgsYjVdz7fsLNpdMYhULZ0ZtFovpi2XGzW+dfqKjwi0=
-X-Gm-Gg: AZuq6aINyUtOQ0c505ynP3+QVH9nK3/C/EfSxcVhdFowqhTm/cwCTOHvMRJ1LI1OcHX
-	uLdK96pLeLu02es4U3cVC0XuD1/5D/4g6h3afZECpXr0OxUUKbdSP0lGuooiLDOsQfr7Vg4wjMP
-	ju55uVO7nJj099wlyMR/FgWNHGLwWUbx4D+cazp5rUzRgnA58cq6SaS+MHtP0w5Qvq2OThCLTn5
-	jEpahBhgmnb5gbg9BCQDszDQ3TRFTufD32BgOyNVgfzXUXcwOdTlQUjgbPJVE1SDH6dhbzXlMiU
-	og6JX5s5d7FziMfyt9MaXxdl8zCj4O14MZJpoW8E7Uz7zGB8oISUHQ859EIKEgkQtYo46jwNRdi
-	XyuD3jYa/2BCGXto3Gxo43w+O100KeY++kLZccV5wrSao+CLKfnXvhkZ4kU5ioL+nzXRhUeFAMh
-	cBsaIjKbA2xLO8l6eAFA==
-X-Received: by 2002:a05:600c:628d:b0:480:1c75:407c with SMTP id 5b1f17b1804b1-482db4577f3mr20579805e9.2.1769757268039;
-        Thu, 29 Jan 2026 23:14:28 -0800 (PST)
+        bh=xpxkN9CzPqlfY/w02rIxvFlrDNaXNReJDm117rqc8w4=;
+        b=kIpV2QQzwdA6Sr45Bmy6hS3zVnVFNYPIjHAuDu2yIlLX6rbm9IPC3FLmbnEhzkSxwO
+         cMU/DktzuwxEgjgBDBpLCJyYHFJx/fLt/weOuotJS2UeXIsZ9LzDlvbc5ykUEkmcAwi5
+         xqBfRz4zWPxPASOhqxOyxA0dENLxogFRVy3uQ5/N0/ffQEUG/fpKJt9LoB36x3D92BXk
+         urOM0NSVzVTFlLGYbM+yhjOPs9yb4QWnJBMPx9P5NtJSKwnX6eYJq/Wf3SwNq+WIpEoc
+         1vSH+CbV9Dn+QrL0A6aHyrRFRspPnJ7HioeQ/vUjivGOh4vAO3LN2ufFSJ8CZtQeJv1T
+         iXkg==
+X-Forwarded-Encrypted: i=1; AJvYcCXLnM1GCjmgF3zcyjnoew1WtheoeiK7GMgknnREkw/4hsXu9gw60sXQTEgaWDSrudCD6ldoc74i3Sk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWCLnLghII/pRvRHzTlGvAlm7oI4IZ9lI35hL3ixbE0kcg8Z9E
+	Phl69npZG7Imya+ki9J2NNYxi4qnwO3BIyzWjdk4ARgSKvE34w6/GRiWep8X3LnSi84=
+X-Gm-Gg: AZuq6aJVfUn4kHUkHlZzDtecf1J3cjw9nzt9UuUAj9aAUnLO4FSqqqPLgOHJ4iGIqhh
+	A4qJCWlD2KZkiuk+m/gOQLhHVvxOtOMYdvR/Xbck1Bn7iGl2b3eY3jF58u7h0DDW+Mmjb9kCwC2
+	LlGhKVerjN+sMT1vtsFd41o/1Etolhlaz/pD/MawFzpgke3I1H8E806Fwt6U2FcWolGfEBxhBj7
+	kwwza2/jYQGwFKUEaot4LkRBeBMO3EKIBJUooAmNTns39K28qwWM2QpDhbHm10no4N549DW8Zg0
+	WK4aKZGtlZzF2HPozfTxiGB08ua1Ojn4Z7hvNq5CUah0I7OmtrunyiH1jicO7t1J9y0TNEJHEmr
+	9mdiaJDfk9wlDojEuVSnygh5Xo+5cU4OJlnXZLHJIaoHqqOa7KLqo354Hu/J/o2fUE2U44MNDNt
+	ZaUhKzb27a1jCguID5IQ==
+X-Received: by 2002:a05:6000:2910:b0:431:864:d48f with SMTP id ffacd0b85a97d-435f3a8689cmr2938639f8f.27.1769757500929;
+        Thu, 29 Jan 2026 23:18:20 -0800 (PST)
 Received: from [10.31.13.216] ([82.77.28.160])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-482e04a082dsm8021235e9.3.2026.01.29.23.14.26
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-435e10ee040sm19847702f8f.11.2026.01.29.23.18.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Jan 2026 23:14:27 -0800 (PST)
-Message-ID: <2d37541e-175e-42ab-a05d-638545a7b7cc@tuxon.dev>
-Date: Fri, 30 Jan 2026 09:14:26 +0200
+        Thu, 29 Jan 2026 23:18:20 -0800 (PST)
+Message-ID: <8d3a2c5e-b31d-4346-ac47-12f9aa1b49aa@tuxon.dev>
+Date: Fri, 30 Jan 2026 09:18:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,8 +68,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 13/31] clk: at91: sama7d65: switch system clocks to
- parent_hw and parent_data
+Subject: Re: [PATCH v5 14/31] clk: at91: clk-pll: add support for parent_hw
 To: ryan.wanner@microchip.com, mturquette@baylibre.com, sboyd@kernel.org,
  nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
  bmasney@redhat.com, alexander.sverdlin@gmail.com,
@@ -78,29 +77,36 @@ Cc: cristian.birsan@microchip.com, balamanikandan.gunasundar@microchip.com,
  linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org
 References: <cover.1768512290.git.ryan.wanner@microchip.com>
- <96e09d47cbff0fb4593d642a1151791e20c15c48.1768512290.git.ryan.wanner@microchip.com>
+ <7b6cc0e89a31b5f0196c0770dc692edf550e01d2.1768512290.git.ryan.wanner@microchip.com>
 Content-Language: en-US
 From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <96e09d47cbff0fb4593d642a1151791e20c15c48.1768512290.git.ryan.wanner@microchip.com>
+In-Reply-To: <7b6cc0e89a31b5f0196c0770dc692edf550e01d2.1768512290.git.ryan.wanner@microchip.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
 On 1/16/26 22:07, ryan.wanner@microchip.com wrote:
-> From: Ryan Wanner<Ryan.Wanner@microchip.com>
+> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 > 
-> Switch the system clocks to use parent_hw and parent_data. Having this
-> allows the driver to conform to the new clk-system API.
+> Add support for parent_hw in pll clock driver. 
+
+Isn't it parent_data?
+
+> With this parent-child
+> relation is described with pointers rather than strings making
+> registration a bit faster.
+
+Please update this along with s/parent_hw/parent_data above.
+
 > 
-> The parent registration is after the USBCK registration due to one of
-
-Would you please make this a bit clear?
-
-> the system clocks being dependent on USBCK.
+> All the SoC based drivers that rely on clk-pll were adapted
+> to the new API change. The switch itself for SoCs will be done
+> in subsequent patches.
 > 
-> Signed-off-by: Ryan Wanner<Ryan.Wanner@microchip.com>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
 
-With the above addressed:
+The rest LGTM. With the description adjusted:
 
 Reviewed-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
