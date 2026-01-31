@@ -1,163 +1,110 @@
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04C635D5F5
-	for <linux-clk@vger.kernel.org>; Sat, 31 Jan 2026 18:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.170
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769882486; cv=pass; b=WRX5VMUbOSPw/zXh1NnUG+uGJk88LqRTxpti8j1A43PWCpV2cmS3pW0DBtcKVeZEmsZhqPr4Zlzn8/B1zKy979jPrCgFi9dISA4/67mMtvi1X+MV2bDLX3Esf269/qJejv5aSzXZv9CXdaK2TaEcZFl6d4GgKZ18rM+ZOAAEU/g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769882486; c=relaxed/simple;
-	bh=nyp82ApQeh091VtiCt4DbocbdHYePxEla0FvQh0eQCo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jNMZr1RM8Hzc+CHTkjkAFfQmOueIlHY9yk1mCDWS5m6PRtqtBtOICXj+52DttJzn5tBqahmV0OilnBOK4DVqSWfmRg5n80ukmYjvkIDIQkZ/Dge9pr03cdmiymm2BO2PuRE8D5k/PjJN5WVJPkdoZxAjgzFSb2klX2kVkssuOUk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dsy9gfuX; arc=pass smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2ADA340DB1;
+	Sat, 31 Jan 2026 18:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769884460; cv=none; b=tTXyK/jmBTIxqEx4HKAsJGjBHANoD7hjdYdELnMdxgCzq1kkGDPone2oQHcv2Fvr1qw4epuItpfdqmBW/ZUDpKzaD9DLVBI2LRpXyOtIlkE4t0noyCveZvyGupMhVjpVmVSF4EAO404ypr7QtDO5FB0P7AtWeXecUao586DSzEg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769884460; c=relaxed/simple;
+	bh=aaE7fKEwlpHt4wn74V9tbscqWqdbeDceUSgbkf29J3Y=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=tb7lxkC1MS8J3LBtBNYlJLw8X2OPIT5ozUahZuRbfyAzId7RPPmwYcaJSTVmyKlZq/cZu9MCSJcwnPVrZTjOnL98pYU9kuafULco5Vr3LbfEvEYcbe2m5+OBK4q9hdKqwDdphLIDeDL/FUdnSYBlrkNm2LzyUBMPkEAuzGRppVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YQC2dZAa; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dsy9gfuX"
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-c46d68f2b4eso1902108a12.2
-        for <linux-clk@vger.kernel.org>; Sat, 31 Jan 2026 10:01:24 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769882483; cv=none;
-        d=google.com; s=arc-20240605;
-        b=GaBkt20v2Blpo3bJolh7c5AezdisA+e/0XYkj4+YkCGdgA6dJ4x1RH3MD+6+X/5Mtu
-         ds5LvH0G/QQ49IKtoC9CuDmU3BEXe0ANUJJObU5SILciiW4qqertWeaZDK/LLr6lA5Dw
-         uRevSk2eCbxSaKxxILxBd+a+TXkmy3jr3utLE6MLoHcdrDeOBcIxirdeKGw5EktcsOMa
-         QXR4VWloqbury6AxaXqAoALr6UbzDLTMvmOKPiEc8DWfpQHQYsg4F4cTttDSn7sqkX3Q
-         i333B4vv3Reo9N3dgVsnxgf9GsA9AEZGn/3aBcsIAlD1e+DjpZjzNj6IWip4pj2PkcjK
-         RFNw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=pCrEKDN74Yg1HcvVzMQvEOY6ZE2OP4wRbYz5bxWYTv4=;
-        fh=9qnJte1pDj0xWIAwOHIzWomqTUCXEPVjAoZsvnNXyWE=;
-        b=ZLCYSKQr1qvI3KATdHGJwMt7TIgR6liDyW1bYwl48Mc9/jGE3qbTQEmpJ5kDHqYILt
-         HZiLPjWRhMEyuaAWaMFfljXVVKPOx2WlDGBXaSwm6PXiHbKEVKlDed9ef1Lrgos0Oc1d
-         7B7QfItBPIV3WQJcp/hHkyRH9N2pgL/4RuHJX0xQXgWNr+6TSAwtzyl9+NVXqYnWOHyg
-         +zHTmfkLuJ3yRUZ+DcJmusSAWSTcaTBVSSrCUPXZNlZlg+MleAmSJyMrAF5KaSzed/gn
-         ZKNlxYO/0swrP1a/aHYbFcGTyLtolE8TJsHLhKrhjC8iz9OAHyhNLDJXrASRMm8Mv6yj
-         8J0g==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769882483; x=1770487283; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pCrEKDN74Yg1HcvVzMQvEOY6ZE2OP4wRbYz5bxWYTv4=;
-        b=Dsy9gfuXVjDMLiDtrwMB+rJJAnbzD0oVtEu2XO2mYkmQl7TggXbOXNbL1tbT15iF7N
-         7AnVQjgucFAxztGff/1oOug+nLgLSV3RAdS6BhCP5q1xK4S+0etVL+Df+UItFZXyGFR4
-         Gj98eIn1sTIQOSDdM/zwwEZ39Vh30CV5pV0OdlmmwlYloJbDj0afy5DYlw2T5pQOvTUm
-         WArT/1zh6qblji/QgL4AF2xTkJ481TZluVc94OVIUyCd6+Vc29DVlX5vBwIDWLZliw5z
-         Sj6InBqqXsWB8dcD+1xSN/bAwEbOb7QB8QtdJaRcUl5ZO33HPGvqBh2r97G96jxewigN
-         Gs4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769882483; x=1770487283;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=pCrEKDN74Yg1HcvVzMQvEOY6ZE2OP4wRbYz5bxWYTv4=;
-        b=XCctZ1fpD1bzilqYYGhgKMnFGKDh+klwO3CP+QctbBqcmFB7Cd3MUgeY/Icc7QXnVc
-         kEWSDHQC9VHJkC27zypgTKfmwH+4Bn2OM3aATJvIEVzgz0Z9UrhQU6d/wFZcAEEslgl2
-         RZN6VPmXXcfmpcBwc5VEUndV05H/v6pRZUK9kUTMpEJl+Yr+XZz8FabZz+bbRlIGBWQa
-         1q5kYbQ0niA/vnnvL9uVRSIxPnWxz5zkcLKLOi99TVR34tSboj9pPW+5kie14nMDKvop
-         fK/l7IGyypYby1D5UG2uSyW5PaZqGA6UAp7NvnCUPYgmtHSLbgNwttlexomw3vEt0FhD
-         rBOg==
-X-Forwarded-Encrypted: i=1; AJvYcCWG82nCrLpP0gsxRidK4YhiRcyq/qK8jaWlCMqFuOEVhvJxOuaFjw44lNsJYxjJAUaV+sqzdCKBRQM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUpPxlgJ9Z6JZWGNH0WFXYoc90fQebF2K9hHWHLslUQX2Nf+HO
-	LK3v13c5IFhUcdb6lHJZkg1j7LLDIj+N/TY54x0EB00RotyucpTxbjSPvt8136YOHFvEQ93/zFn
-	04rnhQTRhmsiVOc8jCjoWwB00S8xMUZA=
-X-Gm-Gg: AZuq6aLJ61f+BFYNVGqr1OqtnlEvjUJspdfivGcAlatYcNZZw0Qe9wtm8IAvLDttGK5
-	PmHYOPz6fF56RlVT84r2100aiwx96fiWFDDpQIkcx1Gp95c0HOVCR8IL0aiMrVLbI1VXo/PlU5s
-	Jo4TJq/e8ADmGaFg7qP/ZRI3lMYKl9uLWloGTHUMDAnYLyGX0hJjIaofvrr+wzsx/gnEQ1eKpgN
-	TfPinkTzHozRycf7GJFloKrUHNIThmO0lLsQJczgycYpWRyP6hHVr6OpyShY+Rroksn
-X-Received: by 2002:a05:6a20:728a:b0:35d:d477:a7fa with SMTP id
- adf61e73a8af0-392e0052a6bmr6468927637.23.1769882483020; Sat, 31 Jan 2026
- 10:01:23 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YQC2dZAa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84035C4CEF1;
+	Sat, 31 Jan 2026 18:34:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769884460;
+	bh=aaE7fKEwlpHt4wn74V9tbscqWqdbeDceUSgbkf29J3Y=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=YQC2dZAaz6ouQyaaU7Z+wFs6TTiYA+yKw8t6OwJjvBghr+V6TwdAFyh8WNHBkwvR/
+	 ZoPGUyXVEw5NXaUyWHBiOrv+g8M1Z5ShTW3ud41iTO8/sw5RneF7ni10xq+nIhnKWN
+	 Hy9mLtn+Jt2HkDYBz1LiqR0rddpZmYEmJMFXyXviPxcOxg0hiZldBR80N0hvEakOhn
+	 w6mbPePNlUck8B0rvlIRzE0x5HtVG6qF7ioLEsQfV+BPk68IEmBrBY7xr8ahuUbyHa
+	 eHp7XpOv4jGulvJimI7k7g7eoFHGCVn0K6tMxuWMNQdMH0+L4NkBykdr84dSOGPizH
+	 x9Aow3hHbKxnA==
+Date: Sat, 31 Jan 2026 12:34:19 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260131-clk-imx6q-v2-0-70471ddc99e0@gmail.com>
- <20260131-clk-imx6q-v2-1-70471ddc99e0@gmail.com> <aX4q+W3Sjx5SRHrC@lizhi-Precision-Tower-5810>
-In-Reply-To: <aX4q+W3Sjx5SRHrC@lizhi-Precision-Tower-5810>
-From: Felix Gu <ustc.gu@gmail.com>
-Date: Sun, 1 Feb 2026 02:01:11 +0800
-X-Gm-Features: AZwV_QhLWLb-FDStR9zG6fjnRX1upvQjUilJNBF9vy-1P4S-LT2FD_90PT_gXlw
-Message-ID: <CAN4SLj0D2PV9vFW4=dAF3ypAtA8JvhJpEut8Aumsx4JaMSEsiw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] clk: imx: imx6q: Fix device node reference leak in pll6_bypassed()
-To: Frank Li <Frank.li@nxp.com>
-Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Lucas Stach <l.stach@pengutronix.de>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Akshay Bhat <akshay.bhat@timesys.com>, 
-	Ranjani Vaidyanathan <Ranjani.Vaidyanathan@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
-	linux-clk@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, 
+ Vikash Garodia <vikash.garodia@oss.qualcomm.com>, 
+ Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, linux-media@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Dikshita Agarwal <dikshita@qti.qualcomm.com>, 
+ Jonathan Marek <jonathan@marek.ca>, 
+ Stanimir Varbanov <stanimir.varbanov@linaro.org>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Hans Verkuil <hverkuil@kernel.org>, 
+ Stefan Schmidt <stefan.schmidt@linaro.org>, linux-arm-msm@vger.kernel.org, 
+ linux-clk@vger.kernel.org, Bryan O'Donoghue <bod@kernel.org>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, linux-pm@vger.kernel.org, 
+ Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+In-Reply-To: <20260131-iris-venus-fix-sm8250-v1-1-b635ee66284c@oss.qualcomm.com>
+References: <20260131-iris-venus-fix-sm8250-v1-0-b635ee66284c@oss.qualcomm.com>
+ <20260131-iris-venus-fix-sm8250-v1-1-b635ee66284c@oss.qualcomm.com>
+Message-Id: <176988445972.2807015.8710676873473596056.robh@kernel.org>
+Subject: Re: [PATCH 1/8] dt-bindings: clock: qcom,sm8250-videocc: account
+ for the MX domain
 
-On Sun, Feb 1, 2026 at 12:17=E2=80=AFAM Frank Li <Frank.li@nxp.com> wrote:
->
-> On Sat, Jan 31, 2026 at 04:11:34PM +0800, Felix Gu wrote:
-> > The function pll6_bypassed() calls of_parse_phandle_with_args()
-> > but never calls of_node_put() to release the reference, causing
-> > a memory leak.
-> >
-> > Fix this by adding proper cleanup calls on all exit paths.
-> >
-> > Fixes: 3cc48976e9763 ("clk: imx6q: handle ENET PLL bypass")
-> > Signed-off-by: Felix Gu <ustc.gu@gmail.com>
-> > ---
-> >  drivers/clk/imx/clk-imx6q.c | 6 +++++-
-> >  1 file changed, 5 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-> > index bf4c1d9c9928..1d8e8f0891a3 100644
-> > --- a/drivers/clk/imx/clk-imx6q.c
-> > +++ b/drivers/clk/imx/clk-imx6q.c
-> > @@ -238,8 +238,11 @@ static bool pll6_bypassed(struct device_node *node=
-)
-> >                       return false;
-> >
-> >               if (clkspec.np =3D=3D node &&
-> > -                 clkspec.args[0] =3D=3D IMX6QDL_PLL6_BYPASS)
-> > +                 clkspec.args[0] =3D=3D IMX6QDL_PLL6_BYPASS) {
-> > +                     of_node_put(clkspec.np);
-> >                       break;
-> > +             }
-> > +             of_node_put(clkspec.np);
-> >       }
-> >
-> >       /* PLL6 bypass is not part of the assigned clock list */
-> > @@ -249,6 +252,7 @@ static bool pll6_bypassed(struct device_node *node)
-> >       ret =3D of_parse_phandle_with_args(node, "assigned-clock-parents"=
-,
-> >                                        "#clock-cells", index, &clkspec)=
-;
-> >
->
-> If ret is err, clkspec will not touched. So clkspec.np keep old value,
-> of_node_put(clkspec.np) will put twice for previous np.
->
-> So need add if (ret) check here. Or use difference variable clkspec with
-> init 0.
-Thanks, I will fix it in v3.
 
->
-> Frank
->
-> > +     of_node_put(clkspec.np);
-> >       if (clkspec.args[0] !=3D IMX6QDL_CLK_PLL6)
-> >               return true;
-> >
-> >
-> > --
-> > 2.43.0
-> >
+On Sat, 31 Jan 2026 19:33:43 +0200, Dmitry Baryshkov wrote:
+> To configure the video PLLs and enable the video GDSCs on SM8250,
+> platform, the MX rail must be ON along with MMCX. Split the bindings
+> file in order to provide separate file utilizing MMCX and MX power
+> domains.
+> 
+> Fixes: dafb992a95e1 ("dt-bindings: clock: add SM8250 QCOM video clock bindings")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> ---
+>  .../bindings/clock/qcom,sm8250-videocc.yaml        | 80 ++++++++++++++++++++++
+>  .../devicetree/bindings/clock/qcom,videocc.yaml    | 20 ------
+>  2 files changed, 80 insertions(+), 20 deletions(-)
+> 
 
-Best regards,
-Felix Gu
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,sm8250-videocc.example.dtb: clock-controller@ab00000 (qcom,sm8250-videocc): clock-names:0: 'iface' was expected
+	from schema $id: http://devicetree.org/schemas/clock/qcom,sm8250-videocc.yaml
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,sm8250-videocc.example.dtb: clock-controller@ab00000 (qcom,sm8250-videocc): clock-names: ['bi_tcxo'] is too short
+	from schema $id: http://devicetree.org/schemas/clock/qcom,sm8250-videocc.yaml
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,sm8250-videocc.example.dtb: clock-controller@ab00000 (qcom,sm8250-videocc): clocks: [[4294967295, 0]] is too short
+	from schema $id: http://devicetree.org/schemas/clock/qcom,sm8250-videocc.yaml
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.kernel.org/project/devicetree/patch/20260131-iris-venus-fix-sm8250-v1-1-b635ee66284c@oss.qualcomm.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
