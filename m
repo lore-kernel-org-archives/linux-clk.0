@@ -1,66 +1,66 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 022A925D216
-	for <linux-clk@vger.kernel.org>; Sat, 31 Jan 2026 10:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEB0F31ED88
+	for <linux-clk@vger.kernel.org>; Sat, 31 Jan 2026 10:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769856872; cv=none; b=iK9id+Sn914MWeTG2kiRgQDNhx+2JvWae33+8n3HcdcyFxx4zsD/oZMVe7+JS/T6nNdRM2unzvK0WxOuQcTsgLHTuozY6tnaQYFo/pxjwKGBggm70J0yvg/UKvZbTSfzGwdiizm/D+lx1n9V9RP+4mvyxQUZwsTySD1Ysu+IYM4=
+	t=1769857040; cv=none; b=WpfVJPH+MMi9/AjYTJfYLJQMk1xtJ7RvvCSdWEidLDR49KeK2eQbsDIwYS5yPdc7Qwd5tayHxMSOYjHnojzr6WytGUY4QT63p7FcP9yuKW+w1W8prHTkOG+mJp/5r1Acpr0XaJ6gmoNCgA5Rxy3hvjuM01aRZU2FMlhZrz6HyQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769856872; c=relaxed/simple;
-	bh=mJVOTxS4H1fQMVs9Cl4pmdL3ojtFAbbWBqx33IPSTe4=;
+	s=arc-20240116; t=1769857040; c=relaxed/simple;
+	bh=yL1kc4lHehBzK5JPtXTnHWLnuRUych8mlRMSAbHA/hQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ky7iLx44JAC3nfoUaPbSq0wlgRpfgTtyo4Xfr24ak8KKLSZADJWAHdkspj6v0ltMMIYMhnQLvZBljrJ9/T7fALXrTJ82WenRhCrXYQdvwMILKrxOSVJ7L0gnXbyIKtePqZepZqISB+QuCFQi1Y+cYJjTQwdCrHrk1+Zci2w1vmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=c/Sr79W1; arc=none smtp.client-ip=209.85.128.41
+	 In-Reply-To:Content-Type; b=YKmtY/obY7mWIUxgXZwZrNZ+QGObU6mf69iGTZWNjywKp/RvDb6f+hOedTE0SfmhbvVCLUeuesDEaaMNHfcXsxfJEEUdctfBQAYuKGENEmSHcg/dPjeuvFO8mjmbyiqsS40qCxZufMulIaAIT8jYNqe2g9syDlGDb//S7S2OQUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Ghv9UGKq; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="c/Sr79W1"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4801bc32725so21690055e9.0
-        for <linux-clk@vger.kernel.org>; Sat, 31 Jan 2026 02:54:30 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Ghv9UGKq"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-4327790c4e9so1891459f8f.2
+        for <linux-clk@vger.kernel.org>; Sat, 31 Jan 2026 02:57:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1769856869; x=1770461669; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1769857037; x=1770461837; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Kft2vd6sCFHP1Kc6YzTKiQk6KPdEUPeMtNpgXRj7ZmI=;
-        b=c/Sr79W1xz+17rtwsq+kRXAcCJYluQcpFCvH6tXOg3RBatzHTjJ/Kax8jc5Vx2nPo7
-         JfSWpcA4eu+dvcBHT2CA0qa+rzAPqrzj1xokTn3tiI7dC1F4bkQ+/KCdGMn+4Beizc7G
-         m5VDejo0uw9iku32Yn4EgXoBLVWzHbArZowtAORYe1YZRktnjOrq2UNGQED3x3wjcoLv
-         Da/bGUTh9Np/phM+QcL1Xa/O5rBYGvrhTW748lWgMpcUwnqyJ0+YXqj9mneoAaERnWmR
-         B+jxhW1sAoThtXOfPH2HONmEI4ZmFExMtflxl6TqdE9I1MuYsqNMnLSrv9iF1D3SmKfC
-         3+qQ==
+        bh=VhAmn8SRPGYqUEzDqoajMHmU7OlCrx0leJ0L/YZ6tVQ=;
+        b=Ghv9UGKqUyiUmkyJLBhDZ8NzWKfzLsfp/g81PglH14azRIwxbD+WUsO84vbtDjDat1
+         OMiMqxi002Z14oV69N19iLi3RFKszhU67F5mi23mmo36f0F7OoQhRp1bqh2q29qZgT+q
+         76qk0qHAFFN1Ki9JmhmZ25mhKaIHQp8DJHJus6UZbGVlGHm2SaDanLCXCpQ7da7q3nml
+         3ikBgoIUXVj1PxI6NUFZihc9+Q4ZLId/j1/p3BUh25GF3uMA3p3azkJ/54NMAqqxfVHs
+         IeTD5VQ04AwcljQLL9Xo/Ty5AkCzPQlbMo+l71NSoXkpJnqCz7Wx62tFDcsbzXItka7E
+         ti7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769856869; x=1770461669;
+        d=1e100.net; s=20230601; t=1769857037; x=1770461837;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Kft2vd6sCFHP1Kc6YzTKiQk6KPdEUPeMtNpgXRj7ZmI=;
-        b=G+LQaOBjme20qqnm+IckfIn+RIKqCsoCrC4vxmvCDfaqsEtjxD763B38FC0Tp1aDk0
-         jAtx0kr2mqlNhNiSfa7Fjoj+Ikxir4blKtUFLAh3PTnfD3BI0C6auQjqgGVRTb4g8Ald
-         b7OoptThhsFccJUAypGTX957xS6It2ffWw9Dq/OehtAXubdfYQM+dyZcvfAHkhNOkU3M
-         1SMNKX9QVj9evlKHerTb00s0QMJvovTQS6Dr++BqmCqgQe4YMqoi4bcc0swcXifgT8A9
-         hzp7V5tj/6vtakYabrx8upT80G/bKTUX77OGVzt570UhKUGkFtVLZY7YbAmKOxyMmIDW
-         DWUA==
-X-Forwarded-Encrypted: i=1; AJvYcCUiRrpmwJWgJdSJkfbfc/W2RGq7bEPPVrNW63Zu4bu0EUOmjpkv0fNgLmZpPX1DMqE3Q8wANFDqG7k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyA3iRhGcrK64EYYGSHj9/b1mQJH+WSL0y5ZcdV5w4xEfn7q7Z6
-	qtZWvGu+4P6RS4J0/Vr6UFwPgi039sk35Ar2dW7B4+OD93Nwf9LhZM8G2ITVGCzfA64=
-X-Gm-Gg: AZuq6aJHS8U2v75SJQnJM+ZFULNGien11YUsxA4yx5/vbYF7AXdWW4lktd9Tq5JUegt
-	tFHO39Hf7YL0Af/SeTQJGr3Bkpq8+zFQtjqYYPUnrouA7UmIKc1mjkak2XLopGfEJ0Px4AEJCOH
-	puQ/glMupXHMmBLonh6ZBCh5RtO5YE77x6o5NUD7ppuR80jXn49R/SAyeVKdrqUOLZ11025sU7f
-	1AshiAdrOfmjYHQB3SKV2z7lT15rgq7lhBopOBefhsYFeiubu+hO5v5TBbQQm297X5yWYKdmeMO
-	p7bTxzTmF0nuGYFl0s1hMEn0DgaNTowv1AimrHfyhGXaynsEpyYGfCLn2gVUJ5t9EDPx3oF0UcP
-	x07ldxe47vy1cmi2KcinLp7prsnNjgsYEzMVPcy9OAX1cM0nBFzW5Q4sHQBAlzrU+q7LF0GQe2j
-	NtFylSQE92kukmj2sl1Z8fbP6T
-X-Received: by 2002:a05:600c:4ec7:b0:47d:586e:2fea with SMTP id 5b1f17b1804b1-482db46b38dmr68726415e9.15.1769856869427;
-        Sat, 31 Jan 2026 02:54:29 -0800 (PST)
+        bh=VhAmn8SRPGYqUEzDqoajMHmU7OlCrx0leJ0L/YZ6tVQ=;
+        b=BdCLy6PoaWz1EfrKTcjHn26woblIoQED7mtsILb/cUFwZTkVaAbTCvzZoc9lixZpTW
+         N5IAhn06pPQfZ3dFetWI3+Pv3WIFgFxLiAATAUnbdg9Je34vNxjxKWezGVNgkHS4HPwN
+         HT/zV+lY1O3SAMZfZBM3KnIqw+Ix1G30XWbQ/s5yftlRwdZ9ImDZL+9Wvhb7Usw+RZ12
+         aVLgztbdOEWCqwMvL/x8jMcHfxRMxBxYe21ifYPoeogylvVzIBCnjmEUhlqOkfhqld4z
+         0Ik9i/FwxySn48MiVwy0d/qmbDBpsy+QD62w03JPpy5/jD+/6HsWsvcO784Yz+F4Lv6+
+         6tdg==
+X-Forwarded-Encrypted: i=1; AJvYcCUGF+M4m3C6F6pz6WSYXqGC7lkNMvdyxLgip8th+fUWcj9T273aWG0hbpbwMHhWUm0FSIndGt4XUg0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYJR+8FvI+Mxi61SpBgTnpqhVjRqV4MxlAwEGJFJyDWVhEVVcf
+	sEZDzADhw5gb7Nkb6z97tkOPk5sM12QxXYdx+1h/4aAk209MU61Dzzs1Ci4TKRn74ek=
+X-Gm-Gg: AZuq6aIjRAunYGO2X5KsEQM4hU8n+3V1iDNJ+seWRWQ7bTbekm6OENldcDqbApJ1IDT
+	Z7rXJtJodRbHW7t2ChtUeIXXB4kh7Wctim8MAMvBTlihFmqJ5B7YcTl0R/JmiWeo5TEuueo+lmN
+	POR8cHuznfGiLCsCkNM7WDmN1hdbR/Nyfw/uiDKNRDNhfW7/7n3Qa2dqhtsRRidZ7DiDX6Musm0
+	vNwpywURt8d2AJHefpf+fNq8T7toJvAZIvxWGf85rG3PNN8l+8sl8x/FQkElBYNGYFtzk/11lWR
+	zj9Kkdmqj0+tuf1qaUkQsN0YFhIMADQUKyMObm9rFZaiw4jDaa+p+KIiG1SttWD90ldbNXfjKwV
+	e96/lL3OUxhzyysUYFZDCwYsiqlnToKfTMz4SEAepjy3d4/t0nKaGJnTIuMpY3t7L16XPe2YbMy
+	h70Q3wWWlQ+QBKUahunrB69jYlirMnaJb3QIY=
+X-Received: by 2002:a05:6000:2310:b0:435:a594:33dd with SMTP id ffacd0b85a97d-435f3aafeb2mr9320664f8f.46.1769857037212;
+        Sat, 31 Jan 2026 02:57:17 -0800 (PST)
 Received: from [10.100.159.246] ([213.233.108.212])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-435e1354205sm29033129f8f.41.2026.01.31.02.54.27
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-435e10f82aesm31437266f8f.19.2026.01.31.02.57.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 31 Jan 2026 02:54:28 -0800 (PST)
-Message-ID: <09f5ae66-9e38-4733-bdb1-044c41a996a5@tuxon.dev>
-Date: Sat, 31 Jan 2026 12:54:25 +0200
+        Sat, 31 Jan 2026 02:57:16 -0800 (PST)
+Message-ID: <1c15207a-b378-4fd0-bc1c-5ffd430dc188@tuxon.dev>
+Date: Sat, 31 Jan 2026 12:57:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,8 +68,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 18/31] clk: at91: clk-i2s-mux: add support for
- parent_data
+Subject: Re: [PATCH v5 19/31] clk: at91: clk-smd: add support for
+ clk_parent_data
 To: ryan.wanner@microchip.com, mturquette@baylibre.com, sboyd@kernel.org,
  nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
  bmasney@redhat.com, alexander.sverdlin@gmail.com,
@@ -78,10 +78,10 @@ Cc: cristian.birsan@microchip.com, balamanikandan.gunasundar@microchip.com,
  linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org
 References: <cover.1768512290.git.ryan.wanner@microchip.com>
- <0d5517f708a262924c6aa6f97a23d078891c218a.1768512290.git.ryan.wanner@microchip.com>
+ <92f9e1fc621d30e9692f2d398372b5a862647d40.1768512290.git.ryan.wanner@microchip.com>
 Content-Language: en-US
 From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <0d5517f708a262924c6aa6f97a23d078891c218a.1768512290.git.ryan.wanner@microchip.com>
+In-Reply-To: <92f9e1fc621d30e9692f2d398372b5a862647d40.1768512290.git.ryan.wanner@microchip.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
@@ -90,15 +90,17 @@ Content-Transfer-Encoding: 7bit
 On 1/16/26 22:07, ryan.wanner@microchip.com wrote:
 > From: Claudiu Beznea<claudiu.beznea@tuxon.dev>
 > 
-> Add support for parent_data in i2s mux clock driver.
+> Add support for parent_data in smd clock drivers.
 > With this parent-child relation is described with pointers rather
 > than strings making registration a bit faster.
 > 
-> All the SoC based drivers that rely on clk-i2s-mux were adapted
+> All the SoC based drivers that rely on clk-smd were adapted
 > to the new API change. The switch itself for SoCs will be done
 > in subsequent patches.
 > 
 > Signed-off-by: Claudiu Beznea<claudiu.beznea@tuxon.dev>
 > Signed-off-by: Ryan Wanner<Ryan.Wanner@microchip.com>
+
+With the patch description adjusted as mentioned previously:
 
 Reviewed-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
