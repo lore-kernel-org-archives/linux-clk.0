@@ -1,66 +1,66 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E3F2AEE4
-	for <linux-clk@vger.kernel.org>; Sat, 31 Jan 2026 11:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4C272627
+	for <linux-clk@vger.kernel.org>; Sat, 31 Jan 2026 14:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769858062; cv=none; b=F/XadgN4nM1469Czslza68EnnAPZcaHVMfzANrqHd+lyl5y7Kg74H7H0/bTArTzPuhCMeyEnYeyLvWe/dR0pp/UHH5pi8I3GKhgL/1+UzhVVlcOvebzX+6A68nwjP/XsvVA/cnaD3+EsYjd3ioGlfRAU5X20xH44mOctUIyTUHo=
+	t=1769868270; cv=none; b=ORevyOKKH/wuR7evAynqABrRx9b+XuEKCzvdbgdnad/NSoAGw6ji0ISjHKDyr2PfIo6b7Xmms7ZdWCsPa1IrIYDgcsV5D6c/SqNwXYnVvOVjycYcugrFtZ8ZMONJM4tkyzqp38VXEWtkpGgzfXk7AkQXKEvYUmVinDCTwQ+2wcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769858062; c=relaxed/simple;
-	bh=7FfIMR/jYlwxyBLXE7zqwi5sIIIGC5nKSaU8m1rZ2WQ=;
+	s=arc-20240116; t=1769868270; c=relaxed/simple;
+	bh=tAHKHXqsnkZlWEgGFp/sREOTzbW171AvQ8UwCb5twPs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SlBkg2nCsGvtRtyyf1EfcKo0Z30gjMz3kN9r9HnxNqbMrNT/CzQcrNqAl3N22e/fDq3CjRDqzOfJ76yKvFF7+iCDPRkCzUbjH1dXZBucGLg2y6db/2s2Noao8YnVnqnWznNncFTOWzk+wCyEk1xg3m4TsbPTYlGShQR3kr1fCL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=PuwFonkl; arc=none smtp.client-ip=209.85.128.52
+	 In-Reply-To:Content-Type; b=m88UKQ7PWZrB97lEffhID6TTBYjQxxfeajbYzyszf58rbL5QfYcNXlPxidsjfZ0OlZy5Gj6y9IttyMw1elW1f4CCn4kTDeh6+tVYTgF+uU/ZJzbprASBTxJHXTg38p7uLq/VqC38FmTQl+2GXJNKPyE6l3A6rqvzlCOctm8rHz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=GJJBLL0M; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="PuwFonkl"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-47fedb7c68dso30936335e9.2
-        for <linux-clk@vger.kernel.org>; Sat, 31 Jan 2026 03:14:21 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="GJJBLL0M"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-42fb2314f52so1792705f8f.0
+        for <linux-clk@vger.kernel.org>; Sat, 31 Jan 2026 06:04:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1769858060; x=1770462860; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1769868265; x=1770473065; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=tdH4255hYxmy/F++J6erRokTwGbIkqj4FsLH5B/UD/Q=;
-        b=PuwFonklXIncLYDuJ+iO+9i03No/5+L4K0Dyjt3CFma/JtWYTOPP29MR8AKb74f69d
-         zzsOWOUNIM+VIwlOH/wB0ol0NwykX/u1qOHsDOK2TKghLdowcb81/hw4wD+3tvLcu/pW
-         H8u9E+rUkceqMfzVTtbE9z0OjO02MG56T78CvtC6Zin7zH8VNG7Ld3UU2uU6nMoaC/Dp
-         2x0jDmN0tSMdZKn2UQtEUj4cmcNW2lf6IWTTH8KS+ZIn0JtvBUt5ZOhSf39FW1o6TvcZ
-         iiRvrctn8PMPZOCAeURDgSu056b44RqqwHThNTSwGNBw4Iz5/mCRQ4D3rOeNQ+sKJdF6
-         UY1g==
+        bh=910J1UI5RUu55yEnGPJEmz7p8s1QIpf16qA4HfR2YUU=;
+        b=GJJBLL0Mhn7VgcL+RoLkpDp0BWIVhynPf+azdDckYgIj0FjPlTqVHoOnLFdYMOy/E/
+         MnOChDfI7mRy6QEEyTt3vX5RjajS/sxb8VzyO4wdRnxT6M748nqT1CCDyzl4t7XjR83L
+         X0xnieJP43Y9BynLAD22Mdfk8U/8w1tyi5yWgfbkrsJR7XXcDXTmGwU38BVcNYeNjMJP
+         XUTXs1WrzEjL5p5JO5zIrbYKQtUn3w6L5rq1E7IYZ+TLn1b3zsA63sv463AyTvzywKlb
+         fe3f9aTrpTc5nL8H62N0vtT8MB698q8SXCeJCb3Ta6MyVUpg6DM7XGJbbdFm00+NFJnT
+         L1rA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769858060; x=1770462860;
+        d=1e100.net; s=20230601; t=1769868265; x=1770473065;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=tdH4255hYxmy/F++J6erRokTwGbIkqj4FsLH5B/UD/Q=;
-        b=FJa83q9wMUUAgzbcA55COVYT6RytZJ+aY6z/IG3dbuD7BRqiWXpJ5IEo1j9BVNFvGN
-         ITcUqmSFzIJnEG8IQbOB2t/3MnZbWFE/4hOwWHrMXeoLrHA7hoGLPr+0feoJoISp9ajm
-         OgQa2XWhBx9wsZWjGRiYmCxKKLp4Z0JkUAYJeWLFqH7P5hMcRMcDcxEb78FUkmtBE84F
-         YIMDMadAcY5OqsTfsj+G0+IZ5srXQBGdzHDQtMtcjL+efDRZPP8A2fJbOapsIzFGptak
-         /G8WNG9Ay9Na4Tsdozdv80Hi+EkmMr7wDM1L5v8Fp7G5WJEjH1lbAWFocE2DUZDlPzb2
-         Ti0w==
-X-Forwarded-Encrypted: i=1; AJvYcCWEkrjzH2t+E9uXMt7E/ONov1P6CBsVHc/y3M93zx3oTZVc7m7IWcssU4pqrKAdLRiNITNTAL4e+WU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMc16Dk58ujqnG6q4RItFDY3QuHpSrI9jwMiCsWDJEZSaoZpCI
-	3BUft+yw4+0rP4ztrJurS02MxylbsyepYYWFCCS8wPjJXcttWr+9XQZA7XQeHQfSseI=
-X-Gm-Gg: AZuq6aKKBNrDtd9mgzUVK+NHcJmvmMbnDZFDhqy7JQRcB9ans6N/8BixTeZ/e5RDZGM
-	I0VbTLZhs+aEerPLOZT+QIdLMtfgE0I9vKoNUIxo2HlbbDu5goC9aM3MUMZN65e1Z0rlaG1ZkGl
-	7tHPbI24FO/d6MVZD+D7BLLJQY4i88/jfc04rOgHICOznOD4CekZgHmxDc4m0L0Bo9fANA9gNVe
-	VYpPUVgHERcl1NaqTR33/7yxuy4gQ95kBpxD0vOaegH/OM54VUNGmXh8rGiH3PsTZz6lZtqlsaS
-	hVSxUM8eiZGJvnCo83JWGgG5+tmhLD02wXOGp1Ao7lGg4Jp4J1yMDwcEYR6ABBxTnVAV9XHOqlF
-	fWxL+VXC3/x2yrrq9aOw5df7sbc97jljlF43HrYcDuC+ljOgKYzE1bWrm/Men+ARcv4ZnIoPWVY
-	06NHYdXLTWJIGsb3Z1DmUBdNa+
-X-Received: by 2002:a05:600c:1e89:b0:47e:e72b:1fce with SMTP id 5b1f17b1804b1-482db4b5e04mr64888425e9.37.1769858059938;
-        Sat, 31 Jan 2026 03:14:19 -0800 (PST)
-Received: from [10.100.159.246] ([213.233.108.212])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4806cddffc0sm303822115e9.5.2026.01.31.03.14.17
+        bh=910J1UI5RUu55yEnGPJEmz7p8s1QIpf16qA4HfR2YUU=;
+        b=lwLYND9Iytv4OpigB0EB021zqzPDaxHWUZT5d/XFMLrDNcpig2nLYSmFmhAN0pUBj0
+         CT/NaWtaqZOIryP9hwJE/dRVgy1/qDNL6if7Xn5CWHw8cMz6+OPUSl5AJQg0JbI2fUwn
+         gqt066G66qvT+bdOIB+hrKvulXXBROr12Hwot6MpudVoenC8eyq0ks+9T6vTVRkJgFTv
+         Lfjg3QydC5yYYBYnolGmW6+ArklK1foUDPLMNNjLK7j5H4zfTQz0TQGVPZOR2vohkVaF
+         M/tQlPpRZqxm2/7hWqlXiZxBwszybLYMA4iLLSxJNoaummvNe+34JI85pAMSPoskzjmT
+         FZ5w==
+X-Forwarded-Encrypted: i=1; AJvYcCV3XKdJo4YfQ/TaYwVosVUBFkAKTJ8jETytvudg1jw0Lk23sOKT08omVJOEmAIBJjYqnARM5xG2EiY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmL6nHl0xZ1I6cv7X/NLRbWR1e8qfHfpdne26QaAERUIG/BRzz
+	PuXYLoxH+ZFQrjrcbemD+rPSvQibEOctGEQgXPVBW3V4Ct92ggd9eQgdwjHqVyWYVVI=
+X-Gm-Gg: AZuq6aI1Nj6p6cwRROH0iKo0UWL2w0i3WNP1lIhKGw5CXev0lJa7EM/6auHPY7Kxq6K
+	uSae8JFQZoQB+OrfbrrrKAA18IYGvkr7AqUNhO8D0DZhAX/JxqF6Elyu88mntPQ5LD83WLCY4fe
+	ze7EH4UFj0eN3c14TZtSdP0cv9ab4RMpou7syF6U0ypav33nEgx/vyr+keCFRn+q+WCWJB0SR7L
+	DysWGT6g1vc1GblHpKyhYWKKtyaglrxOnxAUhRYi6GrWkqPnTg2IEmdAwvW76HVXjSUNucPcmqy
+	2Vim70rRp8U9yyqi5MyJr8TuQ91TjGWA4KEyBEtgJLR3ICoURQxSxKZYBFwE2QihtzXCDyuYzux
+	d7cA7BmkeqRDi80skXv3mWgAJdE9z2JCR7e1R72lG7DjKCYpnR0Tp1Wp2JLARBwPX9DVZrJH1FO
+	9xCTa2lDtFU5bIW9ovtw==
+X-Received: by 2002:a05:6000:18a8:b0:435:dba0:736c with SMTP id ffacd0b85a97d-435f3ab9ae7mr9545982f8f.56.1769868265119;
+        Sat, 31 Jan 2026 06:04:25 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.31])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-435e1354205sm30073518f8f.41.2026.01.31.06.04.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 31 Jan 2026 03:14:19 -0800 (PST)
-Message-ID: <56076f82-f255-422b-b99f-f182d413b34c@tuxon.dev>
-Date: Sat, 31 Jan 2026 13:14:15 +0200
+        Sat, 31 Jan 2026 06:04:24 -0800 (PST)
+Message-ID: <16cfbc63-ab19-40fb-a885-6726f829d7d3@tuxon.dev>
+Date: Sat, 31 Jan 2026 16:04:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,7 +68,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 24/31] clk: at91: sama5d3: switch to parent_data and
+Subject: Re: [PATCH v5 26/31] clk: at91: at91sam9x5: switch to parent_data and
  parent_hw
 To: ryan.wanner@microchip.com, mturquette@baylibre.com, sboyd@kernel.org,
  nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
@@ -78,10 +78,10 @@ Cc: cristian.birsan@microchip.com, balamanikandan.gunasundar@microchip.com,
  linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org
 References: <cover.1768512290.git.ryan.wanner@microchip.com>
- <9431385f28f6a5fad9b4ee37086be58d87643856.1768512290.git.ryan.wanner@microchip.com>
+ <ad3636006cb67acca4f7dd1a6c54c6f58f0bd873.1768512290.git.ryan.wanner@microchip.com>
 Content-Language: en-US
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <9431385f28f6a5fad9b4ee37086be58d87643856.1768512290.git.ryan.wanner@microchip.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <ad3636006cb67acca4f7dd1a6c54c6f58f0bd873.1768512290.git.ryan.wanner@microchip.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
@@ -90,17 +90,17 @@ Content-Transfer-Encoding: 7bit
 On 1/16/26 22:07, ryan.wanner@microchip.com wrote:
 > From: Claudiu Beznea<claudiu.beznea@tuxon.dev>
 > 
-> Switch SAMA5D3 clocks to use parent_data and parent_hw where possible.
+> Switch AT91SAM9X5 clocks to use parent_data and parent_hw where possible.
 > Having parent_data instead of parent names improves to clock registration
-> speed and re-parenting. Update the clock registration functions to use
+> speed and re-parenting. Update clock registration functions to use
 > clk_hw.
 
-I think you can drop the last phrase. I don't understand what it refers to.
+Same here as in patch 24/31.
 
 > 
 > Signed-off-by: Claudiu Beznea<claudiu.beznea@tuxon.dev>
 > Signed-off-by: Ryan Wanner<Ryan.Wanner@microchip.com>
 
-With the above addressed:
+With that addressed:
 
 Reviewed-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
