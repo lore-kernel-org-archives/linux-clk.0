@@ -1,67 +1,66 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88022339B2D
-	for <linux-clk@vger.kernel.org>; Sat, 31 Jan 2026 15:58:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832EB15B0EC
+	for <linux-clk@vger.kernel.org>; Sat, 31 Jan 2026 16:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769875138; cv=none; b=HonqOAQYGw3Y28Dyg1u0H21ANB/j6YP975HpjGsB/GOzPfg5WhMDrEWrx+7qOdyzcG9PW//sp6/7unrQdtoBY2kFu8ViVGEk6oWaZfnuBlL+ysKlwRwKKuBoztK7uJ9POfrd8CfFI3HBQJkqtHMd3SuHTR9fhLRxQ8w64CEXROA=
+	t=1769875261; cv=none; b=fI5zNpWhh7TjHkp8u2nGHMRiIBSgohuTPVbHFCSZ5BYmT/HTzxBQe/1AQwFbYsBW7eSEQRp1pmAJPxb6SCtgxzBvNLdUmJUckpvVPyx4bc64LOXTERbohFdFQrSGfW6szn7rDhpeWo10/eauF8qI8qTCDo67kt2Tb7dh8t3IHpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769875138; c=relaxed/simple;
-	bh=K9aN7OjuKemtuSTajY0LoUlFdOIQZsAHYT3xi+Lw8SQ=;
+	s=arc-20240116; t=1769875261; c=relaxed/simple;
+	bh=yejpOMXPzkPs1BTMWVwwoFRdN1K7aZPHm5sr49+HsXU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dvexODhncf9Y1+Klatldw4djKz6Nt5Yp0QK5Bvv2rL8CHVL0EfrsC3NIy1fK8Mr1+ywNGo+OJnc3Yp4yuzO6t2q4F56yUHFIg3plMIRlpiQU2mrm06D782xhd2oPVyr1mlywdEXdIdtx/JbfbroxWvWSGZ7Ry2ZLJRiX/breQ8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=jAyWIZvV; arc=none smtp.client-ip=209.85.221.51
+	 In-Reply-To:Content-Type; b=lI6ikivTdmB4HJYr4U+cTFLkOBNlZ+S8vRgalJwI8e7oMrhjQqHyPnS+/gXkIbaMCR91XPvE6k+aG5GSgr4iWISSH3PJBt4iQShgZ9mfzChIlfhaCrkJ/N3FjSZjAafUZs3j5cFN3uMkRtqTeusoejzdkZ1apoQOcxRaTf4aAU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=ovZxhndc; arc=none smtp.client-ip=209.85.218.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="jAyWIZvV"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-42fbbc3df8fso2355362f8f.2
-        for <linux-clk@vger.kernel.org>; Sat, 31 Jan 2026 07:58:56 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="ovZxhndc"
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b885d8f4092so537493366b.2
+        for <linux-clk@vger.kernel.org>; Sat, 31 Jan 2026 08:00:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1769875135; x=1770479935; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1769875258; x=1770480058; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=FVER5vPZC6mrgsjqcbK85uhUXRqOLGCzOU5rUyInYAc=;
-        b=jAyWIZvVzZOL7FBF1Z2dsEP7T97EjKtDKtxreN9rC7hcjhrUkcrw6bN33SnHUCW8Gk
-         A0+LaSaix/+/GD3q2d31Vl8aNa89pOuOTAFXEHxHMx0IBI+Uc6gyrt9GivmTs4/OeIj8
-         VZU9vxW/BMWaLT8cvko+NTOISfITbvC9ohtjXsf7TgQBwq+kdhuKutBGwDs0JwkuqREA
-         yC2aNgxP2FFeVdDsvIHh2qck4yNmVG0tPHibmLHrKBX++EOcpQ9ERj93DuOxtxAly8eB
-         7KXVO46y9jOmfoTlhlr5QAFY6iCECHnC9w9fbKcGpnvBjlxZ3sgNxnAiQlNjcLjB8mAL
-         ZeaQ==
+        bh=fJLogjaQIREWDYxPFSLJELLqjbCy21hgcIev5TDCa9s=;
+        b=ovZxhndcN0ayhxIif4/KUa8P2F95O9ZGJ09txMKVJ4wWnIUfzXDyxKsa+69VpHTokC
+         S8j3b1TnNjCNcH+4q6rXMtHrUp4KO4xWOA5xyzv9+fkZIJyXkYl5HNir6CO9JRUqlwDR
+         V0eRHRL0uk0hMODh5+dIpysOlw84RJshLxVGKmBzZnxryI2pUF+cAZsMj0cz98otbm0F
+         aFD1+f2sY5Uf9TWoYpHlmPLWqCJ+T24z7CzxAPPydA6ITIx8FHxPnElJYWnQ8UlnCaD5
+         lJQ9Gw6k023beQcg6K1Gonk6ZMjA1qAWrFb9LdEAafSKqgnCRIePd5vXQCD0arzBuXBh
+         4gbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769875135; x=1770479935;
+        d=1e100.net; s=20230601; t=1769875258; x=1770480058;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=FVER5vPZC6mrgsjqcbK85uhUXRqOLGCzOU5rUyInYAc=;
-        b=ZJuL7yxaLF+IaF5GO1CQ8my9cXd+Lb1z6nY1T1ExcRd9SP/UroDFMnwCr1Dbs2I0H6
-         UbGjFiAvNIo9zFcHfC0LUAXPQLtoW4IZ3lvzGBrzStAyQGUrJ5Auf/0iUK/eIKJsc0JL
-         UOJ5KR657Mv4tJT/IKsppW4xwlNKr3UtByIW/eX2cibyL9rvuKZnQFVaPj/DgUMKSslK
-         hjsES48XAPO2f81Jw7wSj2aFJMLWeGq2hh8BVJOvotnEHNqNvJJGv3KzintYfAA9pTDG
-         q8Ugd1dMKSYJlM1jl+5Bwwii4psUqn+SiFNqDIo4cGW6rgFwY6P6qyVHXBBzYxRMb5D4
-         vZqw==
-X-Forwarded-Encrypted: i=1; AJvYcCXlS2rRnsoc9JTSyEUMk3gwtgHtmIVtKOeRNjMn2xlv50qOIQmlbq0OnFBGMWAfX359A27pvFBY9oE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDPY8Lj9PbnN7h/tzHoMTJvLe8hbdETSCvulQ/HgzZc+epZ7dR
-	DRuVvbVEweLBwvO8e9pL1Cw9Jcq2SvCnn8iXRjv2IuVMjNeXGV0XWw6sHGD+7h1jRfer75BX7UU
-	w+g2J
-X-Gm-Gg: AZuq6aKCwxzu3/+qLs/F554LCr2PeNte/0v6Ww/5TeIFCpTHqQcAAYBfidLX6RqM+Cq
-	Ii5I+sBk4j5h/jZGgJ1/bq8EtNATDCWJSzw1oNVTZQy7AYM4V1W9FVO+o2ZBdDUKjVA3mUM2XZH
-	2NXV7YbNy/mvo+IjfDsf04d6NuP6VmJ3iRXxl2hNkVDTLFAVrIG2/m/kLZVbn6fdcaFTuvNrYbF
-	PZ7qOJ4dnIrsPQyZsx5tnF7XUB1DjGStOSVliKgAJgvPFLTV2FTKWtO8Mt0c58m4+2c9+OYk/hO
-	AgZm6U8cmeUB7WfUx9pMACRlmJh+7fui+0W2JYTj8HjbcjV95rx3DeuLS2xkXFLAte5FE5fACQq
-	x9RKMpO7LYMfOWwrQGV9XI9Ojo+X3dMwLircL6toIqnEmBexqTXy4vkpRuVdB9Ov26glN5aaEfE
-	hsnWzEbeX3YNrgqiG4VQ==
-X-Received: by 2002:a05:6000:24c1:b0:435:8ad8:b7a with SMTP id ffacd0b85a97d-435f3aaf763mr9878839f8f.46.1769875134874;
-        Sat, 31 Jan 2026 07:58:54 -0800 (PST)
+        bh=fJLogjaQIREWDYxPFSLJELLqjbCy21hgcIev5TDCa9s=;
+        b=ijZqi9rFmomEExLj4N6FR55Y7EhWMn2Le49OkSm7iBz0sYMN65R25hiOO/+nNUssmm
+         5iC8oNuXmYvxgFuNuhBeEykryknCH8c1GnltceacgiyIz2KLj8AaRyzak3xQxmcaQ4zc
+         oPbYGfizZCZ1rBFU8t5RtCNzifhHog7nSdJVTlV0MHq18a9cSCd5dGCURa01Bpi3/MGx
+         262Kyvgi3LThrPLcUtLsHRgPj6Fmp0VqrWykzu5tAaOAIyU6bwlPjzaOGdGUrRAuDyiW
+         F3DMM/3CT1MvOv/r6InS1FKgYrFPezZcPpxPY9NiWudLLkHJc7PBYdyBrotGY+Uk46je
+         j7Ow==
+X-Forwarded-Encrypted: i=1; AJvYcCVauyzJPo1DtsRtpl/Avjd3QZGoZ1pyU/wSuilSPnyme1GHBYqIshNGKSNr+ynGn+MtjAtFyIDIgfA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBhdO2bYjUsny0zuADAxrkVBg/KbrIvdEpoD5CU4/DhuVONhdR
+	Aj3vUz+1WeiCWOKBFyKWeogVJbL7yNwz6lGy84p3oihgTm3IKjsWnCAlVUXVC+JtMh0=
+X-Gm-Gg: AZuq6aId1BlLGVwfUD0VtDKl8gEG+L7lgVtyquDJk3dRjObJopV44vF0fTH3G+DIPuj
+	YwwOQFRV0URtJ3dxdliF26yH0d4WM99Zzw3CByEJGplt+jWx7ZSWrkZ5ozZ4XfMpKb74qC868kH
+	Uk9yxl2WsYpG/uZX4L7VvFlv9CkxZbbDmTHUllbndmnDg9gCoQWHp2mtvxSwsH9ibBc7Lh0DFSq
+	mZHg4fEEJLEFdcFCDZeRUu8VFsHLcS/HbsJ7IqUViSG5UrK2ZKey3xOWTUTBKAr2tkxuDJ3Jbbn
+	D5R3XUwt/SCVNE1H7r6+XdYEnBYupVJ51gy8SOTUmXWJcrEKiefZtwaVN3RVRKymtA1GlGIBd9x
+	TkKtMiW/lohjpglvNqr/fHiM7CgTjmAz1/TM+rwhEBGPEOSxbBnlSLD72Z/WXRoTKr/szA5nNh4
+	sn/hKWWZqYHElNe2tmi539xkI65woQ
+X-Received: by 2002:a17:907:96a5:b0:b88:5bd7:63b0 with SMTP id a640c23a62f3a-b8dff5af70amr373554666b.11.1769875257922;
+        Sat, 31 Jan 2026 08:00:57 -0800 (PST)
 Received: from [192.168.50.4] ([82.78.167.31])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-435e1322f40sm29757534f8f.34.2026.01.31.07.58.53
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8dbf183f2bsm587629966b.32.2026.01.31.08.00.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 31 Jan 2026 07:58:54 -0800 (PST)
-Message-ID: <a34bbde5-1dc8-4cad-8deb-f2e7855eb4f8@tuxon.dev>
-Date: Sat, 31 Jan 2026 17:58:53 +0200
+        Sat, 31 Jan 2026 08:00:57 -0800 (PST)
+Message-ID: <a7d42750-276a-4348-802e-30cfa4ad3a81@tuxon.dev>
+Date: Sat, 31 Jan 2026 18:00:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -69,8 +68,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 10/19] nvmem: microchip-otpc: Avoid reading a
- write-only register
+Subject: Re: [PATCH v3 11/19] nvmem: microchip-otpc: Fix swapped 'sleep' and
+ 'timeout' parameters
 To: Alexander Dahl <ada@thorsis.com>
 Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
  Alexandre Belloni <alexandre.belloni@bootlin.com>,
@@ -81,22 +80,20 @@ Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 References: <20260120143759.904013-1-ada@thorsis.com>
  <20260120154502.1280938-1-ada@thorsis.com>
- <20260120154502.1280938-4-ada@thorsis.com>
+ <20260120154502.1280938-5-ada@thorsis.com>
 Content-Language: en-US
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20260120154502.1280938-4-ada@thorsis.com>
+In-Reply-To: <20260120154502.1280938-5-ada@thorsis.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
 On 1/20/26 17:44, Alexander Dahl wrote:
-> The OTPC Control Register (OTPC_CR) has just write-only members.
-> Reading from that register leads to a warning in OTPC Write Protection
-> Status Register (OTPC_WPSR) in field Software Error Type (SWETYP) of
-> type READ_WO (A write-only register has been read (warning).)
-> 
-> Just create the register write content from scratch is sufficient here.
+> Makes no sense to have a timeout shorter than the sleep time, it would
+> run into timeout right after the first sleep already.
+> While at it, use a more specific macro instead of the generic one, which
+> does exactly the same, but needs less parameters.
 > 
 > Fixes: 98830350d3fc ("nvmem: microchip-otpc: add support")
 > Cc:stable@vger.kernel.org
