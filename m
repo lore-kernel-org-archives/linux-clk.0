@@ -1,174 +1,116 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3921D78C9C;
-	Sat, 31 Jan 2026 06:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B99AC2580F2
+	for <linux-clk@vger.kernel.org>; Sat, 31 Jan 2026 08:11:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769842258; cv=none; b=iZht3nVZaXZf08WXT+d/kdrcMEWCbx8PxgChqKPTjv6ERI1drHwWcbW2fSNIF5X/Pb9gW/JIeyNUjHEATARUr0VVUyWk3ig0xMDgZhFyuyOskpQbddmbouhKCNXY4uaz4yBDWlT2HPpGOT4y4I08Hd/h7lJ8yxX+inUC8JNem4I=
+	t=1769847103; cv=none; b=hvJZU38pxCyEq6cn2v8u48hXoUNiPBaDKOBqs/phz268r7jSzozHTRXcQj2emoNz90w6Z09MiMFAbcMjTZmfGpHXdO4sMXNuVw4N+j9K0IUchIOxLTpoEyENCkVcYnwPiybTe9eJ8R16IxxSNY2qq6PnVBiuuLN6UvXh2tIzEQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769842258; c=relaxed/simple;
-	bh=fBAoqy2BOeMDuMfjXPn2PSToulwQTPVGqhclRTRnRwI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UbbRi/QyVpiPBprCq8vgMldkRKyAZwDB3XFyY8BKTw2wuvDO9MkQG95feiU+7liaph6PCqhyKU+ZY9Z7Rnb7WlB7aFfhSB8qIsoP27yIzwvLb5UQwUoFnmuPhHSr7CHU6kp2pI5IFOf9rRCxXOGRAJ9DAqRvf+kBLien4C9oeiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aZ8D6VE6; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1769847103; c=relaxed/simple;
+	bh=EC+hbL4fy1RDBuD3ijyTuRjK7ngIuSwyzpe6h6ynI2w=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Nnfus7E75yjZO+kiy8fBmL+qzVKQlHIQjua7olP5f06txC9zLUbcFN6eGMe7wnas/HnI7hwwzwA1tzX0W3YupX6RFZe56IpLWNeHmzL/Mrs7zAJiWGGvbVZwwHLhW1qzXflQfTVrC+gUyzk9lgWlnM0rE8I+i+gMfN6t5sbJ6cA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LHWVZL0r; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aZ8D6VE6"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1769842256; x=1801378256;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=fBAoqy2BOeMDuMfjXPn2PSToulwQTPVGqhclRTRnRwI=;
-  b=aZ8D6VE69Z8+SufG1Da8u+G505Q/Ti91h9o3rAjx9NhmDLcVXDlZxHwa
-   AX+nm4+uTFCrfXjY8tEdnZzDg9fxT3V4hpKYNMWL4HMo+mlCNf8svlpDo
-   rg6bJcpUW1pqV7vfDNwOCn+oPkg2R7laftHN5OcpQSrhKzulE5zHYbPsb
-   Z6Ra5d+e6XR9VJuCmRxQlkiiy8rJWXX7TwE1vxPDYJvG42iRb0bquqqH1
-   9Tr+m10fc3/DE830wM51zHPTxlDm0MN3EVNCPHQjIsreCK1gsKMt7vpdR
-   V1qEx2b/u567KL0to4iep4lEz65CCyHY/1Fro4rbcd80NagjYcam3fupn
-   A==;
-X-CSE-ConnectionGUID: GyA9veWtRiW96qFYx1AwvQ==
-X-CSE-MsgGUID: z4vtt/R5TtmdeEe4mybHdg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11687"; a="71170920"
-X-IronPort-AV: E=Sophos;i="6.21,264,1763452800"; 
-   d="scan'208";a="71170920"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jan 2026 22:50:56 -0800
-X-CSE-ConnectionGUID: CJE5H3JxTTmGLXbhiDAnAg==
-X-CSE-MsgGUID: Zgx5Or/lS+CEZhW6ZlsLpw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,264,1763452800"; 
-   d="scan'208";a="208153413"
-Received: from lkp-server01.sh.intel.com (HELO 765f4a05e27f) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 30 Jan 2026 22:50:50 -0800
-Received: from kbuild by 765f4a05e27f with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vm4oh-00000000djc-1xxu;
-	Sat, 31 Jan 2026 06:50:47 +0000
-Date: Sat, 31 Jan 2026 14:50:36 +0800
-From: kernel test robot <lkp@intel.com>
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
-	tomm.merciai@gmail.com, geert@linux-m68k.org,
-	laurent.pinchart@ideasonboard.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com,
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 01/20] clk: renesas: rzv2h: Add PLLDSI clk mux support
-Message-ID: <202601311423.gWtJuxiU-lkp@intel.com>
-References: <2cc58beb0c0fd96b07374e1e84e90e860c81fb95.1769797221.git.tommaso.merciai.xr@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LHWVZL0r"
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2a07fac8aa1so21258825ad.1
+        for <linux-clk@vger.kernel.org>; Sat, 31 Jan 2026 00:11:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769847101; x=1770451901; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=orvFoFtsARH+IScJ7lixNcwmtmfCsu6c1Jr0HIMXzBI=;
+        b=LHWVZL0rYyAVJNEfa6PKbbZW53nFip6n7TPJXNDVDCSXmkhylB0og7dJcOzOPzxx8Z
+         ohGAxdwMHvKiB2NkTD4Akv8kjQNMsz9ckxPkadAXMspWmaD59AkyA8pOql5c9sDLnm3C
+         ZXHwg1FVPyGTqdB28tBuhJo7mrUy7hnAEMDCxY/vwdb7qJCdGsE2qouMG3w/ptyDBuB5
+         kq3T9/RwDjAnIT0dTWF1YphnQAWvwiw8cV9X6wL6chUc6NAtOdVeUfy5PW7Pq7iqKQOb
+         JoVwF2i/RthkeBDjH86Iizb36gyyZoGpjbniPaB1uaxhARZoZxxad5NhGnlvbZPKwGY7
+         TGMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769847101; x=1770451901;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=orvFoFtsARH+IScJ7lixNcwmtmfCsu6c1Jr0HIMXzBI=;
+        b=mFFvgVuu3MaG/HkKmRyWKQSlzn1L0dQqCcOgQowl/4/Uo9xGUFtdedJEuG2/eXdX7q
+         7ZBIjBRGTuxI+TpZBIuTB2F2dyAIdgM9u5PbeBflBtaQ9DS0CZCtQUhPgbd/L++NQpsu
+         kh4RJ7F/KEtvWhPGnycLuKk5iGcIIlE82rcuLfTpner5YXtV6dc359yL4aYj2knsNWj4
+         aZLR1J1oggDjvazXVZp49/zJi3mDmsIDv+OhGXBBAFivqam0Lzq9qbZatTbppSxocBIH
+         UtjIhHWbQkAMrnAXZR5rosctHOa1+fC/CGJ1I6xSbRldHIdvbjxDvGrWShwLVBUczCiS
+         chpw==
+X-Gm-Message-State: AOJu0YyXYcHVUoJVR5OVVuApPsBCwEFaRwxpJC53VaI1zVD1UvNTFNy1
+	+9jO0B9bq76CbabdrEOESl38pwyFvSXjo+kXpiDUEApJOCU/ip2wz7q0
+X-Gm-Gg: AZuq6aJVRGUFrMJ/pnBGm5MY8edTZJCvadxc5qJ/m8pfJWxUSV82yjR2qzC+aAoQMLB
+	PxXzSyqXIwc5g+hTt2eBGu1t63wzpPTGm1b0PZ60dgAxxONGjXak68QnxD2bYLq16drOqfxfYEE
+	LxJEIQgC6e1kCjW4aQPV3HTjTp7eplatCFWEk2qdaJ2CEFjuDHmUrDSTIDL9wlBfeiWN+Ntkf3O
+	EO9fbetlAH1nPNeFmEERc3av39B9LZkzwTLeH/4Zoeik92FLgNdgUUltE3qEn089bNTS0meOY4/
+	5a8pO9q56FNAL8n3+47iHX7UqBj0x0rcWh92gfSCPU6cAmwHUI56jDBecL3YHdjGFLRPYwhJzpy
+	OpaKLCqWs3LMozunUtpqJsCcR4LzDo7E+XpDRCbV6eebeAN9SpHpcaiU17cyaQvUVoDcXZqdpA2
+	kIkmFtAo8=
+X-Received: by 2002:a17:902:f689:b0:2a0:b62e:e016 with SMTP id d9443c01a7336-2a8d81503famr59926225ad.32.1769847101113;
+        Sat, 31 Jan 2026 00:11:41 -0800 (PST)
+Received: from junjungu-PC.localdomain ([2408:820c:9008:ba52::3a87])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a88b5d92a9sm92115125ad.69.2026.01.31.00.11.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 31 Jan 2026 00:11:40 -0800 (PST)
+From: Felix Gu <ustc.gu@gmail.com>
+Subject: [PATCH v2 0/2] clk: imx: imx6q: Fix device node reference leaks
+Date: Sat, 31 Jan 2026 16:11:33 +0800
+Message-Id: <20260131-clk-imx6q-v2-0-70471ddc99e0@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2cc58beb0c0fd96b07374e1e84e90e860c81fb95.1769797221.git.tommaso.merciai.xr@bp.renesas.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADW5fWkC/23MSw7CIBSF4a00dywGaCHoyH2YDiiP9sa2KBhS0
+ 7B3sWOH/8nJt0NyEV2Ca7NDdBkThrUGPzVgJr2OjqCtDZxySVlLiZkfBJdNvsjFdINSrfCGS6j
+ /Z3Qet8O697UnTO8QPwed2W/9p2RGGOFed1YLqwclbuOicT6bsEBfSvkCEr9ATaIAAAA=
+X-Change-ID: 20260130-clk-imx6q-9c4b8835fc26
+To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Lucas Stach <l.stach@pengutronix.de>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Akshay Bhat <akshay.bhat@timesys.com>, 
+ Ranjani Vaidyanathan <Ranjani.Vaidyanathan@nxp.com>, 
+ Shawn Guo <shawnguo@kernel.org>
+Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Felix Gu <ustc.gu@gmail.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1769847097; l=644;
+ i=ustc.gu@gmail.com; h=from:subject:message-id;
+ bh=EC+hbL4fy1RDBuD3ijyTuRjK7ngIuSwyzpe6h6ynI2w=;
+ b=SF5MP4ZPO/jYldFRUAkmUvBShoXhgUIO110zw5ChaX4rFg9vK1NmvPTMYmkhIUqBssqF3N9R1
+ kUY3rQpu1bPAR0kzx1bLdy4lfZEHnRa4s6C51KwS5qLjnZPNVls/JRW
+X-Developer-Key: i=ustc.gu@gmail.com; a=ed25519;
+ pk=fjUXwmjchVN7Ja6KGP55IXOzFeCl9edaHoQIEUA+/hw=
 
-Hi Tommaso,
+Signed-off-by: Felix Gu <ustc.gu@gmail.com>
+---
+Changes in v2:
+- Fix device node reference leak in of_assigned_ldb_sels()
+- Link to v1: https://lore.kernel.org/r/20260130-clk-imx6q-v1-1-2fa4da5dab85@gmail.com
 
-kernel test robot noticed the following build errors:
+---
+Felix Gu (2):
+      clk: imx: imx6q: Fix device node reference leak in pll6_bypassed()
+      clk: imx: imx6q: Fix device node reference leak in of_assigned_ldb_sels()
 
-[auto build test ERROR on next-20260129]
-[also build test ERROR on linus/master v6.19-rc7]
-[cannot apply to geert-renesas-drivers/renesas-clk drm-misc/drm-misc-next geert-renesas-devel/next v6.19-rc7 v6.19-rc6 v6.19-rc5]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+ drivers/clk/imx/clk-imx6q.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+---
+base-commit: 33a647c659ffa5bdb94abc345c8c86768ff96215
+change-id: 20260130-clk-imx6q-9c4b8835fc26
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Tommaso-Merciai/clk-renesas-rzv2h-Add-PLLDSI-clk-mux-support/20260131-023642
-base:   next-20260129
-patch link:    https://lore.kernel.org/r/2cc58beb0c0fd96b07374e1e84e90e860c81fb95.1769797221.git.tommaso.merciai.xr%40bp.renesas.com
-patch subject: [PATCH v3 01/20] clk: renesas: rzv2h: Add PLLDSI clk mux support
-config: riscv-allmodconfig (https://download.01.org/0day-ci/archive/20260131/202601311423.gWtJuxiU-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 9b8addffa70cee5b2acc5454712d9cf78ce45710)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260131/202601311423.gWtJuxiU-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202601311423.gWtJuxiU-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/clk/renesas/rzv2h-cpg.c:796:10: error: invalid application of 'typeof' to bit-field
-     796 |         width = fls(smux.width) - ffs(smux.width) + 1;
-         |                 ^
-   arch/riscv/include/asm/bitops.h:154:8: note: expanded from macro 'fls'
-     154 |         typeof(x) x_ = (x);                                     \
-         |               ^
-   1 error generated.
-
-
-vim +/typeof +796 drivers/clk/renesas/rzv2h-cpg.c
-
-   783	
-   784	static struct clk * __init
-   785	rzv2h_cpg_plldsi_smux_clk_register(const struct cpg_core_clk *core,
-   786					   struct rzv2h_cpg_priv *priv)
-   787	{
-   788		struct rzv2h_plldsi_mux_clk *clk_hw_data;
-   789		struct clk_init_data init;
-   790		struct clk_hw *clk_hw;
-   791		struct smuxed smux;
-   792		u8 width;
-   793		int ret;
-   794	
-   795		smux = core->cfg.smux;
- > 796		width = fls(smux.width) - ffs(smux.width) + 1;
-   797	
-   798		if (width + smux.width > 16) {
-   799			dev_err(priv->dev, "mux value exceeds LOWORD field\n");
-   800			return ERR_PTR(-EINVAL);
-   801		}
-   802	
-   803		clk_hw_data = devm_kzalloc(priv->dev, sizeof(*clk_hw_data), GFP_KERNEL);
-   804		if (!clk_hw_data)
-   805			return ERR_PTR(-ENOMEM);
-   806	
-   807		clk_hw_data->priv = priv;
-   808	
-   809		init.name = core->name;
-   810		init.ops = &rzv2h_cpg_plldsi_smux_ops;
-   811		init.flags = core->flag;
-   812		init.parent_names = core->parent_names;
-   813		init.num_parents = core->num_parents;
-   814	
-   815		clk_hw_data->mux.reg = priv->base + smux.offset;
-   816	
-   817		clk_hw_data->mux.shift = smux.shift;
-   818		clk_hw_data->mux.mask = smux.width;
-   819		clk_hw_data->mux.flags = core->mux_flags;
-   820		clk_hw_data->mux.lock = &priv->rmw_lock;
-   821	
-   822		clk_hw = &clk_hw_data->mux.hw;
-   823		clk_hw->init = &init;
-   824	
-   825		ret = devm_clk_hw_register(priv->dev, clk_hw);
-   826		if (ret)
-   827			return ERR_PTR(ret);
-   828	
-   829		return clk_hw->clk;
-   830	}
-   831	
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Felix Gu <ustc.gu@gmail.com>
+
