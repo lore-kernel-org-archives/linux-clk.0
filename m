@@ -1,66 +1,66 @@
 Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6A42E5D17
-	for <linux-clk@vger.kernel.org>; Sat, 31 Jan 2026 08:11:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3DE331203
+	for <linux-clk@vger.kernel.org>; Sat, 31 Jan 2026 08:11:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769847108; cv=none; b=dC0/RkNn3oSQlKgPyT8Tz7f5Ijf3H4gxlSJ8aBqtv8hxOccVpSPb3yK2j0kUeTaQfy3JYklXZS38f+MBjLv6N7yKCks4/F60h3agt9uwE6d5kRna8iyFPB7L1GoBxYlptdqXx+kQVPkLWWmlbOZhfFEKXpF5BCuX/FVU7QjHWN0=
+	t=1769847112; cv=none; b=otkapES8sIgFqd/RKW+/x/WU8Ak/8XY8nB1ditxYp+Eqq6FhikjBk6U+T85Kxm1NUoL9jC/sdRifA/VrJTCCxxWQAjd0It+bL6WQxyUj2rQQzT9iaeUzBAPZWYuDRxIyTKa3SJ7EMP0H5d2cXf+XAf0PzrRtCRudp3W+bdW4cIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769847108; c=relaxed/simple;
-	bh=9OAQjhZI4G9NDVTt9f0prwiTo7Qoj04+zj9JpK/zoHA=;
+	s=arc-20240116; t=1769847112; c=relaxed/simple;
+	bh=8z6Jwe22roU0IcUq5EjPKimwprqUXrkhxOXSXzExrCg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TxjUprMWamdPUolljaBvQgpm0tcNAlNk+LzHl07dYcKTLUUCMppOgkOuHWnCqHIEpPa+YSB51JcmZtZ4UglMIKu79M6B1BYBJL4DyVo8xPAGWJPuXyRf9grxswkuQauPos0QSQAHB6+SEklH2B5Hd63T4PnC+pYsV2oZM2SvV2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IZ/Eo5LA; arc=none smtp.client-ip=209.85.214.196
+	 In-Reply-To:To:Cc; b=Djg4hTej3tabpSXaygepJdgCNORKPd01JOv8A8Vad6uKv6+jmL4q47t3GcrjIVjsRbaN+A0hP4Mm7B4tlYpJ/Z0nDPrktzSFMWSUMhAzzvfNC1Y7nUzHvUIKDE7Fq6v1TPpUrQ/p4NLeA/bxP97o2PDZvckORxvyiewzuX6X7/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BtQh+d3X; arc=none smtp.client-ip=209.85.214.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IZ/Eo5LA"
-Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-2a7bceb6cd0so20189955ad.1
-        for <linux-clk@vger.kernel.org>; Sat, 31 Jan 2026 00:11:46 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BtQh+d3X"
+Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-2a79ded11a2so19689665ad.3
+        for <linux-clk@vger.kernel.org>; Sat, 31 Jan 2026 00:11:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769847106; x=1770451906; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1769847111; x=1770451911; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=E79QyFHl6v9hrcpW7a0gJg/ST+Ia1jTsFgjOY9hJneE=;
-        b=IZ/Eo5LADarTchcYf5LfYhz+JW5qdzj6qiuXGPH72zSwZmCay4kRAPUcHhpIqN0i4+
-         VZBpg5T2id4lbKyW4+lT00xdAT/7OoTuGzPhDwucBMqh2HQPzYzv/akR6sn4vD3cQ4XG
-         kL8j/EltSDxluEM43+tL8xx449BnZRHSGKVyewaEB50xLTjWIBHlGgZ70cTi3FWDsJAj
-         FRtuvE5bnZE0RmNA1PIaRgN1nJeOHMQrV60A3TmOoWFRYLgUFZWGf+29uP7foC7VYYEe
-         iqjekl/2G/rPVZNuAwVwLlH5W1CNw8AInrr9v+XMrEHif4KbZVprQrYN1+zwQSEtXGBO
-         0ROw==
+        bh=FjfAJsvyjCO/vjM7jBeWQxefgcvpbHgFUQ72gcagyLo=;
+        b=BtQh+d3X6ZJf8Y7tBkPZZ0wEyajSbDy3d4GBxmel4Vkg00X544G70M9IzzpvGrwwKV
+         mb2PrmnrmTEkhUJ7Cy2ptl0316YP+ukcUtkipRFkja3QtxefRE7yF5UCZbjUOtAP8cED
+         k+FvMaxJr2CdNfC1SjaZEOWfYbkkSirMhkClErZOTIMk0nAqakZIieMdJ1t1XyGg6Dff
+         eES8DxjI7eTXyAOiAglRGpYHL4wHiNuNkj2KfGKq27asbblpCm6djpXW/rzfYIpB9+rL
+         1WMK8+vW2c2f1y18CA8v8CK7S4GBUYD6E/RiiuXQQSDM4HCMALhcINS5Wg6DsjrpoL5e
+         UMqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769847106; x=1770451906;
+        d=1e100.net; s=20230601; t=1769847111; x=1770451911;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=E79QyFHl6v9hrcpW7a0gJg/ST+Ia1jTsFgjOY9hJneE=;
-        b=MZ424DBAu70ZNeNSI5ztLecFRANnI0bq9AkKUQs8HyRBNO/lbUOQF09iQyqZqib+2J
-         6dZ3HMk6zppj669W0wb4RKsVCNLQ0UXAuF0bw/ePZCIu7jHGplNMKGtRlBcZrghLq/bt
-         H8+0rMFe+xA28G+0e5OT8Rf3QzgDDuquYAkjs2Jki+7hmDuBl+SydtekMw6IuKxy4OU3
-         8vR0edR/cLAqm/kiQJBTb0wNGqOp8a01aQkkR2XyeAgsEZzEX6be2FeY4oHlyEDD6p0m
-         AYGvLk8H+EuWhv6OmYSmhO2RvI0P2PcU+jAUgj6ya0g9+PNSnDGdsD225PuAXz4A9Cay
-         ljJg==
-X-Gm-Message-State: AOJu0YwMOAsDoELJhy4BRaWOMXwAShYUU+xUaBu/Rofcrjc95avVALw6
-	Nwnqr55pLau1XnFCkM8c8wNG1aODINA4y4QSwlVTSQlXiQjrm1z6mOMVvlvlDxZgpxs=
-X-Gm-Gg: AZuq6aIyn17K4tEXsJYD4ACxEfdftR3Wo5GwBow+MSpTPWkxLcuHJmojCZ5WMGmuzPC
-	aurUTZevFym/1buT5bG/Ru6fSt2MDBeByYiXnpQ+knY7w9kdg1BfmNsw6H9+zU0FxviGQPTm8zW
-	EpTNRvGI7LKxRYziYzLFNszk+LtfNMkMlkuWeX/9+r50aRpZ/ZWX2h3UHVjV7srT0lhlpBB07Ar
-	NMtlsu/ACkXdPCTBxS/dMlONvCdhRoi+cHxIrBHTT2otV/YLCg6uHwc+8fmbjTh3HzHzfvMDhDH
-	C0632me0gZFzsONnXniiCk9FO/TeGYtr1xkI5rfvMHB9v/rEdzZUs1ANHMItCluyjB8YmVlDpcN
-	Fd/IbiX/sGmxqF1SP5Fj8S1SiAtAfueJwzgmq9Bn61xp3+3UEZmWmN4Z2W0XcXSO6YdhYWjlWmT
-	z3Gv/HZcw=
-X-Received: by 2002:a17:902:8218:b0:2a7:7c72:42b6 with SMTP id d9443c01a7336-2a8d96a221fmr44250135ad.18.1769847105996;
-        Sat, 31 Jan 2026 00:11:45 -0800 (PST)
+        bh=FjfAJsvyjCO/vjM7jBeWQxefgcvpbHgFUQ72gcagyLo=;
+        b=jLdq65tG12O8ePfixyOn2RCKaeXBIOOGGTJsz1YFIp/qNrCtKaxBaEfoplI/dJsyZ+
+         yXUSC/fcb+HIR5Zali+NEtymyKqYRJgZpHbytW1f6xxF0M0pynNWYYSGC82tt5EOIXaZ
+         KrsL+3av/BebOHZfXn/e7kHpqmGLfkWDe8qcEy7fW66ncP/uaUyoZMa7ErBiGEfZLxKj
+         lALT/JtP0E2Vh/8GeGOLboQVOk3HBd0YInL+pNGrJxcVILFsJ5CORg30Di0zsIR/F7wH
+         MS7Ca/gL6wYSKex6UD1zQP8B08GsQGKxuBmzvCkC3TAH0bmdypGYywdmVqEXrv+yveyH
+         0IBg==
+X-Gm-Message-State: AOJu0YyZTIrVMFqUshFtnev4E9T8PzofjGfEoikRk9bBaQZ+B5ASIVmv
+	qEZyMz6KpMe3kInKEfkYQ+WyPtDyoaQKSC8UUABsTDsFzZX5VWMLaZe1
+X-Gm-Gg: AZuq6aJ/lcuM74VJgaf7Tl42B6kfZFdGn4iZbnXuaSgVdn9PAfqOWpvXTXNod0D725+
+	b+dIyLnSjF+u7CHt6PJZBt9PZ6amoD9iCgY9+ZlpHHgDO4ZumwZwrjJ+mKaFGFhN+O8Bx5vzZu5
+	Av1g8ZFAo3HUE+96UYFJ5HGlqh46/xF5VoiURQlO/s3+fyNj1MXM96mO2wW8FvLkQYaAUPjs+BD
+	JVIBJ3PfLWlqr8Gsx1uRt9VmcGP7/s6teJPP0I6ANQDRn2c9zReG3jNadd1THi7VtAoD8m2L/YT
+	M9qh5Z1a6rSADDpngx0DigFdxs6bfwGt2HmLCVHEuUSMIesUov460GiJcU9eniIEbNpTVsUJlGe
+	GLfmeRfgw4ZguRe9GVycb5LHFzpnw93MNHiwQxiwVTs05Lr7vPsS55mVwnAkJQbcLt+BaBEhV/E
+	EvEzbnPYA=
+X-Received: by 2002:a17:902:f544:b0:2a0:fb1c:143d with SMTP id d9443c01a7336-2a8d9592938mr50396115ad.1.1769847110853;
+        Sat, 31 Jan 2026 00:11:50 -0800 (PST)
 Received: from junjungu-PC.localdomain ([2408:820c:9008:ba52::3a87])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a88b5d92a9sm92115125ad.69.2026.01.31.00.11.41
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a88b5d92a9sm92115125ad.69.2026.01.31.00.11.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Jan 2026 00:11:45 -0800 (PST)
+        Sat, 31 Jan 2026 00:11:50 -0800 (PST)
 From: Felix Gu <ustc.gu@gmail.com>
-Date: Sat, 31 Jan 2026 16:11:34 +0800
-Subject: [PATCH v2 1/2] clk: imx: imx6q: Fix device node reference leak in
- pll6_bypassed()
+Date: Sat, 31 Jan 2026 16:11:35 +0800
+Subject: [PATCH v2 2/2] clk: imx: imx6q: Fix device node reference leak in
+ of_assigned_ldb_sels()
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -69,7 +69,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260131-clk-imx6q-v2-1-70471ddc99e0@gmail.com>
+Message-Id: <20260131-clk-imx6q-v2-2-70471ddc99e0@gmail.com>
 References: <20260131-clk-imx6q-v2-0-70471ddc99e0@gmail.com>
 In-Reply-To: <20260131-clk-imx6q-v2-0-70471ddc99e0@gmail.com>
 To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
@@ -86,51 +86,54 @@ Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
  Felix Gu <ustc.gu@gmail.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1769847097; l=1258;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1769847097; l=1463;
  i=ustc.gu@gmail.com; h=from:subject:message-id;
- bh=9OAQjhZI4G9NDVTt9f0prwiTo7Qoj04+zj9JpK/zoHA=;
- b=Amf+HD1p3lcCeTT2eWu8v7JUo6k/cHzSXe1AmMAfSN8hyokQgHe/dh6dj/P7sHbmDWKqueAlg
- HSqNr6tFh10C/GLl9mZ/HUETAF9ASs8izJZ1BX+ZQlQJkLbXzj1mf8y
+ bh=8z6Jwe22roU0IcUq5EjPKimwprqUXrkhxOXSXzExrCg=;
+ b=oiRk1okIysEjvHlGj/5wAp4PFaBltdhhMRDvFAiXGskFVm57xO67i5mEoNGJaNojLeDz5+wu+
+ WdOTQp1dMycC//jtDtoXsQb3Te+V7M8qOzaj4IqkCVqdZ0e5zHzDORo
 X-Developer-Key: i=ustc.gu@gmail.com; a=ed25519;
  pk=fjUXwmjchVN7Ja6KGP55IXOzFeCl9edaHoQIEUA+/hw=
 
-The function pll6_bypassed() calls of_parse_phandle_with_args()
-but never calls of_node_put() to release the reference, causing
-a memory leak.
+The function of_assigned_ldb_sels() calls of_parse_phandle_with_args()
+but never calls of_node_put() to release the reference, causing a memory
+leak.
 
 Fix this by adding proper cleanup calls on all exit paths.
 
-Fixes: 3cc48976e9763 ("clk: imx6q: handle ENET PLL bypass")
+Fixes: 5d283b083800 ("clk: imx6: Fix procedure to switch the parent of LDB_DI_CLK")
 Signed-off-by: Felix Gu <ustc.gu@gmail.com>
 ---
- drivers/clk/imx/clk-imx6q.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/clk/imx/clk-imx6q.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-index bf4c1d9c9928..1d8e8f0891a3 100644
+index 1d8e8f0891a3..58882dbc3a11 100644
 --- a/drivers/clk/imx/clk-imx6q.c
 +++ b/drivers/clk/imx/clk-imx6q.c
-@@ -238,8 +238,11 @@ static bool pll6_bypassed(struct device_node *node)
- 			return false;
- 
- 		if (clkspec.np == node &&
--		    clkspec.args[0] == IMX6QDL_PLL6_BYPASS)
-+		    clkspec.args[0] == IMX6QDL_PLL6_BYPASS) {
+@@ -188,9 +188,11 @@ static void of_assigned_ldb_sels(struct device_node *node,
+ 		}
+ 		if (clkspec.np != node || clkspec.args[0] >= IMX6QDL_CLK_END) {
+ 			pr_err("ccm: parent clock %d not in ccm\n", index);
 +			of_node_put(clkspec.np);
- 			break;
-+		}
+ 			return;
+ 		}
+ 		parent = clkspec.args[0];
 +		of_node_put(clkspec.np);
- 	}
  
- 	/* PLL6 bypass is not part of the assigned clock list */
-@@ -249,6 +252,7 @@ static bool pll6_bypassed(struct device_node *node)
- 	ret = of_parse_phandle_with_args(node, "assigned-clock-parents",
- 					 "#clock-cells", index, &clkspec);
+ 		rc = of_parse_phandle_with_args(node, "assigned-clocks",
+ 				"#clock-cells", index, &clkspec);
+@@ -198,9 +200,11 @@ static void of_assigned_ldb_sels(struct device_node *node,
+ 			return;
+ 		if (clkspec.np != node || clkspec.args[0] >= IMX6QDL_CLK_END) {
+ 			pr_err("ccm: child clock %d not in ccm\n", index);
++			of_node_put(clkspec.np);
+ 			return;
+ 		}
+ 		child = clkspec.args[0];
++		of_node_put(clkspec.np);
  
-+	of_node_put(clkspec.np);
- 	if (clkspec.args[0] != IMX6QDL_CLK_PLL6)
- 		return true;
- 
+ 		if (child != IMX6QDL_CLK_LDB_DI0_SEL &&
+ 		    child != IMX6QDL_CLK_LDB_DI1_SEL)
 
 -- 
 2.43.0
