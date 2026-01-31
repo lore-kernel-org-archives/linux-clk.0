@@ -1,66 +1,66 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DBE0354ACF
-	for <linux-clk@vger.kernel.org>; Sat, 31 Jan 2026 14:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D911357A4A
+	for <linux-clk@vger.kernel.org>; Sat, 31 Jan 2026 14:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769869624; cv=none; b=DBdazJI02ciedv4D7gib9Zz8sdYPjUbKyuJ7NfKAT7zT+S0w2E32saKRHxqgsVfJbnMDMaMr8iWyylOgB6ylr+Yj3sjzs54LrCADcOuUdiOdU2Yp/ojaCft3NJZVSD1Af6kw737mvbjFFVd+oMFv2G5KliufCHA0uTzr6lY3C1c=
+	t=1769869757; cv=none; b=uzbakmQCHZmpjemH50SObxqB80EGg6PgmltmQ1nJocfVYaz6jRlMgO5nBfOSqTJFKWD6zttCO3sgExCZtsL2Fix+QOX/Ylq/OIr4qkCmZdVaMFLPJ5PLw9B9YuSHEJzNeqqi3kyXNnaYcYBY99sGixXs0MtLkFva/4pbm80EjBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769869624; c=relaxed/simple;
-	bh=JLbNuT4wvHvRF+H8EXOsvLVF2hATZ9wcHJKlSsr5w1A=;
+	s=arc-20240116; t=1769869757; c=relaxed/simple;
+	bh=A/474hY4hFTLTxp5En5W4S7hKInIxqfu2uuu9GAVWMs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WObakHvRG/lx48nmAv6FNHM30Wlr/e0y0wU6vB9GtllQV9H+jhxMDaNLK11wmM637teVvgOh5SKe8a/hSi3JqVvr7PBqRBz79+OvcEIfvNz0EVUaJ6BAWF3jHMR2pWnF9zk0VLo2OCgz1XUnVsM+JzbJqP/Sn/jMQNaa0H/KKH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=SMdP+jBs; arc=none smtp.client-ip=209.85.128.45
+	 In-Reply-To:Content-Type; b=cH1GVvSyQam/g8Et8KikfWGEbRYSqQv3NlLoRZy3nrnmipfC+Fw0dZ/y58wHmgm0Xd0YXxU6H8qrZtC23lr3Z4zqyyeeFYtzJJGKK2WWW2bLUGGR024c6Rs2h2aR6MYump3acoXMisYQl0t37PU4tS4v92g4al5AoHYSDDGL9f0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=AZAeIm3w; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="SMdP+jBs"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-48069a48629so31084105e9.0
-        for <linux-clk@vger.kernel.org>; Sat, 31 Jan 2026 06:27:03 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="AZAeIm3w"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-47fedb7c68dso31972815e9.2
+        for <linux-clk@vger.kernel.org>; Sat, 31 Jan 2026 06:29:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1769869622; x=1770474422; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1769869754; x=1770474554; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=IZemSK0/0LuKdd+h8/xFopjdq8nFilP6S5QwqNfMT2g=;
-        b=SMdP+jBsvZcssMNRptJG8KH58ftHxIL3zGsX9dta97x1Fwx+FdKXZZVVQTiUzssy2x
-         cF+Eypmml/+xcnU7GxbgfaI47EKHB9kOAaDICccMmhbCVWvqH9zJO6/LFPdg0UXRj58Y
-         h87TGKGOAI/QvlVo7hs26GmoAm+ojdkKNnK94xhqolATlSgfRjDh3wo/9+ZqCG8imxiq
-         RmnxJQLb6Dz2lxJljsf5K7CpjcDV62eEPYhegHB+VK5EB7VEVpfWgqFqBXYwPKvTMk8d
-         S1vEHBHVSUQ7IVcwta4AHIHphJX9/AnklFTdNwR5s4zEq27KKWkTNXMikZfHhbvE2yR1
-         WuPA==
+        bh=R6+NmxluvooS176kHE909Dr5qqh8j7I0Oq4Sd/VqYgI=;
+        b=AZAeIm3wohlspo+irUXHq8RyT5VCptA+K0XKnjcU3KkAdRaJpGvAimSj8RTwyOh7Wa
+         6j0b53afFQmwU5R1sHNmQ1GDJm8yJI49htxT1tRNWTM4Sl+GFo0gkjxsGIdXbdlagX/3
+         8y38uMCMLJl3NFwQL5XtZD8K2clA7zU455xN3wgqDdOqKNJVaj0djXFlfghriZoca5XX
+         NBzT53xhmPgHED/Cv/KvmQZtHSQjhpF/b46iYGBYou2K3ILbFdBuaX7PbHDVnGgiwqFq
+         wrsDgW8U5bNuKD348XcuGmTD3XzSz/L30BC9eY+AOkqKrN3XgQC3x0eG65IvH3MJK5AY
+         urgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769869622; x=1770474422;
+        d=1e100.net; s=20230601; t=1769869754; x=1770474554;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=IZemSK0/0LuKdd+h8/xFopjdq8nFilP6S5QwqNfMT2g=;
-        b=RpZ6LUJRnt1sGSbtbNUrUs+foQXRXfpuNFc/rxF2McG4WoLKjc+vdGEjmICVLRvdyx
-         UGytAaYoHs+NUbd4VBxGALmCkOSGneTtQFpKRU/UbvYb4JA5TvIw6jQxa5Ubl3yKXmgI
-         pNobNYB5xb+AhJu74dIa3xboOKCWvuC1cNjRhcHQcRdEEp9oMEusbS6qTUDear+dnyhP
-         tS0TKOyQJbgpFl3GkoLZ2wSUvD94lFg5mL41oyHQR8fYjMOPc74uVv9N6KtTXD4jsmWs
-         ADCsPq5x6O0CccvqugPuvULmsZJoMcT+X0jJzOCSizCQXEtrSM2/FSKGFplGIx5LO04G
-         wbxg==
-X-Forwarded-Encrypted: i=1; AJvYcCV1WzeSTlRlD8veBh4HimMGsW0w6IbqLi9C+9zauFq55aWAMW6XPfT14cNYVt0CJYcIk99085ri7Gg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPkBlHcXvI8HVqX+zjKtEXn1KGCayQcTKU2GRt7jaN9pCMbMcn
-	ieAqgoAOe95WwOxtrfrQ0EbAjWBGNS/ijAjTK1a0RGP8DVzEIVx9iTRM29O7zMluhuk=
-X-Gm-Gg: AZuq6aKUQt90NeeWEdWA0/FBSCEy1fQXrDdvf8wdTC7aHzmYzTzSQ2MFiGhOAiSlyUx
-	QovawCqHuONgau6DY+H262rp2HNix6ZLZR/2yUkEAQp1grGgAv1ZCV7B1IE2oEUZirOdmjLdpoT
-	x65tAtoRTXOlk3/Z/Yv6QtZaZFdL+kZqd1Uua8S436Q7KAvU8qsqcTQDxQH3O1SUFamdkh+i9q2
-	xZLJmf9HUau3LUzM+KHd2rZjQ/0FMIkSYtTPAoft9hX6nLxSY/SUH6HoJMOmWhJ/o0g07HG6X1C
-	f4QJ7ytlPXldmYt0JCi3k31IFphc/WzkIP4ORHOkL5UyUx0NhIHuZv/BgeHGf8SKVmwYy1MNTVb
-	ArTI6jrVZdc7/g2pD4aSgwKnOhJWRdNngudU36zj7/hT7ZLwQiwYCwTmhuF8a+RzbUkoIt1NDjD
-	UxMvCeeNXBBF9xDk/XPQ==
-X-Received: by 2002:a05:600c:6088:b0:477:93f7:bbc5 with SMTP id 5b1f17b1804b1-482db45bc1bmr73362655e9.10.1769869621777;
-        Sat, 31 Jan 2026 06:27:01 -0800 (PST)
+        bh=R6+NmxluvooS176kHE909Dr5qqh8j7I0Oq4Sd/VqYgI=;
+        b=jqFzjlYkAKLC2WlnQwpePOPxV6v77MkyKERzr+EWImP7XHb81pBtV6nxNpUj1gLlJY
+         Df/3dOD09DkHpbgMN+saBinKo96GDjShYvzM6QSpFdHHeUslqH9gjRYBGA73NneMfL+3
+         VFokUwbLk/CHTBnOeberefileXGmGnyLHHyLMYMkE6EFT+bObew60+aGh3OvzV2fdDmS
+         p1jZmz/2CXpuMiSHOuzIr4vwogZC6HawLgLTG84jtS0L5BuzIGaqyRfi+d9WgOOGKVE9
+         C1fKiEA3+TtfyoqX+u+pH2M+702csQm0M0XdxXY5rnXbed3Ko5Q7Y3YGEE7cCiGpMiEg
+         s+xw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZ1Jq95dOK+xaYhIZusKuiaYJoZpg8rUIFfgkxTZmSgjykJqozALZ9iW44EpELfYO6VrublTLR2Jo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJDYc3gDdGhSweEHgzse0RDNE5POZmNpruSANLHso5MtSesFsc
+	oYQQIlsgcYpPZ7BQzgcmLtIr0WOwUO9+afGi2nvewNtSguaveajbyc3Ka4wPEH0bdP0=
+X-Gm-Gg: AZuq6aItpt27IPmWi/a25A+SR5H37z6WI9OHJy8CxcI0wTNakpyMPhRmu/mfhiRJhIb
+	uZsySwXHlbBFEXioTLstLttNq7a6FN6vOU+8DKTe+9nuKmQSsK7kqOcXCxNYSaJLfUr4y4K0tBx
+	DVry0B9us+CtYbMBDqJad1Rpqwxov8J1xZziehD+vv2xM+5As1yplFU5rkrftcufFQ7lN9yf5o1
+	FDol/D52e2GknlbgjGKEiDmgkXtD0XEJ3KqIfp5Q4ABBcELnHrlr/z9y6ZpkALsKzDBeywWgX1G
+	XrK6JeyhJg0ZOgxSWBS91MmWLy8mQUyb7dUmbD5lYM5C2Sd3WbaFIGvqF/PGKGHF9+w7gh7Lbx5
+	TTI7XX4AfSrfOi9AW/PuIlZc34gSV8kFQzK9A31rjBHXWJvq2ofjDdbNbMah+jb3SJtZYrCxNYl
+	1tCTioZd3XldSVFGCz5w==
+X-Received: by 2002:a05:600c:a087:b0:47d:3ffb:16c9 with SMTP id 5b1f17b1804b1-482db491e3fmr76323225e9.23.1769869754514;
+        Sat, 31 Jan 2026 06:29:14 -0800 (PST)
 Received: from [192.168.50.4] ([82.78.167.31])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-482e267aad1sm39377375e9.15.2026.01.31.06.27.00
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48066be7404sm377434895e9.1.2026.01.31.06.29.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 31 Jan 2026 06:27:01 -0800 (PST)
-Message-ID: <ea33dd99-02f3-47fd-ba78-b1988b4d3911@tuxon.dev>
-Date: Sat, 31 Jan 2026 16:26:59 +0200
+        Sat, 31 Jan 2026 06:29:13 -0800 (PST)
+Message-ID: <6067cefb-e016-42b4-8a6d-54e03319b2e4@tuxon.dev>
+Date: Sat, 31 Jan 2026 16:29:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,7 +68,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 02/31] clk: at91: pmc: Move macro to header file
+Subject: Re: [PATCH v5 08/31] clk: at91: clk-master: use clk_parent_data
 To: ryan.wanner@microchip.com, mturquette@baylibre.com, sboyd@kernel.org,
  nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
  bmasney@redhat.com, alexander.sverdlin@gmail.com,
@@ -77,26 +77,68 @@ Cc: cristian.birsan@microchip.com, balamanikandan.gunasundar@microchip.com,
  linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org
 References: <cover.1768512290.git.ryan.wanner@microchip.com>
- <ab320688cf0f527089254eeb242acbb87569c509.1768512290.git.ryan.wanner@microchip.com>
+ <548c567b5144e3556aee5e39a9c11ed13167a14a.1768512290.git.ryan.wanner@microchip.com>
 Content-Language: en-US
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <ab320688cf0f527089254eeb242acbb87569c509.1768512290.git.ryan.wanner@microchip.com>
+In-Reply-To: <548c567b5144e3556aee5e39a9c11ed13167a14a.1768512290.git.ryan.wanner@microchip.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
-On 1/16/26 22:06, ryan.wanner@microchip.com wrote:
-> From: Ryan Wanner <Ryan.Wanner@microchip.com>
+On 1/16/26 22:07, ryan.wanner@microchip.com wrote:
+> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 > 
-> Move this macro to the header file as it is used by more than one driver
-
-Please specify which macro.
-
-> file.
+> Use struct clk_parent_data instead of struct parent_hw as this leads
+> to less usage of __clk_get_hw() in SoC specific clock drivers and simpler
+> conversion of existing SoC specific clock drivers from parent_names to
+> modern clk_parent_data structures.
 > 
+> __clk_get_hw will be removed in subsequent patches.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+> [ryan.wanner@microchip.com: Add clk-master changes to SAM9X75 and
+> SAMA7D65 SoCs. As well as add md_slck commit message.]
 > Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+> ---
 
-With that addressed:
+[ ... ]
 
-Reviewed-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+> @@ -1212,7 +1212,7 @@ static void __init sama7d65_pmc_setup(struct device_node *np)
+>   	}
+>   
+>   	hw = at91_clk_register_master_div(regmap, "mck0", NULL,
+> -					  sama7d65_plls[PLL_ID_CPU][1].hw,
+> +					  &AT91_CLK_PD_HW(sama7d65_plls[PLL_ID_CPU][1].hw),
+>   					  &mck0_layout, &mck0_characteristics,
+>   					  &pmc_mck0_lock, CLK_GET_RATE_NOCACHE, 5);
+>   	if (IS_ERR(hw))
+> @@ -1221,12 +1221,11 @@ static void __init sama7d65_pmc_setup(struct device_node *np)
+>   	sama7d65_pmc->chws[PMC_MCK] = hw;
+>   	sama7d65_mckx[PCK_PARENT_HW_MCK0].hw = hw;
+>   
+> -	parent_hws[0] = md_slck_hw;
+> -	parent_hws[1] = td_slck_hw;
+> -	parent_hws[2] = sama7d65_pmc->chws[PMC_MAIN];
+> +	parent_data[0] = AT91_CLK_PD_NAME("md_slck");
+> +	parent_data[1] = AT91_CLK_PD_NAME("td_slck");
+> +	parent_data[2] = AT91_CLK_PD_HW(sama7d65_pmc->chws[PMC_MAIN]);
+>   	for (i = PCK_PARENT_HW_MCK1; i < ARRAY_SIZE(sama7d65_mckx); i++) {
+>   		u8 num_parents = 3 + sama7d65_mckx[i].ep_count;
+> -		struct clk_hw *tmp_parent_hws[8];
+>   		u32 *mux_table;
+>   
+>   		mux_table = kmalloc_array(num_parents, sizeof(*mux_table),
+> @@ -1243,13 +1242,11 @@ static void __init sama7d65_pmc_setup(struct device_node *np)
+>   			u8 pll_id = sama7d65_mckx[i].ep[j].pll_id;
+>   			u8 pll_compid = sama7d65_mckx[i].ep[j].pll_compid;
+>   
+> -			tmp_parent_hws[j] = sama7d65_plls[pll_id][pll_compid].hw;
+> +			parent_data[3 + j] = AT91_CLK_PD_HW(sama7d65_plls[pll_id][pll_compid].hw);
+>   		}
+> -		PMC_FILL_TABLE(&parent_hws[3], tmp_parent_hws,
+> -			       sama7d65_mckx[i].ep_count);
+
+Could you please move this to a different patch? Same for sama7g5.c file.
+
+The rest LGTM.
