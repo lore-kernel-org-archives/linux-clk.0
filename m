@@ -1,183 +1,162 @@
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF4F36C0C5
-	for <linux-clk@vger.kernel.org>; Mon,  2 Feb 2026 14:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37074371070
+	for <linux-clk@vger.kernel.org>; Mon,  2 Feb 2026 14:46:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.167.46
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770041843; cv=pass; b=dWaF5IUZ52yYQvq7Eg5PGqRW8uGrqdJl7b0PgQc6m3NquECwEZvF/vi86Xzp2C3wxofb+NYlUTpT31DZMRYdArGnsIj6LlgKlOtgFOFYi38oInEj1AgkJKMt6nAvGY6/5Egf+nJmIx6L1QhkElpeo+0HrkX/7dLeOsJzoROw0e8=
+	t=1770043598; cv=pass; b=uHCJ0mdbUIaDTiFs+S8RjIvaCbhbUvPMsXSJNzLddb8EdSAKoFIRnXiTRAgDOvf3lZbzErKOsutoXG/BbSlP0uAfsLScfrHrWzlK5I9rD8l8ynFCNmbBw0e3hy0Jt0LeSGZQ8gm6bh7Jlil8JEMhDW9zW0pMBR/um+OX+UFMCFo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770041843; c=relaxed/simple;
-	bh=8kTR9QPGFqxQjrlyBR2RFv6GOSbe116yVA/R+TPaP8c=;
+	s=arc-20240116; t=1770043598; c=relaxed/simple;
+	bh=6wKlGaF+HJlYg3oYlybm2siLLYbtx8o9sW8eaq0Ny5A=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rdQyWmE+bEI4K3TTkZkeFJgn2WZ4rOYvLuzwxZ8EwO2/Mw1A49waTEz/tCxinXVgiWZjY89fkHSkuoYqFpBJShW6SGATqdg45DIpVD9+rL03MR+lgq1lbCcwPzcFwaO7k0ZGwTsjkXAZndBCzsqSa0sR7fnXLy6zScDs9Y3OBBE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SDvQAlBf; arc=pass smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=mKKe8wjbqiF0l96NBJbEPdpd62+1DxlhUojiJcmFt6O5LSsvjGznlEK3Bs07M9BRw7h6s1i1NtrvrU54hS2xTsbmILM0ex0ha1qkeND22BoBzPKmIOHz4YOR66wu5+fMIaV3EEs2SpAmeA9Ec7VT2GRSKmGGwOa/SrBBhxykYcw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fVOzYKe2; arc=pass smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SDvQAlBf"
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-c5513f598c0so1861803a12.0
-        for <linux-clk@vger.kernel.org>; Mon, 02 Feb 2026 06:17:22 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1770041842; cv=none;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fVOzYKe2"
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-59b6c13b68dso5048016e87.0
+        for <linux-clk@vger.kernel.org>; Mon, 02 Feb 2026 06:46:34 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1770043593; cv=none;
         d=google.com; s=arc-20240605;
-        b=C9OesndZjv25a8u08dc246RWsbUGmakgOyV/I0mYzUlb+ZEEHhp6IAtyk3XfkfpZgC
-         2+I1qADJbpG26xcxVnPL05bN17cpAfujsLFjVs3ZZw8p6vtZhQjgxOjRCVgs3UH/UG8q
-         POEPK+f0PY9bOWfFvqV29uSIEKQ9tEvjbqt+kkCg0xSKEg0gOb14su/Bc7fFZwL7DSau
-         X9NK3LPimGrQUrrY+0qVK/LirXirqRZF27bxNNuB2oGZUxzvAel64QYAPNCPXmptPuGM
-         i3TM9nUEDh+4AKB9tDxUc2Qu0N342SYe5n2hbprO79iSfBKjicQlhp1nsE0vtg8Y/Buy
-         rR6g==
+        b=Y1ynesSnw2LHruwJprmadBMSNLnPtUHzGKkdQ/dkpQv9qsWYsF4ORX3ZDg5oVZ7/At
+         3xqGF3xeG0YbTxgoIFMyOUvdJ6gLmUKbPdihU8i1X97itQmyMkKoR61NRKXCNlGXEotI
+         NvhIZ45HRiWtPQuIxxnVCEIkIK3TlmYTA+f7EnymP4NCJ9SHwcOKwi/8cnBXS0xPMoBr
+         Zz6qI1sfNbfArunknBQqXU4tl/XeKZYwe0jPnFhIZIaHEqocaGZp75gJ0Erocj6jnaY1
+         kogeL/PGxFq/ibDkuvFsdqMm7MgKe3+BjVi5PIwWxPw4ZQFWFNQUA2HDqd+ccokt3Ep4
+         Qv2w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=6DwlNJWcSSWiB1RJVuYLclaV0gPVuBf1c2xRk/9v2KU=;
-        fh=FxhyCJTAtWjgu43zW21N+5HG87lKfYOpsoQ96s2wB4E=;
-        b=Ldgi9s9S00h/GqqozsVucPm51SNLd4iYKkCoXGwQ/TAz9cLyKiOUeEzCkVIBnJwmCW
-         I5VOyngWVnOjyYXPJSKeTyyS2y5NHT9DLGExJ+VR+owPtDeSY7ixY7VV2t2FBWQc6jW1
-         ISYn8ZuTt/ECBrOR0oDv+qO3mh/KFpWtIaIqq127JokTyzkqnnsVIt5WBM/carrYOT+b
-         eSdqjHknxT8BZVJ5fnK78HNXoW6+YyfiRAZZmtj+e352VLuFE3Ml+IElE30DAsn17dB9
-         0gR0ChvYx46Wg+rYc3X9NT6Rx6yX9/y/kyAFOU6jcicrbchWeZW/jnbAVoIfYOMEKiMu
-         /TKw==;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=CCxcsWChfDF2Gh4ycD+vyncq/ofeycyF+64lSijnMn0=;
+        fh=typTWDSqgAkh3URK/edoUbkPcZ654Bfg0Us5OyKthrw=;
+        b=e6TZ45jhiN7ijfEDeysxASaGD7xRODJpRsryubdOLzsZ5HQfh6NuYr3ag1NfbYX1pf
+         VzEdxAl1avYcZl7LhnkZ30Rl938Wk9gDTXu5WboZR1Pvk0Jek4z0218gCI73oukFj2Eu
+         DInvv/1yld0ZVC5SLMgwWXOP6BSMLvvI4rQUf46J4aj7g94xQVmbAHsSegxlsPrsERI2
+         GIOxFwhULbYiUiON62nl6U+iFM7lj1mC1S6b+0Nnd3JBVtHjBfGw3OnH+GRpJ95Lz+RU
+         DkejknaTmylmHztWzRs0C4xF49yDhAOk1dCAWm7pysWWo0QmGS42F8ui5I7i0HyMgA+b
+         +2Jw==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770041842; x=1770646642; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6DwlNJWcSSWiB1RJVuYLclaV0gPVuBf1c2xRk/9v2KU=;
-        b=SDvQAlBfk4fMkm6tAFfFF3AIO0Vkwe/gLIr0LicHAYHw1LdOlijhMOgxUOfeOUYOai
-         aQgW1KOViCdQ+NO5qir/kXFVROaNszqBdfh2YqVwqh0PvJxCKPxmcLGJqDFNy4CGCeIJ
-         LOdcVjnDdg3gR1zd1aWw3jjzWRhOnfnr3zXCpV/HKhxfS8YRPw8VmhZWSQULFscAP5Aa
-         IPIYnZBNPvuRXg/XypQYqiIAkip30+4FJ38wW9zJXCQTd+v5ZCF5i+Tergnd9BEWBpdm
-         lgsotkM6/rmUDWHGGm/Xjk4iz1+6U2gyKcT4pLVWF4kpBP+9E/ZhEsl4McHO0zdEgvk/
-         PWZQ==
+        d=linaro.org; s=google; t=1770043593; x=1770648393; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=CCxcsWChfDF2Gh4ycD+vyncq/ofeycyF+64lSijnMn0=;
+        b=fVOzYKe2l2RRcFW+Sf7fGimY+tIcvF5zBMwbbs7M+DLbk0mH85UpGR3Jws6hsrL7ZQ
+         gjeXyI2CZajzK2NznroXwsu7OdOwiwaT56j3YR/rIVcCra3Zep39byQ7bXnbiJgnA80w
+         c03KOxxv6aHSdSZufwhXe7xg6221bjbExrwu/ii68LoBcV1FpXGkalsGpn7Vyti7RrQ9
+         OeJpYNhAXBcR7UouNnwElYV5VJVwN3HcRVcsVQnJUiGTcY1afNNjV+z4S0KaVdj4poUJ
+         bUMqzXekNZP8KrUlx8w0xMn8F404sCfaITXKzIbS5WU/GF0hxeR3//Epw7itz8PFJ5RU
+         0g6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770041842; x=1770646642;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=6DwlNJWcSSWiB1RJVuYLclaV0gPVuBf1c2xRk/9v2KU=;
-        b=wibz/qtRnXkJchenM4o/hAUs2cFUtLbfrW1yE3MF2Ef99aQQxABHVFJUdxHAi7A0uw
-         ypxlQDog5eO+kwqA0ZgwJXvan0M/xSgClmekufn+VtxIwbIE6ZC2IpPH7xkciZ7EgDqy
-         ier7tYiRstGXs4ajVCtrKK5p7e8gLflicfyQH8LAUZF6/XAnK65lp/4ASmLOH5ZbHkmF
-         U10lMSMRymT4lJ0iXwFrGuFrrdhy2sZufSbJ9vckoSdIE4N1UdnIUBZVlcqHgqbsRCvZ
-         h0CCuzQEz2uiVb+zAfOj15gtHMEQOb/NiWVOKx2vInQ7l5bR1i02t5C+vvS6kCUjcfXH
-         fDJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVtWu3BitmKGcoV1nE4TsNBB18XgXm0atvTZmx+rST5nZg6BC/ELGHAdprLYnIfBnBDuZNMLHSQN5c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzjg3dpvU8bQwLzZ5F/0dWd0v2cj/nYleLdZWgSv15aPqUmpOoW
-	PR1+U9zzG2hrxLbQCWK6PKobzpMrLHJnbDVLn7zMT7K7/xSvlm8opDj4dD7QgsXRs/oIL1RJVY1
-	Vxsh4/b2/sOME7OYPnSS6TVaj32h6jO0=
-X-Gm-Gg: AZuq6aLXsRxinXeSFRSVc0/pSV0pmSYy6vWtRegbiuuV+bu5GDe59WJGdOPo/Noxo8f
-	Xvl4Pahg34YC10yOGxdH2NP/chCcWAkXId+Pwjts8KBb7LoumNSbePbNlVx4IQaWfjeIPQXcOwb
-	J/9fMtpKjdiaLIAm7Idm6oQSaLD8pvW7QYQdAtgjoEaS1k1Am+veb+do/iPZLhRPsz+leyNuZFB
-	8WZnDY6JdY/gzoCLi6YEZ/cXjSmkdZe5Qigp4tvl3lTHNBHqBvrILH9qBNP03EwOMUsNbzsixQ+
-	G6M=
-X-Received: by 2002:a17:90b:5145:b0:34a:9d9a:3f67 with SMTP id
- 98e67ed59e1d1-3543b3eff19mr11142088a91.33.1770041841526; Mon, 02 Feb 2026
- 06:17:21 -0800 (PST)
+        d=1e100.net; s=20230601; t=1770043593; x=1770648393;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CCxcsWChfDF2Gh4ycD+vyncq/ofeycyF+64lSijnMn0=;
+        b=XGtswnUVDQrFHlG8JFCBxMU2V+NFqtDmy/Cs1KdVKzKPGqJuAuFx4XlF60qYghlCta
+         pkiE9ebtiIcykBET63IIOxFHne+zAISYWCnv49aNiVKtU84Hem7Zw2cGJDpaGfiVSTsx
+         M5zKpDe1uPa5BqfP5WbkFv7VG6lnjL+Ops3buBonURGfJK7SqJVSAuyaIvGadG9S/v54
+         oDt3sepIWU3P6YSNPRL5IUaKxLJuVhpQK/eNcdDWnMkOMQ1OzQkokXmgxAN8fRhtCd+y
+         naQjsjjgtWtvZ5Ji5ENY3LE6+0aIP2+lwL7nsyH7d/s/zRGDBLbo9GbMleQEQF5Dy+i8
+         7+RA==
+X-Forwarded-Encrypted: i=1; AJvYcCUX+Qb2xmjPV6iFQRuCMl+sWwRRpOAUYy9fysShak+rOTVpnStZnoowmcJ8T5u2lfJHduBjOopZmPY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIC6JdUtnf3rdl5Bgjbp5vkVTtqrb1liPGs4Bfwolj7z6ejiFY
+	679Zw1wanmvIyV7t5HddRxzLT7eZ1im3Cz5G1yHh4BBX4yqpsz6g/TqIZuVjZgr6oXRekIJPUeO
+	PdxrQYlCDtO/F3RH66Hv6cSbv/6B06yVdUQScsdimEA==
+X-Gm-Gg: AZuq6aIAnq5+uFsJyczmiIgJor4DQONPKrnKIRR0B2Er0tgjjcnVk0Y4L/uAaeBW4HV
+	ORd2gwKJhVc2lsZs6jEe52EF1imrcQtIvOVry78B/SUprpKRl48HiEZemjeCFLZuWCqDb7yodp8
+	+nVi3Njz4w8h3Un94/kJ40DrtzXwdW3K+6KHnJHnNjCYHsl8Tsl7VVB8IwlrmOYfkrmwB6VV+4Y
+	VWjOHY/bpIzni200x+YoBX1zXcBrPM/isDiOjMABKFwfCagbGI73KyS1/ZBIqxjCVxwooWQ
+X-Received: by 2002:a05:6512:3d07:b0:59d:f1c7:3e02 with SMTP id
+ 2adb3069b0e04-59e0d88d299mr7865289e87.1.1770043593213; Mon, 02 Feb 2026
+ 06:46:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260131-clk-imx6q-v2-0-70471ddc99e0@gmail.com>
- <20260131-clk-imx6q-v2-1-70471ddc99e0@gmail.com> <aX4q+W3Sjx5SRHrC@lizhi-Precision-Tower-5810>
- <aYAGMAE7ppXP/lbR@shlinux89>
-In-Reply-To: <aYAGMAE7ppXP/lbR@shlinux89>
-From: Felix Gu <ustc.gu@gmail.com>
-Date: Mon, 2 Feb 2026 22:17:11 +0800
-X-Gm-Features: AZwV_QhoCxlCzLAcnWkBO4ogn0VW2M6mcHRnmBpiFBphn4q3UInMNacf8_hKx4Q
-Message-ID: <CAN4SLj3AaM8qiS=DefEWT=EZKQJ6MVa2zEFhU4vgpJZzDBFq7g@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] clk: imx: imx6q: Fix device node reference leak in pll6_bypassed()
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Frank Li <Frank.li@nxp.com>, Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Lucas Stach <l.stach@pengutronix.de>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Akshay Bhat <akshay.bhat@timesys.com>, 
-	Ranjani Vaidyanathan <Ranjani.Vaidyanathan@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
-	linux-clk@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20260201-iris-venus-fix-sm8250-v2-0-6f40d2605c89@oss.qualcomm.com>
+In-Reply-To: <20260201-iris-venus-fix-sm8250-v2-0-6f40d2605c89@oss.qualcomm.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 2 Feb 2026 15:45:56 +0100
+X-Gm-Features: AZwV_QhOzR0E6k1IfUGRMUbn9MQFxH_pvh_89KhmlNk_aUHzuxVlk0zPxkYMZY8
+Message-ID: <CAPDyKFoNX087ZhLkQ_n8-42WNQcL06noSuPJPDG87y0andVdNg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/8] media: qcom: iris/venus: fix power domain handling
+ on SM8250
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Taniya Das <quic_tdas@quicinc.com>, Jonathan Marek <jonathan@marek.ca>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, "Bryan O'Donoghue" <bod@kernel.org>, 
+	Vikash Garodia <vikash.garodia@oss.qualcomm.com>, 
+	Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Stanimir Varbanov <stanimir.varbanov@linaro.org>, 
+	Abhinav Kumar <abhinav.kumar@linux.dev>, Hans Verkuil <hverkuil@kernel.org>, 
+	Stefan Schmidt <stefan.schmidt@linaro.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Dikshita Agarwal <dikshita@qti.qualcomm.com>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-media@vger.kernel.org, 
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 2, 2026 at 10:03=E2=80=AFAM Peng Fan <peng.fan@oss.nxp.com> wro=
-te:
+On Sun, 1 Feb 2026 at 11:49, Dmitry Baryshkov
+<dmitry.baryshkov@oss.qualcomm.com> wrote:
 >
-> On Sat, Jan 31, 2026 at 11:16:57AM -0500, Frank Li wrote:
-> >On Sat, Jan 31, 2026 at 04:11:34PM +0800, Felix Gu wrote:
-> >> The function pll6_bypassed() calls of_parse_phandle_with_args()
-> >> but never calls of_node_put() to release the reference, causing
-> >> a memory leak.
-> >>
-> >> Fix this by adding proper cleanup calls on all exit paths.
-> >>
-> >> Fixes: 3cc48976e9763 ("clk: imx6q: handle ENET PLL bypass")
-> >> Signed-off-by: Felix Gu <ustc.gu@gmail.com>
-> >> ---
-> >>  drivers/clk/imx/clk-imx6q.c | 6 +++++-
-> >>  1 file changed, 5 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-> >> index bf4c1d9c9928..1d8e8f0891a3 100644
-> >> --- a/drivers/clk/imx/clk-imx6q.c
-> >> +++ b/drivers/clk/imx/clk-imx6q.c
-> >> @@ -238,8 +238,11 @@ static bool pll6_bypassed(struct device_node *nod=
-e)
-> >>                      return false;
-> >>
+> As pointed out by Konrad during the review of SM8350 / SC8280XP
+> patchset, Iris aka Venus description has several flows. It doesn't scale
+> MMCX, the frequencies in the OPP table are wrong, etc.
 >
-> One more comment:
-> Put one line here, "of_node_put", no need duplicate it in below.
-Hi Peng,
-Thanks for your review.
-Frank also mentioned this in V1, but I think it may not be good to use
-clkspec.np after calling of_node_put().
+> Let's correct the Iris/Venus enablement for SM8250 (unfortunately also
+> stopping it from being overclocked).
+>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-Best regards,
-Felix Gu
+Do you want me to pick up patch2 for v7.0 - or what do you suggest at
+this point?
+
+Kind regards
+Uffe
+
+
+> ---
+> Changes in v2:
+> - Fixed example in the new sm8250-videocc schema
+> - Link to v1: https://lore.kernel.org/r/20260131-iris-venus-fix-sm8250-v1-0-b635ee66284c@oss.qualcomm.com
 >
-> >>              if (clkspec.np =3D=3D node &&
-> >> -                clkspec.args[0] =3D=3D IMX6QDL_PLL6_BYPASS)
-> >> +                clkspec.args[0] =3D=3D IMX6QDL_PLL6_BYPASS) {
-> >> +                    of_node_put(clkspec.np);
+> ---
+> Dmitry Baryshkov (8):
+>       dt-bindings: clock: qcom,sm8250-videocc: account for the MX domain
+>       pmdomain: de-constify fields struct dev_pm_domain_attach_data
+>       media: dt-bindings: qcom,sm8250-venus: sort out power domains
+>       media: iris: scale MMCX power domain on SM8250
+>       media: venus: scale MMCX power domain on SM8250
+>       arm64: dts: qcom: sm8250: add MX power domain to the video CC
+>       arm64: dts: qcom: sort out Iris power domains
+>       arm64: dts: qcom: sm8250: correct frequencies in the Iris OPP table
 >
-> Drop this change
+>  .../bindings/clock/qcom,sm8250-videocc.yaml        | 85 ++++++++++++++++++++++
+>  .../devicetree/bindings/clock/qcom,videocc.yaml    | 20 -----
+>  .../bindings/media/qcom,sm8250-venus.yaml          | 10 +--
+>  arch/arm64/boot/dts/qcom/sm8250.dtsi               | 42 +++++++----
+>  .../media/platform/qcom/iris/iris_platform_gen1.c  |  2 +-
+>  drivers/media/platform/qcom/iris/iris_probe.c      |  7 ++
+>  drivers/media/platform/qcom/venus/core.c           |  7 +-
+>  drivers/media/platform/qcom/venus/core.h           |  1 +
+>  drivers/media/platform/qcom/venus/pm_helpers.c     |  8 +-
+>  include/linux/pm_domain.h                          |  4 +-
+>  10 files changed, 140 insertions(+), 46 deletions(-)
+> ---
+> base-commit: 44ef70faf71468e0ae4bdb782a6d43f0614b8ffa
+> change-id: 20260131-iris-venus-fix-sm8250-f938e29e7497
 >
-> >>                      break;
-> >> +            }
-> >> +            of_node_put(clkspec.np);
+> Best regards,
+> --
+> With best wishes
+> Dmitry
 >
-> Ditto.
->
-> Regards,
-> Peng
->
-> >>      }
-> >>
-> >>      /* PLL6 bypass is not part of the assigned clock list */
-> >> @@ -249,6 +252,7 @@ static bool pll6_bypassed(struct device_node *node=
-)
-> >>      ret =3D of_parse_phandle_with_args(node, "assigned-clock-parents"=
-,
-> >>                                       "#clock-cells", index, &clkspec)=
-;
-> >>
-> >
-> >If ret is err, clkspec will not touched. So clkspec.np keep old value,
-> >of_node_put(clkspec.np) will put twice for previous np.
-> >
-> >So need add if (ret) check here. Or use difference variable clkspec with
-> >init 0.
-> >
-> >Frank
-> >
-> >> +    of_node_put(clkspec.np);
-> >>      if (clkspec.args[0] !=3D IMX6QDL_CLK_PLL6)
-> >>              return true;
-> >>
-> >>
-> >> --
-> >> 2.43.0
-> >>
