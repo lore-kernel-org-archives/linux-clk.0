@@ -1,179 +1,183 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0603D36B044
-	for <linux-clk@vger.kernel.org>; Mon,  2 Feb 2026 14:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770041126; cv=none; b=HZpFgfo8uGRxWowDYI7p/Ejeqob6n6fqI6neQFxi8ho9IjpXu7Mve+yA3JWLut1ecMm97HVs+KVCZInc2AQutlQJ5ZOrbo/zUkr5rMAXCNjmGyH+FdLZJTiVnT/NJTOW6qGRx0Y0kyfby4ytC1mY8SQMBfaolxbMqaoUz/hnV6k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770041126; c=relaxed/simple;
-	bh=jKeKlzbc6F3kaHHy5UVAovmfEXOB3L8i605E7NTJsaY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HJ9EYsaVfMShBYiMlaRArp+Lp3XTc7mnIsvFcvO7b8XRg8dJFsNUTHwaV2howy7jTnFlaFnBins8wE3OCtLyfWzN0Ruy6upNApPWjk3cLCdcp0VWlI4X5YHfhbG+6eb0shm9eYqrH6sE6Xb9DJd758V3K3ENYkYk1oy1VwIMfK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vmuYC-0003l2-3s; Mon, 02 Feb 2026 15:05:12 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vmuYA-003kK6-33;
-	Mon, 02 Feb 2026 15:05:10 +0100
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vmuYA-00000000BVX-0mYa;
-	Mon, 02 Feb 2026 15:05:10 +0100
-Message-ID: <d17eaa6b5fcb22a4c06f7c36408fb919ec60b45e.camel@pengutronix.de>
-Subject: Re: [PATCH v4 2/3] reset: tenstorrent: Add reset controller for
- Atlantis
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>, Drew Fustini	
- <dfustini@oss.tenstorrent.com>, Joel Stanley <jms@oss.tenstorrent.com>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley	 <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, joel@jms.id.au, 
-	fustini@kernel.org, mpe@kernel.org, mpe@oss.tenstorrent.com, 
-	npiggin@oss.tenstorrent.com, agross@kernel.org, agross@oss.tenstorrent.com,
- 	bmasney@redhat.com
-Date: Mon, 02 Feb 2026 15:05:10 +0100
-In-Reply-To: <20260130-atlantis-clocks-v4-2-46de52d52924@oss.tenstorrent.com>
-References: <20260130-atlantis-clocks-v4-0-46de52d52924@oss.tenstorrent.com>
-	 <20260130-atlantis-clocks-v4-2-46de52d52924@oss.tenstorrent.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF4F36C0C5
+	for <linux-clk@vger.kernel.org>; Mon,  2 Feb 2026 14:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.178
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770041843; cv=pass; b=dWaF5IUZ52yYQvq7Eg5PGqRW8uGrqdJl7b0PgQc6m3NquECwEZvF/vi86Xzp2C3wxofb+NYlUTpT31DZMRYdArGnsIj6LlgKlOtgFOFYi38oInEj1AgkJKMt6nAvGY6/5Egf+nJmIx6L1QhkElpeo+0HrkX/7dLeOsJzoROw0e8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770041843; c=relaxed/simple;
+	bh=8kTR9QPGFqxQjrlyBR2RFv6GOSbe116yVA/R+TPaP8c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rdQyWmE+bEI4K3TTkZkeFJgn2WZ4rOYvLuzwxZ8EwO2/Mw1A49waTEz/tCxinXVgiWZjY89fkHSkuoYqFpBJShW6SGATqdg45DIpVD9+rL03MR+lgq1lbCcwPzcFwaO7k0ZGwTsjkXAZndBCzsqSa0sR7fnXLy6zScDs9Y3OBBE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SDvQAlBf; arc=pass smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SDvQAlBf"
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-c5513f598c0so1861803a12.0
+        for <linux-clk@vger.kernel.org>; Mon, 02 Feb 2026 06:17:22 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1770041842; cv=none;
+        d=google.com; s=arc-20240605;
+        b=C9OesndZjv25a8u08dc246RWsbUGmakgOyV/I0mYzUlb+ZEEHhp6IAtyk3XfkfpZgC
+         2+I1qADJbpG26xcxVnPL05bN17cpAfujsLFjVs3ZZw8p6vtZhQjgxOjRCVgs3UH/UG8q
+         POEPK+f0PY9bOWfFvqV29uSIEKQ9tEvjbqt+kkCg0xSKEg0gOb14su/Bc7fFZwL7DSau
+         X9NK3LPimGrQUrrY+0qVK/LirXirqRZF27bxNNuB2oGZUxzvAel64QYAPNCPXmptPuGM
+         i3TM9nUEDh+4AKB9tDxUc2Qu0N342SYe5n2hbprO79iSfBKjicQlhp1nsE0vtg8Y/Buy
+         rR6g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=6DwlNJWcSSWiB1RJVuYLclaV0gPVuBf1c2xRk/9v2KU=;
+        fh=FxhyCJTAtWjgu43zW21N+5HG87lKfYOpsoQ96s2wB4E=;
+        b=Ldgi9s9S00h/GqqozsVucPm51SNLd4iYKkCoXGwQ/TAz9cLyKiOUeEzCkVIBnJwmCW
+         I5VOyngWVnOjyYXPJSKeTyyS2y5NHT9DLGExJ+VR+owPtDeSY7ixY7VV2t2FBWQc6jW1
+         ISYn8ZuTt/ECBrOR0oDv+qO3mh/KFpWtIaIqq127JokTyzkqnnsVIt5WBM/carrYOT+b
+         eSdqjHknxT8BZVJ5fnK78HNXoW6+YyfiRAZZmtj+e352VLuFE3Ml+IElE30DAsn17dB9
+         0gR0ChvYx46Wg+rYc3X9NT6Rx6yX9/y/kyAFOU6jcicrbchWeZW/jnbAVoIfYOMEKiMu
+         /TKw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1770041842; x=1770646642; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6DwlNJWcSSWiB1RJVuYLclaV0gPVuBf1c2xRk/9v2KU=;
+        b=SDvQAlBfk4fMkm6tAFfFF3AIO0Vkwe/gLIr0LicHAYHw1LdOlijhMOgxUOfeOUYOai
+         aQgW1KOViCdQ+NO5qir/kXFVROaNszqBdfh2YqVwqh0PvJxCKPxmcLGJqDFNy4CGCeIJ
+         LOdcVjnDdg3gR1zd1aWw3jjzWRhOnfnr3zXCpV/HKhxfS8YRPw8VmhZWSQULFscAP5Aa
+         IPIYnZBNPvuRXg/XypQYqiIAkip30+4FJ38wW9zJXCQTd+v5ZCF5i+Tergnd9BEWBpdm
+         lgsotkM6/rmUDWHGGm/Xjk4iz1+6U2gyKcT4pLVWF4kpBP+9E/ZhEsl4McHO0zdEgvk/
+         PWZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770041842; x=1770646642;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=6DwlNJWcSSWiB1RJVuYLclaV0gPVuBf1c2xRk/9v2KU=;
+        b=wibz/qtRnXkJchenM4o/hAUs2cFUtLbfrW1yE3MF2Ef99aQQxABHVFJUdxHAi7A0uw
+         ypxlQDog5eO+kwqA0ZgwJXvan0M/xSgClmekufn+VtxIwbIE6ZC2IpPH7xkciZ7EgDqy
+         ier7tYiRstGXs4ajVCtrKK5p7e8gLflicfyQH8LAUZF6/XAnK65lp/4ASmLOH5ZbHkmF
+         U10lMSMRymT4lJ0iXwFrGuFrrdhy2sZufSbJ9vckoSdIE4N1UdnIUBZVlcqHgqbsRCvZ
+         h0CCuzQEz2uiVb+zAfOj15gtHMEQOb/NiWVOKx2vInQ7l5bR1i02t5C+vvS6kCUjcfXH
+         fDJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVtWu3BitmKGcoV1nE4TsNBB18XgXm0atvTZmx+rST5nZg6BC/ELGHAdprLYnIfBnBDuZNMLHSQN5c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzjg3dpvU8bQwLzZ5F/0dWd0v2cj/nYleLdZWgSv15aPqUmpOoW
+	PR1+U9zzG2hrxLbQCWK6PKobzpMrLHJnbDVLn7zMT7K7/xSvlm8opDj4dD7QgsXRs/oIL1RJVY1
+	Vxsh4/b2/sOME7OYPnSS6TVaj32h6jO0=
+X-Gm-Gg: AZuq6aLXsRxinXeSFRSVc0/pSV0pmSYy6vWtRegbiuuV+bu5GDe59WJGdOPo/Noxo8f
+	Xvl4Pahg34YC10yOGxdH2NP/chCcWAkXId+Pwjts8KBb7LoumNSbePbNlVx4IQaWfjeIPQXcOwb
+	J/9fMtpKjdiaLIAm7Idm6oQSaLD8pvW7QYQdAtgjoEaS1k1Am+veb+do/iPZLhRPsz+leyNuZFB
+	8WZnDY6JdY/gzoCLi6YEZ/cXjSmkdZe5Qigp4tvl3lTHNBHqBvrILH9qBNP03EwOMUsNbzsixQ+
+	G6M=
+X-Received: by 2002:a17:90b:5145:b0:34a:9d9a:3f67 with SMTP id
+ 98e67ed59e1d1-3543b3eff19mr11142088a91.33.1770041841526; Mon, 02 Feb 2026
+ 06:17:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+References: <20260131-clk-imx6q-v2-0-70471ddc99e0@gmail.com>
+ <20260131-clk-imx6q-v2-1-70471ddc99e0@gmail.com> <aX4q+W3Sjx5SRHrC@lizhi-Precision-Tower-5810>
+ <aYAGMAE7ppXP/lbR@shlinux89>
+In-Reply-To: <aYAGMAE7ppXP/lbR@shlinux89>
+From: Felix Gu <ustc.gu@gmail.com>
+Date: Mon, 2 Feb 2026 22:17:11 +0800
+X-Gm-Features: AZwV_QhoCxlCzLAcnWkBO4ogn0VW2M6mcHRnmBpiFBphn4q3UInMNacf8_hKx4Q
+Message-ID: <CAN4SLj3AaM8qiS=DefEWT=EZKQJ6MVa2zEFhU4vgpJZzDBFq7g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] clk: imx: imx6q: Fix device node reference leak in pll6_bypassed()
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Frank Li <Frank.li@nxp.com>, Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Lucas Stach <l.stach@pengutronix.de>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Akshay Bhat <akshay.bhat@timesys.com>, 
+	Ranjani Vaidyanathan <Ranjani.Vaidyanathan@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
+	linux-clk@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fr, 2026-01-30 at 11:50 -0600, Anirudh Srinivasan wrote:
-> Adds Atlantis Reset Controller and auxiliary device definitions for
-> reset to share same regmap interface as prcm (clock controller).
->=20
-> This version of the reset controller driver covers resets from the RCPU
-> prcm.
->=20
-> Signed-off-by: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
-> ---
->  MAINTAINERS                                |   2 +
->  drivers/reset/Kconfig                      |  11 ++
->  drivers/reset/Makefile                     |   1 +
->  drivers/reset/reset-tenstorrent-atlantis.c | 160 +++++++++++++++++++++++=
-++++++
->  include/soc/tenstorrent/atlantis-prcm.h    |  31 ++++++
->  5 files changed, 205 insertions(+)
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 0fc7bc6d0458..0cde1774567d 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -22537,7 +22537,9 @@ T:	git https://github.com/tenstorrent/linux.git
->  F:	Documentation/devicetree/bindings/clock/tenstorrent,atlantis-prcm.yam=
-l
->  F:	Documentation/devicetree/bindings/riscv/tenstorrent.yaml
->  F:	arch/riscv/boot/dts/tenstorrent/
-> +F:	drivers/reset/reset-tenstorrent-atlantis.c
->  F:	include/dt-bindings/clock/tenstorrent,atlantis-prcm.h
-> +F:	include/soc/tenstorrent/
-> =20
->  RISC-V THEAD SoC SUPPORT
->  M:	Drew Fustini <fustini@kernel.org>
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index 6e5d6deffa7d..cade77717492 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -324,6 +324,17 @@ config RESET_SUNXI
->  	help
->  	  This enables the reset driver for Allwinner SoCs.
-> =20
-> +config RESET_TENSTORRENT_ATLANTIS
-> +	tristate "Tenstorrent atlantis reset driver"
-> +	depends on ARCH_TENSTORRENT || COMPILE_TEST
-> +	select AUXILIARY_BUS
-> +	default ARCH_TENSTORRENT
-> +	help
-> +	  This enables the driver for the reset controller
-> +	  present in the Tenstorrent Atlantis SoC.
-> +	  Enable this option to be able to use hardware
-> +	  resets on Atalantis based systems.
-> +
->  config RESET_TH1520
->  	tristate "T-HEAD TH1520 reset controller"
->  	depends on ARCH_THEAD || COMPILE_TEST
-> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-> index 9c3e484dfd81..a31959da0a88 100644
-> --- a/drivers/reset/Makefile
-> +++ b/drivers/reset/Makefile
-> @@ -41,6 +41,7 @@ obj-$(CONFIG_RESET_SOCFPGA) +=3D reset-socfpga.o
->  obj-$(CONFIG_RESET_SPACEMIT) +=3D reset-spacemit.o
->  obj-$(CONFIG_RESET_SUNPLUS) +=3D reset-sunplus.o
->  obj-$(CONFIG_RESET_SUNXI) +=3D reset-sunxi.o
-> +obj-$(CONFIG_RESET_TENSTORRENT_ATLANTIS) +=3D reset-tenstorrent-atlantis=
-.o
->  obj-$(CONFIG_RESET_TH1520) +=3D reset-th1520.o
->  obj-$(CONFIG_RESET_TI_SCI) +=3D reset-ti-sci.o
->  obj-$(CONFIG_RESET_TI_SYSCON) +=3D reset-ti-syscon.o
-> diff --git a/drivers/reset/reset-tenstorrent-atlantis.c b/drivers/reset/r=
-eset-tenstorrent-atlantis.c
-> new file mode 100644
-> index 000000000000..6fe9143ad76c
-> --- /dev/null
-> +++ b/drivers/reset/reset-tenstorrent-atlantis.c
-> @@ -0,0 +1,160 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Tenstorrent Atlantis PRCM Reset Driver
-> + *
-> + * Copyright (c) 2026 Tenstorrent
-> + */
-> +
-> +#include <dt-bindings/clock/tenstorrent,atlantis-prcm.h>
-> +#include <linux/auxiliary_bus.h>
-> +#include <linux/reset-controller.h>
-> +#include <linux/regmap.h>
-> +#include <soc/tenstorrent/atlantis-prcm.h>
-> +
-> +struct atlantis_reset_data {
-> +	u8 bit;
-> +	u16 reg;
-> +	bool active_low;
-> +};
-> +
-> +struct atlantis_reset_controller_data {
-> +	const struct atlantis_reset_data *reset_data;
-> +	size_t count;
-> +};
-> +
-> +struct atlantis_reset_controller {
-> +	struct reset_controller_dev rcdev;
-> +	const struct atlantis_reset_controller_data *data;
-> +	struct regmap *regmap;
-> +};
-> +
-> +#define to_atlantis_reset_controller(_rcdev) \
-> +	container_of((_rcdev), struct atlantis_reset_controller, rcdev)
+On Mon, Feb 2, 2026 at 10:03=E2=80=AFAM Peng Fan <peng.fan@oss.nxp.com> wro=
+te:
+>
+> On Sat, Jan 31, 2026 at 11:16:57AM -0500, Frank Li wrote:
+> >On Sat, Jan 31, 2026 at 04:11:34PM +0800, Felix Gu wrote:
+> >> The function pll6_bypassed() calls of_parse_phandle_with_args()
+> >> but never calls of_node_put() to release the reference, causing
+> >> a memory leak.
+> >>
+> >> Fix this by adding proper cleanup calls on all exit paths.
+> >>
+> >> Fixes: 3cc48976e9763 ("clk: imx6q: handle ENET PLL bypass")
+> >> Signed-off-by: Felix Gu <ustc.gu@gmail.com>
+> >> ---
+> >>  drivers/clk/imx/clk-imx6q.c | 6 +++++-
+> >>  1 file changed, 5 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+> >> index bf4c1d9c9928..1d8e8f0891a3 100644
+> >> --- a/drivers/clk/imx/clk-imx6q.c
+> >> +++ b/drivers/clk/imx/clk-imx6q.c
+> >> @@ -238,8 +238,11 @@ static bool pll6_bypassed(struct device_node *nod=
+e)
+> >>                      return false;
+> >>
+>
+> One more comment:
+> Put one line here, "of_node_put", no need duplicate it in below.
+Hi Peng,
+Thanks for your review.
+Frank also mentioned this in V1, but I think it may not be good to use
+clkspec.np after calling of_node_put().
 
-Please make this an inline function as well. With that,
-
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-
-Since this patch both depends on patch 1 and is a dependency for patch
-3, I suppose this should go through the clock tree.
-
-regards
-Philipp
+Best regards,
+Felix Gu
+>
+> >>              if (clkspec.np =3D=3D node &&
+> >> -                clkspec.args[0] =3D=3D IMX6QDL_PLL6_BYPASS)
+> >> +                clkspec.args[0] =3D=3D IMX6QDL_PLL6_BYPASS) {
+> >> +                    of_node_put(clkspec.np);
+>
+> Drop this change
+>
+> >>                      break;
+> >> +            }
+> >> +            of_node_put(clkspec.np);
+>
+> Ditto.
+>
+> Regards,
+> Peng
+>
+> >>      }
+> >>
+> >>      /* PLL6 bypass is not part of the assigned clock list */
+> >> @@ -249,6 +252,7 @@ static bool pll6_bypassed(struct device_node *node=
+)
+> >>      ret =3D of_parse_phandle_with_args(node, "assigned-clock-parents"=
+,
+> >>                                       "#clock-cells", index, &clkspec)=
+;
+> >>
+> >
+> >If ret is err, clkspec will not touched. So clkspec.np keep old value,
+> >of_node_put(clkspec.np) will put twice for previous np.
+> >
+> >So need add if (ret) check here. Or use difference variable clkspec with
+> >init 0.
+> >
+> >Frank
+> >
+> >> +    of_node_put(clkspec.np);
+> >>      if (clkspec.args[0] !=3D IMX6QDL_CLK_PLL6)
+> >>              return true;
+> >>
+> >>
+> >> --
+> >> 2.43.0
+> >>
