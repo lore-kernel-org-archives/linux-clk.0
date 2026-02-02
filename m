@@ -1,348 +1,64 @@
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011020.outbound.protection.outlook.com [52.101.125.20])
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B04365A0C;
-	Mon,  2 Feb 2026 12:01:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770033682; cv=fail; b=ilYesY2EveNJOgbQdVW4QMEjo5IuuTST4eNZJYn4+K3uneew+LlQugBZl9pCqJCGsNfz4KWPHz4pl1S0aVyB9hX8MTr1XakX2Ut28MYlCZWrOzl/k3XigI4zPj7k7tY2jO4XJKcyfpg4WRLrxsiAL5KyJm+FrwjgnjTcV32mcQk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770033682; c=relaxed/simple;
-	bh=g1reX91Pshpx5VN3Ootvt3VlHN8Al/9rOc/ccVaESa4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BZdF/qqIMwTG7CcAtLipnNBTDlSZKOAvMdU7KXPjRurZWHAh3r1+BKwcadSnuvbQL8B/68UBzmU6xxNf08xgJfaD7ZzVFkQuXnL6mgEiY9IITvNTsOTviPrc3Eu3ub4oWHnDgGiebz+TsRVOV4KGGS0zPpXhzXNnOWjImZznECs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=NHXkyen0; arc=fail smtp.client-ip=52.101.125.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFF5285CBA;
+	Mon,  2 Feb 2026 13:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770040568; cv=none; b=Q9UCOc2kvw2qVUSh/jNk512UjvG6YGxG2Q3qvx4l4fI0q/gHkrnJuF1iyHvjqylZv4B982M9hrswBvNw/iLkbNxLz+9Mbhj5u5jVTGtJs/onN5YcjmilR3ezo+k/2tCI8oTsY82qp45Dy1Sc+QlNfq65QPl8ZHYegvsWL6tGiKQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770040568; c=relaxed/simple;
+	bh=kvwKExbwIcYF0ue04OiBMJvdmTlLzUZT5GdsFLWH7q0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fzdQH8lVVLvliQVfWtlcDBU8XKY5gZJWrWa//z/lWc7IxuuuFjOWUUmAfT7DRc5x0c5VjFLq+zv5RXGNEGeFhEDCfRIWPg3S7gDWblx2jlFh9qRK12d4KfikAUSJpdJNMNLsBRZnyk1A8bYe9c9jQbJ7+VzqlhNxW/yVRW46SH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=onYzNWYT; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="NHXkyen0"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QmA46105w+3dCFUeV9IjNqGOgFoumth0N5pxmrvMuVpHFSMNlgzPaDZwqjBOv2ch72cS9XnHBmt6Br7M/hbIGnan+1vV6s0zOjD0wbG5Z8I6X9LQi+jEhxRprRK7yFzo1FUTUc6uTYRJmfTxgKzda6t0oITzKa+/C6KT1PzpxDl0ooRLuid+EVpeauYsD02mxTt6k8Bpbe7dkenJ9jCDZ7MaijY8+lQuXsCtrsYxyoKy02H/drMd3NvnKNyKPKY5f5mVDxFgPzAhZTSKcLNeqT+k9Qr52wy6dRnSWSX4rhNc/5b5Hywz/2ZAOFmO1xf8/DJBnpldh658cHu8+hkqJA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hWOFHiP+NMtIgVsAL862cVXLQKnbC9xQ/haJxziiTDw=;
- b=Qv5mGKsJNWunWOZZdEFFkS12r8+8RDE4J2tL6SFqZ+2z8+1lOvhBWNMnILBfqWGqihjhY394J1Yb3zAcEo0lzc4BfzkHLALQ2E6Y5xDGMMijr6Cqdno0aBNo1hTQzsDf09+qOZPaYsMD0BbjbXREZzf9zhZshItnJBAgj11+n29+fQoGIdXG3EOn23Ub9ylTh4gBRVzle1RK7xVOgnp+RlGMmZkiP5OqmzbUUwqQbcgEcVEhn1/bwbX0sycRyaqEBQM/C2qBOXI3oW+uAbMp01HTLXYkBP0L7A5mbuTHane0jnmWynhgA1gt6v5xi46TFj9R2W43HG0ErW001h0YVA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hWOFHiP+NMtIgVsAL862cVXLQKnbC9xQ/haJxziiTDw=;
- b=NHXkyen00m3rUZka/1BZk8985BWAW5YMqmWSuN3XDWqdRf13XxSx0Dp05v3wMJZzxG9Xt0VG4whp1xBtHt9/dXw9ooZGIs1AYBZKmixss8YZAiwNn/KzuhtYZO0/vKvmiBMImp+m0ofr07jAPF3TtD211X2TbSiT5WjidN0s+C8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com (2603:1096:400:3e1::6)
- by OSZPR01MB8632.jpnprd01.prod.outlook.com (2603:1096:604:16c::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9564.16; Mon, 2 Feb
- 2026 12:01:18 +0000
-Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com
- ([fe80::33f1:f7cd:46be:e4d8]) by TYCPR01MB11947.jpnprd01.prod.outlook.com
- ([fe80::33f1:f7cd:46be:e4d8%5]) with mapi id 15.20.9564.016; Mon, 2 Feb 2026
- 12:01:18 +0000
-From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-To: tomm.merciai@gmail.com,
-	geert@linux-m68k.org,
-	laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org,
-	biju.das.jz@bp.renesas.com,
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v4 20/20] arm64: dts: renesas: r9a09g047e57-smarc: Enable DU1 and DSI support
-Date: Mon,  2 Feb 2026 12:57:51 +0100
-Message-ID: <c675387c866ae08304fd4db3706ff6ebde19164e.1770030493.git.tommaso.merciai.xr@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1770030493.git.tommaso.merciai.xr@bp.renesas.com>
-References: <cover.1770030493.git.tommaso.merciai.xr@bp.renesas.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: FR0P281CA0087.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:1e::12) To TYCPR01MB11947.jpnprd01.prod.outlook.com
- (2603:1096:400:3e1::6)
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="onYzNWYT"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=ZQh9OYc3Oc4hr8yMakIVLGrYeLd2XVCP0GPV4wb5uzM=; b=onYzNWYTUx1c1sMmhmU2VYAXzS
+	2EEyuUZNK6gff5lLgdPS2mFkrr2o7bA9Vu8lMFTKNj5rQ0PWvjbWbg3ogQtO43rJE0hB3vvA+E8fL
+	evzT/vn2UqXuxBP3LBeLA2qnvecZ0gXSEyDVoQ7yqGREkK1pYoc8/5smRdD0cDfg39f0=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vmuPF-005pYn-72; Mon, 02 Feb 2026 14:55:57 +0100
+Date: Mon, 2 Feb 2026 14:55:57 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Mihai Sain <mihai.sain@microchip.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, nicolas.ferre@microchip.com,
+	alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev,
+	varshini.rajendran@microchip.com, cristian.birsan@microchip.com,
+	balamanikandan.gunasundar@microchip.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, ryan.wanner@microchip.com
+Subject: Re: [PATCH 1/5] clk: at91: sam9x7: Remove gmac peripheral and
+ generic clock entries with ID 67
+Message-ID: <2fa66fa6-1ad5-430b-b030-c3969147c853@lunn.ch>
+References: <20260202104025.3781-1-mihai.sain@microchip.com>
+ <20260202104025.3781-2-mihai.sain@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYCPR01MB11947:EE_|OSZPR01MB8632:EE_
-X-MS-Office365-Filtering-Correlation-Id: 69ae4612-9b89-4344-aeec-08de6252c5b6
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|1800799024|52116014|7416014|376014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?YkYHqepo7nrm6ydJWi1CQ3/rtW2HtKvu+rUyxgvPaSgYZpSwZxeJR2ZT6H/Y?=
- =?us-ascii?Q?3zYOvANSFLLsDxsBZAV1ANRomICGZVVTl9U33TetrNCMJrg7QQjMwGT6REzk?=
- =?us-ascii?Q?ZVBhmqW0yEtUlsaaDsFAsMX9WKZhOppqjeC97hIB8Fv6OVQZVIiggdVBjsbP?=
- =?us-ascii?Q?CsfRmMG1mPvc9vkxsMp8IWZ65EP241igFHYlf9ugIMP/NsKCKM26y5OhZcPr?=
- =?us-ascii?Q?MRgqr/CBFqbTD2tJRInFiryNWYSGdOAXzVe4IYw2BwwufWvJSuzNtFu9YEp+?=
- =?us-ascii?Q?6Fnoux2TJpIffZb/R9rMvfWJliP3fcufsw21gaalZZYSPedRjhgAXzBghaVm?=
- =?us-ascii?Q?WV/ZDP4bd4zO+4KL3UJa6qDlwCaHG2XEfwnoW8zBk58spndU/OkVkMNhmFUE?=
- =?us-ascii?Q?meq4uo1mzIO96QqCw95l1nfK8ovmZofUJW9PcOSX8f72W75OoYPwbpOPxCQO?=
- =?us-ascii?Q?0QVPXmncEk/YwmFmP+8Wyi6vQKcYXowEe6c/PWAo/Ctqgh0PH2PmbvgazjKa?=
- =?us-ascii?Q?3bvqYQkzi3mu5GWbFNaiZ3DK35Lb5ji7WP33PNNEbqFmfa8Yge/KaZgVmPOE?=
- =?us-ascii?Q?aNg8DTT3AvRPnaGTNoB2GUtkLPZZtSTw8x3HZpR1QVc1UhhL1E2fJ+9bqYl0?=
- =?us-ascii?Q?hbPN76dQV3BUfZalYwwQo+WjKdZLjpz7qmk3JnlLf3pgJPHRwgo3xE1O/Nsl?=
- =?us-ascii?Q?NphSLYst8q7BKa5mc0k+g/qNWugdhpOMbpMPFRrY1rJ5XS7HJ3VCr6DtoMhP?=
- =?us-ascii?Q?Fb3Ml+5Ti6X2595lOCqPowNkpC6uH5NsjsAmsxcLzmoxwfyEvlLoEfh6t4PW?=
- =?us-ascii?Q?NKAQHeR+UVoEwTc6/a9Ws2wnEpB3mZg0N6OLVHeUwkgWdqyBQxo9EUBaip9x?=
- =?us-ascii?Q?YXuN8pct6ZRReyxOS4y/d3CiwGTPQ+dFJadw1oBgDDsBsHJMHwIRYt8BuKdG?=
- =?us-ascii?Q?Q+rDatJuPqxJkKqBQFLLWzX5tf+WSGQCg1txU1g62lZyszgzDDXhxmORfydg?=
- =?us-ascii?Q?uhogMJehkgvcG1WIYSvRcvfyU6Fnspo8SsEm8DDwKBdWtS313o6t0/UL3cPu?=
- =?us-ascii?Q?cXfgMKkTVMQqXJfykyEl0NjaIcZ47kawMqM4Zzll3i27Spe8EsnMnzQ81sbJ?=
- =?us-ascii?Q?WBbz4aw2oPUzerI6qU9pFDku7nMiNCYkxuzd95zC3VnEthrBaSqTdpVKquus?=
- =?us-ascii?Q?+DSr2bsLDPP/oWjOaWAYBT5ym/lUpa5WkDeKGre7aTWypgkAQNBoilRkMdu2?=
- =?us-ascii?Q?PAGpd/ENpryhUif8TTu0SBfUYj2PSy1G0NZupcoX+yCJV5D/nYiwS7aWa8FK?=
- =?us-ascii?Q?gVlPr0T/HZTgKi8Flulu6Dq80qrtUcw6NxAispK8c+LVYwcInm+dfX9aZUD7?=
- =?us-ascii?Q?Nkl/glqFrjEHJftKwVTOMcZCXjHPC1eZk036x2vryZOaRk2ZZGYLc0KXqiBB?=
- =?us-ascii?Q?9WXP7HYQlFsBrKhag45h1VQ2UvG0Qn8A6vFkdYoN/CIE5uexFrDtnyrwhlnX?=
- =?us-ascii?Q?tkw1z3hoSyvM0u9qJfFcyLX6BNH2FVYxl9tcc0ucpXZipwXetJZ/Ig51sEGy?=
- =?us-ascii?Q?Tp1p0YzZd/P6oZfyS8clN6pD2O5pBr97swzj4A/89L6tx2tVNKPCm9Lhlzdx?=
- =?us-ascii?Q?QiDhh60QQgET0fF2S1OQNY4=3D?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11947.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(7416014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?/m3PaECEcNTcZ9/LXkGgB5x7VjNSAP8X0dsu+umf7aDgBSldPBZNOyuuYRE5?=
- =?us-ascii?Q?zJHuQsdt/H9Xx5WucXqbArVi4JH/oRBeOk5vMBvT/8NXaZYDhzvQjGJbg1ma?=
- =?us-ascii?Q?ZQcdcBhsk3xtWSPcNVh1S28dmLtqwW/8fIE8C5T0rh5e13sSSFPkVGjTtBUv?=
- =?us-ascii?Q?UVuyunnumCMEOJn+TdTREYXXi7PZIRgezvwZW1HnoHt5AUgfFdcJfWEPsGa9?=
- =?us-ascii?Q?Xet7xiOJZQn05Mtc1+vGam/BIJsL0JmKjTX/BSggY6jwBbkd1VPDnXjWpFih?=
- =?us-ascii?Q?MDOtSfPwkAijdTxIQe9oSuhzwc199ZNYGDYRhf/nym4VlZFxKn1j3CNcv20R?=
- =?us-ascii?Q?+RZxFFO9Lb1ASQm9x6okdTNCHLwuTps5BHadL8meXQsLLTfiuwPjP57USY80?=
- =?us-ascii?Q?ZFLYXyLHq6BbgUZkRz2TPZr69ZY3CXlX7/HLmF8BO357xvWtzqYyn27d+ddn?=
- =?us-ascii?Q?8/XbbpCEtwDF8ZVr4H7S42rpt4WLUsswi8faCx9rg/+lzRuza2UJTBdaogWA?=
- =?us-ascii?Q?okeXsNUbsi5N08Ckg6l8yAoXDQzbw2DYCNO5i1BGwUWXoGzPA9SfwEXdYdMk?=
- =?us-ascii?Q?DrZ6XFUAme35qtwWF/8VO0SAl/aQw9Y39N1Rfj0T6y594EKe4AWNOkpnAAPj?=
- =?us-ascii?Q?CAhRzHSPjRnvGxRTSefzO6Zw9wMe5Jguhzayk7eUqdB1JtdO2H/M0Sr+hUIB?=
- =?us-ascii?Q?o4MeRRBCDrc+vmHXOAr0HFfQI9f/3KtvhBjy5zRaP4853Czog7yT73gAKUnK?=
- =?us-ascii?Q?7NAiLlDtJ1bD/uld0deKFyYMqiuvUIpc5jFlN8wcpqdwlBBBbaIoOgg+oKwS?=
- =?us-ascii?Q?zdhozyfvu2cLE0mtyiWrdaMgKaUcvk9shgYnk/LZgsvIJK9u/4ktHwL7Fv8W?=
- =?us-ascii?Q?H3Rtd39Z8AdG8jzAkpBvKCixi/FE0wgtHYj7cFoMWUBMJavBYjItmvcuLg8F?=
- =?us-ascii?Q?EKpZqoivoaXdcFvP7fI4jT4KxHDBLqH2nl0KpMZT55beSt/I+6uBrq0VN2O0?=
- =?us-ascii?Q?1ZCd65asJ0IcAezDkW30BrKwUH+Phs8ZiBPIyAKapT98cYm576t/lPB6wm/a?=
- =?us-ascii?Q?OexszXoNmwikGpZOltzFNNJy6ip2GUjtjoHu/2TBwQrlPY3h10bH/tGg0Paz?=
- =?us-ascii?Q?ZGNnQgv3lLuehHzVt2pI98cUTDUbqob4Ng70/N4TfIBlF9O6fwRB24oOfQzX?=
- =?us-ascii?Q?gn338gfn/1a7SiQXHUIOJ06DwTV7nQS74QyzYVmIFNOuV/RDke7GMm0vciE5?=
- =?us-ascii?Q?LGEr4MCnth6XVofns/OtmCftWua9EUCfSc8UhAUkvAha7mboIbU3tuNc5bdQ?=
- =?us-ascii?Q?tf603gGhfVeyx9aa+BNRmpCd8DX1O4MHiNr/kzDiqd3iVcfX9iROoIj5JCGW?=
- =?us-ascii?Q?vzpipFwOln1YGHnE0GOqPKutCrpr8YFUAm/RRhKMxEFiO8N+X5LWIQC5zSpv?=
- =?us-ascii?Q?znzB2M/GHgr+2ie75hAdJCRrUNtn2embh24A4leSsszPHQkheG4pPnX7Hl2T?=
- =?us-ascii?Q?Ys5xKcfKNOU+agVNRDFq0JROZX/TIuKxyGeI//jZbDntPGhVjLJB5mNUpbej?=
- =?us-ascii?Q?Lq0AVjaFscnkuvYieXYod73kYaqo6pSM5Vx6gcjltzpoRxmJpkyh4A6uCRXc?=
- =?us-ascii?Q?w1x+6qZ6eSQm9i6U9dW+K2cLSH98a7yZWFDRaPpkNGscFbb7AY9Db4Kg8NcI?=
- =?us-ascii?Q?gZzKw/jXrThLtvwzWFR8nimjoiSR8PrgnBdk3JhIMQrih491QaIQJ5Kc/5Fe?=
- =?us-ascii?Q?t+UXFqoN68VCKEc63L1hkL/A1ISE/QTA31Zu7Ug3H+OtHoDKntv2?=
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 69ae4612-9b89-4344-aeec-08de6252c5b6
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11947.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Feb 2026 12:01:18.0609
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xPqFHrKGK0qyYYPU+IEN8XDPSZaOkB2d+Zf/vA2AYbrCbHT4PCZ6WX4sfvUKQioqz0vi2Sgt4MQ4DHkdtJm5iFO2oQ1HOL35MauXt0LIWrGVmJ7tVmV08oJMKdi9qgdf
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZPR01MB8632
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260202104025.3781-2-mihai.sain@microchip.com>
 
-Enable DU1, DSI and ADV7535 on RZ/G3E SMARC EVK.
+On Mon, Feb 02, 2026 at 12:40:21PM +0200, Mihai Sain wrote:
+> According with datasheet table 12.1 the instance ID 67 is reserved.
+> This change drops the gmactsu_clk and gmac_gclk entries from
+> the SAM9X7 clock description tables.
 
-Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
----
-v1->v2:
- - Fixed: dsi, du and adv7535 are part of the the R9A09G047E57
-   SMARC SoM board then add entries in the rzg3e-smarc-som.dtsi instead
-   of using the r9a09g047e57-smarc-du1-adv7535.dtsi.
+It would be nice to mention in the commit message that there are no
+users of these clocks in mainline, so there are no backwards
+compatibility issues.
 
-v2->v3:
- - No changes.
-
-v3->v4:
- - No changes.
-
- .../boot/dts/renesas/rzg3e-smarc-som.dtsi     | 114 ++++++++++++++++++
- 1 file changed, 114 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
-index 3b571c096752..fa45e001f706 100644
---- a/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
-@@ -33,6 +33,7 @@ aliases {
- 		ethernet0 = &eth0;
- 		ethernet1 = &eth1;
- 		i2c2 = &i2c2;
-+		i2c7 = &i2c7;
- 		mmc0 = &sdhi0;
- 		mmc2 = &sdhi2;
- 	};
-@@ -71,12 +72,47 @@ reg_vdd0p8v_others: regulator-vdd0p8v-others {
- 		regulator-always-on;
- 	};
- 
-+	reg_1p8v_adv: regulator-1p8v-adv {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-1.8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	reg_3p3v_adv: regulator-3p3v-adv {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	osc1: cec-clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <12000000>;
-+	};
-+
- 	/* 32.768kHz crystal */
- 	x3: x3-clock {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
- 		clock-frequency = <32768>;
- 	};
-+
-+	dsi-to-hdmi-out {
-+		compatible = "hdmi-connector";
-+		type = "d";
-+
-+		port {
-+			dsi_to_hdmi_out: endpoint {
-+				remote-endpoint = <&adv7535_out>;
-+			};
-+		};
-+	};
- };
- 
- &audio_extal_clk {
-@@ -101,6 +137,37 @@ &eth1 {
- 	status = "okay";
- };
- 
-+&dsi {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			dsi_in1: endpoint {
-+				remote-endpoint = <&du1_out_dsi0>;
-+			};
-+		};
-+
-+		port@2 {
-+			dsi_out: endpoint {
-+				remote-endpoint = <&adv7535_in>;
-+				data-lanes = <1 2 3 4>;
-+			};
-+		};
-+	};
-+};
-+
-+&du1 {
-+	status = "okay";
-+
-+	ports {
-+		port@0 {
-+			du1_out_dsi0: endpoint {
-+				remote-endpoint = <&dsi_in1>;
-+			};
-+		};
-+	};
-+};
-+
- &gpu {
- 	status = "okay";
- 	mali-supply = <&reg_vdd0p8v_others>;
-@@ -126,6 +193,48 @@ raa215300: pmic@12 {
- 	};
- };
- 
-+&i2c7 {
-+	pinctrl-0 = <&i2c7_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+	clock-frequency = <400000>;
-+
-+	adv7535: hdmi@3d {
-+		compatible = "adi,adv7535";
-+		reg = <0x3d>, <0x4d>, <0x2d>, <0x5d>;
-+		reg-names = "main", "edid", "cec", "packet";
-+		clocks = <&osc1>;
-+		clock-names = "cec";
-+		avdd-supply = <&reg_1p8v_adv>;
-+		dvdd-supply = <&reg_1p8v_adv>;
-+		pvdd-supply = <&reg_1p8v_adv>;
-+		a2vdd-supply = <&reg_1p8v_adv>;
-+		v3p3-supply = <&reg_3p3v_adv>;
-+		v1p2-supply = <&reg_1p8v_adv>;
-+		adi,dsi-lanes = <4>;
-+		interrupts-extended = <&pinctrl RZG3E_GPIO(L, 4) IRQ_TYPE_EDGE_FALLING>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				adv7535_in: endpoint {
-+					remote-endpoint = <&dsi_out>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				adv7535_out: endpoint {
-+					remote-endpoint = <&dsi_to_hdmi_out>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
- &i3c {
- 	pinctrl-0 = <&i3c_pins>;
- 	pinctrl-names = "default";
-@@ -231,6 +340,11 @@ i2c2_pins: i2c {
- 			 <RZG3E_PORT_PINMUX(3, 5, 1)>; /* SDA2 */
- 	};
- 
-+	i2c7_pins: i2c7 {
-+		pinmux = <RZG3E_PORT_PINMUX(A, 4, 4)>, /* SCL7 */
-+			 <RZG3E_PORT_PINMUX(A, 5, 4)>; /* SDA7 */
-+	};
-+
- 	i3c_pins: i3c {
- 		pinmux = <RZG3E_PORT_PINMUX(2, 0, 2)>, /* I3C0_SCL */
- 			 <RZG3E_PORT_PINMUX(2, 1, 2)>; /* I3C0_SDA */
--- 
-2.43.0
-
+	Andrew
