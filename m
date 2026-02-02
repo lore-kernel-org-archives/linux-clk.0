@@ -1,337 +1,164 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE28309EF2
-	for <linux-clk@vger.kernel.org>; Mon,  2 Feb 2026 19:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2AF572627
+	for <linux-clk@vger.kernel.org>; Mon,  2 Feb 2026 19:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770061182; cv=none; b=qLFUMPTqpj8l184cfgozugy/OLqJ8cg8JRIKOEAn/oPAcnUfWIa8nVx9AHmyojqv32OuEafgm1tQT15ypbRQltBmzYuwkSWkc63rq7iUUyHFKGAPum0K/npy0NzN7+RjyVTgZbuVXj6HpuKU9st15K0AXJ99uV9uLX3GJ3pKXzY=
+	t=1770061621; cv=none; b=mXsag19syJmS7V+iSuS8kWVlQV+tB3HmuvGjXc1pkotLhG2AXxdh41/Sq91zF5gz6PvTrHplfikD9ucROMOOdo+l0GZ1AWytmT/ozn4qHcEcyR+rHGDdhxfluaX7mMScYDLkmNko/QImCBpesE4U0dX9OtOuAEsvJCvE5GO5dag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770061182; c=relaxed/simple;
-	bh=pt4kShmmoCd3mgoMo2uPMiVLNAM/T7idh2I97ecTmso=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GGeeseOJq/29Fg3wI/BXvYWRCimJTNMukeq3CWXvfnIj6JmEESREVljlHURe1n58DKieDesXQWtxjaF72grhaIG9mReNJ7MHok1gROYE01oF4PBsVIaKEcWuiRWyKAnvS+Var5nr+/weLSD+ZfU4pbwBo1MoPN6YNZ7SNg+U5hY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Pt9aBDWc; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=eZsyQJYv; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1770061621; c=relaxed/simple;
+	bh=eQU/XZ64Wclw2y2Fa9l2QuLfg/GOnWVXwSFwhzeu+OM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=EQvfKOH5MVpe48ntDmgNgyoi8BR3Z631QSK6eLe9Dh8h3MUiCW318lCWg+lPQy026JC8OZTOwhbyJn/PUWmeVSs6pEsH4h0YVkw2ccSnp9H79dIxVYGJqu31uZtHp2MXRvBqmK2CUHJOCmi1J+LnZ6P43WpU7mth+KlOFvQOWL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oss.tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=eURwga8R; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oss.tenstorrent.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Pt9aBDWc";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="eZsyQJYv"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 612HSv2I3744582
-	for <linux-clk@vger.kernel.org>; Mon, 2 Feb 2026 19:39:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=Zk1ULsaiSOs9L7KZAkb1H21D
-	x8Ea4YpAW8YrsTNEF04=; b=Pt9aBDWc/m5oCzFPiZ8cOjG2bdTuFcxUx5uHkmLw
-	GksTBfw4IYO9+q2ChSSXqN3rrcHEVRtEEJycxEBTOemNszrCQLfrIsXVFDeMXiCu
-	5hkWy0k3NEB4SZ5uxX+cJ/ycERvTqrZUdq0SFRal+Qz8ILPYmO7xiO9e9j2Sw+qs
-	Ze92RoZvVwM0Rb6TeiI05rvElm8VkI/j3d2dkTebO4JuJP33Gg4U79ADMCN3UBXl
-	xPizGyVCjY6wV732p1fMIpjmLG2Qu+euRqcAjic6FNUlhpK5znezAAIvhGhjeowc
-	9z45SKFoQzMpZ8PCn75EhE7pQPzBkIwLgh0bJ4LVP7dODQ==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4c2tp0sk8m-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 02 Feb 2026 19:39:38 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8c277fe676eso1461134485a.0
-        for <linux-clk@vger.kernel.org>; Mon, 02 Feb 2026 11:39:38 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="eURwga8R"
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-794ed669269so1857237b3.1
+        for <linux-clk@vger.kernel.org>; Mon, 02 Feb 2026 11:46:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1770061178; x=1770665978; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zk1ULsaiSOs9L7KZAkb1H21Dx8Ea4YpAW8YrsTNEF04=;
-        b=eZsyQJYvzFCfkLjtritqDwVW5sY6+YsMZ5Dx/dTYyPDhRjGvfx7HfLd6NCjykHjTC+
-         Pk2l7ddIo56W0dI7BH/LWuyDeliqDdMNuqwneHYDz6RfXDZ2qJ0p1Kz4A/0SzdWp5pKG
-         8jIwfkbGeDe0XbfJtV2WDd1iWa9C1I/8KLI+5fRZMQ9YBUNAO4D46llR5mZqmHN73nyJ
-         wgqdklHR225o2Glr2/Mz1tBhgugfXph5F1O7xfdcjjLdYvHWVMtLYm7y9qxH436UM3Cr
-         FJMuztOsMx+uQv3+SCmyp4Acy8pTvebvvNhdIkA4YCJc5/1J6waEYzFdgTKP6i+ZTe24
-         ey3w==
+        d=tenstorrent.com; s=google; t=1770061618; x=1770666418; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=u82dPfWkZFveIydXJfE5pfWEOGw2ni/TqG+rcgpwY6Q=;
+        b=eURwga8RgtSpUcILxTdtCGcelfaYo3fjnqQMq96dh1qdpGyKoThPR+rWlThgaH79B5
+         qmJ3WgJLda4WJKTIjC6gOG1W1d0AVJTH3OxdRx35EEdP/2TCbOVhqBX//s6cefwV2kUw
+         g263FyQd5QuOhHjWBJEb0F3ctPpl+IW5SFz0GsincPoZ11Un0LT4mg9VZHk3GBuXtMgR
+         9RAap4lL8s9chuMcgVN5QtP4e6wPQIahNa2mJ5amVteFT14YPx0grQ+XJSPABVgxPrIq
+         f++mHA2BwhYLfYskZ5c6EjF8Pd801g7uAMQoMxQLlFSiFu9hRJK5+7vFd9MJNhpylMP3
+         YVhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770061178; x=1770665978;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Zk1ULsaiSOs9L7KZAkb1H21Dx8Ea4YpAW8YrsTNEF04=;
-        b=gyyFLTE3twyKOs8XSAvEkieImuXs0gyHiE9iG5ag1sMf7eaWLSahi9frI38RQ+s2bv
-         O3V5HQ+CjaAIAkN+St8Y4GTe+XARowrqY69p2WS/3/CnGiawzUDDgR+YZ4/vfN9azm+m
-         cqSJAUZKgaBArCOpV471/y8/qUOwI6Crze0A/0KqYpT6tn5gHE6Jva+89iIpOt6IKCCS
-         /skbCCBVYI4BlCYE1wPOCgPgue0CUcA6KUDB0hAeiFYcgLZ/cy+txuTdZQy2xGHPYL+f
-         gZJOsfK7/bH3mMoGo9QcWb+8Ym8k9JURNAznyFIZKtrlE1Vxk1HifxgXwxgbOB+MRMg8
-         OzxA==
-X-Forwarded-Encrypted: i=1; AJvYcCUmefEtUKA0r/0tnRJmYDFLQh1oyp/NoMDCQ/Py+qI+9tFsX/MCjl5xGa4HvXCu/kyCvEmb7GPe8Lc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEzqSkRWhUfUB0moxKdNZK1zmpJ99avow3CySgFHzdhbr7gsKz
-	cxFkt9cEDQfGz/CmVqJx++OoSBYJL8uByJYyHA6Iw5ra4Gjeb3GBFwXoql71jiKxmY6MzHPV9SB
-	Jj56XvIHn2Ktz6QH4jytnWsCvVqbHl3gwd0g9OAfUzBSgN8VrDHC2bj5njSnFraY=
-X-Gm-Gg: AZuq6aLsCsLLS+IyrgWHdpoX0Zt0o6comCwDimE+aMbnzw4UkRfaDPfEuRMtnWY+4OU
-	mKrgwYr2lTTyrzsqzSbw3sYoKcmeBiYKsxHtj+SR4yAsEMsJR5ZuGofobNWpdIuCGmJYOW701WS
-	C2u8htHpr2SmUaAlwyU9fqL1vfoC7S/B5ZFgTzHrwWwAh3BMHy1cv5qMlQ/Oe572rjLVku0shW7
-	0Mc4xJB2E8nrm5FOSzB9N8b3zvfefn4kovfzP396cmaeUWCHBjkSbz/B1zRidySMs51LFvL4NxF
-	Kp3FN1OidGYPAg3YYCsU9vQPcnrtIRBeV6eLjkZPUtI3lPjqS36Fr3rOJdxhGeejVgvIxAO8jun
-	k08l1Om8ibDZWX9D+qL9Hu2T8ap2Ji494abvVIukzhuxahsu9OByKZs3uSP95vOo3wpI02WavAv
-	Ji2K+zDV1XqPMJGhI/WNusPxg=
-X-Received: by 2002:a05:620a:440b:b0:8a4:107a:6772 with SMTP id af79cd13be357-8c9eb32dfc5mr1640238285a.76.1770061177836;
-        Mon, 02 Feb 2026 11:39:37 -0800 (PST)
-X-Received: by 2002:a05:620a:440b:b0:8a4:107a:6772 with SMTP id af79cd13be357-8c9eb32dfc5mr1640234985a.76.1770061177333;
-        Mon, 02 Feb 2026 11:39:37 -0800 (PST)
-Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59e0748993esm3734670e87.37.2026.02.02.11.39.36
+        d=1e100.net; s=20230601; t=1770061618; x=1770666418;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u82dPfWkZFveIydXJfE5pfWEOGw2ni/TqG+rcgpwY6Q=;
+        b=jSCVEGhNRtIyTB5HwJO5m5DiLvVKIHsBJW/a7/YC2wm+CqojwUroKKWysLplG+ipmj
+         4SZycW1Avqo897O1Swor8FGCKRAOrrBANETdPw19t013AeoY2eu3xRvMKoC2H0WKBMRE
+         LoY37nDE+9fraJi136vDUwAlAe/Frz6WOjLg8N/3yc46wiPgIFMVFdUQ4pN3fgrxjhj1
+         +WDcfA7lrDHUZFH05ezB//E3E9pd/fHNMd7psIT00VScFEch6T6JOU9vnp5pZXQR/TOs
+         m9uKJAPHDPiVRaq3j0eqQ4xqQ2zSyUjCu+FDS6b16P23IYktqVtecNfwB3QTzpcTMlA+
+         EHlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVZPPnnXlf5qNZyIYm34P0HlXPLjEFlD6EdoYZNaN1oa3Dr9/JbvBXznxTs2D9c3ZowEGcMQWTOmF8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxnp0lHfrTN++UI4Adb+uzKq1I9J9m2I+/I43BTN0DoepuuXOzt
+	xF9Fl1Zs+7efYxcLqTfFSvC9S5OqYbVF/L9guoUNc4uvf0yM3i3364Y1x3tCrtDKkIM=
+X-Gm-Gg: AZuq6aICUewm3dVHogVFpbtJl1sIrJOnbfAcrijfRtKXyrDV6pqpzSlzA8vYcfJc/TI
+	bOKhnIm+SvJe71cNItbONMUsSHBgLSpTbsms3PNibM0grEq/oyUtiCbUdsFVaS+dMpY/jyAO2Y4
+	p/H8R0dtRAFsInUNKW/THbgNorKgdyrOYFY7iEJfYHJy1U64CoVcVjhH29YaiP/Yt4Dj4iHr3ce
+	YCd29ioZxIZhyPIM2sC9i2SQkaUuzQLRziKkEn+ZXiZ7B5JadjqLX6uI+clCDVN09o+GRd+kAtQ
+	acovnUFyZGVNGtF5DFZ7TEHMF2tOA+P4tHi2JzhCs/yXcACFHqEcLnwb/gRXt7OCsp1UZvJQ+4O
+	djZJ7Y0UZwROPKF8S4EHH0Z36yHv/edrCXIfTrqpv7WSGm2LqZnxLVSYA99hCglM6gvylex1Dg5
+	+RqJ8WtiKYkhFGu10eM6BmVUfvNTrlwiqoHYKl+wx5A9vdUK67JmT3KscaKQBVbGMa+gC8HsCm
+X-Received: by 2002:a81:b813:0:b0:794:bc47:df1 with SMTP id 00721157ae682-794ecdcb28fmr4723137b3.22.1770061617857;
+        Mon, 02 Feb 2026 11:46:57 -0800 (PST)
+Received: from [192.168.5.15] ([50.231.163.162])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-794cd7241c0sm39493667b3.24.2026.02.02.11.46.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Feb 2026 11:39:36 -0800 (PST)
-Date: Mon, 2 Feb 2026 21:39:34 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-        Taniya Das <taniya.das@oss.qualcomm.com>,
-        Linus Walleij <linusw@kernel.org>,
-        Melody Olvera <quic_molvera@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
-        Jishnu Prakash <quic_jprakash@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH RFC 3/8] pinctrl: qcom: Allow exposing reference clocks
- living in TLMM reg space
-Message-ID: <xkndkbp6w7xh23wc4xd2yjakiic5kcwviwcgi3vq4quct2z4tu@m7dxfub5ike7>
-References: <20260202-topic-8750_tcsr-v1-0-cd7e6648c64f@oss.qualcomm.com>
- <20260202-topic-8750_tcsr-v1-3-cd7e6648c64f@oss.qualcomm.com>
+        Mon, 02 Feb 2026 11:46:57 -0800 (PST)
+From: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
+Subject: [PATCH v5 0/3] Add Tenstorrent Atlantis Clock/Reset Controller
+Date: Mon, 02 Feb 2026 13:46:48 -0600
+Message-Id: <20260202-atlantis-clocks-v5-0-0922e43acaba@oss.tenstorrent.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260202-topic-8750_tcsr-v1-3-cd7e6648c64f@oss.qualcomm.com>
-X-Proofpoint-ORIG-GUID: 2AqGNYy1hAzbraDlickX1BPmQIMVpXj1
-X-Authority-Analysis: v=2.4 cv=VJ/QXtPX c=1 sm=1 tr=0 ts=6980fd7a cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=HzLeVaNsDn8A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=2tca-NSePewhJHxpEWQA:9 a=CjuIK1q_8ugA:10
- a=IoWCM6iH3mJn3m4BftBB:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjAyMDE1MyBTYWx0ZWRfX1YlU8Czu57K+
- c5vu9hhqQUmAP3d6A0fH/IbcXCMyiGD3JPnDX6xMrjMEdWAotj7kUH/3nyyW92FFmiEbY8gg8fr
- xOjA95Y3r2rQPLTkJbw0JirevuLZKlg7U7DXysLAfZqhT/szz2/TujYlQBbKlmRz7K3kgWeQgQ0
- akQ/dP5xhhvHl6xa4kPpF0BLkwxDyqQ1QY9d/etttqfC6g0uNQWU6QsJ0fduzQ3xBTfOK8/w8T8
- XIeS6MchC1EGcoe6ph6QhjHAqyGp0dAFkGZGcMouxPZgT1DiMSMFmCjV7EWiYyAglOQIm6zZeFU
- CoS7iO0ILEg926GLbmn7W4yLVZnt8mEv9/NvgAcP+v5BHNRAb6QHsFRh8JuWpVSQfunwkW4OXIu
- 2JzxXOs1Aa9sGsGvOi7gBUr8+l+pqbyc7k/nkYM3NP2g7qqkXjMSoXGLv6XvvnjCNVXrHV8Enh5
- Ozd4PsgdhIThvyuVqlw==
-X-Proofpoint-GUID: 2AqGNYy1hAzbraDlickX1BPmQIMVpXj1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-02-02_05,2026-02-02_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 adultscore=0 malwarescore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 phishscore=0 priorityscore=1501 impostorscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2601150000
- definitions=main-2602020153
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACj/gGkC/3XOwWrDMAyA4VcpPtfFkmOl2WnvMXpIHGU1a+1hG
+ 9NR8u5zCoVA2uMv0CfdReLoOImP3V1ELi654GuY/U7Yc++/WbqxtkCFpABQ9vnS++yStJdgf5K
+ cVKcsdGo40ijq1m/kyd0e4tep9tmlHOLf40CBZfq0zMYqIJVstSGmFiY8Dp8hpUNmvxCRfT7Yc
+ BWLWnAl4farglWyRLoF0h0TvZf0WqKtpKs0KCDQxhgY2vdSs5K02kpNlRoa2eBosMPmtTTP8z8
+ Q+nFelgEAAA==
+X-Change-ID: 20260112-atlantis-clocks-f090c190b86d
+To: Drew Fustini <dfustini@oss.tenstorrent.com>, 
+ Joel Stanley <jms@oss.tenstorrent.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, joel@jms.id.au, 
+ fustini@kernel.org, mpe@kernel.org, mpe@oss.tenstorrent.com, 
+ npiggin@oss.tenstorrent.com, agross@kernel.org, agross@oss.tenstorrent.com, 
+ bmasney@redhat.com
+X-Mailer: b4 0.14.3
 
-On Mon, Feb 02, 2026 at 03:57:35PM +0100, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> Certain platforms (at least SM8750) had a number of registers
-> (responsible for gating refclk output to various consumers) moved to
-> TLMM. They're simple on/off toggles.
-> 
-> Expose them from the msm-pinctrl driver to allow for a reasonable DT
-> representation.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
->  drivers/pinctrl/qcom/pinctrl-msm.c | 92 ++++++++++++++++++++++++++++++++++++++
->  drivers/pinctrl/qcom/pinctrl-msm.h | 14 ++++++
->  2 files changed, 106 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-> index e99871b90ab9..1a52431a8605 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> @@ -4,6 +4,7 @@
->   * Copyright (c) 2013, The Linux Foundation. All rights reserved.
->   */
->  
-> +#include <linux/clk-provider.h>
->  #include <linux/delay.h>
->  #include <linux/err.h>
->  #include <linux/gpio/driver.h>
-> @@ -16,6 +17,7 @@
->  #include <linux/pm.h>
->  #include <linux/firmware/qcom/qcom_scm.h>
->  #include <linux/reboot.h>
-> +#include <linux/regmap.h>
->  #include <linux/seq_file.h>
->  #include <linux/slab.h>
->  #include <linux/spinlock.h>
-> @@ -80,6 +82,7 @@ struct msm_pinctrl {
->  	const struct msm_pinctrl_soc_data *soc;
->  	void __iomem *regs[MAX_NR_TILES];
->  	u32 phys_base[MAX_NR_TILES];
-> +	struct ref_clk ref_clks[];
->  };
->  
->  #define MSM_ACCESSOR(name) \
-> @@ -1525,9 +1528,69 @@ SIMPLE_DEV_PM_OPS(msm_pinctrl_dev_pm_ops, msm_pinctrl_suspend,
->  
->  EXPORT_SYMBOL(msm_pinctrl_dev_pm_ops);
->  
-> +static int clkref_enable(struct clk_hw *hw)
-> +{
-> +	struct ref_clk *rclk = container_of(hw, struct ref_clk, hw);
-> +	u32 val;
-> +
-> +	regmap_write(rclk->regmap, rclk->init.offset, BIT(0));
-> +	udelay(10);
-> +
-> +	regmap_read(rclk->regmap, rclk->init.offset, &val);
-> +
-> +	return (val & BIT(0)) ? 0 : -EINVAL;
-> +}
-> +
-> +static void clkref_disable(struct clk_hw *hw)
-> +{
-> +	struct ref_clk *rclk = container_of(hw, struct ref_clk, hw);
-> +
-> +	regmap_write(rclk->regmap, rclk->init.offset, 0);
-> +
-> +	udelay(10);
-> +}
-> +
-> +static int clkref_is_enabled(struct clk_hw *hw)
-> +{
-> +	struct ref_clk *rclk = container_of(hw, struct ref_clk, hw);
-> +	u32 val;
-> +
-> +	regmap_read(rclk->regmap, rclk->init.offset, &val);
-> +
-> +	return !!val;
-> +}
-> +
-> +static const struct clk_ops clkref_ops = {
-> +	.enable = clkref_enable,
-> +	.disable = clkref_disable,
-> +	.is_enabled = clkref_is_enabled,
-> +};
-> +
-> +static struct clk_hw *msm_pinctrl_clk_get(struct of_phandle_args *clkspec, void *data)
-> +{
-> +	struct msm_pinctrl *pctrl = data;
-> +	u32 idx = clkspec->args[0];
-> +
-> +	if (idx >= pctrl->soc->num_ref_clks)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	return &pctrl->ref_clks[idx].hw;
-> +}
-> +
-> +static const struct clk_parent_data clkref_parent_data = {
-> +	.index = 0, /* RPM(h) XO clock */
-> +};
-> +
-> +static const struct regmap_config clkref_regmap_config = {
-> +	.reg_bits = 32,
-> +	.reg_stride = 4,
-> +	.val_bits = 32,
-> +};
-> +
->  int msm_pinctrl_probe(struct platform_device *pdev,
->  		      const struct msm_pinctrl_soc_data *soc_data)
->  {
-> +	struct device *dev = &pdev->dev;
->  	const struct pinfunction *func;
->  	struct msm_pinctrl *pctrl;
->  	struct resource *res;
-> @@ -1595,6 +1658,35 @@ int msm_pinctrl_probe(struct platform_device *pdev,
->  	if (ret)
->  		return ret;
->  
-> +	if (soc_data->num_ref_clks) {
-> +		struct regmap *regmap = devm_regmap_init_mmio(dev, pctrl->regs[0],
-> +							      &clkref_regmap_config);
-> +		if (IS_ERR(regmap))
-> +			return PTR_ERR(regmap);
-> +
-> +		for (int i = 0; i < soc_data->num_ref_clks; i++) {
-> +			struct clk_hw *hw = &pctrl->ref_clks[i].hw;
-> +			struct clk_init_data init = { };
-> +
-> +			init.name = pctrl->soc->ref_clks[i]->name;
-> +			init.parent_data = &clkref_parent_data;
-> +			init.num_parents = 1;
-> +			init.ops = &clkref_ops;
-> +			hw->init = &init;
-> +
-> +			ret = devm_clk_hw_register(dev, hw);
-> +			if (ret)
-> +				return dev_err_probe(dev, ret, "Couldn't register clock %s\n",
-> +						     init.name);
-> +
-> +			pctrl->ref_clks[i].regmap = regmap;
+This series adds support for a multifunctional register block
+called PRCM in the Tenstorrent Atlantis SoC, whose main functionality
+is to serve clocks and resets. This block is instantiated multiple
+times in the SoC, with each block covering clock/resets from a
+different subsystem. This series also adds a driver that covers clocks
+and resets from the RCPU subsystem, which covers most low speed IO
+interfaces found in the chip. The reset controller is implemented as
+an auxiliary device of the clock controller and shares the same regmap
+as it.
 
-This will access beyond the end of the allocated chunk, because you
-haven't extended pctrl allocation.
+The first commit adds bindings documenting the PRCM block, along with
+clock and reset indices. The second commit adds the reset controller
+driver along with the auxdev definitions needed for it. The third commit
+adds the clock controller driver, and the reset controller is created as
+an auxdev of it.
 
-> +		}
-> +
-> +		ret = devm_of_clk_add_hw_provider(dev, msm_pinctrl_clk_get, pctrl);
-> +		if (ret)
-> +			return dev_err_probe(dev, ret, "Couldn't register clk provider\n");
-> +	}
-> +
->  	platform_set_drvdata(pdev, pctrl);
->  
->  	dev_dbg(&pdev->dev, "Probed Qualcomm pinctrl driver\n");
-> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.h b/drivers/pinctrl/qcom/pinctrl-msm.h
-> index 4625fa5320a9..213cc789711d 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-msm.h
-> +++ b/drivers/pinctrl/qcom/pinctrl-msm.h
-> @@ -5,6 +5,7 @@
->  #ifndef __PINCTRL_MSM_H__
->  #define __PINCTRL_MSM_H__
->  
-> +#include <linux/clk-provider.h>
->  #include <linux/pm.h>
->  #include <linux/types.h>
->  
-> @@ -129,6 +130,17 @@ struct msm_gpio_wakeirq_map {
->  	unsigned int wakeirq;
->  };
->  
-> +struct ref_clk_init_data {
-> +	const char * const name;
-> +	u32 offset;
-> +};
-> +
-> +struct ref_clk {
-> +	struct clk_hw hw;
-> +	struct regmap *regmap;
-> +	struct ref_clk_init_data init;
-> +};
-> +
->  /**
->   * struct msm_pinctrl_soc_data - Qualcomm pin controller driver configuration
->   * @pins:	    An array describing all pins the pin controller affects.
-> @@ -170,6 +182,8 @@ struct msm_pinctrl_soc_data {
->  	bool wakeirq_dual_edge_errata;
->  	unsigned int gpio_func;
->  	unsigned int egpio_func;
-> +	const struct ref_clk_init_data **ref_clks;
-> +	unsigned int num_ref_clks;
->  };
->  
->  extern const struct dev_pm_ops msm_pinctrl_dev_pm_ops;
-> 
-> -- 
-> 2.52.0
-> 
+Signed-off-by: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
 
+---
+Changes in v5:
+- Replaced to_atlantis_*/hw_to_atlantis_* macros with static inline functions in clk and reset driver
+- Add Rb tags from Philipp Zabel
+- Link to v4: https://lore.kernel.org/r/20260130-atlantis-clocks-v4-0-46de52d52924@oss.tenstorrent.com
+
+Changes in v4:
+- Dropped !rcpu prcms and custom property used by them. Will be added
+  later with rest of clock tree
+- Link to v3: https://lore.kernel.org/r/20260126-atlantis-clocks-v3-0-b016135551b7@oss.tenstorrent.com
+
+Changes in v3:
+- Fixed warnings reported by kernel test bot
+- Addressed comments on reset driver bit set/unset value
+- Changed auxdev macros to use inline functions
+- Renamed bindings and clock driver to use block's name of "PRCM" rather
+  than syscon
+- Link to v2: https://lore.kernel.org/r/20260122-atlantis-clocks-v2-0-c66371639e66@oss.tenstorrent.com
+
+Changes in v2:
+- Improve the documentation about the syscon block in bindings
+- Implemented all clks using custom ops
+- Removed custom lock/lock handling functions for regmap
+- Addressed comments on header file ordering, newlines and typos
+- Removed code for mux parent setting
+- Squashed down multiple commits that added reset/auxdev separately
+- Link to v1: https://lore.kernel.org/r/20260115-atlantis-clocks-v1-0-7356e671f28b@oss.tenstorrent.com
+
+---
+Anirudh Srinivasan (3):
+      dt-bindings: clk: tenstorrent: Add tenstorrent,atlantis-prcm
+      reset: tenstorrent: Add reset controller for Atlantis
+      clk: tenstorrent: Add Atlantis clock controller driver
+
+ .../bindings/clock/tenstorrent,atlantis-prcm.yaml  |  54 ++
+ MAINTAINERS                                        |   5 +
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/tenstorrent/Kconfig                    |  14 +
+ drivers/clk/tenstorrent/Makefile                   |   3 +
+ drivers/clk/tenstorrent/atlantis-prcm.c            | 945 +++++++++++++++++++++
+ drivers/reset/Kconfig                              |  11 +
+ drivers/reset/Makefile                             |   1 +
+ drivers/reset/reset-tenstorrent-atlantis.c         | 163 ++++
+ .../dt-bindings/clock/tenstorrent,atlantis-prcm.h  | 103 +++
+ include/soc/tenstorrent/atlantis-prcm.h            |  58 ++
+ 12 files changed, 1359 insertions(+)
+---
+base-commit: 9448598b22c50c8a5bb77a9103e2d49f134c9578
+change-id: 20260112-atlantis-clocks-f090c190b86d
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
+
