@@ -1,33 +1,33 @@
 Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFF5285CBA;
-	Mon,  2 Feb 2026 13:56:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07311369986;
+	Mon,  2 Feb 2026 13:59:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770040568; cv=none; b=Q9UCOc2kvw2qVUSh/jNk512UjvG6YGxG2Q3qvx4l4fI0q/gHkrnJuF1iyHvjqylZv4B982M9hrswBvNw/iLkbNxLz+9Mbhj5u5jVTGtJs/onN5YcjmilR3ezo+k/2tCI8oTsY82qp45Dy1Sc+QlNfq65QPl8ZHYegvsWL6tGiKQ=
+	t=1770040767; cv=none; b=PbTgRJ1CSCspqvkLzuF947FFF4cyDbskZa/11C19siQn+nlqBfwi6J24erZ3POmM0vB1wuIx8epqvDOySHJpVsJSGvcjdtQzixuinMxL6r6m+hxyIU8SnxFnbcvJsfD2UIkUKNt1SAVvmElgT+ee7fI0KfBzbZGY+QNY6MHrMfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770040568; c=relaxed/simple;
-	bh=kvwKExbwIcYF0ue04OiBMJvdmTlLzUZT5GdsFLWH7q0=;
+	s=arc-20240116; t=1770040767; c=relaxed/simple;
+	bh=RjiQcZo3siwt/g6vfVvfP7zHHenObl9EeExQ2+UyGAc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fzdQH8lVVLvliQVfWtlcDBU8XKY5gZJWrWa//z/lWc7IxuuuFjOWUUmAfT7DRc5x0c5VjFLq+zv5RXGNEGeFhEDCfRIWPg3S7gDWblx2jlFh9qRK12d4KfikAUSJpdJNMNLsBRZnyk1A8bYe9c9jQbJ7+VzqlhNxW/yVRW46SH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=onYzNWYT; arc=none smtp.client-ip=156.67.10.101
+	 Content-Type:Content-Disposition:In-Reply-To; b=kOxaey5naa46KoKmuvI5UimqdUXiqfZp0fkSP023iUwbOJnRVe7rxUswoaM3HWQofq7EI9F3WuEa4nWHHhiM2VDoTgUjGOEfx0qIT5AWgPFklx+ZA5fdRUGZ1zwfLmjk/Hqg5ojExWzDMdHM8LtBviBN0qXMPC+EAmImIKqCIPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=srHzf0q2; arc=none smtp.client-ip=156.67.10.101
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="onYzNWYT"
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="srHzf0q2"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
 	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
 	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
 	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=ZQh9OYc3Oc4hr8yMakIVLGrYeLd2XVCP0GPV4wb5uzM=; b=onYzNWYTUx1c1sMmhmU2VYAXzS
-	2EEyuUZNK6gff5lLgdPS2mFkrr2o7bA9Vu8lMFTKNj5rQ0PWvjbWbg3ogQtO43rJE0hB3vvA+E8fL
-	evzT/vn2UqXuxBP3LBeLA2qnvecZ0gXSEyDVoQ7yqGREkK1pYoc8/5smRdD0cDfg39f0=;
+	bh=6WGi/A54YejTHQzh/fZBfu89v313LcQrf2k4eo/rCf0=; b=srHzf0q28APUNFsImOjs13e8c/
+	eB59sWM2qyWGTXxakwYOFsU6ixk6hzbPiDrvMm1542ZLjns1VLGggDMDnOGOYw0ofoQLMf30sHCZj
+	leot7h8AD9/2eVqo0T1YGoAU630yDWtkBy8hivB2ME79j/h3cyMmk5ljrw8TMfQ2rURs=;
 Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
 	(envelope-from <andrew@lunn.ch>)
-	id 1vmuPF-005pYn-72; Mon, 02 Feb 2026 14:55:57 +0100
-Date: Mon, 2 Feb 2026 14:55:57 +0100
+	id 1vmuSW-005pd1-JZ; Mon, 02 Feb 2026 14:59:20 +0100
+Date: Mon, 2 Feb 2026 14:59:20 +0100
 From: Andrew Lunn <andrew@lunn.ch>
 To: Mihai Sain <mihai.sain@microchip.com>
 Cc: mturquette@baylibre.com, sboyd@kernel.org, nicolas.ferre@microchip.com,
@@ -37,11 +37,11 @@ Cc: mturquette@baylibre.com, sboyd@kernel.org, nicolas.ferre@microchip.com,
 	krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org, ryan.wanner@microchip.com
-Subject: Re: [PATCH 1/5] clk: at91: sam9x7: Remove gmac peripheral and
- generic clock entries with ID 67
-Message-ID: <2fa66fa6-1ad5-430b-b030-c3969147c853@lunn.ch>
+Subject: Re: [PATCH 4/5] ARM: dts: microchip: sam9x7: Remove the tx_clk from
+ gmac node
+Message-ID: <87e0938c-20da-48bc-9bb7-8ca963800dae@lunn.ch>
 References: <20260202104025.3781-1-mihai.sain@microchip.com>
- <20260202104025.3781-2-mihai.sain@microchip.com>
+ <20260202104025.3781-5-mihai.sain@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,15 +50,31 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260202104025.3781-2-mihai.sain@microchip.com>
+In-Reply-To: <20260202104025.3781-5-mihai.sain@microchip.com>
 
-On Mon, Feb 02, 2026 at 12:40:21PM +0200, Mihai Sain wrote:
-> According with datasheet table 12.1 the instance ID 67 is reserved.
-> This change drops the gmactsu_clk and gmac_gclk entries from
-> the SAM9X7 clock description tables.
+On Mon, Feb 02, 2026 at 12:40:24PM +0200, Mihai Sain wrote:
+> The gmac controller on sam9x7 has no internal pll to generate
+> the 125MHz clock source for rgmii mode.
+> This clock is generated on external board by eth-phy or
+> clock oscillator.
+> This change drops the tx_clk entry from gmac node.
+> 
+> Signed-off-by: Mihai Sain <mihai.sain@microchip.com>
+> ---
+>  arch/arm/boot/dts/microchip/sam9x7.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/microchip/sam9x7.dtsi b/arch/arm/boot/dts/microchip/sam9x7.dtsi
+> index 46dacbbd201d..da94865c57e9 100644
+> --- a/arch/arm/boot/dts/microchip/sam9x7.dtsi
+> +++ b/arch/arm/boot/dts/microchip/sam9x7.dtsi
+> @@ -991,7 +991,7 @@ gmac: ethernet@f802c000 {
+>  				     <63 IRQ_TYPE_LEVEL_HIGH 3>,	/* Queue 4 */
+>  				     <64 IRQ_TYPE_LEVEL_HIGH 3>;	/* Queue 5 */
+>  			clocks = <&pmc PMC_TYPE_PERIPHERAL 24>, <&pmc PMC_TYPE_PERIPHERAL 24>, <&pmc PMC_TYPE_GCK 24>, <&pmc PMC_TYPE_GCK 67>;
+> -			clock-names = "hclk", "pclk", "tx_clk", "tsu_clk";
+> +			clock-names = "hclk", "pclk", "tsu_clk";
 
-It would be nice to mention in the commit message that there are no
-users of these clocks in mainline, so there are no backwards
-compatibility issues.
+You drop a clock name, but not a clock?
 
-	Andrew
+    Andrew
