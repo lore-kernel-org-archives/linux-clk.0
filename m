@@ -1,136 +1,144 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 532333A4F54;
-	Tue,  3 Feb 2026 14:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE88D3ACF17
+	for <linux-clk@vger.kernel.org>; Tue,  3 Feb 2026 15:15:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770130444; cv=none; b=dVBVqiEaES75DWDUl/8JXAdAbiY7wqjYjXUC0IOGBNo4E+gx6FeNVqRxlEeNmyrcdcixVp3hZOd7hY0VlJBU2fdygDCCyAeD2vq1d81p+aLTCaBC7b0XNkxw5PHyl2F1J1toEQ2c1jeF9QK8TuhY+SYvPh11bTRaFv9RAj3BkTk=
+	t=1770131754; cv=none; b=f1tVU4KzskbjYDUF4GiCVppEPgZlJduOtVvKLKCbDRweW5dljZqHhoZ4UWNswb6ryR+uxzYJT40TRAxwbFyBpsyxDTxFc9gKuPog7ffW++wpzwHvtcrLHSq1UgzvGSzU5GyLTpfHBiXggGoaPTbowNn1Xmxm1Eb0HtOa/pgkwRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770130444; c=relaxed/simple;
-	bh=3KcvY6BFAVkYx2CaRlFGKXfmnRMIMtHNvAHM5ApGVvU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CvOO+TARy8OfVTUe0Z1DVEzWmxmErborkoF88hBP/7tFKFXb4oMNdExXWKbXo9Ztj3+ycCPopC9sPxFzMk9Aeuq+O83Lhcv4eqD1cT+itE+F+Sm8Konryo0tN8iPi8xIrgAYPooL70HvYJXpd7ohmdlI63ZWgXPcjd2ArWADmUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=pFDS0747; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1770131754; c=relaxed/simple;
+	bh=1Fi5bzZAG+1cbdUfewtQaIkBwyxLJrJtRKSaoVU2o4s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hizyxdxdimbvRJLmewgEjfxoRJVPuV4eeYURVAQhYZAruYTbYadpusAuTlzpBcTHbpo2AzEj7zO8Lo3NDPmjLDVL6lSDNsohtJIA1Iqx8Ww6McobPMBZtadRr1ETRXHbUxGeQBXnr/VCuKWX1x+PzNtQH/FYP+dGvEbLzyvUZZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Yp5DGoms; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=eRbtheRD; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="pFDS0747"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1770130440;
-	bh=3KcvY6BFAVkYx2CaRlFGKXfmnRMIMtHNvAHM5ApGVvU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pFDS0747I6//N0JfFvhOfrFRr349OeRMQajiwIK8cB6QKQ03hqynIuKOrUfpt1l+O
-	 dTEBCyQ4QKVRojCCHAFmlJoVLbYxifRL5ffhWX3K36Od5RdlARX8wuWCdIqjEey18u
-	 FvjFLQDwvXiAsGytBefZEqsQCL0kPT4BhaYhhfE+K9G/m93jzOjmhYFBjSc2jt55qp
-	 BcuFlVbjlyBfZW13v4DFI3pJ6X3jbK5IqEN/XIZ+WjuyeJn5sv4U+NtF8WKY78DFcA
-	 7Z1ick3CWWW6UrjT+OZRS/5bLrHmUV3oGyqoQlMCmlr/N+Ee5QkeFCL0rUJSoYMdUa
-	 9DyAzghoEakpg==
-Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 72A7317E1276;
-	Tue,  3 Feb 2026 15:53:59 +0100 (CET)
-Date: Tue, 3 Feb 2026 15:53:54 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Maxime Ripard <mripard@kernel.org>, Daniel Almeida
- <daniel.almeida@collabora.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>, Danilo Krummrich <dakr@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Drew Fustini <fustini@kernel.org>, Guo Ren
- <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, "Uwe =?UTF-8?B?S2xlaW5l?=
- =?UTF-8?B?LUvDtm5pZw==?=" <ukleinek@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda
- <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
- <gary@garyguo.net>, "=?UTF-8?B?QmrDtnJu?= Roy Baron"
- <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Andreas
- Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org,
- linux-pwm@vger.kernel.org, linux-clk@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] rust: clk: use the type-state pattern
-Message-ID: <20260203155354.0cea1f65@fedora>
-In-Reply-To: <20260203122631.3a94a935@fedora>
-References: <20260107-clk-type-state-v3-0-77d3e3ee59c2@collabora.com>
-	<20260107-clk-type-state-v3-1-77d3e3ee59c2@collabora.com>
-	<20260108-delectable-fennec-of-sunshine-ffca19@houat>
-	<98CD0BF6-3350-40B9-B8A9-F569AE3E3220@collabora.com>
-	<20260119-thundering-tested-robin-4be817@houat>
-	<aW4lCfUyumOKRRJm@google.com>
-	<20260203113902.501e5803@fedora>
-	<20260203122631.3a94a935@fedora>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-redhat-linux-gnu)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Yp5DGoms";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="eRbtheRD"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1770131747;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3GPmx/o94nzL4/jmMhbm+4apVlFi7+ZwJQ/KS0Eum2k=;
+	b=Yp5DGomsUd8neCy5SExr8VH53jM37A4iuM+XgCU9mzOA5kkH6XKETrlEUVeXcZBcmis7MN
+	WoSn/wEFo2Smqr5F/pty0UCL8a2TMSPSbcV8bTh6lT4vnnT2Y/SYu7ZPDj6Li46fUU+Hzq
+	FBmAqb6jSmEo1m910iVoYWTd4SSlBGw=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-74-Ht3kvzAHOzuXuPIw6xsFyQ-1; Tue, 03 Feb 2026 10:15:45 -0500
+X-MC-Unique: Ht3kvzAHOzuXuPIw6xsFyQ-1
+X-Mimecast-MFC-AGG-ID: Ht3kvzAHOzuXuPIw6xsFyQ_1770131744
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-5033c483b76so208132901cf.1
+        for <linux-clk@vger.kernel.org>; Tue, 03 Feb 2026 07:15:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1770131744; x=1770736544; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3GPmx/o94nzL4/jmMhbm+4apVlFi7+ZwJQ/KS0Eum2k=;
+        b=eRbtheRDBAkNLSmPnQXSLY51IZYS7mSyJ4nrPWKfqOEw4Bx5Be0Mmstc/QgM9Z6i4d
+         1RawUsTchID0EsAQYN6020Rx3reKsAWGk9bEMtmMcja4GHgegCVKGkkZ13N9aFvmiDal
+         KyYiRpkIz+f77c2hiE2K8zNoVg/uYedTlUCnEPux9OGwiHw3lngAqafvLQ1OM5h/VpYj
+         Kd3nhFlsMjXtkIZVie9i+UpvNAg4KtbCwmUJt9TGrARaK8KFtFlW+Juw/bhF7xZKlTmo
+         dWDCW92hqXWr3KlbxhfN5AXfI9W9wgmEc30JjMqBsG981xaMhFbx9ktax7YviCIyWO4V
+         grFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770131744; x=1770736544;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=3GPmx/o94nzL4/jmMhbm+4apVlFi7+ZwJQ/KS0Eum2k=;
+        b=gn/yYZ0ZlzYG0jJcFk8PIl9+Ag521uJFKnhW96zR6Y/d80bMqsL3QdKI+K/GTDmGGV
+         cRTO875OnqS2By3qNTod4kMlUEaT/4F6AXg7S/MNPEhl1rAqGkYb2pyb/+0JPEQqh+zM
+         mr3N8edexYFssUSuJvWwXMG43p2Ty77/DGlsGZzHUp3Jndboy4GW3ujI8CPYnqLz2dS6
+         vVBcY/emP35ZTgcN1+STAIL+14+NJk5iwh488CfGtrYL/bB7U8gOasGGgTDjXCZ6q+nQ
+         Gm2/8ai45K1AttyL6yjvJz85+VoLwBF75h/YGs8R4LvPUSyagHL37CTokKdXThOgfVG0
+         hX1g==
+X-Forwarded-Encrypted: i=1; AJvYcCV2cyghZrzurerUMIsNSNMYvdREZhVE6+M7QGTQctmD/95Q/CWBdMYH8PSjB3+Lv83SDXXlfPfDjpQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgOeZcrZcM+hU3qsJItcNvohliGrmP1y3FnDLt0I4ccOpso15E
+	NxiLu6jI2WnyHnYpkCYcqsPdL0Y6rZRJwhnbkmfpJO/W8PZ8Q9wWPd8YUTHdz5N9gC3kfzCJg41
+	6QgMfuDODYhztM1Lsraver2oPPei1/dOGAS3YNfh9hLxGswyi1mZCo+xvlOv19A==
+X-Gm-Gg: AZuq6aJfNv74BmVbrVemtq2d2+EdZbNd3NMLr8kpMJir0/9iEYZ9lw9qJxRq1/CKXH5
+	c78E2hppk2eznm6D25POxSor4iILpy6PHPYUrTo19NORlZQDJ4BjaLf0LqN9tfxRTxE5wYmVnvQ
+	ILQDv9o0km0Kx3VKIzGBW2n0qLWn1oaKzAK5LEAPdvQ1OImF0JAwQ2JBGdK9Jq00p28zM0y/XMQ
+	NqhHGfXGM1INWiPF+sL5vyIAt6YGS8SrDgnwPxd/nNSYJQ8K1ptAvkbFxVj/KaohdniIfmurBbz
+	p1Oxs0ahPYC/GJgiGgTk+u60BnpUjvJPYG7cmovScSsEgAm15rsEfz69tzcaQ+9VHbBhJekkzgw
+	YF/v793e3eysazUD8OMlmWC+x872JgF0pHC4+xfnFIbzv
+X-Received: by 2002:ac8:7dd5:0:b0:4ff:c08a:52c4 with SMTP id d75a77b69052e-505d218ff4fmr206450041cf.18.1770131744188;
+        Tue, 03 Feb 2026 07:15:44 -0800 (PST)
+X-Received: by 2002:ac8:7dd5:0:b0:4ff:c08a:52c4 with SMTP id d75a77b69052e-505d218ff4fmr206449111cf.18.1770131743486;
+        Tue, 03 Feb 2026 07:15:43 -0800 (PST)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5033a4de38esm129309391cf.27.2026.02.03.07.15.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Feb 2026 07:15:42 -0800 (PST)
+Date: Tue, 3 Feb 2026 10:15:41 -0500
+From: Brian Masney <bmasney@redhat.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	patches@lists.linux.dev,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Mark Brown <broonie@kernel.org>,
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Chen-Yu Tsai <wenst@chromium.org>
+Subject: Re: [PATCH] Revert "clk: Respect CLK_OPS_PARENT_ENABLE during recalc"
+Message-ID: <aYIRHf1njCXmoswF@redhat.com>
+References: <20260203002439.1223213-1-sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260203002439.1223213-1-sboyd@kernel.org>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On Tue, 3 Feb 2026 12:26:31 +0100
-Boris Brezillon <boris.brezillon@collabora.com> wrote:
+On Mon, Feb 02, 2026 at 04:24:38PM -0800, Stephen Boyd wrote:
+> This reverts commit 669917676e93fca5ea3c66fc9539830312bec58e.
+> It's been shown to cause problems on i.MX and STM32 platforms
+> where the board doesn't boot. In one case, a clk with
+> CLK_IS_CRITICAL and CLK_OPS_PARENT_ENABLE is being registered
+> causing the parent to be enabled, the rate recalculated, and then
+> the parent is disabled causing the critical clk being registered
+> to stop clocking.
+> 
+> A fix for that would be to calculate the rate of the clk after
+> enabling the critical clk itself, but that wouldn't fix another
+> problem where a clk with CLK_OPS_PARENT_ENABLE is registered
+> before the parent is registered. In this case the hardware access
+> in the clk_ops::recalc_rate() function would fail if the parent
+> is disabled.
+> 
+> There are even more problems exposed by this patch because it
+> introduces logic that disables clks earlier in system boot than
+> has existed previously. Historically we've not disabled clks
+> until late init (clk_disable_unused) under the assumption that
+> clks have been registered enough to have a consistent view of the
+> clk tree. The clk_disable_unused logic doesn't work very well
+> though, leading to quite a few devices booting with
+> clk_ignore_unused on the kernel command line.
+> 
+> Long story short, disabling clks during clk registration is full
+> of pitfalls. Revert this commit until a proper solution can be
+> found.
+> 
+> Reported-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> Closes: https://lore.kernel.org/r/6239343.lOV4Wx5bFT@steina-w
+> Reported-by: Mark Brown <broonie@kernel.org>
+> Closes: https://lore.kernel.org/r/036da7ce-6487-4a6e-9b15-97c6d3bcdcec@sirena.org.uk
+> Cc: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> Cc: Brian Masney <bmasney@redhat.com>
+> Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Cc: Chen-Yu Tsai <wenst@chromium.org>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 
-> On Tue, 3 Feb 2026 11:39:02 +0100
-> Boris Brezillon <boris.brezillon@collabora.com> wrote:
-> 
-> > On Mon, 19 Jan 2026 12:35:21 +0000
-> > Alice Ryhl <aliceryhl@google.com> wrote:
-> >   
-> > > On Mon, Jan 19, 2026 at 11:45:57AM +0100, Maxime Ripard wrote:    
-> > > > On Thu, Jan 08, 2026 at 11:14:37AM -0300, Daniel Almeida wrote:      
-> > > > > > For example, it's quite typical to have (at least) one clock for the bus
-> > > > > > interface that drives the register, and one that drives the main
-> > > > > > component logic. The former needs to be enabled only when you're
-> > > > > > accessing the registers (and can be abstracted with
-> > > > > > regmap_mmio_attach_clk for example), and the latter needs to be enabled
-> > > > > > only when the device actually starts operating.
-> > > > > > 
-> > > > > > You have a similar thing for the prepare vs enable thing. The difference
-> > > > > > between the two is that enable can be called into atomic context but
-> > > > > > prepare can't.
-> > > > > > 
-> > > > > > So for drivers that would care about this, you would create your device
-> > > > > > with an unprepared clock, and then at various times during the driver
-> > > > > > lifetime, you would mutate that state.      
-> > > 
-> > > The case where you're doing it only while accessing registers is
-> > > interesting, because that means the Enable bit may be owned by a local
-> > > variable. We may imagine an:
-> > > 
-> > >     let enabled = self.prepared_clk.enable_scoped();
-> > >     ... use registers
-> > >     drop(enabled);
-> > > 
-> > > Now ... this doesn't quite work with the current API - the current
-> > > Enabled stated owns both a prepare and enable count, but the above keeps
-> > > the prepare count in `self` and the enabled count in a local variable.
-> > > But it could be done with a fourth state, or by a closure method:
-> > > 
-> > >     self.prepared_clk.with_enabled(|| {
-> > >         ... use registers
-> > >     });
-> > > 
-> > > All of this would work with an immutable variable of type Clk<Prepared>.    
-> > 
-> > Hm, maybe it'd make sense to implement Clone so we can have a temporary
-> > clk variable that has its own prepare/enable refs and releases them
-> > as it goes out of scope. This implies wrapping *mut bindings::clk in an
-> > Arc<> because bindings::clk is not ARef, but should be relatively easy
-> > to do. Posting the quick experiment I did with this approach, in case
-> > you're interested [1]  
-> 
-> This time with a proper RawClk(*mut bindings::clk) wrapper, so we can
-> clk_put() called in RawClk::drop() instead of in Clk::drop().
-> 
-> [1]https://gitlab.freedesktop.org/bbrezillon/linux/-/commit/6fa6cb72f14373b276c61d038bc2b16f49c78f74
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
-And I forgot to drop the ManuallyDrop in that one, but I bet you get the
-idea.
