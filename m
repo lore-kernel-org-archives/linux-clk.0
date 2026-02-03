@@ -1,123 +1,209 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459A47260F;
-	Tue,  3 Feb 2026 09:09:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3047C396B86
+	for <linux-clk@vger.kernel.org>; Tue,  3 Feb 2026 09:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770109763; cv=none; b=Mc1U+gFD7tJfIV+7FPmrTvF+1jiM9dKqNDMc9qsfB+Msn7SCcl4068m0pnxIOo8BNsWO8LeyTnB8BTLCGs+7qa1i7qnRcjEkI4G2rY2N9VYOQQ10SwBvhzNMAl94x0DWoDod+o2QsuVlAM5Jv+8/yGcf8EkCHvxUSI3KIMm1PKY=
+	t=1770109902; cv=none; b=rKSIfjFmk1JPKv5Ek4Dqsc+d3Py8ih8UbAT0a5emwC/vMzr4SH4bpGeKOHcBHP7XmWga2Mvu5mG3J9Ya8WN1PShxU51chLfU3muYMigfKZX7FUgSEdKiJHxPNz7E/XTUg/K5Uz23SA9rkd3/vNr9aLCtblNXQmHd0MbhCLTVraE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770109763; c=relaxed/simple;
-	bh=X7jzLZ1GgbMnGkSzg2P6TINP/UEVUi+UuFD6WvVbSxI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DA4juV0oImeXce7aqj0b4KaIIfXZgcyQdgZQgiAmyFqlojygFKNpNNI1DXzwdVo0imaydRe681riDnO0zGMlaXJolIIuT5BlzfUya79j/ElYGNoEFu9Ngdym8/Ch7Q2Io9jaJFJAWnHKWjHFNvASwpaTQjGApbk9bHOgsRbK854=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZFatVTox; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1770109902; c=relaxed/simple;
+	bh=cVfXsmh4g5Jnpr+qx6yCihE26g/+bryyh8mxmPKssz4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WnwgcSF4LSPLfbADwaaO6dNdJyiEQ3zSUEZ6Uw6A7ASpDRIyzxggykHBJoQ3Kw7RoA1Q2qK9UqZOrR/4oY5ShQPFhswADui1/P6hIbvdq7/WE+JZvtGi0X9NkhjVRTcWu6I31+D7+n+Ih4V8JyHGJEOeSyscFl7APVeKczZzElM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KTyiFKKP; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=FBlG3VFr; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZFatVTox"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1770109760;
-	bh=X7jzLZ1GgbMnGkSzg2P6TINP/UEVUi+UuFD6WvVbSxI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZFatVToxDXh4OwgdhbjFjXaOgCJU6JZAujnQlkaozaIVHjVFryZrSDyEFFhWw7Dde
-	 DLTH3PD5JoMagk7qYK3kH1V8AjraHnhM5T2a1qj8snpWNY9xQ7YaweaWpLBE2jgoKY
-	 KgjsOWUMIKOmJJlU8yOwmpsR4ghuvUXWvya6/uyjkxfjMfejARwbzAsddQKibn/6ji
-	 M7XapaCo7JLZYZNkHmsmCb/TtbEKMcItKPGOpOGuBzceyoN0Kk8TK+clcecM1qCrCy
-	 6OmvvOrV3XVaiX8JrMdndc+czEOTHamjC851t5mx78kTiEMUlHh/xLat/r3OIIKGSx
-	 hsgcwAJUHjUUQ==
-Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 603B717E00A3;
-	Tue,  3 Feb 2026 10:09:19 +0100 (CET)
-Date: Tue, 3 Feb 2026 10:09:13 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: "Gary Guo" <gary@garyguo.net>
-Cc: "Daniel Almeida" <daniel.almeida@collabora.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Viresh Kumar" <viresh.kumar@linaro.org>, "Danilo
- Krummrich" <dakr@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
- Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Drew
- Fustini" <fustini@kernel.org>, "Guo Ren" <guoren@kernel.org>, "Fu Wei"
- <wefu@redhat.com>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
- <ukleinek@kernel.org>, "Michael Turquette" <mturquette@baylibre.com>,
- "Stephen Boyd" <sboyd@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>,
- "Boqun Feng" <boqun.feng@gmail.com>, =?UTF-8?B?QmrDtnJu?= Roy Baron
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>,
- <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <dri-devel@lists.freedesktop.org>, <linux-riscv@lists.infradead.org>,
- <linux-pwm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH v3 1/3] rust: clk: use the type-state pattern
-Message-ID: <20260203100913.6d224657@fedora>
-In-Reply-To: <20260202171038.10e51e18@fedora>
-References: <20260107-clk-type-state-v3-0-77d3e3ee59c2@collabora.com>
-	<20260107-clk-type-state-v3-1-77d3e3ee59c2@collabora.com>
-	<DFSMRQFIYQPO.1A38Y84XZ1GZO@garyguo.net>
-	<20260202171038.10e51e18@fedora>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KTyiFKKP";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="FBlG3VFr"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6138nqUJ848678
+	for <linux-clk@vger.kernel.org>; Tue, 3 Feb 2026 09:11:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	51y+zk9oPwAHrTNnzHu+UYWMQfDx1dP+m7ewZ/BKyNE=; b=KTyiFKKPCKB1Ho4W
+	7KcUorL7euNmrvAP60siFRIOO7488FdIial7MpL8gDwuXQeNSLhgt7PI8EvaKrzC
+	ALs1h+qnRrUznx7rmRIAViCMbSAuHouLcuSr/h2Hv39ZiJVSms9OXE+nppmzO4w/
+	uoLaeax0DRCUo1XiCdQwKKsGiVWf6fDVd7kV/PUn2XLlki06u0alOudMIKLqL/xr
+	BTMPRb7HcX5OrbQlyZUUtLaaA1Nx0e6h8eDmw/0s5zoZxla93X9wYeE0SZbxY4ge
+	zy2T6udHFbsObvYaNHQkeGbn7OqNmsT8hC2aoZchF8YW7extMH+rnMEbnSnb1bBT
+	i/iJ2w==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4c3dutg2ax-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 03 Feb 2026 09:11:40 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2a8c54bbe46so109876965ad.2
+        for <linux-clk@vger.kernel.org>; Tue, 03 Feb 2026 01:11:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1770109899; x=1770714699; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=51y+zk9oPwAHrTNnzHu+UYWMQfDx1dP+m7ewZ/BKyNE=;
+        b=FBlG3VFrWUa8bMWwBg52DyYACOxWWKhw4LRmvHuLmKF3etpgtFLJ0xb2Ttth1RtzO6
+         iKMgbTU9wkNDEjuhJNWN14vevOvCuXMMRflr+GxqDG3c5dwSR9v9Cw2T9BTdzjar9cnD
+         T2tm3SRy6HkGVOBnXsASJ1xpngwAzNzi3ApzTpZch+eyfzJH4jM+xjJZ7wQPA6RJ1+2B
+         c0gm6/AJGIH/m5wjg660xHBfs77S1zKw8DnbmD0Ym+yOV4nT70/Q812MU+J6z06IXjwq
+         kmS5gwsxpygXUh+mPI11RcYnrD9muyzpj0wRXfbNYD+HaoKb33H6wNPjEei/iT1Lcdw9
+         9AtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770109899; x=1770714699;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=51y+zk9oPwAHrTNnzHu+UYWMQfDx1dP+m7ewZ/BKyNE=;
+        b=aIab0Bp1/D3azkFHIxed0ingWBEjW+44FzrvA+EJ/+pp8JgJ/JHf3oKPjwbFye1HhC
+         XPknURTZWBIlRc+YebmkriTwMMTUg9LC3kOFOPQMKiZlWHulBTUMBvrr8KW5FyKl2erv
+         4x22gb4MPiwDBSKOycZdEcyfudverGuHF9h9xRoEfObLdhudR5peFY/eUR7P7xlqzMjn
+         XZhsiApidTMYx7J/6QnV7njDLBrJ/n/3IcUfdB8E1PlPkrxlNuVzydOY0ygDddPdywBi
+         6Zns/E8P2zJYSBH+0DAdAgFjAnFAURMIImbYyvJrf3Igx7ks3MV4zwhjie8o8yc7BTvA
+         G2qA==
+X-Forwarded-Encrypted: i=1; AJvYcCVXJVZq6qikEvKvuvuesQvPDLy1IaxXrVfXFu8feDEc8WpFWQpxIEFOTLTERKY0aSsiHUnlg9sSSxI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAYuPvWpmNgjCqRdYXaA+BzdrQO//aPjcUwHg6ZZbLB71FRid8
+	xfhRowI9i2Vqz0ToiNdnyY/YQF4nHLl014EiTx9WAF+rlyDC+GRa5XNmHhl4lG4ad1lFsoBOW6b
+	CATLBUjODoMbYKjOWJ2K9eF5wpJAqZ6F9572K/vfzqTAM3wBOPgRZaoSxKdLuOz0=
+X-Gm-Gg: AZuq6aL94AqCmMBnL/JG6Kv7nTio95mNBXSIF4yJwAatTVoGp6incObgjBhVm0yzqWT
+	P07zKthBWDnQt2s0ykLZ+a8Jwhee87eaJUQejqdoqBENv7QjiwUlfRWY2We3qXPhC1UHCjSuXNz
+	Dsd761WOavMmjcAj/hlEwF5nKqPzCZz91AkXLHwlLKg2g0qs5U429ERkRIvCOgxvsUTAliLWelZ
+	RGH/LeR124lkXGBgN3d4fjWtgjOhMRBQ//BxnYVmh21iKXgotYEWPDSTTiZs2lB5XTe185DR5vq
+	rvkDBj65qFMLJXfqriCOLJ1Y/SzbpQVLrkolRs31hkuGkxtygP8dg3u0mVM2fVBtKGwdlGTG+Xt
+	fs1cgI5pg8fRzNNpv7AuznQKVhlwEf2n2L0iPJaE6fqMI
+X-Received: by 2002:a17:903:2f91:b0:2a8:d9ea:8b59 with SMTP id d9443c01a7336-2a8d9ea8ce0mr151911275ad.7.1770109899113;
+        Tue, 03 Feb 2026 01:11:39 -0800 (PST)
+X-Received: by 2002:a17:903:2f91:b0:2a8:d9ea:8b59 with SMTP id d9443c01a7336-2a8d9ea8ce0mr151910935ad.7.1770109898539;
+        Tue, 03 Feb 2026 01:11:38 -0800 (PST)
+Received: from [10.206.109.90] ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a88b3eecc5sm178047315ad.17.2026.02.03.01.11.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Feb 2026 01:11:38 -0800 (PST)
+Message-ID: <2f387069-f7e7-e3e5-f66c-c0d9e7fa92a6@oss.qualcomm.com>
+Date: Tue, 3 Feb 2026 14:41:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v2 4/8] media: iris: scale MMCX power domain on SM8250
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>, Jonathan Marek <jonathan@marek.ca>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Bryan O'Donoghue <bod@kernel.org>,
+        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Hans Verkuil <hverkuil@kernel.org>,
+        Stefan Schmidt <stefan.schmidt@linaro.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Dikshita Agarwal <dikshita@qti.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-media@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+References: <20260201-iris-venus-fix-sm8250-v2-0-6f40d2605c89@oss.qualcomm.com>
+ <20260201-iris-venus-fix-sm8250-v2-4-6f40d2605c89@oss.qualcomm.com>
+From: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
+In-Reply-To: <20260201-iris-venus-fix-sm8250-v2-4-6f40d2605c89@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjAzMDA3MyBTYWx0ZWRfX8qSmYM8g2xc4
+ qsQYTNACCTsKPs6sl+rM1SS3a1nfEIUcstYHkU9klwM/s7zArczil+VA4mc/zRJGayZNzH5S8Se
+ Rgsfwlw3U01qmjtqoAdiMIbnmyNV9j48Xetuz3PMq5adrmbjp/oM2AhL1AoB66ctGaPwzGscm86
+ aWFFIY3THTDJa9GqR6t01c6s3w/ofQ8AkfLni/oNsKySVPlPMFWdDWD0csG8f9E4TjtVxnXpNEA
+ OIpkde9Jgo+c03WpLD6v33Tgz2Xg+78r1i9stzIhP5hjOd6oeNzRoXEYPZn2hVducmJBPXLmcQ8
+ ogNgC3bzryRa3d4Jal+xl+mYpb/DGSpaTvmuY93E3ukCpV8qs6NsFmeGi21HwFErlmtwCcX1tix
+ Wxa04kx0WNNb1GuY0Zi881+nj3XK85rZbaSqG4Kg8S9FmI6HAoE7cBwOCPQLwscEqpQKqyHYeyx
+ H5hNRABeFkR9YE8Smew==
+X-Authority-Analysis: v=2.4 cv=FrgIPmrq c=1 sm=1 tr=0 ts=6981bbcc cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=HzLeVaNsDn8A:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=R0B0fMNruX7Akzlv-IwA:9
+ a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
+X-Proofpoint-ORIG-GUID: UtcHOs8OkDKuZDybozRhsdmLZwa2w20K
+X-Proofpoint-GUID: UtcHOs8OkDKuZDybozRhsdmLZwa2w20K
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-02-03_02,2026-02-02_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 spamscore=0 clxscore=1015 priorityscore=1501
+ lowpriorityscore=0 suspectscore=0 phishscore=0 impostorscore=0 bulkscore=0
+ adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2601150000
+ definitions=main-2602030073
 
-Hello Daniel,
 
-On Mon, 2 Feb 2026 17:10:38 +0100
-Boris Brezillon <boris.brezillon@collabora.com> wrote:
 
-> > > -#[pin_data(PinnedDrop)]
-> > > +#[pin_data]
-> > >  pub(crate) struct TyrData {
-> > >      pub(crate) pdev: ARef<platform::Device>,
-> > >  
-> > > @@ -92,13 +92,9 @@ fn probe(
-> > >          pdev: &platform::Device<Core>,
-> > >          _info: Option<&Self::IdInfo>,
-> > >      ) -> impl PinInit<Self, Error> {
-> > > -        let core_clk = Clk::get(pdev.as_ref(), Some(c_str!("core")))?;
-> > > -        let stacks_clk = OptionalClk::get(pdev.as_ref(), Some(c_str!("stacks")))?;
-> > > -        let coregroup_clk = OptionalClk::get(pdev.as_ref(), Some(c_str!("coregroup")))?;
-> > > -
-> > > -        core_clk.prepare_enable()?;
-> > > -        stacks_clk.prepare_enable()?;
-> > > -        coregroup_clk.prepare_enable()?;
-> > > +        let core_clk = Clk::<Enabled>::get(pdev.as_ref(), Some(c_str!("core")))?;    
-> > 
-> > Ah, more turbofish.. I'd really want to avoid them if possible.
-> > 
-> > Any disadvantage on just ask the user to chain `.get().prepare_enable()?`? This
-> > way it is also clear that some action is performed.  
+On 2/1/2026 4:19 PM, Dmitry Baryshkov wrote:
+> On SM8250 most of the video clocks are powered by the MMCX domain, while
+> the PLL it powered on by the MX domain. Extend the driver to support
+
+Nit: s/it/is/
+
+> scaling both power domains, while keeping compatibitility with the
+
+Nit: s/compatibitility/compatibility/
+
+> existing DTs, which define only the MX domain.
 > 
-> I've just disc
+> Fixes: 79865252acb6 ("media: iris: enable video driver probe of SM8250 SoC")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> ---
+>  drivers/media/platform/qcom/iris/iris_platform_gen1.c | 2 +-
+>  drivers/media/platform/qcom/iris/iris_probe.c         | 7 +++++++
+>  2 files changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen1.c b/drivers/media/platform/qcom/iris/iris_platform_gen1.c
+> index df8e6bf9430e..aa71f7f53ee3 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_gen1.c
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_gen1.c
+> @@ -281,7 +281,7 @@ static const struct bw_info sm8250_bw_table_dec[] = {
+>  
+>  static const char * const sm8250_pmdomain_table[] = { "venus", "vcodec0" };
+>  
+> -static const char * const sm8250_opp_pd_table[] = { "mx" };
+> +static const char * const sm8250_opp_pd_table[] = { "mx", "mmcx" };
+>  
+>  static const struct platform_clk_data sm8250_clk_table[] = {
+>  	{IRIS_AXI_CLK,  "iface"        },
+> diff --git a/drivers/media/platform/qcom/iris/iris_probe.c b/drivers/media/platform/qcom/iris/iris_probe.c
+> index 7b612ad37e4f..74ec81e3d622 100644
+> --- a/drivers/media/platform/qcom/iris/iris_probe.c
+> +++ b/drivers/media/platform/qcom/iris/iris_probe.c
+> @@ -64,6 +64,13 @@ static int iris_init_power_domains(struct iris_core *core)
+>  		return ret;
+>  
+>  	ret =  devm_pm_domain_attach_list(core->dev, &iris_opp_pd_data, &core->opp_pmdomain_tbl);
+> +	/* backwards compatibility for incomplete ABI SM8250 */
+> +	if (ret == -ENODEV &&
+> +	    of_device_is_compatible(core->dev->of_node, "qcom,sm8250-venus")) {
+> +		iris_opp_pd_data.num_pd_names--;
+> +		ret = devm_pm_domain_attach_list(core->dev, &iris_opp_pd_data,
+> +						 &core->opp_pmdomain_tbl);
+> +	}
+>  	if (ret < 0)
+>  		return ret;
+>  
+> 
 
-Sorry, I've hit the reply button before I had finished writing my
-answer. So I was about to say that I had started writing something
-similar without knowing this series existed, and I feel like we'd don't
-really need those prepare_enable() shortcuts that exist in C. We might
-has well just go:
+Once above nits are fixed.
 
-	Clk::get(dev, Some(c_str!("core"))).prepare()?.enable()?;
+Reviewed-by: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
 
-and have the following variant-specofoc functions
-
-- Clk<Unprepared>::get[_optional]() (no get on Prepared and Enabled
-  variants)
-- Clk<Unprepared>::prepare()
-- Clk<Prepared>::{enable,unprepare}()
-- Clk<Enabled>::{disable}()
-
-Regards,
-
-Boris
-
+Thanks,
+Dikshita
