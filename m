@@ -1,131 +1,179 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A22F134F484
-	for <linux-clk@vger.kernel.org>; Tue,  3 Feb 2026 13:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770124257; cv=none; b=Pab3/7n985QxDDEZZJtNo9GZo8sEicDJ3oJFSdDC1Kj98DiNvG7aLnFKsUQrp2jTehWk8czk9gaP899fW4Wvl+grkJ6TRU3PG2lbVzeL03eyEUNmaZJ/jFXACWxqRZj1OuLTrNoxuWFMO6EAO/K2Gf1zRB/H1CiBiPEpIp4zDdA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770124257; c=relaxed/simple;
-	bh=GtD/9l/D42UM8AefeKF0lZttZ6YGxQt4M7P3WCXGqKA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y9m5XS49sHRH94WWcshedryVe2yvkhRNkGiOkuUF8MmO+3YhJUTbhutTyDpRPl3o8UHiQ+sIYJiqInzMMIr1Kv1kAMsBKMvYrXAYj9yu08XpJqmsFODj+5fE1TqdrLn2n519GOdBBqtMMJWYGxf9Bw8gSRWfuSnjgmF49nXuTEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lgDIrgkU; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9631C38E110;
+	Tue,  3 Feb 2026 13:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770125668; cv=pass; b=dHVK1UsfdMO2R+2r8Tf+7FQf0GiOrNblTcaGLlb1vz8W8Ov3jKA9JoRm02lJuwGgefi+TQ6Tl8V9sngm9QzonlZRHnO0EUZ5Ph4+Alf7qVDZJOqEgcHvwFe0k6julxUTiOzVKCF0oMrQk58vlg7wsVIv49XaBK9rNH8ZNJs4DO4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770125668; c=relaxed/simple;
+	bh=ChalByCuTihRfVeCZWRZnvLKjLssr1aGB5DOv9CjXV8=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=KGsu2yybnmKRELptOym5fFm2BTG9UD+kTfNLDsdBNp/ESn82JmDNpcib1z4Bn0gK9bO0bm7xcaWCJSjJYWzusPMZv47x2YETi/+lsF/cmyW2uJTwMEdjxvSC4Mo/v5CYHMTNHOMypLeb1I6wa1aSP2F+Hiq83q79+g8kC3GWnhQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=OA7UxvT7; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lgDIrgkU"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-48069a48629so58200265e9.0
-        for <linux-clk@vger.kernel.org>; Tue, 03 Feb 2026 05:10:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770124254; x=1770729054; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3okOClBXUJoLFyNSUEoNAcCjGRrkRSkTJX+qEfn7Ojg=;
-        b=lgDIrgkUIJbruFyH6BvfUTcYDFBSLlbXgLcnk0upCyeMIbGPFRP95jLsVXbl4P+IQ+
-         +bIeEI0NTNGrqVqSPSundF5N0td4NorGpquc9hzj7MRAHJxTo38iS5MgVPR9Y1AbnQMS
-         SBARfrHo+YqN2JK8UwG/h+0/ywyV91s7rZfMH+COdLx0jQOYwOxDKy+unCAwPUH+9rrr
-         q8yvWLi+158qkHR4VhbS1qlvEx7uxtsoivmdfAgX13igeo0V2ph/GaXnzYE9sjjisorE
-         ZXdl+a7t87pcDgHOdglhNTd+vV7ZsLxPz64ptrORXF2PMxcINKsec5DA9kmQtrc9ILK3
-         nYhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770124254; x=1770729054;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=3okOClBXUJoLFyNSUEoNAcCjGRrkRSkTJX+qEfn7Ojg=;
-        b=bK/7ogYmtlFhZO3FpW96SUhbeAcOuy9oTH4Pb89sK18vXTgHy627Q6/UbBNSY6DhIZ
-         rlyxpU+GYjlLbkFNzjdOkBulqfbqVcDNgQk7I5EnWZn61dsXTLo0vMEm1jAWlmOGus4V
-         +SyzOpXBtI6IZmdzF/ock34d61qUrzmpuSBrBWOXgsLUZVxsZOGmmjCziMaQv33786Up
-         4zXFNdxZ4c/UN7iMHvqqKF+9UMZlQ+kuUSfrMlDoLPo21uY/td0EUkMtems40C0M+rYE
-         v26Fb2LbqZswZcRj0RwS/v3iHqvDIvcuAWlV9E0y1glTbuJLhpj7nBshH2huvm+pu92z
-         0j4w==
-X-Forwarded-Encrypted: i=1; AJvYcCWTRfQaJmIND5lk2QXBrPhMXkgEiI+2yoR5f5SxQCyTRIqpklnddr6nDNMtFqP8jc/rnzXZbmOfmBQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwG7rmbJe5ojY1GczvD1L5XL+dZ/tzhSpgUNuoaDYsdK6Q+wbBH
-	MqVmh9YNqo7TQjjG14tZlonHT01VGrv4hGvWW1U83DgwodeTrJEb+2Fg
-X-Gm-Gg: AZuq6aLLn4l1pSiHNnXvfKwT90k5+4Ipy1vt8309yQtBgUJxDLw+61P8E23WJwuUZbQ
-	oPIum+dXP5SfSVlzEfx/aNJKn/m7uOlKcohkdaBHBO9gl1NL2c0YdF/imBDpBs8n1D1mCR+z7re
-	l4V2J2MX6IkMkejeRIvywyKZTKUh8LCN6rO90vc1RoweojjhhV0yHhQ1389nYKWgEVkIImj5aH1
-	wbsoILzc2CFt2DpKrqwpEFYIjitZ/53rxGYA87pI7oLzgayiKwBBZUU594PeilU6n/zkUFm2O1J
-	zPC0FXtQga04+F9mVnRJacYHcJurUjYY8tEPTPaxhqx53sdq58+je/eIPR/3HNANhZp/M7SOaB3
-	Ds39YqTjLc0GwXuUCUf1wUus+u0KYWlFzPsrMiKTuPC3tLNMsNcRTgXzPUsAFucVoOG5iCG2nGr
-	IUE3k/GjxzjqWjK8x29w==
-X-Received: by 2002:a05:600c:138a:b0:47e:e20e:bbbe with SMTP id 5b1f17b1804b1-482db48e4a7mr232127365e9.25.1770124253800;
-        Tue, 03 Feb 2026 05:10:53 -0800 (PST)
-Received: from biju.lan ([2a00:23c4:a758:8a01:9cd9:f748:166d:55fc])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4830512ddd0sm63662185e9.9.2026.02.03.05.10.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Feb 2026 05:10:53 -0800 (PST)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v2 03/10] clk: renesas: r9a08g046: Add GPIO clocks/resets
-Date: Tue,  3 Feb 2026 13:10:26 +0000
-Message-ID: <20260203131048.421708-4-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260203131048.421708-1-biju.das.jz@bp.renesas.com>
-References: <20260203131048.421708-1-biju.das.jz@bp.renesas.com>
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="OA7UxvT7"
+ARC-Seal: i=1; a=rsa-sha256; t=1770125637; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=C1GbKPfFkTdX3EQDiy0qa9/CKZhWiApFO8NLGPDE6I8dBZr+hSDQJjBYjD31uKofyr4BKwbxxzHy8In87h6bMY1wNCN8bcAxmsKbIUrWXCXS52Edu6f3aMgYCMgdWmxsKtw9XTlgFkjP26XQ1TQKpDrFJ7oYRU5upEkDtiBGjRM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1770125637; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=HyBOdQqWUtuQacZEEr3ql23BswwmLu6r6afyPnxrMoA=; 
+	b=N2r0FU1b18zkOKUUhM4R7bNfxM8CRkG9/BoQJNg6pFKNLIfmNbzwCZ1Ui5mCUfzsDA0cVUgYDD981n6nvWwuf0ocKvEIpSZ39v/PuqKz6I2Ni/BDaX02EShynz35Uus3gdhAy27jYUFSxjXv0/2PMVJbjNRzC6lsk/UFDAJ7YcI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1770125637;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=HyBOdQqWUtuQacZEEr3ql23BswwmLu6r6afyPnxrMoA=;
+	b=OA7UxvT7iiUq1OUz1gxbHI8H2/t6OL0y+g8hem3/mGpjMJ37P3mnyQWH28GnvFKs
+	NkbuY3U7FX8T5dN3q8TC6MzsJU/jZxX2IknKIZIpHar1udK5OXVCW5S949s0L9cKpRn
+	84RC8g3iE9sRI4ni8Dn3rt9Odhx5CpN3FL93OcXM=
+Received: by mx.zohomail.com with SMTPS id 1770125634489679.9066983046164;
+	Tue, 3 Feb 2026 05:33:54 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH v3 1/3] rust: clk: use the type-state pattern
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20260203113902.501e5803@fedora>
+Date: Tue, 3 Feb 2026 10:33:34 -0300
+Cc: Alice Ryhl <aliceryhl@google.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Drew Fustini <fustini@kernel.org>,
+ Guo Ren <guoren@kernel.org>,
+ Fu Wei <wefu@redhat.com>,
+ =?utf-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Trevor Gross <tmgross@umich.edu>,
+ linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org,
+ linux-riscv@lists.infradead.org,
+ linux-pwm@vger.kernel.org,
+ linux-clk@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <E7286D12-0BD9-4726-B072-FE5A040312B1@collabora.com>
+References: <20260107-clk-type-state-v3-0-77d3e3ee59c2@collabora.com>
+ <20260107-clk-type-state-v3-1-77d3e3ee59c2@collabora.com>
+ <20260108-delectable-fennec-of-sunshine-ffca19@houat>
+ <98CD0BF6-3350-40B9-B8A9-F569AE3E3220@collabora.com>
+ <20260119-thundering-tested-robin-4be817@houat> <aW4lCfUyumOKRRJm@google.com>
+ <20260203113902.501e5803@fedora>
+To: Boris Brezillon <boris.brezillon@collabora.com>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+Hi Boris,
 
-Add GPIO clock and reset entries.
+> On 3 Feb 2026, at 07:39, Boris Brezillon =
+<boris.brezillon@collabora.com> wrote:
+>=20
+> On Mon, 19 Jan 2026 12:35:21 +0000
+> Alice Ryhl <aliceryhl@google.com> wrote:
+>=20
+>> On Mon, Jan 19, 2026 at 11:45:57AM +0100, Maxime Ripard wrote:
+>>> On Thu, Jan 08, 2026 at 11:14:37AM -0300, Daniel Almeida wrote: =20
+>>>>> For example, it's quite typical to have (at least) one clock for =
+the bus
+>>>>> interface that drives the register, and one that drives the main
+>>>>> component logic. The former needs to be enabled only when you're
+>>>>> accessing the registers (and can be abstracted with
+>>>>> regmap_mmio_attach_clk for example), and the latter needs to be =
+enabled
+>>>>> only when the device actually starts operating.
+>>>>>=20
+>>>>> You have a similar thing for the prepare vs enable thing. The =
+difference
+>>>>> between the two is that enable can be called into atomic context =
+but
+>>>>> prepare can't.
+>>>>>=20
+>>>>> So for drivers that would care about this, you would create your =
+device
+>>>>> with an unprepared clock, and then at various times during the =
+driver
+>>>>> lifetime, you would mutate that state. =20
+>>=20
+>> The case where you're doing it only while accessing registers is
+>> interesting, because that means the Enable bit may be owned by a =
+local
+>> variable. We may imagine an:
+>>=20
+>>    let enabled =3D self.prepared_clk.enable_scoped();
+>>    ... use registers
+>>    drop(enabled);
+>>=20
+>> Now ... this doesn't quite work with the current API - the current
+>> Enabled stated owns both a prepare and enable count, but the above =
+keeps
+>> the prepare count in `self` and the enabled count in a local =
+variable.
+>> But it could be done with a fourth state, or by a closure method:
+>>=20
+>>    self.prepared_clk.with_enabled(|| {
+>>        ... use registers
+>>    });
+>>=20
+>> All of this would work with an immutable variable of type =
+Clk<Prepared>.
+>=20
+> Hm, maybe it'd make sense to implement Clone so we can have a =
+temporary
+> clk variable that has its own prepare/enable refs and releases them
+> as it goes out of scope. This implies wrapping *mut bindings::clk in =
+an
+> Arc<> because bindings::clk is not ARef, but should be relatively easy
+> to do. Posting the quick experiment I did with this approach, in case
+> you're interested [1]
+>=20
+> =
+[1]https://gitlab.freedesktop.org/bbrezillon/linux/-/commit/d5d04da4f4f619=
+2b6e6760d5f861c69596c7d837
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v1->v2:
- * No change
----
- drivers/clk/renesas/r9a08g046-cpg.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+The problem with what you have suggested is that the previous state is =
+not
+consumed if you can clone it, and consuming the previous state is a =
+pretty key
+element in ensuring you cannot misuse it. For example, here:
 
-diff --git a/drivers/clk/renesas/r9a08g046-cpg.c b/drivers/clk/renesas/r9a08g046-cpg.c
-index a2856d8fa95b..795dc700bdaa 100644
---- a/drivers/clk/renesas/r9a08g046-cpg.c
-+++ b/drivers/clk/renesas/r9a08g046-cpg.c
-@@ -174,6 +174,7 @@ static const struct cpg_core_clk r9a08g046_core_clks[] __initconst = {
- 	DEF_FIXED("ETHRM1", R9A08G046_CLK_ETHRM1, CLK_ETH1_RM, 1, 1),
- 	DEF_FIXED("ETHTX12", R9A08G046_CLK_ETHTX12, CLK_SEL_ETH1_TX, 1, 1),
- 	DEF_FIXED("ETHRX12", R9A08G046_CLK_ETHRX12, CLK_SEL_ETH1_RX, 1, 1),
-+	DEF_FIXED("OSCCLK", R9A08G046_OSCCLK, CLK_EXTAL, 1, 1),
- };
- 
- static const struct rzg2l_mod_clk r9a08g046_mod_clks[] = {
-@@ -229,6 +230,8 @@ static const struct rzg2l_mod_clk r9a08g046_mod_clks[] = {
- 					MSTOP(BUS_PERI_COM, BIT(3))),
- 	DEF_MOD("scif0_clk_pck",	R9A08G046_SCIF0_CLK_PCK, R9A08G046_CLK_P0, 0x584, 0,
- 					MSTOP(BUS_MCPU2, BIT(1))),
-+	DEF_MOD("gpio_hclk",		R9A08G046_GPIO_HCLK, R9A08G046_OSCCLK, 0x598, 0,
-+					MSTOP(BUS_PERI_CPU, BIT(6))),
- };
- 
- static const struct rzg2l_reset r9a08g046_resets[] = {
-@@ -240,6 +243,9 @@ static const struct rzg2l_reset r9a08g046_resets[] = {
- 	DEF_RST(R9A08G046_ETH0_ARESET_N, 0x87c, 0),
- 	DEF_RST(R9A08G046_ETH1_ARESET_N, 0x87c, 1),
- 	DEF_RST(R9A08G046_SCIF0_RST_SYSTEM_N, 0x884, 0),
-+	DEF_RST(R9A08G046_GPIO_RSTN, 0x898, 0),
-+	DEF_RST(R9A08G046_GPIO_PORT_RESETN, 0x898, 1),
-+	DEF_RST(R9A08G046_GPIO_SPARE_RESETN, 0x898, 2),
- };
- 
- static const unsigned int r9a08g046_crit_mod_clks[] __initconst = {
--- 
-2.43.0
+let enabled_clk =3D prepared_clk.clone().enable()?;
+// do stuff
+// enabled_clk goes out of scope and releases the enable
+// ref it had
 
+prepared_clk is still alive. Now, this may not be the end of the world =
+in this
+particular case, but for API consistency, I'd say we should probably =
+avoid this
+behavior.
+
+I see that Alice suggested a closure approach. IMHO, we should use that
+instead.
+
+=E2=80=94 Daniel=
