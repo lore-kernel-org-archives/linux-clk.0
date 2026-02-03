@@ -1,66 +1,66 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB8186348
-	for <linux-clk@vger.kernel.org>; Tue,  3 Feb 2026 23:20:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3BBF31A812
+	for <linux-clk@vger.kernel.org>; Tue,  3 Feb 2026 23:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770160858; cv=none; b=OdqN2/W/ABaDQLbYdAQC9nF0R76/Hw6ZNtdkdxJ6mr/olCEDULk3qikFCGeSJWH6aNyT2vdfDDhfDWwBJk/XGQCPfSiAaWs6KSwKO7jpl/f0eYkfkMho8WlddWZ5HDNM+YrSe1TupAerwDIasvPedrUIwFskg5FR7SUmaU+C9kg=
+	t=1770160938; cv=none; b=tTRHoFO27BGBP8O3PfBJvSXQAOR1Q/I7SOHBkTCUtEsr4UZefIIdo92LFLrffL/YZeQD6Bloqw/oK75KfL8TV8V/pGJQoex6VnTvBG9zA3LuwSBPst6/KXIXYtw1fgUniIsAEnCDTKBUUCd9i6DN2Fv9AcWChfgJiNkLHfF8LT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770160858; c=relaxed/simple;
-	bh=DBlsEnCNWOdgU65s3UGQhrlX8AWLWkEiqvqbN717n08=;
+	s=arc-20240116; t=1770160938; c=relaxed/simple;
+	bh=vmGDTvEh0kB/nA8sp+H/PED+RYlPTGDJvMgu8OOxZgU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q336ahmxpiLIAYUAx1y/YbDPORUBn/Tn2sqjyyIfUWr+G0HoFQf5d9/clOEsJOtC0MjvHhIzCgMocqI0lWMtAXpMpJ9dYuFxyRRyObk62IELlT3TVHDaPMKG3/MPGgpeeCbhpwaRxtBU0g2V/yQHtQQoxlYfVzXngSSrywkvuX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eNMZfLj9; arc=none smtp.client-ip=209.85.128.46
+	 In-Reply-To:Content-Type; b=iffv867pUjv5fK78vjPJkm31r+GhFUEhBAR/+QWx9bYltP78OntMEu1x9oT4j3Wa0WI2ISNp4RLf9DTgglSLsH8Vgjr/H0ukiuZrx7dlA5DSbcUjB95O6zBV8pqW2QaGFfgkIGQchB8X6InQNTeXdKg0G3jpEzTyoB5P/Ss1Mjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lA7Z6LXz; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eNMZfLj9"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-47edd6111b4so65220595e9.1
-        for <linux-clk@vger.kernel.org>; Tue, 03 Feb 2026 15:20:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lA7Z6LXz"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-4359108fd24so69567f8f.2
+        for <linux-clk@vger.kernel.org>; Tue, 03 Feb 2026 15:22:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1770160854; x=1770765654; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1770160935; x=1770765735; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=kP3cETuc1CkrPsq53s7PbxZQOsGNVLDKkivfucBoVDY=;
-        b=eNMZfLj9tkKmMOs7kikYt2+qc5gx6WoZ55jn8TNRRC1cjpDOasTzJW4rUI/5wNRWXq
-         SrUNGKbwjHVJaBK8MvjKvfPOqTXD+6NmgLuNSZDtt1+g5LlL9yC3hN7vCoX2zFOgAjpp
-         22GvTZLF/qw5MTX8mUbdvMDfxgvkiKU8sHhvdNk0VM+mBPFdmgb5ySpZXtQuiSwf3+QR
-         JrW390zUgThE72BN26Quk/LbSP0iU9l9SsxBvkKXkyc1Xt76uFILq18uUQjDaYicR+Ay
-         YryAXBbzSUvq1vjS/HnkG/1uQRRETkKfaDj54bMCoszy1nxEkbudE7q4C7KfVf+E0+is
-         ct7w==
+        bh=zHQSzgLVAjnFP4dBv05KnkyuxPSQFJ3wmRvAOwsqKgI=;
+        b=lA7Z6LXzT+vaJ1rbVAfhg+7GjJkYrIgBM/ims6zHGMCYrIxKjmE+WPTRfIzvcSdrA6
+         jXpZ5dLPLw5gwb75RVqmPp3+pgUFoRZ18CYP6U/dgkpcDx5LKNMhAzamnfaku1LiRPh8
+         iWyVmJ6+6IgFiVkuGUW9opeO49Fd8zt+lH/PrmgYDzflPy3JCaXnRt+0aUWfmwnQV0yO
+         hqHG96AxXgFcKXIVNuUyYO5q3x5j7gF13SCMf+QIewodnXqcPRV8yxRjS72a4wNk0LTn
+         aeTtg0nxCbrFvDYRBkoawUU+gbtm1DkOTxo5zGzc8INEo5nDZ2hWxOZ/LTBVglaKaAeZ
+         iuEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770160854; x=1770765654;
+        d=1e100.net; s=20230601; t=1770160935; x=1770765735;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=kP3cETuc1CkrPsq53s7PbxZQOsGNVLDKkivfucBoVDY=;
-        b=eT6dARiicJps90TjvHrYIpO2ebn80d0PWoZUr9oqIjZC+feKyVvnx9yItaXqZWldRh
-         AQXdjQtsGNGJqNArichN20E/xNZwtjUH+OvB0SeUYMDXk1ijBNqU1G6vrFltg2R1KGxf
-         3IyVOPQYK2SwEQ2TRQQ7bI4pq/BGd4kv2mBPUG4R1u4gZGt973T3UKYZFZ/274mDiLyn
-         HdlUW3nkvGO1kPJTbztXlEtT2m6GFSP6LOamRczPiemla3EIy6I9rsIDxUiqfEFLqPIa
-         46OK7aCTYOWzLmgXWC3IHnmyjXmwYxiwyqSiqjmwyp7iMX9faPZ/pDgddQTNNbLHFjuk
-         Vm0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUzGLNRlJAhvbAQggjBShiuZLDM+WfRqXSPyBE4Wz41oaGnvN6DXhj6+SHZ5V1QBQMrQuuS7zmpk1c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoWoXhZ+NqFZ3WLit3wrlSNKYwzVSojoSzIMXVope2jw2VLnr+
-	j4EEkXSyEBOWouLLgqd8jTJCmySiQmGwtzvi1p1dnKIIY9oyRIrW7KPmSuM18c8j/0E=
-X-Gm-Gg: AZuq6aLTyaLs+PuAp56H1WCKDCjDQmghqRV8axmQsqq41yQjAMIRBpZIUvAMnLxHuJK
-	uQo7U+yqlBIdNJAKRxEBClpRmdFES91atTL+PP1nkXWQpdUlnhuclIkeLNd145K/FoV2qwDxDnD
-	cIdN+UWU8vz4aSGfy35zpqcMJ8h6/dJ3iFDzB9qSyupVx52cNuKaFelvfItQoIlUf25rarQXI9d
-	seHlqTLt+qaSX2xMa3MwUtIsZTSkIRi4tJwc1zQMu6zmeGcZicmogy4F272IUpnbqxiXM6wJ964
-	ikBLH2gV6RrGfKKYEpEvRNIXYWMQ3XsVbvzA7CDEBetlF90gq5xwOK1KGwQcjybN/M46Xpejc/B
-	9mQdYM6Wszac0UcLSkqBWiY+hnxPogQKJQCQ5CiIIVUshoKaiq9zjHL9qX8zb0fPaFtB4npZmb7
-	SoPzNEeozFssQ0DlnXtlpSKx4GEtNCW3pyz8TBGzDkp4uwSe8sMGj+W1FaAi8L18c=
-X-Received: by 2002:a05:600c:5491:b0:46f:c55a:5a8d with SMTP id 5b1f17b1804b1-4830e935736mr15228825e9.4.1770160854462;
-        Tue, 03 Feb 2026 15:20:54 -0800 (PST)
+        bh=zHQSzgLVAjnFP4dBv05KnkyuxPSQFJ3wmRvAOwsqKgI=;
+        b=gPrPHY1hpCH0IZx+1JnNUnGw+kQsYLfQAtjMcxdmY6miGNoZZYD3lOLe8z0JutMbFs
+         a/hsQfvX8LqMmRPjNa2IHjHQl3qha0MMuyK6JyuF4+Y7wxylOrd6QOkcmpQVGElXwpB/
+         cxuyCEBPSE6pv1tPamUEKIh7TNX8u0I1Eefe11hv8bR6snBOmrOswMdmL0801mCDU8tG
+         Y+GyNgfM9i2lYeDBAEHi6y1FEugQQvp0W9ClXZ9moTjyRJz7T9czMBTOY3ZV1ZN1BkeM
+         ux8BoXaLet7fd/F0Yd7g75PSa+DXaosn1O8xwjsuofGzSOKbcEqZFbSuzZgOcdHLEuL+
+         0N5A==
+X-Forwarded-Encrypted: i=1; AJvYcCW4EH4CpDmbphLkoBaLaZ6kMOi5SpH3MdBQKk6ZRKdrTUwwkWZlCEoc0P1XHCC57x0O5q9Ptqy0Bmw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJG5+muDDdgD+u0LVq3yaSe/7qeYB3EgFWoJY7yGiFK1HXftAv
+	6cUtKGiVp5nEct1osL3bKLMU07rG63M80UG4m+qUSjBLMAIscPJ/8bY5j5UuUpEm/j0=
+X-Gm-Gg: AZuq6aIyDu1h3C/0ampCUve9gBENabl8cVQiOuPU8FEi0c3xP5eQaDKGgrc21Vn5EgA
+	kgYww+dQ0SHryRg/yq0XfUiRhhWq/4l9GFSoxpWge1rv4z5lH8D0ogmub88fx7FA3P/+c8PZuJE
+	Lxrci5EILe0J7D0BAxm7Ddj8zaLYv0OMsJ+kD+LU1wFJE3p8BjqNctOW9x6T4nWhw+Qv4/DMpxw
+	uGOdI5HVU6MUo/nHIHsuDLisLV5zaOhQBNPpmCGDb2LOiXawX2fNj7wLh5nH9JaDG8P+pIcwqUZ
+	bRsef71oMxlvZQAjAvZpdUml4KSIqKRdaQ7B5K0kqmgYYBRGACyrYnNYnAYwuyUMHWpGfyVfIZR
+	gTNUeYnIQWqL4wNmgRfsZGYlH9wgdjZ3KF46PlhoEN7Ed+hnVNc9FYmFfY1r7GMK5eIF0LTh9KI
+	JO220TpMOImXaX66MDUAB+IzNlJdz73aYn70ttoinx6YmVgecLRp4323k1+/tk9v0=
+X-Received: by 2002:a05:6000:603:b0:436:143c:c000 with SMTP id ffacd0b85a97d-436180593b3mr1240527f8f.45.1770160935331;
+        Tue, 03 Feb 2026 15:22:15 -0800 (PST)
 Received: from [192.168.0.40] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4830fe86a7bsm4055075e9.8.2026.02.03.15.20.52
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43618057f7csm2010133f8f.23.2026.02.03.15.22.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Feb 2026 15:20:53 -0800 (PST)
-Message-ID: <e31d9865-5002-49fa-b6f0-06328d3d6a12@linaro.org>
-Date: Tue, 3 Feb 2026 23:20:51 +0000
+        Tue, 03 Feb 2026 15:22:14 -0800 (PST)
+Message-ID: <e29f4014-a8f5-479c-8043-e0d9f3de06d7@linaro.org>
+Date: Tue, 3 Feb 2026 23:22:12 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,8 +68,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/8] pmdomain: de-constify fields struct
- dev_pm_domain_attach_data
+Subject: Re: [PATCH v2 3/8] media: dt-bindings: qcom,sm8250-venus: sort out
+ power domains
 To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
  Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
@@ -92,49 +92,66 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-pm@vger.kernel.org, linux-media@vger.kernel.org,
  Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 References: <20260201-iris-venus-fix-sm8250-v2-0-6f40d2605c89@oss.qualcomm.com>
- <3gNulq9mtM9Uxcj8IfIzusuPDhOGNCEcCGQrxhCBiYbh2DCGhUpRYpLgY-KfrSj746f6RWqzl90Fge-7U_CsUA==@protonmail.internalid>
- <20260201-iris-venus-fix-sm8250-v2-2-6f40d2605c89@oss.qualcomm.com>
+ <26272oeYIcfP__dNdKT_lizJQ9hvr9jKE2zsy_3aiWVlymjbtHB5vToDV_2DL3N8gIxnqB_YminHDztbUanmwg==@protonmail.internalid>
+ <20260201-iris-venus-fix-sm8250-v2-3-6f40d2605c89@oss.qualcomm.com>
 From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 Content-Language: en-US
-In-Reply-To: <20260201-iris-venus-fix-sm8250-v2-2-6f40d2605c89@oss.qualcomm.com>
+In-Reply-To: <20260201-iris-venus-fix-sm8250-v2-3-6f40d2605c89@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 01/02/2026 10:48, Dmitry Baryshkov wrote:
-> It doesn't really make sense to keep u32 fields to be marked as const.
-> Having the const fields prevents their modification in the driver.
-> Instead the whole struct can be defined as const (if it is constant).
+On 01/02/2026 10:49, Dmitry Baryshkov wrote:
+> First of all, on SM8250 Iris (ex-Venus) core needs to scale clocks which
+> are powered by the MMCX domain. Add MMCX domain to the list of the power
+> domain to be used on this platform.
 > 
-> Fixes: 161e16a5e50a ("PM: domains: Add helper functions to attach/detach multiple PM domains")
-
-This doesn't really fix a bug though.
-
+> While we are at it, drop minItems from both power-domains and
+> power-domains-names, it doesn't make sense from the hardware point of
+> view. There are always 2 GDSCs and two power rails wired to the video
+> clock controller and Venus. Disallow passing just two.
+> 
 > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 > ---
->   include/linux/pm_domain.h | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+>   Documentation/devicetree/bindings/media/qcom,sm8250-venus.yaml | 10 +++++-----
+>   1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-> index f6f6d494f728..b299dc0128d6 100644
-> --- a/include/linux/pm_domain.h
-> +++ b/include/linux/pm_domain.h
-> @@ -49,8 +49,8 @@
+> diff --git a/Documentation/devicetree/bindings/media/qcom,sm8250-venus.yaml b/Documentation/devicetree/bindings/media/qcom,sm8250-venus.yaml
+> index da54493220c9..04cbacc251d7 100644
+> --- a/Documentation/devicetree/bindings/media/qcom,sm8250-venus.yaml
+> +++ b/Documentation/devicetree/bindings/media/qcom,sm8250-venus.yaml
+> @@ -21,15 +21,14 @@ properties:
+>       const: qcom,sm8250-venus
 > 
->   struct dev_pm_domain_attach_data {
->   	const char * const *pd_names;
-> -	const u32 num_pd_names;
-> -	const u32 pd_flags;
-> +	u32 num_pd_names;
-> +	u32 pd_flags;
->   };
+>     power-domains:
+> -    minItems: 2
+> -    maxItems: 3
+> +    maxItems: 4
 > 
->   struct dev_pm_domain_list {
+>     power-domain-names:
+> -    minItems: 2
+>       items:
+>         - const: venus
+>         - const: vcodec0
+>         - const: mx
+> +      - const: mmcx
+> 
+>     clocks:
+>       maxItems: 3
+> @@ -114,8 +113,9 @@ examples:
+>           interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
+>           power-domains = <&videocc MVS0C_GDSC>,
+>                           <&videocc MVS0_GDSC>,
+> -                        <&rpmhpd RPMHPD_MX>;
+> -        power-domain-names = "venus", "vcodec0", "mx";
+> +                        <&rpmhpd RPMHPD_MX>,
+> +                        <&rpmhpd RPMHPD_MMCX>;
+> +        power-domain-names = "venus", "vcodec0", "mx", "mmcx";
+> 
+>           clocks = <&gcc GCC_VIDEO_AXI0_CLK>,
+>                    <&videocc VIDEO_CC_MVS0C_CLK>,
 > 
 > --
 > 2.47.3
 > 
 > 
-
-Other than that.
-
 Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
