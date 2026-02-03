@@ -1,140 +1,168 @@
-Received: from mail-pg1-f193.google.com (mail-pg1-f193.google.com [209.85.215.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D070D32D7F1
-	for <linux-clk@vger.kernel.org>; Tue,  3 Feb 2026 14:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85DDE3A1D0C;
+	Tue,  3 Feb 2026 14:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770127706; cv=none; b=LqPRDDjQr7V9pWh4sl/SZBXW4mmfX4sTEbDlINjlmyMFKgjS2mse6ZNpB7M2x0h6Rvcf3gHktpmNdmA0zc1kVhXBqzym+mkc2KLkDLp5pUCedfvK3OSfrLN7lN9P7pSQMRlPCskUXYXBm4yrqCRrsiwiCHKSuo+ikirql3NwILU=
+	t=1770127750; cv=none; b=lXDtwtDeWz6eevr6hrXlbIsP2sAFfg2a3/Q8CCRZb32o5174MZzoFTWio46SEE420sfVSRVno+4go1XO/gGXmm3nWYwjsBZCzJTLBpZWzYtoaTydmWWzqjEc33jg1ZvOoC6aqvRsQLOHO1myPmX+Jo/zf0Vw7ZOJb2XR1HM7Kto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770127706; c=relaxed/simple;
-	bh=7ZLF4iCQxbFTodP5/N08fEkFkgqaaRd3959nJlVr5Rw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=l71Wkuod8ALT5pBV/KRXAezQbRcU59RCgU+FNTvtMOJhJPJbSxMnH+2EibK+ZLt7A+TRc2KlyCv640x2J9ixQ6Bk9vI6PLXjXgR5PZdPcETOODV7olWlR4QlsisbbqT3cI2QZVykc/WeAWD/JpMg0Y9IOPqcXFsWaY1V+Px/yXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d8CEeOBB; arc=none smtp.client-ip=209.85.215.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1770127750; c=relaxed/simple;
+	bh=SRhVsuA6qCibxzOxbAcdl0WeLCTElC6ZAazodXmGefM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MOr39O2gMr5NWX3EIH9QuxnwDHlwsu8T3dztPO3NbAtuFdID7bHK9ASmp5G5fZuzobPuS7VEvO2tY407kWeVhMZ2hRNSHUfNP5UBGWwQkI6PuRod2LSWoEb5gWAweZGM+l9Ux3x9QuyRa9DZJyh3vFvHPuAQp/tdwFkVg8S+Waw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Q3Ei2lwx; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d8CEeOBB"
-Received: by mail-pg1-f193.google.com with SMTP id 41be03b00d2f7-c613161b489so2411013a12.0
-        for <linux-clk@vger.kernel.org>; Tue, 03 Feb 2026 06:08:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770127704; x=1770732504; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vggTaQ/1IglRgZCrC6069BZ56pr4AJ+trFVQZHc37RM=;
-        b=d8CEeOBBQ2pyibYEC466ViWJDLs+GFV2rmuZRe0A0o26nSGJCu6LP73tEOW9B1ykLv
-         0wH0HiRFddtbL2mbPNngnR+xvn0g1hiNB52Xe2Wc8pCzldDXCBUwFEFh+q6PxpR0KziQ
-         ed+55i/IW7nYo8fa9h7GPfZ59dCKzkHH4oaRNruvyVI9nfheBUcPIomc4mOzIr9/kh8g
-         fLTZLQQGAtKWmzJ4rUzKgD+TV4c+xJuh6YCkoPJxyIlr9TmbOO994Gtyqvm9LzvIkHrN
-         E+GdtlrLvggwnivrVIQqccTlCQJN1K2z/LHwh8pPgH2B+xQCzAVbiNYcil5zAPN5+rn+
-         EBzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770127704; x=1770732504;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=vggTaQ/1IglRgZCrC6069BZ56pr4AJ+trFVQZHc37RM=;
-        b=n8r1ZkRw07fytowZCdrTpERlmx5Vtb18gx8DrEAWT0wGstOIy6cPEmQ5l7y6SFEm0y
-         HsIFtw4DqCIEbzne58BTLC2t6Pt1SL1YrfdPmuCImPUifj8s0fY+e8SKeow8skFNI36d
-         x6eu/VrgcWuaCM2qhfTns3vcIpPyrWOK2mij7ZOQnQtZbf23QRT2d+Eo0IAxLJV2kSGW
-         cj/DCj276lZ2ZYxLrD0jhIICVPMdtPFJma+7Zbazo+AbXdofArVjrpBNw+VVCnAfqXli
-         OQStil4yBNHvee04RUJbRrMzIBQdKw2wPTGJ5it+SvglsQItYq1Rn1pIhXFNKHHX3tJ+
-         uWyg==
-X-Gm-Message-State: AOJu0YwI+/sByOKd5TssMCRltvCVOBA6tr19TsoKZnNAzLyW079orqO6
-	I/0HSOmQpz9v9yU2UfIZ8QTW1gPVRngRuHzr2ax63mrBuqxNvVT94qi2aE8GIJKyfmM=
-X-Gm-Gg: AZuq6aK4VKDjGbnqWHgjpwtZvY65o5A4SZev49PjVALZn/Wnnh1delt73CGzs+pi/RN
-	tu5HPqmH5yZHpFEBBFTD6NTIVfcqL712aU2a1+xjDC0Hdy7PWueMab7tD9fYsqH3wU+L485oOgG
-	VfFw84NTZrrYBFjmmAXmS27d1f+cXKAeYHkSgU2FcSBSdy+q3IRsnlYRmnT40cPmnODgnlmTh3E
-	2MNtq9AbHaLRdB2tWZ4MCkmkat54D7IR1y+/I/T/b/UEWMobMj6K9SfUGO2ySIRtfCDiD4prMPt
-	Rxbn+2vk+D+U/AjnPvkAbMvn8+JLN0M9ckGu6vWr3iCQtpVOOK+Fkf/veU8g+oskM7XaW4roso9
-	+LQsw1E6fJr8kFl+lUQdqR3YSgR2p4vrGylGzcNGbwGjry1rutcObPMCNMDLp8mKsQSlgRUzMx5
-	5QljHB6vWolt0fDB8lf5gOFMVzqbX3W4GOjwP3
-X-Received: by 2002:a17:90b:3b82:b0:34f:454f:69a9 with SMTP id 98e67ed59e1d1-3543b3b04bfmr13811322a91.28.1770127704120;
-        Tue, 03 Feb 2026 06:08:24 -0800 (PST)
-Received: from junjungu-PC.localdomain ([2408:820c:9008:ba52:f091:7dff:927e:f788])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3543d52c396sm7694684a91.4.2026.02.03.06.08.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Feb 2026 06:08:23 -0800 (PST)
-From: Felix Gu <ustc.gu@gmail.com>
-Date: Tue, 03 Feb 2026 22:07:58 +0800
-Subject: [PATCH v3 2/2] clk: imx: imx6q: Fix device node reference leak in
- of_assigned_ldb_sels()
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Q3Ei2lwx"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1770127740;
+	bh=SRhVsuA6qCibxzOxbAcdl0WeLCTElC6ZAazodXmGefM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Q3Ei2lwx3w93ygih6KxuhQGZCmuSaziEMTQrFoZ6GkOrM+w76GOqODPD+UKA6x8hm
+	 nJFbkuPBQZMpIC7f1XQzkDKDLiNEsRQ04yu56idpGQD+4WNnR6IpBbplmvNBg4MchP
+	 jJLM5frB05Dxeu13em9+tTFm0M752shhL+PueoIE+XS6+u+pbhlspndHW836Jegtwh
+	 fwhErH9VC3Y/piA0zT7thqLGBsSH04dJCy5qfSCeng7BAkSnY0tPzLD+QhRm8se/Ks
+	 32zXND6IvXFgpdBuHmoXBLwinRbWWY6KXh2ZP3g3PwGCiHPHnWQ962WnSKPhehU98s
+	 +YXwDNA+kNgOQ==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id A1D2617E1276;
+	Tue,  3 Feb 2026 15:08:59 +0100 (CET)
+Date: Tue, 3 Feb 2026 15:08:55 +0100
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Maxime Ripard <mripard@kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar
+ <viresh.kumar@linaro.org>, Danilo Krummrich <dakr@kernel.org>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Drew Fustini <fustini@kernel.org>, Guo Ren
+ <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Uwe =?UTF-8?B?S2xlaW5lLUs=?=
+ =?UTF-8?B?w7ZuaWc=?= <ukleinek@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda
+ <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
+ <gary@garyguo.net>, =?UTF-8?B?QmrDtnJu?= Roy Baron
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Andreas
+ Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org,
+ linux-pwm@vger.kernel.org, linux-clk@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] rust: clk: use the type-state pattern
+Message-ID: <20260203150855.77c93e22@fedora>
+In-Reply-To: <E7286D12-0BD9-4726-B072-FE5A040312B1@collabora.com>
+References: <20260107-clk-type-state-v3-0-77d3e3ee59c2@collabora.com>
+	<20260107-clk-type-state-v3-1-77d3e3ee59c2@collabora.com>
+	<20260108-delectable-fennec-of-sunshine-ffca19@houat>
+	<98CD0BF6-3350-40B9-B8A9-F569AE3E3220@collabora.com>
+	<20260119-thundering-tested-robin-4be817@houat>
+	<aW4lCfUyumOKRRJm@google.com>
+	<20260203113902.501e5803@fedora>
+	<E7286D12-0BD9-4726-B072-FE5A040312B1@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260203-clk-imx6q-v3-2-6cd2696bb371@gmail.com>
-References: <20260203-clk-imx6q-v3-0-6cd2696bb371@gmail.com>
-In-Reply-To: <20260203-clk-imx6q-v3-0-6cd2696bb371@gmail.com>
-To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Lucas Stach <l.stach@pengutronix.de>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Akshay Bhat <akshay.bhat@timesys.com>, 
- Ranjani Vaidyanathan <Ranjani.Vaidyanathan@nxp.com>, 
- Shawn Guo <shawnguo@kernel.org>
-Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Felix Gu <ustc.gu@gmail.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1770127681; l=1463;
- i=ustc.gu@gmail.com; h=from:subject:message-id;
- bh=7ZLF4iCQxbFTodP5/N08fEkFkgqaaRd3959nJlVr5Rw=;
- b=DCfqaRTuO/c9AWvt1I0DC0keOeLbELpHdMjClHQL8bIs/5szqeMTmhgfJZppc9gcC1f2quZJL
- unhYgZsD3wQAt48+SEMgmJH6spLmHlOQqnVc6AWYJIlz4uL3VkUO4WY
-X-Developer-Key: i=ustc.gu@gmail.com; a=ed25519;
- pk=fjUXwmjchVN7Ja6KGP55IXOzFeCl9edaHoQIEUA+/hw=
 
-The function of_assigned_ldb_sels() calls of_parse_phandle_with_args()
-but never calls of_node_put() to release the reference, causing a memory
-leak.
+On Tue, 3 Feb 2026 10:33:34 -0300
+Daniel Almeida <daniel.almeida@collabora.com> wrote:
 
-Fix this by adding proper cleanup calls on all exit paths.
+> Hi Boris,
+> 
+> > On 3 Feb 2026, at 07:39, Boris Brezillon <boris.brezillon@collabora.com> wrote:
+> > 
+> > On Mon, 19 Jan 2026 12:35:21 +0000
+> > Alice Ryhl <aliceryhl@google.com> wrote:
+> >   
+> >> On Mon, Jan 19, 2026 at 11:45:57AM +0100, Maxime Ripard wrote:  
+> >>> On Thu, Jan 08, 2026 at 11:14:37AM -0300, Daniel Almeida wrote:    
+> >>>>> For example, it's quite typical to have (at least) one clock for the bus
+> >>>>> interface that drives the register, and one that drives the main
+> >>>>> component logic. The former needs to be enabled only when you're
+> >>>>> accessing the registers (and can be abstracted with
+> >>>>> regmap_mmio_attach_clk for example), and the latter needs to be enabled
+> >>>>> only when the device actually starts operating.
+> >>>>> 
+> >>>>> You have a similar thing for the prepare vs enable thing. The difference
+> >>>>> between the two is that enable can be called into atomic context but
+> >>>>> prepare can't.
+> >>>>> 
+> >>>>> So for drivers that would care about this, you would create your device
+> >>>>> with an unprepared clock, and then at various times during the driver
+> >>>>> lifetime, you would mutate that state.    
+> >> 
+> >> The case where you're doing it only while accessing registers is
+> >> interesting, because that means the Enable bit may be owned by a local
+> >> variable. We may imagine an:
+> >> 
+> >>    let enabled = self.prepared_clk.enable_scoped();
+> >>    ... use registers
+> >>    drop(enabled);
+> >> 
+> >> Now ... this doesn't quite work with the current API - the current
+> >> Enabled stated owns both a prepare and enable count, but the above keeps
+> >> the prepare count in `self` and the enabled count in a local variable.
+> >> But it could be done with a fourth state, or by a closure method:
+> >> 
+> >>    self.prepared_clk.with_enabled(|| {
+> >>        ... use registers
+> >>    });
+> >> 
+> >> All of this would work with an immutable variable of type Clk<Prepared>.  
+> > 
+> > Hm, maybe it'd make sense to implement Clone so we can have a temporary
+> > clk variable that has its own prepare/enable refs and releases them
+> > as it goes out of scope. This implies wrapping *mut bindings::clk in an
+> > Arc<> because bindings::clk is not ARef, but should be relatively easy
+> > to do. Posting the quick experiment I did with this approach, in case
+> > you're interested [1]
+> > 
+> > [1]https://gitlab.freedesktop.org/bbrezillon/linux/-/commit/d5d04da4f4f6192b6e6760d5f861c69596c7d837  
+> 
+> The problem with what you have suggested is that the previous state is not
+> consumed if you can clone it, and consuming the previous state is a pretty key
+> element in ensuring you cannot misuse it. For example, here:
+> 
+> let enabled_clk = prepared_clk.clone().enable()?;
+> // do stuff
+> // enabled_clk goes out of scope and releases the enable
+> // ref it had
+> 
+> prepared_clk is still alive.
 
-Fixes: 5d283b083800 ("clk: imx6: Fix procedure to switch the parent of LDB_DI_CLK")
-Signed-off-by: Felix Gu <ustc.gu@gmail.com>
----
- drivers/clk/imx/clk-imx6q.c | 4 ++++
- 1 file changed, 4 insertions(+)
+That was intentional in this example. Think about a prepared_clk that's
+stored in some driver-internal object, because you want to keep the clk
+prepared at all times between the probe() and unbind(). Then you have
+some sections where you want to briefly enable the clk to access
+registers, and immediately disable it when you're done. The clone()
+here guarantees that the initial prepared_clk stays valid.
 
-diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-index ba696cf34fe3..048e2ddba490 100644
---- a/drivers/clk/imx/clk-imx6q.c
-+++ b/drivers/clk/imx/clk-imx6q.c
-@@ -188,9 +188,11 @@ static void of_assigned_ldb_sels(struct device_node *node,
- 		}
- 		if (clkspec.np != node || clkspec.args[0] >= IMX6QDL_CLK_END) {
- 			pr_err("ccm: parent clock %d not in ccm\n", index);
-+			of_node_put(clkspec.np);
- 			return;
- 		}
- 		parent = clkspec.args[0];
-+		of_node_put(clkspec.np);
- 
- 		rc = of_parse_phandle_with_args(node, "assigned-clocks",
- 				"#clock-cells", index, &clkspec);
-@@ -198,9 +200,11 @@ static void of_assigned_ldb_sels(struct device_node *node,
- 			return;
- 		if (clkspec.np != node || clkspec.args[0] >= IMX6QDL_CLK_END) {
- 			pr_err("ccm: child clock %d not in ccm\n", index);
-+			of_node_put(clkspec.np);
- 			return;
- 		}
- 		child = clkspec.args[0];
-+		of_node_put(clkspec.np);
- 
- 		if (child != IMX6QDL_CLK_LDB_DI0_SEL &&
- 		    child != IMX6QDL_CLK_LDB_DI1_SEL)
+If you were to disable, unprepare and put the clk when enabled_clk goes
+out of scope, you'd go
 
--- 
-2.43.0
+	let enabled_clk = prepared_clk.enable()?;
 
+and that would still work, it's just not the same use-case.
+
+> Now, this may not be the end of the world in this
+> particular case, but for API consistency, I'd say we should probably avoid this
+> behavior.
+> 
+> I see that Alice suggested a closure approach. IMHO, we should use that
+> instead.
+
+The closure, while being useful for the above local clk-enablement
+example, doesn't allow for passing some Clk<Enabled> guard around, like
+you would do with a lock Guard, and I believe that's a useful thing to
+have.
