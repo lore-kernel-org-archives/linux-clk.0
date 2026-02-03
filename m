@@ -1,165 +1,136 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966C63ACA74
-	for <linux-clk@vger.kernel.org>; Tue,  3 Feb 2026 14:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 532333A4F54;
+	Tue,  3 Feb 2026 14:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770130363; cv=none; b=aCCjVdfvRWJhrTbYuokHQTs/micJhBR6+NNCL0lZu8T+y1XAZhVGL7krWfLxNN19DJCvwFqtdnIqMJYzi/jApwfNjJfFksNaCtR9hbgE9mcZDXgLo1jpFFNRuX3N19YkpZ0Ps5Aqm91F9M3cELzp/xY7Hjv67FjUMySOPW02qKA=
+	t=1770130444; cv=none; b=dVBVqiEaES75DWDUl/8JXAdAbiY7wqjYjXUC0IOGBNo4E+gx6FeNVqRxlEeNmyrcdcixVp3hZOd7hY0VlJBU2fdygDCCyAeD2vq1d81p+aLTCaBC7b0XNkxw5PHyl2F1J1toEQ2c1jeF9QK8TuhY+SYvPh11bTRaFv9RAj3BkTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770130363; c=relaxed/simple;
-	bh=dVx/NTBKTBYer1sAELG6RU2I0c4yRgXuu2CweMfhYDE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CId0F885O7wrc9+W/br2RdCnGlYjW9QyUtA/OI4l6L/DTZgHqo2fD4A2Gg7pGiu7elEax31w7e0nzXlychAgG+Z0Ygp/CthaebkMF0F1XzLqGmTEvYHe2S/SrfZmoeu4tUISt1bEIYhOuEV06UjFJcJGq0HfteeGGIfYor7z7mA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uss+FDHD; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1770130444; c=relaxed/simple;
+	bh=3KcvY6BFAVkYx2CaRlFGKXfmnRMIMtHNvAHM5ApGVvU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CvOO+TARy8OfVTUe0Z1DVEzWmxmErborkoF88hBP/7tFKFXb4oMNdExXWKbXo9Ztj3+ycCPopC9sPxFzMk9Aeuq+O83Lhcv4eqD1cT+itE+F+Sm8Konryo0tN8iPi8xIrgAYPooL70HvYJXpd7ohmdlI63ZWgXPcjd2ArWADmUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=pFDS0747; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uss+FDHD"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-42fb6ce71c7so4801963f8f.1
-        for <linux-clk@vger.kernel.org>; Tue, 03 Feb 2026 06:52:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770130360; x=1770735160; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bfk7LFQnGB8edV2Pkyiykl2DNq5nGPoA5EosQF70rIA=;
-        b=Uss+FDHDHClLgQwLQ0cObhsr608dKfcuY6WETeXB65+MvmGVhsL2qrrSig8GqdHnlx
-         2aag7c1sPErmixQppwAe+GZBrGkmeQh536us2a3lNKzAdFUnnRE7b9//WIhcpNKgaPrw
-         /xm3ycsCzhuXYFvbTkcjN5kHEVH8n1Fm73NCrxQIJDlhgl2NETWL/yGoEGCyNpVG9xL5
-         h9WpskxZi5UKSE/NS+lhrdGygkhuCTdXlKcZ3J6mvz5wtJXwhV/njsAV1eYrOWGTph1a
-         VRoUWu8N7Y4oirzhtL8kZ3hoJFvjjs5qUnrB+xNaEKCTQVW7IcBvfdqnd6GyYNeixKpM
-         25eA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770130360; x=1770735160;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bfk7LFQnGB8edV2Pkyiykl2DNq5nGPoA5EosQF70rIA=;
-        b=pGACLRwZQ1Qb/9ZLR1+jDC4GswiF+Fj20NxFlq+k5j+gte5lmy8drwzcKyhAYbIfSG
-         /E/1mztZSRf4VSPCm1N2K1nw6lC06SQPduz0WsOhAzOxemr8QlimuB0RFRYtxLmCgJar
-         Kwvw3aviEHmMajnrCQEHIWyxZ5K1z+n6d4v3tysxiI37Q6nVCHy6iZo4vDp/bq25+QoK
-         +EDu07CHfTFe7wJdPFMGw+dJnYFcAysZLnp4/lVWkv9OkVEkwctE+Q5WhALnhmKNaifL
-         xmQhoCZyM6n1F1+K8hiCyaLu1FvWW+4tP3v8OjXZq0mjvQb+8RKbQNisNJaIX5HMtaRN
-         46Mw==
-X-Forwarded-Encrypted: i=1; AJvYcCWKqSifB9uE0t+KriBI35Kns6DrovICCVoIxobvReJFTsAI/UheywWAHHua4XyqdOb1LfC4GJGcIjY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwO3G0lds+o+c/YA8PC2oeW40P+8ru7ogKTMpYKKpwHrVgJ9fiF
-	xZvmqg8hi1iy22mg7tw/JlgBjVTt7FZXZ/T85/ZjzAkA93VfTdjPwHd6g+3PBcV1
-X-Gm-Gg: AZuq6aKKlW4+vTl3oQ1Uk5y2EBhKq3qPtxA0fSKxWyZyibjk+r9/8bRZ4vKN+V6OVoK
-	7rVsqIVS8PB9LGj38JITn5FY/0Tt16xDLM0fPNIGi6jKTZFxFF06mzlIECmHALxPlDPHtR8Rj+g
-	pCbIlLONPJAxAzBGEG7QxNZ5s1v7q2oWcdoSB5qfhham0jNxIdu38KNQDI7+xrawZenSooOTex6
-	UoZyu3fqL8i6ZVocuoBYT1df9Icc3/Z417m99xe+8GBy2la3EgItQ7kH2JTJAe3qyjIgb1lDM2t
-	bno0ZaSPAAG8YUR/QsYnGjCsiKbaw5ovsje9kau2hYwm3zcsgHXMXZ+mOYjqgEvysff/aCDn6BN
-	heDcjN4CIvgrrFF8ST1GOTnp8Fj9fd+HSp7/FZBlWWDCCqw7XgsB0hzWCV9Ox67TrOPVf53wZGX
-	bTcxGFmbTlKPPnMs4lyw==
-X-Received: by 2002:a05:600c:4e12:b0:477:c71:1fc1 with SMTP id 5b1f17b1804b1-482db481b62mr184164265e9.19.1770124252099;
-        Tue, 03 Feb 2026 05:10:52 -0800 (PST)
-Received: from biju.lan ([2a00:23c4:a758:8a01:9cd9:f748:166d:55fc])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4830512ddd0sm63662185e9.9.2026.02.03.05.10.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Feb 2026 05:10:51 -0800 (PST)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linus Walleij <linusw@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v2 00/10] Add Renesas RZ/G3L PINCONTROL support
-Date: Tue,  3 Feb 2026 13:10:23 +0000
-Message-ID: <20260203131048.421708-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="pFDS0747"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1770130440;
+	bh=3KcvY6BFAVkYx2CaRlFGKXfmnRMIMtHNvAHM5ApGVvU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=pFDS0747I6//N0JfFvhOfrFRr349OeRMQajiwIK8cB6QKQ03hqynIuKOrUfpt1l+O
+	 dTEBCyQ4QKVRojCCHAFmlJoVLbYxifRL5ffhWX3K36Od5RdlARX8wuWCdIqjEey18u
+	 FvjFLQDwvXiAsGytBefZEqsQCL0kPT4BhaYhhfE+K9G/m93jzOjmhYFBjSc2jt55qp
+	 BcuFlVbjlyBfZW13v4DFI3pJ6X3jbK5IqEN/XIZ+WjuyeJn5sv4U+NtF8WKY78DFcA
+	 7Z1ick3CWWW6UrjT+OZRS/5bLrHmUV3oGyqoQlMCmlr/N+Ee5QkeFCL0rUJSoYMdUa
+	 9DyAzghoEakpg==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 72A7317E1276;
+	Tue,  3 Feb 2026 15:53:59 +0100 (CET)
+Date: Tue, 3 Feb 2026 15:53:54 +0100
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Maxime Ripard <mripard@kernel.org>, Daniel Almeida
+ <daniel.almeida@collabora.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>, Danilo Krummrich <dakr@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Drew Fustini <fustini@kernel.org>, Guo Ren
+ <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, "Uwe =?UTF-8?B?S2xlaW5l?=
+ =?UTF-8?B?LUvDtm5pZw==?=" <ukleinek@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda
+ <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
+ <gary@garyguo.net>, "=?UTF-8?B?QmrDtnJu?= Roy Baron"
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Andreas
+ Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org,
+ linux-pwm@vger.kernel.org, linux-clk@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] rust: clk: use the type-state pattern
+Message-ID: <20260203155354.0cea1f65@fedora>
+In-Reply-To: <20260203122631.3a94a935@fedora>
+References: <20260107-clk-type-state-v3-0-77d3e3ee59c2@collabora.com>
+	<20260107-clk-type-state-v3-1-77d3e3ee59c2@collabora.com>
+	<20260108-delectable-fennec-of-sunshine-ffca19@houat>
+	<98CD0BF6-3350-40B9-B8A9-F569AE3E3220@collabora.com>
+	<20260119-thundering-tested-robin-4be817@houat>
+	<aW4lCfUyumOKRRJm@google.com>
+	<20260203113902.501e5803@fedora>
+	<20260203122631.3a94a935@fedora>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+On Tue, 3 Feb 2026 12:26:31 +0100
+Boris Brezillon <boris.brezillon@collabora.com> wrote:
 
-Hi All,
+> On Tue, 3 Feb 2026 11:39:02 +0100
+> Boris Brezillon <boris.brezillon@collabora.com> wrote:
+> 
+> > On Mon, 19 Jan 2026 12:35:21 +0000
+> > Alice Ryhl <aliceryhl@google.com> wrote:
+> >   
+> > > On Mon, Jan 19, 2026 at 11:45:57AM +0100, Maxime Ripard wrote:    
+> > > > On Thu, Jan 08, 2026 at 11:14:37AM -0300, Daniel Almeida wrote:      
+> > > > > > For example, it's quite typical to have (at least) one clock for the bus
+> > > > > > interface that drives the register, and one that drives the main
+> > > > > > component logic. The former needs to be enabled only when you're
+> > > > > > accessing the registers (and can be abstracted with
+> > > > > > regmap_mmio_attach_clk for example), and the latter needs to be enabled
+> > > > > > only when the device actually starts operating.
+> > > > > > 
+> > > > > > You have a similar thing for the prepare vs enable thing. The difference
+> > > > > > between the two is that enable can be called into atomic context but
+> > > > > > prepare can't.
+> > > > > > 
+> > > > > > So for drivers that would care about this, you would create your device
+> > > > > > with an unprepared clock, and then at various times during the driver
+> > > > > > lifetime, you would mutate that state.      
+> > > 
+> > > The case where you're doing it only while accessing registers is
+> > > interesting, because that means the Enable bit may be owned by a local
+> > > variable. We may imagine an:
+> > > 
+> > >     let enabled = self.prepared_clk.enable_scoped();
+> > >     ... use registers
+> > >     drop(enabled);
+> > > 
+> > > Now ... this doesn't quite work with the current API - the current
+> > > Enabled stated owns both a prepare and enable count, but the above keeps
+> > > the prepare count in `self` and the enabled count in a local variable.
+> > > But it could be done with a fourth state, or by a closure method:
+> > > 
+> > >     self.prepared_clk.with_enabled(|| {
+> > >         ... use registers
+> > >     });
+> > > 
+> > > All of this would work with an immutable variable of type Clk<Prepared>.    
+> > 
+> > Hm, maybe it'd make sense to implement Clone so we can have a temporary
+> > clk variable that has its own prepare/enable refs and releases them
+> > as it goes out of scope. This implies wrapping *mut bindings::clk in an
+> > Arc<> because bindings::clk is not ARef, but should be relatively easy
+> > to do. Posting the quick experiment I did with this approach, in case
+> > you're interested [1]  
+> 
+> This time with a proper RawClk(*mut bindings::clk) wrapper, so we can
+> clk_put() called in RawClk::drop() instead of in Clk::drop().
+> 
+> [1]https://gitlab.freedesktop.org/bbrezillon/linux/-/commit/6fa6cb72f14373b276c61d038bc2b16f49c78f74
 
-This patch series aims to add basic pincontrol support for RZ/G3L SoC. The
-RZ/G3L pinctrl has OTHER_POC register compared to other SoCs for setting
-IO domain volage for AWO, ISO and WDT.
-
-Document the reset-names as all SOCs has multiple resets.
-
-Document the bindings for RZ/G3L SOC and add pinctrl definitions in
-driver.
-
-Add pincontrol device node and add pincontrol support for SCIF0 and GBETH
-nodes.
-
-Note:
-Some IPs needs to set the register IPCONT_SEL_CLONECH in SYSC to control
-the clone channel of the IP. Plan to add clone channel control support
-later. The IP's involing clone channel needs to do the setup as per the
-below flow
-
-(1) Set SYS_IPCONT_SEL_CLONECH register as necessary
-(2) Set the PWPR register to allow writing to the PFC_m register.
-    After setting the PWPR.B0WI bit to “0” (initial value = 1), 
-    set the PWPR.PFCWE bit to “1” (initial value = 0).
-    Select the required function from Functions 0-15.
-    (Hereafter, Function1 setting example)
-(3) Set PFC_m = 0001b and switch to Function1.
-(4) Set the PMC_m register to “1” (initial value = 0).
-(5) Set the PFC_m register to write-protected. After setting
-    the PWPR.PFCWE bit to “0”, set the PWPR.B0WI bit to “1”.
-
-The clock patches depend upon [1]
-The dtsi/dts patches depend upon [2]
-[1] https://lore.kernel.org/all/20260203110220.265748-1-biju.das.jz@bp.renesas.com/
-[2] https://lore.kernel.org/all/20260203123503.314755-1-biju.das.jz@bp.renesas.com/
-
-v1->v2:
- * Split DTSI patches from bindings
- * Fix typo maxItems->minItems in bindings
- * Collected the tag
-
-Biju Das (10):
-  dt-bindings: pinctrl: renesas: Document reset-names
-  dt-bindings: pinctrl: renesas: Document RZ/G3L SoC
-  clk: renesas: r9a08g046: Add GPIO clocks/resets
-  pinctrl: renesas: rzg2l: Add support for selecting power source for
-    {WDT,AWO,ISO}
-  pinctrl: renesas: rzg2l: Add OEN support for RZ/G3L
-  pinctrl: renesas: rzg2l: Add support for RZ/G3L SoC
-  arm64: dts: renesas: Add reset-names for RZ/G2L and RZ/V2H family SoCs
-  arm64: dts: renesas: r9a08g046: Add pincontrol node
-  arm64: dts: renesas: r9a08g046l48-smarc: Add SCIF0 pincontrol
-  arm64: dts: renesas: rzg3l-smarc-som: Enable eth1 (GBETH1) interface
-
- .../pinctrl/renesas,rzg2l-pinctrl.yaml        |  16 +
- arch/arm64/boot/dts/renesas/r9a07g043.dtsi    |   1 +
- arch/arm64/boot/dts/renesas/r9a07g044.dtsi    |   1 +
- arch/arm64/boot/dts/renesas/r9a07g054.dtsi    |   1 +
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |   1 +
- arch/arm64/boot/dts/renesas/r9a08g046.dtsi    |  10 +
- .../boot/dts/renesas/r9a08g046l48-smarc.dts   |  13 +
- arch/arm64/boot/dts/renesas/r9a09g047.dtsi    |   1 +
- arch/arm64/boot/dts/renesas/r9a09g056.dtsi    |   1 +
- arch/arm64/boot/dts/renesas/r9a09g057.dtsi    |   1 +
- .../boot/dts/renesas/rzg3l-smarc-som.dtsi     |  92 ++++++
- drivers/clk/renesas/r9a08g046-cpg.c           |   6 +
- drivers/pinctrl/renesas/pinctrl-rzg2l.c       | 285 +++++++++++++++++-
- .../pinctrl/renesas,r9a08g046-pinctrl.h       |  39 +++
- 14 files changed, 465 insertions(+), 3 deletions(-)
- create mode 100644 include/dt-bindings/pinctrl/renesas,r9a08g046-pinctrl.h
-
--- 
-2.43.0
-
+And I forgot to drop the ManuallyDrop in that one, but I bet you get the
+idea.
