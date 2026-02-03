@@ -1,41 +1,66 @@
-Received: from galaxy.gendns.com (galaxy.gendns.com [66.235.175.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com [209.85.128.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8370280CC9;
-	Tue,  3 Feb 2026 22:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.235.175.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CFC42E645
+	for <linux-clk@vger.kernel.org>; Tue,  3 Feb 2026 23:19:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770157565; cv=none; b=mlaMQu1RsC96JtEcRNIVtrQLsX+IqaiOgw/MNrvkWrC7vHghtSzuvZpzh8jePQiRMQ/l6Pr3g8glLFGbg1z+MYGQf630th6eMWyKDAPILKw3cWjUQQ4VHL1G/tAWwDBKNSxPJtHp+IqkVfdH9DPOtg0Bwlp8+wKH372LhN1AEzs=
+	t=1770160786; cv=none; b=Soe7GX/lpcsFrwOoROC4aiaB40D4Ew7XNdJH1LjuDIIlyErTjQY2W7wz6PbQBYaofN9QajoVDalgK7xYnyrypIcjP16902+B+Iln69VymlJ09Ha2ZD1dr+8yMKGoagItCByaLLp/ItFdTcdWPMhdzX5aa6rAiC4fv4ZgSiTaJ1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770157565; c=relaxed/simple;
-	bh=hW5ALRU4pRTytfRcBR/ccmGuaty8zrbzEgBBu7TRXgk=;
+	s=arc-20240116; t=1770160786; c=relaxed/simple;
+	bh=QmJIRkoJvSC1+X5XmHnKi501SEuHKyJrim2KrRQ9zFg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A0ue5GNWz1h7V7e0gQnTOibuYnEAXq+ISHHHoL35SxdVYRVcnoKlHTflYaEq1CNxzMj0lADTY/1X34oGyh8+s079nCQHw6KKvqJRYmSzcCSGGtJEvGQ1kTG93hZeZIJWJ458UvkAbvgfIePvDJOh1ow6/9MzXplkhij6LRjQDS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com; spf=pass smtp.mailfrom=lechnology.com; dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b=rl40TErI; arc=none smtp.client-ip=66.235.175.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lechnology.com
+	 In-Reply-To:Content-Type; b=SurMOzOXFU9E2qtbBWWOuqji2B7OZ0lSw+e/cCQXBbolGyqu4GMOi6u5Shweh/3hGMFDZlLfqY+FMuo5dCOb+MEUIp7ja9grWRd86jxpoEGyJ9p/zUwZtVsJL2CGcHXlwXhmKNHyiWi22wKMBjArvdslP93WfLgKD0ImP40/vZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HmulR57Y; arc=none smtp.client-ip=209.85.128.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="rl40TErI"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=wm24Jp5La5O55tojWMeVfNjPmY1+xEaXsFnYX/lbqr0=; b=rl40TErII5/QB2Jk29BUUB8Vqr
-	1XQ2JTVmoypvUL13fl+RpKGOOHNnHzJQymDFI14PSAa95KQQNFYfLUo0pHMDlK922AoqJ6DbVj12H
-	7O8l4IzpamQFei7zmgEN6tWyCKsG141+AbRfwW9Y33SHJd7Uep91LqWBRchvXd3DobAkBMsuhcHFT
-	/HRs3y2plmIVnHhNDF+rXEaLXUud9Z9UP3O/IQNM+yrSueVTvfRjJvKzAdmuBZUeS3G+8IPP7W77N
-	2qO9aDJgzdRxZGSUE8Xm30s+MIY6fbvuSA4JH/EVbOVi0hOGPl4fzTsAQc+RJT4zyqrrSjHHjQJx+
-	g7JTFVzQ==;
-Received: from ip98-183-112-25.ok.ok.cox.net ([98.183.112.25]:53062 helo=[192.168.1.142])
-	by galaxy.gendns.com with essmtpa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
-	(Exim 4.99.1)
-	(envelope-from <david@lechnology.com>)
-	id 1vnOYM-0000000A5to-3Xyp;
-	Tue, 03 Feb 2026 17:07:21 -0500
-Message-ID: <dfd2801b-75dd-48eb-9e87-2b88fc00b66e@lechnology.com>
-Date: Tue, 3 Feb 2026 16:07:19 -0600
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HmulR57Y"
+Received: by mail-wm1-f65.google.com with SMTP id 5b1f17b1804b1-481188b7760so1126215e9.0
+        for <linux-clk@vger.kernel.org>; Tue, 03 Feb 2026 15:19:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1770160784; x=1770765584; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nUf/+8BbxtoTRhkrLvjqMjX8iWnPM8A43bKR4Om6EwE=;
+        b=HmulR57Y9xUwS++3m+y6PRPK9V6NDonO8k4I/xV0TO/7kiLFq/Ho2xjzP7ooDhG1x6
+         zNrKEc8JT8gg2oAu8BFBkpGwe8Yp+RZ+276wce57FVHksEzTY7GZt99hckbwwlqHFAqX
+         Qr0QdYOBAVgYE+jHjHngwJd1sK/FWDyhQWV1r/F0+47xqyAockZMF4KUNW5ogbpGZWJA
+         Lq/u++bVG0v3C+9GMq/7AJYl6sgrjsg5dBwvQNYsNWKc8A9Pi7YOMrYT+dNM1xxzhR7H
+         pgqke9AEg/gSWwmTyEoHE803g2QYxtaV3aCC9/vCP62alxSliLmVqcnlrPUi/1Cf4T/7
+         +tDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770160784; x=1770765584;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nUf/+8BbxtoTRhkrLvjqMjX8iWnPM8A43bKR4Om6EwE=;
+        b=ulEXNBfBrQtsXLglXJHNoJMINzRR807KInSJrEHU5XRHt0ecgMGv2MhvBeRWBBMPfK
+         lSuSqOVRkbiLsIHNjfMOFlb8GrhboB7AwzA2F10Wo05lf+POMgsHZjqhWNiX+WVWyVFT
+         jcjejEB8Tn41qwVJvkoI3tCoTytZd827JdjgukgRGg4dSmptQg2xE04T5ALgUdlqFhJq
+         ieA85ugDuH0LSXy2i9ykPhmxhKxxlmDZ563PuZtztWFjitQXkrvan3vkvqK8eDG0NjTP
+         nM3VQB6SMKHmXhTYvzwzWbLqeP88yvSWc25O6XS8r+cWkbMIbMgF2FqHcVPi1Prv6Iyg
+         rFdA==
+X-Forwarded-Encrypted: i=1; AJvYcCXUOsDS1dYSw8FXvQruHsNie5OYviCzrcsZJeZir1Xi0V0eU2OGiBbMzgvyoV1qhi3tldcJNRXiGR0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiPOe/1fCnXXJGtItICym8CcQteIOfO+FL5+CMddK5kha3L38B
+	fiCBzoi4VWlDH2X2vcp19qCuPNkR0dGInPB+/+sOqpUYwpno/b6+UWsInXMPRa0Mxnk=
+X-Gm-Gg: AZuq6aKmDWKBVcMR6UzsWBAOKJhky3XO+CIU9WNym2B995BJVFtW7nD1emFYm+0ga2t
+	Afp//bwYOs9zL84/HUh25YH/UqGGbn9yDdj1rKBeQ9GuOAJtZvSnqvQAB6IS/4MEEnHXo8W+m1l
+	Z/kTxd6Fi9y/X5E0vLblySD4F9t9h2qKQkvlcFggZe9EXkFxShHPagQZwTyc0Cm7Y5KuE0ltYdX
+	127auX70ojhynhq8tv2cf/zFOFGJrPsab2BYTmDErExeQYgGsTyMYhnJsKJ7RmGVEfEvE7Jj/0D
+	i1yEkROz+6j1nk1oGqbHH4qUv+p/oXFwH7vZTswNBouiSh9NLiFalKZ0MOIFyeQJkcUDs4Gk8dv
+	9eI6/Xk2xFmQWjqlG8qg7NxkIizxOmYPU/t3KiI1Z2EazQKeL8nte35ufeODbc216rop4WVYqpe
+	YXgYXytRK9PG6kdMQ/EO7ql7DUjXpSjQAL622sB3vyg6ZbjWULal6Q
+X-Received: by 2002:a05:600c:1c17:b0:480:5951:fc1e with SMTP id 5b1f17b1804b1-4830e930f73mr17628865e9.11.1770160783238;
+        Tue, 03 Feb 2026 15:19:43 -0800 (PST)
+Received: from [192.168.0.40] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483108ec315sm2221095e9.8.2026.02.03.15.19.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Feb 2026 15:19:42 -0800 (PST)
+Message-ID: <0c3acd1c-5860-4819-9b36-6935137deea8@linaro.org>
+Date: Tue, 3 Feb 2026 23:19:39 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -43,96 +68,190 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 01/18] dt-bindings: clock: Add MediaTek MT8189 clock
-To: "irving.ch.lin" <irving-ch.lin@mediatek.com>,
+Subject: Re: [PATCH v2 1/8] dt-bindings: clock: qcom,sm8250-videocc: account
+ for the MX domain
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Richard Cochran <richardcochran@gmail.com>,
- Bartosz Golaszewski <brgl@kernel.org>, Chen-Yu Tsai <wenst@chromium.org>,
- Miles Chen <miles.chen@mediatek.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com,
- Qiqi Wang <qiqi.wang@mediatek.com>, sirius.wang@mediatek.com,
- vince-wl.liu@mediatek.com, jh.hsu@mediatek.com
-References: <20260202062840.342707-1-irving-ch.lin@mediatek.com>
- <20260202062840.342707-2-irving-ch.lin@mediatek.com>
+ <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+ Jonathan Marek <jonathan@marek.ca>, Ulf Hansson <ulf.hansson@linaro.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+ Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>, Hans Verkuil <hverkuil@kernel.org>,
+ Stefan Schmidt <stefan.schmidt@linaro.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Dikshita Agarwal <dikshita@qti.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-media@vger.kernel.org,
+ Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+References: <20260201-iris-venus-fix-sm8250-v2-0-6f40d2605c89@oss.qualcomm.com>
+ <gfDLl0QXQ6wHp-p_Lm8sRAgCea7hCkOH5OWeF2Rj3rLMllCVIut5Je7AqhSNCTptN0w13hXwkQvP9rjH9hNUHw==@protonmail.internalid>
+ <20260201-iris-venus-fix-sm8250-v2-1-6f40d2605c89@oss.qualcomm.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 Content-Language: en-US
-From: David Lechner <david@lechnology.com>
-Autocrypt: addr=david@lechnology.com; keydata=
- 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
-In-Reply-To: <20260202062840.342707-2-irving-ch.lin@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20260201-iris-venus-fix-sm8250-v2-1-6f40d2605c89@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - galaxy.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: galaxy.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: galaxy.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 
-On 2/2/26 12:28 AM, irving.ch.lin wrote:
-> From: Irving-CH Lin <irving-ch.lin@mediatek.com>
+On 01/02/2026 10:48, Dmitry Baryshkov wrote:
+> To configure the video PLLs and enable the video GDSCs on SM8250,
+> platform, the MX rail must be ON along with MMCX. Split the bindings
+> file in order to provide separate file utilizing MMCX and MX power
+> domains.
 > 
-> Add dt schema and IDs for the clocks of MediaTek MT8189 SoC.
-> The MT8189 clock IP provide clock control for main system
-> (apmixedsys, topcksys and vlpcksys) and
-> subsys (eg. peri, mfg, venc/vdec ...).
+> Fixes: dafb992a95e1 ("dt-bindings: clock: add SM8250 QCOM video clock bindings")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> ---
+>   .../bindings/clock/qcom,sm8250-videocc.yaml        | 85 ++++++++++++++++++++++
+>   .../devicetree/bindings/clock/qcom,videocc.yaml    | 20 -----
+>   2 files changed, 85 insertions(+), 20 deletions(-)
 > 
-
-> +#define CLK_TOP_VOWPLL                                  174
-This one seems out of place. It is not used in the driver. It is
-a fixed 1:1 divider AFAKCT, so should not be included. (And this
-line has spaces while the rest of the file uses tabs for indent.)
-
-
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8250-videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8250-videocc.yaml
+> new file mode 100644
+> index 000000000000..341d3cbb7cbb
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8250-videocc.yaml
+> @@ -0,0 +1,85 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,sm8250-videocc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Video Clock & Reset Controller
+> +
+> +maintainers:
+> +  - Taniya Das <quic_tdas@quicinc.com>
+> +
+> +description: |
+> +  Qualcomm video clock control module provides the clocks, resets and power
+> +  domains on Qualcomm SoCs.
+> +
+> +  See also::
+> +    include/dt-bindings/clock/qcom,videocc-sm8250.h
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - enum:
+> +          - qcom,sm8250-videocc
+> +
+> +  clocks:
+> +    items:
+> +      - description: AHB
+> +      - description: Board XO source
+> +      - description: Board active XO source
+> +
+> +  clock-names:
+> +    items:
+> +      - const: iface
+> +      - const: bi_tcxo
+> +      - const: bi_tcxo_ao
+> +
+> +  power-domains:
+> +    items:
+> +      - description:
+> +          A phandle and PM domain specifier for the MMCX power domain.
+> +      - description:
+> +          A phandle and PM domain specifier for the MX power domain.
+> +
+> +  required-opps:
+> +    items:
+> +      - description:
+> +          A phandle to an OPP node describing required MMCX performance point.
+> +      - description:
+> +          A phandle to an OPP node describing required MX performance point.
+> +
+> +required:
+> +  - compatible
+> +  - clocks
+> +  - clock-names
+> +  - '#power-domain-cells'
+> +  - power-domains
+> +  - required-opps
+> +
+> +allOf:
+> +  - $ref: qcom,gcc.yaml#
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,rpmh.h>
+> +    #include <dt-bindings/power/qcom,rpmhpd.h>
+> +    clock-controller@ab00000 {
+> +      compatible = "qcom,sm8250-videocc";
+> +      reg = <0x0ab00000 0x10000>;
+> +      clocks = <&gcc_gcc_video_ahb_clk>,
+> +               <&rpmhcc RPMH_CXO_CLK>,
+> +               <&rpmhcc RPMH_CXO_CLK_A>;
+> +      clock-names = "iface",
+> +                    "bi_tcxo",
+> +                    "bi_tcxo_ao";
+> +      #clock-cells = <1>;
+> +      #reset-cells = <1>;
+> +      #power-domain-cells = <1>;
+> +      power-domains = <&rpmhpd RPMHPD_MMCX>,
+> +                      <&rpmhpd RPMHPD_MX>;
+> +      required-opps = <&rpmhpd_opp_low_svs>,
+> +                      <&rpmhpd_opp_low_svs>;
+> +    };
+> +...
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
+> index f4ff9acef9d5..8676c7e22b4c 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
+> @@ -19,7 +19,6 @@ description: |
+>       include/dt-bindings/clock/qcom,videocc-sc7280.h
+>       include/dt-bindings/clock/qcom,videocc-sdm845.h
+>       include/dt-bindings/clock/qcom,videocc-sm8150.h
+> -    include/dt-bindings/clock/qcom,videocc-sm8250.h
+> 
+>   properties:
+>     compatible:
+> @@ -30,7 +29,6 @@ properties:
+>             - qcom,sdm845-videocc
+>             - qcom,sm6350-videocc
+>             - qcom,sm8150-videocc
+> -          - qcom,sm8250-videocc
+>         - items:
+>             - const: qcom,sc8180x-videocc
+>             - const: qcom,sm8150-videocc
+> @@ -128,24 +126,6 @@ allOf:
+>               - const: iface
+>               - const: bi_tcxo
+> 
+> -  - if:
+> -      properties:
+> -        compatible:
+> -          enum:
+> -            - qcom,sm8250-videocc
+> -    then:
+> -      properties:
+> -        clocks:
+> -          items:
+> -            - description: AHB
+> -            - description: Board XO source
+> -            - description: Board active XO source
+> -        clock-names:
+> -          items:
+> -            - const: iface
+> -            - const: bi_tcxo
+> -            - const: bi_tcxo_ao
+> -
+>   unevaluatedProperties: false
+> 
+>   examples:
+> 
+> --
+> 2.47.3
+> 
+> 
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
