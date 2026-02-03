@@ -1,129 +1,91 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3B3832FA34;
-	Tue,  3 Feb 2026 11:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB985274B3A;
+	Tue,  3 Feb 2026 11:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770118000; cv=none; b=StdgQkQPnYtgkGsaFh8NepmXaLLbPJ1PvK266dKg7pmh4xm94dZ//N+1FcU5NPq0cUGcaJSZdzwOkNw2c0LJD+ZeJAhHaGTyf5Vbt4HbdkrBCnyqpVZ2LJgHt2u1SN0msF2bCD80SjurQ83ZZN2+PpP/UNyeX5mxFijBbCrVKR0=
+	t=1770119068; cv=none; b=pMFOWOfYwmqyQ23rSO4oCSh0aEZB3dpfcJ2B5b8eqDePIPxxj6CGTb3nDnNsgEEV7oE7Gm7YGgZVLUNpyOCcTXs12W6j+eC3mzWhnUbb26Y9U1Q+BSriBO/sZbfFM9wuhQJDWG6sTTJ8Woe1si8H4NGDHFySLL+roRzotdWesSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770118000; c=relaxed/simple;
-	bh=c2+gYkdchGPjD2P9JpmsB+DRIFYZMK0TCeVAo3W5bi4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FAYuiZ/K0CILgEdYyN5ZMxpTq+wwV3B+I1D59ULKeD0zXd85Mn+vvvkUUuqkMzJ49HV5MHVsnBuqOhFOyzdtSbiIHxvmJGJAcDrOkKl64cyGPPMLvG8/dXAGwArsbueuJO9eudyVRDEPCLLwqJtBycFA4KqkpIxDOq0xeBc7j4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=JQ3ZxiPl; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1770119068; c=relaxed/simple;
+	bh=ti6GPfXzNrGebiZu8scvVNHPqQoAoCsZtWggvYnGPHY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=egP76iGPUJ9B3EZYyV6g1nIghqbX23aOyh/svQ3Vafwoovovo8ImDrU6C6d/FfjfahYR07vy3ZpZH5k3c7hK0DWF5Vra5AnhQGfAjtTY0XcAJSgsAFsDySk1egc/QhN7HbJu75yMYYzM7IWP5aouHxfvwGOWUHKk53pqLfsGlO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dFhuPE9H; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="JQ3ZxiPl"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1770117996;
-	bh=c2+gYkdchGPjD2P9JpmsB+DRIFYZMK0TCeVAo3W5bi4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=JQ3ZxiPl2rBLEEWmvBwGo0TC1cNmU1PXUFSCCzFL6cKhdiA0NFr/jSbUwCuvctW3K
-	 L4Nqe2T/JU9zS/E1gWZ47AZFwpsEUEd8RP6v7HzvMLWGjHGUd+LJYQ2/4a6b/23jl3
-	 xPPb6QW6Mi8pvARe+TpG/jRIaBWAogTkwWImZlkzg+eFo/6xcHXdsfuhLkzWd4kU5y
-	 4G2yq9p/UZcy4WVN9vXCCrRN0s3PwrcMNwtj+pImqggAIXJH0FLEXamE+qBf99ZHle
-	 kJCRSem8WvUEo8u9YWTqFkenSh94C/uFqhv3mTka99dcR1iOz2rMDCg24rHv1J6V/r
-	 r6DeezIyDquMA==
-Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C1FA917E12E5;
-	Tue,  3 Feb 2026 12:26:35 +0100 (CET)
-Date: Tue, 3 Feb 2026 12:26:31 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Maxime Ripard <mripard@kernel.org>, Daniel Almeida
- <daniel.almeida@collabora.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>, Danilo Krummrich <dakr@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Drew Fustini <fustini@kernel.org>, Guo Ren
- <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, "Uwe =?UTF-8?B?S2xlaW5l?=
- =?UTF-8?B?LUvDtm5pZw==?=" <ukleinek@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda
- <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
- <gary@garyguo.net>, "=?UTF-8?B?QmrDtnJu?= Roy Baron"
- <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Andreas
- Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org,
- linux-pwm@vger.kernel.org, linux-clk@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] rust: clk: use the type-state pattern
-Message-ID: <20260203122631.3a94a935@fedora>
-In-Reply-To: <20260203113902.501e5803@fedora>
-References: <20260107-clk-type-state-v3-0-77d3e3ee59c2@collabora.com>
-	<20260107-clk-type-state-v3-1-77d3e3ee59c2@collabora.com>
-	<20260108-delectable-fennec-of-sunshine-ffca19@houat>
-	<98CD0BF6-3350-40B9-B8A9-F569AE3E3220@collabora.com>
-	<20260119-thundering-tested-robin-4be817@houat>
-	<aW4lCfUyumOKRRJm@google.com>
-	<20260203113902.501e5803@fedora>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dFhuPE9H"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3997DC19421;
+	Tue,  3 Feb 2026 11:44:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770119068;
+	bh=ti6GPfXzNrGebiZu8scvVNHPqQoAoCsZtWggvYnGPHY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dFhuPE9HDwbP/PkMm1QWhsjsU7JLn5zWS/AJ4F23F5pHWZf8gC2UR+aKK26fXoy61
+	 BLF40m1IMUuQ+F1UpKqxE2JkfDBIiNe/2WnZDJJ5/cxs5JHgQuWZUbQ5GFLcgXLE39
+	 eevqhb5BM2X8TxSDhvxfIUrQND9I/h8NDWOdjh/aQsMWgQRslbKH/45m6atMIGbE/M
+	 EKOU35iN5hUif/Ews03PVJJcJ2+UZFlOlE4rWXk19TEYauOxkHD9o/i2PzHPSHxvaT
+	 X3SQZdn2fi3K66EzloiTBgQHt9Fbr9WBdxfKTOFUVYqQZgDpy/wscSrZfcb+JpJZ/T
+	 HjU8d86BUu6Pg==
+Date: Tue, 3 Feb 2026 11:44:22 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Daniel Baluta <daniel.baluta@gmail.com>
+Cc: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Chen-Yu Tsai <wenst@chromium.org>, Abel Vesa <abelvesa@kernel.org>,
+	Peng Fan <peng.fan@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel@collabora.com,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] clk: Disable CLK_OPS_PARENT_ENABLED parent only
+ after CRITICAL check
+Message-ID: <0cc467a6-2121-4a79-9143-71cce088bcc7@sirena.org.uk>
+References: <20260128-ops-parent-enable-fix-v1-0-ff39cc37f98d@collabora.com>
+ <20260128-ops-parent-enable-fix-v1-1-ff39cc37f98d@collabora.com>
+ <CAEnQRZABuXQsJ4-5u9uP8VM63of8EpiV1LcUxv_vSBuGT1uEBA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="0shkWHVSS9MR5KUA"
+Content-Disposition: inline
+In-Reply-To: <CAEnQRZABuXQsJ4-5u9uP8VM63of8EpiV1LcUxv_vSBuGT1uEBA@mail.gmail.com>
+X-Cookie: Do you know Montana?
 
-On Tue, 3 Feb 2026 11:39:02 +0100
-Boris Brezillon <boris.brezillon@collabora.com> wrote:
 
-> On Mon, 19 Jan 2026 12:35:21 +0000
-> Alice Ryhl <aliceryhl@google.com> wrote:
-> 
-> > On Mon, Jan 19, 2026 at 11:45:57AM +0100, Maxime Ripard wrote:  
-> > > On Thu, Jan 08, 2026 at 11:14:37AM -0300, Daniel Almeida wrote:    
-> > > > > For example, it's quite typical to have (at least) one clock for the bus
-> > > > > interface that drives the register, and one that drives the main
-> > > > > component logic. The former needs to be enabled only when you're
-> > > > > accessing the registers (and can be abstracted with
-> > > > > regmap_mmio_attach_clk for example), and the latter needs to be enabled
-> > > > > only when the device actually starts operating.
-> > > > > 
-> > > > > You have a similar thing for the prepare vs enable thing. The difference
-> > > > > between the two is that enable can be called into atomic context but
-> > > > > prepare can't.
-> > > > > 
-> > > > > So for drivers that would care about this, you would create your device
-> > > > > with an unprepared clock, and then at various times during the driver
-> > > > > lifetime, you would mutate that state.    
-> > 
-> > The case where you're doing it only while accessing registers is
-> > interesting, because that means the Enable bit may be owned by a local
-> > variable. We may imagine an:
-> > 
-> >     let enabled = self.prepared_clk.enable_scoped();
-> >     ... use registers
-> >     drop(enabled);
-> > 
-> > Now ... this doesn't quite work with the current API - the current
-> > Enabled stated owns both a prepare and enable count, but the above keeps
-> > the prepare count in `self` and the enabled count in a local variable.
-> > But it could be done with a fourth state, or by a closure method:
-> > 
-> >     self.prepared_clk.with_enabled(|| {
-> >         ... use registers
-> >     });
-> > 
-> > All of this would work with an immutable variable of type Clk<Prepared>.  
-> 
-> Hm, maybe it'd make sense to implement Clone so we can have a temporary
-> clk variable that has its own prepare/enable refs and releases them
-> as it goes out of scope. This implies wrapping *mut bindings::clk in an
-> Arc<> because bindings::clk is not ARef, but should be relatively easy
-> to do. Posting the quick experiment I did with this approach, in case
-> you're interested [1]
+--0shkWHVSS9MR5KUA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This time with a proper RawClk(*mut bindings::clk) wrapper, so we can
-clk_put() called in RawClk::drop() instead of in Clk::drop().
+On Tue, Feb 03, 2026 at 12:13:22PM +0200, Daniel Baluta wrote:
 
-[1]https://gitlab.freedesktop.org/bbrezillon/linux/-/commit/6fa6cb72f14373b276c61d038bc2b16f49c78f74
+> Would you consider please reverting faulty patch above as i.MX8mp is
+> still broken?
+
+Stephen posted a revert yesterday:
+
+   https://lore.kernel.org/r/20260203002439.1223213-1-sboyd@kernel.org
+
+--0shkWHVSS9MR5KUA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmB35UACgkQJNaLcl1U
+h9A4Vgf/Uvyj2AFwDKOzAlFFnP32o0XeoeZeQhAYu73zomn39yZ5TAhVi2zdEG+k
++jbtloMu8oyjExk7NhheXUVhNgO1CGBDCtNp+JpCSw0kryE+HTXQnCgVS6cbQvar
+A3uLI1QEvKw7m+QXLuHu05MQb8Kzzogo8BuY3l5pOTJXWt7pUKitzxIImoIdibjI
+kDw77odABT2YgZhcVgLsWbiQhwcViOBdkIHNOIRFUhMG5RHHNWyCdy+OASgcVPmn
+ifVPRUNXJ46vrhNnUYwEu+ziRTg0IrLbAq4ddsUMgb7CW08QIJYaRfInOPr9znkJ
+izQGTgOS+AsikNGt+yoQiclJSnf17A==
+=H2I7
+-----END PGP SIGNATURE-----
+
+--0shkWHVSS9MR5KUA--
