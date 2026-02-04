@@ -1,171 +1,132 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEEC03ED10B;
-	Wed,  4 Feb 2026 14:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51F94218B2
+	for <linux-clk@vger.kernel.org>; Wed,  4 Feb 2026 15:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770215671; cv=none; b=MlJkZoemx3H+pvdHZXkNXiHeHKeo0x7J3yRm9JNpjKAvhErC4ewr0w0xsZ10XNCrv29Wwc8mP2OJtQJ3zqxRkKR2ocyMQ1cpZFP/eNeIY5tZEB4be7tsvr1HUNgZ4ForXzfh1VTdAfyiqJhVTmwtn/2AqckkJZqh5UmQMtUwDpQ=
+	t=1770217440; cv=none; b=CAaXa/VnmPqJCq1mhWWOHPGBKKWUS9XQHIu+2QS0K+TqsYxF9VHfPWRc8mZAQF7hHvwsMVCFFG7W2Pgf8gJXefQh+lNt8+Hv5bSbgUNgCvucDaqkhiQNYgFo+B/PGEIZ3MElayT90qhcvQ3Fo6VwVQz4lnA6ZHDnJD4aNNBfMls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770215671; c=relaxed/simple;
-	bh=qwW0E3km7Imz+Ih8y6CvkTb1Tgc1MA3d/Qg0OSOn85k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e4sFaJhob7sDWEWp0zjsYFdVJyhFj7Xu43bmxW466I2rlgIPrWyL29Hji055SSOexNUzq7YqyzYX1aO6Xco7UVsUItqWSWNJ4oF/0I5zcwBDlRSFMXMzrQBc9h6P+eJDrLs+wRx8G6bFekFq9OEuX5YmLKgvz8g2rormeocKK+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gx/BQ7ev; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770217440; c=relaxed/simple;
+	bh=eZH+hnjWiszPZG9kr9yc7o3ptxMyDuVNvXKjOSELY/A=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=pppR7a6UHz5cgiAqx198NAL3mkLbHyNx4mhspsuGbOVxc9iu42/xbec+aJPp8EDbIiUj2kqDOwXM6n/6wk74N8fqqygqfZ4krQeNqN6etLgWP4WFy5orYPpsHbW+7Cug9I7H2zhp8+Hr47vDQnf3Rbf2u88UuqcCNz+rkIkvw0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=01PkKoQC; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gx/BQ7ev"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8E2AC4CEF7;
-	Wed,  4 Feb 2026 14:34:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770215671;
-	bh=qwW0E3km7Imz+Ih8y6CvkTb1Tgc1MA3d/Qg0OSOn85k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gx/BQ7evxp6zGTeDdYoeq3cHPDxwjrQbY50Ss5ol6uWNa+m6MGxM9SEfyVAjON7T4
-	 iwKsc/t0UJOg4gYwqSRE9ScZwhNIgNZZrSTVUsEwEKrpQ3tDKLF0LFaGYdKLU/mCQQ
-	 ibCvVC4jzkyf+i3JTkD+wqYf33swZRh3fZWbrqJZ2nB6S9TvL8EWJlV2qDzisdv5VT
-	 LRrEeWKgxTGv+UnV12pBS94uB6vmZZbEnBNazaqkB6dxHGK67rJZOfYuDOW8cOaZdb
-	 JvBaq6akDKJuCavqkeSkUmbXjrUkL7aP6dDrNmkMQaSxRwqi54I9vUJBj8EpYlqyGw
-	 6DdWz+yJivXRg==
-Date: Wed, 4 Feb 2026 15:34:29 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org, 
-	linux-pwm@vger.kernel.org, linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] rust: clk: use the type-state pattern
-Message-ID: <20260204-angelic-vermilion-beagle-fd1507@houat>
-References: <20260119-thundering-tested-robin-4be817@houat>
- <aW4lCfUyumOKRRJm@google.com>
- <518D8B09-B9A1-4DB4-85CD-37A2DD3D5FB1@collabora.com>
- <DFSLCI9U4NCW.2HI2UPUI7G134@kernel.org>
- <20260119-weightless-pelican-of-anger-190db0@houat>
- <DFSN4FDCYHMW.3J3237PEBV2ZP@kernel.org>
- <20260122-majestic-masterful-jaguarundi-d0abde@houat>
- <2F3D3A40-6EF9-46FC-A769-E5A3AAF67E65@collabora.com>
- <20260204-nickel-seal-of-poetry-8fdefb@houat>
- <91A92D84-1F2E-45F3-82EC-6A97D32E2A78@collabora.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="01PkKoQC"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 24FC64E423F9;
+	Wed,  4 Feb 2026 15:03:58 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id DD7AC60705;
+	Wed,  4 Feb 2026 15:03:57 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8CCF6119A88F7;
+	Wed,  4 Feb 2026 16:03:52 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1770217437; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=V+jIX2+PXJPcmc9ucwjmh1dIDrajSC6GG82tgislS3M=;
+	b=01PkKoQC1tWnJDivPZCN6FUoxPPYQ5fkmldZ1ChoPh6qJ4Eak5r19qTPIXuaEsS3rctQTS
+	UDqv+7SI/uDAUEpgFS4OX1ictqFq75Q5AiN3iqT+TO/Wkg0Se3vG8jZ6N7wpdHXCVahTco
+	l3uPFR08DjXa8IjLKj9m1PLdZU1ksK1G+vG+rLSKF6ZrIJIYEJ9T3gkEqa0tvwI8MFtXmy
+	mc3Qv1B7sRXckugiaCh/98fsUCx2hrYQ8aBDpFuSLSY5LDEvmA9+Yt2yIwarQIupHRptIB
+	lGBsBCYvenL5w2l6kr/3gfoMyRMzDFD/kS8qoDpNNBpBWpWVDEghKvxllldh8A==
+From: "Thomas Richard (TI)" <thomas.richard@bootlin.com>
+Subject: [PATCH v4 0/4] firmware: ti_sci: Introduce BOARDCFG_MANAGED mode
+ for Jacinto family
+Date: Wed, 04 Feb 2026 16:03:37 +0100
+Message-Id: <20260204-ti-sci-jacinto-s2r-restore-irq-v4-0-67820af39eac@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="qsblwuvkhfiyygwy"
-Content-Disposition: inline
-In-Reply-To: <91A92D84-1F2E-45F3-82EC-6A97D32E2A78@collabora.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMpfg2kC/4XOTW7CMBAF4KsgrzvVeGxI0hX3QCxc/5Sp2rixT
+ QRCuXsdKhShLrJ8T6PvzU1kn9hn8ba5ieRHzhz7GvTLRtiT6T88sKtZENJWokQoDNkyfBrLfYm
+ QKUHyucRUL9MAmlqP2AYn0YqK/CQf+HIfOBz/cvLDue6UpTzxDFzvT4xybh97zdreKAFBaaeV6
+ hzpxuzfYyxf3L/a+C1mfKQFlLQOUgWNbptgVAhE8j+oFpBwuwqqCjrcdTvVNdo4/QxO0/QLGdw
+ c4IUBAAA=
+X-Change-ID: 20251010-ti-sci-jacinto-s2r-restore-irq-428e008fd10c
+To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
+ Santosh Shilimkar <ssantosh@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: Gregory CLEMENT <gregory.clement@bootlin.com>, 
+ richard.genoud@bootlin.com, Udit Kumar <u-kumar1@ti.com>, 
+ Prasanth Mantena <p-mantena@ti.com>, Abhash Kumar <a-kumar2@ti.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-clk@vger.kernel.org, 
+ "Thomas Richard (TI)" <thomas.richard@bootlin.com>
+X-Mailer: b4 0.14.3
+X-Last-TLS-Session-Version: TLSv1.3
 
+The fourth iteration of this series adds support for two new firmware
+capabilities:
+- MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST: Indicates that DM-Firmware is not
+  able to restore IRQ context during resume after suspend-to-ram.
+- MSG_FLAG_CAPS_LPM_CLK_CONTEXT_LOST: Indicates that DM-Firmware is not
+  able to restore clock context (rate and parent configuration) during
+  resume after suspend-to-ram.
 
---qsblwuvkhfiyygwy
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 1/3] rust: clk: use the type-state pattern
-MIME-Version: 1.0
+Now, ti_sci driver determines whether to restore IRQs based on the
+MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST capability rather than the
+BOARDCFG_MANAGED mode. The same logic applies to the clock context.
 
-On Wed, Feb 04, 2026 at 09:43:55AM -0300, Daniel Almeida wrote:
-> > I'm probably missing something then, but let's assume you have a driver
-> > that wants its clock prepared and enabled in an hypothetical enable()
-> > callback, and disabled / unprepared in a disable() callback.
-> >=20
-> > From a PM management perspective, this usecase makes total sense, is a
-> > valid usecase, is widely used in the kernel, and is currently supported
-> > by both the C and Rust clk APIs.
-> >=20
-> > The only solution to this you suggested so far (I think?) to implement
-> > this on top of the new clk API you propose is to have a driver specific
-> > enum that would store each of the possible state transition.
->=20
-> Yes, you need an enum _if_ you want to model transitions at runtime. IIUC=
- you
-> only need two variants to implement the pattern you described. I do not
-> consider this  =E2=80=9Cboilerplate=E2=80=9D, but rather a small cost to =
-pay.
+Both J784s4 and J7200 platforms support these new capabilities. A
+corresponding pull request has been submitted on DM-Firmware side to
+define and enable these capabilities.
 
-A maintenance cost to pay by every driver is kind of the textbook
-definition of boilerplate to me.
+The value for the BOARDCFG_MANAGED mode has also been fixed.
 
-> I would understand if this was some elaborate pattern that had to be
-> implemented by all drivers, but a two-variant enum is as
-> straightforward as it gets.
+Public documentation for BOARDCFG_MANAGED mode and these new capabilities
+is currently unavailable. I will update the series with relevant
+documentation references as soon as they become available.
 
-And yet, that framework has dozens of helpers that do not remove
-anything from drivers but a couple of lines. So surely its users must
-find value in reducing that boilerplate as much as possible. And you do
-implement some of them, so you must find value in that too.
+I rebased the series on linux-next next-20260202.
 
-> > That's the boilerplate I'm talking about. If every driver wanting to
-> > implement that pattern has to make such an enum, with all the relevant
-> > traits implementation that might come with it, we go from an API where
-> > everything works at no-cost from a code-size perspective to a situation
-> > where every driver has to develop and maintain that enum.
->
-> There are no "traits that come with it". It's just an enum, with two
-> variants.
->=20
-> > API where everything works at no-cost
->=20
-> The previous API was far from =E2=80=9Ceverything works=E2=80=9D. It was =
-fundamentally
-> broken by design in multiple ways, i.e.:
+Best Regards,
+Thomas
 
-Out of context and not what I meant, but ok.
+Signed-off-by: Thomas Richard (TI) <thomas.richard@bootlin.com>
+---
+Changes in v4:
+- rebase on linux-next next-20260202.
+- fix BOARDCFG_MANAGED value.
+- add MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST firmware capability.
+- add MSG_FLAG_CAPS_LPM_CLK_CONTEXT_LOST firmware capability.
+- Link to v3: https://lore.kernel.org/r/20251205-ti-sci-jacinto-s2r-restore-irq-v3-0-d06963974ad4@bootlin.com
 
-> > a) It only keeps track of a count to clk_get(), which means that users =
-have
-> > to manually call disable() and unprepare(), or a variation of those, li=
-ke
-> > disable_unprepare().
-> >=20
-> > b) It allows repeated calls to prepare() or enable(), but it keeps no t=
-rack
-> > of how often these were called, i.e., it's currently legal to write the
-> > following:
-> >=20
-> > clk.prepare();
-> > clk.prepare();
-> > clk.enable();
-> > clk.enable();
-> >=20
-> > And nothing gets undone on drop().
->=20
-> IMHO, what we have here is an improvement that has been long overdue.
+Changes in v3:
+- rebased on linux-next
+- sci-clk: context_restore() operation restores also rate.
+- Link to v2: https://lore.kernel.org/r/20251127-ti-sci-jacinto-s2r-restore-irq-v2-0-a487fa3ff221@bootlin.com
 
-Nothing is absolute. It is indeed an improvement on the refcounting side
-of things and general safety of the API for the general case. I don't
-think I ever questionned that.
+Changes in v2:
+- ti_sci: use hlist to store IRQs.
+- sci-clk: add context_restore operation
+- ti_sci: restore clock parents during resume
+- Link to v1: https://lore.kernel.org/r/20251017-ti-sci-jacinto-s2r-restore-irq-v1-0-34d4339d247a@bootlin.com
 
-However, for the use-cases we've been discussing (and dozens of drivers
-implementing it), it also comes with a regression in the amount of code
-to create and maintain. They used to be able to only deal with the Clk
-structure, and now they can't anymore.
+---
+Thomas Richard (TI) (4):
+      firmware: ti_sci: add BOARDCFG_MANAGED mode support
+      firmware: ti_sci: add support for restoring IRQs during resume
+      clk: keystone: sci-clk: add restore_context() operation
+      firmware: ti_sci: add support for restoring clock context during resume
 
-You might find that neglible, you might have a plan to address that in
-the future, etc. and that's fine, but if you can't acknowledge that it's
-indeed happening, there's no point in me raising the issue and
-continuing the discussion.
+ drivers/clk/keystone/sci-clk.c |  42 +++++++++--
+ drivers/firmware/ti_sci.c      | 164 ++++++++++++++++++++++++++++++++++++++---
+ drivers/firmware/ti_sci.h      |   6 ++
+ 3 files changed, 192 insertions(+), 20 deletions(-)
+---
+base-commit: c6fb8985458d675f32a22788f30afcba754b6d78
+change-id: 20251010-ti-sci-jacinto-s2r-restore-irq-428e008fd10c
 
-Maxime
+Best regards,
+-- 
+Thomas Richard (TI) <thomas.richard@bootlin.com>
 
---qsblwuvkhfiyygwy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaYNY7AAKCRAnX84Zoj2+
-dse/AXsGeJch3I0bMyx52I9cEf+Sxmls2zkB6ONfE0zIrOQMV2G4Snz3Z01b1itP
-KS0DtvABgNL1o1ryYS9P8eHOi2y4d6qYsbQfxCQ0B9xEbJpvTbkBm30967SOJrBI
-4I9o9NicZA==
-=izfb
------END PGP SIGNATURE-----
-
---qsblwuvkhfiyygwy--
