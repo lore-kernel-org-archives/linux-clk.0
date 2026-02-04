@@ -1,42 +1,42 @@
 Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501C64219F3;
-	Wed,  4 Feb 2026 15:04:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7941742EEA1;
+	Wed,  4 Feb 2026 15:04:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770217444; cv=none; b=CP9SQd2pPSbJl2dQGeKMMmlvbgC3ChZg0lj0TLTJDTTj/EoIL2cSLWYJY7+o7ZcekDamHEXmS/nULcZMYwG0jJaF64XshM+9pNohWog7J1QQM/RWC1OGCmOB1yJ8D2TR2WtNvofka3CHPsSrVLbz9eW02nFz6vND5yeEkZRuO1E=
+	t=1770217445; cv=none; b=HssE4tvGsPa4f4SilTdq+lXdILLO5qP/tuxO40oE2kJZFqjTgsvdMoJ5Di068GLO2M/uYind6enx6XizqrRHDzjggC4PT0xM70KyMGzlVuviL6RgfZl0iiAXRSkdfdOX8fLK5HxZgGK/G2r9x6ZDkRd4U//UP8Tjz0EPjRb8oxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770217444; c=relaxed/simple;
-	bh=JlQBEWovYtEQvZX5Zd29IiK4tUStCNlnQYb0ISvwx0g=;
+	s=arc-20240116; t=1770217445; c=relaxed/simple;
+	bh=GoxCauAl/0UtRpDDsLAD2WK6HtG6rsqTwI2UDcgZzA0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WDAr9oSttuywmq5bRwRS4zkNQ5SEbBlySBJ8l+jbGpCBioDpHfOD4cwY4leiu3AFIDoFAimfAvuDSUwZy1EFnByqTlj0aBAFNWmjupESoDgHpKTH4kUYCmR+XLhVBmLszhlWQxJCZRptomDMTMmQ1IMAsc/GROZNU80GqSTFENg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZCSrqrTT; arc=none smtp.client-ip=185.246.85.4
+	 In-Reply-To:To:Cc; b=ls05eXiVLQA8n0CwQ6y0xDYee+qz6z6glCULJPSYrqPG8l1ilaR9l2ASh9gHPJZbV9oDY1wAhM21OTHAfw5AkNFjqGbID7T8HBJh7KE2I/cSRsCpENSaGqVd3wAsCTIjXKf/E2bnY6yd4+49PigBWq6/yevshIPbvf9CBZs5QEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=sVHmEQS7; arc=none smtp.client-ip=185.246.85.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZCSrqrTT"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="sVHmEQS7"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id DF18B4E423FD;
-	Wed,  4 Feb 2026 15:04:02 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 4A23A4E423FE;
+	Wed,  4 Feb 2026 15:04:04 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id B5E3860705;
-	Wed,  4 Feb 2026 15:04:02 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 67A49119A88EE;
-	Wed,  4 Feb 2026 16:04:00 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 2087760705;
+	Wed,  4 Feb 2026 15:04:04 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 28B1A119A88F7;
+	Wed,  4 Feb 2026 16:04:02 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1770217441; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1770217443; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=6p/0qkc9q0L2/MssP3yQd880K7+7RE4DlFTVxL15zFA=;
-	b=ZCSrqrTT7qItPTh+z40JnQByUb2lwIz4PjdthHG9fgt5UScshEnAQ81YEANT6bBsp3gf2y
-	MIp8EKA1mlFTyH74M+vGtnDg2Oa1rSWhZ8w7q97ahLxfyX3MdnGYDxKZdYeAaYLtO5Qu7W
-	4bXML6sAvW03JYoyUeolt3/aQHi1j+VAS8HD/mFEIxENxMmzzNwCfrhr0Zbfr3pFJuyann
-	1sY0FXeDXAF2Bl7qnVHo525TgnQeMFYjuL4/5McdLjdJQBWFZ/undIcSpKY7MzdSnYzWO5
-	KXRl9UV9G1VwuVN0YQiiajlLtkwABpV7YRaU9ZIpHzfe0ARnJ3vNzjqmwJdevQ==
+	bh=Fp+HKBVSb1UN2Yv/9fjsKERsSTABjuOidTlZwEBgpTo=;
+	b=sVHmEQS7L2c2UBK865tHHhyuyYTSU7Co0HhmUUZbC5i5Tf2F5g/WMsFPa+ZPNcALL4SO8f
+	ZBBrU2ayR5JHQnZniQNr07RJs8TeOxGZttsWQW9Qvym8D3Uqu5Zoj/y9Ij4hKIA8QbIVRu
+	LEiVFQfXjE0rINeYGWKrMCOYHvgSdT+RNcefRHjcGL7PsTNbtB8bCgYdpKoVm+HwcRK/CW
+	3EU+pARoMKAdPtqzSeRlrUdIwxCze+eLPXK4n7jlHenvbKVOqbHjwWAy6WRj/99LIokVpY
+	RdoRVR8rjkVYqIHJMsS26f6g0eBG1Qt2/09dyiptUKmVRS+xgJtR6Q1M6sqN4g==
 From: "Thomas Richard (TI)" <thomas.richard@bootlin.com>
-Date: Wed, 04 Feb 2026 16:03:40 +0100
-Subject: [PATCH v4 3/4] clk: keystone: sci-clk: add restore_context()
- operation
+Date: Wed, 04 Feb 2026 16:03:41 +0100
+Subject: [PATCH v4 4/4] firmware: ti_sci: add support for restoring clock
+ context during resume
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -44,8 +44,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20260204-ti-sci-jacinto-s2r-restore-irq-v4-3-67820af39eac@bootlin.com>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260204-ti-sci-jacinto-s2r-restore-irq-v4-4-67820af39eac@bootlin.com>
 References: <20260204-ti-sci-jacinto-s2r-restore-irq-v4-0-67820af39eac@bootlin.com>
 In-Reply-To: <20260204-ti-sci-jacinto-s2r-restore-irq-v4-0-67820af39eac@bootlin.com>
 To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
@@ -61,114 +61,82 @@ Cc: Gregory CLEMENT <gregory.clement@bootlin.com>,
  "Thomas Richard (TI)" <thomas.richard@bootlin.com>
 X-Mailer: b4 0.14.3
 X-Last-TLS-Session-Version: TLSv1.3
-X-Rspamd-Fuzzy: 41a41182b59d79f583916f68cda4ce24371bbb78bb5201448cdda28aa13f7e12f6862ad9c69aaabad6cacf50bd7bcdc4e70062e7913d09bed0cb7f9b3ddaf05c
 
-Implement the restore_context() operation to restore the clock rate and the
-clock parent state. The clock rate is saved in sci_clk struct during
-set_rate() operation. The parent index is saved in sci_clk struct during
-set_parent() operation. During clock registration, the core retrieves each
-clock’s parent using get_parent() operation to ensure the internal clock
-tree reflects the actual hardware state, including any configurations made
-by the bootloader. So we also save the parent index in get_parent().
+Some DM-Firmware are not able to restore the clock rates and the clock
+parents after a suspend-resume. The CLK_CONTEXT_LOST firmware capability
+has been introduced to identify this characteristic. In this case the
+responsibility is therefore delegated to the ti_sci driver, which uses
+clk_restore_context() to trigger the context_restore() operation for all
+registered clocks, including those managed by the sci-clk. The sci-clk
+driver implements the context_restore() operation to ensure rates and clock
+parents are correctly restored.
 
 Signed-off-by: Thomas Richard (TI) <thomas.richard@bootlin.com>
 ---
- drivers/clk/keystone/sci-clk.c | 42 ++++++++++++++++++++++++++++++++++--------
- 1 file changed, 34 insertions(+), 8 deletions(-)
+ drivers/firmware/ti_sci.c | 9 +++++++--
+ drivers/firmware/ti_sci.h | 2 ++
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
-index 9d5071223f4c..428050a05de3 100644
---- a/drivers/clk/keystone/sci-clk.c
-+++ b/drivers/clk/keystone/sci-clk.c
-@@ -47,6 +47,8 @@ struct sci_clk_provider {
-  * @node:	 Link for handling clocks probed via DT
-  * @cached_req:	 Cached requested freq for determine rate calls
-  * @cached_res:	 Cached result freq for determine rate calls
-+ * @parent_id:	 Parent index for this clock
-+ * @rate:	 Clock rate
-  */
- struct sci_clk {
- 	struct clk_hw hw;
-@@ -58,6 +60,8 @@ struct sci_clk {
- 	struct list_head node;
- 	unsigned long cached_req;
- 	unsigned long cached_res;
-+	u8 parent_id;
-+	unsigned long rate;
- };
+diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
+index 8e43e69ef7c4..01cbfedaf4be 100644
+--- a/drivers/firmware/ti_sci.c
++++ b/drivers/firmware/ti_sci.c
+@@ -9,6 +9,7 @@
+ #define pr_fmt(fmt) "%s: " fmt, __func__
  
- #define to_sci_clk(_hw) container_of(_hw, struct sci_clk, hw)
-@@ -210,10 +214,16 @@ static int sci_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 			    unsigned long parent_rate)
- {
- 	struct sci_clk *clk = to_sci_clk(hw);
-+	int ret;
+ #include <linux/bitmap.h>
++#include <linux/clk.h>
+ #include <linux/cpu.h>
+ #include <linux/debugfs.h>
+ #include <linux/export.h>
+@@ -3981,6 +3982,9 @@ static int ti_sci_resume_noirq(struct device *dev)
+ 					return ret;
+ 			}
+ 		}
 +
-+	ret = clk->provider->ops->set_freq(clk->provider->sci, clk->dev_id,
-+					   clk->clk_id, rate / 10 * 9, rate,
-+					   rate / 10 * 11);
- 
--	return clk->provider->ops->set_freq(clk->provider->sci, clk->dev_id,
--					    clk->clk_id, rate / 10 * 9, rate,
--					    rate / 10 * 11);
-+	if (!ret)
-+		clk->rate = rate;
-+
-+	return ret;
- }
- 
- /**
-@@ -237,9 +247,9 @@ static u8 sci_clk_get_parent(struct clk_hw *hw)
- 		return 0;
++		if (info->fw_caps & MSG_FLAG_CAPS_LPM_CLK_CONTEXT_LOST)
++			clk_restore_context();
+ 		break;
+ 	default:
+ 		break;
+@@ -4141,14 +4145,15 @@ static int ti_sci_probe(struct platform_device *pdev)
  	}
  
--	parent_id = parent_id - clk->clk_id - 1;
-+	clk->parent_id = (u8)(parent_id - clk->clk_id - 1);
+ 	ti_sci_msg_cmd_query_fw_caps(&info->handle, &info->fw_caps);
+-	dev_dbg(dev, "Detected firmware capabilities: %s%s%s%s%s%s%s\n",
++	dev_dbg(dev, "Detected firmware capabilities: %s%s%s%s%s%s%s%s\n",
+ 		info->fw_caps & MSG_FLAG_CAPS_GENERIC ? "Generic" : "",
+ 		info->fw_caps & MSG_FLAG_CAPS_LPM_PARTIAL_IO ? " Partial-IO" : "",
+ 		info->fw_caps & MSG_FLAG_CAPS_LPM_DM_MANAGED ? " DM-Managed" : "",
+ 		info->fw_caps & MSG_FLAG_CAPS_LPM_ABORT ? " LPM-Abort" : "",
+ 		info->fw_caps & MSG_FLAG_CAPS_IO_ISOLATION ? " IO-Isolation" : "",
+ 		info->fw_caps & MSG_FLAG_CAPS_LPM_BOARDCFG_MANAGED ? " BoardConfig-Managed" : "",
+-		info->fw_caps & MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST ? " IRQ-Context-Lost" : ""
++		info->fw_caps & MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST ? " IRQ-Context-Lost" : "",
++		info->fw_caps & MSG_FLAG_CAPS_LPM_CLK_CONTEXT_LOST ? " Clk-Context-Lost" : ""
+ 	);
  
--	return (u8)parent_id;
-+	return clk->parent_id;
- }
- 
- /**
-@@ -252,12 +262,27 @@ static u8 sci_clk_get_parent(struct clk_hw *hw)
- static int sci_clk_set_parent(struct clk_hw *hw, u8 index)
- {
- 	struct sci_clk *clk = to_sci_clk(hw);
-+	int ret;
- 
- 	clk->cached_req = 0;
- 
--	return clk->provider->ops->set_parent(clk->provider->sci, clk->dev_id,
--					      clk->clk_id,
--					      index + 1 + clk->clk_id);
-+	ret = clk->provider->ops->set_parent(clk->provider->sci, clk->dev_id,
-+					     clk->clk_id,
-+					     index + 1 + clk->clk_id);
-+	if (!ret)
-+		clk->parent_id = index;
-+
-+	return ret;
-+}
-+
-+static void sci_clk_restore_context(struct clk_hw *hw)
-+{
-+	struct sci_clk *clk = to_sci_clk(hw);
-+
-+	sci_clk_set_parent(hw, clk->parent_id);
-+
-+	if (clk->rate)
-+		sci_clk_set_rate(hw, clk->rate, 0);
- }
- 
- static const struct clk_ops sci_clk_ops = {
-@@ -269,6 +294,7 @@ static const struct clk_ops sci_clk_ops = {
- 	.set_rate = sci_clk_set_rate,
- 	.get_parent = sci_clk_get_parent,
- 	.set_parent = sci_clk_set_parent,
-+	.restore_context = sci_clk_restore_context,
- };
- 
- /**
+ 	ti_sci_setup_ops(info);
+diff --git a/drivers/firmware/ti_sci.h b/drivers/firmware/ti_sci.h
+index 67f16e8c69a1..2d75667a6723 100644
+--- a/drivers/firmware/ti_sci.h
++++ b/drivers/firmware/ti_sci.h
+@@ -152,6 +152,7 @@ struct ti_sci_msg_req_reboot {
+  *		MSG_FLAG_CAPS_IO_ISOLATION: IO Isolation support
+  *		MSG_FLAG_CAPS_LPM_BOARDCFG_MANAGED: LPM config done statically for the DM via boardcfg
+  *		MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST: DM is not able to restore IRQ context
++ *		MSG_FLAG_CAPS_LPM_CLK_CONTEXT_LOST: DM is not able to restore Clock context
+  *
+  * Response to a generic message with message type TI_SCI_MSG_QUERY_FW_CAPS
+  * providing currently available SOC/firmware capabilities. SoC that don't
+@@ -166,6 +167,7 @@ struct ti_sci_msg_resp_query_fw_caps {
+ #define MSG_FLAG_CAPS_IO_ISOLATION	TI_SCI_MSG_FLAG(7)
+ #define MSG_FLAG_CAPS_LPM_BOARDCFG_MANAGED	TI_SCI_MSG_FLAG(12)
+ #define MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST	TI_SCI_MSG_FLAG(14)
++#define MSG_FLAG_CAPS_LPM_CLK_CONTEXT_LOST	TI_SCI_MSG_FLAG(15)
+ #define MSG_MASK_CAPS_LPM		GENMASK_ULL(4, 1)
+ 	u64 fw_caps;
+ } __packed;
 
 -- 
 2.51.0
