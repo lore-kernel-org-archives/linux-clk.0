@@ -1,173 +1,83 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1EE3A1E77;
-	Wed,  4 Feb 2026 09:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96383A1D01;
+	Wed,  4 Feb 2026 09:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770196691; cv=none; b=LU0eTonHXqAznroQl3drVwhWD/NDyqkuXFRSybyYWWx2PfP4mSYjBzMr39KPvIUJT3e0cShcPAFMl/CSiWqwAPmOKjYQPTUveQHmXM+fmMMuT/V8nlIEu4PvmrgFkGKONhAbqajLDf7Fig7Ny/3wxvkBOs433AX2ke4/O+RuHrQ=
+	t=1770197737; cv=none; b=qC3vVGZD/3v02RfV2lC9qWaFCmYMkquOz/uzqdgWGsRwsqkJyeKmOl+oYZCDHYOKsnZK9fL24qM4oCbFtZ0xBym41fO6Tw4vLuYxfDxE59LJeUM2q2JspJ4FjDY5veJnDFhiUoztv0RbjbKrMRG+NE2cDhZpIrJVHdxD9kHTshk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770196691; c=relaxed/simple;
-	bh=P7VVEj/kLKZsCTZNYZCLsTQXk/QsOpa5tXm+pUPfS2Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eB9FS2QCb92ypgl/O9Iql40t1ocqDyibxwc/HhTHitZKE2VgxMttm21x0yKGOaFG26wBa9vjRcXawmaXU8vUBnnN0U0GhVq/3lWkqs9+ttQDrDn0V1LIu0TroVAPF+oH8cXlJn+VTWTAt5ieo0f12ZRkJ4LlsvlZO2L3piI3EJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BvsZkZO9; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770197737; c=relaxed/simple;
+	bh=jf4RgzlGdwbUlzDUpBSHMOUi07m+ktoWuB1ArPzud1s=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=Nt7UVc7VdrOfbfWIUApTWcnZAEIkPzmahclwhHWQBOL3+CZo3+KMIh0JFdlOqPCJ2Y2J6oJL8LXPDZIpl0z72UlqcnbD4ZsydUYfIV4tn6aGwzGf5hLKoCQDuryJrQlk9MKcqXsWsUwnI4La4UoWSOcz0dLP8gRzYVFzxr9OFvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gI/B9DSi; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BvsZkZO9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68986C4CEF7;
-	Wed,  4 Feb 2026 09:18:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770196690;
-	bh=P7VVEj/kLKZsCTZNYZCLsTQXk/QsOpa5tXm+pUPfS2Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BvsZkZO9i1X4RmX9IPdfJ9CVV3Maf+wiFIbDIV6TgxTvWvlV15dyPg9p8RyasquYQ
-	 tjV/8plk39JIiBN9hJCPmneVZNjzu68bk/BRAgN9SPDJWJ9b+hns2QuL42v/Orguid
-	 IknUvK/KpqQIqBcF3oJwteG2sDsuC+mFlCVUtpan/eI03oo/LN7EneOH1JLejpub2r
-	 0TGqdeLh7EJU3F3KYkPmyVFLzlF5dZo7y5j5HT+nNUrP08TaOFPpWF5eFrdnIvs+ZC
-	 U/G3Xk8EuoltbuCdape+1kvy+j1k0BZeiTfIpCtgOxZrI4cHqr2FuaSvsJby/iHzC2
-	 cm4/ArpITD9nw==
-Date: Wed, 4 Feb 2026 10:18:08 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Boris Brezillon <boris.brezillon@collabora.com>
-Cc: Gary Guo <gary@garyguo.net>, 
-	Daniel Almeida <daniel.almeida@collabora.com>, Alice Ryhl <aliceryhl@google.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, 
-	Fu Wei <wefu@redhat.com>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org, linux-pwm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] rust: clk: use the type-state pattern
-Message-ID: <20260204-cunning-strange-bittern-2bb569@houat>
-References: <20260119-thundering-tested-robin-4be817@houat>
- <aW4lCfUyumOKRRJm@google.com>
- <20260203113902.501e5803@fedora>
- <E7286D12-0BD9-4726-B072-FE5A040312B1@collabora.com>
- <20260203150855.77c93e22@fedora>
- <4DD13AE1-C85F-450F-93F2-C7C75766E518@collabora.com>
- <DG5HJPIYMS7B.152WPGG9MZZJ5@garyguo.net>
- <B94452FD-5F6F-44D4-80D8-4D4B7004C4B5@collabora.com>
- <DG5M5MVHTNS4.1CUD61S0PD9NU@garyguo.net>
- <20260204091104.0a9c4a13@fedora>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gI/B9DSi"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 332361A2BE7;
+	Wed,  4 Feb 2026 09:35:35 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id F111160745;
+	Wed,  4 Feb 2026 09:35:34 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 62843119A88F7;
+	Wed,  4 Feb 2026 10:35:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1770197733; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=jf4RgzlGdwbUlzDUpBSHMOUi07m+ktoWuB1ArPzud1s=;
+	b=gI/B9DSiD6lHoSUUDety76BjmYRcoVrTdad7OK55xLgm9VECyd9yLcCSJfjEWVongW5vHU
+	RVB/mmg3SdU526tmo7jeUa7rGi2NU9M6fkDWYiyYB/skpem+AnO9UqdnYzOlJJb+wl29iC
+	RI4RUKnAr16Vl0dnEITApJuiAvK/+gc6Beo/DXjMbIiL0dmYgDh7yVUKd0wSj1t1e1nAYE
+	LZxhC7Es54T1lRSIVnuwGGRx6iItGi+3wzPbNdzd7yTJjxF2IFyETnPRMZk0QbZhGeaDw/
+	fkTbomwvIiTeYgZha5Zv2HudnPMw5xeegeO1m/fZC8Mu3OnqGT3OLBTAky4Pfg==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="o6nwitrag23dn734"
-Content-Disposition: inline
-In-Reply-To: <20260204091104.0a9c4a13@fedora>
-
-
---o6nwitrag23dn734
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 1/3] rust: clk: use the type-state pattern
-MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 04 Feb 2026 10:35:27 +0100
+Message-Id: <DG62Q1L5RK1Y.22BS02J31LJV4@bootlin.com>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH v6 0/8] Add generic PHY driver used by MACB/GEM on EyeQ5
+Cc: <linux-mips@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+ <linux-clk@vger.kernel.org>, =?utf-8?q?Beno=C3=AEt_Monin?=
+ <benoit.monin@bootlin.com>, "Tawfik Bayouk" <tawfik.bayouk@mobileye.com>,
+ "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>, "Luca Ceresoli"
+ <luca.ceresoli@bootlin.com>, "Conor Dooley" <conor.dooley@microchip.com>,
+ "Jerome Brunet" <jbrunet@baylibre.com>, "Andrew Lunn" <andrew@lunn.ch>
+To: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, "Vladimir
+ Kondratiev" <vladimir.kondratiev@mobileye.com>,
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Vinod Koul" <vkoul@kernel.org>,
+ "Kishon Vijay Abraham I" <kishon@kernel.org>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Philipp
+ Zabel" <p.zabel@pengutronix.de>, "Thomas Bogendoerfer"
+ <tsbogend@alpha.franken.de>, "Neil Armstrong" <neil.armstrong@linaro.org>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20260127-macb-phy-v6-0-cdd840588188@bootlin.com>
+In-Reply-To: <20260127-macb-phy-v6-0-cdd840588188@bootlin.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, Feb 04, 2026 at 09:11:04AM +0100, Boris Brezillon wrote:
-> Hi Gary, Daniel,
->=20
-> On Tue, 03 Feb 2026 20:36:30 +0000
-> "Gary Guo" <gary@garyguo.net> wrote:
->=20
-> > On Tue Feb 3, 2026 at 7:26 PM GMT, Daniel Almeida wrote:
-> > > =20
-> > >>=20
-> > >> I think it's fine to have all of these:
-> > >> * `Clone` impl
-> > >> * `enable` which consumes `Clk<Prepared>` by value and spit out `Clk=
-<Enabled>`
-> > >> * `with_enabled` that gives `&Clk<Enabled>`
-> > >>=20
-> > >> This way, if you only want to enable in short time, you can do `with=
-_enabled`.
-> > >> If the closure callback wants to keep clock enabled for longer, it c=
-an just do
-> > >> `.clone()` inside the closure and obtain an owned `Clk<Enabled>`.
-> > >>=20
-> > >> If the user just have a reference and want to enable the callback th=
-ey can do
-> > >> `prepared_clk.clone().enable()` which gives an owned `Clk<Enabled>`.=
- Thoughts?
-> > >>=20
-> > >> Best,
-> > >> Gary =20
-> > >
-> > >
-> > > I=E2=80=99m ok with what you proposed above. The only problem is that=
- implementing
-> > > clone() is done through an Arc<*mut bindings::clk>  in Boris=E2=80=99=
- current
-> > > design, so this requires an extra allocation. =20
-> >=20
-> > Hmm, that's a very good point. `struct clk` is already a reference into
-> > clk_core, so having to put another level of indirection over is not ide=
-al.
-> > However, if we're going to keep C code unchanged and do a zero-cost abs=
-traction
-> > on the Rust side, then we won't be able to have have multiple prepare/e=
-nable to
-> > the same `struct clk` with the current design.
-> >=20
-> > It feels like we can to do a trade-off and choose from:
-> > 1. Not be able to have multiple prepare/enable calls on the same `clk` =
-(this can
-> >    limit users that need dynamically enable/disable clocks, with the ve=
-ry limited
-> >    exception that closure-callback is fine).
-> > 2. Do an extra allocation
-> > 3. Put lifetime on types that represent a prepared/enabled `Clk`
-> > 4. Change C to make `struct clk` refcounted.
->=20
-> It probably comes to no surprise that I'd be more in favor of option 2
-> or 4. Maybe option 2 first, so we can get the user-facing API merged
-> without too much churn, and then we can see if the clk maintainers are
-> happy adding a refcnt to struct clk to optimize things.
->=20
-> If we really feel that the indirection/memory overhead is going to
-> hurt us, we can also start with option 1, and extend it to 2 and/or 4
-> (needed to add a Clone support) when it becomes evident we can't do
-> without it. But as I was saying in my previous reply to Daniel, I
-> expect the extra indirection/memory overhead to be negligible since:
->=20
-> 1. clks are usually not {prepared,enabled}/{disabled,unprepared} in a
->    hot path
-> 2. in the rare occasions where they might be ({dev,cpu}freq ?), this
->    clk state change is usually one operation in an ocean of other
->    slower operations (regulator reconfiguration, for instance, which
->    usually goes over a slow I2C bus, or a
->    relatively-faster-but-still-slow SPI one, at least when we compare
->    it to an IoMem access for in-SoCs clks). So overall, the clk state
->    change might account for a very small portion of the CPU cycles
->    spent in this bigger operation
+On Tue Jan 27, 2026 at 6:09 PM CET, Th=C3=A9o Lebrun wrote:
+> EyeQ5 SoCs integrate two GEM instances. A system-controller register
+> region named "OLB" has some control over the Ethernet PHY integration.
 
-I'm not even too worried about that one. devfreq and cpufreq will
-typically adjust the clock rate while device is active, and thus the
-clock is enabled. So we shouldn't have a prepared -> enabled transition
-in the path that adjust the device / cpu rate, it would have happened
-before.
+Is the plan to take this for the v6.20 merge window or await v7.0?
+The driver has seldom changed since its first revision 3 months ago.
 
-Maxime
+Thanks!
+Have a nice day,
 
---o6nwitrag23dn734
-Content-Type: application/pgp-signature; name="signature.asc"
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaYMOzwAKCRAnX84Zoj2+
-doB8AYCfx9IZOlLCZ2nw2gkPQkwwMDlcj5etfelzJqKGoQ1Blw8+W8r6ng1eq07z
-cLHVaE0BgJrwYQAoxvhIjBTgEYBe2ph4BRLtr784a1qlhn5ISI7HvPvTlIAIQY6Z
-X2wiFMonHg==
-=OqKD
------END PGP SIGNATURE-----
-
---o6nwitrag23dn734--
