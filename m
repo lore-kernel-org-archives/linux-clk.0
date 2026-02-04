@@ -1,164 +1,193 @@
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B6AB3F23A0;
-	Wed,  4 Feb 2026 12:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770209079; cv=pass; b=Yx4AiIPnhuY0OqeuUhrd1cQAO/M79zc926VtcrXKCVfkDwgQjFSrJuCcAIcnnv+5eMIHy6dl+OF5vMVaEN2Gw87LSlgN4iGO89qjvxPa94c1cCBbFq+r16y5SZl+4qjcRvFgQ770NmHXL5N3vIboU92wDjPv6P2ftJ5tBs4FuzE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770209079; c=relaxed/simple;
-	bh=7rJyrkWcUJTJPVf3Jfxd0+6rylK9Rvt56+nJ5FndSaM=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=N6I03RvTDNyZE2nL2m7CzGyLeVyfZ4IKw3sRx4WMX1iRw3JzDk4dtlAd4y8CyEjpVPFqYpFd9J7rgjlpoqrMG+4ZLWBhacsyRK2q1FF/C5RkMBbAmlmdD3EDiAYSDtqj8U4OgUzvDZLtzpKgzLOMMLI1hAaecfeOZEFnZI/vxY4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=D9fY5vsY; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559312D5C95
+	for <linux-clk@vger.kernel.org>; Wed,  4 Feb 2026 12:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770209308; cv=none; b=NyI1Lfjmnx6HNi56Pl8zC8PFluphvkDbvdE3PqGrBfZCO5fnpfgKWYj8D4FcWUxqsNXg4xrIznSarMZbl1mMycohN36Jgnd+U7fkXZYPgpJjINLQFrBrkONP5eoIRgxstlPfYjAPBKJuwSASN3ShIp7KxWWYItfDYjuetd20fig=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770209308; c=relaxed/simple;
+	bh=6MfjmNk8dtyaBuEQCdqrh2ZHv3QxPSfQgxQU2sWMjCE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jqIWr4MllqmfxebPZK5wws+gxIhVKnUUR19pbzLiiDhREtRCWtTpsNzsZEcTYQT2aUzC8QG1PPivifTXPxC3c4wSPnZCXRIKsLcpIJ3EowgZOlHTds3T9tZmZMti92vflRO6+YFe6+PTzfgow2owsAsm7TyAiOAVSdKgzEx7hOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=nK1RH4Xe; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="D9fY5vsY"
-ARC-Seal: i=1; a=rsa-sha256; t=1770209056; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=VlpkdDeeeuo06wVd3QoFjeQF4Ze/WvqBlenT7Jxm0kIXdrUYyqy7ANv1tLtDRRzzqfLYNdrPNkWVquUaNRftFbw42AH49LYk/zkoDXAH0Ntfo1HhhYgXERyL497cdRdqm1Ex72I7fUcm5KVNgfWVA5+svJoKXiMwu0aq6H6hApQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1770209056; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=ZHEfRwCP34SKP/etqf2R3yvPOUYfeiMlExy0k9a0BNk=; 
-	b=EY8CFOFttnCRasix3rIcqXqI3UN2g9W04GFEFPR1ZNNP7jOpoKfAPlwvbOXuBrv3ukECbHXQdEntU4zuZB9MoDDQYHSsmIMITHZTSaQnIUbIz/xw2HPCQXTbcSNzzFhJfuJWkqdUlbiIeqlXhHvA8G8g9SXqaQK0wBphiTsMpOs=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1770209056;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=ZHEfRwCP34SKP/etqf2R3yvPOUYfeiMlExy0k9a0BNk=;
-	b=D9fY5vsYmDzxbb3wnJ6GeN2NPcWUM3P96dDZwTdg8wRu0RO5UFiU0nieyb+hVJ0q
-	yI8/bK2piXW4wuCwLcUWSkwryxH+w1MDZSTV5OJjf4H1/lV+m+0ge2r2zOoB7bn9DUC
-	xBaM6iGniq4R2heDGhtciZgJAlf8pNM31KS9AmSI=
-Received: by mx.zohomail.com with SMTPS id 1770209055218580.5695590716871;
-	Wed, 4 Feb 2026 04:44:15 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="nK1RH4Xe"
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b8715a4d9fdso769935166b.0
+        for <linux-clk@vger.kernel.org>; Wed, 04 Feb 2026 04:48:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1770209307; x=1770814107; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FmsMlFS2If3FaGyK0lL7JZ89jCKyXCfusyNuSVVf17s=;
+        b=nK1RH4XeYWYYFx7VMKonWyhxFjJaZt4zHbEB5ahflmiycVYOFP3SYXwVYA0VJU/UPu
+         lFtBcpXYghWEbeEZiJ5z6CmMmPPzOwcaAiEitKiNCQf+M/holIQ+AF3QC3N5HFciE7U/
+         iQyQscjE5+w6V+b6ahUi6B/54O7frYGWA7Yl/VEk0eOuXvMUgtt/RsvtvVDpDi1KNfhY
+         httOWdUPsKDrpSSlUdwvASiaiCx3ss58HFcCoRfLuVaIElzbAxyKIo+z27PehcpxBmh9
+         dSK99C96Mq0dj9+IeS9gbSjjPLbrlTGH3nuEHMKR76rFVL2fTZDPfYW4JEeQDyLuxYPf
+         FFnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770209307; x=1770814107;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FmsMlFS2If3FaGyK0lL7JZ89jCKyXCfusyNuSVVf17s=;
+        b=jYrJe4duLA6jfTwxnfhSZU/l8ANQGYAe+ZeDmBx8jCxYhwCGR5RsaZmjhmPkATm1F2
+         59ow65a5QoKg9Vbavrhg0aLkIy0UTWNFO4Z1bE3jGOH6vee6mmgB+P2N6QtKADZaASbu
+         oB1i/RM3q1YQpswDNOsgzA0mtL+LuDN6Notu9xJSNJ1jwlfuyYBJRTzIVoPCcL+Skw7u
+         CmZwTy5N9hXwgTTReX+Z3k1t9mfmenM1Yi9eAARmo4AAPQYxPoXM8yWm/X7WTQ38YPUB
+         iV4H9WPrr327Bx3WUY6Wqh6xIb3CgqUj2jnVQERFchdLYdFjlgklca5E/IHtXvW3H6Ml
+         V2Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCXBeybJl9LA1Lp7QQfd2Pcf2K8lPkxtHgVPS3KGbaRLKslgIlcA4VnG4Wb42pzjr46P4vg12RxFdzA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2wNAgO5PWrTp6bgxL2ELNCogP0angBQXUxAUWMUhLD4IcjWJ4
+	lDgNNZ0yCihEgCnVrz2KpCLyOp7OtC7kmFxFkKOw5Mwmj4z8XZTHJdsB71ZZBdjKxRA=
+X-Gm-Gg: AZuq6aKvRJyfPwSknIBhk2YyFjRijXXeFiVRsAO72+uLqqO7JuqFRyL83EGsS2aJvYT
+	aZcm3m7sR4ca/s45LYPSwZ65r9+SZtk6gC54rpTya1w50uoAHR31DbNRQoOTJu5scXYIOa5AyKL
+	9q4KO3y3G28e3WgpFZwijqUGCSFwMt5/gFHUTPK2sBQnHQB6tdl6/erCYWBF58Skc+oTmR6epmm
+	bZ1/P0X2RMAX74u4jT0s6CoumxhacDacsNhfDiOAlL0MDCshFIRxtaADWOaFtXpqTcCTYzVWfac
+	3Xh6tygaaNAxzDVe037dcNPqHxARrwtSqcENCGKC0jKPJL7QpEvOaKpYvPO9OxisTo5SIUk2bCf
+	PG4CEUnfCrwqVmcXeO2Bv3zh8bQaQHYHsKOCDwzfHNbt3C9iUhf3fJXRCshMkwDQu/7H+BY4k/p
+	Shw2Gfs0+NvW/gnFWyUq8=
+X-Received: by 2002:a17:907:971a:b0:b73:544d:b963 with SMTP id a640c23a62f3a-b8e9f04c8ecmr184780066b.13.1770209306435;
+        Wed, 04 Feb 2026 04:48:26 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.215])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8e9feeff67sm118439166b.36.2026.02.04.04.48.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Feb 2026 04:48:25 -0800 (PST)
+Message-ID: <d024e1f1-ab7e-4b90-9be3-a55e130c2b67@tuxon.dev>
+Date: Wed, 4 Feb 2026 14:48:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v3 1/3] rust: clk: use the type-state pattern
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20260204-nickel-seal-of-poetry-8fdefb@houat>
-Date: Wed, 4 Feb 2026 09:43:55 -0300
-Cc: Danilo Krummrich <dakr@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Drew Fustini <fustini@kernel.org>,
- Guo Ren <guoren@kernel.org>,
- Fu Wei <wefu@redhat.com>,
- =?utf-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Trevor Gross <tmgross@umich.edu>,
- linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org,
- linux-riscv@lists.infradead.org,
- linux-pwm@vger.kernel.org,
- linux-clk@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <91A92D84-1F2E-45F3-82EC-6A97D32E2A78@collabora.com>
-References: <20260108-delectable-fennec-of-sunshine-ffca19@houat>
- <98CD0BF6-3350-40B9-B8A9-F569AE3E3220@collabora.com>
- <20260119-thundering-tested-robin-4be817@houat> <aW4lCfUyumOKRRJm@google.com>
- <518D8B09-B9A1-4DB4-85CD-37A2DD3D5FB1@collabora.com>
- <DFSLCI9U4NCW.2HI2UPUI7G134@kernel.org>
- <20260119-weightless-pelican-of-anger-190db0@houat>
- <DFSN4FDCYHMW.3J3237PEBV2ZP@kernel.org>
- <20260122-majestic-masterful-jaguarundi-d0abde@houat>
- <2F3D3A40-6EF9-46FC-A769-E5A3AAF67E65@collabora.com>
- <20260204-nickel-seal-of-poetry-8fdefb@houat>
-To: Maxime Ripard <mripard@kernel.org>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: renesas: rzg2l: Drop DMA driver dependency for
+ system boot
+To: Biju <biju.das.au@gmail.com>, Geert Uytterhoeven
+ <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>, linux-renesas-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20260130143456.256813-1-biju.das.jz@bp.renesas.com>
+Content-Language: en-US
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20260130143456.256813-1-biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
->=20
-> I'm probably missing something then, but let's assume you have a =
-driver
-> that wants its clock prepared and enabled in an hypothetical enable()
-> callback, and disabled / unprepared in a disable() callback.
->=20
-> =46rom a PM management perspective, this usecase makes total sense, is =
-a
-> valid usecase, is widely used in the kernel, and is currently =
-supported
-> by both the C and Rust clk APIs.
->=20
-> The only solution to this you suggested so far (I think?) to implement
-> this on top of the new clk API you propose is to have a driver =
-specific
-> enum that would store each of the possible state transition.
+Hi, Biju,
 
-Yes, you need an enum _if_ you want to model transitions at runtime. =
-IIUC you
-only need two variants to implement the pattern you described. I do not
-consider this  =E2=80=9Cboilerplate=E2=80=9D, but rather a small cost to =
-pay.
+On 1/30/26 16:34, Biju wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+> 
+> As per section 4.6.1.7.1 of the RZ/G3L hardware manual "Precaution when
+> use the peripheral modules which can initiate DMA Controller", it is
+> stated that it needs the below register settings even if DMA controller
+> is not used:
+>   - Set CPG_CLKON_DMAC_REG register to supply a clock for DMA Controller.
+>   - Set CPG_RST_DMAC register to release a reset for DMA Controller.
+> 
+> Currently, the serial IRQ is not routed to the CPU if the DMA ACLK is off,
+> or if DMA resets being in the asserted state result in not getting serial
+> IRQs for the console. Fix the issue by explicitly deasserting the DMA
+> resets during probe, and since the DMA clk is a critical clock, it will be
+> turned on forever. This will allow booting system without DMA driver.
+> 
+> RZ/G2L SoC loses power during s2ram. Explicitly turn on clk/deassert
+> resets to get the console during wakeup.
+> 
+> The DMA driver is used by both RZ/G2L and RZ/V2H family SoCs. The latter
+> does not have any issue related to serial IRQ routing. The reset assert
+> in DMA driver will impact wakeup using serial IRQ on RZ/G2L SoCs. The
+> cpg_suspend() is suspend-no-irq which suspends later than DMA driver. So,
+> deassert thereset in cpg_suspend() for making available the serial IRQ
+> as a wakeup source for s2idle.
+> 
+> With these changes, the RZ/G2L-based systems:
+>   1) can boot without the DMA driver
+>   2) get serial IRQ available as wakeup source for s2idle
+>   3) get serial console prompt during wakeup of s2ram.
+>   4) has no dependency on bootloaders for turning on DMA clks/releasing
+>      the resets.
+> 
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+>   drivers/clk/renesas/rzg2l-cpg.c | 35 ++++++++++++++++++++++++++++++++-
+>   1 file changed, 34 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+> index f4deb5d3b837..16771a0101bd 100644
+> --- a/drivers/clk/renesas/rzg2l-cpg.c
+> +++ b/drivers/clk/renesas/rzg2l-cpg.c
+> @@ -86,6 +86,12 @@
+>   #define PLL5_HSCLK_MIN		10000000
+>   #define PLL5_HSCLK_MAX		187500000
+>   
+> +/* Critical clk/resets to route serial IRQ to CPU by default */
+> +#define CPG_CLKON_DMAC_REG	0x52c
+> +#define CPG_RST_DMAC		0x82c
+> +#define CPG_CLKON_DMAC_REG_ACLK_ON	((BIT(0) << 16) | BIT(0))
+> +#define CPG_RST_DMAC_DEASSERTED_ALL	((GENMASK(1, 0) << 16) | GENMASK(1, 0))
+> +
+>   /**
+>    * struct clk_hw_data - clock hardware data
+>    * @hw: clock hw
+> @@ -2051,21 +2057,48 @@ static int __init rzg2l_cpg_probe(struct platform_device *pdev)
+>   	if (error)
+>   		return error;
+>   
+> +	/*
+> +	 * Deassert DMA resets to route the serial IRQ to CPU for serial
+> +	 * console during boot. DMA clk is critical clk and it will be
+> +	 * turned on forever.
+> +	 */
+> +	writel(CPG_RST_DMAC_DEASSERTED_ALL, priv->base + CPG_RST_DMAC);
+> +
+>   	debugfs_create_file("mstop", 0444, NULL, priv, &rzg2l_mod_clock_mstop_fops);
+>   	return 0;
+>   }
+>   
+> +static int rzg2l_cpg_suspend(struct device *dev)
+> +{
+> +	struct rzg2l_cpg_priv *priv = dev_get_drvdata(dev);
+> +
+> +	/*
+> +	 * Deassert DMA resets to route the serial IRQ to CPU for making
+> +	 * serial IRQ available as wakeup source for s2idle.
+> +	 */
+> +	writel(CPG_RST_DMAC_DEASSERTED_ALL, priv->base + CPG_RST_DMAC);
 
-I would understand if this was some elaborate pattern that had to be
-implemented by all drivers, but a two-variant enum is as straightforward =
-as it
-gets.
+Instead of this, you can mark these resets as critical from the SoC specific 
+drivers and based on that, don't ever assert them in __rzg2l_cpg_assert(), to 
+avoid any potential window when this can be asserted by the user and then 
+de-asserted back here.
 
+> +	return 0;
+> +}
+> +
+>   static int rzg2l_cpg_resume(struct device *dev)
+>   {
+>   	struct rzg2l_cpg_priv *priv = dev_get_drvdata(dev);
+>   
+>   	rzg2l_mod_clock_init_mstop(priv);
+>   
+> +	/*
+> +	 * Deassert DMA resets and enable clk to route serial IRQ to CPU for
+> +	 * serial console during wakeup from s2ram as the SoC is in DDR
+> +	 * retention mode.
+> +	 */
+> +	writel(CPG_CLKON_DMAC_REG_ACLK_ON, priv->base + CPG_CLKON_DMAC_REG);
 
->=20
-> That's the boilerplate I'm talking about. If every driver wanting to
-> implement that pattern has to make such an enum, with all the relevant
-> traits implementation that might come with it, we go from an API where
-> everything works at no-cost from a code-size perspective to a =
-situation
-> where every driver has to develop and maintain that enum.
->=20
-> Maxime
+This need to be set before MSTOP to follow the MSTOP and clock configuration 
+sequence described in the HW manual (section 42.2.2. in RZ/G2L HW manual, rev.1.30).
 
-There are no "traits that come with it". It's just an enum, with two =
-variants.
-
-> API where everything works at no-cost
-
-The previous API was far from =E2=80=9Ceverything works=E2=80=9D. It was =
-fundamentally
-broken by design in multiple ways, i.e.:
-
-> a) It only keeps track of a count to clk_get(), which means that users =
-have
-> to manually call disable() and unprepare(), or a variation of those, =
-like
-> disable_unprepare().
->=20
-> b) It allows repeated calls to prepare() or enable(), but it keeps no =
-track
-> of how often these were called, i.e., it's currently legal to write =
-the
-> following:
->=20
-> clk.prepare();
-> clk.prepare();
-> clk.enable();
-> clk.enable();
->=20
-> And nothing gets undone on drop().
-
-IMHO, what we have here is an improvement that has been long overdue.
-
-=E2=80=94 Daniel=
+Thank you,
+Claudiu
