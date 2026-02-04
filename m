@@ -1,101 +1,72 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5BF423A76;
-	Wed,  4 Feb 2026 15:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC160421EF5;
+	Wed,  4 Feb 2026 16:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770219872; cv=none; b=PDd8r+Cc08M11Gz0XWzJP5zBH519oMpUgWYdC+dJyaPPTp1KpvHVMn9Ighp1zfU5aYpiDhejsd6Y5zIxzWN0FOqi8JVW6u1yd4NPlUecJWOnFGRTUDb3Hr1kWer5H6NB6iSIi00T59Q20oftLQ83/zWVI5+L6JS0D/iuksVAgrQ=
+	t=1770221735; cv=none; b=mXhec3QdZxbghfSWCrSjPX8IKsJbiLn/w+y25nQqYw8v8Az3ikmaTHmRZoIf6tuX3eZzT4swWFOmyLkA6orHAQ8zkLNdsDaxtb2/lMhMe5NwRGWrLl7PACrUTI9JGeES7qsBJUfeSTMzzxp4TjpxcbAVWV9BSuP2lcgjDj/KBd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770219872; c=relaxed/simple;
-	bh=+SiVY+/yNC7rLAU4MsNDlaFmt/l6M3hSIaCT9ls3sWA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=m72uba23pl4WjvM98glI9P4rnREvAsy0VgAg9S2Kc0bfyPHOT7zG+uGX3MsKh+yq9PLwtnN4UZ6XpEjCuow0dOyn6PVZ5K5XuuGCw3fAJ84N7r7CgeY94MdZDpbkrJ00Oi18puXxHqzpDyn6UPB7+gWWz6MhOL++U3ZvwkG1saY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ChyBoGK2; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ChyBoGK2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86463C4AF09;
-	Wed,  4 Feb 2026 15:44:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770219872;
-	bh=+SiVY+/yNC7rLAU4MsNDlaFmt/l6M3hSIaCT9ls3sWA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=ChyBoGK2yE6SGuM1Drf5M172SdoJACKZFUrrNsUyxs9tGn1I7qqhqJE3n0SdMuKH8
-	 WBsiwmPVq8rOQ6GO0hIm6TfZIkR7fNFOFSnqJ6Wdc5I/3L23nQxD+pLZgfso/lsmdU
-	 N1ft/ntOh+AHs/UCG+Km7aago4ldSONLc+3r2AOXwQZfUcNSU1niG9vFP8cVLMaEBv
-	 VG4YKOSwN1dDXgyUhW0x6meOz/fA8+ehA5Aie8KkSz3fTjfCixIQW19ESOaqSx9ox7
-	 M5PMr/5rexa0xvN6NnkgCdEKKhyKZgRD5vul5MiJBcLirTLb81zxgj6ptueMw8TKGG
-	 fD9D5P7F7CkxQ==
-From: Vinod Koul <vkoul@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>, 
- sophgo@lists.linux.dev, Chen-Yu Tsai <wens@kernel.org>, 
- Maxime Ripard <mripard@kernel.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, linux-arm-kernel@lists.infradead.org, 
- linux-sunxi@lists.linux.dev, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- linux-rtc@vger.kernel.org, 
- =?utf-8?q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
- Manivannan Sadhasivam <mani@kernel.org>, linux-actions@lists.infradead.org, 
- Keguang Zhang <keguang.zhang@gmail.com>, linux-mips@vger.kernel.org, 
- Taichi Sugaya <sugaya.taichi@socionext.com>, 
- Takao Orito <orito.takao@socionext.com>, Jacky Huang <ychuang3@nuvoton.com>, 
- Shan-Chun Hung <schung@nuvoton.com>, Vladimir Zapolskiy <vz@mleia.com>, 
- Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
- Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org, 
- Orson Zhai <orsonzhai@gmail.com>, 
- Baolin Wang <baolin.wang@linux.alibaba.com>, 
- Chunyan Zhang <zhang.lyra@gmail.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- linux-stm32@st-md-mailman.stormreply.com, 
- Michal Simek <michal.simek@amd.com>, 
- Rob Clark <robin.clark@oss.qualcomm.com>, 
- Dmitry Baryshkov <lumag@kernel.org>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
- Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
- Neil Armstrong <neil.armstrong@linaro.org>, linux-phy@lists.infradead.org
-In-Reply-To: <20260108-clk-divider-round-rate-v1-0-535a3ed73bf3@redhat.com>
-References: <20260108-clk-divider-round-rate-v1-0-535a3ed73bf3@redhat.com>
-Subject: Re: (subset) [PATCH 00/27] clk: remove deprecated API
- divider_round_rate() and friends
-Message-Id: <177021986017.133434.7084660742419779164.b4-ty@kernel.org>
-Date: Wed, 04 Feb 2026 21:14:20 +0530
+	s=arc-20240116; t=1770221735; c=relaxed/simple;
+	bh=TyMzeAtaXJe6ipITTr9gCRwrZcrC11QjvuKok67sKSo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HWY2RfhVKEEzGF+nIcl8btA9MSZ/7SsuLBGuerL4J2ETaTY5YjLPaua5kZg3UwRrMYiJkl6HeNeEd0s4101OCP7S0UIE3kd9uSMys9AvDhiE3bmz4p8aIlANbjKoNMU/8a3iQynmWUU1UhMFMfGLn5EyJ9L1xXhhlwApRC8cLWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn; spf=pass smtp.mailfrom=isrc.iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=isrc.iscas.ac.cn
+Received: from duge-virtual-machine (unknown [183.192.223.177])
+	by APP-03 (Coremail) with SMTP id rQCowABnhdybcINpU1WvBw--.42131S2;
+	Thu, 05 Feb 2026 00:15:24 +0800 (CST)
+Date: Thu, 5 Feb 2026 00:15:22 +0800
+From: Jiayu Du <jiayu.riscv@isrc.iscas.ac.cn>
+To: Xukai Wang <kingxukai@zohomail.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Troy Mitchell <TroyMitchell988@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v10 0/3] riscv: canaan: Add support for K230 clock
+Message-ID: <aYNwmqEjvfAahGA+@duge-virtual-machine>
+References: <20260116-b4-k230-clk-v10-0-de59033c5d30@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260116-b4-k230-clk-v10-0-de59033c5d30@zohomail.com>
+X-CM-TRANSID:rQCowABnhdybcINpU1WvBw--.42131S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUY57k0a2IF6F4UM7kC6x804xWl14x267AK
+	xVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGw
+	A2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j
+	6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j6r4UM28EF7xvwVC2z280aVAFwI0_Jr
+	0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r1j6r4UM2AIxVAIcxkEcVAq07x20xvEncxI
+	r21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87
+	Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42xK82IYc2Ij
+	64vIr41l4c8EcI0Ec7CjxVAaw2AFwI0_JF0_Jw1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2
+	IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v2
+	6r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2
+	IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv
+	67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf
+	9x07j189NUUUUU=
+X-CM-SenderInfo: 5mld534oul2uny6l223fol2u1dvotugofq/
 
+On Fri, Jan 16, 2026 at 09:26:18PM +0800, Xukai Wang wrote:
+> This patch series adds clock controller support for the Canaan Kendryte
+> K230 SoC. The K230 SoC includes an external 24MHz OSC, 4 internal
+> PLLs and an external pulse input, with the controller managing these
+> sources and their derived clocks.
+ 
+Hi, Xukai. Currently, the k230 initial series and the patch 3 of the
+pinctrl series has been in the linux next. So if possible, you need
+to rebase your clock series onto the latest linux-next.
 
-On Thu, 08 Jan 2026 16:16:18 -0500, Brian Masney wrote:
-> Here's a series that gets rid of the deprecated APIs
-> divider_round_rate(), divider_round_rate_parent(), and
-> divider_ro_round_rate_parent() since these functions are just wrappers
-> for the determine_rate variant.
-> 
-> Note that when I converted some of these drivers from round_rate to
-> determine_rate, this was mistakenly converted to the following in some
-> cases:
-> 
-> [...]
+Then I will proceed with the development based on your v11 of the
+clock series.
 
-Applied, thanks!
-
-[25/27] phy: ti: phy-j721e-wiz: convert from divider_round_rate() to divider_determine_rate()
-        commit: dbeea86fecef7cf2b93aded4525d74f6277376ef
-
-Best regards,
--- 
-~Vinod
-
+Regards,
+Jiayu Du
 
