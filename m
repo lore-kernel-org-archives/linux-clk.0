@@ -1,181 +1,194 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FDC936A027;
-	Wed,  4 Feb 2026 08:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0DB938F94A;
+	Wed,  4 Feb 2026 09:15:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770192672; cv=none; b=rl4E/+zUXhQHwa6PSyjqbcf2fec5qwyvZABWCdt+Y72hysCNsQ3xYdi/nrHbgwmm8euXT+bFiy6q0YvqFAKq2g3P5Ol6HWC9S1C3EnVIKBqjAJftYd6B82MnbU9P8NaiTqObDNKNqdUttgcpuQrch3C50Qc7KEuS9xL4ES5PBxE=
+	t=1770196549; cv=none; b=ZACoLWNayBUrcK145qNmzNeekpCykKGqQsFFZnjrMpWZsMSb/YFDV+e9kE7h2xoJFAwyUV5MCte+cvUgawTVEYj7uEjrI1nWN7578Fbzd9OvHot3lQH0vFzbGVyQRkVbOaQ3xDGknJeM1qJLhv/WX0X7rrEdwE2JdUUZoWFt0mE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770192672; c=relaxed/simple;
-	bh=8j8R8MPrfWY6vBRRIpvDiircDbGhdSwDxXfuiVs5GeI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=njr3Td8ocY2hdwhpuEjoCl2LtemEFzWZUSWnT4ypP8igm5JuQHnWcYoPyrVJwoNt8t6dpVfd3FuTVLJ2UBFf+OCeD4OVX5knf3Ru2d35mS+g/2AQrfIRgnRIYH9qC+8aK/pYldPSirN+DeMv7bB1bPTkjNiJRDrMLRWiAxYnvN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=DsEFJ3Nh; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1770196549; c=relaxed/simple;
+	bh=lS9VFPZsRSSNY0TpBWxQ7aGLcnM4yMbS/RfpIHPoP1U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aThMhe85F2p+dT03zVjQyuD8fH39JUSb0o0HjabC8O0jn68Vcr0ONemGtsIsu4XrZEpjXJdbGTnllKoMCH+wJf/O1JlOYa3PJIqzpbItwygKFAj7U9U3cs8ZNRq5Ei7wdzRJDRvQqIxfKcz6AlljlhPzCWiiPvmHidx4Ug4FnKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ArXmYgvB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="DsEFJ3Nh"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1770192670;
-	bh=8j8R8MPrfWY6vBRRIpvDiircDbGhdSwDxXfuiVs5GeI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=DsEFJ3Nhca0gHPn0WW46xPuzuZwRmLNuOpKTYci/Grpz+8iFbAUufcYWOTdolbhe4
-	 4Rju+q4X4pcKmAjKivkByu4y4dJjqVFYuCz5WFEYfcwMkREFh1aD8b/HUnDvbBGA4O
-	 K1Tom/wQJod9y9Z6en141msQx34QphBNYgjipqSBG0XBBmR/FBZVfKVSfxPegpTbfj
-	 w4RljDBo2vI4n3721FrPdjwSS+bIn9ahzDlJQUGlfuXZledsqf1PdT+3XYuZqoD+lC
-	 i/NCr5O3feDTRIiu+CdMizfBKEWtDKIfpGXKb9i0DyOQihsMQ5R5bLUkGRJ15nhaFH
-	 ZJJ99EmmtpDZA==
-Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id AE37317E114C;
-	Wed,  4 Feb 2026 09:11:09 +0100 (CET)
-Date: Wed, 4 Feb 2026 09:11:04 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: "Gary Guo" <gary@garyguo.net>
-Cc: "Daniel Almeida" <daniel.almeida@collabora.com>, "Alice Ryhl"
- <aliceryhl@google.com>, "Maxime Ripard" <mripard@kernel.org>, "Rafael J.
- Wysocki" <rafael@kernel.org>, "Viresh Kumar" <viresh.kumar@linaro.org>,
- "Danilo Krummrich" <dakr@kernel.org>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Thomas Zimmermann"
- <tzimmermann@suse.de>, "David Airlie" <airlied@gmail.com>, "Simona Vetter"
- <simona@ffwll.ch>, "Drew Fustini" <fustini@kernel.org>, "Guo Ren"
- <guoren@kernel.org>, "Fu Wei" <wefu@redhat.com>, Uwe =?UTF-8?B?S2xlaW5l?=
- =?UTF-8?B?LUvDtm5pZw==?= <ukleinek@kernel.org>, "Michael Turquette"
- <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Boqun Feng" <boqun.feng@gmail.com>,
- =?UTF-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Trevor
- Gross" <tmgross@umich.edu>, <linux-pm@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
- <linux-riscv@lists.infradead.org>, <linux-pwm@vger.kernel.org>,
- <linux-clk@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ArXmYgvB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4ED09C4CEF7;
+	Wed,  4 Feb 2026 09:15:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770196548;
+	bh=lS9VFPZsRSSNY0TpBWxQ7aGLcnM4yMbS/RfpIHPoP1U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ArXmYgvBA36SUx1c2xvQzH24vnKr/dLJ567NvWI8RRbJPb7FUmnsBRpFh8+JxH2oH
+	 a4O2uhpoXMZd8psL8tyxV66IVOQxaWwcw5srCDnEeTkDdceL9379S/Oxt5gRc0HNJ7
+	 iJ/oyrGQu7PjoGsg2u6BjE0fqwiKT2oSeYIUj0fcCuxS3qCs8lBCIenfIZODUNIMKA
+	 cf3wiNqV/lPenBD9EtSee0hKDjnvFrhMIdEJlz3mI6gfkHraltBRkf+u3J1K6IJBkC
+	 yI9oGlZS2IVPZPE4siUHNp02gTmhORcHZJJNwUUf4gkxAizbp22DL+a2sTe9+DsbDE
+	 HjeM3nyKC2P3w==
+Date: Wed, 4 Feb 2026 10:15:45 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org, 
+	linux-pwm@vger.kernel.org, linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org
 Subject: Re: [PATCH v3 1/3] rust: clk: use the type-state pattern
-Message-ID: <20260204091104.0a9c4a13@fedora>
-In-Reply-To: <DG5M5MVHTNS4.1CUD61S0PD9NU@garyguo.net>
-References: <20260107-clk-type-state-v3-0-77d3e3ee59c2@collabora.com>
-	<20260107-clk-type-state-v3-1-77d3e3ee59c2@collabora.com>
-	<20260108-delectable-fennec-of-sunshine-ffca19@houat>
-	<98CD0BF6-3350-40B9-B8A9-F569AE3E3220@collabora.com>
-	<20260119-thundering-tested-robin-4be817@houat>
-	<aW4lCfUyumOKRRJm@google.com>
-	<20260203113902.501e5803@fedora>
-	<E7286D12-0BD9-4726-B072-FE5A040312B1@collabora.com>
-	<20260203150855.77c93e22@fedora>
-	<4DD13AE1-C85F-450F-93F2-C7C75766E518@collabora.com>
-	<DG5HJPIYMS7B.152WPGG9MZZJ5@garyguo.net>
-	<B94452FD-5F6F-44D4-80D8-4D4B7004C4B5@collabora.com>
-	<DG5M5MVHTNS4.1CUD61S0PD9NU@garyguo.net>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-redhat-linux-gnu)
+Message-ID: <20260204-nickel-seal-of-poetry-8fdefb@houat>
+References: <20260108-delectable-fennec-of-sunshine-ffca19@houat>
+ <98CD0BF6-3350-40B9-B8A9-F569AE3E3220@collabora.com>
+ <20260119-thundering-tested-robin-4be817@houat>
+ <aW4lCfUyumOKRRJm@google.com>
+ <518D8B09-B9A1-4DB4-85CD-37A2DD3D5FB1@collabora.com>
+ <DFSLCI9U4NCW.2HI2UPUI7G134@kernel.org>
+ <20260119-weightless-pelican-of-anger-190db0@houat>
+ <DFSN4FDCYHMW.3J3237PEBV2ZP@kernel.org>
+ <20260122-majestic-masterful-jaguarundi-d0abde@houat>
+ <2F3D3A40-6EF9-46FC-A769-E5A3AAF67E65@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="cc3shtqnjnhks75h"
+Content-Disposition: inline
+In-Reply-To: <2F3D3A40-6EF9-46FC-A769-E5A3AAF67E65@collabora.com>
+
+
+--cc3shtqnjnhks75h
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 1/3] rust: clk: use the type-state pattern
+MIME-Version: 1.0
 
-Hi Gary, Daniel,
-
-On Tue, 03 Feb 2026 20:36:30 +0000
-"Gary Guo" <gary@garyguo.net> wrote:
-
-> On Tue Feb 3, 2026 at 7:26 PM GMT, Daniel Almeida wrote:
-> > =20
-> >>=20
-> >> I think it's fine to have all of these:
-> >> * `Clone` impl
-> >> * `enable` which consumes `Clk<Prepared>` by value and spit out `Clk<E=
-nabled>`
-> >> * `with_enabled` that gives `&Clk<Enabled>`
-> >>=20
-> >> This way, if you only want to enable in short time, you can do `with_e=
-nabled`.
-> >> If the closure callback wants to keep clock enabled for longer, it can=
- just do
-> >> `.clone()` inside the closure and obtain an owned `Clk<Enabled>`.
-> >>=20
-> >> If the user just have a reference and want to enable the callback they=
- can do
-> >> `prepared_clk.clone().enable()` which gives an owned `Clk<Enabled>`. T=
-houghts?
-> >>=20
-> >> Best,
-> >> Gary =20
-> >
-> >
-> > I=E2=80=99m ok with what you proposed above. The only problem is that i=
-mplementing
-> > clone() is done through an Arc<*mut bindings::clk>  in Boris=E2=80=99 c=
-urrent
-> > design, so this requires an extra allocation. =20
+On Thu, Jan 22, 2026 at 09:29:30PM -0300, Daniel Almeida wrote:
 >=20
-> Hmm, that's a very good point. `struct clk` is already a reference into
-> clk_core, so having to put another level of indirection over is not ideal.
-> However, if we're going to keep C code unchanged and do a zero-cost abstr=
-action
-> on the Rust side, then we won't be able to have have multiple prepare/ena=
-ble to
-> the same `struct clk` with the current design.
 >=20
-> It feels like we can to do a trade-off and choose from:
-> 1. Not be able to have multiple prepare/enable calls on the same `clk` (t=
-his can
->    limit users that need dynamically enable/disable clocks, with the very=
- limited
->    exception that closure-callback is fine).
-> 2. Do an extra allocation
-> 3. Put lifetime on types that represent a prepared/enabled `Clk`
-> 4. Change C to make `struct clk` refcounted.
+> > On 22 Jan 2026, at 10:44, Maxime Ripard <mripard@kernel.org> wrote:
+> >=20
+> > On Mon, Jan 19, 2026 at 03:37:17PM +0100, Danilo Krummrich wrote:
+> >> On Mon Jan 19, 2026 at 3:18 PM CET, Maxime Ripard wrote:
+> >>> On Mon, Jan 19, 2026 at 02:13:48PM +0100, Danilo Krummrich wrote:
+> >>>> On Mon Jan 19, 2026 at 1:54 PM CET, Daniel Almeida wrote:
+> >>>>>> On 19 Jan 2026, at 09:35, Alice Ryhl <aliceryhl@google.com> wrote:
+> >>>>>> I think that if you still want an API where you just call enable/d=
+isable
+> >>>>>> directly on it with no protection against unbalanced calls, then t=
+hat
+> >>>>>> should be the special API. Probably called RawClk and functions ma=
+rked
+> >>>>>> unsafe. Unbalanced calls seem really dangerous and use should not =
+be
+> >>>>>> encouraged.
+> >>>>=20
+> >>>> +1; and unless there is a use-case that requires otherwise, it shoul=
+d not even
+> >>>> be possible to do this at all -- at least for driver code.
+> >>>=20
+> >>> I mean, it's great, it's safe, etc. but it's also suboptimal from a PM
+> >>> perspective on many platforms. It's totally fine to provide nice, saf=
+e,
+> >>> ergonomic wrappers for the drivers that don't care (or can't, really),
+> >>> but treating a legitimate optimisation as something we should consider
+> >>> impossible to do is just weird to me.
+> >>=20
+> >> I said that an unsafe API with potentially unbalanced calls is somethi=
+ng we
+> >> should clearly avoid for drivers. This is *not* equivalent to "treatin=
+g a
+> >> legitimate optimisation as something we should consider impossible".
+> >>=20
+> >> If we discover use-cases where the current API doesn't work well, we c=
+an
+> >> invenstigate further.
+> >=20
+> > I'm not sure I'm following what you're saying, sorry. I've pointed out
+> > such a use-case already.
+> >=20
+> >>>>> I think we should discourage RawClk if at all possible. But if the =
+consensus
+> >>>>> is that we *really* need this easily-abused thing, I can provide a =
+follow-up.
+> >>>>=20
+> >>>> I think we should only do this if there are use-case with no alterna=
+tive, so far
+> >>>> there haven't been any AFAIK.
+> >>>=20
+> >>> I don't really care about which alternative we come up with, but look=
+ at
+> >>> devm_regmap_init_mmio_clk for example. It is a valid use-case that
+> >>> already exists today, and has had for more than a decade at this poin=
+t.
+> >>=20
+> >> I don't see the issue with devm_regmap_init_mmio_clk()? It takes a ref=
+erence
+> >> count of the clock and prepares it when called and unprepares the clk =
+in drops
+> >> its reference in regmap_mmio_free_context() called from the devres cal=
+lback.
+> >>=20
+> >> That something we can easily do with the current API, no?
+> >=20
+> > The current one, yes. Doing that in the API suggested here would involve
+> > some boilerplate in all those drivers they don't have right now.
+> >=20
+> > Maxime
+>=20
+> Maxime, I know you=E2=80=99ve already pointed out a use-case, but I think=
+ the
+> confusion stems from why you seem to think that the current solution cann=
+ot
+> cater to the API you mentioned in a clean way. You seem to imply that the=
+re
+> will be a lot of boilerplate involved, but we (or I) cannot see this. Per=
+haps
+> it would help if you highlighted how exactly the type state solution woul=
+d be
+> verbose using some pseudocode. I guess that would make your point clearer=
+ for
+> us.
 
-It probably comes to no surprise that I'd be more in favor of option 2
-or 4. Maybe option 2 first, so we can get the user-facing API merged
-without too much churn, and then we can see if the clk maintainers are
-happy adding a refcnt to struct clk to optimize things.
+I'm probably missing something then, but let's assume you have a driver
+that wants its clock prepared and enabled in an hypothetical enable()
+callback, and disabled / unprepared in a disable() callback.
 
-If we really feel that the indirection/memory overhead is going to
-hurt us, we can also start with option 1, and extend it to 2 and/or 4
-(needed to add a Clone support) when it becomes evident we can't do
-without it. But as I was saying in my previous reply to Daniel, I
-expect the extra indirection/memory overhead to be negligible since:
+=46rom a PM management perspective, this usecase makes total sense, is a
+valid usecase, is widely used in the kernel, and is currently supported
+by both the C and Rust clk APIs.
 
-1. clks are usually not {prepared,enabled}/{disabled,unprepared} in a
-   hot path
-2. in the rare occasions where they might be ({dev,cpu}freq ?), this
-   clk state change is usually one operation in an ocean of other
-   slower operations (regulator reconfiguration, for instance, which
-   usually goes over a slow I2C bus, or a
-   relatively-faster-but-still-slow SPI one, at least when we compare
-   it to an IoMem access for in-SoCs clks). So overall, the clk state
-   change might account for a very small portion of the CPU cycles
-   spent in this bigger operation
-3. if I focus solely on the clk aspect, and look at the existing
-   indirections in the clk framework (clk -> clk_core -> clk_{hw,ops} ->
-   clk_methods), I'd expect the Arc indirection to be just noise in
-   this pre-existing overhead
-4. in term of memory, we're talking about 16 more bytes allocated per
-   Clk on a 64-bit architecture (refcount is an int, but the alignment
-   for the clk pointer forces 4 bytes of padding on most
-   architectures). On a 64 bit arch, struct clk is 72 bytes if my math
-   is correct, so that's a 22% overhead, compared to 11% overhead if
-   the refcount was in struct clk (or in a struct
-   refcounted_clk variant if we don't want C users to pay the price).
-   Not great, but not terrible either
+The only solution to this you suggested so far (I think?) to implement
+this on top of the new clk API you propose is to have a driver specific
+enum that would store each of the possible state transition.
 
-So yeah my gut feeling is that we might be overthinking this extra
-allocation/indirection issue. This being said, one thing I'd really like
-to avoid is us being dragged into infinite discussions about a perfect
-implementation causing the merging of these changes to be delayed and
-other contributions being blocked on this (perfect is the enemy of
-good). I mean, option #1 is already an improvement compared to the raw
-functions we have at the moment, so if that's the middle-ground we
-agree on, I'm happy to give it my R-b.
+That's the boilerplate I'm talking about. If every driver wanting to
+implement that pattern has to make such an enum, with all the relevant
+traits implementation that might come with it, we go from an API where
+everything works at no-cost from a code-size perspective to a situation
+where every driver has to develop and maintain that enum.
 
-Regards,
+Maxime
 
-Boris
+--cc3shtqnjnhks75h
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaYMOQQAKCRAnX84Zoj2+
+dvrFAYCy9cMAXESi9V53Vv20SNDa4P4AXDj8RQneRDFodbIFI+G3mTEJQXOcFGkx
++lpmRa0Bf1ShS4JaHvSikZv6j6Jok+SN4hqbhT/G4nenYi5IvCNK7+Ezo+THb7dq
+SORhPzP8yg==
+=E93p
+-----END PGP SIGNATURE-----
+
+--cc3shtqnjnhks75h--
