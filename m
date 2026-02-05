@@ -1,156 +1,140 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A9B3EACE;
-	Thu,  5 Feb 2026 18:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264F332BF23;
+	Thu,  5 Feb 2026 21:46:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770317269; cv=none; b=bxPebdm0MG8n7BFbl1e88zqxDx1QlWXBMSAQbpTm3oyW9hvy/DtFH8VA6Y79v69Dvrhi/1nij0bg4ukKtG4L/DVKOEvBwZyLLH7EHT9lEp1c9m+6IifwJSQ4GhV7LQ48hI0NWKRlkuNuYL/PG6kZQmjvYbGBCXa7ODWe/b1NNVM=
+	t=1770327999; cv=none; b=PQ+K1veIxluA6Jslpx5F55ShNeH5f9sk+UWpU82FPjULzeMoUkowp6niBTLJyWHdvmVC27pXjyYGUB/qAWYDv37V44OkJlpsb3YUIEaAQKVTYE8Qj5igLffD06Gi3iB3lTUVvYG7g/SPcKroa8YS0EyZ2SQaFhFpl8nW6MjUSFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770317269; c=relaxed/simple;
-	bh=xlt7tCr9N5Z8VZCWEEDmknncqKKsGQxBS+VomxFPp94=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jjIWkqqJAr8LJMePbZ7dEMQFqGsdbGmtg42CoCp7NFQLMraVe4IP9i70Gj4TTW+CsIMN7E0uQWgaKRlb+lHl6AJczVn/qZBF88ebkdnRE5H6iYxtDoDBYc7gZUc1aw+Bri1AKXcRVhLd/1Q91PZ8AsyDO1ffGSa5uc+Oj78BP/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TTB1ax84; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770327999; c=relaxed/simple;
+	bh=0jhX6zKSC95EE9efVfTENFlaDkA+U6Y1etKjI43bDVA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NVH+FlGq0kpwi4y7c3h2aK0Afnec9cWdOahhHGFTGxVwS3n72qefagqFldnZL8UMzmuPQmw1F62tK3jysnBLue5mrshTOD31j51eIvtUJhqzq6shQJpVwI4YbE8RyX8NdcPsz4Zmqdxzsh9/j0byn2MTZbxkXXXktw/fNBqI2JY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DDIk+8cr; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TTB1ax84"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6819C4CEF7;
-	Thu,  5 Feb 2026 18:47:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770317268;
-	bh=xlt7tCr9N5Z8VZCWEEDmknncqKKsGQxBS+VomxFPp94=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TTB1ax84YQCaIuJBblnZHNHLcMTxGBol/UYmFOfbLYyWuB3izvBPvyrlmVMwIq3KA
-	 yFDbAPWcIn4DdKJ+W33msfVNBpoQkQRPjU1f0GIFs4X0ACOEW2NVK8TlMM/WDEUSUv
-	 DW7HIyePxoXyKjhgPB+fiG8veZBZPew4hrKKiXObG1liq82RVgPJLXieaKd/ijIDvR
-	 JwA8vSXGvZF2/SVOIQ1SMYTHhac+CKYEUiM4tOlb6zBSg2y9MK9ggK53QPVgr3FI/s
-	 Qewow3Iuk2j070bWCuPK092Q5+4VIB87ZWcp0YkQgXWL41Yz8ps8kE6+lobJfiuMa9
-	 dM12TUp92DsHw==
-Message-ID: <cb18f760-500b-4417-b706-cdc7448441a4@kernel.org>
-Date: Thu, 5 Feb 2026 19:47:42 +0100
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DDIk+8cr"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1770327998; x=1801863998;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0jhX6zKSC95EE9efVfTENFlaDkA+U6Y1etKjI43bDVA=;
+  b=DDIk+8crNC8y/LmFRzus/UZ2xZYxBpl0pNNrR0M2dLwCchdHcnYyfdIz
+   sInTEp7ZNhZCVid/vrknaQmIgO2Hm2HwdVK+Ebz53pbvt+CTnbJljijTr
+   dt5JIeqImk8Ch8K/80twIsJCCLxAnFWBOMn+VUG05w38oM0oEfgrXD+Kq
+   SIUpppSirCMhO1OItfH6WV7BmcQ/CExkaQ3n7v3WCYq+vvJ8Ez/Lr7Qk5
+   LZF4KXDpkfr8/CD/GKVLzRVouoALEKMJN/QwiHVRml7pp/WiRx7CgdRtZ
+   +3M3400AFwpqlhMnIkMByxK/82bEQsSyOTnZkcXHznxSo7foerpcafE0U
+   Q==;
+X-CSE-ConnectionGUID: XnUFovZ7RxGzIukBJVrR4w==
+X-CSE-MsgGUID: H6iUAysSTb6mdePwJOhi+g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11692"; a="89119531"
+X-IronPort-AV: E=Sophos;i="6.21,275,1763452800"; 
+   d="scan'208";a="89119531"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Feb 2026 13:46:37 -0800
+X-CSE-ConnectionGUID: w3KStVOaSpmiIopV9wV5QQ==
+X-CSE-MsgGUID: qR9vmdVIReGoCba8Bkws3A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,275,1763452800"; 
+   d="scan'208";a="210730692"
+Received: from lkp-server01.sh.intel.com (HELO 765f4a05e27f) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 05 Feb 2026 13:46:33 -0800
+Received: from kbuild by 765f4a05e27f with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vo7BH-00000000kEq-0A68;
+	Thu, 05 Feb 2026 21:46:31 +0000
+Date: Fri, 6 Feb 2026 05:45:34 +0800
+From: kernel test robot <lkp@intel.com>
+To: dongxuyang@eswincomputing.com, mturquette@baylibre.com,
+	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	troy.mitchell@linux.dev, bmasney@redhat.com
+Cc: oe-kbuild-all@lists.linux.dev, ningyu@eswincomputing.com,
+	linmin@eswincomputing.com, huangyifeng@eswincomputing.com,
+	pinkesh.vaghela@einfochips.com, ganboing@gmail.com,
+	marcel@ziswiler.com, Xuyang Dong <dongxuyang@eswincomputing.com>
+Subject: Re: [PATCH v10 2/3] clock: eswin: Add eic7700 clock driver
+Message-ID: <202602060520.p4Hg35Ja-lkp@intel.com>
+References: <20260205093453.1143-1-dongxuyang@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/3] reset: tenstorrent: Add reset controller for
- Atlantis
-To: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
-Cc: Drew Fustini <dfustini@oss.tenstorrent.com>,
- Joel Stanley <jms@oss.tenstorrent.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, joel@jms.id.au,
- fustini@kernel.org, mpe@kernel.org, mpe@oss.tenstorrent.com,
- npiggin@oss.tenstorrent.com, agross@kernel.org, agross@oss.tenstorrent.com,
- bmasney@redhat.com
-References: <20260202-atlantis-clocks-v5-0-0922e43acaba@oss.tenstorrent.com>
- <20260202-atlantis-clocks-v5-2-0922e43acaba@oss.tenstorrent.com>
- <20260205-spiffy-bizarre-doberman-184d2b@quoll>
- <CAEev2e_S9LYV609VmrHCqNneuTro=hbAjzgHFLAO6RD0_fErwA@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CAEev2e_S9LYV609VmrHCqNneuTro=hbAjzgHFLAO6RD0_fErwA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260205093453.1143-1-dongxuyang@eswincomputing.com>
 
-On 05/02/2026 15:18, Anirudh Srinivasan wrote:
-> Hello Krzysztof,
-> 
-> On Thu, Feb 5, 2026 at 3:27 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On Mon, Feb 02, 2026 at 01:46:50PM -0600, Anirudh Srinivasan wrote:
->>> diff --git a/include/soc/tenstorrent/atlantis-prcm.h b/include/soc/tenstorrent/atlantis-prcm.h
->>> new file mode 100644
->>> index 000000000000..841516cbefd9
->>> --- /dev/null
->>> +++ b/include/soc/tenstorrent/atlantis-prcm.h
->>> @@ -0,0 +1,31 @@
->>> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
->>> +/*
->>> + * Shared definitions for Atlantis PRCM Clock and Reset Drivers
->>> + *
->>> + * Copyright (c) 2026 Tenstorrent
->>> + */
->>> +#ifndef __SOC_ATLANTIS_PRCM_H__
->>> +#define __SOC_ATLANTIS_PRCM_H__
->>> +
->>> +#include <linux/bits.h>
->>> +#include <linux/types.h>
->>> +
->>> +struct atlantis_prcm_adev {
->>> +     struct auxiliary_device adev;
->>> +     struct regmap *regmap;
->>> +};
->>
->> Drop, there is no driver-wide user of this.
-> 
->>
->>> +
->>> +static inline struct atlantis_prcm_adev *
->>> +to_atlantis_prcm_adev(struct auxiliary_device *adev)
->>
->> Same here.
->>
->> Do not add symbols to headers which nothing uses. These are private to
->> the driver so they must stay ONLY in the driver.
-> 
-> The definitions in these files are shared between the clock and reset
-> driver (which are in drivers/clk/tenstorrent/ and drivers/reset/),
-> hence they have been put here.
+Hi,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.19-rc8 next-20260205]
+[cannot apply to clk/clk-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/dongxuyang-eswincomputing-com/dt-bindings-clock-eswin-Documentation-for-eic7700-SoC/20260205-174013
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20260205093453.1143-1-dongxuyang%40eswincomputing.com
+patch subject: [PATCH v10 2/3] clock: eswin: Add eic7700 clock driver
+config: arc-randconfig-r053-20260206 (https://download.01.org/0day-ci/archive/20260206/202602060520.p4Hg35Ja-lkp@intel.com/config)
+compiler: arc-linux-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260206/202602060520.p4Hg35Ja-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202602060520.p4Hg35Ja-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/clk/eswin/clk.c: In function 'eswin_clk_register_clks':
+>> drivers/clk/eswin/clk.c:519:4: error: a label can only be part of a statement and a declaration is not a statement
+       const struct eswin_fixed_factor_clock *factor;
+       ^~~~~
+   drivers/clk/eswin/clk.c:528:4: error: a label can only be part of a statement and a declaration is not a statement
+       const struct eswin_mux_clock *mux = &info->data.mux;
+       ^~~~~
+   drivers/clk/eswin/clk.c:538:4: error: a label can only be part of a statement and a declaration is not a statement
+       const struct eswin_divider_clock *div = &info->data.div;
+       ^~~~~
+   drivers/clk/eswin/clk.c:554:4: error: a label can only be part of a statement and a declaration is not a statement
+       const struct eswin_gate_clock *gate = &info->data.gate;
+       ^~~~~
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for NET_SELFTESTS
+   Depends on [n]: NET [=y] && PHYLIB [=y] && INET [=n]
+   Selected by [m]:
+   - AMD_XGBE [=m] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_AMD [=y] && (OF_ADDRESS [=y] || ACPI || PCI [=n]) && HAS_IOMEM [=y] && (X86 || ARM64 || COMPILE_TEST [=y]) && PTP_1588_CLOCK_OPTIONAL [=m]
 
 
-Ah, but then I wonder why your clock driver needs to access reset driver
-structures. Or vice versa. You are only expected to get regmap from the
-parent, no?
+vim +519 drivers/clk/eswin/clk.c
 
+   506	
+   507	int eswin_clk_register_clks(struct device *dev, struct eswin_clk_info *clks,
+   508				    int nums, struct eswin_clock_data *data)
+   509	{
+   510		struct eswin_clk_info *info;
+   511		const struct clk_hw *phw = NULL;
+   512		struct clk_hw *hw;
+   513		int i;
+   514	
+   515		for (i = 0; i < nums; i++) {
+   516			info = &clks[i];
+   517			switch (info->type) {
+   518			case CLK_FIXED_FACTOR:
+ > 519				const struct eswin_fixed_factor_clock *factor;
 
-Best regards,
-Krzysztof
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
