@@ -1,77 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940E430499A;
-	Thu,  5 Feb 2026 11:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3E43A9D95;
+	Thu,  5 Feb 2026 11:43:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770291179; cv=none; b=L1UqZJU8x3RGFV4Rm9szShGPyCYZQIuAZtRk/kYKp3NQ3WOYwHPGw3Kgi0gYjrqkZrsA7wgbCaTf7DguAAbj99UyxxzXHGIEchvVryGqWM0OwwBsFWUiKGRowrXCp+gzL3h20FOc7l+EqsVwCrd3YLBvQJM0cQHKsLzQ15BXE7g=
+	t=1770291827; cv=none; b=LCau7vTNqY9tqP5aaZcNQvwPMyUBaAePKX3kTGF4V6WZOt76COhanpdokrRMQsMymiz8WhCOBAt0VdepUGqK7XvXOsb3NsrKdCKg/pcMkWS2oOoHZAfdWRL7sQr173p/b/gQNhEin4Atl+/N6lp5b0Mh5KljI6jTm7iHGF3uMno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770291179; c=relaxed/simple;
-	bh=P4ZwgmEFwWuk9hjrWBwpZjmoLLL/Y/YJAN5ooNOu0uI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dZiXsXHGky4efiFJdDw7+nCY1WeoFS6g89cbQjpCaziyj1xE6GQuLKn4Z4Fpt+rAgWV1btaG4J09o4tRE7alcOXaaOiVgWI1oIQv7p9E7YsKEHIDXrJfi180tKdGlctqAg5ZdMyGgTsaF59xf94LqI8woFfRjp67QDpli1r1EYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IEYMDdlK; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770291827; c=relaxed/simple;
+	bh=vjEXTaSTawfH1ca3LhmSc8JEfQI/Je7hHvUf3p5l+5c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PWve4I8GIUW6PQ8Qit8f7UcCAxB7WiBoTbD+cF75+PjO92BRxpP92u2IUNCT/p4z6anA9fgB8Lppp42NYUww+ULvIQ33gcN2W7oG25NZ7MXgjg1o7MQBih3f6Wc4HILhSSXJSYsEiLLl9lpQGOR6uTB+h2uadZnJVP+YbEQ15Ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=k7B4+b7g; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IEYMDdlK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A41E7C4CEF7;
-	Thu,  5 Feb 2026 11:32:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770291179;
-	bh=P4ZwgmEFwWuk9hjrWBwpZjmoLLL/Y/YJAN5ooNOu0uI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IEYMDdlKA9PbPNi0vo3ba+Y/Zhy/k8KxDytnoOYJpm7Ftn/gWcD+0RnUhERCw/AWE
-	 C6NXUVB4LegYFVH/l0vPNVkPCyGy0GOnvR8q8p9qzqw/ieouROH6/NwKUyIBQESC1p
-	 q2+wDjfP/ZLs0HD9+URPzrFUzXHmozauTNvw+hmmiXCeLdSeofmAOid1EDBvZ4+ceU
-	 dogT/Xqd8RyT0plrS/bva+gZACVvx9XyIuKG7U13WPGw/z8FADDwULJ6/DRiLQPHu3
-	 5Tnxdi4LVlKAkRH7tUZ9xxyW6WK1shCDs628G3VNMkxpJ0nco0ObA6x0F7PeF/rhPA
-	 +9UM4UwaO3O7w==
-Date: Thu, 5 Feb 2026 12:32:56 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, Jonathan Marek <jonathan@marek.ca>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Bryan O'Donoghue <bod@kernel.org>, Vikash Garodia <vikash.garodia@oss.qualcomm.com>, 
-	Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Stanimir Varbanov <stanimir.varbanov@linaro.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
-	Hans Verkuil <hverkuil@kernel.org>, Stefan Schmidt <stefan.schmidt@linaro.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
-	Dikshita Agarwal <dikshita@qti.qualcomm.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v3 2/7] media: dt-bindings: qcom,sm8250-venus: sort out
- power domains
-Message-ID: <20260205-vermilion-chupacabra-of-teaching-f964eb@quoll>
-References: <20260204-iris-venus-fix-sm8250-v3-0-70fa68e57f96@oss.qualcomm.com>
- <20260204-iris-venus-fix-sm8250-v3-2-70fa68e57f96@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="k7B4+b7g"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1770291825;
+	bh=vjEXTaSTawfH1ca3LhmSc8JEfQI/Je7hHvUf3p5l+5c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=k7B4+b7gCE10wBWECw7ovibE2MBwyVS9iT6BI4EpMMTm8WSCXWMUZVY3PT1oOrNct
+	 gN37xSvFotB2ZJN6HlN5BuzNBTFQYJP9dfkRdeS7UD5jZh+uQh78TOUA3VzRq+2bIh
+	 p8UDrUHiAgdRtPl3DnmkQ1xiwmiXg1vEH/YL8qtEhUMPoXY6eWNclZznM3RMwEbDRe
+	 bc6R8bJG/qV3zO5SzJZtIUpuGZHo1UisTDbeU4Vu8f3vzYBOqtzuqCcejZGq4gXevK
+	 +nWl4fDATiZ9KwkDhoBo6C4XpTAJmTjbXF/7ZvZlekKWAtKaVct3ipHiWEu4zoQhTm
+	 g6eHXBsLaXJiQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7F81917E06C3;
+	Thu,  5 Feb 2026 12:43:45 +0100 (CET)
+Message-ID: <4171d9d6-1f2c-44d3-b908-3ca11ffa9d96@collabora.com>
+Date: Thu, 5 Feb 2026 12:43:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260204-iris-venus-fix-sm8250-v3-2-70fa68e57f96@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Revert "clk: Respect CLK_OPS_PARENT_ENABLE during recalc"
+To: Stephen Boyd <sboyd@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ patches@lists.linux.dev, Alexander Stein <alexander.stein@ew.tq-group.com>,
+ Mark Brown <broonie@kernel.org>,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+ Brian Masney <bmasney@redhat.com>, Chen-Yu Tsai <wenst@chromium.org>
+References: <20260203002439.1223213-1-sboyd@kernel.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20260203002439.1223213-1-sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 04, 2026 at 02:59:50AM +0200, Dmitry Baryshkov wrote:
-> First of all, on SM8250 Iris (ex-Venus) core needs to scale clocks which
-> are powered by the MMCX domain. Add MMCX domain to the list of the power
-> domain to be used on this platform.
+Il 03/02/26 01:24, Stephen Boyd ha scritto:
+> This reverts commit 669917676e93fca5ea3c66fc9539830312bec58e.
+> It's been shown to cause problems on i.MX and STM32 platforms
+> where the board doesn't boot. In one case, a clk with
+> CLK_IS_CRITICAL and CLK_OPS_PARENT_ENABLE is being registered
+> causing the parent to be enabled, the rate recalculated, and then
+> the parent is disabled causing the critical clk being registered
+> to stop clocking.
 > 
-> While we are at it, drop minItems from both power-domains and
-> power-domains-names, it doesn't make sense from the hardware point of
-> view. There are always 2 GDSCs and two power rails wired to the video
-> clock controller and Venus. Disallow passing just two.
+> A fix for that would be to calculate the rate of the clk after
+> enabling the critical clk itself, but that wouldn't fix another
+> problem where a clk with CLK_OPS_PARENT_ENABLE is registered
+> before the parent is registered. In this case the hardware access
+> in the clk_ops::recalc_rate() function would fail if the parent
+> is disabled.
+> 
+> There are even more problems exposed by this patch because it
+> introduces logic that disables clks earlier in system boot than
+> has existed previously. Historically we've not disabled clks
+> until late init (clk_disable_unused) under the assumption that
+> clks have been registered enough to have a consistent view of the
+> clk tree. The clk_disable_unused logic doesn't work very well
+> though, leading to quite a few devices booting with
+> clk_ignore_unused on the kernel command line.
+> 
+> Long story short, disabling clks during clk registration is full
+> of pitfalls. Revert this commit until a proper solution can be
+> found.
+> 
+> Reported-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> Closes: https://lore.kernel.org/r/6239343.lOV4Wx5bFT@steina-w
+> Reported-by: Mark Brown <broonie@kernel.org>
+> Closes: https://lore.kernel.org/r/036da7ce-6487-4a6e-9b15-97c6d3bcdcec@sirena.org.uk
+> Cc: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> Cc: Brian Masney <bmasney@redhat.com>
+> Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Cc: Chen-Yu Tsai <wenst@chromium.org>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 
+Makes sense, and I agree.
 
-the min-items were also serving to preserve ABI which you now broke.
-Same comments as previous patch apply.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Best regards,
-Krzysztof
 
