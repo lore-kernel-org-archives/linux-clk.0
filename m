@@ -1,182 +1,214 @@
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013054.outbound.protection.outlook.com [52.101.72.54])
+Received: from mout.perfora.net (mout.perfora.net [74.208.4.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E624E15ADB4;
-	Fri,  6 Feb 2026 00:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770336677; cv=fail; b=fVBUoOsslMgxWLvlmvFTLbx9fceWRE5OZ4dSDl3+sAmgrdOHiiMjqc4nPyevG/F/irxxBuK2im0cN9UbvkDCGf01eMAhQOmJgwsR4I+GNgPFrQ9XFstdQpZNUoxovu8sCF3vWxEWNJv0iN9ZNqBZ7GhuzmUnklnyW4bSHa8zKd8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770336677; c=relaxed/simple;
-	bh=GNSv5OmZ9Tlv8JvHKwqJxNY5nxREpqBY+WKHZpUvPuM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=f/S7kiuCRebsEUUAsMSPakqzyTmyINlaNtavkPRhKtviyroarzWuo2pvrC++/s7MifDyboIEBoXEXdcIWCYTuYCdEDTh8ZchtM3qYJzfCRShdyqXEsjnZ2xTmsFBWKoOxFUFEo72nOQVB8YXKXLK7MqFjSLePe5fTG9fLajvPpk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=jH4KR77T; arc=fail smtp.client-ip=52.101.72.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9468D22127B;
+	Fri,  6 Feb 2026 00:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.197
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770338166; cv=none; b=qGDeQXUcllqMKtiklEsOobpCf5GZ4fa9Ln4wureYt9S7ucT8w3P4JTdTcpmO4F1AJrWrX3uJm90Vb+LrRvFfnvQZDYIX9pP/g5RcXcSakJyKApLb6HgDeNpTrOCEri3dCtW6bWZkE+03nBS2S0G9N6YSQJoap2Xvv3lWNpoebX4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770338166; c=relaxed/simple;
+	bh=Xhkea2uuWgsFz5RIwUPCylSMm3n3sBnhjKt3SVa5kPo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=JwtIHCVdY6Mtgi0+hYGAaclUmEzENxY7MNPVNBly+pOkfGcB2o0gD7hWlLMAGkP3dDWTLY5UDtvAQ5uULNzHCMye8C3+GLyzGDjrsUVrlpiPGX5x6htApJCiNbjdgt0d+kzaNFaICLuok7H2nQmFpkys19uPe5djTlxfyEiTMxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=ziswiler.com; spf=pass smtp.mailfrom=ziswiler.com; dkim=pass (2048-bit key) header.d=ziswiler.com header.i=marcel@ziswiler.com header.b=Or49auqq; arc=none smtp.client-ip=74.208.4.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=ziswiler.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziswiler.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="jH4KR77T"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ABms9RLC4paailqVS6/WVLBee0LpQAOEizM1J/Ak2ErjS32kMagtcTkeVMMww1oXQm5jPV9SaqL6u9Z2uTxjavMUWUmxKHtouLAJCtjkUgtxSBQNYY5Q23y9geyr7HiCb5XzzGqFlhnUpfi8y84ePbN3lkucEmgPqDZqdBjoR1CAoatubJeYNobPZTfhO9f6dRCJBISACxRAiBEE9xTTUEUYYh9NEnqdhqLdP+Zfb8+8EDQh0cGe8AGl6g2841e7Hbm1YG18mHwZgTTEDyL0Vc5QSjSlTvnUJFQ1XMglTw8m58fV6E4rd2nMQ6Qj3rVS4AgBTeAhCtGYMnNsG4rwvA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bfeRaD8GQllPFKvIVEUXK2m2msjCiurgcjviSoH1Xbo=;
- b=FM7eLQ15OmJSIx887R/K0DaNG2aoDaTjn3t9shnr9SijlJP861Hej6WFtvxDurmnXXOJa2paiyMOYHnA72IbY5Rr0Ucwru1ZuIbmxP0EI07ybGiNg6rrz9+uKB28sjIIWw+2YMqerVtoUPeYbQqMbAwvG5m3UBX7unSlUnVDY6GuYEv0D31DmMkIKMGogGdRmzqQzXGdR2YTTL2kZnhWvA72yLjZtv/h3g70lJdxU+XOLYfcJdlfqlKfpXB0sdfu9N6RBnVOjRajnKN4IlS9i9p1Rc5wDbsUETI6mZx6E2KxfdilY/itaC95kVIIUtM3Q3bL4p5FHhA7jMYYipqRLg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bfeRaD8GQllPFKvIVEUXK2m2msjCiurgcjviSoH1Xbo=;
- b=jH4KR77Tp30HIoPukq7rDJZlNdXpecSG8QAhVr+mzHWyV9A3Mds+XxF6S/ccZHvrNWg67SU2s/9QMiT7Bz1F/cimkcpA0vSl9V2TmXatEuwssnsrxJpcOwPbpOsKddztHlITQIuBbFQQUjR5rdqeNzJMaZuNX48gDwgpUvFEMyW90RpcX02qCcQtIp1bujoFcrCzDty0HKFMjnZjI83IJD4rcE8gx8LieN98kulkm301bEdikOZWut0ACIrjyw/58GP1tZQVSTJCrpRzUGrsns3SD56CVYzdsnF7CJyBvntLGz918f3WnlEr9BGsKHoO1RGGNocHN7aEWV5f43Hsow==
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by AS8PR04MB8833.eurprd04.prod.outlook.com (2603:10a6:20b:42c::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9587.15; Fri, 6 Feb
- 2026 00:11:13 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::4972:7eaa:b9f6:7b5e]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::4972:7eaa:b9f6:7b5e%7]) with mapi id 15.20.9587.013; Fri, 6 Feb 2026
- 00:11:13 +0000
-From: Peng Fan <peng.fan@nxp.com>
-To: Felix Gu <ustc.gu@gmail.com>, Abel Vesa <abelvesa@kernel.org>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Frank
- Li <frank.li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
-	Lucas Stach <l.stach@pengutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>,
-	Akshay Bhat <akshay.bhat@timesys.com>, Ranjani Vaidyanathan
-	<ranjani.vaidyanathan@nxp.com>, Shawn Guo <shawnguo@kernel.org>
-CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v3 0/2] clk: imx: imx6q: Fix device node reference leaks
-Thread-Topic: [PATCH v3 0/2] clk: imx: imx6q: Fix device node reference leaks
-Thread-Index: AQHclSS+QdwHmUB70keuaMcGCoIoEbV0z8tg
-Date: Fri, 6 Feb 2026 00:11:13 +0000
-Message-ID:
- <PAXPR04MB8459FEAF3D171751E3A8E0F28866A@PAXPR04MB8459.eurprd04.prod.outlook.com>
-References: <20260203-clk-imx6q-v3-0-6cd2696bb371@gmail.com>
-In-Reply-To: <20260203-clk-imx6q-v3-0-6cd2696bb371@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|AS8PR04MB8833:EE_
-x-ms-office365-filtering-correlation-id: 4ad9abfe-7149-4cd9-ea17-08de65143d63
-x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|376014|1800799024|19092799006|366016|38070700021|921020;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?d6DPtF2ip4Wn0vX3OXitKy4NwSk0Ukg9uf9+Qq29Vuzee5FWMePVAUkUFS2E?=
- =?us-ascii?Q?WiOGgx612oC1T6q4OyplYx90XZKUspkVG33DdF3CssMgJbjSxRWz2Ifd3LkS?=
- =?us-ascii?Q?bhin5moBLkeCkpD/kxp4wMis2eQikVYBB5TYy0SsfcNFGSkJyLuq0WI1MLVg?=
- =?us-ascii?Q?U/Ft0XyKeSlRwpbyiVsrVmiUHvqPcAT7piz5ISSTF8Eg7RTFmEEF3iH0SlVw?=
- =?us-ascii?Q?mB4NEE9jG8Ds+K5hf/zymeWPEYOpUEgkkt8IUC88enwyAOtBCWSVACOsf4LC?=
- =?us-ascii?Q?2Thfv5UG+mUBSWRVc431ZqNEKf15mTiaFLeJtaGLzAcjp97ROx7uZHFUfkzO?=
- =?us-ascii?Q?WfW+FxGmTD6W33ED1Mm1PMPb/SHJKuGSMeYk17itOvKQo35lKPoB6K926RWp?=
- =?us-ascii?Q?KVq5VpREciPLBT+X5zNld45jdcaAcZwFKWvSTlS3mQmu8x+9C6F5x3hEnHok?=
- =?us-ascii?Q?3nwcEfM2pERrBVZ8aKz3r6dWJZXWvBeO736+KkZmhdNrOQcgjMPZ2OnWqibG?=
- =?us-ascii?Q?r9XEEsAdtd+XteBad9VmwvxswstugM/DZsl+kKZr3eYAX/zlnl5gCWkoBb6O?=
- =?us-ascii?Q?KGBm3WWnuryNT05D0kuumM66rcn6kISfCxpHFK0PyhXuWo8gFO4HGra8B19a?=
- =?us-ascii?Q?/wO4ROzNrMZqqwKEJ885fl1VJMag1p1s+lvSQCbLAPVoXUKb6IptwWdnctws?=
- =?us-ascii?Q?dad6lHlHLKQpIOBTdLBncPWgSTUUGxCxF46qt8/jGRGfyohW9mYkst/tTQFs?=
- =?us-ascii?Q?D4JskQE7wn2nbpm+AYUhai52PTzLpK0EkPWQpHyLuKu2p2gB9YpeegejQN5o?=
- =?us-ascii?Q?w2dcuT6VDGteKpMmY/fjr7aGETgyvfiak55bGDH7th/noK5CYVWXCTksLQiw?=
- =?us-ascii?Q?dLn5FM7tq/sKATvVXFpybGa278Ji6C6vx0NZuwKT7Zp4XnNIgz9FtQ6h3Nnk?=
- =?us-ascii?Q?MQLzCxdewa6l9RPhLFrCBqCagcqIEL33SJAGkU09pCHY+b02jrrlf+Xj/zpY?=
- =?us-ascii?Q?9cE0Kst0SoNrV40zTgot0FRn3A8vkI3ZvPPF3SxJJjGvNXIowlLUMmIU0r7C?=
- =?us-ascii?Q?nD/c8Q4jqPrhqtpqbnJKVjpE7IoH030twNkk2cuP2JWNGzeIyt0NMUGhQSAc?=
- =?us-ascii?Q?yqHHYhEDSxnvNUYhrPaKUU4yWn4kIDpjzag8lW1Halj2U+TdfR3yyc2csXXa?=
- =?us-ascii?Q?D7rkcpQTUML9Ys2mT+XGP5Dd04l04gu0FHD75oErB+86LgI+d+LwRkNXczV9?=
- =?us-ascii?Q?8QtGxa1vHQZ5YP+8Mak1tf2y9eIt0ln21pMumg2cz20NkYBM2ujQxnXJkuFw?=
- =?us-ascii?Q?etpICfes5QX9kGPT3QZGwsPDtG20hpA2kr8VyuWVQ9gSsOG0rp5nEY5dgqUO?=
- =?us-ascii?Q?pS60uLV8iLS6vsh79gg9v+QClWhHVwSR/+jwERHiYY3T0v1vGrWdL7SqtRRT?=
- =?us-ascii?Q?TdAkjomHMnPeB20cJqjPqnf6c1D1jxk9q7Xth1Qy049547BmrUA2kgt32Hun?=
- =?us-ascii?Q?8hNBxgz3IReTTYEkM7uNTE9dftLFOwBcD8cydzHBVlIdIavXRMGb+lYT5lKQ?=
- =?us-ascii?Q?ciAvCJ98hXryxXTZx3ENeLdeAWHUP3sZNHnRq4Ld/+AzLqMyCtLPXtPVuZNd?=
- =?us-ascii?Q?V1aOta9wn7bTixxYhWrMm8H4iYx9XShOouGUDnt7aIqI?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(19092799006)(366016)(38070700021)(921020);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?R91iaReZgX0RUdlts9rgPmR1Nepps1G0zf/HEnVHuTVvTaQpTAsWYXJY81gq?=
- =?us-ascii?Q?Ti9xtZivVait0ByNu3as3w5iou+UwfZ3hDHAZqH7Rw/WyjYIOmmW9pB53eqt?=
- =?us-ascii?Q?7HlRk3CeLruobSQmPWf3rLschWLmUIFe6OpxozA1yrVjBTS/z5Yvs6Y6eoDw?=
- =?us-ascii?Q?7ykhv/hTE2ywYNoNBS9CGIRDS4QaOoQCQJNOPUHIPYXri7gjuJarb5iEdsg1?=
- =?us-ascii?Q?qFzt6Kb1pBBlLO/Aw11IiwNGVuuO9jvATFXcMWibZTTqhvDMX4XWGM839ufd?=
- =?us-ascii?Q?ia7BSsf36KPCAxwcmhjcPIIjXj704QGuiQBuKeGYS1AXOKf7yotRIewFlNfK?=
- =?us-ascii?Q?2xaIKF7K5UVKFw5Fyn1setzeyrx8ms1O1zlsIfLclrNt5RBJu32LjMfs8V50?=
- =?us-ascii?Q?RkXIJdMFkWqrlpJcvonSI2EPuVuJLp5mX8yUsygRMVlRvWiiWUZPIvuUsse6?=
- =?us-ascii?Q?45EDbQAvgBa/MOJtIRkyqzMDfStAGqU2/W5Es97/eRGmgxLzXR/Fu0QWDpy/?=
- =?us-ascii?Q?JlP4qf0cFstJ9ELysV5wUp59ZqjoCo5y4F8/M1kb+6B/GUUo/NLauT07QrEC?=
- =?us-ascii?Q?T/A1+WJ8ECuCzrdWcQE4bcQY6OmTFpPujQ+oPUFRJRMlmHQeqFTI3uxhuB3I?=
- =?us-ascii?Q?WfmNNmxbIm7nLLOsW/HiGnH8YkVNp1CW534M5EbuI6Y8CEcKt7YyDaMHoMHC?=
- =?us-ascii?Q?egRhuzTRWYJspUsgjrnF1r5k+6CDkPnPJcEQ46qzDsadrNtnDF829UIEcTSo?=
- =?us-ascii?Q?rH0ej+Z6r8PGx9yS+cCOmM7lABvCwu1rkc9BdJKmq+ozls5THL22evxiaxbn?=
- =?us-ascii?Q?udM3ycdg78gRYTr7Yy/fmc1YIbMJjyR8FTaWrb+GZSOOiT5dhrKSqu/apTiz?=
- =?us-ascii?Q?JIhDSRa/XwTI1Pc29bGDn3aXUxDng25qRwY75n4BoIJdhWIrq98wGOIQHyQd?=
- =?us-ascii?Q?+8EdnPbN/mfTgnkQomlMaueagUBmYCW2VSG/N/lhESLamOVbkPN2OC/EwKnj?=
- =?us-ascii?Q?1XStbrhiJWEclXQD/gIjy52fqVjJIiL+sr/qFQUlrdywpy9p1jRlEAyHhF5k?=
- =?us-ascii?Q?OdkPFAEKO98Yx5/lHZzJ9W25ozrbD3i9K7+oy7DdhTLgsvMN9/0ZXMhE8ngH?=
- =?us-ascii?Q?SeVHYx2xdpmVsrjSG5J2Daj7Ho/zJ9ib6QehLGNHuiwSXsnColaC91XxsN1l?=
- =?us-ascii?Q?/Ce/iOcmesJUEKvX6jMg8qAJF88+zs7AlMtzci9eKYGdkihee2qOxW94xD2N?=
- =?us-ascii?Q?2dU/s5365I3y4eWoGmxAPiqQ1Rr8F0t2M8pOili+lmB7+XxbSDpntS2815pP?=
- =?us-ascii?Q?pDLBPnTPv/Y4clHZlB5aCFm75bt432d+bdGtnxzWYbM5chd+vJ1WWj+kN+QP?=
- =?us-ascii?Q?fg7qr3QQW5R/8EQtuuiXJoB270u1MZb8FeTDfhD3HgQ9js9sp9HvhwAFZMBV?=
- =?us-ascii?Q?YW/MhPiX7pPwo0jLvJeLQXoplJBYHDE0ppqdX1a/HdEvj2lMMw2oVsGHjDTE?=
- =?us-ascii?Q?weZ7kFWD6infer9F7zSY+MxCD+apvaUROXcscSvkBqsEzKxOdniUjlV9YqPp?=
- =?us-ascii?Q?UsE0o7fhoqjiJEfEnoAlui1Pbn+maasLP/9U8ipKqskZU+px+LtdzXQ+1bJy?=
- =?us-ascii?Q?vcOwq4XRMpoRlsPH9EBnQZaN/jlEH/tMdOEuXZIZUWVMxISlI2TcWjk4sdhF?=
- =?us-ascii?Q?sMHEbODFt6guQf9Ben+5OBhtBzXmtKcyavUGOPW4S69eLa5H?=
-Content-Type: text/plain; charset="us-ascii"
+	dkim=pass (2048-bit key) header.d=ziswiler.com header.i=marcel@ziswiler.com header.b="Or49auqq"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ziswiler.com;
+	s=s1-ionos; t=1770338161; x=1770942961; i=marcel@ziswiler.com;
+	bh=Xhkea2uuWgsFz5RIwUPCylSMm3n3sBnhjKt3SVa5kPo=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:Content-Transfer-Encoding:MIME-Version:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Or49auqq5TOaoraO/5JCgpn68ik1a26TfCrvJExzKlykYFC/cxsrbXJyVDaGzC4B
+	 yfzll7ZJs0q2ObW7ffiC+CfmX6u3MabiO1PZgc6LZIJ19WlMJoSwVSaUgux0BHe//
+	 uy3GhXlADtf3pcP8TMO0bnP0cV9B0XH+4KULzPBpPAPDenEImLp0zH3kn/TfJzIdW
+	 1m0hiVZZoiQ/5N6KVYtUUzVxxp1vEP3H9Bbi9lF7iLhk0vhyDTLr+6ftwfS1rdTqq
+	 VYTStUiFD7oaxUthxGRXScCYJu4AjE10C8CDnMjGPeeH4lvFnodfJqFazU7I4AoWI
+	 CMdxKF2eOqfYYJ2HRQ==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from [10.10.1.155] ([84.227.68.106]) by mrelay.perfora.net
+ (mreueus004 [74.208.5.2]) with ESMTPSA (Nemesis) id 1MgOMF-1vKrBs3W99-00h0v5;
+ Fri, 06 Feb 2026 01:30:20 +0100
+Message-ID: <2931a866f5daf82e57fd0a87c04bd583658db946.camel@ziswiler.com>
+Subject: Re: [PATCH v10 0/3] Add driver support for ESWIN eic700 SoC clock
+ controller
+From: Marcel Ziswiler <marcel@ziswiler.com>
+To: dongxuyang@eswincomputing.com, mturquette@baylibre.com,
+ sboyd@kernel.org, 	robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, 	linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, 	linux-kernel@vger.kernel.org,
+ troy.mitchell@linux.dev, bmasney@redhat.com
+Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com, 
+	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com, 
+	ganboing@gmail.com
+Date: Fri, 06 Feb 2026 01:30:11 +0100
+In-Reply-To: <20260205093322.1030-1-dongxuyang@eswincomputing.com>
+References: <20260205093322.1030-1-dongxuyang@eswincomputing.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.3 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4ad9abfe-7149-4cd9-ea17-08de65143d63
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Feb 2026 00:11:13.6714
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Nl+cb2Yn2vtjcA+6/uyptgkdhTgKuxYa+I9YUsMpTqaY/NVekDykAwnGFiTMCHIu6imJqI6s2r+9Zwms3xozrw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8833
+X-Provags-ID: V03:K1:Aug1QhwJRosjBkuLTR2iyMa0FfhDgjzDGkGlqDsWZGtX6GVQBpr
+ 7i3Kk36hlnTs8/peZGELUafMN5UHRmlLLNrsu0VCCObr3FHFA5KuSZUELyoXIk5icNkPNn+
+ ZjUPevCm52RLDOUdQIBYWUsOPwT2pkd9+N12fMxM/TNjTid/JDUDZPeAhkyTUDNrCHOD41l
+ x+KpXCQqznC7n6sNynDfQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:JnqF4fu1XXU=;QhKuutrFwLIzCvdsUg58WbnehJz
+ sktUrHSPsOrGQzkgvKsBIbFLWwEE8p5/xiij5aKZJo/msTmv62HZ4RKX72fNhT9CNDtSYMWvz
+ xCGylLwaIONMaJR7y4+UBUU2DoONmgEQQ8FgcLIkfHxnsSFefBA/ehbDfbSmYGBvBR1dllCtY
+ VBh12jVbPhXNcBSXLVYRzVldbot1AH+v5i+ty25ollzNOI34O3tEMHJq5z5a2EpUHyDjke7qZ
+ LqLdAFq21JVqZQbmIJ3IjkVCPtdKj6HKqRocE7u2UeL6P/ZMBEuvtuGpRUdmzhAy1g535fSm3
+ VR/Z5GdwkJGT4gQR3e96Lrg67uy8I2PZBOZ2T1wsANWJGNqNScT8eVTl61uGadKKOXkAyxdFR
+ lzkb8zEZyy1BDjasTuVq+fhFzSiVch1AIMcp9OMnfVsV+elzkNiP4BjFQaprL+hronwfaXjJu
+ 5li0buuMSmbH/MCRrXprp/c7RIAZATs3h1RpsTa3QrOKcVctd3P8qzUKI30+iOI2hsbeAGmd2
+ /BtLTJAcq2H5Xp3IrgSRDJcQlBloPHqPMxLfKNKGhxOyoRwt/2WDmZ6d6zzLRxh+NoorY5Fts
+ kxhHHx8FtQS3Jkhh2K0pt1cqPgGQjk8X/adbQ6DFi0s/IAOztjDzS5vVs955izVr7SsXgZ15j
+ 6tqxmRX8cJpXYSz35PbisoezBfeNWfHJt2MuV1pKX8zFG99av13dH2+ELfUy25C0t6RPjbF7A
+ PEXgM6XngWfN7sb/mePnwVMDBWgW3HaQ2yszJNQY0IhBWIJd8uRNeCZ7d6jUPH67ZOKQMyo9x
+ 29f9S41Vq0OzW0Vs1Hf7QZrp5qT3adqQ6ylqQ7PUX1jgzxAOcYtnYDpx/yCXlwSTKGEBL3t9t
+ zp9OZcwDNz1izxLpBOEjD89fuhhFiZ4IfaaQ5hjMm/92NeTFpbAk6PcXhw06/zMAJixNdxlV4
+ RB3P97r4GTImg/1u5hjL5Pw8sghKzQhDe40O9dHoc6gM3hHzJ95x4+yAM7qA8MG3w+OF5+B+L
+ BWR0fHtYv6YKbBGwHSWo7T79FCfDq2vwERWRTrhLhjMV5BANCSvQsUchfQrs401PTsByl/n2L
+ NFST7ISJJPV/6pnVNg7Gk5FVQOGCy4Qdo14BrPqbUkNsgHp8v9mbvO84uxy2a6typEOg1obsM
+ F5i1kpl3GC/Se9OLEDU+zPhXQWmCRTfZz9D4mz0tH/FqRqAA3SQNJ2FIHJgvk7RM1hUQC3nGl
+ onpfv3FS2NbSC7zvaqOWJkY7+lmgJyXGRXAjkDF3iok+rzq9RLpLmLUzVAF+7kn6KtRwtz7Dm
+ /T1ksD56e5KA9AcrOKwx8SSyc1YiZ5DmNcvDPBEUPioXjSR/TmHrB/Rk0DXrmcgqtX91pNm11
+ 1ZIAWT5BrB0RKKZ4qVwEn4om/H9+IwnkObhYgj7YKH1zTFltN8UuHO8aHzFGIssHvbpJ6gLOI
+ ZH0cXeO7FbtAK9Se5h7FBjPJjpQxhdZDnQxBiVz9YxkSQXSz1fZURZhrlijMtNO8MOdT6j6zt
+ 56hJTWxfp+ZBuLnpfXLWD7J6Ur1oSJv2Q8oH4roWBg91rqddXXGnsOHMcdSXNrN9RkFwqRu8G
+ aPclBMBbf7OHZj79LuG2klCrwQifxW1/ZHTigGYe8M5bDbFW0X++EX3Y1YSOHUWGbn8bwRhGH
+ u/KhpxDP8SdGvgUs/4JAfalaaY3rCwFTYPgVTPSh8IPmpoIUXy8nTxmGc1RDGtv4XEeCXf8Xb
+ J6qRHlaj7YqBRJaqYMpW4a/ve/wNYPLQY4xaMkCOO7ILU/lQWigJmDvs=
 
-> Subject: [PATCH v3 0/2] clk: imx: imx6q: Fix device node reference
-> leaks
->=20
-> Signed-off-by: Felix Gu <ustc.gu@gmail.com>
->=20
-> ---
-> Felix Gu (2):
->       clk: imx: imx6q: Fix device node reference leak in pll6_bypassed()
->       clk: imx: imx6q: Fix device node reference leak in
-> of_assigned_ldb_sels()
+Hi Xuyang Dong
 
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
+On Thu, 2026-02-05 at 17:33 +0800, dongxuyang@eswincomputing.com wrote:
+> From: Xuyang Dong <dongxuyang@eswincomputing.com>
 
+Thank you very much!
+
+For the whole series.
+
+Tested-by: Marcel Ziswiler <marcel@ziswiler.com> # ebc77
+
+BTW: Should anybody else want to easily test mainline on EBC77 [1].
+
+[1] https://github.com/riscv/meta-riscv/pull/594
+
+Cheers
+
+Marcel
+
+> The link [1] provides the official documentation for the EIC7700. Section=
+ 3.2
+> covers the clock subsystem.
 >=20
->  drivers/clk/imx/clk-imx6q.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
-> ---
-> base-commit: 33a647c659ffa5bdb94abc345c8c86768ff96215
-> change-id: 20260130-clk-imx6q-9c4b8835fc26
+> [1] https://www.sifive.com/document-file/eic7700x-datasheet
 >=20
-> Best regards,
+> Updates:
+> =C2=A0 Changes in v10:
+> =C2=A0 - Updated driver file
+> =C2=A0=C2=A0=C2=A0 - Add a private clock divider API named 'eswin_registe=
+r_clkdiv' to
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 register divider clocks with private flag.
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Define 'ESWIN_PRIV_DIV_MIN_2' private flag=
+ for registering the clock
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dividers whose division ratio start from 2=
+.
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Implement the private set_rate, recalc_rat=
+e, and determine_rate accordingly.
+> =C2=A0=C2=A0=C2=A0 - Add CLK_DIVIDER_ALLOW_ZERO flag to the clock divider=
+s whose division
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ratio start from 0.
+> =C2=A0=C2=A0=C2=A0 - Replace CONFIG_ARCH_ESWIN with CONFIG_COMMON_CLK_ESW=
+IN in the Makefile.
+> =C2=A0=C2=A0=C2=A0 - Modify the help description of COMMON_CLK_EIC7700.
+> =C2=A0=C2=A0=C2=A0 - Move register offset definitions from 'clk-eic7700.h=
+' to 'clk-eic7700.c' and
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 remove the 'clk-eic7700.h'. Remove '_CTRL'=
+ from the offset names.
+> =C2=A0=C2=A0=C2=A0 - Remove all unused headers.
+> =C2=A0=C2=A0=C2=A0 - Use devm_platform_ioremap_resource() instead of devm=
+_of_iomap().
+> =C2=A0=C2=A0=C2=A0 - Export the functions from clk.c as symbols.
+> =C2=A0=C2=A0=C2=A0 - Use readl_poll_timeout().
+> =C2=A0=C2=A0=C2=A0 - Use 'clk_parent_data' and '.hw' instead of string pa=
+rent names.
+> =C2=A0=C2=A0=C2=A0 - Rename the header file from clk.h to common.h.
+> =C2=A0=C2=A0=C2=A0 - Rename macros from EIC7700_* to ESWIN_* in common.h.
+> =C2=A0=C2=A0=C2=A0 - Add a new function, 'eswin_clk_register_clks', which=
+ can register
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 divider, mux, gate, and fixed-factor clock=
+s based on their types.
+> =C2=A0=C2=A0=C2=A0 - Add structure 'eswin_clk_info' to manage the clocks =
+that need to be registered
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 in a specific order.
+> =C2=A0=C2=A0=C2=A0 - Add macros 'ESWIN_*_TYPE' to define divider, mux, ga=
+te, and fixed-factor clocks
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 with type. Add enum 'eswin_clk_type' for t=
+hese types.
+> =C2=A0=C2=A0=C2=A0 - Remove 'eswin_clk_register_mux_tbl'. Use 'eswin_clk_=
+register_mux' to register
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mux clocks with or without table.
+> =C2=A0=C2=A0=C2=A0 - Add xtal24m as the parent clock of the PLL.
+> =C2=A0=C2=A0=C2=A0 - Change 2025 to 2026 in all files.
+>=20
+> =C2=A0 - Link to v9: https://lore.kernel.org/all/20251229105844.1089-1-do=
+ngxuyang@eswincomputing.com/
+
+[snip]
+
+> Xuyang Dong (3):
+> =C2=A0 dt-bindings: clock: eswin: Documentation for eic7700 SoC
+> =C2=A0 clock: eswin: Add eic7700 clock driver
+> =C2=A0 MAINTAINERS: Add entry for ESWIN EIC7700 clock driver
+>=20
+> =C2=A0.../bindings/clock/eswin,eic7700-clock.yaml=C2=A0=C2=A0 |=C2=A0=C2=
+=A0 46 +
+> =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ |=C2=A0=C2=A0=C2=A0 8 +
+> =C2=A0drivers/clk/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 1 +
+> =C2=A0drivers/clk/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 1 +
+> =C2=A0drivers/clk/eswin/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 |=C2=A0=C2=A0 15 +
+> =C2=A0drivers/clk/eswin/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ |=C2=A0=C2=A0=C2=A0 8 +
+> =C2=A0drivers/clk/eswin/clk-eic7700.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 1337 +++++++++++++++++
+> =C2=A0drivers/clk/eswin/clk.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0 575 +++++++
+> =C2=A0drivers/clk/eswin/common.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ |=C2=A0 373 +++++
+> =C2=A0.../dt-bindings/clock/eswin,eic7700-clock.h=C2=A0=C2=A0 |=C2=A0 285=
+ ++++
+> =C2=A010 files changed, 2649 insertions(+)
+> =C2=A0create mode 100644 Documentation/devicetree/bindings/clock/eswin,ei=
+c7700-clock.yaml
+> =C2=A0create mode 100644 drivers/clk/eswin/Kconfig
+> =C2=A0create mode 100644 drivers/clk/eswin/Makefile
+> =C2=A0create mode 100644 drivers/clk/eswin/clk-eic7700.c
+> =C2=A0create mode 100644 drivers/clk/eswin/clk.c
+> =C2=A0create mode 100644 drivers/clk/eswin/common.h
+> =C2=A0create mode 100644 include/dt-bindings/clock/eswin,eic7700-clock.h
+>=20
 > --
-> Felix Gu <ustc.gu@gmail.com>
-
+> 2.34.1
