@@ -1,247 +1,182 @@
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013054.outbound.protection.outlook.com [52.101.72.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89EE7318121
-	for <linux-clk@vger.kernel.org>; Thu,  5 Feb 2026 22:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770328921; cv=none; b=ZiWNXiaG9ZJZF43tsiWk4q6dvp0OnHGZgRgt6fHDFv6Y2zg8lwsQWpuX+TB9mwp9vv4+GDfjsN1tU4zp5kLAoMP2MF9dA4t+MuFy0c0nwMrQ7eyf1fVKNSWdwdQJO9h49hBuKuU0vfqe/JNGGiXI6pyTNQkcMakzU67hgDTeZxc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770328921; c=relaxed/simple;
-	bh=U05JLftmyJnHY2XoTQa/nqqqQ5++HU8ZHdqPgaBReWs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=IMgGHqWrORFXYMPsEuPsTc+NbN1zAfTEyNCucBmfJzwemz7oHJLDEA4ZyQTCxDGSbjnGiOlyNHO9MCaYaH5sdsYRb96H8yJnjlGf9JBfEmGizqWugnVNCWxMY9Tn9DTsLfoZOmTfKlpa2Bipib6K5YxEejICD4YOvGOYQJ3UpbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y2ZWOG9w; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E624E15ADB4;
+	Fri,  6 Feb 2026 00:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770336677; cv=fail; b=fVBUoOsslMgxWLvlmvFTLbx9fceWRE5OZ4dSDl3+sAmgrdOHiiMjqc4nPyevG/F/irxxBuK2im0cN9UbvkDCGf01eMAhQOmJgwsR4I+GNgPFrQ9XFstdQpZNUoxovu8sCF3vWxEWNJv0iN9ZNqBZ7GhuzmUnklnyW4bSHa8zKd8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770336677; c=relaxed/simple;
+	bh=GNSv5OmZ9Tlv8JvHKwqJxNY5nxREpqBY+WKHZpUvPuM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=f/S7kiuCRebsEUUAsMSPakqzyTmyINlaNtavkPRhKtviyroarzWuo2pvrC++/s7MifDyboIEBoXEXdcIWCYTuYCdEDTh8ZchtM3qYJzfCRShdyqXEsjnZ2xTmsFBWKoOxFUFEo72nOQVB8YXKXLK7MqFjSLePe5fTG9fLajvPpk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=jH4KR77T; arc=fail smtp.client-ip=52.101.72.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y2ZWOG9w"
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-65808d08423so2235434a12.1
-        for <linux-clk@vger.kernel.org>; Thu, 05 Feb 2026 14:02:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1770328919; x=1770933719; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DSe1MS03T8BW9ZubjvfneKpDOJEdsi+I8lH8q1oaCb4=;
-        b=Y2ZWOG9wzo4xToeA9qHRyVHAIUjfEIyW7drWjryIS9pVCtcr+5oPsm+rsvQI5gJZD3
-         vCMF+fVckwt+OG2jzDms7CwJzliuxlfK2bIQ7POeDZnZCLUaOs2Cl5bxTDCvxvaA8Bj9
-         vEuiUSIxnhZ7tnKKD6wwygVpZx4EDTDIhgY9LZVog8FxmGWYgQB+hzvM0DOgKR7X/v/C
-         q+SZtwx29cbYJtH/Apeunm6hJRuwr1kFlC5eyKtp9+3VZqs0l+EYyYbWYAJ1qLa3AP3E
-         +zK3QCZczVLYBxEyQgMFDTLjCJmQALxE/kdZzU+F3qmiNEToGlP+G7pX37oXdeHZLJGW
-         whVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770328919; x=1770933719;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DSe1MS03T8BW9ZubjvfneKpDOJEdsi+I8lH8q1oaCb4=;
-        b=d/v5GtOUvI17SMT+oZ/3F7HjpggIhczn0PGqPzcQZcawysUqIlpthcbluI/O2e7oFg
-         XFtHpA/ljkFJjvy7ySSWBH0mAKeVE1Acy1K++X5vKyMjIvgIRYYM6Z08XJIidU+rdpBU
-         2KUSh/A9Q1lkJhu+XWwM3qEpd3xo1pxf093XAkr+TLq7olwgeVlLzNI5G9vhOvS/TjpF
-         6CNMBGOEzf60XNwg4UCx+KhgEdCtze3xVAyAlGcmCFCclvJ7Td1v5LERtVbYzpeYOPsp
-         8jXjLDJx02GIasbrBpwnr1F/QgvFk0OrjuNl1l4ILwhmrrFcqoY8r0/oP7Bef+kUgdok
-         RWdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUbh3RIpYIyNct9Oj4QLmbF87boQ0ixRqOvKjfQD5pDIPBanUcew9V4RrxRwvRxlk9/n5vvb8YVtt4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQVXfZsfXU9dshab0pSWOWMMmFqLqV4R4zCwYUy5IabI/p9rvy
-	jlk0Fj2sbE1ii4xJrtJNUTtgEqmwfRZbjmYLjnMKIlM46yApba1Gn5gdt6SrMJBazL5Des51tbb
-	4/uu01v4=
-X-Gm-Gg: AZuq6aLF3EAa+vHDevSMEz2c78t2l77iWEgo4ePWzYLyUzszwbEEmbufhkWUY/U6Ys6
-	eTyh0zFyxge54yQ8h8MmSQwx17s5mgqA4SQl30Nn0aJrHyoPq+fb6EyWsY6jzICw5ZqLLan/sQH
-	KKbuGdjbrAl3xZ9n5PYRLoBDOQGDsBmgfPsCDZKhHn33cVATJvfkewRE8X9tx/DPQCamwUnyYal
-	tI20DvN/s7PDNKvX34vFspMtUlolTsoUKRMb3RIrz1wIDNx2pBtlWkTKgOhLusjS54hJj2ynadO
-	cc8Zgo+F7hl/9ckwxhgPsJA3kpiqyfBz2/I0mDBbXGeEPNyHy/pTJkKxCOtNGq339FHU63c2jdk
-	mzD05n1CssC+xYf3lIENBsvH0enaIsGoTXayhfMoVN+dZh0NdMFarWpze6xFmPT94N9i3oSKMH6
-	hqHYNIFMk2ezZ7BIAeZ80Z1U4EKkfxbNrIoQamdi6SAlitzfDAQDJkekDWjrsDLXRiaOeZ5H1Zk
-	CvKhA==
-X-Received: by 2002:a17:907:6d1e:b0:b8e:12f9:5fce with SMTP id a640c23a62f3a-b8edf4636b0mr25927466b.61.1770328918709;
-        Thu, 05 Feb 2026 14:01:58 -0800 (PST)
-Received: from puffmais2.c.googlers.com (244.175.141.34.bc.googleusercontent.com. [34.141.175.244])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8eda748963sm22893366b.12.2026.02.05.14.01.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Feb 2026 14:01:58 -0800 (PST)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Thu, 05 Feb 2026 22:01:57 +0000
-Subject: [PATCH] clk: samsung: gs101: harmonise symbol names (clock arrays)
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="jH4KR77T"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ABms9RLC4paailqVS6/WVLBee0LpQAOEizM1J/Ak2ErjS32kMagtcTkeVMMww1oXQm5jPV9SaqL6u9Z2uTxjavMUWUmxKHtouLAJCtjkUgtxSBQNYY5Q23y9geyr7HiCb5XzzGqFlhnUpfi8y84ePbN3lkucEmgPqDZqdBjoR1CAoatubJeYNobPZTfhO9f6dRCJBISACxRAiBEE9xTTUEUYYh9NEnqdhqLdP+Zfb8+8EDQh0cGe8AGl6g2841e7Hbm1YG18mHwZgTTEDyL0Vc5QSjSlTvnUJFQ1XMglTw8m58fV6E4rd2nMQ6Qj3rVS4AgBTeAhCtGYMnNsG4rwvA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bfeRaD8GQllPFKvIVEUXK2m2msjCiurgcjviSoH1Xbo=;
+ b=FM7eLQ15OmJSIx887R/K0DaNG2aoDaTjn3t9shnr9SijlJP861Hej6WFtvxDurmnXXOJa2paiyMOYHnA72IbY5Rr0Ucwru1ZuIbmxP0EI07ybGiNg6rrz9+uKB28sjIIWw+2YMqerVtoUPeYbQqMbAwvG5m3UBX7unSlUnVDY6GuYEv0D31DmMkIKMGogGdRmzqQzXGdR2YTTL2kZnhWvA72yLjZtv/h3g70lJdxU+XOLYfcJdlfqlKfpXB0sdfu9N6RBnVOjRajnKN4IlS9i9p1Rc5wDbsUETI6mZx6E2KxfdilY/itaC95kVIIUtM3Q3bL4p5FHhA7jMYYipqRLg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bfeRaD8GQllPFKvIVEUXK2m2msjCiurgcjviSoH1Xbo=;
+ b=jH4KR77Tp30HIoPukq7rDJZlNdXpecSG8QAhVr+mzHWyV9A3Mds+XxF6S/ccZHvrNWg67SU2s/9QMiT7Bz1F/cimkcpA0vSl9V2TmXatEuwssnsrxJpcOwPbpOsKddztHlITQIuBbFQQUjR5rdqeNzJMaZuNX48gDwgpUvFEMyW90RpcX02qCcQtIp1bujoFcrCzDty0HKFMjnZjI83IJD4rcE8gx8LieN98kulkm301bEdikOZWut0ACIrjyw/58GP1tZQVSTJCrpRzUGrsns3SD56CVYzdsnF7CJyBvntLGz918f3WnlEr9BGsKHoO1RGGNocHN7aEWV5f43Hsow==
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by AS8PR04MB8833.eurprd04.prod.outlook.com (2603:10a6:20b:42c::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9587.15; Fri, 6 Feb
+ 2026 00:11:13 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::4972:7eaa:b9f6:7b5e]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::4972:7eaa:b9f6:7b5e%7]) with mapi id 15.20.9587.013; Fri, 6 Feb 2026
+ 00:11:13 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Felix Gu <ustc.gu@gmail.com>, Abel Vesa <abelvesa@kernel.org>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Frank
+ Li <frank.li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+	Lucas Stach <l.stach@pengutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>,
+	Akshay Bhat <akshay.bhat@timesys.com>, Ranjani Vaidyanathan
+	<ranjani.vaidyanathan@nxp.com>, Shawn Guo <shawnguo@kernel.org>
+CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v3 0/2] clk: imx: imx6q: Fix device node reference leaks
+Thread-Topic: [PATCH v3 0/2] clk: imx: imx6q: Fix device node reference leaks
+Thread-Index: AQHclSS+QdwHmUB70keuaMcGCoIoEbV0z8tg
+Date: Fri, 6 Feb 2026 00:11:13 +0000
+Message-ID:
+ <PAXPR04MB8459FEAF3D171751E3A8E0F28866A@PAXPR04MB8459.eurprd04.prod.outlook.com>
+References: <20260203-clk-imx6q-v3-0-6cd2696bb371@gmail.com>
+In-Reply-To: <20260203-clk-imx6q-v3-0-6cd2696bb371@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|AS8PR04MB8833:EE_
+x-ms-office365-filtering-correlation-id: 4ad9abfe-7149-4cd9-ea17-08de65143d63
+x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|1800799024|19092799006|366016|38070700021|921020;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?d6DPtF2ip4Wn0vX3OXitKy4NwSk0Ukg9uf9+Qq29Vuzee5FWMePVAUkUFS2E?=
+ =?us-ascii?Q?WiOGgx612oC1T6q4OyplYx90XZKUspkVG33DdF3CssMgJbjSxRWz2Ifd3LkS?=
+ =?us-ascii?Q?bhin5moBLkeCkpD/kxp4wMis2eQikVYBB5TYy0SsfcNFGSkJyLuq0WI1MLVg?=
+ =?us-ascii?Q?U/Ft0XyKeSlRwpbyiVsrVmiUHvqPcAT7piz5ISSTF8Eg7RTFmEEF3iH0SlVw?=
+ =?us-ascii?Q?mB4NEE9jG8Ds+K5hf/zymeWPEYOpUEgkkt8IUC88enwyAOtBCWSVACOsf4LC?=
+ =?us-ascii?Q?2Thfv5UG+mUBSWRVc431ZqNEKf15mTiaFLeJtaGLzAcjp97ROx7uZHFUfkzO?=
+ =?us-ascii?Q?WfW+FxGmTD6W33ED1Mm1PMPb/SHJKuGSMeYk17itOvKQo35lKPoB6K926RWp?=
+ =?us-ascii?Q?KVq5VpREciPLBT+X5zNld45jdcaAcZwFKWvSTlS3mQmu8x+9C6F5x3hEnHok?=
+ =?us-ascii?Q?3nwcEfM2pERrBVZ8aKz3r6dWJZXWvBeO736+KkZmhdNrOQcgjMPZ2OnWqibG?=
+ =?us-ascii?Q?r9XEEsAdtd+XteBad9VmwvxswstugM/DZsl+kKZr3eYAX/zlnl5gCWkoBb6O?=
+ =?us-ascii?Q?KGBm3WWnuryNT05D0kuumM66rcn6kISfCxpHFK0PyhXuWo8gFO4HGra8B19a?=
+ =?us-ascii?Q?/wO4ROzNrMZqqwKEJ885fl1VJMag1p1s+lvSQCbLAPVoXUKb6IptwWdnctws?=
+ =?us-ascii?Q?dad6lHlHLKQpIOBTdLBncPWgSTUUGxCxF46qt8/jGRGfyohW9mYkst/tTQFs?=
+ =?us-ascii?Q?D4JskQE7wn2nbpm+AYUhai52PTzLpK0EkPWQpHyLuKu2p2gB9YpeegejQN5o?=
+ =?us-ascii?Q?w2dcuT6VDGteKpMmY/fjr7aGETgyvfiak55bGDH7th/noK5CYVWXCTksLQiw?=
+ =?us-ascii?Q?dLn5FM7tq/sKATvVXFpybGa278Ji6C6vx0NZuwKT7Zp4XnNIgz9FtQ6h3Nnk?=
+ =?us-ascii?Q?MQLzCxdewa6l9RPhLFrCBqCagcqIEL33SJAGkU09pCHY+b02jrrlf+Xj/zpY?=
+ =?us-ascii?Q?9cE0Kst0SoNrV40zTgot0FRn3A8vkI3ZvPPF3SxJJjGvNXIowlLUMmIU0r7C?=
+ =?us-ascii?Q?nD/c8Q4jqPrhqtpqbnJKVjpE7IoH030twNkk2cuP2JWNGzeIyt0NMUGhQSAc?=
+ =?us-ascii?Q?yqHHYhEDSxnvNUYhrPaKUU4yWn4kIDpjzag8lW1Halj2U+TdfR3yyc2csXXa?=
+ =?us-ascii?Q?D7rkcpQTUML9Ys2mT+XGP5Dd04l04gu0FHD75oErB+86LgI+d+LwRkNXczV9?=
+ =?us-ascii?Q?8QtGxa1vHQZ5YP+8Mak1tf2y9eIt0ln21pMumg2cz20NkYBM2ujQxnXJkuFw?=
+ =?us-ascii?Q?etpICfes5QX9kGPT3QZGwsPDtG20hpA2kr8VyuWVQ9gSsOG0rp5nEY5dgqUO?=
+ =?us-ascii?Q?pS60uLV8iLS6vsh79gg9v+QClWhHVwSR/+jwERHiYY3T0v1vGrWdL7SqtRRT?=
+ =?us-ascii?Q?TdAkjomHMnPeB20cJqjPqnf6c1D1jxk9q7Xth1Qy049547BmrUA2kgt32Hun?=
+ =?us-ascii?Q?8hNBxgz3IReTTYEkM7uNTE9dftLFOwBcD8cydzHBVlIdIavXRMGb+lYT5lKQ?=
+ =?us-ascii?Q?ciAvCJ98hXryxXTZx3ENeLdeAWHUP3sZNHnRq4Ld/+AzLqMyCtLPXtPVuZNd?=
+ =?us-ascii?Q?V1aOta9wn7bTixxYhWrMm8H4iYx9XShOouGUDnt7aIqI?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(19092799006)(366016)(38070700021)(921020);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?R91iaReZgX0RUdlts9rgPmR1Nepps1G0zf/HEnVHuTVvTaQpTAsWYXJY81gq?=
+ =?us-ascii?Q?Ti9xtZivVait0ByNu3as3w5iou+UwfZ3hDHAZqH7Rw/WyjYIOmmW9pB53eqt?=
+ =?us-ascii?Q?7HlRk3CeLruobSQmPWf3rLschWLmUIFe6OpxozA1yrVjBTS/z5Yvs6Y6eoDw?=
+ =?us-ascii?Q?7ykhv/hTE2ywYNoNBS9CGIRDS4QaOoQCQJNOPUHIPYXri7gjuJarb5iEdsg1?=
+ =?us-ascii?Q?qFzt6Kb1pBBlLO/Aw11IiwNGVuuO9jvATFXcMWibZTTqhvDMX4XWGM839ufd?=
+ =?us-ascii?Q?ia7BSsf36KPCAxwcmhjcPIIjXj704QGuiQBuKeGYS1AXOKf7yotRIewFlNfK?=
+ =?us-ascii?Q?2xaIKF7K5UVKFw5Fyn1setzeyrx8ms1O1zlsIfLclrNt5RBJu32LjMfs8V50?=
+ =?us-ascii?Q?RkXIJdMFkWqrlpJcvonSI2EPuVuJLp5mX8yUsygRMVlRvWiiWUZPIvuUsse6?=
+ =?us-ascii?Q?45EDbQAvgBa/MOJtIRkyqzMDfStAGqU2/W5Es97/eRGmgxLzXR/Fu0QWDpy/?=
+ =?us-ascii?Q?JlP4qf0cFstJ9ELysV5wUp59ZqjoCo5y4F8/M1kb+6B/GUUo/NLauT07QrEC?=
+ =?us-ascii?Q?T/A1+WJ8ECuCzrdWcQE4bcQY6OmTFpPujQ+oPUFRJRMlmHQeqFTI3uxhuB3I?=
+ =?us-ascii?Q?WfmNNmxbIm7nLLOsW/HiGnH8YkVNp1CW534M5EbuI6Y8CEcKt7YyDaMHoMHC?=
+ =?us-ascii?Q?egRhuzTRWYJspUsgjrnF1r5k+6CDkPnPJcEQ46qzDsadrNtnDF829UIEcTSo?=
+ =?us-ascii?Q?rH0ej+Z6r8PGx9yS+cCOmM7lABvCwu1rkc9BdJKmq+ozls5THL22evxiaxbn?=
+ =?us-ascii?Q?udM3ycdg78gRYTr7Yy/fmc1YIbMJjyR8FTaWrb+GZSOOiT5dhrKSqu/apTiz?=
+ =?us-ascii?Q?JIhDSRa/XwTI1Pc29bGDn3aXUxDng25qRwY75n4BoIJdhWIrq98wGOIQHyQd?=
+ =?us-ascii?Q?+8EdnPbN/mfTgnkQomlMaueagUBmYCW2VSG/N/lhESLamOVbkPN2OC/EwKnj?=
+ =?us-ascii?Q?1XStbrhiJWEclXQD/gIjy52fqVjJIiL+sr/qFQUlrdywpy9p1jRlEAyHhF5k?=
+ =?us-ascii?Q?OdkPFAEKO98Yx5/lHZzJ9W25ozrbD3i9K7+oy7DdhTLgsvMN9/0ZXMhE8ngH?=
+ =?us-ascii?Q?SeVHYx2xdpmVsrjSG5J2Daj7Ho/zJ9ib6QehLGNHuiwSXsnColaC91XxsN1l?=
+ =?us-ascii?Q?/Ce/iOcmesJUEKvX6jMg8qAJF88+zs7AlMtzci9eKYGdkihee2qOxW94xD2N?=
+ =?us-ascii?Q?2dU/s5365I3y4eWoGmxAPiqQ1Rr8F0t2M8pOili+lmB7+XxbSDpntS2815pP?=
+ =?us-ascii?Q?pDLBPnTPv/Y4clHZlB5aCFm75bt432d+bdGtnxzWYbM5chd+vJ1WWj+kN+QP?=
+ =?us-ascii?Q?fg7qr3QQW5R/8EQtuuiXJoB270u1MZb8FeTDfhD3HgQ9js9sp9HvhwAFZMBV?=
+ =?us-ascii?Q?YW/MhPiX7pPwo0jLvJeLQXoplJBYHDE0ppqdX1a/HdEvj2lMMw2oVsGHjDTE?=
+ =?us-ascii?Q?weZ7kFWD6infer9F7zSY+MxCD+apvaUROXcscSvkBqsEzKxOdniUjlV9YqPp?=
+ =?us-ascii?Q?UsE0o7fhoqjiJEfEnoAlui1Pbn+maasLP/9U8ipKqskZU+px+LtdzXQ+1bJy?=
+ =?us-ascii?Q?vcOwq4XRMpoRlsPH9EBnQZaN/jlEH/tMdOEuXZIZUWVMxISlI2TcWjk4sdhF?=
+ =?us-ascii?Q?sMHEbODFt6guQf9Ben+5OBhtBzXmtKcyavUGOPW4S69eLa5H?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20260205-clk-gs101-symbol-names-v1-1-a7d9a7a4d108@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAFQThWkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIzMDQyNj3eScbN30YkMDQ93iytyk/BzdvMTc1GJdA3NzEwsLC9Pk5MQkJaD
- mgqLUtMwKsMHRsbW1ALdxm+xoAAAA
-X-Change-ID: 20260123-clk-gs101-symbol-names-07748885ccab
-To: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: Juan Yescas <jyescas@google.com>, kernel-team@android.com, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.2
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4ad9abfe-7149-4cd9-ea17-08de65143d63
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Feb 2026 00:11:13.6714
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Nl+cb2Yn2vtjcA+6/uyptgkdhTgKuxYa+I9YUsMpTqaY/NVekDykAwnGFiTMCHIu6imJqI6s2r+9Zwms3xozrw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8833
 
-Most symbols for the clock descriptions (arrays) don't have a cmu_
-prefix and all symbols have a _clks suffix where appropriate.
+> Subject: [PATCH v3 0/2] clk: imx: imx6q: Fix device node reference
+> leaks
+>=20
+> Signed-off-by: Felix Gu <ustc.gu@gmail.com>
+>=20
+> ---
+> Felix Gu (2):
+>       clk: imx: imx6q: Fix device node reference leak in pll6_bypassed()
+>       clk: imx: imx6q: Fix device node reference leak in
+> of_assigned_ldb_sels()
 
-Update the few outliers to also fall into this same scheme for
-consistency.
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
 
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- drivers/clk/samsung/clk-gs101.c | 52 ++++++++++++++++++++---------------------
- 1 file changed, 26 insertions(+), 26 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs101.c
-index 44a8ecd332fddce7d4e162219528462ce3c8c03f..d2bcd3a9daf8939157640c4e7a00da3d39ac309e 100644
---- a/drivers/clk/samsung/clk-gs101.c
-+++ b/drivers/clk/samsung/clk-gs101.c
-@@ -339,7 +339,7 @@
- #define GENERALIO_ACD_CHANNEL_3				0x3f0c
- #define GENERALIO_ACD_MASK				0x3f14
- 
--static const unsigned long cmu_top_clk_regs[] __initconst = {
-+static const unsigned long top_clk_regs[] __initconst = {
- 	PLL_LOCKTIME_PLL_SHARED0,
- 	PLL_LOCKTIME_PLL_SHARED1,
- 	PLL_LOCKTIME_PLL_SHARED2,
-@@ -638,7 +638,7 @@ static const unsigned long cmu_top_clk_regs[] __initconst = {
- 	GENERALIO_ACD_MASK,
- };
- 
--static const struct samsung_pll_clock cmu_top_pll_clks[] __initconst = {
-+static const struct samsung_pll_clock top_pll_clks[] __initconst = {
- 	/* CMU_TOP_PURECLKCOMP */
- 	PLL(pll_0517x, CLK_FOUT_SHARED0_PLL, "fout_shared0_pll", "oscclk",
- 	    PLL_LOCKTIME_PLL_SHARED0, PLL_CON3_PLL_SHARED0,
-@@ -952,7 +952,7 @@ PNAME(mout_cmu_cmuref_p)	= { "mout_cmu_top_boost_option1",
-  * For gates remove _UID _BLK _IPCLKPORT and _RSTNSYNC
-  */
- 
--static const struct samsung_mux_clock cmu_top_mux_clks[] __initconst = {
-+static const struct samsung_mux_clock top_mux_clks[] __initconst = {
- 	MUX(CLK_MOUT_PLL_SHARED0, "mout_pll_shared0", mout_pll_shared0_p,
- 	    PLL_CON0_PLL_SHARED0, 4, 1),
- 	MUX(CLK_MOUT_PLL_SHARED1, "mout_pll_shared1", mout_pll_shared1_p,
-@@ -1108,7 +1108,7 @@ static const struct samsung_mux_clock cmu_top_mux_clks[] __initconst = {
- 	    CLK_CON_MUX_MUX_CMU_CMUREF, 0, 1),
- };
- 
--static const struct samsung_div_clock cmu_top_div_clks[] __initconst = {
-+static const struct samsung_div_clock top_div_clks[] __initconst = {
- 	DIV(CLK_DOUT_CMU_BO_BUS, "dout_cmu_bo_bus", "gout_cmu_bo_bus",
- 	    CLK_CON_DIV_CLKCMU_BO_BUS, 0, 4),
- 	DIV(CLK_DOUT_CMU_BUS0_BUS, "dout_cmu_bus0_bus", "gout_cmu_bus0_bus",
-@@ -1253,13 +1253,13 @@ static const struct samsung_div_clock cmu_top_div_clks[] __initconst = {
- 	    "mout_pll_shared3", CLK_CON_DIV_PLL_SHARED3_DIV2, 0, 1),
- };
- 
--static const struct samsung_fixed_factor_clock cmu_top_ffactor[] __initconst = {
-+static const struct samsung_fixed_factor_clock top_ffactor_clks[] __initconst = {
- 	FFACTOR(CLK_DOUT_CMU_HSI0_USBDPDBG, "dout_cmu_hsi0_usbdpdbg",
- 		"gout_cmu_hsi0_usbdpdbg", 1, 4, 0),
- 	FFACTOR(CLK_DOUT_CMU_OTP, "dout_cmu_otp", "oscclk", 1, 8, 0),
- };
- 
--static const struct samsung_gate_clock cmu_top_gate_clks[] __initconst = {
-+static const struct samsung_gate_clock top_gate_clks[] __initconst = {
- 	GATE(CLK_GOUT_CMU_BUS0_BOOST, "gout_cmu_bus0_boost",
- 	     "mout_cmu_boost_option1", CLK_CON_GAT_CLKCMU_BUS0_BOOST, 21, 0, 0),
- 	GATE(CLK_GOUT_CMU_BUS1_BOOST, "gout_cmu_bus1_boost",
-@@ -1425,19 +1425,19 @@ static const struct samsung_gate_clock cmu_top_gate_clks[] __initconst = {
- };
- 
- static const struct samsung_cmu_info top_cmu_info __initconst = {
--	.pll_clks		= cmu_top_pll_clks,
--	.nr_pll_clks		= ARRAY_SIZE(cmu_top_pll_clks),
--	.mux_clks		= cmu_top_mux_clks,
--	.nr_mux_clks		= ARRAY_SIZE(cmu_top_mux_clks),
--	.div_clks		= cmu_top_div_clks,
--	.nr_div_clks		= ARRAY_SIZE(cmu_top_div_clks),
--	.fixed_factor_clks	= cmu_top_ffactor,
--	.nr_fixed_factor_clks	= ARRAY_SIZE(cmu_top_ffactor),
--	.gate_clks		= cmu_top_gate_clks,
--	.nr_gate_clks		= ARRAY_SIZE(cmu_top_gate_clks),
-+	.pll_clks		= top_pll_clks,
-+	.nr_pll_clks		= ARRAY_SIZE(top_pll_clks),
-+	.mux_clks		= top_mux_clks,
-+	.nr_mux_clks		= ARRAY_SIZE(top_mux_clks),
-+	.div_clks		= top_div_clks,
-+	.nr_div_clks		= ARRAY_SIZE(top_div_clks),
-+	.fixed_factor_clks	= top_ffactor_clks,
-+	.nr_fixed_factor_clks	= ARRAY_SIZE(top_ffactor_clks),
-+	.gate_clks		= top_gate_clks,
-+	.nr_gate_clks		= ARRAY_SIZE(top_gate_clks),
- 	.nr_clk_ids		= CLKS_NR_TOP,
--	.clk_regs		= cmu_top_clk_regs,
--	.nr_clk_regs		= ARRAY_SIZE(cmu_top_clk_regs),
-+	.clk_regs		= top_clk_regs,
-+	.nr_clk_regs		= ARRAY_SIZE(top_clk_regs),
- 	.auto_clock_gate	= true,
- 	.gate_dbg_offset	= GS101_GATE_DBG_OFFSET,
- 	.option_offset		= CMU_CMU_TOP_CONTROLLER_OPTION,
-@@ -2434,15 +2434,15 @@ PNAME(mout_hsi0_usb31drd_p)		= { "fout_usb_pll",
- 					    "dout_hsi0_usb31drd",
- 					    "fout_usb_pll" };
- 
--static const struct samsung_pll_rate_table cmu_hsi0_usb_pll_rates[] __initconst = {
-+static const struct samsung_pll_rate_table hsi0_usb_pll_rates[] __initconst = {
- 	PLL_35XX_RATE(24576000, 19200000, 150, 6, 5),
- 	{ /* sentinel */ }
- };
- 
--static const struct samsung_pll_clock cmu_hsi0_pll_clks[] __initconst = {
-+static const struct samsung_pll_clock hsi0_pll_clks[] __initconst = {
- 	PLL(pll_0518x, CLK_FOUT_USB_PLL, "fout_usb_pll", "oscclk",
- 	    PLL_LOCKTIME_PLL_USB, PLL_CON3_PLL_USB,
--	    cmu_hsi0_usb_pll_rates),
-+	    hsi0_usb_pll_rates),
- };
- 
- static const struct samsung_mux_clock hsi0_mux_clks[] __initconst = {
-@@ -2660,8 +2660,8 @@ static const struct samsung_fixed_rate_clock hsi0_fixed_clks[] __initconst = {
- };
- 
- static const struct samsung_cmu_info hsi0_cmu_info __initconst = {
--	.pll_clks		= cmu_hsi0_pll_clks,
--	.nr_pll_clks		= ARRAY_SIZE(cmu_hsi0_pll_clks),
-+	.pll_clks		= hsi0_pll_clks,
-+	.nr_pll_clks		= ARRAY_SIZE(hsi0_pll_clks),
- 	.mux_clks		= hsi0_mux_clks,
- 	.nr_mux_clks		= ARRAY_SIZE(hsi0_mux_clks),
- 	.div_clks		= hsi0_div_clks,
-@@ -2791,7 +2791,7 @@ static const struct samsung_cmu_info hsi0_cmu_info __initconst = {
- #define QCH_CON_UFS_EMBD_QCH_FMP													0x3094
- #define QUEUE_CTRL_REG_BLK_HSI2_CMU_HSI2												0x3c00
- 
--static const unsigned long cmu_hsi2_clk_regs[] __initconst = {
-+static const unsigned long hsi2_clk_regs[] __initconst = {
- 	PLL_CON0_MUX_CLKCMU_HSI2_BUS_USER,
- 	PLL_CON1_MUX_CLKCMU_HSI2_BUS_USER,
- 	PLL_CON0_MUX_CLKCMU_HSI2_MMC_CARD_USER,
-@@ -3166,8 +3166,8 @@ static const struct samsung_cmu_info hsi2_cmu_info __initconst = {
- 	.gate_clks		= hsi2_gate_clks,
- 	.nr_gate_clks		= ARRAY_SIZE(hsi2_gate_clks),
- 	.nr_clk_ids		= CLKS_NR_HSI2,
--	.clk_regs		= cmu_hsi2_clk_regs,
--	.nr_clk_regs		= ARRAY_SIZE(cmu_hsi2_clk_regs),
-+	.clk_regs		= hsi2_clk_regs,
-+	.nr_clk_regs		= ARRAY_SIZE(hsi2_clk_regs),
- 	.sysreg_clk_regs	= dcrg_memclk_sysreg,
- 	.nr_sysreg_clk_regs	= ARRAY_SIZE(dcrg_memclk_sysreg),
- 	.clk_name		= "bus",
-
----
-base-commit: 9845cf73f7db6094c0d8419d6adb848028f4a921
-change-id: 20260123-clk-gs101-symbol-names-07748885ccab
-
-Best regards,
--- 
-André Draszik <andre.draszik@linaro.org>
+>=20
+>  drivers/clk/imx/clk-imx6q.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+> ---
+> base-commit: 33a647c659ffa5bdb94abc345c8c86768ff96215
+> change-id: 20260130-clk-imx6q-9c4b8835fc26
+>=20
+> Best regards,
+> --
+> Felix Gu <ustc.gu@gmail.com>
 
