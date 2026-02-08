@@ -1,116 +1,173 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D348B2D8797;
-	Sun,  8 Feb 2026 11:26:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F050C2D0C95
+	for <linux-clk@vger.kernel.org>; Sun,  8 Feb 2026 13:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770549977; cv=none; b=lmwjL+fU7CzyBf2R1kH0TsqJLSHCid/WHEFEvpF/wz/V4m15Z+jaFJm9n//6Y4rfUAQJPfY4VFBr/wONVqZTxA0RCVFNQB4mtoeFCG9dJ9/q8OCipsmplgFIzbGBTih4byYtxPZNNjLCYR/x5JE4xkwe94X5sfSGm3Hzq4MRuck=
+	t=1770559084; cv=none; b=Kqn7xp8tu7PwDSu7NcHGHvUTQxkuMLsXTtYtgm2PSGu/3mHvYMaXGBSFbuveIk5RvY9m+te2F4hocoZtIL9k0cJcPk30G4lcVFaS96mCg0c9uI4vGSnj2+FaSQEGBgumju3tpaA3CxhxBS599LUb7Gerya7yAXoKSm60cag6Jz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770549977; c=relaxed/simple;
-	bh=MIQaFm+mVYPbMUThq0gQqfvnOU8g9x8m9zL9ClrzgwA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YAWeTC7ZSzD3PyAwzWGA7EnqJlsW/f0tVw6Y6OCkcv7v00bZfa48P/+RiGa92lebdd6PK1ZcTfwjKKjJXwSgtNdvadLenwgCWPVuq2Nsv65SnEzWddUYkYdMvsrTG3fwbH9NcOo3ZsvDQtTaCcOa8aIEZ8fXteJk7sKYS1B/rA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WKXbfjHg; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WKXbfjHg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9D6CC4CEF7;
-	Sun,  8 Feb 2026 11:26:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770549977;
-	bh=MIQaFm+mVYPbMUThq0gQqfvnOU8g9x8m9zL9ClrzgwA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WKXbfjHg3WAtptJ0gH0xheEvs2PPkv/gXLJlQ4gZF7kfJRzzsjDQcUTXaSaBX6/Pw
-	 mWVxIEV3Bqa5QOApaOmVKzjwRmMhHXNI0R9L9Wd+9Ybjd45+XEW0sxcTIwLB+s/o6Z
-	 94k9Q9XquJzK7G+vkMdJR7BieWhN2sGTKc1hnj7I9VaVSnHWA7odZwr4qmL5pXkMty
-	 L9hS9MtQv0Hg2LpX2A6Cv6aOGhs/4mDa+4G1EpxbDYuUwlP9aWQXv1KB4HZDVcxDpM
-	 RkNd8W38aRmC/69YRtsbTjkKN8Ly/TLfSMuszsN8HEUGbGu79xsDo9wCWdIf80COZx
-	 tA3e9WR4oHSaA==
-Message-ID: <007a761a-a419-43c3-981b-13e2cd977972@kernel.org>
-Date: Sun, 8 Feb 2026 12:26:11 +0100
+	s=arc-20240116; t=1770559084; c=relaxed/simple;
+	bh=YnMdYrPRmABGTA354900TUIDfcbXfaSv4jL06On68C8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WDxUNe442RbSTv/3kCyCXqgd7gslMgLtbJxlPtE4knTveDJp2ulRGGlJTersqNtRs0uGYwYE3xAe4e61EEzuY6cIJm9rVu2PoGlkwCWcnx7l8U6YM6yx2nvQU+Zi80z1TkSVOP8IAZRjpr1FHzlylOWNKitLtMUk9zfaLOQoqXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-59b834e3d64so2430217e87.2
+        for <linux-clk@vger.kernel.org>; Sun, 08 Feb 2026 05:58:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770559081; x=1771163881;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=584eDfC1mUTdyJpPvHvHXMYm+KHiPo1etMl4F2Gr3Us=;
+        b=U55hJTmC6B3jKnIAoQsR5gyl1zaGLjXAZGOwvoA0hi7KF1a/NGOLjxFPOwOmIDzIuH
+         3Wn4DHaHDjIsRybH42JtsL06VLps2htNoE9n+wk2Oxpbujr+Ps3kszrFK9R0LSKEGQRn
+         LcX6mp7I/EuMe1wYz7FV26sZ0Ehp6fNtueecmEon9RO96hznIltFkumYUoUQAn092Kmy
+         zyQzkKRPDOF51tgv0YfklVCWvwvL9Jv1DRqk/cSi2jyZ7qaD3CEfZ7D8qRrkYiJ+3Yzg
+         AI6gSaQSDsYNaqZDDuNwyAJ0AHIO8saMMU40B8XO5NzkQ0dNEoemq6mFEXpEpDj/8Wpy
+         twTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWgsl8UcFj5HpVl84nhCQOKtj/RoJMWzNvol9H/5q/l0auf7Noq8izh1wbGnk4lSydYlF4308SeP9A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/3R3HuUVFYlNH/Ps8SYusJo4ljtSuDVRodzbIMRjoJvxHSOOT
+	Y0OWtKmajwuBvWiVeMsQQg6JiNhE1z4tKw2tvZTO/3AiLDO2lOvRcfAkb5neuUaa02A=
+X-Gm-Gg: AZuq6aLUozgQRIUe5J8b+WJjJcpygdww9X04nK++FumjFrvz7zSVbfWc6NqYKxAc2Q/
+	Igqk1IFQL3q0cqmeiUzdL03Ug4NjG1JvpwlRi9nIk9olkZvO5nX/DFAOMGR6HslgSojWETb27VA
+	/Rd+w+Io1+6agqFGyAPGyOgDDObiohPcgKSilGGgYUzh4KkyNR0CorI5x0A0ztiyWkI87N+v30c
+	z5Boc6cY1nxLmozAhtRa6U2h0slVlAsw86zY+G2wP34gYLl2p1k7cpY7FAlX1+QI2UJZlfge8iG
+	q8AX1BAYz8nQaHOl00OTKiy7iDbZGEwbqeexHS2ARsaytbnfPnxUwEkA1J/1WfF0J+uUUXmquOe
+	R2pMONjCsADp/qzNHrJjeZ2VmX97O0930MrkjVZDLvAAehojl1ERxvWVgqzU63i8sIo46l+jRo+
+	Wgud2eNs/feRhJ2mLuHGeuWFEG9Cz1Y1BNtDBGsj4=
+X-Received: by 2002:a05:6512:61b3:b0:59e:3e27:2cbe with SMTP id 2adb3069b0e04-59e451622cbmr2788758e87.43.1770559080326;
+        Sun, 08 Feb 2026 05:58:00 -0800 (PST)
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59e44cffdb3sm1967168e87.35.2026.02.08.05.57.59
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 08 Feb 2026 05:57:59 -0800 (PST)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-59b834e3d64so2430192e87.2
+        for <linux-clk@vger.kernel.org>; Sun, 08 Feb 2026 05:57:59 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXDSObnOCGedRbKAWOczpXx1lYvPbCAHZONcyq+rth8jLMBV1GvKLN5C/0IVM8rm8iBeL1ULvZaQQQ=@vger.kernel.org
+X-Received: by 2002:a05:6512:23a3:b0:59e:1930:d92a with SMTP id
+ 2adb3069b0e04-59e450493a2mr2868949e87.12.1770559079022; Sun, 08 Feb 2026
+ 05:57:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 8/8] arm64: defconfig: Enable VIDEOCC and CAMCC drivers on
- Qualcomm X1P42100
-To: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jagadeesh Kona <quic_jkona@quicinc.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
- Imran Shaik <imran.shaik@oss.qualcomm.com>,
- Taniya Das <taniya.das@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20260128-purwa-videocc-camcc-v1-0-b23de57df5ba@oss.qualcomm.com>
- <20260128-purwa-videocc-camcc-v1-8-b23de57df5ba@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20260128-purwa-videocc-camcc-v1-8-b23de57df5ba@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20260205154202.21819-1-me@ziyao.cc>
+In-Reply-To: <20260205154202.21819-1-me@ziyao.cc>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sun, 8 Feb 2026 21:57:46 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66rvs_wM-vUrMiKHGCmVi2hKXsiBhmr8ATwfXnXv24trQ@mail.gmail.com>
+X-Gm-Features: AZwV_QiLLl3AbUKlP4o-7k8Poc_d9wUqBrpqUspJjZNjI39LjV85LvTD7PCo2OE
+Message-ID: <CAGb2v66rvs_wM-vUrMiKHGCmVi2hKXsiBhmr8ATwfXnXv24trQ@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: Avoid DT fetch in possible_parent_show if clk_hw
+ is provided
+To: Yao Zi <me@ziyao.cc>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Drew Fustini <fustini@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 27/01/2026 20:26, Jagadeesh Kona wrote:
-> Enable video and camera clock controller drivers for their respective
-> functionalities on Qualcomm X1P42100-CRD and similar other platforms
-> with Snapdragon X1P42100 SoC.
-> 
-> Signed-off-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+On Thu, Feb 5, 2026 at 11:42=E2=80=AFPM Yao Zi <me@ziyao.cc> wrote:
+>
+> When showing a parent for which clk_core_get_parent_by_index fails, we
+> may try using the parent's global name or the local name. If this fails
+> either, the parent clock's clock-output-names is fetched through
+> DT-index.
+>
+> struct clk_hw pointer takes precedence with DT-index when registering
+> clocks, thus most drivers only zero the index member of struct
+> clk_parent_data when providing the parent through struct clk_hw pointer.
+> If the pointer cannot resovle to a clock, clk_core_get_parent_by_index
+
+                        ^ typo here.
+
+> will fail as well, in which case possible_parent_show will fetch the
+> parent's clock-output-names property, treat the unintended, zeroed index
+> as valid, and yield a misleading name if the clock controller does come
+> with a clocks property.
+>
+> Let's add an extra check against the struct clk_hw pointer, and only
+> perform the DT-index-based fetch if it isn't provided.
+>
+> Fixes: 2d156b78ce8f ("clk: Fix debugfs clk_possible_parents for clks with=
+out parent string names")
+> Signed-off-by: Yao Zi <me@ziyao.cc>
+> Tested-by: Drew Fustini <fustini@kernel.org>
 > ---
+>  drivers/clk/clk.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> This was found when fixing the wrong parent description of
+> clk-th1520-ap.c[1]. Without the patch,
+>
+>         # cat /sys/kernel/debug/clk/c910/clk_possible_parents
+>         osc_24m cpu-pll1
+>
+> The first parent should be c910-i0, provided by an unresolvable struct
+> clk_hw pointer. osc_24m is the first (and only) parent specified in
+> devicetree for the clock controller. With the patch,
+>
+>         # cat /sys/kernel/debug/clk/c910/clk_possible_parents
+>         (missing) cpu-pll1
+>
+> [1]: https://lore.kernel.org/linux-riscv/20250705052028.24611-1-ziyao@dis=
+root.org/
+>
+> Changed from v1:
+> - Collect tags
+> - Switch to my new mail address
+> - Link to v1: https://lore.kernel.org/all/20250705095816.29480-2-ziyao@di=
+sroot.org/
+>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 85d2f2481acf..a9d1aea59689 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -3588,7 +3588,7 @@ static void possible_parent_show(struct seq_file *s=
+, struct clk_core *core,
+>         } else if (core->parents[i].fw_name) {
+>                 seq_printf(s, "<%s>(fw)", core->parents[i].fw_name);
+>         } else {
+> -               if (core->parents[i].index >=3D 0)
+> +               if (!core->parents[i].hw && core->parents[i].index >=3D 0=
+)
+>                         name =3D of_clk_get_parent_name(core->of_node, co=
+re->parents[i].index);
+>                 if (!name)
+>                         name =3D "(missing)";
+
+I think this is slightly wrong. It should never fall back to looking
+to the other sources if parents[i].hw is a valid pointer, since that
+takes precedence.
+
+I think it should look more like:
+
+parent =3D clk_core_get_parent_by_index(core, i);
+if (parent) {
+        seq_puts(s, parent->name);
+} else if (!core->parents[i].hw) {
+        if (core->parents[i].name) {
+                seq_puts(s, core->parents[i].name);
+        } else if (core->parents[i].fw_name) {
+                seq_printf(s, "<%s>(fw)", core->parents[i].fw_name);
+        } else {
+                if (core->parents[i].index >=3D 0)
+                        name =3D of_clk_get_parent_name(core->of_node,
+core->parents[i].index);
+                if (!name)
+                        name =3D "(missing)";
+                seq_puts(s, name);
+        }
+}
+
+Anyway, thank you for fixing this. I wrote the original code and this was
+one of the corner cases that we didn't have on the sunxi platform.
 
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-
-Best regards,
-Krzysztof
+ChenYu
