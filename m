@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9615542049;
-	Sun,  8 Feb 2026 09:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D348B2D8797;
+	Sun,  8 Feb 2026 11:26:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770543909; cv=none; b=C3HLh7AR5TLQJtQ9DO7Q+O3B4x4v+6o201DxD/z2Jh9BIfwnW6bPs65o/zmYgrhZInIGJzgVAGjAu61yY4J/ZSHT1MhltNIrSG8bPws/4jXc8FaNAz1vNGEefZqNh71xCU+7HzXncJ9BicQFmCTyEMIAMDWknVfmqHCWqjxB2UI=
+	t=1770549977; cv=none; b=lmwjL+fU7CzyBf2R1kH0TsqJLSHCid/WHEFEvpF/wz/V4m15Z+jaFJm9n//6Y4rfUAQJPfY4VFBr/wONVqZTxA0RCVFNQB4mtoeFCG9dJ9/q8OCipsmplgFIzbGBTih4byYtxPZNNjLCYR/x5JE4xkwe94X5sfSGm3Hzq4MRuck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770543909; c=relaxed/simple;
-	bh=FIQg0zmD65iPVufX+m5FEFh4Z4LKQ7VDLk2wjOo/qCk=;
+	s=arc-20240116; t=1770549977; c=relaxed/simple;
+	bh=MIQaFm+mVYPbMUThq0gQqfvnOU8g9x8m9zL9ClrzgwA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N92cuoBmtIz/JmN5tGXKPXJPTJsiz6gbztle9srhidZMkTiFVa3NXnidQ3RcQsUCb8SQuHKIXh/jsTIEV8el4oQZt1Sw1b5yfg0FnAYK4KjZLR24MSGBBlVy8mKn5ephFs32GtneX2jd0XaZc38g6l7V36Bgxh8dpFU9S240M0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bZZuMnB2; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=YAWeTC7ZSzD3PyAwzWGA7EnqJlsW/f0tVw6Y6OCkcv7v00bZfa48P/+RiGa92lebdd6PK1ZcTfwjKKjJXwSgtNdvadLenwgCWPVuq2Nsv65SnEzWddUYkYdMvsrTG3fwbH9NcOo3ZsvDQtTaCcOa8aIEZ8fXteJk7sKYS1B/rA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WKXbfjHg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bZZuMnB2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A601C4CEF7;
-	Sun,  8 Feb 2026 09:45:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WKXbfjHg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9D6CC4CEF7;
+	Sun,  8 Feb 2026 11:26:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770543909;
-	bh=FIQg0zmD65iPVufX+m5FEFh4Z4LKQ7VDLk2wjOo/qCk=;
+	s=k20201202; t=1770549977;
+	bh=MIQaFm+mVYPbMUThq0gQqfvnOU8g9x8m9zL9ClrzgwA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bZZuMnB29q82TNoks3Sk5Zp68uuY7hshQik8SChh2sZDShRkSzuFYz+pyHDRPYu7B
-	 tQfgiz7lPoMqY2MH/r9FcySRokmHo1+DWtaYD3UW5+VVlY/lEnpI6egBPROImOca+W
-	 KMIfqnon8weZykJJ/X0nTYc1N7+ec46eifhPZ149NU519zP1BualaBEKYmPDm7qFJx
-	 CshKM6ix1ECOjslst+qIy56Fq5jaJmCJVeThAJGDxYODOiYelbGlKEwxKaxdxAto9R
-	 ABhU+Po42gw/9gGlnnbBZLq09xVl6fAkliFjo+IA1hLPbDPsGLtHgQco+BqTYbUxQ1
-	 2GnGkNGE1cIlg==
-Message-ID: <19a5b5dd-a3d2-4246-8519-ac9125d8698b@kernel.org>
-Date: Sun, 8 Feb 2026 10:45:01 +0100
+	b=WKXbfjHg3WAtptJ0gH0xheEvs2PPkv/gXLJlQ4gZF7kfJRzzsjDQcUTXaSaBX6/Pw
+	 mWVxIEV3Bqa5QOApaOmVKzjwRmMhHXNI0R9L9Wd+9Ybjd45+XEW0sxcTIwLB+s/o6Z
+	 94k9Q9XquJzK7G+vkMdJR7BieWhN2sGTKc1hnj7I9VaVSnHWA7odZwr4qmL5pXkMty
+	 L9hS9MtQv0Hg2LpX2A6Cv6aOGhs/4mDa+4G1EpxbDYuUwlP9aWQXv1KB4HZDVcxDpM
+	 RkNd8W38aRmC/69YRtsbTjkKN8Ly/TLfSMuszsN8HEUGbGu79xsDo9wCWdIf80COZx
+	 tA3e9WR4oHSaA==
+Message-ID: <007a761a-a419-43c3-981b-13e2cd977972@kernel.org>
+Date: Sun, 8 Feb 2026 12:26:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,33 +35,23 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/7] dt-bindings: clock: qcom,sm8250-videocc: account
- for the MX domain
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
+Subject: Re: [PATCH 8/8] arm64: defconfig: Enable VIDEOCC and CAMCC drivers on
+ Qualcomm X1P42100
+To: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
- Jonathan Marek <jonathan@marek.ca>, Ulf Hansson <ulf.hansson@linaro.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Bryan O'Donoghue <bod@kernel.org>,
- Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
- Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Stanimir Varbanov <stanimir.varbanov@linaro.org>,
- Abhinav Kumar <abhinav.kumar@linux.dev>, Hans Verkuil <hverkuil@kernel.org>,
- Stefan Schmidt <stefan.schmidt@linaro.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
+ <conor+dt@kernel.org>, Jagadeesh Kona <quic_jkona@quicinc.com>,
  Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Dikshita Agarwal <dikshita@qti.qualcomm.com>, linux-arm-msm@vger.kernel.org,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+ Imran Shaik <imran.shaik@oss.qualcomm.com>,
+ Taniya Das <taniya.das@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org,
  linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-media@vger.kernel.org,
- Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-References: <20260204-iris-venus-fix-sm8250-v3-0-70fa68e57f96@oss.qualcomm.com>
- <20260204-iris-venus-fix-sm8250-v3-1-70fa68e57f96@oss.qualcomm.com>
- <20260205-abiding-beautiful-locust-6ee1b5@quoll>
- <mlpe7ph27grv4bulvwlo5lbbsjmwqqfwc3rrfwfcu7tl7qltsu@xrtzonb2t44k>
+ linux-kernel@vger.kernel.org
+References: <20260128-purwa-videocc-camcc-v1-0-b23de57df5ba@oss.qualcomm.com>
+ <20260128-purwa-videocc-camcc-v1-8-b23de57df5ba@oss.qualcomm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -107,40 +97,20 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <mlpe7ph27grv4bulvwlo5lbbsjmwqqfwc3rrfwfcu7tl7qltsu@xrtzonb2t44k>
+In-Reply-To: <20260128-purwa-videocc-camcc-v1-8-b23de57df5ba@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 05/02/2026 13:48, Dmitry Baryshkov wrote:
->>
->>> +  clock-names:
->>> +    items:
->>> +      - const: iface
->>> +      - const: bi_tcxo
->>> +      - const: bi_tcxo_ao
->>> +
->>> +  power-domains:
->>> +    items:
->>> +      - description:
->>> +          A phandle and PM domain specifier for the MMCX power domain.
->>> +      - description:
->>> +          A phandle and PM domain specifier for the MX power domain.
->>
->> This is an ABI break, so please say in the commit what was not working
->> or why this ABI break is really justified. Currently you just give a
->> hint that it is needed for PLL configuration, but honestly - why would
->> we care to configure PLL if everything was working correct before?
+On 27/01/2026 20:26, Jagadeesh Kona wrote:
+> Enable video and camera clock controller drivers for their respective
+> functionalities on Qualcomm X1P42100-CRD and similar other platforms
+> with Snapdragon X1P42100 SoC.
 > 
-> I must admit, I c&p'ed the commit message from [1] which was ack'ed by
-> Rob and accepted into the kernel. What is the difference?
+> Signed-off-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+> ---
 
-No difference. To me both are insufficiently explained as fixes, but
-other maintainer might have different opinion. I don't mind that.
 
-> 
-> [1] https://lore.kernel.org/all/20250530-videocc-pll-multi-pd-voting-v5-1-02303b3a582d@quicinc.com/
-> 
-
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 Best regards,
 Krzysztof
