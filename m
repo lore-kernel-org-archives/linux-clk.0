@@ -1,143 +1,507 @@
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7283A344DBF
-	for <linux-clk@vger.kernel.org>; Sun,  8 Feb 2026 21:39:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.182
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770586791; cv=pass; b=NwUr/nxmCbtf48XZG/WbU1FZBJDDyjV2QtIZoMq+ie0JbGm3OYR6GGeVIW+euAyWSVZ/YazLMhs7o0vaypVrp4PUzdu2dbtdLR07APNlng4JTB1DiY8yYX1P12J+QkeYoate1YklwiOcjLWMFujNqv3lyDDfEhOd2F04j17RtzI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770586791; c=relaxed/simple;
-	bh=bE4KLuNDmmwdLE9+ipQbVHt6P79ExA5fyxCMLhhgUHI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fJFkP3t53u2QSgWKmExgQ+BYReNdfAQShsM25Q1GCF4H63Os/KaXFRknLxXcdslsuSGtFsWCIIKu9sSvo+27sTlupA7yxqlwa9IA4I4W3A58OAb7j9uF7ToPmof+i3aRl5nuN6/rYGqHyVnpfpQtMe5VIFK/Pz/s23KrGOrCf9o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oss.tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=ISNt0Wcb; arc=pass smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oss.tenstorrent.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7FC0286D57
+	for <linux-clk@vger.kernel.org>; Sun,  8 Feb 2026 22:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770589367; cv=none; b=LK7XlJkqivSHg8Rbw7Na+jcx8fXCJFAwEJDHD2/u890BYOyp32W5Lgzd0/YgEzD1k8EAgox1uj6BonombZbv96Z6e1YOqOXTy7TSw4PuO4iRVImyLruY7ProwrZIlHlHRcPv27gry+FzfwelAQ327nqmXhbvz/+TQmIAcpeGtkg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770589367; c=relaxed/simple;
+	bh=a8K7gK1IeOYPo+N47SGzN7ysjbqx9pbIooPB7+PdatA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Nmxm+ct+IAe62Vvzw+y7VfF+xdqxpv1ZBFSe3qcsyWHqMD676ggNu9ZSJfaZwk0Jo4MnHFEbjcQnJop4C47oTnyINnaf/cnAkLuZ90RHYiw9CgcOQHZBoQmxyDKNbruhawN7anuRKhtaGeI10tIneISb5X8+J43Y4GWvVDyXkMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=WY2xfOdy; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="ISNt0Wcb"
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-7945838691aso60297767b3.0
-        for <linux-clk@vger.kernel.org>; Sun, 08 Feb 2026 13:39:50 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1770586790; cv=none;
-        d=google.com; s=arc-20240605;
-        b=jev6S4l+pF3Aab3mM8y3aJy2BVwDJvWbcstGQDhWnXIH9/teEgVldZ6Vs186+QaoRM
-         E4z9aEGeCNzDhpWNyq2MUZFhrAAvJS2XsWt4INhPH2SCGZ+CMWA4REfU8z38YpeuEAwS
-         tbqM3f06SDe1QZgk/X5ojcsgRyibZTQhlaIVQEWMQedBsDopcjTewIt+var8O1k7s3fT
-         q/aTagx7paEUlAVChPqSfZR1RcyQFbb8tNYUiF7U5SJvcYt4PoKJTrnY5gMTVcsCRZFO
-         0aqkY/j7ol6xj3APB3DiuXuD/+Ldc3qVHChEqyc0fnKTtb7inCb38qYxXtJMZkr++5B2
-         yn5w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=bE4KLuNDmmwdLE9+ipQbVHt6P79ExA5fyxCMLhhgUHI=;
-        fh=2RjucZBdwekNpHdGrsZAysXjXfTUW3ZwpJPD9uwjzwY=;
-        b=FkeiyDZZZe16vfgrQc9tdwcyW2gz9RPGSn71nW/AjUfLVJwnHv4FbToIrSp7Kxycgx
-         xKKqWbUioHOXtO0tFyZhmoSc9SbU4yWIFEWIxkn6gWJWjsCFlOw8uvTtJrBc9byL+GWq
-         2RTef4MdlPj7gmrfkoLzjVPAe2C4Bp7ggPRG06IYQsXfpyDsHvv+Uy1N78QsoK9HK/lV
-         +zEGw6nlSM3fAkbaovQMM6diqqsXfJxXrem3Mxv2wOGHRfELauK63vT18GvhoFAVeXW8
-         z6xT/E1qYFC6ZeN2/RycQLy39STj27KI0FAA9n50nBYpRZxCnmL8UnnWSMI9vt8pNZDG
-         CqpQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1770586790; x=1771191590; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bE4KLuNDmmwdLE9+ipQbVHt6P79ExA5fyxCMLhhgUHI=;
-        b=ISNt0WcbRgPjx3kC/9pbRh4YChVp5vK0PmK8CQJXxPJUWWxNwUrXNhju+4zhQKeXHO
-         hPzQ1hjwY9DFgQiSGXOcxSccfYhaqhYO2AqDAsr453CUlXpWHSoFMj5ekRUqL9/vZsfe
-         hoy1WUiUPAQ6r05j7VXC2AeFBD2oT+a7GtP9wTzNljQ3SDSL9GXs0X5PiSosb/KoEG/L
-         7/aYslmWH6c1db9BTeaSGQzlizP15komLGRH5TFT9GNtk6SYzQs3LeEWWsiko/Vgs1au
-         TLdh6h2tm0xtF6lZYR1XlpRg6riLrXcB8o+6zY8ChZJjIJ/AmYSO+yeJfsIYtxBqiZfa
-         MBTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770586790; x=1771191590;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=bE4KLuNDmmwdLE9+ipQbVHt6P79ExA5fyxCMLhhgUHI=;
-        b=w6bYDw+SS7SJJrwvGiJmabxZwaYyDJi3/nevqITX/uPe26KuYkj+j8mRllcP9oK27Z
-         XsMc1q2SIcxlIKkNwbvaiLLohsilr8KmURANls3YkMLxX17DbMSiWm/lYRr54sD8ClVS
-         YNRSn30o5UeNeoXTnpRMxOJTxUUtJJO0Tb3nRDgmpA65Ihu1GlMMaW67cdTE9ARL8MmQ
-         V1fPyukj2INkP7FtmoU7UvKLqrIVysj85RvYzARX3ijtYMsLPQbzksbB3ucEghOpK8JX
-         84rcGBxc0yp3Hqm4DN2UAm1LSq5mFm03psJ2NN5iQJieKa5yc4ina40Scrla1p9HeVE2
-         mHKA==
-X-Forwarded-Encrypted: i=1; AJvYcCXcB72Xa4L7mYsppqo3Fw478Bzlg4Ji7w4b7UYUE+3vVkKL+nlL3kEt4hRjCrmJKItl2m/7mHrwgzg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxII9KcF+fD/NxwIxzEepXfZ83YURjkCXK8P1EUAqPrl/IPAPgQ
-	7YcoCZhUQQtVIl54xri/5glg0gG+aVc3Z2F7ksX8cbVtiftRLEgeK/ZWUthuPDHwBxfSwAn1fVV
-	ZMgQM0gge1XcocJ4k73qge5pHg1Xf8DRNYdjvx5yyrw==
-X-Gm-Gg: AZuq6aKJ0jutUKcK5idawXYn5opVMvzEeniHHgKfoWJA7APB0enr3YAozw+N89T+0rk
-	FKY76pJfkWrsMpj0hSGAcAL5HV9vdMWmVrBOiz3Phuei21sgC2IDPDt5sJSOQhUEP4Uk3SckUAK
-	q9gzJN3hzahsPd17Vt5FL6kAClZumCHdH4F0TMMp1h0XmZFm/KOGRLmF6IrOeLM6WvqtbOLGhSF
-	EwqITKm3AN6Dm3bpFxmE1HzWeIc0k6dRCs3dGmTx9rgMK4AcgtVR1x64bAUoOSrcHepzThx0cor
-	gsAmSbDWu8m41yfODy/OX0WoEAoSSn+F4OwXe2Gw6VtcsGB8Jsq0fjvbmg==
-X-Received: by 2002:a53:cb85:0:b0:649:b062:674a with SMTP id
- 956f58d0204a3-649f253441dmr6382827d50.37.1770586790136; Sun, 08 Feb 2026
- 13:39:50 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="WY2xfOdy"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1770589365;
+ bh=L2aNrlKPZvg+AUjYVCqkyqFsXqfOmQTY4HLKMlMQjCQ=;
+ b=WY2xfOdyetbiOZke2EepWfdCs2xhX0D0qq5bWIAmdqnAo9YM9i82qTToo6+urNlG9ajBcy2qp
+ C9BNXsUMrXFIrkCdllxUYyXD50pty7hFv/4DataGCofrpOF00WImqI2c9tCCyeIPv3+/muGSGVu
+ D50TGt84AVnDuqaPMuzDj1TtT9ZKAlMyJCSDlnd+axnELM6AKSmcTbk2miUPW3MRExs3UlcibDg
+ 2S/MOEm1GdEyWpANz8AFsflylnhlGDgiGQWduVrWUHd0JvPAaSrR/FlOxMmUe12aE10UpkYC6YA
+ JsTXZROpzspmEAbopf6ofRJTeIonGLb+RSwg1if+r5fQ==
+X-Forward-Email-ID: 69890cafa6487c2810b19df6
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-Forward-Email-Version: 2.6.2
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <3a2f5dad-84de-4afd-baaf-42f7d68cba7b@kwiboo.se>
+Date: Sun, 8 Feb 2026 23:22:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260202-atlantis-clocks-v5-0-0922e43acaba@oss.tenstorrent.com>
- <20260202-atlantis-clocks-v5-1-0922e43acaba@oss.tenstorrent.com>
- <20260205-upbeat-tortoise-of-admiration-b3c0eb@quoll> <CAEev2e8_4LSLNvHsiC4d7Rrd2GmjQ_5GRHU6b9-Ha69+yvn5cA@mail.gmail.com>
- <92512903-4651-4ac3-b3ea-c9297e866a3a@kernel.org> <CAEev2e99LEoi83_d09NEJwzcSiYdFFZvLOFZUTRRrYtL_qCErw@mail.gmail.com>
- <e242a327-b53e-4b24-a9c1-9ae990de901e@kernel.org> <20260207-stifle-chowtime-8502c0a57f70@spud>
- <6ebcb1a9-78ca-4734-8723-758f79e6819e@kernel.org>
-In-Reply-To: <6ebcb1a9-78ca-4734-8723-758f79e6819e@kernel.org>
-From: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
-Date: Sun, 8 Feb 2026 15:39:39 -0600
-X-Gm-Features: AZwV_QgkEwTCiwXuHTTQ3WLCXuNOfifaUxe6wncI1nA-Tus6DJ7O3arSqaM8mRM
-Message-ID: <CAEev2e9ukBSgWc5WT1xcv+G1ZzOWAnuwp9kaJcKKe6mbtOtoFA@mail.gmail.com>
-Subject: Re: [PATCH v5 1/3] dt-bindings: clk: tenstorrent: Add tenstorrent,atlantis-prcm
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Conor Dooley <conor@kernel.org>, Drew Fustini <dfustini@oss.tenstorrent.com>, 
-	Joel Stanley <jms@oss.tenstorrent.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-riscv@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, joel@jms.id.au, fustini@kernel.org, mpe@kernel.org, 
-	mpe@oss.tenstorrent.com, npiggin@oss.tenstorrent.com, agross@kernel.org, 
-	agross@oss.tenstorrent.com, bmasney@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: rockchip: Add RV1103B CRU
+ support
+To: Fabio Estevam <festevam@gmail.com>
+Cc: sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, Fabio Estevam <festevam@nabladev.com>
+References: <20260207130256.2832815-1-festevam@gmail.com>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <20260207130256.2832815-1-festevam@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, Feb 7, 2026 at 12:39=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On 07/02/2026 15:54, Conor Dooley wrote:
-> >>>>> suggests picking a more generic name in this case, so isn't
-> >>>>> "tenstorrent,atlantis-prcm" okay for that?
-> >>>>
-> >>>> No, because I don't want to keep guessing this. The docs clearly ask=
- you
-> >>>> to post complete bindings, which now became less-complete, but fine.
-> >
-> > I don't think it actually is "less complete" without the other
-> > compatibles. The non-rcpu prcms function differently to the rcpu prcm
-> > (they seem to be consumers of clocks that the rcpu produces) and are no=
-t
-> > supported by the drivers in this series. They're different devices and =
-I
-> > think should only be documented when support for them comes along. v4
-> > had problems that were caused by trying to document them without
-> > actually having driver support figured out.
->
-> It's fine without them, but then let's just name the file after that
-> only sole compatible.
+Hi Fabio,
 
-Okay, thank you for clarifying this. I will just add one compatible
-and name the bindings file based on that one.
+On 2/7/2026 2:02 PM, Fabio Estevam wrote:
+> From: Fabio Estevam <festevam@nabladev.com>
+> 
+> Add support for the Rockchip RV1103B Clock and Reset Unit (CRU).
+> 
+> The RV1103B CRU is compatible with the existing RV1126B binding.
+> Add the compatible string to the schema and introduce the
+> corresponding clock ID definitions.
+> 
+> Signed-off-by: Fabio Estevam <festevam@nabladev.com>
+> ---
+> Changes since v1:
+> - Make it a separate series.
+> - Start the clock index from zero and without gaps.
+> - Remove the reset definitions as there is no consumer for them yet.
+> - Squash yaml and dt-bindings.
+> 
+>  .../bindings/clock/rockchip,rv1126b-cru.yaml  |   1 +
+>  .../dt-bindings/clock/rockchip,rv1103b-cru.h  | 220 ++++++++++++++++++
+>  2 files changed, 221 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/rockchip,rv1103b-cru.h
 
-In the future when I add the remaining compatibles (and driver for
-them), should I add them to this same bindings file? Can I rename the
-file to have a more generic name then? Is renaming bindings files
-okay? Or is this something to worry about for later?
+This should probably also include the reset indices or will that be a
+separate series to extend this clock and reset dt-binding?
 
->
-> Best regards,
-> Krzysztof
+Below is the indices decoded and renumbered from vendor kernel, along
+with some macros that can possible be used with the reset driver part.
+
+Generated by a small script I used with resets for e.g. rk3528.
+
+#define SRST_A_PERI_BIU			0
+#define SRST_H_HPMCU_BIU		1
+#define SRST_LS_PERI_BIU		2
+#define SRST_P_PERI_BIU			3
+#define SRST_P_RTC_BIU			4
+#define SRST_H_BOOTROM			5
+#define SRST_P_TIMER			6
+#define SRST_TIMER0			7
+#define SRST_TIMER1			8
+#define SRST_TIMER2			9
+#define SRST_TIMER3			10
+#define SRST_TIMER4			11
+#define SRST_TIMER5			12
+#define SRST_P_STIMER			13
+#define SRST_STIMER0			14
+#define SRST_STIMER1			15
+#define SRST_P_WDT_NS			16
+#define SRST_T_WDT_NS			17
+#define SRST_P_WDT_S			18
+#define SRST_T_WDT_S			19
+#define SRST_P_WDT_HPMCU		20
+#define SRST_T_WDT_HPMCU		21
+#define SRST_P_I2C1			22
+#define SRST_I2C1			23
+#define SRST_P_I2C2			24
+#define SRST_I2C2			25
+#define SRST_P_I2C3			26
+#define SRST_I2C3			27
+#define SRST_P_I2C4			28
+#define SRST_I2C4			29
+#define SRST_P_UART2			30
+#define SRST_S_UART2			31
+#define SRST_P_UART1			32
+#define SRST_S_UART1			33
+#define SRST_P_SPI0			34
+#define SRST_SPI0			35
+#define SRST_P_PWM1			36
+#define SRST_PWM1			37
+#define SRST_P_PWM2			38
+#define SRST_PWM2			39
+#define SRST_A_RKDMA			40
+#define SRST_P_TSADC			41
+#define SRST_TSADC			42
+#define SRST_P_SARADC			43
+#define SRST_SARADC			44
+#define SRST_SARADC_PHY			45
+#define SRST_P_RTC_TEST			46
+#define SRST_P_GPIO2			47
+#define SRST_DB_GPIO2			48
+#define SRST_P_IOC_VCCIO6		49
+#define SRST_P_PERI_SGRF		50
+#define SRST_P_PERI_GRF			51
+#define SRST_P_CRU_PERI			52
+#define SRST_A_USBOTG			53
+#define SRST_H_SDMMC1			54
+#define SRST_H_SAI			55
+#define SRST_M_SAI			56
+#define SRST_CORE_CRYPTO		57
+#define SRST_PKA_CRYPTO			58
+#define SRST_A_CRYPTO			59
+#define SRST_H_CRYPTO			60
+#define SRST_H_RK_RNG_NS		61
+#define SRST_H_RK_RNG_S			62
+#define SRST_P_OTPC_NS			63
+#define SRST_SBPI_OTPC_NS		64
+#define SRST_USER_OTPC_NS		65
+#define SRST_P_OTPC_S			66
+#define SRST_SBPI_OTPC_S		67
+#define SRST_USER_OTPC_S		68
+#define SRST_OTPC_ARB			69
+#define SRST_P_OTP_MASK			70
+#define SRST_H_RGA			71
+#define SRST_A_RGA			72
+#define SRST_CORE_RGA			73
+#define SRST_A_MAC			74
+#define SRST_MACPHY			75
+#define SRST_A_SPINLOCK			76
+#define SRST_H_CACHE			77
+#define SRST_P_HPMCU_MAILBOX		78
+#define SRST_P_HPMCU_INTMUX		79
+#define SRST_HPMCU_FULL_CLUSTER		80
+#define SRST_HPMCU_PWUP			81
+#define SRST_HPMCU_ONLY_CORE		82
+#define SRST_T_HPMCU_JTAG		83
+#define SRST_D_DECOM			84
+#define SRST_A_DECOM			85
+#define SRST_P_DECOM			86
+#define SRST_A_SYS_SRAM			87
+#define SRST_P_DMA2DDR			88
+#define SRST_A_DMA2DDR			89
+#define SRST_P_DCF			90
+#define SRST_A_DCF			91
+#define SRST_USBPHY_POR			92
+#define SRST_USBPHY_OTG			93
+#define SRST_A_VEPU_BIU			94
+#define SRST_LS_VEPU_BIU		95
+#define SRST_REF_PVTPLL_VEPU		96
+#define SRST_H_VEPU			97
+#define SRST_A_VEPU			98
+#define SRST_CORE_VEPU			99
+#define SRST_P_VEPU_PVTPLL		100
+#define SRST_P_CRU_VEPU			101
+#define SRST_P_VEPU_GRF			102
+#define SRST_P_IOC_VCCIO3		103
+#define SRST_P_ACODEC			104
+#define SRST_P_USBPHY			105
+#define SRST_REF_PVTPLL_NPU		106
+#define SRST_A_NPU_BIU			107
+#define SRST_LS_NPU_BIU			108
+#define SRST_H_RKNN			109
+#define SRST_A_RKNN			110
+#define SRST_P_NPU_PVTPLL		111
+#define SRST_P_CRU_NPU			112
+#define SRST_P_NPU_GRF			113
+#define SRST_LS_VI_BIU			114
+#define SRST_A_VI_BIU			115
+#define SRST_REF_PVTPLL_ISP		116
+#define SRST_CORE_ISP			117
+#define SRST_D_VICAP			118
+#define SRST_A_VICAP			119
+#define SRST_H_VICAP			120
+#define SRST_ISP0RESETN_VICAP		121
+#define SRST_P_CSI2HOST0		122
+#define SRST_P_CSI2HOST1		123
+#define SRST_S_SFC_2X			124
+#define SRST_H_EMMC			125
+#define SRST_H_SFC			126
+#define SRST_H_SFC_XIP			127
+#define SRST_H_SDMMC0			128
+#define SRST_P_CSIPHY			129
+#define SRST_P_GPIO1			130
+#define SRST_DB_GPIO1			131
+#define SRST_P_IOC_VCCIO47		132
+#define SRST_P_VI_GRF			133
+#define SRST_P_CRU_VI			134
+#define SRST_P_VI_PVTPLL		135
+#define SRST_REF_PVTPLL_CORE		136
+#define SRST_NCOREPORESET		137
+#define SRST_NCORESET			138
+#define SRST_NDBGRESET			139
+#define SRST_NL2RESET			140
+#define SRST_A_CORE_BIU			141
+#define SRST_P_CORE_BIU			142
+#define SRST_H_CORE_BIU			143
+#define SRST_P_DBG			144
+#define SRST_POT_DBG			145
+#define SRST_NT_DBG			146
+#define SRST_LS_DDR_BIU			147
+#define SRST_P_DDRC			148
+#define SRST_P_DDRMON			149
+#define SRST_TIMER_DDRMON		150
+#define SRST_P_DFICTRL			151
+#define SRST_P_DDR_GRF			152
+#define SRST_P_CRU_DDR			153
+#define SRST_H_DDRPHY			154
+#define SRST_DDR_BIU			155
+#define SRST_A_DDRSCH_CPU		156
+#define SRST_A_DDRSCH_VI		157
+#define SRST_A_DDRSCH_NPVD		158
+#define SRST_CORE_DDRC			159
+#define SRST_DDRMON			160
+#define SRST_DFICTRL			161
+#define SRST_DFI_SCRAMBLE		162
+#define SRST_P_CRU			163
+#define SRST_P_CRU_BIU			164
+#define SRST_DDRPHY			165
+#define SRST_P_PMU_GPIO0		166
+#define SRST_DB_PMU_GPIO0		167
+#define SRST_DDR_FAIL_SAFE		168
+#define SRST_P_PMU_HP_TIMER		169
+#define SRST_PMU_HP_TIMER		170
+#define SRST_PMU_32K_HP_TIMER		171
+#define SRST_P_I2C0			172
+#define SRST_I2C0			173
+#define SRST_P_UART0			174
+#define SRST_S_UART0			175
+#define SRST_P_IOC_PMUIO0		176
+#define SRST_P_CRU_PMU			177
+#define SRST_P_PMU_GRF			178
+#define SRST_P_PMU_SGRF			179
+#define SRST_P_PMU_SGRF_REMAP		180
+#define SRST_PREROLL			181
+#define SRST_PREROLL_32K		182
+#define SRST_H_PMU_SRAM			183
+#define SRST_P_PWM0			184
+#define SRST_PWM0			185
+#define SRST_LPMCU			186
+#define SRST_LPMCU_PWRUP		187
+#define SRST_LPMCU_CPU			188
+#define SRST_T_LPMCU_CPU		189
+#define SRST_P_SPI2AHB			190
+#define SRST_H_SPI2AHB			191
+#define SRST_S_SPI2AHB			192
+#define SRST_LS_PMU_BIU			193
+#define SRST_P_WDT_LPMCU		194
+#define SRST_T_WDT_LPMCU		195
+#define SRST_H_SFC_PMU1			196
+#define SRST_H_SFC_XIP_PMU1		197
+#define SRST_S_SFC_2X_PMU1		198
+#define SRST_P_LPMCU_MAILBOX		199
+#define SRST_P_IOC_PMUIO1		200
+#define SRST_P_CRU_PMU1			201
+
+	CRU_RESET_OFFSET(SRST_A_PERI_BIU, 0, 2),
+	CRU_RESET_OFFSET(SRST_H_HPMCU_BIU, 0, 3),
+	CRU_RESET_OFFSET(SRST_LS_PERI_BIU, 0, 4),
+	CRU_RESET_OFFSET(SRST_P_PERI_BIU, 0, 5),
+	CRU_RESET_OFFSET(SRST_P_RTC_BIU, 0, 6),
+	CRU_RESET_OFFSET(SRST_H_BOOTROM, 0, 7),
+	CRU_RESET_OFFSET(SRST_P_TIMER, 1, 0),
+	CRU_RESET_OFFSET(SRST_TIMER0, 1, 1),
+	CRU_RESET_OFFSET(SRST_TIMER1, 1, 2),
+	CRU_RESET_OFFSET(SRST_TIMER2, 1, 3),
+	CRU_RESET_OFFSET(SRST_TIMER3, 1, 4),
+	CRU_RESET_OFFSET(SRST_TIMER4, 1, 5),
+	CRU_RESET_OFFSET(SRST_TIMER5, 1, 6),
+	CRU_RESET_OFFSET(SRST_P_STIMER, 1, 7),
+	CRU_RESET_OFFSET(SRST_STIMER0, 1, 8),
+	CRU_RESET_OFFSET(SRST_STIMER1, 1, 9),
+	CRU_RESET_OFFSET(SRST_P_WDT_NS, 2, 0),
+	CRU_RESET_OFFSET(SRST_T_WDT_NS, 2, 1),
+	CRU_RESET_OFFSET(SRST_P_WDT_S, 2, 2),
+	CRU_RESET_OFFSET(SRST_T_WDT_S, 2, 3),
+	CRU_RESET_OFFSET(SRST_P_WDT_HPMCU, 2, 4),
+	CRU_RESET_OFFSET(SRST_T_WDT_HPMCU, 2, 5),
+	CRU_RESET_OFFSET(SRST_P_I2C1, 2, 6),
+	CRU_RESET_OFFSET(SRST_I2C1, 2, 7),
+	CRU_RESET_OFFSET(SRST_P_I2C2, 2, 8),
+	CRU_RESET_OFFSET(SRST_I2C2, 2, 9),
+	CRU_RESET_OFFSET(SRST_P_I2C3, 2, 10),
+	CRU_RESET_OFFSET(SRST_I2C3, 2, 11),
+	CRU_RESET_OFFSET(SRST_P_I2C4, 2, 12),
+	CRU_RESET_OFFSET(SRST_I2C4, 2, 13),
+	CRU_RESET_OFFSET(SRST_P_UART2, 3, 0),
+	CRU_RESET_OFFSET(SRST_S_UART2, 3, 1),
+	CRU_RESET_OFFSET(SRST_P_UART1, 3, 2),
+	CRU_RESET_OFFSET(SRST_S_UART1, 3, 3),
+	CRU_RESET_OFFSET(SRST_P_SPI0, 3, 10),
+	CRU_RESET_OFFSET(SRST_SPI0, 3, 11),
+	CRU_RESET_OFFSET(SRST_P_PWM1, 4, 6),
+	CRU_RESET_OFFSET(SRST_PWM1, 4, 7),
+	CRU_RESET_OFFSET(SRST_P_PWM2, 4, 12),
+	CRU_RESET_OFFSET(SRST_PWM2, 4, 13),
+	CRU_RESET_OFFSET(SRST_A_RKDMA, 5, 8),
+	CRU_RESET_OFFSET(SRST_P_TSADC, 5, 9),
+	CRU_RESET_OFFSET(SRST_TSADC, 5, 10),
+	CRU_RESET_OFFSET(SRST_P_SARADC, 5, 12),
+	CRU_RESET_OFFSET(SRST_SARADC, 5, 13),
+	CRU_RESET_OFFSET(SRST_SARADC_PHY, 6, 0),
+	CRU_RESET_OFFSET(SRST_P_RTC_TEST, 6, 1),
+	CRU_RESET_OFFSET(SRST_P_GPIO2, 6, 3),
+	CRU_RESET_OFFSET(SRST_DB_GPIO2, 6, 4),
+	CRU_RESET_OFFSET(SRST_P_IOC_VCCIO6, 6, 5),
+	CRU_RESET_OFFSET(SRST_P_PERI_SGRF, 6, 6),
+	CRU_RESET_OFFSET(SRST_P_PERI_GRF, 6, 7),
+	CRU_RESET_OFFSET(SRST_P_CRU_PERI, 6, 8),
+	CRU_RESET_OFFSET(SRST_A_USBOTG, 6, 9),
+	CRU_RESET_OFFSET(SRST_H_SDMMC1, 7, 0),
+	CRU_RESET_OFFSET(SRST_H_SAI, 7, 1),
+	CRU_RESET_OFFSET(SRST_M_SAI, 7, 2),
+	CRU_RESET_OFFSET(SRST_CORE_CRYPTO, 8, 0),
+	CRU_RESET_OFFSET(SRST_PKA_CRYPTO, 8, 1),
+	CRU_RESET_OFFSET(SRST_A_CRYPTO, 8, 2),
+	CRU_RESET_OFFSET(SRST_H_CRYPTO, 8, 3),
+	CRU_RESET_OFFSET(SRST_H_RK_RNG_NS, 8, 4),
+	CRU_RESET_OFFSET(SRST_H_RK_RNG_S, 8, 5),
+	CRU_RESET_OFFSET(SRST_P_OTPC_NS, 8, 6),
+	CRU_RESET_OFFSET(SRST_SBPI_OTPC_NS, 8, 8),
+	CRU_RESET_OFFSET(SRST_USER_OTPC_NS, 8, 9),
+	CRU_RESET_OFFSET(SRST_P_OTPC_S, 8, 10),
+	CRU_RESET_OFFSET(SRST_SBPI_OTPC_S, 8, 12),
+	CRU_RESET_OFFSET(SRST_USER_OTPC_S, 8, 13),
+	CRU_RESET_OFFSET(SRST_OTPC_ARB, 8, 14),
+	CRU_RESET_OFFSET(SRST_P_OTP_MASK, 8, 15),
+	CRU_RESET_OFFSET(SRST_H_RGA, 9, 0),
+	CRU_RESET_OFFSET(SRST_A_RGA, 9, 1),
+	CRU_RESET_OFFSET(SRST_CORE_RGA, 9, 2),
+	CRU_RESET_OFFSET(SRST_A_MAC, 9, 3),
+	CRU_RESET_OFFSET(SRST_MACPHY, 9, 11),
+	CRU_RESET_OFFSET(SRST_A_SPINLOCK, 10, 0),
+	CRU_RESET_OFFSET(SRST_H_CACHE, 10, 1),
+	CRU_RESET_OFFSET(SRST_P_HPMCU_MAILBOX, 10, 2),
+	CRU_RESET_OFFSET(SRST_P_HPMCU_INTMUX, 10, 3),
+	CRU_RESET_OFFSET(SRST_HPMCU_FULL_CLUSTER, 10, 4),
+	CRU_RESET_OFFSET(SRST_HPMCU_PWUP, 10, 5),
+	CRU_RESET_OFFSET(SRST_HPMCU_ONLY_CORE, 10, 6),
+	CRU_RESET_OFFSET(SRST_T_HPMCU_JTAG, 10, 7),
+	CRU_RESET_OFFSET(SRST_D_DECOM, 11, 0),
+	CRU_RESET_OFFSET(SRST_A_DECOM, 11, 1),
+	CRU_RESET_OFFSET(SRST_P_DECOM, 11, 2),
+	CRU_RESET_OFFSET(SRST_A_SYS_SRAM, 11, 3),
+	CRU_RESET_OFFSET(SRST_P_DMA2DDR, 11, 4),
+	CRU_RESET_OFFSET(SRST_A_DMA2DDR, 11, 5),
+	CRU_RESET_OFFSET(SRST_P_DCF, 11, 6),
+	CRU_RESET_OFFSET(SRST_A_DCF, 11, 7),
+	CRU_RESET_OFFSET(SRST_USBPHY_POR, 11, 12),
+	CRU_RESET_OFFSET(SRST_USBPHY_OTG, 11, 13),
+	
+	CRU_RESET_OFFSET(SRST_A_VEPU_BIU, 16384, 1),
+	CRU_RESET_OFFSET(SRST_LS_VEPU_BIU, 16384, 2),
+	CRU_RESET_OFFSET(SRST_REF_PVTPLL_VEPU, 16384, 3),
+	CRU_RESET_OFFSET(SRST_H_VEPU, 16384, 4),
+	CRU_RESET_OFFSET(SRST_A_VEPU, 16384, 5),
+	CRU_RESET_OFFSET(SRST_CORE_VEPU, 16384, 6),
+	CRU_RESET_OFFSET(SRST_P_VEPU_PVTPLL, 16384, 7),
+	CRU_RESET_OFFSET(SRST_P_CRU_VEPU, 16384, 8),
+	CRU_RESET_OFFSET(SRST_P_VEPU_GRF, 16384, 10),
+	CRU_RESET_OFFSET(SRST_P_IOC_VCCIO3, 16384, 11),
+	CRU_RESET_OFFSET(SRST_P_ACODEC, 16384, 13),
+	CRU_RESET_OFFSET(SRST_P_USBPHY, 16384, 14),
+	
+	CRU_RESET_OFFSET(SRST_REF_PVTPLL_NPU, 32768, 0),
+	CRU_RESET_OFFSET(SRST_A_NPU_BIU, 32768, 2),
+	CRU_RESET_OFFSET(SRST_LS_NPU_BIU, 32768, 3),
+	CRU_RESET_OFFSET(SRST_H_RKNN, 32768, 4),
+	CRU_RESET_OFFSET(SRST_A_RKNN, 32768, 5),
+	CRU_RESET_OFFSET(SRST_P_NPU_PVTPLL, 32768, 6),
+	CRU_RESET_OFFSET(SRST_P_CRU_NPU, 32768, 7),
+	CRU_RESET_OFFSET(SRST_P_NPU_GRF, 32768, 9),
+	
+	CRU_RESET_OFFSET(SRST_LS_VI_BIU, 49152, 1),
+	CRU_RESET_OFFSET(SRST_A_VI_BIU, 49152, 2),
+	CRU_RESET_OFFSET(SRST_REF_PVTPLL_ISP, 49152, 3),
+	CRU_RESET_OFFSET(SRST_CORE_ISP, 49152, 6),
+	CRU_RESET_OFFSET(SRST_D_VICAP, 49153, 0),
+	CRU_RESET_OFFSET(SRST_A_VICAP, 49153, 2),
+	CRU_RESET_OFFSET(SRST_H_VICAP, 49153, 3),
+	CRU_RESET_OFFSET(SRST_ISP0RESETN_VICAP, 49153, 8),
+	CRU_RESET_OFFSET(SRST_P_CSI2HOST0, 49153, 9),
+	CRU_RESET_OFFSET(SRST_P_CSI2HOST1, 49153, 11),
+	CRU_RESET_OFFSET(SRST_S_SFC_2X, 49153, 12),
+	CRU_RESET_OFFSET(SRST_H_EMMC, 49153, 13),
+	CRU_RESET_OFFSET(SRST_H_SFC, 49153, 14),
+	CRU_RESET_OFFSET(SRST_H_SFC_XIP, 49153, 15),
+	CRU_RESET_OFFSET(SRST_H_SDMMC0, 49154, 0),
+	CRU_RESET_OFFSET(SRST_P_CSIPHY, 49154, 2),
+	CRU_RESET_OFFSET(SRST_P_GPIO1, 49154, 3),
+	CRU_RESET_OFFSET(SRST_DB_GPIO1, 49154, 4),
+	CRU_RESET_OFFSET(SRST_P_IOC_VCCIO47, 49154, 5),
+	CRU_RESET_OFFSET(SRST_P_VI_GRF, 49154, 6),
+	CRU_RESET_OFFSET(SRST_P_CRU_VI, 49154, 8),
+	CRU_RESET_OFFSET(SRST_P_VI_PVTPLL, 49154, 9),
+	
+	CRU_RESET_OFFSET(SRST_REF_PVTPLL_CORE, 65536, 0),
+	CRU_RESET_OFFSET(SRST_NCOREPORESET, 65536, 1),
+	CRU_RESET_OFFSET(SRST_NCORESET, 65536, 2),
+	CRU_RESET_OFFSET(SRST_NDBGRESET, 65536, 3),
+	CRU_RESET_OFFSET(SRST_NL2RESET, 65536, 4),
+	CRU_RESET_OFFSET(SRST_A_CORE_BIU, 65536, 5),
+	CRU_RESET_OFFSET(SRST_P_CORE_BIU, 65536, 6),
+	CRU_RESET_OFFSET(SRST_H_CORE_BIU, 65536, 7),
+	CRU_RESET_OFFSET(SRST_P_DBG, 65536, 8),
+	CRU_RESET_OFFSET(SRST_POT_DBG, 65536, 9),
+	CRU_RESET_OFFSET(SRST_NT_DBG, 65536, 10),
+	
+	CRU_RESET_OFFSET(SRST_LS_DDR_BIU, 81920, 1),
+	CRU_RESET_OFFSET(SRST_P_DDRC, 81920, 2),
+	CRU_RESET_OFFSET(SRST_P_DDRMON, 81920, 3),
+	CRU_RESET_OFFSET(SRST_TIMER_DDRMON, 81920, 4),
+	CRU_RESET_OFFSET(SRST_P_DFICTRL, 81920, 5),
+	CRU_RESET_OFFSET(SRST_P_DDR_GRF, 81920, 6),
+	CRU_RESET_OFFSET(SRST_P_CRU_DDR, 81920, 7),
+	CRU_RESET_OFFSET(SRST_H_DDRPHY, 81920, 8),
+	
+	CRU_RESET_OFFSET(SRST_DDR_BIU, 90112, 1),
+	CRU_RESET_OFFSET(SRST_A_DDRSCH_CPU, 90112, 2),
+	CRU_RESET_OFFSET(SRST_A_DDRSCH_VI, 90112, 4),
+	CRU_RESET_OFFSET(SRST_A_DDRSCH_NPVD, 90112, 5),
+	CRU_RESET_OFFSET(SRST_CORE_DDRC, 90112, 6),
+	CRU_RESET_OFFSET(SRST_DDRMON, 90112, 7),
+	CRU_RESET_OFFSET(SRST_DFICTRL, 90112, 8),
+	CRU_RESET_OFFSET(SRST_DFI_SCRAMBLE, 90112, 9),
+	
+	CRU_RESET_OFFSET(SRST_P_CRU, 98304, 0),
+	CRU_RESET_OFFSET(SRST_P_CRU_BIU, 98304, 1),
+	CRU_RESET_OFFSET(SRST_DDRPHY, 98304, 12),
+	
+	CRU_RESET_OFFSET(SRST_P_PMU_GPIO0, 114688, 4),
+	CRU_RESET_OFFSET(SRST_DB_PMU_GPIO0, 114688, 5),
+	CRU_RESET_OFFSET(SRST_DDR_FAIL_SAFE, 114688, 8),
+	CRU_RESET_OFFSET(SRST_P_PMU_HP_TIMER, 114688, 9),
+	CRU_RESET_OFFSET(SRST_PMU_HP_TIMER, 114688, 10),
+	CRU_RESET_OFFSET(SRST_PMU_32K_HP_TIMER, 114688, 11),
+	CRU_RESET_OFFSET(SRST_P_I2C0, 114688, 12),
+	CRU_RESET_OFFSET(SRST_I2C0, 114688, 13),
+	CRU_RESET_OFFSET(SRST_P_UART0, 114688, 14),
+	CRU_RESET_OFFSET(SRST_S_UART0, 114688, 15),
+	CRU_RESET_OFFSET(SRST_P_IOC_PMUIO0, 114689, 0),
+	CRU_RESET_OFFSET(SRST_P_CRU_PMU, 114689, 1),
+	CRU_RESET_OFFSET(SRST_P_PMU_GRF, 114689, 2),
+	CRU_RESET_OFFSET(SRST_P_PMU_SGRF, 114689, 3),
+	CRU_RESET_OFFSET(SRST_P_PMU_SGRF_REMAP, 114689, 4),
+	CRU_RESET_OFFSET(SRST_PREROLL, 114689, 6),
+	CRU_RESET_OFFSET(SRST_PREROLL_32K, 114689, 7),
+	CRU_RESET_OFFSET(SRST_H_PMU_SRAM, 114689, 8),
+	CRU_RESET_OFFSET(SRST_P_PWM0, 114689, 9),
+	CRU_RESET_OFFSET(SRST_PWM0, 114689, 10),
+	CRU_RESET_OFFSET(SRST_LPMCU, 114690, 0),
+	CRU_RESET_OFFSET(SRST_LPMCU_PWRUP, 114690, 1),
+	CRU_RESET_OFFSET(SRST_LPMCU_CPU, 114690, 2),
+	CRU_RESET_OFFSET(SRST_T_LPMCU_CPU, 114690, 3),
+	
+	CRU_RESET_OFFSET(SRST_P_SPI2AHB, 131072, 0),
+	CRU_RESET_OFFSET(SRST_H_SPI2AHB, 131072, 1),
+	CRU_RESET_OFFSET(SRST_S_SPI2AHB, 131072, 2),
+	CRU_RESET_OFFSET(SRST_LS_PMU_BIU, 131072, 3),
+	CRU_RESET_OFFSET(SRST_P_WDT_LPMCU, 131072, 9),
+	CRU_RESET_OFFSET(SRST_T_WDT_LPMCU, 131072, 10),
+	CRU_RESET_OFFSET(SRST_H_SFC_PMU1, 131072, 12),
+	CRU_RESET_OFFSET(SRST_H_SFC_XIP_PMU1, 131072, 13),
+	CRU_RESET_OFFSET(SRST_S_SFC_2X_PMU1, 131072, 14),
+	CRU_RESET_OFFSET(SRST_P_LPMCU_MAILBOX, 131073, 8),
+	CRU_RESET_OFFSET(SRST_P_IOC_PMUIO1, 131073, 9),
+	CRU_RESET_OFFSET(SRST_P_CRU_PMU1, 131073, 10),
+
+Regards,
+Jonas
