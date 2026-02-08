@@ -1,173 +1,143 @@
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F050C2D0C95
-	for <linux-clk@vger.kernel.org>; Sun,  8 Feb 2026 13:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770559084; cv=none; b=Kqn7xp8tu7PwDSu7NcHGHvUTQxkuMLsXTtYtgm2PSGu/3mHvYMaXGBSFbuveIk5RvY9m+te2F4hocoZtIL9k0cJcPk30G4lcVFaS96mCg0c9uI4vGSnj2+FaSQEGBgumju3tpaA3CxhxBS599LUb7Gerya7yAXoKSm60cag6Jz8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770559084; c=relaxed/simple;
-	bh=YnMdYrPRmABGTA354900TUIDfcbXfaSv4jL06On68C8=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7283A344DBF
+	for <linux-clk@vger.kernel.org>; Sun,  8 Feb 2026 21:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.182
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770586791; cv=pass; b=NwUr/nxmCbtf48XZG/WbU1FZBJDDyjV2QtIZoMq+ie0JbGm3OYR6GGeVIW+euAyWSVZ/YazLMhs7o0vaypVrp4PUzdu2dbtdLR07APNlng4JTB1DiY8yYX1P12J+QkeYoate1YklwiOcjLWMFujNqv3lyDDfEhOd2F04j17RtzI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770586791; c=relaxed/simple;
+	bh=bE4KLuNDmmwdLE9+ipQbVHt6P79ExA5fyxCMLhhgUHI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WDxUNe442RbSTv/3kCyCXqgd7gslMgLtbJxlPtE4knTveDJp2ulRGGlJTersqNtRs0uGYwYE3xAe4e61EEzuY6cIJm9rVu2PoGlkwCWcnx7l8U6YM6yx2nvQU+Zi80z1TkSVOP8IAZRjpr1FHzlylOWNKitLtMUk9zfaLOQoqXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-59b834e3d64so2430217e87.2
-        for <linux-clk@vger.kernel.org>; Sun, 08 Feb 2026 05:58:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770559081; x=1771163881;
+	 To:Cc:Content-Type; b=fJFkP3t53u2QSgWKmExgQ+BYReNdfAQShsM25Q1GCF4H63Os/KaXFRknLxXcdslsuSGtFsWCIIKu9sSvo+27sTlupA7yxqlwa9IA4I4W3A58OAb7j9uF7ToPmof+i3aRl5nuN6/rYGqHyVnpfpQtMe5VIFK/Pz/s23KrGOrCf9o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oss.tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=ISNt0Wcb; arc=pass smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oss.tenstorrent.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="ISNt0Wcb"
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-7945838691aso60297767b3.0
+        for <linux-clk@vger.kernel.org>; Sun, 08 Feb 2026 13:39:50 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1770586790; cv=none;
+        d=google.com; s=arc-20240605;
+        b=jev6S4l+pF3Aab3mM8y3aJy2BVwDJvWbcstGQDhWnXIH9/teEgVldZ6Vs186+QaoRM
+         E4z9aEGeCNzDhpWNyq2MUZFhrAAvJS2XsWt4INhPH2SCGZ+CMWA4REfU8z38YpeuEAwS
+         tbqM3f06SDe1QZgk/X5ojcsgRyibZTQhlaIVQEWMQedBsDopcjTewIt+var8O1k7s3fT
+         q/aTagx7paEUlAVChPqSfZR1RcyQFbb8tNYUiF7U5SJvcYt4PoKJTrnY5gMTVcsCRZFO
+         0aqkY/j7ol6xj3APB3DiuXuD/+Ldc3qVHChEqyc0fnKTtb7inCb38qYxXtJMZkr++5B2
+         yn5w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=584eDfC1mUTdyJpPvHvHXMYm+KHiPo1etMl4F2Gr3Us=;
-        b=U55hJTmC6B3jKnIAoQsR5gyl1zaGLjXAZGOwvoA0hi7KF1a/NGOLjxFPOwOmIDzIuH
-         3Wn4DHaHDjIsRybH42JtsL06VLps2htNoE9n+wk2Oxpbujr+Ps3kszrFK9R0LSKEGQRn
-         LcX6mp7I/EuMe1wYz7FV26sZ0Ehp6fNtueecmEon9RO96hznIltFkumYUoUQAn092Kmy
-         zyQzkKRPDOF51tgv0YfklVCWvwvL9Jv1DRqk/cSi2jyZ7qaD3CEfZ7D8qRrkYiJ+3Yzg
-         AI6gSaQSDsYNaqZDDuNwyAJ0AHIO8saMMU40B8XO5NzkQ0dNEoemq6mFEXpEpDj/8Wpy
-         twTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWgsl8UcFj5HpVl84nhCQOKtj/RoJMWzNvol9H/5q/l0auf7Noq8izh1wbGnk4lSydYlF4308SeP9A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/3R3HuUVFYlNH/Ps8SYusJo4ljtSuDVRodzbIMRjoJvxHSOOT
-	Y0OWtKmajwuBvWiVeMsQQg6JiNhE1z4tKw2tvZTO/3AiLDO2lOvRcfAkb5neuUaa02A=
-X-Gm-Gg: AZuq6aLUozgQRIUe5J8b+WJjJcpygdww9X04nK++FumjFrvz7zSVbfWc6NqYKxAc2Q/
-	Igqk1IFQL3q0cqmeiUzdL03Ug4NjG1JvpwlRi9nIk9olkZvO5nX/DFAOMGR6HslgSojWETb27VA
-	/Rd+w+Io1+6agqFGyAPGyOgDDObiohPcgKSilGGgYUzh4KkyNR0CorI5x0A0ztiyWkI87N+v30c
-	z5Boc6cY1nxLmozAhtRa6U2h0slVlAsw86zY+G2wP34gYLl2p1k7cpY7FAlX1+QI2UJZlfge8iG
-	q8AX1BAYz8nQaHOl00OTKiy7iDbZGEwbqeexHS2ARsaytbnfPnxUwEkA1J/1WfF0J+uUUXmquOe
-	R2pMONjCsADp/qzNHrJjeZ2VmX97O0930MrkjVZDLvAAehojl1ERxvWVgqzU63i8sIo46l+jRo+
-	Wgud2eNs/feRhJ2mLuHGeuWFEG9Cz1Y1BNtDBGsj4=
-X-Received: by 2002:a05:6512:61b3:b0:59e:3e27:2cbe with SMTP id 2adb3069b0e04-59e451622cbmr2788758e87.43.1770559080326;
-        Sun, 08 Feb 2026 05:58:00 -0800 (PST)
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59e44cffdb3sm1967168e87.35.2026.02.08.05.57.59
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 08 Feb 2026 05:57:59 -0800 (PST)
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-59b834e3d64so2430192e87.2
-        for <linux-clk@vger.kernel.org>; Sun, 08 Feb 2026 05:57:59 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXDSObnOCGedRbKAWOczpXx1lYvPbCAHZONcyq+rth8jLMBV1GvKLN5C/0IVM8rm8iBeL1ULvZaQQQ=@vger.kernel.org
-X-Received: by 2002:a05:6512:23a3:b0:59e:1930:d92a with SMTP id
- 2adb3069b0e04-59e450493a2mr2868949e87.12.1770559079022; Sun, 08 Feb 2026
- 05:57:59 -0800 (PST)
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=bE4KLuNDmmwdLE9+ipQbVHt6P79ExA5fyxCMLhhgUHI=;
+        fh=2RjucZBdwekNpHdGrsZAysXjXfTUW3ZwpJPD9uwjzwY=;
+        b=FkeiyDZZZe16vfgrQc9tdwcyW2gz9RPGSn71nW/AjUfLVJwnHv4FbToIrSp7Kxycgx
+         xKKqWbUioHOXtO0tFyZhmoSc9SbU4yWIFEWIxkn6gWJWjsCFlOw8uvTtJrBc9byL+GWq
+         2RTef4MdlPj7gmrfkoLzjVPAe2C4Bp7ggPRG06IYQsXfpyDsHvv+Uy1N78QsoK9HK/lV
+         +zEGw6nlSM3fAkbaovQMM6diqqsXfJxXrem3Mxv2wOGHRfELauK63vT18GvhoFAVeXW8
+         z6xT/E1qYFC6ZeN2/RycQLy39STj27KI0FAA9n50nBYpRZxCnmL8UnnWSMI9vt8pNZDG
+         CqpQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tenstorrent.com; s=google; t=1770586790; x=1771191590; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bE4KLuNDmmwdLE9+ipQbVHt6P79ExA5fyxCMLhhgUHI=;
+        b=ISNt0WcbRgPjx3kC/9pbRh4YChVp5vK0PmK8CQJXxPJUWWxNwUrXNhju+4zhQKeXHO
+         hPzQ1hjwY9DFgQiSGXOcxSccfYhaqhYO2AqDAsr453CUlXpWHSoFMj5ekRUqL9/vZsfe
+         hoy1WUiUPAQ6r05j7VXC2AeFBD2oT+a7GtP9wTzNljQ3SDSL9GXs0X5PiSosb/KoEG/L
+         7/aYslmWH6c1db9BTeaSGQzlizP15komLGRH5TFT9GNtk6SYzQs3LeEWWsiko/Vgs1au
+         TLdh6h2tm0xtF6lZYR1XlpRg6riLrXcB8o+6zY8ChZJjIJ/AmYSO+yeJfsIYtxBqiZfa
+         MBTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770586790; x=1771191590;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=bE4KLuNDmmwdLE9+ipQbVHt6P79ExA5fyxCMLhhgUHI=;
+        b=w6bYDw+SS7SJJrwvGiJmabxZwaYyDJi3/nevqITX/uPe26KuYkj+j8mRllcP9oK27Z
+         XsMc1q2SIcxlIKkNwbvaiLLohsilr8KmURANls3YkMLxX17DbMSiWm/lYRr54sD8ClVS
+         YNRSn30o5UeNeoXTnpRMxOJTxUUtJJO0Tb3nRDgmpA65Ihu1GlMMaW67cdTE9ARL8MmQ
+         V1fPyukj2INkP7FtmoU7UvKLqrIVysj85RvYzARX3ijtYMsLPQbzksbB3ucEghOpK8JX
+         84rcGBxc0yp3Hqm4DN2UAm1LSq5mFm03psJ2NN5iQJieKa5yc4ina40Scrla1p9HeVE2
+         mHKA==
+X-Forwarded-Encrypted: i=1; AJvYcCXcB72Xa4L7mYsppqo3Fw478Bzlg4Ji7w4b7UYUE+3vVkKL+nlL3kEt4hRjCrmJKItl2m/7mHrwgzg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxII9KcF+fD/NxwIxzEepXfZ83YURjkCXK8P1EUAqPrl/IPAPgQ
+	7YcoCZhUQQtVIl54xri/5glg0gG+aVc3Z2F7ksX8cbVtiftRLEgeK/ZWUthuPDHwBxfSwAn1fVV
+	ZMgQM0gge1XcocJ4k73qge5pHg1Xf8DRNYdjvx5yyrw==
+X-Gm-Gg: AZuq6aKJ0jutUKcK5idawXYn5opVMvzEeniHHgKfoWJA7APB0enr3YAozw+N89T+0rk
+	FKY76pJfkWrsMpj0hSGAcAL5HV9vdMWmVrBOiz3Phuei21sgC2IDPDt5sJSOQhUEP4Uk3SckUAK
+	q9gzJN3hzahsPd17Vt5FL6kAClZumCHdH4F0TMMp1h0XmZFm/KOGRLmF6IrOeLM6WvqtbOLGhSF
+	EwqITKm3AN6Dm3bpFxmE1HzWeIc0k6dRCs3dGmTx9rgMK4AcgtVR1x64bAUoOSrcHepzThx0cor
+	gsAmSbDWu8m41yfODy/OX0WoEAoSSn+F4OwXe2Gw6VtcsGB8Jsq0fjvbmg==
+X-Received: by 2002:a53:cb85:0:b0:649:b062:674a with SMTP id
+ 956f58d0204a3-649f253441dmr6382827d50.37.1770586790136; Sun, 08 Feb 2026
+ 13:39:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260205154202.21819-1-me@ziyao.cc>
-In-Reply-To: <20260205154202.21819-1-me@ziyao.cc>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sun, 8 Feb 2026 21:57:46 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66rvs_wM-vUrMiKHGCmVi2hKXsiBhmr8ATwfXnXv24trQ@mail.gmail.com>
-X-Gm-Features: AZwV_QiLLl3AbUKlP4o-7k8Poc_d9wUqBrpqUspJjZNjI39LjV85LvTD7PCo2OE
-Message-ID: <CAGb2v66rvs_wM-vUrMiKHGCmVi2hKXsiBhmr8ATwfXnXv24trQ@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: Avoid DT fetch in possible_parent_show if clk_hw
- is provided
-To: Yao Zi <me@ziyao.cc>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Drew Fustini <fustini@kernel.org>
+References: <20260202-atlantis-clocks-v5-0-0922e43acaba@oss.tenstorrent.com>
+ <20260202-atlantis-clocks-v5-1-0922e43acaba@oss.tenstorrent.com>
+ <20260205-upbeat-tortoise-of-admiration-b3c0eb@quoll> <CAEev2e8_4LSLNvHsiC4d7Rrd2GmjQ_5GRHU6b9-Ha69+yvn5cA@mail.gmail.com>
+ <92512903-4651-4ac3-b3ea-c9297e866a3a@kernel.org> <CAEev2e99LEoi83_d09NEJwzcSiYdFFZvLOFZUTRRrYtL_qCErw@mail.gmail.com>
+ <e242a327-b53e-4b24-a9c1-9ae990de901e@kernel.org> <20260207-stifle-chowtime-8502c0a57f70@spud>
+ <6ebcb1a9-78ca-4734-8723-758f79e6819e@kernel.org>
+In-Reply-To: <6ebcb1a9-78ca-4734-8723-758f79e6819e@kernel.org>
+From: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
+Date: Sun, 8 Feb 2026 15:39:39 -0600
+X-Gm-Features: AZwV_QgkEwTCiwXuHTTQ3WLCXuNOfifaUxe6wncI1nA-Tus6DJ7O3arSqaM8mRM
+Message-ID: <CAEev2e9ukBSgWc5WT1xcv+G1ZzOWAnuwp9kaJcKKe6mbtOtoFA@mail.gmail.com>
+Subject: Re: [PATCH v5 1/3] dt-bindings: clk: tenstorrent: Add tenstorrent,atlantis-prcm
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Conor Dooley <conor@kernel.org>, Drew Fustini <dfustini@oss.tenstorrent.com>, 
+	Joel Stanley <jms@oss.tenstorrent.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-riscv@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, joel@jms.id.au, fustini@kernel.org, mpe@kernel.org, 
+	mpe@oss.tenstorrent.com, npiggin@oss.tenstorrent.com, agross@kernel.org, 
+	agross@oss.tenstorrent.com, bmasney@redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 5, 2026 at 11:42=E2=80=AFPM Yao Zi <me@ziyao.cc> wrote:
+On Sat, Feb 7, 2026 at 12:39=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
 >
-> When showing a parent for which clk_core_get_parent_by_index fails, we
-> may try using the parent's global name or the local name. If this fails
-> either, the parent clock's clock-output-names is fetched through
-> DT-index.
+> On 07/02/2026 15:54, Conor Dooley wrote:
+> >>>>> suggests picking a more generic name in this case, so isn't
+> >>>>> "tenstorrent,atlantis-prcm" okay for that?
+> >>>>
+> >>>> No, because I don't want to keep guessing this. The docs clearly ask=
+ you
+> >>>> to post complete bindings, which now became less-complete, but fine.
+> >
+> > I don't think it actually is "less complete" without the other
+> > compatibles. The non-rcpu prcms function differently to the rcpu prcm
+> > (they seem to be consumers of clocks that the rcpu produces) and are no=
+t
+> > supported by the drivers in this series. They're different devices and =
+I
+> > think should only be documented when support for them comes along. v4
+> > had problems that were caused by trying to document them without
+> > actually having driver support figured out.
 >
-> struct clk_hw pointer takes precedence with DT-index when registering
-> clocks, thus most drivers only zero the index member of struct
-> clk_parent_data when providing the parent through struct clk_hw pointer.
-> If the pointer cannot resovle to a clock, clk_core_get_parent_by_index
+> It's fine without them, but then let's just name the file after that
+> only sole compatible.
 
-                        ^ typo here.
+Okay, thank you for clarifying this. I will just add one compatible
+and name the bindings file based on that one.
 
-> will fail as well, in which case possible_parent_show will fetch the
-> parent's clock-output-names property, treat the unintended, zeroed index
-> as valid, and yield a misleading name if the clock controller does come
-> with a clocks property.
->
-> Let's add an extra check against the struct clk_hw pointer, and only
-> perform the DT-index-based fetch if it isn't provided.
->
-> Fixes: 2d156b78ce8f ("clk: Fix debugfs clk_possible_parents for clks with=
-out parent string names")
-> Signed-off-by: Yao Zi <me@ziyao.cc>
-> Tested-by: Drew Fustini <fustini@kernel.org>
-> ---
->  drivers/clk/clk.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> This was found when fixing the wrong parent description of
-> clk-th1520-ap.c[1]. Without the patch,
->
->         # cat /sys/kernel/debug/clk/c910/clk_possible_parents
->         osc_24m cpu-pll1
->
-> The first parent should be c910-i0, provided by an unresolvable struct
-> clk_hw pointer. osc_24m is the first (and only) parent specified in
-> devicetree for the clock controller. With the patch,
->
->         # cat /sys/kernel/debug/clk/c910/clk_possible_parents
->         (missing) cpu-pll1
->
-> [1]: https://lore.kernel.org/linux-riscv/20250705052028.24611-1-ziyao@dis=
-root.org/
->
-> Changed from v1:
-> - Collect tags
-> - Switch to my new mail address
-> - Link to v1: https://lore.kernel.org/all/20250705095816.29480-2-ziyao@di=
-sroot.org/
->
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 85d2f2481acf..a9d1aea59689 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -3588,7 +3588,7 @@ static void possible_parent_show(struct seq_file *s=
-, struct clk_core *core,
->         } else if (core->parents[i].fw_name) {
->                 seq_printf(s, "<%s>(fw)", core->parents[i].fw_name);
->         } else {
-> -               if (core->parents[i].index >=3D 0)
-> +               if (!core->parents[i].hw && core->parents[i].index >=3D 0=
-)
->                         name =3D of_clk_get_parent_name(core->of_node, co=
-re->parents[i].index);
->                 if (!name)
->                         name =3D "(missing)";
+In the future when I add the remaining compatibles (and driver for
+them), should I add them to this same bindings file? Can I rename the
+file to have a more generic name then? Is renaming bindings files
+okay? Or is this something to worry about for later?
 
-I think this is slightly wrong. It should never fall back to looking
-to the other sources if parents[i].hw is a valid pointer, since that
-takes precedence.
-
-I think it should look more like:
-
-parent =3D clk_core_get_parent_by_index(core, i);
-if (parent) {
-        seq_puts(s, parent->name);
-} else if (!core->parents[i].hw) {
-        if (core->parents[i].name) {
-                seq_puts(s, core->parents[i].name);
-        } else if (core->parents[i].fw_name) {
-                seq_printf(s, "<%s>(fw)", core->parents[i].fw_name);
-        } else {
-                if (core->parents[i].index >=3D 0)
-                        name =3D of_clk_get_parent_name(core->of_node,
-core->parents[i].index);
-                if (!name)
-                        name =3D "(missing)";
-                seq_puts(s, name);
-        }
-}
-
-Anyway, thank you for fixing this. I wrote the original code and this was
-one of the corner cases that we didn't have on the sunxi platform.
-
-
-ChenYu
+>
+> Best regards,
+> Krzysztof
