@@ -1,352 +1,195 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC233164DC;
-	Mon,  9 Feb 2026 05:49:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FCB61917ED;
+	Mon,  9 Feb 2026 08:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770616148; cv=none; b=XrpG6UYy2RlODD2ot31cORHV4JYYrDWN1gtu9H1GRwvPBhxXWERYGVNPJ61ylIaCWDlq+khTNYJjRqo4tJAhE5YeLBsgygv2NHb9w5I+6QMSrLnbubIoi2QON8YCmmdEJq6ReegGOSL6DF6TyAyuyn81gpm66Nyf+seSm2kc5cc=
+	t=1770625102; cv=none; b=Qj/UzzVWwkrL1jk2CWUFaEQ9JepXoh62PI5cFKVpLN6K05iBI0Qw8bObd1reE+6kbj9dxBEaqkEdAft/pQ/cJ5tOZEbnHsh6NBe3FQClhprQwgXVDRYJbZRn1rLQvMiJRfh2yVkVkitxSDguD7fjWInZh4ExqKlzHLVzeS1b6MY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770616148; c=relaxed/simple;
-	bh=kUXClErnxJfpoi63zJu/2VA2hevTyPYJHfWGKISrFnU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ueTja77NdR3fMvz8Crl4LzhmhVEdDS+FjSWkD7EMo86436niBlS3KwvV0bsiSm/Zu9xtM9TzCvVFccFF10qLgPt5J8twW8L0ItiO2q9xP13d9tNSGF9E+ZLWEHXq/ztk2iEEaj7pylfTLBiRU0GV9Z4EuyaGKyUCYcJB8D+euYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NN+YWyA+; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770625102; c=relaxed/simple;
+	bh=j41Y8/Fj/52cE/OBpXfiJPe/ap6VLQF/tQYQjVKZuaY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bTkBj510jVom0I+uCkkYUSjQjG9MO9Is16PW6+0Sb+nQDn54xtXBTP0IICKIlNFFs0xnpvuEnZQLi9zrgRuEBxslvQ8R0cYbTJiyvDhO+6/5gzLuTyK+DaKybCQYxvEGaxtVx4NjfNktdTBbKF1jmJRZbzZAtPf6gIVhUKH4W1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=d6Liw7qJ; arc=none smtp.client-ip=217.92.40.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NN+YWyA+"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CE848C2BC86;
-	Mon,  9 Feb 2026 05:49:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770616147;
-	bh=kUXClErnxJfpoi63zJu/2VA2hevTyPYJHfWGKISrFnU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=NN+YWyA+qIGY3YaUnRcbMBZCfreM3uyGRGVzJWOJOLke8MaQU7G7e+T5uL9NRI7vo
-	 Bbim/pFLtK255n+2IYoQgyn4Gnka2o9JJSOWnX6o5WQcHErQ5z7+SQvkXprp47l7Bo
-	 jQ+w4YIsXKQ1HZbKjIEx2YKF29bAWH0V+33ZnTB1fqfC+Z4ZvxgniUjsmPMz5E58re
-	 2LElyuhcQLzjxnvN3Uko7GRTtpDtQOKM8j/WTTH31OdcUKl+Gw0jVWdNXzIW5pFEfT
-	 Rug9hC2lRYLsox0eKHOoIRxgjPpg6+uKgN68NdJMf13XqxTLQ4m1PGJwOjN/DzRJ5x
-	 RfMHQPMhbAPIA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF661EF070F;
-	Mon,  9 Feb 2026 05:49:07 +0000 (UTC)
-From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Date: Mon, 09 Feb 2026 13:48:59 +0800
-Subject: [PATCH 13/13] clk: amlogic: Add support for building as combined
- kernel module
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="d6Liw7qJ"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CC952148DD11;
+	Mon,  9 Feb 2026 09:09:01 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
+	t=1770624543; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=h44us49OCY+Aqqi8FHfVgT4PgOs8rfwSyPhPjcy/Tf8=;
+	b=d6Liw7qJZ3Ycos6ROe2kxvvXGOomIAdAhB3rdkL2ihEJ8pNKRFAXVVzWrL9xbooWELTicZ
+	bnDdxni4KVZwvanGpn3rhpDIEpy1ADE3lhn8dwex04jtqU6CJT575VXySBE06sy5DQFTvi
+	Rhqs+Nq3keLKX9Bz2QYdg7qMJwW23R6/AbhIdXqJ9CtjWokrZ0Gw2w0KljOUJSc5/9lG/d
+	QmhTNZof/JXXlTzPzZqhqtMYpkg3R9KQEpvazz3kSj+kLjkRtQKaFR1hf1h8NVFA4YooNO
+	oFhczojEq700YkPS0ohdDA5cjWNQHyaap4d0zXxHKLGeJYi5wzh1Ik7hVt9bRQ==
+Date: Mon, 9 Feb 2026 09:08:56 +0100
+From: Alexander Dahl <ada@thorsis.com>
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: Alexander Dahl <ada@thorsis.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Ryan Wanner <ryan.wanner@microchip.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH v3 03/19] dt-bindings: clock: at91: Allow referencing
+ main rc oscillator in DT
+Message-ID: <20260209-amulet-customize-08ef8dfa1c38@thorsis.com>
+Mail-Followup-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Ryan Wanner <ryan.wanner@microchip.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+References: <20260120143759.904013-1-ada@thorsis.com>
+ <20260120143759.904013-4-ada@thorsis.com>
+ <b932cdfb-9197-462b-abb8-e7b4c7ecab6f@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260209-a9_clock_driver-v1-13-a9198dc03d2a@amlogic.com>
-References: <20260209-a9_clock_driver-v1-0-a9198dc03d2a@amlogic.com>
-In-Reply-To: <20260209-a9_clock_driver-v1-0-a9198dc03d2a@amlogic.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Chuan Liu <chuan.liu@amlogic.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1770616143; l=9091;
- i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=ynvp9MD3ylfPiIkBw4uhgEanUvmWd8JB/qKY9SExV8o=;
- b=rIp87sPNTmv1EeoL0cQLnHC8zFT5RmCyigPuTBsDnhU7tDl4Li/EvTduSqy0K5WyL9GGTe1oW
- aK55O13JSACD8zJ8hG8x6xnyqaQiH3n7skHbz/TXYWbP7LGwiio0m40
-X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
- pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
-X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
- auth_id=203
-X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
-Reply-To: chuan.liu@amlogic.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b932cdfb-9197-462b-abb8-e7b4c7ecab6f@tuxon.dev>
+User-Agent: Mutt/2.2.13 (2024-03-09)
+X-Last-TLS-Session-Version: TLSv1.3
 
-From: Chuan Liu <chuan.liu@amlogic.com>
+Hello Claudiu,
 
-Some use cases require clock drivers to be built as kernel modules
-and loaded using insmod after system initialization. This patch combines
-multiple clock drivers into a single module to reduce system call
-overhead caused by multiple insmod invocations during boot process.
+Am Sat, Jan 31, 2026 at 05:44:18PM +0200 schrieb Claudiu Beznea:
+> Hi, Alexander,
+> 
+> On 1/20/26 16:37, Alexander Dahl wrote:
+> > The main rc oscillator will be needed for the OTPC to work properly.
+> > 
+> > The new index introduced here was not used on the four affected SoC
+> > clock drivers before, but for sama5d2 only (PMC_I2S1_MUX).
+> > 
+> > Link: https://lore.kernel.org/linux-devicetree/20250207-jailbird-circus-bcc04ee90e05@thorsis.com/T/#u
+> > Signed-off-by: Alexander Dahl <ada@thorsis.com>
+> > ---
+> > 
+> > Notes:
+> >      v3:
+> >      - adapt to different base changes, added lines are the same
+> >      v2:
+> >      - new patch, not present in v1
+> > 
+> >   include/dt-bindings/clock/microchip,sam9x60-pmc.h  | 1 +
+> >   include/dt-bindings/clock/microchip,sam9x7-pmc.h   | 1 +
+> >   include/dt-bindings/clock/microchip,sama7d65-pmc.h | 1 +
+> >   include/dt-bindings/clock/microchip,sama7g5-pmc.h  | 1 +
+> >   4 files changed, 4 insertions(+)
+> > 
+> > diff --git a/include/dt-bindings/clock/microchip,sam9x60-pmc.h b/include/dt-bindings/clock/microchip,sam9x60-pmc.h
+> > index 91f8f863ea076..1f6bb51780d09 100644
+> > --- a/include/dt-bindings/clock/microchip,sam9x60-pmc.h
+> > +++ b/include/dt-bindings/clock/microchip,sam9x60-pmc.h
+> > @@ -10,6 +10,7 @@
+> >   #define SAM9X60_PMC_MCK		1
+> >   #define SAM9X60_PMC_UTMI	2
+> >   #define SAM9X60_PMC_MAIN	3
+> > +#define SAM9X60_PMC_MAIN_RC	6
+> 
+> Why 6 and not another index? In theory, now, you should be able to define
+> here all the core clocks IDs (as these are known from the manuals) and
+> prepare the driver to allocate memory for all of them such that the driver
+> will have to be able to work with old and new device trees w/o further
+> changes.
 
-Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
----
- drivers/clk/amlogic/Kconfig        | 17 ++++++------
- drivers/clk/amlogic/Makefile       |  1 +
- drivers/clk/amlogic/a9-misc-ccu.c  | 12 ++++++++-
- drivers/clk/amlogic/a9-model-ccu.c | 12 ++++++++-
- drivers/clk/amlogic/a9-pll.c       | 12 ++++++++-
- drivers/clk/amlogic/clk-module.c   | 42 ++++++++++++++++++++++++++++++
- drivers/clk/amlogic/clk-module.h   | 53 ++++++++++++++++++++++++++++++++++++++
- 7 files changed, 138 insertions(+), 11 deletions(-)
+Was the first common free index for these four clocks.  Before split
+up would have been nice to have a common index, because it was all
+together in include/dt-bindings/clock/at91.h in one file.  After
+splitup one could just use the first free index, as Krzysztof already
+suggested.
 
-diff --git a/drivers/clk/amlogic/Kconfig b/drivers/clk/amlogic/Kconfig
-index 502aca5332bc..1b60725b80d8 100644
---- a/drivers/clk/amlogic/Kconfig
-+++ b/drivers/clk/amlogic/Kconfig
-@@ -9,7 +9,7 @@ config COMMON_CLK_AMLOGIC
- 	help
- 	  This driver provides the basic clock infrastructure for Amlogic SoCs,
- 	  offering read and write interfaces for various clock control units.
--	  Select Y if your target SoC needs clock driver support.
-+	  Select M or Y if your target SoC needs clock driver support.
- 
- config COMMON_CLK_AMLOGIC_MISC
- 	tristate "Amlogic Misc Clock Control Units"
-@@ -17,8 +17,8 @@ config COMMON_CLK_AMLOGIC_MISC
- 	help
- 	  Supports non-standard module clock control units in Amlogic SoC clock
- 	  trees, such as sc-ccu (for smart card controller) and ts-ccu (for
--	  temperature sensor). Select Y if the current SoC contains these module
--	  clock control units.
-+	  temperature sensor). Select M or Y if the current SoC contains these
-+	  module clock control units.
- 
- config COMMON_CLK_AMLOGIC_MODEL
- 	tristate "Amlogic Standardized Model Clock Control Units"
-@@ -27,8 +27,8 @@ config COMMON_CLK_AMLOGIC_MODEL
- 	  Supports standardized model clock control units commonly used in Amlogic
- 	  SoC clock trees, such as composite-ccu, noglitch-ccu, and sysbus-ccu.
- 	  Most peripheral clock controllers in Amlogic SoCs are composed of
--	  these models. Select Y if the current SoC contains these clock control
--	  unit models.
-+	  these models. Select M or Y if the current SoC contains these clock
-+	  control unit models.
- 
- config COMMON_CLK_AMLOGIC_PLL
- 	tristate "Amlogic PLL Controller"
-@@ -36,8 +36,8 @@ config COMMON_CLK_AMLOGIC_PLL
- 	help
- 	  Supports PLL controller used in Amlogic SoCs. The PLL supports dynamic
- 	  configuration of output clock frequency, enabling flexible frequency
--	  settings to provide clocks for other modules. Select Y if the current
--	  SoC contains PLLs.
-+	  settings to provide clocks for other modules. Select M or Y if the
-+	  current SoC contains PLLs.
- 
- config COMMON_CLK_AMLOGIC_A9
- 	tristate "Amlogic A9 Family Clock Controller"
-@@ -48,4 +48,5 @@ config COMMON_CLK_AMLOGIC_A9
- 	select COMMON_CLK_AMLOGIC_PLL
- 	help
- 	  Support for the clock controller present on the Amlogic A9 family
--	  SoCs. Select Y if A9 family SoC needs to support clock controller.
-+	  SoCs. Select M or Y if A9 family SoC needs to support clock
-+	  controller.
-diff --git a/drivers/clk/amlogic/Makefile b/drivers/clk/amlogic/Makefile
-index b174dce61ae9..2778d3859a5e 100644
---- a/drivers/clk/amlogic/Makefile
-+++ b/drivers/clk/amlogic/Makefile
-@@ -8,6 +8,7 @@ clk-amlogic-y += clk-composite.o
- clk-amlogic-y += clk-dualdiv.o
- clk-amlogic-y += clk-noglitch.o
- clk-amlogic-y += clk-pll.o
-+clk-amlogic-y += clk-module.o
- 
- ifneq ($(CONFIG_COMMON_CLK_AMLOGIC_MISC),)
- clk-amlogic-y += a9-misc-ccu.o
-diff --git a/drivers/clk/amlogic/a9-misc-ccu.c b/drivers/clk/amlogic/a9-misc-ccu.c
-index db130d84ccdd..6fd2c9ae3cd0 100644
---- a/drivers/clk/amlogic/a9-misc-ccu.c
-+++ b/drivers/clk/amlogic/a9-misc-ccu.c
-@@ -10,6 +10,7 @@
- #include "clk-basic.h"
- #include "clk-composite.h"
- #include "clk-dualdiv.h"
-+#include "clk-module.h"
- #include "clk-noglitch.h"
- #include "clk-pll.h"
- 
-@@ -952,7 +953,16 @@ static struct platform_driver of_aml_clk_misc_driver = {
- 		.of_match_table = of_aml_clk_misc_match_table,
- 	},
- };
--module_platform_driver(of_aml_clk_misc_driver);
-+
-+int __init aml_clk_misc_driver_init(void)
-+{
-+	return platform_driver_register(&of_aml_clk_misc_driver);
-+}
-+
-+void __exit aml_clk_misc_driver_exit(void)
-+{
-+	platform_driver_unregister(&of_aml_clk_misc_driver);
-+}
- 
- MODULE_DESCRIPTION("Amlogic A9 Misc Clock Control Units Driver");
- MODULE_AUTHOR("Chuan Liu <chuan.liu@amlogic.com>");
-diff --git a/drivers/clk/amlogic/a9-model-ccu.c b/drivers/clk/amlogic/a9-model-ccu.c
-index 5d5bf1538f73..58babd42aca3 100644
---- a/drivers/clk/amlogic/a9-model-ccu.c
-+++ b/drivers/clk/amlogic/a9-model-ccu.c
-@@ -9,6 +9,7 @@
- #include "clk.h"
- #include "clk-basic.h"
- #include "clk-composite.h"
-+#include "clk-module.h"
- #include "clk-noglitch.h"
- 
- /*
-@@ -457,7 +458,16 @@ static struct platform_driver of_aml_clk_model_driver = {
- 		.of_match_table = of_aml_clk_model_match_table,
- 	},
- };
--module_platform_driver(of_aml_clk_model_driver);
-+
-+int __init aml_clk_model_driver_init(void)
-+{
-+	return platform_driver_register(&of_aml_clk_model_driver);
-+}
-+
-+void __exit aml_clk_model_driver_exit(void)
-+{
-+	platform_driver_unregister(&of_aml_clk_model_driver);
-+}
- 
- MODULE_DESCRIPTION("Amlogic A9 Standardized Model Clock Control Units Driver");
- MODULE_AUTHOR("Chuan Liu <chuan.liu@amlogic.com>");
-diff --git a/drivers/clk/amlogic/a9-pll.c b/drivers/clk/amlogic/a9-pll.c
-index c4c695caa8ed..fe2a77382509 100644
---- a/drivers/clk/amlogic/a9-pll.c
-+++ b/drivers/clk/amlogic/a9-pll.c
-@@ -7,6 +7,7 @@
- #include <linux/module.h>
- 
- #include "clk.h"
-+#include "clk-module.h"
- #include "clk-pll.h"
- 
- static const struct aml_pll_data a9_mclk_pll_data = {
-@@ -138,7 +139,16 @@ static struct platform_driver of_aml_clk_pll_driver = {
- 		.of_match_table = of_aml_clk_pll_match_table,
- 	},
- };
--module_platform_driver(of_aml_clk_pll_driver);
-+
-+int __init aml_pll_driver_init(void)
-+{
-+	return platform_driver_register(&of_aml_clk_pll_driver);
-+}
-+
-+void __exit aml_pll_driver_exit(void)
-+{
-+	platform_driver_unregister(&of_aml_clk_pll_driver);
-+}
- 
- MODULE_DESCRIPTION("Amlogic A9 PLL Controllers Driver");
- MODULE_AUTHOR("Chuan Liu <chuan.liu@amlogic.com>");
-diff --git a/drivers/clk/amlogic/clk-module.c b/drivers/clk/amlogic/clk-module.c
-new file mode 100644
-index 000000000000..506926c1f908
---- /dev/null
-+++ b/drivers/clk/amlogic/clk-module.c
-@@ -0,0 +1,42 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
-+/*
-+ * Copyright (c) 2026 Amlogic, Inc. All rights reserved
-+ */
-+
-+#include <linux/module.h>
-+
-+#include "clk-module.h"
-+
-+static int __init aml_clk_driver_init(void)
-+{
-+	int ret;
-+
-+	ret = aml_pll_driver_init();
-+	if (ret)
-+		return ret;
-+
-+	ret = aml_clk_model_driver_init();
-+	if (ret)
-+		return ret;
-+
-+	ret = aml_clk_misc_driver_init();
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static void __exit aml_clk_driver_exit(void)
-+{
-+	aml_clk_misc_driver_exit();
-+	aml_clk_model_driver_exit();
-+	aml_pll_driver_exit();
-+}
-+
-+module_init(aml_clk_driver_init);
-+module_exit(aml_clk_driver_exit);
-+
-+MODULE_DESCRIPTION("Amlogic Clock Controllers Driver Register");
-+MODULE_AUTHOR("Chuan Liu <chuan.liu@amlogic.com>");
-+MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS("CLK_AMLOGIC");
-diff --git a/drivers/clk/amlogic/clk-module.h b/drivers/clk/amlogic/clk-module.h
-new file mode 100644
-index 000000000000..6091a50803df
---- /dev/null
-+++ b/drivers/clk/amlogic/clk-module.h
-@@ -0,0 +1,53 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
-+/*
-+ * Copyright (c) 2026 Amlogic, Inc. All rights reserved
-+ */
-+
-+#ifndef __AML_CLK_MODULE_H
-+#define __AML_CLK_MODULE_H
-+
-+#include <linux/kconfig.h>
-+
-+#if IS_ENABLED(CONFIG_COMMON_CLK_AMLOGIC_PLL)
-+extern int aml_pll_driver_init(void);
-+extern void aml_pll_driver_exit(void);
-+#else /* CONFIG_COMMON_CLK_AMLOGIC_PLL */
-+static inline int aml_pll_driver_init(void)
-+{
-+	return 0;
-+}
-+
-+static inline void aml_pll_driver_exit(void)
-+{
-+}
-+#endif /* CONFIG_COMMON_CLK_AMLOGIC_PLL */
-+
-+#if IS_ENABLED(CONFIG_COMMON_CLK_AMLOGIC_MODEL)
-+extern int aml_clk_model_driver_init(void);
-+extern void aml_clk_model_driver_exit(void);
-+#else /* CONFIG_COMMON_CLK_AMLOGIC_MODEL */
-+static inline int aml_clk_model_driver_init(void)
-+{
-+	return 0;
-+}
-+
-+static inline void aml_clk_model_driver_exit(void)
-+{
-+}
-+#endif /* CONFIG_COMMON_CLK_AMLOGIC_MODEL */
-+
-+#if IS_ENABLED(CONFIG_COMMON_CLK_AMLOGIC_MISC)
-+extern int aml_clk_misc_driver_init(void);
-+extern void aml_clk_misc_driver_exit(void);
-+#else /* CONFIG_COMMON_CLK_AMLOGIC_MISC */
-+static inline int aml_clk_misc_driver_init(void)
-+{
-+	return 0;
-+}
-+
-+static inline void aml_clk_misc_driver_exit(void)
-+{
-+}
-+#endif /* CONFIG_COMMON_CLK_AMLOGIC_MISC */
-+
-+#endif /* __AML_CLK_MODULE_H */
+From my reading of the SAM9X60 manual, there's no such thing as core
+clock IDs in the manual.  If there is a section in the manual, please
+point it out.
 
--- 
-2.42.0
+From my interpretation for SAM9X60 these clocks are provided by the
+clock generator (section 40 in the manual):
 
+- TD_SLCK
+- MD_SLCK
+- MAINCK
+- UPLLCK
+- PLLACK
 
+The "main rc oscillator" clock is somewhat internal here, but for OTPC
+we must be able to enable it.
+
+MCK (not MAINCK) is generated in the Processor Clock Controller block
+of the PMC (section 41 in the manual) from one of the above clocks.
+
+So it's all mixed up from different blocks from Clock Generator and
+Power Management Controller already.  These indexes are
+arbitrary and just for the driver, right?  Or am I missing something?
+
+Besides, if it is renamed now anyway:
+
+- Why that PMC prefix? (most of these core clocks come from the
+  clock controller, not the pmc)
+
+- Why not rename PMC_UTMI to something like xyz_UPLLCK to match the
+  datasheet/manual (likewise for the other definitions)?
+
+Greets
+Alex
+
+> 
+> >   #define SAM9X60_PMC_PLLACK	7
+> >   #endif
+> > diff --git a/include/dt-bindings/clock/microchip,sam9x7-pmc.h b/include/dt-bindings/clock/microchip,sam9x7-pmc.h
+> > index e1dd41fe75046..657f32ce10071 100644
+> > --- a/include/dt-bindings/clock/microchip,sam9x7-pmc.h
+> > +++ b/include/dt-bindings/clock/microchip,sam9x7-pmc.h
+> > @@ -10,6 +10,7 @@
+> >   #define SAM9X7_PMC_MCK		1
+> >   #define SAM9X7_PMC_UTMI		2
+> >   #define SAM9X7_PMC_MAIN		3
+> > +#define SAM9X7_PMC_MAIN_RC	6
+> >   #define SAM9X7_PMC_PLLACK	7
+> >   #define SAM9X7_PMC_AUDIOPMCPLL	9
+> >   #define SAM9X7_PMC_AUDIOIOPLL	10
+> > diff --git a/include/dt-bindings/clock/microchip,sama7d65-pmc.h b/include/dt-bindings/clock/microchip,sama7d65-pmc.h
+> > index 09d152da6db44..ddcb236718978 100644
+> > --- a/include/dt-bindings/clock/microchip,sama7d65-pmc.h
+> > +++ b/include/dt-bindings/clock/microchip,sama7d65-pmc.h
+> > @@ -12,6 +12,7 @@
+> >   #define SAMA7D65_PMC_MAIN		3
+> >   #define SAMA7D65_PMC_CPUPLL		4
+> >   #define SAMA7D65_PMC_SYSPLL		5
+> > +#define SAMA7D65_PMC_MAIN_RC		6
+> 
+> E.g. 6 was previously reserved for DDR and IMG PLLs.
+> 
+> >   #define SAMA7D65_PMC_BAUDPLL		8
+> >   #define SAMA7D65_PMC_AUDIOPMCPLL	9
+> >   #define SAMA7D65_PMC_AUDIOIOPLL		10
+> > diff --git a/include/dt-bindings/clock/microchip,sama7g5-pmc.h b/include/dt-bindings/clock/microchip,sama7g5-pmc.h
+> > index 0303cae56f849..e891715a35173 100644
+> > --- a/include/dt-bindings/clock/microchip,sama7g5-pmc.h
+> > +++ b/include/dt-bindings/clock/microchip,sama7g5-pmc.h
+> > @@ -12,6 +12,7 @@
+> >   #define SAMA7G5_PMC_MAIN	3
+> >   #define SAMA7G5_PMC_CPUPLL	4
+> >   #define SAMA7G5_PMC_SYSPLL	5
+> > +#define SAMA7G5_PMC_MAIN_RC	6
+> >   #define SAMA7G5_PMC_AUDIOPMCPLL	9
+> >   #define SAMA7G5_PMC_AUDIOIOPLL	10
+> >   #define SAMA7G5_PMC_MCK1	13
+> 
