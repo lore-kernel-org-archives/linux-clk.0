@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B76623373D;
-	Mon,  9 Feb 2026 13:14:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E67324B1F;
+	Mon,  9 Feb 2026 13:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770642874; cv=none; b=NDhNuS6uMdFb6qTQF/XJG8iuGKHcaZ3k7RZH9lF+ijDUDqqQJ+m6fABATa3Ho8lxGx2A6QTQACEb3RhvqAg/ovbIj7xz0xQA/21BEvJcRnLLHdwTbd0UjtKhBw1/SStCNMAmTHsNAs6vO2Li/2TWYhtDKKqbRVQc0Tt7AXz/49A=
+	t=1770642957; cv=none; b=oOh33IaayUMlqgIiK9ClvDi9zLHfmX3eSlOHgL2SXrKB/niopgdJMVEa5RUTptMPpFOlY7TdntNAjBTEtuzb1lR33h1/+Q6Ege2xpdAw8sZuiYR5sh1jIK7ugysJmJs1I27/aHZE7lTYiwbKiPP5pKVmz7ddxyS16eGoBxHVmro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770642874; c=relaxed/simple;
-	bh=564k2LnoApszpIPBy6pIXAzs/P2R7AhJFsF2c/0eiNs=;
+	s=arc-20240116; t=1770642957; c=relaxed/simple;
+	bh=Kg4jDGByr8veZSYV1NGN2EPKkJ0isZGa9w3htJFrkGw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d26h3/PysX6VSlslCeHi8b8CrR6oUNNUParFJfGTt+0mKIeLUK/kOYfwYH79ojBwRB+PP1bzY6IRC4gcQfzVuluv3NvNdQCT232IoRrAJpuCY6i1OkuFchhm15TaxaB4Rp4mcGBAl7FT6TmCYr7ombMgAiUwpeyitssvCFPP9xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e1Mxnd7F; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=TBG39O4KBxfbXbe92G1zM5oePsa6oxYanxez44T1IJiKJ7BtrY+Y9ubPQJHe/V81rnlhd7v2bywuN7UOwlKB1NRipgaAp3nlfR2OVLUZI4HR4SNCj57j2ry6M8IHuV1L69MxK+G/3skNf3EoAzFMoIXZEV6VjkPDtoL76kPXNZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qLYxf146; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e1Mxnd7F"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0AFFC116C6;
-	Mon,  9 Feb 2026 13:14:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qLYxf146"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C69D9C116C6;
+	Mon,  9 Feb 2026 13:15:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770642873;
-	bh=564k2LnoApszpIPBy6pIXAzs/P2R7AhJFsF2c/0eiNs=;
+	s=k20201202; t=1770642957;
+	bh=Kg4jDGByr8veZSYV1NGN2EPKkJ0isZGa9w3htJFrkGw=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=e1Mxnd7FrLR/nBfDYZ8/Xt5QjPS+7uAz0eK2b3vZgJS3H8O+t/OhnLqspmhipgXli
-	 EnokWJyQhYhnEIFDhvUqFhkfaJLW8mcbA9RtOVbSMbpdq/vijsWzZN4mKUZ3qalGSX
-	 sllVmEPyVTa83HsCBT6jEL9aLHXqnW7wbYFd1ia22bui4/2V1TYuSGny0Ircph4HvF
-	 lHR+pJpOlSHtKY3Zg5swfEgQhxifuC4gEkEngFxJsA60PoPQ08+Nv0STvRbZtrE0+G
-	 nFBCgx4scCA/6HN4kodTwdvWfi+UWACc2xYUdw8yxsmkG9hqu/HRJuEMDAioIGjiI9
-	 vIXPgmAd9lf+g==
-Message-ID: <10caac08-1a1d-4fe9-8df8-e0b75c532e8f@kernel.org>
-Date: Mon, 9 Feb 2026 14:14:29 +0100
+	b=qLYxf1460ZKJnF/c0sjx/DBBHB6YNhBIKNdqEonF6xUF5/foMYs/RkuyPBsqafOuJ
+	 iWYwEGhxlkqJGWb7/G1YraKrXWZdIoTMwjCMyuw0mlaXvA4zIn+Oev67m6MPhjiaZt
+	 +zK88Gxe8hOFZeDJh12s3RX90RCZFkDO3JeNaOFfynoZsOm+OZYL7hoI7opBLlp3Zn
+	 dXZe5lPOh+pIyR5pCqS6EF+z5Igt+azg4fuQeQjbnWhAmkZtEwzkfXwMbOtHE3DfSH
+	 B6T5aMyB8CRPAkg4+te9a7oFsJA1+rZKbm9XKcAeZIQ2UYTzFF4Cj/HFpNU87GZUuS
+	 iStnlKBhUbhKw==
+Message-ID: <dbaa1ebc-a0a2-4ca3-bb6d-0c8a07ca1b31@kernel.org>
+Date: Mon, 9 Feb 2026 14:15:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/13] dt-bindings: clock: Add Amlogic A9 standardized
- model clock control units
+Subject: Re: [PATCH 03/13] dt-bindings: clock: Add Amlogic A9 misc clock
+ control units
 To: chuan.liu@amlogic.com, Neil Armstrong <neil.armstrong@linaro.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -44,7 +44,7 @@ To: chuan.liu@amlogic.com, Neil Armstrong <neil.armstrong@linaro.org>,
 Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20260209-a9_clock_driver-v1-0-a9198dc03d2a@amlogic.com>
- <20260209-a9_clock_driver-v1-1-a9198dc03d2a@amlogic.com>
+ <20260209-a9_clock_driver-v1-3-a9198dc03d2a@amlogic.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -90,117 +90,26 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20260209-a9_clock_driver-v1-1-a9198dc03d2a@amlogic.com>
+In-Reply-To: <20260209-a9_clock_driver-v1-3-a9198dc03d2a@amlogic.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 09/02/2026 06:48, Chuan Liu via B4 Relay wrote:
-> From: Chuan Liu <chuan.liu@amlogic.com>
-> 
-> Add dt-binding documentation for standardized model clock control units
-> in A9 SoC family.
-> 
-> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
-> ---
->  .../bindings/clock/amlogic,a9-model-ccu.yaml       | 435 +++++++++++++++++++++
->  1 file changed, 435 insertions(+)
-
-Brief review, you still have to read basic guidelines to not repeat the
-basic mistakes.
-
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/amlogic,a9-model-ccu.yaml b/Documentation/devicetree/bindings/clock/amlogic,a9-model-ccu.yaml
-> new file mode 100644
-> index 000000000000..56c5cbe1b246
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/amlogic,a9-model-ccu.yaml
-> @@ -0,0 +1,435 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +# Copyright (C) 2026 Amlogic, Inc. All rights reserved
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/amlogic,a9-model-ccu.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Amlogic A9 Family Standardized Model Clock Control Unit
-> +
-> +maintainers:
-> +  - Chuan Liu <chuan.liu@amlogic.com>
-> +
-> +description:
-> +  The clock tree within the A9 is composed of numerous instances of these
-> +  standardized model CCU (Clock Control Units).
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - items:
-
-Drop
-
-> +          - const: amlogic,a9-composite-ccu
-> +        description: Supports clock source selection, frequency division, and
-> +                     clock gating.
-
-This is just one big enum. You can add comments if you insist...
-
-
-> +      - items:
-> +          - const: amlogic,a9-composite-ccu-mult
-> +        description: Some modules have multiple input clocks and contain
-> +                     multiple composite-ccus internally.
-> +      - items:
-> +          - const: amlogic,a9-noglitch-ccu
-> +        description: Provides the same functionality as composite-ccu but
-> +                     includes glitch suppression during frequency transitions.
-> +      - items:
-> +          - const: amlogic,a9-noglitch-ccu-mult
-> +        description: Some modules have multiple input clocks and contain
-> +                     multiple noglitch-ccus internally.
-> +      - items:
-> +          - const: amlogic,a9-sysbus-ccu
-> +        description: Consists of multiple gating arrays, commonly used for
-> +                     Amlogic's sys_clk and axi_clk.
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    minItems: 1
-> +    maxItems: 16
-> +
-> +  clock-names:
-> +    minItems: 1
-> +    maxItems: 16
-> +
-> +  clock-output-names:
-> +    minItems: 1
-> +    # The sysbus-ccu of A9 supports up to 128 gates
-> +    maxItems: 128
 > +
 > +  '#clock-cells':
 > +    description:
-> +      The clock controller of a module may contain one or more CCU(s). When a
-> +      clock controller has multiple CCUs, an index is required to specify a
-> +      particular CCU within the clock controller.
-
-Drop
-
+> +      The clock controller of a module may contain one or more child clock(s).
+> +      When a clock controller has multiple child clocks, an index is required
+> +      to specify a particular clock within the clock controller.
 > +    oneOf:
 > +      - const: 0
 > +        description: Single clock output, no specifier needed
 > +      - const: 1
 > +        description: Multiple clocks, index selects specific output
-
-Drop all descriptions. That's enum. Do not explain usu how DT works.
-
 > +
 > +  amlogic,clock-max-frequency:
 
-Drop property. So many wrong things here... First, start from basic
-guidelines like talks or docs in kernel and understand the suffixes.
-
-Second not a DT property.
+No
 
 > +    description: |
 > +      Each clock's maximum output frequency is constrained during hardware
@@ -210,310 +119,26 @@ Second not a DT property.
 > +      cross-talk that affects other modules.
 > +
 > +      In the driver, this property is parsed, and interface functions from the
-
-Why would we care about driver?
-
-This is binding, we talk about hardware.
-
-
 > +      CCF are called to enforce the clock's maximum frequency, preventing
 > +      potential issues caused by excessive clock frequency configurations.
 > +    $ref: /schemas/types.yaml#/definitions/uint32-array
 > +
-> +  amlogic,reg-layout:
+> +  amlogic,clock-init-regs:
 
-No, drop. Compatible defines it.
+NAK
 
-> +    description:
-> +      These standardized model CCUs require register configuration for their
-> +      clock functions. This property node describes the register layout
-> +      parameters for each model's CCU.
-> +    $ref: /schemas/types.yaml#/definitions/uint32-matrix
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          anyOf:
-> +            - contains:
-> +                const: amlogic,a9-composite-ccu
-> +            - contains:
-> +                const: amlogic,a9-noglitch-ccu
-> +    then:
-> +      properties:
-> +        '#clock-cells':
-> +          const: 0
-> +        clock-output-names:
-> +          minItems: 1
-> +          maxItems: 1
-> +    else:
-> +      properties:
-> +        '#clock-cells':
-> +          const: 1
-> +        clock-output-names:
-> +          minItems: 2
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: amlogic,a9-composite-ccu
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 1
-> +          items:
-> +            - description: input clock source 0
-> +            - description: input clock source 1 (optional)
-> +            - description: input clock source 2 (optional)
-> +            - description: input clock source 3 (optional)
-> +            - description: input clock source 4 (optional)
-> +            - description: input clock source 5 (optional)
-> +            - description: input clock source 6 (optional)
-> +            - description: input clock source 7 (optional)
-> +        clock-names:
-> +          minItems: 1
-> +          items:
-> +            - const: clkin0
-> +            - const: clkin1
-> +            - const: clkin2
-> +            - const: clkin3
-> +            - const: clkin4
-> +            - const: clkin5
-> +            - const: clkin6
-> +            - const: clkin7
-> +        amlogic,reg-layout:
-> +          description: |
-> +            composite-ccu contains three register layout parameters:
-> +              * register offset
-> +              * bit offset
-> +              * divider effective bit width
-> +      required:
-> +        - amlogic,reg-layout
-> +        - clock-names
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: amlogic,a9-composite-ccu-mult
-> +    then:
-> +      properties:
-> +        clocks:
-> +          description:
-> +            Some clock controllers contain two composite-ccus (labeled
-> +            composite_a and composite_b). In certain controllers, composite_a
-> +            and composite_b share a common clock source, while in others they
-> +            have independent clock sources.
-> +          minItems: 1
-> +          items:
-> +            - description: composite_a/b's input clock source 0
-> +            - description: composite_a/b's input clock source 1 (optional)
-> +            - description: composite_a/b's input clock source 2 (optional)
-> +            - description: composite_a/b's input clock source 3 (optional)
-> +            - description: composite_a/b's input clock source 4 (optional)
-> +            - description: composite_a/b's input clock source 5 (optional)
-> +            - description: composite_a/b's input clock source 6 (optional)
-> +            - description: composite_a/b's input clock source 7 (optional)
-> +            - description: composite_b's input clock source 0 (optional)
-> +            - description: composite_b's input clock source 1 (optional)
-> +            - description: composite_b's input clock source 2 (optional)
-> +            - description: composite_b's input clock source 3 (optional)
-> +            - description: composite_b's input clock source 4 (optional)
-> +            - description: composite_b's input clock source 5 (optional)
-> +            - description: composite_b's input clock source 6 (optional)
-> +            - description: composite_b's input clock source 7 (optional)
-> +        clock-names:
-> +          minItems: 1
-> +          items:
-> +            - const: clkin0
-> +            - const: clkin1
-> +            - const: clkin2
-> +            - const: clkin3
-> +            - const: clkin4
-> +            - const: clkin5
-> +            - const: clkin6
-> +            - const: clkin7
-> +            - const: bclkin0
-> +            - const: bclkin1
-> +            - const: bclkin2
-> +            - const: bclkin3
-> +            - const: bclkin4
-> +            - const: bclkin5
-> +            - const: bclkin6
-> +            - const: bclkin7
-> +        amlogic,reg-layout:
-> +          description: |
-> +            composite-ccu contains three register layout parameters:
-> +              * register offset
-> +              * bit offset
-> +              * divider effective bit width
-> +      required:
-> +        - amlogic,reg-layout
-> +        - clock-names
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: amlogic,a9-noglitch-ccu
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 1
-> +          items:
-> +            - description: input clock source 0
-> +            - description: input clock source 1 (optional)
-> +            - description: input clock source 2 (optional)
-> +            - description: input clock source 3 (optional)
-> +            - description: input clock source 4 (optional)
-> +            - description: input clock source 5 (optional)
-> +            - description: input clock source 6 (optional)
-> +            - description: input clock source 7 (optional)
-> +        clock-names:
-> +          minItems: 1
-> +          items:
-> +            - const: clkin0
-> +            - const: clkin1
-> +            - const: clkin2
-> +            - const: clkin3
-> +            - const: clkin4
-> +            - const: clkin5
-> +            - const: clkin6
-> +            - const: clkin7
-> +      required:
-> +        - clock-names
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: amlogic,a9-noglitch-ccu-mult
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 1
+...
 
-Why?
+> diff --git a/include/dt-bindings/clock/amlogic,a9-misc-ccu.h b/include/dt-bindings/clock/amlogic,a9-misc-ccu.h
+> new file mode 100644
+> index 000000000000..102aff8d68e4
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/amlogic,a9-misc-ccu.h
+> @@ -0,0 +1,53 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
 
-> +          items:
-> +            - description: input clock source 0
-> +            - description: input clock source 1 (optional)
+Use the same license as in binding doc.
 
-Drop optional. Don't repeat constraints in free form text.
-
-> +            - description: input clock source 2 (optional)
-> +            - description: input clock source 3 (optional)
-> +            - description: input clock source 4 (optional)
-> +            - description: input clock source 5 (optional)
-> +            - description: input clock source 6 (optional)
-> +            - description: input clock source 7 (optional)
-> +        clock-names:
-> +          minItems: 1
-> +          items:
-> +            - const: clkin0
-> +            - const: clkin1
-> +            - const: clkin2
-> +            - const: clkin3
-> +            - const: clkin4
-> +            - const: clkin5
-> +            - const: clkin6
-> +            - const: clkin7
-> +        amlogic,reg-layout:
-> +          description: |
-> +            composite-ccu contains one register layout parameters:
-> +              * register offset
-> +      required:
-> +        - amlogic,reg-layout
-> +        - clock-names
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: amlogic,a9-sysbus-ccu
-> +    then:
-> +      properties:
-> +        clocks:
-> +          maxItems: 1
-> +          description: input clock of sysbus-ccu
-
-list the items with description instead.
-
-> +        amlogic,reg-layout:
-> +          description: |
-> +            composite-ccu contains two register layout parameters:
-> +              * register offset
-> +              * bit offset
-> +      required:
-> +        - amlogic,reg-layout
-
-This is huge and amount of ifs is clearly suggesting you combined way
-too much into one file.
-
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-output-names
-> +  - "#clock-cells"
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    clk_dummy: clock-dummy {
-> +        compatible = "fixed-clock";
-> +        #clock-cells = <0>;
-> +        clock-frequency = <0>;
-> +        clock-output-names = "dummy";
-> +        status = "disabled";
-> +    };
-
-Not relevant, drop entire node.
-
-> +
-> +    apb {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +        clock-controller@350 {
-> +            compatible = "amlogic,a9-composite-ccu";
-> +            reg = <0x0 0x350 0x0 0x4>;
-> +            #clock-cells = <0>;
-> +            amlogic,clock-max-frequency = <50000000>;
-> +            amlogic,reg-layout = <0x0 0  7>;
-> +            clock-output-names = "sar_adc";
-> +            clocks = <&xtal_24m>,
-> +                     <&scmi_clk 17>;
-> +            clock-names = "clkin0", "clkin1";
-> +        };
-> +
-> +        clock-controller@290 {
-> +            compatible = "amlogic,a9-composite-ccu-mult";
-> +            reg = <0x0 0x290 0x0 0x8>;
-> +            #clock-cells = <1>;
-> +            amlogic,clock-max-frequency = <250000000>,
-> +                                          <250000000>,
-> +                                          <1200000000>;
-> +            amlogic,reg-layout = <0x0 0  7>,
-> +                                 <0x0 16 7>,
-> +                                 <0x4 0  7>;
-> +            clock-output-names = "sd_emmc_a",
-> +                                 "sd_emmc_b",
-> +                                 "sd_emmc_c";
-> +            clocks = <&xtal_24m>,
-> +                     <&scmi_clk 6>,
-> +                     <&scmi_clk 10>;
-> +            clock-names = "clkin0",
-> +                          "clkin1",
-> +                          "clkin2";
-> +        };
-
-One or two are enough. Drop the rest.
-
-> 
 
 
 Best regards,
