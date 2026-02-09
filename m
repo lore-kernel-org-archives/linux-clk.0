@@ -1,113 +1,78 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ADC62040B6;
-	Mon,  9 Feb 2026 13:18:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B6C125A0;
+	Mon,  9 Feb 2026 14:01:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770643122; cv=none; b=PEP9ExKE3HX34mj35DZIYFwlPcr3KOZ2ALAATCBDI8dYHjvrW44BhOKM7waIVfu9KuRvB9B4eVkmtptEi/rV0S0Eqc7XcVkUV+GM4WRHCsupabSzyIy3NdtSO2Axepah5oUYYILALmYX5mTzsbEp/SCimIT3NnFh9Hj1gvKSdz4=
+	t=1770645675; cv=none; b=AutFzAa1x0rO8hm+bmTvlIt0YZY/AcVBE76eSaDmBNdH9aXy1Kx6h4utjmWnn9gMtrmet1tueqQXUJiTgebDupgeUUkp4A41Xmot4YrQC+Rno3Bmco/pcj95IZAM4fmFSif/mQPBBonWbwshMddFDINwSY6gBge+nNZuyMHauTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770643122; c=relaxed/simple;
-	bh=tspf+dZIq5x+tREgKHnBEYdV+MaRpD+POKR8lg9U9Bo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CeKAQ95lYxsrKuwZYXzEOwl9sYAfRTweXGrcDfBGXtpHCF6aVB9f7E93v7t++Z4tw/8Ij1Cj5yKGE7Fcf2BfzPFFGl8fc33/5a992UxvOeRoix00qpgU4rUZ6+sfFtIzKUd27DOt5Y3ycmVmVYq119O/vzyaQUmd0WvvwKdRsko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l6K6IDDs; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770645675; c=relaxed/simple;
+	bh=fYPBR01alZpEYRpDujYTEsPzZb1nOME5FDGaHE4a5BI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V+UaIJsio44E4z2meYmNJuRYNqD2GTDDyMsouDzeqvN0uRYxY6UcLpzRZBqYxFniuUYdtZCpaGGH7EKqnABFL8cYp7bLOGT2kIowXQ03m8pL8sDtO3Xbfoq5fneEsWg/8Bd+ceUvta5Rl0BKi5S7jD7Q4DCyswA/7mhularBKWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g6G5ti1Z; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l6K6IDDs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B517C116C6;
-	Mon,  9 Feb 2026 13:18:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g6G5ti1Z"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 261B0C116C6;
+	Mon,  9 Feb 2026 14:01:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770643122;
-	bh=tspf+dZIq5x+tREgKHnBEYdV+MaRpD+POKR8lg9U9Bo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=l6K6IDDspNacwVyrMLRrPneXwf2aEYg/lL96WezPv3Kz6bnLmZd3fjluf2Zk9JpcX
-	 uH43WpV5BHzaDuCWm609iU9e7ywyAB6P5oZgUHW9CZR6W2VDZ3SEtXWCldqRGO5Tf0
-	 XGxlBaERylkOz1Qlq7Hc87PulSfRnZjjb+gssuCDfL2D7aezDq5i1SZSDqu0F8St0h
-	 q7ufRFLHeqgxQHxOG7domHvDlDHXLczlNjYgF8QALUFNE7fjdVgKhAj8MET10Qexbn
-	 cV30hWaHVUQqSuh+xsl/45VdvF5uhlJYQPdwMimIPseOszwmFak12dbWZ+YXcK1bZL
-	 cQCCgjtbDYTXw==
-Message-ID: <b5922f14-55de-4e7a-ad94-f8045dcc770a@kernel.org>
-Date: Mon, 9 Feb 2026 14:18:37 +0100
+	s=k20201202; t=1770645674;
+	bh=fYPBR01alZpEYRpDujYTEsPzZb1nOME5FDGaHE4a5BI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=g6G5ti1ZqRs5CWS9JhQXr8p5lqFEB6XLntBSZIavi229v1MMeDMcYKyXt/CtPMcNL
+	 jRO3FtS3lSEIOSOUYkpdpt8pF5lCwuLSHNijIsAD9BjrYDbTD1bD/l4dxEAZq6ntN0
+	 jblyMWO5IywmZ32ZU1UxiKm75z+ZDEfZYyJ82vny/ot7RxytYprawwbUo2hbpjgM0x
+	 rTYc8N35C+AQ8cd4K5xiVnR38LSalP6zItq/uMXD0YHTMe0OAE3c99GDvlCgB75JeP
+	 99qqpEa97gF9lpR7XP8VYWYVhhsptzSjXr/iKB8z2HACvXdoYDR7IUhfGg5MTqASuH
+	 euGVLyF11GrIQ==
+Date: Mon, 9 Feb 2026 15:01:12 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Taniya Das <quic_tdas@quicinc.com>, Jonathan Marek <jonathan@marek.ca>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Bryan O'Donoghue <bod@kernel.org>, Vikash Garodia <vikash.garodia@oss.qualcomm.com>, 
+	Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Stanimir Varbanov <stanimir.varbanov@linaro.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
+	Hans Verkuil <hverkuil@kernel.org>, Stefan Schmidt <stefan.schmidt@linaro.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+	Dikshita Agarwal <dikshita@qti.qualcomm.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v5 1/5] media: dt-bindings: qcom,sm8250-venus: sort out
+ power domains
+Message-ID: <20260209-impetuous-functional-caribou-14c8ec@quoll>
+References: <20260209-iris-venus-fix-sm8250-v5-0-0a22365d3585@oss.qualcomm.com>
+ <20260209-iris-venus-fix-sm8250-v5-1-0a22365d3585@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/13] dt-bindings: clock: Add Amlogic A9 standardized
- model clock control units
-To: chuan.liu@amlogic.com, Neil Armstrong <neil.armstrong@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260209-a9_clock_driver-v1-0-a9198dc03d2a@amlogic.com>
- <20260209-a9_clock_driver-v1-1-a9198dc03d2a@amlogic.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20260209-a9_clock_driver-v1-1-a9198dc03d2a@amlogic.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260209-iris-venus-fix-sm8250-v5-1-0a22365d3585@oss.qualcomm.com>
 
-On 09/02/2026 06:48, Chuan Liu via B4 Relay wrote:
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    clk_dummy: clock-dummy {
-> +        compatible = "fixed-clock";
-> +        #clock-cells = <0>;
-> +        clock-frequency = <0>;
-> +        clock-output-names = "dummy";
-> +        status = "disabled";
+On Mon, Feb 09, 2026 at 03:32:16AM +0200, Dmitry Baryshkov wrote:
+> First of all, on SM8250 Iris (ex-Venus) core needs to scale clocks which
+> are powered by the MMCX domain. Add MMCX domain to the list of the power
+> domain to be used on this platform.
+> 
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Reviewed-by: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
+> Acked-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> ---
+>  .../devicetree/bindings/media/qcom,sm8250-venus.yaml          | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
 
-Eee, nope. Please review this internally so you won't be making such
-trivial mistakes.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 Best regards,
 Krzysztof
+
