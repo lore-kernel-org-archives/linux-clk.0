@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7454B31B810;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F3831352D;
 	Mon,  9 Feb 2026 05:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770616147; cv=none; b=OqEqjzeJqCk6snNTj9cjB271OQuuhUmWFmjRyB4geisqS0tnqSytNj+/CWmK0A2hsRiC6zp67kQ+dk2pe47NsEOfElx1GehP2bbsdkWFMAg/tsr+AnSvPrx5m8AIawI8daZhglyQvpp+Bl2DoTpy2CP6jB+7dAdHKP/rdTw0zMQ=
+	t=1770616147; cv=none; b=hSKzo0JccDVU+18zQVwGbQkxTpqtpRcTn6LN8lcKAKsXuIIGdNPp8H5WotGciJcMk3T0/GM2qoz4TrBsM4Xnf6g7tH5RUDOLzjvV00sPjhBqN02biWQ9YOXWUZM1PDcVVlLkpnEgAehnj0mgv9cYFZZycuIjZZc2VT/n+FYdUNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1770616147; c=relaxed/simple;
-	bh=N+uYCRMmJ55t9DThH54gsj/D58MY9yM6LLaPmYCM3BE=;
+	bh=MOHUGf7vTOMF6lwnsIj7fzyFlWDO1jYxaQ8jI4vnDS0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mynv/hgC3yzmiTd1qJyMmf9pU8E8W2k+mk+ICsEsRT8BCJWGVuxo8Otg2Ady+h8DNia4ESVoB127sRDzREfo3zq6Dyiw2hQwJqGDkCc4YXUkjqekaBDbWK6RgmJNGKMbGbgiAHL5ZM/QaJpMbG/pIPDjgFNdjyFnjz8YUZkXk6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X0wafZZH; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=tXdzHuFOlrNMgJV7I53/P1z1VmlrXFbrsR46XEZ/UZf87jgslMyxbRk76BRKvhI25tp+qwAe/XH0gTSPIvC67J3fNNAvJenjl/FOG3THBt1A63zap6XiWJU0+MimVAHSLM7xsxgUsozQm0hFhkF3eapyJb5ux7/aeGRg8OEfY1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bD1yHKof; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X0wafZZH"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4BDDFC19422;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bD1yHKof"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6A6BFC116C6;
 	Mon,  9 Feb 2026 05:49:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1770616147;
-	bh=N+uYCRMmJ55t9DThH54gsj/D58MY9yM6LLaPmYCM3BE=;
+	bh=MOHUGf7vTOMF6lwnsIj7fzyFlWDO1jYxaQ8jI4vnDS0=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=X0wafZZHYFTwBhS5LfNdZpSQi0ZQ5aJAQJLvIrjIBED8F2VmFd2QSVnlcCApS7sf8
-	 +Gg+YHmUfEjqVCZ6zlQZWMGjW3XmcgDF6UU/9ePQE6fijSM/m6jvEPWLNh+SWtol1k
-	 LDe7zcPkeGfU+jv+FSt5IKxv/MA6z+V05QJTePCI4zPwgHPERRmDbiiuqDSQXtnmQx
-	 H4xQlu0nO8+MeeUXZwDfHLOesMSrPFFLXrjVmZ5ucCt1Q8RiknjgqatGacUA6bHdRa
-	 F1js68kQFMRCH4rL8rF7dEDV1j3XbMxSdCLQiK7SShIC0DkWIpmoFqTvPPhuPqolxs
-	 /hEh5xSIz8ehg==
+	b=bD1yHKof6KshfPMre7sBQ9IezJ4GNYw3QRBNOSWzh22+RcVCRSgf1FdSOJL9xqF1Y
+	 G99188bOR2Zwj4/ABcfIRrnTtw9xQQcGrx09557UBiCma1oIt2E0a7bOKmKX81DtzZ
+	 lzFDELzS9WpvwtA+h2ZjVojZO9JNcyVCWGyQS4J/gXezcearCMzRVhHeQRw45+uOdu
+	 dBn+T5nGuahJUPj0T6zho+ioxHvDzKDrN2H+FZOE79pvvYTmLJPU7S8MiWa3X7p8BC
+	 La3elBc4nwyMY6l7H8zl/vY8X6b1EXL5oOUE+EpKmjZjdL3s14QKjcRgk2hY9EU8w3
+	 N5Uwpf3h5m7mg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4469CEF06E5;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D765EF070F;
 	Mon,  9 Feb 2026 05:49:07 +0000 (UTC)
 From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Date: Mon, 09 Feb 2026 13:48:55 +0800
-Subject: [PATCH 09/13] clk: amlogic: Add DT-based clock registration
- functions
+Date: Mon, 09 Feb 2026 13:48:56 +0800
+Subject: [PATCH 10/13] clk: amlogic: Add A9 standardized model clock
+ control units driver
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260209-a9_clock_driver-v1-9-a9198dc03d2a@amlogic.com>
+Message-Id: <20260209-a9_clock_driver-v1-10-a9198dc03d2a@amlogic.com>
 References: <20260209-a9_clock_driver-v1-0-a9198dc03d2a@amlogic.com>
 In-Reply-To: <20260209-a9_clock_driver-v1-0-a9198dc03d2a@amlogic.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>, 
@@ -53,11 +53,11 @@ Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Chuan Liu <chuan.liu@amlogic.com>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1770616142; l=10590;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1770616143; l=15986;
  i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=bn1W4wBj9kR2bBMVc+TWzhW7ePYmeAS9HgD29Ygxs+k=;
- b=JptUihEMip98DRKPFWIBfkFKyU+hFUTh+CMKTUdN3dzRJIuVh140hOffNm6cPeACf4QLAZO1/
- BCdBK4+aJjHB2TuZyJ2W02UXGWreD/Y33v+ALbk72q/b6HhZQP5BZGf
+ bh=LIC/rr157/JcmUmsWhff3I7WronpOmEnKJiamdc04jU=;
+ b=Cn+IlwLfHrOKz84vKbMEjcJCgFP2t1fhGCknPdqWQzUKBbwq0EpLcNhUSHVvN+IZdvSD6B9HK
+ uMBtyslg2V7BQypbVB3EUhsVYWfp1VsatS5ODnHB4Tv99kkrXFguZZS
 X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
  pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
 X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
@@ -67,372 +67,528 @@ Reply-To: chuan.liu@amlogic.com
 
 From: Chuan Liu <chuan.liu@amlogic.com>
 
-Amlogic clock controllers require hardware information description in
-device tree. This patch provides functions for parsing clock configuration
-from DT and performing clock registration after obtaining clock details.
+Add support for Amlogic standardized model clock control units on A9
+SoC family. The standardized models include:
+  - composite-ccu
+  - noglitch-ccu
+  - sysbus-ccu
 
 Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
 ---
- drivers/clk/amlogic/clk.c | 310 +++++++++++++++++++++++++++++++++++++++++++++-
- drivers/clk/amlogic/clk.h |  14 +++
- 2 files changed, 323 insertions(+), 1 deletion(-)
+ drivers/clk/amlogic/Kconfig        |  19 ++
+ drivers/clk/amlogic/Makefile       |   3 +
+ drivers/clk/amlogic/a9-model-ccu.c | 465 +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 487 insertions(+)
 
-diff --git a/drivers/clk/amlogic/clk.c b/drivers/clk/amlogic/clk.c
-index 2558c3f48242..f3327c8414be 100644
---- a/drivers/clk/amlogic/clk.c
-+++ b/drivers/clk/amlogic/clk.c
-@@ -3,12 +3,15 @@
-  * Copyright (c) 2026 Amlogic, Inc. All rights reserved
-  */
- 
-+#include <linux/clk.h>
- #include <linux/module.h>
-+#include <linux/of_clk.h>
+diff --git a/drivers/clk/amlogic/Kconfig b/drivers/clk/amlogic/Kconfig
+index 216fe98a413b..6e954c9388dc 100644
+--- a/drivers/clk/amlogic/Kconfig
++++ b/drivers/clk/amlogic/Kconfig
+@@ -10,3 +10,22 @@ config COMMON_CLK_AMLOGIC
+ 	  This driver provides the basic clock infrastructure for Amlogic SoCs,
+ 	  offering read and write interfaces for various clock control units.
+ 	  Select Y if your target SoC needs clock driver support.
++
++config COMMON_CLK_AMLOGIC_MODEL
++	tristate "Amlogic Standardized Model Clock Control Units"
++	depends on COMMON_CLK_AMLOGIC
++	help
++	  Supports standardized model clock control units commonly used in Amlogic
++	  SoC clock trees, such as composite-ccu, noglitch-ccu, and sysbus-ccu.
++	  Most peripheral clock controllers in Amlogic SoCs are composed of
++	  these models. Select Y if the current SoC contains these clock control
++	  unit models.
++
++config COMMON_CLK_AMLOGIC_A9
++	tristate "Amlogic A9 Family Clock Controller"
++	depends on COMMON_CLK_AMLOGIC
++	default COMMON_CLK_AMLOGIC
++	select COMMON_CLK_AMLOGIC_MODEL
++	help
++	  Support for the clock controller present on the Amlogic A9 family
++	  SoCs. Select Y if A9 family SoC needs to support clock controller.
+diff --git a/drivers/clk/amlogic/Makefile b/drivers/clk/amlogic/Makefile
+index 6956592c41c8..ef3fb57cae9f 100644
+--- a/drivers/clk/amlogic/Makefile
++++ b/drivers/clk/amlogic/Makefile
+@@ -8,3 +8,6 @@ clk-amlogic-y += clk-composite.o
+ clk-amlogic-y += clk-dualdiv.o
+ clk-amlogic-y += clk-noglitch.o
+ clk-amlogic-y += clk-pll.o
++ifneq ($(CONFIG_COMMON_CLK_AMLOGIC_MODEL),)
++clk-amlogic-y += a9-model-ccu.o
++endif
+diff --git a/drivers/clk/amlogic/a9-model-ccu.c b/drivers/clk/amlogic/a9-model-ccu.c
+new file mode 100644
+index 000000000000..5d5bf1538f73
+--- /dev/null
++++ b/drivers/clk/amlogic/a9-model-ccu.c
+@@ -0,0 +1,465 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
++/*
++ * Copyright (c) 2026 Amlogic, Inc. All rights reserved
++ */
++
++#include <linux/err.h>
++#include <linux/module.h>
 +
 +#include "clk.h"
- 
- #ifdef CONFIG_DEBUG_FS
- #include <linux/err.h>
- 
--#include "clk.h"
- #include "clk-basic.h"
- #include "clk-composite.h"
- #include "clk-noglitch.h"
-@@ -150,6 +153,311 @@ const struct file_operations aml_clk_div_available_rates_fops = {
- EXPORT_SYMBOL_NS_GPL(aml_clk_div_available_rates_fops, "CLK_AMLOGIC");
- #endif /* CONFIG_DEBUG_FS */
- 
-+struct regmap *aml_clk_regmap_init(struct platform_device *pdev)
++#include "clk-basic.h"
++#include "clk-composite.h"
++#include "clk-noglitch.h"
++
++/*
++ * The standardized model clock control units of Amlogic includes:
++ *   - composite-ccu
++ *   - noglitch-ccu
++ *   - sysbus-ccu
++ */
++#define MAX_AML_CLK_COMP_PARENTS		8
++
++enum aml_clk_model_type {
++	CLK_MODEL_COMPOSITE	= 1,
++	CLK_MODEL_NOGLITCH	= 2,
++	CLK_MODEL_SYSBUS	= 3,
++};
++
++struct aml_clk_model_data {
++	enum aml_clk_model_type	type;
++};
++
++static int of_aml_clk_model_get_type(struct device *dev,
++				     enum aml_clk_type *out_type)
 +{
-+	void __iomem *base;
-+	struct resource *res;
-+	struct regmap_config clkc_regmap_config = {
-+		.reg_bits	= 32,
-+		.val_bits	= 32,
-+		.reg_stride	= 4,
-+	};
++	const struct aml_clk_model_data *data;
 +
-+	base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
-+	if (IS_ERR(base))
-+		return NULL;
++	data = of_device_get_match_data(dev);
++	if (!data)
++		return -EFAULT;
 +
-+	clkc_regmap_config.max_register = resource_size(res) - 4;
-+	if (!clkc_regmap_config.max_register)
-+		clkc_regmap_config.max_register_is_0 = true;
-+
-+	return devm_regmap_init_mmio(&pdev->dev, base, &clkc_regmap_config);
-+}
-+EXPORT_SYMBOL_NS_GPL(aml_clk_regmap_init, "CLK_AMLOGIC");
-+
-+static inline int of_aml_clk_get_init_reg_count(struct device_node *np)
-+{
-+	return of_property_count_elems_of_size(np, "amlogic,clock-init-regs",
-+					       sizeof(struct reg_sequence));
-+}
-+
-+static inline int of_aml_clk_get_init_reg(struct device_node *np, int reg_count,
-+					  struct reg_sequence *init_regs)
-+{
-+	return of_property_read_u32_array(np, "amlogic,clock-init-regs",
-+					  (u32 *)init_regs,
-+					  3 * reg_count);
-+}
-+
-+int of_aml_clk_regs_init(struct device *dev)
-+{
-+	struct device_node *dev_np = dev_of_node(dev);
-+	struct regmap *regmap = dev_get_regmap(dev, NULL);
-+	int ret, reg_count;
-+	struct reg_sequence *init_regs;
-+
-+	ret = of_aml_clk_get_init_reg_count(dev_np);
-+	if (ret < 0)
++	switch (data->type) {
++	case CLK_MODEL_COMPOSITE:
++		*out_type = AML_CLKTYPE_COMPOSITE;
 +		return 0;
 +
-+	reg_count = ret;
-+	init_regs = devm_kcalloc(dev, reg_count, sizeof(*init_regs),
-+				 GFP_KERNEL);
-+	if (!init_regs)
-+		return -ENOMEM;
-+
-+	ret = of_aml_clk_get_init_reg(dev_np, reg_count, init_regs);
-+	if (ret)
-+		goto fail;
-+
-+	ret = regmap_multi_reg_write(regmap, init_regs, reg_count);
-+
-+fail:
-+	devm_kfree(dev, init_regs);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_NS_GPL(of_aml_clk_regs_init, "CLK_AMLOGIC");
-+
-+u32 of_aml_clk_get_count(struct device_node *np)
-+{
-+	/*
-+	 * NOTE: Each clock under a clock device node must define the
-+	 * "clock-output-names" property, so this property is used here to
-+	 * determine how many clocks are contained in the current clock device
-+	 * node.
-+	 */
-+	int ret = of_property_count_strings(np, "clock-output-names");
-+
-+	if (ret < 0)
++	case CLK_MODEL_NOGLITCH:
++		*out_type = AML_CLKTYPE_NOGLITCH;
 +		return 0;
 +
-+	return ret;
-+}
-+EXPORT_SYMBOL_NS_GPL(of_aml_clk_get_count, "CLK_AMLOGIC");
++	case CLK_MODEL_SYSBUS:
++		*out_type = AML_CLKTYPE_GATE;
++		return 0;
 +
-+const char *of_aml_clk_get_name_index(struct device_node *np, u32 index)
-+{
-+	const char *name;
-+
-+	if (of_property_read_string_index(np, "clock-output-names", index,
-+					  &name)) {
-+		pr_err("<%pOFn>: Invalid clock-output-names, index = %d\n",
-+		       np, index);
-+		return NULL;
-+	}
-+
-+	return name;
-+}
-+EXPORT_SYMBOL_NS_GPL(of_aml_clk_get_name_index, "CLK_AMLOGIC");
-+
-+static bool of_aml_clk_is_dummy_index(struct device_node *np, int index)
-+{
-+	struct of_phandle_args clk_args;
-+	u32 rate;
-+	int ret = of_parse_phandle_with_args(np, "clocks", "#clock-cells",
-+					     index, &clk_args);
-+
-+	if (ret < 0)
-+		return true;
-+
-+	/*
-+	 * If the device node description specified by clk_args indicates a
-+	 * fixed clock with a frequency of 0, the device is considered a dummy
-+	 * clock device.
-+	 */
-+	if (of_device_is_compatible(clk_args.np, "fixed-clock") &&
-+	    !of_property_read_u32(clk_args.np, "clock-frequency", &rate) &&
-+	    rate == 0)
-+		return true;
-+
-+	return false;
-+}
-+
-+int of_aml_clk_get_parent_num(struct device *dev, int start_index, int end_index)
-+{
-+	struct device_node *np = dev_of_node(dev);
-+	unsigned int pcnt = of_clk_get_parent_count(np);
-+	int i, real_pcnt = 0;
-+
-+	if (end_index < 0 || end_index >= pcnt)
-+		/* Get the number of all "clocks" for the current device node */
-+		end_index = pcnt - 1;
-+
-+	if (start_index > end_index ||
-+	    start_index > pcnt)
++	default:
 +		return -EINVAL;
-+
-+	for (i = start_index; i <= end_index; i++) {
-+		if (of_aml_clk_is_dummy_index(np, i))
-+			continue;
-+
-+		real_pcnt++;
 +	}
-+
-+	return real_pcnt;
-+}
-+EXPORT_SYMBOL_NS_GPL(of_aml_clk_get_parent_num, "CLK_AMLOGIC");
-+
-+static struct clk_hw *of_aml_clk_get_hw(struct device_node *np,
-+					struct clk_hw **dev_hws, int index)
-+{
-+	struct of_phandle_args out_args;
-+	struct clk *clk;
-+	struct clk_hw *clk_hw;
-+	int ret;
-+
-+	ret = of_parse_phandle_with_args(np, "clocks", "#clock-cells", index,
-+					 &out_args);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	if (out_args.np == np) {
-+		if (!dev_hws)
-+			return ERR_PTR(-EFAULT);
-+
-+		/*
-+		 * If a parent clock comes from the device node itself, the
-+		 * corresponding clk_hw can be found using the
-+		 * "out_args.args[0]" (clock index).
-+		 */
-+		clk_hw = dev_hws[out_args.args[0]];
-+	} else {
-+		clk = of_clk_get_from_provider(&out_args);
-+		if (IS_ERR(clk)) {
-+			if (PTR_ERR(clk) != -EPROBE_DEFER)
-+				pr_warn("clk: couldn't get clock for %pOF\n",
-+					out_args.np);
-+
-+			return ERR_CAST(clk);
-+		}
-+
-+		clk_hw = __clk_get_hw(clk);
-+		clk_put(clk);
-+	}
-+
-+	return clk_hw;
 +}
 +
-+int of_aml_clk_get_parent_data(struct device *dev, struct clk_hw **dev_hws,
-+			       int start_index, int end_index,
-+			       struct clk_parent_data *out_pdatas,
-+			       u8 *out_num_parents)
++/*
++ * A diagram of the A9 composite-ccu is as follows:
++ *         +----------------------------------+
++ *         |                                  |
++ *         |   |\                             |
++ * clk0 ------>| |                            |
++ * clk1 ------>| |                            |
++ * clk2 ------>| |                            |
++ * clk3 ------>| |     +-----+     +------+   |
++ *         |   | |---->| div |---->| gate |------> clk out
++ * clk4 ------>| |     +-----+     +------+   |
++ * clk5 ------>| |                            |
++ * clk6 ------>| |                            |
++ * clk7 ------>| |                            |
++ *         |   |/                             |
++ *         |                                  |
++ *         +----------------------------------+
++ */
++static int
++of_aml_clk_model_composite_init_register(struct device *dev,
++					 struct clk_hw_onecell_data *hw_data)
 +{
 +	struct device_node *np = dev_of_node(dev);
++	struct aml_clk *clk;
++	struct aml_clk_composite_data *composite;
++	u32 reg_val[3];
 +	unsigned int pcnt = of_clk_get_parent_count(np);
-+	int i, real_pcnt;
++	struct clk_parent_data pdata[MAX_AML_CLK_COMP_PARENTS];
++	struct clk_parent_data pdata_compb[MAX_AML_CLK_COMP_PARENTS];
++	u8 pnum, pnum_compb;
++	u32 *ptab, *ptab_compb;
++	struct clk_init_data init = { 0 };
++	int index;
++	int ret, clkid, i;
 +
-+	if (end_index < 0 || end_index >= pcnt)
-+		/* Get the number of all "clocks" for the current device node */
-+		end_index = pcnt - 1;
-+
-+	if (start_index > end_index || start_index > pcnt)
-+		return -EINVAL;
-+
-+	for (i = start_index, real_pcnt = 0; i <= end_index; i++) {
-+		if (of_aml_clk_is_dummy_index(np, i))
-+			continue;
-+
-+		out_pdatas[real_pcnt].hw = of_aml_clk_get_hw(np, dev_hws, i);
-+		if (IS_ERR(out_pdatas[real_pcnt].hw))
-+			return PTR_ERR(out_pdatas[real_pcnt].hw);
-+
-+		real_pcnt++;
-+	}
-+
-+	if (out_num_parents)
-+		*out_num_parents = real_pcnt;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_NS_GPL(of_aml_clk_get_parent_data, "CLK_AMLOGIC");
-+
-+u32 *of_aml_clk_get_parent_table(struct device *dev, int start_index,
-+				 int end_index)
-+{
-+	struct device_node *np = dev_of_node(dev);
-+	bool has_ptab = false;
-+	u32 *ptab;
-+	unsigned int pcnt = of_clk_get_parent_count(np);
-+	int i, real_pcnt, ptab_i;
-+
-+	real_pcnt = of_aml_clk_get_parent_num(dev, start_index, end_index);
-+	if (real_pcnt < 0)
-+		return ERR_PTR(-EINVAL);
-+	else if (!real_pcnt) /* no parent clock */
-+		return NULL;
-+
-+	if (end_index < 0 || end_index >= pcnt)
-+		end_index = pcnt - 1;
-+
-+	for (i = start_index, ptab_i = 0; i <= end_index; i++) {
-+		/* dummy clock exist and ptab needs to be defined */
-+		if (of_aml_clk_is_dummy_index(np, i)) {
-+			has_ptab = true;
-+			break;
-+		}
-+	}
-+	if (!has_ptab)
-+		return NULL;
-+
-+	ptab = devm_kcalloc(dev, real_pcnt, sizeof(*ptab), GFP_KERNEL);
-+	if (!ptab)
-+		return ERR_PTR(-ENOMEM);
-+
-+	for (i = start_index, ptab_i = 0; i <= end_index; i++) {
-+		if (!of_aml_clk_is_dummy_index(np, i))
-+			ptab[ptab_i++] = i - start_index;
-+	}
-+
-+	return ptab;
-+}
-+EXPORT_SYMBOL_NS_GPL(of_aml_clk_get_parent_table, "CLK_AMLOGIC");
-+
-+static int of_aml_clk_get_max_rate(struct device_node *np, u32 index,
-+			    unsigned long *out_max_rate)
-+{
-+	int count = of_property_count_u32_elems(np,
-+						"amlogic,clock-max-frequency");
-+
-+	if (count < 0)
-+		return count;
-+	else if (count == 1)
-+		/*
-+		 * If the property "amlogic,clock-max-frequency" under the
-+		 * current device node defines only a single value, that value
-+		 * specifies the maximum frequency limit for all clocks under
-+		 * this device node.
-+		 */
-+		index = 0;
-+
-+	return of_property_read_u32_index(np, "amlogic,clock-max-frequency",
-+					  index, (u32 *)out_max_rate);
-+}
-+
-+int of_aml_clk_register(struct device *dev, struct clk_hw *hw, int clkid)
-+{
-+	struct device_node *np = dev_of_node(dev);
-+	unsigned long max_rate;
-+	int ret;
-+
-+	ret = devm_clk_hw_register(dev, hw);
++	ret = of_aml_clk_get_parent_data(dev, hw_data->hws, 0, 7, pdata, &pnum);
 +	if (ret)
 +		return ret;
 +
-+	ret = of_aml_clk_get_max_rate(np, clkid, &max_rate);
-+	if (ret) {
-+		if (ret != -EINVAL)
++	ptab = of_aml_clk_get_parent_table(dev, 0, 7);
++	if (IS_ERR(ptab))
++		return PTR_ERR(ptab);
++
++	/*
++	 * If the number of "clocks" defined in DT is less than or equal
++	 * to MAX_AML_CLK_COMP_PARENTS, composite-ccu_a and composite-ccu_b
++	 * share the same parent clocks.
++	 *
++	 * If the number of "clocks" defined in the DT is greater than
++	 * MAX_AML_CLK_COMP_PARENTS, composite-ccu_a and composite-ccu_b have
++	 * different parent clocks, the parent clocks specified by
++	 * "clocks" follow the rule below:
++	 *   - for composite-ccu_a: clocks indices 0-7 in "clocks"
++	 *   - for composite-ccu_b: clocks indices 8-15 in "clocks"
++	 */
++	if (pcnt > MAX_AML_CLK_COMP_PARENTS) { /* composite-ccu_b */
++		ret = of_aml_clk_get_parent_data(dev, hw_data->hws, 8, 15,
++						 pdata_compb, &pnum_compb);
++		if (ret)
 +			return ret;
-+	} else {
-+		if (max_rate)
-+			clk_hw_set_rate_range(hw, 0, max_rate);
++
++		ptab_compb = of_aml_clk_get_parent_table(dev, 8, 15);
++		if (IS_ERR(ptab_compb))
++			return PTR_ERR(ptab_compb);
++	}
++
++	init.ops = &aml_clk_composite_ops;
++	for (clkid = 0; clkid < hw_data->num; clkid++) {
++		init.name = of_aml_clk_get_name_index(np, clkid);
++		if (!init.name)
++			return -EINVAL;
++
++		/*
++		 * The set of "amlogic,reg-layout" attributes of composite_ccu
++		 * contains three u32 data:
++		 *   - reg_offset
++		 *   - bit_offset
++		 *   - div_width
++		 */
++		index = clkid * 3;
++		for (i = 0; i < 3; i++) {
++			ret = of_property_read_u32_index(np,
++							 "amlogic,reg-layout",
++							 index + i, &reg_val[i]);
++			if (ret)
++				return ret;
++		}
++
++		composite = devm_kzalloc(dev, sizeof(*composite), GFP_KERNEL);
++		if (!composite)
++			return -ENOMEM;
++
++		composite->reg_offset = reg_val[0];
++		composite->bit_offset = reg_val[1];
++		composite->div_width = reg_val[2];
++
++		/*
++		 * The register bit allocation for composite-ccu_a and
++		 * composite-ccu_b is as follows:
++		 *   - composite-ccu_a: bit[15: 0]
++		 *   - composite-ccu_b: bit[31: 16]
++		 * A value of "composite->bit_offset == 16" indicates that this
++		 * CCU corresponds to composite-ccu_b.
++		 */
++		if (pcnt > MAX_AML_CLK_COMP_PARENTS &&
++		    composite->bit_offset == 16) { /* composite-ccu_b */
++			init.num_parents = pnum_compb;
++			init.parent_data = pdata_compb;
++
++			if (ptab_compb)
++				composite->table = ptab_compb;
++		} else { /* composite-ccu_a */
++			init.num_parents = pnum;
++			init.parent_data = pdata;
++
++			if (ptab)
++				composite->table = ptab;
++		}
++
++		clk = to_aml_clk(hw_data->hws[clkid]);
++		clk->data = composite;
++
++		hw_data->hws[clkid]->init = &init;
++		ret = of_aml_clk_register(dev, hw_data->hws[clkid], clkid);
++		if (ret)
++			return ret;
 +	}
 +
 +	return 0;
 +}
-+EXPORT_SYMBOL_NS_GPL(of_aml_clk_register, "CLK_AMLOGIC");
 +
- MODULE_DESCRIPTION("Amlogic Common Clock Driver");
- MODULE_AUTHOR("Chuan Liu <chuan.liu@amlogic.com>");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/amlogic/clk.h b/drivers/clk/amlogic/clk.h
-index b62045aedfbf..3cfe2e650ed4 100644
---- a/drivers/clk/amlogic/clk.h
-+++ b/drivers/clk/amlogic/clk.h
-@@ -39,4 +39,18 @@ static inline struct aml_clk *to_aml_clk(struct clk_hw *hw)
- 	return container_of(hw, struct aml_clk, hw);
- }
- 
-+struct regmap *aml_clk_regmap_init(struct platform_device *pdev);
-+int of_aml_clk_regs_init(struct device *dev);
-+u32 of_aml_clk_get_count(struct device_node *np);
-+const char *of_aml_clk_get_name_index(struct device_node *np, u32 index);
-+int of_aml_clk_get_parent_num(struct device *dev, int start_index,
-+			      int end_index);
-+int of_aml_clk_get_parent_data(struct device *dev, struct clk_hw **dev_hws,
-+			       int start_index, int end_index,
-+			       struct clk_parent_data *out_pdatas,
-+			       u8 *out_num_parents);
-+u32 *of_aml_clk_get_parent_table(struct device *dev, int start_index,
-+				 int end_index);
-+int of_aml_clk_register(struct device *dev, struct clk_hw *hw, int clkid);
++/*
++ * A diagram of the A9 noglitch-ccu is as follows:
++ *         +---------------------------------------------+
++ *         |   |\                                        |
++ * clk0 ------>| |                                       |
++ * clk1 ------>| |                                       |
++ * clk2 ------>| |                                       |
++ * clk3 ------>| |      +-----+      +------+      |\    |
++ *         |   | |----->| div |----->| gate |----->| |   |
++ * clk4 ------>| |      +-----+      +------+      | |   |
++ * clk5 ------>| |                                 | |   |
++ * clk6 ------>| |                                 | |   |
++ * clk7 ------>| |                                 | |   |
++ *         |   |/                                  | |   |
++ *         |                                       | |-------> clk out
++ *         |   |\                                  | |   |
++ * clk0 ------>| |                                 | |   |
++ * clk1 ------>| |                                 | |   |
++ * clk2 ------>| |                                 | |   |
++ * clk3 ------>| |      +-----+     +------+       | |   |
++ *         |   | |----->| div |---->| gate |------>| |   |
++ * clk4 ------>| |      +-----+     +------+       |/    |
++ * clk5 ------>| |                                       |
++ * clk6 ------>| |                                       |
++ * clk7 ------>| |                                       |
++ *         |   |/                                        |
++ *         +---------------------------------------------+
++ */
++static int
++of_aml_clk_model_noglitch_init_register(struct device *dev,
++					struct clk_hw_onecell_data *hw_data)
++{
++	struct device_node *np = dev_of_node(dev);
++	struct aml_clk *clk;
++	struct aml_clk_noglitch_data *noglitch;
++	struct clk_parent_data pdata[MAX_AML_CLK_COMP_PARENTS];
++	u8 pnum;
++	u32 *ptab;
++	struct clk_init_data init = { 0 };
++	int ret, clkid;
 +
- #endif /* __AML_CLK_H */
++	/* noglitch-ccu supports up to eight parent clocks. */
++	ret = of_aml_clk_get_parent_data(dev, hw_data->hws, 0, 7, pdata, &pnum);
++	if (ret)
++		return ret;
++
++	ptab = of_aml_clk_get_parent_table(dev, 0, 7);
++	if (IS_ERR(ptab))
++		return PTR_ERR(ptab);
++
++	init.ops = &aml_clk_noglitch_ops;
++	init.num_parents = pnum;
++	init.parent_data = pdata;
++	for (clkid = 0; clkid < hw_data->num; clkid++) {
++		init.name = of_aml_clk_get_name_index(np, clkid);
++		if (!init.name)
++			return -EINVAL;
++
++		hw_data->hws[clkid]->init = &init;
++
++		noglitch = devm_kzalloc(dev, sizeof(*noglitch), GFP_KERNEL);
++		if (!noglitch)
++			return -ENOMEM;
++
++		ret = of_property_read_u32_index(np, "amlogic,reg-layout",
++						 clkid, &noglitch->reg_offset);
++		if (ret)
++			return ret;
++
++		if (ptab)
++			noglitch->table = ptab;
++
++		clk = to_aml_clk(hw_data->hws[clkid]);
++		clk->data = noglitch;
++
++		ret = of_aml_clk_register(dev, hw_data->hws[clkid], clkid);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++
++/*
++ * A diagram of the A9 sysbus-ccu is as follows:
++ *         +-------------------+
++ *         |                   |
++ *         |        +------+   |
++ *         |  +---->| gate |----->clkout0
++ *         |  |     +------+   |
++ *         |  |                |
++ *         |  |                |
++ *         |  |                |
++ *         |  |     +------+   |
++ * clk in-----+---->| gate |----->clkout1
++ *         |  |     +------+   |
++ *         |  |        ...     |
++ *         |  |                |
++ *         |  |                |
++ *         |  |     +------+   |
++ *         |  +---->| gate |----->clkoutn
++ *         |        +------+   |
++ *         |                   |
++ *         +-------------------+
++ */
++static int
++of_aml_clk_model_sysbus_init_register(struct device *dev,
++				      struct clk_hw_onecell_data *hw_data)
++{
++	struct device_node *np = dev_of_node(dev);
++	struct aml_clk *clk;
++	struct aml_clk_gate_data *gate;
++	u32 reg_val[2];
++	struct clk_parent_data pdata;
++	u8 pnum;
++	struct clk_init_data init = { 0 };
++	int index;
++	int ret, clkid, i;
++
++	ret = of_aml_clk_get_parent_data(dev, hw_data->hws, 0, 0, &pdata, &pnum);
++	if (ret)
++		return ret;
++
++	init.ops = &aml_clk_gate_ops;
++	init.num_parents = pnum;
++	init.parent_data = &pdata;
++	for (clkid = 0; clkid < hw_data->num; clkid++) {
++		init.name = of_aml_clk_get_name_index(np, clkid);
++		if (!init.name)
++			return -EINVAL;
++
++		/*
++		 * The set of "amlogic,reg-layout" attributes of sysbus_ccu
++		 * contains three u32 data:
++		 *   - reg_offset
++		 *   - bit_idx
++		 */
++		index = clkid * 2;
++		for (i = 0; i < 2; i++) {
++			ret = of_property_read_u32_index(np,
++							 "amlogic,reg-layout",
++							 index + i, &reg_val[i]);
++			if (ret)
++				return ret;
++		}
++
++		gate = devm_kzalloc(dev, sizeof(*gate), GFP_KERNEL);
++		if (!gate)
++			return -ENOMEM;
++
++		gate->reg_offset = reg_val[0];
++		gate->bit_idx = reg_val[1];
++
++		clk = to_aml_clk(hw_data->hws[clkid]);
++		clk->data = gate;
++
++		hw_data->hws[clkid]->init = &init;
++		ret = of_aml_clk_register(dev, hw_data->hws[clkid], clkid);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++
++static int of_aml_clk_model_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	const struct aml_clk_model_data *data;
++	struct device_node *np = dev_of_node(dev);
++	struct regmap *regmap;
++	struct clk_hw_onecell_data *hw_data;
++	struct aml_clk *clk;
++	enum aml_clk_type clk_type;
++	int clk_num;
++	int ret, i;
++
++	data = of_device_get_match_data(dev);
++	if (!data)
++		return -EFAULT;
++
++	clk_num = of_aml_clk_get_count(np);
++	if (clk_num == 0)
++		return -EINVAL;
++
++	regmap = aml_clk_regmap_init(pdev);
++	if (IS_ERR_OR_NULL(regmap))
++		return -EIO;
++
++	of_aml_clk_regs_init(dev);
++
++	hw_data = devm_kzalloc(dev, struct_size(hw_data, hws, clk_num),
++				GFP_KERNEL);
++	if (!hw_data)
++		return -ENOMEM;
++
++	hw_data->num = clk_num;
++	clk = devm_kcalloc(dev, clk_num, sizeof(*clk), GFP_KERNEL);
++	if (!clk)
++		return -ENOMEM;
++
++	ret = of_aml_clk_model_get_type(dev, &clk_type);
++	if (ret)
++		return ret;
++
++	for (i = 0; i < clk_num; i++) {
++		clk[i].map = regmap;
++		clk[i].type = clk_type;
++		hw_data->hws[i] = &clk[i].hw;
++	}
++
++	if (data->type == CLK_MODEL_COMPOSITE)
++		ret = of_aml_clk_model_composite_init_register(dev, hw_data);
++	else if (data->type == CLK_MODEL_NOGLITCH)
++		ret = of_aml_clk_model_noglitch_init_register(dev, hw_data);
++	else if (data->type == CLK_MODEL_SYSBUS)
++		ret = of_aml_clk_model_sysbus_init_register(dev, hw_data);
++
++	if (clk_num == 1)
++		return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
++						   &clk->hw);
++	else
++		return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
++						   hw_data);
++}
++
++static const struct aml_clk_model_data aml_composite_dev_data = {
++	.type = CLK_MODEL_COMPOSITE,
++};
++
++static const struct aml_clk_model_data aml_noglitch_dev_data = {
++	.type = CLK_MODEL_NOGLITCH,
++};
++
++static const struct aml_clk_model_data aml_sysbus_dev_data = {
++	.type = CLK_MODEL_SYSBUS,
++};
++
++static const struct of_device_id of_aml_clk_model_match_table[] = {
++	{
++		.compatible = "amlogic,a9-composite-ccu",
++		.data = &aml_composite_dev_data,
++	},
++	{
++		.compatible = "amlogic,a9-composite-ccu-mult",
++		.data = &aml_composite_dev_data,
++	},
++	{
++		.compatible = "amlogic,a9-noglitch-ccu",
++		.data = &aml_noglitch_dev_data,
++	},
++	{
++		.compatible = "amlogic,a9-noglitch-ccu-mult",
++		.data = &aml_noglitch_dev_data,
++	},
++	{
++		.compatible = "amlogic,a9-sysbus-ccu",
++		.data = &aml_sysbus_dev_data,
++	},
++	{}
++};
++MODULE_DEVICE_TABLE(of, of_aml_clk_model_match_table);
++
++static struct platform_driver of_aml_clk_model_driver = {
++	.probe		= of_aml_clk_model_probe,
++	.driver		= {
++		.name	= "aml-clk-model",
++		.of_match_table = of_aml_clk_model_match_table,
++	},
++};
++module_platform_driver(of_aml_clk_model_driver);
++
++MODULE_DESCRIPTION("Amlogic A9 Standardized Model Clock Control Units Driver");
++MODULE_AUTHOR("Chuan Liu <chuan.liu@amlogic.com>");
++MODULE_LICENSE("GPL");
++MODULE_IMPORT_NS("CLK_AMLOGIC");
 
 -- 
 2.42.0
