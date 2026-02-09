@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E67324B1F;
-	Mon,  9 Feb 2026 13:15:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C85365A01;
+	Mon,  9 Feb 2026 13:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770642957; cv=none; b=oOh33IaayUMlqgIiK9ClvDi9zLHfmX3eSlOHgL2SXrKB/niopgdJMVEa5RUTptMPpFOlY7TdntNAjBTEtuzb1lR33h1/+Q6Ege2xpdAw8sZuiYR5sh1jIK7ugysJmJs1I27/aHZE7lTYiwbKiPP5pKVmz7ddxyS16eGoBxHVmro=
+	t=1770643033; cv=none; b=k1nnxX6W63IQjWdgNBSHZosfl4M9qTJ2QK4yKVTA/GAKEszAkmLIXcBuOI/gaTg7aj+Mq1Nw2shvRSyPZAe8km1wX2eLQPpyEh9gtvzTDc/D4TZ1EigRpO/WDhCHCfiMI6E1G9XJGvUqBF//HgObn+yTlgrE0kNcVihGSBJ8Rr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770642957; c=relaxed/simple;
-	bh=Kg4jDGByr8veZSYV1NGN2EPKkJ0isZGa9w3htJFrkGw=;
+	s=arc-20240116; t=1770643033; c=relaxed/simple;
+	bh=E3YdeD/rTwCR4yxn83bzlx/otZ5fCYuWld30uE4Lcow=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TBG39O4KBxfbXbe92G1zM5oePsa6oxYanxez44T1IJiKJ7BtrY+Y9ubPQJHe/V81rnlhd7v2bywuN7UOwlKB1NRipgaAp3nlfR2OVLUZI4HR4SNCj57j2ry6M8IHuV1L69MxK+G/3skNf3EoAzFMoIXZEV6VjkPDtoL76kPXNZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qLYxf146; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=EyAGwpKX4vkUlwMCQ52tIy2uCYhme0VmHTc7h6dHaGqxwtt9cJPwhWDp0WQHTXBQurU4+DU75pCiGSiX8qrdHXyh9KLhbXtFJhMzMgVGuyvaMwYyziJAwsX7v69SQS3ihmQ0Y+2NKQuv7xvvwAgjkBKiscESDU+pe4Y1L4mSE6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W/8+DSp4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qLYxf146"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C69D9C116C6;
-	Mon,  9 Feb 2026 13:15:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W/8+DSp4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1248C116C6;
+	Mon,  9 Feb 2026 13:17:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770642957;
-	bh=Kg4jDGByr8veZSYV1NGN2EPKkJ0isZGa9w3htJFrkGw=;
+	s=k20201202; t=1770643033;
+	bh=E3YdeD/rTwCR4yxn83bzlx/otZ5fCYuWld30uE4Lcow=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qLYxf1460ZKJnF/c0sjx/DBBHB6YNhBIKNdqEonF6xUF5/foMYs/RkuyPBsqafOuJ
-	 iWYwEGhxlkqJGWb7/G1YraKrXWZdIoTMwjCMyuw0mlaXvA4zIn+Oev67m6MPhjiaZt
-	 +zK88Gxe8hOFZeDJh12s3RX90RCZFkDO3JeNaOFfynoZsOm+OZYL7hoI7opBLlp3Zn
-	 dXZe5lPOh+pIyR5pCqS6EF+z5Igt+azg4fuQeQjbnWhAmkZtEwzkfXwMbOtHE3DfSH
-	 B6T5aMyB8CRPAkg4+te9a7oFsJA1+rZKbm9XKcAeZIQ2UYTzFF4Cj/HFpNU87GZUuS
-	 iStnlKBhUbhKw==
-Message-ID: <dbaa1ebc-a0a2-4ca3-bb6d-0c8a07ca1b31@kernel.org>
-Date: Mon, 9 Feb 2026 14:15:53 +0100
+	b=W/8+DSp4TFnZs9qrwFXBuBC53pusSs3qc22C/u6aoBpbxP4dBE5kCVVKmeeoOS8es
+	 +p//f8zmdcbi2VDZ6MYRdcCgrEW2Xp4tnEeDpYEAmUBNLUC27xAdYf6j7nXmUqyWtA
+	 pXPT2c1LTlKTSOaz7LYYP0ox3XB4Jdjs9Ze4QJKzSsUpArGMyBfs1JFueav6GnUKHC
+	 5Oy4ZYVsbnfZ5S0yBEhu1RAjgD8aO8Pm1vYvVC2olmLSBgmbX5+BmSxTvk2522qSbJ
+	 bmVe6jpVuEpzNj+ok4DrP5Q4JQrADy9NdYLcwDnFzD2o0BhbhBpJ9DuXN2PHiJgt9H
+	 pdiF3Z89bSHww==
+Message-ID: <89cc0724-32a8-4da5-8070-c128cafcfc82@kernel.org>
+Date: Mon, 9 Feb 2026 14:17:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,8 +35,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/13] dt-bindings: clock: Add Amlogic A9 misc clock
- control units
+Subject: Re: [PATCH 04/13] clk: amlogic: Add basic clock driver
 To: chuan.liu@amlogic.com, Neil Armstrong <neil.armstrong@linaro.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -44,7 +43,7 @@ To: chuan.liu@amlogic.com, Neil Armstrong <neil.armstrong@linaro.org>,
 Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20260209-a9_clock_driver-v1-0-a9198dc03d2a@amlogic.com>
- <20260209-a9_clock_driver-v1-3-a9198dc03d2a@amlogic.com>
+ <20260209-a9_clock_driver-v1-4-a9198dc03d2a@amlogic.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -90,56 +89,20 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20260209-a9_clock_driver-v1-3-a9198dc03d2a@amlogic.com>
+In-Reply-To: <20260209-a9_clock_driver-v1-4-a9198dc03d2a@amlogic.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 09/02/2026 06:48, Chuan Liu via B4 Relay wrote:
-> +
-> +  '#clock-cells':
-> +    description:
-> +      The clock controller of a module may contain one or more child clock(s).
-> +      When a clock controller has multiple child clocks, an index is required
-> +      to specify a particular clock within the clock controller.
-> +    oneOf:
-> +      - const: 0
-> +        description: Single clock output, no specifier needed
-> +      - const: 1
-> +        description: Multiple clocks, index selects specific output
-> +
-> +  amlogic,clock-max-frequency:
+> From: Chuan Liu <chuan.liu@amlogic.com>
+> 
+> Implement core clock driver for Amlogic SoC platforms, supporting
 
-No
+So how did all existing Amlogic SoC platforms work so far without basic
+clock driver? Really, how?
 
-> +    description: |
-> +      Each clock's maximum output frequency is constrained during hardware
-> +      design to ensure proper timing requirements for the clock network. If the
-> +      clock frequency configured exceeds this design limit, it can lead to
-> +      abnormal behavior in modules relying on that clock and may even cause
-> +      cross-talk that affects other modules.
-> +
-> +      In the driver, this property is parsed, and interface functions from the
-> +      CCF are called to enforce the clock's maximum frequency, preventing
-> +      potential issues caused by excessive clock frequency configurations.
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +
-> +  amlogic,clock-init-regs:
-
-NAK
-
-...
-
-> diff --git a/include/dt-bindings/clock/amlogic,a9-misc-ccu.h b/include/dt-bindings/clock/amlogic,a9-misc-ccu.h
-> new file mode 100644
-> index 000000000000..102aff8d68e4
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/amlogic,a9-misc-ccu.h
-> @@ -0,0 +1,53 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
-
-Use the same license as in binding doc.
-
-
+You are suppose to grow existing code, not add your completely new
+"basic" driver just because you have it that way in downstream.
 
 Best regards,
 Krzysztof
