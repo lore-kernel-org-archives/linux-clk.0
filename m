@@ -1,365 +1,520 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5A637646C
-	for <linux-clk@vger.kernel.org>; Mon,  9 Feb 2026 12:28:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770640114; cv=pass; b=ubZumMkQrDuGY1hqvnPJRFMPnpxftJEpr8OKBxVIAcPwRq2U4sbXak9jqJ7z4XDjUVKwrmQ4yaO+DGNwf8rcUBT2o5yP43bQwgfnBHR4T3x24tXybQHHUEMyluahnXtv5olpguyx0HWLDNKpdCd10PTR91taHCmkXJEyTtgctN0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770640114; c=relaxed/simple;
-	bh=AjRlWaYsW7ON0GJN0WjeDSsZURLHotWAUuc159HjAn8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KPaQ9MsIrHKAbPyWU0r+uk8Bv3/ynm6wohl8/LhIlZnlK90fmpftwdOmH5bU6KdKxtMWpYXFmPzWfRBpjvypix9kHBxH2bh3XM+6vBFK9YtAdAJFRLxhJaox1BEzgnDr7EPZoJq2FvkgKBvzywA/ghsps5TDT635fqcPHw0k23E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kGcrb4mZ; arc=pass smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B76623373D;
+	Mon,  9 Feb 2026 13:14:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770642874; cv=none; b=NDhNuS6uMdFb6qTQF/XJG8iuGKHcaZ3k7RZH9lF+ijDUDqqQJ+m6fABATa3Ho8lxGx2A6QTQACEb3RhvqAg/ovbIj7xz0xQA/21BEvJcRnLLHdwTbd0UjtKhBw1/SStCNMAmTHsNAs6vO2Li/2TWYhtDKKqbRVQc0Tt7AXz/49A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770642874; c=relaxed/simple;
+	bh=564k2LnoApszpIPBy6pIXAzs/P2R7AhJFsF2c/0eiNs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d26h3/PysX6VSlslCeHi8b8CrR6oUNNUParFJfGTt+0mKIeLUK/kOYfwYH79ojBwRB+PP1bzY6IRC4gcQfzVuluv3NvNdQCT232IoRrAJpuCY6i1OkuFchhm15TaxaB4Rp4mcGBAl7FT6TmCYr7ombMgAiUwpeyitssvCFPP9xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e1Mxnd7F; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kGcrb4mZ"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-436e87589e8so1151808f8f.3
-        for <linux-clk@vger.kernel.org>; Mon, 09 Feb 2026 04:28:33 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1770640112; cv=none;
-        d=google.com; s=arc-20240605;
-        b=hQZZohlS+0jexVtuHpVWrOc06avnixjKFpKRrTTndmLhZ9GP9RJTIx/Qw1zHkEvLnA
-         f9WcGsoeLgEnLBCiomKHhmatIAu5Dml9p+x3BCrUVbtmsQiOElRUxbdalKjujZK0/ubU
-         I3eZxVDhTm3w9OWy9X09bggR8tSGN5MfQyZTtVtRh92qaHZWushN6sfPIQbb6wHl3a/M
-         6tbD5pevqI3JwGf2at6+ssLxGOXxGeBv4qex5hweSdyFHGvcLXh+yUIP5TlTF77E9PBU
-         rUDhPjvJztxXvAszwvS8obKrD/JRqk4tROPjGZrHb3oBtFu59JuOO/E9RrxOQStB4Iyk
-         ypfA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=8rqLaylJQoEadFpFQ9cVP7gyL0VWhbwU4Jf8Ealm+9Y=;
-        fh=+VAiOrpaqN+piO6Abi2ucMLW3MEclIK9wOErElEOfiE=;
-        b=LJ76GTZB5uKKTj8iHteQUjA54tpzEa73BBVIXsig4ex9olPQvlUsZ2rK6HeibPTP6I
-         WDSB9j9Bo456eVuYVBmmc9yzAVbLXqcUBxsZ4PBpQ6uhwccX+qcHPXTOTGVRSVydxmc6
-         LEB3YxCrH8TYFNTD3Qf6GFi5yUDDok/XVFKa4tbML4X9bpC2w9LIDIwMMn39WfR5Nnkm
-         JHGK8PkTKyXl+Zm9oHyK/D48XEiHgOSuR3XBGJjXkjOtDoW3ueH6dtMBbo0ELtL3wk2i
-         EikJC8RqIzSWwXYwqJ/m8upIwSlUnBCGPD98534Afg6d/SHb+1vbebeb4Wwr3HzuFxQZ
-         VpEQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770640112; x=1771244912; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8rqLaylJQoEadFpFQ9cVP7gyL0VWhbwU4Jf8Ealm+9Y=;
-        b=kGcrb4mZQj9iJXN75sP+1ZG1aIZH+8z4X+jVFLH3hLWBX0CkXtRZdntnEDbQCEQXsm
-         5NSF5leMorcohYd8ygqU9k+whliu5gf4pKe9oKKeKIr1evpE5WLUk3TRZyfHx0Ue4v/I
-         3OCFvsTzoSpavNui+0prTt6+mMRXsS2cSvvMna/bzTCLZYJWfvvjHpOIpXnVo4+EqZJO
-         YTDnD8QSUn0TpfvWFI2tz1NXHu/hMP6MtD1yuaKtIJ1PnM6Rr2g6nLAdTqysTM337+QU
-         8rAU9H2ExGHCqnKrURzB15n1T7z5eUvN+DZ4aHiPfjcFBp4+ZFcDpPhxFzNPLSUs9ZsC
-         C9SA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770640112; x=1771244912;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=8rqLaylJQoEadFpFQ9cVP7gyL0VWhbwU4Jf8Ealm+9Y=;
-        b=GRYKDU7SalcQnW1rVa4bAPvaOGlYZx4tnR0MbDiqQ8YZVE5bSauI7j1lTCnxpuZ7Ja
-         IaPzvX+CaQ7M+UopMPLbpDgkvOPJGPAhLcL1+PuIVD7+zVp15Br3ppROZyG4M1wE8aHi
-         gogkQLPRhG4WS/Sl90QfwoyNZ4R4VFcZRzbcK7g5u+Jk7klEYF34fvGB1PnqkIMNaFTw
-         Ut1QBSABeY0+/LklXWa2BwPnyEaBZ0rknZfCJGcyLqx9nLKMbwkDtssHBzekLXv0YQ8N
-         pp0tslREhQIQk97o5nNyFk764Ox6p0jkpgbeZC7E9XDgSfM4c27VXH0YLVQ0N8n+9lO9
-         jz6A==
-X-Forwarded-Encrypted: i=1; AJvYcCVElfc1uWjGhP8tYast2k8FKv/0cUwZBJIHPF3C1d5JBpndu3aE6h6v7ifG4emeM2wNsySmUuia14k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyf8eeYRA5nyeUAJeboXlvmuEt1zn5PizglF7gPm7EeVp/RvGyc
-	zHGsXQTzyCproW+KiXVUnZoB3ry7SRBNqu8etlF51KNXLNvyuVpJTxB09fAINndBRgaZWQPTNwB
-	+LQHhicy/zOms63dWFDr3677cBsjmHoo=
-X-Gm-Gg: AZuq6aJLUmt69R6HkEuumlP7OgftGdjYKWibD1NmghFn82AWh2A8OBMau6WPm61q7KX
-	Q4oIMIP4VPJDVDRQMEPFmXtHxQkymq0ih/+GosTD2Eum4kWCTdmqHlJpQtMCKC9quMd2FwYJwJV
-	cE3VcPDskQr8zmoPpYqUFN7X7JH/HUCVIHu+yMFh35tEyFM6Hc0shK0YYSs8xAv8Jk14OiNRgLi
-	UtQaIRfh1OzcCLdt++wdSOhr8U7PIw34xNsWtHD0O0nln4sQZScLL3VNIOuZbZw2npEJJBleV54
-	x+9C4HX/OSPpqf8cjknTmi1C+wJQ+L4Frnj0Z73iuglktpDAJlKuOGPeSwiMa4a/PqLSvorLZ7e
-	aALQgCfucWBf0
-X-Received: by 2002:a05:6000:2209:b0:435:9241:37b4 with SMTP id
- ffacd0b85a97d-4362938ffe3mr19624465f8f.53.1770640112091; Mon, 09 Feb 2026
- 04:28:32 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e1Mxnd7F"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0AFFC116C6;
+	Mon,  9 Feb 2026 13:14:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770642873;
+	bh=564k2LnoApszpIPBy6pIXAzs/P2R7AhJFsF2c/0eiNs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=e1Mxnd7FrLR/nBfDYZ8/Xt5QjPS+7uAz0eK2b3vZgJS3H8O+t/OhnLqspmhipgXli
+	 EnokWJyQhYhnEIFDhvUqFhkfaJLW8mcbA9RtOVbSMbpdq/vijsWzZN4mKUZ3qalGSX
+	 sllVmEPyVTa83HsCBT6jEL9aLHXqnW7wbYFd1ia22bui4/2V1TYuSGny0Ircph4HvF
+	 lHR+pJpOlSHtKY3Zg5swfEgQhxifuC4gEkEngFxJsA60PoPQ08+Nv0STvRbZtrE0+G
+	 nFBCgx4scCA/6HN4kodTwdvWfi+UWACc2xYUdw8yxsmkG9hqu/HRJuEMDAioIGjiI9
+	 vIXPgmAd9lf+g==
+Message-ID: <10caac08-1a1d-4fe9-8df8-e0b75c532e8f@kernel.org>
+Date: Mon, 9 Feb 2026 14:14:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1770030493.git.tommaso.merciai.xr@bp.renesas.com> <dc9b5f379bcec34a7276d5d769828fde4231595e.1770030493.git.tommaso.merciai.xr@bp.renesas.com>
-In-Reply-To: <dc9b5f379bcec34a7276d5d769828fde4231595e.1770030493.git.tommaso.merciai.xr@bp.renesas.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 9 Feb 2026 12:28:06 +0000
-X-Gm-Features: AZwV_QhWE3m-0Cf9oFsMG8j9Et_-hSHC_oSoZvKiTZg5SGLg2ociSjZxhHZs0jg
-Message-ID: <CA+V-a8smn9bRGeTaYv4WUEXSPuu1CBgzqainupBc-h6kpUWJbA@mail.gmail.com>
-Subject: Re: [PATCH v4 14/20] drm: renesas: rz-du: Add RZ/G3E support
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: tomm.merciai@gmail.com, geert@linux-m68k.org, 
-	laurent.pinchart@ideasonboard.com, linux-renesas-soc@vger.kernel.org, 
-	biju.das.jz@bp.renesas.com, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/13] dt-bindings: clock: Add Amlogic A9 standardized
+ model clock control units
+To: chuan.liu@amlogic.com, Neil Armstrong <neil.armstrong@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260209-a9_clock_driver-v1-0-a9198dc03d2a@amlogic.com>
+ <20260209-a9_clock_driver-v1-1-a9198dc03d2a@amlogic.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20260209-a9_clock_driver-v1-1-a9198dc03d2a@amlogic.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Tommaso,
-
-Thank you for the patch.
-
-
-On Mon, Feb 2, 2026 at 12:04=E2=80=AFPM Tommaso Merciai
-<tommaso.merciai.xr@bp.renesas.com> wrote:
->
-> The RZ/G3E Soc has 2 LCD controller (LCDC), contain a Frame Compression
-> Processor (FCPVD), a Video Signal Processor (VSPD), Video Signal
-> Processor (VSPD), and Display Unit (DU).
->
-> LCDC0 supports DSI and LVDS (single or dual-channel) outputs.
-> LCDC1 supports DSI, LVDS (single-channel), and RGB outputs.
->
-> Depending on the selected output, the correct SMUX2 clock parent must be
-> chosen based on the requested duty cycle:
->
->  - Index 0 for LVDS -> CDIV7_DSIx_CLK (DUTY H/L=3D4/3, 4/7 duty cycle)
->  - Index 1 for DSI/DPAD -> CSDIV_2to16_PLLDSIx (symmetric 50% duty cycle)
->
-> To support this behavior, introduce the `RG2L_DU_FEATURE_SMUX2_DSI_CLK`
-> feature flag and extend the `rzg2l_du_device_info` structure to include a
-> features field. Also, add a new helper function `rzg2l_du_has()` to check
-> for feature flags.
->
-> Add support for the RZ/G3E SoC by introducing:
->  - `rzg2l_du_r9a09g047_du_info` structure
->  - The `renesas,r9a09g047-du` compatible string
->
-> Additionally, introduce the missing output definitions
-> `RZG2L_DU_OUTPUT_LVDS{0,1}`.
->
-> Introduce `rzg2l_du_crtc_atomic_check()` helper to store the routes from
-> the CRTC output to the DU outputs.
->
-> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+On 09/02/2026 06:48, Chuan Liu via B4 Relay wrote:
+> From: Chuan Liu <chuan.liu@amlogic.com>
+> 
+> Add dt-binding documentation for standardized model clock control units
+> in A9 SoC family.
+> 
+> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
 > ---
-> v1->v2:
->  - Instead of using clk-provider API to select the right parent clock,
->    based on the outputs. Just set the correct duty cycle based on the
->    output, this reflects at CPG lvl to select the right parent.
->  - Updated commit message accordingly.
->
-> v2->v3:
->  - No changes.
->
-> v3->v4:
->  - No changes.
->
->  drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c | 48 +++++++++++++++++++
->  drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c  | 26 ++++++++++
->  drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.h  | 11 +++++
->  3 files changed, 85 insertions(+)
->
-> diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c b/drivers/gpu/=
-drm/renesas/rz-du/rzg2l_du_crtc.c
-> index 6e7aac6219be..c51ba4b8c383 100644
-> --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c
-> +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c
-> @@ -64,11 +64,32 @@
->  static void rzg2l_du_crtc_set_display_timing(struct rzg2l_du_crtc *rcrtc=
-)
->  {
->         const struct drm_display_mode *mode =3D &rcrtc->crtc.state->adjus=
-ted_mode;
-> +       struct rzg2l_du_crtc_state *rstate =3D
-> +               to_rzg2l_crtc_state(rcrtc->crtc.state);
->         unsigned long mode_clock =3D mode->clock * 1000;
->         u32 ditr0, ditr1, ditr2, ditr3, ditr4, pbcr0;
->         struct rzg2l_du_device *rcdu =3D rcrtc->dev;
->
->         clk_prepare_enable(rcrtc->rzg2l_clocks.dclk);
-> +
-> +       if (rzg2l_du_has(rcdu, RG2L_DU_FEATURE_SMUX2_DSI_CLK)) {
-> +               struct clk *clk_parent;
-> +
-> +               clk_parent =3D clk_get_parent(rcrtc->rzg2l_clocks.dclk);
-> +
-> +               /*
-> +                * Request appropriate duty cycle to let clock driver sel=
-ect
-> +                * the correct parent:
-> +                * - CDIV7_DSIx_CLK (LVDS path) has DUTY H/L=3D4/3, 4/7 d=
-uty cycle.
-> +                * - CSDIV_2to16_PLLDSIx (DSI/RGB path) has symmetric 50%=
- duty cycle.
-> +                */
-> +               if (rstate->outputs =3D=3D BIT(RZG2L_DU_OUTPUT_LVDS0) ||
-> +                   rstate->outputs =3D=3D BIT(RZG2L_DU_OUTPUT_LVDS1))
-> +                       clk_set_duty_cycle(clk_parent, 4, 7);
-> +               else
-> +                       clk_set_duty_cycle(clk_parent, 1, 2);
-> +       }
-> +
->         clk_set_rate(rcrtc->rzg2l_clocks.dclk, mode_clock);
->
->         ditr0 =3D (DU_DITR0_DEMD_HIGH
-> @@ -248,6 +269,32 @@ static void rzg2l_du_crtc_stop(struct rzg2l_du_crtc =
-*rcrtc)
->   * CRTC Functions
->   */
->
-> +static int rzg2l_du_crtc_atomic_check(struct drm_crtc *crtc,
-> +                                     struct drm_atomic_state *state)
-> +{
-> +       struct drm_crtc_state *crtc_state =3D drm_atomic_get_new_crtc_sta=
-te(state,
-> +                                                                        =
- crtc);
-> +       struct rzg2l_du_crtc_state *rstate =3D to_rzg2l_crtc_state(crtc_s=
-tate);
-> +       struct drm_encoder *encoder;
-> +
-> +       /* Store the routes from the CRTC output to the DU outputs. */
-> +       rstate->outputs =3D 0;
-> +
-> +       drm_for_each_encoder_mask(encoder, crtc->dev,
-> +                                 crtc_state->encoder_mask) {
-> +               struct rzg2l_du_encoder *renc;
-> +
-> +               /* Skip the writeback encoder. */
-> +               if (encoder->encoder_type =3D=3D DRM_MODE_ENCODER_VIRTUAL=
-)
-> +                       continue;
-> +
-> +               renc =3D to_rzg2l_encoder(encoder);
-> +               rstate->outputs |=3D BIT(renc->output);
-> +       }
-> +
-> +       return 0;
-> +}
-> +
->  static void rzg2l_du_crtc_atomic_enable(struct drm_crtc *crtc,
->                                         struct drm_atomic_state *state)
->  {
-> @@ -296,6 +343,7 @@ static void rzg2l_du_crtc_atomic_flush(struct drm_crt=
-c *crtc,
->  }
->
->  static const struct drm_crtc_helper_funcs crtc_helper_funcs =3D {
-> +       .atomic_check =3D rzg2l_du_crtc_atomic_check,
-This change and adding rzg2l_du_crtc_atomic_check() can be a separate
-patch as the same changes are required for T2H and its not specific to
-G3E.
+>  .../bindings/clock/amlogic,a9-model-ccu.yaml       | 435 +++++++++++++++++++++
+>  1 file changed, 435 insertions(+)
 
->         .atomic_flush =3D rzg2l_du_crtc_atomic_flush,
->         .atomic_enable =3D rzg2l_du_crtc_atomic_enable,
->         .atomic_disable =3D rzg2l_du_crtc_atomic_disable,
-> diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c b/drivers/gpu/d=
-rm/renesas/rz-du/rzg2l_du_drv.c
-> index 0fef33a5a089..84e6bf186f5d 100644
-> --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c
-> +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c
-> @@ -51,6 +51,29 @@ static const struct rzg2l_du_device_info rzg2l_du_r9a0=
-7g044_info =3D {
->         }
->  };
->
-> +static const struct rzg2l_du_device_info rzg2l_du_r9a09g047_du_info =3D =
-{
-> +       .features =3D RG2L_DU_FEATURE_SMUX2_DSI_CLK,
-> +       .channels_mask =3D BIT(0),
-> +       .routes =3D {
-> +               [RZG2L_DU_OUTPUT_DSI0] =3D {
-> +                       .possible_outputs =3D BIT(0),
-> +                       .port =3D 0,
-> +               },
-> +               [RZG2L_DU_OUTPUT_LVDS0] =3D {
-> +                       .possible_outputs =3D BIT(0),
-> +                       .port =3D 1,
-> +               },
-> +               [RZG2L_DU_OUTPUT_LVDS1] =3D {
-> +                       .possible_outputs =3D BIT(0),
-> +                       .port =3D 2,
-> +               },
-> +               [RZG2L_DU_OUTPUT_DPAD0] =3D {
-> +                       .possible_outputs =3D BIT(0),
-> +                       .port =3D 3,
-> +               },
-> +       },
-> +};
-> +
->  static const struct rzg2l_du_device_info rzg2l_du_r9a09g057_info =3D {
->         .channels_mask =3D BIT(0),
->         .routes =3D {
-> @@ -64,6 +87,7 @@ static const struct rzg2l_du_device_info rzg2l_du_r9a09=
-g057_info =3D {
->  static const struct of_device_id rzg2l_du_of_table[] =3D {
->         { .compatible =3D "renesas,r9a07g043u-du", .data =3D &rzg2l_du_r9=
-a07g043u_info },
->         { .compatible =3D "renesas,r9a07g044-du", .data =3D &rzg2l_du_r9a=
-07g044_info },
-> +       { .compatible =3D "renesas,r9a09g047-du", .data =3D &rzg2l_du_r9a=
-09g047_du_info },
->         { .compatible =3D "renesas,r9a09g057-du", .data =3D &rzg2l_du_r9a=
-09g057_info },
->         { /* sentinel */ }
->  };
-> @@ -74,6 +98,8 @@ const char *rzg2l_du_output_name(enum rzg2l_du_output o=
-utput)
->  {
->         static const char * const names[] =3D {
->                 [RZG2L_DU_OUTPUT_DSI0] =3D "DSI0",
-> +               [RZG2L_DU_OUTPUT_LVDS0] =3D "LVDS0",
-> +               [RZG2L_DU_OUTPUT_LVDS1] =3D "LVDS1",
->                 [RZG2L_DU_OUTPUT_DPAD0] =3D "DPAD0"
->         };
->
-> diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.h b/drivers/gpu/d=
-rm/renesas/rz-du/rzg2l_du_drv.h
-> index 58806c2a8f2b..c6f9dc46ab31 100644
-> --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.h
-> +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.h
-> @@ -20,8 +20,12 @@
->  struct device;
->  struct drm_property;
->
-> +#define RG2L_DU_FEATURE_SMUX2_DSI_CLK  BIT(0)  /* Per output mux */
-> +
->  enum rzg2l_du_output {
->         RZG2L_DU_OUTPUT_DSI0,
-> +       RZG2L_DU_OUTPUT_LVDS0,
-> +       RZG2L_DU_OUTPUT_LVDS1,
->         RZG2L_DU_OUTPUT_DPAD0,
->         RZG2L_DU_OUTPUT_MAX,
->  };
-> @@ -46,6 +50,7 @@ struct rzg2l_du_output_routing {
->   * @routes: array of CRTC to output routes, indexed by output (RZG2L_DU_=
-OUTPUT_*)
->   */
->  struct rzg2l_du_device_info {
-> +       unsigned int features;
-The member description needs adding.
+Brief review, you still have to read basic guidelines to not repeat the
+basic mistakes.
 
-Cheers,
-Prabhakar
-
->         unsigned int channels_mask;
->         struct rzg2l_du_output_routing routes[RZG2L_DU_OUTPUT_MAX];
->  };
-> @@ -73,6 +78,12 @@ static inline struct rzg2l_du_device *to_rzg2l_du_devi=
-ce(struct drm_device *dev)
->         return container_of(dev, struct rzg2l_du_device, ddev);
->  }
->
-> +static inline bool rzg2l_du_has(struct rzg2l_du_device *rcdu,
-> +                               unsigned int feature)
-> +{
-> +       return rcdu->info->features & feature;
-> +}
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/amlogic,a9-model-ccu.yaml b/Documentation/devicetree/bindings/clock/amlogic,a9-model-ccu.yaml
+> new file mode 100644
+> index 000000000000..56c5cbe1b246
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/amlogic,a9-model-ccu.yaml
+> @@ -0,0 +1,435 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +# Copyright (C) 2026 Amlogic, Inc. All rights reserved
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/amlogic,a9-model-ccu.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
->  const char *rzg2l_du_output_name(enum rzg2l_du_output output);
->
->  #endif /* __RZG2L_DU_DRV_H__ */
-> --
-> 2.43.0
->
->
+> +title: Amlogic A9 Family Standardized Model Clock Control Unit
+> +
+> +maintainers:
+> +  - Chuan Liu <chuan.liu@amlogic.com>
+> +
+> +description:
+> +  The clock tree within the A9 is composed of numerous instances of these
+> +  standardized model CCU (Clock Control Units).
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+
+Drop
+
+> +          - const: amlogic,a9-composite-ccu
+> +        description: Supports clock source selection, frequency division, and
+> +                     clock gating.
+
+This is just one big enum. You can add comments if you insist...
+
+
+> +      - items:
+> +          - const: amlogic,a9-composite-ccu-mult
+> +        description: Some modules have multiple input clocks and contain
+> +                     multiple composite-ccus internally.
+> +      - items:
+> +          - const: amlogic,a9-noglitch-ccu
+> +        description: Provides the same functionality as composite-ccu but
+> +                     includes glitch suppression during frequency transitions.
+> +      - items:
+> +          - const: amlogic,a9-noglitch-ccu-mult
+> +        description: Some modules have multiple input clocks and contain
+> +                     multiple noglitch-ccus internally.
+> +      - items:
+> +          - const: amlogic,a9-sysbus-ccu
+> +        description: Consists of multiple gating arrays, commonly used for
+> +                     Amlogic's sys_clk and axi_clk.
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    minItems: 1
+> +    maxItems: 16
+> +
+> +  clock-names:
+> +    minItems: 1
+> +    maxItems: 16
+> +
+> +  clock-output-names:
+> +    minItems: 1
+> +    # The sysbus-ccu of A9 supports up to 128 gates
+> +    maxItems: 128
+> +
+> +  '#clock-cells':
+> +    description:
+> +      The clock controller of a module may contain one or more CCU(s). When a
+> +      clock controller has multiple CCUs, an index is required to specify a
+> +      particular CCU within the clock controller.
+
+Drop
+
+> +    oneOf:
+> +      - const: 0
+> +        description: Single clock output, no specifier needed
+> +      - const: 1
+> +        description: Multiple clocks, index selects specific output
+
+Drop all descriptions. That's enum. Do not explain usu how DT works.
+
+> +
+> +  amlogic,clock-max-frequency:
+
+Drop property. So many wrong things here... First, start from basic
+guidelines like talks or docs in kernel and understand the suffixes.
+
+Second not a DT property.
+
+> +    description: |
+> +      Each clock's maximum output frequency is constrained during hardware
+> +      design to ensure proper timing requirements for the clock network. If the
+> +      clock frequency configured exceeds this design limit, it can lead to
+> +      abnormal behavior in modules relying on that clock and may even cause
+> +      cross-talk that affects other modules.
+> +
+> +      In the driver, this property is parsed, and interface functions from the
+
+Why would we care about driver?
+
+This is binding, we talk about hardware.
+
+
+> +      CCF are called to enforce the clock's maximum frequency, preventing
+> +      potential issues caused by excessive clock frequency configurations.
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +
+> +  amlogic,reg-layout:
+
+No, drop. Compatible defines it.
+
+> +    description:
+> +      These standardized model CCUs require register configuration for their
+> +      clock functions. This property node describes the register layout
+> +      parameters for each model's CCU.
+> +    $ref: /schemas/types.yaml#/definitions/uint32-matrix
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          anyOf:
+> +            - contains:
+> +                const: amlogic,a9-composite-ccu
+> +            - contains:
+> +                const: amlogic,a9-noglitch-ccu
+> +    then:
+> +      properties:
+> +        '#clock-cells':
+> +          const: 0
+> +        clock-output-names:
+> +          minItems: 1
+> +          maxItems: 1
+> +    else:
+> +      properties:
+> +        '#clock-cells':
+> +          const: 1
+> +        clock-output-names:
+> +          minItems: 2
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: amlogic,a9-composite-ccu
+> +    then:
+> +      properties:
+> +        clocks:
+> +          minItems: 1
+> +          items:
+> +            - description: input clock source 0
+> +            - description: input clock source 1 (optional)
+> +            - description: input clock source 2 (optional)
+> +            - description: input clock source 3 (optional)
+> +            - description: input clock source 4 (optional)
+> +            - description: input clock source 5 (optional)
+> +            - description: input clock source 6 (optional)
+> +            - description: input clock source 7 (optional)
+> +        clock-names:
+> +          minItems: 1
+> +          items:
+> +            - const: clkin0
+> +            - const: clkin1
+> +            - const: clkin2
+> +            - const: clkin3
+> +            - const: clkin4
+> +            - const: clkin5
+> +            - const: clkin6
+> +            - const: clkin7
+> +        amlogic,reg-layout:
+> +          description: |
+> +            composite-ccu contains three register layout parameters:
+> +              * register offset
+> +              * bit offset
+> +              * divider effective bit width
+> +      required:
+> +        - amlogic,reg-layout
+> +        - clock-names
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: amlogic,a9-composite-ccu-mult
+> +    then:
+> +      properties:
+> +        clocks:
+> +          description:
+> +            Some clock controllers contain two composite-ccus (labeled
+> +            composite_a and composite_b). In certain controllers, composite_a
+> +            and composite_b share a common clock source, while in others they
+> +            have independent clock sources.
+> +          minItems: 1
+> +          items:
+> +            - description: composite_a/b's input clock source 0
+> +            - description: composite_a/b's input clock source 1 (optional)
+> +            - description: composite_a/b's input clock source 2 (optional)
+> +            - description: composite_a/b's input clock source 3 (optional)
+> +            - description: composite_a/b's input clock source 4 (optional)
+> +            - description: composite_a/b's input clock source 5 (optional)
+> +            - description: composite_a/b's input clock source 6 (optional)
+> +            - description: composite_a/b's input clock source 7 (optional)
+> +            - description: composite_b's input clock source 0 (optional)
+> +            - description: composite_b's input clock source 1 (optional)
+> +            - description: composite_b's input clock source 2 (optional)
+> +            - description: composite_b's input clock source 3 (optional)
+> +            - description: composite_b's input clock source 4 (optional)
+> +            - description: composite_b's input clock source 5 (optional)
+> +            - description: composite_b's input clock source 6 (optional)
+> +            - description: composite_b's input clock source 7 (optional)
+> +        clock-names:
+> +          minItems: 1
+> +          items:
+> +            - const: clkin0
+> +            - const: clkin1
+> +            - const: clkin2
+> +            - const: clkin3
+> +            - const: clkin4
+> +            - const: clkin5
+> +            - const: clkin6
+> +            - const: clkin7
+> +            - const: bclkin0
+> +            - const: bclkin1
+> +            - const: bclkin2
+> +            - const: bclkin3
+> +            - const: bclkin4
+> +            - const: bclkin5
+> +            - const: bclkin6
+> +            - const: bclkin7
+> +        amlogic,reg-layout:
+> +          description: |
+> +            composite-ccu contains three register layout parameters:
+> +              * register offset
+> +              * bit offset
+> +              * divider effective bit width
+> +      required:
+> +        - amlogic,reg-layout
+> +        - clock-names
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: amlogic,a9-noglitch-ccu
+> +    then:
+> +      properties:
+> +        clocks:
+> +          minItems: 1
+> +          items:
+> +            - description: input clock source 0
+> +            - description: input clock source 1 (optional)
+> +            - description: input clock source 2 (optional)
+> +            - description: input clock source 3 (optional)
+> +            - description: input clock source 4 (optional)
+> +            - description: input clock source 5 (optional)
+> +            - description: input clock source 6 (optional)
+> +            - description: input clock source 7 (optional)
+> +        clock-names:
+> +          minItems: 1
+> +          items:
+> +            - const: clkin0
+> +            - const: clkin1
+> +            - const: clkin2
+> +            - const: clkin3
+> +            - const: clkin4
+> +            - const: clkin5
+> +            - const: clkin6
+> +            - const: clkin7
+> +      required:
+> +        - clock-names
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: amlogic,a9-noglitch-ccu-mult
+> +    then:
+> +      properties:
+> +        clocks:
+> +          minItems: 1
+
+Why?
+
+> +          items:
+> +            - description: input clock source 0
+> +            - description: input clock source 1 (optional)
+
+Drop optional. Don't repeat constraints in free form text.
+
+> +            - description: input clock source 2 (optional)
+> +            - description: input clock source 3 (optional)
+> +            - description: input clock source 4 (optional)
+> +            - description: input clock source 5 (optional)
+> +            - description: input clock source 6 (optional)
+> +            - description: input clock source 7 (optional)
+> +        clock-names:
+> +          minItems: 1
+> +          items:
+> +            - const: clkin0
+> +            - const: clkin1
+> +            - const: clkin2
+> +            - const: clkin3
+> +            - const: clkin4
+> +            - const: clkin5
+> +            - const: clkin6
+> +            - const: clkin7
+> +        amlogic,reg-layout:
+> +          description: |
+> +            composite-ccu contains one register layout parameters:
+> +              * register offset
+> +      required:
+> +        - amlogic,reg-layout
+> +        - clock-names
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: amlogic,a9-sysbus-ccu
+> +    then:
+> +      properties:
+> +        clocks:
+> +          maxItems: 1
+> +          description: input clock of sysbus-ccu
+
+list the items with description instead.
+
+> +        amlogic,reg-layout:
+> +          description: |
+> +            composite-ccu contains two register layout parameters:
+> +              * register offset
+> +              * bit offset
+> +      required:
+> +        - amlogic,reg-layout
+
+This is huge and amount of ifs is clearly suggesting you combined way
+too much into one file.
+
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-output-names
+> +  - "#clock-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    clk_dummy: clock-dummy {
+> +        compatible = "fixed-clock";
+> +        #clock-cells = <0>;
+> +        clock-frequency = <0>;
+> +        clock-output-names = "dummy";
+> +        status = "disabled";
+> +    };
+
+Not relevant, drop entire node.
+
+> +
+> +    apb {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +        clock-controller@350 {
+> +            compatible = "amlogic,a9-composite-ccu";
+> +            reg = <0x0 0x350 0x0 0x4>;
+> +            #clock-cells = <0>;
+> +            amlogic,clock-max-frequency = <50000000>;
+> +            amlogic,reg-layout = <0x0 0  7>;
+> +            clock-output-names = "sar_adc";
+> +            clocks = <&xtal_24m>,
+> +                     <&scmi_clk 17>;
+> +            clock-names = "clkin0", "clkin1";
+> +        };
+> +
+> +        clock-controller@290 {
+> +            compatible = "amlogic,a9-composite-ccu-mult";
+> +            reg = <0x0 0x290 0x0 0x8>;
+> +            #clock-cells = <1>;
+> +            amlogic,clock-max-frequency = <250000000>,
+> +                                          <250000000>,
+> +                                          <1200000000>;
+> +            amlogic,reg-layout = <0x0 0  7>,
+> +                                 <0x0 16 7>,
+> +                                 <0x4 0  7>;
+> +            clock-output-names = "sd_emmc_a",
+> +                                 "sd_emmc_b",
+> +                                 "sd_emmc_c";
+> +            clocks = <&xtal_24m>,
+> +                     <&scmi_clk 6>,
+> +                     <&scmi_clk 10>;
+> +            clock-names = "clkin0",
+> +                          "clkin1",
+> +                          "clkin2";
+> +        };
+
+One or two are enough. Drop the rest.
+
+> 
+
+
+Best regards,
+Krzysztof
