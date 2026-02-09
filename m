@@ -1,195 +1,250 @@
-Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FCB61917ED;
-	Mon,  9 Feb 2026 08:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C353366054;
+	Mon,  9 Feb 2026 09:51:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770625102; cv=none; b=Qj/UzzVWwkrL1jk2CWUFaEQ9JepXoh62PI5cFKVpLN6K05iBI0Qw8bObd1reE+6kbj9dxBEaqkEdAft/pQ/cJ5tOZEbnHsh6NBe3FQClhprQwgXVDRYJbZRn1rLQvMiJRfh2yVkVkitxSDguD7fjWInZh4ExqKlzHLVzeS1b6MY=
+	t=1770630661; cv=none; b=V7kuQsFYLz3TaGl8qlqpPKItfRq4t1RY3US6gBzjNkAyj8bOs6v+dfuHjQ9e+4jny0qAm6AdVhaKqUuiNB5w5BEYSLVlAsz6nTtK9dtx/VVr4Dyngb7E9IO93Cy6fYnoEcuh4yMvrGUHj6/NJPwaYJhNsZX1j1+2pqpNhN+QmRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770625102; c=relaxed/simple;
-	bh=j41Y8/Fj/52cE/OBpXfiJPe/ap6VLQF/tQYQjVKZuaY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bTkBj510jVom0I+uCkkYUSjQjG9MO9Is16PW6+0Sb+nQDn54xtXBTP0IICKIlNFFs0xnpvuEnZQLi9zrgRuEBxslvQ8R0cYbTJiyvDhO+6/5gzLuTyK+DaKybCQYxvEGaxtVx4NjfNktdTBbKF1jmJRZbzZAtPf6gIVhUKH4W1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=d6Liw7qJ; arc=none smtp.client-ip=217.92.40.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
+	s=arc-20240116; t=1770630661; c=relaxed/simple;
+	bh=lg8CE3wdX+dcJL6yDeqGzT+IDyDi7+zFMbcdS7bHqvY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SL64xOU/lhztYU2quyLTJhPytfmKQEwNM9+v69emsPTFHDrG20e3BNoCx+mfGyNM6hXe9H2Ak/nHec+2gduTJO8xudfR/n7lRXT0Q+rdca42Q1r3GxGjSWKH8IuG/ho0EQWakppUeJg9jFcmoEYrO8VfFqtQUr8WGZ5ArsB1RNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=GAl5PSI0; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="d6Liw7qJ"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CC952148DD11;
-	Mon,  9 Feb 2026 09:09:01 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1770624543; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=h44us49OCY+Aqqi8FHfVgT4PgOs8rfwSyPhPjcy/Tf8=;
-	b=d6Liw7qJZ3Ycos6ROe2kxvvXGOomIAdAhB3rdkL2ihEJ8pNKRFAXVVzWrL9xbooWELTicZ
-	bnDdxni4KVZwvanGpn3rhpDIEpy1ADE3lhn8dwex04jtqU6CJT575VXySBE06sy5DQFTvi
-	Rhqs+Nq3keLKX9Bz2QYdg7qMJwW23R6/AbhIdXqJ9CtjWokrZ0Gw2w0KljOUJSc5/9lG/d
-	QmhTNZof/JXXlTzPzZqhqtMYpkg3R9KQEpvazz3kSj+kLjkRtQKaFR1hf1h8NVFA4YooNO
-	oFhczojEq700YkPS0ohdDA5cjWNQHyaap4d0zXxHKLGeJYi5wzh1Ik7hVt9bRQ==
-Date: Mon, 9 Feb 2026 09:08:56 +0100
-From: Alexander Dahl <ada@thorsis.com>
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: Alexander Dahl <ada@thorsis.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Ryan Wanner <ryan.wanner@microchip.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH v3 03/19] dt-bindings: clock: at91: Allow referencing
- main rc oscillator in DT
-Message-ID: <20260209-amulet-customize-08ef8dfa1c38@thorsis.com>
-Mail-Followup-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Ryan Wanner <ryan.wanner@microchip.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-References: <20260120143759.904013-1-ada@thorsis.com>
- <20260120143759.904013-4-ada@thorsis.com>
- <b932cdfb-9197-462b-abb8-e7b4c7ecab6f@tuxon.dev>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="GAl5PSI0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1770630653;
+	bh=lg8CE3wdX+dcJL6yDeqGzT+IDyDi7+zFMbcdS7bHqvY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GAl5PSI0gxZCB4fRfIXmb+OCpJY8qNOwXLz9veN8T1muQZoP1SLZuyEN5jFkvF2vC
+	 ipEp3b4sMip86VDrIuyv0saU6cadpiIbCjLXvBVVbeZAQqEsKVjT0taFlrKIdQOG5o
+	 OZQLZf2qXFX+xYlx0veU9pFtFvMJZFR5drDK3SDbpdlXo4c3lYspdavKG7jiw9NlZW
+	 xa/6D7KeI3iQ35tMqN3uTY1pHR6VVhFsLSaG8GVpX+qBCwtkSmIJAVf9ZN5odCFfCe
+	 6XncsOBtXX+6Ns4d6I4xWWAvxrKDHBZuGV6cEunws0xUFhCtHMLYrEcFSnZW8x55/J
+	 GOPQBqzU8Vu7A==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id F334C17E12C5;
+	Mon,  9 Feb 2026 10:50:51 +0100 (CET)
+Date: Mon, 9 Feb 2026 10:50:47 +0100
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Daniel Almeida <daniel.almeida@collabora.com>, Danilo Krummrich
+ <dakr@kernel.org>, Alice Ryhl <aliceryhl@google.com>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Drew Fustini <fustini@kernel.org>, Guo Ren
+ <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Uwe =?UTF-8?B?S2xlaW5lLUs=?=
+ =?UTF-8?B?w7ZuaWc=?= <ukleinek@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda
+ <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
+ <gary@garyguo.net>, =?UTF-8?B?QmrDtnJu?= Roy Baron
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Andreas
+ Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org,
+ linux-pwm@vger.kernel.org, linux-clk@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] rust: clk: use the type-state pattern
+Message-ID: <20260209105047.693f2515@fedora>
+In-Reply-To: <20260204-angelic-vermilion-beagle-fd1507@houat>
+References: <20260119-thundering-tested-robin-4be817@houat>
+	<aW4lCfUyumOKRRJm@google.com>
+	<518D8B09-B9A1-4DB4-85CD-37A2DD3D5FB1@collabora.com>
+	<DFSLCI9U4NCW.2HI2UPUI7G134@kernel.org>
+	<20260119-weightless-pelican-of-anger-190db0@houat>
+	<DFSN4FDCYHMW.3J3237PEBV2ZP@kernel.org>
+	<20260122-majestic-masterful-jaguarundi-d0abde@houat>
+	<2F3D3A40-6EF9-46FC-A769-E5A3AAF67E65@collabora.com>
+	<20260204-nickel-seal-of-poetry-8fdefb@houat>
+	<91A92D84-1F2E-45F3-82EC-6A97D32E2A78@collabora.com>
+	<20260204-angelic-vermilion-beagle-fd1507@houat>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b932cdfb-9197-462b-abb8-e7b4c7ecab6f@tuxon.dev>
-User-Agent: Mutt/2.2.13 (2024-03-09)
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello Claudiu,
+Hi Maxime,
 
-Am Sat, Jan 31, 2026 at 05:44:18PM +0200 schrieb Claudiu Beznea:
-> Hi, Alexander,
-> 
-> On 1/20/26 16:37, Alexander Dahl wrote:
-> > The main rc oscillator will be needed for the OTPC to work properly.
-> > 
-> > The new index introduced here was not used on the four affected SoC
-> > clock drivers before, but for sama5d2 only (PMC_I2S1_MUX).
-> > 
-> > Link: https://lore.kernel.org/linux-devicetree/20250207-jailbird-circus-bcc04ee90e05@thorsis.com/T/#u
-> > Signed-off-by: Alexander Dahl <ada@thorsis.com>
-> > ---
-> > 
-> > Notes:
-> >      v3:
-> >      - adapt to different base changes, added lines are the same
-> >      v2:
-> >      - new patch, not present in v1
-> > 
-> >   include/dt-bindings/clock/microchip,sam9x60-pmc.h  | 1 +
-> >   include/dt-bindings/clock/microchip,sam9x7-pmc.h   | 1 +
-> >   include/dt-bindings/clock/microchip,sama7d65-pmc.h | 1 +
-> >   include/dt-bindings/clock/microchip,sama7g5-pmc.h  | 1 +
-> >   4 files changed, 4 insertions(+)
-> > 
-> > diff --git a/include/dt-bindings/clock/microchip,sam9x60-pmc.h b/include/dt-bindings/clock/microchip,sam9x60-pmc.h
-> > index 91f8f863ea076..1f6bb51780d09 100644
-> > --- a/include/dt-bindings/clock/microchip,sam9x60-pmc.h
-> > +++ b/include/dt-bindings/clock/microchip,sam9x60-pmc.h
-> > @@ -10,6 +10,7 @@
-> >   #define SAM9X60_PMC_MCK		1
-> >   #define SAM9X60_PMC_UTMI	2
-> >   #define SAM9X60_PMC_MAIN	3
-> > +#define SAM9X60_PMC_MAIN_RC	6
-> 
-> Why 6 and not another index? In theory, now, you should be able to define
-> here all the core clocks IDs (as these are known from the manuals) and
-> prepare the driver to allocate memory for all of them such that the driver
-> will have to be able to work with old and new device trees w/o further
-> changes.
+On Wed, 4 Feb 2026 15:34:29 +0100
+Maxime Ripard <mripard@kernel.org> wrote:
 
-Was the first common free index for these four clocks.  Before split
-up would have been nice to have a common index, because it was all
-together in include/dt-bindings/clock/at91.h in one file.  After
-splitup one could just use the first free index, as Krzysztof already
-suggested.
+> On Wed, Feb 04, 2026 at 09:43:55AM -0300, Daniel Almeida wrote:
+> > > I'm probably missing something then, but let's assume you have a driv=
+er
+> > > that wants its clock prepared and enabled in an hypothetical enable()
+> > > callback, and disabled / unprepared in a disable() callback.
+> > >=20
+> > > From a PM management perspective, this usecase makes total sense, is a
+> > > valid usecase, is widely used in the kernel, and is currently support=
+ed
+> > > by both the C and Rust clk APIs.
+> > >=20
+> > > The only solution to this you suggested so far (I think?) to implement
+> > > this on top of the new clk API you propose is to have a driver specif=
+ic
+> > > enum that would store each of the possible state transition. =20
+> >=20
+> > Yes, you need an enum _if_ you want to model transitions at runtime. II=
+UC you
+> > only need two variants to implement the pattern you described. I do not
+> > consider this  =E2=80=9Cboilerplate=E2=80=9D, but rather a small cost t=
+o pay. =20
+>=20
+> A maintenance cost to pay by every driver is kind of the textbook
+> definition of boilerplate to me.
+>=20
+> > I would understand if this was some elaborate pattern that had to be
+> > implemented by all drivers, but a two-variant enum is as
+> > straightforward as it gets. =20
+>=20
+> And yet, that framework has dozens of helpers that do not remove
+> anything from drivers but a couple of lines. So surely its users must
+> find value in reducing that boilerplate as much as possible. And you do
+> implement some of them, so you must find value in that too.
+>=20
+> > > That's the boilerplate I'm talking about. If every driver wanting to
+> > > implement that pattern has to make such an enum, with all the relevant
+> > > traits implementation that might come with it, we go from an API where
+> > > everything works at no-cost from a code-size perspective to a situati=
+on
+> > > where every driver has to develop and maintain that enum. =20
+> >
+> > There are no "traits that come with it". It's just an enum, with two
+> > variants.
+> >  =20
+> > > API where everything works at no-cost =20
+> >=20
+> > The previous API was far from =E2=80=9Ceverything works=E2=80=9D. It wa=
+s fundamentally
+> > broken by design in multiple ways, i.e.: =20
+>=20
+> Out of context and not what I meant, but ok.
+>=20
+> > > a) It only keeps track of a count to clk_get(), which means that user=
+s have
+> > > to manually call disable() and unprepare(), or a variation of those, =
+like
+> > > disable_unprepare().
+> > >=20
+> > > b) It allows repeated calls to prepare() or enable(), but it keeps no=
+ track
+> > > of how often these were called, i.e., it's currently legal to write t=
+he
+> > > following:
+> > >=20
+> > > clk.prepare();
+> > > clk.prepare();
+> > > clk.enable();
+> > > clk.enable();
+> > >=20
+> > > And nothing gets undone on drop(). =20
+> >=20
+> > IMHO, what we have here is an improvement that has been long overdue. =
+=20
+>=20
+> Nothing is absolute. It is indeed an improvement on the refcounting side
+> of things and general safety of the API for the general case. I don't
+> think I ever questionned that.
+>=20
+> However, for the use-cases we've been discussing (and dozens of drivers
+> implementing it), it also comes with a regression in the amount of code
+> to create and maintain. They used to be able to only deal with the Clk
+> structure, and now they can't anymore.
+>=20
+> You might find that neglible, you might have a plan to address that in
+> the future, etc. and that's fine, but if you can't acknowledge that it's
+> indeed happening, there's no point in me raising the issue and
+> continuing the discussion.
 
-From my reading of the SAM9X60 manual, there's no such thing as core
-clock IDs in the manual.  If there is a section in the manual, please
-point it out.
 
-From my interpretation for SAM9X60 these clocks are provided by the
-clock generator (section 40 in the manual):
+Okay, let's see if I can sum-up the use case you'd like to support. You
+have some PM hooks, which I'm assuming are (or will be) written in
+rust. It will probably take the form of some Device{Rpm,Pm} trait to
+implement for your XxxDeviceData (Xxx being the bus under which is
+device is) object (since I've only recently joined the R4L effort, I
+wouldn't be surprised if what I'm describing already exists or is
+currently being proposed/reviewed somewhere, so please excuse my
+ignorance if that's the case :-)).
 
-- TD_SLCK
-- MD_SLCK
-- MAINCK
-- UPLLCK
-- PLLACK
+The way I see it, rather than having one enum per clk/regulator/xxx
+where we keep track of each state individually, what we could have is a
 
-The "main rc oscillator" clock is somewhat internal here, but for OTPC
-we must be able to enable it.
+trait DevicePm {
+	type ResumedState;
+	type SuspendedState;
 
-MCK (not MAINCK) is generated in the Processor Clock Controller block
-of the PMC (section 41 in the manual) from one of the above clocks.
+	fn resume(&self, state: SuspendedState) -> Result<ResumedState, Error<Susp=
+endedState>>;
+	fn suspend(&self, state: SuspendedState) -> Result<SuspendedState, Error<R=
+esumedState>>;
+};
 
-So it's all mixed up from different blocks from Clock Generator and
-Power Management Controller already.  These indexes are
-arbitrary and just for the driver, right?  Or am I missing something?
+enum DeviceState<T: DevicePm> {
+	Resumed(T::ResumedState),
+	Suspended(T::SuspendedState),
+};
 
-Besides, if it is renamed now anyway:
+and then in your driver:
 
-- Why that PMC prefix? (most of these core clocks come from the
-  clock controller, not the pmc)
+MySuspendedDeviceResources {
+	xxx_clk: Clk<Unprepared>,
+};
 
-- Why not rename PMC_UTMI to something like xyz_UPLLCK to match the
-  datasheet/manual (likewise for the other definitions)?
+MyResumedDeviceResources {
+	xxx_clk: Clk<Enabled>,
+};
 
-Greets
-Alex
+implem DevicePm for MyDevice {
+	type ResumedState =3D MyResumedDeviceResources;
+	type SuspendedState =3D MySuspendedDeviceResources;
 
-> 
-> >   #define SAM9X60_PMC_PLLACK	7
-> >   #endif
-> > diff --git a/include/dt-bindings/clock/microchip,sam9x7-pmc.h b/include/dt-bindings/clock/microchip,sam9x7-pmc.h
-> > index e1dd41fe75046..657f32ce10071 100644
-> > --- a/include/dt-bindings/clock/microchip,sam9x7-pmc.h
-> > +++ b/include/dt-bindings/clock/microchip,sam9x7-pmc.h
-> > @@ -10,6 +10,7 @@
-> >   #define SAM9X7_PMC_MCK		1
-> >   #define SAM9X7_PMC_UTMI		2
-> >   #define SAM9X7_PMC_MAIN		3
-> > +#define SAM9X7_PMC_MAIN_RC	6
-> >   #define SAM9X7_PMC_PLLACK	7
-> >   #define SAM9X7_PMC_AUDIOPMCPLL	9
-> >   #define SAM9X7_PMC_AUDIOIOPLL	10
-> > diff --git a/include/dt-bindings/clock/microchip,sama7d65-pmc.h b/include/dt-bindings/clock/microchip,sama7d65-pmc.h
-> > index 09d152da6db44..ddcb236718978 100644
-> > --- a/include/dt-bindings/clock/microchip,sama7d65-pmc.h
-> > +++ b/include/dt-bindings/clock/microchip,sama7d65-pmc.h
-> > @@ -12,6 +12,7 @@
-> >   #define SAMA7D65_PMC_MAIN		3
-> >   #define SAMA7D65_PMC_CPUPLL		4
-> >   #define SAMA7D65_PMC_SYSPLL		5
-> > +#define SAMA7D65_PMC_MAIN_RC		6
-> 
-> E.g. 6 was previously reserved for DDR and IMG PLLs.
-> 
-> >   #define SAMA7D65_PMC_BAUDPLL		8
-> >   #define SAMA7D65_PMC_AUDIOPMCPLL	9
-> >   #define SAMA7D65_PMC_AUDIOIOPLL		10
-> > diff --git a/include/dt-bindings/clock/microchip,sama7g5-pmc.h b/include/dt-bindings/clock/microchip,sama7g5-pmc.h
-> > index 0303cae56f849..e891715a35173 100644
-> > --- a/include/dt-bindings/clock/microchip,sama7g5-pmc.h
-> > +++ b/include/dt-bindings/clock/microchip,sama7g5-pmc.h
-> > @@ -12,6 +12,7 @@
-> >   #define SAMA7G5_PMC_MAIN	3
-> >   #define SAMA7G5_PMC_CPUPLL	4
-> >   #define SAMA7G5_PMC_SYSPLL	5
-> > +#define SAMA7G5_PMC_MAIN_RC	6
-> >   #define SAMA7G5_PMC_AUDIOPMCPLL	9
-> >   #define SAMA7G5_PMC_AUDIOIOPLL	10
-> >   #define SAMA7G5_PMC_MCK1	13
-> 
+	fn resume(&self, state: SuspendedState) -> Result<ResumedState, Error<Susp=
+endedState>> {
+		// FIXME: error propagation not handled
+		let enabled_clk =3D state.xxx_clk.clone().prepare()?.enable()?;
+
+		Ok(ResumedState {
+			xxx_clk: enabled_clk,
+		});
+	}
+
+	fn suspend(&self, state: ResumedState) -> Result<SuspendedState, Error<Res=
+umedState>> {
+		// FIXME: error propagation not handled
+		let unprep_clk =3D state.xxx_clk.clone().disable().unprepare();
+
+		Ok(SuspendedState {
+			xxx_clk: unprep_clk,
+		});
+	}
+};
+
+With this model, I don't think Daniel's refactor goes in the way of more
+generalization at the core level, it's just expressed differently than
+it would be if it was written in C. And I say that as someone who struggles
+with his C developer bias every time I'm looking at or trying to write
+rust code.
+
+As others have said in this thread (Danilo and Gary), and after having
+played myself with both approaches in Tyr, I do see this shift from manual
+prepare/enable to an RAII approach as an improvement, so I hope we can
+find a middle-ground where every one is happy.
+
+Regards,
+
+Boris
