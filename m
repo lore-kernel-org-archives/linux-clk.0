@@ -1,152 +1,189 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A2230595C;
-	Mon,  9 Feb 2026 17:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB20217648;
+	Mon,  9 Feb 2026 17:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770658558; cv=none; b=nNXwHm7gfaTTz+o1WXMi0auV2zK0/JmbeBQFQMQfqbFaLrFafKZ5u0uYVMDITbUfmjBOP8LvWUc5jSidVrzrpbML100c6DRHKOFbd9yFM+DoYHB6gFbTO1VTIoaLtjsumY9VWZaBb5w1SZP8QhUDwmxEJ6RV2z4cxZNtR1qSh8M=
+	t=1770659247; cv=none; b=iWX1dQ9fLL6J4lBS92TZI2aZ9IrVQS3vRYAklrw9mLraeWUb2R7Iti+n8IvjFq+slp3XNBtfBLrIbet0sVHFy4uAX6aSDJbb33mHQury8qlWL8jWg10cv3fmHW2uC6Z7Xs7GFpuPffLw7jG4DuZonQqLDa0NQ0OKgNs+gjTwDrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770658558; c=relaxed/simple;
-	bh=73LGh3J5tomwn6vZ9HuVNxSPnB+51GM8Nl0zJ+5ENEU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XOfFdE5XYvqn+LJMh5a4NNxXlsV0j/iOgXSIAN0FYkMMn+nJ01n3rj1gYSy6hqh//w1U1t7d+sP3nSvjvh6bzonQDcUUSd3Q+dNczzlqV4GoD91YezI+//74MK+4mo4vQNPxGn4FDX5aHY8eip0KW3LIF/drD8JtU4BB4ZkP3GE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SEX7tpO8; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1770659247; c=relaxed/simple;
+	bh=W37SsjB+H7rXIGvWY7KH81Hzrv9zqZkMvfSZ8zrUAxk=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=MqGFnN+YT5xmdoJDpH0w0gbKVlrTXFUauXCSz9UJcbWuz2pBP/1q4A4haJpkAWemM5a3IPU6vFTNQ5JVP1S++d2ksR0GvMe4avhgS43n184p3FowKHyKDoQs0YjAME9vJmXEKlyfUARTjenoeiOHe2jaSDe8Anlq3OARnQjHq08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XgwP0Q2H; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SEX7tpO8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1770658558; x=1802194558;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=73LGh3J5tomwn6vZ9HuVNxSPnB+51GM8Nl0zJ+5ENEU=;
-  b=SEX7tpO8CmbzEAP+nryMOWeRWujNPKb+7Z5OQMKiwKPX9tbVbUKkPj0B
-   I2/+1skkHthV+ICG5WcBCFh+T3pZz5/3RDbnovitsUbkLU9T7orNvS/IC
-   GnY7UjpYP2ELSitJIF7GaA6mCVLbOZNoOk3z/5dHNmcmjLLZSM6iyKMr+
-   V/5sfqyQmhj6q/AA6vjXxCAUTpR6hYtg23QgYnKE/KGIOMfORsqkZpMqi
-   WgQroeKECpUIFNl4IFdXbPu3SGFNlZHg9lA1Q+tTRUMAG856PBoEn2BP3
-   nIqBErQPqXhReWP0208XIz6zXqDdmbYvWOHUpJlRDw3FX9ItuiYB3L0/g
-   w==;
-X-CSE-ConnectionGUID: nJN+b69cTKW0qZHrmQULFg==
-X-CSE-MsgGUID: aENm772HTpmU748COYtY7Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11696"; a="74375250"
-X-IronPort-AV: E=Sophos;i="6.21,282,1763452800"; 
-   d="scan'208";a="74375250"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Feb 2026 09:35:56 -0800
-X-CSE-ConnectionGUID: zfdlWZZpTma6abgQOL91Bw==
-X-CSE-MsgGUID: 5kpuJEo+TR6RTYSj1OKZ9g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,282,1763452800"; 
-   d="scan'208";a="216622484"
-Received: from lkp-server01.sh.intel.com (HELO 765f4a05e27f) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 09 Feb 2026 09:35:50 -0800
-Received: from kbuild by 765f4a05e27f with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vpVAp-00000000oB2-2v2D;
-	Mon, 09 Feb 2026 17:35:47 +0000
-Date: Tue, 10 Feb 2026 01:35:05 +0800
-From: kernel test robot <lkp@intel.com>
-To: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Chuan Liu <chuan.liu@amlogic.com>
-Subject: Re: [PATCH 08/13] clk: amlogic: Add PLL driver
-Message-ID: <202602100115.ykL6A0lh-lkp@intel.com>
-References: <20260209-a9_clock_driver-v1-8-a9198dc03d2a@amlogic.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XgwP0Q2H"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5669FC16AAE;
+	Mon,  9 Feb 2026 17:47:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770659247;
+	bh=W37SsjB+H7rXIGvWY7KH81Hzrv9zqZkMvfSZ8zrUAxk=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=XgwP0Q2HgNbqCO4/70Co8ZcBFWV+4fv6zAAFPiAlE4aeDGQpOaoAWPr8tBXyM9hJ5
+	 OtLDPXMpVHA5gEVa81L6XlGaeoaQUuX7m2Ep7MWoNOflwfaRxekg0Eo9WNXPBOiXIY
+	 9fH8cxZs16MZW+1zZANdxancSSnGyDaCDtMMc2B6fD1YNlowTEHLMdHcYoNKAjYpjK
+	 wmwY5iovi9EsiNUAphiqeD0bcUZpXylXcPtp19gjCpQTDQZL2BZmEwl044pQBuuOVK
+	 0+EuXb2qZVWJxIPm4v6eOcT310DNtoLJ53bHL3dSXzC7AuBk6yAlp0rwFt6KgP0zhD
+	 af7JYMeHmO5sw==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260209-a9_clock_driver-v1-8-a9198dc03d2a@amlogic.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20260205154202.21819-1-me@ziyao.cc>
+References: <20260205154202.21819-1-me@ziyao.cc>
+Subject: Re: [PATCH v2] clk: Avoid DT fetch in possible_parent_show if clk_hw is provided
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Yao Zi <me@ziyao.cc>, Drew Fustini <fustini@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>
+To: Chen-Yu Tsai <wens@csie.org>, Michael Turquette <mturquette@baylibre.com>, Yao Zi <me@ziyao.cc>
+Date: Mon, 09 Feb 2026 09:47:25 -0800
+Message-ID: <177065924524.54237.5857092620031619822@lazor>
+User-Agent: alot/0.12
 
-Hi Chuan,
+Quoting Yao Zi (2026-02-05 07:42:02)
+> When showing a parent for which clk_core_get_parent_by_index fails, we
+> may try using the parent's global name or the local name. If this fails
+> either, the parent clock's clock-output-names is fetched through
+> DT-index.
+>=20
+> struct clk_hw pointer takes precedence with DT-index when registering
+> clocks, thus most drivers only zero the index member of struct
+> clk_parent_data when providing the parent through struct clk_hw pointer.
+> If the pointer cannot resovle to a clock, clk_core_get_parent_by_index
 
-kernel test robot noticed the following build errors:
+Use clk_core_get_parent_by_index() to indicate this is a function.
 
-[auto build test ERROR on 4d310797262f0ddf129e76c2aad2b950adaf1fda]
+> will fail as well, in which case possible_parent_show will fetch the
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Chuan-Liu-via-B4-Relay/dt-bindings-clock-Add-Amlogic-A9-standardized-model-clock-control-units/20260209-135334
-base:   4d310797262f0ddf129e76c2aad2b950adaf1fda
-patch link:    https://lore.kernel.org/r/20260209-a9_clock_driver-v1-8-a9198dc03d2a%40amlogic.com
-patch subject: [PATCH 08/13] clk: amlogic: Add PLL driver
-config: arm-randconfig-004-20260209 (https://download.01.org/0day-ci/archive/20260210/202602100115.ykL6A0lh-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260210/202602100115.ykL6A0lh-lkp@intel.com/reproduce)
+possible_parent_show()
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202602100115.ykL6A0lh-lkp@intel.com/
+> parent's clock-output-names property, treat the unintended, zeroed index
 
-All errors (new ones prefixed by >>):
+Use "clock-output-names" to indicate DT property.
 
-   arm-linux-gnueabi-ld: drivers/clk/amlogic/clk-pll.o: in function `aml_pll_get_rate_range':
->> drivers/clk/amlogic/clk-pll.c:554:(.text+0x700): undefined reference to `__aeabi_uldivmod'
->> arm-linux-gnueabi-ld: drivers/clk/amlogic/clk-pll.c:567:(.text+0x728): undefined reference to `__aeabi_uldivmod'
-   arm-linux-gnueabi-ld: drivers/clk/amlogic/clk-pll.c:554:(.text+0x814): undefined reference to `__aeabi_uldivmod'
+> as valid, and yield a misleading name if the clock controller does come
+> with a clocks property.
+>=20
+> Let's add an extra check against the struct clk_hw pointer, and only
+> perform the DT-index-based fetch if it isn't provided.
+>=20
+> Fixes: 2d156b78ce8f ("clk: Fix debugfs clk_possible_parents for clks with=
+out parent string names")
+> Signed-off-by: Yao Zi <me@ziyao.cc>
+> Tested-by: Drew Fustini <fustini@kernel.org>
+> ---
+>  drivers/clk/clk.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> This was found when fixing the wrong parent description of
+> clk-th1520-ap.c[1]. Without the patch,
+>=20
+>         # cat /sys/kernel/debug/clk/c910/clk_possible_parents
+>         osc_24m cpu-pll1
+>=20
+> The first parent should be c910-i0, provided by an unresolvable struct
+> clk_hw pointer. osc_24m is the first (and only) parent specified in
+> devicetree for the clock controller. With the patch,
+>=20
+>         # cat /sys/kernel/debug/clk/c910/clk_possible_parents
+>         (missing) cpu-pll1
+>=20
+> [1]: https://lore.kernel.org/linux-riscv/20250705052028.24611-1-ziyao@dis=
+root.org/
+>=20
+> Changed from v1:
+> - Collect tags
+> - Switch to my new mail address
+> - Link to v1: https://lore.kernel.org/all/20250705095816.29480-2-ziyao@di=
+sroot.org/
+>=20
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 85d2f2481acf..a9d1aea59689 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -3588,7 +3588,7 @@ static void possible_parent_show(struct seq_file *s=
+, struct clk_core *core,
+>         } else if (core->parents[i].fw_name) {
+>                 seq_printf(s, "<%s>(fw)", core->parents[i].fw_name);
+>         } else {
+> -               if (core->parents[i].index >=3D 0)
+> +               if (!core->parents[i].hw && core->parents[i].index >=3D 0)
+>                         name =3D of_clk_get_parent_name(core->of_node, co=
+re->parents[i].index);
+>                 if (!name)
+>                         name =3D "(missing)";
 
+I had to read this and reference the code for about 10 minutes. It's
+really confusing! Adding a well placed condition doesn't help me :(
 
-vim +554 drivers/clk/amlogic/clk-pll.c
+My confusion comes from thinking that core->parents[i].index should be
+negative if the 'hw' member is specified. See how the loop in
+clk_core_populate_parent_map() sets the index to -1 at the start of the
+loop? It seems that whatever the clk provider passes though will
+overwrite that though, leading to the index becoming 0 again if the
+clk_parent_data was static initialized. Oof.
 
-   536	
-   537	static int aml_pll_get_best_rate(unsigned long rate, unsigned long step_rate,
-   538					 u64 min_vco_rate, u64 max_vco_rate,
-   539					 u8 od_max, enum round_type round,
-   540					 unsigned long *out_rate)
-   541	{
-   542		int i;
-   543		u64 vco_rate;
-   544		unsigned long now_rate, best_rate = 0;
-   545	
-   546		for (i = 0; i <= od_max; i++) {
-   547			vco_rate = rate << i;
-   548			if (vco_rate < min_vco_rate)
-   549				continue;
-   550	
-   551			if (vco_rate > max_vco_rate)
-   552				break;
-   553	
- > 554			if (vco_rate % step_rate == 0) {
-   555				best_rate = rate;
-   556	
-   557				break;
-   558			}
-   559	
-   560			if (round == ROUND_DOWN) {
-   561				vco_rate = vco_rate - (vco_rate % step_rate);
-   562				now_rate = vco_rate >> i;
-   563				if ((rate - now_rate) < (rate - best_rate))
-   564					best_rate = now_rate;
-   565			} else {
-   566				vco_rate = vco_rate + step_rate;
- > 567				vco_rate = vco_rate - (vco_rate % step_rate);
-   568				now_rate = vco_rate >> i;
-   569				if ((now_rate - rate) < (best_rate - rate))
-   570					best_rate = now_rate;
-   571			}
-   572		}
-   573	
-   574		if (!best_rate)
-   575			return -EINVAL;
-   576	
-   577		*out_rate = best_rate;
-   578	
-   579		return 0;
-   580	}
-   581	
+How about we set index to -1 when 'hw' is present? This reminds me of a
+thread[1] with Jerome years ago where we were discussing how confusing
+this all is. It's my fault for missing that the index was getting
+overwritten. Here's a totally untested patch. I'm tempted to print a
+warning or really fail clk registration if we find that hw is NULL,
+fw_name is NULL, and index is < 0. I don't see any case where we should
+allow drivers to only put the legacy name in the clk_parent_data
+structure.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+----8<-----
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 85d2f2481acf..b1a0da0991c4 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -4254,10 +4254,23 @@ static int clk_core_populate_parent_map(struct clk_=
+core *core,
+ 			ret =3D clk_cpy_name(&parent->name, parent_names[i],
+ 					   true);
+ 		} else if (parent_data) {
++			/*
++			 * Most difficult case. Precedence order is 'hw',
++			 * 'fw_name', 'index', and finally 'name'. If 'hw' is
++			 * present it's easy, just use it. Otherwise 'fw_name'
++			 * or 'index' needs to be present, while 'name' can be
++			 * present in the case that a parent lookup should
++			 * fallback to the legacy path where global clk names
++			 * are used for clk topology.
++			 */
+ 			parent->hw =3D parent_data[i].hw;
+-			parent->index =3D parent_data[i].index;
++			if (parent->hw)
++				continue;
++
+ 			ret =3D clk_cpy_name(&parent->fw_name,
+ 					   parent_data[i].fw_name, false);
++			if (!parent->fw_name)
++				parent->index =3D parent_data[i].index;
+ 			if (!ret)
+ 				ret =3D clk_cpy_name(&parent->name,
+ 						   parent_data[i].name,
+
+Another thing we can probably do in debugfs is figure out that the clk
+is known but not registered yet. That case can be detected if the 'hw'
+member isn't NULL or if the fw_name/index field is set. In that case we
+know without a doubt that either the clk hasn't been registered yet or
+it never will appear in the case the DT node is disabled or the clocks
+property has a <0> cell at that index. We signal this information from
+clk_core_fill_parent_index() by setting 'parent' to -EPROBE_DEFER. We
+could have a better function here that returns the parent clk_core
+pointer and then in debugfs we can test that for -ENOENT vs.
+-EPROBE_DEFER and distinguish "missing" from "waiting" or something like
+that.
+
+I'll also note that of_clk_get_parent_name() doesn't need to check for a
+positive index. It will fail with a negative index like we intend
+causing the end result to be "(missing)" anyway. We should remove that
+condition to simplify.
+
+[1] https://lore.kernel.org/all/6394b7e46a7967f4a5a6f77215e670e3e7a7ef10.ca=
+mel@baylibre.com/
