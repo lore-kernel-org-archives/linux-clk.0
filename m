@@ -1,256 +1,281 @@
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013007.outbound.protection.outlook.com [52.101.83.7])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA73123D7C8;
-	Wed, 11 Feb 2026 14:56:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770821793; cv=fail; b=FgnxABVDVI8dzaYAZXhhXu4e5zf+BNL9SOPmuBAWPi1zOsUwtAxM16GTSd2C/MpbmiQqyNiv85FdzcL9dSQB+swQH4E7VEM33NRQhf6w4NI8sqex2lAGhJVjEryutFTcs16s5lpVP0sKy3mpLwGpKxz3Qpc46+0+1dICmJu7b/0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770821793; c=relaxed/simple;
-	bh=tAsvOsSNkTWhQBe/QZFTtf9l0UsrdJ6PNJt5YI8EGP0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=BGu5eYwH3pdMgy+Dw1xNvn05dUiH736IrFx2cOEYhMfO5cMSVenlT0/HcNiUL+ypHx4cHkOu2Xb41GlMKwYuN/8E5rNGUzZAVi/TIAokNTph35fX8VT4QmseWLWmuh/2ugTmcbOAl61UjBcx7W/0gOlWBzR2TH5VpC9xU9qIYyI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=OiJGtwZU; arc=fail smtp.client-ip=52.101.83.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AAF0341ADD;
+	Wed, 11 Feb 2026 16:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770827875; cv=none; b=ejnMYjbIinV7LvuV2kEIZzsDaWzWRFmuvfNO+T7MNgUZKX2dhrwDLsutCL1h3IrQj2gJUgEyLeyajblCFpipC+WJGbwuCHmMdH4TpJZRSlxazkESwvFLRI1wcpe+s0RCMG2UCcC4XNksxGcvGAAQsI3STP8w31BEDwd4C/mRzXA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770827875; c=relaxed/simple;
+	bh=N4BFmuWQ/WPOUmQeIFOT/JQw3aZcuNZ5Ic0+qE7JO5A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nRud1aiIYj8+j7Hj03AaUkKx/6t4HC+af5d5rftvdm1gKnD5DTWw8qAfg2Sr6WVCD9a3XPTtAnBhMZWUn0gLXiQJ7Xnm5IkFPjt4Pu+iCPPav2ecLZKpe93wP+cZIFJq4YaZilSXUxQJ9UYVw5um5Hqj/zQnwAClYfmyyHf3FmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YTrP6Ifg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="OiJGtwZU"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BFEGSp1TvyNYZfNFjMzYnyEAl9iTFlv0G3O1tHeiN3lUuh8gcH/220q9t2zqvtVGkxABBCNKrQwRf75R1f9lDX22BPzEWk+1lZxpCDy6Nfwp2lqX2VCQjbGmHSVsvtIixIsdZgSMGHtVW5NuWsxJ7tYxASusFfoFwrS/3phC/Taa6GQbZolveyhUpUNMKhU0LL2sotFh2JX6KLo15jTpzBv981cayT0hrX1rqjrOsR0W+I6Fr3/Xe5gIxn686u1X6Wb0nQvc4jMIoZ/lBsfSopgr+0DfCsRCs1Mhmpsn5ABXPeDKRufMk8WdfboNq0A1V+qe8YjLXfDvklOdUrkdSQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XEMIgdDBhZI8jUYiBS/LrmUj2lKbS6PML+BRkdspUUo=;
- b=ye/jzU6JBmU9zwW0Wghu6zxf59me9EcM5Q/cnhJlfXrmkHk0t3CPwxUXh3sCXnwkp+oO7LJ3h55Fk1bfX1jMybVTbQ700qt2DifIWMH8bMuc4DI/FYGCNq1t9qZwdzlJMkCwNGGF56kaiC4VZ9RDWWlXWinaPRdTwAmRBUirwE6hBEtq3+dZZ2HpagP1/T0jzgQhORvCOVUrtJm5RJm8CV3VKIa3CShPov9p6tEICedxLb78HiKV8BWnMjg4foXiiRbhUaJtbfQdVyeVGD2Gnb99QgO+cLqumuB3Nd9gxuigQB2fNY1m5HJXM/nkFYj5mnOROa6Lh/vM5eI2MjrHPg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XEMIgdDBhZI8jUYiBS/LrmUj2lKbS6PML+BRkdspUUo=;
- b=OiJGtwZU7f0QsW+rZWK/lkXpZayPh+Gi7SEqkcoSUK9SCg6j7AWGx2VA2WA4EZ90qZd1YMJ4e4OalTwzE0v4UZ4ki6KvlMK8GvEoJU1jo4f5pVcF08DW8prqoUQeCUe4RxGGQUxhx2vhsZDz0EOKujYhPNUs0QLG2OgtSmd6qQKcvU0qHBLIeI+/Fptvts7i6OSdrPBss0uTArz1bU0NCdDV6E2C3uKs54fs2AQOTcsVjT0tUUciM0F8o+MOEBIIphqOw33m8zY3j21ksLcIBHco/c82WAcNHHwo16sP34jQrgziOfd5Ng1iXahMln+/u3BdcLZFFGe/ScpXfan5Xw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from AS8PR04MB8247.eurprd04.prod.outlook.com (2603:10a6:20b:3f2::13)
- by VI0PR04MB12115.eurprd04.prod.outlook.com (2603:10a6:800:313::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9611.10; Wed, 11 Feb
- 2026 14:56:25 +0000
-Received: from AS8PR04MB8247.eurprd04.prod.outlook.com
- ([fe80::e99:f504:ce75:9bed]) by AS8PR04MB8247.eurprd04.prod.outlook.com
- ([fe80::e99:f504:ce75:9bed%3]) with mapi id 15.20.9587.010; Wed, 11 Feb 2026
- 14:56:25 +0000
-Message-ID: <9e33e5e5-76cd-4395-acb4-e2e03e436bf5@oss.nxp.com>
-Date: Wed, 11 Feb 2026 16:59:18 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: scu/imx8qxp: do not register driver in probe()
-To: Alexander Stein <alexander.stein@ew.tq-group.com>, abelvesa@kernel.org,
- peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
- Frank.Li@nxp.com, s.hauer@pengutronix.de, kernel@pengutronix.de,
- festevam@gmail.com, gregkh@linuxfoundation.org, rafael@kernel.org,
- hanguidong02@gmail.com, Danilo Krummrich <dakr@kernel.org>
-Cc: driver-core@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-References: <20260211142321.55404-1-dakr@kernel.org>
- <10809444.nUPlyArG6x@steina-w>
-Content-Language: en-US
-From: Daniel Baluta <daniel.baluta@oss.nxp.com>
-In-Reply-To: <10809444.nUPlyArG6x@steina-w>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: AM0PR02CA0139.eurprd02.prod.outlook.com
- (2603:10a6:20b:28d::6) To AS8PR04MB8247.eurprd04.prod.outlook.com
- (2603:10a6:20b:3f2::13)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YTrP6Ifg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F105C4CEF7;
+	Wed, 11 Feb 2026 16:37:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770827875;
+	bh=N4BFmuWQ/WPOUmQeIFOT/JQw3aZcuNZ5Ic0+qE7JO5A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YTrP6Ifgrg5QMICHMqBxdHlpO2tyOdVv6eoq2NRvoIBL5ZJg5/FGwIJGuQ6hTShf6
+	 QyNyhheDUm/u4Y+R2nhlRVH6fOB69LV3xfGaMcnc56Kgk1Dnx14hl9aZNNWVcPVkwS
+	 bElLBxZT1KuRNO1Y3tDFHWr+618kqWCvcsdmfotCjre41jFdSYgNAdYjbTHchFzeqe
+	 xBpgNs7DeR2zQn5CLt86nzEM1gqZrls2adrD0thGMYE1ex2V9/eqyIc83/sVgeNYJ7
+	 xAWYlp5he/08r44o/x1f4S39Pu4vU2kcTop7JcuQhtOHUwsD/Wr1BqfPMITELR+UV2
+	 bAGpo6qi4PWIw==
+Date: Wed, 11 Feb 2026 17:37:52 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Boris Brezillon <boris.brezillon@collabora.com>
+Cc: Daniel Almeida <daniel.almeida@collabora.com>, 
+	Danilo Krummrich <dakr@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org, 
+	linux-pwm@vger.kernel.org, linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] rust: clk: use the type-state pattern
+Message-ID: <20260211-flawless-feathered-boar-0b87ad@houat>
+References: <518D8B09-B9A1-4DB4-85CD-37A2DD3D5FB1@collabora.com>
+ <DFSLCI9U4NCW.2HI2UPUI7G134@kernel.org>
+ <20260119-weightless-pelican-of-anger-190db0@houat>
+ <DFSN4FDCYHMW.3J3237PEBV2ZP@kernel.org>
+ <20260122-majestic-masterful-jaguarundi-d0abde@houat>
+ <2F3D3A40-6EF9-46FC-A769-E5A3AAF67E65@collabora.com>
+ <20260204-nickel-seal-of-poetry-8fdefb@houat>
+ <91A92D84-1F2E-45F3-82EC-6A97D32E2A78@collabora.com>
+ <20260204-angelic-vermilion-beagle-fd1507@houat>
+ <20260209105047.693f2515@fedora>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8247:EE_|VI0PR04MB12115:EE_
-X-MS-Office365-Filtering-Correlation-Id: 73acf8ff-453c-45a3-5c92-08de697dba60
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|19092799006|366016|921020|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?emRuVGxETHRRb2xVN0ptdzlNTnIxLzNSWmN4OWxtWkF6Tis2NWJTaDJzZllX?=
- =?utf-8?B?VGNoV1RPOE9hZGRMZjdlRHRtaVR3anlYQk5KeDFYcko5dTFJTVluZ2NhY1ZD?=
- =?utf-8?B?bUNpS3B4aTRiSFVTb2ZuZnFoc3BYbVltZnpRTUFHbnAyeitrTm9na2wyMXBI?=
- =?utf-8?B?S1pXZTNyTnJhV2xoOHJvaU9wa003UUNoUUFtU0lBejE2d1BoWmc2c1BGOXJZ?=
- =?utf-8?B?WnQ5NitRYVYwQ3hnZjlIOTg1REJNNlRtcmFkUXNjUmp0TDBNbjVNeVhiQXht?=
- =?utf-8?B?OS9LcUVaV3VBNzVXYWhKUEQ3OTRLV0l0N241Kzl1Q3doUngrU2p6WnUxZFlJ?=
- =?utf-8?B?VHBoQWtWRmNIZS9UL3VwVU9uTUJqcmRyamxoNE1lNzlwakZHQk1mblBiTito?=
- =?utf-8?B?cW54VU5GeVhJbENGaU9aYzZ1NHdRTTJQTnZmM3VhaW9BZ0dXd2NrcWNlRVFE?=
- =?utf-8?B?MzlpR3NPNmJaTWkvYnZQUUh2M0l4UElza0lIRnVyUEZFUXlEYk9ZZjdPNFVn?=
- =?utf-8?B?bFBHWlp6bCt2YnJsU0NQYmtQTEk2aHJnK1lza0doNEJ2YVRYL0NUb2MwRTRu?=
- =?utf-8?B?NW5Qc0ZhODAxWHBOYjJONEViWW0zUmxXSFNIeHRMMGpjVUM2RHJ4eEtTR0lW?=
- =?utf-8?B?Z1Y5aDJ3Mnk2QXVneFlRRlVieVFudGVBbWc2Q2RyZ3k4QnB2L2NVR1h3ZUFV?=
- =?utf-8?B?Wk0rZWdrUlJDc1o2YmVUQkhFelp2eHZ3RVR6SDVVWGx6TVdHNGRISHpTazVa?=
- =?utf-8?B?THBnU2NCdVdNSGpmVnJJQUFOT016K1VXME14RXBSMHpJMFcvSnVQSGh6cDlW?=
- =?utf-8?B?ZVRhOHVVNSs4aWZ3YitGcnZWdjBUaWRMWkZSQ2h1Zk9pbzNqU2N0WW5MMmNC?=
- =?utf-8?B?NFdQUHRTZzRYQU5TODFGQk00MWliSXRwT1JTUUJhSjFIdGp6TDJvejFpMXFX?=
- =?utf-8?B?RUZtTXdNQ3FrMElxaUwwTmU4dUZEMkRvZVVxVHhZUEZpUmZQWXNDdlNmSkFt?=
- =?utf-8?B?ZzVha3QxYkhaZUxldmhoMGpiRzBVaXAyRmgvamNQVWtYeWl4NkFjT1Y4K2Fq?=
- =?utf-8?B?TG1PTGVkVzl2dk5Td3o5ejduOU50YzYxczVqSUZvMG1TbG5SVTB4dmt6QUta?=
- =?utf-8?B?TWlzeFpkNThMaS9LaEVPUVk5eGx1VlhMRnVPZmZUSkN1a0w3YzFWbmVLTWVa?=
- =?utf-8?B?N0xLc3hYdEM3V254dTd5RFlZYzBOdWN2V1JwWFJQbVh2ZjFXdFJJbUxCQXpT?=
- =?utf-8?B?czhHZWdISFVLdmpiT0hick9VbWxxcDBkaVN2TVNtQnI0bzN5Rys2ckRtcTFE?=
- =?utf-8?B?MkdKTHFnaHNBKy84dDdVZGE2TU5wRFZ2YWY5REp2ajFUbkxNSll4b1k0NHVt?=
- =?utf-8?B?V2FIaFR0MU1kNFZqQmJtUkgyMHBMcTR2SEtZSnNuVjFBL3FtN3pVSVE0eVg3?=
- =?utf-8?B?S3RjeHdaR3M2WW15d1JPaWorNUE4NGQ5d2FSUDR0bHM3aVVySndjNTlkU0kx?=
- =?utf-8?B?MXpIM3RNM3hZcDhUY3hqOUh4Y21UNkpqV00rVllJQmJJL045S29TM0VJRWNV?=
- =?utf-8?B?L2dLd1EyL05lUk0xaG1uN0hjOTlKUnZjbTZYRGR2M3VFSU9oTTI1NGVGbDlT?=
- =?utf-8?B?VnorM3E0d3ZVVlE5QTJIbnZQV3ZmSEZYZFpVR3lHQWQ2Yno4MXVYSkJ1Zm9t?=
- =?utf-8?B?Nko2WXJlT0VuT0NoNWZzMnY2aUZaaW9XdjNNblJTcmN2d1BySStWdnc4cjJL?=
- =?utf-8?B?ZkFHOFdJcWRRVGNVMGprZnRtUEllMmNuVUp3ZnVuRVNnZm9CTlcreHdrKzF4?=
- =?utf-8?B?Znpjd1IrcTNlVjZpd0JtNE1QWUV3VCttTWpXWVBkN3VnNWJ0RWJFMEdETmNJ?=
- =?utf-8?B?NmpMMDRhb0JBUVlIY2VhOWxmWjdPSEVKc2I1YkVRS21MUmlDcU5BQmg0dnZC?=
- =?utf-8?B?M1I4OWtXTmVpMEZ3V09PQjd6ZmZTQTM1ZDZiR0FMUlY3NDQwMmF6Wi9WcVJP?=
- =?utf-8?B?Y3ZXcCs4Qnc0blpWWGNiZnRoTE81aXBoZWRCUGt4NERYaXpKRTBaY21SeHVB?=
- =?utf-8?B?MmhuU0pUTmdpdnpXZ0xpMU52d09iR0h0VWZndkFTY1ZIQ2d6NUxSMTd2Ymc0?=
- =?utf-8?Q?A39OObFAxvnkNbiWSfzWlGf5/?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8247.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(19092799006)(366016)(921020)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NFZzSk5hM0g4b2thZWJuNzRpREFVZmF6RWU3UlZxV1VRa3lrczZJL0RvQW5G?=
- =?utf-8?B?Zit2RlVvRFMzQnhjdm1jS2h4TmNScTJzd210NlJLa3k4cE1TcHhlbE9jODRN?=
- =?utf-8?B?bFNJdDlkSUw2SldVenBhWWN2M2NmUVdTZCtZYXp3NGV0aDhLUElpWWNENEZB?=
- =?utf-8?B?eFRhV1Z2QmttS1A2M0ZZVWwyVVgxTTB1cTFtNFZZQ3BheHNBMjR5ak9kSnhu?=
- =?utf-8?B?STB5YVNlbXpqcGtOMjNKdUczVGZjRnA3Q2lEV3FCOEpPQkJmL0d6UldsUGhQ?=
- =?utf-8?B?S2wxS21Id0JlaCtabWJ6M0ZuclQ3WFpTQkI3V2VscnhiUS9MSW45YnVLaVBi?=
- =?utf-8?B?V2pRMU5VNFBkaEZvaUk3Y0c3ZC9qdGh0Yjc0Wk5QQWFPQ1pBaGlDc0RvcElZ?=
- =?utf-8?B?M0NUcFJOaHRXWlI4VTEzNGFKWjk4M2ZiSGJWb3pGYkR2Zm8zSUsrVlB4dDNN?=
- =?utf-8?B?d1NwN1VxU3BwWVJMeVl0bUhycmdSYnNLQ1dDcWVPNDRpT1lEdCtIR3dDemlY?=
- =?utf-8?B?RGlQTUhqM3paRCsrekVIUDZaNks3eWFWOWxNWm9JTFZoUjZSUWpudmJjbzBy?=
- =?utf-8?B?NFRRQ3JJWUExcGdQUkFGeXJYR2kvUHFvTHl4TVdEeS9NUG14VXZOOEsrVStw?=
- =?utf-8?B?SW5SaXowY1hDL3BKems1ejJCR24zK1BSZmcwcUpubWRiZDlkYXZkL0dSWEVI?=
- =?utf-8?B?OW9MQ0lzeXRMM2hYZUhRMnhoQStMUk1ZQzE2LzdBU21wUjdUVlFyNTZlQ2dS?=
- =?utf-8?B?VkxzaGZoWnY0NzFjZDFCYkJqRVRCZWswRHNLVXVsZHVydDJFeU13QWZrdytX?=
- =?utf-8?B?UEVtMTZNL2g3MXRVUnRsWWc2SU9QT2I2WitzUnhGYUgwb05RT0Zzd1JJcFpF?=
- =?utf-8?B?L2pHOW1Rb2dRWjFGeVVDR0xlTXV4Q3ZNWFFTOW9vL0xoNU5aTVhzV2ZMZDUx?=
- =?utf-8?B?a1ptbXR1Q0wrWXpkU3ZPU01tY1dlV2VzNWRQV2pER3F4UDZKdTJyZTlLOE95?=
- =?utf-8?B?WmhHWnJGdmFheEUycFBHcjR2TytLSmhoU2ZPUUJmVllVdnRnYjBYNmZVMDVR?=
- =?utf-8?B?Y3d2bjhlejJGMzdEcEFhb0N3Z2NZamR3VUtQcmxyQ0d5VW8zb1grRjZ5S0Jr?=
- =?utf-8?B?eW0rZldlWEhjNW94UWpFdWNSTzJCYitUVnR3MHJVbVZEUjZNTlVxQTZHNTYx?=
- =?utf-8?B?dU56RlRwYjNOMTJiZklqMFFnbzVCTktEdEVFSGZJeHVSSnRzUkVxakRnZVNN?=
- =?utf-8?B?WnJ0ckpxUzBvcUVKU2hiNDNGbmNkS2tQL0JabXdONVRWSk9EWnY3QmhyTXJP?=
- =?utf-8?B?d2ttUlhDRkR1M1pURU91TVcrd2lMZEtjckxQZVBER3Bab2dOeUVZbnhUalla?=
- =?utf-8?B?bHgzNVF6eUFzM3hvcjlSZlQ1RlNJYWdJL2k4YXdMOFBjN0pqRWg5U2dpRlJF?=
- =?utf-8?B?eGZGQnBMdUZPTWh1cDlZWm1DQ213alR2WDZUUDNaVUM0c1VIL1JBejI3YkJW?=
- =?utf-8?B?dDdyVldJa1dBb0JBVWRNbXY4ZEZxVjl1S094Zzk0VGFpcUlEeGJMRFMyN092?=
- =?utf-8?B?L0ZoSDBUY0FjcFowYWZpc0txTERLQTM0TTRXR2g1MWdCQ0FRTUxiS1d2anNk?=
- =?utf-8?B?a2RDU1lOYVUyZEpXdjFDeXZKbE0zUzIyVWNCZmNvZkZ0STVMZFlKTjZScnNr?=
- =?utf-8?B?eVo2eDlkU0JhZjdQUW9pcUU1YXRpVEtmdDlPMDZlL2J1cnF1ckpHaGp2aWdH?=
- =?utf-8?B?WGE0eGliUjhVWUxweTNPRDlwNXBuMDdOalpGSVptb0E2aVlsZG5DMFI0N2dm?=
- =?utf-8?B?dFZaemlDSjBaUW5QQjhpcS81UjdBZURwZysvRXlEeE5pT0QvMWIvdnZzRmFi?=
- =?utf-8?B?QXc0TGFDYlVWS2JzZEFxYUpiYXJoVVF1ajZJeUI0MGZBelRNN1dmNEsrQTF3?=
- =?utf-8?B?ZWkwcjRWSFhqSW55Z2ZEbzlrcHdlT3pyY2RkdkNMV3N5eThhNWNrZ0pJM3g1?=
- =?utf-8?B?TmE4c1JRTDJUS09UKzdrbmlBczdySC83R1N4TnRlVXp3ZlBwRVE4RFc5TXpI?=
- =?utf-8?B?R3JNcWJyekdUTnF0T29IUG91bkM1dHd6c2NDd2ZwelREeEtFRys1TXpHbWNX?=
- =?utf-8?B?cFhiaVFwczZ2TXJJUDgrejYxMjFBbHlkNjBOaFk5K3o4aDNEY3Q5K1AzaGMv?=
- =?utf-8?B?N1RKR3dhMzk4Vit4K2ZxdXdMb3pDK0ZSc3BmR3ZKVnl1aU1QVDZ6SHh0c0JU?=
- =?utf-8?B?a3k5MXAwQmsva2hrMSttNjV1VkFGUWhkZDh6YUJ6YmI0a1FwTmcxU0VEU0Zu?=
- =?utf-8?B?elptQ3c5Z0NodUVmVExsWFduTVhIYTdNYUJySis5YkhDcnNEd21xQT09?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 73acf8ff-453c-45a3-5c92-08de697dba60
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8247.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Feb 2026 14:56:25.3745
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: W943JNspXXCYikT+JWJOCPJWtDJjKKyodNh0MzCAiiKcg/WzEKtsHM1fGg2NS9TldPBxARKSUFt8cn8ng9PzfA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB12115
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="va37xmuzn6sqyd6c"
+Content-Disposition: inline
+In-Reply-To: <20260209105047.693f2515@fedora>
 
-On 2/11/26 16:43, Alexander Stein wrote:
-> Hi Danilo,
+
+--va37xmuzn6sqyd6c
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 1/3] rust: clk: use the type-state pattern
+MIME-Version: 1.0
+
+On Mon, Feb 09, 2026 at 10:50:47AM +0100, Boris Brezillon wrote:
+> Hi Maxime,
+>=20
+> On Wed, 4 Feb 2026 15:34:29 +0100
+> Maxime Ripard <mripard@kernel.org> wrote:
+>=20
+> > On Wed, Feb 04, 2026 at 09:43:55AM -0300, Daniel Almeida wrote:
+> > > > I'm probably missing something then, but let's assume you have a dr=
+iver
+> > > > that wants its clock prepared and enabled in an hypothetical enable=
+()
+> > > > callback, and disabled / unprepared in a disable() callback.
+> > > >=20
+> > > > From a PM management perspective, this usecase makes total sense, i=
+s a
+> > > > valid usecase, is widely used in the kernel, and is currently suppo=
+rted
+> > > > by both the C and Rust clk APIs.
+> > > >=20
+> > > > The only solution to this you suggested so far (I think?) to implem=
+ent
+> > > > this on top of the new clk API you propose is to have a driver spec=
+ific
+> > > > enum that would store each of the possible state transition. =20
+> > >=20
+> > > Yes, you need an enum _if_ you want to model transitions at runtime. =
+IIUC you
+> > > only need two variants to implement the pattern you described. I do n=
+ot
+> > > consider this  =E2=80=9Cboilerplate=E2=80=9D, but rather a small cost=
+ to pay. =20
+> >=20
+> > A maintenance cost to pay by every driver is kind of the textbook
+> > definition of boilerplate to me.
+> >=20
+> > > I would understand if this was some elaborate pattern that had to be
+> > > implemented by all drivers, but a two-variant enum is as
+> > > straightforward as it gets. =20
+> >=20
+> > And yet, that framework has dozens of helpers that do not remove
+> > anything from drivers but a couple of lines. So surely its users must
+> > find value in reducing that boilerplate as much as possible. And you do
+> > implement some of them, so you must find value in that too.
+> >=20
+> > > > That's the boilerplate I'm talking about. If every driver wanting to
+> > > > implement that pattern has to make such an enum, with all the relev=
+ant
+> > > > traits implementation that might come with it, we go from an API wh=
+ere
+> > > > everything works at no-cost from a code-size perspective to a situa=
+tion
+> > > > where every driver has to develop and maintain that enum. =20
+> > >
+> > > There are no "traits that come with it". It's just an enum, with two
+> > > variants.
+> > >  =20
+> > > > API where everything works at no-cost =20
+> > >=20
+> > > The previous API was far from =E2=80=9Ceverything works=E2=80=9D. It =
+was fundamentally
+> > > broken by design in multiple ways, i.e.: =20
+> >=20
+> > Out of context and not what I meant, but ok.
+> >=20
+> > > > a) It only keeps track of a count to clk_get(), which means that us=
+ers have
+> > > > to manually call disable() and unprepare(), or a variation of those=
+, like
+> > > > disable_unprepare().
+> > > >=20
+> > > > b) It allows repeated calls to prepare() or enable(), but it keeps =
+no track
+> > > > of how often these were called, i.e., it's currently legal to write=
+ the
+> > > > following:
+> > > >=20
+> > > > clk.prepare();
+> > > > clk.prepare();
+> > > > clk.enable();
+> > > > clk.enable();
+> > > >=20
+> > > > And nothing gets undone on drop(). =20
+> > >=20
+> > > IMHO, what we have here is an improvement that has been long overdue.=
+ =20
+> >=20
+> > Nothing is absolute. It is indeed an improvement on the refcounting side
+> > of things and general safety of the API for the general case. I don't
+> > think I ever questionned that.
+> >=20
+> > However, for the use-cases we've been discussing (and dozens of drivers
+> > implementing it), it also comes with a regression in the amount of code
+> > to create and maintain. They used to be able to only deal with the Clk
+> > structure, and now they can't anymore.
+> >=20
+> > You might find that neglible, you might have a plan to address that in
+> > the future, etc. and that's fine, but if you can't acknowledge that it's
+> > indeed happening, there's no point in me raising the issue and
+> > continuing the discussion.
+>=20
+>=20
+> Okay, let's see if I can sum-up the use case you'd like to support. You
+> have some PM hooks, which I'm assuming are (or will be) written in
+> rust. It will probably take the form of some Device{Rpm,Pm} trait to
+> implement for your XxxDeviceData (Xxx being the bus under which is
+> device is) object (since I've only recently joined the R4L effort, I
+> wouldn't be surprised if what I'm describing already exists or is
+> currently being proposed/reviewed somewhere, so please excuse my
+> ignorance if that's the case :-)).
+>=20
+> The way I see it, rather than having one enum per clk/regulator/xxx
+> where we keep track of each state individually, what we could have is a
+>=20
+> trait DevicePm {
+> 	type ResumedState;
+> 	type SuspendedState;
+>=20
+> 	fn resume(&self, state: SuspendedState) -> Result<ResumedState, Error<Su=
+spendedState>>;
+> 	fn suspend(&self, state: SuspendedState) -> Result<SuspendedState, Error=
+<ResumedState>>;
+> };
+>=20
+> enum DeviceState<T: DevicePm> {
+> 	Resumed(T::ResumedState),
+> 	Suspended(T::SuspendedState),
+> };
+>=20
+> and then in your driver:
+>=20
+> MySuspendedDeviceResources {
+> 	xxx_clk: Clk<Unprepared>,
+> };
+>=20
+> MyResumedDeviceResources {
+> 	xxx_clk: Clk<Enabled>,
+> };
+>=20
+> implem DevicePm for MyDevice {
+> 	type ResumedState =3D MyResumedDeviceResources;
+> 	type SuspendedState =3D MySuspendedDeviceResources;
+>=20
+> 	fn resume(&self, state: SuspendedState) -> Result<ResumedState, Error<Su=
+spendedState>> {
+> 		// FIXME: error propagation not handled
+> 		let enabled_clk =3D state.xxx_clk.clone().prepare()?.enable()?;
+>=20
+> 		Ok(ResumedState {
+> 			xxx_clk: enabled_clk,
+> 		});
+> 	}
+>=20
+> 	fn suspend(&self, state: ResumedState) -> Result<SuspendedState, Error<R=
+esumedState>> {
+> 		// FIXME: error propagation not handled
+> 		let unprep_clk =3D state.xxx_clk.clone().disable().unprepare();
+>=20
+> 		Ok(SuspendedState {
+> 			xxx_clk: unprep_clk,
+> 		});
+> 	}
+> };
+
+I'm not sure we need to associate this with the suspend/resume state either.
+
+> With this model, I don't think Daniel's refactor goes in the way of more
+> generalization at the core level, it's just expressed differently than
+> it would be if it was written in C. And I say that as someone who struggl=
+es
+> with his C developer bias every time I'm looking at or trying to write
+> rust code.
 >
-> Am Mittwoch, 11. Februar 2026, 15:23:16 CET schrieb Danilo Krummrich:
->> imx_clk_scu_init() registers the imx_clk_scu_driver while commonly being
->> called from IMX driver's probe() callbacks.
->>
->> However, it neither makes sense to register drivers from probe()
->> callbacks of other drivers, nor does the driver core allow registering
->> drivers with a device lock already being held.
->>
->> The latter was revealed by commit dc23806a7c47 ("driver core: enforce
->> device_lock for driver_match_device()") leading to a deadlock condition
->> described in [1].
->>
->> Additionally, nothing seems to unregister the imx_clk_scu_driver once
->> the corresponding driver module is unloaded, which leaves the
->> driver-core with a dangling pointer.
->>
->> Hence, register the imx_clk_scu_driver from module_init() and unregister
->> it in module_exit().
->>
->> Fixes: dc23806a7c47 ("driver core: enforce device_lock for driver_match_device()")
->> Fixes: 220175cd3979 ("clk: imx: scu: fix build break when compiled as modules")
->> Reported-by: Alexander Stein <alexander.stein@ew.tq-group.com>
->> Closes: https://lore.kernel.org/lkml/13955113.uLZWGnKmhe@steina-w/
->> Link: https://lore.kernel.org/lkml/DFU7CEPUSG9A.1KKGVW4HIPMSH@kernel.org/ [1]
->> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> Thanks for the patch.
-> Tested-by: Alexander Stein <alexander.stein@ew.tq-group.com> # TQMa8x/MBa8x
->
->> ---
->> I plan to send the driver-core PR for 7.0-rc1 soon, which will also contain
->> commit dc23806a7c47 ("driver core: enforce device_lock for
->> driver_match_device()").
->>
->> It also contains an IOMMU commit similar to this one:
->> https://patch.msgid.link/20260121141215.29658-1-dakr@kernel.org
->>
->> The commit was originally scheduled for 6.19-rc7, but was deferred to 7.0-rc1 in
->> case more of those cases pop up (which now happened).
->> ---
->>  drivers/clk/imx/clk-imx8qxp.c | 24 +++++++++++++++++++++++-
->>  drivers/clk/imx/clk-scu.c     | 12 +++++++++++-
->>  drivers/clk/imx/clk-scu.h     |  2 ++
->>  3 files changed, 36 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/clk/imx/clk-imx8qxp.c b/drivers/clk/imx/clk-imx8qxp.c
->> index 3ae162625bb1..d89a2f40771e 100644
->> --- a/drivers/clk/imx/clk-imx8qxp.c
->> +++ b/drivers/clk/imx/clk-imx8qxp.c
->> @@ -346,7 +346,29 @@ static struct platform_driver imx8qxp_clk_driver = {
->>  	},
->>  	.probe = imx8qxp_clk_probe,
->>  };
->> -module_platform_driver(imx8qxp_clk_driver);
->> +
->> +static int __init imx8qxp_init(void)
->>
->>
-I would call this imx8qxp_clk_init. Same for imx8qxp_exit.
+> As others have said in this thread (Danilo and Gary), and after having
+> played myself with both approaches in Tyr, I do see this shift from manual
+> prepare/enable to an RAII approach as an improvement, so I hope we can
+> find a middle-ground where every one is happy.
 
+I do think we can find a compromise though. Miguel suggested for example
+to make the current enable/prepare/disable/unprepare function unsafe,
+and that's totally reasonable to me.
 
->> +{
->> +	int ret;
->> +
->> +	ret = platform_driver_register(&imx8qxp_clk_driver);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = imx_clk_scu_module_init();
->> +	if (ret)
->> +		platform_driver_unregister(&imx8qxp_clk_driver);
->> +
->> +	return ret;
->>
-Also, because the logical flow is that CLK driver is uing SCU for calls I would first call
-imx_clk_scu_module_init and then register the imx8qxp_clk driver. 
+Then we can implement the "managed" clock version on that unsafe API,
+and we would end up with a "raw", unsafe, version kind of equivalent to
+the one we have today, and where callers would have to justify why their
+usage of the API is actually safe, or the new, managed, variant that is
+safe and can be easily used by most drivers.
 
-But there is no functionality issues your your approach too, just a better logical flow.
+And we can call these RawClk vs Clk, or Clk vs ManagedClk, or whatever.
 
-Thanks,
-Daniel.
+How does that sound?
+
+Maxime
+
+--va37xmuzn6sqyd6c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaYywWgAKCRAnX84Zoj2+
+diFgAX9NbiTV8lVrQ44u9f4DSVUDq686eOaj7uci6rHY5OPcA0wNpSJTAhKA8TuV
+919XgiwBgM5+jjSrFFfXQ56tF54ch32+uMVDYbpBRp2fx+0+OfxMqCuAQkASAYrZ
+mfHt8q7GSg==
+=MEar
+-----END PGP SIGNATURE-----
+
+--va37xmuzn6sqyd6c--
