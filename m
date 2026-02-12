@@ -1,72 +1,142 @@
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [52.229.168.213])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECC5C1400C;
-	Thu, 12 Feb 2026 09:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.229.168.213
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B21298CC4;
+	Thu, 12 Feb 2026 09:23:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770887156; cv=none; b=OxzruFq5PU4263Q82KJY4FgUMAmeRXdO42yX77c+XgdnL/pvg/ryepWfISLlegFHyMT9Mv6almq1CcKSAKUaMgQu3MH20n+V3RGCsVlMN9yeW86Qf0bd8FlSILhEnNZi3rZ2xUwUu8coBzAw1oCUN/DUJfBA+6e0BHaMBHQpfjM=
+	t=1770888203; cv=none; b=SD+59MQQnQcgnNsw/eFyAvjUz1mGO0Ma8SeBvV8MPt0bUsB8de03j68FvS06et8E5Tv+hCSQAW3qSEUUBZnEgsXDeiW5M1H59K4Pdu6jMfrP0v//wFBnIuLGeC7HOvX89Z0/gB7sOsnxWpcYQwwWdpTnEnWWHd2i/uU5Ef+d4I0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770887156; c=relaxed/simple;
-	bh=f3p58tZYk6B07yhCdrxONy++HQz7qY5uLeay+/NDTpY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=a+i2gUyhRmmA6rHLeMTP31IX2HPMm590sXPnTWsjL/8kptwO0p5O9KXb4Z57KcL8xSjjy8NdSXYXOeCw67jhBuiHcPkdCPE+MA4nHUtTa6i5Vmba12TCvj7/ucUTEQ37umNMMJZZ80H/Ei/HHw/fVzzIkaNX+Bt/yRcLnAyS+Ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=52.229.168.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from dongxuyang$eswincomputing.com ( [10.12.96.41] ) by
- ajax-webmail-app2 (Coremail) ; Thu, 12 Feb 2026 17:05:31 +0800 (GMT+08:00)
-Date: Thu, 12 Feb 2026 17:05:31 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: "Xuyang Dong" <dongxuyang@eswincomputing.com>
-To: "Marcel Ziswiler" <marcel@ziswiler.com>, "Bo Gan" <ganboing@gmail.com>,
-	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	troy.mitchell@linux.dev, bmasney@redhat.com
-Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
-	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
-Subject: Re: Re: [PATCH v11 0/3] Add driver support for ESWIN eic700 SoC
- clock controller
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
- 20241203(6b039d88) Copyright (c) 2002-2026 www.mailtech.cn
- mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
-In-Reply-To: <33528fb083d704d0745c52186673a355d274162f.camel@ziswiler.com>
-References: <20260210095008.726-1-dongxuyang@eswincomputing.com>
- <4f6580f3-3759-4b33-a3d3-54bef0a7ae83@gmail.com>
- <33528fb083d704d0745c52186673a355d274162f.camel@ziswiler.com>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1770888203; c=relaxed/simple;
+	bh=Bd0vkkESwpTKZrM6Vj4/m5riIZawL87UTsB4+AHYnNg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=YMqr7qObt1zlBvRYqkD1Smt3gkTB53nMyg4y+hc9E7aNd19Oosts61RwgQQiyIQYWq9mH9M9qGCvHWhcfVKLFDs7+4CeQyKLTSkYJXkuKLoCk46nI+2KrDUq40H104wtQPuuoUYqT6FxXB8uMLtWvWifkgp86Z0AlqHqbzupntE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tu8+kgNT; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tu8+kgNT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A151BC19424;
+	Thu, 12 Feb 2026 09:23:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770888203;
+	bh=Bd0vkkESwpTKZrM6Vj4/m5riIZawL87UTsB4+AHYnNg=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=tu8+kgNTsI25fjEIsePbpW59UwxIvafjlf1pasP2zMu512PKeIgPylM/1OArUzV6T
+	 vf/ycxcTeVizc6s4S3CnGwKJS4UDfVhHqOj4BHC3HIVQdyfjr3HbQTM+iPghBAGWsc
+	 vUIzJH4quJs90SP6wD5GFiadmkJlIRKdmOjuYZx0KcOjryG0S5fq4+lhH3yrEEHP8n
+	 WoFhQqjaPatTkRju6OnjsCIWDVehxF8EiDB8nrUdvlRm5PNubZV6+hPXWC4wtMYwqf
+	 DeYNpb4bIDz8lByRQXpC/fVg8EmZfmZozq0mNVeOGBi5y/RK+4jkixgwHk15ZDoYK5
+	 r0Q42I2WSLPXg==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <74f952fb.36ac.19c51192f7d.Coremail.dongxuyang@eswincomputing.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:TQJkCgAnPqHbl41piQ8AAA--.61W
-X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/1tbiAgEQAmmMr4QWC
-	wAAsC
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 12 Feb 2026 10:23:16 +0100
+Message-Id: <DGCVH2B2OSFR.1C912TO7G7DGL@kernel.org>
+Subject: Re: [PATCH v3 1/3] rust: clk: use the type-state pattern
+Cc: "Boris Brezillon" <boris.brezillon@collabora.com>, "Daniel Almeida"
+ <daniel.almeida@collabora.com>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, "Viresh Kumar"
+ <viresh.kumar@linaro.org>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Thomas Zimmermann"
+ <tzimmermann@suse.de>, "David Airlie" <airlied@gmail.com>, "Simona Vetter"
+ <simona@ffwll.ch>, "Drew Fustini" <fustini@kernel.org>, "Guo Ren"
+ <guoren@kernel.org>, "Fu Wei" <wefu@redhat.com>,
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "Michael
+ Turquette" <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>,
+ "Miguel Ojeda" <ojeda@kernel.org>, "Boqun Feng" <boqun.feng@gmail.com>,
+ "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>,
+ <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <dri-devel@lists.freedesktop.org>, <linux-riscv@lists.infradead.org>,
+ <linux-pwm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>
+To: "Maxime Ripard" <mripard@kernel.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20260119-weightless-pelican-of-anger-190db0@houat>
+ <DFSN4FDCYHMW.3J3237PEBV2ZP@kernel.org>
+ <20260122-majestic-masterful-jaguarundi-d0abde@houat>
+ <2F3D3A40-6EF9-46FC-A769-E5A3AAF67E65@collabora.com>
+ <20260204-nickel-seal-of-poetry-8fdefb@houat>
+ <91A92D84-1F2E-45F3-82EC-6A97D32E2A78@collabora.com>
+ <20260204-angelic-vermilion-beagle-fd1507@houat>
+ <20260209105047.693f2515@fedora>
+ <20260211-flawless-feathered-boar-0b87ad@houat>
+ <DGCAAE4YEDLO.299F5M641E90B@kernel.org>
+ <20260212-obedient-faithful-koel-d8aaf6@houat>
+In-Reply-To: <20260212-obedient-faithful-koel-d8aaf6@houat>
 
-SGkgTWFyY2VsIGFuZCBCbywKClRoYW5rcyBmb3IgdGhlIHN1Z2dlc3Rpb25zIGFuZCBmb3IgcHJv
-dmlkaW5nIHRoZSBkZXZpY2UtdHJlZSBpbmZvcm1hdGlvbi4KCj4gPiAKPiA+IERvIHlvdSBoYXZl
-IGEgZGV2aWNlLXRyZWUgdGhhdCBjYW4gd29yayB3aXRoIHRoaXMgcGF0Y2hzZXQgYW5kIGVuYWJs
-ZQo+ID4gZU1NQy9ldGgvU0FUQSBvbiBIaWZpdmUgUDU1MD8gR2l2ZW4gdGhlc2UgZHJpdmVycyBh
-cmUgYWxyZWFkeSBtZXJnZWQsCj4gPiBJJ2QgbGlrZSB0byB0ZXN0IGl0IG15c2VsZi4gSSBqdXN0
-IG5lZWQgYSBwcm9wZXIgZGV2aWNlLXRyZWUuIEkgY2hlY2tlZAo+ID4geW91ciBnaXRodWIgcmVw
-bzogaHR0cHM6Ly9naXRodWIuY29tL2Vzd2luY29tcHV0aW5nL2xpbnV4LW5leHQsIHdoaWNoCj4g
-PiBoYXNuJ3QgYmVlbiB1cGRhdGVkIGZvciBhIHdoaWxlLCBhbmQgbm9uZSBvZiB0aGUgYnJhbmNo
-ZXMgYXJlIGJhc2VkIG9uCj4gPiB0aGUgbGF0ZXN0IHY2LjE5LXJjNwo+IAo+IFlvdSBtYXkgZmlu
-ZCB0aGlzIFsxXSBoZWxwZnVsLiBJdCBpcyByZS1iYXNlZCBvbi10b3Atb2YgdjYuMTkuIEhvd2V2
-ZXIsIHNvIGZhciwgSSBvbmx5IHRlc3RlZCB3aXRoIG1pY3JvIFNECj4gY2FyZCBvbiBFQkM3Ny4g
-SSBtYXkgdHJ5IEV0aGVybmV0IGxhdGVyIHRoaXMgd2VlayBhcyB3ZWxsLgo+IAo+IFsxXSBodHRw
-czovL2dpdGh1Yi5jb20vcmlzY3YvbWV0YS1yaXNjdi9ibG9iL21hc3Rlci9yZWNpcGVzLWtlcm5l
-bC9saW51eC9saW51eC1lc3dpbi1lYmM3Ny1tYWlubGluZS5iYgo+IAoKQm8sIHBsZWFzZSBhcHBs
-eSB0aGUgZGV2aWNlLXRyZWUgcGF0Y2ggZnJvbSBbMV0g4oCUIGl0IG1hdGNoZXMgdGhlIGRlc2Ny
-aXB0aW9uCndlIHRlc3RlZCBvbiBrZXJuZWwgNi4xOC4gTmV4dCwgd2UnbGwgYWRkIHRoZSBkZXZp
-Y2UtdHJlZSBmb3IgdGhlIGRyaXZlciBtb2R1bGVzwqAKdGhhdCBoYXZlIGFscmVhZHkgYmVlbiBh
-Y2NlcHRlZCB1cHN0cmVhbSwgdGFyZ2V0aW5nIHRoZSBsYXRlc3QgNi4xOSBrZXJuZWwuCgpSZWdh
-cmRzLApYdXlhbmcgRG9uZwo=
+On Thu Feb 12, 2026 at 8:59 AM CET, Maxime Ripard wrote:
+> On Wed, Feb 11, 2026 at 05:47:09PM +0100, Danilo Krummrich wrote:
+>> On Wed Feb 11, 2026 at 5:37 PM CET, Maxime Ripard wrote:
+>> > I do think we can find a compromise though. Miguel suggested for examp=
+le
+>> > to make the current enable/prepare/disable/unprepare function unsafe,
+>> > and that's totally reasonable to me.
+>> >
+>> > Then we can implement the "managed" clock version on that unsafe API,
+>>=20
+>> What do you mean with "managed" clock? Do you mean devres managed? If so=
+, I
+>> don't think there is any reason to switch to the unsafe API to be able t=
+o
+>> implement devres managed APIs (see also [1]).
+>>=20
+>> [1] https://lore.kernel.org/all/DFVW9MS5YLON.CVJDBYQKJ0P6@kernel.org/
+>
+> By that, I mean what Daniel has been proposing to achieve with this serie=
+s.
+>
+>> > and we would end up with a "raw", unsafe, version kind of equivalent t=
+o
+>> > the one we have today, and where callers would have to justify why the=
+ir
+>> > usage of the API is actually safe, or the new, managed, variant that i=
+s
+>> > safe and can be easily used by most drivers.
+>> >
+>> > And we can call these RawClk vs Clk, or Clk vs ManagedClk, or whatever=
+.
+>> >
+>> > How does that sound?
+>>=20
+>> What about we just wait until we have a user that really requires an uns=
+afe API
+>> for some reason? And if it never appears, even better. :)
+>
+> It works *today*.
+>
+> And the "oh but driver is using the API" is kind of ironic in the
+> context of the Rust bindings which have globally been in that situation
+> for years. You can't argue it both ways.
+
+I can't remember ever advocating for merging code that does not have at lea=
+st a
+user in prospect.
+
+> Either way, I'm not sure what the point of that submission was if you
+> will just dismiss diverging opinions, including attempts to compromise.
+
+Sorry -- I'm a bit confused here, since I did not submit this code.
+
+I'm also not dismissing your opinion; I just have a different one.
+
+In particular, I don't think we need an unsafe API until we see a concrete
+example where the proposed safe API does not work (and no other safe API wo=
+uld
+work either).
+
+Framing a difference in opinion as "dismissing diverging opinions" doesn't =
+feel
+fair to me.
+
+> Do whatever you want, but it's really hard to root for you some times.
+
+I'm starting to wonder if the mail is addressed to me in the first place.
+
+Thanks,
+Danilo
