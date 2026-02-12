@@ -1,142 +1,109 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B21298CC4;
-	Thu, 12 Feb 2026 09:23:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10BC22E8B87;
+	Thu, 12 Feb 2026 10:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770888203; cv=none; b=SD+59MQQnQcgnNsw/eFyAvjUz1mGO0Ma8SeBvV8MPt0bUsB8de03j68FvS06et8E5Tv+hCSQAW3qSEUUBZnEgsXDeiW5M1H59K4Pdu6jMfrP0v//wFBnIuLGeC7HOvX89Z0/gB7sOsnxWpcYQwwWdpTnEnWWHd2i/uU5Ef+d4I0=
+	t=1770890535; cv=none; b=NWPAIY+3q5+vg6vgZd9BfKquq1k6r7Nt2/kssm2BBrkWpxzEzAAZhgsUe95Wd7BLL6jnxb0Jx2dZLs1wvMRAYbbfOIY63R6VeHGN8lPH3ecXJmuWdQXREjGEgH9HIAH4dNtdXWyvXDNqt7tadogm0eaCP/Vn0GAtvA7ZOPzLE5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770888203; c=relaxed/simple;
-	bh=Bd0vkkESwpTKZrM6Vj4/m5riIZawL87UTsB4+AHYnNg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=YMqr7qObt1zlBvRYqkD1Smt3gkTB53nMyg4y+hc9E7aNd19Oosts61RwgQQiyIQYWq9mH9M9qGCvHWhcfVKLFDs7+4CeQyKLTSkYJXkuKLoCk46nI+2KrDUq40H104wtQPuuoUYqT6FxXB8uMLtWvWifkgp86Z0AlqHqbzupntE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tu8+kgNT; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770890535; c=relaxed/simple;
+	bh=x7tYcKwCteLHiZwyHz4dHbxN0Th4mJJiCosWKhhKNhE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rQpgvMh6MRm7NLja4PD3ruC1KPsl+mUzaAPxJrmfkeamNEwdY2YtbIjgSXlwYXYw44t+2QecfQKuHzrLidJi3bWDmncQt+VOzh3FoI51oyxKGN36V0F0YGyJAvdIdnhyM4nor7F+ZvmvFDb3gb9UyPaBAH9XYSNF3dVTzNHRvps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=HJgLaVER; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tu8+kgNT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A151BC19424;
-	Thu, 12 Feb 2026 09:23:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770888203;
-	bh=Bd0vkkESwpTKZrM6Vj4/m5riIZawL87UTsB4+AHYnNg=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=tu8+kgNTsI25fjEIsePbpW59UwxIvafjlf1pasP2zMu512PKeIgPylM/1OArUzV6T
-	 vf/ycxcTeVizc6s4S3CnGwKJS4UDfVhHqOj4BHC3HIVQdyfjr3HbQTM+iPghBAGWsc
-	 vUIzJH4quJs90SP6wD5GFiadmkJlIRKdmOjuYZx0KcOjryG0S5fq4+lhH3yrEEHP8n
-	 WoFhQqjaPatTkRju6OnjsCIWDVehxF8EiDB8nrUdvlRm5PNubZV6+hPXWC4wtMYwqf
-	 DeYNpb4bIDz8lByRQXpC/fVg8EmZfmZozq0mNVeOGBi5y/RK+4jkixgwHk15ZDoYK5
-	 r0Q42I2WSLPXg==
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="HJgLaVER"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1770890534; x=1802426534;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=x7tYcKwCteLHiZwyHz4dHbxN0Th4mJJiCosWKhhKNhE=;
+  b=HJgLaVER5mTxyFtWXakFnTb4HLJkTgQ1w5ETQS0DFkm0C+8+b457cgCt
+   kc1N06j9nFIHswxW7Qv+pboZWHPWgx7h3AI5x8aRZwhA6+0h8tbUBI02u
+   iIWrTQc9fOx50VNeaUuIDrAo+WAP/Bu4JDMChs30J1GwUP8AgS2aj+CG1
+   0plT+oDE1Fhp95GK3/nAkNAt8C8lxxmLhdX8z+KxYASq+9959FAmIng6s
+   za+cJHQK/5JrrgnKBPfweyYE4nYxPtQXFatTKrCtz0T3IHYDNnwAy/5BP
+   n8NNAwYCAv/BDCBicA2AOGgGFx6YBrRHZGxJk8r6RCxIv/sAZqCNcNj7W
+   g==;
+X-CSE-ConnectionGUID: J0RxFlJXSD2hBRyc9bDFXw==
+X-CSE-MsgGUID: uurT8fWXRIWhSFHG2x9hgQ==
+X-IronPort-AV: E=Sophos;i="6.21,286,1763449200"; 
+   d="scan'208";a="52580034"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2026 03:02:13 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.87.151) by
+ chn-vm-ex4.mchp-main.com (10.10.87.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.35; Thu, 12 Feb 2026 03:02:11 -0700
+Received: from archlinux.mchp-main.com (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.58 via Frontend Transport; Thu, 12 Feb 2026 03:02:08 -0700
+From: Mihai Sain <mihai.sain@microchip.com>
+To: <mturquette@baylibre.com>, <sboyd@kernel.org>,
+	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>, <varshini.rajendran@microchip.com>,
+	<cristian.birsan@microchip.com>, <balamanikandan.gunasundar@microchip.com>,
+	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<ryan.wanner@microchip.com>, Mihai Sain <mihai.sain@microchip.com>
+Subject: [PATCH v2 1/4] clk: at91: sam9x7: Remove gmac peripheral and generic clock entries with ID 67
+Date: Thu, 12 Feb 2026 12:01:44 +0200
+Message-ID: <20260212100147.5007-2-mihai.sain@microchip.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260212100147.5007-1-mihai.sain@microchip.com>
+References: <20260212100147.5007-1-mihai.sain@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 12 Feb 2026 10:23:16 +0100
-Message-Id: <DGCVH2B2OSFR.1C912TO7G7DGL@kernel.org>
-Subject: Re: [PATCH v3 1/3] rust: clk: use the type-state pattern
-Cc: "Boris Brezillon" <boris.brezillon@collabora.com>, "Daniel Almeida"
- <daniel.almeida@collabora.com>, "Alice Ryhl" <aliceryhl@google.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, "Viresh Kumar"
- <viresh.kumar@linaro.org>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Thomas Zimmermann"
- <tzimmermann@suse.de>, "David Airlie" <airlied@gmail.com>, "Simona Vetter"
- <simona@ffwll.ch>, "Drew Fustini" <fustini@kernel.org>, "Guo Ren"
- <guoren@kernel.org>, "Fu Wei" <wefu@redhat.com>,
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "Michael
- Turquette" <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>,
- "Miguel Ojeda" <ojeda@kernel.org>, "Boqun Feng" <boqun.feng@gmail.com>,
- "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>,
- <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <dri-devel@lists.freedesktop.org>, <linux-riscv@lists.infradead.org>,
- <linux-pwm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>
-To: "Maxime Ripard" <mripard@kernel.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20260119-weightless-pelican-of-anger-190db0@houat>
- <DFSN4FDCYHMW.3J3237PEBV2ZP@kernel.org>
- <20260122-majestic-masterful-jaguarundi-d0abde@houat>
- <2F3D3A40-6EF9-46FC-A769-E5A3AAF67E65@collabora.com>
- <20260204-nickel-seal-of-poetry-8fdefb@houat>
- <91A92D84-1F2E-45F3-82EC-6A97D32E2A78@collabora.com>
- <20260204-angelic-vermilion-beagle-fd1507@houat>
- <20260209105047.693f2515@fedora>
- <20260211-flawless-feathered-boar-0b87ad@houat>
- <DGCAAE4YEDLO.299F5M641E90B@kernel.org>
- <20260212-obedient-faithful-koel-d8aaf6@houat>
-In-Reply-To: <20260212-obedient-faithful-koel-d8aaf6@houat>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Thu Feb 12, 2026 at 8:59 AM CET, Maxime Ripard wrote:
-> On Wed, Feb 11, 2026 at 05:47:09PM +0100, Danilo Krummrich wrote:
->> On Wed Feb 11, 2026 at 5:37 PM CET, Maxime Ripard wrote:
->> > I do think we can find a compromise though. Miguel suggested for examp=
-le
->> > to make the current enable/prepare/disable/unprepare function unsafe,
->> > and that's totally reasonable to me.
->> >
->> > Then we can implement the "managed" clock version on that unsafe API,
->>=20
->> What do you mean with "managed" clock? Do you mean devres managed? If so=
-, I
->> don't think there is any reason to switch to the unsafe API to be able t=
-o
->> implement devres managed APIs (see also [1]).
->>=20
->> [1] https://lore.kernel.org/all/DFVW9MS5YLON.CVJDBYQKJ0P6@kernel.org/
->
-> By that, I mean what Daniel has been proposing to achieve with this serie=
-s.
->
->> > and we would end up with a "raw", unsafe, version kind of equivalent t=
-o
->> > the one we have today, and where callers would have to justify why the=
-ir
->> > usage of the API is actually safe, or the new, managed, variant that i=
-s
->> > safe and can be easily used by most drivers.
->> >
->> > And we can call these RawClk vs Clk, or Clk vs ManagedClk, or whatever=
-.
->> >
->> > How does that sound?
->>=20
->> What about we just wait until we have a user that really requires an uns=
-afe API
->> for some reason? And if it never appears, even better. :)
->
-> It works *today*.
->
-> And the "oh but driver is using the API" is kind of ironic in the
-> context of the Rust bindings which have globally been in that situation
-> for years. You can't argue it both ways.
+According with datasheet table 12.1 the instance ID 67 is reserved.
+This change drops the gmactsu_clk and gmac_gclk entries from
+the SAM9X7 clock description tables.
 
-I can't remember ever advocating for merging code that does not have at lea=
-st a
-user in prospect.
+Signed-off-by: Mihai Sain <mihai.sain@microchip.com>
+---
+ drivers/clk/at91/sam9x7.c | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-> Either way, I'm not sure what the point of that submission was if you
-> will just dismiss diverging opinions, including attempts to compromise.
+diff --git a/drivers/clk/at91/sam9x7.c b/drivers/clk/at91/sam9x7.c
+index 89868a0aeaba..d9603f1124d0 100644
+--- a/drivers/clk/at91/sam9x7.c
++++ b/drivers/clk/at91/sam9x7.c
+@@ -420,7 +420,6 @@ static const struct {
+ 	{ .n = "lvdsc_clk",	.id = 56, },
+ 	{ .n = "pit64b1_clk",	.id = 58, },
+ 	{ .n = "puf_clk",	.id = 59, },
+-	{ .n = "gmactsu_clk",	.id = 67, },
+ };
+ 
+ /*
+@@ -702,15 +701,6 @@ static const struct {
+ 		.pp_count = 1,
+ 		.pp_chg_id = INT_MIN,
+ 	},
+-
+-	{
+-		.n = "gmac_gclk",
+-		.id = 67,
+-		.pp = { "audiopll_divpmcck", "plla_div2pmcck", },
+-		.pp_mux_table = { 6, 8, },
+-		.pp_count = 2,
+-		.pp_chg_id = INT_MIN,
+-	},
+ };
+ 
+ static void __init sam9x7_pmc_setup(struct device_node *np)
+-- 
+2.53.0
 
-Sorry -- I'm a bit confused here, since I did not submit this code.
-
-I'm also not dismissing your opinion; I just have a different one.
-
-In particular, I don't think we need an unsafe API until we see a concrete
-example where the proposed safe API does not work (and no other safe API wo=
-uld
-work either).
-
-Framing a difference in opinion as "dismissing diverging opinions" doesn't =
-feel
-fair to me.
-
-> Do whatever you want, but it's really hard to root for you some times.
-
-I'm starting to wonder if the mail is addressed to me in the first place.
-
-Thanks,
-Danilo
