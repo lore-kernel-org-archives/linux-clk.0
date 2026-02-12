@@ -1,69 +1,69 @@
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011046.outbound.protection.outlook.com [40.107.130.46])
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010014.outbound.protection.outlook.com [52.101.69.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 922F32E5D17;
-	Thu, 12 Feb 2026 10:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE422DFA54;
+	Thu, 12 Feb 2026 10:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.14
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770891127; cv=fail; b=d6aWhJ/JVm2/tFHlufqLpA5exMREvBBs5u8YdAN7tdqOP2D+fuUgJO7FVz5dA0ytV939TO0cu59UXlqd1zfiRF8s2SwrnCvuuQhiB2C1Ad8bjLR+A1TfP+vRTmTZFesPFhaoCVANlsbSXisauzIIoc3GIBZaYaUAebV+Ft/BhpM=
+	t=1770891137; cv=fail; b=MoPT1fIdBuDVIKvs7redOJ659OI+ClSdw3OFzdyOmSKlFp4uowpE/42iZt7IcnovmI4sGXZ60/OeyFvqFqthDOJULDyvGE4xUis6aBumxS+AHQC/5GhApPLcFWLuXCSdst9zxIhMDgj9sTnBQiSGJN9vt4Chy8psr12lKjBnsWc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770891127; c=relaxed/simple;
-	bh=MypjSmiyKP6k7cRujSxPTWCmqKrhHDDxrKSvBTnhXnU=;
+	s=arc-20240116; t=1770891137; c=relaxed/simple;
+	bh=0Tc+ePASCMhjWlY10/ODwTnhNztbZj6EgXAi8W8NWF0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=oEtdqY9crQx3rTMIiZpxV3udsc/2stVceq+olT8xiHx+4LUI0dxTeZTaospCp7pY1ffYLFdzCcNLWzAPwQKixJsdc+ZG4us2hGhkmiSAu+/WGEapPgCw0FgxmQFT8/Ck5dgKOCsush4wKYqsD/HDJOKKrSIpOwBxL9KKrqYgUME=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=jzMPjLOI; arc=fail smtp.client-ip=40.107.130.46
+	 In-Reply-To:To:CC; b=nucdUkJH2j4yGtB4sIVekFc3UAsBN1sIPXIhPntKac781K/Qm/sdbor503uZk4W9ACgFc8ymc0XEb2m9vvWD4inxh4wJbNs0hfPQirszllHwI1WAyOfdwpySvNAWnmcZZketwnpqiDYQml1Luh3GCdqjAaxj4pCQ8r9UVcuFvh4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=joLX0Avf; arc=fail smtp.client-ip=52.101.69.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="jzMPjLOI"
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="joLX0Avf"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mPQm/3EmsaZgKFhZrsNWBq5DyIGqWySU3GjHkDqPRPe3rWHKpz3F1fEKCpW6rCQrHi8NGDq9IUvxr5fBuV3cvFmj/nwMIcTFFLLrbj9YDTab6zFH+fMJvfvXQRjbFDnS7eGNgZ3RwrhR/+SpPOSoi2wB0y0sVx1cPMbINj/KHER47tbbdsTsd194vQcPI9XIjOiwwat/yrthpph8ol+BTAJBfqNFcPSv5hnBPEj5eZuyBqTtLN2P0ajWk48r/b413mnv3uN20UK4gODvlr7/VYKdIYAqsFghnYVzcM+my8cLBKpsCuwCPt0mh2uUij+2bLA+R6FxhOJ7p/QDVDLQ0A==
+ b=GBTMURvrh4QrI3k6059ze++j5/tNp7zUhq73QF9VeCsC5pu3gQR3tOpxQ+ZliSPfNqksgQTovpZCqFWeK0uANQOlpw+ZYReR5Q+jnP/clvgCdRf+wWPxLC5w0riPS7vp/6Ov9cwaSGEFnviiv/5OBqpQCK7kyK3aWPuX+Kp10xO+Zvs//c+tOGisFkfqnduP+A7x1v3+Qv+MCVVD1qOEvho10e5cy1iB5u6C2dVGwlSROHCjM6CmnyA9HdeGDEjPQtpBS7lp8NqCs/q9Hlob1J1zS2I74RXQ+MPnvr7hQ8gcRaqwlNSHV7TNaJN2f2c+3jZy+A8ZQOKBNTEONyNqAg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9Ogun4KCfAe7PiRPllffd0JmlIdCy1h4x7hZvTuV2QE=;
- b=gF1f2iiW2QPPtGQRai8bvZ71jx6oRuyXVbWKkEFHsfQ/PFkoSyW9UEmUX4wilorkgfPxVryFlKxe53N2JOTSDATZWQoKv+1eOL7zFQ+0nOeOY8woN2icXbuJE1Nhu7POmCA0QewT7EqVkTzUlU2LSkcSSPqiOdMUCN40Olq0xqCjJu8hhIiE+TE8zL2Zc5wfVCaq0QypN486kZvcgkbJvLBUyXXdoIfqRI9Y2cArf5tmU1QE+jtdvLZvhuph8nCC6nxn/ljxzEFesuX1TmtrDE8z9Rnx/UUDzsXLus502FsQnf96/rY8emiC743oebFhjUpWoHtXEMDRpeh8enqaDQ==
+ bh=tGAINNrlADYVNgji7lBhRbnW3sGNwUoyQIMZVaOiTzw=;
+ b=IsLzZPrmxcv80+tYf2eLcIAeomoSovb+3D0qT3TDITlZ2rAwRzL1Xqeeq7WT80ozUTC1NtcCqpAkiBUTw6wTemzE5SC1ntvblalHSorX5PUM8xvGsXXC/L0zS80s8ZFx6LV3Bqvx2Hk4vwC1/NaDkM6r2VlHORnk7C8lrnpSkUblqMaA4hlaYmvGXuKLXd9X59jixqtZNn0RL/utPrlAzQan3MEv8/R9TqQi/5pzZe5e6pWa90/CeeGeUc/bybv+TdoogySMDHnT70fV83sNCXtbM2m9O4gn2cvyANrg9T5V+IFc7ZULoOlze+g61bTn2CpyDHl2BPglJWy3v7l0MQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 164.130.1.59) smtp.rcpttodomain=kernel.org smtp.mailfrom=foss.st.com;
+ 164.130.1.60) smtp.rcpttodomain=kernel.org smtp.mailfrom=foss.st.com;
  dmarc=fail (p=none sp=none pct=100) action=none header.from=foss.st.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9Ogun4KCfAe7PiRPllffd0JmlIdCy1h4x7hZvTuV2QE=;
- b=jzMPjLOI+7Up2lk0GodmtgpP7R7kWmFbMrwzMq0rPJXdxPcVckipJc5weDTQXDZ/mx+8iw/naJ1rr3ppHA/kh57kp6645/Vw902BJg5Xa0EO8a/H7AjYn/0S65KlEuuF7wdJXUjfm3zOTegKktx81sPz8RBMzkNKZZgz+k4h3bxUPxQFmov6VIaUgWIJ5iCx5AAdRF/5mbMJU/+Z0hkde8ZlyxFrDvW9u33AN37EeiLC+/p82KsGuOQ7hqmm0TA+W9cTtD5oHifmHbimOROOdq2sELBdak9yoobCgxhtO7uig+zUbUU8GaBSJHSIPoS/ecd2E5ozWCKlI+soCVRFHw==
-Received: from AS4P191CA0035.EURP191.PROD.OUTLOOK.COM (2603:10a6:20b:657::11)
- by AS8PR10MB7087.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:5ed::15) with
+ bh=tGAINNrlADYVNgji7lBhRbnW3sGNwUoyQIMZVaOiTzw=;
+ b=joLX0AvfIG3rVPzkqccOStY/iOSSR8n5pBfxMB2qW9EGgzTodrlCluz8B9PLq1Kg8fGXPEMKQ4T3SJEFBZk26qcDViX63GrCbYFBerZTIosjzjjYBh4iGknO3rFwidHtyZEzXY0p4mCRvsQwKc7FhgX/JeVBpQIslssYO/tZDXHfVxBVrDDwwLJFgoNlUn5xEB5WDVodMixLiWmo5uT+wJs8//migViMWRFKe863ZCrCjzvI9ycpzy9mycfm+9/5oo+nF3EeTyb6PlqUv/qX0sRpCehUxuW0LxdMvrrm22zUfCdzLKc0RFmOsv28XlCqjfzt+H0T8uduPMUNzB7INQ==
+Received: from AM8P251CA0018.EURP251.PROD.OUTLOOK.COM (2603:10a6:20b:21b::23)
+ by DB9PR10MB6690.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:3d2::15) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9611.10; Thu, 12 Feb
- 2026 10:11:59 +0000
-Received: from AM4PEPF00025F97.EURPRD83.prod.outlook.com
- (2603:10a6:20b:657:cafe::e5) by AS4P191CA0035.outlook.office365.com
- (2603:10a6:20b:657::11) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9611.11 via Frontend Transport; Thu,
- 12 Feb 2026 10:11:57 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.59)
+ 2026 10:12:12 +0000
+Received: from AM1PEPF000252E1.eurprd07.prod.outlook.com
+ (2603:10a6:20b:21b:cafe::23) by AM8P251CA0018.outlook.office365.com
+ (2603:10a6:20b:21b::23) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9611.8 via Frontend Transport; Thu,
+ 12 Feb 2026 10:12:09 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.60)
  smtp.mailfrom=foss.st.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=none header.from=foss.st.com;
 Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
- designate 164.130.1.59 as permitted sender) receiver=protection.outlook.com;
- client-ip=164.130.1.59; helo=smtpO365.st.com;
-Received: from smtpO365.st.com (164.130.1.59) by
- AM4PEPF00025F97.mail.protection.outlook.com (10.167.16.6) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9632.0 via Frontend Transport; Thu, 12 Feb 2026 10:11:59 +0000
-Received: from STKDAG1NODE2.st.com (10.75.128.133) by smtpo365.st.com
- (10.250.44.71) with Microsoft SMTP Server (version=TLS1_2,
+ designate 164.130.1.60 as permitted sender) receiver=protection.outlook.com;
+ client-ip=164.130.1.60; helo=smtpO365.st.com;
+Received: from smtpO365.st.com (164.130.1.60) by
+ AM1PEPF000252E1.mail.protection.outlook.com (10.167.16.59) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9611.8 via Frontend Transport; Thu, 12 Feb 2026 10:12:10 +0000
+Received: from STKDAG1NODE2.st.com (10.75.128.133) by smtpO365.st.com
+ (10.250.44.72) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.29; Thu, 12 Feb
- 2026 11:13:50 +0100
+ 2026 11:13:52 +0100
 Received: from localhost (10.48.86.212) by STKDAG1NODE2.st.com (10.75.128.133)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.29; Thu, 12 Feb
- 2026 11:11:58 +0100
+ 2026 11:12:09 +0100
 From: Gatien Chevallier <gatien.chevallier@foss.st.com>
-Date: Thu, 12 Feb 2026 11:10:32 +0100
-Subject: [PATCH v2 3/9] bus: rifsc: use new CONFIG_STM32_FIREWALL_DEBUG
- switch
+Date: Thu, 12 Feb 2026 11:10:33 +0100
+Subject: [PATCH v2 4/9] arm64: dts: st: add RISAB1/2/3/4/5/6 nodes to
+ stm32mp251.dtsi
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -72,7 +72,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20260212-stm32_risab-v2-3-02ef2859b596@foss.st.com>
+Message-ID: <20260212-stm32_risab-v2-4-02ef2859b596@foss.st.com>
 References: <20260212-stm32_risab-v2-0-02ef2859b596@foss.st.com>
 In-Reply-To: <20260212-stm32_risab-v2-0-02ef2859b596@foss.st.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -88,206 +88,135 @@ X-ClientProxiedBy: STKCAS1NODE1.st.com (10.75.128.134) To STKDAG1NODE2.st.com
  (10.75.128.133)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM4PEPF00025F97:EE_|AS8PR10MB7087:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5df30000-528b-4126-baeb-08de6a1f289f
+X-MS-TrafficTypeDiagnostic: AM1PEPF000252E1:EE_|DB9PR10MB6690:EE_
+X-MS-Office365-Filtering-Correlation-Id: d422aa0f-719d-4be6-0f93-08de6a1f2f2e
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|7416014|376014|1800799024|82310400026;
+	BCL:0;ARA:13230040|36860700013|376014|7416014|82310400026|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?R0RVMUlmUkQxNWhUK3RXU1hubExhYk4yMDBpV0xBM21scGRrVVFMd29ZZmlR?=
- =?utf-8?B?QkpIMXprbWRDYk9Zb2tZc1d3bUtDWExxTE1rV3NvSHA5bGY3M3dxcVZsd0Uy?=
- =?utf-8?B?MllwVXR1QWhsS2JUNjV0cFlHYk1pQ2U1Y0JkVGlPNDdMa2dVdVJrc29GNEg4?=
- =?utf-8?B?Z3krMENhN1YxM1RHTEl5Tkczdll6aUUyTEs4N0RKLy8rMWU5UmhGRmRQajgv?=
- =?utf-8?B?a3Bqa21xbFVOU1B3SHk2b3NrNyt4M2xESmdTM04zTDR6ZFBxVGhoUDhvbmVS?=
- =?utf-8?B?MERnTG9oa2o3dG5pVHFkdTROeDIwa0RRVXVZbjY3bDk3TE9MWTM0OVBOaUpW?=
- =?utf-8?B?YVNTZXhUbW13clFIWjQwNFJmQjZxeVJMNEhRa2YxOVJ1Rm5Gb3FOQXQ3ZjZU?=
- =?utf-8?B?dElTaXNnMzdMTVZSOFdHaTBKbHc0ME1NUlE4TzVPWEFyK1lvbWppRFFZdHZ4?=
- =?utf-8?B?RndTNnh5SlpYL3BJZkw3TXJEc0x0MEhqdk5YVkp5M3MyclprNjJyTU1BbUpl?=
- =?utf-8?B?cGZRUnl3TjFGYkZTOUh5amwzQWl6U3Q5VkUwWlNoaEpKaDBpZDBKelJ2NlVX?=
- =?utf-8?B?eVNmZCtQVlJpKzNRZEtHWlFIM1JvdHpwTGpmQ216ZWNjdEUxanprQ01GZXZW?=
- =?utf-8?B?SWZLUU5meWtLcm1wRDlENXU5VDZFK1krRGR3U1JSWlBLOFZFa2dSWS9VcjdY?=
- =?utf-8?B?Yy90MkU0Rkh3U1FMU3czQTBYVGRIWnJXUi9FaUNEQmJGYTFEK2NBRFBuNlJs?=
- =?utf-8?B?cmJhM2FNU0M3dlQxQnlWNXhxUmFOazAyQlRBM1NueVhzK2lTK0pTRTBPellJ?=
- =?utf-8?B?Z09QRW15RGVwRDhpeUJSWFh3am4yMUNOMEhZK0VPa1BDdE5uVEFjN0plQzBV?=
- =?utf-8?B?ZFY0a2ExdHBZOWxpWHJFckFQZVJ2VlhlWHc4WnRXUnVNU1IxanRMeURGQXpR?=
- =?utf-8?B?OHp3K1dPZnZjTDM0V242MzIwdkJMOG05YjZGd2xmTW9Odjh6UGNQa1BUL1RC?=
- =?utf-8?B?WFMxaVZmd1FPWGxIRnhNV0xBNDJWb000YUlhZGNIckhPVUZ1MTdsWmgxSHc3?=
- =?utf-8?B?S2IzbCtsS2JnWVlsQUgxTmJ0bEs0ZHJkbjhtVitJU3hTU0o3OXlERjFDcEp3?=
- =?utf-8?B?MDZ1MmJCdURWUjN0NVptWGdCdyttUEt5c005ejMvcXEvYVdET3JuSUliMVV0?=
- =?utf-8?B?RGpCaWFIOVhLS3ppV3NoYmZWMDRrb3o3WDROcFZpZlBXbFQ0SzhMa2lReHB2?=
- =?utf-8?B?N28vQi9RZnV4Y3RocytLWHpYZHV6NTFRVlRwUXlZTmt1dnNqTmVHTFhxYTNP?=
- =?utf-8?B?djN5aDdOK0J0THQ3ekF3Qk9xU2VFSEJGRE0rSHFrVXBwVzgwaFlaUWJycVFO?=
- =?utf-8?B?aWNkeW1FY1JwdjJsUmN2Z05HdkxmZCtQY1pDdHZMdFRXbGR3OU5SOWYzaVJB?=
- =?utf-8?B?dHBZWUFoU3BkS1VTaTBnRHNIRmNSNDArMmJRRHhDdDRwdnl1eFhzVnROTXp2?=
- =?utf-8?B?ajFYS0h4Z0p0S2lZamN0UVJVOGxJTWVpVzFtcDRyV0pBdHd3U0VJcWthanJW?=
- =?utf-8?B?b1VoZkxiUVRRdXNOSmR5VFVuNXFudU96UzhNK1J5cVZOeFM1YUZlK3R4WnVC?=
- =?utf-8?B?NUhYMXFpSVlick9QanoreDZ5cUx4WmVqbDhGWlYxMGpBMWFTVWZkU0Y4Vml4?=
- =?utf-8?B?SUxHTmZTektJNE5HMU5IM015b2lVazJTMWt6R1p2MXZHeVgyT3FyVWdXZm4v?=
- =?utf-8?B?RW03SG94Ym1UNEduQy9GNW0yUGZFUy8ydUNpL1o0L1JabVJwaDU4d1ZVZEg2?=
- =?utf-8?B?blo2SkxEb2JGYjVSYmdkMDdDN1B4NE56NVRranBVT0tzRXlyb2xDVUNwV2Rq?=
- =?utf-8?B?NUEvYmdRUjRHRHFBUGorRk5NdTRJQTMxeml1SmlwTE5teXIrOTEzaWpkV0py?=
- =?utf-8?B?cTRCR0FwTTkxc3lzT01sdnVDWGdaaGNEN1ArWVBCY2FpUWc4TnZka2xTZHc0?=
- =?utf-8?B?ZHRvSEFKeERIeEFwWGl3dVdDaWsvRkZuY2dEbHVaZ0NKcGZQeDI1OTZEek51?=
- =?utf-8?B?Mll6S3BVcUJ1NW1Xd1RoYkI0WnkrVjQ3UVphQkdKMXFjaVhRN0pTVXNyRmJR?=
- =?utf-8?B?eDQ0cVpRTlI3SThBb3hGMjBSOHlSd2dDaXBINXlVV2xIRUQyZFFQU01yOUhy?=
- =?utf-8?B?Z3ZqV0NpVVVwVUMwS0pXYk5uclFBOU9oVlJQcm1WVDFRMExzdmlpMFhTUzZh?=
- =?utf-8?B?c3pYbUMwWHN2U3NZdGZ5TldyRXNBPT0=?=
+	=?utf-8?B?Qk9QeGVuNDR1b3l2WURtUlBtTzRMc0ZMNFI1VDNVMjFKSDZLZW9ZTTNSM1dx?=
+ =?utf-8?B?SXNZYndueFRVOWlqUTRIOEdNN2ZhNnlqSkdyNVBtQnBPWE9lc0lYQVlaWHl2?=
+ =?utf-8?B?YkZqbmRRcnFKRkYwbzV5TExvT1ZGY1kzVmxSbmw4QysyR3k1U3E2aTU2a045?=
+ =?utf-8?B?SFFqbFo0c0NiWGNJU1JSaWwzNlJCRUtxYm12M2tTUTFoMCs4NHoveXliaVBL?=
+ =?utf-8?B?V0tvZFNPaURUc3kwRWw0eStMSUg3V0pDNkdMajhQU2NGaUV2STlWYkM1Y0tF?=
+ =?utf-8?B?NG0vV1Q5WXZxUE5ORkRoZlFCSEk5cDNkRlYvb2JHSWlRdTlrbEVHdUd3YnBh?=
+ =?utf-8?B?K1FSWElsNGY4UXdpb1ZaNmVic0FnNUFXVkxjYmxJcFZrQjVzc2lrc1dpT3R0?=
+ =?utf-8?B?ZG5icTBkZTJkL2RLMXluSWVqY2pjalZKMWtzRHhIOEs2YytkUXpwK2JrM1V0?=
+ =?utf-8?B?NjFyLzdrOFZrOGsySUU0MElQaUUrTlVMcVBaUkhNQmZQV1JNZm9JM2trRFFl?=
+ =?utf-8?B?NGxGMTBTb0lORmc2YXNxZ1pNSVhJQ1ZsQnIySE1ldDUwblhqcEJqMTVWYnlv?=
+ =?utf-8?B?T0hEKzhrQ01TdHJJM1ZlU2V6eXlpcU9pRWZRanlXamVickoxcm1SYVA4ODF3?=
+ =?utf-8?B?UXdFQmRTbjJGRERuSWFyK3A4WE1wamtWdzRyaXh4dG9tZVFrU3ZLMkJyYWxL?=
+ =?utf-8?B?YkJpclB3SGxWUERKbmJ6THprMHAvdDdOYjdjZ3c0c05uR05Tdk5ZeTc5dUNu?=
+ =?utf-8?B?QjV0bE1NbDNoWW9oL0kvSjc5RGxDNW9rNzlDNEpFTER1QlpMQ25Mck1UVHRn?=
+ =?utf-8?B?Z0RiWEg2N0R5RG5oU2R5bmhabUtnMTAvb0syYnRmbFF1Q1lsQmcydklFUW8r?=
+ =?utf-8?B?Y3hJQWhIa0o0OEJOeDlXc2xBUlZRcFhFcjYwTEZvYy9vMlAwbHM1TzB4aEFt?=
+ =?utf-8?B?YWZ6eDJiWXNzaUxYTVM3NTZtWDVNSEZLa1BoVkVTamVENFRpbFpyenpIODdn?=
+ =?utf-8?B?Uld4eEhLQ2VmQlpHY2ZBaGpGMTJ6SVpQVUNlSUp4TWZNdEsvakhGMExyaTZY?=
+ =?utf-8?B?NmUxLzdFUnpUdTM4c0VNcFdJckVpWnd2b2NKVU05TmNrdlRZSW92RXpQdlZG?=
+ =?utf-8?B?MG1ZbnUvK2ZSSHl4R1hFeklkKzhaMlNmYWw3VGRKcENnc2lndFZyazFlZnhB?=
+ =?utf-8?B?a3dhZnI3Ulo0ZEZnUWJ4VVh0TC9XMGJHTnExdEt5UU8xSEVLSmpnWlk3RVdI?=
+ =?utf-8?B?VHppM0paQlhnUXVxSTJKK2dzQWNVVWhQbDNZZkpyKzF3UkVnMktHRG95RjFL?=
+ =?utf-8?B?ZzN1QUR4RVJIQ3BGU0RHU1BudVdEZE9JYXMyWjNhLzgwOVlvYlAvcStSNkZV?=
+ =?utf-8?B?aitkaTR6b0Zqd1JTTXpXZ1JDTU5oQWtQbFFqOGtKUmJINVF1VStrYW9PUW9r?=
+ =?utf-8?B?T1pWVXV5SUJtZVVydU9rSTAzYzNqalhHOWJLNkpONGxncFRYWFdvTTYrWURw?=
+ =?utf-8?B?NnByOGN4anlUUkdFaVVQcU5MSEIvb1poZHFNeTdNdGE5UjVUWVhmcU9kN0JQ?=
+ =?utf-8?B?UDR3Q2dDUUoxVmNFUjRDRXZBdDlTT3pLVEFYc1B0UjdGMEN1OXljbkRnQjlV?=
+ =?utf-8?B?YVBObHdwbVVmRTVkWU41VjM3K3ZBZkRKNUJEeWUxOXdKRGY2ZDFJbUxWUGVH?=
+ =?utf-8?B?SDBYWmozUkNnL0loeDJGVjNwZnFXRzhjeC9rK3Yzb0cyUTlySEZ4OEMvSUh6?=
+ =?utf-8?B?MzkwMTJ5cWR4NHJndk1wek10SUFWUkxzb2k4emRwd0tZK1liWC9SeEkxMGRu?=
+ =?utf-8?B?bVJEK0V5RytqUk9tQytDMnNmRzlxYzRtbHpiNDM2UnJmdDVkcWU2SkFnbnB5?=
+ =?utf-8?B?WGlxUGNrQ05naVVjR0xxMVNIVDJ6YUlHcmFzbGF6N3BnczNma1lEUVBlbnl3?=
+ =?utf-8?B?U0syVVR2Wk45VjN5TEVDc1RiQVhSVGZydDNLejVlTWNJWVp3Ymd2WUl0L0JP?=
+ =?utf-8?B?QmRMazdwUTdNcVJJcllEVnEwUVUvZTNkZVdBTGRrM2l6c0V1NVhZcG8yOHln?=
+ =?utf-8?B?L3dWOTdic3RLNlV1NmI5blBZNXhncGVEOStieTAvZ0xMNWprQ1U1dkZvSDlP?=
+ =?utf-8?B?MlZnUE9yMEszNFdXWjZidnlIVUZ0ckhvdk84bWtzZGxHeitwcnAxeWxtTisz?=
+ =?utf-8?B?WDB4TGRSelYvczBSVVZDVlkxUklFQUNJczhBRlNLNTNEN3AzQ095QVprK1NH?=
+ =?utf-8?B?eitNMnliOHdleFlwa0ZvTFJEWkJ3PT0=?=
 X-Forefront-Antispam-Report:
-	CIP:164.130.1.59;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+	CIP:164.130.1.60;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(7416014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	n7NkFnR7M8gzUJWiJN9QQX+orl52JUopoeKgGDwEdbNhLRqHl28nLiMH7QDC48YwxIrgaRkUy16/hW5tCsvOIqqdUcfdSAjyhe4h5OwJY9uqzb6bNK1mcSDXnOizhHNUnsT2a8kQU8OdOyXMeCQu9j2ELL0vriyzyQUaBH7Vnq8YwtMTJuUvmnzGnPOx6Yk+ipPmff80OmNxGLr86sgd67s8Uc37LWbVUz1yc83EaN/z+XC32IojOMPFlhCYXp6fmYqe7L9p8/RtoBR14HcMWSsFqQBiIJNMfcJvzBuB+Z07QHU8O4vkJXdt8uoUrhdteiReMj2KTpkdpO3fixiCSHp+9wkdQxiaMwF+5dnd5EHcVtS7oWS2ihb6gdmE8NIh1/LGf7LC0PhvRLxCHwbfGdRJGfi4lvmQXqeE8WCnMGeyxsRpl6X48ae69C48MXbE
+	AE1ymF8e9V6k6/ovqsS7DsitKw1mCJyAe52Dv1ydbfe+hqxLjI1XQ0NX7KSYPaVI5k/45QCyN6L31UWGnzYn0uhAx1IvzF1boqqucwqxW+Ex9ZBvbEV49DYhejZN6vVnGkx7YsbJL3hvBcckRqidIqa7RAltFsjN59ROqhV55rdY1G899eCNWI6dpTE/eSVxP3LltaHdd9AxpnKbNp1MBoIpc+flCEQtcDck90uCWt1B35YuMSuqzb6tkal/Z0dOdpdGrzdgp2FwtKwqLdrXjkBRMFzZNB6IO7BBhP1dlI4+jtV/3xmzinCo4hFH94GACIwJqgS586KUjCT7RY9XQBVcThrdXpAe0BCiVlQKCYH4x3S8r0OzC7ZFsNgvPixVJNRLjlBCqeeFByfUe+K+moNA0TAoLWQH1g7JepAL1MXFtPHOl95xAVyK0Ccaw7JT
 X-OriginatorOrg: foss.st.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2026 10:11:59.0503
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2026 10:12:10.0281
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5df30000-528b-4126-baeb-08de6a1f289f
+X-MS-Exchange-CrossTenant-Network-Message-Id: d422aa0f-719d-4be6-0f93-08de6a1f2f2e
 X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.59];Helo=[smtpO365.st.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.60];Helo=[smtpO365.st.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	AM4PEPF00025F97.EURPRD83.prod.outlook.com
+	AM1PEPF000252E1.eurprd07.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR10MB7087
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR10MB6690
 
-Instead on relying on CONFIG_DEBUG_FS, rely on the new
-CONFIG_STM32_FIREWALL_DEBUG switch that groups all stm32 firewall
-debug features to embed RIFSC configuration dump.
-
-While there, use IF_DEFINED() instead of #if defined() so that
-all the code is always compiled and let the compiler optimize.
+Add RISAB1/2/3/4/5/6 nodes to the stm32mp251.dtsi device tree SoC
+file.
 
 Signed-off-by: Gatien Chevallier <gatien.chevallier@foss.st.com>
 ---
- drivers/bus/stm32_rifsc.c | 48 +++++++++++++++++++++++------------------------
- 1 file changed, 23 insertions(+), 25 deletions(-)
+ arch/arm64/boot/dts/st/stm32mp251.dtsi | 48 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
-diff --git a/drivers/bus/stm32_rifsc.c b/drivers/bus/stm32_rifsc.c
-index debeaf8ea1bd..80bd5c5acfb4 100644
---- a/drivers/bus/stm32_rifsc.c
-+++ b/drivers/bus/stm32_rifsc.c
-@@ -73,7 +73,6 @@
- #define RIF_CID0			0x0
- #define RIF_CID1			0x1
+diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
+index a8e6e0f77b83..b413430939a8 100644
+--- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
++++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
+@@ -1733,6 +1733,54 @@ pcie@0,0 {
+ 			};
+ 		};
  
--#if defined(CONFIG_DEBUG_FS)
- #define RIFSC_RISUP_ENTRIES		128
- #define RIFSC_RIMU_ENTRIES		16
- #define RIFSC_RISAL_SUBREGIONS		2
-@@ -434,18 +433,19 @@ struct rifsc_dbg_private {
- 	unsigned int nb_risal;
- };
- 
--static const struct stm32_rifsc_resources_names rifsc_mp21_res_names = {
-+static const struct __maybe_unused stm32_rifsc_resources_names rifsc_mp21_res_names = {
- 	.device_names = stm32mp21_rifsc_risup_names,
- 	.initiator_names = stm32mp21_rifsc_rimu_names,
- };
- 
--static const struct stm32_rifsc_resources_names rifsc_mp25_res_names = {
-+static const struct __maybe_unused stm32_rifsc_resources_names rifsc_mp25_res_names = {
- 	.device_names = stm32mp25_rifsc_risup_names,
- 	.initiator_names = stm32mp25_rifsc_rimu_names,
- };
- 
--static void stm32_rifsc_fill_rimu_dbg_entry(struct rifsc_dbg_private *rifsc,
--					    struct rifsc_rimu_debug_data *dbg_entry, int i)
-+static void __maybe_unused stm32_rifsc_fill_rimu_dbg_entry(struct rifsc_dbg_private *rifsc,
-+							   struct rifsc_rimu_debug_data *dbg_entry,
-+							   int i)
- {
- 	const struct stm32_rifsc_resources_names *dbg_names = rifsc->res_names;
- 	u32 rimc_attr = readl_relaxed(rifsc->mmio + RIFSC_RIMC_ATTR0 + 0x4 * i);
-@@ -457,8 +457,9 @@ static void stm32_rifsc_fill_rimu_dbg_entry(struct rifsc_dbg_private *rifsc,
- 	dbg_entry->m_priv = rimc_attr & RIFSC_RIMC_MPRIV;
- }
- 
--static void stm32_rifsc_fill_dev_dbg_entry(struct rifsc_dbg_private *rifsc,
--					   struct rifsc_risup_debug_data *dbg_entry, int i)
-+static void __maybe_unused stm32_rifsc_fill_dev_dbg_entry(struct rifsc_dbg_private *rifsc,
-+							  struct rifsc_risup_debug_data *dbg_entry,
-+							  int i)
- {
- 	const struct stm32_rifsc_resources_names *dbg_names = rifsc->res_names;
- 	u32 cid_cfgr, sec_cfgr, priv_cfgr;
-@@ -481,9 +482,9 @@ static void stm32_rifsc_fill_dev_dbg_entry(struct rifsc_dbg_private *rifsc,
- }
- 
- 
--static void stm32_rifsc_fill_subreg_dbg_entry(struct rifsc_dbg_private *rifsc,
--					      struct rifsc_subreg_debug_data *dbg_entry, int i,
--					      int j)
-+static void __maybe_unused
-+stm32_rifsc_fill_subreg_dbg_entry(struct rifsc_dbg_private *rifsc,
-+				  struct rifsc_subreg_debug_data *dbg_entry, int i, int j)
- {
- 	u32 risc_xcfgr = readl_relaxed(rifsc->mmio + RIFSC_RISC_REG0_ACFGR + 0x10 * i + 0x8 * j);
- 	u32 risc_xaddr;
-@@ -503,7 +504,7 @@ static void stm32_rifsc_fill_subreg_dbg_entry(struct rifsc_dbg_private *rifsc,
- 	}
- }
- 
--static int stm32_rifsc_conf_dump_show(struct seq_file *s, void *data)
-+static int __maybe_unused stm32_rifsc_conf_dump_show(struct seq_file *s, void *data)
- {
- 	struct rifsc_dbg_private *rifsc = (struct rifsc_dbg_private *)s->private;
- 	int i, j;
-@@ -603,8 +604,9 @@ static int stm32_rifsc_conf_dump_show(struct seq_file *s, void *data)
- }
- DEFINE_SHOW_ATTRIBUTE(stm32_rifsc_conf_dump);
- 
--static int stm32_rifsc_register_debugfs(struct stm32_firewall_controller *rifsc_controller,
--					u32 nb_risup, u32 nb_rimu, u32 nb_risal)
-+static int __maybe_unused
-+stm32_rifsc_register_debugfs(struct stm32_firewall_controller *rifsc_controller, u32 nb_risup,
-+			     u32 nb_rimu, u32 nb_risal)
- {
- 	struct rifsc_dbg_private *rifsc_priv;
- 	struct dentry *root = NULL;
-@@ -630,7 +632,6 @@ static int stm32_rifsc_register_debugfs(struct stm32_firewall_controller *rifsc_
- 
- 	return 0;
- }
--#endif /* defined(CONFIG_DEBUG_FS) */
- 
- static bool stm32_rifsc_is_semaphore_available(void __iomem *addr)
- {
-@@ -800,11 +801,12 @@ static int stm32_rifsc_probe(struct platform_device *pdev)
- 		return rc;
- 	}
- 
--#if defined(CONFIG_DEBUG_FS)
--	rc = stm32_rifsc_register_debugfs(rifsc_controller, nb_risup, nb_rimu, nb_risal);
--	if (rc)
--		return dev_err_probe(rifsc_controller->dev, rc, "Failed creating debugfs entry\n");
--#endif
-+	if (IS_ENABLED(CONFIG_STM32_FIREWALL_DEBUG)) {
-+		rc = stm32_rifsc_register_debugfs(rifsc_controller, nb_risup, nb_rimu, nb_risal);
-+		if (rc)
-+			return dev_err_probe(rifsc_controller->dev, rc,
-+					     "Failed creating debugfs entry\n");
-+	}
- 
- 	/* Populate all allowed nodes */
- 	return of_platform_populate(np, NULL, NULL, &pdev->dev);
-@@ -813,15 +815,11 @@ static int stm32_rifsc_probe(struct platform_device *pdev)
- static const struct of_device_id stm32_rifsc_of_match[] = {
- 	{
- 		.compatible = "st,stm32mp25-rifsc",
--#if defined(CONFIG_DEBUG_FS)
--		.data = &rifsc_mp25_res_names,
--#endif
-+		.data = PTR_IF(IS_ENABLED(CONFIG_STM32_FIREWALL_DEBUG), &rifsc_mp25_res_names),
- 	},
- 	{
- 		.compatible = "st,stm32mp21-rifsc",
--#if defined(CONFIG_DEBUG_FS)
--		.data = &rifsc_mp21_res_names,
--#endif
-+		.data = PTR_IF(IS_ENABLED(CONFIG_STM32_FIREWALL_DEBUG), &rifsc_mp21_res_names)
- 	},
- 	{}
- };
++		risab1: firewall@420f0000 {
++			compatible = "st,stm32mp25-risab";
++			reg = <0x420f0000 0x1000>;
++			clocks = <&scmi_clk CK_SCMI_ICN_LS_MCU>;
++			st,mem-map = <0xa000000 0x20000>;
++			status = "disabled";
++		};
++
++		risab2: firewall@42100000 {
++			compatible = "st,stm32mp25-risab";
++			reg = <0x42100000 0x1000>;
++			clocks = <&scmi_clk CK_SCMI_ICN_LS_MCU>;
++			st,mem-map = <0xa020000 0x20000>;
++			status = "disabled";
++		};
++
++		risab3: firewall@42110000 {
++			compatible = "st,stm32mp25-risab";
++			reg = <0x42110000 0x1000>;
++			clocks = <&scmi_clk CK_SCMI_ICN_LS_MCU>;
++			st,mem-map = <0xa040000 0x20000>;
++			status = "disabled";
++		};
++
++		risab4: firewall@42120000 {
++			compatible = "st,stm32mp25-risab";
++			reg = <0x42120000 0x1000>;
++			clocks = <&scmi_clk CK_SCMI_ICN_LS_MCU>;
++			st,mem-map = <0xa060000 0x20000>;
++			status = "disabled";
++		};
++
++		risab5: firewall@42130000 {
++			compatible = "st,stm32mp25-risab";
++			reg = <0x42130000 0x1000>;
++			clocks = <&scmi_clk CK_SCMI_ICN_LS_MCU>;
++			st,mem-map = <0xa080000 0x20000>;
++			status = "disabled";
++		};
++
++		risab6: firewall@42140000 {
++			compatible = "st,stm32mp25-risab";
++			reg = <0x42140000 0x1000>;
++			clocks = <&scmi_clk CK_SCMI_ICN_LS_MCU>;
++			st,mem-map = <0xa0a0000 0x20000>;
++			status = "disabled";
++		};
++
+ 		bsec: efuse@44000000 {
+ 			compatible = "st,stm32mp25-bsec";
+ 			reg = <0x44000000 0x1000>;
 
 -- 
 2.43.0
