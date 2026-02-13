@@ -1,41 +1,41 @@
 Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442E027B340
-	for <linux-clk@vger.kernel.org>; Fri, 13 Feb 2026 18:53:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6317427B340
+	for <linux-clk@vger.kernel.org>; Fri, 13 Feb 2026 18:54:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771008839; cv=none; b=daIYYnbj5/mycClSKSo6n/Ou32tip2Z6Myvr3reHaWa61JdtLz013BpFstmGL+3TW08csn563eAH1qjDGFDowKmEFnmmABe0crPL6fpGY6rcJ8lwQh2jGoMIbIDXDFW0/sLNzP0Dx7xYJAc+K+N8voTSbrrhdsigwpdVY/Xgqak=
+	t=1771008843; cv=none; b=HqNjTh0qI357UWxL+oEBgQ+5FD4d+LIQVs4bGXlNBTqbDXLjW7so56I2/PSenA7QL0Tn2xBUsbV1nkTi5WB5Xf9T5RMXhs+cdpxa904ynFjpvP/l/hNZbj9MDBqIDA1+AdUS7n4iMAUf90j0aeDOg28C54O4VkNZR5kz+WGIDvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771008839; c=relaxed/simple;
-	bh=/i7oD+HdEV5+FKpKWf+g///6ddnKCJYwQMS7LWp2oV8=;
+	s=arc-20240116; t=1771008843; c=relaxed/simple;
+	bh=zKvkw8v9FF0PR1wEseEBbs4PTvLJNPiF9dMfrp3ZWEM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ukAv3MNKOQtUMy9e2SSHY6lP69q8kPYosVVFKlVl/1/rL28zfFNHX9pH5BvWD40t9/mjEQgZJgVId2oiPJU0DuA/AFO8CM5zGTretpGhb+w8YRkh0hqin9xAVj2pFOrOZuuiPxsJ32NWdyWrvBTQlmCfJUqH7emSOcqKkvdkotM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=ndOoyLup; arc=none smtp.client-ip=213.97.179.56
+	 In-Reply-To:To:Cc; b=J3brIemQB72qNdCmMYh3ldFpd7fxvyzEQ1/nf5OPWEgpqLM8Kbn5oI+P0wM2iAECWwbE+I7P9KoXAUaZ+STj9VaTFucdoLV48FFfOFQ8MrVzsdsNMe4NZWXnDqdjRLSA41a71FIpn0aRWV+mwn2c9ge5xAFpyTE07R6Smazs8tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=JmFeUejY; arc=none smtp.client-ip=213.97.179.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="ndOoyLup"
+	dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="JmFeUejY"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
 	s=20170329; h=Cc:To:In-Reply-To:References:Message-Id:
 	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
 	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=dJUICxDk015PLfzQs3JF41wFjRVpYrqT9S2gtAwBHi0=; b=ndOoyLup8B0TBeJn1N4tlqUn1F
-	Gj6/P2r5A6YCfJ4Dnw9l1XKCBcL+KAsP3zBAf5+vjIDaennXp+VR24NWC9MD2hXu48+LzE04/qFWQ
-	xMxin4Y6ZNb8A4L1ECwpRRgsK+0OrJ6gf+6Q27BXeZk50KaT10bpYl4IKMPlNuakw68ZNBnVKm/vr
-	tcZTkw2cMM9Bnggsmxy3LDxikyBV/gjkjy3VBe3YrwUW/fGXE/lnIRgWfs1EnPwoLoc5M83z2QJRQ
-	PB9VzfUjS6tA82Fa+iVRWN46k3f6YOgEouK/cd8A+P3weDzJr0vVdg+aQ8i/3CoDqcjsdgtu9RXW4
-	glEvT2Yw==;
+	bh=GplsYPFeQZhA8hmi85G1RnmgDSDJoeTllgjYVKEvqno=; b=JmFeUejYEq9e/6svlqtvJe4RWK
+	T+fcKUc8vF6kGHKeOw962uBL4YZYWa/1U7MTeQmhMwE3whr0YCg6PrrMwRM6fUsEWd7soW0d+pN2A
+	/DyL1e9iVNv6lti0tEDqw/NyIIHb3RkqfaX8GQba/NsRstDNobgqJT/Rxg77Fg6vwHCFgGNG+HKeG
+	XmKzZNO7sW5dGAnlLwvwJjdF2Z4KrguJYqreRfRwHV6h3Amo2PnnGGBKoukrpphGCPbGOG3Hqqmig
+	GNoVYdSLZEevoqYkh5mA0eE9/2iStHZL1XO1GDkQSSxj//3sD0719rJWRJS1e7GgbqlpddvSjTL56
+	xtr6ybtA==;
 Received: from [187.36.210.68] (helo=janis.local)
 	by fanzine2.igalia.com with esmtpsa 
 	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1vqyIZ-000Sqv-Kk; Fri, 13 Feb 2026 19:53:51 +0100
+	id 1vqyIe-000Sqv-0L; Fri, 13 Feb 2026 19:53:56 +0100
 From: =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-Date: Fri, 13 Feb 2026 15:52:57 -0300
-Subject: [PATCH v5 4/7] pmdomain: bcm: bcm2835-power: Increase ASB control
- timeout
+Date: Fri, 13 Feb 2026 15:52:58 -0300
+Subject: [PATCH v5 5/7] drm/v3d: Use
+ devm_reset_control_get_optional_exclusive()
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -44,7 +44,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260213-v3d-power-management-v5-4-7a8b381eb379@igalia.com>
+Message-Id: <20260213-v3d-power-management-v5-5-7a8b381eb379@igalia.com>
 References: <20260213-v3d-power-management-v5-0-7a8b381eb379@igalia.com>
 In-Reply-To: <20260213-v3d-power-management-v5-0-7a8b381eb379@igalia.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -60,61 +60,57 @@ Cc: linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
  Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
  kernel-dev@igalia.com, =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1846; i=mcanal@igalia.com;
- h=from:subject:message-id; bh=/i7oD+HdEV5+FKpKWf+g///6ddnKCJYwQMS7LWp2oV8=;
- b=owEBbQGS/pANAwAIAT/zDop2iPqqAcsmYgBpj3MnfLFUgQohsJnsvP4RBi7Un823vMOh17qqK
- KW6ZvU/kLOJATMEAAEIAB0WIQT45F19ARZ3Bymmd9E/8w6Kdoj6qgUCaY9zJwAKCRA/8w6Kdoj6
- qstkCACSBZ3hrpms7suJiJH0W944uto0MNxl3J6FogrMYI47TUiu8OeW8DEhoUOEyeSQNJ+koYt
- zSQZY37oF/iEFp5ryB0Vv5657et/tPNLBlgYa2QquCqtll3SBdiz9yl9IyEOlX/UwMEaHccnYeF
- HHfln4qXzF/va4XvusI7HprGrtk2vOAgKfNW/UT0xkizyYDvIGgBACoBYPTyZFMG0ZUDD26ga2h
- mnFjTxRYoU/MmLLAhiidHGofm2S3rAo5rk16mDtgUoedHMbc02BuJR9miYaoJoOqfFPEIvXV1Ak
- 6AIFWHQcdiTgICmhSK6Kp1k5+WsfSkVimAuGIgZdmg8ObpLf
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1335; i=mcanal@igalia.com;
+ h=from:subject:message-id; bh=zKvkw8v9FF0PR1wEseEBbs4PTvLJNPiF9dMfrp3ZWEM=;
+ b=owEBbQGS/pANAwAIAT/zDop2iPqqAcsmYgBpj3Mn+qB06zp9DGb6x5J4Kds9vT+cDphWf8Bew
+ 0z22C7HzuGJATMEAAEIAB0WIQT45F19ARZ3Bymmd9E/8w6Kdoj6qgUCaY9zJwAKCRA/8w6Kdoj6
+ qhy2B/kBRtbORqvBcX5iwJZQvvghWPWimS5zTuZz99y2/ZMkwjIZBcSRH6r07OrIw2NMelKpQiP
+ 1iFhXTOZ2j2mgGvDlTh/HuV7DFVjaSu1nHzjJsow3kvt16P6ddbAl+pICIR/bQ4hzpCIbpBbqOq
+ viXYViQW3hLMt1lx8GGKtFRnO2ZE1GhQ/ikhii5zWVh6vZvC4n1rLK2FkZkGVpngYnvY7H/dGHb
+ i3ty+ax/A8TdMnvSbSoVVvG0YvYtJRS4XMRnkU56sUxA1nI7OsyU9paQnzO8md4q1eyGXw2v5Wa
+ pLir2X9An1/1blbEkUAHrff+B2XXfhPJoR0yLFwOH82mY7iM
 X-Developer-Key: i=mcanal@igalia.com; a=openpgp;
  fpr=F8E45D7D0116770729A677D13FF30E8A7688FAAA
 
-The bcm2835_asb_control() function uses a tight polling loop to wait
-for the ASB bridge to acknowledge a request. During intensive workloads,
-this handshake intermittently fails for V3D's master ASB on BCM2711,
-resulting in "Failed to disable ASB master for v3d" errors during
-runtime PM suspend. As a consequence, the failed power-off leaves V3D in
-a broken state, leading to bus faults or system hangs on later accesses.
+Simplify optional reset handling by using the function
+devm_reset_control_get_optional_exclusive().
 
-As the timeout is insufficient in some scenarios, increase the polling
-timeout from 1us to 5us, which is still negligible in the context of a
-power domain transition. Also, move the start timestamp to after the
-MMIO write, as the write latency is counted against the timeout,
-reducing the effective wait time for the hardware to respond.
-
+Reviewed-by: Melissa Wen <mwen@igalia.com>
 Signed-off-by: Maíra Canal <mcanal@igalia.com>
 ---
- drivers/pmdomain/bcm/bcm2835-power.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/v3d/v3d_drv.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/pmdomain/bcm/bcm2835-power.c b/drivers/pmdomain/bcm/bcm2835-power.c
-index 1d29addfe036348e82293693b4059e504bb25575..7b9eea10a24e26835deeca84c60ccb616b99a508 100644
---- a/drivers/pmdomain/bcm/bcm2835-power.c
-+++ b/drivers/pmdomain/bcm/bcm2835-power.c
-@@ -166,8 +166,6 @@ static int bcm2835_asb_control(struct bcm2835_power *power, u32 reg, bool enable
- 		break;
- 	}
+diff --git a/drivers/gpu/drm/v3d/v3d_drv.c b/drivers/gpu/drm/v3d/v3d_drv.c
+index 8de4f151a5c02cbf970e72933d1a275968088357..257f2fefbdb6f8736411de8965919f1728844a6a 100644
+--- a/drivers/gpu/drm/v3d/v3d_drv.c
++++ b/drivers/gpu/drm/v3d/v3d_drv.c
+@@ -398,18 +398,17 @@ static int v3d_platform_drm_probe(struct platform_device *pdev)
  
--	start = ktime_get_ns();
+ 	v3d_perfmon_init(v3d);
+ 
+-	v3d->reset = devm_reset_control_get_exclusive(dev, NULL);
++	v3d->reset = devm_reset_control_get_optional_exclusive(dev, NULL);
+ 	if (IS_ERR(v3d->reset)) {
+-		ret = PTR_ERR(v3d->reset);
++		ret = dev_err_probe(dev, PTR_ERR(v3d->reset),
++				    "Failed to get reset control\n");
++		goto clk_disable;
++	}
+ 
+-		if (ret == -EPROBE_DEFER)
+-			goto clk_disable;
 -
- 	/* Enable the module's async AXI bridges. */
- 	if (enable) {
- 		val = readl(base + reg) & ~ASB_REQ_STOP;
-@@ -176,9 +174,10 @@ static int bcm2835_asb_control(struct bcm2835_power *power, u32 reg, bool enable
+-		v3d->reset = NULL;
++	if (!v3d->reset) {
+ 		ret = map_regs(v3d, &v3d->bridge_regs, "bridge");
+ 		if (ret) {
+-			dev_err(dev,
+-				"Failed to get reset control or bridge regs\n");
++			dev_err(dev, "Failed to get bridge registers\n");
+ 			goto clk_disable;
+ 		}
  	}
- 	writel(PM_PASSWORD | val, base + reg);
- 
-+	start = ktime_get_ns();
- 	while (!!(readl(base + reg) & ASB_ACK) == enable) {
- 		cpu_relax();
--		if (ktime_get_ns() - start >= 1000)
-+		if (ktime_get_ns() - start >= 5000)
- 			return -ETIMEDOUT;
- 	}
- 
 
 -- 
 2.52.0
