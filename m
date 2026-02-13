@@ -1,99 +1,123 @@
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [207.46.229.174])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34185336EF8;
-	Fri, 13 Feb 2026 09:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.46.229.174
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DF736164E;
+	Fri, 13 Feb 2026 15:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770975743; cv=none; b=lyeOV491WuBOtz7geAH08k1dP/w0DfbmeK5uIbRMi0PRN1g4Hf7YokpKoMERIakfEXSC6XLDR5IA/SGErlxnSLk+BFcs1umFTAPK9qlL0YcJ3893WnzEx3fu29Iw2z5CCF+IwIdTGvYbBxwAdYxQUiGR0OJDM1WAH3WT5Nhyu5I=
+	t=1770995267; cv=none; b=kovbBv5Dxea0nDSkdy2NlXmu0+xxLt5+ExJ7K6bP5VCmTYIBF5OyFL4HyzyBdAPvjQrdsAQVuKlYIxBIMKVhpnGd8UuW91RfEl/29ZRZAELOrNfPuyF+ZmIlpvxXQZz5hMft2HLk+wJmKFjLyNZlwOzC9qUNgrBkGMXP3FfX3UE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770975743; c=relaxed/simple;
-	bh=0TaG3zKhjPdH3XKQ3J68a9J/86YyuBuqPvF95YxTGm4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ij5yreiZX4s/50zhpopGb2YgqkfBXqzYhW35u0XIUaIP/6N5mEkNaqGZBE0BmAmdYJdgdjMzk8iRCL76W6Ut1N0UGpl7Vuol1wvnhKHJuukp/Vm/KDbKIzRJ0RMCT+okKi2b+pLn76RHkURJDyUBoVaRcBiIepOzh37V73Vnvbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=207.46.229.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from E0005152DT.eswin.cn (unknown [10.12.96.41])
-	by app1 (Coremail) with SMTP id TAJkCgAnyXL28Y5poVEAAA--.2295S2;
-	Fri, 13 Feb 2026 17:42:15 +0800 (CST)
-From: dongxuyang@eswincomputing.com
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	troy.mitchell@linux.dev,
-	bmasney@redhat.com
-Cc: ningyu@eswincomputing.com,
-	linmin@eswincomputing.com,
-	huangyifeng@eswincomputing.com,
-	pinkesh.vaghela@einfochips.com,
-	ganboing@gmail.com,
-	marcel@ziswiler.com,
-	Xuyang Dong <dongxuyang@eswincomputing.com>
-Subject: [PATCH v12 3/3] MAINTAINERS: Add entry for ESWIN EIC7700 clock driver
-Date: Fri, 13 Feb 2026 17:42:12 +0800
-Message-Id: <20260213094212.283-1-dongxuyang@eswincomputing.com>
-X-Mailer: git-send-email 2.31.1.windows.1
-In-Reply-To: <20260213094112.115-1-dongxuyang@eswincomputing.com>
-References: <20260213094112.115-1-dongxuyang@eswincomputing.com>
+	s=arc-20240116; t=1770995267; c=relaxed/simple;
+	bh=fU3Smstkm9vsVdQ6PhIzTlsFAgeVVpZBvhQMAzyojZs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eUrMqaIMsid8AsSwjAKkR0kNBHDSzmSy2WpbtfYmDg+41cGQz9zkVOaIp+sWfNKKXf11xpfqkKRVsxNZDixYwfA+BIIJl6yUVMPlj5UlONdpNkxY+OJ8j96Ci1Hvc9JjTWELjwnqueSdtlimNc6huMJEXSydZnrEUCd5H0tF160=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L8aCvjJ3; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L8aCvjJ3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08F24C116C6;
+	Fri, 13 Feb 2026 15:07:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770995266;
+	bh=fU3Smstkm9vsVdQ6PhIzTlsFAgeVVpZBvhQMAzyojZs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=L8aCvjJ3ggkAvsYLbrrqgGs2JXaim6L9ojNxxQpVeHdQRDAA7n0Rak8bQTx7sL+0i
+	 jpgADss010yQVG47/e3Z+lWuhUJiqIVw7OIbkkQnGtrGGWgLAo3+hs1/UrlCqdSEv1
+	 qM3w5ypQ2A75tSIdRLmocZuFpSiTsZQFUWSrPleq5p4V2KjsiLYctSjWiPocriuWxQ
+	 8ziTvzQmENvl4/3baBzaX/FO6WIxJ3Clbu/SsTMlT5KnnicEqPer0rNUod0Kl+ZNyl
+	 ERmWAcGuofcYOCrww2LS/6HOTbwx8D9VfDuZf7RcKHF0FHzXtOWbsur4aJ/dt/QUh4
+	 VszLfOE0qrkIA==
+Message-ID: <f45e77d7-0d0b-4236-a661-cc44d3460214@kernel.org>
+Date: Fri, 13 Feb 2026 16:07:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:TAJkCgAnyXL28Y5poVEAAA--.2295S2
-X-Coremail-Antispam: 1UD129KBjvdXoWruF48XFWkKr1DGr1UAw4fKrg_yoWDArc_Gr
-	48Aay7XFyrJF12k395ZFZayFWYkw4xJr45KanFyw4jv34Yyr1DKFWqvwnavw47GF43WryU
-	uFyrKFZIgFnrWjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbhkFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-	n2kIc2xKxwAKzVCY07xG64k0F24lc7CjxVAaw2AFwI0_GFv_Wrylc2xSY4AK6svPMxAIw2
-	8IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4l
-	x2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrw
-	CI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1l
-	IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
-	A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRmZXOUUUUU=
-X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/9] dt-bindings: bus: document the RISAB firewall
+ peripheral
+To: Gatien Chevallier <gatien.chevallier@foss.st.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20260212-stm32_risab-v2-0-02ef2859b596@foss.st.com>
+ <20260212-stm32_risab-v2-1-02ef2859b596@foss.st.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20260212-stm32_risab-v2-1-02ef2859b596@foss.st.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Xuyang Dong <dongxuyang@eswincomputing.com>
+On 12/02/2026 11:10, Gatien Chevallier wrote:
+> +
+> +  memory-region:
+> +    minItems: 1
+> +    maxItems: 32
+> +    description:
+> +      Phandle to nodes describing memory regions to be configured in the RISAB
+> +      by the trusted domain of at least a RISAB page size.
+> +      These regions cannot overlap. A region must be within st,mem-map range and
+> +      can be represented by one or more pages. RISAB has a 4kBytes page
+> +      granularity and each page can hold different access rights.
+> +
+> +  st,mem-map:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    description: Memory address range covered by the RISAB.
+> +    items:
+> +      - description: Memory range base address
+> +      - description: Memory range size
 
-Add myself as maintainer of ESWIN EIC7700 clock driver
+I did reply at v1 now. This is not a trivial device so should not be rushed.
 
-Tested-by: Marcel Ziswiler <marcel@ziswiler.com> # ebc77
-Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a9e5dda52199..0ef12433aaa8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9500,6 +9500,14 @@ T:	git https://github.com/eswincomputing/linux-next.git
- F:	Documentation/devicetree/bindings/riscv/eswin.yaml
- F:	arch/riscv/boot/dts/eswin/
- 
-+ESWIN EIC7700 CLOCK DRIVER
-+M:	Yifeng Huang <huangyifeng@eswincomputing.com>
-+M:	Xuyang Dong <dongxuyang@eswincomputing.com>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml
-+F:	drivers/clk/eswin/
-+F:	include/dt-bindings/clock/eswin,eic7700-clock.h
-+
- ET131X NETWORK DRIVER
- M:	Mark Einon <mark.einon@gmail.com>
- S:	Odd Fixes
--- 
-2.43.0
-
+Best regards,
+Krzysztof
