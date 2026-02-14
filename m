@@ -1,623 +1,447 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7984217736;
-	Sun, 15 Feb 2026 01:53:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5FF24677A
+	for <linux-clk@vger.kernel.org>; Sun, 15 Feb 2026 07:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771120408; cv=none; b=CC2lAgvRySAGIx5KalGOosWQz4G9yONdK3sQy6jYOc0weOrYolUwLh/cLC1XTs727WMNtwR8iOImEY1WUjMju1dcOVrmgR9punHQCyWDv65U3K4cW4fCPi9Ave/TYrJQmi1bBg4JHRJyqJ1DV24Ixs/Wnx4XlvzAzqDDsqvIt+E=
+	t=1771139020; cv=none; b=S9JqDZMf55vOKKCNOVt2F3NLocEIJEp7pUurKHq8RQ1W/Tds4SzgReRp/wF/I1ahx2BlXlR52DFI52rUeLg0GKOfJjLrotUevYUMxaP1I9P+fYXnqd9TvnMq4zzz6wVNrAQ17T1nKDg+obdGszplNyM2aF/Krno/xRBvDbGVy/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771120408; c=relaxed/simple;
-	bh=ImnwUIDFxGcO3VzJftV0cIHBEvxZco+0n7SWqfwcm1A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QeCMtcjz9EBbLum2kwPQ1PNM7tqWDjcRjXjtkhD99AUF9wuC1ywOjdMamSa/j+y/aXXspzsHLyKEDQPaoh4rYUcvoy2Miw+4fuBb3K1vawCZZsjzKbNsrOiqdLIN+vpX9JUgVxPOLn0zz16eZ0hdVs3IFAhdO5GHnkVfHboVKq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kc4Zgoj4; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1771139020; c=relaxed/simple;
+	bh=6aJthlOel/fQ4UXJiao/R4OrfMqOBdWVLslBJ1nqCDI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=S0TfJzkerzzYHB5st7SoZQ9/MiIDBPs/VXYjxA3GfEw7VJqbrlbswfKj9dp/QV09P0C+lvt9GmIreBbcswsbzrixCmEnIZhFNiQfKdetERuJAwsvKL6Wkb5EptbGg/VsXp7+g82SkdvzjDexIIiEHEHLRLx+slgg8oPwU9ghgpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VVlFUWjw; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kc4Zgoj4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC9ECC16AAE;
-	Sun, 15 Feb 2026 01:53:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771120408;
-	bh=ImnwUIDFxGcO3VzJftV0cIHBEvxZco+0n7SWqfwcm1A=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Kc4Zgoj4uKeh1A9kxS/GT2ReTckqu749AoA8bsTVBERhCFYP4d8Oml3HhB8RpyC10
-	 SAsvilpleXycxW6nlXCfhl8NTMZZ+ZPwN0wZrTguvf8fDUWayaHa/QT1cFv5pQHm/T
-	 JIDldZenKpOResrLBM44lNEc3PuIoRPfSAvljOImWVVkOiFtvYcRcpTMiS9SWY3yiw
-	 qONwp317Z1vOSmQAG3d9jliVl7HvRMOMRkHPjpsoQuXuRBSUS1flOpqpj789GRT65X
-	 /fQAwH5XcIibfxNkgPAUdw5roxYVWUKw28wTtaLfFVzs5k2CTInuL71YzWpiQIQMUU
-	 pDlbN6IjJIBNA==
-From: Stephen Boyd <sboyd@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk changes for the merge window
-Date: Sat, 14 Feb 2026 17:53:24 -0800
-Message-ID: <20260215015325.34211-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VVlFUWjw"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-48375f1defeso15368875e9.0
+        for <linux-clk@vger.kernel.org>; Sat, 14 Feb 2026 23:03:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1771139017; x=1771743817; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1g+0t9HyVXdFrZRpw6jgWddfRKPzWReFsz+gFXMWCcY=;
+        b=VVlFUWjwj3X8XPFp5mNLyfe8zmvXy3jMUVqt/zvsec4FmW7wdwLbNyK/ONESm5/S/P
+         Vepmpv7qtOOUCTMvcQGIPR4YsDWHyXnX+wIPYadcNYNW+4HV7DFTujhE0eKv14s7Llvr
+         aBOrvsMxSXVK5MIGmIQ09AhCWH6KpyINMtQ7PN6bpgCz5C/eTNPuudUlY1dayhg9kvml
+         dD6KAo8fm6kVucfHvTAg/ReGIlzMu7BJdhmgXUvTgELFB4pDvfHxGJGaBPp7hirpL3HB
+         7pYRig5bH80N7wa48Ge3OJNzep5uNOnLpble0YZMFh2VCrB3p+MAO8L2OyZ5emEpWaNC
+         abFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771139017; x=1771743817;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=1g+0t9HyVXdFrZRpw6jgWddfRKPzWReFsz+gFXMWCcY=;
+        b=axLPYJX+sj7mzshYjv+vNPJXTBIVJbkeB1kyg+eru20/Pb/8OEWsGygQjNcPEF+Y5b
+         jktTnn6XuzTPtdGsAsZEbefLxR4et3tMwDULfnZ+oHjG6hsMq7E8o8hGKX9+KlhCbeLr
+         B7R61Z3eEYa3niCRU0T83lvdrmZfwb1XfOe+Lv5aL90A83o4tjXwemxd659+2+JvJrJw
+         0UBeISLyw3XLB5kFKa0/W0RkUvQ/BLaa4BNOOzg/jtYQZft2gUY13gs2Wk5tHtlsezIO
+         C51Z/VxfXGhc6psMD+F1PhDiHdSssJJhqmYQaoEUUDe+Tc757B/EMCSiZRM9+Y9XWX8G
+         YLew==
+X-Forwarded-Encrypted: i=1; AJvYcCVfz163pGZ/ueLntgG0k/0gJqro9bOA1u6VDt6E26BywIvD8lXm2GwgAxXB4xohaYmbcCMgU8C8g0I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4DWsPgE+HCXO/8JBsySy02GJYOPOKSxaYyIVCL/w3clz65ixH
+	0Uc60kNDQVdGRHJYE8SkB25DoDLYTEMWnWCwoJTeOq+NHQ9Fk9Yo57j1
+X-Gm-Gg: AZuq6aJ+AE+4+O1SJpYJib8gQWHlaCLJuE/deB2s9kpIpd/5LiCZWwGVea732EApM6W
+	oME3SKhBT/QYo/UpXN2QW3CmErXbPlPMl+1SohNTE/093eTzLwCQK60RvV3xS29+Rq+lxwtQLIH
+	x7frt35pLFMwMX50hMazpv0zr/uDz9oG+SU2qQPxULbOBMrhjVtBwBsv9Yu9jPttusNEO4MOLI7
+	6SbwRFCwxC4/dxCyel+z73OIG55/5+9hXlHtxjS8AC1Yzoq8f2AXR3mGV/LTWOLQQpROmf7SM3O
+	QnmO+CBAjgRa4LW4wxCXtC5JpZhjdwPOlZbXUMVRLFje+UqFhjVhiSMy9jY+vFD0u4tSiORVwXo
+	3pPGBTvNLJiGiHo+NXiQu8nfu3vjNWEmAYZ72z7CrqlgZRWunl8diTgCxvyyAyKgvDUI3f9ZeAM
+	R7Ac8cis+KV6ODHsF+LQlIQt9hIINdms9jf9Bj3sJEmB5dDjjUoVkF4H77P2ufFeQFTHXVyQUu/
+	BV35ygwAZiJLbNx9Sr/QzVTQCTx
+X-Received: by 2002:a05:600c:1c22:b0:47d:18b0:bb9a with SMTP id 5b1f17b1804b1-48373a786f3mr128369245e9.33.1771139017090;
+        Sat, 14 Feb 2026 23:03:37 -0800 (PST)
+Received: from jernej-laptop.localnet (178-79-79-213.dynamic.telemach.net. [178.79.79.213])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4836ff00332sm168216905e9.2.2026.02.14.23.03.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Feb 2026 23:03:36 -0800 (PST)
+From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To: wens@kernel.org
+Cc: samuel@sholland.org, mripard@kernel.org,
+ maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com,
+ simona@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+Subject: Re: [PATCH 7/7] drm/sun4i: switch DE33 to new bindings
+Date: Sat, 14 Feb 2026 21:55:00 +0100
+Message-ID: <5047516.GXAFRqVoOG@jernej-laptop>
+In-Reply-To:
+ <CAGb2v67B_2SMsDbATVu51Ed+2o+6=FRLw7KmjeL1KYgxm=gyDw@mail.gmail.com>
+References:
+ <20251115141347.13087-1-jernej.skrabec@gmail.com>
+ <20251115141347.13087-8-jernej.skrabec@gmail.com>
+ <CAGb2v67B_2SMsDbATVu51Ed+2o+6=FRLw7KmjeL1KYgxm=gyDw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-The following changes since commit 52300cd894b3167d6206e266e341a089e87124b9:
+Hi Chen-Yu,
 
-  dt-bindings: clock: google,gs101-clock: Add DPU clock management unit (2026-01-17 20:29:38 +0100)
+Dne =C4=8Detrtek, 25. december 2025 ob 10:49:47 Srednjeevropski standardni =
+=C4=8Das je Chen-Yu Tsai napisal(a):
+> On Sat, Nov 15, 2025 at 10:14=E2=80=AFPM Jernej Skrabec
+> <jernej.skrabec@gmail.com> wrote:
+> >
+> > Now that everything is in place, switch DE33 to new bindings.
+> >
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+> > ---
+> >  drivers/gpu/drm/sun4i/sun8i_mixer.c | 130 +++++++++++++++-------------
+> >  drivers/gpu/drm/sun4i/sun8i_mixer.h |  10 +--
+> >  2 files changed, 71 insertions(+), 69 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4=
+i/sun8i_mixer.c
+> > index fde3b677e925..da213e54e653 100644
+> > --- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> > +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> > @@ -13,6 +13,7 @@
+> >  #include <linux/of.h>
+> >  #include <linux/of_device.h>
+> >  #include <linux/of_graph.h>
+> > +#include <linux/of_platform.h>
+> >  #include <linux/platform_device.h>
+> >  #include <linux/reset.h>
+> >
+> > @@ -24,6 +25,7 @@
+> >  #include <drm/drm_probe_helper.h>
+> >
+> >  #include "sun4i_drv.h"
+> > +#include "sun50i_planes.h"
+> >  #include "sun8i_mixer.h"
+> >  #include "sun8i_ui_layer.h"
+> >  #include "sun8i_vi_layer.h"
+> > @@ -256,7 +258,6 @@ static void sun8i_mixer_commit(struct sunxi_engine =
+*engine,
+> >  {
+> >         struct sun8i_mixer *mixer =3D engine_to_sun8i_mixer(engine);
+> >         u32 bld_base =3D sun8i_blender_base(mixer);
+> > -       struct regmap *bld_regs =3D sun8i_blender_regmap(mixer);
+> >         struct drm_plane_state *plane_state;
+> >         struct drm_plane *plane;
+> >         u32 route =3D 0, pipe_en =3D 0;
+> > @@ -293,16 +294,16 @@ static void sun8i_mixer_commit(struct sunxi_engin=
+e *engine,
+> >                 route |=3D layer->index << SUN8I_MIXER_BLEND_ROUTE_PIPE=
+_SHIFT(zpos);
+> >                 pipe_en |=3D SUN8I_MIXER_BLEND_PIPE_CTL_EN(zpos);
+> >
+> > -               regmap_write(bld_regs,
+> > +               regmap_write(engine->regs,
+> >                              SUN8I_MIXER_BLEND_ATTR_COORD(bld_base, zpo=
+s),
+> >                              SUN8I_MIXER_COORD(x, y));
+> > -               regmap_write(bld_regs,
+> > +               regmap_write(engine->regs,
+> >                              SUN8I_MIXER_BLEND_ATTR_INSIZE(bld_base, zp=
+os),
+> >                              SUN8I_MIXER_SIZE(w, h));
+> >         }
+> >
+> > -       regmap_write(bld_regs, SUN8I_MIXER_BLEND_ROUTE(bld_base), route=
+);
+> > -       regmap_write(bld_regs, SUN8I_MIXER_BLEND_PIPE_CTL(bld_base),
+> > +       regmap_write(engine->regs, SUN8I_MIXER_BLEND_ROUTE(bld_base), r=
+oute);
+> > +       regmap_write(engine->regs, SUN8I_MIXER_BLEND_PIPE_CTL(bld_base),
+> >                      pipe_en | SUN8I_MIXER_BLEND_PIPE_CTL_FC_EN(0));
+> >
+> >         if (mixer->cfg->de_type !=3D SUN8I_MIXER_DE33)
+> > @@ -317,7 +318,6 @@ static struct drm_plane **sun8i_layers_init(struct =
+drm_device *drm,
+> >         struct sun8i_mixer *mixer =3D engine_to_sun8i_mixer(engine);
+> >         int plane_cnt =3D mixer->cfg->ui_num + mixer->cfg->vi_num;
+> >         enum drm_plane_type type;
+> > -       unsigned int phy_index;
+> >         int i;
+> >
+> >         planes =3D devm_kcalloc(drm->dev, plane_cnt, sizeof(*planes), G=
+=46P_KERNEL);
+> > @@ -332,12 +332,8 @@ static struct drm_plane **sun8i_layers_init(struct=
+ drm_device *drm,
+> >                 else
+> >                         type =3D DRM_PLANE_TYPE_OVERLAY;
+> >
+> > -               phy_index =3D i;
+> > -               if (mixer->cfg->de_type =3D=3D SUN8I_MIXER_DE33)
+> > -                       phy_index =3D mixer->cfg->map[i];
+> > -
+> >                 layer =3D sun8i_vi_layer_init_one(drm, type, mixer->eng=
+ine.regs,
+> > -                                               i, phy_index, plane_cnt,
+> > +                                               i, i, plane_cnt,
+> >                                                 &mixer->cfg->lay_cfg);
+> >                 if (IS_ERR(layer)) {
+> >                         dev_err(drm->dev,
+> > @@ -357,12 +353,8 @@ static struct drm_plane **sun8i_layers_init(struct=
+ drm_device *drm,
+> >                 else
+> >                         type =3D DRM_PLANE_TYPE_OVERLAY;
+> >
+> > -               phy_index =3D index;
+> > -               if (mixer->cfg->de_type =3D=3D SUN8I_MIXER_DE33)
+> > -                       phy_index =3D mixer->cfg->map[index];
+> > -
+> >                 layer =3D sun8i_ui_layer_init_one(drm, type, mixer->eng=
+ine.regs,
+> > -                                               index, phy_index, plane=
+_cnt,
+> > +                                               index, index, plane_cnt,
+> >                                                 &mixer->cfg->lay_cfg);
+> >                 if (IS_ERR(layer)) {
+> >                         dev_err(drm->dev, "Couldn't initialize %s plane=
+\n",
+> > @@ -376,16 +368,25 @@ static struct drm_plane **sun8i_layers_init(struc=
+t drm_device *drm,
+> >         return planes;
+> >  }
+> >
+> > +static struct drm_plane **sun50i_layers_init(struct drm_device *drm,
+> > +                                            struct sunxi_engine *engin=
+e)
+> > +{
+> > +       struct sun8i_mixer *mixer =3D engine_to_sun8i_mixer(engine);
+> > +
+> > +       if (IS_ENABLED(CONFIG_DRM_SUN50I_PLANES))
+> > +               return sun50i_planes_setup(mixer->planes_dev, drm, engi=
+ne->id);
+> > +
+> > +       return NULL;
+> > +}
+> > +
+> >  static void sun8i_mixer_mode_set(struct sunxi_engine *engine,
+> >                                  const struct drm_display_mode *mode)
+> >  {
+> >         struct sun8i_mixer *mixer =3D engine_to_sun8i_mixer(engine);
+> > -       struct regmap *bld_regs;
+> >         u32 bld_base, size, val;
+> >         bool interlaced;
+> >
+> >         bld_base =3D sun8i_blender_base(mixer);
+> > -       bld_regs =3D sun8i_blender_regmap(mixer);
+> >         interlaced =3D !!(mode->flags & DRM_MODE_FLAG_INTERLACE);
+> >         size =3D SUN8I_MIXER_SIZE(mode->hdisplay, mode->vdisplay);
+> >
+> > @@ -397,14 +398,14 @@ static void sun8i_mixer_mode_set(struct sunxi_eng=
+ine *engine,
+> >         else
+> >                 regmap_write(mixer->engine.regs, SUN8I_MIXER_GLOBAL_SIZ=
+E, size);
+> >
+> > -       regmap_write(bld_regs, SUN8I_MIXER_BLEND_OUTSIZE(bld_base), siz=
+e);
+> > +       regmap_write(engine->regs, SUN8I_MIXER_BLEND_OUTSIZE(bld_base),=
+ size);
+> >
+> >         if (interlaced)
+> >                 val =3D SUN8I_MIXER_BLEND_OUTCTL_INTERLACED;
+> >         else
+> >                 val =3D 0;
+> >
+> > -       regmap_update_bits(bld_regs, SUN8I_MIXER_BLEND_OUTCTL(bld_base),
+> > +       regmap_update_bits(engine->regs, SUN8I_MIXER_BLEND_OUTCTL(bld_b=
+ase),
+> >                            SUN8I_MIXER_BLEND_OUTCTL_INTERLACED, val);
+> >
+> >         DRM_DEBUG_DRIVER("Switching display mixer interlaced mode %s\n",
+> > @@ -417,8 +418,14 @@ static const struct sunxi_engine_ops sun8i_engine_=
+ops =3D {
+> >         .mode_set       =3D sun8i_mixer_mode_set,
+> >  };
+> >
+> > +static const struct sunxi_engine_ops sun50i_engine_ops =3D {
+> > +       .commit         =3D sun8i_mixer_commit,
+> > +       .layers_init    =3D sun50i_layers_init,
+> > +       .mode_set       =3D sun8i_mixer_mode_set,
+> > +};
+> > +
+> >  static const struct regmap_config sun8i_mixer_regmap_config =3D {
+> > -       .name           =3D "layers",
+> > +       .name           =3D "display",
+> >         .reg_bits       =3D 32,
+> >         .val_bits       =3D 32,
+> >         .reg_stride     =3D 4,
+> > @@ -433,14 +440,6 @@ static const struct regmap_config sun8i_top_regmap=
+_config =3D {
+> >         .max_register   =3D 0x3c,
+> >  };
+> >
+> > -static const struct regmap_config sun8i_disp_regmap_config =3D {
+> > -       .name           =3D "display",
+> > -       .reg_bits       =3D 32,
+> > -       .val_bits       =3D 32,
+> > -       .reg_stride     =3D 4,
+> > -       .max_register   =3D 0x20000,
+> > -};
+> > -
+> >  static int sun8i_mixer_of_get_id(struct device_node *node)
+> >  {
+> >         struct device_node *ep, *remote;
+> > @@ -463,17 +462,14 @@ static int sun8i_mixer_of_get_id(struct device_no=
+de *node)
+> >
+> >  static void sun8i_mixer_init(struct sun8i_mixer *mixer)
+> >  {
+> > -       struct regmap *top_regs, *disp_regs;
+> >         unsigned int base =3D sun8i_blender_base(mixer);
+> > +       struct regmap *top_regs;
+> >         int plane_cnt, i;
+> >
+> > -       if (mixer->cfg->de_type =3D=3D SUN8I_MIXER_DE33) {
+> > +       if (mixer->cfg->de_type =3D=3D SUN8I_MIXER_DE33)
+> >                 top_regs =3D mixer->top_regs;
+> > -               disp_regs =3D mixer->disp_regs;
+> > -       } else {
+> > +       else
+> >                 top_regs =3D mixer->engine.regs;
+> > -               disp_regs =3D mixer->engine.regs;
+> > -       }
+> >
+> >         /* Enable the mixer */
+> >         regmap_write(top_regs, SUN8I_MIXER_GLOBAL_CTL,
+> > @@ -483,25 +479,25 @@ static void sun8i_mixer_init(struct sun8i_mixer *=
+mixer)
+> >                 regmap_write(top_regs, SUN50I_MIXER_GLOBAL_CLK, 1);
+> >
+> >         /* Set background color to black */
+> > -       regmap_write(disp_regs, SUN8I_MIXER_BLEND_BKCOLOR(base),
+> > +       regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_BKCOLOR(base=
+),
+> >                      SUN8I_MIXER_BLEND_COLOR_BLACK);
+> >
+> >         /*
+> >          * Set fill color of bottom plane to black. Generally not needed
+> >          * except when VI plane is at bottom (zpos =3D 0) and enabled.
+> >          */
+> > -       regmap_write(disp_regs, SUN8I_MIXER_BLEND_PIPE_CTL(base),
+> > +       regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_PIPE_CTL(bas=
+e),
+> >                      SUN8I_MIXER_BLEND_PIPE_CTL_FC_EN(0));
+> > -       regmap_write(disp_regs, SUN8I_MIXER_BLEND_ATTR_FCOLOR(base, 0),
+> > +       regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_ATTR_FCOLOR(=
+base, 0),
+> >                      SUN8I_MIXER_BLEND_COLOR_BLACK);
+> >
+> >         plane_cnt =3D mixer->cfg->vi_num + mixer->cfg->ui_num;
+> >         for (i =3D 0; i < plane_cnt; i++)
+> > -               regmap_write(disp_regs,
+> > +               regmap_write(mixer->engine.regs,
+> >                              SUN8I_MIXER_BLEND_MODE(base, i),
+> >                              SUN8I_MIXER_BLEND_MODE_DEF);
+> >
+> > -       regmap_update_bits(disp_regs, SUN8I_MIXER_BLEND_PIPE_CTL(base),
+> > +       regmap_update_bits(mixer->engine.regs, SUN8I_MIXER_BLEND_PIPE_C=
+TL(base),
+> >                            SUN8I_MIXER_BLEND_PIPE_CTL_EN_MSK, 0);
+> >  }
+> >
+> > @@ -532,7 +528,6 @@ static int sun8i_mixer_bind(struct device *dev, str=
+uct device *master,
+> >         if (!mixer)
+> >                 return -ENOMEM;
+> >         dev_set_drvdata(dev, mixer);
+> > -       mixer->engine.ops =3D &sun8i_engine_ops;
+> >         mixer->engine.node =3D dev->of_node;
+> >
+> >         if (of_property_present(dev->of_node, "iommus")) {
+> > @@ -562,6 +557,11 @@ static int sun8i_mixer_bind(struct device *dev, st=
+ruct device *master,
+> >         if (!mixer->cfg)
+> >                 return -EINVAL;
+> >
+> > +       if (mixer->cfg->de_type =3D=3D SUN8I_MIXER_DE33)
+> > +               mixer->engine.ops =3D &sun50i_engine_ops;
+>=20
+> You're missing an IS_ENABLED() clause here if you wanted to make the DE 3=
+=2E3
+> planes driver optional. Though as I mentioned in the other patch, splittig
+> the two modules might not work.
+>=20
+> > +       else
+> > +               mixer->engine.ops =3D &sun8i_engine_ops;
+> > +
+> >         regs =3D devm_platform_ioremap_resource(pdev, 0);
+> >         if (IS_ERR(regs))
+> >                 return PTR_ERR(regs);
+> > @@ -584,17 +584,6 @@ static int sun8i_mixer_bind(struct device *dev, st=
+ruct device *master,
+> >                         dev_err(dev, "Couldn't create the top regmap\n"=
+);
+> >                         return PTR_ERR(mixer->top_regs);
+> >                 }
+> > -
+> > -               regs =3D devm_platform_ioremap_resource_byname(pdev, "d=
+isplay");
+> > -               if (IS_ERR(regs))
+> > -                       return PTR_ERR(regs);
+> > -
+> > -               mixer->disp_regs =3D devm_regmap_init_mmio(dev, regs,
+> > -                                                        &sun8i_disp_re=
+gmap_config);
+> > -               if (IS_ERR(mixer->disp_regs)) {
+> > -                       dev_err(dev, "Couldn't create the disp regmap\n=
+");
+> > -                       return PTR_ERR(mixer->disp_regs);
+> > -               }
+> >         }
+> >
+> >         mixer->reset =3D devm_reset_control_get(dev, NULL);
+> > @@ -634,6 +623,33 @@ static int sun8i_mixer_bind(struct device *dev, st=
+ruct device *master,
+> >
+> >         clk_prepare_enable(mixer->mod_clk);
+> >
+> > +       if (mixer->cfg->de_type =3D=3D SUN8I_MIXER_DE33) {
+> > +               struct platform_device *pdev;
+> > +               struct device_node *np;
+> > +               void *data;
+> > +
+> > +               np =3D of_parse_phandle(dev->of_node, "allwinner,planes=
+", 0);
+> > +               if (!np) {
+> > +                       ret =3D -ENODEV;
+> > +                       goto err_disable_mod_clk;
+> > +               }
+> > +
+> > +               pdev =3D of_find_device_by_node(np);
+>=20
+> You need to add a matching put_device() in the unbind function.
+>=20
+> Side note:
+>=20
+> This bind function is using a lot of devm_ functions. These have the wrong
+> lifetime. I think it would be better if we could move resource acquisition
+> into the probe function.
 
-are available in the Git repository at:
+Looking a bit more into this, this requires a bit more work. For example, c=
+locks
+can be provided by tcon-top, which are created only in bind callback. Basic=
+ally,
+whole sun4i-drm driver depends on devm_* calls in bind functions. This would
+need careful analysis of all driver calls and then refactoring drivers one =
+by one.=20
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
+IMO tcon-top driver needs to be refactored to plain clock driver without co=
+mponent
+bind/unbind functions. Although this may cause slightly higher power consum=
+ption
+if device doesn't have display but driver is loaded nevertheless.
 
-for you to fetch changes up to 5921ae27ea7b0e8cda621f8951ca79b34c36ce49:
+What do you think?
 
-  Merge branches 'clk-aspeed' and 'clk-qcom' into clk-next (2026-02-14 10:23:59 -0800)
+Best regards,
+Jernej
 
-----------------------------------------------------------------
-Not much changed in the clk framework this time except the clk.h consumer API
-moved the context saving APIs around to fix a build error in certain
-configurations. There was a change to the core framework for
-CLK_OPS_PARENT_ENABLE behavior during registration, but it wrecked existing
-drivers that didn't expect things to be turned off during clk registration so
-it got reverted.
 
-This cycle is really a large collection of new clk drivers, primarily for
-Qualcomm SoCs but also for Amlogic, SpacemiT, Google, and Aspeed. Another big
-change in here is support for automatic hardware clock gating on Samsung SoCs
-where the clks turn on and off when needed. Ideally more vendors move to this
-method for better power savings. The highlights are in the updates section
-below.
 
-Beyond all the new drivers we have a bunch of cleanups like converting drivers
-from divider_round_rate() to divider_determine_rate() and using scoped for each
-OF child loops. Otherwise it's the usual data fixes and plugging reference
-leaks, etc. that's all pretty ordinary but not critical enough to fix until the
-next release.
-
-New Drivers:
- - Qualcomm Kaanapali global, tcsr, rpmh, display, gpu, camera, and video clk
-   controllers
- - Qualcomm SM8750 camera clk controllers
- - Qualcomm MSM8940 and SDM439 global clk controllers
- - Google GS101 Display Process Unit (DPU) clk controllers
- - SpacemiT K3 clk controllers
- - Amlogic t7 clk controllers
- - Aspeed AST2700 clk controllers
-
-Updates:
- - Convert clock dividers from round_rate() to determine_rate()
- - Fix sparse warnings, kernel-doc warnings, and plug leaked OF refs
- - Automatic hardware clk gating on Google GS101 SoCs
- - Amlogic s4 video clks
- - CAN-FD clks and resets on Renesas RZ/T2H, RZ/N2H, RZ/V2H, and RZ/V2N
- - Expanded Serial Peripheral Interface (xSPI) clocks and resets on Renesas
-   RZ/T21H and RZ/N2H
- - DMAC, interrupt controller (ICU), SPI, and thermal (TSU) clocks and resets
-   on Renesas RZ/V2N
- - More serial (RSCI) clocks and resets on Renesas RZ/V2H and RZ/V2N
- - CPU frequency scaling on T-HEAD TH1520
-
-----------------------------------------------------------------
-André Draszik (2):
-      clk: samsung: avoid warning message on legacy Exynos (auto clock gating)
-      clk: samsung: fix sysreg save/restore when PM is enabled for CMU
-
-AngeloGioacchino Del Regno (1):
-      dt-bindings: clock: mediatek,mt7622-pciesys: Remove syscon compatible
-
-Barnabás Czémán (5):
-      clk: qcom: gcc-msm8917: Add missing MDSS reset
-      dt-bindings: clock: qcom: Add MSM8940 Global Clock Controller
-      dt-bindings: clock: qcom: Add SDM439 Global Clock Controller
-      clk: qcom: gcc-msm8953: Remove ALWAYS_ON flag from cpp_gdsc
-      clk: qcom: gcc-msm8917: Remove ALWAYS_ON flag from cpp_gdsc
-
-Bartosz Golaszewski (1):
-      clk: mediatek: don't select clk-mt8192 for all ARM64 builds
-
-Biju Das (2):
-      clk: renesas: rzg2l: Deassert reset on assert timeout
-      clk: renesas: rzv2h: Deassert reset on assert timeout
-
-Bjorn Andersson (4):
-      Merge branch '20251117-mdss-resets-msm8917-msm8937-v2-1-a7e9bbdaac96@mainlining.org' into clk-for-6.20
-      Merge branch '20260103-ufs_symbol_clk-v2-1-51828cc76236@oss.qualcomm.com' into clk-for-6.20
-      Merge branch '20251202-sm8750_camcc-v1-2-b3f7ef6723f1@oss.qualcomm.com' into clk-for-6.20
-      Merge branch '20260107-kaanapali-mmcc-v3-v3-0-8e10adc236a8@oss.qualcomm.com' into clk-for-6.20
-
-Brian Masney (26):
-      clk: qcom: alpha-pll: convert from divider_round_rate() to divider_determine_rate()
-      clk: microchip: core: remove duplicate determine_rate on pic32_sclk_ops
-      clk: microchip: core: correct return value on *_get_parent()
-      clk: microchip: core: remove unused include asm/traps.h
-      clk: qcom: regmap-divider: convert from divider_ro_round_rate() to divider_ro_determine_rate()
-      clk: qcom: regmap-divider: convert from divider_round_rate() to divider_determine_rate()
-      clk: sophgo: cv18xx-ip: convert from divider_round_rate() to divider_determine_rate()
-      clk: sunxi-ng: convert from divider_round_rate_parent() to divider_determine_rate()
-      clk: actions: owl-composite: convert from owl_divider_helper_round_rate() to divider_determine_rate()
-      clk: actions: owl-divider: convert from divider_round_rate() to divider_determine_rate()
-      clk: bm1880: convert from divider_ro_round_rate() to divider_ro_determine_rate()
-      clk: bm1880: convert from divider_round_rate() to divider_determine_rate()
-      clk: hisilicon: clkdivider-hi6220: convert from divider_round_rate() to divider_determine_rate()
-      clk: loongson1: convert from divider_round_rate() to divider_determine_rate()
-      clk: milbeaut: convert from divider_ro_round_rate() to divider_ro_determine_rate()
-      clk: milbeaut: convert from divider_round_rate() to divider_determine_rate()
-      clk: nuvoton: ma35d1-divider: convert from divider_round_rate() to divider_determine_rate()
-      clk: nxp: lpc32xx: convert from divider_round_rate() to divider_determine_rate()
-      clk: sophgo: sg2042-clkgen: convert from divider_round_rate() to divider_determine_rate()
-      clk: sprd: div: convert from divider_round_rate() to divider_determine_rate()
-      clk: stm32: stm32-core: convert from divider_ro_round_rate() to divider_ro_determine_rate()
-      clk: stm32: stm32-core: convert from divider_round_rate_parent() to divider_determine_rate()
-      clk: versaclock3: convert from divider_round_rate() to divider_determine_rate()
-      clk: x86: cgu: convert from divider_round_rate() to divider_determine_rate()
-      clk: zynqmp: divider: convert from divider_round_rate() to divider_determine_rate()
-      rtc: ac100: convert from divider_round_rate() to divider_determine_rate()
-
-Chris Brandt (3):
-      clk: renesas: rzg2l: Fix intin variable size
-      clk: renesas: rzg2l: Select correct div round macro
-      clk: renesas: rzg2l: Remove DSI clock rate restrictions
-
-Chuan Liu (3):
-      dt-bindings: clock: add video clock indices for Amlogic S4 SoC
-      clk: amlogic: add video-related clocks for S4 SoC
-      clk: amlogic: remove potentially unsafe flags from S4 video clocks
-
-Conor Dooley (1):
-      clk: microchip: drop POLARFIRE from ARCH_MICROCHIP_POLARFIRE
-
-Cosmin Tanislav (2):
-      clk: renesas: cpg-mssr: Simplify pointer math in cpg_rzt2h_mstp_read()
-      clk: renesas: cpg-mssr: Handle RZ/T2H register layout in PM callbacks
-
-Daniil Titov (2):
-      clk: qcom: gcc: Add support for Global Clock controller found on MSM8940
-      clk: qcom: gcc: Add support for Global Clock controller found on SDM439
-
-David Heidelberg (1):
-      clk: qcom: dispcc-sm7150: Fix dispcc_mdss_pclk1_clk_src
-
-Dmitry Baryshkov (1):
-      clk: qcom: gfx3d: add parent to parent request map
-
-Geert Uytterhoeven (7):
-      Merge tag 'renesas-r9a09g077-dt-binding-defs-tag5' into renesas-clk-for-v6.20
-      Merge tag 'renesas-r9a09g077-dt-binding-defs-tag6' into renesas-clk-for-v6.20
-      clk: Move clk_{save,restore}_context() to COMMON_CLK section
-      clk: Merge prepare and unprepare sections
-      clk: Annotate #else and #endif
-      clk: renesas: Add missing log message terminators
-      clk: rs9: Convert to DEFINE_SIMPLE_DEV_PM_OPS()
-
-George Moussalem (1):
-      clk: qcom: gcc-ipq5018: flag sleep clock as critical
-
-Haotian Zhang (1):
-      clk: mediatek: Fix error handling in runtime PM setup
-
-Haoxiang Li (1):
-      clk: tegra: tegra124-emc: Fix potential memory leak in tegra124_clk_register_emc()
-
-Inochi Amaoto (2):
-      clk: spacemit: Respect Kconfig setting when building modules
-      clk: spacemit: Hide common clock driver from user controller
-
-Jagadeesh Kona (8):
-      clk: qcom: gcc-sm8450: Update the SDCC RCGs to use shared_floor_ops
-      clk: qcom: gcc-sm8750: Update the SDCC RCGs to use shared_floor_ops
-      clk: qcom: gcc-sm4450: Update the SDCC RCGs to use shared_floor_ops
-      clk: qcom: gcc-sdx75: Update the SDCC RCGs to use shared_floor_ops
-      clk: qcom: gcc-milos: Update the SDCC RCGs to use shared_floor_ops
-      clk: qcom: gcc-x1e80100: Update the SDCC RCGs to use shared_floor_ops
-      clk: qcom: gcc-qdu1000: Update the SDCC RCGs to use shared_floor_ops
-      clk: qcom: gcc-glymur: Update the SDCC RCGs to use shared_floor_ops
-
-Jammy Huang (2):
-      dt-bindings: clock: aspeed: Add VIDEO reset definition
-      clk: aspeed: Add reset for HACE/VIDEO
-
-Janne Grunau (1):
-      clk: clk-apple-nco: Add "apple,t8103-nco" compatible
-
-Jian Hu (5):
-      dt-bindings: clock: add Amlogic T7 PLL clock controller
-      dt-bindings: clock: add Amlogic T7 SCMI clock controller
-      dt-bindings: clock: add Amlogic T7 peripherals clock controller
-      clk: meson: t7: add support for the T7 SoC PLL clock
-      clk: meson: t7: add t7 clock peripherals controller driver
-
-Johan Hovold (1):
-      clk: tegra: tegra124-emc: fix device leak on set_rate()
-
-Krzysztof Kozlowski (11):
-      clk: qcom: gcc-kaanapali: Fix double array initializer
-      clk: qcom: rpmh: Fix double array initializer on Kaanapali
-      clk: qcom: videocc-sm8750: Constify qcom_cc_desc
-      clk: lmk04832: Simplify with scoped for each OF child loop
-      clk: scpi: Simplify with scoped for each OF child loop
-      clk: versatile: impd1: Simplify with scoped for each OF child loop
-      clk: tegra: tegra124-emc: Simplify with scoped for each OF child loop
-      Merge branch 'for-v6.20/dt-bindings-clk' into next/clk
-      clk: zynqmp: divider: Fix zynqmp_clk_divider_determine_rate kerneldoc
-      clk: zynqmp: pll: Fix zynqmp_clk_divider_determine_rate kerneldoc
-      clk: qcom: sm8750: Constify 'qcom_cc_desc' in SM8750 camcc
-
-Lad Prabhakar (11):
-      clk: renesas: r9a09g077: Add xSPI core and module clocks
-      clk: renesas: r9a09g077: Propagate rate changes through mux parents
-      clk: renesas: r9a09g056: Add entries for the DMACs
-      clk: renesas: r9a09g056: Add entries for ICU
-      clk: renesas: r9a09g056: Add entries for the RSPIs
-      clk: renesas: r9a09g056: Add entries for RSCIs
-      clk: renesas: r9a09g057: Add entries for RSCIs
-      clk: renesas: r9a09g077: Add CANFD clocks
-      clk: renesas: r9a09g057: Add entries for CANFD
-      clk: renesas: r9a09g056: Add entries for CANFD
-      clk: renesas: cpg-mssr: Unlock before reset verification
-
-Marco Felsch (2):
-      clk: imx: fracn-gppll: Add 332.60 MHz Support
-      clk: imx: fracn-gppll: Add 241.90 MHz Support
-
-Marek Vasut (2):
-      clk: rs9: Reserve 8 struct clk_hw slots for for 9FGV0841
-      dt-bindings: clk: rs9: Fix DIF pattern match
-
-Martin Blumenstingl (3):
-      clk: meson: gxbb: Limit the HDMI PLL OD to /4 on GXL/GXM SoCs
-      clk: meson: g12a: Limit the HDMI PLL OD to /4
-      clk: meson: gxbb: use the existing HHI_HDMI_PLL_CNTL3 macro
-
-Miaoqian Lin (1):
-      clk: rockchip: Fix error pointer check after rockchip_clk_register_gate_link()
-
-Nicolas Frattaroli (5):
-      clk: Respect CLK_OPS_PARENT_ENABLE during recalc
-      clk: mediatek: Refactor pll registration to pass device
-      clk: mediatek: Pass device to clk_hw_register for PLLs
-      clk: mediatek: Refactor pllfh registration to pass device
-      clk: mediatek: Add mfg_eb as parent to mt8196 mfgpll clocks
-
-Ovidiu Panait (1):
-      clk: renesas: r9a09g056: Add clock and reset entries for TSU
-
-Peng Fan (1):
-      clk: Disable KUNIT_UML_PCI
-
-Peter Griffin (5):
-      dt-bindings: clock: google,gs101-clock: add samsung,sysreg property as required
-      clk: samsung: Implement automatic clock gating mode for CMUs
-      clk: samsung: gs101: Enable auto_clock_gate mode for each gs101 CMU
-      dt-bindings: samsung: exynos-sysreg: add gs101 dpu compatible
-      clk: samsung: gs101: add support for Display Process Unit (DPU) clocks
-
-Petr Hodina (1):
-      clk: qcom: dispcc-sdm845: Enable parents for pixel clocks
-
-Pierre-Henry Moussay (2):
-      dt-bindings: clock: mpfs-ccc: Add pic64gx compatibility
-      dt-bindings: clock: mpfs-clkcfg: Add pic64gx compatibility
-
-Rafael J. Wysocki (1):
-      clk: tegra: Adjust callbacks in tegra_clock_pm
-
-Raghav Sharma (2):
-      dt-bindings: clock: exynosautov920: add MFD clock definitions
-      clk: samsung: exynosautov920: add clock support
-
-Ryan Chen (3):
-      clk: aspeed: Move the existing ASPEED clk drivers into aspeed subdirectory.
-      MAINTAINERS: Add entry for ASPEED clock drivers.
-      clk: aspeed: add AST2700 clock driver
-
-Sjoerd Simons (1):
-      clk: mediatek: Drop __initconst from gates
-
-Stephen Boyd (17):
-      Merge tag 'renesas-clk-for-v6.20-tag1' of git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers into clk-renesas
-      Merge tag 'renesas-clk-for-v6.20-tag2' of git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers into clk-renesas
-      Merge tag 'spacemit-clk-for-6.20-1' of https://github.com/spacemit-com/linux into clk-spacemit
-      Merge tag 'for-6.20-clk' of git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux into clk-tegra
-      Merge tag 'thead-clk-for-v6.20' of https://git.kernel.org/pub/scm/linux/kernel/git/fustini/linux into clk-thead
-      Merge tag 'clk-meson-v6.20-1' of https://github.com/BayLibre/clk-meson into clk-amlogic
-      Merge tag 'samsung-clk-6.20' of https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux into clk-samsung
-      Merge tag 'clk-divider-round-rate-v6.20-v2' of https://github.com/masneyb/linux into clk-divider
-      Merge tag 'clk-imx-6.20' of git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux into clk-imx
-      Merge tag 'v6.20-rockchip-clk-1' of https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip into clk-rockchip
-      Merge tag 'clk-microchip-6.20' of https://git.kernel.org/pub/scm/linux/kernel/git/at91/linux into clk-microchip
-      Revert "clk: Respect CLK_OPS_PARENT_ENABLE during recalc"
-      Merge tag 'qcom-clk-for-6.20' of https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux into clk-qcom
-      Merge branches 'clk-renesas', 'clk-cleanup', 'clk-spacemit' and 'clk-tegra' into clk-next
-      Merge branches 'clk-amlogic', 'clk-thead', 'clk-mediatek' and 'clk-samsung' into clk-next
-      Merge branches 'clk-imx', 'clk-divider', 'clk-rockchip' and 'clk-microchip' into clk-next
-      Merge branches 'clk-aspeed' and 'clk-qcom' into clk-next
-
-Svyatoslav Ryhel (3):
-      clk: tegra20: Reparent dsi clock to pll_d_out0
-      clk: tegra: Set CSUS as vi_sensor's gate for Tegra20, Tegra30 and Tegra114
-      clk: tegra30: Add CSI pad clock gates
-
-Taniya Das (19):
-      clk: qcom: rpmh: Update the clock suffix for Glymur
-      clk: qcom: rpmh: Add support for Kaanapali rpmh clocks
-      clk: qcom: Add TCSR clock driver for Kaanapali
-      clk: qcom: Add support for Global clock controller on Kaanapali
-      clk: qcom: gcc-x1e80100: Add missing UFS symbol mux clocks
-      clk: qcom: rcg2: compute 2d using duty fraction directly
-      dt-bindings: clock: qcom: Add camera clock controller for SM8750 SoC
-      dt-bindings: clock: qcom: document Kaanapali DISPCC clock controller
-      dt-bindings: clock: qcom: Add support for CAMCC for Kaanapali
-      dt-bindings: clock: qcom: Add Kaanapali video clock controller
-      dt-bindings: clock: qcom: document the Kaanapali GPU Clock Controller
-      clk: qcom: clk-alpha-pll: Add support for controlling Rivian PLL
-      clk: qcom: camcc: Add camera clock controller driver for SM8750 SoC
-      clk: qcom: clk-alpha-pll: Update the PLL support for cal_l
-      clk: qcom: clk-alpha-pll: Add support for controlling Pongo EKO_T PLL
-      clk: qcom: dispcc: Add support for display clock controller Kaanapali
-      clk: qcom: camcc: Add support for camera clock controller for Kaanapali
-      clk: qcom: Add support for VideoCC driver for Kaanapali
-      clk: qcom: Add support for GPUCC and GXCLK for Kaanapali
-
-Vladimir Zapolskiy (2):
-      clk: qcom: gcc-sm8550: Use floor ops for SDCC RCGs
-      clk: qcom: gcc-sm8650: Use floor ops for SDCC RCGs
-
-Yao Zi (6):
-      dt-bindings: clock: thead,th1520-clk-ap: Add ID for C910 bus clock
-      clk: thead: th1520-ap: Poll for PLL lock and wait for stability
-      clk: thead: th1520-ap: Add C910 bus clock
-      clk: thead: th1520-ap: Support setting PLL rates
-      clk: thead: th1520-ap: Add macro to define multiplexers with flags
-      clk: thead: th1520-ap: Support CPU frequency scaling
-
-Yixun Lan (9):
-      Merge tag 'spacemit-clkrst-v6.20-1' into spacemit-clk-for-6.20
-      clk: spacemit: extract common ccu functions
-      clk: spacemit: add platform SoC prefix to reset name
-      Merge tag 'spacemit-clkrst-v6.20-2' into spacemit-clk-for-6.20
-      dt-bindings: soc: spacemit: k3: add clock support
-      clk: spacemit: ccu_mix: add inverted enable gate clock
-      clk: spacemit: ccu_pll: add plla type clock
-      Merge tag 'spacemit-clkrst-v6.20-3' into spacemit-clk-for-6.20
-      clk: spacemit: k3: add the clock tree
-
- .../clock/amlogic,t7-peripherals-clkc.yaml         |  116 +
- .../bindings/clock/amlogic,t7-pll-clkc.yaml        |  114 +
- .../bindings/clock/google,gs101-clock.yaml         |   19 +-
- .../bindings/clock/mediatek,mt7622-pciesys.yaml    |   10 +-
- .../bindings/clock/microchip,mpfs-ccc.yaml         |    6 +-
- .../bindings/clock/microchip,mpfs-clkcfg.yaml      |   16 +-
- .../bindings/clock/qcom,gcc-msm8953.yaml           |    6 +-
- .../bindings/clock/qcom,kaanapali-gxclkctl.yaml    |   63 +
- .../bindings/clock/qcom,sm8450-camcc.yaml          |   11 +
- .../bindings/clock/qcom,sm8450-gpucc.yaml          |    2 +
- .../bindings/clock/qcom,sm8450-videocc.yaml        |    3 +
- .../bindings/clock/qcom,sm8550-dispcc.yaml         |    2 +
- .../bindings/clock/qcom,x1e80100-gcc.yaml          |    8 +-
- .../devicetree/bindings/clock/renesas,9series.yaml |   11 +-
- .../clock/samsung,exynosautov920-clock.yaml        |   19 +
- .../devicetree/bindings/clock/spacemit,k1-pll.yaml |    9 +-
- .../soc/samsung/samsung,exynos-sysreg.yaml         |    2 +
- .../bindings/soc/spacemit/spacemit,k1-syscon.yaml  |   14 +-
- MAINTAINERS                                        |    9 +
- drivers/clk/.kunitconfig                           |    2 +-
- drivers/clk/Kconfig                                |   13 +-
- drivers/clk/Makefile                               |    3 +-
- drivers/clk/actions/owl-composite.c                |   11 +-
- drivers/clk/actions/owl-divider.c                  |   17 +-
- drivers/clk/actions/owl-divider.h                  |    5 -
- drivers/clk/aspeed/Kconfig                         |   21 +
- drivers/clk/aspeed/Makefile                        |    4 +
- drivers/clk/{ => aspeed}/clk-aspeed.c              |    2 +
- drivers/clk/{ => aspeed}/clk-aspeed.h              |    0
- drivers/clk/{ => aspeed}/clk-ast2600.c             |    0
- drivers/clk/aspeed/clk-ast2700.c                   | 1055 ++++++
- drivers/clk/clk-apple-nco.c                        |    1 +
- drivers/clk/clk-bm1880.c                           |   13 +-
- drivers/clk/clk-lmk04832.c                         |    4 +-
- drivers/clk/clk-loongson1.c                        |    5 +-
- drivers/clk/clk-milbeaut.c                         |   15 +-
- drivers/clk/clk-renesas-pcie.c                     |   10 +-
- drivers/clk/clk-scpi.c                             |    5 +-
- drivers/clk/clk-versaclock3.c                      |    7 +-
- drivers/clk/hisilicon/clkdivider-hi6220.c          |    6 +-
- drivers/clk/imx/clk-fracn-gppll.c                  |    4 +-
- drivers/clk/mediatek/Kconfig                       |    2 +-
- drivers/clk/mediatek/clk-mt2701.c                  |    2 +-
- drivers/clk/mediatek/clk-mt2712-apmixedsys.c       |    2 +-
- drivers/clk/mediatek/clk-mt6735-apmixedsys.c       |    4 +-
- drivers/clk/mediatek/clk-mt6765.c                  |    2 +-
- drivers/clk/mediatek/clk-mt6779.c                  |    2 +-
- drivers/clk/mediatek/clk-mt6795-apmixedsys.c       |    2 +-
- drivers/clk/mediatek/clk-mt6797.c                  |    2 +-
- drivers/clk/mediatek/clk-mt7622-apmixedsys.c       |    2 +-
- drivers/clk/mediatek/clk-mt7629.c                  |    2 +-
- drivers/clk/mediatek/clk-mt7981-apmixed.c          |    2 +-
- drivers/clk/mediatek/clk-mt7981-eth.c              |    6 +-
- drivers/clk/mediatek/clk-mt7986-apmixed.c          |    2 +-
- drivers/clk/mediatek/clk-mt7988-apmixed.c          |    2 +-
- drivers/clk/mediatek/clk-mt8135-apmixedsys.c       |    3 +-
- drivers/clk/mediatek/clk-mt8167-apmixedsys.c       |    2 +-
- drivers/clk/mediatek/clk-mt8173-apmixedsys.c       |   14 +-
- drivers/clk/mediatek/clk-mt8183-apmixedsys.c       |    2 +-
- drivers/clk/mediatek/clk-mt8186-apmixedsys.c       |    2 +-
- drivers/clk/mediatek/clk-mt8188-apmixedsys.c       |    2 +-
- drivers/clk/mediatek/clk-mt8192-apmixedsys.c       |    2 +-
- drivers/clk/mediatek/clk-mt8195-apmixedsys.c       |    2 +-
- drivers/clk/mediatek/clk-mt8195-apusys_pll.c       |    3 +-
- drivers/clk/mediatek/clk-mt8196-apmixedsys.c       |    3 +-
- drivers/clk/mediatek/clk-mt8196-mcu.c              |    2 +-
- drivers/clk/mediatek/clk-mt8196-mfg.c              |   15 +-
- drivers/clk/mediatek/clk-mt8196-vlpckgen.c         |    2 +-
- drivers/clk/mediatek/clk-mt8365-apmixedsys.c       |    2 +-
- drivers/clk/mediatek/clk-mt8516-apmixedsys.c       |    2 +-
- drivers/clk/mediatek/clk-mt8516.c                  |    2 +-
- drivers/clk/mediatek/clk-mtk.c                     |   12 +-
- drivers/clk/mediatek/clk-pll.c                     |   19 +-
- drivers/clk/mediatek/clk-pll.h                     |   15 +-
- drivers/clk/mediatek/clk-pllfh.c                   |   13 +-
- drivers/clk/mediatek/clk-pllfh.h                   |    2 +-
- drivers/clk/meson/Kconfig                          |   28 +
- drivers/clk/meson/Makefile                         |    2 +
- drivers/clk/meson/g12a.c                           |   17 +-
- drivers/clk/meson/gxbb.c                           |   23 +-
- drivers/clk/meson/s4-peripherals.c                 |  206 +-
- drivers/clk/meson/t7-peripherals.c                 | 1271 +++++++
- drivers/clk/meson/t7-pll.c                         | 1074 ++++++
- drivers/clk/microchip/Kconfig                      |    4 +-
- drivers/clk/microchip/clk-core.c                   |   36 +-
- drivers/clk/nuvoton/clk-ma35d1-divider.c           |    7 +-
- drivers/clk/nxp/clk-lpc32xx.c                      |    6 +-
- drivers/clk/qcom/Kconfig                           |   71 +-
- drivers/clk/qcom/Makefile                          |    7 +
- drivers/clk/qcom/cambistmclkcc-kaanapali.c         |  437 +++
- drivers/clk/qcom/cambistmclkcc-sm8750.c            |  454 +++
- drivers/clk/qcom/camcc-kaanapali.c                 | 2661 +++++++++++++++
- drivers/clk/qcom/camcc-sm8750.c                    | 2710 +++++++++++++++
- drivers/clk/qcom/clk-alpha-pll.c                   |   41 +-
- drivers/clk/qcom/clk-alpha-pll.h                   |    7 +
- drivers/clk/qcom/clk-rcg2.c                        |    7 +-
- drivers/clk/qcom/clk-regmap-divider.c              |   16 +-
- drivers/clk/qcom/clk-rpmh.c                        |   60 +-
- drivers/clk/qcom/dispcc-kaanapali.c                | 1956 +++++++++++
- drivers/clk/qcom/dispcc-sdm845.c                   |    4 +-
- drivers/clk/qcom/dispcc-sm7150.c                   |    2 +-
- drivers/clk/qcom/gcc-glymur.c                      |    4 +-
- drivers/clk/qcom/gcc-ipq5018.c                     |    1 +
- drivers/clk/qcom/gcc-kaanapali.c                   | 3540 ++++++++++++++++++++
- drivers/clk/qcom/gcc-milos.c                       |    6 +-
- drivers/clk/qcom/gcc-msm8917.c                     |  282 +-
- drivers/clk/qcom/gcc-msm8953.c                     |    1 -
- drivers/clk/qcom/gcc-qdu1000.c                     |    4 +-
- drivers/clk/qcom/gcc-sdx75.c                       |    4 +-
- drivers/clk/qcom/gcc-sm4450.c                      |    6 +-
- drivers/clk/qcom/gcc-sm8450.c                      |    4 +-
- drivers/clk/qcom/gcc-sm8550.c                      |    4 +-
- drivers/clk/qcom/gcc-sm8650.c                      |    4 +-
- drivers/clk/qcom/gcc-sm8750.c                      |    4 +-
- drivers/clk/qcom/gcc-x1e80100.c                    |   76 +-
- drivers/clk/qcom/gpucc-kaanapali.c                 |  482 +++
- drivers/clk/qcom/gxclkctl-kaanapali.c              |   76 +
- drivers/clk/qcom/tcsrcc-kaanapali.c                |  141 +
- drivers/clk/qcom/videocc-kaanapali.c               |  821 +++++
- drivers/clk/qcom/videocc-sm8750.c                  |    2 +-
- drivers/clk/renesas/clk-vbattb.c                   |    4 +-
- drivers/clk/renesas/r9a09g056-cpg.c                |  188 ++
- drivers/clk/renesas/r9a09g057-cpg.c                |  136 +
- drivers/clk/renesas/r9a09g077-cpg.c                |  206 +-
- drivers/clk/renesas/renesas-cpg-mssr.c             |   54 +-
- drivers/clk/renesas/rzg2l-cpg.c                    |  189 +-
- drivers/clk/renesas/rzv2h-cpg.c                    |   15 +-
- drivers/clk/rockchip/clk.c                         |    2 +-
- drivers/clk/samsung/clk-exynos-arm64.c             |   92 +-
- drivers/clk/samsung/clk-exynos4.c                  |   12 +-
- drivers/clk/samsung/clk-exynos4412-isp.c           |    4 +-
- drivers/clk/samsung/clk-exynos5250.c               |    2 +-
- drivers/clk/samsung/clk-exynos5420.c               |    4 +-
- drivers/clk/samsung/clk-exynosautov920.c           |   40 +
- drivers/clk/samsung/clk-gs101.c                    |  338 ++
- drivers/clk/samsung/clk-s3c64xx.c                  |    4 +-
- drivers/clk/samsung/clk-s5pv210.c                  |    2 +-
- drivers/clk/samsung/clk.c                          |  207 +-
- drivers/clk/samsung/clk.h                          |   56 +-
- drivers/clk/sophgo/clk-cv18xx-ip.c                 |  154 +-
- drivers/clk/sophgo/clk-sg2042-clkgen.c             |   15 +-
- drivers/clk/spacemit/Kconfig                       |   20 +-
- drivers/clk/spacemit/Makefile                      |   12 +-
- drivers/clk/spacemit/ccu-k1.c                      |  192 +-
- drivers/clk/spacemit/ccu-k3.c                      | 1487 ++++++++
- drivers/clk/spacemit/ccu_common.c                  |  177 +
- drivers/clk/spacemit/ccu_common.h                  |   11 +
- drivers/clk/spacemit/ccu_ddn.c                     |    1 +
- drivers/clk/spacemit/ccu_mix.c                     |   21 +-
- drivers/clk/spacemit/ccu_mix.h                     |   12 +
- drivers/clk/spacemit/ccu_pll.c                     |  119 +
- drivers/clk/spacemit/ccu_pll.h                     |   57 +-
- drivers/clk/sprd/div.c                             |    6 +-
- drivers/clk/stm32/clk-stm32-core.c                 |   42 +-
- drivers/clk/sunxi-ng/ccu_div.c                     |   25 +-
- drivers/clk/sunxi-ng/ccu_mp.c                      |   26 +-
- drivers/clk/sunxi-ng/ccu_mult.c                    |   16 +-
- drivers/clk/sunxi-ng/ccu_mux.c                     |   49 +-
- drivers/clk/sunxi-ng/ccu_mux.h                     |    8 +-
- drivers/clk/sunxi-ng/ccu_nkm.c                     |   25 +-
- drivers/clk/tegra/clk-device.c                     |   13 +-
- drivers/clk/tegra/clk-tegra114.c                   |    7 +-
- drivers/clk/tegra/clk-tegra124-emc.c               |   10 +-
- drivers/clk/tegra/clk-tegra20.c                    |   26 +-
- drivers/clk/tegra/clk-tegra30.c                    |   20 +-
- drivers/clk/thead/clk-th1520-ap.c                  |  350 +-
- drivers/clk/versatile/clk-impd1.c                  |    7 +-
- drivers/clk/x86/clk-cgu.c                          |    6 +-
- drivers/clk/zynqmp/divider.c                       |   10 +-
- drivers/clk/zynqmp/pll.c                           |    5 +-
- drivers/reset/reset-spacemit.c                     |    2 +-
- drivers/rtc/rtc-ac100.c                            |   75 +-
- .../clock/amlogic,s4-peripherals-clkc.h            |   11 +
- .../clock/amlogic,t7-peripherals-clkc.h            |  228 ++
- include/dt-bindings/clock/amlogic,t7-pll-clkc.h    |   56 +
- include/dt-bindings/clock/amlogic,t7-scmi.h        |   47 +
- include/dt-bindings/clock/aspeed-clock.h           |    1 +
- include/dt-bindings/clock/qcom,gcc-msm8917.h       |    2 +
- .../clock/qcom,kaanapali-cambistmclkcc.h           |   33 +
- include/dt-bindings/clock/qcom,kaanapali-camcc.h   |  147 +
- include/dt-bindings/clock/qcom,kaanapali-dispcc.h  |  109 +
- include/dt-bindings/clock/qcom,kaanapali-gpucc.h   |   47 +
- .../dt-bindings/clock/qcom,kaanapali-gxclkctl.h    |   13 +
- include/dt-bindings/clock/qcom,kaanapali-videocc.h |   58 +
- .../dt-bindings/clock/qcom,sm8750-cambistmclkcc.h  |   30 +
- include/dt-bindings/clock/qcom,sm8750-camcc.h      |  151 +
- include/dt-bindings/clock/qcom,x1e80100-gcc.h      |    3 +
- .../dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h |    3 +
- .../dt-bindings/clock/renesas,r9a09g087-cpg-mssr.h |    3 +
- include/dt-bindings/clock/samsung,exynosautov920.h |    4 +
- include/dt-bindings/clock/spacemit,k3-clocks.h     |  390 +++
- include/dt-bindings/clock/thead,th1520-clk-ap.h    |    1 +
- include/linux/clk.h                                |  104 +-
- include/linux/clk/renesas.h                        |   11 +
- include/soc/spacemit/ccu.h                         |   21 +
- include/soc/spacemit/k1-syscon.h                   |   12 +-
- include/soc/spacemit/k3-syscon.h                   |  273 ++
- 197 files changed, 23730 insertions(+), 956 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/amlogic,t7-peripherals-clkc.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/amlogic,t7-pll-clkc.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,kaanapali-gxclkctl.yaml
- create mode 100644 drivers/clk/aspeed/Kconfig
- create mode 100644 drivers/clk/aspeed/Makefile
- rename drivers/clk/{ => aspeed}/clk-aspeed.c (99%)
- rename drivers/clk/{ => aspeed}/clk-aspeed.h (100%)
- rename drivers/clk/{ => aspeed}/clk-ast2600.c (100%)
- create mode 100644 drivers/clk/aspeed/clk-ast2700.c
- create mode 100644 drivers/clk/meson/t7-peripherals.c
- create mode 100644 drivers/clk/meson/t7-pll.c
- create mode 100644 drivers/clk/qcom/cambistmclkcc-kaanapali.c
- create mode 100644 drivers/clk/qcom/cambistmclkcc-sm8750.c
- create mode 100644 drivers/clk/qcom/camcc-kaanapali.c
- create mode 100644 drivers/clk/qcom/camcc-sm8750.c
- create mode 100644 drivers/clk/qcom/dispcc-kaanapali.c
- create mode 100644 drivers/clk/qcom/gcc-kaanapali.c
- create mode 100644 drivers/clk/qcom/gpucc-kaanapali.c
- create mode 100644 drivers/clk/qcom/gxclkctl-kaanapali.c
- create mode 100644 drivers/clk/qcom/tcsrcc-kaanapali.c
- create mode 100644 drivers/clk/qcom/videocc-kaanapali.c
- create mode 100644 drivers/clk/spacemit/ccu-k3.c
- create mode 100644 drivers/clk/spacemit/ccu_common.c
- create mode 100644 include/dt-bindings/clock/amlogic,t7-peripherals-clkc.h
- create mode 100644 include/dt-bindings/clock/amlogic,t7-pll-clkc.h
- create mode 100644 include/dt-bindings/clock/amlogic,t7-scmi.h
- create mode 100644 include/dt-bindings/clock/qcom,kaanapali-cambistmclkcc.h
- create mode 100644 include/dt-bindings/clock/qcom,kaanapali-camcc.h
- create mode 100644 include/dt-bindings/clock/qcom,kaanapali-dispcc.h
- create mode 100644 include/dt-bindings/clock/qcom,kaanapali-gpucc.h
- create mode 100644 include/dt-bindings/clock/qcom,kaanapali-gxclkctl.h
- create mode 100644 include/dt-bindings/clock/qcom,kaanapali-videocc.h
- create mode 100644 include/dt-bindings/clock/qcom,sm8750-cambistmclkcc.h
- create mode 100644 include/dt-bindings/clock/qcom,sm8750-camcc.h
- create mode 100644 include/dt-bindings/clock/spacemit,k3-clocks.h
- create mode 100644 include/soc/spacemit/ccu.h
- create mode 100644 include/soc/spacemit/k3-syscon.h
-
--- 
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
-https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
