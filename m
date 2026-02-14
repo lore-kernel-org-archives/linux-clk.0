@@ -1,39 +1,43 @@
-Received: from mail-08.mail-europe.com (mail-08.mail-europe.com [57.129.93.249])
+Received: from mail-106118.protonmail.ch (mail-106118.protonmail.ch [79.135.106.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 214CB31352C;
-	Sat, 14 Feb 2026 18:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.129.93.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B021314B8F
+	for <linux-clk@vger.kernel.org>; Sat, 14 Feb 2026 18:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771092630; cv=none; b=o3hiGvQ9u4doiSPy8EUJv8xjFd+jkOXKnTxe6IgHLaH8urODWRR7gcXMf+eGwjocxDbR70lmlB/ytYY3bfksnUUdryvJ/dt5Xxlf4NKGKtdPR/DvZfB8qi9YHN5Du7GPUKaBxoYn1uECCvnOKBh3U6/jSQvLHImXppkapiNSiUY=
+	t=1771092632; cv=none; b=t1MK1LyA0xMRdyFUsg4ZoBmeL1H9q4CBc+yro+HqTp28oVbiu73ieEJWE5zUNT2RtPZIj4QUUX+wfZ3wtibLCa7Tt53DNDUjCnUbB0PGdLJdsLCQBymHCgvYJi9LV+dyJaVCZ6prc3f6wFDr+R2MNmwj5KXKEaG2JaEH05F+8/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771092630; c=relaxed/simple;
-	bh=hGg21hNdwfSVHjjadqjdQcAko5Jr38TIRFRNcPdSaao=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=TjaHIGZU51bgavHu6MX8J+bA0GgbPB9kmn77STtMDJtsSdf9StfCLMRqYJAqwe/rrdDsutwzBFXjLeYR/OEYv926XP4ojsb2jQyvGHdVY/HInsgTIjhWxWUZwTNu+CBloCUzRlmcwxrbEsuhPrkM7Soh2271zE6XdmFbNkAduko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=lzWNZnmz; arc=none smtp.client-ip=57.129.93.249
+	s=arc-20240116; t=1771092632; c=relaxed/simple;
+	bh=AJlHYfxIvBl5RZQ9zTgwhN3YoknQjxSKJx/4Ql9uZFA=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IpB9i0sXpPcZF/dAT23NEzXurKQ0+dWoi00mtZXyb+NZ9Q3BnWIJKX67/oIlmZpZLl9L5XbFa5hYwMB2l3kOclRruikQSxC+9y+c2ANv55TW5ygp0+uZKH8XkEOO7AJovEt88UBu3d/gSrxyRKoZBLvLYAdw2YuQz6kk+PHJWKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=Tj6+zAEZ; arc=none smtp.client-ip=79.135.106.118
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="lzWNZnmz"
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="Tj6+zAEZ"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1771092613; x=1771351813;
-	bh=04vk7Tkl67/hhgMqv+BcDZRWNDj7PkIykfjIdYJisGI=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=lzWNZnmzltXz6nKdjeyNDHOlSQzkdIsgEGnJuEuAIh+ldTYFsToo1a3JptAUkBRzK
-	 hVnnWL8OXZj55Idi+s7X6HaaUZ64MJDYSZl7/vP9T+KnnoUStrkI0couBie+1kl0+J
-	 HoX5nVotwuTsv+X1bHagi6PvugvvER0ewJWICrK1vfg/acODaJyjiwQ9H0kk2N3WBr
-	 doGNWDaC2wirfvlYWgMnh3FLeP9dflQrMW6u3T/3tNJXikg+Sqv66J/JBmH3CI5L5t
-	 sc09AcozxpqhCC/QgjCiPnawGU6cXvwfKfiFbrBalo/ZHPl+0cBh9JHBbt94zRUq7T
-	 I1TghprY9gVLw==
-Date: Sat, 14 Feb 2026 18:10:09 +0000
+	s=protonmail3; t=1771092624; x=1771351824;
+	bh=rwsnzH8jOGlUyiBNnOHeUfIy3Fa0IVng/RKkWIkfN6c=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=Tj6+zAEZlGr5eJXYuhw8QYFrTTTtk+TizrUM0X1sSioH79T+zvkIYr39lm73vLh8p
+	 F8IiLRU1SFgqXIzJzQf0G3diKLzB226f72p2POG66gqQ5i+XwubFZNHGnSCYT7eV+M
+	 Ltx+FFg/7P0wFD3zsvoXVO1yMIeR0yMEYofoqtPohespQDc4FxiB3FbQYLOLcIRWam
+	 6MaLgqO3ROhIVSCYkKJbvkpMb5Wmjpt6clNfAfXIAL1r4dmJl2k7ING/SgJig2PAnW
+	 8zXbv0V0cTP+0LEVilcY9NFW3jhCPNE31nrRyOmHsrzmVQqGT9oA78kqoTLPAK+91n
+	 lUVR/ugjDWbpw==
+Date: Sat, 14 Feb 2026 18:10:16 +0000
 To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Michal Simek <michal.simek@amd.com>
 From: Harry Austen <hpausten@protonmail.com>
 Cc: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Harry Austen <hpausten@protonmail.com>
-Subject: [PATCH v4 0/2] clk: clocking-wizard: add user clock monitor support
-Message-ID: <20260214180933.42143-1-hpausten@protonmail.com>
+Subject: [PATCH v4 1/2] dt-bindings: clock: xilinx: add description of user monitor interrupt
+Message-ID: <20260214180933.42143-2-hpausten@protonmail.com>
+In-Reply-To: <20260214180933.42143-1-hpausten@protonmail.com>
+References: <20260214180933.42143-1-hpausten@protonmail.com>
 Feedback-ID: 53116287:user:proton
-X-Pm-Message-ID: 33811916af14432e3496307dc748448316a346c8
+X-Pm-Message-ID: 7e6743f472392713e83bb028a7961a7e4545dc21
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -43,52 +47,76 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Add support for the clock monitor functionality added in version 6.0 of the
-Xilinx clocking wizard IP core, through use of devcoredump.
+This Xilinx clocking wizard IP core outputs this interrupt signal to
+indicate when one of the four optional user clock inputs is either
+stopped, overruns, underruns or glitches.
 
-This is a follow up from a patchset I submitted quite a while ago [1],
-where I was attempting to utilise the UIO subsystem instead. Stephen Boyd
-suggested use of devcoredump instead [2] and I have finally got round to
-giving this a go.
+This functionality was only added from version 6.0 onwards, so restrict
+it to particular compatible strings.
 
-This is currently untested on hardware, so any help testing this would be
-much appreciated!
-
-v3 -> v4:
-- Patches 1-4,8-9 dropped, as they were submitted/accepted separately [3]
-- Patch 7 removed, as no longer creating a new UIO driver
-- DT binding patch mostly unchanged. Slight rework and rebase, so removed
-  Krzysztof's R-b tag just in case
-- Clock monitor support patch now reworked to make use of devcoredump
-- Rebased on top of clk-next
-v2 -> v3:
-- Move kernel doc variable comment to bottom in clk_hw transition patch (2)
-- Remove extra line (and add Krzysztof's R-b tag) in binding patch (5)
-- Add Krzysztof's A-b tag to dynamic reconfig binding patch (8)
-v1 -> v2:
-- Split and improve clk_hw+devres transition patch (2+3)
-- Fix/improve DT binding patches (5+8)
-- Utilise auxiliary bus in monitor support patch (6)
-- Add dedicated UIO driver for monitor support (7)
-
-[1]: https://lore.kernel.org/linux-clk/20240826123602.1872-1-hpausten@proto=
-nmail.com/
-[2]: https://lore.kernel.org/linux-clk/1bd17a02bab46391872e4934895b83e8.sbo=
-yd@kernel.org/
-[3]: https://lore.kernel.org/linux-clk/20240913191037.2690-1-hpausten@proto=
-nmail.com/
-
-Harry Austen (2):
-  dt-bindings: clock: xilinx: add description of user monitor interrupt
-  clk: clocking-wizard: add user clock monitor support
-
- .../bindings/clock/xlnx,clocking-wizard.yaml  | 24 ++++++-
- drivers/clk/xilinx/Kconfig                    |  1 +
- drivers/clk/xilinx/clk-xlnx-clock-wizard.c    | 69 +++++++++++++++++--
- 3 files changed, 89 insertions(+), 5 deletions(-)
+Signed-off-by: Harry Austen <hpausten@protonmail.com>
 ---
-base-commit: ea7282e99ead6d2a294cef40acd2a29ada3ab71d
+v3 -> v4: Slight rework and rebase, removing Krzysztof's R-b tag
+v2 -> v3: Add Krzysztof's R-b tag
+v1 -> v2: Fix binding errors by moving interrupts up front, restrict later
 
+ .../bindings/clock/xlnx,clocking-wizard.yaml  | 24 ++++++++++++++++++-
+ 1 file changed, 23 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.y=
+aml b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
+index b497c28e8094f..7688601f1f31b 100644
+--- a/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
++++ b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
+@@ -38,6 +38,14 @@ properties:
+       - const: clk_in1
+       - const: s_axi_aclk
+=20
++  interrupts:
++    items:
++      - description: user clock monitor interrupt
++
++  interrupt-names:
++    items:
++      - const: monitor
++
+   xlnx,static-config:
+     $ref: /schemas/types.yaml#/definitions/flag
+     description:
+@@ -66,12 +74,24 @@ required:
+   - xlnx,speed-grade
+   - xlnx,nr-outputs
+=20
++if:
++  properties:
++    compatible:
++      enum:
++        - xlnx,clocking-wizard
++        - xlnx,clocking-wizard-v5.2
++then:
++  properties:
++    interrupts: false
++    interrupt-names: false
++
+ additionalProperties: false
+=20
+ examples:
+   - |
++    #include <dt-bindings/interrupt-controller/irq.h>
+     clock-controller@b0000000  {
+-        compatible =3D "xlnx,clocking-wizard";
++        compatible =3D "xlnx,clocking-wizard-v6.0";
+         reg =3D <0xb0000000 0x10000>;
+         #clock-cells =3D <1>;
+         xlnx,static-config;
+@@ -79,5 +99,7 @@ examples:
+         xlnx,nr-outputs =3D <6>;
+         clock-names =3D "clk_in1", "s_axi_aclk";
+         clocks =3D <&clkc 15>, <&clkc 15>;
++        interrupts-extended =3D <&intc 52 IRQ_TYPE_EDGE_RISING>;
++        interrupt-names =3D "monitor";
+     };
+ ...
 --=20
 2.53.0
 
