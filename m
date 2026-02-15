@@ -1,450 +1,262 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011010.outbound.protection.outlook.com [40.107.74.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF75277C9E
-	for <linux-clk@vger.kernel.org>; Sun, 15 Feb 2026 07:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771139594; cv=none; b=F7NBcSeSTqvIkf6cVqWLmeFPbPIUSx7MJFtDFe6Hm+sLDjMXh4XytciFeHllBWZnTx15oUhf6yNbRjPr17fTYggWu6byNNTij1XpIpLSlfmbUM9cRAkt6QuH4NfQKttCBCtaMm6xx7oB4/YZWDvEOcM6lqy7sMbluj0r6aTkXc8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771139594; c=relaxed/simple;
-	bh=T+2YgmZCyE4C+I+RkFGx+TjN0SFl1Bbne2hkNWWCq8I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GM8O0KwFJrv9JUnmzy1cuqPgcIUtJ2W0ehklRihk7FAJbZseHtmf6GqRi3AEVm/SC4EKvuzPUP7gfM16qM3cFq7WsQ0j5ioPW8H61y6+QYtXBNbywDrn3F9fEQlg5ulOVuSR+mzZCjFx+3S7ypBQvgUHCi8EQS4Y5CPVDLt+SSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vATdvhTX; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8512BE639;
+	Sun, 15 Feb 2026 08:11:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771143109; cv=fail; b=ssEZ4SNaNo0YlpAyZueCirN0hkq0vTYKE1UGCH1mKvZ8n5dJN3Ex46DNJnIjnGeiw031+nlCtfHcRVoYIWCUXBs+88gyHV+0X4CF2I/3TXnEsDF2FrDUbBX+1IEFJPyB4gtSkztUGM36BWe203z7Rk6U5MSvLsWr4NrI0FLY1Uo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771143109; c=relaxed/simple;
+	bh=Kz6AHMhhSAtlljstQ99N6ro44/xKyWZOcHgYcA7oAcA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=OPEKpjgEQE0Wb/0N8ymQleLyeN2w+ESzDcXqoNLrIbnFlIpKN1HpczIws6sLqN6ARQGnbvnvlie2WRN2CQNjo3xI6T85bKQs3fBHlCVlrA4y5oHKJlsntqWKXCjo5MLqmgLG7baXx8K81ZwJjl6ovY1WtGkC6Hw0N4MSgLPMTVg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=TIUHd2Zt; arc=fail smtp.client-ip=40.107.74.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vATdvhTX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 552F0C2BC86
-	for <linux-clk@vger.kernel.org>; Sun, 15 Feb 2026 07:13:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771139594;
-	bh=T+2YgmZCyE4C+I+RkFGx+TjN0SFl1Bbne2hkNWWCq8I=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
-	b=vATdvhTXqdsTLkR43pbGnZgzP0fwRNukAV0UdhY6eSkl1ZsysaJb0pIvamVZT2E9z
-	 gyskIQPGPKxYIpYhCA8RlI5lGEAo/xib99lySI0Gnheq6SFv5TXdKAHEKW4IP8DhXT
-	 4AsggrfTo1Gmnn4B97py0+3Cmqc00IGqVloQ/DSOZLN9LhmVaYVZ7OiPZCgsmLNVpC
-	 fry/0AGMXtaOeiza4bFH2VhPpg3lRJ+mUrPS/BML2SDo5qtqGX2TxYJ3nbwPGMQyd/
-	 5qfw1VVWlLZhR8j8KkUIc+31eOcdubbxPmiqXpEz7u3OtHfR/QxyCJ/Vi9bx7646KJ
-	 p/wWY80SJe4mw==
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-386714da2a2so17889341fa.1
-        for <linux-clk@vger.kernel.org>; Sat, 14 Feb 2026 23:13:14 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXdljLl0eCNP7HLFWcGL/nZwOZQ1fD2+J4ptQbh4R9VYgCDTA01iiKLzK0YWkKVldty1nN01O6ygx8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoZFjQLFhFc8Zb1EGmjMklJoN0PTBJxAy7M+e0Bb0eyYqfWTzB
-	d82ygJ3pK/Zh/i3MEwZ/8pkkHlEd/ajFcAtt/B6/WyhsLMJcrLgoETz/Qlve5bblqJGBmIZCvq0
-	2JxWlkWGOg8Rt/KxCvo8Y1mZnohRKo9Q=
-X-Received: by 2002:a05:651c:3042:b0:385:f3df:c375 with SMTP id
- 38308e7fff4ca-3881b97c4d6mr8983961fa.36.1771139592579; Sat, 14 Feb 2026
- 23:13:12 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="TIUHd2Zt"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ip+hDVJtsZXNW5ecB7UH3ew+PQNUIz0WygQx83ISFLZRmJtGrR4dG6gtV25DMnMfKTrpfO9XVF3qj8n89Asu0eaVY0LmYZBIa4SyOupsV9fH2r8WWmiPLKIVZgOe7GSSkXYp1yhF1p+kD9Of99uvoSwMHufM7PmtqoMtm+O3Te82CZT9u6f3hkqEsgCuU3//str5yWI147TNYpUb87/sz3FkK0LQCydDhq25NJA2CDKhvkL3M9r+/88a4txLBzS1tASVaWHyHg5GguIgldkx+cQRCJjbFg0bQpNaLsKGQdG6VXW42HRDKc/Ick3U3RS7rJI5XuOtpUdP5KnAGpi6bg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XOvaiyZ9GFLOrpOMmwiADOXcMGl1FQR7vw2BLxiULjI=;
+ b=c0ULLC7eXn/Q88kzDvO/L0fBOruMssflFqfKrHNscbanGQkqh12BUuxc2+qMGejF1pUAi3Y7B10BjegkJN8ubzAvpTFOF+t0ZD+jtJcNCYDpsT4VtcnYZ83IcQH/QhsEc2piRG0ubyxWU7guX6zimKDXXZHc75JNEzuEoN87g+Gy7aGbIjQI0exbd/cDYb0r7Ja4oQG2ALsrDX9tIc4XLJh7Nyx98HW1oOfcoq5oKQSN1fNuIEErdRtkHnAsFGQPx8JZFT/iS6F40XDP/wcR0p4caK8KCMcjcHFgK+IXHWWDtv8LPj68s0RXRcxvddgStgqm3T43V8iJga1MMNGVzQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XOvaiyZ9GFLOrpOMmwiADOXcMGl1FQR7vw2BLxiULjI=;
+ b=TIUHd2Ztqqk5tRXs0KEDmHQP4Wl2r7hhMgTX0s6PV22FmrLGhvwE75x2Zm40mUqorSvl47KpomTMb/ErGQqvvwRa3BU7NMPURnzS93fB1zDFc0tyAvXyrqPcTK2Jar1nKt8Nr1awPCSinW6tVkYToBBlVbVWJz/qbCcybLNx7RA=
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
+ by TY7PR01MB16885.jpnprd01.prod.outlook.com (2603:1096:405:329::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9611.15; Sun, 15 Feb
+ 2026 08:11:42 +0000
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::87d1:4928:d55:97de]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::87d1:4928:d55:97de%4]) with mapi id 15.20.9611.013; Sun, 15 Feb 2026
+ 08:11:37 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, Tommaso Merciai
+	<tomm.merciai@gmail.com>, geert <geert@linux-m68k.org>, laurent.pinchart
+	<laurent.pinchart@ideasonboard.com>
+CC: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	magnus.damm <magnus.damm@gmail.com>, Laurent Pinchart
+	<laurent.pinchart+renesas@ideasonboard.com>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH v5 09/20] dt-bindings: display: renesas,rzg2l-du: Add
+ support for RZ/G3E SoC
+Thread-Topic: [PATCH v5 09/20] dt-bindings: display: renesas,rzg2l-du: Add
+ support for RZ/G3E SoC
+Thread-Index: AQHcnQXxMzM3EUraMkKoWbnYkqyBArWDaewQ
+Date: Sun, 15 Feb 2026 08:11:37 +0000
+Message-ID:
+ <TY3PR01MB113460BED5F6F944C0FD4DDB8866FA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <cover.1770996493.git.tommaso.merciai.xr@bp.renesas.com>
+ <ca022fdbba5236c36e0cb3095db4c31e8e0cb1b8.1770996493.git.tommaso.merciai.xr@bp.renesas.com>
+In-Reply-To:
+ <ca022fdbba5236c36e0cb3095db4c31e8e0cb1b8.1770996493.git.tommaso.merciai.xr@bp.renesas.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TY7PR01MB16885:EE_
+x-ms-office365-filtering-correlation-id: f7a550e0-8072-442b-0a8c-08de6c69d792
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700021;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?wzANXy+1HAmTq+/6XFyoBzj7t5TpDx5LsxBeUe5l1x4lAwD7bDsAJ8gm6ww1?=
+ =?us-ascii?Q?hnrk6pPoTPVKMPzYypOlHL49rXfLo0X0vu0aMO1H+ICp3t/+8ujkHZ80x7iA?=
+ =?us-ascii?Q?Y/Hz65LGRgi3Rq3oE2BkCX3l0ibTn6uMv8tl6+bIDEeppORfImyq+idOooSa?=
+ =?us-ascii?Q?9XHiGlAbkL0GtIslpqS7hzS5/LPtp0e3NTdYxKm5S7ZZHrcrYuDK3120ljZD?=
+ =?us-ascii?Q?r5P/okcmaLVNKNacngwTLC7Nv/k/g8vQ87nji6mMxFdOvd7jZmpHXwYhB6ob?=
+ =?us-ascii?Q?HJ+AzOEKESLxRev4hSfRTTeWcyHE77o/t+Ypj7xJAYNQu34vqcSY3T2Qp5DL?=
+ =?us-ascii?Q?Cl9wSIdg79K2fSj+3K4hJW4PE9xAhTNOA091BRmBc9tz587w7nX4AI0/qJsC?=
+ =?us-ascii?Q?MkLz66dyAAyzmy3Aadw29xTQqhF19g5GR9+OlMWRKrRGTG6lR9zZMaaY7fLY?=
+ =?us-ascii?Q?XadKtRha5k8rYBr6OM7QgxMapwv7M3Fvt6ODKmnJL9kdHU5rG/qHt4uwgqmv?=
+ =?us-ascii?Q?L7Q0Ysfvo677PHzdL7n3TwjpTPxO1KxQtWhv13orxm4uI6544Q1v/QsTG0M9?=
+ =?us-ascii?Q?k8PRGQwvTRmLMWGkm48018BWX0gbwcohaZlPHalaF4r0t/pZ8rtWFk1ZuZ7h?=
+ =?us-ascii?Q?ezOy58LqKTNC0H+9Wcdl0Db26DSpu+f5Y6+hxAOfE0wJuy6ThFSEQyC06kzV?=
+ =?us-ascii?Q?U/iYe0mge8u4r31K3mpwoDTjQRACb39c30UH/QwhFODBWNglLEbiDbw/+TgY?=
+ =?us-ascii?Q?6t/lT8FddfhNjFKFvURXiKwBuaBe093tlESjBNZsYdLz+UwJQAB9LqV2ZjIf?=
+ =?us-ascii?Q?b3CIPwksIAG06jSzPLdLDNbokvdJ/P0ad1qiVVE9BvFXo/uyvKEkWrfXnV4B?=
+ =?us-ascii?Q?FlgliFsmsN8whYKXnjRjmKXvmJS6G8rtFTRsaWc+lHpzzdZiSonSbBKCz0OE?=
+ =?us-ascii?Q?MyV75MlXmH9+uWKibscruNlmFrUKNZh4RNFyfV5XdywkztaVWoMOagwjM+HE?=
+ =?us-ascii?Q?8uCT+C1QkPRsKWsY39K2BulCqB2cmk05ItnFutoswhm8lC8WWXTii8MJrGlR?=
+ =?us-ascii?Q?nGW/YCGmUbc66zGetti8S3fb+ddZOJkm+yC7P3BaCwHjr5r2l4x4Jp17rT3W?=
+ =?us-ascii?Q?RZR7g9Bq1rrXzjIr+HAsj0zqoys7ZlnsQev06/sLt7ZMwQqG9TLh6uW86Tix?=
+ =?us-ascii?Q?zn2j0qXC5lytS+S4XXrcdEsme6YzvDmQraUQM+FXDylHhhiuWbMY4QVObB7S?=
+ =?us-ascii?Q?DMz9njPgJVU8VSqtWs9StfmiolJQCtqrojq0g7v8OCvlhPDycTwqR8auYQWf?=
+ =?us-ascii?Q?c+yE1JqKZZ/nnn4XWSS7zrE5F+WZS/aI8kB87FJoVKkhWFvn7s6PfQ8Z/wJe?=
+ =?us-ascii?Q?SYCxmkhgXSgUqGR3qOhDhyxAEbpBGvFIBNSxOaGDirS+LvP6qcvLXNG9JUel?=
+ =?us-ascii?Q?YYi74K+q7hdClrAL97gVYeRc0gMfg6AYzhXxZmPQdj3Tnt0bugl2i+Vf4lDq?=
+ =?us-ascii?Q?wogycMvLepgeaHKipIkxyYC5MLSBdVgWznLfyCqR11Nn0/fa/BzoqwFw4vNy?=
+ =?us-ascii?Q?tVvJjI7TluhdZZnYCLlCgUZAAWSjlQE8jWGLqt2bAEKhukYc36714lotQTwI?=
+ =?us-ascii?Q?aA=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?UJ1iXtWqhSuQ4rUAHVOofNqm+gfcCgQ3TEovmeKKCRTVaxMPSS3twCQEhOV0?=
+ =?us-ascii?Q?c3VvhJx1tKII3lbNyBMCPdYCh2iG66aJvCn+DC4ndF0Wgqc/5FYh/IU0K8Iz?=
+ =?us-ascii?Q?0v66OpdMKc42wplGXm/HEdeiMzz2RGQ+aF7yUNLN6flV/3NXP3XOdkwQf2gw?=
+ =?us-ascii?Q?sZlzoHVwhNjJTkUwWPlvZOHv4MocCjVSMJIqUt9z3qZE+CeQIh5ZgywpN2jw?=
+ =?us-ascii?Q?W/coBQijidnDYJeI0aSvyUc3AxnxXX2OKeoL2kbw1BCVPmjtIvQ8at2MSwMw?=
+ =?us-ascii?Q?kXUx1q3iilyVi5lLtJxmVp21r36ttn8CihG+FfM0fZuXNUiW36Gd+NtRhICg?=
+ =?us-ascii?Q?Z0Z6MucWTB3BUVhrd9kVGXbQyIMQDy5Cgnga6IZU5nFCpbk8f4SyyNCNKJ8E?=
+ =?us-ascii?Q?Fx3w4lW9y8iGRpGL3K3cmVQhN7YBXtscUOOrLqxnE+2foaC9FWFzD23on8dr?=
+ =?us-ascii?Q?L6SBp9q9c0Ut0WSQ67nB9QkNTL7MUHW3FK/Hvlk4UjKkruITTVyht7PCz1SA?=
+ =?us-ascii?Q?QwV6Rh8xk3yjNblyoeCDkSwF3iK7Ug3EiGDewiRm+2NdxT+8SsU3AF0prs6u?=
+ =?us-ascii?Q?OcIfOnIIA65V3SPO0KXh5/53UeyvnDhN5MeXwJUQDOCmTH1R5uqata+Y0hZk?=
+ =?us-ascii?Q?tiID6VW/XpbvDY/F/gTfQv5QqVq2M7XRQPGzYKj5preTSFGVSdIcahdNBBlT?=
+ =?us-ascii?Q?UAEXEvjV0QB1FK1XxizCcyFGNrrHccd89DzWNTaGdRiool6vQ5SyComCRclb?=
+ =?us-ascii?Q?q5t0rAB3yQeqePCXWxWJGJUIkIRLwGGWvi94JeHUYoclZphH8IgXbBqslqFi?=
+ =?us-ascii?Q?ic5X5JCpUDu8B7Rgda0B3S4kUW4wj5UgVPxx3oi8UqL87mwHEih6d7Qh+ndK?=
+ =?us-ascii?Q?VDoL8FXcaNx0TcsEJBjOecg/EcEdCX1Y3MEwsyLriXpEfcALbjjkhHC68Ynz?=
+ =?us-ascii?Q?aHEHDTLe9IUUGvC91TBThs7BwKCdYZ7Quemo3CqaUsn63G7Bl8ZBb1OfyuF2?=
+ =?us-ascii?Q?RNwr0LuI8vubkWzFy57mvErCITK0UHtbzb191WOaMrgyd/zMUqF3tRSEXAZc?=
+ =?us-ascii?Q?C6uY3XDVdsIfi0hFqzUCgW3g2uxnfb0Y/FhXXDkpIocSJN7LAVSEwdzPitoM?=
+ =?us-ascii?Q?UFqUGkxRwhTvTlFuysApsezHcd22x0SRms9/tBdhwDsn3qJ5k6bIUN3Hi77b?=
+ =?us-ascii?Q?YZ1HUHhEa+DNc+O8GGYV++M9oWpZuC2sWEJ5nwQeMsDphVuihY2BEqFfUxLO?=
+ =?us-ascii?Q?2w+Moanrte1LSTozyUML2TnMPm/N8lFTe+h0V0KYFhfa63+K4zeUkdipG3m1?=
+ =?us-ascii?Q?dD8fOStl7DsrA+0pQLmdR/q6BQOfAacSKNys7IGukBJX4Rc1HH5bH+CvI+sE?=
+ =?us-ascii?Q?MW068uAzKyBSrDXfaIqOtzrBkLjaRvEtB1YD29Xv/5BjdVf9ESYfgomYyEpm?=
+ =?us-ascii?Q?35cHjiriEZtZv97w51moHfMNUL3eoCPySGqjQeHG3wW0fqHwSMQz/NZwcnTe?=
+ =?us-ascii?Q?fH7BX1jLlYIm/caRftqMx/umzQn5m3PdErKdbghJeM5Ablh+U4VgzFEDn5ps?=
+ =?us-ascii?Q?pI+AW5O9d6DGZJmMksxRSekmN7iueIknvy3jL75ZuH1WZntagO/Qz1Z5k6IO?=
+ =?us-ascii?Q?3abIWqyJ2kPpRQCObn8/R/tLFzCTMRYOrwAbD937U5xpFdL7EVI94ZRxQ9oM?=
+ =?us-ascii?Q?0sY3rOhoa0bbPv7YsvQBM46d/9Ce+ZSxmUN3v6+Hnw6NbRl4ws48DTDjTIsh?=
+ =?us-ascii?Q?Hqzwi1ppDQ=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251115141347.13087-1-jernej.skrabec@gmail.com>
- <20251115141347.13087-8-jernej.skrabec@gmail.com> <CAGb2v67B_2SMsDbATVu51Ed+2o+6=FRLw7KmjeL1KYgxm=gyDw@mail.gmail.com>
- <5047516.GXAFRqVoOG@jernej-laptop>
-In-Reply-To: <5047516.GXAFRqVoOG@jernej-laptop>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Sun, 15 Feb 2026 15:13:09 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64L1bhOTkVegmd=H83ceVkQSQCAA5h=wu_YjpDS1nuvog@mail.gmail.com>
-X-Gm-Features: AaiRm52URlQdYETFUTCV8VojqZTbAYlBjxg9KO2lGpt3t4I6YTUR894fs5tx07g
-Message-ID: <CAGb2v64L1bhOTkVegmd=H83ceVkQSQCAA5h=wu_YjpDS1nuvog@mail.gmail.com>
-Subject: Re: [PATCH 7/7] drm/sun4i: switch DE33 to new bindings
-To: =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@gmail.com>
-Cc: samuel@sholland.org, mripard@kernel.org, maarten.lankhorst@linux.intel.com, 
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com, 
-	sboyd@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f7a550e0-8072-442b-0a8c-08de6c69d792
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Feb 2026 08:11:37.6777
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: YikoY7Zug0zDLktPOFgTLVBO051i6w+VY9Q2jOEAC0QY5TWYUKDhCbEhxSY4CK9uRFZR8kP8WSmHHpRk6tGeIoNpkSPa/sbZwtV8unJg+KM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY7PR01MB16885
 
-On Sun, Feb 15, 2026 at 3:03=E2=80=AFPM Jernej =C5=A0krabec <jernej.skrabec=
-@gmail.com> wrote:
->
-> Hi Chen-Yu,
->
-> Dne =C4=8Detrtek, 25. december 2025 ob 10:49:47 Srednjeevropski standardn=
-i =C4=8Das je Chen-Yu Tsai napisal(a):
-> > On Sat, Nov 15, 2025 at 10:14=E2=80=AFPM Jernej Skrabec
-> > <jernej.skrabec@gmail.com> wrote:
-> > >
-> > > Now that everything is in place, switch DE33 to new bindings.
-> > >
-> > > Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-> > > ---
-> > >  drivers/gpu/drm/sun4i/sun8i_mixer.c | 130 +++++++++++++++-----------=
---
-> > >  drivers/gpu/drm/sun4i/sun8i_mixer.h |  10 +--
-> > >  2 files changed, 71 insertions(+), 69 deletions(-)
-> > >
-> > > diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/su=
-n4i/sun8i_mixer.c
-> > > index fde3b677e925..da213e54e653 100644
-> > > --- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> > > +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> > > @@ -13,6 +13,7 @@
-> > >  #include <linux/of.h>
-> > >  #include <linux/of_device.h>
-> > >  #include <linux/of_graph.h>
-> > > +#include <linux/of_platform.h>
-> > >  #include <linux/platform_device.h>
-> > >  #include <linux/reset.h>
-> > >
-> > > @@ -24,6 +25,7 @@
-> > >  #include <drm/drm_probe_helper.h>
-> > >
-> > >  #include "sun4i_drv.h"
-> > > +#include "sun50i_planes.h"
-> > >  #include "sun8i_mixer.h"
-> > >  #include "sun8i_ui_layer.h"
-> > >  #include "sun8i_vi_layer.h"
-> > > @@ -256,7 +258,6 @@ static void sun8i_mixer_commit(struct sunxi_engin=
-e *engine,
-> > >  {
-> > >         struct sun8i_mixer *mixer =3D engine_to_sun8i_mixer(engine);
-> > >         u32 bld_base =3D sun8i_blender_base(mixer);
-> > > -       struct regmap *bld_regs =3D sun8i_blender_regmap(mixer);
-> > >         struct drm_plane_state *plane_state;
-> > >         struct drm_plane *plane;
-> > >         u32 route =3D 0, pipe_en =3D 0;
-> > > @@ -293,16 +294,16 @@ static void sun8i_mixer_commit(struct sunxi_eng=
-ine *engine,
-> > >                 route |=3D layer->index << SUN8I_MIXER_BLEND_ROUTE_PI=
-PE_SHIFT(zpos);
-> > >                 pipe_en |=3D SUN8I_MIXER_BLEND_PIPE_CTL_EN(zpos);
-> > >
-> > > -               regmap_write(bld_regs,
-> > > +               regmap_write(engine->regs,
-> > >                              SUN8I_MIXER_BLEND_ATTR_COORD(bld_base, z=
-pos),
-> > >                              SUN8I_MIXER_COORD(x, y));
-> > > -               regmap_write(bld_regs,
-> > > +               regmap_write(engine->regs,
-> > >                              SUN8I_MIXER_BLEND_ATTR_INSIZE(bld_base, =
-zpos),
-> > >                              SUN8I_MIXER_SIZE(w, h));
-> > >         }
-> > >
-> > > -       regmap_write(bld_regs, SUN8I_MIXER_BLEND_ROUTE(bld_base), rou=
-te);
-> > > -       regmap_write(bld_regs, SUN8I_MIXER_BLEND_PIPE_CTL(bld_base),
-> > > +       regmap_write(engine->regs, SUN8I_MIXER_BLEND_ROUTE(bld_base),=
- route);
-> > > +       regmap_write(engine->regs, SUN8I_MIXER_BLEND_PIPE_CTL(bld_bas=
-e),
-> > >                      pipe_en | SUN8I_MIXER_BLEND_PIPE_CTL_FC_EN(0));
-> > >
-> > >         if (mixer->cfg->de_type !=3D SUN8I_MIXER_DE33)
-> > > @@ -317,7 +318,6 @@ static struct drm_plane **sun8i_layers_init(struc=
-t drm_device *drm,
-> > >         struct sun8i_mixer *mixer =3D engine_to_sun8i_mixer(engine);
-> > >         int plane_cnt =3D mixer->cfg->ui_num + mixer->cfg->vi_num;
-> > >         enum drm_plane_type type;
-> > > -       unsigned int phy_index;
-> > >         int i;
-> > >
-> > >         planes =3D devm_kcalloc(drm->dev, plane_cnt, sizeof(*planes),=
- GFP_KERNEL);
-> > > @@ -332,12 +332,8 @@ static struct drm_plane **sun8i_layers_init(stru=
-ct drm_device *drm,
-> > >                 else
-> > >                         type =3D DRM_PLANE_TYPE_OVERLAY;
-> > >
-> > > -               phy_index =3D i;
-> > > -               if (mixer->cfg->de_type =3D=3D SUN8I_MIXER_DE33)
-> > > -                       phy_index =3D mixer->cfg->map[i];
-> > > -
-> > >                 layer =3D sun8i_vi_layer_init_one(drm, type, mixer->e=
-ngine.regs,
-> > > -                                               i, phy_index, plane_c=
-nt,
-> > > +                                               i, i, plane_cnt,
-> > >                                                 &mixer->cfg->lay_cfg)=
-;
-> > >                 if (IS_ERR(layer)) {
-> > >                         dev_err(drm->dev,
-> > > @@ -357,12 +353,8 @@ static struct drm_plane **sun8i_layers_init(stru=
-ct drm_device *drm,
-> > >                 else
-> > >                         type =3D DRM_PLANE_TYPE_OVERLAY;
-> > >
-> > > -               phy_index =3D index;
-> > > -               if (mixer->cfg->de_type =3D=3D SUN8I_MIXER_DE33)
-> > > -                       phy_index =3D mixer->cfg->map[index];
-> > > -
-> > >                 layer =3D sun8i_ui_layer_init_one(drm, type, mixer->e=
-ngine.regs,
-> > > -                                               index, phy_index, pla=
-ne_cnt,
-> > > +                                               index, index, plane_c=
-nt,
-> > >                                                 &mixer->cfg->lay_cfg)=
-;
-> > >                 if (IS_ERR(layer)) {
-> > >                         dev_err(drm->dev, "Couldn't initialize %s pla=
-ne\n",
-> > > @@ -376,16 +368,25 @@ static struct drm_plane **sun8i_layers_init(str=
-uct drm_device *drm,
-> > >         return planes;
-> > >  }
-> > >
-> > > +static struct drm_plane **sun50i_layers_init(struct drm_device *drm,
-> > > +                                            struct sunxi_engine *eng=
-ine)
-> > > +{
-> > > +       struct sun8i_mixer *mixer =3D engine_to_sun8i_mixer(engine);
-> > > +
-> > > +       if (IS_ENABLED(CONFIG_DRM_SUN50I_PLANES))
-> > > +               return sun50i_planes_setup(mixer->planes_dev, drm, en=
-gine->id);
-> > > +
-> > > +       return NULL;
-> > > +}
-> > > +
-> > >  static void sun8i_mixer_mode_set(struct sunxi_engine *engine,
-> > >                                  const struct drm_display_mode *mode)
-> > >  {
-> > >         struct sun8i_mixer *mixer =3D engine_to_sun8i_mixer(engine);
-> > > -       struct regmap *bld_regs;
-> > >         u32 bld_base, size, val;
-> > >         bool interlaced;
-> > >
-> > >         bld_base =3D sun8i_blender_base(mixer);
-> > > -       bld_regs =3D sun8i_blender_regmap(mixer);
-> > >         interlaced =3D !!(mode->flags & DRM_MODE_FLAG_INTERLACE);
-> > >         size =3D SUN8I_MIXER_SIZE(mode->hdisplay, mode->vdisplay);
-> > >
-> > > @@ -397,14 +398,14 @@ static void sun8i_mixer_mode_set(struct sunxi_e=
-ngine *engine,
-> > >         else
-> > >                 regmap_write(mixer->engine.regs, SUN8I_MIXER_GLOBAL_S=
-IZE, size);
-> > >
-> > > -       regmap_write(bld_regs, SUN8I_MIXER_BLEND_OUTSIZE(bld_base), s=
-ize);
-> > > +       regmap_write(engine->regs, SUN8I_MIXER_BLEND_OUTSIZE(bld_base=
-), size);
-> > >
-> > >         if (interlaced)
-> > >                 val =3D SUN8I_MIXER_BLEND_OUTCTL_INTERLACED;
-> > >         else
-> > >                 val =3D 0;
-> > >
-> > > -       regmap_update_bits(bld_regs, SUN8I_MIXER_BLEND_OUTCTL(bld_bas=
-e),
-> > > +       regmap_update_bits(engine->regs, SUN8I_MIXER_BLEND_OUTCTL(bld=
-_base),
-> > >                            SUN8I_MIXER_BLEND_OUTCTL_INTERLACED, val);
-> > >
-> > >         DRM_DEBUG_DRIVER("Switching display mixer interlaced mode %s\=
-n",
-> > > @@ -417,8 +418,14 @@ static const struct sunxi_engine_ops sun8i_engin=
-e_ops =3D {
-> > >         .mode_set       =3D sun8i_mixer_mode_set,
-> > >  };
-> > >
-> > > +static const struct sunxi_engine_ops sun50i_engine_ops =3D {
-> > > +       .commit         =3D sun8i_mixer_commit,
-> > > +       .layers_init    =3D sun50i_layers_init,
-> > > +       .mode_set       =3D sun8i_mixer_mode_set,
-> > > +};
-> > > +
-> > >  static const struct regmap_config sun8i_mixer_regmap_config =3D {
-> > > -       .name           =3D "layers",
-> > > +       .name           =3D "display",
-> > >         .reg_bits       =3D 32,
-> > >         .val_bits       =3D 32,
-> > >         .reg_stride     =3D 4,
-> > > @@ -433,14 +440,6 @@ static const struct regmap_config sun8i_top_regm=
-ap_config =3D {
-> > >         .max_register   =3D 0x3c,
-> > >  };
-> > >
-> > > -static const struct regmap_config sun8i_disp_regmap_config =3D {
-> > > -       .name           =3D "display",
-> > > -       .reg_bits       =3D 32,
-> > > -       .val_bits       =3D 32,
-> > > -       .reg_stride     =3D 4,
-> > > -       .max_register   =3D 0x20000,
-> > > -};
-> > > -
-> > >  static int sun8i_mixer_of_get_id(struct device_node *node)
-> > >  {
-> > >         struct device_node *ep, *remote;
-> > > @@ -463,17 +462,14 @@ static int sun8i_mixer_of_get_id(struct device_=
-node *node)
-> > >
-> > >  static void sun8i_mixer_init(struct sun8i_mixer *mixer)
-> > >  {
-> > > -       struct regmap *top_regs, *disp_regs;
-> > >         unsigned int base =3D sun8i_blender_base(mixer);
-> > > +       struct regmap *top_regs;
-> > >         int plane_cnt, i;
-> > >
-> > > -       if (mixer->cfg->de_type =3D=3D SUN8I_MIXER_DE33) {
-> > > +       if (mixer->cfg->de_type =3D=3D SUN8I_MIXER_DE33)
-> > >                 top_regs =3D mixer->top_regs;
-> > > -               disp_regs =3D mixer->disp_regs;
-> > > -       } else {
-> > > +       else
-> > >                 top_regs =3D mixer->engine.regs;
-> > > -               disp_regs =3D mixer->engine.regs;
-> > > -       }
-> > >
-> > >         /* Enable the mixer */
-> > >         regmap_write(top_regs, SUN8I_MIXER_GLOBAL_CTL,
-> > > @@ -483,25 +479,25 @@ static void sun8i_mixer_init(struct sun8i_mixer=
- *mixer)
-> > >                 regmap_write(top_regs, SUN50I_MIXER_GLOBAL_CLK, 1);
-> > >
-> > >         /* Set background color to black */
-> > > -       regmap_write(disp_regs, SUN8I_MIXER_BLEND_BKCOLOR(base),
-> > > +       regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_BKCOLOR(ba=
-se),
-> > >                      SUN8I_MIXER_BLEND_COLOR_BLACK);
-> > >
-> > >         /*
-> > >          * Set fill color of bottom plane to black. Generally not nee=
-ded
-> > >          * except when VI plane is at bottom (zpos =3D 0) and enabled=
-.
-> > >          */
-> > > -       regmap_write(disp_regs, SUN8I_MIXER_BLEND_PIPE_CTL(base),
-> > > +       regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_PIPE_CTL(b=
-ase),
-> > >                      SUN8I_MIXER_BLEND_PIPE_CTL_FC_EN(0));
-> > > -       regmap_write(disp_regs, SUN8I_MIXER_BLEND_ATTR_FCOLOR(base, 0=
-),
-> > > +       regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_ATTR_FCOLO=
-R(base, 0),
-> > >                      SUN8I_MIXER_BLEND_COLOR_BLACK);
-> > >
-> > >         plane_cnt =3D mixer->cfg->vi_num + mixer->cfg->ui_num;
-> > >         for (i =3D 0; i < plane_cnt; i++)
-> > > -               regmap_write(disp_regs,
-> > > +               regmap_write(mixer->engine.regs,
-> > >                              SUN8I_MIXER_BLEND_MODE(base, i),
-> > >                              SUN8I_MIXER_BLEND_MODE_DEF);
-> > >
-> > > -       regmap_update_bits(disp_regs, SUN8I_MIXER_BLEND_PIPE_CTL(base=
-),
-> > > +       regmap_update_bits(mixer->engine.regs, SUN8I_MIXER_BLEND_PIPE=
-_CTL(base),
-> > >                            SUN8I_MIXER_BLEND_PIPE_CTL_EN_MSK, 0);
-> > >  }
-> > >
-> > > @@ -532,7 +528,6 @@ static int sun8i_mixer_bind(struct device *dev, s=
-truct device *master,
-> > >         if (!mixer)
-> > >                 return -ENOMEM;
-> > >         dev_set_drvdata(dev, mixer);
-> > > -       mixer->engine.ops =3D &sun8i_engine_ops;
-> > >         mixer->engine.node =3D dev->of_node;
-> > >
-> > >         if (of_property_present(dev->of_node, "iommus")) {
-> > > @@ -562,6 +557,11 @@ static int sun8i_mixer_bind(struct device *dev, =
-struct device *master,
-> > >         if (!mixer->cfg)
-> > >                 return -EINVAL;
-> > >
-> > > +       if (mixer->cfg->de_type =3D=3D SUN8I_MIXER_DE33)
-> > > +               mixer->engine.ops =3D &sun50i_engine_ops;
-> >
-> > You're missing an IS_ENABLED() clause here if you wanted to make the DE=
- 3.3
-> > planes driver optional. Though as I mentioned in the other patch, split=
-tig
-> > the two modules might not work.
-> >
-> > > +       else
-> > > +               mixer->engine.ops =3D &sun8i_engine_ops;
-> > > +
-> > >         regs =3D devm_platform_ioremap_resource(pdev, 0);
-> > >         if (IS_ERR(regs))
-> > >                 return PTR_ERR(regs);
-> > > @@ -584,17 +584,6 @@ static int sun8i_mixer_bind(struct device *dev, =
-struct device *master,
-> > >                         dev_err(dev, "Couldn't create the top regmap\=
-n");
-> > >                         return PTR_ERR(mixer->top_regs);
-> > >                 }
-> > > -
-> > > -               regs =3D devm_platform_ioremap_resource_byname(pdev, =
-"display");
-> > > -               if (IS_ERR(regs))
-> > > -                       return PTR_ERR(regs);
-> > > -
-> > > -               mixer->disp_regs =3D devm_regmap_init_mmio(dev, regs,
-> > > -                                                        &sun8i_disp_=
-regmap_config);
-> > > -               if (IS_ERR(mixer->disp_regs)) {
-> > > -                       dev_err(dev, "Couldn't create the disp regmap=
-\n");
-> > > -                       return PTR_ERR(mixer->disp_regs);
-> > > -               }
-> > >         }
-> > >
-> > >         mixer->reset =3D devm_reset_control_get(dev, NULL);
-> > > @@ -634,6 +623,33 @@ static int sun8i_mixer_bind(struct device *dev, =
-struct device *master,
-> > >
-> > >         clk_prepare_enable(mixer->mod_clk);
-> > >
-> > > +       if (mixer->cfg->de_type =3D=3D SUN8I_MIXER_DE33) {
-> > > +               struct platform_device *pdev;
-> > > +               struct device_node *np;
-> > > +               void *data;
-> > > +
-> > > +               np =3D of_parse_phandle(dev->of_node, "allwinner,plan=
-es", 0);
-> > > +               if (!np) {
-> > > +                       ret =3D -ENODEV;
-> > > +                       goto err_disable_mod_clk;
-> > > +               }
-> > > +
-> > > +               pdev =3D of_find_device_by_node(np);
-> >
-> > You need to add a matching put_device() in the unbind function.
-> >
-> > Side note:
-> >
-> > This bind function is using a lot of devm_ functions. These have the wr=
-ong
-> > lifetime. I think it would be better if we could move resource acquisit=
-ion
-> > into the probe function.
->
-> Looking a bit more into this, this requires a bit more work. For example,=
- clocks
-> can be provided by tcon-top, which are created only in bind callback. Bas=
-ically,
-> whole sun4i-drm driver depends on devm_* calls in bind functions. This wo=
-uld
-> need careful analysis of all driver calls and then refactoring drivers on=
-e by one.
+Hi Tommaso,
 
-Unfortunately so. However most of them just require moving the initial
-context memory allocation and whatever resource acquisition over. It
-shouldn't be that messy.
+Thanks for the patch.
 
-> IMO tcon-top driver needs to be refactored to plain clock driver without =
-component
-> bind/unbind functions. Although this may cause slightly higher power cons=
-umption
-> if device doesn't have display but driver is loaded nevertheless.
->
-> What do you think?
-
-It's just the bus clock that's enabled all the time, so I think that's fine=
-.
-However since it sits in the middle of the whole OF graph, you either need
-to make sun4i-drm know to skip that when adding all the components, or just
-keep a dummy bind callback and component to make it happy.
+> -----Original Message-----
+> From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> Sent: 13 February 2026 16:28
+> Subject: [PATCH v5 09/20] dt-bindings: display: renesas,rzg2l-du: Add sup=
+port for RZ/G3E SoC
+>=20
+> The RZ/G3E Soc has 2 LCD controller (LCDC), contain a Frame Compression P=
+rocessor (FCPVD), a Video
+> Signal Processor (VSPD), Video Signal Processor (VSPD), and Display Unit =
+(DU).
+>=20
+>  - LCDC0 supports DSI and LVDS (single or dual-channel) outputs.
+>  - LCDC1 supports DSI, LVDS (single-channel), and RGB outputs.
+>=20
+> Add new SoC-specific compatible string 'renesas,r9a09g047-du'.
+>=20
+> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> ---
+> v4->v5:
+>  - Dropped renesas,id property and updated bindings
+>    accordingly.
+>=20
+> v2->v3:
+>  - No changes.
+>=20
+> v2->v3:
+>  - No changes.
+>=20
+> v1->v2:
+>  - Use single compatible string instead of multiple compatible strings
+>    for the two DU instances, leveraging a 'renesas,id' property to
+>    differentiate between DU0 and DU1.
+>  - Updated commit message accordingly.
+>=20
+>  .../bindings/display/renesas,rzg2l-du.yaml    | 22 +++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/display/renesas,rzg2l-du.y=
+aml
+> b/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
+> index 2cc66dcef870..be50b153d651 100644
+> --- a/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
+> +++ b/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
+> @@ -20,6 +20,7 @@ properties:
+>        - enum:
+>            - renesas,r9a07g043u-du # RZ/G2UL
+>            - renesas,r9a07g044-du # RZ/G2{L,LC}
+> +          - renesas,r9a09g047-du # RZ/G3E
+>            - renesas,r9a09g057-du # RZ/V2H(P)
+>        - items:
+>            - enum:
+> @@ -137,6 +138,27 @@ allOf:
+>=20
+>            required:
+>              - port@0
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: renesas,r9a09g047-du
+> +    then:
+> +      properties:
+> +        ports:
+> +          properties:
+> +            port@0:
+> +              description: DSI
+> +            port@1:
+> +              description: LVDS Channel 0
+> +            port@2:
+> +              description: LVDS Channel 1
+> +            port@3:
+> +              description: DPAD
+> +
+> +          required:
+> +            - port@0
+> +            - port@1
 
 
-Thanks
-ChenYu
+LCDC0 has port@0, port@1 and port@2
+LCDC1 has port@0, port@1 and port@3
+
+Looks like from the above port@2 and port@3 are optional??
+
+Also not sure to make port@1 for DPAD for consistency with RZ/G2L??
+Do you see any advantage by making port@1 for LVDS0?
+
+Cheers,
+Biju
+
+
