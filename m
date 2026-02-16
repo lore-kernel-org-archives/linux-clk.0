@@ -1,133 +1,207 @@
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 027E02690C0
-	for <linux-clk@vger.kernel.org>; Mon, 16 Feb 2026 12:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225CE3101AD
+	for <linux-clk@vger.kernel.org>; Mon, 16 Feb 2026 13:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771244333; cv=none; b=EjgCitXUCt1iaEan4aJ2hMddMNZDKppnHKv3VrTioMCHX8qJ+qSaCOXiavQPGj1ChcqgIG0GsPF46LohubdbF6G/pef/T7dLvJTsAP1DHOdqEg4ooTidXxU+n/e3G219rduXsfjGJbKCDvA0LN4tssNxNfy3Ab77Jgni6BtojHI=
+	t=1771249402; cv=none; b=TuIREC351rJmV4xCRGQSl50cQeFOwB1eiue9q0Lu5th6RQecgGGStb7y8aRa7BL3v+ehh2oR0mmgKJIuLVwdbkIpgPgM/0bmDNJ5pUcCMzA8dZ5dcdbHGf6WMm0NZ+8hE5I7Mq/TpTvPeNlJDdDCld4xFUvCR5F27I7q0mS5LTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771244333; c=relaxed/simple;
-	bh=NDIKOIT4sSt9XuIcL4/MRBIm6pbBEzWUJvadpY+UFW4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AOTEpqcpC0VCzFSr2dSjAZgNq270FGTM8H6G+o7efYHe51F0eETgHt8Ztg7jhFiItcWQUzH6glgQqTcworagZzX7NfBkK1SdG0Rb+NO1m/3jKf791DjrUD+JXnKd0zplFii/BLH9rODRaKXaQLvXwBW5h1KwPtjSv1ckdTvskmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=kPBIMA/s; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+	s=arc-20240116; t=1771249402; c=relaxed/simple;
+	bh=G/C8E6tnyrlc7aXmdiruS70Vl6WjWr9lu5dVB+apm5U=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=sIRxmUZuIs8jzOT38/ePR4sCV9R8U1XfyUwvU4MUjVuMzo+uZGjjC612fXiWEidlmqT2d69grHL8tmJkK1X5UuDM83orymzxgdS5R0VaBWUtNDiRUt8mYpAYV6h9oBkClojBR/IW7UxE6J0vLWrw7+tmF/XEPqMgb1eWMm3Nus4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Vm+35B4E; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=b/UXavjQ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="kPBIMA/s"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=C2NvsMxoWNVuUqRhdvvQV3f9iNA9+S0f6QJVA/XX1tA=; b=kPBIMA/sRAOsa3jwN6/PZ5Tk0O
-	2dxAzeWhKqPER+8aVa5N4vM08Mr9G5ewBkId/zezYtybBPS+oF0SKGSXy1NUsRPQRcj7JiUTZO95E
-	He2I40ZGS9BSoK8uDOkAoQyUKC1LxbaWFECwDaQuhSCANE3i6tXufhgx+VB08EI+LX/7oWdDlprXg
-	lJoFvUliz6A+5eu+oWPFSGx4XhVIrjep86hp8ZocGod9b62hIaPwUBhGPcTiqPz2/ZgAya8FbcCWR
-	4NBufBjqivKo/z3djmIh6vZWL8KaK3X+e13CZNSRgQEbko2ySfEy3K8bv1RA/Rq5PpJ5J5OXWVTqO
-	IAPvLL8A==;
-Received: from [187.36.210.68] (helo=[192.168.1.103])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1vrxYl-001Hhw-My; Mon, 16 Feb 2026 13:18:39 +0100
-Message-ID: <b55ac433-4fe7-4179-9777-278022ccd3cb@igalia.com>
-Date: Mon, 16 Feb 2026 09:18:31 -0300
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Vm+35B4E";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="b/UXavjQ"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 61G9aPoP1869034
+	for <linux-clk@vger.kernel.org>; Mon, 16 Feb 2026 13:43:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=o13mfHfcaClhodqHfsXTqv
+	g6+iAu9vhr09PZvEYRGDU=; b=Vm+35B4EXUNf3We6914FZCS2lAas3sfi7ppyEa
+	NXwlgIalncbdmozTebAjotlA+yZ9g5v7GnP/bW4OpTZarE6kMKE6w48aJDoJm0Dw
+	HqLsX+gjBGeBnm+Kh95QmHYippFbHRlSaLftopClv/J6+wgvOMv7UKy7oJxM0sRJ
+	9tlWUWfa2Key8XwVgZN3x/W/vo07+Q2r+uiNzE2Qp0jiguM2kdXwMP5aTmX0BLik
+	1vlA69ifymTWVpEk6HAxBgfLnIsLurVhV8thp+DWnMgDLD4adUZQmwhYvtdNGYho
+	B6Xq1Q5AHxkL9vsJlvkCA8MMYmm9dQKPYTzsS/pq93iaA4yQ==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cb6bujyna-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Mon, 16 Feb 2026 13:43:19 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-50333a8184aso278700691cf.1
+        for <linux-clk@vger.kernel.org>; Mon, 16 Feb 2026 05:43:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1771249398; x=1771854198; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=o13mfHfcaClhodqHfsXTqvg6+iAu9vhr09PZvEYRGDU=;
+        b=b/UXavjQxyEkEZimMlRUlaRodQtsZq5AcBXDuKZ2bNcgV78wPjTLhdrdtKSg3FnJBc
+         nlA0RUJJFirn8eys4x5PdRX1YzMVKeuuoF8zSt++J1kMlWD4JEBPdNX+bOmCk5BTcG84
+         HGFJgr3TxUq5js2uCZDXGt5sSqua/GDmvgB3c5kQ3pTOB52Qmm5Sibn1TPa8qK7uqz34
+         8laNLR2554Oc4ts0ujqhC4oRlP8aH8B2TjOXwf4S+xsR2rycp7Z0HPL8hTwjIpRhkz7j
+         w9KVluS6qYbqKWwglkunpfbGRsQTSdvM4FO+G7+tWk1R4ez/EQADddFSL624X3pprLC1
+         Y18A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771249398; x=1771854198;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o13mfHfcaClhodqHfsXTqvg6+iAu9vhr09PZvEYRGDU=;
+        b=oVDGsT7d7hJQzcFh1kEHBwZIoCGWvyVrfebbT9jzwwhfQAeKAgqNsTyn6Pt3GYsiC1
+         ozeGnrsvpH5gqCDbSwxg6+zKv0wVwxHoyArPXm0rrVWtc5o01wjDmHPoNKIRZvrgBlD5
+         ZvYBg7gB4fjWUBzNVLYOLsBn+j2rp4kYnYeIgzbP4CdbwGwvSeGKHb15SApmu5l1kWma
+         0xEryIHFMaQerbP4RCIxK4AxCEHfTGuJKzONyXDdGT7svlN/vZp4fMNdoBt3wzpa1RCr
+         0vM/DQyeVQgW27VgglZnwXNGN+wYd5hc68lFMbzBpFrpApSEFq/qdbOYDb6XFMhsAX5d
+         q67g==
+X-Forwarded-Encrypted: i=1; AJvYcCUP9XBfJahRVrDq6VlYiKL7W6raO+rdMouoCMnAyT+qwUkos0/oNtNd8P8LN6ePAa1TZmzhui4kK3M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyo9LOfwh3kxkVbXwGzgv3c12TtNu+luLR+UmeML8eYB5BJbOwR
+	HFlHAb3qvjZ8oJkx153EL+br5cug2ax+G65uxThxhfyJI01fAiZFdN4XKQnWCwp1hmkfTTOPVUm
+	tDDat1djpSTS82G17kRJDWk/zGisdDXIz2CS1JkmORYDoWOiAMHqTiIO63YUd/ig=
+X-Gm-Gg: AZuq6aIuMEejMfZ30V2tJRllWTW+18pOK6PXLj4MeFK/Z1u4p9ohxzSjd7TDGr+YOcF
+	GLemQ+IPuJzZ31TZnatp1Y1uj1dq85pmSZhiU1ZQJJjqkGaxXKsoTbYJw8oBr0Jc8ndu1QjKJ7d
+	TS0MZAiBPACfm8SV+aHoduUX+aFq5NNuRi8ek0ASQtwuklL7ss3mcuiZG9tActEhlo5Y7e8ZzCc
+	Avvz+d8L6K4ICqQ5ywUn8NB2P+BNMmjCV07oR4x1VgWQya5FxcVdCEVM5638r9Q7MyW9Id/z20K
+	XV/CaZZefRYJ11f0KhPCYqse3/q+cpscQUNYWGDY6SIrJfGweJ9Jepyam4XIhclt94opOOp4WXn
+	qXAcy5NVVZpfggzOM0cY/1dFCGZnNTQ==
+X-Received: by 2002:a05:620a:462c:b0:8c5:e166:fa14 with SMTP id af79cd13be357-8cb4249ab6dmr1296952785a.73.1771249398180;
+        Mon, 16 Feb 2026 05:43:18 -0800 (PST)
+X-Received: by 2002:a05:620a:462c:b0:8c5:e166:fa14 with SMTP id af79cd13be357-8cb4249ab6dmr1296948985a.73.1771249397631;
+        Mon, 16 Feb 2026 05:43:17 -0800 (PST)
+Received: from hackbox.lan ([86.121.162.109])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43796a6c1bfsm28883025f8f.13.2026.02.16.05.43.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Feb 2026 05:43:17 -0800 (PST)
+From: Abel Vesa <abel.vesa@oss.qualcomm.com>
+Subject: [PATCH v3 0/6] clk: qcom: Add support for basic clocks providers
+ on Eliza SoC
+Date: Mon, 16 Feb 2026 15:43:02 +0200
+Message-Id: <20260216-eliza-clocks-v3-0-8afc5a7e3a98@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/7] clk: bcm: rpi: Mark PIXEL_CLK and HEVC_CLK as
- CLK_IGNORE_UNUSED
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Stefan Wahren <wahrenst@gmx.net>, Melissa Wen <mwen@igalia.com>,
- Iago Toral Quiroga <itoral@igalia.com>,
- Chema Casanova <jmcasanova@igalia.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- dri-devel@lists.freedesktop.org,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, kernel-dev@igalia.com
-References: <20260213-v3d-power-management-v5-0-7a8b381eb379@igalia.com>
- <20260213-v3d-power-management-v5-3-7a8b381eb379@igalia.com>
- <20260216-brave-ara-of-typhoon-cf90ba@houat>
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-Content-Language: en-US
-Autocrypt: addr=mcanal@igalia.com; keydata=
- xsBNBGcCwywBCADgTji02Sv9zjHo26LXKdCaumcSWglfnJ93rwOCNkHfPIBll85LL9G0J7H8
- /PmEL9y0LPo9/B3fhIpbD8VhSy9Sqz8qVl1oeqSe/rh3M+GceZbFUPpMSk5pNY9wr5raZ63d
- gJc1cs8XBhuj1EzeE8qbP6JAmsL+NMEmtkkNPfjhX14yqzHDVSqmAFEsh4Vmw6oaTMXvwQ40
- SkFjtl3sr20y07cJMDe++tFet2fsfKqQNxwiGBZJsjEMO2T+mW7DuV2pKHr9aifWjABY5EPw
- G7qbrh+hXgfT+njAVg5+BcLz7w9Ju/7iwDMiIY1hx64Ogrpwykj9bXav35GKobicCAwHABEB
- AAHNIE1hw61yYSBDYW5hbCA8bWNhbmFsQGlnYWxpYS5jb20+wsCRBBMBCAA7FiEE+ORdfQEW
- dwcppnfRP/MOinaI+qoFAmcCwywCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQ
- P/MOinaI+qoUBQgAqz2gzUP7K3EBI24+a5FwFlruQGtim85GAJZXToBtzsfGLLVUSCL3aF/5
- O335Bh6ViSBgxmowIwVJlS/e+L95CkTGzIIMHgyUZfNefR2L3aZA6cgc9z8cfow62Wu8eXnq
- GM/+WWvrFQb/dBKKuohfBlpThqDWXxhozazCcJYYHradIuOM8zyMtCLDYwPW7Vqmewa+w994
- 7Lo4CgOhUXVI2jJSBq3sgHEPxiUBOGxvOt1YBg7H9C37BeZYZxFmU8vh7fbOsvhx7Aqu5xV7
- FG+1ZMfDkv+PixCuGtR5yPPaqU2XdjDC/9mlRWWQTPzg74RLEw5sz/tIHQPPm6ROCACFls7A
- TQRnAsMsAQgAxTU8dnqzK6vgODTCW2A6SAzcvKztxae4YjRwN1SuGhJR2isJgQHoOH6oCItW
- Xc1CGAWnci6doh1DJvbbB7uvkQlbeNxeIz0OzHSiB+pb1ssuT31Hz6QZFbX4q+crregPIhr+
- 0xeDi6Mtu+paYprI7USGFFjDUvJUf36kK0yuF2XUOBlF0beCQ7Jhc+UoI9Akmvl4sHUrZJzX
- LMeajARnSBXTcig6h6/NFVkr1mi1uuZfIRNCkxCE8QRYebZLSWxBVr3h7dtOUkq2CzL2kRCK
- T2rKkmYrvBJTqSvfK3Ba7QrDg3szEe+fENpL3gHtH6h/XQF92EOulm5S5o0I+ceREwARAQAB
- wsB2BBgBCAAgFiEE+ORdfQEWdwcppnfRP/MOinaI+qoFAmcCwywCGwwACgkQP/MOinaI+qpI
- zQf+NAcNDBXWHGA3lgvYvOU31+ik9bb30xZ7IqK9MIi6TpZqL7cxNwZ+FAK2GbUWhy+/gPkX
- it2gCAJsjo/QEKJi7Zh8IgHN+jfim942QZOkU+p/YEcvqBvXa0zqW0sYfyAxkrf/OZfTnNNE
- Tr+uBKNaQGO2vkn5AX5l8zMl9LCH3/Ieaboni35qEhoD/aM0Kpf93PhCvJGbD4n1DnRhrxm1
- uEdQ6HUjWghEjC+Jh9xUvJco2tUTepw4OwuPxOvtuPTUa1kgixYyG1Jck/67reJzMigeuYFt
- raV3P8t/6cmtawVjurhnCDuURyhUrjpRhgFp+lW8OGr6pepHol/WFIOQEg==
-In-Reply-To: <20260216-brave-ara-of-typhoon-cf90ba@houat>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOYek2kC/23NTQ6CMBAF4KuQri1py78r72FcwDBIFai20KiEu
+ 9tiTNS4meQlb743E4NaoiHbYCYarTRSDS5Em4BAWw5HpLJ2mQgmUsYFo9jJR0mhU3A2NEHMEIq
+ aYVYQ93LR2Mjbyu0Pr2ym6oQwesM3WmlGpe/rnuW+96ajb9pyymiaxg0vIt7kkO2UMeF1KjtQf
+ R+6Q/yCFZ9G9mMIZwAgFnGUVwnkf4xlWZ65r8z8BQEAAA==
+X-Change-ID: 20260120-eliza-clocks-5ee7ec9d0e79
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Luca Weiss <luca.weiss@fairphone.com>,
+        Taniya Das <taniya.das@oss.qualcomm.com>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Abel Vesa <abel.vesa@oss.qualcomm.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+X-Mailer: b4 0.15-dev-47773
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2338;
+ i=abel.vesa@oss.qualcomm.com; h=from:subject:message-id;
+ bh=G/C8E6tnyrlc7aXmdiruS70Vl6WjWr9lu5dVB+apm5U=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBpkx7o23fPvCCd/ziw5IsX4TYPH0rSLlhUyXhd+
+ pabptFqo9OJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCaZMe6AAKCRAbX0TJAJUV
+ Vl7dD/9zgFF1bTT2xK/+bBhbjXJZVk88dmFEB80loFEV34ZYz5ibPUkAQFB1thrc2WTQ+Fpgfs8
+ YRZnGHJKaxOLfCw0d9rFAcVaLxE1YhqNAM4jwRoUj6ptqcxLHYvGhdaH1KT1jtnp66m8HUEhnZY
+ DygCcYTMQOM1RsEmqvkw9uq2a7YeOJ6x97JM/TO9U64+hpWmgJhq78k6EU0U5MRP5f769aUzdkq
+ rzGFuStvFyszCsxtblwMkIMHogZ67ayA+tJdaJZBcfWPMDFKkEs6oQKMm9BcJdkB66uZAsfZaVL
+ 7K5ma6ZlblUFYV2bxMXCoYUGp5iV1Yqe33mZVE5CErVWEsd5+5SZNTQTkMzoJFY2h4hBs6ZmzCJ
+ 7pmUGc/ugQYohInEY+YmwtrEbAxUbO2OXJs/uZVTQBhGixuqChGGahS9EvysOH1E0onDHz3k5Fd
+ fKBRfZrFOz/Susz8WfIwfxm5DAtvUxI3+OKe2TcvQ5Es49D4hloueYo8DCFbIjj8xyZUDOlEueH
+ CxublY+ZqtuxmPZbimTUwioCPZswXwoYauDk9yrRDyz675tC2l0nTdMieoXLGdo7p+7jBMlVCYv
+ GrYCCU4KgTd0izIl3Tv/1TSSjIAEbV/x3rGwRXF6FKDMKzUKYS1w9W4BAgVIv22SxqD78JKatQk
+ O445vmRzUjd+8BQ==
+X-Developer-Key: i=abel.vesa@oss.qualcomm.com; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
+X-Proofpoint-GUID: EfUkXY7d_yYlJYFwpwpijzuu3jgFf_IA
+X-Proofpoint-ORIG-GUID: EfUkXY7d_yYlJYFwpwpijzuu3jgFf_IA
+X-Authority-Analysis: v=2.4 cv=M8dA6iws c=1 sm=1 tr=0 ts=69931ef7 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=oauzzCmhM186DRC0Y2yWPg==:17
+ a=IkcTkHD0fZMA:10 a=HzLeVaNsDn8A:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=Mpw57Om8IfrbqaoTuvik:22 a=GgsMoib0sEa3-_RKJdDe:22
+ a=bC-a23v3AAAA:8 a=EUspDBNiAAAA:8 a=RHXNpSf-syxuuu4qC9MA:9 a=QEXdDO2ut3YA:10
+ a=dawVfQjAaf238kedN5IG:22 a=FO4_E8m0qiDe52t0p3_H:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjE2MDExNiBTYWx0ZWRfX//l3BRDV923n
+ pTTCLwg078/wwX+GN3pM6fvpHV9W7AFeFgAUpK4XsVhO/DiGF8bS3enHpN2Z8YsHz6NrJ928jtf
+ zQsaOwreSDWVpldsqYWkLXcKz4fvfSdL+91YmyIepdlu0ZADexqRZAj7OD7Bbrjm3fBTXVbzQEE
+ LcWCPpktfPOFXPIwV8Lnm8RNPGgROZzR0kKKPpnV1tuk+LWkU/2kupeYiB0osMuufGL7XcoTw3d
+ QMqnQ4s/oNZ00vjSi32dnnSJ9GaFpD6cj6sWhCfaVToEtgN88jaQEhS8J+ZGzLS+RIo8A/5VEqN
+ 3RqTDbl5Jv7SBeOaEeXEGfeUlJCc0Sf52uIu6nSUByGyutrizGC5OZWDXGup817YGk7n55MBHEU
+ Eu2lRhR5wfhmKdTSYpjojZ6ENhAAM4TucvUV1RpKtS3Yn9qQbuOqMl514gpx5zJ1cu6vVzY7SN8
+ munalwt+563fLjpapdA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-02-16_04,2026-02-16_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 adultscore=0 suspectscore=0 bulkscore=0 impostorscore=0
+ clxscore=1015 phishscore=0 lowpriorityscore=0 priorityscore=1501
+ malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2601150000
+ definitions=main-2602160116
 
-Hi Maxime,
+These are the bare minimum clock providers needed in order to
+be able to boot to shell and have the rootfs on UFS.
 
-On 16/02/26 07:53, Maxime Ripard wrote:
-> Hi,
-> 
-> On Fri, Feb 13, 2026 at 03:52:56PM -0300, Maíra Canal wrote:
->> If PIXEL_CLK or HEVC_CLK is disabled during boot, the firmware will skip
->> HSM initialization, which would result in a bus lockup. However, those
->> clocks are consumed by drivers (vc4 and HEVC decoder drivers,
->> respectively), which means that they can be enabled/disabled by the
->> drivers.
->>
->> Mark those clocks as CLK_IGNORE_UNUSED to allow them to be disabled by
->> drivers when appropriate.
->>
->> Acked-by: Melissa Wen <mwen@igalia.com>
->> Signed-off-by: Maíra Canal <mcanal@igalia.com>
-> 
-> It looks like sync_state would be a better candidate to handle this?
+The multimedia-specific clock providers will come later on.
 
-I have the impression that CLK_IGNORE_UNUSED is still a better fit here.
+Signed-off-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
+---
+Changes in v3:
+- Rebased on next-20260213
+- Picked ub Krzysztof's R-b tags for the TCSRCC and RPMHCC bindings
+  patches.
+- Picked up Dmitry's R-b tags for the GCC and RPMHCC drivers patches.
+- Added missing TCSR PCIe1 and HDMI clocks, as reported by Konrad.
+- Fixed the compatible order in GCC bindings patch.
+- Link to v2: https://patch.msgid.link/20260127-eliza-clocks-v2-0-ccee9438b5c8@oss.qualcomm.com
 
-First, the clock framework has no sync_state integration. The only use
-of sync_state in clock drivers is done by Qualcomm's clock controllers,
-which uses icc_sync_state for the interconnect framework. From my
-understanding, CLK_IGNORE_UNUSED is the idiomatic mechanism for "don't
-disable this clock during clk_disable_unused() and allow drivers to 
-manage it", which is exactly what we are looking for.
+Changes in v2:
+- Rebased on next-20260126
+- Replaced the all-caps SoC name everywhere
+- Created separate patches for each clock controller
+- Dropped unused header includes
+- Added parents to all TCSR clocks
+- Added an explanation to why the Milos GCC bindings schema was reused.
+- Link to v1: https://patch.msgid.link/20260123-eliza-clocks-v1-0-664f1931f8c7@oss.qualcomm.com
 
-Apart from that, if we decide to use sync_state, I'm not sure we could
-handle granularity. sync_state is a per-device mechanism, not per-clock,
-and clk-raspberrypi provides multiple clocks (consumed by different
-drivers). With CLK_IGNORE_UNUSED, the protection is per-clock: once a
-driver calls clk_prepare_enable/unprepare() it manages that clock,
-regardless of what other consumers of other clocks are doing.
+---
+Abel Vesa (1):
+      clk: qcom: Add TCSR clock driver for Eliza
+
+Taniya Das (5):
+      dt-bindings: clock: qcom: document the Eliza Global Clock Controller
+      dt-bindings: clock: qcom: Document the Eliza TCSR Clock Controller
+      dt-bindings: clock: qcom-rpmhcc: Add RPMHCC for Eliza
+      clk: qcom: rpmh: Add support for Eliza rpmh clocks
+      clk: qcom: Add support for Global clock controller on Eliza
+
+ .../devicetree/bindings/clock/qcom,milos-gcc.yaml  |    9 +-
+ .../devicetree/bindings/clock/qcom,rpmhcc.yaml     |    1 +
+ .../bindings/clock/qcom,sm8550-tcsr.yaml           |    2 +
+ drivers/clk/qcom/Kconfig                           |   17 +
+ drivers/clk/qcom/Makefile                          |    2 +
+ drivers/clk/qcom/clk-rpmh.c                        |   20 +
+ drivers/clk/qcom/gcc-eliza.c                       | 3160 ++++++++++++++++++++
+ drivers/clk/qcom/tcsrcc-eliza.c                    |  180 ++
+ include/dt-bindings/clock/qcom,eliza-gcc.h         |  218 ++
+ include/dt-bindings/clock/qcom,eliza-tcsr.h        |   15 +
+ 10 files changed, 3622 insertions(+), 2 deletions(-)
+---
+base-commit: 635c467cc14ebdffab3f77610217c1dacaf88e8c
+change-id: 20260120-eliza-clocks-5ee7ec9d0e79
 
 Best regards,
-- Maíra
-
-> 
-> Maxime
+--  
+Abel Vesa <abel.vesa@oss.qualcomm.com>
 
