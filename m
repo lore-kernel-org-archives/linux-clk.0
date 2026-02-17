@@ -1,194 +1,152 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f54.google.com (mail-yx1-f54.google.com [74.125.224.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102832BD030
-	for <linux-clk@vger.kernel.org>; Tue, 17 Feb 2026 23:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771370574; cv=none; b=iu9L34rU0bVOPdTokyedKP9VDwid3LhYpKECaI/tn31rZxsQiKbJJ/R/h1zX3jOnKDOtnBUDhyHaO5G64Rm35VWdVUImaNFKCDScUfCWAhmba8olx1BFXf3ZcSAp0QXJp91TFw2eBAXz887J110ps8bURxHV4vcq25AqtFvTrd0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771370574; c=relaxed/simple;
-	bh=fT2sRGh/Fthzt1N+eQsgIYRWMI25aFYgD6n85ujm+8E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h0xeRBDG4SPzt+QwRvNa6wOS8tUI4fRoqNpRnXsRkPvKTPkrrk4OPa+eholajwiTrG9pvByRzLWbXWxIx3aqLI8uRHahYC3p9WxrsLmNXEtRfZ8RQeoe6Q1QAP2wXCOJo6MkVYcDFDlaZ36hPVYFx4q3S5nDZACcRr3k8tS+dxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ecwZpaI5; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=RA4wcICz; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51DC31B122
+	for <linux-clk@vger.kernel.org>; Tue, 17 Feb 2026 23:30:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771371010; cv=pass; b=Ik9XvNBxWwWRUr4fnkKBFRoBnbCosYyx6mMol25o2ktCTkpU5+j847xjjjFo8WLxd2OVwdqhAZ7yMlWj+PBWGPZIrd8Rif+vmA0W2L/fXuRQOiJQmKY42NzLauYiWtmXdk/LKtOXPeH5xlYYo3GoBapP7z4uiBbizTMic1ZUJ9w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771371010; c=relaxed/simple;
+	bh=0iqgQ0iC08pETndYz+OYiMyT+2bia4CvGsqBmREgTlg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pXB9AXLnaFgVNfvGKx4Vzml+X5HZsQiqhezVYk2Qb6OSQ1E7yo4HfqqxQSdtzWiiSIFobndUM61AJLARwNwWEexN9KOirdxshLAfTjl2NlvmoAK44oPLgNCaEtPvsCNixPJqWm/Z350Fh4WqnOrhjTZcnQhRmC7RtWeLFMzWMwM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oss.tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=Q0/v2xlB; arc=pass smtp.client-ip=74.125.224.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oss.tenstorrent.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ecwZpaI5";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="RA4wcICz"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1771370572;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pu6xIl0G77mqVnN/koO35p0gUExl94drv061er+Ef0k=;
-	b=ecwZpaI5Mm4TTYGeG+jmn90YidJVoJDKooacmRpKn9/On0VAFIG9nY/uGWAbCShEzk2621
-	FVoLZtb4Qb6MmJFLHFIwxu+3TdfHxNQho6McQW6f5Sc2wmPjUSGG1FZdftcPwaGXSGDEg3
-	gQhfmHFz8Ycb1w1SGgeLGWqKNjzZCN4=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-511-P1JcIV_2M6GYJprfLEnsew-1; Tue, 17 Feb 2026 18:22:51 -0500
-X-MC-Unique: P1JcIV_2M6GYJprfLEnsew-1
-X-Mimecast-MFC-AGG-ID: P1JcIV_2M6GYJprfLEnsew_1771370570
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-8c70b6a5821so2643835885a.0
-        for <linux-clk@vger.kernel.org>; Tue, 17 Feb 2026 15:22:50 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="Q0/v2xlB"
+Received: by mail-yx1-f54.google.com with SMTP id 956f58d0204a3-64ae222d87dso4899957d50.2
+        for <linux-clk@vger.kernel.org>; Tue, 17 Feb 2026 15:30:08 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1771371008; cv=none;
+        d=google.com; s=arc-20240605;
+        b=iFB2qL9O26ttevppxVCmoupAlMJ7aowcjfkEpCwbrYvfDRsi0qAS4VyGt2GKe/56Bu
+         m6myZWge/V+eh+FdWnjs3quR93g5psMZx61vC7oW59gqpRd9ZRQVBoLoufDY0QHVJ+lW
+         leWze9ee2t454l2MEL0rqV86jOr9OkDpvmkXvy419t9yXb/GdfLDeT6uzIivu3yGBgK1
+         raf6LQA24IpWaUG2jUMyU2KM55MdRFUYMCJSjBgmWX2kxqfrwQVkygIpzPva/Mt36FFX
+         DaXxO4PLmVbbFewKHCxcLNA9wn93q1LHZ8XYtqAKXmzeAEGEtS9tIXQS6EeWmGhm3x6P
+         Y7qw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=RTnOou82ckQE54SQrVzimf0IaJoxyiz9fz7f1nWejVk=;
+        fh=Su0eoq/h7pmZUObwY5l0SUvEq1+EzbS7bmehvvrGmg8=;
+        b=CreNLV0gVKp1mEF1GUN5LhQpsP1c9WG2snz5TIfhBp1pzW1A5ItWbm062RoaYqYxjU
+         BmNjFRbY4nifN3D1OOzic6VaMXrxlv7cnnCQuRP42e6ZWgiM/ra4xpIGiXFSvPkE/F4b
+         z4zcbXIXt0UxY7iN/ZvIEiZq/KV49yrz/7TpXoBcdZbUuh4qpzxZsoxD/Ou/mE4eEVUz
+         HJ4et/L6zaW1nzznLU8gaEGi7DGg5N8HqsrZpPs+T7C5/5eURE9dp9+SWI53eCtXsOoz
+         fwggt8G1dej3ksKmV/ezzJfaSK0xI+eStkHgYVoQZ8pQITL2ibCjiqUrdh4yGbHlCqAN
+         dwtw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1771370570; x=1771975370; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pu6xIl0G77mqVnN/koO35p0gUExl94drv061er+Ef0k=;
-        b=RA4wcICzmrF0fhmSw5cDWngiWY9UMpR0NULfELJQTnY7L2TYu5LIXCITvf3tsMLKHU
-         CTyrC+5ct7T2byup8C0aw0+h9Bddnu/2EoPbe8i66v+xEq8OJ1jUJtpkytEtxECYbGf8
-         Vd1tBU2ruz8+nJJHWGpIOq8LIR6BI80r1tmHKaDiqVJ85UNXiI2lfb9ZQS2rpeSGieYw
-         sBOTfNjnRHgbSwwNJ+hhmz5ySdtOVw0Pk+h4nE5mh3y3NwV26RJ96FMc9fa3D1yiy/kZ
-         xehJDQixcry0efXr8Ay8K3IvMjby6HzJYCUTX3jvUJMtIwN+B8GcMhIo8xMPOqjou7LG
-         ClSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771370570; x=1771975370;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=tenstorrent.com; s=google; t=1771371008; x=1771975808; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pu6xIl0G77mqVnN/koO35p0gUExl94drv061er+Ef0k=;
-        b=eEcUKQRvtfcQxHgIV8H03Ev/HopMEOJSnNXmnFn2VKb5le+pD/K3WQmtNLZ9edNCTy
-         Poe3aDkzl5TNxV1xJfRoWEcN006PJJ3NwOnsmICxiim1/l/2ke7Hy2oYnb1zTe4wDAmH
-         v2aUbFOL7klSya/Pg0vP21IVa6dGJ2Dgay8RMACmxDh0N0vIhVGWNpwudAod7ENzvUf/
-         FrcaJlST1+o4k8cqJbc+keo0X0YqaTWRou1eRjTybK8kie16aLFwPWXGC/eBJp019Oli
-         9Y1/TiXU4rCy+wbYPEfIZoQMJTRre/4LmvQ/eS2brqLi9MZVh/6BuZt3zdhCK16bUm8k
-         vlvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXwCZ1eJCMsFQC5QEgutroSt74nAGq7GcaXiK96NeNb6ZnQxUWpIhAkrVFbnE1zZwklXmnWYWge7qs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0BBE+eAhbJjeIeLnW+pxd1LYrZr4KtS7acj9pu+dKQM89GXYQ
-	mCelVtY/R0NuiDzd85DKPuXZ5eH+DhmpC6/Zn/roxMm/DqHBkse8jD4O7bNPurylb0oqfoihrl9
-	Ixv0YBiEimULaxKEMDI/okMPfHfnqCc318VtbeXIs37HLEy5fxSvGKCXitWPVPDpNJH8pxw==
-X-Gm-Gg: AZuq6aL9VEHxIvz2bkEen8F9KI0HVBBHtQPmvPR06uZEXhmxZ8gZLMc+az/Zr2D6x1S
-	uzlP1UvuOd6guNwutc/4EtcwFmCoSKTKx8d9CmbWQEfBn4jjv9v/VF7dC3kL8aSfg8GD167vZ53
-	LlLoTABZZtwidxrJNJ62Ow/zmFjz3rLhRlCIDQpvncW23D3dfmZLxHpkT4K6nrenSrfL8czFsms
-	3M5GDdheibyodX1iS3IqdRnnEudp5oT5hqJ4gEE5w6UM6fPmj4kyv3B5SESzd0a5op94vCJoU0B
-	LpghlTDkUphIqbMk13nYMxl+TZPS7CuuJ49tuT6X+tAYHOzH0OvvDoWK+n8YrL6R+pBXn47zHT+
-	txMJ/HfvfIiUVRuJsVYTT
-X-Received: by 2002:a05:620a:450f:b0:8c6:ae78:f750 with SMTP id af79cd13be357-8cb74029a2dmr17236385a.14.1771370570404;
-        Tue, 17 Feb 2026 15:22:50 -0800 (PST)
-X-Received: by 2002:a05:620a:450f:b0:8c6:ae78:f750 with SMTP id af79cd13be357-8cb74029a2dmr17232885a.14.1771370569874;
-        Tue, 17 Feb 2026 15:22:49 -0800 (PST)
-Received: from redhat.com ([2600:382:8113:e835:467d:eb0a:6604:e0dc])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8971cdd1541sm178290736d6.49.2026.02.17.15.22.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Feb 2026 15:22:49 -0800 (PST)
-Date: Tue, 17 Feb 2026 18:22:46 -0500
-From: Brian Masney <bmasney@redhat.com>
-To: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
-Cc: Drew Fustini <dfustini@oss.tenstorrent.com>,
-	Joel Stanley <jms@oss.tenstorrent.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	joel@jms.id.au, fustini@kernel.org, mpe@kernel.org,
-	mpe@oss.tenstorrent.com, npiggin@oss.tenstorrent.com,
-	agross@kernel.org, agross@oss.tenstorrent.com
-Subject: Re: [PATCH v6 3/3] clk: tenstorrent: Add Atlantis clock controller
- driver
-Message-ID: <aZT4RsGnu1qlZl-l@redhat.com>
-References: <20260216-atlantis-clocks-v6-0-cb46d6a59c73@oss.tenstorrent.com>
- <20260216-atlantis-clocks-v6-3-cb46d6a59c73@oss.tenstorrent.com>
- <aZST4Yywv09u65MP@redhat.com>
- <CAEev2e_XjxD3kHbOxVYwbf0Q0cwEr96dSQ3hWZE9eLdgeXhs4g@mail.gmail.com>
+        bh=RTnOou82ckQE54SQrVzimf0IaJoxyiz9fz7f1nWejVk=;
+        b=Q0/v2xlBcwXuN2qEiSfa/RBNxfyYfzg55GYWugN2GbvxUdO3INYhg655GKRGSCfheq
+         rmibYSyY2wknPIuDKPuyNEzyFbiOKGh+7CyH3U+it5al/w4FG2dE/wugPTOuu1Z73+56
+         oQl5J08HGqNmDsdwwo8TkUdAOcvIkJ6MEdis45spAsc+JQMpqXICEyD7I75An2XK+xFk
+         ysqxkoVHe1TPBSBGUY70UD6h0MENoDlKvswr5J3S67HQAImRRkfqK4zkS1qoaL0Y90yV
+         aT/nxShqg7AR/Ocpw1KU7Pz7e1SKUZsBKICatRBgr7ksXHRV8Hz3J8N3NPRewsIvxeiX
+         ySAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771371008; x=1771975808;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=RTnOou82ckQE54SQrVzimf0IaJoxyiz9fz7f1nWejVk=;
+        b=ev8hTJlzHuvDe2ZK3iNCn/pKKTfVCE8kLKGzWmc60az28yb82hmYb2wpl30PWEGNd+
+         UyEKwQK+jmMJf/1DcPukyEK+cfMXtBPEY6gEUKZ4Qi/yUHOtPVNBaH01aEgv/dXuAuqV
+         mih3LvHxPaoJ09v60zxDqaXtn55G9q3tlwHYaMlLEcjn3/33hPHlitA9o8wZqX26XI4D
+         hY5M8HjoJIxN5auDuETc31Rbd/hlJ5xZ2YCIm7dBD6Ax5Oqszm4hL8mV/SXlAUmoivPa
+         y3CuubZnsC4T9IynJhj2k2NcAxbX48bybN/Vmqqq2W/Hh44OZWtzJ6v6Kq4rY8pPNHX+
+         +A2A==
+X-Forwarded-Encrypted: i=1; AJvYcCVJOakMZV+tnJWhyQ+G1ocdJbBnhLAHjCXUELHZWmYMhtFjaTDcaqkOILjB/n+VO1yX91gN/8ac+8k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzoey/yjP8KxdvrS+FTMeX2pojNGX3Fr21QN4Fgvhj1+t9tdok+
+	/HP3gNWANtAyVmbaHEbtRB/oUQGa2HFqhtF3TanQLlmAseDWoRq5aV9Cw3ZMTbR6n44zLCGp4XW
+	LuKIlwWOGfbDo9reMirD2qPX5GkKbPlsF8YvVnCXhog==
+X-Gm-Gg: AZuq6aKS+CeoepL73WdeP8q5VukWA1e5892oT+ClMKUXTvjO4eU0Y1gza0hyfvNurt+
+	GZYcoqI1tdOdLa8T8qcSXPTcKQHwTUXYkrpCbIkyIsKXpRbuWRNyGmCPQFIS6WmBt+nh7CDmhwQ
+	LpM9f+7YnAB60H4dyjPbMOHKNlohL+CEhT/9bu/uheQk8OQ4NE/VLgLnYuYk71r8Sd6bsZXiJ0a
+	zXWZXcynXxwi0hBtqDAyFF9V/J85x3jU2jhPrJPz5qldkoNlU9c1atQJT2H2lcbFcLCrAHXwXmH
+	f4V+DzdUv9uX0tqE/T3qZLZzC/N3/3vfuYIv/e1T1nIHin127fR6czT8NnEYsS2CSJSzfxYW
+X-Received: by 2002:a05:690e:400a:b0:64a:e543:cabd with SMTP id
+ 956f58d0204a3-64c556c9ad7mr114487d50.70.1771371007641; Tue, 17 Feb 2026
+ 15:30:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEev2e_XjxD3kHbOxVYwbf0Q0cwEr96dSQ3hWZE9eLdgeXhs4g@mail.gmail.com>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+References: <20260216-atlantis-clocks-v6-0-cb46d6a59c73@oss.tenstorrent.com>
+ <20260216-atlantis-clocks-v6-3-cb46d6a59c73@oss.tenstorrent.com>
+ <aZST4Yywv09u65MP@redhat.com> <CAEev2e_XjxD3kHbOxVYwbf0Q0cwEr96dSQ3hWZE9eLdgeXhs4g@mail.gmail.com>
+ <aZT4RsGnu1qlZl-l@redhat.com>
+In-Reply-To: <aZT4RsGnu1qlZl-l@redhat.com>
+From: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
+Date: Tue, 17 Feb 2026 17:29:56 -0600
+X-Gm-Features: AaiRm52TAk-yyamOoXmwj8fFo7BsCbo2w-ZlTEB2IeiGt4tNj-r_C0lIrKQFA3c
+Message-ID: <CAEev2e8hwN1FBR6yMr_NeZrFx3BXNz88RHfHLhSM=GrpExsUyw@mail.gmail.com>
+Subject: Re: [PATCH v6 3/3] clk: tenstorrent: Add Atlantis clock controller driver
+To: Brian Masney <bmasney@redhat.com>
+Cc: Drew Fustini <dfustini@oss.tenstorrent.com>, Joel Stanley <jms@oss.tenstorrent.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-riscv@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, joel@jms.id.au, fustini@kernel.org, mpe@kernel.org, 
+	mpe@oss.tenstorrent.com, npiggin@oss.tenstorrent.com, agross@kernel.org, 
+	agross@oss.tenstorrent.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Anirudh,
+Hi Brian,
 
-On Tue, Feb 17, 2026 at 05:12:38PM -0600, Anirudh Srinivasan wrote:
-> On Tue, Feb 17, 2026 at 10:14 AM Brian Masney <bmasney@redhat.com> wrote:
-> > On Mon, Feb 16, 2026 at 04:16:34PM -0600, Anirudh Srinivasan wrote:
-> > > Add driver for clock controller in Tenstorrent Atlantis SoC. This version
-> > > of the driver coves clocks from RCPU syscon.
+On Tue, Feb 17, 2026 at 5:22=E2=80=AFPM Brian Masney <bmasney@redhat.com> w=
+rote:
 > >
-> > ...covers clocks..
-> 
-> Thank you for your comments. I will address the typos and add the
-> static modifier for the different variables that you suggested.
-> 
-> > > +
-> > > +struct atlantis_clk_gate_shared_config {
-> > > +     u32 reg_offset;
-> > > +     u32 enable;
-> > > +     unsigned int *share_count;
-> >
-> > Why is this a pointer? Could this just be a plain unsigned int since
-> > all occurrences of this are dereferenced?
-> 
-> We have a group of gate clocks that have a single enable bit shared
-> among them (instead of individual enable bits for each clock). We need
-> to keep track of the number of clocks within a group that have
-> requested an enable, and only unset the bit if all the clocks are
-> disabled. share_count is used to keep track of this. It gets updated
-> by each clock. Hence it's a pointer (and the mutexes around access to
-> it).
+> > We have a group of gate clocks that have a single enable bit shared
+> > among them (instead of individual enable bits for each clock). We need
+> > to keep track of the number of clocks within a group that have
+> > requested an enable, and only unset the bit if all the clocks are
+> > disabled. share_count is used to keep track of this. It gets updated
+> > by each clock. Hence it's a pointer (and the mutexes around access to
+> > it).
+>
+> The code currently has:
+>
+> struct atlantis_clk_gate_shared_config {
+>         ...
+>         unsigned int *share_count;
+> }
+>
+> That pointer is dereferenced like this in several places:
+>
+>     need_enable =3D (*gate->config.share_count)++ =3D=3D 0;
+>
+> I don't see why the pointer is needed. Can you drop the pointer
+> and the dereference like this?
+>
+> struct atlantis_clk_gate_shared_config {
+>         ...
+>         unsigned int share_count;
+> }
+>
+>     need_enable =3D gate->config.share_count++ =3D=3D 0;
+>
 
-The code currently has:
+In this case, wouldn't each atlantis_clk_gate_shared end up getting
+its own copy of share_count? Which is not what we want. Or maybe I'm
+not quite understanding what you're saying.
 
-struct atlantis_clk_gate_shared_config {
-	...
-	unsigned int *share_count;
-}
+Every time we create a group of these shared gate clks, we create a
+refcnt variable like this and pass the var to all clks that share it.
 
-That pointer is dereferenced like this in several places:
-
-    need_enable = (*gate->config.share_count)++ == 0;
-
-I don't see why the pointer is needed. Can you drop the pointer
-and the dereference like this?
-
-struct atlantis_clk_gate_shared_config {
-	...
-	unsigned int share_count;
-}
-
-    need_enable = gate->config.share_count++ == 0;
-
-[ snip ]
-
-> > However, bigger question is if this message should be dropped entirely? If
-> > this condition occurs, an error is logged here, and a second message will be
-> > logged in atlantis_prcm_probe() below.
-> >
-> > > +                     return ret;
-> > > +             }
-> > > +
-> > > +             clk_data->hws[common->clkid] = hw;
-> > > +     }
-> > > +
-> > > +     clk_data->num = num_clks;
-> > > +
-> > > +     ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, clk_data);
-> > > +     if (ret)
-> > > +             dev_err(dev, "failed to add clock hardware provider (%d)\n",
-> > > +                     ret);
-> >
-> > Should this message also be dropped as well?
-> 
-> So you're suggesting that we just print a single error message instead
-> of multiple. I can change it to be like that.
-
-Yes, and sounds good!
-
-Brian
-
+static unsigned int refcnt_qspi;
+ATLANTIS_GATE_SHARED_DEFINE(CLK_QSPI_SCLK, qspi_sclk, nocc_clk_mux,
+                           LSIO_BLK_CG_REG, BIT(0), &refcnt_qspi, 0);
+ATLANTIS_GATE_SHARED_DEFINE(CLK_QSPI_HCLK, qspi_hclk, nocc_div2_clk,
+                           LSIO_BLK_CG_REG, BIT(0), &refcnt_qspi, 0);
