@@ -1,190 +1,202 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013046.outbound.protection.outlook.com [40.93.201.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8644B1A9F88
-	for <linux-clk@vger.kernel.org>; Tue, 17 Feb 2026 10:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771323331; cv=none; b=QJanJM7ABvjSOiootq+pVAyRo9/PxfPRCv3/HILLy0JbCXE6dEx99kS0Dny5Q8XiveTmBO7pSSUOJqqqN3WapYYkkCNK4TGDzIZv5JpHdAJ01fuMcCftXktb/hXCJXUmlzs7jiXW0IEHxqCspE4Av7ph/7JIDN5jMymZzP4Z4Ww=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771323331; c=relaxed/simple;
-	bh=u3TkWkPH6LWvLanuhDAXSqqIBVBVtYI33nSwq/2/5kE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OyoHj1wdgHzuZJLZxWI7eD4l7e7deb5Tkp1Pp+lQcGv2gfvHu4WrGFkL/7DTvyi26Bu4z1Ab938KL3pRFgNrgIO4tArz9yXsMCd0NANMZxw4foTI3dDgBPkgULtk89Ww6SFz2ge4RdFYZm1QquQ0JG4PMepNrImS73T+Q3O2DHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hnl/YYMG; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=BmzPSONd; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8253254AA;
+	Tue, 17 Feb 2026 10:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771323815; cv=fail; b=gF2dVCNx6jzVFJ7pPMLbsPu2qWHF1RVPeIvgfQ4v6HUO5x00/NE+DO51zngM8SWi62yE8ibVaZnBWwrNfcooWe9c/SGnrm9Ui1qtdvhCOCHqGEAZ4py4FFKXklawBeiU31WpLCTva4nPd9FR/Vzs/7JxnwHhbtYlKsQEAfL4uAk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771323815; c=relaxed/simple;
+	bh=ruNIvyHPBIftD7Li2dh217EkH/9CAC3EUtMmJ3U5Zao=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OfMl2cQV2powQK9goCQ1TUYNaK2/iwHJObl0crQUyyidk1bezw6jFJ4qOXHbUH3zfodpQVUspMxLfZK1HV3ofE5sxSMM1/TW0uJ8/4sfFPMuDCfMT4vbuQeIaW/iyRMxCifWxL5jxQWs7v1NfLV/ZxTPVQkKOI0KSaTuxnwH6Fg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gehealthcare.com; spf=pass smtp.mailfrom=gehealthcare.com; dkim=pass (2048-bit key) header.d=gehealthcare.com header.i=@gehealthcare.com header.b=IyY6NGIR; arc=fail smtp.client-ip=40.93.201.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gehealthcare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gehealthcare.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hnl/YYMG";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="BmzPSONd"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 61GNRZhu919268
-	for <linux-clk@vger.kernel.org>; Tue, 17 Feb 2026 10:15:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	35pdAs0GELaEmLYh71wOirxIOtz+aG7dtGNqdZFfqPU=; b=hnl/YYMGkiFn6J1a
-	EYZ0H1sGJzSmh4QUVQp3QiXc2muztkQPL4sf+KpxPZz/Ris0rcl0+oVD8nLP1Kg+
-	hD5GTm0jlvFw/6vf53V559Xv56U7KNhVctW3bh7z/JbR0ilN/FEok2xafA1ZROZq
-	wI0xlFa7SbRURTAh6tXkc7FEJFhkM4uz1BxDn/0IGgYbwBxfs5TMbrGVV6mpSZM5
-	6NrDouJ8kzHwvhzL5ffAFKpVpBeKGvgqfCfGCWGQtNSokSnGS6HMnTkgOWrvIICK
-	8Kw4otNVKsziifreMglJ16PZ6bYnLW3Hy46Qm23bZcITiPuMEYgZ5F1FFI4I05IK
-	tWjYxw==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cc6d81y6g-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 17 Feb 2026 10:15:29 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-8954937be97so33744696d6.1
-        for <linux-clk@vger.kernel.org>; Tue, 17 Feb 2026 02:15:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1771323329; x=1771928129; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=35pdAs0GELaEmLYh71wOirxIOtz+aG7dtGNqdZFfqPU=;
-        b=BmzPSONdlKC0ZWYaE6AboA44A0g0w9x1eUQ6nZenNoDy8nsNvWpXUTtrBgfquvKM4E
-         YRZHCfvL88bBQvSJbkTn8+RajNGlw6pIBDVJf+NlqKYTfhjvnuWBnkNQhwtssqZlmkY2
-         wHQyjp5nwSf97Xza+HDjZ6Xr5K8g19ET8sYsuhCicJhtvmuEMiIln+VXSJfRLLkwdmwr
-         4U44ulmdHYIpSbCV3uHVkaFXET8p97fK3WQ+KoLjh30jPmOJlL2W/O0hC2Fbd2DpASgr
-         /DywfnMAm9xvE/mr6KA7c39g3boGYXutxNKZi+mOteBjLovYnVu77XM+xB4m3kqp2BaL
-         aZzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771323329; x=1771928129;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=35pdAs0GELaEmLYh71wOirxIOtz+aG7dtGNqdZFfqPU=;
-        b=ImZWhdqCDuGX57ruVxKYih/mQSqFM5rdYO/SzHTyTEVa/DfYg3n5rPwV15AAv8SIdn
-         7yX0sPMokvOeQYhPbssi70AwxXoXYHZyq6/vdg1dyElXDyy+rxN6DPG51NZfXxETCaKw
-         zIgRwaNKECAYd/V0YdEk9kWAUJ34RXevPbFYqmmyGkTnCm+VnqduegmxY+Nv7+tjj4Hk
-         q3oj8k0dM8eoyYGa9CBntL0ceiduP7lbBSn2iLgoOD3TGX4kBvWL5uPEbJjmuaswo38i
-         WqM1kh88jOBn9CpmUqgYJhcnDSyG84IOkIs3TN0JNhbBcmyePREX9936HYMaj2wJ/OEf
-         DEAg==
-X-Forwarded-Encrypted: i=1; AJvYcCVqssxviSKihvB04CQ4thUlhOl5PyCO8wtnUkszo8HHYn5lM1CxzEqGzSYlMRIJ0SrmM4TGamjmhEw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw10rb4TcM6P0ZS3hrjaXFM/rUskgm8MZf84ZBDg/pcccPcfSjF
-	LukXZEQrDr1O8XPjNDuQf984gR2spavP+HT2b6O6J9VWxm2tTopgOCuDsD3sKBNRxTuDyz3+TSa
-	wrzdIMDPmFURfUit9M65BU0URFrKnb0/9LuZQXIkqaMiZGRQ2hZaxcipR5OA3N/A=
-X-Gm-Gg: AZuq6aIw79co5MnwuJURDxxcHgK49pyUZ/cLzpts6+5dmI5xGk8bDKA79T2QseAjMAC
-	nnLeBJwyjE0XzEv7luF85y02gwBGHY5Az1Sd5n5V0jt0B5XD4stQB1flauUZYIfEhWiuLp08Yx1
-	mPrZu9NJWCMoixRtkIWGaqQ6Zqm0j/5CU0IqdQ+JU5mcoDPUjyjicnFCNPiXTpvDxeglCni23C4
-	IJy0ZbHamvbNIf9pvyOzkxctV6SlqXS994/UZvAtfZULGMLFuF+zTwaBbcbIbzJrQwhlZYDrU4w
-	OZDFRZ/Mo0vzMc0tL9BhVohqTGhGQMAhfAbIlRr0zwA6FZ+C3x55Q/eQBEqRhYFnZ9d4g3lUZlE
-	rCmUgO7ltwyFRZ9AxoVbL84JJmCAavWTu6302OTXU6NQPCIwOmJ6gohHCZgHlVUI4nqvCDOdjkI
-	+j0vA=
-X-Received: by 2002:a05:6214:8095:b0:896:f9ed:bea1 with SMTP id 6a1803df08f44-8994ac78794mr12228626d6.7.1771323328776;
-        Tue, 17 Feb 2026 02:15:28 -0800 (PST)
-X-Received: by 2002:a05:6214:8095:b0:896:f9ed:bea1 with SMTP id 6a1803df08f44-8994ac78794mr12228466d6.7.1771323328379;
-        Tue, 17 Feb 2026 02:15:28 -0800 (PST)
-Received: from [192.168.119.254] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8fc7665563sm337195666b.47.2026.02.17.02.15.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Feb 2026 02:15:27 -0800 (PST)
-Message-ID: <9933eb31-b77a-4ae8-b52f-c30999e99232@oss.qualcomm.com>
-Date: Tue, 17 Feb 2026 11:15:25 +0100
+	dkim=pass (2048-bit key) header.d=gehealthcare.com header.i=@gehealthcare.com header.b="IyY6NGIR"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yAB95bj79irDnNmSnykutC4G1v6xvlZNkKW2VLAKUR8MAm/mmx2jWB1jP+sEmXetbyEYEX8AU0rItD8dI+71imgPsecjqzKx0oxDnBuIVtITgfwKf3dnZGPJkGbH1JRT02cTHIePlsk0cPLgmBZJA7AoLHQ+ET1EbMaeb5wwBQJCDiPn8Mr/tSJiQUgW10rQ8YqHoSVxU6Ct6lSbalYu+k52uj/S1BS3PQ9c1/qzBay4MgEX5zo+UK30EPKoWzmMnKUxJnXrftb0DltTdrBT2lQw731/15coNFNmgl7bYSfW/FF49xfHi0AtMfdZONOa1O+xE5AbYEwzYGbxbYTQTg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=G8i6+u/bpWa+b2K8kEUTWbYqKM2qsbXNNKPoTsSjMNs=;
+ b=M2Ib551bSrNcaSBOV6VvD/OekPTGsq883rnsGXUKMzbH64px0bcSd7N1B1CVU4MxVXCta808ZgE8A6vtewNHyk15fbSprJNyfuq0LaZNUcteh4aQN4tM3TmGu+3BEovXL9SwRG67SQ6IpsH0vQOWT7zTSZQTWtVaqWeapu97ATODPCNksZtejJvOv9LAEmij5cBO44CW0Di8+u5ubT8gGY8wcitPE9ocYgl4pypN2oG0qKT2ZHWs/tvfwJTuHTWnGkBdxTTxT5Qaa9iWzJtTift/lW9NDO0bnVxmf0p00yWqzgPY0TwCF//9q+8azta4x6KvKkZWzv4cfsbRC6/GDw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 165.85.157.49) smtp.rcpttodomain=vger.kernel.org
+ smtp.mailfrom=gehealthcare.com; dmarc=fail (p=quarantine sp=quarantine
+ pct=100) action=quarantine header.from=gehealthcare.com; dkim=none (message
+ not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gehealthcare.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G8i6+u/bpWa+b2K8kEUTWbYqKM2qsbXNNKPoTsSjMNs=;
+ b=IyY6NGIRy6pUPJPKi21lyozsMmR4j2eBq8+WqOlUNZbQ/j1fWLquJYQmflTm3XW4rQHBZajSj4gXpr6bh0VwYA79yJUY/6JqfkPUCJTUMPDXXxwj300Ahe0z2k7hM01HGUHzc9oQ3LbuSyxNvUMoLhfCpz1+pSml8yRph9VxyuZbkHJUnVBAWbQYxkzSS7rTpRhDIksx0tgKtdLDsGP6HKs4HJpBFWLX15oDmtl4854CfDvDYDQE0HbhLqEafwr06L0qR785/GwbbZmCyGrW8REXLkD9w9H9zYbvPAYbH/4SVJRO9Z0UvSygE5UafmGD8guP80CRcdTqyLmM8EKyng==
+Received: from SJ0PR05CA0015.namprd05.prod.outlook.com (2603:10b6:a03:33b::20)
+ by LV8PR22MB4710.namprd22.prod.outlook.com (2603:10b6:408:1ca::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9611.16; Tue, 17 Feb
+ 2026 10:23:29 +0000
+Received: from SJ1PEPF00002312.namprd03.prod.outlook.com
+ (2603:10b6:a03:33b:cafe::3e) by SJ0PR05CA0015.outlook.office365.com
+ (2603:10b6:a03:33b::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9632.13 via Frontend Transport; Tue,
+ 17 Feb 2026 10:23:12 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 165.85.157.49)
+ smtp.mailfrom=gehealthcare.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=quarantine header.from=gehealthcare.com;
+Received-SPF: Fail (protection.outlook.com: domain of gehealthcare.com does
+ not designate 165.85.157.49 as permitted sender)
+ receiver=protection.outlook.com; client-ip=165.85.157.49;
+ helo=mkerelay1.compute.ge-healthcare.net;
+Received: from mkerelay1.compute.ge-healthcare.net (165.85.157.49) by
+ SJ1PEPF00002312.mail.protection.outlook.com (10.167.242.166) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9632.12 via Frontend Transport; Tue, 17 Feb 2026 10:23:28 +0000
+Received: from zeus (zoo13.fihel.lab.ge-healthcare.net [10.168.174.111])
+	by builder1.fihel.lab.ge-healthcare.net (Postfix) with ESMTP id 5FF92E8F41;
+	Tue, 17 Feb 2026 12:23:25 +0200 (EET)
+Date: Tue, 17 Feb 2026 12:23:24 +0200
+From: Ian Ray <ian.ray@gehealthcare.com>
+To: Marco Felsch <m.felsch@pengutronix.de>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: imx: pll14xx: Add 756 MHz entry for PLL1443x
+Message-ID: <aZRBnD2KOP4PYP16@zeus>
+References: <20260217094152.19958-1-ian.ray@gehealthcare.com>
+ <rvz22m6k4g62gopbghfssyuwz43raxzoxeohfn7hpvbou3htoi@de2ajdoeybm5>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/6] clk: qcom: Add support for Global clock controller
- on Eliza
-To: Abel Vesa <abel.vesa@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Luca Weiss <luca.weiss@fairphone.com>,
-        Taniya Das <taniya.das@oss.qualcomm.com>,
-        Taniya Das
- <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-References: <20260216-eliza-clocks-v3-0-8afc5a7e3a98@oss.qualcomm.com>
- <20260216-eliza-clocks-v3-5-8afc5a7e3a98@oss.qualcomm.com>
- <d6392cb9-9ab2-4743-a13f-7432ec03762c@oss.qualcomm.com>
- <iepxnbk7h6yti7biozcgw4uq6l6fmtaxrgxbt2tmcjxf5x2lep@expe5bgt3oin>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <iepxnbk7h6yti7biozcgw4uq6l6fmtaxrgxbt2tmcjxf5x2lep@expe5bgt3oin>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=bqVBxUai c=1 sm=1 tr=0 ts=69943fc1 cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=HzLeVaNsDn8A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=Mpw57Om8IfrbqaoTuvik:22 a=GgsMoib0sEa3-_RKJdDe:22
- a=EUspDBNiAAAA:8 a=kkBeuq3EVEdDXXmyUhYA:9 a=QEXdDO2ut3YA:10
- a=iYH6xdkBrDN1Jqds4HTS:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjE3MDA4NCBTYWx0ZWRfXzrdhHX/VxyGv
- TcV6cC5PpCOTH8AL6yr2z+9vyO52fDlqZqm+dJ0Qyogj71RIZpz6z9raqezHnaTlvzyzy4zh1BW
- o8CXdPCKSy1TMf0rt1imjJC+O/01fD5xQxhxYueWjkqIEPcMJbk0baNwQvoB0UWplH8vhMmiuN7
- OWuk3VxhjMJFlwNdWbsYzjo8vCMn6/VYvawBd3qk0Qz1BkCgSqyn43lCVw+EI2PsBszgbNHCT13
- vYMt6mIY7TJ/6rO/ChqhoMpoh1j/gDb21eHXsL3mOqam4CmePPIzgInnr8ZCeLb7cv3f/7xWMS7
- 7ybyM3DQPTVb3OhH2x2+XD0qkbb9oDbbAYDOPIAKAA5l78uv5pyT3b69NXN60+x1/cCwVhBDgFu
- LtyT6CRlV2PZUgkiAwmt4kFWgNiBcMYVPd0tCI+nu47W7tjd4/b4bdX+uOL4twtnYFCIZdXm1XL
- K4FT3UrpMvrDmWdCmxg==
-X-Proofpoint-GUID: kGqC1gHznHZwwrX13LoaFFdvn53tCWpC
-X-Proofpoint-ORIG-GUID: kGqC1gHznHZwwrX13LoaFFdvn53tCWpC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-02-17_01,2026-02-16_04,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 impostorscore=0 lowpriorityscore=0 bulkscore=0
- priorityscore=1501 spamscore=0 adultscore=0 phishscore=0 clxscore=1015
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2601150000
- definitions=main-2602170084
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <rvz22m6k4g62gopbghfssyuwz43raxzoxeohfn7hpvbou3htoi@de2ajdoeybm5>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002312:EE_|LV8PR22MB4710:EE_
+X-MS-Office365-Filtering-Correlation-Id: d19fdb41-6486-4ec8-8153-08de6e0e97f2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?N2hqRGIxWkx6WHZqRDF1bTBveEQwUnJScUJQdGl4cU83R2VGS0gwRWVQUVVC?=
+ =?utf-8?B?NlVFUE5QY3BaejBuRmlZaEoyQXhSK3BtV0d6VGVQaEVTQTVyYXpWaHllcnYr?=
+ =?utf-8?B?a1llNG1MZFpLVk9Ic29pSSswekNYUlk5SGFWandpcTZhR3BNWFN4UVdpRmho?=
+ =?utf-8?B?WHRiYkw5OFFCVXhITnpQT3JNZi9LWDNsN01nQStnYW1aQmJvSFlzekUvMWZD?=
+ =?utf-8?B?MlV0OFprVC8vYkl0MEZVcU5DcVRDT3hhbmRvdXBXWEp2SmV3K29EVkkrYTFj?=
+ =?utf-8?B?aEs3YmNuM2E3MjNibjJNNXgxN3pRZWlKNE1xRUZwb0ZHbDdlMnMvSS9zeFRw?=
+ =?utf-8?B?UWcvYm5GVVVYRyt3alF3c2Q1OWIwZHphY1NPODZtNXNkeXdGYU94alFPaVpw?=
+ =?utf-8?B?Y1hqeXArOGtLcURleGowZDB1RkV3dEMzbS81dkZYSEhwZU9pUDVVS09WdVBN?=
+ =?utf-8?B?MVNUMDBLc2ptdXJBVW9HT3Vac1FJdEdhOXRXTW16R0JIRm5sK0Qzc1hxcHBR?=
+ =?utf-8?B?aGJSZUU4L29ndkNWallRbVFnM0IvQUJNcFFBSExMRHViRDU0b1NJWTV2ODRF?=
+ =?utf-8?B?Yk5IbFlMbUFrQ1J6dGcva0pDNEJwakFsVnMvdERZYXBZcTVuVlA5SUwveGZn?=
+ =?utf-8?B?ZkVTUmFETjNUV2o1aThQL0d4bnAwQ0RqVjU3ZXI1SUFuSWowdmMrK3hwRFlo?=
+ =?utf-8?B?a3REQlFFaE04ei9jdnViS2pDUEJ2dnhiM1RmY1Q1clFGTnZxM3NCaVlPd3R4?=
+ =?utf-8?B?MWZQZXBzSWNYOThONjZiVTRwTHpZUVVWTDNnWnIzYStMRkprcE5uRW5PUVNS?=
+ =?utf-8?B?amgvdThJRzArUjVMM3E1bmxac3pJRDhIektBVi93a0QwWlA2YVQ0ZFBSenJ0?=
+ =?utf-8?B?c05LS2ZJRGlJeFZKZzVPOXpORjhjM2JlVlhNVWN6Tm4yYW9maU5ORkx1QU9M?=
+ =?utf-8?B?QjRlakQ5UDlyQ0tSMEZMMWJneTJtY1BCL1VUS3F2RS9ZeXFzSmlSUEhVaG5F?=
+ =?utf-8?B?Nmp5YUxqdUJLckJmSUpWeFZJNnpiZHhCcWJ3azFTMHRyWnl1a0ZUQkN0TmhK?=
+ =?utf-8?B?L1ZnajhjdVZYNFpJRWRwQ05OMmhuNEJ2ZVFTM215NmduSDE4bkp6WXpxeGlI?=
+ =?utf-8?B?TWtPTkRiZlFyMjdOOU1FU3pUZ3ZCcVkxWE9tNkEyVWdHbVVwTzBJRjhCV2dF?=
+ =?utf-8?B?VE5xYkVteElLektjOUF0anRIL1V6R3E0YklNcUxTSWNOUTRZN25uMmtINlhv?=
+ =?utf-8?B?RXYwdUU1M082WTBYSGJ3TU00bit5UVpLOVpHUzl5Q2JjaWNwZFlLMUdIdWt4?=
+ =?utf-8?B?dzllR0FSak5XS1V0OGV5bkR4cTZCRGRlWDUyNUx3WmpXaTFrU3FZQ1hESHd4?=
+ =?utf-8?B?WmJJMTFBWHhOZFI5dTBTME8vVHdLaEtOWTNyT01kTHdXWlRtZGVBaDJZNUQ2?=
+ =?utf-8?B?WDFyMFoxVzFhQkpZS2VKdHpWZFFTbFJCTzI5NXh2eVNpTlJkUzdVdFBkKzF2?=
+ =?utf-8?B?TGxOSGhLbEpUd0I5ODZqeHJGYkVmZmJySG1zYlZxK2grTUdadDJuZmVTMjBK?=
+ =?utf-8?B?S0xOd2taNUR3aEowcjJXWHR4SFBROU94QW83UmliNkdFTUZWK2NOR2RZOFFB?=
+ =?utf-8?B?Ryt1Z21pTXVBV2UrMVhQSDhRR3dwWGl1M00zNUpOSWZxaUZMR3RoWERiV3ZJ?=
+ =?utf-8?B?RnFMQXFnclpEdUt4eDdkbERnZGt4aXE5bTNwRHB0dGhCUzkrNmNQM0NyVWF0?=
+ =?utf-8?B?OUVoUU85OEp5VHdsVDh4Q3JuSVZ5N3NCZ0VKamEwcW1Gbnd2Sk1FeDkzdkJp?=
+ =?utf-8?B?ZGVNMTl4Kzh6NllsRTZIS2oxeFIySUJwRXZvbzFBSzN0bm5wSFVBZ3Q4RkZj?=
+ =?utf-8?B?UGVYZWtGWmNYVm42bC9MUDJJTjlKSlBYNjRmQ2ZPaFRpeEZhbVB0R3AvRklY?=
+ =?utf-8?B?MVBKcTFKeW43Z1hMR2lrTVozVzFDcTZIcnRMcTFFOEFXV0FqY2xEdDZ0MjVv?=
+ =?utf-8?B?RzJCczI5ZW5LYkNyME0yUHdiUWtLcytnNVBiS0V1RlZ2YlVpaGlOdk1qOEVa?=
+ =?utf-8?B?Nzl2d1VrNWRlNnlkaWdmcWtLdklqSDZSOUZkTGlRcHJtUU9HT3B2bUpZRkhW?=
+ =?utf-8?B?aUFrZ1Avb1pncmg3ZUdCcmg2QVl4ckwrNkNPc3pMT0t1QzczNkdyQWp3MlRt?=
+ =?utf-8?B?akE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:165.85.157.49;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mkerelay1.compute.ge-healthcare.net;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026)(13003099007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	txik19aUbZXO1PUcQZMlE/xz2wN+2MFMWUMaPZS5BhvEcMq1S0PpdHvB8j8Uj/wDVc43wqww7Q86V2Aa9ulmUtjTSimnU3AKlF0fo1X+fCG1kuu7F6rFtbiEAuPwPD7XNMNTWHWqVme/muqaXckZybnGD1+ThNumtRUbwEnhC8SYD/8MdR3hWokmELHYK/zVZ9u6pVoon3jIyaM8QEYjs1rvVmoDCt8by/vBgtQi80afmpW8F64voPeiMlTmj6rd1kxApjZI/MsIr5Q2bYBYY0kiU3TvhL063ghyIYwC5qyJgP1dTHLe3ECuM0EBawKboCU1vAB1wjcrRhhViWnLLLNIq3PHdgilgDaAz+3zt8xMlpeBPURZUlbncGQq/RtinRx57fdBgh6bVwnNewKgNEtI6sY6AG/f9B0XYnrZ3d7x64BTYqSLOpl60//+aVSn
+X-OriginatorOrg: gehealthcare.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2026 10:23:28.7333
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d19fdb41-6486-4ec8-8153-08de6e0e97f2
+X-MS-Exchange-CrossTenant-Id: 9a309606-d6ec-4188-a28a-298812b4bbbf
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=9a309606-d6ec-4188-a28a-298812b4bbbf;Ip=[165.85.157.49];Helo=[mkerelay1.compute.ge-healthcare.net]
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TreatMessagesAsInternal-SJ1PEPF00002312.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR22MB4710
 
-On 2/17/26 8:58 AM, Abel Vesa wrote:
-> On 26-02-16 16:38:15, Konrad Dybcio wrote:
->> On 2/16/26 2:43 PM, Abel Vesa wrote:
->>> From: Taniya Das <taniya.das@oss.qualcomm.com>
->>>
->>> Add support for Global clock controller for Eliza Qualcomm SoC.
->>>
->>> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
->>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
->>> Signed-off-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
->>> ---
->>
->> [...]
->>
->>
->>> +static struct clk_regmap_mux gcc_pcie_0_pipe_clk_src = {
->>
->> This and a number of others should be struct clk_regmap_phy_mux instead,
->> cross-check with kaanapali and remember to drop the then-unused parentmaps
+On Tue, Feb 17, 2026 at 10:54:49AM +0100, Marco Felsch wrote:
+> CAUTION: This email originated from outside of GE HealthCare. Only open links or attachments if you trust the sender. Report suspicious emails using Outlook’s “Report” button.
 > 
-> Oups, missed this in v4. Will fix in v5.
+> Hi Ian,
 > 
->>
->> [...]
->>
->>> +	[GCC_CAMERA_HF_CLK_EN_SLP_STG] = { 0x26018, 1 },
->>> +	[GCC_CAMERA_SF_CLK_EN_SLP_STG] = { 0x26028, 1 },
->>> +	[GCC_CAMERA_HF_CLK_EN_SEL_SLP_STG] = { 0x26018, 2 },
->>> +	[GCC_CAMERA_SF_CLK_EN_SEL_SLP_STG] = { 0x26028, 2 },
->>
->> So SEL_SLP_STG=0x1 allows setting SLP_STG to =0x1 to assert the ARES,
->> otherwise if SEL_SLP_STG=0x0, it's controlled by the HW state machine
->>
->> I don't think modelling the prior one as a reset is valid, but I don't
->> know what considerations we need to take wrt dis/allowing hw control
->> here and what the consumer expectations are.
->>
->> Taniya, would you know?
+> On 26-02-17, Ian Ray wrote:
+> > The PLL1443x is used to implement VIDEO_PLL1 on i.MX8MP and can be used
+> > for dual-channel LVDS displays.  Add new rate 756 MHz, which divides by
+> > 7 to provide 108 MHz LVDS pixel clock, and by 2 for 378 MHz LDB clock.
+> 
+> the on-demand rate calculation doe for the PLL1443X PLLs is not
+> sufficient for you?
 
-I see you've already sent a v5, but I'd like to see the above resolved..
+Apologies! The on-demand rate calculation does indeed work. So please
+ignore this patch.
 
-Adding more context, bits 1 and 2 control the gating of the SLP_STG
-*clock*, whereas bits 4 and 5 control the reset.. I think if we don't have
-an immediate need for these, we may temporarily drop them as we try and
-figure out a way forward to avoid adding fake ABI
+(The patch was needed on kernel 6.12 IIRC, and I automatically re-based
+it on 6.18 without re-testing. Once again, apologies for the noise.)
 
-Konrad
+> 
+> Regards,
+>   Marco
+> 
+> 
+> >
+> > Signed-off-by: Ian Ray <ian.ray@gehealthcare.com>
+> > ---
+> >  drivers/clk/imx/clk-pll14xx.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
+> > index 36d0e80b55b8..84279cf9f12b 100644
+> > --- a/drivers/clk/imx/clk-pll14xx.c
+> > +++ b/drivers/clk/imx/clk-pll14xx.c
+> > @@ -63,6 +63,7 @@ static const struct imx_pll14xx_rate_table imx_pll1416x_tbl[] = {
+> >
+> >  static const struct imx_pll14xx_rate_table imx_pll1443x_tbl[] = {
+> >       PLL_1443X_RATE(1039500000U, 173, 2, 1, 16384),
+> > +     PLL_1443X_RATE(756000000U, 252, 2, 2, 0),
+> >       PLL_1443X_RATE(650000000U, 325, 3, 2, 0),
+> >       PLL_1443X_RATE(594000000U, 198, 2, 2, 0),
+> >       PLL_1443X_RATE(519750000U, 173, 2, 2, 16384),
+> > --
+> > 2.49.0
+> >
+> >
+> >
+> 
+> --
+> #gernperDu
+> #CallMeByMyFirstName
+> 
+> Pengutronix e.K.                           |                             |
+> Steuerwalder Str. 21                       | https://www.pengutronix.de/ |
+> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-9    |
