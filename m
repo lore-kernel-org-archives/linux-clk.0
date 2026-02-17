@@ -1,178 +1,145 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DCCE2857CC
-	for <linux-clk@vger.kernel.org>; Tue, 17 Feb 2026 16:16:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B3DA36D510
+	for <linux-clk@vger.kernel.org>; Tue, 17 Feb 2026 16:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771344977; cv=none; b=K6DT6Bs+vTgnSKmN6sGP80QruFdaJdKv8B+KHInk7grmUuZxOa+OayQbtWT8kbjj3ij/BY2INaYSA+7ymev05GmPN9pOJP7hR28oI0F3NijorZqdc9aueRGcdl+gulwUlp8PwNmCD3rhv3at4tYw8JZ2p3vq8M8PqBucpxOuGnQ=
+	t=1771345395; cv=none; b=oLakOur3EoDko1Yf8lL0Nv4SkJZHjuReilhwPvP8yygqGZBlzjwgTWlaJ6xdZfVR/OCAbkQrMRWKJzt1Cy8Tp0Z4deUWlS3Hz0F6Dgz/Llf0weHg9urp0ss5boe0cA7NyLAvLiT410CYTpnSAOi1oVxqDebFZUpkXHWH46ZPlCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771344977; c=relaxed/simple;
-	bh=/s1RSE8T94ukLF8gyrvHmN7vQg+U8Jmkrx6H9/OZWAs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JtrNT6RqcqRnx0IGGunZhr5+S/3r9yHkRxvFbMQ9kqzhmYOF8fnZEbPQuFxMoeWVJAQ4jIDjub3Gy/GxGkZVZ/NLhGWY0u7XGf+9NIVkx3JTeojGXLYH7TDLp8fDvpRFOc1zcVH0n0zT20uR7amJohtz83XTrYuffZ+pGy4cTDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nN+VI4Wu; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1771345395; c=relaxed/simple;
+	bh=huPv1Rq82ylXN0CnKmdOpk+HRnSzxJ99NW1Era5l7sQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VKkmk8GHvvEn6FSxrtGc9VJbFqgkFSWbS3VgiLmkkKXRMvPQFjhcPJ26Eg/5hCJ0dRdxjtr1jFeunps1GD7CC5bfLouHlIDCPIwtwqmrSCw7eeQbM9MKSiwknSEw4DcHAVlIcvZO90d/WU61C1xji4XTvhuG+nEHdjx8ifpOogM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZCNW1L6Z; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=b98GKMQ2; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nN+VI4Wu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DD22C4AF09
-	for <linux-clk@vger.kernel.org>; Tue, 17 Feb 2026 16:16:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771344977;
-	bh=/s1RSE8T94ukLF8gyrvHmN7vQg+U8Jmkrx6H9/OZWAs=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
-	b=nN+VI4WuCOwe4QC38vIXqvsap416Euw1liNmCKOikP7ZhCBV00LmzuDodGJ12Ppfy
-	 6RZoPYAIKoT8hCorpQlDODkmFQa6vY3P97n4WM9cf0FazkUpVuTsQVEaq9sRVMDCnS
-	 JiZvk5ey6/F7UU0BWXXJo9oZJxVAxHiknvlrflbtBaHCMJuAlauBt/1u0P1X7G5jBF
-	 OgOF5DNRPSGiTyE/alg8vG5ILSM8BJehojRd0cxPYHlnil8+ppOG9xVYGUqyiBd7pe
-	 r87ZeFIghE4NSSpSuBaaSsH1PzNVCM2qddK1OoUKDPh6dSCBBC9Voif6oAiVO7ZrDd
-	 xtIRbYsF6wYyw==
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-38709888abeso34492381fa.1
-        for <linux-clk@vger.kernel.org>; Tue, 17 Feb 2026 08:16:17 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWYICxGRaKNe0/TmymRT/RgNggVBu3TU+hC66uyNkSM2gZsuIgKETvfsLPPDkk0wXr++lrjS35Dq58=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwItyCb+R9NorEa6CER4Panf+FM+WMVbYNbaVuDc17aRQ5KVKvA
-	/t1i0NWUgl/UD8V7qau1onKM7qLECuZkqc+51jL9uapEfq+ZTNdB0VNLCWwCTyRe5FCczhWNXXl
-	zrVaqLGU/xq7jDoq9AigCftK7ebfU/tM=
-X-Received: by 2002:a05:651c:4201:b0:386:1ce2:11a9 with SMTP id
- 38308e7fff4ca-38810570e54mr43358761fa.23.1771344975457; Tue, 17 Feb 2026
- 08:16:15 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZCNW1L6Z";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="b98GKMQ2"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 61HDxRSh2111894
+	for <linux-clk@vger.kernel.org>; Tue, 17 Feb 2026 16:23:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=M+8icpgoWecUC2cZa/Z4FLKT
+	WEtQIY9I7RrykM8WNkc=; b=ZCNW1L6ZwI+JqjXAx9yq8205HD/tBwWorsrrKWJy
+	8tw9/HKp1dqwufsf0zjCnOJ5nqXom2blR1+n2rKG1NMPjk6KQ33f7qxJhztaNVh9
+	63PZ7DGT+Z15JpqSQm7fKVceA19Cd0mtjXdFShJ6BbIHQeahvpkI9y1TDmuZUfox
+	LSzLe1iJbu2KVhaCKkydqF5//g6Iaf3mpr4h4PrK4KTqjHLM77st+Cmj65H9Dkp/
+	KG50JYVEXwSV5B7SDpLAlX6K7BgHwk1S9sCYERLHIhQFdRrsg3ebNSjbin7P4hBO
+	jTqVjoTwS9Xk/oB5i0cHbiQAPSrnlsDsrbInqShSYiU0ZA==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cchv4hrw7-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 17 Feb 2026 16:23:13 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8c70fadd9a3so3604526885a.0
+        for <linux-clk@vger.kernel.org>; Tue, 17 Feb 2026 08:23:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1771345393; x=1771950193; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=M+8icpgoWecUC2cZa/Z4FLKTWEtQIY9I7RrykM8WNkc=;
+        b=b98GKMQ2iJ4O7fz691rKSqOdLMIedlbyLL161SC2yZWeEgzJntbUBboEdBxWIVt4lN
+         DJzToKBHJ8XwLUGsHwxV0YR2NCjsNB9gcgg27oxKRegqci9JHsQSgnH9Rpq4BlxGjE+c
+         MUkLU0efW674PFW29nkAVPuKaSfZYG+gbMrxnvvQi3k9R+fmuubQBpuBMwfBthrF0mCl
+         GEWsgsmwnCHBytQY6bQz4X5WdfztcA2sI4J2TRdTn8Ddr4+3CQ3CfLA2fouTYQiBtpkX
+         GA5XIZ9jxENQGpYVxA3GyHQ8FfRENwJq4oGeKI7InrhSJzMWTEC4CpgggwIUPFw6GkgD
+         LjsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771345393; x=1771950193;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=M+8icpgoWecUC2cZa/Z4FLKTWEtQIY9I7RrykM8WNkc=;
+        b=MrOLurE5dcZj6GzJ0yUfKLuUv/krjnUP4h6HbZCPl2fL7Yt/0p+dFTjp/HQH1z0+FW
+         Jtu2KG3/z3S6LCRdMw7p0y29v3d6tKS6+R7TKnByK63G8KpWLS63QLnZKQDgNgzAIACG
+         BF5zTrrZ+SPUU+WLou+iRmRFww2D0JRi+uwNKs6TAJIwxAOCVQrnlza8ePc//gYLWarz
+         wePN9lPlLRAqqf5dwi0RBfz41fn91nymQDs4XwT7WlJVy0asyOqEAV4uyak7o4XOgmhU
+         grGLAk6qA+njLbd782sRTBlReZ9W+mHlLaETViVYYSGqmHrJ2mTGUYCoovqzi2fhTm/M
+         /hsg==
+X-Forwarded-Encrypted: i=1; AJvYcCXTS9hcMdk+tLBKarKTRlsUggjIhy2lHVzBAlP18O3fEEYsFadIQ/GpwAC5nEh7LXHHwPDMWJgxuVc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOyf4R3hD8CouC7/TAs0iM2Qlbuqag9XJ643DBtx3YZjbs+DT3
+	R0ge2AMtVbhFhaGzDGEgGqxBZfbHFy1OKO4c7ozJzJkreowNguVeIwnNYCgD/8NsF7EmhxQckDC
+	vvGU0zln94QM851kzjkw44VjJ/KCxmTPSkWU/SVB2ZfNWlPAyL7StOp6XcqNa5s8=
+X-Gm-Gg: AZuq6aK406W/iCTKVWpC6uOWJBHX1B7GLVKf0YhyLskJz/VaFuEUTwzIF++EwTCfuwP
+	sp2M1TiAKAZUjLNpuXE7OqNRyI1x+T75p8MaHVojvRlDV/QbLf6Lx5W2hpDRohX5/6mc3IbHSKA
+	89olu9sKO8fpy2GLdc7kTLm04/eequMomDlaNVl18uExFZyHQgNNEdrbYRUJegkOQz8iYDYzjV2
+	C397st0D31JQUu5Rawe1erq2hDUGnueTWJBW90oElg7T83sdUmVHyZGR2nCtb8zdsOaNzabY226
+	uuQ/+/3svSTsIpJfbLtZ6V78wjocLSg6D70zk71ygr/fJBV2NqXi5eINu6fgL4xQ7B/PWooAJrC
+	d3FHe+1dkmUoB0okWSt7E1Rqn1nDRCFAE6MmEHSXH/ZE2sAjV+P2xo6JyrpwmGJ57f94EpS+TZS
+	epIt5qFpzuUz/PaQTLAXBIKZ4Ya8NikCe9ryk=
+X-Received: by 2002:a05:620a:1a04:b0:8ca:1240:4990 with SMTP id af79cd13be357-8cb4c041a5amr1410692685a.86.1771345392899;
+        Tue, 17 Feb 2026 08:23:12 -0800 (PST)
+X-Received: by 2002:a05:620a:1a04:b0:8ca:1240:4990 with SMTP id af79cd13be357-8cb4c041a5amr1410686585a.86.1771345392251;
+        Tue, 17 Feb 2026 08:23:12 -0800 (PST)
+Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59e5f5636b3sm3847209e87.14.2026.02.17.08.23.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Feb 2026 08:23:11 -0800 (PST)
+Date: Tue, 17 Feb 2026 18:23:10 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Taniya Das <taniya.das@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] clk: qcom: De-acronymize Glymur SoC name
+Message-ID: <jfzhybhuh5doxxiymznhizrsqft2ywrtfcpuilmsz7gumsh7h3@o5ocoxq2qkpd>
+References: <20260217130047.281813-3-krzysztof.kozlowski@oss.qualcomm.com>
+ <20260217130047.281813-4-krzysztof.kozlowski@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260217093004.3239051-1-wens@kernel.org> <20260217155717.0b99c310@orionap.fritz.box>
-In-Reply-To: <20260217155717.0b99c310@orionap.fritz.box>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Wed, 18 Feb 2026 00:16:02 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65tO56=7pJtaB8WaW8O9A9m0EGa_XLW_Jj-HN8pEHtvEg@mail.gmail.com>
-X-Gm-Features: AaiRm53DUWoECi_d8aGElFwN4vbWdscHSmspOWe2xrny_hmVpKJsk2TliQhvzuw
-Message-ID: <CAGb2v65tO56=7pJtaB8WaW8O9A9m0EGa_XLW_Jj-HN8pEHtvEg@mail.gmail.com>
-Subject: Re: [PATCH] clk: sunxi-ng: sun55i-a523-r: Add missing r-spi module clock
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Jernej Skrabec <jernej@kernel.org>, Samuel Holland <samuel@sholland.org>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-sunxi@lists.linux.dev, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260217130047.281813-4-krzysztof.kozlowski@oss.qualcomm.com>
+X-Authority-Analysis: v=2.4 cv=eYAwvrEH c=1 sm=1 tr=0 ts=699495f1 cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=HzLeVaNsDn8A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=Mpw57Om8IfrbqaoTuvik:22 a=GgsMoib0sEa3-_RKJdDe:22 a=EUspDBNiAAAA:8
+ a=Rh8BIR2qzSpX2dRZ-WwA:9 a=CjuIK1q_8ugA:10 a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjE3MDEzMyBTYWx0ZWRfX7JBxg24Xbluz
+ Xir5akEGU8l3h/GvkgbTInjBeWuDL26TNpdNLzLGJcjl6XWnpxDdjuAbuN91osxqiK9WYXksvXT
+ iQezHhXbX99ORHdAnanUBq0q99ZSUbqgLcWwAt4DmW/6RTsDWWfCI1X5/RV2jNxnTCH5XGCtTRh
+ sIRmFbi6NIVywKhNZbMvZlTj+LJwQ1k2tIoDoebMyE/DoKqRS4tfGfGFGu8Nai/l7LTMMkZAH3j
+ SWmj/hrpfuZgvMM31nF6kfJu3SNuvIjpXncGs/ACMQJhh0af59xk429PGEG3iKkwnlKVhB+q8nT
+ WTOP9jeiL0HPhp+41JWyZZ5sTyZH+Es1o99RmEIjF5ak7P+2HT+oPtWxj/Xwaa3gcAqWREZZP5z
+ Tz0BqVGGKVXgvlecz1nEFWzopauyNs1cXOSvWHMFPGvSBxvNvFL9s69g2N8ZWCQ5e1R27+Q+Z/L
+ mZI+v7ynOGRrOVQmgag==
+X-Proofpoint-GUID: 0x0miXmQytdjo1NJgz9-oGnwmhz2T069
+X-Proofpoint-ORIG-GUID: 0x0miXmQytdjo1NJgz9-oGnwmhz2T069
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-02-17_02,2026-02-16_04,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 bulkscore=0 suspectscore=0 priorityscore=1501 malwarescore=0
+ phishscore=0 impostorscore=0 lowpriorityscore=0 adultscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2602170133
 
-On Tue, Feb 17, 2026 at 11:57=E2=80=AFPM Andre Przywara <andre.przywara@arm=
-.com> wrote:
->
-> On Tue, 17 Feb 2026 17:30:03 +0800
-> Chen-Yu Tsai <wens@kernel.org> wrote:
->
-> Hi,
->
-> > When the PRCM clk driver was added, somehow the r-spi module clock
-> > was skipped over.
-> >
-> > Add it so that r-spi can actually work.
->
-> The patch itself looks fine, compared against the manual, so for that:
->
-> Reviewed-by: Andre Przywara <andre.przywara@arm.com>
->
-> But I noticed one thing below....
->
-> > Fixes: 8cea339cfb81 ("clk: sunxi-ng: add support for the A523/T527 PRCM=
- CCU")
-> > Signed-off-by: Chen-Yu Tsai <wens@kernel.org>
-> > ---
-> >  drivers/clk/sunxi-ng/ccu-sun55i-a523-r.c | 17 ++++++++++++++++-
-> >  1 file changed, 16 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523-r.c b/drivers/clk/sun=
-xi-ng/ccu-sun55i-a523-r.c
-> > index 0339c4af0fe5..db0e36d8838e 100644
-> > --- a/drivers/clk/sunxi-ng/ccu-sun55i-a523-r.c
-> > +++ b/drivers/clk/sunxi-ng/ccu-sun55i-a523-r.c
-> > @@ -83,9 +83,22 @@ static SUNXI_CCU_MUX_DATA_WITH_GATE(r_pwmctrl_clk, "=
-r-pwmctrl",
-> >  static SUNXI_CCU_GATE_HW(bus_r_pwmctrl_clk, "bus-r-pwmctrl",
-> >                        &r_apb0_clk.common.hw, 0x13c, BIT(0), 0);
-> >
-> > -/* SPI clock is /M/N (same as new MMC?) */
->
-> Ooops, looks like I saw that clock, but someone managed to dodge it :-(
-> Sorry about that.
->
-> > +static const struct clk_parent_data r_spi_parents[] =3D {
-> > +     { .fw_name =3D "hosc" },
-> > +     { .fw_name =3D "pll-periph" },
-> > +     { .name =3D "pll-periph0-300M" },
-> > +     { .name =3D "pll-periph1-300M" },
-> > +     { .name =3D "pll-audio" },
->
-> Looking a bit closer, all the PRCM PLL-AUDIO clocks in the manual refer t=
-o
-> AUDIO1PLL4X, which is provided by the MCU CCU, not AUDIO0PLL4X provided b=
-y
+On Tue, Feb 17, 2026 at 02:00:49PM +0100, Krzysztof Kozlowski wrote:
+> Glymur is a codename of Qualcomm SoC, not an acronym.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> ---
+>  drivers/clk/qcom/Kconfig         | 12 ++++++------
+>  drivers/clk/qcom/dispcc-glymur.c |  2 +-
+>  drivers/clk/qcom/gcc-glymur.c    |  2 +-
+>  drivers/clk/qcom/tcsrcc-glymur.c |  2 +-
+>  4 files changed, 9 insertions(+), 9 deletions(-)
+> 
 
-That's weird though, given that pll-audio1 only has /2 and /5 outputs.
-
-The BSP code from https://github.com/radxa/allwinner-bsp.git also shows
-pll-audio0-4x as the parent for the r_spi module clock. It does show
-pll-audio1-4x as the parent for the ahbs clock, but "pll-audio1-4x" is
-nowhere to be found.
-
-So I think it's an error. Moreover, I think we might have discussed this
-on IRC at the time?
-
-> the main CCU. So we would need to change the DT? I wonder if that breaks
-> boots with kernels which didn't know the MCU CCU yet (v6.15-v6.17)?
-
-Did you mean new DT with old kernel? I think we don't really support that?
-
-But even if you did do that, AFAIK the clk parent resolution is done
-opportunistically, so if this one is missing, it would be fine as long
-as no user is directly trying to select it with clk_set_parent(); and
-even if they did, it would probably fail?
-
-I could be wrong though.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
 
-Anyway, thanks for being thorough.
-
-
-ChenYu
-
-> Cheers,
-> Andre.
->
-> > +};
-> > +static SUNXI_CCU_DUALDIV_MUX_GATE(r_spi_clk, "r-spi", r_spi_parents, 0=
-x150,
-> > +                               0, 5,         /* M */
-> > +                               8, 5,         /* P */
-> > +                               24, 3,        /* mux */
-> > +                               BIT(31),      /* gate */
-> > +                               0);
-> >  static SUNXI_CCU_GATE_HW(bus_r_spi_clk, "bus-r-spi",
-> >                        &r_ahb_clk.common.hw, 0x15c, BIT(0), 0);
-> > +
-> >  static SUNXI_CCU_GATE_HW(bus_r_spinlock_clk, "bus-r-spinlock",
-> >                        &r_ahb_clk.common.hw, 0x16c, BIT(0), 0);
-> >  static SUNXI_CCU_GATE_HW(bus_r_msgbox_clk, "bus-r-msgbox",
-> > @@ -138,6 +151,7 @@ static struct ccu_common *sun55i_a523_r_ccu_clks[] =
-=3D {
-> >       &bus_r_twd_clk.common,
-> >       &r_pwmctrl_clk.common,
-> >       &bus_r_pwmctrl_clk.common,
-> > +     &r_spi_clk.common,
-> >       &bus_r_spi_clk.common,
-> >       &bus_r_spinlock_clk.common,
-> >       &bus_r_msgbox_clk.common,
-> > @@ -169,6 +183,7 @@ static struct clk_hw_onecell_data sun55i_a523_r_hw_=
-clks =3D {
-> >               [CLK_BUS_R_TWD]         =3D &bus_r_twd_clk.common.hw,
-> >               [CLK_R_PWMCTRL]         =3D &r_pwmctrl_clk.common.hw,
-> >               [CLK_BUS_R_PWMCTRL]     =3D &bus_r_pwmctrl_clk.common.hw,
-> > +             [CLK_R_SPI]             =3D &r_spi_clk.common.hw,
-> >               [CLK_BUS_R_SPI]         =3D &bus_r_spi_clk.common.hw,
-> >               [CLK_BUS_R_SPINLOCK]    =3D &bus_r_spinlock_clk.common.hw=
-,
-> >               [CLK_BUS_R_MSGBOX]      =3D &bus_r_msgbox_clk.common.hw,
->
->
+-- 
+With best wishes
+Dmitry
