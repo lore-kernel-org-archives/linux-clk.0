@@ -1,123 +1,99 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB502848BB;
-	Tue, 17 Feb 2026 13:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81712DF136
+	for <linux-clk@vger.kernel.org>; Tue, 17 Feb 2026 14:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771336261; cv=none; b=F3BQ/+QXQGJdlmSbMCCTzyH5d7IbHZr1Zf94K/PVOe7A4R69P9e3GFbNTlSr0QFbRlpYkRCBpeftOWu1Uon7VkJtiskxmcOUiR0mOzRfZWmo89K5CDpE6KSRu5pVbKxzxPzhO0jErVMPPWks87S9RnDhJcbRG1qv3Ma3dFJsPCU=
+	t=1771339696; cv=none; b=rY6TljOWBUBdSs/5gcKUhBWHewLqreNb2xSUL/aTloto8zSotrBhqHbxpUGIzMwF9BLreM0XtJezwJ3nrcN4r+mACgz0h85E6ik1RHhhFuy5T+EsGIZJVvFYMJXq6i+5Ft2kXZupuevZuHqANZ22XwWpffQUi7zNs1QGJ6EeB2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771336261; c=relaxed/simple;
-	bh=nSCO4o0qkMzdNo830mkU5cf8xxulV9CioBU1t1CATmE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OXHe+CYJ0klaJJJEGibuMr1lKZ4diS+irQK3nz59Oi65mPz+NqG/dd+K/h34lzWY7UaLxUM6sVmsJKq332Im/hSps6AMuc1cBJc3JGhct0pqaX20DksMzr0cDvnmxwV83AH1xrHyKBo7jllGmqihZa4VxGWunTpvdL8lY+AlkQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X+IBbCPs; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1771339696; c=relaxed/simple;
+	bh=XWrOUlc6WmN3rEw2oGS4C02DYkL+sibKsPW3R80wFhQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Xns4fNJCPVtzpPyRRQPslRmbxaeFKV17ipgj5BR0Z246M5Wj3Tb2dlKoaXvl1UHg+MAdGbyoVtGOuIrfibxhM+uksrc5EXR6de/6Uyc+UFCQPWaj0omJiLpVtMZ5oA5wc6chkhe9m0ZC0ziZxjoKRhVOfJgiuhNQ35GxiDnle6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QhtVYoRr; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X+IBbCPs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5821C4CEF7;
-	Tue, 17 Feb 2026 13:50:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771336261;
-	bh=nSCO4o0qkMzdNo830mkU5cf8xxulV9CioBU1t1CATmE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=X+IBbCPsbjUUjam7Et7M7v2O3eutPHd12aHG/kC0F7JVPbXTAVaYf8aCK0+w+dZOx
-	 sl0vHglzqqP9jDeaE9usJEVs8zbhmGuWFmaxYpEGBTum1s8rj+Z3GDbkacCvCLk0Qj
-	 NKUmR2qlr5Xw05SMm9GHQr0KzfaC+cEgZVDDoZ9Xtbyfl/14UBigH+ko4qWvoJwX1M
-	 SOIbit6AaPZ/UbbrxR6mc8MM6JeFgenECWrLVCKwFeoOiJe02Q1WHo768iIqxhyuu5
-	 xro3mCOSVBm0vzTupjFD4RCcpo9242LQ2ynllV7nQHVZxMcCzknupdFKObD1FRCUNs
-	 yOF+wI9Ig1sNQ==
-Message-ID: <1c25ae88-d99a-4e7e-85b9-1a8060133411@kernel.org>
-Date: Tue, 17 Feb 2026 14:50:55 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QhtVYoRr"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4833115090dso38901195e9.3
+        for <linux-clk@vger.kernel.org>; Tue, 17 Feb 2026 06:48:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1771339693; x=1771944493; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XWrOUlc6WmN3rEw2oGS4C02DYkL+sibKsPW3R80wFhQ=;
+        b=QhtVYoRrSRUo+jlulEKDVQJ9OHO1kFS9v4nnegvG731soK1x6E7Lbkiq4fK2EE7CXL
+         buSqE7tAWN+Qu4chEZ+sMwn6NSWZ4AoHUSKwU3XHX3jbVUzop12WhoXLOcFaByiLxS7I
+         cVHOqm1ETNa61xv546tVZG90Ob+fMjMqsNvj84eCtBt8xNP9TuBhq9z5NlR0YtmN2y8A
+         kW3lbcuGpD4L8QV2b6KeQHMSKuoHckvrrEnngYMufh2yivbs9UddrGF9y9nXb5+04RNj
+         XCv/eEDVjYdzAkUuoX5YDalkpSdTRohL+ikjG6slwnH5u56zip4Bg1QBUIRdMVEJ41b4
+         yG9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771339693; x=1771944493;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=XWrOUlc6WmN3rEw2oGS4C02DYkL+sibKsPW3R80wFhQ=;
+        b=Pcw+8Ehq4ruI1Glv+t4/xhWOnWlFakehT0peXN3H/CB9+JPMYV1ymk97vjgrsY8361
+         owJdt3d6gxtCoMiiux+gksgAzTRiiSaduZOYPAhuVSSajzXHrpCBpPGhvEETZLhFyIFi
+         fExjpThAyr0GDf8Lv3kPA2nDRRLXNr9O6IPcCgGyL0xYmuRO4hZ26tb4c7r7T2zBktJ+
+         JlgY8vPHC1okQic+ZNpyAi5JUmmpXc1f4SrOYZ65WA+DqUjh4r4E0Hf8NCiIS0B16F46
+         e1ucz9fYg6kGF1+65bFg3XwUpL+i6hLucqhEX9fC++3aTNuKIXENxNU4GsnqSY+pkLFs
+         fqAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVDqa+3IEsSe1GCQ4bO+G5sMGFQRZ/CwW6vhfZS/PV0BgooRN5ST1CRyJJWAvGlx1rmud6vHEgYK4U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfFXWPVrg7Yd7xLPXdfekr+9XQCM32aR/Xp6BkGaw1JZUX+x6c
+	3Vrj5xu0iOMNVmK9i0OAwgqppebFyro9BCU5IR1YbptzsWQvgna19PJxtP2E8w==
+X-Gm-Gg: AZuq6aJsH6mognbyBumdIExDjMF/Oxif2EEr5DAS7z0cJHkMsBaLjUXkmIGxqBOhQp3
+	YF502mSKtWD/tb6qilYHx7hTyc2amRCDPupDcii9g4VwmXnmP0MZ6pzs7MRBtgxvG7b2rcFYy8C
+	ttJEkz+XBtdsuK7i0eAs+pSbkeyJyZp9Zgs6UV4/b/L+p/b+2NopXqr4Go4xN4iRzxDGz1CNuqA
+	YjEpF676UeirZWTyqVP6UQ6lPfsThDF+Iyy2J7NhjPfmfXAkz6KWCGiGvcyLX4uqSAVLntjCutz
+	PzKrhJcgNY+7l004xHmzFrqj0mHRSVLqKwAY8dfsYOrxU/A2eiCACATSr6uv6j2mNC/ROZjVZc5
+	GwUxYUEKzr1cr1z9UR/6lau045VfT2VIBUYQ7HnBwjLatDSRp1PMlOvmrWZgIs4ngWXfd8zkrCg
+	yG3TGhUzxPAbXnj+tmzeidMxTYdbke+jaW+NIshJjVayhDzwQ4KNTbpDmP4QF38+NWkXQVpGr0N
+	9vwI0xFtLS1THstSYQ=
+X-Received: by 2002:a05:600c:1e1d:b0:477:8985:4036 with SMTP id 5b1f17b1804b1-48373a15f31mr228213415e9.1.1771339693045;
+        Tue, 17 Feb 2026 06:48:13 -0800 (PST)
+Received: from jernej-laptop.localnet (86-58-126-118.dynamic.telemach.net. [86.58.126.118])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48370a4e149sm164687075e9.2.2026.02.17.06.48.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Feb 2026 06:48:11 -0800 (PST)
+From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To: Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej@kernel.org>,
+ Samuel Holland <samuel@sholland.org>, Stephen Boyd <sboyd@kernel.org>,
+ Chen-Yu Tsai <wens@kernel.org>
+Cc: linux-sunxi@lists.linux.dev, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH] clk: sunxi-ng: sun55i-a523-r: Add missing r-spi module clock
+Date: Tue, 17 Feb 2026 15:48:10 +0100
+Message-ID: <6238719.lOV4Wx5bFT@jernej-laptop>
+In-Reply-To: <20260217093004.3239051-1-wens@kernel.org>
+References: <20260217093004.3239051-1-wens@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/6] clk: qcom: Add support for Global clock controller
- on Eliza
-To: Abel Vesa <abel.vesa@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Luca Weiss <luca.weiss@fairphone.com>,
- Taniya Das <taniya.das@oss.qualcomm.com>, Taniya Das <quic_tdas@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-References: <20260216-eliza-clocks-v3-0-8afc5a7e3a98@oss.qualcomm.com>
- <20260216-eliza-clocks-v3-5-8afc5a7e3a98@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20260216-eliza-clocks-v3-5-8afc5a7e3a98@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On 16/02/2026 14:43, Abel Vesa wrote:
->  config CLK_GLYMUR_DISPCC
->  	tristate "GLYMUR Display Clock Controller"
->  	depends on ARM64 || COMPILE_TEST
-> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-> index 6b0ad8832b55..6ec63a5d4363 100644
-> --- a/drivers/clk/qcom/Makefile
-> +++ b/drivers/clk/qcom/Makefile
-> @@ -21,6 +21,7 @@ clk-qcom-$(CONFIG_QCOM_GDSC) += gdsc.o
->  obj-$(CONFIG_APQ_GCC_8084) += gcc-apq8084.o
->  obj-$(CONFIG_APQ_MMCC_8084) += mmcc-apq8084.o
->  obj-$(CONFIG_CLK_GFM_LPASS_SM8250) += lpass-gfm-sm8250.o
-> +obj-$(CONFIG_CLK_ELIZA_GCC) += gcc-eliza.o
+Dne torek, 17. februar 2026 ob 10:30:03 Srednjeevropski standardni =C4=8Das=
+ je Chen-Yu Tsai napisal(a):
+> When the PRCM clk driver was added, somehow the r-spi module clock
+> was skipped over.
+>=20
+> Add it so that r-spi can actually work.
+>=20
+> Fixes: 8cea339cfb81 ("clk: sunxi-ng: add support for the A523/T527 PRCM C=
+CU")
+> Signed-off-by: Chen-Yu Tsai <wens@kernel.org>
 
-Scroll few lines above. What comment is there? To keep things ordered.
-
-This does not go after GFM.
-
->  obj-$(CONFIG_CLK_GLYMUR_DISPCC) += dispcc-glymur.o
-
+Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 
 Best regards,
-Krzysztof
+Jernej
+
+
