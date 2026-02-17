@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5578338590;
-	Tue, 17 Feb 2026 12:13:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7920D28D8DB;
+	Tue, 17 Feb 2026 12:39:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771330415; cv=none; b=rd9CKbVx7fxUybFOJFNDVQVgvOZHt7DbpNSLGy5vDSBflouR20CS8VVNCZRAIQBaQepY2S+J7kdSeh1NNM0ddApGKxfe8Ek5JlWj5iLs5ffraKmMmUdQDYsXThDJVSlTOVPQw6kdTobMtyNGq4I3emSKo9s2btCgL87OoTH9ess=
+	t=1771331979; cv=none; b=ABuu00PBHUQxVJyF649BW3KkaZi4e2BivCM9L6jmJG0Xd5z3aCBNlxMFxnQmfZmYRzUUah7F2Nfgs0RMnwilucINm1ajwPdvifV8ZABN/sEjd7+WKDzjSbluUh6pZLdbEqZLAsi1zaOO1iYF00/exvK66IlqXmAVXN9iwDNVl4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771330415; c=relaxed/simple;
-	bh=66fkRRWSnA15EdP6wDQO6snlgWoJLWLBikp6ptrEsKc=;
+	s=arc-20240116; t=1771331979; c=relaxed/simple;
+	bh=LLYf0at6RGo6TNuIGcbEKML7gNSPDGWF6UuTzG7b0oU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IF/gZKVHhPX4IAbhZT7jR/Zr3YxjvqLl37HzSE3uSlVAU1Uixi10cKupGTMeVNdBkuEcL1EIfIyZhTbVQqcH/7fFuj+77KlUe1AIX0onDUq4dEnfJ0lMG6ChNve+q6voRur7AU/w+WlReDCxSonCI5Cy00+usA6nWwLsSYQhm8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jq4P/jOb; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=TRIs/VHc3zLCPgm+jM3++OgsaHrHZU192dN/uVxbDve5hOKxs1v3M8oZqmeGZGK/oTwIK3yPUhU6uuGhS2qTIJiXIh98RGUJZVAABVgwPVHnQEyTRcLkFCfNEbl/HT7gZyvmGQwA0MEaY+Icup+6v9+Lu5XMzvbjUEIzyp3JuVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UT4S7+jo; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jq4P/jOb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8A1CC4CEF7;
-	Tue, 17 Feb 2026 12:13:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UT4S7+jo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFFBDC4CEF7;
+	Tue, 17 Feb 2026 12:39:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771330415;
-	bh=66fkRRWSnA15EdP6wDQO6snlgWoJLWLBikp6ptrEsKc=;
+	s=k20201202; t=1771331979;
+	bh=LLYf0at6RGo6TNuIGcbEKML7gNSPDGWF6UuTzG7b0oU=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Jq4P/jObll0BRthLOPvT5YX+WpPPzZp3Sl0U2OrFlrZOWbllTign6kR/NRSO2QFz9
-	 ChMyn7kJL0wVpqF71K8jeb+gZ0WsSsWzVvhWQPIZuuk0ymwqo08b+3Q7y9ViQEzJNG
-	 AcdcfNpywB1ASd2qBFs2gKKU2wIM9hvyEc1dbedj5q+CgX+W5EoTBy/q7ThSQu/VtL
-	 CagjExM2QZjJy2NAR18huPwwsg7QsBreGUZyW5IT7SVm7GTg0nhEilwmlp/RKImU0Z
-	 MwH8kmUKjMj75ErCfhU1EOLpd0HzHHU06uC5DEYW9rRLcB0IWuGD9SzAaDCV/DzVM3
-	 fUD8EKqQGQ3Cg==
-Message-ID: <b27ed4eb-bbdf-42fd-a54a-0c893de504c0@kernel.org>
-Date: Tue, 17 Feb 2026 13:13:31 +0100
+	b=UT4S7+jo8hENpS+XEy/C1k9MdIkuVVvGuwMsRNPmFYWXnKcAJNKNxn5HDzJ4Ybugp
+	 QL64EDcaoTQsNsdYz8t4kHjMkOdOibrb3dQTyCvMx1TFNOP99U/SDNhuYbOOEVlUOE
+	 S0qN2q7Evb8mqZJ6F7lOLinqoLFn5kowPq0HbR8Yiq2gRPp3mHnIUpY9oGi7J57jgu
+	 mKhYCzRPL1ODd40dM8YQaop8GOoMRbSsl1q4M18vvdxXhSzWXcME8v1zdCs9r5NbTs
+	 mzBt8PY/9C9CMtgjRxFTi7nUIbMIShGD9D26BYyuFlZJkIe8v2w9EN34FaGJrXsEy5
+	 0bcSlD2BjeFaA==
+Message-ID: <d81849fd-dc32-44fb-b523-2026f2c0db52@kernel.org>
+Date: Tue, 17 Feb 2026 13:39:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,17 +35,23 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] ASPEED clk updates for v6.20
-To: Billy Tsai <billy_tsai@aspeedtech.com>, Stephen Boyd <sboyd@kernel.org>,
- "bmasney@redhat.com" <bmasney@redhat.com>
-Cc: Ryan Chen <ryan_chen@aspeedtech.com>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- linux-aspeed <linux-aspeed@lists.ozlabs.org>,
- Linux ARM <linux-arm-kernel@lists.infradead.org>
-References: <OSQPR06MB72521F40C1F2CD858B8D83FB8B9EA@OSQPR06MB7252.apcprd06.prod.outlook.com>
+Subject: Re: [PATCH RFC 5/8] arm64: dts: qcom: Remove inexistent TCSR_CC
+To: Konrad Dybcio <konradybcio@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+ Taniya Das <taniya.das@oss.qualcomm.com>, Linus Walleij <linusw@kernel.org>,
+ Melody Olvera <quic_molvera@quicinc.com>, Taniya Das
+ <quic_tdas@quicinc.com>, Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
+ Jishnu Prakash <quic_jprakash@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org, Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, stable+noautosel@kernel.org
+References: <20260202-topic-8750_tcsr-v1-0-cd7e6648c64f@oss.qualcomm.com>
+ <20260202-topic-8750_tcsr-v1-5-cd7e6648c64f@oss.qualcomm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -91,71 +97,39 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <OSQPR06MB72521F40C1F2CD858B8D83FB8B9EA@OSQPR06MB7252.apcprd06.prod.outlook.com>
+In-Reply-To: <20260202-topic-8750_tcsr-v1-5-cd7e6648c64f@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 29/01/2026 03:36, Billy Tsai wrote:
-> Hi Stephen,
+On 02/02/2026 15:57, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 > 
-> Please pull the following ASPEED clock driver updates for v6.20.
+> On SM8750 specifically, the block which provides various reference
+> clocks does *NOT* live inside TCSR, but rather TLMM.
 > 
-> The series includes:
-> - Reorganization of ASPEED clock drivers under drivers/clk/aspeed/
-> - MAINTAINERS updates for ASPEED clock drivers
-> - New ASPEED clock driver support
+> With the former now being able to properly expose them, switch over to
+> the proper source.
 > 
-> The branch is based on v6.19-rc1 as requested.
+> Now, the TCSR still exists as a block for various tunables and
+> switches, however the prior misuse resulted in its 8750-specifc
+> compatible being already in use. With it freed up, it is now free again
+> to be described properly.
 > 
-> Thanks,
-> 
-> Billy
-> 
-> ----------------------------------------------------------------
-> The following changes since commit 8f0b4cce4481fb22653697cced8d0d04027cb1e8:
-> 
->   Linux 6.19-rc1 (2025-12-14 16:05:07 +1200)
-> 
-> are available in the Git repository at:
-> 
->   https://github.com/billy-tsai/linux.git tags/aspeed-clk-for-v6.20-rc1
-> 
-> for you to fetch changes up to dc345e213f16d3ae5dce01bb0002e46bc4eaff4c:
-> 
->   clk: aspeed: add AST2700 clock driver (2026-01-28 14:58:47 +0800)
-> 
-> ----------------------------------------------------------------
-> ASPEED clk updates
-> 
-> This pull request contains the following changes:
-> 
-> - Reorganize ASPEED clock drivers under drivers/clk/aspeed/ and update
->   the corresponding Makefiles and Kconfig entries.
-> 
-> - Add MAINTAINERS entries for ASPEED clock drivers to reflect current
->   ownership and review responsibilities.
-> 
-> - Add support for the AST2700 clock controller, including initial clock
->   definitions required by the SoC.
-> 
-> Patch series:
->   https://patchwork.ozlabs.org/project/linux-aspeed/cover/20251224-upstream_clk-v16-0-8c1318f56c3c@aspeedtech.com/
-> 
-> Reconstruct with:
->   b4 am 20251224-upstream_clk-v16-0-8c1318f56c3c@aspeedtech.com
-> 
-> ----------------------------------------------------------------
-> Ryan Chen (3):
->       clk: aspeed: Move the existing ASPEED clk drivers into aspeed subdirectory.
->       MAINTAINERS: Add entry for ASPEED clock drivers.
->       clk: aspeed: add AST2700 clock driver
+> Fixes: 068c3d3c83be ("arm64: dts: qcom: Add base SM8750 dtsi")
+> Cc: <stable+noautosel@kernel.org> # complex dependencies, no immediate gain
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sm8750.dtsi | 22 ++++++++--------------
 
 
-All of these have incomplete DCO which triggered next warning. If you
-apply patches and send them in pull request, be sure you understand DCO
-(see submitting patches).
+This will break all the users of this DTS and commit msg is silent about
+this. It's also silent on actual bug being supposedly fixed here.
 
-https://lore.kernel.org/all/aYHcXJPhxIVgvAp9@sirena.org.uk/
+So again - as explained many times to other Qualcomm engineers - you
+cannot just break the users silently and without justified reason.
+
+That's RFC, so maybe you planned to rewrite it later, dunno. That's why
+I did not review the rest.
 
 Best regards,
 Krzysztof
