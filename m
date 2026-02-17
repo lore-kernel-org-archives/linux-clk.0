@@ -1,45 +1,48 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651FA22541B;
-	Tue, 17 Feb 2026 01:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4AD231A3B;
+	Tue, 17 Feb 2026 01:01:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771290082; cv=none; b=QLLsA2LbFjezeRXgzKrWYhJbd3KCawG/P7LXS7fTZyxZ1l/OPHhQ8NAAnKqmihLaR7CCmRbbVnWYDLmmo+d9G4Tz9C8fGbeaAYuLxILy25hqQvVyJQHkPgftg1VwfH4wlnQtST6bIGN6s4qELWotsR/iefw1D52Maa0USRyvBKM=
+	t=1771290085; cv=none; b=Ivw5/197GdvQAf6X+ZW1jv/fnhDfR6kjAbcOOjQJ9eYUwTIASy7xF9xHvGk5LR6Zwrmo8XlzF2XQIyW3tuDOkYZH19n/EwOKPqSxBicjSjzmVPSytP09d5nmJQDb0cDoJWrBAnES6eJyNzS45w7nLET6n3MVxxwmvsyBD0EAraI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771290082; c=relaxed/simple;
-	bh=aBlsoCKqIY1rr8x2s305PSeMwbnfVD32M/6FirNmeEU=;
+	s=arc-20240116; t=1771290085; c=relaxed/simple;
+	bh=3CQR8MNuLy3NsGjQSjNTddHYGKdbU4uYpOwzcupblxg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UWbPdO3Y7WTYwylJ0Om6Zt3CsjI56XBQ+9heNrcRiZ4pGsO+TPcGKFGl0cp6PJ55BRYtGHiF/gNZZBzJfCBDL3mDHCnIJqdPYt2MD3vrccokBgcjxo4AN1WJ5v326p3gcbi2M+akCzi2Vz+KBGCcv/9IqcuFB9qHmjXXJOoJOY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eFlKrI5R; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=ucpbeOgW0iHSCGxjj8/CJdvn2vSRtoDFIh/0PmhbdEbUSeTqJ4mmf+mjamLrkBsDtuHFpZL5z+lXgcj/pqfTT4O1gj1GBb0OAhWdQ8YdGk5eubzMfAltvP1tYeqLkr1bBizf5Bf9ddKMO6Gi/nx0n96UJtzv4PlTHSx3lKyk5aY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bwp48MMi; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eFlKrI5R"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30749C19423;
-	Tue, 17 Feb 2026 01:01:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bwp48MMi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D46A6C2BC87;
+	Tue, 17 Feb 2026 01:01:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771290082;
-	bh=aBlsoCKqIY1rr8x2s305PSeMwbnfVD32M/6FirNmeEU=;
+	s=k20201202; t=1771290085;
+	bh=3CQR8MNuLy3NsGjQSjNTddHYGKdbU4uYpOwzcupblxg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=eFlKrI5RgHc+GLaQTN75d4zO4QH9zfsjTvHGYxwkRrTnQC1XWsZ5DY5b5bz8oIkJk
-	 dhHYC7j3wI0RfDGvjjgb7Zn6LWjrWjp+GmBWwvtWrhllyeQzX2WH+N1WHLufX6K1xr
-	 ss07hXcYY3M1T8N22j4HMdV0ZZoosm0XJk9QLpOn0Tb9g78p9S/wvZRaa9EO3ZxQkw
-	 36/YFAEi9vXNeJGf8hnlnTc/dCyCfRHDhPMKy+0WoTw2NslUwQB+yf7C7MxY0xGpQT
-	 5OlWL0d1ypQhQudNn15eRJldiX4M4xiGeGX/t0OSy5Q0JM/RxGj9WDVV7BhhwB6iCb
-	 yQLU1etBUSu6Q==
+	b=Bwp48MMihd4Al5ZmBb87Sv8KwQ+2c4ApUINj/56l4mXnIWAagnXfdVj8+oPOdmjWS
+	 XLhl0JT3dSeNtMHMaAk00BldL/EIAE1PF8Bf65ZpsIfzcBVPrO7jwoFoCI5HRi55ZX
+	 C6PSli29FLb3zNn1UB1C9nxQK9SYSMh3hFiJvXBednk4Ne7VeAUVznVgL0+O9izm1H
+	 DnsgSwjCacZ9HILf5+sfE8yyH0Y/pq+a7Ljwp/pzvT45Vr5tDzNZ+k2MC70J6rWoXB
+	 vKjdz2Gt3ZX83NxwnyvN/gRmVSlbCR0PytP/iAn6onlcBC/TAL+Zfk7x4EsNhayAaS
+	 CmzJLF9zcDSpw==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
+Cc: Chuan Liu <chuan.liu@amlogic.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
 	Sasha Levin <sashal@kernel.org>,
+	neil.armstrong@linaro.org,
 	mturquette@baylibre.com,
 	sboyd@kernel.org,
-	linux-renesas-soc@vger.kernel.org,
+	khilman@baylibre.com,
+	linux-amlogic@lists.infradead.org,
 	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.19-6.18] clk: renesas: rzg2l: Deassert reset on assert timeout
-Date: Mon, 16 Feb 2026 20:01:13 -0500
-Message-ID: <20260217010118.3503621-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.19-6.18] clk: amlogic: remove potentially unsafe flags from S4 video clocks
+Date: Mon, 16 Feb 2026 20:01:15 -0500
+Message-ID: <20260217010118.3503621-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260217010118.3503621-1-sashal@kernel.org>
 References: <20260217010118.3503621-1-sashal@kernel.org>
@@ -55,136 +58,149 @@ X-stable-base: Linux 6.19.2
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+From: Chuan Liu <chuan.liu@amlogic.com>
 
-[ Upstream commit 0b0201f259e1158a875c5fd01adf318ae5d32352 ]
+[ Upstream commit 4aca7e92023cac5018b4053bae324450f884c937 ]
 
-If the assert() fails due to timeout error, set the reset register bit
-back to deasserted state. This change is needed especially for handling
-assert error in suspend() callback that expect the device to be in
-operational state in case of failure.
+The video clocks enci, encp, vdac and hdmitx share the same clock
+source. Adding CLK_SET_RATE_PARENT to the mux may unintentionally change
+the shared parent clock, which could affect other video clocks.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20260108123433.104464-2-biju.das.jz@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+Link: https://lore.kernel.org/r/20250919-add_video_clk-v6-3-fe223161fb3f@amlogic.com
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-The suspend/resume directly in this driver doesn't call assert. The
-commit message mentions "suspend() callback" — this likely refers to
-peripheral device drivers that use reset_control_assert() during their
-own suspend callbacks, which then calls `rzg2l_cpg_assert()` through the
-reset_control_ops.
+Wait, this is very confusing. The mailing list says patch 2 adds new
+clocks, but git blame shows these video clock muxes (`cts_enci_sel`,
+`cts_encp_sel`, etc.) were already in the original commit from 2023. Let
+me re-read the diff more carefully.
 
-## Summary of Analysis
+Looking at the diff again: the commit removes `CLK_SET_RATE_PARENT` from
+`s4_cts_enci_sel`, `s4_cts_encp_sel`, `s4_cts_vdac_sel`, and
+`s4_hdmi_tx_sel`. Git blame confirmed these structures were added in
+`57b55c76aaf1b` (2023, v6.7). The patch 2 of the series adds **new**
+clocks (encl, cdac, demod, adc), but the ones being **fixed** in patch 3
+already existed.
 
-### What the commit fixes:
-1. **Variable shadowing bug**: `readl_poll_timeout_atomic` overwrites
-   `value`, which is then needed for the error recovery path. The patch
-   introduces a separate `mon` variable for the poll output, keeping
-   `value` intact.
-2. **Missing error recovery on assert timeout**: The original code only
-   rolls back on deassert failure. If assert fails (e.g., during
-   suspend), the device is left in an asserted (reset) state with no
-   recovery, making the device non-operational even though the suspend
-   callback returns an error. The fix uses `value ^= mask` to undo
-   either direction of the operation.
+This means patch 3 (our commit) is **self-contained** with respect to
+the bug fix — it removes flags from clocks that already exist in stable
+trees. It does NOT depend on patch 2.
 
-### Dependencies:
-This commit has **hard dependencies** on two v6.18 commits:
-- `341b0f1b6cba5` - introduces `__rzg2l_cpg_assert()` helper
-- `f8c5f0dc77d86` - introduces the deassert-only rollback code that this
-  commit modifies
+## Final Analysis
 
-Without these two prerequisite commits, the patch cannot apply to any
-stable tree older than v6.18.
+### Problem Description
+The `CLK_SET_RATE_PARENT` flag on the video clock mux selectors
+(`cts_enci_sel`, `cts_encp_sel`, `cts_vdac_sel`, `hdmi_tx_sel`) allows
+rate change requests to propagate from these muxes up to their shared
+parent clock. Since all four muxes share the same parent clock sources
+(vclk_div and vclk2_div families), any one of them requesting a rate
+change could alter the parent, breaking the other video outputs.
 
-### Risk Assessment:
-- **Scope**: Small, contained change in one function (~10 lines changed)
-- **Risk**: Low — only affects error paths in Renesas RZ/G2L clock/reset
-  driver
-- **Correctness**: The XOR approach is elegant and correct for both
-  assert and deassert cases
-- **Review**: Has "Reviewed-by: Geert Uytterhoeven" (Renesas clk
-  subsystem maintainer)
+### Impact Assessment
+- **Real bug**: Yes — when one video output (e.g., HDMI) requests a
+  clock rate change, it can modify the shared parent clock, causing
+  other video outputs (CVBS, encoder) to use the wrong clock rate. This
+  could result in display corruption or loss of video signal.
+- **Scope**: Affects all Amlogic S4 SoC users with multiple active video
+  outputs, since v6.7.
+- **Severity**: Medium — display corruption/failure when multiple video
+  outputs are active simultaneously.
 
-### Stable Tree Applicability:
-The fix only applies to v6.18.y since its prerequisites were merged in
-v6.18-rc1. For older stable trees (6.12.y, 6.6.y, etc.), the code
-structure is completely different (separate functions, no rollback
-logic), so this specific bug doesn't exist there.
+### Stable Kernel Criteria Assessment
+- **Obviously correct**: Yes — removing `CLK_SET_RATE_PARENT` from
+  shared mux selectors is a well-understood pattern for preventing
+  unintended parent clock modifications.
+- **Fixes a real bug**: Yes — prevents unintended shared parent clock
+  modification affecting other video clocks.
+- **Small and contained**: Yes — removes 4 lines (flag declarations)
+  from a single file.
+- **No new features**: Correct — purely a bug fix.
+- **Risk**: Very low — removing `CLK_SET_RATE_PARENT` means the mux
+  won't propagate rate changes upward, which is the desired behavior for
+  shared clock sources. The downstream gate clocks still have
+  `CLK_SET_RATE_PARENT`, so rate requests still propagate from the gate
+  to the mux; they just stop there instead of going further up.
+
+### Concerns
+- **Dependency check**: The fix is self-contained. The affected clock
+  structures exist since v6.7 (commit `57b55c76aaf1b`). No dependency on
+  other patches in the series.
+- **Behavioral change**: Users who relied on `CLK_SET_RATE_PARENT`
+  propagation through the mux to the parent might see different
+  behavior, but this "reliance" was always incorrect since it could
+  break other video outputs.
 
 ## Verification
 
-- **git log master** showed the prerequisite commits 341b0f1b6cba5 and
-  f8c5f0dc77d86 are only in v6.18+
-- **git tag --contains** confirmed both prerequisites are in v6.18-rc1+,
-  not in any earlier release
-- **git show v6.12:drivers/clk/renesas/rzg2l-cpg.c** confirmed older
-  stable trees have separate assert/deassert functions without the
-  `__rzg2l_cpg_assert()` helper and without any error rollback logic
-- **Read of current file** confirmed the code matches the "before" state
-  of the diff
-- **Code analysis** verified the XOR-based rollback logic is correct:
-  when asserting, `value = mask << 16` (no lower mask), XOR with mask
-  adds it → deasserts; when deasserting, `value = (mask << 16) | mask`,
-  XOR with mask removes it → re-asserts
-- **Variable shadowing confirmed**: `readl_poll_timeout_atomic` modifies
-  the `value` parameter in-place, so using it for both the initial write
-  value and poll output is a real bug (though in practice the old code's
-  `if (ret && !assert)` branch reassigned `value`, masking the issue for
-  deassert)
+- **git blame** confirmed `s4_cts_enci_sel`, `s4_cts_encp_sel`,
+  `s4_cts_vdac_sel`, `s4_hdmi_tx_sel` with `CLK_SET_RATE_PARENT` were
+  introduced in `57b55c76aaf1b` (v6.7, September 2023).
+- **git tag --contains 57b55c76aaf1b** confirmed the buggy code is in
+  v6.7+ and v6.12.y LTS.
+- **lore.kernel.org** confirmed this is patch 3/3 of the "add video-
+  related clocks for S4 SoC" series, accepted December 2025 by Jerome
+  Brunet.
+- **lore.kernel.org patch 2** confirmed patch 2 adds **different**
+  clocks (encl, cdac, demod, adc), not the ones being fixed here — the
+  fix is independent.
+- **Code inspection** confirmed `s4_cts_encl_sel` already lacked
+  `CLK_SET_RATE_PARENT` (consistent architecture — encl was already
+  correct).
+- **Code inspection** confirmed downstream gate clocks (`s4_cts_enci`,
+  `s4_cts_encp`) retain `CLK_SET_RATE_PARENT`, so rate propagation still
+  works from gate to mux but stops at the mux level.
+- **Could NOT verify** any user reports of actual display corruption
+  from this bug (unverified — but the mechanism is sound and the fix is
+  obvious).
 
-## Decision
-
-This is a legitimate bug fix that:
-1. Fixes a real issue where assert failure during suspend leaves
-   hardware in a non-operational state
-2. Also fixes a variable shadowing bug (reusing `value` for two
-   different purposes)
-3. Is small, contained, reviewed by the subsystem maintainer
-4. Meets stable kernel criteria
-
-However, it has hard dependencies on two refactoring/feature commits
-from v6.18 that are not in any current stable tree. The only applicable
-stable tree would be 6.18.y. Given that this is a genuine fix for an
-error recovery path that matters during suspend/resume, and it's
-applicable to 6.18.y, it should be backported.
+The fix is small, surgical, self-contained, fixes a real clock-tree
+correctness issue affecting all Amlogic S4 users since v6.7, and carries
+extremely low regression risk. It meets all stable kernel criteria.
 
 **YES**
 
- drivers/clk/renesas/rzg2l-cpg.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/clk/meson/s4-peripherals.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index 64d1ef6e4c943..c20ea1212b360 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -1647,6 +1647,7 @@ static int __rzg2l_cpg_assert(struct reset_controller_dev *rcdev,
- 	u32 mask = BIT(info->resets[id].bit);
- 	s8 monbit = info->resets[id].monbit;
- 	u32 value = mask << 16;
-+	u32 mon;
- 	int ret;
+diff --git a/drivers/clk/meson/s4-peripherals.c b/drivers/clk/meson/s4-peripherals.c
+index 6d69b132d1e1f..bab4f5700de47 100644
+--- a/drivers/clk/meson/s4-peripherals.c
++++ b/drivers/clk/meson/s4-peripherals.c
+@@ -1106,7 +1106,6 @@ static struct clk_regmap s4_cts_enci_sel = {
+ 		.ops = &clk_regmap_mux_ops,
+ 		.parent_hws = s4_cts_parents,
+ 		.num_parents = ARRAY_SIZE(s4_cts_parents),
+-		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
  
- 	dev_dbg(rcdev->dev, "%s id:%ld offset:0x%x\n",
-@@ -1667,10 +1668,10 @@ static int __rzg2l_cpg_assert(struct reset_controller_dev *rcdev,
- 		return 0;
- 	}
+@@ -1122,7 +1121,6 @@ static struct clk_regmap s4_cts_encp_sel = {
+ 		.ops = &clk_regmap_mux_ops,
+ 		.parent_hws = s4_cts_parents,
+ 		.num_parents = ARRAY_SIZE(s4_cts_parents),
+-		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
  
--	ret = readl_poll_timeout_atomic(priv->base + reg, value,
--					assert == !!(value & mask), 10, 200);
--	if (ret && !assert) {
--		value = mask << 16;
-+	ret = readl_poll_timeout_atomic(priv->base + reg, mon,
-+					assert == !!(mon & mask), 10, 200);
-+	if (ret) {
-+		value ^= mask;
- 		writel(value, priv->base + CLK_RST_R(info->resets[id].off));
- 	}
+@@ -1138,7 +1136,6 @@ static struct clk_regmap s4_cts_vdac_sel = {
+ 		.ops = &clk_regmap_mux_ops,
+ 		.parent_hws = s4_cts_parents,
+ 		.num_parents = ARRAY_SIZE(s4_cts_parents),
+-		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+ 
+@@ -1169,7 +1166,6 @@ static struct clk_regmap s4_hdmi_tx_sel = {
+ 		.ops = &clk_regmap_mux_ops,
+ 		.parent_hws = s4_hdmi_tx_parents,
+ 		.num_parents = ARRAY_SIZE(s4_hdmi_tx_parents),
+-		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
  
 -- 
 2.51.0
