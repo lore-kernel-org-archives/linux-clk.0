@@ -1,207 +1,134 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4AD231A3B;
-	Tue, 17 Feb 2026 01:01:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97AEA17A305
+	for <linux-clk@vger.kernel.org>; Tue, 17 Feb 2026 01:09:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771290085; cv=none; b=Ivw5/197GdvQAf6X+ZW1jv/fnhDfR6kjAbcOOjQJ9eYUwTIASy7xF9xHvGk5LR6Zwrmo8XlzF2XQIyW3tuDOkYZH19n/EwOKPqSxBicjSjzmVPSytP09d5nmJQDb0cDoJWrBAnES6eJyNzS45w7nLET6n3MVxxwmvsyBD0EAraI=
+	t=1771290582; cv=none; b=cbSVP/109SXG1oVIEeOSLFgbn09plgwo9bJnJk48fSgPU2YMQeTrZyGBv6B5AU3RMAYQ+ZoVMpKumqOEccTudZD9CUw6WAIimvKFBkTTMdN4igzvOITjjVNRRFJ6ZNNXD5qOV07kn8WEjFG4biCFmFvfnvXl13P/YYWq/PbCEKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771290085; c=relaxed/simple;
-	bh=3CQR8MNuLy3NsGjQSjNTddHYGKdbU4uYpOwzcupblxg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ucpbeOgW0iHSCGxjj8/CJdvn2vSRtoDFIh/0PmhbdEbUSeTqJ4mmf+mjamLrkBsDtuHFpZL5z+lXgcj/pqfTT4O1gj1GBb0OAhWdQ8YdGk5eubzMfAltvP1tYeqLkr1bBizf5Bf9ddKMO6Gi/nx0n96UJtzv4PlTHSx3lKyk5aY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bwp48MMi; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1771290582; c=relaxed/simple;
+	bh=YnXGBxQb2yQTIsJPsA76f33oYDBAi82tICtV3X+cWVk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IMvR3mT5xZrkcg1gGEmoGl74snK2E3R6gSW2CXlLsnH5FAI/kKMYZb8FMewclVXk1EOR+M+x62F68Jcu7VdoJBrHku4NeWFlItY0eKs14PG0d6iFyvAgZIWJYQFkcVy+qwQjJMuzMQfJM8BhFOkgRyNRfx0+od8/x1hrrwru5zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M7B0ZpFN; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=PY5CVkBs; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bwp48MMi"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D46A6C2BC87;
-	Tue, 17 Feb 2026 01:01:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771290085;
-	bh=3CQR8MNuLy3NsGjQSjNTddHYGKdbU4uYpOwzcupblxg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Bwp48MMihd4Al5ZmBb87Sv8KwQ+2c4ApUINj/56l4mXnIWAagnXfdVj8+oPOdmjWS
-	 XLhl0JT3dSeNtMHMaAk00BldL/EIAE1PF8Bf65ZpsIfzcBVPrO7jwoFoCI5HRi55ZX
-	 C6PSli29FLb3zNn1UB1C9nxQK9SYSMh3hFiJvXBednk4Ne7VeAUVznVgL0+O9izm1H
-	 DnsgSwjCacZ9HILf5+sfE8yyH0Y/pq+a7Ljwp/pzvT45Vr5tDzNZ+k2MC70J6rWoXB
-	 vKjdz2Gt3ZX83NxwnyvN/gRmVSlbCR0PytP/iAn6onlcBC/TAL+Zfk7x4EsNhayAaS
-	 CmzJLF9zcDSpw==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Chuan Liu <chuan.liu@amlogic.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Sasha Levin <sashal@kernel.org>,
-	neil.armstrong@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	khilman@baylibre.com,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.19-6.18] clk: amlogic: remove potentially unsafe flags from S4 video clocks
-Date: Mon, 16 Feb 2026 20:01:15 -0500
-Message-ID: <20260217010118.3503621-4-sashal@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260217010118.3503621-1-sashal@kernel.org>
-References: <20260217010118.3503621-1-sashal@kernel.org>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M7B0ZpFN";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="PY5CVkBs"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1771290580;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xPKbRNPHyosMAfxhwpYDOU+GJ6u5P872HLfNECxcQQY=;
+	b=M7B0ZpFNDwlf1on8UlJYP6SpRzfxgqHdSR91IXOJZdTjlDOf5wegHYATTtD2f6R26R/SJ7
+	hY+X+Hb+CS30VEGmYTsosD+eLcrhn6+RotL+bcCcgxNzwWMvpl6iEeFLKP6AC6H4aJAMlI
+	nTxkEfA2tAWynGNg008BtIFf8JfeDVw=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-463-_6-2TO-QP3O0bZDLr9WP5A-1; Mon, 16 Feb 2026 20:09:39 -0500
+X-MC-Unique: _6-2TO-QP3O0bZDLr9WP5A-1
+X-Mimecast-MFC-AGG-ID: _6-2TO-QP3O0bZDLr9WP5A_1771290579
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-896f8dde688so294102736d6.0
+        for <linux-clk@vger.kernel.org>; Mon, 16 Feb 2026 17:09:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1771290579; x=1771895379; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xPKbRNPHyosMAfxhwpYDOU+GJ6u5P872HLfNECxcQQY=;
+        b=PY5CVkBsu8/UXV71RL3KC2tpDkbNDFYdZ3maUldat1Fg5V+4aofKS9KSQ8i7RxsgDp
+         yB2yp9k8KFQTTLIqHjB2H+R7zAlZpuNT+4oJE9IZBZOux0gt9WGybcXbV7VtujL03++y
+         Ayy6F2TsimNPpA5wEVJQRB+MZaC6IEed0rArTyX7ocqoxB0liip+wssI52TFKcxEDNBd
+         BWhwpCD1D+lVS9g+qV4ynCx2lGWQZM4emwTdWv3uPfqVQGxmLs8DBmCIvyDQCnW4Jf1+
+         Ax0+iKmA2VIvWedYEtRB9nxICmaxJzuqXg4JZWjTkC2tZFP8CePd1XeIUf4R6YODDKjg
+         6q7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771290579; x=1771895379;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=xPKbRNPHyosMAfxhwpYDOU+GJ6u5P872HLfNECxcQQY=;
+        b=qkl9/aN9rqW9N1hVjWpDsFea5HL2mFQAfhhslemix4VTnOjaALAX4+oD/6inAvbbOA
+         cR4HqdcUJ8SBYjF7QE5v4XNg9P8bnFswqzUZosq8t8utc/az1Zaef7kk64xOzOT+GXeJ
+         qMZquVdax6PKEKgOQMum6rhxw8OTCGPMe7NfqfuSr2LO88QzLS60VIVw67/qicckbVWR
+         bOVTpwASJu30AvfQ75nBtPS+7GHqeeKTmc0PJMbN2yU5aHj8xhhEJgAiNwqoxZizaQ93
+         VMpAvJHNUMhUjMA/j3Xs2vCOJANigAYWVfqVXs4me6NL0QBuYBV/UMKKYcOJ0Ln07suQ
+         zRbg==
+X-Forwarded-Encrypted: i=1; AJvYcCUgY7Vd35m2foO+Xxv+5A4tAPX5ye+rY+1Ze0IvEMBWD4QK/iq41jhpHRRNOnm48SzkPKq7dJEkJ38=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeDOpkG3Pdyz5o63UkywvJSLkoCcKn6f6+YmANNo+Ksln3yFEK
+	mcaHLoYycHUn/WtqDj0gmpGydPDESz9PjwlhFRpZazSbmRfUT6yB4EhtV4TmtTYh8sCvd0EQI1f
+	gblQy0UBgDWwTzUFoSQXaTkMM2GTMXTkkHMQqtlOGafSmhjpfiu4oqBUT1vxelg==
+X-Gm-Gg: AZuq6aJacoa2KVVlQtbL9Kdd24R33ftguJ6wnMMrTV/tbBvkwXr0fwHa9VZEJ5nmzeY
+	XpWsvOD0iedlG0m1k4BIREnrhkLQfHdqGKNlIHzZxgzfIAham4sroDCfisXM2NZxMeNJliuMfvX
+	9vfiinUQ62euU5IT/GbkIw5+GSvqCWxkboIORLgfHlaRRaM5rEqTgN2iqHtxCoy9BodgqwR7sTl
+	LfhpWiylAFZhcEEhOXiS3wofqb/00mEQaGbPf5pAoSxUfDo/iKCn1GzQOYrLDWQZlKbkB8ojvXF
+	b7mH9AS9N/L0LIgp9Xcea1MVWgV+HEx+iTXSd+mkTZLW9fB+qouAf2YpsNkHwzdoUj3gNoBNCYV
+	wpVXXyuhiIDFWyx7mdzRrEQCvo3J2Y4QP6CSt6KM+k9XaSBRXcFklh5S1
+X-Received: by 2002:a05:6214:2588:b0:88f:d216:6fef with SMTP id 6a1803df08f44-8973621458bmr165777276d6.50.1771290573929;
+        Mon, 16 Feb 2026 17:09:33 -0800 (PST)
+X-Received: by 2002:a05:6214:2588:b0:88f:d216:6fef with SMTP id 6a1803df08f44-8973621458bmr165774616d6.50.1771290568801;
+        Mon, 16 Feb 2026 17:09:28 -0800 (PST)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8971cd8a5ccsm151660686d6.25.2026.02.16.17.09.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Feb 2026 17:09:28 -0800 (PST)
+Date: Mon, 16 Feb 2026 20:09:26 -0500
+From: Brian Masney <bmasney@redhat.com>
+To: dongxuyang@eswincomputing.com
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	troy.mitchell@linux.dev, ningyu@eswincomputing.com,
+	linmin@eswincomputing.com, huangyifeng@eswincomputing.com,
+	pinkesh.vaghela@einfochips.com, ganboing@gmail.com,
+	marcel@ziswiler.com
+Subject: Re: [PATCH v13 2/3] clk: eswin: Add eic7700 clock driver
+Message-ID: <aZO_xgoix_SvJRxb@redhat.com>
+References: <20260214101421.228-1-dongxuyang@eswincomputing.com>
+ <20260214101519.341-1-dongxuyang@eswincomputing.com>
+ <aZNRFYs_QuGRI8PV@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.19.2
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aZNRFYs_QuGRI8PV@redhat.com>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-From: Chuan Liu <chuan.liu@amlogic.com>
+On Mon, Feb 16, 2026 at 12:17:09PM -0500, Brian Masney wrote:
+> On Sat, Feb 14, 2026 at 06:15:19PM +0800, dongxuyang@eswincomputing.com wrote:
+> > +static const struct of_device_id eic7700_clock_dt_ids[] = {
+> > +	{ .compatible = "eswin,eic7700-clock", },
+> > +	{ /* sentinel */ }
+> > +};
+> > +MODULE_DEVICE_TABLE(of, eic7700_clock_dt_ids);
+> > +
+> > +static struct platform_driver eic7700_clock_driver = {
+> > +	.probe	= eic7700_clk_probe,
+> > +	.driver = {
+> > +		.name	= "eic7700-clock",
+> > +		.of_match_table	= eic7700_clock_dt_ids,
+> > +	},
+> > +};
+> > +module_platform_driver(eic7700_clock_driver);
+> > +
+> > +MODULE_LICENSE("GPL");
+> > +MODULE_AUTHOR("Yifeng Huang<huangyifeng@eswincomputing.com>");
+> > +MODULE_AUTHOR("Xuyang Dong<dongxuyang@eswincomputing.com>");
+> > +MODULE_DESCRIPTION("ESWIN EIC7700 clock controller driver");
+> 
+> MODULE_ALIAS("platform:eic7700-clk")
 
-[ Upstream commit 4aca7e92023cac5018b4053bae324450f884c937 ]
+Ignore the MODULE_ALIAS suggestion from me. The list of aliases will be
+automatically generated based on what's in MODULE_DEVICE_TABLE(). I
+verified this with modinfo.
 
-The video clocks enci, encp, vdac and hdmitx share the same clock
-source. Adding CLK_SET_RATE_PARENT to the mux may unintentionally change
-the shared parent clock, which could affect other video clocks.
-
-Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
-Link: https://lore.kernel.org/r/20250919-add_video_clk-v6-3-fe223161fb3f@amlogic.com
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
-
-LLM Generated explanations, may be completely bogus:
-
-Wait, this is very confusing. The mailing list says patch 2 adds new
-clocks, but git blame shows these video clock muxes (`cts_enci_sel`,
-`cts_encp_sel`, etc.) were already in the original commit from 2023. Let
-me re-read the diff more carefully.
-
-Looking at the diff again: the commit removes `CLK_SET_RATE_PARENT` from
-`s4_cts_enci_sel`, `s4_cts_encp_sel`, `s4_cts_vdac_sel`, and
-`s4_hdmi_tx_sel`. Git blame confirmed these structures were added in
-`57b55c76aaf1b` (2023, v6.7). The patch 2 of the series adds **new**
-clocks (encl, cdac, demod, adc), but the ones being **fixed** in patch 3
-already existed.
-
-This means patch 3 (our commit) is **self-contained** with respect to
-the bug fix — it removes flags from clocks that already exist in stable
-trees. It does NOT depend on patch 2.
-
-## Final Analysis
-
-### Problem Description
-The `CLK_SET_RATE_PARENT` flag on the video clock mux selectors
-(`cts_enci_sel`, `cts_encp_sel`, `cts_vdac_sel`, `hdmi_tx_sel`) allows
-rate change requests to propagate from these muxes up to their shared
-parent clock. Since all four muxes share the same parent clock sources
-(vclk_div and vclk2_div families), any one of them requesting a rate
-change could alter the parent, breaking the other video outputs.
-
-### Impact Assessment
-- **Real bug**: Yes — when one video output (e.g., HDMI) requests a
-  clock rate change, it can modify the shared parent clock, causing
-  other video outputs (CVBS, encoder) to use the wrong clock rate. This
-  could result in display corruption or loss of video signal.
-- **Scope**: Affects all Amlogic S4 SoC users with multiple active video
-  outputs, since v6.7.
-- **Severity**: Medium — display corruption/failure when multiple video
-  outputs are active simultaneously.
-
-### Stable Kernel Criteria Assessment
-- **Obviously correct**: Yes — removing `CLK_SET_RATE_PARENT` from
-  shared mux selectors is a well-understood pattern for preventing
-  unintended parent clock modifications.
-- **Fixes a real bug**: Yes — prevents unintended shared parent clock
-  modification affecting other video clocks.
-- **Small and contained**: Yes — removes 4 lines (flag declarations)
-  from a single file.
-- **No new features**: Correct — purely a bug fix.
-- **Risk**: Very low — removing `CLK_SET_RATE_PARENT` means the mux
-  won't propagate rate changes upward, which is the desired behavior for
-  shared clock sources. The downstream gate clocks still have
-  `CLK_SET_RATE_PARENT`, so rate requests still propagate from the gate
-  to the mux; they just stop there instead of going further up.
-
-### Concerns
-- **Dependency check**: The fix is self-contained. The affected clock
-  structures exist since v6.7 (commit `57b55c76aaf1b`). No dependency on
-  other patches in the series.
-- **Behavioral change**: Users who relied on `CLK_SET_RATE_PARENT`
-  propagation through the mux to the parent might see different
-  behavior, but this "reliance" was always incorrect since it could
-  break other video outputs.
-
-## Verification
-
-- **git blame** confirmed `s4_cts_enci_sel`, `s4_cts_encp_sel`,
-  `s4_cts_vdac_sel`, `s4_hdmi_tx_sel` with `CLK_SET_RATE_PARENT` were
-  introduced in `57b55c76aaf1b` (v6.7, September 2023).
-- **git tag --contains 57b55c76aaf1b** confirmed the buggy code is in
-  v6.7+ and v6.12.y LTS.
-- **lore.kernel.org** confirmed this is patch 3/3 of the "add video-
-  related clocks for S4 SoC" series, accepted December 2025 by Jerome
-  Brunet.
-- **lore.kernel.org patch 2** confirmed patch 2 adds **different**
-  clocks (encl, cdac, demod, adc), not the ones being fixed here — the
-  fix is independent.
-- **Code inspection** confirmed `s4_cts_encl_sel` already lacked
-  `CLK_SET_RATE_PARENT` (consistent architecture — encl was already
-  correct).
-- **Code inspection** confirmed downstream gate clocks (`s4_cts_enci`,
-  `s4_cts_encp`) retain `CLK_SET_RATE_PARENT`, so rate propagation still
-  works from gate to mux but stops at the mux level.
-- **Could NOT verify** any user reports of actual display corruption
-  from this bug (unverified — but the mechanism is sound and the fix is
-  obvious).
-
-The fix is small, surgical, self-contained, fixes a real clock-tree
-correctness issue affecting all Amlogic S4 users since v6.7, and carries
-extremely low regression risk. It meets all stable kernel criteria.
-
-**YES**
-
- drivers/clk/meson/s4-peripherals.c | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/drivers/clk/meson/s4-peripherals.c b/drivers/clk/meson/s4-peripherals.c
-index 6d69b132d1e1f..bab4f5700de47 100644
---- a/drivers/clk/meson/s4-peripherals.c
-+++ b/drivers/clk/meson/s4-peripherals.c
-@@ -1106,7 +1106,6 @@ static struct clk_regmap s4_cts_enci_sel = {
- 		.ops = &clk_regmap_mux_ops,
- 		.parent_hws = s4_cts_parents,
- 		.num_parents = ARRAY_SIZE(s4_cts_parents),
--		.flags = CLK_SET_RATE_PARENT,
- 	},
- };
- 
-@@ -1122,7 +1121,6 @@ static struct clk_regmap s4_cts_encp_sel = {
- 		.ops = &clk_regmap_mux_ops,
- 		.parent_hws = s4_cts_parents,
- 		.num_parents = ARRAY_SIZE(s4_cts_parents),
--		.flags = CLK_SET_RATE_PARENT,
- 	},
- };
- 
-@@ -1138,7 +1136,6 @@ static struct clk_regmap s4_cts_vdac_sel = {
- 		.ops = &clk_regmap_mux_ops,
- 		.parent_hws = s4_cts_parents,
- 		.num_parents = ARRAY_SIZE(s4_cts_parents),
--		.flags = CLK_SET_RATE_PARENT,
- 	},
- };
- 
-@@ -1169,7 +1166,6 @@ static struct clk_regmap s4_hdmi_tx_sel = {
- 		.ops = &clk_regmap_mux_ops,
- 		.parent_hws = s4_hdmi_tx_parents,
- 		.num_parents = ARRAY_SIZE(s4_hdmi_tx_parents),
--		.flags = CLK_SET_RATE_PARENT,
- 	},
- };
- 
--- 
-2.51.0
+Brian
 
