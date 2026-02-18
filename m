@@ -1,78 +1,79 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA0C30C36D
-	for <linux-clk@vger.kernel.org>; Wed, 18 Feb 2026 18:05:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 037843451CC
+	for <linux-clk@vger.kernel.org>; Wed, 18 Feb 2026 18:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771437955; cv=none; b=lqC+7TRY2Dj40azxSrHcjovysuQ1RtEcN83UouDZYlZj3cij8wo0ZNudtWAGejmIdXc22Zd/CD2FuPJX7cJky1LI6JNxnqzD2mAWHWanQruvq9dJ+NL1h5fWjeSQ+Q7vdISTzgveLl+MxHCyJQBIaE16Do2e0pIL/ElqhzYrQuo=
+	t=1771438151; cv=none; b=KfiVKmeSvi5barDfml5qOtgbKmLx1y4u/qe1oIYMIYz25jBsY1i0GtQxTzYaVk47/JNNBacUYXC0gbOo4vOcHenYR9sPKWnvBdxbr56KAQkzCK9eHkKChj/oh8gTH7oXj+NcZdX5ZUSnk19uG2h8lddceZ2sNaPa7qib3zC8Ot4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771437955; c=relaxed/simple;
-	bh=vVN3eI0cG3eJzDGQMowePioEB5QD5fgAY4jEmwKs8Cs=;
+	s=arc-20240116; t=1771438151; c=relaxed/simple;
+	bh=yEeYbKwJ4dKz6zZmYCTVTgYkxo4KJMNXH37g/tTh02g=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=GGBteqqJhWFfWP8QycG1LA2elZ2moT/ptDqySumbEt1cdU/Dk+/8bk4PyXIMTHbwgfaZ43fgfzR3Fo3XZ/do1aPBt4kkBKr502lOCfPKF17YNPZwgSiQNX7/rCoYibITXK57KYNUaVReeemvybh5A2JDN9fIQPq3OMbTZrBof/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=IzbDdriN; arc=none smtp.client-ip=209.85.128.43
+	 MIME-Version:Content-Type; b=jfcdQIPl2vIpO0VyibBa0cifZcW0MiMrGLKJ+pp0P8bZR49IB+M/cL1pFLCc/cDt0hXKVyyJYiry/5Yx6K6UD2Lq20J7w7+N7+aHHGWsAgVGFifKB4+LOJbvdK4NddK9DAKzhIMmskLKj+14IlHvqkePcGcMhxzGVSF4IQNM7ZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=gGDSRIqK; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="IzbDdriN"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4836e3288cdso1107785e9.0
-        for <linux-clk@vger.kernel.org>; Wed, 18 Feb 2026 10:05:53 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="gGDSRIqK"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4836f363ad2so1263175e9.1
+        for <linux-clk@vger.kernel.org>; Wed, 18 Feb 2026 10:09:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1771437952; x=1772042752; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1771438147; x=1772042947; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:user-agent
          :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZXX5Ad6lE4eM3SpWZXXZtn5YXTRNU+kz7ZHFBHa7LgY=;
-        b=IzbDdriNK3y5TBY4beWPuSk0MIgZqCk6dysdFWOE+r40Ukguxq1K+/CrvSXFI5VvYM
-         Uepf8L0Ez0sh9HwtlUpBKvva+/Uu6Qz2lLj5qBN5SGIyVqv5wyQ+vvy3toGqZqc28Xl2
-         Iwx104xOIgkxKJkhQYR6j9BvpRPt+kFqSMfaiXtg9/ehRDy2RLnSwav9bQFN5cqTnDIy
-         O0jwSl5rvgi1AF7jeANSUXNebpjwGtClq6S9bsMjY+Nc8kvaOh4cuto+azGCBwM1CTIh
-         56apnuR4V96p2+tSWPg8gK/+GJzkZNlsGs/xGPVK0G9cpusbyVyg7YA8ly27yqJ3n6V+
-         b7Zw==
+        bh=eHxKKXGBHlMMgCTEd77iJPpVcu514Qc+HROZ7KUYSWM=;
+        b=gGDSRIqKU9M+Tl37QS5YPOi3OBQ6cBupJxBijYNfVNrCbcb+K9XYW29P+SInjvhc0S
+         W6egA1GNhrBHaA76g/guSMtDpETkmxHtADiyKh018uNzaTB0bE9KypcvONyf39vcQb1i
+         5c8Zmui3VPKHCbW6ePRo/APYLpUdR30Scsag+C0yUYOKl5eBSX5/yru5iAROZqrM3PrJ
+         sLF2HW/0BXfr0yjJJYmpkem58+75KWcyeG8Kogg0QOUl9LwqE9hij9fLSmImuhy81Ebv
+         QiPgUK6SLmGXwW7VNpWNgHO5IUYIxxP1ZL06CXrRALqXVZnC9UzujfRiZNhcgajv+4vG
+         FYbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771437952; x=1772042752;
+        d=1e100.net; s=20230601; t=1771438147; x=1772042947;
         h=content-transfer-encoding:mime-version:message-id:date:user-agent
          :references:in-reply-to:subject:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZXX5Ad6lE4eM3SpWZXXZtn5YXTRNU+kz7ZHFBHa7LgY=;
-        b=WZpQ3X7qubCRbGs4byF0qwfWVaTY5vtarjlBK0aY+ydx3FT7tpCauML2RjY7W84xW9
-         dPTW2h5OedkrYDX2UjqAWQ66+TswVgORvoU/vNQ/L+6qBiaOck+7rStbfaK6ooweQYb1
-         DlHGc0ihK69ebbcHZOQNNaJrgd7E1/OB5+u5WoqHyEaNLrX5O3HHCgKSzcEFUW22egx1
-         1hr7WIuEvkl6W0pg/eXQdE9yQKYzgxoo0TjrXOvrQKTsD/y0YngIMdtH7JvObcRCI8nE
-         35usZ8HQi4KsEdX59Q2G9b0qDFaxUT0U9Mf19PziPcPqAPsV1P1PJhuw5APhUYY/Hfl6
-         OWRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXYkdpioa3XpAP/yq0553ExkwNLHD+b81s3W42381AuvjCGexd42JXDSqlOkvy/4ll/4ym+QCbcAF4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxlTP0B9DVKS+AtMM5mNG2IRLo1DAVUEfBgFcW+ZDaEExBwZw9
-	oj/3J1bEGpHKDKrhmf64vsFieWmpKpjOPIa3C3X6j7BHS3FFQ/14v5L/mJn7eFM28HY=
-X-Gm-Gg: AZuq6aJtTEiWtNYaty675H/H3I2VdC/wjBsGMzQDP0X+hY1Cg3ycpAWC51xGl9zwgu4
-	M83K2QtFEbvh2scM++Sm2FejjTB5mAHFQFHlVEPr87l0M+YZs6Pk188WqCHYRvG2umtzYcPypKp
-	3fnG6CjvN3IM2Zu39pFeIGDyNNMHQ1KoCgz48RmSZsbHXp8bVQjYHTRDOSy8hKO+Rucu7/xS+c5
-	VTYx66t0lqOOEVWWFgM9jK4JM9D2W24OV1s+3OZFyyeEmMxtq8iCbZjLm/vEdcKcQSoskqcWIzJ
-	BNLVx5K1/xPujXaI+/DC03I9Kt5RSkLHNmVZU8orrql9vWDmtRXAPHDJZfbI9SkZCuQ43bdEQWA
-	cXFkIOnJmoGP573LX3OXP4KDcgat9ul+/Ogyz2Siiorh1w9xZh80QzVs/gaJx39RUP8TAlAQAtS
-	gmRIMrxBF01YDsv2pS5OcpaQ==
-X-Received: by 2002:a05:600c:3b15:b0:47d:333d:99c with SMTP id 5b1f17b1804b1-48398cc6196mr51541025e9.18.1771437951849;
-        Wed, 18 Feb 2026 10:05:51 -0800 (PST)
+        bh=eHxKKXGBHlMMgCTEd77iJPpVcu514Qc+HROZ7KUYSWM=;
+        b=YjbSmRQs2EsLKMlEWnEfZC+N9TCdDocI0CBpiRnNGQHjS9vntiD+crKMA+vtGzHz7A
+         1fdh6QgfsLAJHZX/R7bf4eZMWBoMU63SLywiCoJ5qKOcK3YX9Sg6ki3rJph9pVPwPLIY
+         ZkH+ZhR1+wRv67ufvccAXCnfGCdWYM1ER/Q0O5It27raJ3OuPMeYDfGYZ1+WQ9JwLivf
+         jUjufOIz8rJxtJnqx5y4TUU+KKyENlEMbdUFsKvSVZkfr4dI5YjtoeWNKsUvaqk3Ql4d
+         vyJcPIiE+XOt/c5+39hgXUYiXN+CXvhCRW/8YZisv++ABmJmSUPbS1o++YkWHPM6qvOm
+         yQbg==
+X-Forwarded-Encrypted: i=1; AJvYcCWtq4LUEMZ22CvqOtV0i3gGtQKZIq0IBAwTiG6IJNEmCD9TZFGO32aMN8vG1usCS/i8Yv+ofNNiv7M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNmapWJS9OfMaLTzOH4y18q7blhVf/9FWl/sLUUnH8tALqXa0A
+	f1dJ6mS9Hqlqw22k5R2Zg4cp2oJK16RcZ5vHj26l//2VUF/lonLYNXTSnXmCbMBRskA=
+X-Gm-Gg: AZuq6aIL7hvYYEpEj/Lo18cm+Q+P9sNbkl0IU5/Lx5ZMcWBbt394cWDVtF4mzG32epj
+	a7IRMonxGRZRMKmNZc8Mza/dQEdbh4DTQeKp3b0uiCuKbx6i0DwiT/NJ7jV/0aaMEvZp67xkg+V
+	KQFFQQK1VJBoUTnIBvIwk0iumeXSGxx5EBtnQunoEqjGMjtSOym7ipw1kGt5zWGbvY/IkmPJ7ez
+	XjWsIyZMoacsTiR3YN65BMKOJXSTPXDwDHRGUvTeUhb6QYmFyFUB0Vuiled2Y4XLZumFH6ZIF+v
+	zvHA68/i7yTY08EjRDoL5ZLMzRowez5lAd8yPGjot/JjcQDIVHreFUwGfkjCQoB+Kx/AOs2fWIx
+	mUYGxKfuuoxt0htyrzsIQIDusjOdLgp8uuaYZzDoiaGW4nV76JOPpgUe/5FP2RlgqYuJnRzwP8D
+	nOtlIwu8Po8XVlqRTMbj1KWw==
+X-Received: by 2002:a05:600c:450d:b0:482:eec4:758 with SMTP id 5b1f17b1804b1-48373a4f05bmr316456575e9.26.1771438147319;
+        Wed, 18 Feb 2026 10:09:07 -0800 (PST)
 Received: from localhost ([2a01:e0a:3c5:5fb1:cf71:8cf8:56bb:5790])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-483801ff9b3sm317029295e9.13.2026.02.18.10.05.51
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4835dcfb28dsm560787365e9.11.2026.02.18.10.09.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Feb 2026 10:05:51 -0800 (PST)
+        Wed, 18 Feb 2026 10:09:06 -0800 (PST)
 From: Jerome Brunet <jbrunet@baylibre.com>
 To: Ronald Claveau <linux-kernel-dev@aliel.fr>
-Cc: linux-amlogic@lists.infradead.org,  Neil Armstrong
- <neil.armstrong@linaro.org>,  Michael Turquette <mturquette@baylibre.com>,
-  Stephen Boyd <sboyd@kernel.org>,  Kevin Hilman <khilman@baylibre.com>,
-  Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-  linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/7] drivers: clk: meson: Add Amlogic T7 fix pll support
-In-Reply-To: <20260218101709.35450-1-linux-kernel-dev@aliel.fr> (Ronald
-	Claveau's message of "Wed, 18 Feb 2026 11:17:06 +0100")
+Cc: linux-amlogic@lists.infradead.org,  Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Rob Herring
+ <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor
+ Dooley <conor+dt@kernel.org>,  linux-clk@vger.kernel.org,
+  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/7] dt-bindings: clk: meson: Add Amlogic T7 fix pll
+ support
+In-Reply-To: <20260218105611.36216-1-linux-kernel-dev@aliel.fr> (Ronald
+	Claveau's message of "Wed, 18 Feb 2026 11:56:09 +0100")
 References: <20260218101709.35450-1-linux-kernel-dev@aliel.fr>
+	<20260218105611.36216-1-linux-kernel-dev@aliel.fr>
 User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Wed, 18 Feb 2026 19:05:49 +0100
-Message-ID: <1j4ine6i6a.fsf@starbuckisacylon.baylibre.com>
+Date: Wed, 18 Feb 2026 19:09:05 +0100
+Message-ID: <1jy0kp6i0u.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -82,319 +83,51 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On mer. 18 f=C3=A9vr. 2026 at 11:17, Ronald Claveau <linux-kernel-dev@aliel=
+On mer. 18 f=C3=A9vr. 2026 at 11:56, Ronald Claveau <linux-kernel-dev@aliel=
 .fr> wrote:
 
 > Add PLL for the clock controller of the Amlogic T7 SoC family.
+
+Usually bindings changes should comes before the driver changes in a
+series.
+
+This is especially important here because you are using the IDs in the
+driver. With order used here, bisect is broken.
+
 >
-
-As Krzysztof pointed out, a series like this needs a cover letter to explain
-what you are trying to acheive overall, and proper threading.
-
-The description above is too vague.
-
 > Signed-off-by: Ronald Claveau <linux-kernel-dev@aliel.fr>
 > ---
->  drivers/clk/meson/t7-pll.c | 257 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 257 insertions(+)
+>  include/dt-bindings/clock/amlogic,t7-pll-clkc.h | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
 >
-> diff --git a/drivers/clk/meson/t7-pll.c b/drivers/clk/meson/t7-pll.c
-> index 0a622f45fa36..3dd3aca50b7c 100644
-> --- a/drivers/clk/meson/t7-pll.c
-> +++ b/drivers/clk/meson/t7-pll.c
-> @@ -71,6 +71,15 @@
->  #define MCLK_PLL_CNTL4		0x10
->  #define MCLK_PLL_STS		0x14
+> diff --git a/include/dt-bindings/clock/amlogic,t7-pll-clkc.h b/include/dt=
+-bindings/clock/amlogic,t7-pll-clkc.h
+> index e2481f2f1163..690421009eab 100644
+> --- a/include/dt-bindings/clock/amlogic,t7-pll-clkc.h
+> +++ b/include/dt-bindings/clock/amlogic,t7-pll-clkc.h
+> @@ -53,4 +53,20 @@
+>  #define CLKID_MCLK_1_PRE	9
+>  #define CLKID_MCLK_1		10
 >=20=20
-> +#define FPLL_CTRL0		0x00
-> +#define FPLL_CTRL1		0x04
-> +#define FPLL_CTRL2		0x08
-> +#define FPLL_CTRL3		0x0c
-> +#define FPLL_CTRL4		0x10
-> +#define FPLL_CTRL5		0x14
-> +#define FPLL_CTRL6		0x18
-> +#define FPLL_STS		0x1c
+> +/* ANALOG */
+No idea what you mean with this ...
 
-The PLL you are adding is described in the datasheet as the MPLL. FPLL
-is nowhere to be found. Prefer using names that relate to the
-documentation.
-
-If you must make a name up, you need to have a very good reason and to
-explain it.
-
-Still from the public documentation, this PLL belong in the same device as
-MPLL0, MPLL1, etc ... BUT, I remember correctly the T7 initial
-submission, the fixed PLL and fdivs are supposed to be provided through
-SCMI clocks. Have you checked that ?
-
+> +#define CLKID_FPLL_DCO		0
+> +#define CLKID_FPLL			1
+> +#define CLKID_FDIV2_DIV		2
+> +#define CLKID_FDIV2			3
+> +#define CLKID_FDIV2P5_DIV	4
+> +#define CLKID_FDIV2P5		5
+> +#define CLKID_FDIV3_DIV		6
+> +#define CLKID_FDIV3			7
+> +#define CLKID_FDIV4_DIV		8
+> +#define CLKID_FDIV4			9
+> +#define CLKID_FDIV5_DIV		10
+> +#define CLKID_FDIV5			11
+> +#define CLKID_FDIV7_DIV		12
+> +#define CLKID_FDIV7			13
 > +
->  static const struct pll_mult_range t7_media_pll_mult_range =3D {
->  	.min =3D 125,
->  	.max =3D 250,
-> @@ -1047,6 +1056,253 @@ static const struct meson_clkc_data t7_mclk_data =
-=3D {
->  	},
->  };
->=20=20
-> +static struct clk_regmap t7_fpll_dco =3D {
-> +	.data =3D &(struct meson_clk_pll_data){
-> +		.en =3D {
-> +			.reg_off =3D FPLL_CTRL0,
-> +			.shift   =3D 28,
-> +			.width   =3D 1,
-> +		},
-> +		.m =3D {
-> +			.reg_off =3D FPLL_CTRL0,
-> +			.shift   =3D 0,
-> +			.width   =3D 8,
-> +		},
-> +		.n =3D {
-> +			.reg_off =3D FPLL_CTRL0,
-> +			.shift   =3D 10,
-> +			.width   =3D 5,
-> +		},
-> +		.frac =3D {
-> +			.reg_off =3D FPLL_CTRL1,
-> +			.shift   =3D 0,
-> +			.width   =3D 17,
-> +		},
-> +		.l =3D {
-> +			.reg_off =3D FPLL_CTRL0,
-> +			.shift   =3D 31,
-> +			.width   =3D 1,
-> +		},
-> +		.rst =3D {
-> +			.reg_off =3D FPLL_CTRL0,
-> +			.shift   =3D 29,
-> +			.width   =3D 1,
-> +		},
-> +	},
-> +	.hw.init =3D &(struct clk_init_data){
-> +		.name =3D "fpll_dco",
-> +		.ops =3D &meson_clk_pll_ro_ops,
-> +		.parent_data =3D &(const struct clk_parent_data) {
-> +			.fw_name =3D "xtal",
-> +		},
-> +		.num_parents =3D 1,
-> +	},
-> +};
-> +
-> +static struct clk_regmap t7_fpll =3D {
-> +	.data =3D &(struct clk_regmap_div_data){
-> +		.offset =3D FPLL_CTRL0,
-> +		.shift =3D 16,
-> +		.width =3D 2,
-> +		.flags =3D CLK_DIVIDER_POWER_OF_TWO,
-> +	},
-> +	.hw.init =3D &(struct clk_init_data){
-> +		.name =3D "fpll",
-> +		.ops =3D &clk_regmap_divider_ro_ops,
-> +		.parent_hws =3D (const struct clk_hw *[]) {
-> +			&t7_fpll_dco.hw
-> +		},
-> +		.num_parents =3D 1,
-> +	},
-> +};
-> +
-> +static struct clk_fixed_factor t7_fdiv2_div =3D {
-> +	.mult =3D 1,
-> +	.div =3D 2,
-> +	.hw.init =3D &(struct clk_init_data){
-> +		.name =3D "fdiv2_div",
-> +		.ops =3D &clk_fixed_factor_ops,
-> +		.parent_hws =3D (const struct clk_hw *[]) { &t7_fpll.hw },
-> +		.num_parents =3D 1,
-> +	},
-> +};
-> +
-> +static struct clk_regmap t7_fdiv2 =3D {
-> +	.data =3D &(struct clk_regmap_gate_data){
-> +		.offset =3D FPLL_CTRL1,
-> +		.bit_idx =3D 24,
-> +	},
-> +	.hw.init =3D &(struct clk_init_data){
-> +		.name =3D "fdiv2",
-> +		.ops =3D &clk_regmap_gate_ops,
-> +		.parent_hws =3D (const struct clk_hw *[]) {
-> +			&t7_fdiv2_div.hw
-> +		},
-> +		.num_parents =3D 1,
-> +		.flags =3D CLK_IS_CRITICAL,
-> +	},
-> +};
-> +
-> +static struct clk_fixed_factor t7_fdiv2p5_div =3D {
-> +	.mult =3D 2,
-> +	.div =3D 5,
-> +	.hw.init =3D &(struct clk_init_data){
-> +		.name =3D "fdiv2p5_div",
-> +		.ops =3D &clk_fixed_factor_ops,
-> +		.parent_hws =3D (const struct clk_hw *[]) {
-> +			&t7_fpll.hw
-> +		},
-> +		.num_parents =3D 1,
-> +	},
-> +};
-> +
-> +static struct clk_regmap t7_fdiv2p5 =3D {
-> +	.data =3D &(struct clk_regmap_gate_data){
-> +		.offset =3D FPLL_CTRL1,
-> +		.bit_idx =3D 25,
-> +	},
-> +	.hw.init =3D &(struct clk_init_data){
-> +		.name =3D "fdiv2p5",
-> +		.ops =3D &clk_regmap_gate_ops,
-> +		.parent_hws =3D (const struct clk_hw *[]) {
-> +			&t7_fdiv2p5_div.hw
-> +		},
-> +		.num_parents =3D 1,
-> +	},
-> +};
-> +
-> +static struct clk_fixed_factor t7_fdiv3_div =3D {
-> +	.mult =3D 1,
-> +	.div =3D 3,
-> +	.hw.init =3D &(struct clk_init_data){
-> +		.name =3D "fdiv3_div",
-> +		.ops =3D &clk_fixed_factor_ops,
-> +		.parent_hws =3D (const struct clk_hw *[]) { &t7_fpll.hw },
-> +		.num_parents =3D 1,
-> +	},
-> +};
-> +
-> +static struct clk_regmap t7_fdiv3 =3D {
-> +	.data =3D &(struct clk_regmap_gate_data){
-> +		.offset =3D FPLL_CTRL1,
-> +		.bit_idx =3D 20,
-> +	},
-> +	.hw.init =3D &(struct clk_init_data){
-> +		.name =3D "fdiv3",
-> +		.ops =3D &clk_regmap_gate_ops,
-> +		.parent_hws =3D (const struct clk_hw *[]) {
-> +			&t7_fdiv3_div.hw
-> +		},
-> +		.num_parents =3D 1,
-> +		.flags =3D CLK_IS_CRITICAL,
-> +	},
-> +};
-> +
-> +static struct clk_fixed_factor t7_fdiv4_div =3D {
-> +	.mult =3D 1,
-> +	.div =3D 4,
-> +	.hw.init =3D &(struct clk_init_data){
-> +		.name =3D "fdiv4_div",
-> +		.ops =3D &clk_fixed_factor_ops,
-> +		.parent_hws =3D (const struct clk_hw *[]) { &t7_fpll.hw },
-> +		.num_parents =3D 1,
-> +	},
-> +};
-> +
-> +static struct clk_regmap t7_fdiv4 =3D {
-> +	.data =3D &(struct clk_regmap_gate_data){
-> +		.offset =3D FPLL_CTRL1,
-> +		.bit_idx =3D 21,
-> +	},
-> +	.hw.init =3D &(struct clk_init_data){
-> +		.name =3D "fdiv4",
-> +		.ops =3D &clk_regmap_gate_ops,
-> +		.parent_hws =3D (const struct clk_hw *[]) {
-> +			&t7_fdiv4_div.hw
-> +		},
-> +		.num_parents =3D 1,
-> +		.flags =3D CLK_IS_CRITICAL,
-> +	},
-> +};
-> +
-> +static struct clk_fixed_factor t7_fdiv5_div =3D {
-> +	.mult =3D 1,
-> +	.div =3D 5,
-> +	.hw.init =3D &(struct clk_init_data){
-> +		.name =3D "fdiv5_div",
-> +		.ops =3D &clk_fixed_factor_ops,
-> +		.parent_hws =3D (const struct clk_hw *[]) { &t7_fpll.hw },
-> +		.num_parents =3D 1,
-> +	},
-> +};
-> +
-> +static struct clk_regmap t7_fdiv5 =3D {
-> +	.data =3D &(struct clk_regmap_gate_data){
-> +		.offset =3D FPLL_CTRL1,
-> +		.bit_idx =3D 22,
-> +	},
-> +	.hw.init =3D &(struct clk_init_data){
-> +		.name =3D "fdiv5",
-> +		.ops =3D &clk_regmap_gate_ops,
-> +		.parent_hws =3D (const struct clk_hw *[]) {
-> +			&t7_fdiv5_div.hw
-> +		},
-> +		.num_parents =3D 1,
-> +		.flags =3D CLK_IS_CRITICAL,
-> +	},
-> +};
-> +
-> +static struct clk_fixed_factor t7_fdiv7_div =3D {
-> +	.mult =3D 1,
-> +	.div =3D 7,
-> +	.hw.init =3D &(struct clk_init_data){
-> +		.name =3D "fdiv7_div",
-> +		.ops =3D &clk_fixed_factor_ops,
-> +		.parent_hws =3D (const struct clk_hw *[]) { &t7_fpll.hw },
-> +		.num_parents =3D 1,
-> +	},
-> +};
-> +
-> +static struct clk_regmap t7_fdiv7 =3D {
-> +	.data =3D &(struct clk_regmap_gate_data){
-> +		.offset =3D FPLL_CTRL1,
-> +		.bit_idx =3D 23,
-> +	},
-> +	.hw.init =3D &(struct clk_init_data){
-> +		.name =3D "fdiv7",
-> +		.ops =3D &clk_regmap_gate_ops,
-> +		.parent_hws =3D (const struct clk_hw *[]) {
-> +			&t7_fdiv7_div.hw
-> +		},
-> +		.num_parents =3D 1,
-> +		.flags =3D CLK_IS_CRITICAL,
-> +	},
-> +};
-> +
-> +static struct clk_hw *t7_fpll_hw_clks[] =3D {
-> +	[CLKID_FPLL_DCO]	=3D &t7_fpll_dco.hw,
-> +	[CLKID_FPLL]		=3D &t7_fpll.hw,
-> +	[CLKID_FDIV2_DIV]	=3D &t7_fdiv2_div.hw,
-> +	[CLKID_FDIV2]		=3D &t7_fdiv2.hw,
-> +	[CLKID_FDIV2P5_DIV]	=3D &t7_fdiv2p5_div.hw,
-> +	[CLKID_FDIV2P5]		=3D &t7_fdiv2p5.hw,
-> +	[CLKID_FDIV3_DIV]	=3D &t7_fdiv3_div.hw,
-> +	[CLKID_FDIV3]		=3D &t7_fdiv3.hw,
-> +	[CLKID_FDIV4_DIV]	=3D &t7_fdiv4_div.hw,
-> +	[CLKID_FDIV4]		=3D &t7_fdiv4.hw,
-> +	[CLKID_FDIV5_DIV]	=3D &t7_fdiv5_div.hw,
-> +	[CLKID_FDIV5]		=3D &t7_fdiv5.hw,
-> +	[CLKID_FDIV7_DIV]	=3D &t7_fdiv7_div.hw,
-> +	[CLKID_FDIV7]		=3D &t7_fdiv7.hw,
-> +};
-> +
-> +static const struct meson_clkc_data t7_fpll_data =3D {
-> +	.hw_clks =3D {
-> +		.hws =3D t7_fpll_hw_clks,
-> +		.num =3D ARRAY_SIZE(t7_fpll_hw_clks),
-> +	},
-> +};
-> +
->  static const struct of_device_id t7_pll_clkc_match_table[] =3D {
->  	{ .compatible =3D "amlogic,t7-gp0-pll",	.data =3D &t7_gp0_data, },
->  	{ .compatible =3D "amlogic,t7-gp1-pll",	.data =3D &t7_gp1_data, },
-> @@ -1055,6 +1311,7 @@ static const struct of_device_id t7_pll_clkc_match_=
-table[] =3D {
->  	{ .compatible =3D "amlogic,t7-mpll",	.data =3D &t7_mpll_data, },
->  	{ .compatible =3D "amlogic,t7-hdmi-pll",	.data =3D &t7_hdmi_data, },
->  	{ .compatible =3D "amlogic,t7-mclk-pll",	.data =3D &t7_mclk_data, },
-> +	{ .compatible =3D "amlogic,t7-fpll",	.data =3D &t7_fpll_data, },
->  	{}
->  };
->  MODULE_DEVICE_TABLE(of, t7_pll_clkc_match_table);
+>  #endif /* __T7_PLL_CLKC_H */
 
 --=20
 Jerome
