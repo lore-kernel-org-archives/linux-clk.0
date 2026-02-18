@@ -1,113 +1,157 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from ixit.cz (ixit.cz [185.100.197.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A620309DB5
-	for <linux-clk@vger.kernel.org>; Wed, 18 Feb 2026 11:14:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7730424729A;
+	Wed, 18 Feb 2026 11:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.100.197.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771413273; cv=none; b=tnNtA11y6tceE+v82XLdO0I48eXGC+SDn60SL6Igu6e1fdS20uuLPhkHUp+RmInH9lDtA0iKfSqZucs6Ii2fpbziGkQdiYKYlluNqyOenO9eK18Pa8eg/5G5hR+g2zbKJQ2sHM/4VCJmE1grMkEvVmOH5HeXTKQvAMZSF+w5hkU=
+	t=1771413533; cv=none; b=GPZUO/J38PtutNNACn8r0ru9S9YeHPut/uOZcAqL6n0007OeQjyyw6TXbfGSyZPtbIGL1S5X4ZRD7O95G4hVo1hrdqnvFxsWL6AkY+i6wO3WrXd2zrB9Q1hEI8VzdGnEhKkmp/NWxbwoedakI+Ix1+dukXD2deUZbnotBaqdX/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771413273; c=relaxed/simple;
-	bh=T8V75jFHCxdVBIey4SVAYN9nGoaO/70zF+m7YAmtrlY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GVziPUhCj1ewIcAtRaOPrL4i3qfQJ3qZn9T6+d5YQKJnHkGsDq+r4eIFYvtRMH7AfIA+cNXVQUPgOMe5KlDSr88muRtYOBofrXKGaRAZQJszYhBdQ18XwBw1OOT80H084v7ZSqcGZ0B0yjjE75tgmahNQTWdxnXtGJldaUzGFgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KUH+t7OV; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=nIP+As6a; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1771413533; c=relaxed/simple;
+	bh=o3WhltwIU/ce2JP51Pd3bWIpA7/t5ViZPBP2WUTW9tQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P1M0x4ZLOZkkNg9VCrmApY6GHYPZrjiD+cS20tMi2ePk60DFik5fCyn0q0DQepnDR32uE4uEAb6Ju8gl1D2yur0uGKhgwo4uXSdtLOUVMxM4s1MfEDwDxWbxWwx2KGRI86ga8ir/lT0iESj7GPCEL/eSpOhyECs+/WfcZBdNDJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=vRm9HL+4; arc=none smtp.client-ip=185.100.197.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KUH+t7OV";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="nIP+As6a"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1771413271;
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="vRm9HL+4"
+Received: from [IPV6:2a02:f000:10bd:e301::471] (unknown [IPv6:2a02:f000:10bd:e301::471])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ixit.cz (Postfix) with ESMTPSA id ADC49534093F;
+	Wed, 18 Feb 2026 12:18:39 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+	t=1771413520;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2G2U1r6MNxqXWHe+KrJPIT7PkZtApRJqJedGKd+iJpc=;
-	b=KUH+t7OV30HOSW1ruP/9h0J6ZNmhwQNOBcB38cwxwuG5AWWvsjvB/RSsqCL8RGbWEuKMyb
-	IeFL4lR4T2YPNzQQt0/JaD+63SJG9RO/Hqb1K535BjV2A55pg3A1dyhUnwo6iKaenrLfss
-	YCE59aahICRYmiTNioLuaROphAq3B4A=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-484-3eGksUNcPH-MCukuPbXcmQ-1; Wed, 18 Feb 2026 06:14:28 -0500
-X-MC-Unique: 3eGksUNcPH-MCukuPbXcmQ-1
-X-Mimecast-MFC-AGG-ID: 3eGksUNcPH-MCukuPbXcmQ_1771413268
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8c70d16d5a9so2908360085a.3
-        for <linux-clk@vger.kernel.org>; Wed, 18 Feb 2026 03:14:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1771413268; x=1772018068; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2G2U1r6MNxqXWHe+KrJPIT7PkZtApRJqJedGKd+iJpc=;
-        b=nIP+As6aBHaHJQ2RQJuGN3dY6oIj+yjo+TdN/K6PZPT48V/vcnsmB8fxefvowHSKIh
-         GB7qKdfERx9HeIy3nRfn7CqPTZoKUhz5WGdB9Bj/BW3F/WrnDxiEP4yrT7QAjV/+9IHV
-         hLUxQFhWT9llEt6Z57b6pFfA5eDHKWRW20NIkX9pQ0pKI6e5gPiM9LB3v17ViY+igx2M
-         Defd47i3P90g6XudhJA9axOuiAO6xvKM7BhuRJNqNbSvkE0yA5KqNhQv6YDcq5FCrrEm
-         19E2TPauCamhn4TmRyADKiQaT2htYFAG4Dj+nVZ3Y6xNG8OOBKm8xMc9ud9TwOHs0lpr
-         TyFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771413268; x=1772018068;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=2G2U1r6MNxqXWHe+KrJPIT7PkZtApRJqJedGKd+iJpc=;
-        b=PquFO5BwgGu8umfl8wCK1s/0IXsUJngPdZAJxtpvJoJ/j9T8PXG3Mlqt/ZnhpwbHvT
-         f5R6T/SzzPBYglbVw18icy1ERLPrOoYkavYpYpKcYgomXDeeM3ih00RcbsU/oKKw5Ubo
-         pOHhrbJpWxCjGdW7AG44+bHGsWAmfKE7B3J5FNnr3KKYqkl8xrNgHBB5pU2b3Ve+rvNH
-         3YGh120/+W+Qo/9kZiJF5U0KDwm8TNgtJpmFvYZw1afZFSMF94nNWZHy6w3e8/NVb4Ya
-         IBJ84EAjc56oL7EXtX4IY9MtOGLOgeUEy0KEgsjXJQEazaSb25sq1rNm1KOLsY5dfis8
-         ltAA==
-X-Forwarded-Encrypted: i=1; AJvYcCUX29u3bBVeHDJpKEa7dXKBqv0ykCtFT0b1wQnWPRAzjManoisBKvRrrkA7nRtij2XBelm0lsWSXK8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwU5Rhs4uEa9w3uxXexIjX0JFaUSaQziFi94A2Nt7eIfiEi8pFy
-	LcbkWS1rYlzR/z9tGyzSy5siQDUTvrpO62IxL2EMkP2lFqlHpke0paTL+dr5iyMfPo30qzXMI3w
-	kLj6H9H1s/yhh0MB6usYMPY9Qwb/pF5/Drs4hG8oiMVGmajK2QTyGax8R5Uz3NA==
-X-Gm-Gg: AZuq6aIiKHmBneNOqcBr7w+EnyZBfNOIazCahgmE9Uvb7AaMqkypS6NpUHHVkKntjNV
-	Ytp4ZrqGbUwnGm7TfSSYYCQiBWSWp14ns9itIg2lKcSZNjAhP+N+M6ur7DZKBj6LJov+TvdDQHs
-	ryw6dlJKBsbUBEA8/7I9RKODpCxsedjkEqBt5eNl2B2MLkjYk8wwFsystP+LmzCcX8dNyL7TNqa
-	GcTI1LoLSsWMgbnVDWJSJLj5GKPwEibw6lvWpAMMwNnT19nmNDUcbMBAbHLTfWlyrsqKdDeAKEm
-	UxvteO9qFOWqknF7cFcvXXrzcEh5/oD5S6hghkeQDTjsFeE4L9P0OV0kl6nQjTtLPVEntG/hIGq
-	TmIajNttslyGzBB8RaiTVfFDSAOz+YNxN8qpcyI4J8tjHvV0n6sbPML9x
-X-Received: by 2002:a05:620a:1723:b0:8cb:4289:6c3a with SMTP id af79cd13be357-8cb4c01f4e9mr1744949985a.74.1771413267745;
-        Wed, 18 Feb 2026 03:14:27 -0800 (PST)
-X-Received: by 2002:a05:620a:1723:b0:8cb:4289:6c3a with SMTP id af79cd13be357-8cb4c01f4e9mr1744947785a.74.1771413267191;
-        Wed, 18 Feb 2026 03:14:27 -0800 (PST)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8cb2b0e1bdbsm1749411685a.17.2026.02.18.03.14.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Feb 2026 03:14:26 -0800 (PST)
-Date: Wed, 18 Feb 2026 06:14:25 -0500
-From: Brian Masney <bmasney@redhat.com>
-To: Felix Gu <ustc.gu@gmail.com>
-Cc: Ryan Chen <ryan_chen@aspeedtech.com>, Joel Stanley <joel@jms.id.au>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	linux-clk@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: aspeed: ast2700: Add missing NULL pointer check for
- devm_kasprintf()
-Message-ID: <aZWfESmMIw-e81W-@redhat.com>
-References: <20260218-ast2700-v1-1-2388e0fe3597@gmail.com>
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/2twYMBPL8RFmrM3kKaz3qbCcrHZHObNC7PqzjiacFQ=;
+	b=vRm9HL+4fTYn4qfcAWQ4OKTN7cRcdX1HbYkFCyczlxD//lnA0bh/0auT1Ta0wQi9iXk8U+
+	ik7NAJOxqD+WQjgGcFlkRhL3X5/ROV3dvMgqAuv3iKdULdYpy/XO4XLj8Yb+ddUsl257eP
+	yO787TrMGg+xBkYJ6L5SYilhAUtxyDo=
+Message-ID: <e43d5bb2-bdbf-4439-933e-36591dcfd3c1@ixit.cz>
+Date: Wed, 18 Feb 2026 12:18:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260218-ast2700-v1-1-2388e0fe3597@gmail.com>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] arm64: dts: qcom: sdm845: Add missing MDSS reset
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20260217-sdm845-hdk-v1-0-866f1965fef7@oss.qualcomm.com>
+ <20260217-sdm845-hdk-v1-3-866f1965fef7@oss.qualcomm.com>
+ <590f75c2-6418-4d39-ba7e-589acdf98786@oss.qualcomm.com>
+Content-Language: en-US
+From: David Heidelberg <david@ixit.cz>
+Autocrypt: addr=david@ixit.cz; keydata=
+ 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
+In-Reply-To: <590f75c2-6418-4d39-ba7e-589acdf98786@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 18, 2026 at 04:16:37PM +0800, Felix Gu wrote:
-> devm_kasprintf() can return NULL on memory allocation failure.
+On 18/02/2026 11:30, Konrad Dybcio wrote:
+> On 2/17/26 10:20 PM, Dmitry Baryshkov wrote:
+>> From: David Heidelberg <david@ixit.cz>
+>>
+>> If the OS does not support recovering the state left by the
+>> bootloader it needs a way to reset display hardware, so that it can
+>> start from a clean state. Add a reference to the relevant reset.
 > 
-> Check the return value and return -ENOMEM if allocation fails in
-> ast2700_soc_clk_probe().
+> This is not the relevant reset
 > 
-> Fixes: fdc1eb624ddc ("clk: aspeed: add AST2700 clock driver")
-> Signed-off-by: Felix Gu <ustc.gu@gmail.com>
+> You want MDSS_CORE_BCR @ 0xaf0_2000
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+Thanks, I prepared the fixes [1].
+
+I'll try to test it if it's not breaking anything for us and send as v2 
+of [2].
+
+David
+
+[1] https://codeberg.org/sdm845/linux/commits/branch/b4/mdss-reset
+[2] 
+https://patchwork.kernel.org/project/linux-arm-msm/patch/20260112-mdss-reset-v1-1-af7c572204d3@ixit.cz/
+
+> 
+> Konrad
+> 
+>>
+>> Signed-off-by: David Heidelberg <david@ixit.cz>
+>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+>> ---
+> 
+> 
+>>   arch/arm64/boot/dts/qcom/sdm845.dtsi | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+>> index bf2f9c04adba..75c192eddc57 100644
+>> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+>> @@ -4550,6 +4550,7 @@ mdss: display-subsystem@ae00000 {
+>>   			reg-names = "mdss";
+>>   
+>>   			power-domains = <&dispcc MDSS_GDSC>;
+>> +			resets = <&dispcc DISP_CC_MDSS_RSCC_BCR>;
+>>   
+>>   			clocks = <&dispcc DISP_CC_MDSS_AHB_CLK>,
+>>   				 <&dispcc DISP_CC_MDSS_MDP_CLK>;
+>>
+
+-- 
+David Heidelberg
 
