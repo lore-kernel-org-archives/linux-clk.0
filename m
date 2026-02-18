@@ -1,214 +1,124 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D68287263;
-	Wed, 18 Feb 2026 08:12:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743A52F6930
+	for <linux-clk@vger.kernel.org>; Wed, 18 Feb 2026 08:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771402333; cv=none; b=tm3amNbQXLDRA57iciC3Cxma06eJ0Ujdvb5GoFCKj2laSQRBgn+hokANuCJu5S4n9ql8H3HGvxji7obmY0X8bP8u8A9BUhbwGUMFjfmc98G3JDSU8EqpqfvVBi2d/6Rb7fNlMemcfj2loXmW9ByWkjq5foO5NrLpxYWHRgxTn1c=
+	t=1771402604; cv=none; b=W4wPIUgxEX3bqh7x7twB14W9d16B24MhIoCkyK3du8CzF/4JB+lJxaL2fTahOQ/I2FkRn/fuiCAgQZHLT9pe12RwGrcWM87UnTVV6PV+KJSaZdaZujd2ruOXLeZkIvBOgPnSBtGeXz/4fUgHqTNa69d7/NrvHsgwVmjKIiGkMRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771402333; c=relaxed/simple;
-	bh=tncM6eitUJUN0H6rXBJ9YikrPEEHKB8O2kAIgl1CwKQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UamfxZORcxkDo2Vn+xQGEkZQxhvKI1j+G2XJfxWi/eB+fm7EC6RC1f2FQvXJckb1nE9ssFpU2CI+yqmpnYWkfWiV8jYj0tG5aJye7eM2rS7JzKRHy0E97P+w53JOXmggPxAYGP/54MUVf6LESOxJHMyeteFFQ08b+0zKg+jHWm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cWwSAhWd; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1771402604; c=relaxed/simple;
+	bh=ATLkbn8TN+9WkJGc0zUgyg102ukNwiK3cRL5DAp1VH4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=lSmDPlSxS++6vVmk5lIrv/w03eMKT+1Hwr6LpedpI22FZ2uxNRhIvx/+9H5jGF7IjQI1Kqfi3/X6raUEZXOuRzSvyd4lSCkSwZcDuKaB5aXq/+Ni7cpbzEfQAXTEf5HYN/YiFB8ZehKUDlXyqV3DxyBUWVa5Y+C9eH8d15EvnGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mDsSIdBM; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cWwSAhWd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4527FC19421;
-	Wed, 18 Feb 2026 08:12:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771402333;
-	bh=tncM6eitUJUN0H6rXBJ9YikrPEEHKB8O2kAIgl1CwKQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cWwSAhWdBONnGX2KJrC3wmO4D5V2UcU6r1esgTl8Xec2rVcZvmUXzKI/4O6DI5BmJ
-	 P7nR2gcRNkAdoZb0hYAN3aDb8Jiw9zoSs0wDzdeBMR2WrFUme0fNuJJlhROvE8J04S
-	 E6J3nObpJ7RrXaEob3JzAVn3jLlzZpD1BcV6sPJSvkjZRrSGKa9GvhvBLjhhmTSYlA
-	 s/9XPXKxv7tvhi8xlNVeAoGxK2H7fCFwaMdt735X3abHVXt/14BKX08+iKZ9NQEMSo
-	 N/kn1zsQTa5E8Z3goI52EfgJImi4kjaVP6ZA0NixxI6WHCDBzLq86ijEePn+Exq52R
-	 cb2Cm7rkbZ7Jg==
-Message-ID: <0cc339f8-5f53-410e-b798-92b0fe46dc9e@kernel.org>
-Date: Wed, 18 Feb 2026 09:12:08 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mDsSIdBM"
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-82491fbf02cso2920380b3a.1
+        for <linux-clk@vger.kernel.org>; Wed, 18 Feb 2026 00:16:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1771402603; x=1772007403; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=o0bP01qFBrwLQV21WFsuN0zM6OdwGcJ2YrdhXKOaIYw=;
+        b=mDsSIdBM09Hi2eRJiI2IdTaquqHz80gsrjtJM6865uVx/34wUqPqk03nXOej8adq3R
+         2bVCl6xVTfDiNuZZfIzTRc3khzwPqzQK0UyBWRzi0rgY3RcxFeln0wB5estf/7yb+iXy
+         hKSa/fqmvBOjFI0r/w0OgAo16y73Fg7WMnJl9JVwsMsMgqRox6373JdTTW0nByN0HKTv
+         z3spg/b5WScxfJ5gvPn7e+CLVJp8+/MJsAmWI3OEoFDzgsoRBFXuAS+hl6HYu6ftVmLm
+         imhR/1yHzCJYkq7ROsXdG/VlLk/sL6SY8pq7p4un4uL95oQ/Lgf8+ZbpLHH4c4NeYhlw
+         ZYnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771402603; x=1772007403;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o0bP01qFBrwLQV21WFsuN0zM6OdwGcJ2YrdhXKOaIYw=;
+        b=Sg0ldeK4h5JEmj8c2xRTo8W69CD+dmJxpa0BE7mPcxm2DxrfMm8Vt/nfQs39zgV8MS
+         J+tiCAlN7bY1YnRwpJ/vpy5XXXRh0O4kxyWfqh0t8vJBU3Is2xqRSYkrB58yl9EglN4d
+         98RwzO8tE1+icPifIaC+4LT+sMFO+1irreNOhH/xicnXOMkSLro4AJ2OJGvPgjZL+kCj
+         xfR9hQFHbH48vdTOeA8lI6EaEZ642RT8kLlYVHmxZN9JxSkHDIfa1vRpKoHWjYvIWG9l
+         GTK55g9l9WYk7tSoJxc/BW2okFcDrMNGh/y6/q2JU/ENczdYVoD2LlLioQ2A6hbiaeul
+         rdUA==
+X-Gm-Message-State: AOJu0YxvwWMk6PYYdnELEvFYsBZXXxIag54ckPm7w5tcFkT15yssR7KI
+	A5EsnJZJcO4dJHdR0wpVNinQVEOCa3rm37HNpfp+7TClKSy2oXQT8mhF
+X-Gm-Gg: AZuq6aLivrTKeLXCPZ9y+AQTWbPCBDfL1DjDaP2cRIY3RNRiR9MNkQnlhTLTOutR6MM
+	vnPc526sArhcd3H5YY4U5APde6sArdmx7iYsUqECefOAm9B/yFYzQgQVE1Nx4K+yKxGyUGLDWAi
+	Vk41GQUt1VT3hXalUdq035EpyE3R//uKlGTwsNM8LG4EZ28g6TdgHeVWF0R80XaBD3G0+CyNVZK
+	NKuOCDAtlZqDp4LhPWH8o5LbgQ+ZJ8wEU7fk8XRmg0v4ByKxZuDpVJ9oaLb9bbDWmQ57/RbAAWN
+	4H/+0BDlP9/X5rhiaFFFlDYw707K523tchoshmNc/rHa4hF2i9kPWX2Cx2mG/lHSWG81bzAgY+V
+	M00cWITugKGpwvHryExNyayHepQrq6ZRS8O3SSu7Re6Reuszl5wjHi1zt2pf6wbOHMlA/inFDDu
+	mt4H1fN+7QiVjDaavLLCeT4pZYtrFCN25/xM1+
+X-Received: by 2002:a05:6a21:748e:b0:38d:f250:7a79 with SMTP id adf61e73a8af0-39483780690mr12105647637.15.1771402602733;
+        Wed, 18 Feb 2026 00:16:42 -0800 (PST)
+Received: from junjungu-PC.localdomain ([2408:820c:9008:ba52:403:e988:3f54:236b])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c6e5331ba14sm11966535a12.29.2026.02.18.00.16.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Feb 2026 00:16:42 -0800 (PST)
+From: Felix Gu <ustc.gu@gmail.com>
+Date: Wed, 18 Feb 2026 16:16:37 +0800
+Subject: [PATCH] clk: aspeed: ast2700: Add missing NULL pointer check for
+ devm_kasprintf()
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] clk: qcom: dispcc-sdm845: set GENPD_FLAG_NO_STAY_ON
- flag for MDSS domain
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- stable@vger.kernel.org
-References: <20260217-sdm845-hdk-v1-0-866f1965fef7@oss.qualcomm.com>
- <20260217-sdm845-hdk-v1-1-866f1965fef7@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20260217-sdm845-hdk-v1-1-866f1965fef7@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20260218-ast2700-v1-1-2388e0fe3597@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAGR1lWkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIzMDI0ML3cTiEiNzAwNds+Q0C/OUJHMjyzQDJaDqgqLUtMwKsEnRsbW1AAt
+ +zz5ZAAAA
+X-Change-ID: 20260218-ast2700-6cf87db729f0
+To: Ryan Chen <ryan_chen@aspeedtech.com>, Joel Stanley <joel@jms.id.au>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Andrew Jeffery <andrew@codeconstruct.com.au>, 
+ Brian Masney <bmasney@redhat.com>
+Cc: linux-clk@vger.kernel.org, linux-aspeed@lists.ozlabs.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Felix Gu <ustc.gu@gmail.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1771402600; l=1056;
+ i=ustc.gu@gmail.com; h=from:subject:message-id;
+ bh=ATLkbn8TN+9WkJGc0zUgyg102ukNwiK3cRL5DAp1VH4=;
+ b=mbhAFVh+U+0K5i8+MeMwiZF5g2QdlgYBo36O8enjZLUm7iFq7+Vaki2aS8uPGORp5U/erYDXe
+ TirWXZT+NRjA8lBL1zQsJf5Aq5gsMXEhCXt30+bItwC7kLUzMkRglut
+X-Developer-Key: i=ustc.gu@gmail.com; a=ed25519;
+ pk=fjUXwmjchVN7Ja6KGP55IXOzFeCl9edaHoQIEUA+/hw=
 
-On 17/02/2026 22:20, Dmitry Baryshkov wrote:
-> Since the commit 13a4b7fb6260 ("pmdomain: core: Leave powered-on genpds
-> on until late_initcall_sync") setting of the display clocks is partially
-> broken. For example, when on SDM845-HDK the bootloader leaves display
-> enabled, later the kernel can't set up DSI clocks, ending up with the
-> broken display, blinking blue.
-> 
->  ------------[ cut here ]------------
->  disp_cc_mdss_pclk0_clk_src: rcg didn't update its configuration.
->  WARNING: CPU: 7 PID: 81 at drivers/clk/qcom/clk-rcg2.c:136 update_config+0xd4/0xf0
->  Modules linked in:
->  CPU: 7 UID: 0 PID: 81 Comm: kworker/u32:3 Not tainted 6.16.0-rc2-00040-ga3f36de2f3ba #4236 PREEMPT
->  Hardware name: Qualcomm Technologies, Inc. SDM845 HDK (DT)
->  Workqueue: events_unbound deferred_probe_work_func
->  pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->  pc : update_config+0xd4/0xf0
->  lr : update_config+0xd4/0xf0
->  sp : ffff800080992a30
->  x29: ffff800080992a40 x28: 0000000000000001 x27: ffff00008db49080
->  x26: ffff00008db49220 x25: 0000000000000000 x24: 0000000008d9ee20
->  x23: ffffd6f1bf1f6cd8 x22: 0000000008d9ee20 x21: ffffd6f1becadfa8
->  x20: ffffd6f1bf1f6cc0 x19: 0000000000000000 x18: fffffffffffef3f0
->  x17: 0000000000000004 x16: 0000000000000024 x15: 0000000000000005
->  x14: fffffffffffcf3ef x13: 2e6e6f6974617275 x12: 6769666e6f632073
->  x11: 7469206574616470 x10: 752074276e646964 x9 : 72756769666e6f63
->  x8 : ffff800080992790 x7 : ffff8000809928c0 x6 : ffff800080992850
->  x5 : ffff8000809927d0 x4 : ffff800080994000 x3 : 0000000000000000
->  x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff0000808d1b00
+devm_kasprintf() can return NULL on memory allocation failure.
 
-Please trim the context/messages - most of above is not needed
+Check the return value and return -ENOMEM if allocation fails in
+ast2700_soc_clk_probe().
 
->  Call trace:
->   update_config+0xd4/0xf0 (P)
->   clk_rcg2_configure+0xb8/0xc0
->   clk_pixel_set_rate+0x138/0x180
->   clk_change_rate+0x124/0x620
->   clk_change_rate+0x1b4/0x620
->   clk_change_rate+0x1b4/0x620
->   clk_change_rate+0x1b4/0x620
->   clk_change_rate+0x1b4/0x620
->   clk_change_rate+0x1b4/0x620
->   clk_change_rate+0x1b4/0x620
->   clk_core_set_rate_nolock+0x230/0x2b0
->   clk_set_rate+0x38/0x90
->   _opp_config_clk_single+0x30/0x98
->   _set_opp+0x11c/0x530
->   dev_pm_opp_set_rate+0x18c/0x280
->   dsi_link_clk_set_rate_6g+0x44/0x100
->   msm_dsi_host_power_on+0xc4/0x988
->   dsi_mgr_bridge_pre_enable+0x194/0x3e0
->   drm_atomic_bridge_call_pre_enable+0x40/0x58
->   drm_atomic_bridge_chain_pre_enable+0x50/0x130
->   drm_atomic_helper_commit_modeset_enables+0x15c/0x26c
->   msm_atomic_commit_tail+0x214/0xb18
->   commit_tail+0xa0/0x1a0
->   drm_atomic_helper_commit+0x1a8/0x1d0
->   drm_atomic_commit+0x8c/0xcc
->   drm_client_modeset_commit_atomic+0x258/0x2d0
->   drm_client_modeset_commit_locked+0x60/0x1b8
->   drm_client_modeset_commit+0x2c/0x58
->   __drm_fb_helper_restore_fbdev_mode_unlocked+0xbc/0xe8
->   drm_fb_helper_set_par+0x30/0x58
->   fbcon_init+0x3cc/0x530
->   visual_init+0x8c/0xe0
->   do_bind_con_driver.isra.0+0x18c/0x320
->   do_take_over_console+0x13c/0x1d4
->   do_fbcon_takeover+0x6c/0xe0
->   fbcon_fb_registered+0x1dc/0x1e0
->   do_register_framebuffer+0x1bc/0x278
->   register_framebuffer+0x30/0x5c
->   __drm_fb_helper_initial_config_and_unlock+0x2dc/0x5a8
->   drm_fb_helper_initial_config+0x48/0x58
->   drm_fbdev_client_hotplug+0x7c/0xe0
->   drm_client_register+0x5c/0xa0
->   drm_fbdev_client_setup+0xa4/0x1c0
->   drm_client_setup+0x58/0xa0
->   msm_drm_bind+0x3b4/0x460
->   try_to_bring_up_aggregate_device+0x16c/0x1e0
->   __component_add+0xa8/0x170
->   component_add+0x14/0x20
->   dsi_dev_attach+0x20/0x38
->   dsi_host_attach+0x58/0x98
->   devm_mipi_dsi_attach+0x34/0x90
->   lt9611_attach_dsi+0x98/0x120
->   lt9611_probe+0x3f8/0x4a0
->   i2c_device_probe+0x154/0x340
->   really_probe+0xbc/0x2c0
+Fixes: fdc1eb624ddc ("clk: aspeed: add AST2700 clock driver")
+Signed-off-by: Felix Gu <ustc.gu@gmail.com>
+---
+ drivers/clk/aspeed/clk-ast2700.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Nothing below makes sense either
+diff --git a/drivers/clk/aspeed/clk-ast2700.c b/drivers/clk/aspeed/clk-ast2700.c
+index bbb2b571eb72..011f8be03edc 100644
+--- a/drivers/clk/aspeed/clk-ast2700.c
++++ b/drivers/clk/aspeed/clk-ast2700.c
+@@ -901,6 +901,8 @@ static int ast2700_soc_clk_probe(struct platform_device *pdev)
+ 
+ 	clk_ctrl->clk_data = clk_data;
+ 	reset_name = devm_kasprintf(dev, GFP_KERNEL, "reset%d", clk_data->scu);
++	if (!reset_name)
++		return -ENOMEM;
+ 
+ 	clk_hw_data = devm_kzalloc(dev, struct_size(clk_hw_data, hws, clk_data->nr_clks),
+ 				   GFP_KERNEL);
 
->   __driver_probe_device+0x78/0x120
->   driver_probe_device+0x3c/0x160
->   __device_attach_driver+0xb8/0x140
->   bus_for_each_drv+0x88/0xe8
->   __device_attach+0xa0/0x198
->   device_initial_probe+0x14/0x20
->   bus_probe_device+0xb4/0xc0
->   deferred_probe_work_func+0x90/0xcc
->   process_one_work+0x214/0x64c
->   worker_thread+0x1c0/0x364
->   kthread+0x14c/0x220
->   ret_from_fork+0x10/0x20
->  irq event stamp: 110949
->  hardirqs last  enabled at (110949): [<ffffd6f1be502d78>] _raw_spin_unlock_irqrestore+0x6c/0x74
->  hardirqs last disabled at (110948): [<ffffd6f1be502268>] _raw_spin_lock_irqsave+0x84/0x88
->  softirqs last  enabled at (109450): [<ffffd6f1be1b9ff0>] release_sock+0x90/0xa4
->  softirqs last disabled at (109448): [<ffffd6f1be1b9f88>] release_sock+0x28/0xa4
->  ---[ end trace 0000000000000000 ]---
->  ------------[ cut here ]------------
->  disp_cc_mdss_pclk1_clk_src: rcg didn't update its configuration.
-
-And that's the same log.
+---
+base-commit: fe9e3edb6a215515d1148d32a5c445c5bdd7916f
+change-id: 20260218-ast2700-6cf87db729f0
 
 Best regards,
-Krzysztof
+-- 
+Felix Gu <ustc.gu@gmail.com>
+
