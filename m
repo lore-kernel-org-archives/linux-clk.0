@@ -1,153 +1,225 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB8230275E;
-	Wed, 18 Feb 2026 19:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE3992FD1B1
+	for <linux-clk@vger.kernel.org>; Wed, 18 Feb 2026 20:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771443547; cv=none; b=txse+ZymoYg+mH/NluUzUt0x17nA+DuRYs6mJj9jAUmEgwW62Q7vxCVooNqXe9/u/yZP6KJROZiV++N0oUp/5l1ktu09rEDMxq6E7KmgQqrGxJ718Ud8mUYvnyuM9uq6J9G+80JEDajF5g1ows7NqJKYe2jjpSz+fjlRMShFdys=
+	t=1771447579; cv=none; b=SVSJs6qXl6qzN1nL5hed60WJ3MyTMSJKVcfAd8bmldYu2OyeqnYs8r5uLgiyxxPQ5EvlxkzpjxZ0JfTKrisUpquKd7E5JeoliFxrFrV5kTjRpupGaLtfS2SOfMBiA4LP0sBakdZq8TC/DyloDP0cCH+VnOd6GXPdx4duV0sobeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771443547; c=relaxed/simple;
-	bh=NzbIsmjObZ1OO7Q+OaE1b5Bf4ezXavlaqQd3CWFVMfQ=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=T0LBhWcoWsA4OiWhdDV5fZznlJYLrYZhAgaTEk9v7k4xKUb+lFT9vFw616/eNkXwh2NdOEJCNVNpsoRUFkAruq4DCoLFjwlJckxz8juuwHd2U1cf+fnjtfceRlKKwzsqYbFxQOu1Pf0HmJ4UPOtxxwGlBb6C/0jNWTlRaOzgF1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TvHmEyn3; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1771447579; c=relaxed/simple;
+	bh=IA1YBUMs/iIQl36lh0k9HyH0QwFi5qeoZtBc3SU2miA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=NzgqsLzQyakX149osWzxluMMPUFmsgqkcvd+Deqs5KnbGx+8eey1pCcqWZxMrqsGymVa5/JXs2XTfjpVhcUrT+b9fU9Mu35IatQ4VTDHZLQAyvjLI0j6YoHG14UaMQlSJXUyztNYIw6N2LlfmH//6H3bJOZornrHAAgdIpfQMtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=rwDoe2Yz; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TvHmEyn3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAF78C116D0;
-	Wed, 18 Feb 2026 19:39:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771443547;
-	bh=NzbIsmjObZ1OO7Q+OaE1b5Bf4ezXavlaqQd3CWFVMfQ=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=TvHmEyn3C5Gsp1d90B5hABpFRwzd9RFB5yjLevVnbp9ZVng6L30dlIDSAgloVAPij
-	 BH0B5lZBG5rop/i5sAmx9Ag1xtVPJGYfIRTrl2tzB/8r1BFsvjbYcIGPFaUG2wwm9l
-	 W2bbEOrjKqqpck1/EucOY9Bo1a7reLYFGOTxkPbzOxZtFkX6pMR1+1UsFDkJ4G+UC+
-	 AB3nKU4QOSvgu+lCRm/sWPMYsuwnZTI7FnezG0X9hVH0FXzykXW7TxiOxwFVgG03cJ
-	 PDwIKyyqS5bluJPL99mloGnrw8cFNoxQaLSl0q06Z5ExtNMyN2zSthEUEKiTNLGeOn
-	 mP16MOBJ++JNg==
-Message-ID: <837e6519-da8e-45dc-8c90-3fbf087e4317@kernel.org>
-Date: Wed, 18 Feb 2026 20:39:02 +0100
+	dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="rwDoe2Yz"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Cc:To:In-Reply-To:References:Message-Id:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=sgtQYzUApyiQz10T+cRb0FtV8nPLoTQ14FL2GFbOzVA=; b=rwDoe2YzEogG3q5VbAAnz2K9FW
+	WkyQwHzqTTkxbZ7/fKJ3r+GNGrcS8PaytSJr8KuPFUEi9t3FfQKka2ocYyPTj9l9k7swIKnz7AvrO
+	a5ae8yeqFqLte5IiiumNNUAkWs2ToYTIiNxWE2YDThq6Qi2GSXuGPz+EMwL7uVXcOh1I/T1LaVrMo
+	vpX2dq2muAfl3HyDweAmFy4ik+knL+dcW+h52e4+Eanc2GcJQvVKv1FuFfOpsDvm/m2GxNAgpc1ex
+	2V/oE40vHFfeSns0JSNPCIJ5uyTCElWisKwBX28vXCVP11kiUfadNrW3Et2OlUnribZG0UoBvuZPV
+	zhCFWCRw==;
+Received: from [187.36.210.68] (helo=1.0.0.127.in-addr.arpa)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1vsoQo-002Czn-Vb; Wed, 18 Feb 2026 21:45:59 +0100
+From: =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+Date: Wed, 18 Feb 2026 17:44:59 -0300
+Subject: [PATCH v6 1/6] clk: bcm: rpi: Manage clock rate in
+ prepare/unprepare callbacks
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/7] dt-bindings: clk: meson: Add Amlogic T7 fix pll
- support
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Ronald Claveau <linux-kernel-dev@aliel.fr>,
- linux-amlogic@lists.infradead.org,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260218101709.35450-1-linux-kernel-dev@aliel.fr>
- <20260218105611.36216-1-linux-kernel-dev@aliel.fr>
- <594f4fcc-ad88-4969-b9e5-98061fd5b73c@kernel.org>
- <1j8qcp6ed1.fsf@starbuckisacylon.baylibre.com>
- <fc25180a-859a-45da-b3f8-7ccb2e4d73cf@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <fc25180a-859a-45da-b3f8-7ccb2e4d73cf@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20260218-v3d-power-management-v6-1-40683fd39865@igalia.com>
+References: <20260218-v3d-power-management-v6-0-40683fd39865@igalia.com>
+In-Reply-To: <20260218-v3d-power-management-v6-0-40683fd39865@igalia.com>
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Stefan Wahren <wahrenst@gmx.net>, Maxime Ripard <mripard@kernel.org>, 
+ Melissa Wen <mwen@igalia.com>, Iago Toral Quiroga <itoral@igalia.com>, 
+ Chema Casanova <jmcasanova@igalia.com>, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ kernel-dev@igalia.com, =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5144; i=mcanal@igalia.com;
+ h=from:subject:message-id; bh=IA1YBUMs/iIQl36lh0k9HyH0QwFi5qeoZtBc3SU2miA=;
+ b=owEBbQGS/pANAwAIAT/zDop2iPqqAcsmYgBpliT45j6LIUMOG+Wd1sW9pNM7ypsiQP42M1KoQ
+ PxsTOYMkeeJATMEAAEIAB0WIQT45F19ARZ3Bymmd9E/8w6Kdoj6qgUCaZYk+AAKCRA/8w6Kdoj6
+ qln2CADfJXhF/h7MuQ2xD10xBv8GfzdHfEnRl6FxgRsgPtMiecFZb/cjQy70YeYu8XgQ8t1spQx
+ v2OkKQ13gMqOfbOS5VD+YeYefy1/Nd+osgTOzRtGYjAzratxfBFiRDjiJaH+4DYyi32fFW6wfm0
+ LPpqDjgufQBVNNL4bVVIZAHBkHLm7rYcCbnVzKUNLupKKuEHopcnilx7CzS9ctel6eMzNEyaTx4
+ eBOYIjzA68YndHWpR7C68vbMailgLTlMkixngrIzwo6QN1tddgEdDQjisjMbQYo3f+hnBIPjjM2
+ PMQey2m6/lkieZvM6nMC8xb5Q2/ve1sbIR6wL0K4NV9Ax3yI
+X-Developer-Key: i=mcanal@igalia.com; a=openpgp;
+ fpr=F8E45D7D0116770729A677D13FF30E8A7688FAAA
 
-On 18/02/2026 20:37, Krzysztof Kozlowski wrote:
-> On 18/02/2026 20:28, Jerome Brunet wrote:
->> On mer. 18 févr. 2026 at 20:17, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->>> On 18/02/2026 11:56, Ronald Claveau wrote:
->>>> Add PLL for the clock controller of the Amlogic T7 SoC family.
->>>>
->>>> Signed-off-by: Ronald Claveau <linux-kernel-dev@aliel.fr>
->>>> ---
->>>>  include/dt-bindings/clock/amlogic,t7-pll-clkc.h | 16 ++++++++++++++++
->>>>  1 file changed, 16 insertions(+)
->>>
->>> So you ignored my comments?
->>>
->>> And that's v2, not v1. You sent v1 and GOT the comments.
->>
->> I think this was still v1 and if you look at timestamps, Patch 1 was sent
-> 
-> No
-> 
->> before your first reply, then there is lot of time between the different
->> patches - probably done manually  ... at patch 6 (the one you've
->> commented fist) was sent twice.
-> 
-> 1. v1:
-> https://lore.kernel.org/all/20260218101728.35497-1-linux-kernel-dev@aliel.fr/
-> Wed, 18 Feb 2026 11:17:26 +0100
-> 
-> 2. My reply 5 minutes later:
-> https://lore.kernel.org/all/a848fa43-6a46-4fd6-86a4-96aaf82e2a02@kernel.org/
-> Wed, 18 Feb 2026 11:21:13 +0100	
-> 
-> 3. This patch send half an hour later:
-> https://lore.kernel.org/all/20260218105611.36216-1-linux-kernel-dev@aliel.fr/
-> Wed, 18 Feb 2026 *11:56:09* +0100	
+On current firmware versions, RPI_FIRMWARE_SET_CLOCK_STATE doesn't
+actually power off the clock. To achieve meaningful power savings, the
+clock rate must be set to the minimum before disabling. This might be
+fixed in future firmware releases.
 
-Ah, and I forgot to mention - author replied to me in private at:
-Wed, 18 Feb 2026 11:28:23 +0100
+Rather than pushing rate management to clock consumers, handle it
+directly in the clock framework's prepare/unprepare callbacks. In
+unprepare, set the rate to the firmware-reported minimum before
+disabling the clock. In prepare, for clocks marked with `maximize`
+(currently v3d), restore the rate to the maximum after enabling.
 
-So BEFORE this was sent, thus he already received my first reply to v1
-and this had to be conscious sending of next version, thus v2.
+Signed-off-by: Maíra Canal <mcanal@igalia.com>
+---
+ drivers/clk/bcm/clk-raspberrypi.c | 61 ++++++++++++++++++++++-----------------
+ 1 file changed, 35 insertions(+), 26 deletions(-)
 
-> 
-> after I already provided feedback about wrong threading.
-> 
-> 
-> Best regards,
-> Krzysztof
+diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
+index 1a9162f0ae31e330c46f6eafdd00350599b0eede..0d6e4f43c3bac0e7b38934c5c6e4db51211233de 100644
+--- a/drivers/clk/bcm/clk-raspberrypi.c
++++ b/drivers/clk/bcm/clk-raspberrypi.c
+@@ -66,7 +66,8 @@ const struct raspberrypi_clk_data *clk_hw_to_data(const struct clk_hw *hw)
+ struct raspberrypi_clk_variant {
+ 	bool		export;
+ 	char		*clkdev;
+-	unsigned long	min_rate;
++	u32		min_rate;
++	u32		max_rate;
+ 	bool		minimize;
+ 	bool		maximize;
+ 	u32		flags;
+@@ -289,16 +290,22 @@ static int raspberrypi_fw_dumb_determine_rate(struct clk_hw *hw,
+ static int raspberrypi_fw_prepare(struct clk_hw *hw)
+ {
+ 	const struct raspberrypi_clk_data *data = clk_hw_to_data(hw);
++	struct raspberrypi_clk_variant *variant = data->variant;
+ 	struct raspberrypi_clk *rpi = data->rpi;
+ 	u32 state = RPI_FIRMWARE_STATE_ENABLE_BIT;
+ 	int ret;
+ 
+ 	ret = raspberrypi_clock_property(rpi->firmware, data,
+ 					 RPI_FIRMWARE_SET_CLOCK_STATE, &state);
+-	if (ret)
++	if (ret) {
+ 		dev_err_ratelimited(rpi->dev,
+ 				    "Failed to set clock %s state to on: %d\n",
+ 				    clk_hw_get_name(hw), ret);
++		return ret;
++	}
++
++	if (variant->maximize)
++		ret = raspberrypi_fw_set_rate(hw, variant->max_rate, 0);
+ 
+ 	return ret;
+ }
+@@ -306,10 +313,19 @@ static int raspberrypi_fw_prepare(struct clk_hw *hw)
+ static void raspberrypi_fw_unprepare(struct clk_hw *hw)
+ {
+ 	const struct raspberrypi_clk_data *data = clk_hw_to_data(hw);
++	struct raspberrypi_clk_variant *variant = data->variant;
+ 	struct raspberrypi_clk *rpi = data->rpi;
+ 	u32 state = 0;
+ 	int ret;
+ 
++	/*
++	 * On current firmware versions, RPI_FIRMWARE_SET_CLOCK_STATE doesn't
++	 * actually power off the clock. To achieve meaningful power consumption
++	 * reduction, the driver needs to set the clock rate to minimum before
++	 * disabling it.
++	 */
++	raspberrypi_fw_set_rate(hw, variant->min_rate, 0);
++
+ 	ret = raspberrypi_clock_property(rpi->firmware, data,
+ 					 RPI_FIRMWARE_SET_CLOCK_STATE, &state);
+ 	if (ret)
+@@ -334,7 +350,7 @@ static struct clk_hw *raspberrypi_clk_register(struct raspberrypi_clk *rpi,
+ {
+ 	struct raspberrypi_clk_data *data;
+ 	struct clk_init_data init = {};
+-	u32 min_rate, max_rate;
++	unsigned long rate;
+ 	int ret;
+ 
+ 	data = devm_kzalloc(rpi->dev, sizeof(*data), GFP_KERNEL);
+@@ -354,18 +370,20 @@ static struct clk_hw *raspberrypi_clk_register(struct raspberrypi_clk *rpi,
+ 
+ 	data->hw.init = &init;
+ 
+-	ret = raspberrypi_clock_property(rpi->firmware, data,
+-					 RPI_FIRMWARE_GET_MIN_CLOCK_RATE,
+-					 &min_rate);
+-	if (ret) {
+-		dev_err(rpi->dev, "Failed to get clock %d min freq: %d\n",
+-			id, ret);
+-		return ERR_PTR(ret);
++	if (!variant->min_rate) {
++		ret = raspberrypi_clock_property(rpi->firmware, data,
++						 RPI_FIRMWARE_GET_MIN_CLOCK_RATE,
++						 &variant->min_rate);
++		if (ret) {
++			dev_err(rpi->dev, "Failed to get clock %d min freq: %d\n",
++				id, ret);
++			return ERR_PTR(ret);
++		}
+ 	}
+ 
+ 	ret = raspberrypi_clock_property(rpi->firmware, data,
+ 					 RPI_FIRMWARE_GET_MAX_CLOCK_RATE,
+-					 &max_rate);
++					 &variant->max_rate);
+ 	if (ret) {
+ 		dev_err(rpi->dev, "Failed to get clock %d max freq: %d\n",
+ 			id, ret);
+@@ -376,7 +394,7 @@ static struct clk_hw *raspberrypi_clk_register(struct raspberrypi_clk *rpi,
+ 	if (ret)
+ 		return ERR_PTR(ret);
+ 
+-	clk_hw_set_rate_range(&data->hw, min_rate, max_rate);
++	clk_hw_set_rate_range(&data->hw, variant->min_rate, variant->max_rate);
+ 
+ 	if (variant->clkdev) {
+ 		ret = devm_clk_hw_register_clkdev(rpi->dev, &data->hw,
+@@ -387,20 +405,11 @@ static struct clk_hw *raspberrypi_clk_register(struct raspberrypi_clk *rpi,
+ 		}
+ 	}
+ 
+-	if (variant->maximize)
+-		variant->min_rate = max_rate;
+-
+-	if (variant->min_rate) {
+-		unsigned long rate;
+-
+-		clk_hw_set_rate_range(&data->hw, variant->min_rate, max_rate);
+-
+-		rate = raspberrypi_fw_get_rate(&data->hw, 0);
+-		if (rate < variant->min_rate) {
+-			ret = raspberrypi_fw_set_rate(&data->hw, variant->min_rate, 0);
+-			if (ret)
+-				return ERR_PTR(ret);
+-		}
++	rate = raspberrypi_fw_get_rate(&data->hw, 0);
++	if (rate < variant->min_rate) {
++		ret = raspberrypi_fw_set_rate(&data->hw, variant->min_rate, 0);
++		if (ret)
++			return ERR_PTR(ret);
+ 	}
+ 
+ 	return &data->hw;
 
+-- 
+2.52.0
 
-Best regards,
-Krzysztof
