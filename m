@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3413EBF02;
-	Wed, 18 Feb 2026 07:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E662D244665;
+	Wed, 18 Feb 2026 07:50:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771400824; cv=none; b=XryVULgF5gXlqjfuaFIO6j3owQMstxp901VqP5QwpNrd8BbZdywm6HMVIhZzrdw+xvNpyLWI2Yr3RZMD6JtI/GRt3oHD7AL2Jddu9vn0mBXuFdYR4edOcoRbAWxjQhPkXOxxqugQSaOOrH3kAgqWTg/m9xMxLWeaWJDVYdwp/Yk=
+	t=1771401034; cv=none; b=b549dBu3b2IdqcQv6hKBwsdFY/FKGFQpRYtkPUARAj4odmH6S0Tdyn/lrwG7m6XeNHpRibigDBd26OjlzWdu32Tn/+nKpoPoTmFKeQ7O87Z4uUWZom/IFCxiXO4I1eaXDPyOmZxyD5HTXciXZzCymlQPeYxQ9iz1csVqDoIZUhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771400824; c=relaxed/simple;
-	bh=x3uMMgrQz5LgkjVbNCzGY+sKvBJr5F05qUWXDzQChdM=;
+	s=arc-20240116; t=1771401034; c=relaxed/simple;
+	bh=X7bP3ObTNjSBS2BdKVTSimAgexhX+AOVB5SdkTLbPPk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bT/XQH8cLIN0aeA+LNip0qOb7Rzz26kIvyKWa0AOPURYlfOSl7WGyEFQS7IHJWXcZymsOLjKcITL1GMfzyXJJSOxaJNelXq0cPvSpj+TvX9XIyAPDHI/j0IyHs+5EkwT2FFDFuZHmZlviXvhVzqBjqUxrkNojddMMI/eQ6lSM8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VupicOOc; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zj1+xW5Lqw1beb9EqxK7SxwDEI+egs05I9Hgoaj+PDkRJX2MA6AFWIeWIXILmwnLKBUcgCXB8leX0FsMF4X/f47qFgXAMK9IRHpotXZjF8rviyJHtw6c9PGMYNVwsBLBBO+cSRlu30CmQT3veN38pyEuNzNi/jODgHNWFm0GuMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E9pFgJwk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VupicOOc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20721C19421;
-	Wed, 18 Feb 2026 07:47:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E9pFgJwk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28F79C19421;
+	Wed, 18 Feb 2026 07:50:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771400823;
-	bh=x3uMMgrQz5LgkjVbNCzGY+sKvBJr5F05qUWXDzQChdM=;
+	s=k20201202; t=1771401033;
+	bh=X7bP3ObTNjSBS2BdKVTSimAgexhX+AOVB5SdkTLbPPk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VupicOOcDLjE7thhBzdPmlHxO/R7scUlUGDRMXtpFCbWNXWP+5TYIRpJp0bI35Sm/
-	 uOa3Z9yNWow3EcHs2Z8goxqS0zRpAknz0GmTEryr8asmZGGAAW1najVGzuF4wjGeSC
-	 FZRf+dtY6EE+T2i/u9K5wrjlct4zJ+ljZu4uh40zTsvs/jPKGldeHqyvQVp9SykNBy
-	 qB5A0GSY8yNrgcx55sRjbut41Ekd51LdEkwYY+SRtAdAhLDXNSoyrlZbLQ5ML7+B5I
-	 DRwp6amOS1Eds89CXF6MyTvOqZLJHBxJwg/RcOlyQVDC1XnzH9GU4eHsUHnU+02pDY
-	 OddIM5djHWwqQ==
-Date: Wed, 18 Feb 2026 08:47:01 +0100
+	b=E9pFgJwkCai07jpNYjE2yEwBsW5UD4B1kfImT2pHol/movRb2ucouzR+tLnTi2yuD
+	 id5PXETeDrtvmA+4wqKgqW3Kh1mlY8GkCl+ddyrIXy+8RvFY8iq1bCeTbELucEIf+9
+	 BB6eOs/XlxZFk71KpKfxEEViN07/s4RT8f9XQHrSshjWF+JbVyI54N9Fq3V5qhXDN9
+	 0jDOmEwxDa/qa50oIhHsOJBN6IKbBpj9D744lG3EOXvSiDa74Jok6QbznyFZBNelNF
+	 gp5V/q1IrRr5TvBHjyfc8g6GMiUic7sax+FBkuc1PmMoZz3VWatZeoYEltfCapO9+B
+	 gE0YV4xw5zfCQ==
+Date: Wed, 18 Feb 2026 08:50:31 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org, 
@@ -36,11 +36,11 @@ Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
 	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-spi@vger.kernel.org, 
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/5] spi: dt-bindings: renesas,rzv2h-rspi: Document dmas
- property
-Message-ID: <20260218-handsome-wakeful-swift-7be541@quoll>
+Subject: Re: [PATCH 3/5] spi: dt-bindings: renesas,rzv2h-rspi: Document
+ RZ/G3E SoC support
+Message-ID: <20260218-qualified-octopus-of-luck-5fcbf1@quoll>
 References: <cover.1771344527.git.tommaso.merciai.xr@bp.renesas.com>
- <ea6ed3b82c5a326732adfc0fcdb2922bfcad2591.1771344527.git.tommaso.merciai.xr@bp.renesas.com>
+ <f6b43f0dc64e13b1c9942c164dea30002d4c4466.1771344527.git.tommaso.merciai.xr@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -49,23 +49,19 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ea6ed3b82c5a326732adfc0fcdb2922bfcad2591.1771344527.git.tommaso.merciai.xr@bp.renesas.com>
+In-Reply-To: <f6b43f0dc64e13b1c9942c164dea30002d4c4466.1771344527.git.tommaso.merciai.xr@bp.renesas.com>
 
-On Tue, Feb 17, 2026 at 05:23:46PM +0100, Tommaso Merciai wrote:
-> Document the dmas property to state it must be specified as TX/RX DMA
-> specifier pairs.
-> This clarifies the expected ordering and improves binding readability
-> without changing behavior.
+On Tue, Feb 17, 2026 at 05:23:47PM +0100, Tommaso Merciai wrote:
+> Document the RSPI controller on the Renesas RZ/G3E SoC. The block is
+> compatible with the RSPI implementation found on the RZ/V2H(P) family.
 > 
 > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 > ---
 >  - This patch depend up on [0]
 >  - [0] https://lore.kernel.org/all/20260128215132.1353381-2-cosmin-gabriel.tanislav.xa@renesas.com/
 
-So just squash it there....
-
-Why are you adding comment to correct code which is in-flight, not
-applied? Just REVIEW the other!
+I am not even looking there, start reviewing each other patches, so you
+won't be sending FIXES instead of reviews.
 
 Best regards,
 Krzysztof
