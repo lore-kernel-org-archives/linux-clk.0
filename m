@@ -1,177 +1,400 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB6DC2FFF97
-	for <linux-clk@vger.kernel.org>; Wed, 18 Feb 2026 17:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA0C30C36D
+	for <linux-clk@vger.kernel.org>; Wed, 18 Feb 2026 18:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771436122; cv=none; b=FmRYUp7KWcotztEjSMW4PAFQ2cK8VJCMQdzvWW/2HFc+AQ+B9RBU6wyRhFlnahhqKTl8bbHYlf4HJO6cNWOnw8fjqVblkAcMdNQL9MAlMAkL9hbjgbo40+ev0hjixGFRWEUxXV5gRNzUlZ5KVrkCcRsxZv1OLkh5oRb+eYsz3jE=
+	t=1771437955; cv=none; b=lqC+7TRY2Dj40azxSrHcjovysuQ1RtEcN83UouDZYlZj3cij8wo0ZNudtWAGejmIdXc22Zd/CD2FuPJX7cJky1LI6JNxnqzD2mAWHWanQruvq9dJ+NL1h5fWjeSQ+Q7vdISTzgveLl+MxHCyJQBIaE16Do2e0pIL/ElqhzYrQuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771436122; c=relaxed/simple;
-	bh=6ZpSzjQ2Q8cSDPJlsM2jP4pwKfvfayaWDf8EqYJEigg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=azED2Yi458asc7abHSBNXfBJivPBrmYrln5w0349/DuxoX/zLTNTn76MbFrg4mPnswcKaX4hqsZgx+NbCD9UIbPeUB3QXbYGwg4rgTaczDIhxSeVjwoQAQLIKKvt+TSQF7sTK171z9bpfs29o/3QuZaIc8hz0ftsLs/aQMpWs0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Vv488xVl; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=L/RXMCLv; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1771437955; c=relaxed/simple;
+	bh=vVN3eI0cG3eJzDGQMowePioEB5QD5fgAY4jEmwKs8Cs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GGBteqqJhWFfWP8QycG1LA2elZ2moT/ptDqySumbEt1cdU/Dk+/8bk4PyXIMTHbwgfaZ43fgfzR3Fo3XZ/do1aPBt4kkBKr502lOCfPKF17YNPZwgSiQNX7/rCoYibITXK57KYNUaVReeemvybh5A2JDN9fIQPq3OMbTZrBof/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=IzbDdriN; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Vv488xVl";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="L/RXMCLv"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 61I8h4D53379977
-	for <linux-clk@vger.kernel.org>; Wed, 18 Feb 2026 17:35:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	SNnZn+xmeWcZfBOU+WqjAArDp5I0MTFneEShOM7do4o=; b=Vv488xVla9u2cGG+
-	vTx5gwQmmHE/WGrMERnpvZtpSev7T/yNIDGwqTtLfobF4GMtUww9e5/PI2xVALoe
-	7N14JompQDiQ0ZtPlSi+wksqtS4gFdhqOAQ3hvbys1IQc9+DsQ7hi+7dpx8PjTc9
-	Waa8ZC0TZsJfzmGADiQN0hpW2LDrXlZ/csQ/KGKf1lYCrB28AblTacxGwPKCcYKU
-	ZjKDDdNvpjCpfUrIhHc6fQxNgkXblEJiYbnU7a3UrG1WluHA3cnKQHLdO4vi3q9r
-	a08SooOTDBct1bBeb4fnzkQyha7ShkEZspzpvKXt4wpycV7in3oeJmQx/N+kMakS
-	F8YTaQ==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ccxnyk7y0-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Wed, 18 Feb 2026 17:35:20 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2a75ed2f89dso214785ad.1
-        for <linux-clk@vger.kernel.org>; Wed, 18 Feb 2026 09:35:20 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="IzbDdriN"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4836e3288cdso1107785e9.0
+        for <linux-clk@vger.kernel.org>; Wed, 18 Feb 2026 10:05:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1771436119; x=1772040919; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=SNnZn+xmeWcZfBOU+WqjAArDp5I0MTFneEShOM7do4o=;
-        b=L/RXMCLvTjp2+1vK7SylmG80zl5vZzxs3qTSTSHAvH/s4bGQrqSIFU0jhuXcowr7ui
-         Go97K/vKjVAGdGQ9bMfvH2zWJLXasrgE/QZke9mS/+xND9Y7bRQxMb+PTvs+I/DE7U70
-         GxODrpmXEr1p0+SQDyyGIMYZ6wKwqUax6W4OU3QnOhu4epbvji1FtC0RqEkq2ta+jCRu
-         rmRhcQ1Vs8kqeW1XNJj+Djwt4bqIvAYE/r+cWAqrmjO/WUZwWQmKV3cHawzhFg5Meaef
-         SaPC5TXfwK+cxmxJcVEcOAScP1j3ww+KIPZfZ9FwZnh2Wi4RxOlqF+8R0SdunS+S1W8P
-         drVQ==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1771437952; x=1772042752; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZXX5Ad6lE4eM3SpWZXXZtn5YXTRNU+kz7ZHFBHa7LgY=;
+        b=IzbDdriNK3y5TBY4beWPuSk0MIgZqCk6dysdFWOE+r40Ukguxq1K+/CrvSXFI5VvYM
+         Uepf8L0Ez0sh9HwtlUpBKvva+/Uu6Qz2lLj5qBN5SGIyVqv5wyQ+vvy3toGqZqc28Xl2
+         Iwx104xOIgkxKJkhQYR6j9BvpRPt+kFqSMfaiXtg9/ehRDy2RLnSwav9bQFN5cqTnDIy
+         O0jwSl5rvgi1AF7jeANSUXNebpjwGtClq6S9bsMjY+Nc8kvaOh4cuto+azGCBwM1CTIh
+         56apnuR4V96p2+tSWPg8gK/+GJzkZNlsGs/xGPVK0G9cpusbyVyg7YA8ly27yqJ3n6V+
+         b7Zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771436119; x=1772040919;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SNnZn+xmeWcZfBOU+WqjAArDp5I0MTFneEShOM7do4o=;
-        b=DY+mEaFWR0cwAjbVyNO25xRBhkgqahmaQF0LQOyHC1i/pRvYFnfQdLhiTLvdPhCR2w
-         sxUF/PlkkgQIbiQ2zk6s5x/q6NUZ044P1ey/PpoSc+MkNDIsMYEtvHfydCe55loJgEom
-         U2qxPD8iKutSVjvJNEwIci6a0NZY7/6kAXQc60dfUlW1z5Ktr0STHmuIUMRRh31y1XwE
-         ay76zLlgWGFqsBGv1Z/+LSsKSxjw4afHE2PrgdvNhw+Y/vJl1OL+SNtBe8RERkbVZS2N
-         YIcRzgSd0qLVZ6r9lyZRuczjxF8Uo3h8wpmOsePTovVc6QWPNplzPEIP72bvSMFX//Sq
-         Hb4w==
-X-Forwarded-Encrypted: i=1; AJvYcCXTn2FvR72oG/5xphexivyXu3ggB1mqn8HzihQcGsizots0AoVGaWUx9TqSh3wxxfH1iPg047cYDXc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+JiFhLhNrGQXFJCHCaNqtOG1XeDZZPLWtOe3FBF/jJTKlKxJf
-	J4uSInPu2VjSc4xla4bt3uvKw1qTPSY9JboSJ+AnWGd4yCkaU7G475MhkV7EYs7IyiuoeIbuIue
-	hv+sdoH8K1bomvMgMND7U5Uyq1tirovBCNN886IkQbQa6O2ZrCipmGeDIxoz/cvo=
-X-Gm-Gg: AZuq6aKkm4Sc7iRvOm3tcocgS023Fdz4Px8NLsw7nXEb42iYCI/G569xUOml9xmzTrN
-	optozEJvG8AalDRhh+wiKIiSTigHvsD+WWy3btEAN2LYA2cDDJ+pBMIKFxKDdr/s+VfyDOTBVR0
-	72O/EXEqCjeNzOiqty91K/cW31XQoZIRDim6XyWMwik/OndSM+YzdX2uaBhXctT340hhbZEJGg0
-	tgdTckmlQWXzIcO2qM75w15QC6vDN4zz9tJUY5l3Qa9cSM9LTUKopEGrN1Eznl9M+9GS775mtjD
-	Bi7frzKFxLCxSl1knYklbEmU619dtjlLiuBLF7N5/nvKYdOXFKSMKn866DrpG3YwMN3Kw34j3VW
-	qJiQ6HMJSr36GUkWpaszn7KpUi7nWsqN6gHKvubcLC/3STB4Scg==
-X-Received: by 2002:a17:903:2b10:b0:2aa:e843:ab11 with SMTP id d9443c01a7336-2ad174dd3c2mr126622695ad.28.1771436119445;
-        Wed, 18 Feb 2026 09:35:19 -0800 (PST)
-X-Received: by 2002:a17:903:2b10:b0:2aa:e843:ab11 with SMTP id d9443c01a7336-2ad174dd3c2mr126622325ad.28.1771436118678;
-        Wed, 18 Feb 2026 09:35:18 -0800 (PST)
-Received: from [192.168.0.195] ([49.204.28.145])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ad1aaf5506sm133262885ad.87.2026.02.18.09.35.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Feb 2026 09:35:18 -0800 (PST)
-Message-ID: <6bbeaf2e-47a8-4e99-ab5b-71452f2cc9be@oss.qualcomm.com>
-Date: Wed, 18 Feb 2026 23:05:13 +0530
+        d=1e100.net; s=20230601; t=1771437952; x=1772042752;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZXX5Ad6lE4eM3SpWZXXZtn5YXTRNU+kz7ZHFBHa7LgY=;
+        b=WZpQ3X7qubCRbGs4byF0qwfWVaTY5vtarjlBK0aY+ydx3FT7tpCauML2RjY7W84xW9
+         dPTW2h5OedkrYDX2UjqAWQ66+TswVgORvoU/vNQ/L+6qBiaOck+7rStbfaK6ooweQYb1
+         DlHGc0ihK69ebbcHZOQNNaJrgd7E1/OB5+u5WoqHyEaNLrX5O3HHCgKSzcEFUW22egx1
+         1hr7WIuEvkl6W0pg/eXQdE9yQKYzgxoo0TjrXOvrQKTsD/y0YngIMdtH7JvObcRCI8nE
+         35usZ8HQi4KsEdX59Q2G9b0qDFaxUT0U9Mf19PziPcPqAPsV1P1PJhuw5APhUYY/Hfl6
+         OWRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXYkdpioa3XpAP/yq0553ExkwNLHD+b81s3W42381AuvjCGexd42JXDSqlOkvy/4ll/4ym+QCbcAF4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxlTP0B9DVKS+AtMM5mNG2IRLo1DAVUEfBgFcW+ZDaEExBwZw9
+	oj/3J1bEGpHKDKrhmf64vsFieWmpKpjOPIa3C3X6j7BHS3FFQ/14v5L/mJn7eFM28HY=
+X-Gm-Gg: AZuq6aJtTEiWtNYaty675H/H3I2VdC/wjBsGMzQDP0X+hY1Cg3ycpAWC51xGl9zwgu4
+	M83K2QtFEbvh2scM++Sm2FejjTB5mAHFQFHlVEPr87l0M+YZs6Pk188WqCHYRvG2umtzYcPypKp
+	3fnG6CjvN3IM2Zu39pFeIGDyNNMHQ1KoCgz48RmSZsbHXp8bVQjYHTRDOSy8hKO+Rucu7/xS+c5
+	VTYx66t0lqOOEVWWFgM9jK4JM9D2W24OV1s+3OZFyyeEmMxtq8iCbZjLm/vEdcKcQSoskqcWIzJ
+	BNLVx5K1/xPujXaI+/DC03I9Kt5RSkLHNmVZU8orrql9vWDmtRXAPHDJZfbI9SkZCuQ43bdEQWA
+	cXFkIOnJmoGP573LX3OXP4KDcgat9ul+/Ogyz2Siiorh1w9xZh80QzVs/gaJx39RUP8TAlAQAtS
+	gmRIMrxBF01YDsv2pS5OcpaQ==
+X-Received: by 2002:a05:600c:3b15:b0:47d:333d:99c with SMTP id 5b1f17b1804b1-48398cc6196mr51541025e9.18.1771437951849;
+        Wed, 18 Feb 2026 10:05:51 -0800 (PST)
+Received: from localhost ([2a01:e0a:3c5:5fb1:cf71:8cf8:56bb:5790])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-483801ff9b3sm317029295e9.13.2026.02.18.10.05.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Feb 2026 10:05:51 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Ronald Claveau <linux-kernel-dev@aliel.fr>
+Cc: linux-amlogic@lists.infradead.org,  Neil Armstrong
+ <neil.armstrong@linaro.org>,  Michael Turquette <mturquette@baylibre.com>,
+  Stephen Boyd <sboyd@kernel.org>,  Kevin Hilman <khilman@baylibre.com>,
+  Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+  linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/7] drivers: clk: meson: Add Amlogic T7 fix pll support
+In-Reply-To: <20260218101709.35450-1-linux-kernel-dev@aliel.fr> (Ronald
+	Claveau's message of "Wed, 18 Feb 2026 11:17:06 +0100")
+References: <20260218101709.35450-1-linux-kernel-dev@aliel.fr>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Wed, 18 Feb 2026 19:05:49 +0100
+Message-ID: <1j4ine6i6a.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: clock: qcom,glymur-dispcc:
- De-acronymize SoC name
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20260217130047.281813-3-krzysztof.kozlowski@oss.qualcomm.com>
-Content-Language: en-US
-From: Taniya Das <taniya.das@oss.qualcomm.com>
-In-Reply-To: <20260217130047.281813-3-krzysztof.kozlowski@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: ify-JBKizw06BVelCjST3oS9MeTeQSGI
-X-Authority-Analysis: v=2.4 cv=Do5bOW/+ c=1 sm=1 tr=0 ts=6995f858 cx=c_pps
- a=cmESyDAEBpBGqyK7t0alAg==:117 a=IXbkkVN8uJs8XsqYossUiQ==:17
- a=IkcTkHD0fZMA:10 a=HzLeVaNsDn8A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=Mpw57Om8IfrbqaoTuvik:22 a=GgsMoib0sEa3-_RKJdDe:22
- a=gEfo2CItAAAA:8 a=EUspDBNiAAAA:8 a=ZD5VXX6mDgfP9xSn57MA:9 a=QEXdDO2ut3YA:10
- a=1OuFwYUASf3TG4hYMiVC:22 a=sptkURWiP4Gy88Gu7hUp:22
-X-Proofpoint-GUID: ify-JBKizw06BVelCjST3oS9MeTeQSGI
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjE4MDE1MCBTYWx0ZWRfX+bbVH/7IP49o
- I3Sfgdj5pPsf918EaNxVn/DFM/K/um8tb1LIt0LVXajF6juLR0lFrUYpYYgSmvyg1siyxJGC2IF
- zz5msAregp+w4jfSTKsCmrVgn5ZJ+//yiD6K8F7vh3AFJccBE6zhiLWVACgQTYNGhtxIqPsfVQN
- 8MZbeevMvuww2gRB7wzGrvOuAN5+DIKBXCU386jofj+jmhSH+RVSLYwKMxlJFuFfqKBAXI14l/b
- EB7U7HxSEDtLrqnyalICKZO69sBYp6U+p+liC8UUbLcPbsRDBipTMXGDlbBE0XY907CGFySDfsH
- v8NLmGqOqOtl6B7uffOvtbupR5Odo4wXfsHUFr2O9pYXPF44ux7rw2qxepkJ+fO1uEAlind1Hc6
- ujut0DNtX5ec8+kEIxJ41dXDlH1/jT7yUe5s8CqiPVvc8mYwmYpkwOShvfYR3R5eVnQEYRF2s/B
- UeWZFULRY+Q8qxnOqvA==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-02-18_03,2026-02-18_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 impostorscore=0 phishscore=0 bulkscore=0 clxscore=1015
- priorityscore=1501 adultscore=0 malwarescore=0 suspectscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2602180150
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On mer. 18 f=C3=A9vr. 2026 at 11:17, Ronald Claveau <linux-kernel-dev@aliel=
+.fr> wrote:
 
+> Add PLL for the clock controller of the Amlogic T7 SoC family.
+>
 
-On 2/17/2026 6:30 PM, Krzysztof Kozlowski wrote:
-> Glymur is a codename of Qualcomm SoC, not an acronym.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-> 
+As Krzysztof pointed out, a series like this needs a cover letter to explain
+what you are trying to acheive overall, and proper threading.
+
+The description above is too vague.
+
+> Signed-off-by: Ronald Claveau <linux-kernel-dev@aliel.fr>
 > ---
-> 
-> Changes in v2:
-> Split from previous patchset, because I messed up commands and combined
-> wrong patches together.
-> ---
->  .../devicetree/bindings/clock/qcom,glymur-dispcc.yaml         | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,glymur-dispcc.yaml b/Documentation/devicetree/bindings/clock/qcom,glymur-dispcc.yaml
-> index 45f027c70e03..9de4ba71f1d9 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,glymur-dispcc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,glymur-dispcc.yaml
-> @@ -4,14 +4,14 @@
->  $id: http://devicetree.org/schemas/clock/qcom,glymur-dispcc.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
-> -title: Qualcomm Display Clock & Reset Controller on GLYMUR
-> +title: Qualcomm Display Clock & Reset Controller on Glymur SoC
->  
->  maintainers:
->    - Taniya Das <taniya.das@oss.qualcomm.com>
->  
->  description: |
->    Qualcomm display clock control module which supports the clocks, resets and
-> -  power domains for the MDSS instances on GLYMUR SoC.
-> +  power domains for the MDSS instances on Glymur SoC.
->  
->    See also:
->      include/dt-bindings/clock/qcom,dispcc-glymur.h
+>  drivers/clk/meson/t7-pll.c | 257 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 257 insertions(+)
+>
+> diff --git a/drivers/clk/meson/t7-pll.c b/drivers/clk/meson/t7-pll.c
+> index 0a622f45fa36..3dd3aca50b7c 100644
+> --- a/drivers/clk/meson/t7-pll.c
+> +++ b/drivers/clk/meson/t7-pll.c
+> @@ -71,6 +71,15 @@
+>  #define MCLK_PLL_CNTL4		0x10
+>  #define MCLK_PLL_STS		0x14
+>=20=20
+> +#define FPLL_CTRL0		0x00
+> +#define FPLL_CTRL1		0x04
+> +#define FPLL_CTRL2		0x08
+> +#define FPLL_CTRL3		0x0c
+> +#define FPLL_CTRL4		0x10
+> +#define FPLL_CTRL5		0x14
+> +#define FPLL_CTRL6		0x18
+> +#define FPLL_STS		0x1c
 
-Reviewed-by: Taniya Das <taniya.das@oss.qualcomm.com>
+The PLL you are adding is described in the datasheet as the MPLL. FPLL
+is nowhere to be found. Prefer using names that relate to the
+documentation.
 
--- 
-Thanks,
-Taniya Das
+If you must make a name up, you need to have a very good reason and to
+explain it.
 
+Still from the public documentation, this PLL belong in the same device as
+MPLL0, MPLL1, etc ... BUT, I remember correctly the T7 initial
+submission, the fixed PLL and fdivs are supposed to be provided through
+SCMI clocks. Have you checked that ?
+
+> +
+>  static const struct pll_mult_range t7_media_pll_mult_range =3D {
+>  	.min =3D 125,
+>  	.max =3D 250,
+> @@ -1047,6 +1056,253 @@ static const struct meson_clkc_data t7_mclk_data =
+=3D {
+>  	},
+>  };
+>=20=20
+> +static struct clk_regmap t7_fpll_dco =3D {
+> +	.data =3D &(struct meson_clk_pll_data){
+> +		.en =3D {
+> +			.reg_off =3D FPLL_CTRL0,
+> +			.shift   =3D 28,
+> +			.width   =3D 1,
+> +		},
+> +		.m =3D {
+> +			.reg_off =3D FPLL_CTRL0,
+> +			.shift   =3D 0,
+> +			.width   =3D 8,
+> +		},
+> +		.n =3D {
+> +			.reg_off =3D FPLL_CTRL0,
+> +			.shift   =3D 10,
+> +			.width   =3D 5,
+> +		},
+> +		.frac =3D {
+> +			.reg_off =3D FPLL_CTRL1,
+> +			.shift   =3D 0,
+> +			.width   =3D 17,
+> +		},
+> +		.l =3D {
+> +			.reg_off =3D FPLL_CTRL0,
+> +			.shift   =3D 31,
+> +			.width   =3D 1,
+> +		},
+> +		.rst =3D {
+> +			.reg_off =3D FPLL_CTRL0,
+> +			.shift   =3D 29,
+> +			.width   =3D 1,
+> +		},
+> +	},
+> +	.hw.init =3D &(struct clk_init_data){
+> +		.name =3D "fpll_dco",
+> +		.ops =3D &meson_clk_pll_ro_ops,
+> +		.parent_data =3D &(const struct clk_parent_data) {
+> +			.fw_name =3D "xtal",
+> +		},
+> +		.num_parents =3D 1,
+> +	},
+> +};
+> +
+> +static struct clk_regmap t7_fpll =3D {
+> +	.data =3D &(struct clk_regmap_div_data){
+> +		.offset =3D FPLL_CTRL0,
+> +		.shift =3D 16,
+> +		.width =3D 2,
+> +		.flags =3D CLK_DIVIDER_POWER_OF_TWO,
+> +	},
+> +	.hw.init =3D &(struct clk_init_data){
+> +		.name =3D "fpll",
+> +		.ops =3D &clk_regmap_divider_ro_ops,
+> +		.parent_hws =3D (const struct clk_hw *[]) {
+> +			&t7_fpll_dco.hw
+> +		},
+> +		.num_parents =3D 1,
+> +	},
+> +};
+> +
+> +static struct clk_fixed_factor t7_fdiv2_div =3D {
+> +	.mult =3D 1,
+> +	.div =3D 2,
+> +	.hw.init =3D &(struct clk_init_data){
+> +		.name =3D "fdiv2_div",
+> +		.ops =3D &clk_fixed_factor_ops,
+> +		.parent_hws =3D (const struct clk_hw *[]) { &t7_fpll.hw },
+> +		.num_parents =3D 1,
+> +	},
+> +};
+> +
+> +static struct clk_regmap t7_fdiv2 =3D {
+> +	.data =3D &(struct clk_regmap_gate_data){
+> +		.offset =3D FPLL_CTRL1,
+> +		.bit_idx =3D 24,
+> +	},
+> +	.hw.init =3D &(struct clk_init_data){
+> +		.name =3D "fdiv2",
+> +		.ops =3D &clk_regmap_gate_ops,
+> +		.parent_hws =3D (const struct clk_hw *[]) {
+> +			&t7_fdiv2_div.hw
+> +		},
+> +		.num_parents =3D 1,
+> +		.flags =3D CLK_IS_CRITICAL,
+> +	},
+> +};
+> +
+> +static struct clk_fixed_factor t7_fdiv2p5_div =3D {
+> +	.mult =3D 2,
+> +	.div =3D 5,
+> +	.hw.init =3D &(struct clk_init_data){
+> +		.name =3D "fdiv2p5_div",
+> +		.ops =3D &clk_fixed_factor_ops,
+> +		.parent_hws =3D (const struct clk_hw *[]) {
+> +			&t7_fpll.hw
+> +		},
+> +		.num_parents =3D 1,
+> +	},
+> +};
+> +
+> +static struct clk_regmap t7_fdiv2p5 =3D {
+> +	.data =3D &(struct clk_regmap_gate_data){
+> +		.offset =3D FPLL_CTRL1,
+> +		.bit_idx =3D 25,
+> +	},
+> +	.hw.init =3D &(struct clk_init_data){
+> +		.name =3D "fdiv2p5",
+> +		.ops =3D &clk_regmap_gate_ops,
+> +		.parent_hws =3D (const struct clk_hw *[]) {
+> +			&t7_fdiv2p5_div.hw
+> +		},
+> +		.num_parents =3D 1,
+> +	},
+> +};
+> +
+> +static struct clk_fixed_factor t7_fdiv3_div =3D {
+> +	.mult =3D 1,
+> +	.div =3D 3,
+> +	.hw.init =3D &(struct clk_init_data){
+> +		.name =3D "fdiv3_div",
+> +		.ops =3D &clk_fixed_factor_ops,
+> +		.parent_hws =3D (const struct clk_hw *[]) { &t7_fpll.hw },
+> +		.num_parents =3D 1,
+> +	},
+> +};
+> +
+> +static struct clk_regmap t7_fdiv3 =3D {
+> +	.data =3D &(struct clk_regmap_gate_data){
+> +		.offset =3D FPLL_CTRL1,
+> +		.bit_idx =3D 20,
+> +	},
+> +	.hw.init =3D &(struct clk_init_data){
+> +		.name =3D "fdiv3",
+> +		.ops =3D &clk_regmap_gate_ops,
+> +		.parent_hws =3D (const struct clk_hw *[]) {
+> +			&t7_fdiv3_div.hw
+> +		},
+> +		.num_parents =3D 1,
+> +		.flags =3D CLK_IS_CRITICAL,
+> +	},
+> +};
+> +
+> +static struct clk_fixed_factor t7_fdiv4_div =3D {
+> +	.mult =3D 1,
+> +	.div =3D 4,
+> +	.hw.init =3D &(struct clk_init_data){
+> +		.name =3D "fdiv4_div",
+> +		.ops =3D &clk_fixed_factor_ops,
+> +		.parent_hws =3D (const struct clk_hw *[]) { &t7_fpll.hw },
+> +		.num_parents =3D 1,
+> +	},
+> +};
+> +
+> +static struct clk_regmap t7_fdiv4 =3D {
+> +	.data =3D &(struct clk_regmap_gate_data){
+> +		.offset =3D FPLL_CTRL1,
+> +		.bit_idx =3D 21,
+> +	},
+> +	.hw.init =3D &(struct clk_init_data){
+> +		.name =3D "fdiv4",
+> +		.ops =3D &clk_regmap_gate_ops,
+> +		.parent_hws =3D (const struct clk_hw *[]) {
+> +			&t7_fdiv4_div.hw
+> +		},
+> +		.num_parents =3D 1,
+> +		.flags =3D CLK_IS_CRITICAL,
+> +	},
+> +};
+> +
+> +static struct clk_fixed_factor t7_fdiv5_div =3D {
+> +	.mult =3D 1,
+> +	.div =3D 5,
+> +	.hw.init =3D &(struct clk_init_data){
+> +		.name =3D "fdiv5_div",
+> +		.ops =3D &clk_fixed_factor_ops,
+> +		.parent_hws =3D (const struct clk_hw *[]) { &t7_fpll.hw },
+> +		.num_parents =3D 1,
+> +	},
+> +};
+> +
+> +static struct clk_regmap t7_fdiv5 =3D {
+> +	.data =3D &(struct clk_regmap_gate_data){
+> +		.offset =3D FPLL_CTRL1,
+> +		.bit_idx =3D 22,
+> +	},
+> +	.hw.init =3D &(struct clk_init_data){
+> +		.name =3D "fdiv5",
+> +		.ops =3D &clk_regmap_gate_ops,
+> +		.parent_hws =3D (const struct clk_hw *[]) {
+> +			&t7_fdiv5_div.hw
+> +		},
+> +		.num_parents =3D 1,
+> +		.flags =3D CLK_IS_CRITICAL,
+> +	},
+> +};
+> +
+> +static struct clk_fixed_factor t7_fdiv7_div =3D {
+> +	.mult =3D 1,
+> +	.div =3D 7,
+> +	.hw.init =3D &(struct clk_init_data){
+> +		.name =3D "fdiv7_div",
+> +		.ops =3D &clk_fixed_factor_ops,
+> +		.parent_hws =3D (const struct clk_hw *[]) { &t7_fpll.hw },
+> +		.num_parents =3D 1,
+> +	},
+> +};
+> +
+> +static struct clk_regmap t7_fdiv7 =3D {
+> +	.data =3D &(struct clk_regmap_gate_data){
+> +		.offset =3D FPLL_CTRL1,
+> +		.bit_idx =3D 23,
+> +	},
+> +	.hw.init =3D &(struct clk_init_data){
+> +		.name =3D "fdiv7",
+> +		.ops =3D &clk_regmap_gate_ops,
+> +		.parent_hws =3D (const struct clk_hw *[]) {
+> +			&t7_fdiv7_div.hw
+> +		},
+> +		.num_parents =3D 1,
+> +		.flags =3D CLK_IS_CRITICAL,
+> +	},
+> +};
+> +
+> +static struct clk_hw *t7_fpll_hw_clks[] =3D {
+> +	[CLKID_FPLL_DCO]	=3D &t7_fpll_dco.hw,
+> +	[CLKID_FPLL]		=3D &t7_fpll.hw,
+> +	[CLKID_FDIV2_DIV]	=3D &t7_fdiv2_div.hw,
+> +	[CLKID_FDIV2]		=3D &t7_fdiv2.hw,
+> +	[CLKID_FDIV2P5_DIV]	=3D &t7_fdiv2p5_div.hw,
+> +	[CLKID_FDIV2P5]		=3D &t7_fdiv2p5.hw,
+> +	[CLKID_FDIV3_DIV]	=3D &t7_fdiv3_div.hw,
+> +	[CLKID_FDIV3]		=3D &t7_fdiv3.hw,
+> +	[CLKID_FDIV4_DIV]	=3D &t7_fdiv4_div.hw,
+> +	[CLKID_FDIV4]		=3D &t7_fdiv4.hw,
+> +	[CLKID_FDIV5_DIV]	=3D &t7_fdiv5_div.hw,
+> +	[CLKID_FDIV5]		=3D &t7_fdiv5.hw,
+> +	[CLKID_FDIV7_DIV]	=3D &t7_fdiv7_div.hw,
+> +	[CLKID_FDIV7]		=3D &t7_fdiv7.hw,
+> +};
+> +
+> +static const struct meson_clkc_data t7_fpll_data =3D {
+> +	.hw_clks =3D {
+> +		.hws =3D t7_fpll_hw_clks,
+> +		.num =3D ARRAY_SIZE(t7_fpll_hw_clks),
+> +	},
+> +};
+> +
+>  static const struct of_device_id t7_pll_clkc_match_table[] =3D {
+>  	{ .compatible =3D "amlogic,t7-gp0-pll",	.data =3D &t7_gp0_data, },
+>  	{ .compatible =3D "amlogic,t7-gp1-pll",	.data =3D &t7_gp1_data, },
+> @@ -1055,6 +1311,7 @@ static const struct of_device_id t7_pll_clkc_match_=
+table[] =3D {
+>  	{ .compatible =3D "amlogic,t7-mpll",	.data =3D &t7_mpll_data, },
+>  	{ .compatible =3D "amlogic,t7-hdmi-pll",	.data =3D &t7_hdmi_data, },
+>  	{ .compatible =3D "amlogic,t7-mclk-pll",	.data =3D &t7_mclk_data, },
+> +	{ .compatible =3D "amlogic,t7-fpll",	.data =3D &t7_fpll_data, },
+>  	{}
+>  };
+>  MODULE_DEVICE_TABLE(of, t7_pll_clkc_match_table);
+
+--=20
+Jerome
