@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31E0266581;
-	Wed, 18 Feb 2026 10:21:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D9D2FE578;
+	Wed, 18 Feb 2026 10:21:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771410061; cv=none; b=qHcA77o6buap4Wm6rgZuDCuLwpx61/lu9H3uVb5qcpwSfBawz/X/VjqZ419T/K9gxkwmVhB84FGAydhE6UyNa0GWjtG4ro2YVwMaXSS0o/v5qiMv8hcati6nuJx88JR4Sg0Qryu4C1ht1GK78niInHn7Bs0/k1s7zpNv+A568Hg=
+	t=1771410077; cv=none; b=cwYoS18PmJOfoFMQdtS9qkLwyxoRhPAKEigoQnSvCZCswTqVWyPvO7V4Z5AmMyCzpi/dj2jSbzxdq9C4zoq0URvD/boD3aI15i+GTUDYGVHrBOSz/x2sUE5GYt0KdG3w0pmka5zG9df6MCOwCXQNXJ4yN4UBkrmGk4xBvzX862E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771410061; c=relaxed/simple;
-	bh=NL3KEAoxg6ED/GrLAyiT/l75w2HKZcckzeBY6zEX2lk=;
+	s=arc-20240116; t=1771410077; c=relaxed/simple;
+	bh=roSU2DvI93Z7X+1nucEHh5gV6chME7xKeGVIi9NYMDU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MMwHek1eBPJWco5jOgc3uaFTMsQfvTeuk2Ien6kOIoQlmVEG3vPthfdwJQQCvpDu/yHyL8OADJqtILA+avKUGgFzSWeCorcqhrjv3aEsAHka4dMgr1/EosyEqV6qlSu3Jh69f7u2EP8CQu/Jc7ngLuXfZuocEHX8hSZsd5JOkHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JUqQy2IQ; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=Y3SqHxtYZd4x86b+LVNdLX6OIoSjq0IBj6HDPNakZvHglKPUfwMkiYhYXWsrYIl2aq2nuO0FKm8wTsbKadBkRZm3h0U+T9IzCfWItHZCr7e18njYWh+SjwOvahjRJHCvr74AuwNFedqLBAaKSC3Ja1q35Vvq3c4JgpcxpU578l0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SAFH4p8o; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JUqQy2IQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79C41C19421;
-	Wed, 18 Feb 2026 10:20:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SAFH4p8o"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60667C19423;
+	Wed, 18 Feb 2026 10:21:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771410060;
-	bh=NL3KEAoxg6ED/GrLAyiT/l75w2HKZcckzeBY6zEX2lk=;
+	s=k20201202; t=1771410077;
+	bh=roSU2DvI93Z7X+1nucEHh5gV6chME7xKeGVIi9NYMDU=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JUqQy2IQVEWmFDcfaH55pVZh4UOPKtXy/yaJFEq0vdUWPHA2itFSdqK1UMZImq6Og
-	 KStaTPE5ti3ISvuaqzz4hwagumoDSdfEX4PILafNWAErjpYcArUdMJbLZrQ7vyS60s
-	 WBpaslWbIKabzYUO+0rrU+FngIj1G+uvfs6uAbX8gyyKkCgpQNvlXTUgHdNX2NN36D
-	 2sxu4Pxe9w/IgGDlrQcafszleb7SUvrf2FsTt96C0cHwYPncg/tXqQ0CVHme2rlSjP
-	 nntHbSzmWtx4mx9C5WObqPScQ1VIwBX0WXg9cgkssQhg19ETppw4RGbr58Fm0J2QsZ
-	 sl78LKqxS53nA==
-Message-ID: <48f22234-8631-475b-afa7-4c67cadb1de9@kernel.org>
-Date: Wed, 18 Feb 2026 11:20:55 +0100
+	b=SAFH4p8oskiHizNzigshBS5jlmrYOPC/oZfNGVwUQbcz6ij1G2E7YeOBwZLEKJRpl
+	 w66NwlGRsFqDn9kAYV97TSiT1KENz57Im1/nhE1Nr8eW9tDPYCOZkFDhNYpp6D1HXU
+	 ZfVjlhf9ZKcIVaElODGuWdpkWqWu7uVQ89BIKOdge1LlKEeGX14BGfKU8ZGfq1WyON
+	 43wxTRMF3I1Tb7FtL7WOZNOhju0YM2qCDjRRUumAwuBXQDj6bfam9wBtL+ss+NTFd2
+	 lbnK9COyoZOW3NN1jww5tIwC982UIcQ9qb2GJs4AFFesvQZ+flyZzwX+5VA/bh8gTJ
+	 MKrdWF+NgYTzQ==
+Message-ID: <a848fa43-6a46-4fd6-86a4-96aaf82e2a02@kernel.org>
+Date: Wed, 18 Feb 2026 11:21:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,19 +35,16 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/7] dt-bindings: clk: meson: Add Amlogic T7 fix pll
+Subject: Re: [PATCH 2/7] dt-bindings: clk: meson: Add Amlogic T7 fix pll
  support
 To: Ronald Claveau <linux-kernel-dev@aliel.fr>,
  linux-amlogic@lists.infradead.org
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jian Hu <jian.hu@amlogic.com>,
- Xianwei Zhao <xianwei.zhao@amlogic.com>, linux-clk@vger.kernel.org,
+ <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260218101904.35541-1-linux-kernel-dev@aliel.fr>
+References: <20260218101728.35497-1-linux-kernel-dev@aliel.fr>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -93,18 +90,18 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20260218101904.35541-1-linux-kernel-dev@aliel.fr>
+In-Reply-To: <20260218101728.35497-1-linux-kernel-dev@aliel.fr>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 18/02/2026 11:19, Ronald Claveau wrote:
+On 18/02/2026 11:17, Ronald Claveau wrote:
 > Add PLL for the clock controller of the Amlogic T7 SoC family.
 > 
 > Signed-off-by: Ronald Claveau <linux-kernel-dev@aliel.fr>
+> ---
 
-Your patchset lacks threading. Please use standard tools to send patches
-(e.g. git format-patch + git send-email or b4).
-
+This is not a separate patch, but belongs to the one adding this
+binding/compatible.
 
 Best regards,
 Krzysztof
