@@ -1,157 +1,113 @@
-Received: from ixit.cz (ixit.cz [185.100.197.86])
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7730424729A;
-	Wed, 18 Feb 2026 11:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.100.197.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04C31302140
+	for <linux-clk@vger.kernel.org>; Wed, 18 Feb 2026 11:24:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771413533; cv=none; b=GPZUO/J38PtutNNACn8r0ru9S9YeHPut/uOZcAqL6n0007OeQjyyw6TXbfGSyZPtbIGL1S5X4ZRD7O95G4hVo1hrdqnvFxsWL6AkY+i6wO3WrXd2zrB9Q1hEI8VzdGnEhKkmp/NWxbwoedakI+Ix1+dukXD2deUZbnotBaqdX/M=
+	t=1771413859; cv=none; b=PdtQvWy8c6Ix4JWOBGnmnoBxm6JYkKUdzuAYmR+bTGK7V4ZSZ2YmodVT412HmNAGXlTwd442QDn6quOoauVDMsaOFBF+l9Eui2aDaWuUfH9yWH7Ye3o89MqVkJVB/1CXsM8eAvvOBLOAAmiz0gjejuDnKfm+9ebMa3yQdIZwOIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771413533; c=relaxed/simple;
-	bh=o3WhltwIU/ce2JP51Pd3bWIpA7/t5ViZPBP2WUTW9tQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P1M0x4ZLOZkkNg9VCrmApY6GHYPZrjiD+cS20tMi2ePk60DFik5fCyn0q0DQepnDR32uE4uEAb6Ju8gl1D2yur0uGKhgwo4uXSdtLOUVMxM4s1MfEDwDxWbxWwx2KGRI86ga8ir/lT0iESj7GPCEL/eSpOhyECs+/WfcZBdNDJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=vRm9HL+4; arc=none smtp.client-ip=185.100.197.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
+	s=arc-20240116; t=1771413859; c=relaxed/simple;
+	bh=WL16A14IHJFls09t6846X750Ko4v7i2RpOSf0P0jIxo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=FXQloxd8CfK4S5mclsv7jSqJXdj7rbq225eE5u8ZTcuIL9h/ixLMS1y9+MD9Zw8D7OKYgBYYbXKPqmQXqUaES0V0eVoXe1F9wrCYU302pkosdS+8jDENW5ZmgCnTBE7s9sVVF9yuIQL/QrMd56AmmHKoR9eJkUEoF5O0og+dB8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=postmarketos.org; spf=pass smtp.mailfrom=postmarketos.org; dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b=RaPraqdE; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=postmarketos.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=postmarketos.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="vRm9HL+4"
-Received: from [IPV6:2a02:f000:10bd:e301::471] (unknown [IPv6:2a02:f000:10bd:e301::471])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id ADC49534093F;
-	Wed, 18 Feb 2026 12:18:39 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1771413520;
+	dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b="RaPraqdE"
+Date: Wed, 18 Feb 2026 11:10:29 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=postmarketos.org;
+	s=key1; t=1771413854;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/2twYMBPL8RFmrM3kKaz3qbCcrHZHObNC7PqzjiacFQ=;
-	b=vRm9HL+4fTYn4qfcAWQ4OKTN7cRcdX1HbYkFCyczlxD//lnA0bh/0auT1Ta0wQi9iXk8U+
-	ik7NAJOxqD+WQjgGcFlkRhL3X5/ROV3dvMgqAuv3iKdULdYpy/XO4XLj8Yb+ddUsl257eP
-	yO787TrMGg+xBkYJ6L5SYilhAUtxyDo=
-Message-ID: <e43d5bb2-bdbf-4439-933e-36591dcfd3c1@ixit.cz>
-Date: Wed, 18 Feb 2026 12:18:39 +0100
+	 in-reply-to:in-reply-to:references:references;
+	bh=BEknqRay9cLst5+GJTiimtPKgqbaOAo4KgPgHKVMPt8=;
+	b=RaPraqdEBp6UPnaqoDyevHruMq95QSv53angpGggoOK+NLRbpW/jmUnTZ1bK91Uetwzwlv
+	8ZEgDt1wq7CPBSLFiujoBN5uhZcKE5+LMq9pw2Oul5AotTuv8vNh2c3GYNtEXWu01BuLuJ
+	osYkb6S0f+Cv/agd6nNDDdJda4KLgZ5YeJLJHOf6YeZHnvKyF4Kpr6dyx3FBaj3G19Y89f
+	gJPfywKJGtCujFS0TrBHv2L4FqSReG5k/Z647wGZvZiOFDpLmNRyM1XLPb1CNm4DQ+2BYh
+	Jn94sPZblRRGSdUYUNAPWPuKP3vZn5us5B0QqazGPL3mT+o53wnPDCff56QVyA==
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Ferass El Hafidi <funderscore@postmarketos.org>
+To: linux-amlogic@lists.infradead.org, Ronald Claveau <linux-kernel-dev@aliel.fr>
+Cc: Ronald Claveau <linux-kernel-dev@aliel.fr>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/7] dt-bindings: clk: meson: Add Amlogic T7 sys pll support
+References: <20260218101709.35450-1-linux-kernel-dev@aliel.fr> <20260218110127.36394-1-linux-kernel-dev@aliel.fr>
+In-Reply-To: <20260218110127.36394-1-linux-kernel-dev@aliel.fr>
+Message-ID: <tanjoa.3m1sr95zhvsal@postmarketos.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] arm64: dts: qcom: sdm845: Add missing MDSS reset
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20260217-sdm845-hdk-v1-0-866f1965fef7@oss.qualcomm.com>
- <20260217-sdm845-hdk-v1-3-866f1965fef7@oss.qualcomm.com>
- <590f75c2-6418-4d39-ba7e-589acdf98786@oss.qualcomm.com>
-Content-Language: en-US
-From: David Heidelberg <david@ixit.cz>
-Autocrypt: addr=david@ixit.cz; keydata=
- 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
-In-Reply-To: <590f75c2-6418-4d39-ba7e-589acdf98786@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+X-Migadu-Flow: FLOW_OUT
 
-On 18/02/2026 11:30, Konrad Dybcio wrote:
-> On 2/17/26 10:20 PM, Dmitry Baryshkov wrote:
->> From: David Heidelberg <david@ixit.cz>
->>
->> If the OS does not support recovering the state left by the
->> bootloader it needs a way to reset display hardware, so that it can
->> start from a clean state. Add a reference to the relevant reset.
+Hi,
+
+On Wed, 18 Feb 2026 11:01, Ronald Claveau <linux-kernel-dev@aliel.fr> wrote:
+>Add SYS PLL for the clock controller of the Amlogic T7 SoC family.
+
+Your commit description is almost the same on every patch in the series.
+Probably having a more specific description per commit would be much more
+useful, for reviewers to better understand your commit.
+
+There are documentation pages on how to write informative commit messages
+at [1] and [2], but in summary, your description should talk about *what*
+is being done and (provided that makes sense), *why*.
+
+You also have multiple commits with the exact same commit message
+("dt-bindings: clk: meson: Add Amlogic T7 sys pll support"), did you
+mean to squash them all into one? (You can do so with `git rebase -i`.)
+
+It probably also would make sense to add a cover letter, which would describe
+overall what you goal is with this patch series, and on a high level
+(doesn't have to be too detailled, because you'd describe these in more
+detail in the respective commit messages themselves) what each patch does.
+This once again helps people reviewing your code to understand what problem
+you're trying to solve.
+
+[1]: https://docs.kernel.org/process/submitting-patches.html#explanation-body
+[2]: https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
+
+Best regards,
+Ferass
+
+[PS: sorry if this email was sent twice, my email client did something
+     strange]
+
+>
+>Signed-off-by: Ronald Claveau <linux-kernel-dev@aliel.fr>
+>---
+> include/dt-bindings/clock/amlogic,t7-peripherals-clkc.h | 7 +++++++
+> 1 file changed, 7 insertions(+)
+>
+>diff --git a/include/dt-bindings/clock/amlogic,t7-peripherals-clkc.h b/include/dt-bindings/clock/amlogic,t7-peripherals-clkc.h
+>index 32c4b62037de..0cda8edfa7cd 100644
+>--- a/include/dt-bindings/clock/amlogic,t7-peripherals-clkc.h
+>+++ b/include/dt-bindings/clock/amlogic,t7-peripherals-clkc.h
+>@@ -224,5 +224,12 @@
+> #define CLKID_SYS_PWM_AO_CD		215
+> #define CLKID_SYS_PWM_AO_EF		216
+> #define CLKID_SYS_PWM_AO_GH		217
+>+#define CLKID_SYS_A_SEL			218
+>+#define CLKID_SYS_A_DIV			219
+>+#define CLKID_SYS_A			220
+>+#define CLKID_SYS_B_SEL			221
+>+#define CLKID_SYS_B_DIV			222
+>+#define CLKID_SYS_B			223
+>+#define CLKID_SYS			224
 > 
-> This is not the relevant reset
-> 
-> You want MDSS_CORE_BCR @ 0xaf0_2000
-
-Thanks, I prepared the fixes [1].
-
-I'll try to test it if it's not breaking anything for us and send as v2 
-of [2].
-
-David
-
-[1] https://codeberg.org/sdm845/linux/commits/branch/b4/mdss-reset
-[2] 
-https://patchwork.kernel.org/project/linux-arm-msm/patch/20260112-mdss-reset-v1-1-af7c572204d3@ixit.cz/
-
-> 
-> Konrad
-> 
->>
->> Signed-off-by: David Heidelberg <david@ixit.cz>
->> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
->> ---
-> 
-> 
->>   arch/arm64/boot/dts/qcom/sdm845.dtsi | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
->> index bf2f9c04adba..75c192eddc57 100644
->> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
->> @@ -4550,6 +4550,7 @@ mdss: display-subsystem@ae00000 {
->>   			reg-names = "mdss";
->>   
->>   			power-domains = <&dispcc MDSS_GDSC>;
->> +			resets = <&dispcc DISP_CC_MDSS_RSCC_BCR>;
->>   
->>   			clocks = <&dispcc DISP_CC_MDSS_AHB_CLK>,
->>   				 <&dispcc DISP_CC_MDSS_MDP_CLK>;
->>
-
--- 
-David Heidelberg
-
+> #endif /* __T7_PERIPHERALS_CLKC_H */
+>-- 
+>2.49.0
+>
+>
+>_______________________________________________
+>linux-amlogic mailing list
+>linux-amlogic@lists.infradead.org
+>http://lists.infradead.org/mailman/listinfo/linux-amlogic
