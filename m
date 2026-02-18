@@ -1,45 +1,98 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1474C2D8762;
-	Wed, 18 Feb 2026 14:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFAB634164B
+	for <linux-clk@vger.kernel.org>; Wed, 18 Feb 2026 15:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771426178; cv=none; b=cmjfpVq/AwtfREzo9TaHAW2H5gDXBUZiM33a2xpiBhTew39RvshzcthKROPhVOy6FSgKrnTH1tXWruzozUM1HOb/eaVK1kMJCGX4etZ7cuA1Tk0KiL5ehE9iMprL41B2fZmDG7byltXlnnbC1sFi2BQ9O/8xR87x5to1Cn7sDvg=
+	t=1771430327; cv=none; b=dPXIvw2z7fb8ceOEG0UxmbNyGUHtPJ7LhSENcvOfN7ZuBtHzn/PlHi50MwrTFMEbTEeJJgERUA7w3cW8Hy0UqzHb94vPabqwUC4rn7gV/vSBJqfozq5u2IZyUCrFrELkXwqCiJSFpDGL6R5qvej2BZlyCwr3UXyLWhICX/pXGkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771426178; c=relaxed/simple;
-	bh=MqCsBAeeKLYKSCL8IplZux6VI1NuB4kGl35kBbiVAl0=;
+	s=arc-20240116; t=1771430327; c=relaxed/simple;
+	bh=4UKsrMNfLCiF1xF8FvDDsNS8miSUkjRKIn22yVThOZw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rTIXzTCDGIbo/67QJvX+LZ2DHNg5tOUtYbJuSyUxwCnV1jeAArgbsE9WC/n28VYj8VWSyZu3pdafU3Kcp4w4KtuCgOwxROExAPawpa20ouyF7VaOGCyqUjS+wIDvVCKLGjjWpS64K8deZr23SrIYpFSCtpgeMuJkKPcE3UwjOxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gnHWOx3K; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=hyVJTEchhMQltjkQqq+L3imWQ1yLt60yQ8qteyv6G2OB9pymJ7iem3dF4hc5EFPA3yWmL1j5oHEyjXF+5YtTsVLP4099QzwJYBgv1FZA2s/V4oHzTY4lFIJYcW0Jpu+zcjB0gUDbFkUqalaeCwxTS9xLHZFCOp/GgPsUmAItmDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VI+8b6zP; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=GtvM+UVQ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gnHWOx3K"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F198C116D0;
-	Wed, 18 Feb 2026 14:49:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771426177;
-	bh=MqCsBAeeKLYKSCL8IplZux6VI1NuB4kGl35kBbiVAl0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gnHWOx3K1WCN5jacfryWt6ZFrfRiSy3MK2GQ6P+xBX/TNtUkhEExGfVA+HBD1FTih
-	 TQkHj+/UuthLrMOFiXYH9AnrCOXd66UTPmeWoPPYt8wx8ZfZSqmNYz9TXkll/UxpY1
-	 qhAEoVq5RRRqx8N96k9IjVNGcFxgILXb46GJR05Qof6h26C/cWNHkPpozkmAyrQv0M
-	 Gbh4vJm3xkrJWdEr1FIsFON7zyol4N5oBymL4YNm0yevTDpGoz2CXC74St3+sBtHkx
-	 fElMd8RbZW2xqApF1I2GSs0t/Wf2kAu9RZ/U9Z53czstq7Qs8n5XmhJs+UZUsBs0ej
-	 Zt0OHvU1T2x5g==
-Date: Wed, 18 Feb 2026 08:49:34 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, stable@vger.kernel.org
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VI+8b6zP";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="GtvM+UVQ"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 61IBcs7M413923
+	for <linux-clk@vger.kernel.org>; Wed, 18 Feb 2026 15:58:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=w1emkyL2g0/kDWQ3j+VkHCmb
+	QpoawetFO2n6H9Fw8Cw=; b=VI+8b6zPKSdkgvsz3S4TrP4UYgz+ewvj+mZLtcVU
+	PQjOYyBFANihm1T8+A/u6H2xLus2GSa9v3PPwnxxIVNDspDH95MWpTcYVXSN+suU
+	6FCI1Mon/E/YlZVPGREOkN5DZi3MnyQZCbcTUCVMSsxgxN2OiHAAuiQl+15YJbkS
+	NF5nQsLPbviYo0lVIy2vUoLXV7Q90P6SRSF7W44OQOOUSmEI8v3e9DDQtLsG5y37
+	FU824JczQ+mEdqNbKXLoAnoJsudjP2xolOeKrIRZiATedqUmlqcARJBCdI9R0LhK
+	GToAmIMGp1Ms3H+pkri6Fg6jCLvgfTEj7AJjy5wVcKXOHQ==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cd1q6t8rk-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Wed, 18 Feb 2026 15:58:45 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8c70d16d5a9so3077568085a.3
+        for <linux-clk@vger.kernel.org>; Wed, 18 Feb 2026 07:58:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1771430324; x=1772035124; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=w1emkyL2g0/kDWQ3j+VkHCmbQpoawetFO2n6H9Fw8Cw=;
+        b=GtvM+UVQ/JEo+t33j1nzJeVOpJw2sfVfCnHwES94qLR9VaApcRp7guWxrSM5uoaYvr
+         jHuIP8JQruLGWyHZTAYAoi7JbK4xKPpB4S53UHaDsdPIo+EF0nEf5g9AAZS2ndGNfdTQ
+         T2+ZFQNi4L8OG2iuz1vkQ5AS+GGs0PFxDOsSHHUeL7yNcV6kwlv1RREONVnScwCycKHl
+         +2ncg6K0Rw7T6/UEfcvuwUn8uLcwMxPlSdIwotzTBPLeN2UbgMUradpeUSQAoGYZvnyD
+         H/tNjZqajFoLFYCF50ajl/Zg0LkhhUQkg+OKDDZP8JK8saMHamlymvyBI79vVi5idSlu
+         YZXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771430324; x=1772035124;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w1emkyL2g0/kDWQ3j+VkHCmbQpoawetFO2n6H9Fw8Cw=;
+        b=v4cCyscUkW7fsYrxVFf/1Xjnlz0WpZgc8QbDIYbmvI9LfaWmF4lwN1sJK/bohw97/S
+         ly721MVi9jaRnoMAUkiOSffCjUkmoYJOomsxYuaNQxFfyyRBKyKI6s8pKF/JHMxYu0Io
+         Hln3dQ93068kPlgbTnSFzgPbY5ySpsRhX7JCkbyOcJtbj54io2TV3Y/sZt1OjbeZACvK
+         F04s1jTU7R8pjD5BV3ADwdnOTMvuiI6lWFotEdeNrDPVYG3Dw/nol26WC6NuazDA6Jyx
+         Q+BaIP3UPlpEN5PAowpEUcr1IQS1mTHtubDk+IIhyYNE/vo3PwnPVKMxu1AgG6pDfl4D
+         V5JA==
+X-Forwarded-Encrypted: i=1; AJvYcCUwSVXjujcuve0gxhWwFOScuIe9+YnVOMu1F+/uB3rliKaAc55Lsr2rTkquS1Phri61oppn1hmEPcc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyT31CaufQm2mVqwArd/IBFsdEL/F2qrp12LTS35CUX4gfWox1I
+	p0HAYtCUOk8iV/LQdZimGIfN1bZzazg1g4RbrQAgYtSaSCCO4bQJ8w05qWdkadOLuD1TqoqVuzA
+	1963NOvQ5821mmtC9ZhxO/tZ+VE6HxjDR1U6G37gjhglfzBi7HFnPzVonfGYDeM4=
+X-Gm-Gg: AZuq6aJJV2FwW8JZkLwKHh2B2elrrsORvIZzBPjpdgIIDUm9+Vt5pEO4W8L9u1CJ7wn
+	+LyCmCgqUZC57q3+3H+5ob9rkfEdCYpqd/IdLTPTwP+ObmuxDLuynDpSq+k3qvDaPVL5S5DhzYV
+	U6agc2GbyevYCSIyQ7No5bN+sd+iXZCbZM3D4SSJogxY4cPmnJiZEWJSsZK3wwjl3rRPOGK/qAU
+	/V+dsWLkbnPKya2p8Wh6Pde8PVMrPW/Csj78Vx7PLHFid68wt+fCVbwV5koTUcJL+UaCDdjje8N
+	eJorAf81WpsG4xXBYCabEsiS5QeqBKno76UuM5PeZ5wzqznTG8C3bNRNElKDqCmtJwezKKIeUzW
+	PEEgM1NB/S5AOrqSfTZ/w98irQHjwcpr54x6/LbUuaj9Tf/WgXB3zrSb86Jl6hhxwgQoFLra6vC
+	RX2EsVUtAukqCVU6KHmaVBz2z7fI8WKYSSAdg=
+X-Received: by 2002:a05:620a:19a3:b0:8c5:c99d:b2c with SMTP id af79cd13be357-8cb4bfa7a4fmr1728976385a.34.1771430324079;
+        Wed, 18 Feb 2026 07:58:44 -0800 (PST)
+X-Received: by 2002:a05:620a:19a3:b0:8c5:c99d:b2c with SMTP id af79cd13be357-8cb4bfa7a4fmr1728972985a.34.1771430323548;
+        Wed, 18 Feb 2026 07:58:43 -0800 (PST)
+Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-387068923c3sm44147201fa.5.2026.02.18.07.58.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Feb 2026 07:58:41 -0800 (PST)
+Date: Wed, 18 Feb 2026 17:58:39 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, stable@vger.kernel.org
 Subject: Re: [PATCH 1/4] clk: qcom: dispcc-sdm845: set GENPD_FLAG_NO_STAY_ON
  flag for MDSS domain
-Message-ID: <vbmo6qvepw5sjmtrffkdiaqulgqrhxlo3lrlzxhjz6i252efvg@uyhzdskc3jut>
+Message-ID: <wiztxwsea2aojcxmcs2q4vskooli7lrw3oio75bij54273mrbr@ody4vonry2qr>
 References: <20260217-sdm845-hdk-v1-0-866f1965fef7@oss.qualcomm.com>
  <20260217-sdm845-hdk-v1-1-866f1965fef7@oss.qualcomm.com>
+ <vbmo6qvepw5sjmtrffkdiaqulgqrhxlo3lrlzxhjz6i252efvg@uyhzdskc3jut>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,249 +101,47 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260217-sdm845-hdk-v1-1-866f1965fef7@oss.qualcomm.com>
+In-Reply-To: <vbmo6qvepw5sjmtrffkdiaqulgqrhxlo3lrlzxhjz6i252efvg@uyhzdskc3jut>
+X-Authority-Analysis: v=2.4 cv=K60v3iWI c=1 sm=1 tr=0 ts=6995e1b5 cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=HzLeVaNsDn8A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=Mpw57Om8IfrbqaoTuvik:22 a=GgsMoib0sEa3-_RKJdDe:22 a=0j2gUKGghzJNiw40VA4A:9
+ a=CjuIK1q_8ugA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-GUID: RZIrkACrqhr6yOWkoE8ICe6VrDtgc2BT
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjE4MDEzMyBTYWx0ZWRfX645zMSm8L7RC
+ rHDz3c1qFnZaljNe4n0z4l5aU3V5FPRxcg1qF/RfKI15XMoINAyQoQ+WWbK0bwRvYJOuSr32PB4
+ Cm78OHHwYfGeFYPVTP18ueh9/pEIYe2QqARIU3kmYnKAeDTP3NYebojEV3H5wO/cg2Eh3spztr5
+ JYGBGyVfFGeEpFnuYlPios6WkxgWG0RzvBW97rVkrzZ9GERXfDvg7BnDHdZyNppHM4WTbNWQ+nT
+ plFWkHk+V0EHVocJJq1i8js7lJwHhX+iS7GEBHHDYUQhsJU09MH7VDRnShI2BnnD7QETB+5pDo3
+ +LJcNmEZuBX5YW2stttiE9ciH0JFJDVMwUe/7nybQrwA3uSNKxb2eynq0uvk2OFxokoGmaWznvK
+ BKVBPgPTq8c5JkWHoB41EFy3B63j457vYEMaRpl9nHWDH8hAvNUyv9IgwT5FNF84Y+e4kSBXq8T
+ LKPT28LB7sy5VvFYWUQ==
+X-Proofpoint-ORIG-GUID: RZIrkACrqhr6yOWkoE8ICe6VrDtgc2BT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-02-18_03,2026-02-18_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 lowpriorityscore=0 clxscore=1015 malwarescore=0
+ priorityscore=1501 spamscore=0 impostorscore=0 bulkscore=0 suspectscore=0
+ adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2601150000
+ definitions=main-2602180133
 
-On Tue, Feb 17, 2026 at 11:20:42PM +0200, Dmitry Baryshkov wrote:
-> Since the commit 13a4b7fb6260 ("pmdomain: core: Leave powered-on genpds
-> on until late_initcall_sync") setting of the display clocks is partially
-> broken. For example, when on SDM845-HDK the bootloader leaves display
-> enabled, later the kernel can't set up DSI clocks, ending up with the
-> broken display, blinking blue.
+On Wed, Feb 18, 2026 at 08:49:34AM -0600, Bjorn Andersson wrote:
+> On Tue, Feb 17, 2026 at 11:20:42PM +0200, Dmitry Baryshkov wrote:
+> > Since the commit 13a4b7fb6260 ("pmdomain: core: Leave powered-on genpds
+> > on until late_initcall_sync") setting of the display clocks is partially
+> > broken. For example, when on SDM845-HDK the bootloader leaves display
+> > enabled, later the kernel can't set up DSI clocks, ending up with the
+> > broken display, blinking blue.
+> 
+> This describes how the problem manifest itself. Can you please document
+> why clocks are partially broken and how that relate to the GDSC state,
+> and why setting GENPD_FLAG_NO_STAY_ON solves this?
 
-This describes how the problem manifest itself. Can you please document
-why clocks are partially broken and how that relate to the GDSC state,
-and why setting GENPD_FLAG_NO_STAY_ON solves this?
+Probably the best answer (for the second part of the question): I don't
+know (yet).
 
-Regards,
-Bjorn
-
-> 
->  ------------[ cut here ]------------
->  disp_cc_mdss_pclk0_clk_src: rcg didn't update its configuration.
->  WARNING: CPU: 7 PID: 81 at drivers/clk/qcom/clk-rcg2.c:136 update_config+0xd4/0xf0
->  Modules linked in:
->  CPU: 7 UID: 0 PID: 81 Comm: kworker/u32:3 Not tainted 6.16.0-rc2-00040-ga3f36de2f3ba #4236 PREEMPT
->  Hardware name: Qualcomm Technologies, Inc. SDM845 HDK (DT)
->  Workqueue: events_unbound deferred_probe_work_func
->  pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->  pc : update_config+0xd4/0xf0
->  lr : update_config+0xd4/0xf0
->  sp : ffff800080992a30
->  x29: ffff800080992a40 x28: 0000000000000001 x27: ffff00008db49080
->  x26: ffff00008db49220 x25: 0000000000000000 x24: 0000000008d9ee20
->  x23: ffffd6f1bf1f6cd8 x22: 0000000008d9ee20 x21: ffffd6f1becadfa8
->  x20: ffffd6f1bf1f6cc0 x19: 0000000000000000 x18: fffffffffffef3f0
->  x17: 0000000000000004 x16: 0000000000000024 x15: 0000000000000005
->  x14: fffffffffffcf3ef x13: 2e6e6f6974617275 x12: 6769666e6f632073
->  x11: 7469206574616470 x10: 752074276e646964 x9 : 72756769666e6f63
->  x8 : ffff800080992790 x7 : ffff8000809928c0 x6 : ffff800080992850
->  x5 : ffff8000809927d0 x4 : ffff800080994000 x3 : 0000000000000000
->  x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff0000808d1b00
->  Call trace:
->   update_config+0xd4/0xf0 (P)
->   clk_rcg2_configure+0xb8/0xc0
->   clk_pixel_set_rate+0x138/0x180
->   clk_change_rate+0x124/0x620
->   clk_change_rate+0x1b4/0x620
->   clk_change_rate+0x1b4/0x620
->   clk_change_rate+0x1b4/0x620
->   clk_change_rate+0x1b4/0x620
->   clk_change_rate+0x1b4/0x620
->   clk_change_rate+0x1b4/0x620
->   clk_core_set_rate_nolock+0x230/0x2b0
->   clk_set_rate+0x38/0x90
->   _opp_config_clk_single+0x30/0x98
->   _set_opp+0x11c/0x530
->   dev_pm_opp_set_rate+0x18c/0x280
->   dsi_link_clk_set_rate_6g+0x44/0x100
->   msm_dsi_host_power_on+0xc4/0x988
->   dsi_mgr_bridge_pre_enable+0x194/0x3e0
->   drm_atomic_bridge_call_pre_enable+0x40/0x58
->   drm_atomic_bridge_chain_pre_enable+0x50/0x130
->   drm_atomic_helper_commit_modeset_enables+0x15c/0x26c
->   msm_atomic_commit_tail+0x214/0xb18
->   commit_tail+0xa0/0x1a0
->   drm_atomic_helper_commit+0x1a8/0x1d0
->   drm_atomic_commit+0x8c/0xcc
->   drm_client_modeset_commit_atomic+0x258/0x2d0
->   drm_client_modeset_commit_locked+0x60/0x1b8
->   drm_client_modeset_commit+0x2c/0x58
->   __drm_fb_helper_restore_fbdev_mode_unlocked+0xbc/0xe8
->   drm_fb_helper_set_par+0x30/0x58
->   fbcon_init+0x3cc/0x530
->   visual_init+0x8c/0xe0
->   do_bind_con_driver.isra.0+0x18c/0x320
->   do_take_over_console+0x13c/0x1d4
->   do_fbcon_takeover+0x6c/0xe0
->   fbcon_fb_registered+0x1dc/0x1e0
->   do_register_framebuffer+0x1bc/0x278
->   register_framebuffer+0x30/0x5c
->   __drm_fb_helper_initial_config_and_unlock+0x2dc/0x5a8
->   drm_fb_helper_initial_config+0x48/0x58
->   drm_fbdev_client_hotplug+0x7c/0xe0
->   drm_client_register+0x5c/0xa0
->   drm_fbdev_client_setup+0xa4/0x1c0
->   drm_client_setup+0x58/0xa0
->   msm_drm_bind+0x3b4/0x460
->   try_to_bring_up_aggregate_device+0x16c/0x1e0
->   __component_add+0xa8/0x170
->   component_add+0x14/0x20
->   dsi_dev_attach+0x20/0x38
->   dsi_host_attach+0x58/0x98
->   devm_mipi_dsi_attach+0x34/0x90
->   lt9611_attach_dsi+0x98/0x120
->   lt9611_probe+0x3f8/0x4a0
->   i2c_device_probe+0x154/0x340
->   really_probe+0xbc/0x2c0
->   __driver_probe_device+0x78/0x120
->   driver_probe_device+0x3c/0x160
->   __device_attach_driver+0xb8/0x140
->   bus_for_each_drv+0x88/0xe8
->   __device_attach+0xa0/0x198
->   device_initial_probe+0x14/0x20
->   bus_probe_device+0xb4/0xc0
->   deferred_probe_work_func+0x90/0xcc
->   process_one_work+0x214/0x64c
->   worker_thread+0x1c0/0x364
->   kthread+0x14c/0x220
->   ret_from_fork+0x10/0x20
->  irq event stamp: 110949
->  hardirqs last  enabled at (110949): [<ffffd6f1be502d78>] _raw_spin_unlock_irqrestore+0x6c/0x74
->  hardirqs last disabled at (110948): [<ffffd6f1be502268>] _raw_spin_lock_irqsave+0x84/0x88
->  softirqs last  enabled at (109450): [<ffffd6f1be1b9ff0>] release_sock+0x90/0xa4
->  softirqs last disabled at (109448): [<ffffd6f1be1b9f88>] release_sock+0x28/0xa4
->  ---[ end trace 0000000000000000 ]---
->  ------------[ cut here ]------------
->  disp_cc_mdss_pclk1_clk_src: rcg didn't update its configuration.
->  WARNING: CPU: 7 PID: 81 at drivers/clk/qcom/clk-rcg2.c:136 update_config+0xd4/0xf0
->  Modules linked in:
->  CPU: 7 UID: 0 PID: 81 Comm: kworker/u32:3 Tainted: G        W           6.16.0-rc2-00040-ga3f36de2f3ba #4236 PREEMPT
->  Tainted: [W]=WARN
->  Hardware name: Qualcomm Technologies, Inc. SDM845 HDK (DT)
->  Workqueue: events_unbound deferred_probe_work_func
->  pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->  pc : update_config+0xd4/0xf0
->  lr : update_config+0xd4/0xf0
->  sp : ffff800080992a30
->  x29: ffff800080992a40 x28: 0000000000000001 x27: ffff00008db49080
->  x26: ffff00008db49220 x25: 0000000000000000 x24: 0000000008d9ee20
->  x23: ffffd6f1bf1f6c48 x22: 0000000008d9ee20 x21: ffffd6f1becb1b50
->  x20: ffffd6f1bf1f6c30 x19: 0000000000000000 x18: ffffffffffff0790
->  x17: 0000000000000004 x16: 0000000000000024 x15: 0000000000000005
->  x14: fffffffffffd078f x13: 2e6e6f6974617275 x12: 6769666e6f632073
->  x11: 7469206574616470 x10: 752074276e646964 x9 : 72756769666e6f63
->  x8 : ffff800080992790 x7 : ffff8000809928c0 x6 : ffff800080992850
->  x5 : ffff8000809927d0 x4 : ffff800080994000 x3 : 0000000000000000
->  x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff0000808d1b00
->  Call trace:
->   update_config+0xd4/0xf0 (P)
->   clk_rcg2_configure+0xb8/0xc0
->   clk_pixel_set_rate+0x138/0x180
->   clk_change_rate+0x124/0x620
->   clk_change_rate+0x1b4/0x620
->   clk_change_rate+0x1b4/0x620
->   clk_change_rate+0x1b4/0x620
->   clk_change_rate+0x1b4/0x620
->   clk_change_rate+0x1b4/0x620
->   clk_change_rate+0x1b4/0x620
->   clk_core_set_rate_nolock+0x230/0x2b0
->   clk_set_rate+0x38/0x90
->   _opp_config_clk_single+0x30/0x98
->   _set_opp+0x11c/0x530
->   dev_pm_opp_set_rate+0x18c/0x280
->   dsi_link_clk_set_rate_6g+0x44/0x100
->   msm_dsi_host_power_on+0xc4/0x988
->   dsi_mgr_bridge_pre_enable+0x194/0x3e0
->   drm_atomic_bridge_call_pre_enable+0x40/0x58
->   drm_atomic_bridge_chain_pre_enable+0x50/0x130
->   drm_atomic_helper_commit_modeset_enables+0x15c/0x26c
->   msm_atomic_commit_tail+0x214/0xb18
->   commit_tail+0xa0/0x1a0
->   drm_atomic_helper_commit+0x1a8/0x1d0
->   drm_atomic_commit+0x8c/0xcc
->   drm_client_modeset_commit_atomic+0x258/0x2d0
->   drm_client_modeset_commit_locked+0x60/0x1b8
->   drm_client_modeset_commit+0x2c/0x58
->   __drm_fb_helper_restore_fbdev_mode_unlocked+0xbc/0xe8
->   drm_fb_helper_set_par+0x30/0x58
->   fbcon_init+0x3cc/0x530
->   visual_init+0x8c/0xe0
->   do_bind_con_driver.isra.0+0x18c/0x320
->   do_take_over_console+0x13c/0x1d4
->   do_fbcon_takeover+0x6c/0xe0
->   fbcon_fb_registered+0x1dc/0x1e0
->   do_register_framebuffer+0x1bc/0x278
->   register_framebuffer+0x30/0x5c
->   __drm_fb_helper_initial_config_and_unlock+0x2dc/0x5a8
->   drm_fb_helper_initial_config+0x48/0x58
->   drm_fbdev_client_hotplug+0x7c/0xe0
->   drm_client_register+0x5c/0xa0
->   drm_fbdev_client_setup+0xa4/0x1c0
->   drm_client_setup+0x58/0xa0
->   msm_drm_bind+0x3b4/0x460
->   try_to_bring_up_aggregate_device+0x16c/0x1e0
->   __component_add+0xa8/0x170
->   component_add+0x14/0x20
->   dsi_dev_attach+0x20/0x38
->   dsi_host_attach+0x58/0x98
->   devm_mipi_dsi_attach+0x34/0x90
->   lt9611_attach_dsi+0x98/0x120
->   lt9611_probe+0x3f8/0x4a0
->   i2c_device_probe+0x154/0x340
->   really_probe+0xbc/0x2c0
->   __driver_probe_device+0x78/0x120
->   driver_probe_device+0x3c/0x160
->   __device_attach_driver+0xb8/0x140
->   bus_for_each_drv+0x88/0xe8
->   __device_attach+0xa0/0x198
->   device_initial_probe+0x14/0x20
->   bus_probe_device+0xb4/0xc0
->   deferred_probe_work_func+0x90/0xcc
->   process_one_work+0x214/0x64c
->   worker_thread+0x1c0/0x364
->   kthread+0x14c/0x220
->   ret_from_fork+0x10/0x20
->  irq event stamp: 110949
->  hardirqs last  enabled at (110949): [<ffffd6f1be502d78>] _raw_spin_unlock_irqrestore+0x6c/0x74
->  hardirqs last disabled at (110948): [<ffffd6f1be502268>] _raw_spin_lock_irqsave+0x84/0x88
->  softirqs last  enabled at (109450): [<ffffd6f1be1b9ff0>] release_sock+0x90/0xa4
->  softirqs last disabled at (109448): [<ffffd6f1be1b9f88>] release_sock+0x28/0xa4
->  ---[ end trace 0000000000000000 ]---
->  lt9611 3-003b: video check: hactive_a=0, hactive_b=0, vactive=0, v_total=0, h_total_sysclk=0
->  [drm:dpu_encoder_phys_vid_wait_for_commit_done:540] [dpu error]vblank timeout: 2
->  [drm:dpu_kms_wait_for_commit_done:524] [dpu error]wait for commit done returned -110
->  fb0: sys_imageblit: framebuffer is not in virtual address space.
->  [drm:dpu_encoder_phys_vid_wait_for_commit_done:540] [dpu error]vblank timeout: 2
->  [drm:dpu_kms_wait_for_commit_done:524] [dpu error]wait for commit done returned -110
->  [drm:dpu_encoder_phys_vid_wait_for_commit_done:540] [dpu error]vblank timeout: 2
->  [drm:dpu_kms_wait_for_commit_done:524] [dpu error]wait for commit done returned -110
->  Console: switching to colour frame buffer device 480x135
->  [drm:dpu_encoder_phys_vid_wait_for_commit_done:540] [dpu error]vblank timeout: 2
->  [drm:dpu_kms_wait_for_commit_done:524] [dpu error]wait for commit done returned -110
->  [drm:dpu_encoder_phys_vid_wait_for_commit_done:540] [dpu error]vblank timeout: 2
->  [drm:dpu_kms_wait_for_commit_done:524] [dpu error]wait for commit done returned -110
-> 
-> Fixes: 13a4b7fb6260 ("pmdomain: core: Leave powered-on genpds on until late_initcall_sync")
-> Cc: stable@vger.kernel.org
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
->  drivers/clk/qcom/dispcc-sdm845.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/qcom/dispcc-sdm845.c b/drivers/clk/qcom/dispcc-sdm845.c
-> index 78e43f6d7502..468b30497746 100644
-> --- a/drivers/clk/qcom/dispcc-sdm845.c
-> +++ b/drivers/clk/qcom/dispcc-sdm845.c
-> @@ -763,6 +763,7 @@ static struct gdsc mdss_gdsc = {
->  	.en_rest_wait_val = 0x5,
->  	.pd = {
->  		.name = "mdss_gdsc",
-> +		.flags = GENPD_FLAG_NO_STAY_ON,
->  	},
->  	.pwrsts = PWRSTS_OFF_ON,
->  	.flags = HW_CTRL | POLL_CFG_GDSCR,
-> 
-> -- 
-> 2.47.3
-> 
+-- 
+With best wishes
+Dmitry
