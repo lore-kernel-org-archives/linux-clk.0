@@ -1,33 +1,66 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4780C322537;
-	Wed, 18 Feb 2026 08:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1F933D6C8
+	for <linux-clk@vger.kernel.org>; Wed, 18 Feb 2026 09:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771404925; cv=none; b=Xkxhme9wqJr9HuxKZ71sWSZNGCN3laEpmHyD8RKtF3zJzLkyDDc/FHiVt3Jk/3AiUXp5NHKGRxnuVeBXvHGsBlhYNj+NKPQP913jGmQEd5xdpVYRasqENS9Pra9VGNqZmIEgNpxPfitqTQbed1InVwOiP20cvmPNOKXqOaCk5KE=
+	t=1771407904; cv=none; b=lcOuZTuicFQj12v+gyFPGAIxZUIrt/HvmetnyYJrbQPRRjG5I9jj6jJFKOSuX1ruD31XkfvLqQQkY9Zyhu8nr1cF1qXJP38rk9DPcyl1PP5uLH2RyGGB+vWOl1OenHX7OKsShylncYaoR5SRtw2Jgtkc3DJ3vbMFqhZeCAVO5Rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771404925; c=relaxed/simple;
-	bh=bF2+HNWB1WiX1g59q+OMGNDTaA0gVIg1MYtXD/mCRRQ=;
+	s=arc-20240116; t=1771407904; c=relaxed/simple;
+	bh=CL9soAKZWnSZZkdKPe8QbrfJgbx6ptDGhfh7XJANNiM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=txHW4qVSmzUpCS023qirlNKAhs8DT3J9M+RRoOQG7UmAep+zPiEvoliov5NKi9IbL7ISiHv7x2KGbroR20V5eH/JfvssXfcKMyjawPgIXVyjf9Sfgmyjhmc2a91m6IfV3QPvlCZl3DWidGsHRrjM72x55STqNguMEERcZq+GQEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zc9byjHW; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=kVvgnMK986oT/LAmoOXNM4/v+jhM6IG2zW9pzxT+N8SZn0ZsN2zZjBDXtgsIPaiv5TEF/dqsCdIagb1NRQLqp4mvl8uFhbTYyqXBLSLJIa++jwvgZuvHjSjxvrOrWwaThzrYzOndgNjPDLN4wTomVbF7/tCl91yMxufNJLki3ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=O10WuU5K; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zc9byjHW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 307D9C19421;
-	Wed, 18 Feb 2026 08:55:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771404924;
-	bh=bF2+HNWB1WiX1g59q+OMGNDTaA0gVIg1MYtXD/mCRRQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Zc9byjHWu1aVv4A2OcVNDXQue2GdXDn/8QeqQkML0SRQvKOZEaP2dcvVlAgZhRfll
-	 kimwwJxUGtVfb8oSZYFg51fhOuosUf2emVjFZwnzGmOvfMRPIIZO6FqOeoqx59Lzk3
-	 wOUYPaw0Dwnb9FisF7Z85tXuw1+FW/sof52zGxzmGwOEgrQELtZf6obIFenrAHc0BV
-	 tBuy6itLheakVqDVpwA9m2zrsEn7CSspERn2nGh++R6iYAfcEIKYkUwprsuAjcAe+0
-	 QNe273UFG91EGdeaYYMs2F9XeYCKeanI8odpNkCGVWf+5gaQ/YWkoa+Lv5HiGHMpAK
-	 XE9I5hrMsEGdg==
-Message-ID: <fe12b2cc-c7ed-409c-876a-8583269c9b5d@kernel.org>
-Date: Wed, 18 Feb 2026 09:55:20 +0100
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="O10WuU5K"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-48371119eacso48152805e9.2
+        for <linux-clk@vger.kernel.org>; Wed, 18 Feb 2026 01:45:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1771407901; x=1772012701; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hSgaH5qN66tTg9I9+UItJTauIg80NYLcXtWxdyYbWoQ=;
+        b=O10WuU5KbCw5KB108YKVwVaWMKCoKqVu6h4NJZavl9oaP6uw1fPpohFzvaIsCFEsZP
+         cN1vu1kduYwW8foGaMk39VSIlxmItn2a6OrESUYKneYDpJGmK0fkBuJZAruNjglU2x/C
+         R71Q75019mZ62hThPr7O8+9zQD17u/IUdMkwXfg5xVb9jW3YiTuHZXd4qT+MvDS+lLWt
+         aN3bPBmfdmKDazKNIDyX7WnQdWVOq3uHW2fz+iQHZdjGoiIDm5UzzdMZeAX1hTnHpobd
+         mL1lf/BKgLMZZAokyk5d6pQm7w1lawF4oMP1mh+0/P6HrshWYY6s6xAY4CPVEj8MHbPK
+         U5Yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771407901; x=1772012701;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hSgaH5qN66tTg9I9+UItJTauIg80NYLcXtWxdyYbWoQ=;
+        b=m3KWgVqAZ90ZXDoopk2hKolzg6OXRo3oyxpM9vCfozTXicBaSt2FJg+liev6eKocOH
+         dycjJOEUIiZudoqK0qPkHpUWG0eZOpN/q0ZPBo3J9SOp0Y0lYuA/6B9yyDXUuklH/WaT
+         rbFEk+hxejXDcTiubZVKfpzXOdxcmfJOMIKUYNtRZs0jXCL+0jfgu0JPrQevvwuKwg4y
+         VhKFZaPCZKxiNrg7j9dfWJumPWYFO29GrDs7i926wDz35FIpyIzCUhDU9yVieu+Jpm1t
+         ZP17gSlTMueXxBcinBCAEDl4426X/rnmFYCFkqIHjBmHihSZ8GRRlUweLyuD+fcEtsVF
+         aFqw==
+X-Forwarded-Encrypted: i=1; AJvYcCXvcU2owTyLPCwVrdpLVWPspnt7eU+q055y3thC9e6dSL8SNJJ5MhQTLS1OxrxXgJ8U3NTL0jUMfqs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZkV15+2IoJIxJYw4N24miQE7zHWRe764ucsdNK+6KdOTl2akj
+	q0Ohwjt+VrX5WzEMcrarwvZXmJckLvOj9crGR1mQAMe8LN5OpepGzPpCOdusOMhxuBU=
+X-Gm-Gg: AZuq6aJvPpwcEd9pOoAiuqFhU4ZfaDB3LSJtWTdyQEPrbyXhGRcKDaJlqPaEOsaz3lq
+	eoZV0G6bp2nxJc+Wa0sKI9JBMnO/5RzYJMn9Xw1l8oahToCVLSqiaCcdC2V97h+ZyVLwpx9+PRO
+	PHOvlRSCzIOPq4gSMg4cl3SWGcSF4bYb5TDPsRqwqUlC34D4pH7HkZkylhi9NNeCSIRUqxdnyDx
+	nljkcvrHU1lJfIgk05Rgt+HsJK1eQ2da/YtrUoSgcgcMA9D+zCYdYVAfU1yFxDczsZPs/ed1oiW
+	x4SN3w2fTFjm9wbCiAQ3e9bqyhvS26vC7xI5OAp3hVqRFl/qlGv2STk/wLFnGohaQm96sYENL/n
+	+ZVP86WGSQO2325ZM0YLDpdYJlHwpHPlaiZ2pQsnumQhHGb3vmCKRVJEkWy6sLwWL/25VddUowm
+	rvjpHxZuqnYVfEOugAlEO8qlXfed0pXw==
+X-Received: by 2002:a05:600c:458a:b0:477:5c58:3d42 with SMTP id 5b1f17b1804b1-48398a7e1e2mr23585475e9.10.1771407900211;
+        Wed, 18 Feb 2026 01:45:00 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.73])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4834d5d78cfsm835667815e9.1.2026.02.18.01.44.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Feb 2026 01:44:59 -0800 (PST)
+Message-ID: <d09e741a-8ad2-4386-9c88-98694fbcf644@tuxon.dev>
+Date: Wed, 18 Feb 2026 11:44:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,74 +68,554 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] dt-bindings: mfd: syscon: add qcom,msm8960-sps-sic
-To: Antony Kurniawan Soemardi <linux@smankusors.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- phone-devel@vger.kernel.org
-References: <20260218-msm8960-sps-rpm-bindings-v1-0-bbc11c0d4f24@smankusors.com>
- <20260218-msm8960-sps-rpm-bindings-v1-2-bbc11c0d4f24@smankusors.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v5 13/16] PCI: rzg3s-host: Add support for RZ/G3E PCIe
+ controller
+To: John Madieu <john.madieu.xa@bp.renesas.com>,
+ claudiu.beznea.uj@bp.renesas.com, lpieralisi@kernel.org,
+ kwilczynski@kernel.org, mani@kernel.org, geert+renesas@glider.be,
+ krzk+dt@kernel.org
+Cc: robh@kernel.org, bhelgaas@google.com, conor+dt@kernel.org,
+ magnus.damm@gmail.com, biju.das.jz@bp.renesas.com,
+ linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org, john.madieu@gmail.com
+References: <20260210113041.138430-1-john.madieu.xa@bp.renesas.com>
+ <20260210113041.138430-14-john.madieu.xa@bp.renesas.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20260218-msm8960-sps-rpm-bindings-v1-2-bbc11c0d4f24@smankusors.com>
-Content-Type: text/plain; charset=UTF-8
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20260210113041.138430-14-john.madieu.xa@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 18/02/2026 07:59, Antony Kurniawan Soemardi wrote:
-> Add compat for Smart Peripheral System (SPS) Interrupt Controller (SIC)
-> present on Qualcomm MSM8960 SoC.
+Hi, John,
+
+On 2/10/26 13:30, John Madieu wrote:
+> Add support for the PCIe controller found in RZ/G3E SoCs to the existing
+> RZ/G3S PCIe host driver. The RZ/G3E PCIe controller is similar to the
+> RZ/G3S's, with the following key differences:
 > 
+>   - Supports PCIe Gen3 (8.0 GT/s) link speeds alongside Gen2 (5.0 GT/s)
+>   - Uses a different reset control mechanism via AXI registers instead
+>     of the Linux reset framework
+>   - Requires specific SYSC configuration for link state control and
+>     Root Complex mode selection
+> 
+> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+> ---
+> 
+> Changes:
+> 
+> v5:
+>   - Introduce rzg3s_sysc_config() helper for sys configuration
+> 
+> v4: No changes
+> v3: No changes
+> v2: Collected tag.
+> 
+>   drivers/pci/controller/pcie-rzg3s-host.c | 152 ++++++++++++++++++++---
+>   1 file changed, 137 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/controller/pcie-rzg3s-host.c
+> index 22858a876fd8..77313cc01c02 100644
+> --- a/drivers/pci/controller/pcie-rzg3s-host.c
+> +++ b/drivers/pci/controller/pcie-rzg3s-host.c
+> @@ -111,6 +111,16 @@
+>   #define RZG3S_PCI_PERM_CFG_HWINIT_EN		BIT(2)
+>   #define RZG3S_PCI_PERM_PIPE_PHY_REG_EN		BIT(1)
+>   
+> +/* RZ/G3E specific registers */
+> +#define RZG3E_PCI_RESET				0x310
+> +#define RZG3E_PCI_RESET_RST_OUT_B		BIT(6)
+> +#define RZG3E_PCI_RESET_RST_PS_B		BIT(5)
+> +#define RZG3E_PCI_RESET_RST_LOAD_B		BIT(4)
+> +#define RZG3E_PCI_RESET_RST_CFG_B		BIT(3)
+> +#define RZG3E_PCI_RESET_RST_RSM_B		BIT(2)
+> +#define RZG3E_PCI_RESET_RST_GP_B		BIT(1)
+> +#define RZG3E_PCI_RESET_RST_B			BIT(0)
+> +
+>   #define RZG3S_PCI_MSIRE(id)			(0x600 + (id) * 0x10)
+>   #define RZG3S_PCI_MSIRE_ENA			BIT(0)
+>   
+> @@ -183,9 +193,13 @@ struct rzg3s_sysc_function {
+>   /**
+>    * struct rzg3s_sysc_info - RZ/G3S System Controller function info
+>    * @rst_rsm_b: Reset RSM_B function descriptor
+> + * @l1_allow: L1 power state management function descriptor
+> + * @mode: Mode configuration function descriptor
+>    */
+>   struct rzg3s_sysc_info {
+>   	struct rzg3s_sysc_function rst_rsm_b;
+> +	struct rzg3s_sysc_function l1_allow;
+> +	struct rzg3s_sysc_function mode;
+>   };
+>   
+>   /**
+> @@ -1124,6 +1138,49 @@ static int rzg3s_config_deinit(struct rzg3s_pcie_host *host)
+>   					 host->cfg_resets);
+>   }
+>   
+> +/* RZ/G3E SoC-specific config implementations */
+> +static void rzg3e_pcie_config_pre_init(struct rzg3s_pcie_host *host)
+> +{
+> +	/*
+> +	 * De-assert LOAD_B and CFG_B during configuration phase.
+> +	 * These are part of the RZ/G3E reset register, not reset framework.
+> +	 * Other reset bits remain asserted until config_post_init.
+> +	 */
+> +	rzg3s_pcie_update_bits(host->axi, RZG3E_PCI_RESET,
+> +			       RZG3E_PCI_RESET_RST_LOAD_B | RZG3E_PCI_RESET_RST_CFG_B,
+> +			       RZG3E_PCI_RESET_RST_LOAD_B | RZG3E_PCI_RESET_RST_CFG_B);
+> +}
+> +
+> +static int rzg3e_config_deinit(struct rzg3s_pcie_host *host)
+> +{
+> +	writel_relaxed(0, host->axi + RZG3E_PCI_RESET);
+> +	return 0;
+> +}
+> +
+> +static int rzg3e_config_post_init(struct rzg3s_pcie_host *host)
+> +{
+> +	/* De-assert PS_B, GP_B, RST_B */
+> +	rzg3s_pcie_update_bits(host->axi, RZG3E_PCI_RESET,
+> +			       RZG3E_PCI_RESET_RST_PS_B | RZG3E_PCI_RESET_RST_GP_B |
+> +			       RZG3E_PCI_RESET_RST_B,
+> +			       RZG3E_PCI_RESET_RST_PS_B | RZG3E_PCI_RESET_RST_GP_B |
+> +			       RZG3E_PCI_RESET_RST_B);
+> +
+> +	/*
+> +	 * According to the RZ/G3E HW manual (Rev.1.15, Table 6.6-130
+> +	 * Initialization Procedure (RC)), hardware requires >= 500us delay
+> +	 * before final reset deassert.
+> +	 */
+> +	fsleep(500);
+> +
+> +	/* De-assert OUT_B and RSM_B to complete reset sequence */
+> +	rzg3s_pcie_update_bits(host->axi, RZG3E_PCI_RESET,
+> +			       RZG3E_PCI_RESET_RST_OUT_B | RZG3E_PCI_RESET_RST_RSM_B,
+> +			       RZG3E_PCI_RESET_RST_OUT_B | RZG3E_PCI_RESET_RST_RSM_B);
+> +
+> +	return 0;
+> +}
+> +
+>   static void rzg3s_pcie_irq_init(struct rzg3s_pcie_host *host)
+>   {
+>   	/*
+> @@ -1266,6 +1323,47 @@ static int rzg3s_pcie_host_init_port(struct rzg3s_pcie_host *host)
+>   	return ret;
+>   }
+>   
+> +/**
+> + * rzg3s_sysc_config - Configure SYSC registers for PCIe
+> + * @sysc: SYSC descriptor
+> + * @mode: Mode value to set (-1 to skip)
+> + * @rsm_b: RST_RSM_B value to set (-1 to skip)
+> + * @l1_allow: L1_ALLOW value to set (-1 to skip)
+> + *
+> + * Return: 0 on success, negative error code on failure
+> + */
+> +static int rzg3s_sysc_config(struct rzg3s_sysc *sysc, int mode, int rsm_b,
+> +			     int l1_allow)
+> +{
+> +	const struct rzg3s_sysc_info *info = sysc->info;
+> +	int ret;
+> +
+> +	if (mode >= 0 && info->mode.mask) {
+> +		ret = regmap_write(sysc->regmap, info->mode.offset,
+> +				   field_prep(info->mode.mask, mode));
 
-Where is any user of this new compatible? I typed in lore and did not
-find anything.
+Can't we use regmap_update_bits() here as well to have everything using the same 
+pattern?
 
-Best regards,
-Krzysztof
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	if (rsm_b >= 0 && info->rst_rsm_b.mask) {
+> +		ret = regmap_update_bits(sysc->regmap, info->rst_rsm_b.offset,
+> +					 info->rst_rsm_b.mask,
+> +					 field_prep(info->rst_rsm_b.mask, rsm_b));
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	if (l1_allow >= 0 && info->l1_allow.mask) {
+> +		ret = regmap_update_bits(sysc->regmap, info->l1_allow.offset,
+> +					 info->l1_allow.mask,
+> +					 field_prep(info->l1_allow.mask, l1_allow));
+> +		if (ret)
+> +			return ret;
+> +	}
+
+Seeing how this function looks like, I think the overall code (and this 
+function) would be simpler if instead of describing functions in
+struct rzg3s_sysc_info as individual struct members, would use an array of 
+functions. This is how this function will looks like in the end:
+
+static int rzg3s_sysc_config_func(struct rzg3s_sysc *sysc,
+				  enum rzg3s_sysc_func_id fid,
+				  u32 val)
+{
+	const struct rzg3s_sysc_info *info = sysc->info;
+	const struct rzg3s_sysc_function *functions = info->functions;
+
+	if (fid >= RZG3S_SYSC_FUNC_ID_MAX)
+		return -EINVAL;
+
+	if (!functions[fid].mask)
+		return 0;
+
+	return regmap_update_bits(sysc->regmap, functions[fid].offset,
+				  functions[fid].mask,
+				  field_prep(functions[fid].mask, val));
+}
+
+The following diff could be applied on top of this series to give you a clue:
+
+diff --git a/drivers/pci/controller/pcie-rzg3s-host.c 
+b/drivers/pci/controller/pcie-rzg3s-host.c
+index 639b2d781d66..fc61ac02a4ea 100644
+--- a/drivers/pci/controller/pcie-rzg3s-host.c
++++ b/drivers/pci/controller/pcie-rzg3s-host.c
+@@ -190,16 +190,26 @@ struct rzg3s_sysc_function {
+         u32 mask;
+  };
+
++/**
++ * enum rzg3s_sysc_func_id - System controller function IDs
++ * @RZG3S_SYSC_FUNC_ID_RST_RSM_B: RST_RSM_B SYSC function ID
++ * @RZG3S_SYSC_FUNC_ID_L1_ALLOW: L1 allow SYSC function ID
++ * @RZG3S_SYSC_FUNC_ID_MODE: Mode SYSC function ID
++ * @RZG3S_SYSC_FUNC_ID_MAX: Max SYSC function ID
++ */
++enum rzg3s_sysc_func_id {
++       RZG3S_SYSC_FUNC_ID_RST_RSM_B,
++       RZG3S_SYSC_FUNC_ID_L1_ALLOW,
++       RZG3S_SYSC_FUNC_ID_MODE,
++       RZG3S_SYSC_FUNC_ID_MAX,
++};
++
+  /**
+   * struct rzg3s_sysc_info - RZ/G3S System Controller function info
+- * @rst_rsm_b: Reset RSM_B function descriptor
+- * @l1_allow: L1 power state management function descriptor
+- * @mode: Mode configuration function descriptor
++ * @functions: SYSC function descriptors array
+   */
+  struct rzg3s_sysc_info {
+-       struct rzg3s_sysc_function rst_rsm_b;
+-       struct rzg3s_sysc_function l1_allow;
+-       struct rzg3s_sysc_function mode;
++       const struct rzg3s_sysc_function functions[RZG3S_SYSC_FUNC_ID_MAX];
+  };
+
+  /**
+@@ -1324,45 +1334,22 @@ static int rzg3s_pcie_host_init_port(struct 
+rzg3s_pcie_host *host)
+         return ret;
+  }
+
+-/**
+- * rzg3s_sysc_config - Configure SYSC registers for PCIe
+- * @sysc: SYSC descriptor
+- * @mode: Mode value to set (-1 to skip)
+- * @rsm_b: RST_RSM_B value to set (-1 to skip)
+- * @l1_allow: L1_ALLOW value to set (-1 to skip)
+- *
+- * Return: 0 on success, negative error code on failure
+- */
+-static int rzg3s_sysc_config(struct rzg3s_sysc *sysc, int mode, int rsm_b,
+-                            int l1_allow)
++static int rzg3s_sysc_config_func(struct rzg3s_sysc *sysc,
++                                 enum rzg3s_sysc_func_id fid,
++                                 u32 val)
+  {
+         const struct rzg3s_sysc_info *info = sysc->info;
+-       int ret;
+-
+-       if (mode >= 0 && info->mode.mask) {
+-               ret = regmap_write(sysc->regmap, info->mode.offset,
+-                                  field_prep(info->mode.mask, mode));
+-               if (ret)
+-                       return ret;
+-       }
++       const struct rzg3s_sysc_function *functions = info->functions;
+
+-       if (rsm_b >= 0 && info->rst_rsm_b.mask) {
+-               ret = regmap_update_bits(sysc->regmap, info->rst_rsm_b.offset,
+-                                        info->rst_rsm_b.mask,
+-                                        field_prep(info->rst_rsm_b.mask, rsm_b));
+-               if (ret)
+-                       return ret;
+-       }
++       if (fid >= RZG3S_SYSC_FUNC_ID_MAX)
++               return -EINVAL;
+
+-       if (l1_allow >= 0 && info->l1_allow.mask) {
+-               ret = regmap_update_bits(sysc->regmap, info->l1_allow.offset,
+-                                        info->l1_allow.mask,
+-                                        field_prep(info->l1_allow.mask, l1_allow));
+-               if (ret)
+-                       return ret;
+-       }
++       if (!functions[fid].mask)
++               return 0;
+
+-       return 0;
++       return regmap_update_bits(sysc->regmap, functions[fid].offset,
++                                 functions[fid].mask,
++                                 field_prep(functions[fid].mask, val));
+  }
+
+  static int rzg3s_pcie_host_init(struct rzg3s_pcie_host *host)
+@@ -1384,7 +1371,8 @@ static int rzg3s_pcie_host_init(struct rzg3s_pcie_host *host)
+                 goto config_deinit;
+
+         /* Enable ASPM L1 transition for SoCs that use it */
+-       ret = rzg3s_sysc_config(host->sysc, -1, -1, 1);
++       ret = rzg3s_sysc_config_func(host->sysc,
++                                    RZG3S_SYSC_FUNC_ID_L1_ALLOW, 1);
+         if (ret)
+                 goto config_deinit;
+
+@@ -1735,12 +1723,13 @@ static int rzg3s_pcie_probe(struct platform_device *pdev)
+                 goto port_refclk_put;
+         }
+
+-       /*
+-        * Put controller in RC (Root Complex) mode for SoCs that
+-        * support it. These can operate in either EP or RC mode.
+-        * While at it, do also de-assert RST_RSM_B.
+-        */
+-       ret = rzg3s_sysc_config(sysc, 1, 1, -1);
++       /* Put controller in RC (Root Complex) mode. */
++       ret = rzg3s_sysc_config_func(sysc, RZG3S_SYSC_FUNC_ID_RST_RSM_B, 1);
++       if (ret)
++               goto port_refclk_put;
++
++       /* De-assert RST_RSM_B. */
++       ret = rzg3s_sysc_config_func(sysc, RZG3S_SYSC_FUNC_ID_MODE, 1);
+         if (ret)
+                 goto port_refclk_put;
+
+@@ -1792,7 +1781,7 @@ static int rzg3s_pcie_probe(struct platform_device *pdev)
+          * SYSC RST_RSM_B signal need to be asserted before turning off the
+          * power to the PHY.
+          */
+-       rzg3s_sysc_config(sysc, -1, 0, -1);
++       rzg3s_sysc_config_func(sysc, RZG3S_SYSC_FUNC_ID_RST_RSM_B, 0);
+  port_refclk_put:
+         clk_put(host->port.refclk);
+
+@@ -1823,7 +1812,7 @@ static int rzg3s_pcie_suspend_noirq(struct device *dev)
+         if (ret)
+                 goto config_reinit;
+
+-       ret = rzg3s_sysc_config(sysc, -1, 0, -1);
++       ret = rzg3s_sysc_config_func(sysc, RZG3S_SYSC_FUNC_ID_RST_RSM_B, 0);
+         if (ret)
+                 goto power_resets_restore;
+
+@@ -1848,7 +1837,11 @@ static int rzg3s_pcie_resume_noirq(struct device *dev)
+         struct rzg3s_sysc *sysc = host->sysc;
+         int ret;
+
+-       ret = rzg3s_sysc_config(sysc, 1, 1, -1);
++       ret = rzg3s_sysc_config_func(sysc, RZG3S_SYSC_FUNC_ID_MODE, 1);
++       if (ret)
++               return ret;
++
++       ret = rzg3s_sysc_config_func(sysc, RZG3S_SYSC_FUNC_ID_RST_RSM_B, 1);
+         if (ret)
+                 return ret;
+
+@@ -1877,7 +1870,7 @@ static int rzg3s_pcie_resume_noirq(struct device *dev)
+         reset_control_bulk_assert(data->num_power_resets,
+                                   host->power_resets);
+  assert_rst_rsm_b:
+-       rzg3s_sysc_config(sysc, -1, 0, -1);
++       rzg3s_sysc_config_func(sysc, RZG3S_SYSC_FUNC_ID_RST_RSM_B, 0);
+         return ret;
+  }
+
+@@ -1903,9 +1896,11 @@ static const struct rzg3s_pcie_soc_data rzg3s_soc_data = {
+         .config_deinit = rzg3s_config_deinit,
+         .init_phy = rzg3s_soc_pcie_init_phy,
+         .sysc_info = {
+-               .rst_rsm_b = {
+-                       .offset = 0xd74,
+-                       .mask = BIT(0),
++               .functions = {
++                       [RZG3S_SYSC_FUNC_ID_RST_RSM_B] = {
++                               .offset = 0xd74,
++                               .mask = BIT(0),
++                       },
+                 },
+         },
+  };
+@@ -1919,13 +1914,15 @@ static const struct rzg3s_pcie_soc_data rzg3e_soc_data = {
+         .config_post_init = rzg3e_config_post_init,
+         .config_deinit = rzg3e_config_deinit,
+         .sysc_info = {
+-               .l1_allow = {
+-                       .offset = 0x1020,
+-                       .mask = BIT(0),
+-               },
+-               .mode = {
+-                       .offset = 0x1024,
+-                       .mask = BIT(0),
++               .functions = {
++                       [RZG3S_SYSC_FUNC_ID_L1_ALLOW] = {
++                               .offset = 0x1020,
++                               .mask = BIT(0),
++                       },
++                       [RZG3S_SYSC_FUNC_ID_MODE] = {
++                               .offset = 0x1024,
++                               .mask = BIT(0),
++                       },
+                 },
+         },
+  };
+
+To have this implemented, patch 07/16 "PCI: rzg3s-host: Make SYSC register 
+offsets SoC-specific" would have to be update with enum rzg3s_sysc_func_id, 
+rzg3s_sysc_config_func() should be introduced and used there.
+
+With that addressed, this patch will have to only introduce SYSC function IDs 
+for L1 allow and mode and set it accordingly though rzg3s_sysc_config_func().
+
+That would, in the end, drop the usage of -1 as argument for rzg3s_sysc_config() 
+which is a bit ugly.
+
+Sorry for not spotting this earlier.
+
+Thank you,
+Claudiu
+
+> +
+> +	return 0;
+> +}
+> +
+>   static int rzg3s_pcie_host_init(struct rzg3s_pcie_host *host)
+>   {
+>   	u32 val;
+> @@ -1284,6 +1382,11 @@ static int rzg3s_pcie_host_init(struct rzg3s_pcie_host *host)
+>   	if (ret)
+>   		goto config_deinit;
+>   
+> +	/* Enable ASPM L1 transition for SoCs that use it */
+
+"Enable ASPM L1 transitions should be enough". But if using the above proposed 
+code, the function ID macro would be meaningful enough and thus, I don't 
+consider a comment would be needed anymore.
+
+> +	ret = rzg3s_sysc_config(host->sysc, -1, -1, 1);
+> +	if (ret)
+> +		goto config_deinit;
+> +
+>   	/* Initialize the interrupts */
+>   	rzg3s_pcie_irq_init(host);
+>   
+> @@ -1631,9 +1734,12 @@ static int rzg3s_pcie_probe(struct platform_device *pdev)
+>   		goto port_refclk_put;
+>   	}
+>   
+> -	ret = regmap_update_bits(sysc->regmap, sysc->info->rst_rsm_b.offset,
+> -				 sysc->info->rst_rsm_b.mask,
+> -				 field_prep(sysc->info->rst_rsm_b.mask, 1));
+> +	/*
+> +	 * Put controller in RC (Root Complex) mode for SoCs that
+> +	 * support it. These can operate in either EP or RC mode.
+> +	 * While at it, do also de-assert RST_RSM_B.
+> +	 */
+
+This should be enough here:
+
+/* Put controller in RC mode and de-assert RST_RSM_B. */
+
+Thank you,
+Claudiu
+
+> +	ret = rzg3s_sysc_config(sysc, 1, 1, -1);
+>   	if (ret)
+>   		goto port_refclk_put;
+>   
+> @@ -1685,9 +1791,7 @@ static int rzg3s_pcie_probe(struct platform_device *pdev)
+>   	 * SYSC RST_RSM_B signal need to be asserted before turning off the
+>   	 * power to the PHY.
+>   	 */
+> -	regmap_update_bits(sysc->regmap, sysc->info->rst_rsm_b.offset,
+> -			   sysc->info->rst_rsm_b.mask,
+> -			   field_prep(sysc->info->rst_rsm_b.mask, 0));
+> +	rzg3s_sysc_config(sysc, -1, 0, -1);
+>   port_refclk_put:
+>   	clk_put(host->port.refclk);
+>   
+> @@ -1718,9 +1822,7 @@ static int rzg3s_pcie_suspend_noirq(struct device *dev)
+>   	if (ret)
+>   		goto config_reinit;
+>   
+> -	ret = regmap_update_bits(sysc->regmap, sysc->info->rst_rsm_b.offset,
+> -				 sysc->info->rst_rsm_b.mask,
+> -				 field_prep(sysc->info->rst_rsm_b.mask, 0));
+> +	ret = rzg3s_sysc_config(sysc, -1, 0, -1);
+>   	if (ret)
+>   		goto power_resets_restore;
+>   
+> @@ -1745,9 +1847,7 @@ static int rzg3s_pcie_resume_noirq(struct device *dev)
+>   	struct rzg3s_sysc *sysc = host->sysc;
+>   	int ret;
+>   
+> -	ret = regmap_update_bits(sysc->regmap, sysc->info->rst_rsm_b.offset,
+> -				 sysc->info->rst_rsm_b.mask,
+> -				 field_prep(sysc->info->rst_rsm_b.mask, 1));
+> +	ret = rzg3s_sysc_config(sysc, 1, 1, -1);
+>   	if (ret)
+>   		return ret;
+>   
+> @@ -1776,9 +1876,7 @@ static int rzg3s_pcie_resume_noirq(struct device *dev)
+>   	reset_control_bulk_assert(data->num_power_resets,
+>   				  host->power_resets);
+>   assert_rst_rsm_b:
+> -	regmap_update_bits(sysc->regmap, sysc->info->rst_rsm_b.offset,
+> -			   sysc->info->rst_rsm_b.mask,
+> -			   field_prep(sysc->info->rst_rsm_b.mask, 0));
+> +	rzg3s_sysc_config(sysc, -1, 0, -1);
+>   	return ret;
+>   }
+>   
+> @@ -1811,11 +1909,35 @@ static const struct rzg3s_pcie_soc_data rzg3s_soc_data = {
+>   	},
+>   };
+>   
+> +static const char * const rzg3e_soc_power_resets[] = { "aresetn" };
+> +
+> +static const struct rzg3s_pcie_soc_data rzg3e_soc_data = {
+> +	.power_resets = rzg3e_soc_power_resets,
+> +	.num_power_resets = ARRAY_SIZE(rzg3e_soc_power_resets),
+> +	.config_pre_init = rzg3e_pcie_config_pre_init,
+> +	.config_post_init = rzg3e_config_post_init,
+> +	.config_deinit = rzg3e_config_deinit,
+> +	.sysc_info = {
+> +		.l1_allow = {
+> +			.offset = 0x1020,
+> +			.mask = BIT(0),
+> +		},
+> +		.mode = {
+> +			.offset = 0x1024,
+> +			.mask = BIT(0),
+> +		},
+> +	},
+> +};
+> +
+>   static const struct of_device_id rzg3s_pcie_of_match[] = {
+>   	{
+>   		.compatible = "renesas,r9a08g045-pcie",
+>   		.data = &rzg3s_soc_data,
+>   	},
+> +	{
+> +		.compatible = "renesas,r9a09g047-pcie",
+> +		.data = &rzg3e_soc_data,
+> +	},
+>   	{}
+>   };
+>   
+
