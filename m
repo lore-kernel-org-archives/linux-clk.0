@@ -1,105 +1,122 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2CCF3451AB;
-	Wed, 18 Feb 2026 19:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A315F344DAE
+	for <linux-clk@vger.kernel.org>; Wed, 18 Feb 2026 19:28:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771442313; cv=none; b=eetgRUKISUuYnnvVK9cYG4wEGYnHvsURV3Ej7fJk5Vjk6WK1r6pU7Vc6XhCdmHeT0a6jVhNU3AsSgBQBLh+VhH5tfeb1/kU4/ADYMtQqLbDEKrwZBERHGQ2WxKRbCnDZAUDYWgf6fiiGCZ5XbV4DJ/37O27bUp5N9gn/X77vMBw=
+	t=1771442895; cv=none; b=SlciE741Z13JkFh/NAcuNPqWgjT/w7JfrMR25tvddH/FYmHmT5EozPolVmKMLcJiW2vTXJ5i+aVu8bE5Pd/xlanxo+k03L0TzAIYEkKLalRsUkxAsTEx89NG8LN3NRIzkVY7OpMwsuqnUsN0bh0BdEfMknCFBfnmWdZqRoVf5vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771442313; c=relaxed/simple;
-	bh=2M6wZGG+9s9L094CSFI5DWX5f9oGZL7Xa8jIt97zaIY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nno6wBMYtGHK7d8A3roGqH3K6fhIoV+NjV39rm3Wguu6H0gNrOK6xP+j8BvBcTXR8brwDr4lXxjgX4QP3SnrNLaA5t5Pnrt5SGu6rsk9Cr6EK+1vAJ/sTNAo2HXEc9Vns5+wcixrLg8p3En3N29y00CTaVqvciSqMrCcvDNZwvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HYdaoq7J; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1771442895; c=relaxed/simple;
+	bh=KCT7Tp+ZxXSkoxqSjXqGupm3sDHuPZyckCR4M53Ap7A=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=K8oZnwCT1uMzx1rhycsSqIw/DpL/THDIWpwg1vYnPdDtqaEjUQT8Dq8hdRZ15W5HbW+gEAchagA09CmZcMogCNjD4Uvggx+/a2JY+VB3iylv8h6ecjnB+nS6aVQNP94utPXzen43nQSlTveAiAmOeRpvRrIJTO5HA8qVrGw7DIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=K03eMUDd; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HYdaoq7J"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58539C116D0;
-	Wed, 18 Feb 2026 19:18:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771442313;
-	bh=2M6wZGG+9s9L094CSFI5DWX5f9oGZL7Xa8jIt97zaIY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HYdaoq7JI6fyvUIcVyOe+uh4t3AYIysWf2kIxPaBaR9OAdhSvGyURV3WD6qd/XlqF
-	 zE2KA7dsHNQOqhNUdnTl/KcsK8lTbt27pUUNXpG8zm++iwov5KegI9pMMxRE/ycKAC
-	 rn4em59STUqg408yVPZrg9eNEgJmcmwJjUV5AePDBmVQzS52ZsMhsfvdR+YlMHzTRa
-	 TzdnBfy3DSlZ5cbDxk3ik00N+ARe7AupwqunNxAlcrmu38piXUdvguQIzceYNagune
-	 8jo73mbBtUi0EwUwioJwWO6N9heZLxKQqCTotX1XNuIhFomCNkjMiK6j9xxZcmvZ7w
-	 L4mvp7ZN9GwCg==
-Message-ID: <e7080f4b-eaff-45f8-8ce8-bdf501c915b1@kernel.org>
-Date: Wed, 18 Feb 2026 20:18:29 +0100
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="K03eMUDd"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-48334ee0aeaso1741815e9.1
+        for <linux-clk@vger.kernel.org>; Wed, 18 Feb 2026 11:28:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1771442892; x=1772047692; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7FCYIJj0Xz3DNfT5NA4cBOMj1BDhbRNIp0uYNdaHJvk=;
+        b=K03eMUDdvjFUXgFMgCFjCpBJwP5TI8/qDvlJIXHJ4hOWcEH83/f0e2+YQjpfautoh3
+         RexqRuhf44rheQbatfLg0O+iTNTaz6h+OWeuDqi5oDEqyX/aClHJ94EpcRJSvTbWoQpd
+         hiDK1EJlYEuICPB7Gbr0lNxGo0ZmJHtuITHExlaR95ZxEM71ZK/xwG8+LLqKs5SXwnXT
+         wGeufIcVKxY4y28HPs8IegE/cZc08gcHRNS6tHHKaRJC6a03uFxmJPfWbbc8cVKhHgBp
+         W62YJ07JTCfADkSKu1QbAX4hPdvHrl5KRyM4suyI8eC4eTGGQEZGwPZ/QOUdBrobHF/w
+         NWIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771442892; x=1772047692;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7FCYIJj0Xz3DNfT5NA4cBOMj1BDhbRNIp0uYNdaHJvk=;
+        b=T7q9cCIdBT0U/Sm72HEWwLgN/5zcqUyPsfwwk38hainTlmbEGnHvZJ+JemcUWg5j1I
+         oKpjeGyEmmAjXAdBuiTnnNBiaZzpUNlcDyW+4h9hf87v/0L6LHGhRfBO91SIXiwNPxiS
+         38jL5sqHlw9nHU32wz8HAq2v2WP+XnoY+CyPYoQL7sYaAIwjTAHsdEqkG/LwDXbI0laQ
+         QvE4r4Yj1GFVgLLHuOy8aXv3Y8POAIbqJgWulnIoTCtlEMzYJvDxdmQIZWKw8yrEn+dz
+         4e057QuVe6Ah1tgPjNiejD0yDWV2/oZrndVN6M8oxS5qnQuIaB6XcUchgrnk7Saa7ZsU
+         KVSA==
+X-Forwarded-Encrypted: i=1; AJvYcCX/OmA8oEM7nPuJa9fQvdNghL118r6yeAwCixQ+Zikf7oLE6oSP3eQ+xDGd9u3brM6tTZsJug8S9cs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycoFEpB/O9OgAmdXG4Eupep1gCxS9U5UdkiUguZmCfAZzt684V
+	Eu6xn+8gzD1m3RD6VenMNKtbkI234N/GgMBUdUbjZ3riLURL8jN37+SUdIEKKScPaq0JPzSUaRN
+	0HFgk
+X-Gm-Gg: AZuq6aLCiv1TdpgMixIjXyUWDxnz+jq/4e7VmwOns9p6sYlzp/wOLNCxJm/V6HdpUAu
+	/QcHGfXHAW4IwQT162WYKbj4ZB6hP69LiYWBT+KUIoajxtV3UytiQ7IDkDHvfHWbdZmCU3aGsCL
+	WaGkCS1cb7Fr5/VGgc9ogvSuKxBHra1ECwiXEj0+iBEFMESQluh4H0pSUTccryZlPQVg3wAS68I
+	aTb3FLzXP/XpCoN2DRF2oVMwcP+h1ZvYsbiy1enk1WgIFTxZxg0jPMrGNWlpbyYF4v0cgQXbWPz
+	i+NWZuZUDTtLHnx+EwTCQHKjSwqRTIvoeBCBjGlM99wygzXyTyYhltWA2vZ1AwzqiWlHBw6kYFG
+	WHJQi8LM8QBtqJjfk7wM69T3qbYfvguBzU/zu0ul3DvCCqQ0CrFF0OJ0dhUPdc8ZW1MAoY7ssyC
+	wRobdK+TKAg7jqiiFktRKnng==
+X-Received: by 2002:a05:600c:3b13:b0:483:3d42:d04f with SMTP id 5b1f17b1804b1-48398af1ef9mr53949695e9.37.1771442891970;
+        Wed, 18 Feb 2026 11:28:11 -0800 (PST)
+Received: from localhost ([2a01:e0a:3c5:5fb1:cf71:8cf8:56bb:5790])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4839e7f9d1asm818125e9.3.2026.02.18.11.28.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Feb 2026 11:28:11 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Ronald Claveau <linux-kernel-dev@aliel.fr>,
+  linux-amlogic@lists.infradead.org,  Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Rob Herring
+ <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor
+ Dooley <conor+dt@kernel.org>,  linux-clk@vger.kernel.org,
+  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/7] dt-bindings: clk: meson: Add Amlogic T7 fix pll
+ support
+In-Reply-To: <594f4fcc-ad88-4969-b9e5-98061fd5b73c@kernel.org> (Krzysztof
+	Kozlowski's message of "Wed, 18 Feb 2026 20:17:53 +0100")
+References: <20260218101709.35450-1-linux-kernel-dev@aliel.fr>
+	<20260218105611.36216-1-linux-kernel-dev@aliel.fr>
+	<594f4fcc-ad88-4969-b9e5-98061fd5b73c@kernel.org>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Wed, 18 Feb 2026 20:28:10 +0100
+Message-ID: <1j8qcp6ed1.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/7] dt-bindings: clk: meson: Add Amlogic T7 sys pll
- support
-To: Ronald Claveau <linux-kernel-dev@aliel.fr>,
- linux-amlogic@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260218101709.35450-1-linux-kernel-dev@aliel.fr>
- <20260218110127.36394-1-linux-kernel-dev@aliel.fr>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20260218110127.36394-1-linux-kernel-dev@aliel.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 18/02/2026 12:01, Ronald Claveau wrote:
-> Add SYS PLL for the clock controller of the Amlogic T7 SoC family.
+On mer. 18 f=C3=A9vr. 2026 at 20:17, Krzysztof Kozlowski <krzk@kernel.org> =
+wrote:
 
+> On 18/02/2026 11:56, Ronald Claveau wrote:
+>> Add PLL for the clock controller of the Amlogic T7 SoC family.
+>>=20
+>> Signed-off-by: Ronald Claveau <linux-kernel-dev@aliel.fr>
+>> ---
+>>  include/dt-bindings/clock/amlogic,t7-pll-clkc.h | 16 ++++++++++++++++
+>>  1 file changed, 16 insertions(+)
+>
+> So you ignored my comments?
+>
+> And that's v2, not v1. You sent v1 and GOT the comments.
 
-You already sent v1 and received feedback. Implement that one.
+I think this was still v1 and if you look at timestamps, Patch 1 was sent
+before your first reply, then there is lot of time between the different
+patches - probably done manually  ... at patch 6 (the one you've
+commented fist) was sent twice.
 
-Best regards,
-Krzysztof
+I think there is no malice here, just first time contribution with a few
+mistakes ;)
+
+>
+> Best regards,
+> Krzysztof
+>
+> _______________________________________________
+> linux-amlogic mailing list
+> linux-amlogic@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-amlogic
+
+--=20
+Jerome
