@@ -1,124 +1,229 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD9732721D
-	for <linux-clk@vger.kernel.org>; Thu, 19 Feb 2026 06:52:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C04E339878
+	for <linux-clk@vger.kernel.org>; Thu, 19 Feb 2026 09:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771483947; cv=none; b=nEeeuZzO0xAUttRNYaXKtMEyj17y/ljJNdriiqe/AWG70hK/j7TK7yZr1nQiDGBxRSY+dx1mjtgXKAZTd8Yt2R6VHY6r8zV3ffeNLqQjTcQBze8KZrVp9nWArZfSQ/9dD57xVbUpUwCbPF+cmbSomCGf6uNy4JDHayPuHrhpXoU=
+	t=1771493404; cv=none; b=CeW0qGvRyI5HJYoWxzCojjCqN8ysE5ByWYIakYG1UU2woHU9kJ92vIr8aYE1NGgLUFfDN5TEcNzL/aNw+6PLwkBEZ4HeEsd/n9ixsqaDztiltT55wgP2QM6n5kLidO2+vz8aC9kpt8Q4cZLbJQvQV61srMv90hYu1pU/ANA3B7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771483947; c=relaxed/simple;
-	bh=a9gIIuUbYtr3xbL1BkLiyFYBOn2YLV4QKHmbdYOIfKg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=f9bhVqtEfNE1Uc+W8KjE1BZU8CyzSFCqZ6Z119vOiZHX6Gv6+b7uluJeCfzeWTbuwQmXnfsF7/GB0NPSVgacRcQKejWelTjypL6HCQ/qS58f6yrl/ax56in1Qn4roVMrtM8vAQwHf90jFgP6OzTkXBO62tWhM9OFMO3EBZVI+dE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sOpAMsQ1; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1771493404; c=relaxed/simple;
+	bh=RygtW83dHF2LdzupDl7e1RWiWV5bC3NvpUj9QHFGlXs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ghCwL9da8VJez1a1CrkfyKcU75rqAgipDQ/HNF3v4PjgizVkXdaMaeWtMMw5gxAIGrkzABj5TUo7iAIIrsxVRZ/o092WKI2btmlw/okDIKRxDneC0WjX78zxNmq+Juy3GuTcJJDjO8tsc7igW/bBdQ0nj9Lm7qJJx5blgh6AYks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=iIih+xhq; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=X6uY0aZq; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sOpAMsQ1"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-4359a316d89so540442f8f.0
-        for <linux-clk@vger.kernel.org>; Wed, 18 Feb 2026 22:52:19 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="iIih+xhq";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="X6uY0aZq"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 61INpZh42883165
+	for <linux-clk@vger.kernel.org>; Thu, 19 Feb 2026 09:30:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	hJsPVkggm5naZHTouB5P3aQWHbVavGwIin4koVrw3Kw=; b=iIih+xhqETsKZO85
+	3Gh6iJUIn1pjzSYOjb8c13/geQBBb3pd42DYOCrDqzZce7GTPScg1ZBMMvexhflm
+	Ki/bW7yoCM0hc4vm4WZLvIaiKctd4lTaBH+gWWKZcUh9FZFnQi4TTL3+HDTpBRB0
+	LLAZZDAFaV7YEXK+neBqCyZyO0lWLPCP1F1bGpmYkVDUXuWFJ5RT7R8XbRwGz0YN
+	a10PQOjHIlBIRwn2jqUtqhNyN1Y0HaBBTdcYWz29ULGvaBE9gb1k6kLArv3U0yxd
+	u8IKl6zEWV2sCkhcgRHI0a2dHlLHuhLfucNwVkP2OaeE9Q1HkWGT1qA8bzmrksmF
+	eWDiJA==
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cdqfg92g5-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Thu, 19 Feb 2026 09:30:02 +0000 (GMT)
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-354c7febaefso3007911a91.3
+        for <linux-clk@vger.kernel.org>; Thu, 19 Feb 2026 01:30:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1771483937; x=1772088737; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3EBP5eZrSw5SNu4AKLCAw7ge8STkhI5WlLpg3XWzOaM=;
-        b=sOpAMsQ1MVE4s7cCbsAdLmUB7thK8ePn2HjuQra1Ycn1RVNxOw3NgPxjpLLY1XHPFa
-         lRvz16iiJtU4pTsZkKkLTG34wrLk4sJIe9MvS9mRzxIz4tHo58U+H3/vn4oQRgJpDinA
-         JdB4RpAKhq+jK/sLfedkJRha7zs95pJW3vYId2cGjGtQ8AZ1ECoQTBPmj2LoWIwJvQNj
-         7zlzEbIVeXJg5tIUIvwQM3lvdIywkjGefejv1WOaePKSlhyzSiLicUMVQsljnd3ofwz/
-         X3Fz7Hh5bxgRL+M2XOx/jxpNnpoRiXAXEmRx2BZoat29D3xWNKBRUsGfz/VEgsDeW9Tz
-         vS1w==
+        d=oss.qualcomm.com; s=google; t=1771493401; x=1772098201; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hJsPVkggm5naZHTouB5P3aQWHbVavGwIin4koVrw3Kw=;
+        b=X6uY0aZqaXVxRyKZjGqUKNyyXwQ3lbxqPF33rrbSCMPUyU0XFh6T/k7CQy5sE718pC
+         lfT1e4kXx9gLgGKpeGWt7Gmq0hBePMd/CRz6+7RPR3dLH1ON4day/jCLnRPSyxnCCpla
+         SuHClKDJ83zuYJufdo/CyZVdDQ3Z0/cxfDQNJ8MSP0wRQ90MfrldC+wuUX/f2PEIqc/m
+         4YZfydZT4ZPILK+C/QpBPg/Slbenu+Y6/YLFGd5wVNwFBFaUNNb6A+FfS3CqxO+rtb2w
+         kwqsvns6bPuPiiMbdX2GFcVm8dlD9aDaxwEn7LOuHgIBQZCOnXGE8GJAtO8ZXYsREICb
+         rbbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771483937; x=1772088737;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3EBP5eZrSw5SNu4AKLCAw7ge8STkhI5WlLpg3XWzOaM=;
-        b=iarvCiw5TFD/ezW4PB2XHl2RTvmysLziU2V0xSboaxP5TsurdzkliPSesYfuVs90mI
-         crucNQGgzS20gly/dP2PBsvLK1CiFPmjx3ysFBxb5NdKL/tI6+GH9xor5o9FbEsGiHXL
-         zOFqbEhnRdBM4CFnPpSnCx4c/RwnKMxo4PmN2sOkge63rEwTAxlBwpVxpXBeJigt3nRy
-         jxFNmdMgA/EExtYK/KFzUmRdQ5MndDv3PyJsmm+Ak1OWlSODrdFjfR3KyCLrd9MDdR8o
-         rciocLK8Nw3SkVYAFVa1R/6/1ecB/ad5Kkn8CM69zhys31/ITaCd07H4+QK29xSmmD3L
-         RdYg==
-X-Forwarded-Encrypted: i=1; AJvYcCVH1LxmjrWWJYYIlZGDTqsGGa+syN+TfsrI7OX/GGmt4XlAHCAEcSJidZTPhk5NUlFMOfffyGrdjZQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5K5G3Me5tIz+4BJmSuYdZYMDUbI4soh2IHwEV0qLxKz+zMh2U
-	WR/6lF1A8a1HC7MYeAkz/DJOBYH0h9zDt7lPQGmBM/30is+Ml0f0wqseJ/iywHeddQ8=
-X-Gm-Gg: AZuq6aKX4eRzs9PmkWxK2y3CWyhaKzPFdf6BPWFXQFxTlfzU2u24oQAAP/V4QUp+W3s
-	iwkK2iMFzRCpDCNssLl6mpWpigZWNJMeZ84LTX8PxRhPTOl7W8fBvuV/KbJCKmH4Wwvtl22nMrd
-	+ZgVdi7JNGfFK+vqzoMgSrEnPMpP0Y2BHk1rxQshwmMt3bQZVV4HU1rddl1cFK+DTy4dZxJqvsM
-	LvwgArpzpz/qaFQLB33M+8o47JAo//Gs1a3UTAa9Vp/QLsVc/iF31vRXkfTMxeFWvt4VQLrJev8
-	lcLAlB2GJpIhs+q/V6y546aUyskBFM8vPBsX5lJAl9PvRC9jAbIPSGsf31uBbsaYDvwJl6Ls4Gh
-	ibtpX/DGQqcMkJ/3Uu6NkJBJo8SlTgJUWEyRLSYXR/x/5fhcnvZPWLf0WPji6r2+3u3rf7zyCpg
-	MhCp4eK8NyNcocecm6M8qsfSPNkiHfWNG7vLYdJLo=
-X-Received: by 2002:a05:6000:401f:b0:430:f5dc:d34a with SMTP id ffacd0b85a97d-43958e4a636mr7655865f8f.29.1771483937384;
-        Wed, 18 Feb 2026 22:52:17 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43796acf5b9sm45905510f8f.34.2026.02.18.22.52.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Feb 2026 22:52:17 -0800 (PST)
-Date: Thu, 19 Feb 2026 09:52:14 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Harry Austen <hpausten@protonmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Michal Simek <monstr@monstr.eu>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Harry Austen <hpausten@protonmail.com>
-Subject: Re: [PATCH v4 2/2] clk: clocking-wizard: add user clock monitor
- support
-Message-ID: <202602151704.qepyfVlc-lkp@intel.com>
+        d=1e100.net; s=20230601; t=1771493401; x=1772098201;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hJsPVkggm5naZHTouB5P3aQWHbVavGwIin4koVrw3Kw=;
+        b=m9BduoejB5kW90EC2tPiVbtW60gqRLzvgJ6gcPDWYg31ZxDZexOuxI1o/qRatv6qVD
+         aIqu9JMzGPvobc6wCZVqY6sDW6XDwY5HwVHDZI5gTVFvaOoa0b8/HuF04xJT24MD6ptj
+         H4fvKXa5oc4YWiVel84tvRYdxmmlcRb42dKQNsnLyN2vci4XIsM21XIsIvZng+UCeCmG
+         2u/hBdnRpGVrTr1u1+fBIECfPRtsgGelc2Bj03WgibweURhe9gLGH3WF0QzXyw6iWMch
+         bbsyvx6fOBs7/vLkYItY2495PMOAtGSzvgu00KQ1or/mk/t4Jk3wvJhLamczwt6VUCjo
+         maWA==
+X-Forwarded-Encrypted: i=1; AJvYcCWY1QqrB7fyBfCEJGiBBGu6WwUiDMf5kjC8RT+wmOA+6F3vtTKlQtrzSRWu4YO5StiyxMn5X3grgFs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHNVRDgeR6D/T6aK+eInwPvAH+407k2RmP18uSTjn2A9Uy+CwT
+	9uwvlS0LadVu6tyJhhGQvXl8hkeLGtjpHKUuLVwQs2D1GagarIdWVI4zGpcA9TYb0c2pKeYG+E6
+	yqHnkEObsQNmdh98qWvqcJOcuCKriowyRJYp0HBh67Gu9HPq3F9HJLCbma+4+qY8=
+X-Gm-Gg: AZuq6aJscLFFaHUW9XLyqc0ZeeIxI+v7Iy6SqQB2dLxLK6jVCvBwYEGrUzdNv31W90+
+	AfH5EwMwL2YmDrRQH2BM3/cJTp6Glfizo47YXZYiOSCpzi89Qy1w5rgTRuZXHuYOnUofzDn6SuF
+	MwjzhBrEL2zq7Z+8oSX78ew4wEoS1Y9FASIlSzn+E1gQY2zodIGsYc7VeCRbuJR4uw0mHgohc/+
+	9k3dmWZxCPo0UotSClCFJA1WFAvYvhxLQo7AVWOR8paHUIlGGLHlbna7ryXAqbKQZ8Mm6Bo/hmV
+	YJ2RLv4lrOdLsFsIetATdfRWGtRVizBvyTSmeh3oyj2FbxzRs1H8Zb5yQjTTFERx/EMri8cJPz4
+	emkeGd0Pwna2LMBgV+uiNLzoRRqfRNQ2Y2VQMHNTyir8x1cE7
+X-Received: by 2002:a05:6a21:489:b0:38b:eadd:449a with SMTP id adf61e73a8af0-394fc339ee1mr4614426637.38.1771493401294;
+        Thu, 19 Feb 2026 01:30:01 -0800 (PST)
+X-Received: by 2002:a05:6a21:489:b0:38b:eadd:449a with SMTP id adf61e73a8af0-394fc339ee1mr4614395637.38.1771493400788;
+        Thu, 19 Feb 2026 01:30:00 -0800 (PST)
+Received: from [10.92.198.80] ([202.46.23.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-824c6a627a5sm23548236b3a.27.2026.02.19.01.29.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Feb 2026 01:30:00 -0800 (PST)
+Message-ID: <bb28589e-714b-459d-a609-0153b97ac158@oss.qualcomm.com>
+Date: Thu, 19 Feb 2026 14:59:33 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260214180933.42143-3-hpausten@protonmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] Defining a home/maintenance model for non-NIC PHC devices
+ using the /dev/ptpX API
+To: Wen Gu <guwen@linux.alibaba.com>, Thomas Gleixner <tglx@linutronix.de>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, Dust Li <dust.li@linux.alibaba.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        Andrew Lunn <andrew+netdev@lunn.ch>,
+        David Woodhouse <dwmw2@infradead.org>, virtualization@lists.linux.dev,
+        Nick Shi <nick.shi@broadcom.com>, Sven Schnelle <svens@linux.ibm.com>,
+        Paolo Abeni <pabeni@redhat.com>, linux-clk@vger.kernel.org,
+        Taniya Das <taniya.das@oss.qualcomm.com>
+References: <0afe19db-9c7f-4228-9fc2-f7b34c4bc227@linux.alibaba.com>
+ <51e8d8ce-f291-4e31-a938-2c1a0e8684c2@linux.alibaba.com>
+Content-Language: en-US
+From: Imran Shaik <imran.shaik@oss.qualcomm.com>
+In-Reply-To: <51e8d8ce-f291-4e31-a938-2c1a0e8684c2@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: 5O0mqJLaYMzc4cc5JjpTCpsd_YP80EjD
+X-Proofpoint-ORIG-GUID: 5O0mqJLaYMzc4cc5JjpTCpsd_YP80EjD
+X-Authority-Analysis: v=2.4 cv=A6hh/qWG c=1 sm=1 tr=0 ts=6996d81a cx=c_pps
+ a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
+ a=IkcTkHD0fZMA:10 a=HzLeVaNsDn8A:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=Mpw57Om8IfrbqaoTuvik:22 a=GgsMoib0sEa3-_RKJdDe:22
+ a=VwQbUJbxAAAA:8 a=SRrdq9N9AAAA:8 a=ibL7N2hfcdCGtAndqR0A:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=uKXjsCUrEbL0IQVhDsJ9:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjE5MDA4NiBTYWx0ZWRfX8+8Zw1iVB+IC
+ tWYY3Nj5YGO1mMlSgyvr4C1ArhRry18X6pXZIEMnYuD1g6xWHWZTpUI1Teh5btpv6Y+0wQM6my5
+ h2IROKRmZc3LfiNf03Nv2cWKH0Q6/uag7OAuVc0J3PoNU+KEYUY/HZWTblH0CfCc9tPfQOMixOY
+ qs3KFhv0IAm5jTv7USLB/Wqg1negkebyh7lExaXjqHZM7NZfKzba/RKt5LY0VCP2x3CdWJ1TAAs
+ CNAILUymCWt6UxSwjWHemA5G4xFL8SNOAS7inhR4GouRi4HsGoVX03/z2O3Cqvgut2Y1S9BlfOU
+ dGGAM0deM6opaIu8Ofbxy+wcnBGaOvpX9wuCBmgqrcwGshBaXPyc1eU4W8s4r/R+TfYUqTK8Mip
+ uQ6/XqT/7IJ8ggCh3a76UqX5K4vwuvZyb4aGpBPNx2CR8HVP1bSIUZMoEqv7nTFTlJaVcynMfv4
+ VpyWpHfD+tpIC/eQfMw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-02-19_02,2026-02-18_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 priorityscore=1501 adultscore=0 impostorscore=0 suspectscore=0
+ spamscore=0 malwarescore=0 clxscore=1015 bulkscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2602190086
 
-Hi Harry,
 
-kernel test robot noticed the following build warnings:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Harry-Austen/dt-bindings-clock-xilinx-add-description-of-user-monitor-interrupt/20260215-021554
-base:   ea7282e99ead6d2a294cef40acd2a29ada3ab71d
-patch link:    https://lore.kernel.org/r/20260214180933.42143-3-hpausten%40protonmail.com
-patch subject: [PATCH v4 2/2] clk: clocking-wizard: add user clock monitor support
-config: microblaze-randconfig-r072-20260215 (https://download.01.org/0day-ci/archive/20260215/202602151704.qepyfVlc-lkp@intel.com/config)
-compiler: microblaze-linux-gcc (GCC) 14.3.0
-smatch version: v0.5.0-8994-gd50c5a4c
+On 21-01-2026 07:59 pm, Wen Gu wrote:
+> 
+> 
+> On 2026/1/9 10:56, Wen Gu wrote:
+>>
+>> #
+>> ## Proposal
+>> #
+>>
+>> 1. Reorganize drivers/ptp/ to make the interface/implementation split
+>>     explicit,
+>>
+>>     * drivers/ptp/core      : PTP core infrastructure and API.
+>>                               (e.g. ptp_chardev.c, ptp_clock.c,
+>>                                ptp_sysfs.c, etc.)
+>>
+>>     * drivers/ptp/pure      : Non-network ("pure clock") implementation,
+>>                               they are typically platform/architecture/
+>>                               virtualization-provided time sources.
+>>                               (e.g. ptp_kvm, ptp_vmw, ptp_vmclock,
+>>                                ptp_s390, etc.)
+>>
+>>     * drivers/ptp/*         : Network timestamping oriented 
+>> implementation,
+>>                               they primarily used together with IEEE1588
+>>                               over the network.
+>>                               (e.g. ptp_qoriq, ptp_pch, ptp_dp83640,
+>>                                ptp_idt82p33 etc.)
+>>
+> 
+> Thanks for the feedback so far. It seems we are close to consensus on
+> the directory split, as [1] summarized:
+> 
+> - drivers/ptp/core       : PTP core infrastructure and API
+> - drivers/ptp/1588       : network/IEEE 1588 oriented PTP clocks
+> - drivers/ptp/emulating  : platform/hardware/hypervisor-provided pure 
+> clocks
+> 
+> For how the existing drivers in `drivers/ptp` are categorized into the
+> directories above, please also refer to [1] and the follow-up replies.
+> 
+>> 2. Transition drivers/ptp/pure from netdev maintainership to
+>>     clock/time maintainership (with an appropriate MAINTAINERS entry,
+>>     e.g. PURE TIME PHC), since these PHC implementations are primarily
+>>     clock devices and not network-oriented. New similar drivers can be
+>>     added under drivers/ptp/pure as well.
+> 
+> 
+> Then the open item now is maintainership and the merge path.
+> 
+> Based on previous guidance[2] and the current MAINTAINERS structure,
+> it seems reasonable to have it maintained under the clock/timekeeping
+> domain (following the existing timekeeping pull chain), with a
+> dedicated MAINTAINERS entry.
+> 
+> 
+> Hi Thomas and clock/timekeeping maintainers,
+> 
+> Would you agree with this approach? If so, could you please advise on
+> the appropriate maintainer/reviewer for this MAINTAINERS entry?
+> 
+> Below is a strawman MAINTAINERS entry (happy to adjust):
+> 
+> EMULATING PTP CLOCK SUPPORT
+> L:     linux-kernel@vger.kernel.org
+> S:     Maintained
+> F:     drivers/ptp/emulating/*
+> 
+> 
+> We (Alibaba) are also willing to be the maintainer for this entry as
+> a fallback.
+> 
+> [1] https://lore.kernel.org/netdev/b5a60753-85ed-4d61- 
+> a652-568393e0dff3@linux.alibaba.com/
+> [2] https://lore.kernel.org/netdev/20251216135848.174e010f@kernel.org/
+> 
+> Regards.
+> 
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202602151704.qepyfVlc-lkp@intel.com/
+Hi Wen,
 
-smatch warnings:
-drivers/clk/xilinx/clk-xlnx-clock-wizard.c:1183 clk_wzrd_user_mon_work() error: dereferencing freed memory 'dump' (line 1182)
+Thanks for driving this discussion.
 
-vim +/dump +1183 drivers/clk/xilinx/clk-xlnx-clock-wizard.c
+Is there a patch series posted that reflects the new proposal?
 
-68614f228e6cbe Harry Austen 2026-02-14  1176  static void clk_wzrd_user_mon_work(struct work_struct *work)
-68614f228e6cbe Harry Austen 2026-02-14  1177  {
-68614f228e6cbe Harry Austen 2026-02-14  1178  	struct clk_wzrd *clk_wzrd = container_of(work, struct clk_wzrd, work.work);
-68614f228e6cbe Harry Austen 2026-02-14  1179  	u32 *dump = vmalloc(WZRD_NUM_DUMP_REGS * sizeof(*dump));
-68614f228e6cbe Harry Austen 2026-02-14  1180  
-68614f228e6cbe Harry Austen 2026-02-14  1181  	ioread32_rep(clk_wzrd->base, dump, WZRD_NUM_DUMP_REGS);
-68614f228e6cbe Harry Austen 2026-02-14 @1182  	dev_coredumpv(&clk_wzrd->pdev->dev, dump, WZRD_NUM_DUMP_REGS * sizeof(*dump), GFP_KERNEL);
-68614f228e6cbe Harry Austen 2026-02-14 @1183  	iowrite32(dump[WZRD_INTR_STATUS / sizeof(*dump)], clk_wzrd->base + WZRD_INTR_STATUS);
-                                                          ^^^^
-dev_coredumpv() can free dump.
+As Manivannan mentioned, some Qcom MHI devices have similar 
+requirements. Once the reorganized changes are posted, we will also 
+resend our patch series adopting the latest changes.
 
-68614f228e6cbe Harry Austen 2026-02-14  1184  }
-68614f228e6cbe Harry Austen 2026-02-14  1185  
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Imran
 
