@@ -1,121 +1,237 @@
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F22B325715
-	for <linux-clk@vger.kernel.org>; Thu, 19 Feb 2026 21:27:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107CE2EDD52;
+	Thu, 19 Feb 2026 22:36:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771536450; cv=none; b=h+/+25YnzGosyPnZm+wM8cLG64xgzg/Dnzn9iY6oLCiQYDVdPGvZbUvIS4LKZ6SZlf0mBtEEyUmAoO+UaAmKpigLoTAjk0mIcKSwVfDYanniYY/vI6XmQeeCwH4R8MJaorveVCaQyb3Tc6vSG0le3eqlWAW2G/hltYR2O8nJEEU=
+	t=1771540589; cv=none; b=q+NZtcx5sapdk8nGCIuXV06efxmaqgJzfy55gFnTTs1lo3WEeCXiSaVQ7U4ziweLRfptpF0+OKfZS1Gx22ESnS4uqW4I2g7vnBwTE+acxM0GwJ4v/hWuA+Y3csWEmhOueAbJznDArqY9+0KNH6HG+nqJwfHKnomfpUZA8IkGyYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771536450; c=relaxed/simple;
-	bh=uAGBrIf0G4PtksC5eMQdKnqhc6vXfYYkalF3B3xNnBA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=nP4cjYKDBEiJkHpbp87o8EXPamaJdboLnWRxVNNnqchBWH/nZW339l8CYXEqH+kqgNEG/WPJjbjDNUN36xFseby/FaygaML7DhAQVvxovDsW0z2CMS9bFenHUXcqeimQxY7cvRwJ5U5RxCcm2kkJ7cR+eUWqmsXLNEiyZexWWDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=GgpKtR6a; arc=none smtp.client-ip=209.85.160.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="GgpKtR6a"
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-404254ffe8aso908924fac.0
-        for <linux-clk@vger.kernel.org>; Thu, 19 Feb 2026 13:27:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1771536446; x=1772141246; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=UA1VERvz5151jt2KdPat2DgK+V02UUk6l4sZ04x/A1s=;
-        b=GgpKtR6aGP7idiUYNt2cYM6FhXS49LEVdgkg+d5gPQOk6ooxYU+JrN9UMretVowqUR
-         Jj+AVBu3zTavQ4UQKfWJCDTfwP3ECznoPWhty2152bdA2EgJ8PBJgRV9eiB8t+ue/lW3
-         myYZrV+MGB62O5uJEK/QLBYE/9WthXH/YePRs6hQd2/52x71u70l5bOu7TXwwjGRb97o
-         4Bv7xAR/DH9WPmVh4GJxmtBSi0x/6YCwdmszVL/bsQUPVUjM9hWkQ5ddxDR8wy6/nCv+
-         XHUm17PE9aQekZgTDdoh1Tvb6Lr60oKO3eWHoP3426toYsYSuO0DtD5xvIaSb8kfCFYt
-         /Zog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771536446; x=1772141246;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UA1VERvz5151jt2KdPat2DgK+V02UUk6l4sZ04x/A1s=;
-        b=usTR4hGH/2rQhLAhBrPlnt5LOjy54ka5XwS8Ox4BdPADmOPCSNlvJQ6s+/GlvNXDgv
-         KjcgPdRnbAVARRl/IPefte/dNTwP2BINTtVeSM/ULlnwfvJwiRxPwO7VasGpKhcrCGfK
-         WfWA55mSnoXHBBIaafOvc0h/CYT/iXsLLeU5fcBQVMSfxaJSfnrTBdggJeWto+XhRljK
-         OS0rBejiLnkY5hCGBfuoHh+33nGOr2I2S5lgoOuXTxs8jfOVxp3fKCI4mP48f53xmhLb
-         +3yJ2yCBI6DYB0JsdDj/JJJUUbIDFFLL6QvBmPgKhrFs4cBkw9FoeZMYS4mNxwbk6pKR
-         e+tg==
-X-Gm-Message-State: AOJu0Yxg+DGlGhjm5VBEeDkBIAUotUt+mvW/ojJDbfhhEtU5fZLSzA+V
-	7tlG3UGhtPgnm/mA/eBr9pTckW/KoCgfwFEj/FAXuzp17MxonSeukRXJ2PWMRHewwrs=
-X-Gm-Gg: AZuq6aKGbhOK9S2zGkMQu8AdwtQ/D2esv9vZfiIoKNoXf0APLna5GlQPMQT5whiOxLk
-	7taFrQjlEhF0jUc0qXXt/McwXklmb9BASjB8QmzbaxrH1I4/X4ymRXclG55GWX4WMQIA3xrQu+S
-	6ZHEB4GFxjheNSfK80tJZbDqWL7z9itvCh0jyroYcnso8/dwsx0NGnlyBY/5HD8SfWolsA4jVOw
-	YwCKKOXnM9JYsn5oM0qT4w3T9PCEM+YXwQlquIs5dPhP+b1BHYzOkERgpViPhkDN5Orx75RRVBE
-	226wme1+QpxJyyyiHZTKMi8JtDRKIgZq4ms9Sf/t23umJDA9s/QO6IkCTzGpwhjTL2yTikaMCRy
-	Fv8uC4zZ4Qw3zDsqeMI1LOsgyaKlN3BfTl0pxNCaSpyPvyOQmyuq3yWP4mVERae7l3qpOZpMyg4
-	ThfgYwHM2g3MRcxZBM7c8KvPadejpyh5YZQnYBsW0ndHGbGiD0aOQRWErbq57XTvcT6lyChg==
-X-Received: by 2002:a05:6870:326e:b0:404:1ec2:562c with SMTP id 586e51a60fabf-4154539ed1emr1793941fac.6.1771536446376;
-        Thu, 19 Feb 2026 13:27:26 -0800 (PST)
-Received: from ?IPV6:2600:8803:e7e4:500:d4c1:bce:26a1:c903? ([2600:8803:e7e4:500:d4c1:bce:26a1:c903])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-40f062ee328sm18930333fac.4.2026.02.19.13.27.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Feb 2026 13:27:25 -0800 (PST)
-Message-ID: <5e6fbdcc-6a19-4d99-af5f-50ba8fa529bb@baylibre.com>
-Date: Thu, 19 Feb 2026 15:27:24 -0600
+	s=arc-20240116; t=1771540589; c=relaxed/simple;
+	bh=VepEKFoJVCzXFJ4mrg/0V57ellXKl1xlb3jR4CMxPgE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=RlUce5aE8t1wyM8WHT+PJKubpQDfr4U5OWp55Vnq/AbMzMzXbYnpJRQsfdWC2cJd5g/P+b+jaJ61dPi6hQ28faDNoSCfHXskJ1LmYYqKgqKMXGw1amYTktcHC2slPvnCMcm/xJW7Q1DekjQm2QI20yRlWer405/MN2HkHa976WE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: 63UxcGnCSR606+GmGFyMHQ==
+X-CSE-MsgGUID: kMY8E3BUT9ugGEx4W/KIxA==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 20 Feb 2026 07:36:24 +0900
+Received: from ubuntu.adwin.renesas.com (unknown [10.24.0.22])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 49A5C4010DC2;
+	Fri, 20 Feb 2026 07:36:18 +0900 (JST)
+From: John Madieu <john.madieu.xa@bp.renesas.com>
+To: claudiu.beznea.uj@bp.renesas.com,
+	lpieralisi@kernel.org,
+	kwilczynski@kernel.org,
+	mani@kernel.org,
+	geert+renesas@glider.be,
+	krzk+dt@kernel.org
+Cc: robh@kernel.org,
+	bhelgaas@google.com,
+	conor+dt@kernel.org,
+	magnus.damm@gmail.com,
+	biju.das.jz@bp.renesas.com,
+	linux-pci@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	john.madieu@gmail.com,
+	John Madieu <john.madieu.xa@bp.renesas.com>
+Subject: [PATCH v6 04/16] clk: renesas: rzv2h-cpg: Add support for init_{off|asserted} clocks/resets
+Date: Thu, 19 Feb 2026 23:35:30 +0100
+Message-ID: <20260219223542.6364-5-john.madieu.xa@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260219223542.6364-1-john.madieu.xa@bp.renesas.com>
+References: <20260219223542.6364-1-john.madieu.xa@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 05/18] clk: mediatek: Add MT8189 vlpckgen clock support
-From: David Lechner <dlechner@baylibre.com>
-To: "irving.ch.lin" <irving-ch.lin@mediatek.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Richard Cochran <richardcochran@gmail.com>,
- Bartosz Golaszewski <brgl@kernel.org>, Chen-Yu Tsai <wenst@chromium.org>,
- Miles Chen <miles.chen@mediatek.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com,
- Qiqi Wang <qiqi.wang@mediatek.com>, sirius.wang@mediatek.com,
- vince-wl.liu@mediatek.com, jh.hsu@mediatek.com
-References: <20260202062840.342707-1-irving-ch.lin@mediatek.com>
- <20260202062840.342707-6-irving-ch.lin@mediatek.com>
- <b7fd3dfe-c141-4164-80c2-ddc1f79374f8@lechnology.com>
-Content-Language: en-US
-In-Reply-To: <b7fd3dfe-c141-4164-80c2-ddc1f79374f8@lechnology.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2/19/26 2:44 PM, David Lechner wrote:
-> On 2/2/26 12:28 AM, irving.ch.lin wrote:
->> From: Irving-CH Lin <irving-ch.lin@mediatek.com>
->>
->> Add support for the MT8189 vlpckgen clock controller, which provides
->> muxes and dividers for clock selection in vlp domain for other IP blocks.
->>
->> Signed-off-by: Irving-CH Lin <irving-ch.lin@mediatek.com>
->> ---
-> 
-> 
->> +static const char * const vlp_aud_adc_parents[] = {
->> +	"clk26m",
->> +	"vowpll",
->> +	"aud_adc_ext",
-> 
-> I could not find a matching clock name for "aud_adc_ext" in any
-> of the other clock drivers. Which clock is this (i.e. what is the
-> macro name in mediatek,mt8189-clk.h)?
+Some peripherals may be left enabled by the bootloader but should be
+explicitly disabled by the kernel to ensure a known initial state.
+This is particularly important for PCIe which requires proper
+initialization sequencing.
 
-I was able to solve this one. It is a fixed clock. It seems to be
-missing from the devicetree, so I will comment there instead.
+Add new macros DEF_MOD_INIT_OFF() and DEF_RST_INIT_ASSERTED() to declare
+module clocks that should be turned off and resets that should be
+asserted during CPG probe if found in the opposite state.
 
-> 
->> +	"osc_d10"
->> +};
->> +
+Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+---
+
+Changes:
+
+v6: No changes
+v5: No changes
+v4: No changes
+
+v3: 
+ - Fixed potential unitialized rcdev crash
+ - Removed duplicated message
+
+v2:
+ - Added reset-specific assert on probe
+ - Removed Rb tag from Geert due to previous point
+
+ drivers/clk/renesas/rzv2h-cpg.c | 24 ++++++++++++++++++++++-
+ drivers/clk/renesas/rzv2h-cpg.h | 34 +++++++++++++++++++++++++--------
+ 2 files changed, 49 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2h-cpg.c
+index 3f6299b9fec0..8e45f6f48e29 100644
+--- a/drivers/clk/renesas/rzv2h-cpg.c
++++ b/drivers/clk/renesas/rzv2h-cpg.c
+@@ -1337,6 +1337,13 @@ rzv2h_cpg_register_mod_clk(const struct rzv2h_mod_clk *mod,
+ 		spin_unlock_irqrestore(&priv->rmw_lock, flags);
+ 	}
+ 
++	/*
++	 * Turn off clocks marked with init_off flag if they were left
++	 * enabled by the bootloader. This ensures a known initial state.
++	 */
++	if (mod->init_off && rzv2h_mod_clock_is_enabled(&clock->hw))
++		rzv2h_mod_clock_endisable(&clock->hw, false);
++
+ 	return;
+ 
+ fail:
+@@ -1585,7 +1592,7 @@ static int __init rzv2h_cpg_probe(struct platform_device *pdev)
+ 	struct rzv2h_cpg_priv *priv;
+ 	unsigned int nclks, i;
+ 	struct clk **clks;
+-	int error;
++	int error, ret;
+ 
+ 	info = of_device_get_match_data(dev);
+ 
+@@ -1635,6 +1642,21 @@ static int __init rzv2h_cpg_probe(struct platform_device *pdev)
+ 	for (i = 0; i < info->num_mod_clks; i++)
+ 		rzv2h_cpg_register_mod_clk(&info->mod_clks[i], priv);
+ 
++	/*
++	 * Assert resets marked with init_asserted flag if they were left
++	 * deasserted by the bootloader. This ensures a known initial state.
++	 */
++	priv->rcdev.dev = dev;
++	for (i = 0; i < info->num_resets; i++) {
++		if (!info->resets[i].init_asserted)
++			continue;
++
++		/* Check if reset is currently deasserted (status == 0) */
++		ret = rzv2h_cpg_status(&priv->rcdev, i);
++		if (ret == 0)
++			rzv2h_cpg_assert(&priv->rcdev, i);
++	}
++
+ 	error = of_clk_add_provider(np, rzv2h_cpg_clk_src_twocell_get, priv);
+ 	if (error)
+ 		return error;
+diff --git a/drivers/clk/renesas/rzv2h-cpg.h b/drivers/clk/renesas/rzv2h-cpg.h
+index dc957bdaf5e9..927009431a73 100644
+--- a/drivers/clk/renesas/rzv2h-cpg.h
++++ b/drivers/clk/renesas/rzv2h-cpg.h
+@@ -250,6 +250,7 @@ enum clk_types {
+  * @parent: id of parent clock
+  * @critical: flag to indicate the clock is critical
+  * @no_pm: flag to indicate PM is not supported
++ * @init_off: flag to indicate the clock should be turned off during probe
+  * @on_index: control register index
+  * @on_bit: ON bit
+  * @mon_index: monitor register index
+@@ -262,6 +263,7 @@ struct rzv2h_mod_clk {
+ 	u16 parent;
+ 	bool critical;
+ 	bool no_pm;
++	bool init_off;
+ 	u8 on_index;
+ 	u8 on_bit;
+ 	s8 mon_index;
+@@ -269,14 +271,15 @@ struct rzv2h_mod_clk {
+ 	s8 ext_clk_mux_index;
+ };
+ 
+-#define DEF_MOD_BASE(_name, _mstop, _parent, _critical, _no_pm, _onindex, \
+-		     _onbit, _monindex, _monbit, _ext_clk_mux_index) \
++#define DEF_MOD_BASE(_name, _mstop, _parent, _critical, _no_pm, _init_off, \
++		     _onindex, _onbit, _monindex, _monbit, _ext_clk_mux_index) \
+ 	{ \
+ 		.name = (_name), \
+ 		.mstop_data = (_mstop), \
+ 		.parent = (_parent), \
+ 		.critical = (_critical), \
+ 		.no_pm = (_no_pm), \
++		.init_off = (_init_off), \
+ 		.on_index = (_onindex), \
+ 		.on_bit = (_onbit), \
+ 		.mon_index = (_monindex), \
+@@ -285,17 +288,20 @@ struct rzv2h_mod_clk {
+ 	}
+ 
+ #define DEF_MOD(_name, _parent, _onindex, _onbit, _monindex, _monbit, _mstop) \
+-	DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit, -1)
++	DEF_MOD_BASE(_name, _mstop, _parent, false, false, false, _onindex, _onbit, _monindex, _monbit, -1)
+ 
+ #define DEF_MOD_CRITICAL(_name, _parent, _onindex, _onbit, _monindex, _monbit, _mstop) \
+-	DEF_MOD_BASE(_name, _mstop, _parent, true, false, _onindex, _onbit, _monindex, _monbit, -1)
++	DEF_MOD_BASE(_name, _mstop, _parent, true, false, false, _onindex, _onbit, _monindex, _monbit, -1)
++
++#define DEF_MOD_INIT_OFF(_name, _parent, _onindex, _onbit, _monindex, _monbit, _mstop) \
++	DEF_MOD_BASE(_name, _mstop, _parent, false, false, true, _onindex, _onbit, _monindex, _monbit, -1)
+ 
+ #define DEF_MOD_NO_PM(_name, _parent, _onindex, _onbit, _monindex, _monbit, _mstop) \
+-	DEF_MOD_BASE(_name, _mstop, _parent, false, true, _onindex, _onbit, _monindex, _monbit, -1)
++	DEF_MOD_BASE(_name, _mstop, _parent, false, true, false, _onindex, _onbit, _monindex, _monbit, -1)
+ 
+ #define DEF_MOD_MUX_EXTERNAL(_name, _parent, _onindex, _onbit, _monindex, _monbit, _mstop, \
+ 			     _ext_clk_mux_index) \
+-	DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit, \
++	DEF_MOD_BASE(_name, _mstop, _parent, false, false, false, _onindex, _onbit, _monindex, _monbit, \
+ 		     _ext_clk_mux_index)
+ 
+ /**
+@@ -305,24 +311,36 @@ struct rzv2h_mod_clk {
+  * @reset_bit: reset bit
+  * @mon_index: monitor register index
+  * @mon_bit: monitor bit
++ * @init_asserted: flag to indicate the reset should be asserted during probe
+  */
+ struct rzv2h_reset {
+ 	u8 reset_index;
+ 	u8 reset_bit;
+ 	u8 mon_index;
+ 	u8 mon_bit;
++	bool init_asserted;
+ };
+ 
+-#define DEF_RST_BASE(_resindex, _resbit, _monindex, _monbit)	\
++#define DEF_RST_BASE(_resindex, _resbit, _monindex, _monbit, _init_asserted)	\
+ 	{ \
+ 		.reset_index = (_resindex), \
+ 		.reset_bit = (_resbit), \
+ 		.mon_index = (_monindex), \
+ 		.mon_bit = (_monbit), \
++		.init_asserted = (_init_asserted), \
+ 	}
+ 
+ #define DEF_RST(_resindex, _resbit, _monindex, _monbit)	\
+-	DEF_RST_BASE(_resindex, _resbit, _monindex, _monbit)
++	DEF_RST_BASE(_resindex, _resbit, _monindex, _monbit, false)
++
++/**
++ * DEF_RST_INIT_ASSERTED - Define a reset that should be asserted during probe
++ *
++ * Use this for peripherals that require their reset to be asserted at boot
++ * to ensure a known initial state before the peripheral driver takes over.
++ */
++#define DEF_RST_INIT_ASSERTED(_reset_index, _reset_bit, _mon_index, _mon_bit) \
++	DEF_RST_BASE(_reset_index, _reset_bit, _mon_index, _mon_bit, true)
+ 
+ /**
+  * struct rzv2h_cpg_info - SoC-specific CPG Description
+-- 
+2.25.1
 
