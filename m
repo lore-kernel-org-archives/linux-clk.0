@@ -1,32 +1,32 @@
 Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A153B31B123;
-	Fri, 20 Feb 2026 09:58:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF843314C4;
+	Fri, 20 Feb 2026 10:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771581518; cv=none; b=WcyS5b9gMKOoXR4pbRVx9UnNSDAmCTSvpa1SF2SJmqyG/QP4FAz36IUs9CANNW8WWsEOQuqPTAs8ONbzgNpyJjK7h42XdxsMeE/UD+7shWCK7YhnwO+hFUi3U6U1mmGPaGQY2xZaujpObGZBsxgGNYoYrTDp6h/D4ZzCucBGhb4=
+	t=1771583910; cv=none; b=knAu9lm/YHgeIy99n9fHxVButblEF/0t9n/XCD7JcGvpJ3lI2MR5firlpLnfFaXn9FdStu5rtsyLtjJaXZ/yJB/owSVMwDslPAo4JTBosrO3VAApR1dUMCTc+rw4umVOaBilmimaf2QFgM5yTS/7glmI8WLpo6DdguhoanWq9kY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771581518; c=relaxed/simple;
-	bh=MhPtn4MKpm3CPTNUcCJBB31kbLXp1abnqxxpFQLYsWQ=;
+	s=arc-20240116; t=1771583910; c=relaxed/simple;
+	bh=hKZ/W/TzpC5un+HZt0p3i2V4ZGBdodyIIwxNvlUY3Bs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kPRhqHpGma+drfGekPg8MLcuo1dXQsr0ZGZhr1YmIGMnbKDthl3Eas3ExCVEZct/oi6JyNx1Ai7nwP+8rlfAXj4pe+/VJ2o+gFvUVEmXx7E/1yF7EQ6Msl/3LQLDZRAgoQfkXh3zofwzxLxORcmMLbLaP/DRS7P+pBY4jtMazuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=TQZtoTDw; arc=none smtp.client-ip=217.92.40.78
+	 Content-Type:Content-Disposition:In-Reply-To; b=sbMIqVyLJA596wkUNL4QmS04fTDkneAgrLlxm2WvdUIzO9zU4ihoffVPW9ugYpU/HKkMYCuuvlvXmDqgs/kd7G+tkwp8NxpuANzAqB3vyC3Ahk4sPSlxudoueaapBVo22M9xKX5WGo8DiHeGGuJa/8sogDgWrAeHagf6QwYq3hM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=G7g+VOFZ; arc=none smtp.client-ip=217.92.40.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="TQZtoTDw"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F2A481483628;
-	Fri, 20 Feb 2026 10:58:30 +0100 (CET)
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="G7g+VOFZ"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 346A2148332C;
+	Fri, 20 Feb 2026 11:38:24 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1771581512; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=sAJ079v3EuGaMgXIGsa8tTVoFFB51aEPHIUaV4fqzFE=;
-	b=TQZtoTDwMs37I4I8gIeJassjf9/U8KxmeaNXN06BKIdkR1LarQVTeOACFa6dVuv7HyImUU
-	jpC1NWJ+7rWEnR4VtuWsnean0F3+u1oy/xgO9XdGgCd5FiRTV/2yJM5xVUnBBm06iChh23
-	QKW4OTYaKL4lGYB5yCM+jPLMS3H1RwPgyygxZAP7Wlc0r+xKvl+n05v0CHdJIXO+hhcA0/
-	HSNnMXv2VpPGcZNpQRdxKSkwp04wkWuey9qIf1mgZKSO2OyGFBvFPxzDm/pTCWnG0Ozun3
-	BUKETuB47iUekQhoQEX97zQflz2lnUiWDfBxqm5hySPsG2ZC4buBAIzQAkpzCw==
-Date: Fri, 20 Feb 2026 10:58:25 +0100
+	t=1771583906; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=95n3S7OhyJLgWav5p8ft1mLShRbAAlU1n4biE46GLho=;
+	b=G7g+VOFZLjBF2BUmYiAdr1GiXzIa+8CnOYBDQCbrNJ9+Ra0s4qkJZnIZxpsrALLzT7lcTg
+	lQRUz8fsYM4LjhrTHhuAR/l4kdAG1sF1vPP4bplE44rNxt4uEwbOLMCNO2oGFqtt0Bkj/B
+	K5dSi4MyuZDF7Sk9Nph5L27TGl6+BQAGiTJYokLFdsU6LirFGkNq9XB0f611eEjRX13Rq5
+	l91gGrD4UawxLvKnUr+ctIcb9PyhjQuq3yvohY1zv43VrGk9iZBeM4QR8Txo2SsJpUHCVX
+	6uRhTrRsL7534DCokwloECZbwjizVGMHwfJBcHn5r4FAQLBzZwlSx7NADxUAcA==
+Date: Fri, 20 Feb 2026 11:38:23 +0100
 From: Alexander Dahl <ada@thorsis.com>
 To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Cc: Alexander Dahl <ada@thorsis.com>,
@@ -35,27 +35,21 @@ Cc: Alexander Dahl <ada@thorsis.com>,
 	Ryan Wanner <ryan.wanner@microchip.com>,
 	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH v3 09/19] dt-bindings: nvmem: microchip-otpc: Add
- required clocks
-Message-ID: <20260220-bloomers-runny-e69ab1966b9c@thorsis.com>
+	Srinivas Kandagatla <srini@kernel.org>
+Subject: Re: [PATCH v3 14/19] nvmem: microchip-otpc: Expose UID registers as
+ 2nd nvmem device
+Message-ID: <20260220-maximize-glance-a0abd1806c44@thorsis.com>
 Mail-Followup-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>,
 	Nicolas Ferre <nicolas.ferre@microchip.com>,
 	Alexandre Belloni <alexandre.belloni@bootlin.com>,
 	Ryan Wanner <ryan.wanner@microchip.com>,
 	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
+	Srinivas Kandagatla <srini@kernel.org>
 References: <20260120143759.904013-1-ada@thorsis.com>
  <20260120154502.1280938-1-ada@thorsis.com>
- <20260120154502.1280938-3-ada@thorsis.com>
- <f406abde-c7d1-4ed6-b7dd-5336956bc795@tuxon.dev>
+ <20260120154502.1280938-8-ada@thorsis.com>
+ <05128a16-553d-49d5-b09d-2c3e03cb4421@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -64,94 +58,136 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f406abde-c7d1-4ed6-b7dd-5336956bc795@tuxon.dev>
+In-Reply-To: <05128a16-553d-49d5-b09d-2c3e03cb4421@tuxon.dev>
 User-Agent: Mutt/2.2.13 (2024-03-09)
 X-Last-TLS-Session-Version: TLSv1.3
 
 Hello Claudiu,
 
-Am Sat, Jan 31, 2026 at 05:47:05PM +0200 schrieb Claudiu Beznea:
+thanks for your feedback on this, see my remarks inline below.
+
+Am Sat, Jan 31, 2026 at 06:11:56PM +0200 schrieb Claudiu Beznea:
 > 
 > 
 > On 1/20/26 17:44, Alexander Dahl wrote:
-> > The OTPC requires both the peripheral clock through PMC and the main RC
-> > oscillator.  Seemed to work without explicitly enabling those clocks on
-> > sama7g5 before, but did not on sam9x60.
-> > 
-> > Older datasheets were not clear and explicit about this, but recent are,
-> > e.g. SAMA7G5 series datasheet (DS60001765B),
-> > section 30.4.1 Power Management:
-> > 
-> > > The OTPC is clocked through the Power Management Controller (PMC).
-> > > The user must power on the main RC oscillator and enable the
-> > > peripheral clock of the OTPC prior to reading or writing the OTP
-> > > memory.
+> > For SAM9X60 the Product UID x Register containing the Unique Product ID
+> > is part of the OTPC registers.
 > 
-> As this was not mentioned in the previous datasheet versions, the current
-> driver don't handle those clocks, and it probably worked as the clocks were
-> enabled by bootloaders, I think the clocks should be marked as required and
-> this patch to be propagated as a fix along with fixes on driver and device
-> trees.
-
-What do you mean by "clocks should be marked as required"?  Where?
-How?  Is something more necessary, than already done here?
-
-> I'll let DT binding maintainers for the final decision on this.
+> SAMA7G5 as well.
+> 
+> > We have everything at hand here to just
+> > create a trivial nvmem device for those.
+> 
+> Please massage a bit the patch description to match https://www.kernel.org/doc/html/v6.13/process/submitting-patches.html#describe-your-changes
 > 
 > > 
-> > Link: https://lore.kernel.org/linux-clk/ec34efc2-2051-4b8a-b5d8-6e2fd5e08c28@microchip.com/T/#u
-> 
-> Why this link here?
-
-That was the original discussion and at the time the sama7g5 datasheet
-mentioned a thing missing in the sam9x60 datasheet.  So that
-discussion was the only reference for why this change is needed for
-sam9x60.  Will drop the line in v4 then.
-
-Greets
-Alex
-
-> 
 > > Signed-off-by: Alexander Dahl <ada@thorsis.com>
 > > ---
 > > 
 > > Notes:
 > >      v3:
-> >      - Removed clock-names (led to confusion, and not used by the driver anyways)
-> >      - Removed redundant example
+> >      - no changes
 > >      v2:
-> >      - new patch, not present in v1
+> >      - Use dev_err_probe() for error reporting (thanks Claudiu)
+> >      - Move required register definition over here from removed patch
 > > 
-> >   .../devicetree/bindings/nvmem/microchip,sama7g5-otpc.yaml | 8 ++++++++
-> >   1 file changed, 8 insertions(+)
+> >   drivers/nvmem/microchip-otpc.c | 38 +++++++++++++++++++++++++++++++++-
+> >   1 file changed, 37 insertions(+), 1 deletion(-)
 > > 
-> > diff --git a/Documentation/devicetree/bindings/nvmem/microchip,sama7g5-otpc.yaml b/Documentation/devicetree/bindings/nvmem/microchip,sama7g5-otpc.yaml
-> > index 9a7aaf64eef32..847dfb67c6b72 100644
-> > --- a/Documentation/devicetree/bindings/nvmem/microchip,sama7g5-otpc.yaml
-> > +++ b/Documentation/devicetree/bindings/nvmem/microchip,sama7g5-otpc.yaml
-> > @@ -29,6 +29,11 @@ properties:
-> >     reg:
-> >       maxItems: 1
-> > +  clocks:
-> > +    items:
-> > +      - description: main rc oscillator
-> > +      - description: otpc peripheral clock
+> > diff --git a/drivers/nvmem/microchip-otpc.c b/drivers/nvmem/microchip-otpc.c
+> > index 34c0d7611f3e4..b35ed13b004bb 100644
+> > --- a/drivers/nvmem/microchip-otpc.c
+> > +++ b/drivers/nvmem/microchip-otpc.c
+> > @@ -25,10 +25,14 @@
+> >   #define MCHP_OTPC_HR			(0x20)
+> >   #define MCHP_OTPC_HR_SIZE		GENMASK(15, 8)
+> >   #define MCHP_OTPC_DR			(0x24)
+> > +#define MCHP_OTPC_UID0R			(0x60)
+> >   #define MCHP_OTPC_NAME			"mchp-otpc"
+> >   #define MCHP_OTPC_SIZE			(11 * 1024)
+> > +#define MCHP_OTPC_UID_NAME		"mchp-uid"
+> > +#define MCHP_OTPC_UID_SIZE		16
+> 
+> I think you can drop these as they are used (individually) in a single place.
+
+If you don't mind I would rather keep it here together with already
+present similar definitions, instead of sprinkling new literals over
+this c file.
+
+> 
 > > +
-> >   required:
-> >     - compatible
-> >     - reg
-> > @@ -37,6 +42,8 @@ unevaluatedProperties: false
-> >   examples:
-> >     - |
-> > +    #include <dt-bindings/clock/at91.h>
-> > +    #include <dt-bindings/clock/microchip,sama7g5-pmc.h>
-> >       #include <dt-bindings/nvmem/microchip,sama7g5-otpc.h>
-> >       otpc: efuse@e8c00000 {
-> > @@ -44,6 +51,7 @@ examples:
-> >           reg = <0xe8c00000 0xec>;
-> >           #address-cells = <1>;
-> >           #size-cells = <1>;
-> > +        clocks = <&pmc PMC_TYPE_CORE SAMA7G5_PMC_MAIN_RC>, <&pmc PMC_TYPE_PERIPHERAL 67>;
-> >           temperature_calib: calib@1 {
-> >               reg = <OTP_PKT(1) 76>;
+> >   /**
+> >    * struct mchp_otpc - OTPC private data structure
+> >    * @base: base address
+> > @@ -230,6 +234,16 @@ static int mchp_otpc_init_packets_list(struct mchp_otpc *otpc, u32 *size)
+> >   	return 0;
+> >   }
+> > +static int mchp_otpc_uid_read(void *priv, unsigned int offset,
+> > +			      void *val, size_t bytes)
+> > +{
+> > +	struct mchp_otpc *otpc = priv;
+> > +
+> > +	memcpy_fromio(val, otpc->base + MCHP_OTPC_UID0R + offset, bytes);
+> 
+> Include <asm-generic/logic_io.h> for this one?
+
+Yes, include what you use, I'd add `#include <linux/io.h>` then, seems
+the usual way in drivers/nvmem.
+
+> 
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >   static struct nvmem_config mchp_nvmem_config = {
+> >   	.name = MCHP_OTPC_NAME,
+> >   	.type = NVMEM_TYPE_OTP,
+> > @@ -239,6 +253,15 @@ static struct nvmem_config mchp_nvmem_config = {
+> >   	.reg_read = mchp_otpc_read,
+> >   };
+> > +static struct nvmem_config mchp_otpc_uid_nvmem_config = {
+> > +	.name = MCHP_OTPC_UID_NAME,
+> 
+> Should the type be filled here?
+
+In general I would say yes, but looking at `enum nvmem_type` none of
+them seems to match.  IIRC I more or less copied the approach from
+drivers/soc/atmel/sfr.c here.
+
+Greets
+Alex
+
+> 
+> 
+> > +	.read_only = true,
+> > +	.word_size = 4,
+> > +	.stride = 4,
+> > +	.size = MCHP_OTPC_UID_SIZE,
+> > +	.reg_read = mchp_otpc_uid_read,
+> > +};
+> > +
+> >   static int mchp_otpc_probe(struct platform_device *pdev)
+> >   {
+> >   	struct nvmem_device *nvmem;
+> > @@ -269,8 +292,21 @@ static int mchp_otpc_probe(struct platform_device *pdev)
+> >   	mchp_nvmem_config.size = size;
+> >   	mchp_nvmem_config.priv = otpc;
+> >   	nvmem = devm_nvmem_register(&pdev->dev, &mchp_nvmem_config);
+> > +	if (IS_ERR(nvmem)) {
+> > +		return dev_err_probe(&pdev->dev, PTR_ERR(nvmem),
+> > +				     "Error registering OTP as nvmem device\n");
+> > +	}
+> > -	return PTR_ERR_OR_ZERO(nvmem);
+> > +	mchp_otpc_uid_nvmem_config.dev = otpc->dev;
+> > +	mchp_otpc_uid_nvmem_config.priv = otpc;
+> > +
+> > +	nvmem = devm_nvmem_register(&pdev->dev, &mchp_otpc_uid_nvmem_config);
+> > +	if (IS_ERR(nvmem)) {
+> > +		return dev_err_probe(&pdev->dev, PTR_ERR(nvmem),
+> > +				     "Error registering UIDxR as nvmem device\n");
+> > +	}
+> > +
+> > +	return 0;
+> >   }
+> >   static const struct of_device_id __maybe_unused mchp_otpc_ids[] = {
 > 
