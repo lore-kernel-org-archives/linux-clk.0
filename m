@@ -1,45 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 650DB315793;
-	Fri, 20 Feb 2026 07:27:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97FE2BD030;
+	Fri, 20 Feb 2026 07:32:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771572469; cv=none; b=UO3xVjvXuowNiGeeRmRi4+3wRkdfcJwRzWN/sRneYXHlYyCjLubAT7Pe2qQ3aM17mwkXgiNeXYDbasW+gc7njbzxZEayljXywy6t8oNVBPSC+x9L5kP2aK0vlv8IwUofCARCEOiSDeN4L7T1eYlBNVnGrP95sYGCgMtamxdSJkQ=
+	t=1771572760; cv=none; b=lOMvhwG/tHr+2FjQ4d71yv/46lP3IQuXvjg6g3RsRePj+v2JRw/RmIVdaoy/FNKGVggkJGWAWyxhzVHM9UqwF6jYtcXPwrb9xmJSTE42EZ6iCdFzY6Ec8stjS5g6HGvddKpx64gFEWCnc4aN6KmCTJz3lAklVj9WAYAoIKgzPE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771572469; c=relaxed/simple;
-	bh=b5pyA+0WzmQOchcp2iQ8hOm0EPX+hYJEW7UxUeXuzV4=;
+	s=arc-20240116; t=1771572760; c=relaxed/simple;
+	bh=ja/Au8yYydwcnPjfZRcjcxY2BHygaA1MhU/bDE1G/Rw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NPxhtM/R0TCBpxTpGgbMPE/r5blWK0LEZBwj6NKgPvnod/GKfNwP/lQRZtDoeO3sTNFDM3ohQ6qbV6YXC/nMmqK+FRayvtYA5uFO2Ombpbgf3ZzaPoAwO3DZE/iGLABS2xdNENB084qeDAdIi86uvKvhOQPCX+CB/5L/mBWQBdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qbTCxayO; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=UkYVAzqwqBhaD93kJUr70MgmsxRgUkGHffd6slTpW2LzwnUW3qgHY/ep0c0OMUcHdmFf30UNqjRGBEKdYQ7Nl7WmlUycCq7TvKPqn93vKDmNZStRYUFS/f/PQp8IPyRf3mnM/kN8TBjuunjO4DjWRqUuq+Y/zDYkoQNs+MtCTZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VlmHSu32; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qbTCxayO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A39A7C116C6;
-	Fri, 20 Feb 2026 07:27:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VlmHSu32"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1C52C116C6;
+	Fri, 20 Feb 2026 07:32:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771572468;
-	bh=b5pyA+0WzmQOchcp2iQ8hOm0EPX+hYJEW7UxUeXuzV4=;
+	s=k20201202; t=1771572759;
+	bh=ja/Au8yYydwcnPjfZRcjcxY2BHygaA1MhU/bDE1G/Rw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qbTCxayO3rKoJGWD3htKNb0EehrnXuiY7relCSPDnIlneShgRjSHosHQTtuNGa+N4
-	 Z8s7gFi4SPSi9uSq5Fbbmj48JWE/swDb89aYtj+dCAHip1FgCXlLPbtPPcSzclF4zi
-	 FOOlYb40d8yeDfjK2CsCeeeIWh7Uas4yWsKFoIUZK2C/Y6dIvcxtWHmBbp1FBDxLEG
-	 N6pPkOsIR9AR/DLk4UGGht4+8rHt8je4lQdFWUfQGfQcCwX+hG/N8ZgegLvGdU4Tze
-	 mSHAPSI+zBdpkGmEustVyuAHC5wlu2k+fiM8VE7lzACanuib7+N/9+nnyyxv/W4rb2
-	 iOXqx6gTgEbgg==
-Date: Fri, 20 Feb 2026 08:27:45 +0100
+	b=VlmHSu32hu6dOgrBQ2+YNFe2pUrpAG7xd9zMK0aQcw+yUSeOEtFzA5eCpMbLY6FZp
+	 NJnEWpyRyJBGa8XwR/g+DCC4U/y4eSQS1tNAKeGjX1jHJNh6cBg9I/d25BxBfH7zkE
+	 OCE8KZf0NSeIv0ZBwpkAOoMrSjZi8WfG/MfH2hVowR2vG++GBvHqdhv6z02rlK5htR
+	 B7uYxhy4e/xE/+LMtY4uyGikJnz6vxiUe/ClmsQARZVy5sBNSh2Hh9CKO4Beh05Zxw
+	 psQTGqPTO5WEcIbq4wGjbMhXy09VmKUQppHn4Q2mhAXrOO0/7jxLD0TYdSxkKrrz8J
+	 4s6UIuaWZuJqQ==
+Date: Fri, 20 Feb 2026 08:32:37 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: John Madieu <john.madieu.xa@bp.renesas.com>
-Cc: claudiu.beznea.uj@bp.renesas.com, lpieralisi@kernel.org, 
-	kwilczynski@kernel.org, mani@kernel.org, geert+renesas@glider.be, krzk+dt@kernel.org, 
-	robh@kernel.org, bhelgaas@google.com, conor+dt@kernel.org, magnus.damm@gmail.com, 
-	biju.das.jz@bp.renesas.com, linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, john.madieu@gmail.com, 
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v6 06/16] dt-bindings: PCI: renesas,r9a08g045s33-pcie:
- Fix naming properties
-Message-ID: <20260220-proud-octopus-of-assurance-0fd60a@quoll>
-References: <20260219223542.6364-1-john.madieu.xa@bp.renesas.com>
- <20260219223542.6364-7-john.madieu.xa@bp.renesas.com>
+To: Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Ajit Pandey <ajit.pandey@oss.qualcomm.com>, 
+	Imran Shaik <imran.shaik@oss.qualcomm.com>, Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v3 1/3] dt-bindings: clock: qcom: Add SM8750 GPU clocks
+Message-ID: <20260220-defiant-qualified-agama-bbe7ee@quoll>
+References: <20260220-gpucc_sm8750_v2-v3-0-6c5408564c3c@oss.qualcomm.com>
+ <20260220-gpucc_sm8750_v2-v3-1-6c5408564c3c@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,19 +48,26 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260219223542.6364-7-john.madieu.xa@bp.renesas.com>
+In-Reply-To: <20260220-gpucc_sm8750_v2-v3-1-6c5408564c3c@oss.qualcomm.com>
 
-On Thu, Feb 19, 2026 at 11:35:32PM +0100, John Madieu wrote:
-> Fix a typo in interrupt-names: "ser_cor" should be "serr_cor" (System
-> Error Correctable).
+On Fri, Feb 20, 2026 at 11:24:20AM +0530, Taniya Das wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 > 
-> Also convert interrupt-names, clock-names, and reset-names properties
-> from "description" to "const" to enable proper validation with
-> dtbs_check.
+> The SM8750 features a "traditional" GPU_CC block, much of which is
+> controlled through the GMU microcontroller. Additionally, there's
+> an separate GX_CC block, where the GX GDSC is moved.
 > 
-> Fixes: e7534e790557 ("dt-bindings: PCI: renesas,r9a08g045s33-pcie: Document RZ/G3E SoC")
+> Update the bindings to accommodate for SM8750 SoC.
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> ---
+>  .../bindings/clock/qcom,kaanapali-gxclkctl.yaml    |  1 +
+>  .../bindings/clock/qcom,sm8450-gpucc.yaml          |  2 +
+>  include/dt-bindings/clock/qcom,sm8750-gpucc.h      | 50 ++++++++++++++++++++++
+>  3 files changed, 53 insertions(+)
 
-You have checkpatch warning for the tag.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 Best regards,
 Krzysztof
