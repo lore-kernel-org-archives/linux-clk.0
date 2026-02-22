@@ -1,101 +1,86 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 292931FB1
-	for <linux-clk@vger.kernel.org>; Sun, 22 Feb 2026 21:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0D43FFD
+	for <linux-clk@vger.kernel.org>; Sun, 22 Feb 2026 23:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771796175; cv=none; b=LkkZMHKEyP5iqTrBCE80q2b10wrqJ4WrNAl/mCPHWDCgrMyN5Iwe5i6RsiCKfLMeMQcW12kc4W///hPwX+c32Ofrda3UbarN86OElS3XEQMgkWK6d2dvqcdlbXWS/fllOTah9v6UFWgqoUUumi8V+BtUbZT2ruZe+hODt0hpsmM=
+	t=1771801322; cv=none; b=dFcUjf4Q+vH6BPf8vIKXLtuXlMj5/HeMkWalXz9eB45Lu2N4YjKso73pLCayA0ON5UcL14ug0e7toyO3EveJGj4LGmHpTazN5/IBYQ5yUGPVA+0p8qHNr+uCXy/eHZHYAEF5AesdPQl0QRdPSY+6TrVrife8HDahknKfi7eSED0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771796175; c=relaxed/simple;
-	bh=gBYaQxc77HBkhh0uwlLDfCtVWKCS/r7jzNxWrFgYMpk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mNczmQ9DEqW5/i4rfUlL3+5RagjCEstrxmq3lwZQXrQTDdn+enUDVcwwskur5caqG4m41Ite33Ap2VelCt5ES0lvj1KU/TAI4gLDTtzMU1KGuZrjO7g9PVRw9vb7Lw0EtxMr6q/O8xckpuMyrGttS5r5imqIhg1p5MgCuDJa6MI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Xw2YEUME; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=OSZCgAfY; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1771801322; c=relaxed/simple;
+	bh=V6KpGL69TczRZCEMSgZc9IktS4ArY13IpJofeDtRH20=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=IPpEKLLlIZEQNpFS3zMsCjJPCSzATI+KA2dg5PCAAD001XLFLg/A9JdEUby7RLjgf9owjMlC+u16grolEi/WwNy6h+rWE+1LPhelRJhAlJqxJVhioKwinklNBfhiT15cY2P5u5dQ+n88HL0TUFJupPspeBC3W69G6S2eGYMFvX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TRPASbpz; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=q+RCctyJ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Xw2YEUME";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="OSZCgAfY"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 61MKrNDb2036619
-	for <linux-clk@vger.kernel.org>; Sun, 22 Feb 2026 21:36:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=YEyfRwd6krp9aI5coV8ALqRP
-	3SvRd2AW4gFFNkO7ypc=; b=Xw2YEUMEpKntdwl2d5X0vVnkQrYt166c+1SgHROR
-	HNGUYtKktAUaJflNElYWj66MnDG5VFc64/ekTcnbXbhDEsiyZIi+OkYtJJvZd2Jr
-	CiQ8tRyshRM1jyTqbL9sIZcEUF3jsbrcvAjmqECEKpbU/rhT/hPGck3mMK2utk9b
-	L6HSM9iyVMRC3oawIoBUWgoQO0tXYukjwRnAoEgVULzXnBcMI/R2KHBavGHOWyez
-	fHkAK9oiJ8R316ZyxjysxUEc5WbfnQXAMuyERQ5p4+ylp8N82YSuW++McY7R8EEw
-	9s5q40lAOgXLXz/d6bpZKUq9SUI6Zk728O43+156gp66DQ==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cf5v3tqwm-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Sun, 22 Feb 2026 21:36:12 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-506ae021853so368881541cf.1
-        for <linux-clk@vger.kernel.org>; Sun, 22 Feb 2026 13:36:12 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TRPASbpz";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="q+RCctyJ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1771801320;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=CRbAOsvSkvcigTRxBIAD2yXagg/nhTzutguk9VZdENc=;
+	b=TRPASbpzt5fu2W2zNgyFq6AX2JhJvafxwxWGNsdcu7MZ7ysLVKtoNDxbIEDsHlFq86AaVw
+	O1lskGYetwkX0cFt2mIfpmFdnGJx43VFLC/rtliBmpa4bWMnLt9qhKI9UrNxXnnLwFVOjN
+	oLRgbkp3d3YDx2Vmar/Z1yY9vmHX7wQ=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-593-9cWAHfbIMQCDBIkcAbw1pQ-1; Sun, 22 Feb 2026 18:01:58 -0500
+X-MC-Unique: 9cWAHfbIMQCDBIkcAbw1pQ-1
+X-Mimecast-MFC-AGG-ID: 9cWAHfbIMQCDBIkcAbw1pQ_1771801318
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8c70e610242so3781731885a.2
+        for <linux-clk@vger.kernel.org>; Sun, 22 Feb 2026 15:01:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1771796171; x=1772400971; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YEyfRwd6krp9aI5coV8ALqRP3SvRd2AW4gFFNkO7ypc=;
-        b=OSZCgAfYCKxyzm+ktiA2teVYmVsWaqAN17CbPG0yK6RPI0s7it1sQ4/vt/iLIgcwjW
-         1/X7XS8V6DsUy/V+HuDh21PSwC1uKubYhKfL7219FTeRHi1GLt4EBGEashv3ihk7hfE4
-         DB9cRBP+Ky8sCs25K6URszzAJbQxgUnbr4VPlhoTGjDaTFPY34MILzE4J9stFJE9Mwuo
-         mRER6wE8moZ6CUeMS0N3jn/7eNDHVgFtqKyyjsKqmIo15qVPRfiNsAE9vx4XjqaYSfhn
-         a/1FpTkOlpfvuIpyHxs/h3Scq+vjQhFqxEt+mEi1fXJvQxhghS1YAVaHQWVAcvy/ANT+
-         bUjw==
+        d=redhat.com; s=google; t=1771801318; x=1772406118; darn=vger.kernel.org;
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CRbAOsvSkvcigTRxBIAD2yXagg/nhTzutguk9VZdENc=;
+        b=q+RCctyJcnneZE1mUAEiAYtcSl/ZakRFy2319PD0sgy9yqqxerFeqwSAam95zbJ64v
+         g9KQU3d543/KxNaXvxdbbae6N/lDJ22I0ADxu5YZ8TkRsAZzr5fr8yGwcOILWE/iVMtC
+         r4LnwNTOulhRWnmqYyAH7j62NTrcaJRTivuch33ZvTetYRj6wbXUs0Wk5oB4uD0NCaMy
+         6U0KlFTGtFtMKyqHtOkS9e2GPSfNzrM4K+AHXWHJWy7B6FLK3iAHKAgNK63X13+8/+cG
+         X1deD+COzQBZ0Kw2ETeoYn4U1Hq7wpTPFntVly2BXTHx8IIs8RrpKnQOyO/HpHhnw4Qm
+         GK1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771796171; x=1772400971;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YEyfRwd6krp9aI5coV8ALqRP3SvRd2AW4gFFNkO7ypc=;
-        b=pkbh0kdGq8CuoSYXJZUWfO0oA7f2QBCNon0isYOydjFKisrjCExmrDYEX5LTtae+cn
-         KKPZfxAqOKV1oZue4wSsnkerdxuCPdb34bDA8ySqopTbKB1u5ZjZ0y9mauXd1I8Q3VFz
-         gRIMtJg1VUxG+xU81HBhx0RVbfzrTPyQPv/mpyoObazSwU2ywrXh4GQaTLnqIAYeWbUS
-         l9ypLLuip6wfmSkREK85pPw2G7fisKye26t1rv7g3ERPo9I2FQEK/FKzFpf1gKX9dn4q
-         T6UD7Z1vgS4qjh8LplogHzJgh/zpD5LJOGR7gTqOPsIqvcU1gLHGw6m0dtxujJiNsegl
-         6Bng==
-X-Forwarded-Encrypted: i=1; AJvYcCVBpOaMViuDz1Fw0AIjhBsqjH/awskhGUbc/VA8hjcJ/T5KVk3tDYJvrX0i+22w0PM2YmFGELZWXyA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLv2/pW/CxPTqMOnYxIdka1LOW3n7mp+FIfuawxEmVZrGyXgw9
-	bNJnTvtRjzzGfHF/SX4cVp63c699dc6EgGdY1VV+cpWTNBAN7RWAmTFfzs57MKaJWlIMDRep2Ws
-	4SCrA/arGmubvuux7BjbCkj/5XsxG7TAZulzDh5fvS5+PIDvqaToxLYl9vYzF5PQ=
-X-Gm-Gg: AZuq6aKKf3TMgkKNTpCld4L6lvLxv13kn0CHJSfOPyJU0Qjvo5ZMqE2imJ4tiiHWHG0
-	La4xXxyW0PkzykZJ6nzq4saa3t00HWDVqOreLkfGGSHhf6aghmvjhk8MDkVnlmILa3idePAq0Uj
-	47m/LLlxFNfwx8mYUTOMLvZUWJ+577lTnCZsx9fPEkzqaXNV9psPHOrmIgYikhOlKfPQRu3xSk1
-	h0CiRaORYLbpwTg+y5G/M7hyHhojcvH6EdbU3P125JTB4QAnAyO3LqQGuG7CUY//zTRrhz6WnVT
-	FPXuWFZXGDjaMactDYwJWgyekBOzhNXyBMLxr0+S0ZmGN0mmAdZxk+KiS3s4g8GRfwB6cLMqwt0
-	XL2nR6ZlOgm9p+2zvCb2M3rzrh1C19wSwxX1bilQL6mDH51Llo2mavLWW7ZKyMo6GTL3qGWeNOI
-	eTrMugBki7wuYi3o8pMz2U/SPpTH9F3GAYzSI=
-X-Received: by 2002:a05:620a:19a5:b0:8c9:ea1c:f216 with SMTP id af79cd13be357-8cb8c9cbc63mr786962085a.14.1771796171277;
-        Sun, 22 Feb 2026 13:36:11 -0800 (PST)
-X-Received: by 2002:a05:620a:19a5:b0:8c9:ea1c:f216 with SMTP id af79cd13be357-8cb8c9cbc63mr786960785a.14.1771796170829;
-        Sun, 22 Feb 2026 13:36:10 -0800 (PST)
-Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a0eeb0b88esm1191601e87.8.2026.02.22.13.36.09
+        d=1e100.net; s=20230601; t=1771801318; x=1772406118;
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CRbAOsvSkvcigTRxBIAD2yXagg/nhTzutguk9VZdENc=;
+        b=Mr3R73ILCViDhaA7esDGxoecRZ+wSnl8zUrPDQNaEiaiU0McXTJqFJYRCMiL8JTbZC
+         g49HXm9x34+ZwfLMpxBi/Ow94SmsB/rb2BuIsZ9IjebXRb+p2IC+2GevrwR8FeKrDDcs
+         kpr7y9vJVAXGhglc9OYl2316otx9F/IpHp4eTbX5Y+5bINSotP00Ly0WXy7verEcVo+T
+         Cdfn2Nh9PuQTGYzOvBpmmj8eBpgHzm1hIJPPK20NEMZ57Axd6lxJ4vKRDyCWePP5eAJV
+         wvhNeXAJeVjacyV9W1gfm5KM0DdE5iFRjxbm2YNzE/dAVY/YPAtnMreWPY3IBgN9HTMc
+         CTLg==
+X-Gm-Message-State: AOJu0Yw1b2EDUNGSf1IiqV+geh6NBrYeq4MgKOZRBtUv9LswJQV1SdDx
+	rDlNHLD9BD/SUOP2hU8ejNitgjjqfzs8fDNbhObt5zf9wZ6xkRVnIUeFDvjq1OX0459QOl/85fk
+	I5XArLPINlaaF/JDhfKwFn8QUkAz3zlBukhiUX2HPoPv2kixjAf3bplwQZmTBMA==
+X-Gm-Gg: AZuq6aLokaCn9nj/WAlshJEG3m6TihKhivR1SiSyysKcXXxe+qS/0/pvI+N6y4Lt9Ke
+	1FjXssbGLja+0M+CQMKDFIBapDc5KYfUkGQ6oRo8qsTm3BfB2Z/5G4ZdnkX0jRVU5pb30snwHJc
+	kbz9tCgpcZpf/e/j0QYo+yBv2QpxFevF44Tbl7qXkH+EfRX5mOpGcP+Yt63gLoBqakZeeSACm2i
+	nN/mYJOtxq5MfxxlybU+5RZrtdD8McryLZzkR/mH0gHoUfhROLaw/kdmFEZUQZJS1BqYGzctxUL
+	tTThAWHlf39jksK0IPsKOudiuUnRkzcnBImjDERTYRRBC1QAXZMNvWlecpYow7rNP/zH2MuaOHo
+	j8euse9uhrgCYubsFYIljNtEw5GDvWHvTu0MKDfr8TIIGGDVw3kprE+qM
+X-Received: by 2002:a05:620a:28c3:b0:8b2:f2c5:e7f6 with SMTP id af79cd13be357-8cb8ca65f56mr813313285a.37.1771801318035;
+        Sun, 22 Feb 2026 15:01:58 -0800 (PST)
+X-Received: by 2002:a05:620a:28c3:b0:8b2:f2c5:e7f6 with SMTP id af79cd13be357-8cb8ca65f56mr813310685a.37.1771801317557;
+        Sun, 22 Feb 2026 15:01:57 -0800 (PST)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8cb8d120080sm558377985a.47.2026.02.22.15.01.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Feb 2026 13:36:09 -0800 (PST)
-Date: Sun, 22 Feb 2026 23:36:07 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-        Imran Shaik <imran.shaik@oss.qualcomm.com>,
-        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v3 2/3] clk: qcom: Add a driver for SM8750 GPU clocks
-Message-ID: <pis46xtmxgopk4w4kvu2qbbtcwchnbepaqaw3lbtfbon2cbjls@xjsfo65uj64l>
-References: <20260220-gpucc_sm8750_v2-v3-0-6c5408564c3c@oss.qualcomm.com>
- <20260220-gpucc_sm8750_v2-v3-2-6c5408564c3c@oss.qualcomm.com>
+        Sun, 22 Feb 2026 15:01:56 -0800 (PST)
+Date: Sun, 22 Feb 2026 18:01:55 -0500
+From: Brian Masney <bmasney@redhat.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk: remove deprecated round_rate functions from the clk
+ core for v7.1
+Message-ID: <aZuK4-QJCXUeSxtL@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -104,72 +89,57 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260220-gpucc_sm8750_v2-v3-2-6c5408564c3c@oss.qualcomm.com>
-X-Authority-Analysis: v=2.4 cv=YL6SCBGx c=1 sm=1 tr=0 ts=699b76cc cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=HzLeVaNsDn8A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22 a=EUspDBNiAAAA:8
- a=91OgtvA7_0Jf-gwRHFQA:9 a=CjuIK1q_8ugA:10 a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-ORIG-GUID: hkEC4w4lJG56O3wtkfkL8ZyLE3_SmEAj
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjIyMDIwNyBTYWx0ZWRfX7MqVEkgtyAxl
- 0USnMHVK9hhMQnaddfTnWl0kv4tMmxl2li6G5WjYF2qOXuPCDV2+QQRabJURq9BsBr+LgXgqgcV
- rAqYn6aYGxJ2ViiMfHjnRNP0gCiyrzOPANH9F53VImbmn52ETpbXF48P8pT6mtpzoK+Fi8jF539
- 4z3zmwj9PgVzzWHRuhd4bBMwfzJzOoXjZzb7LIB1Jbc0pt3380tNllOWrjROaITE2OqKH+ZAkpa
- fHQQtW/Xg1NUGlpae3DJAEN0p33L40RU6zc+ddvN0e7U5s6F/6xR2dNbR7KUobk4N3/2jpyvaiH
- 9xVEvbIWkaaavWdrmZwsoVI4WzXU7xhWM5yW2Y4dHkhVuqYyrJWoQnSgv9EEnSfaBsJRzveJAiO
- QWPiPm2UAEqBnpxsXZCP5AEL5WTsoaspbvgqfeQClEyVCkyQ/zxHqlGaEHPdVzlm5vMXbmiet/Z
- GCRgLrfwptAuT5wnf4A==
-X-Proofpoint-GUID: hkEC4w4lJG56O3wtkfkL8ZyLE3_SmEAj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-02-22_05,2026-02-20_04,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0 phishscore=0
- impostorscore=0 suspectscore=0 clxscore=1015 spamscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2602130000 definitions=main-2602220207
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On Fri, Feb 20, 2026 at 11:24:21AM +0530, Taniya Das wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> Support the graphics clock controller for SM8750 for Graphics SW
-> driver to use the clocks. GXCLKCTL (Graphics GX Clock Controller) is a
-> block dedicated to managing clocks for the GPU subsystem on GX power
-> domain. The GX clock controller driver manages only the GX GDSC and the
-> rest of the resources of the controller are managed by the firmware.
+Hi Stephen,
 
-You missed patches for the gxclkctl driver.
+Here's a small pull for patches that I previously posted that removes
+several deprecated APIs from the clk core. Details are in the signed
+tag. I assembled this pull with the following b4 commands:
 
-> 
-> Update the compatible for Graphics GX Clock Controller for SM8750 as the
-> GX clock controller is a reuse of the Kaanapali driver.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Co-developed-by: Taniya Das <taniya.das@oss.qualcomm.com>
-> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
-> ---
->  drivers/clk/qcom/Kconfig        |   9 +
->  drivers/clk/qcom/Makefile       |   1 +
->  drivers/clk/qcom/gpucc-sm8750.c | 472 ++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 482 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-> index 6b0ad8832b55f1914079f15323b8cdd1608ad4c0..817b13f5e78cb534e165b09d95e70cd4a58b12bd 100644
-> --- a/drivers/clk/qcom/Makefile
-> +++ b/drivers/clk/qcom/Makefile
-> @@ -180,6 +180,7 @@ obj-$(CONFIG_SM_GPUCC_8350) += gpucc-sm8350.o
->  obj-$(CONFIG_SM_GPUCC_8450) += gpucc-sm8450.o
->  obj-$(CONFIG_SM_GPUCC_8550) += gpucc-sm8550.o
->  obj-$(CONFIG_SM_GPUCC_8650) += gpucc-sm8650.o
-> +obj-$(CONFIG_SM_GPUCC_8750) += gpucc-sm8750.o gxclkctl-kaanapali.o
+    b4 am 20251212-clk-remove-round-rate-v1-0-5c3d5f3edc78@redhat.com
+    b4 am --cherry-pick 26-27 20260108-clk-divider-round-rate-v1-0-535a3ed73bf3@redhat.com
 
-I think, If both drivers are built-in, this will result in the object
-file being added twice and, thus, a conflict.
 
->  obj-$(CONFIG_SM_GPUCC_MILOS) += gpucc-milos.o
->  obj-$(CONFIG_SM_LPASSCC_6115) += lpasscc-sm6115.o
->  obj-$(CONFIG_SM_TCSRCC_8550) += tcsrcc-sm8550.o
+The following changes since commit 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f:
 
--- 
-With best wishes
-Dmitry
+  Linux 7.0-rc1 (2026-02-22 13:18:59 -0800)
+
+are available in the Git repository at:
+
+  https://github.com/masneyb/linux tags/clk-remove-deprecated-apis-v7.1
+
+for you to fetch changes up to d4851759742c1322f498021dab882d322fc34a1d:
+
+  clk: divider: remove divider_round_rate() and divider_round_rate_parent() (2026-02-22 17:38:37 -0500)
+
+----------------------------------------------------------------
+clk: remove deprecated round_rate functions from the clk core
+
+Now that all of the dependencies across the tree have been merged into
+Linus's tree, here's a small series with the following changes:
+
+- Converts clk-composite from round_rate() to determine_rate().
+- Removes the round_rate() clk op.
+- Removes the deprecated functions divider_round_rate(),
+  divider_round_rate_parent(), and divider_ro_round_rate_parent() since
+  these are just wrappers for the corresponding determine_rate variant.
+
+Signed-off-by: Brian Masney <bmasney@redhat.com>
+
+----------------------------------------------------------------
+Brian Masney (5):
+      clk: test: remove references to clk_ops.round_rate
+      clk: composite: convert from round_rate() to determine_rate()
+      clk: remove round_rate() clk ops
+      clk: divider: remove divider_ro_round_rate_parent()
+      clk: divider: remove divider_round_rate() and divider_round_rate_parent()
+
+ Documentation/driver-api/clk.rst |  9 +-------
+ drivers/clk/clk-composite.c      | 38 +++++----------------------------
+ drivers/clk/clk-divider.c        | 44 --------------------------------------
+ drivers/clk/clk.c                | 39 ++++++++++++----------------------
+ drivers/clk/clk_test.c           | 16 +++++++-------
+ include/linux/clk-provider.h     | 46 ++++++----------------------------------
+ 6 files changed, 34 insertions(+), 158 deletions(-)
+
