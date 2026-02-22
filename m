@@ -1,84 +1,85 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C553612C3
-	for <linux-clk@vger.kernel.org>; Sun, 22 Feb 2026 23:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 100E0360747
+	for <linux-clk@vger.kernel.org>; Sun, 22 Feb 2026 23:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771804290; cv=none; b=ClrUhr5A7iKAOi6eGPag5pM9VzsQzfieoMdferGNlKy/aK1+7Mw7JtQNpRtIysZ17ZV6W9iIqGK7Fb2xl5CurDq2PuM4/0nq4W+0UbNpDQw9YPib7RNhr+cr9YlPHauLw5lP0+MMaeEob9vZoqyVyIWtutdhk3SaDlarxQe0qDg=
+	t=1771804292; cv=none; b=lzm+R3d7LIhCublUwEcco72kul5oAmW+X9HLodt7ZwOD/xS04vP3JnwB8bZR5sE3xw0LawTPae3PjOIZPOMB8gpq8IpKvSlGKKzxvQFqTuglAq2kh/SUjiSNCmND0J5HXQkZiJp2Tw52ZFXshVuhaRPRWKnc/zND0za4vEx3ylw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771804290; c=relaxed/simple;
-	bh=CcOilrt5K4K/T1jJzE29QaA49JBm79z4ATT14FiguCo=;
+	s=arc-20240116; t=1771804292; c=relaxed/simple;
+	bh=Vaz/v5iK5xCxuwXrVAC77q7tpyqLodfB6MfmVz11O5g=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=O1znej9TPCAQEZYSsaDdTPJSTy2tmkzxKAjKKOKG+99HxyQhdok336WG+5jv2FSWtuo/bKddH40hC4Qk+KQxF9uRYpl7TPvjDmSFtqWrLhVoAiRFLasdgqywG6vImOqooOFKcG2L9XqQjaMjlxqtRd0Pqb2WZHYCrroS5nw2E28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JCFaqAJt; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=mGz+nwhL; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:To:Cc; b=jv0puXclntWFOX9MLiCF2mPdS9zrvVMDfImedfBMDMzAxLl++b1f68lbNzqiBj7mTQQqehNlu2ji+O7TFEuqGcEnkoXGMtNOHnISjYJX9qax363ZGnfG47xfwfK9wMSKII0cCZzBli6ZEFFep9CNpZ6AkXZt3huY+I07xg6j4os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VZ6WU7pP; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=as/2x38S; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JCFaqAJt";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="mGz+nwhL"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VZ6WU7pP";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="as/2x38S"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1771804288;
+	s=mimecast20190719; t=1771804290;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=SP/zy4pHeHh6oU011bprJUoBpIb3oQUn1FgaJ/yqaQ4=;
-	b=JCFaqAJthLqFI27MUyOfNc9NfixLJludni1z6erbvhuwZb/cy3hcRBokfUPhsQUSVRsESn
-	+X3dm/GStSmFHgItFBuBmP/Tp67Ke4kPnnekQIJHfdkDYY/imebZNBfGt/ErNWbdUylAE3
-	jAb3trVzahMKg5OdQUgjioZqRvIUELo=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=eaAuaX8i1J4KvXjA55C7U1MLeaCwL4Udn6KaFgAJ3gs=;
+	b=VZ6WU7pPIgW2e7oh6fwt6d+LYQTOlQTBzW2PtYJJyHO87zG8eDB7DT8ePnTSKzWqw17MnK
+	YwozWMbSuOya4f11uFHem+U37T/eDkILMeKNh6Yw0XJQol4/TFfRESUFnOaXX+DspX+axG
+	HQgT8hb8Sv7OMHEgTxS1/aW1/xR3LWI=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-533-H4XgXyL-NPmIxQ3mWk1q8A-1; Sun, 22 Feb 2026 18:51:26 -0500
-X-MC-Unique: H4XgXyL-NPmIxQ3mWk1q8A-1
-X-Mimecast-MFC-AGG-ID: H4XgXyL-NPmIxQ3mWk1q8A_1771804286
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-506a936d7afso470694701cf.3
-        for <linux-clk@vger.kernel.org>; Sun, 22 Feb 2026 15:51:26 -0800 (PST)
+ us-mta-278-pku5ftvaMRKIHvw3d0XjLw-1; Sun, 22 Feb 2026 18:51:28 -0500
+X-MC-Unique: pku5ftvaMRKIHvw3d0XjLw-1
+X-Mimecast-MFC-AGG-ID: pku5ftvaMRKIHvw3d0XjLw_1771804288
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-50341fddb89so459995321cf.3
+        for <linux-clk@vger.kernel.org>; Sun, 22 Feb 2026 15:51:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1771804286; x=1772409086; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1771804288; x=1772409088; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=SP/zy4pHeHh6oU011bprJUoBpIb3oQUn1FgaJ/yqaQ4=;
-        b=mGz+nwhL7hjw9mHSPOeynrh8SPZg+Cl3bNi0sUUGzQ9j/hb2A/cw1cml4duspZqdAb
-         WWyFjHv2oxG41RuY/FXkwb7RNqjPRXws7VrnXt3/TJcDa21pvfxRdZ+B/xAinJSM9lGX
-         WVg8TBhRo1EkkkPziEujyVFjW7GESdFZMkv4/0QAZI+0AqN2eHQxw36nqwy91sln1hjd
-         uXagqg0QSWBNuYYlprw+jm58TlqwQRzkwV8vpEUllcRMa/oozfGbbEJVVT3+dnFrLOI1
-         PMhvE26g6ZfNyWIt+PRwYkSrVWpVNN8P9QO7mcQo59g3B+oB12r8QkbwlkB/PAvNsJka
-         XQZQ==
+        bh=eaAuaX8i1J4KvXjA55C7U1MLeaCwL4Udn6KaFgAJ3gs=;
+        b=as/2x38SpUK/Y1sVtwsodJVffjbb8dkBdATMyj1lwtvSeem5g/x5qzeYk6x1F4Diz6
+         Qbc2ABW2+xfTZxjfBFN7SQot5HHPbjLg+m8O3c6YjPvPGVNHpJkFK5+/SItPc9R4082S
+         3Eg8vh4BOAuzOwfT1cBlOemg7ChLmnrICjCgD2xIkIsiSp4fGgVt5qeB00tH8sUH7AcG
+         ZD5v/81sqAo6CaoWBIPxqAtWwOJpUeUpDGubsER3VCXaWkJNZ61vMekAk1ai8S73y3td
+         UAXnTHhKWWil2q3xFnhvSZydG+QMDyZPICUU+vZvdothXHeiCw1f97Jv1MAkSVIDmLhR
+         iOqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771804286; x=1772409086;
+        d=1e100.net; s=20230601; t=1771804288; x=1772409088;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=SP/zy4pHeHh6oU011bprJUoBpIb3oQUn1FgaJ/yqaQ4=;
-        b=Eg1Ee1EimsiWNZeN6W3gTUEhw3hNrZGHgYmRZx5Hc+bCOJOPlat/B2VZJCNCRPujgw
-         9+/tHTx3aTfqjyMGuGTcDiT+u27VWUjBXQTMlvJ8tPS+2IDsYRGUY2Q/Jaf/6EC4JWTw
-         bwf/TCYu1fGm2tH1VkFE4oj25ZzzrTq3b5qz24ElAIhkDmTsxaWF6IZwGCkUQxuPdqVc
-         v0DXim+0AB1ZZkLlE7D1JtuFpnqtaB8qYMZ71UY7XE1Hh6tNFNXlY098Erd5yw41fIYQ
-         EF/2j15LSVTmbpo45zUyDavekI7MNwvmgnCB5tj2IEXdNmct2WckrI/08fFdFysz9kWk
-         zEeA==
-X-Gm-Message-State: AOJu0Yw40JaNu5rj4RxAo+X7rNQLSC1UW2v/HZ6VRBPmABT3KHF0gMA0
-	i0D8H5I+x6bykL7UEvfKme5jB3uYjmMfui4wNAPstFUXHlito2IHHRbY/4sVLMj3Bwhi0jEpxFR
-	qZVLQuqmPf+kAirOmhQyAT2ntRFQF3Vdq3sjKmDViKeWiPvgEEn6LFD9kAXXlXg==
-X-Gm-Gg: AZuq6aIz/vCWIFal4Ge1fAKHFUBVTKHgO5jlKKpmUTvLnNYWXmE2gYH1uVNXW0Cw/iM
-	4JVkq9aUH6q3j7mvXpopeBuj4S9ju/Z22LNDQyzg3YVev8E7TXy4QOHLzCRAwLUYxNshGmOR92h
-	pte0O/2klMaKwNMhMfePhWjr9ZorDomjvXoa2Llc5/AyidE4HxjFaJ+2OY3YAcwcK9AuCl35XOf
-	uen/bhIvorbVk84fyPVg87E+lEyLoWX3S9NpW1xwTOVPRbMPIeG1gY/u275vEYYqQq07LO4V/lA
-	y/PfyjDBuN2DWO0kLVGPgbyyuk74QcqtOwogMi64tHYyiuHhYY8/fxK/ggVezBJH5odPoDzIX/7
-	KegFofWgmJAFHsxTBc2OueQi3EInj+peBugxeHxmJz6LIoUIEzBS5tXyXmIJ2qw==
-X-Received: by 2002:ac8:5d86:0:b0:506:8738:651d with SMTP id d75a77b69052e-5070bd02eecmr103575731cf.62.1771804285977;
-        Sun, 22 Feb 2026 15:51:25 -0800 (PST)
-X-Received: by 2002:ac8:5d86:0:b0:506:8738:651d with SMTP id d75a77b69052e-5070bd02eecmr103575551cf.62.1771804285639;
-        Sun, 22 Feb 2026 15:51:25 -0800 (PST)
+        bh=eaAuaX8i1J4KvXjA55C7U1MLeaCwL4Udn6KaFgAJ3gs=;
+        b=fAF4f3OygF7G+kRLUNPk0HhtEsnLSGa8SQLtppYflD9K1ik5Wcav/cR/zZ+H+AVe+U
+         v6yxxFQRVNsJihQZIxDs7t0pUKD1P+yj4V0ySSTdk+aoC7nlPUkaz661ruxbFW/V465+
+         46Kr/gHrBNPml6YqpwXthjw3L7IswDPaOEK+wEshYd+FdnuNOTJUhy1Mw62gAXMQy+IE
+         8gbr0xmM6JQGt7+DqOtBOrEBtj9shhd1fNFR3WeKak/ttliyHYbvY33BvYOTwdixFbSe
+         xitM0Lc2wxU14mxVd3h3wJSQaEqWVOlnGYbR6l64ohSpY2flNYD9fvg0i7EinkOFQK6z
+         xiqA==
+X-Gm-Message-State: AOJu0YyF9Sskqy5a8FEkP3qxl57YD4zYZOAK69ddOSNJLVq/KFnPxymf
+	6D3FS8h4PU7r3HRxVUSKKfvAQ4xqqJZiazpnXDATQFI7Oalp6DayX26z9osqxhSXWy85IMlMQuB
+	ycXSKoanzMGbEyivRfzXU+gxSR234PKlMFxgcOSUyu5lJhtV2RqbqtyK+N8jYGg==
+X-Gm-Gg: AZuq6aLyKoH9YfNRXh0hs/tDphU+KH4bVaGJ5CGr8/N43/TZaPnGawdhJSD2nJ2MoZn
+	BayHfuIGKci1dh+FnCPW/4fUMylaCzEK5qTxSHPtF8qE5oJEWFeTKGFxIgrxWcI1mHDKOH+d1po
+	cHHO2rwR3q/J8xQMscdiUnSIDcdSFqPjl3wKxZ+is3ti+RhOyi75NeE2sBqp8kQzsZzBqsWYjjO
+	PpDiLx59+Qlg9ruw6wfZX5IqqmpoC4ahW9+isuwpH9OJu12U5KsIkTLR68gDjyRq1pT3eR9qFfJ
+	zbwj4IrDCCMXbTjNafnQaPAxY3irXedJbO3YjbM6Q4BOLJhjRPV/xVKD3DhavRe84rgN+jyrdfK
+	wKa/tJQOZcHWrtp3qiQI2nTeLucx2e9e+6FbHh+vOepXdp+SDe9iWZK+3li80xw==
+X-Received: by 2002:a05:622a:1b9e:b0:506:c13b:f038 with SMTP id d75a77b69052e-5070bcf23b8mr89945191cf.75.1771804288204;
+        Sun, 22 Feb 2026 15:51:28 -0800 (PST)
+X-Received: by 2002:a05:622a:1b9e:b0:506:c13b:f038 with SMTP id d75a77b69052e-5070bcf23b8mr89945051cf.75.1771804287909;
+        Sun, 22 Feb 2026 15:51:27 -0800 (PST)
 Received: from [192.168.1.15] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8997c8a771fsm53701036d6.17.2026.02.22.15.51.23
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8997c8a771fsm53701036d6.17.2026.02.22.15.51.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Feb 2026 15:51:25 -0800 (PST)
+        Sun, 22 Feb 2026 15:51:26 -0800 (PST)
 From: Brian Masney <bmasney@redhat.com>
-Date: Sun, 22 Feb 2026 18:51:05 -0500
-Subject: [PATCH 2/3] clk: microchip: core: change asm nop calls to nop()
+Date: Sun, 22 Feb 2026 18:51:06 -0500
+Subject: [PATCH 3/3] clk: microchip: core: allow driver to be compiled with
+ COMPILE_TEST
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -87,7 +88,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260222-clk-microchip-pic32-v1-2-ceacbcd515d1@redhat.com>
+Message-Id: <20260222-clk-microchip-pic32-v1-3-ceacbcd515d1@redhat.com>
 References: <20260222-clk-microchip-pic32-v1-0-ceacbcd515d1@redhat.com>
 In-Reply-To: <20260222-clk-microchip-pic32-v1-0-ceacbcd515d1@redhat.com>
 To: Conor Dooley <conor.dooley@microchip.com>, 
@@ -97,54 +98,38 @@ To: Conor Dooley <conor.dooley@microchip.com>,
 Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Brian Masney <bmasney@redhat.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1318; i=bmasney@redhat.com;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=849; i=bmasney@redhat.com;
  s=20250903; h=from:subject:message-id;
- bh=CcOilrt5K4K/T1jJzE29QaA49JBm79z4ATT14FiguCo=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDJnTyvzawjMU+o+I8Iy142d4d0yvmc/8/XdouZNfK7xc
- 8nxnVeOdpSyMIhxMciKKbIsyTUqiEhdZXvvjiYLzBxWJpAhDFycAjCRsjkMf4X5eTctsp1WO2lt
- lsJiN7XOHYnHDl4oWTLzhN7mxO1ZSTMY/rtkL71533qS0xexIkuVP4cn/RTbdCfZNbdUrEfqYuD
- Rc6wA
+ bh=Vaz/v5iK5xCxuwXrVAC77q7tpyqLodfB6MfmVz11O5g=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDJnTyv3rmrYaLPm5DxXtacbHnYt/ZAza4eQqeKZluNT/
+ r4qZNjyvqOUhUGMi0FWTJFlSa5RQUTqKtt7dzRZYOawMoEMYeDiFICJPEpn+M1+br3yEW/HdTN0
+ ahue7kmZuaX5zcc/Jy9pnWze8trDkCWL4b/Dqv5LfQEfuGKFTosruhb03XGskWKY2GDymvlDaeO
+ ZDFYA
 X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
  fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-In preparation for allowing this driver to be compiled on all
-architectures, convert the direct asm nop calls to use the
-nop() function that's available.
+This driver currently only supports builds against a PIC32 target. To
+avoid future breakage in the future, let's update the Kconfig and the
+driver so that it can be built with COMPILE_TEST enabled.
 
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
- drivers/clk/microchip/clk-core.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/clk/microchip/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/microchip/clk-core.c b/drivers/clk/microchip/clk-core.c
-index 2e86ad846a66cd5487f5412c09ab0ad25ebe3f79..4e90988f47d5d3a370bd1a8e74c5778e4f071038 100644
---- a/drivers/clk/microchip/clk-core.c
-+++ b/drivers/clk/microchip/clk-core.c
-@@ -3,6 +3,7 @@
-  * Purna Chandra Mandal,<purna.mandal@microchip.com>
-  * Copyright (C) 2015 Microchip Technology Inc.  All rights reserved.
-  */
-+#include <asm/barrier.h>
- #include <linux/clk-provider.h>
- #include <linux/delay.h>
- #include <linux/device.h>
-@@ -77,11 +78,11 @@ static struct clk_hw *pic32_sclk_hw;
- /* add instruction pipeline delay while CPU clock is in-transition. */
- #define cpu_nop5()			\
- do {					\
--	__asm__ __volatile__("nop");	\
--	__asm__ __volatile__("nop");	\
--	__asm__ __volatile__("nop");	\
--	__asm__ __volatile__("nop");	\
--	__asm__ __volatile__("nop");	\
-+	nop();				\
-+	nop();				\
-+	nop();				\
-+	nop();				\
-+	nop();				\
- } while (0)
+diff --git a/drivers/clk/microchip/Kconfig b/drivers/clk/microchip/Kconfig
+index 0c03b14699bf083361bb5be8be3cf5305c311549..2864250dcaf8e720695c5a884a5aaf2efde15a1a 100644
+--- a/drivers/clk/microchip/Kconfig
++++ b/drivers/clk/microchip/Kconfig
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
  
- /* Perpheral bus clocks */
+ config COMMON_CLK_PIC32
+-	def_bool COMMON_CLK && MACH_PIC32
++	def_bool COMMON_CLK && (MACH_PIC32 || COMPILE_TEST)
+ 
+ config MCHP_CLK_MPFS
+ 	bool "Clk driver for PolarFire SoC"
 
 -- 
 2.53.0
