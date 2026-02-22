@@ -1,85 +1,84 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4148360748
-	for <linux-clk@vger.kernel.org>; Sun, 22 Feb 2026 23:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C553612C3
+	for <linux-clk@vger.kernel.org>; Sun, 22 Feb 2026 23:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771804288; cv=none; b=hlF88/u6Q5oDP0c8vlHzMMyHZqYENzC1HdcBH3XahqzshBxCAw4J5l/FbpQ18q0YWQpbZ3PLMPbseifXNUGOgDIlDAfbr4NGqEqf+RTsNlj/T3dYMzYB4xvUIpbdTqWvyDVG72v0oz+jC5itKrc8AcFHI7/0I0UlK5lOPTMb8x8=
+	t=1771804290; cv=none; b=ClrUhr5A7iKAOi6eGPag5pM9VzsQzfieoMdferGNlKy/aK1+7Mw7JtQNpRtIysZ17ZV6W9iIqGK7Fb2xl5CurDq2PuM4/0nq4W+0UbNpDQw9YPib7RNhr+cr9YlPHauLw5lP0+MMaeEob9vZoqyVyIWtutdhk3SaDlarxQe0qDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771804288; c=relaxed/simple;
-	bh=CJrk612FhmjDj3VPD/9bUWPYLrlPaYeOFopd1zExvM4=;
+	s=arc-20240116; t=1771804290; c=relaxed/simple;
+	bh=CcOilrt5K4K/T1jJzE29QaA49JBm79z4ATT14FiguCo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=a9gjTv7CAoJy2SWML4PKUlK3C01mQ8Q9foOWimar4D4wzOvI16yGXnNfg3bF5N3NjZXrM/K25nnGMci2bkqvbI/Fln6nG8Mwwj8/YHGgrXBOq8KMT8j4v0a0veFnKBM6mK8hy+0jGofSEo3JGK2iQQxcYq+ZELkjo/AdpG2vc6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NTxF1tni; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=I0IApbXZ; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:To:Cc; b=O1znej9TPCAQEZYSsaDdTPJSTy2tmkzxKAjKKOKG+99HxyQhdok336WG+5jv2FSWtuo/bKddH40hC4Qk+KQxF9uRYpl7TPvjDmSFtqWrLhVoAiRFLasdgqywG6vImOqooOFKcG2L9XqQjaMjlxqtRd0Pqb2WZHYCrroS5nw2E28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JCFaqAJt; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=mGz+nwhL; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NTxF1tni";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="I0IApbXZ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JCFaqAJt";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="mGz+nwhL"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1771804286;
+	s=mimecast20190719; t=1771804288;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ByAYkrfBSiLzcdOcDwRXDw/exNoypqVtDNBAFQcjrrw=;
-	b=NTxF1tnigtMywL6RRM0RIV9XZiXE9T3MFi7li04DzLmrTAiqVshQ0LjQ7G9XEai8LBHxUi
-	DU8bhEcUghng+nqQOorl5guLi8D9z2AwB/Cd4Gw+MgNzENF9LbadMVawiKxlmZWnEPuQ8F
-	9zQ1t1LWF1NXP7DC5vBPQ+U7LLheXGs=
+	bh=SP/zy4pHeHh6oU011bprJUoBpIb3oQUn1FgaJ/yqaQ4=;
+	b=JCFaqAJthLqFI27MUyOfNc9NfixLJludni1z6erbvhuwZb/cy3hcRBokfUPhsQUSVRsESn
+	+X3dm/GStSmFHgItFBuBmP/Tp67Ke4kPnnekQIJHfdkDYY/imebZNBfGt/ErNWbdUylAE3
+	jAb3trVzahMKg5OdQUgjioZqRvIUELo=
 Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
  [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-252-EGOQ2zxUOjGOrghCMxpAbA-1; Sun, 22 Feb 2026 18:51:24 -0500
-X-MC-Unique: EGOQ2zxUOjGOrghCMxpAbA-1
-X-Mimecast-MFC-AGG-ID: EGOQ2zxUOjGOrghCMxpAbA_1771804284
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-503915b0a88so67384641cf.1
-        for <linux-clk@vger.kernel.org>; Sun, 22 Feb 2026 15:51:24 -0800 (PST)
+ us-mta-533-H4XgXyL-NPmIxQ3mWk1q8A-1; Sun, 22 Feb 2026 18:51:26 -0500
+X-MC-Unique: H4XgXyL-NPmIxQ3mWk1q8A-1
+X-Mimecast-MFC-AGG-ID: H4XgXyL-NPmIxQ3mWk1q8A_1771804286
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-506a936d7afso470694701cf.3
+        for <linux-clk@vger.kernel.org>; Sun, 22 Feb 2026 15:51:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1771804284; x=1772409084; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1771804286; x=1772409086; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ByAYkrfBSiLzcdOcDwRXDw/exNoypqVtDNBAFQcjrrw=;
-        b=I0IApbXZut6/gK+NkFoFjCi/wBcjveJAOm1gdzm0nTo08vw1HJs1QE/Af/w1z7AhCp
-         RPAP5YeDjcKIfoHHI6JRkdwOzYOxxg2vX5rJujCDAz1DJ0BM6+qDa9Iu00opUu/o6lLW
-         8aET3j1qxVVd4FF9b6Fyai1LlpRYTEpAZQVLtVg+1Jwiln0WcmL4pMo/PNlw4c0QFcRt
-         RXBEzNWaCcTxwObHx7RBmHoxxGYJ/hBhoW5eiN/Y8DDDvLeIFZxLOddFYUDV0mkWBcv3
-         UU8bI/VZlVRmuEtbyLJyHckLcPW4kyBX6LpZSf1KNBGvwTziTM+qFrz2JmQrj/UDNrf/
-         oR/w==
+        bh=SP/zy4pHeHh6oU011bprJUoBpIb3oQUn1FgaJ/yqaQ4=;
+        b=mGz+nwhL7hjw9mHSPOeynrh8SPZg+Cl3bNi0sUUGzQ9j/hb2A/cw1cml4duspZqdAb
+         WWyFjHv2oxG41RuY/FXkwb7RNqjPRXws7VrnXt3/TJcDa21pvfxRdZ+B/xAinJSM9lGX
+         WVg8TBhRo1EkkkPziEujyVFjW7GESdFZMkv4/0QAZI+0AqN2eHQxw36nqwy91sln1hjd
+         uXagqg0QSWBNuYYlprw+jm58TlqwQRzkwV8vpEUllcRMa/oozfGbbEJVVT3+dnFrLOI1
+         PMhvE26g6ZfNyWIt+PRwYkSrVWpVNN8P9QO7mcQo59g3B+oB12r8QkbwlkB/PAvNsJka
+         XQZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771804284; x=1772409084;
+        d=1e100.net; s=20230601; t=1771804286; x=1772409086;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=ByAYkrfBSiLzcdOcDwRXDw/exNoypqVtDNBAFQcjrrw=;
-        b=Lqc5jgplKXoBcBWDEvtOD9ZbSqlFy/DoaH2mBGHfkx9sTRxSC9cuzetwzNU5BBRiY5
-         bsduZFi+9QG4TW8D9/p2Br1N1Me+nC6cZpbjBwsLKyuOzuzTVOQ3COEYRVLHutaoJxv2
-         hFy+B+D0tI1FGy04TwEBouPAUtTf5xjNXGXa/eIeIONtq82YLe2wW13G26gqlXOHB7Q8
-         YviIVHl0N4ozB8DR2ACirI3SXE/VSbvB6D+snXSeh+5OCkqipuR33ciEpjjh2zhssVJk
-         k6aJ3VUdU40mOENlyuvgbqQSQk2xcuh77B8Y0J7qyUadrJJSWOsid1X3OjSeydV05XLO
-         GxUg==
-X-Gm-Message-State: AOJu0YxUf0M/kXiQPiZJtDxZDmLQzzLS2jSjHR0GqFqCYXhOtPez3oSi
-	wyDLMM9ohCTOTlqkvx2ESZsP+SihL58vhqh/7Hq/MAJDTEFfdxVUqsN83IzN1VRBE2mKXgPUlaw
-	Z/EHD25eX8w1sTevozC7exzLbt2crzlVZfvCd5IG1zNEIjCD9gLPlG1t0wkeHig==
-X-Gm-Gg: AZuq6aKy8IBcsG4WyCi2j8iXbsAhzebgAgEi0WyBp3Y/Q1G88FLu4ZgCP8C//QFo8sO
-	N2o0DPKEYZouZ4siuBEMk5cGAVNVYXUsAkQ+yklp0IGYXm6ht6MK7I8jg4vU6Jt9ZLLbTqwohHB
-	K9t+dcDQ9jhdY3RE4l1lTfr01n2BzeZkwfstqttO4SU5z/3Y9+3qCO5GnwIiFkuyvqHGjcn9f4A
-	xkWynP1FGxnpfut8MJVuSIxv2hMjmnIS1shWv2YI8Jymz+gSon3+813bYSAhjj9+IOBoQyLO+Ih
-	+SLV8hhnTO7kT6ahsLue9QkgbyFYjtZMrJQ0iI0AraOpHNx6FpiyRFo23lWX2j1Egwt5jQJWLix
-	eVIoMHZMLGjHmJBeb6GxofTYEVrpf/Vz7OJSrgY9HWgImmHUTrDLK2vWUIyVDrQ==
-X-Received: by 2002:ac8:5cd2:0:b0:4ed:bad6:9fa9 with SMTP id d75a77b69052e-5070bba0e2amr100498261cf.6.1771804283833;
-        Sun, 22 Feb 2026 15:51:23 -0800 (PST)
-X-Received: by 2002:ac8:5cd2:0:b0:4ed:bad6:9fa9 with SMTP id d75a77b69052e-5070bba0e2amr100498141cf.6.1771804283523;
-        Sun, 22 Feb 2026 15:51:23 -0800 (PST)
+        bh=SP/zy4pHeHh6oU011bprJUoBpIb3oQUn1FgaJ/yqaQ4=;
+        b=Eg1Ee1EimsiWNZeN6W3gTUEhw3hNrZGHgYmRZx5Hc+bCOJOPlat/B2VZJCNCRPujgw
+         9+/tHTx3aTfqjyMGuGTcDiT+u27VWUjBXQTMlvJ8tPS+2IDsYRGUY2Q/Jaf/6EC4JWTw
+         bwf/TCYu1fGm2tH1VkFE4oj25ZzzrTq3b5qz24ElAIhkDmTsxaWF6IZwGCkUQxuPdqVc
+         v0DXim+0AB1ZZkLlE7D1JtuFpnqtaB8qYMZ71UY7XE1Hh6tNFNXlY098Erd5yw41fIYQ
+         EF/2j15LSVTmbpo45zUyDavekI7MNwvmgnCB5tj2IEXdNmct2WckrI/08fFdFysz9kWk
+         zEeA==
+X-Gm-Message-State: AOJu0Yw40JaNu5rj4RxAo+X7rNQLSC1UW2v/HZ6VRBPmABT3KHF0gMA0
+	i0D8H5I+x6bykL7UEvfKme5jB3uYjmMfui4wNAPstFUXHlito2IHHRbY/4sVLMj3Bwhi0jEpxFR
+	qZVLQuqmPf+kAirOmhQyAT2ntRFQF3Vdq3sjKmDViKeWiPvgEEn6LFD9kAXXlXg==
+X-Gm-Gg: AZuq6aIz/vCWIFal4Ge1fAKHFUBVTKHgO5jlKKpmUTvLnNYWXmE2gYH1uVNXW0Cw/iM
+	4JVkq9aUH6q3j7mvXpopeBuj4S9ju/Z22LNDQyzg3YVev8E7TXy4QOHLzCRAwLUYxNshGmOR92h
+	pte0O/2klMaKwNMhMfePhWjr9ZorDomjvXoa2Llc5/AyidE4HxjFaJ+2OY3YAcwcK9AuCl35XOf
+	uen/bhIvorbVk84fyPVg87E+lEyLoWX3S9NpW1xwTOVPRbMPIeG1gY/u275vEYYqQq07LO4V/lA
+	y/PfyjDBuN2DWO0kLVGPgbyyuk74QcqtOwogMi64tHYyiuHhYY8/fxK/ggVezBJH5odPoDzIX/7
+	KegFofWgmJAFHsxTBc2OueQi3EInj+peBugxeHxmJz6LIoUIEzBS5tXyXmIJ2qw==
+X-Received: by 2002:ac8:5d86:0:b0:506:8738:651d with SMTP id d75a77b69052e-5070bd02eecmr103575731cf.62.1771804285977;
+        Sun, 22 Feb 2026 15:51:25 -0800 (PST)
+X-Received: by 2002:ac8:5d86:0:b0:506:8738:651d with SMTP id d75a77b69052e-5070bd02eecmr103575551cf.62.1771804285639;
+        Sun, 22 Feb 2026 15:51:25 -0800 (PST)
 Received: from [192.168.1.15] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8997c8a771fsm53701036d6.17.2026.02.22.15.51.21
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8997c8a771fsm53701036d6.17.2026.02.22.15.51.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Feb 2026 15:51:22 -0800 (PST)
+        Sun, 22 Feb 2026 15:51:25 -0800 (PST)
 From: Brian Masney <bmasney@redhat.com>
-Date: Sun, 22 Feb 2026 18:51:04 -0500
-Subject: [PATCH 1/3] clk: microchip: core: update to use div64_ul() instead
- of do_div()
+Date: Sun, 22 Feb 2026 18:51:05 -0500
+Subject: [PATCH 2/3] clk: microchip: core: change asm nop calls to nop()
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -88,7 +87,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260222-clk-microchip-pic32-v1-1-ceacbcd515d1@redhat.com>
+Message-Id: <20260222-clk-microchip-pic32-v1-2-ceacbcd515d1@redhat.com>
 References: <20260222-clk-microchip-pic32-v1-0-ceacbcd515d1@redhat.com>
 In-Reply-To: <20260222-clk-microchip-pic32-v1-0-ceacbcd515d1@redhat.com>
 To: Conor Dooley <conor.dooley@microchip.com>, 
@@ -96,47 +95,56 @@ To: Conor Dooley <conor.dooley@microchip.com>,
  Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>
 Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Brian Masney <bmasney@redhat.com>, kernel test robot <lkp@intel.com>
+ Brian Masney <bmasney@redhat.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1185; i=bmasney@redhat.com;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1318; i=bmasney@redhat.com;
  s=20250903; h=from:subject:message-id;
- bh=CJrk612FhmjDj3VPD/9bUWPYLrlPaYeOFopd1zExvM4=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDJnTytN9V5zKl910yfBFZmvtdX/h361Nk3bFXBO//PU3
- uX6P6NPdZSyMIhxMciKKbIsyTUqiEhdZXvvjiYLzBxWJpAhDFycAjARluWMDFOFTQwCRP5ICthv
- zlxqzmC8syUoaAmfjqU9S8XbsyJxPxkZLn7mLffdaHMrSu6shduyJ5Nzbr06bKNU2Sdxc9uxBqM
- 2NgA=
+ bh=CcOilrt5K4K/T1jJzE29QaA49JBm79z4ATT14FiguCo=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDJnTyvzawjMU+o+I8Iy142d4d0yvmc/8/XdouZNfK7xc
+ 8nxnVeOdpSyMIhxMciKKbIsyTUqiEhdZXvvjiYLzBxWJpAhDFycAjCRsjkMf4X5eTctsp1WO2lt
+ lsJiN7XOHYnHDl4oWTLzhN7mxO1ZSTMY/rtkL71533qS0xexIkuVP4cn/RTbdCfZNbdUrEfqYuD
+ Rc6wA
 X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
  fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-This driver is currently only compiled on 32-bit MIPS systems. When
-compiling on 64-bit systems, the build fails with:
+In preparation for allowing this driver to be compiled on all
+architectures, convert the direct asm nop calls to use the
+nop() function that's available.
 
-    WARNING: do_div() does a 64-by-32 division, please consider using
-    div64_ul instead.
-
-Let's update this to use div64_ul() in preparation for allowing this
-driver to be compiled on all architectures.
-
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202601160758.bpkN4546-lkp@intel.com/
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
- drivers/clk/microchip/clk-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/microchip/clk-core.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/clk/microchip/clk-core.c b/drivers/clk/microchip/clk-core.c
-index 692152b5094e00bf5acb19a67cf41e6c86b11f35..2e86ad846a66cd5487f5412c09ab0ad25ebe3f79 100644
+index 2e86ad846a66cd5487f5412c09ab0ad25ebe3f79..4e90988f47d5d3a370bd1a8e74c5778e4f071038 100644
 --- a/drivers/clk/microchip/clk-core.c
 +++ b/drivers/clk/microchip/clk-core.c
-@@ -341,7 +341,7 @@ static void roclk_calc_div_trim(unsigned long rate,
- 		div = parent_rate / (rate << 1);
- 		frac = parent_rate;
- 		frac <<= 8;
--		do_div(frac, rate);
-+		frac = div64_ul(frac, rate);
- 		frac -= (u64)(div << 9);
+@@ -3,6 +3,7 @@
+  * Purna Chandra Mandal,<purna.mandal@microchip.com>
+  * Copyright (C) 2015 Microchip Technology Inc.  All rights reserved.
+  */
++#include <asm/barrier.h>
+ #include <linux/clk-provider.h>
+ #include <linux/delay.h>
+ #include <linux/device.h>
+@@ -77,11 +78,11 @@ static struct clk_hw *pic32_sclk_hw;
+ /* add instruction pipeline delay while CPU clock is in-transition. */
+ #define cpu_nop5()			\
+ do {					\
+-	__asm__ __volatile__("nop");	\
+-	__asm__ __volatile__("nop");	\
+-	__asm__ __volatile__("nop");	\
+-	__asm__ __volatile__("nop");	\
+-	__asm__ __volatile__("nop");	\
++	nop();				\
++	nop();				\
++	nop();				\
++	nop();				\
++	nop();				\
+ } while (0)
  
- 		rodiv = (div > REFO_DIV_MASK) ? REFO_DIV_MASK : div;
+ /* Perpheral bus clocks */
 
 -- 
 2.53.0
