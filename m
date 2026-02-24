@@ -1,84 +1,34 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC293A7830
-	for <linux-clk@vger.kernel.org>; Tue, 24 Feb 2026 17:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7B5E555;
+	Tue, 24 Feb 2026 17:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771954054; cv=none; b=NNDpb8LkHx9p+Fxs4U4OlLZnwAK2DEDTH3+lvZ6iFOEwDrUPVWga4ISs03VYBlFQXjr6jGhoyDZXI49QGMnY2DL7BRp5YK5VThv7Z7bG6N95Yyxoo/kP8eAdK2IHS8YnVUTjNEQT06eGH6wUYTMflXK6bSXIePXlz9ikQbKNwqg=
+	t=1771954590; cv=none; b=saIeqhG4UjaADy1B47/IMAnLy2UDvgdEcxwVMkcjZoIpSfle8Hu+S9kB4u5+cUivNrNo440t46DZ+r++5tS1wtO8Jq+IVqxuWxZXBsmWmzs+sUUSKPfoakQQ6mE8HmxIBlTLHVWLKKSij549PAv6LQI0sDg6rPSvOXMiut9oVIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771954054; c=relaxed/simple;
-	bh=CFNcgT5tTeQlPUmrqPT3KTvOxfvrh7kc3JhWiYY0w54=;
+	s=arc-20240116; t=1771954590; c=relaxed/simple;
+	bh=xSmbzUw5iMxQDdpWElFmPaglUBPSo1GRMrPeTHcyCfk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rM8jzd+RK8b8/8bmqvnwde8DygYc7feBrXoMcNbHqhRU9tb/SCp7yidIgxpNT1rBWmBoCk6ZUT9uZfot6Zx65KU663c882pMDLefC28SPpLlT/UJtYynDkJRjxTbo6kvHLID3Kd4JXXkRjz9NewvZigjZlJVMRnzVnvd07Vu87s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SmW9nw9R; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=V1zhMF4X; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=WVnmy+4RRMjV627WmTp5OVUwdjFtUymjvmmyK9ZMxBTtHJquVux91CZQiPRgH/MBEDqw7miLPpBMD7Rp94MsJQiAGA2pBXF8St1voZ2YPmpHbIqAmv7AQ4VPNjIpmODgnpPpFMTNhstGzRvMbvPb75Dzm3OTbKM4GouNso5mAa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nAWUqf3s; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SmW9nw9R";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="V1zhMF4X"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1771954052;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Xn0/IHpnvVZQzpCmT4NuXRsMwOR3rQ6bDNrVNdr8+MM=;
-	b=SmW9nw9Ra5Fj3UHoaVSo+pylsfbAakyRc11BDRT9llYXbKXsliDuuSIzq/xXJIFngp5Lac
-	ANP7utuJHduDPuLhOW2doKcdBetnHmwtm9FEc9P2DgdFBHfEQXwC49cPJD1IFsIR/Hrkpi
-	JMkw4mbyPDGZMISebQoOaidizmoClOs=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-631-0bS8bls9NMuLK2OSKvBNkA-1; Tue, 24 Feb 2026 12:27:30 -0500
-X-MC-Unique: 0bS8bls9NMuLK2OSKvBNkA-1
-X-Mimecast-MFC-AGG-ID: 0bS8bls9NMuLK2OSKvBNkA_1771954050
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-89700915423so90218656d6.2
-        for <linux-clk@vger.kernel.org>; Tue, 24 Feb 2026 09:27:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1771954050; x=1772558850; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xn0/IHpnvVZQzpCmT4NuXRsMwOR3rQ6bDNrVNdr8+MM=;
-        b=V1zhMF4XwwYMNiiuhf3GjA4vE4DrLafZ2CPmnWUEKXD1qazuIt5py2LnPVSn/HebFz
-         hMK7Q8Hb31SKxIk2U2LqG46JAYP/725EA7/pqYZ+Rsmw+o/UG7c9MCHSZmfyajkK5OJv
-         IzpzIP9bdKluZaSkk2rdmEaw2HOaBUSPgm2IUHJqfLPH88SogmVgSFnnQfQADWieu1H3
-         MMv+c9texd0Dv1H+f6P4OzeqtrdSsXt6gu+EYBOazyMvtYH0QuZgWPInh1svkYBM93yC
-         CTwxqndUi/Rcv0+6vAM2i6+kTlp0xJpNcfdo8QcC3jcle4vzHL+lnUZGUyY6lh6YmqM7
-         WAjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771954050; x=1772558850;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Xn0/IHpnvVZQzpCmT4NuXRsMwOR3rQ6bDNrVNdr8+MM=;
-        b=PQeem07DYRWohpQamgxgKB7Pf8YG24KtJWoCI9ifRACCWZSTAnFT6TEM91+ZQZbGeh
-         N3LaoUWoFBO6pVNX20xyoT+53QdCW3TyOx0REz479kY1cFF2XvcsK00BePljCDIw+bRD
-         qvnYoJXe21hbRusPHTsHNwnxUgStvG/7h6Qb766E8U42TdcBQSDOIWy1UiKwNfWWVdNT
-         xJY2Ys0H7GiOJvjoiPWExdFZD7mJRf2ruP5ls6nuH4qb3FNihRvHAQ/H0mI9I3N+fgPN
-         OdAObkjoIK9TL1eSrjGQWCIM2XzPQAn/+4VPQTi2aiw1WjeeK9hKh2CX6FucBXgSbu54
-         uvtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXu0/JLLfjA5VslWmDpjFgHAvE68ipXKWR5I4/BBP3eZc8gjNeL5JtdwYEXDDY4ZHQNTIi7XzQj6Yg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdPV8OkFHfdXWCqNTn8y8j1nVt6oA/PRliPb4RGq8jO8cUGib1
-	GyZ19fP8pRSJOzWdkH3+hCeb9+mBfuL31EjGpz8C/SC7YGEw/8zAi48Y45lH9DhPmEjBOl6CvfN
-	kae1r9Y8IFUQS0QeLqpX7scCatC7sFdwPmoQGoNaQfmdDsVH75gfz9n+hZzcNlQ==
-X-Gm-Gg: AZuq6aKoroCPVT3WB8P1Ep10ol9CufvWw2siUCDg0BESjoEram3ZUt8/B7sRdEUHlyt
-	xvBpPMYUj/WsvZoh7G3HZQtjCGTs6GPFGhLgrSVV716k9SaCkIwG8FQjFbGh8+xBvWuIVV8RX8j
-	b5J4gtBQ9kaaXP3+KyNKtVVN8EfId2Cz5IvhoyIRsFCBjItRdVQowAuIn01Z8lTh7bGDPyUpVnO
-	JiMPj6JndU2kSKxtF1VJ0hEuut9Q8BJqwPniEwLHlntjRDs3bFUTvivkVhoUM+smqWdEeFULRud
-	kOgzWmJU2XVzqu/7zaBWPqQpIqP78c6eIvFCH1Kb7PVTgLIZumTLi0Hs9CeOvhHc1q2e3n2ykir
-	SM68Bx1pdY5yH8XAhE0TyjXINljGyPpCHFm8G+zDpXS1QA/3+K1hiWggj
-X-Received: by 2002:a05:620a:4150:b0:8c9:f996:8203 with SMTP id af79cd13be357-8cb8c9cde5bmr1776867385a.13.1771954050040;
-        Tue, 24 Feb 2026 09:27:30 -0800 (PST)
-X-Received: by 2002:a05:620a:4150:b0:8c9:f996:8203 with SMTP id af79cd13be357-8cb8c9cde5bmr1776858785a.13.1771954049089;
-        Tue, 24 Feb 2026 09:27:29 -0800 (PST)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8cb8d063f0dsm976280585a.15.2026.02.24.09.27.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Feb 2026 09:27:28 -0800 (PST)
-Date: Tue, 24 Feb 2026 12:27:27 -0500
-From: Brian Masney <bmasney@redhat.com>
-To: Conor Dooley <conor@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nAWUqf3s"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BA00C116D0;
+	Tue, 24 Feb 2026 17:36:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771954589;
+	bh=xSmbzUw5iMxQDdpWElFmPaglUBPSo1GRMrPeTHcyCfk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nAWUqf3sXmHuZb/KjeUrcjP80zgKBstHVp1GS8Nmrtz3vWFTbLpj0d0AYF52Bs4jC
+	 NOqb1d3pCFIQsqOwls3+hP3uq0Jna2kqCCswKylAByuHHgU80Nio0nT/0zKTUlA/p0
+	 GpnkFUGuxx0rcHGlaYFhypwVYekdeymhuOzCTWANHQW7/G5WBi+8HeCGrR6Z0dOyrt
+	 Gbk+FL3BZ/E+/Nuf4w9V3DhsH/jKhz90N2gkm65+TVQZ3yLTmCq5VB/mYxrNwa74aq
+	 r3c84hmZxuIha/M3jeVdr1TOc8bp54aQQTRrNxiZv/czvQ8+XG3RlsDGMGIlOlkb+R
+	 8XrpGQaYkfBIQ==
+Date: Tue, 24 Feb 2026 17:36:25 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Brian Masney <bmasney@redhat.com>
 Cc: Conor Dooley <conor.dooley@microchip.com>,
 	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
 	Michael Turquette <mturquette@baylibre.com>,
@@ -86,63 +36,69 @@ Cc: Conor Dooley <conor.dooley@microchip.com>,
 	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
 Subject: Re: [PATCH 0/3] clk: microchip: core: allow driver to be compiled
  with COMPILE_TEST
-Message-ID: <aZ3ff9vq9yuCkwTQ@redhat.com>
+Message-ID: <20260224-gotten-showing-f5f276daa541@spud>
 References: <20260222-clk-microchip-pic32-v1-0-ceacbcd515d1@redhat.com>
  <20260224-placate-runt-54aa8419ec40@spud>
+ <aZ3ff9vq9yuCkwTQ@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="AxT4YrSvvQh0ZT00"
+Content-Disposition: inline
+In-Reply-To: <aZ3ff9vq9yuCkwTQ@redhat.com>
+
+
+--AxT4YrSvvQh0ZT00
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260224-placate-runt-54aa8419ec40@spud>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 24, 2026 at 05:10:42PM +0000, Conor Dooley wrote:
-> On Sun, Feb 22, 2026 at 06:51:03PM -0500, Brian Masney wrote:
-> > Here's a small series that lets us enable COMPILE_TEST for the pic32 clk
-> > driver so that this driver can be compiled on all architectures in the
-> > future to help avoid breakage.
-> 
-> Why do you care about this platform? Originally I thought you cared cos
-> you were getting involved in clock subsystem stuff, but I see you doing
-> stuff with it in pinctrl etc. Is that just general cleanup work, or do
-> you actually have an interest in the platform?
+On Tue, Feb 24, 2026 at 12:27:27PM -0500, Brian Masney wrote:
+> On Tue, Feb 24, 2026 at 05:10:42PM +0000, Conor Dooley wrote:
+> > On Sun, Feb 22, 2026 at 06:51:03PM -0500, Brian Masney wrote:
+> > > Here's a small series that lets us enable COMPILE_TEST for the pic32 =
+clk
+> > > driver so that this driver can be compiled on all architectures in the
+> > > future to help avoid breakage.
+> >=20
+> > Why do you care about this platform? Originally I thought you cared cos
+> > you were getting involved in clock subsystem stuff, but I see you doing
+> > stuff with it in pinctrl etc. Is that just general cleanup work, or do
+> > you actually have an interest in the platform?
+>=20
+> My sole interest is to clean up the clk driver, which spilled into
+> larger work to clean the include header to allow this driver to be
+> compiled on other architectures. If I was going to do this for the
+> clk driver, it wasn't that much work to do the other pic32 driver
+> cleanups while I was there.
+>=20
+> Honestly, I hope to done with all of these pic32 drivers after what I
+> posted this week has been merged.
 
-My sole interest is to clean up the clk driver, which spilled into
-larger work to clean the include header to allow this driver to be
-compiled on other architectures. If I was going to do this for the
-clk driver, it wasn't that much work to do the other pic32 driver
-cleanups while I was there.
+Not to pooh pooh your efforts, but I asking as I am wondering whether
+the whole platform should be deleted. I'm gonna ask internally about it,
+but none of the authors are around anymore and seeing
+| git log --grep "pic32" --author=3D"@microchip.com" --pretty=3D"%h%x09%an%=
+x09%ad%x09%s" -n 2 --date=3Dshort
+| 5e972ac119c87   Conor Dooley    2026-02-24      clk: microchip: rename cl=
+k-core to clk-pic32
+| a726f1d2dd4fe   Purna Chandra Mandal    2016-06-02      MIPS: pic32mzda: =
+Fix linker error for pic32_get_pbclk()
+is bad omen.
 
-Honestly, I hope to done with all of these pic32 drivers after what I
-posted this week has been merged.
+--AxT4YrSvvQh0ZT00
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> Also, seeing "clk: microchip: core" in my inbox triggers me, cos the
-> stuff I work on uses "microchip: core" a lot for FPGA IP cores. Can we
-> do:
-> 
-> -- >8 --
-> From 5e972ac119c87257ce141382019f2b58ebd53359 Mon Sep 17 00:00:00 2001
-> From: Conor Dooley <conor.dooley@microchip.com>
-> Date: Tue, 24 Feb 2026 16:59:53 +0000
-> Subject: [PATCH] clk: microchip: rename clk-core to clk-pic32
-> 
-> clk-core is a confusingly generic name, since it is only used by a
-> single platform and it uses very similar naming to the "soft" IP cores
-> for use in FPGA fabric (CoreClock or similar is what that would be
-> called, although nothing like that exists right now) that the FPGA
-> business unit produces. Rename it to clk-pic32, matching the prefix
-> used by most functions in the driver. As far as I can tell, impact
-> on whatever users may (or may not...) exist for the platform is minimal
-> as it's built-in only and the functions are called directly from
-> clk-pic32mzda.c
-> 
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+-----BEGIN PGP SIGNATURE-----
 
-That sounds good to me. Please post that as a separate patch.
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaZ3hmQAKCRB4tDGHoIJi
+0l+AAP9laHWHU34tuSspOuu/pPOHUB9Wa3c33hsLrNJPFUdIOgD/Z3i5paBanWMa
+USqkXbK+sj5Z7S4V4riugTLLSGuvoQQ=
+=AxBN
+-----END PGP SIGNATURE-----
 
-Brian
-
+--AxT4YrSvvQh0ZT00--
