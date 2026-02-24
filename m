@@ -1,164 +1,86 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF64376BE4
-	for <linux-clk@vger.kernel.org>; Tue, 24 Feb 2026 11:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=170.10.133.124
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771932841; cv=pass; b=AAVo5k3qa5DapCAEMQkd5jaQ9YnQEHSvWMBdQSL28ox0YsK454rfSs3uieo5BvW1WKMNfdb2TiACGYhlLvxH5cCZ/8jCh67OiJXzoxxcs5QOHYbXAjS24queqx5NMLlr9TXyURV+Ntt4Sx8HgwKvtEkjVp1vDbVgJvtt3zr1RGo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771932841; c=relaxed/simple;
-	bh=e3fFdUkJcs62tdGmt94fUffFddFQh3eOqTXtq9Bfi2I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DweFaDqO7PUvFfpjLZGqbQmKyM5xvF4AijMBjySxG/sPM58knojCOStgNQoQKpGXon6Yn5UuTj5gAKCgSe4W8KwFHwaKufv82k+KY8AzHmq1eEZXE3xHc7InseCflqBYh7HZyQoucmGy5SnbTauE4km861lIem4l5Q5tvADo7mw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RcLW7F4A; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=shDzO+Hh; arc=pass smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D8E37D116;
+	Tue, 24 Feb 2026 11:38:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771933109; cv=none; b=uHa65n6F7BcU/rgflQQtv2vyY3SC3AXJMPLcCHOPVXWtNigjq8GeXq3THAdrLrCL+fiI2RyEzT4SdpzQvowqV8YxxhMdOuFXWLsN26dak2mUysv3UOJvzdbAyltIC5VvawU3zCkyluKayrOI72W+F80dAys4u5mDo60Fwnd9Q/0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771933109; c=relaxed/simple;
+	bh=QS7CNJiQG7B9ALbJjQUVylSiRh7zGL57LuSxHqmBi4g=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=O3iwE05sP0S7Bth7c4PfW7ElP6T+Fgj6m1TDtKrI9z69M+a7oWDBR1hMQfUVvtyOoqSYdXTjjqx/P0Xjg4kDvCP6UAM4y9GGkZTH1HNuIBHyEEP9UxR6Ie9sp+HWVPCmGok4JA2BgAsaNlJWTAjZEEyNTeH7DoUtdkX/phihCKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uzzkmfv9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RcLW7F4A";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="shDzO+Hh"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1771932838;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H1XbW7/Mchf18o4deZ5UyLtW8vMbGMc1nfkosLZ6hzk=;
-	b=RcLW7F4AlsSJX7tb/qqUyxzEdaRBauweEIsgOPuVE2jnXx5wQSvm7LmdFZowWhJPdEA8Fp
-	n2c7rotPs7RHse/GNng5lXnoRRVo9WqE5CDkgCy/di0PmEiJV87qKzg6UItaYvCwHc3QGj
-	98TFfmBz6SraE5c8cA5rZMTwfV8QZek=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-14-Di6yjyWvPjugEAI525KMVg-1; Tue, 24 Feb 2026 06:33:56 -0500
-X-MC-Unique: Di6yjyWvPjugEAI525KMVg-1
-X-Mimecast-MFC-AGG-ID: Di6yjyWvPjugEAI525KMVg_1771932836
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-b88622fbe54so92503966b.0
-        for <linux-clk@vger.kernel.org>; Tue, 24 Feb 2026 03:33:56 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1771932835; cv=none;
-        d=google.com; s=arc-20240605;
-        b=QOzhw/W9vBVg+9SnPQ1syYJQ0v7haJjTDTEzXmQlws5AzsS3vlu0kdp/E8AwpwO+ju
-         DtPl6zF0aSD+whNDMPOutdB/mJyrl7XQNpR9wykVRQXTcfY6b4jNAvVr7hdO55ChP+Ij
-         AntC+ww/9pelxk83bHt8G48OeqCOpXjidgLlaenl1Mxmvj9R4mEh4UB4nyOECYaWjvCT
-         Bfr3GmtKLEBCITV6YYuB2GU1nS7LO2tolSjM/xQ+jwvU2PlSfCS2VvtCvv1kLIL02lGv
-         stlBZ4jVnAq5YVHwNjxrXYXu1J+zFYtmhkxUTdlGJ1m9/DjFbm8+aDHP712/4mX0djkh
-         J1Ww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=H1XbW7/Mchf18o4deZ5UyLtW8vMbGMc1nfkosLZ6hzk=;
-        fh=nnrYK6k+TAYaDLdRcsNq3cvvE/HOw3u1KDGWuMmG84o=;
-        b=hRmEdKI5o4MsPI3iNg5QI5HavqODPm67GA25zk09I51t27YLIl2juGNFTWZENkVy7A
-         m8azdGbfdC4HvbFkxDCecBu85BgML7KniV49z0F3B+LKSWsXaYDxdMAIpuZMNce6+O/V
-         V6OTXAMOGuFfBy7UmmUQN8rgrNzlYThKikk/ayJUK3oOI+xjgfe5Wp081XQ9oawi0syw
-         4qpft56RW/8CohPO/WQS5FZsP4BMePuBz6i7oiIuTy157076STEnMq7zYNi/uP2j6cjk
-         tayLq0zJefpE38hu9Ui8dphb/gHJnCUlYqnUijIBkw0X6aYhScSlIxwDf7Kb4nisqDtW
-         TfIQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1771932835; x=1772537635; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H1XbW7/Mchf18o4deZ5UyLtW8vMbGMc1nfkosLZ6hzk=;
-        b=shDzO+Hh1iVCwQxYXnI5fC7UXPt2piLTHEcj7ESIO/8gLgPbtAQEGyeBgqXUcdiNWh
-         /Ialb/4vV/AasvuEDpFMN2nS16KJtLSjhAQL2ooO2FOqwtQ7zi/gKkoHJEkOzvotNv5O
-         tihRFkrEYKQcgWsJvo8sjI7st9YSjS/imktSbvnkMYNz7yEQ2H5wrvO6aK3z2qbTWCLF
-         iBCFVmcng3Nk0GdMV9l9StTAhqVWerTJRPZ4ej1omSehySGSnG+Om/OBr30RduPcyRH7
-         Q/R9r/7hkWca0zgnZOYHfHWtpSBNbN6xr/CqdprmLFsNefeBlLb38zBZn4PTvAMvxXUx
-         nGaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771932835; x=1772537635;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=H1XbW7/Mchf18o4deZ5UyLtW8vMbGMc1nfkosLZ6hzk=;
-        b=Vnu/WEdExq1EHfufSwGFSsdagIr7XaVzEixDwqHJTQKyNy5NbwnZ5XYmRlHe2BzqNN
-         v3TCNQ7GmFYTq6Lr7ilxj3YJHVWt9QCEch+BovkAX+sftUTMSA1INZ7CPnz7JBJKBkm8
-         UL5hqnyPCv41pEujE65kazwSGX+tbC85as90g8M7PqAvuPXEI4u0KvliXVkYXW8OJUfV
-         Bdbn6LDTefKx0m4piGXVk8tS8+xdQTIBgN1ojWjUzGQqL/ZQO3pI9rRGUTrH7MFRO+W8
-         myqvgvQiSO/Y0b3eLbwQgtwWG8hm6HQ8tRTbqY4pg7MHyia8WXOby2kFt5TSSA4NTe1H
-         VLGw==
-X-Forwarded-Encrypted: i=1; AJvYcCXIr4gsQiiuAaO6qQCapKZklYzXGg+33ybsAJaFCYGyFCueNPtgE4nYdvkZyuQ6xm4yjAKImJwkZmU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzpvr1btdVCl8jv2YIEfJwoPtSSdoA8pylZMxS034SQ3QGcG8lD
-	q/5WcF+ushfE80Cilp9SXekyxw/3bmtPRtJR2/vEkD1OXu0EEVYB4KDhwxiyafyEoZGVk/ULzE3
-	TuTOwZx+c3W2JBByo3E7FNCB35Zx54aaAIPmtBN2t8xUy9E9qAZS7NZPMLwtmBr8nzAQ7aNROHo
-	xRAp2L3Vlt85wTLjVVNOISJj4yRpzbBUWe+lHM
-X-Gm-Gg: ATEYQzwkZ/xt7NOHUwuIgtvWsTx/mBcjRp+NvltIpbeK6mWWI7xrN4rfmBlnnt0RgSJ
-	8tVesyFAww6pETQ7bDPzRuXnbSwF5V9Lwq0PPtevEgkO5ivgFVPGGqBMwuuHBIJ6DCp6qCNBVX/
-	/H8a+wHM0a94UobNoN2KK+UZHhlgf+ThRA6vI28dgfMllPIYnBwdTV+O3iTAfXIEfDTWBJ8C3mO
-	ujriw==
-X-Received: by 2002:a17:907:789:b0:b90:6a9a:e36 with SMTP id a640c23a62f3a-b9081b4d10dmr738933166b.48.1771932835484;
-        Tue, 24 Feb 2026 03:33:55 -0800 (PST)
-X-Received: by 2002:a17:907:789:b0:b90:6a9a:e36 with SMTP id
- a640c23a62f3a-b9081b4d10dmr738931066b.48.1771932834979; Tue, 24 Feb 2026
- 03:33:54 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uzzkmfv9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86878C116D0;
+	Tue, 24 Feb 2026 11:38:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771933109;
+	bh=QS7CNJiQG7B9ALbJjQUVylSiRh7zGL57LuSxHqmBi4g=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=Uzzkmfv9bpJw09ktqybI8ICbNfnuTktHHxwRhi04Y1J6PsGW8WbVaybZVCjX8ew6V
+	 DY4cNvK6ZLnzyFuYtMktlLe+GuDpUgHOqc3M4EFt1ibnbV7CgW2b9p26co/D5ACXJf
+	 xw8TQqmSY0T1n14XTCKiK25sBkG2P2j38JJMX13rUJJrbOoll5GgtH7CToUNQ4/qFj
+	 k/ZF9UggSm2nZjFEtAU6GR3x0yobir3FAJvXwcEyZtD/Gb8KivZHv6b9AWT0gL7FR9
+	 fQ/TBtTXhaUDBtry4Y3U07gDQLxpOaEWdYFPkZJBH726qnOqZ0aDGWhkc/w0gBXWpv
+	 jEr75bdsf+SPg==
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+ jesper.nilsson@axis.com, lars.persson@axis.com, mturquette@baylibre.com, 
+ sboyd@kernel.org, alim.akhtar@samsung.com, s.nawrocki@samsung.com, 
+ cw00.choi@samsung.com, Ravi Patel <ravi.patel@samsung.com>
+Cc: ksk4725@coasia.com, smn1196@coasia.com, linux-arm-kernel@axis.com, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-clk@vger.kernel.org, pjsin865@coasia.com, gwk1013@coasia.com, 
+ bread@coasia.com, jspark@coasia.com, limjh0823@coasia.com, 
+ lightwise@coasia.com, hgkim05@coasia.com, mingyoungbo@coasia.com, 
+ shradha.t@samsung.com, swathi.ks@samsung.com, kenkim@coasia.com
+In-Reply-To: <20251029130731.51305-2-ravi.patel@samsung.com>
+References: <20251029130731.51305-1-ravi.patel@samsung.com>
+ <CGME20251029130826epcas5p180506ff38fb57ecca0e33b2f5c57ed6c@epcas5p1.samsung.com>
+ <20251029130731.51305-2-ravi.patel@samsung.com>
+Subject: Re: (subset) [PATCH v3 1/4] dt-bindings: clock: Add ARTPEC-9 clock
+ controller
+Message-Id: <177193310325.54679.15908657347853584387.b4-ty@kernel.org>
+Date: Tue, 24 Feb 2026 12:38:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260214101421.228-1-dongxuyang@eswincomputing.com>
- <ae2358d7-7e82-49fe-8a03-195487a7b010@gmail.com> <41d3bf12.387f.19c8ee9570e.Coremail.dongxuyang@eswincomputing.com>
-In-Reply-To: <41d3bf12.387f.19c8ee9570e.Coremail.dongxuyang@eswincomputing.com>
-From: Brian Masney <bmasney@redhat.com>
-Date: Tue, 24 Feb 2026 06:33:43 -0500
-X-Gm-Features: AaiRm50KgDObk3pYyYmDTAq10i3GCVF2jr0QwhnBU1r08XDcRGlr4pw_FkRlFAM
-Message-ID: <CABx5tqKDQX+AK0yRUsHc2_dvuegWgWfJ+WCnphZX4NYJyHceww@mail.gmail.com>
-Subject: Re: Re: [PATCH v13 0/3] Add driver support for ESWIN eic700 SoC clock controller
-To: Xuyang Dong <dongxuyang@eswincomputing.com>
-Cc: Bo Gan <ganboing@gmail.com>, mturquette@baylibre.com, sboyd@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, troy.mitchell@linux.dev, 
-	ningyu@eswincomputing.com, linmin@eswincomputing.com, 
-	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com, 
-	marcel@ziswiler.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
 
-Hi Xuyang,
 
-On Tue, Feb 24, 2026 at 4:09=E2=80=AFAM Xuyang Dong
-<dongxuyang@eswincomputing.com> wrote:
-> > I'm testing your patchset on
-> > https://github.com/ganboing/linux-eic77/tree/eic77-integration-test-clk=
--v13
-> >
-> > It's applied on top of Samuel's PMA v3 patshset, plus device-tree patch=
-es
-> > from your integration test branch. It's pretty similar to what Marcel d=
-id,
-> > but I just want to have a separate verification. What I found is that t=
-he
-> > kernel can successfully boot with clk_ignore_unused (eMMC/eth working),
-> > but hangs without. It stuck at
-> >
-> > [    3.257141] clk: Disabling unused clocks
-> >
-> > I'm pretty sure that some clocks that weren't supposed to get disabled =
-got
-> > turned off. Can you validate if that's a bug in the clock driver, or my
-> > device-tree just didn't link all clocks. One thing I noticed is that th=
-ere
-> > is no CLK_IS_CRITICAL in your code, so it's highly likely that DDR PLL =
-or
-> > others were turned off unintentionally. Not a clock driver expert, but =
-I'd
-> > expect the kernel should work fine without clk_ignore_unused.
-> >
->
-> Hi Bo,
->
-> Thanks for your reply. I also got the same result without clk_ignore_unus=
-ed.
-> This is a bug, and I will address it in v14.
+On Wed, 29 Oct 2025 18:37:28 +0530, Ravi Patel wrote:
+> Add dt-schema for Axis ARTPEC-9 SoC clock controller.
+> 
+> The Clock Management Unit (CMU) has a top-level block CMU_CMU
+> which generates clocks for other blocks.
+> 
+> Add device-tree binding definitions for following CMU blocks:
+> - CMU_CMU
+> - CMU_BUS
+> - CMU_CORE
+> - CMU_CPUCL
+> - CMU_FSYS0
+> - CMU_FSYS1
+> - CMU_IMEM
+> - CMU_PERI
+> 
+> [...]
 
-In Documentation/driver-api/clk.rst, there is a section titled
-"Disabling clock gating of unused clocks", along with trace kernel
-parameters you can add to log which clks are disabled.
+Applied, thanks!
 
-Brian
+[1/4] dt-bindings: clock: Add ARTPEC-9 clock controller
+      https://git.kernel.org/krzk/linux/c/6974ae5aa23b7f37182da6b66d7f58313a55a88e
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzk@kernel.org>
 
