@@ -1,172 +1,212 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2106339C648
-	for <linux-clk@vger.kernel.org>; Tue, 24 Feb 2026 13:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C1B639E6D5
+	for <linux-clk@vger.kernel.org>; Tue, 24 Feb 2026 14:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771939205; cv=none; b=B1sSLWoQMVGAUl0UldNo898rS+sNyUFS+Qct5+v4b5apXe+9vK2cbxbcQgzeAsvCpxhog6ZB6fsxm8fFNSOYXK5QEVhvenYOjrdIhvvjmbvUbTb5haHHso86aQCyXHyd5b3gK6U/0M5fUcJHN3zZjRkSYDJpU54Pds9+7AgCKjs=
+	t=1771942280; cv=none; b=OAcGSgTb2UMeBJRO9uBkOho0f/lcbPgBk4ZgGOeijqJaWJigFH73klHWoZZt/D7U7ga29d8jA57JT8fAr2cCPYVOCf2vH+2vxDZg0U0Jpsnffi1B8Pg+IcIx8ZEU3iuoOtdm9MWzhTaR/Lhr3ORWZzMCDVZBSdl4jKdX5hSjvzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771939205; c=relaxed/simple;
-	bh=dqXu4dp6EhpMQd6phBO8LxhfJIX7M4tuyuXV1A9yy/0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xmuwh6XQTd6e80FG+X7bdz0FBhxCvp0Y7tEkQEGXItw0ssaecQQX5gjNLCwGYszOl8NAlxkqQ5Et+/zzzkTPm6sFXRFetP+KKD2naicX2TvtFt9boCPV72yZ2ylxD5LTRNOIZxw8ud1vtVrfmorCA6hIZTGk2JGIwtKPx93omDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NKA0N3zs; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=d61WNaSj; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1771942280; c=relaxed/simple;
+	bh=/2JKDLuQmJT/18kwnROeCtwnFb0uQ79jz4jv7dCbOiE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JNpjZqG7Xm6kSw/kpXRBhKoZ5A6Lqw1kXmqDQs1U6EPwRjEvYpLirfaOEsemTd+qw/PFQyi/yqXG/ZbDLEGWe1UdyYzSItQJLtVDuqwb0GxL9IkMO9BMkf4KmvTSchM1AExrhOS8U4Pe+nVnKIe7BOYa0fP6ilNM2rD9EjH5zHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S04o0Hfk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NKA0N3zs";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="d61WNaSj"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 61OAFPgZ2220821
-	for <linux-clk@vger.kernel.org>; Tue, 24 Feb 2026 13:20:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	emPDKvwv7i96jq83XWglXYWY9VE4fVnc26KM4iSxWm0=; b=NKA0N3zsWFso8LND
-	aYLCxGfClRg7AmXTfD63GwU9KMTQO4KPb+5iBgr3mnO+n1dHUBtm55ojCRRLSXPA
-	2vzdXtV65+rKxyxSf5Au5LC34SrUmzK5nPkrYrxkFA8h6zo8Jyodd7N8qTSkC6vP
-	H/kk9PkEstVgT4H+PreKj1ihguRWs/9QFareIGXClIAUAu83Pt9/v+YVtNoeXChE
-	ii02dshQwju3CjB6M6PojeUf+M7rFsMbejLEOo4i7If+2SXH4Enm95O6kHnVDCeu
-	LGsQ15y5kQz1pVzLuBYHoqrP2ulBxynd5gcJBgAFnSTsiGAnCQk8FjVeNoRyZ2Kh
-	8V5mFw==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ch4e39j0a-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 24 Feb 2026 13:20:03 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-8cb399597fbso426415285a.3
-        for <linux-clk@vger.kernel.org>; Tue, 24 Feb 2026 05:20:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1771939202; x=1772544002; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=emPDKvwv7i96jq83XWglXYWY9VE4fVnc26KM4iSxWm0=;
-        b=d61WNaSjEtQkbcGDJw5ncmczZF26GI2Ath91jg+1EZAu+A4Ur81+RmeJZIqbd9qOwj
-         DjRyN9E/sDQRJM7lux/1iFiTYSZVttCk5PAgtjBIBqFQ/kHjRokYYCqKB4+y/EKSKbjH
-         dnCAJoT+ZYarRw++eaOTkEm+btoaFjXDAIgy4IjClYfuQ8zzZZSpJa/yIbW8Gu2pQ4HQ
-         9LcV6TN3PU8om4yBcoLMmi8lWPzUL6ZH/Xji38GaZbFqBX6TQOuiB6J/JqvZdBStfWNA
-         TD4GNJTs8lwWqbPmV9+E0gV/bQJTWCdEf8RlEmp18my++GYhnY+prAgrIlIbEPoLau2C
-         +8aQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771939202; x=1772544002;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=emPDKvwv7i96jq83XWglXYWY9VE4fVnc26KM4iSxWm0=;
-        b=YU8WnWb7ImuF9h8ffsp8KxfcCGCRM0EnQ797I8hssVR+iQsKf2xUb2/CR9hvlq3eWP
-         cAXGbpG7z/j53jEOByyLqHRPraanW1iu7pwRr9GARcToXlRznt7uIwhsUCvEnNmrBye8
-         d7aXqYtjqMXsXPuyfTbuvqGIVhPF/M1KiaCew8KYmTV/oakeYU6uZBgyaoLqz/78YyKg
-         UMqiucHLAr36qXWKm13q249tqyAJoz5BEvj/WiVO4gB9qzY1/+4XRYkX3sLF0Un0CJbR
-         elzAt8aXrSw/rZLoW1fN1gMVAvzJwCrmv6ELQLmjXETzn6dKsKJCacvJdmG77fT9PfJC
-         59Bw==
-X-Forwarded-Encrypted: i=1; AJvYcCXa+tAw1JF1lN2mkPnMqxwbsNVT8J+k6cwKKDSQZJEHMRJ8tGz6+ZOyFZiyiB6+KOysaLu80bDXrFo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJF9uzym6ZwM4iu+7JljPI7+mIs5scDdOPGaUCnxbFDYw3fGA7
-	K+ABJLeAkkFnKIbHJgtcBeC8+0nrGSlU1i8N522AqRzD7kS0wP18sINZHzmTVPU5RH4jMX/ThVn
-	ckYBNrJMVtti/ErksxZvS0DYz/e8NAHEdCGip0Jbt+tUF5VdYWQtyKuL4/46H9OQ=
-X-Gm-Gg: AZuq6aJk9VnvItGztJhgYJsJnGhn1fHb1tme2lPekd9JDI9MQdVX30Jp1hcDsKfsGD2
-	P/PXpdMpDd6J7FVv1HEafr8Drmd5B2w8SqEH3T0HGptH+LQorleexMWoS0LXWMnOwXBGAz+KNnj
-	1oS6nMECDwuf5k2lWBqE/IgtOWOpxrIMjmNkE0yRFL14xj4S2rZZOF0KiJT3tHSyVQWd/gzNCi1
-	c6kE/iSTKeT5XDGc09Pzgg7oXkYbTSZUD7TY9xrqKPvTyrdwrZpefTYjq7CXFouOjzjIkGM9vlD
-	f1nicxncpOEhUgozqbhx5PS+iRtyxJlj1+ddVU5EIK7iBoCDrWhg/c7xWyY4BTJ+1c7mRtIMGjk
-	QIHoRKKCZt5N0TCENnrzSUoncsru8duRKpUgJhY6qNPbIxCPmDuGoOuk+6KY0XZf1URUY+J2GoY
-	y9tjQ=
-X-Received: by 2002:a05:620a:2a12:b0:8c9:fefa:89d5 with SMTP id af79cd13be357-8cb8cae5751mr1126952485a.10.1771939202272;
-        Tue, 24 Feb 2026 05:20:02 -0800 (PST)
-X-Received: by 2002:a05:620a:2a12:b0:8c9:fefa:89d5 with SMTP id af79cd13be357-8cb8cae5751mr1126948185a.10.1771939201549;
-        Tue, 24 Feb 2026 05:20:01 -0800 (PST)
-Received: from [192.168.119.254] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b9084e4bf73sm424673566b.43.2026.02.24.05.19.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Feb 2026 05:20:00 -0800 (PST)
-Message-ID: <a7462f2f-4972-4760-9043-f18b6427f563@oss.qualcomm.com>
-Date: Tue, 24 Feb 2026 14:19:58 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S04o0Hfk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71646C116D0;
+	Tue, 24 Feb 2026 14:11:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771942279;
+	bh=/2JKDLuQmJT/18kwnROeCtwnFb0uQ79jz4jv7dCbOiE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=S04o0HfkyaGX3s7YD+vFy+QibtQstZMFCM7CKDKDXro6kJ9oY3qWp3X6ZhrB9+uX9
+	 E5yQdlQA5Ww3Uri5AKXyg6f/ZDnt8/WdrBEJ4BMsSf6RtMMqHlVv0r8UWRCSbqi4Z6
+	 Htl6SeH2WevZlXGo66vsdLXm2o9VDFWXFkf8gYY9l1RdgcislLTQrGybhxCCXAjBAf
+	 gF/IYdCImbCX/TkII4LGh2g5f+kUM3Q5k2j0ZCvxP2/N7G/3/d7fly46xLS7TuK2CV
+	 370SvjP4WRQvSGHT3HxiESKzZEStcZppsUmqjuL7BK5Bx25WMWdjMg5pWg37fioJ8f
+	 TRqG8GgfTOUeg==
+Date: Tue, 24 Feb 2026 15:11:16 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, Stefan Wahren <wahrenst@gmx.net>, Melissa Wen <mwen@igalia.com>, 
+	Iago Toral Quiroga <itoral@igalia.com>, Chema Casanova <jmcasanova@igalia.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, kernel-dev@igalia.com
+Subject: Re: [PATCH v6 1/6] clk: bcm: rpi: Manage clock rate in
+ prepare/unprepare callbacks
+Message-ID: <20260224-curvy-shiny-dodo-e50cef@houat>
+References: <20260218-v3d-power-management-v6-0-40683fd39865@igalia.com>
+ <20260218-v3d-power-management-v6-1-40683fd39865@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 5/6] clk: qcom: Add support for Global clock controller
- on Eliza
-To: Abel Vesa <abel.vesa@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Luca Weiss <luca.weiss@fairphone.com>,
-        Taniya Das <taniya.das@oss.qualcomm.com>,
-        Taniya Das <quic_tdas@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-References: <20260223-eliza-clocks-v5-0-dcc66df713c3@oss.qualcomm.com>
- <20260223-eliza-clocks-v5-5-dcc66df713c3@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20260223-eliza-clocks-v5-5-dcc66df713c3@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=DfIaa/tW c=1 sm=1 tr=0 ts=699da583 cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=HzLeVaNsDn8A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=XWK_QsXDIVX7E2KYersA:9 a=QEXdDO2ut3YA:10
- a=NFOGd7dJGGMPyQGDc5-O:22
-X-Proofpoint-GUID: NjhwhA0XGXB0GqEY-qpJCU6OfQc1k-gA
-X-Proofpoint-ORIG-GUID: NjhwhA0XGXB0GqEY-qpJCU6OfQc1k-gA
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjI0MDEwNyBTYWx0ZWRfX9WqKqd8GHNHa
- iJIWxqMpWk3ByaY5oSzVX+EamC81KOLm1tgp0newNderr8G4zk7k3pco/jshJI/NgHkYPriLb51
- sTnewDDyGBOrfyyx/GFjI4U4ZtDIZN4x3cJQ4x3mEucy80nw9V7seqaUKNsA7sNOk5qoKFfEnSN
- YT80WiPem5Rz3vU/o4MJ4y/gxqp5Nqo7H+ryayYRMP+VBNESpj9PsHym+ILht709utYF0mV70nX
- mFf1bNeXCdvP3YbBNTwv22xARr1i2jmiqjMmbkramE1x+efLxMAjjf5Sz6YNOL0iyMgeCwjzhP0
- RtQAGc9E3gavrF36bL9IA5QgJvZkH9DTXxxdYgY/2Ll3IiK5DQbRMdCpmpU3HxQgnnVkh6JIUxz
- JbzsJigwlrmeaiRoYgjKr6nIfvcUBLPYX0OGK51dRVhlnqbzWerRafQQDaGGw+xLeGzn5mPQOa5
- MgaKpxVb3fs5jf24g4g==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-02-24_01,2026-02-23_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 spamscore=0 phishscore=0 lowpriorityscore=0 suspectscore=0
- adultscore=0 impostorscore=0 bulkscore=0 clxscore=1015 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2602130000 definitions=main-2602240107
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="ocscotebgpj7h4ea"
+Content-Disposition: inline
+In-Reply-To: <20260218-v3d-power-management-v6-1-40683fd39865@igalia.com>
 
-On 2/23/26 1:01 PM, Abel Vesa wrote:
-> From: Taniya Das <taniya.das@oss.qualcomm.com>
-> 
-> Add support for Global clock controller for Eliza Qualcomm SoC.
-> 
-> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> Signed-off-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
+
+--ocscotebgpj7h4ea
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v6 1/6] clk: bcm: rpi: Manage clock rate in
+ prepare/unprepare callbacks
+MIME-Version: 1.0
+
+Hi Maira,
+
+On Wed, Feb 18, 2026 at 05:44:59PM -0300, Ma=EDra Canal wrote:
+> On current firmware versions, RPI_FIRMWARE_SET_CLOCK_STATE doesn't
+> actually power off the clock. To achieve meaningful power savings, the
+> clock rate must be set to the minimum before disabling. This might be
+> fixed in future firmware releases.
+>=20
+> Rather than pushing rate management to clock consumers, handle it
+> directly in the clock framework's prepare/unprepare callbacks. In
+> unprepare, set the rate to the firmware-reported minimum before
+> disabling the clock. In prepare, for clocks marked with `maximize`
+> (currently v3d), restore the rate to the maximum after enabling.
+>=20
+> Signed-off-by: Ma=EDra Canal <mcanal@igalia.com>
 > ---
+>  drivers/clk/bcm/clk-raspberrypi.c | 61 ++++++++++++++++++++++-----------=
+------
+>  1 file changed, 35 insertions(+), 26 deletions(-)
+>=20
+> diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-rasp=
+berrypi.c
+> index 1a9162f0ae31e330c46f6eafdd00350599b0eede..0d6e4f43c3bac0e7b38934c5c=
+6e4db51211233de 100644
+> --- a/drivers/clk/bcm/clk-raspberrypi.c
+> +++ b/drivers/clk/bcm/clk-raspberrypi.c
+> @@ -66,7 +66,8 @@ const struct raspberrypi_clk_data *clk_hw_to_data(const=
+ struct clk_hw *hw)
+>  struct raspberrypi_clk_variant {
+>  	bool		export;
+>  	char		*clkdev;
+> -	unsigned long	min_rate;
+> +	u32		min_rate;
+> +	u32		max_rate;
+>  	bool		minimize;
+>  	bool		maximize;
+>  	u32		flags;
+> @@ -289,16 +290,22 @@ static int raspberrypi_fw_dumb_determine_rate(struc=
+t clk_hw *hw,
+>  static int raspberrypi_fw_prepare(struct clk_hw *hw)
+>  {
+>  	const struct raspberrypi_clk_data *data =3D clk_hw_to_data(hw);
+> +	struct raspberrypi_clk_variant *variant =3D data->variant;
+>  	struct raspberrypi_clk *rpi =3D data->rpi;
+>  	u32 state =3D RPI_FIRMWARE_STATE_ENABLE_BIT;
+>  	int ret;
+> =20
+>  	ret =3D raspberrypi_clock_property(rpi->firmware, data,
+>  					 RPI_FIRMWARE_SET_CLOCK_STATE, &state);
+> -	if (ret)
+> +	if (ret) {
+>  		dev_err_ratelimited(rpi->dev,
+>  				    "Failed to set clock %s state to on: %d\n",
+>  				    clk_hw_get_name(hw), ret);
+> +		return ret;
+> +	}
+> +
+> +	if (variant->maximize)
+> +		ret =3D raspberrypi_fw_set_rate(hw, variant->max_rate, 0);
 
-[...]
 
-> +	[GCC_CAMERA_HF_AXI_SLP_STG_ARES] = { 0x26018, 4 },
-> +	[GCC_CAMERA_SF_AXI_SLP_STG_ARES] = { 0x26028, 4 },
-> +	[GCC_CAMERA_HF_AXI_SEL_SLP_STG_ARES] = { 0x26018, 5 },
-> +	[GCC_CAMERA_SF_AXI_SEL_SLP_STG_ARES] = { 0x26028, 5 },
+It's not clear to me why you would want to force it to the max there,
+and especially the max of the clock. It would make more sense to me to
+set it to whatever maximum rate clk_hw_get_rate_range would return
+(which should be the minimum of variant->max_rate + all clk->max_rate),
+but even then it would erase every call to clk_set_rate before calling
+clk_prepare().
 
-These are different from the ones we discussed at 
+I'd understand lowering the clock rate in unprepare to avoid wasting too
+much power, but why do we need to raise it here?
 
-https://lore.kernel.org/all/d6392cb9-9ab2-4743-a13f-7432ec03762c@oss.qualcomm.com/
+>  	return ret;
+>  }
+> @@ -306,10 +313,19 @@ static int raspberrypi_fw_prepare(struct clk_hw *hw)
+>  static void raspberrypi_fw_unprepare(struct clk_hw *hw)
+>  {
+>  	const struct raspberrypi_clk_data *data =3D clk_hw_to_data(hw);
+> +	struct raspberrypi_clk_variant *variant =3D data->variant;
+>  	struct raspberrypi_clk *rpi =3D data->rpi;
+>  	u32 state =3D 0;
+>  	int ret;
+> =20
+> +	/*
+> +	 * On current firmware versions, RPI_FIRMWARE_SET_CLOCK_STATE doesn't
+> +	 * actually power off the clock. To achieve meaningful power consumption
+> +	 * reduction, the driver needs to set the clock rate to minimum before
+> +	 * disabling it.
+> +	 */
+> +	raspberrypi_fw_set_rate(hw, variant->min_rate, 0);
 
-but they are also sort of similar in nature..
+I'm not sure setting it to variant->min_rate would work directly either,
+since it would break consumers expectations. Also, can we guard it with
+a version check if we know that there's some good and bad firmwares?
 
-bit 5 selects hw (0) vs sw (1) control and bit 4 is the sw vote
-for asserting (1) or de-asserting (0) the signal
+>  	ret =3D raspberrypi_clock_property(rpi->firmware, data,
+>  					 RPI_FIRMWARE_SET_CLOCK_STATE, &state);
+>  	if (ret)
+> @@ -334,7 +350,7 @@ static struct clk_hw *raspberrypi_clk_register(struct=
+ raspberrypi_clk *rpi,
+>  {
+>  	struct raspberrypi_clk_data *data;
+>  	struct clk_init_data init =3D {};
+> -	u32 min_rate, max_rate;
+> +	unsigned long rate;
+>  	int ret;
+> =20
+>  	data =3D devm_kzalloc(rpi->dev, sizeof(*data), GFP_KERNEL);
+> @@ -354,18 +370,20 @@ static struct clk_hw *raspberrypi_clk_register(stru=
+ct raspberrypi_clk *rpi,
+> =20
+>  	data->hw.init =3D &init;
+> =20
+> -	ret =3D raspberrypi_clock_property(rpi->firmware, data,
+> -					 RPI_FIRMWARE_GET_MIN_CLOCK_RATE,
+> -					 &min_rate);
+> -	if (ret) {
+> -		dev_err(rpi->dev, "Failed to get clock %d min freq: %d\n",
+> -			id, ret);
+> -		return ERR_PTR(ret);
+> +	if (!variant->min_rate) {
+> +		ret =3D raspberrypi_clock_property(rpi->firmware, data,
+> +						 RPI_FIRMWARE_GET_MIN_CLOCK_RATE,
+> +						 &variant->min_rate);
+> +		if (ret) {
+> +			dev_err(rpi->dev, "Failed to get clock %d min freq: %d\n",
+> +				id, ret);
+> +			return ERR_PTR(ret);
+> +		}
+>  	}
 
-Let's drop these too until we have a clear path forward
+It feels to me like it would need to be a separate patch. Why do you
+need to override the minimum clock rate reported by the firmware?
 
-with these gone:
+Maxime
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+--ocscotebgpj7h4ea
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Konrad
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaZ2xhAAKCRAnX84Zoj2+
+dj0uAYDYA2mhl71c/wqrDKPAvTLlIAXMJIOSicez1ItK96GamLM8F93PvhqraCfK
+fFASXvQBfjYI2nDCisxBUCZeDRhehkuv1iDeaTi0B5qRtiIAcpHPx1JdqS+f2W0b
+aFXRe67jFQ==
+=xbDx
+-----END PGP SIGNATURE-----
+
+--ocscotebgpj7h4ea--
