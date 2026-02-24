@@ -1,167 +1,160 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AA53A7F68
-	for <linux-clk@vger.kernel.org>; Tue, 24 Feb 2026 16:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00803A7F73;
+	Tue, 24 Feb 2026 17:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771952170; cv=none; b=UEnRWMPvXWXPW4EE6lqbDflG8v5E9p/v8L5nclWBgBJLybQbRUmT+r4GBftm9OU++g9WObi5N7WbjiqxG4st3JRHMpvLueUxry49z/EIC1ikZDS9y5IszGSHVizQlqOzYKpWpDsWuk1slOZOrXEpzjYvnCVSzHwfSw+616IfKAY=
+	t=1771953046; cv=none; b=uaRXUzPpTOoyzsWchBGQJV8GlgdrL6iwA2sqQ+YyX7KOT4o8QLfL9fyEVJkkuBZBHglrPe5KdS5DrRSP6pux6h5QXGTpegZb4w0k/JgJDVMFSINfvWA/WlPr+HXSL56nE+PLpAjrh4BGujmz4UoMkgVjNCKo5P8CBKIK9rQs46g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771952170; c=relaxed/simple;
-	bh=SXXdxYog2Rl25Gc9IYtvoQ+xwSoZdPRWrNOKzsG9oqM=;
+	s=arc-20240116; t=1771953046; c=relaxed/simple;
+	bh=Ztw7NYo3dcKh1IGItKd9Z+QXx4QfpxBQRazYm/tm6J8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dl8Epjnz7ZzckhY9ThysmDl4ydpK0w1/cebLoE/NYVJEbHE16ACbJ7f0FiaMYSYTOsi43HwRBosh8JrW9BBqhU43HBczHcrn7Z7WDvtXVViqMVps845WZT9Fnxp2F/ChmCHG72dOKyq+bGJVFbgNVp3XvMnjBvAFgMoLnaOzq4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NiWISabA; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=DttHknyn; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=p8+VbnuWRqww7u1nmgckB4Jl0CzGpUZAyqGgg1RrBEg+lDYfl7e+mFU6yYkGbicI7tPRz54KV01wmVXMjf3xEyq179jLdM5NuNvx1dyc/r1Cb20xL2eQx0ktM4qy2cgSQ0bCjuXQrhLBLs7kvKcau8lhf9uh9B7p67rJM2WjpQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jBTqAsIf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NiWISabA";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="DttHknyn"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1771952167;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FleR1f16PYtnUZApWMSnFMFVSHRjzLDJojaW/qHZYcQ=;
-	b=NiWISabAK7Q8D32xutCfyGP/uci8np3vRMbSz0fCww+IP5L1+wJ6Z1Taj0GwFTimsW7S73
-	kFfGdoPDbpA0tOty2hEuEwUa38S6DLOdWd4VKwEsdwnwVFQL08Gjft1P/1ppSzmjLJMNv0
-	y0nLZkz/s66K/H+uQCsDxFDxlgAy+Fs=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-86-n-pQMG9UMbCKCJ1RoXp44Q-1; Tue, 24 Feb 2026 11:56:06 -0500
-X-MC-Unique: n-pQMG9UMbCKCJ1RoXp44Q-1
-X-Mimecast-MFC-AGG-ID: n-pQMG9UMbCKCJ1RoXp44Q_1771952166
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-50333a8184aso78009391cf.1
-        for <linux-clk@vger.kernel.org>; Tue, 24 Feb 2026 08:56:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1771952166; x=1772556966; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FleR1f16PYtnUZApWMSnFMFVSHRjzLDJojaW/qHZYcQ=;
-        b=DttHknynXjAoRnxWw6Xdp9o0ufOuMJoFHmlcoi8P+1w3pv0TNNaXNgGk6swFmEGZcu
-         mvUsfUqzo1je0UEUffcfRl1OqZpTI7OTR9H8vGQAUxT1aDP7np7cToQ42rGWBXx7qK9q
-         MP3dychAvw7EG/0O/HQ8Z4bgxvPi2QCjMZoe36pZ8iGdgZzTbINnU989O3Lq42cpVxOw
-         +ioVG9b039f6g7RuhsnKAeRYVH5D4sVr872MSivqRVFi+KfYIknfBhW7v/Cz/tVnLTHr
-         QWP7ti42xb91zpZz+TopnFUewIZRSHQf5mlTeGQC5SlR50e2rQxFkFfzhoH+RILrXBGh
-         UgxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771952166; x=1772556966;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=FleR1f16PYtnUZApWMSnFMFVSHRjzLDJojaW/qHZYcQ=;
-        b=Nj1sR4BesMd4tmB7Lhedk60zDExgmXdxUnu/bmcgCLE42qjDCl0PbakO+N+WipdOC8
-         gr/Z18iL8cbET6N6RTrU7VXB1O0+0kKz6xTiob5liy3hQiiFrHzdaGT7RzivPJpQR6yi
-         J/dk6884kvX3oM+oGdkmIFIQi1vCFW8KkiUDObRyQz/D8fzdYN0AdZHauXXaQW+h8qHu
-         GgONd8T+g6JSlusBZJoLj9WqVLqWOinPKVL7ELI1179f5Oy1krzaTfzbUnIRJbcwtMlm
-         9zuB7U7+tGkVOoMDiYHJa2HtPY26nydV4MNJWukyOCj3fxFTjAf0XC9p5sZIqX4B52KI
-         /vGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVPqtzupJ4DuZnNM7GNDD3uWGLxXnO+2DiYeWAH+S8TNziQf9jZzKFAU7f8OjHbPY/oZ/PkHq8iMGs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUPFD2PURCymZM7QIsM9ucuR/PCXHvceVfQ5n69Odm7CSZQU8f
-	nUevXUh+aaAKrqkSLb8mBGoLXd2DYgpLLNv1m/hO9Cj95THPEKB5o/iaxEXjhhJeiujaEh5a1hv
-	vkgOA5rnCt6lL0uKfpIhuq3ssGX/W8Lz8X/W7yAySkDBXdK/SaOTH6E4LSkkz9mWDFY7UBw==
-X-Gm-Gg: AZuq6aI3jWrF1e3C5JyKeMJjSr2wyIDVAzgfk3wBuP0gZFy3x1KdSkhyfR+u3TVzlfF
-	0Lc4rxsauKt/rG3Ss/jqF1n4avxdYZqnoMDziZyoiS4mJARU/ZCXqw1osoc7dd1E5g+/+2FmhRI
-	ijr9m0S2SMkYyvJ3ATY0NFV3UC3UrcreqKfgCW1vYhPv7ntp5E7+Kzkg5w7N/C25aPdR6eaiGr1
-	APBdkO4PApvtY4qs3T3BsqHhCnpHK7w7CRcVijL4oxRmJofpxFJRft6C3gR26h4jCQgUU/rXFfh
-	mKTw7muzf+ey9pQkJmHJoOQ/Be93KJVIDUKuofNXs8nLwxsTNaTTXkOq0UAPMQ0iztI4tI6V4xn
-	IPKYkxSqK8xuuhP//H3bODqJX05WxpvUxQlRB5IWvmGpnaDrldNYgKrHe
-X-Received: by 2002:ac8:5816:0:b0:501:3e5e:b027 with SMTP id d75a77b69052e-5070bbe5d95mr164466111cf.19.1771952165678;
-        Tue, 24 Feb 2026 08:56:05 -0800 (PST)
-X-Received: by 2002:ac8:5816:0:b0:501:3e5e:b027 with SMTP id d75a77b69052e-5070bbe5d95mr164465431cf.19.1771952164906;
-        Tue, 24 Feb 2026 08:56:04 -0800 (PST)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5070d550785sm124299171cf.11.2026.02.24.08.56.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Feb 2026 08:56:04 -0800 (PST)
-Date: Tue, 24 Feb 2026 11:56:03 -0500
-From: Brian Masney <bmasney@redhat.com>
-To: David Laight <david.laight.linux@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jBTqAsIf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8CEAC19422;
+	Tue, 24 Feb 2026 17:10:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771953046;
+	bh=Ztw7NYo3dcKh1IGItKd9Z+QXx4QfpxBQRazYm/tm6J8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jBTqAsIfuXzpeasPgE028/f3ZQKwM9EgvgeSIq7TeshnPESeBGanudPog35yl9Xrv
+	 9pCWJ2NjQy8t0XE+OKHKtaVqM5YW1Hn7fyxExR8ZiXzXZepkoQ93Y175Hgrx+046Gk
+	 7FQ8QbzyYyZiNOCcsYJD2MOSU2pzrtROeDbZkIPTBbH/GLWUvchjgsvAknkZyTWwUY
+	 8v3faKGl2HNG5OCksewo3nmtY6Dx5V5GAopOntHNjSNwjgy/gbByZo2mFofTwQM2lU
+	 R2Shzos2oirNCiMInr+6JqMrvXURajpzPXPxVJzHrTpznFMmGZ1d1erJyF4T95BJis
+	 o1s8nzBMqm71g==
+Date: Tue, 24 Feb 2026 17:10:42 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Brian Masney <bmasney@redhat.com>
 Cc: Conor Dooley <conor.dooley@microchip.com>,
 	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH 1/3] clk: microchip: core: update to use div64_ul()
- instead of do_div()
-Message-ID: <aZ3YI2eyyYLWl-dy@redhat.com>
+Subject: Re: [PATCH 0/3] clk: microchip: core: allow driver to be compiled
+ with COMPILE_TEST
+Message-ID: <20260224-placate-runt-54aa8419ec40@spud>
 References: <20260222-clk-microchip-pic32-v1-0-ceacbcd515d1@redhat.com>
- <20260222-clk-microchip-pic32-v1-1-ceacbcd515d1@redhat.com>
- <20260223090948.7970ca87@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Dtm3MbfamtQF2IlR"
+Content-Disposition: inline
+In-Reply-To: <20260222-clk-microchip-pic32-v1-0-ceacbcd515d1@redhat.com>
+
+
+--Dtm3MbfamtQF2IlR
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260223090948.7970ca87@pumpkin>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+Content-Transfer-Encoding: quoted-printable
 
-Hi David,
+On Sun, Feb 22, 2026 at 06:51:03PM -0500, Brian Masney wrote:
+> Here's a small series that lets us enable COMPILE_TEST for the pic32 clk
+> driver so that this driver can be compiled on all architectures in the
+> future to help avoid breakage.
 
-On Mon, Feb 23, 2026 at 09:09:48AM +0000, David Laight wrote:
-> On Sun, 22 Feb 2026 18:51:04 -0500
-> Brian Masney <bmasney@redhat.com> wrote:
-> 
-> > This driver is currently only compiled on 32-bit MIPS systems. When
-> > compiling on 64-bit systems, the build fails with:
-> > 
-> >     WARNING: do_div() does a 64-by-32 division, please consider using
-> >     div64_ul instead.
-> > 
-> > Let's update this to use div64_ul() in preparation for allowing this
-> > driver to be compiled on all architectures.
-> 
-> There are a log of 'long' in that code that hold clock frequencies.
-> I suspect they should be u32 (I think someone was scared that int might be 16bit).
+Why do you care about this platform? Originally I thought you cared cos
+you were getting involved in clock subsystem stuff, but I see you doing
+stuff with it in pinctrl etc. Is that just general cleanup work, or do
+you actually have an interest in the platform?
 
-Instead of calling:
+Also, seeing "clk: microchip: core" in my inbox triggers me, cos the
+stuff I work on uses "microchip: core" a lot for FPGA IP cores. Can we
+do:
 
-    do_div(frac, rate);
+-- >8 --
+=46rom 5e972ac119c87257ce141382019f2b58ebd53359 Mon Sep 17 00:00:00 2001
+=46rom: Conor Dooley <conor.dooley@microchip.com>
+Date: Tue, 24 Feb 2026 16:59:53 +0000
+Subject: [PATCH] clk: microchip: rename clk-core to clk-pic32
 
-Where frac is a u64, and rate is an unsigned long, I could just cast the
-rate to a u32 like this:
+clk-core is a confusingly generic name, since it is only used by a
+single platform and it uses very similar naming to the "soft" IP cores
+for use in FPGA fabric (CoreClock or similar is what that would be
+called, although nothing like that exists right now) that the FPGA
+business unit produces. Rename it to clk-pic32, matching the prefix
+used by most functions in the driver. As far as I can tell, impact
+on whatever users may (or may not...) exist for the platform is minimal
+as it's built-in only and the functions are called directly from
+clk-pic32mzda.c
 
-    do_div(frac, (u32) rate);
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ drivers/clk/microchip/Makefile                    | 2 +-
+ drivers/clk/microchip/{clk-core.c =3D> clk-pic32.c} | 2 +-
+ drivers/clk/microchip/{clk-core.h =3D> clk-pic32.h} | 0
+ drivers/clk/microchip/clk-pic32mzda.c             | 2 +-
+ 4 files changed, 3 insertions(+), 3 deletions(-)
+ rename drivers/clk/microchip/{clk-core.c =3D> clk-pic32.c} (99%)
+ rename drivers/clk/microchip/{clk-core.h =3D> clk-pic32.h} (100%)
 
-Thoughts?
+diff --git a/drivers/clk/microchip/Makefile b/drivers/clk/microchip/Makefile
+index 13250e04e46cf..8e60bc1a03ae7 100644
+--- a/drivers/clk/microchip/Makefile
++++ b/drivers/clk/microchip/Makefile
+@@ -1,5 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+-obj-$(CONFIG_COMMON_CLK_PIC32) +=3D clk-core.o
++obj-$(CONFIG_COMMON_CLK_PIC32) +=3D clk-pic32.o
+ obj-$(CONFIG_PIC32MZDA) +=3D clk-pic32mzda.o
+ obj-$(CONFIG_MCHP_CLK_MPFS) +=3D clk-mpfs.o
+ obj-$(CONFIG_MCHP_CLK_MPFS) +=3D clk-mpfs-ccc.o
+diff --git a/drivers/clk/microchip/clk-core.c b/drivers/clk/microchip/clk-p=
+ic32.c
+similarity index 99%
+rename from drivers/clk/microchip/clk-core.c
+rename to drivers/clk/microchip/clk-pic32.c
+index 692152b5094e0..9d128fba2cdea 100644
+--- a/drivers/clk/microchip/clk-core.c
++++ b/drivers/clk/microchip/clk-pic32.c
+@@ -11,7 +11,7 @@
+ #include <linux/iopoll.h>
+ #include <linux/platform_data/pic32.h>
+=20
+-#include "clk-core.h"
++#include "clk-pic32.h"
+=20
+ /* OSCCON Reg fields */
+ #define OSC_CUR_MASK		0x07
+diff --git a/drivers/clk/microchip/clk-core.h b/drivers/clk/microchip/clk-p=
+ic32.h
+similarity index 100%
+rename from drivers/clk/microchip/clk-core.h
+rename to drivers/clk/microchip/clk-pic32.h
+diff --git a/drivers/clk/microchip/clk-pic32mzda.c b/drivers/clk/microchip/=
+clk-pic32mzda.c
+index 27599829ea40a..e11cbdd982a61 100644
+--- a/drivers/clk/microchip/clk-pic32mzda.c
++++ b/drivers/clk/microchip/clk-pic32mzda.c
+@@ -14,7 +14,7 @@
+ #include <linux/platform_device.h>
+ #include <asm/traps.h>
+=20
+-#include "clk-core.h"
++#include "clk-pic32.h"
+=20
+ /* FRC Postscaler */
+ #define OSC_FRCDIV_MASK		0x07
+--=20
+2.51.0
 
-Brian
 
+--Dtm3MbfamtQF2IlR
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> 
-> > 
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202601160758.bpkN4546-lkp@intel.com/
-> > Signed-off-by: Brian Masney <bmasney@redhat.com>
-> > ---
-> >  drivers/clk/microchip/clk-core.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/clk/microchip/clk-core.c b/drivers/clk/microchip/clk-core.c
-> > index 692152b5094e00bf5acb19a67cf41e6c86b11f35..2e86ad846a66cd5487f5412c09ab0ad25ebe3f79 100644
-> > --- a/drivers/clk/microchip/clk-core.c
-> > +++ b/drivers/clk/microchip/clk-core.c
-> > @@ -341,7 +341,7 @@ static void roclk_calc_div_trim(unsigned long rate,
-> >  		div = parent_rate / (rate << 1);
-> >  		frac = parent_rate;
-> >  		frac <<= 8;
-> > -		do_div(frac, rate);
-> > +		frac = div64_ul(frac, rate);
-> >  		frac -= (u64)(div << 9);
-> 
-> Is that cast in the right place?
-> I suspect 'div' can't be large enough to need it, but it's presence makes
-> my wonder ...
-> 
-> 	David
-> 
-> >  
-> >  		rodiv = (div > REFO_DIV_MASK) ? REFO_DIV_MASK : div;
-> > 
-> 
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaZ3bkgAKCRB4tDGHoIJi
+0hfXAP4ymaWy9IisZ1elLfYoFO6YKBTDXV953YHummZLIRFpzgEArIcdO2m7GIOn
+LpH3Aex/Lb0YCvS21GVlSzNxZNvfZgc=
+=oypA
+-----END PGP SIGNATURE-----
+
+--Dtm3MbfamtQF2IlR--
