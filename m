@@ -1,123 +1,266 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC24D37417A;
-	Tue, 24 Feb 2026 12:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771936295; cv=none; b=geUh+NfsgQGDZp7ILGsex4ZFsdLjxOcx7+e5zYcGBXopi7/ATSzlKsLb3OTOgD3CwdXLT2izICS+MC1xqNkR8zsRnxqIcMZV8nEP+mFQZqB44+soWTPtZGkY5vTdi609vKp5Dep8wWzRLNClXAvmvrJoy+H3KrHvgaSQMVhh8GY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771936295; c=relaxed/simple;
-	bh=6X4d+FM70GZbM3qSklXp7wBJbDEltBSEINeL//XhXok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W2RNt2s/wzjTB/yO6NkYnOwt+JIJnITFeQQSwelSzFxCXjLmQzqbnBEpP2OXmwomVC3b3xzy22Ri32oxjjTek/vs7ztM2eSDnpfDryhkj9kb3cwUedVUFlDVw223WhJ8lQwEN8If4pTFUuQM/baXQkT3I1u1SaOZ05hn/tniw9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DC1F2339;
-	Tue, 24 Feb 2026 04:31:26 -0800 (PST)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BD6553F62B;
-	Tue, 24 Feb 2026 04:31:29 -0800 (PST)
-Date: Tue, 24 Feb 2026 12:31:21 +0000
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: Sudeep Holla <sudeep.holla@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 0/4] firmware: arm_scmi: Drop fake 'const' on scmi_handle
-Message-ID: <aZ2aBD_u_RVhgsei@pluto>
-References: <20260224-handle-not-const-v1-0-90bf93b53e27@oss.qualcomm.com>
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1760A39A7EA;
+	Tue, 24 Feb 2026 12:40:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771936853; cv=pass; b=Ros5iwWQTekectT0q2NHNaGxWyZbmm4olwEhH7Mc3dlTTdnwpd3D35y9uhN5T2GwcBBnAq/mFfOWf+v1LC0j4iKzVAkg8/WCGoHi/CTJYC2s/Zgj157u/1buJBe0fogFa87mmJ8d3gNnXFEchnPW+ccD6zTbkoYpRbVqvvwkjVA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771936853; c=relaxed/simple;
+	bh=DBE/hOYm2uxq8ao7TJcQpf3nluCraOjknYn0QORUTTo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=IkAlRx0vrjmW/kD8JmOxwTFNJDkmvrgai61DDo6cbb4RDfyUpf7A0fuS10GQkKzuD/SMgRmw8BH8PrxZUoupEJgd23n2TmLV0nZoJufoBrS/f/zRJuottDhiaxhbwJfdk6687EMYms4VMKIGuMqhS+kcv6VB9M5DEBeJU5Af6Ck=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=louisalexis.eyraud@collabora.com header.b=MV5O3D43; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=louisalexis.eyraud@collabora.com header.b="MV5O3D43"
+ARC-Seal: i=1; a=rsa-sha256; t=1771936826; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=SqUdUsUQcnjO0yJANGrZuNzL9PCGuKWgRkHOd2/Z1f0X6hYFcX0dLEnGZcUyC6V5WJhUZvuts6fzKYwWnh4i5ahw7QrjjcUAu1EUjgeRD0oYGW4icYnXnrP0evXZzKSOtv4RKPR2eip6HIieZgIIZg1lUf3tmCFaMLPcboRKqQQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1771936826; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=eOZEdnbp46Z76LsK49tdtTNIOhWoViPgM8WCccLIHUE=; 
+	b=jnHZYsjvx4bgXFj2fwDjKLViSY7aFM9q4NORoOs0BAUUhH/SRf432yZgbOHMaP/PWKFYrOKUhOqShxi+hn8sMixSYSQ5r232ekx4Orp0a7vhLE8ba6JnaFAmyXM4VP48oRJY/JdmRYwaBbXUp3EWi/K9jqTUw5YT7cYLBEcRR4k=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=louisalexis.eyraud@collabora.com;
+	dmarc=pass header.from=<louisalexis.eyraud@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1771936826;
+	s=zohomail; d=collabora.com; i=louisalexis.eyraud@collabora.com;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=eOZEdnbp46Z76LsK49tdtTNIOhWoViPgM8WCccLIHUE=;
+	b=MV5O3D43ndbEy9mp7nq8rtLMNyNdMG8MnNEj8pZPqcPhftte69WLFJV/+8o398ir
+	hnrOTRXSzormLfL1sqLDROsM6DuSbgYyrUldvmoXs9AKEKiYHyLHp7IgeqoP0ObRD+6
+	16nALCxSkfRZeVakaq7j3J69dFlLJpiwcMVvkiJM=
+Received: by mx.zohomail.com with SMTPS id 1771936824130242.17321167502485;
+	Tue, 24 Feb 2026 04:40:24 -0800 (PST)
+Message-ID: <ba9d9132bab9d897b89bd686192693ef22bd2923.camel@collabora.com>
+Subject: Re: [PATCH v5 06/18] clk: mediatek: Add MT8189 vlpcfg clock support
+From: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+To: "irving.ch.lin" <irving-ch.lin@mediatek.com>, Michael Turquette	
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring	
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley	
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Richard Cochran <richardcochran@gmail.com>, Bartosz Golaszewski	
+ <brgl@kernel.org>, Chen-Yu Tsai <wenst@chromium.org>, Miles Chen	
+ <miles.chen@mediatek.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org, 
+	Project_Global_Chrome_Upstream_Group@mediatek.com, Qiqi Wang	
+ <qiqi.wang@mediatek.com>, sirius.wang@mediatek.com,
+ vince-wl.liu@mediatek.com, 	jh.hsu@mediatek.com
+Date: Tue, 24 Feb 2026 13:40:16 +0100
+In-Reply-To: <20260202062840.342707-7-irving-ch.lin@mediatek.com>
+References: <20260202062840.342707-1-irving-ch.lin@mediatek.com>
+	 <20260202062840.342707-7-irving-ch.lin@mediatek.com>
+Organization: Collabora Ltd
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260224-handle-not-const-v1-0-90bf93b53e27@oss.qualcomm.com>
+X-ZohoMailClient: External
 
-On Tue, Feb 24, 2026 at 11:43:38AM +0100, Krzysztof Kozlowski wrote:
-> Severale functions operating on the 'handle' pointer, like
+Hi Irving-CH,
 
-Hi Krzysztof,
+On Mon, 2026-02-02 at 14:28 +0800, irving.ch.lin wrote:
+> From: Irving-CH Lin <irving-ch.lin@mediatek.com>
+>=20
+> Add support for the MT8189 vlpcfg clock controller,
+> which provides clock gate control for vlp domain IPs.
+>=20
+> Signed-off-by: Irving-CH Lin <irving-ch.lin@mediatek.com>
+> ---
+> =C2=A0drivers/clk/mediatek/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 2 +-
+> =C2=A0drivers/clk/mediatek/clk-mt8189-vlpcfg.c | 111
+> +++++++++++++++++++++++
+> =C2=A02 files changed, 112 insertions(+), 1 deletion(-)
+> =C2=A0create mode 100644 drivers/clk/mediatek/clk-mt8189-vlpcfg.c
+>=20
+> diff --git a/drivers/clk/mediatek/Makefile
+> b/drivers/clk/mediatek/Makefile
+> index 3b25df9e7b50..d9279b237b7b 100644
+> --- a/drivers/clk/mediatek/Makefile
+> +++ b/drivers/clk/mediatek/Makefile
+> @@ -124,7 +124,7 @@ obj-$(CONFIG_COMMON_CLK_MT8188_VENCSYS) +=3D clk-
+> mt8188-venc.o
+> =C2=A0obj-$(CONFIG_COMMON_CLK_MT8188_VPPSYS) +=3D clk-mt8188-vpp0.o clk-
+> mt8188-vpp1.o
+> =C2=A0obj-$(CONFIG_COMMON_CLK_MT8188_WPESYS) +=3D clk-mt8188-wpe.o
+> =C2=A0obj-$(CONFIG_COMMON_CLK_MT8189) +=3D clk-mt8189-apmixedsys.o clk-
+> mt8189-topckgen.o \
+> -				=C2=A0=C2=A0 clk-mt8189-vlpckgen.o
+> +				=C2=A0=C2=A0 clk-mt8189-vlpckgen.o clk-mt8189-
+> vlpcfg.o
+> =C2=A0obj-$(CONFIG_COMMON_CLK_MT8192) +=3D clk-mt8192-apmixedsys.o clk-
+> mt8192.o
+> =C2=A0obj-$(CONFIG_COMMON_CLK_MT8192_AUDSYS) +=3D clk-mt8192-aud.o
+> =C2=A0obj-$(CONFIG_COMMON_CLK_MT8192_CAMSYS) +=3D clk-mt8192-cam.o
+> diff --git a/drivers/clk/mediatek/clk-mt8189-vlpcfg.c
+> b/drivers/clk/mediatek/clk-mt8189-vlpcfg.c
+> new file mode 100644
+> index 000000000000..2b9c3101f2b4
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/clk-mt8189-vlpcfg.c
+> @@ -0,0 +1,111 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2025 MediaTek Inc.
+> + * Author: Qiqi Wang <qiqi.wang@mediatek.com>
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/module.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +
+> +#include "clk-mtk.h"
+> +#include "clk-gate.h"
+> +
+> +#include <dt-bindings/clock/mediatek,mt8189-clk.h>
+> +
+> +static const struct mtk_gate_regs vlpcfg_ao_reg_cg_regs =3D {
+> +	.set_ofs =3D 0x0,
+> +	.clr_ofs =3D 0x0,
+> +	.sta_ofs =3D 0x0,
+> +};
+> +
+> +#define GATE_VLPCFG_AO_REG(_id, _name, _parent,
+> _shift)		\
+> +	GATE_MTK(_id, _name, _parent, &vlpcfg_ao_reg_cg_regs,
+> _shift, &mtk_clk_gate_ops_no_setclr)
+> +
+> +static const struct mtk_gate vlpcfg_ao_reg_clks[] =3D {
+> +	GATE_VLPCFG_AO_REG(CLK_VLPCFG_AO_APEINT_RX,
+> "vlpcfg_ao_apeint_rx", "clk26m", 8),
+> +};
+> +
+> +static const struct mtk_clk_desc vlpcfg_ao_reg_mcd =3D {
+> +	.clks =3D vlpcfg_ao_reg_clks,
+> +	.num_clks =3D ARRAY_SIZE(vlpcfg_ao_reg_clks),
+> +};
+> +
+> +static const struct mtk_gate_regs vlpcfg_reg_cg_regs =3D {
+> +	.set_ofs =3D 0x4,
+> +	.clr_ofs =3D 0x4,
+> +	.sta_ofs =3D 0x4,
+> +};
+> +
+> +#define GATE_VLPCFG_REG_FLAGS(_id, _name, _parent, _shift,
+> _flags)		\
+> +	GATE_MTK_FLAGS(_id, _name, _parent, &vlpcfg_reg_cg_regs,
+> _shift,	\
+> +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &mtk_clk_gate_ops_no_setclr_inv, =
+_flags)
+> +
+> +#define GATE_VLPCFG_REG(_id, _name, _parent, _shift)		\
+> +	GATE_VLPCFG_REG_FLAGS(_id, _name, _parent, _shift, 0)
+> +
+> +static const struct mtk_gate vlpcfg_reg_clks[] =3D {
+> +	GATE_VLPCFG_REG_FLAGS(CLK_VLPCFG_REG_SCP, "vlpcfg_scp",
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "vlp_scp_sel", 28, CLK_IS_CRITICAL),
+> +	GATE_VLPCFG_REG_FLAGS(CLK_VLPCFG_REG_RG_R_APXGPT_26M,
+> "vlpcfg_r_apxgpt_26m",
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "clk26m", 24, CLK_IS_CRITICAL),
+> +	GATE_VLPCFG_REG_FLAGS(CLK_VLPCFG_REG_DPMSRCK_TEST,
+> "vlpcfg_dpmsrck_test",
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "clk26m", 23, CLK_IS_CRITICAL),
+> +	GATE_VLPCFG_REG_FLAGS(CLK_VLPCFG_REG_RG_DPMSRRTC_TEST,
+> "vlpcfg_dpmsrrtc_test",
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "clk32k", 22, CLK_IS_CRITICAL),
+> +	GATE_VLPCFG_REG_FLAGS(CLK_VLPCFG_REG_DPMSRULP_TEST,
+> "vlpcfg_dpmsrulp_test",
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "osc_d10", 21, CLK_IS_CRITICAL),
+> +	GATE_VLPCFG_REG_FLAGS(CLK_VLPCFG_REG_SPMI_P_MST,
+> "vlpcfg_spmi_p",
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "vlp_spmi_p_sel", 20,
+> CLK_IS_CRITICAL),
+> +	GATE_VLPCFG_REG_FLAGS(CLK_VLPCFG_REG_SPMI_P_MST_32K,
+> "vlpcfg_spmi_p_32k",
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "clk32k", 18, CLK_IS_CRITICAL),
+> +	GATE_VLPCFG_REG_FLAGS(CLK_VLPCFG_REG_PMIF_SPMI_P_SYS,
+> "vlpcfg_pmif_spmi_p_sys",
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "vlp_pwrap_ulposc_sel", 13,
+> CLK_IS_CRITICAL),
+There is no such "vlp_pwrap_ulposc_sel" clock defined in your mt8189
+clock driver patch series. The parent clock should probably be
+"vlp_pwrap_osc_sel" (that is defined in clk-mt8189-vlpckgen.c) instead.
 
-> scmi_handle_put() or scmi_xfer_raw_get(), are claiming it is a pointer
-> to const thus they should not modify the handle.  In fact that's a false
-> statement, because first thing these functions do is drop the cast to
-> const with container_of:
+Same thing for vlpcfg_pmif_spmi_p_tmr, vlpcfg_pmif_spmi_m_sys and
+vlpcfg_pmif_spmi_m_tmr below that have the same parent clock.
 
-Thanks for this first of all...
+Best regards,
+Louis-Alexis
 
-...but :D
-
-... the SCMI stack attempts to follow a sort of layered design, so roughly
-we have transport, core, protocols and finally SCMI Drivers.
-
-Each of these layers has its own responsabilities and the aim was to
-enforce some sort of isolation between these layers, OR even between
-different disjoint features within the same layer, if it made sense,
-like with the notification subsystem within the core...
-
-Now, given that all of the above must be attained using our beloved C
-language, such attempt to enforce isolation between such 'islands' with
-different responsibilities is based on:
-
- - fully opaque pointers/handles...like the ph protocol handels within
-   SCMI drivers...best way to do it..if you cannot even peek into an
-   object you certainly cannot mess with it...
-
- - some 'constification' when passing around some nonm-opaque references
-   across such boundaries
-
-So, when you say that some of these functions sports a fake const
-reference, is certainly true to some extent, BUT you miss the fact that
-usually the const is meant to stop the CALLER from messing freely with
-the handle and instead enforce the usage of a dedicated helper that sits
-in another layer...
-
-As an example, when you say that the scmi_protocol_handle *ph is indeed
-manipulated by scmi_protocol_set_priv() and so it is NOT const, you are
-certainly right, BUT the above function and the protocol handle itself
-lives in the core, a different layer from the protocols, and indeed the
-protocol_init function cannot change directly the protocol priv value
-but instead has to pass through the helper ph->set_priv() which is the
-only helper that can touch the ph content...
-...IOW you are forced to respect the isolation boundary (as much as
-possible) by the constification of ph...if you drop the const in the
-protocol_init protoypes you end opening the stack to all sort of
-cross-boundary manipulations annd hacks: helpers like set_priv were
-added to be able to manipulate the bits that needed to be modifiable
-while maintaining separation of resposibilities between latyers.
-
-Similarly for notifications, they are kept isolated as much as possible
-from the core.
-
-So, I still have definitely to properly go through all of your
-series, but while the usage of container_of_const() is certainly a
-welcome addition, because it raises the isolation factor, dropping the
-'fake' const seems to me a step back in the enforcement of isolation
-boundaries between different layers or different subsystems within the
-same layer.
-
-IOW, the last that we want is to be able to freely change the content
-of such const handles from outside the 'island' they live in...
-
-Any improvement on such isolation with more modern C tricks, if
-possible, is pretty much welcome, i.e. I am not saying that the current
-system is perfect and not improvable...but just dropping all of this in
-name of some better possible compilation optimization seems not worth in
-terms of maintainability...
-
-Does any of the above blabbing of mine makes sense :P ?
-
-Thanks,
-Cristian
-
+> +	GATE_VLPCFG_REG_FLAGS(CLK_VLPCFG_REG_PMIF_SPMI_P_TMR,
+> "vlpcfg_pmif_spmi_p_tmr",
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "vlp_pwrap_ulposc_sel", 12,
+> CLK_IS_CRITICAL),
+> +	GATE_VLPCFG_REG(CLK_VLPCFG_REG_PMIF_SPMI_M_SYS,
+> "vlpcfg_pmif_spmi_m_sys",
+> +			"vlp_pwrap_ulposc_sel", 11),
+> +	GATE_VLPCFG_REG(CLK_VLPCFG_REG_PMIF_SPMI_M_TMR,
+> "vlpcfg_pmif_spmi_m_tmr",
+> +			"vlp_pwrap_ulposc_sel", 10),
+> +	GATE_VLPCFG_REG_FLAGS(CLK_VLPCFG_REG_DVFSRC,
+> "vlpcfg_dvfsrc",
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "vlp_dvfsrc_sel", 9, CLK_IS_CRITICAL),
+> +	GATE_VLPCFG_REG_FLAGS(CLK_VLPCFG_REG_PWM_VLP,
+> "vlpcfg_pwm_vlp",
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "vlp_pwm_vlp_sel", 8,
+> CLK_IS_CRITICAL),
+> +	GATE_VLPCFG_REG_FLAGS(CLK_VLPCFG_REG_SRCK, "vlpcfg_srck",
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "vlp_srck_sel", 7, CLK_IS_CRITICAL),
+> +	GATE_VLPCFG_REG_FLAGS(CLK_VLPCFG_REG_SSPM_F26M,
+> "vlpcfg_sspm_f26m",
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "vlp_sspm_f26m_sel", 4,
+> CLK_IS_CRITICAL),
+> +	GATE_VLPCFG_REG_FLAGS(CLK_VLPCFG_REG_SSPM_F32K,
+> "vlpcfg_sspm_f32k",
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "clk32k", 3, CLK_IS_CRITICAL),
+> +	GATE_VLPCFG_REG_FLAGS(CLK_VLPCFG_REG_SSPM_ULPOSC,
+> "vlpcfg_sspm_ulposc",
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "vlp_sspm_ulposc_sel", 2,
+> CLK_IS_CRITICAL),
+> +	GATE_VLPCFG_REG_FLAGS(CLK_VLPCFG_REG_VLP_32K_COM,
+> "vlpcfg_vlp_32k_com",
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "clk32k", 1, CLK_IS_CRITICAL),
+> +	GATE_VLPCFG_REG_FLAGS(CLK_VLPCFG_REG_VLP_26M_COM,
+> "vlpcfg_vlp_26m_com",
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "clk26m", 0, CLK_IS_CRITICAL),
+> +};
+> +
+> +static const struct mtk_clk_desc vlpcfg_reg_mcd =3D {
+> +	.clks =3D vlpcfg_reg_clks,
+> +	.num_clks =3D ARRAY_SIZE(vlpcfg_reg_clks),
+> +};
+> +
+> +static const struct of_device_id of_match_clk_mt8189_vlpcfg[] =3D {
+> +	{ .compatible =3D "mediatek,mt8189-vlp-ao", .data =3D
+> &vlpcfg_ao_reg_mcd },
+> +	{ .compatible =3D "mediatek,mt8189-vlpcfg-ao", .data =3D
+> &vlpcfg_reg_mcd },
+> +	{ /* sentinel */ }
+> +};
+> +
+> +static struct platform_driver clk_mt8189_vlpcfg_drv =3D {
+> +	.probe =3D mtk_clk_simple_probe,
+> +	.remove =3D mtk_clk_simple_remove,
+> +	.driver =3D {
+> +		.name =3D "clk-mt8189-vlpcfg",
+> +		.of_match_table =3D of_match_clk_mt8189_vlpcfg,
+> +	},
+> +};
+> +
+> +module_platform_driver(clk_mt8189_vlpcfg_drv);
+> +MODULE_DESCRIPTION("MediaTek MT8189 vlpcfg clocks driver");
+> +MODULE_LICENSE("GPL");
