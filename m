@@ -1,73 +1,106 @@
-Received: from zg8tmja5ljk3lje4mi4ymjia.icoremail.net (zg8tmja5ljk3lje4mi4ymjia.icoremail.net [209.97.182.222])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11D016F288;
-	Tue, 24 Feb 2026 09:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.182.222
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28DF236C5A6;
+	Tue, 24 Feb 2026 09:36:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771924203; cv=none; b=ep7putv1zRfR0qWDzmMMbsrjk1TpcIRQLoPCuF43pekDeIQOqhslHFBe6N8A2l3hOmuktmMn+nILJ+H1SQlYkZJeZEsrGlEmsLHva5VgfLbvvHLt/1bcvIwoPAPl+9BU2+lvaj/bPPa+sQPKXn7GPEh7skN6/PfGnah2eFejUSY=
+	t=1771925795; cv=none; b=Qv31RYM1t6ryZ0zBYWmeQgitkOZckSUPx8y7NvfITSsz37JEUGTj7lwXoiqJkwHT5ytzyoHWi6N1491O+hoaqi/J8WCzu3sB3iKuUJfTeTsPu0ANvdiXmXoPxpAkx0Ny6JNkhHBI4bMXsGSLD3fNZyxXBnvobnoxxG361xZ8L7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771924203; c=relaxed/simple;
-	bh=yAOslJ+pC7VyRRx+a0peLrlTHeTl+nRsCm84jAs6dJY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=qqjJmpwPVkdiFM/RzA97S+MqQsrfKVrUYN4Lv66wTJjngaevsV2uILb1rilBZK4RiNxVYoxIaqoSDL2PW5GyfqQrdsFJRGMVQ6nSQjn9e1x1dBCAtvYuVWxfp98/sn1lDkJBYPJTE4dgErVjwsxWv5qO7FjzGMP91i1RRkLetK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=209.97.182.222
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from dongxuyang$eswincomputing.com ( [10.12.96.41] ) by
- ajax-webmail-app2 (Coremail) ; Tue, 24 Feb 2026 17:09:42 +0800 (GMT+08:00)
-Date: Tue, 24 Feb 2026 17:09:42 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: "Xuyang Dong" <dongxuyang@eswincomputing.com>
-To: "Bo Gan" <ganboing@gmail.com>, mturquette@baylibre.com, sboyd@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, troy.mitchell@linux.dev,
-	bmasney@redhat.com
-Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
-	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com,
-	marcel@ziswiler.com
-Subject: Re: Re: [PATCH v13 0/3] Add driver support for ESWIN eic700 SoC
- clock controller
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
- 20241203(6b039d88) Copyright (c) 2002-2026 www.mailtech.cn
- mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
-In-Reply-To: <ae2358d7-7e82-49fe-8a03-195487a7b010@gmail.com>
-References: <20260214101421.228-1-dongxuyang@eswincomputing.com>
- <ae2358d7-7e82-49fe-8a03-195487a7b010@gmail.com>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1771925795; c=relaxed/simple;
+	bh=iSe8V6XyfiQWAbZuq2LAZaMK748jdNxnXDIx3HLR36s=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=u3yfUEZo14Ke3z3UO59e7SEdgng585Mdrgr3j9FvHWfMYcyQ3nf9pQRTY+f72W0u1bdFtdQZzeCnnhlOKGQu/B4qR3WV09y34rBG2YWuTUAcWe7LFWbMTdVS9DRf4d2GNO1E2i7uRDUKri744JCfskXX45+/sBX0cq96szvQgn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=aixx+ocT; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="aixx+ocT"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1771925791; x=1803461791;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=iSe8V6XyfiQWAbZuq2LAZaMK748jdNxnXDIx3HLR36s=;
+  b=aixx+ocTr9Ar9FLaVtdj5Wddp5Q346yvRzCU3RjCa6+SQat9lkpzvdJS
+   7NWZmDmciofNknsn0r2YGPoYmXNxP/hASZZLz2w8tMN5cFeX0WTvwsy0W
+   SFF3WtaRvtp3CctqmxUj8MQq/cmvJG2zC/Dhcez/yZx9ssTN54pddSAwR
+   hooXwgpiEQhKwiPYHtYCh9e0zdzI8101qiw9kP3JdWwUD5Sc3XAubhXk9
+   HBZZnUZ/5judnu7rYWK1Ub0mAM81AIVFxEalsTEFtCNOx5riP9nV9i3fE
+   mhVBWng8kptC5ux0R6R4QWz84udgQUxjHimxaTz++EaNvlpBtgp419jpB
+   w==;
+X-CSE-ConnectionGUID: q+wjTlEOTWe2iGgzOhxVFA==
+X-CSE-MsgGUID: D/CSFvWoRlePx4NNJMu55w==
+X-IronPort-AV: E=Sophos;i="6.21,308,1763449200"; 
+   d="scan'208";a="221050262"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2026 02:36:30 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.87.71) by
+ chn-vm-ex1.mchp-main.com (10.10.87.30) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.35; Tue, 24 Feb 2026 02:35:55 -0700
+Received: from wendy.microchip.com (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Tue, 24 Feb 2026 02:35:53 -0700
+From: Conor Dooley <conor.dooley@microchip.com>
+To: <linux-clk@vger.kernel.org>
+CC: Conor Dooley <conor.dooley@microchip.com>, <stable@vger.kernel.org>,
+	"Daire McNamara" <daire.mcnamara@microchip.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Claudiu Beznea
+	<claudiu.beznea@tuxon.dev>, <linux-riscv@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v1] clk: microchip: mpfs-ccc: fix out of bounds access during output registration
+Date: Tue, 24 Feb 2026 09:35:25 +0000
+Message-ID: <20260224-briskly-scholar-294d13464721@wendy>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <41d3bf12.387f.19c8ee9570e.Coremail.dongxuyang@eswincomputing.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:TQJkCgAHHaDWap1pHxkDAA--.36W
-X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/1tbiAQEIAmmcgREbn
-	gAEsu
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1666; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=iSe8V6XyfiQWAbZuq2LAZaMK748jdNxnXDIx3HLR36s=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDJlzC+4f9/1tcWCXxMfJZysO3ll1oPXkIYntIsnzWC6mmj2f JJWX1FHKwiDGwSArpsiSeLuvRWr9H5cdzj1vYeawMoEMYeDiFICJZHszMlz89CPnlFGJB1NfW8x3xq 27liqId/Smnt0Qax2tOdXT/gQjQ3uvyN/n4aZ3XZs7P+0uKTfZpxO/883EpsT5jLys87nf8wIA
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-PiBIaSBFU1dJTiBmb2xrcywKPiAKPiBJJ20gdGVzdGluZyB5b3VyIHBhdGNoc2V0IG9uCj4gaHR0
-cHM6Ly9naXRodWIuY29tL2dhbmJvaW5nL2xpbnV4LWVpYzc3L3RyZWUvZWljNzctaW50ZWdyYXRp
-b24tdGVzdC1jbGstdjEzCj4gCj4gSXQncyBhcHBsaWVkIG9uIHRvcCBvZiBTYW11ZWwncyBQTUEg
-djMgcGF0c2hzZXQsIHBsdXMgZGV2aWNlLXRyZWUgcGF0Y2hlcwo+IGZyb20geW91ciBpbnRlZ3Jh
-dGlvbiB0ZXN0IGJyYW5jaC4gSXQncyBwcmV0dHkgc2ltaWxhciB0byB3aGF0IE1hcmNlbCBkaWQs
-Cj4gYnV0IEkganVzdCB3YW50IHRvIGhhdmUgYSBzZXBhcmF0ZSB2ZXJpZmljYXRpb24uIFdoYXQg
-SSBmb3VuZCBpcyB0aGF0IHRoZQo+IGtlcm5lbCBjYW4gc3VjY2Vzc2Z1bGx5IGJvb3Qgd2l0aCBj
-bGtfaWdub3JlX3VudXNlZCAoZU1NQy9ldGggd29ya2luZyksCj4gYnV0IGhhbmdzIHdpdGhvdXQu
-IEl0IHN0dWNrIGF0Cj4gCj4gWyAgICAzLjI1NzE0MV0gY2xrOiBEaXNhYmxpbmcgdW51c2VkIGNs
-b2Nrcwo+IAo+IEknbSBwcmV0dHkgc3VyZSB0aGF0IHNvbWUgY2xvY2tzIHRoYXQgd2VyZW4ndCBz
-dXBwb3NlZCB0byBnZXQgZGlzYWJsZWQgZ290Cj4gdHVybmVkIG9mZi4gQ2FuIHlvdSB2YWxpZGF0
-ZSBpZiB0aGF0J3MgYSBidWcgaW4gdGhlIGNsb2NrIGRyaXZlciwgb3IgbXkKPiBkZXZpY2UtdHJl
-ZSBqdXN0IGRpZG4ndCBsaW5rIGFsbCBjbG9ja3MuIE9uZSB0aGluZyBJIG5vdGljZWQgaXMgdGhh
-dCB0aGVyZQo+IGlzIG5vIENMS19JU19DUklUSUNBTCBpbiB5b3VyIGNvZGUsIHNvIGl0J3MgaGln
-aGx5IGxpa2VseSB0aGF0IEREUiBQTEwgb3IKPiBvdGhlcnMgd2VyZSB0dXJuZWQgb2ZmIHVuaW50
-ZW50aW9uYWxseS4gTm90IGEgY2xvY2sgZHJpdmVyIGV4cGVydCwgYnV0IEknZAo+IGV4cGVjdCB0
-aGUga2VybmVsIHNob3VsZCB3b3JrIGZpbmUgd2l0aG91dCBjbGtfaWdub3JlX3VudXNlZC4KPiAK
-CkhpIEJvLAoKVGhhbmtzIGZvciB5b3VyIHJlcGx5LiBJIGFsc28gZ290IHRoZSBzYW1lIHJlc3Vs
-dCB3aXRob3V0IGNsa19pZ25vcmVfdW51c2VkLsKgClRoaXMgaXMgYSBidWcsIGFuZCBJIHdpbGwg
-YWRkcmVzcyBpdCBpbiB2MTQuCgpSZWdhcmRzLApYdXlhbmcgRG9uZwo=
+UBSAN reported an out of bounds access during registration of the last
+two outputs. This out of bounds access occurs because space is only
+allocated in the hws array for two PLLs and the four output dividers
+that each has, but the defined IDs contain two DLLS and their two
+outputs each, which are not supported by the driver. The ID order is
+PLLs -> DLLs -> PLL outputs -> DLL outputs. Decrement the PLL output IDs
+by two while adding them to the array to avoid the problem.
+
+Fixes: d39fb172760e ("clk: microchip: add PolarFire SoC fabric clock support")
+CC: stable@vger.kernel.org
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+CC: Conor Dooley <conor.dooley@microchip.com>
+CC: Daire McNamara <daire.mcnamara@microchip.com>
+CC: Michael Turquette <mturquette@baylibre.com>
+CC: Stephen Boyd <sboyd@kernel.org>
+CC: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+CC: linux-riscv@lists.infradead.org
+CC: linux-clk@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+---
+ drivers/clk/microchip/clk-mpfs-ccc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/microchip/clk-mpfs-ccc.c b/drivers/clk/microchip/clk-mpfs-ccc.c
+index 3a3ea2d142f8a..54cfbb8be8ab5 100644
+--- a/drivers/clk/microchip/clk-mpfs-ccc.c
++++ b/drivers/clk/microchip/clk-mpfs-ccc.c
+@@ -178,7 +178,7 @@ static int mpfs_ccc_register_outputs(struct device *dev, struct mpfs_ccc_out_hw_
+ 			return dev_err_probe(dev, ret, "failed to register clock id: %d\n",
+ 					     out_hw->id);
+ 
+-		data->hw_data.hws[out_hw->id] = &out_hw->divider.hw;
++		data->hw_data.hws[out_hw->id - 2] = &out_hw->divider.hw;
+ 	}
+ 
+ 	return 0;
+-- 
+2.51.0
+
