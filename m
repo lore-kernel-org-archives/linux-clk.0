@@ -1,203 +1,109 @@
-Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010027.outbound.protection.outlook.com [40.93.198.27])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B2332BE642;
-	Tue, 24 Feb 2026 18:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.27
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771956646; cv=fail; b=q3MsylgKav5ttp2PvG/7B+R/h60Xg+rexdSMcAsyrt0UEf+gbBffUfKEIB46QhmumjF5RM8rwmvl/QwPjc956q4xE4yIaZfWW7hXpebirLKXnk7LFVCHlQDn050Y2MpK0Cle6nF1/Xiy9IR9mMtXCLryzJABqNnzPWhlGM83VZU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771956646; c=relaxed/simple;
-	bh=Q0SvaaSfjWLXeTMGjWiDYSHfBUPvrvABnJZEnfcqWWE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=D+IM40YE+TB7PKnfztuLsdKoghRFUKCqAw7qF3t0fq30goXb2LfPvdsd7knNgC/WbQzQ+JXmJArNrpe6xMSRrB+bJ0pgX1RQiTgyLHeUVE4LFbM/NdBHdFixCt5pCrxticqk2cLUpVaNLNCETPy7Lk3SdWN8OIc0XHmq+Nx27i8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=vq9S1z9a; arc=fail smtp.client-ip=40.93.198.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5DA2DB791;
+	Tue, 24 Feb 2026 19:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771960091; cv=none; b=o8ZsYD7UdytLqxcSKOE8Co9c+EEH62iUdaDoB/pJFFGOw+lhgvDhAs+F/4URG5besSyWQmkQGj2hS/NbW8tLQ/ejKbDHbhuwcmPdsgLYJPoXEzEHm1/NrdIo1kL/GBqAmDquC8FYZOblse20cQWbQ6yChKlU4sZioy1IrjFv6Pw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771960091; c=relaxed/simple;
+	bh=Ytxbffr51F0re4bW6nSVt2djpBTroGj9/O4LbmP+m8s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nHZVpfryiEiDBCgtJCdBxpA/U5tc9WdxMGHpLGXa1MoytvF3mB4VYEBPpQfJXJY2vmTBk2p7IcKkwAS6hFFfyTQyZLeWzpjtctGNhMqoj1HJT+am4F2EA1K5UlKQVYxjFYKmnPv9aRBkB4KKLzkvgg98KppIdiKAr2URbm/0Onc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=4g3xkOm7; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="vq9S1z9a"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=N4Z7m3SkYl+rjBC08Ediy8WdpB2Hu6uMOv7QUWYZrK5wFaxoE/lWGXUep0naRatZi8Vzoqrp7SnVP+Gye5Dh8dL5RymeZzz0RniR/Ih3CvADVRY37nl4hHCddQOpRFhmO40EB0reaL/ha4xduijY4cR9HXKWAmlqcGrAGZ+Z5/rV1o4R4imDbxcN/1KGbA/vCnVs3zdgCUmwv6O3t8OYOYlIIAcjjnJM9B/Di4P0+6Z7luvepjeK4K76AwXRkv6M6Tnuph3ptBQ74OSDfnCeWRsvwwqt1bGmsD68PLvg9HCeRNeED1/IiVW/DHMy8wujiUu1IKFDHM4FrS5RX1jyPA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sRcvAQ7/9BozLVUCTTFPnDAktnex573RQGPF2Rk/pSc=;
- b=Qt5cAzjrzG3ZbnWg9g77vK5srdmJhR+VBsp/Ocs+H+me7++qTUfz6fmgrrC348mb66Xl1offeOI7zqi3pxZRhJwnyTRs5qMeeaL0yCu43Gu4VH0xZJHUuRNPZe1UtSvOkhoN2Y4OEISMKhQAo4rTP6D72UiaKMgLOOsdq6C03FJ7KM0U9biNwHSoXxIecczbqBgfneuEnw9YXfEtEOY/+TRgkth9iBo8JfTQmsgDgv6+gT1HRnI1pByggVrD+RJu/vfVJ6pdEzszOz/AAoKp8XO4OVsp+2397w6foMfIvHcCADHxYIrVyoyjq1K7U+hgi0kFg1ZumYWgRzYZeRzz+A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.23.195) smtp.rcpttodomain=gmail.com smtp.mailfrom=ti.com; dmarc=pass
- (p=quarantine sp=none pct=100) action=none header.from=ti.com; dkim=none
- (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sRcvAQ7/9BozLVUCTTFPnDAktnex573RQGPF2Rk/pSc=;
- b=vq9S1z9akvK+0yK2PNfaYKyWuwJ5rxLxYrvSLT6ViOjTU7DsVHnvVnAEy0eSPH5sd+mGSzlP4SY18jLkBlpKcB/4//0AuCs9BL1RIwNx6mEQpPlkePyyITa2d9KOA/cDaz+px98HmqKqE+IFPQfUO7GZzGFxFJ4cPggYyaWU+qg=
-Received: from BN1PR14CA0003.namprd14.prod.outlook.com (2603:10b6:408:e3::8)
- by PH0PR10MB997569.namprd10.prod.outlook.com (2603:10b6:510:37f::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9632.22; Tue, 24 Feb
- 2026 18:10:42 +0000
-Received: from BN3PEPF0000B36D.namprd21.prod.outlook.com
- (2603:10b6:408:e3:cafe::ad) by BN1PR14CA0003.outlook.office365.com
- (2603:10b6:408:e3::8) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9632.22 via Frontend Transport; Tue,
- 24 Feb 2026 18:10:16 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.195)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.23.195 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.23.195; helo=lewvzet201.ext.ti.com; pr=C
-Received: from lewvzet201.ext.ti.com (198.47.23.195) by
- BN3PEPF0000B36D.mail.protection.outlook.com (10.167.243.164) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9654.0 via Frontend Transport; Tue, 24 Feb 2026 18:10:41 +0000
-Received: from DLEE213.ent.ti.com (157.170.170.116) by lewvzet201.ext.ti.com
- (10.4.14.104) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 24 Feb
- 2026 12:10:24 -0600
-Received: from DLEE215.ent.ti.com (157.170.170.118) by DLEE213.ent.ti.com
- (157.170.170.116) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 24 Feb
- 2026 12:10:12 -0600
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE215.ent.ti.com
- (157.170.170.118) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Tue, 24 Feb 2026 12:10:12 -0600
-Received: from [127.0.1.1] (antonios-thinkstation-p3-tower.dhcp.ti.com [128.247.81.112])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 61OIABBU3186529;
-	Tue, 24 Feb 2026 12:10:11 -0600
-From: Antonios Christidis <a-christidis@ti.com>
-Date: Tue, 24 Feb 2026 12:09:15 -0600
-Subject: [PATCH 1/5] arm64: dts: ti: k3-j721e: Add GPU node
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="4g3xkOm7"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=r7Nl4vRIA8zq2/ErXR7S1Ueuua1WfoxbT3suotlryZc=; b=4g3xkOm75N/NMIdeMIw6vzO5oE
+	Xfjs+FulGd3shI5guD2gYXgE8zpO1R7XnS+pwzSGnYyDnVDJOOWkqxEuZG1XCV/4PS/zr7VPOsH6j
+	wAP9OV4A+K+N5y5Q862oMj2z+G02AKXBBC+4bnG8ra5CEMC/YbFnRKg4GW6wa6Gplpn3Xr/0armxL
+	mAw2OX3wIH1/3EvdsobqnZCEpdGPRO4uJ8bVzTUcpc0wFjXwObleKRXCAcPHTetqf5lRCXpKm3ip0
+	bdHMCqBwNOJUYqcEJEouiJUA07gui4fUkZZXfulN0oUV+94ikSJUEn9RfnjWNnDglmGB7siCS1NGc
+	w7JU9ELg==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vuxlQ-00000002fd2-2XBJ;
+	Tue, 24 Feb 2026 19:08:08 +0000
+Message-ID: <2b9b5702-1b30-415f-b734-8af9d1aef27c@infradead.org>
+Date: Tue, 24 Feb 2026 11:08:07 -0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/1] clk: baikal-t1: Remove not-going-to-be-supported
+ code for Baikal SoC
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Richard Cochran <richardcochran@gmail.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Brian Masney <bmasney@redhat.com>
+References: <20260224111821.3491352-1-andriy.shevchenko@linux.intel.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20260224111821.3491352-1-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-ID: <20260224-gpu_dts-v1-1-cc5ddffe140c@ti.com>
-References: <20260224-gpu_dts-v1-0-cc5ddffe140c@ti.com>
-In-Reply-To: <20260224-gpu_dts-v1-0-cc5ddffe140c@ti.com>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, "Tero
- Kristo" <kristo@kernel.org>, Rob Herring <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Frank
- Binns" <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>, "David
- Airlie" <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, Maxime Ripard
-	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, "Santosh
- Shilimkar" <ssantosh@kernel.org>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-clk@vger.kernel.org>, Antonios Christidis <a-christidis@ti.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1771956611; l=1120;
- i=a-christidis@ti.com; s=20260224; h=from:subject:message-id;
- bh=Q0SvaaSfjWLXeTMGjWiDYSHfBUPvrvABnJZEnfcqWWE=;
- b=2g62liA+7HxwFBRNvct3OClW2aGqEkASSv+YXYVRsiZyOzJa4YArju5eK7+TViUsgzB9ic6ng
- pz1uLu96e7YANFhaG1jVosZ0X6keDSWtD2NBCdNBS3Fq2lNo0hOdIwT
-X-Developer-Key: i=a-christidis@ti.com; a=ed25519;
- pk=HcbNQnPnde8WLoob9CZpry+ZyXrXg5+wessZiBGMaFw=
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B36D:EE_|PH0PR10MB997569:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9eeea4ce-487b-422f-5e63-08de73d005aa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014|7416014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YzE3UnVQZG1IT3drV3pONjNQTW5ydEl0b0d4MVVsbERKa3Q1ekZUZ0gyNHFa?=
- =?utf-8?B?M1NodzhJSEM4dzJxRXZUMWFGaHlwT2FJQ2ZTSEpJbjVEcFBaeGI4VktXdE02?=
- =?utf-8?B?WnIwQ1o4N1B2TXVUaUQ4WHdqZWI5MnZ2RWdKQ3VjZEVnSW5nVGJjbXFzVFhO?=
- =?utf-8?B?NlBmSVEyV1ZFU1EzYVNSZ2FCOW40UkVVMnU1cW9VbE5jbjlyZlJhZHBWdXJt?=
- =?utf-8?B?eEk5a0ZEdERLNW40b2Q3T3FSYTRkOFpEdlZsRFh3VmRNMm1WdkZBVTh4Z0k4?=
- =?utf-8?B?aGpvMldVa090MVVzQXpRL1puNE1LckxFRXBudVZOcmpzL3BxcHhXN2NSZlFZ?=
- =?utf-8?B?MmYxSWRXYlR0RUxDb2k0a253UTNVSW10ZU5IL1VZOE1zSEhCbVR6ZnVON0FV?=
- =?utf-8?B?aENuRFpPUS9CdmIyRnhYQzZLTWhkQzUzS01McTVaRHdpMVI3Mk8vRFM0VURw?=
- =?utf-8?B?UTdYQW9FMVRpeDNXMmFpbTA5dDU0eWhyeGJmMU5nY0xHRHYwN3FrRkNvY0dp?=
- =?utf-8?B?azlDaWpkRi9GQWJWS29EY0pJN1ZReThRMEFvOFV4VE5MeFRqTnZBSmVJZEJ5?=
- =?utf-8?B?WCtyTkJlTjUvVFdKT0FOcjdwMW1vY2tKRTRJdUlZYVRYZ21iNThqUHBSRG5D?=
- =?utf-8?B?SlZqdDhGbmp4YWxRL1VJdEl1U2VIT1FJcHJQREcyLzBzSnZ3NHdPald3czUw?=
- =?utf-8?B?UmQzUUNiL0JUOFJITGZWT1hWdFpCc0pLWXQ4blN1SUFzZ0NBL2JKSjNKUU11?=
- =?utf-8?B?MnBCTUYzK0NZem5mRTE4QUxudzZhNGNtU2VLRXdReUdac1ZXRjR6bHZ6Mzh2?=
- =?utf-8?B?bU12VzVxbHZObGRabU1lY0U0K0FFN1VOaWVaZ0JWb0N4UEwxOVVpdjlWQzFG?=
- =?utf-8?B?WlA4d0g0ajl3a2hvQUlLclExVmxlRzZ5SU5yK3JaQlY2ZjNuZjduT1htMXJJ?=
- =?utf-8?B?Zis3Rjh5TFEvWVphNjdDUUpETm5sbGRCOVpuNEYwaDFrR29PMy9ydDFmOE5m?=
- =?utf-8?B?TlJBWm83dllRMEJhWlJhR3RMMnFOZWhQeU8vQzNPRDVtOEpXdndxL240cjFi?=
- =?utf-8?B?TzV3RUtaUS92QlpNYjVwNVUrQkNQUGhoVTlkY3dnUEM4cW00dktjWlM3TUU3?=
- =?utf-8?B?ZHh4N1lpbnhZU29qMkxQSWtFd3pnQWc4aUNseVZiUkZjU05XODZqN2dSeUF1?=
- =?utf-8?B?VHBCUDIyUUNiYU1nYnpQMHVycExxY0NrZE9IcVFzdkF0ZE1GamxkUlpTUExx?=
- =?utf-8?B?bUVWRHlFbzlxREZtaGZ5QkM3L1g0bG9GRVhqQ3lHYndZZFlnTnJKalFrMkxj?=
- =?utf-8?B?dVdQUC9nT0lEWXdDODZYZ3dnTzhoSTl3VGlQQjFPVU9yT1dpVlF0TC9BbUk0?=
- =?utf-8?B?bkFLVENtN3l4VEJ1NEc1M3lOSmpERGQ5dGp1WmNpbU4xSXJ1OFBXTENQMlFj?=
- =?utf-8?B?RmduZ0NtbEtXM0RLVjB4Q0NjYWZKc3VpTHNxQ1BaZFpLRGNCWWdyaTVXdEJL?=
- =?utf-8?B?UlRPcHQvbVhJWXZMRVFoQno0VloyTC9zTU1TWFFTNnhVVEcvZksrcWpBRXF0?=
- =?utf-8?B?NVJLS1BZV1hlTEFNVjhjdUxZbmFkN01rMzAxajBsRG13VVdveXE1OUM3SkNX?=
- =?utf-8?B?M0RjYldzYWNtaGpraEZENWNnRkZNbmZQZWhUcVJLK2FiMWZ0eG05cTRvYUtV?=
- =?utf-8?B?QzN2MzBocnovSENqU3RaRmtBOUU3MCtSRWt4WG1pemNrRXI5L0RwNTljUGFW?=
- =?utf-8?B?ekFrVldHcnQ5NTcyVnBnbmVSQ3lUWmFSZFNabm9VRnA4V3hvbEF5bjB0NWhu?=
- =?utf-8?B?clpoQ3VHalYxK0p2MFlyNnhJVC9yU3hWMi9CRUNlYS9CNUY4WWdMMFo5NkNy?=
- =?utf-8?B?MWp4VkV0OThXT0V2djE4SFJsRDA1YW9qWUlCampObE4xRDVUZWhQN1VkWksx?=
- =?utf-8?B?L2xxdk1oenJycE9EQ2UzVHNPNHJhbkdqckZrTWpPVlJzS1J2V2hVVEhERFkr?=
- =?utf-8?B?ZERZVTI2bWp3VGxLN1ZndnNEN0d3MmlJQVE0cjRPMEFFbEdUcFNxdTFuNURq?=
- =?utf-8?B?RERpZVcwek1CTVU0OXM3S1hYa0s4NzhKTTJyK2tCV2x4UlpLemhzT21IQ2RM?=
- =?utf-8?B?Snc1eEhwRUg3MXJFVUVBMXFXU3BaTHJBMmdCTFBQNWVPSVgrTG1mblBKbE05?=
- =?utf-8?B?YTVnMFNwSVByajZIcUhEWHR0U0R1ODNVVGcrbmNGUUd0b01XaWU2M20vejR5?=
- =?utf-8?B?UkhQRHg5WHljL256K2pzVUh4dXZBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:198.47.23.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet201.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	CUNZsEnKf9uf5IXKFjMnInOUVf2OTfAZT5k+emcICw6JZsnGqiLwk6SRkRhBaiApZ/I6sTUjpW5ojdTlOigpor3r3q6JYvW1Imd0MLzkM3di6j5qSjxTsje2KlBwwck66pVRmXtl1UvOFKyIW0P/5mMuPqItlNSUtLmASHTWEou+rA/XIydTPJFTyFaua+ZKewNX9C9X1MRy8K9qFE1iapxleGOd2SaEb1eimJBabhzOACbtmPA6BZbdT7IciXIify0sbXhEPUy7OHy8ZbH78wgtBvg+AaNxdCS7xT0HA8l+VliF5pfxGmD4mEbhr/yXddIIYI8aIxj1Ke/v3DfvkEVrrX/pX9MG2IInZlBXFx2zBkLfkjm9M7kWZZ+idirQDGHgCRjjyeqdVGshHLVUkXqP5GOiUkrvvv2u3bphZjLc1j2jU4tLjcqj7LMJyr05
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2026 18:10:41.7468
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9eeea4ce-487b-422f-5e63-08de73d005aa
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.195];Helo=[lewvzet201.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B36D.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB997569
 
-Add the series 8XE GPU node for j721e device tree.
 
-Signed-off-by: Antonios Christidis <a-christidis@ti.com>
----
- arch/arm64/boot/dts/ti/k3-j721e-main.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi b/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
-index d5fd30a01032..be91e7a2afe5 100644
---- a/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
-@@ -2624,6 +2624,20 @@ icssg1_mdio: mdio@32400 {
- 		};
- 	};
- 
-+	gpu: gpu@4e20000000 {
-+		compatible = "ti,j721e-gpu", "img,img-ge8430", "img,img-rogue";
-+		reg = <0x4e 0x20000000 0x00 0x80000>;
-+		clocks = <&k3_clks 125 0>;
-+		clock-names = "core";
-+		assigned-clocks = <&k3_clks 125 0>;
-+		assigned-clock-rates = <750000000>;
-+		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
-+		power-domains = <&k3_pds 125 TI_SCI_PD_EXCLUSIVE>,
-+				<&k3_pds 126 TI_SCI_PD_EXCLUSIVE>;
-+		power-domain-names = "a", "b";
-+		dma-coherent;
-+	};
-+
- 	main_mcan0: can@2701000 {
- 		compatible = "bosch,m_can";
- 		reg = <0x00 0x02701000 0x00 0x200>,
+On 2/24/26 3:17 AM, Andy Shevchenko wrote:
+> As noticed in the discussion [1] the Baikal SoC and platforms
+> are not going to be finalized, hence remove stale code.
+> 
+> Reviewed-by: Brian Masney <bmasney@redhat.com>
+> Link: https://lore.kernel.org/lkml/22b92ddf-6321-41b5-8073-f9c7064d3432@infradead.org/ [1]
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+> 
+> v4: added tag (Rob), rebased on top of last changes
+> v3: removed bindings header as well (now should all be gone)
+> v2: added tag (Brian), removed YAML files
+> 
+>  .../bindings/clock/baikal,bt1-ccu-div.yaml    | 196 ------
+>  .../bindings/clock/baikal,bt1-ccu-pll.yaml    | 131 ----
+>  drivers/clk/Kconfig                           |   1 -
+>  drivers/clk/Makefile                          |   1 -
+>  drivers/clk/baikal-t1/Kconfig                 |  52 --
+>  drivers/clk/baikal-t1/Makefile                |   4 -
+>  drivers/clk/baikal-t1/ccu-div.c               | 653 ------------------
+>  drivers/clk/baikal-t1/ccu-div.h               | 121 ----
+>  drivers/clk/baikal-t1/ccu-pll.c               | 560 ---------------
+>  drivers/clk/baikal-t1/ccu-pll.h               |  72 --
+>  drivers/clk/baikal-t1/ccu-rst.c               | 217 ------
+>  drivers/clk/baikal-t1/ccu-rst.h               |  67 --
+>  drivers/clk/baikal-t1/clk-ccu-div.c           | 520 --------------
+>  drivers/clk/baikal-t1/clk-ccu-pll.c           | 277 --------
+>  include/dt-bindings/clock/bt1-ccu.h           |  48 --
+>  15 files changed, 2920 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/baikal,bt1-ccu-div.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/clock/baikal,bt1-ccu-pll.yaml
+>  delete mode 100644 drivers/clk/baikal-t1/Kconfig
+>  delete mode 100644 drivers/clk/baikal-t1/Makefile
+>  delete mode 100644 drivers/clk/baikal-t1/ccu-div.c
+>  delete mode 100644 drivers/clk/baikal-t1/ccu-div.h
+>  delete mode 100644 drivers/clk/baikal-t1/ccu-pll.c
+>  delete mode 100644 drivers/clk/baikal-t1/ccu-pll.h
+>  delete mode 100644 drivers/clk/baikal-t1/ccu-rst.c
+>  delete mode 100644 drivers/clk/baikal-t1/ccu-rst.h
+>  delete mode 100644 drivers/clk/baikal-t1/clk-ccu-div.c
+>  delete mode 100644 drivers/clk/baikal-t1/clk-ccu-pll.c
+>  delete mode 100644 include/dt-bindings/clock/bt1-ccu.h
 
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+
+thanks.
 -- 
-2.34.1
-
+~Randy
