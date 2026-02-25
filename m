@@ -1,39 +1,66 @@
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1770C2DCF55
-	for <linux-clk@vger.kernel.org>; Wed, 25 Feb 2026 13:57:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBDF41FE45D
+	for <linux-clk@vger.kernel.org>; Wed, 25 Feb 2026 14:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772027856; cv=none; b=YltGEt9fX7xwXakx0rWNjZaY8jwOUIbk6MZRe/N8TIxA2yZeYhtvN+fqm/yjmp7pf43NmHfRVEOo5mF3UyLDzML48diRWhFpL526HiWpkwNPANePWtiphO+rPctxId1u+8g4UgyxzTvakyaH4MK+U2CMy4K79dNSb44T080SPNg=
+	t=1772028049; cv=none; b=DX24+/BeSSl7D29dWl8RsTyyEYFMr9pDg7z+D+ZHb+zLjd9a+v14S+83zqRxnsLVmk9i8M/SdYyDFmS9g2DqlbQMVUe9XGf+3CM3QUg60gy6oOKqS1U0YHhiZWLWh/2e/7BJOuCL5vE+4PlfSwZnJh5X0/BCPwGMZqLuVj27UpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772027856; c=relaxed/simple;
-	bh=lU3tjN0VqSiqtqk3ti5Mlwb+Sksjqa/25FkkMJ17gcI=;
+	s=arc-20240116; t=1772028049; c=relaxed/simple;
+	bh=oXWq7ZKppyOqoUwMd00YgZ68r0g8MU/hDohRVD2+w2Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OEJ4+v9N5Lp1YVVNWiuZI1+x4+8YoWXE07i6f78w0im/I48/TryOzHDnMmvxVb0/ORO4hRLwB6cIA4+6Db9Jwrj/vFZUZlIxv3PVLuYAfYdI62GDFOYh7oFY0CoAtTIzgrjdx8+ftFi2la2gcqRA4LjBu5CmDnNCOy30ea6eVJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=sE7ro5j5; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+	 In-Reply-To:Content-Type; b=UhJhl/lPXZdupw7yMCD2ITvz5THSV7qn4tZ1tehE9xg+fI9tY3064jXeen1iSmX3amu1VPNoUZFEKwerJFWPBHKYtGepLV4QY+qSL6hEXB7LDc5tWSi8iFRtk0IsuxZyb07nMjnnwfwSbQEtx2QeknUCkKhUr9AafXtcftrlrug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PCtwohfE; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="sE7ro5j5"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=rG3bFXrppjeuA+iWryZ7vgudlEyemROZ7fVq2Z8BIXg=; b=sE7ro5j5T1LKj13VybTetBxXZT
-	VRbucUIenZh6gy/4TouqpsqjKJcgsP8yNOxWIk8MzTwu8+4ShFqiYkD9dkIU7NIKmjKvFMGyoD1zC
-	dI0LkSU3Q332Wcs/BfHk98kabRpqLwi/j820Ryd/x5ppOJBoI/00Qou4NktlGhAx/gJ78jZXxILsa
-	m837YfYMtkCCWuSh7WPjwoFOvvFk2zzuMGZzFzfzg0jcgqhkurnKTYAO7B+seO9bYPeKGrEHyX4aM
-	DfLHnMX4GMQbhoLpe5CCCs/kNZtZPRSK1OJnVQjq1MhZ4+7IxBzwypfV5jjZBpauyQs0s3h29xttG
-	IYc7JnHw==;
-Received: from [189.7.87.203] (helo=[192.168.0.2])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1vvFOB-005FoP-D2; Wed, 25 Feb 2026 14:57:19 +0100
-Message-ID: <481489f1-850f-44ae-8586-b69c1d2faf8e@igalia.com>
-Date: Wed, 25 Feb 2026 10:57:11 -0300
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PCtwohfE"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-483bd7354efso14274515e9.2
+        for <linux-clk@vger.kernel.org>; Wed, 25 Feb 2026 06:00:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1772028046; x=1772632846; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=v83nX06CFNonzs3aaey88JZD1iHRYlh5Rsz4acoeN6I=;
+        b=PCtwohfEdvCchQQCABCeY8lYDYrQzUvCap6M+pc/f5Xtd8yZ8XPRj658kB7HPnXrIg
+         9l0uQfwKzEcMxwg4BKHWVjDH1x3+xNZh3LUXMjYvLR/6bE4cEFl1rUkLd1jpSTXReB19
+         qmGazQrohP3AuHigkoudW4hJN48GmSKbc2Vk5ADAIzoPbMw26+KnkYJtiB/I6GyM9gnq
+         JeWyJ9/Vlp+AKXr9MpcfhTnRWq1mPbkXFnDAvcpBZb1mfCzPr65HdkhO+kugQDm1rNNg
+         YsVt/zqT2WC9rOPDz5TyP9IGMpGUTrpR6mGOp439w93duG/xsPpkJp+8ISrsTcFy5oKE
+         CgHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772028046; x=1772632846;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=v83nX06CFNonzs3aaey88JZD1iHRYlh5Rsz4acoeN6I=;
+        b=d7PFEKldXBY0kGMqChPJmy626wShsmsfPt/X5hERe8kKzc4Q9GWnxh09A9xOF+cqlI
+         v8Z7B8Rej1Wr6/trO5LNrw4kWXIP7y7uE9CqkC5cmgG/tCak4FzXulM90UJyUyRvD6lS
+         18wyoKsUDIQzq1RChT7giP4+ZooHbOpQEdiBdiqJAyCJJjt86TTDFl08X0PaTVfmqv8X
+         Rfa/pGjxsCTIJ9+echfeaz6Hmx23snn7NYhdo0hquBtouPQWUYvWD0bibF9J9md1/sxw
+         Pvk+3ad161E7ZnnNCRC2rXfUnEzYEp+DaF/k+N9IOAi3TYt5+9CPFz4bJcPqw0nDeXI+
+         bn0w==
+X-Forwarded-Encrypted: i=1; AJvYcCVXhQ5AST5ny3okolBfyLykPYLFyfjM2kqJtKDUrln4AgXb4Of0C3TK6a9X/KUvuXdcrTVgLscYJWY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCLE5SBXu/VJ9h9p4pRWMLEPNRwuaFJod4AbDVuH7ZxK1CNd9V
+	lrHRlyMUdAGJPhFq03poRXoXOcT23RomR3G0iLVmd25Vn19+mdXvRWQdhcPUvfHMJXA=
+X-Gm-Gg: ATEYQzyWCvg0HEl3A4mKNMOg2U8JJtt2zRgvVIpFvSvIPtpeBZuRxauyVoR/2qqdnUE
+	lNfnJlA8mdnVZgajXZd1sFfx7djWWOUL5L8KKxld414IzCtJQs0zExca7A/K/AoTxMER5EqAfTY
+	v0qW7NgTDcPEFoVtEknoi5gJlGOegYAo6MahVVVGjA7Hq4xDvU65u9v3VF8Ggyxri9kTMYy1AzT
+	BLz765yQxvQCEFEhZBtwHHDQ5UwaMZsXoSuVAMKcN/+CbmUmhrGSIp4sjYTYmh9BSo2uuc4nsIc
+	3NfrVZ1mWO/t2ddHQk8XF/F+tMWiliKdg8jl17w4nlAI9p0jSkpZVnJqwRuwWTupV0lS9uABuhL
+	9HGB+mjiCKrvXxJP6yyvfHw8sHJj0d73Rc6Ev8Kx6YsCne2JlK2fzRfeY+U5KODFeFChKkHWGAr
+	6fB3cgrQvcXr4cQ7sqqe0n1OhLUI3/Go04
+X-Received: by 2002:a05:600c:3e1b:b0:483:703e:4ad9 with SMTP id 5b1f17b1804b1-483c219b659mr8852985e9.19.1772028045947;
+        Wed, 25 Feb 2026 06:00:45 -0800 (PST)
+Received: from [10.11.12.108] ([79.115.63.134])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43970c09897sm35367670f8f.17.2026.02.25.06.00.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Feb 2026 06:00:45 -0800 (PST)
+Message-ID: <279baf9e-ef05-4217-9357-94d21bd93978@linaro.org>
+Date: Wed, 25 Feb 2026 16:00:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,189 +68,87 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/6] clk: bcm: rpi: Manage clock rate in
- prepare/unprepare callbacks
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Stefan Wahren <wahrenst@gmx.net>, Melissa Wen <mwen@igalia.com>,
- Iago Toral Quiroga <itoral@igalia.com>,
- Chema Casanova <jmcasanova@igalia.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- dri-devel@lists.freedesktop.org,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, kernel-dev@igalia.com
-References: <20260218-v3d-power-management-v6-0-40683fd39865@igalia.com>
- <20260218-v3d-power-management-v6-1-40683fd39865@igalia.com>
- <20260224-curvy-shiny-dodo-e50cef@houat>
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+Subject: Re: [PATCH v2] firmware: exynos-acpm: Drop fake 'const' on handle
+ pointer
+To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
+ <andre.draszik@linaro.org>, Lee Jones <lee@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: stable@vger.kernel.org
+References: <20260224104203.42950-2-krzysztof.kozlowski@oss.qualcomm.com>
+ <b083e950-f54a-44aa-b587-eec2cc10460b@linaro.org>
+ <3e5001a6-ea3c-4304-8db3-bbe616eb4015@oss.qualcomm.com>
 Content-Language: en-US
-Autocrypt: addr=mcanal@igalia.com; keydata=
- xsBNBGcCwywBCADgTji02Sv9zjHo26LXKdCaumcSWglfnJ93rwOCNkHfPIBll85LL9G0J7H8
- /PmEL9y0LPo9/B3fhIpbD8VhSy9Sqz8qVl1oeqSe/rh3M+GceZbFUPpMSk5pNY9wr5raZ63d
- gJc1cs8XBhuj1EzeE8qbP6JAmsL+NMEmtkkNPfjhX14yqzHDVSqmAFEsh4Vmw6oaTMXvwQ40
- SkFjtl3sr20y07cJMDe++tFet2fsfKqQNxwiGBZJsjEMO2T+mW7DuV2pKHr9aifWjABY5EPw
- G7qbrh+hXgfT+njAVg5+BcLz7w9Ju/7iwDMiIY1hx64Ogrpwykj9bXav35GKobicCAwHABEB
- AAHNIE1hw61yYSBDYW5hbCA8bWNhbmFsQGlnYWxpYS5jb20+wsCRBBMBCAA7FiEE+ORdfQEW
- dwcppnfRP/MOinaI+qoFAmcCwywCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQ
- P/MOinaI+qoUBQgAqz2gzUP7K3EBI24+a5FwFlruQGtim85GAJZXToBtzsfGLLVUSCL3aF/5
- O335Bh6ViSBgxmowIwVJlS/e+L95CkTGzIIMHgyUZfNefR2L3aZA6cgc9z8cfow62Wu8eXnq
- GM/+WWvrFQb/dBKKuohfBlpThqDWXxhozazCcJYYHradIuOM8zyMtCLDYwPW7Vqmewa+w994
- 7Lo4CgOhUXVI2jJSBq3sgHEPxiUBOGxvOt1YBg7H9C37BeZYZxFmU8vh7fbOsvhx7Aqu5xV7
- FG+1ZMfDkv+PixCuGtR5yPPaqU2XdjDC/9mlRWWQTPzg74RLEw5sz/tIHQPPm6ROCACFls7A
- TQRnAsMsAQgAxTU8dnqzK6vgODTCW2A6SAzcvKztxae4YjRwN1SuGhJR2isJgQHoOH6oCItW
- Xc1CGAWnci6doh1DJvbbB7uvkQlbeNxeIz0OzHSiB+pb1ssuT31Hz6QZFbX4q+crregPIhr+
- 0xeDi6Mtu+paYprI7USGFFjDUvJUf36kK0yuF2XUOBlF0beCQ7Jhc+UoI9Akmvl4sHUrZJzX
- LMeajARnSBXTcig6h6/NFVkr1mi1uuZfIRNCkxCE8QRYebZLSWxBVr3h7dtOUkq2CzL2kRCK
- T2rKkmYrvBJTqSvfK3Ba7QrDg3szEe+fENpL3gHtH6h/XQF92EOulm5S5o0I+ceREwARAQAB
- wsB2BBgBCAAgFiEE+ORdfQEWdwcppnfRP/MOinaI+qoFAmcCwywCGwwACgkQP/MOinaI+qpI
- zQf+NAcNDBXWHGA3lgvYvOU31+ik9bb30xZ7IqK9MIi6TpZqL7cxNwZ+FAK2GbUWhy+/gPkX
- it2gCAJsjo/QEKJi7Zh8IgHN+jfim942QZOkU+p/YEcvqBvXa0zqW0sYfyAxkrf/OZfTnNNE
- Tr+uBKNaQGO2vkn5AX5l8zMl9LCH3/Ieaboni35qEhoD/aM0Kpf93PhCvJGbD4n1DnRhrxm1
- uEdQ6HUjWghEjC+Jh9xUvJco2tUTepw4OwuPxOvtuPTUa1kgixYyG1Jck/67reJzMigeuYFt
- raV3P8t/6cmtawVjurhnCDuURyhUrjpRhgFp+lW8OGr6pepHol/WFIOQEg==
-In-Reply-To: <20260224-curvy-shiny-dodo-e50cef@houat>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <3e5001a6-ea3c-4304-8db3-bbe616eb4015@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Maxime,
 
-On 24/02/26 11:11, Maxime Ripard wrote:
-> Hi Maira,
+
+On 2/25/26 12:48 PM, Krzysztof Kozlowski wrote:
+> On 24/02/2026 13:57, Tudor Ambarus wrote:
+>> Hi Krzysztof,
+>>
+>> On 2/24/26 12:42 PM, Krzysztof Kozlowski wrote:
+>>> All the functions operating on the 'handle' pointer are claiming it is a
+>>> pointer to const thus they should not modify the handle.  In fact that's
+>>> a false statement, because first thing these functions do is drop the
+>>> cast to const with container_of:
+>>>
+>>>   struct acpm_info *acpm = handle_to_acpm_info(handle);
+>>>
+>>> And with such cast the handle is easily writable with simple:
+>>>
+>>>   acpm->handle.ops.pmic_ops.read_reg = NULL;
+>>>> The code is not correct logically, either, because functions like
+>>> acpm_get_by_node() and acpm_handle_put() are meant to modify the handle
+>>> reference counting, thus they must modify the handle.  Modification here
+>>
+>> You are right that casting away const via container_of to modify the
+>> parent's reference count is incorrect, so dropping the const from the
+>> handle argument makes sense.
+>>
+>> However, to address the underlying issue of the operations being
+>> writable (e.g., acpm->handle.ops.pmic_ops.read_reg = NULL), I think we
+>> should also decouple the ops from the handle struct and keep them strictly
+>> constant in .rodata.
+>>
+>> How about we apply your fix for the signatures, and I follow up with
+>> (or we include) a patch to do the following:
+>>
+>> struct acpm_handle {
+>>         const struct acpm_ops *ops; // Changed from embedded struct to pointer
+>> };
+>>
+>> static const struct acpm_ops exynos_acpm_driver_ops = {
+>>         .dvfs_ops = {
+>>                 .set_rate = acpm_dvfs_set_rate,
+>>                 .get_rate = acpm_dvfs_get_rate,
+>>         },
+>>         .pmic_ops = {
+>>                 .read_reg = acpm_pmic_read_reg,
+>>                 .write_reg = acpm_pmic_write_reg,
+>>                 // ... other ops
+>>         },
+>> };
+>>
+>> and in probe:
+>> acpm->handle.ops = &exynos_acpm_driver_ops;
+>>
+>> This way, the handle safely reflects the mutability of its container,
+>> but our function pointers remain fully protected.
+> 
+> Yes, this makes sense.
 > 
 
-[...]
+Will you come with a follow up patch or do you want me to ACK this and do
+the follow up patch myself? Both options are fine by mine.
 
->> @@ -289,16 +290,22 @@ static int raspberrypi_fw_dumb_determine_rate(struct clk_hw *hw,
->>   static int raspberrypi_fw_prepare(struct clk_hw *hw)
->>   {
->>   	const struct raspberrypi_clk_data *data = clk_hw_to_data(hw);
->> +	struct raspberrypi_clk_variant *variant = data->variant;
->>   	struct raspberrypi_clk *rpi = data->rpi;
->>   	u32 state = RPI_FIRMWARE_STATE_ENABLE_BIT;
->>   	int ret;
->>   
->>   	ret = raspberrypi_clock_property(rpi->firmware, data,
->>   					 RPI_FIRMWARE_SET_CLOCK_STATE, &state);
->> -	if (ret)
->> +	if (ret) {
->>   		dev_err_ratelimited(rpi->dev,
->>   				    "Failed to set clock %s state to on: %d\n",
->>   				    clk_hw_get_name(hw), ret);
->> +		return ret;
->> +	}
->> +
->> +	if (variant->maximize)
->> +		ret = raspberrypi_fw_set_rate(hw, variant->max_rate, 0);
-> 
-> 
-> It's not clear to me why you would want to force it to the max there,
-> and especially the max of the clock. It would make more sense to me to
-> set it to whatever maximum rate clk_hw_get_rate_range would return
-> (which should be the minimum of variant->max_rate + all clk->max_rate),
-> but even then it would erase every call to clk_set_rate before calling
-> clk_prepare().
-> 
-> I'd understand lowering the clock rate in unprepare to avoid wasting too
-> much power, but why do we need to raise it here?
-
-This only applies to clocks with variant->maximize == true, which is
-exclusively the V3D clock. The V3D driver doesn't do fine-grained rate
-control, it always wants maximum performance. In the case of V3D, there
-are no intermediate clk_set_rate() calls to preserve.
-
-> 
->>   	return ret;
->>   }
->> @@ -306,10 +313,19 @@ static int raspberrypi_fw_prepare(struct clk_hw *hw)
->>   static void raspberrypi_fw_unprepare(struct clk_hw *hw)
->>   {
->>   	const struct raspberrypi_clk_data *data = clk_hw_to_data(hw);
->> +	struct raspberrypi_clk_variant *variant = data->variant;
->>   	struct raspberrypi_clk *rpi = data->rpi;
->>   	u32 state = 0;
->>   	int ret;
->>   
->> +	/*
->> +	 * On current firmware versions, RPI_FIRMWARE_SET_CLOCK_STATE doesn't
->> +	 * actually power off the clock. To achieve meaningful power consumption
->> +	 * reduction, the driver needs to set the clock rate to minimum before
->> +	 * disabling it.
->> +	 */
->> +	raspberrypi_fw_set_rate(hw, variant->min_rate, 0);
-> 
-> I'm not sure setting it to variant->min_rate would work directly either,
-> since it would break consumers expectations. Also, can we guard it with
-
-The clock is being unprepared, which means that any consumer that wants
-to use it again must call clk_prepare() first, at which point the rate
-gets restored (for maximize clocks) or re-established by the consumer
-via clk_set_rate(). Considering that no consumer should be relying on
-the rate of an unprepared clock, I understand that there are no
-expectations to break here.
-
-> a version check if we know that there's some good and bad firmwares?
-
-So far, all firmware versions have this issue. For future firmware
-releases, it might change, but so far, all firmware versions have this
-issue.
-
-> 
->>   	ret = raspberrypi_clock_property(rpi->firmware, data,
->>   					 RPI_FIRMWARE_SET_CLOCK_STATE, &state);
->>   	if (ret)
->> @@ -334,7 +350,7 @@ static struct clk_hw *raspberrypi_clk_register(struct raspberrypi_clk *rpi,
->>   {
->>   	struct raspberrypi_clk_data *data;
->>   	struct clk_init_data init = {};
->> -	u32 min_rate, max_rate;
->> +	unsigned long rate;
->>   	int ret;
->>   
->>   	data = devm_kzalloc(rpi->dev, sizeof(*data), GFP_KERNEL);
->> @@ -354,18 +370,20 @@ static struct clk_hw *raspberrypi_clk_register(struct raspberrypi_clk *rpi,
->>   
->>   	data->hw.init = &init;
->>   
->> -	ret = raspberrypi_clock_property(rpi->firmware, data,
->> -					 RPI_FIRMWARE_GET_MIN_CLOCK_RATE,
->> -					 &min_rate);
->> -	if (ret) {
->> -		dev_err(rpi->dev, "Failed to get clock %d min freq: %d\n",
->> -			id, ret);
->> -		return ERR_PTR(ret);
->> +	if (!variant->min_rate) {
->> +		ret = raspberrypi_clock_property(rpi->firmware, data,
->> +						 RPI_FIRMWARE_GET_MIN_CLOCK_RATE,
->> +						 &variant->min_rate);
->> +		if (ret) {
->> +			dev_err(rpi->dev, "Failed to get clock %d min freq: %d\n",
->> +				id, ret);
->> +			return ERR_PTR(ret);
->> +		}
->>   	}
-> 
-> It feels to me like it would need to be a separate patch. Why do you
-> need to override the minimum clock rate reported by the firmware?
-
-This change is needed because the prepare/unprepare callbacks need
-access to the min/max rates. In the current code, these are local
-variables in raspberrypi_clk_register(). Storing them in the variant
-struct makes them available to the callbacks. The `if (!variant-
- >min_rate)` guard only preserves the existing behavior for clocks like
-M2MC that have a hard-coded minimum rate.
-
-Having said that, I can split this into a separate preparatory patch if
-you prefer.
-
-Thanks for your review!
-
-Best regards,
-- Maíra
-
-> 
-> Maxime
-
+Thanks!
+ta
