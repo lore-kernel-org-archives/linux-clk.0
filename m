@@ -1,174 +1,324 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935A73B8D7A
-	for <linux-clk@vger.kernel.org>; Wed, 25 Feb 2026 13:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F52633A9F1
+	for <linux-clk@vger.kernel.org>; Wed, 25 Feb 2026 13:57:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772026179; cv=none; b=gK7LW8CTTL+g2ISnmDausii3Pgn42dSPSENkcCo2xfcA/SAhIa9IR6/qicL+S/5Kifc1DL12TgvrHp5E7Ps+KloStLryK3XOy3dcJCHN4vugwL2iPZ3yPdI+W5+/3G6dvxqqKRGX2rv35YH+wWQHm2eN6GntGktR8AxS2Eth+7s=
+	t=1772027833; cv=none; b=BeXPlaFOq2cM1CqviRFJt36yssnhf51JrbYm25Kxc78JYBwFuh7PHbHiF7K4Gsd2JPRqM76D/TcypTai8zBuZUc0zKPvt9Q9NY+5HWn5vLC6bThm/dZXVVC0SRAREtnR5DaqHD/5DO3ChzMNijG4QqjM1QGdNd9LUfexm0R8d60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772026179; c=relaxed/simple;
-	bh=kH6pSAzc7ixvwL56p9UiHb2EASU/2oZ/f+xfxqiwvCk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R6nsUxf2HTLHVBn4ernhn+Y8BEAbXA415xJmUORQh6iZpOI7qOmPrTUr2kaGakTkJav9qoexlb5t5Ho3QGBHnrJFCdZXp6CHnaaZYYX57ZkmIrNHk/eLWM2gorjO/0ilr4X66b/UF7j2rFahLjo91Ou4T+guZoYAqNWIpai7ZS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F8NcV5Rm; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=QFdPR5pF; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1772027833; c=relaxed/simple;
+	bh=TuXo6P+puSBX13L6PqdWtJyV9bR9L8shiyQsXJBniiY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
+	 References:In-Reply-To; b=VXBVrDjnMhTVBE+R6JEb8XrnmrF4yDpKb4EOzPm194pIFkU08a8Mlw1TP8xH4jixoiUMaRLuCbUaTfkxLuZ0ZKsoweEWisi9QTPkIlGD2Y9yKLdaNTriEqSRRQ13xUPjyygFA4n5nH7iXfPfKUrBbijtYbFL283hPrvMeTN/6pU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=DN49YSDv; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F8NcV5Rm";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="QFdPR5pF"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1772026177;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bolAAaL16DQVnJO0fDxqs1CZEsyfX0mApW10uOjI4S8=;
-	b=F8NcV5Rm6aGrXK5WwKmrISwmFkOXYSB/jyzqH/r15AHmI3CNoIZ0juXwEX0j25eh0m3s4a
-	LdZooL4gmq8JArEVe2zPER12oZLc5NqLmg6Bx5unQ6dJKtRPElO/iIja5KnnUGNUJ6+eNh
-	N4lVEO/UX36NDly+BasB0BhTKrkxFxQ=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-122-ABZ031iYPYusX8i35HsqlQ-1; Wed, 25 Feb 2026 08:29:34 -0500
-X-MC-Unique: ABZ031iYPYusX8i35HsqlQ-1
-X-Mimecast-MFC-AGG-ID: ABZ031iYPYusX8i35HsqlQ_1772026174
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-506ab115571so631704661cf.0
-        for <linux-clk@vger.kernel.org>; Wed, 25 Feb 2026 05:29:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1772026174; x=1772630974; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bolAAaL16DQVnJO0fDxqs1CZEsyfX0mApW10uOjI4S8=;
-        b=QFdPR5pFgRzajjax+yNvp0aCxyfIZ6qXZFDUBTtnhIWvUrPIj5eivFqXlp/OHNzi9f
-         6nTXU1zPLH2/Tt5T4lZjZsUnjstGjSKyD84DoTIVA6lJHmw5TQKj40irs/oSJdDaRiPG
-         NE7v3AambwDwg5OPwBf1VMQahFmIEI2fBcL9vyiHFYJxYoWzJ2fqZ7jjKLIKvuN659fB
-         zJG4cpWQm0euirCxWwqZ/vdGMu/ZXUcD6IvCehYY0RfiLRla0YWgN4F+uIbZE5i5pS+C
-         NHr4vo6M5zERgHcMWGwbJj1eeio0tFTq0thuwwpCoYR4M9/6gLyKztkiM1sLFrlyhYEP
-         rinA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772026174; x=1772630974;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bolAAaL16DQVnJO0fDxqs1CZEsyfX0mApW10uOjI4S8=;
-        b=KMsfcKkPqFeb2yehqpS/DXkmllIpz3nRRMxhghesGveqmEUIzLu7B2356KYvwzTJjm
-         tUcw9XMV/x9MJucS5VxIjgOkinhO2BzvOz+A88J6rg9aFzTbFmuW+IZgjfcevVNQPhIx
-         /sCFPHEzRI3Wc2kNRZ0P8nAdPvz79Kdu7YZ9ftLKw5l/QYVGBLC9CQa8M4WNXh9df2hH
-         E5PCvfLFcQBtzqtmc3skE9LQ8iu1Sxppq5Mwf72kuENLypJfc8jLkcwhVCUyyVBs6By5
-         ulPFWHVejtWt6ojMAZF34uKmWM6cwCBAv+1tpUBdxOOaubalsz6PoqwS4Urd1t9ePl+E
-         PYEA==
-X-Forwarded-Encrypted: i=1; AJvYcCWfBlG3RAOayS0wICigxVwDfTDwZkTPfnAkRWg21j8DGz8z/3WbyeQxicAWmT7nHiRICVdyNWJs4Eg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrtZt4B2TDZyk/YE9dX9MymDSnD+rvAqM4cPaic6OrwCPm2VJh
-	iySJNpabuoqyDnHzCoK2RqK4CBv7ixqZyk1DDGX0pFSTrctxZY/6hAt96mSK+pD1cIF+31ra/6J
-	1DoR9XzNmBn2275xWzcde8C3QKZb5OCOd6XmGjFjlnJ6tDuxAKK8kCZxxITSHZw==
-X-Gm-Gg: ATEYQzywnMfFYgVTW792KvM/6FUfqrY71wlmZEotdu1wNGRvt0YYlbNYhHOf7lh0FFF
-	dYI2YaNhK1ZGb0df4VlzY5GNn0u2w9dcQiBM4+FtXyDmipEsWQs4fB+wm+6lRWencSRv2BX1uip
-	Y+InUUJgv6HCbdek8THKfE7/IRGSKJqD7mc/mDA8I8iI6gvmizMm8kYcVI2XPrR3aENcHjO4Q+s
-	TAuY+woVTZ0P7FFAEhc9Aw7Mm1NhORyzQ1V+3fuCpc0T00ET+9m3L1zXt/IDdedJmlcDKiVUuND
-	1+kxhIxcz/8/0NK5V8BSPxmat8scbFe2iKy3Z2WST1cJXcjjPX3cCswxX0GueLUwhdSCRg/wv4a
-	jyewM3kAAdtWtXuRIaiq+AEa0tggfE0AgVxs0LQfNKVk3N/TXAuRKMN5r
-X-Received: by 2002:a05:622a:48:b0:4ee:2459:3d6c with SMTP id d75a77b69052e-5070bcb29e2mr204210561cf.58.1772026173802;
-        Wed, 25 Feb 2026 05:29:33 -0800 (PST)
-X-Received: by 2002:a05:622a:48:b0:4ee:2459:3d6c with SMTP id d75a77b69052e-5070bcb29e2mr204210171cf.58.1772026173289;
-        Wed, 25 Feb 2026 05:29:33 -0800 (PST)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5070d6dffadsm125621181cf.31.2026.02.25.05.29.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Feb 2026 05:29:32 -0800 (PST)
-Date: Wed, 25 Feb 2026 08:29:30 -0500
-From: Brian Masney <bmasney@redhat.com>
-To: Xuyang Dong <dongxuyang@eswincomputing.com>
-Cc: sboyd@kernel.org, mturquette@baylibre.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	troy.mitchell@linux.dev, ningyu@eswincomputing.com,
-	linmin@eswincomputing.com, huangyifeng@eswincomputing.com,
-	pinkesh.vaghela@einfochips.com, ganboing@gmail.com,
-	marcel@ziswiler.com
-Subject: Re: Re: [PATCH v13 2/3] clk: eswin: Add eic7700 clock driver
-Message-ID: <aZ75OuPEw7co40J9@redhat.com>
-References: <20260214101421.228-1-dongxuyang@eswincomputing.com>
- <20260214101519.341-1-dongxuyang@eswincomputing.com>
- <aZNRFYs_QuGRI8PV@redhat.com>
- <51ff08b4.38e3.19c9394ac61.Coremail.dongxuyang@eswincomputing.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="DN49YSDv"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 086C81A135D;
+	Wed, 25 Feb 2026 13:57:04 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id CDF0D5FDE6;
+	Wed, 25 Feb 2026 13:57:03 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C616C1036929A;
+	Wed, 25 Feb 2026 14:56:57 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1772027822; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=6bWuF5pnWZBOwGGR56VwV7gssDOPxvk9jbjZSVd1+oY=;
+	b=DN49YSDv4DKnLEtUUqqxL1Z4t7u10b5WDH8Rcm+n2o5P0sObpW/9of+6p5+Odt6vq/QciE
+	U6nVBd6CYrMaUMQjzlMl+jKozaXmKVMj8NMypq01BJW0lPn6PwdJSHYG/+yHFHZiF9pblL
+	4W+kj5CKbbtlevi7Qe2pOXkh6fw+qpLO6v4rxCaQ0MT7QgQWWuRVk9Zy8Qo7cEY3cSikJP
+	dH72CMSnVfue4PoK4f8xapk8eoHoQLu0Um7pYOp/WbAu9VuK4Bj2b0K0JyjVnzL4ueoZcU
+	/6ySo8Zz0jWlLgcpuid1rGL4TBh28hUy/U5OlUoIXbW0bAvbj9QBn0slxpfL9g==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <51ff08b4.38e3.19c9394ac61.Coremail.dongxuyang@eswincomputing.com>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 25 Feb 2026 14:56:56 +0100
+Message-Id: <DGO3FOX4CC39.UP8LQK6E2ZZK@bootlin.com>
+To: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, "Vladimir
+ Oltean" <olteanv@gmail.com>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH v6 3/8] phy: Add driver for EyeQ5 Ethernet PHY wrapper
+Cc: "Vladimir Kondratiev" <vladimir.kondratiev@mobileye.com>,
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Vinod Koul" <vkoul@kernel.org>,
+ "Kishon Vijay Abraham I" <kishon@kernel.org>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Philipp
+ Zabel" <p.zabel@pengutronix.de>, "Thomas Bogendoerfer"
+ <tsbogend@alpha.franken.de>, "Neil Armstrong" <neil.armstrong@linaro.org>,
+ <linux-mips@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+ <linux-clk@vger.kernel.org>, =?utf-8?q?Beno=C3=AEt_Monin?=
+ <benoit.monin@bootlin.com>, "Tawfik Bayouk" <tawfik.bayouk@mobileye.com>,
+ "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>, "Luca Ceresoli"
+ <luca.ceresoli@bootlin.com>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20260127-macb-phy-v6-0-cdd840588188@bootlin.com>
+ <20260127-macb-phy-v6-3-cdd840588188@bootlin.com>
+ <20260210193516.temrg46yozxma7xb@skbuf>
+ <DGND4VXM9X0N.2CP1VBD8E128M@bootlin.com>
+In-Reply-To: <DGND4VXM9X0N.2CP1VBD8E128M@bootlin.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, Feb 25, 2026 at 02:55:20PM +0800, Xuyang Dong wrote:
-> > > +
-> > > +int eswin_clk_register_divider(struct device *dev,
-> > > +			       struct eswin_divider_clock *clks,
-> > > +			       int nums, struct eswin_clock_data *data)
-> > > +{
-> > > +	struct clk_hw *clk_hw;
-> > > +	int i;
-> > > +
-> > > +	for (i = 0; i < nums; i++) {
-> > > +		clk_hw = clk_hw_register_divider_parent_data
-> > > +				(dev, clks[i].name, clks[i].parent_data,
-> > > +				clks[i].flags, data->base + clks[i].offset,
-> > > +				clks[i].shift, clks[i].width, clks[i].div_flags,
-> > > +				&data->lock);
-> > > +
-> > > +		if (IS_ERR(clk_hw)) {
-> > > +			while (i--)
-> > > +				clk_hw_unregister_divider
-> > > +					(data->clk_data.hws[clks[i].id]);
-> > 
-> > All of the other places you are using the devm_ variant to automate the
-> > cleanup, such as devm_clk_hw_register_gate_parent_data(),
-> > devm_clk_hw_register_mux_parent_data_table(), and 
-> > devm_clk_hw_register_divider_parent_hw(). What do you think about adding
-> > a devm_clk_hw_register_divider_parent_data() for consistency?
-> > 
-> 
-> Hi Brian and Stephen,
-> 
-> Thank you for the suggestions. We agree that implementing
-> devm_clk_hw_register_divider_parent_data() is a good approach.
-> In v14, we'll add this function in clk-provider.h as a separate preparatory patch.
-> The ESWIN clock driver will then switch to using
-> devm_clk_hw_register_divider_parent_data() instead of
-> clk_hw_register_divider_parent_data(), with the driver patch depending on the former.
-> Does this approach better align with upstream conventions?
+Hello Th=C3=A9o,
 
-Yes, that sounds good.
+On Tue Feb 24, 2026 at 6:20 PM CET, Th=C3=A9o Lebrun wrote:
+> Hello Vladimir,
+>
+> On Tue Feb 10, 2026 at 8:35 PM CET, Vladimir Oltean wrote:
+>> On Tue, Jan 27, 2026 at 06:09:31PM +0100, Th=C3=A9o Lebrun wrote:
+>>> +static int eq5_phy_init(struct phy *phy)
+>>> +{
+>>> +	struct eq5_phy_inst *inst =3D phy_get_drvdata(phy);
+>>> +	struct eq5_phy_private *priv =3D inst->priv;
+>>> +	struct device *dev =3D priv->dev;
+>>> +	u32 reg;
+>>> +
+>>> +	dev_dbg(dev, "phy_init(inst=3D%td)\n", inst - priv->phys);
+>>
+>> Nitpick: can you please remove the debugging prints and maybe add some
+>> trace points to the PHY core if you feel strongly about having some
+>> introspection?
+>
+> Ack!
+>
+>>> +
+>>> +	writel(0, inst->gp);
+>>> +	writel(0, inst->sgmii);
+>>> +
+>>> +	udelay(5);
+>>
+>> Could you please add a macro or comment hinting at the origin of the
+>> magic number 5 here? You could also place these 3 lines in a common
+>> helper, also called from eq5_phy_exit(), to avoid minor code
+>> duplication.
+>
+> ACK, something named `eq5_phy_reinit()`.
+>
+> I don't have precise explanation for the 5=C2=B5s value; I only know it i=
+s
+> time to let the PHY settle before further register config writes.
+> Is this enough?
+>
+>    udelay(5); /* settling time */
+>
+>>> +
+>>> +	reg =3D readl(inst->gp) | EQ5_GP_TX_SWRST_DIS | EQ5_GP_TX_M_CLKE |
+>>
+>> When you write 0 to inst->gp and then read it back, do you expect to
+>> (a) get back 0 or
+>> (b) are some fields non-resetting?
+>>
+>> I see both as inconsistent, since if (a), you can remove the
+>> readl(inst->gp) and expect the same result. And if (b), it also
+>> shouldn't matter if you write zeroes a second time, if it was fine the
+>> first time?
+>>
+>> Shortly said, is readl(inst->gp) really needed?
+>
+> Some fields are non-resetting (BIT 30).
+> Will drop. I was trying to play it safe for no good reason.
+>
+>>
+>>> +	      EQ5_GP_SYS_SWRST_DIS | EQ5_GP_SYS_M_CLKE |
+>>> +	      FIELD_PREP(EQ5_GP_RGMII_DRV, 0x9);
+>>
+>> Quick sanity check on your proposal to use #phy-cells =3D <1>. This is n=
+ot
+>> a request to change anything.
+>>
+>> What if you need to customize the RGMII drive strength (or some other
+>> setting, maybe SGMII polarity if that is available) per lane, for a
+>> particular board? How would you do that if each PHY does not have its
+>> own OF node?
+>
+> I have no knowledge of what that 0x9 stands for, I didn't see the point
+> exposing it to devicetree. We could plan for the future and add a cell
+> or create subnodes, but here I kept it simple stupid. Is it OK?
+>
+>>> +	writel(reg, inst->gp);
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static int eq5_phy_exit(struct phy *phy)
+>>> +{
+>>> +	struct eq5_phy_inst *inst =3D phy_get_drvdata(phy);
+>>> +	struct eq5_phy_private *priv =3D inst->priv;
+>>> +	struct device *dev =3D priv->dev;
+>>> +
+>>> +	dev_dbg(dev, "phy_exit(inst=3D%td)\n", inst - priv->phys);
+>>> +
+>>> +	writel(0, inst->gp);
+>>> +	writel(0, inst->sgmii);
+>>> +	udelay(5);
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static int eq5_phy_set_mode(struct phy *phy, enum phy_mode mode, int s=
+ubmode)
+>>> +{
+>>> +	struct eq5_phy_inst *inst =3D phy_get_drvdata(phy);
+>>> +	struct eq5_phy_private *priv =3D inst->priv;
+>>> +	struct device *dev =3D priv->dev;
+>>> +
+>>> +	dev_dbg(dev, "phy_set_mode(inst=3D%td, mode=3D%d, submode=3D%d)\n",
+>>> +		inst - priv->phys, mode, submode);
+>>> +
+>>> +	if (mode !=3D PHY_MODE_ETHERNET)
+>>> +		return -EOPNOTSUPP;
+>>> +
+>>> +	if (!phy_interface_mode_is_rgmii(submode) &&
+>>> +	    submode !=3D PHY_INTERFACE_MODE_SGMII)
+>>> +		return -EOPNOTSUPP;
+>>
+>> Both PHYs are equal in capabilities, and support both RGMII and SGMII,
+>> correct? I see the driver is implemented as if they were, but it doesn't
+>> hurt to ask.
+>
+> Datasheet indicates 0 can do SGMII/RGMII and 1 can do only RGMII.
+> Did you imply that the driver code should reject SGMII on PHY 1
+> if it ever gets asked for?
+>
+>>> +
+>>> +	inst->phy_interface =3D submode;
+>>
+>> Short story: don't rely on the phy_set_mode_ext() -> phy_power_on() orde=
+r.
+>> Implement the driver so that it works the other way around too.
+>>
+>> Long story:
+>> https://lore.kernel.org/netdev/aXzFH09AeIRawCwU@shell.armlinux.org.uk/
+>
+> I wouldn't mind, but what should phy_power_on() do if no submode has
+> been provided through phy_set_mode_ext() yet? Guess one? Fail?
+>
+> Also our PHY will need to be reset to change its mode if we do
+> power_on() followed by set_mode(), which in practice is never something
+> we want. Maybe there is a flag to indicate that we require a submode to
+> power on?
 
-> > You can now go out to 100 characters for the line lengths instead of 80, however,
-> > I'm not sure how Stephen feels about that. Personally I think it'd make this
-> > block, plus some others in this series a bit cleaner. Taking into account the
-> > current indentation, this block could become this with 100 characters as the max:
-> > 
-> >     hw = eswin_register_clkdiv(dev, div->id, div->name, phw,
-> >                                div->flags, data->base + div->offset,
-> >                                div->shift, div->width, div->div_flags,
-> >                                div->priv_flag, &data->lock);
-> > 
-> 
-> Stephen,
-> Brian's feedback on line length was very helpful. 
-> For v14, we've kept lines within 80 characters wherever possible.
-> In a few cases, such as function calls with long parameter lists, we've kept 
-> slightly longer lines to preserve readability, 
-> but we're happy to rewrap them if preferred.
-> Does this approach work for the clk subsystem?
+To give something concrete, here is what it could look like.
+ - We refuse phy_power_on() if we haven't been given a mode (we probe
+   with `inst->phy_interface =3D=3D PHY_INTERFACE_MODE_NA`).
+ - We finish phy_set_mode() by restarting if `phy->power_count`.
 
-I don't know when Stephen will be able to respond. I recommend just
-posting a new version.
+I am not convinced. I would prefer to refuse phy_set_mode() with EBUSY
+if `phy->power_count =3D=3D 0`.
 
-I apologize in advance if he asks you to do the opposite later.
 
-Brian
+
+static void eq5_phy_reinit(struct phy *phy)
+{
+	struct eq5_phy_inst *inst =3D phy_get_drvdata(phy);
+
+	writel(0, inst->gp);
+	writel(0, inst->sgmii);
+	udelay(5); /* settling time */
+}
+
+static int eq5_phy_init(struct phy *phy)
+{
+	struct eq5_phy_inst *inst =3D phy_get_drvdata(phy);
+	u32 reg;
+
+	eq5_phy_reinit(phy);
+
+	reg =3D EQ5_GP_TX_SWRST_DIS | EQ5_GP_TX_M_CLKE |
+	      EQ5_GP_SYS_SWRST_DIS | EQ5_GP_SYS_M_CLKE |
+	      FIELD_PREP(EQ5_GP_RGMII_DRV, 0x9);
+	writel(reg, inst->gp);
+
+	return 0;
+}
+
+static int eq5_phy_exit(struct phy *phy)
+{
+	eq5_phy_reinit(phy);
+	return 0;
+}
+
+static int eq5_phy_power_on(struct phy *phy)
+{
+	struct eq5_phy_inst *inst =3D phy_get_drvdata(phy);
+	struct eq5_phy_private *priv =3D inst->priv;
+	struct device *dev =3D priv->dev;
+	u32 reg;
+
+	if (inst->phy_interface =3D=3D PHY_INTERFACE_MODE_NA)
+		return -ENOMEDIUM;
+
+	if (inst->phy_interface =3D=3D PHY_INTERFACE_MODE_SGMII) {
+		writel(readl(inst->gp) | EQ5_GP_SGMII_MODE, inst->gp);
+
+		reg =3D EQ5_SGMII_PWR_EN | EQ5_SGMII_RST_DIS | EQ5_SGMII_PLL_EN;
+		writel(reg, inst->sgmii);
+
+		if (readl_poll_timeout(inst->sgmii, reg,
+				       reg & EQ5_SGMII_PLL_ACK, 1, 100)) {
+			dev_err(dev, "PLL timeout\n");
+			return -ETIMEDOUT;
+		}
+
+		reg =3D readl(inst->sgmii);
+		reg |=3D EQ5_SGMII_PWR_STATE | EQ5_SGMII_SIG_DET_SW;
+		writel(reg, inst->sgmii);
+	} else {
+		writel(readl(inst->gp) & ~EQ5_GP_SGMII_MODE, inst->gp);
+		writel(0, inst->sgmii);
+	}
+
+	return 0;
+}
+
+static int eq5_phy_set_mode(struct phy *phy, enum phy_mode mode, int submod=
+e)
+{
+	struct eq5_phy_inst *inst =3D phy_get_drvdata(phy);
+
+	if (mode !=3D PHY_MODE_ETHERNET)
+		return -EOPNOTSUPP;
+
+	if (!phy_interface_mode_is_rgmii(submode) &&
+	    submode !=3D PHY_INTERFACE_MODE_SGMII)
+		return -EOPNOTSUPP;
+
+	if (submode !=3D inst->phy_interface) {
+		inst->phy_interface =3D submode;
+
+		if (phy->power_count) {
+			eq5_phy_reinit(phy);
+			return eq5_phy_power_on(phy);
+		}
+	}
+
+	return 0;
+}
+
+static int eq5_phy_power_off(struct phy *phy)
+{
+	struct eq5_phy_inst *inst =3D phy_get_drvdata(phy);
+
+	writel(readl(inst->gp) & ~EQ5_GP_SGMII_MODE, inst->gp);
+	writel(0, inst->sgmii);
+
+	return 0;
+}
+
+Thanks,
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
