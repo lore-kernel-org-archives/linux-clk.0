@@ -1,79 +1,105 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E01F2D877D;
-	Wed, 25 Feb 2026 11:24:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82832346AD5;
+	Wed, 25 Feb 2026 11:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772018649; cv=none; b=NaanRjulOq9DY2zpp0WY7WgZZWkurzpJMxycxlcVrII+/Ar0w9niIxk3+zArcFFFYUYRsru5YSk8hbqSkpH+7gfg1u7wHSOCFOjmDSR+GEa1odrET6Kan2qpopEhF0s4cyohlyGoYogG0btYKTgfj/OPfSbfyeDfGzELGNbZPKY=
+	t=1772019123; cv=none; b=VkG9Nx7y6jpyQ8jHEwljVXEXziJzxRHD2JIMRqgEQ3tXCFGJhVcjZTlKKDK40Y64oFoAnrmPhfzvcNwxxZThgHMPlody4DfxDbFaP4RuH7ERhQhcXB8JiVl9u/rUfpQQm2CnibJk/u3ZneGvVGX2AHWAdQfWgT5AmY24MG/BJFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772018649; c=relaxed/simple;
-	bh=83nPCdbWqaF9WpFrOPmSzxEWhHCp8sgCyS1cq+2cTF0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=gekuCSpdHW68iqqJz4orvKy5YW3wfvJzXBb/OFO5n+y2/IIKtBOMxOHZjAxh0hhl1NVKuJHkngB1WhSi5iZLDD7ucKWc4Ky2CiVnCiUFBkTCmlsIMBtgmJSKD8Nmr4zVCZDEqa369qN1pmhIC7vMkFnzJQUD7XQLVVJaOTr6u6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uHYtBxfc; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772019123; c=relaxed/simple;
+	bh=R2R2eDsHNuLYonyIEqSGhS8TL0yxK8Vj+BchHJl6enM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=D0K/+tEiJYH9VtQGLn3Ov1rBKHQex3DFM+zrLqhNAljHu2RKREhN2oH0/fkZe6pkfIcD2NNomPi7EWseYNkN7Cdw8RtJRLhBbsV84617flS/odau4kHNbPgru79wb9dA9HGyAfcwm2WZYrYiOLBKP2uyrkW92NRxNCwC5MHR2uE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=emLrXzOz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uHYtBxfc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30415C116D0;
-	Wed, 25 Feb 2026 11:24:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="emLrXzOz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26F2CC116D0;
+	Wed, 25 Feb 2026 11:31:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772018648;
-	bh=83nPCdbWqaF9WpFrOPmSzxEWhHCp8sgCyS1cq+2cTF0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=uHYtBxfcZmQo9Meu26j2W+u5i4XpsVkP1nTSSj+JI6Li/b42oVVyHnsPYxbCUN6a2
-	 cg2ol2qa7tdUxBeWBO4YoGIFrYGy+YT6Oi4Ejgi1OhMhbKPv5As7fR7KVEy3CEOQMW
-	 Zah/xRWR/pmw3DgUQdelJzsfer9vr5O6X9iyOW7k2Tz4u0zElwZOs14g3gaRhHrGHo
-	 F42Skzctc0Ta8UFUbq2vYjjsMe+c9Zt+oT1M3c3m8O/3nRnh3Ft6r1XQo/2S504GvO
-	 JiTxdZ5fb0kTUAozBDzlwZLyD2CxTm1ZPoaKT8KZjZww5Bzj6i7VnwXUa8F2hp29Lp
-	 Ib8lenOq6cqWw==
-From: Vinod Koul <vkoul@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jiri Slaby <jirislaby@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, Biju <biju.das.au@gmail.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>, linux-kernel@vger.kernel.org, 
- linux-serial@vger.kernel.org, dmaengine@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org, 
- Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20260203103031.247435-1-biju.das.jz@bp.renesas.com>
-References: <20260203103031.247435-1-biju.das.jz@bp.renesas.com>
-Subject: Re: (subset) [PATCH v3 00/10] Add support for Renesas RZ/G3L SoC
- and SMARC-EVK platform
-Message-Id: <177201864381.93331.5903665743776251595.b4-ty@kernel.org>
-Date: Wed, 25 Feb 2026 16:54:03 +0530
+	s=k20201202; t=1772019122;
+	bh=R2R2eDsHNuLYonyIEqSGhS8TL0yxK8Vj+BchHJl6enM=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=emLrXzOzIHkj73jPXqP5z/ClWb4ngKCuVpLtI/zq3qecEphzbfOh3OOO9tPizFNOD
+	 v5hjw5WiL+lRsFyWr8UI74e19Q4P7zNBfUowrrznunrbREFRW8V/XhsauGtG/y7QbG
+	 G8yxXXqAFVObQ56jwLIAOIsyxDYP25smMBr9GqcqkoboMLHRpqFhQMFbmrGfXmjKam
+	 p8FX8/hXnBxJ3ojQs2jFA98XxohlcZRHPOuJIf0ZQyZn+0KAqcdKpZ/pj5PeXE/7XG
+	 KYyO5YSMmtSOYknhvBcTww1ejLRGmbmdCSW5h+NiCtT4m/NZqQtGL/fZ3o/WJKsRes
+	 MQW0bdPG0+6Bg==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 25 Feb 2026 12:31:57 +0100
+Message-Id: <DGO0COF2NCJ0.GFYKM4L9KTP0@kernel.org>
+Subject: Re: [PATCH v2] clk: scu/imx8qxp: do not register driver in probe()
+Cc: <abelvesa@kernel.org>, <peng.fan@nxp.com>, <daniel.baluta@oss.nxp.com>,
+ <mturquette@baylibre.com>, <sboyd@kernel.org>, <Frank.Li@nxp.com>,
+ <s.hauer@pengutronix.de>, <kernel@pengutronix.de>, <festevam@gmail.com>,
+ <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+ <hanguidong02@gmail.com>, <driver-core@lists.linux.dev>,
+ <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>, "Alexander
+ Stein" <alexander.stein@ew.tq-group.com>
+To: "Peng Fan" <peng.fan@oss.nxp.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20260212235842.85934-1-dakr@kernel.org>
+ <aZ6vyQw5a5LhSCaT@shlinux89>
+In-Reply-To: <aZ6vyQw5a5LhSCaT@shlinux89>
 
+On Wed Feb 25, 2026 at 9:16 AM CET, Peng Fan wrote:
+>>diff --git a/drivers/clk/imx/clk-imx8qxp.c b/drivers/clk/imx/clk-imx8qxp.=
+c
+>>index 3ae162625bb1..c781425a005e 100644
+>>--- a/drivers/clk/imx/clk-imx8qxp.c
+>>+++ b/drivers/clk/imx/clk-imx8qxp.c
+>>@@ -346,7 +346,29 @@ static struct platform_driver imx8qxp_clk_driver =3D=
+ {
+>> 	},
+>> 	.probe =3D imx8qxp_clk_probe,
+>> };
+>>-module_platform_driver(imx8qxp_clk_driver);
+>>+
+>>+static int __init imx8qxp_clk_init(void)
+>>+{
+>>+	int ret;
+>>+
+>>+	ret =3D platform_driver_register(&imx8qxp_clk_driver);
+>>+	if (ret)
+>>+		return ret;
+>>+
+>>+	ret =3D imx_clk_scu_module_init();
+>>+	if (ret)
+>>+		platform_driver_unregister(&imx8qxp_clk_driver);
+>>+
+>>+	return ret;
+>>+}
+>>+module_init(imx8qxp_clk_init);
+>>+
+>>+static void __exit imx8qxp_clk_exit(void)
+>>+{
+>>+	imx_clk_scu_module_exit();
+>>+	platform_driver_unregister(&imx8qxp_clk_driver);
+>>+}
+>>+module_exit(imx8qxp_clk_exit);
+>
+> The clk driver is critical for the system to work, removing this driver w=
+ill
+> make the system not work properly I think, so it may not make too much
+> value to add an exit function here.
 
-On Tue, 03 Feb 2026 10:30:08 +0000, Biju wrote:
-> This patch series adds initial support for the Renesas RZ/G3L SoC and
-> RZ/G3L SMARC EVK platform. The RZ/G3L device is a general-purpose
-> microprocessor with a quad-core CA-55, single core CM-33, Mali-G31
-> 3-D Graphics and other peripherals.
-> 
-> Support for the below list of blocks is added in the SoC DTSI (r9a08g046.dtsi):
-> 
-> [...]
+The exit function was there before, just hidden by the module_platform_driv=
+er()
+macro.
 
-Applied, thanks!
+If a driver can be built as module, then we have to unregister the driver, =
+when
+the module is unloaded.
 
-[01/10] dt-bindings: dma: rz-dmac: Document RZ/G3L SoC
-        commit: e45cf0c7d9b960f1aae4ee56c3c3d46549ccde86
-
-Best regards,
--- 
-~Vinod
-
-
+If this driver should always be builtin, that is a separate change, indepen=
+dent
+from this fix.
