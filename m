@@ -1,191 +1,203 @@
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazhn15010019.outbound.protection.outlook.com [52.102.139.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30C886331
-	for <linux-clk@vger.kernel.org>; Wed, 25 Feb 2026 00:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771980080; cv=none; b=SuXQB6TdEqtaUM3BGavb0T235EctNILQ2AzGFFw26QHazHi3rZweQGCcKkBMips2i0FyDkKX8eB3H/CNmYI1T39ZaI73KH1mzwwJzMEXlYAm2Hi6chqnYd0jHX5h2loway4KJAnNTBnz/LvObXFQA6Jb4e5lzs2CC098F3v63V4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771980080; c=relaxed/simple;
-	bh=tl3OPK/hJINVZ0Pvce1rUGnVr5aWQIysiAoOV5Ez3PY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iIYsTl+kIWLzmOrG+yc1nhdAZZVCYNn8MjUEMo9tYWNkoq3/iUSzvA3QbFbUOfo1kLymS7qwcJWOIjMVYZAjAiWWtVKXPOqM2TaxhRBPRi6Q0r9xRnS8blbdzQRQchjnPSb5+hXJWe1EGm/EL5A1DHxGZD4cd4pQq9Iet0Z6FAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FtUCWpk1; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B712236F2;
+	Wed, 25 Feb 2026 01:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.102.139.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771981560; cv=fail; b=KxmcvYsb7JQCx9JtHyaTLpfw8YEv/AHqJplJ0rg2/txawdwMndX66K7a+ppMr4+lnlfhnQEHljJb4x6T3sXmHniEws5yL/1VwcrqEI1qlKyjBd5MAvKswFRpTvSEjI9SswibG1lp6tZKLvO20k0vp+bnErSodlN8yhNBygT/L94=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771981560; c=relaxed/simple;
+	bh=/nsGM583ltJ/9+LIo5u4OW+2gsxO1h8n4chQxOu+9nc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hl0LvSw0IycbxixPXg5B8JvbfDtmlzbQZFCuG9LMJ5yczm2gwKuIW1YS3dAckavjCSenK+5rZzWf4xy1C5KXD8jOZGzBQ0Xf8C1oIbiGLU8WqODIUSUz67HZQ7IHyPC9B/GfY0kR0N7iIMCf6gXCpWKAimy2HIE9Zqz0vLhDkLU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=oZBBP+kL; arc=fail smtp.client-ip=52.102.139.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FtUCWpk1"
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-59dea72099eso6340398e87.0
-        for <linux-clk@vger.kernel.org>; Tue, 24 Feb 2026 16:41:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771980077; x=1772584877; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u6iwHZc2jfg2/r/xq9JQ72DyFmTmkaGJ+WYvMYjFtgQ=;
-        b=FtUCWpk13FY9HHi9zGSB5wENUNitWi0R/+4B+hBS2zv9goFz9nGuwSfYQqfSppuoMU
-         i/cFq+Tm8x4ydbzcO6osTgw355xRgktRaElPPcOnPU1oni7HNbQryoJyEmEiFkDaf8jr
-         RBfGs4tYhYU8ga+0HAD0eSc8N0+yOkE8gfKQIzH010x4sHvXcZg1z9CcN/zo3InLBquY
-         5NRUVJT12w/3DQpCOq5PdvfVWbKUP5Wg5ECE7r3DyI1IwCJ6trNIHsjDsUU4Xw/uBopH
-         Ef2AdpvHNFJ5VREey66DB8RyPm6oYhKxzjZBQnn1sK9kzuqd6lctahd9gDV/L9APkxs2
-         Aqow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771980077; x=1772584877;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=u6iwHZc2jfg2/r/xq9JQ72DyFmTmkaGJ+WYvMYjFtgQ=;
-        b=t0meOxMW7laUdJyCs8EnpM7q1BvzG9EnE0iV0bp48vvXybjxTgh7PK0ZvYTIAn+48t
-         UzYAd2kARKsziIJzRjs6cy9ak8FmCEZW7MkyUDJlj08FF5aNYgooe3zjBQwyI5aJZLjS
-         YlGPowI+Fomj3juyIAOvbO/XtD6OLYENwjPrinuHRv0YbfRDbpKPOGncI3W1rrEoyaTN
-         pNxZefF8pPqbTL222pDlN1CwIjHYHvkrEUVEyYmI83NBGM5WvLs6hS5aefIlxKBBn3uy
-         pvOxG7zqz9rZnQ5cxmbs4BKUudDmvcqMU7i/OvkpqjdyzmOXAw9kbXcnpUbHvM/F449t
-         7ADQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQcXqnrhrC0hzYJLkmFgCdDbpqW9wLO2BOMjfijzXlxq4/uRgj1t8cMsg4EdKxK0gCQX1bR7hljAY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9BoJecZmtwJfKJR1zVtN7CXbF9fQZHbJEuHxW/WjwoTiSjTrO
-	RQDrqKJsS9eMvOfIF75g6GMKDyGlTNkxUdZzBCldXJy5mLXSO8jQ6vhauVFkBvoy
-X-Gm-Gg: ATEYQzzXu3f9iKeGMoNBHbV9ljpuwcj13/WWgBqMts8qEiFD0wvP7ICq6JO7oDLy5Gc
-	l7Aw0cy3MvgMcT5PA4V5QsAbO9BvEpWe6Pglbvwn6fUX0pgzmuV1IZCiqGzScLEfUbNZdlUblKQ
-	t+9UR7b/L5gO3EyhWmmuhqx2tS515JgtjrmThE76WW67buThFNC9f7ifp4tTorfJ4ezhClJoman
-	OVQiG22Yk4mhrFlLDfFZPiK44rO7mn2TxC88Q/DVJ8Tb2kFAUkCy0t7j5Diz48gaVEK5AxtcCwR
-	Kdg8Xh4uUwidEV2utiE0VO322/rLXkip4HEtVym10lT6MeyYyXFmrx6WjaDww54WD6JJqb6rHY3
-	VGWI5XssIanEfgtFIr1yfrunEyyv9Y/pv7tZPF5VxP/PeYIgetYPrdzPUJTh8RgCuLhoYv1ETgn
-	DSFdMVc21im7wU7FpCBPFLzrcEZCC6Agww48mgDF9+CgAjCalTOXexHabCr5XLW3x2
-X-Received: by 2002:a05:600c:5289:b0:480:1b65:b744 with SMTP id 5b1f17b1804b1-483bef5c44fmr5962925e9.28.1771973422565;
-        Tue, 24 Feb 2026 14:50:22 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483bd73ea7esm24486485e9.15.2026.02.24.14.50.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Feb 2026 14:50:21 -0800 (PST)
-Date: Tue, 24 Feb 2026 22:50:20 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Brian Masney <bmasney@redhat.com>
-Cc: Conor Dooley <conor.dooley@microchip.com>, Claudiu Beznea
- <claudiu.beznea@tuxon.dev>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH 1/3] clk: microchip: core: update to use div64_ul()
- instead of do_div()
-Message-ID: <20260224225020.38032819@pumpkin>
-In-Reply-To: <aZ3YI2eyyYLWl-dy@redhat.com>
-References: <20260222-clk-microchip-pic32-v1-0-ceacbcd515d1@redhat.com>
-	<20260222-clk-microchip-pic32-v1-1-ceacbcd515d1@redhat.com>
-	<20260223090948.7970ca87@pumpkin>
-	<aZ3YI2eyyYLWl-dy@redhat.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="oZBBP+kL"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IxZzcpd13JU5kGPKNh6O4Fp+/184X7LhC0D6Axs6+DHSNc712WkpE01v559JbC2gpnYhlAX/gQB0YXkQiTe4w5izdPYDsE11sbhtX9WhneXJS1yLE3mZcfHZNv1lr6v9Zligf/LztkG+eqvRrz8B0MjCyE4TqZdumgxwyDJUMJY1r24o10jRoUAJOiB0ND07xhSA7Q94Sse5JegbLU+WCtl53jaln+X/Rd1k/5bHuIeHwA79o5h0cclpKviTDq7t3x1l+k0DLgVDbxxap/ctWIsYRUv9fYLbijLiEJ4mZCike27nZEHNOtQy9aeJLIXU9SA4wuMyXCGe19aOi1StFQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ASEDpIk9PwestYsXaGClwO0sHBMLU3Jvjl1LBVZf0i4=;
+ b=Lvk2WE069InA2bJh7iopXE3nbmt1U0WgS3k+/koiuMb3G/bK0y+f+Xz3pqYzFgBxYnxANislxO51MO1jyoExHipcE1jHG90UWGkl8u7RdE/qgo2Oy3B2LJWn52EEpu2iPsZFP70v4zN23L42mL7zm8aSYO84lxvjeW2W88Cu55S1ixmDh1MY/A068WUtl3NiORW0QPknDlxzkYsc7RYUy4UHCEP+qoY9thpY548fEHwZQopwst4FO1DHQZ5tgslxpJrFM/RI9S7UpY7et3rCUV1pmarlm37k7RXx5qSj/Bjjq6c5VUS/SVddQO4YzVQAkAl5CIcZVGvA4iGfhxVgsA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.21.195) smtp.rcpttodomain=baylibre.com smtp.mailfrom=ti.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ASEDpIk9PwestYsXaGClwO0sHBMLU3Jvjl1LBVZf0i4=;
+ b=oZBBP+kLqfDzOH8dShNV4Z64Y38K8ibftfiw0uJGf2wAJASjdAZqw26zyECZnCsxXrv/X2Ei7Sc5iA1eZwViLN12aRy33aCf6d+OB19T1DR4fsJAYI+uCNQ5izI98CLq4/L6D/aFO+Bctw42dw4jFNPPzkvCu1jE/37UFEPkJ7E=
+Received: from SJ0PR05CA0107.namprd05.prod.outlook.com (2603:10b6:a03:334::22)
+ by BN0PR10MB4887.namprd10.prod.outlook.com (2603:10b6:408:124::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9632.16; Wed, 25 Feb
+ 2026 01:05:53 +0000
+Received: from SJ1PEPF00002314.namprd03.prod.outlook.com
+ (2603:10b6:a03:334:cafe::4b) by SJ0PR05CA0107.outlook.office365.com
+ (2603:10b6:a03:334::22) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9632.21 via Frontend Transport; Wed,
+ 25 Feb 2026 01:05:59 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.195)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.21.195 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.21.195; helo=flwvzet201.ext.ti.com; pr=C
+Received: from flwvzet201.ext.ti.com (198.47.21.195) by
+ SJ1PEPF00002314.mail.protection.outlook.com (10.167.242.168) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9632.12 via Frontend Transport; Wed, 25 Feb 2026 01:05:52 +0000
+Received: from DFLE215.ent.ti.com (10.64.6.73) by flwvzet201.ext.ti.com
+ (10.248.192.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 24 Feb
+ 2026 19:05:08 -0600
+Received: from DFLE201.ent.ti.com (10.64.6.59) by DFLE215.ent.ti.com
+ (10.64.6.73) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 24 Feb
+ 2026 19:05:07 -0600
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE201.ent.ti.com
+ (10.64.6.59) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 24 Feb 2026 19:05:07 -0600
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 61P157Oo3214557;
+	Tue, 24 Feb 2026 19:05:07 -0600
+Date: Tue, 24 Feb 2026 19:05:07 -0600
+From: Nishanth Menon <nm@ti.com>
+To: Antonios Christidis <a-christidis@ti.com>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Frank Binns <frank.binns@imgtec.com>,
+	Matt Coster <matt.coster@imgtec.com>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, Santosh Shilimkar
+	<ssantosh@kernel.org>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-clk@vger.kernel.org>, Michael Walle
+	<mwalle@kernel.org>, Kevin Hilman <khilman@baylibre.com>, Randolph Sapp
+	<rs@ti.com>
+Subject: Re: [PATCH 0/5] drm/imagination: add support for
+ j721e,j784s4,j722s,am62p
+Message-ID: <20260225010507.flvt775fs5kfe7ez@unknotted>
+References: <20260224-gpu_dts-v1-0-cc5ddffe140c@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20260224-gpu_dts-v1-0-cc5ddffe140c@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002314:EE_|BN0PR10MB4887:EE_
+X-MS-Office365-Filtering-Correlation-Id: 73139fb6-8809-48a2-c129-08de740a0596
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|82310400026|376014|34070700014|36860700013|1800799024|12100799066;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?BWXkiyHCYvVVmmGwukheJqXYKmy86z5tXdfPt7owS08xgJ70mA3zldseeRTx?=
+ =?us-ascii?Q?k+1UPXcQs29AZ9M5WwunkeprumlTDNwsN/5DPXBZUG9ftDQN/k/RvWJlWLEz?=
+ =?us-ascii?Q?HTdPeZVtiZXCJwKjOfTUBEeTR+iCzg78NLhRsUNWbrR2FMFEfR3ZouBA7483?=
+ =?us-ascii?Q?TV9DYoPE6UaQ8WvoEaKZIbMz/DO5hCar8q37hRwoX0TgN7sNceFdh9VM6Lrh?=
+ =?us-ascii?Q?FXVsxlPYgqO89ygOyTNvrl5xlkZ2zExQz241r8GrDYvIslR4blLPJshOYOMa?=
+ =?us-ascii?Q?guxaFIIGiIa1HcgYDx7dcRGabfnDwQoj+8GWmXJEwnN1EA8IHSETNEEZ3wWv?=
+ =?us-ascii?Q?7Bnx0q+w5Q80F57nj2GifroF5Ckx57kEvPEk1usWV0dRoU6YXJ5fGupd/7Se?=
+ =?us-ascii?Q?7i7ErYWG7yGeL+pS1KeRtiaa147x3GetXl5V654Fqwvvlcjwy3J7PiZThotV?=
+ =?us-ascii?Q?3sGIt8Y5SyhDqMVqPnTNbnarAp+0veduOxftSDPrHxEOlbGRZNBxYBrziKT+?=
+ =?us-ascii?Q?ugQz68jBI/vKsW26nzSb5pGQGl7W80d9Tz0+PCy41Uw8l+WXeykiVYwiQLfW?=
+ =?us-ascii?Q?uYjw1x7uaJDBAs2ckh6zYFQ5oaz9E3jjPXlbQyAOdAy8eyedE7+Zj+8OW1F/?=
+ =?us-ascii?Q?3WpxjWyhmcLuAa7EIpmiurdd7KPqaxwt3/YibUWqAqtWw7xTQIkoskCdEqlb?=
+ =?us-ascii?Q?PIntd0R11EmGVqd+/UV35bpiISrJK9KweF/aNZq2aAiuv/bBGLF5xUTMHYtb?=
+ =?us-ascii?Q?sCv6Otke1P+Dq7ypZY4x3lxIonK++Qp8IQIRjZa4ZQCu9moV8R7ihXT3kXf8?=
+ =?us-ascii?Q?ARVqrnVzAlbWtX2Eo6Ui4OcghMwWO+Rjm6zq+Oj1TrHyBVM7sHvmE/Wbgt8n?=
+ =?us-ascii?Q?XMHZ7fsx/0up7oeh/6LY0XcpkKgBVtXkOFqqeLPWPdsptv7mjiqhwXgh+Hc3?=
+ =?us-ascii?Q?02wA4OfMAwzWBSW39aLfgfsu11kttTtFJ5zVfU29reh9l6DDWmxirRnbhQM9?=
+ =?us-ascii?Q?GE5fzMupuIPYTxfd7WONLinTflOGXlWNmEKXx5U7z89v/hKU/0lmg7ApP0EB?=
+ =?us-ascii?Q?p8LA33+Pu7E8owiEG9yeadzNxMV01pBLOcv9VYNiOdMk7CVxaLtAJGF2uNvt?=
+ =?us-ascii?Q?xrXHnClO0Rdyr7sFn+cAnwo9eXayOLgDB6he6TNP9OrFgkHIEZs65lJLvqh5?=
+ =?us-ascii?Q?l56sKDeVZ3RYhr/KV+VeAZ/5ZBa8PBwaAMxNNOMhn+0wRQiaNtyU6AdaxSfN?=
+ =?us-ascii?Q?1GFi+11HgGKi0A6d9yZfBnWh1QClTPL99clI107IQ00WsGN33u2tGZ9+KkaA?=
+ =?us-ascii?Q?LrHg8onk+OoI7UjY3YngXwFyc3wajJhRZu4paK28XyYItHKnv8i2VjC7E7eM?=
+ =?us-ascii?Q?gMwqPr8biiyu5CXdZwnDO/cQ6vJCTxFnTasmDnSnFiHqGY3zOk9WgzfOk/9b?=
+ =?us-ascii?Q?PHDtkz/xpdc3ZerCEQWPvjCcfXoa3fymF12jR8o2PQQzFRpdwKEJIDIq3+vw?=
+ =?us-ascii?Q?9lFkyhfNqrocja6bXX7MVtqrzcpvcweLTUGTjB9NSqgZH5cqEYUVRFnp1k/c?=
+ =?us-ascii?Q?2m8vEt4YTBTexH6Dqa0AiKF2Ul8AMBQSPV0uw2r6T1gz35FaRlMNnxpe4B33?=
+ =?us-ascii?Q?/z39Xhpd5nJSgsF7UXS7aulae7IAF+tPFM7jl3rs07qdLeD+ZB471Iu2czYp?=
+ =?us-ascii?Q?EI8grw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:198.47.21.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet201.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(7416014)(82310400026)(376014)(34070700014)(36860700013)(1800799024)(12100799066);DIR:OUT;SFP:1501;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	AzPl660nNlPL1lnGhD1mHxbXOesa/IL+89ssDisGIFxis05bFKKPncQ5IJm9j2ZtiMZ8gUxMjobh5Zyf68fRlEmZl/5KRwzsAukSNkBQ20Ul6jx6e/asOSKL/TBMvU4SRhtuwTn6fwfMwgvS55R9xocWFB1jqe/+LRM/K+nIx8nlqw/ozEWki+h8u/i474iiRz96MPzvWzpxEY4BI7hBQUMPFARqlS+X0GE8Kzj+0qMYmeFmFMy/8HpuVZMHSVSVmtFetSYeCfERlf1ylNAXrOD+P0JK7oBL5YldHnIYjOqtvbZu5edGi2SAMVvxY9v907GjPg6nMsiRrUUS7KSxJiXVg1mlO8AX5mcRyn2nApfnk9cgf3KY0d94WsEdgx8STgLnjwK6b3AWSxm2wlssp9bkLR2hLqZD7U+8MUh4sdgLyLR6VvJt6FZiNmSWbivH
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2026 01:05:52.4081
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 73139fb6-8809-48a2-c129-08de740a0596
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.195];Helo=[flwvzet201.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00002314.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR10MB4887
 
-On Tue, 24 Feb 2026 11:56:03 -0500
-Brian Masney <bmasney@redhat.com> wrote:
-
-> Hi David,
+On 12:09-20260224, Antonios Christidis wrote:
+> ---
+> Antonios Christidis (3):
+>       arm64: dts: ti: k3-j721e: Add GPU node
+>       dt-bindings: gpu: img: Add J721e SoC specific compatible
+>       arm64: dts: ti: k3-j784s4: Add GPU node
 > 
-> On Mon, Feb 23, 2026 at 09:09:48AM +0000, David Laight wrote:
-> > On Sun, 22 Feb 2026 18:51:04 -0500
-> > Brian Masney <bmasney@redhat.com> wrote:
-> >   
-> > > This driver is currently only compiled on 32-bit MIPS systems. When
-> > > compiling on 64-bit systems, the build fails with:
-> > > 
-> > >     WARNING: do_div() does a 64-by-32 division, please consider using
-> > >     div64_ul instead.
-> > > 
-> > > Let's update this to use div64_ul() in preparation for allowing this
-> > > driver to be compiled on all architectures.  
-> > 
-> > There are a log of 'long' in that code that hold clock frequencies.
-> > I suspect they should be u32 (I think someone was scared that int might be 16bit).  
-> 
-> Instead of calling:
-> 
->     do_div(frac, rate);
-> 
-> Where frac is a u64, and rate is an unsigned long, I could just cast the
-> rate to a u32 like this:
-> 
->     do_div(frac, (u32) rate);
-> 
-> Thoughts?
+> Michael Walle (2):
+>       arm64: dts: ti: add GPU node
+Now that you are picking this up, please Fix the $subject.
+>       clk: keystone: don't cache clock rate
 
-That cast is horrid :-)
 
-On x86 (32bit or 64bit) I'm not sure it makes any difference whether
-you use do_div() or div64_ul().
-Other architectures will be different.
+Bunch of interleaved "kind of related" patches in a single series.
+please do not do this.
 
-I originally thought that do_div() was a simpler wrapper on the x86
-divide instruction - so required that both the quotient and remainder
-be 32bits. But Linus corrected me saying it had always generated a
-64bit quotient.
-So on 32bit div64_ul() is pretty much the same code with the same timings.
-The 'optimised' (and unusual) parameter rules are also pretty much
-a waste of time, div takes 38/41 clocks on a '386 (I happen to have the
-book on my desk!) an extra register move wouldn't matter.
+j784s4 can go in on it's own.
 
-Divide doesn't get much faster, 64 by 32 speeds up a bit, but you
-have to get to cannon lake or zen3 to get a significant improvement.
+j722s/am62p needs to wait for clk-cache patch to go in, but the
+clk-cache patch probably needs to be submitted individually to linux-clk
+mailing list for Stephen to pick up.
 
-zen3+ execute the 128 by 64 divide only slightly slower than 64 by 32.
-64bit Intel is another matter entirely.
-Even coffee lake has:
-                                    reciprocal
-         u-ops  -- ports -- latency throughput
-DIV r32  10 10  p0 p1 p5 p6   26        6
-DIV r64  36 36  p0 p1 p5 p6  35-88    21-83
-So the r64 (128 by 64) divide is a lot slower, and especially so
-when it isn't really needed.
+Please provide reference in the patch diffstat as to where the previous
+version of the patch is.
 
-Both do_div() and div64_ul() do a 128 by 64 divide.
-Even though do_div() would be likely faster using the 32bit sequence.
-(Especially if the condition were fixed to that it used two divides
-less often.)
 
-Still not sure of the numeric domain of 'frac'.
-
-	David
+Finally: j721e - please get the binding accepted through drm mailing
+list, then we can see about the dts.
 
 > 
-> Brian
+>  .../devicetree/bindings/gpu/img,powervr-rogue.yaml         |  7 ++++++-
+>  arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi     | 11 +++++++++++
+>  arch/arm64/boot/dts/ti/k3-j721e-main.dtsi                  | 14 ++++++++++++++
+>  arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi                 | 14 ++++++++++++++
+>  drivers/clk/keystone/sci-clk.c                             |  8 ++++++++
+>  5 files changed, 53 insertions(+), 1 deletion(-)
+> ---
+> base-commit: 3ef088b0c5772a6f75634e54aa34f5fc0a2c041c
+> change-id: 20260224-gpu_dts-ab32c568d756
 > 
-> 
-> >   
-> > > 
-> > > Reported-by: kernel test robot <lkp@intel.com>
-> > > Closes: https://lore.kernel.org/oe-kbuild-all/202601160758.bpkN4546-lkp@intel.com/
-> > > Signed-off-by: Brian Masney <bmasney@redhat.com>
-> > > ---
-> > >  drivers/clk/microchip/clk-core.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/clk/microchip/clk-core.c b/drivers/clk/microchip/clk-core.c
-> > > index 692152b5094e00bf5acb19a67cf41e6c86b11f35..2e86ad846a66cd5487f5412c09ab0ad25ebe3f79 100644
-> > > --- a/drivers/clk/microchip/clk-core.c
-> > > +++ b/drivers/clk/microchip/clk-core.c
-> > > @@ -341,7 +341,7 @@ static void roclk_calc_div_trim(unsigned long rate,
-> > >  		div = parent_rate / (rate << 1);
-> > >  		frac = parent_rate;
-> > >  		frac <<= 8;
-> > > -		do_div(frac, rate);
-> > > +		frac = div64_ul(frac, rate);
-> > >  		frac -= (u64)(div << 9);  
-> > 
-> > Is that cast in the right place?
-> > I suspect 'div' can't be large enough to need it, but it's presence makes
-> > my wonder ...
-> > 
-> > 	David
-> >   
-> > >  
-> > >  		rodiv = (div > REFO_DIV_MASK) ? REFO_DIV_MASK : div;
-> > >   
-> >   
+> Best regards,
+> -- 
+> Antonios Christidis <a-christidis@ti.com>
 > 
 
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+https://ti.com/opensource
