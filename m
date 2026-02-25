@@ -1,203 +1,103 @@
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazhn15010019.outbound.protection.outlook.com [52.102.139.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B712236F2;
-	Wed, 25 Feb 2026 01:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.102.139.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771981560; cv=fail; b=KxmcvYsb7JQCx9JtHyaTLpfw8YEv/AHqJplJ0rg2/txawdwMndX66K7a+ppMr4+lnlfhnQEHljJb4x6T3sXmHniEws5yL/1VwcrqEI1qlKyjBd5MAvKswFRpTvSEjI9SswibG1lp6tZKLvO20k0vp+bnErSodlN8yhNBygT/L94=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771981560; c=relaxed/simple;
-	bh=/nsGM583ltJ/9+LIo5u4OW+2gsxO1h8n4chQxOu+9nc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hl0LvSw0IycbxixPXg5B8JvbfDtmlzbQZFCuG9LMJ5yczm2gwKuIW1YS3dAckavjCSenK+5rZzWf4xy1C5KXD8jOZGzBQ0Xf8C1oIbiGLU8WqODIUSUz67HZQ7IHyPC9B/GfY0kR0N7iIMCf6gXCpWKAimy2HIE9Zqz0vLhDkLU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=oZBBP+kL; arc=fail smtp.client-ip=52.102.139.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43C9126BF7
+	for <linux-clk@vger.kernel.org>; Wed, 25 Feb 2026 01:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771981771; cv=none; b=RvEduHbq0qKgznbSH9facFXOh1R37zWeQInywXHx0XY4CRe00QLhX59Z4lj73MZBWLQgQ1xN2qf9fgUl+mE6TXh74KewZfJrFV/lfI+CnfpzdkUWSHETfAnYUsAFLSqWQIIQwLjjF+GFg3yxgQBK1e5RSHqbu2EE9X704s07odc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771981771; c=relaxed/simple;
+	bh=RukPKz1Tt3CmlbqbIlMxFcr4FTZWd9Ir9RojSVsJO0U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QcwJfs/IAENFOL3gpcN45Ow1hjrSBPHkjQZ2zyndWLw7ocNHaUJ0AFZWGFQ43XFHgSy91LgwDPxW4Po7FvkyNq67PV8XfEL+RaMWjaIpfrIF4cHvj/mn7DRDvqlKwdE2Y8r6ftEo9xXKwNwyFUuu4wHMZ7S2m8UXmHcGsvmecnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ROFGp9JQ; arc=none smtp.client-ip=209.85.214.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="oZBBP+kL"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IxZzcpd13JU5kGPKNh6O4Fp+/184X7LhC0D6Axs6+DHSNc712WkpE01v559JbC2gpnYhlAX/gQB0YXkQiTe4w5izdPYDsE11sbhtX9WhneXJS1yLE3mZcfHZNv1lr6v9Zligf/LztkG+eqvRrz8B0MjCyE4TqZdumgxwyDJUMJY1r24o10jRoUAJOiB0ND07xhSA7Q94Sse5JegbLU+WCtl53jaln+X/Rd1k/5bHuIeHwA79o5h0cclpKviTDq7t3x1l+k0DLgVDbxxap/ctWIsYRUv9fYLbijLiEJ4mZCike27nZEHNOtQy9aeJLIXU9SA4wuMyXCGe19aOi1StFQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ASEDpIk9PwestYsXaGClwO0sHBMLU3Jvjl1LBVZf0i4=;
- b=Lvk2WE069InA2bJh7iopXE3nbmt1U0WgS3k+/koiuMb3G/bK0y+f+Xz3pqYzFgBxYnxANislxO51MO1jyoExHipcE1jHG90UWGkl8u7RdE/qgo2Oy3B2LJWn52EEpu2iPsZFP70v4zN23L42mL7zm8aSYO84lxvjeW2W88Cu55S1ixmDh1MY/A068WUtl3NiORW0QPknDlxzkYsc7RYUy4UHCEP+qoY9thpY548fEHwZQopwst4FO1DHQZ5tgslxpJrFM/RI9S7UpY7et3rCUV1pmarlm37k7RXx5qSj/Bjjq6c5VUS/SVddQO4YzVQAkAl5CIcZVGvA4iGfhxVgsA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.21.195) smtp.rcpttodomain=baylibre.com smtp.mailfrom=ti.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ASEDpIk9PwestYsXaGClwO0sHBMLU3Jvjl1LBVZf0i4=;
- b=oZBBP+kLqfDzOH8dShNV4Z64Y38K8ibftfiw0uJGf2wAJASjdAZqw26zyECZnCsxXrv/X2Ei7Sc5iA1eZwViLN12aRy33aCf6d+OB19T1DR4fsJAYI+uCNQ5izI98CLq4/L6D/aFO+Bctw42dw4jFNPPzkvCu1jE/37UFEPkJ7E=
-Received: from SJ0PR05CA0107.namprd05.prod.outlook.com (2603:10b6:a03:334::22)
- by BN0PR10MB4887.namprd10.prod.outlook.com (2603:10b6:408:124::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9632.16; Wed, 25 Feb
- 2026 01:05:53 +0000
-Received: from SJ1PEPF00002314.namprd03.prod.outlook.com
- (2603:10b6:a03:334:cafe::4b) by SJ0PR05CA0107.outlook.office365.com
- (2603:10b6:a03:334::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9632.21 via Frontend Transport; Wed,
- 25 Feb 2026 01:05:59 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.195)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.21.195 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.21.195; helo=flwvzet201.ext.ti.com; pr=C
-Received: from flwvzet201.ext.ti.com (198.47.21.195) by
- SJ1PEPF00002314.mail.protection.outlook.com (10.167.242.168) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9632.12 via Frontend Transport; Wed, 25 Feb 2026 01:05:52 +0000
-Received: from DFLE215.ent.ti.com (10.64.6.73) by flwvzet201.ext.ti.com
- (10.248.192.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 24 Feb
- 2026 19:05:08 -0600
-Received: from DFLE201.ent.ti.com (10.64.6.59) by DFLE215.ent.ti.com
- (10.64.6.73) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 24 Feb
- 2026 19:05:07 -0600
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE201.ent.ti.com
- (10.64.6.59) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Tue, 24 Feb 2026 19:05:07 -0600
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 61P157Oo3214557;
-	Tue, 24 Feb 2026 19:05:07 -0600
-Date: Tue, 24 Feb 2026 19:05:07 -0600
-From: Nishanth Menon <nm@ti.com>
-To: Antonios Christidis <a-christidis@ti.com>
-CC: Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Frank Binns <frank.binns@imgtec.com>,
-	Matt Coster <matt.coster@imgtec.com>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, Santosh Shilimkar
-	<ssantosh@kernel.org>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-clk@vger.kernel.org>, Michael Walle
-	<mwalle@kernel.org>, Kevin Hilman <khilman@baylibre.com>, Randolph Sapp
-	<rs@ti.com>
-Subject: Re: [PATCH 0/5] drm/imagination: add support for
- j721e,j784s4,j722s,am62p
-Message-ID: <20260225010507.flvt775fs5kfe7ez@unknotted>
-References: <20260224-gpu_dts-v1-0-cc5ddffe140c@ti.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ROFGp9JQ"
+Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-2ad21f437eeso2944835ad.0
+        for <linux-clk@vger.kernel.org>; Tue, 24 Feb 2026 17:09:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1771981770; x=1772586570; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eM+hcX0WJiN8fwhNPYgVInvSLdtAH1Z3iHRCYxgcmmc=;
+        b=ROFGp9JQcazEPd0GoqDULp/04mWYCvMXEdxRJ3dU8zUQ51Nnj9hLrHDjJn2mkqxWUR
+         DyhFrvpVODNcXrSVD1kmM0kEvucb42u5niJI1bOU0KnvdXnzgj4qWhe9jPtuZremD6J0
+         il5P1JVf0c8qd1+Fy5M/WWtLs82WRq8DZk7TsDDMjc3pPzfa678X+vKp4RBB9Sf/UMfD
+         eHYUg/A2uIjQJWouduSlsSK+wB2xcbqcpwFM7xqQriuT/Xx/MO6kXFWrxndO8VqkoqON
+         iLMeXCuSRVg1fMjJlgJp6i7iXcwYb9GGGvWeFiwRMKqqIkaj/LkT0Ir5/Rmy3xemwYhO
+         YYYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771981770; x=1772586570;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eM+hcX0WJiN8fwhNPYgVInvSLdtAH1Z3iHRCYxgcmmc=;
+        b=Y4e3AEtlTrwkJfNq2jWai+Qmixcgi/CYOBUUB9Hm8HowRu8fnRbfrMWl2szCfZKC3Z
+         FbCi9+6qA3qc9JdjgmXk0j/mXwKrc/JqsbJuze5TDwbHQatDsX6SrvR6v7YcU9f1QNUP
+         UNuXBgJB4C2HJ9XR4X/QRlbIn/28SAKFgSoL+tlfVWml5T4mOw12h9pF/wvzZ3Afu56u
+         ESWZqk995+sgTx8x/a7cuz5OVynMKKKwQgmJfIb1RoEqqEXVz1bsjNDIBo8d/ALaU8IV
+         S7aasekvG5sGmvm8EcEC0EBjZiz0WRZA0mdxa9q6pUOIzIPjNtD0Ise59i3L/G7JFUJC
+         Dcrw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGPA9jZ8Zfpwm0lyJ2T+ObdP3ifxDhgON5iRW+2dfnAIoPMqkGKPkhwuFm0i+IRaPjr60JyuxI6tA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIiq1hcjRJy5p08hU7DP+n6IKiNiHXJ0Tfsu8o3N+j0eXdBOxq
+	HYU+aCG9ASA03t4uZvlcBGijU5mTuYKuhfFE2PjH2FGBDzKdeKcfugfK
+X-Gm-Gg: ATEYQzxmJsLn0PeVyaHq2MmRVkqSmSTZBioN25gwGyrPFdJoAUVqeE2cjvOPTWFmCGg
+	kOZBZ05PigdnhqMyLUvenFcWLuW1aR8BOyK8grRiG70Y+AQtd3+uG/sOngiEovL25zPG6byqa5Y
+	QwtLePARDd9UJDrIcF8jv/dPPJj3dHAKk5i8PtU4knsIMk/rQHMrmrxaeAw6aox7oUTfIP38NUu
+	2+xIh1f9/xwzDoIcYG7h3dVOvLP7tZRrB1toIvlSTZ/Ddeg0Dpkqubx4I/18x/8kIkrV/gbZm3A
+	8/chIBt2GirLRvJNA4IP60ZzzIVGojbGxRT8mShvGpDJP0DO1BXbE8rDm8XEwq7erN6R06flnK4
+	DWmhBaz/Q5LsF9hziqT7htJ/pTsVQBvescr9qHyakPwUzsGR8rnfkFql4LXZWfL23uL+6oPawCJ
+	83dVrDj2Df/XSO812yZwro0MmKMGEOiQ2/CxAgMwZJd4Lw
+X-Received: by 2002:a17:902:c946:b0:2aa:e817:1bda with SMTP id d9443c01a7336-2adbdc8e34amr15003465ad.12.1771981769944;
+        Tue, 24 Feb 2026 17:09:29 -0800 (PST)
+Received: from k.localdomain ([120.229.13.36])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ad74f5e0f2sm119350245ad.31.2026.02.24.17.09.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Feb 2026 17:09:29 -0800 (PST)
+From: kanadenadi <kenadicanady@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: orsonzhai@gmail.com,
+	baolin.wang@linux.alibaba.com,
+	zhang.lyra@gmail.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kanadenadi <kenadicanady@gmail.com>
+Subject: [PATCH v3 0/2] clk: sprd: Add support for Unisoc SC9832E clocks
+Date: Wed, 25 Feb 2026 09:09:18 +0800
+Message-Id: <20260225010920.757793-1-kenadicanady@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20260224-gpu_dts-v1-0-cc5ddffe140c@ti.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00002314:EE_|BN0PR10MB4887:EE_
-X-MS-Office365-Filtering-Correlation-Id: 73139fb6-8809-48a2-c129-08de740a0596
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|82310400026|376014|34070700014|36860700013|1800799024|12100799066;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?BWXkiyHCYvVVmmGwukheJqXYKmy86z5tXdfPt7owS08xgJ70mA3zldseeRTx?=
- =?us-ascii?Q?k+1UPXcQs29AZ9M5WwunkeprumlTDNwsN/5DPXBZUG9ftDQN/k/RvWJlWLEz?=
- =?us-ascii?Q?HTdPeZVtiZXCJwKjOfTUBEeTR+iCzg78NLhRsUNWbrR2FMFEfR3ZouBA7483?=
- =?us-ascii?Q?TV9DYoPE6UaQ8WvoEaKZIbMz/DO5hCar8q37hRwoX0TgN7sNceFdh9VM6Lrh?=
- =?us-ascii?Q?FXVsxlPYgqO89ygOyTNvrl5xlkZ2zExQz241r8GrDYvIslR4blLPJshOYOMa?=
- =?us-ascii?Q?guxaFIIGiIa1HcgYDx7dcRGabfnDwQoj+8GWmXJEwnN1EA8IHSETNEEZ3wWv?=
- =?us-ascii?Q?7Bnx0q+w5Q80F57nj2GifroF5Ckx57kEvPEk1usWV0dRoU6YXJ5fGupd/7Se?=
- =?us-ascii?Q?7i7ErYWG7yGeL+pS1KeRtiaa147x3GetXl5V654Fqwvvlcjwy3J7PiZThotV?=
- =?us-ascii?Q?3sGIt8Y5SyhDqMVqPnTNbnarAp+0veduOxftSDPrHxEOlbGRZNBxYBrziKT+?=
- =?us-ascii?Q?ugQz68jBI/vKsW26nzSb5pGQGl7W80d9Tz0+PCy41Uw8l+WXeykiVYwiQLfW?=
- =?us-ascii?Q?uYjw1x7uaJDBAs2ckh6zYFQ5oaz9E3jjPXlbQyAOdAy8eyedE7+Zj+8OW1F/?=
- =?us-ascii?Q?3WpxjWyhmcLuAa7EIpmiurdd7KPqaxwt3/YibUWqAqtWw7xTQIkoskCdEqlb?=
- =?us-ascii?Q?PIntd0R11EmGVqd+/UV35bpiISrJK9KweF/aNZq2aAiuv/bBGLF5xUTMHYtb?=
- =?us-ascii?Q?sCv6Otke1P+Dq7ypZY4x3lxIonK++Qp8IQIRjZa4ZQCu9moV8R7ihXT3kXf8?=
- =?us-ascii?Q?ARVqrnVzAlbWtX2Eo6Ui4OcghMwWO+Rjm6zq+Oj1TrHyBVM7sHvmE/Wbgt8n?=
- =?us-ascii?Q?XMHZ7fsx/0up7oeh/6LY0XcpkKgBVtXkOFqqeLPWPdsptv7mjiqhwXgh+Hc3?=
- =?us-ascii?Q?02wA4OfMAwzWBSW39aLfgfsu11kttTtFJ5zVfU29reh9l6DDWmxirRnbhQM9?=
- =?us-ascii?Q?GE5fzMupuIPYTxfd7WONLinTflOGXlWNmEKXx5U7z89v/hKU/0lmg7ApP0EB?=
- =?us-ascii?Q?p8LA33+Pu7E8owiEG9yeadzNxMV01pBLOcv9VYNiOdMk7CVxaLtAJGF2uNvt?=
- =?us-ascii?Q?xrXHnClO0Rdyr7sFn+cAnwo9eXayOLgDB6he6TNP9OrFgkHIEZs65lJLvqh5?=
- =?us-ascii?Q?l56sKDeVZ3RYhr/KV+VeAZ/5ZBa8PBwaAMxNNOMhn+0wRQiaNtyU6AdaxSfN?=
- =?us-ascii?Q?1GFi+11HgGKi0A6d9yZfBnWh1QClTPL99clI107IQ00WsGN33u2tGZ9+KkaA?=
- =?us-ascii?Q?LrHg8onk+OoI7UjY3YngXwFyc3wajJhRZu4paK28XyYItHKnv8i2VjC7E7eM?=
- =?us-ascii?Q?gMwqPr8biiyu5CXdZwnDO/cQ6vJCTxFnTasmDnSnFiHqGY3zOk9WgzfOk/9b?=
- =?us-ascii?Q?PHDtkz/xpdc3ZerCEQWPvjCcfXoa3fymF12jR8o2PQQzFRpdwKEJIDIq3+vw?=
- =?us-ascii?Q?9lFkyhfNqrocja6bXX7MVtqrzcpvcweLTUGTjB9NSqgZH5cqEYUVRFnp1k/c?=
- =?us-ascii?Q?2m8vEt4YTBTexH6Dqa0AiKF2Ul8AMBQSPV0uw2r6T1gz35FaRlMNnxpe4B33?=
- =?us-ascii?Q?/z39Xhpd5nJSgsF7UXS7aulae7IAF+tPFM7jl3rs07qdLeD+ZB471Iu2czYp?=
- =?us-ascii?Q?EI8grw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:198.47.21.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet201.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(7416014)(82310400026)(376014)(34070700014)(36860700013)(1800799024)(12100799066);DIR:OUT;SFP:1501;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	AzPl660nNlPL1lnGhD1mHxbXOesa/IL+89ssDisGIFxis05bFKKPncQ5IJm9j2ZtiMZ8gUxMjobh5Zyf68fRlEmZl/5KRwzsAukSNkBQ20Ul6jx6e/asOSKL/TBMvU4SRhtuwTn6fwfMwgvS55R9xocWFB1jqe/+LRM/K+nIx8nlqw/ozEWki+h8u/i474iiRz96MPzvWzpxEY4BI7hBQUMPFARqlS+X0GE8Kzj+0qMYmeFmFMy/8HpuVZMHSVSVmtFetSYeCfERlf1ylNAXrOD+P0JK7oBL5YldHnIYjOqtvbZu5edGi2SAMVvxY9v907GjPg6nMsiRrUUS7KSxJiXVg1mlO8AX5mcRyn2nApfnk9cgf3KY0d94WsEdgx8STgLnjwK6b3AWSxm2wlssp9bkLR2hLqZD7U+8MUh4sdgLyLR6VvJt6FZiNmSWbivH
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2026 01:05:52.4081
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 73139fb6-8809-48a2-c129-08de740a0596
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.195];Helo=[flwvzet201.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00002314.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR10MB4887
+Content-Transfer-Encoding: 8bit
 
-On 12:09-20260224, Antonios Christidis wrote:
-> ---
-> Antonios Christidis (3):
->       arm64: dts: ti: k3-j721e: Add GPU node
->       dt-bindings: gpu: img: Add J721e SoC specific compatible
->       arm64: dts: ti: k3-j784s4: Add GPU node
-> 
-> Michael Walle (2):
->       arm64: dts: ti: add GPU node
-Now that you are picking this up, please Fix the $subject.
->       clk: keystone: don't cache clock rate
+This patch series adds clock driver support for the Unisoc SC9832E SoC.
+It includes the device tree bindings and the driver implementation.
 
+kanadenadi (2):
+  dt-bindings: clock: sprd: Add Unisoc SC9832E clock controller
+  clk: sprd: Add SC9832E clock driver
 
-Bunch of interleaved "kind of related" patches in a single series.
-please do not do this.
-
-j784s4 can go in on it's own.
-
-j722s/am62p needs to wait for clk-cache patch to go in, but the
-clk-cache patch probably needs to be submitted individually to linux-clk
-mailing list for Stephen to pick up.
-
-Please provide reference in the patch diffstat as to where the previous
-version of the patch is.
-
-
-Finally: j721e - please get the binding accepted through drm mailing
-list, then we can see about the dts.
-
-> 
->  .../devicetree/bindings/gpu/img,powervr-rogue.yaml         |  7 ++++++-
->  arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi     | 11 +++++++++++
->  arch/arm64/boot/dts/ti/k3-j721e-main.dtsi                  | 14 ++++++++++++++
->  arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi                 | 14 ++++++++++++++
->  drivers/clk/keystone/sci-clk.c                             |  8 ++++++++
->  5 files changed, 53 insertions(+), 1 deletion(-)
-> ---
-> base-commit: 3ef088b0c5772a6f75634e54aa34f5fc0a2c041c
-> change-id: 20260224-gpu_dts-ab32c568d756
-> 
-> Best regards,
-> -- 
-> Antonios Christidis <a-christidis@ti.com>
-> 
+ .../bindings/clock/sprd,sc9832e-clk.yaml      |  120 ++
+ drivers/clk/sprd/Kconfig                      |   11 +
+ drivers/clk/sprd/Makefile                     |    1 +
+ drivers/clk/sprd/sc9832e-clk.c                | 1075 +++++++++++++++++
+ include/dt-bindings/clock/sprd,sc9832e-clk.h  |  177 +++
+ 5 files changed, 1384 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/sprd,sc9832e-clk.yaml
+ create mode 100644 drivers/clk/sprd/sc9832e-clk.c
+ create mode 100644 include/dt-bindings/clock/sprd,sc9832e-clk.h
 
 -- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
-https://ti.com/opensource
+2.34.1
+
