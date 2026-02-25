@@ -1,131 +1,111 @@
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D6C3ACF09;
-	Wed, 25 Feb 2026 12:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772020976; cv=pass; b=Ehd79A5dbX++skq+KdGuIL+dqtQhn7dPaezt1z8pyV2DvTnJKuwvITj5ggH2tguQ4pymAdn6c9J5jnwaBjiu7cA9b7hLeixlPm68+GZFi0ITPO+z8pmzwrw41V3qDhsskR9uOJpq3MAQfAyGAybuYLAv00c2dklRHSbPkQ9d7IA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772020976; c=relaxed/simple;
-	bh=pFySQZzI6I4KvcpNAB0tfMmhto9X1h0vL/C8Z7OeDG8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=dE6tXj+qnH+0Bt5KgIQTFMc1d3VauDYC1x/P6eJPWIIBMYSblabRIfUXmUK2vy97Q5uXMMY/tB3ewyXadVPeuMb/ChbkLsm37mNpUD8zwm8b3f8zsfXFpy4FCLHz6yrCadaowN0rxaOxESE2QSdgc+V+UTldvQyLuwSr/RibwSY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=k9FhMGUz; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 470432C234A
+	for <linux-clk@vger.kernel.org>; Wed, 25 Feb 2026 13:24:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772025893; cv=none; b=LNpBdH37muFdp5F4mJmFPW9P51ttOZok0A2aWAyyZyANBlh14PW6weMYCy246Rap0yaulKMeVKcdy62eD+jvhJMuIQgCQgiAXgeGkjQIuGvt1ZgLdgrLCMnA2I2zPsHeiGk9ox48M4pJz/UhQIq9Jao+e3CipbA4nmuVRz3IjME=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772025893; c=relaxed/simple;
+	bh=PsmboVwe3e/3pySl/bLvjAHmqJvc/g7E09oBJOBuko4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hqtePKjZYMsfOLgw8/5i2/SbF/XMerIlt4qibKJbYvZu7A0u23pA6vQtYheXwVXvW66m7nHfBsBqZjSRjuUlYlrwC3ze7d9FFBpMWRS3iBq0n69JS3BqcAGcPEFFTe7E262j8AzZ4Zr0egV8vopoGjQWKF2YDvIpT8xhuII4hVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C9j2azj5; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=YnwSxD5O; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="k9FhMGUz"
-ARC-Seal: i=1; a=rsa-sha256; t=1772020938; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=TNJv7kHvKUjGqmcwqmsA3x0Le/gXxWBaVPK9MVwLfT0THMVAbnnQafEgk4xL24tsUzOtwk5HHaO7z/S46vhBpb1zdwWLVPIMrGQpcUeBP29lrbkbUywNE9BJqL5Hd2FNpTvxF0nz23wenBDorGxfuwYEshJOxbVn+mh+ru9ski4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1772020938; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=IizUq26mU0IFus36KtptiQJycd4Ah24lnhNyzSKAepg=; 
-	b=OCSRMenj1mEEe8LNXJ4se7RyUl8bq3NAXYRIYzTPesWb0vXEPNFzJAGKLYUT1NMPmZlLloEjQhlTlP2CjrKMUqI4zblo60nLKvGf5u1Qk6hVU/VpsAWQ6mzhb4g+H2xhGtbRlY2qJULoJMmyZHwx3ZJZEqiPT36/nqnKWaDkCCM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=pigmoral.tech;
-	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
-	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1772020938;
-	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
-	h=Mime-Version:Content-Transfer-Encoding:Content-Type:Date:Date:Message-Id:Message-Id:Cc:Cc:Subject:Subject:From:From:To:To:References:In-Reply-To:Reply-To;
-	bh=IizUq26mU0IFus36KtptiQJycd4Ah24lnhNyzSKAepg=;
-	b=k9FhMGUzjDF6Zv9rpTWG7kHQfLXoH3dpXC1A2r40o3ZV9uctEqbdPyvh4ZjlJm61
-	XiS2C33j+JVBS8KJcrVPa1IAnBN/LojPSdNyOTuPC8LmkUYWJChQmOEdwQ6/YoHc7Ls
-	Ggv2L55nMYeb7L2cx03R245+LsUb0Hx+5OBs7Ux0=
-Received: by mx.zohomail.com with SMTPS id 177202093493336.86441168143767;
-	Wed, 25 Feb 2026 04:02:14 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C9j2azj5";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="YnwSxD5O"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1772025890;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9CyHa6Qn5jctEWbw4I8lHp1h1t0NfjY1X6aEPFAKD5k=;
+	b=C9j2azj5rdtuRIorQp35NqwdsDx4YcmNdebDjfhPzcB4NvQy0zNxhFw38k90E7h/+ilqZS
+	QCfkQInHppStEjw9bouv/g/P+QVXcs+CztViicFpUqKkJu5b5080PaE7dbgocYIiCvkkHX
+	LnS8FBxj9HIdZQ5oB8jd+B4bivZFjiA=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-237-XiMq5vxEOAaWJlcORMsh2w-1; Wed, 25 Feb 2026 08:24:49 -0500
+X-MC-Unique: XiMq5vxEOAaWJlcORMsh2w-1
+X-Mimecast-MFC-AGG-ID: XiMq5vxEOAaWJlcORMsh2w_1772025888
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8cb706313beso927472585a.3
+        for <linux-clk@vger.kernel.org>; Wed, 25 Feb 2026 05:24:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1772025888; x=1772630688; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9CyHa6Qn5jctEWbw4I8lHp1h1t0NfjY1X6aEPFAKD5k=;
+        b=YnwSxD5OFUg6wECj7a4cJqvS4lfhlYiy61qX+rwcvlHPrNxYAWv093koZCHG/EyWiO
+         gC5OjF8iLb0Zjsz36YLSTAJWAmDWXbdI4kxZTGrqcnC5Hsqplq1MleAexIv0MxdVO/rH
+         cGUGR0LWDUsQEpJ1hs7sfvxZFm2beyu+6omG1wQKAGrj/RJ5FZKPP+o3XyVmH+fwdCKJ
+         ysk4cw+04h2ueN2W4RHZJVt94hyUKvcomKDyWZn8P4guQLh0LIY+FE/+4TiE4iSwURHv
+         HPrLMjYgfnTvF1dgJ85bXCgWugB/Rfdhevniopw4HuN3mk0fK3s0UR4zziCUS2Jeb+Su
+         7ofQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772025888; x=1772630688;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=9CyHa6Qn5jctEWbw4I8lHp1h1t0NfjY1X6aEPFAKD5k=;
+        b=PnNWJB+o1woZHGq32ZJ+UBtPSMD9QbYxEySiBo5SeUwK87Zkj2ov9iomlPIyva5PH4
+         ntBqXHrDJu+b9DB4oxHjUozH2UEsUS1IJHeRXxrsZRDoImJfd95Yu/mV3gKEboUNVISd
+         U46GYMrm25EFdAL9/PoDpuMgL7w/DqUR+ynRZYpt1Rb0x9YdjORZyDpa6DGf0mGbiCLY
+         P0ZLPKNV5ZMLYxdFcJuVc/LDtPKV166a+XpJzH9VB+d5ih4VFU7aq9fXc8TTvN6MwUzs
+         EnftNPQ97MnJyoYfo7mZfY5aTYj/suUcbsPmYOBEyZLOfsqAwMidIFXnkaku8PdL+hM7
+         WK5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVilKWzuLsEJn6fPM+Uv9cFQFV82iGG2a33dkFGmS6joJLtc0p/ixyYnnOeDS50kyiue0+7QBi4WCI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjOQdc3W62KhoL7JaOEcPB3fCmMtedcYOqPYDqWBDnluNdHvsl
+	+jDpZP/vbP6sxaaicSvv1FcRga8VD4DgNVIkBnFY3UaxLyY4STz6wLXqbcE6ygqUiQnZo5KWvea
+	a+m7W+QiFxyDxdoIHUs0EMeC5fSI/9TR8IO1rkDQENA5K7soZsyZmHZlvizVPtw==
+X-Gm-Gg: ATEYQzzlZYJKecwkm4mkDX+nglTgb1Lb7kC5GlkZGGp8RHGL4U9WC8xxmNGx33uGT8x
+	9m8w7FtMzRbDIXsDWNsAdPXe/WYZK4unlYROnO2g0hQuM+k9kXCg3v/i0XPKbTqhmxDjcpDSIku
+	5V3fv3RPEm4ebPY3oEzCafXvwtdpSabAe3swbjq3D8olYNeMJQyK67Vxx9KeYyyYKevmYflqO67
+	kBellyYGnUzjtw8e9EtzkX/+a9GW7z3rcX3OnpEj431GMNTqQCJJnnpMVncGPI46+kzBm1ZJzqA
+	mUDHP2ix3xsAVFGQNgsgEh8QN84MQOu4H2UvsfguW1AUpdE+qrsVpgJukO/YZSZgfqSgR+TRZH4
+	e4meskJT2K4tE2KwTgOWI7nEHtBsYWNXPMY0+0LNh81AV2VEDo8ok1EP9
+X-Received: by 2002:a05:620a:1921:b0:8c5:2ce6:dae with SMTP id af79cd13be357-8cb8c9fe6afmr2193115985a.29.1772025888389;
+        Wed, 25 Feb 2026 05:24:48 -0800 (PST)
+X-Received: by 2002:a05:620a:1921:b0:8c5:2ce6:dae with SMTP id af79cd13be357-8cb8c9fe6afmr2193111585a.29.1772025887900;
+        Wed, 25 Feb 2026 05:24:47 -0800 (PST)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8cb8d103084sm1542773885a.33.2026.02.25.05.24.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Feb 2026 05:24:47 -0800 (PST)
+Date: Wed, 25 Feb 2026 08:24:45 -0500
+From: Brian Masney <bmasney@redhat.com>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND v2] clk: tests: Add tests for clk lookup by name
+Message-ID: <aZ74HQjEhNe8YZqU@redhat.com>
+References: <20260225083413.3384950-1-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 25 Feb 2026 20:02:03 +0800
-Message-Id: <DGO0ZQ827ZV8.4EO0ONZBR8CL@pigmoral.tech>
-Cc: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
- <linux-rtc@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 0/7] rtc: sun6i: Add support for Allwinner A733 SoC
-From: "Junhui Liu" <junhui.liu@pigmoral.tech>
-To: =?utf-8?q?Jernej_=C5=A0krabec?= <jernej.skrabec@gmail.com>, "Michael
- Turquette" <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>,
- "Chen-Yu Tsai" <wens@kernel.org>, "Samuel Holland" <samuel@sholland.org>,
- "Alexandre Belloni" <alexandre.belloni@bootlin.com>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, "Maxime Ripard" <mripard@kernel.org>,
- "Junhui Liu" <junhui.liu@pigmoral.tech>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20260121-a733-rtc-v1-0-d359437f23a7@pigmoral.tech>
- <5061953.GXAFRqVoOG@jernej-laptop>
-In-Reply-To: <5061953.GXAFRqVoOG@jernej-laptop>
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260225083413.3384950-1-wenst@chromium.org>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-Hi Jernej,
-Thanks for your review.
+On Wed, Feb 25, 2026 at 04:34:11PM +0800, Chen-Yu Tsai wrote:
+> Clk lookup (by name) recently gained some performance improvements at
+> the expense of more complexity within the lookup code.
+> 
+> To make sure that this works as intended and doesn't break, add some
+> basic tests for this part of the CCF.
+> 
+> A new "clk_hw_lookup()" function is added purely for running kunit
+> tests.
+> 
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 
-On Sun Feb 22, 2026 at 6:41 PM CST, Jernej =C5=A0krabec wrote:
-> Hi!
->
-> Dne sreda, 21. januar 2026 ob 11:59:06 Srednjeevropski standardni =C4=8Da=
-s je Junhui Liu napisal(a):
->> Add support for the Allwinner A733 RTC and its internal Clock Control
->> Unit (CCU). Reuse the rtc-sun6i rtc driver while introducing a new
->> SoC-specific RTC CCU driver to handle the hardware's evolved clock
->> structure.
->>=20
->> To facilitate this addition and improve driver modularity, transition
->> the binding between the RTC and its internal CCU from direct
->> cross-subsystem function calls to the auxiliary bus. Also extract shared
->> IOSC and 32kHz clock logic into a standalone ccu_rtc module for reuse
->> across newer SoC generations.
->>=20
->> The A733 implementation supports hardware detection of three external
->> crystal frequencies (19.2MHz, 24MHz and 26MHz), which is represented in
->> the driver via read-only mux operations. Implement logic to derive a
->> normalized 32kHz reference from these DCXO sources using fixed
->> pre-dividers. Additionally, provide several new DCXO gate clocks for
->> peripherals, including SerDes, HDMI, and UFS.
->
-> This work looks nice, but I have some questions/comments:
-> - you're missing RTC SPI clock, which is needed for RTC, at least accordi=
-ng
->   to vendor 5.15 DT. Could it be that this bit set by vendor U-Boot so yo=
-u
->   missed it during testing? Manual says that it's disabled by default.
-
-You're right! I tried disabling the RTC SPI clock in U-Boot and found
-that the output of UART became garbled during booting kernel. I will add
-it in the next version.
-
-> - Vendor DT has strange RTC CCU phandles for UFS and HDMI. In first case
->   uses RTC wakeup and in second DCXO, which doesn't make any sense. Did y=
-ou
->   do any experimentation with these clocks? It wouldn't be the first time
->   that either code or manual contained some kind of error.
-
-Regarding UFS, I am still working on getting UFS functional on the
-mainline kernel. I will investigate the actual relationship between the
-RTC wakeup clock and UFS during this process.
-
-As for HDMI, I believe it actually requires the hosc_hdmi_clk
-(DCXO_HDMI_GATING in the manual) provided by the RTC module.
-
->
-> Btw, switch last two patches. With current order during bisection you wou=
-ld
-> get a complaint that A733 RTC CCU driver is not present.
-
-Okay, I will do it.
-
->
-> Best regards,
-> Jernej
-
---=20
-Best regards,
-Junhui Liu
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
