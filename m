@@ -1,118 +1,95 @@
-Received: from mail-wm1-f68.google.com (mail-wm1-f68.google.com [209.85.128.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C550372B4A
-	for <linux-clk@vger.kernel.org>; Thu, 26 Feb 2026 11:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC543624AA
+	for <linux-clk@vger.kernel.org>; Thu, 26 Feb 2026 13:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772105423; cv=none; b=XfWoNdxJnoaQqY+c6BWosXm2KytXN42KsGXZcpdS2Y/y4SRnP1dnJ+HOpT6NuqdSNbL1RrQqqoCsqI/s6JoO7SPR61RxRKncQfrbkn4D4i4O6MvMDJ/pBASBZ8okPdWRHh4zZddgh6P/iVFb2ZOu4G2jkvDZZR0kfes/P9IndCw=
+	t=1772112855; cv=none; b=BXXwaRBpiyt2V5kDbu/UW+2kFvt/9sCgvzNvtwvURByAnb5x2nggxXVvkPTvtwwmoqkeuj2vCVhvgKLnadofpaFqoLHhLnY2CGwIi7NbF2Vh3zoPv3mPHBPy8qgFrNe626iun8sEaLiaoZjT//qjiTRhQ4Kcwkw3rra9Cj4Pb5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772105423; c=relaxed/simple;
-	bh=gzOlBY8s8d5K60vNR7YJL060QBQtdO6FKSLNusiqquo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CFkrvkuNknWf8oVfkkRU9XMYeXc2956nEL9oWMQZN0ILkklqvT94EKqbpGRrZxK4CEHa0x7H+N4tDNBrGAHHRA5Dzc7x4Z1s16/dond8rpKdYMwyf/MWp2mmfcnkFGMxK4/iI1lzfLbY9LQ+87TfZpMnmBBB+oNN4IqamIfEIVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=d/MbUPey; arc=none smtp.client-ip=209.85.128.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1772112855; c=relaxed/simple;
+	bh=0lSJAvm4Hn1Ils6DHNjWeGoR73lEO8Dc8PMjR4+fBqc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=loLQRUvKkJbpwXhGwWS14iWc0BNPgmHk/JddavQdsV7kkzTQ4yqj0kwwJto8850H1nLdNpOhwECAO+gLZEXVJqXdhDTJd7axc8wIcYXouT14veC06KzmtS9nN1udVey+i/Cfz0ma2d8AGQntIrkzqSZdi8nm6WqUpskcRCbBWks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=b7R0EfHo; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="d/MbUPey"
-Received: by mail-wm1-f68.google.com with SMTP id 5b1f17b1804b1-4836f363d0dso6610695e9.3
-        for <linux-clk@vger.kernel.org>; Thu, 26 Feb 2026 03:30:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1772105420; x=1772710220; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5blS5e/UUiqpkutZRn2hy3ZVpuHS9zAQP/d/WpTwzS8=;
-        b=d/MbUPeyDFN+DfT14sNwhmtwKmxJb90sfeScVAmoZblvH+dFeVnsaXJQwxk8Eqd+rA
-         gaAU2E4eTLjNSRL+TOSvqGX6cwh+pJfV8P7zppJkDr2omETr1lzw7dN/L7ddINBTB696
-         RwYLO7nff1BIWbXTpQ3NT6eDnUoFnF7xBVa0oi/MrVEKQx22M/RWUXXwtegoAqN3u9OO
-         DAdQldgAIEPTPlibocrE/BdFxmqhxp7OPIe7+uk601zOVXKDrQk94147pXDh60xU3LNk
-         l56Lppq52AM3Bhd0C5OD7RbQiRVjARGHgyfsR7yMkhbHKt1fTS4KibdHtuLOSrmPG+lQ
-         YFvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772105420; x=1772710220;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5blS5e/UUiqpkutZRn2hy3ZVpuHS9zAQP/d/WpTwzS8=;
-        b=byAJWfFpzzTyQcnKdq1rk2tJ9VKuhz9cEbzuwE4b383YhnFDbKC6H2HEOAlNMDAoil
-         Ei+fkz+0Ear2trNtidYZ7BzAQrx4+lLp23osXmIw99rxoru3S3Aduy/kh+7BBU2dfZKo
-         hzPTMk96QpFSd7Yuqpit5nDqIth34XXlo38xSMWRq40AxP0wUUTCTN4t4QS/3lawhu0/
-         yqgfUGOOPDViYSiAJJ0COuUF5diH0MxKkgtv6ctIRW/ofGWxTCOqgFKG5lL1xRZvQBWc
-         06Rh4/4uC4PBZgyfMuf0O0UNK3O8LM//TN/4nsKBBmo00V9W6ExCYGJWrNctydZldwqM
-         8JCg==
-X-Forwarded-Encrypted: i=1; AJvYcCUinzMgD7yDylrNth7t5Jh5HfCNBm/deJJu2lQNkwV2gvlCOHKoBcpnjf3SAq5AWoEU4+olNsf4jOQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwN+rn+YRT/OhkI12+3nx4C7oYAO1NiWkmk/1T3lJGAJ82cY0eJ
-	cQEGF9ivrKmOwuvFLKh73y9hOcSkejUsgei3mv00u42gTQ77H9jKNocppD7j95Z5fp0=
-X-Gm-Gg: ATEYQzw8EW0tbIeE5qehoU7w8mM6dSX1Pn6hutxbvOh9ItLasDnflyZge875+794nRG
-	NTXF9HbdMsHtbhD/PsRM2flEVGXPxROgfe8Fa1UaIhQApHdQoN16zKa2RQnCHsSHtGU4fGzHxdJ
-	NMG04K+skQtrRcJFwM9FlIPJLQEEZlTEvof2KQd5oC/DBd1FyIAGqDpNnXOPpjFFlSUG8TgO2rD
-	3+1WT+bArerHQFF+tMlnEyDe8a97PxS0tiBDB0yYL1iB5AedxK9qkilTHeTZtmKAPpUuG27gWEV
-	mi+LXNCFgQFO5opALDqYTdhDbpuOFF5+7slaMjnuqb3LWdA4rwsI27f6xhe34ulC1vfqtowI873
-	6JJ3KsvCeYhUYH3Q4+/HGjG/7AzZcrMwHJqC6q2uBglkmwtF1tDgRZcRyRgSK0RLQFqzO6lE33v
-	GPdHS+BY/eXluTPNwAemFVgUE8ivER7g==
-X-Received: by 2002:a05:600c:628d:b0:480:1c10:5633 with SMTP id 5b1f17b1804b1-483c21a582amr59493115e9.26.1772105420441;
-        Thu, 26 Feb 2026 03:30:20 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.73])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483bfb77abdsm34249225e9.2.2026.02.26.03.30.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Feb 2026 03:30:19 -0800 (PST)
-Message-ID: <912673f8-fd79-4e3f-b45c-730c8629331d@tuxon.dev>
-Date: Thu, 26 Feb 2026 13:30:18 +0200
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="b7R0EfHo"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 9E0B61A13C7;
+	Thu, 26 Feb 2026 13:34:11 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 6D8C25FDEB;
+	Thu, 26 Feb 2026 13:34:11 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F3E851036938A;
+	Thu, 26 Feb 2026 14:34:08 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1772112850; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=YdDsgApApAV3cK0W79hVYmB4UC7l0NfHNOm1EgR/sOU=;
+	b=b7R0EfHoGWw+wn/La/jsuPP6EqOEN7IhVaXpEiM5ujFm4n7XyIebbrfw7gVFGWUlJQpMNy
+	1qWStOVGzarPyR8F85PVCMrOlEv6Cfl14QhSlHL1BoIz4bqd6WArLqRJl3CmjehNdHp3n5
+	oYR5AkX+ecad8Prjc4XwnWeHc4ZMhZqVRVPc+jC1U2FhpDn6CPNsKnos4sGlbuqm5nuAzE
+	4epDnZ2O02CuY9cZ11RdtcXzkanzJBBCNLc7+IwndPvZJglSWu2mwEcetqZRmkbswA6irE
+	2E1eyUU2k5SvkGtovYOMLu4bKcMDKqyxc6Twb4Ne7bvkqy+fdeg+m50eJhgS7Q==
+From: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
+Date: Thu, 26 Feb 2026 14:33:45 +0100
+Subject: [PATCH v3 01/13] dt-bindings: mips: Add Mobileye EyeQ6Lplus SoC
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 02/16] PCI: rzg3s-host: Reorder reset assertion during
- suspend
-To: John Madieu <john.madieu.xa@bp.renesas.com>,
- claudiu.beznea.uj@bp.renesas.com, lpieralisi@kernel.org,
- kwilczynski@kernel.org, mani@kernel.org, geert+renesas@glider.be,
- krzk+dt@kernel.org
-Cc: robh@kernel.org, bhelgaas@google.com, conor+dt@kernel.org,
- magnus.damm@gmail.com, biju.das.jz@bp.renesas.com,
- linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org, john.madieu@gmail.com
-References: <20260219223542.6364-1-john.madieu.xa@bp.renesas.com>
- <20260219223542.6364-3-john.madieu.xa@bp.renesas.com>
-Content-Language: en-US
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20260219223542.6364-3-john.madieu.xa@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20260226-eyeq6lplus-v3-1-9cbeb59268b0@bootlin.com>
+References: <20260226-eyeq6lplus-v3-0-9cbeb59268b0@bootlin.com>
+In-Reply-To: <20260226-eyeq6lplus-v3-0-9cbeb59268b0@bootlin.com>
+To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ Gregory CLEMENT <gregory.clement@bootlin.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Linus Walleij <linusw@kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-mips@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
+X-Mailer: b4 0.14.3
+X-Last-TLS-Session-Version: TLSv1.3
 
+Add an entry to the mobileye bindings for the EyeQ6Lplus
+which is part of the EyeQ family of system-on-chip.
 
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
+---
+ Documentation/devicetree/bindings/mips/mobileye.yaml | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-On 2/20/26 00:35, John Madieu wrote:
-> Reorder the reset assertion sequence during suspend from
-> power_resets -> cfg_resets to cfg_resets -> power_resets.
-> This change ensures the suspend sequence follows the reverse order
-> of the probe/init sequence, where power_resets are deasserted first
-> followed by cfg_resets.
-> 
-> Additionally, this ordering is required for RZ/G3E support where
-> cfg resets are controlled through PCIe AXI registers (offset 0x310h).
-> According to the RZ/G3E hardware manual (Rev.1.15, section 6.6.6.1.1
-> "Changing the Initial Values of the Registers"), AXI register access
-> requires ARESETn to be de-asserted and the clock to be supplied.
-> Since ARESETn is part of power_resets, cfg_resets must be asserted
-> before power_resets, otherwise the AXI registers become inaccessible.
-> 
-> For RZ/G3S, both reset types are CPG-controlled, so the order change
-> has no functional impact.
+diff --git a/Documentation/devicetree/bindings/mips/mobileye.yaml b/Documentation/devicetree/bindings/mips/mobileye.yaml
+index d60744550e46..83abe268e96b 100644
+--- a/Documentation/devicetree/bindings/mips/mobileye.yaml
++++ b/Documentation/devicetree/bindings/mips/mobileye.yaml
+@@ -31,6 +31,11 @@ properties:
+           - enum:
+               - mobileye,eyeq6h-epm6
+           - const: mobileye,eyeq6h
++      - description: Boards with Mobileye EyeQ6Lplus SoC
++        items:
++          - enum:
++              - mobileye,eyeq6lplus-epm6
++          - const: mobileye,eyeq6lplus
+ 
+ additionalProperties: true
+ 
 
-Please drop this part as the order may impact the functionality. But with this 
-fix we now follow the config order from probe, so we should be good now.
+-- 
+2.53.0
 
-> 
-> Fixes: 7ef502fb35b2 ("PCI: Add Renesas RZ/G3S host controller driver")
-> Signed-off-by: John Madieu<john.madieu.xa@bp.renesas.com>
-
-With the above addressed:
-
-Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
