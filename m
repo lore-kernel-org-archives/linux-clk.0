@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C4436215A;
-	Thu, 26 Feb 2026 07:07:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2665537418C;
+	Thu, 26 Feb 2026 07:08:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772089632; cv=none; b=tgSr0BSWwTMR2kBMtmTGKnc74IAyFLCO2vziAeVgXBQ6b8Y/2sf9eY0CxEAZvyqqbpQk7DJiCw35Q2dnW6zgLrOi6A4XNEWsw84Mnd3kVUHBnWMWCzGaL3zS0XOoNw1CyPsp78lJ0KtSu+WaCEtRBkdvBDCOEP8/icTXpGE0gMQ=
+	t=1772089731; cv=none; b=qrakWkU0C9KTocRPGG5jI7dq5RDxWYoMAfhvhTuaZSgTb/XfL+Hd2EpUs9H9UU0fJSc/9Esdl+ClwoXfXGGpw1c6PrTEz0o0ckewzR8MO1Wd3ghv9YOWslW7cGXt0PPxcKFIdyZF/ardoSh5WDJaUTS+WvkUFp6TTAK0Mj8LocM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772089632; c=relaxed/simple;
-	bh=AylNgwICxepLB6UZgoEZD/7/lypOxsc3O1VYwovI09Y=;
+	s=arc-20240116; t=1772089731; c=relaxed/simple;
+	bh=/nOXJwtWBRqjHtF18qw9d+YwsOuhUDgleHpYP8DpyP8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dV6puV2tO0U97fY0DXNv74+2mTJoOfRxrkDB4p89arNuJsHrlbRHfk2SPatjw0pLtVl3282+iPn171BxKR3d5PmNXlCEbGAA9LYaQC/93G2VUrB6NQSn1IGDWCNPfwIe0EVctwqdiHKwQr5vOXcO2NyWTKY13siPnOsJlmPJyM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qSnq7EBM; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=ICvNyoLn6ZmiVJ31iIYJx3sUs35NGFZ5uxd7ZbIfEj1iETJ9nQTftUDMOMVBzocoBU7fwW6MUCkXdGbIG6ktOB6lBoaPM8fH+8sNs6Ed/EvFWRXguv2iX8AZ2RPFtjqMVNU9KBUQrwIJHuQwTa7GjxUOoUcPIStx06QHYg7NNwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=snk+3bDd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qSnq7EBM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE735C19422;
-	Thu, 26 Feb 2026 07:07:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="snk+3bDd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40E04C19422;
+	Thu, 26 Feb 2026 07:08:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772089632;
-	bh=AylNgwICxepLB6UZgoEZD/7/lypOxsc3O1VYwovI09Y=;
+	s=k20201202; t=1772089730;
+	bh=/nOXJwtWBRqjHtF18qw9d+YwsOuhUDgleHpYP8DpyP8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qSnq7EBMVOHFwOji0ctLm9FL1HenrB+ofeB4xNpTErQoF7Z65SFm+o7Ncxik0YiFU
-	 Xy7DgGwciAsdhGkrg5zn0yf0RX7fy72/v+VtGkeRKwuM+yh9sEJMOvRiWLViwbdXpm
-	 lNr6M3SrQVai7cQWunaKQQzvr22INp8kPs383GLCWls8AO6qNMsuwRPMCkzIIUQTf2
-	 CIlHqAWsHRxjD+jJAa1Uz9yRdUFJDvOEpbAIDhRsBmkGgSBGF2FYpf6aGc2Qn65vdJ
-	 k1DnHShoBZBd+2GAWaP30QFGTf7JkbTGT0MAGq3WHdjF4EHaYcjujUHUJn7/0vhj50
-	 jQZgcP3eCO+8A==
-Date: Thu, 26 Feb 2026 08:07:09 +0100
+	b=snk+3bDdO+iB2/f6ppPep06p88NcbIg2BBYSO7yUoZ1EZ/YVMLmgWoWA4OCb36jPl
+	 3BtaQw6aS4VIZnMcJMWUeMTvSeh2Q4DTsuSBzk4r3QIgGZXUXrfiUgt5VfO56SnUsw
+	 EMgxjB+Wb2iaOegyOhOxODlhjdoQ/kEII5HgppPjZ/HFrQSYVHLUsPiMQ7J8bmtbp/
+	 AyYXcF1LuzLMQBlSHYMOnm4Sbe8x90XrhUg0WQMrMhKEMX+EmJu1CJ1uxT+iNRdE00
+	 UYwSNGzvX/3YM6BHt82mvwc6Cv1NUOKOOATL+ei1rThXzpyeouJto/8fkPracuhz8L
+	 NOz/CqjNxa68w==
+Date: Thu, 26 Feb 2026 08:08:48 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 Cc: Bjorn Andersson <andersson@kernel.org>, 
@@ -37,11 +37,11 @@ Cc: Bjorn Andersson <andersson@kernel.org>,
 	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, Bryan O'Donoghue <bod@kernel.org>, linux-arm-msm@vger.kernel.org, 
 	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-media@vger.kernel.org
-Subject: Re: [PATCH v8 02/18] dt-bindings: media: qcom,x1e80100-camss:
- Convert from inline PHY definitions to PHY handles
-Message-ID: <20260226-fluffy-complex-malamute-7ecec6@quoll>
+Subject: Re: [PATCH v8 04/18] dt-bindings: media: qcom,x1e80100-camss: Reduce
+ iommus to five
+Message-ID: <20260226-magnetic-honored-taipan-355eb8@quoll>
 References: <20260225-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v8-0-95517393bcb2@linaro.org>
- <20260225-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v8-2-95517393bcb2@linaro.org>
+ <20260225-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v8-4-95517393bcb2@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,22 +50,16 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260225-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v8-2-95517393bcb2@linaro.org>
+In-Reply-To: <20260225-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v8-4-95517393bcb2@linaro.org>
 
-On Wed, Feb 25, 2026 at 03:11:19PM +0000, Bryan O'Donoghue wrote:
-> We currently do not have an upstream user of the x1e CAMSS schema which
+On Wed, Feb 25, 2026 at 03:11:21PM +0000, Bryan O'Donoghue wrote:
+> Rather than bury the BPS and IPE inside of the CAMSS block we can define
+> them like the CCI/I2C and CSIPHY as their own individual devices.
+> 
+> Remove the IPE and BPS iommu entries from the main CAMSS yaml. There is no
+> upstream user of these iommu entries right now so this is safe to do.
 
-We have. It is in released kernel v6.16, so almost a year.
-
-> allows us to make this the first platform to treat the CSI PHYs as separate
-
-No, it does not allow that. You cannto change the ABI.
-
-That's why I reminded multiple times before reviewing new CAMSS bindings
-for Milos and something more. Because once it gets accepted, you cannot
-change it anymore without valid reason. And there is no valid reason
-here provided. I kept these patches in staging/waiting for long
-enough...
+Of course there is - v6.16.
 
 Best regards,
 Krzysztof
