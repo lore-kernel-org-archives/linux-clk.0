@@ -1,67 +1,67 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 152633B95F9
-	for <linux-clk@vger.kernel.org>; Thu, 26 Feb 2026 14:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124693D3490
+	for <linux-clk@vger.kernel.org>; Thu, 26 Feb 2026 14:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772116130; cv=none; b=t8F9v2hC1l3myq1jWSgvKOAvTS1PfV4l1bSniG9akaJnbtvv0+R0Qp5MbWdCtbq3zL8v53KrC8CLZEBPjr+Ai+In5YFYHZ7pIppsT3Ww7Cw7knz5/mRU4K1vBaOyPOCL0NeSqGtleLcH761RZjFTbnVxG1jaKxM0s100hiWqyQ4=
+	t=1772116131; cv=none; b=BlNDVpwzl+2Tpqcp6zIuxBhLCuzEowJXUwJhdYfmvymWbVXzTNxCA/+nOmhzwpC+tmspNk1RoyG8zt7pFuEb5UokVoLMhTKAsYbWL5PH4WFCNfGTeOhDa/IAXaJLP2egkAcO0zrIyqrkNHXc8kOzA+v5oB7+Jzck1RA1MJ8ODOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772116130; c=relaxed/simple;
-	bh=oUlDgFPOuTzk+k1ZFHFnc33Wy4fO8ZWAGLIRsB8Y02g=;
+	s=arc-20240116; t=1772116131; c=relaxed/simple;
+	bh=Qn38MpcT3X5Uop/ohxc7EbyGDk10OdmDudGcFnhPjxg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=AJ9qRIKIXDSGPd8rPqjM4yqQ9Yo79T+hBI/w8kyVe8yZqgPJNJ6qkUDyJoLFbo+mrxLz78HKTSBzEMY2UGawT1bh4CGL5B3h4ym4jK/a8tT0mR8H5yO7PrwmTwzf4cnBvj83BibyN35YQXbjYiNsZH/nOgJale6CDAmbg3OQCOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gow6+/c3; arc=none smtp.client-ip=209.85.221.45
+	 In-Reply-To:To:Cc; b=DOnWr5e8avzRO304dgj1IRBZHnaTNtsAzgT/ePj4reMdWjp2PpuOm7kAdOTelevyWljF0XRC+EAjULxFW66NTO9Rie7elavJ8V9OfSZVWSbHEChg4NYOjuBxGw1hWGqy23S1uCTJNB9/7wNY1XtdwSp6Jue0EXd39I19CaUjFx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k5PkBfRk; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gow6+/c3"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-4377174e1ebso651432f8f.3
-        for <linux-clk@vger.kernel.org>; Thu, 26 Feb 2026 06:28:45 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k5PkBfRk"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-43990ea3fbcso642230f8f.0
+        for <linux-clk@vger.kernel.org>; Thu, 26 Feb 2026 06:28:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1772116124; x=1772720924; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1772116126; x=1772720926; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=QBlrim4N223oggAozzYLyyaMZ8xxO7R36NeLnPQn72Q=;
-        b=gow6+/c3iGApyXcnFSUXPykNDTWujFc35zuuy30tMJ3oo6HufPU+8fJ6cXBswyDmfE
-         surFLYnvcCNiMKv6hJjMqYX9R1rCXbqey0mg6EKuSr/UMz0heEzYn08AJGKCvyz4Warv
-         7MUOBHQuaZ03CFsD7p5USolUj1K1OCma15QVudm42TH0XynrPn6Sp0sEsSrep+CSVcvL
-         5MXlsXFpbFOFuo4Q408ZAeHgeYxSREvmmsHYSrUOS2M3jJwlyUaHwU9/d2L6tTfKvwFk
-         2TPF7fjCfP5xaf/wMbp8EopmGbcEiUO+lno0cAEkvIGtligheRz3dzSHUxFsjnyxk8Ad
-         +1fg==
+        bh=gAf7469QLdF9nEYEeORB29gZq4TsObx9AWVyJ/rds9w=;
+        b=k5PkBfRkAgezcT43OXqr98+PeNadlKfc7sjS0aQqrQlKtOv36KwCEbjD+q/ZHT8WyV
+         j66stZhmV2U4omDu6GKL5Afn8Pq0LYr/DPa1QjWzpFFiIR08ObhnURXKO3n5fK3OZRxh
+         3nzVDtq4H0wHJV/7+kG5saNwj4+dbHpGgW+F+JMrnF3OaDpbTSQARAD073BcBqDFxkhN
+         x2X8QRoCs+I0jNSobMiWnHT6NTjzd5/xVgoCvOHa4qOVEiCJfq6ynP0Cl3e1wGHprTRV
+         +AeqQCfONyYlhDpqXOtZtfrl0EzfKyjxLOKKWZoB2MF/g5NOIAQd+12kthay4aX9htpS
+         DWGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772116124; x=1772720924;
+        d=1e100.net; s=20230601; t=1772116126; x=1772720926;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=QBlrim4N223oggAozzYLyyaMZ8xxO7R36NeLnPQn72Q=;
-        b=i01bWbDsScUKs+0zuvWG1skc362r5MSk9XN1o4uLZHxK/zZTQeOmqHuuADXKF1CIcT
-         70MDREqMQG2yclxaoE8nRLBhirPa9xngx4+kVVqKaP8f+EYjozhZ1U6ifTUq61A/ppFu
-         9uqmpmA/nxA5J43DKgXcKAUtpVMpc1h+XDnPBLej8VWljHvoSvkQWbSWq/B3YkFz0Dc4
-         h1I/Aoin32zKJ+AYzSHsDtf8rZN5ip/2KMoz6q8HEMkWbcUfMLpkNuW9Hztw5TfQd47+
-         CV0NVKD9n0kxi6SjpXUONOsuS5l7IYKTFb7eNPU6rlQs8aXlEmQMXp6gH8pzMB1BnMLx
-         LzVw==
-X-Forwarded-Encrypted: i=1; AJvYcCV9nBjARcgkS5SI9FcGBlwQCC6CA8eVvOmHJ93omT/AGTEczdOpMSameQgzsnti4O+oiE4dKvbI/+s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxO0Lk+7J2SguyREME6btlX5LRG6I71Mu36cUW/psSviOr5UKr
-	5zHGKzlBXEuvunuIK1l87wXuDOZn3Yu2m3949dRzkG+9DosBh3rTFhVfJvo14ljDzRc=
-X-Gm-Gg: ATEYQzwRqcJnArkvcSgV5xNDn7z8pvEYk3BROsaOAtd3Dw0/Be2PCruqHtdW4zu2+9Y
-	MptXeeXLUaa8nW9G8bSSorgNYZeUJW/eNlPHp20OUAwaCytksuGDR0FJKl+oqToVdgLkAJWT8nZ
-	gzbd+sg0R6XRJUbPADHv32M9yMsBfOmzXdlSdq/j2hfF2gcHwYMxPAOELcEVEglE2TJ73qF5Jh+
-	sm0327S4mA3mLtEfVGMJcEK41I+Tq/xZPVrFMJv2un9NteK6WzRJixBiyh7Wi33BFjQiyn+Abhn
-	d5+plIL/7GKZ2JVV0Cwx19c3y5mzoZRt5R6bOKRQA7medtoGYKMkVNQJtThp3pRxwYAP67vSfp+
-	llk8IPN3MYIj70dMANtH3NI9WH46CUeNhhV6bZEBVBtxNQnltK26Pg1P7GKAjs4lsMt9kvWHzlt
-	BiVktIsZ9fwc1+lTbQSog9gW//FefrePRdQ7HioNUAkUnGplrXFVyc5K6anwY+9Ql+
-X-Received: by 2002:a05:6000:1865:b0:439:8a9d:66fc with SMTP id ffacd0b85a97d-4398a9d684emr16322032f8f.15.1772116124435;
-        Thu, 26 Feb 2026 06:28:44 -0800 (PST)
+        bh=gAf7469QLdF9nEYEeORB29gZq4TsObx9AWVyJ/rds9w=;
+        b=BaOELdZKGcZoMhBkEvgbvjD1ESu60BOWF8zqN6WeP3RrbpAnfXCaKjr5ZMo9Uqaes7
+         FjO+gWkEbI8h2wiMbTb17tTutPjhLWpGQHL2E6XzAChvhB7y8oIhIww/wqXrj/dqvVUy
+         mI85DM+MEh25khN7hyb2MRIE8JCSlfFBzz+xlJdC6EDQ1LBJvKNSp4KC4ZFuEQU3Pp4S
+         La2TLxqHrDZ4InWl82bclzawb6t+N2dF8ArudRQWPW4ttCB6p++ire6kf6sdly9AH6nn
+         +0XrBTUY4ul/No0T3avyWHnK+FVqplhLgflQktk6tImtvwXOj/oJexcIWmsCxwuiroRH
+         bThw==
+X-Forwarded-Encrypted: i=1; AJvYcCUzgBufU8YPLLrz7M5UAjjdwD89pYb/uwN4l8AwDeDIvuKwO55EKWqtsGi0/0p2UH9gpZfiKkUAgbI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyN16KDZ8jgmur6wsYK4hz5yA6tLogThgdQzcPeYqcnz4nXXIW0
+	dahFISN1163gyTUoDU4vB1opOsfVSbbJ7kDiOoqDApbq4BoJtXn1lZCg9LsigxFmGJQ=
+X-Gm-Gg: ATEYQzztRYzSQ9DYE6YHuVGCG1x6tIpLTBpHK1mardubxW6ustUg1JC5CMQ9FFNLwZR
+	C7ZZ2UzJKL6wcjdMVTPjVjPSp53P10L7f38sYkNLXpoC0FSHuXxmYfDeFNHexwURsvJuUY0KDA/
+	eDPfP4i6ujE4DBFvBAfcIp3DDnGmoKaCul4mRotghT4q8UDn3hqvF61PzjCpls7KHmdtIM16ZSk
+	CQCJb1wGpvSImbrq+w+1/1KfCJgj5X4/h4QJFgX+WvFo2gXJ/GyjOnPXUn2g/wBrSkjUh7l5DJk
+	3++7hd0zUfdRYPXN12Lvr2Hxg+bbI7bMo5xYErzhPowNCWUFhsnXOkNMC1sfsxJBZYl1ceEp5kC
+	uwyTdIQ+ezwJMx93uiU9/uzP2Vjsn/m3jGhes9Vti3GehnTesIZIUAtBTdAg03PQpK9rX8QUbh+
+	55REcXjNieYbj+upH2rlNe1Pb2tNWIYd7UqePbRn90fS67vQzms493dUOuBoK/rSGr
+X-Received: by 2002:a05:6000:144c:b0:439:909f:c594 with SMTP id ffacd0b85a97d-439971ae7f0mr6470219f8f.10.1772116126101;
+        Thu, 26 Feb 2026 06:28:46 -0800 (PST)
 Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43970d4bf89sm39219897f8f.29.2026.02.26.06.28.43
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43970d4bf89sm39219897f8f.29.2026.02.26.06.28.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Feb 2026 06:28:43 -0800 (PST)
+        Thu, 26 Feb 2026 06:28:45 -0800 (PST)
 From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Date: Thu, 26 Feb 2026 14:28:42 +0000
-Subject: [PATCH v9 1/7] dt-bindings: media: qcom,x1e80100-camss: Add
- optional PHY handle definitions
+Date: Thu, 26 Feb 2026 14:28:43 +0000
+Subject: [PATCH v9 2/7] dt-bindings: media: qcom,x1e80100-camss: Add
+ support for combo-mode endpoints
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -70,7 +70,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260226-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v9-1-a59c3f037d0b@linaro.org>
+Message-Id: <20260226-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v9-2-a59c3f037d0b@linaro.org>
 References: <20260226-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v9-0-a59c3f037d0b@linaro.org>
 In-Reply-To: <20260226-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v9-0-a59c3f037d0b@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -88,66 +88,143 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-media@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
  Krzysztof Kozlowski <krzk@kernel.org>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1451;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3883;
  i=bryan.odonoghue@linaro.org; h=from:subject:message-id;
- bh=oUlDgFPOuTzk+k1ZFHFnc33Wy4fO8ZWAGLIRsB8Y02g=;
- b=owEBbQKS/ZANAwAKASJxO7Ohjcg6AcsmYgBpoFibxPnmC3u2EverAZkkby/eBo5GIJANa/oCQ
- eM1mxZBwhqJAjMEAAEKAB0WIQTmk/sqq6Nt4Rerb7QicTuzoY3IOgUCaaBYmwAKCRAicTuzoY3I
- OtRQEACLfSoHUc1rg2Jl/sauqI9Mtdw8axf+VLfyialt38ijwTVbFWg48vThermKEBJofT64OEb
- ZfV/Ffe9HuGwiNSrKXZ1sN547+64PJPwCvQASX0Umh3Dopuqt0pafRzLjjOabplu4u1oLeQW0Jn
- s85cGIcLdeuBDSPivy1cVq3fBrmtO5HJOi3kJA2uv2/P71xOpeCL+6eCPG4F2DyxRjFy8ABXfvG
- Wgz01YMVSvzaKcjX3q49X9Y2Bb+gQCm9oRmWskn64HFih57PFk9Xov3SiNh2XOOpOGx02zh7sc3
- GX56hFn0iEX/2XbudY7hLtbPDSh4akpALwY1dLFNU4mrkVXF2zWS/Oc7zJX5etjOgBLm7ylsdbk
- gDCI14tn0NiYq/ZbeNrA5snP0BCsNZQiN2w2CRJs6zyFL5Q5VYRGT+nE7ba/q1ZZ6E/kIpUAcfA
- Q6I32G8xieCSNmiQ6S8kfmSeCpW+p5ZVGBHywDLgWDJrOktttiDA4Lq9uBQmXD2xf68XjQE6Kq4
- aPFxe5B6YR7p+HjIU7sAAGquKK42UjcDsE0d6zGfuKgmN3HSyuRZhfuXUYnXti+U9VQtV2squ6B
- 5QPLVLTVooh4nrMU9sLXHCDZ9VfX0/tH9RR7K8THpex/e3ltG4rZdfQYzHNz2Iam/wUa380RpZU
- tsqIq7hU1M3dZ0Q==
+ bh=Qn38MpcT3X5Uop/ohxc7EbyGDk10OdmDudGcFnhPjxg=;
+ b=owEBbQKS/ZANAwAKASJxO7Ohjcg6AcsmYgBpoFibxmwRG4nV42g91OU5baGAhb9UrprB+WKHZ
+ UeLkd9iB7CJAjMEAAEKAB0WIQTmk/sqq6Nt4Rerb7QicTuzoY3IOgUCaaBYmwAKCRAicTuzoY3I
+ Oi+PD/9pCn3AIL9kKnZr+D3tr8VDBReN+w5AWVk8KycbgwU8ryeqALkr54fryKpzb5jZLxqiovX
+ XRRXh6gUpyCYAsBNfDKD99+C1uDy6YaOfmLip+sWsa/YYfLje0G9J0s8nuxFmgQU53kCY+olg0W
+ qm1fIye7dXW6MHXJvjY9K3+P0ie8VQAVR39n+HI5NKxuzeAazFwckTgzTA/wY0ozthnlUk4zYvZ
+ dCQYhxhFSQ+HjQRbGjDacjka+2hfFzwwIS+twt00NY1UNyrHhhN8AzI7fI/q09OZIwMmg2OMYFd
+ aK9j+1XCrt+1IbOTXllrz/Qk//rQ/B67gbWGP2ZnWpbubpq1La1SWk4mx695AJqshhMN3gk32xl
+ 9gBOCeGLsAVT/accM2oAlSwtzDQQKjNDAAT42AEjKmSC2SKcj4sFmRtIeuVsHio1r2S0RB1lGsb
+ ZLNVjcUhda1VM+54Cu4wLj1J5isHMcjKDlrHa3js5qULzYADANUnNlGlIa8CC7ZlRhiyL/20471
+ 4JypF6hC48KNZm8bFNSCivfirLRbzWYCSoNglj/7c6WZcRvjSru0yaoYcigurZ3RlHFyBVBDQ1k
+ i0gSTKwDMHzDFJNi/tG6mpHyWD8kzmz1jwAyUwgOBVngydEzIcB1lnlFer44PxJPeuHTlTF717Y
+ Vujn/s5/5pYyA6g==
 X-Developer-Key: i=bryan.odonoghue@linaro.org; a=openpgp;
  fpr=E693FB2AABA36DE117AB6FB422713BB3A18DC83A
 
-Add optional PHY handle definitions. This will allow for supporting both
-legacy PHY definitions as well as supporting the optional new handle based
-approach.
+Qualcomm CSI2 PHYs support a mode where two sensors may be attached to the
+one CSIPHY.
+
+When we have one endpoint we may have
+- DPHY 1, 2 or 4 data lanes + 1 clock lane
+- CPHY 3 wire data lane
+
+When we have two endpoints this indicates the special fixed combo-mode.
+- DPHY endpoint0 => 2+1 and endpoint1 => 1+1 data-lane/clock-lane combination.
 
 Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 ---
- .../devicetree/bindings/media/qcom,x1e80100-camss.yaml    | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ .../bindings/media/qcom,x1e80100-camss.yaml        | 69 ++++++++++++++++++++--
+ 1 file changed, 65 insertions(+), 4 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml b/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
-index 2d1662ef522b7..bb18236b4f344 100644
+index bb18236b4f344..8dbaab16b11d4 100644
 --- a/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
 +++ b/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
-@@ -126,6 +126,16 @@ properties:
-     description:
-       1.2V supply to a PHY.
- 
-+  phys:
-+    maxItems: 4
-+
-+  phy-names:
-+    items:
-+      - const: csiphy0
-+      - const: csiphy1
-+      - const: csiphy2
-+      - const: csiphy4
-+
-   ports:
+@@ -140,7 +140,8 @@ properties:
      $ref: /schemas/graph.yaml#/properties/ports
  
-@@ -351,6 +361,11 @@ examples:
-             vdd-csiphy-0p8-supply = <&csiphy_0p8_supply>;
-             vdd-csiphy-1p2-supply = <&csiphy_1p2_supply>;
+     description:
+-      CSI input ports.
++      CSI input ports. Supports either standard single sensor mode or
++      Qualcomm's combo mode with one sensor in 2x1 + 1x1 data-lane, clock-lane mode.
  
-+            phys = <&csiphy0>, <&csiphy1>,
-+                   <&csiphy2>, <&csiphy4>;
-+            phy-names = "csiphy0", "csiphy1",
-+                        "csiphy2", "csiphy4";
+     patternProperties:
+       "^port@[0-3]$":
+@@ -148,26 +149,86 @@ properties:
+         unevaluatedProperties: false
+ 
+         description:
+-          Input port for receiving CSI data from a CSIPHY.
++          Input port for receiving CSI data.
+ 
+         properties:
+-          endpoint:
++          endpoint@0:
+             $ref: video-interfaces.yaml#
+             unevaluatedProperties: false
+ 
++            description:
++              Endpoint for receiving a single sensor input (or first leg of combo).
 +
-             ports {
-                 #address-cells = <1>;
-                 #size-cells = <0>;
+             properties:
+               data-lanes:
+                 minItems: 1
+-                maxItems: 4
++                maxItems: 4 # Base max allows 4 (for D-PHY)
++
++              clock-lanes:
++                maxItems: 1
+ 
+               bus-type:
+                 enum:
+                   - 1 # MEDIA_BUS_TYPE_CSI2_CPHY
+                   - 4 # MEDIA_BUS_TYPE_CSI2_DPHY
+ 
++          endpoint@1:
++            $ref: video-interfaces.yaml#
++            unevaluatedProperties: false
++
++            description:
++              Endpoint for receiving the second leg of a combo sensor input.
++
++            properties:
++              data-lanes:
++                maxItems: 1
++
++              clock-lanes:
++                maxItems: 1
++
++              bus-type:
++                const: 4 # Combo is D-PHY specific
++
+             required:
+               - data-lanes
+ 
++        allOf:
++          # Case 1: Combo Mode (endpoint@1 is present)
++          # If endpoint@1 exists, we restrict endpoint@0 to 2 lanes (D-PHY split)
++          - if:
++              required:
++                - endpoint@1
++            then:
++              properties:
++                endpoint@0:
++                  properties:
++                    data-lanes:
++                      minItems: 2
++                      maxItems: 2
++                    bus-type:
++                      const: 4
++                endpoint@1:
++                  properties:
++                    data-lanes:
++                      minItems: 1
++                      maxItems: 1
++                    bus-type:
++                      const: 4
++
++          # Case 2: Single Mode (endpoint@1 is missing)
++          # We explicitly allow up to 4 lanes here to cover the D-PHY use case.
++          - if:
++              not:
++                required:
++                  - endpoint@1
++            then:
++              properties:
++                endpoint@0:
++                  properties:
++                    data-lanes:
++                      minItems: 1
++                      maxItems: 4
++
+ required:
+   - compatible
+   - reg
 
 -- 
 2.52.0
