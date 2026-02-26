@@ -1,176 +1,130 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mx-relay50-hz3.antispameurope.com (mx-relay50-hz3.antispameurope.com [94.100.134.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72CD43D3CEC
-	for <linux-clk@vger.kernel.org>; Thu, 26 Feb 2026 15:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772120333; cv=none; b=khBupDsl+CaTOz4ytCXtfpUwTnJmldj1/Y5E7r0s9iT0XckOBhP18/oN5GQHre/zq7gbBcCYPPA+zFc3BdTJlN6eeUAx51aO+KRddFSi4eEgX3diNBcGzpY4J21v4Cl881J/vt7rm1gS3t07vCIFIdW3+ndNkMyKoeqj8X4+dGY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772120333; c=relaxed/simple;
-	bh=v/pcgM44YP2tiQz7IlOrxasEfr8v0k6GtuNA86WCkxA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jq87mftQ3THysWPsDRgDsL2rXZXATr5jE/AYKWtzhICqAmqP+b/L/eQhcOWhBz5/+R/U9oN+wHj9YMXtKaN+QEGCItZ9Xu+XChxN5feLoog01QXeMVLYDiab+N+y937n8Ufm9Cf8KObMd3vanqp7YJ6sj0h8D/YxtMk8ATvNIAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bXHeHXr0; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=I2n0r3Sb; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7087340F8E9
+	for <linux-clk@vger.kernel.org>; Thu, 26 Feb 2026 15:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=94.100.134.239
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772120379; cv=pass; b=MhpdJOvqZRc2YOacEm7HBhHKbAC/87ZFPXn/6D3u0p1yOTdbjTfxvgPIDto7t0BcahMfCAppgYWnAr3nb1cCEnvx7rkbK3MhTBjrBl87Po6lk/BwXL91EYWcx+znvoL33rVx940OuYCt1JOunMnRJUkCevlnvBewBcI4tIOQFos=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772120379; c=relaxed/simple;
+	bh=8xptqJuqr6y/XZ8cnubujeOx86XkzhzmPx/rVf1SSn4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BlMCLbmIIkWbjkrBoCs8fGzG2HPjLgrWqeUBSxSjUa4E9DfDa2g3zHaJN5hCxLtH/yXoewmPpnFG1qGJI8NeJspuCxbnu/w0w8jA9CaOZgb8baTmZDxn5jAZJePEvyRkiqejRFhVATbjNqrMSM//jAKF+Zsg6qmfq2W/0UJf8xk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=oWRKw1yt; arc=pass smtp.client-ip=94.100.134.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bXHeHXr0";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="I2n0r3Sb"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1772120331;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1k5RnefQkAvGAiccxF2n3IZAxFH1TLXRjZjH5ND0iLo=;
-	b=bXHeHXr0flEq2loAAVHKpc4tdh2sHBuc5LkNpCq/qm0WSTykz2jvv8RdXepLf72d9gQDRc
-	nO6IKtaPyh5Uc2dIqz+5WtDZYiB35nwdkk5B+M5w9xTm5vTDZ+VjF/euTsf57xfCpG5Xcq
-	U02ftYbKr2uE5Yz30ePfA0kR13sw3BU=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-310-9l4bldiNODK7lUyxPG6UZA-1; Thu, 26 Feb 2026 10:38:50 -0500
-X-MC-Unique: 9l4bldiNODK7lUyxPG6UZA-1
-X-Mimecast-MFC-AGG-ID: 9l4bldiNODK7lUyxPG6UZA_1772120329
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8c70ef98116so769923985a.1
-        for <linux-clk@vger.kernel.org>; Thu, 26 Feb 2026 07:38:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1772120329; x=1772725129; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1k5RnefQkAvGAiccxF2n3IZAxFH1TLXRjZjH5ND0iLo=;
-        b=I2n0r3SbFyIYY7pVLNGTp+wHijBWZGle86nYdueSv9Xde+UtOmRpldFGXa8I43kmYp
-         lDsPa0aqqv/c87N3L7PUU04h18SSsufZct42mcAk9vStsId87sbd4GV9kj++0JNMBSKL
-         +6sxMqvKv3eLFE4jt88DNX4cz9/0VXH90ZeFmOx+Cj3ZT2WijQE3xwhBhFTzZyxlOVX2
-         cMvkLdPAC9tgn52xuAwhmbL1fM169YFUNgBNV5d3YVYt9xs8Gf7bJH67YnLxY5UQkFgG
-         SZBToVwbWiYk9akNJrxQsV+xuhlFwb1WHkevxbGFRVolE5b+zZN1Z8VJ+jWSkqnsQyXp
-         Jy8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772120329; x=1772725129;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=1k5RnefQkAvGAiccxF2n3IZAxFH1TLXRjZjH5ND0iLo=;
-        b=Xj27vniUlio7XImzhwyjsoeH3kx5I7Ffa9BuKb2prBZnnYVpk0gUy5SQn1ohFE/pUQ
-         NeA4exdDiv/nov7oHn3QIvXovwDGpXHnor8CkuwdVMdy1GDn06zzj2APhrScxpp2+yX2
-         5pXN+n7HkPczG0viFft6zfFFAbdhBu/AoTJZonuf+GVrNYraS5h7PhRLHoqTrnojToO4
-         HBwpIcGMtcVA5Dq+6SaS0SiZkz+QY2UxwdpV/2NnEfSo1hwd9LKE7tjphwWmCFBuaIlq
-         2C+KmwENg7SZjYrHzO4xV+T5GlD6hetCVFEMx3FG7jvJaaQ62blLVq5/GBCNzi5MlV5Y
-         zTSg==
-X-Forwarded-Encrypted: i=1; AJvYcCV8Hf08Sdmge7paoeo+k3hun+5/kB103f9TPF6ZRoFeKx2aiTyzujK589HA+sjJIGKrtbEzHKzwULY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyjd9JU9p3geJCdhMNjy+RpjmNCuLoksHBC28CWfnWXYEEYU8Y5
-	A/UCIg5zzrli2f8w36UrfN9GLL3H26sgbdCyvr752crSjN61kgcawdWS4LrnrRUq00dBZahEDVE
-	6oRu4OlouZSkzwTJRa59OdsQLWbgNJXishYl5DuwTXHCp4br8O5OmlHiDxC5HeQ==
-X-Gm-Gg: ATEYQzwMAoORM2VoNfnV2qZsfK27hTtvwk1TozMR30VKjRzM2X77LIjBqr0IMfFgv5v
-	COintVcusFuxl0iXCNU74IK2Znpxxj4He7awLDBxM2DPlofcbgegU3wVmOMwAMZPITPpE0TvfxU
-	l8sPZTk7cKHz2cd1uWym4+nNr10JyteXtiaSV/jFWwCURkllvr9wQCh9WyJ4imrzn6GAZnQdapr
-	qY1DbLYqY3VLlj3AoYjfJtare6Ph45mgekq+dA+7IHdLfo3wK1F4xAWzblSziIqHOvbSx2R7SMQ
-	LL3leeneRo2B1mzoPgcOnSVAPJpzkPZWtuLbCIjCsyIYG4xAfb8Nes6KPXKQxZsKBrUMAntJ8cl
-	97QAwlk6jxfAHAGZjt6ubBAig2An4uqK/xO/UJlhigqejIcxKS8CE1xCc
-X-Received: by 2002:a05:620a:4045:b0:8c0:cbd8:20b0 with SMTP id af79cd13be357-8cb8ca18f95mr1599112285a.34.1772120329379;
-        Thu, 26 Feb 2026 07:38:49 -0800 (PST)
-X-Received: by 2002:a05:620a:4045:b0:8c0:cbd8:20b0 with SMTP id af79cd13be357-8cb8ca18f95mr1599107585a.34.1772120328924;
-        Thu, 26 Feb 2026 07:38:48 -0800 (PST)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8cbbf6534f3sm222534085a.5.2026.02.26.07.38.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Feb 2026 07:38:47 -0800 (PST)
-Date: Thu, 26 Feb 2026 10:38:45 -0500
-From: Brian Masney <bmasney@redhat.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Conor Dooley <conor.dooley@microchip.com>, linux-clk@vger.kernel.org,
-	stable@vger.kernel.org,
-	Daire McNamara <daire.mcnamara@microchip.com>,
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="oWRKw1yt"
+ARC-Authentication-Results: i=1; mx-gate50-hz3.hornetsecurity.com 1; spf=pass
+ reason=mailfrom (ip=94.100.132.6, headerfrom=ew.tq-group.com)
+ smtp.mailfrom=ew.tq-group.com smtp.helo=smtp-out01-hz1.hornetsecurity.com;
+ dmarc=pass header.from=ew.tq-group.com orig.disposition=pass
+ARC-Message-Signature: a=rsa-sha256;
+ bh=EG/8db4PuO6Ccr1+6/OtMXqyxNl4kd3+f1XyzIZeMRg=; c=relaxed/relaxed;
+ d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=1; s=hse1;
+ t=1772120358;
+ b=n1J1AoyhIWjPgEdbCO0zX6dkgrq3PYSJRUQ1Kt3ElgxVs6HTMlO5iEqGulnInBe+LBSdN/E7
+ r9WMF6od0mICT7U+uXztN23bbq4pef9frqLUn0J7InvZVCX3CBrwSrf33kmzAjFtjx1XWyKiEro
+ H8rK7bKk71ztq3TMF029XGWtt25hFxPnRYnq3JPmviO4tfw+swktXd3qhrq3sR9i1L5P6Wg1OPB
+ M9yigpsjSO+LmRy1mvw/2dF7GrFqErlIRtd3q/oGjuPeHySSH5U3grzjrljLyShE1WJKCW0bxGB
+ 5Lp083PRmce6lGFRA0mW4VGMIUh8bj1rkKzIxXhRHNynw==
+ARC-Seal: a=rsa-sha256; cv=none; d=hornetsecurity.com; i=1; s=hse1;
+ t=1772120358;
+ b=iaCh/w8d61E2EnZ9wglRn8WQ+HPkw0d68uhanmfsbJIMxCzfiDwOL5vub/DS8g9K8rj+PJx9
+ Q1gsQeatEi23jQYHKdFV4wf1Kb7RaE094agvbNkkAAImo434aN++Yo0Ez/QP98peh4BxT3+VhSX
+ Qc1AgN6DMm0NAdXfNzHnO+FagVyPo+rIkHz2n+XyBjbTjQVx+TQolUUuuKAH0CbNPA+L33zfAqX
+ 7XUarnDZx1NbgVnLk41Xu4VYFYgC8uYTTO6tzUJNKCzb4ThBWLAM+OZYVsuDO1DkaCGwa6KZ2D3
+ nFApYaxxHkDOomEUgDVnXGjb0THKN1l2Fvh29ZTUwm3lA==
+Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay50-hz3.antispameurope.com;
+ Thu, 26 Feb 2026 16:39:18 +0100
+Received: from steina-w.tq-net.de (host-82-135-125-110.customer.m-online.net [82.135.125.110])
+	(Authenticated sender: alexander.stein@ew.tq-group.com)
+	by smtp-out01-hz1.hornetsecurity.com (Postfix) with ESMTPSA id B4D43A40F28;
+	Thu, 26 Feb 2026 16:39:02 +0100 (CET)
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] clk: microchip: mpfs-ccc: fix out of bounds access
- during output registration
-Message-ID: <aaBpBYVtt_VhuJws@redhat.com>
-References: <20260224-briskly-scholar-294d13464721@wendy>
- <aZ9-NWiX4wMH3Ay6@redhat.com>
- <20260225-cache-nebulizer-2f3669074fa4@spud>
- <20260225-thrive-endless-3168e0b0f916@spud>
+	Peter Chen <peter.chen@kernel.org>,
+	Pawel Laszczak <pawell@cadence.com>,
+	Roger Quadros <rogerq@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Marek Vasut <marex@denx.de>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux@ew.tq-group.com
+Subject: [PATCH v3 1/5] dt-bindings: usb: cdns,usb3: support USB devices in DT
+Date: Thu, 26 Feb 2026 16:38:50 +0100
+Message-ID: <20260226153859.665901-2-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260226153859.665901-1-alexander.stein@ew.tq-group.com>
+References: <20260226153859.665901-1-alexander.stein@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260225-thrive-endless-3168e0b0f916@spud>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+Content-Transfer-Encoding: 8bit
+X-cloud-security-sender:alexander.stein@ew.tq-group.com
+X-cloud-security-recipient:linux-clk@vger.kernel.org
+X-cloud-security-crypt: load encryption module
+X-cloud-security-Mailarchiv: E-Mail archived for: alexander.stein@ew.tq-group.com
+X-cloud-security-Mailarchivtype:outbound
+X-cloud-security-Virusscan:CLEAN
+X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay50-hz3.antispameurope.com with 4fMFxN1L01z2nGBP
+X-cloud-security-connect: he-nlb01-hz1.hornetsecurity.com[94.100.132.6], TLS=1, IP=94.100.132.6
+X-cloud-security-Digest:99766f1dadc9c0fd76839a32754897e4
+X-cloud-security:scantime:1.750
+DKIM-Signature: a=rsa-sha256;
+ bh=EG/8db4PuO6Ccr1+6/OtMXqyxNl4kd3+f1XyzIZeMRg=; c=relaxed/relaxed;
+ d=ew.tq-group.com;
+ h=content-type:mime-version:subject:from:to:message-id:date; s=hse1;
+ t=1772120357; v=1;
+ b=oWRKw1ytQ0zC74cU32UG2PYQIfgUF5Nvj2FBVwnxVhZkGKn3EhMIf7mG1kDEhSWYKZZm6q/Y
+ wnk+r5BUAVu0mtGlYmQXVOBcYGYkk0givq7y/VK0zZNDEjAA+qXWzjK7pEuNgiJj6gqtwqcbZs7
+ meSbv/Sh0paqyis06jUOn/3DesLWknVmOQXMDlAA+QW3/3Vabg2Be/+hEflVOescxGNjGC2wD6b
+ oznXwwbZJbHAO5Jfbkw9miugFuQl8F9OgxMnIfJXlH6KauEeQ50VS1AI/eZcOjHPn9raxUzJaaC
+ sBYunu3pAz11RrQbwBSKK9TqdFNeHZi7hTdr7U6KAtHVw==
 
-On Wed, Feb 25, 2026 at 11:24:59PM +0000, Conor Dooley wrote:
-> On Wed, Feb 25, 2026 at 11:14:47PM +0000, Conor Dooley wrote:
-> > On Wed, Feb 25, 2026 at 05:56:53PM -0500, Brian Masney wrote:
-> > > Hi Conor,
-> > > 
-> > > On Tue, Feb 24, 2026 at 09:35:25AM +0000, Conor Dooley wrote:
-> > > > UBSAN reported an out of bounds access during registration of the last
-> > > > two outputs. This out of bounds access occurs because space is only
-> > > > allocated in the hws array for two PLLs and the four output dividers
-> > > > that each has, but the defined IDs contain two DLLS and their two
-> > > > outputs each, which are not supported by the driver. The ID order is
-> > > > PLLs -> DLLs -> PLL outputs -> DLL outputs. Decrement the PLL output IDs
-> > > > by two while adding them to the array to avoid the problem.
-> > > > 
-> > > > Fixes: d39fb172760e ("clk: microchip: add PolarFire SoC fabric clock support")
-> > > > CC: stable@vger.kernel.org
-> > > > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> > > > ---
-> > > > CC: Conor Dooley <conor.dooley@microchip.com>
-> > > > CC: Daire McNamara <daire.mcnamara@microchip.com>
-> > > > CC: Michael Turquette <mturquette@baylibre.com>
-> > > > CC: Stephen Boyd <sboyd@kernel.org>
-> > > > CC: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-> > > > CC: linux-riscv@lists.infradead.org
-> > > > CC: linux-clk@vger.kernel.org
-> > > > CC: linux-kernel@vger.kernel.org
-> > > > ---
-> > > >  drivers/clk/microchip/clk-mpfs-ccc.c | 2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/drivers/clk/microchip/clk-mpfs-ccc.c b/drivers/clk/microchip/clk-mpfs-ccc.c
-> > > > index 3a3ea2d142f8a..54cfbb8be8ab5 100644
-> > > > --- a/drivers/clk/microchip/clk-mpfs-ccc.c
-> > > > +++ b/drivers/clk/microchip/clk-mpfs-ccc.c
-> > > > @@ -178,7 +178,7 @@ static int mpfs_ccc_register_outputs(struct device *dev, struct mpfs_ccc_out_hw_
-> > > >  			return dev_err_probe(dev, ret, "failed to register clock id: %d\n",
-> > > >  					     out_hw->id);
-> > > >  
-> > > > -		data->hw_data.hws[out_hw->id] = &out_hw->divider.hw;
-> > > > +		data->hw_data.hws[out_hw->id - 2] = &out_hw->divider.hw;
-> > > 
-> > > What happens when / if the DLLs are supported by this driver in the
-> > > future? This seems like a trap for the future.
-> > > 
-> > > According to include/dt-bindings/clock/microchip,mpfs-clock.h, there are
-> > > only 16 clock IDs. Could hws be initialized to have enough room for all
-> > > 16 structures, and would it be ok if it was a sparse array?
-> > > 
-> > > At the very least, I think it would be nice to include a comment here.
-> > 
-> > I think I'd rather add a comment, I know it's at most only 24 extra
-> > allocations, but just feels bad to do it.
-> 
-> I'll add this, maybe on application.
-> 
-> @@ -234,6 +234,10 @@ static int mpfs_ccc_probe(struct platform_device *pdev)
->         unsigned int num_clks;
->         int ret;
->  
-> +       /*
-> +        * If DLLs get added here, mpfs_ccc_register_outputs() currently packs
-> +        * sparse clock IDs in the hws array
-> +        */
->         num_clks = ARRAY_SIZE(mpfs_ccc_pll_clks) + ARRAY_SIZE(mpfs_ccc_pll0out_clks) +
->                    ARRAY_SIZE(mpfs_ccc_pll1out_clks);
+Reference usb-xhci.yaml in host mode in order to support on-board USB
+hubs.
 
-That makes sense.
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+Changes in v3:
+* Fix commit message typo
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+ Documentation/devicetree/bindings/usb/cdns,usb3.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/usb/cdns,usb3.yaml b/Documentation/devicetree/bindings/usb/cdns,usb3.yaml
+index f454ddd9bbaa6..a199e5ba64161 100644
+--- a/Documentation/devicetree/bindings/usb/cdns,usb3.yaml
++++ b/Documentation/devicetree/bindings/usb/cdns,usb3.yaml
+@@ -85,6 +85,7 @@ required:
+ 
+ allOf:
+   - $ref: usb-drd.yaml#
++  - $ref: usb-xhci.yaml#
+ 
+ unevaluatedProperties: false
+ 
+-- 
+2.43.0
 
