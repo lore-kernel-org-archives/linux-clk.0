@@ -1,380 +1,176 @@
-Received: from courrier.aliel.fr (pouet.aliel.fr [65.21.61.41])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D325E3D3011;
-	Thu, 26 Feb 2026 14:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.21.61.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72CD43D3CEC
+	for <linux-clk@vger.kernel.org>; Thu, 26 Feb 2026 15:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772116655; cv=none; b=YcTzPT+YLsv+QSn3OZOPLZbPXTLkyiD1M+1WBpVSITnd1CjEleCyMPLlg4ZJu1YDAd80OISe6LAvd6PbvqBJTQRjenk/WGJ5IeYSPCq9p26+FXUnix1oERvCRNHmicHV+MyGoz8T9zjvCsboapAFf5r1V2XmALfTBJMjavYMYEc=
+	t=1772120333; cv=none; b=khBupDsl+CaTOz4ytCXtfpUwTnJmldj1/Y5E7r0s9iT0XckOBhP18/oN5GQHre/zq7gbBcCYPPA+zFc3BdTJlN6eeUAx51aO+KRddFSi4eEgX3diNBcGzpY4J21v4Cl881J/vt7rm1gS3t07vCIFIdW3+ndNkMyKoeqj8X4+dGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772116655; c=relaxed/simple;
-	bh=uYy7dVPPAn+CvhWewPeOnD73sxjqMb48rW9uwL1HoUU=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=X8RWZgMCAXDT9YRNCbS9zXqaRdESlQImxWHeFpSLNxLgCdBnhU0jjN5qW6KHz33HBHCI849o0ju+IKCf6Uc0r9dul8D0KQpkA8elTdBMDM7Xd3p1rsubMDH/zMJfhb/Jxmivba9AwGsVYS326Ney9A3k8IDHOZTmCkQPOBJ3zMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aliel.fr; spf=pass smtp.mailfrom=aliel.fr; dkim=pass (1024-bit key) header.d=aliel.fr header.i=@aliel.fr header.b=OSiYFWt9; arc=none smtp.client-ip=65.21.61.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aliel.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aliel.fr
+	s=arc-20240116; t=1772120333; c=relaxed/simple;
+	bh=v/pcgM44YP2tiQz7IlOrxasEfr8v0k6GtuNA86WCkxA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jq87mftQ3THysWPsDRgDsL2rXZXATr5jE/AYKWtzhICqAmqP+b/L/eQhcOWhBz5/+R/U9oN+wHj9YMXtKaN+QEGCItZ9Xu+XChxN5feLoog01QXeMVLYDiab+N+y937n8Ufm9Cf8KObMd3vanqp7YJ6sj0h8D/YxtMk8ATvNIAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bXHeHXr0; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=I2n0r3Sb; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=aliel.fr header.i=@aliel.fr header.b="OSiYFWt9"
-Received: from [192.168.1.34] (71.227.91.92.rev.sfr.net [92.91.227.71])
-	by courrier.aliel.fr (Postfix) with ESMTPSA id 5BD2F4A575;
-	Thu, 26 Feb 2026 14:32:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aliel.fr;
-	s=courrier-s1; t=1772116321;
-	bh=uYy7dVPPAn+CvhWewPeOnD73sxjqMb48rW9uwL1HoUU=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To;
-	b=OSiYFWt9TACRtXn4rjkXM5h7tOIa+/M7c3szoUPG39vs/suOhh8CrnAlvlql5BEXj
-	 y7ELnuW149U1jWc0n8Zp2eOTuDncwAcm5LpeGzs7NDmkTRpsNCJVFEMKjAag0I/MXg
-	 /IBXmSYUxAwCSl+KaqMH/4Y26nyJHYN9Fzas6wS8=
-Message-ID: <941c5dac-afcc-4d93-926e-9acb3cf1a930@aliel.fr>
-Date: Thu, 26 Feb 2026 15:30:58 +0100
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bXHeHXr0";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="I2n0r3Sb"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1772120331;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1k5RnefQkAvGAiccxF2n3IZAxFH1TLXRjZjH5ND0iLo=;
+	b=bXHeHXr0flEq2loAAVHKpc4tdh2sHBuc5LkNpCq/qm0WSTykz2jvv8RdXepLf72d9gQDRc
+	nO6IKtaPyh5Uc2dIqz+5WtDZYiB35nwdkk5B+M5w9xTm5vTDZ+VjF/euTsf57xfCpG5Xcq
+	U02ftYbKr2uE5Yz30ePfA0kR13sw3BU=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-310-9l4bldiNODK7lUyxPG6UZA-1; Thu, 26 Feb 2026 10:38:50 -0500
+X-MC-Unique: 9l4bldiNODK7lUyxPG6UZA-1
+X-Mimecast-MFC-AGG-ID: 9l4bldiNODK7lUyxPG6UZA_1772120329
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8c70ef98116so769923985a.1
+        for <linux-clk@vger.kernel.org>; Thu, 26 Feb 2026 07:38:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1772120329; x=1772725129; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1k5RnefQkAvGAiccxF2n3IZAxFH1TLXRjZjH5ND0iLo=;
+        b=I2n0r3SbFyIYY7pVLNGTp+wHijBWZGle86nYdueSv9Xde+UtOmRpldFGXa8I43kmYp
+         lDsPa0aqqv/c87N3L7PUU04h18SSsufZct42mcAk9vStsId87sbd4GV9kj++0JNMBSKL
+         +6sxMqvKv3eLFE4jt88DNX4cz9/0VXH90ZeFmOx+Cj3ZT2WijQE3xwhBhFTzZyxlOVX2
+         cMvkLdPAC9tgn52xuAwhmbL1fM169YFUNgBNV5d3YVYt9xs8Gf7bJH67YnLxY5UQkFgG
+         SZBToVwbWiYk9akNJrxQsV+xuhlFwb1WHkevxbGFRVolE5b+zZN1Z8VJ+jWSkqnsQyXp
+         Jy8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772120329; x=1772725129;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=1k5RnefQkAvGAiccxF2n3IZAxFH1TLXRjZjH5ND0iLo=;
+        b=Xj27vniUlio7XImzhwyjsoeH3kx5I7Ffa9BuKb2prBZnnYVpk0gUy5SQn1ohFE/pUQ
+         NeA4exdDiv/nov7oHn3QIvXovwDGpXHnor8CkuwdVMdy1GDn06zzj2APhrScxpp2+yX2
+         5pXN+n7HkPczG0viFft6zfFFAbdhBu/AoTJZonuf+GVrNYraS5h7PhRLHoqTrnojToO4
+         HBwpIcGMtcVA5Dq+6SaS0SiZkz+QY2UxwdpV/2NnEfSo1hwd9LKE7tjphwWmCFBuaIlq
+         2C+KmwENg7SZjYrHzO4xV+T5GlD6hetCVFEMx3FG7jvJaaQ62blLVq5/GBCNzi5MlV5Y
+         zTSg==
+X-Forwarded-Encrypted: i=1; AJvYcCV8Hf08Sdmge7paoeo+k3hun+5/kB103f9TPF6ZRoFeKx2aiTyzujK589HA+sjJIGKrtbEzHKzwULY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyjd9JU9p3geJCdhMNjy+RpjmNCuLoksHBC28CWfnWXYEEYU8Y5
+	A/UCIg5zzrli2f8w36UrfN9GLL3H26sgbdCyvr752crSjN61kgcawdWS4LrnrRUq00dBZahEDVE
+	6oRu4OlouZSkzwTJRa59OdsQLWbgNJXishYl5DuwTXHCp4br8O5OmlHiDxC5HeQ==
+X-Gm-Gg: ATEYQzwMAoORM2VoNfnV2qZsfK27hTtvwk1TozMR30VKjRzM2X77LIjBqr0IMfFgv5v
+	COintVcusFuxl0iXCNU74IK2Znpxxj4He7awLDBxM2DPlofcbgegU3wVmOMwAMZPITPpE0TvfxU
+	l8sPZTk7cKHz2cd1uWym4+nNr10JyteXtiaSV/jFWwCURkllvr9wQCh9WyJ4imrzn6GAZnQdapr
+	qY1DbLYqY3VLlj3AoYjfJtare6Ph45mgekq+dA+7IHdLfo3wK1F4xAWzblSziIqHOvbSx2R7SMQ
+	LL3leeneRo2B1mzoPgcOnSVAPJpzkPZWtuLbCIjCsyIYG4xAfb8Nes6KPXKQxZsKBrUMAntJ8cl
+	97QAwlk6jxfAHAGZjt6ubBAig2An4uqK/xO/UJlhigqejIcxKS8CE1xCc
+X-Received: by 2002:a05:620a:4045:b0:8c0:cbd8:20b0 with SMTP id af79cd13be357-8cb8ca18f95mr1599112285a.34.1772120329379;
+        Thu, 26 Feb 2026 07:38:49 -0800 (PST)
+X-Received: by 2002:a05:620a:4045:b0:8c0:cbd8:20b0 with SMTP id af79cd13be357-8cb8ca18f95mr1599107585a.34.1772120328924;
+        Thu, 26 Feb 2026 07:38:48 -0800 (PST)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8cbbf6534f3sm222534085a.5.2026.02.26.07.38.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Feb 2026 07:38:47 -0800 (PST)
+Date: Thu, 26 Feb 2026 10:38:45 -0500
+From: Brian Masney <bmasney@redhat.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Conor Dooley <conor.dooley@microchip.com>, linux-clk@vger.kernel.org,
+	stable@vger.kernel.org,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] clk: microchip: mpfs-ccc: fix out of bounds access
+ during output registration
+Message-ID: <aaBpBYVtt_VhuJws@redhat.com>
+References: <20260224-briskly-scholar-294d13464721@wendy>
+ <aZ9-NWiX4wMH3Ay6@redhat.com>
+ <20260225-cache-nebulizer-2f3669074fa4@spud>
+ <20260225-thrive-endless-3168e0b0f916@spud>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-From: Ronald Claveau <linux-kernel-dev@aliel.fr>
-Subject: Re: [PATCH 1/7] drivers: clk: meson: Add Amlogic T7 fix pll support
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: linux-amlogic@lists.infradead.org,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20260218101709.35450-1-linux-kernel-dev@aliel.fr>
- <1j4ine6i6a.fsf@starbuckisacylon.baylibre.com>
-Content-Language: en-US
-In-Reply-To: <1j4ine6i6a.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260225-thrive-endless-3168e0b0f916@spud>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On 2/18/26 7:05 PM, Jerome Brunet wrote:
-> On mer. 18 févr. 2026 at 11:17, Ronald Claveau <linux-kernel-dev@aliel.fr> wrote:
+On Wed, Feb 25, 2026 at 11:24:59PM +0000, Conor Dooley wrote:
+> On Wed, Feb 25, 2026 at 11:14:47PM +0000, Conor Dooley wrote:
+> > On Wed, Feb 25, 2026 at 05:56:53PM -0500, Brian Masney wrote:
+> > > Hi Conor,
+> > > 
+> > > On Tue, Feb 24, 2026 at 09:35:25AM +0000, Conor Dooley wrote:
+> > > > UBSAN reported an out of bounds access during registration of the last
+> > > > two outputs. This out of bounds access occurs because space is only
+> > > > allocated in the hws array for two PLLs and the four output dividers
+> > > > that each has, but the defined IDs contain two DLLS and their two
+> > > > outputs each, which are not supported by the driver. The ID order is
+> > > > PLLs -> DLLs -> PLL outputs -> DLL outputs. Decrement the PLL output IDs
+> > > > by two while adding them to the array to avoid the problem.
+> > > > 
+> > > > Fixes: d39fb172760e ("clk: microchip: add PolarFire SoC fabric clock support")
+> > > > CC: stable@vger.kernel.org
+> > > > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> > > > ---
+> > > > CC: Conor Dooley <conor.dooley@microchip.com>
+> > > > CC: Daire McNamara <daire.mcnamara@microchip.com>
+> > > > CC: Michael Turquette <mturquette@baylibre.com>
+> > > > CC: Stephen Boyd <sboyd@kernel.org>
+> > > > CC: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+> > > > CC: linux-riscv@lists.infradead.org
+> > > > CC: linux-clk@vger.kernel.org
+> > > > CC: linux-kernel@vger.kernel.org
+> > > > ---
+> > > >  drivers/clk/microchip/clk-mpfs-ccc.c | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/drivers/clk/microchip/clk-mpfs-ccc.c b/drivers/clk/microchip/clk-mpfs-ccc.c
+> > > > index 3a3ea2d142f8a..54cfbb8be8ab5 100644
+> > > > --- a/drivers/clk/microchip/clk-mpfs-ccc.c
+> > > > +++ b/drivers/clk/microchip/clk-mpfs-ccc.c
+> > > > @@ -178,7 +178,7 @@ static int mpfs_ccc_register_outputs(struct device *dev, struct mpfs_ccc_out_hw_
+> > > >  			return dev_err_probe(dev, ret, "failed to register clock id: %d\n",
+> > > >  					     out_hw->id);
+> > > >  
+> > > > -		data->hw_data.hws[out_hw->id] = &out_hw->divider.hw;
+> > > > +		data->hw_data.hws[out_hw->id - 2] = &out_hw->divider.hw;
+> > > 
+> > > What happens when / if the DLLs are supported by this driver in the
+> > > future? This seems like a trap for the future.
+> > > 
+> > > According to include/dt-bindings/clock/microchip,mpfs-clock.h, there are
+> > > only 16 clock IDs. Could hws be initialized to have enough room for all
+> > > 16 structures, and would it be ok if it was a sparse array?
+> > > 
+> > > At the very least, I think it would be nice to include a comment here.
+> > 
+> > I think I'd rather add a comment, I know it's at most only 24 extra
+> > allocations, but just feels bad to do it.
 > 
->> Add PLL for the clock controller of the Amlogic T7 SoC family.
->>
+> I'll add this, maybe on application.
 > 
-> As Krzysztof pointed out, a series like this needs a cover letter to explain
-> what you are trying to acheive overall, and proper threading.
-> 
-> The description above is too vague.
-> 
+> @@ -234,6 +234,10 @@ static int mpfs_ccc_probe(struct platform_device *pdev)
+>         unsigned int num_clks;
+>         int ret;
+>  
+> +       /*
+> +        * If DLLs get added here, mpfs_ccc_register_outputs() currently packs
+> +        * sparse clock IDs in the hws array
+> +        */
+>         num_clks = ARRAY_SIZE(mpfs_ccc_pll_clks) + ARRAY_SIZE(mpfs_ccc_pll0out_clks) +
+>                    ARRAY_SIZE(mpfs_ccc_pll1out_clks);
 
-Indeed, I will do that for the next one.
+That makes sense.
 
->> Signed-off-by: Ronald Claveau <linux-kernel-dev@aliel.fr>
->> ---
->>  drivers/clk/meson/t7-pll.c | 257 +++++++++++++++++++++++++++++++++++++
->>  1 file changed, 257 insertions(+)
->>
->> diff --git a/drivers/clk/meson/t7-pll.c b/drivers/clk/meson/t7-pll.c
->> index 0a622f45fa36..3dd3aca50b7c 100644
->> --- a/drivers/clk/meson/t7-pll.c
->> +++ b/drivers/clk/meson/t7-pll.c
->> @@ -71,6 +71,15 @@
->>  #define MCLK_PLL_CNTL4		0x10
->>  #define MCLK_PLL_STS		0x14
->>  
->> +#define FPLL_CTRL0		0x00
->> +#define FPLL_CTRL1		0x04
->> +#define FPLL_CTRL2		0x08
->> +#define FPLL_CTRL3		0x0c
->> +#define FPLL_CTRL4		0x10
->> +#define FPLL_CTRL5		0x14
->> +#define FPLL_CTRL6		0x18
->> +#define FPLL_STS		0x1c
-> 
-> The PLL you are adding is described in the datasheet as the MPLL. FPLL
-> is nowhere to be found. Prefer using names that relate to the
-> documentation.
-> 
-> If you must make a name up, you need to have a very good reason and to
-> explain it.
-> 
-> Still from the public documentation, this PLL belong in the same device as
-> MPLL0, MPLL1, etc ... BUT, I remember correctly the T7 initial
-> submission, the fixed PLL and fdivs are supposed to be provided through
-> SCMI clocks. Have you checked that ?
-> 
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
-Yes, I read the initial submission, and I tried first with scmi-smc and
-scmi-mailbox, but with no success.
-I will try it again and ask khadas team for more information related to
-this.
-
->> +
->>  static const struct pll_mult_range t7_media_pll_mult_range = {
->>  	.min = 125,
->>  	.max = 250,
->> @@ -1047,6 +1056,253 @@ static const struct meson_clkc_data t7_mclk_data = {
->>  	},
->>  };
->>  
->> +static struct clk_regmap t7_fpll_dco = {
->> +	.data = &(struct meson_clk_pll_data){
->> +		.en = {
->> +			.reg_off = FPLL_CTRL0,
->> +			.shift   = 28,
->> +			.width   = 1,
->> +		},
->> +		.m = {
->> +			.reg_off = FPLL_CTRL0,
->> +			.shift   = 0,
->> +			.width   = 8,
->> +		},
->> +		.n = {
->> +			.reg_off = FPLL_CTRL0,
->> +			.shift   = 10,
->> +			.width   = 5,
->> +		},
->> +		.frac = {
->> +			.reg_off = FPLL_CTRL1,
->> +			.shift   = 0,
->> +			.width   = 17,
->> +		},
->> +		.l = {
->> +			.reg_off = FPLL_CTRL0,
->> +			.shift   = 31,
->> +			.width   = 1,
->> +		},
->> +		.rst = {
->> +			.reg_off = FPLL_CTRL0,
->> +			.shift   = 29,
->> +			.width   = 1,
->> +		},
->> +	},
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "fpll_dco",
->> +		.ops = &meson_clk_pll_ro_ops,
->> +		.parent_data = &(const struct clk_parent_data) {
->> +			.fw_name = "xtal",
->> +		},
->> +		.num_parents = 1,
->> +	},
->> +};
->> +
->> +static struct clk_regmap t7_fpll = {
->> +	.data = &(struct clk_regmap_div_data){
->> +		.offset = FPLL_CTRL0,
->> +		.shift = 16,
->> +		.width = 2,
->> +		.flags = CLK_DIVIDER_POWER_OF_TWO,
->> +	},
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "fpll",
->> +		.ops = &clk_regmap_divider_ro_ops,
->> +		.parent_hws = (const struct clk_hw *[]) {
->> +			&t7_fpll_dco.hw
->> +		},
->> +		.num_parents = 1,
->> +	},
->> +};
->> +
->> +static struct clk_fixed_factor t7_fdiv2_div = {
->> +	.mult = 1,
->> +	.div = 2,
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "fdiv2_div",
->> +		.ops = &clk_fixed_factor_ops,
->> +		.parent_hws = (const struct clk_hw *[]) { &t7_fpll.hw },
->> +		.num_parents = 1,
->> +	},
->> +};
->> +
->> +static struct clk_regmap t7_fdiv2 = {
->> +	.data = &(struct clk_regmap_gate_data){
->> +		.offset = FPLL_CTRL1,
->> +		.bit_idx = 24,
->> +	},
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "fdiv2",
->> +		.ops = &clk_regmap_gate_ops,
->> +		.parent_hws = (const struct clk_hw *[]) {
->> +			&t7_fdiv2_div.hw
->> +		},
->> +		.num_parents = 1,
->> +		.flags = CLK_IS_CRITICAL,
->> +	},
->> +};
->> +
->> +static struct clk_fixed_factor t7_fdiv2p5_div = {
->> +	.mult = 2,
->> +	.div = 5,
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "fdiv2p5_div",
->> +		.ops = &clk_fixed_factor_ops,
->> +		.parent_hws = (const struct clk_hw *[]) {
->> +			&t7_fpll.hw
->> +		},
->> +		.num_parents = 1,
->> +	},
->> +};
->> +
->> +static struct clk_regmap t7_fdiv2p5 = {
->> +	.data = &(struct clk_regmap_gate_data){
->> +		.offset = FPLL_CTRL1,
->> +		.bit_idx = 25,
->> +	},
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "fdiv2p5",
->> +		.ops = &clk_regmap_gate_ops,
->> +		.parent_hws = (const struct clk_hw *[]) {
->> +			&t7_fdiv2p5_div.hw
->> +		},
->> +		.num_parents = 1,
->> +	},
->> +};
->> +
->> +static struct clk_fixed_factor t7_fdiv3_div = {
->> +	.mult = 1,
->> +	.div = 3,
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "fdiv3_div",
->> +		.ops = &clk_fixed_factor_ops,
->> +		.parent_hws = (const struct clk_hw *[]) { &t7_fpll.hw },
->> +		.num_parents = 1,
->> +	},
->> +};
->> +
->> +static struct clk_regmap t7_fdiv3 = {
->> +	.data = &(struct clk_regmap_gate_data){
->> +		.offset = FPLL_CTRL1,
->> +		.bit_idx = 20,
->> +	},
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "fdiv3",
->> +		.ops = &clk_regmap_gate_ops,
->> +		.parent_hws = (const struct clk_hw *[]) {
->> +			&t7_fdiv3_div.hw
->> +		},
->> +		.num_parents = 1,
->> +		.flags = CLK_IS_CRITICAL,
->> +	},
->> +};
->> +
->> +static struct clk_fixed_factor t7_fdiv4_div = {
->> +	.mult = 1,
->> +	.div = 4,
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "fdiv4_div",
->> +		.ops = &clk_fixed_factor_ops,
->> +		.parent_hws = (const struct clk_hw *[]) { &t7_fpll.hw },
->> +		.num_parents = 1,
->> +	},
->> +};
->> +
->> +static struct clk_regmap t7_fdiv4 = {
->> +	.data = &(struct clk_regmap_gate_data){
->> +		.offset = FPLL_CTRL1,
->> +		.bit_idx = 21,
->> +	},
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "fdiv4",
->> +		.ops = &clk_regmap_gate_ops,
->> +		.parent_hws = (const struct clk_hw *[]) {
->> +			&t7_fdiv4_div.hw
->> +		},
->> +		.num_parents = 1,
->> +		.flags = CLK_IS_CRITICAL,
->> +	},
->> +};
->> +
->> +static struct clk_fixed_factor t7_fdiv5_div = {
->> +	.mult = 1,
->> +	.div = 5,
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "fdiv5_div",
->> +		.ops = &clk_fixed_factor_ops,
->> +		.parent_hws = (const struct clk_hw *[]) { &t7_fpll.hw },
->> +		.num_parents = 1,
->> +	},
->> +};
->> +
->> +static struct clk_regmap t7_fdiv5 = {
->> +	.data = &(struct clk_regmap_gate_data){
->> +		.offset = FPLL_CTRL1,
->> +		.bit_idx = 22,
->> +	},
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "fdiv5",
->> +		.ops = &clk_regmap_gate_ops,
->> +		.parent_hws = (const struct clk_hw *[]) {
->> +			&t7_fdiv5_div.hw
->> +		},
->> +		.num_parents = 1,
->> +		.flags = CLK_IS_CRITICAL,
->> +	},
->> +};
->> +
->> +static struct clk_fixed_factor t7_fdiv7_div = {
->> +	.mult = 1,
->> +	.div = 7,
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "fdiv7_div",
->> +		.ops = &clk_fixed_factor_ops,
->> +		.parent_hws = (const struct clk_hw *[]) { &t7_fpll.hw },
->> +		.num_parents = 1,
->> +	},
->> +};
->> +
->> +static struct clk_regmap t7_fdiv7 = {
->> +	.data = &(struct clk_regmap_gate_data){
->> +		.offset = FPLL_CTRL1,
->> +		.bit_idx = 23,
->> +	},
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "fdiv7",
->> +		.ops = &clk_regmap_gate_ops,
->> +		.parent_hws = (const struct clk_hw *[]) {
->> +			&t7_fdiv7_div.hw
->> +		},
->> +		.num_parents = 1,
->> +		.flags = CLK_IS_CRITICAL,
->> +	},
->> +};
->> +
->> +static struct clk_hw *t7_fpll_hw_clks[] = {
->> +	[CLKID_FPLL_DCO]	= &t7_fpll_dco.hw,
->> +	[CLKID_FPLL]		= &t7_fpll.hw,
->> +	[CLKID_FDIV2_DIV]	= &t7_fdiv2_div.hw,
->> +	[CLKID_FDIV2]		= &t7_fdiv2.hw,
->> +	[CLKID_FDIV2P5_DIV]	= &t7_fdiv2p5_div.hw,
->> +	[CLKID_FDIV2P5]		= &t7_fdiv2p5.hw,
->> +	[CLKID_FDIV3_DIV]	= &t7_fdiv3_div.hw,
->> +	[CLKID_FDIV3]		= &t7_fdiv3.hw,
->> +	[CLKID_FDIV4_DIV]	= &t7_fdiv4_div.hw,
->> +	[CLKID_FDIV4]		= &t7_fdiv4.hw,
->> +	[CLKID_FDIV5_DIV]	= &t7_fdiv5_div.hw,
->> +	[CLKID_FDIV5]		= &t7_fdiv5.hw,
->> +	[CLKID_FDIV7_DIV]	= &t7_fdiv7_div.hw,
->> +	[CLKID_FDIV7]		= &t7_fdiv7.hw,
->> +};
->> +
->> +static const struct meson_clkc_data t7_fpll_data = {
->> +	.hw_clks = {
->> +		.hws = t7_fpll_hw_clks,
->> +		.num = ARRAY_SIZE(t7_fpll_hw_clks),
->> +	},
->> +};
->> +
->>  static const struct of_device_id t7_pll_clkc_match_table[] = {
->>  	{ .compatible = "amlogic,t7-gp0-pll",	.data = &t7_gp0_data, },
->>  	{ .compatible = "amlogic,t7-gp1-pll",	.data = &t7_gp1_data, },
->> @@ -1055,6 +1311,7 @@ static const struct of_device_id t7_pll_clkc_match_table[] = {
->>  	{ .compatible = "amlogic,t7-mpll",	.data = &t7_mpll_data, },
->>  	{ .compatible = "amlogic,t7-hdmi-pll",	.data = &t7_hdmi_data, },
->>  	{ .compatible = "amlogic,t7-mclk-pll",	.data = &t7_mclk_data, },
->> +	{ .compatible = "amlogic,t7-fpll",	.data = &t7_fpll_data, },
->>  	{}
->>  };
->>  MODULE_DEVICE_TABLE(of, t7_pll_clkc_match_table);
-> 
-
-
--- 
-Best regards,
-Ronald
