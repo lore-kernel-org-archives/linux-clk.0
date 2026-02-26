@@ -1,596 +1,380 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from courrier.aliel.fr (pouet.aliel.fr [65.21.61.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B6B3D1CCA
-	for <linux-clk@vger.kernel.org>; Thu, 26 Feb 2026 14:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D325E3D3011;
+	Thu, 26 Feb 2026 14:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.21.61.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772116140; cv=none; b=BURe1mQJFb9qvOKfTV5w3VCsbDktdlZUMFmHEBHY2ze8w9dj5U5azG8A93oMB/w74e1nTx9//2Pp42HsYfXQ6GexRXyZPKpTuNTnDd3SdItUEgXl6Ju/WIPsVZ2Cw4VO2g4uY83dR7CqFTHsqs7/6upeyV5v6b8hHwiOO3m2B8U=
+	t=1772116655; cv=none; b=YcTzPT+YLsv+QSn3OZOPLZbPXTLkyiD1M+1WBpVSITnd1CjEleCyMPLlg4ZJu1YDAd80OISe6LAvd6PbvqBJTQRjenk/WGJ5IeYSPCq9p26+FXUnix1oERvCRNHmicHV+MyGoz8T9zjvCsboapAFf5r1V2XmALfTBJMjavYMYEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772116140; c=relaxed/simple;
-	bh=tbtehKEreKASco/1IMHRTZnZxOQyhVsppf5Y02ot/qU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ndmRzNsvqnmT2EmC6V3e5CiVWeDNeiambTaRbX7551wTtHxRNdx/+UEgQinE41C+JTzs+7gFN+DrP3Wkhwqx5wWSTqX+lT8Z0LAq4ukNnT4c/UlbTV98rEtAtnFOUF629EBMbGBLdFusR/69G1fNGAdfFcxd3JYL2l0PKNaHrT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CCiOm2O2; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1772116655; c=relaxed/simple;
+	bh=uYy7dVPPAn+CvhWewPeOnD73sxjqMb48rW9uwL1HoUU=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=X8RWZgMCAXDT9YRNCbS9zXqaRdESlQImxWHeFpSLNxLgCdBnhU0jjN5qW6KHz33HBHCI849o0ju+IKCf6Uc0r9dul8D0KQpkA8elTdBMDM7Xd3p1rsubMDH/zMJfhb/Jxmivba9AwGsVYS326Ney9A3k8IDHOZTmCkQPOBJ3zMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aliel.fr; spf=pass smtp.mailfrom=aliel.fr; dkim=pass (1024-bit key) header.d=aliel.fr header.i=@aliel.fr header.b=OSiYFWt9; arc=none smtp.client-ip=65.21.61.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aliel.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aliel.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CCiOm2O2"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-48378136adcso5673025e9.1
-        for <linux-clk@vger.kernel.org>; Thu, 26 Feb 2026 06:28:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1772116132; x=1772720932; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Sd+vX+/I71k3DZM/mohq2ah4AX5XhZGwQbe1seESShQ=;
-        b=CCiOm2O2TxbDS6KNHKN8cNLA8cN/hIwmZLs4OQu+XZAFpp7q7R51PL1fFPErkZgdPW
-         11Loq37+LjlsutL4pSzptv6zaIqRgfjxLtUW+1ZgSbQkCniA1sLnD3ex5QKhARh7YAyD
-         PXbx+RSOKuhkVI1MavvsT3/7lbOx7Xc0kcojFMyLzvf8u1h5fB8nwIuGC+cqRo8PpMao
-         KYer1lOzA2JQ95ZGUm/MHXVJfI3KCsG7/Rt1WOTj5eeAdEysS6QbGULCo3+q+fnMaY9V
-         bI7R5Ng4hRp0dLoWAcTruvMIgb3bRFVyp09tgAm14AxJtsfZo12QTyVV6u+sys2bdrB5
-         uOdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772116132; x=1772720932;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Sd+vX+/I71k3DZM/mohq2ah4AX5XhZGwQbe1seESShQ=;
-        b=T4oThGTkNlfREve1ABIOjLzrKdw6ct5uea2Q13xtK6J+yRndmURN4Q3kojiCNede+I
-         3ZuoKJxMnf+5UvgZI5FjJKxoSuLbFzcmG5l3kdiLIiVlR8RfNrAuw35oUPNlo4TFr5mZ
-         LgH/5MmbI7PgEtWXF9CdOh9u1nuYtpdM8jYECazU0BTCF3Fra8D4hSPuj8QSThemOmB6
-         NTqMq+BkcPpZGTctNU35b8oEQD4enhw4J9YpnECJAau7S8UuOIiA9tzm7BZ9Fsuii1Ac
-         QPY3FVnNgFRfwywUZuIGqLvqZuV2bzor8uNW+V/QiNx9WDpnpL7faf6J5EohoHmmVUFJ
-         HvEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVA22Qg9I23c+h5Cg3i2sghqPW1Fow6VHdah3QYWhHMW8dVnVMSFp2uCTPY8HlfZcczDM3TKSmSOJg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1yJq5YArXE8DiycO1Dnxx5mM9pGjPlKvgmOT21zChxz9lAFhg
-	HG3yFAJZzHOhciwzMS300P2qhXQz3YaKhBoQod2XXeAG4Nb2J5LjvaSF5YHYXCiApFw=
-X-Gm-Gg: ATEYQzwkVWG1tACRT2QCLv9uQH91ZLA75QxScChpS3Og205f/rWKEuV47E6M7Qp1Xzl
-	ZTvpPjuzoK0x85yTRj4O5XIqbD1RyK5NYd1XEkYT55D0X/PuO77NJGyUtcsjGHMzlMYzHZRXZgQ
-	68acKS3VdGK1H4v9TsblGJq0ZZKafTT+pdB1W2izMylSxsMTnOaYG2dkxqc/LKclWR89U05qtQU
-	NKguaccpx/dwu/hx2vUiBaFv1DwWgw9HmhfFgrVau4HiYfkn4EdQHsRzvGUON+qCsIaVzCK0PSX
-	nSVJyK+aQA7kKirwdTjmbNIHJmnSjKGb5H/uN18lldnQSg2NMRKOTW3NRt6kXSoi4qGQDYQYAL0
-	lAIeSSEDAA500fDjijrjo4whYA010j8qlfGXQC7LwfCcq/SjB7/BkgDJ5LPwVzRXlUhU7QbYCQe
-	/EvjZOm6fyIGV7FS6XTW5xH8SWhMszwPMQfgBVQuCpifJhJg5Uz/oOrRu0NmwlVh5u
-X-Received: by 2002:a05:600c:a085:b0:47e:e20e:bbb0 with SMTP id 5b1f17b1804b1-483c216bdfamr72425185e9.6.1772116131682;
-        Thu, 26 Feb 2026 06:28:51 -0800 (PST)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43970d4bf89sm39219897f8f.29.2026.02.26.06.28.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Feb 2026 06:28:51 -0800 (PST)
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Date: Thu, 26 Feb 2026 14:28:47 +0000
-Subject: [PATCH v9 6/7] media: qcom: camss: Add support for PHY API devices
+	dkim=pass (1024-bit key) header.d=aliel.fr header.i=@aliel.fr header.b="OSiYFWt9"
+Received: from [192.168.1.34] (71.227.91.92.rev.sfr.net [92.91.227.71])
+	by courrier.aliel.fr (Postfix) with ESMTPSA id 5BD2F4A575;
+	Thu, 26 Feb 2026 14:32:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aliel.fr;
+	s=courrier-s1; t=1772116321;
+	bh=uYy7dVPPAn+CvhWewPeOnD73sxjqMb48rW9uwL1HoUU=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To;
+	b=OSiYFWt9TACRtXn4rjkXM5h7tOIa+/M7c3szoUPG39vs/suOhh8CrnAlvlql5BEXj
+	 y7ELnuW149U1jWc0n8Zp2eOTuDncwAcm5LpeGzs7NDmkTRpsNCJVFEMKjAag0I/MXg
+	 /IBXmSYUxAwCSl+KaqMH/4Y26nyJHYN9Fzas6wS8=
+Message-ID: <941c5dac-afcc-4d93-926e-9acb3cf1a930@aliel.fr>
+Date: Thu, 26 Feb 2026 15:30:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260226-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v9-6-a59c3f037d0b@linaro.org>
-References: <20260226-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v9-0-a59c3f037d0b@linaro.org>
-In-Reply-To: <20260226-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v9-0-a59c3f037d0b@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>, 
- Todor Tomov <todor.too@gmail.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
- Bryan O'Donoghue <bod@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-media@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=15750;
- i=bryan.odonoghue@linaro.org; h=from:subject:message-id;
- bh=tbtehKEreKASco/1IMHRTZnZxOQyhVsppf5Y02ot/qU=;
- b=owEBbQKS/ZANAwAKASJxO7Ohjcg6AcsmYgBpoFic6ldfzI9vDof3S9JuchagTS4PzcI+UrN51
- BxgdagSZk2JAjMEAAEKAB0WIQTmk/sqq6Nt4Rerb7QicTuzoY3IOgUCaaBYnAAKCRAicTuzoY3I
- OlMfEAC5tVBCyCal6NTOpr5lRZf9WHKvJgY06KEMVEuBzofdHkQEABtdpUvYDN5uLvTWk4Lwez4
- u+mhC+lStfwEI/XIO7Y3/OPFPmn8y1TnC0Qjs8atm7JvP5cdABPZHej7rfvxYm1W2b30tiWXVTe
- vbO7GyF4CDdHn1jOgk0wxNF2OfIyHXJ/sdh/wPZme/a9TSLoxS/Rb9LfwKAlpF8WgmiYu/RSmYf
- jo0lG0/1ptW+S0DoMerJUhWYHlKuQCkuESPzq/F5k7TaMv95dSARPCXyYKWBdLUR21PhWyxWwf/
- COlqO6/3GlYtqQlN8nDbqRC03mPotdVkAUIP4oz5F/F9LiJMOU5KjKaTb8hW9XMMWFb7VeP6GvG
- +v172jxCZc3ZxygV8SaANA5jDxa+Zrfpc7sD6eB63sSfI21QK2bRPAzY++tkZ9OJtGnYdQWQbEw
- nguVbMNNz6QUZNDiwhAJ0g4qSZKoiLb8mbbswVtj8IqRsQsrWezdkTjY0VtLKw1trp++HpkgV+E
- yTXZ/r9iRbcg/yt75pMYn9RbwfTIt4SHQFDdfZ+p6iBXjhqTdo9Gy0U4A7lM8+MjCi4w01DLGvc
- 5FkVkh/xcH85sLGqX8ZKnbgP337oVKS684fvO1WB0WBia8rsS4QH+hsPs5nmHPFhvlBdFd7oa2x
- /yR1bDYUXUP8ooA==
-X-Developer-Key: i=bryan.odonoghue@linaro.org; a=openpgp;
- fpr=E693FB2AABA36DE117AB6FB422713BB3A18DC83A
+User-Agent: Mozilla Thunderbird Beta
+From: Ronald Claveau <linux-kernel-dev@aliel.fr>
+Subject: Re: [PATCH 1/7] drivers: clk: meson: Add Amlogic T7 fix pll support
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: linux-amlogic@lists.infradead.org,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20260218101709.35450-1-linux-kernel-dev@aliel.fr>
+ <1j4ine6i6a.fsf@starbuckisacylon.baylibre.com>
+Content-Language: en-US
+In-Reply-To: <1j4ine6i6a.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Add the ability to use a PHY pointer which interacts with the standard PHY
-API.
+On 2/18/26 7:05 PM, Jerome Brunet wrote:
+> On mer. 18 févr. 2026 at 11:17, Ronald Claveau <linux-kernel-dev@aliel.fr> wrote:
+> 
+>> Add PLL for the clock controller of the Amlogic T7 SoC family.
+>>
+> 
+> As Krzysztof pointed out, a series like this needs a cover letter to explain
+> what you are trying to acheive overall, and proper threading.
+> 
+> The description above is too vague.
+> 
 
-In the first instance the code will try to use the new PHY interface. If no
-PHYs are present in the DT then the legacy method will be attempted.
+Indeed, I will do that for the next one.
 
-Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
----
- drivers/media/platform/qcom/camss/Kconfig        |   1 +
- drivers/media/platform/qcom/camss/camss-csiphy.c | 185 +++++++++++++++++++++--
- drivers/media/platform/qcom/camss/camss-csiphy.h |   7 +
- drivers/media/platform/qcom/camss/camss.c        |  72 +++++++--
- 4 files changed, 235 insertions(+), 30 deletions(-)
+>> Signed-off-by: Ronald Claveau <linux-kernel-dev@aliel.fr>
+>> ---
+>>  drivers/clk/meson/t7-pll.c | 257 +++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 257 insertions(+)
+>>
+>> diff --git a/drivers/clk/meson/t7-pll.c b/drivers/clk/meson/t7-pll.c
+>> index 0a622f45fa36..3dd3aca50b7c 100644
+>> --- a/drivers/clk/meson/t7-pll.c
+>> +++ b/drivers/clk/meson/t7-pll.c
+>> @@ -71,6 +71,15 @@
+>>  #define MCLK_PLL_CNTL4		0x10
+>>  #define MCLK_PLL_STS		0x14
+>>  
+>> +#define FPLL_CTRL0		0x00
+>> +#define FPLL_CTRL1		0x04
+>> +#define FPLL_CTRL2		0x08
+>> +#define FPLL_CTRL3		0x0c
+>> +#define FPLL_CTRL4		0x10
+>> +#define FPLL_CTRL5		0x14
+>> +#define FPLL_CTRL6		0x18
+>> +#define FPLL_STS		0x1c
+> 
+> The PLL you are adding is described in the datasheet as the MPLL. FPLL
+> is nowhere to be found. Prefer using names that relate to the
+> documentation.
+> 
+> If you must make a name up, you need to have a very good reason and to
+> explain it.
+> 
+> Still from the public documentation, this PLL belong in the same device as
+> MPLL0, MPLL1, etc ... BUT, I remember correctly the T7 initial
+> submission, the fixed PLL and fdivs are supposed to be provided through
+> SCMI clocks. Have you checked that ?
+> 
 
-diff --git a/drivers/media/platform/qcom/camss/Kconfig b/drivers/media/platform/qcom/camss/Kconfig
-index 4eda48cb1adf0..1edc5e5a1829e 100644
---- a/drivers/media/platform/qcom/camss/Kconfig
-+++ b/drivers/media/platform/qcom/camss/Kconfig
-@@ -7,3 +7,4 @@ config VIDEO_QCOM_CAMSS
- 	select VIDEO_V4L2_SUBDEV_API
- 	select VIDEOBUF2_DMA_SG
- 	select V4L2_FWNODE
-+	select PHY_QCOM_MIPI_CSI2
-diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.c b/drivers/media/platform/qcom/camss/camss-csiphy.c
-index 62623393f4144..b8bfbf2fef8fa 100644
---- a/drivers/media/platform/qcom/camss/camss-csiphy.c
-+++ b/drivers/media/platform/qcom/camss/camss-csiphy.c
-@@ -7,12 +7,14 @@
-  * Copyright (c) 2011-2015, The Linux Foundation. All rights reserved.
-  * Copyright (C) 2016-2018 Linaro Ltd.
-  */
-+#include <dt-bindings/phy/phy.h>
- #include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/kernel.h>
- #include <linux/of.h>
-+#include <linux/phy/phy.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <media/media-entity.h>
-@@ -131,10 +133,10 @@ static u8 csiphy_get_bpp(const struct csiphy_format_info *formats,
- }
- 
- /*
-- * csiphy_set_clock_rates - Calculate and set clock rates on CSIPHY module
-+ * csiphy_set_clock_rates_legacy - Calculate and set clock rates on CSIPHY module
-  * @csiphy: CSIPHY device
-  */
--static int csiphy_set_clock_rates(struct csiphy_device *csiphy)
-+static int csiphy_set_clock_rates_legacy(struct csiphy_device *csiphy)
- {
- 	struct device *dev = csiphy->camss->dev;
- 	s64 link_freq;
-@@ -200,7 +202,7 @@ static int csiphy_set_clock_rates(struct csiphy_device *csiphy)
-  *
-  * Return 0 on success or a negative error code otherwise
-  */
--static int csiphy_set_power(struct v4l2_subdev *sd, int on)
-+static int csiphy_set_power_legacy(struct v4l2_subdev *sd, int on)
- {
- 	struct csiphy_device *csiphy = v4l2_get_subdevdata(sd);
- 	struct device *dev = csiphy->camss->dev;
-@@ -219,7 +221,7 @@ static int csiphy_set_power(struct v4l2_subdev *sd, int on)
- 			return ret;
- 		}
- 
--		ret = csiphy_set_clock_rates(csiphy);
-+		ret = csiphy_set_clock_rates_legacy(csiphy);
- 		if (ret < 0) {
- 			regulator_bulk_disable(csiphy->num_supplies,
- 					       csiphy->supplies);
-@@ -254,7 +256,7 @@ static int csiphy_set_power(struct v4l2_subdev *sd, int on)
- }
- 
- /*
-- * csiphy_stream_on - Enable streaming on CSIPHY module
-+ * csiphy_stream_on_legacy - Enable streaming on CSIPHY module
-  * @csiphy: CSIPHY device
-  *
-  * Helper function to enable streaming on CSIPHY module.
-@@ -262,7 +264,7 @@ static int csiphy_set_power(struct v4l2_subdev *sd, int on)
-  *
-  * Return 0 on success or a negative error code otherwise
-  */
--static int csiphy_stream_on(struct csiphy_device *csiphy)
-+static int csiphy_stream_on_legacy(struct csiphy_device *csiphy)
- {
- 	struct csiphy_config *cfg = &csiphy->cfg;
- 	s64 link_freq;
-@@ -306,11 +308,86 @@ static int csiphy_stream_on(struct csiphy_device *csiphy)
-  *
-  * Helper function to disable streaming on CSIPHY module
-  */
--static void csiphy_stream_off(struct csiphy_device *csiphy)
-+static void csiphy_stream_off_legacy(struct csiphy_device *csiphy)
- {
- 	csiphy->res->hw_ops->lanes_disable(csiphy, &csiphy->cfg);
- }
- 
-+/*
-+ * csiphy_stream_on - Enable streaming on CSIPHY module
-+ * @csiphy: CSIPHY device
-+ *
-+ * Helper function to enable streaming on CSIPHY module.
-+ * Main configuration of CSIPHY module is also done here.
-+ *
-+ * Return 0 on success or a negative error code otherwise
-+ */
-+static int csiphy_stream_on(struct csiphy_device *csiphy)
-+{
-+	u8 bpp = csiphy_get_bpp(csiphy->res->formats->formats, csiphy->res->formats->nformats,
-+				csiphy->fmt[MSM_CSIPHY_PAD_SINK].code);
-+	u8 num_lanes = csiphy->cfg.csi2->lane_cfg.num_data;
-+	struct phy_configure_opts_mipi_dphy *dphy_cfg;
-+	union phy_configure_opts dphy_opts = { 0 };
-+	struct device *dev = csiphy->camss->dev;
-+	s64 link_freq;
-+	int ret;
-+
-+	dphy_cfg = &dphy_opts.mipi_dphy;
-+
-+	link_freq = camss_get_link_freq(&csiphy->subdev.entity, bpp, num_lanes);
-+
-+	if (link_freq < 0) {
-+		dev_err(dev,
-+			"Cannot get CSI2 transmitter's link frequency\n");
-+		return -EINVAL;
-+	}
-+
-+	phy_mipi_dphy_get_default_config_for_hsclk(link_freq, num_lanes, dphy_cfg);
-+
-+	phy_set_mode(csiphy->phy, PHY_MODE_MIPI_DPHY);
-+	ret = phy_configure(csiphy->phy, &dphy_opts);
-+	if (ret) {
-+		dev_err(dev, "failed to configure MIPI D-PHY\n");
-+		goto error;
-+	}
-+
-+	return phy_power_on(csiphy->phy);
-+
-+error:
-+	return ret;
-+}
-+
-+/*
-+ * csiphy_stream_off - Disable streaming on CSIPHY module
-+ * @csiphy: CSIPHY device
-+ *
-+ * Helper function to disable streaming on CSIPHY module
-+ */
-+static void csiphy_stream_off(struct csiphy_device *csiphy)
-+{
-+	phy_power_off(csiphy->phy);
-+}
-+
-+/*
-+ * csiphy_set_stream - Enable/disable streaming on CSIPHY module
-+ * @sd: CSIPHY V4L2 subdevice
-+ * @enable: Requested streaming state
-+ *
-+ * Return 0 on success or a negative error code otherwise
-+ */
-+static int csiphy_set_stream_legacy(struct v4l2_subdev *sd, int enable)
-+{
-+	struct csiphy_device *csiphy = v4l2_get_subdevdata(sd);
-+	int ret = 0;
-+
-+	if (enable)
-+		ret = csiphy_stream_on_legacy(csiphy);
-+	else
-+		csiphy_stream_off_legacy(csiphy);
-+
-+	return ret;
-+}
- 
- /*
-  * csiphy_set_stream - Enable/disable streaming on CSIPHY module
-@@ -568,16 +645,16 @@ static bool csiphy_match_clock_name(const char *clock_name, const char *format,
- }
- 
- /*
-- * msm_csiphy_subdev_init - Initialize CSIPHY device structure and resources
-+ * msm_csiphy_subdev_init_legacy - Initialize CSIPHY device structure and resources
-  * @csiphy: CSIPHY device
-  * @res: CSIPHY module resources table
-  * @id: CSIPHY module id
-  *
-  * Return 0 on success or a negative error code otherwise
-  */
--int msm_csiphy_subdev_init(struct camss *camss,
--			   struct csiphy_device *csiphy,
--			   const struct camss_subdev_resources *res, u8 id)
-+int msm_csiphy_subdev_init_legacy(struct camss *camss,
-+				  struct csiphy_device *csiphy,
-+				  const struct camss_subdev_resources *res, u8 id)
- {
- 	struct device *dev = camss->dev;
- 	struct platform_device *pdev = to_platform_device(dev);
-@@ -705,6 +782,69 @@ int msm_csiphy_subdev_init(struct camss *camss,
- 	return ret;
- }
- 
-+/*
-+ * msm_csiphy_subdev_init - Initialize CSIPHY device structure and resources
-+ * @csiphy: CSIPHY device
-+ * @res: CSIPHY module resources table
-+ * @id: CSIPHY module id
-+ *
-+ * Return 0 on success or a negative error code otherwise
-+ */
-+int msm_csiphy_subdev_init(struct camss *camss,
-+			   struct csiphy_device *csiphy,
-+			   const struct camss_subdev_resources *res, u8 id)
-+{
-+	struct device *dev = camss->dev;
-+	struct of_phandle_args args;
-+	u8 combo_mode;
-+	int idx;
-+	int ret;
-+
-+	snprintf(csiphy->name, ARRAY_SIZE(csiphy->name), "csiphy%d", id);
-+
-+	idx = of_property_match_string(dev->of_node, "phy-names", csiphy->name);
-+	if (idx < 0) {
-+		dev_err(dev, "%s not found\n", csiphy->name);
-+		return idx;
-+	}
-+
-+	ret = of_parse_phandle_with_args(dev->of_node, "phys", "#phy-cells", idx, &args);
-+	if (ret < 0) {
-+		dev_err(dev, "unable to parse phys args %s\n", csiphy->name);
-+		return ret;
-+	}
-+
-+	if (!of_device_is_available(args.np))
-+		goto put_np;
-+
-+	combo_mode = args.args[0];
-+	if (combo_mode != PHY_TYPE_DPHY) {
-+		dev_err(dev, "%s mode %d not supported\n", csiphy->name, combo_mode);
-+		ret = -EOPNOTSUPP;
-+		goto put_np;
-+	}
-+
-+	csiphy->phy = devm_phy_get(dev, csiphy->name);
-+	if (IS_ERR(csiphy->phy)) {
-+		ret = PTR_ERR(csiphy->phy);
-+		goto put_np;
-+	}
-+
-+	csiphy->camss = camss;
-+	csiphy->id = id;
-+	csiphy->cfg.combo_mode = combo_mode;
-+	csiphy->res = &res->csiphy;
-+
-+	ret = phy_init(csiphy->phy);
-+	if (ret)
-+		dev_err(dev, "phy %s init fail %d\n", csiphy->name, ret);
-+
-+put_np:
-+	of_node_put(args.np);
-+
-+	return ret;
-+}
-+
- /*
-  * csiphy_link_setup - Setup CSIPHY connections
-  * @entity: Pointer to media entity structure
-@@ -739,8 +879,12 @@ static int csiphy_link_setup(struct media_entity *entity,
- 	return 0;
- }
- 
--static const struct v4l2_subdev_core_ops csiphy_core_ops = {
--	.s_power = csiphy_set_power,
-+static const struct v4l2_subdev_core_ops csiphy_core_ops_legacy = {
-+	.s_power = csiphy_set_power_legacy,
-+};
-+
-+static const struct v4l2_subdev_video_ops csiphy_video_ops_legacy = {
-+	.s_stream = csiphy_set_stream_legacy,
- };
- 
- static const struct v4l2_subdev_video_ops csiphy_video_ops = {
-@@ -754,8 +898,13 @@ static const struct v4l2_subdev_pad_ops csiphy_pad_ops = {
- 	.set_fmt = csiphy_set_format,
- };
- 
-+static const struct v4l2_subdev_ops csiphy_v4l2_ops_legacy = {
-+	.core = &csiphy_core_ops_legacy,
-+	.video = &csiphy_video_ops_legacy,
-+	.pad = &csiphy_pad_ops,
-+};
-+
- static const struct v4l2_subdev_ops csiphy_v4l2_ops = {
--	.core = &csiphy_core_ops,
- 	.video = &csiphy_video_ops,
- 	.pad = &csiphy_pad_ops,
- };
-@@ -784,7 +933,11 @@ int msm_csiphy_register_entity(struct csiphy_device *csiphy,
- 	struct device *dev = csiphy->camss->dev;
- 	int ret;
- 
--	v4l2_subdev_init(sd, &csiphy_v4l2_ops);
-+	if (IS_ERR(csiphy->phy))
-+		v4l2_subdev_init(sd, &csiphy_v4l2_ops_legacy);
-+	else
-+		v4l2_subdev_init(sd, &csiphy_v4l2_ops);
-+
- 	sd->internal_ops = &csiphy_v4l2_internal_ops;
- 	sd->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
- 	snprintf(sd->name, ARRAY_SIZE(sd->name), "%s%d",
-@@ -823,6 +976,8 @@ int msm_csiphy_register_entity(struct csiphy_device *csiphy,
-  */
- void msm_csiphy_unregister_entity(struct csiphy_device *csiphy)
- {
-+	if (!IS_ERR(csiphy->phy))
-+		phy_exit(csiphy->phy);
- 	v4l2_device_unregister_subdev(&csiphy->subdev);
- 	media_entity_cleanup(&csiphy->subdev.entity);
- }
-diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.h b/drivers/media/platform/qcom/camss/camss-csiphy.h
-index 2d5054819df7f..25b803c06e8bf 100644
---- a/drivers/media/platform/qcom/camss/camss-csiphy.h
-+++ b/drivers/media/platform/qcom/camss/camss-csiphy.h
-@@ -12,6 +12,7 @@
- 
- #include <linux/clk.h>
- #include <linux/interrupt.h>
-+#include <linux/phy/phy.h>
- #include <media/media-entity.h>
- #include <media/v4l2-device.h>
- #include <media/v4l2-mediabus.h>
-@@ -95,6 +96,7 @@ struct csiphy_device_regs {
- 
- struct csiphy_device {
- 	struct camss *camss;
-+	struct phy *phy;
- 	u8 id;
- 	struct v4l2_subdev subdev;
- 	struct media_pad pads[MSM_CSIPHY_PADS_NUM];
-@@ -102,6 +104,7 @@ struct csiphy_device {
- 	void __iomem *base_clk_mux;
- 	u32 irq;
- 	char irq_name[30];
-+	char name[16];
- 	struct camss_clock *clock;
- 	bool *rate_set;
- 	int nclocks;
-@@ -116,6 +119,10 @@ struct csiphy_device {
- 
- struct camss_subdev_resources;
- 
-+int msm_csiphy_subdev_init_legacy(struct camss *camss,
-+				  struct csiphy_device *csiphy,
-+				  const struct camss_subdev_resources *res, u8 id);
-+
- int msm_csiphy_subdev_init(struct camss *camss,
- 			   struct csiphy_device *csiphy,
- 			   const struct camss_subdev_resources *res, u8 id);
-diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
-index 5fb5ad87e1671..b1737b5d52160 100644
---- a/drivers/media/platform/qcom/camss/camss.c
-+++ b/drivers/media/platform/qcom/camss/camss.c
-@@ -4450,14 +4450,35 @@ static int camss_parse_endpoint_node(struct device *dev,
- static int camss_parse_ports(struct camss *camss)
- {
- 	struct device *dev = camss->dev;
-+	const struct camss_resources *res = camss->res;
- 	struct fwnode_handle *fwnode = dev_fwnode(dev), *ep;
- 	int ret;
- 
- 	fwnode_graph_for_each_endpoint(fwnode, ep) {
- 		struct camss_async_subdev *csd;
-+		struct fwnode_handle *remote;
-+
-+		if (!fwnode_device_is_available(ep))
-+			continue;
-+
-+		if (res->legacy_phy) {
-+			csd = v4l2_async_nf_add_fwnode_remote(&camss->notifier, ep,
-+							      typeof(*csd));
-+		} else {
-+			/*
-+			 * For non-legacy PHY, the CSIPHY is a separate device.
-+			 * Register the remote endpoint (CSIPHY's endpoint) as
-+			 * the async subdev, not the remote port parent.
-+			 */
-+			remote = fwnode_graph_get_remote_endpoint(ep);
-+			if (!remote)
-+				continue;
-+
-+			csd = v4l2_async_nf_add_fwnode(&camss->notifier, remote,
-+						       struct camss_async_subdev);
-+			fwnode_handle_put(remote);
-+		}
- 
--		csd = v4l2_async_nf_add_fwnode_remote(&camss->notifier, ep,
--						      typeof(*csd));
- 		if (IS_ERR(csd)) {
- 			ret = PTR_ERR(csd);
- 			goto err_cleanup;
-@@ -4489,15 +4510,26 @@ static int camss_init_subdevices(struct camss *camss)
- 	unsigned int i;
- 	int ret;
- 
--	for (i = 0; i < camss->res->csiphy_num; i++) {
--		ret = msm_csiphy_subdev_init(camss, &camss->csiphy[i],
--					     &res->csiphy_res[i],
--					     res->csiphy_res[i].csiphy.id);
--		if (ret < 0) {
--			dev_err(camss->dev,
--				"Failed to init csiphy%d sub-device: %d\n",
--				i, ret);
--			return ret;
-+	if (!res->legacy_phy) {
-+		for (i = 0; i < camss->res->csiphy_num; i++) {
-+			ret = msm_csiphy_subdev_init(camss, &camss->csiphy[i],
-+						     &res->csiphy_res[i],
-+						     res->csiphy_res[i].csiphy.id);
-+			if (ret < 0)
-+				return ret;
-+		}
-+	} else {
-+		for (i = 0; i < camss->res->csiphy_num; i++) {
-+			ret = msm_csiphy_subdev_init_legacy(camss, &camss->csiphy[i],
-+							    &res->csiphy_res[i],
-+							    res->csiphy_res[i].csiphy.id);
-+			if (ret < 0) {
-+				dev_err(camss->dev,
-+					"Failed to init csiphy%d sub-device: %d\n",
-+					i, ret);
-+				return ret;
-+			}
-+			camss->csiphy[i].phy = ERR_PTR(-ENODEV);
- 		}
- 	}
- 
-@@ -4574,6 +4606,9 @@ static int camss_link_entities(struct camss *camss)
- 
- 	for (i = 0; i < camss->res->csiphy_num; i++) {
- 		for (j = 0; j < camss->res->csid_num; j++) {
-+			if (!camss->csiphy[i].phy)
-+				continue;
-+
- 			ret = media_create_pad_link(&camss->csiphy[i].subdev.entity,
- 						    MSM_CSIPHY_PAD_SRC,
- 						    &camss->csid[j].subdev.entity,
-@@ -4683,6 +4718,9 @@ static int camss_register_entities(struct camss *camss)
- 	int ret;
- 
- 	for (i = 0; i < camss->res->csiphy_num; i++) {
-+		if (!camss->csiphy[i].phy)
-+			continue;
-+
- 		ret = msm_csiphy_register_entity(&camss->csiphy[i],
- 						 &camss->v4l2_dev);
- 		if (ret < 0) {
-@@ -4738,8 +4776,10 @@ static int camss_register_entities(struct camss *camss)
- 
- 	i = camss->res->csiphy_num;
- err_reg_csiphy:
--	for (i--; i >= 0; i--)
--		msm_csiphy_unregister_entity(&camss->csiphy[i]);
-+	for (i--; i >= 0; i--) {
-+		if (camss->csiphy[i].phy)
-+			msm_csiphy_unregister_entity(&camss->csiphy[i]);
-+	}
- 
- 	return ret;
- }
-@@ -4754,8 +4794,10 @@ static void camss_unregister_entities(struct camss *camss)
- {
- 	unsigned int i;
- 
--	for (i = 0; i < camss->res->csiphy_num; i++)
--		msm_csiphy_unregister_entity(&camss->csiphy[i]);
-+	for (i = 0; i < camss->res->csiphy_num; i++) {
-+		if (camss->csiphy[i].phy)
-+			msm_csiphy_unregister_entity(&camss->csiphy[i]);
-+	}
- 
- 	for (i = 0; i < camss->res->csid_num; i++)
- 		msm_csid_unregister_entity(&camss->csid[i]);
+Yes, I read the initial submission, and I tried first with scmi-smc and
+scmi-mailbox, but with no success.
+I will try it again and ask khadas team for more information related to
+this.
+
+>> +
+>>  static const struct pll_mult_range t7_media_pll_mult_range = {
+>>  	.min = 125,
+>>  	.max = 250,
+>> @@ -1047,6 +1056,253 @@ static const struct meson_clkc_data t7_mclk_data = {
+>>  	},
+>>  };
+>>  
+>> +static struct clk_regmap t7_fpll_dco = {
+>> +	.data = &(struct meson_clk_pll_data){
+>> +		.en = {
+>> +			.reg_off = FPLL_CTRL0,
+>> +			.shift   = 28,
+>> +			.width   = 1,
+>> +		},
+>> +		.m = {
+>> +			.reg_off = FPLL_CTRL0,
+>> +			.shift   = 0,
+>> +			.width   = 8,
+>> +		},
+>> +		.n = {
+>> +			.reg_off = FPLL_CTRL0,
+>> +			.shift   = 10,
+>> +			.width   = 5,
+>> +		},
+>> +		.frac = {
+>> +			.reg_off = FPLL_CTRL1,
+>> +			.shift   = 0,
+>> +			.width   = 17,
+>> +		},
+>> +		.l = {
+>> +			.reg_off = FPLL_CTRL0,
+>> +			.shift   = 31,
+>> +			.width   = 1,
+>> +		},
+>> +		.rst = {
+>> +			.reg_off = FPLL_CTRL0,
+>> +			.shift   = 29,
+>> +			.width   = 1,
+>> +		},
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "fpll_dco",
+>> +		.ops = &meson_clk_pll_ro_ops,
+>> +		.parent_data = &(const struct clk_parent_data) {
+>> +			.fw_name = "xtal",
+>> +		},
+>> +		.num_parents = 1,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap t7_fpll = {
+>> +	.data = &(struct clk_regmap_div_data){
+>> +		.offset = FPLL_CTRL0,
+>> +		.shift = 16,
+>> +		.width = 2,
+>> +		.flags = CLK_DIVIDER_POWER_OF_TWO,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "fpll",
+>> +		.ops = &clk_regmap_divider_ro_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&t7_fpll_dco.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_fixed_factor t7_fdiv2_div = {
+>> +	.mult = 1,
+>> +	.div = 2,
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "fdiv2_div",
+>> +		.ops = &clk_fixed_factor_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) { &t7_fpll.hw },
+>> +		.num_parents = 1,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap t7_fdiv2 = {
+>> +	.data = &(struct clk_regmap_gate_data){
+>> +		.offset = FPLL_CTRL1,
+>> +		.bit_idx = 24,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "fdiv2",
+>> +		.ops = &clk_regmap_gate_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&t7_fdiv2_div.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		.flags = CLK_IS_CRITICAL,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_fixed_factor t7_fdiv2p5_div = {
+>> +	.mult = 2,
+>> +	.div = 5,
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "fdiv2p5_div",
+>> +		.ops = &clk_fixed_factor_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&t7_fpll.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap t7_fdiv2p5 = {
+>> +	.data = &(struct clk_regmap_gate_data){
+>> +		.offset = FPLL_CTRL1,
+>> +		.bit_idx = 25,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "fdiv2p5",
+>> +		.ops = &clk_regmap_gate_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&t7_fdiv2p5_div.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_fixed_factor t7_fdiv3_div = {
+>> +	.mult = 1,
+>> +	.div = 3,
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "fdiv3_div",
+>> +		.ops = &clk_fixed_factor_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) { &t7_fpll.hw },
+>> +		.num_parents = 1,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap t7_fdiv3 = {
+>> +	.data = &(struct clk_regmap_gate_data){
+>> +		.offset = FPLL_CTRL1,
+>> +		.bit_idx = 20,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "fdiv3",
+>> +		.ops = &clk_regmap_gate_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&t7_fdiv3_div.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		.flags = CLK_IS_CRITICAL,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_fixed_factor t7_fdiv4_div = {
+>> +	.mult = 1,
+>> +	.div = 4,
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "fdiv4_div",
+>> +		.ops = &clk_fixed_factor_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) { &t7_fpll.hw },
+>> +		.num_parents = 1,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap t7_fdiv4 = {
+>> +	.data = &(struct clk_regmap_gate_data){
+>> +		.offset = FPLL_CTRL1,
+>> +		.bit_idx = 21,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "fdiv4",
+>> +		.ops = &clk_regmap_gate_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&t7_fdiv4_div.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		.flags = CLK_IS_CRITICAL,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_fixed_factor t7_fdiv5_div = {
+>> +	.mult = 1,
+>> +	.div = 5,
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "fdiv5_div",
+>> +		.ops = &clk_fixed_factor_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) { &t7_fpll.hw },
+>> +		.num_parents = 1,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap t7_fdiv5 = {
+>> +	.data = &(struct clk_regmap_gate_data){
+>> +		.offset = FPLL_CTRL1,
+>> +		.bit_idx = 22,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "fdiv5",
+>> +		.ops = &clk_regmap_gate_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&t7_fdiv5_div.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		.flags = CLK_IS_CRITICAL,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_fixed_factor t7_fdiv7_div = {
+>> +	.mult = 1,
+>> +	.div = 7,
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "fdiv7_div",
+>> +		.ops = &clk_fixed_factor_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) { &t7_fpll.hw },
+>> +		.num_parents = 1,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap t7_fdiv7 = {
+>> +	.data = &(struct clk_regmap_gate_data){
+>> +		.offset = FPLL_CTRL1,
+>> +		.bit_idx = 23,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "fdiv7",
+>> +		.ops = &clk_regmap_gate_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&t7_fdiv7_div.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		.flags = CLK_IS_CRITICAL,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_hw *t7_fpll_hw_clks[] = {
+>> +	[CLKID_FPLL_DCO]	= &t7_fpll_dco.hw,
+>> +	[CLKID_FPLL]		= &t7_fpll.hw,
+>> +	[CLKID_FDIV2_DIV]	= &t7_fdiv2_div.hw,
+>> +	[CLKID_FDIV2]		= &t7_fdiv2.hw,
+>> +	[CLKID_FDIV2P5_DIV]	= &t7_fdiv2p5_div.hw,
+>> +	[CLKID_FDIV2P5]		= &t7_fdiv2p5.hw,
+>> +	[CLKID_FDIV3_DIV]	= &t7_fdiv3_div.hw,
+>> +	[CLKID_FDIV3]		= &t7_fdiv3.hw,
+>> +	[CLKID_FDIV4_DIV]	= &t7_fdiv4_div.hw,
+>> +	[CLKID_FDIV4]		= &t7_fdiv4.hw,
+>> +	[CLKID_FDIV5_DIV]	= &t7_fdiv5_div.hw,
+>> +	[CLKID_FDIV5]		= &t7_fdiv5.hw,
+>> +	[CLKID_FDIV7_DIV]	= &t7_fdiv7_div.hw,
+>> +	[CLKID_FDIV7]		= &t7_fdiv7.hw,
+>> +};
+>> +
+>> +static const struct meson_clkc_data t7_fpll_data = {
+>> +	.hw_clks = {
+>> +		.hws = t7_fpll_hw_clks,
+>> +		.num = ARRAY_SIZE(t7_fpll_hw_clks),
+>> +	},
+>> +};
+>> +
+>>  static const struct of_device_id t7_pll_clkc_match_table[] = {
+>>  	{ .compatible = "amlogic,t7-gp0-pll",	.data = &t7_gp0_data, },
+>>  	{ .compatible = "amlogic,t7-gp1-pll",	.data = &t7_gp1_data, },
+>> @@ -1055,6 +1311,7 @@ static const struct of_device_id t7_pll_clkc_match_table[] = {
+>>  	{ .compatible = "amlogic,t7-mpll",	.data = &t7_mpll_data, },
+>>  	{ .compatible = "amlogic,t7-hdmi-pll",	.data = &t7_hdmi_data, },
+>>  	{ .compatible = "amlogic,t7-mclk-pll",	.data = &t7_mclk_data, },
+>> +	{ .compatible = "amlogic,t7-fpll",	.data = &t7_fpll_data, },
+>>  	{}
+>>  };
+>>  MODULE_DEVICE_TABLE(of, t7_pll_clkc_match_table);
+> 
+
 
 -- 
-2.52.0
-
+Best regards,
+Ronald
