@@ -1,33 +1,67 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE3FF313E32;
-	Thu, 26 Feb 2026 09:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D173A1E7E
+	for <linux-clk@vger.kernel.org>; Thu, 26 Feb 2026 10:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772099430; cv=none; b=H0FS6KpwDS4Vi2m5UK+B6tLflioUkrrdu6z0KQbZkO8t3ra1WwW2CINXPbRe11SA8eE6ejXj106WfUVaoJPUoguVMUq65yZSvV4mUyIwqFn+1PKAj4ruylqZV+5OHN/K5Umi7+KdRXxkRzrKQAB9N3hfbQWu9D4hM81gur3D5Co=
+	t=1772100395; cv=none; b=ECflCqRCw9BNwDbcOryxM/fgWdhpVAxUpXK/RU687EPOtslMk2WGC3XhBDFkZ79+EGeicymr0rIhwdbaMYyX8mJKJubkD/bQNFl3hVmfMCFcZII3r9v+VIwZnAKQ4/PvWAG0kfnPZARfpjg6/QzJtHwiaImD9b64dU/RjLUG4bE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772099430; c=relaxed/simple;
-	bh=DoFI8NOx4OmNm71uvoT/u7+mNopX1qI0advMczlFsxY=;
+	s=arc-20240116; t=1772100395; c=relaxed/simple;
+	bh=Kb7Zr1q5fDprwOuIFKVHgYkCHY8BIbU86+n0nZmBXIM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SxDvvjTprHElzWTO8I1Gobm4F8MjwIZzjNkIQ5tNE2XtrIdsf/AFXFtVw9NvfOjKxguTbL5jY4pFnAvb7OvvSNyGJc0+stFdlK6XfGrpiaIw8uUajQFaZTiMCM+1dTO7rfbbq/KWoATRGP+Yq6QoPattyFyO2/uNKwdwtSdHmlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZDJ8FS4D; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=Mh7NpQSoOuuDtlRDCtvPsgehR56Kot8UwXZFp2Cu16BkxLe1+exTEtw8k7OT6fCj+czIZseDldPoZvdSn00yJBKprBvWRFYEbldlPUUtB8UpgmE+DcTg/Yt37iLtCYAEG4bBjtOLSxi2P4Kf4EeiuCb/omFvbSDxy1hsy6PZIQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iUHNE/x9; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZDJ8FS4D"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE149C19422;
-	Thu, 26 Feb 2026 09:50:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772099430;
-	bh=DoFI8NOx4OmNm71uvoT/u7+mNopX1qI0advMczlFsxY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZDJ8FS4DZSC+Gw9dh19wXD2mexu/y9OtzSAIcGQQFrU3x/cA71La5BWcinusMdvRh
-	 Xv9qDThYtDkdoF7sFbkZ6kqSd1qU50dhMmV84ZF//3ax9/lxnxRMEkpX+NstQqc2K1
-	 4pEV5HudSlc7vW1EV8u4GAJFMAzhWj+w1F4P5gILehrv4PA0qgARwsOQhsFd3O1CJP
-	 YwZtvVCbAv1vUwnhp5bfzmiX/PJd7qwogwm87ovvk8D42I1Udt6w50b+8CmWTYMwjr
-	 FozoWZ9Emfa8waIAF0zEr2L4XEJAdbl3AZU+/gdVzW1u+rBtDTv0ukQz931xk8SzFl
-	 i98Ux8njThRRw==
-Message-ID: <72f0ed74-ac86-4571-8a72-d41282349718@kernel.org>
-Date: Thu, 26 Feb 2026 10:50:24 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iUHNE/x9"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-4398dd671daso717745f8f.0
+        for <linux-clk@vger.kernel.org>; Thu, 26 Feb 2026 02:06:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1772100391; x=1772705191; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=M45UmrhuMMqbMjpIjOb+glFVXPQnqnkmhvjio0VGfRA=;
+        b=iUHNE/x9ZjIVYoKad9cyKQce52Pn9/sI+xFBh2jGnzYfiNWEuy3VdbDhyVJooyskQ6
+         1ooeYtBVTp1D0RhPPeOexSksG6gT0F3MPGTVXSS1eIv3UpDIpWcpUL5Fk8HH3uzSAKJg
+         FcEy26lUEKvPr9lkD+aLL5nxrx/mRgSxQCMjf6YNUIubhSvgxqnc+DIKE+1RmMAPQfip
+         9bt9NCjRj0qa1nqAXRxxRiRPRAr7KfalY4+ABvhhl+ihib5CVYkANsCGVX3pYXRD5/7+
+         k/FZS+3afVXBZsD6qEq4RKjnb2/vcYM0fmVL6xaPlcfXjGNfl5+aVHH6twZGaVifb4UX
+         hfuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772100391; x=1772705191;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M45UmrhuMMqbMjpIjOb+glFVXPQnqnkmhvjio0VGfRA=;
+        b=LSHWw5wT/rAZnQ9gnxkugEuRgkM5qZfF4nq6o/fSsDcqljQJYBHuHP8JXo9WAZa1za
+         feX2dD6gAFKJR6xkuVKL7nVHeIjsXm/DI0baCkt9CSpTWq9h8pbcRTm2bqLwA19PlfEE
+         p7i8AwB0fS9Q8atQcAf/w6rPFPEb9Fsa1fJoZPWy6XOqUC3qmU8WZp8JBr35h/KYVEka
+         qRs0/UUrLOifLKekLNeAtIDLzBo0KV7aneIeKtyajQ5+3t/wFfmTiHufOdnnD9/746tD
+         aw9anM6yQdPLxSu9Tw+DIL8+7cpXfD4PZA5TdOk2HYXNsB6hMjP+H+VmVYfqtMCAeFGZ
+         RZyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWVmerthGYnQabzXuInrG+9qEfLG0T3cH/6lCalsSYfs3nv4p5264kcnMXCJPh2bEXWg2JcuyickQY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznMItuub5MNlmSpZjUy4I/4Cbf/3QV2aY4J4H54KZyI12S510A
+	wf4RmbjWs0ZjFlFAifT1H2tpK7CB2oTCKsFjMElBtjP+su/Ih+PhMPsU+HwzJNj3mKA=
+X-Gm-Gg: ATEYQzwACE1lmn4eC+ZNwgt2WbOnKW9+7IQDZ6A08+GAEkzr8P3A7XQuDrqs0LCuWrk
+	ZU58PpBpyhRv2auWe9Wt81ZXfFF5OLV8uU/98ZHbjAGFyjh70swKVoJJpg5POUPQltMtT9H67KA
+	jMz+k3F5J+FwIZS4EPhjqWgnQ7kuh0F+f64mmnYu1Q+92vrndHxbDeB6FMfRCd8E5si9PX6jjz9
+	Oh2G4WnosAum4NYKPk+UzhRhCIiX2ZZth2Z/i7dweaBy2yKerePnMQGHFwzsidDaI6zliSli2OK
+	mFyEgqQCc5Fl1JCm5b61HYwKtNeNGVHKDZB5vVKFHTrN3D96CTzg5dmuzAKKy6JO0yLul9Gqkn1
+	SJJJX5SwGjLC6RU4X3H42ii0kzzTuOpgU3guWtZcxmQX1awDDv+iTL6M9Q1anAcCZ/kxk7FVoUw
+	JrkJGLEh+yPFqeypgd8TyBApIcRPJ6WawWflRqtVzhGGD1a8HpPAJHDFSL8Q46TVh9gFR9yKgS0
+	18=
+X-Received: by 2002:a05:6000:288e:b0:439:8d73:58c4 with SMTP id ffacd0b85a97d-43997ee07efmr3050767f8f.18.1772100390701;
+        Thu, 26 Feb 2026 02:06:30 -0800 (PST)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43970d4bf89sm38109724f8f.29.2026.02.26.02.06.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Feb 2026 02:06:30 -0800 (PST)
+Message-ID: <d1ddaa7f-cfba-4e71-8a9f-70014c57de74@linaro.org>
+Date: Thu, 26 Feb 2026 10:06:28 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -37,8 +71,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v8 02/18] dt-bindings: media: qcom,x1e80100-camss: Convert
  from inline PHY definitions to PHY handles
-To: Bryan O'Donoghue <bod@kernel.org>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Bryan O'Donoghue <bod@kernel.org>
 Cc: Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -58,97 +91,65 @@ References: <20260225-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v8-0-95517393bc
  <tVxcOw7tqTRGXAoW06WPM_voMVBY3SO7Mm_MTMWp6OuotVmgmyi0DOgVHdDavO2V6o3iRH7ax0NosgHuzGkHgw==@protonmail.internalid>
  <4ebe2f26-29fa-4104-bc90-3f5aa7009ec3@kernel.org>
  <c2d9742c-3d82-4340-a11b-16370bcad5ea@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <72f0ed74-ac86-4571-8a72-d41282349718@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <c2d9742c-3d82-4340-a11b-16370bcad5ea@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <72f0ed74-ac86-4571-8a72-d41282349718@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 26/02/2026 10:40, Bryan O'Donoghue wrote:
-> On 26/02/2026 09:33, Krzysztof Kozlowski wrote:
->> On 26/02/2026 10:27, Bryan O'Donoghue wrote:
->>> On 26/02/2026 07:07, Krzysztof Kozlowski wrote:
->>>> No, it does not allow that. You cannto change the ABI.
+On 26/02/2026 09:50, Krzysztof Kozlowski wrote:
+> On 26/02/2026 10:40, Bryan O'Donoghue wrote:
+>> On 26/02/2026 09:33, Krzysztof Kozlowski wrote:
+>>> On 26/02/2026 10:27, Bryan O'Donoghue wrote:
+>>>> On 26/02/2026 07:07, Krzysztof Kozlowski wrote:
+>>>>> No, it does not allow that. You cannto change the ABI.
+>>>>>
+>>>>> That's why I reminded multiple times before reviewing new CAMSS bindings
+>>>>> for Milos and something more. Because once it gets accepted, you cannot
+>>>>> change it anymore without valid reason. And there is no valid reason
+>>>>> here provided. I kept these patches in staging/waiting for long
+>>>>> enough...
 >>>>
->>>> That's why I reminded multiple times before reviewing new CAMSS bindings
->>>> for Milos and something more. Because once it gets accepted, you cannot
->>>> change it anymore without valid reason. And there is no valid reason
->>>> here provided. I kept these patches in staging/waiting for long
->>>> enough...
+>>>> I thought your policy was - a dtsi had to have it, which we don't yet have.
 >>>
->>> I thought your policy was - a dtsi had to have it, which we don't yet have.
+>>> And from where did you take that policy? I am pretty sure my each
+>>> comment is about ABI. Heh, I even commented few times about implied ABI
+>>> purely based on kernel, without DTS.
 >>
->> And from where did you take that policy? I am pretty sure my each
->> comment is about ABI. Heh, I even commented few times about implied ABI
->> purely based on kernel, without DTS.
+>> Correct me if I'm wrong. I thought we had discussed either @ the Linaro
+>> Dublin meet or the Linaro Amsterdam meet that changing upstream YAML
+>> would be feasible _if_ you could show there was no dependency on it -
+>> say u-boot, FreeBSD etc.
 > 
-> Correct me if I'm wrong. I thought we had discussed either @ the Linaro 
-> Dublin meet or the Linaro Amsterdam meet that changing upstream YAML 
-> would be feasible _if_ you could show there was no dependency on it - 
-> say u-boot, FreeBSD etc.
-
-And I mentioned multiple caveats and restrictions. Do you quote them
-here or just took the first part of sentence before ", but only ..."?
-
-Anyway, whatever spoken is improvable and I am sure I did not give such
-permissions, maybe except that Dublin meeting was in 2024 thus before
-the release of previous user, so before v6.16, so of course you can
-still reshape unreleased ABI. And then you released it closing the
-discussion.
-
+> And I mentioned multiple caveats and restrictions. Do you quote them
+> here or just took the first part of sentence before ", but only ..."?
 > 
-> I completely understand why you'd say for a UART definition its an ABI 
-> since quite likely another OS might consume the YAML but, I also think 
-> nobody but upstream Linux cares about this binding at all and our only 
-> actual user is upstream dtsi in Linux, which doesn't exist yet.
+> Anyway, whatever spoken is improvable and I am sure I did not give such
+> permissions, maybe except that Dublin meeting was in 2024 thus before
+> the release of previous user, so before v6.16, so of course you can
+> still reshape unreleased ABI. And then you released it closing the
+> discussion.
+Well, is there a way to support both then ?
 
-Half of the comments responding to DT maintainers are "but no one
-cares". Well, I do care, so that's it. If I start analyzing each case
-for possible exceptions I would spend too much time on it. So follow
-documented and expressed in written rules.
+Right now I have csiphy and their registers listed in the camss block.
 
-Best regards,
-Krzysztof
+I could add phys = <> as optional in the schema. Is there any reason to 
+stop adding adjacent csiphy nodes ?
+
+isp@addr {
+	regs = 0xCSID0,
+	       0xCSIPH1;
+	reg-names = "csidX",
+		    "csiphy0";
+};
+
+csiphy@CSIPHY1 {}
+
+I'm not sure if this is against DT rules.
+
+The iommu items _should_ be fine as its maxItems so I can just set that 
+to five instead of eight in the dtsi.
+
+---
+bod
