@@ -1,84 +1,85 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B62389444
-	for <linux-clk@vger.kernel.org>; Thu, 26 Feb 2026 18:17:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6BF5364932
+	for <linux-clk@vger.kernel.org>; Thu, 26 Feb 2026 18:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772129868; cv=none; b=EbQaUZqAWvE2Xfvbgk9IxC+GxlE2SSXJzI4pct7WJwuAJzeB1M1fdu/OVuK3qm45JBBcNPjwZLy5MYT4O3o1J/cyMMIaIenXVVyGYQlZy7XgkXvzUlNpJXITRiqZlvVfydI0Oqr8hYJLdyo/QzfREPoiuMXzLricD9fk0LDrsDo=
+	t=1772129871; cv=none; b=bz4dot3AEXn9Wi45xtu0CiRNE/98yuNRnWA4iFMvckEt32inCEqFP+CU/AA1POAj/aTX7DiBRxxpC6GUUx1P1FTk4gbTJ9Gg6NOTwTuisV13v+JF2i8zfghVmrimYbgYnum6Yru2hsRPwSMk/NPUQccFG6cvM6Z4puQ+ecElEfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772129868; c=relaxed/simple;
-	bh=Nq3CMChIfPaEW53CpS7DRO/eUow2u/bScwRGHq/ah5A=;
+	s=arc-20240116; t=1772129871; c=relaxed/simple;
+	bh=Xv/Yn0DsACY4tPbVThHFi4E542QG5tcnAnMJGGRhnJY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JOsP8GralIX2A3OUM/a/Yvd8lpP1QNrPxwt8ur0BkdU7DUIHbUyp5lPsjCQBNII3XS8ZiJN0pPlFQArBnJmVn1UZm7vLKuMhrYBmwP8bKP/o99xXx/+jdOfl/BUXMiHAtz2sbb2olAnWLakr48vMVtUmAqzkSOLZ/m5B94FOJKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YTLKw0Pm; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=T9SJhdfC; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:To:Cc; b=feoBW9jOP1Nnz2Fw2Y+ljoJapvct1Ya9bDXt61rhR2Wz7qpc7dNft+Fn4NnULyV8Sw5Mfoi2b6JEx0pAD2dotcss/BdBxQAPRlhA88gbY/Y6D+XBMovp8ao8IGDzWJ32pa3NPva3EEOTu9A1oigfHQOOP79miSwd8rddwjYACDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W+kPBjby; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=VlRlL93h; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YTLKw0Pm";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="T9SJhdfC"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W+kPBjby";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="VlRlL93h"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1772129864;
+	s=mimecast20190719; t=1772129868;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=SZUTvZ638AEjm5qo1oF8P/Ro4B+EvKlMp+AWJ5ktKic=;
-	b=YTLKw0PmHnCkhMmHhyKIRKDj83ELoThI9ONG63S0XRyWiPCt2UiYATfXdoM/lOc4Litqv4
-	ocsj5NO/AYdx/Gz9shWA9RLeDKB3eFbix7GzEyepnShA8CCdD914zAHFcMLi5odv1p0K9f
-	SH2R+ww95EkaLUeuSRixoG79ww+hAmI=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=jTyzt/WEM+gv/OJ+PPQ8O+8T255/lfffemaw2ikqAT8=;
+	b=W+kPBjbys2mkPdeAln3KCV3+mIKAmmD2gghnpEC/7/pPBVEryJ2kDg3FMtKBw1iUsHBRzB
+	QXGKFPVP3vrD5Q/OGIi2XzUOQYVUFEgJiPlTuZCzaww7CFlR2DpEvMnqxWxyKxk5dNhQIl
+	UpisEIfy92KRM/6e80MhyzE0ShI86xQ=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-310-s_HlBtN1NmepaTIQHIWPFg-1; Thu, 26 Feb 2026 13:17:42 -0500
-X-MC-Unique: s_HlBtN1NmepaTIQHIWPFg-1
-X-Mimecast-MFC-AGG-ID: s_HlBtN1NmepaTIQHIWPFg_1772129862
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-506ab115571so55403061cf.0
-        for <linux-clk@vger.kernel.org>; Thu, 26 Feb 2026 10:17:42 -0800 (PST)
+ us-mta-561-Au_Z8rdQN6mzxZsRx5w4Tw-1; Thu, 26 Feb 2026 13:17:45 -0500
+X-MC-Unique: Au_Z8rdQN6mzxZsRx5w4Tw-1
+X-Mimecast-MFC-AGG-ID: Au_Z8rdQN6mzxZsRx5w4Tw_1772129865
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8cb42f56c4aso1010246585a.3
+        for <linux-clk@vger.kernel.org>; Thu, 26 Feb 2026 10:17:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1772129862; x=1772734662; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1772129865; x=1772734665; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=SZUTvZ638AEjm5qo1oF8P/Ro4B+EvKlMp+AWJ5ktKic=;
-        b=T9SJhdfClEKo4WZ0WI7ruoV/PtvgrjwotExnIIkUGCBOmE+fxTlfvwaV1781Ckdifv
-         GRFWZ5A/95Mez8v1hWMvlyM+3X5RbQ7Klh4+1vSRCPIqHChcPyCjQgQnPKcswSyW7haJ
-         cXGpcZi/yuHCzXNOo3o5rQR6OFqqskWisDS8UAlBDo5CJDOeHqVyVLKLtd9PRrmQj4R8
-         ZsVOmZfIu3DGE5Nn4djI4HlVHczYio/sy6Qvx7blKn2FLBami4ySthpzwaex/JG/Ec/B
-         QAetdvj8Eir8CfamP7yM9BT3NiCEEgVeaD4TC2bCvXLpRspoootTd5Z/XJcbdsrvjogA
-         kVLA==
+        bh=jTyzt/WEM+gv/OJ+PPQ8O+8T255/lfffemaw2ikqAT8=;
+        b=VlRlL93hrZj1dYZfjTBaWm+z1JLada8eWPFqv03OVsMgZcYgM+QZfr+uefkCU1o7YK
+         /xiHbjiFx6aR1kzkftWYKNGEiYJ44NQAriTLfHiUGykGsOUfRo1mt0zdJFgFAh/O01wf
+         fjbVRi1EQHPHvcuLHr5ry4Zk9UoUHnRsjOaX5L8Js2uJVXlZot3i59w/t2KzlZb+Gt8N
+         orH+SiJhsw0ALMNIkRAki4xwIZ51wNmrC3X+Ywxya4cUcmgHicqdy0GxSB1u5p0MCYqq
+         O9lwu5+kdQ8ctbWO/OoF38l3oY3L6etI6sqmuA2dfoUr3vFKGtCad7fN++WBxbnj8eLP
+         NiOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772129862; x=1772734662;
+        d=1e100.net; s=20230601; t=1772129865; x=1772734665;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=SZUTvZ638AEjm5qo1oF8P/Ro4B+EvKlMp+AWJ5ktKic=;
-        b=nV/2ucfsOxRLmNS/K88ZZn0cN5FNRi/tYNqssgnv/IQ4RhzLK1BeUY5BjDjn8vdJ7c
-         C326nPR7XDrrvayuOnakiRBv023MH9sUM+pAJlDNBDITDm4Reet+kN3RHWTG72YYNlGi
-         wx4DAEfj4/N4vg0K8Htn/qW3BFcdwabHO+iRKHbZ5YbTD6mBTc9u6PjvtvXFu0k6FyRu
-         6odQSc6hTr1MxpEYxTRyxVjqCIyAAZYX94YJoAFNacRDOEhHdcuwThVkkSazfnbeoGXO
-         pzIHy5u9EGJZwJPV3s5E3VhVnL0JV5jhQDg7G43ekQ4Xrubpkm3pCCJAOoAmOigCoZ4z
-         HU5w==
-X-Gm-Message-State: AOJu0YyApaVdr6V614UTFQJjVjCqMyCMgtKG9/seD8+BlquBFt4fiSSS
-	u/qPWEOOjWDUykaks9SBCHzET+bm/8+AkCouubU4xcW/zZWh5V2r6MjR/zEif+lz8vJ3ayXiY3S
-	1c3/orS0g3S3noCNqfrtqf4dA19zZJcZ1lTPXmZs28Bu088nGqC+IyZ+qRjSkOQ==
-X-Gm-Gg: ATEYQzxSa+vOTtX+ra1sUINv2S07b30V/G0e6iQ5YoNrwy3OMm+7L2433FfwHNwFxC6
-	L+fw9TLQ1OZ0em4N8mUJI5BJlJIqi5TtY4fvAAdSanDLVa2GieU67ZZfmr9QQlTzin8P52Y0tH2
-	xsFCUC6N0cDiG171nW1IzW+nVkv/yuD9ZxGu0z95c8rVcc+Po0taoLt8vLtKIw5DDlS6etdfgld
-	4845A1AHAOmfhDeTfydnXB+shcQef8M945IRHlhHXjmWG8J01oaMZel7VQ6+LwsIbW1e4D3rxMv
-	F/+vAXmWYd/tOQPJhZs/KpM9UBvsSDsnKHu7c2tobZVLaPmlwrKTy8JvQkSxvka/eSVWhKYazZQ
-	ZhljzPZJ/03TteG0zNO7ROXknbrAYbav61Gg6KM/lwYb2m4rwJHacF3rFvW3R
-X-Received: by 2002:a05:620a:1b8b:b0:8cb:c7b7:1be3 with SMTP id af79cd13be357-8cbc7b71dbfmr89299185a.38.1772129862165;
-        Thu, 26 Feb 2026 10:17:42 -0800 (PST)
-X-Received: by 2002:a05:620a:1b8b:b0:8cb:c7b7:1be3 with SMTP id af79cd13be357-8cbc7b71dbfmr89293185a.38.1772129861633;
-        Thu, 26 Feb 2026 10:17:41 -0800 (PST)
+        bh=jTyzt/WEM+gv/OJ+PPQ8O+8T255/lfffemaw2ikqAT8=;
+        b=pGIVFOwlKwX2tqdvYYVJYdyFTmdkKlN94Skw0S9QqTOIG6YL+noNx35BavLHfFnmju
+         5b/NvftlVNLx3YCWSB2X5jJ9rNWFXrMWvC9l4nYt+NSoZGqUWmvPyq9T7iiGfT0EH/lK
+         BCFWV2Y7mu8hlSCKrrt9nJx8rlg/0ETApJ3coXTzikLZPpG7gC1qt4PR3cKQXUfbgSXc
+         mbYRLVyF1scNrJxLlE3rtuuO9Aji6b86jLEvFhvxXbTGeGcDwBFewZEPsoA+fXyM3CSd
+         uo14OxXg8uwpPKqO5mDXZyYM2Pr3GW3pnF1ibULnWNaESmbnIxSiu3dJSWTd0S+PhsB1
+         ma7A==
+X-Gm-Message-State: AOJu0Yy1Xwevmqvllv6eTX+OjSNkuptMKmfAO68783WCfNlg5OPKA7ei
+	oPI5Fy/Rw8Ks/nXCC3sXqzAqz7k9IS11DkeBBMxYjw/0e9rfgipP7XLsQ+pLfd6VgmpLrbJdHrX
+	Jz8lVwGqTbFGBsIuWON9wSOEmp8+n2nA9XmaDkPL3gJbfKuQVRXn0YZdD+8cLXg==
+X-Gm-Gg: ATEYQzw9sxsvhtSE6qyHjQtPh2DoXpfe1C7rXR3LUb2A3ssNcEdWvTdkMUuVYqIiw3K
+	EbKv9yQOSFlAd8JwHZTGMtYA7KP5svjuAyrSHSJuYXscSWxld4dWNNtu5BKdj/CjP/niiNnDpnR
+	pgkqpMaTFELJfYQ616Py5ViU+Bn2OVAVvvZTCXmWoQC29RjEqq5qJx/hGqycpc3PvTyB9f4vvC/
+	3dT8QItGnRHMCvrP4KdF7duxmDJFk7grYGzy8dQ67zeKcu51d7ViUT+QLeZR3j2uRehKLFFkLrZ
+	r3TVgowKvEkVJm4W3m2X/P0fvrJbSEge9R9LeMUS+PWTcqvTTJ42Gc42XYnTzc0ZXKfZmQiy9R4
+	ECDC8hbxKZPqpxMDRg1PGOEY1EOiNklLQ3Sv0zP7lJAjg7OOJ3c1r99RAwO05
+X-Received: by 2002:a05:620a:3192:b0:8cb:3870:5c1f with SMTP id af79cd13be357-8cbc112b3f0mr376956085a.27.1772129864770;
+        Thu, 26 Feb 2026 10:17:44 -0800 (PST)
+X-Received: by 2002:a05:620a:3192:b0:8cb:3870:5c1f with SMTP id af79cd13be357-8cbc112b3f0mr376953185a.27.1772129864349;
+        Thu, 26 Feb 2026 10:17:44 -0800 (PST)
 Received: from [192.168.1.3] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8cbbf717f2bsm247046685a.35.2026.02.26.10.17.36
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8cbbf717f2bsm247046685a.35.2026.02.26.10.17.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Feb 2026 10:17:40 -0800 (PST)
+        Thu, 26 Feb 2026 10:17:42 -0800 (PST)
 From: Brian Masney <bmasney@redhat.com>
-Date: Thu, 26 Feb 2026 13:16:45 -0500
-Subject: [PATCH 01/13] clk: add new flag CLK_ROUNDING_FW_MANAGED
+Date: Thu, 26 Feb 2026 13:16:46 -0500
+Subject: [PATCH 02/13] clk: test: add test suite for
+ CLK_ROUNDING_FW_MANAGED flag
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -87,167 +88,142 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260226-clk-det-rate-fw-managed-v1-1-4421dd2f6dc6@redhat.com>
+Message-Id: <20260226-clk-det-rate-fw-managed-v1-2-4421dd2f6dc6@redhat.com>
 References: <20260226-clk-det-rate-fw-managed-v1-0-4421dd2f6dc6@redhat.com>
 In-Reply-To: <20260226-clk-det-rate-fw-managed-v1-0-4421dd2f6dc6@redhat.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>
 Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Brian Masney <bmasney@redhat.com>, Abel Vesa <abelvesa@kernel.org>, 
- Andrea della Porta <andrea.porta@suse.com>, 
- Baolin Wang <baolin.wang@linux.alibaba.com>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Frank Li <Frank.Li@nxp.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Krzysztof Kozlowski <krzk@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Sudeep Holla <sudeep.holla@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, arm-scmi@vger.kernel.org, 
- Chunyan Zhang <zhang.lyra@gmail.com>, 
- Cristian Marussi <cristian.marussi@arm.com>, 
- Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- Peng Fan <peng.fan@nxp.com>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>
+ Brian Masney <bmasney@redhat.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4829; i=bmasney@redhat.com;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3637; i=bmasney@redhat.com;
  s=20250903; h=from:subject:message-id;
- bh=Nq3CMChIfPaEW53CpS7DRO/eUow2u/bScwRGHq/ah5A=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDIX9Gl/8Qhn3nT5sJOJp63wTebDqndvHZo401bZ3U3v9
- fUq74XtHaUsDGJcDLJiiixLco0KIlJX2d67o8kCM4eVCWQIAxenAExEyILhf9mh5qLnnYv6ovVZ
- BV0j136w/qzwRDRlzgWDsnBfpx13LBkZbrjNE7DY37FVRFDaqplrc1X3XEOBzF0rNoqd8tWwMzj
- MAQA=
+ bh=Xv/Yn0DsACY4tPbVThHFi4E542QG5tcnAnMJGGRhnJY=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDIX9OmotiloOvscfXSnkXtJtmCyxnyLuwlHd1dscFCfM
+ GthzvKYjlIWBjEuBlkxRZYluUYFEamrbO/d0WSBmcPKBDKEgYtTACby35nhr/zUY+r3Zpz6xBpT
+ OZdnHa9P+bYTB4LOWWpWXPqieSVq0w6GPzw2L4wl4mxMq2xUz6okl9xT89teyjF73Ymebztkgq5
+ KcAIA
 X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
  fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-There are some clocks where the rounding is managed by the hardware, and
-the determine_rate() clk ops is just a noop that simply returns 0. Add a
-new flag for these type of clocks, and update the clk core so that the
-determine_rate() clk op is not required when this flag is set.
+Add two new clk tests related to the CLK_ROUNDING_FW_MANAGED flag:
+
+- Test that clk_hw_register() fails when determine_rate is not set.
+
+- Test that clk_hw_register() succeeds when determine_rate is not set,
+  and CLK_ROUNDING_FW_MANAGED is set. clk_set_rate() works, and
+  clk_round_rate() returns the requested rate.
 
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 
 ---
 To: Michael Turquette <mturquette@baylibre.com>
 To: Stephen Boyd <sboyd@kernel.org>
-To: Abel Vesa <abelvesa@kernel.org>
-To: Andrea della Porta <andrea.porta@suse.com>
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-To: Bjorn Andersson <andersson@kernel.org>
-To: Chanwoo Choi <cw00.choi@samsung.com>
-To: Frank Li <Frank.Li@nxp.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-To: Orson Zhai <orsonzhai@gmail.com>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-To: Sudeep Holla <sudeep.holla@kernel.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
 Cc: linux-clk@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
-Cc: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: arm-scmi@vger.kernel.org
-Cc: Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: imx@lists.linux.dev
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-arm-msm@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: Peng Fan <peng.fan@nxp.com>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
 ---
- drivers/clk/clk.c            | 24 +++++++++++++++++++++---
- include/linux/clk-provider.h |  2 ++
- 2 files changed, 23 insertions(+), 3 deletions(-)
+ drivers/clk/clk_test.c | 85 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 85 insertions(+)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index fd418dc988b1c60c49e3ac9c0c44aa132dd5da28..0a522a0817411c7f7c6e9cffd6f024e672a331a8 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1557,6 +1557,20 @@ static int __init clk_disable_unused(void)
- }
- late_initcall_sync(clk_disable_unused);
- 
-+/**
-+ * clk_is_rounding_fw_managed - Check to see if clk rounding is handled by the
-+ * firmware.
-+ * @core: the clk to check
-+ *
-+ * Clks that have this flag enabled do not need to have a determine_rate() op
-+ * set, and will always return success for any rounding operation since the
-+ * firmware will deal with the rounding.
-+ */
-+static inline bool clk_is_rounding_fw_managed(struct clk_core *core)
-+{
-+	return core->flags & CLK_ROUNDING_FW_MANAGED;
-+}
-+
- static int clk_core_determine_round_nolock(struct clk_core *core,
- 					   struct clk_rate_request *req)
- {
-@@ -1589,6 +1603,8 @@ static int clk_core_determine_round_nolock(struct clk_core *core,
- 		req->rate = core->rate;
- 	} else if (core->ops->determine_rate) {
- 		return core->ops->determine_rate(core->hw, req);
-+	} else if (clk_is_rounding_fw_managed(core)) {
-+		return 0;
- 	} else {
- 		return -EINVAL;
- 	}
-@@ -1673,7 +1689,7 @@ EXPORT_SYMBOL_GPL(clk_hw_forward_rate_request);
- 
- static bool clk_core_can_round(struct clk_core * const core)
- {
--	return core->ops->determine_rate;
-+	return core->ops->determine_rate || clk_is_rounding_fw_managed(core);
- }
- 
- static int clk_core_round_rate_nolock(struct clk_core *core,
-@@ -3528,6 +3544,7 @@ static const struct {
- 	ENTRY(CLK_IS_CRITICAL),
- 	ENTRY(CLK_OPS_PARENT_ENABLE),
- 	ENTRY(CLK_DUTY_CYCLE_PARENT),
-+	ENTRY(CLK_ROUNDING_FW_MANAGED),
- #undef ENTRY
+diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+index b1961daac5e22fb84f493f04feab1ff94a975d90..d7037eadc0a0ddf7559151068775a9d11429c02e 100644
+--- a/drivers/clk/clk_test.c
++++ b/drivers/clk/clk_test.c
+@@ -3541,9 +3541,94 @@ static struct kunit_suite clk_hw_get_dev_of_node_test_suite = {
+ 	.test_cases = clk_hw_get_dev_of_node_test_cases,
  };
  
-@@ -3906,7 +3923,7 @@ static int __clk_core_init(struct clk_core *core)
++static const struct clk_ops clk_no_determine_rate_ops = {
++	.recalc_rate = clk_dummy_recalc_rate,
++	.set_rate = clk_dummy_set_rate,
++};
++
++/*
++ * Test that clk_hw_register() fails when determine_rate is not set.
++ */
++static void clk_test_no_determine_rate_fails(struct kunit *test)
++{
++	struct clk_init_data init = { };
++	struct clk_dummy_context *ctx;
++	int ret;
++
++	ctx = kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
++
++	ctx->rate = DUMMY_CLOCK_INIT_RATE;
++
++	init.name = "test_no_determine_rate";
++	init.ops = &clk_no_determine_rate_ops;
++	ctx->hw.init = &init;
++
++	ret = clk_hw_register(NULL, &ctx->hw);
++	KUNIT_EXPECT_EQ(test, ret, -EINVAL);
++}
++
++/*
++ * Test that clk_hw_register() succeeds when determine_rate is not set,
++ * and CLK_ROUNDING_FW_MANAGED is set. clk_set_rate() works, and
++ * clk_round_rate() returns the requested rate.
++ */
++static void clk_test_fw_managed_round_rate(struct kunit *test)
++{
++	struct clk_init_data init = { };
++	struct clk_dummy_context *ctx;
++	long rate, rounded_rate;
++	struct clk *clk;
++	int ret;
++
++	ctx = kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
++
++	ctx->rate = DUMMY_CLOCK_INIT_RATE;
++
++	init.name = "test_fw_managed";
++	init.ops = &clk_no_determine_rate_ops;
++	init.flags = CLK_ROUNDING_FW_MANAGED;
++	ctx->hw.init = &init;
++
++	ret = clk_hw_register(NULL, &ctx->hw);
++	KUNIT_ASSERT_EQ(test, ret, 0);
++
++	clk = clk_hw_get_clk(&ctx->hw, NULL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, clk);
++
++	/* Test that clk_round_rate() returns the requested rate */
++	rounded_rate = clk_round_rate(clk, DUMMY_CLOCK_RATE_1);
++	KUNIT_EXPECT_EQ(test, rounded_rate, DUMMY_CLOCK_RATE_1);
++
++	/* Set a rate and verify it works */
++	ret = clk_set_rate(clk, DUMMY_CLOCK_RATE_1);
++	KUNIT_ASSERT_EQ(test, ret, 0);
++
++	rate = clk_get_rate(clk);
++	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
++
++	clk_put(clk);
++	clk_hw_unregister(&ctx->hw);
++}
++
++static struct kunit_case clk_fw_managed_test_cases[] = {
++	KUNIT_CASE(clk_test_no_determine_rate_fails),
++	KUNIT_CASE(clk_test_fw_managed_round_rate),
++	{}
++};
++
++/*
++ * Test suite for CLK_ROUNDING_FW_MANAGED flag.
++ */
++static struct kunit_suite clk_fw_managed_test_suite = {
++	.name = "clk_fw_managed_test",
++	.test_cases = clk_fw_managed_test_cases,
++};
  
- 	/* check that clk_ops are sane.  See Documentation/driver-api/clk.rst */
- 	if (core->ops->set_rate && !core->ops->determine_rate &&
--	      core->ops->recalc_rate) {
-+	      core->ops->recalc_rate && !clk_is_rounding_fw_managed(core)) {
- 		pr_err("%s: %s must implement .determine_rate in addition to .recalc_rate\n",
- 		       __func__, core->name);
- 		ret = -EINVAL;
-@@ -3920,7 +3937,8 @@ static int __clk_core_init(struct clk_core *core)
- 		goto out;
- 	}
- 
--	if (core->ops->set_parent && !core->ops->determine_rate) {
-+	if (core->ops->set_parent && !core->ops->determine_rate &&
-+	    !clk_is_rounding_fw_managed(core)) {
- 		pr_err("%s: %s must implement .set_parent & .determine_rate\n",
- 			__func__, core->name);
- 		ret = -EINVAL;
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 1cda2c78dffaff037f0f16b0f11106b63b3a746f..187f8248a9c840c701cbbba99bb7cdeef7b654ee 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -32,6 +32,8 @@
- #define CLK_OPS_PARENT_ENABLE	BIT(12)
- /* duty cycle call may be forwarded to the parent clock */
- #define CLK_DUTY_CYCLE_PARENT	BIT(13)
-+/* clock rate rounding is managed by firmware, don't require determine_rate */
-+#define CLK_ROUNDING_FW_MANAGED		BIT(14)
- 
- struct clk;
- struct clk_hw;
+ kunit_test_suites(
+ 	&clk_assigned_rates_suite,
++	&clk_fw_managed_test_suite,
+ 	&clk_hw_get_dev_of_node_test_suite,
+ 	&clk_leaf_mux_set_rate_parent_test_suite,
+ 	&clk_test_suite,
 
 -- 
 2.53.0
