@@ -1,33 +1,66 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f65.google.com (mail-wr1-f65.google.com [209.85.221.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC94389462;
-	Thu, 26 Feb 2026 09:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E86330FC01
+	for <linux-clk@vger.kernel.org>; Thu, 26 Feb 2026 09:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772098845; cv=none; b=sQ0DdanaG7Cc/H2b85cN4uM6HSJcmj8fs+nzqIWnWE3b03vwMdSPta8nVNftTtrP/ItuiObhaRIqLL0xonjdLPR0O1adU7dDhjPqcQs8qCNfZRAvcmGobtQXDawkHdGNXgZdB52on+kUaLY/2eSafPGfhnxjv35ds2FdehwGViQ=
+	t=1772099397; cv=none; b=mlP8aQm9Brr1xawkt6E7rTjwQJ7cbcgINa0O5AQbomGZhlYs9zFqr/ssZ2TLgfaOtfab2cXHNAPaqHZpSYQwg4VBPeiVkFaiuEeqT+ktHzQhWnL4DyamylqSMKKQ9hc2HjsBj2pgCyi6PzSMImw5Vzy0SLKcoMm+YTyDPhKJcSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772098845; c=relaxed/simple;
-	bh=QHY47h/TjPBp6NY294KbWIc5ru66u4hKqyorM2kux24=;
+	s=arc-20240116; t=1772099397; c=relaxed/simple;
+	bh=0VLKb0yi2wmg8HmVprc6SZDCPaIePTHOT5RF/nosdlQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XWlIuGFCaTpM6yYWh9SKjRWD1z7SSleZJ2T+OBY/DTozdGi8tsKeT5qkkd8geTOAw+s91c98/QBx3gvUF8FhDeCt682c69X96SoBF4D8G60gxgr93XyFWwMtiKFPCzz+Vwvq+4M8XRD+lKpmIbg2+dewVlfSyeYxYcScroDTdFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HLS7ItEK; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=rVsPApajnRVfg9n1yRpXIwbNHctvy91smIbqRqug6Xjd7vCVvSfo1zQsYTXfDLIxKfIpsUhPVzeitwLzwFws+AYUVxqlGeeVe/UOkv1LuFYo7cXFJ/Fv4RqLXtrJRiOWA7aI6aFxCFDXbbJsKA2da2ZQCJRxsMioOQi0DChrQxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BEJsCcJp; arc=none smtp.client-ip=209.85.221.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HLS7ItEK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69F98C19422;
-	Thu, 26 Feb 2026 09:40:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772098845;
-	bh=QHY47h/TjPBp6NY294KbWIc5ru66u4hKqyorM2kux24=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HLS7ItEKocqtKSSl6JcAhpO3gkAZxhcKgyu9WU/sQeIQ80c+0f+n0KU7Q9r3GVfEf
-	 i2ImvM1Wq1/DJ33giPojRzfCvGw4CAodyuJPXrTAANr8ZT3ClaR4g3NnBhxcBLFctb
-	 DJTpBlenGtb3UOKGENAMstHgHDZdf1hi0WyFmSdHX5ys5+42DzokJx/b38osHlNkgJ
-	 bnxtrteuYkhiVdfOZjQRlsOyUobIbomu1CyKRtFaH0zlWb22sQcK4rDEY94uCp7q1a
-	 z+WHVCMwI63SY9vU1sI3WcMynGu9r6shhyJC4Jup6rUIwRt2TNSLxDawlARP8ROci9
-	 usdFoo/7oRCnA==
-Message-ID: <c2d9742c-3d82-4340-a11b-16370bcad5ea@kernel.org>
-Date: Thu, 26 Feb 2026 09:40:37 +0000
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BEJsCcJp"
+Received: by mail-wr1-f65.google.com with SMTP id ffacd0b85a97d-4399851b14bso329870f8f.1
+        for <linux-clk@vger.kernel.org>; Thu, 26 Feb 2026 01:49:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1772099395; x=1772704195; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7ACrGoewzoYGRbbsm9o100sXJ5ajI581hmZz0uIYUic=;
+        b=BEJsCcJpbn0rZefI+x0qXtlzFynEIuTfR5bpCRgJCN+JigKjtCM9Os5wi02gKWQtWC
+         L3gebfx8rZssFS1V/IqZ7oKW5/d9VtwWfQIBQqWtCZdtmoWsGrqgJOYnw/wSl4nvKu9f
+         PxN6pCtC6gZSI55fl+jEgX29RlzKbTl2p/KhXVM/yBJm8AaFxQ9G2r6mbz++sac2zLIU
+         azsWJuAyyivWszqkek45/YHndN8plNEEwc9+XBY+5OGsDNNF/Ovs1PCVntMpNzO8RdHj
+         ve8O5yVlV/oViio9Ml06FdsvCOxncmeNdEMFessAWSDQvdWjLCgrHH/CKTC5xRP+B40c
+         Zv+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772099395; x=1772704195;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7ACrGoewzoYGRbbsm9o100sXJ5ajI581hmZz0uIYUic=;
+        b=MVq8FmP3Yhn1Sam2OaoiFMW/EEdUWrNo27D70Ag1l+ZjFV3anT+mkQKaGPMcjcFkOq
+         OxbTLKdl/zXHIGVjDwltXaHwAug7xc4ldxIe61DKC2vFcFpVcA8qqP42smpWs4oU7LBB
+         d1zhvhVnNCOgrj8//KlS2HHK2Px5NgngpFDe0Pg49lAJd+MXCyz78cVU1Q1sfhWnQ+nS
+         jqJSDVZEjSpfIk4QPadcg9tobCua69gjnfFsa1CfMh2KpgvSZo0SWqhJi3sWEHGL65z7
+         h+Pl/DG3z+qVxzLamq09huCfPKaTWlxvvw2eacPCaGp4SU4mYvLRStk9qclMWW/W8r8K
+         bCgg==
+X-Forwarded-Encrypted: i=1; AJvYcCWU7ZIJj/smoBqi3+wQaJ4dA3UKXg//ionormKETlCr7I1FF68tYzIpV8Tmiq74QHlPh2Oi8w0SAGM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkCWJ6ip/0J3KkuIVxR1ZLdDkEPezX52VFg/NMwHf0xkNCo4R3
+	AjShIgM8u+lw3GTIg5/jEd3XFbayRiv7K3aUkonBiKmKPZtUcquXy1rSz8A6vMnxZIw=
+X-Gm-Gg: ATEYQzzCTh2I6240HZKPmmXw+jg5ymW1buMXWg1CrxnFvK2CnRAcOvpFLGcPBWomO6R
+	4emGb+0OQsMQ6L6FniPb9tQKBLT602KarT7+9Wpo2TAdKdTfVjUKZRbylL55ASqN8d0O3HbGK2A
+	vbkIrfcrn2iGtErTeazWyGVlPedqL0Ggn+om5KoJ7SqguxW+pze7quNkFIhXTXQDEJF8cVMlfTz
+	5lMlPDWyR2mZq2napNBrRNHSUNwn4fZDJy4g7aBCOxYIcOgsZNdtxFtO6j6EK7g3Dtkn7VCK7bE
+	KwqmiOyOCoNbXvkJGDp6G8OkavClVtOtCf3NsDdAH8hRR4tVCpFvtpd7D48g8Wqnm40cFakySG2
+	d3ySbYkYjAgdluNg/s54pgjw2lOWB8r3rj5Ipfqv/FYPPQrKSHNBeXZVaimfWu6gBpBFoC6SWkO
+	wea8yg+qKTMLfRfJ9+dhdqgp7YQ7Ddu1IGVgW1rZZvvcYYaiczf8eiV4pfDMoW6DWJ
+X-Received: by 2002:a05:6000:24c1:b0:439:5bfe:18ce with SMTP id ffacd0b85a97d-4396f15ccdemr36782242f8f.8.1772099394691;
+        Thu, 26 Feb 2026 01:49:54 -0800 (PST)
+Received: from [192.168.0.40] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439927c3e01sm8948031f8f.11.2026.02.26.01.49.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Feb 2026 01:49:54 -0800 (PST)
+Message-ID: <5e595b6f-ec3b-43d9-9963-f4b594f93b86@linaro.org>
+Date: Thu, 26 Feb 2026 09:49:49 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,10 +68,9 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 02/18] dt-bindings: media: qcom,x1e80100-camss: Convert
- from inline PHY definitions to PHY handles
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: Re: [PATCH v8 01/18] dt-bindings: media: qcom,x1e80100-camss: Assign
+ correct main register bank to first address
+To: Krzysztof Kozlowski <krzk@kernel.org>, Bryan O'Donoghue <bod@kernel.org>
 Cc: Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -51,44 +83,29 @@ Cc: Bjorn Andersson <andersson@kernel.org>,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-media@vger.kernel.org
 References: <20260225-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v8-0-95517393bcb2@linaro.org>
- <20260225-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v8-2-95517393bcb2@linaro.org>
- <CuJMpimPBtwHGAd5-YHUArL6FkU2HQeY4SjbxeMwf0ToQ7LKO3zWSTn86L-HKxC1KfarWc4rRbZqnCMQsv0pcw==@protonmail.internalid>
- <20260226-fluffy-complex-malamute-7ecec6@quoll>
- <35b1ba2a-e156-4542-b33a-d4e53f6a62cb@kernel.org>
- <tVxcOw7tqTRGXAoW06WPM_voMVBY3SO7Mm_MTMWp6OuotVmgmyi0DOgVHdDavO2V6o3iRH7ax0NosgHuzGkHgw==@protonmail.internalid>
- <4ebe2f26-29fa-4104-bc90-3f5aa7009ec3@kernel.org>
-From: Bryan O'Donoghue <bod@kernel.org>
+ <20260225-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v8-1-95517393bcb2@linaro.org>
+ <6JLP5a_yJmhmmwSmtFoMmzlT3Gh5yhHVpVSRTqDb93I2_KFB6-p_6mKmGKaqtStt2bbVPqQ16j0Sfp2Z-LvhlQ==@protonmail.internalid>
+ <20260226-resourceful-pelican-of-defense-437c7e@quoll>
+ <13853dc8-1a54-4cfd-b801-f23d88be4a88@kernel.org>
+ <5QUAno5rJaSIXrCTC1Y9QJOrrx2Pt1GGVJspvhutMHgSh6mcu5S6gsZHu3lOEVXjG7pqSyJjH6RB1wXRszZ-Mg==@protonmail.internalid>
+ <860cb545-8283-4f2b-9f21-19d207ed7da3@kernel.org>
+ <f9242e8f-95bc-4b2b-9b7d-2ad80bea1e46@kernel.org>
+ <df38ac48-a472-4f0d-84c0-1f108aa13229@kernel.org>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 Content-Language: en-US
-In-Reply-To: <4ebe2f26-29fa-4104-bc90-3f5aa7009ec3@kernel.org>
+In-Reply-To: <df38ac48-a472-4f0d-84c0-1f108aa13229@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 26/02/2026 09:33, Krzysztof Kozlowski wrote:
-> On 26/02/2026 10:27, Bryan O'Donoghue wrote:
->> On 26/02/2026 07:07, Krzysztof Kozlowski wrote:
->>> No, it does not allow that. You cannto change the ABI.
->>>
->>> That's why I reminded multiple times before reviewing new CAMSS bindings
->>> for Milos and something more. Because once it gets accepted, you cannot
->>> change it anymore without valid reason. And there is no valid reason
->>> here provided. I kept these patches in staging/waiting for long
->>> enough...
->>
->> I thought your policy was - a dtsi had to have it, which we don't yet have.
-> 
-> And from where did you take that policy? I am pretty sure my each
-> comment is about ABI. Heh, I even commented few times about implied ABI
-> purely based on kernel, without DTS.
+On 26/02/2026 09:38, Krzysztof Kozlowski wrote:
+> I just told you - there is actual mainline user in v6.16 - so whatever
+> you claim here is incorrect in first assumption.
 
-Correct me if I'm wrong. I thought we had discussed either @ the Linaro 
-Dublin meet or the Linaro Amsterdam meet that changing upstream YAML 
-would be feasible _if_ you could show there was no dependency on it - 
-say u-boot, FreeBSD etc.
+I thought we had discussed @ Amsterdam or perhaps Tokyo that if you 
+could show there was no external user - i.e. prove no dependency then 
+you could change the YAML ?
 
-I completely understand why you'd say for a UART definition its an ABI 
-since quite likely another OS might consume the YAML but, I also think 
-nobody but upstream Linux cares about this binding at all and our only 
-actual user is upstream dtsi in Linux, which doesn't exist yet.
+Specifically check u-boot, FreeBSD etc.
 
 ---
 bod
