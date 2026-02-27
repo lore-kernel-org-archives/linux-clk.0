@@ -1,48 +1,50 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B237A43CEFD;
-	Fri, 27 Feb 2026 15:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 641DB43901F;
+	Fri, 27 Feb 2026 15:33:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772206407; cv=none; b=uf97nbtecpNnqAMQlgYg1CJJhYvySGuuR91AzViKWGYDQ1LXj5M3SvxCr+l2+yzq5uS9Jn5z4gga9rpPfBR9xcZinsi62WdtTlX7TYfCPQ7M4R/+Okcpi+rNqmVX625OHi9ngVcVHM5rfOSpalKB+yp1XivumyQWE0e5pIFc7DA=
+	t=1772206411; cv=none; b=m1Pj9df5TZ7W17onFXKjUlBsppAaRZ06+c3GFJDx1gSHizirZTyXMipfUqPFWo4zDaKUmHXjWUR/BvQKDkPl0a1jSZyOQwPXTIVGx4eFWs68eKKHvN5VyDomBV1D4AbAIqT+MnG7XcbrhHXoBesXSmor03LLzTJVDsxgtd7St9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772206407; c=relaxed/simple;
-	bh=WtFHCNGjsWLI3a0WbwSqCvLqMb55tMllJC3qlMJCveM=;
+	s=arc-20240116; t=1772206411; c=relaxed/simple;
+	bh=Tkd/258mwtchO7qfEmkltVc/PZJ7n6JXbNX9LHJ9lsA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OnPrYK4n0tc78lgqpTIKabU0bZXAtOVRxtz0X/law+jGyYE/O4l1NEpt/2Jqu5hD/uTTl5zwg53xVI597hdBijC8K24XyjB6iWPaCB8WnLG9vyBdcbhLbUgFANq5dCfVDhVhjftB/wR+MeAOVxGzBLabn3iBRt/38IMUSJGyUIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: qppQCwIvSParb7whLD6jWw==
-X-CSE-MsgGUID: No/HWlCNRa2USKlIlvxQ9g==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 28 Feb 2026 00:33:25 +0900
-Received: from ubuntu.adwin.renesas.com (unknown [10.226.92.57])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 2F1754006C61;
-	Sat, 28 Feb 2026 00:33:19 +0900 (JST)
-From: John Madieu <john.madieu.xa@bp.renesas.com>
-To: claudiu.beznea.uj@bp.renesas.com,
-	lpieralisi@kernel.org,
-	kwilczynski@kernel.org,
-	mani@kernel.org,
-	geert+renesas@glider.be,
-	krzk+dt@kernel.org
-Cc: robh@kernel.org,
-	bhelgaas@google.com,
-	conor+dt@kernel.org,
-	magnus.damm@gmail.com,
-	biju.das.jz@bp.renesas.com,
-	linux-pci@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	 MIME-Version; b=f2t+uCjSOlMKgwb2w3qAPC7Ej8mtCODk4CcC+7e7OkXvWHRsRlIOnJd/mdsyu3fLBSI39WDv5Tix0vqD9X2TgQm4QBR4Oq4aathA4t9/lWs0L7SAe1DMwNHWCZQXCTT78Tj35nLXzWkRzDenP/FsWSNMDlK3mxrUjyyMaQ4lsns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 71A1B339;
+	Fri, 27 Feb 2026 07:33:22 -0800 (PST)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8297B3F73B;
+	Fri, 27 Feb 2026 07:33:22 -0800 (PST)
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	john.madieu@gmail.com,
-	John Madieu <john.madieu.xa@bp.renesas.com>
-Subject: [PATCH v7 03/15] PCI: renesas: rzg3s: Rework inbound window algorithm for multi-SoC support
-Date: Fri, 27 Feb 2026 16:32:23 +0100
-Message-ID: <20260227153236.55988-4-john.madieu.xa@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260227153236.55988-1-john.madieu.xa@bp.renesas.com>
-References: <20260227153236.55988-1-john.madieu.xa@bp.renesas.com>
+	linux-renesas-soc@vger.kernel.org
+Cc: sudeep.holla@arm.com,
+	philip.radford@arm.com,
+	james.quinlan@broadcom.com,
+	f.fainelli@gmail.com,
+	vincent.guittot@linaro.org,
+	etienne.carriere@foss.st.com,
+	peng.fan@oss.nxp.com,
+	michal.simek@amd.com,
+	dan.carpenter@linaro.org,
+	geert+renesas@glider.be,
+	kuninori.morimoto.gx@renesas.com,
+	marek.vasut+renesas@gmail.com,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH 04/11] clk: scmi: Use new simplified per-clock rate properties
+Date: Fri, 27 Feb 2026 15:32:18 +0000
+Message-ID: <20260227153225.2778358-5-cristian.marussi@arm.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260227153225.2778358-1-cristian.marussi@arm.com>
+References: <20260227153225.2778358-1-cristian.marussi@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,142 +53,52 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The existing inbound window configuration algorithm has two issues that
-prevent proper operation on RZ/G3E:
+Use the new min_rate and max_rate unified properties that provide the
+proper values without having to consider the clock type.
 
-1. Over-mapping: Using roundup_pow_of_two() on the remaining region size
-   can result in windows that extend beyond the intended memory region.
-
-2. Alignment violation: Addresses are only aligned to 4K regardless of
-   the actual window size. According to the RZ/G3S HW manual (Rev.1.10,
-   section 34.6.6.7) and RZ/G3E HW manual (Rev.1.15, section 6.6.7.6),
-   bit carry must not occur when adding AXI Window Base and AXI Window
-   Mask registers. This effectively requires the base address to be
-   aligned to the window size.
-
-RZ/G3E strictly enforces these constraints and requires precise window
-boundaries with properly aligned addresses.
-
-Rework the algorithm to properly handle arbitrary region sizes and
-alignment constraints by splitting non-power-of-2 regions into multiple
-windows. The new approach iteratively selects the largest power-of-2
-size that:
- - Fits within the remaining region (__fls of remaining size)
- - Does not exceed the natural alignment of the CPU address (__ffs)
- - Does not exceed the natural alignment of the PCI address (__ffs)
-
-This ensures windows never over-map beyond the intended region and
-satisfies the hardware requirement that base address + mask must not
-cause bit carry, while maintaining the 4K * 2^N byte window size
-constraint.
-
-The reworked algorithm is required for RZ/G3E support and remains
-fully compatible with RZ/G3S.
-
-Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org
+Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
 ---
+ drivers/clk/clk-scmi.c | 17 ++---------------
+ 1 file changed, 2 insertions(+), 15 deletions(-)
 
-Changes:
-
-v7: No changes
-v6: No changes
-
-v5:
- - Updated HW manual section specification
- - Collected Rb tag
-
-v4: No changes
-v3: No changes
-v2: New patch
-
- drivers/pci/controller/pcie-rzg3s-host.c | 53 +++++++++++++-----------
- 1 file changed, 29 insertions(+), 24 deletions(-)
-
-diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/controller/pcie-rzg3s-host.c
-index 222891324374..7f5ffc5c218a 100644
---- a/drivers/pci/controller/pcie-rzg3s-host.c
-+++ b/drivers/pci/controller/pcie-rzg3s-host.c
-@@ -1270,50 +1270,55 @@ static int rzg3s_pcie_set_inbound_windows(struct rzg3s_pcie_host *host,
- 	u64 pci_addr = entry->res->start - entry->offset;
- 	u64 cpu_addr = entry->res->start;
- 	u64 cpu_end = entry->res->end;
--	u64 size_id = 0;
- 	int id = *index;
- 	u64 size;
+diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
+index c223e4ef1dd1..7c562559ad8b 100644
+--- a/drivers/clk/clk-scmi.c
++++ b/drivers/clk/clk-scmi.c
+@@ -202,7 +202,6 @@ static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk,
+ 			     const struct clk_ops *scmi_ops)
+ {
+ 	int ret;
+-	unsigned long min_rate, max_rate;
  
--	while (cpu_addr < cpu_end) {
-+	/*
-+	 * According to the RZ/G3S HW manual (Rev.1.10, section 34.6.6.7) and
-+	 * RZ/G3E HW manual (Rev.1.15, section 6.6.7.6):
-+	 * - Each window must be a single memory size of power of two
-+	 * - Mask registers must be set to (2^N - 1)
-+	 * - Bit carry must not occur when adding base and mask registers,
-+	 *   meaning the base address must be aligned to the window size
-+	 *
-+	 * Split non-power-of-2 regions into multiple windows to satisfy
-+	 * these constraints without over-mapping.
-+	 */
-+	while (cpu_addr <= cpu_end) {
-+		u64 remaining_size = cpu_end - cpu_addr + 1;
-+		u64 align_limit;
-+
- 		if (id >= RZG3S_MAX_WINDOWS)
- 			return dev_err_probe(host->dev, -ENOSPC,
- 					     "Failed to map inbound window for resource (%s)\n",
- 					     entry->res->name);
+ 	struct clk_init_data init = {
+ 		.flags = CLK_GET_RATE_NOCACHE,
+@@ -217,20 +216,8 @@ static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk,
+ 	if (ret)
+ 		return ret;
  
--		size = resource_size(entry->res) - size_id;
-+		/* Start with largest power-of-two that fits in remaining size */
-+		size = 1ULL << __fls(remaining_size);
- 
- 		/*
--		 * According to the RZ/G3S HW manual (Rev.1.10,
--		 * section 34.3.1.71 AXI Window Mask (Lower) Registers) the min
--		 * size is 4K.
-+		 * The "no bit carry" rule requires base addresses to be
-+		 * aligned to the window size. Find the maximum window size
-+		 * that both addresses can support based on their natural
-+		 * alignment (lowest set bit).
- 		 */
--		size = max(size, SZ_4K);
-+		align_limit = min(cpu_addr ? (1ULL << __ffs(cpu_addr)) : ~0ULL,
-+				  pci_addr ? (1ULL << __ffs(pci_addr)) : ~0ULL);
- 
--		/*
--		 * According the RZ/G3S HW manual (Rev.1.10, sections:
--		 * - 34.3.1.69 AXI Window Base (Lower) Registers
--		 * - 34.3.1.71 AXI Window Mask (Lower) Registers
--		 * - 34.3.1.73 AXI Destination (Lower) Registers)
--		 * the CPU addr, PCIe addr, size should be 4K aligned and be a
--		 * power of 2.
--		 */
--		size = ALIGN(size, SZ_4K);
--		size = roundup_pow_of_two(size);
+-	if (sclk->info->rate_discrete) {
+-		int num_rates = sclk->info->list.num_rates;
 -
--		cpu_addr = ALIGN(cpu_addr, SZ_4K);
--		pci_addr = ALIGN(pci_addr, SZ_4K);
-+		size = min(size, align_limit);
+-		if (num_rates <= 0)
+-			return -EINVAL;
+-
+-		min_rate = sclk->info->list.rates[0];
+-		max_rate = sclk->info->list.rates[num_rates - 1];
+-	} else {
+-		min_rate = sclk->info->range.min_rate;
+-		max_rate = sclk->info->range.max_rate;
+-	}
+-
+-	clk_hw_set_rate_range(&sclk->hw, min_rate, max_rate);
++	clk_hw_set_rate_range(&sclk->hw, sclk->info->min_rate,
++			      sclk->info->max_rate);
+ 	return ret;
+ }
  
- 		/*
--		 * According to the RZ/G3S HW manual (Rev.1.10, section
--		 * 34.3.1.71 AXI Window Mask (Lower) Registers) HW expects first
--		 * 12 LSB bits to be 0xfff. Subtract 1 from size for this.
-+		 * Minimum window size is 4KB.
-+		 * See RZ/G3S HW manual (Rev.1.10, section 34.3.1.71) and
-+		 * RZ/G3E HW manual (Rev.1.15, section 6.6.4.1.3.(74)).
- 		 */
-+		size = max(size, SZ_4K);
-+
- 		rzg3s_pcie_set_inbound_window(host, cpu_addr, pci_addr,
- 					      size - 1, id);
- 
- 		pci_addr += size;
- 		cpu_addr += size;
--		size_id = size;
- 		id++;
- 	}
- 	*index = id;
 -- 
-2.25.1
+2.53.0
 
