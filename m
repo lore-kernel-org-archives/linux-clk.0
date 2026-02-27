@@ -1,147 +1,211 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010003.outbound.protection.outlook.com [52.101.228.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9651443E9CF;
-	Fri, 27 Feb 2026 15:35:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772206526; cv=none; b=j9sDyJElbiEQTaIDs4NmaYZjP3odE0y/WtMqBYuIHfVGL7V9C+c14lbAMGM65NEYibsCf4MXzPgeqKnC8mM1qydF1nPVroSvIh4s1gNr3SHSeb/PR+53akDr2BzaG4wq7/eIxr02Xl//Qf+asraEBeFuK2nVwiLog+zy042d0vk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772206526; c=relaxed/simple;
-	bh=2wm97TyyZjI/SrmKi1/wNI1HD8jHbl9Gjn52e3rRCIM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pi7rPGzphg+DFoDbJ02zQxJsGmwHgyRTnOoxyj9Vk1n7b1XuNX+LPYbk/IQXHhrP43CQLlVj5/EBOa+XNEuSw2KxcYPwzE21ITSh3dkabBSL7aMkOwn+e+xYsMOqvMuzt7cQNJhLFVQD35gXr3RrBxI2KrgIf+uEx1TK7IO1C/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f6sQZdp+; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3DD43E487;
+	Fri, 27 Feb 2026 15:41:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.3
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772206910; cv=fail; b=LeIfHXR8iXeH5cR0zTuyvGgKGdsiGIKcsZZ6WCmjYW/QYTGz+Im8ezMgN8c/zaZtqVpYkET0dat7UcdkYn8YuHcVNM8ZXcGyO0me+pc4yG1yUm15508yG6WAPfWwaqrezOOCcdB+xe4ETtzpNyuE0Z21+fmiFoE77wossLzLmZ8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772206910; c=relaxed/simple;
+	bh=SdfW0GRvtIgKN0lXnKwe/XVERDKzmGZNPNjaQuCjPtA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=FVv63dQy/SpnRNy0OoKep8LAQOtgNQu1KPOZRMx2r4qqNH4CwhjjOe5eP9zl2FEJEZF+vVOe7A7WqeP7Bs1EZjXO2FTjACjYwyN7Vkdg/UA8BUf+7bnp2FM4tmbpEwlZI9RfG3PqSDM4JdEQejIHSM1HTHJySbTMjZ0rN8Lf+9M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=mYL0PoVz; arc=fail smtp.client-ip=52.101.228.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f6sQZdp+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5973C116C6;
-	Fri, 27 Feb 2026 15:35:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772206525;
-	bh=2wm97TyyZjI/SrmKi1/wNI1HD8jHbl9Gjn52e3rRCIM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=f6sQZdp+LbTmEM/oHmeJsTS7ZJkowj3EDdtlJlNcMBWMcgSmmDiJCKl8lbQ02Tv4K
-	 drKSDsqNCBvjYRfIaYS9TFDifBIs8qSoYeDmNxxBX9S0gl96ty1dkqPP8QF6Bry5pV
-	 iMF2M9f9Gmoh1FKzovPo/dXy4M8K+PLnw9lpPeA375TA5DPYoxaIkLsh95w8fwaDjz
-	 qqM4wPd7+bWpHJqwuKJghXTA+loymkP2gmeKA27NKrISbC7R0Y3qXYzuJhXLU+hhYt
-	 jE3PSkaPVTB7g6VdpTV6RG1jcD9eQgpt7wFVjIxhRfR6/cMYVGRr2OR+eVqs/eiSju
-	 lKxCz3EEjlbmw==
-Message-ID: <54b36faa-62b3-4561-bfc9-0c507d9e148e@kernel.org>
-Date: Fri, 27 Feb 2026 16:35:20 +0100
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="mYL0PoVz"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ls9i4IOMCmrkysyWv1JrytTYjD5Sh3H726bmi+Ewnh8YX0awORm2OJWl1sawuUn7jC2aJZ/37sQLnQnLlGY1oE8+jBP08yIu2JWY7/SpE/eZ9LTIUUAdPR3PHVuQLsnWtbehhqRorlMQIBdX77t00Dc8S89oQheWlUsuO3Ra2jB9vvru9xTiEGMPT59FW5PvaLPCilqwL2AZJfFVs2N86lTOYcBQuOgYOmmquWnoz0stdweqKi74rkKbJbDzyWRg5dhwkjQdxIvVcX6r2kC0swoXH9oaxBqKDFkSOPErirIfHJgNLiGjjfEjL874JRhqdiskZ6i7iJ2CxCMsfis1tA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iHckkYWGeO9lwCJpFN0r7RB69gmA7IFHuiW/sjJEP54=;
+ b=k+hkYWDEU54lIlG+SVtLpwZc/JWnK2jkcyBoPl8VYkn0XnprFmlEwz1a6zqytvY53HEa1RTmvdOawIXkz/GxzTyRFDKI45Bh2a/oPIel1P6bVS6HTO8uOtyxAiTK8zWVrE1uLyGpFX+f/MOI7azvUo45dInn64Y1OJh1aJL0obQPyjzPOplhzSR2jDV8gaH5yZtDMreqbuE4x/NgIBJ1gpmouyiOjkrfkfQ1IKCuouLe1ofMU+nuCAzCZIbRGITP3D4J1O++E1tnweXxqJNQmpX0ZazYAqlRGha5gAACPAlcsZltZjw5e619C/s3lKxAhVKygYBCShnrknngP6XEBA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iHckkYWGeO9lwCJpFN0r7RB69gmA7IFHuiW/sjJEP54=;
+ b=mYL0PoVzsPBKnvnhEaEK9CUaGqzUdEdeoCrQKQnhYcWTa8fS9gUTwj8prkAykbM3nJPGsCL5yfpLOO/r6vg3JLA+aTtLMsyjlAqrAjO1wlZTZUM95+sAsOk7Yuz6olsoy/JerHM7QizzhJye/1aF0yMA3FgY/jIjO3wHbhVti5g=
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
+ by TY4PR01MB14524.jpnprd01.prod.outlook.com (2603:1096:405:237::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9654.16; Fri, 27 Feb
+ 2026 15:41:43 +0000
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::87d1:4928:d55:97de]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::87d1:4928:d55:97de%4]) with mapi id 15.20.9654.014; Fri, 27 Feb 2026
+ 15:41:43 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: John Madieu <john.madieu.xa@bp.renesas.com>, Claudiu Beznea
+	<claudiu.beznea.uj@bp.renesas.com>, "lpieralisi@kernel.org"
+	<lpieralisi@kernel.org>, "kwilczynski@kernel.org" <kwilczynski@kernel.org>,
+	"mani@kernel.org" <mani@kernel.org>, "geert+renesas@glider.be"
+	<geert+renesas@glider.be>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>
+CC: "robh@kernel.org" <robh@kernel.org>, "bhelgaas@google.com"
+	<bhelgaas@google.com>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+	magnus.damm <magnus.damm@gmail.com>, "linux-pci@vger.kernel.org"
+	<linux-pci@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "john.madieu@gmail.com" <john.madieu@gmail.com>,
+	John Madieu <john.madieu.xa@bp.renesas.com>
+Subject: RE: [PATCH v7 12/15] PCI: rzg3s-host: Add support for RZ/G3E PCIe
+ controller
+Thread-Topic: [PATCH v7 12/15] PCI: rzg3s-host: Add support for RZ/G3E PCIe
+ controller
+Thread-Index: AQHcp/6Mgy22Z/aR3kizuyWQZDnsmrWWrjEA
+Date: Fri, 27 Feb 2026 15:41:43 +0000
+Message-ID:
+ <TY3PR01MB11346B9FB9B0FE7BA3B82D6378673A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20260227153236.55988-1-john.madieu.xa@bp.renesas.com>
+ <20260227153236.55988-13-john.madieu.xa@bp.renesas.com>
+In-Reply-To: <20260227153236.55988-13-john.madieu.xa@bp.renesas.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TY4PR01MB14524:EE_
+x-ms-office365-filtering-correlation-id: b7b85447-9cbe-496a-4e8b-08de7616b529
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|7416014|376014|366016|38070700021;
+x-microsoft-antispam-message-info:
+ 931veSIc37A4cP3oWwCOVTN5tR15IZvcrmPiE9RlpxRYlUVWN8j6bvGYiqutMaBxWLYn8kOeU33Or7TCMTWrDF2xoZuEnw0TTKrQi8uFigPUS+WLZrGBSipRskATnbRaLnHg9pAi2LfIsYwcWLod2wUTUmVDoRtvv7eD767rQdjOgmaHQiIcI7iywney0pQr+y83q+j4FnkYhYkf2Oq/0vzcmu6lbWOjpaJeVPRE08sxtnpMUsPjZe1355AXc9oPl59mo5O9xBx2LBR0DlxtmPNgjqK4FZGZ+vG5veHkSMG3YCVN9fKzlXmaWHY8fbtSldSGJoamUmAA3BlP5YWtXob3lrlSanmfX1o0irpsf+TTcFp17GG11351oMmbVtSMybg1r0IP7uM0ASQ+xTgn3O6NJ9tlRt+2iVPVpVC3fX6i2YYf4CTvtKGelLAcQiWFxGhmUgR4Iia7BkXqk6ytf1MCgKFqOU579LfwNU4E3kpc7mxUycnsVSgbbM6N75sl5sVal4L4Emwmyu3+1zEe7gz5mz91fnVXtvkVvTyW5lbJvyyVV7+YzNTXGNQ20V8k9Lrwewu+Sj9BYm8tGhv63iX1/fvE1yZxt9F/4Z218I3em25A5jJTaK/ItaEDv4nbKc99d7kA3dB5vlx5ybmrzA3NHp0Tu+mR7HTFjGvVGklF52yCdjF2ZH2ljyc/kjViG5PTV/2l3YGgNaPHGhf7um1o/+egftmcUX+DHWMz3RvfPPlSZkMMTc5l9g1T3oDvEyh29Wl8FSB2Cnf67w8u0+JpdEnaNQMq7D48tpEmPwA=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?Oc49UxbwXQO5kZir5jC3KKaJEFZ4SpgdWZ6xn080bguAPGlSR+0tRYazZtCN?=
+ =?us-ascii?Q?9RIMJetJgrfpOBQ18HFbZpal6N1q6h4q9fUngPMf6WBGahRXMs8AID9Bre4W?=
+ =?us-ascii?Q?oxaApTkdh4WngTMjQMVYPD2jy+eqY7XMqFFfdddCQCLKotIrD9pnFU5tFV7n?=
+ =?us-ascii?Q?PJAkg5nJjpUoJa+N1AVpP/7mwbQMnwK9Gohq4lL8qyfOJo/hDMbsaQ3jFubY?=
+ =?us-ascii?Q?ikiyoYMoDtvEYB4qMkNFpKlblA13Wq8+93MZjdIGTMtk0pmGPwpXuJ1VKdKw?=
+ =?us-ascii?Q?YQfXsLAggIfAzPJ4a73AphVooMIUr2iWZQ0t3w2dDQCt3IJ+2JK8o9ATyZfc?=
+ =?us-ascii?Q?GuIqu/OvO6iN6aPf76WYxjkxprlGwT7GSpfr8m0svGNQSSo8MiaEcOOWgPXl?=
+ =?us-ascii?Q?nZhRoH8EnrUg1llI/Rv0oqrQVNIY8BaOwGPN0/vOQWhwF7iXs0PwGrQvZ8iS?=
+ =?us-ascii?Q?YLHhoXeDmZmU3wdQXB/tizPsR7VB+rGEZ9+p1yTgtQD3ygi+awDjcIVlyLu1?=
+ =?us-ascii?Q?/940AFn4c7jl7i17nrKBqcOveGGwI3vlZfRwpbw8EpQZqX+uRg3h0niIgtm+?=
+ =?us-ascii?Q?UwwRvHIUYlLAUi4B6Dcq8sPHZ0Ed/NdshFac/gS5GjXNZ6MVH9OC3HP1iiNe?=
+ =?us-ascii?Q?gH8XkLV+piVVjiU9Hc5nkU9HIvO4mHTunXLM+Pras1U+gF/bx6CYn1MGbphx?=
+ =?us-ascii?Q?kizhHiMYjZ3t3SW/57Kfi7OSoL2EMgod98UGNWnUNl2ZCOGLigX0Q4IZbGAN?=
+ =?us-ascii?Q?yRyP8Bw+nGQ2ALnPbfXFz85uJARjAOqyVvq09PAbxAy1dmPnUHhmymfZtbAQ?=
+ =?us-ascii?Q?62klc1QIQ73eryYQ6lLUv+GhPyqJkJkQL3whFhm04DlIz50TY3KsT4kj5a36?=
+ =?us-ascii?Q?v56ExhsfIix+71sMsNGS8mrdUjgsQOQwn2+it7Fb2evWum4S5nYUP713hCRW?=
+ =?us-ascii?Q?1an+HehT8GBLaro02SRsMzFqrHz6HCXa7Lepds04RCPrfMXLENs9SRdchIM9?=
+ =?us-ascii?Q?OkevdD1n9JucMYzSrmN4i97VKelEZ+1GQJ3KQBj4LVF6Hrn0l+qYNrKm61EX?=
+ =?us-ascii?Q?B2uwNNtP5C1obh45DFcgB3afxFahSmPtsvfKSrIvHln2lECGrCOyGSUeD9Ra?=
+ =?us-ascii?Q?DvSBtvSOhNvuetIadyVEOXI+badnx94zacCsPberM0h1ON5ARyngFYycHkv9?=
+ =?us-ascii?Q?Yv5VvlKQ5PK+QS1K15mRHouKfGlYHQQAh4BZ6OAwB9q65aRq/DCl5qMsnBZn?=
+ =?us-ascii?Q?S27SMhnWn9V3xLFVu4alnZA9EV7aWWj0kfdMaaL/niIU0zkuOLStEp7qfLvA?=
+ =?us-ascii?Q?KTRTWibjivjo8t2AHQKgj+C0AFFK4mmMKFzFKEiwUTQ8dedQxPqJ+6wRRv/L?=
+ =?us-ascii?Q?yilpEO0odmni/pgMtNplOXqm0yRaREt1P7oY78W5d2EvIeu+ho6pbepthOzv?=
+ =?us-ascii?Q?j4x/gO4PlG5IR5EgXkIEJPB6phnGbWD2fXmpdPbx5WVQSZ/XUOPQKSg7dXXD?=
+ =?us-ascii?Q?nAWHQHz78gMbr+2H3yniMxaHyvwSSyQv0wXGHKzP8mRUN+CIokl8iuzgGZ1g?=
+ =?us-ascii?Q?Ah6wKlfsAraMHdkBz6Y4+blKdHkJ7VrVER3FIcs03vyD8X0zgTSb1Xof3zXg?=
+ =?us-ascii?Q?MIkehVMezv8ZrmOu2LMrebXSzd2yuVaDRxx0URlDdaPHfJot3lIRlarz5gg8?=
+ =?us-ascii?Q?vj0pDDcnj24sDYcSmLfiVx1KObCAdb1/JG/bCp7BzDMqC5DEfVH6jRFQVhEz?=
+ =?us-ascii?Q?RTjO93YuQg=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] media: aspeed: Fix driver probe failure
-To: Haiyue Wang <haiyuewa@163.com>, linux-aspeed@lists.ozlabs.org
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Hans Verkuil <hverkuil+cisco@kernel.org>,
- Jammy Huang <jammy_huang@aspeedtech.com>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>,
- "moderated list:ARM/ASPEED MACHINE SUPPORT"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-References: <20260227123837.70079-1-haiyuewa@163.com>
- <8060fe77-18ec-4aa0-90a1-50eee398a55b@kernel.org>
- <0bc7875c-106c-48e1-8d40-72919ca227c4@163.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <0bc7875c-106c-48e1-8d40-72919ca227c4@163.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b7b85447-9cbe-496a-4e8b-08de7616b529
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2026 15:41:43.3609
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: x2qIPgo2JK8gIJO4dUP2eiWbFFWJFAhZ4cRxxSXsY7/2vZAUThdMLmhFGDFW85fELekzUB0KHC8MiYZF2PtofXV1S7LByLzl1JFujrYVrAs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4PR01MB14524
 
-On 27/02/2026 16:18, Haiyue Wang wrote:
-> 
-> 
-> On 2/27/2026 8:59 PM, Krzysztof Kozlowski wrote:
->> On 27/02/2026 13:38, Haiyue Wang wrote:
->>> The aspeed video (be compatible for ast2400, ast2500, ast2600) now needs
->>> the reset DTS handle specified, otherwise it will fail to load:
->>>
->>> [    0.000000] OF: reserved mem: initialized node video, compatible id shared-dma-pool
->>> [    0.000000] OF: reserved mem: 0xbb000000..0xbeffffff (65536 KiB) map reusable video
->>> [    0.377039] videodev: Linux video capture interface: v2.00
->>> [    4.809494] aspeed-video 1e700000.video: irq 57
->>> [    4.809977] aspeed-video 1e700000.video: Unable to get reset
->>> [    4.810341] aspeed-video 1e700000.video: probe with driver aspeed-video failed with error -2
->>>
->>> Fixes: e83f8dd668ea ("media: aspeed: Fix dram hang at res-change")
->>> Signed-off-by: Haiyue Wang <haiyuewa@163.com>
->>> ---
->>>   arch/arm/boot/dts/aspeed/aspeed-g4.dtsi   | 1 +
->>>   arch/arm/boot/dts/aspeed/aspeed-g5.dtsi   | 1 +
->>>   arch/arm/boot/dts/aspeed/aspeed-g6.dtsi   | 1 +
->>>   include/dt-bindings/clock/ast2600-clock.h | 1 +
->>
->> Please run scripts/checkpatch.pl on the patches and fix reported
->> warnings. After that, run also 'scripts/checkpatch.pl --strict' on the
->> patches and (probably) fix more warnings. Some warnings can be ignored,
->> especially from --strict run, but the code here looks like it needs a
->> fix. Feel free to get in touch if the warning is not clear.
->>
->>
->> Please use subject prefixes matching the subsystem. You can get them for
->> example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
->> your patch is touching. For bindings, the preferred subjects are
->> explained here:
->> https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
->>
-> 
-> Seperated into two patches in v2, please help to review.
+Hi John,
 
-No, please wait. One posting per day. We have enough of other patches to
-review.
+> -----Original Message-----
+> From: John Madieu <john.madieu.xa@bp.renesas.com>
+> Sent: 27 February 2026 15:33
+> Subject: [PATCH v7 12/15] PCI: rzg3s-host: Add support for RZ/G3E PCIe co=
+ntroller
+>=20
+> Add support for the PCIe controller found in RZ/G3E SoCs to the existing =
+RZ/G3S PCIe host driver. The
+> RZ/G3E PCIe controller is similar to the RZ/G3S's, with the following key=
+ differences:
+>=20
+>  - Supports PCIe Gen3 (8.0 GT/s) link speeds alongside Gen2 (5.0 GT/s)
+>  - Uses a different reset control mechanism via AXI registers instead
+>    of the Linux reset framework
+>  - Requires specific SYSC configuration for link state control and
+>    Root Complex mode selection
+>=20
+> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+> ---
+>=20
+> Changes:
+>=20
+> v7:
+>  - Renamed RZG3E_PCI_RESET* defines to RZG3S_PCI_RESET* as these
+>    registers are shared with upcoming SoCs (RZ/V2H, RZ/T2N, RZ/N2H),
+>    dropped associated "RZ/G3E specific registers" comment
+>  - Dropped "RZ/G3E SoC-specific config implementations" comment
+>  - Unified function naming to rzg3e_pcie_config_{pre_init,post_init,
+>    deinit}() and rzg3s_pcie_config_{post_init,deinit}()
+>  - Simplified comments as per Claudiu's suggestions
+>  - Used local mask variables for compactness within 80-char limit
+>  - Fixed L1_ALLOW error path: goto config_deinit_and_refclk since
+>    port refclk is already enabled
+>  - Fixed resume: reordered MODE before RST_RSM_B to match probe
+>    sequence, fixing error path handling
+>=20
+> v6:
+>   - Use rzg3s_sysc_config_func() with per-function calls instead of
+>     rzg3s_sysc_config() with -1 skip pattern, as suggested by Claudiu
+>   - Extend enum rzg3s_sysc_func_id with L1_ALLOW and MODE entries
+>   - Use regmap_update_bits() consistently for all SYSC accesses
+>   - Shorten comment to "Put controller in RC mode and de-assert RST_RSM_B=
+."
+>   - Drop "Enable ASPM L1 transition" comment (function ID is self-documen=
+ting)
+>=20
+> v5:
+>   - Introduce rzg3s_sysc_config() helper for sys configuration
+>=20
+> v4: No changes
+> v3: No changes
+>=20
+>  drivers/pci/controller/pcie-rzg3s-host.c | 90 ++++++++++++++++++++++++
+>  1 file changed, 90 insertions(+)
+>=20
+> diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/contr=
+oller/pcie-rzg3s-host.c
+> index 44ce056d62c6..b7f92f5aee4a 100644
+> --- a/drivers/pci/controller/pcie-rzg3s-host.c
+> +++ b/drivers/pci/controller/pcie-rzg3s-host.c
+> @@ -111,6 +111,15 @@
+>  #define RZG3S_PCI_PERM_CFG_HWINIT_EN		BIT(2)
+>  #define RZG3S_PCI_PERM_PIPE_PHY_REG_EN		BIT(1)
+>=20
+> +#define RZG3S_PCI_RESET				0x310=20
 
-Best regards,
-Krzysztof
+If there is any new version of the series, please put a comment
+
++#define RZG3S_PCI_RESET				0x310 # Only for RZ/G3E
+
+Cheers,
+Biju
