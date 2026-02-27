@@ -1,48 +1,48 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F2F243CEF9;
-	Fri, 27 Feb 2026 15:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A982E43CEF9;
+	Fri, 27 Feb 2026 15:34:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772206445; cv=none; b=UKEG5HswmtcE02uphYTPHhGDF2QZQ1X30AiYA/DR2EawYKKFShpR29WahdqRlyfbNQP3f5tcKEXKzYLYyNE6uVcIPTsCkKX4Nel8ZomwLdxADCOE8/15SBmRyYBkpbKHzcZjmp1Oxciq0wiDdpuDMYw2xdMxLx0A1sLhbg2iZEA=
+	t=1772206450; cv=none; b=TXMILXsCie+GcKsfhb4NvILz6mG3Wxh0AZk657X4iKPizrlxe8bTAwpUSckZmeCpHcLTVe4B2oTMuIg962vvrxeZkItw07Sz8rNRBn2cTtUuOJ7oOhYfUXwcFpOw4CxLUGklSHf5XQmxHLbEvTd3+La3jEJkVN68H7fJhn5fJ5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772206445; c=relaxed/simple;
-	bh=o1wyGFFzv1WlO61N6heUNvXWChi57n1OuASyQQfpiAY=;
+	s=arc-20240116; t=1772206450; c=relaxed/simple;
+	bh=dhovkjQI0x1QjLUviC/mCqjlTmtwJI3Q1SuZOmWzm7g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gcA6TNsnxJo4i2vzE0wae2on9CR0CdukpLQBTBXT6AaLZ2w0Vdg7YYQMZDHEDHvsZ+ZlUwkGaZbRjhfoOTAR17jbwGo7E9SNduBDE/YODJEEHTY4EpanmrPxCp9ygO/0vFrFIMe+eB070ZZwPcwA+1VoTzp/CIETBtsre+4qL1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BCD18339;
-	Fri, 27 Feb 2026 07:33:56 -0800 (PST)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BB7EF3F73B;
-	Fri, 27 Feb 2026 07:33:56 -0800 (PST)
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Cc: sudeep.holla@arm.com,
-	philip.radford@arm.com,
-	james.quinlan@broadcom.com,
-	f.fainelli@gmail.com,
-	vincent.guittot@linaro.org,
-	etienne.carriere@foss.st.com,
-	peng.fan@oss.nxp.com,
-	michal.simek@amd.com,
-	dan.carpenter@linaro.org,
+	 MIME-Version; b=gceTYrMV6wRC8vJEi4rXctcfxIcuMZ/QF4LNnOZqxtXVOPY2sqUZhqhRb1XatMTrzFRm/LCv50xzfwRW2uM/iXP85p/EFgzDBvbWepGyFGQVXq9qJPbLgz3m/m/3TnHOBX+ldPTt/2Gn2m/ErA5ckcGDH8TgcWy8zT5BWLiSVNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: F0Hxp8g8S3a/A21H6TFIuw==
+X-CSE-MsgGUID: EtepC2wtTaCV+D3Zc6ciug==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 28 Feb 2026 00:34:06 +0900
+Received: from ubuntu.adwin.renesas.com (unknown [10.226.92.57])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 741134007134;
+	Sat, 28 Feb 2026 00:34:01 +0900 (JST)
+From: John Madieu <john.madieu.xa@bp.renesas.com>
+To: claudiu.beznea.uj@bp.renesas.com,
+	lpieralisi@kernel.org,
+	kwilczynski@kernel.org,
+	mani@kernel.org,
 	geert+renesas@glider.be,
-	kuninori.morimoto.gx@renesas.com,
-	marek.vasut+renesas@gmail.com,
-	Cristian Marussi <cristian.marussi@arm.com>
-Subject: [PATCH 09/11] firmware: arm_scmi: Add bound iterators support
-Date: Fri, 27 Feb 2026 15:32:23 +0000
-Message-ID: <20260227153225.2778358-10-cristian.marussi@arm.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260227153225.2778358-1-cristian.marussi@arm.com>
-References: <20260227153225.2778358-1-cristian.marussi@arm.com>
+	krzk+dt@kernel.org
+Cc: robh@kernel.org,
+	bhelgaas@google.com,
+	conor+dt@kernel.org,
+	magnus.damm@gmail.com,
+	biju.das.jz@bp.renesas.com,
+	linux-pci@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	john.madieu@gmail.com,
+	John Madieu <john.madieu.xa@bp.renesas.com>
+Subject: [PATCH v7 10/15] PCI: rzg3s-host: Explicitly set class code for RZ/G3E compatibility
+Date: Fri, 27 Feb 2026 16:32:30 +0100
+Message-ID: <20260227153236.55988-11-john.madieu.xa@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260227153236.55988-1-john.madieu.xa@bp.renesas.com>
+References: <20260227153236.55988-1-john.madieu.xa@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,189 +51,58 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-SCMI core stack provides some common helpers to handle in a unified way
-multipart message replies: such iterator-helpers, when run, currently
-process by default the whole set of discovered resources.
+Program the class code register explicitly during PCIe configuration
+initialization. RZ/G3E requires this register to be set, while RZ/G3S
+has these values as hardware defaults.
 
-Introduce an alternative way to run the initialized iterator on a limited
-range of resources.
+This configuration is harmless for RZ/G3S where these match the hardware
+defaults, and necessary for RZ/G3E to properly identify the device as a
+PCI bridge.
 
-Note that the subset of resources that can be chosen is anyway limited by
-the SCMI protocol specification, since you are only allowed to choose the
-startindex on a multi-part enumeration NOT the end index, so that the
-effective number of returned items by a bound iterators depends really
-on platform side decisions.
-
-Suggested-by: Etienne Carriere <etienne.carriere@foss.st.com>
-Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
 ---
- drivers/firmware/arm_scmi/clock.c     |  3 +-
- drivers/firmware/arm_scmi/driver.c    | 58 +++++++++++++++++++--------
- drivers/firmware/arm_scmi/protocols.h | 13 +++++-
- 3 files changed, 55 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
-index 15faa79abed4..d7df5c45836e 100644
---- a/drivers/firmware/arm_scmi/clock.c
-+++ b/drivers/firmware/arm_scmi/clock.c
-@@ -505,8 +505,7 @@ iter_clk_describe_process_response(const struct scmi_protocol_handle *ph,
- 	struct scmi_clk_ipriv *p = priv;
- 	const struct scmi_msg_resp_clock_describe_rates *r = response;
- 
--	p->clkd->rates[st->desc_index + st->loop_idx] =
--		RATE_TO_U64(r->rate[st->loop_idx]);
-+	p->clkd->rates[p->clkd->num_rates] = RATE_TO_U64(r->rate[st->loop_idx]);
- 
- 	/* Count only effectively discovered rates */
- 	p->clkd->num_rates++;
-diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-index d9d6edbc1275..299265d05f62 100644
---- a/drivers/firmware/arm_scmi/driver.c
-+++ b/drivers/firmware/arm_scmi/driver.c
-@@ -1813,48 +1813,50 @@ static void *scmi_iterator_init(const struct scmi_protocol_handle *ph,
- 	return no_free_ptr(i);
- }
- 
--static int scmi_iterator_run(void *iter)
-+static int __scmi_iterator_run(void *iter, unsigned int *start, unsigned int *end)
+Changes:
+
+v7: No changes
+v6: Collected Rb tag from Claudiu
+v5:
+ - Used field_prep for non-constant mask to fix test robot warnings
+
+v4: No changes
+v3: No changes
+v2: No changes
+
+ drivers/pci/controller/pcie-rzg3s-host.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/controller/pcie-rzg3s-host.c
+index f8f03b669153..bf9dc76fe975 100644
+--- a/drivers/pci/controller/pcie-rzg3s-host.c
++++ b/drivers/pci/controller/pcie-rzg3s-host.c
+@@ -1081,6 +1081,7 @@ static int rzg3s_pcie_set_max_link_speed(struct rzg3s_pcie_host *host)
+ static int rzg3s_pcie_config_init(struct rzg3s_pcie_host *host)
  {
- 	int ret;
- 	struct scmi_iterator_ops *iops;
- 	const struct scmi_protocol_handle *ph;
- 	struct scmi_iterator_state *st;
-+	struct scmi_iterator *i;
+ 	struct pci_host_bridge *bridge = pci_host_bridge_from_priv(host);
++	u32 mask = GENMASK(31, 8);
+ 	struct resource_entry *ft;
+ 	struct resource *bus;
+ 	u8 subordinate_bus;
+@@ -1104,6 +1105,13 @@ static int rzg3s_pcie_config_init(struct rzg3s_pcie_host *host)
+ 	writel_relaxed(0xffffffff, host->pcie + RZG3S_PCI_CFG_BARMSK00L);
+ 	writel_relaxed(0xffffffff, host->pcie + RZG3S_PCI_CFG_BARMSK00U);
  
- 	if (!iter)
- 		return -EINVAL;
- 
--	/* Take ownership of the iterator */
--	struct scmi_iterator *i __free(kfree) = iter;
--
-+	i = iter;
- 	iops = i->ops;
- 	ph = i->ph;
- 	st = &i->state;
- 
-+	/* Reinitialize state for next run */
-+	st->num_returned = 0;
-+	st->num_remaining = 0;
-+	st->desc_index = start ? *start : 0;
++	/*
++	 * Explicitly program class code. RZ/G3E requires this configuration.
++	 * Harmless for RZ/G3S where this matches the hardware default.
++	 */
++	rzg3s_pcie_update_bits(host->pcie, PCI_CLASS_REVISION, mask,
++			       field_prep(mask, PCI_CLASS_BRIDGE_PCI_NORMAL));
 +
- 	do {
- 		iops->prepare_message(i->msg, st->desc_index, i->priv);
- 		ret = ph->xops->do_xfer(ph, i->t);
- 		if (ret)
--			break;
-+			return ret;
+ 	/* Disable access control to the CFGU */
+ 	writel_relaxed(0, host->axi + RZG3S_PCI_PERM);
  
- 		st->rx_len = i->t->rx.len;
- 		ret = iops->update_state(st, i->resp, i->priv);
- 		if (ret)
--			break;
-+			return ret;
- 
- 		if (st->num_returned > st->max_resources - st->desc_index) {
- 			dev_err(ph->dev,
- 				"No. of resources can't exceed %d\n",
- 				st->max_resources);
--			ret = -EINVAL;
--			break;
-+			return -EINVAL;
- 		}
- 
--		for (st->loop_idx = 0; !ret && st->loop_idx < st->num_returned;
--		     st->loop_idx++)
-+		for (st->loop_idx = 0; st->loop_idx < st->num_returned; st->loop_idx++) {
- 			ret = iops->process_response(ph, i->resp, st, i->priv);
--
--		if (ret)
--			break;
-+			if (ret)
-+				return ret;
-+		}
- 
- 		st->desc_index += st->num_returned;
- 		ph->xops->reset_rx_to_maxsz(ph, i->t);
-@@ -1862,14 +1864,36 @@ static int scmi_iterator_run(void *iter)
- 		 * check for both returned and remaining to avoid infinite
- 		 * loop due to buggy firmware
- 		 */
--	} while (st->num_returned && st->num_remaining);
-+	} while (st->num_returned && st->num_remaining &&
-+		 (!end || (st->desc_index <= min(*end, st->max_resources - 1))));
- 
--	/* Finalize and destroy iterator */
--	ph->xops->xfer_put(ph, i->t);
-+	return 0;
-+}
-+
-+static void scmi_iterator_cleanup(void *iter)
-+{
-+	struct scmi_iterator *i = iter;
-+
-+	i->ph->xops->xfer_put(i->ph, i->t);
-+	kfree(i);
-+}
-+
-+static int scmi_iterator_run(void *iter)
-+{
-+	int ret;
-+
-+	ret = __scmi_iterator_run(iter, NULL, NULL);
-+	scmi_iterator_cleanup(iter);
- 
- 	return ret;
- }
- 
-+static int scmi_iterator_run_bound(void *iter, unsigned int *start,
-+				   unsigned int *end)
-+{
-+	return __scmi_iterator_run(iter, start, end);
-+}
-+
- struct scmi_msg_get_fc_info {
- 	__le32 domain;
- 	__le32 message_id;
-@@ -2048,6 +2072,8 @@ static const struct scmi_proto_helpers_ops helpers_ops = {
- 	.get_max_msg_size = scmi_common_get_max_msg_size,
- 	.iter_response_init = scmi_iterator_init,
- 	.iter_response_run = scmi_iterator_run,
-+	.iter_response_run_bound = scmi_iterator_run_bound,
-+	.iter_response_cleanup = scmi_iterator_cleanup,
- 	.protocol_msg_check = scmi_protocol_msg_check,
- 	.fastchannel_init = scmi_common_fastchannel_init,
- 	.fastchannel_db_ring = scmi_common_fastchannel_db_ring,
-diff --git a/drivers/firmware/arm_scmi/protocols.h b/drivers/firmware/arm_scmi/protocols.h
-index 4c75970326e6..487f84239385 100644
---- a/drivers/firmware/arm_scmi/protocols.h
-+++ b/drivers/firmware/arm_scmi/protocols.h
-@@ -259,7 +259,15 @@ struct scmi_fc_info {
-  *			multi-part responses using the custom operations
-  *			provided in @ops.
-  * @iter_response_run: A common helper to trigger the run of a previously
-- *		       initialized iterator.
-+ *		       initialized iterator. Note that unbound iterators are
-+ *		       automatically cleaned up.
-+ * @iter_response_run_bound: A common helper to trigger the run of a previously
-+ *			     initialized iterator, but only within the
-+ *			     specified, optional, @start and @end resource
-+ *			     indexes. Note that these bound-iterators need
-+ *			     explicit cleanup via @iter_response_bound_cleanup.
-+ * @iter_response_bound_cleanup: A common helper to finally release the iterator
-+ *				 for bound iterators.
-  * @protocol_msg_check: A common helper to check is a specific protocol message
-  *			is supported.
-  * @fastchannel_init: A common helper used to initialize FC descriptors by
-@@ -276,6 +284,9 @@ struct scmi_proto_helpers_ops {
- 				    unsigned int max_resources, u8 msg_id,
- 				    size_t tx_size, void *priv);
- 	int (*iter_response_run)(void *iter);
-+	int (*iter_response_run_bound)(void *iter,
-+				       unsigned int *start, unsigned int *end);
-+	void (*iter_response_cleanup)(void *iter);
- 	int (*protocol_msg_check)(const struct scmi_protocol_handle *ph,
- 				  u32 message_id, u32 *attributes);
- 	void (*fastchannel_init)(const struct scmi_protocol_handle *ph,
 -- 
-2.53.0
+2.25.1
 
