@@ -1,48 +1,48 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC1A329E66;
-	Fri, 27 Feb 2026 15:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B237A43CEFD;
+	Fri, 27 Feb 2026 15:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772206403; cv=none; b=YTuwt7bmMt+cGqpyqSP+3PhNFXygHqrsk8pFJ3mws/77vsJ1gAqzr5F1lnSz2QPT0DdHB5yuxdJvW1GRHz5ygyqiYfzM2B8gFdLSh9NMVeZw84yUBBgf/N2xuBOc8LHj5HNDSTVhnAUl8sJC2C9fIxysxAhkItLo7AFpzFIplXw=
+	t=1772206407; cv=none; b=uf97nbtecpNnqAMQlgYg1CJJhYvySGuuR91AzViKWGYDQ1LXj5M3SvxCr+l2+yzq5uS9Jn5z4gga9rpPfBR9xcZinsi62WdtTlX7TYfCPQ7M4R/+Okcpi+rNqmVX625OHi9ngVcVHM5rfOSpalKB+yp1XivumyQWE0e5pIFc7DA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772206403; c=relaxed/simple;
-	bh=1RDdoXQv8ByWzH0qtHjedbEuu4NTenKcqHV7lqJbm5o=;
+	s=arc-20240116; t=1772206407; c=relaxed/simple;
+	bh=WtFHCNGjsWLI3a0WbwSqCvLqMb55tMllJC3qlMJCveM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fNMDZLZwxTlV6DSeweWk3rjJ5aedMhFoaxbvACS505WqViWRiP5Jjm1taJOR9K61bwPS/Ny2ivcEz+hobd/QHxhr6an3LO6G9eNlZLksfDFxSk4sH3mMfAvODDA98FjpF99R2Dj5akMODW03op8nOjj7ou5C4h9TCaMBhEfdjts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 66A83339;
-	Fri, 27 Feb 2026 07:33:15 -0800 (PST)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0E8D93F73B;
-	Fri, 27 Feb 2026 07:33:13 -0800 (PST)
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Cc: sudeep.holla@arm.com,
-	philip.radford@arm.com,
-	james.quinlan@broadcom.com,
-	f.fainelli@gmail.com,
-	vincent.guittot@linaro.org,
-	etienne.carriere@foss.st.com,
-	peng.fan@oss.nxp.com,
-	michal.simek@amd.com,
-	dan.carpenter@linaro.org,
+	 MIME-Version; b=OnPrYK4n0tc78lgqpTIKabU0bZXAtOVRxtz0X/law+jGyYE/O4l1NEpt/2Jqu5hD/uTTl5zwg53xVI597hdBijC8K24XyjB6iWPaCB8WnLG9vyBdcbhLbUgFANq5dCfVDhVhjftB/wR+MeAOVxGzBLabn3iBRt/38IMUSJGyUIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: qppQCwIvSParb7whLD6jWw==
+X-CSE-MsgGUID: No/HWlCNRa2USKlIlvxQ9g==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 28 Feb 2026 00:33:25 +0900
+Received: from ubuntu.adwin.renesas.com (unknown [10.226.92.57])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 2F1754006C61;
+	Sat, 28 Feb 2026 00:33:19 +0900 (JST)
+From: John Madieu <john.madieu.xa@bp.renesas.com>
+To: claudiu.beznea.uj@bp.renesas.com,
+	lpieralisi@kernel.org,
+	kwilczynski@kernel.org,
+	mani@kernel.org,
 	geert+renesas@glider.be,
-	kuninori.morimoto.gx@renesas.com,
-	marek.vasut+renesas@gmail.com,
-	Cristian Marussi <cristian.marussi@arm.com>
-Subject: [PATCH 03/11] firmware: arm_scmi: Simplify clock rates exposed interface
-Date: Fri, 27 Feb 2026 15:32:17 +0000
-Message-ID: <20260227153225.2778358-4-cristian.marussi@arm.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260227153225.2778358-1-cristian.marussi@arm.com>
-References: <20260227153225.2778358-1-cristian.marussi@arm.com>
+	krzk+dt@kernel.org
+Cc: robh@kernel.org,
+	bhelgaas@google.com,
+	conor+dt@kernel.org,
+	magnus.damm@gmail.com,
+	biju.das.jz@bp.renesas.com,
+	linux-pci@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	john.madieu@gmail.com,
+	John Madieu <john.madieu.xa@bp.renesas.com>
+Subject: [PATCH v7 03/15] PCI: renesas: rzg3s: Rework inbound window algorithm for multi-SoC support
+Date: Fri, 27 Feb 2026 16:32:23 +0100
+Message-ID: <20260227153236.55988-4-john.madieu.xa@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260227153236.55988-1-john.madieu.xa@bp.renesas.com>
+References: <20260227153236.55988-1-john.madieu.xa@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,364 +51,142 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Move needlessly exposed fields away from scmi_clock_info into the new
-internal struct scmi_clock_desc while keeping exposed only the two new
-min_rate and max_rate fields for each clock.
+The existing inbound window configuration algorithm has two issues that
+prevent proper operation on RZ/G3E:
 
-No functional change.
+1. Over-mapping: Using roundup_pow_of_two() on the remaining region size
+   can result in windows that extend beyond the intended memory region.
 
-Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+2. Alignment violation: Addresses are only aligned to 4K regardless of
+   the actual window size. According to the RZ/G3S HW manual (Rev.1.10,
+   section 34.6.6.7) and RZ/G3E HW manual (Rev.1.15, section 6.6.7.6),
+   bit carry must not occur when adding AXI Window Base and AXI Window
+   Mask registers. This effectively requires the base address to be
+   aligned to the window size.
+
+RZ/G3E strictly enforces these constraints and requires precise window
+boundaries with properly aligned addresses.
+
+Rework the algorithm to properly handle arbitrary region sizes and
+alignment constraints by splitting non-power-of-2 regions into multiple
+windows. The new approach iteratively selects the largest power-of-2
+size that:
+ - Fits within the remaining region (__fls of remaining size)
+ - Does not exceed the natural alignment of the CPU address (__ffs)
+ - Does not exceed the natural alignment of the PCI address (__ffs)
+
+This ensures windows never over-map beyond the intended region and
+satisfies the hardware requirement that base address + mask must not
+cause bit carry, while maintaining the 4K * 2^N byte window size
+constraint.
+
+The reworked algorithm is required for RZ/G3E support and remains
+fully compatible with RZ/G3S.
+
+Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
 ---
- drivers/firmware/arm_scmi/clock.c | 145 +++++++++++++++---------------
- include/linux/scmi_protocol.h     |   2 +
- 2 files changed, 74 insertions(+), 73 deletions(-)
 
-diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
-index 54e8b59c3941..f5d1c608f85a 100644
---- a/drivers/firmware/arm_scmi/clock.c
-+++ b/drivers/firmware/arm_scmi/clock.c
-@@ -157,13 +157,27 @@ struct scmi_clock_rate_notify_payld {
- 	__le32 rate_high;
- };
+Changes:
+
+v7: No changes
+v6: No changes
+
+v5:
+ - Updated HW manual section specification
+ - Collected Rb tag
+
+v4: No changes
+v3: No changes
+v2: New patch
+
+ drivers/pci/controller/pcie-rzg3s-host.c | 53 +++++++++++++-----------
+ 1 file changed, 29 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/controller/pcie-rzg3s-host.c
+index 222891324374..7f5ffc5c218a 100644
+--- a/drivers/pci/controller/pcie-rzg3s-host.c
++++ b/drivers/pci/controller/pcie-rzg3s-host.c
+@@ -1270,50 +1270,55 @@ static int rzg3s_pcie_set_inbound_windows(struct rzg3s_pcie_host *host,
+ 	u64 pci_addr = entry->res->start - entry->offset;
+ 	u64 cpu_addr = entry->res->start;
+ 	u64 cpu_end = entry->res->end;
+-	u64 size_id = 0;
+ 	int id = *index;
+ 	u64 size;
  
-+struct scmi_clock_desc {
-+	u32 id;
-+	bool rate_discrete;
-+	unsigned int num_rates;
-+	u64 rates[SCMI_MAX_NUM_RATES];
-+#define	RATE_MIN	0
-+#define	RATE_MAX	1
-+#define	RATE_STEP	2
-+	struct scmi_clock_info info;
-+};
+-	while (cpu_addr < cpu_end) {
++	/*
++	 * According to the RZ/G3S HW manual (Rev.1.10, section 34.6.6.7) and
++	 * RZ/G3E HW manual (Rev.1.15, section 6.6.7.6):
++	 * - Each window must be a single memory size of power of two
++	 * - Mask registers must be set to (2^N - 1)
++	 * - Bit carry must not occur when adding base and mask registers,
++	 *   meaning the base address must be aligned to the window size
++	 *
++	 * Split non-power-of-2 regions into multiple windows to satisfy
++	 * these constraints without over-mapping.
++	 */
++	while (cpu_addr <= cpu_end) {
++		u64 remaining_size = cpu_end - cpu_addr + 1;
++		u64 align_limit;
 +
-+#define to_desc(p)	(container_of((p), struct scmi_clock_desc, info))
+ 		if (id >= RZG3S_MAX_WINDOWS)
+ 			return dev_err_probe(host->dev, -ENOSPC,
+ 					     "Failed to map inbound window for resource (%s)\n",
+ 					     entry->res->name);
+ 
+-		size = resource_size(entry->res) - size_id;
++		/* Start with largest power-of-two that fits in remaining size */
++		size = 1ULL << __fls(remaining_size);
+ 
+ 		/*
+-		 * According to the RZ/G3S HW manual (Rev.1.10,
+-		 * section 34.3.1.71 AXI Window Mask (Lower) Registers) the min
+-		 * size is 4K.
++		 * The "no bit carry" rule requires base addresses to be
++		 * aligned to the window size. Find the maximum window size
++		 * that both addresses can support based on their natural
++		 * alignment (lowest set bit).
+ 		 */
+-		size = max(size, SZ_4K);
++		align_limit = min(cpu_addr ? (1ULL << __ffs(cpu_addr)) : ~0ULL,
++				  pci_addr ? (1ULL << __ffs(pci_addr)) : ~0ULL);
+ 
+-		/*
+-		 * According the RZ/G3S HW manual (Rev.1.10, sections:
+-		 * - 34.3.1.69 AXI Window Base (Lower) Registers
+-		 * - 34.3.1.71 AXI Window Mask (Lower) Registers
+-		 * - 34.3.1.73 AXI Destination (Lower) Registers)
+-		 * the CPU addr, PCIe addr, size should be 4K aligned and be a
+-		 * power of 2.
+-		 */
+-		size = ALIGN(size, SZ_4K);
+-		size = roundup_pow_of_two(size);
+-
+-		cpu_addr = ALIGN(cpu_addr, SZ_4K);
+-		pci_addr = ALIGN(pci_addr, SZ_4K);
++		size = min(size, align_limit);
+ 
+ 		/*
+-		 * According to the RZ/G3S HW manual (Rev.1.10, section
+-		 * 34.3.1.71 AXI Window Mask (Lower) Registers) HW expects first
+-		 * 12 LSB bits to be 0xfff. Subtract 1 from size for this.
++		 * Minimum window size is 4KB.
++		 * See RZ/G3S HW manual (Rev.1.10, section 34.3.1.71) and
++		 * RZ/G3E HW manual (Rev.1.15, section 6.6.4.1.3.(74)).
+ 		 */
++		size = max(size, SZ_4K);
 +
- struct clock_info {
- 	int num_clocks;
- 	int max_async_req;
- 	bool notify_rate_changed_cmd;
- 	bool notify_rate_change_requested_cmd;
- 	atomic_t cur_async_req;
--	struct scmi_clock_info *clk;
-+	struct scmi_clock_desc *clkds;
-+#define CLOCK_INFO(c, i)	(&(((c)->clkds + (i))->info))
- 	int (*clock_config_set)(const struct scmi_protocol_handle *ph,
- 				u32 clk_id, enum clk_state state,
- 				enum scmi_clock_oem_config oem_type,
-@@ -185,7 +199,7 @@ scmi_clock_domain_lookup(struct clock_info *ci, u32 clk_id)
- 	if (clk_id >= ci->num_clocks)
- 		return ERR_PTR(-EINVAL);
+ 		rzg3s_pcie_set_inbound_window(host, cpu_addr, pci_addr,
+ 					      size - 1, id);
  
--	return ci->clk + clk_id;
-+	return CLOCK_INFO(ci, clk_id);
- }
- 
- static int
-@@ -226,8 +240,7 @@ scmi_clock_protocol_attributes_get(const struct scmi_protocol_handle *ph,
- 
- struct scmi_clk_ipriv {
- 	struct device *dev;
--	u32 clk_id;
--	struct scmi_clock_info *clk;
-+	struct scmi_clock_desc *clkd;
- };
- 
- static void iter_clk_possible_parents_prepare_message(void *message, unsigned int desc_index,
-@@ -236,7 +249,7 @@ static void iter_clk_possible_parents_prepare_message(void *message, unsigned in
- 	struct scmi_msg_clock_possible_parents *msg = message;
- 	const struct scmi_clk_ipriv *p = priv;
- 
--	msg->id = cpu_to_le32(p->clk_id);
-+	msg->id = cpu_to_le32(p->clkd->id);
- 	/* Set the number of OPPs to be skipped/already read */
- 	msg->skip_parents = cpu_to_le32(desc_index);
- }
-@@ -246,7 +259,6 @@ static int iter_clk_possible_parents_update_state(struct scmi_iterator_state *st
- {
- 	const struct scmi_msg_resp_clock_possible_parents *r = response;
- 	struct scmi_clk_ipriv *p = priv;
--	struct device *dev = ((struct scmi_clk_ipriv *)p)->dev;
- 	u32 flags;
- 
- 	flags = le32_to_cpu(r->num_parent_flags);
-@@ -258,12 +270,13 @@ static int iter_clk_possible_parents_update_state(struct scmi_iterator_state *st
- 	 * assume it's returned+remaining on first call.
- 	 */
- 	if (!st->max_resources) {
--		p->clk->num_parents = st->num_returned + st->num_remaining;
--		p->clk->parents = devm_kcalloc(dev, p->clk->num_parents,
--					       sizeof(*p->clk->parents),
--					       GFP_KERNEL);
--		if (!p->clk->parents) {
--			p->clk->num_parents = 0;
-+		p->clkd->info.num_parents = st->num_returned + st->num_remaining;
-+		p->clkd->info.parents = devm_kcalloc(p->dev,
-+						     p->clkd->info.num_parents,
-+						     sizeof(*p->clkd->info.parents),
-+						     GFP_KERNEL);
-+		if (!p->clkd->info.parents) {
-+			p->clkd->info.num_parents = 0;
- 			return -ENOMEM;
- 		}
- 		st->max_resources = st->num_returned + st->num_remaining;
-@@ -280,29 +293,27 @@ static int iter_clk_possible_parents_process_response(const struct scmi_protocol
- 	const struct scmi_msg_resp_clock_possible_parents *r = response;
- 	struct scmi_clk_ipriv *p = priv;
- 
--	u32 *parent = &p->clk->parents[st->desc_index + st->loop_idx];
-+	u32 *parent = &p->clkd->info.parents[st->desc_index + st->loop_idx];
- 
- 	*parent = le32_to_cpu(r->possible_parents[st->loop_idx]);
- 
- 	return 0;
- }
- 
--static int scmi_clock_possible_parents(const struct scmi_protocol_handle *ph, u32 clk_id,
--				       struct scmi_clock_info *clk)
-+static int scmi_clock_possible_parents(const struct scmi_protocol_handle *ph,
-+				       u32 clk_id, struct clock_info *cinfo)
- {
- 	struct scmi_iterator_ops ops = {
- 		.prepare_message = iter_clk_possible_parents_prepare_message,
- 		.update_state = iter_clk_possible_parents_update_state,
- 		.process_response = iter_clk_possible_parents_process_response,
- 	};
--
-+	struct scmi_clock_desc *clkd = &cinfo->clkds[clk_id];
- 	struct scmi_clk_ipriv ppriv = {
--		.clk_id = clk_id,
--		.clk = clk,
-+		.clkd = clkd,
- 		.dev = ph->dev,
- 	};
- 	void *iter;
--	int ret;
- 
- 	iter = ph->hops->iter_response_init(ph, &ops, 0,
- 					    CLOCK_POSSIBLE_PARENTS_GET,
-@@ -311,9 +322,7 @@ static int scmi_clock_possible_parents(const struct scmi_protocol_handle *ph, u3
- 	if (IS_ERR(iter))
- 		return PTR_ERR(iter);
- 
--	ret = ph->hops->iter_response_run(iter);
--
--	return ret;
-+	return ph->hops->iter_response_run(iter);
- }
- 
- static int
-@@ -352,7 +361,7 @@ static int scmi_clock_attributes_get(const struct scmi_protocol_handle *ph,
- 	u32 attributes;
- 	struct scmi_xfer *t;
- 	struct scmi_msg_resp_clock_attributes *attr;
--	struct scmi_clock_info *clk = cinfo->clk + clk_id;
-+	struct scmi_clock_info *clk = CLOCK_INFO(cinfo, clk_id);
- 
- 	ret = ph->xops->xfer_get_init(ph, CLOCK_ATTRIBUTES,
- 				      sizeof(clk_id), sizeof(*attr), &t);
-@@ -394,7 +403,7 @@ static int scmi_clock_attributes_get(const struct scmi_protocol_handle *ph,
- 			clk->rate_change_requested_notifications = true;
- 		if (PROTOCOL_REV_MAJOR(ph->version) >= 0x3) {
- 			if (SUPPORTS_PARENT_CLOCK(attributes))
--				scmi_clock_possible_parents(ph, clk_id, clk);
-+				scmi_clock_possible_parents(ph, clk_id, cinfo);
- 			if (SUPPORTS_GET_PERMISSIONS(attributes))
- 				scmi_clock_get_permissions(ph, clk_id, clk);
- 			if (SUPPORTS_EXTENDED_CONFIG(attributes))
-@@ -424,7 +433,7 @@ static void iter_clk_describe_prepare_message(void *message,
- 	struct scmi_msg_clock_describe_rates *msg = message;
- 	const struct scmi_clk_ipriv *p = priv;
- 
--	msg->id = cpu_to_le32(p->clk_id);
-+	msg->id = cpu_to_le32(p->clkd->id);
- 	/* Set the number of rates to be skipped/already read */
- 	msg->rate_index = cpu_to_le32(desc_index);
- }
-@@ -457,14 +466,14 @@ iter_clk_describe_update_state(struct scmi_iterator_state *st,
- 	flags = le32_to_cpu(r->num_rates_flags);
- 	st->num_remaining = NUM_REMAINING(flags);
- 	st->num_returned = NUM_RETURNED(flags);
--	p->clk->rate_discrete = RATE_DISCRETE(flags);
-+	p->clkd->rate_discrete = RATE_DISCRETE(flags);
- 
- 	/* Warn about out of spec replies ... */
--	if (!p->clk->rate_discrete &&
-+	if (!p->clkd->rate_discrete &&
- 	    (st->num_returned != 3 || st->num_remaining != 0)) {
- 		dev_warn(p->dev,
- 			 "Out-of-spec CLOCK_DESCRIBE_RATES reply for %s - returned:%d remaining:%d rx_len:%zd\n",
--			 p->clk->name, st->num_returned, st->num_remaining,
-+			 p->clkd->info.name, st->num_returned, st->num_remaining,
- 			 st->rx_len);
- 
- 		SCMI_QUIRK(clock_rates_triplet_out_of_spec,
-@@ -479,38 +488,19 @@ iter_clk_describe_process_response(const struct scmi_protocol_handle *ph,
- 				   const void *response,
- 				   struct scmi_iterator_state *st, void *priv)
- {
--	int ret = 0;
- 	struct scmi_clk_ipriv *p = priv;
- 	const struct scmi_msg_resp_clock_describe_rates *r = response;
- 
--	if (!p->clk->rate_discrete) {
--		switch (st->desc_index + st->loop_idx) {
--		case 0:
--			p->clk->range.min_rate = RATE_TO_U64(r->rate[0]);
--			break;
--		case 1:
--			p->clk->range.max_rate = RATE_TO_U64(r->rate[1]);
--			break;
--		case 2:
--			p->clk->range.step_size = RATE_TO_U64(r->rate[2]);
--			break;
--		default:
--			ret = -EINVAL;
--			break;
--		}
--	} else {
--		u64 *rate = &p->clk->list.rates[st->desc_index + st->loop_idx];
-+	p->clkd->rates[st->desc_index + st->loop_idx] =
-+		RATE_TO_U64(r->rate[st->loop_idx]);
-+	p->clkd->num_rates++;
- 
--		*rate = RATE_TO_U64(r->rate[st->loop_idx]);
--		p->clk->list.num_rates++;
--	}
--
--	return ret;
-+	return 0;
- }
- 
- static int
- scmi_clock_describe_rates_get(const struct scmi_protocol_handle *ph, u32 clk_id,
--			      struct scmi_clock_info *clk)
-+			      struct clock_info *cinfo)
- {
- 	int ret;
- 	void *iter;
-@@ -519,9 +509,9 @@ scmi_clock_describe_rates_get(const struct scmi_protocol_handle *ph, u32 clk_id,
- 		.update_state = iter_clk_describe_update_state,
- 		.process_response = iter_clk_describe_process_response,
- 	};
-+	struct scmi_clock_desc *clkd = &cinfo->clkds[clk_id];
- 	struct scmi_clk_ipriv cpriv = {
--		.clk_id = clk_id,
--		.clk = clk,
-+		.clkd = clkd,
- 		.dev = ph->dev,
- 	};
- 
-@@ -536,16 +526,23 @@ scmi_clock_describe_rates_get(const struct scmi_protocol_handle *ph, u32 clk_id,
- 	if (ret)
- 		return ret;
- 
--	if (!clk->rate_discrete) {
-+	/* empty set ? */
-+	if (!clkd->num_rates)
-+		return 0;
-+
-+	if (!clkd->rate_discrete) {
-+		clkd->info.max_rate = clkd->rates[RATE_MAX];
- 		dev_dbg(ph->dev, "Min %llu Max %llu Step %llu Hz\n",
--			clk->range.min_rate, clk->range.max_rate,
--			clk->range.step_size);
--	} else if (clk->list.num_rates) {
--		sort(clk->list.rates, clk->list.num_rates,
--		     sizeof(clk->list.rates[0]), rate_cmp_func, NULL);
-+			clkd->rates[RATE_MIN], clkd->rates[RATE_MAX],
-+			clkd->rates[RATE_STEP]);
-+	} else {
-+		sort(clkd->rates, clkd->num_rates,
-+		     sizeof(clkd->rates[0]), rate_cmp_func, NULL);
-+		clkd->info.max_rate = clkd->rates[clkd->num_rates - 1];
+ 		pci_addr += size;
+ 		cpu_addr += size;
+-		size_id = size;
+ 		id++;
  	}
-+	clkd->info.min_rate = clkd->rates[RATE_MIN];
- 
--	return ret;
-+	return 0;
- }
- 
- static int
-@@ -630,6 +627,7 @@ static int scmi_clock_determine_rate(const struct scmi_protocol_handle *ph,
- {
- 	u64 fmin, fmax, ftmp;
- 	struct scmi_clock_info *clk;
-+	struct scmi_clock_desc *clkd;
- 	struct clock_info *ci = ph->get_priv(ph);
- 
- 	if (!rate)
-@@ -639,15 +637,17 @@ static int scmi_clock_determine_rate(const struct scmi_protocol_handle *ph,
- 	if (IS_ERR(clk))
- 		return PTR_ERR(clk);
- 
-+	clkd = to_desc(clk);
-+
- 	/*
- 	 * If we can't figure out what rate it will be, so just return the
- 	 * rate back to the caller.
- 	 */
--	if (clk->rate_discrete)
-+	if (clkd->rate_discrete)
- 		return 0;
- 
--	fmin = clk->range.min_rate;
--	fmax = clk->range.max_rate;
-+	fmin = clk->min_rate;
-+	fmax = clk->max_rate;
- 	if (*rate <= fmin) {
- 		*rate = fmin;
- 		return 0;
-@@ -657,10 +657,10 @@ static int scmi_clock_determine_rate(const struct scmi_protocol_handle *ph,
- 	}
- 
- 	ftmp = *rate - fmin;
--	ftmp += clk->range.step_size - 1; /* to round up */
--	do_div(ftmp, clk->range.step_size);
-+	ftmp += clkd->rates[RATE_STEP] - 1; /* to round up */
-+	do_div(ftmp, clkd->rates[RATE_STEP]);
- 
--	*rate = ftmp * clk->range.step_size + fmin;
-+	*rate = ftmp * clkd->rates[RATE_STEP] + fmin;
- 
- 	return 0;
- }
-@@ -1122,17 +1122,16 @@ static int scmi_clock_protocol_init(const struct scmi_protocol_handle *ph)
- 	if (ret)
- 		return ret;
- 
--	cinfo->clk = devm_kcalloc(ph->dev, cinfo->num_clocks,
--				  sizeof(*cinfo->clk), GFP_KERNEL);
--	if (!cinfo->clk)
-+	cinfo->clkds = devm_kcalloc(ph->dev, cinfo->num_clocks,
-+				    sizeof(*cinfo->clkds), GFP_KERNEL);
-+	if (!cinfo->clkds)
- 		return -ENOMEM;
- 
- 	for (clkid = 0; clkid < cinfo->num_clocks; clkid++) {
--		struct scmi_clock_info *clk = cinfo->clk + clkid;
--
-+		cinfo->clkds[clkid].id = clkid;
- 		ret = scmi_clock_attributes_get(ph, clkid, cinfo);
- 		if (!ret)
--			scmi_clock_describe_rates_get(ph, clkid, clk);
-+			scmi_clock_describe_rates_get(ph, clkid, cinfo);
- 	}
- 
- 	if (PROTOCOL_REV_MAJOR(ph->version) >= 0x3) {
-diff --git a/include/linux/scmi_protocol.h b/include/linux/scmi_protocol.h
-index 28579c145045..7283302b0c85 100644
---- a/include/linux/scmi_protocol.h
-+++ b/include/linux/scmi_protocol.h
-@@ -51,6 +51,8 @@ struct scmi_clock_info {
- 	bool rate_ctrl_forbidden;
- 	bool parent_ctrl_forbidden;
- 	bool extended_config;
-+	u64 min_rate;
-+	u64 max_rate;
- 	union {
- 		struct {
- 			int num_rates;
+ 	*index = id;
 -- 
-2.53.0
+2.25.1
 
