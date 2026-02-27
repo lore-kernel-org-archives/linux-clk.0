@@ -1,133 +1,121 @@
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D107288D6
-	for <linux-clk@vger.kernel.org>; Fri, 27 Feb 2026 08:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4FDF332606
+	for <linux-clk@vger.kernel.org>; Fri, 27 Feb 2026 08:48:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772180424; cv=none; b=GvYH0xjaJXiVyWZ4sdttFFlMz0EdSdiEFgwrCh0de9kK3j5o4qKa8NbTRJM+duWF0q5qKqJNquKBR1seama62S8wvdgaBTB1rzRUAGK5Wc2wgONmbZ0fS0RBzqk7CAtYxJk7/qxsvTFm6J2Kr/61sp2aKH3IZUTjJ+8DtFvXeFM=
+	t=1772182131; cv=none; b=HkFtf31ZbGCgUtZXNxZqOLLnkGPIVlwB6/EzTTkSCBBxTGZalvysTGqAkQbmJqbyK0Rel6ih3bMApMOc8KBFuPQWiBAIbabmdP0W/4JDt1w7ay4Rs4n3zC6WId2d9eG3t0MmqAyBFtF6Tt5/YJhxl1HkiKSs43M0xOJ972oZYlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772180424; c=relaxed/simple;
-	bh=qfGaDXK95+OOnoa2/Oo2k0+JRm83LeVTat62jVPLQws=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rbfQJls+lLXAjFBZjZh5jkKpSjTZl8d46XelRhmLrNnmKdzeIJZsr1MBA7lI2JqrDsmxne3OO3lwxs2QIRDmJd3i2ooRBtFMSM24ThkSgr+PceEKbWkfhaGSRuNIrL29K27ztC8XiMEdOGksaS5cmaLhVyXVOQ2FVRe3KubroL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-56a8fdaddebso693177e0c.0
-        for <linux-clk@vger.kernel.org>; Fri, 27 Feb 2026 00:20:23 -0800 (PST)
+	s=arc-20240116; t=1772182131; c=relaxed/simple;
+	bh=+C2AViCGBu6JCnL7njP0l/RXkEu3njPw7S4z03Ac/Ws=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yvy9YrsoMjOWC+QO+e0lfi3MJEMPmgYRRegX33fVUGmnUVtiD96gADkFv2FL0BfANTHyZOmU9h3Kz/p36x0Ki89ySCT/EYzw7I5NP0QR12WBobWLTqouviZcd8EpVSYVGpaTEdSGDM+99GsGrVJu/ikM7sOG1mJTvVcyxma9ZEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tZctkDXb; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tZctkDXb"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-43988056dc3so1758951f8f.3
+        for <linux-clk@vger.kernel.org>; Fri, 27 Feb 2026 00:48:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1772182128; x=1772786928; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DygztlrJ/2EfLqsjEMNZWS27dKKJ7KUU3T7C84zCrOQ=;
+        b=tZctkDXbiUHo/OXhkW0WyGZX6gNs/L+qk6jXa5ayADuO3XIbWqKLLDwIka8/hqiXyO
+         2wgsUKCB/lBPi1KnUKbaH71LDryBTX9+By11Vrq0VQYlOdm6eInYntouyTskl/ykQCTw
+         3JPcktBGQu5sTCD6EMRVPAcPzTUkNF7CPFPpYqne4XGgQgnhDc0pNp1NBj8oN77Hxco6
+         B/gUhpVnQtx8qKkxt28Awrz2hW7fHq6oS1nsFxHq6uVUBvChWBNXT+pK1E8mTbwWl80v
+         LwGRqCelU4h24IBRvRMvim13Bmgd4tamO5YgHQdmTgR8VUJnOFOwu+ywGim1cOmAGSHB
+         zTAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772180422; x=1772785222;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2vM7kNTsRSuwTYb1u/IIFpUK3Lpu1QAEIlctXUAXXFc=;
-        b=cuMHT3x7FJcHI/DoQsGke2LcOsfbpdmX623HGNVbHPkSo5MvCR4LV5s5FNJuENKntf
-         Pyn7HQG+Ae8GDrHnLq9OVxIRsrkvqq4YIRXEGqw03x9O+SUP3re4ceCerEncKza102UR
-         BD+sdryhHMc8MitCQ9bzK4hks9JuroI3ls5TUMC0WpzIF2ltTSjpWmZCn8oQjVKg0HrF
-         WqZJMeoGHB9repFhYDIXtlhz0kErt83cwiKpsBtcY1CXQDSEhcFHV8FPYHj9oRja8plu
-         wNOrIw9BAFPADxJi+hBrCUqTPqFDemUkV1uWzplHJIpbnBQ4o+C1xKYT1XCBOHkhrlO/
-         VTuw==
-X-Forwarded-Encrypted: i=1; AJvYcCXh6bycOiYvj5L9zmfbStkEqUXSRf7wZnv7n2mX3bxutMm06N9Y6I2NNRRnKtXbjccRZ9koWhqT9Nk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIoCp0NzlQEsHdy/yQaWrfkedzqoz8EIViN7Ijv4r5D41GeyKe
-	mXVrMI9yUHLhGxVLMjb5VERVBEP9fnmS/edzyBKIpyWMmhTLDp4B3e432JR5DwSH0oA=
-X-Gm-Gg: ATEYQzzV3NFQIOLCu41QWo5n18jlRxkoO2QAIc4FaU0a1UcUwFprxa5lXY59jAXhEzM
-	IjOwgDZwhnZdvAN/QSYa5IImJcY/or8IicH1lACKxckofrU5uncVkCPlU4SZBon7QpNCTDMgq+B
-	+KNZW6Z+b+5vU7DMkUTafqppub2kJM2tjGwmhwRWGCjS+mVV5dva50J94UCWLQNwkSFGmHho49V
-	+nU//olzil+cR6WgZxX2mcX0ojhA1txRiWSh2vmMFq8pePmrH5IO4fr/6O7lcoOYbqUyG5FpdI2
-	csawhSxU84yIZMpf/+EN02anU1T4b7H/E/us30SGn+PrLRw3Bh2Ax6nD/BK/BpyYddPYUnTkysL
-	jmQl1392lLI/YrwycOzDweY3u0e5PVcs1QeVwzyao7b4lVGHwuppXlXuq4zY6cGSR45oRS/HyzS
-	Wh+4UqsJYx5NartglSPpJ/EJpvHTfgIliOcL8HA5tNFpkJtkwaIYsNusQTxoTv
-X-Received: by 2002:a05:6122:1803:b0:566:37da:a72a with SMTP id 71dfb90a1353d-56aa0aafaffmr1015438e0c.13.1772180422327;
-        Fri, 27 Feb 2026 00:20:22 -0800 (PST)
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56a920493f9sm5392034e0c.13.2026.02.27.00.20.21
-        for <linux-clk@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1772182128; x=1772786928;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DygztlrJ/2EfLqsjEMNZWS27dKKJ7KUU3T7C84zCrOQ=;
+        b=DonnCtdUIBwmk46VPkn7OXUekNSN5AZgfbYtjPfxd5vaXTHY4mfMnmn6n6ptglrsiV
+         LbKWbwptKGzMXefQHuFDzGgVB15s4tgxYLACM+quXWI7BJQVdqisq65BPhLNXfE4H6py
+         nkDUfbBegVExux+ygRtdvmYVeykXnzQLW+9FIOLIxvWqZTQOnQiVLsLZQ0bSJb7K85Ad
+         zZxGRbJaX55Ms36+PSAyV56TXbx4An7KheqG6NvSEFwbqChFDeL5dfGOp9FNlweOtzVT
+         Mtm7WU3QCSdsCkPOlc3izLR+kUzD0SR08qhMFsO3jiBwKjsKm7cPOzcXbUgjMz9j1XhX
+         DSzA==
+X-Forwarded-Encrypted: i=1; AJvYcCXVlJzf6+R7XDH1fvxmzPJf280Uo1gkaSk8gP86NjSwraABY3QthcN1EErQwr8/hLOaISIlLL4x5V8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNlWtmWbC7LI6Kjr6pj1quk2iG3bxpOCjdBX87UJ3a42Ux5B2D
+	FBF6xglQ7pTXp4FLVPOhIwPhWRl1IUqB5bm7J/XYkN5MRU7mWN7eDFnc1p5RHGd3aH0=
+X-Gm-Gg: ATEYQzxjSeeryiPej3+7bu9IsUkfSeqzROynlTThYEPHWZrCNdw3JKeyf1yii5wyqjS
+	Qksf/m707iQBgJ1QNQXJ2CjXlkmaQ6DJ9KN8gxTC46049sF18B+uS7j47MWYoDKFS3pqZPh9i5t
+	YlbcaA/UObeVFhE4zZ/40HtNXy7BWH6i1BaTndzdaOPbRWG3pla7KAPfUBTZIbD3QZiXlyM1nRh
+	HfGtIa0mEvSBzZuHut/IDmYjFK43oNO9batRg8iYNtOg3IdFdzZT52GDhi+8onnvTts9xOX5ok+
+	TS+o6T/bvoqABKYhvIZCj4xwWZd5JR6GreFSwP2HGbZIjKMRYmQ67FQ/H5YAiPrGodWXm1loLcK
+	LUi14AVNyu1qJmNJUHmMTDicCSvuaHi0hZo0SE7bWYF1fcUBRJWljvU6ZlwpvSEPlld4B4PrOrF
+	GUTI9RKN7F2O+e7EQUjgyO2ueJQSGm6Z3iQ7QHt6SSnS1wfnn966uUWwH3ou+2OGR9
+X-Received: by 2002:a5d:4527:0:b0:437:664c:3f28 with SMTP id ffacd0b85a97d-4399de4a684mr2333826f8f.47.1772182128271;
+        Fri, 27 Feb 2026 00:48:48 -0800 (PST)
+Received: from [192.168.0.40] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4399c76b40esm4856509f8f.36.2026.02.27.00.48.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Feb 2026 00:20:21 -0800 (PST)
-Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-5ff196450c6so427059137.2
-        for <linux-clk@vger.kernel.org>; Fri, 27 Feb 2026 00:20:21 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX7vDShE2hep0UJDZJrcYT0+fQiA7sD9ssnD2LHMTHHG976EDj6PhxpE+HhafNUp3sQm//vQRYR/zw=@vger.kernel.org
-X-Received: by 2002:a05:6102:b0f:b0:5f0:2451:5f5 with SMTP id
- ada2fe7eead31-5ff3227b5fdmr919932137.7.1772180420917; Fri, 27 Feb 2026
- 00:20:20 -0800 (PST)
+        Fri, 27 Feb 2026 00:48:47 -0800 (PST)
+Message-ID: <71fcb165-7fda-4714-b56b-40d6537b8ccd@linaro.org>
+Date: Fri, 27 Feb 2026 08:48:45 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260226-clk-det-rate-fw-managed-v1-0-4421dd2f6dc6@redhat.com> <20260226-clk-det-rate-fw-managed-v1-11-4421dd2f6dc6@redhat.com>
-In-Reply-To: <20260226-clk-det-rate-fw-managed-v1-11-4421dd2f6dc6@redhat.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 27 Feb 2026 09:20:09 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWPiy2OYEntYNEMjkxYPrQBED2segMfND+4VtzdeQE6+g@mail.gmail.com>
-X-Gm-Features: AaiRm514zxc-j2wSE9hmPrV4K28ncYIEZUw_Gwmc4uNdGcUAjx-4leTB7pDypQg
-Message-ID: <CAMuHMdWPiy2OYEntYNEMjkxYPrQBED2segMfND+4VtzdeQE6+g@mail.gmail.com>
-Subject: Re: [PATCH 11/13] clk: renesas: rzg2l-cpg: drop determine_rate op and
- use CLK_ROUNDING_FW_MANAGED flag
-To: Brian Masney <bmasney@redhat.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 02/18] dt-bindings: media: qcom,x1e80100-camss: Convert
+ from inline PHY definitions to PHY handles
+To: Krzysztof Kozlowski <krzk@kernel.org>, Bryan O'Donoghue <bod@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org
+References: <20260225-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v8-0-95517393bcb2@linaro.org>
+ <20260225-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v8-2-95517393bcb2@linaro.org>
+ <CuJMpimPBtwHGAd5-YHUArL6FkU2HQeY4SjbxeMwf0ToQ7LKO3zWSTn86L-HKxC1KfarWc4rRbZqnCMQsv0pcw==@protonmail.internalid>
+ <20260226-fluffy-complex-malamute-7ecec6@quoll>
+ <35b1ba2a-e156-4542-b33a-d4e53f6a62cb@kernel.org>
+ <tVxcOw7tqTRGXAoW06WPM_voMVBY3SO7Mm_MTMWp6OuotVmgmyi0DOgVHdDavO2V6o3iRH7ax0NosgHuzGkHgw==@protonmail.internalid>
+ <4ebe2f26-29fa-4104-bc90-3f5aa7009ec3@kernel.org>
+ <c2d9742c-3d82-4340-a11b-16370bcad5ea@kernel.org>
+ <72f0ed74-ac86-4571-8a72-d41282349718@kernel.org>
+ <d1ddaa7f-cfba-4e71-8a9f-70014c57de74@linaro.org>
+ <934812b1-a853-471f-beb7-3988eff0856d@kernel.org>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <934812b1-a853-471f-beb7-3988eff0856d@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Brian,
+On 27/02/2026 07:24, Krzysztof Kozlowski wrote:
+>> Well, is there a way to support both then ?
+> I would just not touch x1e80100, but if you want then probably binding
+> should stay backwards compatible, where you keep all properties intact
+> and only add csiphy nodes.
+> 
 
-C Biju
+I really want to stop adding new stuff with the legacy way that has 
+broken power-rails, even if that means x1e has a bit Frankenstein binding.
 
-On Thu, 26 Feb 2026 at 19:18, Brian Masney <bmasney@redhat.com> wrote:
-> This clk driver has a noop determine_rate clk op. Drop this empty
-> function, and enable the CLK_ROUNDING_FW_MANAGED flag.
->
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
+>> Right now I have csiphy and their registers listed in the camss block.
+>>
+>> I could add phys = <> as optional in the schema. Is there any reason to
+>> stop adding adjacent csiphy nodes ?
+> I think no.
 
-Thanks for your patch!
+Great so, that's what I'll do.
 
-> --- a/drivers/clk/renesas/rzg2l-cpg.c
-> +++ b/drivers/clk/renesas/rzg2l-cpg.c
-> @@ -938,12 +938,6 @@ static unsigned long rzg2l_cpg_sipll5_recalc_rate(struct clk_hw *hw,
->         return pll5_rate;
->  }
->
-> -static int rzg2l_cpg_sipll5_determine_rate(struct clk_hw *hw,
-> -                                          struct clk_rate_request *req)
-> -{
-> -       return 0;
-> -}
-> -
->  static int rzg2l_cpg_sipll5_set_rate(struct clk_hw *hw,
->                                      unsigned long rate,
->                                      unsigned long parent_rate)
-> @@ -1015,7 +1009,6 @@ static int rzg2l_cpg_sipll5_set_rate(struct clk_hw *hw,
->
->  static const struct clk_ops rzg2l_cpg_sipll5_ops = {
->         .recalc_rate = rzg2l_cpg_sipll5_recalc_rate,
-> -       .determine_rate = rzg2l_cpg_sipll5_determine_rate,
->         .set_rate = rzg2l_cpg_sipll5_set_rate,
->  };
->
-> @@ -1041,7 +1034,7 @@ rzg2l_cpg_sipll5_register(const struct cpg_core_clk *core,
->         init.name = core->name;
->         parent_name = __clk_get_name(parent);
->         init.ops = &rzg2l_cpg_sipll5_ops;
-> -       init.flags = 0;
-> +       init.flags = CLK_ROUNDING_FW_MANAGED;
-
-Iff this is the Right Thing To Do (TM), it needs a comment, as this
-clock is not managed by firmware.
-
->         init.parent_names = &parent_name;
->         init.num_parents = 1;
->
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+---
+bod
