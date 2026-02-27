@@ -1,110 +1,98 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B03C41323A;
-	Fri, 27 Feb 2026 17:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9171636E472;
+	Fri, 27 Feb 2026 18:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772213612; cv=none; b=Aj6xf5tBnvzuRHaQkK4A2zuMhlb9kykwcJ18y1NqUcMZUynV8TNSQcBQXFj6wmhq31h/LDFxECoS83te2c4Z1HRAsF85UgWmeJ8BOnW3Qhuay727qah+npBEQSlekisoc/FA+4v82QYM6usZkwj41/sd78vs3hkHWol5OIu5iBw=
+	t=1772216156; cv=none; b=Rg/tyPVrNswpX3BJnEdR7Trx3zJyA0xbLuN7Y2QF+wW9I/n+G9kpp9QnsKCbSX4SCdrI+PQCJEd58nVA1joYqEklrZasKCJgQ6EAuN4NM7miOPE2uMEJtckCTWsNZQga8pPqEOf1vYAPflo/cEnIYIHgsf5FFbYHp+UfDEjL7V0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772213612; c=relaxed/simple;
-	bh=RWIw2XbMdqDRicGEL0YDWL0cD+Khc6u5UWrGRAKiQU4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CWo4s5+HfnjTltC/EB30vf/8KKBDA07xPBj+5SMbhR+7emfTXdTfFSWyQyLxaWcTw9eQTcQsjgFcxPwS9gl0x0uSN+YSK0CWDWro29oS1U6TUZJyAGo0zG6EgVrH/1GtvkYUlzT1Ci14nFsrDtOM+GoRuy3VLHwrn5jeeaExWHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fWFy41pT; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772216156; c=relaxed/simple;
+	bh=lFxX50iVSlnpuiBMKPhLIJk3W+4PP2Gcphk0SCPZefU=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=MmTNHkP+ae9/rwkn+dacB7glpBG3pgjwkeByQDR8lp2b0evKl5yVAWBjVaDWRpVXhU8JzT2CZBL6dlbEvTjr1i59OZEWodfBQlY33mGIaXS4sCNQoTi9PgfAGvcklFxAI8dDphPzPOeKtRYRO6SCHVyDXJJzzCl0hhapksRc2oM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=oyctG9i/; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fWFy41pT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C973C116C6;
-	Fri, 27 Feb 2026 17:33:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772213611;
-	bh=RWIw2XbMdqDRicGEL0YDWL0cD+Khc6u5UWrGRAKiQU4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fWFy41pTOMD/9pJ517nQN5PTE0puGxWrnW1MFm0j0g9Lss2dfK/1U8XdJCfMJBnmX
-	 jCgWj0Msb3BLjiNHfnf1u9bjKPnBzYg3dgHnDjlMG7OPHizjPZAYVV77McRu9Morv0
-	 i5K8UmA7AoN8x6AdMHIzi8wQqBAWaugmrFnwFmNKnoLCBAvCM7Dy36z1OJ/8tbkZHS
-	 vZvvUSu1flSeLNMN8UJWZEzpa1ON3I0Tiwu2AIehj2eC0MnCKJ0dZLEqDvv0PjqF/c
-	 coEMNWEvZdTL0uS46TibvhXU18GjUghGYiG6/5DUhWaQd5avReNJeMM9jI9skkBmby
-	 Q9Nkc73XwOcHg==
-Date: Fri, 27 Feb 2026 17:33:27 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Haiyue Wang <haiyuewa@163.com>
-Cc: linux-aspeed@lists.ozlabs.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Hans Verkuil <hverkuil+cisco@kernel.org>,
-	Jammy Huang <jammy_huang@aspeedtech.com>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: clock: ast2600: Add reset definition
- for video
-Message-ID: <20260227-smooth-carefully-f427e242ce58@spud>
-References: <20260227151602.829-1-haiyuewa@163.com>
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="oyctG9i/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1772216145; x=1772475345;
+	bh=IJQBuqJIDFLF068ZEeM//Jn8YuHmvtnbJIbkjKaD0TI=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=oyctG9i/fhP0IwGW7lBNWi5EXeTgSsLoEIr65yB+dy/aKzk8cnRE+EXjuPfqqXTPp
+	 5CBgaGu0fDtLYbI3Zs9///0JJs74omxS8LObpVqa9yOiRHX1vTzTKA/a9w62wVk42b
+	 DsacfO6cl6wawLL0s0YTsSov1DMPX8VUE2Xc3wPx6DW22aB+OP2W2xRy0JUaUZrgP9
+	 Hb/wdZsoprdiFHb8tBTVZLC2R/7bgoGpuHeYho2tTEZ6g35EFMWcyKZpJzSKsZ1MyE
+	 o5kfJUeoD1JFDQzV/19BXVO1bGStZTMys3ihiiKatmilRdidXg0VS8ebxPx8F7wp6i
+	 eIM9llNPE9dPQ==
+Date: Fri, 27 Feb 2026 18:15:40 +0000
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Michal Simek <michal.simek@amd.com>
+From: Harry Austen <hpausten@protonmail.com>
+Cc: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Harry Austen <hpausten@protonmail.com>
+Subject: [PATCH v5 0/2] clk: clocking-wizard: add user clock monitor support
+Message-ID: <20260227181507.19890-1-hpausten@protonmail.com>
+Feedback-ID: 53116287:user:proton
+X-Pm-Message-ID: 0612b8fa22ff3219816b113f35263756f3547ea4
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/NuwEW3VcqbDOFRB"
-Content-Disposition: inline
-In-Reply-To: <20260227151602.829-1-haiyuewa@163.com>
-
-
---/NuwEW3VcqbDOFRB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 27, 2026 at 11:13:14PM +0800, Haiyue Wang wrote:
-> Add ASPEED_RESET_VIDEO reset definition to the ast2600-clock binding
-> header. It is required for proper reset control of the video on the
-> AST2600 SoC for aspeed-video driver.
->=20
-> Fixes: e83f8dd668ea ("media: aspeed: Fix dram hang at res-change")
+Add support for the clock monitor functionality added in version 6.0 of the
+Xilinx clocking wizard IP core, through use of devcoredump.
 
-How can a binding change be a fix for a driver one?
+This is a follow up from a patchset I submitted quite a while ago [1],
+where I was attempting to utilise the UIO subsystem instead. Stephen Boyd
+suggested use of devcoredump instead [2] and I have finally got round to
+giving this a go.
 
-> Signed-off-by: Haiyue Wang <haiyuewa@163.com>
-> ---
-> v2:
->   - Fix checkpatch.pl warning, and send dt-bindings as single patch as
->     the submitting-patches guide.
-> v1: https://lore.kernel.org/all/20260227123837.70079-1-haiyuewa@163.com/
-> ---
->  include/dt-bindings/clock/ast2600-clock.h | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/include/dt-bindings/clock/ast2600-clock.h b/include/dt-bindi=
-ngs/clock/ast2600-clock.h
-> index f60fff261130..7b9b80c38a8b 100644
-> --- a/include/dt-bindings/clock/ast2600-clock.h
-> +++ b/include/dt-bindings/clock/ast2600-clock.h
-> @@ -124,6 +124,7 @@
->  #define ASPEED_RESET_PCIE_RC_OEN	18
->  #define ASPEED_RESET_MAC2		12
->  #define ASPEED_RESET_MAC1		11
-> +#define ASPEED_RESET_VIDEO		6
->  #define ASPEED_RESET_PCI_DP		5
->  #define ASPEED_RESET_HACE		4
->  #define ASPEED_RESET_AHB		1
-> --=20
-> 2.53.0
->=20
+This is currently untested on hardware, so any help testing this would be
+much appreciated!
 
---/NuwEW3VcqbDOFRB
-Content-Type: application/pgp-signature; name="signature.asc"
+v4 -> v5:
+- Add Krzysztof's R-b tag to patch 1
+- Fix patch 2 by moving dev_coredumpv() after iowrite32()
+v3 -> v4:
+- Patches 1-4,8-9 dropped, as they were submitted/accepted separately [3]
+- Patch 7 removed, as no longer creating a new UIO driver
+- DT binding patch mostly unchanged. Slight rework (removed allOf) and
+  rebase, so removed Krzysztof's R-b tag just in case
+- Clock monitor support patch now reworked to make use of devcoredump
+- Rebased on top of clk-next
+v2 -> v3:
+- Move kernel doc variable comment to bottom in clk_hw transition patch (2)
+- Remove extra line (and add Krzysztof's R-b tag) in binding patch (5)
+- Add Krzysztof's A-b tag to dynamic reconfig binding patch (8)
+v1 -> v2:
+- Split and improve clk_hw+devres transition patch (2+3)
+- Fix/improve DT binding patches (5+8)
+- Utilise auxiliary bus in monitor support patch (6)
+- Add dedicated UIO driver for monitor support (7)
 
------BEGIN PGP SIGNATURE-----
+[1]: https://lore.kernel.org/linux-clk/20240826123602.1872-1-hpausten@proto=
+nmail.com/
+[2]: https://lore.kernel.org/linux-clk/1bd17a02bab46391872e4934895b83e8.sbo=
+yd@kernel.org/
+[3]: https://lore.kernel.org/linux-clk/20240913191037.2690-1-hpausten@proto=
+nmail.com/
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaaHVZwAKCRB4tDGHoIJi
-0v8lAQCW2Ed+aChACjPUAODW7TWzNWwDP3rAPWm+A2fLCUB3DgEAik6lKaZxDq1I
-c8ghmP/y1HVCuZ5bT0LrcmzClD0egQw=
-=o4Ct
------END PGP SIGNATURE-----
+Harry Austen (2):
+  dt-bindings: clock: xilinx: add description of user monitor interrupt
+  clk: clocking-wizard: add user clock monitor support
 
---/NuwEW3VcqbDOFRB--
+ .../bindings/clock/xlnx,clocking-wizard.yaml  | 24 ++++++-
+ drivers/clk/xilinx/Kconfig                    |  1 +
+ drivers/clk/xilinx/clk-xlnx-clock-wizard.c    | 69 +++++++++++++++++--
+ 3 files changed, 89 insertions(+), 5 deletions(-)
+---
+base-commit: 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f
+
+--=20
+2.53.0
+
+
