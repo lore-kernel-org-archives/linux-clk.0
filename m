@@ -1,48 +1,48 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D595D43DA2E;
-	Fri, 27 Feb 2026 15:34:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5C943DA44;
+	Fri, 27 Feb 2026 15:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772206460; cv=none; b=t9ziKoZMDrR2t2J987iRJypdKlUig7hFspNcWmEtwd6qfWXGeErvY/VIYZZAB4YUt2d/88rDjJfiydtVjrAfwPyXWt5z+Y/0V0tm9Sx9pllr/JfpWJKcC8G+40xAFhVPDSeuKh8b4DRUQyzq/BOhKGAgfmeyr5W3NT5pK1gLAWY=
+	t=1772206461; cv=none; b=q9gMf2hchKxPI3Nz1Af83CL71GXg2ZgkxelIWBeyGQE51kvakaHy286xBIjR4WF2UlO0vqSwHvf9M/+gfXbSeh8peN9Lrm2IBkGMPHprDTIu4+2syqD3iAAjr2c5mlDIyQodaQFKT0Ug0FIh9F2Lm9o5Cwr4uO5dDHj0OnjaO0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772206460; c=relaxed/simple;
-	bh=cDmyGhVRBAXTAOsnBaTbIhCabwry7zDHpYdYX7wGMMw=;
+	s=arc-20240116; t=1772206461; c=relaxed/simple;
+	bh=xl8cIWCcXh8CjPxMyQ11/1/0la0YJNf317lL3qEwtsQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JBMBpTFWQTW3sbP6kLVE+nt/qTMam+14EC9AoCIyQ8FVUPZGrAVyxC1UIF6pxserwb26LT7/qhYJclnGz+TR5hH1e6Xd593JlUTo0EzBmSy7vUQnVfmO7OTJmslNzpDhBKWHv4/o45USmya0A7De9IXwjsAd1RsZzxV/QAxo+/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2C0DC339;
-	Fri, 27 Feb 2026 07:34:12 -0800 (PST)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BAC343F73B;
-	Fri, 27 Feb 2026 07:34:11 -0800 (PST)
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Cc: sudeep.holla@arm.com,
-	philip.radford@arm.com,
-	james.quinlan@broadcom.com,
-	f.fainelli@gmail.com,
-	vincent.guittot@linaro.org,
-	etienne.carriere@foss.st.com,
-	peng.fan@oss.nxp.com,
-	michal.simek@amd.com,
-	dan.carpenter@linaro.org,
+	 MIME-Version; b=a15Hog0cfI5ih8RNO4nsEXa6c+qx5yuFMPIBfOMKYlWsR83nAccBfYP2NwH9CEVmwPV47NuhTF3lfFwzpa5lpNdwuihzSL2PjF1y6p6IVrs4kI+7XJULO2Ju/zmnfbfc2gvUa0psO/cVAf0m3XkhtFAJGaSL3mpVDw+avSLx+8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: RFBNu7HcTjuS2fCUWiGV/Q==
+X-CSE-MsgGUID: q/DceJuaRoqvQOy+nUSXpg==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 28 Feb 2026 00:34:18 +0900
+Received: from ubuntu.adwin.renesas.com (unknown [10.226.92.57])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 2658D4006C61;
+	Sat, 28 Feb 2026 00:34:12 +0900 (JST)
+From: John Madieu <john.madieu.xa@bp.renesas.com>
+To: claudiu.beznea.uj@bp.renesas.com,
+	lpieralisi@kernel.org,
+	kwilczynski@kernel.org,
+	mani@kernel.org,
 	geert+renesas@glider.be,
-	kuninori.morimoto.gx@renesas.com,
-	marek.vasut+renesas@gmail.com,
-	Cristian Marussi <cristian.marussi@arm.com>
-Subject: [PATCH 11/11] firmware: arm_scmi: Introduce all_rates_get clock operation
-Date: Fri, 27 Feb 2026 15:32:25 +0000
-Message-ID: <20260227153225.2778358-12-cristian.marussi@arm.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260227153225.2778358-1-cristian.marussi@arm.com>
-References: <20260227153225.2778358-1-cristian.marussi@arm.com>
+	krzk+dt@kernel.org
+Cc: robh@kernel.org,
+	bhelgaas@google.com,
+	conor+dt@kernel.org,
+	magnus.damm@gmail.com,
+	biju.das.jz@bp.renesas.com,
+	linux-pci@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	john.madieu@gmail.com,
+	John Madieu <john.madieu.xa@bp.renesas.com>
+Subject: [PATCH v7 12/15] PCI: rzg3s-host: Add support for RZ/G3E PCIe controller
+Date: Fri, 27 Feb 2026 16:32:32 +0100
+Message-ID: <20260227153236.55988-13-john.madieu.xa@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260227153236.55988-1-john.madieu.xa@bp.renesas.com>
+References: <20260227153236.55988-1-john.madieu.xa@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,232 +51,204 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a clock operation to get the whole set of rates available to a specific
-clock: when needed this request could transparently trigger a full rate
-discovery enumeration if this specific clock-rates were previously only
-lazily enumerated.
+Add support for the PCIe controller found in RZ/G3E SoCs to the existing
+RZ/G3S PCIe host driver. The RZ/G3E PCIe controller is similar to the
+RZ/G3S's, with the following key differences:
 
-Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+ - Supports PCIe Gen3 (8.0 GT/s) link speeds alongside Gen2 (5.0 GT/s)
+ - Uses a different reset control mechanism via AXI registers instead
+   of the Linux reset framework
+ - Requires specific SYSC configuration for link state control and
+   Root Complex mode selection
+
+Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
 ---
- drivers/firmware/arm_scmi/clock.c | 85 +++++++++++++++++++++----------
- include/linux/scmi_protocol.h     |  9 ++++
- 2 files changed, 67 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
-index a0de10652abe..c2fd9a1c3316 100644
---- a/drivers/firmware/arm_scmi/clock.c
-+++ b/drivers/firmware/arm_scmi/clock.c
-@@ -159,10 +159,8 @@ struct scmi_clock_rate_notify_payld {
+Changes:
+
+v7:
+ - Renamed RZG3E_PCI_RESET* defines to RZG3S_PCI_RESET* as these
+   registers are shared with upcoming SoCs (RZ/V2H, RZ/T2N, RZ/N2H),
+   dropped associated "RZ/G3E specific registers" comment
+ - Dropped "RZ/G3E SoC-specific config implementations" comment
+ - Unified function naming to rzg3e_pcie_config_{pre_init,post_init,
+   deinit}() and rzg3s_pcie_config_{post_init,deinit}()
+ - Simplified comments as per Claudiu's suggestions
+ - Used local mask variables for compactness within 80-char limit
+ - Fixed L1_ALLOW error path: goto config_deinit_and_refclk since
+   port refclk is already enabled
+ - Fixed resume: reordered MODE before RST_RSM_B to match probe
+   sequence, fixing error path handling
+
+v6:
+  - Use rzg3s_sysc_config_func() with per-function calls instead of
+    rzg3s_sysc_config() with -1 skip pattern, as suggested by Claudiu
+  - Extend enum rzg3s_sysc_func_id with L1_ALLOW and MODE entries
+  - Use regmap_update_bits() consistently for all SYSC accesses
+  - Shorten comment to "Put controller in RC mode and de-assert RST_RSM_B."
+  - Drop "Enable ASPM L1 transition" comment (function ID is self-documenting)
+
+v5:
+  - Introduce rzg3s_sysc_config() helper for sys configuration
+
+v4: No changes
+v3: No changes
+
+ drivers/pci/controller/pcie-rzg3s-host.c | 90 ++++++++++++++++++++++++
+ 1 file changed, 90 insertions(+)
+
+diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/controller/pcie-rzg3s-host.c
+index 44ce056d62c6..b7f92f5aee4a 100644
+--- a/drivers/pci/controller/pcie-rzg3s-host.c
++++ b/drivers/pci/controller/pcie-rzg3s-host.c
+@@ -111,6 +111,15 @@
+ #define RZG3S_PCI_PERM_CFG_HWINIT_EN		BIT(2)
+ #define RZG3S_PCI_PERM_PIPE_PHY_REG_EN		BIT(1)
  
- struct scmi_clock_desc {
- 	u32 id;
--	bool rate_discrete;
- 	unsigned int tot_rates;
--	unsigned int num_rates;
--	u64 *rates;
-+	struct scmi_clock_rates r;
- #define	RATE_MIN	0
- #define	RATE_MAX	1
- #define	RATE_STEP	2
-@@ -469,10 +467,10 @@ iter_clk_describe_update_state(struct scmi_iterator_state *st,
- 	flags = le32_to_cpu(r->num_rates_flags);
- 	st->num_remaining = NUM_REMAINING(flags);
- 	st->num_returned = NUM_RETURNED(flags);
--	p->clkd->rate_discrete = RATE_DISCRETE(flags);
-+	p->clkd->r.rate_discrete = RATE_DISCRETE(flags);
- 
- 	/* Warn about out of spec replies ... */
--	if (!p->clkd->rate_discrete &&
-+	if (!p->clkd->r.rate_discrete &&
- 	    (st->num_returned != 3 || st->num_remaining != 0)) {
- 		dev_warn(p->dev,
- 			 "Out-of-spec CLOCK_DESCRIBE_RATES reply for %s - returned:%d remaining:%d rx_len:%zd\n",
-@@ -486,9 +484,9 @@ iter_clk_describe_update_state(struct scmi_iterator_state *st,
- 	if (!st->max_resources) {
- 		unsigned int tot_rates = st->num_returned + st->num_remaining;
- 
--		p->clkd->rates = devm_kcalloc(p->dev, tot_rates,
--					      sizeof(*p->clkd->rates), GFP_KERNEL);
--		if (!p->clkd->rates)
-+		p->clkd->r.rates = devm_kcalloc(p->dev, tot_rates,
-+						sizeof(*p->clkd->r.rates), GFP_KERNEL);
-+		if (!p->clkd->r.rates)
- 			return -ENOMEM;
- 
- 		/* max_resources is used by the iterators to control bounds */
-@@ -507,10 +505,10 @@ iter_clk_describe_process_response(const struct scmi_protocol_handle *ph,
- 	struct scmi_clk_ipriv *p = priv;
- 	const struct scmi_msg_resp_clock_describe_rates *r = response;
- 
--	p->clkd->rates[p->clkd->num_rates] = RATE_TO_U64(r->rate[st->loop_idx]);
-+	p->clkd->r.rates[p->clkd->r.num_rates] = RATE_TO_U64(r->rate[st->loop_idx]);
- 
- 	/* Count only effectively discovered rates */
--	p->clkd->num_rates++;
-+	p->clkd->r.num_rates++;
- 
- 	return 0;
- }
-@@ -531,7 +529,13 @@ scmi_clock_describe_rates_get_full(const struct scmi_protocol_handle *ph,
- 		.dev = ph->dev,
- 	};
- 
--	iter = ph->hops->iter_response_init(ph, &ops, 0, CLOCK_DESCRIBE_RATES,
-+	/*
-+	 * Using tot_rates as max_resources parameter here so as to trigger
-+	 * the dynamic allocation only when strictly needed: when trying a
-+	 * full enumeration after a lazy one tot_rates will be non-zero.
-+	 */
-+	iter = ph->hops->iter_response_init(ph, &ops, clkd->tot_rates,
-+					    CLOCK_DESCRIBE_RATES,
- 					    sizeof(struct scmi_msg_clock_describe_rates),
- 					    &cpriv);
- 	if (IS_ERR(iter))
-@@ -542,12 +546,12 @@ scmi_clock_describe_rates_get_full(const struct scmi_protocol_handle *ph,
- 		return ret;
- 
- 	/* empty set ? */
--	if (!clkd->num_rates)
-+	if (!clkd->r.num_rates)
- 		return 0;
- 
--	if (clkd->rate_discrete)
--		sort(clkd->rates, clkd->num_rates,
--		     sizeof(clkd->rates[0]), rate_cmp_func, NULL);
-+	if (clkd->r.rate_discrete && PROTOCOL_REV_MAJOR(ph->version) == 0x1)
-+		sort(clkd->r.rates, clkd->r.num_rates,
-+		     sizeof(clkd->r.rates[0]), rate_cmp_func, NULL);
- 
- 	return 0;
- }
-@@ -583,7 +587,7 @@ scmi_clock_describe_rates_get_lazy(const struct scmi_protocol_handle *ph,
- 		goto out;
- 
- 	/* If discrete grab the last value, which should be the max */
--	if (clkd->rate_discrete && clkd->tot_rates > 3) {
-+	if (clkd->r.rate_discrete && clkd->tot_rates > 3) {
- 		first = clkd->tot_rates - 1;
- 		last = clkd->tot_rates - 1;
- 		ret = ph->hops->iter_response_run_bound(iter, &first, &last);
-@@ -615,16 +619,16 @@ scmi_clock_describe_rates_get(const struct scmi_protocol_handle *ph,
- 	if (ret)
- 		return ret;
- 
--	clkd->info.min_rate = clkd->rates[RATE_MIN];
--	if (!clkd->rate_discrete) {
--		clkd->info.max_rate = clkd->rates[RATE_MAX];
-+	clkd->info.min_rate = clkd->r.rates[RATE_MIN];
-+	if (!clkd->r.rate_discrete) {
-+		clkd->info.max_rate = clkd->r.rates[RATE_MAX];
- 		dev_dbg(ph->dev, "Min %llu Max %llu Step %llu Hz\n",
--			clkd->rates[RATE_MIN], clkd->rates[RATE_MAX],
--			clkd->rates[RATE_STEP]);
-+			clkd->r.rates[RATE_MIN], clkd->r.rates[RATE_MAX],
-+			clkd->r.rates[RATE_STEP]);
- 	} else {
--		clkd->info.max_rate = clkd->rates[clkd->num_rates - 1];
-+		clkd->info.max_rate = clkd->r.rates[clkd->r.num_rates - 1];
- 		dev_dbg(ph->dev, "Clock:%s DISCRETE:%d -> Min %llu Max %llu\n",
--			clkd->info.name, clkd->rate_discrete,
-+			clkd->info.name, clkd->r.rate_discrete,
- 			clkd->info.min_rate, clkd->info.max_rate);
- 	}
- 
-@@ -729,7 +733,7 @@ static int scmi_clock_determine_rate(const struct scmi_protocol_handle *ph,
- 	 * If we can't figure out what rate it will be, so just return the
- 	 * rate back to the caller.
- 	 */
--	if (clkd->rate_discrete)
-+	if (clkd->r.rate_discrete)
- 		return 0;
- 
- 	fmin = clk->min_rate;
-@@ -743,14 +747,40 @@ static int scmi_clock_determine_rate(const struct scmi_protocol_handle *ph,
- 	}
- 
- 	ftmp = *rate - fmin;
--	ftmp += clkd->rates[RATE_STEP] - 1; /* to round up */
--	do_div(ftmp, clkd->rates[RATE_STEP]);
-+	ftmp += clkd->r.rates[RATE_STEP] - 1; /* to round up */
-+	do_div(ftmp, clkd->r.rates[RATE_STEP]);
- 
--	*rate = ftmp * clkd->rates[RATE_STEP] + fmin;
-+	*rate = ftmp * clkd->r.rates[RATE_STEP] + fmin;
- 
- 	return 0;
- }
- 
-+static const struct scmi_clock_rates *
-+scmi_clock_all_rates_get(const struct scmi_protocol_handle *ph, u32 clk_id)
-+{
-+	struct clock_info *ci = ph->get_priv(ph);
-+	struct scmi_clock_desc *clkd;
-+	struct scmi_clock_info *clk;
++#define RZG3S_PCI_RESET				0x310
++#define RZG3S_PCI_RESET_RST_OUT_B		BIT(6)
++#define RZG3S_PCI_RESET_RST_PS_B		BIT(5)
++#define RZG3S_PCI_RESET_RST_LOAD_B		BIT(4)
++#define RZG3S_PCI_RESET_RST_CFG_B		BIT(3)
++#define RZG3S_PCI_RESET_RST_RSM_B		BIT(2)
++#define RZG3S_PCI_RESET_RST_GP_B		BIT(1)
++#define RZG3S_PCI_RESET_RST_B			BIT(0)
 +
-+	clk = scmi_clock_domain_lookup(ci, clk_id);
-+	if (IS_ERR(clk) || !clk->name[0])
-+		return NULL;
-+
-+	clkd = to_desc(clk);
-+	/* Needs full enumeration ? */
-+	if (clkd->r.rate_discrete && clkd->tot_rates != clkd->r.num_rates) {
-+		int ret;
-+
-+		/* rates[] is already allocated BUT we need to re-enumerate */
-+		clkd->r.num_rates = 0;
-+		ret = scmi_clock_describe_rates_get_full(ph, clkd);
-+		if (ret)
-+			return NULL;
-+	}
-+
-+	return &clkd->r;
-+}
-+
- static int
- scmi_clock_config_set(const struct scmi_protocol_handle *ph, u32 clk_id,
- 		      enum clk_state state,
-@@ -1064,6 +1094,7 @@ static const struct scmi_clk_proto_ops clk_proto_ops = {
- 	.rate_get = scmi_clock_rate_get,
- 	.rate_set = scmi_clock_rate_set,
- 	.determine_rate = scmi_clock_determine_rate,
-+	.all_rates_get = scmi_clock_all_rates_get,
- 	.enable = scmi_clock_enable,
- 	.disable = scmi_clock_disable,
- 	.state_get = scmi_clock_state_get,
-diff --git a/include/linux/scmi_protocol.h b/include/linux/scmi_protocol.h
-index 5552ac04c820..c710107c2120 100644
---- a/include/linux/scmi_protocol.h
-+++ b/include/linux/scmi_protocol.h
-@@ -40,6 +40,12 @@ struct scmi_revision_info {
- 	char sub_vendor_id[SCMI_SHORT_NAME_MAX_SIZE];
+ #define RZG3S_PCI_MSIRE(id)			(0x600 + (id) * 0x10)
+ #define RZG3S_PCI_MSIRE_ENA			BIT(0)
+ 
+@@ -183,10 +192,14 @@ struct rzg3s_sysc_function {
+ /**
+  * enum rzg3s_sysc_func_id - System controller function IDs
+  * @RZG3S_SYSC_FUNC_ID_RST_RSM_B: RST_RSM_B SYSC function ID
++ * @RZG3S_SYSC_FUNC_ID_L1_ALLOW: L1 allow SYSC function ID
++ * @RZG3S_SYSC_FUNC_ID_MODE: Mode SYSC function ID
+  * @RZG3S_SYSC_FUNC_ID_MAX: Max SYSC function ID
+  */
+ enum rzg3s_sysc_func_id {
+ 	RZG3S_SYSC_FUNC_ID_RST_RSM_B,
++	RZG3S_SYSC_FUNC_ID_L1_ALLOW,
++	RZG3S_SYSC_FUNC_ID_MODE,
+ 	RZG3S_SYSC_FUNC_ID_MAX,
  };
  
-+struct scmi_clock_rates {
-+	bool rate_discrete;
-+	unsigned int num_rates;
-+	u64 *rates;
+@@ -1151,6 +1164,42 @@ static int rzg3s_pcie_config_deinit(struct rzg3s_pcie_host *host)
+ 					 host->cfg_resets);
+ }
+ 
++static void rzg3e_pcie_config_pre_init(struct rzg3s_pcie_host *host)
++{
++	u32 mask = RZG3S_PCI_RESET_RST_LOAD_B | RZG3S_PCI_RESET_RST_CFG_B;
++
++	/* De-assert LOAD_B and CFG_B */
++	rzg3s_pcie_update_bits(host->axi, RZG3S_PCI_RESET, mask, mask);
++}
++
++static int rzg3e_pcie_config_deinit(struct rzg3s_pcie_host *host)
++{
++	writel_relaxed(0, host->axi + RZG3S_PCI_RESET);
++	return 0;
++}
++
++static int rzg3e_pcie_config_post_init(struct rzg3s_pcie_host *host)
++{
++	u32 mask = RZG3S_PCI_RESET_RST_PS_B | RZG3S_PCI_RESET_RST_GP_B |
++		   RZG3S_PCI_RESET_RST_B;
++
++	/* De-assert PS_B, GP_B, RST_B */
++	rzg3s_pcie_update_bits(host->axi, RZG3S_PCI_RESET, mask, mask);
++
++	/*
++	 * According to the RZ/G3E HW manual (Rev.1.15, Table 6.6-130
++	 * Initialization Procedure (RC)), hardware requires >= 500us delay
++	 * before final reset deassert.
++	 */
++	fsleep(500);
++
++	/* De-assert OUT_B and RSM_B */
++	mask = RZG3S_PCI_RESET_RST_OUT_B | RZG3S_PCI_RESET_RST_RSM_B;
++	rzg3s_pcie_update_bits(host->axi, RZG3S_PCI_RESET, mask, mask);
++
++	return 0;
++}
++
+ static void rzg3s_pcie_irq_init(struct rzg3s_pcie_host *host)
+ {
+ 	/*
+@@ -1311,6 +1360,12 @@ static int rzg3s_pcie_host_init(struct rzg3s_pcie_host *host)
+ 	if (ret)
+ 		goto config_deinit;
+ 
++	/* Enable ASPM L1 transition for SoCs that use it */
++	ret = rzg3s_sysc_config_func(host->sysc,
++				     RZG3S_SYSC_FUNC_ID_L1_ALLOW, 1);
++	if (ret)
++		goto config_deinit_and_refclk;
++
+ 	/* Initialize the interrupts */
+ 	rzg3s_pcie_irq_init(host);
+ 
+@@ -1658,6 +1713,11 @@ static int rzg3s_pcie_probe(struct platform_device *pdev)
+ 		goto port_refclk_put;
+ 	}
+ 
++	/* Put controller in RC mode */
++	ret = rzg3s_sysc_config_func(sysc, RZG3S_SYSC_FUNC_ID_MODE, 1);
++	if (ret)
++		goto port_refclk_put;
++
+ 	ret = rzg3s_sysc_config_func(sysc, RZG3S_SYSC_FUNC_ID_RST_RSM_B, 1);
+ 	if (ret)
+ 		goto port_refclk_put;
+@@ -1768,6 +1828,10 @@ static int rzg3s_pcie_resume_noirq(struct device *dev)
+ 	struct rzg3s_sysc *sysc = host->sysc;
+ 	int ret;
+ 
++	ret = rzg3s_sysc_config_func(sysc, RZG3S_SYSC_FUNC_ID_MODE, 1);
++	if (ret)
++		return ret;
++
+ 	ret = rzg3s_sysc_config_func(sysc, RZG3S_SYSC_FUNC_ID_RST_RSM_B, 1);
+ 	if (ret)
+ 		return ret;
+@@ -1832,11 +1896,37 @@ static const struct rzg3s_pcie_soc_data rzg3s_soc_data = {
+ 	},
+ };
+ 
++static const char * const rzg3e_soc_power_resets[] = { "aresetn" };
++
++static const struct rzg3s_pcie_soc_data rzg3e_soc_data = {
++	.power_resets = rzg3e_soc_power_resets,
++	.num_power_resets = ARRAY_SIZE(rzg3e_soc_power_resets),
++	.config_pre_init = rzg3e_pcie_config_pre_init,
++	.config_post_init = rzg3e_pcie_config_post_init,
++	.config_deinit = rzg3e_pcie_config_deinit,
++	.sysc_info = {
++		.functions = {
++			[RZG3S_SYSC_FUNC_ID_L1_ALLOW] = {
++				.offset = 0x1020,
++				.mask = BIT(0),
++			},
++			[RZG3S_SYSC_FUNC_ID_MODE] = {
++				.offset = 0x1024,
++				.mask = BIT(0),
++			},
++		},
++	},
 +};
 +
- struct scmi_clock_info {
- 	char name[SCMI_MAX_STR_SIZE];
- 	unsigned int enable_latency;
-@@ -85,6 +91,7 @@ enum scmi_clock_oem_config {
-  *		    clock calculating the closest allowed rate.
-  *		    Note that @rate is an input/output parameter used both to
-  *		    describe the requested rate and report the closest match
-+ * @all_rates_get: get the list of all available rates for the specified clock.
-  * @enable: enables the specified clock
-  * @disable: disables the specified clock
-  * @state_get: get the status of the specified clock
-@@ -104,6 +111,8 @@ struct scmi_clk_proto_ops {
- 			u64 rate);
- 	int (*determine_rate)(const struct scmi_protocol_handle *ph, u32 clk_id,
- 			      unsigned long *rate);
-+	const struct scmi_clock_rates __must_check *(*all_rates_get)
-+		(const struct scmi_protocol_handle *ph, u32 clk_id);
- 	int (*enable)(const struct scmi_protocol_handle *ph, u32 clk_id,
- 		      bool atomic);
- 	int (*disable)(const struct scmi_protocol_handle *ph, u32 clk_id,
+ static const struct of_device_id rzg3s_pcie_of_match[] = {
+ 	{
+ 		.compatible = "renesas,r9a08g045-pcie",
+ 		.data = &rzg3s_soc_data,
+ 	},
++	{
++		.compatible = "renesas,r9a09g047-pcie",
++		.data = &rzg3e_soc_data,
++	},
+ 	{}
+ };
+ 
 -- 
-2.53.0
+2.25.1
 
