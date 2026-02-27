@@ -1,48 +1,48 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D633B43D4E4;
-	Fri, 27 Feb 2026 15:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 665CD43DA44;
+	Fri, 27 Feb 2026 15:33:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772206424; cv=none; b=NeUrqx0jVjXSvVgutIaHQ8M7/MaD4WL27ATHLmjMHfcklUDWVtXbtgG+RAhBr4feZdH8lycnLrGbzBUVK9t0X83qkbZNo2KyUhvhhI+1l0696+xwHAS5ksOsKiDsw8FqW4fxdqomBuzqWLiDBXkjjftx1IVJntAKtwO0rGcDPDk=
+	t=1772206426; cv=none; b=NOCWpFFr8PrHPrg+s3QOvbE+pljLi9rKlG/fP0P6zHG69iFYpqE5ydvz4hZsw9RuqSHBb0i4smmTeN6A7YrnT4kXx86BjLhv9iwMxBr6HtiDlvSyMPtoJAadTpUPMXmbfjzIFlSlQq8txomV61LnD8M8ggOVIlX6QUB5EMO44LM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772206424; c=relaxed/simple;
-	bh=FPNIPV8Y68QYStm4ZPE7dPkSR3ncymanrnqOV1af5lw=;
+	s=arc-20240116; t=1772206426; c=relaxed/simple;
+	bh=gFTAb06u6ZMT/Y/fHCZmtBnDbVs81u15sS8d8rcUQ2U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ENST93XAU//6MJGYlNyQAhWrezeZlWZe5wFz3V+ua6Zaw7QUVGatCRnztLTXBGQfYl0JiUvLOZy7ai3g65L5OtYNagzqtB/nRLC93ZKcmc9QUw6rQEzEfo393Eyek5dF5ReNYMST1/gyroVbiQiOYeFka/omJ6X52oO6qONvV8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0C59A339;
-	Fri, 27 Feb 2026 07:33:36 -0800 (PST)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 00B203F73B;
-	Fri, 27 Feb 2026 07:33:35 -0800 (PST)
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Cc: sudeep.holla@arm.com,
-	philip.radford@arm.com,
-	james.quinlan@broadcom.com,
-	f.fainelli@gmail.com,
-	vincent.guittot@linaro.org,
-	etienne.carriere@foss.st.com,
-	peng.fan@oss.nxp.com,
-	michal.simek@amd.com,
-	dan.carpenter@linaro.org,
+	 MIME-Version; b=m7Xr4U4RkAzvuTCsVMPwrATby597/hA25iP5WqdFLWGoinB+8OpCnCvx/fwI7QJ83n4V6btaam/+FoS5TLT5zswI+5C5H4T8PTupfDZ+AsAuh3p1TRu4KytoOGAnfl8N//qFR0T0gDCw9iRkXK/NJTH0URfm6Wxyd8KItW/np0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: Xf+9ZZ0sTr6u26uY5e39iQ==
+X-CSE-MsgGUID: 3+EYMOeLRBihTwNyjy+Q0Q==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 28 Feb 2026 00:33:43 +0900
+Received: from ubuntu.adwin.renesas.com (unknown [10.226.92.57])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 326354006C61;
+	Sat, 28 Feb 2026 00:33:37 +0900 (JST)
+From: John Madieu <john.madieu.xa@bp.renesas.com>
+To: claudiu.beznea.uj@bp.renesas.com,
+	lpieralisi@kernel.org,
+	kwilczynski@kernel.org,
+	mani@kernel.org,
 	geert+renesas@glider.be,
-	kuninori.morimoto.gx@renesas.com,
-	marek.vasut+renesas@gmail.com,
-	Cristian Marussi <cristian.marussi@arm.com>
-Subject: [PATCH 06/11] firmware: arm_scmi: Make clock rates allocation dynamic
-Date: Fri, 27 Feb 2026 15:32:20 +0000
-Message-ID: <20260227153225.2778358-7-cristian.marussi@arm.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260227153225.2778358-1-cristian.marussi@arm.com>
-References: <20260227153225.2778358-1-cristian.marussi@arm.com>
+	krzk+dt@kernel.org
+Cc: robh@kernel.org,
+	bhelgaas@google.com,
+	conor+dt@kernel.org,
+	magnus.damm@gmail.com,
+	biju.das.jz@bp.renesas.com,
+	linux-pci@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	john.madieu@gmail.com,
+	John Madieu <john.madieu.xa@bp.renesas.com>
+Subject: [PATCH v7 06/15] dt-bindings: PCI: renesas,r9a08g045s33-pcie: Document RZ/G3E SoC
+Date: Fri, 27 Feb 2026 16:32:26 +0100
+Message-ID: <20260227153236.55988-7-john.madieu.xa@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260227153236.55988-1-john.madieu.xa@bp.renesas.com>
+References: <20260227153236.55988-1-john.madieu.xa@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,81 +51,181 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Leveraging SCMI Clock protocol dynamic discovery capabilities, move away
-from the static per-clock rates allocation model in favour of a dynamic
-runtime allocation based on effectively discovered resources.
+Extend the existing device tree bindings for Renesas RZ/G3S PCIe
+controller to include support for the RZ/G3E (renesas,r9a09g047e57-pcie) PCIe
+controller. The RZ/G3E PCIe controller is similar to RZ/G3S but has some key
+differences:
 
-No functional change.
+ - Uses a different device ID
+ - Supports PCIe Gen3 (8.0 GT/s) link speeds
+ - Uses a different clock naming (clkpmu vs clkl1pm)
+ - Has a different set of interrupts, interrupt ordering, and reset signals
 
-Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+Add device tree bindings for renesas,r9a09g047e57-pcie compatible IPs.
+
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
 ---
- drivers/firmware/arm_scmi/clock.c | 19 ++++++++++++++++---
- include/linux/scmi_protocol.h     |  1 -
- 2 files changed, 16 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
-index f5d1c608f85a..d0fb5affb5cf 100644
---- a/drivers/firmware/arm_scmi/clock.c
-+++ b/drivers/firmware/arm_scmi/clock.c
-@@ -161,7 +161,7 @@ struct scmi_clock_desc {
- 	u32 id;
- 	bool rate_discrete;
- 	unsigned int num_rates;
--	u64 rates[SCMI_MAX_NUM_RATES];
-+	u64 *rates;
- #define	RATE_MIN	0
- #define	RATE_MAX	1
- #define	RATE_STEP	2
-@@ -480,6 +480,18 @@ iter_clk_describe_update_state(struct scmi_iterator_state *st,
- 			   QUIRK_OUT_OF_SPEC_TRIPLET);
- 	}
+Changes:
+
+v7: No changes
+v6: Collected Rb tag from Claudiu
+v5: Collected Rb tag from Rob
+v4: Fixed clock name constraint using enum
+
+v3:
+ - Moved interrupt/clock description in distinct PATCH
+ - Fixed clock name constraints
+ - Updated clock descriptions
+
+v2: Reuse G3S names
+
+ .../bindings/pci/renesas,r9a08g045-pcie.yaml  | 73 +++++++++++++++++--
+ 1 file changed, 67 insertions(+), 6 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/pci/renesas,r9a08g045-pcie.yaml b/Documentation/devicetree/bindings/pci/renesas,r9a08g045-pcie.yaml
+index d1eb92995e2c..a67108c48feb 100644
+--- a/Documentation/devicetree/bindings/pci/renesas,r9a08g045-pcie.yaml
++++ b/Documentation/devicetree/bindings/pci/renesas,r9a08g045-pcie.yaml
+@@ -10,17 +10,21 @@ maintainers:
+   - Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
  
-+	if (!st->max_resources) {
-+		int num_rates = st->num_returned + st->num_remaining;
-+
-+		p->clkd->rates = devm_kcalloc(p->dev, num_rates,
-+					      sizeof(*p->clkd->rates), GFP_KERNEL);
-+		if (!p->clkd->rates)
-+			return -ENOMEM;
-+
-+		/* max_resources is used by the iterators to control bounds */
-+		st->max_resources = st->num_returned + st->num_remaining;
-+	}
-+
- 	return 0;
- }
+ description:
+-  Renesas RZ/G3S PCIe host controller complies with PCIe Base Specification
+-  4.0 and supports up to 5 GT/s (Gen2).
++  Renesas RZ/G3{E,S} PCIe host controllers comply with PCIe
++  Base Specification 4.0 and support up to 5 GT/s (Gen2) for RZ/G3S and
++  up to 8 GT/s (Gen3) for RZ/G3E.
  
-@@ -493,6 +505,8 @@ iter_clk_describe_process_response(const struct scmi_protocol_handle *ph,
+ properties:
+   compatible:
+-    const: renesas,r9a08g045-pcie # RZ/G3S
++    enum:
++      - renesas,r9a08g045-pcie # RZ/G3S
++      - renesas,r9a09g047-pcie # RZ/G3E
  
- 	p->clkd->rates[st->desc_index + st->loop_idx] =
- 		RATE_TO_U64(r->rate[st->loop_idx]);
-+
-+	/* Count only effectively discovered rates */
- 	p->clkd->num_rates++;
+   reg:
+     maxItems: 1
  
- 	return 0;
-@@ -515,8 +529,7 @@ scmi_clock_describe_rates_get(const struct scmi_protocol_handle *ph, u32 clk_id,
- 		.dev = ph->dev,
- 	};
+   interrupts:
++    minItems: 16
+     items:
+       - description: System error interrupt
+       - description: System error on correctable error interrupt
+@@ -38,8 +42,16 @@ properties:
+       - description: PCIe event interrupt
+       - description: Message interrupt
+       - description: All interrupts
++      - description: Link equalization request interrupt
++      - description: Turn off event interrupt
++      - description: PMU power off interrupt
++      - description: D3 event function 0 interrupt
++      - description: D3 event function 1 interrupt
++      - description: Configuration PMCSR write clear function 0 interrupt
++      - description: Configuration PMCSR write clear function 1 interrupt
  
--	iter = ph->hops->iter_response_init(ph, &ops, SCMI_MAX_NUM_RATES,
--					    CLOCK_DESCRIBE_RATES,
-+	iter = ph->hops->iter_response_init(ph, &ops, 0, CLOCK_DESCRIBE_RATES,
- 					    sizeof(struct scmi_msg_clock_describe_rates),
- 					    &cpriv);
- 	if (IS_ERR(iter))
-diff --git a/include/linux/scmi_protocol.h b/include/linux/scmi_protocol.h
-index d97b4e734744..5552ac04c820 100644
---- a/include/linux/scmi_protocol.h
-+++ b/include/linux/scmi_protocol.h
-@@ -15,7 +15,6 @@
+   interrupt-names:
++    minItems: 16
+     items:
+       - const: serr
+       - const: serr_cor
+@@ -57,20 +69,28 @@ properties:
+       - const: pcie_evt
+       - const: msg
+       - const: all
++      - const: link_equalization_request
++      - const: turn_off_event
++      - const: pmu_poweroff
++      - const: d3_event_f0
++      - const: d3_event_f1
++      - const: cfg_pmcsr_writeclear_f0
++      - const: cfg_pmcsr_writeclear_f1
  
- #define SCMI_MAX_STR_SIZE		64
- #define SCMI_SHORT_NAME_MAX_SIZE	16
--#define SCMI_MAX_NUM_RATES		16
+   interrupt-controller: true
  
- /**
-  * struct scmi_revision_info - version information structure
+   clocks:
+     items:
+       - description: System clock
+-      - description: PM control clock
++      - description: PM control clock or clock for L1 substate handling
+ 
+   clock-names:
+     items:
+       - const: aclk
+-      - const: pm
++      - enum: [pm, pmu]
+ 
+   resets:
++    minItems: 1
+     items:
+       - description: AXI2PCIe Bridge reset
+       - description: Data link layer/transaction layer reset
+@@ -81,6 +101,7 @@ properties:
+       - description: Configuration register reset
+ 
+   reset-names:
++    minItems: 1
+     items:
+       - const: aresetn
+       - const: rst_b
+@@ -128,7 +149,9 @@ patternProperties:
+         const: 0x1912
+ 
+       device-id:
+-        const: 0x0033
++        enum:
++          - 0x0033
++          - 0x0039
+ 
+       clocks:
+         items:
+@@ -167,6 +190,44 @@ required:
+ 
+ allOf:
+   - $ref: /schemas/pci/pci-host-bridge.yaml#
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: renesas,r9a08g045-pcie
++    then:
++      properties:
++        interrupts:
++          maxItems: 16
++        interrupt-names:
++          maxItems: 16
++        clock-names:
++          items:
++            - const: aclk
++            - const: pm
++        resets:
++          minItems: 7
++        reset-names:
++          minItems: 7
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: renesas,r9a09g047-pcie
++    then:
++      properties:
++        interrupts:
++          minItems: 23
++        interrupt-names:
++          minItems: 23
++        clock-names:
++          items:
++            - const: aclk
++            - const: pmu
++        resets:
++          maxItems: 1
++        reset-names:
++          maxItems: 1
+ 
+ unevaluatedProperties: false
+ 
 -- 
-2.53.0
+2.25.1
 
