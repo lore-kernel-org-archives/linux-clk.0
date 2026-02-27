@@ -1,48 +1,49 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2353290A1;
-	Fri, 27 Feb 2026 15:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF7C443D4E6;
+	Fri, 27 Feb 2026 15:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772206417; cv=none; b=QuCeRrLeXEwFMB+pKcLveNla+eE2h7svb4aL42KjlYErFzPH+ngMzFERSCnhrRllyLg01nsRm/tGDLL6a2Wz+1MPDBrR0tEjlfhMGCDboWjomJkptnHEST3WVRsujyMjxEXGvwrGqFBJE5ejY5u+XsWY19T3ROYTMmHFyhpwZrU=
+	t=1772206419; cv=none; b=DTtmkttJ0G9ZUMLPpVjKDiK6yovBlzID5dEn/m0jz56yav7JJOdOxB80GnEcaENtIYYiXY6o3IsMtK/AzN7U8gRVZKilTewo7apnAeFKSZzdOfkehsyKulKZpWKKxudVdWdc7mjxDlWPGUwBSGT57FMXLEoVCTXKr7mZM1QvstU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772206417; c=relaxed/simple;
-	bh=hosC0lf8QJPZBWpaH541Aizu9iGMXB9D/VZmiclacXw=;
+	s=arc-20240116; t=1772206419; c=relaxed/simple;
+	bh=kx6N1RtAye7JUvjnaNpE1GYHv8pIJzY/a9Qs4gvrZPE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kWw15CJ6HRqrIq2f7OgsuTLNXTxKW616u7ifOMIZByVOtrbOHjZNaGMkfKirHRXQ1uE6eOkzqcNmf36NCigAOkvq0zrnD0KdLvikThi+6qKX8519L8uvfR/wxP0nqkSjqe0v4YRbxkS5P7JLErkicwH1Pdgiu6JoapUsBWIcXhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2642C339;
-	Fri, 27 Feb 2026 07:33:29 -0800 (PST)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 687453F73B;
-	Fri, 27 Feb 2026 07:33:29 -0800 (PST)
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Cc: sudeep.holla@arm.com,
-	philip.radford@arm.com,
-	james.quinlan@broadcom.com,
-	f.fainelli@gmail.com,
-	vincent.guittot@linaro.org,
-	etienne.carriere@foss.st.com,
-	peng.fan@oss.nxp.com,
-	michal.simek@amd.com,
-	dan.carpenter@linaro.org,
+	 MIME-Version; b=q2G3k8noBkV8/pgKei7d0zbBnAQqJQN3O2AyVrZ9xoY2VoKSH1C4RHiGhM8MnQ8DYq97fZe1TGFtiF5PeeVFOub74chpElCDZFlszFaudQtzjLdFpbkQKSU6H1nGjAewTs68mvI0aZxHQ9b39Q8T6qA5qq7emQawiRB1wTonVHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: ALqp3Q8hS968zm9s1jhtIg==
+X-CSE-MsgGUID: no0gZvizRVusmDS+qxWz6g==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 28 Feb 2026 00:33:37 +0900
+Received: from ubuntu.adwin.renesas.com (unknown [10.226.92.57])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 369774007131;
+	Sat, 28 Feb 2026 00:33:31 +0900 (JST)
+From: John Madieu <john.madieu.xa@bp.renesas.com>
+To: claudiu.beznea.uj@bp.renesas.com,
+	lpieralisi@kernel.org,
+	kwilczynski@kernel.org,
+	mani@kernel.org,
 	geert+renesas@glider.be,
-	kuninori.morimoto.gx@renesas.com,
-	marek.vasut+renesas@gmail.com,
-	Cristian Marussi <cristian.marussi@arm.com>
-Subject: [PATCH 05/11] firmware: arm_scmi: Drop unused clock rate interfaces
-Date: Fri, 27 Feb 2026 15:32:19 +0000
-Message-ID: <20260227153225.2778358-6-cristian.marussi@arm.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260227153225.2778358-1-cristian.marussi@arm.com>
-References: <20260227153225.2778358-1-cristian.marussi@arm.com>
+	krzk+dt@kernel.org
+Cc: robh@kernel.org,
+	bhelgaas@google.com,
+	conor+dt@kernel.org,
+	magnus.damm@gmail.com,
+	biju.das.jz@bp.renesas.com,
+	linux-pci@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	john.madieu@gmail.com,
+	John Madieu <john.madieu.xa@bp.renesas.com>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v7 05/15] dt-bindings: PCI: renesas,r9a08g045s33-pcie: Fix naming properties
+Date: Fri, 27 Feb 2026 16:32:25 +0100
+Message-ID: <20260227153236.55988-6-john.madieu.xa@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260227153236.55988-1-john.madieu.xa@bp.renesas.com>
+References: <20260227153236.55988-1-john.madieu.xa@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,35 +52,105 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Only the unified interface exposing min_rate/max_rate is now used.
+Fix a typo in interrupt-names: "ser_cor" should be "serr_cor" (System
+Error Correctable).
 
-Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+Also convert interrupt-names, clock-names, and reset-names properties
+from "description" to "const" to enable proper validation with
+dtbs_check.
+
+Fixes: e7534e790557 ("dt-bindings: PCI: Add Renesas RZ/G3S PCIe controller binding")
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
 ---
- include/linux/scmi_protocol.h | 11 -----------
- 1 file changed, 11 deletions(-)
 
-diff --git a/include/linux/scmi_protocol.h b/include/linux/scmi_protocol.h
-index 7283302b0c85..d97b4e734744 100644
---- a/include/linux/scmi_protocol.h
-+++ b/include/linux/scmi_protocol.h
-@@ -53,17 +53,6 @@ struct scmi_clock_info {
- 	bool extended_config;
- 	u64 min_rate;
- 	u64 max_rate;
--	union {
--		struct {
--			int num_rates;
--			u64 rates[SCMI_MAX_NUM_RATES];
--		} list;
--		struct {
--			u64 min_rate;
--			u64 max_rate;
--			u64 step_size;
--		} range;
--	};
- 	int num_parents;
- 	u32 *parents;
- };
+Changes:
+
+v7: Fixed checkpatch commit message line length warnings
+v6: No changes
+v5: No changes
+v4: Collected Acked-by tag from Conor
+v3: New patch
+
+ .../bindings/pci/renesas,r9a08g045-pcie.yaml  | 50 +++++++++----------
+ 1 file changed, 25 insertions(+), 25 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/pci/renesas,r9a08g045-pcie.yaml b/Documentation/devicetree/bindings/pci/renesas,r9a08g045-pcie.yaml
+index d668782546a2..d1eb92995e2c 100644
+--- a/Documentation/devicetree/bindings/pci/renesas,r9a08g045-pcie.yaml
++++ b/Documentation/devicetree/bindings/pci/renesas,r9a08g045-pcie.yaml
+@@ -41,22 +41,22 @@ properties:
+ 
+   interrupt-names:
+     items:
+-      - description: serr
+-      - description: ser_cor
+-      - description: serr_nonfatal
+-      - description: serr_fatal
+-      - description: axi_err
+-      - description: inta
+-      - description: intb
+-      - description: intc
+-      - description: intd
+-      - description: msi
+-      - description: link_bandwidth
+-      - description: pm_pme
+-      - description: dma
+-      - description: pcie_evt
+-      - description: msg
+-      - description: all
++      - const: serr
++      - const: serr_cor
++      - const: serr_nonfatal
++      - const: serr_fatal
++      - const: axi_err
++      - const: inta
++      - const: intb
++      - const: intc
++      - const: intd
++      - const: msi
++      - const: link_bandwidth
++      - const: pm_pme
++      - const: dma
++      - const: pcie_evt
++      - const: msg
++      - const: all
+ 
+   interrupt-controller: true
+ 
+@@ -67,8 +67,8 @@ properties:
+ 
+   clock-names:
+     items:
+-      - description: aclk
+-      - description: pm
++      - const: aclk
++      - const: pm
+ 
+   resets:
+     items:
+@@ -82,13 +82,13 @@ properties:
+ 
+   reset-names:
+     items:
+-      - description: aresetn
+-      - description: rst_b
+-      - description: rst_gp_b
+-      - description: rst_ps_b
+-      - description: rst_rsm_b
+-      - description: rst_cfg_b
+-      - description: rst_load_b
++      - const: aresetn
++      - const: rst_b
++      - const: rst_gp_b
++      - const: rst_ps_b
++      - const: rst_rsm_b
++      - const: rst_cfg_b
++      - const: rst_load_b
+ 
+   power-domains:
+     maxItems: 1
 -- 
-2.53.0
+2.25.1
 
