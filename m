@@ -1,48 +1,48 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E4CE32825D;
-	Fri, 27 Feb 2026 15:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824CA3290A1;
+	Fri, 27 Feb 2026 15:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772206436; cv=none; b=ELcofbH6zfVdXMnzjc00c3b+QpJ8HxQM96ANIeXgXznc8zpIlqdfCzYNL1DPE4IhhhJsmdkP27Rkp2W1QWFbpoj+OESMzfXU5KbCMA5NtgUy62A91uQF86bascA/2U8LznhFTlh1lyV+70aMzGWqdc9w3BTdWp+2u1lzZszEIXw=
+	t=1772206438; cv=none; b=BwXy/0UEzf0ew+Y2hGgAUMy9cfhP9wqGMyeROoVlYfmEyfVVJaEkMhTG50Bn40gY/jzAEHYOOBCYqvB2fBcjBjkipgpkeN5uNrzmRJBdph8HqNmC9oyxyDV9qRvwo8R3OZFpYt69Diya58NN++1dS6nxLmu3KefcD4NIwKhmGbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772206436; c=relaxed/simple;
-	bh=DmRXm0syIz4FTQwjGB/yoCjmkhZm36rgHCK1oJXqZqY=;
+	s=arc-20240116; t=1772206438; c=relaxed/simple;
+	bh=t6Hj+PFhx1Jd+Y7VMJSrSjsEfVZ19zlNTAlw4Q7T+LQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LP1KqvHNlpbbgyux91uMWjkKlaEwFeJi8Lv/fWCOtDV0Nl1sd7NlUX8itQIk0+nJsQsXxAo0jS6PDkczNrj6gNfmi/irqqGCUkpaWx/t9dn+MFEwU0IJcPcLnkbk9IGx/47u85tEcmOismpgKKKCIFkhvERIy8E96mR3sGiFCwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: QrqoUFb3Q0K5IAwNZaHADw==
-X-CSE-MsgGUID: GD/OqLBDS9OBNF2SX7RTOw==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 28 Feb 2026 00:33:54 +0900
-Received: from ubuntu.adwin.renesas.com (unknown [10.226.92.57])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id A8E9A4006C61;
-	Sat, 28 Feb 2026 00:33:49 +0900 (JST)
-From: John Madieu <john.madieu.xa@bp.renesas.com>
-To: claudiu.beznea.uj@bp.renesas.com,
-	lpieralisi@kernel.org,
-	kwilczynski@kernel.org,
-	mani@kernel.org,
-	geert+renesas@glider.be,
-	krzk+dt@kernel.org
-Cc: robh@kernel.org,
-	bhelgaas@google.com,
-	conor+dt@kernel.org,
-	magnus.damm@gmail.com,
-	biju.das.jz@bp.renesas.com,
-	linux-pci@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	 MIME-Version; b=u2eIS/dowTVV/9TOcQiMgs0nCzSIAk2kd/+wwPr/vtPp6Ye5E8KsDTmUQAZclyy+oxSuNxwNVhRr24xTHzs+rhX9iNn88sauAAU6OtXMb7fU3kLbwBpfEux0PWtZD/p71JUHV0YwxQEiw+v1B668wCNABeKYTGNScknPxSFtD1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AF99F339;
+	Fri, 27 Feb 2026 07:33:49 -0800 (PST)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8F8923F73B;
+	Fri, 27 Feb 2026 07:33:49 -0800 (PST)
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	john.madieu@gmail.com,
-	John Madieu <john.madieu.xa@bp.renesas.com>
-Subject: [PATCH v7 08/15] PCI: rzg3s-host: Make configuration reset lines optional
-Date: Fri, 27 Feb 2026 16:32:28 +0100
-Message-ID: <20260227153236.55988-9-john.madieu.xa@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260227153236.55988-1-john.madieu.xa@bp.renesas.com>
-References: <20260227153236.55988-1-john.madieu.xa@bp.renesas.com>
+	linux-renesas-soc@vger.kernel.org
+Cc: sudeep.holla@arm.com,
+	philip.radford@arm.com,
+	james.quinlan@broadcom.com,
+	f.fainelli@gmail.com,
+	vincent.guittot@linaro.org,
+	etienne.carriere@foss.st.com,
+	peng.fan@oss.nxp.com,
+	michal.simek@amd.com,
+	dan.carpenter@linaro.org,
+	geert+renesas@glider.be,
+	kuninori.morimoto.gx@renesas.com,
+	marek.vasut+renesas@gmail.com,
+	Cristian Marussi <cristian.marussi@arm.com>
+Subject: [PATCH 08/11] firmware: arm_scmi: Refactor iterators internal allocation
+Date: Fri, 27 Feb 2026 15:32:22 +0000
+Message-ID: <20260227153225.2778358-9-cristian.marussi@arm.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260227153225.2778358-1-cristian.marussi@arm.com>
+References: <20260227153225.2778358-1-cristian.marussi@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,45 +51,108 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Some SoC variants such as RZ/G3E handle configuration reset
-control through PCIe AXI registers instead of dedicated reset
-lines. Make cfg_resets optional by using
-devm_reset_control_bulk_get_optional_exclusive() to allow
-SoCs to use alternative or complementary reset control mechanisms.
+Use cleanup handlers to manage iterator data structures.
 
-Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+No functional change.
+
+Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
 ---
+ drivers/firmware/arm_scmi/driver.c | 35 +++++++++++++++---------------
+ 1 file changed, 18 insertions(+), 17 deletions(-)
 
-changes:
-
-v7: Fixed checkpatch commit message line length warnings
-v6: No changes
-v5: No changes
-v4: No changes
-v3: No changes
-v2: Collected Rb tag.
-
- drivers/pci/controller/pcie-rzg3s-host.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/controller/pcie-rzg3s-host.c
-index b8a3abf7b6cc..c741d5ac2594 100644
---- a/drivers/pci/controller/pcie-rzg3s-host.c
-+++ b/drivers/pci/controller/pcie-rzg3s-host.c
-@@ -1188,9 +1188,9 @@ static int rzg3s_pcie_resets_prepare_and_get(struct rzg3s_pcie_host *host)
- 	if (ret)
- 		return ret;
+diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
+index baefa7d43c00..d9d6edbc1275 100644
+--- a/drivers/firmware/arm_scmi/driver.c
++++ b/drivers/firmware/arm_scmi/driver.c
+@@ -17,6 +17,7 @@
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
  
--	return devm_reset_control_bulk_get_exclusive(host->dev,
--						     data->num_cfg_resets,
--						     host->cfg_resets);
-+	return devm_reset_control_bulk_get_optional_exclusive(host->dev,
-+							      data->num_cfg_resets,
-+							      host->cfg_resets);
+ #include <linux/bitmap.h>
++#include <linux/cleanup.h>
+ #include <linux/debugfs.h>
+ #include <linux/device.h>
+ #include <linux/export.h>
+@@ -1789,39 +1790,41 @@ static void *scmi_iterator_init(const struct scmi_protocol_handle *ph,
+ 				size_t tx_size, void *priv)
+ {
+ 	int ret;
+-	struct scmi_iterator *i;
+ 
+-	i = devm_kzalloc(ph->dev, sizeof(*i), GFP_KERNEL);
++	struct scmi_iterator *i __free(kfree) = kzalloc(sizeof(*i), GFP_KERNEL);
+ 	if (!i)
+ 		return ERR_PTR(-ENOMEM);
+ 
++	if (!ops || !ph)
++		return ERR_PTR(-EINVAL);
++
+ 	i->ph = ph;
+ 	i->ops = ops;
+ 	i->priv = priv;
+ 
+ 	ret = ph->xops->xfer_get_init(ph, msg_id, tx_size, 0, &i->t);
+-	if (ret) {
+-		devm_kfree(ph->dev, i);
++	if (ret)
+ 		return ERR_PTR(ret);
+-	}
+ 
+ 	i->state.max_resources = max_resources;
+ 	i->msg = i->t->tx.buf;
+ 	i->resp = i->t->rx.buf;
+ 
+-	return i;
++	return no_free_ptr(i);
  }
  
- static int rzg3s_pcie_host_parse_port(struct rzg3s_pcie_host *host)
+ static int scmi_iterator_run(void *iter)
+ {
+-	int ret = -EINVAL;
++	int ret;
+ 	struct scmi_iterator_ops *iops;
+ 	const struct scmi_protocol_handle *ph;
+ 	struct scmi_iterator_state *st;
+-	struct scmi_iterator *i = iter;
+ 
+-	if (!i || !i->ops || !i->ph)
+-		return ret;
++	if (!iter)
++		return -EINVAL;
++
++	/* Take ownership of the iterator */
++	struct scmi_iterator *i __free(kfree) = iter;
+ 
+ 	iops = i->ops;
+ 	ph = i->ph;
+@@ -1846,12 +1849,12 @@ static int scmi_iterator_run(void *iter)
+ 			break;
+ 		}
+ 
+-		for (st->loop_idx = 0; st->loop_idx < st->num_returned;
+-		     st->loop_idx++) {
++		for (st->loop_idx = 0; !ret && st->loop_idx < st->num_returned;
++		     st->loop_idx++)
+ 			ret = iops->process_response(ph, i->resp, st, i->priv);
+-			if (ret)
+-				goto out;
+-		}
++
++		if (ret)
++			break;
+ 
+ 		st->desc_index += st->num_returned;
+ 		ph->xops->reset_rx_to_maxsz(ph, i->t);
+@@ -1861,10 +1864,8 @@ static int scmi_iterator_run(void *iter)
+ 		 */
+ 	} while (st->num_returned && st->num_remaining);
+ 
+-out:
+ 	/* Finalize and destroy iterator */
+ 	ph->xops->xfer_put(ph, i->t);
+-	devm_kfree(ph->dev, i);
+ 
+ 	return ret;
+ }
 -- 
-2.25.1
+2.53.0
 
