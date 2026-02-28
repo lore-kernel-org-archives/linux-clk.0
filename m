@@ -1,156 +1,134 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47BB035A394;
-	Sat, 28 Feb 2026 10:47:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D36E25F78F;
+	Sat, 28 Feb 2026 12:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772275648; cv=none; b=imRzE48LSvqwnZw+BbKw6FjxansjDo75ssM01ttIcfxbcrg2H8CgmZ0+lXNts9kDYFjv+9qQ6t5YskZ7x4dP3spYiDFMK2qZSfGdrMkdWjU4ivvCpFcxOIvTldxZYbhumZzUsJO1ukmlKQei9LwVt1GwOOQJUcfSwKLB2s563v8=
+	t=1772281015; cv=none; b=u0E8r0LoYFmImpjzyQl4lR+wI/+li1N44Y5is+7/fUU8+jFJvx0o79EyC8yNZeg2SH8MNK4fYsSDN95E9rosSDGzdhFQ5mSw7tZWKQOQvBd32EBi2MiGoTfQbAi5Mk1jqisg0NPXdJ5RvvRwj1M9t0n9FbsN8QBAcvhdXe6X21Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772275648; c=relaxed/simple;
-	bh=nzAk7/QowEGPMrlDONM9TR2kjxqD1F41usJmvt9CiyQ=;
+	s=arc-20240116; t=1772281015; c=relaxed/simple;
+	bh=eKfWdtF1f8rgeMqH6Rg4gSPSLAuvp8Ejd2HbndMRVlA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N34Dnv4Ja3SAQIHCnMPNff6sToHCPPs5zldK1yodTgiOMq5b1SaRHooDPvzWqdU3ep+bZsWgM1WYtySPty+Xh5YIGbLROFvi6YkFOMm9zJgpBA3gTZoU2elIZFMz9mW8d/qpeI/oZXHwcOBcwlcHaYSoN/JyBuxDHBK5sY41oRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6AB711516;
-	Sat, 28 Feb 2026 02:47:20 -0800 (PST)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 17A713F7BD;
-	Sat, 28 Feb 2026 02:47:22 -0800 (PST)
-Date: Sat, 28 Feb 2026 10:47:20 +0000
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, sudeep.holla@arm.com,
-	philip.radford@arm.com, james.quinlan@broadcom.com,
-	f.fainelli@gmail.com, vincent.guittot@linaro.org,
-	etienne.carriere@foss.st.com, michal.simek@amd.com,
-	dan.carpenter@linaro.org, geert+renesas@glider.be,
-	kuninori.morimoto.gx@renesas.com, marek.vasut+renesas@gmail.com
-Subject: Re: [PATCH 11/11] firmware: arm_scmi: Introduce all_rates_get clock
- operation
-Message-ID: <aaLHuHFpcxdyqf9P@pluto>
-References: <20260227153225.2778358-1-cristian.marussi@arm.com>
- <20260227153225.2778358-12-cristian.marussi@arm.com>
- <aaJXy2V7oI1tH4Ac@shlinux89>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MbEvZ/Pv/G59ub4TEEoxYaG97UBAfblubyz2Dz3HoadQxJfkY9FtTH804CILmnwit/giI6ZAyE0+MiWH558NUsBSPRqTjePBlIzWJPENfnNDKsIFeoXSobTAAQcnXRSFe2HnJ5c/Gw1VHHBYArHZLHXhhBNUtJqkXle44xB1KYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YtbXngux; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YtbXngux"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3C73C116D0;
+	Sat, 28 Feb 2026 12:16:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772281015;
+	bh=eKfWdtF1f8rgeMqH6Rg4gSPSLAuvp8Ejd2HbndMRVlA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YtbXnguxTm7DWEOff7Ou0m+dXJUWhKOCdT4kpXC5lXnCi4e6zYNcevBrWR5OWbkpg
+	 CTonEHikHwJbQATZFzSiBqbOAd8+dmUjmGIf85504Fa6UXDp3r1fE0ISg7eG7ohL+C
+	 YET5Ul0ktj1UwePxGoKmG0l3YO9rjp+FMX1bzUOlw7FVkrwJYSfmJRm+xCJ6UKW9UD
+	 sgeoKqWIqJalg3THL7Nkd0t+Z2IIZwlYRueqHaNnyA0DdR13WjORPREO5oYgx1erk/
+	 Bx1SXrdevQr9TdAA6pfg6rP34NH6jHbj6FptTgtX9AgtAIbAGl8rrnI9zO8ZrpULaI
+	 vw3tK06BNfF/Q==
+Date: Sat, 28 Feb 2026 12:16:50 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Haiyue Wang <haiyuewa@163.com>
+Cc: linux-aspeed@lists.ozlabs.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Hans Verkuil <hverkuil+cisco@kernel.org>,
+	Jammy Huang <jammy_huang@aspeedtech.com>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: ast2600: Add reset definition
+ for video
+Message-ID: <20260228-entourage-awoke-92c61c5b1544@spud>
+References: <20260227151602.829-1-haiyuewa@163.com>
+ <20260227-smooth-carefully-f427e242ce58@spud>
+ <16a430a2-fdc9-41eb-945c-0727feb7b9d6@163.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="snTcT9PcFEKvQmUU"
+Content-Disposition: inline
+In-Reply-To: <16a430a2-fdc9-41eb-945c-0727feb7b9d6@163.com>
+
+
+--snTcT9PcFEKvQmUU
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aaJXy2V7oI1tH4Ac@shlinux89>
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Feb 28, 2026 at 10:49:47AM +0800, Peng Fan wrote:
-> On Fri, Feb 27, 2026 at 03:32:25PM +0000, Cristian Marussi wrote:
-> >Add a clock operation to get the whole set of rates available to a specific
-> >clock: when needed this request could transparently trigger a full rate
-> >discovery enumeration if this specific clock-rates were previously only
-> >lazily enumerated.
-> >
-> >Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
-> >---
-> > drivers/firmware/arm_scmi/clock.c | 85 +++++++++++++++++++++----------
-> > include/linux/scmi_protocol.h     |  9 ++++
-> > 2 files changed, 67 insertions(+), 27 deletions(-)
-> >
-> >diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
-> >index a0de10652abe..c2fd9a1c3316 100644
-> >--- a/drivers/firmware/arm_scmi/clock.c
-> >+++ b/drivers/firmware/arm_scmi/clock.c
-> >@@ -159,10 +159,8 @@ struct scmi_clock_rate_notify_payld {
-> > 
-> > struct scmi_clock_desc {
-> > 	u32 id;
-> >-	bool rate_discrete;
-> > 	unsigned int tot_rates;
-> >-	unsigned int num_rates;
-> >-	u64 *rates;
-> >+	struct scmi_clock_rates r;
-> > #define	RATE_MIN	0
-> > #define	RATE_MAX	1
-> > #define	RATE_STEP	2
-> >@@ -469,10 +467,10 @@ iter_clk_describe_update_state(struct scmi_iterator_state *st,
-> > 	flags = le32_to_cpu(r->num_rates_flags);
-> > 	st->num_remaining = NUM_REMAINING(flags);
-> > 	st->num_returned = NUM_RETURNED(flags);
-> >-	p->clkd->rate_discrete = RATE_DISCRETE(flags);
-> >+	p->clkd->r.rate_discrete = RATE_DISCRETE(flags);
-> > 
-> > 	/* Warn about out of spec replies ... */
-> >-	if (!p->clkd->rate_discrete &&
-> >+	if (!p->clkd->r.rate_discrete &&
-> > 	    (st->num_returned != 3 || st->num_remaining != 0)) {
-> > 		dev_warn(p->dev,
-> > 			 "Out-of-spec CLOCK_DESCRIBE_RATES reply for %s - returned:%d remaining:%d rx_len:%zd\n",
-> >@@ -486,9 +484,9 @@ iter_clk_describe_update_state(struct scmi_iterator_state *st,
-> > 	if (!st->max_resources) {
-> > 		unsigned int tot_rates = st->num_returned + st->num_remaining;
-> > 
-> >-		p->clkd->rates = devm_kcalloc(p->dev, tot_rates,
-> >-					      sizeof(*p->clkd->rates), GFP_KERNEL);
-> >-		if (!p->clkd->rates)
-> >+		p->clkd->r.rates = devm_kcalloc(p->dev, tot_rates,
-> >+						sizeof(*p->clkd->r.rates), GFP_KERNEL);
-> >+		if (!p->clkd->r.rates)
-> > 			return -ENOMEM;
-> > 
-> > 		/* max_resources is used by the iterators to control bounds */
-> >@@ -507,10 +505,10 @@ iter_clk_describe_process_response(const struct scmi_protocol_handle *ph,
-> > 	struct scmi_clk_ipriv *p = priv;
-> > 	const struct scmi_msg_resp_clock_describe_rates *r = response;
-> > 
-> >-	p->clkd->rates[p->clkd->num_rates] = RATE_TO_U64(r->rate[st->loop_idx]);
-> >+	p->clkd->r.rates[p->clkd->r.num_rates] = RATE_TO_U64(r->rate[st->loop_idx]);
-> > 
-> > 	/* Count only effectively discovered rates */
-> >-	p->clkd->num_rates++;
-> >+	p->clkd->r.num_rates++;
-> > 
-> > 	return 0;
-> > }
-> >@@ -531,7 +529,13 @@ scmi_clock_describe_rates_get_full(const struct scmi_protocol_handle *ph,
-> > 		.dev = ph->dev,
-> > 	};
-> > 
-> >-	iter = ph->hops->iter_response_init(ph, &ops, 0, CLOCK_DESCRIBE_RATES,
-> >+	/*
-> >+	 * Using tot_rates as max_resources parameter here so as to trigger
-> >+	 * the dynamic allocation only when strictly needed: when trying a
-> >+	 * full enumeration after a lazy one tot_rates will be non-zero.
-> >+	 */
-> >+	iter = ph->hops->iter_response_init(ph, &ops, clkd->tot_rates,
-> >+					    CLOCK_DESCRIBE_RATES,
-> > 					    sizeof(struct scmi_msg_clock_describe_rates),
-> > 					    &cpriv);
-> > 	if (IS_ERR(iter))
-> >@@ -542,12 +546,12 @@ scmi_clock_describe_rates_get_full(const struct scmi_protocol_handle *ph,
-> > 		return ret;
-> > 
-> > 	/* empty set ? */
-> >-	if (!clkd->num_rates)
-> >+	if (!clkd->r.num_rates)
-> > 		return 0;
-> > 
-> >-	if (clkd->rate_discrete)
-> >-		sort(clkd->rates, clkd->num_rates,
-> >-		     sizeof(clkd->rates[0]), rate_cmp_func, NULL);
-> >+	if (clkd->r.rate_discrete && PROTOCOL_REV_MAJOR(ph->version) == 0x1)
-> 
-> Not understand well "PROTOCOL_REV_MAJOR(ph->version) == 0x1", I may
-> get something wrong, should use ">="?
+On Sat, Feb 28, 2026 at 09:20:56AM +0800, Haiyue Wang wrote:
+>=20
+>=20
+> On 2/28/2026 1:33 AM, Conor Dooley wrote:
+> > On Fri, Feb 27, 2026 at 11:13:14PM +0800, Haiyue Wang wrote:
+> > > Add ASPEED_RESET_VIDEO reset definition to the ast2600-clock binding
+> > > header. It is required for proper reset control of the video on the
+> > > AST2600 SoC for aspeed-video driver.
+> > >=20
+> > > Fixes: e83f8dd668ea ("media: aspeed: Fix dram hang at res-change")
+> >=20
+> > How can a binding change be a fix for a driver one?
+> >=20
+>=20
+> https://git.kernel.org/torvalds/c/9897831de614
+>=20
+> If squashed into one patch as v1 does, it will have patch format warning:
+> ./scripts/checkpatch.pl ...patch
+> WARNING: DT binding docs and includes should be a separate patch. See:
+> Documentation/devicetree/bindings/submitting-patches.rst
 
-I have NOT double checked BUT I think fro Etienne original patch, you
-can assume that clock rates are returned by the platform in ascending
-order (already sorted) only after Clock protocol version 0x01, the first
-ever, so ONLY when teh used version is 0x1 we must perform a full scan
-(no lazy optimization since we cannot assume that rates[last-1] is max
-AND we must sort the obtained list of clocks...
+Adding a fixes tag implies that the change you have here should have
+been done in the patch you're citing. If you had done it in that patch,
+you would get a checkpatch warning there too. This is a separate change
+that is needed for your dts changes, but is not a fix for the driver
+change.
 
-Thanks,
-Cristian
+>=20
+> > > Signed-off-by: Haiyue Wang <haiyuewa@163.com>
+> > > ---
+> > > v2:
+> > >    - Fix checkpatch.pl warning, and send dt-bindings as single patch =
+as
+> > >      the submitting-patches guide.
+> > > v1: https://lore.kernel.org/all/20260227123837.70079-1-haiyuewa@163.c=
+om/
+> > > ---
+> > >   include/dt-bindings/clock/ast2600-clock.h | 1 +
+> > >   1 file changed, 1 insertion(+)
+> > >=20
+> > > diff --git a/include/dt-bindings/clock/ast2600-clock.h b/include/dt-b=
+indings/clock/ast2600-clock.h
+> > > index f60fff261130..7b9b80c38a8b 100644
+> > > --- a/include/dt-bindings/clock/ast2600-clock.h
+> > > +++ b/include/dt-bindings/clock/ast2600-clock.h
+> > > @@ -124,6 +124,7 @@
+> > >   #define ASPEED_RESET_PCIE_RC_OEN	18
+> > >   #define ASPEED_RESET_MAC2		12
+> > >   #define ASPEED_RESET_MAC1		11
+> > > +#define ASPEED_RESET_VIDEO		6
+> > >   #define ASPEED_RESET_PCI_DP		5
+> > >   #define ASPEED_RESET_HACE		4
+> > >   #define ASPEED_RESET_AHB		1
+> > > --=20
+> > > 2.53.0
+> > >=20
+>=20
+
+--snTcT9PcFEKvQmUU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaaLcrgAKCRB4tDGHoIJi
+0qIzAP0fCpQvHKxzjpBO3i3FwHRprWGH7sA7u2Vc1d8vbM7pAAD9Gas2h7A6tW3J
+h4bNYkprIt1F73c2ydusMJO0tnEhwg0=
+=kgT7
+-----END PGP SIGNATURE-----
+
+--snTcT9PcFEKvQmUU--
