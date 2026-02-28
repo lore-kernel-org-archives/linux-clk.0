@@ -1,134 +1,144 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D36E25F78F;
-	Sat, 28 Feb 2026 12:16:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9012126A1B5;
+	Sat, 28 Feb 2026 13:28:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772281015; cv=none; b=u0E8r0LoYFmImpjzyQl4lR+wI/+li1N44Y5is+7/fUU8+jFJvx0o79EyC8yNZeg2SH8MNK4fYsSDN95E9rosSDGzdhFQ5mSw7tZWKQOQvBd32EBi2MiGoTfQbAi5Mk1jqisg0NPXdJ5RvvRwj1M9t0n9FbsN8QBAcvhdXe6X21Q=
+	t=1772285296; cv=none; b=q2r1CKR820yqZ2utT51XmkneQ/vV70Xt68PuhABS0AhTltfbjj3hp1tNmnYM3e6u4VeQKwjw+OTQqnoOxOILnG86OvCFYsLG50/PyYJS0yjB8bik4OtYliLnzA8tocUxZRPdiNPExHCuZwKIpRpLVwolAQdE/XCmU8Zs5r4Mfnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772281015; c=relaxed/simple;
-	bh=eKfWdtF1f8rgeMqH6Rg4gSPSLAuvp8Ejd2HbndMRVlA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MbEvZ/Pv/G59ub4TEEoxYaG97UBAfblubyz2Dz3HoadQxJfkY9FtTH804CILmnwit/giI6ZAyE0+MiWH558NUsBSPRqTjePBlIzWJPENfnNDKsIFeoXSobTAAQcnXRSFe2HnJ5c/Gw1VHHBYArHZLHXhhBNUtJqkXle44xB1KYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YtbXngux; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772285296; c=relaxed/simple;
+	bh=UBCk3rzkDHKIaczXyfNWGpsGgF1btNYSyUx4UegJgAc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TFPmvnH0MHjKBMKrX05/OsB7Ve0zo5BBIukcDuI2yFBodtSj+kdYAI4IIIH497qokpqf2DXY115ljPkGRtfmeU/LH9T4JCE/8GTGxMui9HHsGD1VGid2t3ZK6AOxW/0UdgWqh7d1axn3xjTidgJlM1C3QAYwxyd5bB3kIfpSwBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g4U1Yu4+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YtbXngux"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3C73C116D0;
-	Sat, 28 Feb 2026 12:16:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g4U1Yu4+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87E8FC116D0;
+	Sat, 28 Feb 2026 13:28:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772281015;
-	bh=eKfWdtF1f8rgeMqH6Rg4gSPSLAuvp8Ejd2HbndMRVlA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YtbXnguxTm7DWEOff7Ou0m+dXJUWhKOCdT4kpXC5lXnCi4e6zYNcevBrWR5OWbkpg
-	 CTonEHikHwJbQATZFzSiBqbOAd8+dmUjmGIf85504Fa6UXDp3r1fE0ISg7eG7ohL+C
-	 YET5Ul0ktj1UwePxGoKmG0l3YO9rjp+FMX1bzUOlw7FVkrwJYSfmJRm+xCJ6UKW9UD
-	 sgeoKqWIqJalg3THL7Nkd0t+Z2IIZwlYRueqHaNnyA0DdR13WjORPREO5oYgx1erk/
-	 Bx1SXrdevQr9TdAA6pfg6rP34NH6jHbj6FptTgtX9AgtAIbAGl8rrnI9zO8ZrpULaI
-	 vw3tK06BNfF/Q==
-Date: Sat, 28 Feb 2026 12:16:50 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Haiyue Wang <haiyuewa@163.com>
-Cc: linux-aspeed@lists.ozlabs.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Hans Verkuil <hverkuil+cisco@kernel.org>,
-	Jammy Huang <jammy_huang@aspeedtech.com>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: clock: ast2600: Add reset definition
- for video
-Message-ID: <20260228-entourage-awoke-92c61c5b1544@spud>
-References: <20260227151602.829-1-haiyuewa@163.com>
- <20260227-smooth-carefully-f427e242ce58@spud>
- <16a430a2-fdc9-41eb-945c-0727feb7b9d6@163.com>
+	s=k20201202; t=1772285296;
+	bh=UBCk3rzkDHKIaczXyfNWGpsGgF1btNYSyUx4UegJgAc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=g4U1Yu4+A2Q5H8lgKDDIslCYzTqxvin3VDNqVO73/djB5jNeStnObzhp8vkyQXlBN
+	 yEKfP54V5veY87IwNLIL3cDn/IhspyoceUaFbFLympr9AQDQtqIb6W1A1iQi7az+gs
+	 jrvpZade9+lJlA+nqsUpgPgT0oNT1jj4/E0Pj8sOWDs1/BN7Vy+V+F53J6g5gsBILp
+	 g5IYLZEV7+eDyN6uqsec37HIajRedHo2zWyvugB1Parhfrv1sx59yoPZIJlicD04Gc
+	 zh955xblQqBvhW90mZw4Q/L7y5xjIxwFWYd0UsDw3Rpo86riJF7vsa55FOyEsTX92j
+	 Kphzz/af778DA==
+Message-ID: <fd83752b-8714-41a9-a61a-c4b1f8d62d34@kernel.org>
+Date: Sat, 28 Feb 2026 14:28:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="snTcT9PcFEKvQmUU"
-Content-Disposition: inline
-In-Reply-To: <16a430a2-fdc9-41eb-945c-0727feb7b9d6@163.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 02/18] dt-bindings: media: qcom,x1e80100-camss: Convert
+ from inline PHY definitions to PHY handles
+To: Christopher Obbard <christopher.obbard@linaro.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Bryan O'Donoghue <bod@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org
+References: <20260225-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v8-0-95517393bcb2@linaro.org>
+ <20260225-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v8-2-95517393bcb2@linaro.org>
+ <e6a277cfecc1fb94e1819944ce72e0a03ae0a9fe.camel@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <e6a277cfecc1fb94e1819944ce72e0a03ae0a9fe.camel@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+On 27/02/2026 23:01, Christopher Obbard wrote:
+> Hi Bryan,
+> 
+> On Wed, 2026-02-25 at 15:11 +0000, Bryan O'Donoghue wrote:
+>> We currently do not have an upstream user of the x1e CAMSS schema which
+>> allows us to make this the first platform to treat the CSI PHYs as separate
+>> devices in much the same way as we treat the CCI block as separate devices.
+>>
+>> Convert the embedded CSIPHY node data to simple phys = <> removing all of
+>> the PHY specific stuff previously embedded.
+>>
+>> I gave some serious thought to making the Test Pattern Generators TPGs into
+>> PHY nodes also but, unlike the CSIPHYs the TPGs have no dedicated external
+>> pins nor regulators.
+>>
+>> The CSIPHYs OTOH have dedicated in-fact generally unmuxed pins on Qualcomm
+>> SoCs and each CSIPHY has its own set of input power rails usually 0p8 and
+>> 1p2.
+>>
+>> Instead of defining the CSIPHYs as children of the CAMSS block, we take the
+>> same approach as the CCI/I2C bus dedicated to CAMSS and define the CSIPHYs
+>> as their own nodes.
+>>
+>> Remove the embedded CSIPHY specific data and give CAMSS regular,
+>> bog-standard phys = <>;
+>>
+>> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> 
+> Reviewed-by: Christopher Obbard <christopher.obbard@linaro.org>
 
 
---snTcT9PcFEKvQmUU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This is surprising since I clearly object to these patches and pointed
+out issues.
 
-On Sat, Feb 28, 2026 at 09:20:56AM +0800, Haiyue Wang wrote:
->=20
->=20
-> On 2/28/2026 1:33 AM, Conor Dooley wrote:
-> > On Fri, Feb 27, 2026 at 11:13:14PM +0800, Haiyue Wang wrote:
-> > > Add ASPEED_RESET_VIDEO reset definition to the ast2600-clock binding
-> > > header. It is required for proper reset control of the video on the
-> > > AST2600 SoC for aspeed-video driver.
-> > >=20
-> > > Fixes: e83f8dd668ea ("media: aspeed: Fix dram hang at res-change")
-> >=20
-> > How can a binding change be a fix for a driver one?
-> >=20
->=20
-> https://git.kernel.org/torvalds/c/9897831de614
->=20
-> If squashed into one patch as v1 does, it will have patch format warning:
-> ./scripts/checkpatch.pl ...patch
-> WARNING: DT binding docs and includes should be a separate patch. See:
-> Documentation/devicetree/bindings/submitting-patches.rst
+This is also obsolete version, thus your review will not apply to new
+one (it's different).
 
-Adding a fixes tag implies that the change you have here should have
-been done in the patch you're citing. If you had done it in that patch,
-you would get a checkpatch warning there too. This is a separate change
-that is needed for your dts changes, but is not a fix for the driver
-change.
-
->=20
-> > > Signed-off-by: Haiyue Wang <haiyuewa@163.com>
-> > > ---
-> > > v2:
-> > >    - Fix checkpatch.pl warning, and send dt-bindings as single patch =
-as
-> > >      the submitting-patches guide.
-> > > v1: https://lore.kernel.org/all/20260227123837.70079-1-haiyuewa@163.c=
-om/
-> > > ---
-> > >   include/dt-bindings/clock/ast2600-clock.h | 1 +
-> > >   1 file changed, 1 insertion(+)
-> > >=20
-> > > diff --git a/include/dt-bindings/clock/ast2600-clock.h b/include/dt-b=
-indings/clock/ast2600-clock.h
-> > > index f60fff261130..7b9b80c38a8b 100644
-> > > --- a/include/dt-bindings/clock/ast2600-clock.h
-> > > +++ b/include/dt-bindings/clock/ast2600-clock.h
-> > > @@ -124,6 +124,7 @@
-> > >   #define ASPEED_RESET_PCIE_RC_OEN	18
-> > >   #define ASPEED_RESET_MAC2		12
-> > >   #define ASPEED_RESET_MAC1		11
-> > > +#define ASPEED_RESET_VIDEO		6
-> > >   #define ASPEED_RESET_PCI_DP		5
-> > >   #define ASPEED_RESET_HACE		4
-> > >   #define ASPEED_RESET_AHB		1
-> > > --=20
-> > > 2.53.0
-> > >=20
->=20
-
---snTcT9PcFEKvQmUU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaaLcrgAKCRB4tDGHoIJi
-0qIzAP0fCpQvHKxzjpBO3i3FwHRprWGH7sA7u2Vc1d8vbM7pAAD9Gas2h7A6tW3J
-h4bNYkprIt1F73c2ydusMJO0tnEhwg0=
-=kgT7
------END PGP SIGNATURE-----
-
---snTcT9PcFEKvQmUU--
+Best regards,
+Krzysztof
