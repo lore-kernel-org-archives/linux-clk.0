@@ -1,236 +1,107 @@
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012049.outbound.protection.outlook.com [52.101.66.49])
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B663BB67E;
-	Sat, 28 Feb 2026 00:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772240056; cv=fail; b=kGbL+EL9mcNMM17gpCWojFhgQ7Vrizx9HvVnrAbinmC9rPJaRFKLCYiBPTnCBXuDDYMQ/zaJSNyrXlGIbhRc5NG27aXIE51guvZYrpO7BXhVUwBo+uGtmK7siKbuft3wCi/UvDL6PvdhtiJGz0vxF9SJHCVz5Pr7tW+XGQDARVI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772240056; c=relaxed/simple;
-	bh=pjiS1jitwmGdmBVsnTmLXiCobWKvW5p6YJX9usrjT7Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=EpofqEU8DsvZ4CG537CQpk8j1ls5O7O7qAbcDboLRawBrIJ/pvlRj/bWSDl8+M0U4792Xsc0xARX2KLNp1ZM9sd1PDtQfDXOiKmnBgTouB2ZnNhG62XGwXsbPrCMVRHVmCQWLWu3NZMzs+vRVEKZs5BewnWpaL4MYgQk/523wk4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=qhwvund4; arc=fail smtp.client-ip=52.101.66.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B87525F78F;
+	Sat, 28 Feb 2026 01:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772241709; cv=none; b=IVjgK9J9jdfRrw7Ym2Af4U9W/UjZBn5HUMElRBxppUECU5MHE+hN66c5MuXp+iqResf5HBN5uuRt5ndkVaNAWc1kiM2wQfr0iXEn06gkZpqtWaHRlxvEmvOxoZyNzi0YZRAqyWeF0jOeiBzK66M8ebP5ZnmuNXwnC1UYr8BIlcc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772241709; c=relaxed/simple;
+	bh=560pz722u0kmHP3nR6xpDHBPEv+1wxjHOQQC03qjMME=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FE9nSoXpIx8H4Q44GTkd8K4ifSl1VxdIeEEX/1i0dlbDRvyfqLidVghcTxGZ572pJN/HyesKrKK0g92hn+cE7X5luLH079quUfWxlEd2mz9q6ontB5n9T20bez7tF9hbo3puak7AJkbzofeksViveG0wdkBb6UfGF5ouSEU62ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=c7NKEmmp; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="qhwvund4"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xJxsA2SWp5SnKjd9WIitzLR5uKPH0A+V2pX+qMzjogLYrxPEQsk5TAYtyElLOFtKm8ln9ZpAUtzgMy/55buHsNO1+PMZtrPJ2/4ZbCekM7BGMWWU3lXdAIoRlUOSabEu4+y/xVljO7UDEXY6rx7xwCcmvop6GvNx7DgdWEdPyHkMjSLh42T0phJdggYZEE/AntcSir7IU+19zq6sVEODeoUaABfv0wZOWh9gGc9PVIV3AFzOImMfb8UbznoyBhbKfMcQ7l+MHR8XvxHHH2xx6Ig5546cMWAIIh7WmWKRbFIipuXgSHnuFItKEh5RhcDmGYFkORsTx/PxMvuc9GzCjg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LA5/cHLgqF5UdTP1ya20OuOQjObbaBOtuyuP2d6unaw=;
- b=EbX0A2CsIUo8j8IDEFDYF3qgtLku+WW8++ivF15IUXGaqrUj4zQ2ckzXhXV2rk5q5yA1NdwBtw5x6JMP/sYewCo4DeRuAWh9bdK+iyFPcvdPtO9zWV96FXCYaiQb4Y5F8g9/BPVOYkueUcB2H8OmHpPUXBblNCz9ocwjI52FNXATog6CvsS8Zn76AkPjX7nqdL4hhWxlkC36QJAWzBU7OubdP1f4c8ydkCEPgk/skYUwUqKsYT7p4bKagKG6qZyzGb4D0vKkxdsAhrDNAwakMJ7eCnp9IN5cx+COCB33ORoQd8Lztj4ZxciffGomHW+W5oEnrvYvLgNKS+7mk3lFUA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LA5/cHLgqF5UdTP1ya20OuOQjObbaBOtuyuP2d6unaw=;
- b=qhwvund48p01sZ77EN/bi4BXkWuQlhmxCiyGwIX6m9Af7NeyzuQWcx4a+DIrMBV0rVfBZWWNn6ccZ+eNZp4Eb6W0OH83vZ5/UUYaN/isEbBjTYx7hTEZNRc8OXLokv+fiWwiijrgzTOCXzsDV/jufg9JkZe0PB4ouogWKqSmOmeea56z/O3VF1+d09NvkYPS/Gw6AiI8+Yxz/9fMF10NnNnY4IWz74IPZjNUMWgE/AKZFPL0d9ic5KYwShKcni16jvsPqWQjkdhgycCB/Psw59L/EaKxyHegV9NuFTXyem7OQpr914o6H+MMdgipZiOi0JnlSvijf0+laCIlkqNt7Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9654.15; Sat, 28 Feb
- 2026 00:54:10 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::4972:7eaa:b9f6:7b5e]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::4972:7eaa:b9f6:7b5e%7]) with mapi id 15.20.9632.017; Sat, 28 Feb 2026
- 00:54:10 +0000
-Date: Sat, 28 Feb 2026 08:56:04 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Cristian Marussi <cristian.marussi@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, sudeep.holla@arm.com,
-	philip.radford@arm.com, james.quinlan@broadcom.com,
-	f.fainelli@gmail.com, vincent.guittot@linaro.org,
-	etienne.carriere@foss.st.com, michal.simek@amd.com,
-	dan.carpenter@linaro.org, geert+renesas@glider.be,
-	kuninori.morimoto.gx@renesas.com, marek.vasut+renesas@gmail.com,
-	Brian Masney <bmasney@redhat.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 02/11] clk: scmi: Use new determine_rate clock operation
-Message-ID: <aaI9JBwWaMmfBbd/@shlinux89>
-References: <20260227153225.2778358-1-cristian.marussi@arm.com>
- <20260227153225.2778358-3-cristian.marussi@arm.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260227153225.2778358-3-cristian.marussi@arm.com>
-X-ClientProxiedBy: SI2PR01CA0021.apcprd01.prod.exchangelabs.com
- (2603:1096:4:192::19) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="c7NKEmmp"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=IVtwgUEgU7viJhk9iZiDp027XYkfTYNp3airlT7p+P4=;
+	b=c7NKEmmpmGseHyrobxDU25LdmCA0lhUitkXjxWgCPl3goVF2/0IpRQmv/HMlKa
+	hZkf7MipfWkAzZu2FEGHyNW+if36YcSqUzRPzWrtYGe9LX1OS5uLVODrnL1lk5ay
+	HE4fQGhqocnre53PwTfQ9mP8UMHWCRwtMfRRFQBO+Q7iY=
+Received: from [192.168.11.65] (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id PSgvCgBn3935QqJp+sDLTQ--.20842S2;
+	Sat, 28 Feb 2026 09:20:58 +0800 (CST)
+Message-ID: <16a430a2-fdc9-41eb-945c-0727feb7b9d6@163.com>
+Date: Sat, 28 Feb 2026 09:20:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|PAXPR04MB8510:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8cefb6bb-37eb-4ed5-f2ca-08de7663e23b
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|52116014|7416014|376014|366016|1800799024|38350700014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	1sT7DDM1YUwJi7i8RNdIIJMT/hdze0+o5zBt+cWXjjbfYJioGGn1HM7tdLLK0tyDF4UX2YQ/vEk6oH7LP1iQdF092ACKSQINyyj802dmKu5oQLfp2nj6Y0gdTPp98OuROMi40uFy9wVNvIQiYDv2AmNbqyeIKbHXPmWjfAcOS2NKCoYLC+Lclegr2s7V/YMh42UeWi9ewZPXeFbuwWlNSVyI0+wv7yWsrTuooNAlLMz+6amFO2/mf3AFOPTaGl4QReh3Qh1FrtCsFCksqF83PklsxMMI3j0GSXjGZYi1EfaGwVB42ohgJOKPIl0Hgvry9lALJaJN+85NT4htQc+BverI3MFRigM1UYgc1J3EDrEPu9hue5uCOBhQNmmZ2kkVjLP0wtK9es3hhuTNsuT0ZIjdRp3O2W5fw8hYUSS1mlXeo9KNdMLnM4aE2dYSEXY2u6ZY2b/QK8iklhby4o+bgeDIvotskValsaX0JHHgyLT23KEYtunAId70H0c/Bc8liS0BqD24kMqlxRPZ4cCKoBsU456y/E6w/vHltT5Tf0LC+pepPSe3rskysrBje8iPU+pHcadJTq8j80sKAVz9gC2AWiZGw3AUkbj6PSWbVL9esc8KtWpXYUd70JN6hapBGMdU7hHTi3BOxc+bxDihgyrf1zTK0K5ucm+zlDB9rrAj8+nFObg4F8zR9K/txnFVDqiaX4rD01MSWlr1m6E99JhaY2MIex+NuAIqBl7pLI7S57nePaOIkLpukAaeK1WCl7PfBNIgIwn5QbApZNF+z5ee/mICxIWuN1Pj8Fm++sY=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(52116014)(7416014)(376014)(366016)(1800799024)(38350700014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?rhRqqrZ12+W4x9iXmIBOLQO8CH/CiCT6fc8PltNxcX91AitXAT+pjKJIyUOZ?=
- =?us-ascii?Q?hKtASMXdSbdng+IGhNTWTuK6EnmXCx+pb1PcguuTgiVJA6RX+2K8q5VTU8V7?=
- =?us-ascii?Q?lJDh5NX70gKGiq4lT6AKVY5lmPAVQGPU+cah6fo5Px7eZrn8sgcEPgBOd3kC?=
- =?us-ascii?Q?M6Uw4SDZMkc6kFL2cca7lRTYr0oXzZ+AaSMMygzdRwZ1y/dcVcFhTuUrB1LJ?=
- =?us-ascii?Q?8GKtQJsXJJ1mcebE9BCgyrmkPTs3grgymrRhbzpgCd8Dz/zPqvqiBoXeElzB?=
- =?us-ascii?Q?39eEsXXrutKRjk0DkHNmGDzW7gM1fmCnL3F4Wxeo8wcq8wbi8SB9OPuixuIC?=
- =?us-ascii?Q?irolkwKqBJHjLPPn9EEjk1TW3fyXXNZ+iJXhSBQlNwZyWE0bWAffgC1VSnmZ?=
- =?us-ascii?Q?CZEjjffbvCiNVzzbkHIx4n8cVNP+5+mTU3tnyxz3XCm3SFVHMvH400XcxMuB?=
- =?us-ascii?Q?TCFR0Ek4ZadsMSp8BQXbra9Mjw8iufu/jA6FfM+5gqdZh6ZousJl6bnZmxKS?=
- =?us-ascii?Q?Mm89h/8GgkDjRQdUgKlN65FgpTtgO12rkTpyHxXv23hWaTziITwXe4Yf0cxy?=
- =?us-ascii?Q?/ISxKc7nm/hpAqHmEoVx57e5CqlBZ9Y50dpHrgetN8mHLTlOzJpz9Z+t70Dr?=
- =?us-ascii?Q?PpTDK7T/aS8yB4OUW6Vm0UIQg9LYHKZ8gTkD2i2LGMwluM/B7cqhCrbkMMI+?=
- =?us-ascii?Q?KS/oi21w4ZadbHM6Gzj8QMkSszOmEtqdQbsFReFn6BrCpwLwPmvI59ZKuJ57?=
- =?us-ascii?Q?t4MQjDJ+zKLuB/tIF/65DLDw54fp56FR2+xiRF7ZGSqWlYZHW5XfOml0Isk0?=
- =?us-ascii?Q?OHoaGqYlfICod4Qj2oHGgo4CC1p0gGuEejoHLgsr+ziJe24MoQpzDjrNCo3J?=
- =?us-ascii?Q?PfRaDNagAnXtITigsb/w5zH2Xz96AjaK/CK2yXVEsXHc3uU1zajwl8msPi5z?=
- =?us-ascii?Q?zgz01ezzEGVjo7epgc0PpQErsf2tN5r9B+vauFYWA8kWlHEZv9N1LWq9n4gY?=
- =?us-ascii?Q?p1yVF+y4TQn5m3sELuE7QDz/g2qnAFBunPYQyXexXJEadxi6wpepwdTtuYl7?=
- =?us-ascii?Q?45+9J8jDgGGzRb35jahGO6Bz3fwfnmDWewoLj0l4sqDCzmqhS06WijVqdBLr?=
- =?us-ascii?Q?+uFACBmm4mTCmLRMotvNsZkMn/hPcU7VF/QO9ESbq+RafA58J/rfA3gPXZ20?=
- =?us-ascii?Q?sdXEUW3paYa4fsf9jOK9+8tHaSnsTRTjUM5gO5JjP2rRQ2D9YOXiIA6nExqY?=
- =?us-ascii?Q?YETplsP4ykbUwEz1oSFRZrTeEvU1QMbEoflXUd04WoQr6Bbkv37aXQodGQTe?=
- =?us-ascii?Q?dOnrjFPrXlMtbm2VJ2ZcgHZlegKc4dcdUUr38LA/ACqzgx8d0FuV+tB1LhrB?=
- =?us-ascii?Q?oD8kcX1HguUDJGUddIJiZtN8oZevVOpNQ/qtLW/Nxk5zc+oA9mGnnmOC/YDe?=
- =?us-ascii?Q?QJ2Jc47y6pIXDnN5Dt5nu65PtcImin+C9Z8Yjs2MdUPpxeIWaRU9wdGzPyhj?=
- =?us-ascii?Q?MMEz8d+J3/gSzGqC2CacHuuBzV1aerRque3ABkObSpn617OU0IXDHPnUCqZD?=
- =?us-ascii?Q?8kw8gui1Ul1WAgA8cHKyQVs8ASF97qA16e0cLMYd6XD2wDV74/D/CU736AfU?=
- =?us-ascii?Q?Kc30ejleOgG/btBXq2rUk3qJxn/5ob/IPj8GaqKCCEU/8ZnwvOS6YIatErLE?=
- =?us-ascii?Q?N6rrfUrNz6sM0ejEGpvcWu4xXF5OmDgXsEoRibmgVHRTaMxvNZM9MMHV6+fi?=
- =?us-ascii?Q?ij2+AH3HZw=3D=3D?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8cefb6bb-37eb-4ed5-f2ca-08de7663e23b
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2026 00:54:10.4044
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: x43CnBvtaOcZqRon2o6i6vsrPo+pAOgfLvgvcuVav5AdzITgfMErtCDAdjve7iRTzedL7silwMDqazV4XFoT1g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8510
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: ast2600: Add reset definition
+ for video
+To: Conor Dooley <conor@kernel.org>
+Cc: linux-aspeed@lists.ozlabs.org, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Hans Verkuil
+ <hverkuil+cisco@kernel.org>, Jammy Huang <jammy_huang@aspeedtech.com>,
+ "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+References: <20260227151602.829-1-haiyuewa@163.com>
+ <20260227-smooth-carefully-f427e242ce58@spud>
+Content-Language: en-US
+From: Haiyue Wang <haiyuewa@163.com>
+In-Reply-To: <20260227-smooth-carefully-f427e242ce58@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:PSgvCgBn3935QqJp+sDLTQ--.20842S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7KFWxZFW3Gw4fZr4fGFy5XFb_yoW8WFyUpF
+	sYyF1ktr4UZFWYk3yIq3WxtF1kWw15JF1Ygry5Wa4jya1rW3Wjg3yIgryY9a4DWr4fur12
+	yFnFgFWDCFyIy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UsjjgUUUUU=
+X-CM-SenderInfo: 5kdl53xhzdqiywtou0bp/xtbCzRrRPWmiQvoI7gAA3u
 
-On Fri, Feb 27, 2026 at 03:32:16PM +0000, Cristian Marussi wrote:
->Use the Clock protocol layer determine_rate logic to calculate the closest
->rate that can be supported by a specific clock.
->
->No functional change.
->
->Cc: Brian Masney <bmasney@redhat.com>
->Cc: Michael Turquette <mturquette@baylibre.com>
->Cc: Stephen Boyd <sboyd@kernel.org>
->Cc: linux-clk@vger.kernel.org
->Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
->---
->Note that the calculation logic in the protocol layer is exactly the same
->as it wes here.
->
->@Brian I suppose once your CLK_ROUNDING_FW_MANAGED sereis is merged I can flag
->such SCMI clocks.
 
-Per my reading of Brain's thread, if ->determine_rate exists,
-->determine_rate() will be used.
 
- 	} else if (core->ops->determine_rate) {
- 		return core->ops->determine_rate(core->hw, req);
-+	} else if (clk_is_rounding_fw_managed(core)) {
-+		return 0;
-
-So unless update scmi_clk_determine_rate() to something:
---------
-if (clk & CLK_ROUNDING_FW_MANAGED)
-	return 0;
-
-return scmi_proto_clk_ops->determine_rate(clk->ph, clk->id, &req->rate);
---------
-
-It maybe better to update Brain's patch to move clk_is_rounding_fw_managed()
-above the check of core->ops->determine_rate().
-
->---
-> drivers/clk/clk-scmi.c | 31 ++++++-------------------------
-> 1 file changed, 6 insertions(+), 25 deletions(-)
->
->diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
->index 6b286ea6f121..c223e4ef1dd1 100644
->--- a/drivers/clk/clk-scmi.c
->+++ b/drivers/clk/clk-scmi.c
->@@ -12,7 +12,6 @@
-> #include <linux/of.h>
-> #include <linux/module.h>
-> #include <linux/scmi_protocol.h>
->-#include <asm/div64.h>
+On 2/28/2026 1:33 AM, Conor Dooley wrote:
+> On Fri, Feb 27, 2026 at 11:13:14PM +0800, Haiyue Wang wrote:
+>> Add ASPEED_RESET_VIDEO reset definition to the ast2600-clock binding
+>> header. It is required for proper reset control of the video on the
+>> AST2600 SoC for aspeed-video driver.
+>>
+>> Fixes: e83f8dd668ea ("media: aspeed: Fix dram hang at res-change")
 > 
-> #define NOT_ATOMIC	false
-> #define ATOMIC		true
->@@ -57,35 +56,17 @@ static unsigned long scmi_clk_recalc_rate(struct clk_hw *hw,
-> static int scmi_clk_determine_rate(struct clk_hw *hw,
-> 				   struct clk_rate_request *req)
-> {
->-	u64 fmin, fmax, ftmp;
->+	int ret;
-> 	struct scmi_clk *clk = to_scmi_clk(hw);
+> How can a binding change be a fix for a driver one?
 > 
-> 	/*
->-	 * We can't figure out what rate it will be, so just return the
->-	 * rate back to the caller. scmi_clk_recalc_rate() will be called
->-	 * after the rate is set and we'll know what rate the clock is
->+	 * If we could not get a better rate scmi_clk_recalc_rate() will be
->+	 * called after the rate is set and we'll know what rate the clock is
-> 	 * running at then.
-> 	 */
->-	if (clk->info->rate_discrete)
->-		return 0;
->-
->-	fmin = clk->info->range.min_rate;
->-	fmax = clk->info->range.max_rate;
->-	if (req->rate <= fmin) {
->-		req->rate = fmin;
->-
->-		return 0;
->-	} else if (req->rate >= fmax) {
->-		req->rate = fmax;
->-
->-		return 0;
->-	}
->-
->-	ftmp = req->rate - fmin;
->-	ftmp += clk->info->range.step_size - 1; /* to round up */
->-	do_div(ftmp, clk->info->range.step_size);
->-
->-	req->rate = ftmp * clk->info->range.step_size + fmin;
->+	ret = scmi_proto_clk_ops->determine_rate(clk->ph, clk->id, &req->rate);
->+	if (ret)
->+		return ret;
 
-nit:
-"return scmi_proto_clk_ops->determine_rate(clk->ph, clk->id, &req->rate);"
+https://git.kernel.org/torvalds/c/9897831de614
 
-Otherwise:
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
+If squashed into one patch as v1 does, it will have patch format warning:
+./scripts/checkpatch.pl ...patch
+WARNING: DT binding docs and includes should be a separate patch. See: 
+Documentation/devicetree/bindings/submitting-patches.rst
 
-> 
-> 	return 0;
-> }
->-- 
->2.53.0
->
+>> Signed-off-by: Haiyue Wang <haiyuewa@163.com>
+>> ---
+>> v2:
+>>    - Fix checkpatch.pl warning, and send dt-bindings as single patch as
+>>      the submitting-patches guide.
+>> v1: https://lore.kernel.org/all/20260227123837.70079-1-haiyuewa@163.com/
+>> ---
+>>   include/dt-bindings/clock/ast2600-clock.h | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/include/dt-bindings/clock/ast2600-clock.h b/include/dt-bindings/clock/ast2600-clock.h
+>> index f60fff261130..7b9b80c38a8b 100644
+>> --- a/include/dt-bindings/clock/ast2600-clock.h
+>> +++ b/include/dt-bindings/clock/ast2600-clock.h
+>> @@ -124,6 +124,7 @@
+>>   #define ASPEED_RESET_PCIE_RC_OEN	18
+>>   #define ASPEED_RESET_MAC2		12
+>>   #define ASPEED_RESET_MAC1		11
+>> +#define ASPEED_RESET_VIDEO		6
+>>   #define ASPEED_RESET_PCI_DP		5
+>>   #define ASPEED_RESET_HACE		4
+>>   #define ASPEED_RESET_AHB		1
+>> -- 
+>> 2.53.0
+>>
+
