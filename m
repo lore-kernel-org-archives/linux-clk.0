@@ -1,33 +1,65 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B377284694;
-	Sat, 28 Feb 2026 13:31:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2AB3371048
+	for <linux-clk@vger.kernel.org>; Sat, 28 Feb 2026 14:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772285512; cv=none; b=Vx+2Hbi/yVNQV88WmVSAtG5JKsy7+sZeyGLE6MjMrKLmijLWepjujjNmfENxMTxwKBl/IvIxwMSejLAfftzQE49RbPHz5liShVrYsvEk3Jrn2nye3bkV4L/0wNB3xncJ5LuqlXAO5HFbhdDAp4jeFXjK725o2EAJhl0YbDeN+Dg=
+	t=1772288546; cv=none; b=YPamPFoRcR0vle9Z05/wnZ2RJL3RT8WgGJeEpPQXwTy8BZTuLv1XhOuGhUu29lOWV8Wt/ajPJRAzmeflo66Km0b3+CRhMUAmqUtWLuHzk3kFvg7Gi9UipgyzHcrqFkKb8K/3jdE10JEX3gZ+Fq2vwCQpUfyNw2sSh0h9GrsQIAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772285512; c=relaxed/simple;
-	bh=m1ZrWjHvg5njNw84EH0oDrYxVzwQZhLacGTCELlESTQ=;
+	s=arc-20240116; t=1772288546; c=relaxed/simple;
+	bh=cdMeSBcwMEAfIQGzdu8kqieWYjvBMRGrwvzxRNQyUck=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iqB7J7jSa4qxSeToZ+0Strvb9N0g2URto1HB7YbNxC7US5aFiX20Sy61B8+MShDgZB/leh2t/Dj6RxC2+YXe6KxkaTNN9xUBH1kHXyzSaaJuNNQOfKmRiwssoNbA252z79V28KqTgEnTnXOVUnWJ9FwfinifU9nxP3ZSpcLi8VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bI8LoTrS; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=sS4f+foewMEw+v1+SP4/n+6Y0qOrqMU9zRJyERYFrVka5r8K0XGtgPT8hnF//QkSAgWHCPNclHTaYLzBxaeRxCv4GyjTMlO8IoJS+yb3eH2SCkSlzoWp5Oqcy5fcrkmnAFgGEFDu2pQaFhJkBU4VbNTQOtOqnm5s70evPXnN/Ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=IA2/qqfN; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bI8LoTrS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFBE0C2BC86;
-	Sat, 28 Feb 2026 13:31:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772285512;
-	bh=m1ZrWjHvg5njNw84EH0oDrYxVzwQZhLacGTCELlESTQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bI8LoTrSprxbDUPFo2Cp2Dzsi8+oSnSttKBKqScn5MJZX4VMmlp+D5HxnsteJlnUs
-	 Eb2lSDt9xYLKQaEPfHhXNJTUCyHLYS28Cm2zyMWzFpBuX1y8A3/PoPwbRE4Zsuv14Y
-	 +4FMz/Xd8T9TWhlfdqxU+ERkpwRksl28V+3zWZLErYaBiSSLKC+IswTTMcrzAcDbo4
-	 YbK68z0hpVzDdppmi086/n63dfSr4+lv9zgt92F9QEw6O/NetpruROINb3tXPWpMTT
-	 F7Jz/y+S04yjgst21OqsT/so5r4M9BQUoT0lW0o4PDVJQNZwJnvSqCerTKt8yDAhAD
-	 PObw7sWnO3UCg==
-Message-ID: <8a7d21bf-6867-4d5f-8376-6f988d89c969@kernel.org>
-Date: Sat, 28 Feb 2026 14:31:47 +0100
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="IA2/qqfN"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4836f363ad2so34603045e9.1
+        for <linux-clk@vger.kernel.org>; Sat, 28 Feb 2026 06:22:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1772288543; x=1772893343; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vtW+TvDVbM5bVPkT5f4veuf3YOot6jvs+xND9WyGWvg=;
+        b=IA2/qqfNf34lDP8pHByF28263YQ4Z6xRN5eQAXx49WmB9Iz9nSdt7dVcm5llJfHK7o
+         Mmwj9XfBREp9JEnc7ihbGEhEw7+3gMo65ncWULZofDlknlEPZws2c+PkelB3rRuFCRdl
+         qKfM0sRp/VG3+3FINgOjybBoTpQGIgdw3Mkw9r8AAmTDFiNavfVANphxpHNA6MkZPaIy
+         2R+FbXoablV6wK2uX5E1lUogoecHV0zh7BOaevIkBWbrShS0sD0fk/8v/zBB/+taQv0B
+         QS0nU6d8LBaWC8Q4UKhR2fPYiFvMGoKcWoVbfYArpgCMOwn/qGGXIr7uDJt8Mv24cLgx
+         XmUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772288543; x=1772893343;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vtW+TvDVbM5bVPkT5f4veuf3YOot6jvs+xND9WyGWvg=;
+        b=llB7N6/dpUzlFZIkE2WKvzIXW0KhmhmTRANMenKI0nsQNngUM45xIw94ev0ikJE8Wv
+         1R7vHHnaUnbcDgRsB/NMlEdYf9rF3J24aJPiK9X7Dt3stiXy52/VCCdeReFRULVhDFDO
+         /RC05ExPj/zN+jpw0TwxQo6tm9lEGcdbaeCE5F3O0WxarZy9Z8ZjTJG+XIu9P2075eAy
+         QO2peOJS+VwshAsiu7RGe84vq1vuRRfH/CLYLmKRAV2uSYZoiapn66B8bC6TXGl/K9zM
+         57blWHcN/YltBcn7m3FYltFdRqCce8so1/wd1RooKRWTT/sCEf1oXPsAxYHYnoMDLpCd
+         +QxQ==
+X-Gm-Message-State: AOJu0YxCD+Cc1CXChDBZUiq7wJhVuv6rTYXeNjgHGbyma2OBeMSucFDh
+	AwwQqBkiIK3da5+XDJXKZZv/H7tbjXfeUjD5SVahRxiTFJiW7PkyN3HTWFbW+THB880=
+X-Gm-Gg: ATEYQzyOiiOimJXYcyzH+hrbgyqxYQLn2ZWU+DlCtr9abVxvVxGFCGSeMxc0uE2lAzj
+	RK+El/Uq/04E4izr/WtOgwZK4KK5ekHPGGho8bbsNOvZlV5ASjjZxS4WpYTZG12kxdIyZFCdaXR
+	zdklLc1l9bO8n7LKjRVKMULsqLyVBjtPlfUDTW7fvlnOIrDNc3a8opqqMMaO2dSKN54FUlbJMGy
+	J+SjDeufOWURtBM3ggMuNBjM8OsOW9WCrUR6bOV1SUTYSZFfn+7y+3qBfoYBideOBNaEyoDzXVB
+	RVRnpuUcnsB65xHq7FkqoDvOFekuJMZhOpWCwVNDHWtGX/lKGUIhIjtf1NNNnXySuXoZT42wygD
+	2G7t8icaY5f4YHG6xHAY1QoUVxp6lerZRqcrqEeZ1sIiCGT/I+VnXzPmPTsjmOryrbfSXtO907j
+	x1Aronvku0BXYZHoB8phZ2X114aU8eXg==
+X-Received: by 2002:a05:600c:154b:b0:477:5af7:6fa with SMTP id 5b1f17b1804b1-483c9c2059bmr90939375e9.32.1772288543254;
+        Sat, 28 Feb 2026 06:22:23 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.73])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483bfcb4f8bsm212800145e9.4.2026.02.28.06.22.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 28 Feb 2026 06:22:22 -0800 (PST)
+Message-ID: <9965d2fb-e1ee-4103-a5d3-01cb94468db0@tuxon.dev>
+Date: Sat, 28 Feb 2026 16:22:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,77 +67,70 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/13] clk: samsung: acpm: drop determine_rate op and use
- CLK_ROUNDING_FW_MANAGED flag
-To: Brian Masney <bmasney@redhat.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- linux-samsung-soc@vger.kernel.org
-References: <20260226-clk-det-rate-fw-managed-v1-0-4421dd2f6dc6@redhat.com>
- <20260226-clk-det-rate-fw-managed-v1-12-4421dd2f6dc6@redhat.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 1/4] clk: at91: sam9x7: Remove gmac peripheral and
+ generic clock entries with ID 67
+To: Mihai Sain <mihai.sain@microchip.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, nicolas.ferre@microchip.com,
+ alexandre.belloni@bootlin.com, varshini.rajendran@microchip.com,
+ cristian.birsan@microchip.com, balamanikandan.gunasundar@microchip.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ ryan.wanner@microchip.com
+References: <20260212100147.5007-1-mihai.sain@microchip.com>
+ <20260212100147.5007-2-mihai.sain@microchip.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20260226-clk-det-rate-fw-managed-v1-12-4421dd2f6dc6@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20260212100147.5007-2-mihai.sain@microchip.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 26/02/2026 19:16, Brian Masney wrote:
-> This clk driver has a noop determine_rate clk op. Drop this empty
-> function, and enable the CLK_ROUNDING_FW_MANAGED flag.
+Hi, Mihai,
+
+On 2/12/26 12:01, Mihai Sain wrote:
+> According with datasheet table 12.1 the instance ID 67 is reserved.
+
+Could you please mention the datasheet revision ID?
+
+> This change drops the gmactsu_clk and gmac_gclk entries from
+> the SAM9X7 clock description tables.
 > 
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> Signed-off-by: Mihai Sain <mihai.sain@microchip.com>
+> ---
+>   drivers/clk/at91/sam9x7.c | 10 ----------
+>   1 file changed, 10 deletions(-)
 > 
-> 
+> diff --git a/drivers/clk/at91/sam9x7.c b/drivers/clk/at91/sam9x7.c
+> index 89868a0aeaba..d9603f1124d0 100644
+> --- a/drivers/clk/at91/sam9x7.c
+> +++ b/drivers/clk/at91/sam9x7.c
+> @@ -420,7 +420,6 @@ static const struct {
+>   	{ .n = "lvdsc_clk",	.id = 56, },
+>   	{ .n = "pit64b1_clk",	.id = 58, },
+>   	{ .n = "puf_clk",	.id = 59, },
+> -	{ .n = "gmactsu_clk",	.id = 67, },
 
+Could you please keep this in a separate patch?
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+>   };
+>   
+>   /*
+> @@ -702,15 +701,6 @@ static const struct {
+>   		.pp_count = 1,
+>   		.pp_chg_id = INT_MIN,
+>   	},
+> -
+> -	{
+> -		.n = "gmac_gclk",
+> -		.id = 67,
+> -		.pp = { "audiopll_divpmcck", "plla_div2pmcck", },
+> -		.pp_mux_table = { 6, 8, },
+> -		.pp_count = 2,
+> -		.pp_chg_id = INT_MIN,
+> -	},
 
+And squash this changes with patch 3/4 "clk: at91: sam9x7: Add gmac generic 
+clock entry with ID 24" and also provide a fixes tag for it?
 
-Best regards,
-Krzysztof
+Thank you,
+Claudiu
