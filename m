@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9012126A1B5;
-	Sat, 28 Feb 2026 13:28:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B377284694;
+	Sat, 28 Feb 2026 13:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772285296; cv=none; b=q2r1CKR820yqZ2utT51XmkneQ/vV70Xt68PuhABS0AhTltfbjj3hp1tNmnYM3e6u4VeQKwjw+OTQqnoOxOILnG86OvCFYsLG50/PyYJS0yjB8bik4OtYliLnzA8tocUxZRPdiNPExHCuZwKIpRpLVwolAQdE/XCmU8Zs5r4Mfnw=
+	t=1772285512; cv=none; b=Vx+2Hbi/yVNQV88WmVSAtG5JKsy7+sZeyGLE6MjMrKLmijLWepjujjNmfENxMTxwKBl/IvIxwMSejLAfftzQE49RbPHz5liShVrYsvEk3Jrn2nye3bkV4L/0wNB3xncJ5LuqlXAO5HFbhdDAp4jeFXjK725o2EAJhl0YbDeN+Dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772285296; c=relaxed/simple;
-	bh=UBCk3rzkDHKIaczXyfNWGpsGgF1btNYSyUx4UegJgAc=;
+	s=arc-20240116; t=1772285512; c=relaxed/simple;
+	bh=m1ZrWjHvg5njNw84EH0oDrYxVzwQZhLacGTCELlESTQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TFPmvnH0MHjKBMKrX05/OsB7Ve0zo5BBIukcDuI2yFBodtSj+kdYAI4IIIH497qokpqf2DXY115ljPkGRtfmeU/LH9T4JCE/8GTGxMui9HHsGD1VGid2t3ZK6AOxW/0UdgWqh7d1axn3xjTidgJlM1C3QAYwxyd5bB3kIfpSwBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g4U1Yu4+; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=iqB7J7jSa4qxSeToZ+0Strvb9N0g2URto1HB7YbNxC7US5aFiX20Sy61B8+MShDgZB/leh2t/Dj6RxC2+YXe6KxkaTNN9xUBH1kHXyzSaaJuNNQOfKmRiwssoNbA252z79V28KqTgEnTnXOVUnWJ9FwfinifU9nxP3ZSpcLi8VA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bI8LoTrS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g4U1Yu4+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87E8FC116D0;
-	Sat, 28 Feb 2026 13:28:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bI8LoTrS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFBE0C2BC86;
+	Sat, 28 Feb 2026 13:31:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772285296;
-	bh=UBCk3rzkDHKIaczXyfNWGpsGgF1btNYSyUx4UegJgAc=;
+	s=k20201202; t=1772285512;
+	bh=m1ZrWjHvg5njNw84EH0oDrYxVzwQZhLacGTCELlESTQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=g4U1Yu4+A2Q5H8lgKDDIslCYzTqxvin3VDNqVO73/djB5jNeStnObzhp8vkyQXlBN
-	 yEKfP54V5veY87IwNLIL3cDn/IhspyoceUaFbFLympr9AQDQtqIb6W1A1iQi7az+gs
-	 jrvpZade9+lJlA+nqsUpgPgT0oNT1jj4/E0Pj8sOWDs1/BN7Vy+V+F53J6g5gsBILp
-	 g5IYLZEV7+eDyN6uqsec37HIajRedHo2zWyvugB1Parhfrv1sx59yoPZIJlicD04Gc
-	 zh955xblQqBvhW90mZw4Q/L7y5xjIxwFWYd0UsDw3Rpo86riJF7vsa55FOyEsTX92j
-	 Kphzz/af778DA==
-Message-ID: <fd83752b-8714-41a9-a61a-c4b1f8d62d34@kernel.org>
-Date: Sat, 28 Feb 2026 14:28:10 +0100
+	b=bI8LoTrSprxbDUPFo2Cp2Dzsi8+oSnSttKBKqScn5MJZX4VMmlp+D5HxnsteJlnUs
+	 Eb2lSDt9xYLKQaEPfHhXNJTUCyHLYS28Cm2zyMWzFpBuX1y8A3/PoPwbRE4Zsuv14Y
+	 +4FMz/Xd8T9TWhlfdqxU+ERkpwRksl28V+3zWZLErYaBiSSLKC+IswTTMcrzAcDbo4
+	 YbK68z0hpVzDdppmi086/n63dfSr4+lv9zgt92F9QEw6O/NetpruROINb3tXPWpMTT
+	 F7Jz/y+S04yjgst21OqsT/so5r4M9BQUoT0lW0o4PDVJQNZwJnvSqCerTKt8yDAhAD
+	 PObw7sWnO3UCg==
+Message-ID: <8a7d21bf-6867-4d5f-8376-6f988d89c969@kernel.org>
+Date: Sat, 28 Feb 2026 14:31:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,25 +35,17 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 02/18] dt-bindings: media: qcom,x1e80100-camss: Convert
- from inline PHY definitions to PHY handles
-To: Christopher Obbard <christopher.obbard@linaro.org>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Bryan O'Donoghue <bod@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org
-References: <20260225-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v8-0-95517393bcb2@linaro.org>
- <20260225-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v8-2-95517393bcb2@linaro.org>
- <e6a277cfecc1fb94e1819944ce72e0a03ae0a9fe.camel@linaro.org>
+Subject: Re: [PATCH 12/13] clk: samsung: acpm: drop determine_rate op and use
+ CLK_ROUNDING_FW_MANAGED flag
+To: Brian Masney <bmasney@redhat.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ linux-samsung-soc@vger.kernel.org
+References: <20260226-clk-det-rate-fw-managed-v1-0-4421dd2f6dc6@redhat.com>
+ <20260226-clk-det-rate-fw-managed-v1-12-4421dd2f6dc6@redhat.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -99,46 +91,21 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <e6a277cfecc1fb94e1819944ce72e0a03ae0a9fe.camel@linaro.org>
+In-Reply-To: <20260226-clk-det-rate-fw-managed-v1-12-4421dd2f6dc6@redhat.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 27/02/2026 23:01, Christopher Obbard wrote:
-> Hi Bryan,
+On 26/02/2026 19:16, Brian Masney wrote:
+> This clk driver has a noop determine_rate clk op. Drop this empty
+> function, and enable the CLK_ROUNDING_FW_MANAGED flag.
 > 
-> On Wed, 2026-02-25 at 15:11 +0000, Bryan O'Donoghue wrote:
->> We currently do not have an upstream user of the x1e CAMSS schema which
->> allows us to make this the first platform to treat the CSI PHYs as separate
->> devices in much the same way as we treat the CCI block as separate devices.
->>
->> Convert the embedded CSIPHY node data to simple phys = <> removing all of
->> the PHY specific stuff previously embedded.
->>
->> I gave some serious thought to making the Test Pattern Generators TPGs into
->> PHY nodes also but, unlike the CSIPHYs the TPGs have no dedicated external
->> pins nor regulators.
->>
->> The CSIPHYs OTOH have dedicated in-fact generally unmuxed pins on Qualcomm
->> SoCs and each CSIPHY has its own set of input power rails usually 0p8 and
->> 1p2.
->>
->> Instead of defining the CSIPHYs as children of the CAMSS block, we take the
->> same approach as the CCI/I2C bus dedicated to CAMSS and define the CSIPHYs
->> as their own nodes.
->>
->> Remove the embedded CSIPHY specific data and give CAMSS regular,
->> bog-standard phys = <>;
->>
->> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
 > 
-> Reviewed-by: Christopher Obbard <christopher.obbard@linaro.org>
+> 
 
 
-This is surprising since I clearly object to these patches and pointed
-out issues.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-This is also obsolete version, thus your review will not apply to new
-one (it's different).
 
 Best regards,
 Krzysztof
