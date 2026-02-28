@@ -1,48 +1,49 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E345230F93C;
-	Sat, 28 Feb 2026 14:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EFF0449EB3;
+	Sat, 28 Feb 2026 14:58:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772289854; cv=none; b=gYMDWeuVHjvnBaDagd4IJywGgXxtVPRnRn+27YZL39MAIt78tBfua6jOFQ1paT7ysDSsgC2iK5qcjhjHaw0r7yifCnr6jXNZVBKnJEIJcXGuaM03xWeY0pRc1G/kq/rI3kW0rFVaNwavYvLHT1r5HnyWV/vMA89LneoYzOKD94Q=
+	t=1772290734; cv=none; b=srWrRVfXsQLYwVMgr5mx5T87tSnH06wuvZm6eR1IFzC/vmOH5NbyKoRFBRIhgPyUrwnF8C118iQagno3BFY8kckb3+uh+3Z2EsDKHNjK4KfY0SapqV3rsGUXC39cPHIgbgnzuy6TWIRDzFxYcjr8HoOCtk5I3+4V3Rfuhl/nq3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772289854; c=relaxed/simple;
-	bh=8uBL+lM1E6r1mevBWfyFVMB3IGUpvr/djhVuaXmKqhc=;
+	s=arc-20240116; t=1772290734; c=relaxed/simple;
+	bh=0OyJcWNteWiTO58j6Le8ba8Qir8zEk0kOYFEoDW4tXk=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=m7ZVpDB1QbE4JMqDS+MdGZHC+KLfv/4w3VeiWbYazBh5z6X2VJMd44fYfoxpF82FAduuAiNOCs2l5cpFF5d24yPbwuUtopGoy/Z6bv3j7Ov0Betsi+SK86LoN5nzAkU1q9c93CIgsbYe+PnDTyNoz0w3f46dz1LJoQg8AdLg46A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I6Vkf1du; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=FXHbHgNOBufd0aRO+r/EWJ0gx78Uzk8ilidpZv3x2Z/FqHcujLGFHqN7IbHJsbleDmhMDQdgJSJ/FofapFFOqxgUVk15391/DOumpEl1HE606lAzK+FfoGCGQgWOYyN6x7qcorZ4Lfmrut7CqN7LG4dgwZ/wASil1AyGQFqShTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W56Lrb+4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I6Vkf1du"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 682B2C2BC87;
-	Sat, 28 Feb 2026 14:44:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W56Lrb+4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EE81C19421;
+	Sat, 28 Feb 2026 14:58:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772289853;
-	bh=8uBL+lM1E6r1mevBWfyFVMB3IGUpvr/djhVuaXmKqhc=;
+	s=k20201202; t=1772290734;
+	bh=0OyJcWNteWiTO58j6Le8ba8Qir8zEk0kOYFEoDW4tXk=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=I6Vkf1du4xFWzgVNJFeMdki+NgnDQO3zCAagEE+lfQSxyCfK2iMEWPQmN5s1g9y/O
-	 9Ak2srQ+Cn4n+YSfya//t3dBNG7mbBRwavZDRTGYXeFZ9ZoAgnVyyo32qSvkGZ8mc+
-	 R7RhnVjJkHOGyRwH6kykbtkWSAjabGfbuoH5Sj3miqthZvr/SaeYIH49nod7gQmkAw
-	 xgMeCDTnHqErF4Kb4bsibeEMFmSc7gAzYcUYVh+E9ddB8yd5dRiQUqS7rS9sbBXZBA
-	 04gooO4UPBFz5Cm2QhtniFC8K3xwUkxi5vkSXdPF9ySEqDIr9y/oNceIl83dnLxGbA
-	 qyreKpnpOPtBQ==
+	b=W56Lrb+47NZ+p+mBAUphKa58Oxz8ePjhF0kTbndR+xz0Vy3I6WAlMjicTc/GmLIPv
+	 99F6qwsxRi4WUzzTFlfzQDJlioC6/dApQj9gpL6TPZcVWOFeduSty3Y22bpBzLokCO
+	 YRXfO7lRoKJnODF8DaIb4M/89rt+e8WjTtjqb5TFIq9U9qLi9onishF/VMGeJ3wjB9
+	 rnNdXz3x0l0ReLau2+rV4M0mRxaPUa5F+ZCjMqLkknAKvly43cCvrsfmwhGzS/8CWR
+	 08d8T2kt7EfiRrmM75cuimPxPbHDDrofMZk3z35kndaglOVunQckq4eXmFCKjLFYo+
+	 NkiyUN3NlUZTQ==
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: s.nawrocki@samsung.com, cw00.choi@samsung.com, alim.akhtar@samsung.com, 
- mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
- conor+dt@kernel.org, sunyeal.hong@samsung.com, shin.son@samsung.com, 
- Raghav Sharma <raghav.s@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, chandan.vn@samsung.com, 
- dev.tailor@samsung.com, karthik.sun@samsung.com
-In-Reply-To: <20260202103555.2089376-4-raghav.s@samsung.com>
-References: <20260202103555.2089376-1-raghav.s@samsung.com>
- <CGME20260202102001epcas5p4ebe15ce1cec50c6ca024464ffdbe9d79@epcas5p4.samsung.com>
- <20260202103555.2089376-4-raghav.s@samsung.com>
-Subject: Re: (subset) [PATCH 3/3] arm64: dts: exynosautov920: add CMU_G3D
- clock DT nodes
-Message-Id: <177228985014.54920.4826846692131993586.b4-ty@kernel.org>
-Date: Sat, 28 Feb 2026 15:44:10 +0100
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Cc: stable@vger.kernel.org
+In-Reply-To: <20260224104203.42950-2-krzysztof.kozlowski@oss.qualcomm.com>
+References: <20260224104203.42950-2-krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: [PATCH v2] firmware: exynos-acpm: Drop fake 'const' on handle
+ pointer
+Message-Id: <177229073130.58647.11987139126675596860.b4-ty@kernel.org>
+Date: Sat, 28 Feb 2026 15:58:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -54,16 +55,20 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.3
 
 
-On Mon, 02 Feb 2026 16:05:55 +0530, Raghav Sharma wrote:
-> Add required dt node for cmu_g3d block, which provides
-> clocks for G3D IP
+On Tue, 24 Feb 2026 11:42:04 +0100, Krzysztof Kozlowski wrote:
+> All the functions operating on the 'handle' pointer are claiming it is a
+> pointer to const thus they should not modify the handle.  In fact that's
+> a false statement, because first thing these functions do is drop the
+> cast to const with container_of:
 > 
+>   struct acpm_info *acpm = handle_to_acpm_info(handle);
 > 
+> [...]
 
 Applied, thanks!
 
-[3/3] arm64: dts: exynosautov920: add CMU_G3D clock DT nodes
-      https://git.kernel.org/krzk/linux/c/a94b4c84ae9294e4f2e398c61d94bedd56162785
+[1/1] firmware: exynos-acpm: Drop fake 'const' on handle pointer
+      https://git.kernel.org/krzk/linux/c/a2be37eedb52ea26938fa4cc9de1ff84963c57ad
 
 Best regards,
 -- 
