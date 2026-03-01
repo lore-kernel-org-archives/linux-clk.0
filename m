@@ -1,39 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22752274B42;
-	Sun,  1 Mar 2026 01:25:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D1818E02A;
+	Sun,  1 Mar 2026 01:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772328318; cv=none; b=InLWthEKfVBEeBjs7CKWrQ7aVNDk1gykfseU2BbvYyylgfxLUfTLLFK45/jjbe91XciHb8R4zMuZPf/SritxLbhtR0Ihv+yDMxOwQK9Tsc5DMV84Po8RZyEUg0a2OxuBypmMUh9SPW4tODysuFsBXBSyUNQubbHCJmQFfklGPC4=
+	t=1772328597; cv=none; b=hdynma1Nf5RoGhXzB/ayRYkW/HEEe83UEWC4OgnurZeCFvIuMHiSku6YF0v1z2IF49XC6yG35gz9WFsnkbp+1ZlV4qIiEid7UGansWXAK1E/IPmtXl/dhDCybjZCnHnHCaD3lr/fagAJkOZU0KQ/iG8jHMZn1aLT0+I8zNCBnpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772328318; c=relaxed/simple;
-	bh=f1ibaOyv4uusuUBy4GY/AWUaF/y2rzQeWxTt83qH2mg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EPjo6TafR2K9fz5Hyhsy7LvnkNNIxL0kIgBJ0sKbCNgmsX+KxqpiOyVfJznyvOq4CjK0txmHK22xmq8wKM+SuW+5DAk8ECOaI0PnQB6Mox50/KCmdFTh6sOkBSzy5mYRNOKGnDaluYw79RPtM8q5ozRLffXyK7At8wGHXt4LarQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R4BuRBRY; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772328597; c=relaxed/simple;
+	bh=9asx+xbUbiwjE66j5ysMw/U8GoI8BeO3Nkuvf+WtAhM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a7tOc+54+zHG214f+d724Yinm4M5VadVMBuLE64bm+O5OaGHjlYbvr6gZ7S25edqA6/oZA9jbOx+ANL2hBRe99Fr9yAeiAIgYKxau9Q1GVTc3rjkk5Rxh+ZoRdPdE9ihU7pY8+iDfySk/zunU8XJxJOfF2bt7HahHUF9clliSO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vi6z7s8y; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R4BuRBRY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36964C19421;
-	Sun,  1 Mar 2026 01:25:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vi6z7s8y"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E641C19421;
+	Sun,  1 Mar 2026 01:29:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772328317;
-	bh=f1ibaOyv4uusuUBy4GY/AWUaF/y2rzQeWxTt83qH2mg=;
+	s=k20201202; t=1772328596;
+	bh=9asx+xbUbiwjE66j5ysMw/U8GoI8BeO3Nkuvf+WtAhM=;
 	h=From:To:Cc:Subject:Date:From;
-	b=R4BuRBRYUxGeWwIHFUmMojTVTKXKKWz6/zPGi0l5VBHUBxAzYPbhiBAtJZU5olmKs
-	 qQJP7seNNmv2zOEwVd3LbWhZVmUOKk8EuLWsaadHc1f/EyJnzdGwJ+UsAYf+JaNk22
-	 e4ChTJOfg6fJViZKoJBiXylIDQaIvjzcjatOMPlZrYrm8e4LCJm+jA2MoUmNMbo3GD
-	 8XxOCVGQ7Btcdk9VxdAP0uYfGh1Pn5qoWK5V3bSzK2bm2XSMegz5JhTJ49pTyZgSym
-	 az+BQhxT2oqJSKjoA01UgdB9bp+ijJdafpBNHt+cwLZMJMvmEJpxCK0vo1ay0dW74o
-	 9+zmIY3hrR07Q==
+	b=Vi6z7s8yY7yI+CHNy9oADWjZKx8PRmNVeBPJbP9wR+avDYXWlkgZq8dDBkdCDr8vD
+	 D+N5rCFOhrQmmroCcKFnjvH4FFN/r432nm8pkMYPChy8t8KBtrxqUpA8nr8sd33ET/
+	 PQ7TM53PXJLeWgSnBvLI5dpYqEEAFhgN/iYZ6rK78L8TG70D67/IUmM+kr8Fvxptfe
+	 07q4GGw7oRK8tL8HhSV0aO2h5LG3GByvwBrTpJ8g79rSFdE1yEku3bkgEkSssIWdRU
+	 9yEJhEEwEP4r+5vGm1rQoDVtIHmmB4jAzYmwIXF5jotgYmGKZnRaSBJLKj5MQuXOj8
+	 1hj3OUYi7qKFg==
 From: Sasha Levin <sashal@kernel.org>
 To: stable@vger.kernel.org,
-	marek.vasut+renesas@mailbox.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Stephen Boyd <sboyd@kernel.org>,
+	chris.brandt@renesas.com
+Cc: stable@kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-renesas-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Subject: FAILED: Patch "clk: rs9: Reserve 8 struct clk_hw slots for for 9FGV0841" failed to apply to 6.12-stable tree
-Date: Sat, 28 Feb 2026 20:25:15 -0500
-Message-ID: <20260301012516.1682320-1-sashal@kernel.org>
+Subject: FAILED: Patch "clk: renesas: rzg2l: Select correct div round macro" failed to apply to 6.6-stable tree
+Date: Sat, 28 Feb 2026 20:29:54 -0500
+Message-ID: <20260301012955.1687816-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -45,7 +46,7 @@ X-Patchwork-Hint: ignore
 X-stable: review
 Content-Transfer-Encoding: 8bit
 
-The patch below does not apply to the 6.12-stable tree.
+The patch below does not apply to the 6.6-stable tree.
 If someone wants it applied there, or to any other stable or longterm
 tree, then please email the backport, including the original git commit
 id to <stable@vger.kernel.org>.
@@ -55,51 +56,40 @@ Sasha
 
 ------------------ original commit in Linus's tree ------------------
 
-From 5ec820fc28d0b8a0f3890d476b1976f20e8343cc Mon Sep 17 00:00:00 2001
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Date: Thu, 22 Jan 2026 00:26:38 +0100
-Subject: [PATCH] clk: rs9: Reserve 8 struct clk_hw slots for for 9FGV0841
+From f9451374dcfdfe669ee55b58ee6c11e8638980e4 Mon Sep 17 00:00:00 2001
+From: Chris Brandt <chris.brandt@renesas.com>
+Date: Fri, 14 Nov 2025 14:45:29 -0500
+Subject: [PATCH] clk: renesas: rzg2l: Select correct div round macro
 
-The 9FGV0841 has 8 outputs and registers 8 struct clk_hw, make sure
-there are 8 slots for those newly registered clk_hw pointers, else
-there is going to be out of bounds write when pointers 4..7 are set
-into struct rs9_driver_data .clk_dif[4..7] field.
+Variable foutvco_rate is an unsigned long, not an unsigned long long.
 
-Since there are other structure members past this struct clk_hw
-pointer array, writing to .clk_dif[4..7] fields corrupts both
-the struct rs9_driver_data content and data around it, sometimes
-without crashing the kernel. However, the kernel does surely
-crash when the driver is unbound or during suspend.
-
-Fix this, increase the struct clk_hw pointer array size to the
-maximum output count of 9FGV0841, which is the biggest chip that
-is supported by this driver.
-
-Cc: stable@vger.kernel.org
-Fixes: f0e5e1800204 ("clk: rs9: Add support for 9FGV0841")
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: stable@kernel.org
 Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Closes: https://lore.kernel.org/CAMuHMdVyQpOBT+Ho+mXY07fndFN9bKJdaaWGn91WOFnnYErLyg@mail.gmail.com
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Closes: https://lore.kernel.org/CAMuHMdVf7dSeqAhtyxDCFuCheQRzwS-8996Rr2Ntui21uiBgdA@mail.gmail.com
+Fixes: dabf72b85f29 ("clk: renesas: rzg2l: Fix FOUTPOSTDIV clk")
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://patch.msgid.link/20251114194529.3304361-1-chris.brandt@renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/clk-renesas-pcie.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/renesas/rzg2l-cpg.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
-index 4c3a5e4eb77ac..f94a9c4d0b670 100644
---- a/drivers/clk/clk-renesas-pcie.c
-+++ b/drivers/clk/clk-renesas-pcie.c
-@@ -64,7 +64,7 @@ struct rs9_driver_data {
- 	struct i2c_client	*client;
- 	struct regmap		*regmap;
- 	const struct rs9_chip_info *chip_info;
--	struct clk_hw		*clk_dif[4];
-+	struct clk_hw		*clk_dif[8];
- 	u8			pll_amplitude;
- 	u8			pll_ssc;
- 	u8			clk_dif_sr;
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+index dfe0f5e87d8cf..0bcf64b152e07 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -572,8 +572,8 @@ rzg2l_cpg_get_foutpostdiv_rate(struct rzg2l_pll5_param *params,
+ 	foutvco_rate = div_u64(mul_u32_u32(EXTAL_FREQ_IN_MEGA_HZ * MEGA,
+ 					   (params->pl5_intin << 24) + params->pl5_fracin),
+ 			       params->pl5_refdiv) >> 24;
+-	foutpostdiv_rate = DIV_ROUND_CLOSEST_ULL(foutvco_rate,
+-						 params->pl5_postdiv1 * params->pl5_postdiv2);
++	foutpostdiv_rate = DIV_ROUND_CLOSEST(foutvco_rate,
++					     params->pl5_postdiv1 * params->pl5_postdiv2);
+ 
+ 	return foutpostdiv_rate;
+ }
 -- 
 2.51.0
 
