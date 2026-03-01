@@ -1,101 +1,131 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31B2259C80;
-	Sun,  1 Mar 2026 02:01:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from sgoci-sdnproxy-4.icoremail.net (sgoci-sdnproxy-4.icoremail.net [129.150.39.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625A91F4C8E;
+	Sun,  1 Mar 2026 10:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.150.39.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772330507; cv=none; b=hypGQ1a1uKeqc69ksV5ZtGycAFXEt+YD2MHXvHWKCpz+6bKLZUsLRz0XF06xC2Hisb7BRhFhH0e1y5kjp2YFGHIMNPViZu/sLdqLeab93R8awh7/uog/6TYg8OR5jnnlBid5Rd3H7nbL4k4jVPlj83g3S+dVYP7Md+CLGuKjm/4=
+	t=1772360411; cv=none; b=CMcpSWFqNUa0RNA3xuURS7VKsD3PDtTBPaUQb1955idAw5f3IbZQOIvxrWacY6yJRLiB2LiTm3n5zWc3M4l5M2Js9dbXW0zV49us5k5+3wP/jOt8NKNfPJMxf6nju9zipjNhyoFRFd6Poh16uM5Jy8bnczhLWNrfp/gQYmpLvRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772330507; c=relaxed/simple;
-	bh=MIyWhPSW/rf0+IdLSpVGnEEI82crPdbVtRJCTh+JDJs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H9FCPkOQ8sG0mflQuTYq8AaDut9O3oesVM8udhJSxRy9xe3s76/e7ji2v2UUp5v2YPKr9frpTBwBmfOkb/AVbkFM6g1R0txTb7r0kyy0dNxTgr5po+hxaxJswq1+v5q899jQnQCgxu/kWBFeGL8vmvbEi0BDRawgtp0ejkrsXXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tQ9hGwIO; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772360411; c=relaxed/simple;
+	bh=QWxhVnUzrMb5Y/nH3h4lmW7LpHxKTL/PS0fGxPJUmFA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E0yw5IuVEmZb56t4/kZ0H6lOBU4NGgGN2MBMI1DA5mQq5ZzCzvBdU+uHbh7fO/wjBlsFeGK/URRrOONZElZq1drfiWy+NF/zsX2l1n21RB+6sdFqHoozDnbnoY4PsPgr26llIGPYbrGvRr/AIKE/ILDiY0KsALJw+JfBkUFM1l8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=std.uestc.edu.cn; spf=pass smtp.mailfrom=std.uestc.edu.cn; dkim=fail (0-bit key) header.d=std.uestc.edu.cn header.i=@std.uestc.edu.cn header.b=tTVkj7ws reason="key not found in DNS"; arc=none smtp.client-ip=129.150.39.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=std.uestc.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=std.uestc.edu.cn
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tQ9hGwIO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AF79C19421;
-	Sun,  1 Mar 2026 02:01:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772330507;
-	bh=MIyWhPSW/rf0+IdLSpVGnEEI82crPdbVtRJCTh+JDJs=;
-	h=From:To:Cc:Subject:Date:From;
-	b=tQ9hGwIODz+4SIPtWYLYZaahPaC/6hn9b89yHO+Vcb53L4V5BVC30KXgC7dck3rBU
-	 V1Q/w/ZGNR7uqcGEDlF5qDYxeAzKwJemxtbiKT7BaH05AOb1m/lLTci3EI6i6vgiLR
-	 E+KokeTfIrk0ZVx6nBNSAnMdHhfxQJIq1jLeMHDPQijhmTH2lyBV7BuyUUs1AvL1Zv
-	 0Lp0aUuWkj6aZUP89b8oZqvUc83Vw1ogKT5ZYQ7a5Q42L62Yp4lTc2ZnPAhCxCHahB
-	 YY2umXnkobrFkZUqu1arcekFEg+Zr2Lu4I2vzg2bGXKsLm6ocU4TWt6Z8lA8Bb28Er
-	 yCKkdOxVCz8Dg==
-From: Sasha Levin <sashal@kernel.org>
-To: stable@vger.kernel.org,
-	johan@kernel.org
-Cc: Mikko Perttunen <mperttunen@nvidia.com>,
-	Miaoqian Lin <linmq006@gmail.com>,
-	Stephen Boyd <sboyd@kernel.org>,
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=std.uestc.edu.cn header.i=@std.uestc.edu.cn header.b="tTVkj7ws"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=std.uestc.edu.cn; s=dkim; h=Received:From:To:Cc:Subject:Date:
+	Message-ID:MIME-Version:Content-Transfer-Encoding; bh=43Y/I9oWNK
+	BG9DdMbprB6AV3bhzC03Dp3vwKvjGvVpI=; b=tTVkj7wsnO5mRijln8umc3JzIL
+	P8JDf0IDvgNoLT9hfhionFSTzaEVDevHovwVUf2tsg0vIezNRVH6nG1LIddNxzzW
+	y6dC8U0V0JMR89pMIyaUio5YAr/cXIMfzK81wTvwfAR7IXicKGjRhKhOhlDVqxhu
+	mCBj5qz3/w6/refHU=
+Received: from server28 (unknown [218.194.32.214])
+	by hzbj-edu-front-3.icoremail.net (Coremail) with SMTP id BbQMCkCGqzW2EqRpzgx5AA--.32208S2;
+	Sun, 01 Mar 2026 18:19:39 +0800 (CST)
+From: YuXuan Liu <2021020915018@std.uestc.edu.cn>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: mripard@kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: FAILED: Patch "clk: tegra: tegra124-emc: fix device leak on set_rate()" failed to apply to 5.10-stable tree
-Date: Sat, 28 Feb 2026 21:01:45 -0500
-Message-ID: <20260301020145.1729141-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	linux-kernel@vger.kernel.org,
+	YuXuan Liu <2021020915018@std.uestc.edu.cn>
+Subject: [RFC PATCH] clk: composite: Fix incorrect rate constraint clamping in determine_rate
+Date: Sun,  1 Mar 2026 18:19:31 +0800
+Message-ID: <20260301101932.3014089-1-2021020915018@std.uestc.edu.cn>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Patchwork-Hint: ignore
-X-stable: review
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:BbQMCkCGqzW2EqRpzgx5AA--.32208S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxZrWDCw4UJw1fCr1rur1xZrb_yoW5WrW3pr
+	W8GFW0yr48XF15Zr9rtF17Zrn5uFZ2va47GF95K3WIywn8J3W0vw1xKF90vF4xurW8XrWr
+	Zw4qk3W8A3W8XFDanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUPC14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j
+	6r4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
+	1j6F4UJwAaw2AFwI0_Jrv_JF1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28I
+	cVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx
+	0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwAC
+	jI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK67AK6r4DMx
+	AIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r1Y6r17
+	MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67
+	AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0
+	cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z2
+	80aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI
+	43ZEXa7VUboUDtUUUUU==
+X-CM-SenderInfo: isqsiiysqzikqqryq21wgo3vxvwfhvlgxou0/
 
-The patch below does not apply to the 5.10-stable tree.
-If someone wants it applied there, or to any other stable or longterm
-tree, then please email the backport, including the original git commit
-id to <stable@vger.kernel.org>.
+In clk_composite_determine_rate(), the rate request is currently
+modified using clk_hw_forward_rate_request() before being passed to the
+rate_hw (divider). This behavior was inadvertently introduced by commit
+20220816112530.1837489-22-maxime@cerno.tech ("clk: Stop forwarding
+clk_rate_requests to the parent").
 
-Thanks,
-Sasha
+While clk_hw_forward_rate_request() effectively prevents context
+pollution for pure multiplexers, using it for the internal components
+of a composite clock introduces an unintended side effect. It fetches
+the parent's rate boundaries and overwrites tmp_req.min_rate and
+tmp_req.max_rate.
 
------------------- original commit in Linus's tree ------------------
+Consequently, the divider evaluates its own output constraints based on
+the parent's operating constraints. For example, if a target rate is
+50MHz, but the parent PLL hardware boundaries are [100MHz, 200MHz], the
+divider erroneously assumes its output cannot be lower than 100MHz. It
+then refuses to divide the frequency down, clamping the output to 100MHz.
 
-From da61439c63d34ae6503d080a847f144d587e3a48 Mon Sep 17 00:00:00 2001
-From: Johan Hovold <johan@kernel.org>
-Date: Fri, 21 Nov 2025 17:40:03 +0100
-Subject: [PATCH] clk: tegra: tegra124-emc: fix device leak on set_rate()
+Fix this by reverting to a local copy of the request (*req) without
+applying parent boundaries before passing it to the rate_hw. This allows
+the divider to evaluate boundaries correctly based on its own requirements.
 
-Make sure to drop the reference taken when looking up the EMC device and
-its driver data on first set_rate().
+I am submitting this as an RFC because I want to make sure I am not missing
+a specific reason why the parent's boundaries must be forwarded to the
+divider's output request in this context. Any insights would be
+appreciated.
 
-Note that holding a reference to a device does not prevent its driver
-data from going away so there is no point in keeping the reference.
-
-Fixes: 2db04f16b589 ("clk: tegra: Add EMC clock driver")
-Fixes: 6d6ef58c2470 ("clk: tegra: tegra124-emc: Fix missing put_device() call in emc_ensure_emc_driver")
-Cc: stable@vger.kernel.org	# 4.2: 6d6ef58c2470
-Cc: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Miaoqian Lin <linmq006@gmail.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Fixes: 262ca38f4b6e ("clk: Stop forwarding clk_rate_requests to the parent")
+Signed-off-by: YuXuan Liu <2021020915018@std.uestc.edu.cn>
 ---
- drivers/clk/tegra/clk-tegra124-emc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/clk-composite.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra124-emc.c b/drivers/clk/tegra/clk-tegra124-emc.c
-index 2a6db04342815..2777e70da8b99 100644
---- a/drivers/clk/tegra/clk-tegra124-emc.c
-+++ b/drivers/clk/tegra/clk-tegra124-emc.c
-@@ -197,8 +197,8 @@ static struct tegra_emc *emc_ensure_emc_driver(struct tegra_clk_emc *tegra)
- 	tegra->emc_node = NULL;
+diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
+index 66759fe28fad..952df88518c2 100644
+--- a/drivers/clk/clk-composite.c
++++ b/drivers/clk/clk-composite.c
+@@ -85,11 +85,10 @@ static int clk_composite_determine_rate(struct clk_hw *hw,
+ 		req->best_parent_hw = NULL;
  
- 	tegra->emc = platform_get_drvdata(pdev);
-+	put_device(&pdev->dev);
- 	if (!tegra->emc) {
--		put_device(&pdev->dev);
- 		pr_err("%s: cannot find EMC driver\n", __func__);
- 		return NULL;
- 	}
+ 		if (clk_hw_get_flags(hw) & CLK_SET_RATE_NO_REPARENT) {
+-			struct clk_rate_request tmp_req;
++			struct clk_rate_request tmp_req = *req;
+ 
+ 			parent = clk_hw_get_parent(mux_hw);
+ 
+-			clk_hw_forward_rate_request(hw, req, parent, &tmp_req, req->rate);
+ 			ret = clk_composite_determine_rate_for_parent(rate_hw,
+ 								      &tmp_req,
+ 								      parent,
+@@ -105,13 +104,12 @@ static int clk_composite_determine_rate(struct clk_hw *hw,
+ 		}
+ 
+ 		for (i = 0; i < clk_hw_get_num_parents(mux_hw); i++) {
+-			struct clk_rate_request tmp_req;
++			struct clk_rate_request tmp_req = *req;
+ 
+ 			parent = clk_hw_get_parent_by_index(mux_hw, i);
+ 			if (!parent)
+ 				continue;
+ 
+-			clk_hw_forward_rate_request(hw, req, parent, &tmp_req, req->rate);
+ 			ret = clk_composite_determine_rate_for_parent(rate_hw,
+ 								      &tmp_req,
+ 								      parent,
 -- 
-2.51.0
-
-
-
+2.53.0
 
