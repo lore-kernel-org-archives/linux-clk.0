@@ -1,40 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15B42D948D;
-	Sun,  1 Mar 2026 01:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB902F25F0;
+	Sun,  1 Mar 2026 01:40:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772329193; cv=none; b=S570dm0uwfwRzvkjwG9BHAn4i3sHYeDPeO1F1I6bwBR9C0369EBCIWwMLYPw5SEbQNL/DVDhgZWlkNs1HgsZJ+79T+cgP7QiYufBqp4TJ61LFWYVYgHPuvhTK/qCSnQN6BLHLk8EiOyUl4zNbKNJDTeAk4efmB+zBDOe03pjyQs=
+	t=1772329205; cv=none; b=aQytI9WOK/C2P3tHC4Sjj5ekECEbgE7mv2lWa96S1ZvSv5vcWgmXlD3OZ1FQsp4Qgn/GwyHACy5xZ+mNz7wB3i2zexz03oRzT8dWPl1qzl2eRSnNxIXCac/td/1oNxsZE74ipSlgZiAmVL5DJkFcTH69mPoKCF5ET2fIs4wLpQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772329193; c=relaxed/simple;
-	bh=QmY453AXwD4mPrBeO7AHb93Fv7VSEIN9xrMLMeODI/M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=epCUNwBcSzekekN8gF3X9JwQhG+jNpobaTyPwn1MJF5gR0cZjSOd/wOt17o/1aLAyzPxGQbPtn6ZXeWDO2M/Xv64vBi5cMmInjQImfnbm19RwCJCwH41oXzsv52UCh6KZmx92LykxxtIEuzuRFFCpwG38vQCGMO/GiG66RLD72o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J6agGvEu; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772329205; c=relaxed/simple;
+	bh=IVsdRCf09PIrz+NLVnJgcmyyqvZ1jGoF5WvH/1EnhiU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HY2lxn0pAajyVcAZofLHujYymYtHUCZ8yUbzMV+9kinQ+9LmT30ejesU8zQ1BN2zj+lIHkLHsZVlCflAUWYN+AsZ5AprvMB/ORPgpByD/RQv7K913mMC1iwYaL8OZLR1UGYAAxyUbJC2fIwk8W3u9m5SgtdTyMPWJWR1KLM6cqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SkqvG2sy; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J6agGvEu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3527FC19421;
-	Sun,  1 Mar 2026 01:39:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SkqvG2sy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83016C19425;
+	Sun,  1 Mar 2026 01:40:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772329192;
-	bh=QmY453AXwD4mPrBeO7AHb93Fv7VSEIN9xrMLMeODI/M=;
+	s=k20201202; t=1772329205;
+	bh=IVsdRCf09PIrz+NLVnJgcmyyqvZ1jGoF5WvH/1EnhiU=;
 	h=From:To:Cc:Subject:Date:From;
-	b=J6agGvEunkSvStGh0dSuOjsltMfc7gzm1Gknxftfm6DJiytJnWQLFQSwOlCEdXL38
-	 geOZqnjsaJbi2YcW9mpmV2O3D8v86NXbYbX3BdZdkDbQsNRhZjXK2Y6rat5fFencC9
-	 vmGUdvIL5xj0rYoEOTO0IINreBSSQno47mQh2QiwLKFeQmPwbuw92yWoCyQUMK+0om
-	 npnS1p4c6ZNTeujwG1OeZW7W5oBo5tCe8V17JyfzZcrm/P+NRUNIvNZUDQT1YhoBRH
-	 6f7rI3l+qzJo46oCm0rY6PzYjmWJI8XVaR4AQQ/jL+06jtZhOsy42lqToxmeLjAwt2
-	 SxiSUAQWseyEw==
+	b=SkqvG2sykx+7nXXIL6wfpM6bvWhmNPyZvBQLKGC87ebQNCbDzuEkYGjh97rYbK27u
+	 mnjJMnL8qN3BHMnFgDKjSFE24pOT4Ap/jNDN2OWr2sXR00ocDdVozEeZ/sKntsm39J
+	 0sdkK3GxaspqcfZ5m1XsBQXOklNyKT2oETz1NE6+6DVoyUoOGlV+59+AMEPBUehLEF
+	 fGqHi+RCeYZDVcSBqxypWrM6PZpd5emVtWNAlB3qCocvo6o5Sh8ZX7H52HMeds/5oF
+	 ks3NBJOuh1wYafVxUzuvuj1zTuCD+81TV9ait8pv16GbFFjpb9otauQ56AF4DdT+a+
+	 gFkMjnlS6p7FQ==
 From: Sasha Levin <sashal@kernel.org>
 To: stable@vger.kernel.org,
 	chris.brandt@renesas.com
-Cc: Hugo Villeneuve <hugo@hugovil.com>,
+Cc: stable@kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	linux-renesas-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Subject: FAILED: Patch "clk: renesas: rzg2l: Fix intin variable size" failed to apply to 6.1-stable tree
-Date: Sat, 28 Feb 2026 20:39:50 -0500
-Message-ID: <20260301013951.1700954-1-sashal@kernel.org>
+Subject: FAILED: Patch "clk: renesas: rzg2l: Select correct div round macro" failed to apply to 6.1-stable tree
+Date: Sat, 28 Feb 2026 20:40:03 -0500
+Message-ID: <20260301014003.1701211-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -56,39 +56,40 @@ Sasha
 
 ------------------ original commit in Linus's tree ------------------
 
-From a00655d98cd885472c311f01dff3e668d1288d0a Mon Sep 17 00:00:00 2001
+From f9451374dcfdfe669ee55b58ee6c11e8638980e4 Mon Sep 17 00:00:00 2001
 From: Chris Brandt <chris.brandt@renesas.com>
-Date: Fri, 14 Nov 2025 14:37:11 -0500
-Subject: [PATCH] clk: renesas: rzg2l: Fix intin variable size
+Date: Fri, 14 Nov 2025 14:45:29 -0500
+Subject: [PATCH] clk: renesas: rzg2l: Select correct div round macro
 
-INTIN is a 12-bit register value, so u8 is too small.
+Variable foutvco_rate is an unsigned long, not an unsigned long long.
 
-Fixes: 1561380ee72f ("clk: renesas: rzg2l: Add FOUTPOSTDIV clk support")
-Cc: stable@vger.kernel.org
-Reported-by: Hugo Villeneuve <hugo@hugovil.com>
-Closes: https://lore.kernel.org/20251107113058.f334957151d1a8dd94dd740b@hugovil.com
+Cc: stable@kernel.org
+Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Closes: https://lore.kernel.org/CAMuHMdVf7dSeqAhtyxDCFuCheQRzwS-8996Rr2Ntui21uiBgdA@mail.gmail.com
+Fixes: dabf72b85f29 ("clk: renesas: rzg2l: Fix FOUTPOSTDIV clk")
 Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20251114193711.3277912-1-chris.brandt@renesas.com
+Link: https://patch.msgid.link/20251114194529.3304361-1-chris.brandt@renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/renesas/rzg2l-cpg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/renesas/rzg2l-cpg.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index 64d1ef6e4c943..dfe0f5e87d8cf 100644
+index dfe0f5e87d8cf..0bcf64b152e07 100644
 --- a/drivers/clk/renesas/rzg2l-cpg.c
 +++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -122,8 +122,8 @@ struct div_hw_data {
+@@ -572,8 +572,8 @@ rzg2l_cpg_get_foutpostdiv_rate(struct rzg2l_pll5_param *params,
+ 	foutvco_rate = div_u64(mul_u32_u32(EXTAL_FREQ_IN_MEGA_HZ * MEGA,
+ 					   (params->pl5_intin << 24) + params->pl5_fracin),
+ 			       params->pl5_refdiv) >> 24;
+-	foutpostdiv_rate = DIV_ROUND_CLOSEST_ULL(foutvco_rate,
+-						 params->pl5_postdiv1 * params->pl5_postdiv2);
++	foutpostdiv_rate = DIV_ROUND_CLOSEST(foutvco_rate,
++					     params->pl5_postdiv1 * params->pl5_postdiv2);
  
- struct rzg2l_pll5_param {
- 	u32 pl5_fracin;
-+	u16 pl5_intin;
- 	u8 pl5_refdiv;
--	u8 pl5_intin;
- 	u8 pl5_postdiv1;
- 	u8 pl5_postdiv2;
- 	u8 pl5_spread;
+ 	return foutpostdiv_rate;
+ }
 -- 
 2.51.0
 
