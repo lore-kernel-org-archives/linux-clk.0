@@ -1,41 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD46277C9D;
-	Sun,  1 Mar 2026 01:41:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC4B01CD2C;
+	Sun,  1 Mar 2026 01:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772329311; cv=none; b=kBrdi+91PkHO0Tv1mYPzC1fi03i8aVeqjaxZX9aNepVD9Rzz8eTWQYt794rOUD2DThRhq4v9/tX+AaQwApt3v1SP0wDqN5yxxb1AUjLHWvTsqiuItSu/qCi+7ypoJM4TSbvC18hA3pVCPcbAPKLTXSbbEOwg7p6egRtNAn7qc2w=
+	t=1772329336; cv=none; b=RdlOsUSHP04pf/vG7OXz6vAgssZo6G/tQzVKfnvI6xsjtmrUk/zm9XqQS1GRnU3KV5e4MP4/mhnr2ZpFNkFSTArxFxXjcGrbdwZV+kaYkn37UEhvp+byN7y5e6Kq45oKLy5+sL0G5Ou/8ndlM6OoxW9kjyTDVFWlnko3Z1DndZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772329311; c=relaxed/simple;
-	bh=sWCKkiCKWTg+DMqq+FIDjQiXxA9LlovjboPsGg0rn9k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G4w/1NFc24WYXfQYjvEeSNjCrMcpTvvXzRcwUNvY5gq+YW1cS+Wv5HWKQk+44OdOBHhZ2VTHmJIQKkZrAgDE4egYyc3Enzu3FwqDJb441GmWqWwG+h/8OaXq7ZXNiWoyA2rvkQNCzyu65y5CiFO9MCS9nBuLjVZBABRQjW6CL3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ABdCagmw; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772329336; c=relaxed/simple;
+	bh=vsoR3yyadeUCCksgORzAW8aDQlA2LTTwDmnMVbYdUZ0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SrsZlPjiOcNC6k6cZBFivpvOmOH/xM3MkAhGTdONyqmqOjt8ckz/YCSS8MAhYtbdgvYJu6EkiRooptQ0IJRzRiNC9MbkjS04niDx4NE2gAvbhABbCStXx+uDJ8xGogGBvn8XaaKLsV9RPpQ2zMLspoAH0f3dDAqn44lSqnifsrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pvz6YTYi; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ABdCagmw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E23E0C19421;
-	Sun,  1 Mar 2026 01:41:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pvz6YTYi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D557C19421;
+	Sun,  1 Mar 2026 01:42:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772329311;
-	bh=sWCKkiCKWTg+DMqq+FIDjQiXxA9LlovjboPsGg0rn9k=;
+	s=k20201202; t=1772329335;
+	bh=vsoR3yyadeUCCksgORzAW8aDQlA2LTTwDmnMVbYdUZ0=;
 	h=From:To:Cc:Subject:Date:From;
-	b=ABdCagmwU4DsPTscoM91KJokNTS4rCYwDTVfKFICNrNpJPlqQuIpHMo+toOLYGAg/
-	 NHETNHZP2KFIFG+h5Is25I6GXQPi2ioCFdnwzaOfdFfbVYACerQv27soMe49lDjIol
-	 +dZ3EFgv2fZHeCiByw2Oibt1QKLFsJPhZR61ApvrQi/Lc3opBP2MgA89RiIf1DDSPU
-	 VTmCE0jZKwzsy5wdjvazdFTI6jAdmuQhPEw/ijxzKJCeFdzVAhBa+xi2qsrg+w35m/
-	 kZizD1ZgyRTyeqq9dxzVXTmFLCHcH1sBQagPuqeATVs+5uPNcbRxluSyhTfWr8uvpT
-	 n6rGdjxxN399g==
+	b=pvz6YTYicfYLpKmMt2tuEiTr3iG5ev/r6jgUuwc2cREuVobJ7NxPFZAL3mDNi94zA
+	 5dZXxnOmnAaxDIoCSALa3P03/1yBPUC2fDcAYdMeyYFTZTLPYWwl9VLVa6Pd0MJuPE
+	 EZ/18ZTole8CD0HtEdyAKfCkB4pbix4/C6qZG3g0YmP4fXMRHqtH5Aezs6AAiz4Qti
+	 gSxQh9Cwq0jrbKDPqOdE5r3NPjHyR5hU8frbxQvTCbngHTdx45/arykG9mnxC2uHLH
+	 gu/xFaO05PbmbXZVhn8pHJiq11XFjnLVNt/42Hc30OKZZYCA8iCBIzP51+PbpMJFkK
+	 s49qwTTHSQlrQ==
 From: Sasha Levin <sashal@kernel.org>
 To: stable@vger.kernel.org,
-	j@jannau.net
-Cc: Stephen Boyd <sboyd@kernel.org>,
-	Neal Gompa <neal@gompa.dev>,
-	asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: FAILED: Patch "clk: clk-apple-nco: Add "apple,t8103-nco" compatible" failed to apply to 6.1-stable tree
-Date: Sat, 28 Feb 2026 20:41:49 -0500
-Message-ID: <20260301014149.1703547-1-sashal@kernel.org>
+	lihaoxiang@isrc.iscas.ac.cn
+Cc: Brian Masney <bmasney@redhat.com>,
+	Thierry Reding <treding@nvidia.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: FAILED: Patch "clk: tegra: tegra124-emc: Fix potential memory leak in tegra124_clk_register_emc()" failed to apply to 6.1-stable tree
+Date: Sat, 28 Feb 2026 20:42:13 -0500
+Message-ID: <20260301014214.1704043-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -57,40 +56,39 @@ Sasha
 
 ------------------ original commit in Linus's tree ------------------
 
-From ef9b3b4dbe767e4ac642a88dc0507927ac545047 Mon Sep 17 00:00:00 2001
-From: Janne Grunau <j@jannau.net>
-Date: Wed, 31 Dec 2025 13:22:00 +0100
-Subject: [PATCH] clk: clk-apple-nco: Add "apple,t8103-nco" compatible
+From fce0d0bd9c20fefd180ea9e8362d619182f97a1d Mon Sep 17 00:00:00 2001
+From: Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>
+Date: Thu, 15 Jan 2026 13:05:42 +0800
+Subject: [PATCH] clk: tegra: tegra124-emc: Fix potential memory leak in
+ tegra124_clk_register_emc()
 
-After discussion with the devicetree maintainers we agreed to not extend
-lists with the generic compatible "apple,nco" anymore [1]. Use
-"apple,t8103-nco" as base compatible as it is the SoC the driver and
-bindings were written for.
+If clk_register() fails, call kfree to release "tegra".
 
-[1]: https://lore.kernel.org/asahi/12ab93b7-1fc2-4ce0-926e-c8141cfe81bf@kernel.org/
-
-Fixes: 6641057d5dba ("clk: clk-apple-nco: Add driver for Apple NCO")
+Fixes: 2db04f16b589 ("clk: tegra: Add EMC clock driver")
 Cc: stable@vger.kernel.org
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Reviewed-by: Neal Gompa <neal@gompa.dev>
-Signed-off-by: Janne Grunau <j@jannau.net>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>
+Reviewed-by: Brian Masney <bmasney@redhat.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/clk/clk-apple-nco.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/tegra/clk-tegra124-emc.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-apple-nco.c b/drivers/clk/clk-apple-nco.c
-index d3ced4a0f029e..434c067968bbc 100644
---- a/drivers/clk/clk-apple-nco.c
-+++ b/drivers/clk/clk-apple-nco.c
-@@ -320,6 +320,7 @@ static int applnco_probe(struct platform_device *pdev)
- }
+diff --git a/drivers/clk/tegra/clk-tegra124-emc.c b/drivers/clk/tegra/clk-tegra124-emc.c
+index 2a6db04342815..0f6fb776b2298 100644
+--- a/drivers/clk/tegra/clk-tegra124-emc.c
++++ b/drivers/clk/tegra/clk-tegra124-emc.c
+@@ -538,8 +538,10 @@ struct clk *tegra124_clk_register_emc(void __iomem *base, struct device_node *np
+ 	tegra->hw.init = &init;
  
- static const struct of_device_id applnco_ids[] = {
-+	{ .compatible = "apple,t8103-nco" },
- 	{ .compatible = "apple,nco" },
- 	{ }
- };
+ 	clk = clk_register(NULL, &tegra->hw);
+-	if (IS_ERR(clk))
++	if (IS_ERR(clk)) {
++		kfree(tegra);
+ 		return clk;
++	}
+ 
+ 	tegra->prev_parent = clk_hw_get_parent_by_index(
+ 		&tegra->hw, emc_get_parent(&tegra->hw))->clk;
 -- 
 2.51.0
 
