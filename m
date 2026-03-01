@@ -1,41 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C19238171;
-	Sun,  1 Mar 2026 01:23:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22752274B42;
+	Sun,  1 Mar 2026 01:25:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772328195; cv=none; b=GplMhnW05kER6qXjqatx4Ma/p5gbHnKEf+jgDVH+9FLwBqqfjfLlfH7hOJsmTxE+8nLUBhqWVaI1kuxRHG6ILTbMwuyv5J1HaVNdiygn8HYz5pXKWHYb1hlQ803SdJX3YG1DsCY220MgoL0kLUxF8Kv6csrtkArCA51JxWFU1fU=
+	t=1772328318; cv=none; b=InLWthEKfVBEeBjs7CKWrQ7aVNDk1gykfseU2BbvYyylgfxLUfTLLFK45/jjbe91XciHb8R4zMuZPf/SritxLbhtR0Ihv+yDMxOwQK9Tsc5DMV84Po8RZyEUg0a2OxuBypmMUh9SPW4tODysuFsBXBSyUNQubbHCJmQFfklGPC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772328195; c=relaxed/simple;
-	bh=JvPsAWRl7A5TNresg7NgehnF90HT3KeZx5T6cofBRCg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PJiidR1ql3huiPd4JmnOFmF5JfM2M9ZIfIN3cynHkqSD2mZmuVtEFEPXEyy00EuccsQTmJCBHmB8fnPNV2LamwH/ULiWPfpM0+59pzW+jwFqq6PaEr7uw5dP0EO7QWcpRu4aO9Zk6oYnF3FrOXs9iTdcfApA5Fe+CMJGk819hOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d69ngT9d; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772328318; c=relaxed/simple;
+	bh=f1ibaOyv4uusuUBy4GY/AWUaF/y2rzQeWxTt83qH2mg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EPjo6TafR2K9fz5Hyhsy7LvnkNNIxL0kIgBJ0sKbCNgmsX+KxqpiOyVfJznyvOq4CjK0txmHK22xmq8wKM+SuW+5DAk8ECOaI0PnQB6Mox50/KCmdFTh6sOkBSzy5mYRNOKGnDaluYw79RPtM8q5ozRLffXyK7At8wGHXt4LarQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R4BuRBRY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d69ngT9d"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F094AC19424;
-	Sun,  1 Mar 2026 01:23:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R4BuRBRY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36964C19421;
+	Sun,  1 Mar 2026 01:25:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772328194;
-	bh=JvPsAWRl7A5TNresg7NgehnF90HT3KeZx5T6cofBRCg=;
+	s=k20201202; t=1772328317;
+	bh=f1ibaOyv4uusuUBy4GY/AWUaF/y2rzQeWxTt83qH2mg=;
 	h=From:To:Cc:Subject:Date:From;
-	b=d69ngT9dQThn9lmqWR9wgLshUSTLRE1PUrx6hWxoT2rO3M7JC/yud1lj4wWsAPA9k
-	 5fo4E3JYP/4AW7qg2s3Rr+eKfVksyI3rpRAesa3y9oEJLlZzHRFa52CTraPJku2+HD
-	 BhfyZgnj0i3pT+XKuagAMpTlwfYoidCWY5Su6mgLAhsf25MOumPlDst3Hy97Pn5g50
-	 RHMLX5dx5tcAu1FL8bpQfpm0tm1IEwWW91DWrLu5m3ahA37/AmLZoDUOF/ZDJK9WzU
-	 isLPfGTS+P6Q3+yrJ5ZLTYuk4kYWQm8mJZUPWenbvZyflR5A8UmB+TcwoFF5U6ZWmE
-	 grVuHzCqujZFw==
+	b=R4BuRBRYUxGeWwIHFUmMojTVTKXKKWz6/zPGi0l5VBHUBxAzYPbhiBAtJZU5olmKs
+	 qQJP7seNNmv2zOEwVd3LbWhZVmUOKk8EuLWsaadHc1f/EyJnzdGwJ+UsAYf+JaNk22
+	 e4ChTJOfg6fJViZKoJBiXylIDQaIvjzcjatOMPlZrYrm8e4LCJm+jA2MoUmNMbo3GD
+	 8XxOCVGQ7Btcdk9VxdAP0uYfGh1Pn5qoWK5V3bSzK2bm2XSMegz5JhTJ49pTyZgSym
+	 az+BQhxT2oqJSKjoA01UgdB9bp+ijJdafpBNHt+cwLZMJMvmEJpxCK0vo1ay0dW74o
+	 9+zmIY3hrR07Q==
 From: Sasha Levin <sashal@kernel.org>
 To: stable@vger.kernel.org,
-	johan@kernel.org
-Cc: Mikko Perttunen <mperttunen@nvidia.com>,
-	Miaoqian Lin <linmq006@gmail.com>,
+	marek.vasut+renesas@mailbox.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
 	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: FAILED: Patch "clk: tegra: tegra124-emc: fix device leak on set_rate()" failed to apply to 6.12-stable tree
-Date: Sat, 28 Feb 2026 20:23:12 -0500
-Message-ID: <20260301012312.1679886-1-sashal@kernel.org>
+	linux-clk@vger.kernel.org
+Subject: FAILED: Patch "clk: rs9: Reserve 8 struct clk_hw slots for for 9FGV0841" failed to apply to 6.12-stable tree
+Date: Sat, 28 Feb 2026 20:25:15 -0500
+Message-ID: <20260301012516.1682320-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -57,42 +55,51 @@ Sasha
 
 ------------------ original commit in Linus's tree ------------------
 
-From da61439c63d34ae6503d080a847f144d587e3a48 Mon Sep 17 00:00:00 2001
-From: Johan Hovold <johan@kernel.org>
-Date: Fri, 21 Nov 2025 17:40:03 +0100
-Subject: [PATCH] clk: tegra: tegra124-emc: fix device leak on set_rate()
+From 5ec820fc28d0b8a0f3890d476b1976f20e8343cc Mon Sep 17 00:00:00 2001
+From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Date: Thu, 22 Jan 2026 00:26:38 +0100
+Subject: [PATCH] clk: rs9: Reserve 8 struct clk_hw slots for for 9FGV0841
 
-Make sure to drop the reference taken when looking up the EMC device and
-its driver data on first set_rate().
+The 9FGV0841 has 8 outputs and registers 8 struct clk_hw, make sure
+there are 8 slots for those newly registered clk_hw pointers, else
+there is going to be out of bounds write when pointers 4..7 are set
+into struct rs9_driver_data .clk_dif[4..7] field.
 
-Note that holding a reference to a device does not prevent its driver
-data from going away so there is no point in keeping the reference.
+Since there are other structure members past this struct clk_hw
+pointer array, writing to .clk_dif[4..7] fields corrupts both
+the struct rs9_driver_data content and data around it, sometimes
+without crashing the kernel. However, the kernel does surely
+crash when the driver is unbound or during suspend.
 
-Fixes: 2db04f16b589 ("clk: tegra: Add EMC clock driver")
-Fixes: 6d6ef58c2470 ("clk: tegra: tegra124-emc: Fix missing put_device() call in emc_ensure_emc_driver")
-Cc: stable@vger.kernel.org	# 4.2: 6d6ef58c2470
-Cc: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Miaoqian Lin <linmq006@gmail.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Fix this, increase the struct clk_hw pointer array size to the
+maximum output count of 9FGV0841, which is the biggest chip that
+is supported by this driver.
+
+Cc: stable@vger.kernel.org
+Fixes: f0e5e1800204 ("clk: rs9: Add support for 9FGV0841")
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Closes: https://lore.kernel.org/CAMuHMdVyQpOBT+Ho+mXY07fndFN9bKJdaaWGn91WOFnnYErLyg@mail.gmail.com
+Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 ---
- drivers/clk/tegra/clk-tegra124-emc.c | 2 +-
+ drivers/clk/clk-renesas-pcie.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra124-emc.c b/drivers/clk/tegra/clk-tegra124-emc.c
-index 2a6db04342815..2777e70da8b99 100644
---- a/drivers/clk/tegra/clk-tegra124-emc.c
-+++ b/drivers/clk/tegra/clk-tegra124-emc.c
-@@ -197,8 +197,8 @@ static struct tegra_emc *emc_ensure_emc_driver(struct tegra_clk_emc *tegra)
- 	tegra->emc_node = NULL;
- 
- 	tegra->emc = platform_get_drvdata(pdev);
-+	put_device(&pdev->dev);
- 	if (!tegra->emc) {
--		put_device(&pdev->dev);
- 		pr_err("%s: cannot find EMC driver\n", __func__);
- 		return NULL;
- 	}
+diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
+index 4c3a5e4eb77ac..f94a9c4d0b670 100644
+--- a/drivers/clk/clk-renesas-pcie.c
++++ b/drivers/clk/clk-renesas-pcie.c
+@@ -64,7 +64,7 @@ struct rs9_driver_data {
+ 	struct i2c_client	*client;
+ 	struct regmap		*regmap;
+ 	const struct rs9_chip_info *chip_info;
+-	struct clk_hw		*clk_dif[4];
++	struct clk_hw		*clk_dif[8];
+ 	u8			pll_amplitude;
+ 	u8			pll_ssc;
+ 	u8			clk_dif_sr;
 -- 
 2.51.0
 
