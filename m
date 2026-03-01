@@ -1,101 +1,80 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F26B430B90;
-	Sun,  1 Mar 2026 01:34:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926932D9798;
+	Sun,  1 Mar 2026 01:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772328865; cv=none; b=IwR+dl+h0fdJbTugT8FGgQIa7X7mxqvnMl4P81FYdVVoNaIW5h8Gv583PN8F5gIJNicqEW4Nokm+RCfAq9Zms4VaaOE69wVQNvgIsh8xCWk3jB3aUfbpIzFjbBdfxe7iqetTRrVnjpCjm1tjMfq7bOc2SgPDjCJIx3e1rUgIl1c=
+	t=1772329076; cv=none; b=YIGLvIGBJUsFb5b4Nkc16LCm21QcNce8y5jIxNpz6H4eMwDYNh/SBRRTsq9K8t63k/QktXayo4ElbncM2Ghj4xfkKX00zrlleUJ5af6IzNoo6ZHHG3VxBQAlPt+GcNZI5PBEx5OsM5E81Bi5VKHOzhDPVVIj4bph96bHxFRtzV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772328865; c=relaxed/simple;
-	bh=MB0P91t9zp6qVjZz+9GGdPQywEFddmgV863nmnX5iSw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ga+046/MOmsBhMAu5esSkfLb4WZz4bBa5FhNaVLDdkCJzy0SW528O0aUiErHd1QeSqPT77fhxnEN0XvLvFZaWApAFjF7DrIydQEvyExL5wcgSPr/yofBk77P/8vf8Cp3Z2NA9DoUR846fY6O8hfyEXvmUDYdkheuWfHMvPNe2OY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pr1aPb92; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772329076; c=relaxed/simple;
+	bh=BYdzQUQXUluLNpS/kygOSuGk/nZbOjcmhBlyHPtOvSU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XSXrAGZ1YYcORas8azrkBUGzGU4hdx0H5ZL+kgetCLE2GPIdMmjZowUjBCG/Bu8GbepCOktRfxnd7bLZFsvm/KeH6vapAOU26AegSEtr0zO3L2J5Sbe9JqDDchhGLp0rJRyKLoNZ//vuyUuQ8kbjiGtuju3qxLN+BaFK53QJHaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Jz9jf955; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=wf/IdZ3j; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pr1aPb92"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25655C19424;
-	Sun,  1 Mar 2026 01:34:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772328864;
-	bh=MB0P91t9zp6qVjZz+9GGdPQywEFddmgV863nmnX5iSw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=pr1aPb92xIh8Pc5m02TumUv2ddqWTNHobVoMd576OppQ7GMQ6PL6R6tErcNB12W1N
-	 5ji2Ye3U5tlWlqSdxRB3Ka3Qvj+JJD7XiwXX73Bt/IiKQplb0+ki2CzhqP0ZHeQR1y
-	 Vw7TX9NWT4xhggR82L1WlMIgzMdcXbQ380sO/ZjGfJrbk5SbzOYe4b7A93oN33Z+8U
-	 ioVZSAI+Py5sKnY+C6hq1PnaP9NhELdO2NXFpXujY/SJWtHhcHdPS4vq80utgBTLRh
-	 X06Xs+TKfydHlwVroHM5ewml5Ge8n6JIE9l6IIacTyTqEem1LU22jrUDaLSbDfH3rY
-	 GZ9LgKjfgd2YA==
-From: Sasha Levin <sashal@kernel.org>
-To: stable@vger.kernel.org,
-	johan@kernel.org
-Cc: Mikko Perttunen <mperttunen@nvidia.com>,
-	Miaoqian Lin <linmq006@gmail.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: FAILED: Patch "clk: tegra: tegra124-emc: fix device leak on set_rate()" failed to apply to 6.6-stable tree
-Date: Sat, 28 Feb 2026 20:34:22 -0500
-Message-ID: <20260301013423.1693849-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Jz9jf955";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="wf/IdZ3j"
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4fNl7N3YFmz9tR2;
+	Sun,  1 Mar 2026 02:37:52 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1772329072;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lmHJlRdWO7qOd4RDxTIAgF1+/4f6K+CEHnktCEN3TKM=;
+	b=Jz9jf955eXg/mI4NHhMiXLxrckmPaJQvyNN37xq4pPC39BU2lSgMYVFPqej2Y5IWQH4fy9
+	S9xYF8059POAxrgPr/oqqUa3uWQ1F9FiBtfLKIddMQN1Irzxb1St7xaNkmIdd4Dm62PUvz
+	Zd8CQBWwwPnvyWz+qFe7o2kemeWWMLR86Tvygi+npmKwwJe7uwD1oq4Pjx89f06YVzHigT
+	RG7qx/+cCVLAXm9YaXXxgc+4ek8hhnF7Q16KrparNRcBS/hQyicXVC8S5iSCENKNAHOMSg
+	UcGzM/Vs6oNTMpUrxDX5K0Cx5TO3BX3m77DBQBbhA4MM4TDmataXibc5SslqrQ==
+Message-ID: <e477a469-09c1-4e09-b951-c262a983ee7b@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1772329071;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lmHJlRdWO7qOd4RDxTIAgF1+/4f6K+CEHnktCEN3TKM=;
+	b=wf/IdZ3jQfkzWP46xjtXBLhCs3pnO86X9DPY3OOjqchN6OLN3g0NOrX2QSX1zdaiqcWZw7
+	WUsJCfZBKYGb4Yob++LzWgCu8xfsYK968PeXJCBTBjpYTgO659aIkchYO2YJdrVmQFEo2G
+	0L4s1tMz+gO3GX2iF4M6ZXerNKggDiJksuVpcAtfWqotIpzbu74N2mo7NQ+hahqRM3c0pJ
+	HLh05U6rxWlnduCuxYABLkMclSKbokEKshg5HnzAk0iRGP2ptl7r00KJ3P1/Ab5a04hVHP
+	Tenwi4tD328xyFcy6MguYtNBrfkVjcZO6yK7En+JMdWgt8cEHteCKQByZA+kXg==
+Date: Sun, 1 Mar 2026 02:37:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Patchwork-Hint: ignore
-X-stable: review
-Content-Transfer-Encoding: 8bit
+Subject: Re: FAILED: Patch "clk: rs9: Reserve 8 struct clk_hw slots for for
+ 9FGV0841" failed to apply to 6.12-stable tree
+To: Sasha Levin <sashal@kernel.org>, stable@vger.kernel.org,
+ marek.vasut+renesas@mailbox.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+References: <20260301012516.1682320-1-sashal@kernel.org>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <20260301012516.1682320-1-sashal@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: nzkenmm1rdcax8bydyxxzu8uufdemdoa
+X-MBO-RS-ID: b4bebc9cdd06493374a
 
-The patch below does not apply to the 6.6-stable tree.
-If someone wants it applied there, or to any other stable or longterm
-tree, then please email the backport, including the original git commit
-id to <stable@vger.kernel.org>.
-
-Thanks,
-Sasha
-
------------------- original commit in Linus's tree ------------------
-
-From da61439c63d34ae6503d080a847f144d587e3a48 Mon Sep 17 00:00:00 2001
-From: Johan Hovold <johan@kernel.org>
-Date: Fri, 21 Nov 2025 17:40:03 +0100
-Subject: [PATCH] clk: tegra: tegra124-emc: fix device leak on set_rate()
-
-Make sure to drop the reference taken when looking up the EMC device and
-its driver data on first set_rate().
-
-Note that holding a reference to a device does not prevent its driver
-data from going away so there is no point in keeping the reference.
-
-Fixes: 2db04f16b589 ("clk: tegra: Add EMC clock driver")
-Fixes: 6d6ef58c2470 ("clk: tegra: tegra124-emc: Fix missing put_device() call in emc_ensure_emc_driver")
-Cc: stable@vger.kernel.org	# 4.2: 6d6ef58c2470
-Cc: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Miaoqian Lin <linmq006@gmail.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
----
- drivers/clk/tegra/clk-tegra124-emc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/tegra/clk-tegra124-emc.c b/drivers/clk/tegra/clk-tegra124-emc.c
-index 2a6db04342815..2777e70da8b99 100644
---- a/drivers/clk/tegra/clk-tegra124-emc.c
-+++ b/drivers/clk/tegra/clk-tegra124-emc.c
-@@ -197,8 +197,8 @@ static struct tegra_emc *emc_ensure_emc_driver(struct tegra_clk_emc *tegra)
- 	tegra->emc_node = NULL;
- 
- 	tegra->emc = platform_get_drvdata(pdev);
-+	put_device(&pdev->dev);
- 	if (!tegra->emc) {
--		put_device(&pdev->dev);
- 		pr_err("%s: cannot find EMC driver\n", __func__);
- 		return NULL;
- 	}
--- 
-2.51.0
-
-
-
-
+On 3/1/26 2:25 AM, Sasha Levin wrote:
+> The patch below does not apply to the 6.12-stable tree.
+> If someone wants it applied there, or to any other stable or longterm
+> tree, then please email the backport, including the original git commit
+> id to <stable@vger.kernel.org>.
+The cherry-pick worked out cleanly on 6.12.74, I also don't see anything 
+that would prevent the patch from being applied, is there maybe another 
+backport in the pipeline that is interfering with the application ?
