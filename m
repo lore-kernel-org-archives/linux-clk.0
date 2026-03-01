@@ -1,40 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB902F25F0;
-	Sun,  1 Mar 2026 01:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD46277C9D;
+	Sun,  1 Mar 2026 01:41:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772329205; cv=none; b=aQytI9WOK/C2P3tHC4Sjj5ekECEbgE7mv2lWa96S1ZvSv5vcWgmXlD3OZ1FQsp4Qgn/GwyHACy5xZ+mNz7wB3i2zexz03oRzT8dWPl1qzl2eRSnNxIXCac/td/1oNxsZE74ipSlgZiAmVL5DJkFcTH69mPoKCF5ET2fIs4wLpQc=
+	t=1772329311; cv=none; b=kBrdi+91PkHO0Tv1mYPzC1fi03i8aVeqjaxZX9aNepVD9Rzz8eTWQYt794rOUD2DThRhq4v9/tX+AaQwApt3v1SP0wDqN5yxxb1AUjLHWvTsqiuItSu/qCi+7ypoJM4TSbvC18hA3pVCPcbAPKLTXSbbEOwg7p6egRtNAn7qc2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772329205; c=relaxed/simple;
-	bh=IVsdRCf09PIrz+NLVnJgcmyyqvZ1jGoF5WvH/1EnhiU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HY2lxn0pAajyVcAZofLHujYymYtHUCZ8yUbzMV+9kinQ+9LmT30ejesU8zQ1BN2zj+lIHkLHsZVlCflAUWYN+AsZ5AprvMB/ORPgpByD/RQv7K913mMC1iwYaL8OZLR1UGYAAxyUbJC2fIwk8W3u9m5SgtdTyMPWJWR1KLM6cqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SkqvG2sy; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772329311; c=relaxed/simple;
+	bh=sWCKkiCKWTg+DMqq+FIDjQiXxA9LlovjboPsGg0rn9k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G4w/1NFc24WYXfQYjvEeSNjCrMcpTvvXzRcwUNvY5gq+YW1cS+Wv5HWKQk+44OdOBHhZ2VTHmJIQKkZrAgDE4egYyc3Enzu3FwqDJb441GmWqWwG+h/8OaXq7ZXNiWoyA2rvkQNCzyu65y5CiFO9MCS9nBuLjVZBABRQjW6CL3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ABdCagmw; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SkqvG2sy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83016C19425;
-	Sun,  1 Mar 2026 01:40:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ABdCagmw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E23E0C19421;
+	Sun,  1 Mar 2026 01:41:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772329205;
-	bh=IVsdRCf09PIrz+NLVnJgcmyyqvZ1jGoF5WvH/1EnhiU=;
+	s=k20201202; t=1772329311;
+	bh=sWCKkiCKWTg+DMqq+FIDjQiXxA9LlovjboPsGg0rn9k=;
 	h=From:To:Cc:Subject:Date:From;
-	b=SkqvG2sykx+7nXXIL6wfpM6bvWhmNPyZvBQLKGC87ebQNCbDzuEkYGjh97rYbK27u
-	 mnjJMnL8qN3BHMnFgDKjSFE24pOT4Ap/jNDN2OWr2sXR00ocDdVozEeZ/sKntsm39J
-	 0sdkK3GxaspqcfZ5m1XsBQXOklNyKT2oETz1NE6+6DVoyUoOGlV+59+AMEPBUehLEF
-	 fGqHi+RCeYZDVcSBqxypWrM6PZpd5emVtWNAlB3qCocvo6o5Sh8ZX7H52HMeds/5oF
-	 ks3NBJOuh1wYafVxUzuvuj1zTuCD+81TV9ait8pv16GbFFjpb9otauQ56AF4DdT+a+
-	 gFkMjnlS6p7FQ==
+	b=ABdCagmwU4DsPTscoM91KJokNTS4rCYwDTVfKFICNrNpJPlqQuIpHMo+toOLYGAg/
+	 NHETNHZP2KFIFG+h5Is25I6GXQPi2ioCFdnwzaOfdFfbVYACerQv27soMe49lDjIol
+	 +dZ3EFgv2fZHeCiByw2Oibt1QKLFsJPhZR61ApvrQi/Lc3opBP2MgA89RiIf1DDSPU
+	 VTmCE0jZKwzsy5wdjvazdFTI6jAdmuQhPEw/ijxzKJCeFdzVAhBa+xi2qsrg+w35m/
+	 kZizD1ZgyRTyeqq9dxzVXTmFLCHcH1sBQagPuqeATVs+5uPNcbRxluSyhTfWr8uvpT
+	 n6rGdjxxN399g==
 From: Sasha Levin <sashal@kernel.org>
 To: stable@vger.kernel.org,
-	chris.brandt@renesas.com
-Cc: stable@kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-renesas-soc@vger.kernel.org,
+	j@jannau.net
+Cc: Stephen Boyd <sboyd@kernel.org>,
+	Neal Gompa <neal@gompa.dev>,
+	asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org
-Subject: FAILED: Patch "clk: renesas: rzg2l: Select correct div round macro" failed to apply to 6.1-stable tree
-Date: Sat, 28 Feb 2026 20:40:03 -0500
-Message-ID: <20260301014003.1701211-1-sashal@kernel.org>
+Subject: FAILED: Patch "clk: clk-apple-nco: Add "apple,t8103-nco" compatible" failed to apply to 6.1-stable tree
+Date: Sat, 28 Feb 2026 20:41:49 -0500
+Message-ID: <20260301014149.1703547-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -56,40 +57,40 @@ Sasha
 
 ------------------ original commit in Linus's tree ------------------
 
-From f9451374dcfdfe669ee55b58ee6c11e8638980e4 Mon Sep 17 00:00:00 2001
-From: Chris Brandt <chris.brandt@renesas.com>
-Date: Fri, 14 Nov 2025 14:45:29 -0500
-Subject: [PATCH] clk: renesas: rzg2l: Select correct div round macro
+From ef9b3b4dbe767e4ac642a88dc0507927ac545047 Mon Sep 17 00:00:00 2001
+From: Janne Grunau <j@jannau.net>
+Date: Wed, 31 Dec 2025 13:22:00 +0100
+Subject: [PATCH] clk: clk-apple-nco: Add "apple,t8103-nco" compatible
 
-Variable foutvco_rate is an unsigned long, not an unsigned long long.
+After discussion with the devicetree maintainers we agreed to not extend
+lists with the generic compatible "apple,nco" anymore [1]. Use
+"apple,t8103-nco" as base compatible as it is the SoC the driver and
+bindings were written for.
 
-Cc: stable@kernel.org
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Closes: https://lore.kernel.org/CAMuHMdVf7dSeqAhtyxDCFuCheQRzwS-8996Rr2Ntui21uiBgdA@mail.gmail.com
-Fixes: dabf72b85f29 ("clk: renesas: rzg2l: Fix FOUTPOSTDIV clk")
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20251114194529.3304361-1-chris.brandt@renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[1]: https://lore.kernel.org/asahi/12ab93b7-1fc2-4ce0-926e-c8141cfe81bf@kernel.org/
+
+Fixes: 6641057d5dba ("clk: clk-apple-nco: Add driver for Apple NCO")
+Cc: stable@vger.kernel.org
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Neal Gompa <neal@gompa.dev>
+Signed-off-by: Janne Grunau <j@jannau.net>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 ---
- drivers/clk/renesas/rzg2l-cpg.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/clk-apple-nco.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index dfe0f5e87d8cf..0bcf64b152e07 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -572,8 +572,8 @@ rzg2l_cpg_get_foutpostdiv_rate(struct rzg2l_pll5_param *params,
- 	foutvco_rate = div_u64(mul_u32_u32(EXTAL_FREQ_IN_MEGA_HZ * MEGA,
- 					   (params->pl5_intin << 24) + params->pl5_fracin),
- 			       params->pl5_refdiv) >> 24;
--	foutpostdiv_rate = DIV_ROUND_CLOSEST_ULL(foutvco_rate,
--						 params->pl5_postdiv1 * params->pl5_postdiv2);
-+	foutpostdiv_rate = DIV_ROUND_CLOSEST(foutvco_rate,
-+					     params->pl5_postdiv1 * params->pl5_postdiv2);
- 
- 	return foutpostdiv_rate;
+diff --git a/drivers/clk/clk-apple-nco.c b/drivers/clk/clk-apple-nco.c
+index d3ced4a0f029e..434c067968bbc 100644
+--- a/drivers/clk/clk-apple-nco.c
++++ b/drivers/clk/clk-apple-nco.c
+@@ -320,6 +320,7 @@ static int applnco_probe(struct platform_device *pdev)
  }
+ 
+ static const struct of_device_id applnco_ids[] = {
++	{ .compatible = "apple,t8103-nco" },
+ 	{ .compatible = "apple,nco" },
+ 	{ }
+ };
 -- 
 2.51.0
 
