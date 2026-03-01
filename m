@@ -1,110 +1,101 @@
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F1C2307AE3
-	for <linux-clk@vger.kernel.org>; Sat, 28 Feb 2026 20:47:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B8E223328;
+	Sun,  1 Mar 2026 01:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772311660; cv=none; b=hWBhbGxMgpC4VSeAbpMYJRWa9KtALaVsm3XoGSPXOWdTzvR2iyslc+K+xNzvgB1Makp7jnaL3xcP2U8VAAG4vhk/HujMhby/nmzfwVPdVxSk3R2vR2OOdWB3BHQ27+PBM9ZoNv2LTqlJQdqV8h2+QOjv6CZAWA0zh4IMOyGXlHo=
+	t=1772327830; cv=none; b=h/O1LCNupKzUt/nbIDbbF6Cnqva7Fl/1/oF91+P24WYpq2RzQY69LRGXOP2xfn5gCDqPy+Sg6+v8D54PP5nMEjuUo1BvhbbvRVm81A6gbrywHj84Z2uHZAjQ3zMZnWiNg+joEZ56Yv9eo+3eZNmyO9K5eheBQaT+K0gxcTF7zuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772311660; c=relaxed/simple;
-	bh=dcQi2nbUZD1i0Tnlv+ymMpJgvfb8tkQT2XZ6lA9C2Mo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=prG8rTtzBvtilfRMtek16ep/67xVLWc5YTjKJ0QTuQoTSNqqUHqaUHTWcK3I3CQQVuDoZCOTSGB7+C7gOTqF2UxopSoCiOFwiucvKE2CGoWSGV89ku1oRQfe3sgoBO6kXWPfqgDlAI99EEqd8VRrYkI1+5EU+ZO0o0K6h0qKnP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=rykXTcqZ; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
+	s=arc-20240116; t=1772327830; c=relaxed/simple;
+	bh=klObpSaYoSyW/5osKaoPn/OLj5AlWLNjgtAhajFhv+E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R0ORPeQUnaoQcGeLfG2uID/d/hJ7xDeGnsR8TPjVBvQMYxAt88h61/aMnJF7oEFmaib9UeTmvmDebs+od6Nckj3mbt/IRbvWGFVMEgl4uD3wDIqsI2AmWd2DFjN1gjnH0dc05+gBKXpTpnjm2dI6M4EbQGDp9qatQ0kDPmUcyII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CkVRvaYs; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="rykXTcqZ"
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
-	s=key1; t=1772311657;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pSQbyc3KzSWaX/5WfKEJcewBM7+uUPCiSw58qLGCf1k=;
-	b=rykXTcqZZQG9Btdc+M4B66oUchPQJ8QsB1YWj/yAHqYSs4/Sj0O103u7vs9FOHfTU4bqCz
-	XEQi7mOs7v3kLGGCClzIaOdny38LyihyS9ChdCc6mL66H/PgIup+PfiQG22U76mK/GIib5
-	CaSZpeCz6R9IIwH0xRZcxOt7ZmpaAfNsLeZ8PeC1V02JRDDnYLsOohIcqTOgS939Be8fKg
-	94udtyeyVme/YIL5oHzHqVBawfDHA9OJdC6zKxLc/JeX4abIgIUCKKssMreiPmL3ILt3Uw
-	IYCCFNV3DoSCdYUfMIlKHpSTH/iUgXnMjkd/j/v9yyqijKhDn5TzrhWG/2/kxA==
-From: Val Packett <val@packett.cool>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CkVRvaYs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39411C19421;
+	Sun,  1 Mar 2026 01:17:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772327830;
+	bh=klObpSaYoSyW/5osKaoPn/OLj5AlWLNjgtAhajFhv+E=;
+	h=From:To:Cc:Subject:Date:From;
+	b=CkVRvaYs6s0vg10RIrAg2M/OTGQaRnPq2rZkdCl9G7fYnKpsyoR3mMhEG1D05cg5Q
+	 9XFwad/vawpIFHqhqRwQW2aMyHexikVMtUct3cwlCU5E503oNzm3OQi7EX1GqhHHkT
+	 /nmjk0Q8dpOq+JWlqjDQEoheT0Qsecw0AG1jxQm0Eg9qN1A6hDXLZG5tfk0DhRyh82
+	 0r9Q39BEm7jvo1GNigRUb826YhiZwaH2/fCsKsPsX0MjjzivzvRVyNbmSbrXqM3V+i
+	 6a2guYpHfwBEc98u5KYHuvLw6sC/xeK6ky7ncs7W42JP8opYeFl9vmzeS/5gPTkJm/
+	 2eQJSWuI0aM7w==
+From: Sasha Levin <sashal@kernel.org>
+To: stable@vger.kernel.org,
+	johan@kernel.org
+Cc: Mikko Perttunen <mperttunen@nvidia.com>,
+	Miaoqian Lin <linmq006@gmail.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Adam Skladowski <a39.skl@gmail.com>,
-	Martin Botka <martin.botka@somainline.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Marijn Suijten <marijn.suijten@somainline.org>
-Cc: Val Packett <val@packett.cool>,
-	linux-arm-msm@vger.kernel.org,
-	phone-devel@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: [PATCH v2 4/6] clk: qcom: dispcc-sm6125: Add missing MDSS resets
-Date: Sat, 28 Feb 2026 17:41:30 -0300
-Message-ID: <20260228204638.11705-5-val@packett.cool>
-In-Reply-To: <20260228204638.11705-1-val@packett.cool>
-References: <20260228204638.11705-1-val@packett.cool>
+	linux-tegra@vger.kernel.org
+Subject: FAILED: Patch "clk: tegra: tegra124-emc: fix device leak on set_rate()" failed to apply to 6.18-stable tree
+Date: Sat, 28 Feb 2026 20:17:07 -0500
+Message-ID: <20260301011708.1670960-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Patchwork-Hint: ignore
+X-stable: review
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-The MDSS resets were left undescribed. Add them to allow resetting the
-display subsystem, which is necessary to avoid issues caused by state
-left over from the bootloader on various platforms.
+The patch below does not apply to the 6.18-stable tree.
+If someone wants it applied there, or to any other stable or longterm
+tree, then please email the backport, including the original git commit
+id to <stable@vger.kernel.org>.
 
-Fixes: 6e87c8f07407 ("clk: qcom: Add display clock controller driver for SM6125")
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Val Packett <val@packett.cool>
+Thanks,
+Sasha
+
+------------------ original commit in Linus's tree ------------------
+
+From da61439c63d34ae6503d080a847f144d587e3a48 Mon Sep 17 00:00:00 2001
+From: Johan Hovold <johan@kernel.org>
+Date: Fri, 21 Nov 2025 17:40:03 +0100
+Subject: [PATCH] clk: tegra: tegra124-emc: fix device leak on set_rate()
+
+Make sure to drop the reference taken when looking up the EMC device and
+its driver data on first set_rate().
+
+Note that holding a reference to a device does not prevent its driver
+data from going away so there is no point in keeping the reference.
+
+Fixes: 2db04f16b589 ("clk: tegra: Add EMC clock driver")
+Fixes: 6d6ef58c2470 ("clk: tegra: tegra124-emc: Fix missing put_device() call in emc_ensure_emc_driver")
+Cc: stable@vger.kernel.org	# 4.2: 6d6ef58c2470
+Cc: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Miaoqian Lin <linmq006@gmail.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 ---
- drivers/clk/qcom/dispcc-sm6125.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/clk/tegra/clk-tegra124-emc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/dispcc-sm6125.c b/drivers/clk/qcom/dispcc-sm6125.c
-index 851d38a487d3..2c67abcfef12 100644
---- a/drivers/clk/qcom/dispcc-sm6125.c
-+++ b/drivers/clk/qcom/dispcc-sm6125.c
-@@ -17,6 +17,7 @@
- #include "clk-regmap.h"
- #include "common.h"
- #include "gdsc.h"
-+#include "reset.h"
+diff --git a/drivers/clk/tegra/clk-tegra124-emc.c b/drivers/clk/tegra/clk-tegra124-emc.c
+index 2a6db04342815..2777e70da8b99 100644
+--- a/drivers/clk/tegra/clk-tegra124-emc.c
++++ b/drivers/clk/tegra/clk-tegra124-emc.c
+@@ -197,8 +197,8 @@ static struct tegra_emc *emc_ensure_emc_driver(struct tegra_clk_emc *tegra)
+ 	tegra->emc_node = NULL;
  
- enum {
- 	P_BI_TCXO,
-@@ -607,6 +608,10 @@ static struct clk_branch disp_cc_xo_clk = {
- 	},
- };
- 
-+static const struct qcom_reset_map disp_cc_sm6125_resets[] = {
-+	[DISP_CC_MDSS_CORE_BCR] = { 0x2000 },
-+};
-+
- static struct gdsc mdss_gdsc = {
- 	.gdscr = 0x3000,
- 	.pd = {
-@@ -663,6 +668,8 @@ static const struct qcom_cc_desc disp_cc_sm6125_desc = {
- 	.config = &disp_cc_sm6125_regmap_config,
- 	.clks = disp_cc_sm6125_clocks,
- 	.num_clks = ARRAY_SIZE(disp_cc_sm6125_clocks),
-+	.resets = disp_cc_sm6125_resets,
-+	.num_resets = ARRAY_SIZE(disp_cc_sm6125_resets),
- 	.gdscs = disp_cc_sm6125_gdscs,
- 	.num_gdscs = ARRAY_SIZE(disp_cc_sm6125_gdscs),
- };
+ 	tegra->emc = platform_get_drvdata(pdev);
++	put_device(&pdev->dev);
+ 	if (!tegra->emc) {
+-		put_device(&pdev->dev);
+ 		pr_err("%s: cannot find EMC driver\n", __func__);
+ 		return NULL;
+ 	}
 -- 
-2.52.0
+2.51.0
+
+
+
 
