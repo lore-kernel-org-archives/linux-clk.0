@@ -1,40 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B768D244665;
-	Sun,  1 Mar 2026 01:18:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD5E26E710;
+	Sun,  1 Mar 2026 01:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772327886; cv=none; b=LsffdrF9OFl0HtWJ9EYCwf3eDE8wqjlQMkcpczk4YWZ+1EHjFIcD7pda0ruyX+VR4sCYuXsq1q2rT2iBfNV2xhgMeSQa7lx34oYDS7c2qaEfpwqMlvaJmCXyyfObD9orjzErhBhbMt5NbYSpMkeZqByuzt0ForTYmMxV+pUXQtc=
+	t=1772328080; cv=none; b=SGJW6WGFjmnycVsHpSg0U5Jp97P71P0F5RUlGiyj6UZfmoJY44YV6uD+R2WIEBSEzFTCl0fqLyLInmf3h3yZhVPnhsmFkG7WoOcUmH9tuWLzjlocY1EnmkY6gTO+/S+SnEBgjOwp4/io5G0EtFkr0B2uAWokfU12EBCNdhjFqHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772327886; c=relaxed/simple;
-	bh=uxyROrbsnnHuxtm4Ogy2NEKZR8k0HlvnQwgG16F+36g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L0svTPrvZtgTxb4FUj3iNfY2VbkIPfAm4EogDw2VY8WpYc0CY/AhN3PkFy5IAbcq/r69oH8gn7E3eZlKVGwBEyePKDIZh9CQtfxRDbHbezajk9V/YUkrWbFikzSghgPj9teUFA2v7Nx6EOXn5AWJ1UkqgNN6rOThXIdnCeyIrZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u8U4O05E; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772328080; c=relaxed/simple;
+	bh=nQi1ZwZu+uxNekWTc62vjx6L1HetqztgxKUdU7MC5Xw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=er8HynWwrJATjOOTEMj7FYJ80HMBFdjY37F+QKi48QpPNKiGMA7Djj65FXvQXv4Gkatf+jhqHjeMmyS+qMOnJ8EG88niOcjE7Kd2qJ2i61ugMLXCRSr+Xl+IifRMiZhlPYtu4paCFD0GJX00DTgZYhg1rM+LEzyvh46AfSl5jiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ViqGU/Im; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u8U4O05E"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B365DC19424;
-	Sun,  1 Mar 2026 01:18:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ViqGU/Im"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE5BBC19421;
+	Sun,  1 Mar 2026 01:21:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772327886;
-	bh=uxyROrbsnnHuxtm4Ogy2NEKZR8k0HlvnQwgG16F+36g=;
+	s=k20201202; t=1772328080;
+	bh=nQi1ZwZu+uxNekWTc62vjx6L1HetqztgxKUdU7MC5Xw=;
 	h=From:To:Cc:Subject:Date:From;
-	b=u8U4O05E6862vIpubu5FKP42hSWKujti6h3QGzVsfR8sc5lCXbEy7Ll5fWuJlAd5y
-	 MLlje9oe8G/H8M9rmxOVGbvAJgWbTSwhc5yNNF2kuunuHu4/FtWxzjQaJcLaH2VAme
-	 VclYQKFNsaVGdMk+Oi3ENjIRlEhSVEYWngM98CO3Elk/zOxj6bxaBdW8jXcFHHpQS1
-	 0cSAef34yA3S0nMhXCSzX1qqeCSX7XqHNGtWb5/sqZeWrme5hdhLIxe+BzHLRmNSz2
-	 Tot2TSngedIRID+ttXfdi1IxIHOvUesUSoB5nBiSagbn+cLZPwkn3zTvg9DZ28NJX2
-	 tFrMyEWZOCh9Q==
+	b=ViqGU/ImNXjNkA7XbRDttcC0vb44p71MF4PcE3XiqLp+NjVpnDJz707KR+fG3x01H
+	 t5hVS8RwmgvjdydGui5bsXL5e2zckIIyqp1x8mLoi8knVsIV1Pzih24LEP8P4ptBuo
+	 KvQhcZWBQqLsFybUmO7piNZI7W4jpEsX360FmcunyYMVsdpz79aOaum5W0qwEtbGiX
+	 5RpepB8nC2okgXaBTh0pJqHAc/3xp1zV824ORevYS7lF2yWr02aqSt+CNrBjyycrbo
+	 TyquL6J/vfVlGEC1qNZLj6ZPwJf/5y3ZPFjTmP+ZuWoKBSuRI3zmQWZROJoa9hyrc4
+	 HrNHX3jQ+KhUw==
 From: Sasha Levin <sashal@kernel.org>
 To: stable@vger.kernel.org,
-	chris.brandt@renesas.com
-Cc: Hugo Villeneuve <hugo@hugovil.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-renesas-soc@vger.kernel.org,
+	j@jannau.net
+Cc: Stephen Boyd <sboyd@kernel.org>,
+	Neal Gompa <neal@gompa.dev>,
+	asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org
-Subject: FAILED: Patch "clk: renesas: rzg2l: Fix intin variable size" failed to apply to 6.12-stable tree
-Date: Sat, 28 Feb 2026 20:18:04 -0500
-Message-ID: <20260301011804.1672172-1-sashal@kernel.org>
+Subject: FAILED: Patch "clk: clk-apple-nco: Add "apple,t8103-nco" compatible" failed to apply to 6.12-stable tree
+Date: Sat, 28 Feb 2026 20:21:18 -0500
+Message-ID: <20260301012118.1677195-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -56,39 +57,40 @@ Sasha
 
 ------------------ original commit in Linus's tree ------------------
 
-From a00655d98cd885472c311f01dff3e668d1288d0a Mon Sep 17 00:00:00 2001
-From: Chris Brandt <chris.brandt@renesas.com>
-Date: Fri, 14 Nov 2025 14:37:11 -0500
-Subject: [PATCH] clk: renesas: rzg2l: Fix intin variable size
+From ef9b3b4dbe767e4ac642a88dc0507927ac545047 Mon Sep 17 00:00:00 2001
+From: Janne Grunau <j@jannau.net>
+Date: Wed, 31 Dec 2025 13:22:00 +0100
+Subject: [PATCH] clk: clk-apple-nco: Add "apple,t8103-nco" compatible
 
-INTIN is a 12-bit register value, so u8 is too small.
+After discussion with the devicetree maintainers we agreed to not extend
+lists with the generic compatible "apple,nco" anymore [1]. Use
+"apple,t8103-nco" as base compatible as it is the SoC the driver and
+bindings were written for.
 
-Fixes: 1561380ee72f ("clk: renesas: rzg2l: Add FOUTPOSTDIV clk support")
+[1]: https://lore.kernel.org/asahi/12ab93b7-1fc2-4ce0-926e-c8141cfe81bf@kernel.org/
+
+Fixes: 6641057d5dba ("clk: clk-apple-nco: Add driver for Apple NCO")
 Cc: stable@vger.kernel.org
-Reported-by: Hugo Villeneuve <hugo@hugovil.com>
-Closes: https://lore.kernel.org/20251107113058.f334957151d1a8dd94dd740b@hugovil.com
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20251114193711.3277912-1-chris.brandt@renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Neal Gompa <neal@gompa.dev>
+Signed-off-by: Janne Grunau <j@jannau.net>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 ---
- drivers/clk/renesas/rzg2l-cpg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/clk-apple-nco.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index 64d1ef6e4c943..dfe0f5e87d8cf 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -122,8 +122,8 @@ struct div_hw_data {
+diff --git a/drivers/clk/clk-apple-nco.c b/drivers/clk/clk-apple-nco.c
+index d3ced4a0f029e..434c067968bbc 100644
+--- a/drivers/clk/clk-apple-nco.c
++++ b/drivers/clk/clk-apple-nco.c
+@@ -320,6 +320,7 @@ static int applnco_probe(struct platform_device *pdev)
+ }
  
- struct rzg2l_pll5_param {
- 	u32 pl5_fracin;
-+	u16 pl5_intin;
- 	u8 pl5_refdiv;
--	u8 pl5_intin;
- 	u8 pl5_postdiv1;
- 	u8 pl5_postdiv2;
- 	u8 pl5_spread;
+ static const struct of_device_id applnco_ids[] = {
++	{ .compatible = "apple,t8103-nco" },
+ 	{ .compatible = "apple,nco" },
+ 	{ }
+ };
 -- 
 2.51.0
 
