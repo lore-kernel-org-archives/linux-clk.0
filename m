@@ -1,66 +1,67 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BB93446B0
-	for <linux-clk@vger.kernel.org>; Mon,  2 Mar 2026 16:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D53B341C0CB
+	for <linux-clk@vger.kernel.org>; Mon,  2 Mar 2026 16:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772468726; cv=none; b=NhSEA0hwnAqRP9uPNBmSSXE0lz+scPDkrax/QsiOEVv/KeLTr9W5/CrNgTVpRfRUvnjLBWu2q96wbaMrXcm7OsX6B/xbZckc59JO2U5+2zEVl4C4yDhpGfWSwtI1gYICpgNngIIwNItNcVRExhwJ9eQM1ahhoP6jClbHdkv/pHg=
+	t=1772468914; cv=none; b=dQg0U77wiJi7b8XuYd6Y894JAYf9REk55ouXhgAfgk/nUjwv70bjNBdYCfUgS87+PbKkKjloLzIL71sl4ZThw51Xs8eDTBLz/rjhMV8CJ6vj+eDnWd/zZPMd1QR1SOhEQLBbLlvd8GvI5b9Yg1o+cGeGBq7QH7OKKhzEY/60ljo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772468726; c=relaxed/simple;
-	bh=w0JfEAL8UQJ6mwvoIym34kQuZstRGM9t3S3tUgFM7p8=;
+	s=arc-20240116; t=1772468914; c=relaxed/simple;
+	bh=uBx35spdecr0Foh/80vdl9yoCBDNS30rMaVxtcY9Jps=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uqpFvhSEArVd0G1KuRTdQXzvZPb5yh5YpovdYDkxUNQhLfKQkaVF6VbPnDa2uHEK9u6nieGWrRsyiqibbW4Q/rrt5MDCIU3W/WYyT2gRjvajE8RG6QmuPgpeu2MWTXvkPkrz6w8V4rkyYLJxtkQIDDsuFO70rvIJYPYne1GSNvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=NybzX7s7; arc=none smtp.client-ip=209.85.221.41
+	 In-Reply-To:Content-Type; b=pZ1Cmi6y5kQ38K6vmcjqTSx40pSWv4HJK8Whd1E6msttSq5gB1l40U/sMghijnm/0MF2coXj2Ef2AmcKvyLfIyylVLxSDIh54lEYjXvGwq0rc9ZSZf4CDNaedP+gXHu1MHVtHQuayLxJ693w4sAGBNJcuUEdB/JZn/oJrolmTuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=A8qCg0m0; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="NybzX7s7"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-439aa2f8ebaso1278911f8f.2
-        for <linux-clk@vger.kernel.org>; Mon, 02 Mar 2026 08:25:25 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="A8qCg0m0"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4806cc07ce7so52849635e9.1
+        for <linux-clk@vger.kernel.org>; Mon, 02 Mar 2026 08:28:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1772468724; x=1773073524; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1772468910; x=1773073710; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=zsRF/yJZ5HdWuSiQ8L7Xgp4L8TnqAkrXaWtbBnRsnSw=;
-        b=NybzX7s7FTuQY3g/l0A65lOcwxaR2inYaNu8p9A3zaC0tf9hayJC6WzIb88ea8wx6I
-         WJnkyovdWgzi8cdVZHSNLuErCv/hiAT+gmPVz1AvOxxUbADQ+44TWD+whbw/xiYgWcYk
-         CrS+l47SQid4pDb/4GFAahuIcZqojAsT7rHc/GPNeRiJpbzrDY9GuH6hNW/RZiHd46/+
-         8mv74ZI8ZEz5Gol6HjzoxqVDA3jO4O8DC0UzEp5iHXLO2isiIDvzZG7/xwS1o6ICPVzY
-         gE69PrqTHuFPhzTU+Gb9drGfmMSS8eb8EhusyvkIDwxOP5JHn0x4in5ZQiFrhYjGfwO6
-         f/qQ==
+        bh=SzwJxqhy0QNK9BireGlunz30/kBwTEVhSwOAZ1SWJvA=;
+        b=A8qCg0m0Vidcv4VeF9WHMvykAbOo0fEO+KGUIOqQghcHNPObbQKHWFro2kkwvNxsKH
+         Mg3kP3yBKu6d0oUUeYaC4IiuA2rqpRrnJttUdaipGB+bEIua87z7b8N7OUatWK7c67EK
+         OvamKkoKhw4sVlyhAnz3HMwH+aRxNhAJxmTb8BluWU3YExHdEEYG41sdcRH/aAeCe/xU
+         140MLlkuWbEc4SZWQ0wxwN1Hguy0AD+3qzmT7p+KYFL0fYYJBhWxA+QGJykJx3g+/cz7
+         s0M1TpZRNLUNguM61fU+YLanlxpFJk7QsUY2ZL17cv24Q13F+DavF4lePRwL28PpaQqh
+         9yKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772468724; x=1773073524;
+        d=1e100.net; s=20230601; t=1772468910; x=1773073710;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zsRF/yJZ5HdWuSiQ8L7Xgp4L8TnqAkrXaWtbBnRsnSw=;
-        b=wjwU/VLSnBS9R1Oq2oNIXcXyeOBvefy7ZDlpXwnT34JybFLP5mxIyILrWD021ZKGzy
-         Z7CtqhH7atxZ1+eDFHj9X9ayd4AikGW70eSL16YDstoSaQhVIUOoBaELVfsO5HPTKx4R
-         wVSRGDfL5h4GAFcwcfDL2EAagZ8loZZol7su5dIvv5Oji6H7NxnKzzqqYXa3cqnweL28
-         kDJu18z4urwyvUA5pqK7iUf0sMyy9rOJYbRP7T424dzwGivC+E1sfqRs3pUX06p4OsSy
-         JliGACFRqI1W87sLPV8kFwErTh8ENqlbAk4aprTobkpq/MQ/ad5LJf/qx+SEfpxDTAI/
-         H/pg==
-X-Forwarded-Encrypted: i=1; AJvYcCX9nxaz8gY/EHVnTmAWp/ih4udI+G+6dBTZ8N5U846SJEAdD20rkfXmSLIAt4WxEiakAnO3p45Ie1E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5kYAGouWXya5G8/UG0cjPti70N+4W8YRfBPWGs10eMO7yAFfz
-	rMWpXT0UkldebxLMdlqkFfsBanRjOppgCpUT9ujPGcW38Vx804wTL/2aI7FgJ222aMs=
-X-Gm-Gg: ATEYQzzrvdGOq9UZ3M9Y+OwmvkY4yn5k5VB9by/cWm6iNoJL9bY52/8YuCPYs4OLQ6G
-	GlsCpUMjzHvAxCcWGFXre08/SeVod18UvFJnjq7hXWcH6SrwrdY1GgJJHUEXKRMDs0WOWYmEl/E
-	Xx9j/2/GZaTHVwpjgfS8yyUNJbX4/ASIRTir6boVzq1pronrK8evt+N5fwqP6rtvz94dyusGPF+
-	4yM8dEPJQkLuLpR3mMX/k5lX2a9TeONm916pYE3R7g7Ep7KQQJMTykHoT0Y0PfkWKnjJWbqapPX
-	k63aEq769xeRRA9O1KVwHC0B4edoXrSrIs+3sWkmv+TKElx2Ui2LpcAXbwMXFeSC3xKCeP06mS9
-	jeGm74FFOvuuteAA9RIvxk3ri6AYRUyQA9uz24VIYDQtRC6ascoWB0U/Z4U4tDo6BrCDaXH8eSO
-	yDQO5yidhLbuQvsQnHwAa+Kp00WzSAbVuiu+/q1CBONDj8PVs=
-X-Received: by 2002:a05:6000:1acb:b0:437:6629:9b82 with SMTP id ffacd0b85a97d-4399de3aacfmr21667465f8f.52.1772468724121;
-        Mon, 02 Mar 2026 08:25:24 -0800 (PST)
+        bh=SzwJxqhy0QNK9BireGlunz30/kBwTEVhSwOAZ1SWJvA=;
+        b=f/ZrZVxjAMlrQlJFoLgG6rEAg4pvK83D/Ruzn4fsOCi/byGRX1/eJQhXAqj/YHSNur
+         sOEyc+sjnGX3fw7XlMAlY9qyrnrYhKw0GaPO/+Nohm+esajvwTSfXgVK4t8q6+KXKwYG
+         i3HYHT0ycySXlzCaqtpDHC6gSG2ikBf6q60/SdMfgVO8voUiLsi5acGs7uREsKruyf1x
+         Z28EdngEV4Or2aIR6xoj3QXn6l/miJbVy3zW1nJsbsCKUTjFOdf8HPED4862N/OMOyy+
+         AP5ROPYKmwSK6djJsJ2cBGl64vaphgSmlaR7I1IUU7qS0Qt6WvVYC2yGQ2Va65kpSXW6
+         RBHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1SEKLmvCY38nqHIK42HcOHlUVjvVrE+fMZvn+K+jMAIOcwYhfA2nYK3Alg2xQklO/TtWuexhv2YQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySWquQ2ot/w5XSV8zKRbu+TnZFxVXVGjDA+iUZn2tBj0irFNvW
+	eCL/TCTydmmrhK+t7Ij6zlLxv45lRb6nOtFovu1l4VywtNkOkq91hXup/e6YaWiw+RTi4GsOq/r
+	eDgTG
+X-Gm-Gg: ATEYQzx13hpavWb9AArwo3LuWUV8q7H/LhbTL3QCJK7OUuW2SY//I9n9dPLjy324Yje
+	4kUYSTRYEtgzmvhNV0UzY62wsshyuXKb8JCKEy4nKRWPE4pwr3EjO1brNoDneghWs27MRHMicWq
+	OKBJ/1/yo4YS0CzBbFaDsUEseZks765Uot/DsbatIZEucUaf+g+WhBZhtOiRfdlMphNbzYtqrJf
+	/bdQMXK5YJel9R7QkqtqAdybQyZHmUEyg5OKzdUmSp7kfCVBBJmjioKZVzd20ZXd7g+NfvvR+f5
+	K6MVayrpwVUN1yPccQQJlQtKnvP0rMEwq9Bb98cEWLDztcPsxF5nU3FI4LU1Au8yPwHuMUfaEwk
+	LRagr/XPbFZsaAUPl1+3vprZmhV3OgIzVdATTc7UgMSXW/kew/ebT3TEqgYpyZerS+1Cq5rL1aS
+	XSuANh06ETt1b2fjW3vEtYcpXkO+rkuVwVK3Ce
+X-Received: by 2002:a05:600c:3486:b0:480:3a72:524a with SMTP id 5b1f17b1804b1-483c9bed89emr257432255e9.19.1772468909910;
+        Mon, 02 Mar 2026 08:28:29 -0800 (PST)
 Received: from [172.19.170.194] ([213.233.104.147])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439ba2a5970sm5477752f8f.33.2026.03.02.08.25.20
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483bd70e6c9sm366337995e9.8.2026.03.02.08.28.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Mar 2026 08:25:23 -0800 (PST)
-Message-ID: <3b30df38-3a68-4d1b-9e61-77a80d3fe8a2@tuxon.dev>
-Date: Mon, 2 Mar 2026 18:25:19 +0200
+        Mon, 02 Mar 2026 08:28:29 -0800 (PST)
+Message-ID: <a22454c4-637e-4114-b43e-fa8cb1363cdb@tuxon.dev>
+Date: Mon, 2 Mar 2026 18:28:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,8 +69,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 11/15] PCI: rzg3s-host: Add PCIe Gen3 (8.0 GT/s) link
- speed support
+Subject: Re: [PATCH v7 09/15] PCI: rzg3s-host: Add SoC-specific configuration
+ and initialization callbacks
 To: John Madieu <john.madieu.xa@bp.renesas.com>,
  claudiu.beznea.uj@bp.renesas.com, lpieralisi@kernel.org,
  kwilczynski@kernel.org, mani@kernel.org, geert+renesas@glider.be,
@@ -79,42 +80,38 @@ Cc: robh@kernel.org, bhelgaas@google.com, conor+dt@kernel.org,
  linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
  devicetree@vger.kernel.org, linux-clk@vger.kernel.org, john.madieu@gmail.com
 References: <20260227153236.55988-1-john.madieu.xa@bp.renesas.com>
- <20260227153236.55988-12-john.madieu.xa@bp.renesas.com>
+ <20260227153236.55988-10-john.madieu.xa@bp.renesas.com>
 Content-Language: en-US
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20260227153236.55988-12-john.madieu.xa@bp.renesas.com>
+In-Reply-To: <20260227153236.55988-10-john.madieu.xa@bp.renesas.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi, John,
 
-Something got wrong with the patch description for this version. See below.
 
 On 2/27/26 17:32, John Madieu wrote:
-> Extend the link speed configuration to support Gen3 (8.0 GT/s) in
-> additionvto Gen2 (5.0 GT/s). This is required for RZ/G3E PCIe host
-
-s/additionvto/addition to
-
-> support, which is Gen3 capable.
+> Add optional cfg_pre_init, cfg_post_init, and cfg_deinit callbacks
+> to handle SoC-specific configuration methods. While RZ/G3S uses the Linux
+> reset framework with dedicated reset lines, other SoC variants like RZ/G3E
+> control configuration resets through PCIe AXI registers.
 > 
-> Instead of relying on DT max-link-speed for configuration, read the
-> hardware capabilities from the PCI_EXP_LNKCAP register to determine the
-> maximumvsupported speed. The DT max-link-speed property is now only used
-
-s/maximumvsupported/maximum supported
-
-> as anvoptional limit when explicitly specified, which aligns with PCIe
-
-s/anvoptional/an optional
-
-> subsystemvexpectations.
-
-s/subsystemvexpectations/subsystem expectations
-
-Thank you,
-Claudiu
-
+> As Linux reset bulk API gracefully handles optional NULL reset lines
+> (num_cfg_resets = 0 for RZ/G3E), the driver continues to use the standard
+> reset framework when reset lines are available, while custom callbacks
+> are only invoked when provided.
 > 
-> Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+> This provides a balanced pattern where:
+> - RZ/G3S: Uses callbacks that fall back to the
+>    reset framework
+
+Nit: This fits on the previous line.
+
+> - RZ/G3E: Sets num_cfg_resets=0, provides
+>    cfg_pre_init/cfg_post_init/cfg_deinit
+> 
+> Add cfg_pre_init, cfg_post_init, and cfg_deinit callbacks to support
+> custom configuration mechanism in preparation to RZ/G3E PCIe support.
+> 
+> Signed-off-by: John Madieu<john.madieu.xa@bp.renesas.com>
+
+Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
