@@ -1,115 +1,158 @@
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E16D36C9C5;
-	Mon,  2 Mar 2026 12:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B99E36F428
+	for <linux-clk@vger.kernel.org>; Mon,  2 Mar 2026 12:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772454296; cv=none; b=sFG+ZKX1azKLtlt+wPLDPXjbsqOjKHNzi37yveuRd8y3gHNzq3T3ijmr8bRUbWU1OXUKxtBca/krx8EPz3UVBiyv+feEjFNc7pFspc3fiVbVWaoVKJqCkHVQvi87lvccuo+uPWuh53a3bwan+/8RZHYxJHAiBjXCRGWrkiOqJa0=
+	t=1772455036; cv=none; b=C39Pf+tVKMLeNFDFrCATJv7pSloeyzmItZvx8SwxQRWiJMN9Dgp+VbaE8+a6r66IPLbpH9kRfbK6M/2wjkyCoLFn3q4MHWMFn3TsNr4ACKBXU8Q0p0HQKSreQ2GWKKKRHjvZXzqxnfo6aAT1Y2/SWPe4z5+OKRdXgXa4ic2K0Vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772454296; c=relaxed/simple;
-	bh=x7t/iAkWcnd9QyYdAw+6vUuJizpL9ieaOGsdRW/mZTI=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nARK7p/dt1QpDCYCUv5+4jhUqv33aIzcFdnKrAOdEKyFTVRHfSAX4L0ZC25tTaJNihoW1CLpnFY4YsBFWdHtMDp5To+/jwanNfvKP77y1CUOr7LR+lDiT/QqszsXZ9aQ1ucknHs+IRYX7pWdzzP3qDyo/VudTtP8+QgiQzZ0oEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.224.107])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4fPdQs3pfrzJ46p4;
-	Mon,  2 Mar 2026 20:24:21 +0800 (CST)
-Received: from dubpeml500005.china.huawei.com (unknown [7.214.145.207])
-	by mail.maildlp.com (Postfix) with ESMTPS id E1AB340584;
-	Mon,  2 Mar 2026 20:24:52 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml500005.china.huawei.com
- (7.214.145.207) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 2 Mar
- 2026 12:24:50 +0000
-Date: Mon, 2 Mar 2026 12:24:49 +0000
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Herve Codina <herve.codina@bootlin.com>
-CC: Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Geert
- Uytterhoeven" <geert+renesas@glider.be>, Kalle Niemi <kaleposti@gmail.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Danilo
- Krummrich <dakr@kernel.org>, Frank Li <Frank.Li@nxp.com>, "Sascha Hauer"
-	<s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, "Michael Turquette"
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, "Andi Shyti"
-	<andi.shyti@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Peter Rosin <peda@axentia.se>, "Arnd Bergmann" <arnd@arndb.de>, Saravana
- Kannan <saravanak@kernel.org>, "Bjorn Helgaas" <bhelgaas@google.com>, Charles
- Keepax <ckeepax@opensource.cirrus.com>, Richard Fitzgerald
-	<rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, "Linus
- Walleij" <linusw@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, "Mark
- Brown" <broonie@kernel.org>, Len Brown <lenb@kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus
-	<sakari.ailus@linux.intel.com>, Davidlohr Bueso <dave@stgolabs.net>, "Dave
- Jiang" <dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>, "Ira Weiny" <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>, "Shawn Guo" <shawnguo@kernel.org>,
-	Wolfram Sang <wsa@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<driver-core@lists.linux.dev>, <imx@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-pci@vger.kernel.org>, <linux-sound@vger.kernel.org>,
-	<patches@opensource.cirrus.com>, <linux-gpio@vger.kernel.org>,
-	<linux-pm@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-	<linux-acpi@vger.kernel.org>, <linux-cxl@vger.kernel.org>, Allan Nielsen
-	<allan.nielsen@microchip.com>, Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>, Luca Ceresoli
-	<luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v5 11/28] cxl/test: Use fw_devlink_set_device()
-Message-ID: <20260302122449.00006c77@huawei.com>
-In-Reply-To: <20260227135428.783983-12-herve.codina@bootlin.com>
-References: <20260227135428.783983-1-herve.codina@bootlin.com>
-	<20260227135428.783983-12-herve.codina@bootlin.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1772455036; c=relaxed/simple;
+	bh=ieLd8uA33XYRvC/1/m1UwSIxYq2+WBaleB8sHCAJgK0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BxzqN9XTmIeSdGEM5UKvwk+0ZFRqXDyNt4HPKy4EHVrHWHj0uLN1e8gXLcKW++wVp+hzxWUR15Aod2M8pHskrSm839GGJf6jYyzrhdKlCgi8UAE3Jr0ZvWjdJ+knjow5b+SsGMwU5FB44axT4wBqqkVwW9jtl39o3m/OE97xKcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-56a973a7bdfso4015160e0c.3
+        for <linux-clk@vger.kernel.org>; Mon, 02 Mar 2026 04:37:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772455034; x=1773059834;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jGJIr8wFv9hr5lqBHLuRLwT5yQ6DlyeOxeauruYedWE=;
+        b=JflhBn8EW6G2KIEfT39V3SYdLdAIbUR7vEQ62+ia7TvnKGob/UVA7KDtO1SaHc41xr
+         6URv7ssuFHrJq3+0MczZyE4PHFHXMx1CBxWHe1u3OPsRtHJKVz+Gt8a5n0Sw/r65Jvox
+         zZjIuzSVF2/dVT2PZupg3NunPcWvwg/9iqZ10yyAMEBS4oC7RDJxvfgKGHB2q6+pvJOQ
+         xbIhN6mVHVyNc7Jxg+PG9jzIXctrNeMat2wNRy3zGjPOrbvfgX5nICR5edQaVHlNDRq3
+         wwflOUIKqzpuqRv0x4kL0QgZW8wuUT8p8jfWDAqKWC0i30SNTadPaCpS/fKXmhfQyNOG
+         6Ozw==
+X-Forwarded-Encrypted: i=1; AJvYcCWH+ciJ3zZp9VpIOqzCLIUL8eMx8I6F/MYALw8qpVmZFWT+WSw/XCt0XIwn4YY9TPbWKLz1TiB3A8g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEib2koSBHlSAt8AWRJIYXH+abE911vn23gFhqIUfBiT5zKljI
+	tE4mmTH3eoaWi6wMzZyaiXz60rf4MPb3HliD5n+poj63Dqll5qpZ7GTzwhJTTleQ
+X-Gm-Gg: ATEYQzxPkrU8II70JPYHjrpoQZOmONLqu0rIUrf56HugXP9SDpSGvvlyCU0zMQj+BMZ
+	+m7z3FeU//r/0GW0+2wi15roVVdZ1g70m3Ou10laNSBFxiYcXT9V4a6RxSHQwkRKbb+4TdcPl7J
+	0chq9wFKTRbObmVP70nK3YmZiY3VPwXxFHNtq+MEla/cqFzZ/mFsH7eYGEMNfguLoTrM9n8KPh4
+	KuBWmCiJorGnblvq73rBN81fmvk/UZ6w2RSmJdyz8Sejw0w92xk1leSAEGoOXIOkxVq4/8lwL0T
+	HlvBL+R6QqfPVvEKs7QRv/OP35Q6D136lvb4zto4kb3KgjmzjXjYvd0eajr+n1K+hFVjACRuE2x
+	MOWLA1GqRP7r1cpINdu8m2vwFrwEHlROJgyMLJm7nOpp5C+cG7Is1BZqkI66620lJU85/zGUZS2
+	M4yfxgGNbbTd7yBKy9VoM84EfkJWt8Tk/JeIR4ILkqau0mo7naTt25T+E2hGfbgLum1XsBAew=
+X-Received: by 2002:a05:6122:20a5:b0:560:2368:191 with SMTP id 71dfb90a1353d-56aa0a818f2mr6180024e0c.10.1772455034075;
+        Mon, 02 Mar 2026 04:37:14 -0800 (PST)
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56a91bd2291sm15326859e0c.9.2026.03.02.04.37.12
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Mar 2026 04:37:12 -0800 (PST)
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-94ac8cbf3feso2868060241.0
+        for <linux-clk@vger.kernel.org>; Mon, 02 Mar 2026 04:37:12 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCX1UdHgBdxp3lF8f7S3exliq+4TNa0XagfR0IMB4qVF04i01zjBxh/sDH1qJwz9FrEskhMJiBEUr/Q=@vger.kernel.org
+X-Received: by 2002:a05:6102:1629:b0:5f5:46f6:fb29 with SMTP id
+ ada2fe7eead31-5ff324e81ffmr5803667137.26.1772455031730; Mon, 02 Mar 2026
+ 04:37:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
- dubpeml500005.china.huawei.com (7.214.145.207)
+References: <20260227153225.2778358-1-cristian.marussi@arm.com> <20260227153225.2778358-2-cristian.marussi@arm.com>
+In-Reply-To: <20260227153225.2778358-2-cristian.marussi@arm.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 2 Mar 2026 13:37:00 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUZjZvhifzh0W2wbMZf2DYgZjO=gXepsS2nQtSG0weCag@mail.gmail.com>
+X-Gm-Features: AaiRm53-o6YuVgiLNI10tKCGvgnqzSehuU_fUzxc3DHRL4EGR1lrqXZ8SrXsMvo
+Message-ID: <CAMuHMdUZjZvhifzh0W2wbMZf2DYgZjO=gXepsS2nQtSG0weCag@mail.gmail.com>
+Subject: Re: [PATCH 01/11] firmware: arm_scmi: Add clock determine_rate operation
+To: Cristian Marussi <cristian.marussi@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	arm-scmi@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, sudeep.holla@arm.com, 
+	philip.radford@arm.com, james.quinlan@broadcom.com, f.fainelli@gmail.com, 
+	vincent.guittot@linaro.org, etienne.carriere@foss.st.com, 
+	peng.fan@oss.nxp.com, michal.simek@amd.com, dan.carpenter@linaro.org, 
+	geert+renesas@glider.be, kuninori.morimoto.gx@renesas.com, 
+	marek.vasut+renesas@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 27 Feb 2026 14:54:08 +0100
-Herve Codina <herve.codina@bootlin.com> wrote:
+Hi Cristian,
 
-> The code set directly fwnode.dev field.
->=20
-> Use the dedicated fw_devlink_set_device() helper to perform this
-> operation.
->=20
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+On Fri, 27 Feb 2026 at 16:33, Cristian Marussi <cristian.marussi@arm.com> wrote:
+> Add a clock operation to help determining the effective rate, closest to
+> the required one, that a specific clock can support.
+>
+> Calculation is currently performed kernel side and the logic is taken
+> directly from the SCMI Clock driver: embedding the determinate rate logic
+> in the protocol layer enables semplifications in the SCMI Clock protocol
+> interface and  will more easily accommodate further evolutions where such
+> determine_rate logic into is optionally delegated to the platform SCMI
+> server.
+>
+> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
 
-=46rom practical point of view, what path do you expect this to take?
-Is there urgency to make the change, or does it make more sense to
-add the helper this cycle and cleanup up the various places it can be
-used next?
+Thanks for your patch!
 
-> ---
->  tools/testing/cxl/test/cxl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/tools/testing/cxl/test/cxl.c b/tools/testing/cxl/test/cxl.c
-> index 3d9107b2661c..7f232a869389 100644
-> --- a/tools/testing/cxl/test/cxl.c
-> +++ b/tools/testing/cxl/test/cxl.c
-> @@ -1137,7 +1137,7 @@ static void mock_companion(struct acpi_device *adev=
-, struct device *dev)
->  	device_initialize(&adev->dev);
->  	fwnode_init(&adev->fwnode, NULL);
->  	device_set_node(dev, &adev->fwnode);
-> -	adev->fwnode.dev =3D dev;
-> +	fw_devlink_set_device(&adev->fwnode, dev);
+> --- a/drivers/firmware/arm_scmi/clock.c
+> +++ b/drivers/firmware/arm_scmi/clock.c
+> @@ -624,6 +625,46 @@ static int scmi_clock_rate_set(const struct scmi_protocol_handle *ph,
+>         return ret;
 >  }
-> =20
->  #ifndef SZ_64G
+>
+> +static int scmi_clock_determine_rate(const struct scmi_protocol_handle *ph,
+> +                                    u32 clk_id, unsigned long *rate)
+> +{
+> +       u64 fmin, fmax, ftmp;
+> +       struct scmi_clock_info *clk;
+> +       struct clock_info *ci = ph->get_priv(ph);
+> +
+> +       if (!rate)
+> +               return -EINVAL;
+> +
+> +       clk = scmi_clock_domain_lookup(ci, clk_id);
+> +       if (IS_ERR(clk))
+> +               return PTR_ERR(clk);
+> +
+> +       /*
+> +        * If we can't figure out what rate it will be, so just return the
+> +        * rate back to the caller.
+> +        */
+> +       if (clk->rate_discrete)
+> +               return 0;
+> +
+> +       fmin = clk->range.min_rate;
+> +       fmax = clk->range.max_rate;
+> +       if (*rate <= fmin) {
+> +               *rate = fmin;
+> +               return 0;
+> +       } else if (*rate >= fmax) {
+> +               *rate = fmax;
+> +               return 0;
+> +       }
+> +
+> +       ftmp = *rate - fmin;
+> +       ftmp += clk->range.step_size - 1; /* to round up */
+> +       do_div(ftmp, clk->range.step_size);
 
+step_size is u64, while do_div() truncates it to 32-bit.
+
+> +
+> +       *rate = ftmp * clk->range.step_size + fmin;
+> +
+> +       return 0;
+> +}
+> +
+>  static int
+>  scmi_clock_config_set(const struct scmi_protocol_handle *ph, u32 clk_id,
+>                       enum clk_state state,
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
