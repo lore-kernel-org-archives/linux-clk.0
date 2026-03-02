@@ -1,91 +1,113 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E6D038CFFC
-	for <linux-clk@vger.kernel.org>; Mon,  2 Mar 2026 09:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA2C350D7D;
+	Mon,  2 Mar 2026 10:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772443180; cv=none; b=gt69IiZidRq+odg7QrQHDZa/ohv2wEX87i4HLH5hWBWq6YCo6b9Udrd7/99Du+Q+ecShLN4Fh2vREdB+zNI86fTYSA3LLcNJGOAeQ/meIzsnAtu+cqC/3kK2egLp/3g0ldkKfkNBodzHd+nFJ5wy62+M1mv/+r97lHj/Ig0NAdE=
+	t=1772448448; cv=none; b=Rr1Lf+4qguPbTDPkoUH2T1zX2LRvIJOJADz5agO9YKhNXrBNq/ZkqzdvICMAzcdkuqaTBdApEQ5hhIuImeGJeUBxugHgs63VkPxVBzVw2EpuFow9sPawmD5Hd0ZdfaI4daGEmgxAx2LKlP/4hIrlMFCz5AUjhWQuv3AF/NeIS4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772443180; c=relaxed/simple;
-	bh=7ckUxNu6Er/vlKjRLTGYQicGp10gUC8i4ulwH0qnW6Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tiB6hG3YBX7qYO50wK0PPfuaPKVZEWrjiEPPH+GagZCvRM90N1QjV1pGmaiwCmnMNxgCXdrwW2qP1C9PTOrUC8TPHhNgiQ/48GdVuaSIBXmdre/bQXlNKx79aSrhDKs+opj2CdK0TQ14EC/eulqQR1gyONj1xcCsbTAdyp1S4Lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NaSaYEwv; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NaSaYEwv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE390C2BC87
-	for <linux-clk@vger.kernel.org>; Mon,  2 Mar 2026 09:19:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772443179;
-	bh=7ckUxNu6Er/vlKjRLTGYQicGp10gUC8i4ulwH0qnW6Q=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=NaSaYEwv6W5X/DgCkkxrsPmp/GhAulMTl+hZiRTxUxtDDakDwwhsiq+R5pTeHAsZM
-	 OIbDNM1DveCGwTAONAxVOu/KcPk0lRkgP8WI72/xqx6lOfBbBbU7RSaOQijai8aXqE
-	 Iph6v21mAHpkVFT2/v4EuO4Hhul4HjChQ0pU6S5v1tJDVMm/uPsy5B3zye42S5H+L/
-	 zwlbLDCwfPC/QUd2hC418X1y4CHEeXuHxZmckZMzg2mhCGvn6A7YncTJHd8Xnsxo18
-	 hpZQvhGk41Vg43V6LhnmHFk3tZjPopY4U+BtxJI2mm4cH+mtHH+mP3OJ27P/d5fZMb
-	 f6zFXUS0FBF8g==
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-7982c3b7da9so39310567b3.1
-        for <linux-clk@vger.kernel.org>; Mon, 02 Mar 2026 01:19:39 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXhZP8cK+7VW2KcY5E6ks0/biDJtIVkV2dy/ucwPw3JqGmiNnqTM4ilgZAEqmKgq6m7vMo3jJNpBmc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytMWxzv6KqK6r5jl1VoHtMimrY9/yHDm+5V4wTqUHGAzXaDVT+
-	rHGND8VJIfjyUMbvIO4+tIm9Zw55B/gnk+dLdu+N4Z591Oksdw5qkUwhqSVkh+2Funy5vw6/rE7
-	PIi1Sql1cPK+hte3nN6tvHEFbh8WSWHc=
-X-Received: by 2002:a05:690c:385:b0:798:6c28:dd57 with SMTP id
- 00721157ae682-7988554de07mr102205297b3.28.1772443179061; Mon, 02 Mar 2026
- 01:19:39 -0800 (PST)
+	s=arc-20240116; t=1772448448; c=relaxed/simple;
+	bh=7dWHhQC2IFqeGMM4XAkUbsKg+tjiAbap0pQrYEeCqxs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RL2fWx55KIwoH51l9iu6xPTDTNUj3zojS5JZHtZ4j/A5qoYqDc8HHzOIx2nbrS5gI+sDXYWfNqpwhs2TsCL4F+LaRUk4KjZkp0ptyeqQ2xGW/ukGsYY6DIYgV/JGR3pwA6fHAPbxRd2NOtxU4DcerNofuaeXds82t1trZsVbVPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6CA4F14BF;
+	Mon,  2 Mar 2026 02:47:20 -0800 (PST)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CB0BD3F7BD;
+	Mon,  2 Mar 2026 02:47:22 -0800 (PST)
+Date: Mon, 2 Mar 2026 10:47:10 +0000
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, sudeep.holla@arm.com,
+	philip.radford@arm.com, james.quinlan@broadcom.com,
+	f.fainelli@gmail.com, vincent.guittot@linaro.org,
+	etienne.carriere@foss.st.com, michal.simek@amd.com,
+	dan.carpenter@linaro.org, geert+renesas@glider.be,
+	kuninori.morimoto.gx@renesas.com, marek.vasut+renesas@gmail.com
+Subject: Re: [PATCH 11/11] firmware: arm_scmi: Introduce all_rates_get clock
+ operation
+Message-ID: <aaVqrsh_gd9meIWT@pluto>
+References: <20260227153225.2778358-1-cristian.marussi@arm.com>
+ <20260227153225.2778358-12-cristian.marussi@arm.com>
+ <aaJXy2V7oI1tH4Ac@shlinux89>
+ <aaLHuHFpcxdyqf9P@pluto>
+ <aaU5xn/UlHeAhdxk@shlinux89>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260226-eyeq6lplus-v3-0-9cbeb59268b0@bootlin.com>
- <CAD++jLmEU=PkmsPOksF9dtV5UpH3S9X=VJey8ZEf5wdsPbsNvg@mail.gmail.com> <5262868.Qq0lBPeGtt@benoit.monin>
-In-Reply-To: <5262868.Qq0lBPeGtt@benoit.monin>
-From: Linus Walleij <linusw@kernel.org>
-Date: Mon, 2 Mar 2026 10:19:27 +0100
-X-Gmail-Original-Message-ID: <CAD++jL=aQwj3vfGQcJQGoFGneKyDPTMWik1zVhhoH3BM42odug@mail.gmail.com>
-X-Gm-Features: AaiRm52IPrnZjaOF5tFQCgs0uPwRGDpKCfSWJ4D7JFeg9UWmQRrGRVgXGFakAgc
-Message-ID: <CAD++jL=aQwj3vfGQcJQGoFGneKyDPTMWik1zVhhoH3BM42odug@mail.gmail.com>
-Subject: Re: [PATCH v3 00/13] Introducing the Mobileye EyeQ6Lplus SoC
-To: =?UTF-8?Q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
-Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
-	Gregory CLEMENT <gregory.clement@bootlin.com>, =?UTF-8?B?VGjDqW8gTGVicnVu?= <theo.lebrun@bootlin.com>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-mips@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aaU5xn/UlHeAhdxk@shlinux89>
 
-On Fri, Feb 27, 2026 at 2:54=E2=80=AFPM Beno=C3=AEt Monin <benoit.monin@boo=
-tlin.com> wrote:
-> On Friday, 27 February 2026 at 01:14:32 CET, Linus Walleij wrote:
-> > Hi Benoit,
-> >
-> > On Thu, Feb 26, 2026 at 2:34=E2=80=AFPM Beno=C3=AEt Monin <benoit.monin=
-@bootlin.com> wrote:
-> >
-> > >       pinctrl: eyeq5: Use match data
-> > >       pinctrl: eyeq5: Add Mobileye EyeQ6Lplus OLB
-> >
-> > Can I just apply these two to the pinctrl tree?
-> >
-> > Yours,
-> > Linus Walleij
-> >
-> Yes you can, they apply and build cleanly on their own.
+On Mon, Mar 02, 2026 at 03:18:30PM +0800, Peng Fan wrote:
+> On Sat, Feb 28, 2026 at 10:47:20AM +0000, Cristian Marussi wrote:
+> >On Sat, Feb 28, 2026 at 10:49:47AM +0800, Peng Fan wrote:
+> >> On Fri, Feb 27, 2026 at 03:32:25PM +0000, Cristian Marussi wrote:
+> >> >Add a clock operation to get the whole set of rates available to a specific
+> >> >clock: when needed this request could transparently trigger a full rate
+> >> >discovery enumeration if this specific clock-rates were previously only
+> >> >lazily enumerated.
+> >> >
 
-I applied patches 5 & 6 to the pin control tree.
+Hi,
 
-The corresponding DT binding is in patch 1, and since that
-is already ACKed by Rob I positively expect it to be merged
-for v7.1.
+> >> >Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+> >> >---
+> >> > drivers/firmware/arm_scmi/clock.c | 85 +++++++++++++++++++++----------
+> >> > include/linux/scmi_protocol.h     |  9 ++++
+> >> > 2 files changed, 67 insertions(+), 27 deletions(-)
 
-Yours,
-Linus Walleij
+[snip]
+
+> >> > 
+> >> >-	if (clkd->rate_discrete)
+> >> >-		sort(clkd->rates, clkd->num_rates,
+> >> >-		     sizeof(clkd->rates[0]), rate_cmp_func, NULL);
+> >> >+	if (clkd->r.rate_discrete && PROTOCOL_REV_MAJOR(ph->version) == 0x1)
+> >> 
+> >> Not understand well "PROTOCOL_REV_MAJOR(ph->version) == 0x1", I may
+> >> get something wrong, should use ">="?
+> >
+> >I have NOT double checked BUT I think fro Etienne original patch, you
+> >can assume that clock rates are returned by the platform in ascending
+> >order (already sorted) only after Clock protocol version 0x01, the first
+> >ever, so ONLY when teh used version is 0x1 we must perform a full scan
+> >(no lazy optimization since we cannot assume that rates[last-1] is max
+> >AND we must sort the obtained list of clocks...
+> 
+> Per https://developer.arm.com/documentation/den0056/c/?lang=en, SCMI version
+> 3.0, CLOCK protocol version is 1.0, I see:
+> "The clock rates returned by this call should be in numeric ascending order".
+> 
+> SCMI 2.0 also has it. But SCMI 1.0 does not have above line.
+> 
+> All the above specs are using CLOCK protocol version 1.0.
+> 
+> It might be overshoot, should the "PROTOCOL_REV_MAJOR(ph->version) == 0x1"
+> be dropped, so always sort the array?
+
+Yes there is a 'glitch' in the specs v1.0/v2.0/v3.0 since all reports
+Clock proto version 0x10000 BUT the clarification around the ordering of
+the returned rates is NOT always there, so, since we must be absolutely
+pedantic to guarantee compatibility with any possible deployed SCMI/FW,
+we cannot assume that any 0x10000 protocol return ordered rates: this
+means that if proto==0x10000 we MUST sort AND we cannot play smart with
+the new bound iterators since we are NOT assure that rates[0] AND
+rates[last -1] contain respectively min and max rates...
+
+On the other side for any protocol version != 0x10000 (i.e. v3.1/v3.2/v4.0)
+we can assume those rates as ordered and so, on one side, we can run 'lazy'
+partial enumerations AND, on the other side, we can avoid the overhead of
+sorting with full scans enumerations.
+
+Thanks,
+Cristian
