@@ -1,70 +1,70 @@
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF51D3A6417
-	for <linux-clk@vger.kernel.org>; Mon,  2 Mar 2026 12:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA03A3AE6E9
+	for <linux-clk@vger.kernel.org>; Mon,  2 Mar 2026 12:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772455651; cv=none; b=QjqbOkwOfbxRzesKrmZTND82HQfNCva9HpjvRDzySZ0UCZL82opWJn2UNYXdmgKmrgY8JlrR1tGvgRVjcHM836DhNTMGl4SPOImClfhpp9i7xPtWRQWi1vT2X3Q6OtImY/BKhw76r118skHhXeQ87eJAqyCGsrVVLEq4No8gkWg=
+	t=1772455695; cv=none; b=uxAytqB47VjmL3n9nqgDCUfKDpURv8oHqx9LEURROA5KlGSxlecsSavd0YcTNOR2bTyJahMr9xOiS5ugeBYKDjq1JXQdddNnHWoDTZmmKHRme1mp+uIagW3id/2xdbtMgglGxktXgIDzyZELa3ZxoBFCcY4Uop3Vz2EDqZjrB1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772455651; c=relaxed/simple;
-	bh=bbZA1NIjrsyDbwc/owDhNs6Y6gSNpyIeUkxNy0yJ1ss=;
+	s=arc-20240116; t=1772455695; c=relaxed/simple;
+	bh=5HFzGr832crqv2W64pTYS8wggyt85EHspGHJD1BYhVw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XDTaggVCkj32wFEwzeCWkkT2kzkelmzQCeQt07FmsGsW0hthgpZROAhn7Om7ovndbsvzInkKTNm6DjzbNIpestYZ4QNYPpfLWjWlYQjEIHjF16ggmOFgUPot1UlEE3X7HukeyDqBNz7GO9n14kR7+epZeh8AGC9J04l79W5VSWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.173
+	 To:Cc:Content-Type; b=aWJOJsWy5+tfOBEeYSdiolQ5lmxcC9empj8VOt+Ood7StDVTGB7222SsG75eoJ96hDo3Li5JJi15Pv6VTiY7zfXSIKxqy9V247TDawSmD89vZJ0bOY3+CH+usK7RL0S1R5WK4nMbafkywCb62w0TzQz0Uz5a6IwpILW/kO2MPvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-46392972257so3604605b6e.2
-        for <linux-clk@vger.kernel.org>; Mon, 02 Mar 2026 04:47:29 -0800 (PST)
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-5ff093cf15eso1007767137.0
+        for <linux-clk@vger.kernel.org>; Mon, 02 Mar 2026 04:48:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772455649; x=1773060449;
+        d=1e100.net; s=20230601; t=1772455692; x=1773060492;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hHdX83DJ8NzB0+Dg2GzVMundpvvc3+ChCaV5hT6gxKs=;
-        b=B8o3mEf7ezOeT8nEKVbGWcIs2VCl0QrTGzWMrUym3KPuADc5gsAIC5VgjqUlTvy+F8
-         5oft6ltHDw+zBeYOi5YXUDDmgDSMoefwp/pPHBPPt3Tss0BmCCAriRWv7kakSGNiBvVn
-         CNnZVCCnTgJ+0rRiJmsK3JeQ3eQI+buDyZt1AiccGxeoGVXrBAECCaXqrRFYCrH/QcFE
-         xVecvmljYnfJg8S93pHs3xiKIUTrZuvbry6rMxVchkcOFglqnrIexapJXwWMoqxNwgT9
-         +CQTuWAkaCRuRzAdOb9fMN0V8PkxdHguLPsfekARnOpUMfTSEmrv28khm39E0w9Z8tmC
-         FKgg==
-X-Forwarded-Encrypted: i=1; AJvYcCXkjJhWlfS444SGENbOZtNBIS/EkhysJHyQwmYAO1eDsLPcKKzZCiQ/38ZqkrgjZj9geOPXg3dgRV0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQY8HgKq/H0ncBzwz+MLnNV+BzFYe/pr/ZvLE8gjEFBWsU5DZh
-	TKaGFIOMCw2FISxzHgbbSQbaHvuTLKedxgwl/vAy3tXzA3gOGH6Uv7hMvTh962ae
-X-Gm-Gg: ATEYQzzJu8WjTsdXdqXIq+rxmJB2OJjLuT0ATKYtc4xYLiEzoVPRM2KiQOo3uIWUS17
-	qd8R2uR8mB07+K2rx2WKMumK1/+PDd6QkYSWYSi06Vx4/AeXp399XqzyyYsc/+xDFx2jI4F7Fn7
-	KUk+TGtUOsG/JWPsf0galZ6tpIKnqNSflXjFxXEIGBD3XfhwbD5hhuXRSNRj9W2VTzxNxIE4PNs
-	/O5gGTe3TjrZgnG0xDAxbHsoX6SHhEr7PXWxzj9XxEphG+nQr8uXb5QJPwuJ6sVX/M9MLBkyhWm
-	UbX+lfoVvMLiZ18mRv6+Lb1URJ2r1gPjjT6iZRkdYbHvjJwEZ99GjKmwLA+p2eOwNwSdkeHwxEJ
-	xo2xbhfxoY8ICwyBCK5W9cc+fGraq2dKj/stkINg782ZyHkPvkYG8u3h7xhnA2uB8UZE1pSbf5g
-	zB67S4Z5FmT2LL2fAOOJPCU4jdvm63UnBJsPSAxohKyO0UOsaws3TraGjMVzjd
-X-Received: by 2002:a05:6808:1587:b0:450:42c9:4cd0 with SMTP id 5614622812f47-464bebd76e5mr7250748b6e.49.1772455648659;
-        Mon, 02 Mar 2026 04:47:28 -0800 (PST)
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com. [209.85.210.51])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-464bb3ab302sm7475701b6e.7.2026.03.02.04.47.27
+        bh=UPZaguxK4uAclO1GJ8sZm5gYxF5BgvNNNwtD4mqwBno=;
+        b=SXBmV0yjDxhyK8zZMDRCmSY2Ai6dx510qgCFSBlDlCpoKQByX8HfHcGGiF/9yUCedz
+         d+z631kjMiG2JoGAbgK4T2OonI5wVb4NvEN0hFn2dInioygP/G/gLXycN6AlZ4mlInRX
+         +SvO1meYe8YBpHU9XC8PJ9ZzuYvF4osz7rl9UjqvZ4Q3bhSzoElZn8I19A6oRhsOakJ0
+         T0ulhZTIlowcfrDr427D9ncG1Yz+I80YRqQxtU/lVZ3nnR/zp1T/aXyUEnzofQ+rPHCH
+         974BTjKpwRTKHZJQVDroPyO9glrw5Bht58S60wPPh/oh9FeHfMj5Xjxb563G3YAdB64r
+         dFuA==
+X-Forwarded-Encrypted: i=1; AJvYcCX7TQAo3J4tfFJlIL6L4RKL3je7/Va2H6rtAA2S8ZoDQ3nsSGOwwUG+/qBcAKKEx80K3PAzAWmGuF4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDe7d+GszwDHokXcIDxVXVtxPJ4HjKCO9dazKBmgruXHpUjmcP
+	go26ka5FDw5vsaglEg5PHpcVtIlXjDgvHb0PIavgU9OUPGnX4BGjlxpURJEBA/vI
+X-Gm-Gg: ATEYQzztc1sdRnGibqEUzbe/ZP32g7K2hD5M9O7J13l4wGPdvRIAuOGtksMS9ETM6ww
+	ZLiHdfoT7Jw3asyWuVw9sJxzgaGdmE2tIyNpBTYmM4vX7b1GWahEii2U2IBM4bvB7P1r5Qc93UQ
+	H0ED1e9vHb/0jnIVqcG2LnNRDGz+XHLdYpBa6s41Pt1jm6PcIPno1UGXMRyWZ6/0+kCtLD7Zwf0
+	t6T+yoz4ZsB2w+XdF/Q+9HwHqyaC3WrHmrlamGlxTQqkSe8i/Jd+muxa0mkeSFsArS+Rt75PEvD
+	TnBZDKomnDw6iFHq0PB22YJn+mS/tL458dwmIVEIPpVb9Fow528Qsn6BWjq3mlUGBLOP7kpS4NH
+	LqTIoJdIrQ+cHk4L5HkIAIkFEI6wbus5JRwbGAHzCKIK5C1XZrVHkijHk+7KKAr8yMmrs7s4qSP
+	IoUJSjIT+khPI4J79pP6FT6SrNaTppTacKfOi2RhXhKEZncrPuyj30mSGtA8B/W3E3CYSnRCc=
+X-Received: by 2002:a05:6102:41ab:b0:5f5:2638:9f3f with SMTP id ada2fe7eead31-5ff322805cdmr3991354137.8.1772455691811;
+        Mon, 02 Mar 2026 04:48:11 -0800 (PST)
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-94df63d6695sm11787567241.1.2026.03.02.04.48.11
         for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Mar 2026 04:47:27 -0800 (PST)
-Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-7d18a9d2b1aso3884936a34.2
-        for <linux-clk@vger.kernel.org>; Mon, 02 Mar 2026 04:47:27 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCViDguOxes+qK6yv5pFsz3Tmlzsoe8MVdpNery+sB5XS1Hpno8kFXNHQaYRw2P6G2GrSw03b9Uo75Y=@vger.kernel.org
-X-Received: by 2002:a05:6102:b0f:b0:5ff:3159:303f with SMTP id
- ada2fe7eead31-5ff3228629emr4217443137.7.1772455202516; Mon, 02 Mar 2026
- 04:40:02 -0800 (PST)
+        Mon, 02 Mar 2026 04:48:11 -0800 (PST)
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-5ff093cf15eso1007761137.0
+        for <linux-clk@vger.kernel.org>; Mon, 02 Mar 2026 04:48:11 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVZUsjyi2bhoDxCYCFxVjWsNChuV5+vb9PUzIMQwMrdTu/mmPNU5YGOY8Q6SmLf8Z+NN6HlHLHdHRQ=@vger.kernel.org
+X-Received: by 2002:a05:6102:b0f:b0:5ef:24aa:986f with SMTP id
+ ada2fe7eead31-5ff32280163mr4813153137.2.1772455690946; Mon, 02 Mar 2026
+ 04:48:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260227153225.2778358-1-cristian.marussi@arm.com> <20260227153225.2778358-3-cristian.marussi@arm.com>
-In-Reply-To: <20260227153225.2778358-3-cristian.marussi@arm.com>
+References: <20260227153225.2778358-1-cristian.marussi@arm.com> <20260227153225.2778358-4-cristian.marussi@arm.com>
+In-Reply-To: <20260227153225.2778358-4-cristian.marussi@arm.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 2 Mar 2026 13:39:51 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVCgq4Wbm8g_O9e1sPhJ4PyY-nWTt9RW1f3=G3a0PvdKA@mail.gmail.com>
-X-Gm-Features: AaiRm53Myvi_2ZqSj1TUDPoKLpT_7oeJnXIYfnZdksVjKBsJ5C9Q8S7vMIJT-rk
-Message-ID: <CAMuHMdVCgq4Wbm8g_O9e1sPhJ4PyY-nWTt9RW1f3=G3a0PvdKA@mail.gmail.com>
-Subject: Re: [PATCH 02/11] clk: scmi: Use new determine_rate clock operation
+Date: Mon, 2 Mar 2026 13:48:00 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdW7e45rc5VmHQV5GxzMvJ3r6=04sWOoFsu4JJPAqDUiJA@mail.gmail.com>
+X-Gm-Features: AaiRm50BStTuBuZFtFkMptJqRSM8Fy1hreKbQGIVp2iYFH2DYfQrEyfTQ_vqsrc
+Message-ID: <CAMuHMdW7e45rc5VmHQV5GxzMvJ3r6=04sWOoFsu4JJPAqDUiJA@mail.gmail.com>
+Subject: Re: [PATCH 03/11] firmware: arm_scmi: Simplify clock rates exposed interface
 To: Cristian Marussi <cristian.marussi@arm.com>
 Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
 	arm-scmi@vger.kernel.org, linux-clk@vger.kernel.org, 
@@ -73,70 +73,57 @@ Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	vincent.guittot@linaro.org, etienne.carriere@foss.st.com, 
 	peng.fan@oss.nxp.com, michal.simek@amd.com, dan.carpenter@linaro.org, 
 	geert+renesas@glider.be, kuninori.morimoto.gx@renesas.com, 
-	marek.vasut+renesas@gmail.com, Brian Masney <bmasney@redhat.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+	marek.vasut+renesas@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hi Cristian,
 
+Thanks for your patch!
+
 On Fri, 27 Feb 2026 at 16:33, Cristian Marussi <cristian.marussi@arm.com> wrote:
-> Use the Clock protocol layer determine_rate logic to calculate the closest
-> rate that can be supported by a specific clock.
+> Move needlessly exposed fields away from scmi_clock_info into the new
+> internal struct scmi_clock_desc while keeping exposed only the two new
+> min_rate and max_rate fields for each clock.
 >
 > No functional change.
 >
-> Cc: Brian Masney <bmasney@redhat.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-clk@vger.kernel.org
 > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
 
-> --- a/drivers/clk/clk-scmi.c
-> +++ b/drivers/clk/clk-scmi.c
-> @@ -57,35 +56,17 @@ static unsigned long scmi_clk_recalc_rate(struct clk_hw *hw,
->  static int scmi_clk_determine_rate(struct clk_hw *hw,
->                                    struct clk_rate_request *req)
->  {
-> -       u64 fmin, fmax, ftmp;
-> +       int ret;
->         struct scmi_clk *clk = to_scmi_clk(hw);
+> --- a/drivers/firmware/arm_scmi/clock.c
+> +++ b/drivers/firmware/arm_scmi/clock.c
+> @@ -157,13 +157,27 @@ struct scmi_clock_rate_notify_payld {
+>         __le32 rate_high;
+>  };
 >
->         /*
-> -        * We can't figure out what rate it will be, so just return the
-> -        * rate back to the caller. scmi_clk_recalc_rate() will be called
-> -        * after the rate is set and we'll know what rate the clock is
-> +        * If we could not get a better rate scmi_clk_recalc_rate() will be
-> +        * called after the rate is set and we'll know what rate the clock is
->          * running at then.
->          */
-> -       if (clk->info->rate_discrete)
-> -               return 0;
-> -
-> -       fmin = clk->info->range.min_rate;
-> -       fmax = clk->info->range.max_rate;
-> -       if (req->rate <= fmin) {
-> -               req->rate = fmin;
-> -
-> -               return 0;
-> -       } else if (req->rate >= fmax) {
-> -               req->rate = fmax;
-> -
-> -               return 0;
-> -       }
-> -
-> -       ftmp = req->rate - fmin;
-> -       ftmp += clk->info->range.step_size - 1; /* to round up */
-> -       do_div(ftmp, clk->info->range.step_size);
+> +struct scmi_clock_desc {
+> +       u32 id;
+> +       bool rate_discrete;
+> +       unsigned int num_rates;
+> +       u64 rates[SCMI_MAX_NUM_RATES];
+> +#define        RATE_MIN        0
+> +#define        RATE_MAX        1
+> +#define        RATE_STEP       2
 
-Oh, so the truncation bug exists in the original code, too.
+Any specific reason you are not using a union here, like in
+scmi_clock_info?
 
-> -
-> -       req->rate = ftmp * clk->info->range.step_size + fmin;
-> +       ret = scmi_proto_clk_ops->determine_rate(clk->ph, clk->id, &req->rate);
-> +       if (ret)
-> +               return ret;
->
->         return 0;
+> +       struct scmi_clock_info info;
+> +};
+
+> --- a/include/linux/scmi_protocol.h
+> +++ b/include/linux/scmi_protocol.h
+> @@ -51,6 +51,8 @@ struct scmi_clock_info {
+>         bool rate_ctrl_forbidden;
+>         bool parent_ctrl_forbidden;
+>         bool extended_config;
+> +       u64 min_rate;
+> +       u64 max_rate;
+>         union {
+>                 struct {
+>                         int num_rates;
+
+You patch description read like the actual rates would be moved
+from scmi_clock_info to scmi_clock_desc, i.e. _removed_ here?
 
 Gr{oetje,eeting}s,
 
