@@ -1,24 +1,24 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E936423162;
-	Mon,  2 Mar 2026 16:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 173613FB04C;
+	Mon,  2 Mar 2026 16:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772470499; cv=none; b=FdWdudQszlpudo1G27nFMIZ+jvWPONLkYpCbQhAUadq3Awau72Xba4F8frlt1tfS40OheoNEylrMIu8Anggu54v1oQH9E7Qnw7yeEvz/1kGqHtgdcWfbgHEzDdDNl/mNE+GmnKeR4Egxyu9qf1IrZH7yIZn9q+b0VwOgyy9qVQ4=
+	t=1772470506; cv=none; b=NiSCOMiHxFo3fVgeAjI65oAkHgg8MRZ6npaCHs2CTB2qiQcrBGNpGo2WVLJ8LeYDFNN9Npf0tvIMNaFUprOJByEe6Burw5ygBA7D/LVoYgezHu3rcVIrtVIdSK6qnXOAXC3aIvgHnPUZF+yBQVCjAX4eYYOGmPfXWFXc7CpmyEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772470499; c=relaxed/simple;
-	bh=HgzAEfE5xQSuGnub8+UaQIU2hl4Lqcxc39DHnPC3G7A=;
+	s=arc-20240116; t=1772470506; c=relaxed/simple;
+	bh=tj+IUEsyjHLZLuZW5DjRX11ogu1mf7bSwtnzSaCrekA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ch4JkcrovyEWO5GoRy4pzUDWzrM7+oNJS1mBCcjmPgLZhtiCN9dwwUirRl3ATZlMvWTJpcZaPV3px98mJtl01M/nFRQABX6/KHsL0l+5EUSmNEtcsIBA4ZRq0uAUOZnzI9Q3SYWnSoUQLkVbUV9bPjDwHkzvWoeWvAoEia+LYrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
+	 MIME-Version; b=VhQs6ZwMs9mV+5CQWsktw2v3d/Vaw3fDnxdLCGEAoi1jvdE098ucpp2sJlzuFNsm7QF8Z0Kgc253YxtNtIq9VRPjD57DJ3nOjAdhoFbzXNzCUCpoM2ag58GeXZqTOHfLWkWK7nIUwdvrbBpvUtFyB4syCZb4SGb0ClHRB4Xg+YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-X-CSE-ConnectionGUID: 88d5BPg/QPeT9oo4i1aUIg==
-X-CSE-MsgGUID: xjpS3NZMT+608qhPm8qjWg==
+X-CSE-ConnectionGUID: KuwKuDNcTOq/RINwMRXkdA==
+X-CSE-MsgGUID: 8IGYA3cQReGA7CeM3gYRvQ==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 03 Mar 2026 01:54:52 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 03 Mar 2026 01:54:56 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.92.15])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 07BA1401A65F;
-	Tue,  3 Mar 2026 01:54:47 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id AFD36401C226;
+	Tue,  3 Mar 2026 01:54:52 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: geert+renesas@glider.be,
 	magnus.damm@gmail.com,
@@ -33,9 +33,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Subject: [PATCH v4 1/7] clk: versaclock3: Fix NULL pointer dereference in error path
-Date: Mon,  2 Mar 2026 16:54:35 +0000
-Message-ID: <20260302165441.4457-2-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH v4 2/7] clk: versaclock3: Remove unused SE2 clock select macro
+Date: Mon,  2 Mar 2026 16:54:36 +0000
+Message-ID: <20260302165441.4457-3-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260302165441.4457-1-ovidiu.panait.rb@renesas.com>
 References: <20260302165441.4457-1-ovidiu.panait.rb@renesas.com>
@@ -47,113 +47,34 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If devm_clk_hw_register() fails, the driver logs an error using
-hw.init->name. However, the clock core sets hw->init to NULL in
-__clk_register() immediately after registration, regardless of
-success or failure. This leads to a NULL pointer dereference.
+The VC3_SE2_CTRL_REG0_SE2_CLK_SEL macro is no longer used since
+commit ae6040cd7c7f8 ("clk: versaclock3: Prepare for the addition of
+5L35023 device"), which switched SE2 clock select handling to use
+variant-specific OF data (se2_clk_sel_msk).
 
-To fix this, save the clock name before registration and use the
-saved pointer in the error message. While at it, improve the error
-message to make it more clear.
-
-Fixes: 6e9aff555db7 ("clk: Add support for versa3 clock driver")
+Reviewed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
 v4 changes: None.
 
-v3 changes: New patch.
+v3 changes:
+- Added "Reviewed-by" tag from Fabrizio.
 
- drivers/clk/clk-versaclock3.c | 36 +++++++++++++++++++++++------------
- 1 file changed, 24 insertions(+), 12 deletions(-)
+ drivers/clk/clk-versaclock3.c | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/drivers/clk/clk-versaclock3.c b/drivers/clk/clk-versaclock3.c
-index 27b6cf70f3ae..6dcf3d94db7b 100644
+index 6dcf3d94db7b..18ef0f38c85b 100644
 --- a/drivers/clk/clk-versaclock3.c
 +++ b/drivers/clk/clk-versaclock3.c
-@@ -1031,19 +1031,23 @@ static int vc3_probe(struct i2c_client *client)
- 	/* Register pfd muxes */
- 	for (i = 0; i < ARRAY_SIZE(clk_pfd_mux); i++) {
- 		clk_pfd_mux[i].regmap = regmap;
-+		name = clk_pfd_mux[i].hw.init->name;
- 		ret = devm_clk_hw_register(dev, &clk_pfd_mux[i].hw);
- 		if (ret)
--			return dev_err_probe(dev, ret, "%s failed\n",
--					     clk_pfd_mux[i].hw.init->name);
-+			return dev_err_probe(dev, ret,
-+					     "failed to register clock %s\n",
-+					     name);
- 	}
+@@ -61,7 +61,6 @@
+ #define VC3_OUTPUT_CTR_DIV4_SRC_SEL	BIT(3)
  
- 	/* Register pfd's */
- 	for (i = 0; i < ARRAY_SIZE(clk_pfd); i++) {
- 		clk_pfd[i].regmap = regmap;
-+		name = clk_pfd[i].hw.init->name;
- 		ret = devm_clk_hw_register(dev, &clk_pfd[i].hw);
- 		if (ret)
--			return dev_err_probe(dev, ret, "%s failed\n",
--					     clk_pfd[i].hw.init->name);
-+			return dev_err_probe(dev, ret,
-+					     "failed to register clock %s\n",
-+					     name);
- 	}
+ #define VC3_SE2_CTRL_REG0		0x1f
+-#define VC3_SE2_CTRL_REG0_SE2_CLK_SEL	BIT(6)
  
- 	data = i2c_get_match_data(client);
-@@ -1056,28 +1060,34 @@ static int vc3_probe(struct i2c_client *client)
- 
- 			pll_data->vco = data->pll2_vco;
- 		}
-+		name = clk_pll[i].hw.init->name;
- 		ret = devm_clk_hw_register(dev, &clk_pll[i].hw);
- 		if (ret)
--			return dev_err_probe(dev, ret, "%s failed\n",
--					     clk_pll[i].hw.init->name);
-+			return dev_err_probe(dev, ret,
-+					     "failed to register clock %s\n",
-+					     name);
- 	}
- 
- 	/* Register divider muxes */
- 	for (i = 0; i < ARRAY_SIZE(clk_div_mux); i++) {
- 		clk_div_mux[i].regmap = regmap;
-+		name = clk_div_mux[i].hw.init->name;
- 		ret = devm_clk_hw_register(dev, &clk_div_mux[i].hw);
- 		if (ret)
--			return dev_err_probe(dev, ret, "%s failed\n",
--					     clk_div_mux[i].hw.init->name);
-+			return dev_err_probe(dev, ret,
-+					     "failed to register clock %s\n",
-+					     name);
- 	}
- 
- 	/* Register dividers */
- 	for (i = 0; i < ARRAY_SIZE(clk_div); i++) {
- 		clk_div[i].regmap = regmap;
-+		name = clk_div[i].hw.init->name;
- 		ret = devm_clk_hw_register(dev, &clk_div[i].hw);
- 		if (ret)
--			return dev_err_probe(dev, ret, "%s failed\n",
--					     clk_div[i].hw.init->name);
-+			return dev_err_probe(dev, ret,
-+					     "failed to register clock %s\n",
-+					     name);
- 	}
- 
- 	/* Register clk muxes */
-@@ -1088,10 +1098,12 @@ static int vc3_probe(struct i2c_client *client)
- 
- 			clk_data->bitmsk = data->se2_clk_sel_msk;
- 		}
-+		name = clk_mux[i].hw.init->name;
- 		ret = devm_clk_hw_register(dev, &clk_mux[i].hw);
- 		if (ret)
--			return dev_err_probe(dev, ret, "%s failed\n",
--					     clk_mux[i].hw.init->name);
-+			return dev_err_probe(dev, ret,
-+					     "failed to register clock %s\n",
-+					     name);
- 	}
- 
- 	/* Register clk outputs */
+ #define VC3_SE3_DIFF1_CTRL_REG		0x21
+ #define VC3_SE3_DIFF1_CTRL_REG_SE3_CLK_SEL	BIT(6)
 -- 
 2.51.0
 
