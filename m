@@ -1,68 +1,109 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA342DC79F;
-	Mon,  2 Mar 2026 12:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22557175A85;
+	Mon,  2 Mar 2026 12:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772452923; cv=none; b=UERy1LWwIJbWaPiY8ZKyoLQbsZr5NHrfWO372odlX0SLlmLHuGSIvEtUC2RCOoFgMdZUMkA1WRe1mdfcsfApi0hh5ZlVRE2N49JBcLTDo9ZLPShA3HLJw6OvhP9UfTBJmI7dqnBSkw82GS6MxA47ZnPTs1C9STkdG7IHL3qGoag=
+	t=1772454109; cv=none; b=fSYEIBWbOM9kvRzQ7C8pXjKui+Y5Fxpw+D9OmAHbmPg7t0wxQFdloEtshM9zmKa+jiiZp+xT0fKpujZIfIZHAJaloavzQgaQfz/NraQi8WGe4pWPykEHrGpcVDzsCShSLEkviAT3lDvuloMiQVoPdHGxmyultIAfnFM4rqK/6nQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772452923; c=relaxed/simple;
-	bh=xzgE2dy6h92Ku6TppARxUqQObTm1N2T5eDIFIwu5fc0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WP+qIKFadfPsL4NlAaxizIbKwlOMqdG80Wtmd2Ehul0f9gVlBabEk2MQQN+hDFzVgnDN4RvFgxKCOY6KKgXdrs4fOhbOfoGB0IOszZWdOweBXqXZ5hBqQbXD960B91xMHrfLX2meg4r2MzEJ0MnNXVqA/bo6fcPqAp71WPTHwMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=jIC4VcS6; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="jIC4VcS6"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=xzgE2dy6h92Ku6TppARxUqQObTm1N2T5eDIFIwu5fc0=; b=jIC4VcS67TJVEaF7+mGeSVWak4
-	7HYaZRR+Ar3D8UT5qeLfgIK6YNyYXQCOfY7fBDDMc89XC5jCy6FF1RG7uRdh1vUSvfvsa6CNTw5PX
-	uSkklaz8oaG7nH2AKXONcqiDP74DJ8PBivT4g6x5X3pKSWucKSe2CiAaqMAF2LQi65/dXDv0vlef6
-	IGpeY0+EsWqiLutxgtkfeQVv/ZmiULEsTizPrYOPbDyrbDvTOY8BDMW+TMFsMWTMxTur8mTNIfMzt
-	9WdjUr+9Mun8yu//A7wGtrYqRB++KbmqTPmTWVnOmg89zHaIL7VYTnpgjq8AwHMWFJTJCqSStaGoE
-	L9/bkYsQ==;
-From: Heiko Stuebner <heiko@sntech.de>
-To: Fabio Estevam <festevam@gmail.com>
-Cc: sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, linux-clk@vger.kernel.org, jonas@kwiboo.se,
- devicetree@vger.kernel.org, Fabio Estevam <festevam@nabladev.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Subject:
- Re: [PATCH v3 1/2] dt-bindings: clock: rockchip: Add RV1103B CRU support
-Date: Mon, 02 Mar 2026 13:01:56 +0100
-Message-ID: <1850487.VLH7GnMWUR@phil>
-In-Reply-To:
- <CAOMZO5AvymrELSnaHQ+cThcSDdPbayLPGwx-5YB18=0zm+oJ_w@mail.gmail.com>
-References:
- <20260210022620.172570-1-festevam@gmail.com> <32347982.43St1lv6Oq@diego>
- <CAOMZO5AvymrELSnaHQ+cThcSDdPbayLPGwx-5YB18=0zm+oJ_w@mail.gmail.com>
+	s=arc-20240116; t=1772454109; c=relaxed/simple;
+	bh=hY4/1V4CPkbzOM46xddbLCRjIns1Rne2oR81yNkRkMQ=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Zs4I+AmdVZGEnrx256SEazhMrm2xjZTnZ7Qlty/7b7bWlrXt4b6GHsRRB/3Z4wA+27U7p3yuwrb0qUdxhvJAniS4/hAeYLnMSeNlXAX0ft3vdu/4sffPPrqxPdP2BtOB4mB72fTGd/OzFNy3ySDjeqauPHGpiCfGslzsVigw97M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.224.150])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4fPdLq4LTKzHnGhl;
+	Mon,  2 Mar 2026 20:20:51 +0800 (CST)
+Received: from dubpeml500005.china.huawei.com (unknown [7.214.145.207])
+	by mail.maildlp.com (Postfix) with ESMTPS id 53AA54056B;
+	Mon,  2 Mar 2026 20:21:43 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml500005.china.huawei.com
+ (7.214.145.207) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 2 Mar
+ 2026 12:21:41 +0000
+Date: Mon, 2 Mar 2026 12:21:39 +0000
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Herve Codina <herve.codina@bootlin.com>
+CC: Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Geert
+ Uytterhoeven" <geert+renesas@glider.be>, Kalle Niemi <kaleposti@gmail.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Danilo
+ Krummrich <dakr@kernel.org>, Frank Li <Frank.Li@nxp.com>, "Sascha Hauer"
+	<s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, "Michael Turquette"
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, "Andi Shyti"
+	<andi.shyti@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Peter Rosin <peda@axentia.se>, "Arnd Bergmann" <arnd@arndb.de>, Saravana
+ Kannan <saravanak@kernel.org>, "Bjorn Helgaas" <bhelgaas@google.com>, Charles
+ Keepax <ckeepax@opensource.cirrus.com>, Richard Fitzgerald
+	<rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, "Linus
+ Walleij" <linusw@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, "Mark
+ Brown" <broonie@kernel.org>, Len Brown <lenb@kernel.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus
+	<sakari.ailus@linux.intel.com>, Davidlohr Bueso <dave@stgolabs.net>, "Dave
+ Jiang" <dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>, "Ira Weiny" <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>, "Shawn Guo" <shawnguo@kernel.org>,
+	Wolfram Sang <wsa@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<driver-core@lists.linux.dev>, <imx@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-pci@vger.kernel.org>, <linux-sound@vger.kernel.org>,
+	<patches@opensource.cirrus.com>, <linux-gpio@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+	<linux-acpi@vger.kernel.org>, <linux-cxl@vger.kernel.org>, Allan Nielsen
+	<allan.nielsen@microchip.com>, Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>, Luca Ceresoli
+	<luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v5 10/28] cxl/test: Use device_set_node()
+Message-ID: <20260302122139.00000041@huawei.com>
+In-Reply-To: <20260227135428.783983-11-herve.codina@bootlin.com>
+References: <20260227135428.783983-1-herve.codina@bootlin.com>
+	<20260227135428.783983-11-herve.codina@bootlin.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
+ dubpeml500005.china.huawei.com (7.214.145.207)
 
-Hey Fabio,
+On Fri, 27 Feb 2026 14:54:07 +0100
+Herve Codina <herve.codina@bootlin.com> wrote:
 
-Am Montag, 2. M=C3=A4rz 2026, 12:46:25 Mitteleurop=C3=A4ische Normalzeit sc=
-hrieb Fabio Estevam:
-> On Mon, Feb 23, 2026 at 11:21=E2=80=AFAM Heiko St=C3=BCbner <heiko@sntech=
-=2Ede> wrote:
->=20
-> > I generally pick up Rockchip clock changes anyway and then
-> > send PRs to the clock maintainers, so that'll work as always :-) .
->=20
-> Please let me know if you are OK with the RV1103B clock and dts series.
+> The code set directly dev->fwnode.
+> 
+> Use the dedicated helper to perform this operation.
+> 
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
 
-just didn't get that in the list yet, but applied now :-)
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
-Heiko
-
+> ---
+>  tools/testing/cxl/test/cxl.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/cxl/test/cxl.c b/tools/testing/cxl/test/cxl.c
+> index 81e2aef3627a..3d9107b2661c 100644
+> --- a/tools/testing/cxl/test/cxl.c
+> +++ b/tools/testing/cxl/test/cxl.c
+> @@ -1136,7 +1136,7 @@ static void mock_companion(struct acpi_device *adev, struct device *dev)
+>  {
+>  	device_initialize(&adev->dev);
+>  	fwnode_init(&adev->fwnode, NULL);
+> -	dev->fwnode = &adev->fwnode;
+> +	device_set_node(dev, &adev->fwnode);
+>  	adev->fwnode.dev = dev;
+>  }
+>  
 
