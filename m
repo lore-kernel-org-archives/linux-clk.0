@@ -1,147 +1,122 @@
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B025738552A
-	for <linux-clk@vger.kernel.org>; Mon,  2 Mar 2026 13:25:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6C643FD13B;
+	Mon,  2 Mar 2026 14:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772457928; cv=none; b=WkKNEdb/OxLED5U50NIgw3u32/PgvcKVD2z+7Dd9TVUs3jpYAnk35PkvS/cMspwJphp6UeRfALY7VcATh9BUBu62NHZO7zzFg8xLZu9lpLGBtO5ttyXN9VOul/sISCwKX1SD4PO/6kcUXvfcGeva8OTxnZbQ2y9I1YJOJjdfNN0=
+	t=1772461250; cv=none; b=LTTtUnSDzm0lyXtRxjUdl/bDu0TVSocEBAh7bz12Dt5AGwH6gMHvO6L0XzHo5VJ5aYz8rRurbVrQdkXTSAQV6qXE1nu5YnriEZJLx32Zv/fuiksAte+Mh7TJwCe7pw2YzQc2yf6EJK9+3v0OJD+y7S+o1+9b27NHJVwLkuuYoyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772457928; c=relaxed/simple;
-	bh=sgxnmhj2rQgljJRNTMAEIU71ZOKKmdvca0WN6HsSkl4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AwLWyzjwrFr3ANRuPGoBk2Iu7cv9dA6m/GxBbokKXfZUpgOV1Tc407ZYQkPueS1CCfpvyF/lE0891sI58rpJGGBC+UN5p9VTvKSLT9CJ8z5Y2Imq5kU8MKD6tRUPK1ZhUDjIvwwoXBZxiJ7gYYTyXpZXGjuXOX2ZSaDnnkoudSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-56a8ebde349so3809927e0c.1
-        for <linux-clk@vger.kernel.org>; Mon, 02 Mar 2026 05:25:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772457914; x=1773062714;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u/KgeLtXmZOUh5kr82wm/EePACuyTgS6gfBGBNvywTM=;
-        b=dPwM8+AmJu5A60FsnUSf4vxxwmQvRp8qISSOSgTNHe8QDHKTvb0zibQZOTi05rzqFd
-         U0MWsKaNeVXlStTOlLbO1OnhUSeFaTuC8ApDZjcW5Wi3VPxgHLuvMXozSD8XIrgimMbb
-         ZDev+GlctyeonqqxklkQfrqDU9IuBQUR7E57q2ycxg3cinM92tXuQMqGnXzfD7sCJJEe
-         bIQzNJiVR89DKU9ucN3X4h5g4FSWFyopBW1VqeZ1DZq/+rH0KAZqdDioigUi0FVt8vZJ
-         APA8/YNZMbjR98Ct5lLjvcA2TTasaHV8k9ONgtnitkZXZ8BOwD/MAQDeoNd9HUWfLC3l
-         c1dg==
-X-Forwarded-Encrypted: i=1; AJvYcCVWwsRdr3/Ex0oSki4HKNPnailKnpBid/B7q46iI1JePfle7mN3hwLzRZkjdNaGi+dHeFp1FRzfyQM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4YnYJ7Ga45kRAnZsBvll2+Mk8SEh7cE8T9DPLwFMIInT3dR3L
-	toY3LXZTA/kTraSW+zF6ygQ+VamflClf0J1TiDd0n32DPIS7EPKSk3R5WV9JvM09
-X-Gm-Gg: ATEYQzx+JKIAViKmrwYM1SzWYkel5SpaduIhUAdrREYJCGeO0l6ZwXytUdVAYfnwvEH
-	gwpk/9iIXit3RUEH4tF71IlEKH/g5DeV/tLeKRw/Ji/DdMM9e5B+BZ5bdYl5wnSc6O95LpvWp5C
-	1qryrY0JEKl5XgCV/t5MG3WC65Q1yxOxel8S5qAEKM84V6G/FGIrKffYu/wmH2Cry+/T7N+WWH7
-	uO3rJcDSqn9dNsEp1uTZEjJrzax2ijZR/RSBvF5TUcC/QlqZ/EEP6ABNSWrooHgjpFs9stKHJAL
-	pkQ6Fv7/f7JXYZRnE6O0APXTXHswRLAP2wBz+xiEhVeWC+m7cSGG1KRY/HkPQACcwQJcIwmV1+c
-	lnzjsaJD26ubHR+l1b1XRFz/gqCpfC+d9/BXx3CUEhmRd0FxmOgBv5Vjx+9ghkhB2Wpbg8E3got
-	ulri92FFcbv1/qyUg7gF5Uxq0w7xr5fgP/vycTcSkkwmeCzLOLbRAUrO2haUQC9GKkp5SYgdc=
-X-Received: by 2002:a05:6122:829f:b0:566:3954:f74e with SMTP id 71dfb90a1353d-56aa0a16848mr5655542e0c.5.1772457914284;
-        Mon, 02 Mar 2026 05:25:14 -0800 (PST)
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com. [209.85.217.46])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56a91bb97absm15307963e0c.6.2026.03.02.05.25.12
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Mar 2026 05:25:12 -0800 (PST)
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-5ff09bb668cso2960928137.0
-        for <linux-clk@vger.kernel.org>; Mon, 02 Mar 2026 05:25:12 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW+6OLsosue1JLviAHXddUt6Tt7J+Mf7CaNvJSobt0+twrBG+u/iuneQHNOpoRCmEp/0k5MUMQDlV0=@vger.kernel.org
-X-Received: by 2002:a05:6102:304c:b0:5ff:1d94:b746 with SMTP id
- ada2fe7eead31-5ff32519f2emr6218672137.27.1772457912000; Mon, 02 Mar 2026
- 05:25:12 -0800 (PST)
+	s=arc-20240116; t=1772461250; c=relaxed/simple;
+	bh=AZMbzgF0MBXEM33A7JxLatOxJLBIUtQdFwEpG1uKRco=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZjaP02FELUZGUOKKd7OxsxbII38hZftq54LmKFJJYNNEo9XQv5Gig2x6A6ZSjTHlm3iYBp63TPhgJZuG/XcM5ESBtnru3XsChYb4kl0EDy2xiqJe1tZUQQ6v6Uci9N4RStYiNgbdA+XSDIgCGmbdJtEZt4/3UXDtZVg72UC0jYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=lq71oCnF; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="lq71oCnF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1772461247; x=1803997247;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=AZMbzgF0MBXEM33A7JxLatOxJLBIUtQdFwEpG1uKRco=;
+  b=lq71oCnFwrN+08nHz8VnQoYtnNQ9eDz9B8wlWOoxTj4+ug/PxDrNuj2R
+   fx5LM3PdJcQe8wNE9bHgUqktHY5a26nCozxkuuVmh0+FulIHxa3fMgWzl
+   Zhh51yRWPnI4UM190N2qPCfI/SKzE0VOEnHRpYxYvaTetJD87BleFIal+
+   j0LQpfZqYVqg/I+FDFfI12vLhzRUQH/868JXMsL9VGUejHOPXv2HFx8q7
+   Tiyeat9YptbsG3o5QN8h8LH71H6tm3Z7LqqYJEYjpnv+BEEEHa8t0U8wX
+   hn6gVsQAUhjwKkeJ3sHntzou5pLX4H8zjpMdvjW0SZkkeckEaby5wP/mV
+   w==;
+X-CSE-ConnectionGUID: lE1TtW25TS6tGatQdMkbxQ==
+X-CSE-MsgGUID: JtovAiLOTAKBnZLIpVdlIA==
+X-IronPort-AV: E=Sophos;i="6.21,320,1763449200"; 
+   d="scan'208";a="61529580"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 02 Mar 2026 07:20:45 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Mon, 2 Mar 2026 07:20:29 -0700
+Received: from archlinux.mchp-main.com (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.58 via Frontend Transport; Mon, 2 Mar 2026 07:20:25 -0700
+From: Mihai Sain <mihai.sain@microchip.com>
+To: <mturquette@baylibre.com>, <sboyd@kernel.org>,
+	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>, <varshini.rajendran@microchip.com>,
+	<cristian.birsan@microchip.com>, <balamanikandan.gunasundar@microchip.com>,
+	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<ryan.wanner@microchip.com>, Mihai Sain <mihai.sain@microchip.com>
+Subject: [PATCH 3/4] clk: at91: sam9x7: Fix gmac_gclk clock definition
+Date: Mon, 2 Mar 2026 16:20:07 +0200
+Message-ID: <20260302142008.3253-4-mihai.sain@microchip.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260302142008.3253-1-mihai.sain@microchip.com>
+References: <20260302142008.3253-1-mihai.sain@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260227153225.2778358-1-cristian.marussi@arm.com>
-In-Reply-To: <20260227153225.2778358-1-cristian.marussi@arm.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 2 Mar 2026 14:25:00 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdW9dtAnT2E103kp1zK=LJrER7k1ib8_WPk5aorPRw80uQ@mail.gmail.com>
-X-Gm-Features: AaiRm50Tkxhc-oCHlHPyabn9QxR4wbHw_RTC9z1g5dQZe_w9JY9CV7dca6PXC-4
-Message-ID: <CAMuHMdW9dtAnT2E103kp1zK=LJrER7k1ib8_WPk5aorPRw80uQ@mail.gmail.com>
-Subject: Re: [PATCH 00/11] SCMI Clock rates discovery rework
-To: Cristian Marussi <cristian.marussi@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	arm-scmi@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, sudeep.holla@arm.com, 
-	philip.radford@arm.com, james.quinlan@broadcom.com, f.fainelli@gmail.com, 
-	vincent.guittot@linaro.org, etienne.carriere@foss.st.com, 
-	peng.fan@oss.nxp.com, michal.simek@amd.com, dan.carpenter@linaro.org, 
-	kuninori.morimoto.gx@renesas.com, marek.vasut+renesas@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Hi Cristian,
+According with datasheet [1] table 12.1 the instance ID 24 is used
+for gmac generic clock.
+This patch adds the correct gmac_gclk entry at ID 24, aligned with the
+SoC clock layout, and removes the old misplaced 67 entry.
 
-Thanks for your series!
+[1]: https://ww1.microchip.com/downloads/aemDocuments/documents/MPU32/ProductDocuments/DataSheets/SAM9X75-SIP-Series-Data-Sheet-DS60001827.pdf
 
-On Fri, 27 Feb 2026 at 16:33, Cristian Marussi <cristian.marussi@arm.com> wrote:
-> it was a known limitation, in the SCMI Clock protocol support, the lack of
-> dynamic allocation around per-clock rates discovery: fixed size statically
-> per-clock rates arrays did not scale and was increasingly a waste of memory
-> (see [1]).
->
-> This series aim at solving this in successive steps:
->
->  - simplify and reduce to the minimum possible the rates data info exposed
->    to the SCMI driver by scmi_clock_info
->  - move away from static fixed allocation of per-clock rates arrays in
->    favour of a completely dynamic runtime allocation: just allocate what
->    is needed based on the effectively discovered
->
-> This is done in patches 1-6.
->
-> A further bigger optimization suggested in a past series [1] by Etienne
+Fixes: 33013b43e271 ("clk: at91: sam9x7: add sam9x7 pmc driver")
 
-s/[1]/[2]/
+Signed-off-by: Mihai Sain <mihai.sain@microchip.com>
+---
+ drivers/clk/at91/sam9x7.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-> would be, whenever allowed by the spec, to limit upfront the number of
-> queries in order to simply retrieve min and max rate, that are indeed the
-> only rates needed by the CLK SCMI driver.
->
-> The approach proposed in [1] was open coding and duplicating some of the
-
-What does [1] refer to?
-
-> functionalities already provided by SCMI iterators, though.
->
-> Patch 7-10 implement such optimization instead by:
->
->  - reworking core SCMI iterators to support bound enumerations
->  - use such new bound iterators to perform the minimum number of queries
->    in order to ony retrieve min an max rate
->
-> As a final result now the rates enumeration triggered by the CLK SCMI
-> driver, while still allocating for all the existent rates, miminize the
-> number of SCMI CLK_DESCRIBE_RATE messages needed to obtain min and max.
->
-> Finally, patch 11 introduces a new clock protocol operation to be able to
-> trigger anytime on demand a full enumeration and obtain the full list of
-> rates when needed, not only min/max: this latter method is really only used
-> currently by some dowstream SCMI Test driver of mine.
->
-> Based on v7.0-rc1.
->
-> Tested on JUNO and an emulated environment.
-
-Thank you, this removes the need for increasing SCMI_MAX_NUM_RATES on
-R-Car X5H, while decreasing memory usage.
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-> [1]: https://lore.kernel.org/arm-scmi/aZsX-oplR6fiLBBN@pluto/T/#t
-> [2]: https://lore.kernel.org/20241203173908.3148794-2-etienne.carriere@foss.st.com
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/clk/at91/sam9x7.c b/drivers/clk/at91/sam9x7.c
+index 32c082b4ca4b..8b52da194849 100644
+--- a/drivers/clk/at91/sam9x7.c
++++ b/drivers/clk/at91/sam9x7.c
+@@ -568,6 +568,15 @@ static const struct {
+ 		.pp_chg_id = INT_MIN,
+ 	},
+ 
++	{
++		.n = "gmac_gclk",
++		.id = 24,
++		.pp = { "audiopll_divpmcck", "plla_div2pmcck", },
++		.pp_mux_table = { 6, 8, },
++		.pp_count = 2,
++		.pp_chg_id = INT_MIN,
++	},
++
+ 	{
+ 		.n = "lcd_gclk",
+ 		.id = 25,
+@@ -701,15 +710,6 @@ static const struct {
+ 		.pp_count = 1,
+ 		.pp_chg_id = INT_MIN,
+ 	},
+-
+-	{
+-		.n = "gmac_gclk",
+-		.id = 67,
+-		.pp = { "audiopll_divpmcck", "plla_div2pmcck", },
+-		.pp_mux_table = { 6, 8, },
+-		.pp_count = 2,
+-		.pp_chg_id = INT_MIN,
+-	},
+ };
+ 
+ static void __init sam9x7_pmc_setup(struct device_node *np)
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.53.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
