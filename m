@@ -1,41 +1,41 @@
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ADA0319871
-	for <linux-clk@vger.kernel.org>; Mon,  2 Mar 2026 22:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AF6C31E834
+	for <linux-clk@vger.kernel.org>; Mon,  2 Mar 2026 22:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772491462; cv=none; b=WAmvwmcaqNinqvyAXxwbFS1QptbYEA/xmQfPMfnPUwK3wzcdsxruQ9apFgGb3uKQYZwgrb0feqnCdyCosMm14CIOY1FWtDiq+28r4rbiVqgWR9cMFXNTYqMwQI7uf4DbTI3YDdX6BynM7crVnRMB6KcVPHP3Nr9Sh+lD3xqPVLQ=
+	t=1772492401; cv=none; b=IyOpeG2gVyxrfQMA5wFhr2fob+7qYEAmQOpyHSANlenJcSbanieAGpxvbiEW2qb7oVo8nq7oQqcwwQsEIMVK6X+9hXnjDW3UQRHwcg3KsTgzjlclW2x+VHsz4vIqH05GvJn8sWwLGd13nfkPUI9E8+ysuNNWy1dKKWHcXuMpm4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772491462; c=relaxed/simple;
-	bh=o0eB2ct4wNAt1+DliY/kotvNRSJAASpnfilBouLyGkY=;
+	s=arc-20240116; t=1772492401; c=relaxed/simple;
+	bh=mTf7y5mdJrDws9f9ehKayRWh/dPyzbKoAMyFm0B1Mck=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WejeF616Mjh5xCh9enpIxowFqd+9RKgWHCkpxjmpy4IDI+aN+QKCnf1nz6TwW0wd9zouS3736VaNGfM1mOJ6anx9vhQhMUCXbnqWrTYvJOeJPxg+7pn6GR+I1KRIysix8lyKzC7L1FwbKOLRZrawRC4Z24iVFpn3C6713/oyRYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=p8dexbwg; arc=none smtp.client-ip=212.227.15.18
+	 In-Reply-To:Content-Type; b=ODdoqsWoBiMwGrMcXUzmlfb10Wr371y4uAbkZjz6/ARyMKbJ75YZ81RBofDF36yDeN44JtEiXXUIXVP4EptI4sgwzzn9drbFT1G+WFnsp1V+CqJejLVkKYhmnPYwELFzGO3Ppjc8zdObtv5slKr5AR6c55HYFYyg9TXGIPT/UUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=JEvszFQ1; arc=none smtp.client-ip=212.227.15.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="p8dexbwg"
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="JEvszFQ1"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1772491437; x=1773096237; i=wahrenst@gmx.net;
-	bh=c8T4YCww+EZIzlhUopgp3ugCAlhE5XupPTFrter383o=;
+	s=s31663417; t=1772492380; x=1773097180; i=wahrenst@gmx.net;
+	bh=3i0kTk9h4Tm7QszjJIXjo1qFSidrNxe30HcG0SNcNOc=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
 	 References:From:In-Reply-To:Content-Type:
 	 Content-Transfer-Encoding:cc:content-transfer-encoding:
 	 content-type:date:from:message-id:mime-version:reply-to:subject:
 	 to;
-	b=p8dexbwgKKOCYpqqpuI9k3YgkqRc1Wn8K7xk85ItV1X7o9mXUqpgyv2KhtnYuGHa
-	 +wf4tGM/Uz9CIgGlQr1dQM6vtoLY++Q/qr0GoaFWr6qu5qyTS3pnFqNPMZc35MD6v
-	 sdCFRPMyZN1+Z0iIWv8p5gIWN1B2ZMH+7RmPLI8La/2Wwo4cFn/gxFM707c4n8e6T
-	 wGtaxeLKdgtULtRx5jQG80IVjbI8wHwgezSxogCCSNc8HmjITK7Ye1phmj97+x7pT
-	 8tSUQCgjrcCNp9+uR9jlf8+L8xOPpez7UgytNkz5/8k13hnQRdM+cyiOQOogT0smC
-	 rEZ+vbIfmFbMcD9FUA==
+	b=JEvszFQ12SGUs6t10r6bQup5LhwuGOfDoImIHInCZagXWRrnyeCsQea7a+h2223e
+	 ZX/44JSjAoUjuHkGXJkSFQEO/Mbf4SavOmpz0Hw7A0Ev9fjH9+JzO3781+BONAdBd
+	 /7zqMSXYfzMXOCROV4c9nRBTjRpxSAyW2x/EnCKT9iPhFRaSsDnm6FdBSlwi2m+Ks
+	 xqonoywC1BXJslk/bBEn1/c0EfNRDhgSulo6mTn3vTVKspewWVP/YoQbfDJ2k3Oxz
+	 xF9Jii+2+i8RwtjOY6wbgY7VnL5S3SFAUG39LyFBQJdeK/SV8JMW64sFjnn8kKLTv
+	 ifKteYBRT2wE6zGE1A==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
 Received: from client.hidden.invalid by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MXGvM-1wB2RP1Q8k-00M5M4; Mon, 02
- Mar 2026 23:43:57 +0100
-Message-ID: <1028109e-3b74-49fc-becb-4eca2f6bdda3@gmx.net>
-Date: Mon, 2 Mar 2026 23:43:56 +0100
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MXXuH-1wBJFD2kJz-00MLyB; Mon, 02
+ Mar 2026 23:59:40 +0100
+Message-ID: <1ac72f71-e742-4754-9400-4a7f26a8b52d@gmx.net>
+Date: Mon, 2 Mar 2026 23:59:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -43,8 +43,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/6] pmdomain: bcm: bcm2835-power: Increase ASB control
- timeout
+Subject: Re: [PATCH v6 6/6] drm/v3d: Introduce Runtime Power Management
 To: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Nicolas Saenz Julienne <nsaenz@kernel.org>,
@@ -59,7 +58,7 @@ Cc: linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
  Broadcom internal kernel review list
  <bcm-kernel-feedback-list@broadcom.com>, kernel-dev@igalia.com
 References: <20260218-v3d-power-management-v6-0-40683fd39865@igalia.com>
- <20260218-v3d-power-management-v6-3-40683fd39865@igalia.com>
+ <20260218-v3d-power-management-v6-6-40683fd39865@igalia.com>
 Content-Language: en-US
 From: Stefan Wahren <wahrenst@gmx.net>
 Autocrypt: addr=wahrenst@gmx.net; keydata=
@@ -71,152 +70,285 @@ Autocrypt: addr=wahrenst@gmx.net; keydata=
  f5QR/BrEK0hs3bLT6Hb9WgMBCAfCfgQYFggAJhYhBPcVeD4Cmw6E8M000W7C8svCIDCKBQJn
  V04kBQkHhM4AAhsMAAoJEG7C8svCIDCKJxoA/i+kqD5bphZEucrJHw77ujnOQbiKY2rLb0pE
  aHMQoiECAQDVbj827W1Yai/0XEABIr8Ci6a+/qZ8Vz6MZzL5GJosAA==
-In-Reply-To: <20260218-v3d-power-management-v6-3-40683fd39865@igalia.com>
+In-Reply-To: <20260218-v3d-power-management-v6-6-40683fd39865@igalia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:/dKO6vh4W+Eps9OgX+rV9aEaqsq/PRozC7CUP6kc/kH37O7pzFk
- tckrAynrTppoU9F2x3h1qM8tbXvbillHCQ2RS2g4gSeAHFaVCci6NLJPsOS3Jy4f+h0Bnc3
- KmGN1QUkd/Q3/I+RbxRdgRMAxqzmL3pmG9uKVi+7X+fpkPcpHnlESrYihgruiGOtSkobg3J
- WOBjo2uyY40UH43F8qTTw==
+X-Provags-ID: V03:K1:1h3Bzt16hbphMMQXb+zgTJ8MNFCC485TK5VhSAWsJxoz11vFXBt
+ WnOcRXjLD050pht+F8uwItJkeO3JdgNwP7Trv7LnpRXCYi2gj749STBYaQESbYFbHFR6RZ1
+ O25Rdw0v4m/Z6dYKk2sojqPrcHkWVQJYuDKcGR8Qf7JNftakTTSZcrcoj4VbVMW0BphmOQo
+ ykvQl8aP8XrX03aCE+ahg==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:x+yb4fqT2vo=;jjv6eA4H2HO+PdrPWtWgZSOrnTt
- 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
+UI-OutboundReport: notjunk:1;M01:P0:Tou9v1rMmD4=;ek/A2HueG+WPXgjF5SbLca7lFC0
+ 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
 
 Hi Ma=C3=ADra,
 
+just 2 nits.
+
 Am 18.02.26 um 21:45 schrieb Ma=C3=ADra Canal:
-> The bcm2835_asb_control() function uses a tight polling loop to wait
-> for the ASB bridge to acknowledge a request. During intensive workloads,
-> this handshake intermittently fails for V3D's master ASB on BCM2711,
-> resulting in "Failed to disable ASB master for v3d" errors during
-> runtime PM suspend. As a consequence, the failed power-off leaves V3D in
-> a broken state, leading to bus faults or system hangs on later accesses.
+> Commit 90a64adb0876 ("drm/v3d: Get rid of pm code") removed the last
+> bits of power management code that V3D had, which were actually never
+> hooked. Therefore, currently, the GPU clock is enabled during probe
+> and only disabled when removing the driver.
 >
-> As the timeout is insufficient in some scenarios, increase the polling
-> timeout from 1us to 5us, which is still negligible in the context of a
-> power domain transition. Also, move the start timestamp to after the
-> MMIO write, as the write latency is counted against the timeout,
-> reducing the effective wait time for the hardware to respond.
-so this bug has been discovered by this series and doesn't need to=20
-backported?
-I remember complete system freezes during suspend to idle causes by V3D=20
-on Raspberry CM4 [1]. But I never had the time to investigate further.
-
-Regardless, this patch is
-Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
-
-Thanks
-
-[1] -=20
-https://github.com/lategoodbye/linux-dev/commit/6af3f79da5b5a41b37aefa6abe=
-3d368c9ef09805=20
-
+> Implement proper power management using the kernel's Runtime PM
+> framework.
 >
 > Signed-off-by: Ma=C3=ADra Canal <mcanal@igalia.com>
 > ---
->   drivers/pmdomain/bcm/bcm2835-power.c | 5 ++---
->   1 file changed, 2 insertions(+), 3 deletions(-)
+>   drivers/gpu/drm/v3d/Makefile      |  3 +-
+>   drivers/gpu/drm/v3d/v3d_debugfs.c | 23 ++++++++++-
+>   drivers/gpu/drm/v3d/v3d_drv.c     | 84 ++++++++++++++++++-------------=
+=2D-------
+>   drivers/gpu/drm/v3d/v3d_drv.h     | 17 ++++++++
+>   drivers/gpu/drm/v3d/v3d_mmu.c     | 10 ++++-
+>   drivers/gpu/drm/v3d/v3d_perfmon.c | 18 +++++++--
+>   drivers/gpu/drm/v3d/v3d_power.c   | 83 +++++++++++++++++++++++++++++++=
++++++++
+>   drivers/gpu/drm/v3d/v3d_submit.c  | 19 +++++++--
+>   8 files changed, 198 insertions(+), 59 deletions(-)
 >
-> diff --git a/drivers/pmdomain/bcm/bcm2835-power.c b/drivers/pmdomain/bcm=
-/bcm2835-power.c
-> index 1d29addfe036348e82293693b4059e504bb25575..7b9eea10a24e26835deeca84=
-c60ccb616b99a508 100644
-> --- a/drivers/pmdomain/bcm/bcm2835-power.c
-> +++ b/drivers/pmdomain/bcm/bcm2835-power.c
-> @@ -166,8 +166,6 @@ static int bcm2835_asb_control(struct bcm2835_power =
-*power, u32 reg, bool enable
->   		break;
+> diff --git a/drivers/gpu/drm/v3d/Makefile b/drivers/gpu/drm/v3d/Makefile
+> index b7d673f1153bef16db3800e50b2bfaf36bf8871b..9cb1fd4e4091dbb56e6a73e2=
+b8a51fa0d242698b 100644
+> --- a/drivers/gpu/drm/v3d/Makefile
+> +++ b/drivers/gpu/drm/v3d/Makefile
+> @@ -13,7 +13,8 @@ v3d-y :=3D \
+>   	v3d_trace_points.o \
+>   	v3d_sched.o \
+>   	v3d_sysfs.o \
+> -	v3d_submit.o
+> +	v3d_submit.o \
+> +	v3d_power.o
+Please keep the alphabetical order.
+>  =20
+>   v3d-$(CONFIG_DEBUG_FS) +=3D v3d_debugfs.o
+>  =20
+...
+>  =20
+> diff --git a/drivers/gpu/drm/v3d/v3d_power.c b/drivers/gpu/drm/v3d/v3d_p=
+ower.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..f3d30ef5de4ea6ecdbd21c43=
+8b8af54bdf4d0dba
+> --- /dev/null
+> +++ b/drivers/gpu/drm/v3d/v3d_power.c
+> @@ -0,0 +1,83 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/* Copyright (C) 2026 Raspberry Pi */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/reset.h>
+> +
+> +#include <drm/drm_print.h>
+> +
+> +#include "v3d_drv.h"
+> +#include "v3d_regs.h"
+> +
+> +static void
+> +v3d_resume_sms(struct v3d_dev *v3d)
+> +{
+> +	if (v3d->ver < V3D_GEN_71)
+> +		return;
+> +
+> +	V3D_SMS_WRITE(V3D_SMS_TEE_CS, V3D_SMS_CLEAR_POWER_OFF);
+> +
+> +	if (wait_for((V3D_GET_FIELD(V3D_SMS_READ(V3D_SMS_TEE_CS),
+> +				    V3D_SMS_STATE) =3D=3D V3D_SMS_IDLE), 100)) {
+> +		drm_err(&v3d->drm, "Failed to power up SMS\n");
+> +	}
+> +
+> +	v3d_reset_sms(v3d);
+> +}
+> +
+> +static void
+> +v3d_suspend_sms(struct v3d_dev *v3d)
+> +{
+> +	if (v3d->ver < V3D_GEN_71)
+> +		return;
+> +
+> +	V3D_SMS_WRITE(V3D_SMS_TEE_CS, V3D_SMS_POWER_OFF);
+> +
+> +	if (wait_for((V3D_GET_FIELD(V3D_SMS_READ(V3D_SMS_TEE_CS),
+> +				    V3D_SMS_STATE) =3D=3D V3D_SMS_POWER_OFF_STATE), 100)) {
+> +		drm_err(&v3d->drm, "Failed to power off SMS\n");
+> +	}
+> +}
+> +
+> +int v3d_power_suspend(struct device *dev)
+> +{
+> +	struct drm_device *drm =3D dev_get_drvdata(dev);
+> +	struct v3d_dev *v3d =3D to_v3d_dev(drm);
+> +
+> +	v3d_irq_disable(v3d);
+> +	v3d_suspend_sms(v3d);
+> +
+> +	if (v3d->reset)
+> +		reset_control_assert(v3d->reset);
+Shouldn't we handle the error case?
+> +
+> +	clk_disable_unprepare(v3d->clk);
+> +
+> +	return 0;
+> +}
+> +
+> +int v3d_power_resume(struct device *dev)
+> +{
+> +	struct drm_device *drm =3D dev_get_drvdata(dev);
+> +	struct v3d_dev *v3d =3D to_v3d_dev(drm);
+> +	int ret;
+> +
+> +	ret =3D clk_prepare_enable(v3d->clk);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (v3d->reset) {
+> +		ret =3D reset_control_deassert(v3d->reset);
+> +		if (ret)
+> +			goto clk_disable;
+> +	}
+> +
+> +	v3d_resume_sms(v3d);
+> +	v3d_mmu_set_page_table(v3d);
+> +	v3d_irq_enable(v3d);
+> +
+> +	return 0;
+> +
+> +clk_disable:
+> +	clk_disable_unprepare(v3d->clk);
+> +	return ret;
+> +}
+> diff --git a/drivers/gpu/drm/v3d/v3d_submit.c b/drivers/gpu/drm/v3d/v3d_=
+submit.c
+> index 794c3571662de7eb566bf4c0561571d7618dd234..fea7573505cd0d2b84d21efd=
+a88ed4da657d18d4 100644
+> --- a/drivers/gpu/drm/v3d/v3d_submit.c
+> +++ b/drivers/gpu/drm/v3d/v3d_submit.c
+> @@ -103,6 +103,9 @@ v3d_job_free(struct kref *ref)
+>   	if (job->perfmon)
+>   		v3d_perfmon_put(job->perfmon);
+>  =20
+> +	if (job->has_pm_ref)
+> +		v3d_pm_runtime_put(job->v3d);
+> +
+>   	kfree(job);
+>   }
+>  =20
+> @@ -184,13 +187,13 @@ v3d_job_init(struct v3d_dev *v3d, struct drm_file =
+*file_priv,
+>   				if (copy_from_user(&in, handle++, sizeof(in))) {
+>   					ret =3D -EFAULT;
+>   					drm_dbg(&v3d->drm, "Failed to copy wait dep handle.\n");
+> -					goto fail_deps;
+> +					goto fail_job_init;
+>   				}
+>   				ret =3D drm_sched_job_add_syncobj_dependency(&job->base, file_priv=
+, in.handle, 0);
+>  =20
+>   				// TODO: Investigate why this was filtered out for the IOCTL.
+>   				if (ret && ret !=3D -ENOENT)
+> -					goto fail_deps;
+> +					goto fail_job_init;
+>   			}
+>   		}
+>   	} else {
+> @@ -198,14 +201,22 @@ v3d_job_init(struct v3d_dev *v3d, struct drm_file =
+*file_priv,
+>  =20
+>   		// TODO: Investigate why this was filtered out for the IOCTL.
+>   		if (ret && ret !=3D -ENOENT)
+> -			goto fail_deps;
+> +			goto fail_job_init;
+> +	}
+> +
+> +	/* CPU jobs don't require hardware resources */
+> +	if (queue !=3D V3D_CPU) {
+> +		ret =3D v3d_pm_runtime_get(v3d);
+> +		if (ret)
+> +			goto fail_job_init;
+> +		job->has_pm_ref =3D true;
 >   	}
 >  =20
-> -	start =3D ktime_get_ns();
-> -
->   	/* Enable the module's async AXI bridges. */
->   	if (enable) {
->   		val =3D readl(base + reg) & ~ASB_REQ_STOP;
-> @@ -176,9 +174,10 @@ static int bcm2835_asb_control(struct bcm2835_power=
- *power, u32 reg, bool enable
->   	}
->   	writel(PM_PASSWORD | val, base + reg);
+>   	kref_init(&job->refcount);
 >  =20
-> +	start =3D ktime_get_ns();
->   	while (!!(readl(base + reg) & ASB_ACK) =3D=3D enable) {
->   		cpu_relax();
-> -		if (ktime_get_ns() - start >=3D 1000)
-> +		if (ktime_get_ns() - start >=3D 5000)
->   			return -ETIMEDOUT;
->   	}
+>   	return 0;
 >  =20
+> -fail_deps:
+> +fail_job_init:
+>   	drm_sched_job_cleanup(&job->base);
+>   	return ret;
+>   }
 >
 
