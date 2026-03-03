@@ -1,184 +1,112 @@
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F254347F2EA
-	for <linux-clk@vger.kernel.org>; Tue,  3 Mar 2026 14:58:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869CD39EF27
+	for <linux-clk@vger.kernel.org>; Tue,  3 Mar 2026 15:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772549929; cv=none; b=K0CEMn/gAGRcanQJwvQCQ0ZnsjGDHDjIhdGNNAZgTZlGJqPMpcDsw9a9spLpAqocoADik82o1ZONnDoF4z9BN25CJGXLoKzKlVlRu5YxPPCD+00kk2AyhPDX3HgZllFK/iBHqXPHexL7Wp3u1TwZs28dnft4bcn+13SseCAeFlI=
+	t=1772550143; cv=none; b=AswjmkL+KKDSJjtwbpIbOf01ELeFXZQEKua0STzLaW3WUMXc6tACyuNVm10/FUN8acv+Kx5YV0XoYx/+EembdCulPDvRNR38s2cIZ18e0vwYL/l/Rt8Bo3zyWyldmqr+Ajb/AaEWJMwsMDWrDdTIM1N8IcFjWds4Z+EoBkFVd+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772549929; c=relaxed/simple;
-	bh=oGjc1yjeiIqz4fk/uBDQWtGhcY0iItbRMgLP4C00KAw=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=qEDK81W+R7TyUDpfPDMo9sGLh3Bl83fGjX2Cvg/gwBASkV8ueJA5S7+2QN4hTpSs4L9aMMh7jNBwqQGdJFRMWNwPqs8VIObXdwGFaEqvHAZuCQZoBpU83ZnwdUSsobgFsFGVlH1bGizwzK3b5vrESuLizINCCVXWg5xHhGo5zIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LveiTJjN; arc=none smtp.client-ip=209.85.208.175
+	s=arc-20240116; t=1772550143; c=relaxed/simple;
+	bh=gNqnLiUMRF06kVmMGIoKoKFFh7FWu50PSgdQBYVwVXo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g1PCb1WeObjBUp/l+rstULk63fpSAdZaUW4p4lCbZQdkMd6Jp2cP0pLtSGr+KeMri3I32h60IHs1KKXGxMTPjc3wWmtPuMXGvmsSPGtVofT1XUg5wRPws/8j2F3ZY5Jbck+/ilYOPplrEz6F2AEag455XxG9gjRLji1V7GvIXXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=It7AjH2a; arc=none smtp.client-ip=209.85.215.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LveiTJjN"
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-389f9895c81so34366991fa.2
-        for <linux-clk@vger.kernel.org>; Tue, 03 Mar 2026 06:58:45 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="It7AjH2a"
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-c06cb8004e8so2236126a12.0
+        for <linux-clk@vger.kernel.org>; Tue, 03 Mar 2026 07:02:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772549924; x=1773154724; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oGjc1yjeiIqz4fk/uBDQWtGhcY0iItbRMgLP4C00KAw=;
-        b=LveiTJjNXx5hPNvBlBSnvouKNtULsS930y+9lYTIz0ur59YAQK7guIOg6a0J4M4toT
-         awLTA2i7sR8LN9EhZvoi5ZnVNxcpk4B1ck1z9aOvPluM1ywHwjMLcmN8FC7lQsu6w4zI
-         xTu1DidaNqIdXgj8C3RAERdLJLmjDd8PVaZY3pF3KuQR95d60HDUA4NozaDCq/1NgoZc
-         V3uiyI8EaJ172xFb8kc9+L1xswUS2mByrvyuIJqfsTKiP1QMsbtVzL6mpAt9yYnsr8+c
-         2r1AEd2/cQhW1bg5BdXdgFy4+dobuUmpoHmRy/aVb1M6h5N7e5dNZViz+9tNR6Z35+CY
-         LdZg==
+        d=gmail.com; s=20230601; t=1772550142; x=1773154942; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JbEJcsuZwESDaLeDaKVaWHRTkzFmd5Ebe6jUtHes1/I=;
+        b=It7AjH2au4TsGUZrE3drgl/k5w2M+16/U5SjiegC+cbrmHk3OXlyqS3DWuDS48BcR6
+         Cem0j/Q5zLTD+fkizfQF9++Li9dOhbJxqD+9f3xVmDCjCdMj2ARN3oPLxqd8VT4wNBXt
+         ybGzXeY8AKnjmfJW8KqIwlFRQ4+Hy4B8ytYtjexiA+gWk1IkrOQThgzj0Vrdb8ye33zX
+         ARho99eWbHvsbyc7Kl+pUH5zHCLSu1deF6lwKnehTaYyuiAGGDtg6jYCpbeSO/CoTp52
+         NBZGuKJvhnqyg+AyC4S8jURJ7Yg4MIAl911nMi7fNnLhyoxIq/7vloGTsiNTCDAAec7n
+         xgVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772549924; x=1773154724;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oGjc1yjeiIqz4fk/uBDQWtGhcY0iItbRMgLP4C00KAw=;
-        b=XxJmpm4GCNwZTcKJDSwF2osDEXDM35iwQ+2+ONd87TPoseZFSdRgBeC8imVOWVUsWG
-         3n40yz6IJZ/FBZo3CEJX+E+qNNIEBZ5Duem2X0/qkEYnZe0tPeWDkrhsVFViyuyqv0Nm
-         vfpZtOT6XEH7G11wtVpNpvdXDQkkZhnIzLb8jSABWXVOt0UWq2iwBX3jM5M1EOaOThEP
-         hW06ZBEruoEPfoO7mDlB9OQxwuziS9NymnXCGPBdQjK/aW/N7kuH6utZCYhl6jar2+8+
-         hru6G0CRZcw023QezDqv+cow5WWIFJ//RZj2UNOhFXRYufF9e59Ja6uwbd3SIpAk58us
-         3oSg==
-X-Forwarded-Encrypted: i=1; AJvYcCWnJcM98YfMbnmSMoDPkXZWzTy2CXwyh3VzsywV9vBL21RAXDubjQfJAByt4yvbPHAorJiwjoXsfvY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFzeYKUHUytZIrA0ObL2jFrZuaUM12xPvZHuKK1jenZrdjq89C
-	fT4AgicOA7TkPaRifSu5Y0XJwgtB2MhgInWVAc5UJ7OJYNicaOpp4Z2u
-X-Gm-Gg: ATEYQzzFfu8dei3urbHCuhxDERm+iAZMvRWBIwIyVZ+fci70+Hq/EeZdxqEyunbvD8q
-	QvssaHCbhC8aZBbEeiSiyHJddtNKh+5aL86h0WHhB7YN2mO5tC26+R/htAotZY14sD1pohO3ZiI
-	VqCXuxQLcFjjJds3dmEan/paErHUR1+qYDAqg3vm7EgcX4hnUY0utMgAeb/w9LwqT7woRQ5AKLX
-	S0aDkgPrumOhG1MKKyolNvGJ1kDWEeAX4oeFyx+ewu/CuCvH5CT+b0LppJ9y4bj1ehsZFX2BKDW
-	b3AW4LLRHNBVyEni8CtChenZfGi9nXMV9pjzQgwUvGKLux5NfeJ/bUXxrlWSySnFeQJIlgM6Xvv
-	HgbAV7wN0SiDhACjtj8NTjbYwZw/sr2LrQkg3pLVtGzNUzbA/yvTxxpZmpb4hBVlScAW6/eWku2
-	36PVWnbyaUmeFTxQZRBZkGRLaB4KFhKje7scgig/pQx9dEpiMjB3fKDxaJQF+tnKfsJTNTMUay3
-	/A9rI34Lf4P+qcu2glpmHaHeD7Zy23SLv0LIHbELgWth8c=
-X-Received: by 2002:a2e:80cf:0:b0:37b:aaf7:f022 with SMTP id 38308e7fff4ca-389ff3644bemr93473051fa.35.1772549923580;
-        Tue, 03 Mar 2026 06:58:43 -0800 (PST)
-Received: from smtpclient.apple (2001-14ba-437-c00-1991-9ef0-d3f1-621a.rev.dnainternet.fi. [2001:14ba:437:c00:1991:9ef0:d3f1:621a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a124d7fd31sm359172e87.68.2026.03.03.06.58.41
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 03 Mar 2026 06:58:43 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+        d=1e100.net; s=20230601; t=1772550142; x=1773154942;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JbEJcsuZwESDaLeDaKVaWHRTkzFmd5Ebe6jUtHes1/I=;
+        b=XnusAidJxt/25bjfo7SRFKXYZQHYno916ELAxLqU1XzdjWD874FNuQBHKnfBvej4+m
+         hWuNProJpJC7qFYJEnKt7R1LmSsopEsfoWL8Rs9YmOd+ax65hIijplHvxY9QLrl6rABD
+         zwoL/LdJGbZTMi83YBpzgMlpqW3B/4MRJHSKEuMk7I+xZGskwoxeUHo2lDpv8sBicCLz
+         uHiYu0zI3eENn5RxAtZ+7FKxE2s5X2A+36fawMzT3uQb8VHLnPuhu5qRpXq8Ek9JYjx6
+         mpIbT+dH1BWIsCB4s+vwMbUBzN88jmS8pzxHUhVyuMSG7yC/wH7tf0Sod32PX2OWdsIv
+         CT3w==
+X-Forwarded-Encrypted: i=1; AJvYcCXlhqD4/4XfnC3rB5hJr3Efsoq6qYew6LrIv14uSgnFzDN12knjyjNtjFKPDYrcrePLiq8efNdZsV8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8UzTmlJ/zxdDMLnMvcFaClOpmffO1gMDDvJinjqQqSN5ExY8c
+	zYY2qzUezlKy+PxiRz6g6B2RwuwkvofDtoJBRaF3SLPdZFxvTg3szuv5
+X-Gm-Gg: ATEYQzzP8PKf0xQjqCCKrCYNKN2AHgpgDIesRrlJfFc3M1yiPEHWsbzUkNR4oF28zVF
+	CfEQ8H7fjFS3jlMybJDDYihdTdJkY2N3aikgrg1cD9V2Ai4YDGK5l8ywHHtnd/AIWa48ewkfuZI
+	A1AJrfNa2LcOb5LiuaE1jfPAd/hiWKnkd5XiL5BisyQFpah9BpbngqBUPKpLYUTmUi9g9m2+Z2a
+	ZlSew0QUf5IRrZWjNkrx8g691YjLfZjnToHX9fF4F4xdw2uEMKz10R55pBCdIIRgYi/YhVsmJ0M
+	KQsrirWZTpQED2wDmN/42IFevM80+f8+mNtwC6t1ZUg3QVl4VtOBcpuA2mqgdHREiqgmZA5oS3s
+	oP7l2xpYTR72A5BDAZzjGhMXY7Z0dXIFRI8+j9oHq7p3yO7VLs21RZxEegooS/zGaVpmlE0oZRa
+	tCWySfhNaRF21B7iYUaQ==
+X-Received: by 2002:a17:902:d4c1:b0:2ae:4d44:c647 with SMTP id d9443c01a7336-2ae4d44c8b5mr92904595ad.37.1772550140806;
+        Tue, 03 Mar 2026 07:02:20 -0800 (PST)
+Received: from nuvole ([89.185.27.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ae5229cda1sm76226775ad.23.2026.03.03.07.02.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Mar 2026 07:02:18 -0800 (PST)
+From: Pengyu Luo <mitltlatltl@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Pengyu Luo <mitltlatltl@gmail.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: qcom: dispcc-sc8280xp: Don't park mdp_clk_src at registration time
+Date: Tue,  3 Mar 2026 23:01:51 +0800
+Message-ID: <20260303150152.90685-1-mitltlatltl@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3864.400.21\))
-Subject: Re: [PATCH v5 03/28] of: dynamic: Fix overlayed devices not probing
- because of fw_devlink
-From: Kalle Niemi <kaleposti@gmail.com>
-In-Reply-To: <20260227135428.783983-4-herve.codina@bootlin.com>
-Date: Tue, 3 Mar 2026 16:58:30 +0200
-Cc: Andrew Lunn <andrew@lunn.ch>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Matti Vaittinen <mazziesaccount@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Danilo Krummrich <dakr@kernel.org>,
- Frank Li <Frank.Li@nxp.com>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Andi Shyti <andi.shyti@kernel.org>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Peter Rosin <peda@axentia.se>,
- Arnd Bergmann <arnd@arndb.de>,
- Saravana Kannan <saravanak@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Charles Keepax <ckeepax@opensource.cirrus.com>,
- Richard Fitzgerald <rf@opensource.cirrus.com>,
- David Rhodes <david.rhodes@cirrus.com>,
- Linus Walleij <linusw@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Mark Brown <broonie@kernel.org>,
- Len Brown <lenb@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Daniel Scally <djrscally@gmail.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>,
- Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Shawn Guo <shawnguo@kernel.org>,
- Wolfram Sang <wsa@kernel.org>,
- linux-kernel@vger.kernel.org,
- driver-core@lists.linux.dev,
- imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org,
- linux-i2c@vger.kernel.org,
- devicetree@vger.kernel.org,
- linux-pci@vger.kernel.org,
- linux-sound@vger.kernel.org,
- patches@opensource.cirrus.com,
- linux-gpio@vger.kernel.org,
- linux-pm@vger.kernel.org,
- linux-spi@vger.kernel.org,
- linux-acpi@vger.kernel.org,
- linux-cxl@vger.kernel.org,
- Allan Nielsen <allan.nielsen@microchip.com>,
- Horatiu Vultur <horatiu.vultur@microchip.com>,
- Steen Hegelund <steen.hegelund@microchip.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Saravana Kannan <saravanak@google.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <E7575FC9-7D0D-43E8-A477-4DEE79101C13@gmail.com>
-References: <20260227135428.783983-1-herve.codina@bootlin.com>
- <20260227135428.783983-4-herve.codina@bootlin.com>
-To: Herve Codina <herve.codina@bootlin.com>
-X-Mailer: Apple Mail (2.3864.400.21)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On 27. Feb 2026, at 15.54, Herve Codina <herve.codina@bootlin.com> =
-wrote:
->=20
-> From: Saravana Kannan <saravanak@google.com>
->=20
-> When an overlay is applied, if the target device has already probed
-> successfully and bound to a device, then some of the fw_devlink logic
-> that ran when the device was probed needs to be rerun. This allows =
-newly
-> created dangling consumers of the overlayed device tree nodes to be
-> moved to become consumers of the target device.
->=20
-> Fixes: 1a50d9403fb9 ("treewide: Fix probing of devices in DT =
-overlays")
-> Reported-by: Herve Codina <herve.codina@bootlin.com>
-> Closes: =
-https://lore.kernel.org/lkml/CAMuHMdXEnSD4rRJ-o90x4OprUacN_rJgyo8x6=3D9F9r=
-Z+-KzjOg@mail.gmail.com/
-> Closes: =
-https://lore.kernel.org/all/20240221095137.616d2aaa@bootlin.com/
-> Closes: =
-https://lore.kernel.org/lkml/20240312151835.29ef62a0@bootlin.com/
-> Signed-off-by: Saravana Kannan <saravanak@google.com>
-> Link: =
-https://lore.kernel.org/lkml/20240411235623.1260061-3-saravanak@google.com=
-/
-> [Herve: Rebase on top of recent kernel and use =
-get_device_from_fwnode()]
-> [Herve: Add the call to driver_deferred_probe_trigger()]
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
->=20
+Parking disp{0,1}_cc_mdss_mdp_clk_src clk broke simplefb on HUAWEI
+Gaokun3, the image will stuck at grey for seconds until msm takes
+over framebuffer. Use clk_rcg2_shared_no_init_park_ops to skip it.
 
-Hello Herv=C3=A9,
+Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
+---
+ drivers/clk/qcom/dispcc-sc8280xp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Tested this patch series with BeagleBone Black and all tests pass. =
-bd718x7 driver probes.
+diff --git a/drivers/clk/qcom/dispcc-sc8280xp.c b/drivers/clk/qcom/dispcc-sc8280xp.c
+index e91dfed0f..acc927c21 100644
+--- a/drivers/clk/qcom/dispcc-sc8280xp.c
++++ b/drivers/clk/qcom/dispcc-sc8280xp.c
+@@ -977,7 +977,7 @@ static struct clk_rcg2 disp0_cc_mdss_mdp_clk_src = {
+ 		.name = "disp0_cc_mdss_mdp_clk_src",
+ 		.parent_data = disp0_cc_parent_data_5,
+ 		.num_parents = ARRAY_SIZE(disp0_cc_parent_data_5),
+-		.ops = &clk_rcg2_shared_ops,
++		.ops = &clk_rcg2_shared_no_init_park_ops,
+ 	},
+ };
+ 
+@@ -991,7 +991,7 @@ static struct clk_rcg2 disp1_cc_mdss_mdp_clk_src = {
+ 		.name = "disp1_cc_mdss_mdp_clk_src",
+ 		.parent_data = disp1_cc_parent_data_5,
+ 		.num_parents = ARRAY_SIZE(disp1_cc_parent_data_5),
+-		.ops = &clk_rcg2_shared_ops,
++		.ops = &clk_rcg2_shared_no_init_park_ops,
+ 	},
+ };
+ 
+-- 
+2.53.0
 
-Tested-by: Kalle Niemi <kaleposti@gmail.com>
-
-BR
-Kalle=
