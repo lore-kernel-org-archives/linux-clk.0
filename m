@@ -1,44 +1,43 @@
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46DFC32D45C;
-	Tue,  3 Mar 2026 12:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E22A35DA74;
+	Tue,  3 Mar 2026 12:49:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772542088; cv=none; b=QHS9EAJ07YcGM6uTPHQmpkpEKRCAMpyNHVzCuXO3SqOpAGKnaobpgkSKtYE+dZ0iIvb8QeQ8ZwDiAZPH1okiOZjTYQqpb/rxj+qSE6ZMvcJcNNz3lMQ8CA8lzukma/Pv52QyVavVNH/SM+6HEPDGv4JwHfUuzMSlH2ZAM0WOEtE=
+	t=1772542168; cv=none; b=qBS8TDziHa+PCKy54ZKqARElx63bW7+CCOIzuyIO7+ZwUv/3ys9L0dTYrOqSfZsVAquHQLcgMI79VkMigfwZGucmCXABZCC1TBzaiHco9IUk+KpsFerp+6ghvT4X7BbVlrztrczObJZKjgZ+vpkvvLIey1d/Ey1mDizehL6bc50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772542088; c=relaxed/simple;
-	bh=5NgeH5OoINRp8crMWTINcSNzZJt9T+xHhKJlmRvfwSI=;
+	s=arc-20240116; t=1772542168; c=relaxed/simple;
+	bh=s7j0fbso4tsBG06xVlpLLWWbus6SBHjGxZWYTvaqeSw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zm8yMMq9LvtJa+Dh8i00ottklJBi98vm4hCwZhnVT9sLlBcT1KWTDyU+naPX8I61g43tOwW3ylQ6chtOQxuxkjVMovC92U45uFOpdmahQ4TTziHqVIzNSofB+lz1CU1AqXgAp05oCXw4tZwz4VxAMmD6csJKqdUncFbSv+7ZlXU=
+	 Content-Type:Content-Disposition:In-Reply-To; b=X3V3w3QR2aPHPUu6Z7es1ef5tMZS1pyKc86JjLtivRilembVm0WQLLl3glvlRvSy9bbRqvxY63lCUWd+SutrhfmWJr/7/c7cKueG+9cSsw6s6E5F8Kof4IkGKSdbotdvGl1QQNOlKLMqnoOriOnKhDtn0ZI2tb5wi9VLSnJX+zw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 33056497;
-	Tue,  3 Mar 2026 04:48:00 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5279B497;
+	Tue,  3 Mar 2026 04:49:16 -0800 (PST)
 Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 004193F7BD;
-	Tue,  3 Mar 2026 04:48:01 -0800 (PST)
-Date: Tue, 3 Mar 2026 12:47:58 +0000
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F2EE73F7BD;
+	Tue,  3 Mar 2026 04:49:17 -0800 (PST)
+Date: Tue, 3 Mar 2026 12:49:14 +0000
 From: Cristian Marussi <cristian.marussi@arm.com>
-To: Brian Masney <bmasney@redhat.com>
-Cc: Peng Fan <peng.fan@oss.nxp.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
 	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	arm-scmi@vger.kernel.org, linux-clk@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org, sudeep.holla@arm.com,
 	philip.radford@arm.com, james.quinlan@broadcom.com,
 	f.fainelli@gmail.com, vincent.guittot@linaro.org,
-	etienne.carriere@foss.st.com, michal.simek@amd.com,
-	dan.carpenter@linaro.org, geert+renesas@glider.be,
-	kuninori.morimoto.gx@renesas.com, marek.vasut+renesas@gmail.com,
+	etienne.carriere@foss.st.com, peng.fan@oss.nxp.com,
+	michal.simek@amd.com, dan.carpenter@linaro.org,
+	geert+renesas@glider.be, kuninori.morimoto.gx@renesas.com,
+	marek.vasut+renesas@gmail.com, Brian Masney <bmasney@redhat.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>
 Subject: Re: [PATCH 02/11] clk: scmi: Use new determine_rate clock operation
-Message-ID: <aabYfgvXh2QtPDWR@pluto>
+Message-ID: <aabYyj5Xh-kFWBzw@pluto>
 References: <20260227153225.2778358-1-cristian.marussi@arm.com>
  <20260227153225.2778358-3-cristian.marussi@arm.com>
- <aaI9JBwWaMmfBbd/@shlinux89>
- <aaXEtNilpRYhwmYc@redhat.com>
+ <CAMuHMdVCgq4Wbm8g_O9e1sPhJ4PyY-nWTt9RW1f3=G3a0PvdKA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,57 +46,64 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aaXEtNilpRYhwmYc@redhat.com>
+In-Reply-To: <CAMuHMdVCgq4Wbm8g_O9e1sPhJ4PyY-nWTt9RW1f3=G3a0PvdKA@mail.gmail.com>
 
-On Mon, Mar 02, 2026 at 12:11:16PM -0500, Brian Masney wrote:
-> On Sat, Feb 28, 2026 at 08:56:04AM +0800, Peng Fan wrote:
-> > On Fri, Feb 27, 2026 at 03:32:16PM +0000, Cristian Marussi wrote:
-> > >Use the Clock protocol layer determine_rate logic to calculate the closest
-> > >rate that can be supported by a specific clock.
-> > >
-> > >No functional change.
-> > >
-> > >Cc: Brian Masney <bmasney@redhat.com>
-> > >Cc: Michael Turquette <mturquette@baylibre.com>
-> > >Cc: Stephen Boyd <sboyd@kernel.org>
-> > >Cc: linux-clk@vger.kernel.org
-> > >Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
-> > >---
-> > >Note that the calculation logic in the protocol layer is exactly the same
-> > >as it wes here.
-> > >
-> > >@Brian I suppose once your CLK_ROUNDING_FW_MANAGED sereis is merged I can flag
-> > >such SCMI clocks.
-> > 
-> > Per my reading of Brain's thread, if ->determine_rate exists,
-> > ->determine_rate() will be used.
-> > 
-> >  	} else if (core->ops->determine_rate) {
-> >  		return core->ops->determine_rate(core->hw, req);
-> > +	} else if (clk_is_rounding_fw_managed(core)) {
-> > +		return 0;
-> > 
-> > So unless update scmi_clk_determine_rate() to something:
-> > --------
-> > if (clk & CLK_ROUNDING_FW_MANAGED)
-> > 	return 0;
-> > 
-> > return scmi_proto_clk_ops->determine_rate(clk->ph, clk->id, &req->rate);
-> > --------
-> > 
-> > It maybe better to update Brain's patch to move clk_is_rounding_fw_managed()
-> > above the check of core->ops->determine_rate().
+On Mon, Mar 02, 2026 at 01:39:51PM +0100, Geert Uytterhoeven wrote:
+> Hi Cristian,
 > 
-> The clk framework has some basic sanity checks in place that are called
-> during device probe to ensure that various ops are configured properly. I
-> could add a check that if CLK_ROUNDING_FW_MANAGED [*] is set, and a
-> determine_rate() op is set, then it gives an error.
+> On Fri, 27 Feb 2026 at 16:33, Cristian Marussi <cristian.marussi@arm.com> wrote:
+> > Use the Clock protocol layer determine_rate logic to calculate the closest
+> > rate that can be supported by a specific clock.
+> >
+> > No functional change.
+> >
+> > Cc: Brian Masney <bmasney@redhat.com>
+> > Cc: Michael Turquette <mturquette@baylibre.com>
+> > Cc: Stephen Boyd <sboyd@kernel.org>
+> > Cc: linux-clk@vger.kernel.org
+> > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
 > 
-> [*] Note: I am tentatively planning to rename that to CLK_ROUNDING_NOOP
-> in v2 in about a week.
+> > --- a/drivers/clk/clk-scmi.c
+> > +++ b/drivers/clk/clk-scmi.c
+> > @@ -57,35 +56,17 @@ static unsigned long scmi_clk_recalc_rate(struct clk_hw *hw,
+> >  static int scmi_clk_determine_rate(struct clk_hw *hw,
+> >                                    struct clk_rate_request *req)
+> >  {
+> > -       u64 fmin, fmax, ftmp;
+> > +       int ret;
+> >         struct scmi_clk *clk = to_scmi_clk(hw);
+> >
+> >         /*
+> > -        * We can't figure out what rate it will be, so just return the
+> > -        * rate back to the caller. scmi_clk_recalc_rate() will be called
+> > -        * after the rate is set and we'll know what rate the clock is
+> > +        * If we could not get a better rate scmi_clk_recalc_rate() will be
+> > +        * called after the rate is set and we'll know what rate the clock is
+> >          * running at then.
+> >          */
+> > -       if (clk->info->rate_discrete)
+> > -               return 0;
+> > -
+> > -       fmin = clk->info->range.min_rate;
+> > -       fmax = clk->info->range.max_rate;
+> > -       if (req->rate <= fmin) {
+> > -               req->rate = fmin;
+> > -
+> > -               return 0;
+> > -       } else if (req->rate >= fmax) {
+> > -               req->rate = fmax;
+> > -
+> > -               return 0;
+> > -       }
+> > -
+> > -       ftmp = req->rate - fmin;
+> > -       ftmp += clk->info->range.step_size - 1; /* to round up */
+> > -       do_div(ftmp, clk->info->range.step_size);
+> 
+> Oh, so the truncation bug exists in the original code, too.
 
-Ok, I will track yor series to decide how to better handle this on my
-side.
+Yep...as said I will fix the original code and then move the fixed
+code.
 
 Thanks,
 Cristian
