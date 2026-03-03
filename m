@@ -1,24 +1,24 @@
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E22A35DA74;
-	Tue,  3 Mar 2026 12:49:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0918342C93;
+	Tue,  3 Mar 2026 13:08:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772542168; cv=none; b=qBS8TDziHa+PCKy54ZKqARElx63bW7+CCOIzuyIO7+ZwUv/3ys9L0dTYrOqSfZsVAquHQLcgMI79VkMigfwZGucmCXABZCC1TBzaiHco9IUk+KpsFerp+6ghvT4X7BbVlrztrczObJZKjgZ+vpkvvLIey1d/Ey1mDizehL6bc50=
+	t=1772543335; cv=none; b=i6yO2IumE2I1wFQ829Op+ZPs/EB+GiDjeoE5Pgjd4uKvuV9BhDed06t+4iUSB4KusMrONrCFV75Ffqex1GYTg+xy1wdrf5tl9Ryc2kGtPJDozzFJukyIo0shzU5YyZ7RPw5mkUXa5QFiXVpGhagOtctwnohloXxkFjKUapEgXSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772542168; c=relaxed/simple;
-	bh=s7j0fbso4tsBG06xVlpLLWWbus6SBHjGxZWYTvaqeSw=;
+	s=arc-20240116; t=1772543335; c=relaxed/simple;
+	bh=+aD7rHRYNhH4mWSwuRacRuHrsbhzN5dK0LutoaXKLPY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X3V3w3QR2aPHPUu6Z7es1ef5tMZS1pyKc86JjLtivRilembVm0WQLLl3glvlRvSy9bbRqvxY63lCUWd+SutrhfmWJr/7/c7cKueG+9cSsw6s6E5F8Kof4IkGKSdbotdvGl1QQNOlKLMqnoOriOnKhDtn0ZI2tb5wi9VLSnJX+zw=
+	 Content-Type:Content-Disposition:In-Reply-To; b=smYZOFZcTcYdg9MCv1HH3nQ/c895+Fyj9U96FHNV0ZsB+2f8cnHhp6uDqj7ZtxGkdicvYZvyNPPQlvyx4HQEktKmP0sxIXlBmkw8m1ImdqUL4hqiVK7sM/7rjWUkdEVNn9fN93zoSVGTWkjXOmVs4HKLtCdoVXlFz4DQga5KQwc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5279B497;
-	Tue,  3 Mar 2026 04:49:16 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 02975497;
+	Tue,  3 Mar 2026 05:08:47 -0800 (PST)
 Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F2EE73F7BD;
-	Tue,  3 Mar 2026 04:49:17 -0800 (PST)
-Date: Tue, 3 Mar 2026 12:49:14 +0000
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BA2673F73B;
+	Tue,  3 Mar 2026 05:08:49 -0800 (PST)
+Date: Tue, 3 Mar 2026 13:08:46 +0000
 From: Cristian Marussi <cristian.marussi@arm.com>
 To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Cristian Marussi <cristian.marussi@arm.com>,
@@ -29,15 +29,11 @@ Cc: Cristian Marussi <cristian.marussi@arm.com>,
 	f.fainelli@gmail.com, vincent.guittot@linaro.org,
 	etienne.carriere@foss.st.com, peng.fan@oss.nxp.com,
 	michal.simek@amd.com, dan.carpenter@linaro.org,
-	geert+renesas@glider.be, kuninori.morimoto.gx@renesas.com,
-	marek.vasut+renesas@gmail.com, Brian Masney <bmasney@redhat.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 02/11] clk: scmi: Use new determine_rate clock operation
-Message-ID: <aabYyj5Xh-kFWBzw@pluto>
+	kuninori.morimoto.gx@renesas.com, marek.vasut+renesas@gmail.com
+Subject: Re: [PATCH 00/11] SCMI Clock rates discovery rework
+Message-ID: <aabdXvaSlu1EDgG4@pluto>
 References: <20260227153225.2778358-1-cristian.marussi@arm.com>
- <20260227153225.2778358-3-cristian.marussi@arm.com>
- <CAMuHMdVCgq4Wbm8g_O9e1sPhJ4PyY-nWTt9RW1f3=G3a0PvdKA@mail.gmail.com>
+ <CAMuHMdW9dtAnT2E103kp1zK=LJrER7k1ib8_WPk5aorPRw80uQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -46,64 +42,70 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdVCgq4Wbm8g_O9e1sPhJ4PyY-nWTt9RW1f3=G3a0PvdKA@mail.gmail.com>
+In-Reply-To: <CAMuHMdW9dtAnT2E103kp1zK=LJrER7k1ib8_WPk5aorPRw80uQ@mail.gmail.com>
 
-On Mon, Mar 02, 2026 at 01:39:51PM +0100, Geert Uytterhoeven wrote:
+On Mon, Mar 02, 2026 at 02:25:00PM +0100, Geert Uytterhoeven wrote:
 > Hi Cristian,
 > 
+> Thanks for your series!
+> 
 > On Fri, 27 Feb 2026 at 16:33, Cristian Marussi <cristian.marussi@arm.com> wrote:
-> > Use the Clock protocol layer determine_rate logic to calculate the closest
-> > rate that can be supported by a specific clock.
+> > it was a known limitation, in the SCMI Clock protocol support, the lack of
+> > dynamic allocation around per-clock rates discovery: fixed size statically
+> > per-clock rates arrays did not scale and was increasingly a waste of memory
+> > (see [1]).
 > >
-> > No functional change.
+> > This series aim at solving this in successive steps:
 > >
-> > Cc: Brian Masney <bmasney@redhat.com>
-> > Cc: Michael Turquette <mturquette@baylibre.com>
-> > Cc: Stephen Boyd <sboyd@kernel.org>
-> > Cc: linux-clk@vger.kernel.org
-> > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+> >  - simplify and reduce to the minimum possible the rates data info exposed
+> >    to the SCMI driver by scmi_clock_info
+> >  - move away from static fixed allocation of per-clock rates arrays in
+> >    favour of a completely dynamic runtime allocation: just allocate what
+> >    is needed based on the effectively discovered
+> >
+> > This is done in patches 1-6.
+> >
+> > A further bigger optimization suggested in a past series [1] by Etienne
 > 
-> > --- a/drivers/clk/clk-scmi.c
-> > +++ b/drivers/clk/clk-scmi.c
-> > @@ -57,35 +56,17 @@ static unsigned long scmi_clk_recalc_rate(struct clk_hw *hw,
-> >  static int scmi_clk_determine_rate(struct clk_hw *hw,
-> >                                    struct clk_rate_request *req)
-> >  {
-> > -       u64 fmin, fmax, ftmp;
-> > +       int ret;
-> >         struct scmi_clk *clk = to_scmi_clk(hw);
-> >
-> >         /*
-> > -        * We can't figure out what rate it will be, so just return the
-> > -        * rate back to the caller. scmi_clk_recalc_rate() will be called
-> > -        * after the rate is set and we'll know what rate the clock is
-> > +        * If we could not get a better rate scmi_clk_recalc_rate() will be
-> > +        * called after the rate is set and we'll know what rate the clock is
-> >          * running at then.
-> >          */
-> > -       if (clk->info->rate_discrete)
-> > -               return 0;
-> > -
-> > -       fmin = clk->info->range.min_rate;
-> > -       fmax = clk->info->range.max_rate;
-> > -       if (req->rate <= fmin) {
-> > -               req->rate = fmin;
-> > -
-> > -               return 0;
-> > -       } else if (req->rate >= fmax) {
-> > -               req->rate = fmax;
-> > -
-> > -               return 0;
-> > -       }
-> > -
-> > -       ftmp = req->rate - fmin;
-> > -       ftmp += clk->info->range.step_size - 1; /* to round up */
-> > -       do_div(ftmp, clk->info->range.step_size);
+> s/[1]/[2]/
 > 
-> Oh, so the truncation bug exists in the original code, too.
+> > would be, whenever allowed by the spec, to limit upfront the number of
+> > queries in order to simply retrieve min and max rate, that are indeed the
+> > only rates needed by the CLK SCMI driver.
+> >
+> > The approach proposed in [1] was open coding and duplicating some of the
+> 
+> What does [1] refer to?
 
-Yep...as said I will fix the original code and then move the fixed
-code.
+I messed up the refs..of course...it was just a reference to your thread
+where the number of rates where staticallty raised to 64.
 
-Thanks,
+> 
+> > functionalities already provided by SCMI iterators, though.
+> >
+> > Patch 7-10 implement such optimization instead by:
+> >
+> >  - reworking core SCMI iterators to support bound enumerations
+> >  - use such new bound iterators to perform the minimum number of queries
+> >    in order to ony retrieve min an max rate
+> >
+> > As a final result now the rates enumeration triggered by the CLK SCMI
+> > driver, while still allocating for all the existent rates, miminize the
+> > number of SCMI CLK_DESCRIBE_RATE messages needed to obtain min and max.
+> >
+> > Finally, patch 11 introduces a new clock protocol operation to be able to
+> > trigger anytime on demand a full enumeration and obtain the full list of
+> > rates when needed, not only min/max: this latter method is really only used
+> > currently by some dowstream SCMI Test driver of mine.
+> >
+> > Based on v7.0-rc1.
+> >
+> > Tested on JUNO and an emulated environment.
+> 
+> Thank you, this removes the need for increasing SCMI_MAX_NUM_RATES on
+> R-Car X5H, while decreasing memory usage.
+> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+
+Thanks for testing in the real world !
 Cristian
