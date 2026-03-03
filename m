@@ -1,123 +1,184 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F09426D17;
-	Tue,  3 Mar 2026 14:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F254347F2EA
+	for <linux-clk@vger.kernel.org>; Tue,  3 Mar 2026 14:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772548119; cv=none; b=OC75F4bHbkC4PMXmeePNa+WG4ngzcyFbL5mDYSpXyB3pHGvANnO2NfdQiYWsXlrL5eUhTnEw3Ms8qeFZLYy6z74gu1dgItl8P6yiN40oPqM5REs2iODP0VC13CRgE+lp2Jbqr8hfdZa/9/+VNkp3VIbPIl6GAsGL5tixOdwqAbU=
+	t=1772549929; cv=none; b=K0CEMn/gAGRcanQJwvQCQ0ZnsjGDHDjIhdGNNAZgTZlGJqPMpcDsw9a9spLpAqocoADik82o1ZONnDoF4z9BN25CJGXLoKzKlVlRu5YxPPCD+00kk2AyhPDX3HgZllFK/iBHqXPHexL7Wp3u1TwZs28dnft4bcn+13SseCAeFlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772548119; c=relaxed/simple;
-	bh=sFdspMKJumEMO4fDQc2+117471ZtpGFHB8cFzHcqV9k=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O8n8KdcANGeo5HgRhp7ATof0t1m3PSlrlvObMxNog3FLmh4gnm3KfYUejjZ27p1Y1F/lB9gi/D1MrzkeqCAC4bqrdUsKMmzBPHU8QKX7NF0mwW4DGqwh4wQvbPfRIX1W8WAZu2L6HKKwkuq54fmm/cu2pdv+TrItM7KtuC0j05o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=d/O+JXo5; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1772549929; c=relaxed/simple;
+	bh=oGjc1yjeiIqz4fk/uBDQWtGhcY0iItbRMgLP4C00KAw=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=qEDK81W+R7TyUDpfPDMo9sGLh3Bl83fGjX2Cvg/gwBASkV8ueJA5S7+2QN4hTpSs4L9aMMh7jNBwqQGdJFRMWNwPqs8VIObXdwGFaEqvHAZuCQZoBpU83ZnwdUSsobgFsFGVlH1bGizwzK3b5vrESuLizINCCVXWg5xHhGo5zIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LveiTJjN; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="d/O+JXo5"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 03C62C40FAC;
-	Tue,  3 Mar 2026 14:28:54 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 3AFBB5FF87;
-	Tue,  3 Mar 2026 14:28:36 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2BC881036864C;
-	Tue,  3 Mar 2026 15:28:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1772548112; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=GWUy5XUp50lxxjU1GZxGSJIelBHwpc1HiL3azJ0BLV4=;
-	b=d/O+JXo543vedMVvGLT5gKQytZfFXK8awsVgYA6R2ojxBslqYDSqG0VaRPH7bRUxFJlQN8
-	1vkegNiRGY41CrTbPRA1NgXIqSpHHXeFNACKcalOr4bzHngc7EbH0CSSUuvUxXHy5MVFSy
-	vEESymOX/4StaUul4BCuzjnEikImvMMtImKAjJiVJGCmUvbpNeHT+w2j0OOFIPwqXLeYpl
-	cStsMnmcoZTIpyS3EgJxQykjVvH8H5XHlQadKad7TsG6qk3H2sE9QULsdlhxCLsvdS6N3P
-	Oejd8rD6YiajdGxXjpbhWcTxEQM/3Nco4XUAiT9M4D/MHRwg24QTsSLti/Lp2w==
-Date: Tue, 3 Mar 2026 15:28:12 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Geert
- Uytterhoeven" <geert+renesas@glider.be>, Kalle Niemi <kaleposti@gmail.com>,
- Matti Vaittinen <mazziesaccount@gmail.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Danilo Krummrich <dakr@kernel.org>, Frank Li <Frank.Li@nxp.com>, "Sascha
- Hauer" <s.hauer@pengutronix.de>, Pengutronix Kernel Team
- <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, "Michael
- Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- "Andi Shyti" <andi.shyti@kernel.org>, Wolfram Sang
- <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, "Arnd
- Bergmann" <arnd@arndb.de>, Saravana Kannan <saravanak@kernel.org>, "Bjorn
- Helgaas" <bhelgaas@google.com>, Charles Keepax
- <ckeepax@opensource.cirrus.com>, Richard Fitzgerald
- <rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, "Linus
- Walleij" <linusw@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, "Mark
- Brown" <broonie@kernel.org>, Len Brown <lenb@kernel.org>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus
- <sakari.ailus@linux.intel.com>, Davidlohr Bueso <dave@stgolabs.net>, "Dave
- Jiang" <dave.jiang@intel.com>, Alison Schofield
- <alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, "Ira
- Weiny" <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>,
- "Shawn Guo" <shawnguo@kernel.org>, Wolfram Sang <wsa@kernel.org>,
- <linux-kernel@vger.kernel.org>, <driver-core@lists.linux.dev>,
- <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
- <linux-clk@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-pci@vger.kernel.org>,
- <linux-sound@vger.kernel.org>, <patches@opensource.cirrus.com>,
- <linux-gpio@vger.kernel.org>, <linux-pm@vger.kernel.org>,
- <linux-spi@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
- <linux-cxl@vger.kernel.org>, Allan Nielsen <allan.nielsen@microchip.com>,
- Horatiu Vultur <horatiu.vultur@microchip.com>, Steen Hegelund
- <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v5 11/28] cxl/test: Use fw_devlink_set_device()
-Message-ID: <20260303152812.5d699701@bootlin.com>
-In-Reply-To: <20260302122449.00006c77@huawei.com>
-References: <20260227135428.783983-1-herve.codina@bootlin.com>
-	<20260227135428.783983-12-herve.codina@bootlin.com>
-	<20260302122449.00006c77@huawei.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LveiTJjN"
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-389f9895c81so34366991fa.2
+        for <linux-clk@vger.kernel.org>; Tue, 03 Mar 2026 06:58:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1772549924; x=1773154724; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oGjc1yjeiIqz4fk/uBDQWtGhcY0iItbRMgLP4C00KAw=;
+        b=LveiTJjNXx5hPNvBlBSnvouKNtULsS930y+9lYTIz0ur59YAQK7guIOg6a0J4M4toT
+         awLTA2i7sR8LN9EhZvoi5ZnVNxcpk4B1ck1z9aOvPluM1ywHwjMLcmN8FC7lQsu6w4zI
+         xTu1DidaNqIdXgj8C3RAERdLJLmjDd8PVaZY3pF3KuQR95d60HDUA4NozaDCq/1NgoZc
+         V3uiyI8EaJ172xFb8kc9+L1xswUS2mByrvyuIJqfsTKiP1QMsbtVzL6mpAt9yYnsr8+c
+         2r1AEd2/cQhW1bg5BdXdgFy4+dobuUmpoHmRy/aVb1M6h5N7e5dNZViz+9tNR6Z35+CY
+         LdZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772549924; x=1773154724;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oGjc1yjeiIqz4fk/uBDQWtGhcY0iItbRMgLP4C00KAw=;
+        b=XxJmpm4GCNwZTcKJDSwF2osDEXDM35iwQ+2+ONd87TPoseZFSdRgBeC8imVOWVUsWG
+         3n40yz6IJZ/FBZo3CEJX+E+qNNIEBZ5Duem2X0/qkEYnZe0tPeWDkrhsVFViyuyqv0Nm
+         vfpZtOT6XEH7G11wtVpNpvdXDQkkZhnIzLb8jSABWXVOt0UWq2iwBX3jM5M1EOaOThEP
+         hW06ZBEruoEPfoO7mDlB9OQxwuziS9NymnXCGPBdQjK/aW/N7kuH6utZCYhl6jar2+8+
+         hru6G0CRZcw023QezDqv+cow5WWIFJ//RZj2UNOhFXRYufF9e59Ja6uwbd3SIpAk58us
+         3oSg==
+X-Forwarded-Encrypted: i=1; AJvYcCWnJcM98YfMbnmSMoDPkXZWzTy2CXwyh3VzsywV9vBL21RAXDubjQfJAByt4yvbPHAorJiwjoXsfvY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFzeYKUHUytZIrA0ObL2jFrZuaUM12xPvZHuKK1jenZrdjq89C
+	fT4AgicOA7TkPaRifSu5Y0XJwgtB2MhgInWVAc5UJ7OJYNicaOpp4Z2u
+X-Gm-Gg: ATEYQzzFfu8dei3urbHCuhxDERm+iAZMvRWBIwIyVZ+fci70+Hq/EeZdxqEyunbvD8q
+	QvssaHCbhC8aZBbEeiSiyHJddtNKh+5aL86h0WHhB7YN2mO5tC26+R/htAotZY14sD1pohO3ZiI
+	VqCXuxQLcFjjJds3dmEan/paErHUR1+qYDAqg3vm7EgcX4hnUY0utMgAeb/w9LwqT7woRQ5AKLX
+	S0aDkgPrumOhG1MKKyolNvGJ1kDWEeAX4oeFyx+ewu/CuCvH5CT+b0LppJ9y4bj1ehsZFX2BKDW
+	b3AW4LLRHNBVyEni8CtChenZfGi9nXMV9pjzQgwUvGKLux5NfeJ/bUXxrlWSySnFeQJIlgM6Xvv
+	HgbAV7wN0SiDhACjtj8NTjbYwZw/sr2LrQkg3pLVtGzNUzbA/yvTxxpZmpb4hBVlScAW6/eWku2
+	36PVWnbyaUmeFTxQZRBZkGRLaB4KFhKje7scgig/pQx9dEpiMjB3fKDxaJQF+tnKfsJTNTMUay3
+	/A9rI34Lf4P+qcu2glpmHaHeD7Zy23SLv0LIHbELgWth8c=
+X-Received: by 2002:a2e:80cf:0:b0:37b:aaf7:f022 with SMTP id 38308e7fff4ca-389ff3644bemr93473051fa.35.1772549923580;
+        Tue, 03 Mar 2026 06:58:43 -0800 (PST)
+Received: from smtpclient.apple (2001-14ba-437-c00-1991-9ef0-d3f1-621a.rev.dnainternet.fi. [2001:14ba:437:c00:1991:9ef0:d3f1:621a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a124d7fd31sm359172e87.68.2026.03.03.06.58.41
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 03 Mar 2026 06:58:43 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3864.400.21\))
+Subject: Re: [PATCH v5 03/28] of: dynamic: Fix overlayed devices not probing
+ because of fw_devlink
+From: Kalle Niemi <kaleposti@gmail.com>
+In-Reply-To: <20260227135428.783983-4-herve.codina@bootlin.com>
+Date: Tue, 3 Mar 2026 16:58:30 +0200
+Cc: Andrew Lunn <andrew@lunn.ch>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Matti Vaittinen <mazziesaccount@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Frank Li <Frank.Li@nxp.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ Andi Shyti <andi.shyti@kernel.org>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Peter Rosin <peda@axentia.se>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Saravana Kannan <saravanak@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Charles Keepax <ckeepax@opensource.cirrus.com>,
+ Richard Fitzgerald <rf@opensource.cirrus.com>,
+ David Rhodes <david.rhodes@cirrus.com>,
+ Linus Walleij <linusw@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ Mark Brown <broonie@kernel.org>,
+ Len Brown <lenb@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Daniel Scally <djrscally@gmail.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Davidlohr Bueso <dave@stgolabs.net>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Dave Jiang <dave.jiang@intel.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>,
+ Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Shawn Guo <shawnguo@kernel.org>,
+ Wolfram Sang <wsa@kernel.org>,
+ linux-kernel@vger.kernel.org,
+ driver-core@lists.linux.dev,
+ imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org,
+ linux-i2c@vger.kernel.org,
+ devicetree@vger.kernel.org,
+ linux-pci@vger.kernel.org,
+ linux-sound@vger.kernel.org,
+ patches@opensource.cirrus.com,
+ linux-gpio@vger.kernel.org,
+ linux-pm@vger.kernel.org,
+ linux-spi@vger.kernel.org,
+ linux-acpi@vger.kernel.org,
+ linux-cxl@vger.kernel.org,
+ Allan Nielsen <allan.nielsen@microchip.com>,
+ Horatiu Vultur <horatiu.vultur@microchip.com>,
+ Steen Hegelund <steen.hegelund@microchip.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Saravana Kannan <saravanak@google.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <E7575FC9-7D0D-43E8-A477-4DEE79101C13@gmail.com>
+References: <20260227135428.783983-1-herve.codina@bootlin.com>
+ <20260227135428.783983-4-herve.codina@bootlin.com>
+To: Herve Codina <herve.codina@bootlin.com>
+X-Mailer: Apple Mail (2.3864.400.21)
 
-Hi Jonathan,
+On 27. Feb 2026, at 15.54, Herve Codina <herve.codina@bootlin.com> =
+wrote:
+>=20
+> From: Saravana Kannan <saravanak@google.com>
+>=20
+> When an overlay is applied, if the target device has already probed
+> successfully and bound to a device, then some of the fw_devlink logic
+> that ran when the device was probed needs to be rerun. This allows =
+newly
+> created dangling consumers of the overlayed device tree nodes to be
+> moved to become consumers of the target device.
+>=20
+> Fixes: 1a50d9403fb9 ("treewide: Fix probing of devices in DT =
+overlays")
+> Reported-by: Herve Codina <herve.codina@bootlin.com>
+> Closes: =
+https://lore.kernel.org/lkml/CAMuHMdXEnSD4rRJ-o90x4OprUacN_rJgyo8x6=3D9F9r=
+Z+-KzjOg@mail.gmail.com/
+> Closes: =
+https://lore.kernel.org/all/20240221095137.616d2aaa@bootlin.com/
+> Closes: =
+https://lore.kernel.org/lkml/20240312151835.29ef62a0@bootlin.com/
+> Signed-off-by: Saravana Kannan <saravanak@google.com>
+> Link: =
+https://lore.kernel.org/lkml/20240411235623.1260061-3-saravanak@google.com=
+/
+> [Herve: Rebase on top of recent kernel and use =
+get_device_from_fwnode()]
+> [Herve: Add the call to driver_deferred_probe_trigger()]
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+>=20
 
-On Mon, 2 Mar 2026 12:24:49 +0000
-Jonathan Cameron <jonathan.cameron@huawei.com> wrote:
+Hello Herv=C3=A9,
 
-> On Fri, 27 Feb 2026 14:54:08 +0100
-> Herve Codina <herve.codina@bootlin.com> wrote:
-> 
-> > The code set directly fwnode.dev field.
-> > 
-> > Use the dedicated fw_devlink_set_device() helper to perform this
-> > operation.
-> > 
-> > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> > Reviewed-by: Dave Jiang <dave.jiang@intel.com>  
-> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-> 
-> From practical point of view, what path do you expect this to take?
-> Is there urgency to make the change, or does it make more sense to
-> add the helper this cycle and cleanup up the various places it can be
-> used next?
+Tested this patch series with BeagleBone Black and all tests pass. =
+bd718x7 driver probes.
 
-I hoped to have patches 7 to 12 applied by one maintainer on his/her trees.
+Tested-by: Kalle Niemi <kaleposti@gmail.com>
 
-As it is related to fw_devlink, I expect to have them applied by a driver
-core maintainer.
-
-Any other plan can work as well.
-
-Best regards,
-Hervé
-
+BR
+Kalle=
