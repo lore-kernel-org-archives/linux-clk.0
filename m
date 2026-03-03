@@ -1,57 +1,52 @@
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1088D2737E3;
-	Tue,  3 Mar 2026 03:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40CB337DE89
+	for <linux-clk@vger.kernel.org>; Tue,  3 Mar 2026 03:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772509767; cv=none; b=az9H6zxPrjCmRhb5/o1og8fk3XAHWgIYYRdj3T+yDo9ECmbodrWAvUHLhwnkAfhAGNDYx8ZP1TRKHFZb/M1XRyxuF99J7IyaL/cxzg7jXG37G7YEE0PaBEWKXbj+Q5UnnxNc5c6iFOwre1Gjmgw3j+3DEEUjaVOZ7YtAVar74ZM=
+	t=1772509772; cv=none; b=utGO/7U5FIWqZEKDlhUv4c2DSEmHg1fFZa4TaQCEe1JGh/uhf0HtvVlSdph1LXR4V43SWx20fCTYafkdWMpktIeDFyuVMQMSgaof57qkClBGv6m6OCoizXCaL9ewzMIIeHYWL2OJv39zUhfysCkvBC/4h1XFRolJZptNAQIbWEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772509767; c=relaxed/simple;
-	bh=Oxqq7FBPa89dFrlDTbFy880KjWCv9U30rlHaZMDlhHc=;
+	s=arc-20240116; t=1772509772; c=relaxed/simple;
+	bh=sIMzmBRl7F2254Xp2z1eNy5UC3Yxqw+c8cCYSyVdArc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HxjIDbbgXfvkSoLKjRlkzACMLYzLf73ubXjk/HKIB4+c9O5FaRd1oWJa/l4Bw7bvGK+TrdrKlAInR+oVAgOMTS+vSB/vCrP+ExfdqpTmx7TVnDDERoMJISy81i3yLyrYnLt/GSy1c06WGexL2mP4A1kCexkCWNzYP97ShgToPEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=QSbOUuvw; arc=none smtp.client-ip=91.218.175.179
+	 MIME-Version; b=kTgvzPevujsICXvQ+9T4iCNd+MC+dHinO65x3VpbpFNDN7byAh4OsLyv+WJb0jQDHi0qXl72DMqp7VBl7ndA2HYKExsY2c3yWDDGc5muw73InFvUtYCBwEkSGxpUrc+30cYyEj/P0sXVaQJtmpU8TY01vnGFwtxKN/NW8SKd9NI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=Xb5DXXQy; arc=none smtp.client-ip=91.218.175.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="QSbOUuvw"
+	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="Xb5DXXQy"
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
-	s=key1; t=1772509764;
+	s=key1; t=1772509769;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=lLIEZZ1zVezNjOyOb9t3XNEW1b9xk5httPJ3UUt/8x8=;
-	b=QSbOUuvwhfBRzEiioxvVw6MlDgxLZ58pFHGOnVEog3+NocB/5LX98VJaVd6NGAETumroCu
-	aZ9gZ4xgI/bp0FDi65xYbFtvMcMOeMQtAxvHw6+br+pn1ext+ClDic8tDq9gMm2tU1coNH
-	mg0HReyfkaFBoRkbAGg+203QJwnodFyR27cnxRGxBfu64JUvEQFmm6rnfwEKew5d6YhDa/
-	v3px/dfr7lzOISHvTLTiy6lOw5iruP3WadRSqNSD0PGtR7NMoC1TzVWMYV+UdvwS9Iehq/
-	jQK0Pfg86frBa5wCs2IR8CKHDH9gVGRHpiTiOvw7SuZJQ4TeKhILqlyeeGRy1w==
+	bh=TSkgsnsf+FgtWgqbbfEStI+11ELiu+OKexgV71tabUQ=;
+	b=Xb5DXXQyd1+XElR/7rxWQv+ccJQQ1BMmvMKBlhBz45yfMwkuiT0vaxrrRUaD8r2yEXrdIp
+	8K7sbLuZia3E4Wonc00U5nt3RarjzH9H9i1M2nWYH3T9PNuViN2HDwmzNlfSzls9cF9aIg
+	ZqApnBeSiozZixSmJ4NBNKrBPVZc+4JT++Al4W/p7zlmkfuJnGikLc071cHQpmtTZALYY6
+	gdQU4rC+++7lWPn+pEqroEpboC5RCps+hHNZbNImvbVmIAePiE29Y3cYzYMGlJ2IMonCMi
+	DdmPVZ6IAOeV7zYK0+gOshSG9C3uL+RrzPlFMJ9Dxv9uktZbjSxoBmN0sEaMBg==
 From: Val Packett <val@packett.cool>
 To: Bjorn Andersson <andersson@kernel.org>,
 	Konrad Dybcio <konradybcio@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Adam Skladowski <a39.skl@gmail.com>,
-	Martin Botka <martin.botka@somainline.org>,
-	Marijn Suijten <marijn.suijten@somainline.org>
+	Adam Skladowski <a39.skl@gmail.com>
 Cc: Val Packett <val@packett.cool>,
 	linux-arm-msm@vger.kernel.org,
 	phone-devel@vger.kernel.org,
 	~postmarketos/upstreaming@lists.sr.ht,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: [PATCH v3 2/6] dt-bindings: clock: qcom,dispcc-sm6125: Define MDSS resets
-Date: Tue,  3 Mar 2026 00:41:21 -0300
-Message-ID: <20260303034847.13870-3-val@packett.cool>
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: [PATCH v3 3/6] clk: qcom: dispcc-sm6115: Add missing MDSS resets
+Date: Tue,  3 Mar 2026 00:41:22 -0300
+Message-ID: <20260303034847.13870-4-val@packett.cool>
 In-Reply-To: <20260303034847.13870-1-val@packett.cool>
 References: <20260303034847.13870-1-val@packett.cool>
 Precedence: bulk
@@ -63,42 +58,49 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Add the missing defines for MDSS resets, which are necessary to reset
-the display subsystem in order to avoid issues caused by state left over
-from the bootloader.
+The MDSS resets were left undescribed. Add them to allow resetting the
+display subsystem, which is necessary to avoid issues caused by state
+left over from the bootloader on various platforms.
 
-While here, align comment style with other SoCs.
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 Signed-off-by: Val Packett <val@packett.cool>
 ---
- include/dt-bindings/clock/qcom,dispcc-sm6125.h | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/clk/qcom/dispcc-sm6115.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/include/dt-bindings/clock/qcom,dispcc-sm6125.h b/include/dt-bindings/clock/qcom,dispcc-sm6125.h
-index 4ff974f4fcc3..f58b85d2c814 100644
---- a/include/dt-bindings/clock/qcom,dispcc-sm6125.h
-+++ b/include/dt-bindings/clock/qcom,dispcc-sm6125.h
-@@ -6,6 +6,7 @@
- #ifndef _DT_BINDINGS_CLK_QCOM_DISP_CC_SM6125_H
- #define _DT_BINDINGS_CLK_QCOM_DISP_CC_SM6125_H
+diff --git a/drivers/clk/qcom/dispcc-sm6115.c b/drivers/clk/qcom/dispcc-sm6115.c
+index 8ae25d51db94..75bd57213079 100644
+--- a/drivers/clk/qcom/dispcc-sm6115.c
++++ b/drivers/clk/qcom/dispcc-sm6115.c
+@@ -22,6 +22,7 @@
+ #include "clk-regmap-divider.h"
+ #include "common.h"
+ #include "gdsc.h"
++#include "reset.h"
  
-+/* Clocks */
- #define DISP_CC_PLL0			0
- #define DISP_CC_MDSS_AHB_CLK		1
- #define DISP_CC_MDSS_AHB_CLK_SRC	2
-@@ -35,7 +36,10 @@
- #define DISP_CC_MDSS_VSYNC_CLK_SRC	26
- #define DISP_CC_XO_CLK			27
+ enum {
+ 	DT_BI_TCXO,
+@@ -511,6 +512,10 @@ static struct clk_branch disp_cc_sleep_clk = {
+ 	},
+ };
  
--/* DISP_CC GDSCR */
-+/* Resets */
-+#define DISP_CC_MDSS_CORE_BCR			0
++static const struct qcom_reset_map disp_cc_sm6115_resets[] = {
++	[DISP_CC_MDSS_CORE_BCR] = { 0x2000 },
++};
 +
-+/* GDSCs */
- #define MDSS_GDSC			0
- 
- #endif
+ static struct gdsc mdss_gdsc = {
+ 	.gdscr = 0x3000,
+ 	.pd = {
+@@ -561,6 +566,8 @@ static const struct qcom_cc_desc disp_cc_sm6115_desc = {
+ 	.config = &disp_cc_sm6115_regmap_config,
+ 	.clks = disp_cc_sm6115_clocks,
+ 	.num_clks = ARRAY_SIZE(disp_cc_sm6115_clocks),
++	.resets = disp_cc_sm6115_resets,
++	.num_resets = ARRAY_SIZE(disp_cc_sm6115_resets),
+ 	.gdscs = disp_cc_sm6115_gdscs,
+ 	.num_gdscs = ARRAY_SIZE(disp_cc_sm6115_gdscs),
+ };
 -- 
 2.52.0
 
