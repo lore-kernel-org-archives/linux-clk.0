@@ -1,100 +1,93 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C513A8728;
-	Wed,  4 Mar 2026 12:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C203537FE;
+	Wed,  4 Mar 2026 13:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772626495; cv=none; b=TTiMhcJe+ALmJ8Z3+xfV4ly/4Uct3I5Se2oa5i6DiEJJTKRfStKc729RUOltFdBRBtTuL45FK2qJoZZw/yD9lYdVCO0zPbtIBGj/KlkE8QLfqTYIE2rTfvYvvqps6h6gCh2ctJKXE+cZUeX3/YnFvqmGTaC1GL6ZDWEs0FZaEcw=
+	t=1772632150; cv=none; b=L4efrATiWP13saJSDi39BUCU21lOv+DJ5dLKGvZBkr+ACZBFYFQOQfor0eAM7K1+uucI25FR0b5f/HAPbTEWk/q5pBfTOL0znl63/2M/bPb0G4ZAMszE8hOsqqGNz3QJ8VPYAKrpEeDorQakD75sd6I1by2hFC+x661UnSUI1y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772626495; c=relaxed/simple;
-	bh=o1IO/7Jx2Z8RpKsNrWhXXQKWQ/F53whEvuDY1IKh2Sc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KDaQ6RywzT2RurbdB6ruvqc1tqh1i1CS7OVemR03ltiWNCSQZ1PgiuC2czWq6W8Jkgccky8CIP146uSf3cqvXln4V5qG3St6BiGkH+gM2+aYNRreVO8phQ3+/fcu8ene6TsVBlsEulE2qYuJFFRfdcMFPkc/74d0UHxyr52ZAV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=zDr4XQnT; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1772632150; c=relaxed/simple;
+	bh=JWDc2j0hV+E3FHXcOmEoLa067HRHjeDXFW7Z13ie7vM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=LvWuHz0ejY7XrVIEIHQOqahcRbmNqRNQXDDpspXomzKCUf3gzC5aaxaAdFKV6e/JHAme9bBBEVK50IGqnPvyNTtYimYinscNxKPIQIGYhblpFqsf4Jw9BjI1mxVVlVRCCrIoQldMbDbza0izBp10LWahTV0uIXCBtmjPVrjcm1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FP9xCYbS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="zDr4XQnT"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type;
-	bh=D1J6bBElKC5kc3fK81QWrSYx8rE0smFFIJm9isvrGyE=; b=zDr4XQnT4lsz+ngMWLnCpdR4BM
-	ZCUu2f1o2py44Z97GR1XFrdgN/DjAMgLywfnvndfMHTKeWE+hVuXKkR0otnma5hIJ+eo1jMf2id+D
-	gu2pJSHiH7jStO7Md/Jms+fjA7rHP62w3oAuz4+O9b9HFisVShulF1OZjKk8P540GGVh8TXaWoZpg
-	SHDgBUxkLoDiRfMeMF3zdzAFwEKaAtCXLYrNVCvxn5jspG+oJFUVgHvvftbaS9fAwUAfOJUWJIE5a
-	jzgl+hjoQKq9afGfbiXK87De0IHKg1UMmRxspiqDNB2col3YZYc8wf90H8nrUU7883b12iM7f2Tg1
-	TsVL10iw==;
-From: Heiko Stuebner <heiko@sntech.de>
-To: heiko@sntech.de
-Cc: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	zhangqing@rock-chips.com,
-	sebastian.reichel@collabora.com,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	quentin.schulz@cherry.de,
-	andyshrk@163.com,
-	macromorgan@hotmail.com,
-	Heiko Stuebner <heiko.stuebner@cherry.de>,
-	stable@vger.kernel.org
-Subject: [PATCH v2 1/2] clk: rockchip: rk3588: Don't change PLL rates when setting dclk_vop2_src
-Date: Wed,  4 Mar 2026 13:14:25 +0100
-Message-ID: <20260304121426.1184680-2-heiko@sntech.de>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260304121426.1184680-1-heiko@sntech.de>
-References: <20260304121426.1184680-1-heiko@sntech.de>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FP9xCYbS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C28ADC19423;
+	Wed,  4 Mar 2026 13:49:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772632150;
+	bh=JWDc2j0hV+E3FHXcOmEoLa067HRHjeDXFW7Z13ie7vM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=FP9xCYbSUDg9BoqnpZ4jQf/uUSFBARng5biSelO0DXKghx+PBH21j0xgoIMtF4SBh
+	 iTCueIH1XcrbYOznBdaNbAWjWfGEaVTPrN+kPJVqiO10m+8nbtLsEDdCiOiHeT6nQL
+	 9eBhq0YbazTL1P/69ktdcv68AygufNnPMu9TPBIbFdBSSQ9bJCtwpzhMuSjNARun+v
+	 lzPDZnL0e+hYgQyEztRCXi9oq5pNSeC9INzPp0mEHzfTPaHQVRGqBzhFPDR62y9vAA
+	 zNjamHatwn4ondNY+nMDmSpZVWXOgpk0zyUQHUOwJPZIz9mzQTeg+3u4V9KPgnLH+9
+	 cBqUBBbk4l34Q==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Subject: [PATCH 0/5] DSI byte clock setting fixup
+Date: Wed, 04 Mar 2026 14:48:26 +0100
+Message-Id: <20260304-topic-dsi_byte_fixup-v1-0-b79b29f83176@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x2MQQqAIBAAvxJ7TjAti74SEZVb7cVELQrx70nHY
+ ZiJ4NEReuiLCA5v8nSaDFVZwHrMZkdGOjMILhSXXLJwWlqZ9jQtb8Bpo+eybFZL3coGO60Qcmo
+ dZvFvhzGlD5zQkI5mAAAA
+X-Change-ID: 20260303-topic-dsi_byte_fixup-a6b4735e8d6e
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Taniya Das <taniya.das@oss.qualcomm.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Luca Weiss <luca.weiss@fairphone.com>, Dmitry Baryshkov <lumag@kernel.org>, 
+ Ajit Pandey <quic_ajipan@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
+ Jagadeesh Kona <quic_jkona@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1772632145; l=1206;
+ i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
+ bh=JWDc2j0hV+E3FHXcOmEoLa067HRHjeDXFW7Z13ie7vM=;
+ b=gH0/LWZ3K3Fg0/L/EblKz7UVnPB5Zh6EyJs4dqVZX9aNJYBaVY1hHm3WyRSZVy8xehkP3CW5b
+ 1VrGy1NcK6fDeDsHGuFLX2EHWvG/CEJDDJ8wf8drP1xfWrF5AUj9ZuX
+X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-From: Heiko Stuebner <heiko.stuebner@cherry.de>
+There's a conflict between the byte and byte_intf_div2 clocks trying to
+set_rate on their common parent. The latter should follow the rate of
+the former in one way or another anyway, so the fix here is to prevent
+the latter from ratesetting the upstream PLL.
 
-dclk_vop2_src currently has the CLK_SET_RATE_PARENT flag set, which is
-very different from dclk_vop0_src or dclk_vop1_src, which don't have it.
+This series does just that.
 
-With this flag in dclk_vop2_src, actually setting the clock then results
-in a lot of other peripherals breaking, because setting the rate results
-in the PLL source getting changed:
-
-[   14.898718] clk_core_set_rate_nolock: setting rate for dclk_vop2 to 152840000
-[   15.155017] clk_change_rate: setting rate for pll_gpll to 1680000000
-[ clk adjusting every gpll user ]
-
-This includes possibly the other vops, i2s, spdif and even the uarts.
-Among other possible things, this breaks the uart console on a board
-I use. Sometimes it recovers later on, but there will be a big block
-of garbled output for a while at least.
-
-Shared PLLs should not be changed by individual users, so drop this flag
-from dclk_vop2_src.
-
-Fixes: f1c506d152ff ("clk: rockchip: add clock controller for the RK3588")
-Cc: stable@vger.kernel.org
-Tested-by: Quentin Schulz <quentin.schulz@cherry.de> # RK3588 Tiger w/ DP
-Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 ---
- drivers/clk/rockchip/clk-rk3588.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Konrad Dybcio (5):
+      clk: qcom: dispcc-glymur: Fix DSI byte clock rate setting
+      clk: qcom: dispcc-kaanapali: Fix DSI byte clock rate setting
+      clk: qcom: dispcc-milos: Fix DSI byte clock rate setting
+      clk: qcom: dispcc-sm4450: Fix DSI byte clock rate setting
+      clk: qcom: dispcc[01]-sa8775p: Fix DSI byte clock rate setting
 
-diff --git a/drivers/clk/rockchip/clk-rk3588.c b/drivers/clk/rockchip/clk-rk3588.c
-index 1694223f4f84..bea2deed0e23 100644
---- a/drivers/clk/rockchip/clk-rk3588.c
-+++ b/drivers/clk/rockchip/clk-rk3588.c
-@@ -2094,7 +2094,7 @@ static struct rockchip_clk_branch rk3588_early_clk_branches[] __initdata = {
- 	COMPOSITE(DCLK_VOP1_SRC, "dclk_vop1_src", gpll_cpll_v0pll_aupll_p, 0,
- 			RK3588_CLKSEL_CON(111), 14, 2, MFLAGS, 9, 5, DFLAGS,
- 			RK3588_CLKGATE_CON(52), 11, GFLAGS),
--	COMPOSITE(DCLK_VOP2_SRC, "dclk_vop2_src", gpll_cpll_v0pll_aupll_p, CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT,
-+	COMPOSITE(DCLK_VOP2_SRC, "dclk_vop2_src", gpll_cpll_v0pll_aupll_p, CLK_SET_RATE_NO_REPARENT,
- 			RK3588_CLKSEL_CON(112), 5, 2, MFLAGS, 0, 5, DFLAGS,
- 			RK3588_CLKGATE_CON(52), 12, GFLAGS),
- 	COMPOSITE_NODIV(DCLK_VOP0, "dclk_vop0", dclk_vop0_p,
+ drivers/clk/qcom/dispcc-glymur.c    | 2 --
+ drivers/clk/qcom/dispcc-kaanapali.c | 2 --
+ drivers/clk/qcom/dispcc-milos.c     | 1 -
+ drivers/clk/qcom/dispcc-sm4450.c    | 1 -
+ drivers/clk/qcom/dispcc0-sa8775p.c  | 2 --
+ drivers/clk/qcom/dispcc1-sa8775p.c  | 2 --
+ 6 files changed, 10 deletions(-)
+---
+base-commit: 3fa5e5702a82d259897bd7e209469bc06368bf31
+change-id: 20260303-topic-dsi_byte_fixup-a6b4735e8d6e
+
+Best regards,
 -- 
-2.47.3
+Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
