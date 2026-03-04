@@ -1,61 +1,63 @@
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0831E379972
-	for <linux-clk@vger.kernel.org>; Wed,  4 Mar 2026 18:11:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6713337C92C
+	for <linux-clk@vger.kernel.org>; Wed,  4 Mar 2026 18:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772647893; cv=none; b=DDSaLL18WU9uOhspR5cMj6ZZjUbreWWM8RcKxd9uYp4ynb2OQh16O5D2qqGgDZ/urE5LDcYghb+yzR17YXtyOijRH3gaItHhcl2ZvmMHMXUOLjjKsyePCszgTC5kscRSsMR9moFvUObkVEUunZjqUvsiFQF5lUqJ1P6Ee+xCAUY=
+	t=1772647900; cv=none; b=cXxe4NMopM5SkwNzXCH5/14BpuL/VZJvwuSgI48z36dZS3bV8myQHDbneB0O7MMGbbOOQP4xTLzxh8vrYU/J1jiRJah6vU+Y1tapupdLw8bICOg+Rp2jG9ZjvxLzh8Use3C70nYZUXOpI8loP0AVA76z+LW15j3Iycvj6cAcfBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772647893; c=relaxed/simple;
-	bh=gMs9rkyUtRGBkJwtTCnd6ntqEwwKjKQ7OEelBccwclk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IQs59AJXC9zmT151Q4t1Q+NuosRnODWZ8DATJTZv+ajPlTdfu2SaI7qYSe8XoHWquDlo16y24GdFVqDuIjKn8oEDG0198uRjhXzsc79M1RChhjbA9Vs1/36pfaNXcTYkW+ltRXw2knriIw/5STE7JzGvVea6tOUzzx03BJ+fEZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gBiY6Knx; arc=none smtp.client-ip=209.85.210.177
+	s=arc-20240116; t=1772647900; c=relaxed/simple;
+	bh=JOs6Hru9e1pyzmoSC+Fu2HzEj09qTOnEBQH8YB/TK0A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=CUzsuqt1YdWviVUkQgMS1iPTwzkad7NaSMCseM62p8qKONTebRz0f4J6xzgb8pwERrYuHOsCKDOExjygIiAPGPWfvZhi7x5d+v3YHeRMkCQSLoYCHNJq3ko8kajQNitWSlrOSGf3BtGBlWkxh80wyV1fpuFGvThtjxz9MirpgyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NiMwoFpe; arc=none smtp.client-ip=209.85.210.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gBiY6Knx"
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-8297310ce0aso557171b3a.2
-        for <linux-clk@vger.kernel.org>; Wed, 04 Mar 2026 10:11:30 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NiMwoFpe"
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-8272c559597so7158835b3a.1
+        for <linux-clk@vger.kernel.org>; Wed, 04 Mar 2026 10:11:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772647890; x=1773252690; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CAARsnlrqcfDm8ekZAoMmoCRNxm299rJHElT0uztVl4=;
-        b=gBiY6Knx+0tK/SlWMl25LYjS6PYZFOZ/c0J7EANeXSgZKMs/A05qcq4Mdbc+KEU52z
-         oAeUQhyFp1JkV+JAzxt9pr36qNZXPLH7xR7fdcclPBTqSA9V7X3ZkeC0UwjAJkJV+TCt
-         swmIzFjrOYJ+SWs1r4l1whnO1b/8H9BUte0d4HY5WvpRTUeqxzTCkejSp5KWeoquJsp1
-         rXnUaGSPCO083t5zruzpixiJXl/qBuhh0+rxrlhINGK2EBtzZ/E01uLWk+pBO1B6C9B1
-         jhAlbniHfBmzJptnimVnMTHYM18Nl0K/T3mXZGr5XhpN4dgcCOm98bBzEha81k52i5ff
-         8vxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772647890; x=1773252690;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1772647898; x=1773252698; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CAARsnlrqcfDm8ekZAoMmoCRNxm299rJHElT0uztVl4=;
-        b=dOqyhRLiuZnF4bPa8FSM4/QeQtd3bDuwRpZDNTqwyDXEmOYp6XkwizqJOTICcmiIcS
-         9qw4z35kyvOew2T9zF2DkVsla3KSnhGF1xUjyk5gq8Bk3DAz3CSfKvl9bXeIMHnAsfKT
-         Gmte+cF7rF9INhGmFDf5bajEFo4DSUzv7vEDtYvqAHp0wVQR2RQ/SvJGkPimR0kuYKxR
-         Sq5QETHBnznK3PeGBFt3JniDybFOQ1QzzWVWRALJ2OYoGEqNeX47/jtMbzdoqVizagNI
-         XXvG7jCF5lw5Psqs1XGbZA8SG35DtKhBBcC/FAHVeaUpggUrgmJ64JYUH8MPSI/iHgsn
-         3L+g==
-X-Gm-Message-State: AOJu0Yyw71nvAChhbYMuIE0bEt56MI00kLRM5HxIKM8rRrRbS4Xs3D7+
-	MK+fs2C4gfyVpDQut9E0DGDIJ5oGWboCDX4tcDkToywKXYV1TYlJf1/v
-X-Gm-Gg: ATEYQzwCp5MkSxmkh1QV37Pz58ao8A1IeFiAtdhNNg/sacbeMLRFAQ0tAHnMl6qMxvb
-	Q2ydTmMKPlb5sYmOsbMWd2FEImjSoPIkH0QJDHE4QBbTQSq5RhjSdjfjQEzjB9tq+gWvM7XE3e6
-	NULDXODEUgPlhDoDAv/njSYnMXYU2wUH40gsOQzFlLne3Oc4Wrk5YZ2KayF0+ElQWFGkJvm6Xi6
-	3koZo+2yLyfY8NecVKbCuN812ExGZjyIc+9OCMnFiPCNRsf7Fq09IHdzlp0UtnNnHhIcR+AcALj
-	g8dsxxJV4TxmsRv8OrR9kQWZW5dIWkgK+rufeV/bH6hs7cQNbm6JICi1XkWeN51qKNqfgweS31V
-	llbA0LRCV7v9tNXUYm8kgzgQKvVbFELqhx+IAyhpU4pM2vuXDux/F/xCr35rCF++c5ZVx/orDuV
-	zaupS4+McuwHJ0WuXFc71MUqjfo596OR7kM7kvYYKz9D7f5RjoeVR5RBaMSnxNrv3tFaJMJ3SNM
-	dgS8yU=
-X-Received: by 2002:a05:6a00:a21b:b0:827:433c:ba7e with SMTP id d2e1a72fcca58-82972ca0908mr2672299b3a.41.1772647890346;
-        Wed, 04 Mar 2026 10:11:30 -0800 (PST)
+        bh=IbrHSPPxep6X+vivH1+ezOTNFT57/EKHgyG9LJdna2A=;
+        b=NiMwoFpevUQPMXIoE/7+Sju6sxscBm6LnsUnnLKdmFu9D1/4UKXiiX5T0z89/iI62z
+         iLBnUmc9G9etO3w+S7UKLue9an84ToOWz6nyODK7K43u6s9QPjC6oroGUSCrnfbx1ri4
+         /J+QFdnVPok7HMYR3zJt0cyHXfQvW3k7N1ppdJsE5+gZGddMbpo1CiJd1JusKj4pUFQ3
+         gHxbaXN6xr3vZRO5g7suXOgAf40j+WytciyMpOnBlKVoTCL4i7hHt0NH7okp3TscTYon
+         XXmI0QOTaZgxZU0HaSz4wxriKinx7h4Huk4fhJX1k4JM09IY8GVituS6TXJdDFx46Ykd
+         N/cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772647898; x=1773252698;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=IbrHSPPxep6X+vivH1+ezOTNFT57/EKHgyG9LJdna2A=;
+        b=eSVIPjdaNWyDNtUZ2m+F0Yq0YwcaMq3BldvTFm5mWUkj7VWCeXJTZPzL3EELTSKYX8
+         7xNGOppJuN2B3bnnyzKXTkRBFhFJugmOvLiFkAGLADu1fbtjBCWV3U25cLoRkhszkJAb
+         zYanY45mS+xlqjnkZQcWbFHfhlvnp2vzFKvWf467uCHPwzpbZ/+SBAcqrO1nyuq6w3pz
+         6YdIFtyTwjW7BU9gdH8s9HZOQ1IInV9H3oYhZ354nH+UgBDsDwVsMtAFy12TZLZJvPGf
+         vmrxBSsWxyIQCUGxpMoWyMWl9YQPJXjKqn9Uc77FG3jC6O5pHZsMniK9ia2t/szpTZdL
+         VNpA==
+X-Gm-Message-State: AOJu0YzoI8BnywVBUOMidwY0jDwulrsPztKllDKEoLv6uLjjMFLfq+R9
+	UrhOKa/eb/pXRgQlF1AEhXf2fSiwwyFgYkopPVMIvSjhjIs2I9h7Hqm/I4+dHl4R
+X-Gm-Gg: ATEYQzx79dM+HXqdKNSg1BcseO69BFnAPxTOALfG4FM9VieAeSo96zQpAzJXWBQ73U9
+	epXndSazHHBxLa3g4ewQm2tWYAlfmKOPG/qp3uIIAxhcnYGJlI4MsSE0p2aShmGM0HNQZpDFtbw
+	hk2H/RdmtWDcoIW7haA2tPx+nuceNTGkOh7utaV8DoFOA8Uckg+qoj+FRr3llRBOybI1k5FaCz/
+	fW7MAY5YocDvEoZplW3jF/cV+ZVwV0ouXR8F08G0rZUqfdg5c6B3Y+ZU4XD+/OkzSrx9uuTzQRz
+	6+swAiyNyIFivM6UStJDZQB2DvW0Xgi3+MrKdFHWNKIrRECjFG9K+4x8VoQ1IAuWM7ZDNFiZHvZ
+	UaZ25ExphzZE+lDomm9fbWUoUVg/30L0Nd5bLu7E8XYGB5Yxk+kj8pJ8CZrtNzuWw5XK/I1+pvA
+	8yfxXgH9KKEXdT7Jwtk37dA9Sog8g25o47CNKV4eczqlW9q68kU4jlICTwfDh0MUJU0hP6rX7wa
+	qdjsCuRx+VwxG3eIg==
+X-Received: by 2002:a05:6a00:130f:b0:81e:2bca:d133 with SMTP id d2e1a72fcca58-82972b49983mr2518364b3a.24.1772647897597;
+        Wed, 04 Mar 2026 10:11:37 -0800 (PST)
 Received: from buffalo-ssd.taila54753.ts.net (M014013071096.v4.enabler.ne.jp. [14.13.71.96])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-829713825efsm2503835b3a.51.2026.03.04.10.11.24
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-829713825efsm2503835b3a.51.2026.03.04.10.11.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2026 10:11:27 -0800 (PST)
+        Wed, 04 Mar 2026 10:11:32 -0800 (PST)
 From: Akari Tsuyukusa <akkun11.open@gmail.com>
 To: mturquette@baylibre.com,
 	sboyd@kernel.org,
@@ -66,10 +68,12 @@ Cc: linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org,
 	Akari Tsuyukusa <akkun11.open@gmail.com>
-Subject: [PATCH 0/3] Refactor infracfg drivers to be able to use common helpers
-Date: Thu,  5 Mar 2026 03:10:21 +0900
-Message-ID: <20260304181024.738391-1-akkun11.open@gmail.com>
+Subject: [PATCH 1/3] clk: mediatek: clk-mtk: Add cpumux support to common probe/remove helpers
+Date: Thu,  5 Mar 2026 03:10:22 +0900
+Message-ID: <20260304181024.738391-2-akkun11.open@gmail.com>
 X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20260304181024.738391-1-akkun11.open@gmail.com>
+References: <20260304181024.738391-1-akkun11.open@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -78,32 +82,93 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This series extends the MediaTek clock common framework to support
-cpumux and converts existing infracfg drivers to use the common
-helpers.
+Extend __mtk_clk_simple_probe() and __mtk_clk_simple_remove() to support
+cpumux clocks. This reduces boilerplate code in drivers for SoCs that
+require cpumux registration, such as mt6795-infracfg.
 
-Currently, many MediaTek clock drivers implement their own probe and
-remove functions, leading to significant code duplication. By extending
-the mtk_clk_desc structure and the __mtk_clk_simple_probe/remove
-functions, we can handle these sequences in a unified way.
+Signed-off-by: Akari Tsuyukusa <akkun11.open@gmail.com>
+---
+ drivers/clk/mediatek/clk-mtk.c | 18 +++++++++++++++++-
+ drivers/clk/mediatek/clk-mtk.h |  2 ++
+ 2 files changed, 19 insertions(+), 1 deletion(-)
 
-Summary of changes:
-- Patch 1: Add cpumux support to common mtk_clk_simple_probe/remove.
-- Patch 2: Convert MT6795 infracfg driver to the common helpers.
-- Patch 3: Convert MT7622 infracfg driver to the common helpers.
-
-Akari Tsuyukusa (3):
-  clk: mediatek: clk-mtk: Add cpumux support to common probe/remove
-    helpers
-  clk: mediatek: mt6795-infracfg: Switch to common probe/remove helpers
-  clk: mediatek: mt7622-infracfg: Switch to common probe/remove helpers
-
- drivers/clk/mediatek/clk-mt6795-infracfg.c | 70 ++++------------------
- drivers/clk/mediatek/clk-mt7622-infracfg.c | 70 ++++------------------
- drivers/clk/mediatek/clk-mtk.c             | 18 +++++-
- drivers/clk/mediatek/clk-mtk.h             |  2 +
- 4 files changed, 41 insertions(+), 119 deletions(-)
-
+diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
+index 3dfdd3a422f8..8148c21e6099 100644
+--- a/drivers/clk/mediatek/clk-mtk.c
++++ b/drivers/clk/mediatek/clk-mtk.c
+@@ -19,6 +19,7 @@
+ #include "clk-mtk.h"
+ #include "clk-gate.h"
+ #include "clk-mux.h"
++#include "clk-cpumux.h"
+ 
+ const struct mtk_gate_regs cg_regs_dummy = { 0, 0, 0 };
+ EXPORT_SYMBOL_GPL(cg_regs_dummy);
+@@ -513,6 +514,7 @@ static int __mtk_clk_simple_probe(struct platform_device *pdev,
+ 	num_clks = mcd->num_clks + mcd->num_composite_clks;
+ 	num_clks += mcd->num_fixed_clks + mcd->num_factor_clks;
+ 	num_clks += mcd->num_mux_clks + mcd->num_divider_clks;
++	num_clks += mcd->num_cpumuxes;
+ 
+ 	clk_data = mtk_alloc_clk_data(num_clks);
+ 	if (!clk_data) {
+@@ -542,6 +544,13 @@ static int __mtk_clk_simple_probe(struct platform_device *pdev,
+ 			goto unregister_factors;
+ 	}
+ 
++	if (mcd->cpumuxes) {
++		r = mtk_clk_register_cpumuxes(&pdev->dev, node, mcd->cpumuxes,
++					      mcd->num_cpumuxes, clk_data);
++		if (r)
++			goto unregister_muxes;
++	}
++
+ 	if (mcd->composite_clks) {
+ 		/* We don't check composite_lock because it's optional */
+ 		r = mtk_clk_register_composites(&pdev->dev,
+@@ -549,7 +558,7 @@ static int __mtk_clk_simple_probe(struct platform_device *pdev,
+ 						mcd->num_composite_clks,
+ 						base, mcd->clk_lock, clk_data);
+ 		if (r)
+-			goto unregister_muxes;
++			goto unregister_cpumuxes;
+ 	}
+ 
+ 	if (mcd->divider_clks) {
+@@ -605,6 +614,10 @@ static int __mtk_clk_simple_probe(struct platform_device *pdev,
+ 	if (mcd->composite_clks)
+ 		mtk_clk_unregister_composites(mcd->composite_clks,
+ 					      mcd->num_composite_clks, clk_data);
++unregister_cpumuxes:
++	if (mcd->cpumuxes)
++		mtk_clk_unregister_cpumuxes(mcd->cpumuxes,
++					    mcd->num_cpumuxes, clk_data);
+ unregister_muxes:
+ 	if (mcd->mux_clks)
+ 		mtk_clk_unregister_muxes(mcd->mux_clks,
+@@ -643,6 +656,9 @@ static void __mtk_clk_simple_remove(struct platform_device *pdev,
+ 	if (mcd->composite_clks)
+ 		mtk_clk_unregister_composites(mcd->composite_clks,
+ 					      mcd->num_composite_clks, clk_data);
++	if (mcd->cpumuxes)
++		mtk_clk_unregister_cpumuxes(mcd->cpumuxes,
++					    mcd->num_cpumuxes, clk_data);
+ 	if (mcd->mux_clks)
+ 		mtk_clk_unregister_muxes(mcd->mux_clks,
+ 					 mcd->num_mux_clks, clk_data);
+diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
+index 5417b9264e6d..02fab4b166f2 100644
+--- a/drivers/clk/mediatek/clk-mtk.h
++++ b/drivers/clk/mediatek/clk-mtk.h
+@@ -252,6 +252,8 @@ struct mtk_clk_desc {
+ 	size_t num_factor_clks;
+ 	const struct mtk_mux *mux_clks;
+ 	size_t num_mux_clks;
++	const struct mtk_composite *cpumuxes;
++	size_t num_cpumuxes;
+ 	const struct mtk_clk_rst_desc *rst_desc;
+ 	spinlock_t *clk_lock;
+ 	bool shared_io;
 -- 
 2.52.0
 
