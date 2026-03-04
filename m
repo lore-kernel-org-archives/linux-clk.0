@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E18C364EA3;
-	Wed,  4 Mar 2026 08:39:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D33390CA8;
+	Wed,  4 Mar 2026 08:44:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772613576; cv=none; b=D8sqC139S3XloOJE6SNjkGC2KWjqR+64UeGe9EkRDFcMVIDAZMJZw1wFDRWmB9FOxbzgGoCposs2eJ26xMoJwM37cURaCMDRjtKkW9diezn2ZzpKMGUGy+XkOpOp+3bMnkfmp3ARh0NCrUmPMFROH1bKOiNku0LYT3wpVanC1Fg=
+	t=1772613863; cv=none; b=bhfqKpr2Z9n8G4OFuN1CvXr810Zb7ZpF7G2vPylF/CicRH8FT2n0ho6Kle1a2UeEdmoAMpou1FTBMkICo4ddpzKsWG5bCzBj1Lvz7fo0pwNSQKr+ZPaKFAs34QHl8NWg3LGh4dYjsQ01BPmso8N5hcxWwGcK57hfF9UGlvLHBw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772613576; c=relaxed/simple;
-	bh=BW1MAMlh/nk9MxeyiUabogHzZOl5p0qUa7BasAromto=;
+	s=arc-20240116; t=1772613863; c=relaxed/simple;
+	bh=bJ5oHMvnEDqSRR/kfjx4LrLT56zcOOAt+qoZ/KCobTA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cX7jRRs/KxCzPTqtQUbQn1VRASgg6FZDSMCd+awJWxvfTDd8i95HQu/CaNInZfyPHEGJ0JRZbwM3+Tw0Q+0VzJ71aKg4ssyjuyDLfwpx0xtYsmFmu0oLJ5RKG7LSHJbX2GFYZG3atwRPvK6yq2Izw8AGYwypegIFfPIx0n3sp3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EfR5j+Gg; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=sLPFMNAkg2VR0O/JD2bzsUg1B8uwOZPzvJnS+vZmNcltv8uupZjg+63qFwU1H/icJ5A+p1kkWgD3vb6j4EfDyTW1sx19hzsdFAlzhLb2hcqGEvRLs2NveFUHYRmAqX+lbekEwOuccRd1nzLvlOrPjwmr3x5iwmd/7hcM9AlQMS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ExQv6fcU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EfR5j+Gg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31FECC19425;
-	Wed,  4 Mar 2026 08:39:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ExQv6fcU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98119C19423;
+	Wed,  4 Mar 2026 08:44:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772613575;
-	bh=BW1MAMlh/nk9MxeyiUabogHzZOl5p0qUa7BasAromto=;
+	s=k20201202; t=1772613863;
+	bh=bJ5oHMvnEDqSRR/kfjx4LrLT56zcOOAt+qoZ/KCobTA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EfR5j+GgtqBCJg9fn4WlhlRXNMZoren5zEMp9IawERa7OzBlNPqY3ntehvva1btFW
-	 8xsJbUsmmWUhHnyf+jBxr2ja0Z8XZPiZal3Ylk/3mOuZJejvLg3d75YRVyKtZdprcg
-	 du8ajEQ+Ke7oW16KjYjfs9lxtrhRAWfHdC2W7FfL0ikdn7SSR3xv6tA9gxGOn+61Uc
-	 aJoEXQO1hg25LbX54rzdUD9KMQBbAsnJUoTM2OgDHwScrid+WkGTn1iv8KsLAC7UNK
-	 PXbWKWLa+44L3myxtKVDYzc3noL5tTlb/+Kj7FWnBEPU6Tksq/+2cPWi+vHz59pIZ2
-	 X/LjKrskKwZJA==
-Date: Wed, 4 Mar 2026 09:39:33 +0100
+	b=ExQv6fcUjaxXCqkb10ek6GOSiyT8xcIBKgqmQrOlEenEjB9c8BZquWvtJQrBMMJxR
+	 9SIsFZSNgO/9yv41Kogy3NSU+q7mZKq5+9Xw0ItZcmAX0QgYWIG3uOaRu74UIHRzP7
+	 X5aDeGBqLkhnodHuYnxJN1qxxDJ5X2OrWfK1KB4pxTuP5jyh2u/IgX3JobvmmL/Xkt
+	 xueWhr9XiE3PThGwYhvvDFEExh+0PUCTDeZ+C6fKYAz9gKddW5rUGHrZptFJGbdeWg
+	 zQ0kSrzrxmBMT6IL4WYaFjoMOYbavyFWvrfsR3Jf+nPMV885MSblPtMjFZSq+l4TN6
+	 t22/DuEv9Wq4A==
+Date: Wed, 4 Mar 2026 09:44:20 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Caleb James DeLisle <cjd@cjdns.fr>
 Cc: linux-mips@vger.kernel.org, naseefkm@gmail.com, 
@@ -39,11 +39,11 @@ Cc: linux-mips@vger.kernel.org, naseefkm@gmail.com,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
 	linux-mediatek@lists.infradead.org, linux-phy@lists.infradead.org, 
 	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/8] dt-bindings: clock, reset: Add econet EN751221
- bindings
-Message-ID: <20260304-accomplished-helpful-orca-5d6b81@quoll>
+Subject: Re: [PATCH 3/8] dt-bindings: phy: Document PCIe PHY in EcoNet
+ EN751221 and EN7528
+Message-ID: <20260304-proficient-coati-of-lightning-df2cab@quoll>
 References: <20260303190948.694783-1-cjd@cjdns.fr>
- <20260303190948.694783-2-cjd@cjdns.fr>
+ <20260303190948.694783-4-cjd@cjdns.fr>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -52,147 +52,102 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260303190948.694783-2-cjd@cjdns.fr>
+In-Reply-To: <20260303190948.694783-4-cjd@cjdns.fr>
 
-On Tue, Mar 03, 2026 at 07:09:41PM +0000, Caleb James DeLisle wrote:
-> Add clock and reset bindings for EN751221 as well as
-> a "chip-scu" which is an additional regmap that is used
-> by the clock driver as well as others. This split of the
-> SCU across two register areas is the same as the Airoha
-> AN758x family.
-
-Please wrap commit message according to Linux coding style / submission
-process (neither too early nor over the limit):
-https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
-
-A nit, subject: drop second/last, redundant "bindings". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.17-rc3/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
-
+On Tue, Mar 03, 2026 at 07:09:43PM +0000, Caleb James DeLisle wrote:
+> EN751221 and EN7528 SoCs have two PCIe slots, and each one has a
+> PHY which behaves slightly differently because one slot is Gen1/Gen2
+> while the other is Gen1 only.
 > 
 > Signed-off-by: Caleb James DeLisle <cjd@cjdns.fr>
 > ---
->  .../bindings/clock/airoha,en7523-scu.yaml     | 19 ++++++-
->  .../mips/econet,en751221-chip-scu.yaml        | 41 ++++++++++++++++
->  MAINTAINERS                                   |  3 ++
->  .../dt-bindings/clock/econet,en751221-scu.h   | 15 ++++++
->  .../dt-bindings/reset/econet,en751221-scu.h   | 49 +++++++++++++++++++
->  5 files changed, 126 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/devicetree/bindings/mips/econet,en751221-chip-scu.yaml
->  create mode 100644 include/dt-bindings/clock/econet,en751221-scu.h
->  create mode 100644 include/dt-bindings/reset/econet,en751221-scu.h
+>  .../phy/econet,en751221-pcie-phy.yaml         | 57 +++++++++++++++++++
+
+Why are you mixing multiple subsystems in the same patchset? That's
+like three or four different ones. Don't, just make it difficult to
+apply pieces and understand the dependencies.
+
+>  MAINTAINERS                                   |  6 ++
+>  2 files changed, 63 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/econet,en751221-pcie-phy.yaml
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-> index a8471367175b..e60e54273393 100644
-> --- a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-> +++ b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-> @@ -32,6 +32,7 @@ properties:
->        - enum:
->            - airoha,en7523-scu
->            - airoha,en7581-scu
-> +          - econet,en751221-scu
->  
->    reg:
->      items:
-> @@ -67,7 +68,10 @@ allOf:
->    - if:
->        properties:
->          compatible:
-> -          const: airoha,en7581-scu
-> +          items:
-
-Drop items, it's just enum
-
-> +            - enum:
-> +                - airoha,en7581-scu
-> +                - econet,en751221-scu
->      then:
->        properties:
->          reg:
-> @@ -98,3 +102,16 @@ examples:
->                #reset-cells = <1>;
->        };
->      };
-> +
-> +  - |
-> +    soc {
-> +      #address-cells = <1>;
-> +      #size-cells = <1>;
-
-No need for new example, especially without any differences. You already
-have there two.
-
-> +
-> +      scuclk2: clock-controller@1fb00000 {
-> +        compatible = "econet,en751221-scu";
-> +        reg = <0x1fb00000 0x970>;
-> +        #clock-cells = <1>;
-> +        #reset-cells = <1>;
-> +      };
-> +    };
-> diff --git a/Documentation/devicetree/bindings/mips/econet,en751221-chip-scu.yaml b/Documentation/devicetree/bindings/mips/econet,en751221-chip-scu.yaml
+> diff --git a/Documentation/devicetree/bindings/phy/econet,en751221-pcie-phy.yaml b/Documentation/devicetree/bindings/phy/econet,en751221-pcie-phy.yaml
 > new file mode 100644
-> index 000000000000..7c7c8cf8d2a5
+> index 000000000000..8e1d3c791c6e
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mips/econet,en751221-chip-scu.yaml
-> @@ -0,0 +1,41 @@
+> +++ b/Documentation/devicetree/bindings/phy/econet,en751221-pcie-phy.yaml
+> @@ -0,0 +1,57 @@
 > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/mips/econet,en751221-chip-scu.yaml#
+> +$id: http://devicetree.org/schemas/phy/econet,en751221-pcie-phy.yaml#
 > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: EcoNet Chip SCU Controller for EN751221 SoC
+> +title: EcoNet PCI-Express PHY for EcoNet EN751221 and EN7528
 > +
 > +maintainers:
 > +  - Caleb James DeLisle <cjd@cjdns.fr>
 > +
 > +description:
-> +  The EcoNet chip-scu block provides a configuration interface for clock,
-> +  io-muxing and other functionalities used by multiple controllers (e.g. clock,
-> +  pinctrl, ecc) on EN751221 SoC.
+> +  The PCIe PHY supports physical layer functionality for PCIe Gen1 and
+> +  Gen1/Gen2 ports. On these SoCs, port 0 is a Gen1-only port while
+> +  port 1 is Gen1/Gen2 capable.
 > +
 > +properties:
 > +  compatible:
-> +    items:
-> +      - const: econet,en751221-chip-scu
-> +      - const: syscon
+> +    enum:
+> +      - econet,en751221-pcie-phy0
+> +      - econet,en751221-pcie-phy1
 
-And it does not fit existing syscon bindings file, because ... ?
+What is the difference between phy0 and phy1? This must be explicitly
+explained in the description.
 
+If phy1 means "port 1" (although first sentence disagrees, because it
+says that THE SAME phy supports two ports), then the names aren't -gen1
+and -gen2? Or what are other differences?
+
+> +      - econet,en7528-pcie-phy0
+> +      - econet,en7528-pcie-phy1
 > +
 > +  reg:
 > +    maxItems: 1
 > +
+> +  "#phy-cells":
+> +    const: 0
+> +
 > +required:
 > +  - compatible
 > +  - reg
+> +  - '#phy-cells'
+
+Use consisent quotes.
+
 > +
 > +additionalProperties: false
 > +
 > +examples:
 > +  - |
+> +    #include <dt-bindings/phy/phy.h>
+
+Where do you use it here?
+
 > +    soc {
 > +      #address-cells = <1>;
 > +      #size-cells = <1>;
-> +      syscon@1fa20000 {
-> +        compatible = "econet,en751221-chip-scu", "syscon";
-> +        reg = <0x1fa20000 0x388>;
+> +
+> +      pcie_phy0: pcie-phy@1faf2000 {
+
+Drop unused label.
+
+> +        compatible = "econet,en7528-pcie-phy0";
+> +        reg = <0x1faf2000 0x1000>;
+> +        #phy-cells = <0>;
 > +      };
-> +    };
-
-...
-
 > +
-> +#define EN751221_MAX_CLKS	6
+> +      pcie_phy1: pcie-phy@1fac0000 {
+> +        compatible = "econet,en7528-pcie-phy1";
 
-Drop, not a binding.
-
-> +
-> +#endif /* _DT_BINDINGS_CLOCK_ECONET_EN751221_SCU_H_ */
-> diff --git a/include/dt-bindings/reset/econet,en751221-scu.h b/include/dt-bindings/reset/econet,en751221-scu.h
-> new file mode 100644
+Drop node, same as previous one.
 
 Best regards,
 Krzysztof
