@@ -1,147 +1,119 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C7152367D3
-	for <linux-clk@vger.kernel.org>; Wed,  4 Mar 2026 15:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7A632ED54;
+	Wed,  4 Mar 2026 15:05:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772636427; cv=none; b=mN8dOEqh9ZDhR0yjUQLxrM3t2vIcUr0l3G6B8d36KVOaHqqIV4oVqC0LTH5na9rZP4BAjfIeZP+ushaATl/C/H1znG1KXo3b52D0j6FRp8Ys3fVwPspAJEr/I5YG8GY+Dz3dDSRImXo+6apt26wJGBz0x1RkP2E0pPf85Ud2+3s=
+	t=1772636741; cv=none; b=uK90g3QpC656RDodus+cryDRcY1lrSmrBh2YPtcoA68IeUiFrN21bqyuAOQ+0my0k+532FRysfFWLNsDsHeYSk4jhIDLjdlbSwcVVCGa5N0g2PNTZ9fATLT8B3cALU3k4kOMATfGdnJn5S5KbNd2vuf8LShyv3ewLuUiTxxGwMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772636427; c=relaxed/simple;
-	bh=OnVyzSPRGyxt/yed8Pp95yruj+VpaEdTmCsIS3gSEvI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=joHzyKgo9861x3XIhrF5oB/cACBn4q2wILWWIXMI79boEKDQmWiudyjG90Hzy3Qi/6Xb6Z5XRm9wiB0I0Sq7NnCBSVs1WyAqxOCgmzbGM9dUCfobMFOMLIYYSF70WjaEONqbEifLt2Gi7wlp1s9tGjxnB/RUDQXxKA/AETQEGQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bdf0kFba; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=gnmQ9ykG; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1772636741; c=relaxed/simple;
+	bh=EQq+Z/eEJ/BjZ3Sli8Trx7DoThRfnqXwppcDfiyKYXk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Iue9niKNJocGwbfUCNvygH2DBRmHINEmlqCb7usdUniSip6k8TEszgfi0H7gRH68nEZX27XT+OUcAbLV5JQ3AIARMzb8lagPtQpv2NFvpHPi3gR1Rk6lFDk64Zj14WvYCAIsOZj/EjTxWeluevlh+fCGqFVCvClEHB6dKOxkHGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=syDX+awR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bdf0kFba";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="gnmQ9ykG"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1772636425;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QsE+BT3d+rRDBDuK2gn8nLOWlG0CDg1jJKOjkZeChvA=;
-	b=bdf0kFbazphNwdUw3QrbItsDAjDqkCbJA09e6KlMZsXsaOIUCIGaTpTV6nyT3JRSeHeClz
-	II3haUaS+wsrPCKNwZ8/DjsXo/tLnZdc6GKx1yMkUKO1YmU2jG5cjUZvZz7tMvQM7cR6Q1
-	VCKyJsQXj27cXzeWFQuo0E0JNgnPvCg=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-576-YMTkxIFrONue6DqA2T1GSw-1; Wed, 04 Mar 2026 10:00:22 -0500
-X-MC-Unique: YMTkxIFrONue6DqA2T1GSw-1
-X-Mimecast-MFC-AGG-ID: YMTkxIFrONue6DqA2T1GSw_1772636422
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-899f6e5b909so215206346d6.1
-        for <linux-clk@vger.kernel.org>; Wed, 04 Mar 2026 07:00:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1772636422; x=1773241222; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QsE+BT3d+rRDBDuK2gn8nLOWlG0CDg1jJKOjkZeChvA=;
-        b=gnmQ9ykGWqeo13hkw5PzSXgDlRFEL5CEswfWF7QP+qaaQJPqpDJ00mFgeKUBmileqo
-         7ukg+PUCUrKP1lAvXyCPJhsKHNJiGYtbs0Q/1DarBDKh8U4rYdhDs9nIINaHdx7Hq8Cj
-         EXj/YsTvQebSCdVBYtSSDjS3NltuASl78+UM5b7I3YP/JHW8NnaG+SIhSC/gX+8cDBbD
-         6OLbt88M5sKg+tsnFY+rRee3Ah05QDAtAltK9dzIucNrdu1Mpi3nWfpH3lXmJGcgcKPu
-         PgrN9P9SR4iF/iLqlx6rvSfCtBzojG0rBG3jXo5zVZRk8ma+SLoLs0VLhxTK7afBpCFH
-         EsHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772636422; x=1773241222;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QsE+BT3d+rRDBDuK2gn8nLOWlG0CDg1jJKOjkZeChvA=;
-        b=Y4jlkJFHPAOn2puzN4Rnz1jTTQznBHuuzKvRWs5wRwnzAEf12YiHXpsIq+IHaJMQC+
-         TJrnnA7cACrmPz6SMrljrMAhgMKEXFY/uznvZEPUNuoRXPE/1o2vCDZiHkztTmm19Hu4
-         UiyTwafLVjGu4pjQvG8FgKKZ2HUSJs5YbFvTizcJsbjfGu0C1YG+go4lEdQI4O///oua
-         4xW8SZ20ADw6Miv3qsW0TfMsJRB+SP+P2KNBqn6mS57P33H5aNUdxPWNHTPS92S4jKPt
-         UJd7UdvipQSnigDB7js1mikpzsvxgnrNH0KizcATFEcY4/4O0+tDczTNAywVdJurUTaa
-         liYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUV179WfluX0vZQx66H/qA82C1TL90sonSYtVE4+9xXSu81v4KzSD2TlLAZ80Ipkn/wOiadnk0a4k8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxespBIJDSp6X4ZbhI+Ic8CXuNZAqxqKs8/xYv+AZq87aA/NR+w
-	g4ehZ+PhnlC7qXwIdcY5vrP2yG/0kuqcV0BC9FShaotkDi2CJfnskf2HD1d6B95HQOROlL81tgq
-	9g5/b/JPUwDE4c+V4bYFp0qB2glkMO9HdZExJYO4x/Ag9C3LgcJbC8BGKVTHSCw==
-X-Gm-Gg: ATEYQzzbkgFx01+lRilE60Eoj+SrIcVKLJbxOX2EJDR2OO9SXym86uUGKAHaSm//9Up
-	sL3oYlYM5D0nAo/Y0pKnV+htJ393q1Nw9HgeoqJ/FBtIVg/zKjvI2ZCUhrgYjisZr/mRg1CIT8M
-	+NYGLDBdqAs2CI3MeZ2Klqqbkjq0DeClsIFRQQ4gX6aF53ph4W1NrcmGWNPXm33dfolabEnnTWS
-	3bsVtdZX1VkSSgGmFGSzsIOFoTqLlUgB54ITgRolBH7dyTpVydlBgS/9yukHOU7IG/JJ6cw7mkv
-	AV5D3lmgsYfkc8RjKhL3fiMh4pGF2X/dT9vYJ+ORpurOUWzAFirYSGpJusHQSKIIGx5vCN7yn9j
-	Ucuyc+WlbgaWDH60W1xWzQ05tJZ89zvbt4cnCQN3rVfv5D2IzLFqrKtfY
-X-Received: by 2002:ad4:5cc8:0:b0:89a:1441:b7f6 with SMTP id 6a1803df08f44-89a19987420mr28225486d6.2.1772636419843;
-        Wed, 04 Mar 2026 07:00:19 -0800 (PST)
-X-Received: by 2002:ad4:5cc8:0:b0:89a:1441:b7f6 with SMTP id 6a1803df08f44-89a19987420mr28220996d6.2.1772636417628;
-        Wed, 04 Mar 2026 07:00:17 -0800 (PST)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-899c7374600sm158729826d6.29.2026.03.04.07.00.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2026 07:00:16 -0800 (PST)
-Date: Wed, 4 Mar 2026 10:00:15 -0500
-From: Brian Masney <bmasney@redhat.com>
-To: j.ne@posteo.net
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Tao Lan <taolan@huawei.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: hisilicon: Improve deallocation in error path
-Message-ID: <aahI_4lfMdQjZCu3@redhat.com>
-References: <20260303-hisi-error-v2-1-7cd9b43d8fbb@posteo.net>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="syDX+awR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24D27C4CEF7;
+	Wed,  4 Mar 2026 15:05:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772636740;
+	bh=EQq+Z/eEJ/BjZ3Sli8Trx7DoThRfnqXwppcDfiyKYXk=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=syDX+awRE0iFPv2HiOGRFYRW1webFqd8nfEis9HwTVlMlDXVi5hr3vwzm3cHQpNyN
+	 4tvGELJv8erZH5u0sIVVA5+P5KOpPmNuoII1/0AzJwk4fwRLFCKmAwHAB/T8FM+Em3
+	 Tajh03GZ972NiQbW5dEcgos4WTM/8ZQkPUcDK0OB8urvBRDhrjNlw2upM4ayF7k3T2
+	 1noEeQaw0i/o38VfPgvufeGwT9XVJ2smHaHOgFz/Zi5pIVCJb9WgnDygkA1paiIg4v
+	 jGzDLp6Mw1CvWlIcGa64kGKjGpsrGV/ZEYE3pJ9KtH2Mlf7+8a2m5OIwMnYa/WwZHz
+	 bTv2A8RN9nnFw==
+Message-ID: <3cec7787-0787-4b97-8eb6-5fe28f4c2a14@kernel.org>
+Date: Wed, 4 Mar 2026 16:05:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260303-hisi-error-v2-1-7cd9b43d8fbb@posteo.net>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/5] spi: dt-bindings: renesas,rzv2h-rspi: Document RZ/G3E
+ SoC support
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org,
+ biju.das.jz@bp.renesas.com, Fabrizio Castro
+ <fabrizio.castro.jz@renesas.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <cover.1771344527.git.tommaso.merciai.xr@bp.renesas.com>
+ <f6b43f0dc64e13b1c9942c164dea30002d4c4466.1771344527.git.tommaso.merciai.xr@bp.renesas.com>
+ <20260218-qualified-octopus-of-luck-5fcbf1@quoll>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20260218-qualified-octopus-of-luck-5fcbf1@quoll>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 03, 2026 at 04:25:18PM +0100, J. Neuschäfer via B4 Relay wrote:
-> From: "J. Neuschäfer" <j.ne@posteo.net>
+On 18/02/2026 08:50, Krzysztof Kozlowski wrote:
+> On Tue, Feb 17, 2026 at 05:23:47PM +0100, Tommaso Merciai wrote:
+>> Document the RSPI controller on the Renesas RZ/G3E SoC. The block is
+>> compatible with the RSPI implementation found on the RZ/V2H(P) family.
+>>
+>> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+>> ---
+>>  - This patch depend up on [0]
+>>  - [0] https://lore.kernel.org/all/20260128215132.1353381-2-cosmin-gabriel.tanislav.xa@renesas.com/
 > 
-> Unmap 'base' if an error occurs after it has been mapped.
-> 
-> Reported-by: Tao Lan <taolan@huawei.com>
-> Closes: https://lore.kernel.org/lkml/ZNlSH+eWV8Sk3FYn@probook/
-> Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
+> I am not even looking there, start reviewing each other patches, so you
+> won't be sending FIXES instead of reviews.
 
-My understanding is that you need to use your full first name in the
-Signed-off-by.
+You kind of ignored the problem and the other patch got merged.
 
-> ---
-> Changes in v2:
-> - Rebase on v7.0-rc2
-> - Update my email address
-> - Reword the commit message somewhat
-> - Link to v1: https://lore.kernel.org/r/20240708-hisi-error-v1-1-727bc7399b63@gmx.net
-> ---
->  drivers/clk/hisilicon/clk.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
-> index fae65127cd4aa8..08050ff1c8cf9a 100644
-> --- a/drivers/clk/hisilicon/clk.c
-> +++ b/drivers/clk/hisilicon/clk.c
-> @@ -70,7 +70,7 @@ struct hisi_clock_data *hisi_clk_init(struct device_node *np,
->  
->  	clk_data = kzalloc_obj(*clk_data);
->  	if (!clk_data)
-> -		goto err;
-> +		goto err_base;
->  
->  	clk_data->base = base;
->  	clk_table = kzalloc_objs(*clk_table, nr_clks);
-> @@ -83,6 +83,8 @@ struct hisi_clock_data *hisi_clk_init(struct device_node *np,
->  	return clk_data;
->  err_data:
->  	kfree(clk_data);
-> +err_base:
-> +	iounmap(base);
-
-Use devm_of_iomap() and it will be automatically cleaned up for you.
-
-Brian
-
+Best regards,
+Krzysztof
