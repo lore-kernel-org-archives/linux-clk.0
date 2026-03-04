@@ -1,44 +1,43 @@
-Received: from mail.cjdns.fr (mail.cjdns.fr [5.135.140.105])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DAB73976A4;
-	Wed,  4 Mar 2026 09:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.135.140.105
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6CF283FCF;
+	Wed,  4 Mar 2026 09:46:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772616543; cv=none; b=AQAfQW1erjD8u1rWnXJKmkrzXEhcEq7iLzFIBkSVhZOlaofVlrVSjpZ9X6Fl0NzwRYBM7PGX6g5MFIgDfqAMsbJwBwD132ZLhDVwBELNnR+AVhbhMvFSksYqj0T5BImqd8FHrfVv7GKAXHxPWcsUABlJatgUTP8VWGA3+lYQ7/A=
+	t=1772617614; cv=none; b=oaTPS4rc+O9mPNjuSx/vjqrumpkxj+EFOhX2ru553dGMZGCvT2+QDDGDJiJ6SfU3IUAMn0rnCGT+Uys8bCA0kRbY5Gfk1Hc9+R0sQtUEKabFPq+ihsQWBKq8Kq/t7hYwlPaD5lgZJD0AhlpcP65PjAlzfCCsrgcrdqFaSr/7ivk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772616543; c=relaxed/simple;
-	bh=Jcr0tn3DZiSPoeHfUwIDLAFM+lK8CgOCHgpZwOJ4tVs=;
+	s=arc-20240116; t=1772617614; c=relaxed/simple;
+	bh=YzkeSeB3azCaG6bGzrn5yE/65e+g4LRb8pbV3Ay8XkA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iPRy2JIq9f4PdG8DL6BimQ7G4Cb/0bYp/EoZewn7Abuk8C7uSlHMMfGDHQz5cUqZOUiE3TiMxI4Rm88SQ64r8ZQRPsAcnL2VWkPXjulydkM6ABkQoWCkS+LKRG6UrRnVaLSdqFkLLSj5eXGYFbCiQ0Ka2Vpt47hZsMZV4Ul1o+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr; spf=none smtp.mailfrom=cjdns.fr; dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b=ncHzYAwC; arc=none smtp.client-ip=5.135.140.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cjdns.fr
+	 In-Reply-To:Content-Type; b=piabUJ3rMFr5N+BkLN/7BFlbCs7gWzFPTdyoYrraCtAAQXUqses7YqgqiwznlxH4UgaCne1OCbGZ/nkRjDAefZjm7uz5eRgim419emwnZ2QlVVv1Eb3QgPNojsIPzg5VO3sSPC0DCkJ3NoqlZHlan9nYKX8TgF1IzJrwxhEUDmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kpHgcB4V; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b="ncHzYAwC"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3F58322A039;
-	Wed,  4 Mar 2026 10:28:50 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cjdns.fr; s=dkim;
-	t=1772616537; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=xn/i0N8EgAKuwuM15FDiV4PZjdt7rsAySJLonN4COK8=;
-	b=ncHzYAwCogixHNVPZGRZuZBlCM11hw7NxKf1wlD/bw1xMbPi831jWfcgUfJU1SGpwp0cuN
-	Rx2yqoJ/z4sL4VfWI0kLPehzjMcSF8eyL5zN2dHW7EJs38wYdXg7tYbpKLoccnxYqVBrO3
-	rXGLP9iEhH2S+4/L2Q9mtYc8JR6Kj2LgowV0a0KvCrQ0sGg5HuYtoBhLpnzCb5PR0Zy+1C
-	OCqlAhCLilI7JHL3nlXFdGJZsZruj//g7V1c9fs+C4s8N7lIRnhtTNAiQCNgu8RFvY38zP
-	BtHLrE155jwkaELLPVa+tjzFSXjFq9YJJ+z2qaKnJvb8zr2xNEx4Kt/bixTrqw==
-Message-ID: <63cd305f-e76f-4ed3-bb4d-d6b1dec8c92e@cjdns.fr>
-Date: Wed, 4 Mar 2026 10:28:50 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kpHgcB4V"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA984C19423;
+	Wed,  4 Mar 2026 09:46:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772617614;
+	bh=YzkeSeB3azCaG6bGzrn5yE/65e+g4LRb8pbV3Ay8XkA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kpHgcB4VLuLIOeqRCYsJ3mB3VyQb0uCXQOp0N4h8/D2tT4NKJNtZJh3ZZ6I5/iWt8
+	 BibQiOlxfJ7YFh8ONzTTeYSdeep4rHzyNjisYObkLi06dk3wLrj2E1PxDXhESXQF+6
+	 o7o40v/esJMejywS6kZCKy6It49GqoTb5wTAZkTAPqrYyUKQDn+z+5gA7gLRgIzQMY
+	 /vG242Z0htPhjjbJXQJ2ERtLdwh9Hgv5FQUjOQee2baU2Yr8hCeZgLo+Oi2lgLVwvG
+	 IwcFNHr3CM+Lt+eN9x6xoJU+3xoO8fCx+w71URgjxa4DxhwY2MaUEoUpOk53U2QSW4
+	 0tDTuXBpqas6A==
+Message-ID: <419c552a-a57f-4f67-9923-5315ea43a4d9@kernel.org>
+Date: Wed, 4 Mar 2026 10:46:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH 3/8] dt-bindings: phy: Document PCIe PHY in EcoNet
- EN751221 and EN7528
-To: Krzysztof Kozlowski <krzk@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/8] dt-bindings: clock, reset: Add econet EN751221
+ bindings
+To: Caleb James DeLisle <cjd@cjdns.fr>
 Cc: linux-mips@vger.kernel.org, naseefkm@gmail.com, mturquette@baylibre.com,
  sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
  tsbogend@alpha.franken.de, ryder.lee@mediatek.com,
@@ -51,138 +50,80 @@ Cc: linux-mips@vger.kernel.org, naseefkm@gmail.com, mturquette@baylibre.com,
  linux-mediatek@lists.infradead.org, linux-phy@lists.infradead.org,
  linux-arm-kernel@lists.infradead.org
 References: <20260303190948.694783-1-cjd@cjdns.fr>
- <20260303190948.694783-4-cjd@cjdns.fr>
- <20260304-proficient-coati-of-lightning-df2cab@quoll>
+ <20260303190948.694783-2-cjd@cjdns.fr>
+ <20260304-accomplished-helpful-orca-5d6b81@quoll>
+ <7888e449-fec9-4a23-8133-ad0c9651a354@cjdns.fr>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Caleb James DeLisle <cjd@cjdns.fr>
-In-Reply-To: <20260304-proficient-coati-of-lightning-df2cab@quoll>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <7888e449-fec9-4a23-8133-ad0c9651a354@cjdns.fr>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+
+On 04/03/2026 10:09, Caleb James DeLisle wrote:
+>>> +
+>>> +description:
+>>> +  The EcoNet chip-scu block provides a configuration interface for clock,
+>>> +  io-muxing and other functionalities used by multiple controllers (e.g. clock,
+>>> +  pinctrl, ecc) on EN751221 SoC.
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    items:
+>>> +      - const: econet,en751221-chip-scu
+>>> +      - const: syscon
+>> And it does not fit existing syscon bindings file, because ... ?
+> 
+> 
+> If you're asking why it needs to be named "econet,en751221-chip-scu" and 
+
+No, I am asking why you cannot put it with other syscon bindings - git
+grep syscon? What is missing here (we expect complete binding for given
+hardware)?
 
 
-On 04/03/2026 09:44, Krzysztof Kozlowski wrote:
-> On Tue, Mar 03, 2026 at 07:09:43PM +0000, Caleb James DeLisle wrote:
->> EN751221 and EN7528 SoCs have two PCIe slots, and each one has a
->> PHY which behaves slightly differently because one slot is Gen1/Gen2
->> while the other is Gen1 only.
->>
->> Signed-off-by: Caleb James DeLisle <cjd@cjdns.fr>
->> ---
->>   .../phy/econet,en751221-pcie-phy.yaml         | 57 +++++++++++++++++++
-> Why are you mixing multiple subsystems in the same patchset? That's
-> like three or four different ones. Don't, just make it difficult to
-> apply pieces and understand the dependencies.
 
-
-Please pardon my ignorance, I was under the impression that a patch 
-should be specific to a subsystem but a patchset should accomplish a 
-goal and avoid introducing unused code. In this case the goal is PCIe 
-support. If you prefer it, I can resend as a PHY patchset and a CLK 
-patchset, and then after those are merged, send the PCIe patchset to use 
-them.
-
-
->
->>   MAINTAINERS                                   |  6 ++
->>   2 files changed, 63 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/phy/econet,en751221-pcie-phy.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/phy/econet,en751221-pcie-phy.yaml b/Documentation/devicetree/bindings/phy/econet,en751221-pcie-phy.yaml
->> new file mode 100644
->> index 000000000000..8e1d3c791c6e
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/phy/econet,en751221-pcie-phy.yaml
->> @@ -0,0 +1,57 @@
->> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/phy/econet,en751221-pcie-phy.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: EcoNet PCI-Express PHY for EcoNet EN751221 and EN7528
->> +
->> +maintainers:
->> +  - Caleb James DeLisle <cjd@cjdns.fr>
->> +
->> +description:
->> +  The PCIe PHY supports physical layer functionality for PCIe Gen1 and
->> +  Gen1/Gen2 ports. On these SoCs, port 0 is a Gen1-only port while
->> +  port 1 is Gen1/Gen2 capable.
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - econet,en751221-pcie-phy0
->> +      - econet,en751221-pcie-phy1
-> What is the difference between phy0 and phy1? This must be explicitly
-> explained in the description.
->
-> If phy1 means "port 1" (although first sentence disagrees, because it
-> says that THE SAME phy supports two ports), then the names aren't -gen1
-> and -gen2? Or what are other differences?
-
-
-In practice, port0 is gen1 only and port1 is gen1/2. But I suppose it 
-makes sense to specify them as gen1 and gen2, so that fact is documented 
-in the DT.
-
-
->
->> +      - econet,en7528-pcie-phy0
->> +      - econet,en7528-pcie-phy1
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  "#phy-cells":
->> +    const: 0
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - '#phy-cells'
-> Use consisent quotes.
-
-OK
-
->
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/phy/phy.h>
-> Where do you use it here?
-Whoops, I think I daydreamed that it was needed for "#phy-cells", will 
-drop.
->
->> +    soc {
->> +      #address-cells = <1>;
->> +      #size-cells = <1>;
->> +
->> +      pcie_phy0: pcie-phy@1faf2000 {
-> Drop unused label.
-OK
->
->> +        compatible = "econet,en7528-pcie-phy0";
->> +        reg = <0x1faf2000 0x1000>;
->> +        #phy-cells = <0>;
->> +      };
->> +
->> +      pcie_phy1: pcie-phy@1fac0000 {
->> +        compatible = "econet,en7528-pcie-phy1";
-> Drop node, same as previous one.
-
-OK
-
-
-Thanks for the review.
-
-Caleb
-
-
->
-> Best regards,
-> Krzysztof
->
+Best regards,
+Krzysztof
