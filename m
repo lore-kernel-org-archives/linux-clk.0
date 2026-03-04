@@ -1,162 +1,193 @@
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F161329371
-	for <linux-clk@vger.kernel.org>; Wed,  4 Mar 2026 15:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.222.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772636934; cv=pass; b=ImvAtl7ERTy1Mom2vH6L7jevBsmuz/IQkL0HAX+XcCOto2MghU7c0bCNSYHGvaPOOq87jd6K9fMccroZ+r3fBx6Q3sM84j8LVa9YcJtVHNkMJx7/D7HY1LgwiKWRBcPJzj6XG+szwBWwTKruDFxzbGT8zENJnsOLXwjQLWqTJyw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772636934; c=relaxed/simple;
-	bh=YhlXiU0XKCWPaqDUqf4rhyXjvfvZOfuj3Ya2JfRbtgA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lwpFj0ccRosz4D98XxPmThFWpKYOtzFsxSC3omnJ7anXtqo6z8yVd5m8kP3hQLd0alx1RMEP2tNpJCEmoXzhny2wHBLPuSj/CVASkgOkf3wlXxuUEG9swPq+wUW0ZLAP+TFLUnDcECfJAMCFwuDSfjHA+CoOinkGKFnytsF+1Jg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K3ffOugd; arc=pass smtp.client-ip=209.85.222.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078F8339863;
+	Wed,  4 Mar 2026 15:25:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772637963; cv=none; b=g2Zj5Ango4gimM+mUnVLTbt2zm+UczV3opViDuP73aBQvOJW27KZxGhyegbAtCRoSyrI3ZAvBfvpux7k2oblsIlMWGWNhDTZ2/ZZ43ch3fEk10oZAOJmx7rz7EAWG1lZwvxJRNLRM98vqlu6fZmXRQVJTJET3E0Rd9rIDf1pWrU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772637963; c=relaxed/simple;
+	bh=2zTJepp9PeAUecvd2FD/sQLoC97yP4rS/9I24SeT0Y4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=n1F/y/jDZOTP7roDqf9GgsmwZKe54uWTQdF1lymhdJeOPGKNYD8P5KBGm6e2PCLbyG3PfkPSd5gppPEI2MZ+lN5krmed1xvxMrbijZX9leWXjSNKQ0z6Xltpc44laknbJOUL4isrE4k2u5Ap5AJdfaZVZyn+gPvcAM1Jaxdbvbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TOKnlZwD; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K3ffOugd"
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-94ab69af6c8so4689144241.0
-        for <linux-clk@vger.kernel.org>; Wed, 04 Mar 2026 07:08:52 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772636931; cv=none;
-        d=google.com; s=arc-20240605;
-        b=iwJRekDZtrVoKkZSIrsMcw9xSK4fLjQBVQ5chwaPPmkAAKs2B+f5JoWvlKFWKLYQR+
-         HvHSkv9I85F5N5/OfjLkbRPPpJTl7iD7vIMtD2ioPZ43bk/TzBKJ+K1tXabEnPVcOTcL
-         jWCceyElESn53foqTuOcYUVo5iS8Vod5zFQtZN8k+I0mfqHJaNvtj5M+vD/3hx20hTQ7
-         5deOjIZbxGamE5GQ0b1elUsjeF5gQThLAg0XxBGmkbcOxjdvIsypWc/O0wnUULZxMwnl
-         pP7HbmzTvyJaDuVFHQNM3oTI79unwRfrYfc+M35d8Ef0VBtjAtn1Bw2bSLp1weSbbXm/
-         bCZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=Zt95rYDrbJQ7v21KKoOXmX6dHYnzklnNjTFqH4raDgw=;
-        fh=X6EtzCtrP7cyGci7aAywrw7mFfhy26XzLoob7owEAL0=;
-        b=T/vCNNjcLSmhMq9PpzxbqJ0v12sZtp9T2Fp8hxT7g9Hts+yt67eVUiYoXxHD9xrmk3
-         7ds/S9oAIjZ4Fl1LPvJ0UlN/FrrfchsW9MrNjhtVNXFsRxtHM1z5x26rdPakj535E5+8
-         5oPEDoRSU0OS1Lwnc/Jvtsn2e5AV/uufA6StquX5Ef2Fq7afkmDrxC0kiP/lCMLeY1Ed
-         f0QFe7JunE43425aAC2ZjnVvJaPkfSY4OCsWNW0O0wAE3bADr7JED36H63Q/2TlOb0Eo
-         f5d5j5wZaoPpGHvMlJk9cnXFxHZDEo/pw0FU2KanRaofIIdOsiQ+dP4AArvizJraJNfY
-         IzPg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772636931; x=1773241731; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zt95rYDrbJQ7v21KKoOXmX6dHYnzklnNjTFqH4raDgw=;
-        b=K3ffOugdaLQFkS1vn+ekot/3RyzoeBOXHBSNNKzQ+DLP3A7Gk+2gByxVMkTBGGgbdU
-         jSMvWlZr8rVQI0nsie9QXkovuJ+Tj08whQp4nXoiUiC37dGNFwIuCG3LbfUIZHgw3LaP
-         df6kfbDFeRPeC8HwPVEjNE6YCRhBPVDkaKQljea4u3WUY0EHUvNT1gW2Gse4XSb+FC6g
-         W7zAi1tuIoz2rQFxlzfSEzShi8q/06/ZhkoDTIaW+6V4/nYvExX8XXlpUDbsqQGcbqzx
-         SHJ68mE4wu4ZcQsDRdpZiLMusGpbQ6K8XrU46wRMPHRBiKqe+NSE1+gxybeKqlwpeCrn
-         51KA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772636931; x=1773241731;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Zt95rYDrbJQ7v21KKoOXmX6dHYnzklnNjTFqH4raDgw=;
-        b=OQFvBiViVgkOLhwE9w/xgrBQzQcsA29FLJN6qIsIzIcQ0E+6KYHCvvsNOCH1atUvUX
-         O6od9aOBzcFi/aLMtmSX6ueFfmmDbaWa21fq7JDLEqR7nwgIz1Qpw3NOsHE9zSvUFTvy
-         2Qnf27FRGDkJyluWbpM1l17yKsbJpzNhmkPM3ol99/ORmJJ7/OKy79uQmoZgyGI7Gt71
-         lXyoX1v0rqMJqzkcu1+b2yZ3EvG6QszCUauIh4ThLP9kcxIMw6X/BZyBecx0PaeoBKGV
-         vVdJx4Uh8vB2h7nv64HJj0QCdbo6yGdjPE1i/JjxU/qtiuKBd3rc+y/jbic7GKxprH/i
-         bnHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWSko22llEM1HAPUP6mRIBiLAzS2nFin0FeEkPZIhvGIlcn+MVfmAXMqaDYLD+jGycyUgpBm5Q4S4c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRvuXc4Oayso6MmUO20aPeM91MnylWFlRIclQBkMkZTX5v5hRz
-	pEQN3OSH10WQE9S2KkECMXNRpoBTlVtATMlMWir+wbTXTQGK9QJqVDv3S8+GPcg0R6fn6B73E1M
-	5lyfTfigVY9MAoofpq4XQcmGJ2cLAAammpAj6xZ4=
-X-Gm-Gg: ATEYQzzTJcArvtoSQXbB8yYwNAQFR93UmJBzW8mBa0l4pm2+g5pbMmD+2TJbGxeGtuV
-	S1+9KLR/ql2pL95P0GV0Aug8Zl9Du3PB2EA0b0Fuu2Ab8NqRd/KUbET+1/0ElUkZZdFG5jikXXw
-	lOthKvYJKvFatMpDXSXQe2D3wGg+7onK8DI+8IfH+pE+i2ORYzM4FTUjf/dP5CJ46Zp6xGEDvR/
-	MZWVHB8CP70KszGiQS4dcJ1vLMFNwKGM/LHc0NthGZcMIgyTUI+wj+fVkrvyfhm3B0Fzt/tnUMz
-	bdEDOBI=
-X-Received: by 2002:a05:6102:3ed5:b0:5ef:a416:be63 with SMTP id
- ada2fe7eead31-5ff8fc64c78mr3126757137.22.1772636931320; Wed, 04 Mar 2026
- 07:08:51 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TOKnlZwD"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 789801A2C8D;
+	Wed,  4 Mar 2026 15:25:58 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 411C75FF5C;
+	Wed,  4 Mar 2026 15:25:58 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1AC3A103697AE;
+	Wed,  4 Mar 2026 16:25:50 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1772637957; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=stR+fiQn44jXAiWKBJzbsxfh8q0GGnEp7PRkh3gMa3I=;
+	b=TOKnlZwD7v8PFZeNSuQC0M3oyEv2h5CRUZYCZV1ZPAYMootLlr79pikYpmZmTaW3+H6iL5
+	gNdCDzS7liY6Xt7o1VI0Y0K6U5ZesH8lqM+WhFOyQLxS6XtJzr9+xhaIArayuHNcYUULFP
+	mdyi8LlAGZZUCnGB6DHwUD0pGUcrielhMPiyISYLktBrH2NEgkbyHMW8Nxe+pJs1Bxhd2I
+	VOeHF3rbjy0H9xiIX3qCfxAa0BilBSwU8K8JId9JpFaDMRndTJiSie2B1BpBLMAYbOFoDd
+	IuiL4uBLW4Yj/GiBG5bi78vjwVA+sYbIaXmX0rm22dx87DDRgPoFKmA9g9ZAnA==
+From: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
+Subject: [PATCH v4 00/10] Add clock and reset support for Mobileye EyeQ7H
+Date: Wed, 04 Mar 2026 16:25:14 +0100
+Message-Id: <20260304-clk-eyeq7-v4-0-9d6bd9d24bec@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260303115550.9279-1-mitltlatltl@gmail.com> <d2cdaa7e-1a17-4e6b-879d-266844958410@oss.qualcomm.com>
- <aahGtIkxtNPeeWKc@redhat.com>
-In-Reply-To: <aahGtIkxtNPeeWKc@redhat.com>
-From: Pengyu Luo <mitltlatltl@gmail.com>
-Date: Wed, 4 Mar 2026 23:08:30 +0800
-X-Gm-Features: AaiRm53efplzSDOab61tQud_P7APn9ZaH_aClYCYiHE6tyUSiXw8N58pgNHrRTk
-Message-ID: <CAH2e8h5oHvaADPgE_GdPQsWrU00XUT1d0ktbE25ztMeBEE51Yw@mail.gmail.com>
-Subject: Re: [PATCH] clk: qcom: dispcc-sc8280xp: remove CLK_SET_RATE_PARENT
- from byte_div_clk_src dividers
-To: Brian Masney <bmasney@redhat.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	White Lewis <liu224806@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIANtOqGkC/2WQ2WrDMBBFf8XouQoabV4Ipf9R+mBJ40bUWyxH1
+ IT8e2WbFoc+XmnO4c7cScDJYyBVdicTRh/80KcgXzJiL3X/idS7lAlnXLGC5dS2XxQXvOa0Ka3
+ GWgoHoiBpfpyw8d+b6/0j5YsP8zAtmzrC+rpbSiYOlgiUUdEoxqVRTiN/M8Mwt74/2aEjqyfyP
+ xY4l0eWJ7aAXEoH6deV/1nxy2oG8MSKlUXjTJ0bBkI8s499oQmvt3STed+KdBhCvd2kys6blHN
+ Fu9oaOl4WGvPk1FoZV2gonYKj85Ucb1pl2z7Ai62Pbsf2FmipwWrBGlZKVqXuiTB1QJrwzs9VF
+ vMTo5OF1O/xA8qeP7e7AQAA
+X-Change-ID: 20250807-clk-eyeq7-f9c6ea43d138
+To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ Gregory CLEMENT <gregory.clement@bootlin.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
+ Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-riscv@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-mips@vger.kernel.org, 
+ =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
+ Sari Khoury <sari.khoury@mobileye.com>
+X-Mailer: b4 0.14.3
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, Mar 4, 2026 at 10:50=E2=80=AFPM Brian Masney <bmasney@redhat.com> w=
-rote:
->
-> Hi Pengyu and Konrad,
->
-> On Tue, Mar 03, 2026 at 01:10:43PM +0100, Konrad Dybcio wrote:
-> > On 3/3/26 12:55 PM, Pengyu Luo wrote:
-> > > From: White Lewis <liu224806@gmail.com>
-> > >
-> > > The four byte_div_clk_src dividers (disp{0,1}_cc_mdss_byte{0,1}_div_c=
-lk_src)
-> > > had CLK_SET_RATE_PARENT set. When the DSI driver calls clk_set_rate()=
- on
-> > > byte_intf_clk, the rate-change propagates through the divider up to t=
-he
-> > > parent PLL (byte_clk_src), halving the byte clock rate.
-> > >
-> > > A simiar issue had been also encountered on SM8750.
-> > > b8501febdc51 ("clk: qcom: dispcc-sm8750: Drop incorrect CLK_SET_RATE_=
-PARENT on byte intf parent").
-> > >
-> > > Likewise, remove CLK_SET_RATE_PARENT from all four byte divider clock=
-s
-> > > so that clk_set_rate() on the divider adjusts only the divider ratio,
-> > > leaving the parent PLL untouched.
-> > >
-> > > Fixes: 4a66e76fdb6d ("clk: qcom: Add SC8280XP display clock controlle=
-r")
-> > > Signed-off-by: White Lewis <liu224806@gmail.com>
-> > > [pengyu: reword]
-> > > Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
-> > > ---
-> >
-> > Looks like more platforms have this issue.. thanks for fixing this
->
-> I hope within the next week to post a new draft of my patch series to
-> keep certain clk rates intact when sibling and parent rate changes occur
-> [1]. This will be for certain critical clks, such as the ones used for
-> DRM and sound. I have it working with kunit, and just need to clean up
-> some of my new clk helpers and commit messages before I post a v5.
->
-> I'd like to test this on some real hardware and I have the Thinkpad x13s
-> with the sc8280xp SoC. Can this issue be reproduced on this hardware? If
-> so, can you provide me detailed instructions about how to trigger this
-> scenario?
->
+This patchset brings the support of the Other Logic Blocks (OLB)
+found in the first Mobileye SoC based on the RISC-V architecture, the
+EyeQ7H. Despite the change from MIPS to RISC-V, the Other Logic Blocks
+provide similar clock and reset functions to the controllers of the
+chip. This series introduces the device tree bindings of the SoC and
+the necessary changes to the clock and reset eyeq drivers.
 
-Quick answer, no, x13s uses a edp panel, not dsi. This issue is
-related to dsi clks.
+Since this series affects drivers used on Mobileye MIPS SoCs, mainly
+clk-eyeq, I tested that it does not introduce regressions on EyeQ5,
+EyeQ6H, and EyeQ6Lplus evaluation boards.
+    
+In detail, the first patch adds the dt-bindings yaml and headers for
+the EyeQ7H OLB.
 
-Best wishes,
-Pengyu
+Patch 2 adds the compatible entries to the reset-eyeq driver, and the
+necessary changes for the reset domains found in the EyeQ7H OLB.
 
-> [1] Latest public posting v4 from September
->     https://lore.kernel.org/linux-clk/20250923-clk-tests-docs-v4-0-9205cb=
-3d3cba@redhat.com/
->
-> Thanks,
->
-> Brian
->
+Patches 3 and 4 rework the handling of parent clocks in
+__clk_hw_register_fixed_factor() to make it identical to other clock types
+like divider or gate. This allows simplifying the registration functions
+built on top of the now exported __clk_hw_register_fixed_factor(). A
+new clk_hw_register_fixed_factor_pdata() is added that will be used in
+clk-eyeq later in the series.
+
+Patch 5 renames the defines and functions related to the PLL with the
+PLL type fracg, to make room for the other types of PLL found the in
+EyeQ7H OLB.
+
+Patch 6 introduces a new generic type of clock structure that can
+represents all clocks found in OLB. Then patch 7 and 8 converts all
+clocks defined in the driver to the new struct eqc_clock and remove all
+the previous separate clocks structures.
+
+Patch 9 adds the list of clocks as match data for the 14 OLB present
+in the EyeQ7H SoC, and the functions needed to probe the two PLL types
+found in the chip.
+
+Finally patch 10 adds an entry for Mobileye RISC-V SoCs to the MAINTAINERS
+file for the newly added dt-bindings files.
+
+This series depends on the EyeQ6Lplus support patchset posted
+previously[1], which in turn depends on Théo's series[2]. In particular,
+the changes made to the clk-eyeq driver in this patchset depend on the
+changes done in these two series.
+
+[1]: https://lore.kernel.org/all/20260226-eyeq6lplus-v3-0-9cbeb59268b0@bootlin.com/
+[2]: https://lore.kernel.org/lkml/20260225-macb-phy-v7-0-665bd8619d51@bootlin.com/
+
+Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
+---
+Changes in v4:
+- Rebased on v7.0-rc1 + version 3 of eyeq6plus series.
+- Link to v3: https://lore.kernel.org/r/20260114-clk-eyeq7-v3-0-8ebdba7b0133@bootlin.com
+
+Changes in v3:
+- Fix eyeq7h-olb DT bindings following Krzysztof review.
+- Link to v2: https://lore.kernel.org/r/20251224-clk-eyeq7-v2-0-81744d1025d9@bootlin.com
+
+Changes in v2:
+- Move the dt-bindings to their own files and sort the compatibles.
+- Reorder the changes in reset-eyeq and make the register access more
+  readable.
+- Drop the validity check on even divider. Unnecessary since it is
+  always called from a clock .set_rate().
+- Drop the parameters check on divider registration. Will be posted
+  separately.
+- Switch to a new generic struct for describing the clocks.
+- Add an entry to MAINTAINERS.
+- Link to v1: https://lore.kernel.org/r/20250903-clk-eyeq7-v1-0-3f5024b5d6e2@bootlin.com
+
+---
+Benoît Monin (10):
+      dt-bindings: soc: mobileye: Add EyeQ7H OLB
+      reset: eyeq: Add EyeQ7H compatibles
+      clk: fixed-factor: Rework initialization with parent clocks
+      clk: fixed-factor: Export __clk_hw_register_fixed_factor()
+      clk: eyeq: Prefix the PLL registers with the PLL type
+      clk: eyeq: Introduce a generic clock type
+      clk: eyeq: Convert clocks declaration to eqc_clock
+      clk: eyeq: Drop PLL, dividers, and fixed factors structs
+      clk: eyeq: Add EyeQ7H compatibles
+      MAINTAINERS: Add entry for Mobileye RISC-V SoCs
+
+ .../bindings/soc/mobileye/mobileye,eyeq7h-olb.yaml |  192 +++
+ MAINTAINERS                                        |   13 +-
+ drivers/clk/clk-eyeq.c                             | 1245 +++++++++++++-------
+ drivers/clk/clk-fixed-factor.c                     |   72 +-
+ drivers/reset/reset-eyeq.c                         |  268 ++++-
+ include/dt-bindings/clock/mobileye,eyeq7h-clk.h    |  119 ++
+ include/linux/clk-provider.h                       |   56 +-
+ 7 files changed, 1468 insertions(+), 497 deletions(-)
+---
+base-commit: 559f264e403e4d58d56a17595c60a1de011c5e20
+change-id: 20250807-clk-eyeq7-f9c6ea43d138
+prerequisite-message-id: <20260225-macb-phy-v7-0-665bd8619d51@bootlin.com>
+prerequisite-patch-id: 68a9ce9820cf78e8a0705505ea29ff981b518570
+prerequisite-patch-id: 40a406305a44a0ea0d0b861d34c199907750f84c
+prerequisite-patch-id: dda6d7c3d7d7d8e49b31015887d1a7308f65559a
+prerequisite-change-id: 20251128-eyeq6lplus-961c630f0940:v3
+prerequisite-patch-id: 68a9ce9820cf78e8a0705505ea29ff981b518570
+prerequisite-patch-id: 40a406305a44a0ea0d0b861d34c199907750f84c
+prerequisite-patch-id: dda6d7c3d7d7d8e49b31015887d1a7308f65559a
+prerequisite-patch-id: ee24f0dcdb893f3850e9dd0d54e848782a1b9ed7
+prerequisite-patch-id: 781c4ae465c2af54c28ef4ad7a3c142da8390cf0
+prerequisite-patch-id: 5de50e537525f326cd3478f8cf88df947c66a7ee
+prerequisite-patch-id: cbb05dadd49dbf4ef54548b1016bba1e80c90805
+prerequisite-patch-id: 07021e7be37e3c14ef2950f2ca176a69b3be3ded
+prerequisite-patch-id: 1ee9fc5cf027bc9211c1a5e1547036e33d30fcf7
+prerequisite-patch-id: 30f092cffaae6e2adc8f6520af6073b9cd20c59e
+prerequisite-patch-id: 90361e8b03b1160a73257cc7d69e32435f319423
+prerequisite-patch-id: 5db4ab27d470485e90f50a95ab7fc423ae63f5c8
+prerequisite-patch-id: 571f8eb779bcad13ac8762519dafc2d0c260d6c7
+prerequisite-patch-id: 27c86e0ecfdabca4bca4bdc44e1bc9db8c27634a
+prerequisite-patch-id: 40a5ae6831ec4107ae32d74e948636837fa9e076
+prerequisite-patch-id: a8952e1ae521fd6f757ebed446f15523791003ac
+
+Best regards,
+-- 
+Benoît Monin, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
