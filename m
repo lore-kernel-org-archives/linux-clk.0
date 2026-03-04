@@ -1,117 +1,179 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A77F23537EF
-	for <linux-clk@vger.kernel.org>; Wed,  4 Mar 2026 04:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772599107; cv=pass; b=nlx5vD9z7GYVq04rGBjRs9xyMCfkBDsp3PnRrjdMvXBsubc4zW1xuY2E0GMv8xbZeh6J6MpaLPNaMaKP71wW1byL9vh3X17SGmWBYJcW5h2iHBeJHVrcfJjqhkbTEmy898u5TbdFGCid+jziDH0roXEhHMhO/KY81FLtnbd1UZ4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772599107; c=relaxed/simple;
-	bh=IMq/66z83Cb1wYKbJHyMR5HqtqYIMKKZ69NE/x8vY1g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ElLyxTWvkLnSmsY79vV+fQcZpPEWvUoFPEPTdGUO4sK75LOH6gHGJ+bUxgTbBnqCx4sDywGvoT4jCDJyIVpqDxPzP8yGSnJ9D2b2FT2I7zohkQ+BUkJahufdourq8VawcdsZ9Cx5idQ2ghNF2zzVPU8pBf/hDlaqvzaXOBcNpKM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a4PHeZ54; arc=pass smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1ECA390CBD
+	for <linux-clk@vger.kernel.org>; Wed,  4 Mar 2026 08:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772611723; cv=none; b=mSMf66ej83+7BthsA4Sdfv5dZlW2YRs+38/QsksXYAVwg0Zdf/ALAwW7NGE97yYB1MENTMpq59mVzzrbrvAlyUeXrAgTjZWZog5DctsHxtGtiyBePrS10FOF5C0i8gkvwcHXoyOonJvu/PcvNG7yunv1yj8Q8aqx3VSvLm6LjI4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772611723; c=relaxed/simple;
+	bh=SCl11TbcKKgrDpz8AOKo3E9AzwfTwHh0/Z5vfzDPinw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LpdMnIbdjNN51B3/D/2pkjvnKJ2CTUigvk8WCuiEufVYgsJbsA08zrEjZxE7KzP2Gl66Rqn0bqWNIMr8yfpLVluvZfdLUvYxPlre7o5FEA8c8o/IpcxhDet9MLSTyT5LDFfJNUQsq55lO4QHkOXCnfnrK7p0dIRiP2WDFyPI9Dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KgMJc9/v; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a4PHeZ54"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-439b2965d4bso2902205f8f.2
-        for <linux-clk@vger.kernel.org>; Tue, 03 Mar 2026 20:38:25 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772599104; cv=none;
-        d=google.com; s=arc-20240605;
-        b=ZdiqEtm+idn3YaaZ+8XeAAcT00PGSjTXduQXPN9jos2z9uIS4TosxPC5kZGtWGYWFi
-         6JM0nXMFy5A031LtUSnoOBeLc7Ae9q3tz6uFqP6Qd0A5hLrisO+3Edl+9jUXRVOQulV3
-         Tt4gTotdP3fuZmZam7MXNvd/TJjtWmKonNJDQrykehu6YI8QyxVA3cizuvkCL+yuhYo4
-         lIkxa6V9sauIO7/QP7pcvEqRShGGlqJYe7Byeui/kKOSRfBrYx8vizDAjI42wG+uNl/s
-         76RHmhpwXXVbLe1/dGdJVgTxM3Z8hKH9tM58PXKobIuPt8P0YOaCwldqTriR7zz5awJB
-         YoBw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=IMq/66z83Cb1wYKbJHyMR5HqtqYIMKKZ69NE/x8vY1g=;
-        fh=lcc2T68Wwjj4+h3aqMrU7e8DMDGh9D+QHNV+ZdZgMyI=;
-        b=BszqdSu4IlUoQiyEQm1sYe4qKAa1Z2x3KNd0v64kPSHWoZjB306m3mxCSI2xujuy96
-         6oLFO6XGTQ6WXzS/kpfgojQpLK4oeZcsEpCialri0W07X0+wLGYuF+sujY0J1Fg0yN//
-         GqTwbQnIy8Tr+44Y4oGm35CoAnvLym81CLSzBfIqvwZNQ8agLBExCsn85ECV98Z82iO/
-         qwDNmZlkgZIElG1yjXhvkMRGXfUV91HLCiH02Lc6dgDZKYItMstOLIQTB5iTbv65W22v
-         XJVZT9gxUkt5IeRKbwSoSL9TbtGwh1cQya1iXAkY35mDIAHJ/Cbw9F+JB0qG84uq2QBv
-         vmcA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KgMJc9/v"
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-3597fea200dso2617854a91.3
+        for <linux-clk@vger.kernel.org>; Wed, 04 Mar 2026 00:08:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1772599104; x=1773203904; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=IMq/66z83Cb1wYKbJHyMR5HqtqYIMKKZ69NE/x8vY1g=;
-        b=a4PHeZ54fqu9d5dVPFbZdcYJfKNZS+n8sza8UdDwvU8W4oplBUnUD/bOWYZp0p0nZ4
-         u1LAKHQE79lkTqYphT2+t3/e49W1AS19x2WUd7+bHfgEe/E3B/ppmxlX+nZIX2XfPe/n
-         b7+ojlG9jM0Ofo2VjunjkP5jdv8235577BTSXAhOqVXpLoUYs4X7f8+SIatthXA/6+Pf
-         pMvaHpKvauMBQWkhefcxnwmYRGG7Qy4M3RNCZU0aTW+0NVtocJaJSmw8P8+aolqnwmzG
-         mho1yrTjZREPRgcePSHNq5u1HbckRqF6Vl1e0NnKm6auw2GlJ2mUy3/fjou2iDus8S0f
-         wdSQ==
+        d=gmail.com; s=20230601; t=1772611715; x=1773216515; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6V4ZABAoBYAEDoOVQvmIQ76oRldfMwh5wzfjWSFa+/U=;
+        b=KgMJc9/v7e8TyF0l45KxWaYpiGQiHHdHaHh99F+sQOVf7pnj0jMqVkxoryAXv4vup4
+         XQJheuqy6Bxicnv+xPE75cY/aZ5VIUGTBYLsN1yQwwimsf0Pa6A4bFkAy5bPdTvpUoMo
+         qssc5eEPe6UlxisuAkkqhdbFA5RRP11tMk5dw6pFiyS+mOg4Dqxsaq9t7SXFgio+jYmX
+         qGbcWQ+qNAicdFeo9FE6D3S97FcwyfH2x2VRTAa+F/Kxooe3FWp4A9cp47WLmDPdoGLl
+         oPOxqY98YA42YhCUFlG6EDYiJBQTpHuwVjCs2A9vjNo9BeakWAoQ75r/m4a1BovurIJf
+         jDIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772599104; x=1773203904;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IMq/66z83Cb1wYKbJHyMR5HqtqYIMKKZ69NE/x8vY1g=;
-        b=Io5J3YpWcjM8ZXgW1Pmn/+njT9lgQ/zCJsuLxCuWlG6wZf4+WjiFO3ZpRmbaUjnBA6
-         T/NYIpTQVox4K5vWRORehGyrI4tUGrBdyt1Vvky2JvwnSqDI9C0vAqTbMm1pbFCfWXhy
-         VKBXWvIxJAwMjIy/J7B7PePxxQ7S4RgGF0BLZktK1JeuJybBvFFrVOFEH6NrpUXLInYw
-         1AQ9CPzmpKlosVweCsjE5oY4o1om2MUHvBkQz7RIrpmyj//rQxQB/KvWcUnDbrJHyAgp
-         nGXih9644I6+3r+MOLFEZFzY4D1AzZgz/Kp1LiTP0QKQQj6Jtb1BrLV3yzfyVo6tFIow
-         wBpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUVEduTSFOS7ybY4R8Torx6w9hf2bqJHcJDC8sn29L2ruvPWlXhE8MsiYWajUGqbf13S4t3l2TMIDU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXpwNR7EeoaO+XTQvpdGXjhKKtsA60sx0opdoBISEPNrPoe6Ad
-	aJexnpo9EiYI3fv4DkUQANV9V6GQSMp3JalfCQnOEm8bld1Z10z7nnn8RyyuJfDKBcyAk+Nhcck
-	ZLwYFR+VMBpgkDKG9UwIF1Q1wToH1+cGbYZx3BomQxQ==
-X-Gm-Gg: ATEYQzxUx+HV2aZSQ/pwjdg+fun2YPzRYKNwWWPyRsKAivoy+Pf7QtuqjNSsCxTv1BN
-	ZISnR5MUbc7rU4PBMiSUfyglbXTWD2CCdV0El/IM4bNaTd8LlQKv4M3YiZISBsxoFFNITRTgGZ2
-	B3qrCxPc+TCHGlwy17vApWRLWXbwYSSMnpmDRn+uDe3oSMFqzMydI5m7XlB2FvL0w30hf4+RU4d
-	1oVln0nsQHkcE9xdORKeMtbEp11fL29C5LpBuVWeKo9Eqbd8eJaxHC9V4mmx8NS+/V7+FmMgkEf
-	/euSL/QKkx/X4OlmcA==
-X-Received: by 2002:a05:6000:26cc:b0:439:bae9:6151 with SMTP id
- ffacd0b85a97d-439c80100b5mr1233744f8f.48.1772599103909; Tue, 03 Mar 2026
- 20:38:23 -0800 (PST)
+        d=1e100.net; s=20230601; t=1772611715; x=1773216515;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6V4ZABAoBYAEDoOVQvmIQ76oRldfMwh5wzfjWSFa+/U=;
+        b=GYiw2cdp3KbAUJBSzvOPVJ7Din7nUDTlBO1d76O/FmMlRzOB0hnu85Wu5zxab47Qjh
+         2L08KiY5uqOcDa5FAN2mDebpa2QMEYgp2H/43kPA2id41swgFJdAmApryg7Q9eQjoXTp
+         tckM41eeHiZERHAqfzKGr3V2X21P2j0pdwhmgL5rFqRH+VXoafJbAzpEgulAOERizmxe
+         aqxZVAR/pHZxa2f2ARGTNiaBCxkvd06TpFjbHKoxSK+A0hyRTpsgUym+CWCXF46P1w1L
+         Tl2CahB+OM97h06kijCq+/gY+AJd0UFWX0J+2n1B73W8Tgfc65aYCz3Zz7cHfT8rIg0l
+         AO5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWsdmXXoNq5+b+LesFXEDXd0CDzRmbWIN1r5ibah1sQ9HtwWUxBXc15EfkimZnRZ38xSz3Dme8DaUY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9FRpUpdlGZYQvo8SDV3mTzXb2LIXTaRlg9d3v1+HJ0zynhezE
+	VhJkd+J58BYUW1m0qt5vWMuTNODXLcPV3EgCTdQqRTrsd++1gPZ8yZg7
+X-Gm-Gg: ATEYQzy4P+Lfx38etfZ2v42cvGbtRvI3V/N7qowysP2P/XN738wnXV9+44zRf+NJlZ5
+	RPoy/kfRqxnvxm3k1gf/98diIn8yZUqmF6kLA3YJ7kBCuzdwfHTH40045/KS1It3Tr5cbRQqZf9
+	6khbC3hLUUGCPJISzXJ99xVtJAO/sflQGBz1SHnRfGu/fgMb3z/2I0f0XASUZxHXFkDbFavgvm5
+	+j7rr0zpXRz2bJIxDS4jEhrO/1/JRJ2H3Bdspgj0DcBft04rajSYV1NPcxjq8VWiT9IeRhYOdZ1
+	bbP7fNVgykXktFzv0MfYzOYeboCOgAblzdRTURvDsp4412ZqYHIAj9yLn2e6SKnorHoQwZSuaNU
+	Q15wOUmrzaMma87y2t0LPZDS/YdFeFcq3Sj6hipQeZ56tN4dx98i64QDj6oPd3u5tVRAHmQ1Aq9
+	j+gB/t5XRwtDZYbpbdpRbOCVxRZpL/h9+dYTL6TlA=
+X-Received: by 2002:a17:90b:2fc8:b0:359:8e1c:542 with SMTP id 98e67ed59e1d1-359a6a3c1ddmr1261053a91.18.1772611715477;
+        Wed, 04 Mar 2026 00:08:35 -0800 (PST)
+Received: from DESKTOP-TIT0J8O.localdomain ([49.47.198.15])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3599c3acea3sm4504552a91.16.2026.03.04.00.08.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Mar 2026 00:08:35 -0800 (PST)
+Date: Wed, 4 Mar 2026 12:08:25 +0400
+From: Ahmed Naseef <naseefkm@gmail.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Caleb James DeLisle <cjd@cjdns.fr>, linux-mips@vger.kernel.org,
+	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, tsbogend@alpha.franken.de,
+	ryder.lee@mediatek.com, jianjun.wang@mediatek.com,
+	lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
+	bhelgaas@google.com, vkoul@kernel.org, neil.armstrong@linaro.org,
+	p.zabel@pengutronix.de, matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com, nbd@nbd.name,
+	ansuelsmth@gmail.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 7/8] PCI: Skip bridge window reads when window is not
+ supported
+Message-ID: <aafoedMHhKNuEwFE@DESKTOP-TIT0J8O.localdomain>
+References: <20260303190948.694783-8-cjd@cjdns.fr>
+ <20260303213723.GA4075286@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260225-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v8-0-95517393bcb2@linaro.org>
- <20260225-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v8-3-95517393bcb2@linaro.org>
- <06249a9b825de30d1fc19fac873840ab3cd7f6aa.camel@linaro.org> <j46cw7ns2jvcojavsqw3f6se5zwjt6lfx7z5ahy56owtrwd27q@ufjrfwnfk453>
-In-Reply-To: <j46cw7ns2jvcojavsqw3f6se5zwjt6lfx7z5ahy56owtrwd27q@ufjrfwnfk453>
-From: Christopher Obbard <christopher.obbard@linaro.org>
-Date: Wed, 4 Mar 2026 04:38:11 +0000
-X-Gm-Features: AaiRm51B2RI4RVd1gpKraSUcwk1_GGIfzTP-w_kfBb8uww1EVsubpX8PXY_AI10
-Message-ID: <CACr-zFAZELW8rL2ui96G4nPDnmtxQ4X5Q47Ha4n1dF7iHcPHYw@mail.gmail.com>
-Subject: Re: [PATCH v8 03/18] dt-bindings: media: qcom,x1e80100-camss: Add
- support for combo-mode endpoints
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, "Bryan O'Donoghue" <bod@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260303213723.GA4075286@bhelgaas>
 
-Hi Dmitry,
+On Tue, Mar 03, 2026 at 03:37:23PM -0600, Bjorn Helgaas wrote:
+> On Tue, Mar 03, 2026 at 07:09:47PM +0000, Caleb James DeLisle wrote:
+> > pci_read_bridge_io() and pci_read_bridge_mmio_pref() read bridge window
+> > registers unconditionally. If the registers are hardwired to zero
+> > (not implemented), both base and limit will be 0. Since (0 <= 0) is
+> > true, a bogus window [mem 0x00000000-0x000fffff] or [io 0x0000-0x0fff]
+> > gets created.
+> > 
+> > pci_read_bridge_windows() already detects unsupported windows by
+> > testing register writability and sets io_window/pref_window flags
+> > accordingly. Check these flags at the start of pci_read_bridge_io()
+> > and pci_read_bridge_mmio_pref() to skip reading registers when the
+> > window is not supported.
+> 
+> BTW, I'm still interested in the details of how we got here.  It
+> shouldn't be too unusual to have a bridge without an I/O window or
+> maybe even without a prefetchable (64-bit) memory window.
+> 
+Hi Bjorn,
 
-On Sat, 28 Feb 2026 at 07:17, Dmitry Baryshkov
-<dmitry.baryshkov@oss.qualcomm.com> wrote:
-> On Fri, Feb 27, 2026 at 10:01:43PM +0000, Christopher Obbard wrote:
-> > Reviewed-by: Christopher Obbard <christopher.obbard@linaro.org>
->
-> Christopher, please trim your messages. There is no point in having the
-> whole original patch to be quoted if you are replying with an R-B.
+I'm fairly new to the PCI subsystem, so please correct me if
+any of my understanding below is wrong.
 
-Thanks for the hint, I will make sure to trim my replies in future.
+Regarding the I/O window check: I only hit the issue with the
+prefetchable window. The I/O window check was added per your
+suggestion in our earlier discussion, since the same logic
+applies. Neither downstream device (MT7603, MT7663) has I/O
+BARs, so I haven't been able to test that path.
 
-Chris
+The EN7528 SoC's PCIe bridge does not implement the optional
+prefetchable memory window , the registers are hardwired to
+zero. The downstream device (MT7663 WiFi) has 64-bit
+prefetchable BARs.
+
+The problem is that pci_read_bridge_bases() reads these
+registers without checking pref_window. With both base and
+limit hardwired to zero, base(0) <= limit(0) evaluates true,
+creating a bogus [mem 0x00000000-0x000fffff pref] window.
+This makes the allocator believe the bridge has a prefetch
+window and route the prefetchable BARs through it. But since
+the hardware can't actually forward through this non-existent
+window, the device becomes unreachable.
+
+This patch skips the register read when pref_window is not
+set, so no bogus resource is created, and the allocator
+correctly falls back to the non-prefetchable MMIO window.
+
+As to why this hasn't surfaced before , I'm not sure. It may
+depend on whether pci_read_bridge_bases() gets called on a
+given platform and whether the downstream devices have
+prefetchable BARs. But I don't have enough experience with
+other platforms to say for certain.
+
+Reagrds,
+Ahmed Naseef
+
+> > Suggested-by: Bjorn Helgaas <helgaas@kernel.org>
+> > Signed-off-by: Ahmed Naseef <naseefkm@gmail.com>
+> > Signed-off-by: Caleb James DeLisle <cjd@cjdns.fr>
+> > ---
+> >  drivers/pci/probe.c | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> > 
+> > diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> > index bccc7a4bdd79..4eacb741b4ec 100644
+> > --- a/drivers/pci/probe.c
+> > +++ b/drivers/pci/probe.c
+> > @@ -395,6 +395,9 @@ static void pci_read_bridge_io(struct pci_dev *dev, struct resource *res,
+> >  	unsigned long io_mask, io_granularity, base, limit;
+> >  	struct pci_bus_region region;
+> >  
+> > +	if (!dev->io_window)
+> > +		return;
+> > +
+> >  	io_mask = PCI_IO_RANGE_MASK;
+> >  	io_granularity = 0x1000;
+> >  	if (dev->io_window_1k) {
+> > @@ -465,6 +468,9 @@ static void pci_read_bridge_mmio_pref(struct pci_dev *dev, struct resource *res,
+> >  	pci_bus_addr_t base, limit;
+> >  	struct pci_bus_region region;
+> >  
+> > +	if (!dev->pref_window)
+> > +		return;
+> > +
+> >  	pci_read_config_word(dev, PCI_PREF_MEMORY_BASE, &mem_base_lo);
+> >  	pci_read_config_word(dev, PCI_PREF_MEMORY_LIMIT, &mem_limit_lo);
+> >  	base64 = (mem_base_lo & PCI_PREF_RANGE_MASK) << 16;
+> > -- 
+> > 2.39.5
+> > 
