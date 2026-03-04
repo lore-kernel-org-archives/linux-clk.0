@@ -1,84 +1,84 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF603845A6
-	for <linux-clk@vger.kernel.org>; Wed,  4 Mar 2026 22:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061AD373C0B
+	for <linux-clk@vger.kernel.org>; Wed,  4 Mar 2026 22:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772664698; cv=none; b=J2b6N4S4vemvctgfrj0FDhrRf70h9W2paT0pA1UMZ9yCE/Qcel6Al6b0l4ninOXQ9eDVknKSeoXog/o3Q3nmui7HPt0F23IR5ES2DlZ9SsmZlzkNs+RZhAdkwqFHRfqmSYbbo6D8eWOJr3gQPqLI1Z44xxZ9QMtqI5hOXv85b08=
+	t=1772664701; cv=none; b=Kc9rrZvkkWlhreQaCa8EDFCOswC8mJY01iDEWARsdykxz/bwvJH2Fpvb2PowtetjDJclVxnsPJgoEjV5ehYKfLODaKBQeXkNllW6QPKo89vEO0PGxCsjc6oGoCjGYehOaEPskeAMvjzRzipGcusbuyd7ZikRyQysB/pfXFdQoFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772664698; c=relaxed/simple;
-	bh=CDynmqnNGNqeRMDqyGZQt5+Y7aUBAhjbZuUmwJcAQF8=;
+	s=arc-20240116; t=1772664701; c=relaxed/simple;
+	bh=+jW3MS7DFLqoUmBWO2hApFPt6x7I6eU55roZMBHG3AY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oBTsQar5W9dvMKBPu90wAAfoDqGpS6JLCLbsT1Me5itkKSs3MhN3StGIeJAPyAoYBUjahbJl+zVzCXM9RXaFTVb8R+rgw/W25iN5Hbm6Chhtlq0wckEgJJQhqUdwy1WNZDQRK9UiQQ3YUVi4pBN/4G7cnj9rlalBIKi5OCcZJFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JumxrEDo; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=UvENq1De; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:To:Cc; b=JIDsi0C8HgFDP9dfWBQZoihlJwhacIjhrLbLC4keWKq3fC4DyLvG1cVvHhg3D5GPC24nRvDR2Y/vlqMViK6TsKM74CZ9T5fS1ari5tZ/AfhY3jhbfKhiIYLLrhVV49AT3PK6arLpNSasfDweK8l9C4KkEUZi4ATS9rdcYk6LVEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fhdIwUmF; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=ethVQs6O; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JumxrEDo";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="UvENq1De"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fhdIwUmF";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="ethVQs6O"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1772664695;
+	s=mimecast20190719; t=1772664699;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=sAE4SvbVc5xuqVfNMXPNWetx7bFn7ASO7FJPhI+jmF0=;
-	b=JumxrEDosYaaynRVc3sWoFnrXoflRaEwNmPTGrAfVS9u7trMaSMFP6YfXETmBvGkTwhoYi
-	bYkS4B6G9KsO3CAoX7iuEKCx1ftHm/71WVa5h/PcMPuAEJBZH6XAoq6K1JGt+bBRcxCCFC
-	bB8Su27x21HdRo73YmbNuMuhl6Y19+g=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=ahje0afOzEE5AO8iZY1qk1UFWqM0XHyDZg7ReLCYYwI=;
+	b=fhdIwUmFQlfj/JRs5mo1yWIN/goYOpKWLITNB+LHX8B4lTR1VmeEmE59paGe1ucI57Qi7/
+	xNg6TG//XelM0loiNCHwYtd/Z0aY/SVJhyq1Phz6tCwzPfoCvmphU1YCQsFtoG6VNsqBzz
+	/GGLRIrD5OoXVhVMY5DRr62LdJuvjcU=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-65-wvNiiX9hOyCiUsUOTpyXvg-1; Wed, 04 Mar 2026 17:51:34 -0500
-X-MC-Unique: wvNiiX9hOyCiUsUOTpyXvg-1
-X-Mimecast-MFC-AGG-ID: wvNiiX9hOyCiUsUOTpyXvg_1772664694
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-50620483ff6so571453451cf.0
-        for <linux-clk@vger.kernel.org>; Wed, 04 Mar 2026 14:51:34 -0800 (PST)
+ us-mta-179-OxLheqijMPqKPFAZKNb2Bg-1; Wed, 04 Mar 2026 17:51:38 -0500
+X-MC-Unique: OxLheqijMPqKPFAZKNb2Bg-1
+X-Mimecast-MFC-AGG-ID: OxLheqijMPqKPFAZKNb2Bg_1772664697
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-503810dba87so57217381cf.1
+        for <linux-clk@vger.kernel.org>; Wed, 04 Mar 2026 14:51:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1772664694; x=1773269494; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1772664697; x=1773269497; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=sAE4SvbVc5xuqVfNMXPNWetx7bFn7ASO7FJPhI+jmF0=;
-        b=UvENq1De9YvutPiCMx/rNxIqqSE5oZbZh1tOlVNC+sWajkjAHbBrZ3zzSEUjeu4tMg
-         Ah6BklIPQuAdJnDbKR8De3mx9csC2P3pQW3/kPiRLZ/ywi2zPt2bAiP934b+5nW8GdyA
-         +dEq06yGnjb3X+Y5G9QSoX1a4KKQ+IOfySf8/V3zSbe+B4t/XDQSIY93elKdk0vqyHO2
-         jBM/FY4PzImriePcQ4p05As9khUzUrBWb8vsn9InqeR/0TavHZXIyxRZ89XVr+4wJvnJ
-         uLpVJePK9d2cABqJFGeQF1O3WrskXz2/+mjsCRhljbd6ukqBfDDnWK18GecRR2SjhzZB
-         hLsw==
+        bh=ahje0afOzEE5AO8iZY1qk1UFWqM0XHyDZg7ReLCYYwI=;
+        b=ethVQs6OKdSM86yy0g7ZJQ39Hk6IwhbcsNyjiMktaNcqwU3nYh4wRidJyAOkaC+8qk
+         W0USlASM69BrVGNbqQDJMQ3l1YG3XocQyu5zEHB1rt8qE7aWpV6M/aFe7slf9WXoLY3q
+         L8SqKBTKltNV+wCpWzKLsIVQ8kQ0hsZxCqGZ+Zr1ELJ5R2b2mISxJoeHsVeHnfMgEOh0
+         zG42dNRxhb8HnOG8/Ri9Xvi/bVCcNOPEsajiLVOn8L0xtNF08spN+oBS0QvXvS6jW8Vv
+         86oyrRiBQwDXDbDr7NfgI+JJHfIuyzoT9myQBY14OrDs0B7EsiDQHoWtENRwrT6cwXrW
+         2BOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772664694; x=1773269494;
+        d=1e100.net; s=20230601; t=1772664697; x=1773269497;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=sAE4SvbVc5xuqVfNMXPNWetx7bFn7ASO7FJPhI+jmF0=;
-        b=qZYdNjlOloiXv+g6kPSAjPYjAiNys+hcexCkiQMj82n+JWQPGsHtyV9cbaDbjjBTF4
-         mU8+EgNkpQiS+g649Zbtmd6c0sGM/9tJz61vNrFphowUuDkgal+lxtVdMBHDzYKiyjyP
-         nnKBKoWec49kBhrqQ9522q3aHqEaHW0dNrLFqT/rEAS5+dXefDPWXW40GILLGP1ToOu/
-         SzOfSx4+Ae7j31iJrHTnQIHAD5LP+dbC2FooTEyqb39J4t8a2/wUV4OiFUphsTGEHb89
-         g4h38keU9k6jzv4JYMesQTLsCGsQrvUscA9tlChqNmVsXIfnW+cHF8FJcBRtM1TOW2PX
-         8h+w==
-X-Gm-Message-State: AOJu0Yy0HTha/1Os1tZ0mg4ZsOchxk6NsEIhsNyRbwbLgeBz0e91jvVe
-	/C2wgxVS7R1X6vpDR6JpFqnFu/3vT3lRXaViigzKUx96uJP7L5LU9vH+clkHaf3vJRt+vKLbX2x
-	hzj7B+g7cVDrkD1pVxdizg8YsMm/vh1t4ZXpHmTeSfj6XLqEOJ/KAihnzAuuwpw==
-X-Gm-Gg: ATEYQzw3F5SH3wxSWr7g0h74a6wLh4p1up3HLk9JasTTAMguH4jlM/gvLqkMgQemuTA
-	dypyiZnsh2yrJfsi1C4M0yJYxbNsxnknJ/saiu3+pvDDt9nYG6XL3hZ41B4n6uNK5lf/svHUhpl
-	hL0TUjk0ooiW+X4CoVHPq8KxWGec4cFothPeHIgXI3x38KsaUMRzj4v1ihlsVi64Tuq++BI9369
-	E+GlbdjbiPhvEfD+DFl5vycS9oL+wMmxm6VZYlGT6LlFqtvfIzBHxwfha5KiZKP3yd7rAJ4IgFx
-	iTHxiDjZSKZn2UaTIcdhselYXmKMM+aXxpIuomCMjoGkQ8Wi2p/R6z00HJYOebdpNHsgXaMzNp3
-	31/l8Q6pBuVLbVacb1WrA9IEKBE+g
-X-Received: by 2002:ac8:7d4e:0:b0:4eb:a192:de99 with SMTP id d75a77b69052e-508db42179emr47830311cf.76.1772664694165;
-        Wed, 04 Mar 2026 14:51:34 -0800 (PST)
-X-Received: by 2002:ac8:7d4e:0:b0:4eb:a192:de99 with SMTP id d75a77b69052e-508db42179emr47830041cf.76.1772664693781;
-        Wed, 04 Mar 2026 14:51:33 -0800 (PST)
+        bh=ahje0afOzEE5AO8iZY1qk1UFWqM0XHyDZg7ReLCYYwI=;
+        b=FimE8YcwL8BcinzPPnIiqmg78DxAlkoaaAOxrsaTke/2D9Ph/qaXXwg3YEkfkiIOuf
+         e3bKCV23ZYhM/LXk5inh8cyq2txoJeoLMZu4cx5u325q1me+9WPF8ljBJXun10QptdrU
+         vFfC6RyN+2WqfqHo0gDsAtYEPSPEabxsU17EZEsc+veIbhaMkDIXF17PwN/PNDixJRsc
+         K6hrVRvsKadpZ1suQzxnjZIKenpwANbrpKC7PJdxlV3AnnkLchq7V+yWOxiOVQlp2XCZ
+         Y4QVek3zNa/Rj098AwFvPcRK7dzmJt3AaS5qWC2h+tQLPZ2scsRrZnvErJPiRRlcrM5y
+         crXQ==
+X-Gm-Message-State: AOJu0Yxqemti568xoRphP1w27DKI1VD+9Xyn/8IdGQ94mJUGx7Gj+bxi
+	aD58uHxE42dGMDpHH9sIegP8tYyCUHWAqBB1N11xR+2niqZikLqHbNMJVpnR84toVevFolprv1J
+	vY+nGh7ByKbCmT8DUSoJCreEu11Nx13m6P1bUv6K2k3Fzvp6udIJugju33GyPDg==
+X-Gm-Gg: ATEYQzz128Ng8EZN0McdkE+aS+DPWByvhlCIubOmFDocCnbqKLAajUwq0dQrfxX2LMl
+	oDO5uVH6m+np31P/ET9RoRHzORefJ+IG16itdIVemBGCWajCcqjr5WQ/yJgahC7J6q5lXsgkUty
+	dJElKH3cEDt+upJOKkxMSHxUuMrHnjUeYu3Zf6hKEOmJqYtn+sXJ0bmzgg4Syv1habeZvqKiKE3
+	QMSwqQfVH4inYgZmcmLK/ASpDcqVJ1/8TGRfDAcJVsPfEMCRUrU6Alal0PpAX8GvagUiWuhvf1M
+	G5B3vZPJsN0Qd5gU/3xMRbisJyqUYcLcRR6tEg+xLResf7Zx2WWSzYr4jy605CWeor0jv1GA2aZ
+	4oo/0szH+ZiaKWqIsUa77gs43m6ej
+X-Received: by 2002:a05:622a:3d1:b0:503:2b0b:ebee with SMTP id d75a77b69052e-508dadfe8e2mr52202021cf.0.1772664697419;
+        Wed, 04 Mar 2026 14:51:37 -0800 (PST)
+X-Received: by 2002:a05:622a:3d1:b0:503:2b0b:ebee with SMTP id d75a77b69052e-508dadfe8e2mr52201911cf.0.1772664697106;
+        Wed, 04 Mar 2026 14:51:37 -0800 (PST)
 Received: from [10.125.247.224] ([2600:382:7705:162f:3db4:e16a:e5d8:352e])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-507449b4dc0sm157558891cf.14.2026.03.04.14.51.31
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-507449b4dc0sm157558891cf.14.2026.03.04.14.51.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2026 14:51:33 -0800 (PST)
+        Wed, 04 Mar 2026 14:51:35 -0800 (PST)
 From: Brian Masney <bmasney@redhat.com>
-Date: Wed, 04 Mar 2026 17:51:03 -0500
-Subject: [PATCH 1/2] clk: add kernel docs for struct clk_core
+Date: Wed, 04 Mar 2026 17:51:04 -0500
+Subject: [PATCH 2/2] clk: test: convert constants to use HZ_PER_MHZ
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -87,7 +87,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260304-clk-docs-v1-1-fee468db99f1@redhat.com>
+Message-Id: <20260304-clk-docs-v1-2-fee468db99f1@redhat.com>
 References: <20260304-clk-docs-v1-0-fee468db99f1@redhat.com>
 In-Reply-To: <20260304-clk-docs-v1-0-fee468db99f1@redhat.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -95,93 +95,48 @@ To: Michael Turquette <mturquette@baylibre.com>,
 Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Brian Masney <bmasney@redhat.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4599; i=bmasney@redhat.com;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1065; i=bmasney@redhat.com;
  s=20250903; h=from:subject:message-id;
- bh=CDynmqnNGNqeRMDqyGZQt5+Y7aUBAhjbZuUmwJcAQF8=;
- b=kA0DAAoWt9LdJ11+wIcByyZiAGmot22jq3Pe1ymtU3Tdf4xLiZ5WMCXA2cSmkAz1GcCEyn49U
- 4h1BAAWCgAdFiEEpG0ycFhlqj3e3CkEt9LdJ11+wIcFAmmot20ACgkQt9LdJ11+wIdx+wEAnDgE
- VvnDipPoU2NORr6nXjeaGJxfJqE7aA1js6Fo9C8BAOrEGuk1uMfDNBdO9WepblVp4M1n0dBEfP0
- xAVgeWaMB
+ bh=+jW3MS7DFLqoUmBWO2hApFPt6x7I6eU55roZMBHG3AY=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDJXbM8vlJ6xzfPu+sOu607cu7N6pY3HVoaWwJKVdXP9r
+ jpPtLSc0FHKwiDGxSArpsiyJNeoICJ1le29O5osMHNYmUCGMHBxCsBEEvsZGTrOisn0r/0X7Pj4
+ +PyFfrfY1z3nu68steBDSZiCkv//1MmMDHNWJJ3vX8GmM//JPlE1PW+D0gMzQh1ezuuer7z/6qk
+ Pe1kB
 X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
  fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-Document all of the members of struct clk_core.
+Convert the DUMMY_CLOCK_* constants over to use HZ_PER_MHZ.
 
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
- drivers/clk/clk.c | 59 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
+ drivers/clk/clk_test.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 47093cda9df32223c1120c3710261296027c4cd3..18b7a14e3f2c595d82401be9382a062fbca8a5c6 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -63,6 +63,65 @@ struct clk_parent_map {
- 	int			index;
- };
+diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+index a268d7b5d4cb28ec1f029f828c31107f8e130556..372dd289a7ba148a0725ea0643342ccda7196216 100644
+--- a/drivers/clk/clk_test.c
++++ b/drivers/clk/clk_test.c
+@@ -7,6 +7,7 @@
+ #include <linux/clk/clk-conf.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
++#include <linux/units.h>
  
-+/**
-+ * struct clk_core - This structure represents the internal state of a clk
-+ * within the kernel's clock tree. Drivers do not interact with this structure
-+ * directly. The clk_core is manipulated by the framework to manage clock
-+ * operations, parent/child relationships, rate, and other properties.
-+ *
-+ * @name:              Unique name of the clk for identification.
-+ * @ops:               Pointer to hardware-specific operations for this clk.
-+ * @hw:                Pointer for traversing from a struct clk to its
-+ *                     corresponding hardware-specific structure.
-+ * @owner:             Kernel module owning this clk (for reference counting).
-+ * @dev:               Device associated with this clk (optional)
-+ * @rpm_node:          Node for runtime power management list management.
-+ * @of_node:           Device tree node associated with this clk (if applicable)
-+ * @parent:            Pointer to the current parent in the clock tree.
-+ * @parents:           Array of possible parents (for muxes/selectable parents).
-+ * @num_parents:       Number of possible parents
-+ * @new_parent_index:  Index of the new parent during parent change. This is
-+ *                     also used when a clk's rate is changed.
-+ * @rate:              Current clock rate (Hz). This is effectively a cached
-+ *                     value of what the hardware has been programmed with. It's
-+ *                     initialized by reading the value at boot time, and will
-+ *                     be updated every time an operation affects the rate.
-+ *                     Clocks with the CLK_GET_RATE_NOCACHE flag should not use
-+ *                     this value, as its rate is expected to change behind the
-+ *                     kernel's back (because the firmware might change it, for
-+ *                     example). Also, if the clock is orphan, it's set to 0
-+ *                     and updated when (and if) its parent is later loaded, so
-+ *                     its content is only ever valid if clk_core->orphan is
-+ *                     false.
-+ * @req_rate:          The last rate requested by a call to clk_set_rate. It's
-+ *                     initialized to clk_core->rate. It's also updated to
-+ *                     clk_core->rate every time the clock is reparented, and
-+ *                     when we're doing the orphan -> !orphan transition.
-+ * @new_rate:          New rate to be set during a rate change operation.
-+ * @new_parent:        Pointer to new parent during parent change. This is also
-+ *                     used when a clk's rate is changed.
-+ * @new_child:         Pointer to new child during reparenting. This is also
-+ *                     used when a clk's rate is changed.
-+ * @flags:             Clock property and capability flags.
-+ * @orphan:            True if this clk is currently orphaned.
-+ * @rpm_enabled:       True if runtime power management is enabled for this clk.
-+ * @enable_count:      Reference count of enables.
-+ * @prepare_count:     Reference count of prepares.
-+ * @protect_count:     Protection reference count against disable.
-+ * @min_rate:          Minimum supported clock rate (Hz).
-+ * @max_rate:          Maximum supported clock rate (Hz).
-+ * @accuracy:          Accuracy of the clock rate (parts per billion).
-+ * @phase:             Current phase (degrees).
-+ * @duty:              Current duty cycle configuration (as ratio: num/den).
-+ * @children:          All of the children of this clk.
-+ * @child_node:        Node for linking as a child in the parent's list.
-+ * @hashtable_node:    Node for hash table that allows fast clock lookup by name.
-+ * @clks:              All of the clk consumers registered.
-+ * @notifier_count:    Number of notifiers registered for this clk.
-+ * @dentry:            DebugFS entry for this clk.
-+ * @debug_node:        DebugFS node for this clk.
-+ * @ref:               Reference count for structure lifetime management.
-+ */
- struct clk_core {
- 	const char		*name;
- 	const struct clk_ops	*ops;
+ /* Needed for clk_hw_get_clk() */
+ #include "clk.h"
+@@ -21,9 +22,9 @@
+ 
+ static const struct clk_ops empty_clk_ops = { };
+ 
+-#define DUMMY_CLOCK_INIT_RATE	(42 * 1000 * 1000)
+-#define DUMMY_CLOCK_RATE_1	(142 * 1000 * 1000)
+-#define DUMMY_CLOCK_RATE_2	(242 * 1000 * 1000)
++#define DUMMY_CLOCK_INIT_RATE		(42 * HZ_PER_MHZ)
++#define DUMMY_CLOCK_RATE_1		(142 * HZ_PER_MHZ)
++#define DUMMY_CLOCK_RATE_2		(242 * HZ_PER_MHZ)
+ 
+ struct clk_dummy_context {
+ 	struct clk_hw hw;
 
 -- 
 2.53.0
