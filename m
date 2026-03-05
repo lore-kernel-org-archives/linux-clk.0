@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE55396D27;
-	Thu,  5 Mar 2026 11:58:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A5F39A818;
+	Thu,  5 Mar 2026 11:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772711893; cv=none; b=J6jQYCsWC6GVtJiJ7D/Egrv71RULQG+dsAHFLxqHRE/wOCHHin+Iu44MXL6ALrnL7sOg8ppN1sQdZpcMvqKRG8LNrW3P4Nzv7jpqyfowPVE81WRwvI1lAXxH5tkKjNkzNX25TDGcJhiNZBJOE/JgBOLs1eqD+pPvFUl4Na13aRs=
+	t=1772711924; cv=none; b=ul/8xIsa2jgmb4/Jh4/TJheUurjGHJnLTTPFisytHvwidYZaOtJiZnAsbA0N1cpPFyEnNKkFittEJl7qzV1mWnyXN0C2x51CTD3Ea0AZNhtNe8TXI1D3z7JgDyOn7xpsuIuGpy5UgqhXmJep1mIr5nox7dW9MhtFCn2xQ2Hl4l4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772711893; c=relaxed/simple;
-	bh=dd4MLTX079ZEhPWQPSZFHprNaooRKc4+tJz9JbnHXnM=;
+	s=arc-20240116; t=1772711924; c=relaxed/simple;
+	bh=jjwCOVMzYb5lm+oBtSJFL2iGiGfKjZLIlu8EQ1xCUVs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t3um42pP7JG5xU7ggY0i1mcB7qtbaAtINiHwXwC83CjZkSfJOxYxmDIJj+h8h5QKeuzK0nkdlWUjKAOlfKVyncvuTxisS8+tFwsstGhUrgax+eusvf5IU0IBqI36wrvIk+UCGB0hTdvCe51A8iTCNMjVvfhQtNKjdjZqXIAm5gQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QrEU3vHw; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=WbdAdAkUbUeLVSakLjo+RWySRHFAbRlvbjy+fmvtRRxaZIyMF3BZXcwXCiUbQebKCJXhFY5JfNvYqhLMeV5AyS+11vUx7Cs1mI9CWBvvMs8nDEXXtEJlpLB2MR/tXxHLNVkx4DInT8pHWnumZD3it3CgDfUagdZsxFBN1zKRosM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N26NfsLZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QrEU3vHw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE6F8C19423;
-	Thu,  5 Mar 2026 11:58:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N26NfsLZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8312C2BCAF;
+	Thu,  5 Mar 2026 11:58:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772711893;
-	bh=dd4MLTX079ZEhPWQPSZFHprNaooRKc4+tJz9JbnHXnM=;
+	s=k20201202; t=1772711924;
+	bh=jjwCOVMzYb5lm+oBtSJFL2iGiGfKjZLIlu8EQ1xCUVs=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QrEU3vHw4u2OrrpLpJW3QgChvTXaMkRqdG9v4MmzOBqyYfePgvG8CjBgdpPOLYQQk
-	 o3TBGZfp7jY9RgWIP9tDq5u/02WZiGd2lHcr0xZXxfSTb4vZNR2qZvkgOLUbcUlh71
-	 iezcYR9LEl8p45WGZVDaPFxj2eTtszE1uz81XtCjmUCRtipL9zk0dGB9Mob6g8ml1g
-	 yusnGr7XwfcXxXoMnizx9gBh5ufg/M3i/12aD3rJv09aLABKlJjiXZeUO1XZX8jdMK
-	 lDiIDTuWLCC+8hKlNlKT6yAzLi1HDz+HSktnbovltBUKbW+cfefq3INt+dGFrwQINU
-	 CA7/hd9lLZ5Lw==
-Message-ID: <3f69539c-7383-4321-8cc6-1f5a8cc23822@kernel.org>
-Date: Thu, 5 Mar 2026 12:58:02 +0100
+	b=N26NfsLZEorxafpMajzp1jh7UuGTEtAvYlP8lh8PhsrBHwDRzBQ1Ae2ioooTXXq57
+	 VKJ3dUeTFgYHZ4Ew0JwDIWBijGx+dgKRMkoMKAZaIbDLzxEDH8NP9eWV5+edubSHEa
+	 FlgTwcO20ObIZXodx7AzKI+v2OKHUZPuGlLQkT3VSssASkdnPPSyJdirNIg/5Khd/F
+	 jLTRcY2EujYsGyQHKj0d3+TMxlAf2lCn/Rdm6bXCeTeWH8fXECkQra/i4OysZr8QpV
+	 uijpWq+4kvt46xAG17sJ5nYv9G4VaU3sCNHBQCmwAYQVTqqlW6CxBIn7nwtJdgH/5u
+	 MPtMh7HrhIeIw==
+Message-ID: <47049136-db4a-4ffd-8cbe-9d1362b783ad@kernel.org>
+Date: Thu, 5 Mar 2026 12:58:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/7] arm64: dts: qcom: x1e80100: Add CAMCC block
- definition
+Subject: Re: [PATCH v2 4/7] clk: qcom: camcc-x1e80100: Add support for camera
+ QDSS debug clocks
 To: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
  Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
@@ -51,12 +51,9 @@ Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
  Imran Shaik <imran.shaik@oss.qualcomm.com>,
  Taniya Das <taniya.das@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org,
  linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Konrad Dybcio
- <konrad.dybcio@oss.qualcomm.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Abel Vesa <abel.vesa@oss.qualcomm.com>
+ linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 References: <20260304-purwa-videocc-camcc-v2-0-dbbd2d258bd6@oss.qualcomm.com>
- <20260304-purwa-videocc-camcc-v2-6-dbbd2d258bd6@oss.qualcomm.com>
+ <20260304-purwa-videocc-camcc-v2-4-dbbd2d258bd6@oss.qualcomm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -102,29 +99,18 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20260304-purwa-videocc-camcc-v2-6-dbbd2d258bd6@oss.qualcomm.com>
+In-Reply-To: <20260304-purwa-videocc-camcc-v2-4-dbbd2d258bd6@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 04/03/2026 18:40, Jagadeesh Kona wrote:
-> From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Add support for camera QDSS debug clocks on X1E80100 platform which
+> are required to be voted for camera icp and cpas usecases.
 > 
-> Add the CAMCC block for x1e80100. The x1e80100 CAMCC block is an iteration
-> of previous CAMCC blocks with the exception of having two required
-> power-domains not just one. And update the compatible for camcc and
-> videocc nodes on Purwa to match with their respective Purwa (X1P42100)
-> specific drivers.
-> 
-> Fixes: a8a5ea012471 ("arm64: dts: qcom: x1e80100: Add videocc")
+> Fixes: 76126a5129b5 ("clk: qcom: Add camcc clock driver for x1e80100")
 
-How is this a fix? Describe the user-observable bug in such case.
+NAK, not a fix or describe user-observable bug.
 
-> Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> Reviewed-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
-
-Three people reviewed this...
 
 Best regards,
 Krzysztof
