@@ -1,127 +1,242 @@
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EBAF3A783D
-	for <linux-clk@vger.kernel.org>; Thu,  5 Mar 2026 14:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41943B582A
+	for <linux-clk@vger.kernel.org>; Thu,  5 Mar 2026 14:59:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772720554; cv=none; b=PvZu5x+HVfR/1wJAjpseMW5QVo+wQ0J8wKZWDWXDcb4h0lgbfp4yb0suyuW2OYI+R1LnfNCgjknGb2u6UM4GWbt2TWLf3EC1ll/7JLIj7M6LmnShGqWaTDGZIQfW86nZ1Vi56TqP3I7FWThDcSW9Lo3sYFsXrEbKJaV38Tx1u5Y=
+	t=1772722783; cv=none; b=QeRg5mPEHxx1RU6xSRmaeog6DjTTm8/xr/0fhiyTnUIeLSNTdJOEfT/6vQuzY8W0auMygAjyPLbARYGoJhBbzaBCXjh/QfJmPAHGtYswYspqHOdA3uE0vm11ErwothmN6bvK/zXkZV3xChqxeR+yjrkKEOZDF2tNMNwZQgBJRNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772720554; c=relaxed/simple;
-	bh=/3f4nIlcCZ20P6/JbRx5tsmmqG8H3w9dAtoGznvYWWk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MI02tI/7zoUsQP3AyNoDh9f9ywnPaJm/frD52JbAVgfKj3i/HtEjEUyEbHLGjpOUVwKc7A4fBsdOLyueIpHpbv0t46V9WscFhetmUCktLB1m7hQg9RVS38Pj8SFq0VjX8vxIortcuN9vrq2SJol3QuB7wVWaPXHXjSClnhxUnYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-660d2e4846cso3058986a12.2
-        for <linux-clk@vger.kernel.org>; Thu, 05 Mar 2026 06:22:33 -0800 (PST)
+	s=arc-20240116; t=1772722783; c=relaxed/simple;
+	bh=J2lbMFMnGYo6KcpMR6geLR+TBx5SW6z+n9kOHJ9ak+M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h40WFdZaoLUlQBJVEDgM+huWsUs9VYr4nPt968O2f5aLthpOmTtQVRp7bELeMr3xFL40lcRoUn4/NJPZFkSBPdvyifU/ldtkBiyyj4GYV01PFUNNbxM7+IH6KruHqf4geg9wFPCVvG7sZT9bhodHyR1oDSwhbwUm9y/73nO7tC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MYuEArvI; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=H18hMmfa; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MYuEArvI";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="H18hMmfa"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 625AFdd02922255
+	for <linux-clk@vger.kernel.org>; Thu, 5 Mar 2026 14:59:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	SmnvSi+Mlmxa1/2IVU2T+BS0zKlOzWLnk6SgpB6s5WE=; b=MYuEArvINTLoJXn/
+	5uRsYxESNS3mU0eg5ex/bV0qSOVNpejqqM+0NSrTM/9PrAj9giRpE7tLxs3ZWYFs
+	Tq3t/E7uDBXw+RRfcFtOHukGf2rQoSJ0wX5wMt9P7GwUXf5iAmgUFtvEmDTV1BQu
+	T5mEEsAmQVQCFyPhtu9SrB7+ZnKtA7ADmvyZ9w/jnKeHvy9Hux2cpOADjV66BFvW
+	vcI1hXvcFRn6cxqcN9Mjzg4m4uzaMpZhqSBvDUfaC1H6OMfuupc+O1cExTSCyfZt
+	m62vsrmeyyC5q1jB5p8mir57ZVUAu5m08vubsVGG0AhAgfFnu3PTXj+XNVi59vDN
+	+xrkBw==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cq2q820wv-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Thu, 05 Mar 2026 14:59:41 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8cb37db8b79so5855641985a.3
+        for <linux-clk@vger.kernel.org>; Thu, 05 Mar 2026 06:59:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1772722780; x=1773327580; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=SmnvSi+Mlmxa1/2IVU2T+BS0zKlOzWLnk6SgpB6s5WE=;
+        b=H18hMmfa9AAXxi3tUB90f7umkSTsW0ibaHPVjl5IGwSteExRTMvTvIlLb61g25UYsO
+         9qJrzsFuJiwz/8Cj1XNMaPMtKrG6RDF/iwaGnVaafxSQbe8WGWxVtiig3MdhtT7CAGy+
+         cDjKqf+GBq4MoRlwMiNC1CvzQa0sA7XX4AkM5gH3HSeS0O9vFsiyDgYP/a1P0TG7LlFu
+         MIzQ8gDs5WT++t29N52mus5igS9f7AQurMANZsTzFSMdRSfWXUZD/NBoH0kkhLqjOEMm
+         KqVj24tZZa1CD1ZnpKzx+0ZVbJpOz4o0gjt0uaLa+6s3doyEetN7Q3JZmGKceq2zl9gn
+         D3nA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772720552; x=1773325352;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1772722780; x=1773327580;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oMbUtOFBoMgA60FOVDAadgTwgL06nHyrUoMpJYzbdVQ=;
-        b=i017MHk0aLjFBVrDhbLbOjqGpVzg8j2j4X/0mgoZm6gihtTd97pfXup32Fya+JC9YM
-         aWFyQR0NGKN9nIFIxqOzU5MRM1+Uznc7k1ujBwdBIpUEvwxfks0Me+DefdvlzFDFflrL
-         DWNRejPJgbIDhDDlzrEAtx0GtAfTfDv0g5ffCa9mDvOrjDBvo0lF9O9FDXslyV4qpDB5
-         XPFZLHnSZ/9jpip9Kirv63nQnk5/O4jYyAKCxC6i+oWfVdLeNNsI9UfCoIGatlKXFrt2
-         +uFdQbpVMOSxqAB7wd1oAG2GiDLzTRrwwVit0NyMK+iuqY/CoKGZDCSEN3rqd2LO/jaF
-         dGeA==
-X-Forwarded-Encrypted: i=1; AJvYcCW0sO7HdfLWQHO3jD+lnQM2fgLY3mSP/ZheJFmwM2SkaY9cQfYhwqJ/lkBvtsbROMk+YIrfitgo5IA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLd09PyoC+CeGdk4ibpsWCsM2Ew3w7b0xQode/8rGg60ZCLM/0
-	+oF9cYTp/it3BB11pUc9JHJbjKurN3mTTp7LiSjqrxmdJiMO6uKoYV2PPIMGN3V+Juc=
-X-Gm-Gg: ATEYQzyYfuLn/B+yFscESzOzEQJvzieQaLrp6VFVNEdvUiQvx/I5DulUTA3VEFWr05K
-	SaVSdFwRyu/ftqq3AkVJJjTQQop1eXyf6gwx+XvG09wanTCBTA9TU0PiNRcC/aoJJzo1M+PmpXh
-	TmRaWHczrq8lHTj+u4FfVTj/Hyr4US308KplSW2j30rCTZ9Iknhna1egm42IFkJqzpdB/UsswGR
-	nxkmhjBbc3KPQPBXyTyoHUnC1T1r0egA3cGtp/byyzch3UKQddwNE1UBeqgYgLYcdxonYQnjka3
-	yscl23uAyi/tqybggOtCuFmT7hiEop61fUBtfJr9YvShsAsnnUtUc7YSoLlClIj9lcuhHencuuy
-	iLJ2OiH4ywZ6+Nq29kcHN/BdGC5VRK44MOonsFTC9Eq/b4a9C8zjD0Ga7/3DnvmEDuFWq9vJNHC
-	KWuNsL2HB0m4IuMoMoNA6n6PDLODETTecCiLg4sLCE0at6DeP4lt5eCQwZQDiBK9UIiKl/BRs=
-X-Received: by 2002:a05:6402:4304:b0:65f:fd46:3fad with SMTP id 4fb4d7f45d1cf-660f02d1f04mr3214264a12.31.1772720551579;
-        Thu, 05 Mar 2026 06:22:31 -0800 (PST)
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-660eafe7051sm2209128a12.21.2026.03.05.06.22.29
-        for <linux-clk@vger.kernel.org>
+        bh=SmnvSi+Mlmxa1/2IVU2T+BS0zKlOzWLnk6SgpB6s5WE=;
+        b=t+4lPUmdvItAGScWgLe6r/dJG54Gp6DF44i3jIWVWtiDx1s7ozXZJYHcC/jRIqSS3F
+         i1EUHSlEAc9CNkgNzP8Lrhl1FRfFbaiw7MS6ktfbvQgMs8T7zZErFGHgDE/SvZ7tpWQs
+         UPpviYeQmzPRBbnfYSR6gYCRRy7sRFHbBHrrjrCVec35MiFvTR6E/e3xOOL+PIwN6qSH
+         4S/D9ctFi+za4OQQQngViXyIJBIR8UrRlz1dWW8iD/XmKQGI1wopyUQ1aomycOO26mGA
+         TLX6HEdcnD/bHQbK2Gay69wnroPgXpXwwcX++ZvBPQg6kOhNrESQ3Cvq6ieKjjoZ37M9
+         gn+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWil9via46nHn7oZFKIbxJodnLTz22ebz+tSh8FbqIzjDRqbGc32lHo3epMrv/LF/RTLcEhJnu8NdI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztzFF9Ea1129U8tIPtqFeCp8xEldIGmc6JOF55Xp70Vg2GiTTC
+	5bpny5lfSVhdlt/kUpMsznpp1qoJgbwZhmv1hYOdFd7qNKBZKsnuIGzn9Ptyj/KppFx0HCOey3P
+	RjsO/CqGQQeHC5Oq5rFSIpZyCITkOIn4YW9hkkBNmXIhUdTtcowpIsh/gfBs48gI=
+X-Gm-Gg: ATEYQzzurd0heZDNpW7PxrIOLSF94JuOJ+HWaMYT990zlG8rWCG/0LCDCqMn0W0gN0v
+	7KSfQ8Tx/fCK7S7sxkMZgv0nuY1rV1k8+zK1KtUvnHUKiLbSVibesfPTMTMPFC2erppVytuJIBZ
+	XTG065LpWK2os41HHB6Pm8tXszGxmf13xvsvX4S+ODegKEK1aO7tf4mRvAxBzBpW3NZHqR+A4Hc
+	i8Y/h2Ms12gyrQDXzXBZQD46jTUZd4CcPYKwVAPJ1QHWjoPfqovf8FWnIwWoXElNOjD9knQ14P6
+	08yWjVNEHIiRceFsONupBcr35JdBek9TwIt/oBFtkCo5LplLAyBUeB2+aORZhv/0aenAzfeX3f4
+	79S5tz2Ql8A2eNfjL9Hq0kk/t8WO9WKJTGoAfGYAb/feTc4Qy
+X-Received: by 2002:a05:620a:4481:b0:8c6:adfc:48f0 with SMTP id af79cd13be357-8cd5aefa21fmr710569485a.28.1772722780136;
+        Thu, 05 Mar 2026 06:59:40 -0800 (PST)
+X-Received: by 2002:a05:620a:4481:b0:8c6:adfc:48f0 with SMTP id af79cd13be357-8cd5aefa21fmr710564485a.28.1772722779676;
+        Thu, 05 Mar 2026 06:59:39 -0800 (PST)
+Received: from [192.168.1.29] ([178.197.219.94])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4851a8d20f7sm36871635e9.8.2026.03.05.06.59.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Mar 2026 06:22:29 -0800 (PST)
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b941bb3e23cso46658566b.0
-        for <linux-clk@vger.kernel.org>; Thu, 05 Mar 2026 06:22:29 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVDyYQXeLsDrE71NS90p7jZ08vBU6e81/6l8LYSCP6oCaQbfgh+02x8SnI1tsDAkQjcsKB3NglMVrY=@vger.kernel.org
-X-Received: by 2002:a17:906:f5a8:b0:b93:c5a9:a5e2 with SMTP id
- a640c23a62f3a-b93f1176dafmr385035766b.6.1772720549265; Thu, 05 Mar 2026
- 06:22:29 -0800 (PST)
+        Thu, 05 Mar 2026 06:59:38 -0800 (PST)
+Message-ID: <5b6a4284-4766-424c-9171-feaa08c52ad1@oss.qualcomm.com>
+Date: Thu, 5 Mar 2026 15:59:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260203103031.247435-1-biju.das.jz@bp.renesas.com>
- <20260203103031.247435-7-biju.das.jz@bp.renesas.com> <TY3PR01MB11346C1B39DEE4A11270FFAE4866DA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY3PR01MB11346C1B39DEE4A11270FFAE4866DA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 5 Mar 2026 15:22:16 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVYMWspJWVtbhk00B4nWGY_rb+a7h1WfJ0Y6gHGP72R+g@mail.gmail.com>
-X-Gm-Features: AaiRm51ilseGDFMV6nGwWIBx2u0k7pUyutq0IevFJpQaDa-lK7xcm2qHhcqW6es
-Message-ID: <CAMuHMdVYMWspJWVtbhk00B4nWGY_rb+a7h1WfJ0Y6gHGP72R+g@mail.gmail.com>
-Subject: Re: [PATCH v3 06/10] clk: renesas: Add support for RZ/G3L SoC
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: "biju.das.au" <biju.das.au@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	"magnus.damm" <magnus.damm@gmail.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ti: sci: Drop fake 'const' on handle pointer
+To: Andrew Davis <afd@ti.com>, Nishanth Menon <nm@ti.com>,
+        Tero Kristo <kristo@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>,
+        Peter Ujfalusi <peter.ujfalusi@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>, Frank Li <Frank.Li@kernel.org>,
+        Thomas Gleixner <tglx@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Dave Gerlach <d-gerlach@ti.com>, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        dmaengine@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org
+Cc: stable@vger.kernel.org
+References: <20260223202426.566958-2-krzysztof.kozlowski@oss.qualcomm.com>
+ <195cc8dc-8642-481c-8bdd-f5409ab8f5b5@ti.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@oss.qualcomm.com; keydata=
+ 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
+ cwzYbmi/Et7T2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <195cc8dc-8642-481c-8bdd-f5409ab8f5b5@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: EzzVLKBxN6QEmYp2XTslKq1lEXfb2cOc
+X-Proofpoint-ORIG-GUID: EzzVLKBxN6QEmYp2XTslKq1lEXfb2cOc
+X-Authority-Analysis: v=2.4 cv=GecaXAXL c=1 sm=1 tr=0 ts=69a99a5d cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=gOEeR9iKwsj33Yj5oN/cWg==:17
+ a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22
+ a=dua3lmL7_bghm9Z8UcoA:9 a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzA1MDEyMCBTYWx0ZWRfX9046gF115xC6
+ ZzVXav/o/3JjEJlghPZo1kT+pICG7kIKHT8/AQ+5L2xdvbwFWwXAVIWHF8Q2pw70F8IDopYPA64
+ 6PyNoZBGWzOZGBOLfn5o6nJACvYeB1xbjqRp7SdH/WHf0U8s91srm8YX6eXE2+rXCz95mYQ6qxf
+ bsspmBqD/PsmC3iFhx6q24qztN/HXAoYZz4AxLh7bhNriTiDBVBiQyfUqsJVqtwLCCgS2gXU6P4
+ Hz8FYoyvbXmJ/5QffiMcNAjji/2MMAq6NN2X/coIEXuCO6FofB0PmUTn/TJwX7Lgg6V7SCRe01D
+ fpwBL1ae+sUX4abEyE++xHzNwA/L6itsFFLRW+5vSYiG0TmXEDRQ36fVEYvLzkxtAh+2Lybb4tT
+ 2YjYW82tOgd989P9PSC2GYyipLWCXfX0dTb48CakrOSnmP+s7Js4d0rg3/HY9TM+61PQ30UrdY4
+ GrN8/oqziZtx0exKQ4Q==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-05_04,2026-03-04_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 bulkscore=0 impostorscore=0 spamscore=0 suspectscore=0
+ clxscore=1015 lowpriorityscore=0 adultscore=0 malwarescore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2602130000 definitions=main-2603050120
 
-Hi Biju,
+On 02/03/2026 20:12, Andrew Davis wrote:
+> On 2/23/26 2:24 PM, Krzysztof Kozlowski wrote:
+>> All the functions operating on the 'handle' pointer are claiming it is a
+>> pointer to const thus they should not modify the handle.  In fact that's
+>> a false statement, because first thing these functions do is drop the
+>> cast to const with container_of:
+>>
+>>    struct ti_sci_info *info = handle_to_ti_sci_info(handle);
+>>
+>> And with such cast the handle is easily writable with simple:
+>>
+>>    info->handle.version.abi_major = 0;
+>>
+> 
+> The const is for all the consumers drivers of the handle. Those
+> consumers cannot do the above becouse both handle_to_ti_sci_info()
+> and struct ti_sci_info itself are only defined inside ti_sci.c.
+> 
+>> The code is not correct logically, either, because functions like
+>> ti_sci_get_handle() and ti_sci_put_handle() are meant to modify the
+>> handle reference counting, thus they must modify the handle.
+> 
+> The reference counting is handled outside of the ti_sci_handle struct,
+> the contents of the handle are never modified after it is created.
+> 
+> The const is only added by functions return a handle to consumers.
+> We cannot return non-const to consumer drivers or then they would
+> be able to modify the content without a compiler warning, which would
+> be a real problem.
 
-On Tue, 17 Feb 2026 at 12:13, Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> > From: Biju <biju.das.au@gmail.com>
-> > The clock structure for RZ/G3L is almost identical to RZ/G3S SoC with more IP blocks such as LCDC,
-> > CRU, LVDS and GPU.
-> >
-> > Add minimal clock and reset entries required to boot the system on Renesas RZ/G3L SMARC EVK and binds
-> > it with the RZ/G2L CPG core driver.
-> >
-> > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+This is the same argument as making pointer to const the pointer freed
+via kfree() (or free() in userspace). kfree() does not modify the
+contents of the pointer, right? The same as getting putting handle does
+not modify the handle...
 
-Thanks for your patch!
+The point is that storing the reference counter outside of handle does
+not make the argument correct. Logically when you get a reference, you
+increase the counter, so it is not a pointer to const. And the code
+agrees, because you must drop the const.
 
-> > --- /dev/null
-> > +++ b/drivers/clk/renesas/r9a08g046-cpg.c
 
-> > +enum clk_ids {
-> > +     /* Core Clock Outputs exported to DT */
-> > +     LAST_DT_CORE_CLK = R9A08G046_CLK_P4_DIV2,
+> 
+> Andrew
+> 
+>> Modification here happens anyway, even if the reference counting is
+>> stored in the container which the handle is part of.
+>>
+>> The code does not have actual visible bug, but incorrect 'const'
+>> annotations could lead to incorrect compiler decisions.
+>>
 
-This will probably have to change, as per my comments on the DT
-binding definitions.
 
-> > +/* Divider tables */
-> > +static const struct clk_div_table dtable_4_128[] = {
-> > +     { 0, 4 },
-> > +     { 1, 2 },
->
-> Typo 2->8
+Please kindly trim the replies from unnecessary context. It makes it
+much easier to find new content.
 
-Indeed.
 
-> > +       .num_resets = R9A08G046_LVDS_RESET_N + 1, /* Last reset ID + 1 */
-
-This may need to change, too.
-
-The rest LGTM.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+Krzysztof
