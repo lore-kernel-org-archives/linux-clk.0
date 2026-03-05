@@ -1,107 +1,69 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail-sc.amlogic.com (unknown [64.106.246.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A69237A4F;
-	Thu,  5 Mar 2026 07:47:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4319F3594A;
+	Thu,  5 Mar 2026 07:48:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.106.246.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772696839; cv=none; b=If37LCiARG7rYhhxsyrH+Y+jcnrYrdKCuZbdXRZp4uJOlou/v6dK74FtnhA1EcC0E5CIZnSYs2G8ulsbNsSsxfFozQ0Qv9CkM9tLzLPk4yhQCx56muMa76VgmheykBuCOHbCP8Ac4cvQtZKJ90DgqYWN7CnbioyVLIVxl+I1088=
+	t=1772696930; cv=none; b=iabOke3wNTiN3uaxSAwH6QLBFDUMmxNO0MM3E3ig0EePc8I+55O3sK/37xxdpfn4oSUmxMU5JEquwSak0o0Aqd/2RE/21ELJC51yomks2ZE2ZtN6lf9vT/tCtB6RfOik4UoKAU1fSeMvcNhCpX9/UNmODtsG8p8Wo43dgSrgluc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772696839; c=relaxed/simple;
-	bh=hYPUpGGfWIgUSWzkvuPzmqoLLcF45V3809LvSzE7F4Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gR+rTUM6i7cQUTajLJY3hpSP0ylHwGDHkp2GcSE8qUErXC6BLmYmQ4OEDaMa5t9FTQD4+0xK1mZZA0ewMeSWnNhrKNxDiAweqAe48IG92ykL5h6QDFb7rAO6AU82UrgyJ98WszhDBesVPs3nlaIAoMQyn/+oTxnz5SE871Zfar8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k40xIYTD; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k40xIYTD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A178CC116C6;
-	Thu,  5 Mar 2026 07:47:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772696839;
-	bh=hYPUpGGfWIgUSWzkvuPzmqoLLcF45V3809LvSzE7F4Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k40xIYTDb+o4L/MskPRFgFk2kd3c8XA1sNUqDv5xEQR8SsDegaGvwjgzn9mrpS6+k
-	 xPaSUMw7Z5qxNdMPa9YsVLvCwwZGlQRtimRv1qBPYRM0QsUl3VtZTkjBypLNPIO6xp
-	 FAqLVSAkuTCqwDIOinW4Qq5GYqSYDvbAWziLRPYAmVMY+IrBpjoAI2xOYC/+EXLyxK
-	 FXPq4fx7n2wK9v9uHaO8EDzvuADeEzW5mQjNEOWBEw8hD5M+Kvf9VcTekrkjCvwfHg
-	 yguttWZKGmC78gh1xpBpqQldk3EyY8cP1tbi9KmBzEdnibYRm4XlMjmQbSsc7dHySk
-	 W+iaobsojVMvQ==
-Date: Thu, 5 Mar 2026 08:47:16 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Abel Vesa <abelvesa@kernel.org>, 
-	Rajendra Nayak <quic_rjendra@quicinc.com>, Stephan Gerhold <stephan.gerhold@linaro.org>, 
-	Ajit Pandey <ajit.pandey@oss.qualcomm.com>, Imran Shaik <imran.shaik@oss.qualcomm.com>, 
-	Taniya Das <taniya.das@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v2 1/7] dt-bindings: clock: qcom: Add X1P42100 video
- clock controller
-Message-ID: <20260305-hairy-hidden-stoat-5c1429@quoll>
-References: <20260304-purwa-videocc-camcc-v2-0-dbbd2d258bd6@oss.qualcomm.com>
- <20260304-purwa-videocc-camcc-v2-1-dbbd2d258bd6@oss.qualcomm.com>
+	s=arc-20240116; t=1772696930; c=relaxed/simple;
+	bh=nfp50h/2NcEk1CRTmoFnuNRMeqtyi/4s20+1umIUi1Y=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gr5UkM1IxuAGGVY3Hd7evcWBiuKx9eofad/wG8/2Cg8a0FWIeSIfb8XNHeLHpS4gSIw5kxeLwstX+6d9XYLls6+STv+9zTnQG1BLR1/OzzoglAXSz/uVplPeXMFCW4smtAq/Gs91e0FC0iw7jlkJ9MZnCpXE+Gughi/+x80FZp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; arc=none smtp.client-ip=64.106.246.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+Received: from rd03-sz.software.amlogic (10.28.11.121) by mailsc.amlogic.com
+ (10.8.11.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.35; Wed, 4 Mar
+ 2026 23:42:45 -0800
+From: Jian Hu <jian.hu@amlogic.com>
+To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
+	<neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, "Martin
+ Blumenstingl" <martin.blumenstingl@googlemail.com>, Stephen Boyd
+	<sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, robh+dt
+	<robh+dt@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+CC: Jian Hu <jian.hu@amlogic.com>, devicetree <devicetree@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>, linux-amlogic
+	<linux-amlogic@lists.infradead.org>, linux-kernel
+	<linux-kernel@vger.kernel.org>, linux-arm-kernel
+	<linux-arm-kernel@lists.infradead.org>, Ronald Claveau
+	<linux-kernel-dev@aliel.fr>
+Subject: [PATCH 0/3] Add the missing mpll3 clock and clock controller nodes
+Date: Thu, 5 Mar 2026 15:43:24 +0800
+Message-ID: <20260305074328.639993-1-jian.hu@amlogic.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260304-purwa-videocc-camcc-v2-1-dbbd2d258bd6@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: mailsh.amlogic.com (10.18.11.5) To mailsc.amlogic.com
+ (10.8.11.35)
 
-On Wed, Mar 04, 2026 at 11:10:51PM +0530, Jagadeesh Kona wrote:
-> X1P42100 video clock controller has most clocks same as SM8650,
-> but it also has few additional clocks and resets. Extend the
-> SM8650 video clock controller bindings to include these additional
-> clocks and resets for X1P42100 platform.
-> 
-> Signed-off-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
-> ---
->  Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml | 2 ++
->  include/dt-bindings/clock/qcom,sm8650-videocc.h                  | 6 ++++++
->  2 files changed, 8 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
-> index e6beebd6a36ee1ce213a816f60df8a76fa5c44d6..e8bf3fcad3fabc4f3b7e8e692c6c634d1aed9605 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
-> @@ -30,6 +30,7 @@ properties:
->        - qcom,sm8650-videocc
->        - qcom,sm8750-videocc
->        - qcom,x1e80100-videocc
-> +      - qcom,x1p42100-videocc
->  
->    clocks:
->      items:
-> @@ -67,6 +68,7 @@ allOf:
->                - qcom,sm8450-videocc
->                - qcom,sm8550-videocc
->                - qcom,sm8750-videocc
-> +              - qcom,x1p42100-videocc
->      then:
->        required:
->          - required-opps
-> diff --git a/include/dt-bindings/clock/qcom,sm8650-videocc.h b/include/dt-bindings/clock/qcom,sm8650-videocc.h
-> index 4e3c2d87280fb9a37cbc52330e31b0710ab63144..ba2d231e9dc8718bdcc07f994577cf68413dc273 100644
-> --- a/include/dt-bindings/clock/qcom,sm8650-videocc.h
-> +++ b/include/dt-bindings/clock/qcom,sm8650-videocc.h
-> @@ -16,8 +16,14 @@
->  #define VIDEO_CC_MVS1_SHIFT_CLK					14
->  #define VIDEO_CC_MVS1C_SHIFT_CLK				15
->  #define VIDEO_CC_XO_CLK_SRC					16
-> +/* X1P42100 introduces below new clocks compared to SM8650 */
+- Fix a typo for gp1 pll
+- Add the missing mpll3 parent clock definition to t7-peripherals-clkc.yaml
+- Add Amlogic T7 SoC clock controller nodes
 
-I don't understand why X1P42100 was added to SM8650. Last time I asked
-you not to include other header, thus solution is to add full list of
-clocks.
+I have discussed with Ronald and agreed that I will first submit the T7 clock DTS,
+and then he can proceed with his work.
 
-This is completely wrong because you do not have the same driver!
+Thanks to Ronald for pointing out the gp1 pll typo.
 
-Best regards,
-Krzysztof
+Jian Hu (3):
+  dt-bindings: clock: amlogic: Fix a typo
+  dt-bindings: clock: amlogic: t7: Add missing mpll3 parent clock
+  arm64: dts: amlogic: t7: Add clock controller nodes
+
+ .../clock/amlogic,t7-peripherals-clkc.yaml    |   8 +-
+ .../bindings/clock/amlogic,t7-pll-clkc.yaml   |   2 +-
+ arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi   | 125 ++++++++++++++++++
+ 3 files changed, 132 insertions(+), 3 deletions(-)
+
+-- 
+2.47.1
 
