@@ -1,214 +1,222 @@
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012042.outbound.protection.outlook.com [52.101.53.42])
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azhn15010054.outbound.protection.outlook.com [52.102.136.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511BF3CB2C6;
-	Thu,  5 Mar 2026 15:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763B417BA6;
+	Thu,  5 Mar 2026 15:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.102.136.54
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772725223; cv=fail; b=uvWp+bgPDHZqbu4Io1vSHedn0XPXqpDQBmHqyQqS6jm2bhOGog2NvDIn+TOUhXpzXmEPuTI29cjCnV9C4stWebNPKE6PGZjn0555/ks8o9js97ccDMnKJTZLKHipw7q1UjTOVHHqMMERoJ3d40h1YlI3wnSkI4QIx1vDQZe1k/0=
+	t=1772726006; cv=fail; b=ScpVBpuBfO8Z7XLFGQlNVLdYZHlqZMWp433lwhlLovSMpGM3t5H3AAYvEnRH6HI6Y0Y9qNMcvF3ugACoQZaDsprfTSChyIBGxM9MDnkLvhu6xUCIWKHa/4eptchP74vTURMhqUBiJRZChmFJrZGvwgtVbv/udrSNNBOHA+C2084=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772725223; c=relaxed/simple;
-	bh=5oviK+YgboqMPFWnbhTbt4Fm1XyOw756fvygEQc4nSY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nSB7MRrEazIJh4q6pPsoOvcuZ+iBZsaG7zSMBMnZBwGGK9pnhxHW0AXuwG9kVSVniCCLQzp81uDsuJDsn6Wr3BLPavHce3L4+mv4eir3iqooiutpx264xS6Hy/lhHWp2YDLsX15tXfqxS98t6DetwEeBQH1FxOIQz3NiHZJk9n0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=LvPslR1m; arc=fail smtp.client-ip=52.101.53.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1772726006; c=relaxed/simple;
+	bh=4CU6pj1Pdx9dFWWZih4uLUYlVQ4b5yH5sFtB+BbuCKY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=r9neZKE6GacpCW1ZZxI0KR9QbATfit3qO3M9tKXow59FQfh6BVeY5/+6HsNXrWPersRT21kmzA4aZoCbqZuc58+mKcGgtIO37ay5SnPVH+gU5g2alO+s3iX7JVJCc+GhipMUqZjad8ho+HP6eUzjE/DaDlJ/6/lDykE9lupJdLE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=R3ZLuUf1; arc=fail smtp.client-ip=52.102.136.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="LvPslR1m"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="R3ZLuUf1"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ly6ZsUW6mKrEiuclTHXqgXeJszejEDOt81WIsH3IOacJc2nHMSSqXNNX8vPa21cXlD+VeWlAWJ3RxvwOJ9UdhZ09t93vBV+ksfQJu7u3tXcGvH+53bA7zE3+JPIlCwaivEVWitNixdkrlCezMARHozk1kYxDt3PaHG+ROgR9p5WD5Q71Gp9E8DbPMyQKTnJO/q14K/y6mbER3GewlzOG4sUI35teCR/J3ui+XuSq+WmWvBzkt+pHp2j/IubV8xgXzI2Z27g7lSgBwh/W43/fCkck5CpFDoih+dynQN+tZxPvxbulefr3J1kS55XWR1CUYwwV1Pkug7qZol8bI4jngg==
+ b=a1Bmw1vKquT3VjRpzPjkpN6gHPOxBx8IFBwu/C386sYhEcbK5K+BbCdjQFks7mcvi00pVi6EUFoxREsUo/onwSMDbDw6ND7+CSol+iFLVwA3faIKMQCCLRfrEeTBUptuRFi9k4ibmQ9LYEkNms7qnbqkC+mWc8L1yxl5R7AK3wA106btjLts7eJ3jicyOq1tIfkAM4jCRaTCrJJS+p1/5pUx/jweMv7Lurcwv1iWopYRyMP9rxXRUOfPsXzBIVzKIDbJ80qPHkuS70D9IqE8ORW6eqe+u/84uADiFdL/C4j1ZbWcxmUZjOUxzT/hzWRDts+EGT486adHuTP6vYLDIg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=y30Oz6fxvnn78WvVDR9+hhSUDewtOjbS974gdcF+CH8=;
- b=ZQ9mECuucm55cH9UqDsONji3hYMBV3jV+t8Ey/xmKQ/jyuG9D4I8LFStht9fPtI98eK8B2YKV0iBhRvUFPDK7XGkZ3/KaiGZu4nKZZXheafXQ/srkqK6rCcYV2HZENA+71Yf0jX9+GEUhT7V8LjnFVcdwtuihfGdZEe5LAMPglGwLvOZEmT3+pj4hsnEG3EMv+xfrjOdWSK+TRNh4PXeZNL+p9IJWfPV0v4bKYs3AmL52KhZrZfgWdaHE1aeSSlNpHrK+abuQtkCuW8igTn02LmcjFW2apHXt4opslxkwGIxzxn8T6E/WhKU9Soq6ZVyn5vHxoujQTbWjM+G2IR5kA==
+ bh=kw2aixUH/tbZ9jCj1bflRepifdxlK0lsktfGzQGgb8k=;
+ b=FUOBUKn9Ll/P/FPBH0fex0m+XTBHFFSIUCRYjybVD0rTZBw1CQdFpGm6Rx86oF6XLIyowmN1JjS4TgaQuBBH+A3rV8DW9xjc+i8B3MHKPTODMDC+uve46PdTUOSzvYEFrofImIbwLeWdS/sbAcQcaR5rES62K4HnhFLNfXxnBKPFCWGQVt6no7I5x2pb/CX5aRFlkYrdpryIVc/+IqjQR1Ijg1zkG6A83k/F92an7mrAiPAP1uUaVmeTMk6ucuMS/6p6PfzYIrDlREkV/N+hHFfK37aRik1wQ3aI8VgfZE6XA3qzeGikNLValo5xuCKStfU8VU9/CaDYN6/0uRWmfg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ 198.47.21.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=y30Oz6fxvnn78WvVDR9+hhSUDewtOjbS974gdcF+CH8=;
- b=LvPslR1mNI8frdnWqOK/J/ukgS4cho3cPiQbo+LvbmVeSxXKRUqgXgWCpHPDDtRXWpescpAF2NCm/D3YJ/kz8RNfm/RuMrD3xfFwmTxFtRQ1C4z4Hp0G7s6njTUfRURz0HVFgZY9cGbJdE6vemfkND6MDkrHY3rHPO9KHqn34Bc=
-Received: from SJ0PR13CA0231.namprd13.prod.outlook.com (2603:10b6:a03:2c1::26)
- by SA1PR12MB8162.namprd12.prod.outlook.com (2603:10b6:806:33a::18) with
+ bh=kw2aixUH/tbZ9jCj1bflRepifdxlK0lsktfGzQGgb8k=;
+ b=R3ZLuUf1ZzqUynMhcFJ7IxDVuE9cyRoDScGafBGdSQIW8wKbkKpA8OYqscAzQuivtUA+BCzUkMGqA+/hrcSJJp7zwT0cCRMFk2x2X+/QIfCEqMIwnr24RzPNDNkl4VI6JFvUhH1ZYParhgA78rcNeS0Xks3o43ZceyIuBTzdgok=
+Received: from BN1PR12CA0026.namprd12.prod.outlook.com (2603:10b6:408:e1::31)
+ by SJ0PR10MB4511.namprd10.prod.outlook.com (2603:10b6:a03:2de::20) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9654.22; Thu, 5 Mar
- 2026 15:40:16 +0000
-Received: from MW1PEPF0001615B.namprd21.prod.outlook.com
- (2603:10b6:a03:2c1:cafe::58) by SJ0PR13CA0231.outlook.office365.com
- (2603:10b6:a03:2c1::26) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9678.17 via Frontend Transport; Thu,
- 5 Mar 2026 15:40:14 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- MW1PEPF0001615B.mail.protection.outlook.com (10.167.249.86) with Microsoft
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9678.17; Thu, 5 Mar
+ 2026 15:53:22 +0000
+Received: from BN1PEPF00004680.namprd03.prod.outlook.com
+ (2603:10b6:408:e1:cafe::29) by BN1PR12CA0026.outlook.office365.com
+ (2603:10b6:408:e1::31) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9654.23 via Frontend Transport; Thu,
+ 5 Mar 2026 15:52:55 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.194)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.21.194 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.21.194; helo=flwvzet200.ext.ti.com; pr=C
+Received: from flwvzet200.ext.ti.com (198.47.21.194) by
+ BN1PEPF00004680.mail.protection.outlook.com (10.167.243.85) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9700.0 via Frontend Transport; Thu, 5 Mar 2026 15:40:14 +0000
-Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 5 Mar
- 2026 09:40:06 -0600
-Received: from localhost (10.180.168.240) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17 via Frontend
- Transport; Thu, 5 Mar 2026 09:40:05 -0600
-From: Michal Simek <michal.simek@amd.com>
-To: <linux-kernel@vger.kernel.org>, <monstr@monstr.eu>,
-	<michal.simek@amd.com>, <git@amd.com>
-CC: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, "Rob
- Herring" <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>, "open list:OPEN
- FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Subject: [PATCH 1/2] dt-bindings: clock: versal-clk: Reorder if/then conditions for Versal NET
-Date: Thu, 5 Mar 2026 16:39:49 +0100
-Message-ID: <7241fe512ff677f7aa5b7212ae4056fba01f1f59.1772725183.git.michal.simek@amd.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1772725183.git.michal.simek@amd.com>
-References: <cover.1772725183.git.michal.simek@amd.com>
+ 15.20.9678.18 via Frontend Transport; Thu, 5 Mar 2026 15:53:20 +0000
+Received: from DFLE208.ent.ti.com (10.64.6.66) by flwvzet200.ext.ti.com
+ (10.248.192.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 5 Mar
+ 2026 09:52:50 -0600
+Received: from DFLE206.ent.ti.com (10.64.6.64) by DFLE208.ent.ti.com
+ (10.64.6.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 5 Mar
+ 2026 09:52:47 -0600
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE206.ent.ti.com
+ (10.64.6.64) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Thu, 5 Mar 2026 09:52:47 -0600
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 625FqkZb2607208;
+	Thu, 5 Mar 2026 09:52:46 -0600
+Message-ID: <2d852f07-0bd9-4076-b0dd-93425ed237f4@ti.com>
+Date: Thu, 5 Mar 2026 09:52:46 -0600
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3130; i=michal.simek@amd.com; h=from:subject:message-id; bh=5oviK+YgboqMPFWnbhTbt4Fm1XyOw756fvygEQc4nSY=; b=owGbwMvMwCG2mv3fB7+vgl8ZT6slMWSuXHyq4MWjBV4iHr3msZ92S27ke27ymfPBLTGu19NEi vu0/G2WdJSyMIhxMMiKKbJMZ9JxWPPt2lKx5ZH5MHNYmUCGMHBxCsBEFr5mZHhsKLvjgIVSseLu h7xSBzPEA49NOrHjyT6ppbt+rzrT6HGdkeHZfLknN54vm/d4QrjCVUuW59msB+e0vm4XXt9n9yN itxITAA==
-X-Developer-Key: i=michal.simek@amd.com; a=openpgp; fpr=67350C9BF5CCEE9B5364356A377C7F21FE3D1F91
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ti: sci: Drop fake 'const' on handle pointer
+To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, Nishanth Menon
+	<nm@ti.com>, Tero Kristo <kristo@kernel.org>, Santosh Shilimkar
+	<ssantosh@kernel.org>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@kernel.org>, Peter Ujfalusi <peter.ujfalusi@gmail.com>, "Vinod
+ Koul" <vkoul@kernel.org>, Frank Li <Frank.Li@kernel.org>, Thomas Gleixner
+	<tglx@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Bjorn Andersson
+	<andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>,
+	"Philipp Zabel" <p.zabel@pengutronix.de>, Dave Gerlach <d-gerlach@ti.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <dmaengine@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
+CC: <stable@vger.kernel.org>
+References: <20260223202426.566958-2-krzysztof.kozlowski@oss.qualcomm.com>
+ <195cc8dc-8642-481c-8bdd-f5409ab8f5b5@ti.com>
+ <5b6a4284-4766-424c-9171-feaa08c52ad1@oss.qualcomm.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <5b6a4284-4766-424c-9171-feaa08c52ad1@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW1PEPF0001615B:EE_|SA1PR12MB8162:EE_
-X-MS-Office365-Filtering-Correlation-Id: a02291ed-27f2-477d-c913-08de7acd7ea2
+X-MS-TrafficTypeDiagnostic: BN1PEPF00004680:EE_|SJ0PR10MB4511:EE_
+X-MS-Office365-Filtering-Correlation-Id: faeade3c-2292-421e-a379-08de7acf5328
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700016|82310400026|376014|1800799024;
+	BCL:0;ARA:13230040|7416014|376014|1800799024|82310400026|34020700016|36860700016|921020|12100799066;
 X-Microsoft-Antispam-Message-Info:
-	VbbG3nTk4MrOiuGADqEkarHOSNlg/b5LuQyp4QumujCkYxmrekEQc07+u2j+hHpc6xf9Fn+IsBZildRSK+yBcjM45oEHekwwY7ge+lzzeNjVHY2jadkkYsDBZJoFoTB2RyQj28PquDUL1Em9PTpdaxTHFZdh8VnD2mlKfjTltBZ6jMGf1vXmdBIr18iKOa9+FUJKhpyhILZKpke61RklhAw3VD9q52Cm9k5LENri+JPIIvvOvy9tGc/DAxyxuMV5J/szdnsMURGl/u5Gm6kyPCEFb07RgYXa+4Qgz9PMjMrGvte3VerbJ1YsnDwTdX72KOXIk//3igoXr4rvt2JlbRDARrLDOs6R6g9uUDBDV7JllMrgm66bFAlo7G2gM9Ifr3X+TxO71Akgw40DDi/71LVKSaPY0MHqd4uRqGNerqXL2x8HXQ4sywQh2APBHZETH1SICzKhQzCY9hViLUJ1CWgmyM3RQsjRow/gAX4Frzsn5R6F6UOAZvt0i319S9xePZQEVxtjJ9RmynbDwovAWiJBsk7kOt4J8pR77x+STrbBUqpofx0CC7j3r2yPtWn6OEP3bRsNRKRZGIrLbLYRYzo9T4YnGZL9hmUxobo+iMRJAgx7Ys4uhdzDJRhYwuqbVuHzGSlsWNgJxv6WiR4BLqSYhbh/oiNmXgWqtj5Gnkv8RG2TeQoiyTDFzFs1J/uz4VzTPuWsqmmXognX/teWdBPvJLSTvqTOFlF0P5I3b7WFnyP/weO4cCSJr0lYEF38WQqORZtvK0J6h2Ey9T/yaQ==
+	isAOi5PEPDP7ViXm6eoNCuTBE5jEstc33/p5kT6opN/amQuk1g1TuryGDR7zhJz7r8Tect/1heIGghmXwqvYB72ePI01jUAMTwRQQl0jIS8poNsHUI4/Nrav2bBKER3vrTW1bpREWrBYF44O2+LB4UaLo9jcHhQeUNpESzovOSYM7y+M86Ir9QCE5e5g4A3Rh0Neywe6AavTUOgJGfq8UN8uP8hk3ZX132a4AE7sxXuJN7otvy1gdtSR5oH8T9sJ7gLSNH+TZFxvEPwQ+hduUD0zLwa4vAB6gFbrQuwQ84TOJEN07Xwsmvlelshds/n0kNdycf2sx4IPGMHyuIm4uuK3aPUAW9ektWrzp08hVHgvvniuZeImDt9hmOHHLI/cKGqr/VXFdC3wNuTE5QqdB+wsZyVU22gZv/JKlkg14+J9kG3jfLQJ1Cfcg9igJIZC+F0H38jn454OP2UP6Q4g6R1sPXdaevHg0xjB2G4jDQoTcUl9ZyJdoTQcg81l2TqihppQIYixmPk/5IWf7vpyrYMSrXhNaqVKRXhOoxRI46+KcWLMjBGxePyxyua6Vs5jMWhpsglo30UuXlijDnxJ9TJTGIYnFRUyJN8cuRxlTutBdGi7PgJNJKH2fCdhanK+guVelKeCWiUHVvHTHHAa26dloKedsxBXPKVqrO/bMvA+216XCoSvSACxPjENWzacsaN+DowN/JHNczNP0Ixm9XYNWiTrmtL2aH+dVe46qL0lMwKhpvI4dqpJag/Ho7c8qHy/de1Ab0Y3jRtVpmq/k5bfcAWvOZw/uVoGWrasQooc1jODuCCY0wDUeuutZWGC
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(82310400026)(376014)(1800799024);DIR:OUT;SFP:1101;
+	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(82310400026)(34020700016)(36860700016)(921020)(12100799066);DIR:OUT;SFP:1501;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	rFkWYGUMSn11iIU7UKh1n95EAtHrJGTaZFhDkC/q/XTt4sBfeFDvLV5QyOZdScdT3pFOB35sPHe9trkqvTKD9UPdktTEM+0V8cbmgXFkiOAGqbSbxLJqV5OWSu7lQri72F9Ncf2Tzgqj4FVjql1MyGiCUaUCRGr76GmMaEeytZN9VI7ofz4w0V3o5Gs2Ydq/mBLRQCW6rnTKWGXpekPJ/DIFE0QdLJqZiC3XIqSeLePylDsOUpRZiMJ974Jhssvw6Mq51vOClnEzhWLuykVVyThNsX0CJVOIYScpugJnqNQIOjNii4UqV5yZB13Q3+6P/ejJLrFkbC7YKMYoCz8/z5DFfgmYBy8v9TS/6we++u2gXKCXPrjxBzvzjMBIZlV8WgNT0Hm/VCKgOkRjzgpBHqFm+XYx8EOHHvuLUPQb+yBIY0XjdoBeFTiVz5mW7zn6
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2026 15:40:14.3573
+	Z3YY2E7hUfuEY3JAhx3IxLufg9olywII8aAIQ6K358EATpEB9WQrFe0pQhaX8jfZUQ3arRFivRBtNAJiSWE9NFr9dzkI93+i5i/4qYNONy2FjgZRQAa2AxRJ1acUBN4XhOBv3hJqMyp6q7mQGseuK2MjG61R/Zd3aJr39ueS3AJQbXXUe05k24fWssjeiOhwzX777h+k/ayT79JlFBAM/ATnaFQHu/LPR5cJD/JXK9MfXweqTCOo5P30IOfD+rLEuKcjmZ7BSMeHNpLCupm8He57ageCYAwXSGzD9h53/UckDUZ76uyLOiqq6KE+d7Wih+Erfs/UrPAsms4i8qeJiBTxDLCtWF7iVcdLFSLWc7SIlOymvxAix8X0mMdxVPwQWMpSGUaPD8pWVi0Xmug0V6SXRYsjwErhERZ3tYa7KEsaIa1moAho6YxNXaNERcTj
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2026 15:53:20.3849
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a02291ed-27f2-477d-c913-08de7acd7ea2
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-Network-Message-Id: faeade3c-2292-421e-a379-08de7acf5328
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.194];Helo=[flwvzet200.ext.ti.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	MW1PEPF0001615B.namprd21.prod.outlook.com
+	BN1PEPF00004680.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8162
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4511
 
-The Versal NET clock controller compatible is specified as:
-  compatible = "xlnx,versal-net-clk", "xlnx,versal-clk";
+On 3/5/26 8:59 AM, Krzysztof Kozlowski wrote:
+> On 02/03/2026 20:12, Andrew Davis wrote:
+>> On 2/23/26 2:24 PM, Krzysztof Kozlowski wrote:
+>>> All the functions operating on the 'handle' pointer are claiming it is a
+>>> pointer to const thus they should not modify the handle.  In fact that's
+>>> a false statement, because first thing these functions do is drop the
+>>> cast to const with container_of:
+>>>
+>>>     struct ti_sci_info *info = handle_to_ti_sci_info(handle);
+>>>
+>>> And with such cast the handle is easily writable with simple:
+>>>
+>>>     info->handle.version.abi_major = 0;
+>>>
+>>
+>> The const is for all the consumers drivers of the handle. Those
+>> consumers cannot do the above becouse both handle_to_ti_sci_info()
+>> and struct ti_sci_info itself are only defined inside ti_sci.c.
+>>
+>>> The code is not correct logically, either, because functions like
+>>> ti_sci_get_handle() and ti_sci_put_handle() are meant to modify the
+>>> handle reference counting, thus they must modify the handle.
+>>
+>> The reference counting is handled outside of the ti_sci_handle struct,
+>> the contents of the handle are never modified after it is created.
+>>
+>> The const is only added by functions return a handle to consumers.
+>> We cannot return non-const to consumer drivers or then they would
+>> be able to modify the content without a compiler warning, which would
+>> be a real problem.
+> 
+> This is the same argument as making pointer to const the pointer freed
+> via kfree() (or free() in userspace). kfree() does not modify the
+> contents of the pointer, right? The same as getting putting handle does
+> not modify the handle...
+> 
 
-with xlnx,versal-clk listed as fallback. The original binding had
-two separate if/then blocks - one matching xlnx,versal-clk (2 clocks)
-and another matching xlnx,versal-net-clk (3 clocks). Since both
-compatible strings are present, both conditions matched simultaneously
-and JSON Schema applied the more restrictive 2-clock constraint,
-causing false "too long" validation errors for Versal NET.
+In that argument, if we wanted the consumer of the pointer to not free()
+it we would return a const pointer, free()'ing that would result in the
+warning we want (discards const qualifier).
 
-Restructure the allOf conditions to check for xlnx,versal-net-clk
-first. If matched, allow 3 clocks (ref, pl_alt_ref, alt_ref).
-Otherwise fall back to the xlnx,versal-clk case with 2 clocks
-(ref, pl_alt_ref).
+If you could somehow malloc() from a const area in memory then free()
+doesn't modify the pointed to values, only the non-const record keeping
+which would be stored outside of the const memory. So even in this analogy
+there isn't a problem.
 
-Add a dedicated example for the Versal NET 3-clock configuration
-and split all examples into separate blocks so each compatible
-variant is validated independently by dt_binding_check.
+> The point is that storing the reference counter outside of handle does
+> not make the argument correct. Logically when you get a reference, you
+> increase the counter, so it is not a pointer to const. And the code
+> agrees, because you must drop the const.
+> 
 
-Signed-off-by: Michal Simek <michal.simek@amd.com>
----
+The record keeping memory is not const and can be modified.
 
- .../bindings/clock/xlnx,versal-clk.yaml       | 49 ++++++++++---------
- 1 file changed, 27 insertions(+), 22 deletions(-)
+And where do we drop the const? The outer "struct ti_sci_info" was never
+const to begin with, so no dropped const.
 
-diff --git a/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml b/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
-index bef109d163a8..65d926d8f464 100644
---- a/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
-+++ b/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
-@@ -51,28 +51,7 @@ allOf:
-       properties:
-         compatible:
-           contains:
--            enum:
--              - xlnx,versal-clk
--
--    then:
--      properties:
--        clocks:
--          items:
--            - description: reference clock
--            - description: alternate reference clock for programmable logic
--
--        clock-names:
--          items:
--            - const: ref
--            - const: pl_alt_ref
--
--  - if:
--      properties:
--        compatible:
--          contains:
--            enum:
--              - xlnx,versal-net-clk
--
-+            const: xlnx,versal-net-clk
-     then:
-       properties:
-         clocks:
-@@ -86,6 +65,23 @@ allOf:
-             - const: ref
-             - const: pl_alt_ref
-             - const: alt_ref
-+    else:
-+      if:
-+        properties:
-+          compatible:
-+            contains:
-+              const: xlnx,versal-clk
-+      then:
-+        properties:
-+          clocks:
-+            items:
-+              - description: reference clock
-+              - description: alternate reference clock for programmable logic
-+
-+          clock-names:
-+            items:
-+              - const: ref
-+              - const: pl_alt_ref
- 
-   - if:
-       properties:
-@@ -135,6 +131,15 @@ examples:
-       };
-     };
- 
-+  - |
-+    clock-controller {
-+        #clock-cells = <1>;
-+        compatible = "xlnx,versal-net-clk", "xlnx,versal-clk";
-+        clocks = <&ref>, <&pl_alt_ref>, <&alt_ref>;
-+        clock-names = "ref", "pl_alt_ref", "alt_ref";
-+    };
-+
-+  - |
-     clock-controller {
-         #clock-cells = <1>;
-         compatible = "xlnx,zynqmp-clk";
--- 
-2.43.0
+If the issue is that the handle is not const inside that outer struct
+we could fix that,
+
+struct ti_sci_info {
+...
+-	struct ti_sci_handle handle;
++	const struct ti_sci_handle handle;
+...
+};
+
+And with that change even your original commit message example issue
+goes away,
+
+struct ti_sci_info *info = handle_to_ti_sci_info(handle);
+info->handle.version.abi_major = 0;
+
+would now fail to work to compile.
+
+Andrew
+
+> 
+>>
+>> Andrew
+>>
+>>> Modification here happens anyway, even if the reference counting is
+>>> stored in the container which the handle is part of.
+>>>
+>>> The code does not have actual visible bug, but incorrect 'const'
+>>> annotations could lead to incorrect compiler decisions.
+>>>
+> 
+> 
+> Please kindly trim the replies from unnecessary context. It makes it
+> much easier to find new content.
+> 
+> 
+> Best regards,
+> Krzysztof
 
