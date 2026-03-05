@@ -1,127 +1,166 @@
-Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2497263B
-	for <linux-clk@vger.kernel.org>; Thu,  5 Mar 2026 09:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6F23264EC
+	for <linux-clk@vger.kernel.org>; Thu,  5 Mar 2026 09:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772701335; cv=none; b=jvHVAKIQAFLhO/bUbx3VeuWUNx59BigDnUT6CmKQiyRqwIxzIZRSJ89tSdX8LJ5TjZYDo3ohIlSWYNbl/V0nYAc83SIadGpfFgevTtAqVU+iiPJ2mFLAHiMDfSufZ1X+ApFryZT6hirHfg1nFvyrRU3m+sOcdmYHOymoz3a6E9Y=
+	t=1772701418; cv=none; b=jvk1gqh/r9rh1av7JG2TXVQsuZw3oaXquS3LHgtYvxju7/WxaF8Uev5yTKupu0Hx7iGixxScJzF++Lv88bczUvVR9c7ZlNd87zdc5Jo9OXNrfyrixOePdWHOkGjhCionRih1aC7LYkJI26ZFSho07m0MkktGUvMKFrEmMQlquLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772701335; c=relaxed/simple;
-	bh=tpyvsJ5mRstCIGOMN8iC11VlwxpnD/CAOM3DjfcP76Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fCu+LRHEQLlBhHpw1nr/VMRM3Uq24cMU+6IQcCX6mEJe4tJuiVGrq/xxQd7NTKfJfyakF3KUKEMMX9qfaO3REjHJteGCtw4CTdsAnuVL++22nY/XDuLz8SN/1BsztehFCCfIUHCX+KruuTeonhEZzbQmmZysJEDJOBMriBP5w7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=fZPhLDO9; arc=none smtp.client-ip=185.67.36.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
+	s=arc-20240116; t=1772701418; c=relaxed/simple;
+	bh=kxnI1kq3blq/G6aSx3FDq3CCB9uCXKLhW/uT2AuKJOA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=gqzto7p2YP3zRBSb7fpTiuBQagF/Xq7HvYwFPTtVJktNQZaTCjpgkyBy2rVZaQpYXE7CUEtUN2ljnTnFQqNRDlexnBoF2bs2e0Yn8nIKDmtYbs1ZYn2Z1n+f+iIMIUETgxn3dBAflKhh0IxQVaeESr4p+RswflApU99Jl8h4j1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=3UhppmL1; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="fZPhLDO9"
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout01.posteo.de (Postfix) with ESMTPS id B9B93240027
-	for <linux-clk@vger.kernel.org>; Thu,  5 Mar 2026 10:02:11 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.net; s=2017;
-	t=1772701331; bh=oVZVukKQPGInYg9l8zQtE22dcUH/mSI7y5+pwOn1iv0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:From;
-	b=fZPhLDO94MOPDleagVYuVHcpNCCNxe0pBNlqV5OvgYMApL1C5hDArjh4dSSsQsz1P
-	 9iQdyWHN3a9+ohz+xLCMvXQn9ISwGBAXWqi1hRIzGa21/NjP7rewC4nYrzpIvrOnqa
-	 JRhPNklB6qPRtaDLrHmnNqySMzTkLFNiuLBtkzlXZ1Do0Rh8w5dJB/wc296lcT5Qyv
-	 JifKzrChlmk9bodRuosrR+YXF+b6RS0OCcp7n9yhVl1FlxBgBRpBbrcdWT17KUzv5+
-	 CD16p/2PNHNDa55kHhSY+G1qdvvb5FhiZTdeO13IZk4no/P+5w+mBI5eLu4pGlcwbX
-	 s8+ADd5nAES5Q==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4fRNp96s7pz6txb;
-	Thu,  5 Mar 2026 10:02:09 +0100 (CET)
-Date: Thu, 05 Mar 2026 09:02:11 +0000
-From: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-To: Brian Masney <bmasney@redhat.com>
-Cc: j.ne@posteo.net, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Tao Lan <taolan@huawei.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: hisilicon: Improve deallocation in error path
-Message-ID: <aalGkLuM1jK3Vlrw@probook>
-References: <20260303-hisi-error-v2-1-7cd9b43d8fbb@posteo.net>
- <aahI_4lfMdQjZCu3@redhat.com>
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="3UhppmL1"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-439b9cf8cb5so3717036f8f.0
+        for <linux-clk@vger.kernel.org>; Thu, 05 Mar 2026 01:03:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1772701415; x=1773306215; darn=vger.kernel.org;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WAQoJ+BsCX38jr9SNjCgtieBrTo3xV4mFgoDVHJVgRk=;
+        b=3UhppmL1ubtCdtjhllLgzD5hrVfzI2bvNG7OP6VbqCcyQOzOzZLZEOVOl6oDDnNCnW
+         cOUgZyfp4vzXkrdPXgnXvlnoxyiDo4oINv9KG5Cc5CNepWf4B1SIs9O6rgC0VC5HVyUr
+         0kwgSI/aGFmJ0tcpXxKAMAlrjRNA//plBNi+c/HlfS1E/Eo1nx0jHqpaMBL2DfG1Tog/
+         Uy6f7dj2v3chQ0MegY5Sp94hdyWoAKJ8HR5h5wEmhavkKn5TX5bTV0c5yvrsrh45Lbvb
+         EPOZU0JxGIvCuNJ7YKSMGhuEzpBZlEiQ8caA7jdVDVWdoA/GouPBxdJqW/TIVOLXAeo5
+         mYXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772701415; x=1773306215;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=WAQoJ+BsCX38jr9SNjCgtieBrTo3xV4mFgoDVHJVgRk=;
+        b=uZNGDu+VhCH/eEbmG8FmURUZd80g4xKHM05VX/rdE+C22R/HPnxkBIEpoE69jGeH69
+         k1orHpcj5qlNi8gD9vfQfqxj4+20Q8+ElDtUzq228H/4rqf72UWG2erAHkITWN2U9idV
+         fGrngby7hXu13AYj3+YCWfXAJ0j+yVEEUs2aNIEZkBdjVE1Ge/vhF+eJla1sw9p1yInc
+         8NWdPm3aKNyo+EG5b3org6rhGxQ9rzmz2YwGadS13vTKAYpcRXSH176mSk/8ee8Bi3CL
+         K/3jsCNhD9235wxtXxvlHm8GQXL5tf36LVJUaH+7ocSeFAN6YVj7f0UH0yNi3TrCnT47
+         f4+w==
+X-Forwarded-Encrypted: i=1; AJvYcCX3d7NLrNVoagUVkTZmdFgEG4DIUzwzYkHNDeaRlNOrIw7xQuVVGjK4qOVMoXiirWsyEaYozQaJVeI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywv/5cw93ADVdpm1czyM5+ylllsTAIxWl2PDa6EN1wFmDC9hDnN
+	AZVbBGf40ra+QbJEAXxQahqqH9U6ij5ntoWvRal+Q/1bC7LbG/mptU3n0arIJfRL8jU=
+X-Gm-Gg: ATEYQzw1YhvtZEXutWi8uASG3mGsILuZrh0VE2aHL5tcuHFYR2sFM3BlaJKhdLuL48O
+	BDkoj+2qBtNLuTAtLCXTxoACel7iBEXbUsTa4sGv3WhPDH2RUbcTyNVzlEoQKKPh17Egn6i+/u7
+	4J36TohiVAcFeikvlCW2f3wZIv9PLvaIiMmV0PGJ95Ke/8nl4GF7CzCI9o0y6s27cRc1pLN0xTa
+	qKEbFt/4xv4emGeqKr9S5Qy5/SWl4iMDd6CuNIdLht8viPsebLzXgkQ3rittNPykQMIc14QEBgp
+	aCAuDr1D19Z7TaFZfZ14CiNMy2i35hsVlCtOt6KtIDA76zLYXa5OCUE6kmFbr1BS10Bt/3HyfSE
+	VVsvmQzcgKhPbyiCGcHCeEsNnwecovv5Cm3+9BnbMoLuoey8pBowf3FLxtKw543FAqyxx/8jC6N
+	+TEzXXMDsh+uiCOa2X0cos
+X-Received: by 2002:a05:600c:1f85:b0:47e:e712:aa88 with SMTP id 5b1f17b1804b1-4851989f765mr93346545e9.31.1772701415004;
+        Thu, 05 Mar 2026 01:03:35 -0800 (PST)
+Received: from localhost ([2a01:e0a:3c5:5fb1:5595:8450:af3:bbe3])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4851fad2812sm41178955e9.1.2026.03.05.01.03.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Mar 2026 01:03:34 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Jian Hu <jian.hu@amlogic.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,  Kevin Hilman
+ <khilman@baylibre.com>,  "Martin Blumenstingl"
+ <martin.blumenstingl@googlemail.com>,  Stephen Boyd <sboyd@kernel.org>,
+  Michael Turquette <mturquette@baylibre.com>,  robh+dt
+ <robh+dt@kernel.org>,  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
+ <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  devicetree
+ <devicetree@vger.kernel.org>,  linux-clk <linux-clk@vger.kernel.org>,
+  linux-amlogic <linux-amlogic@lists.infradead.org>,  linux-kernel
+ <linux-kernel@vger.kernel.org>,  linux-arm-kernel
+ <linux-arm-kernel@lists.infradead.org>,  Ronald Claveau
+ <linux-kernel-dev@aliel.fr>
+Subject: Re: [PATCH 2/3] dt-bindings: clock: amlogic: t7: Add missing mpll3
+ parent clock
+In-Reply-To: <20260305074328.639993-3-jian.hu@amlogic.com> (Jian Hu's message
+	of "Thu, 5 Mar 2026 15:43:26 +0800")
+References: <20260305074328.639993-1-jian.hu@amlogic.com>
+	<20260305074328.639993-3-jian.hu@amlogic.com>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Thu, 05 Mar 2026 10:03:32 +0100
+Message-ID: <1j4imubqcb.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aahI_4lfMdQjZCu3@redhat.com>
+Content-Type: text/plain
 
-On Wed, Mar 04, 2026 at 10:00:15AM -0500, Brian Masney wrote:
-> On Tue, Mar 03, 2026 at 04:25:18PM +0100, J. Neuschäfer via B4 Relay wrote:
-> > From: "J. Neuschäfer" <j.ne@posteo.net>
-> > 
-> > Unmap 'base' if an error occurs after it has been mapped.
-> > 
-> > Reported-by: Tao Lan <taolan@huawei.com>
-> > Closes: https://lore.kernel.org/lkml/ZNlSH+eWV8Sk3FYn@probook/
-> > Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
-> 
-> My understanding is that you need to use your full first name in the
-> Signed-off-by.
+On jeu. 05 mars 2026 at 15:43, Jian Hu <jian.hu@amlogic.com> wrote:
 
-I have been contributing to the Linux kernel and other projects using my
-abbreviated first name for over a year. It has been mostly well received.
+> The mpll3 clock is a valid parent clock for sd_emmc and mipi_isp on
+> the Amlogic T7 SoC, but was missing from t7-peripherals-clkc.yaml.
+> Add it to enable proper clock parent configuration for these peripherals.
 
-> 
-> > ---
-> > Changes in v2:
-> > - Rebase on v7.0-rc2
-> > - Update my email address
-> > - Reword the commit message somewhat
-> > - Link to v1: https://lore.kernel.org/r/20240708-hisi-error-v1-1-727bc7399b63@gmx.net
-> > ---
-> >  drivers/clk/hisilicon/clk.c | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
-> > index fae65127cd4aa8..08050ff1c8cf9a 100644
-> > --- a/drivers/clk/hisilicon/clk.c
-> > +++ b/drivers/clk/hisilicon/clk.c
-> > @@ -70,7 +70,7 @@ struct hisi_clock_data *hisi_clk_init(struct device_node *np,
-> >  
-> >  	clk_data = kzalloc_obj(*clk_data);
-> >  	if (!clk_data)
-> > -		goto err;
-> > +		goto err_base;
-> >  
-> >  	clk_data->base = base;
-> >  	clk_table = kzalloc_objs(*clk_table, nr_clks);
-> > @@ -83,6 +83,8 @@ struct hisi_clock_data *hisi_clk_init(struct device_node *np,
-> >  	return clk_data;
-> >  err_data:
-> >  	kfree(clk_data);
-> > +err_base:
-> > +	iounmap(base);
-> 
-> Use devm_of_iomap() and it will be automatically cleaned up for you.
+... but this changes the index of the clocks after this mpll3, and those
+index are supposed to be stable if I'm not mistaken.
 
-This would require a larger restructuring of the HiSilicon clock drivers
-to pass a struct device * to hisi_clk_init. I'd rather avoid that
-because I can't currently test these drivers and because the benefit is
-questionable. However, I still had the upstreaming of this patch in my
-backlog, and I think it's simple enough to review as is.
+It is indeed more convenient to have the optional clocks at the end
+as it avoids writing multiple <0> in DT when we do not have them.
 
-For instance, in drivers/clk/hisilicon/clk-hi3620.c:
+At the very least, your commit description should say that this change
+will not break any existing DT because these bindings are not used yet.
 
-static void __init hi3620_clk_init(struct device_node *np)
-{
-	struct hisi_clock_data *clk_data;
+I leave it to the DT folks to say if the change is OK in such case.
 
-	clk_data = hisi_clk_init(np, HI3620_NR_CLKS);
-	...
-}
-CLK_OF_DECLARE(hi3620_clk, "hisilicon,hi3620-clock", hi3620_clk_init);
+>
+> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+> ---
+>  .../bindings/clock/amlogic,t7-peripherals-clkc.yaml       | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/clock/amlogic,t7-peripherals-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,t7-peripherals-clkc.yaml
+> index 55bb73707d58..27cc1f331587 100644
+> --- a/Documentation/devicetree/bindings/clock/amlogic,t7-peripherals-clkc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/amlogic,t7-peripherals-clkc.yaml
+> @@ -24,7 +24,7 @@ properties:
+>      const: 1
+>  
+>    clocks:
+> -    minItems: 14
+> +    minItems: 15
+>      items:
+>        - description: input oscillator
+>        - description: input sys clk
+> @@ -40,12 +40,13 @@ properties:
+>        - description: input gp1 pll
+>        - description: input mpll1
+>        - description: input mpll2
+> +      - description: input mpll3
+>        - description: external input rmii oscillator (optional)
+>        - description: input video pll0 (optional)
+>        - description: external pad input for rtc (optional)
+>  
+>    clock-names:
+> -    minItems: 14
+> +    minItems: 15
+>      items:
+>        - const: xtal
+>        - const: sys
+> @@ -61,6 +62,7 @@ properties:
+>        - const: gp1
+>        - const: mpll1
+>        - const: mpll2
+> +      - const: mpll3
+>        - const: ext_rmii
+>        - const: vid_pll0
+>        - const: ext_rtc
+> @@ -98,6 +100,7 @@ examples:
+>                       <&gp1 1>,
+>                       <&mpll 4>,
+>                       <&mpll 6>;
+> +                     <&mpll 8>;
+>              clock-names = "xtal",
+>                            "sys",
+>                            "fix",
+> @@ -112,5 +115,6 @@ examples:
+>                            "gp1",
+>                            "mpll1",
+>                            "mpll2";
+> +                          "mpll3";
+>          };
+>      };
 
-Init functions registered with CLK_OF_DECLARE don't have access to a
-struct device *.
-
-
-Best regards,
-J. Neuschäfer
+-- 
+Jerome
