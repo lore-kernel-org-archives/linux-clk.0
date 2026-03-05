@@ -1,163 +1,160 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5429376BD6
-	for <linux-clk@vger.kernel.org>; Thu,  5 Mar 2026 11:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC247396B6E
+	for <linux-clk@vger.kernel.org>; Thu,  5 Mar 2026 11:57:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772709119; cv=none; b=OZ0/YM6UcAgDw9lt3nlfrYbkzvTeQVR5oH8pzd2s1QsMr2h8QmeKQeGCQYZync1MFlKGU9lG01NP6ff68m5rQHyctXT5RcBjZvCB0sML1RQYn8bEN5fWvUW+j7OFnDbMnsssbfn4Lte07HNKo66fCRYLUxOE5RdFrHIvbhvWYPE=
+	t=1772711829; cv=none; b=pX/FIzhFnuT6KbWBO5srCgN2YCjS3p//mzbCIYmt2wvacCFmpAde0bkw+5sd1gidnUR+YZ8pwHq2ndZOiEp+Z5a9ORrBK+sqRsKzMPJYpY1vwanlxyNvvfVKQm8vdcMbmMqS1lGMajOoGqGcAqdqXBNMtM45aXaNS7pLfKCeJlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772709119; c=relaxed/simple;
-	bh=B873sRwQ1J5CCn/I3TZ27cfOdjvggNk5/UwePR4qofQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wo3k+XnPH7OvU3mpbDR9IQZ9HAtgRz3mWG6j+KFHKIQgb5WpwNwOKya4eSKTlOyj3D05ujLY/LeP1UiSo7bHqbSOHd6VhVFUyPlqQ8dMXDv/59SzhxLNCBa1eMMEWZ0qfjvZbbK3U0uvuEYc4BHD6Spz/813j1Iw3hRGtfRI+2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b/hKmmw+; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=nKKVFOHL; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1772711829; c=relaxed/simple;
+	bh=ywQR8RudpyjuQ4ua9m98nW27zxDvWYAOmFcOPd1cmuc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qOT2ZSvYaXaX3QvJPwcKhRMAaCTZGibju2aZsZcNYQZ4nAnmEKIFCsIJoqZsUXTjTU4Bobv/2zg8LGTichl8YhRG+LyFNFtakNnSpttgRyK1CUCmij0IhZ/UwMJE8/k32iQza0RPeSDb/TCyoKYbF3cARfwjE5H35ClM07n/gyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=n1Ah8Krf; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Zw3tP/dU; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b/hKmmw+";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="nKKVFOHL"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1772709116;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fkxCRFYiRt8J6Zp/a/+uZknb9+WKEd8QL5JOgoUkxw4=;
-	b=b/hKmmw+nblSPUmj/G0J+iaGJHK/u6EpXsgs2QCTq7S+S2dW/SrDtSvUWqCAIt3yS7uzaq
-	Ywcpp+8OcJf48amC3pGcY9o3Y1IYhI0kKRlRmIdYSVPGae5DeGH88WXqxXhM/i/v/E0Z9/
-	q7+A9f8VtCHJxhtjfc43Tr7LgfBodZQ=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-680-NLmBpALWOzmjHWDsqeFlsQ-1; Thu, 05 Mar 2026 06:11:55 -0500
-X-MC-Unique: NLmBpALWOzmjHWDsqeFlsQ-1
-X-Mimecast-MFC-AGG-ID: NLmBpALWOzmjHWDsqeFlsQ_1772709115
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-50341fddb89so554042341cf.3
-        for <linux-clk@vger.kernel.org>; Thu, 05 Mar 2026 03:11:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="n1Ah8Krf";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Zw3tP/dU"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 625AFvUb450544
+	for <linux-clk@vger.kernel.org>; Thu, 5 Mar 2026 11:57:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	oMWGh0Yr/4YojcEUszF8lrbKoqjtdVISzX+uaKBAjlo=; b=n1Ah8Krf1gXp4q+6
+	g/cxD1bGyzwXDDudc3lu/vYT4xKZWu2lZTGBHNNFJQ4Zes9FNXk+YXGllLLWWiGE
+	vVjF0r31vVkjxCrOqJy+Q7i47bb6L5Hzms6OHnBuYkjGVTJA7cFjFNv70sGGrazP
+	n37wZ48ssVRMvgFwpy2Nvq9nGfrq+MS1CBFJNPb7Z3KaDTh1VZzQxBoDTryYzej/
+	bVgt++Ec5IEGCB35wUrQmw0kIUwZa0glUkgzLTrOMd4qwFnnQioMfn1/fKqH8VVc
+	F+st49R0lCLOQHjHNU2mWpk2sm07y0vIn+j2H1JlC22VxchsgjONRBsbvd3OwTuX
+	ifSFaw==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cpj184hxa-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Thu, 05 Mar 2026 11:57:06 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-89a012f8ab7so26137496d6.2
+        for <linux-clk@vger.kernel.org>; Thu, 05 Mar 2026 03:57:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1772709115; x=1773313915; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fkxCRFYiRt8J6Zp/a/+uZknb9+WKEd8QL5JOgoUkxw4=;
-        b=nKKVFOHLKtqB9NmjzoBHkQmNB6+UyJqGFV/alSHWfAq04JHic4Xqq6Yj1cJs/mzKRf
-         PcczZri8M7LVDHqyz2kfvBDUvJHTQUGO87GRh3cUP4xUVR0bEgLDUI6uxRFZdVpgeYdW
-         aLBhuqKXL1Np7+LpM+YO2611Ou+X5nOL64E3kLiKHYtU+6iP6jDxKj+iiiuERl/ZrOB0
-         E0i9jTc8ng+6PM7MN/IzkXTDAFw96i2XAggrDvsO3dQPa0Zhk1Criv8z1MnCASvb/o7x
-         Yw9XAdjARx80g1kCeouZh2rMMtiSIsvTy/E5x36MaXCrPqWVkR9CeyQujox5UMREeaZK
-         uMbw==
+        d=oss.qualcomm.com; s=google; t=1772711826; x=1773316626; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oMWGh0Yr/4YojcEUszF8lrbKoqjtdVISzX+uaKBAjlo=;
+        b=Zw3tP/dUlRki4wzvk1X/Y3KEc0S0Pzv1KN83PR1PB496gVSeMzuOuY8Y6l/Wpw1Oad
+         wtJs5i/NUlsz7HVo2+H8oNsNcu2CJGfQNwlFZVJIZInwhj+G/oFgPM0ss2ZA2RGhbmUf
+         Ooee/03dPOfKu47x3CNkN3vwv5DGCpjDSM/kpF60zuGnseGUr53U1UY6b5dFS0KHZv4R
+         AasoQ72qvC+N+e9k4tMRKvDy1yg+52hsAZoru+ehUNedTveeVa6DRHTuzrVClNX1c+6t
+         QAtbsSeyiBQgV1NuLB2l/hJA1TsDNjKDYP1XcKlUu260AUXFK0599mTDxjRlLeE3nXA7
+         NQEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772709115; x=1773313915;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fkxCRFYiRt8J6Zp/a/+uZknb9+WKEd8QL5JOgoUkxw4=;
-        b=IuMfLSLj56Fx6bKBsWOkOrNSRBjOJTQu8s3dzB10HjX+pzq0VnrqhdaGIQEVCppsNK
-         HhYfF9MN7BJcqSqzcK/OjlKTS6Wpvs44h8WYuFGWml62KfQGApSZGCME9BjOM11IgzX6
-         rRsy9HlGEKx4tFrw2niLgkgoNetMYIA8Envvk9QiUjp+5QyKEi9VYnm1pMp60fRVJWDU
-         fB8W369NGem45ckFjeJ2ynEBf7GVPfMM9f/Ec/mRWxx58bvSiuP+JTpY14hCIarx/9l8
-         zFK986ANKcsW0LUi8IaDQGIAWo6REsU2UkGPzVoCSv4NIpY+14J+o1xS5efSKairE1Kk
-         f5fg==
-X-Forwarded-Encrypted: i=1; AJvYcCWreU/q+cCfhhUlAK8KOAYPtcgmYnk7gD5p8dlRsQyMGE92FwuKrIE+DysEXF/ae+QC21FUiWb/0kY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysDQtc+EXzUCpmAdTMBNlj5k4LvaPwRVMmwqVpDvfE3hc33/k2
-	EahpakiXHH/6D7G00N8uutqvd9YgQE+Z7/SLzO2IBO32fQ3BZE5i97gXBNBUPuWEVWH7aKkCEtF
-	esgwNh13WF6nFz8eBpVe9qncCyRd1WEpQZ+orOmnUBhzFQZMOybNdalAG0yFb7DUrPG0rBg==
-X-Gm-Gg: ATEYQzxYRLWseYbRgatLvvULIYQ1KPJi6jjVq0V3swgQDKhN6kdEAwKm8CR2w3zCHNS
-	W8E1m2MfVIa9r5oVKRrzG4Nrk+K1C8ZGrTZYRi7GcAKl2PLAAYPHFq4iGipv7qyzcFlMfkqshAG
-	jESGEjCgRZ5NhgG7cX5No3mL/EWW8WN0d8a3COod3L2wv8U8PRm5OIqc5fvxY2djn37EPdXDUfa
-	tzQO8m5JW799eYWOc/u79Y0ULqK+7hZHxiBwWQLIx5TaJUiGiGswJQLENOKS6pY0gSspUeW6S5L
-	5GxrpNyHYXFICtpEecmlKPNgZsitjCemZaEGw0ul1/Li7tZZTo29I/iRGmqR7rLdqW9ul5hMaDg
-	6hIyNt9isPBjJVQHSb7Ii+rqu04V9PkisoFsh+wmTL2HD/U5jtYJlWG3p
-X-Received: by 2002:ac8:5f0d:0:b0:506:542d:2b3a with SMTP id d75a77b69052e-508db25d6c0mr65191101cf.11.1772709115283;
-        Thu, 05 Mar 2026 03:11:55 -0800 (PST)
-X-Received: by 2002:ac8:5f0d:0:b0:506:542d:2b3a with SMTP id d75a77b69052e-508db25d6c0mr65190921cf.11.1772709114890;
-        Thu, 05 Mar 2026 03:11:54 -0800 (PST)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-899f4fb7c53sm120590996d6.30.2026.03.05.03.11.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Mar 2026 03:11:54 -0800 (PST)
-Date: Thu, 5 Mar 2026 06:11:53 -0500
-From: Brian Masney <bmasney@redhat.com>
-To: =?iso-8859-1?Q?J=2E_Neusch=E4fer?= <j.ne@posteo.net>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Tao Lan <taolan@huawei.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: hisilicon: Improve deallocation in error path
-Message-ID: <aalk-cn0R40a_tM3@redhat.com>
-References: <20260303-hisi-error-v2-1-7cd9b43d8fbb@posteo.net>
- <aahI_4lfMdQjZCu3@redhat.com>
- <aalGkLuM1jK3Vlrw@probook>
+        d=1e100.net; s=20230601; t=1772711826; x=1773316626;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oMWGh0Yr/4YojcEUszF8lrbKoqjtdVISzX+uaKBAjlo=;
+        b=kNH8eCZRcIqL6MlHrtGKd9q2SqvH1NI1pVj9fUPDAaq+IKPJPX54Z3FVJ6ajORBo7g
+         veqnqYCaxvUkRvI7C6yE1Md+cqC4weCJ78PSA+FYgSaB5lcpUV6Bb8aH4Fs7Ijhu3Nsk
+         /6O/OIy6D5LhjnkF/mP7ftq3x1BAUrLq8ByEQTsOc6fcmFVMtDtEBNlBVN0KxSB0saj4
+         uFYOPxCB5a63aMMc+dRUHf5V2MlyG1TbkEVjqEi9Mh2gpyBxWr+SHthMeiAjFve/J3T3
+         YA46Lw+PHBE2HcaM16Zn9lBuh/wJUwXGN9SKAB/xDjIklzSrw7Uh/Z4Orv4aqLCviJoh
+         xJ2A==
+X-Forwarded-Encrypted: i=1; AJvYcCUExodEBto4V06Pd+h1XZmTJG88YbsR1VVBekAtS03/y78pBgIoz6hZFJ60p2u13mJIPe03T+5iXZE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzevhvgYbWvgj1D9dWLjxG8JpQR5OpgmGqC88XEVFCuTgdFwzPd
+	8wgaehRTM5U95p279h0UNut+DSibG+gRw4dXnA2/iQS/DWxp/B8A79VHFnysw7d0bkMhok6eltD
+	i3K7UggJMq35qhxOd+G1qDOZVXZHe51iFHqNuKlAdE9AYOUujXWpOhSTCk5bbk54=
+X-Gm-Gg: ATEYQzxWy7/iC1b6ndoxB5YLeV3qWzJUw/MAHg+rRGfA502VK3Ezxspq6Y0ruCK4syH
+	kqXkDQus2ECj2i38i4wzG/OUmJOjYJYYKcQrKbKfO+J6cmxkyWU1yqnF0a6UGGbGjGDz72B0gRd
+	Ab059QBmDKSy7HJ/H95ng6nWRi4ENYZa2Z4ecbF1unrSCluLWmQU9bO4JZhrP3gMKePOF7sgwoS
+	RQ39MfXhh4hgwCsXNUTRX5sk8e0Bth7dOFXU6QLA928ZSm2e+qTe4CAZrj9aEEukq9Vf3kb6ig5
+	epVVqb36DleANKApOgLWc30DflljjKdcRLpmB1AoJWFDDepv+KXkBbhpWJTxo8clrpx/ONNo9Eb
+	OFjr7dolCRn7TiDNbrmbccB4efLC0OBAararlLhgB6gazUQtBljYM8xTjebOfCTT1wXx0u76bdL
+	ksznc=
+X-Received: by 2002:a05:620a:318f:b0:8be:6733:92b1 with SMTP id af79cd13be357-8cd5adbad4dmr523868585a.0.1772711826304;
+        Thu, 05 Mar 2026 03:57:06 -0800 (PST)
+X-Received: by 2002:a05:620a:318f:b0:8be:6733:92b1 with SMTP id af79cd13be357-8cd5adbad4dmr523865885a.0.1772711825797;
+        Thu, 05 Mar 2026 03:57:05 -0800 (PST)
+Received: from [192.168.119.254] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b9410131465sm68249966b.42.2026.03.05.03.57.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Mar 2026 03:57:04 -0800 (PST)
+Message-ID: <c37b0fd4-afc6-49cc-a133-7f8334a16cb6@oss.qualcomm.com>
+Date: Thu, 5 Mar 2026 12:57:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aalGkLuM1jK3Vlrw@probook>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/7] clk: qcom: videocc-x1p42100: Add support for video
+ clock controller
+To: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>,
+        Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>,
+        Taniya Das <taniya.das@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260304-purwa-videocc-camcc-v2-0-dbbd2d258bd6@oss.qualcomm.com>
+ <20260304-purwa-videocc-camcc-v2-3-dbbd2d258bd6@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20260304-purwa-videocc-camcc-v2-3-dbbd2d258bd6@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: jyWfrZgn7Bt6a8DGcDkp2RXsGvusuQCQ
+X-Proofpoint-ORIG-GUID: jyWfrZgn7Bt6a8DGcDkp2RXsGvusuQCQ
+X-Authority-Analysis: v=2.4 cv=Ed7FgfmC c=1 sm=1 tr=0 ts=69a96f93 cx=c_pps
+ a=UgVkIMxJMSkC9lv97toC5g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22
+ a=EUspDBNiAAAA:8 a=rAeN3jnYVyXTJrfZgKIA:9 a=QEXdDO2ut3YA:10
+ a=1HOtulTD9v-eNWfpl4qZ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzA1MDA5NyBTYWx0ZWRfXypMOm2akT8LK
+ WjidQAX33KwLI6JYFaKVhf3hGaRgp6rs7W7KYLRclZU1OhTfXoqYiuY2cWH+k3TKCxOw7r5vi2Q
+ 525Zufr8nLkaiyA+EP9lJ1EAPiyESNr8H0NaCPrBOQv9ffmd8XxNydo04q4Y3yWV99mDIf0qgGg
+ ygUluKEAQLwon/Wh3b0iOv+0mMh8lkWH+i/dOiqfGVROggDbJzGAcsZHSJWXjjE+Wic6cZ3Rw0k
+ HJgCKWQ2BYystQsCFRAoifuG9NIbp3urZXrS4N8I09EuDb5Z5IVl7sazp1exnlx6gVnPmpEkK+z
+ Y3uyLrVV79MeIFZ+zU+khQoHjgH6ooiD5HaB7smyV+Seljr3f1VjxPIKPmVDeNmuYDwkcOiahAU
+ BY7vnndG1Hh1+tBjgUE2bGv9P7Fg5tye4Wnzhbn2P8ikW2gjtRPLqEIYwCb/Wq1S/c5bk4PG3ux
+ +msYaXRiN/kCn20O54A==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-05_04,2026-03-04_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 suspectscore=0 spamscore=0 adultscore=0 lowpriorityscore=0
+ clxscore=1015 malwarescore=0 impostorscore=0 priorityscore=1501 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2602130000 definitions=main-2603050097
 
-On Thu, Mar 05, 2026 at 09:02:11AM +0000, J. Neuschäfer wrote:
-> On Wed, Mar 04, 2026 at 10:00:15AM -0500, Brian Masney wrote:
-> > On Tue, Mar 03, 2026 at 04:25:18PM +0100, J. Neuschäfer via B4 Relay wrote:
-> > > From: "J. Neuschäfer" <j.ne@posteo.net>
-> > > 
-> > > Unmap 'base' if an error occurs after it has been mapped.
-> > > 
-> > > Reported-by: Tao Lan <taolan@huawei.com>
-> > > Closes: https://lore.kernel.org/lkml/ZNlSH+eWV8Sk3FYn@probook/
-> > > Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
-> > 
-> > My understanding is that you need to use your full first name in the
-> > Signed-off-by.
+On 3/4/26 6:40 PM, Jagadeesh Kona wrote:
+> Add support for the video clock controller for video clients to be
+> able to request for videocc clocks on X1P42100 platform. Although
+> X1P42100 is derived from X1E80100, the video clock controller differs
+> significantly. The BSE clocks are newly added, several cdiv clocks have
+> been removed, and most RCG frequency tables have been updated. Initial
+> PLL configurations also require changes, hence introduce a separate
+> videocc driver for X1P42100 platform.
 > 
-> I have been contributing to the Linux kernel and other projects using my
-> abbreviated first name for over a year. It has been mostly well received.
+> Reviewed-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> Signed-off-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+> ---
 
-Sorry I should have checked.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-> > > Changes in v2:
-> > > - Rebase on v7.0-rc2
-> > > - Update my email address
-> > > - Reword the commit message somewhat
-> > > - Link to v1: https://lore.kernel.org/r/20240708-hisi-error-v1-1-727bc7399b63@gmx.net
-> > > ---
-> > >  drivers/clk/hisilicon/clk.c | 4 +++-
-> > >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
-> > > index fae65127cd4aa8..08050ff1c8cf9a 100644
-> > > --- a/drivers/clk/hisilicon/clk.c
-> > > +++ b/drivers/clk/hisilicon/clk.c
-> > > @@ -70,7 +70,7 @@ struct hisi_clock_data *hisi_clk_init(struct device_node *np,
-> > >  
-> > >  	clk_data = kzalloc_obj(*clk_data);
-> > >  	if (!clk_data)
-> > > -		goto err;
-> > > +		goto err_base;
-> > >  
-> > >  	clk_data->base = base;
-> > >  	clk_table = kzalloc_objs(*clk_table, nr_clks);
-> > > @@ -83,6 +83,8 @@ struct hisi_clock_data *hisi_clk_init(struct device_node *np,
-> > >  	return clk_data;
-> > >  err_data:
-> > >  	kfree(clk_data);
-> > > +err_base:
-> > > +	iounmap(base);
-> > 
-> > Use devm_of_iomap() and it will be automatically cleaned up for you.
-> 
-> This would require a larger restructuring of the HiSilicon clock drivers
-> to pass a struct device * to hisi_clk_init. I'd rather avoid that
-> because I can't currently test these drivers and because the benefit is
-> questionable. However, I still had the upstreaming of this patch in my
-> backlog, and I think it's simple enough to review as is.
-
-OK, fair enough.
-
-Reviewed-by: Brian Masney <bmasney@redhat.com>
-
+Konrad
