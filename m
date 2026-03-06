@@ -1,200 +1,117 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6783530EF92
-	for <linux-clk@vger.kernel.org>; Fri,  6 Mar 2026 13:42:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 621F133D6DF
+	for <linux-clk@vger.kernel.org>; Fri,  6 Mar 2026 13:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772804558; cv=none; b=R1gZCj+BgUbDxYIVW7LCPxde4tFppH5WXuoRW6iVBzsglgJIQORqJDjN/G1m4ghYLKF8ck3SA175JaGdmG9cMWTmdVeBkTjgwqRFSHcjzrRx0hHKbJUNNyorSSI7LaouFF2phfy/pNNBzdQLJLmZmk0Zh3cfTpz/mrnOpltAJLA=
+	t=1772804925; cv=none; b=RSuzmIa5bDKLppXDNHsAuY2GVlSdNULoI43B218U8FBn61PkejFtZEM5r+d4/dsepjZGP7yCRnQr5qUKazzjMH+Hsi0RuNe/buIeutG6XkGRnQxH0N83AidTkwxFWws7rMLuEqXzZp9gU//5uD9kuhNSvhE0YJxGgn3UfU6ir1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772804558; c=relaxed/simple;
-	bh=S9/Fzkiyb07FiSnwrS8MQmvi6Fitnuo1uoT04N7PIvE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sUCaM3liFMJIO/tGDtkxso1rzjy0mAJnU89mxp33TjVEUROMuB6kSclhO89wNHf89fs8eaiASBJcH2cwQCNTMpdS8aMJ00r+fgFNZwNssqCkzddKXvKKTlr3e+wvQQYsMM1Do3YIhL+OpGFhnKQnwjUqDHeyKDjAyKP1Vnou9do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CkI9fPu+; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1772804925; c=relaxed/simple;
+	bh=1OR1ALE2jVrBKZLHJvIYGf/LHohuVdSZ9p68Cqwcalw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=P4ICO7T2aeY+AytydyZTkdytsydagyOepxMPZmcy2S/NFh5a+NGBYCdGsyy2TrmcTYkmtE0cszCP3TBiEa/lTjMfVKrIs/W/hUhdRYmDKZCDvKUcni3eGE4sQwFUjIrFS7YJF05Q8Wzm7LgTKj6t1tAvgtduF1yEMhhdyNhGQMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=ShfDxM3L; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CkI9fPu+"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-439b8a3f2bcso4412816f8f.3
-        for <linux-clk@vger.kernel.org>; Fri, 06 Mar 2026 05:42:36 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="ShfDxM3L"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-439b94a19fdso5278400f8f.0
+        for <linux-clk@vger.kernel.org>; Fri, 06 Mar 2026 05:48:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772804555; x=1773409355; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o0Ng/uajvfzozXdQpYK5vG2wa/u2Xjabl4u/B9UNDME=;
-        b=CkI9fPu+4f/I4luh/7QtYvHZV6uOXYAphvjNk8iEaWpTQ1lFjD0nEHbztDCihwdWx+
-         Ee2j9SehyGjRh/zQ85uvtnuFohrI/k7JbOymNxt0fxPrLOobx8aBWDuJl6lFS3740LQd
-         HCpLz+qauSHPZOnxvJnx2BCcdk+jSKyCI709i/9o+jnz0w1EFvn9MboUMViWVMD8evDG
-         0vxb+9Imt3LqARayhWBzn5tGXX+oHdpXJ97cH9U2tvEzyu+MqFRw1ZLQbCyy8pS1QDR4
-         jYzdIHxXxqy+fz+y/mVPf0jHtd8xw70Tn5dr2X0VAnJDviqpWjjCOQquC6tVIJbOxAeP
-         Hd0g==
+        d=fairphone.com; s=fair; t=1772804922; x=1773409722; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KLo34mncvv+zEzucrHcRYMCBDiBVpv66f0nGWBz0AyE=;
+        b=ShfDxM3L6Uhsa2K1Z5j/k3byQNeL0hM56ebI+QyIV0I8PPsfQRHYe0k5FLdUx7a+mJ
+         2+tNYL3YpJjiFqMl/BkVrJ/JWRAlDfQDECdaIpKeY+YB5ICtG0z5jEUAD854AVohxOZk
+         YmGYhkkEMLUJ92n+WrvpCs7KJ0af+UJD4vT5ih9oqzNp2VzSC+llVfowlXiravS0Eopt
+         Xtab7hclGZgVy3ECu1siNVapNkchhV/WtaIilhLOOsERIn2Jltwz2nk38KB89dGawRPp
+         iUs2WCYi7RyBoDxwsoHIhEk7FalqvEAfX3xxLUQDqigV2d8j8fp0WZjY6XF7pqyeJ/Gp
+         Ni+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772804555; x=1773409355;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=o0Ng/uajvfzozXdQpYK5vG2wa/u2Xjabl4u/B9UNDME=;
-        b=QG2HtfZjQszwVGm8bHdfq69jTln4EZ/KFgRPMzSjtlBWP7rgRJL1yWiaGM1IBuHw87
-         JVaoXhnR9VoXqbmnLimlqrsXfaM34UCNECnvLFfSq2wRb+PTX0p4GQQXy2mmycr2L4pZ
-         hcEsfU1FdFtRYDrt1w5LhZOhso5V+rTaLtGC4VvD4kwNf7j23PAxe769inX8GG6Ip3Vp
-         eEoox5n1deAGEmNVe/9zSh0sz15hiyQCBUwTBmqW0eG/EkNktFkzYN2HKklTaDgIModB
-         t+ES7pLPHRoKMuQfdbHRm65RGUaDGgIrI5vbqXHFsvecffzUkqiNawqAFgv4BipP5t/A
-         0GvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX0Tkdln/9g+nBdtIBQsZXcy7x220/TAV93w9Gi8xF/eRZUKQcCtC2gxQgaSumieNAbl/Lm3A9hydU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKVatMVT7exDI/HpiVHVe44xIy2qZKbWt7yW5ffsr4O8gUKGjd
-	cgTpsmAZDzp34jqivejLn7S0IAMclJEJi3pFK+TwWyqdlMNl3Wmfumxv92cq5g==
-X-Gm-Gg: ATEYQzxDvQbOKGQuDvD3B9iNf3/M8CZpf3fJtkIa+qw+7erDd0UXHR+j+Hyttbvb589
-	Rg8H4e2W54iuqR7Cy+2iiDPhm5vixj/1voyn7PQ7WVT+qVWtEJxDngpQz02fBuTNqfyNF71jd2R
-	GrGJhGNfPpy3PAq9tvu9SpPQpKFzsj1AD/h0MpoBiMN371Ss9eTecv/nhExz7RNK+tGA/y58qa5
-	4wYjd+tLWJU6DvejE4fQ+oIuDnJ4fxaz0akWIXGGF9RwHnDWqziZuoCB7kLfBgX20u57KuyZmfD
-	Ouba6htf4ZoSxCeMhxGI3HCv8TM1E06A7/ayTTV/UAJLVxW56FTij0zmoXY1RpyFsbT86ef+67Q
-	reFMftIiClFT95nqWh5SsEWTzjlMfaABMtcKrO90Mk8vvbwn14RUemimMStjTP84Os+ugws68LV
-	6OYfETRJtYMptH9HtvClxFRoLtDAyohQEt6aXZs2dRXqgXYKo=
-X-Received: by 2002:a5d:6384:0:b0:439:de1d:74ae with SMTP id ffacd0b85a97d-439de1d7642mr933964f8f.22.1772804554816;
-        Fri, 06 Mar 2026 05:42:34 -0800 (PST)
-Received: from localhost.localdomain ([2a00:23c4:a758:8a01:d0f3:534:36a3:523a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439dadb85b8sm4223790f8f.17.2026.03.06.05.42.33
+        d=1e100.net; s=20230601; t=1772804922; x=1773409722;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KLo34mncvv+zEzucrHcRYMCBDiBVpv66f0nGWBz0AyE=;
+        b=q8NIb+yt6RLtC6A8lNdwjrpoaTJG3fXtlRP1hzndb7SMPMZPIZvxpHBWH/GdPoJJhB
+         haGP+nyzUIEKTUZQ3IeOJu+8a6V1t3bY9yrzi3ROimWl0letRIAbpdAb7v5qTwrLs2cF
+         oQ3B7c5SQXDNPOE3J8n3HEAXIhia2nVd2xOVvTiFhbjXOAf92wCwlLCKkB2wVKl3QJV1
+         DiWGtlx3bWOiZvj2AUurEJf7KMj4jfh/zgmKqF6NsVDGA7qtkYe/QBRgQucRafvE8iiN
+         SzmcZHTeH5fUlk5qD1GJLQGioGzLHJHMmJqcc5KTzlrL9ud8zVXBzZSG/9yXVYvhdSaw
+         tIsg==
+X-Forwarded-Encrypted: i=1; AJvYcCUpYBgkZxVML24P6l6+E614t953C2NgpGIVKjN58nTWFODiUaWylWXaP/sT7ODUmQJO5Qlh2/B4d+c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yys/y/ZvuYONqdNJq2JbQaw0pP9YcQiDHc9n5/diHBgHWClfy4R
+	mKbryXJBA7Kfsh59zFaYbsz1GMPhaYhgQXfncmKq7qgU+HREVCOsHhEcTZHQYCHaMuVnDOMrWWh
+	EWNmi
+X-Gm-Gg: ATEYQzyvE3osRnfDAXlECenBr5Fst9daujBmyFY2hT3C2z7dKlw/Iv69qEVO2/FwXpD
+	E1WiTteY3C0yyo7Xsx22tIZefm3iVwXEoduRdnoYciiLtZa/F8B0pHVrYWh1SGxQfL0t9gfD+U6
+	Q2TN2Xidcwa/ppZf3Jscmh84y+vaFFnksQQEmJHjCnLpjKNZ6XwJmRMdZKxvsi86ay9s+JhlHhY
+	WEUB54ro6GDvkGLGIMTKnCx4aOCJi5SQoY3HqQfpwsUromtTpTJj96dxIgjZpSPOBQr0yVaEF+N
+	CMBsLlICsmn4MGBTvRLJ4+tL4Pr8U/CXYilNS1Yg8tePUST4e6zb51wuEPdUaq9b2XypJHiMQt9
+	T7r9i9PE0wSB0xvYNNc+uxsbW9IhHmcWVQHrHpWihVpeJEMfHk7q/i4Hh0lBWvIKQtmI4stfFSM
+	41B4eVLA8wr6YjeUHk8kpJbVMtNyJPmP1XOnR6u3Wtd+yKBjiMTSQl4qPvgWNGaCUAyYQHgaT/b
+	gH9XVtDuFXa2V0=
+X-Received: by 2002:a05:6000:24c7:b0:439:c5cf:fc73 with SMTP id ffacd0b85a97d-439da654252mr3515918f8f.12.1772804921601;
+        Fri, 06 Mar 2026 05:48:41 -0800 (PST)
+Received: from [172.16.240.99] (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439dad8daf2sm4304767f8f.2.2026.03.06.05.48.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Mar 2026 05:42:34 -0800 (PST)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH 3/3] clk: renesas: rzg2l-cpg: Re-enable critical module clocks during resume
-Date: Fri,  6 Mar 2026 13:42:25 +0000
-Message-ID: <20260306134228.871815-4-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260306134228.871815-1-biju.das.jz@bp.renesas.com>
-References: <20260306134228.871815-1-biju.das.jz@bp.renesas.com>
+        Fri, 06 Mar 2026 05:48:41 -0800 (PST)
+From: Luca Weiss <luca.weiss@fairphone.com>
+Subject: [PATCH 0/3] Add support for GXCLK for Milos
+Date: Fri, 06 Mar 2026 14:48:36 +0100
+Message-Id: <20260306-milos-gxclkctl-v1-0-00b09ee159a7@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/y3MywrCMBCF4VcJs3YgTSWWvop0EdOxDuaiSSqB0
+ nc3WJf/gfNtkCkxZRjFBok+nDmGFt1JgH2YsBDy3BqUVFr2UqNnFzMu1bqnLQ4HM/QXNWvTkYR
+ 2eiW6c/2B1+noRO+1ueUY4WYyoY3ecxlFoFrwb59h2vcvz9r/VZEAAAA=
+X-Change-ID: 20260306-milos-gxclkctl-8a8372d6a1e0
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Luca Weiss <luca.weiss@fairphone.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1772804920; l=865;
+ i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
+ bh=1OR1ALE2jVrBKZLHJvIYGf/LHohuVdSZ9p68Cqwcalw=;
+ b=M06UPn7KuaTC5XklJRqDMhh1yVrVJuyv/h8Op30MNbMy2A5yL6hzG62hBRRaUOV/nHGGRzFA8
+ 4MgjInTjTzyBWNYS0614zxmx4T4DuzYPPMgQWwBjqw7pF6UMcIB648O
+X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
+ pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+Similar to other new SoCs, Milos also contains the GXCLKCTL block that
+we need to control for GPU. Add support for it.
 
-After a suspend/resume cycle, critical module clocks may be left
-disabled as the hardware state is not automatically restored. Unlike
-regular clocks which are re-enabled by their respective drivers, critical
-clocks (CLK_IS_CRITICAL) have no owning driver to restore them, so the
-CPG driver must take responsibility for re-enabling them on resume.
-
-Introduce struct rzg2l_crit_clk_hw to track critical module clock
-hardware entries in a singly-linked list anchored at crit_clk_hw_head
-in rzg2l_cpg_priv. Populate the list during module clock registration
-by checking for the CLK_IS_CRITICAL flag after clk_hw_register()
-succeeds.
-
-On resume, walk the list and re-enable any critical module clock that
-is found to be disabled, before deassering critical resets, ensuring
-the correct clock-before-reset restore ordering.
-
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 ---
- drivers/clk/renesas/rzg2l-cpg.c | 42 ++++++++++++++++++++++++++++++++-
- 1 file changed, 41 insertions(+), 1 deletion(-)
+Luca Weiss (3):
+      dt-bindings: clock: qcom: document the Milos GX clock controller
+      clk: qcom: Add support for GXCLK for Milos
+      arm64: dts: qcom: milos: Add GX clock controller
 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index 8165c163143a..f16c3962e0bd 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -130,6 +130,12 @@ struct div_hw_data {
- 	u32 width;
- };
- 
-+/* Critical clk list  */
-+struct rzg2l_crit_clk_hw {
-+	struct clk_hw *hw;
-+	struct rzg2l_crit_clk_hw *next;
-+};
-+
- #define to_div_hw_data(_hw)	container_of(_hw, struct div_hw_data, hw_data)
- 
- struct rzg2l_pll5_param {
-@@ -168,6 +174,7 @@ struct rzg2l_pll5_mux_dsi_div_param {
-  * @info: Pointer to platform data
-  * @genpd: PM domain
-  * @mux_dsi_div_params: pll5 mux and dsi div parameters
-+ * @crit_clk_hw_head: Head of the linked list critical clk entries
-  */
- struct rzg2l_cpg_priv {
- 	struct reset_controller_dev rcdev;
-@@ -186,8 +193,26 @@ struct rzg2l_cpg_priv {
- 	struct generic_pm_domain genpd;
- 
- 	struct rzg2l_pll5_mux_dsi_div_param mux_dsi_div_params;
-+
-+	struct rzg2l_crit_clk_hw *crit_clk_hw_head;
- };
- 
-+static int rzg2l_cpg_add_crit_clk_hw_entry(struct rzg2l_cpg_priv *priv,
-+					   struct clk_hw *hw)
-+{
-+	struct rzg2l_crit_clk_hw *node;
-+
-+	node = devm_kzalloc(priv->dev, sizeof(*node), GFP_KERNEL);
-+	if (!node)
-+		return -ENOMEM;
-+
-+	node->hw = hw;
-+	node->next = priv->crit_clk_hw_head;
-+	priv->crit_clk_hw_head = node;
-+
-+	return 0;
-+}
-+
- static inline u8 rzg2l_cpg_div_ab(u8 a, u8 b)
- {
- 	return (b + 1) << a;
-@@ -1737,10 +1762,16 @@ rzg2l_cpg_register_mod_clk(const struct rzg2l_mod_clk *mod,
- 		goto fail;
- 	}
- 
-+	if (init.flags & CLK_IS_CRITICAL) {
-+		if (rzg2l_cpg_add_crit_clk_hw_entry(priv, &clock->hw)) {
-+			clk = ERR_PTR(-ENOMEM);
-+			goto fail;
-+		}
-+	}
-+
- 	clk = clock->hw.clk;
- 	dev_dbg(dev, "Module clock %pC at %lu Hz\n", clk, clk_get_rate(clk));
- 	priv->clks[id] = clk;
--
- 	return;
- 
- fail:
-@@ -2086,8 +2117,17 @@ static int __init rzg2l_cpg_probe(struct platform_device *pdev)
- static int rzg2l_cpg_resume(struct device *dev)
- {
- 	struct rzg2l_cpg_priv *priv = dev_get_drvdata(dev);
-+	struct rzg2l_crit_clk_hw *node;
- 	int ret;
- 
-+	for (node = priv->crit_clk_hw_head; node; node = node->next) {
-+		if (!rzg2l_mod_clock_is_enabled(node->hw)) {
-+			ret = rzg2l_mod_clock_endisable(node->hw, true);
-+			if (ret)
-+				return ret;
-+		}
-+	}
-+
- 	ret = rzg2l_cpg_deassert_crit_resets(&priv->rcdev, priv->info);
- 	if (ret)
- 		return ret;
+ .../bindings/clock/qcom,milos-gxclkctl.yaml        | 61 ++++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/milos.dtsi                | 10 ++++
+ drivers/clk/qcom/Makefile                          |  2 +-
+ drivers/clk/qcom/gxclkctl-kaanapali.c              |  1 +
+ 4 files changed, 73 insertions(+), 1 deletion(-)
+---
+base-commit: 755bfcf32666f86ca2a9a2ea2c9dc7eca4c330a1
+change-id: 20260306-milos-gxclkctl-8a8372d6a1e0
+
+Best regards,
 -- 
-2.43.0
+Luca Weiss <luca.weiss@fairphone.com>
 
