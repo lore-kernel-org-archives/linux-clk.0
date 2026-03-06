@@ -1,99 +1,138 @@
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6899D27FD44
-	for <linux-clk@vger.kernel.org>; Fri,  6 Mar 2026 12:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8B22765D7;
+	Fri,  6 Mar 2026 12:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772800565; cv=none; b=QtBEtLN5HgBiQsvSY5t5NU7AfvA9vTAgvjoRIBN0NMnJj3X+FhWvLFfqcyUEGRclvpl2zn8PCI048UUEhOLOtQqN/TRf/7i2/wMDYdVV/0Z9sKuMiUYdhZMCxHhA0SIEEwGendX8JBpYpB3/gSBQD9Zflq03WJD0MMoMGYXt5YM=
+	t=1772800938; cv=none; b=tIIWw/coQZiCY8wdqfoT5VhVS9utK5iz0017ibCJN2mglAuTIMkjUZkgW4ph7oeSNm+IXlhTLq14ETLZB5IvNQPhnaPAafq9Z+9BAM5u8MIOhvw2v8tNACvI5POPMyT07fIg8j9euScjGO09ij50HJMzHIdo4gGlntpxGS0XJVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772800565; c=relaxed/simple;
-	bh=n2/SovO2hXUZ4vwoDsMjq5yl8OUXVJvop1qoGL191Og=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ORaALaX0u6MtTtSk7xbVy521dCE8VeZhOvsFSOpJJqkvkC2cldj+5Km0AjranUYBpT56SVtrDDEE8+ggIBTJxPS0IHENi4fk5V9T72n7t1dEh6C9Uszl76ibvcc4/lboPzrybK5GOPNR1yFUd/6Gc+VezUSDFMjUweyRR4VCZ98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-5673804da95so3769520e0c.0
-        for <linux-clk@vger.kernel.org>; Fri, 06 Mar 2026 04:36:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772800563; x=1773405363;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LuKpTyRyDds90U323Zaw/KGEswVAeRJ7S19meSiB1CQ=;
-        b=DRicA+VyR8zZIuwewu94iBk/8+DAdW9dAFSkfI6fYJ/KaVxEFr/F9RLjbmxHI3yUBO
-         Z1+qrG1eFzlD63ZaqihNXgkSGOoESWFpHUs3e8pmZeut9tahBOmeG1TySWsSBQtBusca
-         iilvmZ3WzDKdfIJTAwiEr+OmfH0O4nfzY5skTGVQBRT4rggR5AQx8lV+oEzkhRR9s86S
-         3n4oBg3qAmdGbZlvWQkLpqfhFohEKd0gVGZiUNMuaNt/8DZn68WsmEqeeb6RbQjzhUEI
-         vv7z4tq9zeh3W6AECZhW8VT5auu9mW1Y+unx5xEfFdW1e3RtxjaaKCyZ3OhoT/0bjnRR
-         Q2wQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVXPU1FW6ck8WeKxcHMc9Gi3UaeuWo6DFbtHZLIW6mA1li2knqQ9/RALxKxDgVBZCndqeQTTnhtpVQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyywrKUbO984vsP4UiIXaF4m9Ktwa5+MEFUiWBSUzu4gAKjfiH8
-	Gu87j9CMSjcgf1DI27xzkN+b9Fe4f3JPB4HC3CpoTQxmPiim6q5LO1YHWtfo3xypnM8=
-X-Gm-Gg: ATEYQzwjByaFnw5tAoo4ih0ZWElR3TwyC4ngCIse/H01PKhr/2SLYmswzRy2aXpT4xK
-	o7qrv7FV5c0RL68uttvdLv/LP34mp0v/Y06g0y15BXs8NIiwbJgk3QTu/r0kQ6yik9kCCDremV1
-	BRZXMQoa0cQvXjoWn8S/c8IQXJLcHq0wie8BQqpUqEieJDcCsUD5BLrpEMna0AJGLZOZOFqIKur
-	6WVutfdyA0KpXRJpon5gb0pV4UFypJObtnZEYsr85Vq1gqxd81p73ZFBUgCIrcPHyFNKvGwKfCU
-	GrVR8y9QAJkTHOuOAFOTivwCMkJcxLiWbKUMLhGtabr/5rRAbWz74iHdEcfJPza0Y4uWdHmUDq0
-	ixOjx6fAYCE2om7k4AB/dNYpaCH1vyOPy7NdPmkrcTsX2zdsrL3c7jLfrmPCy2Ywfhs0zcXpuXS
-	piq7HJmNEqPCeKDdr2VBnLZ9Y48i0pnbOWo9NhkYm5/5PmS+VMRvZrByEdO8eXj/DJfQbW2/E=
-X-Received: by 2002:a05:6122:1699:b0:56a:ff57:3a8a with SMTP id 71dfb90a1353d-56b07e81392mr574636e0c.9.1772800563379;
-        Fri, 06 Mar 2026 04:36:03 -0800 (PST)
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56b09a40cbdsm1272022e0c.9.2026.03.06.04.36.01
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Mar 2026 04:36:02 -0800 (PST)
-Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-5ffe6887e21so154197137.2
-        for <linux-clk@vger.kernel.org>; Fri, 06 Mar 2026 04:36:01 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW4zure6IsvHbdoOPfp0JX+60cnRzVmQojNoV4dthUew4fwLu8siAB1CHbqO6hoYHPMdY72PzS+8m4=@vger.kernel.org
-X-Received: by 2002:a05:6102:5086:b0:5fd:eea2:ded6 with SMTP id
- ada2fe7eead31-5ffe5fcfca1mr594823137.18.1772800561486; Fri, 06 Mar 2026
- 04:36:01 -0800 (PST)
+	s=arc-20240116; t=1772800938; c=relaxed/simple;
+	bh=hmhX29ofHmVWCzL1SALtQcsZhjHt2TQjDqLgIH3btbs=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=p7f1cGX4P0H8jNJzAdwZhZzR/2j5pkx/8Y2LTpFIUWb9WiQUnMyiwIZOtdojOnh59dc/x6W50GzOn7q45FBO29MLkMBCUOJwme7MuctKncwYeCvvezo4Y/6MiiXvtS71krGjIic4WD6ckDhba0wTpKpllm7CzcwJ7aud4mUg1Us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Fri, 6 Mar
+ 2026 20:42:14 +0800
+Received: from [127.0.1.1] (192.168.10.13) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Fri, 6 Mar 2026 20:42:14 +0800
+From: Billy Tsai <billy_tsai@aspeedtech.com>
+Subject: [PATCH v4 0/3] pinctrl: aspeed: Add AST2700 SoC0 support
+Date: Fri, 6 Mar 2026 20:40:24 +0800
+Message-ID: <20260306-upstream_pinctrl-v4-0-ad4e8ab8b489@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260125190314.26729-1-ovidiu.panait.rb@renesas.com> <CAMuHMdUtZqu6xTEena3VXB1_5vdFM1Pu+n9aS_bXXw3cekgY3g@mail.gmail.com>
-In-Reply-To: <CAMuHMdUtZqu6xTEena3VXB1_5vdFM1Pu+n9aS_bXXw3cekgY3g@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 6 Mar 2026 13:35:50 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUE34_eAh520j7xudoBWgeoPZr8ggc5LQGZHY74Ka3fYg@mail.gmail.com>
-X-Gm-Features: AaiRm50UsQ0_G8RtZRr9PvUmLvM6ZOddcq3QNPHABwMCoAn8E2y8IhMT-rwBY0w
-Message-ID: <CAMuHMdUE34_eAh520j7xudoBWgeoPZr8ggc5LQGZHY74Ka3fYg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] clk: renesas: r9a09g057: Fix ordering of module
- clocks array
-To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADjLqmkC/z3MTQ7CIBBA4as0s5YGsKTUVe9hTIMwyCT9IYBG0
+ /TuEhcuv8V7O2RMhBkuzQ4JX5RpWyu6UwM2mPWBjFw1SC6VkEKxZ8wloVmmSKstaWbai0E5z83
+ QK6hZTOjp/Vteb9U+bQsroTb/ER94J/i546LVWuqeCXanef5MJRsaTY6IrqANrd0WOI4v818Hc
+ aUAAAA=
+X-Change-ID: 20251215-upstream_pinctrl-8f195df0a975
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Joel
+ Stanley" <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>,
+	"Linus Walleij" <linusw@kernel.org>, Billy Tsai <billy_tsai@aspeedtech.com>,
+	"Bartosz Golaszewski" <brgl@kernel.org>, Ryan Chen <ryan_chen@aspeedtech.com>
+CC: Andrew Jeffery <andrew@aj.id.au>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
+	<linux-kernel@vger.kernel.org>, <openbmc@lists.ozlabs.org>,
+	<linux-gpio@vger.kernel.org>, <linux-clk@vger.kernel.org>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1772800933; l=3651;
+ i=billy_tsai@aspeedtech.com; s=20251118; h=from:subject:message-id;
+ bh=hmhX29ofHmVWCzL1SALtQcsZhjHt2TQjDqLgIH3btbs=;
+ b=Lb4YNVvozAIHN2+4S7osElCp6zPzI4h1b6nDiv/0/Q9kkILL1f5AqvwWrXcPbS8SM/mUoFGnp
+ BFPpaJ9eunyBlcCNPhH94GGWamZqJC8xEAMqtxUdj2yGiCTbh4j3rsu
+X-Developer-Key: i=billy_tsai@aspeedtech.com; a=ed25519;
+ pk=/A8qvgZ6CPfnwKgT6/+k+nvXOkN477MshEGJvVdzeeQ=
 
-On Mon, 26 Jan 2026 at 16:25, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> On Sun, 25 Jan 2026 at 20:03, Ovidiu Panait
-> <ovidiu.panait.rb@renesas.com> wrote:
-> > The r9a09g057_mod_clks array is sorted by CPG_CLKON register number and
-> > bit position. Move the RTC and RSPI module clock entries to their correct
-> > position to restore the array sort order.
-> >
-> > Fixes: 2efea3b35cc9 ("clk: renesas: r9a09g057: Add entries for RSCIs")
-> > Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> i.e. will queue in renesas-clk for v6.21.
+AST2700 is composed of two interconnected SoC instances, each providing
+its own pin control hardware. This series introduces bindings describing
+the AST2700 pinctrl architecture and adds pinctrl driver support for the
+SoC0 instance.
 
-Promoting to renesas-clk-fixes for v7.0, as I have other fixes.
+The bindings document the AST2700 dual-SoC design and follow common
+pinctrl conventions, while the SoC0 driver implementation builds upon
+the existing ASPEED pinctrl infrastructure.
 
-Gr{oetje,eeting}s,
+A binding example is not yet provided as there were differing opinions
+during review about whether it should live in the SCU binding or the
+pinctrl binding. I can add one in a follow-up revision once the
+preferred location is agreed.
 
-                        Geert
+---
+Changes in v4:
+- Rename series title to "pinctrl: aspeed: Add AST2700 SoC0 support"
+  to make it specific to SoC0.
+- Remove unnecessary SCU example from bindings.
+- Fix Makefile newline to avoid patch warning.
+- Make pinctrl data structures const and align with existing Aspeed drivers.
+- Sort the arrays and enums alphabetically.
+- Minor cleanups for consistency, no functional changes.
+- Link to v3: https://lore.kernel.org/r/20260120-upstream_pinctrl-v3-0-868fbf8413b5@aspeedtech.com
 
+Changes in v3:
+dt-bindings: pinctrl: aspeed: AST2700 pinctrl improvements
+- Improved binding descriptions for SoC0 and SoC1 to better explain the
+  AST2700 dual-SoC architecture with independent pin control blocks
+- Switched from additionalProperties to patternProperties using the
+  '-state$' suffix to restrict child node naming
+- Removed per-binding examples based on review feedback
+- Added additionalProperties: false at the top level for stricter schema
+  validation
+- Dropped the aspeed,ast2700-soc1-pinctrl binding, as the SoC1 pinctrl
+  registers follow a regular layout and can be described using an
+  existing generic pinctrl binding
+- Updated the function and group enum lists to match the definitions
+  used by the AST2700 pinctrl driver
+
+dt-bindings: mfd: aspeed: Add AST2700 SCU example with pinctrl
+- Added a complete AST2700 SCU0 example demonstrating pinctrl integration
+- Example covers both pin function/group configuration and pin
+  drive-strength settings
+- Updated child node naming to use the '-state' suffix, following common
+  pinctrl conventions
+
+pinctrl: aspeed: AST2700 SoC0 driver improvements
+- Refactored pin and signal declarations to use common ASPEED pinmux
+  macros (SIG_EXPR_LIST_DECL_SEMG, SIG_EXPR_LIST_DECL_SESG, PIN_DECL_*)
+- Added SCU010 register definition for hardware strap control
+- Reworked code structure to better align with existing ASPEED pinctrl
+  drivers
+
+- Link to v2: https://lore.kernel.org/r/20250904103401.88287-1-billy_tsai@aspeedtech.com
+
+Changes in v2:
+- Update pinctrl aspeed binding files.
+- Update the commit message for pinctrl binding patch.
+- Link to v1: https://lore.kernel.org/r/20250829073030.2749482-1-billy_tsai@aspeedtech.com
+
+---
+Billy Tsai (3):
+      dt-bindings: mfd: aspeed,ast2x00-scu: Support AST2700 SoC0 pinctrl
+      dt-bindings: pinctrl: Add aspeed,ast2700-soc0-pinctrl
+      pinctrl: aspeed: Add AST2700 SoC0 support
+
+ .../bindings/mfd/aspeed,ast2x00-scu.yaml           |   1 +
+ .../pinctrl/aspeed,ast2700-soc0-pinctrl.yaml       | 126 ++++
+ drivers/pinctrl/aspeed/Kconfig                     |   9 +
+ drivers/pinctrl/aspeed/Makefile                    |   1 +
+ drivers/pinctrl/aspeed/pinctrl-aspeed-g7-soc0.c    | 710 +++++++++++++++++++++
+ 5 files changed, 847 insertions(+)
+---
+base-commit: af4e9ef3d78420feb8fe58cd9a1ab80c501b3c08
+change-id: 20251215-upstream_pinctrl-8f195df0a975
+
+Best regards,
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Billy Tsai <billy_tsai@aspeedtech.com>
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
