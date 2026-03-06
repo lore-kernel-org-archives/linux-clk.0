@@ -1,67 +1,68 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 621F133D6DF
-	for <linux-clk@vger.kernel.org>; Fri,  6 Mar 2026 13:48:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570B333F8B2
+	for <linux-clk@vger.kernel.org>; Fri,  6 Mar 2026 13:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772804925; cv=none; b=RSuzmIa5bDKLppXDNHsAuY2GVlSdNULoI43B218U8FBn61PkejFtZEM5r+d4/dsepjZGP7yCRnQr5qUKazzjMH+Hsi0RuNe/buIeutG6XkGRnQxH0N83AidTkwxFWws7rMLuEqXzZp9gU//5uD9kuhNSvhE0YJxGgn3UfU6ir1E=
+	t=1772804926; cv=none; b=YgwHlwlZpmbGthv+/baqmk6bIoIx/2FvCQtVerM5Yux0QGI07jti4pJTlDBWSN5i4UgI6FhcEPSNexB1sWLMl0KuirCDNlnC0X3DjUZwPZ8EL9FEehhGWURovBgjqZym0IN7dZiJvJy3XjGp9ENnWN1ksAIp2MZ/lJLwnU0bnO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772804925; c=relaxed/simple;
-	bh=1OR1ALE2jVrBKZLHJvIYGf/LHohuVdSZ9p68Cqwcalw=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=P4ICO7T2aeY+AytydyZTkdytsydagyOepxMPZmcy2S/NFh5a+NGBYCdGsyy2TrmcTYkmtE0cszCP3TBiEa/lTjMfVKrIs/W/hUhdRYmDKZCDvKUcni3eGE4sQwFUjIrFS7YJF05Q8Wzm7LgTKj6t1tAvgtduF1yEMhhdyNhGQMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=ShfDxM3L; arc=none smtp.client-ip=209.85.221.51
+	s=arc-20240116; t=1772804926; c=relaxed/simple;
+	bh=S4AYyFcTsusx6JymB78ndk1LzxPjBUj/RxkWMGbPmis=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=JThXjyKA2mzpFpk8OjaAzlVotbEFY2aP+FHYlMZm3TL6nUaAMUFE5QeInOg8tRcLoYmvnC/5qV2NjP+YKpfWAAL43I2xXnRzBoxMv+v7ER040iv9V5/NNpEldUiCK0Y7Lujimy3iFXM0cNhkg8rjWQnpByCGuijSDAZhVp1sKxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=z+axEiQK; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="ShfDxM3L"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-439b94a19fdso5278400f8f.0
-        for <linux-clk@vger.kernel.org>; Fri, 06 Mar 2026 05:48:43 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="z+axEiQK"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-439c6fc2910so2244338f8f.0
+        for <linux-clk@vger.kernel.org>; Fri, 06 Mar 2026 05:48:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1772804922; x=1773409722; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KLo34mncvv+zEzucrHcRYMCBDiBVpv66f0nGWBz0AyE=;
-        b=ShfDxM3L6Uhsa2K1Z5j/k3byQNeL0hM56ebI+QyIV0I8PPsfQRHYe0k5FLdUx7a+mJ
-         2+tNYL3YpJjiFqMl/BkVrJ/JWRAlDfQDECdaIpKeY+YB5ICtG0z5jEUAD854AVohxOZk
-         YmGYhkkEMLUJ92n+WrvpCs7KJ0af+UJD4vT5ih9oqzNp2VzSC+llVfowlXiravS0Eopt
-         Xtab7hclGZgVy3ECu1siNVapNkchhV/WtaIilhLOOsERIn2Jltwz2nk38KB89dGawRPp
-         iUs2WCYi7RyBoDxwsoHIhEk7FalqvEAfX3xxLUQDqigV2d8j8fp0WZjY6XF7pqyeJ/Gp
-         Ni+g==
+        d=fairphone.com; s=fair; t=1772804923; x=1773409723; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ix3uV33RQkJIwlvd9fVLf03DEoMJ43/Z6jDu2eagGtM=;
+        b=z+axEiQKsxnQ517nvve/uhAJapQ7CMCQEyCeDQ3MdFAqjR++TUU1Q+woOwN/F6zEpN
+         z8R0iJn+Hpor4agBzVj+ZfX5hOzhO1d/wfMswIjBKyIF47OZZdIGzhckPWucdMXJbkus
+         P3yz/2qNiopibjBJDPkXQgKRo//Qxfx/RwXWS/1/Zvi8F8ujLgv5vmwpi6Fx35LvDV+0
+         VLgwOkKpbsOixER+ZljUGEpaz1l0WrSAIZMqdnLpZ7L5KGjoJc/+BfucRMC8q9rmOgz5
+         cdL5mblYSCRERnCqdj8HA+i5WhQggaGRnTZ+jJmoM4dhoo7nS9kbMxsKbQr+4Z+TmZSU
+         nwTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772804922; x=1773409722;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KLo34mncvv+zEzucrHcRYMCBDiBVpv66f0nGWBz0AyE=;
-        b=q8NIb+yt6RLtC6A8lNdwjrpoaTJG3fXtlRP1hzndb7SMPMZPIZvxpHBWH/GdPoJJhB
-         haGP+nyzUIEKTUZQ3IeOJu+8a6V1t3bY9yrzi3ROimWl0letRIAbpdAb7v5qTwrLs2cF
-         oQ3B7c5SQXDNPOE3J8n3HEAXIhia2nVd2xOVvTiFhbjXOAf92wCwlLCKkB2wVKl3QJV1
-         DiWGtlx3bWOiZvj2AUurEJf7KMj4jfh/zgmKqF6NsVDGA7qtkYe/QBRgQucRafvE8iiN
-         SzmcZHTeH5fUlk5qD1GJLQGioGzLHJHMmJqcc5KTzlrL9ud8zVXBzZSG/9yXVYvhdSaw
-         tIsg==
-X-Forwarded-Encrypted: i=1; AJvYcCUpYBgkZxVML24P6l6+E614t953C2NgpGIVKjN58nTWFODiUaWylWXaP/sT7ODUmQJO5Qlh2/B4d+c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yys/y/ZvuYONqdNJq2JbQaw0pP9YcQiDHc9n5/diHBgHWClfy4R
-	mKbryXJBA7Kfsh59zFaYbsz1GMPhaYhgQXfncmKq7qgU+HREVCOsHhEcTZHQYCHaMuVnDOMrWWh
-	EWNmi
-X-Gm-Gg: ATEYQzyvE3osRnfDAXlECenBr5Fst9daujBmyFY2hT3C2z7dKlw/Iv69qEVO2/FwXpD
-	E1WiTteY3C0yyo7Xsx22tIZefm3iVwXEoduRdnoYciiLtZa/F8B0pHVrYWh1SGxQfL0t9gfD+U6
-	Q2TN2Xidcwa/ppZf3Jscmh84y+vaFFnksQQEmJHjCnLpjKNZ6XwJmRMdZKxvsi86ay9s+JhlHhY
-	WEUB54ro6GDvkGLGIMTKnCx4aOCJi5SQoY3HqQfpwsUromtTpTJj96dxIgjZpSPOBQr0yVaEF+N
-	CMBsLlICsmn4MGBTvRLJ4+tL4Pr8U/CXYilNS1Yg8tePUST4e6zb51wuEPdUaq9b2XypJHiMQt9
-	T7r9i9PE0wSB0xvYNNc+uxsbW9IhHmcWVQHrHpWihVpeJEMfHk7q/i4Hh0lBWvIKQtmI4stfFSM
-	41B4eVLA8wr6YjeUHk8kpJbVMtNyJPmP1XOnR6u3Wtd+yKBjiMTSQl4qPvgWNGaCUAyYQHgaT/b
-	gH9XVtDuFXa2V0=
-X-Received: by 2002:a05:6000:24c7:b0:439:c5cf:fc73 with SMTP id ffacd0b85a97d-439da654252mr3515918f8f.12.1772804921601;
-        Fri, 06 Mar 2026 05:48:41 -0800 (PST)
+        d=1e100.net; s=20230601; t=1772804923; x=1773409723;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Ix3uV33RQkJIwlvd9fVLf03DEoMJ43/Z6jDu2eagGtM=;
+        b=hs37W+d9rUs64JojVCNIzFMlb93u5ZAfCiJwXmuQGa8dtZ1DvdngRrBSF1IPlzRUQZ
+         f9/cky+06+dJRTa0antlXC8Un9Ti/cX/HNF3Qz8DuTveF3PPw0HLoWYz7qwKImQ78ljt
+         ca8/MvxBoGIZXKDL+PG34VwO0Vwx3PH7y+yBc/J/Emre6dVpQBQvLQMnnU0D+0rEwQIm
+         TAODsntg0aF+67QEG+i9zxo5DfojAeD0e9KO2dWR09ZW9xyb/k5oelC7KD+ZLUzWXleB
+         OjzYQA7hEyHsELlZ5HVmU6hqsyIVXJTvcWWXrwj1sMIKGwxJ6BltGj8txFjHSUQaOqJg
+         y/JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXKKloPmUncStb+TqfOanFYdY/yh5LdHOqAdjc/KW/dAnX12I1c1lFGDIImjI9w3RAMApPJbKlzlAs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9ZnzJeiLi6Y5T85mfqTCOwz9p6V4nkyjvzDTpJ/HraRvebgku
+	Wt7FPnJFBVOTplBLGZ1IlKKThEQ8R41Am1QkXBrjAG/wXQtQ8gL8n3x1MwGqR97wHiU=
+X-Gm-Gg: ATEYQzwilODZlkj2ektoBFLNtzz0B5NpikDzfPlgoaeHidTbw3eocUbsdZSmfMs+mKs
+	eJSsS3zhjcDMZdZYXkRv3enczai8A33XnhkBkH4A6cwP5W+MHcvVN+g9HHffrPnvdcDphV0TN0g
+	OcbvBfxqIlITflnDQg7MB8bUXYirHJmdGylCJZLgda5g+Mej1sPrzoGirPE01WOmeJKKv0NBZeF
+	kBsOZiyY8wnJAyb8h71GNVWU2tA5EW9D0UDlt5W6z/PImK51OlrfB4qcCHwJEBToXYrZpnvNdAg
+	BCP9cNsyLPENibOjm0KlzF32qhriCZGI/Uq0qAIAxKZ4c3AO/BE7LSkjpqr0pHqvvg+rbhv/oSh
+	9kLUpRGrKeGRSa25MKHpjZHAlw+guL9vpzcw1R3+ZGaNe0dpuAnGe3zbfN/fc2h9yAF5CpCy79J
+	yWYt1Sd98tjS3E+WOrtcwokMItcsHjUCBtNKjsIUuLGl0z0cZ26RzU+6/d1tIEGxlO4h0mssiC7
+	vy7FV6PHxRaUs0=
+X-Received: by 2002:a05:6000:2911:b0:439:beee:43aa with SMTP id ffacd0b85a97d-439da351b41mr4056912f8f.16.1772804922768;
+        Fri, 06 Mar 2026 05:48:42 -0800 (PST)
 Received: from [172.16.240.99] (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439dad8daf2sm4304767f8f.2.2026.03.06.05.48.40
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439dad8daf2sm4304767f8f.2.2026.03.06.05.48.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Mar 2026 05:48:41 -0800 (PST)
+        Fri, 06 Mar 2026 05:48:42 -0800 (PST)
 From: Luca Weiss <luca.weiss@fairphone.com>
-Subject: [PATCH 0/3] Add support for GXCLK for Milos
-Date: Fri, 06 Mar 2026 14:48:36 +0100
-Message-Id: <20260306-milos-gxclkctl-v1-0-00b09ee159a7@fairphone.com>
+Date: Fri, 06 Mar 2026 14:48:37 +0100
+Subject: [PATCH 1/3] dt-bindings: clock: qcom: document the Milos GX clock
+ controller
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -70,10 +71,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/y3MywrCMBCF4VcJs3YgTSWWvop0EdOxDuaiSSqB0
- nc3WJf/gfNtkCkxZRjFBok+nDmGFt1JgH2YsBDy3BqUVFr2UqNnFzMu1bqnLQ4HM/QXNWvTkYR
- 2eiW6c/2B1+noRO+1ueUY4WYyoY3ecxlFoFrwb59h2vcvz9r/VZEAAAA=
-X-Change-ID: 20260306-milos-gxclkctl-8a8372d6a1e0
+Message-Id: <20260306-milos-gxclkctl-v1-1-00b09ee159a7@fairphone.com>
+References: <20260306-milos-gxclkctl-v1-0-00b09ee159a7@fairphone.com>
+In-Reply-To: <20260306-milos-gxclkctl-v1-0-00b09ee159a7@fairphone.com>
 To: Bjorn Andersson <andersson@kernel.org>, 
  Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -84,34 +84,95 @@ Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Luca Weiss <luca.weiss@fairphone.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1772804920; l=865;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1772804920; l=2517;
  i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
- bh=1OR1ALE2jVrBKZLHJvIYGf/LHohuVdSZ9p68Cqwcalw=;
- b=M06UPn7KuaTC5XklJRqDMhh1yVrVJuyv/h8Op30MNbMy2A5yL6hzG62hBRRaUOV/nHGGRzFA8
- 4MgjInTjTzyBWNYS0614zxmx4T4DuzYPPMgQWwBjqw7pF6UMcIB648O
+ bh=S4AYyFcTsusx6JymB78ndk1LzxPjBUj/RxkWMGbPmis=;
+ b=kTbKHsy8jRCEnPD2m5k97hP71fQLFbaGxDIxGv0EHdi8iyAguyE0P3/OXLbhWgeCUxmf6Letx
+ C6vAaAw7wgHAHz6VS+U+eRiZmOrn0Q3QwZXfYemKr7ZsfwtKizk9pHi
 X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
  pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
 
-Similar to other new SoCs, Milos also contains the GXCLKCTL block that
-we need to control for GPU. Add support for it.
+Qualcomm GX(graphics) is a clock controller which has PLLs, clocks and
+Power domains (GDSC), but the requirement from the SW driver is to use
+the GDSC power domain from the clock controller to recover the GPU
+firmware in case of any failure/hangs. The rest of the resources of the
+clock controller are being used by the firmware of GPU. This module
+exposes the GDSC power domains which helps the recovery of Graphics
+subsystem.
 
 Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 ---
-Luca Weiss (3):
-      dt-bindings: clock: qcom: document the Milos GX clock controller
-      clk: qcom: Add support for GXCLK for Milos
-      arm64: dts: qcom: milos: Add GX clock controller
-
  .../bindings/clock/qcom,milos-gxclkctl.yaml        | 61 ++++++++++++++++++++++
- arch/arm64/boot/dts/qcom/milos.dtsi                | 10 ++++
- drivers/clk/qcom/Makefile                          |  2 +-
- drivers/clk/qcom/gxclkctl-kaanapali.c              |  1 +
- 4 files changed, 73 insertions(+), 1 deletion(-)
----
-base-commit: 755bfcf32666f86ca2a9a2ea2c9dc7eca4c330a1
-change-id: 20260306-milos-gxclkctl-8a8372d6a1e0
+ 1 file changed, 61 insertions(+)
 
-Best regards,
+diff --git a/Documentation/devicetree/bindings/clock/qcom,milos-gxclkctl.yaml b/Documentation/devicetree/bindings/clock/qcom,milos-gxclkctl.yaml
+new file mode 100644
+index 000000000000..47dc6bb66120
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,milos-gxclkctl.yaml
+@@ -0,0 +1,61 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/qcom,milos-gxclkctl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Graphics power domain Controller on Milos
++
++maintainers:
++  - Luca Weiss <luca.weiss@fairphone.com>
++
++description: |
++  Qualcomm GX(graphics) is a clock controller which has PLLs, clocks and
++  Power domains (GDSC). This module provides the power domains control
++  of gxclkctl on Qualcomm SoCs which helps the recovery of Graphics subsystem.
++
++  See also:
++    include/dt-bindings/clock/qcom,kaanapali-gxclkctl.h
++
++properties:
++  compatible:
++    enum:
++      - qcom,milos-gxclkctl
++
++  power-domains:
++    description:
++      Power domains required for the clock controller to operate
++    items:
++      - description: GFX power domain
++      - description: GPUCC(CX) power domain
++
++  '#power-domain-cells':
++    const: 1
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - power-domains
++  - '#power-domain-cells'
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/power/qcom,rpmhpd.h>
++    soc {
++        #address-cells = <2>;
++        #size-cells = <2>;
++
++        clock-controller@3d64000 {
++            compatible = "qcom,milos-gxclkctl";
++            reg = <0x0 0x03d64000 0x0 0x6000>;
++            power-domains = <&rpmhpd RPMHPD_GFX>,
++                            <&gpucc 0>;
++            #power-domain-cells = <1>;
++        };
++    };
++...
+
 -- 
-Luca Weiss <luca.weiss@fairphone.com>
+2.53.0
 
