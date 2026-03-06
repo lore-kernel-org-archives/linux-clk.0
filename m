@@ -1,277 +1,136 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E773EB804
-	for <linux-clk@vger.kernel.org>; Thu,  5 Mar 2026 19:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5563736AB59
+	for <linux-clk@vger.kernel.org>; Fri,  6 Mar 2026 03:25:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772740178; cv=none; b=WJL51vq3CDDmFxfPeYxdUunMtdWRJwe920U6a1URbnd53CzblWIK9KM9GC9+MGT+JQ64BYssjCkuBgWDgvUbuO9+UOkhO5Vsy0B/WCYz4pbdNLj8JOrxSLNyTyP1mKtV3rdGRUuKf1zJlmaf68cK9TNssgcJfmxUvFFJGyxSns0=
+	t=1772767560; cv=none; b=D+c/FW9olFH4yVwPic3HTJdyzZ8c776Pr66nB7jH1/qO8c7BRjIU8cCGzjSPPQsjFx7bT7UxipiK4g4bPtqJpBtaAJboAPzhd40bFaizZ/wtnJWbCrTYFcyPRTxLahXaLkLDiabQKQ7ypDQQuJNrGq26KIPBQJ3iVbTRfdyt9t0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772740178; c=relaxed/simple;
-	bh=WPWPlT8nmCqIZAEuv9H/d5ylOJBqMsjr7ba7VrnF/wc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MWk935k7x3ud955jsdaYB/CoCJ08KZC1qYs55pYoTti1VuZx263elwu1ERunRSyoAbdCQdh5QIr68PNRdHMfu/oTDM+fe0H0R1z0rL7KNsAMMXWpECYHwXFl6bdtwtoQNttzIrrOfo5X+MNDkRhmY6IX3cXsLxyvEmN7QMT8C1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VmF13nSh; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=KK3n3+tn; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1772767560; c=relaxed/simple;
+	bh=QpBAD8aFcmAHNuzz618F5XcjlFcS2PJ0+mVIGBpyjtI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YNBq1EupVRFjhIimaZ4GrCO/T4tYZ3kMXhDDc5pwtQFxeLuCSnAQcymkLZIHr76hJC2MbygZ7sPojcj/FF4lsae4SSfvPOKmNzUPUTnqh52C1B/v92S/Yp9N73cLQaRn5cA7eVk60oE2i687IVa2GSNIDUtzAzqZHXA2arj388M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q2/JVaI+; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VmF13nSh";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="KK3n3+tn"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 625H2BNM2986298
-	for <linux-clk@vger.kernel.org>; Thu, 5 Mar 2026 19:49:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	W+xZbg2UcQYU0NAtEL3ooNVs0zEnn8ejUS3RGwHRvhs=; b=VmF13nShpwR94pDQ
-	zOtKvBgKFN0Du38CIX6ki/pV5RFPmMPQJzeJKpr8uaKevY3CTw6BEIe3HZpknY01
-	jspR/kdToEP4lAk6CH7IjAcI5XoQ2d85YFUCOnhpJniFBGWqMMjTKmMTd8RcNLB8
-	mGyK8USv/otuq/fKJjHn70n/FUhJXYBPT7PVmek1nSvzmjLLK+DShG0g+eYbRLCU
-	DG5krug1C1Vy1P0VhjJzV8CiqKxVclA7IGHGjkn5+46H79pKd8plfbQls8YpGYCH
-	Up0PlqdBnShiCvlqwyjYlllsWL424k3C7xeJmbQ83iAoOy6pUr/kw++qGm+F6kEd
-	AgUz/A==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cqdvkrm0p-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Thu, 05 Mar 2026 19:49:36 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8cb3ad1b81aso1013862485a.2
-        for <linux-clk@vger.kernel.org>; Thu, 05 Mar 2026 11:49:36 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q2/JVaI+"
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-c7377119453so1180857a12.1
+        for <linux-clk@vger.kernel.org>; Thu, 05 Mar 2026 19:25:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1772740176; x=1773344976; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=W+xZbg2UcQYU0NAtEL3ooNVs0zEnn8ejUS3RGwHRvhs=;
-        b=KK3n3+tn0e3ihjdVdh+pdnkRKNQiiyjnCwcJi1ZitXjI/O14g1YiSSd7W03eVEyzqa
-         1A0RpJ9ViLzGcKJ6qBCEzm54TyNLDJ3AnDT+SSuI8DfVcuT1d/oZqOFX1/YCsPXUMHXf
-         I46Xb6McX8t7AnPgabwOHIjMDa830k8UUEu+++c1XGtgxTSGNn5BGfM6fTWDyOxhn85x
-         I0b2cb1+DuZSi7eST/NLGZ6ZSjTZ5InYK/sYhOdj2NyosZC+ZQPiG/BiCPWLrrLefaO9
-         Q5maLrvQ1GvSZLwZEwZmKAlTA+Df+pQi90fgRb9uE7jeYFRj6LpKsCKn1w1IxA+cTD4t
-         ZRnA==
+        d=gmail.com; s=20230601; t=1772767558; x=1773372358; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=d6bAE765oO9RMv6HiG4ahAua9/sTwWO++ewXCfT3Hxk=;
+        b=Q2/JVaI+mupxmqIZqkFiYcLfEP1ejwGuOg5vL/AQNRTSo7f2AcCf2bEg12zlxm2UGG
+         UeozslG0BgUAuoNoS9y56qGkgB7kP/yZG1UcVcyXJNO2u3tdTuGg6wWmFeEHnZfMqEnQ
+         6EhJDzt5+tiXA4Vb7F1NcE51LWWw5Qx2utrtbaOcuHncYjyBGmgxDAuy1msQmG6P/FM2
+         XDL5BghpgJsRQPe0kMMRtyeqptzZqGTdcAOewu/CJKvY6LIyzREnZMsUq3rfAkVkmS6J
+         Vgfwbrel5hI2tB354hOXuz+CJD2zt8Z44A+TdaumQ0ofagU9gM7aMZ8o14C1YLm/yEKP
+         s54w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772740176; x=1773344976;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1772767558; x=1773372358;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=W+xZbg2UcQYU0NAtEL3ooNVs0zEnn8ejUS3RGwHRvhs=;
-        b=pALUp6/vY4gOdVzqCnmx89LKNuD48YkAt02ax4+p3PnjqXQLVNtPQiEC1rXHqp2beG
-         Y18GR26iAmjdu6yN5y2aqb9Et9EO+WPv2/FOdHuouMyy7fGrdiMpc4MztMsC3+bEBqfl
-         ZmIe8V6DUZeUPYX1XXCPzal+amPVhObUgX0XYSIvd9yqhCKigNtr9Zs3nWPAaQNEZHJ3
-         qXoZjY0ix6CYhJFN5Kc3JZdKXcDLLKx35lZOo9a7m8+uyod1UmQLBL90K66PG/TV9IyR
-         1liCSSFR7eWbEnBNnMGvRA6h86MMvUAzRBXH8imbobjCI73t8N5Uv+MRqN2OxLKHY/yX
-         9UYw==
-X-Forwarded-Encrypted: i=1; AJvYcCUq+VweyfyuKSvaINPMTAnbIKP91p64dC/e1QS89IYzeCFkiNV4u0z5mpFtIg54wnesQam9oL6aSDM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyh2+061TPRjnZkPYhWEcyuwrA8xMFNzpb/PAcVs6SOSTTjNwQ3
-	21W4iNp1oYnE0Ip2SsY5WIPHwiZ3uu9GETdtf+xGolsdkRj7ITpfAe7vMsG2SsvxhGXwuxMUwY0
-	4CGDgogbhnwntJsiyL5dm9Ou5m1zwXHn7kRknMmaWnQCumWv2JauDZ3Y60p4WZHY=
-X-Gm-Gg: ATEYQzzFAACQIEy95FQ5Gk4IT3TNuvYZuRNd6HKq/MsNwEnKXKFb7eOOL5IEicCYSLb
-	13MBNjn7xvyGDOGRdyhWmHyLSfgQ07SzZpg22QSV6pfpfMmL5LIU8L+NaHFIMXBT19GkfQ+OvaW
-	QSrzzkMdBigOPO8atRAX9VdAh9bZB+CHTy3J3NV/SDDjtfq0ZYvAfbvel7dyf4ONrXfsVt3e7G9
-	CkEpWUYTT5ttBubYqsgQnAZOF1sSB55sam8P3ROW3DjKt9iIYwVI0q2OX2DxvgO6NCZTpypDiYm
-	4qask3HjvNY3Tz1YfMiwLgCjyQOwscb2UWqHXEoJmqugbvqqnpcOtPkLmB3Dm6nF0cEe0lOEhd7
-	aWCRjJgBysGrXfnwrP8/iCCcn1OWUAR0tfgOfhgY07Sc3aq72
-X-Received: by 2002:a05:620a:450f:b0:8cb:3bca:bb46 with SMTP id af79cd13be357-8cd5afa3a2cmr885520985a.64.1772740175838;
-        Thu, 05 Mar 2026 11:49:35 -0800 (PST)
-X-Received: by 2002:a05:620a:450f:b0:8cb:3bca:bb46 with SMTP id af79cd13be357-8cd5afa3a2cmr885516485a.64.1772740175244;
-        Thu, 05 Mar 2026 11:49:35 -0800 (PST)
-Received: from [192.168.1.29] ([178.197.219.94])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439b03db76bsm37388533f8f.18.2026.03.05.11.49.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Mar 2026 11:49:34 -0800 (PST)
-Message-ID: <7aa1e643-a557-439c-a337-20575adf1e35@oss.qualcomm.com>
-Date: Thu, 5 Mar 2026 20:49:31 +0100
+        bh=d6bAE765oO9RMv6HiG4ahAua9/sTwWO++ewXCfT3Hxk=;
+        b=iItVfY7M+EKM/Ta5DSoEKpzLDcLhTw0knQbiRbBWFhRCrJF0gRpdEhRwkr+meH7qGo
+         XW0krzogmBW+bKHtcem4RxYFsqZdxGrAKmlDUyToFS7YROizyRQja6hI5lkUJbMYgMVs
+         t4mdau+Z1rp5xcz32bRf9S/BOq/0fqwbNAAj8dPPwRAZYF/n25xnazW4YmIotKZ/JgIC
+         B57BiL+yQokYM3YA57FeoNVENTEPaoiGZZNUyFSNh5zfqvTEjsGuqo5WxOE59h9AvZNE
+         Cxgk28ZarMfzSdHaaLzDWQgnsdLaOSAkd4f4gQIPZIh4aaUDcqKTazn0f8JuLW4dffpM
+         QNJA==
+X-Gm-Message-State: AOJu0YzkiDLooAgPTxlG8C8/p+diMVoojfFCo2JuFBVmcIyXvr4LvSNq
+	h1L8DZVHrLMJyPgeM104ApJpssz7T7lgzNP9Ev3Kwt1IKqORlZXDkC8/HDQzjXAqGyA=
+X-Gm-Gg: ATEYQzy41iEU3+OMrKfOPz4zRwyH4elPuVANcKPWyD8vz2J3jDHoVDhxRWmY/vKSVUB
+	AFoviu7Bk+mK+x4ourGQN/52Ir83Ym2VAeK/K00DdOC5YuUcj5MfGGYL4/0yA2vPKunhXJWz/qY
+	AMQFPy70pcMD7vap2MSKl8m8GLtq48zD2PpoNpjf7OCQqQ4J3vcfimQcl1Us85EhYd9FGz6o3Sp
+	CNY9hRYZMbx6pRhgFitJdhmXOuypRuCjt19D9tX02t0UrlRr2oUC//qNJ0t4NtvABSnjH9slEg2
+	GRyzt6kDroMXYszHZoMwkaHpEUxwzj/kPdeJiY5zlZ1uR76MSkLctSu+k4jjTpn9WAJzcJsVUvv
+	8q29kooApe++dcsScHMdWTys/HgeionAoMf7AEbHw1EMGKRAj4c/1Vopmi4mlPH3WHsy+zR3zda
+	mJ8u4slo9j2OMEkMW6GKerIuIizcBNRnV//SBlVZDU98EUomb+wa0kFL0ski5JgAIL2A==
+X-Received: by 2002:a05:6a20:6a15:b0:366:14b0:4b09 with SMTP id adf61e73a8af0-398590d61b6mr872614637.69.1772767558244;
+        Thu, 05 Mar 2026 19:25:58 -0800 (PST)
+Received: from ryzen ([2601:644:8000:56f5::8bd])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c739e0a70f9sm148424a12.6.2026.03.05.19.25.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Mar 2026 19:25:57 -0800 (PST)
+From: Rosen Penev <rosenp@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/LPC18XX ARCHITECTURE),
+	linux-kernel@vger.kernel.org (open list),
+	linux-hardening@vger.kernel.org (open list:KERNEL HARDENING (not covered by other areas):Keyword:\b__counted_by(_le|_be)?\b)
+Subject: [PATCH] clk-lpc18xx-ccu: kzalloc + kcalloc to kzalloc_flex
+Date: Thu,  5 Mar 2026 19:25:40 -0800
+Message-ID: <20260306032540.47815-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ti: sci: Drop fake 'const' on handle pointer
-To: Andrew Davis <afd@ti.com>, Nishanth Menon <nm@ti.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>,
-        Peter Ujfalusi <peter.ujfalusi@gmail.com>,
-        Vinod Koul <vkoul@kernel.org>, Frank Li <Frank.Li@kernel.org>,
-        Thomas Gleixner <tglx@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Dave Gerlach <d-gerlach@ti.com>, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        dmaengine@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org
-Cc: stable@vger.kernel.org
-References: <20260223202426.566958-2-krzysztof.kozlowski@oss.qualcomm.com>
- <195cc8dc-8642-481c-8bdd-f5409ab8f5b5@ti.com>
- <5b6a4284-4766-424c-9171-feaa08c52ad1@oss.qualcomm.com>
- <2d852f07-0bd9-4076-b0dd-93425ed237f4@ti.com>
- <c768706e-f063-44bd-92cd-f3984ad3bfbc@oss.qualcomm.com>
- <aa2899ff-a8d9-4740-b256-266f7073f0a9@ti.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@oss.qualcomm.com; keydata=
- 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
- cwzYbmi/Et7T2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <aa2899ff-a8d9-4740-b256-266f7073f0a9@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=M7xA6iws c=1 sm=1 tr=0 ts=69a9de50 cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=gOEeR9iKwsj33Yj5oN/cWg==:17
- a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22
- a=QannFOAQAd3pVwgO2DEA:9 a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzA1MDE2NSBTYWx0ZWRfX21AfaE4BkmJq
- J9uDyBG7dKZQtMLn4oKlxrizE5deuJLYmTy/V0X9hsNe8Tze7PKWPW0P0sR0BkH8873SrvMQfGd
- gcpo+pHZzy10+w5QHd7+K8iaberI/8muEjIOx7clrvd9mG3/WegGLn34ft4nLn1TpfZzeKVVhFo
- 3Hg2SGttLjhyvlEBVwsOoDGolWbg3rVWJQ20QrGAEajHFLTtpbH+v+wgk3Ps/5qT34zCIM3d/E7
- kLfJyjM4NuLnWxD5gMnSiX524uv96FkK/n43apnqoep0ub31YX5TuxKxodazxBPVOavW3rOd2eO
- a7BtEmjPU5anDIr5Zm643vF63VkTnaJzEefviNwshn+F6QdsmU5OMSzSh6JdiKys4DBI/fr8MW4
- q3TEUY1U+iP4FpZTuruJSkz3QCAA7zVUEDyFu4QV+U1xQHqp7ex4Z9+FuYG6W1jCjy8NRCHhL/m
- nNcPvUJbXD4IQrkTQQQ==
-X-Proofpoint-GUID: 2_a3TkK4CFGGkLCk_PkCh2dGSB8YLAlo
-X-Proofpoint-ORIG-GUID: 2_a3TkK4CFGGkLCk_PkCh2dGSB8YLAlo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-05_05,2026-03-04_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 suspectscore=0 phishscore=0 malwarescore=0 lowpriorityscore=0
- priorityscore=1501 bulkscore=0 spamscore=0 clxscore=1015 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2602130000 definitions=main-2603050165
+Content-Transfer-Encoding: 8bit
 
-On 05/03/2026 19:44, Andrew Davis wrote:
-> On 3/5/26 9:59 AM, Krzysztof Kozlowski wrote:
->> On 05/03/2026 16:52, Andrew Davis wrote:
->>>>>> The code is not correct logically, either, because functions like
->>>>>> ti_sci_get_handle() and ti_sci_put_handle() are meant to modify the
->>>>>> handle reference counting, thus they must modify the handle.
->>>>>
->>>>> The reference counting is handled outside of the ti_sci_handle struct,
->>>>> the contents of the handle are never modified after it is created.
->>>>>
->>>>> The const is only added by functions return a handle to consumers.
->>>>> We cannot return non-const to consumer drivers or then they would
->>>>> be able to modify the content without a compiler warning, which would
->>>>> be a real problem.
->>>>
->>>> This is the same argument as making pointer to const the pointer freed
->>>> via kfree() (or free() in userspace). kfree() does not modify the
->>>> contents of the pointer, right? The same as getting putting handle does
->>>> not modify the handle...
->>>>
->>>
->>> In that argument, if we wanted the consumer of the pointer to not free()
->>> it we would return a const pointer, free()'ing that would result in the
->>> warning we want (discards const qualifier).
->>>
->>> If you could somehow malloc() from a const area in memory then free()
->>> doesn't modify the pointed to values, only the non-const record keeping
->>> which would be stored outside of the const memory. So even in this analogy
->>> there isn't a problem.
->>
->> I am not saying about malloc. I am saying about free() which does not
->> modify the freed memory.
->>
-> 
-> And if you look, kfree() in Linux takes a const pointer. We also do not
+Simplifies allocation by using a flexible array member.
 
-The slub, but that's the only implementation being I believe frowned
-upon. The mistake made long time ago...
+Also allows using __counted_by for extra runtime analysis.
 
-> modify the content of the pointer we are given either, so we should
-> be okay using const by the same reasoning.
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+---
+ drivers/clk/nxp/clk-lpc18xx-ccu.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-That's a mistake so you cannot use the same reasoning. It's bogus and
-bugfree to take a pointer to const for any kfree(). Just poke MM folks...
+diff --git a/drivers/clk/nxp/clk-lpc18xx-ccu.c b/drivers/clk/nxp/clk-lpc18xx-ccu.c
+index dcb6d0c0b41a..3793e701835f 100644
+--- a/drivers/clk/nxp/clk-lpc18xx-ccu.c
++++ b/drivers/clk/nxp/clk-lpc18xx-ccu.c
+@@ -27,8 +27,8 @@
+ #define CCU_BRANCH_HAVE_DIV2	BIT(1)
+ 
+ struct lpc18xx_branch_clk_data {
+-	const char **name;
+ 	int num;
++	const char *name[] __counted_by(num);
+ };
+ 
+ struct lpc18xx_clk_branch {
+@@ -266,6 +266,7 @@ static void __init lpc18xx_ccu_init(struct device_node *np)
+ {
+ 	struct lpc18xx_branch_clk_data *clk_data;
+ 	void __iomem *reg_base;
++	size_t size;
+ 	int i, ret;
+ 
+ 	reg_base = of_iomap(np, 0);
+@@ -274,19 +275,14 @@ static void __init lpc18xx_ccu_init(struct device_node *np)
+ 		return;
+ 	}
+ 
+-	clk_data = kzalloc_obj(*clk_data);
++	size = of_property_count_strings(np, "clock-names");
++	clk_data = kzalloc_flex(*clk_data, name, size);
+ 	if (!clk_data) {
+ 		iounmap(reg_base);
+ 		return;
+ 	}
+ 
+-	clk_data->num = of_property_count_strings(np, "clock-names");
+-	clk_data->name = kcalloc(clk_data->num, sizeof(char *), GFP_KERNEL);
+-	if (!clk_data->name) {
+-		iounmap(reg_base);
+-		kfree(clk_data);
+-		return;
+-	}
++	clk_data->num = size;
+ 
+ 	for (i = 0; i < clk_data->num; i++) {
+ 		ret = of_property_read_string_index(np, "clock-names", i,
+-- 
+2.53.0
 
-
-> 
->>>
->>>> The point is that storing the reference counter outside of handle does
->>>> not make the argument correct. Logically when you get a reference, you
->>>> increase the counter, so it is not a pointer to const. And the code
->>>> agrees, because you must drop the const.
->>>>
->>>
->>> The record keeping memory is not const and can be modified.
->>>
->>> And where do we drop the const? The outer "struct ti_sci_info" was never
->>> const to begin with, so no dropped const.
->>
->> We discuss about different points. I did not say the outer memory is
->> const. I said that you drop the const - EXPLICITLY - from the pointer to
->> handle.
->>
-> 
-> Only because container_of() forces the const to be dropped, that is out
-> of our control. But we never modify handle though the non-const parent
-> struct.
-
-That is not true. You could use container_of_const() if you wanted to
-have const. You explicitly drop the const, code would not work without
-dropping the const and this is the problem.
-
-> 
->> And that API which gets a handle (increases reference count) via pointer
->> to const is completely illogical, because increasing refcnt is already
->> modifying it. Just because you store the refcnt outside, does not change
->> the fact that API is simply confusing.
->>
-> 
-> If the refcnt is not inside the const struct, then the contents are not
-> changed, therefor const is still correct. Even if the content of handle
-> were in fixed ROM, nothing would break here.
-
-I am talking about API and again you go into memory correctness. So
-again, very simple: any refcnt get taking const data is bogus.
-
-
-Best regards,
-Krzysztof
