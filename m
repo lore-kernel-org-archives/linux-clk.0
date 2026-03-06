@@ -1,98 +1,103 @@
-Received: from mail-m49212.qiye.163.com (mail-m49212.qiye.163.com [45.254.49.212])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82EFC38E5C9
-	for <linux-clk@vger.kernel.org>; Fri,  6 Mar 2026 12:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C11226CE39
+	for <linux-clk@vger.kernel.org>; Fri,  6 Mar 2026 12:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772799066; cv=none; b=Old/xCWuKmVJhG0svzM0O3gGAsPyGQ52DKSVgrMihYY0ET5k9NC+fZllfBOtewXJ0D1trIklhQiLKE0zLI5rLjq47X0I0YhhuU4vtUgyDf6tK8G7v3DQhxgP+q5+VvqsB3VPXuHV5QDf2QhcausGDQQVDjFsO4jvBcqpl5qFSDc=
+	t=1772800545; cv=none; b=oyFIUG6VuGuYnqMMp3lzXF87qMVTdhldcTZpuFZCg4g4f2EM9dpO5ogaSpvqizv+5X3Pjm6Fn2lEbCXxZZqOHonnTMP98zHuH9BY5mWjGxlC/ISIuqle//IV74LMEHkAV44LwN7LZkUJpG1rbYnbsNH6DL8maGB5w4AXPOKnlHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772799066; c=relaxed/simple;
-	bh=lIHrGjyNMSwg8lNh2KFvWlFmsyGwlNKJGs/7ldMuurI=;
-	h=Cc:Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=nfz6a2LbXG/vBdnh4p8+ADVYA/KLr21baV1m8UXrwtKZwYLZjw+yE46JeCJaw73S3qMTw9NYuRJAfOkuVUkjeV6iev060U3uvgtfG1jN1COp8G2+A+IqOiyFdNiUWrEGsqflzOrkL/QaTR3Cxt65J8Q1tLM03jjy8iF8AcjarRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=c6qwPOrY; arc=none smtp.client-ip=45.254.49.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="c6qwPOrY"
-Received: from [172.16.12.14] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 36060f672;
-	Fri, 6 Mar 2026 20:05:45 +0800 (GMT+08:00)
-Cc: shawn.lin@rock-chips.com, linux-rockchip@lists.infradead.org,
- linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] clk: rockchip: rk3568: Add PCIe pipe clock gates
-To: Heiko Stuebner <heiko@sntech.de>
-References: <1772698011-145625-1-git-send-email-shawn.lin@rock-chips.com>
- <3742329.R56niFO833@phil>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Message-ID: <65431f69-811c-61af-9c33-3dee6992ac71@rock-chips.com>
-Date: Fri, 6 Mar 2026 20:05:43 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+	s=arc-20240116; t=1772800545; c=relaxed/simple;
+	bh=t+zhrRtHdxJ0egPar6qDHLUgu1o7nIbY/t2grbrBnTw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AFIlWXa6iy7x8fidt79W9HPT1LaFo1PsIeRz4hmwxTQVy7is7qSrUDi426JFbDbqpC5NKm9QuS4gAPoRsqW1Lfzw6E/hkMdYo5w1u1kQ6oZDHSiBQuaI/2kSMwiMK8rg3SnB+teFdZTfD9xzgMnlsRR/wbL6lO+a4YIsPZoiWq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-56adf76631cso1548766e0c.1
+        for <linux-clk@vger.kernel.org>; Fri, 06 Mar 2026 04:35:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772800543; x=1773405343;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=96m0o8Clxl4fOeYKH2P2MIwu6gx/EjFZuUHZ+Kn4U/g=;
+        b=C9rp294pwqyoUdSk5sek+DKaQpuuDWC1jaw0PYB5AnkyGfvkJ/GRde54GYrAZJIsTc
+         9sFQ6c5DWx/U+/VVrYrnIDNvChed2DxksvyYuA9ONawyifATRpLRQrr0r+iVqXCafMl9
+         sOS/bqaNWlByP5rj6wwh0mj+O115+IeqildqzbgWDbrZbOx6yHqcT93cDOJPRIJIlgvU
+         usCDT9AqX1hWqJdz/SR4oTYwOUApvFE7guVTUvjMKPGzYWzTLqm7J71MuThDLXas+ruk
+         nXru/5DQ1yVOrWzgbX6qigLnwRBDZOGukDniZJOWhepdsI8OIZC2xmgNxCJHLmGzWkNO
+         +Dpw==
+X-Forwarded-Encrypted: i=1; AJvYcCX1kWha8pgRXc09Wl/FjpMy9l+L+KT1gfQMxaiqWIiKzF7NBPrCB/j6Eezg3Nww8N8IYbs6IcsuT3E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEUR7IfJ8vWZAoAS+TE3KLCDXbqwQCrpYpLpQxhefZRW2/IzV+
+	Esk+hVri5KzQLyTWyBIRVsaQUvQCsV9Ds8VvCIH1x70P1xP3ZUHbNCDjT7ecKV1yWYk=
+X-Gm-Gg: ATEYQzyP2ueM0zk+57Q/Gv++acRF3sSYyZ/1ue4SG/T/ayFgvGoEHQeySekrYvtR+ho
+	miVm3Po+VHxvE2slwMempVyOPEC+9Sd1tjEOsUIFBgKwaEfIRx1er/Nm79pRFcLk2ZXqB02EaM6
+	xEwto+rlYAxPPB2yelBOOJfgwBgtdBhJUGd5Y5zy4/o8rCvCOkkZOYWhPMJ7EnkmWDeqfDOpEr5
+	DAvN68GZixDkI8eWcp20l4jhym0zOmUqCjS5PXN/i3H/1qeQzFDN9277T1jASI3WQyi5szvcYxI
+	1qi2YKqn+5ayfplVaeUjV50s11k8vGwKzL7lPRnb+vksoaOaz6T8AS6q+UakDjfi2B6LDbxRM+I
+	Dl6XL86SzAM5l6NTkq5Yp+O6FWAGVF+OBvXhc1laPTTgPypuhbb7Yv/jmaloauTSg0Vl/tU28HT
+	ivglQTyoKZA7FyqPWCFNGFaE3qo+siNDefIPO2EICjcFev8G28F5LntYGJsWun
+X-Received: by 2002:a05:6122:4d0a:b0:55b:74ac:72cf with SMTP id 71dfb90a1353d-56b07e73ac9mr506097e0c.17.1772800543084;
+        Fri, 06 Mar 2026 04:35:43 -0800 (PST)
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56b09b1f5f6sm1298960e0c.14.2026.03.06.04.35.40
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Mar 2026 04:35:41 -0800 (PST)
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-94dd01deb53so2056899241.0
+        for <linux-clk@vger.kernel.org>; Fri, 06 Mar 2026 04:35:40 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVpFIaikouqCDA0NX8RJEyjo4P0G9OX9c7/NPkbSMClaHKGmTghi42rK9AT0y/8XCoEm3DW84F0OJc=@vger.kernel.org
+X-Received: by 2002:a05:6102:2908:b0:5fd:ee19:8b30 with SMTP id
+ ada2fe7eead31-5ffe632e0d7mr598649137.35.1772800540255; Fri, 06 Mar 2026
+ 04:35:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <3742329.R56niFO833@phil>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9cc30a1c1209cckunmc3da3282143748f
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGhkZTFYaGUtKH0tKGh5PQ05WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=c6qwPOrYRMiNOZvNiazi5AcVcMXIfa3avBYrMky8wlVDGAQUrjiBaIU+XhaJCgrZ6GT57No0Vxq6HqmZOLl4MKhSoxRKI3HOwKNqDEr3YHWxLn/l+exT8zORhHfJkE1EaPEIHYVF0TqS8mXRR7IvpBfIWWbPfNHMgiT4Qhvuh5A=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=18SAF6l9IUr8WQgBnZ4/fTJP3r6H7Na38YobGr1twPA=;
-	h=date:mime-version:subject:message-id:from;
+References: <20260125192706.27099-1-ovidiu.panait.rb@renesas.com>
+ <20260125192706.27099-2-ovidiu.panait.rb@renesas.com> <CAMuHMdWZKUjptQCqe_DK3C_g5d9Zhp3r3j6+dAfE1g==NH+ofw@mail.gmail.com>
+In-Reply-To: <CAMuHMdWZKUjptQCqe_DK3C_g5d9Zhp3r3j6+dAfE1g==NH+ofw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 6 Mar 2026 13:35:29 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXyo3hYbWYzdYUUzk=OQJzKn4Q4DdxXZi_0C2zH_goK3w@mail.gmail.com>
+X-Gm-Features: AaiRm526yeK4Pkoal5L7g4NriLGd-kQ5uifyBQ0CVN8Qd9yNZfzNgOUcuHaBmPw
+Message-ID: <CAMuHMdXyo3hYbWYzdYUUzk=OQJzKn4Q4DdxXZi_0C2zH_goK3w@mail.gmail.com>
+Subject: Re: [PATCH 1/5] clk: renesas: r9a09g056: Fix ordering of module
+ clocks array
+To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+Cc: claudiu.beznea.uj@bp.renesas.com, alexandre.belloni@bootlin.com, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, linux-rtc@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Heiko,
+On Mon, 26 Jan 2026 at 16:27, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On Sun, 25 Jan 2026 at 20:27, Ovidiu Panait
+> <ovidiu.panait.rb@renesas.com> wrote:
+> > The r9a09g056_mod_clks array is sorted by CPG_CLKON register number and
+> > bit position. Move the RSPI 0/1/2 module clock entries to their correct
+> > position to restore the array sort order.
+> >
+> > Fixes: 1f76689d1715 ("clk: renesas: r9a09g056: Add entries for RSCIs")
+> > Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> i.e. will queue in renesas-clk for v6.21.
 
-在 2026/03/06 星期五 18:52, Heiko Stuebner 写道:
-> Hi Shawn,
-> 
-> Am Donnerstag, 5. März 2026, 09:06:51 Mitteleuropäische Normalzeit schrieb Shawn Lin:
->> The PCIe pipe clocks are currently left as orphan clocks and remain
->> enabled indefinitely, which is suboptimal. Add the missing clock gates
->> so the PCIe driver can explicitly manage them when not in use.
->>
->> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
->> ---
->> Hi Heiko,
->>
->> This patch should be considered only after David's patch[1] is merged,
->> otherwise it breaks PCIe on RK3566/RK3568 due to clk_disable_unused().
-> 
-> This would also break compatiblity with old devicetrees.
-> 
-> The devicetree used by the kernel can also be embedded for example
-> in an already installed u-boot and handed to the kernel from there.
-> You cannot expect board devicetrees and the kernel image to be updated
-> in lockstep.
+Promoting to renesas-clk-fixes for v7.0, as I have other fixes.
 
-Indeed.
+Gr{oetje,eeting}s,
 
-> 
-> We also sort of guarantee this backwards compatiblity - old DTB with
-> newer kernel.
-> 
-> The solution is to add a CLK_IGNORE_UNUSED flag (but not CLK_IS_CRITICAL)
-> to the newly added gate.
-> 
+                        Geert
 
-Thanks, will improve it.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> This lets the clock stay and keeps the original behavious on old DTBs,
-> but also allows the PCIe driver in newer kernels to turn off the clock
-> if it wants to.
-> 
-> Thanks
-> Heiko
-> 
-> 
-> 
-> 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
