@@ -1,103 +1,157 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ABAD35AC03;
-	Fri,  6 Mar 2026 17:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0504A36CE1E
+	for <linux-clk@vger.kernel.org>; Fri,  6 Mar 2026 19:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772818233; cv=none; b=A3q699jNtWrX3wVcpn5urPYTrkvxFraal8TnDjVLrUaQ2w5gwZeNYGOY6UEAbRS6MkRGRN8yVQ92QI97h6Q7bgBRnEi+kBSsjbNSNbKjx/ghUSABuaZ0ARgqKyI9EyeyFLQAfD9XvRPTIvCvdcN9ahSQZvg17JBxAiBlJKCWX2w=
+	t=1772824249; cv=none; b=SwT9H8v08aD+Ing/5JR4sFtHe+e95NsBnKLTiIbGK5m9CQbN1BBlicufxPnpEwlwxmiKhAxC6MvlLuR+xV9lPwnOLM13w4uv2on1Qm8kXb0eKeaTN13XxH2iaF94jk3SP4ytuEs7BOlX7WS1gmSrJI3Andde4MIHSh+RyI+pt3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772818233; c=relaxed/simple;
-	bh=8VmuFnYbiOKgaR+BBAUnY6HUkEujulh2Twpm6HK6CSU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DblmVhaPwqGaYbvcaTJexbldGUFIC7LZGRGp9weGb6VGXmTrUWG4dfIfPimH2HuFKedUA9m3NQ7xdzvpMt+eqIhTEuKxd4FO66mtmUaOQvAVHGzxARTglIOb7mXzDu3oCUdNapNrprk94eDIxc4LpOUEw14SmpLLMSLMvDZKvAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TR9A1LQF; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1772824249; c=relaxed/simple;
+	bh=EvLAbBJDiD/n1DJ8+nYOK8OWTOwbGeEvKzgqWoKkX/Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ot5mjo9+3gBwU8Dj+LfCs4GaMI+e0p3JP7BgWqQdvjkcWDKrMA5xWNo96Uu/QuWJRXN9oKsVVS2owi457S23ZwaA07epLg8qgNmRAKzb280XQmV8huiX0C+/JrR3cmVc/06spAOXmlCU5LlF42i1QBonV9rDilrvo+1P66bb0EA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=my6AsidB; arc=none smtp.client-ip=35.89.44.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TR9A1LQF"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1772818232; x=1804354232;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8VmuFnYbiOKgaR+BBAUnY6HUkEujulh2Twpm6HK6CSU=;
-  b=TR9A1LQFCB7FJdOsC/QlqG1tp9S3imY7FgXorPbA/TAErCNXmG8vm2UY
-   Ix+Ll1Wghw4pG/WYOVHShBso6SAhs2Z20tDpz8MvgM8QCPa1uTpGawGB8
-   X9+L0waSJGhXkwZ99c0K3vaj9dyhzi5BfIMp0i0E21JoexM3bnq9s+xyD
-   lULbp4q25pOtlu30yxwhAv8GNsytFtFreYN2ZeqQggmFmK7+0JV+cXpa1
-   OTC6zaeIIUk2GONPAj63oaI6PP9SYhYtC87Qd3dgiG6A8w7VI7f+80lhY
-   CsuvPYGhhmGKlUbs9WmeRKmtqG3ssqssh1ISsVK6W3UR8ndC8zLIHGH4J
-   g==;
-X-CSE-ConnectionGUID: Rxhue+gHTwWMtUCeQT8oig==
-X-CSE-MsgGUID: oef6U4QAQImISudFb1opsw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11721"; a="76536359"
-X-IronPort-AV: E=Sophos;i="6.23,105,1770624000"; 
-   d="scan'208";a="76536359"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2026 09:30:32 -0800
-X-CSE-ConnectionGUID: 0bx+XxIITUy/ALxxQyoj5Q==
-X-CSE-MsgGUID: qc/tcyJERO+MUV1m2NxX4Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,105,1770624000"; 
-   d="scan'208";a="218305101"
-Received: from lkp-server01.sh.intel.com (HELO 058beb05654c) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 06 Mar 2026 09:30:26 -0800
-Received: from kbuild by 058beb05654c with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vyZ0H-00000000197-44lO;
-	Fri, 06 Mar 2026 17:30:21 +0000
-Date: Sat, 7 Mar 2026 01:29:40 +0800
-From: kernel test robot <lkp@intel.com>
-To: Caleb James DeLisle <cjd@cjdns.fr>, linux-mips@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, naseefkm@gmail.com,
-	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, cjd@cjdns.fr,
-	tsbogend@alpha.franken.de, ryder.lee@mediatek.com,
-	jianjun.wang@mediatek.com, lpieralisi@kernel.org,
-	kwilczynski@kernel.org, mani@kernel.org, bhelgaas@google.com,
-	vkoul@kernel.org, neil.armstrong@linaro.org, p.zabel@pengutronix.de,
-	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
-	nbd@nbd.name, ansuelsmth@gmail.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 6/8] PCI: mediatek: Add support for EcoNet EN7528 SoC
-Message-ID: <202603070131.ufbXMWzw-lkp@intel.com>
-References: <20260303190948.694783-7-cjd@cjdns.fr>
+	dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="my6AsidB"
+Received: from eig-obgw-5007b.ext.cloudfilter.net ([10.0.29.167])
+	by cmsmtp with ESMTPS
+	id yaP3vRuTlaPqLyaY2vC6WU; Fri, 06 Mar 2026 19:09:18 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id yaXYvrQwFV6WMyaXZv23PS; Fri, 06 Mar 2026 19:08:49 +0000
+X-Authority-Analysis: v=2.4 cv=E//Npbdl c=1 sm=1 tr=0 ts=69ab265e
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=k5Y5iPg+dmTXVWgYE/XtfQ==:17
+ a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=7T7KSl7uo7wA:10 a=pGLkceISAAAA:8
+ a=VwQbUJbxAAAA:8 a=0yR4CDxtN3si-e87978A:9 a=QEXdDO2ut3YA:10
+ a=2aFnImwKRvkU0tJ3nQRT:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=H9EbkxOhimqfk3l0qwEGtPXK1UaquMIBZmS0s0qP6OI=; b=my6AsidB7LeVirLGay0lpPNp2o
+	znIOXq53VwKjX4WiX9lbvWHiXRIvPhwh+kCmFh776QSqapB+/lxWyMTUotyobpqJ6FxCM4x01azfb
+	ci1lFQfFhgrM0c4o8QttFoRRg05Xme1HmTmacHtz1Qw6TmIGFXP5fo8Sscqx3+KIh4EJpzVTn+7nF
+	0McGYwFiNcSH+KPh+bCsXcUW9PBogQNug1JWioHcIPuuEitgv0X68Hy+HPy8rZzo3OJYtjuodU/2d
+	6sX0WV5R211/9P1RyhYivG1OoP4T+LEV1OzmoTp2T3LswLDJsiDkMjwe5reIkD1+dnim5A7IJgYkI
+	HoJVMD5Q==;
+Received: from [177.238.16.13] (port=37112 helo=[192.168.0.21])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.99.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1vyaXX-00000001137-1zAG;
+	Fri, 06 Mar 2026 13:08:48 -0600
+Message-ID: <9555e8df-5455-418a-b93f-2693aa19b849@embeddedor.com>
+Date: Fri, 6 Mar 2026 13:08:14 +0900
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260303190948.694783-7-cjd@cjdns.fr>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk-lpc18xx-ccu: kzalloc + kcalloc to kzalloc_flex
+To: Rosen Penev <rosenp@gmail.com>, linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>,
+ Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ "moderated list:ARM/LPC18XX ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ open "list:KERNEL" HARDENING "(not" covered by other
+ "areas):Keyword:b__counted_by(_le|_be)?b" <linux-hardening@vger.kernel.org>
+References: <20260306032540.47815-1-rosenp@gmail.com>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <20260306032540.47815-1-rosenp@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 177.238.16.13
+X-Source-L: No
+X-Exim-ID: 1vyaXX-00000001137-1zAG
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.0.21]) [177.238.16.13]:37112
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 9
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfO/rIoDSqQ/OLDQcCGoY8J/9zp0L1+FGifMdYQUacrS86mAxnUbLfqir/vNpvsyM7ax8rZRKlKzYeF/9+jY+3ZivTWJWA6FIZAomRJzk/Ek1xluOhla3
+ HZZf/KdZVSTCYPjUvnvQfCxwe3sYeyZww9DevcnSvhhFYHBAFgtUieKYfw0f91AlYIaajlGjNu0nvejf1+KvzmtzXOGXVBCAqS8=
 
-Hi Caleb,
 
-kernel test robot noticed the following build errors:
 
-[auto build test ERROR on 3fa5e5702a82d259897bd7e209469bc06368bf31]
+On 3/6/26 12:25, Rosen Penev wrote:
+> Simplifies allocation by using a flexible array member.
+> 
+> Also allows using __counted_by for extra runtime analysis.
+> 
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Caleb-James-DeLisle/dt-bindings-clock-reset-Add-econet-EN751221-bindings/20260304-031451
-base:   3fa5e5702a82d259897bd7e209469bc06368bf31
-patch link:    https://lore.kernel.org/r/20260303190948.694783-7-cjd%40cjdns.fr
-patch subject: [PATCH 6/8] PCI: mediatek: Add support for EcoNet EN7528 SoC
-config: parisc-allmodconfig (https://download.01.org/0day-ci/archive/20260307/202603070131.ufbXMWzw-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 15.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260307/202603070131.ufbXMWzw-lkp@intel.com/reproduce)
+Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202603070131.ufbXMWzw-lkp@intel.com/
+Thanks
+-Gustavo
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
+> ---
+>   drivers/clk/nxp/clk-lpc18xx-ccu.c | 14 +++++---------
+>   1 file changed, 5 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/clk/nxp/clk-lpc18xx-ccu.c b/drivers/clk/nxp/clk-lpc18xx-ccu.c
+> index dcb6d0c0b41a..3793e701835f 100644
+> --- a/drivers/clk/nxp/clk-lpc18xx-ccu.c
+> +++ b/drivers/clk/nxp/clk-lpc18xx-ccu.c
+> @@ -27,8 +27,8 @@
+>   #define CCU_BRANCH_HAVE_DIV2	BIT(1)
+>   
+>   struct lpc18xx_branch_clk_data {
+> -	const char **name;
+>   	int num;
+> +	const char *name[] __counted_by(num);
+>   };
+>   
+>   struct lpc18xx_clk_branch {
+> @@ -266,6 +266,7 @@ static void __init lpc18xx_ccu_init(struct device_node *np)
+>   {
+>   	struct lpc18xx_branch_clk_data *clk_data;
+>   	void __iomem *reg_base;
+> +	size_t size;
+>   	int i, ret;
+>   
+>   	reg_base = of_iomap(np, 0);
+> @@ -274,19 +275,14 @@ static void __init lpc18xx_ccu_init(struct device_node *np)
+>   		return;
+>   	}
+>   
+> -	clk_data = kzalloc_obj(*clk_data);
+> +	size = of_property_count_strings(np, "clock-names");
+> +	clk_data = kzalloc_flex(*clk_data, name, size);
+>   	if (!clk_data) {
+>   		iounmap(reg_base);
+>   		return;
+>   	}
+>   
+> -	clk_data->num = of_property_count_strings(np, "clock-names");
+> -	clk_data->name = kcalloc(clk_data->num, sizeof(char *), GFP_KERNEL);
+> -	if (!clk_data->name) {
+> -		iounmap(reg_base);
+> -		kfree(clk_data);
+> -		return;
+> -	}
+> +	clk_data->num = size;
+>   
+>   	for (i = 0; i < clk_data->num; i++) {
+>   		ret = of_property_read_string_index(np, "clock-names", i,
 
->> ERROR: modpost: "pcie_retrain_link" [drivers/pci/controller/pcie-mediatek.ko] undefined!
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
