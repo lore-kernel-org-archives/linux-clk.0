@@ -1,268 +1,239 @@
-Received: from mail.cjdns.fr (mail.cjdns.fr [5.135.140.105])
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010064.outbound.protection.outlook.com [52.101.193.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CCE83C1988;
-	Mon,  9 Mar 2026 13:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.135.140.105
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773062362; cv=none; b=IciLSJRzP5sM9w9G7UDVZHA1zBilmuAlhVgSrCxDJjZQ08T8oBIDROKIIa1IpWYLCjCVdp5IAvzvPToiyopyVrrSDUhRO1ZitmTwJ6IrCZ1M4XJDCrPOvPMZwSp+c6ZS7XNwmellxcz+etYBIoBZiEqnuzkIjq0nYZTNGI7FLQI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773062362; c=relaxed/simple;
-	bh=OuVg1o1oE6Dk4NJfoc56g7qoOxUkOmdON33ACGlQ9fU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IwGtn+KCXsIr/Blj7U2RW5OoIZvykj2dnYERs9Qwyu6vUDXcWx14KfUJKKCzx/CZ5Lhj6SmbI/axr2GvnJylCPpM/RQlCmgQMEGV+tAOqMXVlmwIaGUqn1eS6vUy8JFeNQcKf1aMlbGoW+gMPzibozlpAebCh79XhPe62onkgqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr; spf=none smtp.mailfrom=cjdns.fr; dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b=j9ecNe94; arc=none smtp.client-ip=5.135.140.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cjdns.fr
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E59E38E5ED;
+	Mon,  9 Mar 2026 13:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773063572; cv=fail; b=Pkf1Gw9yKf/a7F6PeEZl6K4o8WQAnW5Iwxn4ulNd/0tuwUINd73RHUTVC9s1kzQ4AOIDFy2pkYWCrkT6rWuPy7gWFkMmfzTNF9Msj2cTmhXM3LCusS/S+FZm1pHqqc07GYu+zIu0qizAYN1Wu5MAh3jVX7oMnukZyPvSAQ3DUr4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773063572; c=relaxed/simple;
+	bh=KmGiNTGmcB18G5yhTQG5sD4cTkQUsn3K5VM1SCUUFHo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=d4vrOS1OD8rChgVXJ5ZWRxUhxs2XnJ30fZM9dyZGdaA6wshTSy8SpwumNqkVvQHFAAL3EBWRCT3UKwohBJkkSlZOxRwcSr2NogQyKDdkfY2l/6VIA7mpI+Z71NSYRhl02oEj7wIiRE77J1HgSQi3Cq/sbiVtALJjPS9NeG14UVo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Kjo+SFQV; arc=fail smtp.client-ip=52.101.193.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b="j9ecNe94"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 173DE286152;
-	Mon,  9 Mar 2026 14:19:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cjdns.fr; s=dkim;
-	t=1773062357; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=AsslNjPsniHPFq7y9ACqeRGOIicsFNpWA+I3qRFhHu8=;
-	b=j9ecNe94U9Em4IEwzKUh0fU8VAQGLclzvHLaHHqfT106fFGiQDskAYkhTzaE1I6qjgyzGB
-	fzHSl3OV+SjCc2QfXwjyk3yMQLg7T39ghqRKxskqHiybQKxgOfaq5qCLdF/Ewkkym92M4i
-	D9RG+xHxpH0Rcbc7ezS0pZE4VKZJpacQjXW291iNDzVEpnLXuikzBcl2FFHwLxgwYFWxMF
-	RphLbS4y7iN4bji5qazjWyDImLHqnPZ1tXdm1UYNaVs6l13v8UoCR5wmGIbMJWqPjr5MfE
-	SDf5XydOSUjXeliTSKntn/ovIe2m9Wdk7LS6oGl7bpbcJ8nEHlAZkjr2ABmwDw==
-From: Caleb James DeLisle <cjd@cjdns.fr>
-To: linux-mips@vger.kernel.org
-Cc: naseefkm@gmail.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	cjd@cjdns.fr,
-	tsbogend@alpha.franken.de,
-	ryder.lee@mediatek.com,
-	jianjun.wang@mediatek.com,
-	lpieralisi@kernel.org,
-	kwilczynski@kernel.org,
-	mani@kernel.org,
-	bhelgaas@google.com,
-	vkoul@kernel.org,
-	neil.armstrong@linaro.org,
-	p.zabel@pengutronix.de,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	nbd@nbd.name,
-	ansuelsmth@gmail.com,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-phy@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 8/8] mips: dts: Add PCIe to EcoNet EN751221
-Date: Mon,  9 Mar 2026 13:18:18 +0000
-Message-Id: <20260309131818.74467-9-cjd@cjdns.fr>
-In-Reply-To: <20260309131818.74467-1-cjd@cjdns.fr>
-References: <20260309131818.74467-1-cjd@cjdns.fr>
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Kjo+SFQV"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Zo9wUOOf5MK3XILPnqM+s27sbweHxcJoBIC4Uw3Y7QPEh7Elb/7GMb8iCwaDahnZ/A/qkqhYJ6HEL1G/RU4IQz4ScFiz1PFScBxIP3SWZKegMflh5vOQgCbtZk+vgZdVmhVj7uACcQlWIxSv09u3wqpwQosZ/5hyK/btnD9Tw7IIb0N5si1J/ECZsegcnkvBIIhZdMDw8JPXDqKU0QcabwuA0+SKUbA7hV5TBocP3nCy6rjw2AAo4WmVVDETsf2inI+wMWPg+jQAmsn7ozWKf2d3rgxH1fIDmQqFARukGRFUrMnx5kLAxhllfDjkVVCc5wLHU5QXC4K44zfrsCtTNQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MHB7E9rvIK3PIs7krEYIUdRpKD6Ij8/0f1N99mop3Nw=;
+ b=ABWVQqomxSyo0nv5eT1n+nDSwzRZKvajl6z7oDnBEGdM95o9gQm+mwaowsdQBA/bq+JtvJxETVuwZItBHUNZeBfXQn64OEKqxJMYJQdt49Pvo1mQwG1WB/xDrJPq+2SbTmaab5Nyb3xNzSW6IeCYx8nisfaA/TL9QI5FyPl/rSTcO+mZ8LUlBTtawYDSEwRpeYRIcaRj87iAQRztAF/jRLuEVnAwHYzm3VJt4+leKOMjiseYnzJKUNBPaZ5Xn/CGOaxExMzhEOTPOn9wcb9w4scLpCb5533hbwpfBdQE8L1rg6jXrUAzSnGp69pP+OS2dXGPNUImAuFxWd3X5Z5GpA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.23.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MHB7E9rvIK3PIs7krEYIUdRpKD6Ij8/0f1N99mop3Nw=;
+ b=Kjo+SFQVyDdLqYCLWRj1X6T8+liFszL2Kgw9jBneRjhEP+g3e6PmqQuRYUjXrTh3iBebaA8cVnwBjKjYANE1VLCzBY7+OYuASFNAqmhaGrplm73gNT00NCaECJhU/vExEEm6rv4/wY4dKCUjW3ngAua9Ge9qwX0uy4EUAS7NVKM=
+Received: from DM6PR08CA0013.namprd08.prod.outlook.com (2603:10b6:5:80::26) by
+ SJ0PR10MB4749.namprd10.prod.outlook.com (2603:10b6:a03:2da::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9678.25; Mon, 9 Mar
+ 2026 13:39:24 +0000
+Received: from CY4PEPF0000EE31.namprd05.prod.outlook.com
+ (2603:10b6:5:80:cafe::fd) by DM6PR08CA0013.outlook.office365.com
+ (2603:10b6:5:80::26) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9678.25 via Frontend Transport; Mon,
+ 9 Mar 2026 13:39:26 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.194)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.23.194 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.23.194; helo=lewvzet200.ext.ti.com; pr=C
+Received: from lewvzet200.ext.ti.com (198.47.23.194) by
+ CY4PEPF0000EE31.mail.protection.outlook.com (10.167.242.37) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9678.18 via Frontend Transport; Mon, 9 Mar 2026 13:39:23 +0000
+Received: from DLEE204.ent.ti.com (157.170.170.84) by lewvzet200.ext.ti.com
+ (10.4.14.103) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 9 Mar
+ 2026 08:39:23 -0500
+Received: from DLEE205.ent.ti.com (157.170.170.85) by DLEE204.ent.ti.com
+ (157.170.170.84) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 9 Mar
+ 2026 08:39:18 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE205.ent.ti.com
+ (157.170.170.85) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Mon, 9 Mar 2026 08:39:18 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 629DdHNi1182586;
+	Mon, 9 Mar 2026 08:39:18 -0500
+Message-ID: <512c8f92-f56e-4bb7-a6c4-aef7c4120bce@ti.com>
+Date: Mon, 9 Mar 2026 08:39:17 -0500
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ti: sci: Drop fake 'const' on handle pointer
+To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, Nishanth Menon
+	<nm@ti.com>, Tero Kristo <kristo@kernel.org>, Santosh Shilimkar
+	<ssantosh@kernel.org>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@kernel.org>, Peter Ujfalusi <peter.ujfalusi@gmail.com>, "Vinod
+ Koul" <vkoul@kernel.org>, Frank Li <Frank.Li@kernel.org>, Thomas Gleixner
+	<tglx@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Bjorn Andersson
+	<andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>,
+	"Philipp Zabel" <p.zabel@pengutronix.de>, Dave Gerlach <d-gerlach@ti.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <dmaengine@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
+CC: <stable@vger.kernel.org>
+References: <20260223202426.566958-2-krzysztof.kozlowski@oss.qualcomm.com>
+ <195cc8dc-8642-481c-8bdd-f5409ab8f5b5@ti.com>
+ <5b6a4284-4766-424c-9171-feaa08c52ad1@oss.qualcomm.com>
+ <2d852f07-0bd9-4076-b0dd-93425ed237f4@ti.com>
+ <c768706e-f063-44bd-92cd-f3984ad3bfbc@oss.qualcomm.com>
+ <aa2899ff-a8d9-4740-b256-266f7073f0a9@ti.com>
+ <7aa1e643-a557-439c-a337-20575adf1e35@oss.qualcomm.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <7aa1e643-a557-439c-a337-20575adf1e35@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE31:EE_|SJ0PR10MB4749:EE_
+X-MS-Office365-Filtering-Correlation-Id: d717b4b3-0775-4cad-2cf4-08de7de14674
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700016|1800799024|82310400026|376014|7416014|921020;
+X-Microsoft-Antispam-Message-Info:
+	4r6gJI54oASuTREFVtD5zQzAStqRMfRzWIO5+2FOQef9MFsTRwPjBhrE2U7hFOlLhRPrRG3rg8bZqUscgc27yW+ZR8TnwlrL/iPRZjcWSED5K0f39RafBizsODKl4l3qaJsWiQWn77ssLhunxOqLF45cnQ1fUmccT3e/WpHOaSrY8XuHRb9WHnpm7dEumSauGYeidDr+h9LhipQWCSo3WA4Xax5s6rh2zu7wRg6hLjr3xqhcPs5t1Xv0yfuwmPWqLxkNHHd5+EiAYQsoUIKsx9h0kYOrBp6LsGAHTGenU8p0+r+DdMI8itClxs3nMQ9CSp0Za32M02ABOb7dV0JBHk5J4M1lzLCZAVKEiA0ZZhiCAgTZSVgWQ7zcx7eezyQzy+EKK0cdCeb+odQxqoKiSL+zVBM7ZAQmHb7l/t1C6nqQAAbuFRPsDVLkV1BwWitFwzyL66hMMAi5kuq7Q8xG2G1UpWdZx0meISEuym7wTD0CNf567hdmLnhy7nBDz0Ier9TFh6l1dwTC0QYrwzLGuir3gWfLPjJz+Izm7sjlq7AzYGiOZFmnNHtZTIFgeiEJivWD6LpHL8pWuQMWVzoOgC91i7chbxcK+CyJ+uuRTK6OCIeX7ir9SCFGDfhNvUaS9S2Cj59Vi0rtJVURwEYCo8ioPhitSz1RxDyPKe2Yg7Wr1XeJWLA1pu4+T9Og8b2nZPz0na8IpwjatTKrFLeVuCcVgFuZ/jM5uUW45BJYPxcECwG13OKKpxp2VdDvkvf30cXw5aED3M5FCbHEcWfwNwalxSz3BqoFljp0iOVsHhB3KaxPrDNbm30ZhqiXzjHN
+X-Forefront-Antispam-Report:
+	CIP:198.47.23.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet200.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(1800799024)(82310400026)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	5j+x3jwTJvfMeRrTLYr6h1qr6lXnOTzmUccfV0AoKrOLUCLzjYlJ76OBhsZv3lN/R1UZOxa2gm2BPlGcrlEJqG6++FMLrSrCtkRJ+0dlNcYx//UNUGxx+OvNbqJYvtAN66N9ghk+bNCDEOpun1d7mUfjXLH/hS3pLBR0MafeUYp0Ffk19atfgFiBHZmTBn9eXkCH6hhLAJrV/HiP+TghzVHq+z+fETOB0dDj0yXOriIFdjtFJCBeO5naFfKlo5vqUdZb5k36oRV+0HeIRvBOPRoKYVhhM4YdpXl4QNVsKCk/wtboCvioolZMCADDzCwZYIrJQyapa1I8b3PLynXx6qz+flFcBY9ZWracT7iXDOSd+81erXhbWbZyb5Rbw7Sp0Ii5ikbn/uEnDknSImO5PQaud4HzngFSiwZ87kS2kIoaI39AEmPlZAUU9Jh8tuwL
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Mar 2026 13:39:23.5522
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d717b4b3-0775-4cad-2cf4-08de7de14674
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.194];Helo=[lewvzet200.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EE31.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4749
 
-Add PCIe based on EN7528 PCIe driver, also add two MT76 wifi devices
-to SmartFiber XP8421-B.
+On 3/5/26 1:49 PM, Krzysztof Kozlowski wrote:
+> On 05/03/2026 19:44, Andrew Davis wrote:
+>> On 3/5/26 9:59 AM, Krzysztof Kozlowski wrote:
+>>> On 05/03/2026 16:52, Andrew Davis wrote:
+>>>>>>> The code is not correct logically, either, because functions like
+>>>>>>> ti_sci_get_handle() and ti_sci_put_handle() are meant to modify the
+>>>>>>> handle reference counting, thus they must modify the handle.
+>>>>>>
+>>>>>> The reference counting is handled outside of the ti_sci_handle struct,
+>>>>>> the contents of the handle are never modified after it is created.
+>>>>>>
+>>>>>> The const is only added by functions return a handle to consumers.
+>>>>>> We cannot return non-const to consumer drivers or then they would
+>>>>>> be able to modify the content without a compiler warning, which would
+>>>>>> be a real problem.
+>>>>>
+>>>>> This is the same argument as making pointer to const the pointer freed
+>>>>> via kfree() (or free() in userspace). kfree() does not modify the
+>>>>> contents of the pointer, right? The same as getting putting handle does
+>>>>> not modify the handle...
+>>>>>
+>>>>
+>>>> In that argument, if we wanted the consumer of the pointer to not free()
+>>>> it we would return a const pointer, free()'ing that would result in the
+>>>> warning we want (discards const qualifier).
+>>>>
+>>>> If you could somehow malloc() from a const area in memory then free()
+>>>> doesn't modify the pointed to values, only the non-const record keeping
+>>>> which would be stored outside of the const memory. So even in this analogy
+>>>> there isn't a problem.
+>>>
+>>> I am not saying about malloc. I am saying about free() which does not
+>>> modify the freed memory.
+>>>
+>>
+>> And if you look, kfree() in Linux takes a const pointer. We also do not
+> 
+> The slub, but that's the only implementation being I believe frowned
+> upon. The mistake made long time ago...
+> 
+>> modify the content of the pointer we are given either, so we should
+>> be okay using const by the same reasoning.
+> 
+> That's a mistake so you cannot use the same reasoning. It's bogus and
+> bugfree to take a pointer to const for any kfree(). Just poke MM folks...
+> 
 
-Signed-off-by: Caleb James DeLisle <cjd@cjdns.fr>
----
- arch/mips/boot/dts/econet/en751221.dtsi       | 114 ++++++++++++++++++
- .../econet/en751221_smartfiber_xp8421-b.dts   |  21 ++++
- arch/mips/econet/Kconfig                      |   2 +
- 3 files changed, 137 insertions(+)
+Don't act like I'm trying to trick you by picking some bad example, you
+picked kfree() and it just happened to showcase my point.
 
-diff --git a/arch/mips/boot/dts/econet/en751221.dtsi b/arch/mips/boot/dts/econet/en751221.dtsi
-index 2abeef5b744a..72cb65654c34 100644
---- a/arch/mips/boot/dts/econet/en751221.dtsi
-+++ b/arch/mips/boot/dts/econet/en751221.dtsi
-@@ -1,6 +1,8 @@
- // SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- /dts-v1/;
- 
-+#include <dt-bindings/clock/econet,en751221-scu.h>
-+
- / {
- 	compatible = "econet,en751221";
- 	#address-cells = <1>;
-@@ -30,6 +32,30 @@ cpuintc: interrupt-controller {
- 		#interrupt-cells = <1>;
- 	};
- 
-+	chip_scu: syscon@1fa20000 {
-+		compatible = "econet,en751221-chip-scu", "syscon";
-+		reg = <0x1fa20000 0x388>;
-+	};
-+
-+	pcie_phy1: pcie-phy@1fac0000 {
-+		compatible = "econet,en751221-pcie-gen2";
-+		reg = <0x1fac0000 0x1000>;
-+		#phy-cells = <0>;
-+	};
-+
-+	pcie_phy0: pcie-phy@1faf2000 {
-+		compatible = "econet,en751221-pcie-gen1";
-+		reg = <0x1faf2000 0x1000>;
-+		#phy-cells = <0>;
-+	};
-+
-+	scuclk: clock-controller@1fb00000 {
-+		compatible = "econet,en751221-scu";
-+		reg = <0x1fb00000 0x970>;
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+	};
-+
- 	intc: interrupt-controller@1fb40000 {
- 		compatible = "econet,en751221-intc";
- 		reg = <0x1fb40000 0x100>;
-@@ -41,6 +67,94 @@ intc: interrupt-controller@1fb40000 {
- 		econet,shadow-interrupts = <7 2>, <8 3>, <13 12>, <30 29>;
- 	};
- 
-+	pciecfg: pciecfg@1fb80000 {
-+		compatible = "mediatek,generic-pciecfg", "syscon";
-+		reg = <0x1fb80000 0x1000>;
-+	};
-+
-+	pcie0: pcie@1fb81000 {
-+		compatible = "econet,en7528-pcie";
-+		device_type = "pci";
-+		reg = <0x1fb81000 0x1000>;
-+		reg-names = "port0";
-+		linux,pci-domain = <0>;
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+		interrupt-parent = <&intc>;
-+		interrupts = <23>;
-+		interrupt-names = "pcie_irq";
-+		clocks = <&scuclk EN751221_CLK_PCIE>;
-+		clock-names = "sys_ck0";
-+		phys = <&pcie_phy0>;
-+		phy-names = "pcie-phy0";
-+		bus-range = <0x00 0xff>;
-+		ranges = <0x01000000 0 0x00000000 0x1f600000 0 0x00008000>,
-+			 <0x82000000 0 0x20000000 0x20000000 0 0x08000000>;
-+		status = "disabled";
-+
-+		#interrupt-cells = <1>;
-+		interrupt-map-mask = <0 0 0 7>;
-+		interrupt-map = <0 0 0 1 &pcie_intc0 0>,
-+				<0 0 0 2 &pcie_intc0 1>,
-+				<0 0 0 3 &pcie_intc0 2>,
-+				<0 0 0 4 &pcie_intc0 3>;
-+
-+		pcie_intc0: interrupt-controller {
-+			interrupt-controller;
-+			#address-cells = <0>;
-+			#interrupt-cells = <1>;
-+		};
-+
-+		slot0: pcie@0,0 {
-+			reg = <0x0000 0 0 0 0>;
-+			device_type = "pci";
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			ranges;
-+		};
-+	};
-+
-+	pcie1: pcie@1fb83000 {
-+		compatible = "econet,en7528-pcie";
-+		device_type = "pci";
-+		reg = <0x1fb83000 0x1000>;
-+		reg-names = "port1";
-+		linux,pci-domain = <1>;
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+		interrupt-parent = <&intc>;
-+		interrupts = <24>;
-+		interrupt-names = "pcie_irq";
-+		clocks = <&scuclk EN751221_CLK_PCIE>;
-+		clock-names = "sys_ck1";
-+		phys = <&pcie_phy1>;
-+		phy-names = "pcie-phy1";
-+		bus-range = <0x00 0xff>;
-+		ranges = <0x81000000 0 0x00000000 0x1f608000 0 0x00008000>,
-+			 <0x82000000 0 0x28000000 0x28000000 0 0x08000000>;
-+		status = "disabled";
-+
-+		#interrupt-cells = <1>;
-+		interrupt-map-mask = <0 0 0 7>;
-+		interrupt-map = <0 0 0 1 &pcie_intc1 0>,
-+				<0 0 0 2 &pcie_intc1 1>,
-+				<0 0 0 3 &pcie_intc1 2>,
-+				<0 0 0 4 &pcie_intc1 3>;
-+
-+		pcie_intc1: interrupt-controller {
-+			interrupt-controller;
-+			#address-cells = <0>;
-+			#interrupt-cells = <1>;
-+		};
-+
-+		slot1: pcie@1,0 {
-+			reg = <0x0800 0 0 0 0>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			ranges;
-+		};
-+	};
-+
- 	uart: serial@1fbf0000 {
- 		compatible = "ns16550";
- 		reg = <0x1fbf0000 0x30>;
-diff --git a/arch/mips/boot/dts/econet/en751221_smartfiber_xp8421-b.dts b/arch/mips/boot/dts/econet/en751221_smartfiber_xp8421-b.dts
-index 8223c5bce67f..c633bf73add6 100644
---- a/arch/mips/boot/dts/econet/en751221_smartfiber_xp8421-b.dts
-+++ b/arch/mips/boot/dts/econet/en751221_smartfiber_xp8421-b.dts
-@@ -17,3 +17,24 @@ chosen {
- 		linux,usable-memory-range = <0x00020000 0x1bfe0000>;
- 	};
- };
-+
-+&pcie0 {
-+	status = "okay";
-+};
-+&slot0 {
-+	wifi@0,0 {
-+		/* MT7612E */
-+		compatible = "mediatek,mt76";
-+		reg = <0x0000 0 0 0 0>;
-+	};
-+};
-+&pcie1 {
-+	status = "okay";
-+};
-+&slot1 {
-+	wifi@0,0 {
-+		/* MT7592 */
-+		compatible = "mediatek,mt76";
-+		reg = <0x0000 0 0 0 0>;
-+	};
-+};
-diff --git a/arch/mips/econet/Kconfig b/arch/mips/econet/Kconfig
-index fd69884cc9a8..b37b9d25d5a4 100644
---- a/arch/mips/econet/Kconfig
-+++ b/arch/mips/econet/Kconfig
-@@ -13,7 +13,9 @@ choice
- 		bool "EN751221 family"
- 		select COMMON_CLK
- 		select ECONET_EN751221_INTC
-+		select HAVE_PCI
- 		select IRQ_MIPS_CPU
-+		select PCI_DRIVERS_GENERIC
- 		select SMP
- 		select SMP_UP
- 		select SYS_SUPPORTS_SMP
--- 
-2.39.5
+> 
+>>
+>>>>
+>>>>> The point is that storing the reference counter outside of handle does
+>>>>> not make the argument correct. Logically when you get a reference, you
+>>>>> increase the counter, so it is not a pointer to const. And the code
+>>>>> agrees, because you must drop the const.
+>>>>>
+>>>>
+>>>> The record keeping memory is not const and can be modified.
+>>>>
+>>>> And where do we drop the const? The outer "struct ti_sci_info" was never
+>>>> const to begin with, so no dropped const.
+>>>
+>>> We discuss about different points. I did not say the outer memory is
+>>> const. I said that you drop the const - EXPLICITLY - from the pointer to
+>>> handle.
+>>>
+>>
+>> Only because container_of() forces the const to be dropped, that is out
+>> of our control. But we never modify handle though the non-const parent
+>> struct.
+> 
+> That is not true. You could use container_of_const() if you wanted to
+> have const. You explicitly drop the const, code would not work without
+> dropping the const and this is the problem.
+> 
+
+There is no dropping the const, the parent struct was never const in
+the first place. Only the handle inside the parent struct is const and
+it can stay const and nothing would stop working in any API function.
+
+>>
+>>> And that API which gets a handle (increases reference count) via pointer
+>>> to const is completely illogical, because increasing refcnt is already
+>>> modifying it. Just because you store the refcnt outside, does not change
+>>> the fact that API is simply confusing.
+>>>
+>>
+>> If the refcnt is not inside the const struct, then the contents are not
+>> changed, therefor const is still correct. Even if the content of handle
+>> were in fixed ROM, nothing would break here.
+> 
+> I am talking about API and again you go into memory correctness. So
+> again, very simple: any refcnt get taking const data is bogus.
+> 
+
+Modifying a refcnt stored *inside* a const struct is bogus. Keeping an
+external refcnt about a bit of const data is perfectly sane. When the
+refcnt goes to 0 nothing happens, it's not like we go an free() the
+const data or anything. The refcnt exists just to print a warning if the
+count goes negative, nothing else.
+
+Andrew
+
+> 
+> Best regards,
+> Krzysztof
 
