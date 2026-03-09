@@ -1,139 +1,121 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C91355F49
-	for <linux-clk@vger.kernel.org>; Mon,  9 Mar 2026 10:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=170.10.133.124
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773052348; cv=pass; b=ouuUqQ5ce/4aMvxxAZOIjnSVsF7UyLW9J7pmQjsSTeQNvDiYtnYbQFFhCm0I2aDSlOEQoUoDFDd/fFcmV/ORABitQqP8tfmx552v1/F2dNtR6i2Pu2JlGxxO2nrafUyPsP+tIX3QFMmg9N6wbHlS+3xEu1DB67Me8gj0VN8wbHc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773052348; c=relaxed/simple;
-	bh=ES4m/+XXdJvfwCgDwA/EIjZr9bsFI2wq/QVfbrnuRMk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n+FO0z5+js87Ruu4iayGUw4Md+nauFE4uBjJActBpGsA4ccgcIEnsvGudAQnsvgMUmH48fjVSuJAjYzwT8vEGNsYxEDEc0ESzwuKsK2SNyiiXTqCxFsH761V9eoDA/m7iMP2Hkhf+KOGGtBJFQfiwkjMwJrMwIXCG49T7Bu9g/I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hq5yzVCL; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=mVRUlzEK; arc=pass smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9BEE393DDA;
+	Mon,  9 Mar 2026 10:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773053846; cv=none; b=Mam0NRJt3EQ2l4pid/OZ/d4dX8oO4foc2RQ0BAkBHWYhb55gWY+zyWvNtx+B47BGGt9cId0L9kubaXoWXT47ADojUGaPsh8HKpGX60xYCuqdM4ApyNJM0k9UB9LZl80JsdlVACqHrLdmZ/ikAv993HF4B4XyD9xJoKcPb3l0doE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773053846; c=relaxed/simple;
+	bh=B0wVxkyuc1NmAywYw4m8ECKANYzo9yfMU/jCS8FPVYM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p6TXwjSgN6WPvvQYwR42+ILtjnadp1kNQwlyATL37mAtMzKiqYXBJBl97KMkQXufEWC9HS8/H2C2cRg9HWJyS3Dfv0d0kR5C2DVduUzVZ0WKuAKtozcr15ZDh3NZtuyNVlip/CyRZGdUULQOV1rnDvNmuhY9COvZPS5Yc1yGk1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NZAtmgQJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hq5yzVCL";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="mVRUlzEK"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1773052344;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ES4m/+XXdJvfwCgDwA/EIjZr9bsFI2wq/QVfbrnuRMk=;
-	b=hq5yzVCLaZRoAZJtJ0fl2QwgxCLYfsIvcbrSF81MOrRevzGoGp/f7/61xi/5kJEEHLA7Wr
-	ua1UDokwAzIHLDOkAFTtb1fpfYsQVh5hjfKOiCDe+s28LPGANSroNvQ6d3efiBgmG7w3Vv
-	XNt87kpj6LCzyUcPk/ROz3nxY+lEfNM=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-106-60JoSfT6NiiMZzDE4it_NA-1; Mon, 09 Mar 2026 06:32:23 -0400
-X-MC-Unique: 60JoSfT6NiiMZzDE4it_NA-1
-X-Mimecast-MFC-AGG-ID: 60JoSfT6NiiMZzDE4it_NA_1773052342
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-b941d4b7f2cso311972566b.1
-        for <linux-clk@vger.kernel.org>; Mon, 09 Mar 2026 03:32:23 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1773052342; cv=none;
-        d=google.com; s=arc-20240605;
-        b=AtwslrwoF3TmnTPvNRmGkRSyFb/DRns1SMOtzjVT5gf1S5rzazQT78KAbnNrtcNZpg
-         LOWcYMv/0dhpR21ww78PhzXNMcljcbvV2KLZFSvUKKfQzDoVgK2ghlVy4XjZR3gr/KXv
-         JBwKufw8iFv1/iHsozqPDIM9ypZI3DdJjb0nKThwb6ELp/VvdCVC9JP+xoyQcSSghVpT
-         eucRJ2qzQcwOesJAesJqTLSdYF8E3Rgs9NXrTk1B2BnRfkeY2xHoXuXH9M5XuJx8ey3E
-         deG4EGP4o0DmeGu7KH8ZClPuANehXRI61IcID9pSvpCC8r9TOSA1sbqPR8NtZLrQuW4M
-         e+4w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=ES4m/+XXdJvfwCgDwA/EIjZr9bsFI2wq/QVfbrnuRMk=;
-        fh=histFZijuBd0iAjqsgnJvv+BAhNBBKUMrERju/R3fus=;
-        b=LULcZ+wnGkKfPP9yr9gkVFlCuJiiI0zgvKafkUz2uudpNHB+xhoxCHtZtn1d/OD6/e
-         gbF+FoZpxECp4JKTU7qH1lYsF1Hi0t/4vKVjzlte6CIAwqE9FOCkJ0k9iO99aqSdVlLL
-         1TrUmESY9N/UY11SUoAJxIl8Wc4ZWzcpEcv/dmHeUrTqsyYcDookh3NNaOsEXXBPtB0g
-         ly1EF6j4r6qxaYYUA5jWZ9sOgqw2LNJW7UOTtD6qWIJCNNiEMyX1FUoTk2qXoEeWrqn/
-         vXtBQ/Y0csNPrsgNPYJqXxBd2nUUGZBjm5G97zM5kIc+Q8GsDxXPvyrdtWMgbPdpbJNr
-         qoIA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1773052342; x=1773657142; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ES4m/+XXdJvfwCgDwA/EIjZr9bsFI2wq/QVfbrnuRMk=;
-        b=mVRUlzEK7gRlqvLOWuJKI6Zo/C4sSP631zIsSbzGvQZznB77YpLlWDuDOQBKrdRapQ
-         IeiiTXDPeaUSQ6HaVcjmGGfMWzUqCz9UtqE0q8szAk9oz8mBOLfPjGCLJxGmTo0hUyWX
-         V3R50gM3GOvtXUTk1x4nMOcOUmWjZJqsrn96dcWXg8QxqnXjH4GcpZlXTIW0C5dl3AeC
-         qffTmWbqFrtU0oLq9TX/QL6v0OfvCIhK9RJCtM5AXCLO/cyJZlNEW8s/6bMv98bDQrLN
-         ChaInLzQYj7X8JH0EiXQYxM4MpLo3iVut9l3jYJ5x2C/ZpAJhRkH2ifq3e3mQnfrsrSk
-         AwGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773052342; x=1773657142;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ES4m/+XXdJvfwCgDwA/EIjZr9bsFI2wq/QVfbrnuRMk=;
-        b=uqnAhRfglYh9mKZlnHVWCTrBrEHfCds5bWKxaMAEJfiYXM6AWlraunZDDJWrpYd7CD
-         P6zd5uwELFM+uqQlPAjc1oejkMl8n8tCRdVll1hUIa/XwqGmKQZ8omPd/PLGQirLc5HD
-         YkUG5qyqkxvG08/wggWmIUFK2CXRWUd/L9uL/T/jeb2MNh2qDlKNbSMl37+Y8wGdhCBL
-         DYkYvPMxOy/oFhR5OQJn5EkFNRyXYNOfpaMMoXreRs8c6t5AwrmgujpL9PBHZZntkzg4
-         +UgLKmcNflGVrniCzo7vqg2bH41yy8EDuvHUHRtNmNPd496qAnIiiKHlm1LvoeiD+sfE
-         QnhQ==
-X-Gm-Message-State: AOJu0YyW8hiOxftxN2S7cIUqipMdcD+61enjNKNRVv+eRaSWW82Qs48V
-	WdU3JmEC9c3uijTsW0im7y4NJBLIoxDyNSoccS0rOOjCVdlHv7fty4X14Smtu2CNr1koTtjVCaQ
-	4DPRl63k9OEbk6OTEw0krG7R+pCYmrniE70C77zo6wiT1CWtYCluO8YhVj0JSY1VQ7pSL67XTzw
-	w/3ntjAZaUMBZtbll024MwDYB9Yc3egZnYtUeR
-X-Gm-Gg: ATEYQzx3W3U7spC14OBKoJ22tn5naPgyUPiiL0G2PesN6NtplUxTZEk/JB7xkpfsK8s
-	PhdIT6Xo+j3Zqr5KE53s3u1AJ3MmjajFsJCspxrziE+xmRhoFUEhuIH9esPSo5eimHsrgyf0aRk
-	1+Etq7DqTsErFJ3xFPbInNqkY7Bp8Qfdk2rKUNLNB75uBkaLRcYJisu8cerWxPLkLwZ0gayqPx3
-	7XilQ==
-X-Received: by 2002:a17:907:3e15:b0:b87:1eaf:377c with SMTP id a640c23a62f3a-b942df74e2emr636678366b.38.1773052342106;
-        Mon, 09 Mar 2026 03:32:22 -0700 (PDT)
-X-Received: by 2002:a17:907:3e15:b0:b87:1eaf:377c with SMTP id
- a640c23a62f3a-b942df74e2emr636674466b.38.1773052341472; Mon, 09 Mar 2026
- 03:32:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NZAtmgQJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F34C0C2BC87;
+	Mon,  9 Mar 2026 10:57:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773053845;
+	bh=B0wVxkyuc1NmAywYw4m8ECKANYzo9yfMU/jCS8FPVYM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NZAtmgQJmHFbUbh2C12vY2IIksajxE2LGZmelSB2mgnTM+5cvfO8oW/KBgrH+oZ+z
+	 Fl2u8qSgOF14775I5XniHmWVMgUoC+cqeh0yYg3azpA8Lrl7/Q4W6zfJBRNjkwNDA7
+	 e86ZnZih2C54fr8HPXVamgBqKuUXuxgo75SR1DeioWFRdENNoveqZ8VmWljdE0fsjU
+	 MMNbenVDmNgtsKosRgFnyp5X0/XzCO71RTprW7bqq8lVXtnztJJebWeaLgk5MBcGh5
+	 BG5REgIpmMHAp3fn8kgNH3nuWOMSJxeiTDYD2ycSzjqF1eQhWYL/2grBZHiozsk146
+	 VTf1IvPKnaUww==
+Message-ID: <31d954de-811c-441a-a92c-a6e234494c06@kernel.org>
+Date: Mon, 9 Mar 2026 11:57:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260306-clk-scaling-v5-0-d21b84ee6f27@redhat.com> <20260306-clk-scaling-v5-2-d21b84ee6f27@redhat.com>
-In-Reply-To: <20260306-clk-scaling-v5-2-d21b84ee6f27@redhat.com>
-From: Brian Masney <bmasney@redhat.com>
-Date: Mon, 9 Mar 2026 06:32:10 -0400
-X-Gm-Features: AaiRm525YW9bPGm372anOs0A8j2qVUFhtuo-Huqobjl_XXhjAvocLN1U5bZzXDs
-Message-ID: <CABx5tqLFx1_RcvVj9ZRiQpT0gW5xO3sfvxC480kQ8in4BpKmRA@mail.gmail.com>
-Subject: Re: [PATCH RFC v5 2/4] clk: test: introduce test suite for sibling
- rate changes on a divider
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Maxime Ripard <mripard@kernel.org>, Alberto Ruiz <aruiz@redhat.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] clk: qcom: Add support for basic clock providers on
+ Fillmore SoC
+To: Aelin Reidel <aelin@mainlining.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux@mainlining.org, phone-devel@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht
+References: <20260308-fillmore-clks-v1-0-976d9a6bebe7@mainlining.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20260308-fillmore-clks-v1-0-976d9a6bebe7@mainlining.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 6, 2026 at 6:23=E2=80=AFPM Brian Masney <bmasney@redhat.com> wr=
-ote:
-> Introduce a test suite that creates a parent with two divider-only
-> children, and add kunit tests that document the current behavior when a
-> sibling clk can unknowingly change the rate of another clk. Some boards
-> are unknowingly dependent on this behavior, and per discussions at the
-> 2025 Linux Plumbers Conference in Tokyo, we can't break the existing
-> behavior. So let's add kunit tests with the current behavior so that
-> we can be made aware if that functionality changes in the future.
->
-> Link: https://lore.kernel.org/linux-clk/aUSWU7UymULCXOeF@redhat.com/
-> Link: https://lpc.events/event/19/contributions/2152/
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
+On 08/03/2026 01:39, Aelin Reidel wrote:
+> This series adds the bare minimum clock provider (gcc and rpmh) driver
+> support for the Fillmore SoC (e.g. SM7450).
+> 
+> With this, it is possible to boot to the rootfs from the UFS storage and
+> have functioning USB.
+> 
+> The multimedia-specific clock providers will be sent in a follow-up
+> series.
+> 
+> This patch series was tested on a Xiaomi 13 Lite / Civi 2 (xiaomi-ziyi).
+> 
+> Signed-off-by: Aelin Reidel <aelin@mainlining.org>
 
-If anyone tries to test this, then you'll also need to apply this
-series from me that includes units.h in clk-test.c.
+Do not Cc linux@mainlining.org. It causes multiple bounces and is not
+even necessary. It's some distribution list only growing the CC list
+negatively affecting spam scores of sending patches.
 
-https://lore.kernel.org/linux-clk/20260304-clk-docs-v1-0-fee468db99f1@redha=
-t.com/
+Start using kei or korgalore if you need to track patches.
 
-I forgot to mark that as a dependency in b4.
-
-Brian
-
+Best regards,
+Krzysztof
