@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1357362131;
-	Mon,  9 Mar 2026 19:51:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0672019CD1D;
+	Mon,  9 Mar 2026 19:51:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773085883; cv=none; b=B6yEfqre2fNzUm1IdcgthbXnW3vtiPlE8P9AQkJIsce4rIkrBpc2OCi1LRGmAv0I7rz4BxJsMF9ots4O9ajhiJ6H0X7bvsrY5g7M6xsZT/s0QyTolVPVXP2xQNkvevP/GBrRBj1Vlenzq8gU/zbkZj9z2XftRuIRl6pA2PsuGoo=
+	t=1773085910; cv=none; b=TPzzAr5fGy8QxrAsvC5MakVUxDU5uHh8mDLmx2kM/l7Q/Ne+DcvXFijTAbOG28rQHBOCxjsFK4OVZhprZG1l8mCJmYjS+pgvXaCafcq9mdHHs61PGuRROBmBlDH9rmaf7csMh9vd1aTBv1PvveG2LhHjXJnVj9O9oaNCRWC9eNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773085883; c=relaxed/simple;
-	bh=tc/hXjaPOs4r7lYuxgCDxoSagD04bxl3JaOq+bwMeZM=;
+	s=arc-20240116; t=1773085910; c=relaxed/simple;
+	bh=xM8/Ny/r4IriTwSNVFwt/X7/4waxHBRM2vNObYmgcWg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q0i7FIMklFHLdXDPnorVPovK8qTQUCKwO4cfAhRZGPaaU/VenBBiLcgxsx1Pl/ZPhA6ow6jR278nE//WswMJ6IFGa0RTEBK6+PFh8nUljBfK4eBtMxuB+hRQhabw6jHxw4r2GzJxgv8NgZLeXA7slUgtIHbHFVaIwkup2JG0sZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bSQ52WVj; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=sTVAqxCyPdSnUslH2YRpgvmaS9UZsrxdPN85FRETgYHV3o0drVLmC8Nx+fPcP1b7Mk7P13nJWQVWwQMsBYglY0bpLjXxCgiwT/IATLOZMMN06szvfphZGwzXZYFtja0QruK7RqXPs4hrYPNSiYP1mRGZUjr5hQg/1TYamZrxszc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tfHeGXWS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bSQ52WVj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24E8AC4CEF7;
-	Mon,  9 Mar 2026 19:51:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tfHeGXWS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EEDFC4CEF7;
+	Mon,  9 Mar 2026 19:51:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773085883;
-	bh=tc/hXjaPOs4r7lYuxgCDxoSagD04bxl3JaOq+bwMeZM=;
+	s=k20201202; t=1773085909;
+	bh=xM8/Ny/r4IriTwSNVFwt/X7/4waxHBRM2vNObYmgcWg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bSQ52WVjThj/b4JXmo5ZzqQIQw7aHD/oVdg6NxD3iBrH1hcyu2WlidL5PYBOOyh25
-	 SninXDJC3ov4Sr2ZHfBzhyVPgKBMeAuesm/YWDLfZ9DCdhq9n1jLq8/oFccVqWs1JU
-	 fzCycZtwsOWkdIkeQ5VSgOfYkw5SoytrXt+ZIUUgkLHlFxgAuaM7j/q3boEISdwqWJ
-	 wOJpxGHbCa6TIYlCt6MvnxabaPQ10+IxTBSy54pJCiq2g1OePgHJVHzHbvBCsCT/vZ
-	 LUWAebNUzLu7E57fZffMmMltGMlqwoaRh4xEpEEn2hyng9+k0SzSR+aghvWXuxDou1
-	 3f66n05QiPUow==
-Date: Mon, 9 Mar 2026 12:51:21 -0700
+	b=tfHeGXWSG0uwvPDJY2nCRkdMzaC2IRdryzlgp+p0E83FrULcn4LOuUh577PcK8AuB
+	 8OilqStmnNO0KgbOnteiyH7zzgRR9CCybSVaXJPyXewRcEp8mg+bEel4UUETzGLnZW
+	 We7VAa7aTPnuZsoF5Im9J7rkJNYknL/7077/FtxQuMG/pVp0XUXfPQ1wtiQqAfuh9k
+	 rsKBCIbiNlGtYL2E20GgxQbid0Bzg0B/Rb4mSmw3F1oShKM5Jz+g/w5n9y7imBqKUP
+	 ForZFKRrKHNFZ2JRoO6mE4CE1nUcMI/NeKKo9Nymw3G4uQEGaK25agXjKG4YLtmfJ9
+	 AQLrLZvbWA6Kg==
+Date: Mon, 9 Mar 2026 12:51:47 -0700
 From: Drew Fustini <fustini@kernel.org>
 To: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
 Cc: Drew Fustini <dfustini@oss.tenstorrent.com>,
@@ -43,11 +43,11 @@ Cc: Drew Fustini <dfustini@oss.tenstorrent.com>,
 	npiggin@oss.tenstorrent.com, agross@kernel.org,
 	agross@oss.tenstorrent.com, bmasney@redhat.com,
 	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: Re: [PATCH v8 2/3] reset: tenstorrent: Add reset controller for
- Atlantis
-Message-ID: <aa8kuXgxfqSWC2Yh@x1>
+Subject: Re: [PATCH v8 3/3] clk: tenstorrent: Add Atlantis clock controller
+ driver
+Message-ID: <aa8k0+y0GSxa7lEy@x1>
 References: <20260306-atlantis-clocks-v8-0-6c9b14a4aa8e@oss.tenstorrent.com>
- <20260306-atlantis-clocks-v8-2-6c9b14a4aa8e@oss.tenstorrent.com>
+ <20260306-atlantis-clocks-v8-3-6c9b14a4aa8e@oss.tenstorrent.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -56,23 +56,30 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260306-atlantis-clocks-v8-2-6c9b14a4aa8e@oss.tenstorrent.com>
+In-Reply-To: <20260306-atlantis-clocks-v8-3-6c9b14a4aa8e@oss.tenstorrent.com>
 
-On Fri, Mar 06, 2026 at 11:12:18AM -0600, Anirudh Srinivasan wrote:
-> Adds Atlantis Reset Controller driver, which shares the same regmap as
-> prcm ( clock controller).
+On Fri, Mar 06, 2026 at 11:12:19AM -0600, Anirudh Srinivasan wrote:
+> Add driver for clock controller in Tenstorrent Atlantis SoC. This version
+> of the driver covers clocks from RCPU subsystem.
 > 
-> This version of the reset controller driver covers resets from the RCPU
-> prcm.
+> 5 types of clocks generated by this controller: PLLs (PLLs
+> with bypass functionality and an additional Gate clk at output), Shared
+> Gates (Multiple Gate clks that share an enable bit), standard Muxes,
+> Dividers and Gates. All clocks are implemented using custom clk ops and
+> use the regmap interface associated with the syscon. All clocks are derived
+> from a 24 Mhz oscillator.
 > 
-> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-> Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+> The reset controller is also setup as an auxiliary device of the clock
+> controller.
+> 
 > Signed-off-by: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
 > ---
->  MAINTAINERS                                |   1 +
->  drivers/reset/Kconfig                      |  11 ++
->  drivers/reset/Makefile                     |   1 +
->  drivers/reset/reset-tenstorrent-atlantis.c | 173 +++++++++++++++++++++++++++++
->  4 files changed, 186 insertions(+)
+>  MAINTAINERS                             |   1 +
+>  drivers/clk/Kconfig                     |   1 +
+>  drivers/clk/Makefile                    |   1 +
+>  drivers/clk/tenstorrent/Kconfig         |  14 +
+>  drivers/clk/tenstorrent/Makefile        |   3 +
+>  drivers/clk/tenstorrent/atlantis-prcm.c | 870 ++++++++++++++++++++++++++++++++
+>  6 files changed, 890 insertions(+)
 
 Reviewed-by: Drew Fustini <fustini@kernel.org>
