@@ -1,162 +1,283 @@
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013022.outbound.protection.outlook.com [52.101.72.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08023291C33;
-	Mon,  9 Mar 2026 17:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.22
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773075739; cv=fail; b=swy2D4onjU5XYcM0qRhnvQoh3OzBORK7id5bWp80VLWdl3dU7+nQ/WPGVqVVmsHK4CVgM5rgbxJrrnCZND3Rue2NwTletL2rGFyf+s/fRDF+aUyTgKQt3UL9m+5M7LK+ICx6+b6DVcA/sK8dz4SbsgHQYuAuSEtlbXgDsnc7Qno=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773075739; c=relaxed/simple;
-	bh=b3M+fKEJ4r5ngNznAm2LaIicdpbeGLpHPk+TyeSzdMQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 Content-Type:MIME-Version; b=bVOcpTR4NDEebK76Mf6kYrCNPF9Qp5wFDLMIKV58jfoq8RDaomCVZyi/DQP1bzfclhUFV7czSGJZZHMeHgeLIWloziUK1zhuMOmHt6ByNc8CvoEr1VyEYg1j4fIWv+YiBlophnoRPQIv19yhETUqmvy3EkGnVBnl9RTFIE0Urbw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=h1jmq1G1; arc=fail smtp.client-ip=52.101.72.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE3829ACD1
+	for <linux-clk@vger.kernel.org>; Mon,  9 Mar 2026 17:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773075764; cv=none; b=rzzTcVNkJhwZDN+KOfwih/wOVQ6N6lwyHBvyNGGbjL8bw1ZKfaInx5tX65+fo7eILSdZW0hY/zHsaFD/YJXAgO+jR4oQJ44NqVcBJLyMPPjICGNr81FOH4WPEnXlC5mo56h+h7yizPNiGZJGz9Do7YtqBxLaMw00rL1gnLQuekU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773075764; c=relaxed/simple;
+	bh=THA3bSVQzv73wv2LgwqQEn2CkXKfTFif1AVKB23g0Uc=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=X5RLdooXNSCMT35TDj6EzWMkR1m4KcK60Vts9DP5/oapgX2/cJBpI6wrYjtQJ198/Rd8o2cpR3nciNwMsIINRmiZSbFZLWNtlv5bxnv5GATu0kB2vuho+z1m1NKoEAPWM50pqzY3nvWCO186n76XaKFiugzGozgY+kAPuoSTsHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G6+tR9FP; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="h1jmq1G1"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hsSJ1XZu+2vTTuvTTD7N20OVROaZPwq6LDRZnFDpITDNg9Nr+vSY+vTOpRdnDAMRNiGTQrTNH0lQM7OQyCyJE3wZOCG80l4k290cAS/rw+4BoC+5aKZ317LCuFUPM/HXKzIHObjIbutLnpvbqCvqK9juegpTCXgTgc3Fum3hyf0+Kd52ERX5MbGLbsjmvinGgqgtOF9ormoRpOIDWL2hD4alNNG+S3TnLR25K9kmw7vGrajUDkcPfLUQ8mwfE+I/vNYMI0rwBFZfZ1Yud/yjZA6iE8goufQ73hhHvX+FKzQJa3X6WbHNBH46tA4gNbwf10wTStUbW2+0TRWy+QRXTQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kMcKaJMjkrwHjAfWfUK+mzgBMmOLu2X3b7oalWqVrzA=;
- b=MFKbmPfEQns4omC4007gRlOqyYn5BNqUT6Mo6DuJc28Fy9R5XWPVet9jPR9FVHu/pIN8eGfmDF4mfcwXf2fi7MTmkerUYpRh+iBLx0ByMm95dp6pV27ZMZm8i/r0AlG3hXTq5o4JSJQPmj3IZthebL8WgEeV0+Bd6tSXYebOJ2/Um3Nixg1Om3YBusHTsobP4TN80caW/TMIkq+kuLOz1UyszgH3gvgh7DVlyx6W0sx6INDXAXt4E/vhbOyvmQq1M1sSjAdi33vdzBHV2lZOoy59lVXQogsbIQnW1nRYTTWwfr8JddeYXqNMjOsxn9vJPLaOh27q3ZXAuogxKrxejg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kMcKaJMjkrwHjAfWfUK+mzgBMmOLu2X3b7oalWqVrzA=;
- b=h1jmq1G1aL1NKZqzYnyGFlj2qZDJxAWyZRJDeF40W3qEFH2hM6iUXbXAzQujbXxaFb5BvJL8zRLty+NE8Fn6ictKZJvcxe88dwFT4i1sPDB2XMW0+Z5/OEkoiH0HfdsdIjCRkh5vivl+dfKdoHdwsYDdMqXwbNn3BtfjK7vh73TNNyJVzbUv7aQk101JJM3pg1+dzN7+wTwrHlGcIJB90cpd/49rgdRHdLOjSNLTV7AOtzLm9DUDX93Les3426E2+Qd/zayuO8p/2dhlWp03/4fNW2+LjdwbTnlfWXvCljRCyfwDhL+oB2C+i0/IUdyOH4DL9O3EwX052cFoNG0YWw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PA4PR04MB9366.eurprd04.prod.outlook.com (2603:10a6:102:2a9::8)
- by GV2PR04MB12436.eurprd04.prod.outlook.com (2603:10a6:150:343::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9678.23; Mon, 9 Mar
- 2026 17:02:14 +0000
-Received: from PA4PR04MB9366.eurprd04.prod.outlook.com
- ([fe80::75e4:8143:ddbc:6588]) by PA4PR04MB9366.eurprd04.prod.outlook.com
- ([fe80::75e4:8143:ddbc:6588%6]) with mapi id 15.20.9678.017; Mon, 9 Mar 2026
- 17:02:14 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Peter Chen <peter.chen@kernel.org>, 
- Pawel Laszczak <pawell@cadence.com>, Roger Quadros <rogerq@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, 
- Marek Vasut <marex@denx.de>, 
- Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-usb@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux@ew.tq-group.com
-In-Reply-To: <20260226153859.665901-1-alexander.stein@ew.tq-group.com>
-References: <20260226153859.665901-1-alexander.stein@ew.tq-group.com>
-Subject: Re: (subset) [PATCH v3 0/5] Support TQMa8QM
-Message-Id: <177307572849.1725457.14336744713058252439.b4-ty@nxp.com>
-Date: Mon, 09 Mar 2026 13:02:08 -0400
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: PH7PR17CA0058.namprd17.prod.outlook.com
- (2603:10b6:510:325::7) To PA4PR04MB9366.eurprd04.prod.outlook.com
- (2603:10a6:102:2a9::8)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G6+tR9FP"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4853510b4f3so23823685e9.0
+        for <linux-clk@vger.kernel.org>; Mon, 09 Mar 2026 10:02:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1773075761; x=1773680561; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=D3yVBrm0NO/kyrzRjsGOfgFPVCo6bv+SX/DHuerXF6U=;
+        b=G6+tR9FPfBiGoF9CdAI4+Zh6kAkcG/QMRUoKI3s7cSTDZuU/Cl8bTZBERPGh4G8Oq+
+         eqRrBwICvug+mbLsVxx2pDjupDyLhQpx+bDaYnNDRYWT+TEzNYyJdPdlz7n5E/n8B2nZ
+         1mR7igbX1Pu1p6T7RZdgqt57IlrGswjpXZB4erz9tbfgjwNUvDtKJAxNkbbUtuMXB29T
+         8YPbjw0NHZbYoMe+Us2BPvpDxik204vxm3Zeq6xCI8Ftg9PDq2Kvj6/U6D7ZBCqg942l
+         VAV+X00UvXv6/9eH/yDWsgFZ3Ra3m/Jj6VWsMwcavrc3dV9/hnJqwe7F0vfxDfhIHhGm
+         bqpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773075761; x=1773680561;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D3yVBrm0NO/kyrzRjsGOfgFPVCo6bv+SX/DHuerXF6U=;
+        b=fnnPdgpx+p0VZzH2hsIeK7xWD2+bXB2yiLdPMU4iQdgdmReDntcfkFOKAS+tqu2REa
+         X5aKPJClZrDwBUZvwOAdsdT9/v0IcM3JwnJ002eAk0ZrIsTaevFre1p11v7MLMb8ZuqG
+         9v6A5v69zEBWeg98TAbt6zlOdGwVG9FTbAUlaqHZv1M63l9VxXx1zmYTP0uUOZxWpAIj
+         3l1/EEUc68wzle64bdHyXxkZmpc6n0kKxVK1/V8sLg6gvD/FSW94BQ+of1CHOzmcyGzT
+         Qjdji/KHuet4YS6ix1az/hmmED+tOwKvwIYbOOk293GgyMuXYC9fQT8LRjDxKAGpdnuG
+         4DpA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/NYYOlPITLd0wnHXW6w+e/uyPUYUn7jn5FrRLD5CBBhaW5Yr21F5NYL6RDj4TEkkvsdN+taGJh8k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFUMSjI26KggKkF5I7zvLDr/tipZ0jxAlzVpBsMRuA6NmqhmK0
+	1RV4Q7+3Ssh5E+sYwj5N8+HBv1/KGZ+G5tMwa3Lje83swjmw3aKAgmLg
+X-Gm-Gg: ATEYQzxj9qG3vKPyhw5qSXalqg+Ow8pqtbR/N5kNTjISBb+AuTrd1CVWd3tAlNtegfy
+	7hdfxLJirJnsDYTdNE01xcxT6iLq70gDwu+T6eHZTBwd1b6Qlb9QsOxVrUDQlbVMlDE8JPIdX2R
+	L1IItm6/C6SSGcC4cryEw9+pflID6XEYekKBWWTYktVrOA0St3yg2+ZB72RPseUyFdZy1rsZlgC
+	qE+84hBsvqD84AK//PjnQ9RJJRlH0nZZ0N8fh/ObfJ/F3b3t/yEpXARFtSlIMQTdnuLFgo6mZrL
+	YtneUJC58qDEidJuW3vFyNnD08xDNTuc9WyrflfH4kMhGDuRKZWvVVL5UP51VnNmzp6BfxdJ2jS
+	3miJKW0791xMWluJn1KmHqwhOVFmNMeDCXvOhUtSa/V8tDneXDRPInKdTCcz8j8NAmdj7hDKHcR
+	I6wPtXaFstcv2R4L2282dzErraOMbZKTauk1ifHfmBRb48x9DVnHo16h128CgwHnZwZxQ6pOXnB
+	SPybPbHUTc70pnHrqRHUtF48ZrcQa1fbC8R7LKKHnjz6ixf+T4Kd1n/TynCy4W+8IuSsNdfqw==
+X-Received: by 2002:a05:600c:3b0c:b0:477:5b0a:e616 with SMTP id 5b1f17b1804b1-485269188admr199557965e9.5.1773075760400;
+        Mon, 09 Mar 2026 10:02:40 -0700 (PDT)
+Received: from ?IPV6:2003:ea:8f46:ce00:5f9:7f3c:5f9a:2a3d? (p200300ea8f46ce0005f97f3c5f9a2a3d.dip0.t-ipconnect.de. [2003:ea:8f46:ce00:5f9:7f3c:5f9a:2a3d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48541aacd81sm4246225e9.14.2026.03.09.10.02.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Mar 2026 10:02:40 -0700 (PDT)
+Message-ID: <8ea1a929-33b8-49ee-afe6-355f5a7d2bd1@gmail.com>
+Date: Mon, 9 Mar 2026 18:02:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA4PR04MB9366:EE_|GV2PR04MB12436:EE_
-X-MS-Office365-Filtering-Correlation-Id: e3ee4612-6937-4c31-2d7e-08de7dfd9c4f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|52116014|19092799006|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	+Y6DCsmDK6Mwe+swq7smm3ratciacXuvvpR02Y3HsDlqt6aJLuStBDMAqIZeVhfr1r0D8g6Oa1BozXIGB/mF3t9R7r/zK3BCDAnSYsYzlmr2yIRifqTHb4hb1vu15gIe4tE6LvVALAHWAmFtL+bbu8TQaDRU66q7mJvW8X096pCVDKDNBxgLMPuggm5TeQ/W6mtFGoKeCPh/uOxCK3U4Q1Z5PTr/Y6RA4iisso0uG1E4oMuZmk5Lq7XdRO/3yHXtCuURXm68RRFbMJl85pFt2nTbPW3+MSWQfB3OekYcMwDooSa9QBYGtelEQQypjr3SY2ptEl/gU6QtglhIK46XZ9vWJvzXVGVbRFPWaB2YCctcprML62UMCG6Yz643cB1R71/0LcIGXkCR6F6b3jH9MwweFfoNtljaJvEQ/yRCmZPwpOeKTuHAkxUqoSIHQn4ye8c3TvneaKojxuHc6L5vVUojGvxQ14WINbN9yYcfl0lLJU2GtKyFTjA5nkGokHFgEUuC2wqjF9Wh2KsqK7qKaAps3k0fuDKJFRSvchJtCcpRZmIVN8Ii5D0LEUdC3STx2Y/b2m5P/jhNxbsAsNJVxkf+sEjKA4HfWpXa/O/eknephTcfzcZ3kYVbu9CfCydFMDEup6wePrc7k0kN/QLbxQutIPAxtyyJfPIyiftayJc1T/M8s0YMh+xiuOcwhRknRROXI/Kf3fgeov9sVEQdS9lcYPRc19HTwDXT+KyMoQK73UWW+1LLikKiLwzOXsygJw2LF9aW1D/0BrAjgripwsiNc7NNelF0wJHizgvSk/++rsW++NWwO4AynBy3LXe1
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB9366.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(52116014)(19092799006)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZFZMUGZPa2V4WnJSc2J3OGNuVW4zejlyR2VqMWQ4czBUL21rdjhjYlNvalVv?=
- =?utf-8?B?ejNaMXRuUTVoUWhvYVBGNmh3OXFJNG9laDdvbHhkOUx5SjVjTEFNdFZoNEN5?=
- =?utf-8?B?ZU5NVlp6enRmbnVUOVk4MytLVEZMUFBSWUozOTAxc1BZUDlyeCtaNk9MRnNj?=
- =?utf-8?B?VVJMeXJoUytGbS9VcEYycjNyWDltZDZDQk4xUjFGTEFybkNmelQrS1lkcjc1?=
- =?utf-8?B?c1ZhUjJHUTBza3NURmZWOU5GT1d1ZitrVW9jRU1KRGRIcW1JSGE2NHUzNWRP?=
- =?utf-8?B?NFJKVzNma1pxQW9QMFhiSkI1dC9tWTVFblhsQmJYOERPVTk2elUyQUhxR2E2?=
- =?utf-8?B?aVNnV0FKV09MTDBuWnovcVhWKzFjQVI1TGZZRmVyRGVhdHV5ZExWeEQ5V0xx?=
- =?utf-8?B?QzdBdlNqNzFMQkZrcnRjWFcvb2lSQnRCa3IvUGdBWmFGcGdUL09peHlVQ2Js?=
- =?utf-8?B?OUpHL1ZGeWdGQVNNdHVHdjJnUmxrRHVYWTVCSXZuakdQTlk4bUp2ajZSUkZm?=
- =?utf-8?B?VjFSRnUrVm5rVU5TZ29Vc0F2QTJtS0tZUUJHSjlwWFNSM3hvaHNMTFNEcytF?=
- =?utf-8?B?bWpWTU5oR3ZqZERYbkp0aUp2Q3h3Mk1tQS8wWGRnNWJUOHZ0YzYwZlhjZkR4?=
- =?utf-8?B?TWR4M3QzYUp3azFaTTBJb3ZoclVmNkpqZnZVZ3N2QWQzbGxWU3NJOXVta2FV?=
- =?utf-8?B?MFlkZk90aGxDYWR0Y0ptd3YxSWtxTVpZQWROc1NOWm1ZZXBJYVJ1SGV0K1Z2?=
- =?utf-8?B?aldBUzJleS8xcDdseXJpSGlFRmxGRGNNWjFzd1RTUDZiVWRDeldZdy83UW5I?=
- =?utf-8?B?TS9sbC9pZytKUWxpMGtXeEpTTnhlMm9FRnFuQm5xZ2hKZFBWa09SOCt6YlVu?=
- =?utf-8?B?c0tpVk8xS0JsZmxVZTErd3poOXdObGEvSmVjNWZjZmZUUFQxUzZ2a2FqMm1h?=
- =?utf-8?B?SGIrc2J4RVR3cVJSb1k2dktibXp6dFNzNXFmeHNDMy9ZVVdscE1QU2xEUS9Q?=
- =?utf-8?B?S0ltNWw1Tk9VZ0JtODVERGVkNlk5bityd1ZrNFhCUjAzbnViYTVaQVF1QzFj?=
- =?utf-8?B?YTYvMWhrVU44Z0hkSHhkTlNRMVpaUjIxZ2hvYWprQXJ4KzJ1ZFh0L1BKUnhB?=
- =?utf-8?B?c01QbHZ1aVQrWm9RcmlLWU5VR0hOY2ZTMlJkR2dFK3N4Mm1ERFpncEFUOWs1?=
- =?utf-8?B?S005TklTRjNTSzdTNmJrUmlwajBMNDhvUUZZRC9ib2JiTVg2UTUzSUFIV011?=
- =?utf-8?B?c29tTVlvVGxKRVE3YytIL3pjMUdyVUUyYWxqNS9NRy9UaW9mN040ajc2bS9m?=
- =?utf-8?B?aWF3SnRVT3lWWFRXbGgreXVsaTlhL1RDcFVxZjlVN095MFVaVEhFOTM5bnNV?=
- =?utf-8?B?WlR2YjF1dUpySkNuT1hYb0ZoQ2gyWEpaQ01ZT2c5VVdjQVZ5TzhyaFVqKzN2?=
- =?utf-8?B?Szl4c09TQXowbU1BOUd0TS9CZzdFZ052bGk3dmJXV21DQ0RRQllCMXJ1WlJY?=
- =?utf-8?B?djBBSkcrNWVvQURpSkI4NUs0WUloVjl3MnB6NU54Ump0NFNMa0dUNmt3QzRu?=
- =?utf-8?B?K2hDL3BqN0xHVVF1VDc5WGRDRVU2STVHOHdyb0lhdkE0bkFFSW03alRFTUw4?=
- =?utf-8?B?c3d1aHJleXRXSmNuRE1VSFdrOWVzdkk0bGxrMW82UFk3RGFoaDZJYXVNUjVU?=
- =?utf-8?B?eGFKbGVGcHFSZFBpN0VuMlFQdTlwSkNCaFZRenFpVGRCY0Y1RWdNaXh5eWUz?=
- =?utf-8?B?QVdtOWF4dDlCU2J1MXJEWmJMelJmWkF3dk1iN205TWF3K1ZWNmkrMFdmK0c1?=
- =?utf-8?B?RDhnSk5VT2xxQisvUVlsRW1ReTI4NGpHcWtQdGtBU2FCYXhDeThUU0twdWU4?=
- =?utf-8?B?b0doV2hEc2pOOS9kc2x0NW54RUZKNWZuUll4VS9mcTFualdTTHdrZGo1dnd1?=
- =?utf-8?B?eWNhSFViWW1NeCt0N1huZjNLTlJoaVVOZzBKcFJUN21YVzBub0dFMDd6dEZX?=
- =?utf-8?B?WFBuTW1sVGNHVW9BNVJNNFVUUU8weHF4N0piM2FPYk4xblJyMFdoVk1vYkth?=
- =?utf-8?B?MjBMaHNtazlVQmdxQVN1RHZ0UHg2VjBkdDRwbVRERkk4SjhDQlNnbUQzSUZi?=
- =?utf-8?B?RlZhdERjNUp3ZEk2SU9LYzBwd2V1blR0Z01mU1BTRXFpMnZrVGdabnNwWUk2?=
- =?utf-8?B?b2ZCVzZKSWcwY0t2QUFUTmpQSXVFWmtaUUp1MWgxQ0RyNHpZNmthRjUwQVdh?=
- =?utf-8?B?QWFGczUyekFzcFh1UC9rSmZlUk9TWUIvVm1FRUIvTlhoUEkyMFBpNGl5TUJo?=
- =?utf-8?Q?NbN1i4ajEdbd+8pwrc?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e3ee4612-6937-4c31-2d7e-08de7dfd9c4f
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB9366.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Mar 2026 17:02:13.9615
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JJGnQVv/60nTxUWY7Dg54XzopuRX8Yd64ut73Hlojq5lHsvA2+azrjk5v/305vLd4Ad7yQdRhYKqFJzcFp9Z2g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR04MB12436
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v2 net-next 1/5] net: phy: move mdio_device reset handling
+ functions in the code
+From: Heiner Kallweit <hkallweit1@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>,
+ Russell King - ARM Linux <linux@armlinux.org.uk>,
+ Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+ David Miller <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ linux-arm-msm <linux-arm-msm@vger.kernel.org>, linux-clk@vger.kernel.org,
+ linux-phy@lists.infradead.org
+References: <9d5724bc-e525-4f8f-b3f8-b16dd5a1164e@gmail.com>
+Content-Language: en-US
+In-Reply-To: <9d5724bc-e525-4f8f-b3f8-b16dd5a1164e@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+In preparation of a follow-up patch this moves reset-related functions
+in the code.
 
-On Thu, 26 Feb 2026 16:38:49 +0100, Alexander Stein wrote:
-> this series adds support for TQ's TQMa8QM. The first 2 patches are prepatory:
-> 1. Add support for USB devices in cdns USB3 host controller, namely
-> onboard-devices as USB hubs. Implemented similarily to snps,dwc3-common.yaml.
-> 
-> 2. Add DMA IRQ for PCIe controller. Similar to commit 0b4c46f9ad79c
-> ("arm64: dts: imx8qm-ss-hsio: Wire up DMA IRQ for PCIe") which was only tested
-> on imx8qxp which just has one PCIe controller.
-> 
-> [...]
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+---
+ drivers/net/phy/mdio_device.c | 162 +++++++++++++++++-----------------
+ 1 file changed, 81 insertions(+), 81 deletions(-)
 
-Applied, thanks!
-
-[3/5] dt-bindings: arm: fsl: add bindings for TQMa8x
-      commit: 826f32e8ff437b4b88ba0b5c7978699710572ceb
-
-Best regards,
+diff --git a/drivers/net/phy/mdio_device.c b/drivers/net/phy/mdio_device.c
+index b8a5a183819..da4fb7484c7 100644
+--- a/drivers/net/phy/mdio_device.c
++++ b/drivers/net/phy/mdio_device.c
+@@ -24,6 +24,87 @@
+ #include <linux/property.h>
+ #include "mdio-private.h"
+ 
++/**
++ * mdio_device_register_reset - Read and initialize the reset properties of
++ *				an mdio device
++ * @mdiodev: mdio_device structure
++ *
++ * Return: Zero if successful, negative error code on failure
++ */
++int mdio_device_register_reset(struct mdio_device *mdiodev)
++{
++	struct reset_control *reset;
++
++	/* Deassert the optional reset signal */
++	mdiodev->reset_gpio = gpiod_get_optional(&mdiodev->dev,
++						 "reset", GPIOD_OUT_LOW);
++	if (IS_ERR(mdiodev->reset_gpio))
++		return PTR_ERR(mdiodev->reset_gpio);
++
++	if (mdiodev->reset_gpio)
++		gpiod_set_consumer_name(mdiodev->reset_gpio, "PHY reset");
++
++	reset = reset_control_get_optional_exclusive(&mdiodev->dev, "phy");
++	if (IS_ERR(reset)) {
++		gpiod_put(mdiodev->reset_gpio);
++		mdiodev->reset_gpio = NULL;
++		return PTR_ERR(reset);
++	}
++
++	mdiodev->reset_ctrl = reset;
++
++	/* Read optional firmware properties */
++	device_property_read_u32(&mdiodev->dev, "reset-assert-us",
++				 &mdiodev->reset_assert_delay);
++	device_property_read_u32(&mdiodev->dev, "reset-deassert-us",
++				 &mdiodev->reset_deassert_delay);
++
++	return 0;
++}
++
++/**
++ * mdio_device_unregister_reset - uninitialize the reset properties of
++ *				  an mdio device
++ * @mdiodev: mdio_device structure
++ */
++void mdio_device_unregister_reset(struct mdio_device *mdiodev)
++{
++	gpiod_put(mdiodev->reset_gpio);
++	mdiodev->reset_gpio = NULL;
++	reset_control_put(mdiodev->reset_ctrl);
++	mdiodev->reset_ctrl = NULL;
++	mdiodev->reset_assert_delay = 0;
++	mdiodev->reset_deassert_delay = 0;
++}
++
++void mdio_device_reset(struct mdio_device *mdiodev, int value)
++{
++	unsigned int d;
++
++	if (!mdiodev->reset_gpio && !mdiodev->reset_ctrl)
++		return;
++
++	if (mdiodev->reset_state == value)
++		return;
++
++	if (mdiodev->reset_gpio)
++		gpiod_set_value_cansleep(mdiodev->reset_gpio, value);
++
++	if (mdiodev->reset_ctrl) {
++		if (value)
++			reset_control_assert(mdiodev->reset_ctrl);
++		else
++			reset_control_deassert(mdiodev->reset_ctrl);
++	}
++
++	d = value ? mdiodev->reset_assert_delay : mdiodev->reset_deassert_delay;
++	if (d)
++		fsleep(d);
++
++	mdiodev->reset_state = value;
++}
++EXPORT_SYMBOL(mdio_device_reset);
++
+ void mdio_device_free(struct mdio_device *mdiodev)
+ {
+ 	put_device(&mdiodev->dev);
+@@ -108,87 +189,6 @@ void mdio_device_remove(struct mdio_device *mdiodev)
+ }
+ EXPORT_SYMBOL(mdio_device_remove);
+ 
+-/**
+- * mdio_device_register_reset - Read and initialize the reset properties of
+- *				an mdio device
+- * @mdiodev: mdio_device structure
+- *
+- * Return: Zero if successful, negative error code on failure
+- */
+-int mdio_device_register_reset(struct mdio_device *mdiodev)
+-{
+-	struct reset_control *reset;
+-
+-	/* Deassert the optional reset signal */
+-	mdiodev->reset_gpio = gpiod_get_optional(&mdiodev->dev,
+-						 "reset", GPIOD_OUT_LOW);
+-	if (IS_ERR(mdiodev->reset_gpio))
+-		return PTR_ERR(mdiodev->reset_gpio);
+-
+-	if (mdiodev->reset_gpio)
+-		gpiod_set_consumer_name(mdiodev->reset_gpio, "PHY reset");
+-
+-	reset = reset_control_get_optional_exclusive(&mdiodev->dev, "phy");
+-	if (IS_ERR(reset)) {
+-		gpiod_put(mdiodev->reset_gpio);
+-		mdiodev->reset_gpio = NULL;
+-		return PTR_ERR(reset);
+-	}
+-
+-	mdiodev->reset_ctrl = reset;
+-
+-	/* Read optional firmware properties */
+-	device_property_read_u32(&mdiodev->dev, "reset-assert-us",
+-				 &mdiodev->reset_assert_delay);
+-	device_property_read_u32(&mdiodev->dev, "reset-deassert-us",
+-				 &mdiodev->reset_deassert_delay);
+-
+-	return 0;
+-}
+-
+-/**
+- * mdio_device_unregister_reset - uninitialize the reset properties of
+- *				  an mdio device
+- * @mdiodev: mdio_device structure
+- */
+-void mdio_device_unregister_reset(struct mdio_device *mdiodev)
+-{
+-	gpiod_put(mdiodev->reset_gpio);
+-	mdiodev->reset_gpio = NULL;
+-	reset_control_put(mdiodev->reset_ctrl);
+-	mdiodev->reset_ctrl = NULL;
+-	mdiodev->reset_assert_delay = 0;
+-	mdiodev->reset_deassert_delay = 0;
+-}
+-
+-void mdio_device_reset(struct mdio_device *mdiodev, int value)
+-{
+-	unsigned int d;
+-
+-	if (!mdiodev->reset_gpio && !mdiodev->reset_ctrl)
+-		return;
+-
+-	if (mdiodev->reset_state == value)
+-		return;
+-
+-	if (mdiodev->reset_gpio)
+-		gpiod_set_value_cansleep(mdiodev->reset_gpio, value);
+-
+-	if (mdiodev->reset_ctrl) {
+-		if (value)
+-			reset_control_assert(mdiodev->reset_ctrl);
+-		else
+-			reset_control_deassert(mdiodev->reset_ctrl);
+-	}
+-
+-	d = value ? mdiodev->reset_assert_delay : mdiodev->reset_deassert_delay;
+-	if (d)
+-		fsleep(d);
+-
+-	mdiodev->reset_state = value;
+-}
+-EXPORT_SYMBOL(mdio_device_reset);
+-
+ /**
+  * mdio_probe - probe an MDIO device
+  * @dev: device to probe
 -- 
-Frank Li <Frank.Li@nxp.com>
+2.53.0
+
 
