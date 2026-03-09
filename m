@@ -1,162 +1,744 @@
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010010.outbound.protection.outlook.com [52.101.84.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8925B3CB2F9;
-	Mon,  9 Mar 2026 17:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773075967; cv=fail; b=N8TsfTcHc1IRr6BF6Acbs+6Di2avjNnHikVObTcSCoRqjfWnusNWOyjSZNArRG1lzpiYMizfEzrvqYjvZJaQRkMNFXtOTTUZwOebGPuh65yV7tm+0QLu2Pfjpao7g+GkxnkMjNExTzmvfXW9KJby8D/F4k8QaqmxiEedUTOwVjo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773075967; c=relaxed/simple;
-	bh=k8vsZk9e59MtTk7FkUg6JNfZLBkVFlqCaPPEBpyKsMs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 Content-Type:MIME-Version; b=gG703jrfPS7oC8M4NvoeKpxq1FDU2V0NA2hdzJLVkE1LVVUPLYkRgEJ02jdrblOC7xz5huB0bvSqttOwScIuXrVyT2ILmYk+D92G51xy2ahcVdzGFR4MF8zUcPFvFZgnakAEOPmBo0NOC/Z6tLUAlH+lSsRpfNmItIiiRxB22v8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=E2KeOkiU; arc=fail smtp.client-ip=52.101.84.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4732C3D410A
+	for <linux-clk@vger.kernel.org>; Mon,  9 Mar 2026 17:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773075970; cv=none; b=IZ13vTRrxFPIuKf7TLrHT0vvfca3oU0uDhhVzG87bktbNAnyY/EuAu4ypKxQd1XEBUtNpnY49cNw+qEvZpDp/txHrS1gAL+u9ImjF1TFajp8lpPSMWj1poimtExGNXiI6hb2S+/5wWnLuOUF8Gtr7fsq53civ9WRFuwv2zcp3eE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773075970; c=relaxed/simple;
+	bh=pGoltY4kSCaXo0vDd4mfu5q0ojRiK1efKjHBKySFkEY=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=IJ4mFJg/0lsxBc7KZu6hKyA5Zoo9IU5zMCjaPvDaf+zu0QIlpM87cntQ82jt+QW+8pVjuKYVsBov+aVVTkp4S3KFBtEoowPYJfgdVxMxV9U2eDAZ4Ot0MI/xHgVhjpd0rV4hw7DNCj/MKTbG4ucZDwAGHTLE38tor1VgvaZfkOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MtduvdpA; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="E2KeOkiU"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HZ+/RvyDhf1jfb5FPaGh1Cvxv3+CIQe5Fp5RbzNOQfeHG5CjuCxjL525ufUN6irjG1e3sUFXUNt8rG4SuACyfMfyboF21pbTDTi1vK2F1VrQdL41vss0xt5YXc0Qtvu/eLgDETsqfkw/o8LrzNKoG1q9lqUbn7GV/JuQSvFF0C5Ate4uUViCldP/cCtegkloArwkkcTuiZykLl6/9nZxrqU2kmd8Xi//JpZfK8A2nqjri8r1r9KVCF65m+i9FqIuHGZJYGGc7LK8/AB5Ru+PPcxXsFKGwWyNU0lwj/AuxjvR+BPU4N7nHfzp11EdNMrpAikwxmLXKNyPlgfLKSns+g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=B2UVRm/ImFraOl+d3LT0onnMZcS6zkb8mZVB9OXos+4=;
- b=xg6cjC4ICyzP+5OnknBOD4MGIvS+p+zloqiGPN0kgjzxNN/m/5lyc4wr3YL8qF9zRVwlxzbtUftUZhtrdxV7tanzlM+uQOsTubLwOCJdHY8SYcAxBj+9bfqzN4iMZbjNhtkKQPat6jfVuVRPQj2md0dpce6aSbLK1xdmx2KJkujFoOkGaNUp9sSkNwggH17NboATk5xjicDNk+LeDr9ZBI1sy7v02tLa3gUYqzLccoO4rGYCl2bM85aFf818mPIBsO5SkFNtd4oKLC2CoB+ewbwXvoW7y9IghMBvjgbsCvHWzfvNZTfojs5ZA6RjUSaS3eLBzbPW1O6C5arewvtUkQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=B2UVRm/ImFraOl+d3LT0onnMZcS6zkb8mZVB9OXos+4=;
- b=E2KeOkiUs4OAN1WrRg4FRaQutHUqWO/bitatTkFIVmEwHE9C/2SNgjH58Kv3LoPKfg7yPeVQh/s17retvR1tO/ea9+U+4UgVGi/Zkp0NDzCTdw1p4a2jLhPXy9fQaezJcT5OCAh1w1x3pymuwfijQeVH4REJ+WnP4KdUDlYZUu+WOCA/4Ac1hSNlaaO6DIP46nteq8DK/xF4ax3MRhvQwzi7XsiDjrBKZ/2gYYXOWkIawPZLBvl8IYKyIddTwv/6jXlTxtfe3pHs/6CUiez2oqnPhK8cxjD2GrR6lG/n7Vq0vNoxTODaMUZp7IF0eq40A3pqTh77dW6LMDaYGrL0ow==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PA4PR04MB9366.eurprd04.prod.outlook.com (2603:10a6:102:2a9::8)
- by AS8PR04MB9009.eurprd04.prod.outlook.com (2603:10a6:20b:42d::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9678.25; Mon, 9 Mar
- 2026 17:05:59 +0000
-Received: from PA4PR04MB9366.eurprd04.prod.outlook.com
- ([fe80::75e4:8143:ddbc:6588]) by PA4PR04MB9366.eurprd04.prod.outlook.com
- ([fe80::75e4:8143:ddbc:6588%6]) with mapi id 15.20.9678.017; Mon, 9 Mar 2026
- 17:05:59 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Peter Chen <peter.chen@kernel.org>, 
- Pawel Laszczak <pawell@cadence.com>, Roger Quadros <rogerq@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, 
- Marek Vasut <marex@denx.de>, 
- Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-usb@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux@ew.tq-group.com
-In-Reply-To: <20260226153859.665901-1-alexander.stein@ew.tq-group.com>
-References: <20260226153859.665901-1-alexander.stein@ew.tq-group.com>
-Subject: Re: (subset) [PATCH v3 0/5] Support TQMa8QM
-Message-Id: <177307595569.1726944.11310104344388663928.b4-ty@nxp.com>
-Date: Mon, 09 Mar 2026 13:05:55 -0400
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: SA1P222CA0064.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:806:2c1::15) To PA4PR04MB9366.eurprd04.prod.outlook.com
- (2603:10a6:102:2a9::8)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MtduvdpA"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4853c3c2fe7so7364965e9.0
+        for <linux-clk@vger.kernel.org>; Mon, 09 Mar 2026 10:06:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1773075962; x=1773680762; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=qYvw9MarMz0Jz71VkIlHQa53Xkq+DgdVXXRsb7BPpNk=;
+        b=MtduvdpAexjPMUVuqXRtAf1iFkkWK2g2s0pHvOZg0k318FL9NZpluDI2BN8WcpSJX4
+         DNyBDrIRB/sOtgPBNrjkztKVTgS7mVDTjdZt9mD9LR3uD2gXRzYhM891ItZ+4k1IdzkA
+         dyye0+s5lZDe3P+OnYXMIKxCeBbo7ps3rFsiRx3tbixRgtWUn0NsCzkk832bwZLn4YPd
+         1vFLQEIn/Cv2ZhBHbr+NOVm8j9G0eKnJQpq1wAp4LghOlmOysGgqarMDG15ARZiJN6JB
+         oVlgdSbELKb9cAa/nTFjeakw76N/t473wEuWNxGHXHH5vioJL9aeAFZdk8uHeYQN1SCP
+         pBPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773075962; x=1773680762;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qYvw9MarMz0Jz71VkIlHQa53Xkq+DgdVXXRsb7BPpNk=;
+        b=SOPR9Xi6dYkNkmnbH+mvBkIWD2b/KrviDwU+IeA6i/OHpouSFCss6GAJa9PrGp7L0m
+         LXQM92GgMam5XbGtj3BMa1p6UXRW58RA6ILYzF2OmHVhH5ju0GxuWThQI0ZlRYzzkbYP
+         ujEgZ6ZpXrl0pn16YO23TqAB7Iz246gawLFYuT8QPzMG7bWvIMllerwoJ01XEHDAM06i
+         HLVcogPKqqfCGvRYP8o5MIkKj9bRfDI+aY8S32t78RyhMvVMfNl0GCJPehSiou9S0eD/
+         8aB7drgKkmsHr8/+5vRZZJjZP4SaqKopBuLh6tsQcKmXTxZbyBmTrMkyO4hysmyFN9sT
+         gWWw==
+X-Forwarded-Encrypted: i=1; AJvYcCVrLbIlgzlyyL0qP8BAXJD+MkdRNKRONAgtrdv2guFgPOINxgVLZ6PRj+cbynd0Xv3Y7/G1Q69TKgw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoS3+Dc2vU+hiDCEEt2kZcIZPFPHLBx9oDu2yyq/LjPFbxECBe
+	89z0ClyFD+XsZKDI/3cao6VZlbmG9yv+UysmPeljdB4+vL5/Wy7Vm04t
+X-Gm-Gg: ATEYQzxoGUFV22M2c3l8zWZEBkOY+lNj29qlRPNwzQwdwmiuj0SeoRHObWatlaTUJ97
+	9VcHyFnN73yRBxsYXhtV0KT8zII+KZ2208cQBeAaxwHWUQkZeOblli9vg81ZMmwL3w/O5+c+4Ml
+	oNebbSklM+Xl+zq6BZewNqy0GFoFmDJuBHJDfjQUR4apX6BDMY16+m7GDFuD8ZGVC79heMb/vc6
+	CQgXJigGzksTPYcz8FrjFy3FeJf2NTfIHWrxp7GVVP95Y2p7BCkMGBWq2HmFsLsmgPn9OF1zEfH
+	Q/aRiKXBDsq4VE5LKgpTWr3jh3uXdE+ex/04UvhWhRpwZ0DhQKglFCzdHymHNXrbiASv8wKD/WX
+	NrFx45GXKNVJzolzEnEID8tYD6x3ljBj9UVhRrpJGHELPMwkzVzc1YExUDy2IB7rXDM36vKWQjW
+	NvK5TXv/kcg2sFXm+eMAMFPdPGnRUPIzNLK6ypZpMoEZmUg6Novk0IsxIp0ronO/n2oyZXQ3rBM
+	djbGZghuKpdjtHQlm6JRAtX3t9aoyy0b8dUXTBGZa5OeA/NNcz8+i7sDleZlsk=
+X-Received: by 2002:a05:600c:a413:b0:485:2fe9:336f with SMTP id 5b1f17b1804b1-4852fe93699mr101900845e9.30.1773075962006;
+        Mon, 09 Mar 2026 10:06:02 -0700 (PDT)
+Received: from ?IPV6:2003:ea:8f46:ce00:5f9:7f3c:5f9a:2a3d? (p200300ea8f46ce0005f97f3c5f9a2a3d.dip0.t-ipconnect.de. [2003:ea:8f46:ce00:5f9:7f3c:5f9a:2a3d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-485245dbd87sm110337545e9.16.2026.03.09.10.06.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Mar 2026 10:06:01 -0700 (PDT)
+Message-ID: <47b85676-b349-4aa0-a5ef-cd37769a4c69@gmail.com>
+Date: Mon, 9 Mar 2026 18:06:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA4PR04MB9366:EE_|AS8PR04MB9009:EE_
-X-MS-Office365-Filtering-Correlation-Id: be0206fa-32fc-4cde-e108-08de7dfe22e0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|19092799006|376014|7416014|52116014|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	BbMCrBPgU5WmU8nJQGGXEOtgfFHD0mbaa8iT+iFEv9xIXVmvNpBLynMj1YZ1qMWjjsfgTIrYQ9xWUx3ZxiwLj+zxnz4vQDVJBUjEyJS5kYHe8C5FJhnz3GbDxsfHmZhLGoRlpK/atgKd3VAXUE6W4broLWNH459JjLnPWzMuezaL/NZhLlvZqCGZRwQ11krUzaChuS4Qnp5wnCA9EAVBkUz4R+c35gDzQtyo6kGtPv7wubu9E5En/xJOEm2L9LZw29+bq//fwWOgsFHugjJeF0rfXRUPyIB7LTjsWZzvWA/TLAz4rZB03DR5l0J0VA2dqwyVma1+QcEySCMddj9i0PiNdd6Q489kJ3vr6gMlCX7eTqj2KILdPKLBSk8LpUpO6FTTYxvRPCuppj6HpoquApXKlqT1EQgA/w9naC3mTu4X18YjFLquiuAj5HShehJEhEaAkHvqF8BVQBPkZqomnXovGV3KO7cYnhm2YsXRTuD1rCz6VapqKpAPPV6UoUm56/w+1vCXZopKEfn5WJ3dX9AQ0FQS57sWf+LTKz0wvn49U7bELlQ6CaiTMr7IiGNARYxXA6Ugc7EyZXOA2QkkFlAZ2JtmH7luIxwf6knnIWxXrdKz/COCCGet48Na7gNtNKnjBtuQYRZ4dwtGQdUy9C3joutpGx470a3up0wMMIa2yDxoEdBfGx56iYbcdAVXNKhvdIkrc8F9YVrKid6LhF9tn6VBMZoSp/QlX5ZmVc3KeJoPYLMrJ93pg1jEdTTxJpKl389Yh9rYx/Snw3P6H0wDDRP9JBfpda8wYlAv9fM8MBA/tS2FErK5YQM8vH8H
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB9366.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(376014)(7416014)(52116014)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?d3NSa2FkT1E4Wis1WGxGcTQ0R1lQMHJMb3hLY0N5UUdiRXN1dXJjdklJUWZn?=
- =?utf-8?B?a2l2QXFFVVVRVnRsRkRJaUg2eEdVbllVY2FFSWJVZWlCQ1hLRkdkZHpnTGcw?=
- =?utf-8?B?R2srQ21zVzhNN0s2Y1R4a1NOZ1g2akswNFpGZDJWVVdWblBzTTZ5WDVPTklP?=
- =?utf-8?B?dWdiU2FCaDFFUTZEZjJnT2xRRWlFSlpPd1ltejNrRE81WU82UmJiSG5lWG1W?=
- =?utf-8?B?aU0wb0dzbXpzNG8ySVdwd01zNG5NNWJCU0pOZkVsVjlVaEpjM2luVnRYbnkr?=
- =?utf-8?B?L3orNm14Vy9sNDZZa2VHbG5SVmNYeEFydG5KTnN6RlBsM1pabkp5dm8vS0dr?=
- =?utf-8?B?UVQwOWU1NXVPZ2JmV3VYdnF0bDM1N24weUR3eG1DeHFHM0cwOHo4ZnJnYVNn?=
- =?utf-8?B?Q0dSZ01TQmVKc0wyeGlkZERKMkhKczBZU1E5Z2pQTEw5YmxYV0JTSG9Tamg4?=
- =?utf-8?B?dUtzV3ZqbS9ERFdVaEdQZmdjV2p6cmhIU0EvSXc3ZWtDTGxDWk00V3cwNE9B?=
- =?utf-8?B?M0ZtWjVRV0EzV2laZXNiV3lnWDFZYXkzUU9lQldZM2NRUFJ5RWlUcmJYRDVH?=
- =?utf-8?B?bEhCM2pIWVNQN1U3MXpHbzgxWXByTDNhOEY1cGxRSituWGU5VHJIZnduaWor?=
- =?utf-8?B?a2FBd3NQaDV6eUR4Uzc0VEN6b3J2a0VuNnU0eDBKQktVL2lJNXBlWm9kTVlC?=
- =?utf-8?B?Z0NXdWMrYVd4WlFCSXZpTFg3SGxOTURIRjhUNDA4cjF2Sy9EMEI0T2QwMjAr?=
- =?utf-8?B?YzNxdlhMbjc5UHdZSmh1clJsS0RsUEdEMC9LVzY1aE5ZcXN4QldOWXkwZVlF?=
- =?utf-8?B?bEdvSjZBSnJQRFY0WkJEdWo2MWtHVElhMm9vUzhxZXpvRlNuUHZFZlMwVWxm?=
- =?utf-8?B?aExzWDVQWGlqNXRjdXRzcGpmOXZqdjBGKzBtTktmODQ4dGJDc1ZhUEl5MTNn?=
- =?utf-8?B?U2xtUEtjc2Q5VDhzOG1yUlBGenRPelFRVEhFdG1zay9YendjcUVqR2JweHRM?=
- =?utf-8?B?cVg2TFdYakI1YTZ4aEU2cGFxYWVNMDU4dldLa042cCtCOVRlNDFYaStFNzhl?=
- =?utf-8?B?RWJLbkxoT1F5VkoxT3lkWDBoak5aVzlDTE4vOW84N2ZsdW52Q25kVmJUckpZ?=
- =?utf-8?B?R003cFNBTENrb2FsSEFyL2htZFI2RHlBZmYvVkZXT2gyZ08vRGVZNUxhcU9t?=
- =?utf-8?B?RTJFR1N4aXNRdkZ0Vi9odTdrZ1o3OEptd2FmSVgrS0xpeW1FSTNMRXJPQ2VH?=
- =?utf-8?B?L3BkYm9zekl2amhNbFN2T09GOVlnVVN4OUkwVGVMeUZ3Zy9YaXVYSy9HNFlW?=
- =?utf-8?B?NmxFSkNiWWFRMnlXeXhvWVpkRTM1d1pZV1p5VmxJKzBPckRKYlRIb21zdjJv?=
- =?utf-8?B?YXZCRDN2Y2ZpLzhZYUhyREVsZDhkYnFmTW1zZkF0NHNrVlBsSnJuSTJKK3F4?=
- =?utf-8?B?TkR6TzF0QThCWDVuTGN6UnJFaDlnMUJ2NFhaMFZ4eDdOU0lFVkVDOTM5ZHQz?=
- =?utf-8?B?UHhIUHlwdG54eG15eU84Y3h4c3BNRnlINWhBZ1cwZHZaUHhSdDk4YnhBY3Ja?=
- =?utf-8?B?N3hKUzdsaVNrSG9GbTN5NTJDN1g2dmFNQmhYZ1BWTnp3RnpxeEhXemk3dDls?=
- =?utf-8?B?cVN1UHExcWJNYnNjdFJYWFNxc1kvWm9JZmN5TDdBRFFHcHlETmw1UEpEbk9a?=
- =?utf-8?B?YU1GVjdLc1NnZ2FKQkc3UHltOXUxaFgxR3JOZGFEOExjTFhwdWJWTWc3TVlu?=
- =?utf-8?B?UlpocmVCZW9GcDcrWEhzMVoyaVZNUmpWZy8yR2RweDVLemVRZ2lBcFBTcTNv?=
- =?utf-8?B?QTFBVU5lc244d04weEQxVUFZWVJZVU9rZFo2R3oxSXU2aXJaaE92SmwvSFY1?=
- =?utf-8?B?dDhkcUlkdUJWQUNkTHpoamVkbWJ4NENpVUgxNFZ3UzFhbnRkNy9VUXpVQ2hC?=
- =?utf-8?B?MDJlMjJLdHZKc3grUDJFbUdGN1NrRnJKUGRseStzbHgzdWJ5VDgrQnBONkVj?=
- =?utf-8?B?SUlHMzhMVnovSTJ3dlZUcit4YVFKcE8rUVZWd3IvekZ1cm1ac0R6NTl2NldF?=
- =?utf-8?B?RExnUHVjYm95ZGY3aERPQythR3hJMHo1c0RIMWdVSVpOQXZsbFRsNFBVU2Nl?=
- =?utf-8?B?NHlKMktJQ01KUmNJU2tyK1lhMHJJMXQ5Z2tZUUYxOGZGYUJ2NUs3dElxaWRu?=
- =?utf-8?B?SjZYa3pTeThQR1RaMFlBaFFaRUlsR3lxWC83UkhkV3g1a2dBU2ZRL1ArR0dq?=
- =?utf-8?B?TUhNNkpqR1Ric1ptcVNKMWdHY0FhSUh3UXVpWTVtRGRydkQrV25BamJnT2dM?=
- =?utf-8?Q?KcFuP4GHm44m8gngco?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: be0206fa-32fc-4cde-e108-08de7dfe22e0
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB9366.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Mar 2026 17:05:59.5545
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: p78LOTnfZ9BQ3Slla7Uq5mG/FxZcw8WuDW8jlLX9mTUh0RGpxmUhcMAVWUEvdjR9FAEfdpVnS+j/JPTv6Fy3Zg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB9009
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v2 net-next 5/5] net: phy: move remaining provider code to
+ mdio_bus_provider.c
+From: Heiner Kallweit <hkallweit1@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>,
+ Russell King - ARM Linux <linux@armlinux.org.uk>,
+ Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+ David Miller <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ linux-arm-msm <linux-arm-msm@vger.kernel.org>, linux-clk@vger.kernel.org,
+ linux-phy@lists.infradead.org
+References: <9d5724bc-e525-4f8f-b3f8-b16dd5a1164e@gmail.com>
+Content-Language: en-US
+In-Reply-To: <9d5724bc-e525-4f8f-b3f8-b16dd5a1164e@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+This moves definition of mdio_bus class and bus_type to the provider
+side, what allows to make them private to libphy.
+As a prerequisite MDIO statistics handling is moved to the
+provider side as well.
 
-On Thu, 26 Feb 2026 16:38:49 +0100, Alexander Stein wrote:
-> this series adds support for TQ's TQMa8QM. The first 2 patches are prepatory:
-> 1. Add support for USB devices in cdns USB3 host controller, namely
-> onboard-devices as USB hubs. Implemented similarily to snps,dwc3-common.yaml.
-> 
-> 2. Add DMA IRQ for PCIe controller. Similar to commit 0b4c46f9ad79c
-> ("arm64: dts: imx8qm-ss-hsio: Wire up DMA IRQ for PCIe") which was only tested
-> on imx8qxp which just has one PCIe controller.
-> 
-> [...]
+Note: This patch causes a checkpatch error "Macros with complex values
+      should be enclosed in parentheses" for
+      MDIO_BUS_STATS_ADDR_ATTR_GROUP. I consider this a false positive
+      here, in addition the patch just moves existing code.
 
-Applied, thanks!
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+---
+v2:
+- explain false positive checkpatch error
+---
+ drivers/net/phy/mdio_bus.c          | 282 ----------------------------
+ drivers/net/phy/mdio_bus_provider.c | 275 +++++++++++++++++++++++++++
+ drivers/net/phy/phylib-internal.h   |   3 +
+ include/linux/phy.h                 |   3 -
+ 4 files changed, 278 insertions(+), 285 deletions(-)
 
-[2/5] arm64: dts: imx8qm-ss-hsio: Wire up DMA IRQ for PCIe
-      commit: f21b3840141c3fb3cd469eca2dbb557b4f55210c
-
-Best regards,
+diff --git a/drivers/net/phy/mdio_bus.c b/drivers/net/phy/mdio_bus.c
+index 9fb47332602..00d0e4159e9 100644
+--- a/drivers/net/phy/mdio_bus.c
++++ b/drivers/net/phy/mdio_bus.c
+@@ -10,20 +10,14 @@
+ 
+ #include <linux/device.h>
+ #include <linux/errno.h>
+-#include <linux/etherdevice.h>
+ #include <linux/ethtool.h>
+-#include <linux/gpio/consumer.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+ #include <linux/mii.h>
+ #include <linux/mm.h>
+ #include <linux/module.h>
+-#include <linux/netdevice.h>
+-#include <linux/of_device.h>
+-#include <linux/of_mdio.h>
+ #include <linux/phy.h>
+-#include <linux/reset.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ #include <linux/string.h>
+@@ -64,218 +58,6 @@ bool mdiobus_is_registered_device(struct mii_bus *bus, int addr)
+ }
+ EXPORT_SYMBOL(mdiobus_is_registered_device);
+ 
+-/**
+- * mdiobus_release - mii_bus device release callback
+- * @d: the target struct device that contains the mii_bus
+- *
+- * Description: called when the last reference to an mii_bus is
+- * dropped, to free the underlying memory.
+- */
+-static void mdiobus_release(struct device *d)
+-{
+-	struct mii_bus *bus = to_mii_bus(d);
+-
+-	WARN(bus->state != MDIOBUS_RELEASED &&
+-	     /* for compatibility with error handling in drivers */
+-	     bus->state != MDIOBUS_ALLOCATED,
+-	     "%s: not in RELEASED or ALLOCATED state\n",
+-	     bus->id);
+-
+-	if (bus->state == MDIOBUS_RELEASED)
+-		fwnode_handle_put(dev_fwnode(d));
+-
+-	kfree(bus);
+-}
+-
+-struct mdio_bus_stat_attr {
+-	struct device_attribute attr;
+-	int address;
+-	unsigned int field_offset;
+-};
+-
+-static struct mdio_bus_stat_attr *to_sattr(struct device_attribute *attr)
+-{
+-	return container_of(attr, struct mdio_bus_stat_attr, attr);
+-}
+-
+-static u64 mdio_bus_get_stat(struct mdio_bus_stats *s, unsigned int offset)
+-{
+-	const u64_stats_t *stats = (const void *)s + offset;
+-	unsigned int start;
+-	u64 val = 0;
+-
+-	do {
+-		start = u64_stats_fetch_begin(&s->syncp);
+-		val = u64_stats_read(stats);
+-	} while (u64_stats_fetch_retry(&s->syncp, start));
+-
+-	return val;
+-}
+-
+-static ssize_t mdio_bus_stat_field_show(struct device *dev,
+-					struct device_attribute *attr,
+-					char *buf)
+-{
+-	struct mdio_bus_stat_attr *sattr = to_sattr(attr);
+-	struct mii_bus *bus = to_mii_bus(dev);
+-	u64 val = 0;
+-
+-	if (sattr->address < 0) {
+-		/* get global stats */
+-		for (int i = 0; i < PHY_MAX_ADDR; i++)
+-			val += mdio_bus_get_stat(&bus->stats[i],
+-						 sattr->field_offset);
+-	} else {
+-		val = mdio_bus_get_stat(&bus->stats[sattr->address],
+-					sattr->field_offset);
+-	}
+-
+-	return sysfs_emit(buf, "%llu\n", val);
+-}
+-
+-static ssize_t mdio_bus_device_stat_field_show(struct device *dev,
+-					       struct device_attribute *attr,
+-					       char *buf)
+-{
+-	struct mdio_bus_stat_attr *sattr = to_sattr(attr);
+-	struct mdio_device *mdiodev = to_mdio_device(dev);
+-	struct mii_bus *bus = mdiodev->bus;
+-	int addr = mdiodev->addr;
+-	u64 val;
+-
+-	val = mdio_bus_get_stat(&bus->stats[addr], sattr->field_offset);
+-
+-	return sysfs_emit(buf, "%llu\n", val);
+-}
+-
+-#define MDIO_BUS_STATS_ATTR(field)					\
+-static const struct mdio_bus_stat_attr dev_attr_mdio_bus_##field = {	\
+-	.attr = __ATTR(field, 0444, mdio_bus_stat_field_show, NULL),	\
+-	.address = -1,							\
+-	.field_offset = offsetof(struct mdio_bus_stats, field),		\
+-};									\
+-static const struct mdio_bus_stat_attr dev_attr_mdio_bus_device_##field = { \
+-	.attr = __ATTR(field, 0444, mdio_bus_device_stat_field_show, NULL), \
+-	.field_offset = offsetof(struct mdio_bus_stats, field),		\
+-}
+-
+-MDIO_BUS_STATS_ATTR(transfers);
+-MDIO_BUS_STATS_ATTR(errors);
+-MDIO_BUS_STATS_ATTR(writes);
+-MDIO_BUS_STATS_ATTR(reads);
+-
+-#define MDIO_BUS_STATS_ADDR_ATTR_DECL(field, addr, file)		\
+-static const struct mdio_bus_stat_attr					\
+-dev_attr_mdio_bus_addr_##field##_##addr = {				\
+-	.attr = { .attr = { .name = file, .mode = 0444 },		\
+-		     .show = mdio_bus_stat_field_show,			\
+-	},								\
+-	.address = addr,						\
+-	.field_offset = offsetof(struct mdio_bus_stats, field),		\
+-}
+-
+-#define MDIO_BUS_STATS_ADDR_ATTR(field, addr)				\
+-	MDIO_BUS_STATS_ADDR_ATTR_DECL(field, addr,			\
+-				 __stringify(field) "_" __stringify(addr))
+-
+-#define MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(addr)			\
+-	MDIO_BUS_STATS_ADDR_ATTR(transfers, addr);			\
+-	MDIO_BUS_STATS_ADDR_ATTR(errors, addr);				\
+-	MDIO_BUS_STATS_ADDR_ATTR(writes, addr);				\
+-	MDIO_BUS_STATS_ADDR_ATTR(reads, addr)				\
+-
+-MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(0);
+-MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(1);
+-MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(2);
+-MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(3);
+-MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(4);
+-MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(5);
+-MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(6);
+-MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(7);
+-MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(8);
+-MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(9);
+-MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(10);
+-MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(11);
+-MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(12);
+-MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(13);
+-MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(14);
+-MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(15);
+-MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(16);
+-MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(17);
+-MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(18);
+-MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(19);
+-MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(20);
+-MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(21);
+-MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(22);
+-MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(23);
+-MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(24);
+-MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(25);
+-MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(26);
+-MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(27);
+-MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(28);
+-MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(29);
+-MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(30);
+-MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(31);
+-
+-#define MDIO_BUS_STATS_ADDR_ATTR_GROUP(addr)				\
+-	&dev_attr_mdio_bus_addr_transfers_##addr.attr.attr,		\
+-	&dev_attr_mdio_bus_addr_errors_##addr.attr.attr,		\
+-	&dev_attr_mdio_bus_addr_writes_##addr.attr.attr,		\
+-	&dev_attr_mdio_bus_addr_reads_##addr.attr.attr			\
+-
+-static const struct attribute *const mdio_bus_statistics_attrs[] = {
+-	&dev_attr_mdio_bus_transfers.attr.attr,
+-	&dev_attr_mdio_bus_errors.attr.attr,
+-	&dev_attr_mdio_bus_writes.attr.attr,
+-	&dev_attr_mdio_bus_reads.attr.attr,
+-	MDIO_BUS_STATS_ADDR_ATTR_GROUP(0),
+-	MDIO_BUS_STATS_ADDR_ATTR_GROUP(1),
+-	MDIO_BUS_STATS_ADDR_ATTR_GROUP(2),
+-	MDIO_BUS_STATS_ADDR_ATTR_GROUP(3),
+-	MDIO_BUS_STATS_ADDR_ATTR_GROUP(4),
+-	MDIO_BUS_STATS_ADDR_ATTR_GROUP(5),
+-	MDIO_BUS_STATS_ADDR_ATTR_GROUP(6),
+-	MDIO_BUS_STATS_ADDR_ATTR_GROUP(7),
+-	MDIO_BUS_STATS_ADDR_ATTR_GROUP(8),
+-	MDIO_BUS_STATS_ADDR_ATTR_GROUP(9),
+-	MDIO_BUS_STATS_ADDR_ATTR_GROUP(10),
+-	MDIO_BUS_STATS_ADDR_ATTR_GROUP(11),
+-	MDIO_BUS_STATS_ADDR_ATTR_GROUP(12),
+-	MDIO_BUS_STATS_ADDR_ATTR_GROUP(13),
+-	MDIO_BUS_STATS_ADDR_ATTR_GROUP(14),
+-	MDIO_BUS_STATS_ADDR_ATTR_GROUP(15),
+-	MDIO_BUS_STATS_ADDR_ATTR_GROUP(16),
+-	MDIO_BUS_STATS_ADDR_ATTR_GROUP(17),
+-	MDIO_BUS_STATS_ADDR_ATTR_GROUP(18),
+-	MDIO_BUS_STATS_ADDR_ATTR_GROUP(19),
+-	MDIO_BUS_STATS_ADDR_ATTR_GROUP(20),
+-	MDIO_BUS_STATS_ADDR_ATTR_GROUP(21),
+-	MDIO_BUS_STATS_ADDR_ATTR_GROUP(22),
+-	MDIO_BUS_STATS_ADDR_ATTR_GROUP(23),
+-	MDIO_BUS_STATS_ADDR_ATTR_GROUP(24),
+-	MDIO_BUS_STATS_ADDR_ATTR_GROUP(25),
+-	MDIO_BUS_STATS_ADDR_ATTR_GROUP(26),
+-	MDIO_BUS_STATS_ADDR_ATTR_GROUP(27),
+-	MDIO_BUS_STATS_ADDR_ATTR_GROUP(28),
+-	MDIO_BUS_STATS_ADDR_ATTR_GROUP(29),
+-	MDIO_BUS_STATS_ADDR_ATTR_GROUP(30),
+-	MDIO_BUS_STATS_ADDR_ATTR_GROUP(31),
+-	NULL,
+-};
+-
+-static const struct attribute_group mdio_bus_statistics_group = {
+-	.name		= "statistics",
+-	.attrs_const	= mdio_bus_statistics_attrs,
+-};
+-__ATTRIBUTE_GROUPS(mdio_bus_statistics);
+-
+-const struct class mdio_bus_class = {
+-	.name		= "mdio_bus",
+-	.dev_release	= mdiobus_release,
+-	.dev_groups	= mdio_bus_statistics_groups,
+-};
+-EXPORT_SYMBOL_GPL(mdio_bus_class);
+-
+ static void mdiobus_stats_acct(struct mdio_bus_stats *stats, bool op, int ret)
+ {
+ 	preempt_disable();
+@@ -841,69 +623,5 @@ int mdiobus_c45_modify_changed(struct mii_bus *bus, int addr, int devad,
+ }
+ EXPORT_SYMBOL_GPL(mdiobus_c45_modify_changed);
+ 
+-/**
+- * mdio_bus_match - determine if given MDIO driver supports the given
+- *		    MDIO device
+- * @dev: target MDIO device
+- * @drv: given MDIO driver
+- *
+- * Return: 1 if the driver supports the device, 0 otherwise
+- *
+- * Description: This may require calling the devices own match function,
+- *   since different classes of MDIO devices have different match criteria.
+- */
+-static int mdio_bus_match(struct device *dev, const struct device_driver *drv)
+-{
+-	const struct mdio_driver *mdiodrv = to_mdio_driver(drv);
+-	struct mdio_device *mdio = to_mdio_device(dev);
+-
+-	/* Both the driver and device must type-match */
+-	if (!(mdiodrv->mdiodrv.flags & MDIO_DEVICE_IS_PHY) !=
+-	    !(mdio->flags & MDIO_DEVICE_FLAG_PHY))
+-		return 0;
+-
+-	if (of_driver_match_device(dev, drv))
+-		return 1;
+-
+-	if (mdio->bus_match)
+-		return mdio->bus_match(dev, drv);
+-
+-	return 0;
+-}
+-
+-static int mdio_uevent(const struct device *dev, struct kobj_uevent_env *env)
+-{
+-	int rc;
+-
+-	/* Some devices have extra OF data and an OF-style MODALIAS */
+-	rc = of_device_uevent_modalias(dev, env);
+-	if (rc != -ENODEV)
+-		return rc;
+-
+-	return 0;
+-}
+-
+-static const struct attribute *const mdio_bus_device_statistics_attrs[] = {
+-	&dev_attr_mdio_bus_device_transfers.attr.attr,
+-	&dev_attr_mdio_bus_device_errors.attr.attr,
+-	&dev_attr_mdio_bus_device_writes.attr.attr,
+-	&dev_attr_mdio_bus_device_reads.attr.attr,
+-	NULL,
+-};
+-
+-static const struct attribute_group mdio_bus_device_statistics_group = {
+-	.name		= "statistics",
+-	.attrs_const	= mdio_bus_device_statistics_attrs,
+-};
+-__ATTRIBUTE_GROUPS(mdio_bus_device_statistics);
+-
+-const struct bus_type mdio_bus_type = {
+-	.name		= "mdio_bus",
+-	.dev_groups	= mdio_bus_device_statistics_groups,
+-	.match		= mdio_bus_match,
+-	.uevent		= mdio_uevent,
+-};
+-EXPORT_SYMBOL(mdio_bus_type);
+-
+ MODULE_LICENSE("GPL");
+ MODULE_DESCRIPTION("MDIO bus/device layer");
+diff --git a/drivers/net/phy/mdio_bus_provider.c b/drivers/net/phy/mdio_bus_provider.c
+index d50fe6eb4b0..041576eba47 100644
+--- a/drivers/net/phy/mdio_bus_provider.c
++++ b/drivers/net/phy/mdio_bus_provider.c
+@@ -28,6 +28,281 @@
+ #include <linux/string.h>
+ #include <linux/uaccess.h>
+ #include <linux/unistd.h>
++#include "phylib-internal.h"
++
++/**
++ * mdiobus_release - mii_bus device release callback
++ * @d: the target struct device that contains the mii_bus
++ *
++ * Description: called when the last reference to an mii_bus is
++ * dropped, to free the underlying memory.
++ */
++static void mdiobus_release(struct device *d)
++{
++	struct mii_bus *bus = to_mii_bus(d);
++
++	WARN(bus->state != MDIOBUS_RELEASED &&
++	     /* for compatibility with error handling in drivers */
++	     bus->state != MDIOBUS_ALLOCATED,
++	     "%s: not in RELEASED or ALLOCATED state\n",
++	     bus->id);
++
++	if (bus->state == MDIOBUS_RELEASED)
++		fwnode_handle_put(dev_fwnode(d));
++
++	kfree(bus);
++}
++
++struct mdio_bus_stat_attr {
++	struct device_attribute attr;
++	int address;
++	unsigned int field_offset;
++};
++
++static struct mdio_bus_stat_attr *to_sattr(struct device_attribute *attr)
++{
++	return container_of(attr, struct mdio_bus_stat_attr, attr);
++}
++
++static u64 mdio_bus_get_stat(struct mdio_bus_stats *s, unsigned int offset)
++{
++	const u64_stats_t *stats = (const void *)s + offset;
++	unsigned int start;
++	u64 val = 0;
++
++	do {
++		start = u64_stats_fetch_begin(&s->syncp);
++		val = u64_stats_read(stats);
++	} while (u64_stats_fetch_retry(&s->syncp, start));
++
++	return val;
++}
++
++static ssize_t mdio_bus_stat_field_show(struct device *dev,
++					struct device_attribute *attr,
++					char *buf)
++{
++	struct mdio_bus_stat_attr *sattr = to_sattr(attr);
++	struct mii_bus *bus = to_mii_bus(dev);
++	u64 val = 0;
++
++	if (sattr->address < 0) {
++		/* get global stats */
++		for (int i = 0; i < PHY_MAX_ADDR; i++)
++			val += mdio_bus_get_stat(&bus->stats[i],
++						 sattr->field_offset);
++	} else {
++		val = mdio_bus_get_stat(&bus->stats[sattr->address],
++					sattr->field_offset);
++	}
++
++	return sysfs_emit(buf, "%llu\n", val);
++}
++
++static ssize_t mdio_bus_device_stat_field_show(struct device *dev,
++					       struct device_attribute *attr,
++					       char *buf)
++{
++	struct mdio_bus_stat_attr *sattr = to_sattr(attr);
++	struct mdio_device *mdiodev = to_mdio_device(dev);
++	struct mii_bus *bus = mdiodev->bus;
++	int addr = mdiodev->addr;
++	u64 val;
++
++	val = mdio_bus_get_stat(&bus->stats[addr], sattr->field_offset);
++
++	return sysfs_emit(buf, "%llu\n", val);
++}
++
++#define MDIO_BUS_STATS_ATTR(field)					\
++static const struct mdio_bus_stat_attr dev_attr_mdio_bus_##field = {	\
++	.attr = __ATTR(field, 0444, mdio_bus_stat_field_show, NULL),	\
++	.address = -1,							\
++	.field_offset = offsetof(struct mdio_bus_stats, field),		\
++};									\
++static const struct mdio_bus_stat_attr dev_attr_mdio_bus_device_##field = { \
++	.attr = __ATTR(field, 0444, mdio_bus_device_stat_field_show, NULL), \
++	.field_offset = offsetof(struct mdio_bus_stats, field),		\
++}
++
++MDIO_BUS_STATS_ATTR(transfers);
++MDIO_BUS_STATS_ATTR(errors);
++MDIO_BUS_STATS_ATTR(writes);
++MDIO_BUS_STATS_ATTR(reads);
++
++#define MDIO_BUS_STATS_ADDR_ATTR_DECL(field, addr, file)		\
++static const struct mdio_bus_stat_attr					\
++dev_attr_mdio_bus_addr_##field##_##addr = {				\
++	.attr = { .attr = { .name = file, .mode = 0444 },		\
++		     .show = mdio_bus_stat_field_show,			\
++	},								\
++	.address = addr,						\
++	.field_offset = offsetof(struct mdio_bus_stats, field),		\
++}
++
++#define MDIO_BUS_STATS_ADDR_ATTR(field, addr)				\
++	MDIO_BUS_STATS_ADDR_ATTR_DECL(field, addr,			\
++				 __stringify(field) "_" __stringify(addr))
++
++#define MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(addr)			\
++	MDIO_BUS_STATS_ADDR_ATTR(transfers, addr);			\
++	MDIO_BUS_STATS_ADDR_ATTR(errors, addr);				\
++	MDIO_BUS_STATS_ADDR_ATTR(writes, addr);				\
++	MDIO_BUS_STATS_ADDR_ATTR(reads, addr)				\
++
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(0);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(1);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(2);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(3);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(4);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(5);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(6);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(7);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(8);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(9);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(10);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(11);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(12);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(13);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(14);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(15);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(16);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(17);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(18);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(19);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(20);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(21);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(22);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(23);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(24);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(25);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(26);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(27);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(28);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(29);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(30);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(31);
++
++#define MDIO_BUS_STATS_ADDR_ATTR_GROUP(addr)				\
++	&(dev_attr_mdio_bus_addr_transfers_##addr).attr.attr,		\
++	&(dev_attr_mdio_bus_addr_errors_##addr).attr.attr,		\
++	&(dev_attr_mdio_bus_addr_writes_##addr).attr.attr,		\
++	&(dev_attr_mdio_bus_addr_reads_##addr).attr.attr			\
++
++static const struct attribute *const mdio_bus_statistics_attrs[] = {
++	&dev_attr_mdio_bus_transfers.attr.attr,
++	&dev_attr_mdio_bus_errors.attr.attr,
++	&dev_attr_mdio_bus_writes.attr.attr,
++	&dev_attr_mdio_bus_reads.attr.attr,
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(0),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(1),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(2),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(3),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(4),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(5),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(6),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(7),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(8),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(9),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(10),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(11),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(12),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(13),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(14),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(15),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(16),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(17),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(18),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(19),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(20),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(21),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(22),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(23),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(24),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(25),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(26),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(27),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(28),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(29),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(30),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(31),
++	NULL,
++};
++
++static const struct attribute_group mdio_bus_statistics_group = {
++	.name		= "statistics",
++	.attrs_const	= mdio_bus_statistics_attrs,
++};
++__ATTRIBUTE_GROUPS(mdio_bus_statistics);
++
++const struct class mdio_bus_class = {
++	.name		= "mdio_bus",
++	.dev_release	= mdiobus_release,
++	.dev_groups	= mdio_bus_statistics_groups,
++};
++
++/**
++ * mdio_bus_match - determine if given MDIO driver supports the given
++ *		    MDIO device
++ * @dev: target MDIO device
++ * @drv: given MDIO driver
++ *
++ * Return: 1 if the driver supports the device, 0 otherwise
++ *
++ * Description: This may require calling the devices own match function,
++ *   since different classes of MDIO devices have different match criteria.
++ */
++static int mdio_bus_match(struct device *dev, const struct device_driver *drv)
++{
++	const struct mdio_driver *mdiodrv = to_mdio_driver(drv);
++	struct mdio_device *mdio = to_mdio_device(dev);
++
++	/* Both the driver and device must type-match */
++	if (!(mdiodrv->mdiodrv.flags & MDIO_DEVICE_IS_PHY) !=
++	    !(mdio->flags & MDIO_DEVICE_FLAG_PHY))
++		return 0;
++
++	if (of_driver_match_device(dev, drv))
++		return 1;
++
++	if (mdio->bus_match)
++		return mdio->bus_match(dev, drv);
++
++	return 0;
++}
++
++static int mdio_uevent(const struct device *dev, struct kobj_uevent_env *env)
++{
++	int rc;
++
++	/* Some devices have extra OF data and an OF-style MODALIAS */
++	rc = of_device_uevent_modalias(dev, env);
++	if (rc != -ENODEV)
++		return rc;
++
++	return 0;
++}
++
++static const struct attribute *const mdio_bus_device_statistics_attrs[] = {
++	&dev_attr_mdio_bus_device_transfers.attr.attr,
++	&dev_attr_mdio_bus_device_errors.attr.attr,
++	&dev_attr_mdio_bus_device_writes.attr.attr,
++	&dev_attr_mdio_bus_device_reads.attr.attr,
++	NULL,
++};
++
++static const struct attribute_group mdio_bus_device_statistics_group = {
++	.name		= "statistics",
++	.attrs_const	= mdio_bus_device_statistics_attrs,
++};
++__ATTRIBUTE_GROUPS(mdio_bus_device_statistics);
++
++const struct bus_type mdio_bus_type = {
++	.name		= "mdio_bus",
++	.dev_groups	= mdio_bus_device_statistics_groups,
++	.match		= mdio_bus_match,
++	.uevent		= mdio_uevent,
++};
+ 
+ /**
+  * mdiobus_alloc_size - allocate a mii_bus structure
+diff --git a/drivers/net/phy/phylib-internal.h b/drivers/net/phy/phylib-internal.h
+index bfb1aa82386..664ed7faa51 100644
+--- a/drivers/net/phy/phylib-internal.h
++++ b/drivers/net/phy/phylib-internal.h
+@@ -9,6 +9,9 @@
+ struct mdio_device;
+ struct phy_device;
+ 
++extern const struct bus_type mdio_bus_type;
++extern const struct class mdio_bus_class;
++
+ /*
+  * phy_supported_speeds - return all speeds currently supported by a PHY device
+  */
+diff --git a/include/linux/phy.h b/include/linux/phy.h
+index e9b0d7427b0..5de4b172cd0 100644
+--- a/include/linux/phy.h
++++ b/include/linux/phy.h
+@@ -2446,9 +2446,6 @@ int __phy_hwtstamp_set(struct phy_device *phydev,
+ 
+ struct phy_port *phy_get_sfp_port(struct phy_device *phydev);
+ 
+-extern const struct bus_type mdio_bus_type;
+-extern const struct class mdio_bus_class;
+-
+ /**
+  * phy_module_driver() - Helper macro for registering PHY drivers
+  * @__phy_drivers: array of PHY drivers to register
 -- 
-Frank Li <Frank.Li@nxp.com>
+2.53.0
+
 
