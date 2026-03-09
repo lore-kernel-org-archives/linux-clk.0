@@ -1,66 +1,94 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F32366DB7;
-	Mon,  9 Mar 2026 07:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4879363C5C;
+	Mon,  9 Mar 2026 07:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773041950; cv=none; b=Xck2zA4Wwj6dQa0LfnmBDAwpy6ActaF6QkVQ8w/UiYn/imrJCpATQdKMD+C+8T7j0jNL6e0FHybFA/+bqVIjYberngIHprmb6WIMEJGBFvqNv/zn5M4Q2MQezA45VGZ7PNqlabHcvr7D1korKrMNaBCMHQ2Qj2kBbCYCRtbF8CM=
+	t=1773042845; cv=none; b=RC3hBqVRSbjC/8gv9wcvyGaUPslCo0Y8q3Z+CxLWA2Q8nAr0lZTgXGSaSA4RvwmKUZj0rckJ8zarVZT46dRiSp1FoxSp1lWzVnIocD6BwaipikPXMN+jV2y0rBUMm7q2v1mtrWORA8wrhIPj7vt+QaFi55No62cjOj0DGfyEIHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773041950; c=relaxed/simple;
-	bh=LfthzEhNdO6EQHdljJzA+RHQtd+u41eHEtqfcftzvqs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N/6F9kRALUoub3F5iG/v81du2dc5Lb0E958IgnO1qX6UKNIe9ISfnD6s/fM7LADuTHHSGEFnzx+CVKnpGdvdhv/j+gjoesjhVUWh05Lapg+8gT9oRJ5rGvVpvwrpf6hd04X5gDFWtXC7y4Q4brUhD2FaNDL57l2cNwyzu9x7rxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H2KcXC96; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773042845; c=relaxed/simple;
+	bh=QntaU4iicWXzgHMvjcDEMFDc8eb5pgaNlUYW7f+yomU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=M7KHcpQsM/SXTgrllKSH+aIajRz+9lKKvMbpkmiVJ0Hu7MgcKO4P8KemwQy4zp6xIyWDco5DvVHcXs6QViQOXbZuGg0jnC+7AJroSSkwwgQLWqmzLES1vkwD5OAjy9kkF7+LJL7U6JuGEMtteOCwYPB6MrS0lorjRuK+aJ8ZHFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=ub0DNSq9; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H2KcXC96"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54E57C4CEF7;
-	Mon,  9 Mar 2026 07:39:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773041949;
-	bh=LfthzEhNdO6EQHdljJzA+RHQtd+u41eHEtqfcftzvqs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H2KcXC96rgaNJ8ek1mOiXImpMvCsqNvs8O5/SXlDV1Uiuthun9LNqhlY9e/rN5mty
-	 chte9ksTkzdRSv9nUEruNBeDCBxA044tdD4+a1eRQJ5udli8Bs3+7Fjoi1uYD4lrHs
-	 +UeE7fUg/Cm+Pnm85qD1Z5Gxvtq9HWD+TbZ7Tx9KcYsRwmZHNbIwmvjNCuBSU+xC3p
-	 mTJOgBVGdEZxRIBRpp8gLjvrk1uNEcZpgCfT1JebpTu8OcIcskFGSGz3k6Pn3p2v7q
-	 jRaEiFPQ2HNehTXHNOE3jVs3Im0AcvWqD4NQZdtOaWvXAaeA7uY+zU/Zou27/RFBGZ
-	 l9A3aoU/zuBlA==
-Date: Mon, 9 Mar 2026 08:39:07 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Aelin Reidel <aelin@mainlining.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux@mainlining.org, 
-	phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH 2/4] dt-bindings: clock: qcom: Document the Fillmore RPMH
- Clock Controller
-Message-ID: <20260309-quick-eel-of-reading-da78db@quoll>
-References: <20260308-fillmore-clks-v1-0-976d9a6bebe7@mainlining.org>
- <20260308-fillmore-clks-v1-2-976d9a6bebe7@mainlining.org>
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="ub0DNSq9"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1773042843; x=1804578843;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=QntaU4iicWXzgHMvjcDEMFDc8eb5pgaNlUYW7f+yomU=;
+  b=ub0DNSq9SS4O9xiRka4RHZumZ4IOzH0V/gyWhMc4FUU18Ao8xb/22+cv
+   Nge4hXFlVPudjBV1pChY6wyxl69UVLKe2VSu0gpsz0kLGGiaNqfQbPsZn
+   jGeCCtB5Uwxfij7qbY7nGaiGYSo++S1Rv21TBTGryIztpo2m9pmjnZvq3
+   kUrdw8Kypq04956VHV/sG7hf5p06t+P9vF0jEdC/FsKxnyd54PISEDdFf
+   mBbUPVlwDzPVuVGdUs9ukb8HWRK7wS+vspJtJMJcbE4S5IEn7GU5xqs+P
+   ddnhG0mHqf+XbbyYeIcBTkpAJYkIMbwdPQYMoNOtNWB7EZgqsiQG9D6Wq
+   w==;
+X-CSE-ConnectionGUID: u8JTaPxxQWWCViC89H2kCA==
+X-CSE-MsgGUID: PkjVoswoS9OuKpH23vt/kQ==
+X-IronPort-AV: E=Sophos;i="6.23,109,1770620400"; 
+   d="scan'208";a="54818266"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Mar 2026 00:53:56 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Mon, 9 Mar 2026 00:53:45 -0700
+Received: from archlinux.mchp-main.com (10.10.85.11) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.58 via Frontend Transport; Mon, 9 Mar 2026 00:53:42 -0700
+From: Mihai Sain <mihai.sain@microchip.com>
+To: <mturquette@baylibre.com>, <sboyd@kernel.org>,
+	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>, <varshini.rajendran@microchip.com>,
+	<cristian.birsan@microchip.com>, <balamanikandan.gunasundar@microchip.com>,
+	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<ryan.wanner@microchip.com>, Mihai Sain <mihai.sain@microchip.com>
+Subject: [PATCH v3 0/4] Update gmac clocks and devicetree for sam9x7 mpu
+Date: Mon, 9 Mar 2026 09:53:25 +0200
+Message-ID: <20260309075329.1528-1-mihai.sain@microchip.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260308-fillmore-clks-v1-2-976d9a6bebe7@mainlining.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Sun, Mar 08, 2026 at 01:39:28AM +0100, Aelin Reidel wrote:
-> Add bindings documentation for the Fillmore (e.g. SM7450) RPMH Clock
-> Controller.
-> 
-> Signed-off-by: Aelin Reidel <aelin@mainlining.org>
-> ---
->  Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml | 1 +
->  1 file changed, 1 insertion(+)
+This series updates the GMAC clock configuration for the
+SAM9X7 family. The current clock definitions contain inconsistencies
+around the GMAC peripheral and its associated generic clock IDs, which
+lead to incorrect wiring in both the clock driver and the devicetree.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Changelog:
 
-Best regards,
-Krzysztof
+v2 -> v3:
+- Rework patch 1 and 3 based on Claudiu's comments
+
+v1 -> v2:
+- Add only one patch for devicetree with detailed description
+
+Mihai Sain (4):
+  clk: at91: sam9x7: Remove gmac peripheral clock with ID 67
+  clk: at91: sam9x7: Rename macb0_clk to gmac_clk
+  clk: at91: sam9x7: Fix gmac_gclk clock definition
+  ARM: dts: microchip: sam9x7: fix GMAC clock configuration
+
+ arch/arm/boot/dts/microchip/sam9x7.dtsi |  6 +++---
+ drivers/clk/at91/sam9x7.c               | 21 ++++++++++-----------
+ 2 files changed, 13 insertions(+), 14 deletions(-)
+
+
+base-commit: 11439c4635edd669ae435eec308f4ab8a0804808
+-- 
+2.53.0
 
