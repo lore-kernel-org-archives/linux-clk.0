@@ -1,41 +1,38 @@
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0102D2222CB
-	for <linux-clk@vger.kernel.org>; Mon,  9 Mar 2026 01:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6A92288D5
+	for <linux-clk@vger.kernel.org>; Mon,  9 Mar 2026 01:02:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773018176; cv=none; b=oZ4etYkQ9I9jUW0bVP7B3xr9gxnR6egTtm0FRUOLr8WzA6SPyVRufnAdEaocIQhpcZxYoLZHdFcvqW9fLF/njeVmZ7RGKK04FgV9cPxPbSva1g57hkPhT9Tzz7fHHduhIUB4KTcy49VoL87bwxCz7MNgO8qUxWBjy3xusDGvUWo=
+	t=1773018180; cv=none; b=GKKEc9RKVuvKaGSY31ALLlCtbsiFrq7B/ybs9omK71SC6jm6rILW48y0rAr25yd7oZXBxhwpzL/RYeCLDn04V2fI0g0cLIS1o6sUYPnT8dFZTvAXOT4k2xNSdukXEiHKTNyE0bfu/PqksM+E2LHoO9MfZKcHMzRL2pNyKlMmsAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773018176; c=relaxed/simple;
-	bh=R8i5LmeS7vywoaypHJDWa8+wWER2GrTCmgrv+06xBiA=;
+	s=arc-20240116; t=1773018180; c=relaxed/simple;
+	bh=VtPBWmm/nMOHzp6rCdykqx0cglu7wkQHxw0cSKbRDwI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Qmm98WljVe2Adw7SDEfW2aUmePSvJ72jnSv35D4ecJ4EkTsdH7xW+L8N3F+BOq9XAJTjb+aD5rroVuKWBhWwCuPWmVwxRZpSg23lnifMfC9BUHYbR8jw8W8FgRhdlkG7OQzSMLpZq0v2QNrjT0Nih0CADa+gLy6MdDWnhGHdpeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=RFAHP1zM; arc=none smtp.client-ip=91.218.175.185
+	 MIME-Version; b=d5nEWGO3b3ny3olfdmN36wnufgLIPiwAf+32C86vk9NwhXvHU8+ekIKX5lzwBE02K8erZgLe8ii4W+IaDNLu8aQChg8bF/LB6MYGSI8w5XB8llOBx4NfytFAlmUkAoAx8g4ziyLUvE6H36OBkzq7Z7ZQS9F944gqVb74rLL62Io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=H5vSEpAG; arc=none smtp.client-ip=91.218.175.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="RFAHP1zM"
+	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="H5vSEpAG"
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
-	s=key1; t=1773018172;
+	s=key1; t=1773018177;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4l9TwGmwI62ShrR0LuMlEarvkAy091kq/V4gPz0BH3Y=;
-	b=RFAHP1zMU/tdKR6z+UZyFcIOTAbaIF2iVy0EH00G7pmqGwwREGHA0l9iuyp/YO4yzQYeYF
-	60o6AzbkFyMCdSBxOv9zayNWZLGSYIZTfaX/WRtKGu9hDBnjfe62Tna1JM1pyJv9W69dHO
-	UxBcAodAmFOOEBdF7arqZmN1Xt6zNx13kzhO8OMWk+n6Gf4z3Myo37C93pIaLoQyV7vmb4
-	vhE4+tHdlZ09tHEuoA74CMDclPV++UsmiEYi0aDLPTOwelgh2maKWx/8BO8We+mQJ31Jne
-	sJKAmW55l4fvOoqZz8AM74GaCHx/j6t2PL3+zXwt0Od5y9Sb9E6BqdPpnLQu4A==
+	bh=ODeT6LjiiA9M0KduV+0m+XVAXxRcyY3LPd7El9jSn+c=;
+	b=H5vSEpAGQibvnJiWPv6wxrPA0Q1JF8VOnsbDYX5oLLmNTxGectYKMo4oveASLa+4hEA37m
+	s6W0aW518ocLlSRIBm3mDOlepiS2M9sPxcj9T8SeD+ub9CKw8+q7rC4mB4BCInxTzxsngS
+	FeTeoZBhqceF8NSG5vDOx9mmm/EH1S7zaYMDOYuLm32VPdfYXe3+8NxQ8CweUeHNdn+61d
+	MDNbOOEZoqfn95Sc364hxk9DGX1sWJf3h6Lb3GJ1GKLK5XzdnVF5H602upH736gGbH/j7r
+	hdQyvupvyn4nEX8+7qrRt87DrIoP7GiB+4Q0cYLm/wGbT4IsZkeotoLAW6JprQ==
 From: Val Packett <val@packett.cool>
 To: Bjorn Andersson <andersson@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
+	Stephen Boyd <sboyd@kernel.org>
 Cc: Val Packett <val@packett.cool>,
 	Konrad Dybcio <konradybcio@kernel.org>,
 	Johan Hovold <johan+linaro@kernel.org>,
@@ -44,11 +41,10 @@ Cc: Val Packett <val@packett.cool>,
 	Maximilian Luz <luzmaximilian@gmail.com>,
 	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH 1/7] dt-bindings: clock: qcom,gcc-sc8180x: Add missing GDSCs
-Date: Sun,  8 Mar 2026 22:00:23 -0300
-Message-ID: <20260309010214.224621-2-val@packett.cool>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 2/7] clk: qcom: gcc-sc8180x: Add missing GDSCs
+Date: Sun,  8 Mar 2026 22:00:24 -0300
+Message-ID: <20260309010214.224621-3-val@packett.cool>
 In-Reply-To: <20260309010214.224621-1-val@packett.cool>
 References: <20260309010214.224621-1-val@packett.cool>
 Precedence: bulk
@@ -65,24 +61,77 @@ which are listed in downstream DTS. Add them.
 
 Signed-off-by: Val Packett <val@packett.cool>
 ---
- include/dt-bindings/clock/qcom,gcc-sc8180x.h | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/clk/qcom/gcc-sc8180x.c | 50 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
 
-diff --git a/include/dt-bindings/clock/qcom,gcc-sc8180x.h b/include/dt-bindings/clock/qcom,gcc-sc8180x.h
-index b9d8438a15ff..9ed7b794aacc 100644
---- a/include/dt-bindings/clock/qcom,gcc-sc8180x.h
-+++ b/include/dt-bindings/clock/qcom,gcc-sc8180x.h
-@@ -322,5 +322,10 @@
- #define USB30_MP_GDSC						8
- #define USB30_PRIM_GDSC						9
- #define USB30_SEC_GDSC						10
-+#define HLOS1_VOTE_MMNOC_MMU_TBU_HF0_GDSC		11
-+#define HLOS1_VOTE_MMNOC_MMU_TBU_HF1_GDSC		12
-+#define HLOS1_VOTE_MMNOC_MMU_TBU_SF_GDSC		13
-+#define HLOS1_VOTE_TURING_MMU_TBU0_GDSC			14
-+#define HLOS1_VOTE_TURING_MMU_TBU1_GDSC			15
+diff --git a/drivers/clk/qcom/gcc-sc8180x.c b/drivers/clk/qcom/gcc-sc8180x.c
+index 31e788e22ab4..55dabf6259b2 100644
+--- a/drivers/clk/qcom/gcc-sc8180x.c
++++ b/drivers/clk/qcom/gcc-sc8180x.c
+@@ -4266,6 +4266,51 @@ static struct gdsc usb30_mp_gdsc = {
+ 	.flags = POLL_CFG_GDSCR,
+ };
  
- #endif
++static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc = {
++	.gdscr = 0x7d050,
++	.pd = {
++		.name = "hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
++};
++
++static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc = {
++	.gdscr = 0x7d058,
++	.pd = {
++		.name = "hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
++};
++
++static struct gdsc hlos1_vote_mmnoc_mmu_tbu_sf_gdsc = {
++	.gdscr = 0x7d054,
++	.pd = {
++		.name = "hlos1_vote_mmnoc_mmu_tbu_sf_gdsc",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
++};
++
++static struct gdsc hlos1_vote_turing_mmu_tbu0_gdsc = {
++	.gdscr = 0x7d05c,
++	.pd = {
++		.name = "hlos1_vote_turing_mmu_tbu0_gdsc",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
++};
++
++static struct gdsc hlos1_vote_turing_mmu_tbu1_gdsc = {
++	.gdscr = 0x7d060,
++	.pd = {
++		.name = "hlos1_vote_turing_mmu_tbu1_gdsc",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
++};
++
+ static struct clk_regmap *gcc_sc8180x_clocks[] = {
+ 	[GCC_AGGRE_NOC_PCIE_TBU_CLK] = &gcc_aggre_noc_pcie_tbu_clk.clkr,
+ 	[GCC_AGGRE_UFS_CARD_AXI_CLK] = &gcc_aggre_ufs_card_axi_clk.clkr,
+@@ -4595,6 +4640,11 @@ static struct gdsc *gcc_sc8180x_gdscs[] = {
+ 	[USB30_MP_GDSC] = &usb30_mp_gdsc,
+ 	[USB30_PRIM_GDSC] = &usb30_prim_gdsc,
+ 	[USB30_SEC_GDSC] = &usb30_sec_gdsc,
++	[HLOS1_VOTE_MMNOC_MMU_TBU_HF0_GDSC] = &hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc,
++	[HLOS1_VOTE_MMNOC_MMU_TBU_HF1_GDSC] = &hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc,
++	[HLOS1_VOTE_MMNOC_MMU_TBU_SF_GDSC] = &hlos1_vote_mmnoc_mmu_tbu_sf_gdsc,
++	[HLOS1_VOTE_TURING_MMU_TBU0_GDSC] = &hlos1_vote_turing_mmu_tbu0_gdsc,
++	[HLOS1_VOTE_TURING_MMU_TBU1_GDSC] = &hlos1_vote_turing_mmu_tbu1_gdsc,
+ };
+ 
+ static const struct regmap_config gcc_sc8180x_regmap_config = {
 -- 
 2.52.0
 
