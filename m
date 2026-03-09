@@ -1,99 +1,105 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23A726AA91
-	for <linux-clk@vger.kernel.org>; Mon,  9 Mar 2026 20:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D1033B96A
+	for <linux-clk@vger.kernel.org>; Mon,  9 Mar 2026 21:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773087441; cv=none; b=P4/mNasb4DFO5uDd/572Ewc9oUWa84/BKr70L5ZsWcasCLgrkOV7lMhGBjeYB/gQwE00IW+xSDCQdJR7UyUXRN8xg6xZzkTp3cFQDDGcPedh+z2YugVtTIOCXSaZvoLzRkzer6Dmhg/fw07fcdhGg+ukn0KzkVdQGPK9ccw+Q4w=
+	t=1773090967; cv=none; b=ik9pFxDu9ChsPDaUbCdpV/iRaKnNXc7M+IKdkQbvZGzJRYMlrBh/X5uZqfkd6HunG44L1amn90G1HpFp4xF3yVoVaovCk2YLfWwyOfhr/q33bEdlJjH/Og3+PW2LYN9BOjcvGuZIrEJiPEAQCOif+Yt0rWQnMr5yV7RF2y+Jcz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773087441; c=relaxed/simple;
-	bh=gPiX92NT9mKde0zMMT/God8FXw+kFh6poVE4X8mEfeE=;
+	s=arc-20240116; t=1773090967; c=relaxed/simple;
+	bh=9mXjXVVxTe1P3tuZMnUde/SL8ghtHGQeRE1ObEba6ds=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uR2HMT3FC2XETMQLz+s45FtaHKh2+t2phYT+jDsqmTyi2hALbkykbHrAnCY+gWtKqlPB6r3R4pPyD1cjNGHvZDsmyUVVJKx53QzJokbVJS3M3r+eUdElLC/+u02LGwHQ2rjBAVMTs/XjR0Dg5Bp8K8eGHR9gv7Bs8GRyRhKFw3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BFXCoAsL; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=YzufRY/8; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=UaG/53w/Brb2yp7lGfHIDms4AKLpCG7mqBzGTo4UKPGZH8u4rXbwJR02iz2esANL4Uzb8g+y0krouahKYT1HbPhh7iL3l4ea+Mv0BWJ2cB+2NoJ+o0TXz0xrariWvlJxDU5QtYqqjVQzpl5FGqK0bYhihqF17IHDw1urKJk8DY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Au+7B/Ah; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=cJYvtcTQ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BFXCoAsL";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="YzufRY/8"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 629HBrkH3148251
-	for <linux-clk@vger.kernel.org>; Mon, 9 Mar 2026 20:17:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=1bl733rFNVoHjnY3FJMPPEyn
-	NpusuvQRv/qTulZdrOA=; b=BFXCoAsLF0mgw8ieUsfxpwKDHQqw7+1m3KKuLS6z
-	4Jot9CZ1mt2cVx9+ElH00mbvWAUjHYXk13fBe1tQG1odJaHEzCgv+3mJergFGSEg
-	94cr/OjizUlpgNxN1oqw5Rk5bC7zxTAqoL6eFiMTz1QQFmLHfhRWsgd1dPSjRXPC
-	jZPc754xamjazxe90POwp+spiI1rUO8ISmdk8O/sXN72wzX4+I9j+f7YvRXbFAX2
-	5lhzc0TpI78iNUxh5PM48m2JLwUl423PWVvFFhSmCnOO7kzgVm5mSF/yqDKjBJxH
-	zclxk4868t0A8HQnBrONpAvWPHxnimNRZijH7FH7oChB/g==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4csv5ua0a0-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 09 Mar 2026 20:17:18 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-8cd80c4965aso349539385a.1
-        for <linux-clk@vger.kernel.org>; Mon, 09 Mar 2026 13:17:18 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Au+7B/Ah";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="cJYvtcTQ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1773090964;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qQL1VhgKHAA+ngckVrAOEKHHkR+ETQSpB8jOYFzaBGc=;
+	b=Au+7B/AhHSXIpO+R1vGP/OE/ykpX3CVW4rSCKdJZVCibkzAU/5TcTsao6VXGZHO0QPkFsc
+	v/e1ouwE93nx6dgFfCRLo7fz1/gdfyE0d0Lt/UssDb0TtUTWAjxu+69OU6g2HXvEBfaAtC
+	O2JXhOACdRZs5iIu/7Dp/newwEBC5jg=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-152-1ZFSafgbP0y5nrUxA369Jw-1; Mon, 09 Mar 2026 17:16:02 -0400
+X-MC-Unique: 1ZFSafgbP0y5nrUxA369Jw-1
+X-Mimecast-MFC-AGG-ID: 1ZFSafgbP0y5nrUxA369Jw_1773090962
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-89a08e6cd15so498856826d6.1
+        for <linux-clk@vger.kernel.org>; Mon, 09 Mar 2026 14:16:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1773087438; x=1773692238; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1bl733rFNVoHjnY3FJMPPEynNpusuvQRv/qTulZdrOA=;
-        b=YzufRY/8IUcKfGIUyTcJBrV+3Vwzk94odtc1RB9BLxVVEB4E5eJT079fGS9z70ggz+
-         Pw4XDGdI+R0AwbEIc97H9Wxcu60kdXnZypXQ2w+1hrR9+K0CsIjJWs3MWXth+KOFKbIa
-         sf65DAiJRYsDvgZsKb05HQwqp0pIbcp8C4WpZNaLmI/d54NvzYGMvIA+fW48bm4wKoTw
-         PGAtSbP7gwjw5AA3Zmu6Rv0x5HII2q3NG2i3fHHms0Vb/VuCw/y60AOuE3ybA3BxAGyu
-         eV5YEUKHwgWYCCOnTCuymiut+Ocybx/VustUmYP2E6ot6wwotD3LbeIMIKWsXfabUfNM
-         wj8Q==
+        d=redhat.com; s=google; t=1773090962; x=1773695762; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qQL1VhgKHAA+ngckVrAOEKHHkR+ETQSpB8jOYFzaBGc=;
+        b=cJYvtcTQnTGrI68peTgCWFaOMMU8EQjk736JFyG/4UaLWSZmsXc+f/JlVmb8iTh1BI
+         59wBq+PEVmAtvVMkUkmOkAc933vS8H+iIdywxeO4a/oMifaqWEm0fAlPu5SsfCQ1JfMu
+         S7M0KvXO+lqjCxgZVZRvhUbmWwCTjc0iJNCaAkHtqJf4UYEKNeLEzu9fV2CyhgPwGOu2
+         uLkJaOoChFTGF8VCUz6TIyrp6DOug54li+D5x4rl43Vbvif6YKWV+WIeyUg7q0/i1Hdl
+         Pxh6HuaTWaxoGhbtkllw6Ln8dKn90vj0XW9MFyfcgeLzxyaDp7PZ/awbrVPSzeQ8zpKS
+         MzVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773087438; x=1773692238;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1bl733rFNVoHjnY3FJMPPEynNpusuvQRv/qTulZdrOA=;
-        b=kNalzz0Flif4eSzC29cIkxab/f8UadDoWPS1SzJce7q5CTs2inrQIrJe39dU9HOrBh
-         1cCUQpe/qZl42GlOUdYEH3MfpA1h4t5IkW9N5CMqIEXLh89IvjGGZgugXFD62ZmL2+0P
-         ybdV6+G7RhCDXV5KOqEn0G8MqIYwj6w7IyfmrRNpCjRewaKnxI/gcm4GfWITFONulvB3
-         gO/q8uccL+VGSG3EWRQhWMIkLSZ3EvtX4pUw+wV8KeOaAGC+VF0LVK1ZbZyKr9Rnc8tc
-         MuzqumjctL5s7Wgfv3SBHl4HD8MKIHAW6N3cglOnJ/JHIujzWsKlVI6c8eMUDdtKPF2Y
-         jtNg==
-X-Forwarded-Encrypted: i=1; AJvYcCWRwxTFJL9phPhlQ+8BRY4G0TnKrzd3rv/au/2Hg21ZriWel0dhdjJC0U8lxwO4A5JgKCN0pqRnovo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIOfjSM0GxZ4DQivjN7Vd8rYvEVlI2mpaGRqr4ctPmEehgsA4y
-	D+6GzfTeh7le3syYQML8R4jQ0ZGCxt1WdwS18wSxJNDNNJQzSbQHZgwomaMtu3nAjafAQpDbjAZ
-	ebhvY/vL5AWz6NYeQRmjZUBxHEqOGjf0iwmqsU3PKH+RFLmHQiTWWACK9pcWjtyc=
-X-Gm-Gg: ATEYQzx8ClynCyywn0N9dRX6ZoQ/1qnWY/8UnGWVIcc1YyVGfCjroJ1qxGye/zHueV3
-	kFpkQfWJ97qebdTseHkASWkkroTadb8G8cVkNeqOTiY/VNe/sH1JiLSxKZh0Tb/Ezl+zGBMmPnf
-	PeUok5/nOTclHGSZn07zy2pVXud9KRt/KE6mFS2ZcuX0n/wqpSIh8tmhLw7hi+RtKZ6pcdUetw2
-	O38WexcSqJF1lhv6FXNESGLw+kPjeeubolX5qC0T/O6GA5QLY+TkTyJQSwkHyEUSPIpvDjE3u3w
-	re80MuNUlFf1gY3ocbdz1/1hxLPOv4lGq+JWWWDaLZnrEffpqgHI6UBG9VPoF2gXIHEcySvwSb8
-	LdwhvIWWHfZvSa/bvYZb2Lrmm8ZnNCxUh8Rv0WddABXAscMY+MgXJnKB5tlBU9p0D1GBvnBSBfC
-	ZROK4gyoUozUl8OGpJwRG5X1vXH5Qr0unbPwI=
-X-Received: by 2002:a05:620a:c44:b0:8cd:8c3f:af1 with SMTP id af79cd13be357-8cd93b3cbd9mr99037485a.1.1773087438298;
-        Mon, 09 Mar 2026 13:17:18 -0700 (PDT)
-X-Received: by 2002:a05:620a:c44:b0:8cd:8c3f:af1 with SMTP id af79cd13be357-8cd93b3cbd9mr99033785a.1.1773087437839;
-        Mon, 09 Mar 2026 13:17:17 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a13d085ee3sm2281593e87.62.2026.03.09.13.17.13
+        d=1e100.net; s=20230601; t=1773090962; x=1773695762;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=qQL1VhgKHAA+ngckVrAOEKHHkR+ETQSpB8jOYFzaBGc=;
+        b=rK80CRueqjHGe1CXk/9ju/vAZieeX/g2ZzwP9UxiLVdWNeiEnRozda6BS17L876KjW
+         dbHynVmRoBZf6nNr+sCmdAtT4vs2lfx1GQDG4HBME8gjosa4JDtSQPhBCKHzew56Mrwd
+         IRkmTGaRD7Or9mwleTtDNWlBDYvcFHAcwgUu0wfLgo2UPKQxsE4zguu/n1vBa+UTvthi
+         ujuEadM6l+aNj4eYw6F4zOmxK5ApnSVfyuThmz7sNIPIF/n+MdQA3o5NUNsnUacmkmWS
+         n0zrFsM0owxGMpluwpQb4xEGcwlEukSiLODHCAvkHwVoUl8IhBmq2aOJKzoSV7uuYlkX
+         GdbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX+4CKCxgma4MWrwpS4UMNlQHBio3Az9u4EED0aV+C5f8FX+6Y8h7VjT1j3cVRT8Cg+m6mcpWsEW6A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy98WTJ+fz+GWnaYDfH27otj8B1Zu1CS4CtSnEh4pbwD4mBPbuQ
+	KoDrFdxU5g3EeGz67evW8MY7gNumR2KolncShbMQeZGKLHyXy6x8cyfUoac3sIHSRU06fkQp+E8
+	B8j9OqqxscQkx9hTzuygOGOykVNBcnUIB4/eYeOk+YbHtZARcQw3f4zPQ/M5Uag==
+X-Gm-Gg: ATEYQzwuZdM43GcnN5BXMArG4RtgIfSyLjg+Hqg60rtETKbr+klTUx7JuRluKoq/QEX
+	FFkOqj9cS+eahHNkiOzOwnSoUKLys9LC7zzRnwD9UxjZRGAz+jawH4fN6i+u3oi8PXVXjMnB5fb
+	yhkbjEWze0afcSBaUEZyGfs/zlt3H/XwSeJYLg4D0rhBd1rp+8NXZzWUVKr1I/F0zgHdJplFWG3
+	oD9DmH72b9n52a4Capz1lR3FvdhtBfwoLQTACVR1ClbmUpI1/ODvkvxxORIBaSH7DtWs/jlSWIQ
+	G1azNAgGfnP52O1caVNS5qXR86EMUvXAjXkgU7JAEXGxEJ/dUmkrZLZFNHVD3eAL4goB53BfcKq
+	FBIgsycqddqD+Lt0rIU0hxwrniJRq0Siu1zXXcx/CCYHS3+v3yZfJB1tI
+X-Received: by 2002:a05:6214:c68:b0:899:eff6:6e73 with SMTP id 6a1803df08f44-89a30a1e8d1mr193817736d6.7.1773090962414;
+        Mon, 09 Mar 2026 14:16:02 -0700 (PDT)
+X-Received: by 2002:a05:6214:c68:b0:899:eff6:6e73 with SMTP id 6a1803df08f44-89a30a1e8d1mr193817286d6.7.1773090962011;
+        Mon, 09 Mar 2026 14:16:02 -0700 (PDT)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-89a57a18140sm6725596d6.3.2026.03.09.14.16.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2026 13:17:15 -0700 (PDT)
-Date: Mon, 9 Mar 2026 22:17:12 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Val Packett <val@packett.cool>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Maximilian Luz <luzmaximilian@gmail.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/7] clk: qcom: gcc-sc8180x: Add missing GDSC flags
-Message-ID: <usvdz7ocxyl6erj5aay4ghix4h3x2hklfmkg32fvakuzuoj7vw@zq66ysfqgte4>
-References: <20260309010214.224621-1-val@packett.cool>
- <20260309010214.224621-6-val@packett.cool>
+        Mon, 09 Mar 2026 14:16:01 -0700 (PDT)
+Date: Mon, 9 Mar 2026 17:15:58 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Drew Fustini <fustini@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>,
+	Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>,
+	Drew Fustini <dfustini@oss.tenstorrent.com>,
+	Joel Stanley <jms@oss.tenstorrent.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	joel@jms.id.au, mpe@kernel.org, mpe@oss.tenstorrent.com,
+	npiggin@oss.tenstorrent.com, agross@kernel.org,
+	agross@oss.tenstorrent.com,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: [PATCH v8 3/3] clk: tenstorrent: Add Atlantis clock controller
+ driver
+Message-ID: <aa84jv9NkZnTgSLi@redhat.com>
+References: <20260306-atlantis-clocks-v8-0-6c9b14a4aa8e@oss.tenstorrent.com>
+ <20260306-atlantis-clocks-v8-3-6c9b14a4aa8e@oss.tenstorrent.com>
+ <aa8pVqupeZr67bEd@x1>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -102,45 +108,39 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260309010214.224621-6-val@packett.cool>
-X-Proofpoint-GUID: W9bkdyd4qjayk51sU5KQ3t8icZXwhfUQ
-X-Proofpoint-ORIG-GUID: W9bkdyd4qjayk51sU5KQ3t8icZXwhfUQ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzA5MDE4MCBTYWx0ZWRfX1F1eOUgjIuTb
- LDy8IXqVsWXEBSDT3VNl1KtTEv/ItDW7CKGV7OIrfzqwjB504lvQBJHrBLQxVM5qH9rW0RL0+CM
- 23gRPoegXc46CniZjg0GhA3jxmC9a/bMDDnL48b9WYioiodP2o7OUpoCVeyO2kOW9swGvjEUh7j
- zJB7dMaSjrRNMgyrX7mi/boX7Kd1sU1ZL400CeupWSdQN23Ct+5K8JD+M7mJpoI8noVuFMliLJ0
- pR7ycoVvhcnJKaTvKzH/tLmQ8Ed9zBv9KsOX6tqVwGgpegYOMMbX+DG2/hjJwCBta850SFEGFpB
- 9uU2gZ8IiMRAh/DTVtr8KScB5QO4Ow845ZSg++o+KPmS4XdxZ0NivOmTIP9f3KPPEGS8CiYK+eu
- ePXNzS9PedLkcaTyAIfeVB1OeDud+QmWwX49Jw/5GdvNSAb5D0tIB2hMZ79n1w4NwRdogW/6fb9
- lYHFS0rsUoLTOYEn2ew==
-X-Authority-Analysis: v=2.4 cv=Xr/3+FF9 c=1 sm=1 tr=0 ts=69af2ace cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22 a=EUspDBNiAAAA:8
- a=YcTtKlT3hu8PWQJ1XPkA:9 a=CjuIK1q_8ugA:10 a=NFOGd7dJGGMPyQGDc5-O:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-09_05,2026-03-09_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 adultscore=0 spamscore=0 impostorscore=0 suspectscore=0
- lowpriorityscore=0 clxscore=1015 phishscore=0 priorityscore=1501 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2602130000 definitions=main-2603090180
+In-Reply-To: <aa8pVqupeZr67bEd@x1>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On Sun, Mar 08, 2026 at 10:00:27PM -0300, Val Packett wrote:
-> Similarly to sc8280xp, the GCC GDSCs can and should use the retain
-> registers so as not to lose their state when entering lower power modes.
+On Mon, Mar 09, 2026 at 01:11:02PM -0700, Drew Fustini wrote:
+> On Fri, Mar 06, 2026 at 11:12:19AM -0600, Anirudh Srinivasan wrote:
+> > Add driver for clock controller in Tenstorrent Atlantis SoC. This version
+> > of the driver covers clocks from RCPU subsystem.
+> > 
+> > 5 types of clocks generated by this controller: PLLs (PLLs
+> > with bypass functionality and an additional Gate clk at output), Shared
+> > Gates (Multiple Gate clks that share an enable bit), standard Muxes,
+> > Dividers and Gates. All clocks are implemented using custom clk ops and
+> > use the regmap interface associated with the syscon. All clocks are derived
+> > from a 24 Mhz oscillator.
+> > 
+> > The reset controller is also setup as an auxiliary device of the clock
+> > controller.
+> > 
+> > Signed-off-by: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
+> > ---
+> >  MAINTAINERS                             |   1 +
+> >  drivers/clk/Kconfig                     |   1 +
+> >  drivers/clk/Makefile                    |   1 +
+> >  drivers/clk/tenstorrent/Kconfig         |  14 +
+> >  drivers/clk/tenstorrent/Makefile        |   3 +
+> >  drivers/clk/tenstorrent/atlantis-prcm.c | 870 ++++++++++++++++++++++++++++++++
+> >  6 files changed, 890 insertions(+)
 > 
-> Fixes: 4433594bbe5d ("clk: qcom: gcc: Add global clock controller driver for SC8180x")
-> Signed-off-by: Val Packett <val@packett.cool>
-> ---
->  drivers/clk/qcom/gcc-sc8180x.c | 22 +++++++++++-----------
->  1 file changed, 11 insertions(+), 11 deletions(-)
-> 
+> Hi Stephen, does it make sense for me to create clk branches [1] in the
+> tenstorrent repo on kernel.org for Atlantis patches to go through?
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+I am not Stephen, but that's the approach that all of the other SoC
+vendors use for the clk subsystem, so I would say yes.
 
+Brian
 
--- 
-With best wishes
-Dmitry
