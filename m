@@ -1,39 +1,36 @@
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6A92288D5
-	for <linux-clk@vger.kernel.org>; Mon,  9 Mar 2026 01:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE4D1F16B
+	for <linux-clk@vger.kernel.org>; Mon,  9 Mar 2026 01:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773018180; cv=none; b=GKKEc9RKVuvKaGSY31ALLlCtbsiFrq7B/ybs9omK71SC6jm6rILW48y0rAr25yd7oZXBxhwpzL/RYeCLDn04V2fI0g0cLIS1o6sUYPnT8dFZTvAXOT4k2xNSdukXEiHKTNyE0bfu/PqksM+E2LHoO9MfZKcHMzRL2pNyKlMmsAY=
+	t=1773018180; cv=none; b=mJS4biFpR06UAQLDfJOInj7fuicbN+J09hGnWtfpnBuB73PasFiZsk1cT9/F13dbvL8+V1zNRh059rIBtpolCU/zKhpO3MmToIvYm525gihe49orlBfRMhqZxJT7Wk7JJp0s9+l0VFSrpiwL8gNZgtuftZweebpbcII187rWYcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1773018180; c=relaxed/simple;
-	bh=VtPBWmm/nMOHzp6rCdykqx0cglu7wkQHxw0cSKbRDwI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=d5nEWGO3b3ny3olfdmN36wnufgLIPiwAf+32C86vk9NwhXvHU8+ekIKX5lzwBE02K8erZgLe8ii4W+IaDNLu8aQChg8bF/LB6MYGSI8w5XB8llOBx4NfytFAlmUkAoAx8g4ziyLUvE6H36OBkzq7Z7ZQS9F944gqVb74rLL62Io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=H5vSEpAG; arc=none smtp.client-ip=91.218.175.170
+	bh=rRc/e6K/yWxakpik9GUm14LiUHLzoaW9X3Y/2OZeQZM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ahs9lK2+eezgsbbygkWHTZTqePFJuIf7XMpHCIOsvpai1gphp1acag3hMoxqpOJzB0WoQMCX0djbbV3x022drycqS47rrIvbp7VOV6RhjBDIC+b4G3oSQI8KZQDY3OoKf4CIaRnYt5oQcKEPGP4Bx5P8REjEJg0AGJwG+UFm34o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=jvhojoBA; arc=none smtp.client-ip=91.218.175.184
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="H5vSEpAG"
+	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="jvhojoBA"
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
-	s=key1; t=1773018177;
+	s=key1; t=1773018167;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ODeT6LjiiA9M0KduV+0m+XVAXxRcyY3LPd7El9jSn+c=;
-	b=H5vSEpAGQibvnJiWPv6wxrPA0Q1JF8VOnsbDYX5oLLmNTxGectYKMo4oveASLa+4hEA37m
-	s6W0aW518ocLlSRIBm3mDOlepiS2M9sPxcj9T8SeD+ub9CKw8+q7rC4mB4BCInxTzxsngS
-	FeTeoZBhqceF8NSG5vDOx9mmm/EH1S7zaYMDOYuLm32VPdfYXe3+8NxQ8CweUeHNdn+61d
-	MDNbOOEZoqfn95Sc364hxk9DGX1sWJf3h6Lb3GJ1GKLK5XzdnVF5H602upH736gGbH/j7r
-	hdQyvupvyn4nEX8+7qrRt87DrIoP7GiB+4Q0cYLm/wGbT4IsZkeotoLAW6JprQ==
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=jW4mW1GfYwAGUTP73I4AqgwxwPvoK4UJopMM4jq59Q8=;
+	b=jvhojoBASFCnkcme347c3UBfC/LO8ikwtiZEpISrAKLStuwCJeuozbZ9fTNFhD3aco4GqC
+	wq1go//OsTEZIOPQcHnQfrRcdvAROZPRH+dzM3ojdRayne2hB6cptJvNM4/sQs4f6bu2yL
+	VT2w/k60CouQG7gaFL1t/MaB2+PqswpCrEUhjrpANzaWp7YIcZNHORotlEJ+QNj3zwLHEO
+	mlmI8pXn/5atPTocsfsjPEu7q0c10jbyyC6RVrxLIcyYID2oRLy+hGwrC5YZjZIgIVXoWN
+	sYtwSJTK0HpVBJWDczs41DIxo7UfKd8lBjI8tBIqLXLYBcm4m3oPq3rrL7st6g==
 From: Val Packett <val@packett.cool>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
+To: 
 Cc: Val Packett <val@packett.cool>,
+	Bjorn Andersson <andersson@kernel.org>,
 	Konrad Dybcio <konradybcio@kernel.org>,
 	Johan Hovold <johan+linaro@kernel.org>,
 	Manivannan Sadhasivam <mani@kernel.org>,
@@ -42,11 +39,9 @@ Cc: Val Packett <val@packett.cool>,
 	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/7] clk: qcom: gcc-sc8180x: Add missing GDSCs
-Date: Sun,  8 Mar 2026 22:00:24 -0300
-Message-ID: <20260309010214.224621-3-val@packett.cool>
-In-Reply-To: <20260309010214.224621-1-val@packett.cool>
-References: <20260309010214.224621-1-val@packett.cool>
+Subject: [PATCH 0/7] clk: qcom: sc8180x: PM-related fixes
+Date: Sun,  8 Mar 2026 22:00:22 -0300
+Message-ID: <20260309010214.224621-1-val@packett.cool>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -56,82 +51,55 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-There are 5 more GDSCs that we were ignoring and not putting to sleep,
-which are listed in downstream DTS. Add them.
+This series mostly ports the fixes that were made over the years to the
+sc8280xp drivers to the sc8180x ones. (With apologies to everyone for
+somewhat stealing the commit messages in places :D)
 
-Signed-off-by: Val Packett <val@packett.cool>
----
- drivers/clk/qcom/gcc-sc8180x.c | 50 ++++++++++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
+The most pressing issue this resolves is s2idle exit on the Surface Pro X
+being slow and breaking NVMe:
 
-diff --git a/drivers/clk/qcom/gcc-sc8180x.c b/drivers/clk/qcom/gcc-sc8180x.c
-index 31e788e22ab4..55dabf6259b2 100644
---- a/drivers/clk/qcom/gcc-sc8180x.c
-+++ b/drivers/clk/qcom/gcc-sc8180x.c
-@@ -4266,6 +4266,51 @@ static struct gdsc usb30_mp_gdsc = {
- 	.flags = POLL_CFG_GDSCR,
- };
- 
-+static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc = {
-+	.gdscr = 0x7d050,
-+	.pd = {
-+		.name = "hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = VOTABLE,
-+};
-+
-+static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc = {
-+	.gdscr = 0x7d058,
-+	.pd = {
-+		.name = "hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = VOTABLE,
-+};
-+
-+static struct gdsc hlos1_vote_mmnoc_mmu_tbu_sf_gdsc = {
-+	.gdscr = 0x7d054,
-+	.pd = {
-+		.name = "hlos1_vote_mmnoc_mmu_tbu_sf_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = VOTABLE,
-+};
-+
-+static struct gdsc hlos1_vote_turing_mmu_tbu0_gdsc = {
-+	.gdscr = 0x7d05c,
-+	.pd = {
-+		.name = "hlos1_vote_turing_mmu_tbu0_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = VOTABLE,
-+};
-+
-+static struct gdsc hlos1_vote_turing_mmu_tbu1_gdsc = {
-+	.gdscr = 0x7d060,
-+	.pd = {
-+		.name = "hlos1_vote_turing_mmu_tbu1_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = VOTABLE,
-+};
-+
- static struct clk_regmap *gcc_sc8180x_clocks[] = {
- 	[GCC_AGGRE_NOC_PCIE_TBU_CLK] = &gcc_aggre_noc_pcie_tbu_clk.clkr,
- 	[GCC_AGGRE_UFS_CARD_AXI_CLK] = &gcc_aggre_ufs_card_axi_clk.clkr,
-@@ -4595,6 +4640,11 @@ static struct gdsc *gcc_sc8180x_gdscs[] = {
- 	[USB30_MP_GDSC] = &usb30_mp_gdsc,
- 	[USB30_PRIM_GDSC] = &usb30_prim_gdsc,
- 	[USB30_SEC_GDSC] = &usb30_sec_gdsc,
-+	[HLOS1_VOTE_MMNOC_MMU_TBU_HF0_GDSC] = &hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc,
-+	[HLOS1_VOTE_MMNOC_MMU_TBU_HF1_GDSC] = &hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc,
-+	[HLOS1_VOTE_MMNOC_MMU_TBU_SF_GDSC] = &hlos1_vote_mmnoc_mmu_tbu_sf_gdsc,
-+	[HLOS1_VOTE_TURING_MMU_TBU0_GDSC] = &hlos1_vote_turing_mmu_tbu0_gdsc,
-+	[HLOS1_VOTE_TURING_MMU_TBU1_GDSC] = &hlos1_vote_turing_mmu_tbu1_gdsc,
- };
- 
- static const struct regmap_config gcc_sc8180x_regmap_config = {
+    nvme 0002:01:00.0: Unable to change power state from D3cold to D0, device inaccessible
+    xhci-hcd xhci-hcd.0.auto: xHC error in resume, USBSTS 0x401, Reinit
+    usb usb1: root hub lost power or was reset
+    usb usb2: root hub lost power or was reset
+    nvme nvme0: controller is down; will reset: CSTS=0xffffffff, PCI_STATUS read failed (134)
+    nvme nvme0: Does your device have a faulty power saving mode enabled?
+    nvme nvme0: Try "nvme_core.default_ps_max_latency_us=0 pcie_aspm=off pcie_port_pm=off" and report a bug
+    nvme 0002:01:00.0: Unable to change power state from D3cold to D0, device inaccessible
+
+Hopefully it also contributes towards improving power usage eventually..
+
+One thing I'm left wondering about is 8d114b94fc39 ("clk: qcom:
+gcc-sc8280xp: use collapse-voting for PCIe GDSCs"), not sure if it
+applies and if it does, where I'd find the values. (Downstream dtsi for
+sdmshrike, which is the closest SoC that the msm kernel supports AFAIK,
+was my only reference and it doesn't seem to have anything related.)
+
+And 9410fb940114 ("clk: qcom: gcc-sc8280xp: use phy-mux clock for PCIe")
+.. we don't have the _src clocks for PCIe defined at all here (o.0)
+
+BTW there's also a dispcc patch I sent as an RFC but probably
+should've been part of this series:
+
+https://lore.kernel.org/all/20260307111801.631060-1-val@packett.cool/
+
+Thanks,
+~val
+
+Val Packett (7):
+  dt-bindings: clock: qcom,gcc-sc8180x: Add missing GDSCs
+  clk: qcom: gcc-sc8180x: Add missing GDSCs
+  clk: qcom: gcc-sc8180x: Use retention for USB power domains
+  clk: qcom: gcc-sc8180x: Use retention for PCIe power domains
+  clk: qcom: gcc-sc8180x: Add missing GDSC flags
+  clk: qcom: gcc-sc8180x: Add runtime PM
+  clk: qcom: camcc-sc8180x: Disable always-on clocks on probe failure
+
+ drivers/clk/qcom/camcc-sc8180x.c             |  14 ++-
+ drivers/clk/qcom/gcc-sc8180x.c               | 112 +++++++++++++++----
+ include/dt-bindings/clock/qcom,gcc-sc8180x.h |   5 +
+ 3 files changed, 109 insertions(+), 22 deletions(-)
+
 -- 
 2.52.0
 
