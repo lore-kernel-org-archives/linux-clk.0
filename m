@@ -1,90 +1,103 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B87D43AEF45
-	for <linux-clk@vger.kernel.org>; Mon,  9 Mar 2026 15:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6FAE377EC6
+	for <linux-clk@vger.kernel.org>; Mon,  9 Mar 2026 15:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773069191; cv=none; b=jojhlWgHXb+ALWweaO6vjaPKWm0DaOTi3yNPFPMQWutPHhm5vjpUyOYXgcv0ZQ3APYQ2vTwloPq5pG11duOvtaT1roZPk115vio2QC25Crqt0MPylnLWpITJzRbYOyTf65EaFgFm2WWeil8mO1mSm9WfcQfGQMI0gUxvhMuqz9k=
+	t=1773070803; cv=none; b=C6htQhfWhQZVvjUa7ScVipDB3M6G/Jy+H7dt78cHBTgHvqJtxfZu2pd+e4Kx6LAQGU/Y2LjuiG2ff2/pxdvGz7NH83b2KizhfTigzZgh/XfKNLBNm4ZCDj7f0LOq4KfY1+dDMY6JS6RdK3KioAKFc82tiel/4pHPho5iP20DUMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773069191; c=relaxed/simple;
-	bh=aP1l5mGckZi8uPiNMHIwqyekMx9AdADqZ5kasaUQLQ4=;
+	s=arc-20240116; t=1773070803; c=relaxed/simple;
+	bh=sfB6dzF2hJxL+xZn1sg2gRT//rlMnhqnULg42U5nZi8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pL6HBX/rwbNppYYmk3pBylxGYjLSC4VQuAiMqfrwrQkX6izSC87NW9LTKCZkDVa+cLATUOMVoFZw1GMXIguwzDahseoVRUdJ/rbZL5ABQ6B47CXGMALFZquvxbp33osfEWaGFdKmayPVouNBvacPN7xOub2gF2xoUOWIXJIHlWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gHK6+N31; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=AyIofFFO; arc=none smtp.client-ip=170.10.133.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=LOt9p9ODyjttWNVMIcp4LMvYTA3PZ2KiY8766tnOL/jUcmbUUn+LbAwVwzDd1OA92ITXVd2fic0jeS9+2KmpIHHoewMG+iL/0LAoaIIqm+gUb14c5SUdjO9wYFpFqiHw429ozVkZ3jFCozTL2R2I8YxO9yengSrzMqEARSimEQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KrrzPB13; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=eiB9tMU2; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gHK6+N31";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="AyIofFFO"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KrrzPB13";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="eiB9tMU2"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1773069189;
+	s=mimecast20190719; t=1773070799;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=pj7TRP/LukT6gDbE70HzP4GEHwGpkwj6GBHStbfv6GI=;
-	b=gHK6+N31p84mUuK5/4HdrhtZesVSnEN56SUCQHMi2WK2HvgaWLxO9v3/LHc5kiVWdhd3ps
-	o/nYoXUZQu5nctouY6AYNHMlrKZgzV0YcmkzpxL18ckQCApqHBmSS9qwLx4WWDwsAkyetj
-	bPL3v8WsrL2D2Y0TjwhFVrTSP6h+Kf4=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=e0jqr9O5Qe+QOiK/NfYBlUp6xE1Lwly1Kq1xM3BGau4=;
+	b=KrrzPB13T2D69UhOKCoxVS7Zm2tGJQNQNohdqfWArR2CYzFH+Qd6fOMUdF3Jb/pJmP1OvA
+	ijuiYe0HI0vopIDLNwRjXjpJarw9yV51sFqhnxpYxfzZnBWFz/+oWzJixkx6QCZvsWXJ4j
+	PGpJVDIMnqPU4Ms0Hs4bdnGy+JgpFKM=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-552-wVr4InZLPky4hZRAfmd-DQ-1; Mon, 09 Mar 2026 11:13:06 -0400
-X-MC-Unique: wVr4InZLPky4hZRAfmd-DQ-1
-X-Mimecast-MFC-AGG-ID: wVr4InZLPky4hZRAfmd-DQ_1773069186
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8cb0595def4so200518885a.0
-        for <linux-clk@vger.kernel.org>; Mon, 09 Mar 2026 08:13:06 -0700 (PDT)
+ us-mta-335-nKMpa1SLN8-RkUORmm3C3g-1; Mon, 09 Mar 2026 11:39:58 -0400
+X-MC-Unique: nKMpa1SLN8-RkUORmm3C3g-1
+X-Mimecast-MFC-AGG-ID: nKMpa1SLN8-RkUORmm3C3g_1773070798
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-8cd8b37d4b2so590571885a.3
+        for <linux-clk@vger.kernel.org>; Mon, 09 Mar 2026 08:39:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1773069186; x=1773673986; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1773070798; x=1773675598; darn=vger.kernel.org;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pj7TRP/LukT6gDbE70HzP4GEHwGpkwj6GBHStbfv6GI=;
-        b=AyIofFFOWUjwwDkalBzbnMGqTMoQ5v7wtorPqSLJyH6M57BPwdoiL2+OrLxBeu84w9
-         5YfzVchE3Lx3FarScyoujRpnps5L0KAvOl1ICpfmweYNhxbkw4XWPzEI5fl2sBl1nAMU
-         tFcvW+5DlTxfRjrCgwZjlMi3Wb5Nh7QZL+SYk8VqqOBhC3/HI17dIT1W1dps+4HBsiZP
-         QNZWGaIE9VHVVmS+CHAgzwBgqzg/ZLchIa8HBCq+SypmlyaA/mJG8ISlzBTl6tlsKkfp
-         L2aDBNd3VaqGYEBaKYrO9l5zxMUlFhMD6dly6ZOUDgVS8lKmtgSN3I9FZ75b3mNfFqn6
-         W1ow==
+        bh=e0jqr9O5Qe+QOiK/NfYBlUp6xE1Lwly1Kq1xM3BGau4=;
+        b=eiB9tMU2KN0Uhp/dNeR9bzJDQWR7oaqW3l2lutomZ4oohyLELJ3e98DcAlxTQUXmqk
+         5yKGVQTOkQcypYt1MNxaD2G84s6DLkgXVR7fMIoH4RJ5pRIIqj2m1UvCccfQyBrzFZtK
+         GeyqhfYyAvFe9sLeVpKKWW+Iv7l2UQjQPMNAAw4lUOYkQ+xZOdx3nlfPPJBlg0xsXN2v
+         Bv7Z6AJAV8WeyWyw74Gy9F9Gpbf4X4cpLvCRz8bANmHBphHufpqilRhwrj6V2vDCA6h+
+         BI9gtD8mBrWV3LTMsyGCe/A4BSdwLujzVt/p2hNy5tSAHYKMQLzD7Gz68xaNN64nrhGN
+         QBDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773069186; x=1773673986;
+        d=1e100.net; s=20230601; t=1773070798; x=1773675598;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=pj7TRP/LukT6gDbE70HzP4GEHwGpkwj6GBHStbfv6GI=;
-        b=ZQFhXiVnPvqt08GGbmozS0yZyZDpl00sj4wE1xFiK3EFL+C94Yt6/brtCW2inCXHPo
-         8DfxA20U03XX0HTz7e29EseDtRcfYnRH+KU/jvTpueFvQ9jcH2ItGA685mGnn/W+Q8PW
-         SqNzN8JzX7Lnlywkbk2hssX7abkXVnWjKjy+TTb02AFzRQJvhaLvkb8EbWwcAErebRig
-         ZbyGW1ftabImBr4XUkRIytY7EH4B1RiXDx9cOg7SIKe41qljxmdUaohsQzORm0CBY7f6
-         Yx2s+Dc5OouVdi8fZncktDzxY7Y4NFXLnD39GGA8GNpvV0Ho9cFX7f/jDpNdVwUonaso
-         FiZg==
-X-Forwarded-Encrypted: i=1; AJvYcCVxkuzBwxiuk7HD5+8aW2e+hCtlo/Lp1Xcu8cdFi8j3wo6gIkxDLUBm0sdg2La4k40b/E3oXvZlrsk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJJuX8chvfNzjfIGdJYisl8dRS/IdsTfiS66B15roTqIRaPquV
-	5zIho21TVG5xmeeW/6XZmID780i0Ro5PU5u0jmga/jdKL7kZIR9qajBP3sC1SczJlqsljdFjh6T
-	JZJd3GGIY3Y2CaQdGAh2N7Wh6rMP5BAcyJkUiyuQP75PA+KCNSfkjVLv4JI8yLA==
-X-Gm-Gg: ATEYQzzZ/HTj5pkh1V2dfosF9+9noIOFJeAYEiG0SqrPlhzRhCAqH8XKbZgpCXxsw9k
-	S+tQSDgW178/EF0xJKwQZp3DFMrtquJIVbIe/gbgW+fxNVYTDHuRxW4Yyc2TAPakHRtW0iHD6Tu
-	qKo2p575ZYjob43uAO9dN3Sazs08PLF2VOOz1Ms5T4U4USHc0RMw7/JwDYAnXoEhZAiIS0yV6NI
-	685KKgvSy3KjEH3hYfAxYNakX4hcW7fJRi+tuFbPpJgflg/JNCJ5tVa9BPEvuwe4Nbb3urZiWlY
-	0t31NqkD5xbahl/oRMNFYnzlXtgt/0xlyCeBigDBXx42SCpeWqtDBzYdLBDLMvEdVlsFOadm04r
-	Zv1TdK+Es+7XfJ62mL2/8e4EMCsydC1sTdPQgUDnJacIHyMll2Ze2tTB+
-X-Received: by 2002:a05:620a:45ac:b0:8cd:8ee1:2ee4 with SMTP id af79cd13be357-8cd8ee1374fmr228104985a.23.1773069185907;
-        Mon, 09 Mar 2026 08:13:05 -0700 (PDT)
-X-Received: by 2002:a05:620a:45ac:b0:8cd:8ee1:2ee4 with SMTP id af79cd13be357-8cd8ee1374fmr228100385a.23.1773069185437;
-        Mon, 09 Mar 2026 08:13:05 -0700 (PDT)
+        bh=e0jqr9O5Qe+QOiK/NfYBlUp6xE1Lwly1Kq1xM3BGau4=;
+        b=BrIGsuRbcfLeEAuOnpBGCWflcz7/jC9vXThpws/yOKZ6WzujtJ0BcuRAsbolDDZWNn
+         DbtdE8CWnoXZKzeiQuHICRFh0EGFW3dmho6xc7wxdmjLJkbDpcAWrLd5EvO2QaIV4y+m
+         bMgNwxPJJHsbsTFHHrVTfldJgVCskswkXis5QOm919HooFnVYJcNmU6+QGZAKsSRinLW
+         YacvH6qLlRUoVcasqKBkwING4ILEE8EopWlhTOiiir6AG6iLgJJW5RrM3wWiMlAZmu0V
+         zOT/o/O8yM0AdlcDS2X0Ephf5G57xd3YYPVe6Xw3aTbGduQkhWv9yWPFOUFbVciOpck+
+         mdQw==
+X-Forwarded-Encrypted: i=1; AJvYcCUbsMssBZ2zhI0X6nWXFkAZr708SAmuTDlCwhnArDGUL99o+gT5MWLYwdiXmpEBWCKP+VmIkSype04=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLe4crU58xcRN/P5ggduYN0tB51hkBYfVX8HoKNdNiJwzMS4Dx
+	YYl7zR86CgSYq40mTJjCH0x0sUC5iVPhHfEqn39SSCxNJOJ0QWuLlLPAIy58W4+GeWEtORbUsbd
+	CnlZ1km+8ySZTV9hZdzkcO5LsLekdJaCw/L5qAos+Bv4s5JkYHyW30p2+0xX1hw==
+X-Gm-Gg: ATEYQzzNmCo4Y8f4SYKesbgt+uRx3euh+/1j/UxztZH0R98Kw4Ix2v1YIHfbzau3dbl
+	9OqgPTAWkkbobWGRr9nvz6H1FT6U99Yn0M4y5YLllTJQOzdtcP6b7dLCEVinqKqF/+qzaP0vq5/
+	ijxMtYiIxppzmudWiy3cKDoZoZ9ns8tMTp3l++hQcbzgrIlTjFeZW8DHtx7ZxaHre3rJrjob/Sl
+	llplwuIvbH6FC1nsksBMH2tMEaBsyPc++nydCgU37U+zkzNkE9sg7B9m4pAYZ2H82g4w+OEsl4D
+	LJrk1LA9VVOy6pEh5zqYpr2JnygxHOiB77UVxUfit1KX9OhFtIEfoa9IP8wxJkn86uLc//r6UfK
+	X3yL70EUFka0qwZ7+4i+3XqvaadjMzstKKuCFaFhwK1xLCO16Qmk94ROJ
+X-Received: by 2002:a05:620a:290a:b0:8cd:8f18:d1c0 with SMTP id af79cd13be357-8cd8f18d44dmr228536685a.27.1773070798144;
+        Mon, 09 Mar 2026 08:39:58 -0700 (PDT)
+X-Received: by 2002:a05:620a:290a:b0:8cd:8f18:d1c0 with SMTP id af79cd13be357-8cd8f18d44dmr228531285a.27.1773070797673;
+        Mon, 09 Mar 2026 08:39:57 -0700 (PDT)
 Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8cd6f566fd5sm700212985a.43.2026.03.09.08.13.03
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8cd90aae418sm84839885a.26.2026.03.09.08.39.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2026 08:13:04 -0700 (PDT)
-Date: Mon, 9 Mar 2026 11:13:00 -0400
+        Mon, 09 Mar 2026 08:39:57 -0700 (PDT)
+Date: Mon, 9 Mar 2026 11:39:55 -0400
 From: Brian Masney <bmasney@redhat.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: Simplify clk_is_match()
-Message-ID: <aa7jfB2I0veouYTe@redhat.com>
-References: <703be6fe95cad2e738c712877fcdaa63a7809802.1772705499.git.geert+renesas@glider.be>
+To: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
+Cc: Drew Fustini <dfustini@oss.tenstorrent.com>,
+	Joel Stanley <jms@oss.tenstorrent.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	joel@jms.id.au, fustini@kernel.org, mpe@kernel.org,
+	mpe@oss.tenstorrent.com, npiggin@oss.tenstorrent.com,
+	agross@kernel.org, agross@oss.tenstorrent.com,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: [PATCH v8 3/3] clk: tenstorrent: Add Atlantis clock controller
+ driver
+Message-ID: <aa7pywbaB7rxLWwX@redhat.com>
+References: <20260306-atlantis-clocks-v8-0-6c9b14a4aa8e@oss.tenstorrent.com>
+ <20260306-atlantis-clocks-v8-3-6c9b14a4aa8e@oss.tenstorrent.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -93,17 +106,24 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <703be6fe95cad2e738c712877fcdaa63a7809802.1772705499.git.geert+renesas@glider.be>
+In-Reply-To: <20260306-atlantis-clocks-v8-3-6c9b14a4aa8e@oss.tenstorrent.com>
 User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On Thu, Mar 05, 2026 at 11:12:33AM +0100, Geert Uytterhoeven wrote:
-> Linux style is to handle early-on failure.  Inverting the first
-> condition lets us simplify the second, and improves readability.
+On Fri, Mar 06, 2026 at 11:12:19AM -0600, Anirudh Srinivasan wrote:
+> Add driver for clock controller in Tenstorrent Atlantis SoC. This version
+> of the driver covers clocks from RCPU subsystem.
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 5 types of clocks generated by this controller: PLLs (PLLs
+> with bypass functionality and an additional Gate clk at output), Shared
+> Gates (Multiple Gate clks that share an enable bit), standard Muxes,
+> Dividers and Gates. All clocks are implemented using custom clk ops and
+> use the regmap interface associated with the syscon. All clocks are derived
+> from a 24 Mhz oscillator.
+> 
+> The reset controller is also setup as an auxiliary device of the clock
+> controller.
+> 
+> Signed-off-by: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
 
 Reviewed-by: Brian Masney <bmasney@redhat.com>
-
-Stephen: There are 8 places in clk_test.c where clk_is_match() is
-called, so I feel we should be good testing coverage wise.
 
