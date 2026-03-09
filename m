@@ -1,179 +1,240 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C27D39B4B4
-	for <linux-clk@vger.kernel.org>; Mon,  9 Mar 2026 11:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4EC3A9635;
+	Mon,  9 Mar 2026 12:05:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773055050; cv=none; b=L7pJPqm9G15wEA67WappQFNQVQzb/Mt5g1+ZvdVTYvTWRg231iV7y/f0rbifqqvzpQbgWzvHpZGcdmVNuYjx7Svcme5Oh7avQJowa2tEG27clh7/rzJTjDVnAAZzjmWi3NFijwJ5OkZAfFq9mCP4YuRTZM+1nP1d7YEXEG7vCV0=
+	t=1773057929; cv=none; b=fDE2dlBIGQoQjGTSUv+RuvJdeQilux0mh0yOqprF1H6oZOy5jXgJEIoWOudvY7SCFjCfHKtQboFGf0Cr3iVJ4SlIvomOErTXxjJ572GwHy9V6VUXtYkJppIcnQ3PqwYYjzzIMdlTZMY92K01V3zpyNTps9/C6PCJ2dDZfvN0as4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773055050; c=relaxed/simple;
-	bh=vIupXVvqq0aF0TbLaTcRw65mQz1unZS5rK0UxQXwVv8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uhlaHsnbc3uzhRmDSGXlsyeLebIawerx+0w2KxF2KNPfQrlFYHwCLkH1zHXSMeS65QC4/ZMOf2dgZZYFjqH1jSDgwx9G8E/j7NWkB5ybE2lb2QvmW6eRwfM5wtdic9MIVAepnZ4yqx9isoK6vNHc9sgSj70bmiMRN6q5lqCAokI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BVKto9Np; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=jsgXIMDu; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1773057929; c=relaxed/simple;
+	bh=akClU+dxQ869+SKcEWLXtsyxin7K6PI4gTCwZBYdwXM=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MVMbjlKldy2qaHx259ViqSL5u7cmZcfNetBL2VgmvktZ9JrLzwJjpFI3TmR9oopTQuS/4ceuxA9yB2kiBsqlAL2ANQg8M8d3+YELzemWGLhtfUiROJb2WHCgyQ8nZX5aTaNDa4DtLqeSQrCgTRJtKpvhVsVRrEl4MLjGCze3IKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=qNR4lIoG; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BVKto9Np";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="jsgXIMDu"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6297fG5f4080713
-	for <linux-clk@vger.kernel.org>; Mon, 9 Mar 2026 11:17:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/iJfBOWNK2bjijtz10fDSacvDWmfQHMuUpjyXhkkiV4=; b=BVKto9NphX8o+346
-	+v1lkz+UrJILFuEekqB/dlREsLONTKPaAf4tPmgiSdTrN1AIuE3P3Nu4OFfiLFiY
-	QZqetbc42AO8EC+alwdmjzzImaM5K5DZpzRw1sultw9uXvKcXcxBpo/0KmiMqZLd
-	JSSkUn3IOxbRXLfm619eq+a4SKe7E6DcB6f8nB58ganvw9P3CHtuqhdnEtcQ61Z8
-	C7mpm4/P4xQukJc3Gye+ZwE//T+WdYiBAtEBr5HGnss2xBYWQx/IFJryzo7argGg
-	VFjsYdbjcIx7Bzw01JpdbYAhgKhD54mcOgtUD05KV6pJEZt9eeVV5sUuw6cIE/7d
-	iFEHyA==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4crc3vd4q5-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 09 Mar 2026 11:17:23 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8cd8e89d19bso29286585a.2
-        for <linux-clk@vger.kernel.org>; Mon, 09 Mar 2026 04:17:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1773055043; x=1773659843; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/iJfBOWNK2bjijtz10fDSacvDWmfQHMuUpjyXhkkiV4=;
-        b=jsgXIMDuS4puhzznkKsi7UMCytXk06rtU+0++FmbTw0A34rUQXP+c1qFFGadNLe7DC
-         zedadK7wQLWQFCDKsF34zrCT5FD8iy8Tj8tD6J5sgq8Ntxq2GK0i9rxBPB123TGJA3Zg
-         d7Fp33grRdBTF1Br6NQDeqF0/XFZvAvUKGhXc2xb8qIIFvD5GTLz/ZH2OCPduNrxrZG9
-         A+bS6A0QhaXSjZhwSb0wL1qwoGOaNiNvG+RyMujUvqImVZPYNgYRZxftjJaxTEzwNWgY
-         1b/NkGQc0OCnKO+4YQf3sGqPfRKOvQ8aoirt2dGFdITJZhAtok4ejgzQg026qPrkjUp0
-         cKsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773055043; x=1773659843;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/iJfBOWNK2bjijtz10fDSacvDWmfQHMuUpjyXhkkiV4=;
-        b=Y5cPl8dlX2VLPvrgxknAnryIq5l+pZGUYm5PRR3y4zeguf1jL6P+vuz7mJCxQSBh42
-         4n2M1q3ooDWul0Ee2vk7yfjcis4cI5JO66bA8C8DQ96hL1v/n2VxBN3ZXXZiM+zOEuVd
-         IX+w7uMmHlUrfc89gHM93iBpzly6Ry2wVzIUlqSrHjQv5pRNBs1uqlPXe1kiNc3HIvgT
-         p2jo2z2aqexnNKXODQki2lDg1Hhvgv67LT2ELOsmPc0wNWVCRFaigFpwwX+1W7B5l9RZ
-         Ob4JN6Ki2knZJ8aXfNwxTlIJ8+xcED5vDjNHknFaxwcOzD7IqPm1hMNQzj1v7BVJqwry
-         1sTg==
-X-Forwarded-Encrypted: i=1; AJvYcCXMBQaKyRTHWa1TmECsB1udLgvjmWha64BULwQTGncElEKPKFs+xYKKjeJUunPHmN0AzbM49+jq2lk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvrTQS7FPbbQYz01C6PZikiV2/+d/oZiOgt5bV3mNGaRiWTjKC
-	vbgbnlZu/4Q1iPLKxDgvChnxRAP+CTDZSS8/cqOBVVNUNDAUvJrCr/5bTTD0lLCgLjUvHzd6AvK
-	wjAQD61UiRr5CTSqtyVDq/QGkd00PUVzu9xM8rC6vhn4JAqMN22mYgszri6h+Phg=
-X-Gm-Gg: ATEYQzwDqvsdoJDNlAyXmh/avSmcPiB5Ymf+blPHon+sl1ZtyPFAr0TEctrS9otH2uC
-	rIv1XLZdM+tr2MWtZt6UuSk0l91u9Qd4LqLIg/isTKL9t6BFYbQJMqYrisScG8xwz/F6nGS2pDv
-	ahncfT4fgGQcTioxWjY7NrQ+bxJquF0LGKIjt+Hyjvdm8Kyh13/v1LgSB8hogcUyy6mmIU757EJ
-	bzWBxePDFX7Z7XwEKoZ7LcCRlp0vR0AYS7Rutg+AOR+srCUeInzSaJ2MogrCGDtySAw8k3Dix9G
-	wCkduWX5/5SXIovNhwSdQTrSgnH8VtdiFJzBbgKE2qbEEUdhu24Qlbov4UY0DwX44692T1FsXfK
-	YCO9jGSilNy4c1w7gsq0XxxuidjQHIpDMMPl8vVSM/Qo/qXdimkCIR+dQ5YoWtb3/PreUcDnBa2
-	XFF1w=
-X-Received: by 2002:a05:620a:7004:b0:8cd:8b9b:4581 with SMTP id af79cd13be357-8cd8b9b46a0mr225068385a.0.1773055043353;
-        Mon, 09 Mar 2026 04:17:23 -0700 (PDT)
-X-Received: by 2002:a05:620a:7004:b0:8cd:8b9b:4581 with SMTP id af79cd13be357-8cd8b9b46a0mr225065185a.0.1773055042900;
-        Mon, 09 Mar 2026 04:17:22 -0700 (PDT)
-Received: from [192.168.119.254] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-66298248bb4sm353697a12.16.2026.03.09.04.17.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Mar 2026 04:17:22 -0700 (PDT)
-Message-ID: <fa8ff125-8680-44c1-b516-66d06eda7b91@oss.qualcomm.com>
-Date: Mon, 9 Mar 2026 12:17:18 +0100
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="qNR4lIoG"
+X-UUID: 3e714c221bb011f1a02d4725871ece0b-20260309
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=2MO5pAeKaDnZlEBZfBK1faXM6L5WkJmGw9Ae7P9JBmk=;
+	b=qNR4lIoGrvukvBkAcf1+4fHJcTXjCCWEwZriT2fUKbJXIf65gKnymaNzqjAXUZCdeeibH1CHX7yNidwMoBoHbF63clBX6ssWSqCTU6yJOLnIVFfLs/5L3QhmynNb3Levzvd/5kuWTLUIMVAfNsYpsDcmBeaWkwC+Q1hc8IZpXnM=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.11,REQID:bba3fad9-f670-4e61-a8cc-d3bdd387149c,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:89c9d04,CLOUDID:741f6ff1-16bd-4243-b4ca-b08ca08ab1d8,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|836|888|898,TC:-5,Content:
+	0|15|50,EDM:-3,IP:nil,URL:0,File:130,RT:0,Bulk:nil,QS:nil,BEC:-1,COL:0,OSI
+	:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 3e714c221bb011f1a02d4725871ece0b-20260309
+Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw01.mediatek.com
+	(envelope-from <irving-ch.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 725730763; Mon, 09 Mar 2026 20:05:20 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29; Mon, 9 Mar 2026 20:05:18 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.2562.29 via Frontend Transport; Mon, 9 Mar 2026 20:05:18 +0800
+From: irving.ch.lin <irving-ch.lin@mediatek.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Richard Cochran
+	<richardcochran@gmail.com>, Bartosz Golaszewski <brgl@kernel.org>, "Chen-Yu
+ Tsai" <wenst@chromium.org>, Miles Chen <miles.chen@mediatek.com>
+CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, <netdev@vger.kernel.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Qiqi Wang
+	<qiqi.wang@mediatek.com>, <sirius.wang@mediatek.com>,
+	<vince-wl.liu@mediatek.com>, <jh.hsu@mediatek.com>,
+	<irving-ch.lin@mediatek.com>
+Subject: [PATCH v6 08/18] clk: mediatek: Add MT8189 cam clock support
+Date: Mon, 9 Mar 2026 20:04:50 +0800
+Message-ID: <20260309120512.3624804-9-irving-ch.lin@mediatek.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20260309120512.3624804-1-irving-ch.lin@mediatek.com>
+References: <20260309120512.3624804-1-irving-ch.lin@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: glymur: Tie up the CX power domain
- to GCC
-To: Abel Vesa <abel.vesa@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Taniya Das <taniya.das@oss.qualcomm.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Maulik Shah <maulik.shah@oss.qualcomm.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Jyothi Kumar Seerapu <jyothi.seerapu@oss.qualcomm.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-        Sibi Sankar <sibi.sankar@oss.qualcomm.com>,
-        Pankaj Patil <pankaj.patil@oss.qualcomm.com>,
-        Akhil P Oommen <akhilpo@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>,
-        Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>,
-        Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>,
-        Qiang Yu <qiang.yu@oss.qualcomm.com>,
-        Manaf Meethalavalappu Pallikunhi <manaf.pallikunhi@oss.qualcomm.com>
-References: <20260309-glymur-fix-gcc-cx-scaling-v1-0-f682c82f116f@oss.qualcomm.com>
- <20260309-glymur-fix-gcc-cx-scaling-v1-3-f682c82f116f@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20260309-glymur-fix-gcc-cx-scaling-v1-3-f682c82f116f@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: CEIVheRzuZYn87MmrUoKZ-j6aEKtu0vX
-X-Proofpoint-GUID: CEIVheRzuZYn87MmrUoKZ-j6aEKtu0vX
-X-Authority-Analysis: v=2.4 cv=OOQqHCaB c=1 sm=1 tr=0 ts=69aeac43 cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=gowsoOTTUOVcmtlkKump:22
- a=EUspDBNiAAAA:8 a=XFCnTzhwHPFgJtnojrQA:9 a=QEXdDO2ut3YA:10
- a=IoWCM6iH3mJn3m4BftBB:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzA5MDEwMyBTYWx0ZWRfXyVPI02xQ6MVm
- +Z6+g1+pQGn6PRN9jv8skDVTz9xIfjMfWhz05GvQREgJzryWIEo7dKXeIHa9fhRjOeUE0qiVsmM
- r8ll+bEzrqyPv2Rq0wusk89nySGlR6st0U1ek+yQ+8+yPM9hEo533AM/GkSxIUxr5lhXCh1mKCc
- ZZNdeL2sFng24X1Fmno3cg/SQbTG7Dvpxs8zS2FsXfku2WgEFHovhV9s1aFrXPzsaPaIAiakFon
- 1tX52rzJZvH8eKbvoYF6KfGLclQ7pIlxHck2ZWR1iY2kaE4+GqcMHb3Q3vWVoOnR2a6fpEuT/lf
- M4qjr+q1oLHYJFhoPYTn1Ndaijj6nfuEYxUpPtxOlSX6VkOGp7mTq6/pj3beHOVHzDFzObd+/cJ
- OpDr0YTSUUaPXhOtiActEl8nuAq8q1kNpflxfkjPZpWvvdxMFBvbWWU1qKJCu1lusLRGa3r6JXr
- FvpFdfoJxVRZ3dWa1Cg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-09_03,2026-03-06_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 impostorscore=0 suspectscore=0 spamscore=0 malwarescore=0
- bulkscore=0 clxscore=1015 phishscore=0 lowpriorityscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2602130000 definitions=main-2603090103
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 3/9/26 11:06 AM, Abel Vesa wrote:
-> It has been concluded off-list that the Global Clock Controller needs to
-> scale the RPMh CX power domain, otherwise some of the subsystems might
-> crash or be unstable. So adding the RPMh CX power domain to the clock
-> controller which will result in all GDSCs being parented by CX. This way,
-> the vote from the consumers of each GDSC will trickle all the way to CX.
-> 
-> So add the power domain and Make sure the required OPP is nominal.
-> 
-> Fixes: 41b6e8db400c ("arm64: dts: qcom: Introduce Glymur base dtsi")
-> Signed-off-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/glymur.dtsi | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/glymur.dtsi b/arch/arm64/boot/dts/qcom/glymur.dtsi
-> index e269cec7942c..2d1ffbf53730 100644
-> --- a/arch/arm64/boot/dts/qcom/glymur.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/glymur.dtsi
-> @@ -764,6 +764,8 @@ gcc: clock-controller@100000 {
->  			#clock-cells = <1>;
->  			#reset-cells = <1>;
->  			#power-domain-cells = <1>;
-> +			power-domains = <&rpmhpd RPMHPD_CX>;
-> +			required-opps = <&rpmhpd_opp_nom>;
+From: Irving-CH Lin <irving-ch.lin@mediatek.com>
 
-Let's not keep the system at close-to-full power all the time.
-Please drop required-opps.
+Add support for the MT8189 cam clock controller,
+which provides clock gate control for camera.
 
-Konrad
+Signed-off-by: Irving-CH Lin <irving-ch.lin@mediatek.com>
+---
+ drivers/clk/mediatek/Kconfig          |  11 +++
+ drivers/clk/mediatek/Makefile         |   1 +
+ drivers/clk/mediatek/clk-mt8189-cam.c | 108 ++++++++++++++++++++++++++
+ 3 files changed, 120 insertions(+)
+ create mode 100644 drivers/clk/mediatek/clk-mt8189-cam.c
+
+diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+index 47172623f29f..0665255a29fd 100644
+--- a/drivers/clk/mediatek/Kconfig
++++ b/drivers/clk/mediatek/Kconfig
+@@ -839,6 +839,17 @@ config COMMON_CLK_MT8189_BUS
+ 	  MT8189 chipset, ensuring that all bus-related components receive the
+ 	  correct clock signals for optimal performance.
+ 
++config COMMON_CLK_MT8189_CAM
++	tristate "Clock driver for MediaTek MT8189 cam"
++	depends on COMMON_CLK_MT8189
++	default COMMON_CLK_MT8189
++	help
++	  Enable this to support the clock management for the camera interface
++	  on MediaTek MT8189 SoCs. This includes enabling, disabling, and
++	  setting the rate for camera-related clocks. If you have a camera
++	  that relies on this SoC and you want to control its clocks, say Y or M
++	  to include this driver in your kernel build.
++
+ config COMMON_CLK_MT8192
+ 	tristate "Clock driver for MediaTek MT8192"
+ 	depends on ARM64 || COMPILE_TEST
+diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+index aabfb42cb1b2..95a8f4ae05ee 100644
+--- a/drivers/clk/mediatek/Makefile
++++ b/drivers/clk/mediatek/Makefile
+@@ -126,6 +126,7 @@ obj-$(CONFIG_COMMON_CLK_MT8188_WPESYS) += clk-mt8188-wpe.o
+ obj-$(CONFIG_COMMON_CLK_MT8189) += clk-mt8189-apmixedsys.o clk-mt8189-topckgen.o \
+ 				   clk-mt8189-vlpckgen.o clk-mt8189-vlpcfg.o
+ obj-$(CONFIG_COMMON_CLK_MT8189_BUS) += clk-mt8189-bus.o
++obj-$(CONFIG_COMMON_CLK_MT8189_CAM) += clk-mt8189-cam.o
+ obj-$(CONFIG_COMMON_CLK_MT8192) += clk-mt8192-apmixedsys.o clk-mt8192.o
+ obj-$(CONFIG_COMMON_CLK_MT8192_AUDSYS) += clk-mt8192-aud.o
+ obj-$(CONFIG_COMMON_CLK_MT8192_CAMSYS) += clk-mt8192-cam.o
+diff --git a/drivers/clk/mediatek/clk-mt8189-cam.c b/drivers/clk/mediatek/clk-mt8189-cam.c
+new file mode 100644
+index 000000000000..d65ac08cedd6
+--- /dev/null
++++ b/drivers/clk/mediatek/clk-mt8189-cam.c
+@@ -0,0 +1,108 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2025 MediaTek Inc.
++ * Author: Qiqi Wang <qiqi.wang@mediatek.com>
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/module.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++
++#include "clk-mtk.h"
++#include "clk-gate.h"
++
++#include <dt-bindings/clock/mediatek,mt8189-clk.h>
++
++static const struct mtk_gate_regs cam_m_cg_regs = {
++	.set_ofs = 0x4,
++	.clr_ofs = 0x8,
++	.sta_ofs = 0x0,
++};
++
++#define GATE_CAM_M(_id, _name, _parent, _shift)				\
++	GATE_MTK_FLAGS(_id, _name, _parent, &cam_m_cg_regs, _shift,	\
++		       &mtk_clk_gate_ops_setclr, CLK_IGNORE_UNUSED)
++
++static const struct mtk_gate cam_m_clks[] = {
++	GATE_CAM_M(CLK_CAM_M_LARB13, "cam_m_larb13", "cam_sel", 0),
++	GATE_CAM_M(CLK_CAM_M_LARB14, "cam_m_larb14", "cam_sel", 2),
++	GATE_CAM_M(CLK_CAM_M_CAMSYS_MAIN_CAM, "cam_m_camsys_main_cam", "cam_sel", 6),
++	GATE_CAM_M(CLK_CAM_M_CAMSYS_MAIN_CAMTG, "cam_m_camsys_main_camtg", "cam_sel", 7),
++	GATE_CAM_M(CLK_CAM_M_SENINF, "cam_m_seninf", "cam_sel", 8),
++	GATE_CAM_M(CLK_CAM_M_CAMSV1, "cam_m_camsv1", "cam_sel", 10),
++	GATE_CAM_M(CLK_CAM_M_CAMSV2, "cam_m_camsv2", "cam_sel", 11),
++	GATE_CAM_M(CLK_CAM_M_CAMSV3, "cam_m_camsv3", "cam_sel", 12),
++	GATE_CAM_M(CLK_CAM_M_FAKE_ENG, "cam_m_fake_eng", "cam_sel", 17),
++	GATE_CAM_M(CLK_CAM_M_CAM2MM_GALS, "cam_m_cam2mm_gals", "cam_sel", 19),
++	GATE_CAM_M(CLK_CAM_M_CAMSV4, "cam_m_camsv4", "cam_sel", 20),
++	GATE_CAM_M(CLK_CAM_M_PDA, "cam_m_pda", "cam_sel", 21),
++};
++
++static const struct mtk_clk_desc cam_m_mcd = {
++	.clks = cam_m_clks,
++	.num_clks = ARRAY_SIZE(cam_m_clks),
++};
++
++static const struct mtk_gate_regs cam_ra_cg_regs = {
++	.set_ofs = 0x4,
++	.clr_ofs = 0x8,
++	.sta_ofs = 0x0,
++};
++
++#define GATE_CAM_RA(_id, _name, _parent, _shift)			\
++	GATE_MTK_FLAGS(_id, _name, _parent, &cam_ra_cg_regs, _shift,	\
++		       &mtk_clk_gate_ops_setclr, CLK_IGNORE_UNUSED)
++
++static const struct mtk_gate cam_ra_clks[] = {
++	GATE_CAM_RA(CLK_CAM_RA_CAMSYS_RAWA_LARBX, "cam_ra_camsys_rawa_larbx", "cam_sel", 0),
++	GATE_CAM_RA(CLK_CAM_RA_CAMSYS_RAWA_CAM, "cam_ra_camsys_rawa_cam", "cam_sel", 1),
++	GATE_CAM_RA(CLK_CAM_RA_CAMSYS_RAWA_CAMTG, "cam_ra_camsys_rawa_camtg", "cam_sel", 2),
++};
++
++static const struct mtk_clk_desc cam_ra_mcd = {
++	.clks = cam_ra_clks,
++	.num_clks = ARRAY_SIZE(cam_ra_clks),
++};
++
++static const struct mtk_gate_regs cam_rb_cg_regs = {
++	.set_ofs = 0x4,
++	.clr_ofs = 0x8,
++	.sta_ofs = 0x0,
++};
++
++#define GATE_CAM_RB(_id, _name, _parent, _shift)			\
++	GATE_MTK_FLAGS(_id, _name, _parent, &cam_rb_cg_regs, _shift,	\
++		       &mtk_clk_gate_ops_setclr, CLK_IGNORE_UNUSED)
++
++static const struct mtk_gate cam_rb_clks[] = {
++	GATE_CAM_RB(CLK_CAM_RB_CAMSYS_RAWB_LARBX, "cam_rb_camsys_rawb_larbx", "cam_sel", 0),
++	GATE_CAM_RB(CLK_CAM_RB_CAMSYS_RAWB_CAM, "cam_rb_camsys_rawb_cam", "cam_sel", 1),
++	GATE_CAM_RB(CLK_CAM_RB_CAMSYS_RAWB_CAMTG, "cam_rb_camsys_rawb_camtg", "cam_sel", 2),
++};
++
++static const struct mtk_clk_desc cam_rb_mcd = {
++	.clks = cam_rb_clks,
++	.num_clks = ARRAY_SIZE(cam_rb_clks),
++};
++
++static const struct of_device_id of_match_clk_mt8189_cam[] = {
++	{ .compatible = "mediatek,mt8189-camsys-main", .data = &cam_m_mcd },
++	{ .compatible = "mediatek,mt8189-camsys-rawa", .data = &cam_ra_mcd },
++	{ .compatible = "mediatek,mt8189-camsys-rawb", .data = &cam_rb_mcd },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, of_match_clk_mt8189_cam);
++
++static struct platform_driver clk_mt8189_cam_drv = {
++	.probe = mtk_clk_simple_probe,
++	.remove = mtk_clk_simple_remove,
++	.driver = {
++		.name = "clk-mt8189-cam",
++		.of_match_table = of_match_clk_mt8189_cam,
++	},
++};
++
++module_platform_driver(clk_mt8189_cam_drv);
++MODULE_DESCRIPTION("MediaTek MT8189 cam clocks driver");
++MODULE_LICENSE("GPL");
+-- 
+2.45.2
+
