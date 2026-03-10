@@ -1,244 +1,205 @@
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C3B3D47B9
-	for <linux-clk@vger.kernel.org>; Tue, 10 Mar 2026 17:33:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671AF3D47D8;
+	Tue, 10 Mar 2026 17:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773164019; cv=none; b=ZgPa+/SHGBChNCsFeVWfUwy5njoI+NcDbv8RnDOk/wTv1BVPGVinlsV+SUCM2A1sS0ZOIdk/S9XDje7lIfRPs2KfyiWMZgYc5JWBpPVMbj/2M/+VulO6xzZHbUVOpit0PwgTsNSgbbzA8hKUBu1QNK00or6ScKYOYhVVgOUXIkY=
+	t=1773164338; cv=none; b=rjCo+agA/XX+R5lXHqmLqgpFqjonfv4WUAHcKXSJBJ6oNDoCHavvwcH4iwEhRNPEX1nZkHN8Y+Q+ZSbfVKrh7GVmusQcjJ77Cydgzc7zN178sUx+FcitGmjyDaHJTfREHloIQPd4tB9k/gkk5dc6bCO6dUToEzd45n53lPHg82E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773164019; c=relaxed/simple;
-	bh=iDsUAnuGCJPA0EvA71qgJyApHhY1W5vY//J46Q2Ujtg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=LBkbf8kHtPUCMVh7yiDzOZicnPpvYV/f9TSVApGumfCGB294rEOb301rf9irhamnJDMrDBDq6Teyt3jTPMQ3jKnwGDEN9nMayeVWZgOLkPal/Cr1uLQGwFZNaiRUBhpNkspwEnbKl7wr1YHLH90ck4lOaziLnez57j1BywBaWqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=postmarketos.org; spf=pass smtp.mailfrom=postmarketos.org; dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b=pIm114EZ; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=postmarketos.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=postmarketos.org
+	s=arc-20240116; t=1773164338; c=relaxed/simple;
+	bh=P5jdMY5TcQs1DhjRb0dewSY3xgk6AntRbMg/wL7POtw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l0hlyNgs6qEvxyUvAdavRhhgwJZ8Wj1aQUb+Iylpr/2aRn52QSiVvR0rblExPEuXSbofjQA+V6jVCdBkndGFi1NwM6dt4fjqs35ivRsbMthfqL7zP2cqTUaUndhyWFUPmOl8/T/43k2NiDI+aFYNIwNBpm5K9djiurlTVG/LOqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZcN2S+gE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b="pIm114EZ"
-Date: Tue, 10 Mar 2026 17:30:59 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=postmarketos.org;
-	s=key1; t=1773164011;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pbRHkg6j9RRwu7gnA0/6n+CmNyUAf+QALaWx+a/gjiE=;
-	b=pIm114EZhCnFvihJDz6EkqgldikGB5peLN/GNoPVUM8SKl14CnwYJIOE4ErMAHwCKfGtB3
-	oiRo5WnSWNBtmG5SJUFTonIS3T48mLUDfhQRC8IJMHHuBXt0TisKqY/AYSO1npzSuETDi3
-	gAAWkmCY+2/Ycd8B74gOr8ijLiy49hUQu6zDCk1n8iGqvuQukdPenkomdX6v5eaYRIq1PE
-	IcCJb1wnZcWUm/PWHiyv4g4Fd4VasAJSTNWatypqr5ulUsI2qy0MSto4QGxM6/iPJ4stqb
-	qeF3jkwOIT70sGs5srpp0wqvq8EhAVDnxWciCRok0RGf1q67atuqob0kXOhQ5Q==
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Ferass El Hafidi <funderscore@postmarketos.org>
-To: linux-amlogic@lists.infradead.org, Jian Hu <jian.hu@amlogic.com>, Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Martin  
- Blumenstingl <martin.blumenstingl@googlemail.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, robh+dt <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Jian Hu <jian.hu@amlogic.com>, devicetree <devicetree@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, linux-amlogic <linux-amlogic@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Ronald Claveau <linux-kernel-dev@aliel.fr>
-Subject: Re: [PATCH 3/3] arm64: dts: amlogic: t7: Add clock controller nodes
-References: <20260305074328.639993-1-jian.hu@amlogic.com> <20260305074328.639993-4-jian.hu@amlogic.com>
-In-Reply-To: <20260305074328.639993-4-jian.hu@amlogic.com>
-Message-ID: <tbp23s.3oymu5iyepvke@postmarketos.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZcN2S+gE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AE46C19425;
+	Tue, 10 Mar 2026 17:38:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773164336;
+	bh=P5jdMY5TcQs1DhjRb0dewSY3xgk6AntRbMg/wL7POtw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ZcN2S+gEidzV4BwPh+yfeVydoHqo6riTtspcuMasTedTDtxvTCwwwklmyZ+xxB7tt
+	 CEYFKbyFg7f0z7tDn3KxEBFXuVNDQ/63bdcwhUjtDOz91z3aeR/yQa/wDYtKcClIdS
+	 7Gx/DnGyy7Dnvwo+Z5EasmgTXGxBPr5fB9UljRtS9j62J20PMv/dNV9Cg5Ya0Es0qG
+	 vlHFifRJoC5Z4u2Mvfb53Uw7PsW41cgly3RpOdUhwQiGS867jlyf++3DPhfVB+91wK
+	 EVEhAcFCCjwuJqx9fZVpdTB016CLhRYr896VB/t0XYagyW08N4lD+ejCcpCtFI/Ww/
+	 CBpPRX+x6eeIw==
+Message-ID: <392ededd-ee73-4afa-88b4-b15fe1dc3457@kernel.org>
+Date: Tue, 10 Mar 2026 18:38:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=utf-8; format=flowed
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/5] dt-bindings: watchdog: renesas,rzn1-wdt: Document the
+ reset line
+To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
+ <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, Pascal Eberhard <pascal.eberhard@se.com>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+References: <20260310173249.161354-1-herve.codina@bootlin.com>
+ <20260310173249.161354-4-herve.codina@bootlin.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20260310173249.161354-4-herve.codina@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 05 Mar 2026 07:43, Jian Hu <jian.hu@amlogic.com> wrote:
->Add the required clock controller nodes for Amlogic T7 SoC family:
->- SCMI clock controller
->- PLL clock controller
->- Peripheral clock controller
->
->Signed-off-by: Jian Hu <jian.hu@amlogic.com>
->---
-> arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi | 125 ++++++++++++++++++++
-> 1 file changed, 125 insertions(+)
->
->diff --git a/arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi
->index 6510068bcff9..6ea1b583b13d 100644
->--- a/arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi
->+++ b/arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi
->@@ -6,6 +6,9 @@
-> #include <dt-bindings/interrupt-controller/arm-gic.h>
-> #include <dt-bindings/power/amlogic,t7-pwrc.h>
-> #include "amlogic-t7-reset.h"
->+#include <dt-bindings/clock/amlogic,t7-scmi.h>
->+#include <dt-bindings/clock/amlogic,t7-pll-clkc.h>
->+#include <dt-bindings/clock/amlogic,t7-peripherals-clkc.h>
+On 10/03/2026 18:32, Herve Codina (Schneider Electric) wrote:
+> Watchdogs available in the RZ/N1 SoC can use their specific hardware
+> reset line to reset the system on watchdog timeout.
 > 
-> / {
-> 	interrupt-parent = <&gic>;
->@@ -201,6 +204,33 @@ pwrc: power-controller {
-> 		};
-> 	};
+> This line is not documented in the current binding.
 > 
->+	sram@f7042000 {
->+		compatible = "mmio-sram";
->+		#address-cells = <1>;
->+		#size-cells = <1>;
->+		ranges = <0 0x0 0xf7042000 0x100>;
->+
->+		scmi_shmem: sram@0 {
->+			compatible = "arm,scmi-shmem";
->+			reg = <0x0 0x100>;
->+		};
->+	};
->+
->+	firmware {
->+		scmi: scmi {
->+			compatible = "arm,scmi-smc";
->+			arm,smc-id = <0x820000c1>;
->+			shmem = <&scmi_shmem>;
->+			#address-cells = <1>;
->+			#size-cells = <0>;
->+
->+			scmi_clk: protocol@14 {
->+				reg = <0x14>;
->+				#clock-cells = <1>;
->+			};
->+		};
->+	};
->+
-> 	soc {
-> 		compatible = "simple-bus";
-> 		#address-cells = <2>;
->@@ -224,6 +254,42 @@ apb4: bus@fe000000 {
-> 			#size-cells = <2>;
-> 			ranges = <0x0 0x0 0x0 0xfe000000 0x0 0x480000>;
+> Fill this lack and describe this per watchdog reset line.
 > 
->+			clkc_periphs:clock-controller@0 {
->+				compatible = "amlogic,t7-peripherals-clkc";
->+				reg = <0x0 0x0 0x0 0x1c8>;
->+				#clock-cells = <1>;
->+				clocks = <&xtal>,
->+					 <&scmi_clk CLKID_SYS_CLK>,
->+					 <&scmi_clk CLKID_FIXED_PLL>,
->+					 <&scmi_clk CLKID_FCLK_DIV2>,
->+					 <&scmi_clk CLKID_FCLK_DIV2P5>,
->+					 <&scmi_clk CLKID_FCLK_DIV3>,
->+					 <&scmi_clk CLKID_FCLK_DIV4>,
->+					 <&scmi_clk CLKID_FCLK_DIV5>,
->+					 <&scmi_clk CLKID_FCLK_DIV7>,
->+					 <&hifi CLKID_HIFI_PLL>,
->+					 <&gp0 CLKID_GP0_PLL>,
->+					 <&gp1 CLKID_GP1_PLL>,
->+					 <&mpll CLKID_MPLL1>,
->+					 <&mpll CLKID_MPLL2>,
->+					 <&mpll CLKID_MPLL3>;
->+				clock-names = "xtal",
->+					      "sys",
->+					      "fix",
->+					      "fdiv2",
->+					      "fdiv2p5",
->+					      "fdiv3",
->+					      "fdiv4",
->+					      "fdiv5",
->+					      "fdiv7",
->+					      "hifi",
->+					      "gp0",
->+					      "gp1",
->+					      "mpll1",
->+					      "mpll2",
->+					      "mpll3";
->+			};
->+
-> 			reset: reset-controller@2000 {
-> 				compatible = "amlogic,t7-reset";
-> 				reg = <0x0 0x2000 0x0 0x98>;
->@@ -234,6 +300,7 @@ watchdog@2100 {
-> 				compatible = "amlogic,t7-wdt";
-> 				reg = <0x0 0x2100 0x0 0x10>;
-> 				clocks = <&xtal>;
->+
-> 			};
+> Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>
+> ---
+>  .../bindings/watchdog/renesas,rzn1-wdt.yaml   | 22 +++++++++++++++++++
+>  .../dt-bindings/watchdog/renesas,rzn1-wdt.h   | 16 ++++++++++++++
+>  2 files changed, 38 insertions(+)
+>  create mode 100644 include/dt-bindings/watchdog/renesas,rzn1-wdt.h
 > 
-> 			periphs_pinctrl: pinctrl@4000 {
->@@ -269,6 +336,64 @@ uart_a: serial@78000 {
-> 				status = "disabled";
-> 			};
-> 
->+			gp0:clock-controller@8080 {
->+				compatible = "amlogic,t7-gp0-pll";
->+				reg = <0x0 0x8080 0x0 0x20>;
->+				clocks = <&scmi_clk CLKID_TOP_PLL_OSC>;
->+				clock-names = "in0";
->+				#clock-cells = <1>;
->+			};
+> diff --git a/Documentation/devicetree/bindings/watchdog/renesas,rzn1-wdt.yaml b/Documentation/devicetree/bindings/watchdog/renesas,rzn1-wdt.yaml
+> index 7e3ee533cd56..40a9a4ebc716 100644
+> --- a/Documentation/devicetree/bindings/watchdog/renesas,rzn1-wdt.yaml
+> +++ b/Documentation/devicetree/bindings/watchdog/renesas,rzn1-wdt.yaml
+> @@ -26,6 +26,26 @@ properties:
+>  
+>    timeout-sec: true
+>  
+> +  renesas,reset-line:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 1]
+> +    description: |
+> +      The watchdog reset line (dt-bindings/watchdog/renesas,rzn1-wdt.h defines
+> +      these values). A wachdog timeout asserts this reset line to perform a
+> +      hardware system reset. Two watchdogs are present in the RZ/N1 SoC and
+> +      each of them has a dedicated reset line.
+> +
+> +        - 0: RZN1_WDT_A7_0
+> +          This reset line can be asserted only by the A7 0 watchdog. This
+> +          watchdog is the one mapped at 0x40008000 on RZ/N1 SoCs.
+> +
+> +        - 1: RZN1_WDT_A7_1
+> +          This reset line can be asserted only by the A7 1 watchdog. This
+> +          watchdog is the one mapped at 0x40009000 on RZ/N1 SoCs.
+> +
+> +      If the renesas,reset-line property is not present, the watchdog timeout
+> +      only triggers an interrupt.
 
-I would separate `gp0:` and `clock-controller@8080` with a space, like so:
+I don't understand. You have two watchdogs (0x40008000 and 0x40009000)
+so why you would tell each of them that they can reset line associated
+with them? Can a watchdog reset other watchdog's line? No, thus code like:
 
-			gp0: clock-controller@8080 {
+watchdog@40008000 {
+	renesas,reset-line = <RZN1_WDT_A7_1>;
+};
 
-Same for the others below (and `clkc_periphs:clock-controller@0` above).
+makes no sense and thus is pointless to specify in DT.
 
->+
->+			gp1:clock-controller@80c0 {
->+				compatible = "amlogic,t7-gp1-pll";
->+				reg = <0x0 0x80c0 0x0 0x14>;
->+				clocks = <&scmi_clk CLKID_TOP_PLL_OSC>;
->+				clock-names = "in0";
->+				#clock-cells = <1>;
->+			};
->+
->+			hifi:clock-controller@8100 {
->+				compatible = "amlogic,t7-hifi-pll";
->+				reg = <0x0 0x8100 0x0 0x20>;
->+				clocks = <&scmi_clk CLKID_TOP_PLL_OSC>;
->+				clock-names = "in0";
->+				#clock-cells = <1>;
->+			};
->+
->+			pcie:clock-controller@8140 {
->+				compatible = "amlogic,t7-pcie-pll";
->+				reg = <0x0 0x8140 0x0 0x1c>;
->+				clocks = <&scmi_clk CLKID_PCIE_OSC>;
->+				clock-names = "in0";
->+				#clock-cells = <1>;
->+			};
->+
->+			mpll:clock-controller@8180 {
->+				compatible = "amlogic,t7-mpll";
->+				reg = <0x0 0x8180 0x0 0x28>;
->+				clocks = <&scmi_clk CLKID_FIXED_PLL_DCO>;
->+				clock-names = "in0";
->+				#clock-cells = <1>;
->+			};
->+
->+			hdmi:clock-controller@81c0 {
->+				compatible = "amlogic,t7-hdmi-pll";
->+				reg = <0x0 0x81c0 0x0 0x20>;
->+				clocks = <&scmi_clk CLKID_HDMI_PLL_OSC>;
->+				clock-names = "in0";
->+				#clock-cells = <1>;
->+			};
->+
->+			mclk:clock-controller@8300 {
->+				compatible = "amlogic,t7-mclk-pll";
->+				reg = <0x0 0x8300 0x0 0x18>;
->+				clocks = <&scmi_clk CLKID_MCLK_PLL_OSC>,
->+					 <&xtal>,
->+					 <&scmi_clk CLKID_FCLK_50M>;
->+				clock-names = "in0", "in1", "in2";
->+				#clock-cells = <1>;
->+			};
->+
-> 			sec_ao: ao-secure@10220 {
-> 				compatible = "amlogic,t7-ao-secure",
-> 					     "amlogic,meson-gx-ao-secure",
->-- 
->2.47.1
->
->
+What's more, if reset line is always wired (and how could it be since it
+is fully within the soc), why would this be board-level property?
+
+
+
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -41,10 +61,12 @@ examples:
+>    - |
+>      #include <dt-bindings/clock/r9a06g032-sysctrl.h>
+>      #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/watchdog/renesas,rzn1-wdt.h>
+>  
+>      watchdog@40008000 {
+>              compatible = "renesas,r9a06g032-wdt", "renesas,rzn1-wdt";
+>              reg = <0x40008000 0x1000>;
+>              interrupts = <GIC_SPI 73 IRQ_TYPE_EDGE_RISING>;
+>              clocks = <&sysctrl R9A06G032_CLK_WATCHDOG>;
+> +            renesas,reset-line = <RZN1_WDT_A7_0>;
+>      };
+> diff --git a/include/dt-bindings/watchdog/renesas,rzn1-wdt.h b/include/dt-bindings/watchdog/renesas,rzn1-wdt.h
+> new file mode 100644
+> index 000000000000..fe534aff0609
+> --- /dev/null
+> +++ b/include/dt-bindings/watchdog/renesas,rzn1-wdt.h
+> @@ -0,0 +1,16 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * RZ/N1 watchdog reset lines
+> + *
+> + * Copyright (C) 2026 Bootlin
+> + *
+> + * Herve Codina <herve.codina@bootlin.com>
+> + */
+> +
+> +#ifndef __DT_BINDINGS_RZN1_WDT_H__
+> +#define __DT_BINDINGS_RZN1_WDT_H__
+> +
+> +#define RZN1_WDT_A7_0		0
+> +#define RZN1_WDT_A7_1		1
+
+I also see little value of the binding, but probably because I don't
+understand the point of this patch.
+
 
 Best regards,
-Ferass
-
->_______________________________________________
->linux-amlogic mailing list
->linux-amlogic@lists.infradead.org
->http://lists.infradead.org/mailman/listinfo/linux-amlogic
+Krzysztof
