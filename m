@@ -1,22 +1,23 @@
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148C33624C4;
-	Tue, 10 Mar 2026 18:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685C13AD50A;
+	Tue, 10 Mar 2026 18:40:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773168048; cv=none; b=GWp6uzb2xVRZ3D0T02ElIkk1Zts4ZJ3eferm4lCnRcOkBEwDlnYOPuOA+GyRh32C73HZKmsR9EHgO2JeYM6wgql/N2ZqIDK+39ZUQyjwilz4lOnec0w+/RJKtpV8s+aMDzAiGKrpivGlW0eUR5B9OVq2xnEnBrYisdgzgGbsA+M=
+	t=1773168052; cv=none; b=h8ovtWwQ3V8cZ78pC0gGbeHSjyY/ZS7o8jUrlkp05unf13SQU/jzAcelUUdZNFhNTHDPltFDnWTOb2XzwYkPirjTv0k0EogvyQrse4DbVGA+lVH3FmNprYXesRUda2p2jJbgoxoIddXR/ym8jJ43b3dmyPfl+2Ipq7SxpAreZss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773168048; c=relaxed/simple;
-	bh=Cke6B8ZZszbiGOUnX5WHI4BnPl8uJNN5HsqHAmDu/6c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=plGKMtAzzy0KlfLesBND6ZNQbfjOzuvOc0EAj8tvGvYaMkL2q8MLXNVUzbCxqRGxN6kU2VWemZHiLd5b74aLWaJ57Drjv9B139eEhk0EUxpuRbUPyxjPn7rFbzSXBbVJJ44qVP/R9ASPLaI0jJIyepv1IrwbKL8UJKtowZKHYd4=
+	s=arc-20240116; t=1773168052; c=relaxed/simple;
+	bh=FouQA+bv5j1EdgH3z1eqPEIT8/R9xB/bagn+V+J4Zec=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ct9II6yS/40wzBJKu2DfgvWWoV3iv0euBXKhLo4bVIeR9oBdV4oUSdP2ahgpG1bXTWJnfq9mzvTTo4l5lGZaMgt74VSXYRgXMEhnYxHYrf3/pq0Zmlq8itpwYxY7YKAyboo0D4XI2HBVdjusRYDVo4sTkw6aX85W+Z8XflbBid8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1897614BF;
-	Tue, 10 Mar 2026 11:40:36 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 976191596;
+	Tue, 10 Mar 2026 11:40:43 -0700 (PDT)
 Received: from pluto.guest.local (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2133B3F7BD;
-	Tue, 10 Mar 2026 11:40:38 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BCAD83F7BD;
+	Tue, 10 Mar 2026 11:40:46 -0700 (PDT)
 From: Cristian Marussi <cristian.marussi@arm.com>
 To: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
@@ -36,10 +37,12 @@ Cc: sudeep.holla@arm.com,
 	kuninori.morimoto.gx@renesas.com,
 	marek.vasut+renesas@gmail.com,
 	Cristian Marussi <cristian.marussi@arm.com>
-Subject: [PATCH v2 00/13] SCMI Clock rates discovery rework
-Date: Tue, 10 Mar 2026 18:40:17 +0000
-Message-ID: <20260310184030.3669330-1-cristian.marussi@arm.com>
+Subject: [PATCH v2 02/13] firmware: arm_scmi: Add clock determine_rate operation
+Date: Tue, 10 Mar 2026 18:40:19 +0000
+Message-ID: <20260310184030.3669330-3-cristian.marussi@arm.com>
 X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260310184030.3669330-1-cristian.marussi@arm.com>
+References: <20260310184030.3669330-1-cristian.marussi@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,93 +51,120 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi,
+Add a clock operation to help determining the effective rate, closest to
+the required one, that a specific clock can support.
 
-it was a known limitation, in the SCMI Clock protocol support, the lack of
-dynamic allocation around per-clock rates discovery: fixed size statically
-per-clock rates arrays did not scale and was increasingly a waste of memory
-(see [1]).
+Calculation is currently performed kernel side and the logic is taken
+directly from the SCMI Clock driver: embedding the determinate rate logic
+in the protocol layer enables simplifications in the SCMI Clock protocol
+interface and will more easily accommodate further evolutions where such
+determine_rate logic into is optionally delegated to the platform SCMI
+server.
 
-This series aim at solving this in successive steps:
-
- - simplify and reduce to the minimum possible the rates data info exposed
-   to the SCMI driver by scmi_clock_info
- - move away from static fixed allocation of per-clock rates arrays in
-   favour of a completely dynamic runtime allocation: just allocate what
-   is needed based on the effectively discovered
-
-This is done in patches 2-6.
-
-A further bigger optimization suggested in a past series [2] by Etienne
-would be, whenever allowed by the spec, to limit upfront the number of
-queries in order to simply retrieve min and max rate, that are indeed the
-only rates needed by the CLK SCMI driver.
-
-The approach proposed in [1] was open coding and duplicating some of the
-functionalities already provided by SCMI iterators, though.
-
-Patch 7-12 implement such optimization instead by:
-
- - reworking core SCMI iterators to support bound enumerations
- - use such new bound iterators to perform the minimum number of queries
-   in order to only retrieve min an max rate
-
-As a final result now the rates enumeration triggered by the CLK SCMI
-driver, while still allocating for all the existent rates, miminize the
-number of SCMI CLK_DESCRIBE_RATE messages needed to obtain min and max.
-
-Finally, patch 13 introduces a new clock protocol operation to be able to
-trigger anytime on demand a full enumeration and obtain the full list of
-rates when needed, not only min/max: this latter method is really only used
-currently by some dowstream SCMI Test driver of mine.
-
-Based on v7.0-rc3. 
-Tested on JUNO and an emulated environment.
-
-Beside addressing a few review comments, in V2:
-
- - patch [1/13] introduces a fix for the pre-existing rounding algorithm,
-   before relocating the algorithm logic as alreday done in V1.
- - patch [8/13] hardens clock protocol initialization by adding some
-   missing retval checks
-
-Any feeback welcome.
-
-Thanks,
-Cristian
-
-[1]: https://lore.kernel.org/arm-scmi/aZsX-oplR6fiLBBN@pluto/T/#t
-[2]: https://lore.kernel.org/20241203173908.3148794-2-etienne.carriere@foss.st.com
+Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
 ---
 v1 --> v2
- - Rebaed on v7.0-rc3
- - Added a Fixes patch to rectify bug in rounding algo
- - Removed useless parenthesis in macros
- - Collected a few Reviewed-by tags
- - Clarified commit message
+ - use the fixed rounding algo using div64_ul
 
-Cristian Marussi (13):
-  clk: scmi: Fix clock rate rounding
-  firmware: arm_scmi: Add clock determine_rate operation
-  clk: scmi: Use new determine_rate clock operation
-  firmware: arm_scmi: Simplify clock rates exposed interface
-  clk: scmi: Use new simplified per-clock rate properties
-  firmware: arm_scmi: Drop unused clock rate interfaces
-  firmware: arm_scmi: Make clock rates allocation dynamic
-  firmware: arm_scmi: Harden clock protocol initialization
-  firmware: arm_scmi: Harden clock parents discovery
-  firmware: arm_scmi: Refactor iterators internal allocation
-  firmware: arm_scmi: Add bound iterators support
-  firmware: arm_scmi: Use bound iterators to minimize discovered rates
-  firmware: arm_scmi: Introduce all_rates_get clock operation
+Spoiler alert next SCMI spec will most probably include a new
+CLOCK_DETERMINE_RATE command to delegate to the platform such calculations,
+so this clock proto_ops will be needed anyway sooner or later
+---
+ drivers/firmware/arm_scmi/clock.c | 42 +++++++++++++++++++++++++++++++
+ include/linux/scmi_protocol.h     |  6 +++++
+ 2 files changed, 48 insertions(+)
 
- drivers/clk/clk-scmi.c                |  48 +---
- drivers/firmware/arm_scmi/clock.c     | 316 ++++++++++++++++++++------
- drivers/firmware/arm_scmi/driver.c    |  73 ++++--
- drivers/firmware/arm_scmi/protocols.h |  13 +-
- include/linux/scmi_protocol.h         |  29 ++-
- 5 files changed, 329 insertions(+), 150 deletions(-)
-
+diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
+index ab36871650a1..54b55517b759 100644
+--- a/drivers/firmware/arm_scmi/clock.c
++++ b/drivers/firmware/arm_scmi/clock.c
+@@ -5,6 +5,7 @@
+  * Copyright (C) 2018-2022 ARM Ltd.
+  */
+ 
++#include <linux/math64.h>
+ #include <linux/module.h>
+ #include <linux/limits.h>
+ #include <linux/sort.h>
+@@ -624,6 +625,46 @@ static int scmi_clock_rate_set(const struct scmi_protocol_handle *ph,
+ 	return ret;
+ }
+ 
++static int scmi_clock_determine_rate(const struct scmi_protocol_handle *ph,
++				     u32 clk_id, unsigned long *rate)
++{
++	u64 fmin, fmax, ftmp;
++	struct scmi_clock_info *clk;
++	struct clock_info *ci = ph->get_priv(ph);
++
++	if (!rate)
++		return -EINVAL;
++
++	clk = scmi_clock_domain_lookup(ci, clk_id);
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
++
++	/*
++	 * If we can't figure out what rate it will be, so just return the
++	 * rate back to the caller.
++	 */
++	if (clk->rate_discrete)
++		return 0;
++
++	fmin = clk->range.min_rate;
++	fmax = clk->range.max_rate;
++	if (*rate <= fmin) {
++		*rate = fmin;
++		return 0;
++	} else if (*rate >= fmax) {
++		*rate = fmax;
++		return 0;
++	}
++
++	ftmp = *rate - fmin;
++	ftmp += clk->range.step_size - 1; /* to round up */
++	ftmp = div64_ul(ftmp, clk->range.step_size);
++
++	*rate = ftmp * clk->range.step_size + fmin;
++
++	return 0;
++}
++
+ static int
+ scmi_clock_config_set(const struct scmi_protocol_handle *ph, u32 clk_id,
+ 		      enum clk_state state,
+@@ -936,6 +977,7 @@ static const struct scmi_clk_proto_ops clk_proto_ops = {
+ 	.info_get = scmi_clock_info_get,
+ 	.rate_get = scmi_clock_rate_get,
+ 	.rate_set = scmi_clock_rate_set,
++	.determine_rate = scmi_clock_determine_rate,
+ 	.enable = scmi_clock_enable,
+ 	.disable = scmi_clock_disable,
+ 	.state_get = scmi_clock_state_get,
+diff --git a/include/linux/scmi_protocol.h b/include/linux/scmi_protocol.h
+index aafaac1496b0..28579c145045 100644
+--- a/include/linux/scmi_protocol.h
++++ b/include/linux/scmi_protocol.h
+@@ -91,6 +91,10 @@ enum scmi_clock_oem_config {
+  * @info_get: get the information of the specified clock
+  * @rate_get: request the current clock rate of a clock
+  * @rate_set: set the clock rate of a clock
++ * @determine_rate: determine the effective rate that can be supported by a
++ *		    clock calculating the closest allowed rate.
++ *		    Note that @rate is an input/output parameter used both to
++ *		    describe the requested rate and report the closest match
+  * @enable: enables the specified clock
+  * @disable: disables the specified clock
+  * @state_get: get the status of the specified clock
+@@ -108,6 +112,8 @@ struct scmi_clk_proto_ops {
+ 			u64 *rate);
+ 	int (*rate_set)(const struct scmi_protocol_handle *ph, u32 clk_id,
+ 			u64 rate);
++	int (*determine_rate)(const struct scmi_protocol_handle *ph, u32 clk_id,
++			      unsigned long *rate);
+ 	int (*enable)(const struct scmi_protocol_handle *ph, u32 clk_id,
+ 		      bool atomic);
+ 	int (*disable)(const struct scmi_protocol_handle *ph, u32 clk_id,
 -- 
 2.53.0
 
