@@ -1,103 +1,75 @@
-Received: from mail.cjdns.fr (mail.cjdns.fr [5.135.140.105])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7522E3290C0;
-	Tue, 10 Mar 2026 10:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.135.140.105
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66FBF37104A;
+	Tue, 10 Mar 2026 10:39:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773139055; cv=none; b=L1aG3QdtaY21go234nkv6BomM8yQ6EMRTG/Nxnyg8u232UBFeHtHOa2FuGL28SPc/vL0knM6GK8WjBSi0aqqf5W3ZREBu1V93wwxfHjmS3yyD7wwaVARVEVhlZXFrAjzISH+UB+Ms2e2njfjMpJAsCgNuCokTKRfpGUY5pDQMwI=
+	t=1773139163; cv=none; b=UJ56/i/HYVzzuvNVHuQpKUcbGg5wYB2WYHWhd1XiIfrNvWxvxHIDaMvgKCoa30bjg4ta0LVdAmtdLlBUcRgXlKLisTXEFkSjnuYsKLXKumS51H4TuWqbF5d1gz0//eszVCBvx0MtKFYnmQ06UW4hL2mkJwPECY2ELBJJtN46mGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773139055; c=relaxed/simple;
-	bh=IM3vochcg7NYCrqAYrIjjYRtsA6SOjo+Yu29N2Tzjw0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DjW3y22lR0zjQHSLJsf9yCpf7g22vL8M2/ZIwtKpIA2lKI1Gm8Z3exyCfA9hfeybIIPToakidKso2QVfyBPpubqROshD8HWe6L6KheCCjVpIveJlMQK209CNNA+LTZYIfQ3RUwSdqNR9/AZAdUg/mD8SDIqoXIEbLKH2Y1M9Rjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr; spf=none smtp.mailfrom=cjdns.fr; dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b=Ad7zddx8; arc=none smtp.client-ip=5.135.140.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cjdns.fr
+	s=arc-20240116; t=1773139163; c=relaxed/simple;
+	bh=Z/vAzq5np2GPmqi0sV3g4AHmjAkYGwSpqkW7Ajg73rM=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PPvjAOOwnYb/N+9YaT+CmPMNgxUIuiIZf3mtzKzTxPJ3ghSUSPbP3dqiYMo+I0ZieABNh8TQF2l405yIyt5Z8UF3mzqfWU3507WaHhaSGfRqQjlLxEdEBqElx5yxXfzut47cvZelnLohY9CgARrcxvv2paoTSp9fYcCiMSsQ7eM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=Tu7hpJh7; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b="Ad7zddx8"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B1E2D28EE37;
-	Tue, 10 Mar 2026 11:37:24 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cjdns.fr; s=dkim;
-	t=1773139050; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=jHawHue/HHoIMdOylZQNB/N2WuX1uZGGBcXmmXhdZ6Q=;
-	b=Ad7zddx8oLtstjGz5KASb6EIQGTzoZs9lk+j6pG7a0EA2N4rQpTuEP/dPCcVzlag/LRZmu
-	A81x245jxiYDnd5BMETB4uihbQnNA7byLOz7LruvohZlV/sNgt1BnsyR0wJiCRLK48B63M
-	gagBE0XLsr4ZbDD8AF0PvSXE/QSv+xEMMV608qhIzaFzoVIdQolWDUmN1+9NtEPf8O1Pyx
-	xZcZf+m3VNtkOThDFb2EuxSNqPbznlw1h2JWdyN8vSP1NdYYgIBXce9F97j7LVneL1fTfv
-	Ba5bkpXm9uRLbjKmPKvQXQpF91TvVk8rjDBQJBgYsVxamlUen4GS0++ZGkdZEA==
-Message-ID: <1611d3d5-8c3b-4298-bf50-55ab2c2db0e7@cjdns.fr>
-Date: Tue, 10 Mar 2026 11:37:23 +0100
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="Tu7hpJh7"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 62AAcscuF2414589, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1773139135; bh=Z/vAzq5np2GPmqi0sV3g4AHmjAkYGwSpqkW7Ajg73rM=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding:Content-Type;
+	b=Tu7hpJh7Xaj2uT4e5kJy7+uM0znwx7ZpyGDQZTUcSYTXiFoGC4WIQCT3P4X3QIfCs
+	 4p4VoCzq25NOLeD16xjW+p5JnCpTfmi2rRvk3H3noYTicnOXlXXBLEczCKEu5ipTY7
+	 DVCRiFmoy9iXCiFEHRyrCkalwqr9K3q/Ge1e8UbJ85ZYhN8g+Q0AaLiAs8yNf9r3Ij
+	 FiYeffZS2bpQicPN6nOiulKMBNHIU+VWoikDsXb52kMbBPm2/RVfBhcTZwgUS8SIcT
+	 E+3k8i2QDI2nvfkpbZL/YSmsOvkDgH3+yd1mJDj9ULeJg/BHHYXBISoQvT7PNmTvxi
+	 3YMvAabOa3Mug==
+Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
+	by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 62AAcscuF2414589
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 10 Mar 2026 18:38:55 +0800
+Received: from RTKEXHMBS05.realtek.com.tw (10.21.1.55) by
+ RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Tue, 10 Mar 2026 18:38:54 +0800
+Received: from RTKEXHMBS05.realtek.com.tw (10.21.1.55) by
+ RTKEXHMBS05.realtek.com.tw (10.21.1.55) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Tue, 10 Mar 2026 18:38:54 +0800
+Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS05.realtek.com.tw
+ (10.21.1.55) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Tue, 10 Mar 2026 18:38:54 +0800
+From: Yu-Chun Lin <eleanor.lin@realtek.com>
+To: <eleanor.lin@realtek.com>
+CC: <conor+dt@kernel.org>, <cy.huang@realtek.com>, <cylee12@realtek.com>,
+        <devicetree@vger.kernel.org>, <james.tai@realtek.com>,
+        <jyanchou@realtek.com>, <krzk+dt@kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mturquette@baylibre.com>, <p.zabel@pengutronix.de>, <robh@kernel.org>,
+        <sboyd@kernel.org>, <stanley_chang@realtek.com>
+Subject: Re: [PATCH v3 0/9] clk: realtek: Add RTD1625 Clock Support
+Date: Tue, 10 Mar 2026 18:38:54 +0800
+Message-ID: <20260310103854.3025286-1-eleanor.lin@realtek.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20260122110857.12995-1-eleanor.lin@realtek.com>
+References: <20260122110857.12995-1-eleanor.lin@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH v2 3/8] dt-bindings: phy: Document PCIe PHY in EcoNet
- EN751221 and EN7528
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-mips@vger.kernel.org, naseefkm@gmail.com, mturquette@baylibre.com,
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- tsbogend@alpha.franken.de, ryder.lee@mediatek.com,
- jianjun.wang@mediatek.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
- mani@kernel.org, bhelgaas@google.com, vkoul@kernel.org,
- neil.armstrong@linaro.org, p.zabel@pengutronix.de, matthias.bgg@gmail.com,
- angelogioacchino.delregno@collabora.com, nbd@nbd.name, ansuelsmth@gmail.com,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-phy@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org
-References: <20260309131818.74467-1-cjd@cjdns.fr>
- <20260309131818.74467-4-cjd@cjdns.fr>
- <20260310-scrupulous-fat-ara-eab47c@quoll>
-Content-Language: en-US
-From: Caleb James DeLisle <cjd@cjdns.fr>
-In-Reply-To: <20260310-scrupulous-fat-ara-eab47c@quoll>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
+Gentle ping!
 
-On 10/03/2026 09:24, Krzysztof Kozlowski wrote:
-> On Mon, Mar 09, 2026 at 01:18:13PM +0000, Caleb James DeLisle wrote:
->> EN751221 and EN7528 SoCs have two PCIe slots, and each one has a PHY
->> which behaves slightly differently because one slot is Gen1/Gen2 while
->> the other is Gen1 only.
->>
->> Signed-off-by: Caleb James DeLisle <cjd@cjdns.fr>
-> Still, four separate subsystems unnecessarily merged into one patchset.
-> Split independent parts of your work per subsystem. See also submitting
-> patches.
+Any feedback on this patch? If changes are needed, I'll add an extra clock
+device node in v4.
 
+Thanks!
 
-I asked for clarification last time and didn't get a reply. I'm not 
-against changing it but need to understand exactly what's expected b/c 
-the way I'm imagining it seems way worse. submitting-patches.rst only 
-says of patch sets "only post say 15 or so at a time", obviously not the 
-case here.
-
-If you're asking for one patchset for phy, one for clock, one for PCI, 
-and then one to introduce them to the device, I can do that. I just want 
-to be sure because introducing unused code, and patch sets that depend 
-on other patch sets both seem like anti-patterns to me.
-
-
-Thanks,
-
-Caleb
-
-
->> ---
->>   .../phy/econet,en751221-pcie-phy.yaml         | 50 +++++++++++++++++++
->>   MAINTAINERS                                   |  6 +++
->>   2 files changed, 56 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/phy/econet,en751221-pcie-phy.yaml
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
->
-> Best regards,
-> Krzysztof
->
->
+Yu-Chun
