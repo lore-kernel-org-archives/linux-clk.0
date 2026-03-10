@@ -1,113 +1,142 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from imap4.hz.codethink.co.uk (imap4.hz.codethink.co.uk [188.40.203.114])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F763B6378;
-	Tue, 10 Mar 2026 12:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB7F3D891C
+	for <linux-clk@vger.kernel.org>; Tue, 10 Mar 2026 12:36:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.203.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773145714; cv=none; b=YYkKrWTpvV1BCdEut7Nd0y3OeNd7lSOp9yLpWsbYu6r0umZce68M0AXdf+dwRFIuWgpcJ7UJVy7578BFMevBflxExLa4A/BQpsXBmcqMChEz3XkAN5p5wnWSQ9F3X14KDqkBjhR5I76Na0qns2N+W7/z/cYqrBunb4ho+bNsLgs=
+	t=1773146194; cv=none; b=BmaLXADz9quLtoQoby2eHuV/mmks9AG3RpMVCtfvC1qCDVKJeUDEvuw2p8dLcu2J1dy4cB0hIuxN2wptSzonSkYBAVr9iGuQ8eWwwnRVeopW1kFQEoAtHbh6ii778OlVMwxO5NYoy/+0P7F4g4q8ox7H76rYbXT3jUnHAr7srUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773145714; c=relaxed/simple;
-	bh=NZ5oTCN6VGzePwnu776uK+3unhTqb8pwokxv1IJtK7c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=noHGQmxEL7IiXdiF1hNqEE9uS+fhYYF0hIJyU1chSxO/FtpJTW1bVVyqWOi1E4WPjAeBdzHrOL8ney+Biqjn3eN1PjYWD4Pfho2p9Fnl+y9Lm4V6kLLlMke34xalTNHMyPdq1PxQR9TH4x3t7rnw8iZk8l+7BH0gHYbtJACoJmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FOutLnoL; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773146194; c=relaxed/simple;
+	bh=wF+IAHcaaboaQD3CTg54AEU14AF+WpcAtiZ8qeLXhKw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Eh7ZJ0CmytcBrAvTaAPOnPcXkWPlx7Y6XWtFkr16JR81QqiQjKGyH6nb8NRYOzXfH5kKjw3nuUCzEr9VPQYs7LlrTOCQMVYBVVXO0UmXYNpzS0hfxfdKzlAyLd2fDzTTAvUL8u3xKYPlpbIxQPBfVmwZSqoziopM2fHFmweBCLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.com; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=NaN+ur9Z; arc=none smtp.client-ip=188.40.203.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FOutLnoL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8179C19423;
-	Tue, 10 Mar 2026 12:28:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773145714;
-	bh=NZ5oTCN6VGzePwnu776uK+3unhTqb8pwokxv1IJtK7c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FOutLnoL/seeB/icY17T5kE23weT+c8OWPxsN1CuLtbqZf1qO8twCXpCHPEW4zEb5
-	 uM5pcZxBh8XK3wQOjz6gQLnb8DbNMsJ6SwgjqzPaDdyeQRMdzDiadj+7d8CVSVSbbp
-	 WbSnGZkMbwo0cpPlViR1A0oh5e53oFE0sYAJxulW9oCNKaXKAhhACMzXx6XsRo3Hlx
-	 /XgKdmLcz/EtWl6VZEOUGY5PBqGn3Xb4X+aqLL+l2HoSL3wZMd6NhcSGeVt+ZFpBkn
-	 8s7ZymgPrZjLjSz7/xRlCoCIsHrVCduE0eaA6Z9IamuK4ZW4bnyThB9ZhLWcSUucoJ
-	 BJsDSXl6ZXWkQ==
-Date: Tue, 10 Mar 2026 12:28:20 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Philipp Hahn <phahn-oss@avm.de>
-Cc: amd-gfx@lists.freedesktop.org, apparmor@lists.ubuntu.com,
-	bpf@vger.kernel.org, ceph-devel@vger.kernel.org, cocci@inria.fr,
-	dm-devel@lists.linux.dev, dri-devel@lists.freedesktop.org,
-	gfs2@lists.linux.dev, intel-gfx@lists.freedesktop.org,
-	intel-wired-lan@lists.osuosl.org, iommu@lists.linux.dev,
-	kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-hyperv@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-mips@vger.kernel.org, linux-mm@kvack.org,
-	linux-modules@vger.kernel.org, linux-mtd@lists.infradead.org,
-	linux-nfs@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-phy@lists.infradead.org, linux-pm@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-scsi@vger.kernel.org, linux-sctp@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-sh@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-trace-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-	ntfs3@lists.linux.dev, samba-technical@lists.samba.org,
-	sched-ext@lists.linux.dev, target-devel@vger.kernel.org,
-	tipc-discussion@lists.sourceforge.net, v9fs@lists.linux.dev,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Max Filippov <jcmvbkbc@gmail.com>
-Subject: Re: [PATCH 18/61] sound: Prefer IS_ERR_OR_NULL over manual NULL check
-Message-ID: <19aa26fc-8570-492e-8e17-23d6950676f0@sirena.org.uk>
-References: <20260310-b4-is_err_or_null-v1-0-bd63b656022d@avm.de>
- <20260310-b4-is_err_or_null-v1-18-bd63b656022d@avm.de>
+	dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="NaN+ur9Z"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=codethink.co.uk; s=imap4-20230908; h=Sender:Content-Transfer-Encoding:
+	MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:In-Reply-To:
+	References; bh=IU8oWwwvjxEc+ee+Sw/7Fv1DFEugv27jyfna2MxitOo=; b=NaN+ur9ZCceLTp
+	bMFKuyyOxhDvOqyiTk+pNrPJoRtIx4qBxz2xjDvWEBCMcblLgO93klik3wtkqqeYShVqfxONVkZLh
+	/4pIG0LC6oCz1QywgnhL59vXRTmpH+CDNeXo8zw1B8shUDKKUKjj0Q+n8xD8EqgJfUCgU5g6C0ZZm
+	CZrYosjNCev1+MRrA7y0sFoM3vMInLYf8InbMaKHHbeVVFR7DKtV6Yzkl1I+yLHKSTbg4Z5ohHkyc
+	ZkmA/GLBS8aSiU64bv5hfUFKv6MT999TukfMhFFOi4rNvMRRU1mPMYo/khhKxGfKHWz+d1CbVmH8y
+	DCW5pVWDjR14ezyocPZg==;
+Received: from [63.135.74.212] (helo=rainbowdash)
+	by imap4.hz.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
+	id 1vzwK3-006p9w-CY; Tue, 10 Mar 2026 12:36:27 +0000
+Received: from ben by rainbowdash with local (Exim 4.99.1)
+	(envelope-from <ben@rainbowdash>)
+	id 1vzwK2-00000000gct-2Y8k;
+	Tue, 10 Mar 2026 12:36:26 +0000
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+To: linux-clk@vger.kernel.org,
+	sboyd@kernel.org,
+	mturquette@baylibre.com,
+	sebastian.hesselbarth@gmail.com,
+	gregory.clement@bootlin.co,
+	andrew@lunn.c
+Cc: linux-arm-kernel@lists.infradead.org,
+	Ben Dooks <ben.dooks@codethink.co.uk>
+Subject: [PATCH] clk: mvebu: armada-37xx-periph: fix __iomem casts in structure init
+Date: Tue, 10 Mar 2026 12:36:25 +0000
+Message-Id: <20260310123625.163846-1-ben.dooks@codethink.co.uk>
+X-Mailer: git-send-email 2.37.2.352.g3c44437643
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7JjDB+7CEHk89uTh"
-Content-Disposition: inline
-In-Reply-To: <20260310-b4-is_err_or_null-v1-18-bd63b656022d@avm.de>
-X-Cookie: A fool and his honey are soon parted.
+Content-Transfer-Encoding: 8bit
+Sender: srv_ts003@codethink.com
 
+There are a number of casts to "void __iomem *" in the initialsation
+of the driver's clk information. Fix this by adding a helper macro
+for the cast.
 
---7JjDB+7CEHk89uTh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Silences a number of sparse warnings:
 
-On Tue, Mar 10, 2026 at 12:48:44PM +0100, Philipp Hahn wrote:
-> Prefer using IS_ERR_OR_NULL() over using IS_ERR() and a manual NULL
-> check.
+drivers/clk/mvebu/armada-37xx-periph.c:254:1: warning: incorrect type in initializer (different address spaces)
+drivers/clk/mvebu/armada-37xx-periph.c:254:1:    expected void [noderef] __iomem *reg
+drivers/clk/mvebu/armada-37xx-periph.c:254:1:    got void *
+drivers/clk/mvebu/armada-37xx-periph.c:254:1: warning: incorrect type in initializer (different address spaces)
+drivers/clk/mvebu/armada-37xx-periph.c:254:1:    expected void [noderef] __iomem *reg1
+drivers/clk/mvebu/armada-37xx-periph.c:254:1:    got void *
+drivers/clk/mvebu/armada-37xx-periph.c:254:1: warning: incorrect type in initializer (different address spaces)
+drivers/clk/mvebu/armada-37xx-periph.c:254:1:    expected void [noderef] __iomem *reg2
+drivers/clk/mvebu/armada-37xx-periph.c:254:1:    got void *
+drivers/clk/mvebu/armada-37xx-periph.c:255:1: warning: incorrect type in initializer (different address spaces)
+drivers/clk/mvebu/armada-37xx-periph.c:255:1:    expected void [noderef] __iomem *reg
+drivers/clk/mvebu/armada-37xx-periph.c:255:1:    got void *
+...
 
-I can't tell what the dependency story is here, it looks like there's
-none?  If that's the case you shouldn't send things as a single series,
-send separate patches to the various subsystems.
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+---
+ drivers/clk/mvebu/armada-37xx-periph.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-Please submit patches using subject lines reflecting the style for the
-subsystem, this makes it easier for people to identify relevant patches.
-Look at what existing commits in the area you're changing are doing and
-make sure your subject lines visually resemble what they're doing.
-There's no need to resubmit to fix this alone.
+diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
+index bd0bc8e7b1e7..3123771b9c99 100644
+--- a/drivers/clk/mvebu/armada-37xx-periph.c
++++ b/drivers/clk/mvebu/armada-37xx-periph.c
+@@ -126,9 +126,11 @@ static const struct clk_div_table clk_table2[] = {
+ static const struct clk_ops clk_double_div_ops;
+ static const struct clk_ops clk_pm_cpu_ops;
+ 
++#define __reg(__x) ((void __iomem __force *)(__x))
++
+ #define PERIPH_GATE(_name, _bit)		\
+ struct clk_gate gate_##_name = {		\
+-	.reg = (void *)CLK_DIS,			\
++	.reg = __reg(CLK_DIS),			\
+ 	.bit_idx = _bit,			\
+ 	.hw.init = &(struct clk_init_data){	\
+ 		.ops =  &clk_gate_ops,		\
+@@ -137,7 +139,7 @@ struct clk_gate gate_##_name = {		\
+ 
+ #define PERIPH_MUX(_name, _shift)		\
+ struct clk_mux mux_##_name = {			\
+-	.reg = (void *)TBG_SEL,			\
++	.reg = __reg(TBG_SEL),			\
+ 	.shift = _shift,			\
+ 	.mask = 3,				\
+ 	.hw.init = &(struct clk_init_data){	\
+@@ -147,8 +149,8 @@ struct clk_mux mux_##_name = {			\
+ 
+ #define PERIPH_DOUBLEDIV(_name, _reg1, _reg2, _shift1, _shift2)	\
+ struct clk_double_div rate_##_name = {		\
+-	.reg1 = (void *)_reg1,			\
+-	.reg2 = (void *)_reg2,			\
++	.reg1 = __reg(_reg1),			\
++	.reg2 = __reg(_reg2),			\
+ 	.shift1 = _shift1,			\
+ 	.shift2 = _shift2,			\
+ 	.hw.init = &(struct clk_init_data){	\
+@@ -158,7 +160,7 @@ struct clk_double_div rate_##_name = {		\
+ 
+ #define PERIPH_DIV(_name, _reg, _shift, _table)	\
+ struct clk_divider rate_##_name = {		\
+-	.reg = (void *)_reg,			\
++	.reg = __reg(_reg),			\
+ 	.table = _table,			\
+ 	.shift = _shift,			\
+ 	.hw.init = &(struct clk_init_data){	\
+@@ -168,10 +170,10 @@ struct clk_divider rate_##_name = {		\
+ 
+ #define PERIPH_PM_CPU(_name, _shift1, _reg, _shift2)	\
+ struct clk_pm_cpu muxrate_##_name = {		\
+-	.reg_mux = (void *)TBG_SEL,		\
++	.reg_mux = __reg(TBG_SEL),		\
+ 	.mask_mux = 3,				\
+ 	.shift_mux = _shift1,			\
+-	.reg_div = (void *)_reg,		\
++	.reg_div = __reg(_reg),			\
+ 	.shift_div = _shift2,			\
+ 	.hw.init = &(struct clk_init_data){	\
+ 		.ops =  &clk_pm_cpu_ops,	\
+-- 
+2.37.2.352.g3c44437643
 
---7JjDB+7CEHk89uTh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmwDmMACgkQJNaLcl1U
-h9D4VAf/VCpoXjivQsq8mL1i6sHdID6byBqwG7egrwiRCrsZav80JlvY/F+1fWQl
-Fe3Ct+yRv1pWeNy67wSCZD3mtHtNH0JpwRTNxS1XQrnXc7CLjzKunCldDfzTbfom
-+QmXWHQB3Qo9ie1ugoAGet9gx/vkV0z+cv9sVHg1o1R7/AKqfgov7xnuP9Hlv9Uk
-p1pkMya/NhbXBsrh+BFbktLgp+7sAOMjWgtGZ3NfHzwju9n4Jdbl1JcPxgDl0SHp
-6z8kP2+oskOspesqLWw62mZF+bN32Ycjt1N7/EFjtPBdJKIcQJLICoACzxyQBZYg
-+i50s/oSRL1HiP4US2lxoy8BqxaqrQ==
-=U6jW
------END PGP SIGNATURE-----
-
---7JjDB+7CEHk89uTh--
