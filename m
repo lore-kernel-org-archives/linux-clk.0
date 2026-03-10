@@ -1,366 +1,120 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from mail.cjdns.fr (mail.cjdns.fr [5.135.140.105])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680823859E2
-	for <linux-clk@vger.kernel.org>; Tue, 10 Mar 2026 10:58:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13B03859DC;
+	Tue, 10 Mar 2026 11:13:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.135.140.105
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773140282; cv=none; b=YLpx5nMQ7adZUve2CiomCrtbMINgej++oweEUu/sVhNplXx1W1dxRWl81DI1RCVbyuTYd1TjlLrpNc+5FP6bnfbfY5NE7egn/UpuG1gZNo08Fv1wkVNbyNZbmg95QoNEdY0dFVLYMf9WpRIX+c1764LidKSpCAeyG9/kgbIRZtw=
+	t=1773141219; cv=none; b=OkrybxwltxCNvGPuQp+mzmaM/lxKUTLvU2ndXJEMDtvyZI6b8Lx1B3vg0bTRCSLzfxO/as+MWMHxddap7RIctsjrSLMTXDck3ezhiQ3U3k13mFOiPwZQ2FjZH4ugEyGCmtGSFSaEVM2w9majd0PZ3XJhJlljlKkA5G1mJQrWh5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773140282; c=relaxed/simple;
-	bh=dOKnRIfBKEzvn5a8zO3WbQbn+dEBPERW/b8Vjykyc9w=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=soaa4MXooFXk6o6Mx2zTot/SbfvRrqvTHKrhG2MudMm1vcFNgGfKjjPtM7wjzzZTpqcbTAIe3SvT0IStJvTVxVf7YUt+fFQ5F/tPVA8XBuBRMWKlcgqzL5DfCNH/XHQTG0pZquN42glxzxnBl0Gckll845sAlrxrKrwjNPzZX70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vzumd-0004bZ-NW; Tue, 10 Mar 2026 11:57:51 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vzumb-004gPK-39;
-	Tue, 10 Mar 2026 11:57:51 +0100
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vzumd-000000005e4-0zIB;
-	Tue, 10 Mar 2026 11:57:51 +0100
-Message-ID: <c9e71072faea57cff1ef51cbf85121654c74a3aa.camel@pengutronix.de>
-Subject: Re: [PATCH v3 2/9] clk: realtek: Add basic reset support
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Yu-Chun Lin <eleanor.lin@realtek.com>, mturquette@baylibre.com, 
-	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- 	cylee12@realtek.com, jyanchou@realtek.com
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, james.tai@realtek.com, cy.huang@realtek.com, 
-	stanley_chang@realtek.com
-Date: Tue, 10 Mar 2026 11:57:51 +0100
-In-Reply-To: <20260122110857.12995-3-eleanor.lin@realtek.com>
-References: <20260122110857.12995-1-eleanor.lin@realtek.com>
-	 <20260122110857.12995-3-eleanor.lin@realtek.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+	s=arc-20240116; t=1773141219; c=relaxed/simple;
+	bh=1iPvQ29yv1IijT8IDMtsV7wpjXPY794bQYVjkw4uRYA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Di2L87X3TYHy+qEjPCIxE3ZBc7M6EDG7P6cqJm202xjK/VXJ6jRa08wmecZjq0aAenRbtRcrhZ45o9uMWt844yqfYE074sQBWXLKMKxDj1TAI8xJGwJp2RV1HSaZWGRcUQm0JH6YnGb9aT8ON5eK4cVI+/E6KNYXD4gr+I90CkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr; spf=pass smtp.mailfrom=cjdns.fr; dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b=FhYD7Fkx; arc=none smtp.client-ip=5.135.140.105
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cjdns.fr
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b="FhYD7Fkx"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D4C08294E29;
+	Tue, 10 Mar 2026 12:13:26 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cjdns.fr; s=dkim;
+	t=1773141212; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=ppjb9j47yslvcid+DX8q6bFEIbk65jKNXP8aELcAr9o=;
+	b=FhYD7FkxVdjaKA9J/WpxISceZjzTFPOD/2RXU5lPSgSvOIDYQJGkBo2m8dN3kQxuwPb0+4
+	drLFzl+7KYPS4ilJainCA8MI3Kkp8uGJYqtQsjUbca4kCALBXeyW0cxlKia1z+yvz0NF1X
+	bZ4Y770R8Q3E91oPiwDkfVRYummRq1X4tl5oMbGAq4nihPmBwCHlZL+gyljm7JmHy2zwgi
+	mlWP6e6t1ZViR0DlaugoRmNG4TcqMyVeJzAnmFYpeMJ9NKrI0aPd6s0muisTzp3cIwMR+/
+	r0EatcYhb8hH72h4TsjUpF1RWZjzD1miUUFocbTgi3plasjxeyNsr2nAGxVDeA==
+Message-ID: <36710cc5-5a80-49fc-a9e8-0cac5c554ed2@cjdns.fr>
+Date: Tue, 10 Mar 2026 12:13:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH v2 3/8] dt-bindings: phy: Document PCIe PHY in EcoNet
+ EN751221 and EN7528
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-mips@vger.kernel.org, naseefkm@gmail.com, mturquette@baylibre.com,
+ sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ tsbogend@alpha.franken.de, ryder.lee@mediatek.com,
+ jianjun.wang@mediatek.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
+ mani@kernel.org, bhelgaas@google.com, vkoul@kernel.org,
+ neil.armstrong@linaro.org, p.zabel@pengutronix.de, matthias.bgg@gmail.com,
+ angelogioacchino.delregno@collabora.com, nbd@nbd.name, ansuelsmth@gmail.com,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-phy@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20260309131818.74467-1-cjd@cjdns.fr>
+ <20260309131818.74467-4-cjd@cjdns.fr>
+ <20260310-scrupulous-fat-ara-eab47c@quoll>
+ <1611d3d5-8c3b-4298-bf50-55ab2c2db0e7@cjdns.fr>
+ <05b0fc76-4cdb-4aff-815c-1aad500837b2@kernel.org>
+Content-Language: en-US
+From: Caleb James DeLisle <cjd@cjdns.fr>
+In-Reply-To: <05b0fc76-4cdb-4aff-815c-1aad500837b2@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Do, 2026-01-22 at 19:08 +0800, Yu-Chun Lin wrote:
-> From: Cheng-Yu Lee <cylee12@realtek.com>
->=20
-> Define the reset operations backed by a regmap-based register
-> interface and prepare the reset controller to be registered
-> through the reset framework.
->=20
-> Signed-off-by: Cheng-Yu Lee <cylee12@realtek.com>
-> Co-developed-by: Yu-Chun Lin <eleanor.lin@realtek.com>
-> Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
-> ---
-> Changes in v3:
-> - Reduced the number of IDs per bank from 256 to 32, eliminating unnecess=
-ary
-> gaps.
-> - Converted macro to static inline function.
-> - Removed redundant functions.
-> - Used UL() to prevent undefined behavior.
-> ---
->  MAINTAINERS                  |   1 +
->  drivers/clk/Kconfig          |   1 +
->  drivers/clk/Makefile         |   1 +
->  drivers/clk/realtek/Kconfig  |  28 +++++++++
->  drivers/clk/realtek/Makefile |   4 ++
->  drivers/clk/realtek/reset.c  | 111 +++++++++++++++++++++++++++++++++++
->  drivers/clk/realtek/reset.h  |  36 +++++++++++
->  7 files changed, 183 insertions(+)
->  create mode 100644 drivers/clk/realtek/Kconfig
->  create mode 100644 drivers/clk/realtek/Makefile
->  create mode 100644 drivers/clk/realtek/reset.c
->  create mode 100644 drivers/clk/realtek/reset.h
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 66c0f4924c1e..de772e0026de 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -21975,6 +21975,7 @@ L:	devicetree@vger.kernel.org
->  L:	linux-clk@vger.kernel.org
->  S:	Supported
->  F:	Documentation/devicetree/bindings/clock/realtek*
-> +F:	drivers/clk/realtek/*
->  F:	include/dt-bindings/clock/realtek*
-> =20
->  REALTEK SPI-NAND
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 3a1611008e48..2f2cacf87c38 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -530,6 +530,7 @@ source "drivers/clk/nuvoton/Kconfig"
->  source "drivers/clk/pistachio/Kconfig"
->  source "drivers/clk/qcom/Kconfig"
->  source "drivers/clk/ralink/Kconfig"
-> +source "drivers/clk/realtek/Kconfig"
->  source "drivers/clk/renesas/Kconfig"
->  source "drivers/clk/rockchip/Kconfig"
->  source "drivers/clk/samsung/Kconfig"
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index 61ec08404442..075a1c410b90 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -141,6 +141,7 @@ obj-$(CONFIG_COMMON_CLK_PISTACHIO)	+=3D pistachio/
->  obj-$(CONFIG_COMMON_CLK_PXA)		+=3D pxa/
->  obj-$(CONFIG_COMMON_CLK_QCOM)		+=3D qcom/
->  obj-y					+=3D ralink/
-> +obj-$(CONFIG_COMMON_CLK_REALTEK)	+=3D realtek/
->  obj-y					+=3D renesas/
->  obj-$(CONFIG_ARCH_ROCKCHIP)		+=3D rockchip/
->  obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+=3D samsung/
-> diff --git a/drivers/clk/realtek/Kconfig b/drivers/clk/realtek/Kconfig
-> new file mode 100644
-> index 000000000000..121158f11dd1
-> --- /dev/null
-> +++ b/drivers/clk/realtek/Kconfig
-> @@ -0,0 +1,28 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +config COMMON_CLK_REALTEK
-> +	bool "Clock driver for Realtek SoCs"
-> +	depends on ARCH_REALTEK || COMPILE_TEST
-> +	select MFD_SYSCON
-> +	default y
-> +	help
-> +	  Enable the common clock framework infrastructure for Realtek
-> +	  system-on-chip platforms.
-> +
-> +	  This provides the base support required by individual Realtek
-> +	  clock controller drivers to expose clocks to peripheral devices.
-> +
-> +	  If you have a Realtek-based platform, say Y.
-> +
-> +if COMMON_CLK_REALTEK
-> +
-> +config RTK_CLK_COMMON
-> +	tristate "Realtek Clock Common"
-> +	select RESET_CONTROLLER
-> +	help
-> +	  Common helper code shared by Realtek clock controller drivers.
-> +
-> +	  This provides utility functions and data structures used by
-> +	  multiple Realtek clock implementations, and include integration
-> +	  with reset controllers where required.
-> +
-> +endif
-> diff --git a/drivers/clk/realtek/Makefile b/drivers/clk/realtek/Makefile
-> new file mode 100644
-> index 000000000000..52267de2eef4
-> --- /dev/null
-> +++ b/drivers/clk/realtek/Makefile
-> @@ -0,0 +1,4 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +obj-$(CONFIG_RTK_CLK_COMMON) +=3D clk-rtk.o
-> +
-> +clk-rtk-y +=3D reset.o
-> diff --git a/drivers/clk/realtek/reset.c b/drivers/clk/realtek/reset.c
-> new file mode 100644
-> index 000000000000..4d60a73fc335
-> --- /dev/null
-> +++ b/drivers/clk/realtek/reset.c
-> @@ -0,0 +1,111 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2019 Realtek Semiconductor Corporation
-> + */
-> +
-> +#include <linux/of.h>
-> +#include <linux/device.h>
-> +#include "reset.h"
-> +
-> +#define RTK_RESET_BANK_SHIFT 5
-> +#define RTK_RESET_ID_MASK    0x1f
-> +
-> +static inline struct rtk_reset_data *to_rtk_reset_controller(struct rese=
-t_controller_dev *r)
-> +{
-> +	return container_of(r, struct rtk_reset_data, rcdev);
-> +}
-> +
-> +static inline struct rtk_reset_bank *
-> +rtk_reset_get_bank(struct rtk_reset_data *data, unsigned long idx)
-> +{
-> +	int bank_id =3D idx >> RTK_RESET_BANK_SHIFT;
-> +
-> +	return &data->banks[bank_id];
-> +}
-> +
-> +static inline int rtk_reset_get_id(struct rtk_reset_data *data,
 
-Data is unused.
+On 10/03/2026 11:40, Krzysztof Kozlowski wrote:
+> On 10/03/2026 11:37, Caleb James DeLisle wrote:
+>> On 10/03/2026 09:24, Krzysztof Kozlowski wrote:
+>>> On Mon, Mar 09, 2026 at 01:18:13PM +0000, Caleb James DeLisle wrote:
+>>>> EN751221 and EN7528 SoCs have two PCIe slots, and each one has a PHY
+>>>> which behaves slightly differently because one slot is Gen1/Gen2 while
+>>>> the other is Gen1 only.
+>>>>
+>>>> Signed-off-by: Caleb James DeLisle <cjd@cjdns.fr>
+>>> Still, four separate subsystems unnecessarily merged into one patchset.
+>>> Split independent parts of your work per subsystem. See also submitting
+>>> patches.
+>>
+>> I asked for clarification last time and didn't get a reply. I'm not
+>> against changing it but need to understand exactly what's expected b/c
+>> the way I'm imagining it seems way worse. submitting-patches.rst only
+>> says of patch sets "only post say 15 or so at a time", obviously not the
+>> case here.
+>>
+>> If you're asking for one patchset for phy, one for clock, one for PCI,
+>> and then one to introduce them to the device, I can do that. I just want
+>> to be sure because introducing unused code, and patch sets that depend
+> What is "unused" code? Or how is it unused? Do you understand this will
+> go via different subsystems and nothing will be "used" anyway?
 
-> +				   unsigned long idx)
-> +{
-> +	return idx & RTK_RESET_ID_MASK;
-> +}
-> +
-> +static int rtk_reset_assert(struct reset_controller_dev *rcdev,
-> +			    unsigned long idx)
-> +{
-> +	struct rtk_reset_data *data =3D to_rtk_reset_controller(rcdev);
-> +	struct rtk_reset_bank *bank =3D rtk_reset_get_bank(data, idx);
-> +	u32 id =3D rtk_reset_get_id(data, idx);
 
-Data not used in rtk_reset_get_id().
+Unused in the sense that you can't exercise that code without additional 
+code which is out of tree - at least until the subsequent patch set lands.
 
-> +	u32 mask =3D bank->write_en ? (UL(0x3) << id) : BIT(id);
-> +	u32 val =3D bank->write_en ? (UL(0x2) << id) : 0;
-> +
-> +	return regmap_update_bits(data->regmap, bank->ofs, mask, val);
-> +}
-> +
-> +static int rtk_reset_deassert(struct reset_controller_dev *rcdev,
-> +			      unsigned long idx)
-> +{
-> +	struct rtk_reset_data *data =3D to_rtk_reset_controller(rcdev);
-> +	struct rtk_reset_bank *bank =3D rtk_reset_get_bank(data, idx);
-> +	u32 id =3D rtk_reset_get_id(data, idx);
+>> on other patch sets both seem like anti-patterns to me.
+> And asking four different maintainers to manually pick up individual
+> bits with multiple commands, instead of just applying entire set
+> targeting their subsystem, is pro-pattern here? No. Why adding more work
+> to maintainers?
+>
+> Think how this is seen by individual subsystem maintainers and how they
+> should handle it.
 
-Same as above.
 
-> +	u32 mask =3D bank->write_en ? (0x3 << id) : BIT(id);
-> +	u32 val =3D mask;
-> +
-> +	return regmap_update_bits(data->regmap, bank->ofs, mask, val);
-> +}
-> +
-> +static int rtk_reset_reset(struct reset_controller_dev *rcdev,
-> +			   unsigned long idx)
-> +{
-> +	int ret;
-> +
-> +	ret =3D rtk_reset_assert(rcdev, idx);
-> +	if (ret)
-> +		return ret;
-> +	return rtk_reset_deassert(rcdev, idx);
-> +}
+Okay I think I see the goal, thank you. And you know I'm not smart 
+enough to have an actual opinion on this, I just needed to understand 
+the "why" so that I can do what's expected w/o goofing it up.
 
-Are there any users of this? Does this work for all consumers, without
-any delay between assert and deassert? Don't just implement the .reset
-callback for the sake of it.
 
-> +
-> +static int rtk_reset_status(struct reset_controller_dev *rcdev,
-> +			    unsigned long idx)
-> +{
-> +	struct rtk_reset_data *data =3D to_rtk_reset_controller(rcdev);
-> +	struct rtk_reset_bank *bank =3D &data->banks[idx >> RTK_RESET_BANK_SHIF=
-T];
-> +	u32 id =3D idx & RTK_RESET_ID_MASK;
+Thanks,
 
-	u32 id =3D rtk_reset_get_id(idx);
+Caleb
 
-> +	u32 val;
-> +	int ret;
-> +
-> +	ret =3D regmap_read(data->regmap, bank->ofs, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return !((val >> id) & 1);
-> +}
-> +
-> +static const struct reset_control_ops rtk_reset_ops =3D {
-> +	.reset    =3D rtk_reset_reset,
-> +	.assert   =3D rtk_reset_assert,
-> +	.deassert =3D rtk_reset_deassert,
-> +	.status   =3D rtk_reset_status,
-> +};
-> +
-> +int rtk_reset_controller_add(struct device *dev,
-> +			     struct rtk_reset_initdata *initdata)
-> +{
-> +	struct rtk_reset_data *data;
-> +
-> +	data =3D devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	data->dev =3D dev;
 
-data->dev is unused.
-
-> +	data->num_banks =3D initdata->num_banks;
-
-data->num_banks is unused.
-
-> +	data->banks =3D initdata->banks;
-> +	data->regmap =3D initdata->regmap;
-> +	data->rcdev.owner =3D THIS_MODULE;
-> +	data->rcdev.ops =3D &rtk_reset_ops;
-> +	data->rcdev.dev =3D dev;
-> +	data->rcdev.of_node =3D dev->of_node;
-> +	data->rcdev.nr_resets =3D initdata->num_banks * 32;
-> +
-> +	return devm_reset_controller_register(dev, &data->rcdev);
-> +}
-> +EXPORT_SYMBOL_GPL(rtk_reset_controller_add);
-> diff --git a/drivers/clk/realtek/reset.h b/drivers/clk/realtek/reset.h
-> new file mode 100644
-> index 000000000000..cd446b098429
-> --- /dev/null
-> +++ b/drivers/clk/realtek/reset.h
-> @@ -0,0 +1,36 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (C) 2019 Realtek Semiconductor Corporation
-> + * Author: Cheng-Yu Lee <cylee12@realtek.com>
-> + */
-> +
-> +#ifndef __CLK_REALTEK_RESET_H
-> +#define __CLK_REALTEK_RESET_H
-> +
-> +#include <linux/regmap.h>
-
-Instead of including regmap.h, you can forward declare struct regmap.
-
-> +#include <linux/reset-controller.h>
-> +#include <linux/hwspinlock.h>
-
-Unused header.
-
-> +
-> +struct rtk_reset_bank {
-> +	u32 ofs;
-> +	u32 write_en;
-> +};
-> +
-> +struct rtk_reset_data {
-> +	struct device *dev;
-> +	struct reset_controller_dev rcdev;
-> +	struct rtk_reset_bank *banks;
-> +	u32 num_banks;
-> +	struct regmap *regmap;
-> +};
-
-Why is rtk_reset_data in the header? You can move it into reset.c.
-
-> +
-> +struct rtk_reset_initdata {
-> +	struct rtk_reset_bank *banks;
-> +	u32 num_banks;
-> +	struct regmap *regmap;
-> +};
-> +
-> +int rtk_reset_controller_add(struct device *dev,
-> +			     struct rtk_reset_initdata *initdata);
-> +
-> +#endif /* __CLK_REALTEK_RESET_H */
-
-regards
-Philipp
+>
+>
+>
+> Best regards,
+> Krzysztof
+>
