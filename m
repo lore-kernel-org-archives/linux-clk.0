@@ -1,52 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4282F3A4F49;
-	Tue, 10 Mar 2026 02:46:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859B63A4522;
+	Tue, 10 Mar 2026 02:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773110818; cv=none; b=FFN2aQFzDLD/5U9fVnQa8R45f7v7MhjcTz7mrXUK0WFo2K+alHV+8+1VIyyJIDqmqgYou0S9YbHe8431D7JpEpsXIi2ELfRW0F8ghItxgx5U1/N3xC98SB084XhQgrBWNNHRYTI27RuQbssqZ+nl0f62t1rxBXdvTtx7PZLILfs=
+	t=1773110856; cv=none; b=b6JaIYo1St/5w5pknx9IWbCmDhUOBbufbdZj95oWZoyq4S6p1PIIYogpqp7alhpsZwiITnymRKj71VD5rHbRm4CqhTWgZRwphKmATjehU5ElDODfre5NP9MLQJ+7N3pcxZPC/c3Lzpu/yHZpQyyYgtV4laf18lQ0j94er0XA/Es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773110818; c=relaxed/simple;
-	bh=uVGmmiid7oA5uTt+Z55TPAl+BZtpVzckNaaKuI5zLRw=;
+	s=arc-20240116; t=1773110856; c=relaxed/simple;
+	bh=B0/1bU5zID8Qrgp1bqvLKiKsWfx3028CighHJzAxGP4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XalrP4Wg5OSqu6mGhBRyqQczNGatgt2P9DnL+0n+J9Ei1RYsTCi/o+/zUCEDfzRVh9IJLDm0vfAohXpv5T71RNGSLPMJcPweT1EskfVh0nzB5/gwqn63WwFqm+w8RdjQT9jY05q+GqdzTa8SKdDhfi+h38NFtFtON1OQB1gxtRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=prfxaqRN; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=RzkiJ8/tsWqEJe0zpsAETaTe+an18x6lRG/8pXYRr0hM8FKsbOilEGTbYh6X9UzqQ7/Dgl0H2N5wr9Ral3Dn5D0EYHky96qoVmpRA6HbgIFepChqi6EuzGjk8qdVKjcgFzaUBqEBN4SygTpISCsOhSWa4vIHQUuEbWR5oVkRVKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ecvzii/z; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="prfxaqRN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32526C2BCB2;
-	Tue, 10 Mar 2026 02:46:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ecvzii/z"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47397C2BCB0;
+	Tue, 10 Mar 2026 02:47:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773110817;
-	bh=uVGmmiid7oA5uTt+Z55TPAl+BZtpVzckNaaKuI5zLRw=;
+	s=k20201202; t=1773110856;
+	bh=B0/1bU5zID8Qrgp1bqvLKiKsWfx3028CighHJzAxGP4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=prfxaqRNiYUbYGbKbn1+ktCMTjO2FhGzSSBGRCPh16/hfmPL3smEFEXJXaB/7GOGd
-	 u1aEjjGEaHn1Ve+5qfp8ZF3sBC4D4lqtd7E6Mn6dwA/dpioIt+yo34OXWSgMUrWZ3i
-	 U+p5ugiX8f4wq7GRDyddY+FShPdqstmdo2Ss0VO4Rve4ubLPrQxg07OPNkrTimgRVA
-	 nefL4thD2OIAeRwGNfoH8AcVX7Tm7Vkyckx6v4RNY99m5XkbXLy+V7QCTRmZhFmKUA
-	 LwhFJvaDcT4FAtn4ZeSn4j/eyxrENSzfo2PjyMfxJkq/7cJ+G4zz8WqWGNNjhL8t7I
-	 /yZrVsA/CvByw==
+	b=ecvzii/zMVo+sD9owtpcOdbfWg9XKgCf1AEkAMYGQUvPALOCc1zujd2STk9Ffx5mw
+	 tgIKYBVCq71DEnmKBn2i8N07BQDjevs5Xs/gsPQ7qw5iw+PIdDASiLd8VFcCxZ8mml
+	 ZmUJHQtv6OLBxYXNzC7pJ26XqFLMq7Zym7t8XjncsrqjbiWjzXQ1up/VmYehvMHWOm
+	 xDPyoaTxEvwY3gqNRf/0uxFCKiuLCdENzEti3lDVhG9+UFk5v1tk7YO6if/htVGGyx
+	 Gp8Dwq4LvWpnsWnpQU4URrYhLBcQaj9z+JJG1Lg9LwRwS6cRMwY4XxRKmQIT1AxIvZ
+	 0a7WeIbGeNcGA==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Taniya Das <taniya.das@oss.qualcomm.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Luca Weiss <luca.weiss@fairphone.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
 	Dmitry Baryshkov <lumag@kernel.org>,
-	Ajit Pandey <quic_ajipan@quicinc.com>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Jagadeesh Kona <quic_jkona@quicinc.com>,
-	Konrad Dybcio <konradybcio@kernel.org>
+	Pengyu Luo <mitltlatltl@gmail.com>
 Cc: linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH 0/5] DSI byte clock setting fixup
-Date: Mon,  9 Mar 2026 21:45:31 -0500
-Message-ID: <177311073297.23763.17772084203065134209.b4-ty@kernel.org>
+	White Lewis <liu224806@gmail.com>
+Subject: Re: [PATCH] clk: qcom: dispcc-sc8280xp: remove CLK_SET_RATE_PARENT from byte_div_clk_src dividers
+Date: Mon,  9 Mar 2026 21:45:39 -0500
+Message-ID: <177311073293.23763.5142459029233496147.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260304-topic-dsi_byte_fixup-v1-0-b79b29f83176@oss.qualcomm.com>
-References: <20260304-topic-dsi_byte_fixup-v1-0-b79b29f83176@oss.qualcomm.com>
+In-Reply-To: <20260303115550.9279-1-mitltlatltl@gmail.com>
+References: <20260303115550.9279-1-mitltlatltl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -57,28 +52,21 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Wed, 04 Mar 2026 14:48:26 +0100, Konrad Dybcio wrote:
-> There's a conflict between the byte and byte_intf_div2 clocks trying to
-> set_rate on their common parent. The latter should follow the rate of
-> the former in one way or another anyway, so the fix here is to prevent
-> the latter from ratesetting the upstream PLL.
+On Tue, 03 Mar 2026 19:55:50 +0800, Pengyu Luo wrote:
+> The four byte_div_clk_src dividers (disp{0,1}_cc_mdss_byte{0,1}_div_clk_src)
+> had CLK_SET_RATE_PARENT set. When the DSI driver calls clk_set_rate() on
+> byte_intf_clk, the rate-change propagates through the divider up to the
+> parent PLL (byte_clk_src), halving the byte clock rate.
 > 
-> This series does just that.
+> A simiar issue had been also encountered on SM8750.
+> b8501febdc51 ("clk: qcom: dispcc-sm8750: Drop incorrect CLK_SET_RATE_PARENT on byte intf parent").
 > 
 > [...]
 
 Applied, thanks!
 
-[1/5] clk: qcom: dispcc-glymur: Fix DSI byte clock rate setting
-      commit: 98ea9eda030587601db56425efcd32263d853591
-[2/5] clk: qcom: dispcc-kaanapali: Fix DSI byte clock rate setting
-      commit: e892f4e3f3d558ce5d7595dca7cce2bd170a19fa
-[3/5] clk: qcom: dispcc-milos: Fix DSI byte clock rate setting
-      commit: dd5b76257b4048151006620c9895e2f5f0d997eb
-[4/5] clk: qcom: dispcc-sm4450: Fix DSI byte clock rate setting
-      commit: 7bc48fcdf9e77bf68ef04af015d50df2a9acac00
-[5/5] clk: qcom: dispcc[01]-sa8775p: Fix DSI byte clock rate setting
-      commit: 2851b6c6a42e22c243aa4cd606a49e2b9acfb6d6
+[1/1] clk: qcom: dispcc-sc8280xp: remove CLK_SET_RATE_PARENT from byte_div_clk_src dividers
+      commit: 0b151a6307205eb867250985a910a88787cbf12e
 
 Best regards,
 -- 
