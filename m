@@ -1,133 +1,80 @@
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0473DE421
-	for <linux-clk@vger.kernel.org>; Wed, 11 Mar 2026 16:12:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B7A329B8E8;
+	Wed, 11 Mar 2026 16:49:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773245561; cv=none; b=niHSjGZHEbdlhAH//Zgq1BhIPRnhim5BAnP79rANZNiMkMtug2JnlWQH2PfBFgOIr+ND6HHpZ0CS+IZuxgX/6RpB/lx9c8ZiJBH4Xt7o3UaoUGDHpjsFhZG3k+OwXIlBgMi0SPvSCDwz0rtjvbH66yhXLR7QHQGwWMuE0aSl7Y0=
+	t=1773247782; cv=none; b=jax3ajd3moC81bRswMOvBwtermolgPgwv9EsRERuA+hR71K22pkE7ZFXx4rRx3CC/siIsRxU9QNbh96JCgKkosaaDgVqvpGR0RZ6jA7FTxSUBEU6uL/lm8uWNASv94CQFPVG1h2tO5rIXBXpWEhiKWyzrJNDpnfDiXPDutEd9cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773245561; c=relaxed/simple;
-	bh=kriQ31pznimK4X2P3ovzVVed34liQBkD34H6iVN9D1s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Lk22C3l4jILLBnkZRKoPNdpxsXXyGfhpI8oAxdb3JroRiAh37j90yB3CImiX6o1c5NjriulViLNGfloy2hhOCU8uWNw/hB0HmLCCKGc9ssYZW6VACRyFGIuaDccigjV+H8qxK8x994Dva6R7vIXXui1OSmczPV3YpdntG6IoKD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-56a86f0a23bso87779e0c.0
-        for <linux-clk@vger.kernel.org>; Wed, 11 Mar 2026 09:12:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773245558; x=1773850358;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2TZQnjO7g8xVtwDHS6cEDEA1/Z/EJi3b/CK0eN89lxs=;
-        b=mIPn1M+CvglCk9inpyyJTc++ne20JNATklJapo1V5Yz41GtIo50qH0eY/W93Cb9A6R
-         yCKOy0km8mqck3bZy+DqLR5c5nm96YPme/yRugG8pPT2P02svHDlt2FE4/FyuVR5/hdP
-         fMav3mcqrbywm/HSMwcIZ5RIWXaUsM5DR+KwOU1QqJY9tCOQlJDu8J6LcALuXbcfMXq2
-         MTyiD0FicQ9GfpvCgVXsJXHn7JcSgvthc93D58Cs/GxQK3mKIYvSdBiIZiKVTdVljOFQ
-         f5FuUj6Lo098mODeeOg/FwO6gcw+IE5rwImAJvHlu/XnJYf6NUynOrpEg1G7+zRH90xB
-         d9Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCWF7lSf9bhCFyozx5JjTCukKolEcZqYe5ffoEyprVw7gJLDpFMtN+xlBwPmpOgpjEtONvBJJwlF+rY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNOSEX/MM5FOqqOIR5H+310aIzukXZ64CTKRTp31XQ4jxzkhnB
-	lL+In9uout/yV6zn8qYavBlq9rtln8/OC3d6fNrt/u27uSd0QYHmFzNu7d+NaWUJuK8=
-X-Gm-Gg: ATEYQzzlD1XbiGlpvmPZEMBVTOYMptEHKQ0sinQ26xRGzxwLzV4OZQimiZCs8AKcvat
-	wuBcMYrcosZ/dbgupme2yDaEcH0f0LcmYrW3RLawXX9RpEoKziTAA9hM24G6HZr885LBtS+9sJR
-	8YrPqJMnbcC/v/Ads139VGq0M6v5Y4f+UFM4pU6tmmPObl3VswJ1ZSRzY1mM3qA1uwtxOKLyOUg
-	ILL4wAjBeT6XrTX/+QqpOxNeVbR0Hyu1rPoPEjcnWp1y5qSfAjypdSdCfGStDWebJI0NZFYcCNK
-	m2cZ2l4zihHJTAWNEW9zMdN86bNU+r/zd1HvOkrx+Rw0RqYyOOOEwlvWqQ8Kxv9o6Eq3oiuqWIq
-	cniJu/DrXbW0j4l1Fm0PyN2xMsYwbkTrQfUELmSZ/vjpolPSDlz9PgSmIcpOBS3YvFay3qIm3n8
-	QH7euZD8KuxdZE6IFoiBOgVO8bBi9CIlLqrKC7DUY3a1Zq7yOpKcJ3afqh9wxH
-X-Received: by 2002:a05:6102:374d:b0:5ff:a8d6:b810 with SMTP id ada2fe7eead31-601ded0a1c7mr1338771137.18.1773245558405;
-        Wed, 11 Mar 2026 09:12:38 -0700 (PDT)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-601de74a9a5sm884358137.5.2026.03.11.09.12.34
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Mar 2026 09:12:36 -0700 (PDT)
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-5ffbcfbcecaso4950137.3
-        for <linux-clk@vger.kernel.org>; Wed, 11 Mar 2026 09:12:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWCrbd0qM0+FGqOVbC4RDVnYGZuoRSWHWyYeXKdvuAO7d2EWUBu6HHfXA+/Au6JJ/sj7om4QUNyvEM=@vger.kernel.org
-X-Received: by 2002:a05:6102:290c:b0:5ff:d192:ff22 with SMTP id
- ada2fe7eead31-601deec1db1mr1359334137.19.1773245554633; Wed, 11 Mar 2026
- 09:12:34 -0700 (PDT)
+	s=arc-20240116; t=1773247782; c=relaxed/simple;
+	bh=L+Z41iBxmL9bDC/+5byJSVTm53cIJcCLHJ3pqm2b1eo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nCYkSN0IMSNuutqpwkk/hfWPI+MUXAz5+YvKjrqmZD+TuCILgYRqegdEXXwR7dHROUG/ij4YrvDokijlSLB/00251fmH1x4osn6w1UoWvuFQ7+qVdWGsgv5fMdLTSibgfdrEQNKRehDqoE7Uw/uCNmET5tEHZ8Yvd3ZM/+BT190=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u1RCvb2L; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u1RCvb2L"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC654C4CEF7;
+	Wed, 11 Mar 2026 16:49:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773247781;
+	bh=L+Z41iBxmL9bDC/+5byJSVTm53cIJcCLHJ3pqm2b1eo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u1RCvb2LYs0w+E5E5Q4zBFx7t7yM1DIZAJhNB26Yfi+T/Q3HT6JelU8TvPCRehsFv
+	 OgaLkbjx5UScyRGWqMi6bo3sIQ4sfTapSx3g7AbOBfhGFX/sq/Elw+j2ep2OaA5JuH
+	 HhKfaA4VmKfGdl9OD+mQFw8JzaqgongxtYtCKtHQccr2wYZoLRynbi8+7upGKWTOza
+	 LGh0U/Yh6sqtPKFb3GxzhZTpzqPSQUGn+m05neR5aE4Sa+u/+w8paPWfKZpOxhJmi3
+	 0Xr71Q1xES6voJK47Ktb8nDjfLffEppYjHPrj4WX7XgpmbPpoiOhy0Z3OJBZ5/Ym6H
+	 /lYqKQlMIH3ew==
+Date: Wed, 11 Mar 2026 11:49:40 -0500
+From: Rob Herring <robh@kernel.org>
+To: Michal Simek <michal.simek@amd.com>
+Cc: linux-kernel@vger.kernel.org, monstr@monstr.eu, git@amd.com,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: versal-clk: Reorder if/then
+ conditions for Versal NET
+Message-ID: <20260311164940.GB4041143-robh@kernel.org>
+References: <cover.1772725183.git.michal.simek@amd.com>
+ <7241fe512ff677f7aa5b7212ae4056fba01f1f59.1772725183.git.michal.simek@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260306143423.19562-1-john.madieu.xa@bp.renesas.com> <20260306143423.19562-16-john.madieu.xa@bp.renesas.com>
-In-Reply-To: <20260306143423.19562-16-john.madieu.xa@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 11 Mar 2026 17:12:23 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWMCqPZC2o8GMaRkJVTE3-FAtbPB3h_aDjpND6s=FWbZA@mail.gmail.com>
-X-Gm-Features: AaiRm50HgMmG-2Hd3S3CzPU1H5WBB19C2AdyrH6AqIP1ufq9nQI1hgHf7Jj5-NE
-Message-ID: <CAMuHMdWMCqPZC2o8GMaRkJVTE3-FAtbPB3h_aDjpND6s=FWbZA@mail.gmail.com>
-Subject: Re: [PATCH v8 15/15] arm64: dts: renesas: r9a09g047e57-smarc: Enable PCIe
-To: John Madieu <john.madieu.xa@bp.renesas.com>
-Cc: claudiu.beznea.uj@bp.renesas.com, lpieralisi@kernel.org, 
-	kwilczynski@kernel.org, mani@kernel.org, geert+renesas@glider.be, 
-	krzk+dt@kernel.org, robh@kernel.org, bhelgaas@google.com, conor+dt@kernel.org, 
-	magnus.damm@gmail.com, biju.das.jz@bp.renesas.com, linux-pci@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-clk@vger.kernel.org, john.madieu@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7241fe512ff677f7aa5b7212ae4056fba01f1f59.1772725183.git.michal.simek@amd.com>
 
-Hi John,
+On Thu, Mar 05, 2026 at 04:39:49PM +0100, Michal Simek wrote:
+> The Versal NET clock controller compatible is specified as:
+>   compatible = "xlnx,versal-net-clk", "xlnx,versal-clk";
+> 
+> with xlnx,versal-clk listed as fallback. The original binding had
+> two separate if/then blocks - one matching xlnx,versal-clk (2 clocks)
+> and another matching xlnx,versal-net-clk (3 clocks). Since both
+> compatible strings are present, both conditions matched simultaneously
+> and JSON Schema applied the more restrictive 2-clock constraint,
+> causing false "too long" validation errors for Versal NET.
+> 
+> Restructure the allOf conditions to check for xlnx,versal-net-clk
+> first. If matched, allow 3 clocks (ref, pl_alt_ref, alt_ref).
+> Otherwise fall back to the xlnx,versal-clk case with 2 clocks
+> (ref, pl_alt_ref).
+> 
+> Add a dedicated example for the Versal NET 3-clock configuration
+> and split all examples into separate blocks so each compatible
+> variant is validated independently by dt_binding_check.
 
-On Fri, 6 Mar 2026 at 15:36, John Madieu <john.madieu.xa@bp.renesas.com> wrote:
-> The RZ Smarc Crarrier-II board has PCIe slots mounted on it.
-> Enable PCIe support.
->
-> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+Really, the problem is xlnx,zynqmp-clk should be moved to its own 
+schema. The only thing common is #clock-cells==1, but that would be true 
+for hundreds of bindings. If you do that, then the clock-names can be 
+defined at the top-level which is preferred anyway, and the only thing 
+needed in if/then schemas is 'maxItems: 2' and 'minItems: 3'.
 
-Thanks for your patch!
-
-> --- a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-> +++ b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-> @@ -122,6 +122,11 @@ key-sleep {
->  #endif
->  };
->
-> +&pcie {
-> +       pinctrl-0 = <&pcie_pins>;
-> +       pinctrl-names = "default";
-> +};
-> +
->  &pinctrl {
->         canfd_pins: canfd {
->                 can1_pins: can1 {
-> @@ -167,6 +172,17 @@ rsci9_pins: rsci9 {
->                 bias-pull-up;
->         };
->
-> +       pcie-clkreq-n {
-
-Please preserve sort order (alphabetical, by node name).
-No need to resend this series just for this change.
-
-> +               gpio-hog;
-> +               gpios = <RZG3E_GPIO(4, 5) GPIO_ACTIVE_HIGH>;
-> +               output-low;
-> +               line-name = "pcie_clkreq_n";
-> +       };
-> +
-> +       pcie_pins: pcie {
-> +               pinmux = <RZG3E_PORT_PINMUX(G, 7, 1)>; /* PCIE_RST_OUT# */
-> +       };
-> +
->         scif_pins: scif {
->                 pins = "SCIF_TXD", "SCIF_RXD";
->                 renesas,output-impedance = <1>;
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Rob
