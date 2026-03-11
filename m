@@ -1,121 +1,179 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A6A23ABA8;
-	Wed, 11 Mar 2026 04:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5032EEC0
+	for <linux-clk@vger.kernel.org>; Wed, 11 Mar 2026 05:03:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773205159; cv=none; b=AfUOn7Xr22tdivnqiMJmXtugg75clXxy/ixinW+84d9P9bQcU6XygWynS5vcLY1bvg0ClT+/FZLNRV3acp/hmfB7bGKfikZIxgb4DM7rG+GfxYVjjZgSZlcXDJ+WHdNfJlM6MXdJ14xAjKoxZwyPwj2kpc1le2hoxL9iMo6ym0I=
+	t=1773205401; cv=none; b=Is8TFn1X5W4CMPNm3utAag+Ax91D9AH4d4kXCkMB4/9+hVkXg/VliHbc0G1BflWfTSQeNWazXnxkDJQqSz/BAdSAuMHD/EkoUHWMZiHGfezz275ZI/VdGlq+XAh64MMO9tfpXReVo0eJvVjskbyHP/nnsoCrVcFcV99nDpJpOaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773205159; c=relaxed/simple;
-	bh=hs7h01zebVZ3Cw5TSlyQoCCjwzUa+l8Cgq+3i/i+v4I=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=d+XpBF8R6hSjSTcMBfmH4ILegC+T+VFU6cnWCeL1UynvVuQvwhGK9HU46EbLxpSuUjgEosLLNlyp/vWQRByhJqvaUVytBWX5j1mOlK0gjr5ZpJ0vTdvEsR3BRMdUbUK3k1H4T5bY1NHCoXs6ClvsiRYESo1PnmzsuR0fJZq8vHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R7QWHNq5; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773205401; c=relaxed/simple;
+	bh=e8H0Xw+wh3kNLq/wPXj3gmYnFyaAHCTv7o59qJP51DE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nyr4obJJ4keisPIh5kr3vC+eO1HYh78Wn4jD5V8r+kJdnw8EPkbdg0XRlyq+zQhqHHqd0J6RB5nG6JuBcmfZQQm1wo4f6qXYYp4g1SR9qTfPxO9L0XFChtRvNWh9Xxfp4c4Ky7NVP89FAiOwkAeb9SkHfSp5wP8rTwRmq1/y1nE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Qdcld3cY; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=X9WaLO6W; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R7QWHNq5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7C9CC4CEF7;
-	Wed, 11 Mar 2026 04:59:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773205158;
-	bh=hs7h01zebVZ3Cw5TSlyQoCCjwzUa+l8Cgq+3i/i+v4I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=R7QWHNq5KYIpTwVo6Up5GHHSOdSE2gpk5GaKkIBbqjAR4gbzmNPFWIlQW10KkTPof
-	 EwepFELDieEhDwLa7MFg7ekO96kgeq0l/+LlK0SmYNrKgD9B5JFn2p8cKdN19q4bAB
-	 ZH5nM61a+EeP1bfo59H2leGLnAv8MA9DVbVTjKyoY75UQZCsrcqb+6U4ml2aryZAOd
-	 53HkEOSnemZkK807SePgE6JYJ0qIK9ypnQbQrEKCx7cEo9CjlroOKs6BchxOV0buhD
-	 E4Ehzc8FteV6XUFhu9KE6nGI0Pkr7s204WVgcSsEwXmzro7D3LuhuKd0AU39V1R3Ja
-	 2cWkRLISF31UQ==
-Date: Wed, 11 Mar 2026 13:59:11 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Philipp Hahn <phahn-oss@avm.de>
-Cc: amd-gfx@lists.freedesktop.org, apparmor@lists.ubuntu.com,
- bpf@vger.kernel.org, ceph-devel@vger.kernel.org, cocci@inria.fr,
- dm-devel@lists.linux.dev, dri-devel@lists.freedesktop.org,
- gfs2@lists.linux.dev, intel-gfx@lists.freedesktop.org,
- intel-wired-lan@lists.osuosl.org, iommu@lists.linux.dev,
- kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org,
- linux-btrfs@vger.kernel.org, linux-cifs@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-erofs@lists.ozlabs.org,
- linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-hyperv@vger.kernel.org,
- linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mm@kvack.org,
- linux-modules@vger.kernel.org, linux-mtd@lists.infradead.org,
- linux-nfs@vger.kernel.org, linux-omap@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-pm@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-scsi@vger.kernel.org, linux-sctp@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-sh@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-trace-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
- ntfs3@lists.linux.dev, samba-technical@lists.samba.org,
- sched-ext@lists.linux.dev, target-devel@vger.kernel.org,
- tipc-discussion@lists.sourceforge.net, v9fs@lists.linux.dev, Philipp Zabel
- <p.zabel@pengutronix.de>
-Subject: Re: [PATCH 57/61] reset: Prefer IS_ERR_OR_NULL over manual NULL
- check
-Message-Id: <20260311135911.ced50d67e940cdf933a98d1a@kernel.org>
-In-Reply-To: <20260310-b4-is_err_or_null-v1-57-bd63b656022d@avm.de>
-References: <20260310-b4-is_err_or_null-v1-0-bd63b656022d@avm.de>
-	<20260310-b4-is_err_or_null-v1-57-bd63b656022d@avm.de>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Qdcld3cY";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="X9WaLO6W"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62B2K1ii1572980
+	for <linux-clk@vger.kernel.org>; Wed, 11 Mar 2026 05:03:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	u0QC32ihlZ4NP7LPhxUY4DLpId8PCXDb46OZwe69QQY=; b=Qdcld3cYFEYTHWhI
+	JGvF2z+AtXUDaIpXwbe4pIjSacdXGxt8mJ2b7lDYR9MsA8ldDZua78DDnycOaEoG
+	aQn29Nun43M87IahQ3n9tdgcXa4tOJ9SelqK++RWONkwAzwakdE5d9/WYE1V9e5Y
+	4t0DqQESN8H4aJ6KogrVL30wzidC1+d9SPXIBTTNqq4CoIYEFMqkN7fqfUkkChmZ
+	En859WhxUnapLNyEOjisbxGWiBr478tF7hGyunWPi0yziZLubBuAa7g2cLl4tLNH
+	rULbFApaiEOQ12acFOZB7Wtk6riUO5vxIWsEXkjC7mya4+3fMKQMWEG48rcMdNCR
+	Y6++jA==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ctqgka08u-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Wed, 11 Mar 2026 05:03:17 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2ae65d5cc57so429165605ad.2
+        for <linux-clk@vger.kernel.org>; Tue, 10 Mar 2026 22:03:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1773205396; x=1773810196; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=u0QC32ihlZ4NP7LPhxUY4DLpId8PCXDb46OZwe69QQY=;
+        b=X9WaLO6W/F4E+vIwuY1YOLZcl0zWfp2uOBcRf1bmFJ3W3twWyHsShsWE8+eV30cRRJ
+         3//CU/tBoaeQ7rNiWWD83iOejwiUN3zqnyavyqlf0za/zbUAzXevXFrrelxo8le68apv
+         gj9MfWL8cc9gnogN4ZK8wtOq8NwyFVUsoGJLsBdbVVCNFXVZYe5PrvnoS679yyExyrJU
+         CW/g4iVnV4uPMuQaw7b3epXQygNl6RRfJndWENNIXBHeQ/5EVhJWgE5FbE2J0Yle6tgF
+         DW4OEQINdP+jubm0WvwrjG4ldG4Q0x3kdQmQ7W8km+xfU0Oe1pLkemll6dHQY/ZoI4LQ
+         Zjlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773205396; x=1773810196;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=u0QC32ihlZ4NP7LPhxUY4DLpId8PCXDb46OZwe69QQY=;
+        b=fRfUhSZMeF3+98M3pUFHvCkQQkifwRaOSQqzwmCiBi03WCHkXGlDddpKPmlIULTH1W
+         L/5JR7lwAJyGQ+Jfz5MT1q/lQbPBzsjoRJgeuv16BiIchGcoQYd4h1S+ahEmw82Oqk1E
+         l+lcD4KLGcxvwIfB3lD4H1aKKJkJBtYtSWZyQYqbRTVjkWxLKRqEwzzpCLAQzO2BL3Dd
+         tbs7Vf0LYNNx4dXGRND4RbwYEiEiyo2YtX8PaNVoJeZGSXNbditNirg9gjlCfKNEbiwE
+         QhbMPdYI71Z3cDyGYEOvFZyUQ/lO7sMN+4sgEulPX4ZKl5454GTIm+QldaAe7kTb7f7W
+         hPLA==
+X-Forwarded-Encrypted: i=1; AJvYcCWJM7RLUwMEutRhzhel2BtbxwJDM5AZzeaIYFR6YmH9HGRXhpaoRiQqQdyxSP4yf5+p7gKKja4Babg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzG4o4llsSD0SuMGoW1aAwIYBnmWh82GPDnSGjnted/0cixPctR
+	etNF/sd8q4sHFgLx+o2UP78XL/h4Au/R1c/qm3wIy03bDj0PS0yKu4WOhxCna7lX4RL7neJ3WFL
+	OtD4OREGa6+2q4RUYMSe2yp2wyoNTNZOEHwaTxpYDEkDU+M4QlbXbhKYQkaqkCLIwd2JYQI0=
+X-Gm-Gg: ATEYQzxnjiwPoDW1ZFmSqaeXLZ0LfWHk5i7BqRFi1v5ioSiMsmDG/NQqZQfq7HyKXWD
+	9LdocdOr3HBOlO1Rb6jiusjzCrnJuLEzrk5aMtcsTErli9kz9BuECjsvn8p0Z6CYdr91wKhVJs+
+	6mRVStRd1qlAbHUD+rtcUVk+sZZrEq0p8/V5M2ZNMFFuOITD2nwA7LyvLyGjsoWpPuhnwjgghqJ
+	pxCajfOVQ0dwnbfBDDjyN2eMvwXXiCKsR+fqB/9gRAHnukDpSZSb4F3fse7ErINqHjrW65jdU9t
+	p9sgEm4qIIv3FjtxSDHHQglrG3tzNIhjhzjVTA/hLID9FuIFjQtuuJqRkR9cNK4xs/UvQorJ3Mq
+	Jph4LTJVUJChFGPUofqQUF+ni/W3Lap1Z+rwI4QjiFE7h37tYtg==
+X-Received: by 2002:a17:903:2f81:b0:2ae:5745:f0e9 with SMTP id d9443c01a7336-2aeae76fcf8mr14505035ad.3.1773205396523;
+        Tue, 10 Mar 2026 22:03:16 -0700 (PDT)
+X-Received: by 2002:a17:903:2f81:b0:2ae:5745:f0e9 with SMTP id d9443c01a7336-2aeae76fcf8mr14504805ad.3.1773205396085;
+        Tue, 10 Mar 2026 22:03:16 -0700 (PDT)
+Received: from [10.217.217.147] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2aeae34de7bsm12095585ad.53.2026.03.10.22.03.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Mar 2026 22:03:15 -0700 (PDT)
+Message-ID: <fa004f9c-3c5b-45b4-8ffe-28f665671fc0@oss.qualcomm.com>
+Date: Wed, 11 Mar 2026 10:33:09 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/3] arm64: dts: qcom: sm8750: Add GPU clock & IOMMU
+ nodes
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Pengyu Luo <mitltlatltl@gmail.com>
+Cc: abel.vesa@oss.qualcomm.com, ajit.pandey@oss.qualcomm.com,
+        Bjorn Andersson <andersson@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+        imran.shaik@oss.qualcomm.com, jagadeesh.kona@oss.qualcomm.com,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+References: <CAH2e8h4R-nF+eV+OnkSySKSY5_H-V8Ndyfhac3=VNQ-bMaBeFg@mail.gmail.com>
+ <af606d6c-3ce3-4342-bd5c-ce3ea28c6923@oss.qualcomm.com>
+Content-Language: en-US
+From: Taniya Das <taniya.das@oss.qualcomm.com>
+In-Reply-To: <af606d6c-3ce3-4342-bd5c-ce3ea28c6923@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: dK4O6ghyf5kty_XPR3eL0groAGHg9KR5
+X-Proofpoint-ORIG-GUID: dK4O6ghyf5kty_XPR3eL0groAGHg9KR5
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzExMDA0MCBTYWx0ZWRfXyup5asRXsq8g
+ pvL3959rL594mhDOi2OZMhi24Hmq7AVoJeI7D9dSJyWc7JWLsUdrjK5Nq1fBLiqQj6j7MdskfFF
+ CUTFahPhB9vIr4RLbROv6JgSzwEwb6nPJYU1F6Yw6y2bKgiVG112mJU7m3Kl6/jDXqty8JsYZcC
+ SG654jzdMBSh/2MDIusk6ldQt58+7/bG+GedbrLLcTi575IbJ6CcH5Rr8CtBGlXI1V1UxUF5rzL
+ 7mXMidDgs/EbFkR7NqWxqrRiU/eX5MJCe7y2vsaY8juIufPazK2ts3eHgcq0sQXaZDnsAzMVv+w
+ RDUEzaGz5Ql5sjW6z+X3BWMvHO6yTlgOdnLT/W39Lk2VbiRTP3vAfMsZLE6fU+lcftbF1VeZyYv
+ atSSj6oWoVgdqRe54s+vv9R8FSR6+wb6NyAmQM7wLBxpur8cgsiZdYpcZ7m4uQzcN+Gsb9b9ji0
+ bJjaPakCZAZ6hpOAEGA==
+X-Authority-Analysis: v=2.4 cv=M4JA6iws c=1 sm=1 tr=0 ts=69b0f795 cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=gowsoOTTUOVcmtlkKump:22
+ a=EUspDBNiAAAA:8 a=4HF9s9dolvseeuFZ7A0A:9 a=QEXdDO2ut3YA:10
+ a=GvdueXVYPmCkWapjIL-Q:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-10_05,2026-03-09_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 priorityscore=1501 adultscore=0 lowpriorityscore=0 phishscore=0
+ impostorscore=0 spamscore=0 suspectscore=0 bulkscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2602130000 definitions=main-2603110040
 
-On Tue, 10 Mar 2026 12:49:23 +0100
-Philipp Hahn <phahn-oss@avm.de> wrote:
 
-> Prefer using IS_ERR_OR_NULL() over using IS_ERR() and a manual NULL
-> check.
-> 
-> Semantich change: Previously the code only printed the warning on error,
-> but not when the pointer was NULL. Now the warning is printed in both
-> cases!
-> 
-> Change found with coccinelle.
-> 
-> To: Philipp Zabel <p.zabel@pengutronix.de>
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Philipp Hahn <phahn-oss@avm.de>
-> ---
->  drivers/reset/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-> index fceec45c8afc1e74fe46311bdc023ff257e8d770..649bb4ebabb20a09349ccbfc62f8280621df450e 100644
-> --- a/drivers/reset/core.c
-> +++ b/drivers/reset/core.c
-> @@ -715,7 +715,7 @@ EXPORT_SYMBOL_GPL(reset_control_bulk_acquire);
->   */
->  void reset_control_release(struct reset_control *rstc)
->  {
-> -	if (!rstc || WARN_ON(IS_ERR(rstc)))
-> +	if (WARN_ON(IS_ERR_OR_NULL(rstc)))
 
-This changes the behavior when rstc == NULL.
-WARN_ON does not hit when rstc == NULL in the original code.
-
-Thanks,
-
->  		return;
->  
->  	if (reset_control_is_array(rstc))
+On 3/10/2026 7:02 PM, Konrad Dybcio wrote:
+> On 3/9/26 11:27 AM, Pengyu Luo wrote:
+>> On Thu, Mar 5, 2026 6:40 PM Taniya Das <taniya.das@oss.qualcomm.com> wrote:
+>>> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>>>
+>>> Add the GPU_CC and GX_CC (brand new! as far as we're concerned, this
+>>> is simply a separate block housing the GX GDSC) nodes, required to
+>>> power up the graphics-related hardware.
+>>>
+>>> Make use of it by enabling the associated IOMMU as well. The GPU itself
+>>> needs some more work and will be enabled later.
+>>>
+>>> Reviewed-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
+>>> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>>> Co-developed-by: Taniya Das <taniya.das@oss.qualcomm.com>
+>>> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+>>> ---
+>>>
+>>
+>> Hi Taniya and Konrad, GX GDSC stuck at 'on' on my device
+>> the raw register values are
+>>
+>> 0x3d68024: 0x00000000
+>> 0x3d68028: 0x00000000
 > 
-> -- 
-> 2.43.0
+> These likely indicate that some clock or voltage rail is not accessible
+> at the very moment you're reading them back
 > 
+> GPU support for 8750 is not yet upstream (and A830 is somewhat different
+> vs the supported A840) - there may be something wrong in that sequence.
+> 
+> I heard it's in the works though, so you may be better off waiting a bit.
 > 
 
+I am checking internally if any required clock is getting turned off and
+causing this.
 
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Thanks,
+Taniya Das
+
