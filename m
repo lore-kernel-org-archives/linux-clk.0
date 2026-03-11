@@ -1,43 +1,44 @@
 Received: from www537.your-server.de (www537.your-server.de [188.40.3.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE7D1EE7C6;
-	Wed, 11 Mar 2026 14:32:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5A636C9FC;
+	Wed, 11 Mar 2026 14:32:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.3.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773239571; cv=none; b=PO3XGpRFkvQPSsY2wo43QZqVjAiATG1hJrM7xw0TypdQVaBZZvHcDv5c5wPAAb94uJwdRUCPu7yQkNOEnr8rPHVWCHWm3xvt7K911+KGUpbKIW2/u0fwZgNDaFD50Ts9CiK95eoxLswe1MNf685yymraWBRpeekaRl5HV3LVZ9Q=
+	t=1773239571; cv=none; b=guqxTDHPIki84mD2ESGOAXyk80PwCvcdPvhx8Xr68ap3xFvsHL3iqVAFpkFR0RItQu7tbHudCkw63sHG5eDue+sMZRIugFeDdzDcUM7pJn9a3busrvat0HiTx0NRQE0hL8dOk4AEWaAGC79opaXj2IAW4JUJbEemOsEpe3IPQz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1773239571; c=relaxed/simple;
-	bh=wCEZMFEIe9N1fRThoO8UVaTOZnxRpccdK7arnQBKo6c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CzIo94FE5xC1Q26PX/oYRMumaoq0BdR/jhdDulvGIh8/49bIZV49RASn+LjAQOEGmyG9veu8rWWNpL/ZHgiRtJyW/v6zLaASgT3f6I+ijxo8BAA8+sVa2WZUATyXOIoxoBXcIr4snLt2mHzZVKwcm5X5Jv6JrpzEt8zwGC/8h5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=OCbYZYhZ; arc=none smtp.client-ip=188.40.3.216
+	bh=VCZVp08QKu1CH7Ywbc7ClG0sZyA8DWEa4teZCiebNPU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=T9uO64id9Oq3mI8DhUsA8d8uA4KAgUgjSKfiFr9oymdSoXT2zLSNd4Fc0Ey4he6T9laMDid31jodVll37lXZD/PJMDvCfQlwpYYtZR8YRRWEaZQxKwbFxxirwmWj1nmJhijW8fOyRv8Jejxmcicp/LSW07DncJxNlegtfYvSSQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=IH92FAr9; arc=none smtp.client-ip=188.40.3.216
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="OCbYZYhZ"
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="IH92FAr9"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=ew.tq-group.com; s=default2602; h=Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References;
-	bh=Kkt3A1e6l/KLgh24uOCTImlNQ3maInjpGSRh0bHez1U=; b=OCbYZYhZQZHRhApD9dltpqMqGE
-	exnAuIcBSkHoBUv8XAPktsZGgy+TznUd2rbhWKCmRQyAfyzF1GSV9gTahWyfEPFgDSl07LG/lSxgf
-	HuR2ZKlys9vb/3zv0T2FgDun2nTOWbllECxBs83qQNnQoyEHqQULl3r4Uf+gck3NzmtCZclWL1Wjt
-	OKimXou+JaXkpAvx46qICQKiJvtmU8JE29+b9r2vEvxOrrSO/51/quZtmVimgEIQdQ/0U1uRaE91u
-	FmZNY6I9cl68khuX2aXXDb9hWmwjZ0rj3cXv3CYvJ0RBQnCFucXRTg5BbZlWvPE6PsG9INRChP8ho
-	Qka1h+xA==;
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=4gKXZt44Ma4GCBaMG/hFnAdxzDG8bWPvFE9vNwevguM=; b=IH92FAr98PmZwaoaBpUpFq08eX
+	vVXwRfz7oN3MkPZA9F8x8BqeIWRtkjy2IZlbOMuf1ogiDPfzL55d8+QCsChSqKQVzU/rhxGmiDOXC
+	lPhSU/41zIgoeBBEhGpxxtQPdDWb3NiBS9mNm/Zzcc1C2S5IxrxbxLh4O3DH0KPAMj2djDrKEDh+b
+	pd3eE8dYMCYOAm8yEa17FHfLTsZVTOU8hVnOHFvA0hgHgeGzqQYOyHUB4F/plE9kSIiqpXFD/7TBD
+	ktvmHwbhFkACoIzrKNjfDiu9GWpe40bcXwIYHAm7xa+xj3Zdl5goN68DYUSb+ePvFKYNgbdO5m9gr
+	PbWIpGNw==;
 Received: from sslproxy03.your-server.de ([88.198.220.132])
 	by www537.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <alexander.stein@ew.tq-group.com>)
-	id 1w0Kc5-000Or3-1z;
-	Wed, 11 Mar 2026 15:32:41 +0100
+	id 1w0KcC-000OuR-2p;
+	Wed, 11 Mar 2026 15:32:48 +0100
 Received: from localhost ([127.0.0.1])
 	by sslproxy03.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <alexander.stein@ew.tq-group.com>)
-	id 1w0Kc4-000GoI-39;
-	Wed, 11 Mar 2026 15:32:41 +0100
+	id 1w0KcC-000GoI-0i;
+	Wed, 11 Mar 2026 15:32:48 +0100
 From: Alexander Stein <alexander.stein@ew.tq-group.com>
 To: Frank Li <Frank.Li@nxp.com>,
 	Sascha Hauer <s.hauer@pengutronix.de>,
@@ -57,10 +58,12 @@ Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
 	linux-kernel@vger.kernel.org,
 	linux@ew.tq-group.com,
 	linux-clk@vger.kernel.org
-Subject: [PATCH 0/6] TQMa91/TQMa93: display support on MBa91xxCA
-Date: Wed, 11 Mar 2026 15:32:03 +0100
-Message-ID: <20260311143217.1700704-1-alexander.stein@ew.tq-group.com>
+Subject: [PATCH 4/6] arm64: dts: imx93-tqma9352-mba91xxca: Add LVDS display overlay
+Date: Wed, 11 Mar 2026 15:32:07 +0100
+Message-ID: <20260311143217.1700704-5-alexander.stein@ew.tq-group.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260311143217.1700704-1-alexander.stein@ew.tq-group.com>
+References: <20260311143217.1700704-1-alexander.stein@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -70,38 +73,92 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Virus-Scanned: Clear (ClamAV 1.4.3/27937/Wed Mar 11 07:24:53 2026)
 
-Hi,
+This adds support for Tianma TM070JVHG33 LVDS display on interface X11/X12
+on MBa91xxCA.
 
-this series adds support for parallel and LVDS displays on MBa91xxCA, both for
-TQMa91 and TQMa93. The parallel display is attached directly, while the LVDS
-uses an LVDS-Encoder. To actually work it needs the pdfc driver from [1].
-
-The first two patches add required (Video) PLL configurations to achieve the
-necessary pixel clocks for both displays.
-The last 4 patches add the overlays for TQMa91 and TQMa93, although the
-overlays for TQMa91 use the same overlay for TQMa93.
-
-Best regards,
-Alexander
-
-[1] https://lore.kernel.org/all/20260303-v6-18-topic-imx93-parallel-display-v11-2-1b03733c8461@pengutronix.de/
-
-Alexander Stein (6):
-  clk: imx: fracn-gppll: Add 333.333333 MHz support
-  clk: imx: fracn-gppll: Add 477.4MHz support
-  arm64: dts: imx93-tqma9352-mba91xxca: Add parallel display overlay
-  arm64: dts: imx93-tqma9352-mba91xxca: Add LVDS display overlay
-  arm64: dts: imx91-tqma9131-mba91xxca: Add parallel display overlay
-  arm64: dts: imx91-tqma9131-mba91xxca: Add LVDS display overlay
-
- arch/arm64/boot/dts/freescale/Makefile        | 12 ++++
- ...3-tqma9352-mba91xxca-lvds-tm070jvhg33.dtso | 56 ++++++++++++++++
- ...93-tqma9352-mba91xxca-rgb-cdtech-dc44.dtso | 66 +++++++++++++++++++
- drivers/clk/imx/clk-fracn-gppll.c             |  2 +
- 4 files changed, 136 insertions(+)
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+ arch/arm64/boot/dts/freescale/Makefile        |  2 +
+ ...3-tqma9352-mba91xxca-lvds-tm070jvhg33.dtso | 56 +++++++++++++++++++
+ 2 files changed, 58 insertions(+)
  create mode 100644 arch/arm64/boot/dts/freescale/imx93-tqma9352-mba91xxca-lvds-tm070jvhg33.dtso
- create mode 100644 arch/arm64/boot/dts/freescale/imx93-tqma9352-mba91xxca-rgb-cdtech-dc44.dtso
 
+diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+index 3547f1dd84467..24d5b0c2ddafb 100644
+--- a/arch/arm64/boot/dts/freescale/Makefile
++++ b/arch/arm64/boot/dts/freescale/Makefile
+@@ -456,7 +456,9 @@ dtb-$(CONFIG_ARCH_MXC) += imx93-tqma9352-mba91xxca.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx93-tqma9352-mba93xxca.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx93-tqma9352-mba93xxla.dtb
+ 
++imx93-tqma9352-mba91xxca-lvds-tm070jvhg33-dtbs := imx93-tqma9352-mba91xxca.dtb imx93-tqma9352-mba91xxca-lvds-tm070jvhg33.dtbo
+ imx93-tqma9352-mba91xxca-rgb-cdtech-dc44-dtbs := imx93-tqma9352-mba91xxca.dtb imx93-tqma9352-mba91xxca-rgb-cdtech-dc44.dtbo
++dtb-$(CONFIG_ARCH_MXC) += imx93-tqma9352-mba91xxca-lvds-tm070jvhg33.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx93-tqma9352-mba91xxca-rgb-cdtech-dc44.dtb
+ 
+ dtb-$(CONFIG_ARCH_MXC) += imx93-var-som-symphony.dtb
+diff --git a/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba91xxca-lvds-tm070jvhg33.dtso b/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba91xxca-lvds-tm070jvhg33.dtso
+new file mode 100644
+index 0000000000000..02b9afae44c39
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba91xxca-lvds-tm070jvhg33.dtso
+@@ -0,0 +1,56 @@
++// SPDX-License-Identifier: (GPL-2.0-or-later OR MIT)
++/*
++ * Copyright (c) 2023-2026 TQ-Systems GmbH <linux@ew.tq-group.com>,
++ * D-82229 Seefeld, Germany.
++ * Author: Alexander Stein
++ */
++
++#include <dt-bindings/clock/imx93-clock.h>
++
++/dts-v1/;
++/plugin/;
++
++&backlight {
++	status = "okay";
++};
++
++&display {
++	compatible = "tianma,tm070jvhg33";
++	status = "okay";
++};
++
++&dpi_to_panel {
++	remote-endpoint = <&lvds_encoder_input>;
++};
++
++&lcdif {
++	assigned-clocks = <&clk IMX93_CLK_VIDEO_PLL>;
++	assigned-clock-rates = <477400000>;
++	status = "okay";
++};
++
++&lvds_encoder {
++	status = "okay";
++};
++
++&lvds_encoder_input {
++	remote-endpoint = <&dpi_to_panel>;
++};
++
++&lvds_encoder_output {
++	remote-endpoint = <&panel_in>;
++};
++
++&media_blk_ctrl {
++	status = "okay";
++};
++
++&panel_in {
++	remote-endpoint = <&lvds_encoder_output>;
++};
++
++&dpi_bridge {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_rgbdisp>;
++	status = "okay";
++};
 -- 
 2.43.0
 
