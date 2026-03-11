@@ -1,80 +1,124 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B7A329B8E8;
-	Wed, 11 Mar 2026 16:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9CF31E84A
+	for <linux-clk@vger.kernel.org>; Wed, 11 Mar 2026 17:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773247782; cv=none; b=jax3ajd3moC81bRswMOvBwtermolgPgwv9EsRERuA+hR71K22pkE7ZFXx4rRx3CC/siIsRxU9QNbh96JCgKkosaaDgVqvpGR0RZ6jA7FTxSUBEU6uL/lm8uWNASv94CQFPVG1h2tO5rIXBXpWEhiKWyzrJNDpnfDiXPDutEd9cg=
+	t=1773248704; cv=none; b=MzOocQ9chLKuAR1iFlvH2kHefMhyFD9awBbIXyWCou0HLQ9BUhbgYJ+epvAFzOe9umxuE0MgZMecYi8e9eEBFMgmWjZyz21BwCQmTBLxq2aMTZKtebCWQpdE4+xsYDM+LPWpGcOxbTTLU11i1Py530x/kkEqCcP5gD2yPWyoFDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773247782; c=relaxed/simple;
-	bh=L+Z41iBxmL9bDC/+5byJSVTm53cIJcCLHJ3pqm2b1eo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nCYkSN0IMSNuutqpwkk/hfWPI+MUXAz5+YvKjrqmZD+TuCILgYRqegdEXXwR7dHROUG/ij4YrvDokijlSLB/00251fmH1x4osn6w1UoWvuFQ7+qVdWGsgv5fMdLTSibgfdrEQNKRehDqoE7Uw/uCNmET5tEHZ8Yvd3ZM/+BT190=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u1RCvb2L; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u1RCvb2L"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC654C4CEF7;
-	Wed, 11 Mar 2026 16:49:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773247781;
-	bh=L+Z41iBxmL9bDC/+5byJSVTm53cIJcCLHJ3pqm2b1eo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u1RCvb2LYs0w+E5E5Q4zBFx7t7yM1DIZAJhNB26Yfi+T/Q3HT6JelU8TvPCRehsFv
-	 OgaLkbjx5UScyRGWqMi6bo3sIQ4sfTapSx3g7AbOBfhGFX/sq/Elw+j2ep2OaA5JuH
-	 HhKfaA4VmKfGdl9OD+mQFw8JzaqgongxtYtCKtHQccr2wYZoLRynbi8+7upGKWTOza
-	 LGh0U/Yh6sqtPKFb3GxzhZTpzqPSQUGn+m05neR5aE4Sa+u/+w8paPWfKZpOxhJmi3
-	 0Xr71Q1xES6voJK47Ktb8nDjfLffEppYjHPrj4WX7XgpmbPpoiOhy0Z3OJBZ5/Ym6H
-	 /lYqKQlMIH3ew==
-Date: Wed, 11 Mar 2026 11:49:40 -0500
-From: Rob Herring <robh@kernel.org>
-To: Michal Simek <michal.simek@amd.com>
-Cc: linux-kernel@vger.kernel.org, monstr@monstr.eu, git@amd.com,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: versal-clk: Reorder if/then
- conditions for Versal NET
-Message-ID: <20260311164940.GB4041143-robh@kernel.org>
-References: <cover.1772725183.git.michal.simek@amd.com>
- <7241fe512ff677f7aa5b7212ae4056fba01f1f59.1772725183.git.michal.simek@amd.com>
+	s=arc-20240116; t=1773248704; c=relaxed/simple;
+	bh=3dMJxR9TjCJ9S3Lg7LcRJbtat+eyZPt3SNqC/m6FxkM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M1OoBxdGKmnfu4JEKGBAxURokmcQlakqTecGD/OykCmQZOfP0ZfvRLkVLlDOD6AD5EZ5FfZsbcwHehUKWSvjajoUQZb6eYU7IuBngKNVCNozUAXZr1xT5Tatqba/PhFTqbuBjnF7d4ucZbJkHbu7mThOSTnoa7RzzRBs6qXWI7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-8cd785a8783so6764685a.0
+        for <linux-clk@vger.kernel.org>; Wed, 11 Mar 2026 10:05:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773248702; x=1773853502;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MHqYyMyxNQscHKqebkYfjh9WcEHBmwP9uSBnn8fEJDk=;
+        b=GWxYdOvLySqcAjCoxxESEuYoqhFIQEKvKe3PS4k2tj17I+j6jD86JxE0ffGv+wqdND
+         T+ZbGLZlb1q5OByUoFXBn7WGjmzy5ehYGY6qy+XwI8Ben3CXlfvyCNBdWA740wPrRY+5
+         azV8CkGlBzAR4+wsL1vxFh+0SV7yPo/ym+q8Zr4p3HM7Gc25cq+m89QJHPLVcKJ4xfEv
+         QAyTmNxVaS8p0ZQcX9mi3+OWTyrDqqrN4Lhn/YzMhPK84nxnZu6wahUgg66g5wMgDwTl
+         uIYNdaJaxowmYFftKR6x5qIF/RocKweJV3c+iWfZFvqa1oZuhdI1z6VVCJ8v4gSITcAv
+         LKlA==
+X-Forwarded-Encrypted: i=1; AJvYcCWXz3lrCxWRmsI+HVIdXQB2WW47nKlYB38PhsEL5+Ej99sEiZtv+4qPO6V1fg48x41e1117J114Nms=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTWJrt9ZoSzdzT7cC9yaaAFqUN4i6MrkTkbSayLSbqLsCfcM/6
+	SkXJmNXIdL2bAcFvlgGFVHpQ0TH1GESBakvhu6kFDJ4qeDOiratBEABbluljelE6mW4=
+X-Gm-Gg: ATEYQzxZgdWkdsv9frY1plOyONuaewRFQMGl4SqvTq9VRLD68lnLiS6X5ZqPIYpSWud
+	2gmyMNk3Y22l6Jled4OgdRCOq84SDZ6WoZnirrUL7AxSaDzWcS7Q/PMVxS+5KhjlgRtHIpkCSgu
+	uJvYdWQ6LhKIf56axejySVVTBlEbT1u4cKUYUrWK1uDVXstjoHi8sqyqji/lf/IgCe5zA5DJNoD
+	JYgD4Sm6gs0XE1uzeV+vZR5J6XNklpPNu9v44HNF4Nn4o8PLJpzBWWtdw0EWyCDsjtMtnkhWiFH
+	ZbO40wurC1r/003EGWtF6P2bJ82CmtC5/lodMsFs7o61yS+FJkHrP0Y+rrCpQnvgV/y0DOoxDqi
+	f8v9sW3RB8D0pgUEyOaAC9LvVNxMDR/75CDltmU4T+x18THyZJdTmz3YcuApemxzvPbBPVoBowY
+	Y5dXP0XbPD75c25G5NfoAs3nZE07sjEYOjB4m9VE0phuchFK9hE/QnsUYiJUemoUho
+X-Received: by 2002:a05:620a:191c:b0:8cd:9665:9eee with SMTP id af79cd13be357-8cda1950f82mr413190285a.24.1773248702147;
+        Wed, 11 Mar 2026 10:05:02 -0700 (PDT)
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com. [209.85.160.178])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8cda214be99sm186397485a.41.2026.03.11.10.05.01
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Mar 2026 10:05:01 -0700 (PDT)
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-509149ab7d7so617221cf.2
+        for <linux-clk@vger.kernel.org>; Wed, 11 Mar 2026 10:05:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV0hqZNAoRklg0Du9F9KGJ4P3f/7ai7uexkWSIpC+29xfpR6v/YZ2/pJZnrvu4yAyKztEL+Ch5iviI=@vger.kernel.org
+X-Received: by 2002:a05:6102:e0c:b0:5ff:a16b:93f8 with SMTP id
+ ada2fe7eead31-601deaf0a5cmr1083265137.6.1773248394584; Wed, 11 Mar 2026
+ 09:59:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7241fe512ff677f7aa5b7212ae4056fba01f1f59.1772725183.git.michal.simek@amd.com>
+References: <20260310184030.3669330-1-cristian.marussi@arm.com> <20260310184030.3669330-9-cristian.marussi@arm.com>
+In-Reply-To: <20260310184030.3669330-9-cristian.marussi@arm.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 11 Mar 2026 17:59:43 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUdqrA9kYeDpjwj-y6-4aALkAi2g2Od81Kxh-EVW2e2Nw@mail.gmail.com>
+X-Gm-Features: AaiRm52tcdDuztFkx9k48Wz50kutFch70oo-cU-eA7FFMTwppL_ACNeUC0TZgzs
+Message-ID: <CAMuHMdUdqrA9kYeDpjwj-y6-4aALkAi2g2Od81Kxh-EVW2e2Nw@mail.gmail.com>
+Subject: Re: [PATCH v2 08/13] firmware: arm_scmi: Harden clock protocol initialization
+To: Cristian Marussi <cristian.marussi@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	arm-scmi@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, sudeep.holla@arm.com, 
+	philip.radford@arm.com, james.quinlan@broadcom.com, f.fainelli@gmail.com, 
+	vincent.guittot@linaro.org, etienne.carriere@foss.st.com, 
+	peng.fan@oss.nxp.com, michal.simek@amd.com, dan.carpenter@linaro.org, 
+	geert+renesas@glider.be, kuninori.morimoto.gx@renesas.com, 
+	marek.vasut+renesas@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Mar 05, 2026 at 04:39:49PM +0100, Michal Simek wrote:
-> The Versal NET clock controller compatible is specified as:
->   compatible = "xlnx,versal-net-clk", "xlnx,versal-clk";
-> 
-> with xlnx,versal-clk listed as fallback. The original binding had
-> two separate if/then blocks - one matching xlnx,versal-clk (2 clocks)
-> and another matching xlnx,versal-net-clk (3 clocks). Since both
-> compatible strings are present, both conditions matched simultaneously
-> and JSON Schema applied the more restrictive 2-clock constraint,
-> causing false "too long" validation errors for Versal NET.
-> 
-> Restructure the allOf conditions to check for xlnx,versal-net-clk
-> first. If matched, allow 3 clocks (ref, pl_alt_ref, alt_ref).
-> Otherwise fall back to the xlnx,versal-clk case with 2 clocks
-> (ref, pl_alt_ref).
-> 
-> Add a dedicated example for the Versal NET 3-clock configuration
-> and split all examples into separate blocks so each compatible
-> variant is validated independently by dt_binding_check.
+Hi Cristian,
 
-Really, the problem is xlnx,zynqmp-clk should be moved to its own 
-schema. The only thing common is #clock-cells==1, but that would be true 
-for hundreds of bindings. If you do that, then the clock-names can be 
-defined at the top-level which is preferred anyway, and the only thing 
-needed in if/then schemas is 'maxItems: 2' and 'minItems: 3'.
+On Tue, 10 Mar 2026 at 19:56, Cristian Marussi <cristian.marussi@arm.com> wrote:
+> Add proper error handling on failure to enumerate clocks features or
+> rates.
+>
+> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
 
-Rob
+Thanks for your patch!
+
+> --- a/drivers/firmware/arm_scmi/clock.c
+> +++ b/drivers/firmware/arm_scmi/clock.c
+
+> @@ -1143,8 +1149,12 @@ static int scmi_clock_protocol_init(const struct scmi_protocol_handle *ph)
+>         for (clkid = 0; clkid < cinfo->num_clocks; clkid++) {
+>                 cinfo->clkds[clkid].id = clkid;
+>                 ret = scmi_clock_attributes_get(ph, clkid, cinfo);
+> -               if (!ret)
+> -                       scmi_clock_describe_rates_get(ph, clkid, cinfo);
+> +               if (ret)
+> +                       return ret;
+
+This change breaks R-Car X5H with SCP FW SDKv4.28.0, as some clocks
+do not support the SCMI CLOCK_ATTRIBUTES command.
+Before, these clocks were still instantiated, but were further unusable.
+After, the whole clock driver fails to initialize, and no SCMI clocks
+are available at all.
+
+> +
+> +               ret = scmi_clock_describe_rates_get(ph, clkid, cinfo);
+> +               if (ret)
+> +                       return ret;
+>         }
+>
+>         if (PROTOCOL_REV_MAJOR(ph->version) >= 0x3) {
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
