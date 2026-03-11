@@ -1,34 +1,69 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from www537.your-server.de (www537.your-server.de [188.40.3.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30518362130;
-	Wed, 11 Mar 2026 15:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A326A32D0E3
+	for <linux-clk@vger.kernel.org>; Wed, 11 Mar 2026 15:06:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.3.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773241585; cv=none; b=Iz1TvJHTz9+urKywLp7WptPwc5qQ2lTmawye+Q/Mf7Xr3TgAHWIFtrKEIDZ3lUZ8Z2d3GnYXACLKQOIyZ4+mo5cA52yQHH+HlFu/shHxqkg0v68rXXYdlp7CtRKCb0o1Bh2yq9RglGvdossLPDVxIJVvNpCUu84jd4Yz4eag/cE=
+	t=1773241612; cv=none; b=DtQ2izajXGFQwZTjqYaiOsWghETCdIyzVp7CBbSnfc/7enKB4gCJNTQnW//QfYRvpAMLIR3IF30Xg4+IxjPdMXY5ow8VXyh1SfNuzijT9fYOJGrkNrYD+cdIhFNrKjBq2C/JDc52fyVhTa0/scnJhqKpC1pd3B0jWMHmPLKbTxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773241585; c=relaxed/simple;
-	bh=1ZmxNSzK5y4YYwYPaZmtT/LizhAKrRlUbwYPaZ+wJAE=;
+	s=arc-20240116; t=1773241612; c=relaxed/simple;
+	bh=smT9zxqH70VUwEzQSzPNrDc2PRpij5xt5/StY9XCE4A=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MnvpAare0c5H2/8xNuPmPv0PCM4QfZcsbjococ0jDMg1w3RCIFCJW5hFq9YJh81hAPQR0SZxKKNMEWU9dbgpoN14avO+JsNgEDnEEh3RLzJ+oX7LjuzTdXgMX7zioMmYpo6hW09IWkEU/VpgBhvMIUaQm2Hn1CRT3yKy3HV/kjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D43AC19424;
-	Wed, 11 Mar 2026 15:06:23 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Marek Vasut <marex@denx.de>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
+	 MIME-Version; b=Q+Vx4YaRU6kvZzdU6Ii3Y93yOK2K9ionueDGi1Fep7oF30rsIVzWK4wugtP9HzzgdX1Plns2vc8SxnSJqYQOZBajadpCchQ7C8EwceD3bR8WV//brpsB0MpORQY/+wkTo7z5JhFl9nXcCuxyiFOZZP/e1JYXCL9xdrgwIkEs32o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=lDV2ZZj6; arc=none smtp.client-ip=188.40.3.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="lDV2ZZj6"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=ew.tq-group.com; s=default2602; h=Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=0+yB69un78P4NrscXomjWtgDImz7mYk9jldzNuqG/bY=; b=lDV2ZZj6mmZUaRzTVJQFOrCWP4
+	wGO3yfY4ABQC+4NctQdAL3t4ysOjfM70seeKquID8KgGVqwcD4HYrpcHzOiWupQ/RFbAVVjzMiehl
+	+YCn4A2jLnKpXdeLsUyGmQnmYvo13Cedt4PkZu/ZExN+uNMJSm7vKfmAuDgZlbXO7PR2y9mSX5gKq
+	xXYRAxO60Q/WA5ILYSiADOOGWlegJaCItZ3AGGuEVEnnN7lNrVn3WHornC9p1HYbERB7tbj3G+jeb
+	ynTeQeStc1w4NE2i5mb4b1y1BO/7t+mR/8cxrcGmGImCH4I4N9QlaZWMOQZ0zqcx8jVt6OgPVi+Mj
+	Xwd/bk7A==;
+Received: from sslproxy03.your-server.de ([88.198.220.132])
+	by www537.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <alexander.stein@ew.tq-group.com>)
+	id 1w0KcE-000OvT-1M;
+	Wed, 11 Mar 2026 15:32:50 +0100
+Received: from localhost ([127.0.0.1])
+	by sslproxy03.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <alexander.stein@ew.tq-group.com>)
+	id 1w0KcD-000GoI-2V;
+	Wed, 11 Mar 2026 15:32:49 +0100
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Abel Vesa <abelvesa@kernel.org>,
+	Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Marek Vasut <marek.vasut+renesas@mailbox.org>
-Subject: [PATCH v4 2/2] clk: rs9: Convert to clk_hw_onecell_data and of_clk_hw_onecell_get()
-Date: Wed, 11 Mar 2026 16:06:11 +0100
-Message-ID: <b0f36c47ea002cd72a3a67be1fad5f56e8531367.1773241119.git.geert+renesas@glider.be>
+	linux@ew.tq-group.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 5/6] arm64: dts: imx91-tqma9131-mba91xxca: Add parallel display overlay
+Date: Wed, 11 Mar 2026 15:32:08 +0100
+Message-ID: <20260311143217.1700704-6-alexander.stein@ew.tq-group.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1773241119.git.geert+renesas@glider.be>
-References: <cover.1773241119.git.geert+renesas@glider.be>
+In-Reply-To: <20260311143217.1700704-1-alexander.stein@ew.tq-group.com>
+References: <20260311143217.1700704-1-alexander.stein@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -36,135 +71,31 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: Clear (ClamAV 1.4.3/27937/Wed Mar 11 07:24:53 2026)
 
-Convert the rs9 clock driver to use the of_clk_hw_onecell_get() helper,
-which requires using the clk_hw_onecell_data structure.  Embedding that
-structure in the rs9_driver_data structure has the benefit that the
-clock array always has the correct size, and thus can no longer become
-out of sync when adding support for new rs9 variants.
+This adds support for CDTech S070SWV29HG-DC44 display on parallel
+interface X3 on MBa91xxCA.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 ---
-v4:
-  - Add Reviewed-by,
-  - Rebase on top of "clk: rs9: Add clock index range check to
-    rs9_of_clk_get()", so this becomes a pure refactoring instead of a
-    fix,
-  - Put in a series,
+ arch/arm64/boot/dts/freescale/Makefile | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-(v3 and v2 do not exist)
-
-v1:
-  - https://lore.kernel.org/a6dce17b15d29a257d09fe0edc199a14c297f1a8.1768836042.git.geert+renesas@glider.be
----
- drivers/clk/clk-renesas-pcie.c | 44 ++++++++++++++--------------------
- 1 file changed, 18 insertions(+), 26 deletions(-)
-
-diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
-index b9bee616afe8d4ef..2b8b6b82250360d5 100644
---- a/drivers/clk/clk-renesas-pcie.c
-+++ b/drivers/clk/clk-renesas-pcie.c
-@@ -64,10 +64,11 @@ struct rs9_driver_data {
- 	struct i2c_client	*client;
- 	struct regmap		*regmap;
- 	const struct rs9_chip_info *chip_info;
--	struct clk_hw		*clk_dif[8];
- 	u8			pll_amplitude;
- 	u8			pll_ssc;
- 	u8			clk_dif_sr;
-+	/* must be last */
-+	struct clk_hw_onecell_data onecell;
- };
- 
- /*
-@@ -271,37 +272,28 @@ static void rs9_update_config(struct rs9_driver_data *rs9)
- 	}
- }
- 
--static struct clk_hw *
--rs9_of_clk_get(struct of_phandle_args *clkspec, void *data)
--{
--	struct rs9_driver_data *rs9 = data;
--	unsigned int idx = clkspec->args[0];
--
--	if (idx >= rs9->chip_info->num_clks) {
--		pr_err("%s: Invalid clock index %u\n", __func__, idx);
--		return ERR_PTR(-EINVAL);
--	}
--
--	return rs9->clk_dif[idx];
--}
--
- static int rs9_probe(struct i2c_client *client)
- {
-+	const struct rs9_chip_info *chip_info;
- 	unsigned char name[5] = "DIF0";
- 	struct rs9_driver_data *rs9;
- 	unsigned int vid, did;
- 	struct clk_hw *hw;
- 	int i, ret;
- 
--	rs9 = devm_kzalloc(&client->dev, sizeof(*rs9), GFP_KERNEL);
-+	chip_info = i2c_get_match_data(client);
-+	if (!chip_info)
-+		return -EINVAL;
+diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+index 24d5b0c2ddafb..64fe9487b1003 100644
+--- a/arch/arm64/boot/dts/freescale/Makefile
++++ b/arch/arm64/boot/dts/freescale/Makefile
+@@ -417,6 +417,10 @@ dtb-$(CONFIG_ARCH_MXC) += imx91-11x11-frdm.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx91-11x11-frdm-s.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx91-phyboard-segin.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx91-tqma9131-mba91xxca.dtb
 +
-+	rs9 = devm_kzalloc(&client->dev, struct_size(rs9, onecell.hws,
-+			   chip_info->num_clks), GFP_KERNEL);
- 	if (!rs9)
- 		return -ENOMEM;
++imx91-tqma9131-mba91xxca-rgb-cdtech-dc44-dtbs := imx91-tqma9131-mba91xxca.dtb imx93-tqma9352-mba91xxca-rgb-cdtech-dc44.dtbo
++dtb-$(CONFIG_ARCH_MXC) += imx91-tqma9131-mba91xxca-rgb-cdtech-dc44.dtb
++
+ dtb-$(CONFIG_ARCH_MXC) += imx93-9x9-qsb.dtb
  
- 	i2c_set_clientdata(client, rs9);
- 	rs9->client = client;
--	rs9->chip_info = i2c_get_match_data(client);
--	if (!rs9->chip_info)
--		return -EINVAL;
-+	rs9->chip_info = chip_info;
-+	rs9->onecell.num = chip_info->num_clks;
- 
- 	/* Fetch common configuration from DT (if specified) */
- 	ret = rs9_get_common_config(rs9);
-@@ -309,7 +301,7 @@ static int rs9_probe(struct i2c_client *client)
- 		return ret;
- 
- 	/* Fetch DIFx output configuration from DT (if specified) */
--	for (i = 0; i < rs9->chip_info->num_clks; i++) {
-+	for (i = 0; i < rs9->onecell.num; i++) {
- 		ret = rs9_get_output_config(rs9, i);
- 		if (ret)
- 			return ret;
-@@ -335,24 +327,24 @@ static int rs9_probe(struct i2c_client *client)
- 		return ret;
- 
- 	vid &= RS9_REG_VID_MASK;
--	if (vid != RS9_REG_VID_IDT || did != rs9->chip_info->did)
-+	if (vid != RS9_REG_VID_IDT || did != chip_info->did)
- 		return dev_err_probe(&client->dev, -ENODEV,
- 				     "Incorrect VID/DID: %#02x, %#02x. Expected %#02x, %#02x\n",
--				     vid, did, RS9_REG_VID_IDT,
--				     rs9->chip_info->did);
-+				     vid, did, RS9_REG_VID_IDT, chip_info->did);
- 
- 	/* Register clock */
--	for (i = 0; i < rs9->chip_info->num_clks; i++) {
-+	for (i = 0; i < rs9->onecell.num; i++) {
- 		snprintf(name, 5, "DIF%d", i);
- 		hw = devm_clk_hw_register_fixed_factor_index(&client->dev, name,
- 						    0, 0, 4, 1);
- 		if (IS_ERR(hw))
- 			return PTR_ERR(hw);
- 
--		rs9->clk_dif[i] = hw;
-+		rs9->onecell.hws[i] = hw;
- 	}
- 
--	ret = devm_of_clk_add_hw_provider(&client->dev, rs9_of_clk_get, rs9);
-+	ret = devm_of_clk_add_hw_provider(&client->dev, of_clk_hw_onecell_get,
-+					  &rs9->onecell);
- 	if (!ret)
- 		rs9_update_config(rs9);
- 
+ imx93-9x9-qsb-can1-dtbs += imx93-9x9-qsb.dtb imx93-9x9-qsb-can1.dtbo
 -- 
 2.43.0
 
