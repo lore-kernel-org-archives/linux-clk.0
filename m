@@ -1,128 +1,107 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from www537.your-server.de (www537.your-server.de [188.40.3.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068E331E85D
-	for <linux-clk@vger.kernel.org>; Wed, 11 Mar 2026 14:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE7D1EE7C6;
+	Wed, 11 Mar 2026 14:32:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.3.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773238332; cv=none; b=BoJa1BnPAqU037Ynbr6bYZcoNMAiXqnK8NMWvfhKk1hH+15cP5+vLWyKVOqsBCP6G7hpOtoGic0YB8O7URO99palyktR1MT/S8orLAyoCCwENMemijcazsZQ2/d02cusAygFsJUwkAMlXylk+1h3tMS+C/Aq4G9pMIbkK2r+3mM=
+	t=1773239571; cv=none; b=PO3XGpRFkvQPSsY2wo43QZqVjAiATG1hJrM7xw0TypdQVaBZZvHcDv5c5wPAAb94uJwdRUCPu7yQkNOEnr8rPHVWCHWm3xvt7K911+KGUpbKIW2/u0fwZgNDaFD50Ts9CiK95eoxLswe1MNf685yymraWBRpeekaRl5HV3LVZ9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773238332; c=relaxed/simple;
-	bh=POUJjzeRhBIXfPGojdZfC417KH92loTKx1KmDpRcfoc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BkEpM0mVpfWbfFxGEC9Zp4VedNwBNud/nekL5X1c+m8DpQcjCZpcNT77EIw7IvZFUAidxMhrL15aRr8z8dTe/MoGWDE7uBnsar1XSnZ6G55OInVg/d+PBh+z6R9f0YUv8VU4bnhjxdsK7GAkzSyWCkAFpx6A1ZNnZzphcWl1Yns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b9423d62cbbso151136666b.1
-        for <linux-clk@vger.kernel.org>; Wed, 11 Mar 2026 07:12:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773238329; x=1773843129;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wIz9Fr5w5J45ZN4rxwvT/0kjXMGfLP1VpB2aKPOax7k=;
-        b=dsKvy096fS3stUSjXBZRGsLGDyzMTWvkvlX0Rc9qV0Kqo3PNSf7fHMSx1gUYfzqRiO
-         INZBOqF5gyfcLwJ0bGtELPIN9nUvIkTSHqqNWnHsRgd163hsPOwnuauRLNjkzmxQYQrS
-         QLTqgrO8lbkiEAthm3LvB2i/0rf44RakJa3MfMsGEvjgY60uRWnK/1HV5hLX1I/OcEOe
-         o9Ez4bd95MpFJj64hOBMUoIcGSUntQ7gK68t2pEj5DGPr9vNAubAswtnEPm8WaWyf1uR
-         OGvft4BiOlgp5bzLWV1dqs6b4YBdvgfwa0xaC1sLAyDdkQDCOOVGq+dRDjfqWrR6fDFQ
-         1Wlw==
-X-Forwarded-Encrypted: i=1; AJvYcCVwu78M9ZlNdyBNTOy8ogNQJU76oDBBPBflAvCnd8MgLZnilmX9zIryvtAcCby0qN6RQ76PWVgPlYY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhYnt5FOjQ2MaBM+DHoAuIm897L63i6PElGrstiT9RFmxiS64u
-	WrZizpECS5EHsefy+eCsuTai1/IpvRR2um1XLI/ysnCHN0J1IANdpjg2T+pWHuhb5RUTCQ==
-X-Gm-Gg: ATEYQzyQjvrr4dhEoEgxEloUQD9T2U72i07mk+RDdiyVFPb4y/ujMH7LYphVOJz4BhM
-	TyBuHnNM1OWCbeYKCCXxx6Ytpk8c5DL/6mqJUGzAPMSL6lF57zMRe4uDQqXbr1zf7doUR510zxn
-	VruZSLY9xwXG2hZTA18ix5Ak5ROXROxAsM4lHNyl123peOaED1bMH6hqvRKvAE0LGRAPWSac8cD
-	bYMLjGrZ/r3esNd4EO6DaKYQ+lupemXps6i9IqOS+AteJbV62R4yB8XoI1WNLT/RFCzkP5NV9Vk
-	jjgAKVVxXN/ZYRz1M7rYJWEEeE+7z6KzuRgqTOq7rVeWIcAPF/8kOw9CPJIDK/6lZBaAStJy7s4
-	f6zXTyx3KGF8Fl0YNpzMv61pSapXuJAwG83vLDhGVuFHvauLDC2dFdiZ56ELxISIRRMuFV6oTIz
-	aLL0srftquvKfp/Yo6Ow6574fMnQvgYJ5Vkt9uQC0sZhSipBvnDN8vIGYM/4ht97x97r/i1sw=
-X-Received: by 2002:a17:906:dc92:b0:b90:bd3f:7c0d with SMTP id a640c23a62f3a-b9711a78478mr395390366b.27.1773238328965;
-        Wed, 11 Mar 2026 07:12:08 -0700 (PDT)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b972de82bc0sm57288366b.27.2026.03.11.07.12.08
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Mar 2026 07:12:08 -0700 (PDT)
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b93698bb57aso170192866b.0
-        for <linux-clk@vger.kernel.org>; Wed, 11 Mar 2026 07:12:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWBcL1Dt8OTG3NapvJdOwc8i9kx2Fz4N8gJEjkxEQZC2tGegqS3IKL0kYSqs0v1GDG3FJlZ7nOU42s=@vger.kernel.org
-X-Received: by 2002:a17:907:6d16:b0:b88:4f25:81da with SMTP id
- a640c23a62f3a-b97113ff0b9mr462021166b.0.1773237981235; Wed, 11 Mar 2026
- 07:06:21 -0700 (PDT)
+	s=arc-20240116; t=1773239571; c=relaxed/simple;
+	bh=wCEZMFEIe9N1fRThoO8UVaTOZnxRpccdK7arnQBKo6c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CzIo94FE5xC1Q26PX/oYRMumaoq0BdR/jhdDulvGIh8/49bIZV49RASn+LjAQOEGmyG9veu8rWWNpL/ZHgiRtJyW/v6zLaASgT3f6I+ijxo8BAA8+sVa2WZUATyXOIoxoBXcIr4snLt2mHzZVKwcm5X5Jv6JrpzEt8zwGC/8h5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=OCbYZYhZ; arc=none smtp.client-ip=188.40.3.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="OCbYZYhZ"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=ew.tq-group.com; s=default2602; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=Kkt3A1e6l/KLgh24uOCTImlNQ3maInjpGSRh0bHez1U=; b=OCbYZYhZQZHRhApD9dltpqMqGE
+	exnAuIcBSkHoBUv8XAPktsZGgy+TznUd2rbhWKCmRQyAfyzF1GSV9gTahWyfEPFgDSl07LG/lSxgf
+	HuR2ZKlys9vb/3zv0T2FgDun2nTOWbllECxBs83qQNnQoyEHqQULl3r4Uf+gck3NzmtCZclWL1Wjt
+	OKimXou+JaXkpAvx46qICQKiJvtmU8JE29+b9r2vEvxOrrSO/51/quZtmVimgEIQdQ/0U1uRaE91u
+	FmZNY6I9cl68khuX2aXXDb9hWmwjZ0rj3cXv3CYvJ0RBQnCFucXRTg5BbZlWvPE6PsG9INRChP8ho
+	Qka1h+xA==;
+Received: from sslproxy03.your-server.de ([88.198.220.132])
+	by www537.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <alexander.stein@ew.tq-group.com>)
+	id 1w0Kc5-000Or3-1z;
+	Wed, 11 Mar 2026 15:32:41 +0100
+Received: from localhost ([127.0.0.1])
+	by sslproxy03.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <alexander.stein@ew.tq-group.com>)
+	id 1w0Kc4-000GoI-39;
+	Wed, 11 Mar 2026 15:32:41 +0100
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Abel Vesa <abelvesa@kernel.org>,
+	Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux@ew.tq-group.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 0/6] TQMa91/TQMa93: display support on MBa91xxCA
+Date: Wed, 11 Mar 2026 15:32:03 +0100
+Message-ID: <20260311143217.1700704-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260310-b4-is_err_or_null-v1-0-bd63b656022d@avm.de>
- <20260310-b4-is_err_or_null-v1-15-bd63b656022d@avm.de> <20260310100750.303af303@gandalf.local.home>
- <20260311141332.b611237d36b61b2409e66cb3@kernel.org> <20260311100332.6a2ce4b1@gandalf.local.home>
-In-Reply-To: <20260311100332.6a2ce4b1@gandalf.local.home>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 11 Mar 2026 15:06:07 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdX4kRGLaKMzPuhS1Pmxh609eiqQW-cAS_jWBBbt-vE6SA@mail.gmail.com>
-X-Gm-Features: AaiRm53WEGMMLW4z34e7P-lM1qFvsCJGZ_o4JNL5NPWbhJPKmcqz6k9bJcyL--8
-Message-ID: <CAMuHMdX4kRGLaKMzPuhS1Pmxh609eiqQW-cAS_jWBBbt-vE6SA@mail.gmail.com>
-Subject: Re: [PATCH 15/61] trace: Prefer IS_ERR_OR_NULL over manual NULL check
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Philipp Hahn <phahn-oss@avm.de>, amd-gfx@lists.freedesktop.org, 
-	apparmor@lists.ubuntu.com, bpf@vger.kernel.org, ceph-devel@vger.kernel.org, 
-	cocci@inria.fr, dm-devel@lists.linux.dev, dri-devel@lists.freedesktop.org, 
-	gfs2@lists.linux.dev, intel-gfx@lists.freedesktop.org, 
-	intel-wired-lan@lists.osuosl.org, iommu@lists.linux.dev, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org, 
-	linux-bluetooth@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	linux-cifs@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-hyperv@vger.kernel.org, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-mips@vger.kernel.org, linux-mm@kvack.org, 
-	linux-modules@vger.kernel.org, linux-mtd@lists.infradead.org, 
-	linux-nfs@vger.kernel.org, linux-omap@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-pm@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org, 
-	linux-scsi@vger.kernel.org, linux-sctp@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-sh@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-trace-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, ntfs3@lists.linux.dev, 
-	samba-technical@lists.samba.org, sched-ext@lists.linux.dev, 
-	target-devel@vger.kernel.org, tipc-discussion@lists.sourceforge.net, 
-	v9fs@lists.linux.dev, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: Clear (ClamAV 1.4.3/27937/Wed Mar 11 07:24:53 2026)
 
-Hi Steven,
+Hi,
 
-On Wed, 11 Mar 2026 at 15:03, Steven Rostedt <rostedt@goodmis.org> wrote:
-> On Wed, 11 Mar 2026 14:13:32 +0900
-> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
->
-> > Hmm, now IS_ERR_OR_NULL() is an inline function, so it is safe.
-> > But if you want to use IS_ERR_OR_NULL() here, it will be better something like
-> >
-> > node = rhashtable_walk_next(&iter);
-> > while (!IS_ERR_OR_NULL(node)) {
-> >       fprobe_remove_node_in_module(mod, node, &alist);
-> >       node = rhashtable_walk_next(&iter);
-> > }
->
-> But now you need to have a duplicate code in order to acquire "node"
->
-> I think the patch just makes the code worse.
+this series adds support for parallel and LVDS displays on MBa91xxCA, both for
+TQMa91 and TQMa93. The parallel display is attached directly, while the LVDS
+uses an LVDS-Encoder. To actually work it needs the pdfc driver from [1].
 
-Obviously we need a new for_each_*() helper hiding all the gory internals?
+The first two patches add required (Video) PLL configurations to achieve the
+necessary pixel clocks for both displays.
+The last 4 patches add the overlays for TQMa91 and TQMa93, although the
+overlays for TQMa91 use the same overlay for TQMa93.
 
-Gr{oetje,eeting}s,
+Best regards,
+Alexander
 
-                        Geert
+[1] https://lore.kernel.org/all/20260303-v6-18-topic-imx93-parallel-display-v11-2-1b03733c8461@pengutronix.de/
+
+Alexander Stein (6):
+  clk: imx: fracn-gppll: Add 333.333333 MHz support
+  clk: imx: fracn-gppll: Add 477.4MHz support
+  arm64: dts: imx93-tqma9352-mba91xxca: Add parallel display overlay
+  arm64: dts: imx93-tqma9352-mba91xxca: Add LVDS display overlay
+  arm64: dts: imx91-tqma9131-mba91xxca: Add parallel display overlay
+  arm64: dts: imx91-tqma9131-mba91xxca: Add LVDS display overlay
+
+ arch/arm64/boot/dts/freescale/Makefile        | 12 ++++
+ ...3-tqma9352-mba91xxca-lvds-tm070jvhg33.dtso | 56 ++++++++++++++++
+ ...93-tqma9352-mba91xxca-rgb-cdtech-dc44.dtso | 66 +++++++++++++++++++
+ drivers/clk/imx/clk-fracn-gppll.c             |  2 +
+ 4 files changed, 136 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx93-tqma9352-mba91xxca-lvds-tm070jvhg33.dtso
+ create mode 100644 arch/arm64/boot/dts/freescale/imx93-tqma9352-mba91xxca-rgb-cdtech-dc44.dtso
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.43.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
