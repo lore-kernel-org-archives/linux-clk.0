@@ -1,111 +1,106 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93F829405;
-	Wed, 11 Mar 2026 18:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA9E93E92B9
+	for <linux-clk@vger.kernel.org>; Wed, 11 Mar 2026 18:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773254009; cv=none; b=ELxfX4OfSL9tfOyvRuLCTt/O5bSl82TsE3h8i+I4XrqmHKddoH89P/hMoKPepzgUdoNpEQprHvfanpganrKY3F8YwgJbMJkyQQsI+zrEvSvZYgHQzg5gxel/0rsVf+F5wGzR7AUioxDlXaa2AXZ0MMED2cQUlF9ckzDx9fxtTyw=
+	t=1773254398; cv=none; b=hMKw1YDz5u9U9vA6qjxMWFGg5hUGm8xg6dy3XJahjQAjWJKUJ2agcbMvhOUDD37F/baNTZSKu95vLkvoC6Y2X45RB8UsnxOfmQ+l5nNfh8gWNYjhLZQ1Mx+ytxRDziTjT0KEcFwnY0xCGGiwiX2HzVlowYA2OBAT/v9PsC6NUKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773254009; c=relaxed/simple;
-	bh=GUYwxiPsaz2DH4G/sAtqHJzr876hjNheBO2S7/59Pk4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sFHt5IFPB+DSY++Id4DAHMBzsDAjNj5HR6FVyfGidzvipd3mCiboLhPvyj831gv2A/v1U7e1GFPmhlf0NKIUUpo5xKnHNL3c6CcZjbq1aEqzGLCgffq/G8uQfrJGSDIMxINef0a7e9NkR18mYy/q6YqEX0Zd8UZHFZJXOLNan+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BF3BC1682;
-	Wed, 11 Mar 2026 11:33:20 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 25BA43F73B;
-	Wed, 11 Mar 2026 11:33:22 -0700 (PDT)
-Date: Wed, 11 Mar 2026 18:33:15 +0000
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, sudeep.holla@arm.com,
-	philip.radford@arm.com, james.quinlan@broadcom.com,
-	f.fainelli@gmail.com, vincent.guittot@linaro.org,
-	etienne.carriere@foss.st.com, peng.fan@oss.nxp.com,
-	michal.simek@amd.com, dan.carpenter@linaro.org,
-	geert+renesas@glider.be, kuninori.morimoto.gx@renesas.com,
-	marek.vasut+renesas@gmail.com,
+	s=arc-20240116; t=1773254398; c=relaxed/simple;
+	bh=UpeOhvo/uk8yi+1q96JIv3h8o1rekI1cCyqbUfcNtjA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iH6LfhzKAQCOuOSCTSrsxOyN/6gAFDJNH4mIipj6MoJUzVQ4qfxt52CvsdgEZgUd9qz5UF0lpnfMkbEm2XZOw/X8IloUFBq40l29up4HYcp7w7zJdPcRIPjdVUz4gjLM/KuNVEKcwQfSoxvAQPHnHsfc8sZ9XHt2hpD6s/FyjEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HOzRELnI; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HOzRELnI"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-48540d21f7dso2141615e9.0
+        for <linux-clk@vger.kernel.org>; Wed, 11 Mar 2026 11:39:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1773254393; x=1773859193; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3JpZnzVxjuKCYPTmp0ohRT+2k0IA1puKSWLpheS1yF0=;
+        b=HOzRELnIBkPU1YZg9iBi9Pe10GzyBceNDwQb9gVBEtYiixbYSS8byHVvTEZUCLfc4l
+         ZyacaF5OM9Xqz9tvsCV17mrzgE6lTnY3H4hkwx2xIJImW0oBCmtZPaVqhmLLonQq5nMl
+         wUCthEZNHkV8l8kl8oraVPcQthq8IqSqirc3cAVrAIQrJpouYAs6BZ8mXo2XrsT/aSkA
+         7qcxGnSx0+Yy0vIFdaK448Xc98PV28Pr3/m4VjDKPR1MRzCCjaGq4IMuZShynewWijEe
+         QZi4LNi5KAjgSPXubwSfZjctWfWz2KLvBHLEEUX8Su1jOARVWm+B9kbyq+ceb7g4w9pE
+         QfIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773254393; x=1773859193;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3JpZnzVxjuKCYPTmp0ohRT+2k0IA1puKSWLpheS1yF0=;
+        b=goMhntQ+0Ms7VFx7eRGhrNj6m0rdmLMq6ckluV0422ElaiJRKMZg2JhtnAiX0C8XT9
+         +YMqKkXLUwQktAz05SdlY838KMrwDd/flcL3Ctk3KkhPFczRTzBBzmHiRyqSRLi1jgQi
+         MYXH3xSqdQwiygsN//yR7G69IQSMATyL7fEDA74WZavRvmwo5jetvPJEv7d9gi6cpqBV
+         DgmVGMn6KBngvCkQXX6cknnykf+zB065C8Et4xwg9H7IPb9anRcxoXE2lsVDVl/2xAIA
+         A0PVu5PXjQaHz5U298acQcU/b8TcMeNT2EydT/MWBRIzKr/o0lTgh1+/j22mXjQM1MTU
+         kZ7w==
+X-Forwarded-Encrypted: i=1; AJvYcCXeoZWEuRiVj2HpZcZpFhYTD3t2y43QAqMWAiwXXbMvBG5UqFU5OtvdldzbEyNlfjIkIIGRYXmEPqw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybSJvvgeVPvcd09fxX0b7iOsuaNnLNyC0813r8Mcw/dym3gr2N
+	gM0Ghj763NHD8gx3rpwAkWccU6BQZliJwLfvMoi69i+VTlxVuwkUYIC7
+X-Gm-Gg: ATEYQzwzTuW/Wm33vhFKM0PSGUNcl/UGAEjiP//hxULrNPo9nspC3Uqw1L+USFsMR43
+	rBBV4OpbHKBoXOxjnz+PzBtmqCFmyWv/Z3SNBfV0uN8FU43BO/kBwMxy6EjTjvjBD+951i7500D
+	lQq4Da2RlC2wZwQUCQ3Wmauq+Db2yOGrlq89LaUCRGMq0DfHrlcetJRYBn7f4/8refXSENI9INU
+	nYZxVXpxzhaSDl9bJ15hcibhE8H5awSrzp11Q0e3jJ9PbKUWzpJCqq7Az1xyUBMDHeRoeuiAkuo
+	FKD7s1Vztk4OD5vaA1olxtC3F0tuXJz8EOMX6RW/dEEpfN4DvIzbX1M1Z7ZelR8NiI3TQHOOGXS
+	/hDCZeVgoWnbUNnGpzTBV3Cd9fZRutQUONq7KOvbL4gUSLR0SUkLfHlqYzWKa8fqJhYKKkeL0ou
+	u47o89vMxfNVRkkl8pYkNFLhlh0QyXRTtT1i98e3nzbXmRPvErZ5fNgwY=
+X-Received: by 2002:a05:600c:45c3:b0:485:3473:d4a1 with SMTP id 5b1f17b1804b1-4854b13e63emr63571735e9.34.1773254392844;
+        Wed, 11 Mar 2026 11:39:52 -0700 (PDT)
+Received: from Ansuel-XPS24 (93-34-88-122.ip49.fastwebnet.it. [93.34.88.122])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-48541aac28bsm161176675e9.1.2026.03.11.11.39.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Mar 2026 11:39:52 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v2 01/13] clk: scmi: Fix clock rate rounding
-Message-ID: <abG1a_E_7gBmc3ec@pluto>
-References: <20260310184030.3669330-1-cristian.marussi@arm.com>
- <20260310184030.3669330-2-cristian.marussi@arm.com>
- <CAMuHMdX5T-7ERcjEK_=z7joEftC2cMLqDkyy8iO65U21S-umng@mail.gmail.com>
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Luo Jie <quic_luoj@quicinc.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Christian Marangi <ansuelsmth@gmail.com>
+Subject: [PATCH 0/4] clk: qcom: ipq-cmn-pll: Add IPQ6018/IPQ8074 SoC support
+Date: Wed, 11 Mar 2026 19:39:37 +0100
+Message-ID: <20260311183942.10134-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdX5T-7ERcjEK_=z7joEftC2cMLqDkyy8iO65U21S-umng@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 11, 2026 at 12:30:34PM +0100, Geert Uytterhoeven wrote:
-> Hi Cristian,
-> 
-> On Tue, 10 Mar 2026 at 19:40, Cristian Marussi <cristian.marussi@arm.com> wrote:
-> > While the do_div() helper used for rounding expects its divisor argument
-> > to be a 32bits quantity, the currently provided divisor parameter is a
-> > 64bit value that, as a consequence, is silently truncated and a possible
-> > source of bugs.
-> >
-> > Fix by using the proper div64_ul helper.
-> >
-> > Cc: Michael Turquette <mturquette@baylibre.com>
-> > Cc: Stephen Boyd <sboyd@kernel.org>
-> > Cc: linux-clk@vger.kernel.org
-> > Fixes: 7a8655e19bdb ("clk: scmi: Fix the rounding of clock rate")
-> > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
-> 
-> Thanks for your patch!
-> 
-> > --- a/drivers/clk/clk-scmi.c
-> > +++ b/drivers/clk/clk-scmi.c
-> 
-> > @@ -83,7 +83,7 @@ static int scmi_clk_determine_rate(struct clk_hw *hw,
-> >
-> >         ftmp = req->rate - fmin;
-> >         ftmp += clk->info->range.step_size - 1; /* to round up */
-> > -       do_div(ftmp, clk->info->range.step_size);
-> > +       ftmp = div64_ul(ftmp, clk->info->range.step_size);
-> 
-> include/linux/math64.h has:
-> 
->     #if BITS_PER_LONG == 64
->     #define div64_ul(x, y)   div64_u64((x), (y))
->     #elif BITS_PER_LONG == 32
->     #define div64_ul(x, y)   div_u64((x), (y))
->     #endif
-> 
-> I.e. div64_ul() is meant for the case where the divisor is unsigned
-> long.  Hence div64_ul() may still truncate step_size on 32-bit
-> platforms, and thus should use div64_u64() unconditionally.
-> 
+Simple series that adds support for the common PLL for
+IPQ6018/IPQ8074 SoC support.
 
-Ah...my bad, I missed that...
+This is an initial effort to try to support the Ethernet Switch
+present on the QualcommAX platform upstream.
 
-> I am aware clock rates are "unsigned long" on 32-bit platforms, and
-> thus cannot support rates that do not fit in a 32-bit value.
-> If that is the reason you are using div64_ul(), it should be documented
-> properly.  And probably the SCMI core code should reject any rate values
-> (incl. min, max, step) that do not fit in unsigned long, as such clocks
-> cannot be used on 32-bit platforms.
+John Crispin (4):
+  dt-bindings: clock: qcom: Add CMN PLL support for IPQ6018
+  clk: qcom: ipq-cmn-pll: Add IPQ6018 SoC support
+  dt-bindings: clock: qcom: Add CMN PLL support for IPQ8074
+  clk: qcom: ipq-cmn-pll: Add IPQ8074 SoC support
 
-As per the SCMI spec Clock rates are reported as 64bit, so I suppose
-that, yes I will have to add the checks you mentioned to avoid trying to
-fit a reported clock rate where the upper 32bits are not zero into an
-unsigned long on a 32bit machine...
+ .../bindings/clock/qcom,ipq9574-cmn-pll.yaml     |  2 ++
+ drivers/clk/qcom/ipq-cmn-pll.c                   | 16 ++++++++++++++++
+ include/dt-bindings/clock/qcom,ipq6018-cmn-pll.h | 15 +++++++++++++++
+ include/dt-bindings/clock/qcom,ipq8074-cmn-pll.h | 15 +++++++++++++++
+ 4 files changed, 48 insertions(+)
+ create mode 100644 include/dt-bindings/clock/qcom,ipq6018-cmn-pll.h
+ create mode 100644 include/dt-bindings/clock/qcom,ipq8074-cmn-pll.h
 
-Seems like there will be a V3 (together with your other reports..)
+-- 
+2.53.0
 
-Thanks for your reviews !
-
-Cristian
