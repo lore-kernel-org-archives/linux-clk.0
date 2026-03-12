@@ -1,100 +1,44 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22563B95EB
-	for <linux-clk@vger.kernel.org>; Thu, 12 Mar 2026 13:14:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573E11E1C02;
+	Thu, 12 Mar 2026 13:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773321287; cv=none; b=T4tFcAWONX26djvaZSmplsQnmkn1HCANV5RG6R8JqZFazr6oIhtJQXjjc25IQ4/L6hBuSxGk1BMVFCTh0DJ8Fh6zp4FQZjAbnAi4U1FBCZ/BcWxYjXZb4ot7dbxC1Gbvt03JLykFfUvYkjIXOIiF2U5T4PsiRcGCnmxsF00mVaw=
+	t=1773322783; cv=none; b=fSbkWlRXt2QJTuy1QCgSlDbR5V/Mt7Er64TEKITDihrV8qzr1LpAHWq6ZvODpp8S1OPYKjQqMu21rf9hkvNj1bu9TVuVunM+Z/JpqBml+7pAUaI/GHBat/+QXiZiOkCKUu9aYjS6Yz0SXYG9tCZSuUdlswPCHA7NyBz/C+kPJ6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773321287; c=relaxed/simple;
-	bh=ePrBOIgh1g3/NiYzYd+xgOop9K7VpKCJ57VPnRxbi64=;
+	s=arc-20240116; t=1773322783; c=relaxed/simple;
+	bh=eXQBpUH8EIa/+eY9of7NDEuBwFE4v7O1vPmTS9GY9zE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BJ13U9P6VluKbGGCwri3emIMrxFug3TpElK4gj/SkDeuJHMamnLOFubkZmWsxkqITpuyVD7DDWmkI6LAmdOE87rwgZAf1ay+6QCiPyBsQ43RdjKmH59WatFDQYANkcLyM6Jzh9X6j5YpECcux6c+RY0AojfklRCteSEg/e3k5WA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eSsLW5/c; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ZO0ZpIIx; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q/5SfVztb20xyMIEwxJtYSm2ixJOpb7geTYy8xxRB+wVfbCgSv0LdXBWdzjGIxRFt11GRyoLGqBzTMFuHb7LQWCePpGfP6MMu7WS2YnDpc4wrLahzSBGMnC6MqpshGSosC+7oZuMBykgTylhOtwb3MdpwcbbG+Vbz8nTrz6UGpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FC7/MBEW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eSsLW5/c";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ZO0ZpIIx"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62C7eFva510100
-	for <linux-clk@vger.kernel.org>; Thu, 12 Mar 2026 13:14:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=Ldanf7ZxN5751Df+TS+u/IOh
-	H1KN8mIyUIiBDd3ib+8=; b=eSsLW5/cKmIVP3E6e5WHjMOF3pbd4IXixBZcmSw4
-	Fse2NC1+CUhq5V4mXfpBiL3TYbQgjtvzgEMG8HHhAfnVzGicDKoUnHkIIXkxsOMR
-	KV7T/ihHNzmFWqS/SLAmEvyBUKRWvBPpz7mbRr8qdkr/MXOcFEk3DNue9nLIViIB
-	5qaMMib6MVm8R/Muxskz+udLr++ZyTPBnrvPzCgIS9OgsCdAPJuiWo/K1a2/Rl8C
-	AsY4yawI0ROzG3t1Av5ZHOniX49b5qMy7ZPtSj7aeCdhfuIMoFT5/JlPq4/91cr5
-	fTH2coKcs+j8obAsWyg6zmJvTBtG8MFS4EqYccnBkcF/DQ==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cus9w0u6q-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Thu, 12 Mar 2026 13:14:42 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8cd7fec8d44so675810585a.2
-        for <linux-clk@vger.kernel.org>; Thu, 12 Mar 2026 06:14:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1773321282; x=1773926082; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ldanf7ZxN5751Df+TS+u/IOhH1KN8mIyUIiBDd3ib+8=;
-        b=ZO0ZpIIxvmkLLmsikN02eIc65ac2YUeumCXdOuYE7X6pHxnOvH59aeViNKLUwXQLwX
-         b/EaRPkxXebFvMkPOkr/GqqcaWujkdQUvMSWrpgB7ReXUS+JKvQsdKp6Pd0MJxozJoa6
-         Gpu8o1fcQ5QdOTNY9kz78+NdYThQlmmyzUG+JAPRpI9kp0/cIfKZEnSu1t3NqPK0OFH2
-         98OVM9VbTajTrkei3IVTxoHLUFqEeQFU6YX8hwkPorIBfaQq2x9OrntUV5JmCLoENiOV
-         2fUQFVK54TGR9a4ZO38/L/a7jKQ+sywuVcWn4iARiBu03ss/2RcJzo8W2RlcYqrTCzTM
-         tI5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773321282; x=1773926082;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ldanf7ZxN5751Df+TS+u/IOhH1KN8mIyUIiBDd3ib+8=;
-        b=ppTXAEHYT1wPRw6twKKu6g3B9K8uhhiBFW9SPCOi27ESWvd+wKk5f9MoqUXsbosLUy
-         1gL6PWjJgUSdpI4GSRh6D8ggudWwKE7iX7so/2FNKBMgfRmlXH2ehbxuler6GIdOWRJQ
-         Ts/MjprAlJpP8zzJWzlYVH87TmWaRzdKj3E/gA6f5rPumCexi8P77YazEEzf69rPqXon
-         Cpm5p11YA1/pZDin64lQZVyCPc8knnD8zzWBP96FZWWeCpKzqEwR/dXWvimzfuFPunsC
-         cv5bov5CKbbJIXAZYR1iONRGvPj36cuw6U9xTYBPYSHUIwMHi5osW5wPnmXd/3FahB6j
-         zZCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWntn101MqiIkgglk6qtr2CavFaxZXS57BmCwcf6iwMCfmErSErSdPvSLGr9/vTc6to5MfvVqpDa7U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwR9Y/YZOWiCttyHLeVT6x75Z30FSdkMboyVGJyhwIGXlF9kDok
-	7P8kiiXrRUAZ/uyBMV3dro9H9ENUn4AW+h72IAUKD8/ARZCRgbQ7qoiGqrEvYj8yvsNrgn2zKrC
-	JLpX84Qwe2ehJrjIEAAdJQnYKnEcZ0IxTgfEKYBqVaoFV19YpdxVqeB4NRN0/nfw=
-X-Gm-Gg: ATEYQzzTF8DTIgbuzyWFQz3cAZ7WVeprdz4jkph4MAi1NPUVDfH18B54p3pLkZMyGze
-	q8Js2W9prfV38UfHaAOPAW2gK+V85LkpmNblpDx0N3EdRvom8WYx866HfCLNgfEmOzkfHDfOydZ
-	kECcrunUu1mILjFMqE+N9KYp1cZO+NW6/mJrd/EpTPoEq9LMiLlDkto/KwYIy39WSbsvlXeYMkP
-	CMHVp7+YxcyCtIzXGDBL2o8qNnHZHwiraAkEhJ8UjKe8gvRNGpr/L7LPJPJ30IIVZ6npZYzKgwC
-	9hBWa1BsVfnNqogShjdPFuZr8DYhhMwM31RdAKwF8g/NIvreBzSNIXNnJwHT8nVgXTcSdizKHR+
-	iwsWWXcgAt3bwFKfZElMiJTVFzpcVdiNMdLzIZALR1pp43rzVuwTYmd4wswjiVxzlqwOO13tvWa
-	5kcGkCYyXLqC9sSoyRinOAuT9N0S0hbkPgqaA=
-X-Received: by 2002:a05:620a:404f:b0:8cb:678b:4877 with SMTP id af79cd13be357-8cda1ac6db9mr705918285a.57.1773321282141;
-        Thu, 12 Mar 2026 06:14:42 -0700 (PDT)
-X-Received: by 2002:a05:620a:404f:b0:8cb:678b:4877 with SMTP id af79cd13be357-8cda1ac6db9mr705915385a.57.1773321281622;
-        Thu, 12 Mar 2026 06:14:41 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a15602e7d9sm948962e87.35.2026.03.12.06.14.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Mar 2026 06:14:40 -0700 (PDT)
-Date: Thu, 12 Mar 2026 15:14:38 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Val Packett <val@packett.cool>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Maximilian Luz <luzmaximilian@gmail.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 11/11] clk: qcom: camcc-sc8180x: Refactor to use
- qcom_cc_driver_data
-Message-ID: <oouftqosryziap5gkojd4sx3zwc3ecpdocxfndhrxxrk4yto4h@zdqnxr75hyip>
-References: <20260312112321.370983-1-val@packett.cool>
- <20260312112321.370983-12-val@packett.cool>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FC7/MBEW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEB48C4CEF7;
+	Thu, 12 Mar 2026 13:39:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773322783;
+	bh=eXQBpUH8EIa/+eY9of7NDEuBwFE4v7O1vPmTS9GY9zE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FC7/MBEWkDWfac2YSQswe28PiA+Qm63TAf/7HvbXo7jLEwkpCxvY/OMMX7nShfyY5
+	 SuTPE/qiysTRMo3rNKzLw1mNk1vvpCq0jZX2frBOZ6uyG1iBJuHEvvNETdgd2xYQru
+	 Ke0E3qZoVKcinx/YIkSbcp1nVmNS0eup90MaJj/keTANiQIGZM66Msc4K90hFzaGVm
+	 f/dqXBiCTGigbQ048o0EmJ9eoRzISQN6K+rXkevr1GOmNrC1NncVs7XFVICn34mF5u
+	 s/stnIEElktvGv5YpyAymyfIxvNGBf6ZZrG39DAHpKe+QuAriaQ4LzkCC1xUYFlrai
+	 V5ZWNaUFukmRQ==
+Date: Thu, 12 Mar 2026 08:39:42 -0500
+From: Rob Herring <robh@kernel.org>
+To: kanadenadi <kenadicanady@gmail.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, orsonzhai@gmail.com,
+	baolin.wang@linux.alibaba.com, zhang.lyra@gmail.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: clock: sprd: Add Unisoc SC9832E
+ clock controller
+Message-ID: <20260312133942.GA2886714-robh@kernel.org>
+References: <20260225010920.757793-1-kenadicanady@gmail.com>
+ <20260225010920.757793-2-kenadicanady@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -103,46 +47,347 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260312112321.370983-12-val@packett.cool>
-X-Proofpoint-GUID: zjKg-H_VfLLPPS6jmpa3zKZw4Mskogty
-X-Authority-Analysis: v=2.4 cv=IIIPywvG c=1 sm=1 tr=0 ts=69b2bc42 cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22 a=EUspDBNiAAAA:8
- a=ma-uBWqLQOsuroI5m_MA:9 a=CjuIK1q_8ugA:10 a=IoWCM6iH3mJn3m4BftBB:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzEyMDEwNSBTYWx0ZWRfXx9j8/ERkX51x
- tuEhpNJyM9m8ZeyZoDoMN4SMcKUfkBtHBSQb1U0XGOcxLbf1wctPdNa4ipqxcvVH2O9ITTlTyOZ
- eswu9kFMMlPFYu9afqmC1GRyu91pnBFdtYwnPrr0tVDHIV26wn0OL5iBzKc//AOGdnhspxvRbMf
- qE5h+KmacIF4TYlBN+l0zCKOl3bL4R35RwQI2zrAbCsIECC0P8x1S964YJo1U5I2DaXkoTumGF+
- rk/Lt8Ha3PD+D/ajiUyQLuq+T0AZlNJBT9+VOcyiD+eIh6InVusGVdUGRtWnzToF34CxIBoCsRN
- uZVyu/lzmQGOlYIhRQzaXrWFYE3HUq+c8r5OD/Z1PlM/AkuNFZwQYy6kHv9XtHOteVui9WhYPHQ
- RHIC4q/FYEpf+YE2uEDFMX7UH+loqJBSjrOhQqmg3n8Eikf1VdGxGfEuYnMfjDUpAFT1gdkRiJv
- giy+R5unJR5jP9gjEdA==
-X-Proofpoint-ORIG-GUID: zjKg-H_VfLLPPS6jmpa3zKZw4Mskogty
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-12_01,2026-03-12_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 bulkscore=0 priorityscore=1501 phishscore=0 lowpriorityscore=0
- clxscore=1015 adultscore=0 impostorscore=0 spamscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603120105
+In-Reply-To: <20260225010920.757793-2-kenadicanady@gmail.com>
 
-On Thu, Mar 12, 2026 at 08:12:16AM -0300, Val Packett wrote:
-> Use a qcom_cc_driver_data struct instead of a long custom probe
-> callback to align with modern qcom/gcc-*.c style.
+On Wed, Feb 25, 2026 at 09:09:19AM +0800, kanadenadi wrote:
+> Add device tree bindings for Unisoc SC9832E clock controller. The controller supports multiple clock gates and PLLs.
+
+Wrap your commit messages at 72 char.
+
 > 
-> No functional change intended.
-> 
-> Signed-off-by: Val Packett <val@packett.cool>
+> Signed-off-by: kanadenadi <kenadicanady@gmail.com>
+
+Which name is correct? Here or down below?
+
 > ---
->  drivers/clk/qcom/camcc-sc8180x.c | 67 +++++++++++++++-----------------
->  1 file changed, 32 insertions(+), 35 deletions(-)
+> Changes in v3:
+>  - Dropped redundant 'description' from 'clocks' property.
+>  - Moved globally required properties (reg, clocks, clock-names) to the top-level 'required' block.
+>  - Unified quote styles for "#clock-cells".
+>  - Consolidated identical if-then validation rules for single-clock variants into a single block to avoid code duplication.
+>  - Dropped extra redundant examples, keeping only one representative example.
 > 
+>  .../bindings/clock/sprd,sc9832e-clk.yaml      | 120 ++++++++++++
+>  include/dt-bindings/clock/sprd,sc9832e-clk.h  | 177 ++++++++++++++++++
+>  2 files changed, 297 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/sprd,sc9832e-clk.yaml
+>  create mode 100644 include/dt-bindings/clock/sprd,sc9832e-clk.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/sprd,sc9832e-clk.yaml b/Documentation/devicetree/bindings/clock/sprd,sc9832e-clk.yaml
+> new file mode 100644
+> index 000000000..36d6ddc73
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/sprd,sc9832e-clk.yaml
+> @@ -0,0 +1,120 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +# Copyright 2026 Unisoc Inc.
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/sprd,sc9832e-clk.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Unisoc SC9832E Clock Controllers
+> +
+> +maintainers:
+> +  - Nadi Ke <kenadicanady@gmail.com>
+> +  - Orson Zhai <orsonzhai@gmail.com>
+> +  - Baolin Wang <baolin.wang7@gmail.com>
+> +  - Chunyan Zhang <zhang.lyra@gmail.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - sprd,sc9832e-glbregs
+> +      - sprd,sc9832e-pll
+> +      - sprd,sc9832e-mpll
+> +      - sprd,sc9832e-dpll
+> +      - sprd,sc9832e-rpll
+> +      - sprd,sc9832e-apahb-gate
+> +      - sprd,sc9832e-aonapb-gate
+> +      - sprd,sc9832e-ap-clk
+> +      - sprd,sc9832e-aon-clk
+> +      - sprd,sc9832e-apapb-gate
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    minItems: 1
+> +    maxItems: 6
+> +
+> +  clock-names:
+> +    minItems: 1
+> +    maxItems: 6
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - "#clock-cells"
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - sprd,sc9832e-glbregs
+> +              - sprd,sc9832e-pll
+> +              - sprd,sc9832e-mpll
+> +              - sprd,sc9832e-dpll
+> +              - sprd,sc9832e-rpll
+> +              - sprd,sc9832e-apahb-gate
+> +              - sprd,sc9832e-aonapb-gate
+> +              - sprd,sc9832e-apapb-gate
+> +    then:
+> +      properties:
+> +        clocks:
+> +          maxItems: 1
+> +        clock-names:
+> +          items:
+> +            - const: ext-26m
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: sprd,sc9832e-ap-clk
+> +    then:
+> +      properties:
+> +        clocks:
+> +          minItems: 2
+> +          maxItems: 2
+> +        clock-names:
+> +          items:
+> +            - const: ext-26m
+> +            - const: ext-1m
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: sprd,sc9832e-aon-clk
+> +    then:
+> +      properties:
+> +        clocks:
+> +          minItems: 6
+> +          maxItems: 6
+> +        clock-names:
+> +          items:
+> +            - const: ext-4m3
+> +            - const: ext-26m
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+This one should be first like the others.
 
+> +            - const: ext-32k
+> +            - const: ext-6m5
+> +            - const: ext-13m
+> +            - const: ext-250k
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/sprd,sc9832e-clk.h>
+> +
+> +    clock-controller@21500000 {
+> +        compatible = "sprd,sc9832e-ap-clk";
+> +        reg = <0x21500000 0x1000>;
+> +        clocks = <&ext_26m>, <&ext_1m>;
+> +        clock-names = "ext-26m", "ext-1m";
+> +        #clock-cells = <1>;
+> +    };
+> +...
+> diff --git a/include/dt-bindings/clock/sprd,sc9832e-clk.h b/include/dt-bindings/clock/sprd,sc9832e-clk.h
+> new file mode 100644
+> index 000000000..cd0b9952b
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/sprd,sc9832e-clk.h
+> @@ -0,0 +1,177 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Unisoc SC9832E platform clocks
+> + *
+> + * Copyright (C) 2015 Spreadtrum, Inc.
 
--- 
-With best wishes
-Dmitry
+It's 2026.
+
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLK_SC9832E_H_
+> +#define _DT_BINDINGS_CLK_SC9832E_H_
+> +
+> +#define CLK_ISPPLL_GATE		0
+> +#define CLK_MPLL_GATE		1
+> +#define CLK_DPLL_GATE		2
+> +#define CLK_LPLL_GATE		3
+> +#define CLK_GPLL_GATE		4
+> +
+> +#define CLK_TWPLL		0
+> +#define CLK_TWPLL_768M		1
+> +#define CLK_TWPLL_384M		2
+> +#define CLK_TWPLL_192M		3
+> +#define CLK_TWPLL_96M		4
+> +#define CLK_TWPLL_48M		5
+> +#define CLK_TWPLL_24M		6
+> +#define CLK_TWPLL_12M		7
+> +#define CLK_TWPLL_512M		8
+> +#define CLK_TWPLL_256M		9
+> +#define CLK_TWPLL_128M		10
+> +#define CLK_TWPLL_64M		11
+> +#define CLK_TWPLL_307M2		12
+> +#define CLK_TWPLL_219M4		13
+> +#define CLK_TWPLL_170M6		14
+> +#define CLK_TWPLL_153M6		15
+> +#define CLK_TWPLL_76M8		16
+> +#define CLK_TWPLL_51M2		17
+> +#define CLK_TWPLL_38M4		18
+> +#define CLK_TWPLL_19M2		19
+> +#define CLK_LPLL		20
+> +#define CLK_LPLL_409M6		21
+> +#define CLK_LPLL_245M76		22
+> +#define CLK_GPLL		23
+> +#define CLK_ISPPLL		24
+> +#define CLK_ISPPLL_468M		25
+> +
+> +#define CLK_MPLL		0
+> +#define CLK_MPLL_50M		1
+> +
+> +#define CLK_DPLL		0
+> +#define CLK_DPLL_40M		1
+> +
+> +#define CLK_AUDIO_GATE		0
+> +#define CLK_RPLL		1
+> +#define CLK_RPLL_390M		2
+> +#define CLK_RPLL_260M		3
+> +#define CLK_RPLL_195M		4
+> +#define CLK_RPLL_26M		5
+> +
+> +#define CLK_DSI_EB		0
+> +#define CLK_DISPC_EB		1
+> +#define CLK_VSP_EB		2
+> +#define CLK_GSP_EB		3
+> +#define CLK_OTG_EB		4
+> +#define CLK_DMA_PUB_EB		5
+> +#define CLK_CE_PUB_EB		6
+> +#define CLK_AHB_CKG_EB		7
+> +#define CLK_SDIO0_EB		8
+> +#define CLK_SDIO1_EB		9
+> +#define CLK_NANDC_EB		10
+> +#define CLK_EMMC_EB		11
+> +#define CLK_SPINLOCK_EB		12
+> +#define CLK_CE_EFUSE_EB		13
+> +#define CLK_EMMC_32K_EB		14
+> +#define CLK_SDIO0_32K_EB	15
+> +#define CLK_SDIO1_32K_EB	16
+> +
+> +#define CLK_ADC_EB		0
+> +#define CLK_FM_EB		1
+> +#define CLK_TPC_EB		2
+> +#define CLK_GPIO_EB		3
+> +#define CLK_PWM0_EB		4
+> +#define CLK_PWM1_EB		5
+> +#define CLK_PWM2_EB		6
+> +#define CLK_PWM3_EB		7
+> +#define CLK_KPD_EB		8
+> +#define CLK_AON_SYST_EB		9
+> +#define CLK_AP_SYST_EB		10
+> +#define CLK_AON_TMR_EB		11
+> +#define CLK_AP_TMR0_EB		12
+> +#define CLK_EFUSE_EB		13
+> +#define CLK_EIC_EB		14
+> +#define CLK_INTC_EB		15
+> +#define CLK_ADI_EB		16
+> +#define CLK_AUDIF_EB		17
+> +#define CLK_AUD_EB		18
+> +#define CLK_VBC_EB		19
+> +#define CLK_PIN_EB		20
+> +#define CLK_IPI_EB		21
+> +#define CLK_SPLK_EB		22
+> +#define CLK_AP_WDG_EB		23
+> +#define CLK_MM_EB		24
+> +#define CLK_AON_APB_CKG_EB	25
+> +#define CLK_GPU_EB		26
+> +#define CLK_CA7_TS0_EB		27
+> +#define CLK_CA7_DAP_EB		28
+> +
+> +#define CLK_AP_APB		0
+> +#define CLK_NANDC_ECC		1
+> +#define CLK_OTG_REF		2
+> +#define CLK_OTG_UTMI		3
+> +#define CLK_UART1		4
+> +#define CLK_I2C0		5
+> +#define CLK_I2C1		6
+> +#define CLK_I2C2		7
+> +#define CLK_I2C3		8
+> +#define CLK_I2C4		9
+> +#define CLK_SPI0		10
+> +#define CLK_SPI2		11
+> +#define CLK_HS_SPI		12
+> +#define CLK_IIS0		13
+> +#define CLK_CE			14
+> +#define CLK_NANDC_2X		15
+> +#define CLK_SDIO0_2X		16
+> +#define CLK_SDIO1_2X		17
+> +#define CLK_EMMC_2X		18
+> +#define CLK_VSP			19
+> +#define CLK_GSP			20
+> +#define CLK_DISPC0		21
+> +#define CLK_DISPC0_DPI		22
+> +#define CLK_DSI_RXESC		23
+> +#define CLK_DSI_LANEBYTE	24
+> +
+> +#define CLK_AON_APB		0
+> +#define CLK_ADI			1
+> +#define CLK_AUX0		2
+> +#define CLK_AUX1		3
+> +#define CLK_PWM0		4
+> +#define CLK_PWM1		5
+> +#define CLK_PWM2		6
+> +#define CLK_PWM3		7
+> +#define CLK_THM0		8
+> +#define CLK_THM1		9
+> +#define CLK_AUDIF		10
+> +#define CLK_AUD_IIS_DA0		11
+> +#define CLK_AUD_IIS_AD0		12
+> +#define CLK_CA53_DAP		13
+> +#define CLK_CA53_DMTCK		14
+> +#define CLK_CA53_TS		15
+> +#define CLK_DJTAG_TCK		16
+> +#define CLK_EMC_REF		17
+> +#define CLK_CSSYS		18
+> +#define CLK_TMR			19
+> +#define CLK_DSI_TEST		20
+> +#define CLK_SDPHY_APB		21
+> +#define CLK_AIO_APB		22
+> +#define CLK_DTCK_HW		23
+> +#define CLK_AP_MM		24
+> +#define CLK_AP_AXI		25
+> +#define CLK_NIC_GPU		26
+> +#define CLK_MM_ISP		27
+> +
+> +#define CLK_SIM0_EB		0
+> +#define CLK_IIS0_EB		1
+> +#define CLK_APB_REG_EB		2
+> +#define CLK_SPI0_EB		3
+> +#define CLK_SPI2_EB		4
+> +#define CLK_I2C0_EB		5
+> +#define CLK_I2C1_EB		6
+> +#define CLK_I2C2_EB		7
+> +#define CLK_I2C3_EB		8
+> +#define CLK_I2C4_EB		9
+> +#define CLK_UART1_EB		10
+> +#define CLK_SIM0_32K_EB		11
+> +#define CLK_INTC0_EB		12
+> +#define CLK_INTC1_EB		13
+> +#define CLK_INTC2_EB		14
+> +#define CLK_INTC3_EB		15
+> +
+> +#endif /* _DT_BINDINGS_CLK_SC9832E_H_ */
+> -- 
+> 2.34.1
+> 
