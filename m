@@ -1,158 +1,110 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6E8399370
-	for <linux-clk@vger.kernel.org>; Thu, 12 Mar 2026 11:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB29D3B4E87
+	for <linux-clk@vger.kernel.org>; Thu, 12 Mar 2026 11:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773313577; cv=none; b=P1t+aWrhaDUBKo8LePwaBNGgYAreq4sZJ9By/CdEEWMzjaFtjT878PzpfCiUlJIXKK/OoEcELo3DAiqEWMUV5lWJHm0PzLCrCx2JAuy0FcG9vNMTpNDZf2dJU8gI6r4qcL4qqcRlrRSFKYYRo7bYtaG7ilFDH9JberY6YUO9ItM=
+	t=1773314132; cv=none; b=KbxOBmVqFjxbazVWpD0ZMWTiZRj7P+KyyilduWqUKOSxfJ+lJgLna7VJhzpS2vSDRlMlxu++F5+ZvFZazYw1pMG+EsReBNetv86pv2f4pPb89vFBiLgzQoaQ+yS0BtjqlhtUrz7V5SxgS7C9RlphFZ9StOlxynCfCdtm9olXnFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773313577; c=relaxed/simple;
-	bh=CgWNIiS+M0AOGBmsGiYrX0z/waqFRn3xgrom+Vf1ip8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Txh84J+iBGWMgtJ1aiY3w4kPE7ob11HhnDEl4ylxcp1cEhIu/8+Z1PuXWIAhw3q9gKOxtJJmvl1O1vRrwvDjpXX8Q+2zENsICm/yG2pjAa31xxilUOqKAw+Q0QzMdubRN9m2eTHpBs4wq+JcdIJLkdH/p888VJPWs401SWHhv80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RUBfpx6S; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=CWzZncL/; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1773314132; c=relaxed/simple;
+	bh=aTkPxw+J7/3gRB4+9UctDG1XFql7JDHR21f3DKrFIJw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hT54TknYi51CtXREIzkK+DENHUC79RiXTMx8f9/i3atNpN3L+gNvLEj9ddJE8NJeIAIyw1EiKd6g0T5AGzG59PxkH+rziTXo+gQcwb5OrDUTrCK1mntM4wndEbGUNQGLt9Hh/PwTdgag0SY5wbRkF72zismgI4e1BT2+A2g32GI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c1oBGjqD; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RUBfpx6S";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="CWzZncL/"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1773313575;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q0GjOCrLZMJdWmBqARXEFoO0AI1gLdN5XafIHahOrOo=;
-	b=RUBfpx6Sd2sqvki1w64iamZVIWTJndxzLy8KP8ZSh3lyfnmrZCcC+8cnLBWu+pV4FWw4sZ
-	uZOVG/eRm8oqzowyrscvf8RUzMhOzYUXAhFiNFMicb5a7cREbiXCcc/O4CTBkptir6WYoW
-	0441mB+wTqJLH2pfumtGlRh3U5rbjEc=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-672-__TLjyZ2P76FAOJcllNXjg-1; Thu, 12 Mar 2026 07:06:13 -0400
-X-MC-Unique: __TLjyZ2P76FAOJcllNXjg-1
-X-Mimecast-MFC-AGG-ID: __TLjyZ2P76FAOJcllNXjg_1773313573
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-439f5c57c52so763444f8f.1
-        for <linux-clk@vger.kernel.org>; Thu, 12 Mar 2026 04:06:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c1oBGjqD"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4852fdb36a8so10016235e9.2
+        for <linux-clk@vger.kernel.org>; Thu, 12 Mar 2026 04:15:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1773313572; x=1773918372; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Q0GjOCrLZMJdWmBqARXEFoO0AI1gLdN5XafIHahOrOo=;
-        b=CWzZncL/hOg+k6h5YFk7cwF7clCounjODLg75YCIkiud9zaa4WjkFuHMyJfSfWGSxs
-         G1HDOjMckGdPZ92idkolFPuzAdWBI0utK4W1U6TgX5Oabvsv65HxrJFzlLzFzHwdlrAk
-         yNLR1/XPf9VwfVBqbN6ktkBHcaIesxgnAP/twHSYizZKFjl6XeSkpfw4aHMN1dVMYmDY
-         IQ6CwD4Eoq/zXN2pFskKdCC7ZRTEI9FN+eBWCsAMY1uNyifQsVdMJc+tyXqjzszHgQQj
-         TUSsdbdhs/pwvqsS44/D1H8wUUIwESK+X3Bu0VmZefesp9BOwZHms8jPDOApmLrkhcM/
-         5nzA==
+        d=gmail.com; s=20230601; t=1773314128; x=1773918928; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PBB3mUhKGZhPxp8Diu7McKVo3HGBpoZ0FDv0/vNJNvY=;
+        b=c1oBGjqDzegFrluAH43TRq89cG83Ronok4NtOswl47fe+jxtawaityWCKX9B8cnfu/
+         ZQIZ/w+fsAzB+x1TAqUE+mAPYK2mtr45DQqiJ2aDZBGAZICOPsU5YJ2tGASnT9iCGAq2
+         s1JTFLPDaVKB8aEFoJkFB8hal8oMGhr3MNpl3bDJfafqDZwpwQMR2MJuRVUkkc29j1RZ
+         PNnGPRg3eiW57OvtwLN0b9GZ/QdlsLOlU9egv215GeRG8Ie35gtGTWs0WmPA5iQSSNkX
+         t3pg4XrAJKtaXkUoAm3qd46ym+I+twL8Wb4LiV5Mug6i3WjOiKEpg/s/OOKdVnWz2zDt
+         YrZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773313572; x=1773918372;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Q0GjOCrLZMJdWmBqARXEFoO0AI1gLdN5XafIHahOrOo=;
-        b=aoaVFQhkJU18ITULOFyiEGVZZSCMbq1q81D6NmxzXMJpt3sIQbmxGu6ZdxwLAdmq7M
-         s37dvYVu50d4UuPJK8oAXB8+xyKSenGxxaDt5Doh8Fhg2Ie1xLl5924dXc9qbwOg/B3s
-         reDp6Qunn3Zc0f4swKERyUBHwbnsPUhRn/Yn/H3ZH6gly02JRBRVc1SAzJcE9qbtrDV0
-         5Jk5mGZOUGY8ZHPN0E17KrwauRUIJZwsReFnAaFHdSQGIcPm0Z3534P/teO88rNUe3oN
-         y3AhjRC/oiCiQeiajGhJnkg/WFKOy2Kgv+mGeoqMXxXvmk1hq6Gy4pAQe3FHoZpCF49y
-         BlMA==
-X-Forwarded-Encrypted: i=1; AJvYcCXKBi6/kdu+kIQdP6c9Y43txLtuEkpWLiiG+85t3enHVFCLFHsEN6R2QfDJbNWQNNzjPGBdKhsRDmw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYXK56MLf6iXR0hURWqvT8BVqHk2P4IhGoYMYcRWX7E5FkUZNB
-	AUItP0I8auYhlZzAHEWA1GtxD8QgNInTindmFJii8mS5Jx0JP6uLgR9UJBwTCtLZ0TbVdBlXI/f
-	X+KgC5Jz5UuqSJ0BNBu4LM5P8ytHOIQTCy9fDIb4tvZXutdVdKbhaQWhz64vFtQ==
-X-Gm-Gg: ATEYQzzxJdRn2dK9G5j41GyeUtAxzQyqYUGox30eXCbwQks9DzPf5sfR9Mjetu6bwJ9
-	5GIZ3AxpY2Z+YAtLVsyGlBgyn/I46CVTWvd41TzEFwEglHGtfYJhwJndKcPFf/ybCUlOEfE0tZ/
-	sqgU0OGJHtAH/zXsRTwvI4JMZexuK+IrAahw7F3ipWF4cqW+rsYGgzyB6/BeJskCNYeNm0RXo/w
-	QuW/dec2QYWnTXp1IqK9tdeQt23K5Mh5bTXB/t/M9S9ZHudOiblmVD754iMcpjBw22VGKYftxgw
-	pWnfM3N2H1bnNYGRl0pC5fK7U35VH56gt9mflneqbFEEqk8nAzzSU3sWFDJCYzP7M8AXfPHrzC5
-	3ZkefEVxMw09MTNfwBptpEStaI4JlstkWZt/hz7KznbPgRbi0o0vhRNM=
-X-Received: by 2002:a05:600c:3548:b0:485:345b:ccb1 with SMTP id 5b1f17b1804b1-4854b129fffmr97036455e9.27.1773313572451;
-        Thu, 12 Mar 2026 04:06:12 -0700 (PDT)
-X-Received: by 2002:a05:600c:3548:b0:485:345b:ccb1 with SMTP id 5b1f17b1804b1-4854b129fffmr97035605e9.27.1773313571932;
-        Thu, 12 Mar 2026 04:06:11 -0700 (PDT)
-Received: from [192.168.88.32] ([216.128.11.95])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4854b5f6b95sm116309065e9.6.2026.03.12.04.06.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Mar 2026 04:06:11 -0700 (PDT)
-Message-ID: <04439ab3-818d-460a-9307-2c6cca4f9ab7@redhat.com>
-Date: Thu, 12 Mar 2026 12:06:09 +0100
+        d=1e100.net; s=20230601; t=1773314128; x=1773918928;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PBB3mUhKGZhPxp8Diu7McKVo3HGBpoZ0FDv0/vNJNvY=;
+        b=BJxibc0ALyXxKmmnjAqYSGJ7h2puyUAEp5kEKnSJgsIghVV/afAxM5r7AXAfHbvBkD
+         11rnPj6vFTJDJ+SEbA6V+BH4ee/0JTQhHsFV113Zvh9Suox4i2Xry6ll0VDuIbxJBpHH
+         va9MUaeXXpbUquKL19OZ4OJxg0F5cf/h6+JhX0uf5rdJrbpKKa6MOPdiPwbTW9S0pHGG
+         jCzteFynd5T0evna+gGQ8AoPWc63Q6C1QNZzczjbvGKEntMeTQgFbQsaHmNGS1l1DNgC
+         Nq4ueMWmPcWskS+mkbhyM9yjyp6SqAwPHLVUIPQM6hyQFjTr00zIo6YJxwSFDZz72fVl
+         KnWA==
+X-Forwarded-Encrypted: i=1; AJvYcCX/vzbbZLzVWn/mXXiSdAWBHWn+/JXbmOikQ+sOwnw6MMSm57qI9BpbdlCgBWsWf+TqUvdXTNtg0LA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGbJoJ81td6udt1MEAhKl2CMckKyzqOg9wOBO1Zg5sczaSLSl7
+	0XuxQryGcjokulr0w8cw/q51eLUYjJB+G0ewB3xgY7Pb2ZhKDxUIUNqM
+X-Gm-Gg: ATEYQzwolGlXJg4gMciLpS5vuv5/thi4zbFUjlH7BU27L/SYwGdTMItFXmoCSWKTbV/
+	GZ+1ckC2pP/Nxf6FSXz6sX0/Z2qF3OXu2Wq/o1YWg8DzF5HRjXyIzuwxdv/XJ2sLruRyqp+mqHl
+	mgI3gBKV4C+1u4XYqCvMEu3jYioIYUji9yNBWq7U8BPpE2+d3XKmWKe4X7qOQJYz3rTK6Tv17H9
+	cc/qe64DVn3hN4/5NyuVxCOzBZphFhV7Rw2sjfsr02ENRMnCvMIo+v3nxU5l6BbYmAcxTQPmmU/
+	z+LWeKdfKjfmiKWcahjrpnTvi5YRErDuQpQ5uFaIUqsTQ72Ulj5ciE4V6dyiOVm08XA7f8LkxVW
+	PYND6VqS9sruga+aqN4KhgQG4GpOg18wfrhG9HM8EJ6ZFBAAkwdy0XIlWitqA84qPDgk8/1xcPH
+	W2eUqj16Amh/8LIgiCtJS4bOMTFRrpge0Md8OYo8mEPRf24s6FjuOawsAWgpjaIn3dNTeGM24RN
+	vctV2Nl8oU2vOy6NU5ogT/0hd/l3DqUY2T3qw==
+X-Received: by 2002:a05:600c:1d12:b0:477:a54a:acba with SMTP id 5b1f17b1804b1-4854b12ce3amr109216865e9.17.1773314127930;
+        Thu, 12 Mar 2026 04:15:27 -0700 (PDT)
+Received: from iku.Home ([2a06:5906:61b:2d00:fc52:7d64:32f4:e21e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48541b6f708sm311458385e9.11.2026.03.12.04.15.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Mar 2026 04:15:27 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 0/2] Add PCIe clocks and reset for R9A09G056 and R9A09G057 SoCs
+Date: Thu, 12 Mar 2026 11:15:19 +0000
+Message-ID: <20260312111521.115392-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 net-next 2/5] net: phy: make mdio_device.c part of
- libphy
-To: Heiner Kallweit <hkallweit1@gmail.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- linux-arm-msm <linux-arm-msm@vger.kernel.org>, linux-clk@vger.kernel.org,
- linux-phy@lists.infradead.org, Andrew Lunn <andrew@lunn.ch>,
- Russell King - ARM Linux <linux@armlinux.org.uk>,
- Jakub Kicinski <kuba@kernel.org>, David Miller <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Vinod Koul <vkoul@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>
-References: <9d5724bc-e525-4f8f-b3f8-b16dd5a1164e@gmail.com>
- <c6dbf9b3-3ca0-434b-ad3a-71fe602ab809@gmail.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <c6dbf9b3-3ca0-434b-ad3a-71fe602ab809@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 3/9/26 6:03 PM, Heiner Kallweit wrote:
-> This patch
-> - makes mdio_device.c part of libphy
-> - makes mdio_device_(un)register_reset() static
-> - moves mdiobus_(un)register_device() from mdio_bus.c to mdio_device.c,
->   stops exporting both functions and makes them private to phylib
-> 
-> This further decouples the MDIO consumer functionality from libphy.
-> 
-> Note: This makes MDIO driver registration part of phylib, therefore
->       adjust Kconfig dependencies where needed.
-> 
-> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-> ---
-> v2:
-> - add needed Kconfig dependency changes
-> ---
->  drivers/clk/qcom/Kconfig          |  2 +-
->  drivers/net/phy/Makefile          |  6 ++---
->  drivers/net/phy/mdio-private.h    | 11 ---------
->  drivers/net/phy/mdio_bus.c        | 36 ----------------------------
->  drivers/net/phy/mdio_device.c     | 39 ++++++++++++++++++++++++++++---
->  drivers/net/phy/phylib-internal.h |  4 ++++
->  drivers/phy/broadcom/Kconfig      |  4 ++--
->  include/linux/mdio.h              |  2 --
->  8 files changed, 46 insertions(+), 58 deletions(-)
->  delete mode 100644 drivers/net/phy/mdio-private.h
-> 
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index a8a86ea6bb7..a277c434d64 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -392,7 +392,7 @@ config IPQ_NSSCC_9574
->  
->  config IPQ_NSSCC_QCA8K
->  	tristate "QCA8K(QCA8386 or QCA8084) NSS Clock Controller"
-> -	depends on MDIO_BUS
-> +	depends on PHYLIB
->  	help
->  	  Support for NSS(Network SubSystem) clock controller on
->  	  qca8386/qca8084 chip.
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Bjorn, Micahel, Stephen: are you ok with this change?
+Hi all,
 
-Thanks,
+This patch series adds the necessary PCIe clocks and reset for the
+R9A09G056 and R9A09G057 SoCs. This is essential for enabling PCIe
+functionality on these platforms.
 
-Paolo
+Note, there are checkpatch warnings about `Alignment should match
+open parenthesis` in the `DEF_MOD` and `DEF_RST` macros. These are
+intentional to maintain readability and consistency with existing
+code style in the driver.
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (2):
+  clk: renesas: r9a09g056: Add PCIe clocks and reset
+  clk: renesas: r9a09g057: Add PCIe clocks and reset
+
+ drivers/clk/renesas/r9a09g056-cpg.c | 5 +++++
+ drivers/clk/renesas/r9a09g057-cpg.c | 5 +++++
+ 2 files changed, 10 insertions(+)
+
+-- 
+2.53.0
 
