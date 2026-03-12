@@ -1,145 +1,112 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594E4390CA9;
-	Thu, 12 Mar 2026 17:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E677D39A06C
+	for <linux-clk@vger.kernel.org>; Thu, 12 Mar 2026 19:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773337963; cv=none; b=OWkRNTr8Q7w+RqdICsOShrBTvegXocCuizsqd1oAa02MeK2R7KXE3/jv+Kj8KcQBDiEIpju1F76NYgVs/5KcqKe6esyWcnAa/UJTH5dTRpslmHxWO94utNK3LT7Q+tlGxYzbkNVkBnCiuHF0gIvsRUo4a1rrkQpFZGQ85XNwWbk=
+	t=1773342309; cv=none; b=SPslsBF5G+CXxFPLz7q34GQplzJEIBhUVkyvoaDXqce425HFieku+IfqgPgaiOMrWjC6l9J+UnQTTUIpjIofG7po+7PYJ4Gg5GGxtP98dO0LFmFJD//F7q5dQT6eyoQLOdMFkCCjbc+pLi/U7cfhKjg0lnc/FKEbolUMfY8bQEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773337963; c=relaxed/simple;
-	bh=juOBK+JARNjtYHa7J953QFJ72MkXtnPKnRQL0PoJjKQ=;
+	s=arc-20240116; t=1773342309; c=relaxed/simple;
+	bh=gRz5kv+ZQGoeaBp3JZPi0keg8FC++izwtJHUj7bGlzw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aTby3fVfY0FMllLMh9QXavDQez8TW+hTq1pwgfrd6JpbI1C9DckCKhKrIehqlPCA3RvNczwTlbDWo86gm0SAq4wFvHkfInnUUe5ZWzXohDBWVZY3DQaySpHJdCG1KkABD0R2WxlhT2Er4XiHefK9EZ3CG6DasSLgXOzrtnIFFbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rPJz/bB6; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yptv4RiNMk3fBhvqyxs017VlurjlPniTOpntUZg90886vVWWKQ0IgPfYlYnhZ8E8cZkBydYLnvNFbxEociyQ6U1RbjqcbXIpWEgXEdHYbVaasieIJGGKwgpcSSMCQv0tHiwKnSR8886T4/+rmOetHMG77e93x0O99LpOWPeDNWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S9HPDKyM; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=b7U648rh; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rPJz/bB6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5449C4CEF7;
-	Thu, 12 Mar 2026 17:52:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773337963;
-	bh=juOBK+JARNjtYHa7J953QFJ72MkXtnPKnRQL0PoJjKQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rPJz/bB6+glHH73SLx8hGVkx0l9tUzG4IFNHUsdfn+5UCoebZ+uR4mv6v1CnqPIoz
-	 +B2pxRgvYNrsL/0J23iTIW9Zlr/htHthdACzdZAMooiqtbicFqzZ4X7jx18CuwAiWs
-	 Tug1XH6nyPGz4KBj+gWi0FbyZQPHv21fOSan6TYRqPC7GU0x7JzvkvVKeaxCn6ghqi
-	 4+I9gEJ6s9YY0QNQ4BiOZA1smBIBW7wcRDmbXcHHny97X3nIEHKHPP+VPFTmxZVLSs
-	 SaPwreBDXUS2iGNaCuxJnS0FhCu7ATagW8j7ocQLb+M73YP28zMsfhf9OgAVce+iYa
-	 b1C4M1bG1AQmQ==
-Date: Thu, 12 Mar 2026 17:52:36 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Manikandan Muralidharan <manikandan.m@microchip.com>,
-	alexandre.belloni@bootlin.com, Frank.Li@nxp.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	nicolas.ferre@microchip.com, claudiu.beznea@tuxon.dev,
-	linux@armlinux.org.uk, mturquette@baylibre.com, sboyd@kernel.org,
-	ardb@kernel.org, ebiggers@google.com, martin.petersen@oracle.com,
-	tytso@mit.edu, cristian.birsan@microchip.com,
-	jarkko.nikula@linux.intel.com, kees@kernel.org, npitre@baylibre.com,
-	linux-i3c@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 3/5] i3c: mipi-i3c-hci: add microchip sama7d65 SoC
- compatible with the appropriate quirk
-Message-ID: <20260312-ricotta-unusable-44c25a03eff8@spud>
-References: <20260312042056.309237-1-manikandan.m@microchip.com>
- <20260312042056.309237-4-manikandan.m@microchip.com>
- <a41378a0-d2f1-4fa4-ac6d-1d0916590b47@intel.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S9HPDKyM";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="b7U648rh"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1773342306;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AlGHEWxU5rIBCwzyS3n9Fsdg8fqOw24aBbYZdNgyOtE=;
+	b=S9HPDKyM79avo61mVQ1m8oe1WgYvF2fJrnAcyNnRf5/05vUa2U8OVHv7rJ5roEHHzaxilz
+	quhdbGWw8gaNwpn6IzByGKEXFKoRJzNPjHAoLOD2augzM+pFnAWGH7QOft6gBEFWGoEwBc
+	DqHk8oxhuwkAaL0hDSNZC8Nvox4yM5w=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-316-WJyIGR1YMGetsLjFP288-g-1; Thu, 12 Mar 2026 15:05:03 -0400
+X-MC-Unique: WJyIGR1YMGetsLjFP288-g-1
+X-Mimecast-MFC-AGG-ID: WJyIGR1YMGetsLjFP288-g_1773342303
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8cd7d66afceso865685685a.3
+        for <linux-clk@vger.kernel.org>; Thu, 12 Mar 2026 12:05:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1773342303; x=1773947103; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AlGHEWxU5rIBCwzyS3n9Fsdg8fqOw24aBbYZdNgyOtE=;
+        b=b7U648rh3RlhlQp+2AlnKUt+gm5LxwFO3wWKD7jb1DtCe1hzRX8dlaX9sPfqi4VeDv
+         a0/PUdNOTZ4bhbnJwSQa21ObeTxnpuZrKycDYi10Awo2dMJH17mbiqEfNoo+kjZtv91T
+         Ff7iTJ4h/ECofZnKOv+BNebcSp8jQOlsqt9yOI6VZRqeHuH7hoLG8DGdOlB1bEup7F8n
+         lf/QsexdmRsnTHPW4MtnenBzZFyGmUIO6CFqNgDSqQzWnEv/npEj6xMBSIjJ/Mspvn0x
+         0Y7J9c7P8o5LRVg00vP6M7qRGCJ+J9WGqyWJZVBU4CnHsvErKc+1oT6wgas+lpWE7koz
+         cySA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773342303; x=1773947103;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=AlGHEWxU5rIBCwzyS3n9Fsdg8fqOw24aBbYZdNgyOtE=;
+        b=IligjgPNQr5LzzlucpwypzIrh6Sg+joiV4zaeVqxtSSzDT9vBf/OuOpADfTAZDwhvT
+         LxX23jphxEQ4OTT5KvCi0RsywjJ6zfmo9XB+wDMtRq3S75/Z2uv6P19AuQhWpfe2g/K4
+         m5n+RS63TteUuYRf97KChv4PPolnQU0SI3B0ifk2P1tNVgtYhc+bIN6d0y/vSXqNCkze
+         netjj2Y6e/t3uojZQwxztaf/Vc4W6GbEkJ9Gdij2aF4Ro6VDL1nB3Xc1zk/CDP4adqQn
+         q6tzAvkEmRhspJDFLNOaxZbHSbr87DcbpO2uKLnbbaTEWHUO59f37tcox9w1rglWJBBB
+         Inbw==
+X-Gm-Message-State: AOJu0Yw9t8D0X8zUllVz5m70HB4m84juW1wPVhCA4OWVvMNI2HJjzKu6
+	Rmr7bwo3tmFAnXTd5yDmiqZANwXLhJAsH3VfEAHStoDJGMcrShpoR+NuwL5B1tvSVYAAER/lfph
+	vVaYIdiyVfmeKz4+OOfDK9eUt9wYcNd9fqQayT+yTKl4s68fn6jAS6iErvrMmZg==
+X-Gm-Gg: ATEYQzz0x3ffkkWmbrmh4kH37iQjI2hZY2u6Z97PxGmT/7pW+t7jJmlGht5KILyl7Bn
+	8TsY4GlQekj4NYQ4iRydgcE0NAAvg4xUtVAXNfyGM3wUL4bXxZadW/w6+874C2j/StJYGxLKsV3
+	SfKGhVHnPBRjpVtN+5l4fMD6bI9DfYyfTV8wyRNJa2hgN12fNf+U7T/JE4LmvpVnipd/H+9D16l
+	niWoqU9zKrPpl+agRZasBlQXt5Mk2mG3sLcnX8KcO7LLraiMOtvR29GxPZeflEAWyd3ErccavRP
+	zn+R0LQ7/nTaJOR/eZ9XeornPTSFkyQAryU76Hu4rDjCMgv1gemkb3T6+yZWEuPDXqCm2wTWMTl
+	ziqDOaorTUU4CRQVk1TNeEPt44dMRARrsqPWFFJIjv1bQS3849Zx375jN
+X-Received: by 2002:a05:620a:468c:b0:8cd:8fc7:8308 with SMTP id af79cd13be357-8cdb5baaa87mr107675485a.75.1773342303005;
+        Thu, 12 Mar 2026 12:05:03 -0700 (PDT)
+X-Received: by 2002:a05:620a:468c:b0:8cd:8fc7:8308 with SMTP id af79cd13be357-8cdb5baaa87mr107669385a.75.1773342302313;
+        Thu, 12 Mar 2026 12:05:02 -0700 (PDT)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-89a65bd54f9sm41198836d6.6.2026.03.12.12.05.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Mar 2026 12:05:01 -0700 (PDT)
+Date: Thu, 12 Mar 2026 15:04:59 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Caleb James DeLisle <cjd@cjdns.fr>
+Cc: linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
+	naseefkm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	lee@kernel.org, p.zabel@pengutronix.de, nbd@nbd.name,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: airoha: Add econet EN751221 clock/reset support
+ to en7523-scu
+Message-ID: <abMOW9N-qWqqbmYD@redhat.com>
+References: <20260312162449.569359-1-cjd@cjdns.fr>
+ <20260312162449.569359-3-cjd@cjdns.fr>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="aXc9ewpzkSl2ifoe"
-Content-Disposition: inline
-In-Reply-To: <a41378a0-d2f1-4fa4-ac6d-1d0916590b47@intel.com>
-
-
---aXc9ewpzkSl2ifoe
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20260312162449.569359-3-cjd@cjdns.fr>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On Thu, Mar 12, 2026 at 11:29:25AM +0200, Adrian Hunter wrote:
-> On 12/03/2026 06:20, Manikandan Muralidharan wrote:
-> > Add support for microchip sama7d65 SoC I3C HCI master only IP
-> > with additional clock support to enable bulk clock acquisition
-> > for Microchip platforms using HCI_QUIRK_CLK_SUPPORT quirk.
-> > Introduce MCHP_I3C_CLK_IDX to define the maximum peripheral
-> > clock index
-> >=20
-> > Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
-> > ---
-> > Changes in v3:
-> > - Make use of existing HCI_QUIRK_* code base
-> > - Introduce HCI_QUIRK_CLK_SUPPORT to handle/enable the required Periphe=
-ral
-> > and system generic clk in bulk
-> >=20
-> > Changes in v2:
-> > - Platform specific changes are integrated in the existing mipi-i3c-hci
-> > driver by introducing separate MCHP_HCI_QUIRK_* quirks and vendor
-> > specific quirk files
-> >=20
-> > ---
-> >  drivers/i3c/master/mipi-i3c-hci/core.c | 12 ++++++++++++
-> >  drivers/i3c/master/mipi-i3c-hci/hci.h  |  4 ++++
-> >  2 files changed, 16 insertions(+)
-> >=20
-> > diff --git a/drivers/i3c/master/mipi-i3c-hci/core.c b/drivers/i3c/maste=
-r/mipi-i3c-hci/core.c
-> > index 5879bba78164..6b7716bd517e 100644
-> > --- a/drivers/i3c/master/mipi-i3c-hci/core.c
-> > +++ b/drivers/i3c/master/mipi-i3c-hci/core.c
-> > @@ -8,6 +8,7 @@
-> >   */
-> > =20
-> >  #include <linux/bitfield.h>
-> > +#include <linux/clk.h>
-> >  #include <linux/device.h>
-> >  #include <linux/errno.h>
-> >  #include <linux/i3c/master.h>
-> > @@ -918,6 +919,7 @@ static int i3c_hci_probe(struct platform_device *pd=
-ev)
-> >  {
-> >  	const struct mipi_i3c_hci_platform_data *pdata =3D pdev->dev.platform=
-_data;
-> >  	struct i3c_hci *hci;
-> > +	struct clk_bulk_data *clks;
-> >  	int irq, ret;
-> > =20
-> >  	hci =3D devm_kzalloc(&pdev->dev, sizeof(*hci), GFP_KERNEL);
-> > @@ -946,6 +948,13 @@ static int i3c_hci_probe(struct platform_device *p=
-dev)
-> >  	if (!hci->quirks && platform_get_device_id(pdev))
-> >  		hci->quirks =3D platform_get_device_id(pdev)->driver_data;
-> > =20
-> > +	if (hci->quirks & HCI_QUIRK_CLK_SUPPORT) {
-> > +		ret =3D devm_clk_bulk_get_all_enabled(&pdev->dev, &clks);
-> > +		if (ret < MCHP_I3C_CLK_IDX)
->=20
-> Is MCHP_I3C_CLK_IDX really needed?  Why not just:
->=20
-> 		if (ret <=3D 0)
->=20
-> i.e. don't you anyway have to assume DT has the clocks defined
-> correctly.
+On Thu, Mar 12, 2026 at 04:24:49PM +0000, Caleb James DeLisle wrote:
+> EcoNet EN751221 clock/reset driver is significantly similar to the
+> EN7523 / EN7581, however the EN751221 does not have a neat batch of clock
+> divider registers so there are fewer known clocks, and the frequency of
+> each clock is derived differently. This clock driver will probably work
+> correctly on EN751627, EN7528, and EN7580.
+> 
+> Signed-off-by: Caleb James DeLisle <cjd@cjdns.fr>
 
-Ye, I think this is kinda silly. Trust dtbs_check to have the correct
-number for your platform set, and let this be specific.
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
---aXc9ewpzkSl2ifoe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCabL9ZAAKCRB4tDGHoIJi
-0mFzAQD8sb5isGyPPaQE3kYoakuj+6ep/IS3t3IZhJUaZ7Z3dAD/Vw8LKqh45H8H
-HpMjIeSZSkof2M251PwPTxeNv7o5Bwk=
-=LkO0
------END PGP SIGNATURE-----
-
---aXc9ewpzkSl2ifoe--
