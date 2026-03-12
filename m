@@ -1,49 +1,51 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795AE33B974;
-	Thu, 12 Mar 2026 17:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594E4390CA9;
+	Thu, 12 Mar 2026 17:52:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773337833; cv=none; b=ReG6Lb/39gLbq9YtzVtaBBeAfrkaoYUj3I2BbJ1x5x9e9YUDwQh9yFCaenHypNlPImSX5KquDuqVxro4p7SxLYS7IN26UDO1kKKo8h7g1cvh+aRiFjp8/8AOEhz36H3DGUNs/yPtjE2DdYqfHJcOFoda5ucvtt5IDeIkojkIgcc=
+	t=1773337963; cv=none; b=OWkRNTr8Q7w+RqdICsOShrBTvegXocCuizsqd1oAa02MeK2R7KXE3/jv+Kj8KcQBDiEIpju1F76NYgVs/5KcqKe6esyWcnAa/UJTH5dTRpslmHxWO94utNK3LT7Q+tlGxYzbkNVkBnCiuHF0gIvsRUo4a1rrkQpFZGQ85XNwWbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773337833; c=relaxed/simple;
-	bh=KenJYZKQMESmdjBYhz51YSRSfZ9967IRk4t3Gg1r3Gs=;
+	s=arc-20240116; t=1773337963; c=relaxed/simple;
+	bh=juOBK+JARNjtYHa7J953QFJ72MkXtnPKnRQL0PoJjKQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n2ks8J8emU294HOuxl5cdFrVYGx7Pyc+gHY7nirG78RnAG58WiR4Rq9XeiuVce3mN3aKV1yJVJ0DD01YVj7Z4OmZtoBExa8KVJs8OJ8nQr0EfTeBCEWjEaxZGdS8o5Xf1kooxFoNakK/KBmE5uPrTH+mfIDBhgPAnRfFo1qrAcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hDEHrdjv; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=aTby3fVfY0FMllLMh9QXavDQez8TW+hTq1pwgfrd6JpbI1C9DckCKhKrIehqlPCA3RvNczwTlbDWo86gm0SAq4wFvHkfInnUUe5ZWzXohDBWVZY3DQaySpHJdCG1KkABD0R2WxlhT2Er4XiHefK9EZ3CG6DasSLgXOzrtnIFFbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rPJz/bB6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hDEHrdjv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99C49C4CEF7;
-	Thu, 12 Mar 2026 17:50:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rPJz/bB6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5449C4CEF7;
+	Thu, 12 Mar 2026 17:52:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773337833;
-	bh=KenJYZKQMESmdjBYhz51YSRSfZ9967IRk4t3Gg1r3Gs=;
+	s=k20201202; t=1773337963;
+	bh=juOBK+JARNjtYHa7J953QFJ72MkXtnPKnRQL0PoJjKQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hDEHrdjvqz/MSMlfNSDxSUfMgfLBa5NbMksNsP12fREdHuaLP0aNobY8SPGe44x3T
-	 hLv0YEeaFGOrYxVTn4fZmMAj5LdLofgqsCD6sXyjwqUVhD4POx+Sodo3eqL3rHkjVn
-	 A3ADHv2uwlBzxfwGoc3jbUCnGOVPlAfRiPD2wfAiVdmAzn6ZM0eiyWUnDFRWpZhktw
-	 3/eOBtODVr0SsX43YuGFNLPHN9xAtoxkntlPKMx7pGJ33CYtLjbCD3DHQRrhtMv9Dn
-	 qMtLbzqi6odHsTwMjvFOqo2ueCJvy07NDJWl5PX/88/JAVuBu4iEw+KT79Ch/Mc9oI
-	 rCM0jv2N3Htbg==
-Date: Thu, 12 Mar 2026 17:50:26 +0000
+	b=rPJz/bB6+glHH73SLx8hGVkx0l9tUzG4IFNHUsdfn+5UCoebZ+uR4mv6v1CnqPIoz
+	 +B2pxRgvYNrsL/0J23iTIW9Zlr/htHthdACzdZAMooiqtbicFqzZ4X7jx18CuwAiWs
+	 Tug1XH6nyPGz4KBj+gWi0FbyZQPHv21fOSan6TYRqPC7GU0x7JzvkvVKeaxCn6ghqi
+	 4+I9gEJ6s9YY0QNQ4BiOZA1smBIBW7wcRDmbXcHHny97X3nIEHKHPP+VPFTmxZVLSs
+	 SaPwreBDXUS2iGNaCuxJnS0FhCu7ATagW8j7ocQLb+M73YP28zMsfhf9OgAVce+iYa
+	 b1C4M1bG1AQmQ==
+Date: Thu, 12 Mar 2026 17:52:36 +0000
 From: Conor Dooley <conor@kernel.org>
-To: Manikandan Muralidharan <manikandan.m@microchip.com>
-Cc: alexandre.belloni@bootlin.com, Frank.Li@nxp.com, robh@kernel.org,
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Manikandan Muralidharan <manikandan.m@microchip.com>,
+	alexandre.belloni@bootlin.com, Frank.Li@nxp.com, robh@kernel.org,
 	krzk+dt@kernel.org, conor+dt@kernel.org,
 	nicolas.ferre@microchip.com, claudiu.beznea@tuxon.dev,
 	linux@armlinux.org.uk, mturquette@baylibre.com, sboyd@kernel.org,
 	ardb@kernel.org, ebiggers@google.com, martin.petersen@oracle.com,
 	tytso@mit.edu, cristian.birsan@microchip.com,
-	adrian.hunter@intel.com, jarkko.nikula@linux.intel.com,
-	kees@kernel.org, npitre@baylibre.com, linux-i3c@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 1/5] dt-bindings: i3c: mipi-i3c-hci: add Microchip
- SAMA7D65 compatible
-Message-ID: <20260312-ardently-untoasted-4f4b79be27c4@spud>
+	jarkko.nikula@linux.intel.com, kees@kernel.org, npitre@baylibre.com,
+	linux-i3c@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 3/5] i3c: mipi-i3c-hci: add microchip sama7d65 SoC
+ compatible with the appropriate quirk
+Message-ID: <20260312-ricotta-unusable-44c25a03eff8@spud>
 References: <20260312042056.309237-1-manikandan.m@microchip.com>
- <20260312042056.309237-2-manikandan.m@microchip.com>
+ <20260312042056.309237-4-manikandan.m@microchip.com>
+ <a41378a0-d2f1-4fa4-ac6d-1d0916590b47@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,98 +53,93 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="MqJz2bOHOp/6kCsJ"
+	protocol="application/pgp-signature"; boundary="aXc9ewpzkSl2ifoe"
 Content-Disposition: inline
-In-Reply-To: <20260312042056.309237-2-manikandan.m@microchip.com>
+In-Reply-To: <a41378a0-d2f1-4fa4-ac6d-1d0916590b47@intel.com>
 
 
---MqJz2bOHOp/6kCsJ
+--aXc9ewpzkSl2ifoe
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 12, 2026 at 09:50:52AM +0530, Manikandan Muralidharan wrote:
-> Add the microchip,sama7d65-i3c-hci compatible string to the MIPI I3C
-> HCI binding. The Microchip SAMA7D65 I3C controller is based on the
-> MIPI HCI specification but requires two clocks, so add a conditional
-> constraint when this compatible is present.
+On Thu, Mar 12, 2026 at 11:29:25AM +0200, Adrian Hunter wrote:
+> On 12/03/2026 06:20, Manikandan Muralidharan wrote:
+> > Add support for microchip sama7d65 SoC I3C HCI master only IP
+> > with additional clock support to enable bulk clock acquisition
+> > for Microchip platforms using HCI_QUIRK_CLK_SUPPORT quirk.
+> > Introduce MCHP_I3C_CLK_IDX to define the maximum peripheral
+> > clock index
+> >=20
+> > Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
+> > ---
+> > Changes in v3:
+> > - Make use of existing HCI_QUIRK_* code base
+> > - Introduce HCI_QUIRK_CLK_SUPPORT to handle/enable the required Periphe=
+ral
+> > and system generic clk in bulk
+> >=20
+> > Changes in v2:
+> > - Platform specific changes are integrated in the existing mipi-i3c-hci
+> > driver by introducing separate MCHP_HCI_QUIRK_* quirks and vendor
+> > specific quirk files
+> >=20
+> > ---
+> >  drivers/i3c/master/mipi-i3c-hci/core.c | 12 ++++++++++++
+> >  drivers/i3c/master/mipi-i3c-hci/hci.h  |  4 ++++
+> >  2 files changed, 16 insertions(+)
+> >=20
+> > diff --git a/drivers/i3c/master/mipi-i3c-hci/core.c b/drivers/i3c/maste=
+r/mipi-i3c-hci/core.c
+> > index 5879bba78164..6b7716bd517e 100644
+> > --- a/drivers/i3c/master/mipi-i3c-hci/core.c
+> > +++ b/drivers/i3c/master/mipi-i3c-hci/core.c
+> > @@ -8,6 +8,7 @@
+> >   */
+> > =20
+> >  #include <linux/bitfield.h>
+> > +#include <linux/clk.h>
+> >  #include <linux/device.h>
+> >  #include <linux/errno.h>
+> >  #include <linux/i3c/master.h>
+> > @@ -918,6 +919,7 @@ static int i3c_hci_probe(struct platform_device *pd=
+ev)
+> >  {
+> >  	const struct mipi_i3c_hci_platform_data *pdata =3D pdev->dev.platform=
+_data;
+> >  	struct i3c_hci *hci;
+> > +	struct clk_bulk_data *clks;
+> >  	int irq, ret;
+> > =20
+> >  	hci =3D devm_kzalloc(&pdev->dev, sizeof(*hci), GFP_KERNEL);
+> > @@ -946,6 +948,13 @@ static int i3c_hci_probe(struct platform_device *p=
+dev)
+> >  	if (!hci->quirks && platform_get_device_id(pdev))
+> >  		hci->quirks =3D platform_get_device_id(pdev)->driver_data;
+> > =20
+> > +	if (hci->quirks & HCI_QUIRK_CLK_SUPPORT) {
+> > +		ret =3D devm_clk_bulk_get_all_enabled(&pdev->dev, &clks);
+> > +		if (ret < MCHP_I3C_CLK_IDX)
 >=20
-> Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
-> ---
->  .../devicetree/bindings/i3c/mipi-i3c-hci.yaml | 22 +++++++++++++++----
->  1 file changed, 18 insertions(+), 4 deletions(-)
+> Is MCHP_I3C_CLK_IDX really needed?  Why not just:
 >=20
-> diff --git a/Documentation/devicetree/bindings/i3c/mipi-i3c-hci.yaml b/Do=
-cumentation/devicetree/bindings/i3c/mipi-i3c-hci.yaml
-> index 39bb1a1784c9..db659388a27d 100644
-> --- a/Documentation/devicetree/bindings/i3c/mipi-i3c-hci.yaml
-> +++ b/Documentation/devicetree/bindings/i3c/mipi-i3c-hci.yaml
-> @@ -9,9 +9,6 @@ title: MIPI I3C HCI
->  maintainers:
->    - Nicolas Pitre <npitre@baylibre.com>
-> =20
-> -allOf:
-> -  - $ref: /schemas/i3c/i3c.yaml#
-> -
->  description: |
->    MIPI I3C Host Controller Interface
-> =20
-> @@ -28,7 +25,9 @@ description: |
-> =20
->  properties:
->    compatible:
-> -    const: mipi-i3c-hci
-> +    enum:
-> +      - mipi-i3c-hci
-> +      - microchip,sama7d65-i3c-hci
->    reg:
->      maxItems: 1
->    interrupts:
-> @@ -39,6 +38,21 @@ required:
->    - reg
->    - interrupts
-> =20
-> +allOf:
-> +  - $ref: /schemas/i3c/i3c.yaml#
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: microchip,sama7d65-i3c-hci
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 2
-> +          maxItems: 2
-> +      required:
-> +        - clocks
-
-Properties should be defined at the top level, and only restricted in
-conditional schemas. Please add them at the top level, and provide some
-information as to what each clock is via a description.
-
-pw-bot: changes-requested
-
-Thanks,
-Conor.
-
-> +
->  unevaluatedProperties: false
-> =20
->  examples:
-> --=20
-> 2.25.1
+> 		if (ret <=3D 0)
 >=20
+> i.e. don't you anyway have to assume DT has the clocks defined
+> correctly.
 
---MqJz2bOHOp/6kCsJ
+Ye, I think this is kinda silly. Trust dtbs_check to have the correct
+number for your platform set, and let this be specific.
+
+--aXc9ewpzkSl2ifoe
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCabL84gAKCRB4tDGHoIJi
-0hwzAQDHnz6O+/P97VuIJwNyaCiCSQPZ7MZTZ7H2o3gahOSGrwEAwavDxaOoHF7y
-GpcyvuVbOusizFUCT/bZu8hFfGO9NAg=
-=L5KA
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCabL9ZAAKCRB4tDGHoIJi
+0mFzAQD8sb5isGyPPaQE3kYoakuj+6ep/IS3t3IZhJUaZ7Z3dAD/Vw8LKqh45H8H
+HpMjIeSZSkof2M251PwPTxeNv7o5Bwk=
+=LkO0
 -----END PGP SIGNATURE-----
 
---MqJz2bOHOp/6kCsJ--
+--aXc9ewpzkSl2ifoe--
