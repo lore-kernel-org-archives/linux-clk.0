@@ -1,147 +1,148 @@
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08BF3FB7F5
-	for <linux-clk@vger.kernel.org>; Thu, 12 Mar 2026 16:54:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795AE33B974;
+	Thu, 12 Mar 2026 17:50:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773334496; cv=none; b=OvM0ghlnWf+SLbIGXYK+VNcuUufAKxHP7xhfhxCSyBI71M7FKmTB1Vv2X++Oew0x5cRVGokBFNQh4QyZgnflZGPLtuhseI3iPID3Kx71AlhhCh10DdfiorZk+MlD9XFHVFiSckmujB29bhqsOu0SsHmTpim2Ru3qEplSg0RYzVo=
+	t=1773337833; cv=none; b=ReG6Lb/39gLbq9YtzVtaBBeAfrkaoYUj3I2BbJ1x5x9e9YUDwQh9yFCaenHypNlPImSX5KquDuqVxro4p7SxLYS7IN26UDO1kKKo8h7g1cvh+aRiFjp8/8AOEhz36H3DGUNs/yPtjE2DdYqfHJcOFoda5ucvtt5IDeIkojkIgcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773334496; c=relaxed/simple;
-	bh=ENv0+4bH9YdpFLGeURNwJ3+rEUsnNn74RNCtOl26SEA=;
+	s=arc-20240116; t=1773337833; c=relaxed/simple;
+	bh=KenJYZKQMESmdjBYhz51YSRSfZ9967IRk4t3Gg1r3Gs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uLHOY4o8TOr6v3YH2Gjig3gQY4nCW4XYMmvwi+87RTw4alCEUdnSFodDaEFpzbpvjuLPqmzdhhErFEZ9wLRRS/wijUkUzYd9wJToS75N40Akx9uWwrqOE5Vz+uriMs56cmMlhZprSvyiUR13uHoxVEylpNpxk+z4FCwB/0VCwL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=TCUycPJz; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+	 Content-Type:Content-Disposition:In-Reply-To; b=n2ks8J8emU294HOuxl5cdFrVYGx7Pyc+gHY7nirG78RnAG58WiR4Rq9XeiuVce3mN3aKV1yJVJ0DD01YVj7Z4OmZtoBExa8KVJs8OJ8nQr0EfTeBCEWjEaxZGdS8o5Xf1kooxFoNakK/KBmE5uPrTH+mfIDBhgPAnRfFo1qrAcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hDEHrdjv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="TCUycPJz"
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-509149ab7d7so10174581cf.2
-        for <linux-clk@vger.kernel.org>; Thu, 12 Mar 2026 09:54:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1773334491; x=1773939291; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VQXCfPVu6b6dIVECzm0C8AUD7IL7VvpSkD5+M4S95sw=;
-        b=TCUycPJzE2fI+UEqk7FktReSuNB+qmtoLxCPQIhObf2GoM3FGGUoUzmOL4EcJ8nqrV
-         31wLWw0iuRrm5q/A3vl9oGJab4nkcB5GgE9L87TaBE5zWVhGKUEWMOYZrC4hQkz7+K+y
-         MdSN9PZxg9+VlLOffdwRmQphGTW7UoGABbBRu3CtgROAhKqAusDMmmrNFgCXGsGgS+um
-         4b3n9KF8H9mgZuxtPx/c84lVtPd3kX8R2XT1vLZ+RjANCZT5FGS44RpBGA5cN1JRJXTn
-         oCOtB2FnqO56y3+c6Fos0prISIneHSMHrQ7vAs2p/teTVBOn2DfneDCxuRpkTU9D9cja
-         6IGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773334491; x=1773939291;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VQXCfPVu6b6dIVECzm0C8AUD7IL7VvpSkD5+M4S95sw=;
-        b=DMo+BxObyuQImL+vIzZZJgsLvqhMa4Q12SAcpI4rW3k4XdTyGVtWW++Swy03PTO6iU
-         Wq+ExfMv0x/hnHN4fl/2Ts8AZA+Jz1JhiF0wt7QlrWqNbMNTHXAneuA22mzEhrHkXlk2
-         mNwnp2r2CDxGFLLdMKxJnmrJYUUNrKibuDEImxCdND5m09I8k37V/naE6IPaTPQrMAia
-         kN4WJg6HBUNW62fhPbpHyPA9YLVLXd+aIGApnq2KlnaJgBY5TYO7LcKUZakUFdxPderb
-         0gt4+B4ZPfgdkTFh1I/rrDfRIGYjePCu0ocSMNcVL7zdOCqLUXAK4RoQX9TXXlyVfCQy
-         ASbA==
-X-Forwarded-Encrypted: i=1; AJvYcCVsqL4ML9SvPoeBY4ui7gbtO2K+iKHHjNKYcHlN3HLrcLdy18VCiHozXfrckZVYLWXj0kxpnChAANI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFOVPnrUgYof3nihdA5Vcj62ViRFwIznAFAYxoiZSDMTCQmSoY
-	xaQFBfdx6bX/7fxT+jnFIO+YTwviv202fxhuQ/8J65me0Ii8eC63kPSo45a1KqEXFT4=
-X-Gm-Gg: ATEYQzwnT9hE+A5HFP/py4YHtaxHr5MxlzLQMGfCbgxyy5s07PVVVuo8XBwyxX13mIf
-	Y7wxWqC9jU3TtDm/8GH9WtYLAh4LwNQ7sLhKdaekSmB49vWD9GCYBiH7cHJ1XGxGYBn1dwbCAdC
-	plV3F5bVaPU18v/QBL5f8B9mxb/atDsrx/qcZMsWiP+o6h0a9fq0gIs+YIiEnAAV290AmiJTxqb
-	Y/kbevtVwUKLo3jLJHNlmwT4Y/1AyV0GPUGw/H2RI1mifnah1hBGdaEHeoLEZmry+vH+mY2fjgC
-	4eaCxPJ5w2YD3+Jm/Pl+S/o2Hk9g4GjpbMpsD1tnDvOYqD6N98Nd66qnKNJKuYAv+TaE6mO7FT1
-	MI9Oh5FoxEHPSGIVrWfYAuAay6fhu85ojxGSSga6ymHb9unFi85EbJu0TPkhO3phqnblgFM07KG
-	Owu3r+N04dTkn8SyaqeEHwji6uQQm5lI3POP8pZEKCJij1yuNkQH18Vfln2YveyN9spzrwG9vdg
-	rYL1dQ2VJh0MwljjJw=
-X-Received: by 2002:a05:622a:289:b0:509:44c3:5ffa with SMTP id d75a77b69052e-50957e10673mr1403911cf.52.1773334490530;
-        Thu, 12 Mar 2026 09:54:50 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-162-112-119.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.112.119])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5093a119602sm36658181cf.28.2026.03.12.09.54.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Mar 2026 09:54:49 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1w0jJA-00000006i8N-40X9;
-	Thu, 12 Mar 2026 13:54:48 -0300
-Date: Thu, 12 Mar 2026 13:54:48 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Kuan-Wei Chiu <visitorckw@gmail.com>, Philipp Hahn <phahn-oss@avm.de>,
-	amd-gfx@lists.freedesktop.org, apparmor@lists.ubuntu.com,
-	bpf@vger.kernel.org, ceph-devel@vger.kernel.org, cocci@inria.fr,
-	dm-devel@lists.linux.dev, dri-devel@lists.freedesktop.org,
-	gfs2@lists.linux.dev, intel-gfx@lists.freedesktop.org,
-	intel-wired-lan@lists.osuosl.org, iommu@lists.linux.dev,
-	kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-hyperv@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-mips@vger.kernel.org, linux-mm@kvack.org,
-	linux-modules@vger.kernel.org, linux-mtd@lists.infradead.org,
-	linux-nfs@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-phy@lists.infradead.org, linux-pm@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-scsi@vger.kernel.org, linux-sctp@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-sh@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-trace-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-	ntfs3@lists.linux.dev, samba-technical@lists.samba.org,
-	sched-ext@lists.linux.dev, target-devel@vger.kernel.org,
-	tipc-discussion@lists.sourceforge.net, v9fs@lists.linux.dev
-Subject: Re: [PATCH 00/61] treewide: Use IS_ERR_OR_NULL over manual NULL
- check - refactor
-Message-ID: <20260312165448.GN1469476@ziepe.ca>
-References: <20260310-b4-is_err_or_null-v1-0-bd63b656022d@avm.de>
- <abBlpGKO842B3yl9@google.com>
- <20260312125730.GI1469476@ziepe.ca>
- <f5688b895eaebabae6545a0d9baf8f1404e8454e.camel@HansenPartnership.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hDEHrdjv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99C49C4CEF7;
+	Thu, 12 Mar 2026 17:50:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773337833;
+	bh=KenJYZKQMESmdjBYhz51YSRSfZ9967IRk4t3Gg1r3Gs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hDEHrdjvqz/MSMlfNSDxSUfMgfLBa5NbMksNsP12fREdHuaLP0aNobY8SPGe44x3T
+	 hLv0YEeaFGOrYxVTn4fZmMAj5LdLofgqsCD6sXyjwqUVhD4POx+Sodo3eqL3rHkjVn
+	 A3ADHv2uwlBzxfwGoc3jbUCnGOVPlAfRiPD2wfAiVdmAzn6ZM0eiyWUnDFRWpZhktw
+	 3/eOBtODVr0SsX43YuGFNLPHN9xAtoxkntlPKMx7pGJ33CYtLjbCD3DHQRrhtMv9Dn
+	 qMtLbzqi6odHsTwMjvFOqo2ueCJvy07NDJWl5PX/88/JAVuBu4iEw+KT79Ch/Mc9oI
+	 rCM0jv2N3Htbg==
+Date: Thu, 12 Mar 2026 17:50:26 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Manikandan Muralidharan <manikandan.m@microchip.com>
+Cc: alexandre.belloni@bootlin.com, Frank.Li@nxp.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org,
+	nicolas.ferre@microchip.com, claudiu.beznea@tuxon.dev,
+	linux@armlinux.org.uk, mturquette@baylibre.com, sboyd@kernel.org,
+	ardb@kernel.org, ebiggers@google.com, martin.petersen@oracle.com,
+	tytso@mit.edu, cristian.birsan@microchip.com,
+	adrian.hunter@intel.com, jarkko.nikula@linux.intel.com,
+	kees@kernel.org, npitre@baylibre.com, linux-i3c@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] dt-bindings: i3c: mipi-i3c-hci: add Microchip
+ SAMA7D65 compatible
+Message-ID: <20260312-ardently-untoasted-4f4b79be27c4@spud>
+References: <20260312042056.309237-1-manikandan.m@microchip.com>
+ <20260312042056.309237-2-manikandan.m@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="MqJz2bOHOp/6kCsJ"
+Content-Disposition: inline
+In-Reply-To: <20260312042056.309237-2-manikandan.m@microchip.com>
+
+
+--MqJz2bOHOp/6kCsJ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f5688b895eaebabae6545a0d9baf8f1404e8454e.camel@HansenPartnership.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 12, 2026 at 11:32:37AM -0400, James Bottomley wrote:
-> On Thu, 2026-03-12 at 09:57 -0300, Jason Gunthorpe wrote:
-> > On Wed, Mar 11, 2026 at 02:40:36AM +0800, Kuan-Wei Chiu wrote:
-> > 
-> > > IMHO, the necessity of IS_ERR_OR_NULL() often highlights a
-> > > confusing or flawed API design. It usually implies that the caller
-> > > is unsure whether a failure results in an error pointer or a NULL
-> > > pointer. 
-> > 
-> > +1
-> > 
-> > IS_ERR_OR_NULL() should always be looked on with suspicion. Very
-> > little should be returning some tri-state 'ERR' 'NULL' 'SUCCESS'
-> > pointer. What does the middle condition even mean? IS_ERR_OR_NULL()
-> > implies ERR and NULL are semanticly the same, so fix the things to
-> > always use ERR.
-> 
-> Not in any way supporting the original patch.  However, the pattern
-> ERR, NULL, PTR is used extensively in the dentry code of filesystems. 
-> See the try_lookup..() set of functions in fs/namei.c
-> 
-> The meaning is
-> 
-> PTR - I found it
-> NULL - It definitely doesn't exist
-> ERR - something went wrong during the lookup.
-> 
-> So I don't think you can blanket say this pattern is wrong.
+On Thu, Mar 12, 2026 at 09:50:52AM +0530, Manikandan Muralidharan wrote:
+> Add the microchip,sama7d65-i3c-hci compatible string to the MIPI I3C
+> HCI binding. The Microchip SAMA7D65 I3C controller is based on the
+> MIPI HCI specification but requires two clocks, so add a conditional
+> constraint when this compatible is present.
+>=20
+> Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
+> ---
+>  .../devicetree/bindings/i3c/mipi-i3c-hci.yaml | 22 +++++++++++++++----
+>  1 file changed, 18 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/i3c/mipi-i3c-hci.yaml b/Do=
+cumentation/devicetree/bindings/i3c/mipi-i3c-hci.yaml
+> index 39bb1a1784c9..db659388a27d 100644
+> --- a/Documentation/devicetree/bindings/i3c/mipi-i3c-hci.yaml
+> +++ b/Documentation/devicetree/bindings/i3c/mipi-i3c-hci.yaml
+> @@ -9,9 +9,6 @@ title: MIPI I3C HCI
+>  maintainers:
+>    - Nicolas Pitre <npitre@baylibre.com>
+> =20
+> -allOf:
+> -  - $ref: /schemas/i3c/i3c.yaml#
+> -
+>  description: |
+>    MIPI I3C Host Controller Interface
+> =20
+> @@ -28,7 +25,9 @@ description: |
+> =20
+>  properties:
+>    compatible:
+> -    const: mipi-i3c-hci
+> +    enum:
+> +      - mipi-i3c-hci
+> +      - microchip,sama7d65-i3c-hci
+>    reg:
+>      maxItems: 1
+>    interrupts:
+> @@ -39,6 +38,21 @@ required:
+>    - reg
+>    - interrupts
+> =20
+> +allOf:
+> +  - $ref: /schemas/i3c/i3c.yaml#
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: microchip,sama7d65-i3c-hci
+> +    then:
+> +      properties:
+> +        clocks:
+> +          minItems: 2
+> +          maxItems: 2
+> +      required:
+> +        - clocks
 
-Lots of places also would return ENOENT, I'd argue that is easier to
-use..
+Properties should be defined at the top level, and only restricted in
+conditional schemas. Please add them at the top level, and provide some
+information as to what each clock is via a description.
 
-But yes, I did use the word "suspicion" not blanket wrong :)
+pw-bot: changes-requested
 
-Jason
+Thanks,
+Conor.
+
+> +
+>  unevaluatedProperties: false
+> =20
+>  examples:
+> --=20
+> 2.25.1
+>=20
+
+--MqJz2bOHOp/6kCsJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCabL84gAKCRB4tDGHoIJi
+0hwzAQDHnz6O+/P97VuIJwNyaCiCSQPZ7MZTZ7H2o3gahOSGrwEAwavDxaOoHF7y
+GpcyvuVbOusizFUCT/bZu8hFfGO9NAg=
+=L5KA
+-----END PGP SIGNATURE-----
+
+--MqJz2bOHOp/6kCsJ--
