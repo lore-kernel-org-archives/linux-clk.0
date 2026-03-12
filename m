@@ -1,44 +1,105 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE24D38F64B;
-	Thu, 12 Mar 2026 16:36:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08BF3FB7F5
+	for <linux-clk@vger.kernel.org>; Thu, 12 Mar 2026 16:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773333419; cv=none; b=GrFJPvhcjuZDQbJ7bUPyJNwFB5AtQlTpjUaqFrIYP3pOtWMVgbxOcVmmXifXaHK4nos22z5vuXeOvhHVZ+g4yRDFlG4t4d5sVcp6BrJk4W3iWR0wuMzVIRj5OiKQ9S2c8oGh7f5EKkFXkKqNswD3srIV0rYkWQWibmjizshlnxE=
+	t=1773334496; cv=none; b=OvM0ghlnWf+SLbIGXYK+VNcuUufAKxHP7xhfhxCSyBI71M7FKmTB1Vv2X++Oew0x5cRVGokBFNQh4QyZgnflZGPLtuhseI3iPID3Kx71AlhhCh10DdfiorZk+MlD9XFHVFiSckmujB29bhqsOu0SsHmTpim2Ru3qEplSg0RYzVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773333419; c=relaxed/simple;
-	bh=PHTycdlf1dFs7CToXS9wxFQ5DOSHhKZ3v+bxy6sc4qA=;
+	s=arc-20240116; t=1773334496; c=relaxed/simple;
+	bh=ENv0+4bH9YdpFLGeURNwJ3+rEUsnNn74RNCtOl26SEA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kYOwfJiRpOXzACnkyz3xUhyygxQBQmr7Ytb46YeJfalL7YwLZSjRdTTRByu7rn3Xwo4oVY3CZ66vpoofTek94u9T0G7rplEEjazg7CXwlWtV2xnRIchvp3mkyE2xkp9ZCDbz/322Z6BtyijrES5R+3eIDJmLVkwW96Frne1g0eU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D9E60165C;
-	Thu, 12 Mar 2026 09:36:49 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0541C3F694;
-	Thu, 12 Mar 2026 09:36:52 -0700 (PDT)
-Date: Thu, 12 Mar 2026 16:36:43 +0000
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Sudeep Holla <sudeep.holla@kernel.org>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, philip.radford@arm.com,
-	james.quinlan@broadcom.com, f.fainelli@gmail.com,
-	vincent.guittot@linaro.org, etienne.carriere@foss.st.com,
-	peng.fan@oss.nxp.com, michal.simek@amd.com,
-	dan.carpenter@linaro.org, geert+renesas@glider.be,
-	kuninori.morimoto.gx@renesas.com, marek.vasut+renesas@gmail.com
-Subject: Re: [PATCH v2 08/13] firmware: arm_scmi: Harden clock protocol
- initialization
-Message-ID: <abLrm7x8ggzAhYOg@pluto>
-References: <20260310184030.3669330-1-cristian.marussi@arm.com>
- <20260310184030.3669330-9-cristian.marussi@arm.com>
- <CAMuHMdUdqrA9kYeDpjwj-y6-4aALkAi2g2Od81Kxh-EVW2e2Nw@mail.gmail.com>
- <abG4VfyB2C-gBa5Q@pluto>
- <20260312-classy-misty-platypus-5baea1@sudeepholla>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uLHOY4o8TOr6v3YH2Gjig3gQY4nCW4XYMmvwi+87RTw4alCEUdnSFodDaEFpzbpvjuLPqmzdhhErFEZ9wLRRS/wijUkUzYd9wJToS75N40Akx9uWwrqOE5Vz+uriMs56cmMlhZprSvyiUR13uHoxVEylpNpxk+z4FCwB/0VCwL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=TCUycPJz; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="TCUycPJz"
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-509149ab7d7so10174581cf.2
+        for <linux-clk@vger.kernel.org>; Thu, 12 Mar 2026 09:54:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1773334491; x=1773939291; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VQXCfPVu6b6dIVECzm0C8AUD7IL7VvpSkD5+M4S95sw=;
+        b=TCUycPJzE2fI+UEqk7FktReSuNB+qmtoLxCPQIhObf2GoM3FGGUoUzmOL4EcJ8nqrV
+         31wLWw0iuRrm5q/A3vl9oGJab4nkcB5GgE9L87TaBE5zWVhGKUEWMOYZrC4hQkz7+K+y
+         MdSN9PZxg9+VlLOffdwRmQphGTW7UoGABbBRu3CtgROAhKqAusDMmmrNFgCXGsGgS+um
+         4b3n9KF8H9mgZuxtPx/c84lVtPd3kX8R2XT1vLZ+RjANCZT5FGS44RpBGA5cN1JRJXTn
+         oCOtB2FnqO56y3+c6Fos0prISIneHSMHrQ7vAs2p/teTVBOn2DfneDCxuRpkTU9D9cja
+         6IGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773334491; x=1773939291;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VQXCfPVu6b6dIVECzm0C8AUD7IL7VvpSkD5+M4S95sw=;
+        b=DMo+BxObyuQImL+vIzZZJgsLvqhMa4Q12SAcpI4rW3k4XdTyGVtWW++Swy03PTO6iU
+         Wq+ExfMv0x/hnHN4fl/2Ts8AZA+Jz1JhiF0wt7QlrWqNbMNTHXAneuA22mzEhrHkXlk2
+         mNwnp2r2CDxGFLLdMKxJnmrJYUUNrKibuDEImxCdND5m09I8k37V/naE6IPaTPQrMAia
+         kN4WJg6HBUNW62fhPbpHyPA9YLVLXd+aIGApnq2KlnaJgBY5TYO7LcKUZakUFdxPderb
+         0gt4+B4ZPfgdkTFh1I/rrDfRIGYjePCu0ocSMNcVL7zdOCqLUXAK4RoQX9TXXlyVfCQy
+         ASbA==
+X-Forwarded-Encrypted: i=1; AJvYcCVsqL4ML9SvPoeBY4ui7gbtO2K+iKHHjNKYcHlN3HLrcLdy18VCiHozXfrckZVYLWXj0kxpnChAANI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFOVPnrUgYof3nihdA5Vcj62ViRFwIznAFAYxoiZSDMTCQmSoY
+	xaQFBfdx6bX/7fxT+jnFIO+YTwviv202fxhuQ/8J65me0Ii8eC63kPSo45a1KqEXFT4=
+X-Gm-Gg: ATEYQzwnT9hE+A5HFP/py4YHtaxHr5MxlzLQMGfCbgxyy5s07PVVVuo8XBwyxX13mIf
+	Y7wxWqC9jU3TtDm/8GH9WtYLAh4LwNQ7sLhKdaekSmB49vWD9GCYBiH7cHJ1XGxGYBn1dwbCAdC
+	plV3F5bVaPU18v/QBL5f8B9mxb/atDsrx/qcZMsWiP+o6h0a9fq0gIs+YIiEnAAV290AmiJTxqb
+	Y/kbevtVwUKLo3jLJHNlmwT4Y/1AyV0GPUGw/H2RI1mifnah1hBGdaEHeoLEZmry+vH+mY2fjgC
+	4eaCxPJ5w2YD3+Jm/Pl+S/o2Hk9g4GjpbMpsD1tnDvOYqD6N98Nd66qnKNJKuYAv+TaE6mO7FT1
+	MI9Oh5FoxEHPSGIVrWfYAuAay6fhu85ojxGSSga6ymHb9unFi85EbJu0TPkhO3phqnblgFM07KG
+	Owu3r+N04dTkn8SyaqeEHwji6uQQm5lI3POP8pZEKCJij1yuNkQH18Vfln2YveyN9spzrwG9vdg
+	rYL1dQ2VJh0MwljjJw=
+X-Received: by 2002:a05:622a:289:b0:509:44c3:5ffa with SMTP id d75a77b69052e-50957e10673mr1403911cf.52.1773334490530;
+        Thu, 12 Mar 2026 09:54:50 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-162-112-119.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.112.119])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5093a119602sm36658181cf.28.2026.03.12.09.54.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Mar 2026 09:54:49 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1w0jJA-00000006i8N-40X9;
+	Thu, 12 Mar 2026 13:54:48 -0300
+Date: Thu, 12 Mar 2026 13:54:48 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Kuan-Wei Chiu <visitorckw@gmail.com>, Philipp Hahn <phahn-oss@avm.de>,
+	amd-gfx@lists.freedesktop.org, apparmor@lists.ubuntu.com,
+	bpf@vger.kernel.org, ceph-devel@vger.kernel.org, cocci@inria.fr,
+	dm-devel@lists.linux.dev, dri-devel@lists.freedesktop.org,
+	gfs2@lists.linux.dev, intel-gfx@lists.freedesktop.org,
+	intel-wired-lan@lists.osuosl.org, iommu@lists.linux.dev,
+	kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+	linux-btrfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-hyperv@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-mips@vger.kernel.org, linux-mm@kvack.org,
+	linux-modules@vger.kernel.org, linux-mtd@lists.infradead.org,
+	linux-nfs@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-phy@lists.infradead.org, linux-pm@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+	linux-scsi@vger.kernel.org, linux-sctp@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-sh@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-trace-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+	ntfs3@lists.linux.dev, samba-technical@lists.samba.org,
+	sched-ext@lists.linux.dev, target-devel@vger.kernel.org,
+	tipc-discussion@lists.sourceforge.net, v9fs@lists.linux.dev
+Subject: Re: [PATCH 00/61] treewide: Use IS_ERR_OR_NULL over manual NULL
+ check - refactor
+Message-ID: <20260312165448.GN1469476@ziepe.ca>
+References: <20260310-b4-is_err_or_null-v1-0-bd63b656022d@avm.de>
+ <abBlpGKO842B3yl9@google.com>
+ <20260312125730.GI1469476@ziepe.ca>
+ <f5688b895eaebabae6545a0d9baf8f1404e8454e.camel@HansenPartnership.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,76 +108,40 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260312-classy-misty-platypus-5baea1@sudeepholla>
+In-Reply-To: <f5688b895eaebabae6545a0d9baf8f1404e8454e.camel@HansenPartnership.com>
 
-On Thu, Mar 12, 2026 at 03:33:52PM +0000, Sudeep Holla wrote:
-> On Wed, Mar 11, 2026 at 06:45:41PM +0000, Cristian Marussi wrote:
-> > On Wed, Mar 11, 2026 at 05:59:43PM +0100, Geert Uytterhoeven wrote:
-> > > Hi Cristian,
-> > > 
-> > > On Tue, 10 Mar 2026 at 19:56, Cristian Marussi <cristian.marussi@arm.com> wrote:
-> > > > Add proper error handling on failure to enumerate clocks features or
-> > > > rates.
-> > > >
-> > > > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+On Thu, Mar 12, 2026 at 11:32:37AM -0400, James Bottomley wrote:
+> On Thu, 2026-03-12 at 09:57 -0300, Jason Gunthorpe wrote:
+> > On Wed, Mar 11, 2026 at 02:40:36AM +0800, Kuan-Wei Chiu wrote:
 > > 
-> > Hi,
+> > > IMHO, the necessity of IS_ERR_OR_NULL() often highlights a
+> > > confusing or flawed API design. It usually implies that the caller
+> > > is unsure whether a failure results in an error pointer or a NULL
+> > > pointer. 
 > > 
-> > > 
-> > > Thanks for your patch!
-> > > 
-> > > > --- a/drivers/firmware/arm_scmi/clock.c
-> > > > +++ b/drivers/firmware/arm_scmi/clock.c
-> > > 
-> > > > @@ -1143,8 +1149,12 @@ static int scmi_clock_protocol_init(const struct scmi_protocol_handle *ph)
-> > > >         for (clkid = 0; clkid < cinfo->num_clocks; clkid++) {
-> > > >                 cinfo->clkds[clkid].id = clkid;
-> > > >                 ret = scmi_clock_attributes_get(ph, clkid, cinfo);
-> > > > -               if (!ret)
-> > > > -                       scmi_clock_describe_rates_get(ph, clkid, cinfo);
-> > > > +               if (ret)
-> > > > +                       return ret;
-> > > 
-> > > This change breaks R-Car X5H with SCP FW SDKv4.28.0, as some clocks
-> > > do not support the SCMI CLOCK_ATTRIBUTES command.
-> > > Before, these clocks were still instantiated, but were further unusable.
-> > > After, the whole clock driver fails to initialize, and no SCMI clocks
-> > > are available at all.
+> > +1
 > > 
-> > ...and this is exactly what I feared while doing this sort of hardening :P
-> > 
-> > So there are a few possible solutions (beside reverting this straight away)
-> > 
-> > The easy fix would be instead change the above in a
-> > 
-> > 	if (ret)
-> > 		continue;
-> > 
-> > ...with a bit of annoying accompanying FW_BUG logs, of course, to cause future
-> > FW releases to fix this :D
-> > 
-> > Another option could be leave it as it is, since indeed it is the correct enforced
-> > behaviour, being CLOCK_ATTRIBUTES a mandatory command, BUT add on top an ad-hoc SCMI
-> > quirk targeting the affected FW releases...
-> > 
-> > This latter option, though, while enforcing the correct behaviour AND
-> > fixing your R-Car issue, leaves open the door for a number of possible
-> > failures of other unknowingly buggy Vendors similarly deployed firmwares...
-> > 
-> > ...that could be solved with more quirks of course...but...worth it ?
-> > 
-> > Thoughts ?
-> > 
-> > Let's see also what @Sudeep thinks about this...
-> > 
+> > IS_ERR_OR_NULL() should always be looked on with suspicion. Very
+> > little should be returning some tri-state 'ERR' 'NULL' 'SUCCESS'
+> > pointer. What does the middle condition even mean? IS_ERR_OR_NULL()
+> > implies ERR and NULL are semanticly the same, so fix the things to
+> > always use ERR.
 > 
-> I prefer to fix it as a quirk to prevent similar issues on newer platforms if
-> the firmware baselines are derived from it. In the worst case, we can relax
-> the hardening until we figure out a proper quirk-based solution.
+> Not in any way supporting the original patch.  However, the pattern
+> ERR, NULL, PTR is used extensively in the dentry code of filesystems. 
+> See the try_lookup..() set of functions in fs/namei.c
+> 
+> The meaning is
+> 
+> PTR - I found it
+> NULL - It definitely doesn't exist
+> ERR - something went wrong during the lookup.
+> 
+> So I don't think you can blanket say this pattern is wrong.
 
-Ok, I can post a V3 with a dummy quirk 'template' RFC to be filled by
-Geert with proper versioning....so I can check that there are no
-surprises round the (quirked) corner...
+Lots of places also would return ENOENT, I'd argue that is easier to
+use..
 
-Thanks,
-Cristian
+But yes, I did use the word "suspicion" not blanket wrong :)
+
+Jason
