@@ -1,231 +1,310 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0089D36CE1D
-	for <linux-clk@vger.kernel.org>; Thu, 12 Mar 2026 14:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.167.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773326569; cv=pass; b=HRZhPmJWoH/raCCPIhz8VfrO3g3jEYlQii7gvlvI3AyyyOMNXLmCcGwQvDmwD4SFypcCUxbd1o9MLNSIBkwsbDDEiAkEdlNSoAe4RdPpeCeRH6JRnYOO5QK/koh5e76IajAjgiNX0KflZJSqtx2z2/SoAkMsqhIDG/V2GxR54P8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773326569; c=relaxed/simple;
-	bh=O9LcIYrKm3IMRU3Xcbw5ao9vnQL7OMM6Hl0piZRl6B0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UBtuPX71PEp9yuJEirE+LpSKaGLVf5tGp13n7fZbw5HEsi1JyWNpJg2+00g2/lzbzapuvqLUD0HJtrbAYGloYwlw69i7qFOZXKxFD6TGhLsVz0sC22gE+Q2pnj4OY8EmJEJ7+rJn7RmA2KCbmO5JBF/bEQKQtowL/dy8oQmKCwc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OweVSTHQ; arc=pass smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD643B6BFE
+	for <linux-clk@vger.kernel.org>; Thu, 12 Mar 2026 15:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773327875; cv=none; b=MSJe+ewe5xOncCRHEeDSGbt5ON0OkeULcTJW/toT284pGj30U7nIruR+29Kd2UcxoyjRZRNpArX5A9RNWfwbFIVo4vN/Mdoo4oVUcn63MQhVBjhGr8U9jlemaJAC7++8UUnxWrelo94n2w3KtYb+icjFKDVX3gMovt+TfpBQZ1k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773327875; c=relaxed/simple;
+	bh=RwUphGzbViQ9qL7gq7J5Xch/bPwQ+4prHGHwSo8IUiw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=hVcssS29m7/kNbtTmisVAyuhRd/yGyGZkvEtXEGi9OK8Xu6Yy4lsWvPwwkHTvFkuZ6DbLVwALTqtKhOvImE3Qopr8dzRbKs/H24cgxOyYHDQxeu7QvU2PvH2+X4fRmuUneAE1fBFAFuQRp4OcoRO9Ntry9fb8KTv3u6Ul0U3Ps8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SwNk7r8y; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=AK1dDzMi; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OweVSTHQ"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-59e4a04f059so1218308e87.2
-        for <linux-clk@vger.kernel.org>; Thu, 12 Mar 2026 07:42:45 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1773326564; cv=none;
-        d=google.com; s=arc-20240605;
-        b=LudzaRk6qmlm9bPmApP54g7B0Dc9szi5EenCaB+cxTMlceFowNvlEFEE9dkB2jHIza
-         cEY1sKs/BOgfT5Ulu6t6AKRBi+KPjec7Plvc/K7m+AXT2+oBnxWxRB8MtrycydHf7yNY
-         VdDFY0Qk1UzKKFHGaEX4XR1pKSiUFolnDjtsct0m3gDHO5YjqrLsCsMyPhsLC8yRA4v+
-         nhClLUG8opg7JN+/3rK4MRp9xXOQYUtb1qVzgYLrXt5m8wMiDPLlJ3Ra12nnW0bAqR+6
-         VSVPL7vzlPrpIVHMtq0Krq1BrncOBwjwrbByi7dNlz/58W2e7cqkAlOg+EwG4oVDNWT9
-         O8Ig==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=0R6OZluBmRNxZl/w5NAcbeDBTecdzejm214xvTMZFOU=;
-        fh=D3rYI8ERy+wsUmkWjqOw/46eE+0fHJOzLeczL+avMyY=;
-        b=fE1QJgZRRBry/3cWP//pTOsPiZVQDixAhVFupYl8fmoVLKtU2aHnAX+jqyVSvQqBvI
-         mdsxKreOEx37AYzASnsw68KeizU181XTjgb2HYBMqMhhpeHqaWLffZfy8JnzAyALJ48K
-         r4ZFlquSJYVWFliiOzE960hCrGs345bhOaAnqwhERYHxEMypFTJgGeGBaoReYkSmjUvi
-         a91HHFVZ+yoLnHSUDWcxHrrnPsNGQ235Q2yan+k+UhkphVdJg/hpMcJVojDF8tBy7qYL
-         0CiosAntoCCP5nZtZEAPX/QgWWz3embzj3xXa4yYsFhVAD+L6NEdtuji+dgCbskjRC/G
-         NuKg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SwNk7r8y";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="AK1dDzMi"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1773327873;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=5yubfebbZtWGWMyXAz+IUlEnaVFuppBxaYt4/00Rob0=;
+	b=SwNk7r8yPNTa88XwyhFN3KAgAq7SdVayRiJu5pCBCkIm33siYJw5issKFL5/6JxYHM79gx
+	A6M8/EcovTMDga6WJtaWurytg6oH4nlNxGuBCS0UVr4XJFRR4au2+VC0BW7JCE+I36L+t7
+	fX2riQrSstgGZQ8HG5IQRwMD5NgUdZ4=
+Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com
+ [209.85.210.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-518-tsYk6r5ZM6CNlkWAF0J61A-1; Thu, 12 Mar 2026 11:04:27 -0400
+X-MC-Unique: tsYk6r5ZM6CNlkWAF0J61A-1
+X-Mimecast-MFC-AGG-ID: tsYk6r5ZM6CNlkWAF0J61A_1773327866
+Received: by mail-ot1-f70.google.com with SMTP id 46e09a7af769-7d742bb4003so4868878a34.0
+        for <linux-clk@vger.kernel.org>; Thu, 12 Mar 2026 08:04:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1773326564; x=1773931364; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=0R6OZluBmRNxZl/w5NAcbeDBTecdzejm214xvTMZFOU=;
-        b=OweVSTHQkJIYH+xVrlXrb3YCzjZ5K2VKCMnH5dcKqOZ9zGfvDjxgAtmXHaYB8u6trC
-         83V0/jQD7Oat5Yu530vLOyQZAPUL0Fo7sKMu9CWrS7/0DbqR1mMnWvA+lSByg/fnMbqY
-         Y/UGENCV4fWA2D9CA+z2Jhr/J+HvoaEZzXXwpLZ8G6sqK6LtY6XB3jymPT4+CdmboX89
-         Aok6X7JuOlNMFeG3n8R0P2j24vnm8LSywkSF3e7cx/fSYKeo0kIZmOu9M7tpqcvhkj63
-         kfx0LahHrlkYeLZW7iXt/uJWaYHrB+lcZHK4OgYA15WAd/jdLn6bWFsObRqCkDg+97R0
-         OeqA==
+        d=redhat.com; s=google; t=1773327866; x=1773932666; darn=vger.kernel.org;
+        h=user-agent:content-transfer-encoding:content-disposition
+         :mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5yubfebbZtWGWMyXAz+IUlEnaVFuppBxaYt4/00Rob0=;
+        b=AK1dDzMihntgnqSoBvZPdkt0C+ENWuESULWb+Xg20UgRN/HU7/UyqKz18KKj63oVlq
+         i86uRC13ub1N+jLx+QfwnahlLkpKfqUe1OpsuZ4UrJD+sJni8qhny22jkuyp+ZvlDQRS
+         aUQnmYxiD+sPzyl8VDZ+ARydXsaNp722O+Ds8zlmPM4kURd80iOh1HUfYh+sZZgmOv3o
+         n3kXoKOKMynH5MdniOe2DwVsW2xB2RTTjRe0zkRHkIrCUOxEnu5Pvd8EQv08wh1URBs5
+         SZDG2j1+3UlI5MtL+ZuFVjwS2/yMJjicn1d7iyA9NXDpZoK8/OOPTv3HzWtx6KCyiJQg
+         k5KA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773326564; x=1773931364;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0R6OZluBmRNxZl/w5NAcbeDBTecdzejm214xvTMZFOU=;
-        b=F7zg0FCQRijabuuiCTKWMdAMESpDYDHMN0GlLCCJdyloxF43qhCEOszWNxR7RPlQel
-         +Ukn/PKRZKSin8dI3GtryRqJLxkEuJdUzfJdGlEQ6nz/9flC3mvs1ARkdx6V+CukOXtq
-         YO0w/SxGjJ/qOZndGG8+LYZudX0NBAJEf5slFo2TZMjW63XBfRQjPLwGwzq4NAK8QAFf
-         ulpHYlm8Da58BH8qaMda8o2qrA+fEz7cFF3QNlt+ooFI5pSFlzQNKwDmJYyMYoBaWwI5
-         jkIGCBEf9MwXgt2f8rKxALjcd+hV1REylRvpH/Lsm6/6Bs1vBOkvuYT2kAK9o2ZvhCN7
-         EcYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWFqBumniFcA2MOfP5PK9WtlSx6n6leFKQcnazRFtNVVsrn8eDUIYaiRWPjObPmYfc6NadlPFZheUo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6N9TGx5dAzrww32peh+asflYzUYLfYafcTCISDq6x3gpsOi7K
-	0qC3Dg2/CaozZblTOvqCVLPc5R+uKR7aMRccmneu5iq3MPAaXyrXtyqHKU1YYfgtr4rzZwUoPfy
-	C9jFIvijn7mDHB7Vg7gDR54b3cdM3NilmkwROAs678w==
-X-Gm-Gg: ATEYQzwgIx+rKvf4DYqE3T9v+QaAA78UN53I3lnCebA3TaSqJKgGnn0MRMX2F25k7e+
-	R+SZ0v7RUGZNKxMMwuOpA2o0GSIGlVpkixbf0tDWfbKlMDOKtXx0gU822tK/w4Y3XLwN3McoeNu
-	cdF6cZm1uuD1ckvx4S5sFcdUs4qPWUMExXM0QNoXfa1VoXOW4SmA9R4PLH8K4y4BZrOYIzmtB5q
-	XGcC0s1GKvSvCMybqGlo2sa/44FEtzOIJHuZAqGKvPjHjuYs7gF2/wdfrgmLmLqWpxsJvWcOGSc
-	PkB7bzw=
-X-Received: by 2002:a05:6512:3405:b0:5a1:2ea2:3683 with SMTP id
- 2adb3069b0e04-5a156ddd92cmr2624715e87.44.1773326563685; Thu, 12 Mar 2026
- 07:42:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1773327866; x=1773932666;
+        h=user-agent:content-transfer-encoding:content-disposition
+         :mime-version:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5yubfebbZtWGWMyXAz+IUlEnaVFuppBxaYt4/00Rob0=;
+        b=pQfAWNBIIjDo06BJCDZmn9ekPU1yb3WX19pvMkpRMKXXhyck6BjYP11C9cCjyL3BD+
+         jwpDiIKjumqvVji9xHXN48lpxJVnEQJdRfkc1R53AtRFDQn3e2/d3wVlhtjF/UTKrpmx
+         fQuEYJZKsDm3YZGyHTEtqyyqzt+aybKhalrV2sh6AlJP8kUgvxFF4Ir0PbBleH6uJ602
+         0sRNIAGwE4sMKPCRXgA4sNYZ33YYUFNhFQqKvx8NdDRicbA9ZPfVC9MPix45jXU6bOcF
+         0PA8ENndPN/X71IssHg8THnSdeZnEePfFmv6DeTdsp+owdVpHe75Iug+qfBw2kWU/cka
+         YTgQ==
+X-Gm-Message-State: AOJu0Yxssai3XoeH4UsIIO5OT6XaHETOEemFkH5ldFP64ENSDPWC9TCt
+	P8gvwDHGfB3T2aloghweNfs9AarzPMlZx3KEGVSIix86aMF8vrJZzMcIBIlt/EdvW2GlE6fPlq5
+	cmVIJRcQOzYw9lvp2hdMzprCxkTOcWZT/CpX1Dhj5J/uaX21FCgsVmgX70BNxKw==
+X-Gm-Gg: ATEYQzzlavLwitjzCeJTnRZD/GALxpJki7nU1ibtxa6AgRdvN+E8jSeQ23bejMeW09F
+	twyAixuAvhVNfnzzHVIYDytvGUhVDV8A3soJwyZRBWJbyz0ROGmy+woH98T5oK54MU6x3QYwYJE
+	Ok0+mn6q85MBFGq0NAFipD0GfjWp4Rd8KWcoeP/OwMSjdX2xzsvSv/uy3Ly12/pdcko+y2wCJjS
+	BMiO6DYUmWzokEKVJWji6rwjebWQq48UqcRcWsODc3nPz9c3KYxxmix/IlhUkcgZKsdpZQOImw9
+	xh4a10BBc2dWEKkyNgWVCEye32DkqmBd0mRNCx8EuhFf2J0jZA+UBFmKSGKY+sqB2EQ/I9qNok6
+	zircVVNkA4M46jrMyzAZGKW1/SJrDdg9glRAmNJxMFcn2okmpD3+VwH1W
+X-Received: by 2002:a05:6830:82fa:b0:7cf:d189:2a8b with SMTP id 46e09a7af769-7d76a6299d4mr4075502a34.2.1773327865588;
+        Thu, 12 Mar 2026 08:04:25 -0700 (PDT)
+X-Received: by 2002:a05:6830:82fa:b0:7cf:d189:2a8b with SMTP id 46e09a7af769-7d76a6299d4mr4075408a34.2.1773327864586;
+        Thu, 12 Mar 2026 08:04:24 -0700 (PDT)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-89a65d17023sm36581046d6.49.2026.03.12.08.04.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Mar 2026 08:04:23 -0700 (PDT)
+Date: Thu, 12 Mar 2026 11:04:22 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Ben Dooks <ben.dooks@codethink.co.uk>,
+	Chen-Yu Tsai <wenst@chromium.org>, Felix Gu <ustc.gu@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	=?iso-8859-1?Q?J=2E_Neusch=E4fer?= <j.ne@posteo.net>,
+	Maxime Ripard <mripard@kernel.org>,
+	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>
+Subject: [GIT PULL] clk: round one of improvements for v7.1
+Message-ID: <abLV9vjYxXsKciHW@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260210053708.17239-1-aford173@gmail.com> <CAPDyKFrsMY8q+rvrbOdppYnefX6TA1-EhF+e+pGG6k49KpeTRA@mail.gmail.com>
- <7fd891b7-b1ff-4668-ac99-8f8ac244d90c@collabora.com> <CAPDyKFqbS+PUkLXkjoHjbiVFCYM4FxQeHdJk_LVVfLA5nGEZ-A@mail.gmail.com>
- <108e6fad-401c-427a-bc30-8ddd00bd93a5@collabora.com>
-In-Reply-To: <108e6fad-401c-427a-bc30-8ddd00bd93a5@collabora.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 12 Mar 2026 15:42:07 +0100
-X-Gm-Features: AaiRm53Syf4tONBWunUd9bjmXw_xdyFjtpRQ2mt1ntlqT4z8S3DYLkSeLVjeLKo
-Message-ID: <CAPDyKFoY+pdSh-h_=Ko9L7QaFo4V4iA2_A0jA3BfnuKmiCyzCA@mail.gmail.com>
-Subject: Re: [PATCH 1/5] pmdomain: mediatek: Fix power domain count
-To: Adam Ford <aford173@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-mediatek@lists.infradead.org, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Laura Nao <laura.nao@collabora.com>, 
-	=?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On Thu, 12 Mar 2026 at 13:46, AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
->
-> Il 11/03/26 18:29, Ulf Hansson ha scritto:
-> > On Fri, 6 Mar 2026 at 10:50, AngeloGioacchino Del Regno
-> > <angelogioacchino.delregno@collabora.com> wrote:
-> >>
-> >> Il 12/02/26 12:34, Ulf Hansson ha scritto:
-> >>> On Tue, 10 Feb 2026 at 06:40, Adam Ford <aford173@gmail.com> wrote:
-> >>>>
-> >>>> The wrong value of the number of domains is wrong which leads to
-> >>>> failures when trying to enumerate nested power domains.
-> >>>>
-> >>>>    PM: genpd_xlate_onecell: invalid domain index 0
-> >>>>    PM: genpd_xlate_onecell: invalid domain index 1
-> >>>>    PM: genpd_xlate_onecell: invalid domain index 3
-> >>>>    PM: genpd_xlate_onecell: invalid domain index 4
-> >>>>    PM: genpd_xlate_onecell: invalid domain index 5
-> >>>>    PM: genpd_xlate_onecell: invalid domain index 13
-> >>>>    PM: genpd_xlate_onecell: invalid domain index 14
-> >>>>
-> >>>> Attempts to use these power domains fail, so fix this by
-> >>>> using the correct value of calculated power domains.
-> >>>>
-> >>>> Signed-off-by: Adam Ford <aford173@gmail.com>
-> >>>
-> >>> We should have a fixes tag for this too I think:
-> >>>
-> >>> Fixes: 88914db077b6 ("pmdomain: mediatek: Add support for Hardware
-> >>> Voter power domains")
-> >>>
-> >>>
-> >>>> ---
-> >>>>    drivers/pmdomain/mediatek/mtk-pm-domains.c | 2 +-
-> >>>>    1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>>
-> >>>> diff --git a/drivers/pmdomain/mediatek/mtk-pm-domains.c b/drivers/pmdomain/mediatek/mtk-pm-domains.c
-> >>>> index 58648f4f689b..d2b8d0332951 100644
-> >>>> --- a/drivers/pmdomain/mediatek/mtk-pm-domains.c
-> >>>> +++ b/drivers/pmdomain/mediatek/mtk-pm-domains.c
-> >>>> @@ -1228,7 +1228,7 @@ static int scpsys_probe(struct platform_device *pdev)
-> >>>>           scpsys->soc_data = soc;
-> >>>>
-> >>>>           scpsys->pd_data.domains = scpsys->domains;
-> >>>> -       scpsys->pd_data.num_domains = soc->num_domains;
-> >>>> +       scpsys->pd_data.num_domains = num_domains;
-> >>>
-> >>> Not sure this is the complete fix, as scpsys_add_one_domain() seems to
-> >>> be using the wrong value of "num_domains" too, no?
-> >>>
-> >>
-> >> No, scpsys_add_one_domain() uses num_domains from the soc_data for DIRECT_CTL,
-> >> which is expected. Maybe that can be improved, but it's how it is supposed to work.
-> >>
-> >> So yeah, this patch is resolving an issue, and it is a complete fix.
-> >
-> > I had a closer look and unfortunately, it still looks weird to me.
-> >
-> > More precisely, we are allocating and registering a number of genpds,
-> > that corresponds to the sum of "soc->num_domains +
-> > soc->num_hwv_domains". The index each genpd gets in the array (struct
-> > genpd_onecell_data) must correspond to the index specified in DT, for
-> > both a consumer-node and a child-domain-node, right?
-> >
-> > It seems like adding them dynamically changes the index. In other
-> > words, the index specified using the "reg" property in a
-> > child-domain-node, may not match what a consumer-node should specify
-> > in its "power-domains" property. Isn't that a problem? Perhaps not,
-> > because we never have both "scpsys_domain_data" and
-> > "scpsys_hwv_domain_data", but then why are we adding them in ->probe()
-> > with "soc->num_domains + soc->num_hwv_domains"?
-> >
->
-> As you understood, having both is not really supported right now, and the
-> intention there was to have the flexibility to do so without restructuring
-> the entire thing in the future.
+Hi Stephen,
 
-Thanks for clarifying!
+Here's a pull for some fixes and improvements for the clk subsystem
+that's been posted over the last month. Details are in the signed git
+tag. I didn't include any new drivers, or changes where it looks like
+there is a submaintainer that typically sends you a pull separately.
 
-Although, having both seems problematic for the reasons I pointed out
-above. At least, it looks like some more re-work will be needed to
-support that case.
 
->
-> Though, from what I understand, the confusion comes from a single line (and
-> reading it again, I do agree, because I got confused myself for a moment as
-> well, and I'm the one who wrote this, so that's bad bad bad):
->
->         num_domains = soc->num_domains + soc->num_hwv_domains;
->
-> where, to avoid confusion, this should've been:
->
->         num_domains = soc->num_domains ?
->                       soc->num_domains : soc->num_hwv_domains;
+The following changes since commit 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f:
 
-Agreed.
+  Linux 7.0-rc1 (2026-02-22 13:18:59 -0800)
 
->
-> (perhaps with a check `if (num_domains && num_hwv_domains) dev_err(only one
->   supported)` but being this taken from hardcoded data, I'm not really for it)
+are available in the Git repository at:
 
-Agreed, a print would be superfluous.
+  https://github.com/masneyb/linux tags/clk-for-stephen-round-1-v7.1
 
->
-> ...and still, like the proposed fix does:
->
->         scpsys->pd_data.num_domains = num_domains;
->
->
-> While I agree, again, in that the code could be improved (and it shall be),
-> how the logic behaves, right now, with the proposed fix, still looks good to me.
+for you to fetch changes up to 5e31ef47fa888c9ce117a85bff6a7df26cb2c337:
 
-Okay, I'm queuing the $subject patch as a fix and by adding a stable/fixes-tag.
+  clk: scmi: Add i.MX95 OEM extension support for SCMI clock driver (2026-03-12 09:45:03 -0400)
 
->
-> I can eventually just send a patch that clarifies the `num_domains` if you prefer.
+----------------------------------------------------------------
+Improvements to the clk core
 
-Well, actually, I would suggest splitting the driver into two drivers
-(each handling its own type of match data) and adding some shared
-helper functions, that both drivers can use.
+- Add support for clk spread spectrum, which reduces electromagnetic
+  interference (EMI) by modulating the clk frequency a small amount to
+  spread the energy across a wider bandwidth. The SCMI clk driver uses
+  this new functionality. (Peng Fan)
 
-It's more work, but we should end up with more maintainable code, I think.
+- Introduced the CLK_ROUNDING_NOOP flag, which is for the case where the
+  determine_rate op is an empty function. This typically occurs when
+  rounding is managed by firmware or the clock is capable of any rate.
+  Nine clk drivers were updated to use this new flag: rp1, scpi,
+  hisilicon/hi3660-stub, imx/clk-scu, qcom/clk-rpm, qcom/clk-rpmh,
+  qcom/clk-smd-rpm, samsung/clk-acpm, sprd/pll. (Brian Masney)
 
-What do you think?
+- Added kernel docs for all members of struct clk_core. (Brian Masney)
 
-[...]
+- Simplify clk_is_match() and improve readability. (Geert Uytterhoeven)
 
-Kind regards
-Uffe
+Remove deprecated APIs (all Brian Masney)
+
+- Converts clk-composite from round_rate() to determine_rate().
+
+- Removes the round_rate() clk op.
+
+- Removes the deprecated functions divider_round_rate(),
+  divider_round_rate_parent(), and divider_ro_round_rate_parent() since
+  these are just wrappers for the corresponding determine_rate variant.
+
+KUnit Tests
+
+- Add tests for clk lookup by name. (Chen-Yu Tsai)
+
+- Introduced kunit tests for spread spectrum. (Peng Fan)
+
+- Minor cleanup to use HZ_PER_MHZ. (Brian Masney)
+
+Driver-specific updates not listed above
+
+- The SCMI driver gained support for OEM extensions. (Peng Fan)
+
+- Dropped the baikal-t1 SoC that will not be finalized / supported.
+  (Andy Shevchenko)
+
+- Minor bug fixes / cleanups to various drivers across the clk tree:
+  aspeed/ast2700 (Felix Gu), x86/lpss-atom (Andy Shevchenko),
+  hisilicon/reset (Shawn Guo), hisilicon (J. Neuschäfer), xgene (Geert
+  Uytterhoeven), mvebu/armada-37xx-periph (Ben Dooks), imx/scu (Brian
+  Masney).
+
+----------------------------------------------------------------
+Andy Shevchenko (4):
+      clk: baikal-t1: Remove not-going-to-be-supported code for Baikal SoC
+      clk: x86: lpss-atom: Use predefined constants from units.h
+      clk: x86: lpss-atom: Use temporary variable for struct device
+      clk: x86: lpss-atom: Read frequency from the property
+
+Ben Dooks (1):
+      clk: mvebu: armada-37xx-periph: fix __iomem casts in structure init
+
+Brian Masney (19):
+      clk: test: remove references to clk_ops.round_rate
+      clk: composite: convert from round_rate() to determine_rate()
+      clk: remove round_rate() clk ops
+      clk: divider: remove divider_ro_round_rate_parent()
+      clk: divider: remove divider_round_rate() and divider_round_rate_parent()
+      clk: add kernel docs for struct clk_core
+      clk: test: convert constants to use HZ_PER_MHZ
+      clk: add new flag CLK_ROUNDING_NOOP
+      clk: test: add test suite for CLK_ROUNDING_NOOP flag
+      clk: rp1: drop determine_rate op and use CLK_ROUNDING_NOOP flag
+      clk: scpi: drop determine_rate op and use CLK_ROUNDING_NOOP flag
+      clk: hisilicon: hi3660-stub: drop determine_rate op and use CLK_ROUNDING_NOOP flag
+      clk: imx: scu: drop redundant init.ops variable assignment
+      clk: imx: scu: drop determine_rate op and use CLK_ROUNDING_NOOP flag
+      clk: qcom: rpm: drop determine_rate op and use CLK_ROUNDING_NOOP flag
+      clk: qcom: rpmh: drop determine_rate op and use CLK_ROUNDING_NOOP flag
+      clk: qcom: smd-rpm: drop determine_rate op and use CLK_ROUNDING_NOOP flag
+      clk: samsung: acpm: drop determine_rate op and use CLK_ROUNDING_NOOP flag
+      clk: sprd: drop determine_rate op and use CLK_ROUNDING_NOOP flag
+
+Chen-Yu Tsai (1):
+      clk: tests: Add tests for clk lookup by name
+
+Felix Gu (1):
+      clk: aspeed: ast2700: Add missing NULL pointer check for devm_kasprintf()
+
+Geert Uytterhoeven (2):
+      clk: Simplify clk_is_match()
+      clk: xgene: Fix mapping leak in xgene_pllclk_init()
+
+J. Neuschäfer (1):
+      clk: hisilicon: Improve deallocation in error path
+
+Peng Fan (6):
+      dt-bindings: clock: Add spread spectrum definition
+      clk: Introduce clk_hw_set_spread_spectrum
+      clk: conf: Support assigned-clock-sscs
+      clk: Add KUnit tests for assigned-clock-sscs
+      clk: scmi: Introduce common header for SCMI clock interface
+      clk: scmi: Add i.MX95 OEM extension support for SCMI clock driver
+
+Shawn Guo (1):
+      clk: hisilicon: reset: Use kzalloc instead of kmalloc
+
+ .../bindings/clock/baikal,bt1-ccu-div.yaml         | 196 -------
+ .../bindings/clock/baikal,bt1-ccu-pll.yaml         | 131 -----
+ Documentation/driver-api/clk.rst                   |   9 +-
+ drivers/clk/Kconfig                                |   1 -
+ drivers/clk/Makefile                               |   9 +-
+ drivers/clk/aspeed/clk-ast2700.c                   |   2 +
+ drivers/clk/baikal-t1/Kconfig                      |  52 --
+ drivers/clk/baikal-t1/Makefile                     |   4 -
+ drivers/clk/baikal-t1/ccu-div.c                    | 653 ---------------------
+ drivers/clk/baikal-t1/ccu-div.h                    | 121 ----
+ drivers/clk/baikal-t1/ccu-pll.c                    | 560 ------------------
+ drivers/clk/baikal-t1/ccu-pll.h                    |  72 ---
+ drivers/clk/baikal-t1/ccu-rst.c                    | 217 -------
+ drivers/clk/baikal-t1/ccu-rst.h                    |  67 ---
+ drivers/clk/baikal-t1/clk-ccu-div.c                | 520 ----------------
+ drivers/clk/baikal-t1/clk-ccu-pll.c                | 277 ---------
+ drivers/clk/clk-composite.c                        |  38 +-
+ drivers/clk/clk-conf.c                             |  76 +++
+ drivers/clk/clk-divider.c                          |  44 --
+ drivers/clk/clk-rp1.c                              |  11 +-
+ drivers/clk/clk-scmi-oem.c                         | 108 ++++
+ drivers/clk/clk-scmi.c                             |  44 +-
+ drivers/clk/clk-scmi.h                             |  51 ++
+ drivers/clk/clk-scpi.c                             |  14 +-
+ drivers/clk/clk-xgene.c                            |   2 +
+ drivers/clk/clk.c                                  | 177 +++++-
+ drivers/clk/clk.h                                  |   4 +
+ drivers/clk/clk_test.c                             | 297 +++++++++-
+ drivers/clk/hisilicon/clk-hi3660-stub.c            |  14 +-
+ drivers/clk/hisilicon/clk.c                        |   4 +-
+ drivers/clk/hisilicon/reset.c                      |   2 +-
+ drivers/clk/imx/clk-scu.c                          |  23 +-
+ drivers/clk/kunit_clk_assigned_rates.h             |  10 +
+ drivers/clk/kunit_clk_assigned_rates_multiple.dtso |   6 +
+ ...kunit_clk_assigned_rates_multiple_consumer.dtso |   6 +
+ drivers/clk/kunit_clk_assigned_rates_one.dtso      |   3 +
+ .../clk/kunit_clk_assigned_rates_one_consumer.dtso |   3 +
+ .../clk/kunit_clk_assigned_rates_u64_multiple.dtso |   6 +
+ ...t_clk_assigned_rates_u64_multiple_consumer.dtso |   6 +
+ drivers/clk/kunit_clk_assigned_rates_u64_one.dtso  |   3 +
+ .../kunit_clk_assigned_rates_u64_one_consumer.dtso |   3 +
+ drivers/clk/kunit_clk_assigned_sscs_null.dtso      |  16 +
+ .../clk/kunit_clk_assigned_sscs_null_consumer.dtso |  20 +
+ drivers/clk/kunit_clk_assigned_sscs_without.dtso   |  15 +
+ .../kunit_clk_assigned_sscs_without_consumer.dtso  |  19 +
+ drivers/clk/kunit_clk_assigned_sscs_zero.dtso      |  12 +
+ .../clk/kunit_clk_assigned_sscs_zero_consumer.dtso |  16 +
+ drivers/clk/mvebu/armada-37xx-periph.c             |  16 +-
+ drivers/clk/qcom/clk-rpm.c                         |  16 +-
+ drivers/clk/qcom/clk-rpmh.c                        |   8 +-
+ drivers/clk/qcom/clk-smd-rpm.c                     |  15 +-
+ drivers/clk/samsung/clk-acpm.c                     |  14 +-
+ drivers/clk/sprd/pll.c                             |   7 -
+ drivers/clk/sprd/pll.h                             |   2 +-
+ drivers/clk/x86/clk-lpss-atom.c                    |  22 +-
+ include/dt-bindings/clock/bt1-ccu.h                |  48 --
+ include/dt-bindings/clock/clock.h                  |  14 +
+ include/linux/clk-provider.h                       |  79 ++-
+ 58 files changed, 943 insertions(+), 3242 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/baikal,bt1-ccu-div.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/baikal,bt1-ccu-pll.yaml
+ delete mode 100644 drivers/clk/baikal-t1/Kconfig
+ delete mode 100644 drivers/clk/baikal-t1/Makefile
+ delete mode 100644 drivers/clk/baikal-t1/ccu-div.c
+ delete mode 100644 drivers/clk/baikal-t1/ccu-div.h
+ delete mode 100644 drivers/clk/baikal-t1/ccu-pll.c
+ delete mode 100644 drivers/clk/baikal-t1/ccu-pll.h
+ delete mode 100644 drivers/clk/baikal-t1/ccu-rst.c
+ delete mode 100644 drivers/clk/baikal-t1/ccu-rst.h
+ delete mode 100644 drivers/clk/baikal-t1/clk-ccu-div.c
+ delete mode 100644 drivers/clk/baikal-t1/clk-ccu-pll.c
+ create mode 100644 drivers/clk/clk-scmi-oem.c
+ create mode 100644 drivers/clk/clk-scmi.h
+ create mode 100644 drivers/clk/kunit_clk_assigned_sscs_null.dtso
+ create mode 100644 drivers/clk/kunit_clk_assigned_sscs_null_consumer.dtso
+ create mode 100644 drivers/clk/kunit_clk_assigned_sscs_without.dtso
+ create mode 100644 drivers/clk/kunit_clk_assigned_sscs_without_consumer.dtso
+ create mode 100644 drivers/clk/kunit_clk_assigned_sscs_zero.dtso
+ create mode 100644 drivers/clk/kunit_clk_assigned_sscs_zero_consumer.dtso
+ delete mode 100644 include/dt-bindings/clock/bt1-ccu.h
+ create mode 100644 include/dt-bindings/clock/clock.h
+
