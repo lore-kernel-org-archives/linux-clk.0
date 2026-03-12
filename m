@@ -1,48 +1,48 @@
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717A235A3B9;
-	Thu, 12 Mar 2026 04:22:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5962D4A23;
+	Thu, 12 Mar 2026 04:22:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773289322; cv=none; b=U8b6APnEHXdXgJbV6IslQt3+hEJBtsq4+Zeq8AucIPfxQ+LZDNg6s4g8EYmdq9lw+EIWoa3JDgz9dAQVqO9veEf79h2Lou0ZZ6knM7QBcOCqyeRdT8MGCmPCuB98EYBWLxU6ylrNQfMl/9BJdTBgWtIlzKNXG5ZXCXLrArcs+80=
+	t=1773289342; cv=none; b=biPvasp+GqRCOMj1DoVbxu+TKSbFg6j71OrH4Hg84uLrV3FzaTzfJgprhzhOIoZ/8vR6KK5Q8GsPnmo9iZJTI5KPzuyqVwvrE557sfoxJddxbKUvO4tf+aPjqUiibnTEIdSqhd50gBDhkjvlDU7qAC6zIqfsMcOCVAkBoCq2LmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773289322; c=relaxed/simple;
-	bh=KhmIAgIkXR/FVGhINWVvBX+bl1GcxmHxs9BhpZObeTQ=;
+	s=arc-20240116; t=1773289342; c=relaxed/simple;
+	bh=PUYnKeKHUBCeKind9Npf1NIbjQzWI2oBFhL1pRGpyEw=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D/gs+HlHb113chR3zEfKlN40WTa6MAe1foCsRwLWQ9qbBBP8PiF/CiA/MPFiTWVcpI74L2PW6i5ict3h0VOg377qDktYRyhH+irhOLcc/mLjKSjKaeIzuMDVoyBg2oXcxZ+ufaILCbofTtd1UWcT1OjEFQmDlsM2COw3b4uiKQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=PeVlUOU9; arc=none smtp.client-ip=68.232.153.233
+	 MIME-Version:Content-Type; b=kjxltr8XHqbrcuOYjqc37CHM0io2PC786YR3d2tt9n4oxnQXHAlpNCRn+qb76jVFUYQ5ZrchdQ7DQ00ub+JqZ2+wOpbei8LV4DXNdarIjcA2lq91UDXyjA+EXv5HDc4Hcuf61ZmYi3kVOjZCcoM+TvdOVwK1rUfSQgKQfp8gyrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=yNQ+XmAo; arc=none smtp.client-ip=68.232.153.233
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="PeVlUOU9"
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="yNQ+XmAo"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1773289322; x=1804825322;
+  t=1773289340; x=1804825340;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=KhmIAgIkXR/FVGhINWVvBX+bl1GcxmHxs9BhpZObeTQ=;
-  b=PeVlUOU9fYaqafbay8M2AxwNWo6O6tyrn5kyKC0jsXnRmwKVz2RMyOun
-   Nm7Nyn84X/FmWw5+VJAc+NZID08DO/FtHSnf/uOp/FwOCE7o041GoNUAw
-   c32iYm9ev+/fz1/u/6XtQBtTz7JCMp8wKyEAq9rDUBcwZ2p1L3MFFj+Dg
-   LxMGX+ehaLTNXloWuwPAlUmkqopbAushPPABVcxmgnqaoQKG6lhjS8XX1
-   YoJCD1tUZ5af2jmtpC/D6w2yHhIzHn60+jcZa+d4tSY6OIgW3bnP946ft
-   jUCBwYpvcxzLhScGQIqj2wBUeJ442xxSEiUpH3Nxd/xVCEhFn02e1J0Ju
-   w==;
-X-CSE-ConnectionGUID: b4F98pPuQMeYoHXJAA3Q6w==
-X-CSE-MsgGUID: mp8RutGHQciMn0LqiiVDkQ==
+  bh=PUYnKeKHUBCeKind9Npf1NIbjQzWI2oBFhL1pRGpyEw=;
+  b=yNQ+XmAorypvnC+9wQ8Z8z7ZdOwgcYqpejk4N32O61pIQZRrI6TlOExL
+   6cnxVqt1xOSXUr1Rcyxq/vMRj+oi0GeBNu3oQfM6EaUZzSzvL65SBSS8d
+   GAhxzIQ2hBErxAChaE4VrsRw8i3SL+abiQSEMoshki3RJpXvjdDx2rcet
+   UbaQIPBhnLS2TAg4ydLiQhkFNjfHmm6OumzXWwdzGV7OxNbRvdBVhGOK9
+   ZlMc8fEfZ+Fhmhpc/uAgDYvF7SFaAxfXzrLhgYmMqNWF4yDkD+PZxLSR9
+   9KfTEU1SZG/+gltts6MqczVq5BY9yJkPwTEZyyLJgeIaYQH5bX4f3CYDX
+   Q==;
+X-CSE-ConnectionGUID: il7LFELGTMWBUr9DGihooA==
+X-CSE-MsgGUID: Cw+T+2u+Sv2qNM7MfPGmPw==
 X-IronPort-AV: E=Sophos;i="6.23,115,1770620400"; 
-   d="scan'208";a="285933284"
+   d="scan'208";a="54551562"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2026 21:22:01 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.87.151) by
- chn-vm-ex1.mchp-main.com (10.10.87.30) with Microsoft SMTP Server
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 11 Mar 2026 21:22:19 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.35; Wed, 11 Mar 2026 21:21:58 -0700
+ 15.1.2507.58; Wed, 11 Mar 2026 21:21:49 -0700
 Received: from che-lt-i67131.microchip.com (10.10.85.11) by
  chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Wed, 11 Mar 2026 21:21:49 -0700
+ 15.1.2507.58 via Frontend Transport; Wed, 11 Mar 2026 21:21:40 -0700
 From: Manikandan Muralidharan <manikandan.m@microchip.com>
 To: <alexandre.belloni@bootlin.com>, <Frank.Li@nxp.com>, <robh@kernel.org>,
 	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <nicolas.ferre@microchip.com>,
@@ -56,9 +56,9 @@ To: <alexandre.belloni@bootlin.com>, <Frank.Li@nxp.com>, <robh@kernel.org>,
 	<linux-clk@vger.kernel.org>
 CC: <manikandan.m@microchip.com>, Durai Manickam KR
 	<durai.manickamkr@microchip.com>
-Subject: [PATCH v3 5/5] ARM: configs: at91: sama7: add sama7d65 i3c-hci
-Date: Thu, 12 Mar 2026 09:50:56 +0530
-Message-ID: <20260312042056.309237-6-manikandan.m@microchip.com>
+Subject: [PATCH v3 4/5] ARM: dts: microchip: add I3C controller
+Date: Thu, 12 Mar 2026 09:50:55 +0530
+Message-ID: <20260312042056.309237-5-manikandan.m@microchip.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260312042056.309237-1-manikandan.m@microchip.com>
 References: <20260312042056.309237-1-manikandan.m@microchip.com>
@@ -73,28 +73,35 @@ Content-Type: text/plain
 
 From: Durai Manickam KR <durai.manickamkr@microchip.com>
 
-Enable the configs needed for I3C framework and microchip
-sama7d65 i3c-hci driver.
+Add I3C controller for sama7d65 SoC.
 
 Signed-off-by: Durai Manickam KR <durai.manickamkr@microchip.com>
 Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
 ---
- arch/arm/configs/sama7_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+Changes in v3:
+- Remove clock-names property as driver enables the clk in bulk
+---
+ arch/arm/boot/dts/microchip/sama7d65.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm/configs/sama7_defconfig b/arch/arm/configs/sama7_defconfig
-index e2ad9a05566f..a59b262e48e1 100644
---- a/arch/arm/configs/sama7_defconfig
-+++ b/arch/arm/configs/sama7_defconfig
-@@ -115,6 +115,8 @@ CONFIG_HW_RANDOM=y
- CONFIG_I2C=y
- CONFIG_I2C_CHARDEV=y
- CONFIG_I2C_AT91=y
-+CONFIG_I3C=y
-+CONFIG_MIPI_I3C_HCI=y
- CONFIG_SPI=y
- CONFIG_SPI_ATMEL=y
- CONFIG_SPI_ATMEL_QUADSPI=y
+diff --git a/arch/arm/boot/dts/microchip/sama7d65.dtsi b/arch/arm/boot/dts/microchip/sama7d65.dtsi
+index e21556f46384..f358aae3ec59 100644
+--- a/arch/arm/boot/dts/microchip/sama7d65.dtsi
++++ b/arch/arm/boot/dts/microchip/sama7d65.dtsi
+@@ -1015,5 +1015,13 @@ gic: interrupt-controller@e8c11000 {
+ 			#address-cells = <0>;
+ 			interrupt-controller;
+ 		};
++
++		i3c: i3c@e9000000 {
++			compatible = "microchip,sama7d65-i3c-hci";
++			reg = <0xe9000000 0x300>;
++			interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&pmc PMC_TYPE_PERIPHERAL 105>, <&pmc PMC_TYPE_GCK 105>;
++			status = "disabled";
++		};
+ 	};
+ };
 -- 
 2.25.1
 
