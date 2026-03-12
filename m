@@ -1,63 +1,63 @@
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75483402430
-	for <linux-clk@vger.kernel.org>; Thu, 12 Mar 2026 20:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 858AF402B8D
+	for <linux-clk@vger.kernel.org>; Thu, 12 Mar 2026 20:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773346033; cv=none; b=Y1tZsEKSzixI6l4NZ5ud4i954YaFoi8bNusdo7+BoQCMh6yVi+fl5tRxBXjr37rmuwW4lrv67RHkPAVEV+6v8zpQOPTs0/kPHNlGQMdB/H2AwR15m9HQLNhrBQ647Uf77zCUv3WrBsyi/hQSckeTBIHOdkZEQ/0Zm+zy2cxuOk8=
+	t=1773346035; cv=none; b=PeiJpFDfDHTAckyfal62wLlWdwgxtSnzI8JLcXtXqFodTgyFNrnSmfRe95EPLekE/szp9LxJP/zqh0W/KY8IDyeJSXny2q6Tunyrvbw77SsnZPiM+vLaQjc1Adt8IifPoBQfIeLwUOvKWeVxPT97EGhmvDOdeaaUxgNZtQVuy9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773346033; c=relaxed/simple;
-	bh=mkPn6azSc5sBdNjIBFEPFL6chM6v748TKJtFgSgI6eQ=;
+	s=arc-20240116; t=1773346035; c=relaxed/simple;
+	bh=CMNpkQG0OX1ZmIY4eNoRhc5pN1fKRttQ1DPPmQGZ5Ok=;
 	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
-	 References:Date:Message-Id; b=LfXSo3QzL691zGln1/n3ekuYcF6om0A/6KeJTffwppo3BTDG4L9YKUi7rkajUnmb3wkNQNbs3Mo1KoOFRE3P/c2I5VYL7X2XA+KEpTndskMcvvtqbwaQViARrskXLNMx+y/2FLf+tmTYt8dS79SFktPKU+ECUNGChMG/kMtPoNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=q2dicZ3S; arc=none smtp.client-ip=209.85.160.41
+	 References:Date:Message-Id; b=RvbKvORYRSoGYwXzBS3/D/kLA/c/rYnYu6vumdfd5i35EnDYK8B0vMi5qw2iHYmgvDkzKR+5xtKBqGmiuzzSK7F1oiwrq9G8cOfKeOwj8o2Lfl7nVMpkgWnlB2XMZBpmvmVwBGbrixCD+CSiaq97yfJVIUqf5a3GCc3vKD/A0ZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=mAm7PGQu; arc=none smtp.client-ip=209.85.167.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="q2dicZ3S"
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-40ee9b945d5so948186fac.0
-        for <linux-clk@vger.kernel.org>; Thu, 12 Mar 2026 13:07:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="mAm7PGQu"
+Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-464bba3a9easo1030943b6e.0
+        for <linux-clk@vger.kernel.org>; Thu, 12 Mar 2026 13:07:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1773346030; x=1773950830; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1773346032; x=1773950832; darn=vger.kernel.org;
         h=message-id:date:references:in-reply-to:cc:to:from:subject
          :content-transfer-encoding:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2pWby7tRTaFMLCxNO3vkJZ08S+rk6Df/iLShGmtlipk=;
-        b=q2dicZ3SnpIS4khOQpYl6JJsTkgwF/v8Tiyv5QrQWYES0Hp/od780CRaSel44Bpdd9
-         onKCoW/cyjl2cTrmfxnM/u8aEdTRWd7BrEe+uwxclSzBjHa+Av4bgrv9Lb0ezEQnBmom
-         QHQcouCrZgi9/OBimwLnWzyHUZ3juoVdN8myQKbqsNNa8+PPE5bO3/mKR+UQfQKqpVHx
-         rAdEHvXZINikjEUqVQFQgsKHxt1HaXUNDDEXAs3lQx9JHBvEPfaEhY7X0Xg+SV/sDnGc
-         eLg0jTbANl7prlenWHxeaSCBXxnSEG/qF5+/GkkQyk+nDQBlw2t4G0pJz8FTfzjM3K9P
-         ZVyg==
+        bh=TE8SfkVbVBBUM4eryiGIysgS23QgsEj7qFxF34WfEmM=;
+        b=mAm7PGQu766QLdcOkMPI+qUB5mZZPzXals0SwH6kB2P+4sWPgb87QZPSYPCL11TtpI
+         AX+rgqNIK1TeOHSn30zOXJNgxv7H6LXbfhriQjSY7sjIKP/beCMLNEOEPeYh1Vj6YLqG
+         Nu/X7Bwf2kOCIE4tslvrqPNVSSnpuR6dJgstefLiAihaLia32PeBJK0dhMbg85k9UxwR
+         ZxWYe5yLniCfvazFw3scVVby8X+aIJ3Gxof3H3eExroFRWiaSrYtaZ9hdmYXYEXrCJRB
+         /Pl+BeXF97DSlmpqrfgaAhIGgYWUjN/xWBkDSQ7I/LdNQubEovFcFEc2uZ96fp7VaXKs
+         oqhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773346030; x=1773950830;
+        d=1e100.net; s=20230601; t=1773346032; x=1773950832;
         h=message-id:date:references:in-reply-to:cc:to:from:subject
          :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=2pWby7tRTaFMLCxNO3vkJZ08S+rk6Df/iLShGmtlipk=;
-        b=cMH/XETsp/dXwFmn3y5yFBF7KS2Z7L2hXjR1/6Uzj5nnHip0JnD6L84oStQCwXPxoF
-         W4+wAmf0tnOhs06RpMBWlss36+5q4G7VjkcR6vrs74hQfUTk/Xx+1PEYxGbA1oysdIcA
-         51CKazN93Zrf52qXZn/wdzd80ca9O7sa4sxbhTzVAm+coDsFnLMszPgBM3EuFS5gQBB+
-         nNGcwreO6/d8yYnD+5WtGQvdujITshdoOQ8OROc+5/D68TltTCuyurN72z8Fv7Ac3S+M
-         y+yT89KzFDxD/yDOM3vOOhgcn8LnvtIi22xZ6u1aBpCSaMWDZnrS4aKCJWtIqKJZu82+
-         KtDw==
-X-Forwarded-Encrypted: i=1; AJvYcCVa9KSq4zZ9l6z5PfOoyAQuOI6xVmRm3gaovvaCW51MDk02mPSI8z8pXo4MR6E0J4sSLNBP3g7rXWc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxM3T3hDM4OrNW8PLGhv3D4SWNlMUtSDa5T7uHSrOXWSj0Zxb/e
-	0Mzcwa7Mf0bahuXRvUmla+3n3+sKV8KFC3IWnK6hbew+LeakscHfdxXW8kkr5dgCDX4=
-X-Gm-Gg: ATEYQzz0TUQJTEPnboVGhbaRvR1Wj4lCzWLJ2u5s5AC5a2dnThGzAbOPBlrw0zGecqm
-	7WqFkBph0FkPBb8Dux03VniS2DYfjd/en/+HvDf97az26xWXNmnXDUxe0wZ7y97oZQxYdlEEED8
-	N45uWFD9Ewivb+crj1IEs7uAyXCYx1ubb6ZFJwDi6UCCzwN7a85dkp7XwLoH5lfBg54h37dTh9P
-	+TV7CV/2DSgYmVQQ5mSvFsi+PYcdqqaiDh5/baav5ws4asCPqDDXo/iU1wQTd1qJQU9PSJMPqIh
-	DKFLnhmRdJRo5ZzNxUyTwi51jERMzzVD1LnRxZhQwjWzWR9P5N5qY80a8uwZFFfuua1eIx58vKl
-	Hr2MARMQ7JNdspAs70250Sfm9IIzDpRkM9GBs4yUjMjLBVJ9T/QDkEi2SQYqYYGsb+pUzsZvNmg
-	7dm7wxhkCzS4bg4ED0P10V48Gbh+gm
-X-Received: by 2002:a05:6870:a796:b0:3e8:8b6f:9d85 with SMTP id 586e51a60fabf-417b937d46cmr332682fac.29.1773346030308;
-        Thu, 12 Mar 2026 13:07:10 -0700 (PDT)
+        bh=TE8SfkVbVBBUM4eryiGIysgS23QgsEj7qFxF34WfEmM=;
+        b=Sr8D3WDB0uGxrkCK/Yv2Nql6q05nVIRuv7qM+yMa4ASSvqOnaC/Kxtc6HDo5ogDSBa
+         VfOqdDFYKD80NTGsxPjdRFAn/llolqKq+Zx9nC2xzObxFqlL2HPRtfSJBLzFrfNBYYLk
+         mrWy3Nk0Bl4QQMZh1MdGY0YBOuN/Ypx3sUNJAeP+vTtQ7rL03OZNjzUy189mc14QujFG
+         RE1uGK256qq2nZLIeoYq/w3KKcO4HexAEsX8emUOcCcAumDDCniZBManMKa39zqQOnwF
+         zFLvl5yHoevmvR5vXWHwYOZiLnwydlW5HCpaKhUZMxB+KkyXE2NfMkYMMHzRjKPW+Qfx
+         n1CA==
+X-Forwarded-Encrypted: i=1; AJvYcCVWFm0iw0bssVDGNwUsBMCZQWDgAoC5dRGVsz90tKLtgzyAUsHmkU2Fi4B02uKr6x7YvJ1NFTKJq9c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUVO0Jejh3yOeVnlp8MUNCg7GUgPBw+BKxV/5jyVdagk2c//cQ
+	84sxa0KxAtgzV3Yvmv060dOtBoNO/BLuuLFX05X6jBOGe39Tphjoe+S+VxxKJ+dC+M8=
+X-Gm-Gg: ATEYQzyIU98lgJIyaYSuvukX9irglNOsDEjTAbdKuBokqZWzMwemRsLheXvw2NvtiCH
+	Ngzlk8Ea2YVkpCdOtaAMSaaq1keCRTJAsTqrGWWCysyLCeFesoF5qrylYKbWQQTM3uWBshxJIHw
+	B0J6IVbLs8A8yu5OwMQDqCdomty95NYMeYNhJPJam48FF80tr1MWD+b6eDWUYy1A62NV6NQceqQ
+	jHOmdgVKvcbkXEGGrGBf+MtTFM6aMWspHy7UFWfvlel1ewNzBiKvoHCIVVXLYnSf3o33BhDKfAe
+	vP/wO/ae4LMriCtWYV21WB38v9OyFsx63laY3CkraxawHsCrnou5Sov9d+bS7WElKXrY2CmonuY
+	xfeIfZO9kwYCrWK7zrmc2a2CHB23YZjfQuBKr1lwgb9m79wmu6ZDTb4RK1EW0RwzUePP+ZY7Hm/
+	VRSSVhA//cg30XqFxWpiRS/G1kZVet3xzjeomOxU0=
+X-Received: by 2002:a05:6808:86a4:b0:467:2584:873f with SMTP id 5614622812f47-467575432eamr241621b6e.40.1773346032433;
+        Thu, 12 Mar 2026 13:07:12 -0700 (PDT)
 Received: from [127.0.1.1] ([2600:8803:e7e4:500:1f95:f82e:8747:8137])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-4177e6c7885sm5600081fac.17.2026.03.12.13.07.09
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-4177e6c7885sm5600081fac.17.2026.03.12.13.07.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Mar 2026 13:07:09 -0700 (PDT)
+        Thu, 12 Mar 2026 13:07:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -66,7 +66,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v6 03/18] clk: mediatek: Add MT8189 apmixedsys clock
+Subject: Re: [PATCH v6 15/18] clk: mediatek: Add MT8189 dispsys clock
  support
 From: David Lechner <dlechner@baylibre.com>
 To: "irving.ch.lin" <irving-ch.lin@mediatek.com>
@@ -84,79 +84,41 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
  netdev@vger.kernel.org, Project_Global_Chrome_Upstream_Group@mediatek.com, 
  Qiqi Wang <qiqi.wang@mediatek.com>, sirius.wang@mediatek.com, 
  vince-wl.liu@mediatek.com, jh.hsu@mediatek.com
-In-Reply-To: <20260309120512.3624804-4-irving-ch.lin@mediatek.com>
+In-Reply-To: <20260309120512.3624804-16-irving-ch.lin@mediatek.com>
 References: <20260309120512.3624804-1-irving-ch.lin@mediatek.com>
- <20260309120512.3624804-4-irving-ch.lin@mediatek.com>
+ <20260309120512.3624804-16-irving-ch.lin@mediatek.com>
 Date: Thu, 12 Mar 2026 15:06:36 -0500
-Message-Id: <177334599652.4124794.495599695131479130@freyr>
+Message-Id: <177334599652.4124794.12067751220383417571@freyr>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1679; i=dlechner@baylibre.com;
- h=from:subject:message-id; bh=mkPn6azSc5sBdNjIBFEPFL6chM6v748TKJtFgSgI6eQ=;
- b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBpsxzdMiMJbTxqXDno8lz7uKeJqq/XgEtUTcoAy
- ZhkKwBwxnOJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCabMc3QAKCRDCzCAB/wGP
- wFqcB/48FpvKpV3InEamRZjYBZWJ6fLi/SAwUkbGJyUmItM/vnWwftYkuxXm1sC369JhkJ6LTZ6
- YfgivaaIA/87e8AwAr90CJKmSjB91XqNMT4+0k8RYkN+77VvJcZ2apyV/geYv8E1R7u7nT8gr0m
- fsxRyDy7ZrMFdpc8ENod3K9Tt/ord3fYSSeyUQBCbbZUha8Gsrh4ptu2rpCErKtQ6Vigzdjiw1z
- o+eTFnGlkzvD7rcJLxm1Qp8UAeRgvqtYIFmydhZNYocG71l1fIEkKe+XDpvnBMkYyj3dW1+mP+Z
- 1SKiymojf8wZ+PdFx4HI3agvkAyfo/sl9yqVkSAZvBJAm859
+X-Developer-Signature: v=1; a=openpgp-sha256; l=622; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=CMNpkQG0OX1ZmIY4eNoRhc5pN1fKRttQ1DPPmQGZ5Ok=;
+ b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBpsxzklpGpUf/ZQQIyqz1DGbRxkAj3JX3gj9Fst
+ kHYKcWEcLiJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCabMc5AAKCRDCzCAB/wGP
+ wAB9B/0amsj5mtHGl7JwYJ4m/8bCDd5vMrY9EYIYFmV67HC/3VsGnfj1wPsBIVVvEBbRl+IhIIA
+ ZsVi+f/fEjvU6prplQZ/YZd8np1yTT1IWdeKgbGDDKpmhj+ay9gbv30oTZ7hntcUeH8jUMJrP/q
+ tZU8uftAxgDKfME+lIWGswpoBwlUSOzobxeouycG+WNAHOkJA6P9MGeEtvRIK+FKpHbvhe8km04
+ Ox8e94DXUVshX9UMS9lDnF5G0nMYaWHn1RibGjXUQ/s0dnAAbbdC5p20fdx+NRF7/D6TTyYAO4N
+ AauC6vpKcGuJ+POQeLop+wx9WdMiq97CgGUQthHxIRLRvwFx
 X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
  fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-On Mon, 09 Mar 2026 20:04:45 +0800, irving.ch.lin <irving-ch.lin@mediatek.com> wrote:
-> Add support for the MT8189 apmixedsys clock controller, which provides
-> PLLs generated from SoC 26m.
+On Mon, 09 Mar 2026 20:04:57 +0800, irving.ch.lin <irving-ch.lin@mediatek.com> wrote:
+> Add support for the MT8189 dispsys clock controller,
+> which provides clock gate control for display system.
 > 
 
 ...
 
-> +static int clk_mt8189_apmixed_probe(struct platform_device *pdev)
-> +{
-> +	int r;
-> +	struct clk_hw_onecell_data *clk_data;
-> +	struct device_node *node = pdev->dev.of_node;
-> +	const u8 *fhctl_node = "mediatek,mt8189-fhctl";
-> +
-> +	clk_data = mtk_alloc_clk_data(ARRAY_SIZE(apmixed_plls));
-> +	if (!clk_data)
-> +		return -ENOMEM;
-> +
-> +	fhctl_parse_dt(fhctl_node, pllfhs, ARRAY_SIZE(pllfhs));
-> +
-> +	r = mtk_clk_register_pllfhs(&pdev->dev, apmixed_plls, ARRAY_SIZE(apmixed_plls),
-> +				    pllfhs, ARRAY_SIZE(pllfhs), clk_data);
-> +	if (r)
-> +		goto free_apmixed_data;
-> +
-> +	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
-> +	if (r)
-> +		goto unregister_plls;
-> +
-> +	platform_set_drvdata(pdev, clk_data);
-> +
-> +	return 0;
-> +
-> +unregister_plls:
-> +	mtk_clk_unregister_plls(apmixed_plls, ARRAY_SIZE(apmixed_plls),
+> +	GATE_MM0(CLK_MMSYS_0_DISP_DVO, "mmsys_0_disp_dvo", "disp0_sel", 20),
+> +	GATE_MM0(CLK_MMSYS_0_DISP_DSI0, "mmsys_0_CLK0", "disp0_sel", 21),
 
-Should this be mtk_clk_unregister_pllfhs()?
+Why the random CAPS here? Seems like the name should be "mmsys_0_disp_dsi0"
+instead of "mmsys_0_CLK0".
 
-> +				clk_data);
-> +free_apmixed_data:
-> +	mtk_free_clk_data(clk_data);
-> +	return r;
-> +}
-> +
-> +static void clk_mt8189_apmixed_remove(struct platform_device *pdev)
-> +{
-> +	struct device_node *node = pdev->dev.of_node;
-> +	struct clk_hw_onecell_data *clk_data = platform_get_drvdata(pdev);
-> +
-> +	of_clk_del_provider(node);
-> +	mtk_clk_unregister_pllfhs(apmixed_plls, ARRAY_SIZE(apmixed_plls), pllfhs,
-> +				  ARRAY_SIZE(pllfhs), clk_data);
-> +	mtk_free_clk_data(clk_data);
-> +}
-> +
+> +	/* MM1 */
+> +	GATE_MM1(CLK_MMSYS_1_DISP_DSI0, "mmsys_1_CLK0", "dsi_occ_sel", 0),
+
+Similar case here.
 
 -- 
 David Lechner <dlechner@baylibre.com>
