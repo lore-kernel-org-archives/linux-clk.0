@@ -1,226 +1,154 @@
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4053B7B87
-	for <linux-clk@vger.kernel.org>; Thu, 12 Mar 2026 11:24:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE332D7DD7
+	for <linux-clk@vger.kernel.org>; Thu, 12 Mar 2026 12:25:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773314696; cv=none; b=aCnEBc7Lc02L+AwRb1p91pm6jN9CofITNrGwzywGk2tE8MSYsZlUVY6aKsr04NGZTI4Jqnj7A8p3sceTiesA7/vmAJCBZK4VfEimeleB5AUtk4YL2m9uEhcoEPLiN3TLglltTim0ynACUOTzrMu0FbFAlRhN75F3AbrCPDGdpUc=
+	t=1773318308; cv=none; b=UPs1qAk6XdvC/dSOH1QkUWX3CGAO3NmAaJlb/v/W5IyMas10IE31Z77bRBz+BzHHqxsJM4exs/HNAww4U0wjWf5F+u0EXL4ND39NCa80ZNs0+88mUrO7iCeTsA3jvmou/5Y8pyNflQ56wVECRcI/BeZgIkaYs9Xf4jmuRnPyHWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773314696; c=relaxed/simple;
-	bh=SHsUWsOET7NnIcPa0jYYlqLqNbSur5ziIMfCgbWbCrM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ol4JpCJU+eXFrZQx0i87vdhZz3LwTovCexAWN/gfQHNdWkZS0gRqSc/tO1wjuxzRwn05YqdpwBZGXzOyZeNP8g4xLzpJKppA32dMYN8wO0AvuFV6cHYjyzayvmSdsaY/OXSEkFwmnPK9cvGevZ+LSPADUplz0h9nYz5FhTxrwAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=oILVuSdh; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
+	s=arc-20240116; t=1773318308; c=relaxed/simple;
+	bh=9vax4mRv+ZIHx9WFJYIjJgbBCYugCcoMblax+rJ6408=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=om0ZrOURga8RxYwEh6ooVajdBfk7dAE9sH8Y3dkHQxUZ8bRMWdREljCxUb8D78dnB7vPRpFt0cVPOKvtl6rovfHx7fpI3uDclM56fGgbJ8WSpg4x2AoJv0e3d07x/nSogUoVjRG2PBherL/Yu8UNgwgLtBAMqQBQN76ysAhGa60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Lnd1Qlzm; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=bKAjitIK; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="oILVuSdh"
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
-	s=key1; t=1773314692;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oLUzWeEcNPzK2JN8Mrg4INR+pFs0gxDSLlWR+/wJ15k=;
-	b=oILVuSdhrgvJcsjqzi4KE/t0d6Jm7LKOudVqwAu8zyIf3a2VLHUpesausSf7eyYyA324SV
-	F3uGERqDjBOYunaYWk3fOOSg0XGqoRFCDPGgMpZzEGjRu2c3c8D/ju6Ubw6OIcpHEZi0S2
-	haNsyPJGyOsEIHUlTJhcK5fMnvmPlFn8mcS3jdIn5NJWZoHWyEswALXBtteeExg/LIHXuC
-	AbzzOfRyUug48xTtfJL3iK40b5DrtYfNftvLtZj9RjsRhjqsqCcvtnWS0i+/eUTazPwwA5
-	jNdkPOIM4Y3JiP0gOSpBXmoRvN5zPy6PzDhw0/qWzCN+ud5EmIKdgeMb7Npjuw==
-From: Val Packett <val@packett.cool>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Val Packett <val@packett.cool>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Maximilian Luz <luzmaximilian@gmail.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 11/11] clk: qcom: camcc-sc8180x: Refactor to use qcom_cc_driver_data
-Date: Thu, 12 Mar 2026 08:12:16 -0300
-Message-ID: <20260312112321.370983-12-val@packett.cool>
-In-Reply-To: <20260312112321.370983-1-val@packett.cool>
-References: <20260312112321.370983-1-val@packett.cool>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Lnd1Qlzm";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="bKAjitIK"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62CACpUg4025778
+	for <linux-clk@vger.kernel.org>; Thu, 12 Mar 2026 12:25:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=5JaLhYXw0RSXyl2gHloRFM3B
+	UgmsEhqsm6iB6g8egXM=; b=Lnd1QlzmusBjpLTIR+/GkEHqWSbl0XZt6swzheJX
+	IoYvkTyAEA5anKgktQqLxsOTcvDfH3pKLaV1qSoIw/Y3lVyfViQNZ0KlsJ/Tn60F
+	twGItt6651MgqmjmsaF6fALkQN5iXh0PYM2gRyH2i+zfsfQDxy3t0xRCnvCITUhZ
+	m8tVALhoJ45eLO6chu7NDrHElYCIeY1/SxCE7Q80UUDMV1qwlnqJDrCSJJB2x1MG
+	7iG1AZs0tJI8ZkaQmBi8SRsokuFCJgXPVapdP5PzQlrBFCmqTrS0t8kZ/OussV3A
+	nOxUCeOlswfnEhC9TgJYXYDicH6pwWkyIAe885Jsimd3iw==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cuh50t119-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Thu, 12 Mar 2026 12:25:07 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-8cd773dd409so130131885a.1
+        for <linux-clk@vger.kernel.org>; Thu, 12 Mar 2026 05:25:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1773318306; x=1773923106; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5JaLhYXw0RSXyl2gHloRFM3BUgmsEhqsm6iB6g8egXM=;
+        b=bKAjitIKVgTXV5VfxqqPVnkAY0Bw5d0+V+DJ2ufGeYvGm9rmyJ/HR0DfJE8j7YZRJM
+         5Pf3ZmwUjNiAuFG3gdLIB65D9rTb7EL/YkA/XguXh8VM99QUHZJFFIahxJuIEu/sQb5p
+         6CtwOFNyxGOnbpPgu5Q8T6hu+VzmJ4nWvDlBDvTUEL5eRzts8ZhzEB9jFDddyGTBBVK4
+         Ms0INgseVZ0N8KP3nfa91ZfxTDW+TUdLGuqsRvm+Ynv5G/x44bCjzFE+wpGhFYASC7gf
+         whx4Kx+WbEReFct/1JI6rjFGanAWsf8ocfapCyRkvB36bIy4WXtyWnSWqIidjFFMYsXd
+         iYeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773318306; x=1773923106;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5JaLhYXw0RSXyl2gHloRFM3BUgmsEhqsm6iB6g8egXM=;
+        b=dXmGYMof5JGc5Ok0AyzsM53GbtfL20c8FO77JIbJ0YV2juZ223GXAa0d+5My+UhV2U
+         o2bRU48JytP1BCZP2l+AUsci4OM7/eEPvwknSIHHGJm85T+L3RpkoqXSv+TvDsCnjbwX
+         6UdTGKUR/zSw6weRsmrf0EMULmf+ZbqOEwD7IrK1wmu69WyQx2B2Be8fcVBiWRzlEnSJ
+         zkR4F2FWOX2PzfGZlRtyq+71YjxO9qCmginZrqu4XZbC0m8czEGHN2FkAtq2IX8+L5Xr
+         pUu58V/JWt2X9UXRJTVLT/lrNJLdsTOTi8QojU1B5ukYmd6NLXGLLBcNK3biKD//KfMm
+         qFgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXaPF5HNc8x5armtqJTLtlzQxNwS99XJ0o1+JTwIdAkKuDCVWw6j2Jhfx6zyMtiYcOChdqzrIn8ufc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1k0KP9jdTE873k9uGrHxdEvl9NB3ihRyXX4Rn78VxQB0NkTkY
+	KHSws75dgWtpC5YaaE/LEz8qpW2QIIVyYO1P4avCnIe5HzPaRDEvYMGC/1nqLdNC/HBq53s4mdw
+	Tj91Gn0qtnDw52VuUElmeNMK1ZmB4Mv1lqz7k+7mSXkAS2BuWFGKftjFrwXVrkgVaANXZg2c=
+X-Gm-Gg: ATEYQzxeUs5BZP+wjzs1HJj/mPfGB3zh+aKOdu1AY1tGtnjTIIJzBVLPWM/qPVlvgxB
+	xJqbPF3AHF3XDGa/7C8dMtmw83ZaqyHLqeyeOANOZupDBw5R+h5+OkMEI4mU8aZXKRwgw+428oJ
+	XFLEBO+cSNtQ4l5yzPIDy+UenKxsuZ0yQ+hc1/aWLInmFCvwR5obmijv+iZHJYBBvoQIiqb62LZ
+	/yroJ0sHNARQ20YEbqnjtUoRmxpilKBLvFXn6NjxIhK2PCDKP6oxU0b/lg2NF7PYegiuIQ4og7u
+	3/JfqwIRJfn9fUd7uRBcEHT/0zeF3wwf9VbKfzxE2ycgG1KJnf52aRMy18nIICKsPocm6zb2o8O
+	4P1i+5Bp1AUrbVvmVHCFkPwLsEP5MFfdC+w==
+X-Received: by 2002:a05:620a:1a08:b0:8cd:8f04:50df with SMTP id af79cd13be357-8cda19360fdmr759623185a.12.1773318305769;
+        Thu, 12 Mar 2026 05:25:05 -0700 (PDT)
+X-Received: by 2002:a05:620a:1a08:b0:8cd:8f04:50df with SMTP id af79cd13be357-8cda19360fdmr759617985a.12.1773318305164;
+        Thu, 12 Mar 2026 05:25:05 -0700 (PDT)
+Received: from oss.qualcomm.com ([82.79.95.133])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43a03cfd18fsm1048144f8f.36.2026.03.12.05.24.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Mar 2026 05:24:58 -0700 (PDT)
+Date: Thu, 12 Mar 2026 14:24:35 +0200
+From: Abel Vesa <abel.vesa@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Luca Weiss <luca.weiss@fairphone.com>,
+        Taniya Das <taniya.das@oss.qualcomm.com>,
+        Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH RESEND v6 0/6] clk: qcom: Add support for basic
+ clocks providers on Eliza SoC
+Message-ID: <ermbzju56beeuah6u6ezvkeb22c3nriqmgnbaxivfczqpkswfr@bc4ukm4pbzls>
+References: <20260311-eliza-clocks-v6-0-453c4cf657a2@oss.qualcomm.com>
+ <177326259462.44574.3228852589174701354.b4-ty@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <177326259462.44574.3228852589174701354.b4-ty@kernel.org>
+X-Proofpoint-GUID: 61eMjZc7AlZQVyMAHFioUYhiTRBviUfq
+X-Authority-Analysis: v=2.4 cv=LvKfC3dc c=1 sm=1 tr=0 ts=69b2b0a3 cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=iKs3dpp2RB4k51ZqCjcyjQ==:17
+ a=kj9zAlcOel0A:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
+ a=o3WNsQfHC4QgS8L6BeUA:9 a=CjuIK1q_8ugA:10 a=NFOGd7dJGGMPyQGDc5-O:22
+X-Proofpoint-ORIG-GUID: 61eMjZc7AlZQVyMAHFioUYhiTRBviUfq
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzEyMDA5NyBTYWx0ZWRfX81QdjdLOjUQT
+ sc6kH98F4hihUzzQQm97qdYypf/z8zG90DjJS0L/cRrkeJtA5CNF49klKDoZ2sJMULQke84EuiY
+ D5CmbQvS6Dv2ikuYDQXHSZl/4E1xfK+R5A7+bHejuCImOasVcHJimzbz8BaqmeYc1zuTE7KZqLy
+ jVnr1+rR5P72DHVFtk+3cC+M2vU0wndx/cQ4bb/xJ6qRnVPgBoyUz/4F1huNr/UQYBTWXaVK1NT
+ /CRPLMkJUntvhCKUshkdZ1P/PB1ZQSmVKXjAXnK5Z5IEysEulB7s724u2o4TBz8T3E0qgtWJrb/
+ TyddPJEK0zkc9cCIu3PrGCB/zf5NZYNxP7ETCf8Qz9jnfoeK6vC1kV/TZHeLGLW1A/512CoOBfh
+ DqrE0i1aN65NwWsnS4HLeW1m9ZMkxCHTbE/SHVzwj1G5fnCkZ1nTADoASABmBwCm8eYqa7+UAe3
+ JELMR95tDCt90FkqmrA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-12_01,2026-03-12_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 bulkscore=0 malwarescore=0 adultscore=0 suspectscore=0
+ spamscore=0 priorityscore=1501 phishscore=0 lowpriorityscore=0
+ impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2603050001
+ definitions=main-2603120097
 
-Use a qcom_cc_driver_data struct instead of a long custom probe
-callback to align with modern qcom/gcc-*.c style.
+On 26-03-11 15:56:34, Bjorn Andersson wrote:
+> 
+> On Wed, 11 Mar 2026 16:46:30 +0200, Abel Vesa wrote:
+> > These are the bare minimum clock providers needed in order to
+> > be able to boot to shell and have the rootfs on UFS.
+> > 
+> > The multimedia-specific clock providers will come later on.
+> > 
+> > 
+> 
+> Applied, thanks!
+> 
+> [4/6] clk: qcom: rpmh: Add support for Eliza rpmh clocks
+>       commit: 76cbaa6557b1e685a268f08f892a35004bd4fdd2
+> [5/6] clk: qcom: Add support for Global clock controller on Eliza
+>       commit: 3d356ab4a1ec2d9b208f0d0020c79855097b1fc7
+> [6/6] clk: qcom: Add TCSR clock driver for Eliza
+>       commit: c69a586344758f0d9cf0526d2a4b14fb56941b10
 
-No functional change intended.
+Thanks!
 
-Signed-off-by: Val Packett <val@packett.cool>
----
- drivers/clk/qcom/camcc-sc8180x.c | 67 +++++++++++++++-----------------
- 1 file changed, 32 insertions(+), 35 deletions(-)
-
-diff --git a/drivers/clk/qcom/camcc-sc8180x.c b/drivers/clk/qcom/camcc-sc8180x.c
-index 67b2055bd212..bbd7add69cb0 100644
---- a/drivers/clk/qcom/camcc-sc8180x.c
-+++ b/drivers/clk/qcom/camcc-sc8180x.c
-@@ -7,7 +7,6 @@
- #include <linux/mod_devicetable.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
--#include <linux/pm_runtime.h>
- #include <linux/regmap.h>
- 
- #include <dt-bindings/clock/qcom,sc8180x-camcc.h>
-@@ -63,6 +62,7 @@ static const struct alpha_pll_config cam_cc_pll0_config = {
- 
- static struct clk_alpha_pll cam_cc_pll0 = {
- 	.offset = 0x0,
-+	.config = &cam_cc_pll0_config,
- 	.vco_table = trion_vco,
- 	.num_vco = ARRAY_SIZE(trion_vco),
- 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_TRION],
-@@ -138,6 +138,7 @@ static const struct alpha_pll_config cam_cc_pll1_config = {
- 
- static struct clk_alpha_pll cam_cc_pll1 = {
- 	.offset = 0x1000,
-+	.config = &cam_cc_pll1_config,
- 	.vco_table = trion_vco,
- 	.num_vco = ARRAY_SIZE(trion_vco),
- 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_TRION],
-@@ -167,6 +168,7 @@ static const struct alpha_pll_config cam_cc_pll2_config = {
- 
- static struct clk_alpha_pll cam_cc_pll2 = {
- 	.offset = 0x2000,
-+	.config = &cam_cc_pll2_config,
- 	.vco_table = regera_vco,
- 	.num_vco = ARRAY_SIZE(regera_vco),
- 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_REGERA],
-@@ -219,6 +221,7 @@ static const struct alpha_pll_config cam_cc_pll3_config = {
- 
- static struct clk_alpha_pll cam_cc_pll3 = {
- 	.offset = 0x3000,
-+	.config = &cam_cc_pll3_config,
- 	.vco_table = trion_vco,
- 	.num_vco = ARRAY_SIZE(trion_vco),
- 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_TRION],
-@@ -248,6 +251,7 @@ static const struct alpha_pll_config cam_cc_pll4_config = {
- 
- static struct clk_alpha_pll cam_cc_pll4 = {
- 	.offset = 0x4000,
-+	.config = &cam_cc_pll4_config,
- 	.vco_table = trion_vco,
- 	.num_vco = ARRAY_SIZE(trion_vco),
- 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_TRION],
-@@ -277,6 +281,7 @@ static const struct alpha_pll_config cam_cc_pll5_config = {
- 
- static struct clk_alpha_pll cam_cc_pll5 = {
- 	.offset = 0x4078,
-+	.config = &cam_cc_pll5_config,
- 	.vco_table = trion_vco,
- 	.num_vco = ARRAY_SIZE(trion_vco),
- 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_TRION],
-@@ -306,6 +311,7 @@ static const struct alpha_pll_config cam_cc_pll6_config = {
- 
- static struct clk_alpha_pll cam_cc_pll6 = {
- 	.offset = 0x40f0,
-+	.config = &cam_cc_pll6_config,
- 	.vco_table = trion_vco,
- 	.num_vco = ARRAY_SIZE(trion_vco),
- 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_TRION],
-@@ -2810,6 +2816,21 @@ static const struct qcom_reset_map cam_cc_sc8180x_resets[] = {
- 	[CAM_CC_MCLK7_BCR] = { 0x50e0 },
- };
- 
-+static struct clk_alpha_pll *cam_cc_sc8180x_plls[] = {
-+	&cam_cc_pll0,
-+	&cam_cc_pll1,
-+	&cam_cc_pll2,
-+	&cam_cc_pll3,
-+	&cam_cc_pll4,
-+	&cam_cc_pll5,
-+	&cam_cc_pll6,
-+};
-+
-+static u32 cam_cc_sc8180x_critical_cbcrs[] = {
-+	0xc1e4, /* CAM_CC_GDSC_CLK */
-+	0xc200, /* CAM_CC_SLEEP_CLK */
-+};
-+
- static const struct regmap_config cam_cc_sc8180x_regmap_config = {
- 	.reg_bits = 32,
- 	.reg_stride = 4,
-@@ -2818,6 +2839,13 @@ static const struct regmap_config cam_cc_sc8180x_regmap_config = {
- 	.fast_io = true,
- };
- 
-+static struct qcom_cc_driver_data cam_cc_sc8180x_driver_data = {
-+	.alpha_plls = cam_cc_sc8180x_plls,
-+	.num_alpha_plls = ARRAY_SIZE(cam_cc_sc8180x_plls),
-+	.clk_cbcrs = cam_cc_sc8180x_critical_cbcrs,
-+	.num_clk_cbcrs = ARRAY_SIZE(cam_cc_sc8180x_critical_cbcrs),
-+};
-+
- static const struct qcom_cc_desc cam_cc_sc8180x_desc = {
- 	.config = &cam_cc_sc8180x_regmap_config,
- 	.clks = cam_cc_sc8180x_clocks,
-@@ -2826,6 +2854,8 @@ static const struct qcom_cc_desc cam_cc_sc8180x_desc = {
- 	.num_resets = ARRAY_SIZE(cam_cc_sc8180x_resets),
- 	.gdscs = cam_cc_sc8180x_gdscs,
- 	.num_gdscs = ARRAY_SIZE(cam_cc_sc8180x_gdscs),
-+	.use_rpm = true,
-+	.driver_data = &cam_cc_sc8180x_driver_data,
- };
- 
- static const struct of_device_id cam_cc_sc8180x_match_table[] = {
-@@ -2836,40 +2866,7 @@ MODULE_DEVICE_TABLE(of, cam_cc_sc8180x_match_table);
- 
- static int cam_cc_sc8180x_probe(struct platform_device *pdev)
- {
--	struct regmap *regmap;
--	int ret;
--
--	ret = devm_pm_runtime_enable(&pdev->dev);
--	if (ret)
--		return ret;
--
--	ret = pm_runtime_resume_and_get(&pdev->dev);
--	if (ret)
--		return ret;
--
--	regmap = qcom_cc_map(pdev, &cam_cc_sc8180x_desc);
--	if (IS_ERR(regmap)) {
--		pm_runtime_put(&pdev->dev);
--		return PTR_ERR(regmap);
--	}
--
--	clk_trion_pll_configure(&cam_cc_pll0, regmap, &cam_cc_pll0_config);
--	clk_trion_pll_configure(&cam_cc_pll1, regmap, &cam_cc_pll1_config);
--	clk_regera_pll_configure(&cam_cc_pll2, regmap, &cam_cc_pll2_config);
--	clk_trion_pll_configure(&cam_cc_pll3, regmap, &cam_cc_pll3_config);
--	clk_trion_pll_configure(&cam_cc_pll4, regmap, &cam_cc_pll4_config);
--	clk_trion_pll_configure(&cam_cc_pll5, regmap, &cam_cc_pll5_config);
--	clk_trion_pll_configure(&cam_cc_pll6, regmap, &cam_cc_pll6_config);
--
--	/* Keep some clocks always enabled */
--	qcom_branch_set_clk_en(regmap, 0xc1e4); /* CAM_CC_GDSC_CLK */
--	qcom_branch_set_clk_en(regmap, 0xc200); /* CAM_CC_SLEEP_CLK */
--
--	ret = qcom_cc_really_probe(&pdev->dev, &cam_cc_sc8180x_desc, regmap);
--
--	pm_runtime_put(&pdev->dev);
--
--	return ret;
-+	return qcom_cc_probe(pdev, &cam_cc_sc8180x_desc);
- }
- 
- static struct platform_driver cam_cc_sc8180x_driver = {
--- 
-2.52.0
-
+But without bindings ?
