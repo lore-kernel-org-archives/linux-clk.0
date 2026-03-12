@@ -1,48 +1,48 @@
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7182F390216;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717A235A3B9;
 	Thu, 12 Mar 2026 04:22:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773289322; cv=none; b=ACUKY7IwX6kahnOPgRsSfIDiwxHp4PR7XxTWq5DDzX4DokO89yPL9ZEe40gQzP3a2FHLGlSNC897LAKeCtfG++M0MhNZHOR0VnvIIeXNYs2shCGkl+D2gs2UdYcrBB5Qgt1wpx/eGL++slx3LAdFnRi4k1TVjJ/+O/qaao4OOXI=
+	t=1773289322; cv=none; b=U8b6APnEHXdXgJbV6IslQt3+hEJBtsq4+Zeq8AucIPfxQ+LZDNg6s4g8EYmdq9lw+EIWoa3JDgz9dAQVqO9veEf79h2Lou0ZZ6knM7QBcOCqyeRdT8MGCmPCuB98EYBWLxU6ylrNQfMl/9BJdTBgWtIlzKNXG5ZXCXLrArcs+80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1773289322; c=relaxed/simple;
-	bh=3wHXxRZW+3pyAHHF5bwYh0JQE5H6TZmyeNQhJB8UKIQ=;
+	bh=KhmIAgIkXR/FVGhINWVvBX+bl1GcxmHxs9BhpZObeTQ=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WEcU5IVe5nHrxgxixC90CMZvK7rjWLlhtxeqPwuhCmMGAObZ6HX17q3KN/vdteDh3rjOqI56Z7E6kNOZfRFV/90NGe++VKIJJs9tBDU97wAZI/c89goRK3+fNkfOI4xVPO6opzep0qYZZyst4zXmSbU1zcuSNY2hfv46DTFpiuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=hJpSuExt; arc=none smtp.client-ip=68.232.153.233
+	 MIME-Version:Content-Type; b=D/gs+HlHb113chR3zEfKlN40WTa6MAe1foCsRwLWQ9qbBBP8PiF/CiA/MPFiTWVcpI74L2PW6i5ict3h0VOg377qDktYRyhH+irhOLcc/mLjKSjKaeIzuMDVoyBg2oXcxZ+ufaILCbofTtd1UWcT1OjEFQmDlsM2COw3b4uiKQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=PeVlUOU9; arc=none smtp.client-ip=68.232.153.233
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="hJpSuExt"
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="PeVlUOU9"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1773289319; x=1804825319;
+  t=1773289322; x=1804825322;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=3wHXxRZW+3pyAHHF5bwYh0JQE5H6TZmyeNQhJB8UKIQ=;
-  b=hJpSuExt6+83pL1ed52Ui3fqXkszKLDadM6A3FeJO2fxNFw6/LXSL+ex
-   fl8yrMFyp3Bzo7qOk8hpxWDPBWYdv3vLCZd6S1emOyxJVN18plfNXvwe5
-   D8awTyFjOs8FbR57s+Xl3CHgBMfaWFjBfsn7TpfZkoavRros6GjyULqra
-   fXLP8NvdYNZ4oxHVJvq6U+57RyBzwj1IbQo2D5CnXSpXmZOxC0PnGm0FA
-   /h6siFZP2SfVZtMEpD3JRCduoKrfdW+ZTyiEbOzDGMbfD0RN+mGO749g6
-   InL0Fu0xTu+wEJORYFuNmFZ5v7Rz9bO+IQu5sBf1FF1FAJp1BEZ97LpC2
-   g==;
-X-CSE-ConnectionGUID: NZXECXbnSTC3akxw2a7kVQ==
-X-CSE-MsgGUID: n2UhO/M+TAONHhHV7VTwtw==
+  bh=KhmIAgIkXR/FVGhINWVvBX+bl1GcxmHxs9BhpZObeTQ=;
+  b=PeVlUOU9fYaqafbay8M2AxwNWo6O6tyrn5kyKC0jsXnRmwKVz2RMyOun
+   Nm7Nyn84X/FmWw5+VJAc+NZID08DO/FtHSnf/uOp/FwOCE7o041GoNUAw
+   c32iYm9ev+/fz1/u/6XtQBtTz7JCMp8wKyEAq9rDUBcwZ2p1L3MFFj+Dg
+   LxMGX+ehaLTNXloWuwPAlUmkqopbAushPPABVcxmgnqaoQKG6lhjS8XX1
+   YoJCD1tUZ5af2jmtpC/D6w2yHhIzHn60+jcZa+d4tSY6OIgW3bnP946ft
+   jUCBwYpvcxzLhScGQIqj2wBUeJ442xxSEiUpH3Nxd/xVCEhFn02e1J0Ju
+   w==;
+X-CSE-ConnectionGUID: b4F98pPuQMeYoHXJAA3Q6w==
+X-CSE-MsgGUID: mp8RutGHQciMn0LqiiVDkQ==
 X-IronPort-AV: E=Sophos;i="6.23,115,1770620400"; 
-   d="scan'208";a="62128084"
+   d="scan'208";a="285933284"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2026 21:21:58 -0700
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2026 21:22:01 -0700
 Received: from chn-vm-ex04.mchp-main.com (10.10.87.151) by
- chn-vm-ex4.mchp-main.com (10.10.87.33) with Microsoft SMTP Server
+ chn-vm-ex1.mchp-main.com (10.10.87.30) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.35; Wed, 11 Mar 2026 21:21:20 -0700
+ 15.2.2562.35; Wed, 11 Mar 2026 21:21:58 -0700
 Received: from che-lt-i67131.microchip.com (10.10.85.11) by
  chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Wed, 11 Mar 2026 21:21:11 -0700
+ 15.1.2507.58 via Frontend Transport; Wed, 11 Mar 2026 21:21:49 -0700
 From: Manikandan Muralidharan <manikandan.m@microchip.com>
 To: <alexandre.belloni@bootlin.com>, <Frank.Li@nxp.com>, <robh@kernel.org>,
 	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <nicolas.ferre@microchip.com>,
@@ -54,10 +54,11 @@ To: <alexandre.belloni@bootlin.com>, <Frank.Li@nxp.com>, <robh@kernel.org>,
 	<linux-i3c@lists.infradead.org>, <devicetree@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
 	<linux-clk@vger.kernel.org>
-CC: <manikandan.m@microchip.com>
-Subject: [PATCH v3 1/5] dt-bindings: i3c: mipi-i3c-hci: add Microchip SAMA7D65 compatible
-Date: Thu, 12 Mar 2026 09:50:52 +0530
-Message-ID: <20260312042056.309237-2-manikandan.m@microchip.com>
+CC: <manikandan.m@microchip.com>, Durai Manickam KR
+	<durai.manickamkr@microchip.com>
+Subject: [PATCH v3 5/5] ARM: configs: at91: sama7: add sama7d65 i3c-hci
+Date: Thu, 12 Mar 2026 09:50:56 +0530
+Message-ID: <20260312042056.309237-6-manikandan.m@microchip.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260312042056.309237-1-manikandan.m@microchip.com>
 References: <20260312042056.309237-1-manikandan.m@microchip.com>
@@ -70,63 +71,30 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-Add the microchip,sama7d65-i3c-hci compatible string to the MIPI I3C
-HCI binding. The Microchip SAMA7D65 I3C controller is based on the
-MIPI HCI specification but requires two clocks, so add a conditional
-constraint when this compatible is present.
+From: Durai Manickam KR <durai.manickamkr@microchip.com>
 
+Enable the configs needed for I3C framework and microchip
+sama7d65 i3c-hci driver.
+
+Signed-off-by: Durai Manickam KR <durai.manickamkr@microchip.com>
 Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
 ---
- .../devicetree/bindings/i3c/mipi-i3c-hci.yaml | 22 +++++++++++++++----
- 1 file changed, 18 insertions(+), 4 deletions(-)
+ arch/arm/configs/sama7_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/i3c/mipi-i3c-hci.yaml b/Documentation/devicetree/bindings/i3c/mipi-i3c-hci.yaml
-index 39bb1a1784c9..db659388a27d 100644
---- a/Documentation/devicetree/bindings/i3c/mipi-i3c-hci.yaml
-+++ b/Documentation/devicetree/bindings/i3c/mipi-i3c-hci.yaml
-@@ -9,9 +9,6 @@ title: MIPI I3C HCI
- maintainers:
-   - Nicolas Pitre <npitre@baylibre.com>
- 
--allOf:
--  - $ref: /schemas/i3c/i3c.yaml#
--
- description: |
-   MIPI I3C Host Controller Interface
- 
-@@ -28,7 +25,9 @@ description: |
- 
- properties:
-   compatible:
--    const: mipi-i3c-hci
-+    enum:
-+      - mipi-i3c-hci
-+      - microchip,sama7d65-i3c-hci
-   reg:
-     maxItems: 1
-   interrupts:
-@@ -39,6 +38,21 @@ required:
-   - reg
-   - interrupts
- 
-+allOf:
-+  - $ref: /schemas/i3c/i3c.yaml#
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: microchip,sama7d65-i3c-hci
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 2
-+          maxItems: 2
-+      required:
-+        - clocks
-+
- unevaluatedProperties: false
- 
- examples:
+diff --git a/arch/arm/configs/sama7_defconfig b/arch/arm/configs/sama7_defconfig
+index e2ad9a05566f..a59b262e48e1 100644
+--- a/arch/arm/configs/sama7_defconfig
++++ b/arch/arm/configs/sama7_defconfig
+@@ -115,6 +115,8 @@ CONFIG_HW_RANDOM=y
+ CONFIG_I2C=y
+ CONFIG_I2C_CHARDEV=y
+ CONFIG_I2C_AT91=y
++CONFIG_I3C=y
++CONFIG_MIPI_I3C_HCI=y
+ CONFIG_SPI=y
+ CONFIG_SPI_ATMEL=y
+ CONFIG_SPI_ATMEL_QUADSPI=y
 -- 
 2.25.1
 
