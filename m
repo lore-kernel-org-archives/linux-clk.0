@@ -1,231 +1,185 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1CB3C7DED
-	for <linux-clk@vger.kernel.org>; Fri, 13 Mar 2026 16:44:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3815C3CA4BE
+	for <linux-clk@vger.kernel.org>; Fri, 13 Mar 2026 16:54:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773420259; cv=none; b=BK0GpVj76kh25V5DZh1PkskGT+dxbXe5cPBF2X571CtAa+YbqWmtkdw8C+VEsjvwphC1v9Bai+GhV3DTv7xWkaZr/xH1ilvOImn7I8qoQrlJr7i0djYDf0bqHCbC2dl5LQER9w7ZWnvATF/SdKszGfG+P6lwUS+lmkXXC3PXyfY=
+	t=1773420888; cv=none; b=RHEy4+IWiBIuwM9ChjLWKaZJpSv0Urv2goeHHrMs2utdg95nw1XxwWs2CLVyHIZwSR9c7disAdjNiVrWOdq2vR3vomzqSbpUQNNVKE41P/3MhWRd/UdeLsUoDlbwsJ/Gnjg6Y99VdtevhW8l47sOt6mKXJepLGVIuGBSI8KuxTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773420259; c=relaxed/simple;
-	bh=h2KdQwSzIlZcDjCLpoMS0OLH1GkGmmRBcuj91M9nvrU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HJzBTdfLwxoo2rfNoJPRuRmCe/IUGOrWp65TzSEs+kKaTUdQWy+XkpI+Ou3b1Go5mnciZWOFwVBIzSjKKdgH93r8TLm+RmHQZIOaWFO2oAI0dIpmTsa8pM3jdpSBgs0uh+u4n6ut5ONibgVUtx8O44oRgN/Bef1uh2lZxXAqm6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h8XIm3aF; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wg011fjQ; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1773420888; c=relaxed/simple;
+	bh=MYqtvmPMBbkzVH2cDaVgumHB6+1nChu4X6wiV57iB6w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WE26Yto31SvDKp7V3XRkhSB6KEDvMNiCfLPI8bM5Nj3nTXxirPcdR1IEkc0njM6wOBFToJa0ex/89fqvg8diYbKwITBJrpgZdLM4prvLTNgbABbb2UNyGQ8tQEzt1svwlH2LkazIQu/GSkC/0q1rUwvmCeqYbVRdSpxQmdGrC0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fyHUVu4M; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=R+xuJulT; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h8XIm3aF";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wg011fjQ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fyHUVu4M";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="R+xuJulT"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1773420254;
+	s=mimecast20190719; t=1773420886;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=6l75RfWFOREmI8hEjvhwZVBHJLW9hVD1YjztskzN+WQ=;
-	b=h8XIm3aFNVl59bkf82DYI69pruyDV8lOZ3xMDduy02pf1nRw6Ctah9+SxAIhfT++xRVWmA
-	QoUkX/t2KBMzxr8fgBqltSInnC0uZjbZkMRal6fiUU4IfH6n8WVXn4dGrPn8rLpX6p1Hwo
-	RZGJEeHrnIiug6HtxChsY+pNW6Mv+4w=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=mqxWsYIPaTBPPrjermq+DtfpUjguE2xkVbOTdTjdzII=;
+	b=fyHUVu4MrGC9v131WWUqGCumhybap81RRWxYQzvvBfQV8hNaQvogc5DuwzlUhA50PhnS1r
+	ZToi3Iz/JyHOZzYYonakFtuoGqQ621g23/70UzqrtRPOm540/J5qvRnX4j0GtobDzVZlrj
+	SkbwJMV/yM6O5tNqKWOzVAL4FWFepbM=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-176-k2yAk5ASPWOFl8GO_qFzmw-1; Fri, 13 Mar 2026 12:44:13 -0400
-X-MC-Unique: k2yAk5ASPWOFl8GO_qFzmw-1
-X-Mimecast-MFC-AGG-ID: k2yAk5ASPWOFl8GO_qFzmw_1773420253
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8cb0595def4so1775036285a.0
-        for <linux-clk@vger.kernel.org>; Fri, 13 Mar 2026 09:44:13 -0700 (PDT)
+ us-mta-223-WNhIDrvQOK-h0fLERofQqA-1; Fri, 13 Mar 2026 12:54:42 -0400
+X-MC-Unique: WNhIDrvQOK-h0fLERofQqA-1
+X-Mimecast-MFC-AGG-ID: WNhIDrvQOK-h0fLERofQqA_1773420882
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-5090cc6a7d2so180387421cf.2
+        for <linux-clk@vger.kernel.org>; Fri, 13 Mar 2026 09:54:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1773420253; x=1774025053; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6l75RfWFOREmI8hEjvhwZVBHJLW9hVD1YjztskzN+WQ=;
-        b=Wg011fjQrkkXnAvnkZCa31+GhvcM6Cbtoti4jCiNUqKnKLSUCg6/whATLBJgJc+9g1
-         ANZ+yfmyjCD4hswVb+KeVbqb7R+Yt3aScxCcufecXLHkXEnPypdWy9Qmbrd15DYdA2/k
-         lhN++aIRwyXQ2zBhQNDCSvBUbL/eyXRGQwVmy9okOUC1lfeqlXuUQJbhf2eft86Y0STJ
-         VqCwiQP3SC0aHoMdBSg2ADkAcnXI713RbKjCFmgPxn7HS+gus/IaLYBDYVSIjYs3y0z2
-         8Fdq6N45VVIZp8TKldq7rS4iNyTGwxFuDLAaYAY16idV0Vvvyqz0jLt2M2uBMtKLWikK
-         xeMQ==
+        d=redhat.com; s=google; t=1773420882; x=1774025682; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mqxWsYIPaTBPPrjermq+DtfpUjguE2xkVbOTdTjdzII=;
+        b=R+xuJulTdn4NVCcS6LekFfD5KIiNQk0gPD+plDlLjhm372BUytkcDv7oinoWmOmzcn
+         Kaglql4V+pLjmSD1oPJILoXyS+1ey7+rUgueVnWxRNuI565XpEojHRHcwJWa9KQTBHyt
+         92sxI/sTPtsWFSuzMHSm22Hlv1n8vLPK2t3HohyDZMCdUwvfkzUIY4Q7hGa0+dBBDHcq
+         HMKjOlSlqjVvFV10rIP0SAbXFOVT2moFbjOwDk434Qpexf50+Wf95rgrgpqedHuApf8a
+         zoqaFysBcAGR9rxQ/od2jdjOgPqJDCKliiYvudqwMo4HdghjkNh12CfbvccmOkF3FLsA
+         TaSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773420253; x=1774025053;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=6l75RfWFOREmI8hEjvhwZVBHJLW9hVD1YjztskzN+WQ=;
-        b=lmQvafLRD1rPd2tWWXVXlNBAf1lqP18anE8PoTrEBL2/SYdq5ajILRetUriGkylnmh
-         TJlTXi+aIOJwhgzQvUTw77EuuGB0u4iypfmyOdUqD4RSwf5aojs/HClvGE6i44BTzEyc
-         D+nUYIKU6pvjoujJ4AOtgkay2h5qm74im8N7VYJtz1Z+u3BzqF2jsN9TzQOg3N32o6Si
-         4kLEuLfSm6EuYWTSqcE9wSe45vxFtdOY+zvPDXuifvwqbCmtZwTpmUi+C165c/AQzWhz
-         sXfaaPVCQWeMmUl/JOBdKHFiC9IEPIY7GUm6AkRXagXNfGFDu0Kf0suKMJUBr/uumJN0
-         3L5A==
-X-Gm-Message-State: AOJu0YzyILFrx57coMoGiBEr7VCEcGE46EDpsQOit+dAeuvxhY1r3WgK
-	nQreXmm1vk5Wwr04KE825qwyllFT3hB/O1RjmE3DVtcN5I8HsIw8mGypbZoXeC8H7cM+kGX1MzG
-	B0Td+Heqpq3HRaksaZ0yAXUycftwUGu8HxYnOb2xVkSwSO42sbT2+Ma/SdYKuTeG/hWCSDQ==
-X-Gm-Gg: ATEYQzxYr4r6GD1cw3dmXtVrHbCUF0JXKRVcb8l9AxhTuPOyovm4JwgvmxkwO4db7A0
-	15+h9w9pZaV66/JPe3QNpDvouBTxfIjPysUBvymR5KMpSG8Sm0qx5pnkYWpV/gr79L6eCuctRr0
-	G5KH9XbYb8mAHQU+j8SOhuCugI+dAZELxNoJVYhx+xxqdmmkT+TQahLknpbToGoYt7JDzbjq+Hv
-	7OIBTzeGhJaBN8/d7dezeh3cKBGZnrhYSzdBP67xy/3E5eYmBmrAiT254PwGlJFdc68YHSjFNO3
-	LOhShhav2OPhc3dgqzeAgIxrpuc2XtUvj8ZVuYKSBUNZ17s9e4SDcYwbgzd+RT1J2WGMhew1oXa
-	R+6fF5hPFYJKn+k3MUqBLhEJjX2jQ/fGvGXAmpW+1A/rp+uDGxufg1tnrk3yt
-X-Received: by 2002:a05:620a:1725:b0:8cd:94f9:1bd1 with SMTP id af79cd13be357-8cdb5a79d98mr516989385a.13.1773420252988;
-        Fri, 13 Mar 2026 09:44:12 -0700 (PDT)
-X-Received: by 2002:a05:620a:1725:b0:8cd:94f9:1bd1 with SMTP id af79cd13be357-8cdb5a79d98mr516985285a.13.1773420252539;
-        Fri, 13 Mar 2026 09:44:12 -0700 (PDT)
-Received: from [192.168.1.3] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8cda215c2a9sm587964785a.46.2026.03.13.09.44.11
+        d=1e100.net; s=20251104; t=1773420882; x=1774025682;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mqxWsYIPaTBPPrjermq+DtfpUjguE2xkVbOTdTjdzII=;
+        b=ry7tS5ErLDuQ87r90vmA0T+5Kt80t7jv/o+w1TulKPBhgDzDw3e2s691/eAoYaVR5a
+         zCUaJhH9990A6RhCFYEtaTBaUGq4tNGBbQc7vrQ0oHVDZy90cU9H4TxVZ7kazwuiQ/w9
+         /SbvQG2otJRfQ5n3ZnrCFjMikiYWv4978vj8+HNaShK2XyeEciB6HuSkrcJyOmeu8Amy
+         ZHBrqd0/cWn9tj6uVWR1he4G9M1aqupZ4eofs8eN+IQJrxWeR6wyUw4u2PIgHPTKlt5H
+         4p20Lvy/7ywjLsOfOTQMpPMi05CbSibV5SA62KKRvgQZ9RdUroPDcadONjHMrWvNs608
+         RPMg==
+X-Forwarded-Encrypted: i=1; AJvYcCVXmGE+mwLZfY6bcZWfz3VBxyODQSK3AHixmu9piZW7o45FsnoEVG0fYPSjVLFaRBcgphqejTV90Jc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQWxWCdCfJ4o31L9+OsUToEtsBCGl8t008e/PGDCfyr6/wIBln
+	owsq5PTX4CxN8cxR7s8aKSKWohzKzJIETkVgNFp72meHMAOXpK3Qgxf0wgVOgtK9+Bq+Tk+xUQJ
+	oRPKs1cxb4Z+2SCyxrkDdySYqpFeasQ3NtoNlQRtOpo3MQLMUBtdZWzDn+xCNqA==
+X-Gm-Gg: ATEYQzxk+IGXMNtlYfEnJZCSLphdoHjV6ZXhdKJAKtlE6kxyddWQMMk7gBRfoqrGXNR
+	oAH4cUXMQ2W89iJ/lYs6BaOUDIgdmjEJJrHz1V0Qdvo6Lvbk3jjN/pQBeSs3nQQx8qtk8py9FMg
+	NtOeflOIv7BjiWUnv7g46vL2flZC9RXoCP2mupeu9n1TXytYxfe7YzdJobzvzMckw98ONoGSu9h
+	Hq93gyTIWjdm7728Z6LQxvakkWN5xPFo3yz5VZTsbhNLYLh8/Mj3F/JxXw79DT4pMPMRvIBQ/U8
+	mO/LZ3dEf7i6tk/MJbSIcvH6+vJAlESk/j3J03SmoS6QmcEz4Q+kkXIrurPv6oAtoupp5WdW+08
+	gWRYVdnpPrFS7mdpIrmuKmrctQV0C9Ntwamk7Ugu2SlLJrJ+3Oe3DOyFY
+X-Received: by 2002:a05:622a:4e:b0:509:1c5e:1062 with SMTP id d75a77b69052e-50957b88869mr55996841cf.3.1773420882166;
+        Fri, 13 Mar 2026 09:54:42 -0700 (PDT)
+X-Received: by 2002:a05:622a:4e:b0:509:1c5e:1062 with SMTP id d75a77b69052e-50957b88869mr55996521cf.3.1773420881696;
+        Fri, 13 Mar 2026 09:54:41 -0700 (PDT)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-89a65ce3924sm60581406d6.24.2026.03.13.09.54.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Mar 2026 09:44:12 -0700 (PDT)
+        Fri, 13 Mar 2026 09:54:41 -0700 (PDT)
+Date: Fri, 13 Mar 2026 12:54:39 -0400
 From: Brian Masney <bmasney@redhat.com>
-Date: Fri, 13 Mar 2026 12:43:14 -0400
-Subject: [PATCH v6 7/7] clk: test: introduce additional test case showing
- v2 rate change + LCM parent
+To: Pengyu Luo <mitltlatltl@gmail.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Bjorn Andersson <andersson@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Dmitry Baryshkov <lumag@kernel.org>, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	White Lewis <liu224806@gmail.com>
+Subject: Re: [PATCH] clk: qcom: dispcc-sc8280xp: remove CLK_SET_RATE_PARENT
+ from byte_div_clk_src dividers
+Message-ID: <abRBT4niX2CB9XVR@redhat.com>
+References: <20260303115550.9279-1-mitltlatltl@gmail.com>
+ <d2cdaa7e-1a17-4e6b-879d-266844958410@oss.qualcomm.com>
+ <aahGtIkxtNPeeWKc@redhat.com>
+ <CAH2e8h5oHvaADPgE_GdPQsWrU00XUT1d0ktbE25ztMeBEE51Yw@mail.gmail.com>
+ <CABx5tqJ_spoZrhX7n91rTOaMcp1G_n8jB5aJV-rNbSPYZBZxEA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260313-clk-scaling-v6-7-ce89968c5247@redhat.com>
-References: <20260313-clk-scaling-v6-0-ce89968c5247@redhat.com>
-In-Reply-To: <20260313-clk-scaling-v6-0-ce89968c5247@redhat.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>, 
- Alberto Ruiz <aruiz@redhat.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Brian Masney <bmasney@redhat.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4977; i=bmasney@redhat.com;
- s=20250903; h=from:subject:message-id;
- bh=h2KdQwSzIlZcDjCLpoMS0OLH1GkGmmRBcuj91M9nvrU=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDK32J1XCJS/r7Py2rKqbFGHVVc/s4Q/lbTZ8bzun0VK4
- m0VJe0lHaUsDGJcDLJiiixLco0KIlJX2d67o8kCM4eVCWQIAxenAEwkWY3hDxcT//fbZ7SYuLXb
- PHc990i5nfHMJDVrhT2X1oxA18rW+Qz/fX8aVn1gWXrz8kfmeUeTFkc6/Ylhi0g88jjyMMfDy5P
- v8gMA
-X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
- fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABx5tqJ_spoZrhX7n91rTOaMcp1G_n8jB5aJV-rNbSPYZBZxEA@mail.gmail.com>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-Add a test case that uses the clk divider with the v2 rate negotiation
-logic, plus the Lowest Common Multiple (LCM) to calculate the optimal
-parent rate. The test ensures that the parent clk rate is set to a rate
-that's acceptable to both children, and the sibling clock is not
-affected.
+Hi Qualcomm Folks,
 
-The test in this commit use the following simplified clk tree with
-the initial state:
+On Fri, Mar 06, 2026 at 06:27:20PM -0500, Brian Masney wrote:
+> On Wed, Mar 4, 2026 at 10:08 AM Pengyu Luo <mitltlatltl@gmail.com> wrote:
+> > On Wed, Mar 4, 2026 at 10:50 PM Brian Masney <bmasney@redhat.com> wrote:
+> > > On Tue, Mar 03, 2026 at 01:10:43PM +0100, Konrad Dybcio wrote:
+> > > > On 3/3/26 12:55 PM, Pengyu Luo wrote:
+> > > > > From: White Lewis <liu224806@gmail.com>
+> > > > >
+> > > > > The four byte_div_clk_src dividers (disp{0,1}_cc_mdss_byte{0,1}_div_clk_src)
+> > > > > had CLK_SET_RATE_PARENT set. When the DSI driver calls clk_set_rate() on
+> > > > > byte_intf_clk, the rate-change propagates through the divider up to the
+> > > > > parent PLL (byte_clk_src), halving the byte clock rate.
+> > > > >
+> > > > > A simiar issue had been also encountered on SM8750.
+> > > > > b8501febdc51 ("clk: qcom: dispcc-sm8750: Drop incorrect CLK_SET_RATE_PARENT on byte intf parent").
+> > > > >
+> > > > > Likewise, remove CLK_SET_RATE_PARENT from all four byte divider clocks
+> > > > > so that clk_set_rate() on the divider adjusts only the divider ratio,
+> > > > > leaving the parent PLL untouched.
+> > > > >
+> > > > > Fixes: 4a66e76fdb6d ("clk: qcom: Add SC8280XP display clock controller")
+> > > > > Signed-off-by: White Lewis <liu224806@gmail.com>
+> > > > > [pengyu: reword]
+> > > > > Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
+> > > > > ---
+> > > >
+> > > > Looks like more platforms have this issue.. thanks for fixing this
+> > >
+> > > I hope within the next week to post a new draft of my patch series to
+> > > keep certain clk rates intact when sibling and parent rate changes occur
+> > > [1]. This will be for certain critical clks, such as the ones used for
+> > > DRM and sound. I have it working with kunit, and just need to clean up
+> > > some of my new clk helpers and commit messages before I post a v5.
+> > >
+> > > I'd like to test this on some real hardware and I have the Thinkpad x13s
+> > > with the sc8280xp SoC. Can this issue be reproduced on this hardware? If
+> > > so, can you provide me detailed instructions about how to trigger this
+> > > scenario?
+> > >
+> >
+> > Quick answer, no, x13s uses a edp panel, not dsi. This issue is
+> > related to dsi clks.
+> 
+> I posted my latest clk scaling work in an attempt to address the
+> underlying issue here.
 
-                     parent
-                     24 MHz
-                    /      \
-              child1        child2
-              24 MHz        24 MHz
+Ignore my previous patch set. In my v6 that I just posted, I updated
+clk-divider.c to support the new v2 clk negotiation logic. The
+clk_regmap_div_ops uses this driver, so you shouldn't have to make any
+code changes.
 
-child1 and child2 both divider-only clocks that have CLK_SET_RATE_PARENT
-set, and the parent is capable of achieving any rate.
+Anyways, would someone from Qualcomm be willing to test this? The
+procedure is fairly simple:
 
-child1 requests 32 MHz, and the tree ends up with the correct state:
+1) Back out the patch:
+   clk: qcom: dispcc-sc8280xp: remove CLK_SET_RATE_PARENT from byte_div_clk_src dividers
+   (or one of the similar patches posted for other SoCs)
 
-                     parent
-                     96 MHz
-                    /      \
-              child1        child2
-              32 MHz        24 MHz
-              div=3          div=4
+2) Apply my v6 series:
+   clk: add support for v1 / v2 clock rate negotiation and kunit tests
+   https://lore.kernel.org/linux-clk/20260313-clk-scaling-v6-0-ce89968c5247@redhat.com/T/#
 
-Additionally, add a note about why clk_dummy_div_lcm_ops + friends are
-still needed.
+3) Boot... everything should behave the same as prior to my patch set.
+   The clk crash will still occur.
 
-Link: https://lore.kernel.org/linux-clk/aUSWU7UymULCXOeF@redhat.com/
-Link: https://lpc.events/event/19/contributions/2152/
-Signed-off-by: Brian Masney <bmasney@redhat.com>
----
- drivers/clk/clk_test.c | 49 +++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 49 insertions(+)
+4) Reboot, and boot the kernel this time with the clk_v2_rate_negotiation
+   kernel parameter to globally opt into the v2 negotiation logic. The clk crash
+   hopefully shouldn't occur.
 
-diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
-index 40bc01a0259d8d49ca4c1983b6c10a3684a95f0b..00511afe5faa8b2631633ab796ece1bfe6944fb5 100644
---- a/drivers/clk/clk_test.c
-+++ b/drivers/clk/clk_test.c
-@@ -181,6 +181,14 @@ static const struct clk_ops clk_dummy_div_ops = {
- 	.set_rate = clk_dummy_div_set_rate,
- };
- 
-+/*
-+ * drivers/clk/clk-divider.c has support for v2 rate negotiation, and setting
-+ * the parent based on the LCM, however we need to be able to test just setting
-+ * the parent rate based on the LCM, and not set the v2 rate negotiation flag.
-+ * This is to demonstrate existing functionality in the clk core, and ensure it
-+ * stays the same. That's why we need to keep clk_dummy_div_lcm_ops, and can't
-+ * just use clk_dummy_div_ops.
-+ */
- static int clk_dummy_div_lcm_determine_rate(struct clk_hw *hw,
- 					    struct clk_rate_request *req)
- {
-@@ -709,6 +717,18 @@ clk_rate_change_sibling_div_div_test_lcm_ops_v1_params[] = {
- KUNIT_ARRAY_PARAM_DESC(clk_rate_change_sibling_div_div_test_lcm_ops_v1,
- 		       clk_rate_change_sibling_div_div_test_lcm_ops_v1_params, desc)
- 
-+static const struct clk_rate_change_sibling_div_div_test_param
-+clk_rate_change_sibling_div_div_test_regular_ops_v2_params[] = {
-+	{
-+		.desc = "regular_ops_v2",
-+		.ops = &clk_dummy_div_ops,
-+		.extra_child_flags = CLK_V2_RATE_NEGOTIATION,
-+	},
-+};
-+
-+KUNIT_ARRAY_PARAM_DESC(clk_rate_change_sibling_div_div_test_regular_ops_v2,
-+		       clk_rate_change_sibling_div_div_test_regular_ops_v2_params, desc)
-+
- static int clk_rate_change_sibling_div_div_test_init(struct kunit *test)
- {
- 	const struct clk_rate_change_sibling_div_div_test_param *param = test->param_value;
-@@ -836,6 +856,31 @@ static void clk_test_rate_change_sibling_div_div_3_v1(struct kunit *test)
- 	KUNIT_EXPECT_EQ(test, ctx->child2.div, 1);
- }
- 
-+/*
-+ * Test that, for a parent with two divider-only children with CLK_SET_RATE_PARENT
-+ * set and one requests a rate incompatible with the existing parent rate, the
-+ * sibling rate is not affected, and maintains it's rate.
-+ */
-+static void clk_test_rate_change_sibling_div_div_4_v2(struct kunit *test)
-+{
-+	struct clk_rate_change_sibling_div_div_context *ctx = test->priv;
-+	int ret;
-+
-+	ret = clk_set_rate(ctx->child1_clk, 32 * HZ_PER_MHZ);
-+	KUNIT_ASSERT_EQ(test, ret, 0);
-+
-+	/*
-+	 * With LCM-based parent + v2 rate changes, the parent should be at
-+	 * 96 MHz (LCM of 32 and 24), child1 at 32 MHz (div=3), and child2
-+	 * at 24 MHz (div=4).
-+	 */
-+	KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->parent_clk), 96 * HZ_PER_MHZ);
-+	KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->child1_clk), 32 * HZ_PER_MHZ);
-+	KUNIT_EXPECT_EQ(test, ctx->child1.div, 3);
-+	KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->child2_clk), 24 * HZ_PER_MHZ);
-+	KUNIT_EXPECT_EQ(test, ctx->child2.div, 4);
-+}
-+
- static struct kunit_case clk_rate_change_sibling_div_div_cases[] = {
- 	KUNIT_CASE_PARAM(clk_test_rate_change_sibling_div_div_1,
- 			 clk_rate_change_sibling_div_div_test_regular_ops_gen_params),
-@@ -843,6 +888,10 @@ static struct kunit_case clk_rate_change_sibling_div_div_cases[] = {
- 			 clk_rate_change_sibling_div_div_test_regular_ops_gen_params),
- 	KUNIT_CASE_PARAM(clk_test_rate_change_sibling_div_div_3_v1,
- 			 clk_rate_change_sibling_div_div_test_lcm_ops_v1_gen_params),
-+	KUNIT_CASE_PARAM(clk_test_rate_change_sibling_div_div_1,
-+			 clk_rate_change_sibling_div_div_test_regular_ops_v2_gen_params),
-+	KUNIT_CASE_PARAM(clk_test_rate_change_sibling_div_div_4_v2,
-+			 clk_rate_change_sibling_div_div_test_regular_ops_v2_gen_params),
- 	{}
- };
- 
+Thanks,
 
--- 
-2.53.0
+Brian
 
