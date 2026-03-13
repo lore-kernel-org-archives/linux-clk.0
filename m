@@ -1,168 +1,209 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5978B3B6342
-	for <linux-clk@vger.kernel.org>; Fri, 13 Mar 2026 16:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038BB3C345B
+	for <linux-clk@vger.kernel.org>; Fri, 13 Mar 2026 16:44:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773418224; cv=none; b=Fy+lTTKCL4754dSLYMyMIMkDMF9124QO9GeQKZuCfeSlEgqoh9UPtbFMexIQwoSxLVgARlz1yB5n+kpkOh0UJliNyCZJJX+PWsjgXyuWHuK9qXHBHnvtz+tKsOR4zKF1eZ+ttZyp+kGtbRPyB5HC/sf/IybDNpDk13PUtBmKSpI=
+	t=1773420248; cv=none; b=cwFhkO1Of4QGTPKE8iCZkyTIMf91j2Jd03c0lvtvhwsXxcJcQbTizgG6Or9w7iEnhhMgInjFBVoW1HeB2cviBDG6yqtS2e6GTGLyWogIX8TTNpJ7QPN6mbRFbE4FUtlkPZXHXUWUYlb6bdG5Zf2LqX+Sm2X3U3qjSbN/FQgP0cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773418224; c=relaxed/simple;
-	bh=OQa25WQLrFipN8xkaSAC4gE9e+qUwSPzMMMzf7EKKCY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hRd+/HTZR5F5A31TqCWCCTDZA/hx5fmkZgLwuaMg2qf5j5B6a7waeJTUfLJKsXS9nJLQBnHc09PqJjc/HMhTUA7ehkcRYfD8GaH7mvR/ydfrGE1UwQegqi7237hvtiiWjG4VNVsItRwRJmaYDPtuhgFyhiaGSv8rc3s7U3hMHcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=C+7OT9Nc; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=PMOv7rdk; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1773420248; c=relaxed/simple;
+	bh=LbQQdieLciU0yp4/e3tEpRbC5NeMCqzu+O2mVqVmC3Q=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=sWp1PtiksTxrENnJGDQBRb5ipx80IcTrtHj9TvrsVHSxnxBEKTws47vKxr46QHGH/48ToBN/jj0ew6wYJIGhi28VuBlmoE+ZyhFkDDzfrU6dBwvRAdz/fzw9SFl3bdA5yHYfliHDVP166t3WJOOMX3tM3Qs2qnhP4LMrExQ0ZJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fgiUpyBT; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=boxoC1Fq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="C+7OT9Nc";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="PMOv7rdk"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62DEbdbc2262702
-	for <linux-clk@vger.kernel.org>; Fri, 13 Mar 2026 16:10:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=lm56OVWQc1lPPtQs9j/ASkAL
-	ta+ZK00UwWi5EH1vPMA=; b=C+7OT9NcWNSj2JZ8Bu7Wj4DG+JlhzfoLfT2JrM+Q
-	W25Kh5UcMEte33lba4QJMTsboAyVm8NCBrHHytE50KpNwzkV3q/XG1UKYfcUK8nK
-	3TmJUxqebrjNE+2ubHcywhnOTLZAMd2hhzACcd1PNh1JGwgMPl0mdSYHbOcROn3d
-	CUx7tC2Kbm064tvz3nHlV9CyDyqv/RYx8mpQxD60DOgHTBk8Ao32nLa6h6tOX3CT
-	0MrKr8yfdZg/ltx7Jp1/aMEBUPfsugZKWTU/xjxbEMM67TAcpnHr19b2ph13DMPs
-	mdePu/cwkPa8W7SeQugE7I8zl+WpImWyhlwe5/GZRB7Ikw==
-Received: from mail-vs1-f69.google.com (mail-vs1-f69.google.com [209.85.217.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cvef4srj3-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 13 Mar 2026 16:10:22 +0000 (GMT)
-Received: by mail-vs1-f69.google.com with SMTP id ada2fe7eead31-5ffaa85b95bso18129410137.1
-        for <linux-clk@vger.kernel.org>; Fri, 13 Mar 2026 09:10:22 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fgiUpyBT";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="boxoC1Fq"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1773420245;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=7aoPX6tbptQtsH1qI1YEv71fN+cpkus+OxbpnEXEQTc=;
+	b=fgiUpyBTd0UhrAad4cIJdDRwT0E8ViW2OzMtawdKClsWsH3Yub3OKUVeYb/85v4EODz2DC
+	OuKnIkdrR/MaQi3CIZQSTUIHSGAkhYviV3NFcr3tOSscgTql4msp53NiMy+8CuXI8th7mQ
+	bQkOpDBVs/dIumVlSdhQ66rEUs2mE2A=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-388-EWGYDRHdM4y3Jo13ZVHqGg-1; Fri, 13 Mar 2026 12:44:03 -0400
+X-MC-Unique: EWGYDRHdM4y3Jo13ZVHqGg-1
+X-Mimecast-MFC-AGG-ID: EWGYDRHdM4y3Jo13ZVHqGg_1773420243
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-8cd83cfb36cso1598315085a.3
+        for <linux-clk@vger.kernel.org>; Fri, 13 Mar 2026 09:44:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1773418221; x=1774023021; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lm56OVWQc1lPPtQs9j/ASkALta+ZK00UwWi5EH1vPMA=;
-        b=PMOv7rdk0HYwStY58uXdVInl+rZcob3vtyLXSLq3A4ucJiCqoMlAxYi+YlVpV6xLZG
-         QyUe01EHPQb0jtsFgCPjgv8A+aFVv43UTThKGLpWgygTpJ96KMlb92jjFKAwldsq4eeM
-         hQF4oEbnyGgdPpXvtSS/rH/MiOEbdqt+vgN88aI9YKNLOv1Dr1Sg18IlLLWfanneS2Ec
-         zjAyRw/IdfbwPD8lvaT0F+hXqhN3L+toEuRlsDjNGEqcJfiMsDaMctxTy1xtvOyRsUAh
-         4eL4Y13Z6x894sU6LGGuhUfcl3Rx5mYxi1o4SfyEFHZaFW4u/URmW08o401ECk22VvJO
-         zY6g==
+        d=redhat.com; s=google; t=1773420243; x=1774025043; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7aoPX6tbptQtsH1qI1YEv71fN+cpkus+OxbpnEXEQTc=;
+        b=boxoC1FqUOaL9oNCEFKVo8M9LFu80GbazMWpzwJ2AgQtyBBBK1PVIoLyE7YIWJaqIR
+         LGHMVbyTX96iW8DqK+NUZrR9e4I4HMmBVcA5SgEaOOzA+1r8ICt5MfU16AukaZKuHLEe
+         1h/X9rJCCrtjgcNlsXb38pcZZUWtx4FUbuZ85//z5hnpMevmTSTYF1PLPUtB+kPG5ekK
+         baBtyoyFRkTGQlRGs0A3l+LxfSEKHgp2xCgEusMUs/LCFd0GIpwSwFVqG3Ikkqfz0cqq
+         GOCOUM5LSZgI/u0hHWqPM9FpeKQhYC1LFZz2uk7ARzRQQTedrpuKchBAe7SlDnpRvzfE
+         SuDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773418221; x=1774023021;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lm56OVWQc1lPPtQs9j/ASkALta+ZK00UwWi5EH1vPMA=;
-        b=pnHMcs8iub1PAFkL6UM74BLdjxcI/XLCmJ1Pp0jsbiIQG2VmGJ+UuYRXLsltYM+cqW
-         o0Mv2qRgmi+Re8eaNdFXjgrH7I7/mo3UZtd8QeVb6Nr6vVSvDFn4rPHqN+vdFsdrP3w8
-         1X/JnJd8SUBErj9vu0ecUCVA2TpO+h18Q0yP17+hybP1nH+7S3XrtfwJSqZL7J4R5kPf
-         BBXwNVmwl1U+y/lZSFs/sBfmBE1lnJ0csPPOnP3n7ZymtHyVwN/clYFJ23jg+Hhq5fg1
-         1/GB3Aj47eHBIS74BuCYwpVB11W43r3l6AdxYFO4nLhP5ZhOD7r0U60qNUDHvXUxO8uy
-         pKVg==
-X-Forwarded-Encrypted: i=1; AJvYcCWO6KgAbwNMDpJMngmawaZCFdsSFVVtZ0Jw74Yt53kH6d6WvVlDRKxPaumTymU5vnhOwW6UH/Y2e8U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXYpRSk5x908EK8xzI7ls/B5ndCm9GbaJqZH+eW+JQsxI8GVe7
-	OuLw76ReREnE0fx3pd8eRfnUc6fSxzKnLWkFJJGU6FJzhabsYQH651mnzkmkamcJx+rz8wDICcw
-	KMc489PwAZ9n14S/Uab1vG3ruDJJXtKj73U4i7fmxPzJQWzzKjIHQv6nxxRl1STg=
-X-Gm-Gg: ATEYQzwdYWbwo0qzUqLDU6H+cl2Mq27Ee1ixxfq/cLL8DY2RkxwCcGg/Vf4bH1WFLch
-	l8gd6XUyhCFErYLbNfDAhmcOS5/6JvRnd7K9f5PI30foJcevM4Yj3GwDPqMkHNdrEnuSMiGNKI+
-	9AaNzmvRvOQAnZu1GZeS6b4G3YUKH79GCTuN7fbU6/eeWZ/+zh7lGl09eOCmTfAcQJszOmTW8WH
-	6KpSgXPLwhqzvV09byLK753jchWnBc5p5GMYX2O2YmPZYuPceUKHKib5kqdxffkU4JAY6aQmkUS
-	yL0K+mnO7Bwflq0YAAmHXon2gR5x1TXZpG1gDwbCpvBfzIOZ4qbpnB/q9rmJJaN0klkJo9KCslu
-	JCfzQit/npq2SU3KRlRZgwFjpq+p+2AxiWu2tgZorwG46Ghza69DZXt32q96UCc/JIipzfwMHma
-	ONUawm0Q+muZ1n2zlviqVMD8uZX51qPJOb7rQ=
-X-Received: by 2002:a05:6102:a4f:b0:5ff:a606:3cfc with SMTP id ada2fe7eead31-6020e8b0a9amr1866172137.21.1773418221420;
-        Fri, 13 Mar 2026 09:10:21 -0700 (PDT)
-X-Received: by 2002:a05:6102:a4f:b0:5ff:a606:3cfc with SMTP id ada2fe7eead31-6020e8b0a9amr1866152137.21.1773418220974;
-        Fri, 13 Mar 2026 09:10:20 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-38a67e5f0e0sm16976981fa.28.2026.03.13.09.10.19
+        d=1e100.net; s=20251104; t=1773420243; x=1774025043;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7aoPX6tbptQtsH1qI1YEv71fN+cpkus+OxbpnEXEQTc=;
+        b=Nu8j2zO7ENt07d9frHhTh73S/jZJacwt+HjA05UTIkavmd2SzydaH2F/bpMZ/GDWm/
+         uPr3OAEZJdJwc0ye/z5TqtrsIFj+JBE8X/KKHztqnNzYwDFBrEzn4HySkOKaHxegUnjA
+         KKwtvYkyRmBd/OPVaY4DzUc1irmQianpWsJZvoJkwI//fO1OV52wASwJjSGaw9ACf5pM
+         UmtDfln9Tq732sNX98tFwOtw9SbIK8f1YLKnRc4fsT0P2P8Qzq3Du+o4TAcZGgXFNsYn
+         swK6qxQPA90hXMgYRQkRb0q6+aPGKxZxlKudiR+MmYDoiWLRhe5/yeKCp9d5dJJnBq78
+         qPvA==
+X-Gm-Message-State: AOJu0YyIXcbdUfex/wQNlF7fVJPLCy8ZiOe3FHubd+4JivH2FPhTRtgm
+	K0mRSKFPE5KNyciRq3Z98SmiPw8MJmyxVq/3FARiQCkAu9TIBWXjynyQUXEcLUWGu5M/eXfMdWW
+	DjdC38wwg2syyiweW2lX5cOl6udU2Wwlw7cv6bTsiH+/bFHVhOInfTVf3+X8E5Q==
+X-Gm-Gg: ATEYQzzGgIK0fOGDwDXvLt4EdkmukLDX+mO4q0415d1jTXIeqWL393ObJs0Ff592icC
+	4udKrIkdbSw/gCS8uOpevcWCsscubcC8ndRgHaAyrdMsXXpZm376AUgU7oPTXQ/Jo+k7uDYwxjm
+	JWI5mTlEKPRvFgy+WncdUkyrupyW+gyDjF0t+tnOeDdOWb3EgLX/U6s7gvRAxlJoffsZZeautrM
+	pPV7oGil/Hpa8yk4cTfSzuz+AJktiFMmKnCUMPJjHGClMwSydS1ieJiXY37/3JxKXYx3bmvlWYe
+	RBqEWXaGrQQdQ3+YNIaCgrahbNnH9RPcrNz6c1Zt8QafOPbyMkSXbLgX8M/tEsHeEJSR8zSninj
+	iusFknmYsCu3ENBj25vT9JchxLTS1xOa4Es6CXtUS39rn8/nfmn1bzkClS9L4
+X-Received: by 2002:a05:620a:1583:b0:8cd:b6b7:1e63 with SMTP id af79cd13be357-8cdb6b72286mr376673985a.34.1773420243185;
+        Fri, 13 Mar 2026 09:44:03 -0700 (PDT)
+X-Received: by 2002:a05:620a:1583:b0:8cd:b6b7:1e63 with SMTP id af79cd13be357-8cdb6b72286mr376670685a.34.1773420242724;
+        Fri, 13 Mar 2026 09:44:02 -0700 (PDT)
+Received: from [192.168.1.3] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8cda215c2a9sm587964785a.46.2026.03.13.09.44.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Mar 2026 09:10:19 -0700 (PDT)
-Date: Fri, 13 Mar 2026 18:10:18 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Val Packett <val@packett.cool>, Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Maximilian Luz <luzmaximilian@gmail.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 09/11] clk: qcom: camcc-sc8180x: Remove wait_val for
- Titan GDSC
-Message-ID: <2ncpk6egdhfq7nkgtrluzxv5iryupv5lbh3jgcmn3zuvd5om7a@h3os5hj6uwfa>
-References: <20260312112321.370983-1-val@packett.cool>
- <20260312112321.370983-10-val@packett.cool>
- <ac0fc154-b41c-4273-ac5f-408428c360ad@oss.qualcomm.com>
+        Fri, 13 Mar 2026 09:44:01 -0700 (PDT)
+From: Brian Masney <bmasney@redhat.com>
+Subject: [PATCH v6 0/7] clk: add support for v1 / v2 clock rate negotiation
+ and kunit tests
+Date: Fri, 13 Mar 2026 12:43:07 -0400
+Message-Id: <20260313-clk-scaling-v6-0-ce89968c5247@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ac0fc154-b41c-4273-ac5f-408428c360ad@oss.qualcomm.com>
-X-Proofpoint-ORIG-GUID: ogFikOXWfMkkv7XXbqLq3Af_003xKtZQ
-X-Proofpoint-GUID: ogFikOXWfMkkv7XXbqLq3Af_003xKtZQ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzEzMDEyOSBTYWx0ZWRfXxZDgZCAUoMV0
- sVW0PYYhjrVxlqyORDVLo7vEyDTC13FGtBuaTfkWQg8hLV5N3r5hU7sElIe7B0YXf29OQSzO8W7
- urgCPfjr+DPoo8PAwl3R9Zr+9fvH5vaQf4sxQmq6Z6MqSRtKnrUv80l77F9z7IgAVG4AttF20PG
- CHhNegokUeEpHtkp37N0KSlbbROYOpv+K4n585YWf5VbPZDBJr/pMVMVF9K1EWltfDJXIChj0+X
- tb9mkH4SHPgUPkpWUOSHD1tOtFf4ewXcZNxPWuOnmZ/dEoF2NHGBhxTGCSNa8Arn0uFU4Q5eVLk
- bGqb7K3B3iQOQGJwwzKeqOwFaUGQoC/n2IdbcPEbQfUbhV8XaLWdHDNv1pioK6aSeMtzhU3KTZd
- +s00RlZ6E11qLMqiBySOc3RP5KwKVAn+PpJw6xrL6Kj0J3PJdi0zFcMl7eOik+SM6lDNzNm/hv5
- 8tzydzHZUx0oVINgGPw==
-X-Authority-Analysis: v=2.4 cv=S9nUAYsP c=1 sm=1 tr=0 ts=69b436ee cx=c_pps
- a=5HAIKLe1ejAbszaTRHs9Ug==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22 a=jiBLetKTOZokdF3zhskA:9
- a=CjuIK1q_8ugA:10 a=gYDTvv6II1OnSo0itH1n:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-13_02,2026-03-13_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 adultscore=0 malwarescore=0 priorityscore=1501 suspectscore=0
- clxscore=1015 lowpriorityscore=0 phishscore=0 bulkscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603130129
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/1WNwQ6CMBAFf4Xs2ZpaaDGe/A/DoZSFbkSqbSUa0
+ n+3YozxOJO8eQsE9IQBDsUCHmcK5KYMalOAsXoakFGXGQQXipdcMjOeWTB6pGlgbdmq0mislag
+ gL64ee3qstVPzYY+3e47Gn7QUovPP9XGWb/uNq7/4LBlnndi1+wpR9aI+euysjlvjLtCklF6uu
+ 8U9vAAAAA==
+X-Change-ID: 20260305-clk-scaling-b3b63cae7624
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>, 
+ Alberto Ruiz <aruiz@redhat.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Brian Masney <bmasney@redhat.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4660; i=bmasney@redhat.com;
+ s=20250903; h=from:subject:message-id;
+ bh=LbQQdieLciU0yp4/e3tEpRbC5NeMCqzu+O2mVqVmC3Q=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDK32O0UNir9LhXwuIw9+16Za7f71NNXlN4eUJ8uf3PjH
+ 33rPY1lHaUsDGJcDLJiiixLco0KIlJX2d67o8kCM4eVCWQIAxenAEzE6RvD/0SHW3ftiwPLzk65
+ Fbh0npVlA2Pg1NIZ7i8qTM41K/g/62P4w7WiTaLYgs12qUVBVGMbt8Rb9zef1hzjnnx7W/t5rwM
+ 3WQA=
+X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
+ fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-On Fri, Mar 13, 2026 at 11:50:03AM +0100, Konrad Dybcio wrote:
-> On 3/12/26 12:12 PM, Val Packett wrote:
-> > These values seem to have been copied from newer SoCs, but e.g. SC7180
-> > and SDM845 do not use them. They seem to play a role in causing the
-> > "titan_top_gdsc stuck at off" errors on boot on the Surface Pro X.
-> > 
-> > Remove to fix.
-> > 
-> > Fixes: 691f3413baa4 ("clk: qcom: camcc-sc8180x: Add SC8180X camera clock controller driver")
-> > Signed-off-by: Val Packett <val@packett.cool>
-> > ---
-> >  drivers/clk/qcom/camcc-sc8180x.c | 3 ---
-> >  1 file changed, 3 deletions(-)
-> > 
-> > diff --git a/drivers/clk/qcom/camcc-sc8180x.c b/drivers/clk/qcom/camcc-sc8180x.c
-> > index 388fedf1dc81..cd4c40a81c28 100644
-> > --- a/drivers/clk/qcom/camcc-sc8180x.c
-> > +++ b/drivers/clk/qcom/camcc-sc8180x.c
-> > @@ -2538,9 +2538,6 @@ static struct clk_branch cam_cc_mclk7_clk = {
-> >  
-> >  static struct gdsc titan_top_gdsc = {
-> >  	.gdscr = 0xc1bc,
-> > -	.en_rest_wait_val = 0x2,
-> > -	.en_few_wait_val = 0x2,
-> > -	.clk_dis_wait_val = 0xf,
-> 
-> Those are the 'correct' / on-reset values which if absent, are going to
-> be overriden by the driver, with values destined for MSM8974, so please
-> drop this one
+The Common Clock Framework is expected to keep a clock’s rate stable
+after setting a new rate with:
 
-Probably we should fix the drivers to stop showing in MSM8974 values...
+    clk_set_rate(clk, NEW_RATE);
 
+Clock consumers do not know about the clock hierarchy, sibling clocks,
+or the type of clocks involved. However, several longstanding issues
+affect how rate changes propagate through the clock tree when
+CLK_SET_RATE_PARENT is involved, and the parent's clock rate is changed:
+
+- A clock in some cases can unknowingly change a sibling clock's rate.
+
+- No negotiation is done with the sibling clocks, so an inappropriate
+  or less than ideal parent rate can be selected.
+
+A selection of some real world examples of where this shows up is at
+[1]. DRM needs to run at precise clock rates, and this issue shows up
+there, however will also show up in other subsystems that require
+precise clock rates, such as sound.
+
+This series introduces kunit tests to illustrate the current behavior in
+the clk core. As discussed at Linux Plumbers Conference 2025 in Tokyo,
+it was suggested to move the negotiation logic into the clk providers
+themselves so that only the clks with this issue can have their rate
+preserved, and add some common helpers to the clk core.
+
+How to test on real hardware
+============================
+
+I am interested in getting feedback about testing this patch on real
+hardware, particularly for scenarios where CLK_SET_RATE_PARENT needs
+to be removed like this:
+https://lore.kernel.org/all/20260303115550.9279-1-mitltlatltl@gmail.com/
+
+1) First ensure that your board uses divider_determine_rate() or
+   divider_ro_determine_rate() from drivers/clk/clk-divider.c.
+
+2) Boot the kernel with this patch set. There should be no change to the
+   existing behavior, and everything should still function as is.
+
+3) Now boot the kernel with the parameter clk_v2_rate_negotiation.
+   Trigger the scenario where the clks get in a bad state, and it should
+   not occur with this series.
+
+Changes since v5:
+https://lore.kernel.org/r/20260306-clk-scaling-v5-0-d21b84ee6f27@redhat.com
+- Dropped all of the helpers, and complexity to the clk core. To solve
+  this problem, we don't need to chain rate requests together.
+- Add more unit tests
+- Convert clk-divider.c so that there's a real user of this new API.
+- This series no longer has the problem where large numbers of boards are
+  moved over at once to the new v2 negotiation logic.
+
+Changes since v4:
+https://lore.kernel.org/linux-clk/20250923-clk-tests-docs-v4-0-9205cb3d3cba@redhat.com/
+- Reworked based on feedback at Linux Plumbers [2] as described in two
+  paragraphs above.
+- Dropped gate and mux tests.
+
+Changes since v3:
+https://lore.kernel.org/r/20250812-clk-tests-docs-v3-0-054aed58dcd3@redhat.com
+- Update clk_core struct members (Maxime)
+- Add v2 rate negotiation logic and additional kunit tests
+- Drop clk_dummy_rate_mhz() in kunit tests; use HZ_PER_MHZ
+
+[1] https://lore.kernel.org/lkml/20230825-pll-mipi_keep_rate-v1-0-35bc43570730@oltmanns.dev/
+    https://lore.kernel.org/linux-kernel/20230807-pll-mipi_set_rate_parent-v6-0-f173239a4b59@oltmanns.dev/
+    https://lore.kernel.org/all/20241114065759.3341908-1-victor.liu@nxp.com/
+    https://lore.kernel.org/linux-clk/20241121-ge-ian-debug-imx8-clk-tree-v1-0-0f1b722588fe@bootlin.com/
+
+[2] Fixing Clock Tree Propagation in the Common Clk Framework
+    https://www.youtube.com/watch?v=R8TytDzlcFs
+    https://lpc.events/event/19/contributions/2152/
+
+Link: https://lore.kernel.org/linux-clk/aUSWU7UymULCXOeF@redhat.com/
+Link: https://lpc.events/event/19/contributions/2152/
+Signed-off-by: Brian Masney <bmasney@redhat.com>
+---
+Brian Masney (7):
+      clk: test: introduce clk_dummy_div for a mock divider
+      clk: test: introduce test suite for sibling rate changes on a divider
+      clk: introduce new helper clk_hw_get_children_lcm() to calculate LCM of all child rates
+      clk: test: introduce additional test case showing sibling clock rate change
+      clk: introduce new flag CLK_V2_RATE_NEGOTIATION for sensitive clocks
+      clk: divider: enable optional support for v2 rate negotiation
+      clk: test: introduce additional test case showing v2 rate change + LCM parent
+
+ drivers/clk/clk-divider.c    |  28 +++-
+ drivers/clk/clk.c            | 118 +++++++++++++++--
+ drivers/clk/clk_test.c       | 300 +++++++++++++++++++++++++++++++++++++++++++
+ include/linux/clk-provider.h |   5 +
+ 4 files changed, 436 insertions(+), 15 deletions(-)
+---
+base-commit: 6a2abc8018be1ce9a03470ebb1c526f814903452
+change-id: 20260305-clk-scaling-b3b63cae7624
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Brian Masney <bmasney@redhat.com>
+
