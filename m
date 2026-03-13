@@ -1,47 +1,43 @@
 Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF511372661;
-	Fri, 13 Mar 2026 08:13:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1FD373C1A;
+	Fri, 13 Mar 2026 08:13:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773389629; cv=none; b=C5l1WYtIqBo6PG9Bn/RGatiRRIoAc0mINy+K8kBzYj/M4kQy35/JMOmvdgLLqljymEI7aef/c+il62cLxoSAATOe2IIKmGOL1HMwJhk4JGGJDfRTmI21sHYvvd/JXk9PzLjG9pZdgodqjf+ZiOfBakVzs+vgX7o+jvtCEZnl++g=
+	t=1773389630; cv=none; b=c9T+xBVzLgY62gKg2kkiMhIS1jwxneGt1BlumzwVkaU5e7M7vyFqh88BQkSRPevJySsll3a7DyAIkcL0YKb/tmj5lXip2wd/8XOOBbngc+8jOGG91Dzx0YmNu4gfl/youtobj+F7ELAzj+88rmM4lJM6Fdj4B+KnxYKqISMB5HI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773389629; c=relaxed/simple;
-	bh=RFIBJlrIdSkcIxDnawz3szoUztMLYStmrlAuoCF0PYU=;
+	s=arc-20240116; t=1773389630; c=relaxed/simple;
+	bh=5qoqDi+P7XFJWS6qBl7kbGqHgFsup8J7GRDav74bwJU=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t3/aYOjRFJrA7Wt/AKfn7puqijF2nfiDueCDVkTjcS1NpnOwPm9M9ulhDMAau8yhhhPaWm5r38GxjY0RjfEMkLMpuiRBeXwY4dqfZ6yJ/4Gun3QFmQQzyd6QjqAemq3b5jItWerGt325CBCugGWYJUYdc9Ej6xDvjUjrUr4EnOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=J5ZXXajC; arc=none smtp.client-ip=211.75.126.72
+	 MIME-Version:Content-Type; b=QCmOS0HrhTnYw9mpBOtuPS8cFwfUhsDqXF2Vxxfqa1r9O8KXiFjoi37o5MHUM/VLCLh1rUlREmwE/F+xYDfnwFv9aFQWWBsfH8SgBrpDX/3bfIr+iJeqcFAKHl449rPdAkQzlR7UZyKVf1nd25tWKKUFCrn2OPGMhAdNkztNZDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=bqcmdkUf; arc=none smtp.client-ip=211.75.126.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="J5ZXXajC"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 62D8B2HJ0053110, This message is accepted by code: ctloc85258
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="bqcmdkUf"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 62D8B3rX4053117, This message is accepted by code: ctloc85258
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1773389462; bh=CvElaFYq/IK33ggppVBYpY4DYtvgpJTsuUOAWi+UkTA=;
+	t=1773389463; bh=LT3DgJGi0sIVZSwIRFj26HgRASwCLMmYyKL6dSMnhIM=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=J5ZXXajCNNX4X/PXeRKGg2+w9sNDVAuaHZu02M4D5rYPCAZzyi+b3YnWiMQ8HyNmx
-	 4F0b+Q7+cVLYmLo4d3YNbWoE8zjWXoXeUtwI3TNAELHPayk2oWtl2dnhssO4VmqYB6
-	 yJWqukpl99c6ECwEzpGKazuVh13Vcqy7ajEcYdSmHweSrRPpSW7aL7+aua5Q4aAPOn
-	 59Az/GQqEaqiVdh82YPXBYONkwLJGhmQPdz/mXab5u0885n/MqeR0qmEZCxcEmlanx
-	 osjWF4W/KRsLTBd9ZXehCWJJPEFo9Bvi0sY+DVV3ZVrLAvQF9G/SKPgnsisfWte1Ol
-	 oRY8AygD8xqMA==
+	b=bqcmdkUfeURtBLWuorfoZ0EmD/gobZVLO7IDW8RrUAEOsplvfwpm2m8pUi1U9Wmh5
+	 +toF+qk30KClaieZlq1qbBJSbSrX6228dsyxNngB7ofRDZAj1wYcL3j8CkPTKaP8j7
+	 QKtEmQTJvTKzReibBbxnyQ3ciiq+MRVMAeZmTEjUp5AvvCV80cTlh20nHdF5YdcM+N
+	 iGDkk7cM4MDCF0d1sCDLiKaFEtJGoIsPClg3n7Xe0I2H9dBMF/m253tESck0OOQAWy
+	 we71DFIEWQCB6r1gT5KCRvnA0cTEvGHo+qiYaooZDrNvV2qHWyb59ikQwYTfrDDHd+
+	 hSD7rc5JPXdTg==
 Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
-	by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 62D8B2HJ0053110
+	by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 62D8B3rX4053117
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 13 Mar 2026 16:11:02 +0800
-Received: from RTKEXHMBS01.realtek.com.tw (172.21.6.40) by
+	Fri, 13 Mar 2026 16:11:03 +0800
+Received: from RTKEXHMBS05.realtek.com.tw (10.21.1.55) by
  RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Fri, 13 Mar 2026 16:11:02 +0800
-Received: from RTKEXHMBS05.realtek.com.tw (10.21.1.55) by
- RTKEXHMBS01.realtek.com.tw (172.21.6.40) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Fri, 13 Mar 2026 16:11:02 +0800
+ 15.2.1748.10; Fri, 13 Mar 2026 16:11:03 +0800
 Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS05.realtek.com.tw
  (10.21.1.55) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Fri, 13 Mar 2026 16:11:02 +0800
+ Transport; Fri, 13 Mar 2026 16:11:03 +0800
 From: Yu-Chun Lin <eleanor.lin@realtek.com>
 To: <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
         <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <p.zabel@pengutronix.de>,
@@ -51,9 +47,9 @@ CC: <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         <linux-realtek-soc@lists.infradead.org>, <james.tai@realtek.com>,
         <cy.huang@realtek.com>, <stanley_chang@realtek.com>,
         <eleanor.lin@realtek.com>
-Subject: [PATCH v4 06/10] clk: realtek: Add support for gate clock
-Date: Fri, 13 Mar 2026 16:10:56 +0800
-Message-ID: <20260313081100.596224-7-eleanor.lin@realtek.com>
+Subject: [PATCH v4 10/10] clk: realtek: Add RTD1625-ISO clock controller driver
+Date: Fri, 13 Mar 2026 16:11:00 +0800
+Message-ID: <20260313081100.596224-11-eleanor.lin@realtek.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20260313081100.596224-1-eleanor.lin@realtek.com>
 References: <20260313081100.596224-1-eleanor.lin@realtek.com>
@@ -68,181 +64,191 @@ Content-Type: text/plain
 
 From: Cheng-Yu Lee <cylee12@realtek.com>
 
-Introduce clk_regmap_gate_ops supporting enable, disable, is_enabled, and
-disable_unused for standard regmap gate clocks.
-
-Add clk_regmap_gate_ro_ops as a read-only variant exposing only is_enabled.
+Add support for the ISO (Isolation) domain clock controller on the Realtek
+RTD1625 SoC. This controller manages clocks in the always-on power domain,
+ensuring essential services remain functional even when the main system
+power is gated.
 
 Signed-off-by: Cheng-Yu Lee <cylee12@realtek.com>
 Co-developed-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 ---
 Changes in v4:
-- None.
+- Modfiy the offsets.
 ---
- drivers/clk/realtek/Makefile          |  2 +
- drivers/clk/realtek/clk-regmap-gate.c | 66 +++++++++++++++++++++++++++
- drivers/clk/realtek/clk-regmap-gate.h | 65 ++++++++++++++++++++++++++
- 3 files changed, 133 insertions(+)
- create mode 100644 drivers/clk/realtek/clk-regmap-gate.c
- create mode 100644 drivers/clk/realtek/clk-regmap-gate.h
+ drivers/clk/realtek/Makefile          |   1 +
+ drivers/clk/realtek/clk-rtd1625-iso.c | 153 ++++++++++++++++++++++++++
+ 2 files changed, 154 insertions(+)
+ create mode 100644 drivers/clk/realtek/clk-rtd1625-iso.c
 
 diff --git a/drivers/clk/realtek/Makefile b/drivers/clk/realtek/Makefile
-index c173ea3b10e3..97058d48a176 100644
+index 3cda1e600172..e90fce42a85e 100644
 --- a/drivers/clk/realtek/Makefile
 +++ b/drivers/clk/realtek/Makefile
-@@ -2,6 +2,8 @@
- obj-$(CONFIG_RTK_CLK_COMMON) += clk-rtk.o
+@@ -11,3 +11,4 @@ clk-rtk-y += reset.o
  
- clk-rtk-y += common.o
-+
- clk-rtk-y += clk-pll.o
-+clk-rtk-y += clk-regmap-gate.o
- clk-rtk-y += freq_table.o
- clk-rtk-y += reset.o
-diff --git a/drivers/clk/realtek/clk-regmap-gate.c b/drivers/clk/realtek/clk-regmap-gate.c
+ clk-rtk-$(CONFIG_RTK_CLK_PLL_MMC) += clk-pll-mmc.o
+ obj-$(CONFIG_COMMON_CLK_RTD1625) += clk-rtd1625-crt.o
++obj-$(CONFIG_COMMON_CLK_RTD1625) += clk-rtd1625-iso.o
+diff --git a/drivers/clk/realtek/clk-rtd1625-iso.c b/drivers/clk/realtek/clk-rtd1625-iso.c
 new file mode 100644
-index 000000000000..5174283c2c21
+index 000000000000..e822f21a8598
 --- /dev/null
-+++ b/drivers/clk/realtek/clk-regmap-gate.c
-@@ -0,0 +1,66 @@
++++ b/drivers/clk/realtek/clk-rtd1625-iso.c
+@@ -0,0 +1,153 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +/*
-+ * Copyright (C) 2017 Realtek Semiconductor Corporation
++ * Copyright (C) 2024 Realtek Semiconductor Corporation
 + * Author: Cheng-Yu Lee <cylee12@realtek.com>
 + */
 +
++#include <dt-bindings/clock/realtek,rtd1625-clk.h>
++#include <linux/clk-provider.h>
++#include <linux/mfd/syscon.h>
++#include <linux/module.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
 +#include "clk-regmap-gate.h"
 +
-+static int clk_regmap_gate_enable(struct clk_hw *hw)
-+{
-+	struct clk_regmap_gate *clkg = to_clk_regmap_gate(hw);
-+	unsigned int mask;
-+	unsigned int val;
++#define RTD1625_ISO_CLK_MAX   19
++#define RTD1625_ISO_S_CLK_MAX 5
 +
-+	mask = BIT(clkg->bit_idx);
-+	val = BIT(clkg->bit_idx);
++static CLK_REGMAP_GATE_NO_PARENT(clk_en_usb_p4, 0, 0x4, 0, 0);
++static CLK_REGMAP_GATE_NO_PARENT(clk_en_usb_p3, 0, 0x4, 1, 0);
++static CLK_REGMAP_GATE(clk_en_misc_cec0, "clk_en_misc", 0, 0x4, 2, 0);
++static CLK_REGMAP_GATE_NO_PARENT(clk_en_cbusrx_sys, 0, 0x4, 3, 0);
++static CLK_REGMAP_GATE_NO_PARENT(clk_en_cbustx_sys, 0, 0x4, 4, 0);
++static CLK_REGMAP_GATE_NO_PARENT(clk_en_cbus_sys, 0, 0x4, 5, 0);
++static CLK_REGMAP_GATE_NO_PARENT(clk_en_cbus_osc, 0, 0x4, 6, 0);
++static CLK_REGMAP_GATE_NO_PARENT(clk_en_i2c0, 0, 0x4, 9, 0);
++static CLK_REGMAP_GATE_NO_PARENT(clk_en_i2c1, 0, 0x4, 10, 0);
++static CLK_REGMAP_GATE_NO_PARENT(clk_en_etn_250m, 0, 0x4, 11, 0);
++static CLK_REGMAP_GATE_NO_PARENT(clk_en_etn_sys, 0, 0x4, 12, 0);
++static CLK_REGMAP_GATE_NO_PARENT(clk_en_usb_drd, 0, 0x4, 13, 0);
++static CLK_REGMAP_GATE_NO_PARENT(clk_en_usb_host, 0, 0x4, 14, 0);
++static CLK_REGMAP_GATE_NO_PARENT(clk_en_usb_u3_host, 0, 0x4, 15, 0);
++static CLK_REGMAP_GATE_NO_PARENT(clk_en_usb, 0, 0x4, 16, 0);
++static CLK_REGMAP_GATE_NO_PARENT(clk_en_vtc, 0, 0x4, 17, 0);
++static CLK_REGMAP_GATE(clk_en_misc_vfd, "clk_en_misc", 0, 0x4, 18, 0);
 +
-+	if (clkg->write_en) {
-+		mask |= BIT(clkg->bit_idx + 1);
-+		val |= BIT(clkg->bit_idx + 1);
-+	}
-+
-+	return regmap_update_bits(clkg->clkr.regmap, clkg->gate_ofs, mask, val);
-+}
-+
-+static void clk_regmap_gate_disable(struct clk_hw *hw)
-+{
-+	struct clk_regmap_gate *clkg = to_clk_regmap_gate(hw);
-+	unsigned int mask;
-+	unsigned int val;
-+
-+	mask = BIT(clkg->bit_idx);
-+	val = 0;
-+
-+	if (clkg->write_en) {
-+		mask |= BIT(clkg->bit_idx + 1);
-+		val |= BIT(clkg->bit_idx + 1);
-+	}
-+
-+	regmap_update_bits(clkg->clkr.regmap, clkg->gate_ofs, mask, val);
-+}
-+
-+static int clk_regmap_gate_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_regmap_gate *clkg = to_clk_regmap_gate(hw);
-+	int ret;
-+	u32 val;
-+
-+	ret = regmap_read(clkg->clkr.regmap, clkg->gate_ofs, &val);
-+	if (ret < 0)
-+		return ret;
-+
-+	return !!(val & BIT(clkg->bit_idx));
-+}
-+
-+const struct clk_ops rtk_clk_regmap_gate_ops = {
-+	.enable     = clk_regmap_gate_enable,
-+	.disable    = clk_regmap_gate_disable,
-+	.is_enabled = clk_regmap_gate_is_enabled,
-+};
-+EXPORT_SYMBOL_GPL(rtk_clk_regmap_gate_ops);
-+
-+const struct clk_ops rtk_clk_regmap_gate_ro_ops = {
-+	.is_enabled = clk_regmap_gate_is_enabled,
-+};
-+EXPORT_SYMBOL_GPL(rtk_clk_regmap_gate_ro_ops);
-diff --git a/drivers/clk/realtek/clk-regmap-gate.h b/drivers/clk/realtek/clk-regmap-gate.h
-new file mode 100644
-index 000000000000..b93357bd5a0d
---- /dev/null
-+++ b/drivers/clk/realtek/clk-regmap-gate.h
-@@ -0,0 +1,65 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (C) 2017 Realtek Semiconductor Corporation
-+ * Author: Cheng-Yu Lee <cylee12@realtek.com>
-+ */
-+
-+#ifndef __CLK_REALTEK_CLK_REGMAP_GATE_H
-+#define __CLK_REALTEK_CLK_REGMAP_GATE_H
-+
-+#include "common.h"
-+
-+struct clk_regmap_gate {
-+	struct clk_regmap clkr;
-+	int gate_ofs;
-+	u8 bit_idx;
-+	u32 write_en : 1;
++static struct clk_regmap *rtd1625_clk_regmap_list[] = {
++	&clk_en_usb_p4.clkr,
++	&clk_en_usb_p3.clkr,
++	&clk_en_misc_cec0.clkr,
++	&clk_en_cbusrx_sys.clkr,
++	&clk_en_cbustx_sys.clkr,
++	&clk_en_cbus_sys.clkr,
++	&clk_en_cbus_osc.clkr,
++	&clk_en_i2c0.clkr,
++	&clk_en_i2c1.clkr,
++	&clk_en_etn_250m.clkr,
++	&clk_en_etn_sys.clkr,
++	&clk_en_usb_drd.clkr,
++	&clk_en_usb_host.clkr,
++	&clk_en_usb_u3_host.clkr,
++	&clk_en_usb.clkr,
++	&clk_en_vtc.clkr,
++	&clk_en_misc_vfd.clkr,
 +};
 +
-+#define __clk_regmap_gate_hw(_p) __clk_regmap_hw(&(_p)->clkr)
++static struct clk_hw_onecell_data rtd1625_iso_clk_data = {
++	.num = RTD1625_ISO_CLK_MAX,
++	.hws = {
++		[RTD1625_ISO_CLK_EN_USB_P4]      = &__clk_regmap_gate_hw(&clk_en_usb_p4),
++		[RTD1625_ISO_CLK_EN_USB_P3]      = &__clk_regmap_gate_hw(&clk_en_usb_p3),
++		[RTD1625_ISO_CLK_EN_MISC_CEC0]   = &__clk_regmap_gate_hw(&clk_en_misc_cec0),
++		[RTD1625_ISO_CLK_EN_CBUSRX_SYS]  = &__clk_regmap_gate_hw(&clk_en_cbusrx_sys),
++		[RTD1625_ISO_CLK_EN_CBUSTX_SYS]  = &__clk_regmap_gate_hw(&clk_en_cbustx_sys),
++		[RTD1625_ISO_CLK_EN_CBUS_SYS]    = &__clk_regmap_gate_hw(&clk_en_cbus_sys),
++		[RTD1625_ISO_CLK_EN_CBUS_OSC]    = &__clk_regmap_gate_hw(&clk_en_cbus_osc),
++		[RTD1625_ISO_CLK_EN_I2C0]        = &__clk_regmap_gate_hw(&clk_en_i2c0),
++		[RTD1625_ISO_CLK_EN_I2C1]        = &__clk_regmap_gate_hw(&clk_en_i2c1),
++		[RTD1625_ISO_CLK_EN_ETN_250M]    = &__clk_regmap_gate_hw(&clk_en_etn_250m),
++		[RTD1625_ISO_CLK_EN_ETN_SYS]     = &__clk_regmap_gate_hw(&clk_en_etn_sys),
++		[RTD1625_ISO_CLK_EN_USB_DRD]     = &__clk_regmap_gate_hw(&clk_en_usb_drd),
++		[RTD1625_ISO_CLK_EN_USB_HOST]    = &__clk_regmap_gate_hw(&clk_en_usb_host),
++		[RTD1625_ISO_CLK_EN_USB_U3_HOST] = &__clk_regmap_gate_hw(&clk_en_usb_u3_host),
++		[RTD1625_ISO_CLK_EN_USB]         = &__clk_regmap_gate_hw(&clk_en_usb),
++		[RTD1625_ISO_CLK_EN_VTC]         = &__clk_regmap_gate_hw(&clk_en_vtc),
++		[RTD1625_ISO_CLK_EN_MISC_VFD]    = &__clk_regmap_gate_hw(&clk_en_misc_vfd),
++		[RTD1625_ISO_CLK_MAX] = NULL,
++	},
++};
 +
-+#define __CLK_REGMAP_GATE(_name, _parent, _ops, _flags, _ofs, _bit_idx,     \
-+			  _write_en)                                        \
-+	struct clk_regmap_gate _name = {                                    \
-+		.clkr.hw.init = CLK_HW_INIT(#_name, _parent, _ops, _flags), \
-+		.gate_ofs = _ofs,                                           \
-+		.bit_idx = _bit_idx,                                        \
-+		.write_en = _write_en,                                      \
-+	}
++static struct rtk_reset_bank rtd1625_iso_reset_banks[] = {
++	{.ofs = 0x0,},
++};
 +
-+#define CLK_REGMAP_GATE(_name, _parent, _flags, _ofs, _bit_idx, _write_en)    \
-+	__CLK_REGMAP_GATE(_name, _parent, &rtk_clk_regmap_gate_ops, _flags, _ofs, \
-+			  _bit_idx, _write_en)
++static const struct rtk_clk_desc rtd1625_iso_desc = {
++	.clk_data        = &rtd1625_iso_clk_data,
++	.clks            = rtd1625_clk_regmap_list,
++	.num_clks        = ARRAY_SIZE(rtd1625_clk_regmap_list),
++	.reset_banks     = rtd1625_iso_reset_banks,
++	.num_reset_banks = ARRAY_SIZE(rtd1625_iso_reset_banks),
++};
 +
-+#define CLK_REGMAP_GATE_RO(_name, _parent, _flags, _ofs, _bit_idx, _write_en) \
-+	__CLK_REGMAP_GATE(_name, _parent, &rtk_clk_regmap_gate_ro_ops, _flags,    \
-+			  _ofs, _bit_idx, _write_en)
++static CLK_REGMAP_GATE_NO_PARENT(clk_en_irda, 0, 0x4, 6, 1);
++static CLK_REGMAP_GATE_NO_PARENT(clk_en_ur10, 0, 0x4, 8, 1);
 +
-+#define __CLK_REGMAP_GATE_NO_PARENT(_name, _ops, _flags, _ofs, _bit_idx,     \
-+				    _write_en)                               \
-+	struct clk_regmap_gate _name = {                                     \
-+		.clkr.hw.init = CLK_HW_INIT_NO_PARENT(#_name, _ops, _flags), \
-+		.gate_ofs = _ofs,                                            \
-+		.bit_idx = _bit_idx,                                         \
-+		.write_en = _write_en,                                       \
-+	}
++static struct clk_regmap *rtd1625_iso_s_clk_regmap_list[] = {
++	&clk_en_irda.clkr,
++	&clk_en_ur10.clkr,
++};
 +
-+#define CLK_REGMAP_GATE_NO_PARENT(_name, _flags, _ofs, _bit_idx, _write_en)    \
-+	__CLK_REGMAP_GATE_NO_PARENT(_name, &rtk_clk_regmap_gate_ops, _flags, _ofs, \
-+				    _bit_idx, _write_en)
++static struct clk_hw_onecell_data rtd1625_iso_s_clk_data = {
++	.num = RTD1625_ISO_S_CLK_MAX,
++	.hws = {
++		[RTD1625_ISO_S_CLK_EN_IRDA] = &__clk_regmap_gate_hw(&clk_en_irda),
++		[RTD1625_ISO_S_CLK_EN_UR10] = &__clk_regmap_gate_hw(&clk_en_ur10),
++		[RTD1625_ISO_S_CLK_MAX] = NULL,
++	},
++};
 +
-+#define CLK_REGMAP_GATE_NO_PARENT_RO(_name, _flags, _ofs, _bit_idx, _write_en) \
-+	__CLK_REGMAP_GATE_NO_PARENT(_name, &rtk_clk_regmap_gate_ro_ops, _flags,    \
-+				    _ofs, _bit_idx, _write_en)
++static struct rtk_reset_bank rtd1625_iso_s_reset_banks[] = {
++	{.ofs = 0x0, .write_en = 1,},
++};
 +
-+static inline struct clk_regmap_gate *to_clk_regmap_gate(struct clk_hw *hw)
++static const struct rtk_clk_desc rtd1625_iso_s_desc = {
++	.clk_data        = &rtd1625_iso_s_clk_data,
++	.clks            = rtd1625_iso_s_clk_regmap_list,
++	.num_clks        = ARRAY_SIZE(rtd1625_iso_s_clk_regmap_list),
++	.reset_banks     = rtd1625_iso_s_reset_banks,
++	.num_reset_banks = ARRAY_SIZE(rtd1625_iso_s_reset_banks),
++};
++
++static int rtd1625_iso_probe(struct platform_device *pdev)
 +{
-+	struct clk_regmap *clkr = to_clk_regmap(hw);
++	const struct rtk_clk_desc *desc;
 +
-+	return container_of(clkr, struct clk_regmap_gate, clkr);
++	desc = of_device_get_match_data(&pdev->dev);
++	if (!desc)
++		return -EINVAL;
++	return rtk_clk_probe(pdev, desc);
 +}
 +
-+extern const struct clk_ops rtk_clk_regmap_gate_ops;
-+extern const struct clk_ops rtk_clk_regmap_gate_ro_ops;
++static const struct of_device_id rtd1625_iso_match[] = {
++	{.compatible = "realtek,rtd1625-iso-clk", .data = &rtd1625_iso_desc},
++	{.compatible = "realtek,rtd1625-iso-s-clk", .data = &rtd1625_iso_s_desc},
++	{/* sentinel */}
++};
 +
-+#endif /* __CLK_REALTEK_CLK_REGMAP_GATE_H */
++static struct platform_driver rtd1625_iso_driver = {
++	.probe = rtd1625_iso_probe,
++	.driver = {
++		.name = "rtk-rtd1625-iso-clk",
++		.of_match_table = rtd1625_iso_match,
++	},
++};
++
++static int __init rtd1625_iso_init(void)
++{
++	return platform_driver_register(&rtd1625_iso_driver);
++}
++subsys_initcall(rtd1625_iso_init);
++
++MODULE_DESCRIPTION("Realtek RTD1625 ISO Controller Driver");
++MODULE_AUTHOR("Cheng-Yu Lee <cylee12@realtek.com>");
++MODULE_LICENSE("GPL");
 -- 
 2.34.1
 
