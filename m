@@ -1,73 +1,151 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7D6331215;
-	Fri, 13 Mar 2026 11:13:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F8AC38F245;
+	Fri, 13 Mar 2026 11:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773400400; cv=none; b=gMgRmZZn931XtVhUrxAUjv6hUfAy3EHHcs5QYFO5ZfsL7f18Ip9mQncLjZustzI3UPvRn5rPzOpLEkMqUCIf2lzhqSDVKFa0KjA4yjKZpH/XxYOThC+weoGAU/87w0v9NeQt1kRsL4grmShUr8s/wTYQQ+bCRrAlyTk3FTmZm9I=
+	t=1773400867; cv=none; b=l180lgtodE+8+4INPYVSPy1Ggp0ye/37edzMWpK/VuHxKtKHJq1WFjimqmxmauYuSRiKj9/aSzJx4Sg/qVMINKenFD5ZclpRIdrra0TOUpJL1dSjTsEppe5p1egNOR08tea3ygGJIcv2JSSTk66xGlXATAcGLePPhm9vjgUclaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773400400; c=relaxed/simple;
-	bh=7DzwFuH9mt0HQpYqoW2W8Yk6M8W4P/ovORgLmKkXir0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BTiFJfcw1aUae5M9e2428PGsBJccNMXR63y4oeXLyG8Bxr3H//3fP5zteaq+1xUJc/MP3w6amiPflHZo62/r1ygA43jus1YOS7D9D2MICEC1SIJTBSMg39gWoG36p5wdt6MlZ4UB48qgSKDXumMDXrWgQY3ZJDAoTiToZvNEBHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 709C9C2BC9E;
-	Fri, 13 Mar 2026 11:13:18 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] clk: renesas: Updates for v7.1
-Date: Fri, 13 Mar 2026 12:13:15 +0100
-Message-ID: <cover.1773399986.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1773400867; c=relaxed/simple;
+	bh=iThDtlWFRXyqELPZgOTDTFG9GPUgz6TLe2DwswpTBng=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=leuDkaTHsIo9GHbKLg1E+cVcplyidfmDRfj9aXamVuU8wHr8WaFe6UlbjRppsnWK/d7oFMBAqF15YGLM4RlbmTkux/f0jXkQH8fzD/dWfzNOWGbAUrD9yaFBtlgtf8vyfCW9SXUqxmI+4WiVwH+Evm2NMUjJce5l7n6TczalvJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Do+K6n/K; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Do+K6n/K"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id C71B41A2E1C;
+	Fri, 13 Mar 2026 11:20:58 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 91EB46002C;
+	Fri, 13 Mar 2026 11:20:58 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0812210369E37;
+	Fri, 13 Mar 2026 12:20:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1773400854; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=TViEBJxH/6t08moT1Cupd+GoZoxMid++9M6KSZfI+c8=;
+	b=Do+K6n/KnMT6sRzJjxkeDTXj5gTe6Hx27Z4GI42adJKl10t0UbUB71h1hkyXitEwWH6T2i
+	ltPrtpPGlMRvMhlKdD86qjGAeIZiwe4BSbPsxfLCAtDLLn+QW5HhBnSacBq7w+rkUIZ0J1
+	BNvT7C0jWhklauOjM3AmXTLanlZcFUFy0LLfL80GGk3rI4FrO46yzHOgH6gOlCPWimIWuu
+	bnfxU3ILpTwq5ezxehZ4D3Vzr3CkDosx+2OTafb29osULMFwoJZ2G901V6rpsJr7Jh4Xeb
+	Bvtu0CHib7D6D9nhSPgx5/0hloz3s/0DI814tsG5pLaTxNMnMFKKCQ+0Ohk+mg==
+Date: Fri, 13 Mar 2026 12:20:27 +0100
+From: Herve Codina <herve.codina@bootlin.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Geert Uytterhoeven
+ <geert@linux-m68k.org>, Andrew Lunn <andrew@lunn.ch>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Kalle Niemi <kaleposti@gmail.com>, Matti Vaittinen
+ <mazziesaccount@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Danilo
+ Krummrich <dakr@kernel.org>, Frank Li <Frank.Li@nxp.com>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Andi Shyti
+ <andi.shyti@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Peter Rosin <peda@axentia.se>, Arnd Bergmann <arnd@arndb.de>, Saravana
+ Kannan <saravanak@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Charles
+ Keepax <ckeepax@opensource.cirrus.com>, Richard Fitzgerald
+ <rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, Linus
+ Walleij <linusw@kernel.org>, Mark Brown <broonie@kernel.org>, Len Brown
+ <lenb@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Daniel Scally <djrscally@gmail.com>, Heikki Krogerus
+ <heikki.krogerus@linux.intel.com>, Sakari Ailus
+ <sakari.ailus@linux.intel.com>, Davidlohr Bueso <dave@stgolabs.net>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>, Dave Jiang
+ <dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>, Shawn Guo <shawnguo@kernel.org>,
+ Wolfram Sang <wsa@kernel.org>, linux-kernel@vger.kernel.org,
+ driver-core@lists.linux.dev, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-sound@vger.kernel.org,
+ patches@opensource.cirrus.com, linux-gpio@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-spi@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org, Allan Nielsen
+ <allan.nielsen@microchip.com>, Horatiu Vultur
+ <horatiu.vultur@microchip.com>, Steen Hegelund
+ <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Saravana Kannan
+ <saravanak@google.com>, Bartosz Golaszewski
+ <bartosz.golaszewski@oss.qualcomm.com>
+Subject: Re: [PATCH v5 02/28] driver core: Rename get_dev_from_fwnode()
+ wrapper to get_device_from_fwnode()
+Message-ID: <20260313122027.498ff15f@bootlin.com>
+In-Reply-To: <CAPDyKFpX3A3r4s72PNjBz5QaZUsq1xaGhn5vXwegue7Tyh_Zew@mail.gmail.com>
+References: <20260227135428.783983-1-herve.codina@bootlin.com>
+	<20260227135428.783983-3-herve.codina@bootlin.com>
+	<CAMuHMdVVsEB-xb8Jz4ujBam2NxtxAOb7byYa3VR_eHsbTD5rXw@mail.gmail.com>
+	<2026031242-debug-aviation-19b8@gregkh>
+	<CAPDyKFpX3A3r4s72PNjBz5QaZUsq1xaGhn5vXwegue7Tyh_Zew@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-	Hi Mike, Stephen,
+Hi Greg, Ulf,
 
-The following changes since commit 1b4f047dc4010d51821694cc4ed73b52b3040a5c:
+On Fri, 13 Mar 2026 10:43:33 +0100
+Ulf Hansson <ulf.hansson@linaro.org> wrote:
 
-  clk: renesas: r9a09g057: Remove entries for WDT{0,2,3} (2026-03-06 13:33:52 +0100)
+> On Thu, 12 Mar 2026 at 16:27, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Tue, Mar 10, 2026 at 04:03:42PM +0100, Geert Uytterhoeven wrote:  
+> > > Hi Hervé,
+> > >
+> > > On Fri, 27 Feb 2026 at 14:55, Herve Codina <herve.codina@bootlin.com> wrote:  
+> > > > get_dev_from_fwnode() calls get_device() and so it acquires a reference
+> > > > on the device returned.
+> > > >
+> > > > In order to be more obvious that this wrapper is a get_device() variant,
+> > > > rename it to get_device_from_fwnode().
+> > > >
+> > > > Suggested-by: Mark Brown <broonie@kernel.org>
+> > > > Link: https://lore.kernel.org/lkml/CAGETcx97QjnjVR8Z5g0ndLHpK96hLd4aYSV=iEkKPNbNOccYmA@mail.gmail.com/
+> > > > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> > > > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > > > Reviewed-by: Saravana Kannan <saravanak@google.com>
+> > > > Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> > > > Acked-by: Ulf Hansson <ulf.hansson@linaro.org>  
+> > >
+> > > FTR, one more user of get_dev_from_fwnode() appeared in commit
+> > > 9035073d0ef1de81 ("reset: convert reset core to using firmware nodes")
+> > > in reset/next.  
+> >
+> > Ick, that's going to make this hard to land anywhere.  This is a rough
+> > series, perhaps it should be split up to make it easier somehow?
+> >
+> > thanks,
+> >
+> > greg k-h  
+> 
+> I fully agree with the above. Renaming the function isn't necessary
+> for the $subject series.
+> 
+> I suggest we simply drop this patch from the series - and if the
+> renaming really makes sense in the end, we can deal with that
+> separately later on.
+> 
+> So withdrawing my ack from this one.
+> 
+> Kind regards
+> Uffe
 
-are available in the Git repository at:
+Also agree on my side. I will fully remove this function renaming part from
+this series in its next iteration.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v7.1-tag1
+Best regards,
+Hervé
 
-for you to fetch changes up to c8d5972a25408b1daf73653ccd5207fdfc80c964:
-
-  clk: renesas: r9a09g056: Add clock and reset entries for RTC (2026-03-06 13:33:56 +0100)
-
-----------------------------------------------------------------
-clk: renesas: Updates for v7.1
-
-  - Add RTC clocks and resets on RZ/V2N.
-
-Note that this PR is based on "[GIT PULL] clk: renesas: Fixes for v7.0".
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Ovidiu Panait (1):
-      clk: renesas: r9a09g056: Add clock and reset entries for RTC
-
- drivers/clk/renesas/r9a09g056-cpg.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
