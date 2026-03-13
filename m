@@ -1,185 +1,102 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3815C3CA4BE
-	for <linux-clk@vger.kernel.org>; Fri, 13 Mar 2026 16:54:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A4DC3947A6
+	for <linux-clk@vger.kernel.org>; Fri, 13 Mar 2026 17:09:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773420888; cv=none; b=RHEy4+IWiBIuwM9ChjLWKaZJpSv0Urv2goeHHrMs2utdg95nw1XxwWs2CLVyHIZwSR9c7disAdjNiVrWOdq2vR3vomzqSbpUQNNVKE41P/3MhWRd/UdeLsUoDlbwsJ/Gnjg6Y99VdtevhW8l47sOt6mKXJepLGVIuGBSI8KuxTo=
+	t=1773421799; cv=none; b=X2e0Pk4gOFOIaThkglGmN6DQSOXxr6BDQeLCxe9k7NCgrVYOKp4XZSK5OkGcEp+d0ZRcoq2y8iLYSPAseZnSXxNDgzTXmtlzU4uuTBDyIlou4Yr13K/+Vy4+7mfPcKX9U1o/BO8/PQ4gz3zpUGYTbxXXavnt12ku3MXvkZRXVNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773420888; c=relaxed/simple;
-	bh=MYqtvmPMBbkzVH2cDaVgumHB6+1nChu4X6wiV57iB6w=;
+	s=arc-20240116; t=1773421799; c=relaxed/simple;
+	bh=zgKdsEGdjdvUuCuj3NXoEiAo/0AGLqUvRArM22toq5c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WE26Yto31SvDKp7V3XRkhSB6KEDvMNiCfLPI8bM5Nj3nTXxirPcdR1IEkc0njM6wOBFToJa0ex/89fqvg8diYbKwITBJrpgZdLM4prvLTNgbABbb2UNyGQ8tQEzt1svwlH2LkazIQu/GSkC/0q1rUwvmCeqYbVRdSpxQmdGrC0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fyHUVu4M; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=R+xuJulT; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xus5rdDPoz/F8SlSdhxKt74Rx55KYobaUYsE6Cxj0+EdMnjDr1h524nXh5ZUEOqabt0EsfHo0kl6sLL8Ap6advg+TdUpBwnthAxsGV9961IQHLX2C2HiNH+Ol4OM14Uc89DCiy0mbNTfAmXkAJN7bX/EHmEDWpcOWs77g4fOOL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Kfukbwqp; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fyHUVu4M";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="R+xuJulT"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1773420886;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mqxWsYIPaTBPPrjermq+DtfpUjguE2xkVbOTdTjdzII=;
-	b=fyHUVu4MrGC9v131WWUqGCumhybap81RRWxYQzvvBfQV8hNaQvogc5DuwzlUhA50PhnS1r
-	ZToi3Iz/JyHOZzYYonakFtuoGqQ621g23/70UzqrtRPOm540/J5qvRnX4j0GtobDzVZlrj
-	SkbwJMV/yM6O5tNqKWOzVAL4FWFepbM=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-223-WNhIDrvQOK-h0fLERofQqA-1; Fri, 13 Mar 2026 12:54:42 -0400
-X-MC-Unique: WNhIDrvQOK-h0fLERofQqA-1
-X-Mimecast-MFC-AGG-ID: WNhIDrvQOK-h0fLERofQqA_1773420882
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-5090cc6a7d2so180387421cf.2
-        for <linux-clk@vger.kernel.org>; Fri, 13 Mar 2026 09:54:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1773420882; x=1774025682; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mqxWsYIPaTBPPrjermq+DtfpUjguE2xkVbOTdTjdzII=;
-        b=R+xuJulTdn4NVCcS6LekFfD5KIiNQk0gPD+plDlLjhm372BUytkcDv7oinoWmOmzcn
-         Kaglql4V+pLjmSD1oPJILoXyS+1ey7+rUgueVnWxRNuI565XpEojHRHcwJWa9KQTBHyt
-         92sxI/sTPtsWFSuzMHSm22Hlv1n8vLPK2t3HohyDZMCdUwvfkzUIY4Q7hGa0+dBBDHcq
-         HMKjOlSlqjVvFV10rIP0SAbXFOVT2moFbjOwDk434Qpexf50+Wf95rgrgpqedHuApf8a
-         zoqaFysBcAGR9rxQ/od2jdjOgPqJDCKliiYvudqwMo4HdghjkNh12CfbvccmOkF3FLsA
-         TaSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773420882; x=1774025682;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mqxWsYIPaTBPPrjermq+DtfpUjguE2xkVbOTdTjdzII=;
-        b=ry7tS5ErLDuQ87r90vmA0T+5Kt80t7jv/o+w1TulKPBhgDzDw3e2s691/eAoYaVR5a
-         zCUaJhH9990A6RhCFYEtaTBaUGq4tNGBbQc7vrQ0oHVDZy90cU9H4TxVZ7kazwuiQ/w9
-         /SbvQG2otJRfQ5n3ZnrCFjMikiYWv4978vj8+HNaShK2XyeEciB6HuSkrcJyOmeu8Amy
-         ZHBrqd0/cWn9tj6uVWR1he4G9M1aqupZ4eofs8eN+IQJrxWeR6wyUw4u2PIgHPTKlt5H
-         4p20Lvy/7ywjLsOfOTQMpPMi05CbSibV5SA62KKRvgQZ9RdUroPDcadONjHMrWvNs608
-         RPMg==
-X-Forwarded-Encrypted: i=1; AJvYcCVXmGE+mwLZfY6bcZWfz3VBxyODQSK3AHixmu9piZW7o45FsnoEVG0fYPSjVLFaRBcgphqejTV90Jc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQWxWCdCfJ4o31L9+OsUToEtsBCGl8t008e/PGDCfyr6/wIBln
-	owsq5PTX4CxN8cxR7s8aKSKWohzKzJIETkVgNFp72meHMAOXpK3Qgxf0wgVOgtK9+Bq+Tk+xUQJ
-	oRPKs1cxb4Z+2SCyxrkDdySYqpFeasQ3NtoNlQRtOpo3MQLMUBtdZWzDn+xCNqA==
-X-Gm-Gg: ATEYQzxk+IGXMNtlYfEnJZCSLphdoHjV6ZXhdKJAKtlE6kxyddWQMMk7gBRfoqrGXNR
-	oAH4cUXMQ2W89iJ/lYs6BaOUDIgdmjEJJrHz1V0Qdvo6Lvbk3jjN/pQBeSs3nQQx8qtk8py9FMg
-	NtOeflOIv7BjiWUnv7g46vL2flZC9RXoCP2mupeu9n1TXytYxfe7YzdJobzvzMckw98ONoGSu9h
-	Hq93gyTIWjdm7728Z6LQxvakkWN5xPFo3yz5VZTsbhNLYLh8/Mj3F/JxXw79DT4pMPMRvIBQ/U8
-	mO/LZ3dEf7i6tk/MJbSIcvH6+vJAlESk/j3J03SmoS6QmcEz4Q+kkXIrurPv6oAtoupp5WdW+08
-	gWRYVdnpPrFS7mdpIrmuKmrctQV0C9Ntwamk7Ugu2SlLJrJ+3Oe3DOyFY
-X-Received: by 2002:a05:622a:4e:b0:509:1c5e:1062 with SMTP id d75a77b69052e-50957b88869mr55996841cf.3.1773420882166;
-        Fri, 13 Mar 2026 09:54:42 -0700 (PDT)
-X-Received: by 2002:a05:622a:4e:b0:509:1c5e:1062 with SMTP id d75a77b69052e-50957b88869mr55996521cf.3.1773420881696;
-        Fri, 13 Mar 2026 09:54:41 -0700 (PDT)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-89a65ce3924sm60581406d6.24.2026.03.13.09.54.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Mar 2026 09:54:41 -0700 (PDT)
-Date: Fri, 13 Mar 2026 12:54:39 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Pengyu Luo <mitltlatltl@gmail.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Bjorn Andersson <andersson@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Kfukbwqp"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=zgKd
+	sEGdjdvUuCuj3NXoEiAo/0AGLqUvRArM22toq5c=; b=KfukbwqpzJhNoAxRs1CM
+	usGPS8xUhNq/i0LNijPkJ5tsnRW7JS2r3Muh8oAaRnPmruMbo8YpjJFshAyVw2kx
+	WDaWXlJOIfmzuxlVfkm8fSAvB1WhxWGkLbAo/1u6HL3ChLY8r05hn+pi7lI161Bc
+	gWkApd5TCAHJvuNH5vqmcTne0hCuOzOP5aF4eLupZ4PHQhJT4n1chU9DO6e6cN47
+	qBilPS2nJ6DrmfGnxuoVVz7FfgMe/3iX1Zl60ClRU1poS9oes8WWpZHJkUttgh0x
+	m997CSXkdCfe+NKFUQMjh46Siln+qUPgab6Fr9zd8qbJpkw4SRpN5ucj0Oq/o6M9
+	1A==
+Received: (qmail 387518 invoked from network); 13 Mar 2026 18:09:46 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Mar 2026 18:09:46 +0100
+X-UD-Smtp-Session: l3s3148p1@yLGd7+pMtJ0ujnuR
+Date: Fri, 13 Mar 2026 18:09:46 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Dmitry Baryshkov <lumag@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	White Lewis <liu224806@gmail.com>
-Subject: Re: [PATCH] clk: qcom: dispcc-sc8280xp: remove CLK_SET_RATE_PARENT
- from byte_div_clk_src dividers
-Message-ID: <abRBT4niX2CB9XVR@redhat.com>
-References: <20260303115550.9279-1-mitltlatltl@gmail.com>
- <d2cdaa7e-1a17-4e6b-879d-266844958410@oss.qualcomm.com>
- <aahGtIkxtNPeeWKc@redhat.com>
- <CAH2e8h5oHvaADPgE_GdPQsWrU00XUT1d0ktbE25ztMeBEE51Yw@mail.gmail.com>
- <CABx5tqJ_spoZrhX7n91rTOaMcp1G_n8jB5aJV-rNbSPYZBZxEA@mail.gmail.com>
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	Pascal Eberhard <pascal.eberhard@se.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 1/3] watchdog: rzn1: Fix reverse xmas tree declaration
+Message-ID: <abRE2v-raiGhGuQ2@ninjato>
+References: <20260313092417.294356-1-herve.codina@bootlin.com>
+ <20260313092417.294356-2-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="uqZG+egNaPCPpGfS"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABx5tqJ_spoZrhX7n91rTOaMcp1G_n8jB5aJV-rNbSPYZBZxEA@mail.gmail.com>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+In-Reply-To: <20260313092417.294356-2-herve.codina@bootlin.com>
 
-Hi Qualcomm Folks,
 
-On Fri, Mar 06, 2026 at 06:27:20PM -0500, Brian Masney wrote:
-> On Wed, Mar 4, 2026 at 10:08 AM Pengyu Luo <mitltlatltl@gmail.com> wrote:
-> > On Wed, Mar 4, 2026 at 10:50 PM Brian Masney <bmasney@redhat.com> wrote:
-> > > On Tue, Mar 03, 2026 at 01:10:43PM +0100, Konrad Dybcio wrote:
-> > > > On 3/3/26 12:55 PM, Pengyu Luo wrote:
-> > > > > From: White Lewis <liu224806@gmail.com>
-> > > > >
-> > > > > The four byte_div_clk_src dividers (disp{0,1}_cc_mdss_byte{0,1}_div_clk_src)
-> > > > > had CLK_SET_RATE_PARENT set. When the DSI driver calls clk_set_rate() on
-> > > > > byte_intf_clk, the rate-change propagates through the divider up to the
-> > > > > parent PLL (byte_clk_src), halving the byte clock rate.
-> > > > >
-> > > > > A simiar issue had been also encountered on SM8750.
-> > > > > b8501febdc51 ("clk: qcom: dispcc-sm8750: Drop incorrect CLK_SET_RATE_PARENT on byte intf parent").
-> > > > >
-> > > > > Likewise, remove CLK_SET_RATE_PARENT from all four byte divider clocks
-> > > > > so that clk_set_rate() on the divider adjusts only the divider ratio,
-> > > > > leaving the parent PLL untouched.
-> > > > >
-> > > > > Fixes: 4a66e76fdb6d ("clk: qcom: Add SC8280XP display clock controller")
-> > > > > Signed-off-by: White Lewis <liu224806@gmail.com>
-> > > > > [pengyu: reword]
-> > > > > Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
-> > > > > ---
-> > > >
-> > > > Looks like more platforms have this issue.. thanks for fixing this
-> > >
-> > > I hope within the next week to post a new draft of my patch series to
-> > > keep certain clk rates intact when sibling and parent rate changes occur
-> > > [1]. This will be for certain critical clks, such as the ones used for
-> > > DRM and sound. I have it working with kunit, and just need to clean up
-> > > some of my new clk helpers and commit messages before I post a v5.
-> > >
-> > > I'd like to test this on some real hardware and I have the Thinkpad x13s
-> > > with the sc8280xp SoC. Can this issue be reproduced on this hardware? If
-> > > so, can you provide me detailed instructions about how to trigger this
-> > > scenario?
-> > >
-> >
-> > Quick answer, no, x13s uses a edp panel, not dsi. This issue is
-> > related to dsi clks.
-> 
-> I posted my latest clk scaling work in an attempt to address the
-> underlying issue here.
+--uqZG+egNaPCPpGfS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ignore my previous patch set. In my v6 that I just posted, I updated
-clk-divider.c to support the new v2 clk negotiation logic. The
-clk_regmap_div_ops uses this driver, so you shouldn't have to make any
-code changes.
+On Fri, Mar 13, 2026 at 10:24:14AM +0100, Herve Codina (Schneider Electric)=
+ wrote:
+> Variables declared in probe() don't follow the reverse xmas
+> tree convention.
+>=20
+> Fix the declaration in order to follow the convention.
+>=20
+> Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.co=
+m>
 
-Anyways, would someone from Qualcomm be willing to test this? The
-procedure is fairly simple:
+Not a fan of such changes. But it works and I am not opposing it:
 
-1) Back out the patch:
-   clk: qcom: dispcc-sc8280xp: remove CLK_SET_RATE_PARENT from byte_div_clk_src dividers
-   (or one of the similar patches posted for other SoCs)
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-2) Apply my v6 series:
-   clk: add support for v1 / v2 clock rate negotiation and kunit tests
-   https://lore.kernel.org/linux-clk/20260313-clk-scaling-v6-0-ce89968c5247@redhat.com/T/#
 
-3) Boot... everything should behave the same as prior to my patch set.
-   The clk crash will still occur.
+--uqZG+egNaPCPpGfS
+Content-Type: application/pgp-signature; name="signature.asc"
 
-4) Reboot, and boot the kernel this time with the clk_v2_rate_negotiation
-   kernel parameter to globally opt into the v2 negotiation logic. The clk crash
-   hopefully shouldn't occur.
+-----BEGIN PGP SIGNATURE-----
 
-Thanks,
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmm0RNYACgkQFA3kzBSg
+KbYikw//cv3cIz0tCzQsRnSS2RRZIjN+OyIBjFzKFjBdxShhG41SWNZ5/pwN/7Ah
+u7VMLIP9b30N8Ec9yGOdyKReEGCe2rW4ESf6Mp7ePdIoi++RnBsNZ0EjXVy04wcG
+vktacTR9K/N3NowEjlfnPdY6e1hap6gPDIhTTYWSWacmlsLcRe/LzpwFJV9RujYz
+kPwv7XAZ9E+citlLfC+JndMqQ6JS6IpDnEU7bjrfsq58xkSHzLQc7PkEuWJuH847
+Vg2NPYDwMnQOV3USX9aLyOX4yYhXHI0SynmuEKc8x4YCxh+z942ozaJfXmuqwVD4
+X5Ib158VRwOjw6iZXuYQsi746OXfMiiTtm7qszC5NbQ41nBIkl59zWlkNlvIfPUk
+jxyopg/rDEVvUPJWSQIN3DEaYeW6IO291x8IEaYjGO/CUMEkpfhGuGjTJeoY0wNL
+eH2wFC+y9LdgQBa3e+Y3SXgmJJ3bnu6jdjySuRDfCNsFUuxzgSbMruM/wkT8c2ZT
+plj/1rTGcyGRdxR9wx3B9BdxD0GOtQ9RNaKe7YH34nUKkoj54aSN1Gw5wBygvxIB
+gtwbxXziF0+FIkPuWfQq9wzrphLyy0fUKO8xo5rR8R8ZAt/oQiFr3RV34tZbwXSS
+OZIf11GV9SFhpHZELwOPc8ZL1lv4FOXztxoXlzHzpdEuaeNKFZ4=
+=j4b3
+-----END PGP SIGNATURE-----
 
-Brian
-
+--uqZG+egNaPCPpGfS--
