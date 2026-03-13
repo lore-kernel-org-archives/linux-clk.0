@@ -1,43 +1,66 @@
-Received: from mail-sc.amlogic.com (unknown [64.106.246.77])
+Received: from www537.your-server.de (www537.your-server.de [188.40.3.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E2634F24B;
-	Fri, 13 Mar 2026 07:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.106.246.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B319B29B224;
+	Fri, 13 Mar 2026 07:07:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.3.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773385544; cv=none; b=OAvs0UkLYAo6Togp/AfJ7oji0tTZCjzxpObO6VVeXzd86+of3Sg81ecYVX2C/ccL6RkA7zjoQnyG+NowkTTriLGJArG6KKUKcbdwlGrOH9hdL/VHGp+uZs0FBlXNHouy28uopfSQaCKF00qXkP7p1w6pd1oS06nR+2oEkM51Eic=
+	t=1773385667; cv=none; b=JtviWpAvoawEJpUg6E4bm4OMIUE+4ApLYdh1P8cl88zW6l4LEAmrUehOzMlZNQYjuKdNGm4fcSTbmIfYs5zOZXLy4a/NlGIOggitPAoR1xyefbCPSKm0V2fFWNZhgFAdQkfn8+MsprGHGbi8Eqf/+aVM5Mi04vI2/OExH7qZ7Mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773385544; c=relaxed/simple;
-	bh=whlpUtXUBMICD/iMHzCH6i7RAA1F/626XsL2yoVhsrM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YdzPEO0X5krEOp4b9Ge25VS0vlcqsXjXUEbDeOj7xBIK+isC+QylsKWfpxd8yENFE9f9J8C6Pf+Xrd0D/N/lFDlSdWTQAoyNx7FxTxNANxuvk6f01abJLdXlUej8AW827j4XPZmsgbPftOCJ7gN0afsSUeb2cfowUCN1qctCtOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; arc=none smtp.client-ip=64.106.246.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
-Received: from rd03-sz.software.amlogic (10.28.11.121) by mailsc.amlogic.com
- (10.8.11.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.35; Thu, 12 Mar
- 2026 23:59:40 -0700
-From: Jian Hu <jian.hu@amlogic.com>
-To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
-	<neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, "Martin
- Blumenstingl" <martin.blumenstingl@googlemail.com>, Stephen Boyd
-	<sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, robh+dt
-	<robh+dt@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-CC: Jian Hu <jian.hu@amlogic.com>, Ronald Claveau <linux-kernel-dev@aliel.fr>,
-	devicetree <devicetree@vger.kernel.org>, linux-clk
-	<linux-clk@vger.kernel.org>, linux-amlogic
-	<linux-amlogic@lists.infradead.org>, linux-kernel
-	<linux-kernel@vger.kernel.org>, linux-arm-kernel
-	<linux-arm-kernel@lists.infradead.org>, Ferass El Hafidi
-	<funderscore@postmarketos.org>
-Subject: [PATCH v2 1/3] dt-bindings: clock: amlogic: Fix redundant hyphen in "amlogic,t7-gp1--pll" string.
-Date: Fri, 13 Mar 2026 15:00:20 +0800
-Message-ID: <20260313070022.700437-2-jian.hu@amlogic.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20260313070022.700437-1-jian.hu@amlogic.com>
-References: <20260313070022.700437-1-jian.hu@amlogic.com>
+	s=arc-20240116; t=1773385667; c=relaxed/simple;
+	bh=wCEZMFEIe9N1fRThoO8UVaTOZnxRpccdK7arnQBKo6c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sotZeVCv2UWIgRY3l8750MOcFVtqu8nMuI27IcHUOE0aUM3jetYjs0GoXc62fWD8OQQb0rHeSLT3pX/VhATfUB8x1HfZPyqhbgr2vuDmYStQHf88DV9MTbIxBxqY5yk+FyvepeWMJP4vXUbsrMtz6XFH4ov19X7T3Tm6wjYKrgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=LbX4mAKw; arc=none smtp.client-ip=188.40.3.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="LbX4mAKw"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=ew.tq-group.com; s=default2602; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=Kkt3A1e6l/KLgh24uOCTImlNQ3maInjpGSRh0bHez1U=; b=LbX4mAKwv7C4HUfxwhNXS7VlEh
+	hmvcLa/leBzkzWdz0p6xBwZXLRlGDiGWbdStfzh8qnLx1U3hBb0nlJzc0bMs2eGYKHyW+0QOdAtmO
+	RrDiyIazA141ISX3qUm7EVm6QWYqAIN/pRlHKw+t661OHH45g++qtekm+rJ1OeqckomtMeIa8elKj
+	IaNiwb9So1RFgfHoBvYAi7PaRvAjXDwaWmRTl7latpUxEsYgbQECHNxjzxyi9bb1fKB1vGFZmlQuF
+	Emvofw1cWpf/f0/0AUNY5rXbSEhvGfiKNumGvyjKgWkS9cgqEgPGxfdExkYSlzJZXVDUgicZMNKYx
+	qjjFN14A==;
+Received: from sslproxy07.your-server.de ([78.47.199.104])
+	by www537.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <alexander.stein@ew.tq-group.com>)
+	id 1w0wcZ-000CUj-1k;
+	Fri, 13 Mar 2026 08:07:43 +0100
+Received: from localhost ([127.0.0.1])
+	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <alexander.stein@ew.tq-group.com>)
+	id 1w0wcY-000IYT-2s;
+	Fri, 13 Mar 2026 08:07:42 +0100
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Abel Vesa <abelvesa@kernel.org>,
+	Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux@ew.tq-group.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 0/6] TQMa91/TQMa93: display support on MBa91xxCA
+Date: Fri, 13 Mar 2026 08:07:30 +0100
+Message-ID: <20260313070740.585043-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -45,32 +68,40 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mailsh.amlogic.com (10.18.11.5) To mailsc.amlogic.com
- (10.8.11.35)
+X-Virus-Scanned: Clear (ClamAV 1.4.3/27938/Thu Mar 12 07:24:01 2026)
 
-Fix redundant hyphen in "amlogic,t7-gp1--pll" string.
+Hi,
 
-Fixes: 5437753728ac ("dt-bindings: clock: add Amlogic T7 PLL clock controller")
-Signed-off-by: Jian Hu <jian.hu@amlogic.com>
-Signed-off-by: Ronald Claveau <linux-kernel-dev@aliel.fr>
----
- .../devicetree/bindings/clock/amlogic,t7-pll-clkc.yaml          | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+this series adds support for parallel and LVDS displays on MBa91xxCA, both for
+TQMa91 and TQMa93. The parallel display is attached directly, while the LVDS
+uses an LVDS-Encoder. To actually work it needs the pdfc driver from [1].
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,t7-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,t7-pll-clkc.yaml
-index 49c61f65deff..b488d92b7984 100644
---- a/Documentation/devicetree/bindings/clock/amlogic,t7-pll-clkc.yaml
-+++ b/Documentation/devicetree/bindings/clock/amlogic,t7-pll-clkc.yaml
-@@ -72,7 +72,7 @@ allOf:
-           contains:
-             enum:
-               - amlogic,t7-gp0-pll
--              - amlogic,t7-gp1--pll
-+              - amlogic,t7-gp1-pll
-               - amlogic,t7-hifi-pll
-               - amlogic,t7-pcie-pll
-               - amlogic,t7-mpll
+The first two patches add required (Video) PLL configurations to achieve the
+necessary pixel clocks for both displays.
+The last 4 patches add the overlays for TQMa91 and TQMa93, although the
+overlays for TQMa91 use the same overlay for TQMa93.
+
+Best regards,
+Alexander
+
+[1] https://lore.kernel.org/all/20260303-v6-18-topic-imx93-parallel-display-v11-2-1b03733c8461@pengutronix.de/
+
+Alexander Stein (6):
+  clk: imx: fracn-gppll: Add 333.333333 MHz support
+  clk: imx: fracn-gppll: Add 477.4MHz support
+  arm64: dts: imx93-tqma9352-mba91xxca: Add parallel display overlay
+  arm64: dts: imx93-tqma9352-mba91xxca: Add LVDS display overlay
+  arm64: dts: imx91-tqma9131-mba91xxca: Add parallel display overlay
+  arm64: dts: imx91-tqma9131-mba91xxca: Add LVDS display overlay
+
+ arch/arm64/boot/dts/freescale/Makefile        | 12 ++++
+ ...3-tqma9352-mba91xxca-lvds-tm070jvhg33.dtso | 56 ++++++++++++++++
+ ...93-tqma9352-mba91xxca-rgb-cdtech-dc44.dtso | 66 +++++++++++++++++++
+ drivers/clk/imx/clk-fracn-gppll.c             |  2 +
+ 4 files changed, 136 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx93-tqma9352-mba91xxca-lvds-tm070jvhg33.dtso
+ create mode 100644 arch/arm64/boot/dts/freescale/imx93-tqma9352-mba91xxca-rgb-cdtech-dc44.dtso
+
 -- 
-2.47.1
+2.43.0
 
