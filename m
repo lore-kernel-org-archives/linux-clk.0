@@ -1,43 +1,46 @@
 Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A58374197;
-	Fri, 13 Mar 2026 08:13:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BE06374723;
+	Fri, 13 Mar 2026 08:13:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773389632; cv=none; b=f3wfRwX9CcinsO+aGrajRlFTEFRhW1j+XtqTYVL20bL8ygOhcyTxWO4CdTAzOG8wIiFKOVEBYf0W04YCHy3jjpNl0zMI++4/a4SNJv8tTiI/htpOBLhWPP0edNRkut9Xp4mH7RQzwHSYEVqBk+wd+eJMjOWhhi8S8ErrQ3/CWqA=
+	t=1773389634; cv=none; b=HUUrRCCT99jwjWz2OXWuH+D0vZlqVJByGHWW4DHYel4D+ZR4UqscwQtXrncrUG94PdXQrsi47WKxyIUEh/QyfGdOcFk9OjgVzjmYlfYhcE2YOg/7docWZvRIzEaYrrFQnHTgHsesaip4P4s5/KdXVGmBQH/kwxt75stRT4Lqx64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773389632; c=relaxed/simple;
-	bh=kdEVL1ZMjT/LjY6vd+LZywbVE5TZTzCBbVhptqRjGUI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ucCKJpqXlRTdqgrWcFeHuJwhz4hr5zTrAlZkACBkqB+TzyKAD7ozUcxm0XeqmhL+rNMcrH5vtvxZObK9xZZQcuQjveYJkXl3fOxPmwX1kgWy+PBa04rwLQdNM+dT0/66yWVzYJmOMtTcDj15QCuMX1wpmtEayiikMSwJbXl//rQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=FKp6fK+z; arc=none smtp.client-ip=211.75.126.72
+	s=arc-20240116; t=1773389634; c=relaxed/simple;
+	bh=o3TFzbFpuvR1WEHTDTb0bfEwiMtlVT0qHSjBKojLR+0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GwUTxCWl6cDeoqyhSCuiAC2oV5868AaH0nB4MedylIVdE4X422qSNcQtdMczgWp5kbttqcEFIM7W6UH8Ii79DKfJp6lCvIfxBHKHoWRuv92tPOolp55Ybw/wQKZ8PtwJeBZXPl6icoLkYCcOIHNTyCYFgMNTgDpyimgLIKSPPoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=AKESyFYE; arc=none smtp.client-ip=211.75.126.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="FKp6fK+z"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 62D8B14U0053079, This message is accepted by code: ctloc85258
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="AKESyFYE"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 62D8B1Y20053081, This message is accepted by code: ctloc85258
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1773389461; bh=ZUIRwDRLqnHgtlC5DhqIs5z86/XmY8KuyoDsiTpfYU4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=FKp6fK+zdQ/Dw12153fvS+XAtYmZIkJoqif3WYLhSPcqLRgJdL22t5TB0bC8CeOk+
-	 6fGwpLL1c+EVAa7HE8gJs+ulEqmFNU4Ob1jUWZNBLPqZlC7kBUORSFlUJqJ5qeH9Py
-	 s5k9+aicQFv37YnsiGhkIMWwn/9jPDNMJM+C4O8P/d003brqkEdFBOcIIcuZ8xCtk8
-	 DLcl+LwYQCJ+PlXSuV1Pxw8Q6jn+qbgVsaPNosxpxg5uD3HcPbNQCBjzsk6P6UFzpm
-	 XNgHQ08x9iPNrY3lZ5UCQp//Y5UZ678hkAm+g+4+FCxJKIVUj/44THqjcH5nh9WcCP
-	 K8FYoZJGURnfA==
-Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
-	by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 62D8B14U0053079
+	t=1773389461; bh=Qxz6eXlzXLwGLlhwC0OYVhfrTlN43C6pxFZi0wsu3M4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type;
+	b=AKESyFYEGH2podvDHEUSjWN70rnWrK4bIk0xcdfuaH/Dr4WicsRGm8U8i+dlgnbWk
+	 Ji4TMuEAuMFf85vAW7mL+6pUyCthjr2LxPYOyJhY93CF609MQZIS/3RIUw0qjCbcty
+	 wRAtlxgul1y2242cMerNpz1d3fJipKUE0U2gou7V6RHtB+RP1oFxADWeL7S+0Oh1iV
+	 38TpqUTVqa8NN1ErH3jr4rKBnMyLUHPVPD9h6vcAfZNNeW3JWi/rLlMEg49yidERZq
+	 u6ICVt8V9nkmJChwVgxrWXt3SjJtBZo09FmlRvgeHYsz65Qv2eu3CyaBsfoNoBvKxE
+	 itDtR+oSOs/uQ==
+Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
+	by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 62D8B1Y20053081
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Fri, 13 Mar 2026 16:11:01 +0800
 Received: from RTKEXHMBS05.realtek.com.tw (10.21.1.55) by
- RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
+ RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
  15.2.1748.10; Fri, 13 Mar 2026 16:11:01 +0800
+Received: from RTKEXHMBS05.realtek.com.tw (10.21.1.55) by
+ RTKEXHMBS05.realtek.com.tw (10.21.1.55) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Fri, 13 Mar 2026 16:11:00 +0800
 Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS05.realtek.com.tw
  (10.21.1.55) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Fri, 13 Mar 2026 16:11:01 +0800
+ Transport; Fri, 13 Mar 2026 16:11:00 +0800
 From: Yu-Chun Lin <eleanor.lin@realtek.com>
 To: <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
         <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <p.zabel@pengutronix.de>,
@@ -47,12 +50,10 @@ CC: <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         <linux-realtek-soc@lists.infradead.org>, <james.tai@realtek.com>,
         <cy.huang@realtek.com>, <stanley_chang@realtek.com>,
         <eleanor.lin@realtek.com>
-Subject: [PATCH v4 02/10] arm64: dts: realtek: Add clock support for RTD1625
-Date: Fri, 13 Mar 2026 16:10:52 +0800
-Message-ID: <20260313081100.596224-3-eleanor.lin@realtek.com>
+Subject: [PATCH v4 00/10] clk: realtek: Add RTD1625 Clock Support
+Date: Fri, 13 Mar 2026 16:10:50 +0800
+Message-ID: <20260313081100.596224-1-eleanor.lin@realtek.com>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20260313081100.596224-1-eleanor.lin@realtek.com>
-References: <20260313081100.596224-1-eleanor.lin@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,72 +63,94 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-Add the clock controller nodes and osc27m fixed clock for the
-Realtek RTD1625 SoC.
+Hello,
 
-Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
+This patch series adds clock support for Realtek's RTD1625 platform
+The series includes:
+
+1. Device Tree: Add clock controller nodes.
+2. Infrastructure: reset controller, basic clocks, PLLs, gate clocks, mux
+clocks, and MMC-tuned PLLs.
+3. Platform drivers: two clock controller drivers for RTD1625-CRT and
+RTD1625-ISO.
+
+Best regards,
+Yu-Chun Lin
 ---
 Changes in v4:
-- This is a new patch.
----
- arch/arm64/boot/dts/realtek/kent.dtsi | 30 +++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+In patch 1:
+- Add include/dt-bindings/reset/realtek,rtd1625.h to the bindings.
+- Drop Krzysztof Kozlowski's Reviewed-by tag due to the new changes.
+Patch 2:
+- Add a new patch to introduce the clock device nodes in dts.
+In patch 3:
+- Added forward declaration for struct regmap in reset.c
+- Moved struct rtk_reset_data definition into reset.c as it's only used there
+- Removed rtk_reset_reset() due to unnecessary implementation
+- Removed unnecessary parameter from rtk_reset_get_id()
 
-diff --git a/arch/arm64/boot/dts/realtek/kent.dtsi b/arch/arm64/boot/dts/realtek/kent.dtsi
-index ae006ce24420..eaff586c1806 100644
---- a/arch/arm64/boot/dts/realtek/kent.dtsi
-+++ b/arch/arm64/boot/dts/realtek/kent.dtsi
-@@ -26,6 +26,15 @@ timer {
- 			     <GIC_PPI  9 IRQ_TYPE_LEVEL_HIGH>;
- 	};
- 
-+	clocks {
-+		osc27m: osc {
-+			compatible = "fixed-clock";
-+			clock-frequency = <27000000>;
-+			clock-output-names = "osc27m";
-+			#clock-cells = <0>;
-+		};
-+	};
-+
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -141,6 +150,20 @@ rbus: bus@98000000 {
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 
-+			cc: clock-controller@0 {
-+				compatible = "realtek,rtd1625-crt-clk";
-+				reg = <0x0 0x900>;
-+				#clock-cells = <1>;
-+				#reset-cells = <1>;
-+			};
-+
-+			ic: clock-controller@7088 {
-+				compatible = "realtek,rtd1625-iso-clk";
-+				reg = <0x7088 0x8>;
-+				#clock-cells = <1>;
-+				#reset-cells = <1>;
-+			};
-+
- 			uart0: serial@7800 {
- 				compatible = "snps,dw-apb-uart";
- 				reg = <0x7800 0x100>;
-@@ -150,6 +173,13 @@ uart0: serial@7800 {
- 				reg-shift = <2>;
- 				status = "disabled";
- 			};
-+
-+			iso_s_cc: clock-controller@146310 {
-+				compatible = "realtek,rtd1625-iso-s-clk";
-+				reg = <0x146310 0x8>;
-+				#clock-cells = <1>;
-+				#reset-cells = <1>;
-+			};
- 		};
- 
- 		gic: interrupt-controller@ff100000 {
+v3: https://lore.kernel.org/lkml/20260122110857.12995-1-eleanor.lin@realtek.com/
+v2: https://lore.kernel.org/lkml/20260113112333.821-1-eleanor.lin@realtek.com/
+v1: https://lore.kernel.org/lkml/20251229075313.27254-1-eleanor.lin@realtek.com/
+
+Yu-Chun Lin (10):
+  dt-bindings: clock: Add Realtek RTD1625 Clock & Reset Controller
+  arm64: dts: realtek: Add clock support for RTD1625
+  clk: realtek: Add basic reset support
+  clk: realtek: Introduce a common probe()
+  clk: realtek: Add support for phase locked loops (PLLs)
+  clk: realtek: Add support for gate clock
+  clk: realtek: Add support for mux clock
+  clk: realtek: Add support for MMC-tuned PLL clocks
+  clk: realtek: Add RTD1625-CRT clock controller driver
+  clk: realtek: Add RTD1625-ISO clock controller driver
+
+ .../bindings/clock/realtek,rtd1625-clk.yaml   |  52 ++
+ MAINTAINERS                                   |  18 +
+ arch/arm64/boot/dts/realtek/kent.dtsi         |  30 +
+ drivers/clk/Kconfig                           |   1 +
+ drivers/clk/Makefile                          |   1 +
+ drivers/clk/realtek/Kconfig                   |  45 +
+ drivers/clk/realtek/Makefile                  |  14 +
+ drivers/clk/realtek/clk-pll-mmc.c             | 399 +++++++++
+ drivers/clk/realtek/clk-pll.c                 | 156 ++++
+ drivers/clk/realtek/clk-pll.h                 |  68 ++
+ drivers/clk/realtek/clk-regmap-gate.c         |  66 ++
+ drivers/clk/realtek/clk-regmap-gate.h         |  65 ++
+ drivers/clk/realtek/clk-regmap-mux.c          |  46 +
+ drivers/clk/realtek/clk-regmap-mux.h          |  43 +
+ drivers/clk/realtek/clk-rtd1625-crt.c         | 788 ++++++++++++++++++
+ drivers/clk/realtek/clk-rtd1625-iso.c         | 153 ++++
+ drivers/clk/realtek/common.c                  |  64 ++
+ drivers/clk/realtek/common.h                  |  43 +
+ drivers/clk/realtek/freq_table.c              |  35 +
+ drivers/clk/realtek/freq_table.h              |  23 +
+ drivers/clk/realtek/reset.c                   | 104 +++
+ drivers/clk/realtek/reset.h                   |  28 +
+ .../dt-bindings/clock/realtek,rtd1625-clk.h   | 164 ++++
+ include/dt-bindings/reset/realtek,rtd1625.h   | 195 +++++
+ 24 files changed, 2601 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/realtek,rtd1625-clk.yaml
+ create mode 100644 drivers/clk/realtek/Kconfig
+ create mode 100644 drivers/clk/realtek/Makefile
+ create mode 100644 drivers/clk/realtek/clk-pll-mmc.c
+ create mode 100644 drivers/clk/realtek/clk-pll.c
+ create mode 100644 drivers/clk/realtek/clk-pll.h
+ create mode 100644 drivers/clk/realtek/clk-regmap-gate.c
+ create mode 100644 drivers/clk/realtek/clk-regmap-gate.h
+ create mode 100644 drivers/clk/realtek/clk-regmap-mux.c
+ create mode 100644 drivers/clk/realtek/clk-regmap-mux.h
+ create mode 100644 drivers/clk/realtek/clk-rtd1625-crt.c
+ create mode 100644 drivers/clk/realtek/clk-rtd1625-iso.c
+ create mode 100644 drivers/clk/realtek/common.c
+ create mode 100644 drivers/clk/realtek/common.h
+ create mode 100644 drivers/clk/realtek/freq_table.c
+ create mode 100644 drivers/clk/realtek/freq_table.h
+ create mode 100644 drivers/clk/realtek/reset.c
+ create mode 100644 drivers/clk/realtek/reset.h
+ create mode 100644 include/dt-bindings/clock/realtek,rtd1625-clk.h
+ create mode 100644 include/dt-bindings/reset/realtek,rtd1625.h
+
 -- 
 2.34.1
 
