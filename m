@@ -1,96 +1,81 @@
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5501A9FAB
-	for <linux-clk@vger.kernel.org>; Sat, 14 Mar 2026 00:14:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3492629C33F;
+	Sat, 14 Mar 2026 00:38:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773447254; cv=none; b=HA7TK4tfUCfaEmyEUPktUTdJ2vzI3US5eVJkXJq/MouiKyDnOxPnd7uf4xvu6C5cMewJG9ZcqEMV23HWE0tTv4v4eAHfpXZlL1g9LsIXLRDI5lbn2UNQAltgGrUuNpIQOEPxx5dPVAFRMYOr4okMI/MFikaq9ha2XvmmB4ud0Lw=
+	t=1773448684; cv=none; b=f81q24CE4NOd7mE/iHi7I1p+/rEy4aPZCxbscBhVd33fPMstLgw/WZdLbACiXxDtcqy3hIReORVtDbaukG+BeRmQJ1KjCrtqvddBkO/YIdhqMxAtWbD9lxC+TFwAR9K1yNWrtR4afCne3oXAZo1m+WXdnP2LmKt0KdlgmaXx+/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773447254; c=relaxed/simple;
-	bh=SWQfqoxAVSVc3MG4BIFFiad+Ar7y2VBJ2CgV3JDrNWU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QajeSue/+ljfsKf+LV1dEYY2S6CNsop4LvIBC6znoImu8Fj2129B4L6loWazLd25ka060cLkbwygQ2oSDrUwY3CwdJR9ehZNamYB/VTM35/MIW6ib/a2kR9vPhLhqXhb/cPQFwcndSFYFfUJAqgLBgzRXXgSivWE4JnljpkcF20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=f7Twkly7; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
+	s=arc-20240116; t=1773448684; c=relaxed/simple;
+	bh=FD2WS5RUbvHH16+jWCJnePbwNK7/fnFcOqm+8udtIXs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kr32MjQLGODEX0HiEjlE1LB3Iu/Czq59tw5juvBMvIVixmFNv9P8qzTX6UtJBlkeTGmqs10LCHQk/MonUOu3TLHSljKGcVOrEUiP4MLBMI2GuD59D+O40phJloI9Pq9fDJyjX5JfYX0+Z5EYQppAieJ0iRqgSMdekJEAWSL8yew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MaBLduxH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="f7Twkly7"
-Message-ID: <31c68360-97a6-4e23-9d5f-f141abf0790c@packett.cool>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
-	s=key1; t=1773447248;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ryMQNhmD2GmNjWhcynx8JjeJbIW9dzR8WFdHL4mMvTE=;
-	b=f7Twkly7NxETunS7DTleTLCIiq4Iy6wXgQT+rHSZwqD0EcxyjrfJ4uW6glQaUU6ujjMCxd
-	/Ug3qSVkPFmA+avY8DQkbeDNdW4HMhxXXuJnLNvgxrhjNuMqCYXgsdGAlvHOzH834chVfg
-	juDQiGPIU+ipLxWSmujt1Kyq7kih5vIhlgJdl6ok8lul4FpkqVugpRl0D5HmanQz8yGAP6
-	dyoEqw4ZQ2FPYW7mZRetLQpWFxDfv06qnIpwyRyU7lfUV54GAcZSnmpYYr3bV/I9QGmGL7
-	XU+gSubhpnuXwI6250/jbuSgazFaRqot1JkuuYCvK2w8PvqJIFQLqU45E9fJ7A==
-Date: Fri, 13 Mar 2026 21:13:53 -0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MaBLduxH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE12EC19421;
+	Sat, 14 Mar 2026 00:38:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773448684;
+	bh=FD2WS5RUbvHH16+jWCJnePbwNK7/fnFcOqm+8udtIXs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MaBLduxHXQeby8WUhwBtXYXPGvaXz7v8z0oXbe/J9xTVslw5VS2qArJZxhcnh0pC+
+	 m9DDUnKsDTaPCfLh/6dmIwyZfVpjykneYzJcylYL4kq06KgC32qhV7GAeyZ7bJk5ut
+	 IbO1qerJVbZhMRPvleSyKK3c24CjNZ0wNd/q5dhcyU1TgJABq2Z8t5eSCJ2hTWl0TK
+	 njl3B0XVm18Ly3HLxflliV1g8r7Q4DKPHJ4Z4ot2B4jKSCsJniyEzvBHYCk9c8sg/D
+	 rEZZEAENkBoOIG7SQ4fPDQ2kC63ODLq0VKhAq6WXaBitT0VSqjqvzMTI2cmz1blXf4
+	 qt2zIbFd9M0/Q==
+Date: Fri, 13 Mar 2026 19:38:02 -0500
+From: Rob Herring <robh@kernel.org>
+To: Caleb James DeLisle <cjd@cjdns.fr>
+Cc: linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
+	naseefkm@gmail.com, bmasney@redhat.com, mturquette@baylibre.com,
+	sboyd@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	lee@kernel.org, p.zabel@pengutronix.de, nbd@nbd.name,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: clock, reset: Add econet EN751221
+Message-ID: <20260314003802.GA3735730-robh@kernel.org>
+References: <20260312162449.569359-1-cjd@cjdns.fr>
+ <20260312162449.569359-2-cjd@cjdns.fr>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 10/11] clk: qcom: camcc-sc8180x: Add missing HW_CTRL
- GDSC flag
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>,
- Johan Hovold <johan+linaro@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Dmitry Baryshkov
- <lumag@kernel.org>, Maximilian Luz <luzmaximilian@gmail.com>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20260312112321.370983-1-val@packett.cool>
- <20260312112321.370983-11-val@packett.cool>
- <36da7262-0dda-4bb1-b9f2-abd77ef83730@oss.qualcomm.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Val Packett <val@packett.cool>
-In-Reply-To: <36da7262-0dda-4bb1-b9f2-abd77ef83730@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260312162449.569359-2-cjd@cjdns.fr>
 
+On Thu, Mar 12, 2026 at 04:24:48PM +0000, Caleb James DeLisle wrote:
+> Add clock and reset bindings for EN751221 as well as a "chip-scu" which is
+> an additional regmap that is used by the clock driver as well as others.
+> This split of the SCU across two register areas is the same as the Airoha
+> AN758x family.
+> 
+> Signed-off-by: Caleb James DeLisle <cjd@cjdns.fr>
+> ---
+>  .../bindings/clock/airoha,en7523-scu.yaml     |  6 ++-
+>  .../devicetree/bindings/mfd/syscon.yaml       |  2 +
+>  MAINTAINERS                                   |  2 +
+>  .../dt-bindings/clock/econet,en751221-scu.h   | 12 +++++
+>  .../dt-bindings/reset/econet,en751221-scu.h   | 49 +++++++++++++++++++
+>  5 files changed, 70 insertions(+), 1 deletion(-)
+>  create mode 100644 include/dt-bindings/clock/econet,en751221-scu.h
+>  create mode 100644 include/dt-bindings/reset/econet,en751221-scu.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+> index a8471367175b..eb24a5687639 100644
+> --- a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+> +++ b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+> @@ -32,6 +32,7 @@ properties:
+>        - enum:
+>            - airoha,en7523-scu
+>            - airoha,en7581-scu
+> +          - econet,en751221-scu
 
-On 3/13/26 7:53 AM, Konrad Dybcio wrote:
-> On 3/12/26 12:12 PM, Val Packett wrote:
->> In all other Qualcomm SoC camcc drivers, the BPS and IPE GDSCs use the
->> HW_CTRL flag, but it was missing on SC8180X.
->>
->> Fix by setting it on all applicable GDSC entries.
->>
->> Fixes: 691f3413baa4 ("clk: qcom: camcc-sc8180x: Add SC8180X camera clock controller driver")
->> Signed-off-by: Val Packett <val@packett.cool>
->> ---
->>   drivers/clk/qcom/camcc-sc8180x.c | 6 +++---
->>   1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/clk/qcom/camcc-sc8180x.c b/drivers/clk/qcom/camcc-sc8180x.c
->> index cd4c40a81c28..67b2055bd212 100644
->> --- a/drivers/clk/qcom/camcc-sc8180x.c
->> +++ b/drivers/clk/qcom/camcc-sc8180x.c
->> @@ -2555,7 +2555,7 @@ static struct gdsc bps_gdsc = {
->>   	},
->>   	.pwrsts = PWRSTS_OFF_ON,
->>   	.parent = &titan_top_gdsc.pd,
->> -	.flags = POLL_CFG_GDSCR,
->> +	.flags = HW_CTRL | POLL_CFG_GDSCR,
-> FWIW downstream seems to use HW_MODE at runtime and SW_MODE+collapse on
-> suspend for both BPS and IPE, so perhaps HW_CTRL_TRIGGER (and a patch to
-> the driver) would be better suited
+AFAICT, 'econet' is not a vendor/company but a family of products. The 
+vendor is still airoha.
 
-Hmm what exactly would that "patch to the driver" be? Not sure I 
-understood that part…
-
-~val
-
+Rob
