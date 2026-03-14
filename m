@@ -1,85 +1,88 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 952C61C3BEB;
-	Sat, 14 Mar 2026 09:57:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3F6CA52;
+	Sat, 14 Mar 2026 19:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773482233; cv=none; b=hakzcYGK6B+pjfDROBO9KpnSQDMnIKpwIVn1iaNG56ZIRPy9UK+rTCghSE9/+5ZJJe308cVS5Kai6hMRtFXX2YObFlr+Xm8lX8zeebYKkv2kEL7D9Z2tiKudfMzXK8H4pS0PW8mVJQmZO01zZzyNf8RGu8XzwCC8QDmhuTZPoCs=
+	t=1773516625; cv=none; b=JyWBuZfjkCbB5J0adnmULdiyBu7+CgQljaHCl0m1VGZ48tp4I2ZJZCDvqH8XZMFk/kbS0tS7n015kYexQo/vRkO4Va8hqLRnprQ/B+I4YEovLHTHIra5xRPKYnD/e/fiTvw8uhsXwFVo51p2hR8iyH9JTqinz+aiVB4teiWgbeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773482233; c=relaxed/simple;
-	bh=09501woOjD4eRvQIVfFayJgg97/evg9zfkOZpWm9MNE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Whu5yxtHqbvErheT+Xwn0wANU7gfY53C5XccchAeWCQzoEjBycuqhrtF7jbw7CHt9Vd3YMBAlRBe2SPthzbH4tlWMVV8K3KHQY3SkqrAMJ78aVnHWZL7++DtkQ/c/JXLxtjj18T92iq/hDIx5j/+h8hu/0nslakBUuBENHp0brQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oVSSodaN; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773516625; c=relaxed/simple;
+	bh=APmw1QrkydnSiEcDg6aTb/isY0wGSJupEcg3DG3VK6w=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Q8Rc1tO4miaOb9vXCjNH0E5AWkZsn3uudm00QiykSI/hLzMcI4L0eWDpBya6du1HaFxBRsSAMJ8mGjUDVroNtYudEtx9Pujf6ocfilV83KJ2Ru1NhX1Qd/KpZbvuw8qT1p1WoAG2KC76A4FwLRs5zZ7eCrmpaOlT9cUQ0PSxLn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MBG4Cnp8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oVSSodaN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7CB7C116C6;
-	Sat, 14 Mar 2026 09:57:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MBG4Cnp8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE5B6C116C6;
+	Sat, 14 Mar 2026 19:30:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773482233;
-	bh=09501woOjD4eRvQIVfFayJgg97/evg9zfkOZpWm9MNE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oVSSodaNypOctz3Mvmnd4m3SlYGxQE/t7pz2EmL+ekBbsI8GAUgRk/hRn3ByvAs5h
-	 z96k502Vg26VrEEjdeLNXzFpsFaVtw+cPF/ee/0TB4DnKCBLzWsofCPZCQDocZjw2i
-	 aAzw5IGMS31SQ/YpxVEWoBlNI2u/fi6bUfzd8JbDQC44gw8GQvkmEdRTTjFRbBOCOV
-	 ROSCW8bRdrJFoQU63HvNxr9Fs/isKEgTtxuOS9iAgpkr987lhafcYjrM7N9gPtCu/y
-	 FLDyZxl7iYBXOmUywr7KkkXsqAEFhVN8h4rVsuiAkq/61mdQvIMikddfjxx/4PkzKg
-	 pbz9bDnElBTNQ==
-Date: Sat, 14 Mar 2026 10:57:10 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jian Hu <jian.hu@amlogic.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, robh+dt <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	devicetree <devicetree@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, 
-	linux-amlogic <linux-amlogic@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Ronald Claveau <linux-kernel-dev@aliel.fr>, 
-	Ferass El Hafidi <funderscore@postmarketos.org>
-Subject: Re: [PATCH v2 2/3] dt-bindings: clock: amlogic: t7: Add missing
- mpll3 parent clock
-Message-ID: <20260314-splendid-thoughtful-ostrich-c211dc@quoll>
-References: <20260313070022.700437-1-jian.hu@amlogic.com>
- <20260313070022.700437-3-jian.hu@amlogic.com>
+	s=k20201202; t=1773516624;
+	bh=APmw1QrkydnSiEcDg6aTb/isY0wGSJupEcg3DG3VK6w=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=MBG4Cnp8TmSjYJ/nPnxaC9+u2NQoMP5Cuns3a18+6BsdMwq9YZ2NcgatqyssIO/b7
+	 WRdMneJ1Q0MBpcryi8nG3wDYPAIRKGv+KQgfJ2SwuSrkblVhuYBhuZ7URoUzgkB/D8
+	 CasuGk9/Vhz7SeKuOeCaXo2xctKobdWBw2EYfECkMCJeip56kGhSX377yFKzD+tirE
+	 LvgF3hW192z/pFCLEPUHIOVOSYB1yxQNseNgEK79wl9Dt/Tb+jigpAdOUZBMfj+BRH
+	 y4BV8zPhsbdhvYpu/SGqTQaNYj4Nm9qjf6jVDh+4klURhPzMzZ0XJ88KxTXJaCg8sS
+	 SToMnoVEOdOGw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 4007B3808200;
+	Sat, 14 Mar 2026 19:30:20 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260313070022.700437-3-jian.hu@amlogic.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 net-next 0/5] net: phy: further decouple provider from
+ consumer part
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <177351661903.1763199.2542451163758230122.git-patchwork-notify@kernel.org>
+Date: Sat, 14 Mar 2026 19:30:19 +0000
+References: <9d5724bc-e525-4f8f-b3f8-b16dd5a1164e@gmail.com>
+In-Reply-To: <9d5724bc-e525-4f8f-b3f8-b16dd5a1164e@gmail.com>
+To: Heiner Kallweit <hkallweit1@gmail.com>
+Cc: andrew@lunn.ch, linux@armlinux.org.uk, pabeni@redhat.com, kuba@kernel.org,
+ davem@davemloft.net, edumazet@google.com, andersson@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, vkoul@kernel.org,
+ neil.armstrong@linaro.org, netdev@vger.kernel.org, p.zabel@pengutronix.de,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-phy@lists.infradead.org
 
-On Fri, Mar 13, 2026 at 03:00:21PM +0800, Jian Hu wrote:
-> The mpll3 clock is one parent clock of the sd_emmc and mipi_isp clocks
-> on the Amlogic T7 SoC, but was missing from t7-peripherals-clkc.yaml
-> bindings. Add the mpll3 clock source to the T7 peripherals clock
-> controller input clock list, so that sd_emmc and mipi_isp can use it.
+Hello:
+
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Mon, 9 Mar 2026 18:01:16 +0100 you wrote:
+> This series aims at further decoupling the provider and consumer part
+> in phylib.
 > 
-> For logical consistency, place the required mpll3 entry before the
-> optional entry.
+> v2:
+> - patch 2: add needed Kconfig dependency changes
+> - patch 5: explain false positive checkpatch error
 > 
-> This change breaks the ABI, but while the amlogic,t7-peripherals-clkc
-> bindings have been merged upstream, the corresponding DT has not been
-> merged yet. Thus, no real users or systems are affected.
-> 
-> Fixes: b4156204e0f5 ("dt-bindings: clock: add Amlogic T7 peripherals clock controller")
-> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
-> ---
->  .../bindings/clock/amlogic,t7-peripherals-clkc.yaml  | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
+> [...]
 
-This should go for current fixes cycle and your cover letter is silent
-about it, while patchset combines fixes and non-fixes. You clearly don't
-care about maintainers time for deciphering all this.
+Here is the summary with links:
+  - [v2,net-next,1/5] net: phy: move mdio_device reset handling functions in the code
+    https://git.kernel.org/netdev/net-next/c/2d7bebc9dd79
+  - [v2,net-next,2/5] net: phy: make mdio_device.c part of libphy
+    https://git.kernel.org/netdev/net-next/c/6df1459605ce
+  - [v2,net-next,3/5] net: phy: move (of_)mdio_find_bus to mdio_bus_provider.c
+    https://git.kernel.org/netdev/net-next/c/b69ceb387aca
+  - [v2,net-next,4/5] net: phy: move registering mdio_bus_class and mdio_bus_type to libphy
+    https://git.kernel.org/netdev/net-next/c/25b23d828318
+  - [v2,net-next,5/5] net: phy: move remaining provider code to mdio_bus_provider.c
+    https://git.kernel.org/netdev/net-next/c/c4399af5e556
 
-Well, not my problem.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-
-Best regards,
-Krzysztof
 
