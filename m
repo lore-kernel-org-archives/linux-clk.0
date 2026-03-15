@@ -1,170 +1,225 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723D237186D
-	for <linux-clk@vger.kernel.org>; Sun, 15 Mar 2026 16:39:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928B2287246;
+	Sun, 15 Mar 2026 23:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773592743; cv=none; b=HdBHeKVZmcG3YiYvwhilQtEj36HZ82+wutjteS5vVowC5SmT9btkd6KFytVkgYvX55ATAN7DQdkl7hTWEL90S/zK4xugKhVqsTfnTBsBVo9rVRWCe9bu55gX8vPNDwoQFbq8afhXnaO6nTeM1zim9ErGFQuSVZyB7y2qhA8x52w=
+	t=1773616077; cv=none; b=dUrrD9HOVSbdmFrIfEraXNJya7FPaIPkV7IrwFnRtZHoFemHa68TZyvAgW/mxKoLUXSSUaSpFqV3u0DVSJzAcZ/VFH/4/ECWOJzv85kphZfrgIHtHQIqp0MdQBq8GhyucPznvjszfMoi3p4L7nlf/Zpuw6XFs7ufe/00ALsbMI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773592743; c=relaxed/simple;
-	bh=N6sWnPVYlkWtJGlhWSZD1h8oJ6vG9zrZFh1ZLS4cIqM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=p1z5mPHnPxMrmYYEUFFfL47kC6SNIWtSEyMinrCz8JSy8fsFVa9VMIr0TLuAS0o4FAtQ4y04hO24JC4/IaHvjp+wUuTV3gfNzQX14zCLnsIBal6U87Ww02YWjWjcTewpQFRvUV4WlthzET8mB3h9nkNk3MUqUmP9GJfCJTTcsjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=EALUhEw0; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=W5eEspe7; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1773616077; c=relaxed/simple;
+	bh=uX/BrtmW8jeZBfsMpz031mbVpPze8fSVQMgM+ZisUFI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EOzHkb3wU5Z2q4k+fw3XL0gT90bBN2dQQ6wKJ/DtrhG/IIwuAixiptPwJV5thElJTEky9l/kj3Wh3rE0hX3OsTKB9oMnEVenO+ZMtuyWAt1GCIDX+Njb9M1DtF5GPvLeyCStvp7n2ZgOI7IYhPNEpenLW44b/k6c3uU2nWhqodo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=ON3HXg1L; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="EALUhEw0";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="W5eEspe7"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62F6TLg93431988
-	for <linux-clk@vger.kernel.org>; Sun, 15 Mar 2026 16:39:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	pagjlBgHRFmM8TNjw/u+wIrjp7WABcDLI8XdmTfMjzc=; b=EALUhEw0aw/16p4Y
-	EyHooyKFmsvuX1RXoAFKa98QKult33Jur6ez8ny+4ENwUi67L2XhQ0Pg7QbxvuXA
-	FFS63fWdXE4wy4oG26ij5LVkXLjSWnn+H7qqz442ojxLyxceMcxVqvy0Hp5YNqyR
-	UBuoDLF9Rrx6GkZmppBJBXLKBtMrZ9MBPVuX4IVzjdB9P2b1PAEURtcGnbzKkujg
-	YW+JM6aqP+AdmFylE7V2Hh8ZdJK2nPLYXqCU9Uf+8fMoNXD7Wi8vUKrZmoD0XbMA
-	Yq/F7RkQty9EHuHDmDcm55MeGDp7uTUQypv1vL0BEpQy1GX1uPIojhUuOrUysRhA
-	zZ4YRg==
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cw00ak2af-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Sun, 15 Mar 2026 16:39:01 +0000 (GMT)
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-35a0998a441so25218388a91.2
-        for <linux-clk@vger.kernel.org>; Sun, 15 Mar 2026 09:39:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1773592740; x=1774197540; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pagjlBgHRFmM8TNjw/u+wIrjp7WABcDLI8XdmTfMjzc=;
-        b=W5eEspe7r6Wqm59vE4O+L6kRRf+47aC/tskJTtiVG3lYKYeZYZf/VezcTec060cc36
-         wuLOtQ1Q8esuyNTiaIrxl0AQE5BNdSeaPiFTlDZTkkPzkj9KFHOdUNIZUAm8ByWBpH+9
-         5MX843bjilNaGSKQy6+bWiqW9lc+N8d5Yaz+a7XQ8WhKMXQwjWnoxHjKd3TmODANDG2P
-         E3G554tDYwVa9WvW+jEVzt2ezYOTXYR89f8DJOX8t9sdGbpQJdIntxsuzm8Nse11rY50
-         xKpNVFGzWjtXoc/KzzfDfQIgu0Gg+vNn+oh1SfyRqJ5rO61fflwMJnIiZxAawi7o1igK
-         33fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773592740; x=1774197540;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=pagjlBgHRFmM8TNjw/u+wIrjp7WABcDLI8XdmTfMjzc=;
-        b=akFkqkLw9YrAP1VUTP3SW0XmFUYL+je85TJBE65F/f/aSP0SN6NMcXnhdcO3e2Q3Gw
-         9TkKJFnspX4Ad49nJvs+yF+9KSOIdbLboFoHsQiUkixQJ7gAaSAPQjcliRg+jmx6ZLEB
-         E8CYNfynYgkZmPbRBFBDCuGXYRZTmL+YL4GWowi0XEzeL1eiuDiB0RSuCqkEpZ1IbJ/q
-         jO0ARR9HGxiPa3WV7HXpkLBEf5NB+/vPiC0e8UyLUFp48jmiSocLRVyxQjfPaK0TDTpQ
-         7O32eJ56uF+LvFCAAk8j2GhMX5fi3sZ4MpH19cezyCNvqRw4Y6Bpx/GKSMa5IFSk7muB
-         t0FA==
-X-Forwarded-Encrypted: i=1; AJvYcCUeqD+AfyV4bs6fiP229Xquh5Fk6IzVEW/14pJlj+w+U+yWFHCGk+rdNWs6mhElf2jdcVecpOKWs44=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxW1Tfez/uTS4u75sKJPriwo1SsTVAI+voemQRrRe1argIdjXus
-	FpY9rPeDzVIPCW3fMYlhBIgabdaiT7LpQtkVwTW4ROvx+pcXWOC4Sfehfe63lPOReUCktVDo85i
-	/qRMcBt4CGF88IMu6gG6nwhipQPHe8m3HgoHeB6iuyD/lM+YI6ckHr8AzAiXnWB4=
-X-Gm-Gg: ATEYQzzTbsI/3uQbfX2kb2LLul6wQh/AAqZ6+FXuLaqGmST0/uaC8vrx4VBYY3re1AF
-	JokbKdZIejlI4ib4GKZEiWnymePrrfEI3b8NygkQhy0bgG4VAbzC+5D+4TZPIpN4X33PMc7A/aJ
-	lAjWmN3FEXnTBJ6Mwi+tI8m2eIaS2Jv2r/2jc6v++exYZ+E6NP1cysBZPGuCu9lIj8IIgtfG+Lk
-	JPyVEWijuv9wGO/fUYJaWmLagxUdju29vFj5XR6RZqcTiwnYPm7gQJGkx/ZfcH9u/R3fiIJdIM1
-	R2BBSJhRsH9tjrdK+XadOSDQ90ZpUoThQ2irzzPEk/C7/nUK7mVB87+Si68Amduyj7CfJUGan11
-	64rZXWMLHKyqImYSOvA==
-X-Received: by 2002:a17:90b:1350:b0:359:8de8:1229 with SMTP id 98e67ed59e1d1-35a220032bbmr8989364a91.21.1773592740302;
-        Sun, 15 Mar 2026 09:39:00 -0700 (PDT)
-X-Received: by 2002:a17:90b:1350:b0:359:8de8:1229 with SMTP id 98e67ed59e1d1-35a220032bbmr8989342a91.21.1773592739685;
-        Sun, 15 Mar 2026 09:38:59 -0700 (PDT)
-Received: from [172.20.2.66] ([103.69.90.100])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-35b92ab7bb7sm2822373a91.16.2026.03.15.09.38.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Mar 2026 09:38:59 -0700 (PDT)
-From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-X-Google-Original-From: Manivannan Sadhasivam <mani@kernel.org>
-To: claudiu.beznea.uj@bp.renesas.com, lpieralisi@kernel.org,
-        kwilczynski@kernel.org, geert+renesas@glider.be, krzk+dt@kernel.org,
-        John Madieu <john.madieu.xa@bp.renesas.com>
-Cc: robh@kernel.org, bhelgaas@google.com, conor+dt@kernel.org,
-        magnus.damm@gmail.com, biju.das.jz@bp.renesas.com,
-        linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        john.madieu@gmail.com
-In-Reply-To: <20260306143423.19562-1-john.madieu.xa@bp.renesas.com>
-References: <20260306143423.19562-1-john.madieu.xa@bp.renesas.com>
-Subject: Re: (subset) [PATCH v8 00/15] PCI: renesas: Add RZ/G3E PCIe
- controller support
-Message-Id: <177359273448.15703.17598535780042580130.b4-ty@kernel.org>
-Date: Sun, 15 Mar 2026 22:08:54 +0530
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="ON3HXg1L"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1773616053; x=1774220853; i=wahrenst@gmx.net;
+	bh=VMCPSBmKWW117qnhfEXoCMhM6JqsDOVzqEruNBY+32c=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=ON3HXg1L7ih7TWuitHt6pRyWc2gJ+iSokjz43d4bbkKTMuKdYbmge0R1WUJ3BXSB
+	 A9UEx+pL9Pikw+6wSGc5aESZxtIOioXkB6whifPx2G+K4vLQ6DnIXObudZP4Wrbc2
+	 RMlrkVrL99/JEbXUCADfKrtEykDdaQguGuWz0GvBZqIATe2PawXcpdy6N5L4bbmoI
+	 hKbQD8KmXLvkq2eRuMpddOTst35KUqEdzQEq6Q9T+G6ggfuClk3R6uXTRBA5o/eOp
+	 Q6NOtfSj7sgM0PgIU5IQxVJVUQskkeuteY4WMXoBhCRDioszwdU1hkKiK9LRFCyKX
+	 JMreomHyo/EVKGuvUw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from client.hidden.invalid by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1N1OXZ-1vd30Q1tL1-011y24; Mon, 16
+ Mar 2026 00:07:33 +0100
+Message-ID: <bdae424d-f4b5-4181-9421-4393fe3ac8fb@gmx.net>
+Date: Mon, 16 Mar 2026 00:07:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
-X-Proofpoint-GUID: v69KQeKksFbJf4-ILQ7u4A3CncM_AM7O
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzE1MDEzMSBTYWx0ZWRfXxxmZPUpI2ccT
- 9AY3mJD76qgnGvKtLI2LOA+pgrq5qbzvtoBfxCpbyRqnt6R1wquxlbobTv6IvUJn4vnhaQllVOI
- h16vdK2N8yRSxlSICAVyio5OU750ebwQzKu/GY5X+wgWeNHjCz3quoO2N8g1eIrgrVbGXfuhhIu
- fPKdTOtYwZZ8Vn2scaB0mxSNFnQbxALExaCDWVU4uJbB/xLcsatA9/rTU7ESpgwjGvBl1bzySNM
- V8E+wWH8HMehKnEa1DkSPQwGHvusPjyhin6XM+exC+7mmXWZlxzmMdWsvYbbkkW8Y4foj6b6DP2
- QJxJghDxj5p7wKTFVb+OfSvgxqKpt/T86j+aT09qJKxNzhH0N40XeMGBXfyX8xO9dxpgZtIqG97
- LFWAQ3IVF9AjDfzSmmWz0xJymdtmKYMdJ4CAxxiwntBMC4tyWC4WfzFzuCCTZcDJUbhwVJOgCqU
- p+P8SCSJwcNZa7hDEmg==
-X-Proofpoint-ORIG-GUID: v69KQeKksFbJf4-ILQ7u4A3CncM_AM7O
-X-Authority-Analysis: v=2.4 cv=ebIwvrEH c=1 sm=1 tr=0 ts=69b6e0a5 cx=c_pps
- a=vVfyC5vLCtgYJKYeQD43oA==:117 a=u/vbNR3bhf5HEmanzZPI/A==:17
- a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=gowsoOTTUOVcmtlkKump:22
- a=VwQbUJbxAAAA:8 a=rhLZDS0-Uv6zKdmvx-IA:9 a=QEXdDO2ut3YA:10
- a=rl5im9kqc5Lf4LNbBjHf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-15_06,2026-03-13_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 adultscore=0 suspectscore=0 spamscore=0 priorityscore=1501
- clxscore=1015 phishscore=0 lowpriorityscore=0 malwarescore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603150131
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 2/5] pmdomain: bcm: bcm2835-power: Increase ASB control
+ timeout
+To: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Maxime Ripard <mripard@kernel.org>, Melissa Wen <mwen@igalia.com>,
+ Iago Toral Quiroga <itoral@igalia.com>,
+ Chema Casanova <jmcasanova@igalia.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, kernel-dev@igalia.com,
+ stable@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ linux-pm@vger.kernel.org
+References: <20260312-v3d-power-management-v7-0-9f006a1d4c55@igalia.com>
+ <20260312-v3d-power-management-v7-2-9f006a1d4c55@igalia.com>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+Autocrypt: addr=wahrenst@gmx.net; keydata=
+ xjMEZ1dOJBYJKwYBBAHaRw8BAQdA7H2MMG3q8FV7kAPko5vOAeaa4UA1I0hMgga1j5iYTTvN
+ IFN0ZWZhbiBXYWhyZW4gPHdhaHJlbnN0QGdteC5uZXQ+wo8EExYIADcWIQT3FXg+ApsOhPDN
+ NNFuwvLLwiAwigUCZ1dOJAUJB4TOAAIbAwQLCQgHBRUICQoLBRYCAwEAAAoJEG7C8svCIDCK
+ JQ4BAP4Y9uuHAxbAhHSQf6UZ+hl5BDznsZVBJvH8cZe2dSZ6AQCNgoc1Lxw1tvPscuC1Jd1C
+ TZomrGfQI47OiiJ3vGktBc44BGdXTiQSCisGAQQBl1UBBQEBB0B5M0B2E2XxySUQhU6emMYx
+ f5QR/BrEK0hs3bLT6Hb9WgMBCAfCfgQYFggAJhYhBPcVeD4Cmw6E8M000W7C8svCIDCKBQJn
+ V04kBQkHhM4AAhsMAAoJEG7C8svCIDCKJxoA/i+kqD5bphZEucrJHw77ujnOQbiKY2rLb0pE
+ aHMQoiECAQDVbj827W1Yai/0XEABIr8Ci6a+/qZ8Vz6MZzL5GJosAA==
+In-Reply-To: <20260312-v3d-power-management-v7-2-9f006a1d4c55@igalia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:/TS4HxQY5TivZuoGW+W8HuPijf3g1Y33tGVX19IspPImRfLdS+l
+ mGRaX0xQXzL+rTovBJdd9n124GsVHj6yq4fAk0YjfYTt+ihwybN+w5C7yn+2a+ic6wxg0AV
+ 8WoM01mBRHG83QjzwGQp+8ehdQ12V3BwihkK8qnKaWoO3O63nFhc75hjaBpnF8dAas3X+MY
+ NKCG0IaT6VcrZ7Tn47WYg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:xlCW+9NPf/c=;9NSQeZ/QDaIr9hEogBnBqpDggU7
+ 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
 
+Hi Ma=C3=ADra,
 
-On Fri, 06 Mar 2026 15:34:07 +0100, John Madieu wrote:
-> The Renesas RZ/G3E SoC features a PCIe controller that shares similarities with
-> the existing RZ/G3S PCIe controller, but with several key differences.
-> This series adds support for the RZ/G3E PCIe controller by extending the existing
-> RZ/G3S driver and device tree bindings.
-> 
-> Key differences between RZ/G3E and RZ/G3S PCIe controllers:
-> 
-> [...]
+Am 12.03.26 um 22:34 schrieb Ma=C3=ADra Canal:
+> The bcm2835_asb_control() function uses a tight polling loop to wait
+> for the ASB bridge to acknowledge a request. During intensive workloads,
+> this handshake intermittently fails for V3D's master ASB on BCM2711,
+> resulting in "Failed to disable ASB master for v3d" errors during
+> runtime PM suspend. As a consequence, the failed power-off leaves V3D in
+> a broken state, leading to bus faults or system hangs on later accesses.
+>
+> As the timeout is insufficient in some scenarios, increase the polling
+> timeout from 1us to 5us, which is still negligible in the context of a
+> power domain transition. Also, move the start timestamp to after the
+> MMIO write, as the write latency is counted against the timeout,
+> reducing the effective wait time for the hardware to respond.
+>
+> Cc: stable@vger.kernel.org
+I think, a Fixes tag would be helpful here. Also this fix should be the=20
+first patch of the series or separate.
+> Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
+> Signed-off-by: Ma=C3=ADra Canal <mcanal@igalia.com>
+>
+> ---
+> To: Ulf Hansson <ulf.hansson@linaro.org>
+> To: Ray Jui <rjui@broadcom.com>
+> To: Scott Branden <sbranden@broadcom.com>
+> Cc: linux-pm@vger.kernel.org
+This looks unusual. Is this intended?
 
-Applied, thanks!
-
-[01/15] PCI: rzg3s-host: Fix reset handling in probe error path
-        commit: d284389d4576e7c8040dc4cbb66876e539c6d064
-[02/15] PCI: rzg3s-host: Reorder reset assertion during suspend
-        commit: 34735f63748daa2ea27544259c3042b4948376bf
-[03/15] PCI: rzg3s-host: Rework inbound window algorithm for multi-SoC support
-        commit: d17a200a747b01e05bb0fc14d62fbb5ad6653869
-[05/15] dt-bindings: PCI: renesas,r9a08g045s33-pcie: Fix naming properties
-        commit: bb1b0f47f6822864c1689f46348efa42c5d4074c
-[06/15] dt-bindings: PCI: renesas,r9a08g045s33-pcie: Document RZ/G3E SoC
-        commit: fabce18494e5a4f388c70a40fa8351c911790d8d
-[07/15] PCI: rzg3s-host: Make SYSC register offsets SoC-specific
-        commit: 346dd3422ed9ff56f033726a50fad2da5677eb12
-[08/15] PCI: rzg3s-host: Make configuration reset lines optional
-        commit: 4ec4ccdaace40397638c305c0a36b423d2142a93
-[09/15] PCI: rzg3s-host: Add SoC-specific configuration and initialization callbacks
-        commit: 5f2c4de717786150f8d6cdbdbffb986cd3c59edb
-[10/15] PCI: rzg3s-host: Explicitly set class code for RZ/G3E compatibility
-        commit: 1e75d2e9a0e018b53f06dcc2e9345ac10f1aa174
-[11/15] PCI: rzg3s-host: Add PCIe Gen3 (8.0 GT/s) link speed support
-        commit: 5e9a5af5c9a2797a5e41e8ee565ce8108588f956
-[12/15] PCI: rzg3s-host: Add support for RZ/G3E PCIe controller
-        commit: 8197ec49a2062185f6bd432a19969ce0b3752e94
-
-Best regards,
--- 
-Manivannan Sadhasivam <mani@kernel.org>
+Best regards
+> ---
+>   drivers/pmdomain/bcm/bcm2835-power.c | 5 ++---
+>   1 file changed, 2 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/pmdomain/bcm/bcm2835-power.c b/drivers/pmdomain/bcm=
+/bcm2835-power.c
+> index 0450202bbee2513c9116a36abaa839b460550935..1815eb4ee69b9b672b5e3144=
+02f1cc9897c57dcb 100644
+> --- a/drivers/pmdomain/bcm/bcm2835-power.c
+> +++ b/drivers/pmdomain/bcm/bcm2835-power.c
+> @@ -166,8 +166,6 @@ static int bcm2835_asb_control(struct bcm2835_power =
+*power, u32 reg, bool enable
+>   		break;
+>   	}
+>  =20
+> -	start =3D ktime_get_ns();
+> -
+>   	/* Enable the module's async AXI bridges. */
+>   	if (enable) {
+>   		val =3D readl(base + reg) & ~ASB_REQ_STOP;
+> @@ -176,9 +174,10 @@ static int bcm2835_asb_control(struct bcm2835_power=
+ *power, u32 reg, bool enable
+>   	}
+>   	writel(PM_PASSWORD | val, base + reg);
+>  =20
+> +	start =3D ktime_get_ns();
+>   	while (!!(readl(base + reg) & ASB_ACK) =3D=3D enable) {
+>   		cpu_relax();
+> -		if (ktime_get_ns() - start >=3D 1000)
+> +		if (ktime_get_ns() - start >=3D 5000)
+>   			return -ETIMEDOUT;
+>   	}
+>  =20
+>
 
