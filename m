@@ -1,55 +1,60 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB9C2BE639;
-	Mon, 16 Mar 2026 12:09:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D839D19C542
+	for <linux-clk@vger.kernel.org>; Mon, 16 Mar 2026 12:16:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773662994; cv=none; b=hDZaSLjyfDIdKTkWO3X+FSuSryo6scKmBZevo1cPXHYWjVXXhyP/u6wZ8DvEGLZvRM78qrGHSJfYnB/vm/d3Q6sGk1Z2Mkr1HexRzsnh1G6+jnd7jreDIkbCHpzjSmjuplinlGSsLoJqWi9AkctdLxWvcK7zG5TLCsX8pCGcDTc=
+	t=1773663367; cv=none; b=QfcIKhbIZVNdXCIwiugP6HXyTMwj54L2vsPaLdCbSJG3JtnUVgD1FM1a0KltWgyizaJoqKXg1CDKZXXpUMUpEFGXDov0KwfiRNDC0nkNFgL3ec0Y2cwbRMZtt0QJ0GAAJ0nfN/PKfIlqqGMcIfQq+f8yMfAazTlOCe0LrpRLfNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773662994; c=relaxed/simple;
-	bh=5MXWQw7edysQr8fnerPKD+iq/gnFUPQ0uYdAaIpBuvw=;
-	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=Y37AtzTDpR9Lw+7p6sb7WMOHRi2uBEcd8yYm5WM3UxDEpRZjopIGcnfGHgeKzD8h+hk1x7a9rT2W3/rfRtDeID/qsnOgOedayFuo8WVbdAZvGYM9A18NIVzvHWFzaSqgzadsVZFaoPb44kkXopHxnV4dZQiR/umbCFg1g1KNHTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LgBg0leO; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773663367; c=relaxed/simple;
+	bh=SrpGwU7qrBLflsSEF7JnYoUZan3t/CY9j9+fProo7sk=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=uSSEy5Y982EL6rArZPnGF38UtZH+VkATGflsaOIE/v3Hhzlm+rqJ84vL4e7xMvlQU0cNoZBvcd7w5//5/Qjd2pc3X4ZCTACjTnjvrmA1tMjcBPMYEA+AucY3R4V+klqKhG1RtXyn45jriXrRJ/12luJrr2Q+p9N5k+7CDMSboh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HrIPuqZY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LgBg0leO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2DC0C19421;
-	Mon, 16 Mar 2026 12:09:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HrIPuqZY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED2F9C19421;
+	Mon, 16 Mar 2026 12:16:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773662994;
-	bh=5MXWQw7edysQr8fnerPKD+iq/gnFUPQ0uYdAaIpBuvw=;
+	s=k20201202; t=1773663367;
+	bh=SrpGwU7qrBLflsSEF7JnYoUZan3t/CY9j9+fProo7sk=;
 	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
-	b=LgBg0leODXjJ8tM6rnSluRjM/8ymEJOGGCONNCIs4lJK7+z/p0wfuxShyhVm5Mwn0
-	 Vtb/ujLWo7OWd4VdbqX3Cx3wtoXpc3Tl/BZmjbrdzwy+Hhrkog1KxuzQbQYJ7lwNLO
-	 yU0MEuIlan1Guno4OEYjRelrW1sPv1UkUjAaoGDF5Hq8KEl50uBwT9KAIJHdslvSFz
-	 uwGB7JuK6C00FWF2uQC7dcyMGhNyLVMlg6KODygA6Xyu49ZMyPUV1mpl+PvcQahd1j
-	 gW/wSCiMc5JQMfpnqtYrvoN9+KgG7ZcyqHvRBOf1j/YJcXzp77pupcK236Qgg4qtyP
-	 aZVjFa20Fl49g==
-Message-ID: <ab74df7c182201c345cc7a735453b311@kernel.org>
-Date: Mon, 16 Mar 2026 12:09:51 +0000
+	b=HrIPuqZYfyTJ3andYiQHAdrtH8kzZiFG88qcY+ELNkubu62Llcr9ZVZFNtt8v0qcq
+	 RdlmnW5kd13VgRJROzamTV4kVbEOpBIN+ie8hG23WgnPFaq2M2pEySYvGTIDGFajnv
+	 BISB0DucckMfUh2TwOndhUCxeX7Wf3kFg019VZh0n/11vzhJQGPdpt0KAmiM1cDOwA
+	 BrclieRQpNlS4YqrCF0pnU+kIy73105BFaog7ON9k+sQc0U0Hb5YJMCaQ5d7Fcmtdt
+	 1G4Tf2gFbEIRrnK2lLUQxC9gqZGisd9Cy1tZbo0b0+WdIy72WidvN/EsnZvU8Zp09H
+	 OSkKh82p8nEOw==
+Message-ID: <86d314a03d1597390adb850789501cb9@kernel.org>
+Date: Mon, 16 Mar 2026 12:16:04 +0000
 From: "Maxime Ripard" <mripard@kernel.org>
-To: "Brian Masney" <bmasney@redhat.com>
-Subject: Re: [PATCH v6 1/7] clk: test: introduce clk_dummy_div for a mock
- divider
-In-Reply-To: <20260313-clk-scaling-v6-1-ce89968c5247@redhat.com>
-References: <20260313-clk-scaling-v6-1-ce89968c5247@redhat.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, "Alberto Ruiz" <aruiz@redhat.com>, "Maxime
- Ripard" <mripard@kernel.org>, "Michael Turquette" <mturquette@baylibre.com>, "Stephen
+To: =?utf-8?b?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>
+Subject: Re: [PATCH v7 1/5] clk: bcm: rpi: Manage clock rate in
+ prepare/unprepare callbacks
+In-Reply-To: <20260312-v3d-power-management-v7-1-9f006a1d4c55@igalia.com>
+References: <20260312-v3d-power-management-v7-1-9f006a1d4c55@igalia.com>
+Cc: dri-devel@lists.freedesktop.org, kernel-dev@igalia.com, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, "Broadcom
+ internal kernel review list" <bcm-kernel-feedback-list@broadcom.com>, "Chema
+ Casanova" <jmcasanova@igalia.com>, "Dave Stevenson" <dave.stevenson@raspberrypi.com>, "Florian
+ Fainelli" <florian.fainelli@broadcom.com>, "Iago Toral Quiroga" <itoral@igalia.com>, "Maxime
+ Ripard" <mripard@kernel.org>, "Melissa Wen" <mwen@igalia.com>, "Michael
+ Turquette" <mturquette@baylibre.com>, "Nicolas Saenz Julienne" <nsaenz@kernel.org>, "Philipp
+ Zabel" <p.zabel@pengutronix.de>, "Stefan Wahren" <wahrenst@gmx.net>, "Stephen
  Boyd" <sboyd@kernel.org>
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
-On Fri, 13 Mar 2026 12:43:08 -0400, Brian Masney wrote:
-> This is used to mock up a divider in the clk kunit tests.
-> 
-> Link: https://lore.kernel.org/linux-clk/aUSWU7UymULCXOeF@redhat.com/
-> Link: https://lpc.events/event/19/contributions/2152/
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-> 
+On Thu, 12 Mar 2026 18:34:23 -0300, Ma=C3=ADra Canal wrote:
+> On current firmware versions, RPI_FIRMWARE_SET_CLOCK_STATE doesn't
+> actually power off the clock. To achieve meaningful power savings, the
+> clock rate must be set to the minimum before disabling. This might be
+> fixed in future firmware releases.
+>=20
+>=20
 > [ ... ]
 
 Reviewed-by: Maxime Ripard <mripard@kernel.org>
