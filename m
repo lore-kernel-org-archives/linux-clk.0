@@ -1,172 +1,134 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415DD39A802
-	for <linux-clk@vger.kernel.org>; Mon, 16 Mar 2026 15:04:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773673458; cv=none; b=sf493UPTbVFy7OKDl9146hlWnSjCPu17VUmJNOdsRzC289AbLKnLX7gfPUuWBJL5oaWF8MtXqGPz0G4IqC8nmZJMk/inPnGSCaswuRxcvP0d9b4zTsi4dAW7+CcMpr5yj/dPGl9rVqLEdE1xZUsGES8PnH6Ag2E8ewPD3n71Vdo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773673458; c=relaxed/simple;
-	bh=j9s4nW6rffGEhd1lXVR9dLdMc9z31vqESmtM4Se29VA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DMHViroL33/Ej2k4xmCcz2PHRejcWZxQR5FX/ixnNVUWPasmIf7G5MpH5Dlo8rT4/zu0E/jvNApIeNqmDfFjHDXYp2KHrxMX8nGMP1rXIAcekQTQzF3m1KCOiPqwYbq5+pYoI8xconKkuuHNeM0BIRYFK8bDfs2qe/JRTN2eA70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a+kwyXBg; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=EMXe1oJn; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90663A255D
+	for <linux-clk@vger.kernel.org>; Mon, 16 Mar 2026 15:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.174
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773674165; cv=pass; b=Tgzls1VZPysp9HN/MZ81gf+CzU51BAEvmyKCDh5BAfazomWTwaEkw8dYc/4tBz+RC81yanVxJVNrlAjJFiqa/Ab03DKkPMuiJ57HQ5FbzBMneWCJPLIB8YHFcJ0HmDtkYXFuoebRFkfxQ93rNTtdffxREIMdIQO8wI4+FYzQmcs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773674165; c=relaxed/simple;
+	bh=SGrKOh6DxyjU+GV0XnOjtJnq9uPykPDANTIFfa61QH4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mFGhyFm/uAwgtxxvEP99K5D16RYucnieuFNxHPSKd1xuYzxQN8o4OD5KvGM4QQje609dVqIYs+15puN+0SunLG1Igm5Ig0F0Pi07/HiMZl58xSFuNWBqNugOxNo4K+q/IzbU8xHS+jwzHedAFVpYyOl9vsjZRDg04KDIaNXpZLA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jtsz07GN; arc=pass smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a+kwyXBg";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="EMXe1oJn"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1773673454;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Co7Rw9SvGXfO2Q1q4O/QAU8a4dAjFS1ZZErcH+Mevyc=;
-	b=a+kwyXBgbCa+R7M+Rqf2agB+CL3pziEoyXUP/cB8nCjtAtxJArA2cjrmRjL44o4IApbJ8e
-	r4BA39fsTz4VsWSJpuAtob6OKLs+tKyOeS0lZ9RBXsf9Qr9oFjI/4nAf6qQoJ16KchS1+7
-	N4K0FvE88b2qItWnlzHh6wqP1r2bwC0=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-650-y5PB7hnFM4yRlwjy_7uxzw-1; Mon, 16 Mar 2026 11:04:11 -0400
-X-MC-Unique: y5PB7hnFM4yRlwjy_7uxzw-1
-X-Mimecast-MFC-AGG-ID: y5PB7hnFM4yRlwjy_7uxzw_1773673451
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-89c4d85d619so108281226d6.3
-        for <linux-clk@vger.kernel.org>; Mon, 16 Mar 2026 08:04:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jtsz07GN"
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-38a23dd61c1so43777801fa.1
+        for <linux-clk@vger.kernel.org>; Mon, 16 Mar 2026 08:16:03 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1773674162; cv=none;
+        d=google.com; s=arc-20240605;
+        b=PaweIbYFXOFEBxHvJgg8FRl3HgcAQBrX/iieHeljG1ErXxmf7zdXrVVgyKrv32Zq0n
+         fKcDKz4bDUlN/I0nr9X/YGdcUKLHA5w8wmxqKNSx9z16aL389eFOtLnlmBooBCjV4Qon
+         0NiR9QIxzzK5HNdC/YHP9hSCfu8zBF8wbUKi/MkOzpY2CXtEdZJUnVukCHgiuYwGrC1Y
+         FX8y4HGtmrETH89xgmF58bfUx/gQtPeUhA838egHLYZdARKgp+7XdWzhIZ8iCGlsauKz
+         kPEhuGOT2FN3KXgeZ85dnf4EUju0xrX4u04Sy6KknWovDExaRKkXNYS1CANXteNblUFR
+         f4Mw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=aWwOA9SQqzmxmd74/y4xRp+f9Kw/OsZUX40Voc8OPk4=;
+        fh=ivoBcnrLoW7+zmI0Nbdbwu/x9IG/etGxQI9I1UTheU4=;
+        b=Z5t6r5Y+qqXa9GOzFepDf4UCUZiA+vxzVKjSS0aMbt1BZ51DZT4Ib6TmklvTddWgKv
+         HmCMbwI/Mxce3kGh4RAB3DCLz87qhtlIN73xkDFKB8m99cPrDlnysQzv0hKh0t0tZhvX
+         ZGyKNrwLfDxSc8EmXnZbI/U52Hg7g4zI07it6v6CwAP3ZhcmcKKZTNqZ/gmwWmbGgIJb
+         w924uqvVeLY6rFf1h0ccrLj1W5oZ7iOrznbrT5j9A6KFb1f2dtW58fKxd45cTiLkYsgc
+         fKY8dwALL0hjyU+ZuM23W/E1hbWabgmd2HBsjjJXrzaY1k3OcfceOfj2WM5lNuqhxihq
+         RH3g==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1773673451; x=1774278251; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Co7Rw9SvGXfO2Q1q4O/QAU8a4dAjFS1ZZErcH+Mevyc=;
-        b=EMXe1oJnaWgSZxVnWUiKnSq2oXq1DwgO8ErMLFM6gY5E8C3gYppCf8A1EqPRi8Zik8
-         NFAj0stg2bKPCBt0ACeR13efffBhSNKZteOF2IxRkEZ7+//sdWHYL1T7DPTNZocwbU79
-         OYdPNlOxMAJxP6fAgBlIjyck5KtquGXp78gQGN9VaU6hSz3Nwtn1X0v8HsHQ8LtMw+js
-         JuTdzuO2HQQG32vjKW7ueP3Bp7DW1xaT/f+z35fmFX5Wt0JTF0iBd+tQ5PpusteRIHaR
-         2moUTkFBapN0OjCyeZw9jOS+bF5r0H/KlOg3J3GipSdUcloXWhOb30V/lEJlA8oeoKUm
-         I0BQ==
+        d=linaro.org; s=google; t=1773674162; x=1774278962; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=aWwOA9SQqzmxmd74/y4xRp+f9Kw/OsZUX40Voc8OPk4=;
+        b=jtsz07GNFeAEXMC6uCu//Kl6N+FETjCtKU3pYIQGECDs/OEavmObeUfyyeV4xJYGAa
+         JP3KQ/hR2fIxtUIi4vLy/zrESlImC2KgV8N2BWbuXtqq+lodc+6T3NnuRqHg/36XtRM8
+         2jyu9oHE6oP6NpGRlGITsvzGunnEG6OnlOq+XQ97omXL/cGdtiRTfj4Xkypi8XBHzq4g
+         hi+9JLBr+Fek8NouPQwdUQ8u72u5DpSMoK9DWQbPZASR7aZOntoPxVGjLJ92dI9D9ZDU
+         2sTvLFOCqHr/zBXOFcAZpEH5e95dpF787Uv5voUdcW0ozL5K2Y8iC6mjSxDMc65Hf/5j
+         RUfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773673451; x=1774278251;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20251104; t=1773674162; x=1774278962;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Co7Rw9SvGXfO2Q1q4O/QAU8a4dAjFS1ZZErcH+Mevyc=;
-        b=W/V7HHdarkFjBBAFiVaLvjqw25JY8NJhv2jPu4KNtOyMJtVvyz91WgzsWr8pHEqjia
-         HZfL4dxsXSG7/4nWE8cQR4JPmaFdKETIJIk7PkjIFDfmeeik0tvvwEXL69+3Y7/g6m2U
-         uXqYbLscAuDvEyRV6ft6zfJHrANvhP1VCi56FdfQhnooA5ZN/COU01nbMeZhjvFysn9l
-         BwBViLr/gHZn+sPOlJ2bOisp5UJpZbR46oixpHOuF1vh/b0nH9ob/0lOkD/Wb+2ImWg2
-         pMacQ2KngxnMtwIwRgORo0pwxhtzXZ/DNkfVQ4/24o6rOKJVx+PFo84WewyCtuw2nCn9
-         S/9A==
-X-Forwarded-Encrypted: i=1; AJvYcCVTXWLcJ596aPgKgMkTy0WN1XIu+9e73nIKiBhaBp6p200MdGrt7pCxNqnNxJinP1U7EILag5lPq3A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIEVIAdFxybTJsh1jIN+pqvfih3AVhCZbKuPWvBqYQRdzs/om4
-	kYFAlNz9hIu8Esl9AQqFBWzhZaCXugxZG9yCBS+CjrMJ1UdpT2YcyvDKr00IE+nswx8siLwv1sr
-	HpfaFFBDIHj68+pM75qMAfNB+eoCdyVDDksMZKNsBASfa7415Rr4wZOtkCl6DeA==
-X-Gm-Gg: ATEYQzwd8ulzuJko7OVGP8XLKLFYVGWhkpSVsFRAXygewwGjliNJ70Dp/nz++6tn++r
-	iQeHbpfA0ksbJ9V5SCuydLeFuzytIR6BS20rZix4gpvPvbRYmwhOlzz4+F/Ym++qDoM7vE+TEe+
-	gwuelKNFwgCRQXBRqY7IF8cFhZHLvMYT1rXhV2YOeTsWRV1wNl7lPQMI9RT4fkDXDCYcD1AnwUP
-	sTJfKjfOQeP35rBenofYls6JW4RZ15bv+JeRG8NGxxD37HRbwQqTsqg3LhZOni61mYvKif1qNR8
-	2g9QNbTYYf3NSlEMO4UFKWcdIlhAKwAIWxGEZVmdCme4PYru/cSWqd4UHJfjpJnR7Ryd/8d9s7I
-	qfawt1LMIwwWjF2+HXZ+uflHuxqn03azzb7l8NvsM1n7L2wrQiaprPJac
-X-Received: by 2002:a05:622a:244:b0:509:38d2:858c with SMTP id d75a77b69052e-50957e10b71mr185453261cf.61.1773673450628;
-        Mon, 16 Mar 2026 08:04:10 -0700 (PDT)
-X-Received: by 2002:a05:622a:244:b0:509:38d2:858c with SMTP id d75a77b69052e-50957e10b71mr185450851cf.61.1773673448468;
-        Mon, 16 Mar 2026 08:04:08 -0700 (PDT)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-509400d018csm130100651cf.24.2026.03.16.08.04.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Mar 2026 08:04:07 -0700 (PDT)
-Date: Mon, 16 Mar 2026 11:04:04 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Xuyang Dong <dongxuyang@eswincomputing.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	troy.mitchell@linux.dev, ningyu@eswincomputing.com,
-	linmin@eswincomputing.com, huangyifeng@eswincomputing.com,
-	pinkesh.vaghela@einfochips.com, ganboing@gmail.com,
-	marcel@ziswiler.com
-Subject: Re: [PATCH v15 0/4] Add driver support for ESWIN eic700 SoC clock
- controller
-Message-ID: <abgb5OcSFbt3FzjI@redhat.com>
-References: <20260303080513.2042-1-dongxuyang@eswincomputing.com>
- <54e32101.4409.19cf56c4aae.Coremail.dongxuyang@eswincomputing.com>
+        bh=aWwOA9SQqzmxmd74/y4xRp+f9Kw/OsZUX40Voc8OPk4=;
+        b=WFk4FGAgg8C3EUYrAHggp3vo3gBt2o5NhQY17KpEYMZkVpP1e6cMxpm0JPTGtobpnt
+         +QSf00akS1A1AcrR0bKsi90juUzkCSgHaT1UqF1oRff4pw/DF+qao424RwBAYWLXidVY
+         awgMeRFs7iCeUIsf4QIURi8kgz0yA1mk2U9EEF3+LjstBmMJWq8mu171YYHh48GClFyE
+         1UEshNrsl7mav8vIn0hU63UNJaNVCA9iDpwiPk78dZjUikTIjF4j7AB7fM5RodEf4t0z
+         ccPeQqIMAPWxW1lTFUiI/gCOFAlGHylUP+irOBsdQYCJ9VkucLmBCaZTkGrzT2R0zq6v
+         jwaw==
+X-Forwarded-Encrypted: i=1; AJvYcCVif0z5B/yj6dZg4ffGy4MdCOr1t4ZBZXsA5JL+xuRQvHPfdPXRstdr8tsQHyvY+0sWw5uHVGPhzeA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBZy26P49aUYerbFtF4nEX/N22ErN/EA/1xtY0JIEqooA+h+z8
+	Lpyf40rGOoHXVc+eT2xtdoMeNd7pWBiAtpiwt4TJWV0i7i7duHjnFHrU09pdolNcrWNzhx3IJ+s
+	qDR9n5gbj81N6QmPUby6+4xgNMa14HCa9z/SPQAZ+rQ==
+X-Gm-Gg: ATEYQzw/f8JfUFkf/n4i44id5aPs1RzSuAMxGmAIHCPu9LpNlt2jOmEbeA7adqde/2I
+	qebo3Uen0zXhEkJ/RAQhxI9VY8tu2vJ8R9Ot4q3MYOtwiGojxGMspL4JAgPhL0MEJ4vefp47Y1W
+	hBUT2UipOQw0NC4B/V6yRn1Tp9W2h0OIggyebiYG4O882DxQjv+6kkqUzWp9bEOIqY0U/TCdNWR
+	WnUrmIU3T9PENt/+cjyAnlIaUw3QYTP+KvtYyGDGe4dV29FptpCUobTjuWtcam4R4ijC+eU/jaG
+	g/8W7J8F
+X-Received: by 2002:a05:651c:b1f:b0:386:7e61:5de1 with SMTP id
+ 38308e7fff4ca-38a8930e573mr42245921fa.0.1773674161832; Mon, 16 Mar 2026
+ 08:16:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <54e32101.4409.19cf56c4aae.Coremail.dongxuyang@eswincomputing.com>
-User-Agent: Mutt/2.3.0 (2026-01-25)
+References: <20260311-ipq5210_boot_to_shell-v1-0-fe857d68d698@oss.qualcomm.com>
+ <20260311-ipq5210_boot_to_shell-v1-6-fe857d68d698@oss.qualcomm.com>
+In-Reply-To: <20260311-ipq5210_boot_to_shell-v1-6-fe857d68d698@oss.qualcomm.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 16 Mar 2026 16:15:24 +0100
+X-Gm-Features: AaiRm5153tShsk2TIyyE8TGCBjpaUzTwpROv6h6ltabxhtejv3_1C_1EaRy8Em0
+Message-ID: <CAPDyKFq-pyTffu_D_eZAZQo3e=vkO3uhQ_hAjS-s2DY4TmXoXw@mail.gmail.com>
+Subject: Re: [PATCH 6/9] dt-bindings: mmc: sdhci-msm: add IPQ5210 compatible
+To: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Linus Walleij <linusw@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Robert Marko <robimarko@gmail.com>, 
+	Guru Das Srinagesh <linux@gurudas.dev>, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-mmc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Xuyang (and Stephen),
+On Wed, 11 Mar 2026 at 10:46, Kathiravan Thirumoorthy
+<kathiravan.thirumoorthy@oss.qualcomm.com> wrote:
+>
+> The IPQ5210 supports eMMC with an SDHCI controller. Add the appropriate
+> compatible to the documentation.
+>
+> Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+> ---
+>  Documentation/devicetree/bindings/mmc/sdhci-msm.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
+> index 938be8228d668c87f0be95c63d4d951ebbadd4e4..fd1d5b04e7556903daffe86e455fde11be0dbd9f 100644
+> --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
+> @@ -38,6 +38,7 @@ properties:
+>        - items:
+>            - enum:
+>                - qcom,ipq5018-sdhci
+> +              - qcom,ipq5210-sdhci
+>                - qcom,ipq5332-sdhci
+>                - qcom,ipq5424-sdhci
+>                - qcom,ipq6018-sdhci
+>
+> --
+> 2.34.1
+>
 
-On Mon, Mar 16, 2026 at 02:54:00PM +0800, Xuyang Dong wrote:
-> > 
-> > The link [1] provides the official documentation for the EIC7700. Section 3.2
-> > covers the clock subsystem.
-> > 
-> > [1] https://www.sifive.com/document-file/eic7700x-datasheet
-> > 
-> > Updates:
-> >   Change in v15:
-> >   - Updated driver file
-> >     - Add 'Reviewed-by: Brian Masney <bmasney@redhat.com>' for patch 2/4, 3/4 and 4/4.
-> >     - Add space between the name and < in MODULE_AUTHOR.
-> >     - Remove memset_p() and commit in eswin_clk_init().
-> >       The current implementation ensures that parent clocks are registered
-> >       before child clocks, thus preventing the creation of invalid clocks.
-> > 
-> 
-> Hi Stephen,
-> 
-> I received your review comments on v9. After addressing them and submitting
-> v10 through v14, I received additional comments from Brian, Bo, Marcel, 
-> and the kernel test robot. 
-> v15 now has a Reviewed-by tag from Brian and a Tested-by tag from Marcel.
-> Do you have any further comments on v15? I would like to send a GIT PULL 
-> request for 7.0-rc4 by the end of this week.
-> Do you think this is okay?
+Applied for next, thanks!
 
-It's been a month since Stephen posted on the list, so I'm not sure when
-he'll be able to reply. I know he's been busy.
-https://lore.kernel.org/linux-clk/?q=f%3Asboyd%40kernel.org
-
-If you don't hear from him by rc7 (or even rc6), then I think that you
-should send him a pull request. He'll either pull it, or tell you what
-needs to change.
-
-Once this driver is in tree, you'll still need to post patches to the
-list, get them reviewed on list, and then send Stephen a pull for that
-merge window. That's what the other SoC vendors do.
-
-Stephen: I went through all of your v9 review comments for this driver,
-and ensured that Xuyang addressed all of your concerns. The only thing
-is that drivers/clk/eswin/clk-eic7700.c still includes linux/clk.h,
-and you asked if it could be dropped. If we remove it, then it fails to
-compile because of the clk notifier support:
-
-drivers/clk/eswin/clk-eic7700.c: In function ‘eic7700_clk_pll_cpu_notifier_cb’:
-drivers/clk/eswin/clk-eic7700.c:1270:23: error: ‘PRE_RATE_CHANGE’ undeclared (first use in this function)
- 1270 |         if (action == PRE_RATE_CHANGE) {
-      |                       ^~~~~~~~~~~~~~~
-drivers/clk/eswin/clk-eic7700.c:1270:23: note: each undeclared identifier is reported only once for each function it appears in
-drivers/clk/eswin/clk-eic7700.c:1273:30: error: ‘POST_RATE_CHANGE’ undeclared (first use in this function)
- 1273 |         } else if (action == POST_RATE_CHANGE) {
-      |                              ^~~~~~~~~~~~~~~~
-drivers/clk/eswin/clk-eic7700.c: In function ‘eic7700_clk_probe’:
-drivers/clk/eswin/clk-eic7700.c:1313:15: error: implicit declaration of function ‘devm_clk_notifier_register’; did you mean ‘mmu_notifier_register’? [-Wimplicit-function-declaration]
- 1313 |         ret = devm_clk_notifier_register(dev, pll_clk, &clk_data->pll_nb);
-      |               ^~~~~~~~~~~~~~~~~~~~~~~~~~
-      |               mmu_notifier_register
-
-These are currently defined in clk.h. This code was present in the v9.
-
-Brian
-
+Kind regards
+Uffe
