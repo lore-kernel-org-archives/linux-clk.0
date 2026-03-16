@@ -1,108 +1,104 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E423A8747;
-	Mon, 16 Mar 2026 15:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C913A9631;
+	Mon, 16 Mar 2026 15:26:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773674776; cv=none; b=h1tLtZ/Gb1j9WycQH05AaWibcV2fqY8vFLhtpND6IM39AgKD9TsY9RB6ne6PXNzlOD7tkFFW20DQLGsSj1u7ERVfn0sW5z5Wey7R+J/r9PXXHZlEdh1tEKEOoJLN+2/0AGsEpictCXcNNmHJnZp924/Uyjx9+Y++K1QMXVeGD0w=
+	t=1773674777; cv=none; b=lI6XOnmJusB6eOWbTPVEIUqwuh+EWnw4jiDHqnWMTeE4w2zhLyMxz/7nk4PpY8VgARCUToiBRrY4X1ZOqXUtVau/gaygJdCK7AjGGKk1UT/UEGzw6YBUHvmQTiZACduHFtOzmHRYcCkUhM41NbNXkjod5xbTYLpMmpXL1qtZeG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773674776; c=relaxed/simple;
-	bh=HiF5B4Bc73eHsZAl9unZvix8uUjE2fsep39CeE6Z6ok=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IGR4YRqSfGA7YabQjYvL78Qe5fwnKGFSvrwNbsZ2h9jbzT39tshnccU2Fo099JKrUZ/xp/PYnhgOAA2t58xg7C24kOuzBoIv2XKrcmj2wN8w07HiuIxt7tBfpW0EI6GcFv3ol4j9dCYOj3ulyWD85WtMhpLz8vNTv56PCenuATs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=g7wEu8wM; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1773674777; c=relaxed/simple;
+	bh=f5yrzvJyKqNO0mx1A368jXTrlKXyBPupbgbIJWVdVDg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=s8ZvG/jEuPIdFX2M/RgC+aGvGp8vnEQcafz6EYSXGIVFIaeSy1Rr1Ik+mkoKfIsKyAYTVYYGwZWU8zKWrcA6Y1EZO878AxHPrMF/CR+QTIf45WTR2aX/quu+H3b6jBUnOi4TkLZLT5orkM1H2hjlECWQrQ2VMTN/u2/vBhixShw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ovhzMWqk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="g7wEu8wM"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id EDD7D1A2DAD;
-	Mon, 16 Mar 2026 15:26:13 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id C39045FC4A;
-	Mon, 16 Mar 2026 15:26:13 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 66969103721F8;
-	Mon, 16 Mar 2026 16:26:11 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1773674772; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=t13fTL38ybBnjcJkpfx+K3cUGVZwn08bqofOvp3rY/E=;
-	b=g7wEu8wMxX14MPtuGpZ3ujPtebXwaYKya4BVSMUMXY6d2jmNLwfi4RsmVX1UH28Smz24ax
-	7TqPs8xLfeEfQZMrZ1ORToYJgtJttR+2wfDycflPSIrX7m94pPIH4ADkroO5TC5PaxIAQR
-	iTvbfvRa+zOxQaKSHvc3GnfBr3qNDB+MrLuqLLdAxjEDmuWmC6rOwHuFQkN1QTsj/hT7nD
-	E3Ixl5ChZDd553sn+onzq581qTC0yunPSUfOn/kuia+eQ3RCavKnT0ibkNBJfon5A2xjmb
-	DbvmB816++87ULv9YHpBPNzn/cb4hhtMAHXPgIe3y9r+8YYlLNjtfF8Ld5mxkA==
-From: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
-Date: Mon, 16 Mar 2026 16:25:50 +0100
-Subject: [PATCH v4 13/13] MAINTAINERS: Mobileye: Add EyeQ6Lplus files
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ovhzMWqk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56604C19421;
+	Mon, 16 Mar 2026 15:26:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773674776;
+	bh=f5yrzvJyKqNO0mx1A368jXTrlKXyBPupbgbIJWVdVDg=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ovhzMWqk806ZgRSfbKVBcxktTp+WFCFPfQii4kiAXjB/7c60iC/cGW0GHW1LveMa0
+	 w/GQbssWk9KmNuPvTBzHBcTD5l8BjYuvvusZgzfGltD1S1YLexZmxaFLWHSJknBZOb
+	 qNcxmTgvrz/dsom3WZx91hP+Qcgdf47U7v+rm5W6ieJU0kj/+TjI/qiCdFP9PVoZ91
+	 sIpBJT8ODkhe6zDwzJd1eKnmkGMDp6rdFGMrI2248Zckv6qoDbNcXanZFY8Gy6rPX6
+	 Oakf0AgRspS14udOdoJv28RnnQOX3DrM/YXIw5YSg/O4eMMR0NHRV0kHi7iEw8PCz9
+	 xcSh00OQLnp/g==
+Date: Mon, 16 Mar 2026 08:26:14 -0700
+From: Drew Fustini <fustini@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Brian Masney <bmasney@redhat.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>,
+	Drew Fustini <dfustini@oss.tenstorrent.com>,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [GIT PULL] clk: tenstorrent: Add Atlantis PRCM for v7.1
+Message-ID: <abghFg5INVslFFcc@x1>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20260316-eyeq6lplus-v4-13-bf44dfc7a261@bootlin.com>
-References: <20260316-eyeq6lplus-v4-0-bf44dfc7a261@bootlin.com>
-In-Reply-To: <20260316-eyeq6lplus-v4-0-bf44dfc7a261@bootlin.com>
-To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- Gregory CLEMENT <gregory.clement@bootlin.com>, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
- Linus Walleij <linusw@kernel.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-mips@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
- =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
-X-Mailer: b4 0.14.3
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Use wildcard to match all EyeQ defconfigs under arch/mips. This covers
-the newly added defconfig, and the EyeQ5 and EyeQ6H ones. Add an entry
-for the dt-bindings header of the EyeQ6Lplus clocks.
+Hi Stephen,
 
-While at it, add myself to the maintainers of Mobileye MIPS SoCs.
+This pull request introduces support for the Tenstorrent Atlantis RISC-V
+SoC in the form of a clk driver, reset driver and the associated DT
+binding. The reset driver was reviewed by Philipp, who agreed that it
+could go via the clk tree. Brian reviewed the clk driver but there is no
+review/ack from you. Please let me know if you'd like to see any changes
+and we will post a new revision.
 
-Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
----
- MAINTAINERS | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+The following changes since commit 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 55af015174a5..63048d5ede7d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17802,6 +17802,7 @@ F:	drivers/media/dvb-frontends/mn88473*
- 
- MOBILEYE MIPS SOCS
- M:	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
-+M:	Benoît Monin <benoit.monin@bootlin.com>
- M:	Gregory CLEMENT <gregory.clement@bootlin.com>
- M:	Théo Lebrun <theo.lebrun@bootlin.com>
- L:	linux-mips@vger.kernel.org
-@@ -17809,12 +17810,13 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/mips/mobileye.yaml
- F:	Documentation/devicetree/bindings/soc/mobileye/
- F:	arch/mips/boot/dts/mobileye/
--F:	arch/mips/configs/eyeq5_defconfig
-+F:	arch/mips/configs/eyeq*_defconfig
- F:	arch/mips/mobileye/board-epm5.its.S
- F:	drivers/clk/clk-eyeq.c
- F:	drivers/pinctrl/pinctrl-eyeq5.c
- F:	drivers/reset/reset-eyeq.c
- F:	include/dt-bindings/clock/mobileye,eyeq5-clk.h
-+F:	include/dt-bindings/clock/mobileye,eyeq6lplus-clk.h
- 
- MODULE SUPPORT
- M:	Luis Chamberlain <mcgrof@kernel.org>
+  Linux 7.0-rc1 (2026-02-22 13:18:59 -0800)
 
--- 
-2.53.0
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tenstorrent/linux.git tags/tenstorrent-clk-for-v7.1
+
+for you to fetch changes up to 23c8ebc952849b3ba47d04d0ec95daf5cc136061:
+
+  clk: tenstorrent: Add Atlantis clock controller driver (2026-03-09 20:10:26 -0700)
+
+----------------------------------------------------------------
+clk: tenstorrent: Add support for Atlantis PRCM
+
+Introduce support for the clock and reset controllers (e.g. PRCM) in the
+Tenstorrent Atlantis SoC. 5 types of clocks are generated by the PRCM:
+PLLs, shared gates and standard muxes. The reset controller is setup as
+an auxiliary device of the clock controller.
+
+Signed-off-by: Drew Fustini <fustini@kernel.org>
+
+----------------------------------------------------------------
+Anirudh Srinivasan (3):
+      dt-bindings: clk: tenstorrent: Add tenstorrent,atlantis-prcm-rcpu
+      reset: tenstorrent: Add reset controller for Atlantis
+      clk: tenstorrent: Add Atlantis clock controller driver
+
+ .../clock/tenstorrent,atlantis-prcm-rcpu.yaml      |  54 ++
+ MAINTAINERS                                        |   4 +
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/tenstorrent/Kconfig                    |  14 +
+ drivers/clk/tenstorrent/Makefile                   |   3 +
+ drivers/clk/tenstorrent/atlantis-prcm.c            | 870 +++++++++++++++++++++
+ drivers/reset/Kconfig                              |  11 +
+ drivers/reset/Makefile                             |   1 +
+ drivers/reset/reset-tenstorrent-atlantis.c         | 173 ++++
+ .../clock/tenstorrent,atlantis-prcm-rcpu.h         | 103 +++
+ 11 files changed, 1235 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/tenstorrent,atlantis-prcm-rcpu.yaml
+ create mode 100644 drivers/clk/tenstorrent/Kconfig
+ create mode 100644 drivers/clk/tenstorrent/Makefile
+ create mode 100644 drivers/clk/tenstorrent/atlantis-prcm.c
+ create mode 100644 drivers/reset/reset-tenstorrent-atlantis.c
+ create mode 100644 include/dt-bindings/clock/tenstorrent,atlantis-prcm-rcpu.h
 
