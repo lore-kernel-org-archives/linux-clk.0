@@ -1,149 +1,172 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E4826E173
-	for <linux-clk@vger.kernel.org>; Mon, 16 Mar 2026 14:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415DD39A802
+	for <linux-clk@vger.kernel.org>; Mon, 16 Mar 2026 15:04:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773670864; cv=none; b=lhy83P4x9XZSxiuOSgY4kCfY9qqvp5ZrkQaWzPsZAtfIQAxdR/pfRk2fXCetvl0HIzgVjmngdKcDz+apETG2Uw7K54yK4PEdHXCDxaQdJP+vyJtKtGq8NNOXxTxTvonb0u/vZ5Exxtnz+lcCBKA1HENl1yOWVxTaCq+kOFzag3c=
+	t=1773673458; cv=none; b=sf493UPTbVFy7OKDl9146hlWnSjCPu17VUmJNOdsRzC289AbLKnLX7gfPUuWBJL5oaWF8MtXqGPz0G4IqC8nmZJMk/inPnGSCaswuRxcvP0d9b4zTsi4dAW7+CcMpr5yj/dPGl9rVqLEdE1xZUsGES8PnH6Ag2E8ewPD3n71Vdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773670864; c=relaxed/simple;
-	bh=7Zo832r3CAxZlBSgtHVQyTnKGCjFCF2//i7OeB8wa1E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MHvbTe3g7Tga4QeG3AuxSuQLqKGUrIidT8QG8WSOk+fhZLb9RiBrni1yxSLAJXibrg6xsdPz5a2i17Tg4CNj4ibefk4XS34KblHd7jfO+4scI+yCz4h3ZoNcSlzVDVF4IKSJUXoxx98qvRdqtel2tR6SH/cwZJN+qF1hWiQQnJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IhciJ8UU; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=hNxqV+Og; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1773673458; c=relaxed/simple;
+	bh=j9s4nW6rffGEhd1lXVR9dLdMc9z31vqESmtM4Se29VA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DMHViroL33/Ej2k4xmCcz2PHRejcWZxQR5FX/ixnNVUWPasmIf7G5MpH5Dlo8rT4/zu0E/jvNApIeNqmDfFjHDXYp2KHrxMX8nGMP1rXIAcekQTQzF3m1KCOiPqwYbq5+pYoI8xconKkuuHNeM0BIRYFK8bDfs2qe/JRTN2eA70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a+kwyXBg; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=EMXe1oJn; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IhciJ8UU";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="hNxqV+Og"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62GCY2Rl1623660
-	for <linux-clk@vger.kernel.org>; Mon, 16 Mar 2026 14:21:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ET7+pRVfXFEX2ZQozQ5kNkMYM+mjYrCSj9KRGYyuCJE=; b=IhciJ8UU184mtLQn
-	uy/mMqqJJIN3eg3YcNUuJiOX/jReszs8kC8Kia0ZjqFPZXZbAa2/4wjnNmtK3aKh
-	AB2V1wwEnogIGTsuc87mJhqGmUe1YQI0uq3hlg2Xh8A9jT/MOswRca26CDeZOlCX
-	vJ1WloxTclL4+aCBf/FbPh0id74gEtdoxU+k/k8tFexN2sAwCh6RDpkhmp6OKccW
-	pDkRF8MMkbFoXH2guIz2AtId26gleQ1S0ZbezCLXezXBFiEqzPHX6qNYDvBdgqzn
-	LcND3kpsXRp7FMxaYxbBSXHGKn7C/i7rlK4HN3g9khSX9+rPy51HbqXot2lg71ug
-	rQ5vuQ==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cxhyegdae-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 16 Mar 2026 14:21:02 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-89a04e9d4faso36901736d6.1
-        for <linux-clk@vger.kernel.org>; Mon, 16 Mar 2026 07:21:02 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a+kwyXBg";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="EMXe1oJn"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1773673454;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Co7Rw9SvGXfO2Q1q4O/QAU8a4dAjFS1ZZErcH+Mevyc=;
+	b=a+kwyXBgbCa+R7M+Rqf2agB+CL3pziEoyXUP/cB8nCjtAtxJArA2cjrmRjL44o4IApbJ8e
+	r4BA39fsTz4VsWSJpuAtob6OKLs+tKyOeS0lZ9RBXsf9Qr9oFjI/4nAf6qQoJ16KchS1+7
+	N4K0FvE88b2qItWnlzHh6wqP1r2bwC0=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-650-y5PB7hnFM4yRlwjy_7uxzw-1; Mon, 16 Mar 2026 11:04:11 -0400
+X-MC-Unique: y5PB7hnFM4yRlwjy_7uxzw-1
+X-Mimecast-MFC-AGG-ID: y5PB7hnFM4yRlwjy_7uxzw_1773673451
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-89c4d85d619so108281226d6.3
+        for <linux-clk@vger.kernel.org>; Mon, 16 Mar 2026 08:04:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1773670861; x=1774275661; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ET7+pRVfXFEX2ZQozQ5kNkMYM+mjYrCSj9KRGYyuCJE=;
-        b=hNxqV+Ogg/N9Hd0l5NdgF9sdSs5DAYR71pbfGSK6mSiKpO7ACnXJz/y78Vo9Z3JAWs
-         P4KrffUnL8B4slAYTfMCNNqxMRxldrnUh94c9AazajRO1n2qMd44fJwFbXqo1j18r45n
-         gWWp86kN4AF3tGcLpeX4uYt+Ai76BOOO3/XnHCHm+ErpIoTTF3jztj6DST2ll63vQRdb
-         plSBiwMcgJQDmEBxcXVFKVKCgOp0b7sBINcEdALKovoZ69DYEHRWvxYUv9qs7OeQrIC+
-         38doHXLYUHxsR9XuVrxlmlcOJwsf6TEvVt9Hd3a2hQOE2qi7K2m+3hIlHGfXhZw5jIqQ
-         THZQ==
+        d=redhat.com; s=google; t=1773673451; x=1774278251; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Co7Rw9SvGXfO2Q1q4O/QAU8a4dAjFS1ZZErcH+Mevyc=;
+        b=EMXe1oJnaWgSZxVnWUiKnSq2oXq1DwgO8ErMLFM6gY5E8C3gYppCf8A1EqPRi8Zik8
+         NFAj0stg2bKPCBt0ACeR13efffBhSNKZteOF2IxRkEZ7+//sdWHYL1T7DPTNZocwbU79
+         OYdPNlOxMAJxP6fAgBlIjyck5KtquGXp78gQGN9VaU6hSz3Nwtn1X0v8HsHQ8LtMw+js
+         JuTdzuO2HQQG32vjKW7ueP3Bp7DW1xaT/f+z35fmFX5Wt0JTF0iBd+tQ5PpusteRIHaR
+         2moUTkFBapN0OjCyeZw9jOS+bF5r0H/KlOg3J3GipSdUcloXWhOb30V/lEJlA8oeoKUm
+         I0BQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773670861; x=1774275661;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ET7+pRVfXFEX2ZQozQ5kNkMYM+mjYrCSj9KRGYyuCJE=;
-        b=aRYbRsb05p/olGKI/F4Maj/LJg4Wp3sCOHA8ECKNWx/0yOhYOYvWx0QSki7Cllui2Z
-         uucLqQVgyFd05HKVKuOnjsJL9pmhtxwJh8fdqM9SR3kYzTgdQsOK4e/mWURq3iauJJvc
-         +R0niwXyAuuE725Wk5eEfBWXLiMQjkSks/o3QwekV/KHQwYOlFqWTqfG5Vo1xgIwryP8
-         zbHKg2A4XyeX74rfxlciHLtylgyNscwAp+LFeJcQXuMqwzUxz4LfPpTfLN020HilBC/u
-         JhUdYmhLvl2pvVTo2oGwqxanJDXFgST+7+dd+65L1q2yJuLuPCkm6wb9EhHdt48zN45o
-         THmg==
-X-Forwarded-Encrypted: i=1; AJvYcCVsInoNyb8zaT0oaJeeN5RSQW0yxwFD1rgMuMNEBEGsyHKmSTKgQrv44xLAI2g3quCKWsDmITYvkRs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrVFH9whcAp5M/cxVCHSZ1Q6acWiNC5zHHcaHkDkJmz8NLcpc2
-	9XKztCc6CjWpahVXJOilm+Uo7PEUmyoEl7OJcaeGiGbG5te4fqZapX6qRhvVB8Pf6Sg5CHdaUk4
-	KmJ3dniq5X8CWKF4M77J5NJtc9QwT9rIssM6qRR0NrnnPrb+m6xv325QuxvCSMZA=
-X-Gm-Gg: ATEYQzwIq/h5boU/r/3Rbz5bOqU3Lpzzyp6ChZgyevkKD7/DfTtp43FVBEO2YbFy/SI
-	EIKmVhGyJTWtnzVypphNwimRplZZYNUTAgeQ6A6Z2wv4Xw5Gx5eZblq2jrF/j+IE52TgtglUsmp
-	s5k70JrcAdXY4nBkJjs3vm66WcR4Vu+WBQweN9IsHt1qZjphChBWAOf1uZW1s92ZcaooYtDyV53
-	vFWLMJq2KqgEn+0obI1zxTlnJ3ZkpG0TGM4pHST22cJuVyI8Bco1qTzGqMGaJBdxJM8HKpMtHn+
-	1tafwaXNQ9TiNyqaS33vNkCn3jxV6Dlo3iU6Uso4eoAAiPkGmMonUhLJ+NGzPYCgd0vJFdpmWWJ
-	DXIaPeaB2jIf4WVIvELB/q7g1JCgsH7lTWh0GBVCsu8ez4c8rBYRPU5YBB5lBKa4EpO23bde+iU
-	NyBxY=
-X-Received: by 2002:a05:6214:601c:b0:89a:6263:feae with SMTP id 6a1803df08f44-89a81cce148mr130779296d6.2.1773670861526;
-        Mon, 16 Mar 2026 07:21:01 -0700 (PDT)
-X-Received: by 2002:a05:6214:601c:b0:89a:6263:feae with SMTP id 6a1803df08f44-89a81cce148mr130778816d6.2.1773670860964;
-        Mon, 16 Mar 2026 07:21:00 -0700 (PDT)
-Received: from [192.168.119.254] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b9791c113d4sm468691366b.6.2026.03.16.07.20.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Mar 2026 07:20:59 -0700 (PDT)
-Message-ID: <6e993559-8be6-4dde-8214-9417250b1815@oss.qualcomm.com>
-Date: Mon, 16 Mar 2026 15:20:57 +0100
+        d=1e100.net; s=20251104; t=1773673451; x=1774278251;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Co7Rw9SvGXfO2Q1q4O/QAU8a4dAjFS1ZZErcH+Mevyc=;
+        b=W/V7HHdarkFjBBAFiVaLvjqw25JY8NJhv2jPu4KNtOyMJtVvyz91WgzsWr8pHEqjia
+         HZfL4dxsXSG7/4nWE8cQR4JPmaFdKETIJIk7PkjIFDfmeeik0tvvwEXL69+3Y7/g6m2U
+         uXqYbLscAuDvEyRV6ft6zfJHrANvhP1VCi56FdfQhnooA5ZN/COU01nbMeZhjvFysn9l
+         BwBViLr/gHZn+sPOlJ2bOisp5UJpZbR46oixpHOuF1vh/b0nH9ob/0lOkD/Wb+2ImWg2
+         pMacQ2KngxnMtwIwRgORo0pwxhtzXZ/DNkfVQ4/24o6rOKJVx+PFo84WewyCtuw2nCn9
+         S/9A==
+X-Forwarded-Encrypted: i=1; AJvYcCVTXWLcJ596aPgKgMkTy0WN1XIu+9e73nIKiBhaBp6p200MdGrt7pCxNqnNxJinP1U7EILag5lPq3A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIEVIAdFxybTJsh1jIN+pqvfih3AVhCZbKuPWvBqYQRdzs/om4
+	kYFAlNz9hIu8Esl9AQqFBWzhZaCXugxZG9yCBS+CjrMJ1UdpT2YcyvDKr00IE+nswx8siLwv1sr
+	HpfaFFBDIHj68+pM75qMAfNB+eoCdyVDDksMZKNsBASfa7415Rr4wZOtkCl6DeA==
+X-Gm-Gg: ATEYQzwd8ulzuJko7OVGP8XLKLFYVGWhkpSVsFRAXygewwGjliNJ70Dp/nz++6tn++r
+	iQeHbpfA0ksbJ9V5SCuydLeFuzytIR6BS20rZix4gpvPvbRYmwhOlzz4+F/Ym++qDoM7vE+TEe+
+	gwuelKNFwgCRQXBRqY7IF8cFhZHLvMYT1rXhV2YOeTsWRV1wNl7lPQMI9RT4fkDXDCYcD1AnwUP
+	sTJfKjfOQeP35rBenofYls6JW4RZ15bv+JeRG8NGxxD37HRbwQqTsqg3LhZOni61mYvKif1qNR8
+	2g9QNbTYYf3NSlEMO4UFKWcdIlhAKwAIWxGEZVmdCme4PYru/cSWqd4UHJfjpJnR7Ryd/8d9s7I
+	qfawt1LMIwwWjF2+HXZ+uflHuxqn03azzb7l8NvsM1n7L2wrQiaprPJac
+X-Received: by 2002:a05:622a:244:b0:509:38d2:858c with SMTP id d75a77b69052e-50957e10b71mr185453261cf.61.1773673450628;
+        Mon, 16 Mar 2026 08:04:10 -0700 (PDT)
+X-Received: by 2002:a05:622a:244:b0:509:38d2:858c with SMTP id d75a77b69052e-50957e10b71mr185450851cf.61.1773673448468;
+        Mon, 16 Mar 2026 08:04:08 -0700 (PDT)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-509400d018csm130100651cf.24.2026.03.16.08.04.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Mar 2026 08:04:07 -0700 (PDT)
+Date: Mon, 16 Mar 2026 11:04:04 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Xuyang Dong <dongxuyang@eswincomputing.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	troy.mitchell@linux.dev, ningyu@eswincomputing.com,
+	linmin@eswincomputing.com, huangyifeng@eswincomputing.com,
+	pinkesh.vaghela@einfochips.com, ganboing@gmail.com,
+	marcel@ziswiler.com
+Subject: Re: [PATCH v15 0/4] Add driver support for ESWIN eic700 SoC clock
+ controller
+Message-ID: <abgb5OcSFbt3FzjI@redhat.com>
+References: <20260303080513.2042-1-dongxuyang@eswincomputing.com>
+ <54e32101.4409.19cf56c4aae.Coremail.dongxuyang@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: gcc-ipq6018: mark gcc_xo_clk_src as critical
-To: Christian Marangi <ansuelsmth@gmail.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: John Crispin <john@phrozen.org>
-References: <20260311182147.30266-1-ansuelsmth@gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20260311182147.30266-1-ansuelsmth@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: dp2UtlLe6ZSYjyIeG_TW_idv3GfMHkvJ
-X-Proofpoint-ORIG-GUID: dp2UtlLe6ZSYjyIeG_TW_idv3GfMHkvJ
-X-Authority-Analysis: v=2.4 cv=KLxXzVFo c=1 sm=1 tr=0 ts=69b811ce cx=c_pps
- a=UgVkIMxJMSkC9lv97toC5g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22
- a=Vxy2kpnnAAAA:8 a=pGLkceISAAAA:8 a=EUspDBNiAAAA:8 a=EiN3ZDTDylVKncD3b3QA:9
- a=QEXdDO2ut3YA:10 a=1HOtulTD9v-eNWfpl4qZ:22 a=mQL3ssppXrSh16SuiSjD:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzE2MDEwOCBTYWx0ZWRfX1g656N2SedNY
- S9oOYE2+1fNQxfOhsNWlp7U2WffubRvn4B0ERlNE3m/xZ+lokwfIq1CS3jgmPFZR2ExeYhqTgDG
- yaV6+8ybxVO3rWAHNXwyCwGYVkreUE+nje5xmq4sjAfvh28x+qFr0wGsMfWsqANfzbrDU1u9HDI
- C9MjsAoJFXQ/8gxaMsDfZ/i7/dKTyjwmDJgTwKg7dB9J0sdC7Qv7DnjOJTAD23U3npBeJ3qql4B
- yVXX+spyoygCYLsUektGgwwk+dM2u75Z4CQ0/uOXVwJcRgi+g3tSR12mF6uRC01DjWclFefvkdT
- dCCSrxMAMUyZpw/2Y182VBS0UFE0cerJ5hIn8OE7wvmpp+ARqDi1a2mNiIjeZ+IQzNF/Tm6Y2Ec
- kv/Ov5uWAXohnnSkFQDDkek8cONVmuVmsVysAZcEWfC1gbeMotd65OjBeGQ6i6bkJVHUb2MZWWu
- DpXfcp1bVDo/OdtULhg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-16_04,2026-03-16_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 phishscore=0 priorityscore=1501 lowpriorityscore=0
- suspectscore=0 spamscore=0 clxscore=1015 bulkscore=0 impostorscore=0
- adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2603050001
- definitions=main-2603160108
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <54e32101.4409.19cf56c4aae.Coremail.dongxuyang@eswincomputing.com>
+User-Agent: Mutt/2.3.0 (2026-01-25)
 
-On 3/11/26 7:21 PM, Christian Marangi wrote:
-> From: John Crispin <john@phrozen.org>
-> 
-> The XO clock source is always-on in hardware and cannot be gated.
-> Without CLK_IS_CRITICAL, runtime PM of downstream consumers (such as
-> the CMN PLL driver) cascades a disable up to gcc_xo_clk_src, causing
-> a branch status timeout warning.
-> 
-> The IPQ8074 GCC driver already marks this clock as CLK_IS_CRITICAL.
-> Apply the same fix to IPQ6018.
-> 
-> Signed-off-by: John Crispin <john@phrozen.org>
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
+Hi Xuyang (and Stephen),
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+On Mon, Mar 16, 2026 at 02:54:00PM +0800, Xuyang Dong wrote:
+> > 
+> > The link [1] provides the official documentation for the EIC7700. Section 3.2
+> > covers the clock subsystem.
+> > 
+> > [1] https://www.sifive.com/document-file/eic7700x-datasheet
+> > 
+> > Updates:
+> >   Change in v15:
+> >   - Updated driver file
+> >     - Add 'Reviewed-by: Brian Masney <bmasney@redhat.com>' for patch 2/4, 3/4 and 4/4.
+> >     - Add space between the name and < in MODULE_AUTHOR.
+> >     - Remove memset_p() and commit in eswin_clk_init().
+> >       The current implementation ensures that parent clocks are registered
+> >       before child clocks, thus preventing the creation of invalid clocks.
+> > 
+> 
+> Hi Stephen,
+> 
+> I received your review comments on v9. After addressing them and submitting
+> v10 through v14, I received additional comments from Brian, Bo, Marcel, 
+> and the kernel test robot. 
+> v15 now has a Reviewed-by tag from Brian and a Tested-by tag from Marcel.
+> Do you have any further comments on v15? I would like to send a GIT PULL 
+> request for 7.0-rc4 by the end of this week.
+> Do you think this is okay?
 
-Konrad
+It's been a month since Stephen posted on the list, so I'm not sure when
+he'll be able to reply. I know he's been busy.
+https://lore.kernel.org/linux-clk/?q=f%3Asboyd%40kernel.org
+
+If you don't hear from him by rc7 (or even rc6), then I think that you
+should send him a pull request. He'll either pull it, or tell you what
+needs to change.
+
+Once this driver is in tree, you'll still need to post patches to the
+list, get them reviewed on list, and then send Stephen a pull for that
+merge window. That's what the other SoC vendors do.
+
+Stephen: I went through all of your v9 review comments for this driver,
+and ensured that Xuyang addressed all of your concerns. The only thing
+is that drivers/clk/eswin/clk-eic7700.c still includes linux/clk.h,
+and you asked if it could be dropped. If we remove it, then it fails to
+compile because of the clk notifier support:
+
+drivers/clk/eswin/clk-eic7700.c: In function ‘eic7700_clk_pll_cpu_notifier_cb’:
+drivers/clk/eswin/clk-eic7700.c:1270:23: error: ‘PRE_RATE_CHANGE’ undeclared (first use in this function)
+ 1270 |         if (action == PRE_RATE_CHANGE) {
+      |                       ^~~~~~~~~~~~~~~
+drivers/clk/eswin/clk-eic7700.c:1270:23: note: each undeclared identifier is reported only once for each function it appears in
+drivers/clk/eswin/clk-eic7700.c:1273:30: error: ‘POST_RATE_CHANGE’ undeclared (first use in this function)
+ 1273 |         } else if (action == POST_RATE_CHANGE) {
+      |                              ^~~~~~~~~~~~~~~~
+drivers/clk/eswin/clk-eic7700.c: In function ‘eic7700_clk_probe’:
+drivers/clk/eswin/clk-eic7700.c:1313:15: error: implicit declaration of function ‘devm_clk_notifier_register’; did you mean ‘mmu_notifier_register’? [-Wimplicit-function-declaration]
+ 1313 |         ret = devm_clk_notifier_register(dev, pll_clk, &clk_data->pll_nb);
+      |               ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      |               mmu_notifier_register
+
+These are currently defined in clk.h. This code was present in the v9.
+
+Brian
+
