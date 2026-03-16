@@ -1,164 +1,117 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from fr5000-r.dnsiaas.com (fr5000-r.dnsiaas.com [92.42.104.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D787F396B8B
-	for <linux-clk@vger.kernel.org>; Mon, 16 Mar 2026 12:56:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C73393DC8;
+	Mon, 16 Mar 2026 13:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.42.104.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773665769; cv=none; b=aL0ahyQ5nTgwqboXwBinsENwcO2jxeAxkhK+440eVIcFI/aD+X9jXc7bS3JF2hmGoXinPgxBQZXEUsYhrJd6JKN9iHYTF24xcflF3LHJdYlMI9MdWwcwFdkzIEv+atrD7ClTWbP2NmIhzGe0uyDQiQ4B5hj6kwNpLu0pEWi0TKQ=
+	t=1773667810; cv=none; b=hBIHDm5TM4tC1OaaeXE61TTzz5/PawcvAuGdNEN+43qBsRLPM4GW1mINql/yCLP7xg9Ktmzg9z5X3hJ6VdMa88TbFehOO7ij0kj1RSp/YVTOuSPNkWuoQ/c1JNLojS33ZjRcyzgkPD9rErCjTLXFype/bX8lStnZoY+IdYXDRzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773665769; c=relaxed/simple;
-	bh=UudFQD9Y1asIR34bLW36Fh4vtDgY3XFE+jPhNUBfFis=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rUoJp/eurTQncpiPWgKEWHmnos2UNoi5F3hCT+Iu5yHFGpQ33tIFX3hx9da6nJQqsMaQv5lqGQ3U9RcAH+q9TIdd4As1bQqs7p05+VAZma0YtarAfyxnKCtkoQ7Mrq2GMzof6A+mM37IqKrjz1SfM/QcWzXtLIgs0Ag++/yD4ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dB2qCFJ/; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=B0GUfxRf; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1773667810; c=relaxed/simple;
+	bh=m6I+53NOmP/FBOxIqYA7/Pg65sLmXjAEQcj2H89XEVs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=hUGh0lw7PWTM3OZYhFI8jxuAkj9WAPrd4jN77wa0xeEa1OkWDcGDMEA/n3q8cfd7ydNRDc2W8sADcy0ly9x1l7dYCx2vcpbSCIMqsbd43mSSBkdLiUV8lmen3hjG9xDAaGvbtqZVBIbRCmRcfxs3ndQ/bdQ9xu7lyJmfztDop2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=superkali.me; spf=fail smtp.mailfrom=superkali.me; dkim=pass (2048-bit key) header.d=superkali.me header.i=@superkali.me header.b=H7NwRCY6; arc=none smtp.client-ip=92.42.104.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=superkali.me
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=superkali.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dB2qCFJ/";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="B0GUfxRf"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62GBYaYP1282088
-	for <linux-clk@vger.kernel.org>; Mon, 16 Mar 2026 12:56:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=gnqiazJWrahgpC81KIxe5p8g
-	n66gwt9igbrey0G4FIc=; b=dB2qCFJ/dUDq3K6n/8SuCycOEJBAVkvEfJFoVKf9
-	jo6rP9wOLdgKlv0wf0e/nQ1FP5AxCpn3jqkCsyK4KR/dsVf1mu9GTxYj8csBMOgs
-	wdS93hlVGNKTahQ2UAqJPbeJq+2/reL77/SCmRg0G6T7X4M+YrhcfkiBY2PFbTBg
-	IslzBpsO0nynUnxpIF3hCi2u3CjI883hFxz63/kSTOrONX0NX9UbxvWyVvcfl3ux
-	YXF47/3s+3TbF+1S4h3EBPHYUtuU7EAEOi5vnbs5T0py3GrP1KxP3M8Oq04TPvyi
-	C8gBT2ZZldNsFQ+BH4csyFVAd1pb6HW9ptzLdWsazS9aKg==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cvyyc5nty-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 16 Mar 2026 12:56:07 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-8cd827a356aso2999663285a.3
-        for <linux-clk@vger.kernel.org>; Mon, 16 Mar 2026 05:56:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1773665766; x=1774270566; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gnqiazJWrahgpC81KIxe5p8gn66gwt9igbrey0G4FIc=;
-        b=B0GUfxRfFTGsaA9XdWzSI0KIFJQu3WbBe1XEzZaQDROykLpyY4g7wujV+qAHhP6p0X
-         /H7C1oQ9Td+8FsFfYEAh9lNnPCuO3jIHg0YgvN4lhwzG4RddhMh1yQz7R5nzFTu3Ad+H
-         /ZgMUcesVie92UNdWpAy5OI5us7WgWG6e4rKWDTEAYhimLWu5HqKk5uxATsg/z2Dy+45
-         skvmjx/6AIpc5/o+dk7EzMLCoTm9UGOx7IKqypWM8dVKAdwenFmVURc0MJONBL5WoxcJ
-         sBnrIHAh+cGvkJIMiwkM737NvTJhi7by9h/PX8b8e7kyIvBCQJV6jYDnCFLSUwxPdvHQ
-         JOoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773665766; x=1774270566;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gnqiazJWrahgpC81KIxe5p8gn66gwt9igbrey0G4FIc=;
-        b=Ar6A9ECyivveyLP1VSSULHN67bS/yQtPN99mynwcPbw9Nxnvm0mDxOTl7oFUV1PN61
-         nEReOFeNXFZPiv8fdDyeaNX8dYpfWTxen+Ju/Vd5dQhcIaOJht7vqudEQ/WnKP7H7PoI
-         OJeEVS07PErZ+X+arzTM7GWZVo1MwIRoIQ/SAQcmypr5GE5NuaTdDgEHAzGCPBfq2Fb7
-         oABQzWVNZslB9jxsfUksq/QX2u62fgHX7XkOdhwP9UaSjHrDURVrkNxvjwUrpenw8+j1
-         z6Gf0ma4LW+Eu6PeewypGUQkaTKs4XkKRpqf0EPuHJBmso+NJ85BVekr0NV1DmU5RGep
-         8sUA==
-X-Forwarded-Encrypted: i=1; AJvYcCWDKvY6+O6uVc2eDiSMpHphCQgB8XCioEWuuiKFwm1IZ/JMYrRyGtgaaTxnZyLRoh1wGaIi0zeMzps=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywj6gp4vHulHxmVNq9P7pKXiny8b9W9dEbeBAiLf2EVMe/cK938
-	Cd30vqSmvJc+yYO7jenQ4cSIzK8CEhGNAObDgAY6BsoT6sdICYa+BUYjDEPs+lebx8e0cf7NfH3
-	o4CHinv0RuqfCcRrfGmo38gjTzXhZHcGHJV8fmdlW6+4YFyfqj10RsGN8Y782uBg=
-X-Gm-Gg: ATEYQzzR3u59eEgKqIrGyWlqbCuyV87+CpA1x0+F2ydsX9qfNbuJEFdyjZu69mYVzIa
-	8O4nlL/M+l3LSwDRowA8gR+F9Mr2hVOvQr7bVALYVsIBDR5OcXttZkHHcROO97/6l3pDbY6qazD
-	j7PLOvEgkpxOWykkDTJ8+L3emcylQXUHbAZuF9m/BWyc6R/Ov8ItBk8c8pEV2cuXUvmsf/ZqUK/
-	KezRg0xPS/6fUSGneVpz/z41gGygHYOgfbYK4VRehScPqjwyQPRtfJ5r7Lb3FhSrM7Lk4RNeILR
-	ILgKqeZUdFMI5XBfRij7+DGLe3rMAPIQCPIsLOxiHiHBO5N8kW8f+VRtyXK5bdw1yLzgUZKbnVH
-	9mken4wRJs7Jpx0nQdYlOT3C8xtcT3M/LQBEMdLc9JkKwrFrkHX8rVeDlAdf2bKw2DAGlPYNogL
-	OmQzcqeO9a7b2s+tyCa+qS+9TGf009su+m4R0=
-X-Received: by 2002:a05:620a:384a:b0:8cd:c18c:9eaf with SMTP id af79cd13be357-8cdc18c9f6bmr948773685a.68.1773665766115;
-        Mon, 16 Mar 2026 05:56:06 -0700 (PDT)
-X-Received: by 2002:a05:620a:384a:b0:8cd:c18c:9eaf with SMTP id af79cd13be357-8cdc18c9f6bmr948770585a.68.1773665765708;
-        Mon, 16 Mar 2026 05:56:05 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a155f33d16sm3554262e87.6.2026.03.16.05.56.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Mar 2026 05:56:04 -0700 (PDT)
-Date: Mon, 16 Mar 2026 14:56:02 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-        Imran Shaik <imran.shaik@oss.qualcomm.com>,
-        Taniya Das <taniya.das@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: gcc-x1e80100: Keep GCC USB QTB clock always ON
-Message-ID: <gvj7tsivu6w2fzfcus6oi3pwc7jcfqdrx62uuzny674mj5ftus@dpnn4pzizbqc>
-References: <20260316-hamoa-usb-qtb-clk-always-on-v1-1-a29ac94f20f5@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=superkali.me header.i=@superkali.me header.b="H7NwRCY6"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=superkali.me; s=default; h=Cc:To:In-Reply-To:References:Message-Id:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=55aVh5zzvysKO2K9tzF58PzklumqwmTYgr4KvXL1AMU=; b=H7NwRCY6gSaF/hEX5xAa1uMOQA
+	GB57iDFAq2szDdlfPonj3pBkpV5FjyhtB7pnRN2NPMOB3OI6P/KBa5WAUbnxQO1PXQDY+J9xh2TmM
+	986G1OZKxHIiSr+7GoJqPx1f9aDlBmBULvqacNCTyE3XhDJrw6t2W0+qk3smDbmTA8sMRpnuNAkCE
+	YfQAtFlWE82qSozckVuiDQggb+RyDIQzAOYJkGvkwEKcPdpHZ8n+SQ8RTMa9AFZd7yMUfk3eUYEdf
+	cwGFMWFIoFzyUew4YMzL+HUXTcuU59w5ggnsnd6cqq3B1rcyldSz7b5r1jfueaASZXw5I9QIyuI18
+	/ha5rJpg==;
+Received: from [185.94.132.237] (port=54871 helo=1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa)
+	by fr5000-r.dnsiaas.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.99.1)
+	(envelope-from <hello@superkali.me>)
+	id 1w27eX-0000000BDZB-3ZPN;
+	Mon, 16 Mar 2026 14:06:37 +0100
+From: Daniele Briguglio <hello@superkali.me>
+Date: Mon, 16 Mar 2026 14:06:31 +0100
+Subject: [PATCH 1/3] dt-bindings: clock: rockchip,rk3588-cru: add I2S MCLK
+ output to IO clock IDs
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260316-hamoa-usb-qtb-clk-always-on-v1-1-a29ac94f20f5@oss.qualcomm.com>
-X-Authority-Analysis: v=2.4 cv=euXSD4pX c=1 sm=1 tr=0 ts=69b7fde7 cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22 a=EUspDBNiAAAA:8
- a=h0ysocOLckJHODvUvR4A:9 a=CjuIK1q_8ugA:10 a=NFOGd7dJGGMPyQGDc5-O:22
-X-Proofpoint-GUID: APE-egbHPsr9obpteqZtVySIRfXywUY4
-X-Proofpoint-ORIG-GUID: APE-egbHPsr9obpteqZtVySIRfXywUY4
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzE2MDA5OCBTYWx0ZWRfX2pnwDJQM6VBZ
- 3+ulZEHDKgNYz3qZKbeZJZ1Z/Q33zI3axxvg8uTY+iiCiCmBprg0eq/eTnJ9F+7gwro/17Wtnbz
- Q78k6f98Nk5tKzWUSzHkE2ufrqkH0Z20E7AhXXcfXRDtIBXv7wt8j2EQP1nkDA/T8+4CerAsaiD
- +eLLIBhAmNBF0zC72UrLRdoUwhglkhJG04gqIetORd5GBg5KulTfFwutqpXXypdzDY7+/cRHfZz
- kF3dn9KUBHONSrjYcKuEB4vDe0B58We0JY+HvXmpUGbP09R7/TOi0WHjJJ60v+WQzLDoNtEUMwR
- CH48qwC5gE3lCEK8q1GG69FZJnKDenNStoeJtGbM5qM+BXPmgkllfO6oaWyi/IDoAOVB9pcThqj
- GxodTSCANwRMWLZb5OJ7vdhlb/QjgTkCkj4Snc7ReReF/hQKbBnjjVyOYT/m8c59D4oF4xiCgqA
- kAoHxKcbTaSKLGhgbxA==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-16_04,2026-03-16_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 adultscore=0 bulkscore=0 malwarescore=0 spamscore=0
- impostorscore=0 lowpriorityscore=0 phishscore=0 clxscore=1015 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603160098
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260316-rk3588-mclk-gate-grf-v1-1-66fb9a246718@superkali.me>
+References: <20260316-rk3588-mclk-gate-grf-v1-0-66fb9a246718@superkali.me>
+In-Reply-To: <20260316-rk3588-mclk-gate-grf-v1-0-66fb9a246718@superkali.me>
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
+ Daniele Briguglio <hello@superkali.me>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1773666394; l=1283;
+ i=hello@superkali.me; s=20260316; h=from:subject:message-id;
+ bh=m6I+53NOmP/FBOxIqYA7/Pg65sLmXjAEQcj2H89XEVs=;
+ b=xAes7lPb1gny0pILU/9Erd3+j4Q5USwAbUm9jmw8vsUJyLgpuRAnWHKMxnvBSHKyK3DQ6Xx1n
+ tf9FDQsp2Y7AE8JiWH5tBF71qV134hxJEhMK0GHVYVyIDmukk6tmu8O
+X-Developer-Key: i=hello@superkali.me; a=ed25519;
+ pk=5tynRWQdL93CDcapJ73FkcCRY2PeBOJOIAoIhRig53U=
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - fr5000-r.dnsiaas.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - superkali.me
+X-Get-Message-Sender-Via: fr5000-r.dnsiaas.com: authenticated_id: hello@superkali.me
+X-Authenticated-Sender: fr5000-r.dnsiaas.com: hello@superkali.me
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On Mon, Mar 16, 2026 at 04:38:21PM +0530, Jagadeesh Kona wrote:
-> Keep GCC USB QTB clock always ON which is required for SMMU
-> invalidation on X1E80100 platform.
-> 
-> Signed-off-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
-> ---
->  drivers/clk/qcom/gcc-x1e80100.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/qcom/gcc-x1e80100.c b/drivers/clk/qcom/gcc-x1e80100.c
-> index 74afd12c158c01c121d9aecd56e65c0c302d7cd0..73a2a5112623e5190f41129af7fd76a86603557b 100644
-> --- a/drivers/clk/qcom/gcc-x1e80100.c
-> +++ b/drivers/clk/qcom/gcc-x1e80100.c
-> @@ -7480,6 +7480,7 @@ static int gcc_x1e80100_probe(struct platform_device *pdev)
->  	qcom_branch_set_clk_en(regmap, 0x32004); /* GCC_VIDEO_AHB_CLK */
->  	qcom_branch_set_clk_en(regmap, 0x32030); /* GCC_VIDEO_XO_CLK */
->  	qcom_branch_set_clk_en(regmap, 0x71004); /* GCC_GPU_CFG_AHB_CLK */
-> +	qcom_branch_set_clk_en(regmap, 0x7d01c); /* GCC_HLOS1_VOTE_AGGRE_NOC_MMU_USB_QTB_CLK */
+Add clock identifiers for the I2S MCLK output to IO gate clocks on
+RK3588. These clocks control whether the internal I2S MCLK signals
+reach the external IO pins through gates in the SYS_GRF register
+(SOC_CON6, offset 0x318).
 
-Is it used during all SMMU invalidations or only for those related to
-the USB controller?
+The following gate clocks are defined:
+  - I2S0_8CH_MCLKOUT_TO_IO (bit 0)
+  - I2S1_8CH_MCLKOUT_TO_IO (bit 1)
+  - I2S2_2CH_MCLKOUT_TO_IO (bit 2)
+  - I2S3_2CH_MCLKOUT_TO_IO (bit 7)
 
->  
->  	/* Clear GDSC_SLEEP_ENA_VOTE to stop votes being auto-removed in sleep. */
->  	regmap_write(regmap, 0x52224, 0x0);
-> 
-> ---
-> base-commit: b84a0ebe421ca56995ff78b66307667b62b3a900
-> change-id: 20260316-hamoa-usb-qtb-clk-always-on-bcd4e5f3553e
-> 
-> Best regards,
-> -- 
-> Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
-> 
+These are needed by board DTS files that connect external audio codecs
+to I2S interfaces, where the codec requires MCLK from the SoC.
+
+Signed-off-by: Daniele Briguglio <hello@superkali.me>
+---
+ include/dt-bindings/clock/rockchip,rk3588-cru.h | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/include/dt-bindings/clock/rockchip,rk3588-cru.h b/include/dt-bindings/clock/rockchip,rk3588-cru.h
+index 0c7d3ca2d5bc..7528034cff56 100644
+--- a/include/dt-bindings/clock/rockchip,rk3588-cru.h
++++ b/include/dt-bindings/clock/rockchip,rk3588-cru.h
+@@ -734,6 +734,10 @@
+ #define PCLK_AV1_PRE			719
+ #define HCLK_SDIO_PRE			720
+ #define PCLK_VO1GRF			721
++#define I2S0_8CH_MCLKOUT_TO_IO		722
++#define I2S1_8CH_MCLKOUT_TO_IO		723
++#define I2S2_2CH_MCLKOUT_TO_IO		724
++#define I2S3_2CH_MCLKOUT_TO_IO		725
+ 
+ /* scmi-clocks indices */
+ 
 
 -- 
-With best wishes
-Dmitry
+2.53.0
+
