@@ -1,164 +1,169 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C2B2773C6;
-	Tue, 17 Mar 2026 13:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A88728D83E;
+	Tue, 17 Mar 2026 13:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773754370; cv=none; b=Ux1xX25zfAGFESo+VnKpdO+zG8YBxGh5+XCkb0fipu/akVYeOeO178qw7Udr9qcJ+pNd+VaHOukK3yTn08FmzixrH44Dy1ywyHUaXE4+n3QgJSUjfORDMmwWgzhck7GgKpIDn5C/DlMonZJbd3mZuk/bBtI/quFFQyMQon5ryJ8=
+	t=1773754419; cv=none; b=HfFHL/VLYrTUKCA6PLwCFwD4Ye9jzUM7ZE5wSZ/GTOm5DPBtn+bOY4hysqIFF501RhCQ/Du58mikhRcj8YTfAbiGodKlybD2W96E2Kt0j8hOzqUiCN/MaVdXUrDVrQ4re7IFm01siuaTdd6xaAu4ZsAJYFMfPRiKaHcHIuyNP9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773754370; c=relaxed/simple;
-	bh=F4Jv1k8QHFRwhplRuDbvrvAdd3Wm2JPDzFW5FAGLFy0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vAlOqSsBdNZE2d+sF5kZwlCaCi8aMDzAO/ZqEJMx/JiU/WeD5frJYLasuByCC89I7lwotZEUYrL8XG3Yl6wVTiT0fGjn1h/5xsCyPq20/NFQHOHU32MPpxESvL452zqgNyVPgZFB0OOE+x5r8wp+5X4jMYSBRpHACTNT+7Pa114=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V+lJfDAc; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773754419; c=relaxed/simple;
+	bh=2ea1iWY3G2WJoVz9abrqzxtZaJ7JSndBztOUmPTmdaw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Kfhpp/7+AfRo9RTZtkoy6271peoSfLqlY52788I+8wnjTzQRPzauZw6nYysboJojXPAp3Cmg+54VaMXLHIPygPi64ywh3k8sxTpJGHDNgwPXWaW3yXGKGI/1WPf69QayFFiVsXYo4qI3kKDmISGgqSRwZMr0IXrLKlF1vFW1bAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=1BnL00zW; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V+lJfDAc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73FDCC19425;
-	Tue, 17 Mar 2026 13:32:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773754369;
-	bh=F4Jv1k8QHFRwhplRuDbvrvAdd3Wm2JPDzFW5FAGLFy0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V+lJfDAcGojGt4c8qyjb+vZWQcrZCFtTpylZ4ZwKkDexDpT+pznr6ISGPv/vAJrxT
-	 eyLIhrwEiCxoJJdp3YlZLtf0YXnH63dJ6KAEHp1Eq3J4z6sgwyeVeAjMt3LnM/sfCq
-	 Puih1ZIEVWIEqWNTyqpqZeCYf8kgGeTHqyxF6hU3cbjkZpy76KvLaibep3AcIRIfLG
-	 g8ISqY2ggIyPlRZqAfgMBfGE1O7XK53f7U0rEXau0dbtpoz/GZWGFi/o6Rjjehe+Y7
-	 3LKW4WsrvdXkojIyTLiUCDPR0c7LXa0aGad5w0gViyjFAfUPShfJm8+et7PLoBoNNn
-	 Ln6Xi7/LLZkRg==
-Date: Tue, 17 Mar 2026 14:32:47 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Hans de Goede <hansg@kernel.org>
-Cc: Brian Masney <bmasney@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Abel Vesa <abelvesa@kernel.org>, 
-	Saravana Kannan <saravanak@kernel.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: add new Kconfig to control default behavior of
- disabling unused clocks
-Message-ID: <20260317-tough-slim-sunfish-fbe9da@houat>
-References: <20260316-clk-ignore-unused-kconfig-v1-1-6e95a4fb0c94@redhat.com>
- <20260317-almond-leech-of-correction-2a2ef6@houat>
- <75a9514c-2e62-4535-b963-65a99cdfd3f6@kernel.org>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="1BnL00zW"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 5FC07C5505A;
+	Tue, 17 Mar 2026 13:34:00 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 547305FC9A;
+	Tue, 17 Mar 2026 13:33:36 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7464A104505E9;
+	Tue, 17 Mar 2026 14:33:33 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1773754415; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=ntIkyf4BHjj62Dc7A+L7YEXGw0IsZTA15rJunwpStEs=;
+	b=1BnL00zWwyVJ2Ahl+rY1ma+pyiHmUkWeuMpRJTebQCfIJnv/qyPxILXpRF/LmFkw0sKghF
+	o4rj2GtpUB1JN2U0zj07i5iDluv2pfGykBbp+UERlaPQcwt+aIKs6/XdHh0JmZdj4hvdyI
+	tFlztnwP1YrA56E/i2549Y0/Dh9nbFnobrxLZ5GQzuzhOBtB7YgrUzDKHQSuTXrtm3sZ5B
+	AMGnpYfdJW62j7qKhKmwQxtAahjTrmzf30k5IxATz2XjiMkOIBUpKjrxLR/P0zsz20xyhQ
+	1GOWnG8dNY9/bxSn6rb4ZoiXI9LGsUjyzls71ZO7yWa2M1f0G9sZZ3+o565wLQ==
+From: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
+Date: Tue, 17 Mar 2026 14:33:05 +0100
+Subject: [PATCH v5 03/10] clk: fixed-factor: Rework initialization with
+ parent clocks
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="56z4qrcfxxzpqjgt"
-Content-Disposition: inline
-In-Reply-To: <75a9514c-2e62-4535-b963-65a99cdfd3f6@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20260317-clk-eyeq7-v5-3-6f6daa2c2367@bootlin.com>
+References: <20260317-clk-eyeq7-v5-0-6f6daa2c2367@bootlin.com>
+In-Reply-To: <20260317-clk-eyeq7-v5-0-6f6daa2c2367@bootlin.com>
+To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ Gregory CLEMENT <gregory.clement@bootlin.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
+ Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-riscv@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-mips@vger.kernel.org, 
+ =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>, 
+ Brian Masney <bmasney@redhat.com>
+X-Mailer: b4 0.14.3
+X-Last-TLS-Session-Version: TLSv1.3
 
+Use the same sequence as clk-divider, clk-gate and other to set the
+parent_names, parent_hws and parent_data in the init struct when
+registering a fixed-factor clock. The number of parent clocks is now
+only set to one if a parent clock is provided.
 
---56z4qrcfxxzpqjgt
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] clk: add new Kconfig to control default behavior of
- disabling unused clocks
-MIME-Version: 1.0
+Previously the number of parent clocks was always one, forcing callers
+of __clk_hw_register_fixed_factor() to provide a dummy parent_data
+struct with an invalid clock index in case they were not provided with
+a non-NULL parent_name or parent_hw. Drop this dummy parent_data as is
+not necessary anymore.
 
-On Tue, Mar 17, 2026 at 12:53:10PM +0100, Hans de Goede wrote:
-> Hi Maxime,
->=20
-> On 17-Mar-26 08:30, Maxime Ripard wrote:
-> > Hi,
-> >=20
-> > On Mon, Mar 16, 2026 at 06:33:45PM -0400, Brian Masney wrote:
-> >> At the 2023 Linux Plumbers Conference in Richmond VA, there was a
-> >> discussion about how large number of systems need to boot with
-> >> clk_ignore_unused. Per the discussions at the conference, the existing
-> >> behavior in the clk core is broken, and there is a desire to completely
-> >> remove this functionality.
-> >=20
-> > Broken how?
-> >=20
-> > clk_ignore_unused is to a point where it's seriously cargo-culted and
-> > documented as a silver bullet, when in reality it's just a debug tool
-> > for broken drivers, and the driver must be fixed.
-> >=20
-> > But nobody is actually fixing it.
-> >=20
-> > See
-> > https://fedoraproject.org/wiki/Changes/Automatic_DTB_selection_for_aarc=
-h64_EFI_systems#How_To_Test
-> > for example. The affected clock could be marked as CLK_IS_CRITICAL, and
-> > fedora wouldn't have to package anything, change anything, etc. But no,
-> > the problem is clk_ignore_unused.
->=20
-> Both things can be true at the same time. Yes there are ways to work
-> around issues causes by clk_ignore_unused and those ways should be
-> used more often. And in example of the X1E laptops I do indeed want
-> to try and figure out which clocks must not be turned off and
-> try to see if it will be accepted to mark these as CLK_IS_CRITICAL.
->=20
-> But at the same time the fundamental concept of turning off all unused
-> clocks as soon as all *builtin* drivers are done probing is a broken
-> concept when working with generic distro kernels where many drivers
-> are modules. To me it looks like this was very much made with
-> embedded systems with device specific kernels where all drivers for
-> the used SoC are builtin.
+This change only has a small impact on mis-configured fixed-factor. Now a
+call to clk_hw_register_fixed_factor() with a NULL parent will register
+a fixed-factor with zero parent while previously it was registered with
+one invalid parent. In both cases the rate of the fixed-factor is 0Hz
+but it is no longer shown as orphaned.
 
-It's not about embedded systems, it's about shitty, inconsistent,
-closed-source bootloaders. If bootloaders weren't enabling far more than
-they require and / or if we could fix them when they do, we wouldn't
-have more clocks enabled than we need to.
+This has no impact on properly configured fixed-factors clocks.
 
-Removing clk_ignore_unused will just make end users pissed off because
-of the higher power draw.
+Reviewed-by: Brian Masney <bmasney@redhat.com>
+Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
+---
+ drivers/clk/clk-fixed-factor.c | 28 ++++++++++------------------
+ 1 file changed, 10 insertions(+), 18 deletions(-)
 
-> The problem basically is, that if we want something like disabling
-> unused clocks at all (1), it should happen when all drivers including
-> those build as module have had a chance to run. ATM the clocks
-> simply get turned off too soon.
->=20
-> Also see Stephen Boyd's LPC talk about this:
->=20
-> "Make sync_state()/handoff work for the common clk framework"
-> https://lpc.events/event/17/contributions/1432/
->=20
-> When the clk framework maintainer themselves are arguing for
-> replacing the way unused clks are disabled atm with something
-> better then to me that is a clear sign that there is something
-> wrong with the current mechanism.
+diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
+index 850e8b95f352..359e91441c74 100644
+--- a/drivers/clk/clk-fixed-factor.c
++++ b/drivers/clk/clk-fixed-factor.c
+@@ -124,13 +124,13 @@ __clk_hw_register_fixed_factor(struct device *dev, struct device_node *np,
+ 	init.name = name;
+ 	init.ops = &clk_fixed_factor_ops;
+ 	init.flags = flags;
+-	if (parent_name)
+-		init.parent_names = &parent_name;
+-	else if (parent_hw)
+-		init.parent_hws = &parent_hw;
++	init.parent_names = parent_name ? &parent_name : NULL;
++	init.parent_hws = parent_hw ? &parent_hw : NULL;
++	init.parent_data = pdata;
++	if (parent_name || parent_hw || pdata)
++		init.num_parents = 1;
+ 	else
+-		init.parent_data = pdata;
+-	init.num_parents = 1;
++		init.num_parents = 0;
+ 
+ 	hw = &fix->hw;
+ 	if (dev)
+@@ -190,10 +190,8 @@ struct clk_hw *devm_clk_hw_register_fixed_factor_parent_hw(struct device *dev,
+ 		const char *name, const struct clk_hw *parent_hw,
+ 		unsigned long flags, unsigned int mult, unsigned int div)
+ {
+-	const struct clk_parent_data pdata = { .index = -1 };
+-
+ 	return __clk_hw_register_fixed_factor(dev, NULL, name, NULL, parent_hw,
+-					      &pdata, flags, mult, div, 0, 0, true);
++					      NULL, flags, mult, div, 0, 0, true);
+ }
+ EXPORT_SYMBOL_GPL(devm_clk_hw_register_fixed_factor_parent_hw);
+ 
+@@ -201,10 +199,8 @@ struct clk_hw *clk_hw_register_fixed_factor_parent_hw(struct device *dev,
+ 		const char *name, const struct clk_hw *parent_hw,
+ 		unsigned long flags, unsigned int mult, unsigned int div)
+ {
+-	const struct clk_parent_data pdata = { .index = -1 };
+-
+ 	return __clk_hw_register_fixed_factor(dev, NULL, name, NULL, parent_hw,
+-					      &pdata, flags, mult, div, 0, 0, false);
++					      NULL, flags, mult, div, 0, 0, false);
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_register_fixed_factor_parent_hw);
+ 
+@@ -212,10 +208,8 @@ struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
+ 		const char *name, const char *parent_name, unsigned long flags,
+ 		unsigned int mult, unsigned int div)
+ {
+-	const struct clk_parent_data pdata = { .index = -1 };
+-
+ 	return __clk_hw_register_fixed_factor(dev, NULL, name, parent_name, NULL,
+-					      &pdata, flags, mult, div, 0, 0, false);
++					      NULL, flags, mult, div, 0, 0, false);
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_register_fixed_factor);
+ 
+@@ -296,10 +290,8 @@ struct clk_hw *devm_clk_hw_register_fixed_factor(struct device *dev,
+ 		const char *name, const char *parent_name, unsigned long flags,
+ 		unsigned int mult, unsigned int div)
+ {
+-	const struct clk_parent_data pdata = { .index = -1 };
+-
+ 	return __clk_hw_register_fixed_factor(dev, NULL, name, parent_name, NULL,
+-			&pdata, flags, mult, div, 0, 0, true);
++			NULL, flags, mult, div, 0, 0, true);
+ }
+ EXPORT_SYMBOL_GPL(devm_clk_hw_register_fixed_factor);
+ 
 
-I have no problem with *replacing* it with something better. I looked at
-that talk already, tried to make sync_state work already and suggested
-it to Brian too. So I'm not saying it shouldn't replaced.
+-- 
+2.53.0
 
-What I have a problem with is removing it with no viable alternative in
-sight.
-
-> Arguably it would be better to tie this into the deferred_probe_timeout
-> mechanism with some way for subsystems to register callbacks for
-> when the deferred_probe_timeout triggers. This way there will at
-> least be some attempt by the kernel to delay it until all probing
-> is done.
->=20
-> Even though we do really have a problem here I'm not convinced
-> that this patch, which allows disabling the entire mechanism
-> by default, is a good idea though. There will likely be issues
-> with systems consuming more power then they should, especially
-> when suspended when unused clocks are not disabled. So allowing
-> to change the default behavior will just swap one set of problems
-> for another.
-
-I'm glad we're in violent agreement then :)
-
-Maxime
-
---56z4qrcfxxzpqjgt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCablX/gAKCRAnX84Zoj2+
-doPfAYCLal9zcurS4z82B86oIVOwWwd4XPN7FYFMbsvklyfmtuNWdHAXT7jV9SH6
-miog42YBf2ba5MqulN9XqvQBoL4d0XIruqcZ9jQ6PPyVoT2OJVYz/AE+AJC2vmRW
-IwmBxhDVlQ==
-=5r2I
------END PGP SIGNATURE-----
-
---56z4qrcfxxzpqjgt--
