@@ -1,129 +1,176 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60AE318BB5;
-	Tue, 17 Mar 2026 17:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0BA377579
+	for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 17:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773768768; cv=none; b=KdXKHAn8P2NKRj8eLUvmzaip/HbNM94JTaBL6oE0JW1p0ZVccAIe9uQ6iEG6bhFSO9+lxa2qyTJ1ucLm0NjENSmv3D8aS8TjFfZ0dIpETiVVLnMFyElSIRTsZziXEQBwGJa4M5HtZ5ymLxbqYxGtpyZSVkVuunrR4IHVcSRPOm8=
+	t=1773768785; cv=none; b=DrEvsNmYfc0WiO7ai4oQcKMxZm2NejKneadGQg9i1mKM8EJDzTA77VklvCU7UfFU8e7Da3zUGoBkYlCBsEAvVemdGI8+EDAI2AvHM/phkH7UtBJ/33yIOy4KTGRFS2LDch08h7cfdub+bjmGYKCzbLY+Oiv1/wNWFXdl059dAZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773768768; c=relaxed/simple;
-	bh=Zqbu6imSNjFGSpTh8y7dih+2u8UrcHO7dKrWyA+ImL8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rHLQEJ6EnGeVTCBw496DfHHsKZ4WsK4AGAQGcOrOOmDG9wzwK/HOMA2eQZlGZjRNgplFarKk/Xf525BKawX4YVK/XbkUcqLwXQCjeVf5J66sVZH1t7FXe76+hMFDvsEKSpVMv6V6z6pOwJRseOsiEqV0y7VWoadYKaqkEE7SZDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bw8jr9/n; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773768785; c=relaxed/simple;
+	bh=QjCfN7RY+EItkQZI0L3CAYHaeHS+DOOLxlKQ2SMtCpo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hnOITtmSwuI2LkCwlyevbIri20FisOzYNwUMyBJn6NDgidaQa9hgbsOtWcf36YgQ73LXceZPkQdyOLQ6LNRIoyBoX6dU4NPgAS8mMcdIrZRBbUtRf/1RWQ0Efr+3DDeGpnlZWp8z2iiyheIgs6YthVGJYT6qzcH8pH9+4PdHxYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kLlIZ6WN; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bw8jr9/n"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9C7DC4CEF7;
-	Tue, 17 Mar 2026 17:32:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773768768;
-	bh=Zqbu6imSNjFGSpTh8y7dih+2u8UrcHO7dKrWyA+ImL8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Bw8jr9/nTtuiveGnpi5W7pUAm3KVH2LssYp8XTl/HvSFF4UNKgG91B3XyYkc5+ai0
-	 FknptGCbJSADhIg9xU1dXiLOr2Gsxd0JHpjNTqo1GTiIAXst+xBwUzB6zyH8bunTS/
-	 GzQ9tnJC3kHqw1Hgt56SA8oJhRzhUus7q5vdXmd5OE97O/D+44vXMkLCNHXK+pkKQH
-	 cg8/lNi2P3wWngDIn/2QISz1gIEp2MfJBUhuJfLEOZdwNJPwAfAvbYSKj8h09mp6qN
-	 8pD3aixstcx66CksuqszVdjwAtPUMZ42sfJAtNUejwIMsGwSEJucKPLbgClwidAqUo
-	 E0qmPQ1m7dHHg==
-Message-ID: <0f898ad3-156d-496c-b2c1-88646edc7ab6@kernel.org>
-Date: Tue, 17 Mar 2026 18:32:43 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kLlIZ6WN"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-43b45bb7548so1771983f8f.1
+        for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 10:33:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1773768782; x=1774373582; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=y9igAn1ObASXzGMs9YdWfeZEpRzerCdsgZieuD3oVtg=;
+        b=kLlIZ6WN3KkW4lKyJINNtQY/epK8eXTh1VP9fMBPuVmtxQ1RndmZ4+9MXmDDFPvXMM
+         m0XdS0UVuMSc9351//NxWSQh0q0SnPGGJ5VhGHAHhYyd8iQI6pFEu6KDXs843/HG1tFB
+         Cv9uI9AM0A1EAc4faKbTfUmoh9CWGWhjp8VP/xPTb2QwbSeK6StJ1RXI4qH/Y4hA5o4k
+         /QA+ODfsJyyid692kKyrcaOwB+gCp1pn5rVj5n6FDKx4nfsrz0AcK16dfv+0X5FxgP4k
+         sD7sK33CY1rWqGiK2vJr4uam5se92XcTowrL4DnKxN8MNI2As5h46jCyA2ti2y/4WIEO
+         5xiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1773768782; x=1774373582;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y9igAn1ObASXzGMs9YdWfeZEpRzerCdsgZieuD3oVtg=;
+        b=qdq3Dq9UYqdEVAo1m2ni8MGDyyFb7jFlI8fPN/O79zjWCfmEggcESNVyP8oyiBr5Cy
+         fGj98MGhsxZ+mL3Y6lN7luSFNvJIil/qtMOviqRwh5sN4MpXJRmh9zAw8ilTznPqxwlY
+         qLWfa6t+I1t1x6NfaF3T3a064134PCfqlGtz1PoPp46eSlXmj7oXAu5bBBf4F3vp1Ogo
+         fqkW53xNL7nJlCZy6XGFWl7MUfLsJdn1lhz+I4w4f18yMBmAZUhtxEFOa2jDhPwt/d9v
+         Icf1y4CGggVnY2DQer3j1lBt1DExZ4/diPxxyzLF5NNUlJT+U2W5EEU2O8u5fQ5FzRrF
+         aOnw==
+X-Forwarded-Encrypted: i=1; AJvYcCUCRamj1yZEBS8svpEr//qMhl76WDf4TjUX/oOmJzbxPkeARhR6ICAfZQzHAMAm9i4jl+DOcf878VQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUjzNhOYXSEFCKSX6GsQkwJ2IpAcIGo3jhV07LhKhS3FoJTLFs
+	LnFgpTGixDzRlbkdZju4IRXUWQB8KgqqXsHyGTm2IJYr3xda4ZhP2elN
+X-Gm-Gg: ATEYQzwE0TJFqVLI41a8Qy6DYtLCQJJ8WgJmui5Gv5lvRo+QEBXOFS6iww8Fgi0LZIT
+	7Jjxxm+aoqsuU++KwtNXLpu96roppYEfxWjEQl29jD6wkbHDb0UbB1dKBANbZSWAZmcHT5x4toA
+	vaYpY26oJMJoIAkOZzBAWoYOFadhKbk7urv+RAwKHSSCHMDRc2qIAPIkpsia/B615qlb50RlYEf
+	1ld3/pnZ43rX+gSDoV9gDp7to56uEBjpsQJFlAe2tmEuul47HuHlnvYQgIPusazLp8D/SHMhbAM
+	MiUx1cHxK+N7tXF1X19Nh9ra11OF7AB191fFOwAT1YUY+vFjhCfZbhdmRLkJ0gNK4a6G3/Mzqps
+	F7gvf5ZgnP4wAnkZzwa4UQd+py9oLNPnkmtPfo9vXF0H7hlTErjyYJqti+70oPGCF2L3tSYEq6c
+	aURWnMGAbbG5OszGS5XlL7iN0I0vMiURmJOioN8uwhXv4ncnYSARYX8OPPQ9PhNOTjBC87xWM=
+X-Received: by 2002:a05:6000:2386:b0:439:c5c5:4146 with SMTP id ffacd0b85a97d-43b5279e493mr169875f8f.11.1773768781662;
+        Tue, 17 Mar 2026 10:33:01 -0700 (PDT)
+Received: from Ansuel-XPS24.lan (93-34-88-122.ip49.fastwebnet.it. [93.34.88.122])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-43b518a3e3csm793644f8f.35.2026.03.17.10.33.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Mar 2026 10:33:01 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Christian Marangi <ansuelsmth@gmail.com>
+Subject: [PATCH] clk: add clk_hw_recalc_rate() to trigger HW clk rate recalculation
+Date: Tue, 17 Mar 2026 18:32:45 +0100
+Message-ID: <20260317173255.5531-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 1/7] dt-bindings: media: qcom,x1e80100-camss: Add
- simple-mfd compatible
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Bryan O'Donoghue <bod@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org
-References: <20260316-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v10-0-fdfe984fe941@linaro.org>
- <20260316-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v10-1-fdfe984fe941@linaro.org>
- <20260316-glaring-jaybird-from-wonderland-4f8fd6@quoll>
- <94f4fda4-504e-44eb-87f0-e34e557402f8@linaro.org>
- <471895f6-dc60-44d8-84ce-8ba0069110e4@kernel.org>
- <xSErLOaV_RuZ1DggWWH3WGK4mpUp_7CrvmjVU4ZZd33l60PWpjxiSGID27A9hHbdDYmghPXgZONyhiTJ_USPDg==@protonmail.internalid>
- <1671b8ce-cbf9-45ae-947b-f35d174be93e@kernel.org>
- <61fa4409-e19c-49d9-b7fa-dc6f8413c181@kernel.org>
- <2eef8129-8cec-4ef3-9bb1-22e78b004905@kernel.org>
- <85fc368a-c765-487e-bd9a-c5dd0376fca8@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <85fc368a-c765-487e-bd9a-c5dd0376fca8@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 17/03/2026 18:29, Bryan O'Donoghue wrote:
-> On 17/03/2026 16:29, Krzysztof Kozlowski wrote:
-> Then again if I'm understanding you here, you aren't opposed to 
-> sub-nodes its the simple-mfd you're skeptical about.
+There is currently a latent problem with HW clk that only expose a
+.recalc_rate OP and doesn't have a .set_rate() and also have the
+CLK_GET_RATE_NOCACHE flag set. In such case the rate in clk core is
+parsed only (and set) only at init and when the full clk_set_rate()
+is called. In every other case .recalc_rate() is never called.
 
-Yes. We discussed it more than once, I think, and all arguments you and
-others presented were in favor of CSI PHY nodes.
+It's also possible that an HW clk of this type, initially report 0 as rate
+as the register are still not configured and the HW clk effectively doesn't
+return any rate.
 
-Thanks for working on this.
+This gets especially problematic when a clock provider use such clk as a
+parent and require the rate for parent selection for the final rate
+calculation.
 
-> 
-> There's nothing stopping us doing platform_register_device() from inside 
-> of camss to launch these devices ..
+In such case, since the HW clk rate is never updated after init, it's still
+0 and cause problems with any other HW clk that use .determine_rate() or
+.round_rate() and search for the closest rate using clk_hw_get_rate() on
+the parents.
 
-That's a preferred choice, if feasible.
+This doesn't happen if the full clk_get_rate() is used instead as it will
+check if CLK_GET_RATE_NOCACHE is set and recalculate the rate accordingly.
 
-Best regards,
-Krzysztof
+Updating the clk_hw_get_rate() to align to what clk_get_rate() does is not
+possible as it should be lockless and might cause problems in any user of
+clk_hw_get_rate().
+
+A more safe approach is the introduction of a direct function that triggers
+the HW clk rate recalculation, clk_hw_recalc_rate().
+
+Any driver that implement an HW clk that entirely depends on some register
+to configure the rate (that are externally configured) and have only
+.recalc_rate() and set CLK_GET_RATE_NOCACHE (aka the case where the HW clk
+rate actually change and depends on the external register configuration)
+will have to call clk_hw_recalc_rate() on the HW clk after changing the
+register configuration to sync the CCF with the new rate for the HW clk.
+
+Example:
+
+ - All register zero -> HW clk rate = 0
+ - PCS configure USXGMII mode -> HW clk rate = 0
+ - PCS call clk_hw_recalc_rate() -> HW clk rate = 312MHz
+ - Port goes UP
+ - PCS/MAC scale the PHY port clock correctly by having
+   the correct reference clock as parent (instead of 0)
+
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+---
+ drivers/clk/clk.c            | 23 +++++++++++++++++++++++
+ include/linux/clk-provider.h |  1 +
+ 2 files changed, 24 insertions(+)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 47093cda9df3..35e0cf627c24 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1977,6 +1977,29 @@ static unsigned long clk_core_get_rate_recalc(struct clk_core *core)
+ 	return clk_core_get_rate_nolock(core);
+ }
+ 
++/**
++ * clk_hw_recalc_rate - trigger rate recalculation for clk_hw
++ * @hw: clk_hw associated with the clk to recalculate for
++ *
++ * Use clk_hw_recalc_rate() for the hw clk where the rate
++ * entirely depend on register configuration and doesn't have
++ * a .set_rate() OP. In such case, after modifying the register
++ * that would change the rate for the hw clk, call
++ * clk_hw_recalc_rate() to sync the CCF with the new clk rate.
++ */
++void clk_hw_recalc_rate(const struct clk_hw *hw)
++{
++	struct clk_core *core = hw->core;
++
++	if (!core || !(core->flags & CLK_GET_RATE_NOCACHE))
++		return;
++
++	clk_prepare_lock();
++	__clk_recalc_rates(core, false, 0);
++	clk_prepare_unlock();
++}
++EXPORT_SYMBOL_GPL(clk_hw_recalc_rate);
++
+ /**
+  * clk_get_rate - return the rate of clk
+  * @clk: the clk whose rate is being returned
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 630705a47129..f2865d7876c9 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -1407,6 +1407,7 @@ int clk_hw_get_parent_index(struct clk_hw *hw);
+ int clk_hw_set_parent(struct clk_hw *hw, struct clk_hw *new_parent);
+ unsigned int __clk_get_enable_count(struct clk *clk);
+ unsigned long clk_hw_get_rate(const struct clk_hw *hw);
++void clk_hw_recalc_rate(const struct clk_hw *hw);
+ unsigned long clk_hw_get_flags(const struct clk_hw *hw);
+ #define clk_hw_can_set_rate_parent(hw) \
+ 	(clk_hw_get_flags((hw)) & CLK_SET_RATE_PARENT)
+-- 
+2.53.0
+
