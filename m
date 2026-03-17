@@ -1,150 +1,125 @@
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D781A9F93
-	for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 00:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD131DDC3F;
+	Tue, 17 Mar 2026 02:00:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773707559; cv=none; b=ms6/ME8+xxF3thwzmKQPj++XtcJRpEv4CaWLcV7P0NQKq7AQz5W1fRa4c8io0g/t990ABVxDAwVeFcN5yZD5WlJY+aUPs/ctdVSoF2D7i2J1wnAkA2TQPfoMOPmw9FSjT4ecB5kUcM9bpXPtA/UpS3EnMPo69T7auoGXAvfh7SE=
+	t=1773712821; cv=none; b=PFDbXUFl/QFHbJgQmd/Tfv5ptS7t9EOF7CJU+w9TBCRusY5ymw7lMFIW26/qnlLu8ytbTIWYyLIfX4CdtUhIYrttJGDJij2SLW+wmP5g037cEaDdldqtlGKkIK6XmgbRqyiYF74BmRpV399K5vDT/9tmBbCpglO7lJzzvLXXN4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773707559; c=relaxed/simple;
-	bh=QmoPvHZv7I3xFXH+KsMD3N90vgw+pDI/1KVyvvBmrVY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k6VjhmD1Z1LgMeUlhB3g1bbpkxO2h+FGcJNlfhJo+kukm+rBCuhfY4Y5TwC51n6yl5aiCY2LfW0HM+qoezH7HvLi6SeIlNsmrbucbxh8nhzD+UYSNxyNFjwUNsuap6a5IuI7tPogYPKFBcjUYt/J/nWltW/Hth7hvDLfL09+fgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CcKKuTQa; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1773712821; c=relaxed/simple;
+	bh=G8mrea49hDZtSz8SU3IBfjCwAqm888S2KDreUaH9Nns=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=BLfUSsS90wRfJXnsFsW8tf+snYX9CICLdgS/MJEw9x4SA7L3UYshR1Ld9/XrYkuFRC1pUtVayTksO4ByYvSeRmHgA05ZLbGfULeCZZQX7d650ipnpGfHniaKwqdqoLM7YqxbSdMcCf+z2oUVQPN9MKVGKjyDeSZEWKOjZwTQwDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=qp+cQGIK; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CcKKuTQa"
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2aecc6b0861so21547775ad.2
-        for <linux-clk@vger.kernel.org>; Mon, 16 Mar 2026 17:32:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773707558; x=1774312358; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bjsh2f+U2hpeWjteAhQ/eYeijSGr3dLnz2WVmUmGTyE=;
-        b=CcKKuTQawY1Vmiwqti0ZQbsfWKJVtwLYsRS39kzVq5LbTh+96r2zb0G5f87iDUsR4/
-         37NN7T2/m5eWDG3fBlTjd/jE0aRZxSnJJdTJKXXCeA4Tdz1EmMrv6FPhlRPNRSkbzsLF
-         CNHvPSbqHwXPvlzuGbZKWtg9xdZS8tlADtYwlg5fLgX27aKlhdtK2ReRvUEZtOawdnPX
-         yqJVofqVDxcdzQinHS2yGMU008/UCnPOrSo0NYB4HxGN8lFaot++BhQWEfqRQAXurTmI
-         /OTT9phg+xe2JUvcm9NpBicXobwV87bufF9p1wtCpy1oNevo5aZqRCFOH5pb4xfVZLpb
-         AQCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773707558; x=1774312358;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bjsh2f+U2hpeWjteAhQ/eYeijSGr3dLnz2WVmUmGTyE=;
-        b=TUJwQjmxcGoNf5kk7Rryxpa6HO4it+du0UI6/m2W04lBDpfQXZJp0/ro5UCzQuNcmg
-         aOP6a3pcxh55+UNj+ARgoju3gzdonmYBL2SrncioxWM4Z/3YGg/xSt9Abyn8aepOB544
-         e3y1jOmM0mSGvJXHDe/K+jotejNNU/MOWmcRN31RsJjAZaXEFxOg/Od3xDasbwAwWkkn
-         qzF98WlWgCcN7UH9ckePMrGdWluSnoKrlmaRqlNmLv8zCZYxoAMedcbWWee4BPIWv4CT
-         tB/4wNE+FJJDweWY47BtIQT/c9xuHFMrNYf3ANT+gdpy3Kw0qz4qGBNBgjtwnpO0ZgBF
-         yMFQ==
-X-Gm-Message-State: AOJu0Yz5TpWfvk5WTMo9OWRucp2sbt5z7rcMggXPFxCMiBedghmIyfrK
-	DATLagRkwnBQgGHEzz10doe8mX0Irfo3k5CdIbdV58oaq2XOXF8/694IekoDIV6W
-X-Gm-Gg: ATEYQzw39RM79WTC0KuoiVy2G51hNeozePAx9Py8hNRzOMtcE+WYaduuW3Tcz/D2FFH
-	pdje9Pi4qtjfWCjfC1XVsh68wiuvphnFMpdHAU3iKGDmDvFGjL1jH+gmG6WVpceGk/MmopQ0aqO
-	wyt0E2OOCfcpHrBPi4huxCh+OJiwzX0TiceW3rNN284VuQHCFDta2JY9kEe/pFLWk5S2iM85pgy
-	2/orZukmbnKWhCYXwgk1xiPiOvEU7thdpCbbm5zx5mJGccfSnlUGbNBhLhX2yhi7sal8/msNQnx
-	0AsdZbAK92G5XVMdj0McimrC31ReW0VUhT+IjqSQmCnmVgrMTnbsje0vCPX2jwFCSt5Ix7zQ0Mz
-	W0GbGfZcfjOCXxkOU69Rg+IgjePyeiKwR+Uf51BVYTtovSUP6EM3SS/GE4NSsWnbJeGYgoKYacK
-	y+8ZNN8ilD/9XdXqRHseN0v9KgFzxDGijrAw6AA5dBK4DULngMlXRC1aY=
-X-Received: by 2002:a17:903:3b8e:b0:2ae:aa16:acf7 with SMTP id d9443c01a7336-2aecab0be9bmr141252575ad.40.1773707557570;
-        Mon, 16 Mar 2026 17:32:37 -0700 (PDT)
-Received: from ryzen ([2601:644:8000:56f5::8bd])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2b06272ab03sm13019265ad.64.2026.03.16.17.32.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Mar 2026 17:32:37 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Jacky Huang <ychuang3@nuvoton.com>,
-	Shan-Chun Hung <schung@nuvoton.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/NUVOTON MA35 ARCHITECTURE),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] clk: nuvoton: ma35d1-divider: simplify allocation
-Date: Mon, 16 Mar 2026 17:32:19 -0700
-Message-ID: <20260317003219.71972-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="qp+cQGIK"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 62H1vOcX53035946, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1773712644; bh=G8mrea49hDZtSz8SU3IBfjCwAqm888S2KDreUaH9Nns=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=qp+cQGIKQfxcaqPZq4D4oGpt3wXvzDxcgpqI+ROdg8Dg2UlQNtvbltJrgPR+Fpa4L
+	 OhL256NrySEUVF/HPfIgFmCSGs5qPGwjxO55p4+4bSvzeIS3iaDvxWAj6khDL9P8Ye
+	 WNu7CQ+xtZv2Z5JZn6rzvoDphqkyPoB+5iqINbKc/TuHFKgxihELROuRSwnCravgRK
+	 qmlpmCSj4QobBlI3Qy6GpGPm0Iz2wmJe9Vvo8ogeno9dCoItXzCU/gbfDWAdofxBE3
+	 SU0r52OULi2mVqRj3syf0csYI7OHEPKk5/H6aXceabKAkDldYq9ymEesBRwlGvmwke
+	 8fIiv58z4HM9A==
+Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
+	by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 62H1vOcX53035946
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 17 Mar 2026 09:57:24 +0800
+Received: from RTKEXHMBS01.realtek.com.tw (172.21.6.40) by
+ RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Tue, 17 Mar 2026 09:57:24 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS01.realtek.com.tw (172.21.6.40) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Tue, 17 Mar 2026 09:57:24 +0800
+Received: from RTKEXHMBS06.realtek.com.tw ([fe80::4cbd:6c6c:b92b:3913]) by
+ RTKEXHMBS06.realtek.com.tw ([fe80::4cbd:6c6c:b92b:3913%10]) with mapi id
+ 15.02.1748.010; Tue, 17 Mar 2026 09:57:24 +0800
+From: =?utf-8?B?WXUtQ2h1biBMaW4gW+ael+elkOWQm10=?= <eleanor.lin@realtek.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org"
+	<sboyd@kernel.org>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>,
+        "conor+dt@kernel.org" <conor+dt@kernel.org>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        =?utf-8?B?RWRnYXIgTGVlIFvmnY7mib/oq61d?= <cylee12@realtek.com>,
+        "afaerber@suse.com" <afaerber@suse.com>,
+        =?utf-8?B?SnlhbiBDaG91IFvlkajoirflrold?= <jyanchou@realtek.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "linux-realtek-soc@lists.infradead.org"
+	<linux-realtek-soc@lists.infradead.org>,
+        =?utf-8?B?SmFtZXMgVGFpIFvmiLTlv5fls7Bd?= <james.tai@realtek.com>,
+        =?utf-8?B?Q1lfSHVhbmdb6buD6Ymm5pmPXQ==?= <cy.huang@realtek.com>,
+        =?utf-8?B?U3RhbmxleSBDaGFuZ1vmmIzogrLlvrdd?= <stanley_chang@realtek.com>
+Subject: RE: [PATCH v4 01/10] dt-bindings: clock: Add Realtek RTD1625 Clock &
+ Reset Controller
+Thread-Topic: [PATCH v4 01/10] dt-bindings: clock: Add Realtek RTD1625 Clock &
+ Reset Controller
+Thread-Index: AQHcssDu00Ji1VbGSEi0IIjjl/0gyLWtOvYAgATCPIA=
+Date: Tue, 17 Mar 2026 01:57:24 +0000
+Message-ID: <77e88b72f99c4a709f6fbae57162b090@realtek.com>
+References: <20260313081100.596224-1-eleanor.lin@realtek.com>
+ <20260313081100.596224-2-eleanor.lin@realtek.com>
+ <20260314-orange-foxhound-of-felicity-997667@quoll>
+In-Reply-To: <20260314-orange-foxhound-of-felicity-997667@quoll>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Use a flexible array member instead of kcalloc + pointer that is not
-actually const.
-
-Simplifies allocation slightly.
-
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/clk/nuvoton/clk-ma35d1-divider.c | 20 +++++++-------------
- 1 file changed, 7 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/clk/nuvoton/clk-ma35d1-divider.c b/drivers/clk/nuvoton/clk-ma35d1-divider.c
-index e992e7c30341..6eaca5b35dd8 100644
---- a/drivers/clk/nuvoton/clk-ma35d1-divider.c
-+++ b/drivers/clk/nuvoton/clk-ma35d1-divider.c
-@@ -17,9 +17,9 @@ struct ma35d1_adc_clk_div {
- 	u8 shift;
- 	u8 width;
- 	u32 mask;
--	const struct clk_div_table *table;
- 	/* protects concurrent access to clock divider registers */
- 	spinlock_t *lock;
-+	struct clk_div_table table[];
- };
- 
- static inline struct ma35d1_adc_clk_div *to_ma35d1_adc_clk_div(struct clk_hw *_hw)
-@@ -83,30 +83,25 @@ struct clk_hw *ma35d1_reg_adc_clkdiv(struct device *dev, const char *name,
- {
- 	struct ma35d1_adc_clk_div *div;
- 	struct clk_init_data init;
--	struct clk_div_table *table;
- 	struct clk_parent_data pdata = { .index = 0 };
- 	u32 max_div, min_div;
- 	struct clk_hw *hw;
- 	int ret;
- 	int i;
- 
--	div = devm_kzalloc(dev, sizeof(*div), GFP_KERNEL);
--	if (!div)
--		return ERR_PTR(-ENOMEM);
--
- 	max_div = clk_div_mask(width) + 1;
- 	min_div = 1;
- 
--	table = devm_kcalloc(dev, max_div + 1, sizeof(*table), GFP_KERNEL);
--	if (!table)
-+	div = devm_kzalloc(dev, struct_size(div, table, max_div + 1), GFP_KERNEL);
-+	if (!div)
- 		return ERR_PTR(-ENOMEM);
- 
- 	for (i = 0; i < max_div; i++) {
--		table[i].val = min_div + i;
--		table[i].div = 2 * table[i].val;
-+		div->table[i].val = min_div + i;
-+		div->table[i].div = 2 * div->table[i].val;
- 	}
--	table[max_div].val = 0;
--	table[max_div].div = 0;
-+	div->table[max_div].val = 0;
-+	div->table[max_div].div = 0;
- 
- 	memset(&init, 0, sizeof(init));
- 	init.name = name;
-@@ -122,7 +117,6 @@ struct clk_hw *ma35d1_reg_adc_clkdiv(struct device *dev, const char *name,
- 	div->mask = mask_bit ? BIT(mask_bit) : 0;
- 	div->lock = lock;
- 	div->hw.init = &init;
--	div->table = table;
- 
- 	hw = &div->hw;
- 	ret = devm_clk_hw_register(dev, hw);
--- 
-2.53.0
-
+PiBPbiBGcmksIE1hciAxMywgMjAyNiBhdCAwNDoxMDo1MVBNICswODAwLCBZdS1DaHVuIExpbiB3
+cm90ZToNCj4+ICsjZW5kaWYgLyogX19EVF9CSU5ESU5HU19SVEtfQ0xPQ0tfUlREMTYyNV9IICov
+DQo+PiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9kdC1iaW5kaW5ncy9yZXNldC9yZWFsdGVrLHJ0ZDE2
+MjUuaA0KPj4gYi9pbmNsdWRlL2R0LWJpbmRpbmdzL3Jlc2V0L3JlYWx0ZWsscnRkMTYyNS5oDQo+
+PiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPj4gaW5kZXggMDAwMDAwMDAwMDAwLi5lNjliNWVlMTRj
+YzYNCj4+IC0tLSAvZGV2L251bGwNCj4+ICsrKyBiL2luY2x1ZGUvZHQtYmluZGluZ3MvcmVzZXQv
+cmVhbHRlayxydGQxNjI1LmgNCj4+IEBAIC0wLDAgKzEsMTk1IEBADQo+PiArLyogU1BEWC1MaWNl
+bnNlLUlkZW50aWZpZXI6IChHUEwtMi4wLW9ubHkgT1IgQlNELTItQ2xhdXNlKSAqLw0KPj4gKy8q
+DQo+PiArICogQ29weXJpZ2h0IChDKSAyMDI1IFJlYWx0ZWsgU2VtaWNvbmR1Y3RvciBDb3JwLg0K
+Pj4gKyAqLw0KPj4gKyNpZm5kZWYgX19EVF9CSU5ESU5HU19SVEtfUkVTRVRfUlREMTYyNV9IICNk
+ZWZpbmUNCj4+ICtfX0RUX0JJTkRJTkdTX1JUS19SRVNFVF9SVEQxNjI1X0gNCj4+ICsNCj4+ICsj
+ZGVmaW5lIFJURDE2MjVfUlNUTl9SRUdfSURfU09GVF9SRVNFVDEgICAgIDANCj4+ICsjZGVmaW5l
+IFJURDE2MjVfUlNUTl9SRUdfSURfU09GVF9SRVNFVDIgICAgIDENCj4+ICsjZGVmaW5lIFJURDE2
+MjVfUlNUTl9SRUdfSURfU09GVF9SRVNFVDMgICAgIDINCj4+ICsjZGVmaW5lIFJURDE2MjVfUlNU
+Tl9SRUdfSURfU09GVF9SRVNFVDQgICAgIDMNCj4+ICsjZGVmaW5lIFJURDE2MjVfUlNUTl9SRUdf
+SURfU09GVF9SRVNFVDcgICAgIDQNCj4+ICsjZGVmaW5lIFJURDE2MjVfUlNUTl9SRUdfSURfU09G
+VF9SRVNFVDkgICAgIDUNCj4+ICsjZGVmaW5lIFJURDE2MjVfUlNUTl9SRUdfSURfU09GVF9SRVNF
+VF9CSVNUIDYNCj4+ICsjZGVmaW5lIFJURDE2MjVfUlNUTl9SRUdfSURfRFVNTVkwICAgICAgICAg
+IDcNCj4+ICsjZGVmaW5lIFJURDE2MjVfUlNUTl9SRUdfSURfRFVNTVkxICAgICAgICAgIDgNCj4+
+ICsjZGVmaW5lIFJURDE2MjVfUlNUTl9SRUdfSURfRFVNTVk0ICAgICAgICAgIDkNCj4+ICsjZGVm
+aW5lIFJURDE2MjVfUlNUTl9SRUdfSURfU09GVF9SRVNFVDExICAgIDEwDQo+PiArI2RlZmluZSBS
+VEQxNjI1X1JTVE5fUkVHX0lEX1NPRlRfUkVTRVQxMiAgICAxMQ0KPj4gKw0KPj4gKyNkZWZpbmUg
+X1JFR19JRChuKSAoKFJURDE2MjVfUlNUTl9SRUdfSURfICMjIG4pIDw8IDUpDQo+PiArDQo+IA0K
+PiBOb3QgYSBiaW5kaW5nLg0KPiANCj4+ICsjZGVmaW5lIFJURDE2MjVfQ1JUX1JTVE5fTUlTQyAg
+ICAgIChfUkVHX0lEKFNPRlRfUkVTRVQxKSB8IDApDQo+PiArI2RlZmluZSBSVEQxNjI1X0NSVF9S
+U1ROX0RJUCAgICAgICAoX1JFR19JRChTT0ZUX1JFU0VUMSkgfCAyKQ0KPj4gKyNkZWZpbmUgUlRE
+MTYyNV9DUlRfUlNUTl9HU1BJICAgICAgKF9SRUdfSUQoU09GVF9SRVNFVDEpIHwgNCkNCj4gDQo+
+IE5vbmUgb2YgdGhlc2UgYXJlIHJlYWxseSBiaW5kaW5ncy4gUmVnaXN0ZXIgb2Zmc2V0cyBpcyBo
+YXJkd2FyZSBkYXRhLCBub3QgYQ0KPiBiaW5kaW5nLg0KPiANCj4gRHJvcCBhbGwgb2YgdGhpcyBh
+Ym92ZSBhbmQgZnVydGhlciAtIGFjdHVhbGx5IG5vdGhpbmcgaW4gdGhpcyBoZWFkZXIgbG9vayBs
+aWtlIGENCj4gYmluZGluZywgc2luY2UgeW91IGNhbGxlZCB0aGVzZSAiUkVHIi4NCj4gDQo+IEJl
+c3QgcmVnYXJkcywNCj4gS3J6eXN6dG9mDQoNClRoZSBkZWZpbmVzIGluIHRoaXMgaGVhZGVyIGFy
+ZSBOT1QgcmVnaXN0ZXIgb2Zmc2V0cy4gVGhleSBlbmNvZGUgIkJhbmsgSUQrIEJpdA0KUG9zaXRp
+b24iIGZvciB1c2UgaW4gRGV2aWNlIFRyZWUuDQoNCkFncmVlZCwgVGhlIG5hbWluZyB3aXRoICJS
+RUdfSUQiIGlzIG1pc2xlYWRpbmcuIEkgd2lsbCBpbXByb3ZlIG5hbWluZyBhbGwgcmVzZXQNCklE
+cyBpbiB2NS4NCg0KQmVzdCByZWdhcmRzLA0KWXUtQ2h1bg0K
