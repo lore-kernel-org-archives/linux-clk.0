@@ -1,137 +1,147 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE87439D6C9
-	for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 08:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8432396596
+	for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 08:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773735647; cv=none; b=q6MgAmS8HYmOPPfO90UtGAyvgLasrajQ7h2uNlwEP0N9ZPJeZldHRQaoYWxQxPh+2MYlNnJeiovke/vnwCjbIU1vP62aJSVSupvh8HA7f840g/0zg2RGVtiQFsVY4N89H+ZIKPM9Jhs7Z+Qxww1aDVvv2Ih/FG5l2yuTqCDPBqU=
+	t=1773735969; cv=none; b=FhtaUDq06fROMRvzKFVWeLpgsKxaZuy4qKL2sI+wxz6qHBwpK3riQagP9jEx/BCJEVC5t91058shZ3PHHqhs+2T+LGiOQqOj9mqauS7shFw2Hajne549H5RVRcPkIC8ZI2qxei8QMSJNAe19MG03jP9jmsmJrg35V+nll9IFELc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773735647; c=relaxed/simple;
-	bh=pvmFIdrJY329RE6bMLG/vNraS0gxmOyJoGyrnKHCVUY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uK+yUfNjI7RHVW3DEzYkrYlSnYSnT0zyhXOznxGOjZXs3gxk/lXzuFRstR+Mo+dKsOO+6kcPg4jFWe7RZffaSMVlnvilNWByiOxePmffePpMQUUqPaURC5J54FAG1mLqnClkjn0ezfxHPT4wvvafBjub837tgI4fG92bMgcjEFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WYMSh4gY; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=L/i53zfd; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WYMSh4gY";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="L/i53zfd"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62H7fab31639183
-	for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 08:20:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=q22MAYUqk7atynCYU/o1hplS
-	y4gS1yYkMhcE6k+4m24=; b=WYMSh4gY4nzyJNDkWIGNwmCpNCzKOhmbup1WihmJ
-	OxtLfiO20vvyw5ylrgIPN7hwSM851kBvdOida0PFAgIYziQbncZznCr2762dNlhU
-	j/dYsEUBxnhcOKvfxifoHL9FLQ2zH77rwqyRObntJb+eeV8pZJ6ci9ySTQE4bmJ7
-	RBWplc1lIIMT5qYVQtmwM8iVdOoHsydeFVEecWiOm36n/JWlZckgvQGKQRXki90Y
-	LJsiq9Fylq+/xxTMYJFKyrUXZKEDjzeLLLiFA2gMGgpGsqgIDet7ShDnjo3d4FUe
-	2KAckR9Noig2yrP61AhMk4c9uarQbrLaKkaJLSioKiN7hw==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cxke0bafb-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 08:20:45 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8cd722c1a69so321038285a.0
-        for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 01:20:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1773735644; x=1774340444; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=q22MAYUqk7atynCYU/o1hplSy4gS1yYkMhcE6k+4m24=;
-        b=L/i53zfdShCB5NYUvFcLfKYtulaStJO1YGYeOYpZx7xf9rQe1t6obgJGUWCcN4z0cP
-         //lD+TJLpYSGeBBzHxewz/023zqd8J4/ezWgJ1RCqP4j8QeZ4LNbWKf++PKiz5IgnLGq
-         feDH1ysZOtBLyuSZ7Z+jLMLc2/34N9tBeAUzbU+CTq3K+s+Dt6jMrQjDu4+cw/HCtrFM
-         NzGQM8ILNIQqgfrBU5i+QegOXOHzfO8N4XulfQhdgw46VFlL0CRfspKKUVS2fHgBInba
-         rFe3nPulz4vgWqu1ObuZLg+JHbzGLtA1pIlJYymDxwblOeEAYuCXU7fbElXkAnaUi7pe
-         TcnQ==
+	s=arc-20240116; t=1773735969; c=relaxed/simple;
+	bh=DAXjupgOdwZoikKs5JyJB8iXIyxbkLJF1f1ATpyhV6Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dvYYJZk+31K6KjsCSfTThsWwTPgapeN+sBVjLlKPuTAat7rHKOXxXfkacdl0Ev456FNPQtgEqIpsA5N3VE3semvPAkdPAMPoy/Ke3x7q+q7Dh9irZC7p1e9AJoMsEFFGAz2fRDV9ab9AyQRnCVrNsV0aSDDSpeC89fcEBueyn2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-4671cbce465so2457526b6e.3
+        for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 01:26:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773735644; x=1774340444;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q22MAYUqk7atynCYU/o1hplSy4gS1yYkMhcE6k+4m24=;
-        b=arSkN9YBjlGdnjutd5GFlEz4uoZFYC2sYKAQkbw+gAkgCGvwlwguHwkdZAmDYnWKlg
-         WrB6Sj23IaMI/S2C31ye7LcRh2+kjXoDUvk0axWjQi8lg9QUKJFPpFujdRvGv+1enL9w
-         x1WU8+LBa5VLzOuMYC6eQaTrvlIWNg2YdMDINzuym0r8VSzsNyghhgbFoDXnS9EYB3cD
-         /QPVzj5Xq3ZmPIkENfiKWmoiRv/RF+9s2Ts30pgB5e+Zg1LyWs0rCrqdSu2Ljp7APZ4w
-         U20lHBj46ySrhwhR6qS8N6yZE36W5yA3rJwSeTQa3EstR7cqHBMzsWLbl83Pft0ywuVc
-         h+kA==
-X-Forwarded-Encrypted: i=1; AJvYcCW0G2j1+NcAM0lqaGSlddWFI/3kgsbbTWxc6vy8I8Zt59rW3NhUOLzshO1xuAFQgZ+U2XuHVq1Dlv0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywk1JtDLfQgAwb0dlrd+XxhEyPxvojLAr7zCjTknQU+vz/GD7od
-	VC+aaQlAkHBOMmn8w84m/t/3Z/mQbAAhOuF+OvoMYXe8Uz5C3CPP0h3Prhnk5NJtJTFy6H/QYba
-	LRERPOsqNCqS9/4/mQfo0veL0ro4yWKAIeachHSuC/IOuGG0eUMWmBYz+J4cM1GI=
-X-Gm-Gg: ATEYQzwxPjqAfrVYrHxoORV/kzr0obk9QyWr39w5ROnkvHooE16ny5WEj2Y8Rj1ydZa
-	GGUthMSomOgizD2SNTJn2d5a4N0wmnG+CEdFwXyB3R0nYROlIE9JWYF4k65jE5L3m2DuBoJsEtf
-	h9s26SzOEhHupkudI5TI2d5wsS0OZal3GxKt5XgiusDcDm3dL8NGZfzH1WXYp1IZcaqKVg5P1yR
-	W9VvPuBQOPgn2MQ4pVYTQCcHosKmeHQS4Cw8cLJpNYVHfNtrtc3nQuuFd692un3vm5wVEyNUzOt
-	qlNo3L0gXxf2dLHkfwZpuZbW4TbqX80UTQisiRk+gtj1vIshQwVwbNcLWcmSBG72MvcsaR0c4Rj
-	ge5FIPbr6t+Xanl3pjxdxm8yXCFFTB4I8Jw==
-X-Received: by 2002:a05:620a:19a1:b0:8cd:80f1:f460 with SMTP id af79cd13be357-8cdb5b20e52mr2244390585a.45.1773735644080;
-        Tue, 17 Mar 2026 01:20:44 -0700 (PDT)
-X-Received: by 2002:a05:620a:19a1:b0:8cd:80f1:f460 with SMTP id af79cd13be357-8cdb5b20e52mr2244387385a.45.1773735643531;
-        Tue, 17 Mar 2026 01:20:43 -0700 (PDT)
-Received: from oss.qualcomm.com ([82.79.95.133])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4856eae3037sm51077145e9.11.2026.03.17.01.20.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Mar 2026 01:20:42 -0700 (PDT)
-Date: Tue, 17 Mar 2026 10:20:40 +0200
-From: Abel Vesa <abel.vesa@oss.qualcomm.com>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
-        Peng Fan <peng.fan@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, imx@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux@ew.tq-group.com,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] clk: imx: fracn-gppll: Add 333.333333 MHz support
-Message-ID: <sd6iwi57nfv7whvlzlnl74wgel4ka6zs7mc2imafhtgpeail3r@dotylxqzpr62>
-References: <20260313070740.585043-1-alexander.stein@ew.tq-group.com>
- <20260313070740.585043-2-alexander.stein@ew.tq-group.com>
+        d=1e100.net; s=20251104; t=1773735967; x=1774340767;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3MZrBOzWKX3a3J3HCcGoedqBZCxLLoAjByNA5cYsB/Y=;
+        b=AALsQK+g5SQajGvqfUOpjLFJ+Im6KeBuNrrRd2C1Ia5EUoy+PAs/wkPKsqLO/+6OMv
+         nfFnRt3R6QnqRLZoX8LHriLZ2tnOzvySn6rawwIWOD9Dpmv1Fno2tSGLeeyilqV0p1ZY
+         wdMOmlmU2Ui3buHUcUG3wboD+mw3ZvnoUMOUdg9qdVnhOW4zPMe1mG/RoWJ2ez0mZUws
+         L0VxD4hi0OntZ+l+FlumPtWOpkfgtBERIw/kO94eVNNkeCqwO13pno6873eE1OTTY9bE
+         4YqGTvHbY/0Hwt/dsgfhlOuvrKddhVXhrDllhUv/agEoQ5fEXqySiZ9KUCLlxXG2eR8V
+         tKAw==
+X-Forwarded-Encrypted: i=1; AJvYcCW8cPovXTwRSc9lBBn7XpGrOdHN0y6i5fG4/O5+oxS14lSDgBdk0NGt4rQqY0FKUlvcQg5KNV8FJ8Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMRv7u3XaBvKy7FQAIjzXLGe/VTD9K/pZwpg+lBbgOX7Kx969A
+	pa2YFVXCQoocJAhBBj4FQOPR3+dbZHBw+10NV2UGTjWMVoVYDkFKsaPrdjz/jpsP
+X-Gm-Gg: ATEYQzzJ0j+0ul6hCGtEuTq+ujxri192q9hY7YrHcHEszAPv8mitzgQ02Hdlj2iHuBw
+	HREfQRO3wPYgNZmAy3LDN4N5vUE7rFIR7rESKNF6kOehlJcXVUzgz5pmH5H3DhpP+4QbHGesCIl
+	q35d5wAnYDOVIxwoCaS8y2wkAawDkN4LP/2Dq6P2K9153Sf8EA6PhQm6Lj4hS0NZxutNrpt+1La
+	/0Xud6qWLaz7Uidwqp26MdGL6Z/nVrx/sgDIkxGXVqSuM2aEDRqbtUfO66mN3AHILDPHI81+ch8
+	EZ+kMN1Hb+nY4ElicBEDKgscGV+fkdwhFOKAkjecR7bfKq5gBMJyL/L/C66H8abAx2aRXCFU25x
+	aaHDMCUuDMEx0saOfzf8zWuva+Qpa+xsuWPJzcLr9dsqhoxMLaPqCphquXdKU2WwttQsv48cL9/
+	S5mBd1w5MzJaAh/vWxEt9G34OKJ4xgUKcD1N0BVSehuZIHZMuwCe5Or7i5X7SfRjdTJfrM1xpCd
+	MM=
+X-Received: by 2002:a05:6808:67c1:b0:467:bfa:bd9b with SMTP id 5614622812f47-467571364a4mr9071370b6e.21.1773735966769;
+        Tue, 17 Mar 2026 01:26:06 -0700 (PDT)
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com. [209.85.167.176])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-4177e5e94b4sm17597183fac.11.2026.03.17.01.26.06
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Mar 2026 01:26:06 -0700 (PDT)
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-4671cbce465so2457519b6e.3
+        for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 01:26:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUF4+/cakA/UjRJuPsvplomwPlTaseR0g2x+uaDmMVXlB579OSe/ym1+BcmR+z8kGlsW4ls2Gu4ihE=@vger.kernel.org
+X-Received: by 2002:a05:6102:442b:b0:5ff:cc82:744b with SMTP id
+ ada2fe7eead31-6020e4b8061mr7168193137.19.1773735619991; Tue, 17 Mar 2026
+ 01:20:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260313070740.585043-2-alexander.stein@ew.tq-group.com>
-X-Proofpoint-ORIG-GUID: gTaiYfHiaiXTkNUt68cm15cFzhB5i8wt
-X-Authority-Analysis: v=2.4 cv=aue/yCZV c=1 sm=1 tr=0 ts=69b90edd cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=iKs3dpp2RB4k51ZqCjcyjQ==:17
- a=kj9zAlcOel0A:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
- a=8f9FM25-AAAA:8 a=EUspDBNiAAAA:8 a=LywSNKSTaWSAk7vVM4cA:9 a=CjuIK1q_8ugA:10
- a=bTQJ7kPSJx9SKPbeHEYW:22 a=uSNRK0Bqq4PXrUp6LDpb:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzE3MDA3MiBTYWx0ZWRfX0L3aw6cpY32K
- pRtshcZEw+BaER9kquDpdCidqW8uLCUKreLn9SHrHEuREBXMotCh5juWZAwn4tTBJ3iQYySekIp
- fgA/7USTPVpAW7mWXj3hJQ6r0kZRhD9dsXVNqcJwdQpJWS5C6qcGEitmgQs8PUcnMyTzqPyHz5c
- zlwjD+W/irheaEHYb/DH5mBm+7CYIEwjbA5In7vtbjh1bE0GZpGSd6CnPojbGHpaZiU56T5BNVj
- A5nVtn67oZLFPApbRoStILKTMbHJ5g06Ky4RVZcQ+LYFr3KMTX1l/LchNSlOKWPZov8+COsj2/P
- dJotF0E6Teh9aUOjK+Todzu0WhPGdO4A1G3CcafNVk+A/f8W4BV4OHtst2CXpM+r7YNlH1xzlkU
- lrrG3ZNd4PtIf8kTGrF1G5xCpCjdlL3HgHwGFMEjkxJPlNmTmhAEWlntPxI1oKvwU0Wi6DUOVdh
- DPBnaeUHw7pe243OFCQ==
-X-Proofpoint-GUID: gTaiYfHiaiXTkNUt68cm15cFzhB5i8wt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-17_01,2026-03-16_06,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 suspectscore=0 clxscore=1015 phishscore=0 lowpriorityscore=0
- malwarescore=0 bulkscore=0 priorityscore=1501 adultscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603170072
+References: <20260310184030.3669330-1-cristian.marussi@arm.com>
+In-Reply-To: <20260310184030.3669330-1-cristian.marussi@arm.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 17 Mar 2026 09:20:08 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXMdn4Uu+bLunb0g68rmV=AT523C1=sMdNFK47ZADU09g@mail.gmail.com>
+X-Gm-Features: AaiRm51yyOA7w0a8XkB8aVbP3N6VXftKc6GGkOKP6ReYYiu4pm3s3wiL1ZOxXBM
+Message-ID: <CAMuHMdXMdn4Uu+bLunb0g68rmV=AT523C1=sMdNFK47ZADU09g@mail.gmail.com>
+Subject: Re: [PATCH v2 00/13] SCMI Clock rates discovery rework
+To: Cristian Marussi <cristian.marussi@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	arm-scmi@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, sudeep.holla@arm.com, 
+	philip.radford@arm.com, james.quinlan@broadcom.com, f.fainelli@gmail.com, 
+	vincent.guittot@linaro.org, etienne.carriere@foss.st.com, 
+	peng.fan@oss.nxp.com, michal.simek@amd.com, dan.carpenter@linaro.org, 
+	geert+renesas@glider.be, kuninori.morimoto.gx@renesas.com, 
+	marek.vasut+renesas@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 26-03-13 08:07:31, Alexander Stein wrote:
-> Some parallel panels have a pixelclk of 33.30 MHz. Add support for
-> 333.333333 MHz so a by 10 divider can be used to derive the exact pixelclk.
-> 
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+Hi Cristian,
 
-Reviewed-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
+On Tue, 10 Mar 2026 at 19:40, Cristian Marussi <cristian.marussi@arm.com> wrote:
+> it was a known limitation, in the SCMI Clock protocol support, the lack of
+> dynamic allocation around per-clock rates discovery: fixed size statically
+> per-clock rates arrays did not scale and was increasingly a waste of memory
+> (see [1]).
+>
+> This series aim at solving this in successive steps:
+>
+>  - simplify and reduce to the minimum possible the rates data info exposed
+>    to the SCMI driver by scmi_clock_info
+>  - move away from static fixed allocation of per-clock rates arrays in
+>    favour of a completely dynamic runtime allocation: just allocate what
+>    is needed based on the effectively discovered
+>
+> This is done in patches 2-6.
+>
+> A further bigger optimization suggested in a past series [2] by Etienne
+> would be, whenever allowed by the spec, to limit upfront the number of
+> queries in order to simply retrieve min and max rate, that are indeed the
+> only rates needed by the CLK SCMI driver.
+>
+> The approach proposed in [1] was open coding and duplicating some of the
+> functionalities already provided by SCMI iterators, though.
+>
+> Patch 7-12 implement such optimization instead by:
+>
+>  - reworking core SCMI iterators to support bound enumerations
+>  - use such new bound iterators to perform the minimum number of queries
+>    in order to only retrieve min an max rate
+>
+> As a final result now the rates enumeration triggered by the CLK SCMI
+> driver, while still allocating for all the existent rates, miminize the
+> number of SCMI CLK_DESCRIBE_RATE messages needed to obtain min and max.
+>
+> Finally, patch 13 introduces a new clock protocol operation to be able to
+> trigger anytime on demand a full enumeration and obtain the full list of
+> rates when needed, not only min/max: this latter method is really only used
+> currently by some dowstream SCMI Test driver of mine.
+>
+> Based on v7.0-rc3.
+> Tested on JUNO and an emulated environment.
+>
+> Beside addressing a few review comments, in V2:
+>
+>  - patch [1/13] introduces a fix for the pre-existing rounding algorithm,
+>    before relocating the algorithm logic as alreday done in V1.
+>  - patch [8/13] hardens clock protocol initialization by adding some
+>    missing retval checks
+
+Thank you, this removes the need for increasing SCMI_MAX_NUM_RATES on
+R-Car X5H, while decreasing memory usage.
+
+As upstream does not support SCMI on R-Car X5H yet, I am ignoring
+the hardening for now (it may be fixed by a quirk), so
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
