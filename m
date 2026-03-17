@@ -1,41 +1,42 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA5D52989A2
-	for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 13:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6074F281358
+	for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 13:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773754420; cv=none; b=ax2EkvfuqckIVGsBsbsEQunauJ1f/nez4IBnHZDvdIVv9o0UKU7HMy6hIDCgI4+Fk099MbNQpAfHY0yPc4AYIAC0Fx5jXJmgEEGCSbql7mr2sa81uNlO6Qd6fotgs/KR6O4pmc0k3HsEXsfqN0lG++BTfZSZ2jtQdqII9R4mu5U=
+	t=1773754422; cv=none; b=FFcTVLesWfiQtD0dZnDgyFnA2olNeEY/dKCkJIGk/gr6RVOhDSzhRMCmGX4JrTJfaiY9kACbcabiBeA86lnjfSiResxaAiJ1OC2hLNuDAZpUR8zQ5pAElbsCxfm9pWV1R+Jc5YPvnEdAYREusKxebvVBYkdul1BcGXK5opdlX5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773754420; c=relaxed/simple;
-	bh=F8JawxO+mIIoZ8mYoUUc54WkUzEr4ysxEtWr9HwiTXA=;
+	s=arc-20240116; t=1773754422; c=relaxed/simple;
+	bh=w2P98RtZ71C/LGhITu+Rj69QooLz3cBmY6xljHzBuc8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=D3ylCE7GoYr38bOUHBUzvs1CAlG3Mgx1K5NajyZNzCo5ulUsrkTFYMoexw6KwMIpJIo++KTLAcrwfhMMqXA9rqGGwfsaAnjIj6SS+YnFoEAvj9akzTJwGd+Pe1y2W4TN6SpjZaNybaZfdEQaG/L4CUSw2wpLD/yrJpx+7zbGH4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ItAoKGAE; arc=none smtp.client-ip=185.171.202.116
+	 In-Reply-To:To:Cc; b=U7jQjwVys75e/QsaqaFHsB+G9XQRGGK4EcqYvhPlpbelQJveHq3B8B/TQvRdHN4NUIVR9eAStPOWjqsw0+mfmIp0RYB32q/TGgidB0WgVw9mK3lYI7VBsW6e2DT2TIz8CUwEWB4SaZqT0jNyern+171A2mVnep7LkuGdgIsJ5sQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=aY0bFTvx; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ItAoKGAE"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="aY0bFTvx"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id A6D21C55056;
-	Tue, 17 Mar 2026 13:33:55 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 078111A2DDC;
+	Tue, 17 Mar 2026 13:33:39 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 9A8E75FC9A;
-	Tue, 17 Mar 2026 13:33:31 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B3491104505EA;
-	Tue, 17 Mar 2026 14:33:28 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id D03BB5FC9A;
+	Tue, 17 Mar 2026 13:33:38 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 93175104505EA;
+	Tue, 17 Mar 2026 14:33:35 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1773754410; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1773754417; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=9UHr3CNt/FyTmL3vNkKdZbRX+TRoGerGvEUkQpApgYA=;
-	b=ItAoKGAE/pmDIpGBEu9PTIGouqIiuS0XMYxRFmQ7VnLQDIljs0h6Yz1+Yd0ncXngB2FQMs
-	L3yO/Vk+tJC4nPb6ew04RBP4gY13i7S0yIN9LQQrPyUdomKWRXKD5uXWw9QwUn/wtYBLJ5
-	nhMF8UqBa95Oaapzg+MPdaebc0N6tTGdk8vIPB1T9TG5JTbDLOqTTmYXpcWbMuR/MaCSE0
-	UzM8TGzLI2/0O8twiPr/t++9rAq5571i+bpDVFygoqosJ3GlPPWuQwCUSXyFLgwiE9oAsY
-	iHh4yXZnxfoKOwPzPZOnR3xq1bh0MB1vgIfc9vBItEbpRrRYti8VeCnB+aImpg==
+	bh=yOq1d1/feoU9ZacZzbZLoYJ5+TqXp/ks2PPbQyH8Mhg=;
+	b=aY0bFTvxHUTjsHbOy7p2URiNRXtO+WW7rfpDcPhxIeZf+28G/tgle7gs0BNdqfxAODAt4s
+	ZI2r2+4YbScryLGZaq8fkTTGsV0w+E67NeuP8zrKbtrfaCk9SHAzjDXs9JBjpl+nVo3hsJ
+	R1JRgjmcCZDFbN+/E5w/KbC8Oi3Z8kAavCRDdqYi65Fj8q0jh8MtWsjfRaKhDQ8C1QVouq
+	p7eus60TCljnVashuqFi3t9VPFqWsI82FOpfJtMUoZahkD76Hl3slm2gYvGoo0noJPO8Ra
+	ivi5hKWTuQnTnvJdhr9MM27VsrTuvQwZm3+ZXSlj6Aea81aEd56Mhrrd2D4F9g==
 From: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
-Date: Tue, 17 Mar 2026 14:33:03 +0100
-Subject: [PATCH v5 01/10] dt-bindings: soc: mobileye: Add EyeQ7H OLB
+Date: Tue, 17 Mar 2026 14:33:06 +0100
+Subject: [PATCH v5 04/10] clk: fixed-factor: Export
+ __clk_hw_register_fixed_factor()
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -44,7 +45,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260317-clk-eyeq7-v5-1-6f6daa2c2367@bootlin.com>
+Message-Id: <20260317-clk-eyeq7-v5-4-6f6daa2c2367@bootlin.com>
 References: <20260317-clk-eyeq7-v5-0-6f6daa2c2367@bootlin.com>
 In-Reply-To: <20260317-clk-eyeq7-v5-0-6f6daa2c2367@bootlin.com>
 To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
@@ -61,357 +62,198 @@ Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-clk@vger.kernel.org, linux-mips@vger.kernel.org, 
  =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+ Brian Masney <bmasney@redhat.com>
 X-Mailer: b4 0.14.3
 X-Last-TLS-Session-Version: TLSv1.3
 
-The Other Logic Blocks (OLB) found in Mobileye SoCs contain hardware
-sub-functions grouped in a logical device.
+Make the base registration function for fixed-factor clocks public and
+re-implement the various registration functions that are a direct call
+to __clk_hw_register_fixed_factor() as macros.
 
-The EyeQ7H features 14 such OLB. The main differences with the previous
-generation of SoC are that some blocks have two clock sources instead
-of one and that the clock source can be the one of the clock output of
-another OLB instead of the main oscillator.
+This is similar to how the registration functions of divider, mux and
+other clocks are implemented.
 
-For the blocks with a single parent clock, the name of that clock is
-"ref", similar to what is done for the OLB of the previous SoC. The
-blocks with two parent clocks use either "ref" for the main oscillator,
-"ref_100p0" for a 100MHz reference clock or "ref_106p6" for 106.6MHz
-reference clock.
+Add a new macro clk_hw_register_fixed_factor_pdata() to register
+a fixed-factor clock with its parent clock passed as a struct
+clk_parent_data.
 
-Some OLB also contain a reset controller with one or more reset domain,
-like the blocks found in the EyeQ6H.
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
 ---
- .../bindings/soc/mobileye/mobileye,eyeq7h-olb.yaml | 192 +++++++++++++++++++++
- include/dt-bindings/clock/mobileye,eyeq7h-clk.h    | 119 +++++++++++++
- 2 files changed, 311 insertions(+)
+ drivers/clk/clk-fixed-factor.c | 52 ++-------------------------------------
+ include/linux/clk-provider.h   | 56 +++++++++++++++++++++++++++++++++---------
+ 2 files changed, 46 insertions(+), 62 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq7h-olb.yaml b/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq7h-olb.yaml
-new file mode 100644
-index 000000000000..2958ca9e330b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq7h-olb.yaml
-@@ -0,0 +1,192 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/soc/mobileye/mobileye,eyeq7h-olb.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Mobileye EyeQ7H SoC system controller
-+
-+maintainers:
-+  - Benoît Monin <benoit.monin@bootlin.com>
-+  - Grégory Clement <gregory.clement@bootlin.com>
-+  - Théo Lebrun <theo.lebrun@bootlin.com>
-+  - Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
-+
-+description:
-+  OLB ("Other Logic Block") is a hardware system controller grouping
-+  smaller blocks. Clocks and resets are generated by those blocks and
-+  used by internal controllers of the SoC. The EyeQ7H SoC hosts 14
-+  different OLB.
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - mobileye,eyeq7h-acc0-olb
-+          - mobileye,eyeq7h-acc1-olb
-+          - mobileye,eyeq7h-ddr0-olb
-+          - mobileye,eyeq7h-ddr1-olb
-+          - mobileye,eyeq7h-east-olb
-+          - mobileye,eyeq7h-mips0-olb
-+          - mobileye,eyeq7h-mips1-olb
-+          - mobileye,eyeq7h-mips2-olb
-+          - mobileye,eyeq7h-periph-east-olb
-+          - mobileye,eyeq7h-periph-west-olb
-+          - mobileye,eyeq7h-south-olb
-+          - mobileye,eyeq7h-west-olb
-+          - mobileye,eyeq7h-xnn0-olb
-+          - mobileye,eyeq7h-xnn1-olb
-+      - const: syscon
-+
-+  reg:
-+    maxItems: 1
-+
-+  '#reset-cells':
-+    description:
-+      First cell is domain and optional if compatible has a single reset domain.
-+      Second cell is reset index inside that domain.
-+    enum: [ 1, 2 ]
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  clocks:
-+    minItems: 1
-+    maxItems: 2
-+
-+  clock-names:
-+    minItems: 1
-+    maxItems: 2
-+
-+required:
-+  - compatible
-+  - reg
-+  - '#clock-cells'
-+  - clocks
-+  - clock-names
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - mobileye,eyeq7h-ddr0-olb
-+              - mobileye,eyeq7h-ddr1-olb
-+              - mobileye,eyeq7h-mips0-olb
-+              - mobileye,eyeq7h-mips1-olb
-+              - mobileye,eyeq7h-mips2-olb
-+              - mobileye,eyeq7h-periph-east-olb
-+              - mobileye,eyeq7h-south-olb
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: Reference input clock.
-+        clock-names:
-+          items:
-+            - const: ref
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - mobileye,eyeq7h-east-olb
-+              - mobileye,eyeq7h-west-olb
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: Reference input clock from the main oscillator.
-+            - description: 100MHz reference input clock.
-+        clock-names:
-+          items:
-+            - const: ref
-+            - const: ref_100p0
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - mobileye,eyeq7h-acc0-olb
-+              - mobileye,eyeq7h-acc1-olb
-+              - mobileye,eyeq7h-periph-west-olb
-+              - mobileye,eyeq7h-xnn0-olb
-+              - mobileye,eyeq7h-xnn1-olb
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: 100MHz reference input clock.
-+            - description: 106.6MHz reference input clock.
-+        clock-names:
-+          items:
-+            - const: ref_100p0
-+            - const: ref_106p6
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - mobileye,eyeq7h-ddr0-olb
-+              - mobileye,eyeq7h-ddr1-olb
-+              - mobileye,eyeq7h-east-olb
-+              - mobileye,eyeq7h-periph-east-olb
-+              - mobileye,eyeq7h-periph-west-olb
-+              - mobileye,eyeq7h-west-olb
-+    then:
-+      properties:
-+        '#reset-cells':
-+          const: 1
-+      required:
-+        - '#reset-cells'
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - mobileye,eyeq7h-acc0-olb
-+              - mobileye,eyeq7h-acc1-olb
-+              - mobileye,eyeq7h-south-olb
-+              - mobileye,eyeq7h-xnn0-olb
-+              - mobileye,eyeq7h-xnn1-olb
-+    then:
-+      properties:
-+        '#reset-cells':
-+          const: 2
-+      required:
-+        - '#reset-cells'
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - mobileye,eyeq7h-mips0-olb
-+              - mobileye,eyeq7h-mips1-olb
-+              - mobileye,eyeq7h-mips2-olb
-+    then:
-+      properties:
-+        '#reset-cells': false
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    soc {
-+      #address-cells = <2>;
-+      #size-cells = <2>;
-+
-+      system-controller0@45000000 {
-+        compatible = "mobileye,eyeq7h-acc0-olb", "syscon";
-+        reg = <0x0 0x45000000 0x0 0x1000>;
-+        #reset-cells = <2>;
-+        #clock-cells = <1>;
-+        clocks = <&olb_south 7>, <&olb_east 5>;
-+        clock-names = "ref_100p0", "ref_106p6";
-+      };
-+    };
-diff --git a/include/dt-bindings/clock/mobileye,eyeq7h-clk.h b/include/dt-bindings/clock/mobileye,eyeq7h-clk.h
-new file mode 100644
-index 000000000000..76e06a0abd02
---- /dev/null
-+++ b/include/dt-bindings/clock/mobileye,eyeq7h-clk.h
-@@ -0,0 +1,119 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (C) 2025 Mobileye Vision Technologies Ltd.
+diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
+index 359e91441c74..6116f878fc8f 100644
+--- a/drivers/clk/clk-fixed-factor.c
++++ b/drivers/clk/clk-fixed-factor.c
+@@ -90,7 +90,7 @@ static void devm_clk_hw_register_fixed_factor_release(struct device *dev, void *
+ 	clk_hw_unregister(&fix->hw);
+ }
+ 
+-static struct clk_hw *
++struct clk_hw *
+ __clk_hw_register_fixed_factor(struct device *dev, struct device_node *np,
+ 		const char *name, const char *parent_name,
+ 		const struct clk_hw *parent_hw, const struct clk_parent_data *pdata,
+@@ -148,6 +148,7 @@ __clk_hw_register_fixed_factor(struct device *dev, struct device_node *np,
+ 
+ 	return hw;
+ }
++EXPORT_SYMBOL_GPL(__clk_hw_register_fixed_factor);
+ 
+ /**
+  * devm_clk_hw_register_fixed_factor_index - Register a fixed factor clock with
+@@ -173,46 +174,6 @@ struct clk_hw *devm_clk_hw_register_fixed_factor_index(struct device *dev,
+ }
+ EXPORT_SYMBOL_GPL(devm_clk_hw_register_fixed_factor_index);
+ 
+-/**
+- * devm_clk_hw_register_fixed_factor_parent_hw - Register a fixed factor clock with
+- * pointer to parent clock
+- * @dev: device that is registering this clock
+- * @name: name of this clock
+- * @parent_hw: pointer to parent clk
+- * @flags: fixed factor flags
+- * @mult: multiplier
+- * @div: divider
+- *
+- * Return: Pointer to fixed factor clk_hw structure that was registered or
+- * an error pointer.
+- */
+-struct clk_hw *devm_clk_hw_register_fixed_factor_parent_hw(struct device *dev,
+-		const char *name, const struct clk_hw *parent_hw,
+-		unsigned long flags, unsigned int mult, unsigned int div)
+-{
+-	return __clk_hw_register_fixed_factor(dev, NULL, name, NULL, parent_hw,
+-					      NULL, flags, mult, div, 0, 0, true);
+-}
+-EXPORT_SYMBOL_GPL(devm_clk_hw_register_fixed_factor_parent_hw);
+-
+-struct clk_hw *clk_hw_register_fixed_factor_parent_hw(struct device *dev,
+-		const char *name, const struct clk_hw *parent_hw,
+-		unsigned long flags, unsigned int mult, unsigned int div)
+-{
+-	return __clk_hw_register_fixed_factor(dev, NULL, name, NULL, parent_hw,
+-					      NULL, flags, mult, div, 0, 0, false);
+-}
+-EXPORT_SYMBOL_GPL(clk_hw_register_fixed_factor_parent_hw);
+-
+-struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
+-		const char *name, const char *parent_name, unsigned long flags,
+-		unsigned int mult, unsigned int div)
+-{
+-	return __clk_hw_register_fixed_factor(dev, NULL, name, parent_name, NULL,
+-					      NULL, flags, mult, div, 0, 0, false);
+-}
+-EXPORT_SYMBOL_GPL(clk_hw_register_fixed_factor);
+-
+ struct clk_hw *clk_hw_register_fixed_factor_fwname(struct device *dev,
+ 		struct device_node *np, const char *name, const char *fw_name,
+ 		unsigned long flags, unsigned int mult, unsigned int div)
+@@ -286,15 +247,6 @@ void clk_hw_unregister_fixed_factor(struct clk_hw *hw)
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_unregister_fixed_factor);
+ 
+-struct clk_hw *devm_clk_hw_register_fixed_factor(struct device *dev,
+-		const char *name, const char *parent_name, unsigned long flags,
+-		unsigned int mult, unsigned int div)
+-{
+-	return __clk_hw_register_fixed_factor(dev, NULL, name, parent_name, NULL,
+-			NULL, flags, mult, div, 0, 0, true);
+-}
+-EXPORT_SYMBOL_GPL(devm_clk_hw_register_fixed_factor);
+-
+ struct clk_hw *devm_clk_hw_register_fixed_factor_fwname(struct device *dev,
+ 		struct device_node *np, const char *name, const char *fw_name,
+ 		unsigned long flags, unsigned int mult, unsigned int div)
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 630705a47129..7a3de1009270 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -1146,13 +1146,16 @@ struct clk_fixed_factor {
+ #define to_clk_fixed_factor(_hw) container_of(_hw, struct clk_fixed_factor, hw)
+ 
+ extern const struct clk_ops clk_fixed_factor_ops;
++struct clk_hw *
++__clk_hw_register_fixed_factor(struct device *dev, struct device_node *np,
++		const char *name, const char *parent_name,
++		const struct clk_hw *parent_hw, const struct clk_parent_data *pdata,
++		unsigned long flags, unsigned int mult, unsigned int div,
++		unsigned long acc, unsigned int fixflags, bool devm);
+ struct clk *clk_register_fixed_factor(struct device *dev, const char *name,
+ 		const char *parent_name, unsigned long flags,
+ 		unsigned int mult, unsigned int div);
+ void clk_unregister_fixed_factor(struct clk *clk);
+-struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
+-		const char *name, const char *parent_name, unsigned long flags,
+-		unsigned int mult, unsigned int div);
+ struct clk_hw *clk_hw_register_fixed_factor_fwname(struct device *dev,
+ 		struct device_node *np, const char *name, const char *fw_name,
+ 		unsigned long flags, unsigned int mult, unsigned int div);
+@@ -1164,9 +1167,6 @@ struct clk_hw *clk_hw_register_fixed_factor_index(struct device *dev,
+ 		const char *name, unsigned int index, unsigned long flags,
+ 		unsigned int mult, unsigned int div);
+ void clk_hw_unregister_fixed_factor(struct clk_hw *hw);
+-struct clk_hw *devm_clk_hw_register_fixed_factor(struct device *dev,
+-		const char *name, const char *parent_name, unsigned long flags,
+-		unsigned int mult, unsigned int div);
+ struct clk_hw *devm_clk_hw_register_fixed_factor_fwname(struct device *dev,
+ 		struct device_node *np, const char *name, const char *fw_name,
+ 		unsigned long flags, unsigned int mult, unsigned int div);
+@@ -1178,13 +1178,45 @@ struct clk_hw *devm_clk_hw_register_fixed_factor_index(struct device *dev,
+ 		const char *name, unsigned int index, unsigned long flags,
+ 		unsigned int mult, unsigned int div);
+ 
+-struct clk_hw *devm_clk_hw_register_fixed_factor_parent_hw(struct device *dev,
+-		const char *name, const struct clk_hw *parent_hw,
+-		unsigned long flags, unsigned int mult, unsigned int div);
++#define clk_hw_register_fixed_factor(dev, name, parent_name,                  \
++				     flags, mult, div)                        \
++	__clk_hw_register_fixed_factor((dev), NULL, (name), (parent_name),    \
++				       NULL,  NULL, (flags), (mult), (div),   \
++				       0, 0, false)
++#define clk_hw_register_fixed_factor_pdata(dev, np, name, pdata,              \
++					   flags, mult, div, acc, fixflags)   \
++	__clk_hw_register_fixed_factor((dev), (np), (name), NULL, NULL,       \
++				       (pdata), (flags), (mult), (div),       \
++				       (acc), (fixflags), false)
++#define devm_clk_hw_register_fixed_factor(dev, name, parent_name, flags,      \
++					  mult, div)                          \
++	__clk_hw_register_fixed_factor((dev), NULL, (name), (parent_name),    \
++				       NULL, NULL, (flags), (mult), (div), 0, \
++				       0, true)
++/**
++ * devm_clk_hw_register_fixed_factor_parent_hw - Register a fixed factor clock with
++ * pointer to parent clock
++ * @dev: device that is registering this clock
++ * @name: name of this clock
++ * @parent_hw: pointer to parent clk
++ * @flags: fixed factor flags
++ * @mult: multiplier
++ * @div: divider
++ *
++ * Return: Pointer to fixed factor clk_hw structure that was registered or
++ * an error pointer.
 + */
-+
-+#ifndef _DT_BINDINGS_CLOCK_MOBILEYE_EYEQ7H_CLK_H
-+#define _DT_BINDINGS_CLOCK_MOBILEYE_EYEQ7H_CLK_H
-+
-+/* ACC0 and ACC1 OLBs PLL and dividers */
-+#define EQ7HC_ACC_PLL_VMP	0
-+#define EQ7HC_ACC_PLL_MPC	1
-+#define EQ7HC_ACC_PLL_PMA	2
-+#define EQ7HC_ACC_PLL_NOC	3
-+#define EQ7HC_ACC_DIV_PMA	4
-+#define EQ7HC_ACC_DIV_NCORE	5
-+#define EQ7HC_ACC_DIV_CFG	6
-+
-+/* DDR0 and DDR1 OLBs PLL and dividers */
-+#define EQ7HC_DDR_PLL		0
-+#define EQ7HC_DDR_DIV_APB	1
-+#define EQ7HC_DDR_DIV_PLLREF	2
-+#define EQ7HC_DDR_DIV_DFI	3
-+
-+/* east OLB PLL and dividers */
-+#define EQ7HC_EAST_PLL_106P6		0
-+#define EQ7HC_EAST_DIV_REF_106P6	1
-+#define EQ7HC_EAST_PLL_NOC		2
-+#define EQ7HC_EAST_PLL_ISP		3
-+#define EQ7HC_EAST_PLL_VEU		4
-+#define EQ7HC_EAST_DIV_REF_DDR_PHY	5
-+#define EQ7HC_EAST_DIV_CORE		6
-+#define EQ7HC_EAST_DIV_CORE_MBIST	7
-+#define EQ7HC_EAST_DIV_ISRAM_MBIST	8
-+#define EQ7HC_EAST_DIV_CFG		9
-+#define EQ7HC_EAST_DIV_VEU_CORE		10
-+#define EQ7HC_EAST_DIV_VEU_MBIST	11
-+#define EQ7HC_EAST_DIV_VEU_OCP		12
-+#define EQ7HC_EAST_DIV_LBITS		13
-+#define EQ7HC_EAST_DIV_ISP0_CORE	14
-+
-+/* MIPS0, MIPS1 and MIPS2 OLBs PLL and dividers */
-+#define EQ7HC_MIPS_PLL_CPU	0
-+#define EQ7HC_MIPS_DIV_CM	1
-+
-+/* periph east OLB PLL and dividers */
-+#define EQ7HC_PERIPH_EAST_PLL_PER	0
-+#define EQ7HC_PERIPH_EAST_DIV_PER	1
-+
-+/* periph west OLB PLL and dividers */
-+#define EQ7HC_PERIPH_WEST_PLL_PER	0
-+#define EQ7HC_PERIPH_WEST_PLL_I2S	1
-+#define EQ7HC_PERIPH_WEST_DIV_PER	2
-+#define EQ7HC_PERIPH_WEST_DIV_I2S	3
-+
-+/* south OLB PLL and dividers */
-+#define EQ7HC_SOUTH_PLL_100P0		0
-+#define EQ7HC_SOUTH_DIV_REF_100P0	1
-+#define EQ7HC_SOUTH_PLL_XSPI		2
-+#define EQ7HC_SOUTH_PLL_VDIO		3
-+#define EQ7HC_SOUTH_PLL_PER		4
-+#define EQ7HC_SOUTH_DIV_VDO_DSI_SYS	5
-+#define EQ7HC_SOUTH_DIV_PMA_CMN_REF	6
-+#define EQ7HC_SOUTH_DIV_REF_UFS		7
-+#define EQ7HC_SOUTH_DIV_XSPI_SYS	8
-+#define EQ7HC_SOUTH_DIV_XSPI_MBIST	9
-+#define EQ7HC_SOUTH_DIV_NOC_S		10
-+#define EQ7HC_SOUTH_DIV_PCIE_SYS	11
-+#define EQ7HC_SOUTH_DIV_PCIE_SYS_MBIST	12
-+#define EQ7HC_SOUTH_DIV_PCIE_GBE_PHY	13
-+#define EQ7HC_SOUTH_DIV_UFS_CORE	14
-+#define EQ7HC_SOUTH_DIV_UFS_SMS		15
-+#define EQ7HC_SOUTH_DIV_UFS_ROM_SMS	16
-+#define EQ7HC_SOUTH_DIV_ETH_SYS		17
-+#define EQ7HC_SOUTH_DIV_ETH_MBIST	18
-+#define EQ7HC_SOUTH_DIV_CFG_S		19
-+#define EQ7HC_SOUTH_DIV_TSU		20
-+#define EQ7HC_SOUTH_DIV_VDIO		21
-+#define EQ7HC_SOUTH_DIV_VDIO_CORE	22
-+#define EQ7HC_SOUTH_DIV_VDIO_CORE_MBIST	23
-+#define EQ7HC_SOUTH_DIV_VDO_CORE_MBIST	24
-+#define EQ7HC_SOUTH_DIV_VDO_P		25
-+#define EQ7HC_SOUTH_DIV_VDIO_CFG	26
-+#define EQ7HC_SOUTH_DIV_VDIO_TXCLKESC	27
-+
-+/* west OLB PLL and dividers */
-+#define EQ7HC_WEST_PLL_106P6		0
-+#define EQ7HC_WEST_DIV_REF_106P6	1
-+#define EQ7HC_WEST_PLL_NOC		2
-+#define EQ7HC_WEST_PLL_GPU		3
-+#define EQ7HC_WEST_PLL_SSI		4
-+#define EQ7HC_WEST_DIV_GPU		5
-+#define EQ7HC_WEST_DIV_GPU_MBIST	6
-+#define EQ7HC_WEST_DIV_LBITS		7
-+#define EQ7HC_WEST_DIV_MIPS_TIMER	8
-+#define EQ7HC_WEST_DIV_SSI_CORE		9
-+#define EQ7HC_WEST_DIV_SSI_CORE_MBIST	10
-+#define EQ7HC_WEST_DIV_SSI_ROM		11
-+#define EQ7HC_WEST_DIV_SSI_ROM_MBIST	12
-+#define EQ7HC_WEST_DIV_REF_DDR_PHY	13
-+#define EQ7HC_WEST_DIV_CORE		14
-+#define EQ7HC_WEST_DIV_CORE_MBIST	15
-+#define EQ7HC_WEST_DIV_CFG		16
-+#define EQ7HC_WEST_DIV_CAU		17
-+#define EQ7HC_WEST_DIV_CAU_MBIST	18
-+
-+/* XNN0 and XNN1 OLBs PLL and dividers */
-+#define EQ7HC_XNN_PLL_XNN0	0
-+#define EQ7HC_XNN_PLL_XNN1	1
-+#define EQ7HC_XNN_PLL_XNN2	2
-+#define EQ7HC_XNN_PLL_CLSTR	3
-+#define EQ7HC_XNN_DIV_XNN0	4
-+#define EQ7HC_XNN_DIV_XNN1	5
-+#define EQ7HC_XNN_DIV_XNN2	6
-+#define EQ7HC_XNN_DIV_CLSTR	7
-+#define EQ7HC_XNN_DIV_I2	8
-+#define EQ7HC_XNN_DIV_I2_SMS	9
-+#define EQ7HC_XNN_DIV_CFG	10
-+
-+#endif
++#define devm_clk_hw_register_fixed_factor_parent_hw(dev, name, parent_hw,     \
++						    flags, mult, div)         \
++	__clk_hw_register_fixed_factor((dev), NULL, (name), NULL,             \
++				       (parent_hw), NULL, (flags), (mult),    \
++				       (div), 0, 0, true)
+ 
+-struct clk_hw *clk_hw_register_fixed_factor_parent_hw(struct device *dev,
+-		const char *name, const struct clk_hw *parent_hw,
+-		unsigned long flags, unsigned int mult, unsigned int div);
++#define clk_hw_register_fixed_factor_parent_hw(dev, name, parent_hw, flags,   \
++					       mult, div)                     \
++	__clk_hw_register_fixed_factor((dev), NULL, (name), NULL,             \
++				       (parent_hw), NULL, (flags), (mult),    \
++				       (div), 0, 0, false)
+ /**
+  * struct clk_fractional_divider - adjustable fractional divider clock
+  *
 
 -- 
 2.53.0
