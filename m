@@ -1,84 +1,87 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6F03A5E7B
-	for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 10:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C703A6B79
+	for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 10:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773742023; cv=none; b=fS6E1GhsIqHKadw/tPZGeCMd+7XudN4MRKzgmjTBA/eREoweEub59rfZ83K/uJUNhmx0O0iIDNBm14e7xxGOTm9cQXel4PljuD9nUFTfZsKpk3yhId7Xl3rqAy20hE+9FEPUkcMowTu2Zd8FKgjKIA/m5LQArxfVK0dwk2oYSFQ=
+	t=1773742027; cv=none; b=p71Ew9GOUkJ9v2Vjj/xXbOA1K3QNVWJ3nOnv4zIzy3fYbNduhAqHi/IL5AOBFmDIFihmNdbXRzfYfhNnv+TRWjNKXT/BWeYxezx6DXar4BmQKBT/d4JnLQA3DUjsT+xHSjBTIdvk+ByCZ3bpLrqnrr371dUTswQjhS58OdGA3sA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773742023; c=relaxed/simple;
-	bh=IRck2ORti5++vzKnQPjaqIPGPrwD8P+u9lBXDb7d1Dc=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uITlWAhH8nQWYyoV/VIQjGUmNufOeOq9mH/mS+PeKa2bvmupOOMy8yZp532RlL5hmr8aI/CqiwICpFp2F02z4ktEyhu9USivmITW97ZwqpRds43YRtRvJqDk1u+1AlYi8kEjqwnP9Pc3q2FVDF2nCZCWAMQTE/WJoZYMSMnyA/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=k6ehrvhK; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=O4Pj7RHY; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1773742027; c=relaxed/simple;
+	bh=8J7wnejmu3JgyxbR2LfCQnqJglNWCcU7zD6SalnnO6o=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=keWQl4zRQ45dFHWyzMt7YveGZaleyCX0heAYUQBQXr+LmHdzCi2ekGNlF4TXsNlV1ZylqaOW08w2oXO3tWkNXPHjAA8Jf3ubksoR1SrqmccszCRlbum6ecCgqj45BNVhxXpJkYUNIMotcvBFOqGlpyTLU/hgTt24pQK9aDOP7WM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TMN6XAE3; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Azj4I7hC; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="k6ehrvhK";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="O4Pj7RHY"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62H8JM7T1534027
-	for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 10:06:59 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TMN6XAE3";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Azj4I7hC"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62H82Ew12314565
+	for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 10:07:01 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=4wO1USks+UtompvppfcERO
-	Sf3ZplEYIjCVL6aOBEWjo=; b=k6ehrvhK08Iu4o32p19HlIJTkHXJIU8/xBv7/3
-	e9/qFFK/GfxTE7uBoR5vwCatwXf84/4igZbBL+PWj+1q4lHM0XEUSNL1zdVlHG0s
-	FVLde7f+Ok2dG4zDCHh8QBVD8y5+jn77mEE14XDEw7aVY4wKorGHpe/BH0vDULfC
-	BsVhmRF4Hp1fzSfA1JUmjG5kHyOubArtH7Jv2a8VOFoOKChzMzBMXxfSLMcMS3W0
-	ikNUgFydxExgeEwyS/Ybt8Vt8ntZ+LxUwH6Xqy0yYZIS6k9bn/79bCEzETEkmxt3
-	sKvp9B7/vhQOLiiSTv1MQoA0vNYv+9ufXh8iICHSABGbJLdA==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cxm5k3hy8-1
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	81mqINqGyo0ckhi/b0wliK+5j3ocT0uwNM51rdag/mE=; b=TMN6XAE3ltqAQ7G0
+	85+5pQGnzDtWQr3ZOvpZgIHDHwP+8tlqJnmczC1EDl8WDuAWDX6Wn2OX2z3guRea
+	jPGF+BeTD+GLEgbsfjSCf+vLZTYe7haDA1fGWbsNQlwOn28zaBLrB1EZV1Rm5PnR
+	75+hDsjKSDoPjdJyzYoU1CssLlI7E/JX9/5luPKBEWoqi0IBITrxn3HFCMaT2H/B
+	mSLq/GDpd042GWY6eEBKba+Ugi97hIo6MRNZBorfQZ6Cd9PAeqm+1QQwfWMjWAfy
+	RBUUqU0r9lxMG+ZGdNpIogK8bllWJkOOcx7O/ER/Za7f5B0N4CSNqLGFFldENbZG
+	AubZOg==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cxmf2bc84-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 10:06:58 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8cd820c6a4fso4877478385a.2
-        for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 03:06:58 -0700 (PDT)
+	for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 10:07:01 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-8cd7774be64so3314759185a.0
+        for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 03:07:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1773742018; x=1774346818; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4wO1USks+UtompvppfcEROSf3ZplEYIjCVL6aOBEWjo=;
-        b=O4Pj7RHYw5dvgOvP9sXJjiW+Ia1y/lB1Vvjp4hNZadttBKlfvGBaKOSPiA5HZ23s+B
-         lRG/fQZken9QOBWGstrZTiFM1bc0iF3wTK3S3Gr59k9CY56HNlLm/ilFMv8fgEerGirH
-         6GEHzW4nU8ztpxev95As65lqY+mSNavm6h0wisUn3N2quJJ22YxMxWgqB3xShwQlME1Y
-         xdGABe3o5Ghiul+D7N3a+QQVABMwhOIL9KkDYCtwZo8QehDl259DF0bFpobIIUKVfs7K
-         ISk9Cu/0FNpjgzsswzsw/E3CCx25NCPVyLk3/qhs8fUk6R4PpGIFEXMEBx3AayIIv3s5
-         6a9g==
+        d=oss.qualcomm.com; s=google; t=1773742020; x=1774346820; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=81mqINqGyo0ckhi/b0wliK+5j3ocT0uwNM51rdag/mE=;
+        b=Azj4I7hCQie2bLaYZmHcHqwhHLouDbpJhEpZgJMwcCEfp+WbqOUZOi/JfNiIp0I15C
+         kHrHZz8O6knAgxQANbwWtqusrrW6Kk5KwFGtinRbeMcZjiMCMGjnJduhp1BIfYxbp6Eg
+         c4/v9waYUEnh8QzbcaoCXhHBpZ9Cht6HzkpvCj3VJUOGH2pZ107BkPfe24bA5i8v7CkA
+         FKH4I79TwtWlWW7rQpEA0B7eeraTE7jkima0Pu9hnZKyUKIogUokNAdQKkGMRKOlolVi
+         kANoyCPithocPTOF52yXtssggN9XGDv1ehb4HcN6wxIBBqousPtDZzZZeO2yxzoKJDTf
+         yAFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773742018; x=1774346818;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4wO1USks+UtompvppfcEROSf3ZplEYIjCVL6aOBEWjo=;
-        b=QF+v/DgNomKyEgH9B/fmJ9TjLO/QNdG1eiDoLneAnarwWSvpYV9UERQSo+ttBApOBH
-         YrfAwxkLMic/tZkU+lLZK7hw+4TNdqjEcrngIQLJVz2B2wcSL2PdlIVE6IlYoR3nZxd9
-         24YdCz1sLn8IQHbIcU+L0M/ihn4M6RolDA6h0SVE9r/CR+k/mIHY4vOq/0yIf+dlPntR
-         9SS5hqq0fj57aoWECRk+x9GHmjKrZNXZ5hkXCGs87o3GnyI7Tk/CxTANRSdUx0nGo0uD
-         AQZHj5Sve1TDZSj/cavoKirSjZ5y2Ms17Om32/A+ONleDO9IQAMVL5ZA0BY7CUKyqHao
-         l+0g==
-X-Forwarded-Encrypted: i=1; AJvYcCWoAA3vZlz+qGcThwONSvonIDheTIWWrW2w04bMMR4IbcqJhKKVmGvVGUrmCqFyqgXaECTJEmkJmHQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywoPovXUS2J2vKh0QKVNhUmZCxbEgUi5heLuocxo9AzZAAoCj6
-	HnyL3uRDhZMoZQI68dohExsr7sgfnxOccW242jso9kTazmVcGdT6/9F/bDFAmckbQq++KMOL3XE
-	I4fbTYAJi41kfZQ0rinBTTd+nOLsPDtGqze32mMbEgeUyhLE9HoF9DyXfJGnz2Wc=
-X-Gm-Gg: ATEYQzzoz7/15SWo8s9Ay5qXxzXAVAG2rZT0eWIglTa6hMWFCAt38ldWTt4zdx5LiqJ
-	Vp1rW902jh+ua+KZxgD1rFzzYHwJYhwGMni2ue5439KtkEqO0o3lfnhHhk0osFGfffw7/A7ZSlM
-	Sa409rlFvBWm219nr33nBoJQYr9xpMLROsymQ2BfBScTceikhwbWZOokz572cL4Fkn8oTlBWnJe
-	N6x556khhXhkyo+PPQQvy+L4AGwbreS0KQeH5rL77jbIFy+qFiQrQ7dTowhx3t6YZVy6GtfKDvN
-	WawOd1cfbC5bXvxUKmHA2cJdvpzkoTW9FI8EZwroAup1TGdYBDLfln9ihAOm9awJ48lD1C1WZVs
-	cVjMHvNBYuf8vFuj4I8Gwuw6BTSUWqT7P16CTnzTxlQK8
-X-Received: by 2002:a05:620a:170f:b0:8c6:bbfa:36af with SMTP id af79cd13be357-8cdb5b59a8fmr2112600585a.40.1773742018332;
-        Tue, 17 Mar 2026 03:06:58 -0700 (PDT)
-X-Received: by 2002:a05:620a:170f:b0:8c6:bbfa:36af with SMTP id af79cd13be357-8cdb5b59a8fmr2112596085a.40.1773742017945;
-        Tue, 17 Mar 2026 03:06:57 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1773742020; x=1774346820;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=81mqINqGyo0ckhi/b0wliK+5j3ocT0uwNM51rdag/mE=;
+        b=JEC57rdiBAUIl0xWrlpdjdOqxXG6uKNHEQG4uli1iFtGI/sYY/c6rOuujv00bAjHRB
+         K21VBrlhSH03N2POWjXb7GQd+cm4oFaARNpwyvPdpH6TY4lqEOvzGOcf1ZDPiErzjuvW
+         +h3+pfxzMuFIWbZpT99K00oBQa9QRp56XB2KyXVsYZESW3o4bPFHipeuSaJfjQ6mtlAy
+         G45li795Srb8PQnIUb4zS9xyw1FsSSrVHE2gk6VpvZWOA5/wjqSFG/nNYKxXtKgaF48a
+         fe0fAXsDk7lN5QyLDftGJIRebovgxn7p+WJqW5jWOdXdyTT35iAUZMLF+6v3W7teUqcJ
+         BTUg==
+X-Forwarded-Encrypted: i=1; AJvYcCWWcC6usneVUJPasbFK6JxZPWUycvPmxXEO2AYcrxN1DEb4cz0Wc0YoSPbtoXc0kf0AfU0BsR+CH84=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUEGyFwrESVX/i9zwNt0QnqXZlSdT8AJSjOJJfcKR6KYjGFaXV
+	qg1lRddRSlE9dyTV5zA/U4yr7qMGzmbqp+tsGoKx1CyvfxP/Prw/z9tIbqjMLbuK4dVCNFguIhM
+	UCz5/UGooy2U7q+Tcg7bOk0R1etcOVM2Du2+tnLQSkVxPcJvYuesft7BWkp50vKX47LFD5Uc=
+X-Gm-Gg: ATEYQzwcabCF5ZEBFxGU4rNaM/bpoj91uGN1HmMQUfQXi0UnuHKM5kI/6sEBw2JOx4j
+	mqALVZ/1g/XcPopxzQWLcKlJgjDSWaDLJ3tczfo1eokfrmHhZ40qkjYOE75kDcjafhx70TvyDnP
+	/ndkz98A2JULHPea+12JeW1VkXxHd8CK5vHbU6qHp0pGredlfqAd50AfJOkRZqGqFaRT8NFojBH
+	mdN9zNgg7jGB/Qn97vdvBvl7O94WNiympnrPPYggYYoh8L6LCHX2i1GCykDUbobjBYa4SLfQTMn
+	SEKJYUqKki1OOBf4oqXAU6lH5PFeBHLpmizp7VCfnECOvf50rrhFTC23KAiGxvdIqdeO4Xf7ylj
+	zwHVKpEcNN36YIwMljzmPxpIAmAD4Zkgl8alIo2hBp35B
+X-Received: by 2002:a05:620a:3187:b0:8cd:9b31:23ab with SMTP id af79cd13be357-8cdb5b7a9bfmr2151708585a.61.1773742020238;
+        Tue, 17 Mar 2026 03:07:00 -0700 (PDT)
+X-Received: by 2002:a05:620a:3187:b0:8cd:9b31:23ab with SMTP id af79cd13be357-8cdb5b7a9bfmr2151704185a.61.1773742019700;
+        Tue, 17 Mar 2026 03:06:59 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.219.94])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48634a7ac93sm33271395e9.2.2026.03.17.03.06.56
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48634a7ac93sm33271395e9.2.2026.03.17.03.06.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Mar 2026 03:06:57 -0700 (PDT)
+        Tue, 17 Mar 2026 03:06:58 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: [PATCH 0/2] clk: qcom: Add Eliza Disp CC
-Date: Tue, 17 Mar 2026 11:06:47 +0100
-Message-Id: <20260317-clk-qcom-dispcc-eliza-v1-0-be4b0e4eb24a@oss.qualcomm.com>
+Date: Tue, 17 Mar 2026 11:06:48 +0100
+Subject: [PATCH 1/2] dt-bindings: clock: qcom,eliza-dispcc: Add Eliza SoC
+ display CC
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -87,10 +90,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIALcnuWkC/x2MSQqAMAwAvyI5G6gWLfgV8RDSqMG9BRHFv1s8D
- sPMA1GCSoQmeyDIqVG3NUGRZ8AjrYOg+sRQmrI2tnDI84QHbwt6jTszyqw3obdJO6KKvIXU7kF
- 6vf5v273vB54TWvlnAAAA
-X-Change-ID: 20260317-clk-qcom-dispcc-eliza-d32607aa5ad3
+Message-Id: <20260317-clk-qcom-dispcc-eliza-v1-1-be4b0e4eb24a@oss.qualcomm.com>
+References: <20260317-clk-qcom-dispcc-eliza-v1-0-be4b0e4eb24a@oss.qualcomm.com>
+In-Reply-To: <20260317-clk-qcom-dispcc-eliza-v1-0-be4b0e4eb24a@oss.qualcomm.com>
 To: Bjorn Andersson <andersson@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -101,70 +103,290 @@ Cc: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=827;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8994;
  i=krzysztof.kozlowski@oss.qualcomm.com; h=from:subject:message-id;
- bh=IRck2ORti5++vzKnQPjaqIPGPrwD8P+u9lBXDb7d1Dc=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpuSe7cRkCS3L/kcR+YheCci56C9WI0wMf3Fqp2
- PobUXJfeJqJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCabknuwAKCRDBN2bmhouD
- 119ED/9hfPefOSS/4xCkWBjSPeANk44HAWzM79B4dOlmhOqz5sHDGTTNRwYYvQDfGqjZVr2xaeM
- exGe7oxnvxACk53n/IiGiciCVC/rCT3SQRfnGffQoIEaH6nxy6KjiXXORPjvPZktsH+B7ovH+aY
- XRBvH5bUbm8d0HfP0HaQRRM0evitBqHbAa+LfPUV7j6VhtPzXg5eysCHpAW2DA0NqLp/nETYmxc
- 1KJikAigDUpsCNsxZOuhlqjkP1tyobw31GC/cBzwZklB0OX3zl4vysu1a02Qenzf3t3gIKreIWE
- kf0p7yOAykuBmClPXgGQ6d/s5lrwlcFNPfhyI1a5jKCyHam59EhPFC36G/kH1h/eswHoWh3z7UP
- Uue+cT+kuzuXPnNLF7TxsiFZN4EQ+REXGE0QpFZESYmO0P5B5Ot6y+sjHj347+nbj4sRtcsrsvT
- lADzTiIpSMD6Ce4PqN+2cl3aTt41SXFV0Z4WW1WHTWrfxuYLr/6n3gPBA3bTVWP5sxawtmHXgZv
- vfus4U43TJeAyep+jWFq3/vWe+FeUjUqflUpCZ8hnWdBlP9XHnNyBuh4wf4/5IJupm6sdQTy8+N
- hRFeWphc0c7sxvubUwm7/Qi9ZliOtSkvJ+lWff6FzxJsRULo83+5AI4eSVGdeJoLF8EofaSNDLk
- PNn7ugWiMRAoETw==
+ bh=8J7wnejmu3JgyxbR2LfCQnqJglNWCcU7zD6SalnnO6o=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpuSe+vSOZFS04IT4iP67K9T444IOWE3CC+9cG6
+ g1TRWr+l3yJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCabknvgAKCRDBN2bmhouD
+ 10bPEACSG/mFcX02ade2F2ydl25nmCoZFMUHQGOxHz/g+UqFdo4hSHRmywc05HNyQDdoH33/a+Q
+ 0ocxP3ULqO/KCn0AM7ljo+0p4+Y0R85x4kYmGNB+5wSaGBO2iCaBbtJNGnzC7j4Gq1kA0jrvte8
+ 5MC+Cpgwvsy5dGU+JKbPTS6ZvSGm5HQ+LM8PRGpY1W1Vm/vtCOOMx/XwCF0Se+iJ2tDA8kvj/Pe
+ vniQwo0eq/aMjMMqK14VVfPDu21aqqsfl9ofz41dokzwf/m+Hakld0ztB7L3/WKqx78hkUBnhVz
+ P1ZOHYf41ULEx9uMhF11J8r/x9ApAS+VPzGlWf2p64rUnQRs6OT44Rj4Qy+xNTAJSZD4uk3XdiA
+ U/oVPBKQI6LfKRFYZ5e29/X8IF01QDZYcZteewgscDRu87aR5H3cxmYUYmwZmxMQwWjz4hLNj5o
+ fiOehleziiqZQXKCvYDoEdBBjdbsRKIvyj5ytgRhqiUxvm21K7OkdIlJb12GL+BbNDgIKtbw3eF
+ UaY4KWE90S8EL11phSVApNw7/v00rJP4v1W/CXwf7BC+1nADnLrvECiy64yXQEzNkwj6UEXjKeR
+ wUqjX3LA2XK3MtCjzgtomOe6LhbGNs+FHznBVygJpsp08FQsFOrACnvaPpuIrptqz6JVJGuw9gv
+ RMmzCowFAROcLfQ==
 X-Developer-Key: i=krzysztof.kozlowski@oss.qualcomm.com; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-X-Authority-Analysis: v=2.4 cv=fJ00HJae c=1 sm=1 tr=0 ts=69b927c2 cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=gOEeR9iKwsj33Yj5oN/cWg==:17
+X-Proofpoint-ORIG-GUID: psz44xr0RSZbOqepR3dIIi7o6m_JXwys
+X-Proofpoint-GUID: psz44xr0RSZbOqepR3dIIi7o6m_JXwys
+X-Authority-Analysis: v=2.4 cv=FvcIPmrq c=1 sm=1 tr=0 ts=69b927c5 cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=gOEeR9iKwsj33Yj5oN/cWg==:17
  a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
- a=EUspDBNiAAAA:8 a=K4JGPIF_-WF9Dfj19fAA:9 a=QEXdDO2ut3YA:10
- a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzE3MDA4OSBTYWx0ZWRfX06KryL+qVzhN
- ZaujzRHA68mM5XDQkP3xXzb4S8VoryHrHdgfwFokj8eeIK8RL81Ep46x5WSfUbvdSPapjIAWNje
- TnB2ywmtijLrsMn4uVr8xv+a9tJysnui1TEOywbudnrLyBiIyMr6x19TqNxNY1nWRAbRPHAhl9/
- fpooQVyeYndMkJJz4tAg8PrlotdJClBRB12uyk9VVNaCcwAQmUp2XLVMytCTiBUYkNkLj9ly3qg
- 8DuledUkEkkPZRCFZ3AEHIKTSFLQCwfThMhRDTpmr230ORKGKI33JUkbEjTYa00fHzOOnpWB8lQ
- b9B11AupNSQUKg/vwt2T2z++/xOmd0AvROKTzxdgd06Mdo4QkLjeUAqXKFTHXU0FFeWFmTGWQV/
- WMCKVAGer+WAO2VShYbLuxm+gNk7wpX+zb1MLtYbWUp1KC5T/Md334gFzn6u++0pOBGK+kUc/iP
- VCZZTaPJfLelq3s6WmA==
-X-Proofpoint-GUID: TCJ29FaM782WJvzPJrRz_lDPheCwiRNa
-X-Proofpoint-ORIG-GUID: TCJ29FaM782WJvzPJrRz_lDPheCwiRNa
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22
+ a=gEfo2CItAAAA:8 a=EUspDBNiAAAA:8 a=VwQbUJbxAAAA:8 a=I8plYztaKvtxx8zCzTMA:9
+ a=QEXdDO2ut3YA:10 a=NFOGd7dJGGMPyQGDc5-O:22 a=sptkURWiP4Gy88Gu7hUp:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzE3MDA4OSBTYWx0ZWRfX56G9mEEXf6Sg
+ cEPvuxGOOODpmkXzXerXpiFo/1NRhbIGJvuBOI2p3xLt1f4GCcWOwyvM6Q2PZSiry7I29YeCuxb
+ 8ZrYsjnCZSq6qY8k1ZekiF4zixHftuiPZM3rN/RVpZiH0b6JF3y0SLpbw4x37VB7+++bfKFMllg
+ Ss2vhvJoYe0VSeRiY0xdOsOBzPF8dQMIcQagvftbFjnTjSApWh1CyISCi0kjG8aTSZtSRnls+I3
+ Of7PiSAwb2zheUMF1IfmSc798ebIeSG7F46D8ZYXqkrlF8Vce0Mj+NUOBsFSqTWtDlAQ10latK1
+ NaD4qC9Yl5QjjNLXCO73jw9LOUgkeGbmxnxqRAJdfe0HcX75iivc9FBV74zFwUoTXga3eOXKbzo
+ 3KHYQ55V0HM3ClHRq2JqHWz4pi3l+y6FNykxY8yHn7Aagu2aW06SRtQpTYHv6LI3QEjRHvsxoen
+ ImJIoA5IroEF8kISz7w==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-03-17_01,2026-03-16_06,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 clxscore=1015 malwarescore=0 suspectscore=0 phishscore=0
- lowpriorityscore=0 priorityscore=1501 impostorscore=0 adultscore=0
- bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2603050001
+ impostorscore=0 priorityscore=1501 suspectscore=0 phishscore=0
+ lowpriorityscore=0 bulkscore=0 spamscore=0 clxscore=1015 malwarescore=0
+ adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2603050001
  definitions=main-2603170089
 
-Add driver for Eliza SoC display clock controller.
+Add bindings for Qualcomm Eliza SoC display clock controller (dispcc),
+which is very similar to one in SM8750, except new HDMI-related clocks
+and additional clock input from HDMI PHY PLL.
 
-Best regards,
-Krzysztof
-
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 ---
-Krzysztof Kozlowski (2):
-      dt-bindings: clock: qcom,eliza-dispcc: Add Eliza SoC display CC
-      clk: qcom: dispcc-eliza: Add Eliza display clock controller support
+ .../bindings/clock/qcom,eliza-dispcc.yaml          | 100 +++++++++++++++++
+ include/dt-bindings/clock/qcom,eliza-dispcc.h      | 118 +++++++++++++++++++++
+ 2 files changed, 218 insertions(+)
 
- .../bindings/clock/qcom,eliza-dispcc.yaml          |  100 +
- drivers/clk/qcom/Kconfig                           |    9 +
- drivers/clk/qcom/Makefile                          |    1 +
- drivers/clk/qcom/dispcc-eliza.c                    | 2132 ++++++++++++++++++++
- include/dt-bindings/clock/qcom,eliza-dispcc.h      |  118 ++
- 5 files changed, 2360 insertions(+)
----
-base-commit: 95c541ddfb0815a0ea8477af778bb13bb075079a
-change-id: 20260317-clk-qcom-dispcc-eliza-d32607aa5ad3
+diff --git a/Documentation/devicetree/bindings/clock/qcom,eliza-dispcc.yaml b/Documentation/devicetree/bindings/clock/qcom,eliza-dispcc.yaml
+new file mode 100644
+index 000000000000..174f0ac401ec
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,eliza-dispcc.yaml
+@@ -0,0 +1,100 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/qcom,eliza-dispcc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Display Clock & Reset Controller for Qualcomm Eliza SoC
++
++maintainers:
++  - Bjorn Andersson <andersson@kernel.org>
++  - Konrad Dybcio <konradybcio@kernel.org>
++  - Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
++
++description: |
++  Display clock control module provides the clocks, resets and power
++  domains on Qualcomm Eliza SoC platform.
++
++  See also:
++  - include/dt-bindings/clock/qcom,eliza-dispcc.h
++
++properties:
++  compatible:
++    enum:
++      - qcom,eliza-dispcc
++
++  clocks:
++    items:
++      - description: Board XO source
++      - description: Board Always On XO source
++      - description: Display's AHB clock
++      - description: sleep clock
++      - description: Byte clock from DSI PHY0
++      - description: Pixel clock from DSI PHY0
++      - description: Byte clock from DSI PHY1
++      - description: Pixel clock from DSI PHY1
++      - description: Link clock from DP PHY0
++      - description: VCO DIV clock from DP PHY0
++      - description: Link clock from DP PHY1
++      - description: VCO DIV clock from DP PHY1
++      - description: Link clock from DP PHY2
++      - description: VCO DIV clock from DP PHY2
++      - description: Link clock from DP PHY3
++      - description: VCO DIV clock from DP PHY3
++      - description: HDMI link clock from HDMI PHY
++
++  power-domains:
++    description:
++      A phandle and PM domain specifier for the MMCX power domain.
++    maxItems: 1
++
++  required-opps:
++    description:
++      A phandle to an OPP node describing required MMCX performance point.
++    maxItems: 1
++
++required:
++  - compatible
++  - clocks
++  - '#power-domain-cells'
++
++allOf:
++  - $ref: qcom,gcc.yaml#
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,dsi-phy-28nm.h>
++    #include <dt-bindings/clock/qcom,eliza-gcc.h>
++    #include <dt-bindings/clock/qcom,rpmh.h>
++    #include <dt-bindings/power/qcom,rpmhpd.h>
++    clock-controller@af00000 {
++        compatible = "qcom,eliza-dispcc";
++        reg = <0x0af00000 0x20000>;
++        clocks = <&bi_tcxo_div2>,
++                 <&bi_tcxo_ao_div2>,
++                 <&gcc GCC_DISP_AHB_CLK>,
++                 <&sleep_clk>,
++                 <&dsi0_phy DSI_BYTE_PLL_CLK>,
++                 <&dsi0_phy DSI_PIXEL_PLL_CLK>,
++                 <&dsi1_phy DSI_BYTE_PLL_CLK>,
++                 <&dsi1_phy DSI_PIXEL_PLL_CLK>,
++                 <&dp0_phy 0>,
++                 <&dp0_phy 1>,
++                 <&dp1_phy 0>,
++                 <&dp1_phy 1>,
++                 <&dp2_phy 0>,
++                 <&dp2_phy 1>,
++                 <&dp3_phy 0>,
++                 <&dp3_phy 1>,
++                 <&hdmi_phy>;
++
++        #clock-cells = <1>;
++        #power-domain-cells = <1>;
++        #reset-cells = <1>;
++
++        power-domains = <&rpmhpd RPMHPD_MMCX>;
++        required-opps = <&rpmhpd_opp_low_svs>;
++    };
++...
+diff --git a/include/dt-bindings/clock/qcom,eliza-dispcc.h b/include/dt-bindings/clock/qcom,eliza-dispcc.h
+new file mode 100644
+index 000000000000..30c6d856fa98
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,eliza-dispcc.h
+@@ -0,0 +1,118 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
++ */
++
++#ifndef _DT_BINDINGS_CLK_QCOM_ELIZA_DISP_CC_H
++#define _DT_BINDINGS_CLK_QCOM_ELIZA_DISP_CC_H
++
++/* DISP_CC clocks */
++#define DISP_CC_PLL0						0
++#define DISP_CC_PLL1						1
++#define DISP_CC_PLL2						2
++#define DISP_CC_ESYNC0_CLK					3
++#define DISP_CC_ESYNC0_CLK_SRC					4
++#define DISP_CC_ESYNC1_CLK					5
++#define DISP_CC_ESYNC1_CLK_SRC					6
++#define DISP_CC_MDSS_ACCU_SHIFT_CLK				7
++#define DISP_CC_MDSS_AHB1_CLK					8
++#define DISP_CC_MDSS_AHB_CLK					9
++#define DISP_CC_MDSS_AHB_CLK_SRC				10
++#define DISP_CC_MDSS_BYTE0_CLK					11
++#define DISP_CC_MDSS_BYTE0_CLK_SRC				12
++#define DISP_CC_MDSS_BYTE0_DIV_CLK_SRC				13
++#define DISP_CC_MDSS_BYTE0_INTF_CLK				14
++#define DISP_CC_MDSS_BYTE1_CLK					15
++#define DISP_CC_MDSS_BYTE1_CLK_SRC				16
++#define DISP_CC_MDSS_BYTE1_DIV_CLK_SRC				17
++#define DISP_CC_MDSS_BYTE1_INTF_CLK				18
++#define DISP_CC_MDSS_DPTX0_AUX_CLK				19
++#define DISP_CC_MDSS_DPTX0_AUX_CLK_SRC				20
++#define DISP_CC_MDSS_DPTX0_CRYPTO_CLK				21
++#define DISP_CC_MDSS_DPTX0_LINK_CLK				22
++#define DISP_CC_MDSS_DPTX0_LINK_CLK_SRC				23
++#define DISP_CC_MDSS_DPTX0_LINK_DIV_CLK_SRC			24
++#define DISP_CC_MDSS_DPTX0_LINK_INTF_CLK			25
++#define DISP_CC_MDSS_DPTX0_PIXEL0_CLK				26
++#define DISP_CC_MDSS_DPTX0_PIXEL0_CLK_SRC			27
++#define DISP_CC_MDSS_DPTX0_PIXEL1_CLK				28
++#define DISP_CC_MDSS_DPTX0_PIXEL1_CLK_SRC			29
++#define DISP_CC_MDSS_DPTX0_USB_ROUTER_LINK_INTF_CLK		30
++#define DISP_CC_MDSS_DPTX1_AUX_CLK				31
++#define DISP_CC_MDSS_DPTX1_AUX_CLK_SRC				32
++#define DISP_CC_MDSS_DPTX1_CRYPTO_CLK				33
++#define DISP_CC_MDSS_DPTX1_LINK_CLK				34
++#define DISP_CC_MDSS_DPTX1_LINK_CLK_SRC				35
++#define DISP_CC_MDSS_DPTX1_LINK_DIV_CLK_SRC			36
++#define DISP_CC_MDSS_DPTX1_LINK_INTF_CLK			37
++#define DISP_CC_MDSS_DPTX1_PIXEL0_CLK				38
++#define DISP_CC_MDSS_DPTX1_PIXEL0_CLK_SRC			39
++#define DISP_CC_MDSS_DPTX1_PIXEL1_CLK				40
++#define DISP_CC_MDSS_DPTX1_PIXEL1_CLK_SRC			41
++#define DISP_CC_MDSS_DPTX1_USB_ROUTER_LINK_INTF_CLK		42
++#define DISP_CC_MDSS_DPTX2_AUX_CLK				43
++#define DISP_CC_MDSS_DPTX2_AUX_CLK_SRC				44
++#define DISP_CC_MDSS_DPTX2_CRYPTO_CLK				45
++#define DISP_CC_MDSS_DPTX2_LINK_CLK				46
++#define DISP_CC_MDSS_DPTX2_LINK_CLK_SRC				47
++#define DISP_CC_MDSS_DPTX2_LINK_DIV_CLK_SRC			48
++#define DISP_CC_MDSS_DPTX2_LINK_INTF_CLK			49
++#define DISP_CC_MDSS_DPTX2_PIXEL0_CLK				50
++#define DISP_CC_MDSS_DPTX2_PIXEL0_CLK_SRC			51
++#define DISP_CC_MDSS_DPTX2_PIXEL1_CLK				52
++#define DISP_CC_MDSS_DPTX2_PIXEL1_CLK_SRC			53
++#define DISP_CC_MDSS_DPTX3_AUX_CLK				54
++#define DISP_CC_MDSS_DPTX3_AUX_CLK_SRC				55
++#define DISP_CC_MDSS_DPTX3_CRYPTO_CLK				56
++#define DISP_CC_MDSS_DPTX3_LINK_CLK				57
++#define DISP_CC_MDSS_DPTX3_LINK_CLK_SRC				58
++#define DISP_CC_MDSS_DPTX3_LINK_DIV_CLK_SRC			59
++#define DISP_CC_MDSS_DPTX3_LINK_INTF_CLK			60
++#define DISP_CC_MDSS_DPTX3_PIXEL0_CLK				61
++#define DISP_CC_MDSS_DPTX3_PIXEL0_CLK_SRC			62
++#define DISP_CC_MDSS_ESC0_CLK					63
++#define DISP_CC_MDSS_ESC0_CLK_SRC				64
++#define DISP_CC_MDSS_ESC1_CLK					65
++#define DISP_CC_MDSS_ESC1_CLK_SRC				66
++#define DISP_CC_MDSS_HDMI_AHBM_CLK				67
++#define DISP_CC_MDSS_HDMI_APP_CLK				68
++#define DISP_CC_MDSS_HDMI_APP_CLK_SRC				69
++#define DISP_CC_MDSS_HDMI_CRYPTO_CLK				70
++#define DISP_CC_MDSS_HDMI_INTF_CLK				71
++#define DISP_CC_MDSS_HDMI_PCLK_CLK				72
++#define DISP_CC_MDSS_HDMI_PCLK_CLK_SRC				73
++#define DISP_CC_MDSS_HDMI_PCLK_DIV_CLK_SRC			74
++#define DISP_CC_MDSS_MDP1_CLK					75
++#define DISP_CC_MDSS_MDP_CLK					76
++#define DISP_CC_MDSS_MDP_CLK_SRC				77
++#define DISP_CC_MDSS_MDP_LUT1_CLK				78
++#define DISP_CC_MDSS_MDP_LUT_CLK				79
++#define DISP_CC_MDSS_NON_GDSC_AHB_CLK				80
++#define DISP_CC_MDSS_PCLK0_CLK					81
++#define DISP_CC_MDSS_PCLK0_CLK_SRC				82
++#define DISP_CC_MDSS_PCLK1_CLK					83
++#define DISP_CC_MDSS_PCLK1_CLK_SRC				84
++#define DISP_CC_MDSS_PCLK2_CLK					85
++#define DISP_CC_MDSS_PCLK2_CLK_SRC				86
++#define DISP_CC_MDSS_RSCC_AHB_CLK				87
++#define DISP_CC_MDSS_RSCC_VSYNC_CLK				88
++#define DISP_CC_MDSS_VSYNC1_CLK					89
++#define DISP_CC_MDSS_VSYNC_CLK					90
++#define DISP_CC_MDSS_VSYNC_CLK_SRC				91
++#define DISP_CC_OSC_CLK						92
++#define DISP_CC_OSC_CLK_SRC					93
++#define DISP_CC_SLEEP_CLK					94
++#define DISP_CC_SLEEP_CLK_SRC					95
++#define DISP_CC_XO_CLK						96
++#define DISP_CC_XO_CLK_SRC					97
++
++/* DISP_CC resets */
++#define DISP_CC_MDSS_CORE_BCR					0
++#define DISP_CC_MDSS_CORE_INT2_BCR				1
++#define DISP_CC_MDSS_RSCC_BCR					2
++
++/* DISP_CC GDSCR */
++#define MDSS_GDSC						0
++#define MDSS_INT2_GDSC						1
++
++#endif
 
-Best regards,
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+2.51.0
 
