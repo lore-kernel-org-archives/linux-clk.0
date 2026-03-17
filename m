@@ -1,41 +1,42 @@
 Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096232DAFDD;
-	Tue, 17 Mar 2026 13:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81FB283FC9;
+	Tue, 17 Mar 2026 13:33:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773754423; cv=none; b=dOm2oqZLq197gZHsTci0Xa3+GlgvCMxV17dv35sJye2a/UK4wVFblUryWHYVe2XWsZyGbnIrb0s6sGkTqvh6WYx6lKlUM/6cHC/UslP1x/Ppzcf8eHWrOv4minLQ6g+afcoVkwdPqsZYEAxVtofgyeNrqM6l20aiAenx82aYcNg=
+	t=1773754425; cv=none; b=GNmKtQJZyRcU6/q9KyiZYG3rl27pa5UBUmy9BWVuNFVOfSyFTcZDHZICIOEbR7kyXFfxrL4na5NnUzQLKws2XYnMS2VJ/mkYrjpDJ4KJijIaZPgNOnRlfq61cLxNdwYSLgFnV/jrno6/RJMIvok9n92BUmPCsAtxjjcNbQ0Q1l4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773754423; c=relaxed/simple;
-	bh=YxN9w0SxPEx4dKYGDPjcFAhTyqjYwWthx4zOXAprh3k=;
+	s=arc-20240116; t=1773754425; c=relaxed/simple;
+	bh=1d5jwm/HXf+1jopHHwdBEsJurqsfrBJka01HmjVnAuE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YJqVXgS0nfeKXfRwGKQ7L7E+B7v0d7P5m/S2GRB8E9i1RbDhQtM/r6HCjyQ0UVM5z7/CrTBJgYJ2qZwM84lcZ0/b/szTiA/raoGlq86iFsNHePnx3rq+qPDLnVTQBs27rIUYzJGVlUK/jPks5b7aA52VThqENU0/Z3S7acKymmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RSIrkpx9; arc=none smtp.client-ip=185.171.202.116
+	 In-Reply-To:To:Cc; b=tGhrZQRR8brs6mpZVHBH9Bc9FaQp/xEcYIBuncnd6LpFrQgfQ2bfyslew7AklTT40IUI4gOr+n2jjW2vASR1D1KUI61PCVgL1XYqec3LFXfpo8ySkU3q+JPwl34GgfsoAcciuGO+SiaDc0vw2YZrrTgZnvLVLicmmnmcRO28CzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=2dC0/RvC; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RSIrkpx9"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="2dC0/RvC"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 9321DC55059;
-	Tue, 17 Mar 2026 13:33:58 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 78D5CC55042;
+	Tue, 17 Mar 2026 13:34:04 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 86E7E5FC9A;
-	Tue, 17 Mar 2026 13:33:34 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D4D4C104505EC;
-	Tue, 17 Mar 2026 14:33:30 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 6DA795FC9A;
+	Tue, 17 Mar 2026 13:33:40 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C4F2B104505EB;
+	Tue, 17 Mar 2026 14:33:37 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1773754412; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1773754419; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=5jYxDrf9DM6w0B5wLrRD+9KjH0Jyc/7uXLQcui74daI=;
-	b=RSIrkpx92IhIUnVOb8uM/ofkrhLFchrpAy+4Cu2LeEcG8GiwDIc3wj+QTw74mMWthL9Qvi
-	vVsT366xHi59I06BhY0BWdLFMWK1B4baVGQIoO3HMZAoi2M3lmvZu5eXrZo/xPfPqcUJ8Y
-	tMF5Iv9Aj5t34xD+71T23JByCda4/7JeL4jrEBL0h6czMt/HAn+//QPQdsZb6J8HBsswPT
-	MSEyj77BzyiSLdnpKlXhvjStyIq+VubPYumcu8e9KnADREvCcNOJkuOdqc74076pIwkoCx
-	7R/+hLo5eZtZ1JQnIQ9uDNhOQ/o+C1TfLp8Tw++gWmjUQu1UDUw+7aQTxmi+iA==
+	bh=aUYUflWYXCNMFkVZDsoHMMnLEv02bLTB8mbRpGNIxfo=;
+	b=2dC0/RvCd6o6IcNU6LnR1S/sCsRyNTjyJSOTurvhH5HvwqW+GGfC8c9mYzxC/6yrYpP2KD
+	LG3h5K3DGwzLAQsNKjoUO36m6+9jgMS9KY6wu72PpaQ+DeFfNPyhoHuVRJJHjx86xWA7G/
+	93nUU8xZRBFbyXNgUKqAHK3ue4LQyt/XvCXSN1oh2I8am4fcAuA3FWo/goRqpPFFjcKd3n
+	d9GM2UbeRd5f2uoqfAQMCu+JmRd9PBxPu+o1gDBUlcX6E1Mdqk/5zTwDtFWJg1ss8EIKkZ
+	B8U43WMStqY+fgt/vxuojs17gLGefjJo951Me1iA+aT/cinL9Fymw7A7vi4SjA==
 From: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
-Date: Tue, 17 Mar 2026 14:33:04 +0100
-Subject: [PATCH v5 02/10] reset: eyeq: Add EyeQ7H compatibles
+Date: Tue, 17 Mar 2026 14:33:07 +0100
+Subject: [PATCH v5 05/10] clk: eyeq: Prefix the PLL registers with the PLL
+ type
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -44,7 +45,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260317-clk-eyeq7-v5-2-6f6daa2c2367@bootlin.com>
+Message-Id: <20260317-clk-eyeq7-v5-5-6f6daa2c2367@bootlin.com>
 References: <20260317-clk-eyeq7-v5-0-6f6daa2c2367@bootlin.com>
 In-Reply-To: <20260317-clk-eyeq7-v5-0-6f6daa2c2367@bootlin.com>
 To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
@@ -60,408 +61,169 @@ Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
  Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-riscv@lists.infradead.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-clk@vger.kernel.org, linux-mips@vger.kernel.org, 
- =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>, 
- Sari Khoury <sari.khoury@mobileye.com>
+ =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
 X-Mailer: b4 0.14.3
 X-Last-TLS-Session-Version: TLSv1.3
 
-Add support for the reset controllers found in the EyeQ7H OLB. For
-this, three new types of reset domain are added to the driver.
+Rename the PLL registers to make room for other PLL types that are
+present in the eyeQ7H.
 
-The EQR_EYEQ7H_ACRP reset domain is similar to the EQR_EYEQ5_ACRP domain,
-sharing the same register address calculation but featuring a different
-register layout. When writing to the register, MBIST bits are set to
-zero to ensure normal device operation.
+Move the access to the PLL register inside the function parsing it
+as both call sites were doing the same thing.
 
-The EQR_EYEQ7H_CFG reset domain is similar to the EQR_EYEQ5_PCIE domain,
-with two bits per device instead of one. These two bits, clock enable and
-nreset, are kept in sync when asserting and deasserting the device reset.
-
-The EQR_EYEQ7H_ACC reset domain is similar to the EQR_EYEQ6H_SARCR domain,
-with a different registers layout and no busy waiting.
-
-Alongside these new reset domains, add EQR_NB_DOM_TYPES at the end of the
-eqr_domain_type enumeration and use it to declare the eqr_timings array.
-This ensures that we have the expected number of entries when using the
-timings in eqr_busy_wait_locked().
-
-Add and order the auxiliary_device_id entries in eqr_id_table.
-
-Originally-by: Sari Khoury <sari.khoury@mobileye.com>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
 ---
- drivers/reset/reset-eyeq.c | 268 +++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 259 insertions(+), 9 deletions(-)
+ drivers/clk/clk-eyeq.c | 76 +++++++++++++++++++++++---------------------------
+ 1 file changed, 35 insertions(+), 41 deletions(-)
 
-diff --git a/drivers/reset/reset-eyeq.c b/drivers/reset/reset-eyeq.c
-index 1a3857983897..ce758a1757fc 100644
---- a/drivers/reset/reset-eyeq.c
-+++ b/drivers/reset/reset-eyeq.c
-@@ -1,10 +1,11 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Reset driver for the Mobileye EyeQ5, EyeQ6L and EyeQ6H platforms.
-+ * Reset driver for the Mobileye EyeQ5, EyeQ6L, EyeQ6H and EyeQ7H platforms.
-  *
-  * Controllers live in a shared register region called OLB. EyeQ5 and EyeQ6L
-  * have a single OLB instance for a single reset controller. EyeQ6H has seven
-- * OLB instances; three host reset controllers.
-+ * OLB instances; three host reset controllers. EyeQ7H has fourteen OLB instances;
-+ * eleven host reset controllers.
-  *
-  * Each reset controller has one or more domain. Domains are of a given type
-  * (see enum eqr_domain_type), with a valid offset mask (up to 32 resets per
-@@ -73,6 +74,40 @@
-  *  9. PMA0	10. PMA1	11. MPC0	12. MPC1
-  * 13. MPC2	14. MPC3	15. PERIPH
-  *
-+ * Known resets in EyeQ7H acc domain 0 (type EQR_EYEQ7H_ACRP)
-+ *  1. VMP0	2. XVMP1	3. VMP2		4. VMP3
-+ *  5. MPC0	6. MPC1		7. PMA0		8. PMA1
-+ *
-+ * Known resets in EyeQ7H acc domain 1 (type EQR_EYEQ7H_ACC)
-+ *  1. NCORE0	 2. NCORE1	3. NCORE0_M	4. NCORE1_M
-+ *  5. NCORE_NOC 6. VMP_NOC	7. MPC_NOC	8. PMA_NOC
-+ *
-+ * Known resets in EyeQ7H ddr (type EQR_EYEQ7H_CFG)
-+ *  0. APB	2. DMI		3. DFI		4. PHY_SMS
-+ *  5. CTL_SMS
-+ *
-+ * Known resets in EyeQ7H east (type EQR_EYEQ7H_CFG)
-+ *  0. ISP	2. VEU		3. LBIST
-+ *
-+ * Known resets in EyeQ7H periph (type EQR_EYEQ6H_SARCR)
-+ *  0. gpio	1.EXT TIMER	3.UART		4. SPI
-+ *  5. I2C0	6. I2C1		7.I2C2		8. I2S
-+ *
-+ * Known resets in EyeQ7H south (type EQR_EYEQ7H_CFG)
-+ *  0. PCI_PHY	1. PCI_CTL	2. S_NOC	3. GBE_PHY
-+ *  4. GBE_CTL	5. XSPI		6. UFS		7. VDIO
-+ *
-+ * Known resets in EyeQ7H west (type EQR_EYEQ7H_CFG)
-+ *  0. GPU	2. CAU		3. LBIST	4. GPU_LBIST
-+ *
-+ * Known resets in EyeQ7H xnn domain 0 (type EQR_EYEQ7H_ACRP)
-+ *  1. XNN0	2. XNN1		3.XNN2
-+ *
-+ * Known resets in EyeQ7H xnn domain 1 (type EQR_EYEQ7H_ACC)
-+ *  1. XNN0	2. XNN1		3. XNN2		4. XNN3
-+ *  5. NCORE	6. I2_0		7. I2_1		8. SMS_0
-+ *  9. SMS_1
-+ *
-  * Abbreviations:
-  *  - PMA: Programmable Macro Array
-  *  - MPC: Multi-threaded Processing Clusters
-@@ -114,6 +149,11 @@ enum eqr_domain_type {
- 	EQR_EYEQ5_ACRP,
- 	EQR_EYEQ5_PCIE,
- 	EQR_EYEQ6H_SARCR,
-+	EQR_EYEQ7H_ACC,
-+	EQR_EYEQ7H_ACRP,
-+	EQR_EYEQ7H_CFG,
-+
-+	EQR_NB_DOM_TYPES /* number of domain types, keep at the end */
- };
+diff --git a/drivers/clk/clk-eyeq.c b/drivers/clk/clk-eyeq.c
+index d9303c2c7aa5..e4e690a12a23 100644
+--- a/drivers/clk/clk-eyeq.c
++++ b/drivers/clk/clk-eyeq.c
+@@ -48,28 +48,28 @@
+ #include <dt-bindings/clock/mobileye,eyeq6lplus-clk.h>
  
- /*
-@@ -138,16 +178,34 @@ enum eqr_domain_type {
- #define EQR_EYEQ6H_SARCR_RST_STATUS	(0x008)
- #define EQR_EYEQ6H_SARCR_CLK_REQUEST	(0x00C)
+ /* In frac mode, it enables fractional noise canceling DAC. Else, no function. */
+-#define PCSR0_DAC_EN			BIT(0)
++#define FRACG_PCSR0_DAC_EN			BIT(0)
+ /* Fractional or integer mode */
+-#define PCSR0_DSM_EN			BIT(1)
+-#define PCSR0_PLL_EN			BIT(2)
++#define FRACG_PCSR0_DSM_EN			BIT(1)
++#define FRACG_PCSR0_PLL_EN			BIT(2)
+ /* All clocks output held at 0 */
+-#define PCSR0_FOUTPOSTDIV_EN		BIT(3)
+-#define PCSR0_POST_DIV1			GENMASK(6, 4)
+-#define PCSR0_POST_DIV2			GENMASK(9, 7)
+-#define PCSR0_REF_DIV			GENMASK(15, 10)
+-#define PCSR0_INTIN			GENMASK(27, 16)
+-#define PCSR0_BYPASS			BIT(28)
++#define FRACG_PCSR0_FOUTPOSTDIV_EN		BIT(3)
++#define FRACG_PCSR0_POST_DIV1			GENMASK(6, 4)
++#define FRACG_PCSR0_POST_DIV2			GENMASK(9, 7)
++#define FRACG_PCSR0_REF_DIV			GENMASK(15, 10)
++#define FRACG_PCSR0_INTIN			GENMASK(27, 16)
++#define FRACG_PCSR0_BYPASS			BIT(28)
+ /* Bits 30..29 are reserved */
+-#define PCSR0_PLL_LOCKED		BIT(31)
++#define FRACG_PCSR0_PLL_LOCKED			BIT(31)
  
-+/*
-+ * Domain type EQR_EYEQ7H_ACC register offsets.
-+ */
-+#define EQR_EYEQ7H_ACC_CLK_EN		(0x000)
-+#define EQR_EYEQ7H_ACC_RST_EN		(0x004)
-+
-+/*
-+ * Domain type EQR_EYEQ7H_ACRP register masks.
-+ * Registers are: base + 4 * offset.
-+ */
-+#define EQR_EYEQ7H_ACRP_PD_REQ		BIT(0)
-+#define EQR_EYEQ7H_ACRP_MBIST_CFG	GENMASK(3, 1)
-+#define EQR_EYEQ7H_ACRP_ST_POWER_DOWN	BIT(13)
-+#define EQR_EYEQ7H_ACRP_ST_ACTIVE	BIT(14)
-+
- struct eqr_busy_wait_timings {
- 	unsigned long sleep_us;
- 	unsigned long timeout_us;
- };
+-#define PCSR1_RESET			BIT(0)
+-#define PCSR1_SSGC_DIV			GENMASK(4, 1)
++#define FRACG_PCSR1_RESET			BIT(0)
++#define FRACG_PCSR1_SSGC_DIV			GENMASK(4, 1)
+ /* Spread amplitude (% = 0.1 * SPREAD[4:0]) */
+-#define PCSR1_SPREAD			GENMASK(9, 5)
+-#define PCSR1_DIS_SSCG			BIT(10)
++#define FRACG_PCSR1_SPREAD			GENMASK(9, 5)
++#define FRACG_PCSR1_DIS_SSCG			BIT(10)
+ /* Down-spread or center-spread */
+-#define PCSR1_DOWN_SPREAD		BIT(11)
+-#define PCSR1_FRAC_IN			GENMASK(31, 12)
++#define FRACG_PCSR1_DOWN_SPREAD			BIT(11)
++#define FRACG_PCSR1_FRAC_IN			GENMASK(31, 12)
  
--static const struct eqr_busy_wait_timings eqr_timings[] = {
-+static const struct eqr_busy_wait_timings eqr_timings[EQR_NB_DOM_TYPES] = {
- 	[EQR_EYEQ5_SARCR]	= {1, 10},
- 	[EQR_EYEQ5_ACRP]	= {1, 40 * USEC_PER_MSEC}, /* LBIST implies long timeout. */
- 	/* EQR_EYEQ5_PCIE does no busy waiting. */
- 	[EQR_EYEQ6H_SARCR]	= {1, 400},
-+	/* EQR_EYEQ7H_ACC does no busy waiting. */
-+	[EQR_EYEQ7H_ACRP]	= {1, 40 * USEC_PER_MSEC},
-+	/* EQR_EYEQ7H_CFG does no busy waiting. */
- };
+ struct eqc_pll {
+ 	unsigned int	index;
+@@ -162,34 +162,40 @@ static void eqc_pll_downshift_factors(unsigned long *mult, unsigned long *div)
+ 	*div >>= shift;
+ }
  
- #define EQR_MAX_DOMAIN_COUNT 3
-@@ -221,10 +279,6 @@ static int eqr_busy_wait_locked(struct eqr_private *priv, struct device *dev,
- 					 sleep_us, timeout_us);
- 		break;
+-static int eqc_pll_parse_registers(u32 r0, u32 r1, unsigned long *mult,
+-				   unsigned long *div, unsigned long *acc)
++static int eqc_pll_parse_fracg(void __iomem *base, unsigned long *mult,
++			       unsigned long *div, unsigned long *acc)
+ {
+ 	unsigned long spread;
++	u32 r0, r1;
++	u64 val;
  
--	case EQR_EYEQ5_PCIE:
--		ret = 0; /* No busy waiting. */
--		break;
--
- 	case EQR_EYEQ6H_SARCR:
- 		/*
- 		 * Wait until both bits change:
-@@ -241,6 +295,23 @@ static int eqr_busy_wait_locked(struct eqr_private *priv, struct device *dev,
- 					&rst_status, &clk_status);
- 		break;
- 
-+	case EQR_EYEQ7H_ACRP:
-+		reg = base + 4 * offset;
-+		if (assert)
-+			mask = EQR_EYEQ7H_ACRP_ST_POWER_DOWN;
-+		else
-+			mask = EQR_EYEQ7H_ACRP_ST_ACTIVE;
+-	if (r0 & PCSR0_BYPASS) {
++	val = readq(base);
++	r0 = val;
++	r1 = val >> 32;
 +
-+		ret = readl_poll_timeout(reg, val, !!(val & mask),
-+					 sleep_us, timeout_us);
-+		break;
-+
-+	case EQR_EYEQ5_PCIE:
-+	case EQR_EYEQ7H_ACC:
-+	case EQR_EYEQ7H_CFG:
-+		ret = 0; /* No busy waiting. */
-+		break;
-+
- 	default:
- 		WARN_ON(1);
- 		ret = -EINVAL;
-@@ -285,6 +356,28 @@ static void eqr_assert_locked(struct eqr_private *priv, u32 domain, u32 offset)
- 		writel(val, base + EQR_EYEQ6H_SARCR_CLK_REQUEST);
- 		break;
- 
-+	case EQR_EYEQ7H_ACC:
-+		/* RST_REQUEST and CLK_REQUEST must be kept in sync. */
-+		val = readl(base + EQR_EYEQ7H_ACC_RST_EN);
-+		val &= ~BIT(offset);
-+		writel(val, base + EQR_EYEQ7H_ACC_RST_EN);
-+		writel(val, base + EQR_EYEQ7H_ACC_CLK_EN);
-+		break;
-+
-+	case EQR_EYEQ7H_ACRP:
-+		/* set powerdown and leave MBIST bits at zero */
-+		reg = base + 4 * offset;
-+		val = readl(reg) & ~EQR_EYEQ7H_ACRP_MBIST_CFG;
-+		writel(val | EQR_EYEQ7H_ACRP_PD_REQ, reg);
-+		break;
-+
-+	case EQR_EYEQ7H_CFG:
-+		/* clear clock enable and NRESET bits */
-+		val = readl(base);
-+		val &= ~GENMASK(2 * offset + 1, 2 * offset);
-+		writel(val, base);
-+		break;
-+
- 	default:
- 		WARN_ON(1);
- 		break;
-@@ -339,6 +432,28 @@ static void eqr_deassert_locked(struct eqr_private *priv, u32 domain,
- 		writel(val, base + EQR_EYEQ6H_SARCR_CLK_REQUEST);
- 		break;
- 
-+	case EQR_EYEQ7H_ACC:
-+		/* RST_REQUEST and CLK_REQUEST must be kept in sync. */
-+		val = readl(base + EQR_EYEQ7H_ACC_RST_EN);
-+		val |= BIT(offset);
-+		writel(val, base + EQR_EYEQ7H_ACC_RST_EN);
-+		writel(val, base + EQR_EYEQ7H_ACC_CLK_EN);
-+		break;
-+
-+	case EQR_EYEQ7H_ACRP:
-+		/* clear powerdown and leave MBIST bits at zero */
-+		reg = base + 4 * offset;
-+		val = readl(reg) & ~EQR_EYEQ7H_ACRP_MBIST_CFG;
-+		writel(val & ~EQR_EYEQ7H_ACRP_PD_REQ, reg);
-+		break;
-+
-+	case EQR_EYEQ7H_CFG:
-+		/* set clock enable and NRESET bits */
-+		val = readl(base);
-+		val |= GENMASK(2 * offset + 1, 2 * offset);
-+		writel(val, base);
-+		break;
-+
- 	default:
- 		WARN_ON(1);
- 		break;
-@@ -385,6 +500,14 @@ static int eqr_status(struct reset_controller_dev *rcdev, unsigned long id)
- 	case EQR_EYEQ6H_SARCR:
- 		reg = base + EQR_EYEQ6H_SARCR_RST_STATUS;
- 		return !(readl(reg) & BIT(offset));
-+	case EQR_EYEQ7H_ACC:
-+		reg = base + EQR_EYEQ7H_ACC_RST_EN;
-+		return !(readl(reg) & BIT(offset));
-+	case EQR_EYEQ7H_ACRP:
-+		reg = base + 4 * offset;
-+		return !(readl(reg) & EQR_EYEQ7H_ACRP_ST_ACTIVE);
-+	case EQR_EYEQ7H_CFG:
-+		return !(readl(base) & BIT(2 * offset));
- 	default:
- 		return -EINVAL;
++	if (r0 & FRACG_PCSR0_BYPASS) {
+ 		*mult = 1;
+ 		*div = 1;
+ 		*acc = 0;
+ 		return 0;
  	}
-@@ -558,6 +681,113 @@ static const struct eqr_match_data eqr_eyeq6h_acc_data = {
- 	.domains	= eqr_eyeq6h_acc_domains,
- };
  
-+static const struct eqr_domain_descriptor eqr_eyeq7h_acc_domains[] = {
-+	{
-+		.type = EQR_EYEQ7H_ACRP,
-+		.valid_mask = 0xFF,
-+		.offset = 0x000,
-+	},
-+	{
-+		.type = EQR_EYEQ7H_ACC,
-+		.valid_mask = 0xFF,
-+		.offset = 0x060,
-+	},
-+};
-+
-+static const struct eqr_match_data eqr_eyeq7h_acc_data = {
-+	.domain_count	= ARRAY_SIZE(eqr_eyeq7h_acc_domains),
-+	.domains	= eqr_eyeq7h_acc_domains,
-+};
-+
-+static const struct eqr_domain_descriptor eqr_eyeq7h_ddr_domains[] = {
-+	{
-+		.type = EQR_EYEQ7H_ACRP,
-+		.valid_mask = 0x1F,
-+		.offset = 0x008,
-+	},
-+};
-+
-+static const struct eqr_match_data eqr_eyeq7h_ddr_data = {
-+	.domain_count	= ARRAY_SIZE(eqr_eyeq7h_ddr_domains),
-+	.domains	= eqr_eyeq7h_ddr_domains,
-+};
-+
-+static const struct eqr_domain_descriptor eqr_eyeq7h_east_domains[] = {
-+	{
-+		.type = EQR_EYEQ7H_CFG,
-+		.valid_mask = 0x7,
-+		.offset = 0x060,
-+	},
-+};
-+
-+static const struct eqr_match_data eqr_eyeq7h_east_data = {
-+	.domain_count	= ARRAY_SIZE(eqr_eyeq7h_east_domains),
-+	.domains	= eqr_eyeq7h_east_domains,
-+};
-+
-+/* Periph OLBs each have an instance. */
-+static const struct eqr_domain_descriptor eqr_eyeq7h_per_domains[] = {
-+	{
-+		.type = EQR_EYEQ6H_SARCR,
-+		.valid_mask = 0xFF,
-+		.offset = 0x030,
-+	},
-+};
-+
-+static const struct eqr_match_data eqr_eyeq7h_per_data = {
-+	.domain_count	= ARRAY_SIZE(eqr_eyeq7h_per_domains),
-+	.domains	= eqr_eyeq7h_per_domains,
-+};
-+
-+static const struct eqr_domain_descriptor eqr_eyeq7h_south_domains[] = {
-+	{
-+		.type = EQR_EYEQ7H_CFG,
-+		.valid_mask = 0x1F,
-+		.offset = 0x070,
-+	},
-+	{
-+		.type = EQR_EYEQ7H_CFG,
-+		.valid_mask = 0x7,
-+		.offset = 0x074,
-+	},
-+};
-+
-+static const struct eqr_match_data eqr_eyeq7h_south_data = {
-+	.domain_count	= ARRAY_SIZE(eqr_eyeq7h_south_domains),
-+	.domains	= eqr_eyeq7h_south_domains,
-+};
-+
-+static const struct eqr_domain_descriptor eqr_eyeq7h_west_domains[] = {
-+	{
-+		.type = EQR_EYEQ7H_CFG,
-+		.valid_mask = 0xf,
-+		.offset = 0x068,
-+	},
-+};
-+
-+static const struct eqr_match_data eqr_eyeq7h_west_data = {
-+	.domain_count	= ARRAY_SIZE(eqr_eyeq7h_west_domains),
-+	.domains	= eqr_eyeq7h_west_domains,
-+};
-+
-+static const struct eqr_domain_descriptor eqr_eyeq7h_xnn_domains[] = {
-+	{
-+		.type = EQR_EYEQ7H_ACRP,
-+		.valid_mask = 0x7,
-+		.offset = 0x000,
-+	},
-+	{
-+		.type = EQR_EYEQ7H_ACC,
-+		.valid_mask = 0x1FF,
-+		.offset = 0x060,
-+	},
-+};
-+
-+static const struct eqr_match_data eqr_eyeq7h_xnn_data = {
-+	.domain_count	= ARRAY_SIZE(eqr_eyeq7h_xnn_domains),
-+	.domains	= eqr_eyeq7h_xnn_domains,
-+};
-+
- /*
-  * Table describes OLB system-controller compatibles.
-  * It does not get used to match against devicetree node.
-@@ -569,15 +799,35 @@ static const struct of_device_id eqr_match_table[] = {
- 	{ .compatible = "mobileye,eyeq6h-west-olb", .data = &eqr_eyeq6h_we_data },
- 	{ .compatible = "mobileye,eyeq6h-east-olb", .data = &eqr_eyeq6h_we_data },
- 	{ .compatible = "mobileye,eyeq6h-acc-olb", .data = &eqr_eyeq6h_acc_data },
-+	{ .compatible = "mobileye,eyeq7h-acc0-olb", .data = &eqr_eyeq7h_acc_data },
-+	{ .compatible = "mobileye,eyeq7h-acc1-olb", .data = &eqr_eyeq7h_acc_data },
-+	{ .compatible = "mobileye,eyeq7h-ddr0-olb", .data = &eqr_eyeq7h_ddr_data },
-+	{ .compatible = "mobileye,eyeq7h-ddr1-olb", .data = &eqr_eyeq7h_ddr_data },
-+	{ .compatible = "mobileye,eyeq7h-east-olb", .data = &eqr_eyeq7h_east_data },
-+	{ .compatible = "mobileye,eyeq7h-periph-east-olb", .data = &eqr_eyeq7h_per_data },
-+	{ .compatible = "mobileye,eyeq7h-periph-west-olb", .data = &eqr_eyeq7h_per_data },
-+	{ .compatible = "mobileye,eyeq7h-south-olb", .data = &eqr_eyeq7h_south_data },
-+	{ .compatible = "mobileye,eyeq7h-west-olb", .data = &eqr_eyeq7h_west_data },
-+	{ .compatible = "mobileye,eyeq7h-xnn0-olb", .data = &eqr_eyeq7h_xnn_data },
-+	{ .compatible = "mobileye,eyeq7h-xnn1-olb", .data = &eqr_eyeq7h_xnn_data },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, eqr_match_table);
+-	if (!(r0 & PCSR0_PLL_LOCKED))
++	if (!(r0 & FRACG_PCSR0_PLL_LOCKED))
+ 		return -EINVAL;
  
- static const struct auxiliary_device_id eqr_id_table[] = {
- 	{ .name = "clk_eyeq.reset" },
--	{ .name = "clk_eyeq.reset_west" },
--	{ .name = "clk_eyeq.reset_east" },
- 	{ .name = "clk_eyeq.reset_acc" },
-+	{ .name = "clk_eyeq.reset_acc0" },
-+	{ .name = "clk_eyeq.reset_acc1" },
-+	{ .name = "clk_eyeq.reset_ddr0" },
-+	{ .name = "clk_eyeq.reset_ddr1" },
-+	{ .name = "clk_eyeq.reset_east" },
-+	{ .name = "clk_eyeq.reset_periph_east" },
-+	{ .name = "clk_eyeq.reset_periph_west" },
-+	{ .name = "clk_eyeq.reset_south" },
-+	{ .name = "clk_eyeq.reset_west" },
-+	{ .name = "clk_eyeq.reset_xnn0" },
-+	{ .name = "clk_eyeq.reset_xnn1" },
- 	{}
- };
- MODULE_DEVICE_TABLE(auxiliary, eqr_id_table);
+-	*mult = FIELD_GET(PCSR0_INTIN, r0);
+-	*div = FIELD_GET(PCSR0_REF_DIV, r0);
++	*mult = FIELD_GET(FRACG_PCSR0_INTIN, r0);
++	*div = FIELD_GET(FRACG_PCSR0_REF_DIV, r0);
+ 
+ 	/* Fractional mode, in 2^20 (0x100000) parts. */
+-	if (r0 & PCSR0_DSM_EN) {
++	if (r0 & FRACG_PCSR0_DSM_EN) {
+ 		*div *= (1ULL << 20);
+-		*mult = *mult * (1ULL << 20) + FIELD_GET(PCSR1_FRAC_IN, r1);
++		*mult = *mult * (1ULL << 20) + FIELD_GET(FRACG_PCSR1_FRAC_IN, r1);
+ 	}
+ 
+ 	if (!*mult || !*div)
+ 		return -EINVAL;
+ 
+-	if (r1 & (PCSR1_RESET | PCSR1_DIS_SSCG)) {
++	if (r1 & (FRACG_PCSR1_RESET | FRACG_PCSR1_DIS_SSCG)) {
+ 		*acc = 0;
+ 		return 0;
+ 	}
+@@ -204,10 +210,10 @@ static int eqc_pll_parse_registers(u32 r0, u32 r1, unsigned long *mult,
+ 	 *
+ 	 * Care is taken to avoid overflowing or losing precision.
+ 	 */
+-	spread = FIELD_GET(PCSR1_SPREAD, r1);
++	spread = FIELD_GET(FRACG_PCSR1_SPREAD, r1);
+ 	*acc = DIV_ROUND_CLOSEST(spread * 1000000000, 1024 * 2);
+ 
+-	if (r1 & PCSR1_DOWN_SPREAD) {
++	if (r1 & FRACG_PCSR1_DOWN_SPREAD) {
+ 		/*
+ 		 * Downspreading: the central frequency is half a
+ 		 * spread lower.
+@@ -232,18 +238,12 @@ static void eqc_probe_init_plls(struct device *dev, const struct eqc_match_data
+ 	const struct eqc_pll *pll;
+ 	struct clk_hw *hw;
+ 	unsigned int i;
+-	u32 r0, r1;
+-	u64 val;
+ 	int ret;
+ 
+ 	for (i = 0; i < data->pll_count; i++) {
+ 		pll = &data->plls[i];
+ 
+-		val = readq(base + pll->reg64);
+-		r0 = val;
+-		r1 = val >> 32;
+-
+-		ret = eqc_pll_parse_registers(r0, r1, &mult, &div, &acc);
++		ret = eqc_pll_parse_fracg(base + pll->reg64, &mult, &div, &acc);
+ 		if (ret) {
+ 			dev_warn(dev, "failed parsing state of %s\n", pll->name);
+ 			cells->hws[pll->index] = ERR_PTR(ret);
+@@ -799,14 +799,8 @@ static void __init eqc_early_init(struct device_node *np,
+ 		const struct eqc_pll *pll = &early_data->early_plls[i];
+ 		unsigned long mult, div, acc;
+ 		struct clk_hw *hw;
+-		u32 r0, r1;
+-		u64 val;
+ 
+-		val = readq(base + pll->reg64);
+-		r0 = val;
+-		r1 = val >> 32;
+-
+-		ret = eqc_pll_parse_registers(r0, r1, &mult, &div, &acc);
++		ret = eqc_pll_parse_fracg(base + pll->reg64, &mult, &div, &acc);
+ 		if (ret) {
+ 			pr_err("failed parsing state of %s\n", pll->name);
+ 			goto err;
 
 -- 
 2.53.0
