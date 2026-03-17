@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CC72222CC;
-	Tue, 17 Mar 2026 15:51:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789422DC789;
+	Tue, 17 Mar 2026 16:01:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773762669; cv=none; b=DxWkD53FfxHFY6kf9mEtLkB+UjiK0v4RiPUcFgoXfnnhF4JI3YWNuySIs/riaHOrJHfTUDDw3eXgTktFZa3rV5pENXYe6LqeXpaXp8wf55kokshwne+hDqHUWSJ+cPwG/8g9OnxH4azDYzkPDsDfnWBj2zwn9+94TC7NIV8f0aI=
+	t=1773763262; cv=none; b=szRgZ88sG6lo7L2Bqm6hiFTiiD4b/GbmVL3V6cJFFwvYJkyneH69QHqGmkuCv2VzOc6cjZFkRklN2zP9TH98tGlKwCXAAPr2uqhIawFDHjq0LwxmH8po4nz/sgLmC0cFlelaaLHR9Mil8oMtkQtz9mb9qMjUeBmwEvVRK4Qil8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773762669; c=relaxed/simple;
-	bh=AkJEuI5liNnf15IbF4J03GN5K1Co8BejXS4SjS2ETlY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bh/wg8sWwDTmACDwlpFQmpJZMPYWnCfuK7nbFZkklifVgc4giV9lc4jAQhxH+BX3QPciOC5qWJ2piBunChLF5PV+yvpqa8cMVh7J6Wb0n7j5/q8K3+2ttTuHyoYOsQKMrBjbBIzdnT+7nuwDOYz2xlewYxVXsm45DgetppnMkw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j0G41MDs; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773763262; c=relaxed/simple;
+	bh=ar3yj8StogAACqxc0g1Q58gXeJrr8mZ+2bxzvkTkjOs=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=PGY0EDp8D14ff7SOjzzxDU5pNpqVQx6bGO9WoVIbw5o5k9SUJVDzlhqx5BGM81ybQPbSDyMP5+VDYjjhi9XcUA9PBnEJ7yRx7qQrBOnDCI6+2nQ2Y14yxpPxgk3x8hc+jwu4pWTn0hO/QG3EaQ/m9v3o0mxWwWuM71JHJvQCays=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k9Agb7xp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j0G41MDs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FC51C4CEF7;
-	Tue, 17 Mar 2026 15:51:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k9Agb7xp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EB4AC19424;
+	Tue, 17 Mar 2026 16:00:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773762668;
-	bh=AkJEuI5liNnf15IbF4J03GN5K1Co8BejXS4SjS2ETlY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=j0G41MDsRqZtOEvZrFBfu8IWZHJDGsoIkXABrAudFy11bqpO8rUDe1UYtpB5j2uBg
-	 ZUenn1xAb59IWnT98Hx2pEuNAEVJpzdPVUTgFE0nAFuJ8ZQ0tLleHJO4tJJIzwwVcV
-	 eW7goIzrKnRiEaVUTfqvDiZQ4NBLNOdPmZdvfvUimANjN8154emfMxr87mkJ/5syBJ
-	 uNWrukCm5T3NV6E1o8FN0vPa1C78wnNI5Fkq/93ViJqqRo/dyX6bbI1s46w0ka3Fbb
-	 lUQ/m+XCCrEXi7ObKeuTzk+oSqkOP5rz6tQ9BPhc65CzJX0Bq1bRVxz5qduta5r1gO
-	 llbfe9fJhBnTw==
-Message-ID: <471895f6-dc60-44d8-84ce-8ba0069110e4@kernel.org>
-Date: Tue, 17 Mar 2026 16:51:03 +0100
+	s=k20201202; t=1773763262;
+	bh=ar3yj8StogAACqxc0g1Q58gXeJrr8mZ+2bxzvkTkjOs=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=k9Agb7xpH5vuIK4BsgCwypCn/tGyR9IRfihGBGoPTb+fg9afIT88zZdXNUr+Wv0xw
+	 6LW/an9uCuIVdLUkxfVy7sRLiTFhNVFM14ahS0dHRe6SbaCzxhbUXZ1itVcCaPb4km
+	 5yYN02o6LNyvvZeJ52Q0f3pnukzvgNDTiZjgSRiKjyibAkpPpDx22nRDvtOxy9SJhA
+	 aghcZnENIEYM7frdpf65TRb1chVVRM5RdxCP6M79p7rE8SlfVwjrqZkPF8QJNvgAQd
+	 X0PvkWfk+1PyXLP2uTzy6wOvpC7zgX73uJL1IfjxGOwJe1PCHVtAO44FL8cHIIInAc
+	 FSpyhSTKqYlNA==
+Message-ID: <1671b8ce-cbf9-45ae-947b-f35d174be93e@kernel.org>
+Date: Tue, 17 Mar 2026 17:00:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -37,6 +37,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v10 1/7] dt-bindings: media: qcom,x1e80100-camss: Add
  simple-mfd compatible
+From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 Cc: Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
@@ -53,7 +54,7 @@ References: <20260316-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v10-0-fdfe984fe
  <20260316-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v10-1-fdfe984fe941@linaro.org>
  <20260316-glaring-jaybird-from-wonderland-4f8fd6@quoll>
  <94f4fda4-504e-44eb-87f0-e34e557402f8@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <471895f6-dc60-44d8-84ce-8ba0069110e4@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -98,85 +99,109 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <94f4fda4-504e-44eb-87f0-e34e557402f8@linaro.org>
+In-Reply-To: <471895f6-dc60-44d8-84ce-8ba0069110e4@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 16/03/2026 13:01, Bryan O'Donoghue wrote:
-> On 16/03/2026 07:29, Krzysztof Kozlowski wrote:
->> On Mon, Mar 16, 2026 at 01:02:01AM +0000, Bryan O'Donoghue wrote:
->>> Add "simple-mfd" as a second compatible string to allow child nodes
->>> within the CAMSS block to probe as individual platform devices.
+On 17/03/2026 16:51, Krzysztof Kozlowski wrote:
+> On 16/03/2026 13:01, Bryan O'Donoghue wrote:
+>> On 16/03/2026 07:29, Krzysztof Kozlowski wrote:
+>>> On Mon, Mar 16, 2026 at 01:02:01AM +0000, Bryan O'Donoghue wrote:
+>>>> Add "simple-mfd" as a second compatible string to allow child nodes
+>>>> within the CAMSS block to probe as individual platform devices.
+>>>>
+>>>> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>>>> ---
+>>>>   Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml | 8 ++++++--
+>>>>   1 file changed, 6 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml b/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
+>>>> index 2d1662ef522b7..b5654ef71bd89 100644
+>>>> --- a/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
+>>>> +++ b/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
+>>>> @@ -14,7 +14,11 @@ description:
+>>>>   
+>>>>   properties:
+>>>>     compatible:
+>>>> -    const: qcom,x1e80100-camss
+>>>> +    oneOf:
+>>>> +      - const: qcom,x1e80100-camss
+>>>> +      - items:
+>>>> +          - const: qcom,x1e80100-camss
+>>>> +          - const: simple-mfd
+>>>>   
+>>>>     reg:
+>>>>       maxItems: 17
+>>>> @@ -191,7 +195,7 @@ examples:
+>>>>           #size-cells = <2>;
+>>>>   
+>>>>           camss: isp@acb7000 {
+>>>> -            compatible = "qcom,x1e80100-camss";
+>>>> +            compatible = "qcom,x1e80100-camss", "simple-mfd";
 >>>
->>> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->>> ---
->>>   Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml | 8 ++++++--
->>>   1 file changed, 6 insertions(+), 2 deletions(-)
+>>> You do not have any children here. And if you checked the DTS, you
+>>> would see this does not work.
 >>>
->>> diff --git a/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml b/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
->>> index 2d1662ef522b7..b5654ef71bd89 100644
->>> --- a/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
->>> +++ b/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
->>> @@ -14,7 +14,11 @@ description:
->>>   
->>>   properties:
->>>     compatible:
->>> -    const: qcom,x1e80100-camss
->>> +    oneOf:
->>> +      - const: qcom,x1e80100-camss
->>> +      - items:
->>> +          - const: qcom,x1e80100-camss
->>> +          - const: simple-mfd
->>>   
->>>     reg:
->>>       maxItems: 17
->>> @@ -191,7 +195,7 @@ examples:
->>>           #size-cells = <2>;
->>>   
->>>           camss: isp@acb7000 {
->>> -            compatible = "qcom,x1e80100-camss";
->>> +            compatible = "qcom,x1e80100-camss", "simple-mfd";
+>>> Please post complete example and bindings.
+>>>
+>>> I suspect that after posting complete picture we will see this is not a
+>>> simple-mfd device (child depends on parent).
+>>>
+>>> Best regards,
+>>> Krzysztof
+>>>
 >>
->> You do not have any children here. And if you checked the DTS, you
->> would see this does not work.
+>> This is it:
 >>
->> Please post complete example and bindings.
+>> https://lore.kernel.org/r/20260316-x1e-camss-csi2-phy-dtsi-v2-3-859f3fa55790@linaro.org
+> 
+> That's a DTS branch.
+> 
+> This commit is simply incomplete and noop. Adding simple-mfd without
+> child makes no sense and no benefits.
+> 
+> It's like adding a local variable in C code without any read/assignment.
+> 
 >>
->> I suspect that after posting complete picture we will see this is not a
->> simple-mfd device (child depends on parent).
+>> Just broke up the series so that drivers/bindings could go through 
+>> linux-media and the dtsi stuff through Bjorn.
 >>
->> Best regards,
->> Krzysztof
+>> I actually got the idea from:
 >>
+>> commit fe6a952b567f6a771d087d2e969914f31574d6ab
+>> Author: Krzysztof Kozlowski <krzk@kernel.org>
+>> Date:   Fri Jan 27 20:40:50 2023 +0100
 > 
-> This is it:
+> If you refer to my commits, at least read them. Do you see children
+> there? Yes. You have none.
 > 
-> https://lore.kernel.org/r/20260316-x1e-camss-csi2-phy-dtsi-v2-3-859f3fa55790@linaro.org
-
-That's a DTS branch.
-
-This commit is simply incomplete and noop. Adding simple-mfd without
-child makes no sense and no benefits.
-
-It's like adding a local variable in C code without any read/assignment.
-
+> Plus trying to get 13 year old legacy device without dtbs_check warnings
+> is different thing than correcting a recently introduced bindings.
+> Terrible example to take... And if you find example from 20 years ago,
+> it will be even worse.
 > 
-> Just broke up the series so that drivers/bindings could go through 
-> linux-media and the dtsi stuff through Bjorn.
-> 
-> I actually got the idea from:
-> 
-> commit fe6a952b567f6a771d087d2e969914f31574d6ab
-> Author: Krzysztof Kozlowski <krzk@kernel.org>
-> Date:   Fri Jan 27 20:40:50 2023 +0100
 
-If you refer to my commits, at least read them. Do you see children
-there? Yes. You have none.
+One more thing, that commit was still correct because it fulfilled the
+simple-mfd requirement of lack of dependency on the parent. I do not
+believe your code fulfills it. I am pretty sure it does not.
 
-Plus trying to get 13 year old legacy device without dtbs_check warnings
-is different thing than correcting a recently introduced bindings.
-Terrible example to take... And if you find example from 20 years ago,
-it will be even worse.
+See 2023 and 2022 talks, how to get your schema accepted in less than 10
+iterations.
+
+Or please read writing bindings which *describes exactly that case*.
+
+We have it documented, I was speaking about this more than once.
+
+I also mentioned so many times - do not make random changes, just
+because you found commit doing something similar. You were cc-ed even on
+such remarks from my side, like discussion with Jorge were irrelevant
+work was used as arguments, instead of providing actual technical arguments.
+
+https://lore.kernel.org/all/0d381ad0-85d4-43de-a050-3b9ed03bf5d8@kernel.org/
+
+Don't ever reference some irrelevant commits in the past just because
+something looks similar. It makes no sense. Devices are completely
+different.
 
 Best regards,
 Krzysztof
