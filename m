@@ -1,170 +1,141 @@
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5936B27FB0E;
-	Tue, 17 Mar 2026 14:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5676615C158
+	for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 15:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773758689; cv=none; b=QtGaEuzhln6I7kWPflBbsj7fS8K2rWGKg/A8N350WCQVramrg4GvaOelIV+/1JFZmgB0xb16N8K01CNqswrg0pBTOc4+HgQtkPF+z3ZH4m8d1b3mnNJF0WVcnSeopiLsqfNBx1By3uSTBGu/fTabyYC/dWhyY/+NBruXZnH/QTU=
+	t=1773759646; cv=none; b=jkA7+u/6MwqYdUMbZ6Vq03N0Nu2IHHd05QD21RhL+gbzrwSmnfjARIO0l1M3ulmGKDtIJrVF8HmDqTBuwrH0eE2ZBFIrpcFDFcNGe4OaeVtLIJKyJrBuPb8dzafe9flL2nOtPYpaH9N99wsyLVhDd4U+v0hIXgJgMBpc5zvz9NI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773758689; c=relaxed/simple;
-	bh=ig/EMNX8avDH9Wkq0jW9ZCq98ghPv+RlnlihJXI4x1g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RkzQTd/70CR99r/6Wr2vjeuguPW891jJtc0IqerFk7CfRnF/rli5wANOQuBSyfrRu3jWeNhQsAopGbnYCRYHE69PJO5GLICip1Di/0m3zgTVI8EbRY3MyGXvOlfpOawY8FI50yjo2W1U2RLwhKH/3o/xSrKyLipMhCNyb0uY434=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=kPkW309+; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+	s=arc-20240116; t=1773759646; c=relaxed/simple;
+	bh=y0cFwtPG/Cb2k4cmeeXcVJx5e1bEZ27UmXDXdyoJzSU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fSZarp0lt6oF1whTVS3Tkua54qajZRvnqaHKmLHjeTB4fc12zvYZQmRfrwtmmilPK0IzV1OenVy11OqBQefxLhvW0R26IsQcWHtiHZD//og7D2FvgECT+N1Y6JLqjYOu2JNUDO00SdreEw8I8Mu1U9bic6T+r6cvEXcS/GzeMo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CJgJD9tU; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Xunniq1/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="kPkW309+"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=9nzDO8JHBjMy9LqMyHLjdL/DanHBIGqFXpaJScTCJtQ=; b=kPkW309+RbGupOYzxYbz0CwI8B
-	jEeGsg5RfC93jrywAcCL34e1cun4dqZs3klL8EDztT2qCwquFn+lHGmIREkefKmcP8GUQZgL2mXG4
-	djbLGdEgQAheNnsKH+o5Q67B+F3bb0E4ocgxAPTs9/E0K+QaauyLMxrdd82Jj2Lyq0HdghUhSIcXa
-	5/aGP8YOr1JW/ivrCAbCMC59PwxSkF/i4FaVUFNmMTIjee1alVMKzxM+j5VbJevf8UpK8WUFbDm1y
-	qMpwaOfwiRfpasKIvS4VYtxK58ZuDzYCM1iHkDEMhWQnCRM3bL4Jv6UpARZkODTX9vQasW7n8DnUe
-	MH37YmVA==;
-Received: from gwsc.sc.usp.br ([143.107.225.16] helo=[172.24.4.78])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1w2Vet-002Joh-2k; Tue, 17 Mar 2026 15:44:35 +0100
-Message-ID: <14ad62c7-7046-4df6-8267-c868a9fde982@igalia.com>
-Date: Tue, 17 Mar 2026 11:44:25 -0300
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CJgJD9tU";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xunniq1/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1773759644;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2ZjyvvzO6j/AYmpeb+MoccEZqlSVtgrWJzOGtOE/3fw=;
+	b=CJgJD9tU194jrW5VE+Wx/TQPZDv3SBhup5aAsKdWaR/Xe9v3BPuJ9e62Oj3u5GpUsyl8YT
+	j5Ezn6yeDYXGW67CBrJG5OboGoQkq6lPgXoG9I/UmAs2mv8sTwQtSfcOvsBbjodtB2TOft
+	4aOcqVEnqq6ZpeSFNEpFIDF7J0hN4as=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-556-sr3X-IAGPJKM5IZ2gMZspw-1; Tue, 17 Mar 2026 11:00:43 -0400
+X-MC-Unique: sr3X-IAGPJKM5IZ2gMZspw-1
+X-Mimecast-MFC-AGG-ID: sr3X-IAGPJKM5IZ2gMZspw_1773759643
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8cd77e5e187so3303105285a.1
+        for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 08:00:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1773759643; x=1774364443; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2ZjyvvzO6j/AYmpeb+MoccEZqlSVtgrWJzOGtOE/3fw=;
+        b=Xunniq1/5jx1ZtYBjiTb6g37nvVY1haf8s8xqibb7dvikipBQzxpsekjPXafUlvwdD
+         zvRPQJcnv+4URLRVA7quDV46IiB36jq5W6wV1VFWrR+EJ6aqE1Pluo4evEShxIiIt7vu
+         MGxiUzkeMuWz+8le1GJnwXEtCaOBOw+m7DPbHRcqGYh9ggsOpSoyWUbDwGJcMw7xgRNA
+         jfMyblzC4xWAJj+Ax11atRG7quFb4iSpxXvV6p6GM1bQg+8U+LdE6lPMjQ5mZTbCbyM0
+         /YuXpfa38VfR70SCKYNBJIsoAL/IUCZiygR3VcDUzCaNUIFQhUxuVJjN7qxBigfLgrrL
+         l0Kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1773759643; x=1774364443;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=2ZjyvvzO6j/AYmpeb+MoccEZqlSVtgrWJzOGtOE/3fw=;
+        b=BRn9s0VGWunINWIuR5kO4kXfxzCKYkoNHn8Q7ROxURnmJVnyRUb8lR8kHm2lw2y1LU
+         FoCU6umsk42zMb/9hgFKfWxylDD3U6zNl0jwVJKKYOpAmQH9pR9UlDS5iu7irZBnS6xz
+         dThzz+Gp1qIiKgVPNLnrJ/4G8B71slFO1u/c5i/4q9HLuo/fvuLp/bWzmbUaPV/LRWKg
+         T1QgTHr796S2RY2cGzYXzBdacW1hpqU9ljtAi/0jRbaSJ4/nQPJLZJ7BZt7u1x0fQVIO
+         CaqZxRJXi7ak5AQqb/4e/YTMYExTyIj6aswdr4FLSm8FQ5PYHJXdDinPMrj3oxz2SB7v
+         ctdw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1c8IVVdX8m1RItQUr6BBhRpEqw/F+gR/H7LAaVcTBbU8pQZ1UpMHUnhhx/q+SQbXbTUPa9K9CDOA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6A8UY8J6rtevfAEiv/pRL9p6nbffZns70/6VmPbOac6UwgNrx
+	NRo5HWdE2n4+1+Jnm5qAhfgxbe/Hmqpt7uo7qsHlht6Js1HVaPiJJ8ezaFjZjCk+Fy8+W3YEQlg
+	N47XwUTOs4oyMtoLsj0wstWEzUWmCFGxZoAN0y0vFtqLND6K1ejZt7kq3SnPhkw==
+X-Gm-Gg: ATEYQzyG21vAq7WsH8ZVFjhDtaxLZ6MjOu5LNLj+nRpzl7mBR+E2QfbdsHZ9B4WVTEJ
+	Gu00Z1sLH9UTGT+GbXf1MQ1Yi0mzE0TkM3FpqGnOwmyJHJlIz75k1HK+jjjjAtE9fZYiU6kwsBt
+	dd0G2aF6VgP7gtVn+HdFCywFYyFHRei3/kLdkLQ6ZTVs25fef6s5eyY/qbaUWcUud7jd0YAHAEP
+	kBCcrML2j6Gn+yH/+m1iCrNmg6QerYrfICkDgn0YupSMBXCkhs4uMl2GGsjVIVSSOvUVxZefPiV
+	Nf44uWZ5eXqKusGPsVFY5qXHrfrYJPRQRgGVrjKCYmi174bnmTPZWLnGoQLdnzI53wuQCLxRWSW
+	2EzSvvA/754HRR6BMTKyxCMCwYdM1SltMuEGdbPBQsJBAYbeu44eXb4ZS
+X-Received: by 2002:a05:620a:1a25:b0:8cd:8cb8:6ff9 with SMTP id af79cd13be357-8cdb5a70fecmr2086629285a.34.1773759641504;
+        Tue, 17 Mar 2026 08:00:41 -0700 (PDT)
+X-Received: by 2002:a05:620a:1a25:b0:8cd:8cb8:6ff9 with SMTP id af79cd13be357-8cdb5a70fecmr2086616785a.34.1773759640773;
+        Tue, 17 Mar 2026 08:00:40 -0700 (PDT)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8cda21484casm1462547685a.40.2026.03.17.08.00.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Mar 2026 08:00:39 -0700 (PDT)
+Date: Tue, 17 Mar 2026 11:00:37 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Abel Vesa <abel.vesa@oss.qualcomm.com>
+Cc: Maxime Ripard <mripard@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
+	Hans de Goede <hansg@kernel.org>,
+	Saravana Kannan <saravanak@kernel.org>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: add new Kconfig to control default behavior of
+ disabling unused clocks
+Message-ID: <ablslaSoUraCRPKl@redhat.com>
+References: <20260316-clk-ignore-unused-kconfig-v1-1-6e95a4fb0c94@redhat.com>
+ <20260317-almond-leech-of-correction-2a2ef6@houat>
+ <com5zf4bfgb3eoelbmy5pfykhdow6ne3nteua6l7bnzkr72dsb@pehxxygji5z2>
+ <20260317-notorious-classic-sunfish-d016d5@houat>
+ <2dsd7hq4bn25dibqk62a7o56tt2tecf645tq3upccneq4hby67@cmjjc5d6ximt>
+ <ablhdKJgEhU8KmtO@redhat.com>
+ <hdagvfcxoh4nukz5sqocbp7qbezv3rxct3aygb7fvhsej7zp27@iyeoi74q2w7n>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/5] pmdomain: bcm: bcm2835-power: Increase ASB control
- timeout
-To: Stefan Wahren <wahrenst@gmx.net>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Maxime Ripard <mripard@kernel.org>, Melissa Wen <mwen@igalia.com>,
- Iago Toral Quiroga <itoral@igalia.com>,
- Chema Casanova <jmcasanova@igalia.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, kernel-dev@igalia.com,
- stable@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- linux-pm@vger.kernel.org
-References: <20260312-v3d-power-management-v7-0-9f006a1d4c55@igalia.com>
- <20260312-v3d-power-management-v7-2-9f006a1d4c55@igalia.com>
- <bdae424d-f4b5-4181-9421-4393fe3ac8fb@gmx.net>
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-Content-Language: en-US
-Autocrypt: addr=mcanal@igalia.com; keydata=
- xsBNBGcCwywBCADgTji02Sv9zjHo26LXKdCaumcSWglfnJ93rwOCNkHfPIBll85LL9G0J7H8
- /PmEL9y0LPo9/B3fhIpbD8VhSy9Sqz8qVl1oeqSe/rh3M+GceZbFUPpMSk5pNY9wr5raZ63d
- gJc1cs8XBhuj1EzeE8qbP6JAmsL+NMEmtkkNPfjhX14yqzHDVSqmAFEsh4Vmw6oaTMXvwQ40
- SkFjtl3sr20y07cJMDe++tFet2fsfKqQNxwiGBZJsjEMO2T+mW7DuV2pKHr9aifWjABY5EPw
- G7qbrh+hXgfT+njAVg5+BcLz7w9Ju/7iwDMiIY1hx64Ogrpwykj9bXav35GKobicCAwHABEB
- AAHNIE1hw61yYSBDYW5hbCA8bWNhbmFsQGlnYWxpYS5jb20+wsCRBBMBCAA7FiEE+ORdfQEW
- dwcppnfRP/MOinaI+qoFAmcCwywCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQ
- P/MOinaI+qoUBQgAqz2gzUP7K3EBI24+a5FwFlruQGtim85GAJZXToBtzsfGLLVUSCL3aF/5
- O335Bh6ViSBgxmowIwVJlS/e+L95CkTGzIIMHgyUZfNefR2L3aZA6cgc9z8cfow62Wu8eXnq
- GM/+WWvrFQb/dBKKuohfBlpThqDWXxhozazCcJYYHradIuOM8zyMtCLDYwPW7Vqmewa+w994
- 7Lo4CgOhUXVI2jJSBq3sgHEPxiUBOGxvOt1YBg7H9C37BeZYZxFmU8vh7fbOsvhx7Aqu5xV7
- FG+1ZMfDkv+PixCuGtR5yPPaqU2XdjDC/9mlRWWQTPzg74RLEw5sz/tIHQPPm6ROCACFls7A
- TQRnAsMsAQgAxTU8dnqzK6vgODTCW2A6SAzcvKztxae4YjRwN1SuGhJR2isJgQHoOH6oCItW
- Xc1CGAWnci6doh1DJvbbB7uvkQlbeNxeIz0OzHSiB+pb1ssuT31Hz6QZFbX4q+crregPIhr+
- 0xeDi6Mtu+paYprI7USGFFjDUvJUf36kK0yuF2XUOBlF0beCQ7Jhc+UoI9Akmvl4sHUrZJzX
- LMeajARnSBXTcig6h6/NFVkr1mi1uuZfIRNCkxCE8QRYebZLSWxBVr3h7dtOUkq2CzL2kRCK
- T2rKkmYrvBJTqSvfK3Ba7QrDg3szEe+fENpL3gHtH6h/XQF92EOulm5S5o0I+ceREwARAQAB
- wsB2BBgBCAAgFiEE+ORdfQEWdwcppnfRP/MOinaI+qoFAmcCwywCGwwACgkQP/MOinaI+qpI
- zQf+NAcNDBXWHGA3lgvYvOU31+ik9bb30xZ7IqK9MIi6TpZqL7cxNwZ+FAK2GbUWhy+/gPkX
- it2gCAJsjo/QEKJi7Zh8IgHN+jfim942QZOkU+p/YEcvqBvXa0zqW0sYfyAxkrf/OZfTnNNE
- Tr+uBKNaQGO2vkn5AX5l8zMl9LCH3/Ieaboni35qEhoD/aM0Kpf93PhCvJGbD4n1DnRhrxm1
- uEdQ6HUjWghEjC+Jh9xUvJco2tUTepw4OwuPxOvtuPTUa1kgixYyG1Jck/67reJzMigeuYFt
- raV3P8t/6cmtawVjurhnCDuURyhUrjpRhgFp+lW8OGr6pepHol/WFIOQEg==
-In-Reply-To: <bdae424d-f4b5-4181-9421-4393fe3ac8fb@gmx.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <hdagvfcxoh4nukz5sqocbp7qbezv3rxct3aygb7fvhsej7zp27@iyeoi74q2w7n>
+User-Agent: Mutt/2.3.0 (2026-01-25)
 
-Hi Stefan,
-
-On 15/03/26 20:07, Stefan Wahren wrote:
-> Hi Maíra,
+On Tue, Mar 17, 2026 at 04:20:06PM +0200, Abel Vesa wrote:
+> On 26-03-17 10:13:08, Brian Masney wrote:
+> > FWIW, the only reason I posted this patch is because at the end of
+> > Stephen's LPC talk I got the impression that this was also an acceptable
+> > change. I'm fine with dropping this change.
 > 
-> Am 12.03.26 um 22:34 schrieb Maíra Canal:
->> The bcm2835_asb_control() function uses a tight polling loop to wait
->> for the ASB bridge to acknowledge a request. During intensive workloads,
->> this handshake intermittently fails for V3D's master ASB on BCM2711,
->> resulting in "Failed to disable ASB master for v3d" errors during
->> runtime PM suspend. As a consequence, the failed power-off leaves V3D in
->> a broken state, leading to bus faults or system hangs on later accesses.
->>
->> As the timeout is insufficient in some scenarios, increase the polling
->> timeout from 1us to 5us, which is still negligible in the context of a
->> power domain transition. Also, move the start timestamp to after the
->> MMIO write, as the write latency is counted against the timeout,
->> reducing the effective wait time for the hardware to respond.
->>
->> Cc: stable@vger.kernel.org
-> I think, a Fixes tag would be helpful here. Also this fix should be the 
-> first patch of the series or separate.
+> Here is the scenario that proves adding such config isn't the right
+> solution: think of single kernel image working with different SoCs from
+> different vendors. This is actually the case where distros need to have
+> a way to provide one kernel image + thousands of DTBs and be able to
+> boot one each one of the boards. Whatever this config is set to in the
+> kernel image, it will not work with all platforms.
 
-I'll send it separately with the Fixes tag. Thanks!
+Agreed.
 
->> Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
->> Signed-off-by: Maíra Canal <mcanal@igalia.com>
->>
->> ---
->> To: Ulf Hansson <ulf.hansson@linaro.org>
->> To: Ray Jui <rjui@broadcom.com>
->> To: Scott Branden <sbranden@broadcom.com>
->> Cc: linux-pm@vger.kernel.org
-> This looks unusual. Is this intended?
+However, with or without this new Kconfig, we have this problem today.
+Right now the kernel isn't bootable on large numbers of systems, and
+people have to manually add clk_ignore_unused.
 
-As b4 doesn't support it natively, I used this strategy to send only
-this patch to the linux-pm mailing list and not the whole series.
+I agree though that we don't want to penalize boards that are doing
+things right, and have a full clock tree described with higher power
+draw. 
 
-Best regards,
-- Maíra
+As a test, on my Thinkpad x13s (sc8280xp) clk_disable_unused on Fedora
+43 turns off 96 clocks on this laptop! I can infer what some of the
+clocks do based on their names, however I'm not in Qualcomm, and some
+of these clocks I'm not entire sure which ones would need
+CLK_IGNORE_UNUSED. I got it down to a set of 7 possible clocks that
+may need that flag by excluding some classes of clocks, such as usb.
 
-> 
-> Best regards
->> ---
->>   drivers/pmdomain/bcm/bcm2835-power.c | 5 ++---
->>   1 file changed, 2 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/pmdomain/bcm/bcm2835-power.c b/drivers/pmdomain/ 
->> bcm/bcm2835-power.c
->> index 
->> 0450202bbee2513c9116a36abaa839b460550935..1815eb4ee69b9b672b5e314402f1cc9897c57dcb 100644
->> --- a/drivers/pmdomain/bcm/bcm2835-power.c
->> +++ b/drivers/pmdomain/bcm/bcm2835-power.c
->> @@ -166,8 +166,6 @@ static int bcm2835_asb_control(struct 
->> bcm2835_power *power, u32 reg, bool enable
->>           break;
->>       }
->> -    start = ktime_get_ns();
->> -
->>       /* Enable the module's async AXI bridges. */
->>       if (enable) {
->>           val = readl(base + reg) & ~ASB_REQ_STOP;
->> @@ -176,9 +174,10 @@ static int bcm2835_asb_control(struct 
->> bcm2835_power *power, u32 reg, bool enable
->>       }
->>       writel(PM_PASSWORD | val, base + reg);
->> +    start = ktime_get_ns();
->>       while (!!(readl(base + reg) & ASB_ACK) == enable) {
->>           cpu_relax();
->> -        if (ktime_get_ns() - start >= 1000)
->> +        if (ktime_get_ns() - start >= 5000)
->>               return -ETIMEDOUT;
->>       }
->>
-> 
+Brian
 
