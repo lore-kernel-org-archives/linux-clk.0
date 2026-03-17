@@ -1,126 +1,169 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330993EBF14
-	for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 14:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E843E638F
+	for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 14:13:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773756795; cv=none; b=hTbDn1a+2S3Si2q8ZXcCWrA9Ihh1eLn9437lCh54FewzsKPHGOTnrKr4l1BtTPkr8qXj5g8N5ojIDSQpUJ9EMt7PZxjprtDyXvJz1vMFGiHYIxrv0n884ftLvf4NDvVTkuwu5MguwgOnueFbQKwsAvuETFJ6VZssJ2u0+I+EpzA=
+	t=1773756840; cv=none; b=pvVKd9mSXWSRwjMBnVi5jdbIzgrOAAdsn7Yw2BcdP1FPLcRUMlXDvMh8iSh87ZKZzhyCTAXE3brdBazl4P8tve/1H2rulZnnkFdRm2o8fta9+mG8nDtxNNYOxGpKF6/aJsNyXo7mBAURyXiEEnltTiWdKd15EPcgKjv4hiOJFFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773756795; c=relaxed/simple;
-	bh=91BKEugAixdxcjS7gsISaPOceXdhb9ubhvIKgagWg70=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=roGQKq3TLSEZyM7oCX4zDu34m+Gu5jmFJZ/VW4qolN0CZcmEeLMVZVuJnikVYIAIPtDe12HfrECaMCrlUCn/415OCjuuVDi7YDCDawIV/8fg0dhQuQSqlygP6Rw5fsNPjuDQ4bjF0Zishy7pu2UIpvBmk3X2LA9iYhXh4cqBJyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P7Iv96k1; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=CMU9Xxi6; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1773756840; c=relaxed/simple;
+	bh=jugNfhVGoAZLsOc99uCHasSIqDz4SbgW0PhAWH1GU18=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Z6qNp86I1Pes5jra8uanX6/H1BGFMH+Vq/Rfn9qhju3ebH01IlT+I4ayb5vYADhaBrql0jbXitp/mK1q53K58c3dRsbxeLzXxBmhA2rVMXWNBCg3vsVElcLplxIuQe6dtSoPT7GJ3R9wXd5tMws6iX4nlGZsjdkZkPCc5J7z5uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IwDacHVC; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P7Iv96k1";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="CMU9Xxi6"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1773756793;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=91BKEugAixdxcjS7gsISaPOceXdhb9ubhvIKgagWg70=;
-	b=P7Iv96k1HFlDwAeuNcJtuj0CdyXvZM5XgsE0chJvJjm/34dT8ogsZOOjS+HqMIZiDkXnO6
-	xoYCiC++ZguHBehzJhgklDbBI0enWVKsGfpLI/BvBXdr7SCrWqDFwvML515bJUm5Plj0gN
-	NPoaW7Rbwud3p7i0g3LuPIN3DU29rBs=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-41-uct37gCANLy5Jtq9NtCpzg-1; Tue, 17 Mar 2026 10:13:12 -0400
-X-MC-Unique: uct37gCANLy5Jtq9NtCpzg-1
-X-Mimecast-MFC-AGG-ID: uct37gCANLy5Jtq9NtCpzg_1773756792
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-89a0684d05dso52025696d6.1
-        for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 07:13:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IwDacHVC"
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-c73fbdd9b53so929776a12.3
+        for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 07:13:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1773756792; x=1774361592; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1773756839; x=1774361639; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=91BKEugAixdxcjS7gsISaPOceXdhb9ubhvIKgagWg70=;
-        b=CMU9Xxi66Y2KWbcs7/D/+TUvxSSZjT1svwLcxNx3PCPtCuXh2UPA2HCSY3g9VeyF0p
-         KtMfoGdZ05yl+PuRi77yABP7/VJpB/wIgY09k2yrlPgSyfLCEln0jr7JMd6imMTP3Ww/
-         8Y0ThCaCQRfJw+4tTWrXB7sPd1ywmU273p0QVX3Grbik2/0q6g/xMtGCbIK0digSm9mS
-         cSP4iLCE6I3ZgCWLZkjpvJstVX9qxbH+hQnw7NspIQQrie6tJr8KBWIb5SiGe1jVm0M7
-         dvDvfymZVYHHUqfHMp/4pOlSvOC8Rf0R6MrUZoMlwR+JHsWyO8YxqUh3Gur7XhYQWGyC
-         3kOg==
+        bh=xG69i8JOUMrznCX6jQd2A8Mx07c0rQ57RLS0YIP3VgM=;
+        b=IwDacHVCJqqz/pl59zB+0pV+tkuM8+dz356kv6oRBiBwjg3VkrlOmbPFG78Rb8Oo/E
+         6Ae4mRspZMfm/YwsltuMcGnezSE0xgiVyDDBdoNyRKKpCXw42wBhyi+ay5Q8r2lT9CUx
+         jEMOttyCGd3tTunzzeNcTajNFe/TOm+IOQiSFoLiTKfpU5ex8kpMaY/EU3iAwI9Xa6md
+         0VeSs3XMmSdL53OQzALfFVFcxNhAgEXrQfxEBeZyKQWvgYKtrWQ3HibKRNBcoCFH5wZP
+         i2OleKprJbZ/FNavehvgY1lKCcEMmP2uVzgCo8Rxe5N+6F61EXtDJzzYQVN8BYfV5y4B
+         JtPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773756792; x=1774361592;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20251104; t=1773756839; x=1774361639;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=91BKEugAixdxcjS7gsISaPOceXdhb9ubhvIKgagWg70=;
-        b=JzCGmlz35VzYUhH36xp/tS+LCap+ss9BhPX+iS6KTQal/b3Qh5LBNwhs6wrxxFMHmx
-         31l8+axXmvXApwijokfPkyEYvhTgNZb+KMAQxbUIzNyXML3HBksm/PjvmWj3iDN3pCAE
-         VIyItl+wBuCmGtUOTObtepasi9qWeoQ2yjbFixu7blDMb6bPDxOmgRibHodDU2vn0+DS
-         WPV6gQGQZon/k2EGicrM/loShums+yN1naWHiL9iXYKZQiY4NEy6Mo50G1eyfGj8sM9k
-         aAjeieUVO+MxJybiAkvzdWlcidanViSi+Khq0dKvtSV2GGLw6H3ciacpHiFATuYy6834
-         PMUw==
-X-Forwarded-Encrypted: i=1; AJvYcCWTTCNGZx5QV9BRXaT0MJEYtWkN2L0xfm0CYxrIBGVaham3mvNt6uZt6MNJ9k7SIzS6sUp/UKkpCsQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyumOKfslJwnxWGaFjPsuW57/6CuaW733l6uPQs0PkCY2gePZUY
-	gqRJMznGM+ZkDDSFcFPCFTPzUH9kJmwDo20UrBLEk9IPXt20+DSIDWSDNiZrzDE6mYAErZWVGTW
-	QotYx76tCF2hgKPxte2FbnfKCb2JaO2iVyOr9dzVgi6NPFR0Un867pL4mF7UBuw==
-X-Gm-Gg: ATEYQzx3LLbsyfT3OviYuQE68b3k00tZwRjRw/MgH9HzQV6OFkBxRN86RqMVjyoXUeI
-	dXGzofgHbJG6ji/Gy1Jd1GC1KtSXTjfVwoahc6YBbewi5PE1jxB6XNHr/vNHHOZ1m6bW5ZFYVun
-	dHbvOKwzYK58j/hkHIfOTqe/hlGGvQjCblleHzMOXULYMHhWMw77Mdwd11VLkhYWLi3tvNr1V3A
-	MBJHZR5mjlVpnIKtKnS+KaAjs9O51UMVMRliwAV18hSDpYV1ZATC1vG4zGR7Ro0eH4OIRqRULBy
-	O9prpn8lq7Zb6jgn4KpeHkzqJGhZRirVYDS0XynYkllaLQHmTTriJrjP/VNNhohPEwhZAI/pB2q
-	v6CcUOQYpRgbE4D+Uuyhak4NAKZJ6i+4Ats1qlXrthQo2dRO0UIx7kwVV
-X-Received: by 2002:a05:6214:c2f:b0:89c:5bbe:1e73 with SMTP id 6a1803df08f44-89c5e3f07e5mr52990466d6.32.1773756791611;
-        Tue, 17 Mar 2026 07:13:11 -0700 (PDT)
-X-Received: by 2002:a05:6214:c2f:b0:89c:5bbe:1e73 with SMTP id 6a1803df08f44-89c5e3f07e5mr52989886d6.32.1773756791055;
-        Tue, 17 Mar 2026 07:13:11 -0700 (PDT)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-89c4feaaedbsm47275346d6.40.2026.03.17.07.13.09
+        bh=xG69i8JOUMrznCX6jQd2A8Mx07c0rQ57RLS0YIP3VgM=;
+        b=X2vAwpCxECHu0Dn4GH2JMN9Uhk0HsNCXFTkJJaNy9yAwtc2ge+7xuNcW4HEmNNdcRU
+         khbgAx12qA4Q4hb5VB5Q42OuRWhq04blvRRfJnysbJegHAhFpC9HB1zkzSlA3Gycyelg
+         d4V2Z0vgG/OXlmsLYvPnpu+k620Q1S5axYC9iYuETDZEcXyTyzn5/uH3H1TQ/2cpbxp3
+         n6SLE2WAydLkGkifWfB4IeucCsaq/kgPPscT8FDuoQiF+27PC58r1iyRzX6uT8ZBniuy
+         nqvajlcgOxXOaysUiIGk2GRz7xkR9iqX/sIqXoG6kcopGgqSHGsGZj21k0VKsRNT88/X
+         RAcA==
+X-Forwarded-Encrypted: i=1; AJvYcCVP/a8dLVEiKWolxE5FQu8RiIPuW03rbxnyLkR5AHzP23kapc0dZEIknx5L/hMDwWqZUp1PgEsL8xA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3153eDSempySaXGJ3+fSgSPVGg91x2Ut5O0HECvVVBVZBVE/1
+	ar9XfREapCNGO9LPcpnygG4h4gl70Odm554OZMSfmId5vd0u1q3d4vRx
+X-Gm-Gg: ATEYQzxz6zyh/sPUmXcBc3L27jSThHWbVZcMAol5DhUOdMdcQbkWAQ86nwUY20hH/xa
+	HwICd4WNVGacky5l12Rw3TJiqVwN6ZPhV/hZoFeyh4NPPG91kNvmJUzv75uqsU5R0JM3QxCqHkG
+	cc/iEHAYcA4aXQTpvZ5H2rX65gPDhWmzLTTNOh83z+W1GfSpVC7oK1Ns64xGC/+1l5UNFYV45PQ
+	N+k49ZpvKfgZJhYi107EGZYQ7/qc3FEX1jppKUaZ7F89pHsrhLbPaWbwSPQSZUOMZGa7fpVESL4
+	4627lf1t3iyLgN3yaYsKWHWcpnxdSqWtmI8i3f1ilocWC8ZERUyFITayw5pBDulHKtub/yTyLN8
+	TpXx6yFJ/7XU/bX2RXBMtyD7Vo+g52N5obV/v/joBs0jMDKHmmmbCk5ZZrNp5N5pwZU5RQ+ley1
+	eNcx5n4/L5p1ZSu2cPeSQdnj+Qf6Zp4xchQVL12CE5JbpCn+HHO9qI/1bBBRz6nUbNsWJiyA==
+X-Received: by 2002:a17:902:e54e:b0:2b0:5472:ac80 with SMTP id d9443c01a7336-2b05472af91mr89495745ad.42.1773756838550;
+        Tue, 17 Mar 2026 07:13:58 -0700 (PDT)
+Received: from localhost.localdomain (61-230-23-18.dynamic-ip.hinet.net. [61.230.23.18])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2b04f40f515sm114820005ad.74.2026.03.17.07.13.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Mar 2026 07:13:10 -0700 (PDT)
-Date: Tue, 17 Mar 2026 10:13:08 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Abel Vesa <abel.vesa@oss.qualcomm.com>
-Cc: Maxime Ripard <mripard@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
-	Hans de Goede <hansg@kernel.org>,
-	Saravana Kannan <saravanak@kernel.org>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: add new Kconfig to control default behavior of
- disabling unused clocks
-Message-ID: <ablhdKJgEhU8KmtO@redhat.com>
-References: <20260316-clk-ignore-unused-kconfig-v1-1-6e95a4fb0c94@redhat.com>
- <20260317-almond-leech-of-correction-2a2ef6@houat>
- <com5zf4bfgb3eoelbmy5pfykhdow6ne3nteua6l7bnzkr72dsb@pehxxygji5z2>
- <20260317-notorious-classic-sunfish-d016d5@houat>
- <2dsd7hq4bn25dibqk62a7o56tt2tecf645tq3upccneq4hby67@cmjjc5d6ximt>
+        Tue, 17 Mar 2026 07:13:58 -0700 (PDT)
+From: Yu-Chun Lin <eleanor15x@gmail.com>
+To: krzk@kernel.org
+Cc: afaerber@suse.com,
+	conor+dt@kernel.org,
+	cy.huang@realtek.com,
+	cylee12@realtek.com,
+	devicetree@vger.kernel.org,
+	eleanor.lin@realtek.com,
+	james.tai@realtek.com,
+	jyanchou@realtek.com,
+	krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-realtek-soc@lists.infradead.org,
+	mturquette@baylibre.com,
+	p.zabel@pengutronix.de,
+	robh@kernel.org,
+	sboyd@kernel.org,
+	stanley_chang@realtek.com
+Subject: Re: [PATCH v4 01/10] dt-bindings: clock: Add Realtek RTD1625 Clock & Reset Controller
+Date: Tue, 17 Mar 2026 22:13:52 +0800
+Message-Id: <20260317141352.17813-1-eleanor15x@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <949b509d-c712-43e7-85a0-60f4c5e24a09@kernel.org>
+References: <949b509d-c712-43e7-85a0-60f4c5e24a09@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2dsd7hq4bn25dibqk62a7o56tt2tecf645tq3upccneq4hby67@cmjjc5d6ximt>
-User-Agent: Mutt/2.3.0 (2026-01-25)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 17, 2026 at 03:21:17PM +0200, Abel Vesa wrote:
-> The solution has been already discussed for a long time now and it is:
-> drop the clk_ignore_unused late_initcall entirely and then make a
-> generic sync_state callback that the clock providers can use (or they
-> could implement one themselves). This way, until sync_state is reached
-> for a specific clock provider driver, all unused clocks remain as is.
+> On 17/03/2026 02:57, Yu-Chun Lin [林祐君] wrote:
+>>> On Fri, Mar 13, 2026 at 04:10:51PM +0800, Yu-Chun Lin wrote:
+>>>> +#endif /* __DT_BINDINGS_RTK_CLOCK_RTD1625_H */
+>>>> diff --git a/include/dt-bindings/reset/realtek,rtd1625.h
+>>>> b/include/dt-bindings/reset/realtek,rtd1625.h
+>>>> new file mode 100644
+>>>> index 000000000000..e69b5ee14cc6
+>>>> --- /dev/null
+>>>> +++ b/include/dt-bindings/reset/realtek,rtd1625.h
+>>>> @@ -0,0 +1,195 @@
+>>>> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+>>>> +/*
+>>>> + * Copyright (C) 2025 Realtek Semiconductor Corp.
+>>>> + */
+>>>> +#ifndef __DT_BINDINGS_RTK_RESET_RTD1625_H #define
+>>>> +__DT_BINDINGS_RTK_RESET_RTD1625_H
+>>>> +
+>>>> +#define RTD1625_RSTN_REG_ID_SOFT_RESET1     0
+>>>> +#define RTD1625_RSTN_REG_ID_SOFT_RESET2     1
+>>>> +#define RTD1625_RSTN_REG_ID_SOFT_RESET3     2
+>>>> +#define RTD1625_RSTN_REG_ID_SOFT_RESET4     3
+>>>> +#define RTD1625_RSTN_REG_ID_SOFT_RESET7     4
+>>>> +#define RTD1625_RSTN_REG_ID_SOFT_RESET9     5
+>>>> +#define RTD1625_RSTN_REG_ID_SOFT_RESET_BIST 6
+>>>> +#define RTD1625_RSTN_REG_ID_DUMMY0          7
+>>>> +#define RTD1625_RSTN_REG_ID_DUMMY1          8
+>>>> +#define RTD1625_RSTN_REG_ID_DUMMY4          9
+>>>> +#define RTD1625_RSTN_REG_ID_SOFT_RESET11    10
+>>>> +#define RTD1625_RSTN_REG_ID_SOFT_RESET12    11
+>>>> +
+>>>> +#define _REG_ID(n) ((RTD1625_RSTN_REG_ID_ ## n) << 5)
+>>>> +
+>>>
+>>> Not a binding.
+>>>
+>>>> +#define RTD1625_CRT_RSTN_MISC      (_REG_ID(SOFT_RESET1) | 0)
+>>>> +#define RTD1625_CRT_RSTN_DIP       (_REG_ID(SOFT_RESET1) | 2)
+>>>> +#define RTD1625_CRT_RSTN_GSPI      (_REG_ID(SOFT_RESET1) | 4)
+>>>
+>>> None of these are really bindings. Register offsets is hardware data, not a
+>>> binding.
+>>>
+>>> Drop all of this above and further - actually nothing in this header look like a
+>>> binding, since you called these "REG".
+>>>
+>>> Best regards,
+>>> Krzysztof
+>> 
+>> The defines in this header are NOT register offsets. They encode "Bank ID+ Bit
+>> Position" for use in Device Tree.
+>
+> Bit position as in register bit position? That's still not a binding.
+>
+>
+>>
+>> Agreed, The naming with "REG_ID" is misleading. I will improve naming all reset
+>> IDs in v5.
+>
+> No, all are to be dropped or renamed to standard IDs (incremented by one
+> from 0 or 1).
+>
+> Best regards,
+> Krzysztof
 
-I'm willing to work on the sync state support once my clk scaling
-series [1] lands upstream. I believe that Saravana posted a series
-related to clk sync state, and I need to look at that.
+Hi Krzysztof,
+ 
+Understood. I will redesign as follows:
+ 
+1. Binding header: Sequential IDs (0, 1, 2, ...) without hardware details.
+2. Driver: Internal mapping table to convert IDs to register/bit positions.
+3. DT: Uses abstract IDs from binding header.
 
-FWIW, the only reason I posted this patch is because at the end of
-Stephen's LPC talk I got the impression that this was also an acceptable
-change. I'm fine with dropping this change.
-
-[1] https://lore.kernel.org/linux-clk/20260313-clk-scaling-v6-0-ce89968c5247@redhat.com/
-
-Brian
-
+Regards,
+Yu-Chun
