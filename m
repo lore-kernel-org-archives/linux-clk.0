@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E233DCD9B;
-	Tue, 17 Mar 2026 15:15:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CC72222CC;
+	Tue, 17 Mar 2026 15:51:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773760505; cv=none; b=SVmntcjiVwxs5wHhvi6+fD2ND8uxh2kLLNTX+EZkYKUmef0xSe7hopSKThAy2nZEysVgEXbmpQVPqXI/qydydfgFyOF0IQTbnU8LHARWGjHYDbKh/QMQ05paawjCf9aNIrtmzMEU2sZm73BSoZgXf6lIVE7okjecXxcV9ZPdXjY=
+	t=1773762669; cv=none; b=DxWkD53FfxHFY6kf9mEtLkB+UjiK0v4RiPUcFgoXfnnhF4JI3YWNuySIs/riaHOrJHfTUDDw3eXgTktFZa3rV5pENXYe6LqeXpaXp8wf55kokshwne+hDqHUWSJ+cPwG/8g9OnxH4azDYzkPDsDfnWBj2zwn9+94TC7NIV8f0aI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773760505; c=relaxed/simple;
-	bh=GnoZF4xXU3Ru3GlNC9iVumHKiNxYJyGj7qMhDqY4N5I=;
+	s=arc-20240116; t=1773762669; c=relaxed/simple;
+	bh=AkJEuI5liNnf15IbF4J03GN5K1Co8BejXS4SjS2ETlY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C/qzGDgH+++oQBodXZkiml7BFM/6ALqLpTc0ntzAmdMcGNdJ4EDOt51APhwnfUH6CWuI/H+VOWkpl4+FKbjL5n2Ds4jr+9U+9UbgWXAg3k1PoYfctQCQRPXBzwCcEs/BiVNRsV8w6qd/DjQ8rilc0Lsusra4PJxH39xNUbbApbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=clN6vGOr; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=Bh/wg8sWwDTmACDwlpFQmpJZMPYWnCfuK7nbFZkklifVgc4giV9lc4jAQhxH+BX3QPciOC5qWJ2piBunChLF5PV+yvpqa8cMVh7J6Wb0n7j5/q8K3+2ttTuHyoYOsQKMrBjbBIzdnT+7nuwDOYz2xlewYxVXsm45DgetppnMkw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j0G41MDs; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="clN6vGOr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D239CC4CEF7;
-	Tue, 17 Mar 2026 15:15:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j0G41MDs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FC51C4CEF7;
+	Tue, 17 Mar 2026 15:51:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773760504;
-	bh=GnoZF4xXU3Ru3GlNC9iVumHKiNxYJyGj7qMhDqY4N5I=;
+	s=k20201202; t=1773762668;
+	bh=AkJEuI5liNnf15IbF4J03GN5K1Co8BejXS4SjS2ETlY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=clN6vGOrofyGydrKNTqPJPBNPRTECyfCIRSdnCnCswoycIWxt4o0IKddpC8uvFaf0
-	 LLdL87DXDeAbzpNschaaFbQTn3H8l89eQhpvPP7Zkzky0Q3EfA7zX/wE+HdcxMVuLB
-	 ySMr5hJmZDsUMgdWZgc7Q+r94rYEdut7WGBjYt9z0tZDu/4GXV9VivzxD/koinLkyD
-	 OkrfjW2w15tp3YIgDLI0rgvWvBPVgfIzmyBaurSgLfmnH5S1e2tjDruIdA5SR8MIU1
-	 VBqFRFlXDYKokw6WsUXivO3/E9QnCpxef+y/wM36wAC7OXJY7ykQXt4Uog4jGB7Fh+
-	 ROBwl/7Yg32+A==
-Message-ID: <24801cf0-2c68-4b8c-b35f-b95e9688fcf5@kernel.org>
-Date: Tue, 17 Mar 2026 16:14:59 +0100
+	b=j0G41MDsRqZtOEvZrFBfu8IWZHJDGsoIkXABrAudFy11bqpO8rUDe1UYtpB5j2uBg
+	 ZUenn1xAb59IWnT98Hx2pEuNAEVJpzdPVUTgFE0nAFuJ8ZQ0tLleHJO4tJJIzwwVcV
+	 eW7goIzrKnRiEaVUTfqvDiZQ4NBLNOdPmZdvfvUimANjN8154emfMxr87mkJ/5syBJ
+	 uNWrukCm5T3NV6E1o8FN0vPa1C78wnNI5Fkq/93ViJqqRo/dyX6bbI1s46w0ka3Fbb
+	 lUQ/m+XCCrEXi7ObKeuTzk+oSqkOP5rz6tQ9BPhc65CzJX0Bq1bRVxz5qduta5r1gO
+	 llbfe9fJhBnTw==
+Message-ID: <471895f6-dc60-44d8-84ce-8ba0069110e4@kernel.org>
+Date: Tue, 17 Mar 2026 16:51:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,81 +35,148 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: add new Kconfig to control default behavior of
- disabling unused clocks
-To: Brian Masney <bmasney@redhat.com>, Abel Vesa <abel.vesa@oss.qualcomm.com>
-Cc: Maxime Ripard <mripard@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Shuah Khan <skhan@linuxfoundation.org>,
+Subject: Re: [PATCH v10 1/7] dt-bindings: media: qcom,x1e80100-camss: Add
+ simple-mfd compatible
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
- Saravana Kannan <saravanak@kernel.org>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20260316-clk-ignore-unused-kconfig-v1-1-6e95a4fb0c94@redhat.com>
- <20260317-almond-leech-of-correction-2a2ef6@houat>
- <com5zf4bfgb3eoelbmy5pfykhdow6ne3nteua6l7bnzkr72dsb@pehxxygji5z2>
- <20260317-notorious-classic-sunfish-d016d5@houat>
- <2dsd7hq4bn25dibqk62a7o56tt2tecf645tq3upccneq4hby67@cmjjc5d6ximt>
- <ablhdKJgEhU8KmtO@redhat.com>
- <hdagvfcxoh4nukz5sqocbp7qbezv3rxct3aygb7fvhsej7zp27@iyeoi74q2w7n>
- <ablslaSoUraCRPKl@redhat.com>
-From: Hans de Goede <hansg@kernel.org>
-Content-Language: en-US, nl
-In-Reply-To: <ablslaSoUraCRPKl@redhat.com>
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Bryan O'Donoghue <bod@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+References: <20260316-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v10-0-fdfe984fe941@linaro.org>
+ <20260316-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v10-1-fdfe984fe941@linaro.org>
+ <20260316-glaring-jaybird-from-wonderland-4f8fd6@quoll>
+ <94f4fda4-504e-44eb-87f0-e34e557402f8@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <94f4fda4-504e-44eb-87f0-e34e557402f8@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi,
-
-On 17-Mar-26 16:00, Brian Masney wrote:
-> On Tue, Mar 17, 2026 at 04:20:06PM +0200, Abel Vesa wrote:
->> On 26-03-17 10:13:08, Brian Masney wrote:
->>> FWIW, the only reason I posted this patch is because at the end of
->>> Stephen's LPC talk I got the impression that this was also an acceptable
->>> change. I'm fine with dropping this change.
+On 16/03/2026 13:01, Bryan O'Donoghue wrote:
+> On 16/03/2026 07:29, Krzysztof Kozlowski wrote:
+>> On Mon, Mar 16, 2026 at 01:02:01AM +0000, Bryan O'Donoghue wrote:
+>>> Add "simple-mfd" as a second compatible string to allow child nodes
+>>> within the CAMSS block to probe as individual platform devices.
+>>>
+>>> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>>> ---
+>>>   Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml | 8 ++++++--
+>>>   1 file changed, 6 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml b/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
+>>> index 2d1662ef522b7..b5654ef71bd89 100644
+>>> --- a/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
+>>> +++ b/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
+>>> @@ -14,7 +14,11 @@ description:
+>>>   
+>>>   properties:
+>>>     compatible:
+>>> -    const: qcom,x1e80100-camss
+>>> +    oneOf:
+>>> +      - const: qcom,x1e80100-camss
+>>> +      - items:
+>>> +          - const: qcom,x1e80100-camss
+>>> +          - const: simple-mfd
+>>>   
+>>>     reg:
+>>>       maxItems: 17
+>>> @@ -191,7 +195,7 @@ examples:
+>>>           #size-cells = <2>;
+>>>   
+>>>           camss: isp@acb7000 {
+>>> -            compatible = "qcom,x1e80100-camss";
+>>> +            compatible = "qcom,x1e80100-camss", "simple-mfd";
 >>
->> Here is the scenario that proves adding such config isn't the right
->> solution: think of single kernel image working with different SoCs from
->> different vendors. This is actually the case where distros need to have
->> a way to provide one kernel image + thousands of DTBs and be able to
->> boot one each one of the boards. Whatever this config is set to in the
->> kernel image, it will not work with all platforms.
+>> You do not have any children here. And if you checked the DTS, you
+>> would see this does not work.
+>>
+>> Please post complete example and bindings.
+>>
+>> I suspect that after posting complete picture we will see this is not a
+>> simple-mfd device (child depends on parent).
+>>
+>> Best regards,
+>> Krzysztof
+>>
 > 
-> Agreed.
+> This is it:
 > 
-> However, with or without this new Kconfig, we have this problem today.
-> Right now the kernel isn't bootable on large numbers of systems, and
-> people have to manually add clk_ignore_unused.
+> https://lore.kernel.org/r/20260316-x1e-camss-csi2-phy-dtsi-v2-3-859f3fa55790@linaro.org
+
+That's a DTS branch.
+
+This commit is simply incomplete and noop. Adding simple-mfd without
+child makes no sense and no benefits.
+
+It's like adding a local variable in C code without any read/assignment.
+
 > 
-> I agree though that we don't want to penalize boards that are doing
-> things right, and have a full clock tree described with higher power
-> draw. 
+> Just broke up the series so that drivers/bindings could go through 
+> linux-media and the dtsi stuff through Bjorn.
 > 
-> As a test, on my Thinkpad x13s (sc8280xp) clk_disable_unused on Fedora
-> 43 turns off 96 clocks on this laptop! I can infer what some of the
-> clocks do based on their names, however I'm not in Qualcomm, and some
-> of these clocks I'm not entire sure which ones would need
-> CLK_IGNORE_UNUSED. I got it down to a set of 7 possible clocks that
-> may need that flag by excluding some classes of clocks, such as usb.
+> I actually got the idea from:
+> 
+> commit fe6a952b567f6a771d087d2e969914f31574d6ab
+> Author: Krzysztof Kozlowski <krzk@kernel.org>
+> Date:   Fri Jan 27 20:40:50 2023 +0100
 
-My plan for the T14s is to:
+If you refer to my commits, at least read them. Do you see children
+there? Yes. You have none.
 
-1) Make sure I've working debug output in some form at this point
-of the boot, since lately the screen seems to go black during boot
-until the msm driver loads. Something which I / we really need to
-get to the bottom too.
+Plus trying to get 13 year old legacy device without dtbs_check warnings
+is different thing than correcting a recently introduced bindings.
+Terrible example to take... And if you find example from 20 years ago,
+it will be even worse.
 
-2) Add printk-s of the clock name before disabling the clock,
-then sleep 10s then disable clock and move on to the next 1.
-
-So the last clock you see printed before things go sideways will
-then need a CLK_IGNORE_UNUSED.
-
-At least that is my naive plan for when I can make some time for
-this.
-
-Regards,
-
-Hans
-
-
-
+Best regards,
+Krzysztof
