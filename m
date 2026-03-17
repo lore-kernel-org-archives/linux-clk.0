@@ -1,76 +1,83 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65DBA226D02
-	for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 19:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCEE2346A19
+	for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 19:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773776852; cv=none; b=dIUdIzz/QDfR5s/hEkaO2W1jJOTFngeEvnMLfbBTPScCq3aJMFEcK52lqQ7sjBkpfCWUvsr6d9EfYgMU5RS/A4BZe2FisTIiPCrisVhpS5jWYIamFCfIou3zY+qJSCnj5OzD1OLhEXLIUhIgMDYAuF/3ho3qBQ3jMJ/m0I0VdwY=
+	t=1773777417; cv=none; b=hoB57PH3uYU93fdtch1BSy3n3jnpQyeNOpd79rAy89okrepoFW0IH2Hib3e1taSJstZeJ0gy15E4oOvxkZM0aLLgm3VSz9lcDtyz3iWXpraz6Sdxd0azoa6XSsYJK3CcaoHWteabP6fgH/soy502yB8y7ipgws/O5ni3/j1B4D0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773776852; c=relaxed/simple;
-	bh=/pfeBRZlSAeIZP2jyTAgG02IfuvKN3sK7yiMk55tNm0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SAPyPhLifU/GZLpxDcimOhFiYd3UWia9txMXbIVNGKgTaRV28ZPn7fuxlNuZFZ8CLBJfoBwVpBSJ5IeZBg2w71DIztHjbJX6BenDzu5KrRGm78+EtrnEQfVjnOabRldcdtHXChEv0RSFqdnhrhA0BT18NAfb5sQ7X3Cbtbe2/7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nSxKhaTu; arc=none smtp.client-ip=209.85.221.44
+	s=arc-20240116; t=1773777417; c=relaxed/simple;
+	bh=rD6k5g0x5o7wNECzX7SXx9gUH4XhSPou5kQZofQmVG0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OcOWHDwycdSQhzI1wcvCAuImscmysSmLBmyI569mSlzkbcGAsYG+UbW5bTwa7ob0jRz8Jg+JxlySO67s/ginPsC4PRJ8ca4hdRSt3azchFlKYEi+AF1RGT2fgdT2Tj7yrCSmyrNfoYZUwUTU7R/gVvOPr4qt5ASV7zzeQCvE44c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nE+mM0Qi; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nSxKhaTu"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-439af7d77f0so4558665f8f.0
-        for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 12:47:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nE+mM0Qi"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-439c9bdc1eeso6092555f8f.3
+        for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 12:56:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773776849; x=1774381649; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1773777414; x=1774382214; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qy4MN32IlylccBxs69pXyCRPQ6AWrwsSuWmABVQKBWQ=;
-        b=nSxKhaTuBRv332k9NLLC6N8vRMBXs0T/TkRV44UQLdIMHxp0lmd9zNmUA/o0GfgFa8
-         xthlPMoCsTXg7zwOtNcoiESj9775TglTA/swuQAsRzeHNZ2mZfzDT3VBHU7yUn+YUdDI
-         PLQ6NODpZQoccnTJwzcKp+cfnDm1uUAJ8E6FzX1NmjPQlwHktgYgFF9EhEXfPOrzJP4W
-         f2BxvVs/7Onsbse24WeavEiLw74p4fXg9avfzRSpKxo5cbrJzdUpERx4feMn1XN3l0Bj
-         N04qOEExNjkjc/Et+NQBuMnqX2s7OVxgD8/GmBUvTgYIcHteaEpwb30koarVl0mSC2DI
-         T95g==
+        bh=3Y0xsdwwhqtc3tEm3F1+SO5Z37i9orpFohwEEPl5Uus=;
+        b=nE+mM0QiZNCf/ii+Tn+Xrzhit6Z4/YyBaFbI20nr13XbnG90YbzIPFdmRE5/Gzs7AY
+         7lfzFGqrpZz7ihpv+DLOnuwialuZc/82kUgVFqbBsde91xIsnL8vW31yjXcdZD81+N8w
+         tCcENoUwiELGkXm2k35A7JQABIIjLxpIlF1SIU5iQr+JFxnpC+JJAz5ijPMr9DJVjU9c
+         hLlshWi4BcnWec39gTcXJR68UI4ByzA+iFCvWiWxlAD7RaJbuzZUk3piMASt08GpD4OM
+         B4q24qLbeF+AsrCi8rMR/26RGIs06CBiHPtw8w4zgs8tTw5ffRyk6Ji5964eVLbGCaEK
+         XlXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773776849; x=1774381649;
+        d=1e100.net; s=20251104; t=1773777414; x=1774382214;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qy4MN32IlylccBxs69pXyCRPQ6AWrwsSuWmABVQKBWQ=;
-        b=CSMToVVCJbvTiPStnTbTOMfo6KVqUoMHxUGwj+RzM2WsgTAvSa6+4gs6ehWc6sp+9h
-         bNQTrr32DOZHovluR88+WmcT0NvpCMnWTOvR6vv+i36Z3SboNEoduJk21c7oVMZQ1sEv
-         scIKh52TJZNpPQRZjXl74f9tmBLaPPrtodI2v2OD2x7w6+CBQCGnoqjUfpBOt1BHKRA9
-         /52MO1kn1IZBXa8kyHRl6bhb1iYLFMsuBDJFs3nSHZXaSHcPMmkyzSSS7xTRPmVaa/jf
-         81n/lzTOaX/EMO9cJuHBATBBwNNYuL7IcyjCb2ybddx1dTORKTK9rJfT7pPnclxxgg9d
-         VONQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUWWGRg7dKnqjQk531eONi+TSy3sjkLtJdZ3UsbS903HcvyvVmrHKdKZVqgsxAL2dHsaMqNPaILszA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzfz3i951+f/H+g/WsZssk1o+8ljrOMjaQceOnbNqTBqpX006Bj
-	GvhEshLZc4G0QqfEFX3j+WhWfsUGjSENXOwqOkSFma6IvSDMZj4gt2NQUp45Sg==
-X-Gm-Gg: ATEYQzzhZxHtJnp0TnmmPHOnRIfC0gWQEfFm+vwssbNwBAh9o/fdBROhDtxgONRePx3
-	PF+Bw8mizGXEL1mQ/G9XkU/lZaZzhoVeJFHKztqC3POk5qYPcetZxhhpQ7M/HtQjK9DigDVPi9i
-	kVSsYvd0z3xVJIN+VYB0Ztr6h5V9HsRqgdV12TQo3C3BkN2Kv5bap4EUf/2Eit6K2pzpwWLOEPH
-	xcedM7j8WYjbsZiQYgWtNhpKVcc1BqfKJxWei033Pob8HGmCCxvySjqUxzuW7DiVHC2FSjsW8d0
-	ZCWdRUhsHHLiJeDsL9WVeOYfHLq51ptkt66YHgy6Lw/qT9lWqV0sAEhUKCYUYsjYxsKvWH9/5Kd
-	gFasV+hP1FO/NPbueSxWaE/1jztCbq+L4jG1AqFeUW3Kv7O+BPZg9nVlDWqZKA6fUBIAcT8HOZt
-	p+yfgWpW9OKRacV0oLM83oKPh2yvFRpK8y7+Hsk39KbPU2jx1M
-X-Received: by 2002:a05:6000:40cb:b0:43b:4f97:9608 with SMTP id ffacd0b85a97d-43b527a7368mr921067f8f.14.1773776848667;
-        Tue, 17 Mar 2026 12:47:28 -0700 (PDT)
+        bh=3Y0xsdwwhqtc3tEm3F1+SO5Z37i9orpFohwEEPl5Uus=;
+        b=QzNKRWsOy3ytuqBknxJSh7wlQC4/QZT6RjcYbHm5aakl75r4VF2tIYg7bCzzel1t9R
+         Fa5pttjurVhd6OKm9bOh4azoXYlipfzIHSRFeN+ggjJKeP28xhZimmFdunSGoWr5ZiHN
+         sYVvDEgBUxIT8tG03JrH7x2YOHSguLsoXs2/aq8c9M4ZzKHK538XWGVr7PxoHotGhabh
+         aqasWLd2fKlHRGm8b42MP6KTR0ipZ2f6KiHJmZRG1KZjFj3s3eZUFiat270keJHq0wps
+         WfBKRSz+k/JRb8InZpavI7IjOvoXtIy++3N8k/Y+AJ1ZEsdpAS/tU2db2aUMQqhqnW9L
+         9L+A==
+X-Forwarded-Encrypted: i=1; AJvYcCXEg9APSKnWAGxs9giFJmEoA6dl3Vk7b3rqmbJCrihzZ/3rur5wL2CqiHMpN/WhJmjCc33Gp4zm/2U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytTPq/r0KclWJEztc22tjLan6ZS4YVk2KgSRyf2ZekWaiW28+p
+	+So8zn8jd1S9QrmD+WAVIMWBlBm49fVJEH16SgnaV9wHm9z0VWdWmVKb
+X-Gm-Gg: ATEYQzzqm59nSmgFiJWtrSscXWggQ9T4WFrQELCBYkN4mGbzj4A9y4b1S3EajFiKYAL
+	s65Wr4Rzo0EEKLvLa6Kke0q3888dCXTr/1o7ieIyzXOzgLqARa+pS4GQI/4n0dpPb34eRtHFjN7
+	aQD0sqdm9ZdicEO3uZTHjt5hj8HZcgP73t+yg03B+aHEkM2EHAJFfa2OtxD8vGV5Z0PVByrQq0L
+	/9a3lEfpnimyqOm8I/DdMQOHsy14ZRI20XlY4C92oq9GRxUfoduK6VLQbAIsNpRdo1Co4estIyQ
+	8UKdS1+8ZEaTm+Y0BjAIUT0VraHIEzLT3ukwRIOfHUOVq2P816Nho+l4pJ5qw902lz5WJpQhs9W
+	ZzhGTvLjAIjIeIQoVFB+fA0umZGUyr70+sEgCVVVgWN0j8MgmH4IXNM2MeEKh3XjFJOmVsoOPX4
+	cM0mQk3sL/8/XIeOfCAo0EL0W2CTut9hmOh2tJ4B6egRO/Us9b
+X-Received: by 2002:a05:6000:24c4:b0:43b:3d44:6624 with SMTP id ffacd0b85a97d-43b527a07fbmr1060580f8f.2.1773777413952;
+        Tue, 17 Mar 2026 12:56:53 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a758:8a01:e16b:fc56:e220:9aa9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b5189970fsm1767511f8f.27.2026.03.17.12.47.27
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b5189221dsm1339217f8f.23.2026.03.17.12.56.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Mar 2026 12:47:28 -0700 (PDT)
+        Tue, 17 Mar 2026 12:56:53 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Magnus Damm <magnus.damm@gmail.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v4 4/9] clk: renesas: rzg2l-cpg: Re-enable critical module clocks during resume
-Date: Tue, 17 Mar 2026 19:47:22 +0000
-Message-ID: <20260317194726.468270-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v4 0/9] Add support for Renesas RZ/G3L SoC and SMARC-EVK platform
+Date: Tue, 17 Mar 2026 19:56:29 +0000
+Message-ID: <20260317195650.468330-1-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -82,114 +89,185 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-After a suspend/resume cycle, critical module clocks may be left disabled
-as the hardware state is not automatically restored. Unlike regular clocks
-which are re-enabled by their respective drivers, critical clocks
-(CLK_IS_CRITICAL) have no owning driver to restore them, so the CPG driver
-must take responsibility for re-enabling them on resume.
+Hi all,
 
-Introduce struct rzg2l_crit_clk_hw to track critical module clock hardware
-entries in a singly-linked list anchored at crit_clk_hw_head in
-rzg2l_cpg_priv. Populate the list during module clock registration by
-checking for the CLK_IS_CRITICAL flag after clk_hw_register() succeeds.
+This patch series adds initial support for the Renesas RZ/G3L SoC and
+RZ/G3L SMARC EVK platform. The RZ/G3L device is a general-purpose
+microprocessor with a quad-core CA-55, single core CM-33, Mali-G31
+3-D Graphics and other peripherals.
 
-On resume, walk the list and re-enable any critical module clock that is
-found to be disabled, before deasserting critical resets, ensuring the
-correct clock-before-reset restore ordering.
+Support for the below list of blocks is added in the SoC DTSI (r9a08g046.dtsi):
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v4:
- * Moved this patch from [1] as it is boot-dependent
- [1] https://lore.kernel.org/all/20260306134228.871815-1-biju.das.jz@bp.renesas.com/
----
- drivers/clk/renesas/rzg2l-cpg.c | 41 +++++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
+ - EXT CLK
+ - 4X CA55
+ - SCIF
+ - CPG
+ - GIC
+ - ARMv8 Timer
 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index 8165c163143a..c2d31b93f62b 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -130,6 +130,12 @@ struct div_hw_data {
- 	u32 width;
- };
- 
-+/* Critical clk list  */
-+struct rzg2l_crit_clk_hw {
-+	struct clk_hw *hw;
-+	struct rzg2l_crit_clk_hw *next;
-+};
-+
- #define to_div_hw_data(_hw)	container_of(_hw, struct div_hw_data, hw_data)
- 
- struct rzg2l_pll5_param {
-@@ -168,6 +174,7 @@ struct rzg2l_pll5_mux_dsi_div_param {
-  * @info: Pointer to platform data
-  * @genpd: PM domain
-  * @mux_dsi_div_params: pll5 mux and dsi div parameters
-+ * @crit_clk_hw_head: Head of the linked list critical clk entries
-  */
- struct rzg2l_cpg_priv {
- 	struct reset_controller_dev rcdev;
-@@ -186,8 +193,26 @@ struct rzg2l_cpg_priv {
- 	struct generic_pm_domain genpd;
- 
- 	struct rzg2l_pll5_mux_dsi_div_param mux_dsi_div_params;
-+
-+	struct rzg2l_crit_clk_hw *crit_clk_hw_head;
- };
- 
-+static int rzg2l_cpg_add_crit_clk_hw_entry(struct rzg2l_cpg_priv *priv,
-+					   struct clk_hw *hw)
-+{
-+	struct rzg2l_crit_clk_hw *node;
-+
-+	node = devm_kzalloc(priv->dev, sizeof(*node), GFP_KERNEL);
-+	if (!node)
-+		return -ENOMEM;
-+
-+	node->hw = hw;
-+	node->next = priv->crit_clk_hw_head;
-+	priv->crit_clk_hw_head = node;
-+
-+	return 0;
-+}
-+
- static inline u8 rzg2l_cpg_div_ab(u8 a, u8 b)
- {
- 	return (b + 1) << a;
-@@ -1737,6 +1762,13 @@ rzg2l_cpg_register_mod_clk(const struct rzg2l_mod_clk *mod,
- 		goto fail;
- 	}
- 
-+	if (init.flags & CLK_IS_CRITICAL) {
-+		if (rzg2l_cpg_add_crit_clk_hw_entry(priv, &clock->hw)) {
-+			clk = ERR_PTR(-ENOMEM);
-+			goto fail;
-+		}
-+	}
-+
- 	clk = clock->hw.clk;
- 	dev_dbg(dev, "Module clock %pC at %lu Hz\n", clk, clk_get_rate(clk));
- 	priv->clks[id] = clk;
-@@ -2086,8 +2118,17 @@ static int __init rzg2l_cpg_probe(struct platform_device *pdev)
- static int rzg2l_cpg_resume(struct device *dev)
- {
- 	struct rzg2l_cpg_priv *priv = dev_get_drvdata(dev);
-+	struct rzg2l_crit_clk_hw *node;
- 	int ret;
- 
-+	for (node = priv->crit_clk_hw_head; node; node = node->next) {
-+		if (!rzg2l_mod_clock_is_enabled(node->hw)) {
-+			ret = rzg2l_mod_clock_endisable(node->hw, true);
-+			if (ret)
-+				return ret;
-+		}
-+	}
-+
- 	ret = rzg2l_cpg_deassert_crit_resets(&priv->rcdev, priv->info);
- 	if (ret)
- 		return ret;
+This series also adds SCIF support for the RZ/G3L SMARC EVK board (r9a08g046l48-smarc.dts).
+
+v3->v4:
+ * Dropped SoC identification patches as it is accepted for renesas-devel.
+ * Updated commit description related to core clocks section in the
+    hardware manual
+ * Dropped CLK_P4_DIV2 from core clocks
+ * Added MIPI_DSI_PLLCLK and USB_SCLK to core clocks
+ * Dropped LVDS_PCLK  module clock
+ * Added BSC_X_PRESET_BSC reset
+ * Moved the patch series from [1] to here as it is boot-dependent.
+ * Updated commit description
+ * Updated LAST_DT_CORE_CLK with R9A08G046_USB_SCLK
+ * Fixed typo 2->8 in dtable_4_128[].
+ * Added critical reset table r9a08g046_critical_resets[]
+ * Updated num_resets
+ * Added crit_resets and num_crit_resets to r9a08g046_cpg_info.
+ * Fixed typo R0A08G046L->R9A08G046L in commit description
+ * Dropped R9A08G046L46 from commit description
+ * Dropped unused audio_clk{1,2} andcan_clk device nodes
+ * Reordered i2c device node and updated reg entries by using lower-case
+   hexadecimal number
+ * Added placeholder in pinctrl node
+ * Dropped unused DMAC device node
+ * Added pcie node with placeholder
+ * Collected the tags.
+ * Updated commit description for patch#8
+
+[1] https://lore.kernel.org/all/20260306134228.871815-1-biju.das.jz@bp.renesas.com/
+v2->v3:
+ * Added macros R9A08G046_ETH{0,1}_CLK_{TX,RX}_I_RMII in r9a08g046-cpg.h.
+ * Keep the tag from Conor as it is trivial change for just adding macros.
+v1->v2:
+ * Dropped scif bindings patch as it is accepted.
+ * Collected tags.
+ * Squashed the patch#3 and #4
+ * Documented GE3D/VCP for all SoC variants
+ * Documented external ethernet clocks as it is a clock source for MUX
+   inside CPG
+ * Updated commit description for bindings.
+ * Keep the tag from Conor as it is trivial change for adding more
+   clks.
+ * Added CLK_ETH{0,1}_TXC_TX_CLK_IN and CLK_ETH{0,1}_RXC_RX_CLK_IN clocks
+   in clk table.
+ * Dropped R9A08G046_IA55_PCLK from critical clock list.
+ * Added external clocks eth{0,1}_txc_tx_clk and eth{0,1}_rxc_rx_clk
+   in soc dtsi as it needed for cpg as it is a clock source for mux.
+ * Updated cpg node.
+ * Dropped gpio.h header from SoM dtsi.
+ * Dropped scif node as it is already included in common platform
+   file.
+
+Test logs:
+/ #  uname -r
+7.0.0-rc4-next-20260316-g7f7df5dd3d2a
+/ # cat /proc/cpuinfo
+processor       : 0
+BogoMIPS        : 48.00
+Features        : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant     : 0x2
+CPU part        : 0xd05
+CPU revision    : 0
+
+processor       : 1
+BogoMIPS        : 48.00
+Features        : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant     : 0x2
+CPU part        : 0xd05
+CPU revision    : 0
+
+processor       : 2
+BogoMIPS        : 48.00
+Features        : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant     : 0x2
+CPU part        : 0xd05
+CPU revision    : 0
+
+processor       : 3
+BogoMIPS        : 48.00
+Features        : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant     : 0x2
+CPU part        : 0xd05
+CPU revision    : 0
+
+/ # cat /proc/interrupts
+           CPU0       CPU1       CPU2       CPU3
+ 11:        104        191        429         62    GICv3  27 Level     arch_timer
+ 14:          0          0          0          0    GICv3 418 Level     100ac000.serial:rx err
+ 15:          4          0          0          0    GICv3 420 Level     100ac000.serial:rx full
+ 16:        229          0          0          0    GICv3 421 Level     100ac000.serial:tx empty
+ 17:          0          0          0          0    GICv3 419 Level     100ac000.serial:break
+ 18:         17          0          0          0    GICv3 422 Level     100ac000.serial:rx ready
+IPI0:         3         16         13         21       Rescheduling interrupts
+IPI1:       315        240        180        217       Function call interrupts
+IPI2:         0          0          0          0       CPU stop interrupts
+IPI3:         0          0          0          0       CPU stop NMIs
+IPI4:         0          0          0          0       Timer broadcast interrupts
+IPI5:         0          0          0          0       IRQ work interrupts
+IPI6:         0          0          0          0       CPU backtrace interrupts
+IPI7:         0          0          0          0       KGDB roundup interrupts
+Err:          0
+/ # cat /proc/meminfo
+MemTotal:        1887304 kB
+MemFree:         1852164 kB
+MemAvailable:    1819524 kB
+/ # cat /sys/devices/soc0/family
+RZ/G3L
+/ # cat /sys/devices/soc0/machine
+Renesas SMARC EVK version 2 based on r9a08g046l48
+/ # cat /sys/devices/soc0/soc_id
+r9a08g046
+/ # cat /sys/devices/soc0/revision
+0
+dmesg | grep r9a
+[    0.000000] Machine model: Renesas SMARC EVK version 2 based on r9a08g046l48
+[    0.066480] renesas-rz-sysc 11020000.system-controller: Detected Renesas RZ/G3L r9a08g046 Rev 0
+
+Biju Das (9):
+  dt-bindings: clock: Document RZ/G3L SoC
+  clk: renesas: rzg2l-cpg: Add support for critical resets
+  clk: renesas: r9a07g04{3,4}/r9a08g045-cpg: Add critical reset entries
+  clk: renesas: rzg2l-cpg: Re-enable critical module clocks during
+    resume
+  clk: renesas: Add support for RZ/G3L SoC
+  arm64: dts: renesas: Add initial DTSI for RZ/G3L SoC
+  arm64: dts: renesas: Add initial support for RZ/G3L SMARC SoM
+  arm64: dts: renesas: renesas-smarc2: Move usb3 nodes to board DTS
+  arm64: dts: renesas: Add initial device tree for RZ/G3L SMARC EVK
+    board
+
+ .../bindings/clock/renesas,rzg2l-cpg.yaml     |  40 +-
+ arch/arm64/boot/dts/renesas/Makefile          |   2 +
+ arch/arm64/boot/dts/renesas/r9a08g046.dtsi    | 215 +++++++++++
+ .../boot/dts/renesas/r9a08g046l48-smarc.dts   |  37 ++
+ arch/arm64/boot/dts/renesas/r9a08g046l48.dtsi |  13 +
+ .../boot/dts/renesas/r9a09g047e57-smarc.dts   |   6 +
+ .../boot/dts/renesas/renesas-smarc2.dtsi      |   8 -
+ .../boot/dts/renesas/rzg3l-smarc-som.dtsi     |  20 +
+ drivers/clk/renesas/Kconfig                   |   7 +-
+ drivers/clk/renesas/Makefile                  |   1 +
+ drivers/clk/renesas/r9a07g043-cpg.c           |   8 +
+ drivers/clk/renesas/r9a07g044-cpg.c           |  13 +
+ drivers/clk/renesas/r9a08g045-cpg.c           |   9 +
+ drivers/clk/renesas/r9a08g046-cpg.c           | 153 ++++++++
+ drivers/clk/renesas/rzg2l-cpg.c               |  80 ++++
+ drivers/clk/renesas/rzg2l-cpg.h               |   8 +
+ include/dt-bindings/clock/r9a08g046-cpg.h     | 342 ++++++++++++++++++
+ 17 files changed, 948 insertions(+), 14 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a08g046.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a08g046l48.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi
+ create mode 100644 drivers/clk/renesas/r9a08g046-cpg.c
+ create mode 100644 include/dt-bindings/clock/r9a08g046-cpg.h
+
 -- 
 2.43.0
 
