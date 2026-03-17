@@ -1,623 +1,343 @@
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010034.outbound.protection.outlook.com [52.101.229.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02BBF32AAC5
-	for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 17:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773769964; cv=none; b=t2d5ROUpFGcFUcBgiIcneEGGPsiLXco/hUjK8zYEhauoqZqUebeLqaRAB8qCT9teQACOQpxvUJ+g5yAGCV0uRm0bWnh6730dBuK8JVDXCt2Ph5MdXsspOdDO4WhjFbitbD0IaQP/Gq7YHXTaYDnlVhzEjUeo+CpcIrFM9Bg4L+0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773769964; c=relaxed/simple;
-	bh=EbFdilT0AuorLSELZBKi3+DI4IQF0tOAs8WmyFfY+MA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cci2bAQ7TYcRwuCZUwyDeTod+1kXs7O3+piZAZPDKn7sjcyDCmLpxvz/jnWGUlVraso1nlUrF2nsTBXBeBRf+fBif4r13r7jE4MAijrohVvIiGsJDtPs33E/QCAnXdIqn5/s3nniTzOmognp9ZoJ59Pa86QO8XFj3KY2v5QFWCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Q+hZzPWE; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 622B830C63B;
+	Tue, 17 Mar 2026 18:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.34
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773770515; cv=fail; b=LoZdYSoepEo3M9iI1bPmFrhW9cusa/ZLt/t+GG/c9yDlmTDN9bay4M8+Z4l1VCr6tt16MQPmBYMR8kbpzICkTzs8aD2GplllDpEFq2EvY37hOKPiXTgpxSCo70MLfCXRcZCwOCgYy3eBFTvJhgIEBfUeTofP7pF+FJkZhL+piO4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773770515; c=relaxed/simple;
+	bh=IT/fNqkIxOieeM4WXUh+KgXzkeLDCdazbG+q+1LpW9c=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Us/PLN9QasTTGn0GNSRUKwQZ+J/Jbuz1SaOe+jQBtxih3WUweeLvOHLMQ/bUEEndqcxhhYxupDWZ7CXXJuxK5zCk36kwEX7MmjwGDCdOYzm4HvBoEcU/Z1zMmAeBCOPkU1EeTHW90Wq+H6yl0D+N1l1piXJx8LuTiu60pd5cJe0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=wgdXPT/l; arc=fail smtp.client-ip=52.101.229.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Q+hZzPWE"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=ujnUIqeJVwTtWSyzfqvKdTrTDVHH4AZ3W5qWU0spzR8=; b=Q+hZzPWEIVa9Aeyk2OjTE6V9u5
-	l9PywkXrD5CLDCsm6bRZEI0lG2kFv/oWwnN0aywHzGwqBCg9g15VXt4Q/F6DwqMqfgaVYQphzVxla
-	sQOJ8+2pRewjGriHgEJ5hp8TPrO6AtfkZuMu8w4oNigeP1AKzCGhNBEP1jYwFjojQCAnFLVaO1fWq
-	HNIy+ffX490kwEdU1ikeL8rsgBgA7BPkkIAAslq3/vFqH7fy6BNr4Q1c1nMr2qR053r+F4E3FIukR
-	PfHk+AVhPks0vmJSi8IZkNxf859iqEUTAg9BD7H5c1dVnSxOZpZPpkOdSBCESqTOVq06jW928r4oL
-	o+UnXBXQ==;
-Received: from [186.208.74.38] (helo=[192.168.18.14])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1w2Yah-002OrY-Mj; Tue, 17 Mar 2026 18:52:28 +0100
-Message-ID: <81e2a45c-c2a8-4723-bf4a-fdb2c20e0646@igalia.com>
-Date: Tue, 17 Mar 2026 14:52:21 -0300
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="wgdXPT/l"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wN+Tu4YB5TfZCIek/lyRH3uAnzsE3SN0hV87ChAnHTCWUWkIjADVMUbGIhtqjw8OcVayd4Vd+HE9PLJ6blJh1/dC7EEiVLONoYvvIvZl4yQSVffK1IHGirl1LyHZJ6W3Nb8U606cH3OHel5VhOE2eUwMRwGvZlC/1SWozqf2bPbeaSFWSkgv0Cf0g5hZuGG5zIdaozgzzqScajYNS1ImPE3JeABCnVh0Y8bnx8snWP1irsvh2eggvkgiKDiAsn3fiCT+t76/vtAKjkSW5/fzjv7I8N53DPjyqJhyvUzpX/aMbmcQ6dAbxleOwvQTH/RlAkfWjTD372XuhXy86B7F9g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=129xc3EnyzW74bfbzzhtDctnxvee/06sCU8s2Hqnhz4=;
+ b=gYImkJwcID66IVIysuXNFbJDcfjd/p35fwqX+5nUw6Wfa4gAP+nQ9TCKQll5uQBsWuYMzG0pL+ndb5JDZtor5soDUFzwBGYVp+kj+7STVkuubloZTsWXeB4jd7cUar+mikPmyx7+QTYD1y0fH0pOyH9RWEQz9Yh6MMObWAoKhD6fTgMjEU7os3sfd0ddfbNJQbS8rHZ/t/HlyP3nzwGEd7ze7LLjK+FX+JWQbJZaCfFJ89oborHl/kTSDxTMPirsOzq/15vW52SvxBH+44o/Q0xSnKYkvZiXEXluOK1wDBX69L4DnbXR2gTFvizl0OAecG/AjJGvjSYdoskSgEuBcw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=129xc3EnyzW74bfbzzhtDctnxvee/06sCU8s2Hqnhz4=;
+ b=wgdXPT/lrPtPp4X8l01LtlHZL/uKFoHl55aCEpj1lqkpYyMjcNuWGDLJoRFUce9dzoUqNzbccP81wQ0z5bWsJT7zixprjmay5COdwCMbHuoMUn7iJB8JjrsmAOfALGEyQ9AJuB8Y/5r7rNPutGq156Q9ygNVJfASQ0IqdKNBTVI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+Received: from TY3PR01MB11948.jpnprd01.prod.outlook.com (2603:1096:400:409::5)
+ by OS9PR01MB14066.jpnprd01.prod.outlook.com (2603:1096:604:35e::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9700.19; Tue, 17 Mar
+ 2026 18:01:46 +0000
+Received: from TY3PR01MB11948.jpnprd01.prod.outlook.com
+ ([fe80::b718:17d0:6c0f:1495]) by TY3PR01MB11948.jpnprd01.prod.outlook.com
+ ([fe80::b718:17d0:6c0f:1495%6]) with mapi id 15.20.9700.025; Tue, 17 Mar 2026
+ 18:01:46 +0000
+Message-ID: <ddad817b-6c20-42fc-90ed-3b841b3e8ce7@bp.renesas.com>
+Date: Tue, 17 Mar 2026 19:01:29 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 12/20] drm: renesas: rz-du: mipi_dsi: Add
+ RZ_MIPI_DSI_FEATURE_GPO0R feature
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ Tommaso Merciai <tomm.merciai@gmail.com>, geert <geert@linux-m68k.org>,
+ "laurent.pinchart" <laurent.pinchart@ideasonboard.com>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, "magnus.damm" <magnus.damm@gmail.com>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+References: <cover.1770996493.git.tommaso.merciai.xr@bp.renesas.com>
+ <d1f47b9719edab4e85a8971020c7d7f51fff39e3.1770996493.git.tommaso.merciai.xr@bp.renesas.com>
+ <TY3PR01MB113466CEA27DC0486501E89C38641A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Language: en-US
+From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+In-Reply-To: <TY3PR01MB113466CEA27DC0486501E89C38641A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR3P281CA0066.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:4b::17) To TY3PR01MB11948.jpnprd01.prod.outlook.com
+ (2603:1096:400:409::5)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 5/5] drm/v3d: Introduce Runtime Power Management
-To: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Stefan Wahren <wahrenst@gmx.net>, Maxime Ripard <mripard@kernel.org>,
- Iago Toral Quiroga <itoral@igalia.com>,
- Chema Casanova <jmcasanova@igalia.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, kernel-dev@igalia.com
-References: <20260312-v3d-power-management-v7-0-9f006a1d4c55@igalia.com>
- <20260312-v3d-power-management-v7-5-9f006a1d4c55@igalia.com>
-Content-Language: en-US
-From: Melissa Wen <mwen@igalia.com>
-In-Reply-To: <20260312-v3d-power-management-v7-5-9f006a1d4c55@igalia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TY3PR01MB11948:EE_|OS9PR01MB14066:EE_
+X-MS-Office365-Filtering-Correlation-Id: d945f150-ca27-4067-27f8-08de844f40d9
+X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|376014|7416014|366016|1800799024|22082099003|56012099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+ z91HyX15ptJW+GtDnCfvhXPKx+9vbnmRhFksel9A4LVslrnYi57G2hGGsAqlFK4Zx2DAfEvWP+h0CpodZBY/3OC322AIot4gW94duM6+5+g4F2CrqOo29UPxlF9DM6rriCk+ZUb+pCwnG1tPPDn+P+EdXO4R0x8BKLPs0K8Th8mMukXIZWAFYcn3m7s/YKDWz7tXaA23U3pmzKheZDpX/9bCVd6w6Gi5mp7yHXZSIylrcC+gl5n7AJVFKCio8jTfCa8Pal6qMH2zOEVJAheaBkrlJIXXSE3502prazSMOCuTsLS9NejquhukHmSs3Q7sMrbSukwVfNeorRWgZkCvgWzcW9us6rdfYjMJpyUiL6hUswkS8cSpDO4eJ/NlQsrVzK+ZYqWZ7w7C2K7eYaEPWARHY4KNJfzSK0ldIMi5ZLEA/pPCm+T38cwI4qDEiCYBaC4//sqxqyC8Lr3LIBzWzjR246vu5pcniUTnlalzncAi4PoT6yyFKd84x5LZVeY9zDv/tcGKeQID5fzUhw2qgfg3CPCfYZ3ftHWHDqcJuT8cf0xYtENKfbg7EaVw9lGbl48YXggQF80eZIsJNGe1hiHbIBuFvEfwqWiG2r9z5BSFrBlaMcvW8gwfkxP40jNNFgqnfpZOOSg75Eg0B/JsuT0THE/6bbNfMQkbgZ9vW/8Ss/RmdYr4TT9muR5zBObp1RXasIiUmrYoDNcTIrg/zNtSkGX/RGL/lPcHeukJ/G4=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11948.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(22082099003)(56012099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?TUtXVWRNUU56Q3EwcmVLeTV1K1ZFSmFZYWIwcmNWYXhFNmpYcW0rdlBpMzRR?=
+ =?utf-8?B?djN5cTl0RDJmVlZ6cmhnbHZ1RnVnMkh3eWJkSzVNeWQreVRVVzhMS3hIRXow?=
+ =?utf-8?B?UXVIa2s1TkNGcXFIVW9PUDhNN1NNd1hYYVlHWkdDZzdvdk9YcVlESWtsejVi?=
+ =?utf-8?B?ZXVEOERYaEVoTzVHa0FpRkpBYWVYcVlBUndPZjlYSUEwQU1wclF1M1BQSit6?=
+ =?utf-8?B?d0lwUjRQajk3QkZOdm4yK0NVdktqSWRhYTVNakNsNG55TFlHOUhZZmt0UlVn?=
+ =?utf-8?B?cE5QYUI4dGxGbXVhV2U4Z25PUjRIQTZFK3picU96bkZmbFhTVVRFWVZFUmxG?=
+ =?utf-8?B?TThuME5BRk4xMFNzSnRSOThZN21OWkFLRmhGM3hRWmZlMCsrSTZtTTZQOTJ0?=
+ =?utf-8?B?M3I0WkNMaGlBcm0ySHdua3dBeXRXMXdPOTVHMEg3YWErL3VSeEd0Y3RFNEVm?=
+ =?utf-8?B?N0hlMFJwTWtibk5peVBtWU1TR3lHbXZLZWxsK2VCRnQwUXdhL0NwazdWRHl1?=
+ =?utf-8?B?bVlaSlo2KzdXQ0t4bFdJVUZCRHRPNTJ1Z0srTGFYOWVmYzd6eDVSQ3l3Z3J5?=
+ =?utf-8?B?Mm1Ya3RhajN2TlcxSWx4K1ZCbzlxQnJnaFMxcjdtYUxIRjYyWkR2ZzRIN2ov?=
+ =?utf-8?B?UkVreGhaNFhhM1YxQlhIL2tjelAyY3ZQRzJPWC9xTkhCR2lKc3g3LzFrbzBt?=
+ =?utf-8?B?OXp1YlNMU1pNZExYMDJlT2hrTHpHRHh5aG5LRlBjcnQ0WDBnTnNoaTJ5TU8v?=
+ =?utf-8?B?VDAzOG5VUHlIb20vYWgwK21SaHJRYzNZdUJPc0tiN3craEh1RHZTL2ltZHZQ?=
+ =?utf-8?B?c2xlTjVrc3JubklRMU5vbTl2d2xtdlYzOTZjaTlmQWhvejJSZjZlcVVsdDVx?=
+ =?utf-8?B?WFF5UVA3andKWHhuQUd3SEhlU3c3eWRIZ0Y0c2xVaXNyMzRoVGlPcTBKNHZl?=
+ =?utf-8?B?azJkV3pXRGVsd3Vnb0dUb2xldVJnRnRxRDM2eldSMGRXZWR3dTc0aElBbFkz?=
+ =?utf-8?B?NDVWYzA0MFhGNmxQTmpjbTVRMTMwOXJxZ1Iyd3hpbnprazhFZTMvekVRRS9v?=
+ =?utf-8?B?aUltbnVLMVVIUk1iZTlrZ2gzeDNtSjg5MDhMQTRVMDFVc3lLdllzRE9hcWc2?=
+ =?utf-8?B?a2g5cFQvMlZmZUJ6eTZoRTFITG9HZG5Zc01HNzF2WVBWTWl6VXkxR3FVc3FI?=
+ =?utf-8?B?VkNDaUhFK1k4Y2V1SE9mNzlPRWJxNmppdGlaQktoaEVEd05aQlJBZHBuS1hm?=
+ =?utf-8?B?cFlXSjdvUXBkQzNPbXZEUFJlL0FpelNQdkhYMHNMSk9icENINUpkNmFtNXJK?=
+ =?utf-8?B?NnRnemVab1BldGVJbFJOQyt0UzNPYWJZWVhtdUtxRTd1TUtQbDlweVo4a3pY?=
+ =?utf-8?B?SS9JSXpGUEJDcUsybmFMNlQ5Mzc2a2NPVkc1eE03bE80ZnUwelY5aDh5L3cv?=
+ =?utf-8?B?Z3ozS3lya1ZtNk1SdFB0empYUGd1WCsyQnp6L25zdHJPZVVOVFhOdlViVGpm?=
+ =?utf-8?B?NFNjNHNJbEJxZXg1TlpXSHdvcGZxMGhXbXUxT2tyY245ems5SUwrRVJjUFFl?=
+ =?utf-8?B?ZENQQWNSbDJkbjNweHJ3SWk1MFFHU3BFdEFUNHp5VFBWUUxBSWVLZkROMlJX?=
+ =?utf-8?B?MTByS3M2LzRYSFdzK1d3ckM4MkZnNThRMmZSWGdCeVZKcUFDN1JrV3dheU9z?=
+ =?utf-8?B?L2pPWDV5Y3RKS05VUFVxSGp6R3FRUFFZV0RBazJHVVBLbHpjUUYyZU10MFZu?=
+ =?utf-8?B?MVRMQytZY3lnclVHQzFnT3dBMFltT3VCeEFheG9pQ0h5NTh3d0s1NUZ3bFJo?=
+ =?utf-8?B?RzdHUkNUZFVabHJyRkxhTDErYUZyR3RidGlGSDYxblZwRldTYmI5Y2VQU3U0?=
+ =?utf-8?B?dElLN2RSdmV2TGtURlA1bEkrdHY1YWx1Z09SL0d0eVhyZXM2RHZuQi9RZ2d2?=
+ =?utf-8?B?NHBzSTRNcDdwc05nM2MwNk5ra3hKdlRiM1JHaHBmYU9XckEwR2F6ZTE0VVF0?=
+ =?utf-8?B?eUFqZlhraWp2ZkJMTkl0YlNEbUN1NGNUaWxNUnFWTDBKd2hNWitvMTd0ZEpP?=
+ =?utf-8?B?Z3ViTnVTTkR5ajQ3NXpnVXR6VWo1OXJRWTVmclZ4MU9jZEVuaDgxYWFGUEVk?=
+ =?utf-8?B?NStJbUw0U0NjcVBpbTZQaFAvcEhDRDlXaHJSaWJZNjUyS25BZDd4aE5GbVBz?=
+ =?utf-8?B?eVh5MHZBdFJPeGVKU3FWZnpZbTZkTWNTLzVzOHdYL3NGeWJBcTBaVkVLOTdp?=
+ =?utf-8?B?WHdVY1hWcXpRc3kzNjdzNWk1NGVRR01sVjdPZUtTTHowdFpWeUhzd2tpeWRL?=
+ =?utf-8?B?Y3hIOERCRENtU3hGbnBBZVF6Zm9QbXZsRjZuZ3NBWjRRTHRmaFBZaXVrWXRT?=
+ =?utf-8?Q?fP6avAD9cPldhqXZjsTnwjjBf/aNJnaqYhx8Y?=
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d945f150-ca27-4067-27f8-08de844f40d9
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11948.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2026 18:01:45.9919
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7zOpIjWXjGqg7mOi5RfZLmZxb2VRteZ8K/8zqHSGAfMZyF/G2PbgN3uzDjoKyfnozR458BM14ADc7D0+vV/V13s4So9a7JZovhqzT/qB4XclkCqYdbTG8Z1PVBHfJJoJ
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9PR01MB14066
 
+Hi Biju,
+Thanks for your review.
 
+On 3/17/26 14:03, Biju Das wrote:
+> Hi Tommaso,
+> 
+> Thanks for the patch.
+> 
+>> -----Original Message-----
+>> From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+>> Sent: 13 February 2026 16:28
+>> Subject: [PATCH v5 12/20] drm: renesas: rz-du: mipi_dsi: Add RZ_MIPI_DSI_FEATURE_GPO0R feature
+>>
+>> The MIPI DSI ip found in the RZ/G3E SoC select the video input clock based on the DU instance actually
+>> connected using the GPO0R register.
+>>
+>> Add this feature to the driver using `RZ_MIPI_DSI_FEATURE_GPO0R`, update the code accordingly to
+>> manage the vclk selection with the introduction of `rzg2l_mipi_dsi_get_input_port()`.
+>>
+>> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+>> ---
+>> v4->v5:
+>>   - No changes.
+>>
+>> v3->v4:
+>>   - No changes.
+>>
+>> v2->v3:
+>>   - No changes.
+>>
+>> v1->v2:
+>>   - No changes.
+>>
+>>   .../gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c    | 63 +++++++++++++++++--
+>>   .../drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h   |  3 +
+>>   2 files changed, 60 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c b/drivers/gpu/drm/renesas/rz-
+>> du/rzg2l_mipi_dsi.c
+>> index 8ea8594afee8..35de1a964dc0 100644
+>> --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+>> +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+>> @@ -37,7 +37,9 @@ MODULE_IMPORT_NS("RZV2H_CPG");
+>>
+>>   #define RZG2L_DCS_BUF_SIZE	128 /* Maximum DCS buffer size in external memory. */
+>>
+>> +#define RZ_MIPI_DSI_MAX_INPUT	2
+>>   #define RZ_MIPI_DSI_FEATURE_16BPP	BIT(0)
+>> +#define RZ_MIPI_DSI_FEATURE_GPO0R	BIT(1)
+>>
+>>   struct rzg2l_mipi_dsi;
+>>
+>> @@ -81,13 +83,14 @@ struct rzg2l_mipi_dsi {
+>>   	struct drm_bridge bridge;
+>>   	struct drm_bridge *next_bridge;
+>>
+>> -	struct clk *vclk;
+>> +	struct clk *vclk[RZ_MIPI_DSI_MAX_INPUT];
+>>   	struct clk *lpclk;
+>>
+>>   	enum mipi_dsi_pixel_format format;
+>>   	unsigned int num_data_lanes;
+>>   	unsigned int lanes;
+>>   	unsigned long mode_flags;
+>> +	u8 vclk_idx;
+>>
+>>   	struct rzv2h_dsi_mode_calc mode_calc;
+>>
+>> @@ -552,8 +555,8 @@ static int rzg2l_dphy_conf_clks(struct rzg2l_mipi_dsi *dsi, unsigned long mode_f
+>>   	unsigned long vclk_rate;
+>>   	unsigned int bpp;
+>>
+>> -	clk_set_rate(dsi->vclk, mode_freq * KILO);
+>> -	vclk_rate = clk_get_rate(dsi->vclk);
+>> +	clk_set_rate(dsi->vclk[dsi->vclk_idx], mode_freq * KILO);
+>> +	vclk_rate = clk_get_rate(dsi->vclk[dsi->vclk_idx]);
+>>   	if (vclk_rate != mode_freq * KILO)
+>>   		dev_dbg(dsi->dev, "Requested vclk rate %lu, actual %lu mismatch\n",
+>>   			mode_freq * KILO, vclk_rate);
+>> @@ -764,6 +767,11 @@ static int rzg2l_mipi_dsi_startup(struct rzg2l_mipi_dsi *dsi,
+>>   	if (ret < 0)
+>>   		goto err_phy;
+>>
+>> +	if (dsi->info->features & RZ_MIPI_DSI_FEATURE_GPO0R)
+>> +		rzg2l_mipi_dsi_link_write(dsi, GPO0R, dsi->vclk_idx);
+> 
+> As per "9.5.3.1 Power on Reset and Initial Settings for All Operations"
+> This needs to be set before PLLENR.PLLEN.
 
-On 12/03/2026 18:34, Maíra Canal wrote:
-> Commit 90a64adb0876 ("drm/v3d: Get rid of pm code") removed the last
-> bits of power management code that V3D had, which were actually never
-> hooked. Therefore, currently, the GPU clock is enabled during probe
-> and only disabled when removing the driver.
->
-> Implement proper power management using the kernel's Runtime PM
-> framework.
->
-> Signed-off-by: Maíra Canal <mcanal@igalia.com>
-> ---
->   drivers/gpu/drm/v3d/Makefile      |  1 +
->   drivers/gpu/drm/v3d/v3d_debugfs.c | 23 +++++++++-
->   drivers/gpu/drm/v3d/v3d_drv.c     | 84 +++++++++++++++++--------------------
->   drivers/gpu/drm/v3d/v3d_drv.h     | 17 ++++++++
->   drivers/gpu/drm/v3d/v3d_mmu.c     | 10 ++++-
->   drivers/gpu/drm/v3d/v3d_perfmon.c | 18 ++++++--
->   drivers/gpu/drm/v3d/v3d_power.c   | 88 +++++++++++++++++++++++++++++++++++++++
->   drivers/gpu/drm/v3d/v3d_submit.c  | 19 +++++++--
->   8 files changed, 202 insertions(+), 58 deletions(-)
->
-> diff --git a/drivers/gpu/drm/v3d/Makefile b/drivers/gpu/drm/v3d/Makefile
-> index b7d673f1153bef16db3800e50b2bfaf36bf8871b..601b834e377e8342c6668645112347cca4214024 100644
-> --- a/drivers/gpu/drm/v3d/Makefile
-> +++ b/drivers/gpu/drm/v3d/Makefile
-> @@ -10,6 +10,7 @@ v3d-y := \
->   	v3d_irq.o \
->   	v3d_mmu.o \
->   	v3d_perfmon.o \
-> +	v3d_power.o \
->   	v3d_trace_points.o \
->   	v3d_sched.o \
->   	v3d_sysfs.o \
-> diff --git a/drivers/gpu/drm/v3d/v3d_debugfs.c b/drivers/gpu/drm/v3d/v3d_debugfs.c
-> index 89f24eec62a74ec49b28f0b22dbf626ba7a35206..634cc796ba2324dc497694c070f2cfffcc4424c9 100644
-> --- a/drivers/gpu/drm/v3d/v3d_debugfs.c
-> +++ b/drivers/gpu/drm/v3d/v3d_debugfs.c
-> @@ -97,7 +97,11 @@ static int v3d_v3d_debugfs_regs(struct seq_file *m, void *unused)
->   	struct drm_debugfs_entry *entry = m->private;
->   	struct drm_device *dev = entry->dev;
->   	struct v3d_dev *v3d = to_v3d_dev(dev);
-> -	int i, core;
-> +	int i, core, ret;
-> +
-> +	ret = v3d_pm_runtime_get(v3d);
-> +	if (ret)
-> +		return ret;
->   
->   	for (i = 0; i < ARRAY_SIZE(v3d_hub_reg_defs); i++) {
->   		const struct v3d_reg_def *def = &v3d_hub_reg_defs[i];
-> @@ -139,6 +143,8 @@ static int v3d_v3d_debugfs_regs(struct seq_file *m, void *unused)
->   		}
->   	}
->   
-> +	v3d_pm_runtime_put(v3d);
-> +
->   	return 0;
->   }
->   
-> @@ -148,7 +154,11 @@ static int v3d_v3d_debugfs_ident(struct seq_file *m, void *unused)
->   	struct drm_device *dev = entry->dev;
->   	struct v3d_dev *v3d = to_v3d_dev(dev);
->   	u32 ident0, ident1, ident2, ident3, cores;
-> -	int core;
-> +	int core, ret;
-> +
-> +	ret = v3d_pm_runtime_get(v3d);
-> +	if (ret)
-> +		return ret;
->   
->   	ident0 = V3D_READ(V3D_HUB_IDENT0);
->   	ident1 = V3D_READ(V3D_HUB_IDENT1);
-> @@ -207,6 +217,8 @@ static int v3d_v3d_debugfs_ident(struct seq_file *m, void *unused)
->   		}
->   	}
->   
-> +	v3d_pm_runtime_put(v3d);
-> +
->   	return 0;
->   }
->   
-> @@ -234,6 +246,11 @@ static int v3d_measure_clock(struct seq_file *m, void *unused)
->   	uint32_t cycles;
->   	int core = 0;
->   	int measure_ms = 1000;
-> +	int ret;
-> +
-> +	ret = v3d_pm_runtime_get(v3d);
-> +	if (ret)
-> +		return ret;
->   
->   	if (v3d->ver >= V3D_GEN_41) {
->   		int cycle_count_reg = V3D_PCTR_CYCLE_COUNT(v3d->ver);
-> @@ -253,6 +270,8 @@ static int v3d_measure_clock(struct seq_file *m, void *unused)
->   	msleep(measure_ms);
->   	cycles = V3D_CORE_READ(core, V3D_PCTR_0_PCTR0);
->   
-> +	v3d_pm_runtime_put(v3d);
-> +
->   	seq_printf(m, "cycles: %d (%d.%d Mhz)\n",
->   		   cycles,
->   		   cycles / (measure_ms * 1000),
-> diff --git a/drivers/gpu/drm/v3d/v3d_drv.c b/drivers/gpu/drm/v3d/v3d_drv.c
-> index 6d69669cf776093f74c67985a957617f3135bbc1..6434e0176a07d2c113b6cfe38c640832572fd3b2 100644
-> --- a/drivers/gpu/drm/v3d/v3d_drv.c
-> +++ b/drivers/gpu/drm/v3d/v3d_drv.c
-> @@ -59,6 +59,7 @@ static int v3d_get_param_ioctl(struct drm_device *dev, void *data,
->   		[DRM_V3D_PARAM_V3D_CORE0_IDENT1] = V3D_CTL_IDENT1,
->   		[DRM_V3D_PARAM_V3D_CORE0_IDENT2] = V3D_CTL_IDENT2,
->   	};
-> +	int ret;
->   
->   	if (args->pad != 0)
->   		return -EINVAL;
-> @@ -75,12 +76,19 @@ static int v3d_get_param_ioctl(struct drm_device *dev, void *data,
->   		if (args->value != 0)
->   			return -EINVAL;
->   
-> +		ret = v3d_pm_runtime_get(v3d);
-> +		if (ret)
-> +			return ret;
-> +
->   		if (args->param >= DRM_V3D_PARAM_V3D_CORE0_IDENT0 &&
->   		    args->param <= DRM_V3D_PARAM_V3D_CORE0_IDENT2) {
->   			args->value = V3D_CORE_READ(0, offset);
->   		} else {
->   			args->value = V3D_READ(offset);
->   		}
-> +
-> +		v3d_pm_runtime_put(v3d);
-> +
->   		return 0;
->   	}
->   
-> @@ -287,36 +295,6 @@ static const struct of_device_id v3d_of_match[] = {
->   };
->   MODULE_DEVICE_TABLE(of, v3d_of_match);
->   
-> -static void
-> -v3d_idle_sms(struct v3d_dev *v3d)
-> -{
-> -	if (v3d->ver < V3D_GEN_71)
-> -		return;
-> -
-> -	V3D_SMS_WRITE(V3D_SMS_TEE_CS, V3D_SMS_CLEAR_POWER_OFF);
-> -
-> -	if (wait_for((V3D_GET_FIELD(V3D_SMS_READ(V3D_SMS_TEE_CS),
-> -				    V3D_SMS_STATE) == V3D_SMS_IDLE), 100)) {
-> -		drm_err(&v3d->drm, "Failed to power up SMS\n");
-> -	}
-> -
-> -	v3d_reset_sms(v3d);
-> -}
-> -
-> -static void
-> -v3d_power_off_sms(struct v3d_dev *v3d)
-> -{
-> -	if (v3d->ver < V3D_GEN_71)
-> -		return;
-> -
-> -	V3D_SMS_WRITE(V3D_SMS_TEE_CS, V3D_SMS_POWER_OFF);
-> -
-> -	if (wait_for((V3D_GET_FIELD(V3D_SMS_READ(V3D_SMS_TEE_CS),
-> -				    V3D_SMS_STATE) == V3D_SMS_POWER_OFF_STATE), 100)) {
-> -		drm_err(&v3d->drm, "Failed to power off SMS\n");
-> -	}
-> -}
-> -
->   static int
->   map_regs(struct v3d_dev *v3d, void __iomem **regs, const char *name)
->   {
-> @@ -400,19 +378,26 @@ static int v3d_platform_drm_probe(struct platform_device *pdev)
->   	if (ret)
->   		goto dma_free;
->   
-> -	ret = clk_prepare_enable(v3d->clk);
-> -	if (ret) {
-> -		dev_err(&pdev->dev, "Couldn't enable the V3D clock\n");
-> +	ret = devm_pm_runtime_enable(dev);
-> +	if (ret)
->   		goto gem_destroy;
-> -	}
->   
-> -	v3d_idle_sms(v3d);
-> +	ret = pm_runtime_resume_and_get(dev);
-> +	if (ret)
-> +		goto gem_destroy;
-> +
-> +	/* If PM is disabled, we need to call v3d_power_resume() manually. */
-> +	if (!IS_ENABLED(CONFIG_PM)) {
-> +		ret = v3d_power_resume(dev);
-> +		if (ret)
-> +			goto gem_destroy;
-> +	}
->   
->   	mmu_debug = V3D_READ(V3D_MMU_DEBUG_INFO);
->   	mask = DMA_BIT_MASK(30 + V3D_GET_FIELD(mmu_debug, V3D_MMU_PA_WIDTH));
->   	ret = dma_set_mask_and_coherent(dev, mask);
->   	if (ret)
-> -		goto clk_disable;
-> +		goto runtime_pm_put;
->   
->   	dma_set_max_seg_size(&pdev->dev, UINT_MAX);
->   
-> @@ -433,26 +418,27 @@ static int v3d_platform_drm_probe(struct platform_device *pdev)
->   	v3d->rev = V3D_GET_FIELD(ident3, V3D_HUB_IDENT3_IPREV);
->   
->   	v3d_init_hw_state(v3d);
-> -	v3d_mmu_set_page_table(v3d);
-> -	v3d_irq_enable(v3d);
-> +
-> +	pm_runtime_set_autosuspend_delay(dev, 50);
-> +	pm_runtime_use_autosuspend(dev);
->   
->   	ret = drm_dev_register(drm, 0);
->   	if (ret)
-> -		goto irq_disable;
-> +		goto runtime_pm_put;
->   
->   	ret = v3d_sysfs_init(dev);
->   	if (ret)
->   		goto drm_unregister;
->   
-> +	pm_runtime_mark_last_busy(dev);
-> +	pm_runtime_put_autosuspend(dev);
-> +
->   	return 0;
->   
->   drm_unregister:
->   	drm_dev_unregister(drm);
-> -irq_disable:
-> -	v3d_irq_disable(v3d);
-> -clk_disable:
-> -	v3d_power_off_sms(v3d);
-> -	clk_disable_unprepare(v3d->clk);
-> +runtime_pm_put:
-> +	pm_runtime_put_sync_suspend(dev);
->   gem_destroy:
->   	v3d_gem_destroy(drm);
->   dma_free:
-> @@ -470,21 +456,27 @@ static void v3d_platform_drm_remove(struct platform_device *pdev)
->   
->   	drm_dev_unregister(drm);
->   
-> -	v3d_power_off_sms(v3d);
-> +	pm_runtime_suspend(dev);
->   
-> -	clk_disable_unprepare(v3d->clk);
-> +	/* If PM is disabled, we need to call v3d_power_suspend() manually. */
-> +	if (!IS_ENABLED(CONFIG_PM))
-> +		v3d_power_suspend(dev);
->   
->   	v3d_gem_destroy(drm);
->   
->   	dma_free_wc(dev, 4096, v3d->mmu_scratch, v3d->mmu_scratch_paddr);
->   }
->   
-> +static DEFINE_RUNTIME_DEV_PM_OPS(v3d_pm_ops, v3d_power_suspend,
-> +				 v3d_power_resume, NULL);
-> +
->   static struct platform_driver v3d_platform_driver = {
->   	.probe		= v3d_platform_drm_probe,
->   	.remove		= v3d_platform_drm_remove,
->   	.driver		= {
->   		.name	= "v3d",
->   		.of_match_table = v3d_of_match,
-> +		.pm = pm_ptr(&v3d_pm_ops),
->   	},
->   };
->   
-> diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d_drv.h
-> index ff90ef6876d65241975f259b44c6f09941d12ecb..ff61a2510742e46f246f3935d2d0487d7202b201 100644
-> --- a/drivers/gpu/drm/v3d/v3d_drv.h
-> +++ b/drivers/gpu/drm/v3d/v3d_drv.h
-> @@ -3,6 +3,7 @@
->   
->   #include <linux/delay.h>
->   #include <linux/mutex.h>
-> +#include <linux/pm_runtime.h>
->   #include <linux/spinlock_types.h>
->   #include <linux/workqueue.h>
->   
-> @@ -321,6 +322,8 @@ struct v3d_job {
->   
->   	/* Callback for the freeing of the job on refcount going to 0. */
->   	void (*free)(struct kref *ref);
-> +
-> +	bool has_pm_ref;
->   };
->   
->   struct v3d_bin_job {
-> @@ -594,6 +597,20 @@ int v3d_mmu_set_page_table(struct v3d_dev *v3d);
->   void v3d_mmu_insert_ptes(struct v3d_bo *bo);
->   void v3d_mmu_remove_ptes(struct v3d_bo *bo);
->   
-> +/* v3d_power.c */
-> +int v3d_power_suspend(struct device *dev);
-> +int v3d_power_resume(struct device *dev);
-> +
-> +static __always_inline int v3d_pm_runtime_get(struct v3d_dev *v3d)
-> +{
-> +	return pm_runtime_resume_and_get(v3d->drm.dev);
-> +}
-> +
-> +static __always_inline int v3d_pm_runtime_put(struct v3d_dev *v3d)
-> +{
-> +	return pm_runtime_put_autosuspend(v3d->drm.dev);
-> +}
-> +
->   /* v3d_sched.c */
->   void v3d_timestamp_query_info_free(struct v3d_timestamp_query_info *query_info,
->   				   unsigned int count);
-> diff --git a/drivers/gpu/drm/v3d/v3d_mmu.c b/drivers/gpu/drm/v3d/v3d_mmu.c
-> index c513a393c0313772650fd6d7236127b2dc4101d9..630c64e51d2f2ad30e59fa2b175487efe0bfba49 100644
-> --- a/drivers/gpu/drm/v3d/v3d_mmu.c
-> +++ b/drivers/gpu/drm/v3d/v3d_mmu.c
-> @@ -39,7 +39,11 @@ static bool v3d_mmu_is_aligned(u32 page, u32 page_address, size_t alignment)
->   
->   int v3d_mmu_flush_all(struct v3d_dev *v3d)
->   {
-> -	int ret;
-> +	int ret = 0;
-> +
-> +	/* Flush the PTs only if we're already awake */
-> +	if (!pm_runtime_get_if_active(v3d->drm.dev))
-> +		return 0;
->   
->   	V3D_WRITE(V3D_MMUC_CONTROL, V3D_MMUC_CONTROL_FLUSH |
->   		  V3D_MMUC_CONTROL_ENABLE);
-> @@ -48,7 +52,7 @@ int v3d_mmu_flush_all(struct v3d_dev *v3d)
->   			 V3D_MMUC_CONTROL_FLUSHING), 100);
->   	if (ret) {
->   		dev_err(v3d->drm.dev, "MMUC flush wait idle failed\n");
-> -		return ret;
-> +		goto pm_put;
->   	}
->   
->   	V3D_WRITE(V3D_MMU_CTL, V3D_READ(V3D_MMU_CTL) |
-> @@ -59,6 +63,8 @@ int v3d_mmu_flush_all(struct v3d_dev *v3d)
->   	if (ret)
->   		dev_err(v3d->drm.dev, "MMU TLB clear wait idle failed\n");
->   
-> +pm_put:
-> +	v3d_pm_runtime_put(v3d);
->   	return ret;
->   }
->   
-> diff --git a/drivers/gpu/drm/v3d/v3d_perfmon.c b/drivers/gpu/drm/v3d/v3d_perfmon.c
-> index 8e0249580bbacac507b2d7c0bcac37ef19c1a54e..02451fc09dbbf6d33640000249786e2836732647 100644
-> --- a/drivers/gpu/drm/v3d/v3d_perfmon.c
-> +++ b/drivers/gpu/drm/v3d/v3d_perfmon.c
-> @@ -232,6 +232,9 @@ void v3d_perfmon_start(struct v3d_dev *v3d, struct v3d_perfmon *perfmon)
->   	if (WARN_ON_ONCE(!perfmon || v3d->active_perfmon))
->   		return;
->   
-> +	if (!pm_runtime_get_if_active(v3d->drm.dev))
-> +		return;
-> +
->   	ncounters = perfmon->ncounters;
->   	mask = GENMASK(ncounters - 1, 0);
->   
-> @@ -257,6 +260,8 @@ void v3d_perfmon_start(struct v3d_dev *v3d, struct v3d_perfmon *perfmon)
->   	V3D_CORE_WRITE(0, V3D_PCTR_0_OVERFLOW, mask);
->   
->   	v3d->active_perfmon = perfmon;
-> +
-> +	v3d_pm_runtime_put(v3d);
->   }
->   
->   void v3d_perfmon_stop(struct v3d_dev *v3d, struct v3d_perfmon *perfmon,
-> @@ -268,10 +273,11 @@ void v3d_perfmon_stop(struct v3d_dev *v3d, struct v3d_perfmon *perfmon,
->   		return;
->   
->   	mutex_lock(&perfmon->lock);
-> -	if (perfmon != v3d->active_perfmon) {
-> -		mutex_unlock(&perfmon->lock);
-> -		return;
-> -	}
-> +	if (perfmon != v3d->active_perfmon)
-> +		goto out;
-> +
-> +	if (!pm_runtime_get_if_active(v3d->drm.dev))
-> +		goto out_clear;
->   
->   	if (capture)
->   		for (i = 0; i < perfmon->ncounters; i++)
-> @@ -279,7 +285,11 @@ void v3d_perfmon_stop(struct v3d_dev *v3d, struct v3d_perfmon *perfmon,
->   
->   	V3D_CORE_WRITE(0, V3D_V4_PCTR_0_EN, 0);
->   
-> +	v3d_pm_runtime_put(v3d);
-> +
-> +out_clear:
->   	v3d->active_perfmon = NULL;
-> +out:
->   	mutex_unlock(&perfmon->lock);
->   }
->   
-> diff --git a/drivers/gpu/drm/v3d/v3d_power.c b/drivers/gpu/drm/v3d/v3d_power.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..99e7ec8c8ee0bb174420e517b5a157748c84adf9
-> --- /dev/null
-> +++ b/drivers/gpu/drm/v3d/v3d_power.c
-> @@ -0,0 +1,88 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/* Copyright (C) 2026 Raspberry Pi */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/reset.h>
-> +
-> +#include <drm/drm_print.h>
-> +
-> +#include "v3d_drv.h"
-> +#include "v3d_regs.h"
-> +
-> +static void
-> +v3d_resume_sms(struct v3d_dev *v3d)
-> +{
-> +	if (v3d->ver < V3D_GEN_71)
-> +		return;
-> +
-> +	V3D_SMS_WRITE(V3D_SMS_TEE_CS, V3D_SMS_CLEAR_POWER_OFF);
-> +
-> +	if (wait_for((V3D_GET_FIELD(V3D_SMS_READ(V3D_SMS_TEE_CS),
-> +				    V3D_SMS_STATE) == V3D_SMS_IDLE), 100)) {
-> +		drm_err(&v3d->drm, "Failed to power up SMS\n");
-> +	}
-> +
-> +	v3d_reset_sms(v3d);
-> +}
-> +
-> +static void
-> +v3d_suspend_sms(struct v3d_dev *v3d)
-> +{
-> +	if (v3d->ver < V3D_GEN_71)
-> +		return;
-> +
-> +	V3D_SMS_WRITE(V3D_SMS_TEE_CS, V3D_SMS_POWER_OFF);
-> +
-> +	if (wait_for((V3D_GET_FIELD(V3D_SMS_READ(V3D_SMS_TEE_CS),
-> +				    V3D_SMS_STATE) == V3D_SMS_POWER_OFF_STATE), 100)) {
-> +		drm_err(&v3d->drm, "Failed to power off SMS\n");
-> +	}
-> +}
-> +
-> +int v3d_power_suspend(struct device *dev)
-> +{
-> +	struct drm_device *drm = dev_get_drvdata(dev);
-> +	struct v3d_dev *v3d = to_v3d_dev(drm);
-> +	int ret = 0;
-> +
-> +	v3d_irq_disable(v3d);
-> +
-> +	v3d_perfmon_stop(v3d, v3d->active_perfmon, false);
+Good catch! Thanks.
+I think I can move that into rzv2h_mipi_dsi_dphy_init() before the
+	
+	ndelay(200)
 
-Just a nit, but looks helpful for future debugging to add a debug 
-message here
-that explains perfmon stopped because of suspend.
+In this way the call will reflect the power on sequence diagram.
+Also I think we can drop the dbg print.
 
-Reviewed-by: Melissa Wen <mwen@igalia.com>
+What do you think?
 
-> +
-> +	v3d_suspend_sms(v3d);
-> +
-> +	if (v3d->reset)
-> +		ret = reset_control_assert(v3d->reset);
-> +
-> +	clk_disable_unprepare(v3d->clk);
-> +
-> +	return ret;
-> +}
-> +
-> +int v3d_power_resume(struct device *dev)
-> +{
-> +	struct drm_device *drm = dev_get_drvdata(dev);
-> +	struct v3d_dev *v3d = to_v3d_dev(drm);
-> +	int ret;
-> +
-> +	ret = clk_prepare_enable(v3d->clk);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (v3d->reset) {
-> +		ret = reset_control_deassert(v3d->reset);
-> +		if (ret)
-> +			goto clk_disable;
-> +	}
-> +
-> +	v3d_resume_sms(v3d);
-> +	v3d_init_hw_state(v3d);
-> +	v3d_mmu_set_page_table(v3d);
-> +	v3d_irq_enable(v3d);
-> +
-> +	return 0;
-> +
-> +clk_disable:
-> +	clk_disable_unprepare(v3d->clk);
-> +	return ret;
-> +}
-> diff --git a/drivers/gpu/drm/v3d/v3d_submit.c b/drivers/gpu/drm/v3d/v3d_submit.c
-> index 18f2bf1fe89face6ede3de465c80b63a6635511e..4fbe084cacd31b9e755b0efcb21ad3b361558238 100644
-> --- a/drivers/gpu/drm/v3d/v3d_submit.c
-> +++ b/drivers/gpu/drm/v3d/v3d_submit.c
-> @@ -103,6 +103,9 @@ v3d_job_free(struct kref *ref)
->   	if (job->perfmon)
->   		v3d_perfmon_put(job->perfmon);
->   
-> +	if (job->has_pm_ref)
-> +		v3d_pm_runtime_put(job->v3d);
-> +
->   	kfree(job);
->   }
->   
-> @@ -184,13 +187,13 @@ v3d_job_init(struct v3d_dev *v3d, struct drm_file *file_priv,
->   				if (copy_from_user(&in, handle++, sizeof(in))) {
->   					ret = -EFAULT;
->   					drm_dbg(&v3d->drm, "Failed to copy wait dep handle.\n");
-> -					goto fail_deps;
-> +					goto fail_job_init;
->   				}
->   				ret = drm_sched_job_add_syncobj_dependency(&job->base, file_priv, in.handle, 0);
->   
->   				// TODO: Investigate why this was filtered out for the IOCTL.
->   				if (ret && ret != -ENOENT)
-> -					goto fail_deps;
-> +					goto fail_job_init;
->   			}
->   		}
->   	} else {
-> @@ -198,14 +201,22 @@ v3d_job_init(struct v3d_dev *v3d, struct drm_file *file_priv,
->   
->   		// TODO: Investigate why this was filtered out for the IOCTL.
->   		if (ret && ret != -ENOENT)
-> -			goto fail_deps;
-> +			goto fail_job_init;
-> +	}
-> +
-> +	/* CPU jobs don't require hardware resources */
-> +	if (queue != V3D_CPU) {
-> +		ret = v3d_pm_runtime_get(v3d);
-> +		if (ret)
-> +			goto fail_job_init;
-> +		job->has_pm_ref = true;
->   	}
->   
->   	kref_init(&job->refcount);
->   
->   	return 0;
->   
-> -fail_deps:
-> +fail_job_init:
->   	drm_sched_job_cleanup(&job->base);
->   	return ret;
->   }
->
+Kind Regards,
+Tommaso
+
+> 
+> Cheers,
+> Biju
+> 
+> 
+>> +
+>> +	dev_dbg(dsi->dev, "selected du%d input channel\n", dsi->vclk_idx);
+>> +
+>>   	/* Enable Data lanes and Clock lanes */
+>>   	txsetr = TXSETR_DLEN | TXSETR_NUMLANEUSE(dsi->lanes - 1) | TXSETR_CLEN;
+>>   	rzg2l_mipi_dsi_link_write(dsi, TXSETR, txsetr); @@ -1006,6 +1014,37 @@ static int
+>> rzg2l_mipi_dsi_stop_video(struct rzg2l_mipi_dsi *dsi)
+>>   	return ret;
+>>   }
+>>
+>> +static int rzg2l_mipi_dsi_get_input_port(struct rzg2l_mipi_dsi *dsi) {
+>> +	struct device_node *np = dsi->dev->of_node;
+>> +	struct device_node *remote_ep, *ep_node;
+>> +	struct of_endpoint ep;
+>> +	bool ep_enabled;
+>> +	int in_port;
+>> +
+>> +	/* DSI can have only one port enabled */
+>> +	for_each_endpoint_of_node(np, ep_node) {
+>> +		of_graph_parse_endpoint(ep_node, &ep);
+>> +		if (ep.port >= RZ_MIPI_DSI_MAX_INPUT)
+>> +			break;
+>> +
+>> +		remote_ep = of_graph_get_remote_endpoint(ep_node);
+>> +		ep_enabled = of_device_is_available(remote_ep);
+>> +		of_node_put(remote_ep);
+>> +
+>> +		if (ep_enabled) {
+>> +			in_port = ep.port;
+>> +			break;
+>> +		}
+>> +	}
+>> +
+>> +	if (!ep_enabled)
+>> +		return -EINVAL;
+>> +
+>> +	dev_dbg(dsi->dev, "input port@%d\n", in_port);
+>> +	return in_port;
+>> +}
+>> +
+>>   /* -----------------------------------------------------------------------------
+>>    * Bridge
+>>    */
+>> @@ -1408,9 +1447,21 @@ static int rzg2l_mipi_dsi_probe(struct platform_device *pdev)
+>>   	if (IS_ERR(dsi->mmio))
+>>   		return PTR_ERR(dsi->mmio);
+>>
+>> -	dsi->vclk = devm_clk_get(dsi->dev, "vclk");
+>> -	if (IS_ERR(dsi->vclk))
+>> -		return PTR_ERR(dsi->vclk);
+>> +	dsi->vclk[0] = devm_clk_get(dsi->dev, "vclk");
+>> +		if (IS_ERR(dsi->vclk[0]))
+>> +			return PTR_ERR(dsi->vclk[0]);
+>> +
+>> +	if (dsi->info->features & RZ_MIPI_DSI_FEATURE_GPO0R) {
+>> +		dsi->vclk[1] = devm_clk_get(dsi->dev, "vclk2");
+>> +		if (IS_ERR(dsi->vclk[1]))
+>> +			return PTR_ERR(dsi->vclk[1]);
+>> +
+>> +		ret = rzg2l_mipi_dsi_get_input_port(dsi);
+>> +		if (ret < 0)
+>> +			return dev_err_probe(dsi->dev, -EINVAL,
+>> +					     "No available input port\n");
+>> +		dsi->vclk_idx = ret;
+>> +	}
+>>
+>>   	dsi->lpclk = devm_clk_get(dsi->dev, "lpclk");
+>>   	if (IS_ERR(dsi->lpclk))
+>> diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h b/drivers/gpu/drm/renesas/rz-
+>> du/rzg2l_mipi_dsi_regs.h
+>> index 2bef20566648..cee2e0bc5dc5 100644
+>> --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h
+>> +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h
+>> @@ -83,6 +83,9 @@
+>>   #define LINKSR_SQCHRUN1			BIT(4)
+>>   #define LINKSR_SQCHRUN0			BIT(0)
+>>
+>> +/* RZ/G3E General Purpose Output 0 Register */
+>> +#define GPO0R				0xc0
+>> +
+>>   /* Tx Set Register */
+>>   #define TXSETR				0x100
+>>   #define TXSETR_NUMLANECAP		(0x3 << 16)
+>> --
+>> 2.43.0
+> 
 
