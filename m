@@ -1,137 +1,97 @@
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013048.outbound.protection.outlook.com [40.107.162.48])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9692738CFEA;
-	Tue, 17 Mar 2026 07:27:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773732441; cv=fail; b=g7FlWWQWd3eZYObAp0OA++1cSV3yjf6zIkKbFB04+FQuDzYS+WsEyZDgYPGc7voGtynxg21mcPlwyVIKTDFSlDOMaYREdm62d6i2idCXvl9izCYBjN/AG9tm8UHkEvvGIsMjIng1sHukyyEtQrDDrn0I2OEmqT7buoF0+e7HINo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773732441; c=relaxed/simple;
-	bh=BbwlIWIrt4YWJ2cQAErCtoj72+fB4aWoOEE2aa6YOo4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=h/Jnxz9SCIxvBebZvUULO9zhEQGm0t5UjXs8K4Ew/na10S0X/UfcQfY8p5f3ullXs4RONxpedhCl0wpwdcvY9lSQ6ZJPaJHlwikRupkir/5C70N4rlFDgy0tXpXnbuv8yeZsFsfDrp16sJvTKWadcR6ajAvZwm4NYJoCVUt2bZc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=MAHQ+vaN; arc=fail smtp.client-ip=40.107.162.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F1D390C83;
+	Tue, 17 Mar 2026 07:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773732633; cv=none; b=aAf9HiGiTlKDIW+wqHTbm3qL7FCOp3Ut/z99V5vTzs6hw7lXxFl0Vk2c6FKFJHY//R6a9IsQ597fc2o3Y5gYokZkGUbbp14MbkvfNB1VIjaZ3Li9lol6CJZavkZ/tShTHBYCkVdwmxBp0J013Rmf+fKk0ab1zbrAHXCJ3LR/iD8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773732633; c=relaxed/simple;
+	bh=K/TdHHsZVvOzwwVoJGJ+6DNE03u/r7LaLGvjkYX7nGo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AEbcegt1ANhmEVJXCcDheawDPBJsPs+JO1q2HzqN78MqyEE2FT1kXcIAeuinFy46EOUQz/s9s/+fz8nxGsvmdtmGQsp6tPrlCV+eGijUiGk5ew9xA8nskDLk6Y6gexDuzEsv+1Hz8RKz9qSs+ME6GHdSc85bSr8/4muKKJrYVLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qKXi53ac; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="MAHQ+vaN"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BUFqPdNV+pvVqXW7ST+QZ7cmv1LTC1FxV9ch5OXDfinVWvuT7wf1d2qNOkwvef39y8l2m1MwDYTajeGPYV74vnXugzgF0ZuxZB+YrSEuHfhFwoA4oeFeC0SrC8HFRDS24ZvBvBr7gVwJFpPlFKw92DeBhe9uQzLmDp1ypr0AZ2uNndX3ofojxYd4rKUt7XQpXgmmaocqraKkILm2MjeRgJhqfc8aX4HY3ffPDwbfZoTwPDe5p4mKiO3Tbv2mnJeiEhqgQZn63r5Bl+hbZdDSIT37ioiZk0Mzx9f2uhCUBIEvWDcanEdNhBjJ4qtUhr5l39GgLdcSb0C4RV93R3q2Hw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BbwlIWIrt4YWJ2cQAErCtoj72+fB4aWoOEE2aa6YOo4=;
- b=RFqd+9mn3HM2kDEdVCdkGoKLOED0jBIL8tQfPzIm9aQk1rRhTboy88L1IIfgaNB7OLVGSVj0gyWv01s5SsnVvtz69tZu/GfWzokugGrA4gi36IG4WcNWqBgtJdpq6RWL7W56K+ZqgDmjdxYhqezFLXV6zGYgNahvflKNgB5m1Awz6RO7SPN4PpI19h/ScKGeOH1WZwb+EomLxQrDelkboeRrM02A0qwDYcaMvJ/r8G0Fv6A+2AeOgJdTdV2ljbj+ISJp5D4xHsnzE5S0rCS6cuKMYcZfps9H4pmdKZqMX6ShOeVYaHsXHVplVlF9p47+nzQnwvWNVn7lSJ0wJkmA7g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BbwlIWIrt4YWJ2cQAErCtoj72+fB4aWoOEE2aa6YOo4=;
- b=MAHQ+vaNt1Hx8qV3oKTLpOGTfJQdUJinhmdAzZeNnEImLfQfnWTLNi4kCFx8NKyIuCYMCfua30NvPP33k4PSVJ8TUnpwWDkp59XnY/57gMANPnuRRQ34kIHWDvGMzvCiVt/WQCfB2VttyaAM9W7YDnd0B20vP6dOV/n0PcpSFL6WLJEW0fVkqc4CzbRTwS588Xj1gZBpnATYiv8o9T/nlTFPZlKIr4ZAg4UxOptTC3DLIw0RYrwzxPNR0JZhXyWK3fZMwkJR05WI36rHi0S+8FPNUtab0FAZWCSZQ6hLtXJzXh04qqkgnp3rElEONB0JptvmiyhyDZp5zGmGPNqOtQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DB9PR04MB8461.eurprd04.prod.outlook.com (2603:10a6:10:2cf::20)
- by AM0PR04MB6916.eurprd04.prod.outlook.com (2603:10a6:208:185::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9700.24; Tue, 17 Mar
- 2026 07:26:53 +0000
-Received: from DB9PR04MB8461.eurprd04.prod.outlook.com
- ([fe80::21f6:947a:1f40:18af]) by DB9PR04MB8461.eurprd04.prod.outlook.com
- ([fe80::21f6:947a:1f40:18af%4]) with mapi id 15.20.9700.024; Tue, 17 Mar 2026
- 07:26:47 +0000
-Date: Tue, 17 Mar 2026 15:29:22 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Cristian Marussi <cristian.marussi@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, sudeep.holla@arm.com,
-	philip.radford@arm.com, james.quinlan@broadcom.com,
-	f.fainelli@gmail.com, vincent.guittot@linaro.org,
-	etienne.carriere@foss.st.com, michal.simek@amd.com,
-	dan.carpenter@linaro.org, geert+renesas@glider.be,
-	kuninori.morimoto.gx@renesas.com, marek.vasut+renesas@gmail.com
-Subject: Re: [PATCH v2 09/13] firmware: arm_scmi: Harden clock parents
- discovery
-Message-ID: <abkC0kGeKPvr3F3o@shlinux89>
-References: <20260310184030.3669330-1-cristian.marussi@arm.com>
- <20260310184030.3669330-10-cristian.marussi@arm.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260310184030.3669330-10-cristian.marussi@arm.com>
-X-ClientProxiedBy: MA5P287CA0273.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:1f2::15) To DB9PR04MB8461.eurprd04.prod.outlook.com
- (2603:10a6:10:2cf::20)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qKXi53ac"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB060C2BC9E;
+	Tue, 17 Mar 2026 07:30:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773732633;
+	bh=K/TdHHsZVvOzwwVoJGJ+6DNE03u/r7LaLGvjkYX7nGo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qKXi53aclx2O/SbRnyVrSRqxzdjdw9pj+RLOGYDHPGFsD0VmK74JJab5v+9i5Jpog
+	 Ry41JyZkRu60wcGsscCVP9jQzwI5z1bP7E9TuJweHqpT0Ea9Rkw0jVqIiqvKkR/4gs
+	 T9S4Lw19owG3Q5/9zZfeI9enqxbmVFqYI614IBMeCyMr5SOJljLVIViUaSRA0tK+du
+	 BjOmVQObf7Sci542FmVXqiAqYVYzVIxABWqpDUrg8Zac41Laf0vel4Yj2LHAII0MRZ
+	 KQOX0pNbfnna3g3HYmEhhtnTOJCDjhYK1GUq9k2iB8kCLgbA3XVt+YqABXKFN6NYUo
+	 Njvs9GSMHn1mw==
+Date: Tue, 17 Mar 2026 08:30:24 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Brian Masney <bmasney@redhat.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Abel Vesa <abelvesa@kernel.org>, 
+	Hans de Goede <hansg@kernel.org>, Saravana Kannan <saravanak@kernel.org>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: add new Kconfig to control default behavior of
+ disabling unused clocks
+Message-ID: <20260317-almond-leech-of-correction-2a2ef6@houat>
+References: <20260316-clk-ignore-unused-kconfig-v1-1-6e95a4fb0c94@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR04MB8461:EE_|AM0PR04MB6916:EE_
-X-MS-Office365-Filtering-Correlation-Id: be58c39c-d18f-4900-9663-08de83f68c23
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|52116014|366016|19092799006|22082099003|56012099003|18002099003|7053199007|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	KY5jwiwzW27gCkSzwTMFs8VRriEv3LrbYQKa2XJ1Vb6z73l562UHl2RNI9sQwA2qzcteX7ZkuiUPUYUrJr9dMc7Tj8WZroHKuL7GqryysCrBZ0SUeT2knsxUfZppNsK+qFETh0mByKIBLSHzMV3cyvgV5l5U42s4YIJ2ZMZezOkTsxnVisvCBvyjV6UDQOexPnS6/a0fJTRP1tGcNGg4Vpehf0gE9QOFi9jTaGg4YnJY1JKAG8Lo7QrJiZdvsOnHeih+aVlnQOm+M51ADAZhp0aYFAdzWC4QSaIjrGtDRzVSjcC+60l/PN0P1wrcjqPm2Cpk1Ri4rriHCJ6yRJp89MC9Pakqqw7bBUyu5hQBXA4yGsXrBBM7tswVZzJVVAf1SLMaTKId3ugXLvsOvvneM++KOxqCq1KpEZfscKtcPDBhZbTlSNB+puuxuVycZl8vvjcewJ3Lvo+trcsNrdYHa7KqYut4BvpKRfnVZ4TFxcvEeQPjfJTs7BF804gQMltWSPs3xXcgEj/xGUM/8YgeTbQC9xemnXaoR5xIwRU3lpMV0bsb5icsDo/d5zckGBAanNdvXWp01y4u0traBVgGeRQD1/a9RdT0Gpe5ODIQulmvOKmOIW1K8Hn6mWsCWZriCXvTwjpZUgjL2FBsXp5YXrURgO6t1uPBukUD0ZujK3phSySc/Q3rTizUR0PCqwfw5ryK29i+TEwxW9Rdf4lkDVmh7SPFq2+WfPPlprOQoGqpbP+hVp7GGJ84C/znXTNH5+VAG7PVUbOdhXvih5sEho3hXjLB1sx1tzO7RXlrtrs=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB8461.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(52116014)(366016)(19092799006)(22082099003)(56012099003)(18002099003)(7053199007)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?F4+dC40zkHaQCLc7S7kMamUj04ZQY+/W/TveJ+akcjN/bnU1sNHjIOVyOLAT?=
- =?us-ascii?Q?RA+SqjivtYRUzUnyftDwV5AfPP+E3xNQbmilKwUQ6VKCDq3Kjn+UFFN3ZRvn?=
- =?us-ascii?Q?O4rddaboNblZu4ja1AXMUrK6j0dnQcNgB8e4txIHmbagNi8ON1rl+Ssyz4WJ?=
- =?us-ascii?Q?dGzVtTra2qoMxY7joApp5rlbvWp/f0tSKw9Rbyd0xLaF70aMe3n+DVBB8IXf?=
- =?us-ascii?Q?GUf5n6NqH3GmLawImA6gQ7oxNVfvsbS5sxH82/GrQ+74UR1vOD21c2N6lJAL?=
- =?us-ascii?Q?i//9lAuISoa25t/RiFPhCpT1dbdauuSBalGdwQAV+gyn2jN/4OeZnU3tLhp2?=
- =?us-ascii?Q?C+yLNsn5NoEAmTrpYKzlZvAqlqL/Ux+aR86jqZtPN87xRZzz0RPTNOh0Uo/n?=
- =?us-ascii?Q?0bM99G93ooRyjsFzGsNJsG7UW6PejQZw7RmhGhv8IoaSRIGUSStpetobvEDE?=
- =?us-ascii?Q?qzlFnkfBm3doFyGSEtgBCfZilLeMn7MomGjUKdRTAqnvJc4f7F6nKGzPWQ1b?=
- =?us-ascii?Q?c3AqA00aAFQvQymoHbgBKclrK+ppxezi6lXojV4LKQ0lPJrnW8RWHYEcD+Yr?=
- =?us-ascii?Q?cdkldaUwrcHvi+PfAZtVCfCq8t8bJDDF0nAtPKWyMRbrQ5Jf5ltclNfU1n0y?=
- =?us-ascii?Q?VqVnlxdb7STXEKAE7ucOFikFdnjQSkQY8xH8NMdc+ueueXGWRySKowr2YzhM?=
- =?us-ascii?Q?pQOUarB5MWE2mzhN7WnRwwxxsAFI9cMmrTR0IzJWF/gew7AvCe59mnERnQBK?=
- =?us-ascii?Q?7ePS8ZPi7n1v2uC2SJGA/IMEXGyyrBHhasppGnoFwaq7PPhYAD+wa9w63iBa?=
- =?us-ascii?Q?YZGRcg47f4PmseSbsYNf1iSOEU1towfh2xiwMw936FgWOW3Q9GS/68/nOKXT?=
- =?us-ascii?Q?xNP0owIm5RvBRF8OXVvC8szfBMeXFuWJiS3ySuOQ65piE9osHQUe11RiHUYy?=
- =?us-ascii?Q?tpIRZiwnerm2v7lZH4bo0HcVFqeCHcffe9qB2EfR4vNe8qjG6oN6DEGv53Cz?=
- =?us-ascii?Q?H1UU7LgT9VIqKLtqO8DLFR8ePe/OOjN7+vUkTvuow9BvuCIVv86wPPShLOSm?=
- =?us-ascii?Q?OwzAQb52GAJMK+qqx7/+WT8Qqr7uZuPrwbEEXSAedOoIWkYZMvByk3j7DMce?=
- =?us-ascii?Q?ubnjLX0UNvioim2sNUiHaSARTNmCGXBemtX93hI/9GEPEHKS5LN8Tni6cK+b?=
- =?us-ascii?Q?8Ixd2Gw62dvLiMXFWMEQ8jc9Nl82Xe4eTPty5pQUGZ8gRGsAqc6O5RUxvPe3?=
- =?us-ascii?Q?xtbFOOADPvCsiUhhM8r1pjAl6/0s6Lq+qtC1gfszP+oMK/ipffOlyZK6zCf9?=
- =?us-ascii?Q?Y/BNBTykXT1ksr8jUIHIRf3bnjlJNZiaMbHty1kZofUYhvM/RxBxtbiGIUB+?=
- =?us-ascii?Q?YTlHgYPXGuPCib9cpTJH4f5es9cC4+ChClrvnSMCIUZSjKGM55AEUZ2nQLDp?=
- =?us-ascii?Q?gJaiVelWVlGKlHe9QbqeTT7lg6IRSQ8Bcwzj8S9z3dQdIVrXhfX6eAUt2gFi?=
- =?us-ascii?Q?31+ziKIFMTklj0pgtXfu4eZALei+GAUvhoypqzRz7Kn9DYQGp0wCWFzoU5Qg?=
- =?us-ascii?Q?UT3wdi9SemL3otf1MhzXBBilJNyq5pffpRZ662CBT1e825DOdkZz32W9Lfkg?=
- =?us-ascii?Q?qmLlfPfssa16OpYn+H0oFCg7vspajfmnqbzetBc1iYa+n1Ai7fXivl1uO7ng?=
- =?us-ascii?Q?4O+bJ1bppMYkOfa8RlL2XIoFYp9auIC+mV9jLJnLhh2q0DSHvT79dQoO4cyL?=
- =?us-ascii?Q?UVPvU8owZQ=3D=3D?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: be58c39c-d18f-4900-9663-08de83f68c23
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB8461.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2026 07:26:47.1962
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7zsY4Yg8sUIIL2Q7MwF90vD8CAl7YEK60GZue5Z86YULjKHpsDTZy8ET9CY0zFoKX6uCLIaF2aEAdEWx1W5DXg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6916
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="meejllfhgqllwyqr"
+Content-Disposition: inline
+In-Reply-To: <20260316-clk-ignore-unused-kconfig-v1-1-6e95a4fb0c94@redhat.com>
 
-On Tue, Mar 10, 2026 at 06:40:26PM +0000, Cristian Marussi wrote:
->Fix clock parents enumeration to account only for effectively discovered
->parents during enumeration, avoiding to trust the total number of parents
->declared upfront by the platform.
->
->Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
 
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
+--meejllfhgqllwyqr
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH] clk: add new Kconfig to control default behavior of
+ disabling unused clocks
+MIME-Version: 1.0
+
+Hi,
+
+On Mon, Mar 16, 2026 at 06:33:45PM -0400, Brian Masney wrote:
+> At the 2023 Linux Plumbers Conference in Richmond VA, there was a
+> discussion about how large number of systems need to boot with
+> clk_ignore_unused. Per the discussions at the conference, the existing
+> behavior in the clk core is broken, and there is a desire to completely
+> remove this functionality.
+
+Broken how?
+
+clk_ignore_unused is to a point where it's seriously cargo-culted and
+documented as a silver bullet, when in reality it's just a debug tool
+for broken drivers, and the driver must be fixed.
+
+But nobody is actually fixing it.
+
+See
+https://fedoraproject.org/wiki/Changes/Automatic_DTB_selection_for_aarch64_EFI_systems#How_To_Test
+for example. The affected clock could be marked as CLK_IS_CRITICAL, and
+fedora wouldn't have to package anything, change anything, etc. But no,
+the problem is clk_ignore_unused.
+
+Maxime
+
+--meejllfhgqllwyqr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCabkDCAAKCRAnX84Zoj2+
+dvLZAX0T6qAsSUUww2TayTlfYiGbnqpZPBSCdB+PKM1g4fU/dnCRFozIZM1ECTX3
+OcnrXJkBgLrx8CP1eHbIXH8kwu1lODASf15w0eyvQ6n2ZnRTHNWzkfLhPOGG0NUD
+o0rt6s7qPA==
+=Bq79
+-----END PGP SIGNATURE-----
+
+--meejllfhgqllwyqr--
