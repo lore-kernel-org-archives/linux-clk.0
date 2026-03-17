@@ -1,74 +1,93 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C02E839526A
-	for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 22:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F893A0B24
+	for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 22:24:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773785843; cv=none; b=ENj4cY19LjDLJJFDHiniwJX0MstBQKajZaPqBSgWnrofeZMjdOlK88iXW0XxUzLIue24Jlj9kcoJoCqSoPKOJ924E4doodeSv/XVNqqvcYgyYFKGWqyrG6ZAd5yHdIvwm7K4WOo8WJxsndl1huWv5kaWOIBKAGa3+HoGZI6xctQ=
+	t=1773786246; cv=none; b=mGWvnxMPskjoCHTob4PdkLlgC2rBwlsel9lf6n4wT5b66ap0P1xFr8DDrlIB0aoFzklRcx3UnbUaTTzRe5KQjE89dhPc+4WIeP11f8FhltdtoI1WQ5yO8A/CFKyZCoYjUK4a2s38qY/o2jYJjfjxi6aUin++E+MRmTydqpXpdJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773785843; c=relaxed/simple;
-	bh=gMWzHfXOSUAzAbUgCf0jPYssjSUebade4HuzStLkeZ8=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hBALMQBvdTKZzRPYr/7XV6fKs9PXsbXJbWiKGJy1EwZr4l0Z8pmW2JtEyOfz14tjzsO26chGx0jpmKJ2TUqZCk7LuEgnxX0T9/B+dgG6qr3Woj47YuSLNyvwTE6+Rx6bEgM0f7+TGYaHFxVKrMOK1JJR8bAPCLG2fVm/zXs6RrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dr2azoJg; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1773786246; c=relaxed/simple;
+	bh=XOJsc7TWlX2OR3VVXyws4Z9mCznxegOVcmgKTN/aicg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=esHM9b4eTMs5WUdw8DebUeUBW+bW/I7SmuiojbSy57ceF1I3hqKGjQ5x8JQBpnhDi66mIuIyeArrRzub6z7wzAkcyIrbom1QW6/RDWC/cBOFquxoiq104T0rMsvNIR/alcJf0RqDD26xCQBiK7YLyElBp7bEyyGCzLNwYqXpQTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DzJUvt13; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=E2CFADUC; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dr2azoJg"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-48374014a77so68553945e9.3
-        for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 15:17:20 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DzJUvt13";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="E2CFADUC"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1773786244;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yBl7WuSTPHURhBSfPTM/+0e75JESjPHAQaQXXIuv+YM=;
+	b=DzJUvt13tJFtR/moAKPI8jq9A3JKhjKURRMIIPU9mVY7DZm+5mXX7oD9/vGXrAl+v+goAg
+	CifltAG7wBDDRVvEqSp4Q1Pg6IzUU0PFuW/X/mr5lSIORHN0Jd/0x7X9GS6d08aJStlMDW
+	DLpfiiMMeld+kqjGekQAMJike9Eoom0=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-584-lA6OR4NgN6inQFTk1q2CEw-1; Tue, 17 Mar 2026 18:24:03 -0400
+X-MC-Unique: lA6OR4NgN6inQFTk1q2CEw-1
+X-Mimecast-MFC-AGG-ID: lA6OR4NgN6inQFTk1q2CEw_1773786243
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-50939597b85so5136351cf.2
+        for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 15:24:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773785839; x=1774390639; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=GINAeZ///AzisnC6InzW9YS2TcP/dUfsgkrAnsM793U=;
-        b=Dr2azoJgd/oRYJwfm8KQmRaadP4YqZZwEdGOUVYejbOy77EBlTndaih+UMTJ3ETZru
-         L6PPb/aeb/dY6cJeY862fvcgC3pNNl+4edma5t+P2rYThQsQpnR7671h6Wa8mPmPEllc
-         mUWS876bjZxJ2pHqMAyT03koWBi9XdeYAevnAjAg2Y7MCrggmzDdN5Xm8ySevbgmh1jS
-         JGVvrFVzg5ZxNUrywpybgOBYAMosyP0dN4797oszqur8puNafPKtqO+lHM4Pnn9z8Ydp
-         DCM0SsPdy99gixw9/8WJQRAPGni7qCfL1JKmNeEkvkw2ToTOoL6ftcXq5b0PCz/AcUkQ
-         fpUQ==
+        d=redhat.com; s=google; t=1773786243; x=1774391043; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yBl7WuSTPHURhBSfPTM/+0e75JESjPHAQaQXXIuv+YM=;
+        b=E2CFADUCafOglPiL2YGqu7Ca72yRgixOoSK4cR1ROgGgLjzQWcSiQM1Ix6eJEwlAbA
+         b0NDuAr/TbuyUXyvwLu+ZfL2W3WGXYuqS97xGFeSEVE7IZpoQ6ISRNzyaKOUn9vPXjuh
+         saBMOrVgM4zCqi0WaM3mhcr2cHgX/YQdYY9QJ7HWwmekdK5k7RvAZq8XUi5OIO6CYSUC
+         yxODIpHy0LUn7TginCaUh7riC1iNENAQcCuUDElhcHWadEUAomAHyI9IuOBo28tfv3zW
+         WxGi+8/NnkHlaIHr5irZKBxCweFyrWdJuzvUiv9sCjJWlaqiZS6cbI0DvaG8ptg5oWgT
+         xZ6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773785839; x=1774390639;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GINAeZ///AzisnC6InzW9YS2TcP/dUfsgkrAnsM793U=;
-        b=CoqXZj2JHyEtrLs92TN0jCnae25pA7I+S1nVesF89BUbd+zr1VL+xUv9NGy6hIf0Fi
-         QUGCz0y0x637P/8fftBmXnGf2hdk6YVTVcuicgx9UX740zLLCSq4l9b4cntOrP/sahK4
-         JtZ0r0QAOaMuan4UtlGosK3ya75vYm2ZUuwg66WDuEsDJxoZnHLD5juz5un/J9RHqrM+
-         Q6GyXokB7xdmnESu4rsGv4SCpDybRmesE8Ut9FaRPgPMcwk5yX/SZbFOLjMmfByb1Fun
-         puEX+1oH8sShcMLRr5AzT/FRVAgvuIA7pTv5eJ6yyZ4EwrcC+QD1+IPllPsBsTswQT2J
-         CCKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWk9nZ2A7hUImBT8eoVsD9YJGO/4ds7NLsfj97SBlIBRjmKICXZxIoMeTwssKjfYyygY3VTZ8enErw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw850ic5OKK2cNZLAPg3dBnj954+dD6W8rKHhpYzJ6VJh2engC4
-	c9ex5E14FhdnxOhbGUB3yC9GS8lC7r3bXqjEDDGAeLvwMiEHYCHnt17S
-X-Gm-Gg: ATEYQzwmFfVtjl0ARfLbqfb3eGBPxTRT5kpEFikwh4nWc1I7h8OY9Cu/Hh2RXN/2elW
-	l0mQAxMbGtn794vrJ+I6LTIrb6psLQrRs6bHytlw18y7Dv+aGgo1A9lyA/fp9mRD3dzutV10iiP
-	MJ0zFhV8aaqI7/xP+W2YbT6RBe0m5Pa/fxahpspZIyjEnAqzjl3sW3niO2dwvei2jh9g9Ww7WC8
-	zrhl7FcdSaIMBQEgjur9z5flX4ps300kmetXjzHJRs06Ids3lDXU2ccuQAHFao5uMqYz8x+fs/R
-	0zP9cVmk4EKtWPMPqoP6V2FKDHwBuk8OfMg3+qZeWqrsqYkUuBLOy9V6oYS+Z7PYcFbB6V+laSL
-	Tpb5sB7IGnsotFMInSAncHVPzeWk1AKlhqzuK49ophe0PdoXFUDINnlNja2RFl0bWuFVlM6DeQE
-	Bj9NIi/o+OZbYDff/Y7nREMGmjPYB6MZrpQxrXdEc7aQp7ohc53FDrfQ==
-X-Received: by 2002:a05:6000:26c7:b0:43b:47cd:8f6c with SMTP id ffacd0b85a97d-43b527abd15mr1510416f8f.20.1773785838695;
-        Tue, 17 Mar 2026 15:17:18 -0700 (PDT)
-Received: from Ansuel-XPS. (93-34-88-122.ip49.fastwebnet.it. [93.34.88.122])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b51892244sm2488680f8f.22.2026.03.17.15.17.17
+        d=1e100.net; s=20251104; t=1773786243; x=1774391043;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=yBl7WuSTPHURhBSfPTM/+0e75JESjPHAQaQXXIuv+YM=;
+        b=o0jcmcxJGQYGILLv++KrI2ZS/TAcE0RzqMGver5ZeMdic8Bj/WjDD9yGGi2pS42p8q
+         HhcJcIt3yvSid4Nd3segkSgEE+j0xQZChbZz1hLjk1lbpv/gXTlYy4lOt+x+Av9z934X
+         HfpQ/Bj0MTynFMgRvJLG7/aaQm6xR4KouKs9qcsufHfyxHrDptvADgmzKlIKTD1+ZCsm
+         K6ESf4V7Tlz8AKsYUceX3qlgYbxjQSu4JYQ4J0uKh+Z0hnLvYMyDrm/Pv3NK7W9vmai8
+         JVFXXd2zfuf3Gd9O/fuQdMlFuWmkLXGVmdABqyeTfm4ueSdX03OexLjC2aJuElTa1uOa
+         9kQA==
+X-Forwarded-Encrypted: i=1; AJvYcCXejoh9Lv5p7lskpHXzSCKn23j8CXzJHNd/Qvnv5IHUxgxArvomipuYGa1LwsIGnCeM7jZMo9jkhB0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNgFK31hATYD54H5Wd8ZHzvGUcrTL7YB6tPppN/SB1AERpsryc
+	07I8wDg1DpMh1W7D+uZG4Ivw3y5hfcPwvKXhyUCJPGgQnpQXCIp1ztXcxWYX+I0CMpBWLAtuxz0
+	GSRXJ7q481cYQKoOY7iuTdtItrMo2O5lmrFIgYT4YK+C47CDzOwP5cFEP8MZrug==
+X-Gm-Gg: ATEYQzwjKU1tagZF6UiRmV3dRJbrS11QBrQtUz4uY4Ia5UVdsIBKKPJ2214Iz9MHV80
+	aFjmHykAYB+mp2JYSchbTfwE8NB2F0u7MjTbGeGg/KWw+47NUN5UuctGQghaVD7dI12FD33SR6w
+	I1WKt/FAgyXp6jWpz+cXVJQ9Vr95mcbK8upQUZK1bVoZ/DdITMUm+xf2gAav3fHgfhQiSzzLiRO
+	fqF+trnsAD/dfl+C/a6t+2PLigLkxySnxm5BFTHaKsI50ImMGeJ1HEmFSzj4aRg4AZ9BEh1btGJ
+	09/q5pSAIcYWjaR64oJZhezHxrggV4jbQ2Yi/rYC5iRRiZRnY6RCHIjF13oJdDvzmv2l2KKbTYv
+	6ui4DGcXtwqjL11pqUzb3PUPDAsLzko1Xwqxh7kwuW/C1OHpLZL851wLG
+X-Received: by 2002:ac8:5e48:0:b0:509:23c5:3289 with SMTP id d75a77b69052e-50b1499bdf7mr13768131cf.63.1773786242792;
+        Tue, 17 Mar 2026 15:24:02 -0700 (PDT)
+X-Received: by 2002:ac8:5e48:0:b0:509:23c5:3289 with SMTP id d75a77b69052e-50b1499bdf7mr13767811cf.63.1773786242410;
+        Tue, 17 Mar 2026 15:24:02 -0700 (PDT)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-50b135d5bdfsm8075771cf.26.2026.03.17.15.24.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Mar 2026 15:17:17 -0700 (PDT)
-Message-ID: <69b9d2ed.df0a0220.126423.ca41@mx.google.com>
-X-Google-Original-Message-ID: <abnS6vX2Vtq5iIA0@Ansuel-XPS.>
-Date: Tue, 17 Mar 2026 23:17:14 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Brian Masney <bmasney@redhat.com>
+        Tue, 17 Mar 2026 15:24:01 -0700 (PDT)
+Date: Tue, 17 Mar 2026 18:23:59 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Christian Marangi <ansuelsmth@gmail.com>
 Cc: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Subject: Re: [PATCH] clk: add clk_hw_recalc_rate() to trigger HW clk rate
  recalculation
+Message-ID: <abnUf13EQA_FNOqP@redhat.com>
 References: <20260317173255.5531-1-ansuelsmth@gmail.com>
  <abnRID0SfnQlRw-e@redhat.com>
+ <69b9d2ed.df0a0220.126423.ca41@mx.google.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -77,111 +96,24 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <abnRID0SfnQlRw-e@redhat.com>
+In-Reply-To: <69b9d2ed.df0a0220.126423.ca41@mx.google.com>
+User-Agent: Mutt/2.3.0 (2026-01-25)
 
-On Tue, Mar 17, 2026 at 06:09:36PM -0400, Brian Masney wrote:
-> Hi Christian,
+On Tue, Mar 17, 2026 at 11:17:14PM +0100, Christian Marangi wrote:
+> On Tue, Mar 17, 2026 at 06:09:36PM -0400, Brian Masney wrote:
+> > There's no user of this new function. You need to also include a user
+> > so that we can see the complete picture of how this will be used.
+> > 
+> > If it helps to demonstrate the problem, you can also add to the clk
+> > kunit tests in drivers/clk/clk_test.c.
+> > 
 > 
-> On Tue, Mar 17, 2026 at 06:32:45PM +0100, Christian Marangi wrote:
-> > There is currently a latent problem with HW clk that only expose a
-> > .recalc_rate OP and doesn't have a .set_rate() and also have the
-> > CLK_GET_RATE_NOCACHE flag set. In such case the rate in clk core is
-> > parsed only (and set) only at init and when the full clk_set_rate()
-> > is called. In every other case .recalc_rate() is never called.
-> 
-> As you pointed out below, it's also called for the full clk_get_rate().
->
+> Yes I know a user is needed but the user will be a PCS driver and it might
+> take a while for it to get proposed. If I implement a repro in clk_test is
+> there a chance to implement this without an user?
 
-Yes but normally clk_get_rate is used from the consumer while producer use
-clk_hw_get_rate() and this is where the problem happens.
+That's up to Stephen. My understanding is that is not enough, and you'd
+need to submit this new API with the PCS driver once it's ready.
 
-> > 
-> > It's also possible that an HW clk of this type, initially report 0 as rate
-> > as the register are still not configured and the HW clk effectively doesn't
-> > return any rate.
-> > 
-> > This gets especially problematic when a clock provider use such clk as a
-> > parent and require the rate for parent selection for the final rate
-> > calculation.
-> > 
-> > In such case, since the HW clk rate is never updated after init, it's still
-> > 0 and cause problems with any other HW clk that use .determine_rate() or
-> > .round_rate() and search for the closest rate using clk_hw_get_rate() on
-> > the parents.
-> > 
-> > This doesn't happen if the full clk_get_rate() is used instead as it will
-> > check if CLK_GET_RATE_NOCACHE is set and recalculate the rate accordingly.
-> > 
-> > Updating the clk_hw_get_rate() to align to what clk_get_rate() does is not
-> > possible as it should be lockless and might cause problems in any user of
-> > clk_hw_get_rate().
-> > 
-> > A more safe approach is the introduction of a direct function that triggers
-> > the HW clk rate recalculation, clk_hw_recalc_rate().
-> > 
-> > Any driver that implement an HW clk that entirely depends on some register
-> > to configure the rate (that are externally configured) and have only
-> > .recalc_rate() and set CLK_GET_RATE_NOCACHE (aka the case where the HW clk
-> > rate actually change and depends on the external register configuration)
-> > will have to call clk_hw_recalc_rate() on the HW clk after changing the
-> > register configuration to sync the CCF with the new rate for the HW clk.
-> > 
-> > Example:
-> > 
-> >  - All register zero -> HW clk rate = 0
-> >  - PCS configure USXGMII mode -> HW clk rate = 0
-> >  - PCS call clk_hw_recalc_rate() -> HW clk rate = 312MHz
-> >  - Port goes UP
-> >  - PCS/MAC scale the PHY port clock correctly by having
-> >    the correct reference clock as parent (instead of 0)
-> > 
-> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > ---
-> >  drivers/clk/clk.c            | 23 +++++++++++++++++++++++
-> >  include/linux/clk-provider.h |  1 +
-> >  2 files changed, 24 insertions(+)
-> > 
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index 47093cda9df3..35e0cf627c24 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -1977,6 +1977,29 @@ static unsigned long clk_core_get_rate_recalc(struct clk_core *core)
-> >  	return clk_core_get_rate_nolock(core);
-> >  }
-> >  
-> > +/**
-> > + * clk_hw_recalc_rate - trigger rate recalculation for clk_hw
-> > + * @hw: clk_hw associated with the clk to recalculate for
-> > + *
-> > + * Use clk_hw_recalc_rate() for the hw clk where the rate
-> > + * entirely depend on register configuration and doesn't have
-> > + * a .set_rate() OP. In such case, after modifying the register
-> > + * that would change the rate for the hw clk, call
-> > + * clk_hw_recalc_rate() to sync the CCF with the new clk rate.
-> > + */
-> > +void clk_hw_recalc_rate(const struct clk_hw *hw)
-> > +{
-> > +	struct clk_core *core = hw->core;
-> > +
-> > +	if (!core || !(core->flags & CLK_GET_RATE_NOCACHE))
-> > +		return;
-> > +
-> > +	clk_prepare_lock();
-> > +	__clk_recalc_rates(core, false, 0);
-> > +	clk_prepare_unlock();
-> > +}
-> > +EXPORT_SYMBOL_GPL(clk_hw_recalc_rate);
-> 
-> There's no user of this new function. You need to also include a user
-> so that we can see the complete picture of how this will be used.
-> 
-> If it helps to demonstrate the problem, you can also add to the clk
-> kunit tests in drivers/clk/clk_test.c.
-> 
+Brian
 
-Yes I know a user is needed but the user will be a PCS driver and it might
-take a while for it to get proposed. If I implement a repro in clk_test is
-there a chance to implement this without an user?
-
--- 
-	Ansuel
