@@ -1,257 +1,131 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F4F371878
-	for <linux-clk@vger.kernel.org>; Mon, 16 Mar 2026 22:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF3421018A
+	for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 00:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773700457; cv=none; b=E6jYrD5VcVKtPaMN9WlQIczU7GQQwaw9qVcPD5aIuXtwdPoTThmYJ0YKfHprsh7z19hSVVYMDrPBdrD+K6JzM/4emQtslzRfd0xAz6OvGmkxIxx/SBfiq3xvQ1VMDEtiTyUvZ8l+INuV28YfLQ4zUfh6nZiuF56WIRED0/wiTSY=
+	t=1773707360; cv=none; b=U1UJMT0iKUYxD2QGSRNHnVkNzc4nDQDtkBGzj0MrDINenCfpd86koqvGQdsyBF8/WItMindkjtPIzbjddEcBHy0LeD4L5ROMCfT3BOFT2RNh/cacQH42O6XMb7CR8TVKf/Zgs20l6zbjqY/M8tWUl1wcWhHj+PYc2rIqhuQ2SEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773700457; c=relaxed/simple;
-	bh=0xCjTnQlG1U8KFxdCHLVY8uV/kewZx19MaNmIpedMpI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QT12vjtQ6tQmDOaEfBrkzWEH+Ir3pwV5Qf697zjrUjgjvFskvZ8JhAew2XQnX1xqAlLf99dvwc3oAfVz31fDiIgNKKa3aREAmvYMVwYadgG6ZSaml9mitBgMGOFzi6JBNei7CJGTZfscgBnOb3TFgmACSbJ3y8A50fBV2M5R/PE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BKaNGO8V; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=LqHs7PTY; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1773707360; c=relaxed/simple;
+	bh=Ykl7pRMjv9ddmeTEMSu2XWv5ypxsnnaE2OuTTvdmJf8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B15V+1QLHonfoWA1G8I/E0Nj7jZpnc2dMPESnleGKm3kW4vz5gMbAP7q2JyDE4TAO58gbr9PqXwGEB5c0n4xG6o6DKacM9sPxcNEWOtQgt+Jw4490Haz4iUwfwv9d9SxH9NIWe5AM8V3bvzUsATGXwkxhYOX1MV0yLoVgHygtN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JKqgHCMF; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BKaNGO8V";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="LqHs7PTY"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1773700451;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Sx0g/lXtOSAsHLoQef9D9a+6NzioK6yUmBA2sZSWyI4=;
-	b=BKaNGO8VMlEITu88pzuTzoaNYAfT7lHxuPGDsBX6WlKOGCfo3Jk2fwvfWI5/TDGjZ4iXYR
-	RHecDOVZswrzk/HBgB1qnvfRlVRJsrhv3mBfHqm+AtFXb1ZyX+TOZYBgnGCjfCEpA/nWJr
-	rAXWre5YmiEsPDtJPVsejB8dPFf6zB4=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-34-Sz0oAH2aOgusGXmT3ZHz6w-1; Mon, 16 Mar 2026 18:34:08 -0400
-X-MC-Unique: Sz0oAH2aOgusGXmT3ZHz6w-1
-X-Mimecast-MFC-AGG-ID: Sz0oAH2aOgusGXmT3ZHz6w_1773700448
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-509044f54aaso14582991cf.1
-        for <linux-clk@vger.kernel.org>; Mon, 16 Mar 2026 15:34:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JKqgHCMF"
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-82a13374cf6so4614932b3a.1
+        for <linux-clk@vger.kernel.org>; Mon, 16 Mar 2026 17:29:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1773700448; x=1774305248; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sx0g/lXtOSAsHLoQef9D9a+6NzioK6yUmBA2sZSWyI4=;
-        b=LqHs7PTYmhjYdhWa5YjGW7wiKN0ntn67HZ9iT4Nw/hiPjoel9KLnKW6a0M7bnRmRfK
-         atQCRJwSKCPemgZnYj7+ewEApHn1/jt6Y6MuhAd+mBrUBI1lkXptgJmzhwsHtsEaOXVe
-         7prTGLUXbKQSjvMmYoAbreG1l3ciZX5PQci+L6Wf2kpwhNvNN0ZFf8Du/iEl28x53Lao
-         E1ifiZL2jsW25RkoV+xoaAqYtuCM21cPBAmspcN7ZMr9WJMpTWJOu/Kyd/NwUgS+DO+6
-         F7Vvr15AEqTMX9/hOiy3sMXYNJsYkJWK0QmoFvjV5luDcLmmFg6NOIx+haRHnbGcXUyo
-         +mog==
+        d=gmail.com; s=20230601; t=1773707359; x=1774312159; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zEaJEC5yeKcESXwFqV6k9VnziI7uI+jjMq7JZGGKBfA=;
+        b=JKqgHCMFSBN2PktyvNv9ikODFsFN4db8y1UDUAFV/l3h66ijBTPp/epT4aUYOshxTa
+         /zCbg8ydFzlS1rtWzGwKKDfhw6mcsPjciA88tBxolmK90PX1Xd9qoy5UVXlqwkv31vI7
+         B9CNqxKFN6v6yFspDcztc1/MGSwLCQSvZxQhInkWi+RazCtKvOwtq+NLIrfb4vVoPKau
+         9+Qcrka58jKKJfCn3zMCdAaD+qXWKWfxvLgIGrPojnnR3XrAgOdvYdxzMLmbVexL73/d
+         3cg/KRTHRhC3DuS/UC/C/zWRYnDOkV6SIuyvr/vqpN+nnztK90kvC5GTUeJ5McPGAwXP
+         klfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773700448; x=1774305248;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20251104; t=1773707359; x=1774312159;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Sx0g/lXtOSAsHLoQef9D9a+6NzioK6yUmBA2sZSWyI4=;
-        b=FC5qghlpzhekPBjckxCj25k87/2qv96RaxUfV5Cwm1s729TQUjLWCndgRkKcmOgFP8
-         hqXBYblCuSLEVKIZRY+uLX/UgiahzGdFfiuVJwMPRIetDM9dFUnxMl3oDgvd0bIddDKa
-         9Bf0tc+2ZAUIsht1tnYd4wRx2cCAOZfj2TTfQ55BnMscbBVY1D7T+BDL6uzL87og9/xb
-         nt0xjnyyhu16Wi8iutV77A4sP8AOFT636JodY0Gqc3wj9yOJWjOtmq3siyDrtc6I2fXE
-         QjgALVlBC6J9aEC5ni2I1tfUeq5ug4Pbxj1y9aB1UhbWux04AXNXUxSGL4cFibaAT8NG
-         mYPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU8HDy2Mw2w8P2st11PNfzTSIf6cLovWi3MDFPnvKMGKKgjJj4hwvNu6roJaUzvliiGXnugFhADDek=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy84YDrWcC447wH5bkctfTR68aXxLzgyUXo4Z3VsPZAQlXR8QDL
-	ULahwsRAlc9ZhAdfxe9g4EtTwZH3K94hpcK3AyN8J4fcWxC0bqxZdTUBXlrsInqFAcaHNz9Vcl7
-	Rkw8voxCfXKYeFUABKl3SxR5ljfR2KVl40a1k7MZ1VJl7pl7J0FI33v9VlKKdJA==
-X-Gm-Gg: ATEYQzzH+WWfUwjc0ArPAYhiMlkDDCwARAQjjGqSk5rmwWlDuYpwwRhU6VnAVLHQ79Z
-	LdyR4CIYUL1s03qo3KEcZmPTbVdYmpVcbueVfS9Ax/VSBl/o1JjJk+qYqPQAqymZudwNiedSt+n
-	WyH+QdwGeSiW6O/gyaYIGMzeZ9w/7D3bv9YCHdmhnRQRcgEsIRHKD8NG0cjWnvp6JCO416ltPTV
-	Ie+9PzUnBezXcxPm2Ermab7XGZeghBjViUFKd+TFx+vavapncVqVcVoQkl2XD2qCQ5+W19iRSL9
-	IHDkkt5YrGUkjxGi37FhtQyBtxm7AocepqnNTqRAo+nbf4+tHyfEIMCLIG35pLCfHfB34tCcQ2E
-	kiq3yzGBJBCBAeFm+k1R+Q0VWqI8SF2ZxkB158tnsKYgmJu8oGtKedHvPAXGm
-X-Received: by 2002:ac8:5782:0:b0:509:1b01:8916 with SMTP id d75a77b69052e-50957cf51d8mr212787881cf.4.1773700448050;
-        Mon, 16 Mar 2026 15:34:08 -0700 (PDT)
-X-Received: by 2002:ac8:5782:0:b0:509:1b01:8916 with SMTP id d75a77b69052e-50957cf51d8mr212787461cf.4.1773700447549;
-        Mon, 16 Mar 2026 15:34:07 -0700 (PDT)
-Received: from [192.168.1.3] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5093a0e9658sm155941071cf.21.2026.03.16.15.34.04
+        bh=zEaJEC5yeKcESXwFqV6k9VnziI7uI+jjMq7JZGGKBfA=;
+        b=CdywjcEy1uR5/oJ+bNQoHw/DqW/zw6/cqEQ79/SnbPgE/exR+3tyYwYFvsRDzAN62+
+         WKYbcUq5ReCRIczixeeyRBSieNff2+qxqjU0L00CEXHekedrp/WeFDIIHrforhAkUaQF
+         SAPImXhZ8oTBhyijMtKq40YpuBgz/plpFhWaGzoXKa+zAMGFYphCoWzTV842ZazflZHi
+         33jrNW2d02U2MrTTKj9OXTKG4w/CEVxrVq0eztSC9hVjcYKIt6EUm8aTr8TRr+f/9N1l
+         OvmKGBpT0ftJKBukAAXcZ1axcE+3dhNhXf1oHrc6Y2iSea18ZzTIZ2TdjaxFjbnHwlt4
+         qqyg==
+X-Forwarded-Encrypted: i=1; AJvYcCU9lfu4kzMDc15VibH3US5fSg2XyyVFpvMOs2AhQ9WzCdEAZ27vCy6EEeMtHULWvlKtdRc8I7umblk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZ+4L79Oy4V16SRJ4G1xpmY5Tex9knh1r/nRHn27+5QmpC5CwT
+	johs0nDnn1SH6EMEFpRMC3OmyTViy8x6z5egVXJJipHCvTzVBEt7frZRWTK+EI3x
+X-Gm-Gg: ATEYQzy/kmjGn6GqZ1SGOjncowJt+girc1HRvpvpV104qNKU88F4OSzjvBKCs6031i2
+	eTLvWqnZHq9XZlH/LFDMerN0QwSDDY8fLaybJjyVw2aqBWi8RSUD6IBJz+sXL7DbvyoDITlKAT3
+	PmsCYUDtgKXjs8h5NcpDDBkapPJTKbRZZzs595kw3/mdAJmucCLXimXy9xMdPqqKMi0dmTMQwHd
+	TH+qp5v8VPgERiwlQpigGpwuW7vUd1Kh4MyTRRpL8qtP1cqW5rnCLR9yAjFy7VY1wU2N5lk4fLa
+	lKr4bJeF65JcEoSXejvtnfL42KBkx+wsMp6ssWGMPa3YJrAHv531Dh2g5a/VZUDAMzETGa39n6m
+	0/VVeLXjsyzUkHEnyaLfyLM7IuisR7pZqGOKhBBkbCDjp16I/bt9az1tOuc8ygcPVGPbauHs1r4
+	Ld5s8Dl8eZXv11a1uyrR6R93RHE6JFKWiaGstBbT2ZCKgRbzfmlWk4I1k=
+X-Received: by 2002:a05:6a00:1594:b0:82a:778:cd73 with SMTP id d2e1a72fcca58-82a1992c45amr10581048b3a.51.1773707358578;
+        Mon, 16 Mar 2026 17:29:18 -0700 (PDT)
+Received: from ryzen ([2601:644:8000:56f5::8bd])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82a072603c0sm14010022b3a.22.2026.03.16.17.29.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Mar 2026 15:34:06 -0700 (PDT)
-From: Brian Masney <bmasney@redhat.com>
-Date: Mon, 16 Mar 2026 18:33:45 -0400
-Subject: [PATCH] clk: add new Kconfig to control default behavior of
- disabling unused clocks
+        Mon, 16 Mar 2026 17:29:18 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: linux-tegra@vger.kernel.org
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+	linux-kernel@vger.kernel.org (open list),
+	linux-hardening@vger.kernel.org (open list:KERNEL HARDENING (not covered by other areas):Keyword:\b__counted_by(_le|_be)?\b)
+Subject: [PATCH] clk: tegra: bmp: remove kcalloc
+Date: Mon, 16 Mar 2026 17:29:00 -0700
+Message-ID: <20260317002900.71452-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260316-clk-ignore-unused-kconfig-v1-1-6e95a4fb0c94@redhat.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x3MQQqDMBBG4avIrB2ISpPiVYoLjb/poExKglII3
- r2hy2/xXqGMJMg0NoUSLskStaJrG/LvWQNY1mrqTW/N0Fn2x84SNCbwqWfGyruPuklgB+ewPJb
- nYCzV/pOwyff/fk33/QM/YYCTawAAAA==
-X-Change-ID: 20260316-clk-ignore-unused-kconfig-7e77eb5b8306
-To: Jonathan Corbet <corbet@lwn.net>, 
- Shuah Khan <skhan@linuxfoundation.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>, 
- Abel Vesa <abelvesa@kernel.org>, Hans de Goede <hansg@kernel.org>, 
- Saravana Kannan <saravanak@kernel.org>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-clk@vger.kernel.org, Brian Masney <bmasney@redhat.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6205; i=bmasney@redhat.com;
- s=20250903; h=from:subject:message-id;
- bh=0xCjTnQlG1U8KFxdCHLVY8uV/kewZx19MaNmIpedMpI=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDJ3tEb9e+Bsy3LH9ekkvVKOWImLrUkH7vxM7GIOkz16Z
- dtTb3W+jlIWBjEuBlkxRZYluUYFEamrbO/d0WSBmcPKBDKEgYtTACYyxY+R4eIa/q+eigJWS5Qz
- SxtLJ992r3fUyv/AsPde5lS5jI/2kgz/wwQ2fFzB8V5jefVL43fbkrZ8f1nKWWcxq0++9SLH8X9
- NfAA=
-X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
- fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
+Content-Transfer-Encoding: 8bit
 
-At the 2023 Linux Plumbers Conference in Richmond VA, there was a
-discussion about how large number of systems need to boot with
-clk_ignore_unused. Per the discussions at the conference, the existing
-behavior in the clk core is broken, and there is a desire to completely
-remove this functionality.
+Use a flexible array member to avoid allocating separately.
 
-This series introduces a new Kconfig called
-CONFIG_COMMON_CLK_DISABLE_UNUSED that when set has the existing
-behavior as clk_ignore_unused so that people no longer have to specify
-this parameter on the kernel command line. This Kconfig is disabled by
-default to keep compatibility with existing systems. A kernel that was
-compiled with this Kconfig enabled can have the clk subsystem disable
-the unused clocks by passing clk_ignore_unused=0 on the kernel command
-line.
+Use __counted_by for extra runtime analysis.
 
-Note: The existing clk code calls __setup("clk_ignore_unused", ...)
-without the equals in the name. So someone can actually pass a kernel
-parameter today clk_ignore_unused_foo that'll also match the existing
-parameter. We can't change the existing behavior, so we need to look
-for the equals sign in the value.
-
-Link: https://lpc.events/event/17/contributions/1432/
-Link: https://www.youtube.com/watch?v=tXYzM8yLIQA
-Signed-off-by: Brian Masney <bmasney@redhat.com>
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
 ---
-I searched the mailinglist archive, and couldn't find where anyone
-submitted something like this after LPC 2023. This was the last
-suggestion discussed on the LPC talk, and it sounds like around 14:40
-that this is an acceptable change.
+ drivers/clk/tegra/clk-bpmp.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
-I looked at adding some Kunit tests for this to clk_test.c. I planned to
-export clk_ignore_unused_setup() for Kunit testing, however that will
-require putting "=0" instead of just "0" in the tests. This won't match
-the behavior on the kernel command line. See comment in the code about
-the equals.
----
- Documentation/admin-guide/kernel-parameters.txt |  9 +++++++++
- Documentation/driver-api/clk.rst                |  7 +++++++
- drivers/clk/Kconfig                             | 16 ++++++++++++++++
- drivers/clk/clk.c                               | 17 ++++++++++++++---
- 4 files changed, 46 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index fa6171b5fdd5ff55b3203272568509bb45c69856..d559c387ca32425c0a3776bec899f48a21ed3026 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -830,6 +830,15 @@ Kernel parameters
- 			platform with proper driver support.  For more
- 			information, see Documentation/driver-api/clk.rst.
+diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
+index f6d2b934228b..e2d506cdbae2 100644
+--- a/drivers/clk/tegra/clk-bpmp.c
++++ b/drivers/clk/tegra/clk-bpmp.c
+@@ -32,7 +32,7 @@ struct tegra_bpmp_clk {
+ 	unsigned int id;
  
-+	clk_ignore_unused=0
-+			[CLK]
-+			Force the clock framework to automatically gate unused
-+			clocks at late init, even if CONFIG_COMMON_CLK_DISABLE_UNUSED
-+			is enabled. This overrides the compile-time configuration
-+			to re-enable power saving by disabling unused clocks.
-+
-+			For more information, see Documentation/driver-api/clk.rst.
-+
- 	clock=		[BUGS=X86-32, HW] gettimeofday clocksource override.
- 			[Deprecated]
- 			Forces specified clocksource (if available) to be used
-diff --git a/Documentation/driver-api/clk.rst b/Documentation/driver-api/clk.rst
-index 93bab5336dfda06069eea700d2830089bf3bce03..31ce4e3889f09a4f9c3b63cad7ded214125702f7 100644
---- a/Documentation/driver-api/clk.rst
-+++ b/Documentation/driver-api/clk.rst
-@@ -266,6 +266,13 @@ parameters::
- To bypass this disabling, include "clk_ignore_unused" in the bootargs to the
- kernel.
+ 	unsigned int num_parents;
+-	unsigned int *parents;
++	unsigned int parents[] __counted_by(num_parents);
+ };
  
-+Alternatively, you can enable CONFIG_COMMON_CLK_DISABLE_UNUSED at compile time
-+to prevent the automatic disabling of unused clocks by default. When this
-+option is enabled, unused clocks will remain enabled unless you explicitly
-+force their disabling by passing "clk_ignore_unused=0" on the kernel command
-+line. This can be useful for platforms that require certain clocks to remain
-+enabled for proper operation, or for debugging purposes.
-+
- Locking
- =======
+ static inline struct tegra_bpmp_clk *to_tegra_bpmp_clk(struct clk_hw *hw)
+@@ -510,20 +510,14 @@ tegra_bpmp_clk_register(struct tegra_bpmp *bpmp,
+ 	unsigned int i;
+ 	int err;
  
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 8cc300b90b5fd9fb38ce94fcb1098810c3f52c36..d7503517f6ec1ed773b2dcb9e3a7a0b5bcdea353 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -33,6 +33,22 @@ menuconfig COMMON_CLK
+-	clk = devm_kzalloc(bpmp->dev, sizeof(*clk), GFP_KERNEL);
++	clk = devm_kzalloc(bpmp->dev, struct_size(clk, parents, info->num_parents), GFP_KERNEL);
+ 	if (!clk)
+ 		return ERR_PTR(-ENOMEM);
  
- if COMMON_CLK
++	clk->num_parents = info->num_parents;
+ 	clk->id = info->id;
+ 	clk->bpmp = bpmp;
  
-+config COMMON_CLK_DISABLE_UNUSED
-+	bool "Do not automatically disable unused clocks"
-+	help
-+	  Say Y here if you want to prevent the clock framework from
-+	  automatically disabling unused clocks at late initialization time.
-+	  This keeps clocks running even if no driver is using them, which
-+	  may be necessary for certain hardware configurations or debugging.
-+
-+	  By default (N), the kernel will automatically disable unused clocks
-+	  to save power.
-+
-+	  This behavior can be overridden at boot time on the kernel command
-+	  line with the parameter clk_ignore_unused.
-+
-+	  If unsure, say N.
-+
- config COMMON_CLK_WM831X
- 	tristate "Clock driver for WM831x/2x PMICs"
- 	depends on MFD_WM831X
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 47093cda9df32223c1120c3710261296027c4cd3..4afbf011de6f1727a2bf330465c95407e51d04ad 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1508,10 +1508,21 @@ static void __init clk_disable_unused_subtree(struct clk_core *core)
- 		clk_core_disable_unprepare(core->parent);
- }
- 
--static bool clk_ignore_unused __initdata;
--static int __init clk_ignore_unused_setup(char *__unused)
-+static bool clk_ignore_unused __initdata = IS_ENABLED(CONFIG_COMMON_CLK_DISABLE_UNUSED);
-+static int __init clk_ignore_unused_setup(char *str)
- {
--	clk_ignore_unused = true;
-+	if (!str) {
-+		clk_ignore_unused = true;
-+	} else {
-+		/*
-+		 * Typically the equals is added to the __setup below, however we
-+		 * need to be able to support clk_ignore_unused without an equals
-+		 * since tons of systems just pass clk_ignore_unused. So look for
-+		 * the equals here.
-+		 */
-+		clk_ignore_unused = strcmp(str, "=0") != 0;
-+	}
-+
- 	return 1;
- }
- __setup("clk_ignore_unused", clk_ignore_unused_setup);
-
----
-base-commit: 95c541ddfb0815a0ea8477af778bb13bb075079a
-change-id: 20260316-clk-ignore-unused-kconfig-7e77eb5b8306
-
-Best regards,
+-	clk->parents = devm_kcalloc(bpmp->dev, info->num_parents,
+-				    sizeof(*clk->parents), GFP_KERNEL);
+-	if (!clk->parents)
+-		return ERR_PTR(-ENOMEM);
+-
+-	clk->num_parents = info->num_parents;
+-
+ 	/* hardware clock initialization */
+ 	memset(&init, 0, sizeof(init));
+ 	init.name = info->name;
 -- 
-Brian Masney <bmasney@redhat.com>
+2.53.0
 
