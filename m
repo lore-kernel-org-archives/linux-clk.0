@@ -1,158 +1,170 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4F83C3BFC
-	for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 14:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5936B27FB0E;
+	Tue, 17 Mar 2026 14:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773757213; cv=none; b=clmtQJx/eFUxpwU8I5k4UAobcae1j+pA3zcP6T1eOqCUzeAz34OOLUWn5LW/VDg78yipV15Q6Bq/sW1o0P7AoGB3oWlnolyXK8Hn8nDRj/iYCUrn8rTif7TAbeF+/tPgLib8CaDivaZC74mjyR/SVN+/yZdqpkCIR6/PT1P6qTo=
+	t=1773758689; cv=none; b=QtGaEuzhln6I7kWPflBbsj7fS8K2rWGKg/A8N350WCQVramrg4GvaOelIV+/1JFZmgB0xb16N8K01CNqswrg0pBTOc4+HgQtkPF+z3ZH4m8d1b3mnNJF0WVcnSeopiLsqfNBx1By3uSTBGu/fTabyYC/dWhyY/+NBruXZnH/QTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773757213; c=relaxed/simple;
-	bh=h8RokuzQTmpUInbjp48eFI4p729TuWFXN5xxFkUYsyU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DFCxSdNwFn/xtGWB6GeTC5m4yDywle0SxDIgdOzj5VS/s/lXADUgfbQPWptXDO1lD2osmelaMCkBX5XID6NMgF/KEy3JJtxGvoB3/TsGtrvWbKzt9rZbglw3Mc/luBfj86JSWtlYz2EH3iUIc6U9mPUNg0TcsBUfPgV/jjZ5fsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=U2J5+eJV; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=D+eMRKHL; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1773758689; c=relaxed/simple;
+	bh=ig/EMNX8avDH9Wkq0jW9ZCq98ghPv+RlnlihJXI4x1g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RkzQTd/70CR99r/6Wr2vjeuguPW891jJtc0IqerFk7CfRnF/rli5wANOQuBSyfrRu3jWeNhQsAopGbnYCRYHE69PJO5GLICip1Di/0m3zgTVI8EbRY3MyGXvOlfpOawY8FI50yjo2W1U2RLwhKH/3o/xSrKyLipMhCNyb0uY434=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=kPkW309+; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="U2J5+eJV";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="D+eMRKHL"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62HD01Y91639402
-	for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 14:20:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=UMe5FwLKUI79zakUaymujYWJ
-	qo56zT7hQ3zo7cK1/jw=; b=U2J5+eJVv03wRwdAgX8CYwqHMCjvlRVyXm+tONJ8
-	qSmWZg87oXdUgTqK8FGYeKra5INhtX+FUutx/P/t19mrxCaco5s/+stUD25Jg4yM
-	rySEVVjS+O0ZHnBYerZG90DcnQBckL16uX+iYXy8C7WEJ8nISrJOebH39cY39MUZ
-	GP2gJNMzY8HZVrt3ot+d38VDKG17LW4OGgRPAVZaYBy24ya2JDRU3eQUcW1FrYGw
-	k7rNvh6SvlZqUpHMPV8muJaFzUBAh7bWv0nMv0meY/Pkc+PYok06aTlLHvyYiNpy
-	cD/kFyIJIsptDeHoLW8ehePD38WyQYta5yBz8KBw+uvMcg==
-Received: from mail-vs1-f72.google.com (mail-vs1-f72.google.com [209.85.217.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cxke0ckrf-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 14:20:11 +0000 (GMT)
-Received: by mail-vs1-f72.google.com with SMTP id ada2fe7eead31-5ffaa511969so7988820137.1
-        for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 07:20:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1773757210; x=1774362010; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UMe5FwLKUI79zakUaymujYWJqo56zT7hQ3zo7cK1/jw=;
-        b=D+eMRKHLRYTNElgDFTd6FAHYdVYohW1t8FcWDri7kE+K1/9VtHOECw1AFihWIzPlWT
-         1VqcRoEy4xzVB+erZzed3o4oKZmX8ntEIyexn/68GB8orrxxz0f+7GVMF5GZUh4Vm0tz
-         Cx6ZsQFrGPDAQPwOBZvyKY4FGD5r7QaMj3YikbnYBgk32uPGXEIuDZWkz2TLxjtE2wjt
-         e21gHZzcyKTR33dQFJndNR/W8PBz5oJKznYCz6USvLZ3sSnSGRzWDxLLaX1FLuURpSH2
-         uy5UZTNhDy5RdWSDE2Jj/wK7KeV8jRmjnjwdL9ITPMK/QM5bDbl6CmOr85anTILVj2Wi
-         JjBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773757210; x=1774362010;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UMe5FwLKUI79zakUaymujYWJqo56zT7hQ3zo7cK1/jw=;
-        b=OESkSVlWswczZSe1etYRILhZMw0CWYNXQHut4PTWILpmpp5pK0TIYpPnaml0y4Avnt
-         u6j0Gi+ESyLZiw0+eYHOlsNIBZG35S7V61XS0nj/Noccs1YUSatMDgDHOcyAErgk7gDl
-         TIX8vaQZqmdXvwEdZPKfAF/FMUsZAa71Tu4YWXLnSqDQyzFghTFeMzIvwIPNmhW3SzoH
-         9uaT4k3aHrYZZeDkvpy+u4KzbeDkxPxeDilIXftB3E8Q7qE8rlRG+HiAL/3/vO01q9UZ
-         vkBqGMWHT5MYaiMx9H2cGt4zsuraNKK7+Al6Wj449lFfKS9gkO7g101pVSfmeHNLJ+3C
-         yGoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXTKX5iD94cSmU64FSRkenenf432v1kArSqn3VUVzirybRVNJT8LEuVfAg6w8VUPHaQ1HVbOVAV3sY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw39b1pgeREuHsiyOzmHQydr5isart9Z1rN/PhAeMlBgS+lIFxX
-	O7zMaf2at5AT8xWvF8bRiK1UruzmleX7DJ/6HEOd32OWccv8HofrOAtBcpldkS59/DFhMPeR2u7
-	6Xh+u7QiT/mP45qCRZqnSkdBNFzDFXKR5IVtDLqHTFn9+kJTiktfJEECnLQnCe8c=
-X-Gm-Gg: ATEYQzzTvYXubTD44HoohvYKDWU6jDyQuEDKw1hlAf0ozdl8Rm2h1iKn8TQPayenIFW
-	arEzvxug2fMdpwGK81wTU0wrzBVf+gnh8qSUFw2K9eXOVdACEpjDUyUc4ZX2iXsHRW5MZs3brF6
-	LYyblPdN+ze7q8LcrFY48x7JYW24FPqgngFVoK/APcR6W6HxKIz/HaaiaWYiKX9OU9v1F98k3Rm
-	OXSiKi4z7f9qcKef/dNUxalLwNiZmUiaqT0wEmi70ZRJPY9KjbhmgXaY3EfGREEtJLPTrKyIVtY
-	yged8WTQ8iDjOrQhvFEq2RsgElu+IA8LRwNYwgpIJ2zu/aRQ5DBq10wQrg4jctJvqPIeTQ8vm+o
-	ez3rjohoiWRXeldveRyCJuF6brC9MBPgl0w==
-X-Received: by 2002:a05:6102:32c1:b0:5f5:514f:4e59 with SMTP id ada2fe7eead31-6020e5f6a8cmr5641701137.27.1773757210170;
-        Tue, 17 Mar 2026 07:20:10 -0700 (PDT)
-X-Received: by 2002:a05:6102:32c1:b0:5f5:514f:4e59 with SMTP id ada2fe7eead31-6020e5f6a8cmr5641681137.27.1773757209549;
-        Tue, 17 Mar 2026 07:20:09 -0700 (PDT)
-Received: from oss.qualcomm.com ([82.79.95.133])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48556422338sm122583015e9.7.2026.03.17.07.20.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Mar 2026 07:20:08 -0700 (PDT)
-Date: Tue, 17 Mar 2026 16:20:06 +0200
-From: Abel Vesa <abel.vesa@oss.qualcomm.com>
-To: Brian Masney <bmasney@redhat.com>
-Cc: Maxime Ripard <mripard@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
-        Hans de Goede <hansg@kernel.org>,
-        Saravana Kannan <saravanak@kernel.org>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: add new Kconfig to control default behavior of
- disabling unused clocks
-Message-ID: <hdagvfcxoh4nukz5sqocbp7qbezv3rxct3aygb7fvhsej7zp27@iyeoi74q2w7n>
-References: <20260316-clk-ignore-unused-kconfig-v1-1-6e95a4fb0c94@redhat.com>
- <20260317-almond-leech-of-correction-2a2ef6@houat>
- <com5zf4bfgb3eoelbmy5pfykhdow6ne3nteua6l7bnzkr72dsb@pehxxygji5z2>
- <20260317-notorious-classic-sunfish-d016d5@houat>
- <2dsd7hq4bn25dibqk62a7o56tt2tecf645tq3upccneq4hby67@cmjjc5d6ximt>
- <ablhdKJgEhU8KmtO@redhat.com>
+	dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="kPkW309+"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=9nzDO8JHBjMy9LqMyHLjdL/DanHBIGqFXpaJScTCJtQ=; b=kPkW309+RbGupOYzxYbz0CwI8B
+	jEeGsg5RfC93jrywAcCL34e1cun4dqZs3klL8EDztT2qCwquFn+lHGmIREkefKmcP8GUQZgL2mXG4
+	djbLGdEgQAheNnsKH+o5Q67B+F3bb0E4ocgxAPTs9/E0K+QaauyLMxrdd82Jj2Lyq0HdghUhSIcXa
+	5/aGP8YOr1JW/ivrCAbCMC59PwxSkF/i4FaVUFNmMTIjee1alVMKzxM+j5VbJevf8UpK8WUFbDm1y
+	qMpwaOfwiRfpasKIvS4VYtxK58ZuDzYCM1iHkDEMhWQnCRM3bL4Jv6UpARZkODTX9vQasW7n8DnUe
+	MH37YmVA==;
+Received: from gwsc.sc.usp.br ([143.107.225.16] helo=[172.24.4.78])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1w2Vet-002Joh-2k; Tue, 17 Mar 2026 15:44:35 +0100
+Message-ID: <14ad62c7-7046-4df6-8267-c868a9fde982@igalia.com>
+Date: Tue, 17 Mar 2026 11:44:25 -0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ablhdKJgEhU8KmtO@redhat.com>
-X-Proofpoint-ORIG-GUID: _4xIjIBoR6t5nJWdV-_o9MYWbp46w7bs
-X-Authority-Analysis: v=2.4 cv=aue/yCZV c=1 sm=1 tr=0 ts=69b9631b cx=c_pps
- a=DUEm7b3gzWu7BqY5nP7+9g==:117 a=iKs3dpp2RB4k51ZqCjcyjQ==:17
- a=kj9zAlcOel0A:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
- a=aJ-NGQLJV4KphsafQ0sA:9 a=CjuIK1q_8ugA:10 a=-aSRE8QhW-JAV6biHavz:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzE3MDEyNiBTYWx0ZWRfX4NTkx39I40W2
- ghnEmU7zYwwm8npkbpAkbT+gdr8Pw/w4pL3mhE9pFZBAU2t9JebUYAVHdqw4X4n+9b4mOwz2viD
- 5ulqNeRcAtSwukRwKBKzRaRXKt98eBWQ/QpFRIOx2RLmLKTk/JBNk9yG108HiAd3qEVhzgoUyhC
- jvi3W8n2ysHqnWZffTybFM5XaA5TyC7bQyQJTifEU0WEtuhuWcJSEhkpTqY9qpsl+cm/BQLGLME
- bV4BeSXCA2qFmCWfRnkIncgyeopP2MH0PmQtSuO5BqgvSrAo9JvUSM+6O0npI2yGrtrdPzdoh+r
- T04SxbeHEhT7QnlxXAZ+xu+HTlsFjoLQHs4Xy4dziMu4g/ZRNKTcOym6lIKTFdZrVrb8IzAXa6f
- H853C6Se05P4fyMCnJ0zDNR/P1zAZpDdUuSAui+aH3TQ3mqRCXoc36kdJwujDP0Php2sS61UMYu
- OL0zI2sLmPH/shmzNvw==
-X-Proofpoint-GUID: _4xIjIBoR6t5nJWdV-_o9MYWbp46w7bs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-17_01,2026-03-17_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 suspectscore=0 clxscore=1015 phishscore=0 lowpriorityscore=0
- malwarescore=0 bulkscore=0 priorityscore=1501 adultscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603170126
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 2/5] pmdomain: bcm: bcm2835-power: Increase ASB control
+ timeout
+To: Stefan Wahren <wahrenst@gmx.net>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Maxime Ripard <mripard@kernel.org>, Melissa Wen <mwen@igalia.com>,
+ Iago Toral Quiroga <itoral@igalia.com>,
+ Chema Casanova <jmcasanova@igalia.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, kernel-dev@igalia.com,
+ stable@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ linux-pm@vger.kernel.org
+References: <20260312-v3d-power-management-v7-0-9f006a1d4c55@igalia.com>
+ <20260312-v3d-power-management-v7-2-9f006a1d4c55@igalia.com>
+ <bdae424d-f4b5-4181-9421-4393fe3ac8fb@gmx.net>
+From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+Content-Language: en-US
+Autocrypt: addr=mcanal@igalia.com; keydata=
+ xsBNBGcCwywBCADgTji02Sv9zjHo26LXKdCaumcSWglfnJ93rwOCNkHfPIBll85LL9G0J7H8
+ /PmEL9y0LPo9/B3fhIpbD8VhSy9Sqz8qVl1oeqSe/rh3M+GceZbFUPpMSk5pNY9wr5raZ63d
+ gJc1cs8XBhuj1EzeE8qbP6JAmsL+NMEmtkkNPfjhX14yqzHDVSqmAFEsh4Vmw6oaTMXvwQ40
+ SkFjtl3sr20y07cJMDe++tFet2fsfKqQNxwiGBZJsjEMO2T+mW7DuV2pKHr9aifWjABY5EPw
+ G7qbrh+hXgfT+njAVg5+BcLz7w9Ju/7iwDMiIY1hx64Ogrpwykj9bXav35GKobicCAwHABEB
+ AAHNIE1hw61yYSBDYW5hbCA8bWNhbmFsQGlnYWxpYS5jb20+wsCRBBMBCAA7FiEE+ORdfQEW
+ dwcppnfRP/MOinaI+qoFAmcCwywCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQ
+ P/MOinaI+qoUBQgAqz2gzUP7K3EBI24+a5FwFlruQGtim85GAJZXToBtzsfGLLVUSCL3aF/5
+ O335Bh6ViSBgxmowIwVJlS/e+L95CkTGzIIMHgyUZfNefR2L3aZA6cgc9z8cfow62Wu8eXnq
+ GM/+WWvrFQb/dBKKuohfBlpThqDWXxhozazCcJYYHradIuOM8zyMtCLDYwPW7Vqmewa+w994
+ 7Lo4CgOhUXVI2jJSBq3sgHEPxiUBOGxvOt1YBg7H9C37BeZYZxFmU8vh7fbOsvhx7Aqu5xV7
+ FG+1ZMfDkv+PixCuGtR5yPPaqU2XdjDC/9mlRWWQTPzg74RLEw5sz/tIHQPPm6ROCACFls7A
+ TQRnAsMsAQgAxTU8dnqzK6vgODTCW2A6SAzcvKztxae4YjRwN1SuGhJR2isJgQHoOH6oCItW
+ Xc1CGAWnci6doh1DJvbbB7uvkQlbeNxeIz0OzHSiB+pb1ssuT31Hz6QZFbX4q+crregPIhr+
+ 0xeDi6Mtu+paYprI7USGFFjDUvJUf36kK0yuF2XUOBlF0beCQ7Jhc+UoI9Akmvl4sHUrZJzX
+ LMeajARnSBXTcig6h6/NFVkr1mi1uuZfIRNCkxCE8QRYebZLSWxBVr3h7dtOUkq2CzL2kRCK
+ T2rKkmYrvBJTqSvfK3Ba7QrDg3szEe+fENpL3gHtH6h/XQF92EOulm5S5o0I+ceREwARAQAB
+ wsB2BBgBCAAgFiEE+ORdfQEWdwcppnfRP/MOinaI+qoFAmcCwywCGwwACgkQP/MOinaI+qpI
+ zQf+NAcNDBXWHGA3lgvYvOU31+ik9bb30xZ7IqK9MIi6TpZqL7cxNwZ+FAK2GbUWhy+/gPkX
+ it2gCAJsjo/QEKJi7Zh8IgHN+jfim942QZOkU+p/YEcvqBvXa0zqW0sYfyAxkrf/OZfTnNNE
+ Tr+uBKNaQGO2vkn5AX5l8zMl9LCH3/Ieaboni35qEhoD/aM0Kpf93PhCvJGbD4n1DnRhrxm1
+ uEdQ6HUjWghEjC+Jh9xUvJco2tUTepw4OwuPxOvtuPTUa1kgixYyG1Jck/67reJzMigeuYFt
+ raV3P8t/6cmtawVjurhnCDuURyhUrjpRhgFp+lW8OGr6pepHol/WFIOQEg==
+In-Reply-To: <bdae424d-f4b5-4181-9421-4393fe3ac8fb@gmx.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 26-03-17 10:13:08, Brian Masney wrote:
-> On Tue, Mar 17, 2026 at 03:21:17PM +0200, Abel Vesa wrote:
-> > The solution has been already discussed for a long time now and it is:
-> > drop the clk_ignore_unused late_initcall entirely and then make a
-> > generic sync_state callback that the clock providers can use (or they
-> > could implement one themselves). This way, until sync_state is reached
-> > for a specific clock provider driver, all unused clocks remain as is.
+Hi Stefan,
+
+On 15/03/26 20:07, Stefan Wahren wrote:
+> Hi Maíra,
 > 
-> I'm willing to work on the sync state support once my clk scaling
-> series [1] lands upstream. I believe that Saravana posted a series
-> related to clk sync state, and I need to look at that.
+> Am 12.03.26 um 22:34 schrieb Maíra Canal:
+>> The bcm2835_asb_control() function uses a tight polling loop to wait
+>> for the ASB bridge to acknowledge a request. During intensive workloads,
+>> this handshake intermittently fails for V3D's master ASB on BCM2711,
+>> resulting in "Failed to disable ASB master for v3d" errors during
+>> runtime PM suspend. As a consequence, the failed power-off leaves V3D in
+>> a broken state, leading to bus faults or system hangs on later accesses.
+>>
+>> As the timeout is insufficient in some scenarios, increase the polling
+>> timeout from 1us to 5us, which is still negligible in the context of a
+>> power domain transition. Also, move the start timestamp to after the
+>> MMIO write, as the write latency is counted against the timeout,
+>> reducing the effective wait time for the hardware to respond.
+>>
+>> Cc: stable@vger.kernel.org
+> I think, a Fixes tag would be helpful here. Also this fix should be the 
+> first patch of the series or separate.
 
-Yeah, I've spent time on it a couple of years as well, but got side
-tracked...
+I'll send it separately with the Fixes tag. Thanks!
 
-I'd be nice if this actually lands soon.
+>> Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
+>> Signed-off-by: Maíra Canal <mcanal@igalia.com>
+>>
+>> ---
+>> To: Ulf Hansson <ulf.hansson@linaro.org>
+>> To: Ray Jui <rjui@broadcom.com>
+>> To: Scott Branden <sbranden@broadcom.com>
+>> Cc: linux-pm@vger.kernel.org
+> This looks unusual. Is this intended?
+
+As b4 doesn't support it natively, I used this strategy to send only
+this patch to the linux-pm mailing list and not the whole series.
+
+Best regards,
+- Maíra
 
 > 
-> FWIW, the only reason I posted this patch is because at the end of
-> Stephen's LPC talk I got the impression that this was also an acceptable
-> change. I'm fine with dropping this change.
+> Best regards
+>> ---
+>>   drivers/pmdomain/bcm/bcm2835-power.c | 5 ++---
+>>   1 file changed, 2 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/pmdomain/bcm/bcm2835-power.c b/drivers/pmdomain/ 
+>> bcm/bcm2835-power.c
+>> index 
+>> 0450202bbee2513c9116a36abaa839b460550935..1815eb4ee69b9b672b5e314402f1cc9897c57dcb 100644
+>> --- a/drivers/pmdomain/bcm/bcm2835-power.c
+>> +++ b/drivers/pmdomain/bcm/bcm2835-power.c
+>> @@ -166,8 +166,6 @@ static int bcm2835_asb_control(struct 
+>> bcm2835_power *power, u32 reg, bool enable
+>>           break;
+>>       }
+>> -    start = ktime_get_ns();
+>> -
+>>       /* Enable the module's async AXI bridges. */
+>>       if (enable) {
+>>           val = readl(base + reg) & ~ASB_REQ_STOP;
+>> @@ -176,9 +174,10 @@ static int bcm2835_asb_control(struct 
+>> bcm2835_power *power, u32 reg, bool enable
+>>       }
+>>       writel(PM_PASSWORD | val, base + reg);
+>> +    start = ktime_get_ns();
+>>       while (!!(readl(base + reg) & ASB_ACK) == enable) {
+>>           cpu_relax();
+>> -        if (ktime_get_ns() - start >= 1000)
+>> +        if (ktime_get_ns() - start >= 5000)
+>>               return -ETIMEDOUT;
+>>       }
+>>
+> 
 
-Here is the scenario that proves adding such config isn't the right
-solution: think of single kernel image working with different SoCs from
-different vendors. This is actually the case where distros need to have
-a way to provide one kernel image + thousands of DTBs and be able to
-boot one each one of the boards. Whatever this config is set to in the
-kernel image, it will not work with all platforms.
