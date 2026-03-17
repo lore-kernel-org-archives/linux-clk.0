@@ -1,42 +1,41 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6074F281358
-	for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 13:33:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096232DAFDD;
+	Tue, 17 Mar 2026 13:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773754422; cv=none; b=FFcTVLesWfiQtD0dZnDgyFnA2olNeEY/dKCkJIGk/gr6RVOhDSzhRMCmGX4JrTJfaiY9kACbcabiBeA86lnjfSiResxaAiJ1OC2hLNuDAZpUR8zQ5pAElbsCxfm9pWV1R+Jc5YPvnEdAYREusKxebvVBYkdul1BcGXK5opdlX5k=
+	t=1773754423; cv=none; b=dOm2oqZLq197gZHsTci0Xa3+GlgvCMxV17dv35sJye2a/UK4wVFblUryWHYVe2XWsZyGbnIrb0s6sGkTqvh6WYx6lKlUM/6cHC/UslP1x/Ppzcf8eHWrOv4minLQ6g+afcoVkwdPqsZYEAxVtofgyeNrqM6l20aiAenx82aYcNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773754422; c=relaxed/simple;
-	bh=w2P98RtZ71C/LGhITu+Rj69QooLz3cBmY6xljHzBuc8=;
+	s=arc-20240116; t=1773754423; c=relaxed/simple;
+	bh=YxN9w0SxPEx4dKYGDPjcFAhTyqjYwWthx4zOXAprh3k=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=U7jQjwVys75e/QsaqaFHsB+G9XQRGGK4EcqYvhPlpbelQJveHq3B8B/TQvRdHN4NUIVR9eAStPOWjqsw0+mfmIp0RYB32q/TGgidB0WgVw9mK3lYI7VBsW6e2DT2TIz8CUwEWB4SaZqT0jNyern+171A2mVnep7LkuGdgIsJ5sQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=aY0bFTvx; arc=none smtp.client-ip=185.246.84.56
+	 In-Reply-To:To:Cc; b=YJqVXgS0nfeKXfRwGKQ7L7E+B7v0d7P5m/S2GRB8E9i1RbDhQtM/r6HCjyQ0UVM5z7/CrTBJgYJ2qZwM84lcZ0/b/szTiA/raoGlq86iFsNHePnx3rq+qPDLnVTQBs27rIUYzJGVlUK/jPks5b7aA52VThqENU0/Z3S7acKymmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RSIrkpx9; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="aY0bFTvx"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RSIrkpx9"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 078111A2DDC;
-	Tue, 17 Mar 2026 13:33:39 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 9321DC55059;
+	Tue, 17 Mar 2026 13:33:58 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id D03BB5FC9A;
-	Tue, 17 Mar 2026 13:33:38 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 93175104505EA;
-	Tue, 17 Mar 2026 14:33:35 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 86E7E5FC9A;
+	Tue, 17 Mar 2026 13:33:34 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D4D4C104505EC;
+	Tue, 17 Mar 2026 14:33:30 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1773754417; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1773754412; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=yOq1d1/feoU9ZacZzbZLoYJ5+TqXp/ks2PPbQyH8Mhg=;
-	b=aY0bFTvxHUTjsHbOy7p2URiNRXtO+WW7rfpDcPhxIeZf+28G/tgle7gs0BNdqfxAODAt4s
-	ZI2r2+4YbScryLGZaq8fkTTGsV0w+E67NeuP8zrKbtrfaCk9SHAzjDXs9JBjpl+nVo3hsJ
-	R1JRgjmcCZDFbN+/E5w/KbC8Oi3Z8kAavCRDdqYi65Fj8q0jh8MtWsjfRaKhDQ8C1QVouq
-	p7eus60TCljnVashuqFi3t9VPFqWsI82FOpfJtMUoZahkD76Hl3slm2gYvGoo0noJPO8Ra
-	ivi5hKWTuQnTnvJdhr9MM27VsrTuvQwZm3+ZXSlj6Aea81aEd56Mhrrd2D4F9g==
+	bh=5jYxDrf9DM6w0B5wLrRD+9KjH0Jyc/7uXLQcui74daI=;
+	b=RSIrkpx92IhIUnVOb8uM/ofkrhLFchrpAy+4Cu2LeEcG8GiwDIc3wj+QTw74mMWthL9Qvi
+	vVsT366xHi59I06BhY0BWdLFMWK1B4baVGQIoO3HMZAoi2M3lmvZu5eXrZo/xPfPqcUJ8Y
+	tMF5Iv9Aj5t34xD+71T23JByCda4/7JeL4jrEBL0h6czMt/HAn+//QPQdsZb6J8HBsswPT
+	MSEyj77BzyiSLdnpKlXhvjStyIq+VubPYumcu8e9KnADREvCcNOJkuOdqc74076pIwkoCx
+	7R/+hLo5eZtZ1JQnIQ9uDNhOQ/o+C1TfLp8Tw++gWmjUQu1UDUw+7aQTxmi+iA==
 From: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
-Date: Tue, 17 Mar 2026 14:33:06 +0100
-Subject: [PATCH v5 04/10] clk: fixed-factor: Export
- __clk_hw_register_fixed_factor()
+Date: Tue, 17 Mar 2026 14:33:04 +0100
+Subject: [PATCH v5 02/10] reset: eyeq: Add EyeQ7H compatibles
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -45,7 +44,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260317-clk-eyeq7-v5-4-6f6daa2c2367@bootlin.com>
+Message-Id: <20260317-clk-eyeq7-v5-2-6f6daa2c2367@bootlin.com>
 References: <20260317-clk-eyeq7-v5-0-6f6daa2c2367@bootlin.com>
 In-Reply-To: <20260317-clk-eyeq7-v5-0-6f6daa2c2367@bootlin.com>
 To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
@@ -62,198 +61,407 @@ Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-clk@vger.kernel.org, linux-mips@vger.kernel.org, 
  =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>, 
- Brian Masney <bmasney@redhat.com>
+ Sari Khoury <sari.khoury@mobileye.com>
 X-Mailer: b4 0.14.3
 X-Last-TLS-Session-Version: TLSv1.3
 
-Make the base registration function for fixed-factor clocks public and
-re-implement the various registration functions that are a direct call
-to __clk_hw_register_fixed_factor() as macros.
+Add support for the reset controllers found in the EyeQ7H OLB. For
+this, three new types of reset domain are added to the driver.
 
-This is similar to how the registration functions of divider, mux and
-other clocks are implemented.
+The EQR_EYEQ7H_ACRP reset domain is similar to the EQR_EYEQ5_ACRP domain,
+sharing the same register address calculation but featuring a different
+register layout. When writing to the register, MBIST bits are set to
+zero to ensure normal device operation.
 
-Add a new macro clk_hw_register_fixed_factor_pdata() to register
-a fixed-factor clock with its parent clock passed as a struct
-clk_parent_data.
+The EQR_EYEQ7H_CFG reset domain is similar to the EQR_EYEQ5_PCIE domain,
+with two bits per device instead of one. These two bits, clock enable and
+nreset, are kept in sync when asserting and deasserting the device reset.
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+The EQR_EYEQ7H_ACC reset domain is similar to the EQR_EYEQ6H_SARCR domain,
+with a different registers layout and no busy waiting.
+
+Alongside these new reset domains, add EQR_NB_DOM_TYPES at the end of the
+eqr_domain_type enumeration and use it to declare the eqr_timings array.
+This ensures that we have the expected number of entries when using the
+timings in eqr_busy_wait_locked().
+
+Add and order the auxiliary_device_id entries in eqr_id_table.
+
+Originally-by: Sari Khoury <sari.khoury@mobileye.com>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
 ---
- drivers/clk/clk-fixed-factor.c | 52 ++-------------------------------------
- include/linux/clk-provider.h   | 56 +++++++++++++++++++++++++++++++++---------
- 2 files changed, 46 insertions(+), 62 deletions(-)
+ drivers/reset/reset-eyeq.c | 268 +++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 259 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
-index 359e91441c74..6116f878fc8f 100644
---- a/drivers/clk/clk-fixed-factor.c
-+++ b/drivers/clk/clk-fixed-factor.c
-@@ -90,7 +90,7 @@ static void devm_clk_hw_register_fixed_factor_release(struct device *dev, void *
- 	clk_hw_unregister(&fix->hw);
- }
- 
--static struct clk_hw *
-+struct clk_hw *
- __clk_hw_register_fixed_factor(struct device *dev, struct device_node *np,
- 		const char *name, const char *parent_name,
- 		const struct clk_hw *parent_hw, const struct clk_parent_data *pdata,
-@@ -148,6 +148,7 @@ __clk_hw_register_fixed_factor(struct device *dev, struct device_node *np,
- 
- 	return hw;
- }
-+EXPORT_SYMBOL_GPL(__clk_hw_register_fixed_factor);
- 
- /**
-  * devm_clk_hw_register_fixed_factor_index - Register a fixed factor clock with
-@@ -173,46 +174,6 @@ struct clk_hw *devm_clk_hw_register_fixed_factor_index(struct device *dev,
- }
- EXPORT_SYMBOL_GPL(devm_clk_hw_register_fixed_factor_index);
- 
--/**
-- * devm_clk_hw_register_fixed_factor_parent_hw - Register a fixed factor clock with
-- * pointer to parent clock
-- * @dev: device that is registering this clock
-- * @name: name of this clock
-- * @parent_hw: pointer to parent clk
-- * @flags: fixed factor flags
-- * @mult: multiplier
-- * @div: divider
-- *
-- * Return: Pointer to fixed factor clk_hw structure that was registered or
-- * an error pointer.
-- */
--struct clk_hw *devm_clk_hw_register_fixed_factor_parent_hw(struct device *dev,
--		const char *name, const struct clk_hw *parent_hw,
--		unsigned long flags, unsigned int mult, unsigned int div)
--{
--	return __clk_hw_register_fixed_factor(dev, NULL, name, NULL, parent_hw,
--					      NULL, flags, mult, div, 0, 0, true);
--}
--EXPORT_SYMBOL_GPL(devm_clk_hw_register_fixed_factor_parent_hw);
--
--struct clk_hw *clk_hw_register_fixed_factor_parent_hw(struct device *dev,
--		const char *name, const struct clk_hw *parent_hw,
--		unsigned long flags, unsigned int mult, unsigned int div)
--{
--	return __clk_hw_register_fixed_factor(dev, NULL, name, NULL, parent_hw,
--					      NULL, flags, mult, div, 0, 0, false);
--}
--EXPORT_SYMBOL_GPL(clk_hw_register_fixed_factor_parent_hw);
--
--struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
--		const char *name, const char *parent_name, unsigned long flags,
--		unsigned int mult, unsigned int div)
--{
--	return __clk_hw_register_fixed_factor(dev, NULL, name, parent_name, NULL,
--					      NULL, flags, mult, div, 0, 0, false);
--}
--EXPORT_SYMBOL_GPL(clk_hw_register_fixed_factor);
--
- struct clk_hw *clk_hw_register_fixed_factor_fwname(struct device *dev,
- 		struct device_node *np, const char *name, const char *fw_name,
- 		unsigned long flags, unsigned int mult, unsigned int div)
-@@ -286,15 +247,6 @@ void clk_hw_unregister_fixed_factor(struct clk_hw *hw)
- }
- EXPORT_SYMBOL_GPL(clk_hw_unregister_fixed_factor);
- 
--struct clk_hw *devm_clk_hw_register_fixed_factor(struct device *dev,
--		const char *name, const char *parent_name, unsigned long flags,
--		unsigned int mult, unsigned int div)
--{
--	return __clk_hw_register_fixed_factor(dev, NULL, name, parent_name, NULL,
--			NULL, flags, mult, div, 0, 0, true);
--}
--EXPORT_SYMBOL_GPL(devm_clk_hw_register_fixed_factor);
--
- struct clk_hw *devm_clk_hw_register_fixed_factor_fwname(struct device *dev,
- 		struct device_node *np, const char *name, const char *fw_name,
- 		unsigned long flags, unsigned int mult, unsigned int div)
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 630705a47129..7a3de1009270 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -1146,13 +1146,16 @@ struct clk_fixed_factor {
- #define to_clk_fixed_factor(_hw) container_of(_hw, struct clk_fixed_factor, hw)
- 
- extern const struct clk_ops clk_fixed_factor_ops;
-+struct clk_hw *
-+__clk_hw_register_fixed_factor(struct device *dev, struct device_node *np,
-+		const char *name, const char *parent_name,
-+		const struct clk_hw *parent_hw, const struct clk_parent_data *pdata,
-+		unsigned long flags, unsigned int mult, unsigned int div,
-+		unsigned long acc, unsigned int fixflags, bool devm);
- struct clk *clk_register_fixed_factor(struct device *dev, const char *name,
- 		const char *parent_name, unsigned long flags,
- 		unsigned int mult, unsigned int div);
- void clk_unregister_fixed_factor(struct clk *clk);
--struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
--		const char *name, const char *parent_name, unsigned long flags,
--		unsigned int mult, unsigned int div);
- struct clk_hw *clk_hw_register_fixed_factor_fwname(struct device *dev,
- 		struct device_node *np, const char *name, const char *fw_name,
- 		unsigned long flags, unsigned int mult, unsigned int div);
-@@ -1164,9 +1167,6 @@ struct clk_hw *clk_hw_register_fixed_factor_index(struct device *dev,
- 		const char *name, unsigned int index, unsigned long flags,
- 		unsigned int mult, unsigned int div);
- void clk_hw_unregister_fixed_factor(struct clk_hw *hw);
--struct clk_hw *devm_clk_hw_register_fixed_factor(struct device *dev,
--		const char *name, const char *parent_name, unsigned long flags,
--		unsigned int mult, unsigned int div);
- struct clk_hw *devm_clk_hw_register_fixed_factor_fwname(struct device *dev,
- 		struct device_node *np, const char *name, const char *fw_name,
- 		unsigned long flags, unsigned int mult, unsigned int div);
-@@ -1178,13 +1178,45 @@ struct clk_hw *devm_clk_hw_register_fixed_factor_index(struct device *dev,
- 		const char *name, unsigned int index, unsigned long flags,
- 		unsigned int mult, unsigned int div);
- 
--struct clk_hw *devm_clk_hw_register_fixed_factor_parent_hw(struct device *dev,
--		const char *name, const struct clk_hw *parent_hw,
--		unsigned long flags, unsigned int mult, unsigned int div);
-+#define clk_hw_register_fixed_factor(dev, name, parent_name,                  \
-+				     flags, mult, div)                        \
-+	__clk_hw_register_fixed_factor((dev), NULL, (name), (parent_name),    \
-+				       NULL,  NULL, (flags), (mult), (div),   \
-+				       0, 0, false)
-+#define clk_hw_register_fixed_factor_pdata(dev, np, name, pdata,              \
-+					   flags, mult, div, acc, fixflags)   \
-+	__clk_hw_register_fixed_factor((dev), (np), (name), NULL, NULL,       \
-+				       (pdata), (flags), (mult), (div),       \
-+				       (acc), (fixflags), false)
-+#define devm_clk_hw_register_fixed_factor(dev, name, parent_name, flags,      \
-+					  mult, div)                          \
-+	__clk_hw_register_fixed_factor((dev), NULL, (name), (parent_name),    \
-+				       NULL, NULL, (flags), (mult), (div), 0, \
-+				       0, true)
-+/**
-+ * devm_clk_hw_register_fixed_factor_parent_hw - Register a fixed factor clock with
-+ * pointer to parent clock
-+ * @dev: device that is registering this clock
-+ * @name: name of this clock
-+ * @parent_hw: pointer to parent clk
-+ * @flags: fixed factor flags
-+ * @mult: multiplier
-+ * @div: divider
-+ *
-+ * Return: Pointer to fixed factor clk_hw structure that was registered or
-+ * an error pointer.
-+ */
-+#define devm_clk_hw_register_fixed_factor_parent_hw(dev, name, parent_hw,     \
-+						    flags, mult, div)         \
-+	__clk_hw_register_fixed_factor((dev), NULL, (name), NULL,             \
-+				       (parent_hw), NULL, (flags), (mult),    \
-+				       (div), 0, 0, true)
- 
--struct clk_hw *clk_hw_register_fixed_factor_parent_hw(struct device *dev,
--		const char *name, const struct clk_hw *parent_hw,
--		unsigned long flags, unsigned int mult, unsigned int div);
-+#define clk_hw_register_fixed_factor_parent_hw(dev, name, parent_hw, flags,   \
-+					       mult, div)                     \
-+	__clk_hw_register_fixed_factor((dev), NULL, (name), NULL,             \
-+				       (parent_hw), NULL, (flags), (mult),    \
-+				       (div), 0, 0, false)
- /**
-  * struct clk_fractional_divider - adjustable fractional divider clock
+diff --git a/drivers/reset/reset-eyeq.c b/drivers/reset/reset-eyeq.c
+index 1a3857983897..ce758a1757fc 100644
+--- a/drivers/reset/reset-eyeq.c
++++ b/drivers/reset/reset-eyeq.c
+@@ -1,10 +1,11 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * Reset driver for the Mobileye EyeQ5, EyeQ6L and EyeQ6H platforms.
++ * Reset driver for the Mobileye EyeQ5, EyeQ6L, EyeQ6H and EyeQ7H platforms.
   *
+  * Controllers live in a shared register region called OLB. EyeQ5 and EyeQ6L
+  * have a single OLB instance for a single reset controller. EyeQ6H has seven
+- * OLB instances; three host reset controllers.
++ * OLB instances; three host reset controllers. EyeQ7H has fourteen OLB instances;
++ * eleven host reset controllers.
+  *
+  * Each reset controller has one or more domain. Domains are of a given type
+  * (see enum eqr_domain_type), with a valid offset mask (up to 32 resets per
+@@ -73,6 +74,40 @@
+  *  9. PMA0	10. PMA1	11. MPC0	12. MPC1
+  * 13. MPC2	14. MPC3	15. PERIPH
+  *
++ * Known resets in EyeQ7H acc domain 0 (type EQR_EYEQ7H_ACRP)
++ *  1. VMP0	2. XVMP1	3. VMP2		4. VMP3
++ *  5. MPC0	6. MPC1		7. PMA0		8. PMA1
++ *
++ * Known resets in EyeQ7H acc domain 1 (type EQR_EYEQ7H_ACC)
++ *  1. NCORE0	 2. NCORE1	3. NCORE0_M	4. NCORE1_M
++ *  5. NCORE_NOC 6. VMP_NOC	7. MPC_NOC	8. PMA_NOC
++ *
++ * Known resets in EyeQ7H ddr (type EQR_EYEQ7H_CFG)
++ *  0. APB	2. DMI		3. DFI		4. PHY_SMS
++ *  5. CTL_SMS
++ *
++ * Known resets in EyeQ7H east (type EQR_EYEQ7H_CFG)
++ *  0. ISP	2. VEU		3. LBIST
++ *
++ * Known resets in EyeQ7H periph (type EQR_EYEQ6H_SARCR)
++ *  0. gpio	1.EXT TIMER	3.UART		4. SPI
++ *  5. I2C0	6. I2C1		7.I2C2		8. I2S
++ *
++ * Known resets in EyeQ7H south (type EQR_EYEQ7H_CFG)
++ *  0. PCI_PHY	1. PCI_CTL	2. S_NOC	3. GBE_PHY
++ *  4. GBE_CTL	5. XSPI		6. UFS		7. VDIO
++ *
++ * Known resets in EyeQ7H west (type EQR_EYEQ7H_CFG)
++ *  0. GPU	2. CAU		3. LBIST	4. GPU_LBIST
++ *
++ * Known resets in EyeQ7H xnn domain 0 (type EQR_EYEQ7H_ACRP)
++ *  1. XNN0	2. XNN1		3.XNN2
++ *
++ * Known resets in EyeQ7H xnn domain 1 (type EQR_EYEQ7H_ACC)
++ *  1. XNN0	2. XNN1		3. XNN2		4. XNN3
++ *  5. NCORE	6. I2_0		7. I2_1		8. SMS_0
++ *  9. SMS_1
++ *
+  * Abbreviations:
+  *  - PMA: Programmable Macro Array
+  *  - MPC: Multi-threaded Processing Clusters
+@@ -114,6 +149,11 @@ enum eqr_domain_type {
+ 	EQR_EYEQ5_ACRP,
+ 	EQR_EYEQ5_PCIE,
+ 	EQR_EYEQ6H_SARCR,
++	EQR_EYEQ7H_ACC,
++	EQR_EYEQ7H_ACRP,
++	EQR_EYEQ7H_CFG,
++
++	EQR_NB_DOM_TYPES /* number of domain types, keep at the end */
+ };
+ 
+ /*
+@@ -138,16 +178,34 @@ enum eqr_domain_type {
+ #define EQR_EYEQ6H_SARCR_RST_STATUS	(0x008)
+ #define EQR_EYEQ6H_SARCR_CLK_REQUEST	(0x00C)
+ 
++/*
++ * Domain type EQR_EYEQ7H_ACC register offsets.
++ */
++#define EQR_EYEQ7H_ACC_CLK_EN		(0x000)
++#define EQR_EYEQ7H_ACC_RST_EN		(0x004)
++
++/*
++ * Domain type EQR_EYEQ7H_ACRP register masks.
++ * Registers are: base + 4 * offset.
++ */
++#define EQR_EYEQ7H_ACRP_PD_REQ		BIT(0)
++#define EQR_EYEQ7H_ACRP_MBIST_CFG	GENMASK(3, 1)
++#define EQR_EYEQ7H_ACRP_ST_POWER_DOWN	BIT(13)
++#define EQR_EYEQ7H_ACRP_ST_ACTIVE	BIT(14)
++
+ struct eqr_busy_wait_timings {
+ 	unsigned long sleep_us;
+ 	unsigned long timeout_us;
+ };
+ 
+-static const struct eqr_busy_wait_timings eqr_timings[] = {
++static const struct eqr_busy_wait_timings eqr_timings[EQR_NB_DOM_TYPES] = {
+ 	[EQR_EYEQ5_SARCR]	= {1, 10},
+ 	[EQR_EYEQ5_ACRP]	= {1, 40 * USEC_PER_MSEC}, /* LBIST implies long timeout. */
+ 	/* EQR_EYEQ5_PCIE does no busy waiting. */
+ 	[EQR_EYEQ6H_SARCR]	= {1, 400},
++	/* EQR_EYEQ7H_ACC does no busy waiting. */
++	[EQR_EYEQ7H_ACRP]	= {1, 40 * USEC_PER_MSEC},
++	/* EQR_EYEQ7H_CFG does no busy waiting. */
+ };
+ 
+ #define EQR_MAX_DOMAIN_COUNT 3
+@@ -221,10 +279,6 @@ static int eqr_busy_wait_locked(struct eqr_private *priv, struct device *dev,
+ 					 sleep_us, timeout_us);
+ 		break;
+ 
+-	case EQR_EYEQ5_PCIE:
+-		ret = 0; /* No busy waiting. */
+-		break;
+-
+ 	case EQR_EYEQ6H_SARCR:
+ 		/*
+ 		 * Wait until both bits change:
+@@ -241,6 +295,23 @@ static int eqr_busy_wait_locked(struct eqr_private *priv, struct device *dev,
+ 					&rst_status, &clk_status);
+ 		break;
+ 
++	case EQR_EYEQ7H_ACRP:
++		reg = base + 4 * offset;
++		if (assert)
++			mask = EQR_EYEQ7H_ACRP_ST_POWER_DOWN;
++		else
++			mask = EQR_EYEQ7H_ACRP_ST_ACTIVE;
++
++		ret = readl_poll_timeout(reg, val, !!(val & mask),
++					 sleep_us, timeout_us);
++		break;
++
++	case EQR_EYEQ5_PCIE:
++	case EQR_EYEQ7H_ACC:
++	case EQR_EYEQ7H_CFG:
++		ret = 0; /* No busy waiting. */
++		break;
++
+ 	default:
+ 		WARN_ON(1);
+ 		ret = -EINVAL;
+@@ -285,6 +356,28 @@ static void eqr_assert_locked(struct eqr_private *priv, u32 domain, u32 offset)
+ 		writel(val, base + EQR_EYEQ6H_SARCR_CLK_REQUEST);
+ 		break;
+ 
++	case EQR_EYEQ7H_ACC:
++		/* RST_REQUEST and CLK_REQUEST must be kept in sync. */
++		val = readl(base + EQR_EYEQ7H_ACC_RST_EN);
++		val &= ~BIT(offset);
++		writel(val, base + EQR_EYEQ7H_ACC_RST_EN);
++		writel(val, base + EQR_EYEQ7H_ACC_CLK_EN);
++		break;
++
++	case EQR_EYEQ7H_ACRP:
++		/* set powerdown and leave MBIST bits at zero */
++		reg = base + 4 * offset;
++		val = readl(reg) & ~EQR_EYEQ7H_ACRP_MBIST_CFG;
++		writel(val | EQR_EYEQ7H_ACRP_PD_REQ, reg);
++		break;
++
++	case EQR_EYEQ7H_CFG:
++		/* clear clock enable and NRESET bits */
++		val = readl(base);
++		val &= ~GENMASK(2 * offset + 1, 2 * offset);
++		writel(val, base);
++		break;
++
+ 	default:
+ 		WARN_ON(1);
+ 		break;
+@@ -339,6 +432,28 @@ static void eqr_deassert_locked(struct eqr_private *priv, u32 domain,
+ 		writel(val, base + EQR_EYEQ6H_SARCR_CLK_REQUEST);
+ 		break;
+ 
++	case EQR_EYEQ7H_ACC:
++		/* RST_REQUEST and CLK_REQUEST must be kept in sync. */
++		val = readl(base + EQR_EYEQ7H_ACC_RST_EN);
++		val |= BIT(offset);
++		writel(val, base + EQR_EYEQ7H_ACC_RST_EN);
++		writel(val, base + EQR_EYEQ7H_ACC_CLK_EN);
++		break;
++
++	case EQR_EYEQ7H_ACRP:
++		/* clear powerdown and leave MBIST bits at zero */
++		reg = base + 4 * offset;
++		val = readl(reg) & ~EQR_EYEQ7H_ACRP_MBIST_CFG;
++		writel(val & ~EQR_EYEQ7H_ACRP_PD_REQ, reg);
++		break;
++
++	case EQR_EYEQ7H_CFG:
++		/* set clock enable and NRESET bits */
++		val = readl(base);
++		val |= GENMASK(2 * offset + 1, 2 * offset);
++		writel(val, base);
++		break;
++
+ 	default:
+ 		WARN_ON(1);
+ 		break;
+@@ -385,6 +500,14 @@ static int eqr_status(struct reset_controller_dev *rcdev, unsigned long id)
+ 	case EQR_EYEQ6H_SARCR:
+ 		reg = base + EQR_EYEQ6H_SARCR_RST_STATUS;
+ 		return !(readl(reg) & BIT(offset));
++	case EQR_EYEQ7H_ACC:
++		reg = base + EQR_EYEQ7H_ACC_RST_EN;
++		return !(readl(reg) & BIT(offset));
++	case EQR_EYEQ7H_ACRP:
++		reg = base + 4 * offset;
++		return !(readl(reg) & EQR_EYEQ7H_ACRP_ST_ACTIVE);
++	case EQR_EYEQ7H_CFG:
++		return !(readl(base) & BIT(2 * offset));
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -558,6 +681,113 @@ static const struct eqr_match_data eqr_eyeq6h_acc_data = {
+ 	.domains	= eqr_eyeq6h_acc_domains,
+ };
+ 
++static const struct eqr_domain_descriptor eqr_eyeq7h_acc_domains[] = {
++	{
++		.type = EQR_EYEQ7H_ACRP,
++		.valid_mask = 0xFF,
++		.offset = 0x000,
++	},
++	{
++		.type = EQR_EYEQ7H_ACC,
++		.valid_mask = 0xFF,
++		.offset = 0x060,
++	},
++};
++
++static const struct eqr_match_data eqr_eyeq7h_acc_data = {
++	.domain_count	= ARRAY_SIZE(eqr_eyeq7h_acc_domains),
++	.domains	= eqr_eyeq7h_acc_domains,
++};
++
++static const struct eqr_domain_descriptor eqr_eyeq7h_ddr_domains[] = {
++	{
++		.type = EQR_EYEQ7H_ACRP,
++		.valid_mask = 0x1F,
++		.offset = 0x008,
++	},
++};
++
++static const struct eqr_match_data eqr_eyeq7h_ddr_data = {
++	.domain_count	= ARRAY_SIZE(eqr_eyeq7h_ddr_domains),
++	.domains	= eqr_eyeq7h_ddr_domains,
++};
++
++static const struct eqr_domain_descriptor eqr_eyeq7h_east_domains[] = {
++	{
++		.type = EQR_EYEQ7H_CFG,
++		.valid_mask = 0x7,
++		.offset = 0x060,
++	},
++};
++
++static const struct eqr_match_data eqr_eyeq7h_east_data = {
++	.domain_count	= ARRAY_SIZE(eqr_eyeq7h_east_domains),
++	.domains	= eqr_eyeq7h_east_domains,
++};
++
++/* Periph OLBs each have an instance. */
++static const struct eqr_domain_descriptor eqr_eyeq7h_per_domains[] = {
++	{
++		.type = EQR_EYEQ6H_SARCR,
++		.valid_mask = 0xFF,
++		.offset = 0x030,
++	},
++};
++
++static const struct eqr_match_data eqr_eyeq7h_per_data = {
++	.domain_count	= ARRAY_SIZE(eqr_eyeq7h_per_domains),
++	.domains	= eqr_eyeq7h_per_domains,
++};
++
++static const struct eqr_domain_descriptor eqr_eyeq7h_south_domains[] = {
++	{
++		.type = EQR_EYEQ7H_CFG,
++		.valid_mask = 0x1F,
++		.offset = 0x070,
++	},
++	{
++		.type = EQR_EYEQ7H_CFG,
++		.valid_mask = 0x7,
++		.offset = 0x074,
++	},
++};
++
++static const struct eqr_match_data eqr_eyeq7h_south_data = {
++	.domain_count	= ARRAY_SIZE(eqr_eyeq7h_south_domains),
++	.domains	= eqr_eyeq7h_south_domains,
++};
++
++static const struct eqr_domain_descriptor eqr_eyeq7h_west_domains[] = {
++	{
++		.type = EQR_EYEQ7H_CFG,
++		.valid_mask = 0xf,
++		.offset = 0x068,
++	},
++};
++
++static const struct eqr_match_data eqr_eyeq7h_west_data = {
++	.domain_count	= ARRAY_SIZE(eqr_eyeq7h_west_domains),
++	.domains	= eqr_eyeq7h_west_domains,
++};
++
++static const struct eqr_domain_descriptor eqr_eyeq7h_xnn_domains[] = {
++	{
++		.type = EQR_EYEQ7H_ACRP,
++		.valid_mask = 0x7,
++		.offset = 0x000,
++	},
++	{
++		.type = EQR_EYEQ7H_ACC,
++		.valid_mask = 0x1FF,
++		.offset = 0x060,
++	},
++};
++
++static const struct eqr_match_data eqr_eyeq7h_xnn_data = {
++	.domain_count	= ARRAY_SIZE(eqr_eyeq7h_xnn_domains),
++	.domains	= eqr_eyeq7h_xnn_domains,
++};
++
+ /*
+  * Table describes OLB system-controller compatibles.
+  * It does not get used to match against devicetree node.
+@@ -569,15 +799,35 @@ static const struct of_device_id eqr_match_table[] = {
+ 	{ .compatible = "mobileye,eyeq6h-west-olb", .data = &eqr_eyeq6h_we_data },
+ 	{ .compatible = "mobileye,eyeq6h-east-olb", .data = &eqr_eyeq6h_we_data },
+ 	{ .compatible = "mobileye,eyeq6h-acc-olb", .data = &eqr_eyeq6h_acc_data },
++	{ .compatible = "mobileye,eyeq7h-acc0-olb", .data = &eqr_eyeq7h_acc_data },
++	{ .compatible = "mobileye,eyeq7h-acc1-olb", .data = &eqr_eyeq7h_acc_data },
++	{ .compatible = "mobileye,eyeq7h-ddr0-olb", .data = &eqr_eyeq7h_ddr_data },
++	{ .compatible = "mobileye,eyeq7h-ddr1-olb", .data = &eqr_eyeq7h_ddr_data },
++	{ .compatible = "mobileye,eyeq7h-east-olb", .data = &eqr_eyeq7h_east_data },
++	{ .compatible = "mobileye,eyeq7h-periph-east-olb", .data = &eqr_eyeq7h_per_data },
++	{ .compatible = "mobileye,eyeq7h-periph-west-olb", .data = &eqr_eyeq7h_per_data },
++	{ .compatible = "mobileye,eyeq7h-south-olb", .data = &eqr_eyeq7h_south_data },
++	{ .compatible = "mobileye,eyeq7h-west-olb", .data = &eqr_eyeq7h_west_data },
++	{ .compatible = "mobileye,eyeq7h-xnn0-olb", .data = &eqr_eyeq7h_xnn_data },
++	{ .compatible = "mobileye,eyeq7h-xnn1-olb", .data = &eqr_eyeq7h_xnn_data },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(of, eqr_match_table);
+ 
+ static const struct auxiliary_device_id eqr_id_table[] = {
+ 	{ .name = "clk_eyeq.reset" },
+-	{ .name = "clk_eyeq.reset_west" },
+-	{ .name = "clk_eyeq.reset_east" },
+ 	{ .name = "clk_eyeq.reset_acc" },
++	{ .name = "clk_eyeq.reset_acc0" },
++	{ .name = "clk_eyeq.reset_acc1" },
++	{ .name = "clk_eyeq.reset_ddr0" },
++	{ .name = "clk_eyeq.reset_ddr1" },
++	{ .name = "clk_eyeq.reset_east" },
++	{ .name = "clk_eyeq.reset_periph_east" },
++	{ .name = "clk_eyeq.reset_periph_west" },
++	{ .name = "clk_eyeq.reset_south" },
++	{ .name = "clk_eyeq.reset_west" },
++	{ .name = "clk_eyeq.reset_xnn0" },
++	{ .name = "clk_eyeq.reset_xnn1" },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(auxiliary, eqr_id_table);
 
 -- 
 2.53.0
