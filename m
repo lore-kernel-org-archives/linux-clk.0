@@ -1,177 +1,275 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB3E38B7A7
-	for <linux-clk@vger.kernel.org>; Wed, 18 Mar 2026 08:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B83236BCDC
+	for <linux-clk@vger.kernel.org>; Wed, 18 Mar 2026 08:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773823231; cv=none; b=BEhDvMb/shxSxuBN6LmVZTQzTQCbRaZpzCye9FYoWqorE0dtUSTsPilf9zhlf+y1VyvtEh5OemNGojtCZx4bjVbJTDY4vBbyGt8sC8kPZwQ8R/pOkiGC0OqgTRyfZR9R95osvP48skh4VSHQpDVjHX5Co8aCqkoaURuI+iDcoTo=
+	t=1773823321; cv=none; b=eDTC80ob0fu1/RXqKPilCV/hHpaP/G4RnV0PAzhCE6wA8S9PRC9QrXwB21vYgVChp2HktYquWovNnXpHbn4LuwytlLpvP1Z/XBd02rWKGe1FVTUVuYoK86Su1l0DxSeO2/SpQE7cgaD23485bp0lQcKOfgSUsQy8pmmycAtLcY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773823231; c=relaxed/simple;
-	bh=dy2TgZcFr9/VB3bkmaus0Cw/gHd5PPq/I0Ed7LWpshY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KyqmBW425jk8MDWRTfRanQT6C7Cdou3+h3VM/5YS/klmw9zV8Mq6qwmMCgCKH2VILNcdGRacHHLTeVsB1AUnoJBup8om4muOV1AgJsm3L2NQYH75JQ+7ZTIP3VVBeNw782xtcPKQ+gagwa4WJf+ML1LkjyG+X08wVgsIPLkZaDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=J8N+i14x; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=aC+jwNJs; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1773823321; c=relaxed/simple;
+	bh=toFDugHOMIQiTVQq1LUTExgDMOB2O89mqxVccj4llno=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qI+O3f7keBYCOCuS4aM3KNSFe3i55FjX6IPzy+sSIHtvXQMz2GjRy9piCNOMqPK1V9RZ/xdsBbxVI0rC3j/l/HE0VrGYAOIjGQxIu5vs+A4iEwZMVR0uktrrnpXCDxtkFEzS+atfiMv+oqsjpauw31DXqNeYq+sou6J5YzVYSzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pd3C+f4T; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="J8N+i14x";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="aC+jwNJs"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62I8AdBZ1050002
-	for <linux-clk@vger.kernel.org>; Wed, 18 Mar 2026 08:40:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	IyAv/fUqxS1bjhIsyOH9MFeZHeI00unuuOW8vGV845I=; b=J8N+i14x+44hohYW
-	keV7et/QjarduXc5TfZsM2CERCjRPGwTkDcoi7GKWkY2pbzkVulklifoHG/kYyrX
-	nkOej6koPxwZj2HeVvNcc8PInJOSuy8opM8R2JXk4aiadTU8v5YdWEGh9nhkYaRT
-	yiuzQdCPu2OPc3Ht4P/eimhQHI2sJA6gMaTi+GIugqrkzM4ybRNyHO3VneLDmqol
-	+6VKitcRcOjG+N+tIInExX0CmK3m/j7HP4BRFKxCOaFtg7VE32wqpuAOMM3NEySk
-	myuM0p4ONTx5QunPvRUYyH2euaC/2FNVmj8XPpM+V4XuqmfcYA9+gCFD0jdiJTbN
-	LIfyQA==
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cyj4ehksp-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Wed, 18 Mar 2026 08:40:29 +0000 (GMT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-82a1436347eso2821593b3a.2
-        for <linux-clk@vger.kernel.org>; Wed, 18 Mar 2026 01:40:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pd3C+f4T"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-439d8df7620so4846093f8f.0
+        for <linux-clk@vger.kernel.org>; Wed, 18 Mar 2026 01:41:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1773823229; x=1774428029; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IyAv/fUqxS1bjhIsyOH9MFeZHeI00unuuOW8vGV845I=;
-        b=aC+jwNJsIc/GyHZg2RCtFnvrECD8IpMbcdwD+CDLH/oHlE/g1Bh46qykUf4LfA4+vQ
-         EQ5Kwf2YAl/ofavB2tQ8YioG0DBLQeDZF77H3d0iBvYpEuDH0UZmJ4KIj+pLqgzvUoVM
-         xCcY4oLQCK83rOrcZnr5yXmiPSw+Q5zFcSv30y1kNdS9orQZePsR6jFB2hWMNZ2mg9HJ
-         z6y4Tnh3MNWEWVS04KC/F1bOX+FrkTwFCn9Wzzyit7Ej6RoiHVuKwYhJlJU2tb2eQex4
-         vudeFqQxlh0OdY+kcoqf25MgeEalnjFHM3Mpdx81aOMMTzOQzIMX2zqwL/BEbVuZQvci
-         yRSQ==
+        d=gmail.com; s=20230601; t=1773823315; x=1774428115; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HlK3Ik/10clZmiRR40tUFJQE1y1bmIBWKTM6WkisgFc=;
+        b=Pd3C+f4TlFy6VccF2ZkT2uCM96a3k09ZZ7M9YhBxEvRkEJUnk322Y+1J57EQ398ZC0
+         LoW7aiRs6t6gzOZywrQK9CSSmdsjmJ/dp4FDFM5HW3H9nVb7TCKlyTxJYffQXAuu8xLg
+         10XwoG61OlEEZYHBfA81oBomFmcV5ORlE3SEkU4FEe6iuXz0H8FFTXzQEwVTu59UFPWe
+         kNZ/JmvBnRR/hb4AoBXuv1dcPEQrcjyQdMOzFZy0fZ8Y2kALZC02YF1WMzIgGlsHUZBa
+         EB+vuuyUWukDjtfN04F7pMpqRPDIEXPC5LXyGTjzBp0YOQNQvU1UizxC4VbBGeVUNIJh
+         s6/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773823229; x=1774428029;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=IyAv/fUqxS1bjhIsyOH9MFeZHeI00unuuOW8vGV845I=;
-        b=lkQ69nS/qGMqjuP/g4YlkhfIA+b/YhVz5heZmg9vS+XJ6lfMaxZuFwd6GiFAU8aby0
-         oiLuEjuyOdj/+wbfNxCBrvPvQqepl7rpks0UiZhIjK8wTw+dnWls00TWhepw2PPfclHk
-         z+ZJhOg3RJ0Pb1XYUJaf/xTdeILtfEJmGn3ytBWRngDmzoISmdwakIfxVUHV0cCWgYWM
-         aClJXNeeB4EO8Fmxid7yF4d3xSZ8cmIxxFV2THoEm2fOfa+M4OLXz4ZroN/GATPK4Tyf
-         wuHidZCSenrYdXorKr67iLXqv1jcA/85tq8PNv9gWnhstfFrqdxRCvcig4akAOYEUpiq
-         oZuA==
-X-Forwarded-Encrypted: i=1; AJvYcCUhyww+y5WGzeFe/akrcMXHohsz7gdi66KzYzTEhlzLT7EKg/PDym8uQJxi4l+bF7T9SezrDxBFXxg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwImrZrIB5RM7PJBtOvTmJtdHdAcxlVAk/OiCCnZkfPOmFvNRqy
-	jgrqXgtPGWC5oLJ1+buagaHWBbUC01B/w0KQkFTPRyPDP5+HcimQyLPMKsSukR9/s9hUi9l1Gdw
-	2MEHBlqFBoTEl6GyepAMux/PBLiifDSSJk5R3if/FeQS7FF1hnx6guKDvr+zVkUQ=
-X-Gm-Gg: ATEYQzyzsb6/7MD1+u7l/GHV2vDNFDtYvEibVJNoQ2a93r8lg4mwzCSUByMfr/ABAsa
-	v8DgX2GvGnAAsb3OlfQav2Pb2Yjm/XPHUZTl4NC+4IbJHMxKMPZUYUwIWfloMY9HFhDEfkBYTl+
-	BkosS4LRkaV3ot0USX0ElcD9UWnO+YEEt3tnjY7HpviCsW2fThmX5NZN1h+aQVSSLYd3WsbzXno
-	kE7o86v1MasJreRnwFRb4/oWGK6RrSqk4NNEH+8SC0+85MTOyx/Gz3/aqqPfeD3mPT/3Sl5NU2t
-	GrQI++uZaE4WxEBwd2ruw0gSkML5q6emF46qilEuf5/UAX7D90n1hfaydK2qvTTPljSpJDd7l9F
-	vYcuHadusB5Sn2XYM8u1jfTvffiu8TIxLtKppiEgXPiXsMichGWRRqRFCi5BzGoHt2Irk18IsBf
-	iftLgBCueOE7YFlER6kOenh2rTY9y2uVjkVgfG1EHQfN3WwDuWQ/PQxHEi
-X-Received: by 2002:a05:6a00:1f0f:b0:82a:110b:e216 with SMTP id d2e1a72fcca58-82a6acbe2cfmr2308869b3a.19.1773823228959;
-        Wed, 18 Mar 2026 01:40:28 -0700 (PDT)
-X-Received: by 2002:a05:6a00:1f0f:b0:82a:110b:e216 with SMTP id d2e1a72fcca58-82a6acbe2cfmr2308843b3a.19.1773823228497;
-        Wed, 18 Mar 2026 01:40:28 -0700 (PDT)
-Received: from hu-kathirav-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82a6bbb2802sm1863498b3a.31.2026.03.18.01.40.23
+        d=1e100.net; s=20251104; t=1773823315; x=1774428115;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HlK3Ik/10clZmiRR40tUFJQE1y1bmIBWKTM6WkisgFc=;
+        b=M/hNaVwodDKQtFhnwjebl2tZ6X07MDbvOE6MEujAq5eY4+9lE2qZxLFfZewxwbTZ0E
+         YtPUOnV6sZkfXso41+p8LmKBbmWtdBOB7iJoBehb4lNDfpN75BZhhyEvU7EnAUXjJOWe
+         AGxcJtH8sQXLBNhhmSIlV4PEymmIyepTPXE8z3CGad9audAxWvN4aKQg8AFdUhhWI3K3
+         fMyWXJPgyqyZxTV1RVjN7YKFPZGsF+LdgtK3lyqpdA0H0x8zErk3xe6jRzRH8f8D571v
+         55arJqIX+defnzoBUWVLire9TenvAsAbiijpR0xGIB3wlQF4sawCQQz1IVnRAFKxwP6A
+         cuew==
+X-Forwarded-Encrypted: i=1; AJvYcCVL/vb63EKL9TFSDovc9XE6lh8bVTYWPNhOTh2uYDDwGOkS4lVlF0nkHgqb7pQ/4jVPzZmTILMRrI0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyz8X4RjiLdsHc1Fo1byZKS2WGUndCYOPXvqoyowm+fFMXu4tC7
+	JodBmjtF50U1srwa9SwLTlcGFrVBLI58KhkIKGxHamloqj3kHBkT8A41
+X-Gm-Gg: ATEYQzyxBByeUtzw6BLXE+lGfWLNWn6+MqMpEoG1S8zLsB4rwribqjzrqESzsJWjjMf
+	IfQAYE+A8whFxxj6UKZN3aoPIQ+UgU5Q0dWrYdjN29wwdjcho+ZzrY6KyDD+lLaeHrwSvrQlvuy
+	zC0w4gF/rR9U77HdUCrClTz7N4FVJAeslNJSxNqpoN1Cb0JEhCDDiKi/QCuN1kNBwarMDtsv7oJ
+	SkU0fnOlL1g7bc1bJ8hxAVT5UG+wW3vUvjZmU1IDNE6oDz3Aq3Z22PrcWkZajhh5njBFnpXosYR
+	HnVCo1HfbSHEsUeklD1aKERu6eGuLB5HS+03IDu608dDCA91NqZ+nhwWA6Z2bEA1/G/v7iynVOA
+	o5gt+tVpmX++dA+DEdSDxp/k91vzn9qlIhMxfF4ORqL0+jAoTDa03H+JAPgnEGK2TDkQLzwWCkf
+	xfbV1Fs/JR+5t/pjFVd4Ei1xDqMLqLEQgO2uHIhEhM64jEPzkG
+X-Received: by 2002:a05:6000:400f:b0:43b:4d37:cd3b with SMTP id ffacd0b85a97d-43b527c20b2mr3656925f8f.26.1773823315041;
+        Wed, 18 Mar 2026 01:41:55 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:23c4:a758:8a01:d643:4385:f93a:2085])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b5184961csm6389350f8f.6.2026.03.18.01.41.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Mar 2026 01:40:28 -0700 (PDT)
-From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-Date: Wed, 18 Mar 2026 14:09:48 +0530
-Subject: [PATCH v2 6/6] arm64: defconfig: enable IPQ5210 RDP504 base
- configs
+        Wed, 18 Mar 2026 01:41:54 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v5 0/9] Add support for Renesas RZ/G3L SoC and SMARC-EVK platform
+Date: Wed, 18 Mar 2026 08:41:35 +0000
+Message-ID: <20260318084151.122674-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260318-ipq5210_boot_to_shell-v2-6-a87e27c37070@oss.qualcomm.com>
-References: <20260318-ipq5210_boot_to_shell-v2-0-a87e27c37070@oss.qualcomm.com>
-In-Reply-To: <20260318-ipq5210_boot_to_shell-v2-0-a87e27c37070@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Robert Marko <robimarko@gmail.com>,
-        Guru Das Srinagesh <linux@gurudas.dev>,
-        Linus Walleij <linusw@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
-        Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1773823188; l=1056;
- i=kathiravan.thirumoorthy@oss.qualcomm.com; s=20230906;
- h=from:subject:message-id; bh=dy2TgZcFr9/VB3bkmaus0Cw/gHd5PPq/I0Ed7LWpshY=;
- b=6lprkFKodzP4k0sKVzjKf00VbCzbGf50y6WOPChoRVJ34fDSoTqdz3WKbqR382Ul9sxVyiaZR
- aMiW+5nuamxBRio0eXil4YZ906KsuyUNtmTwVq4BzqYpUJQ93OuLzOW
-X-Developer-Key: i=kathiravan.thirumoorthy@oss.qualcomm.com; a=ed25519;
- pk=xWsR7pL6ch+vdZ9MoFGEaP61JUaRf0XaZYWztbQsIiM=
-X-Authority-Analysis: v=2.4 cv=T4+BjvKQ c=1 sm=1 tr=0 ts=69ba64fd cx=c_pps
- a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22
- a=EUspDBNiAAAA:8 a=Y4Inp1xfyx_JXr0qu3kA:9 a=QEXdDO2ut3YA:10
- a=OpyuDcXvxspvyRM73sMx:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzE4MDA3MyBTYWx0ZWRfX53duVw7e280J
- QjxtpBvjyYeqKI1crj2zWZtMREm+Vyhx1ghnj1FdtpYfPs7wqP4nFxFlTgLIJpALoH/uF8qKe23
- d3QmIkDOKlSee1QJV0SL1b2eUE7T5eLmdbiP0X89ZJxDqhdR5UBgwgVA5VogxhZ/uIyc6QDrYZr
- /jaGSZ/h7SPP/HlhUX24ZBA5zUIghXz+avSmcCNVpO1vYjMSl5/HtjsJcWeY6T0DZyRxJRovTkn
- 465irOtI1BWme73n95dQaLwO+nX9yUT3EcE6tltBok0PEp8W8UzjGdiD53ry62YE5bUBIVOp/RE
- X9TbXXLKy8VXhwZvGYZKROuj/H9c8GYOrYMnj7oT+A6IwVp7lH9wtavV+HIpjWi5utzTPp02JXx
- Uz1BZIOcogpzOOBNLc6VbnszpQppi4kCTB7CgnxiVBeFTn7cOJRo+b56x29SPNh6N4McJ5C0Oj/
- 4ogNCJNm4CZ9jhfs8Ig==
-X-Proofpoint-GUID: 89HJX7l23ujSNCD-83frnelM8-Wajd_x
-X-Proofpoint-ORIG-GUID: 89HJX7l23ujSNCD-83frnelM8-Wajd_x
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-17_05,2026-03-17_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 clxscore=1015 lowpriorityscore=0 adultscore=0 phishscore=0
- bulkscore=0 priorityscore=1501 impostorscore=0 malwarescore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603180073
+Content-Transfer-Encoding: 8bit
 
-Enable GCC, Pinctrl for Qualcomm's IPQ5210 SoC which is required to boot
-ipq5210-rdp504 board to a console shell.
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
----
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+Hi all,
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 18881bd239f9c53e74ad5caa492bace394e4fde7..ceec9a109f08f2a2a4f4090e92c228279509c3ed 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -649,6 +649,7 @@ CONFIG_PINCTRL_IMX_SCMI=y
- CONFIG_PINCTRL_MSM=y
- CONFIG_PINCTRL_GLYMUR=y
- CONFIG_PINCTRL_IPQ5018=y
-+CONFIG_PINCTRL_IPQ5210=y
- CONFIG_PINCTRL_IPQ5332=y
- CONFIG_PINCTRL_IPQ5424=y
- CONFIG_PINCTRL_IPQ8074=y
-@@ -1479,6 +1480,7 @@ CONFIG_IPQ_APSS_6018=y
- CONFIG_IPQ_APSS_5018=y
- CONFIG_IPQ_CMN_PLL=m
- CONFIG_IPQ_GCC_5018=y
-+CONFIG_IPQ_GCC_5210=y
- CONFIG_IPQ_GCC_5332=y
- CONFIG_IPQ_GCC_5424=y
- CONFIG_IPQ_GCC_6018=y
+This patch series adds initial support for the Renesas RZ/G3L SoC and
+RZ/G3L SMARC EVK platform. The RZ/G3L device is a general-purpose
+microprocessor with a quad-core CA-55, single core CM-33, Mali-G31
+3-D Graphics and other peripherals.
+
+Support for the below list of blocks is added in the SoC DTSI (r9a08g046.dtsi):
+
+ - EXT CLK
+ - 4X CA55
+ - SCIF
+ - CPG
+ - GIC
+ - ARMv8 Timer
+
+This series also adds SCIF support for the RZ/G3L SMARC EVK board (r9a08g046l48-smarc.dts).
+
+v4->v5:
+ * Rebased to next-20260317.
+v3->v4:
+ * Dropped SoC identification patches as it is accepted for renesas-devel.
+ * Updated commit description related to core clocks section in the
+    hardware manual
+ * Dropped CLK_P4_DIV2 from core clocks
+ * Added MIPI_DSI_PLLCLK and USB_SCLK to core clocks
+ * Dropped LVDS_PCLK  module clock
+ * Added BSC_X_PRESET_BSC reset
+ * Moved the patch series from [1] to here as it is boot-dependent.
+ * Updated commit description
+ * Updated LAST_DT_CORE_CLK with R9A08G046_USB_SCLK
+ * Fixed typo 2->8 in dtable_4_128[].
+ * Added critical reset table r9a08g046_critical_resets[]
+ * Updated num_resets
+ * Added crit_resets and num_crit_resets to r9a08g046_cpg_info.
+ * Fixed typo R0A08G046L->R9A08G046L in commit description
+ * Dropped R9A08G046L46 from commit description
+ * Dropped unused audio_clk{1,2} andcan_clk device nodes
+ * Reordered i2c device node and updated reg entries by using lower-case
+   hexadecimal number
+ * Added placeholder in pinctrl node
+ * Dropped unused DMAC device node
+ * Added pcie node with placeholder
+ * Collected the tags.
+ * Updated commit description for patch#8
+
+[1] https://lore.kernel.org/all/20260306134228.871815-1-biju.das.jz@bp.renesas.com/
+v2->v3:
+ * Added macros R9A08G046_ETH{0,1}_CLK_{TX,RX}_I_RMII in r9a08g046-cpg.h.
+ * Keep the tag from Conor as it is trivial change for just adding macros.
+v1->v2:
+ * Dropped scif bindings patch as it is accepted.
+ * Collected tags.
+ * Squashed the patch#3 and #4
+ * Documented GE3D/VCP for all SoC variants
+ * Documented external ethernet clocks as it is a clock source for MUX
+   inside CPG
+ * Updated commit description for bindings.
+ * Keep the tag from Conor as it is trivial change for adding more
+   clks.
+ * Added CLK_ETH{0,1}_TXC_TX_CLK_IN and CLK_ETH{0,1}_RXC_RX_CLK_IN clocks
+   in clk table.
+ * Dropped R9A08G046_IA55_PCLK from critical clock list.
+ * Added external clocks eth{0,1}_txc_tx_clk and eth{0,1}_rxc_rx_clk
+   in soc dtsi as it needed for cpg as it is a clock source for mux.
+ * Updated cpg node.
+ * Dropped gpio.h header from SoM dtsi.
+ * Dropped scif node as it is already included in common platform
+   file.
+
+Test logs:
+/ #  uname -r
+7.0.0-rc4-next-20260317-g8e0ac8206088
+/ # cat /proc/cpuinfo
+processor       : 0
+BogoMIPS        : 48.00
+Features        : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant     : 0x2
+CPU part        : 0xd05
+CPU revision    : 0
+
+processor       : 1
+BogoMIPS        : 48.00
+Features        : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant     : 0x2
+CPU part        : 0xd05
+CPU revision    : 0
+
+processor       : 2
+BogoMIPS        : 48.00
+Features        : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant     : 0x2
+CPU part        : 0xd05
+CPU revision    : 0
+
+processor       : 3
+BogoMIPS        : 48.00
+Features        : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant     : 0x2
+CPU part        : 0xd05
+CPU revision    : 0
+
+/ # cat /proc/interrupts
+           CPU0       CPU1       CPU2       CPU3
+ 11:        104        191        429         62    GICv3  27 Level     arch_timer
+ 14:          0          0          0          0    GICv3 418 Level     100ac000.serial:rx err
+ 15:          4          0          0          0    GICv3 420 Level     100ac000.serial:rx full
+ 16:        229          0          0          0    GICv3 421 Level     100ac000.serial:tx empty
+ 17:          0          0          0          0    GICv3 419 Level     100ac000.serial:break
+ 18:         17          0          0          0    GICv3 422 Level     100ac000.serial:rx ready
+IPI0:         3         16         13         21       Rescheduling interrupts
+IPI1:       315        240        180        217       Function call interrupts
+IPI2:         0          0          0          0       CPU stop interrupts
+IPI3:         0          0          0          0       CPU stop NMIs
+IPI4:         0          0          0          0       Timer broadcast interrupts
+IPI5:         0          0          0          0       IRQ work interrupts
+IPI6:         0          0          0          0       CPU backtrace interrupts
+IPI7:         0          0          0          0       KGDB roundup interrupts
+Err:          0
+/ # cat /proc/meminfo
+MemTotal:        1887304 kB
+MemFree:         1852164 kB
+MemAvailable:    1819524 kB
+/ # cat /sys/devices/soc0/family
+RZ/G3L
+/ # cat /sys/devices/soc0/machine
+Renesas SMARC EVK version 2 based on r9a08g046l48
+/ # cat /sys/devices/soc0/soc_id
+r9a08g046
+/ # cat /sys/devices/soc0/revision
+0
+dmesg | grep r9a
+[    0.000000] Machine model: Renesas SMARC EVK version 2 based on r9a08g046l48
+[    0.066480] renesas-rz-sysc 11020000.system-controller: Detected Renesas RZ/G3L r9a08g046 Rev 0
+
+Biju Das (9):
+  dt-bindings: clock: Document RZ/G3L SoC
+  clk: renesas: rzg2l-cpg: Add support for critical resets
+  clk: renesas: r9a07g04{3,4}/r9a08g045-cpg: Add critical reset entries
+  clk: renesas: rzg2l-cpg: Re-enable critical module clocks during
+    resume
+  clk: renesas: Add support for RZ/G3L SoC
+  arm64: dts: renesas: Add initial DTSI for RZ/G3L SoC
+  arm64: dts: renesas: Add initial support for RZ/G3L SMARC SoM
+  arm64: dts: renesas: renesas-smarc2: Move usb3 nodes to board DTS
+  arm64: dts: renesas: Add initial device tree for RZ/G3L SMARC EVK
+    board
+
+ .../bindings/clock/renesas,rzg2l-cpg.yaml     |  40 +-
+ arch/arm64/boot/dts/renesas/Makefile          |   2 +
+ arch/arm64/boot/dts/renesas/r9a08g046.dtsi    | 215 +++++++++++
+ .../boot/dts/renesas/r9a08g046l48-smarc.dts   |  37 ++
+ arch/arm64/boot/dts/renesas/r9a08g046l48.dtsi |  13 +
+ .../boot/dts/renesas/r9a09g047e57-smarc.dts   |   6 +
+ .../boot/dts/renesas/renesas-smarc2.dtsi      |   8 -
+ .../boot/dts/renesas/rzg3l-smarc-som.dtsi     |  20 +
+ drivers/clk/renesas/Kconfig                   |   7 +-
+ drivers/clk/renesas/Makefile                  |   1 +
+ drivers/clk/renesas/r9a07g043-cpg.c           |   8 +
+ drivers/clk/renesas/r9a07g044-cpg.c           |  13 +
+ drivers/clk/renesas/r9a08g045-cpg.c           |   9 +
+ drivers/clk/renesas/r9a08g046-cpg.c           | 153 ++++++++
+ drivers/clk/renesas/rzg2l-cpg.c               |  80 ++++
+ drivers/clk/renesas/rzg2l-cpg.h               |   8 +
+ include/dt-bindings/clock/r9a08g046-cpg.h     | 342 ++++++++++++++++++
+ 17 files changed, 948 insertions(+), 14 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a08g046.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a08g046l48-smarc.dts
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a08g046l48.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/rzg3l-smarc-som.dtsi
+ create mode 100644 drivers/clk/renesas/r9a08g046-cpg.c
+ create mode 100644 include/dt-bindings/clock/r9a08g046-cpg.h
 
 -- 
-2.34.1
+2.43.0
 
