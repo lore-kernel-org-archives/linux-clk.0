@@ -1,48 +1,48 @@
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426C636213B;
-	Wed, 18 Mar 2026 05:53:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FAFC21578D;
+	Wed, 18 Mar 2026 05:53:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773813211; cv=none; b=aTt9RZ2dOwvKzMQDWyAs5lrYFYEn80+zqcI4QClX609zJr3uPQum/c5+taiMqMcA+5CJGEeS1M01CB3fIuV+E9YU95IHLIv21Zz8g38DaqVMLZl+l0NNk9DeYNHu9oNCtDQf7yl4rJLFlt/ElE50XS5rJossDs8RsuIhJNbhwA0=
+	t=1773813240; cv=none; b=PUazjM1euxb/En18hydD8jMZU/g652gvhCB+oNlgP48Z8ndDe9gDxt8ikumVj0tpYRK+6Uan74405rbcgpMy6wLFwFNbrqaFj4VbfjmLRshvTWcrfqFgt4VhJzScKb0W0AhsNNdu8yuCASOds9/2UnApqszDMshELzgT32UvN6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773813211; c=relaxed/simple;
-	bh=RPOloYqq9rrZ7VgT1x2nQRqLYrx+qWYnpICldMjEYvw=;
+	s=arc-20240116; t=1773813240; c=relaxed/simple;
+	bh=PUYnKeKHUBCeKind9Npf1NIbjQzWI2oBFhL1pRGpyEw=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q6DuhYsF7GUq/QWRfiY0wbZrNv9nInRZvrwP0sIIlstpECXuwecrbj6sEWSO9Ewqy5tmdlBvRLq5A3ZnN2nFH83go+HdJHWmRUMcTsZwbXNTe9GIIUkmGKH0GGWIatvH11BpuDzpnzouwmg0M1bXSFNt7MyKxMslaX8XcSzpHJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=KHQyqqjN; arc=none smtp.client-ip=68.232.153.233
+	 MIME-Version:Content-Type; b=I7/0q15bm9GbzOlc7Pr6nqvgCgMCxbKffqtSRk6HSns8NnZowu0vHycbtUjYVEoVgAudJxixUTYBFpDNOLG6pf/MVMDDEfKsvHcu6mJerFu8U2k0XoYVX8ZNH39dNErp1gUtvmyShiyJiG8BwdhvJkHAV5lXFEZ4FytKN8E4n1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Rf0ByEDu; arc=none smtp.client-ip=68.232.153.233
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="KHQyqqjN"
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Rf0ByEDu"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1773813211; x=1805349211;
+  t=1773813240; x=1805349240;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=RPOloYqq9rrZ7VgT1x2nQRqLYrx+qWYnpICldMjEYvw=;
-  b=KHQyqqjNzqv5aXsby75rcKrJllEToZFYi6+QxSk2KhbozfD1kCYBnKux
-   mFVRjiiWrLk+8fGrWJqi/8mLimkBs6C5x1cEGh0L6TfA1F+jTXQCWXlkU
-   PEoOtVtabsSqoiiGWX2F4xANkoP1fBgo6h2fFREGi0E0hOBwKfVMQhUec
-   45ohpxCljpa3bLVFC1ufsJEPFGzazY9GgZVvEunCQZfquCWfzxN+8DQum
-   ddVFlPdJ9AsVV56C7meMrRqCfPOEiNo/dRPSLKhI8w+wU9AzhxmHn7ECQ
-   PbHgVEj+gJQnJemdQFz8Wip2pcS7OeJDc9m5+KBMFqTvIpbWQb3N5f5Ln
-   A==;
-X-CSE-ConnectionGUID: TZ/u7H+YTQiHBRAlQQhOfg==
-X-CSE-MsgGUID: Ul09IGzTTum2bn8E84dyIQ==
+  bh=PUYnKeKHUBCeKind9Npf1NIbjQzWI2oBFhL1pRGpyEw=;
+  b=Rf0ByEDuMYIOY5XSaUUSLxCMfnMZ3HJqBUTtHrKVDgvyDyL06HMYdoVV
+   Pr/YLdvRajgrdcBbxulcsAFozrWAljSxHFvKBP86qNr3Q44GvMQiG5c1K
+   vqobPJtdTkU2aJHd32jbAqZAata7uLBbZQ1uyIII5iNxwQlec5xbFULeL
+   5clA6mcDGlwgRG5zkQMthmtFtr8ynDT3FPPxWVFjikzHEORb7WtZd4IP9
+   FpqYV+x/4x5Zrwx5kCVXyjLGL5uxqtzMVchVf07lCOcYCTPF1UT/vUIn5
+   MlNVpVhWwWjtXdhZrCABTEADtKlwD+9CwNarFwvVWOvjR3Q1mnFi4W7Rh
+   Q==;
+X-CSE-ConnectionGUID: xkXXVVUnT4qAvA583ZC2ng==
+X-CSE-MsgGUID: CCe9pDnlTXOVgU+q5Ub90Q==
 X-IronPort-AV: E=Sophos;i="6.23,126,1770620400"; 
-   d="scan'208";a="286208455"
+   d="scan'208";a="286208466"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2026 22:53:23 -0700
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2026 22:53:59 -0700
 Received: from chn-vm-ex03.mchp-main.com (10.10.87.152) by
  chn-vm-ex3.mchp-main.com (10.10.87.32) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.35; Tue, 17 Mar 2026 22:53:18 -0700
+ 15.2.2562.35; Tue, 17 Mar 2026 22:53:28 -0700
 Received: from che-lt-i67131.microchip.com (10.10.85.11) by
  chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Tue, 17 Mar 2026 22:53:09 -0700
+ 15.1.2507.58 via Frontend Transport; Tue, 17 Mar 2026 22:53:19 -0700
 From: Manikandan Muralidharan <manikandan.m@microchip.com>
 To: <alexandre.belloni@bootlin.com>, <Frank.Li@nxp.com>, <robh@kernel.org>,
 	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <nicolas.ferre@microchip.com>,
@@ -54,10 +54,11 @@ To: <alexandre.belloni@bootlin.com>, <Frank.Li@nxp.com>, <robh@kernel.org>,
 	<linux-i3c@lists.infradead.org>, <devicetree@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
 	<linux-clk@vger.kernel.org>
-CC: <manikandan.m@microchip.com>
-Subject: [PATCH v4 3/5] i3c: mipi-i3c-hci: add microchip sama7d65 SoC compatible with the appropriate quirk
-Date: Wed, 18 Mar 2026 11:22:28 +0530
-Message-ID: <20260318055230.307030-4-manikandan.m@microchip.com>
+CC: <manikandan.m@microchip.com>, Durai Manickam KR
+	<durai.manickamkr@microchip.com>
+Subject: [PATCH v4 4/5] ARM: dts: microchip: add I3C controller
+Date: Wed, 18 Mar 2026 11:22:29 +0530
+Message-ID: <20260318055230.307030-5-manikandan.m@microchip.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260318055230.307030-1-manikandan.m@microchip.com>
 References: <20260318055230.307030-1-manikandan.m@microchip.com>
@@ -70,85 +71,37 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-Add support for microchip sama7d65 SoC I3C HCI master only IP
-with additional clock support to enable bulk clock acquisition
-for Microchip platforms using HCI_QUIRK_CLK_SUPPORT quirk.
+From: Durai Manickam KR <durai.manickamkr@microchip.com>
 
+Add I3C controller for sama7d65 SoC.
+
+Signed-off-by: Durai Manickam KR <durai.manickamkr@microchip.com>
 Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
 ---
-Changes in v4:
-- Remove the clock index variable MCHP_I3C_CLK_IDX
-
 Changes in v3:
-- Make use of existing HCI_QUIRK_* code base
-- Introduce HCI_QUIRK_CLK_SUPPORT to handle/enable the required Peripheral
-and system generic clk in bulk
-
-Changes in v2:
-- Platform specific changes are integrated in the existing mipi-i3c-hci
-driver by introducing separate MCHP_HCI_QUIRK_* quirks and vendor
-specific quirk files
+- Remove clock-names property as driver enables the clk in bulk
 ---
- drivers/i3c/master/mipi-i3c-hci/core.c | 12 ++++++++++++
- drivers/i3c/master/mipi-i3c-hci/hci.h  |  1 +
- 2 files changed, 13 insertions(+)
+ arch/arm/boot/dts/microchip/sama7d65.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/i3c/master/mipi-i3c-hci/core.c b/drivers/i3c/master/mipi-i3c-hci/core.c
-index 284f3ed7af8c..41b7737d22ac 100644
---- a/drivers/i3c/master/mipi-i3c-hci/core.c
-+++ b/drivers/i3c/master/mipi-i3c-hci/core.c
-@@ -8,6 +8,7 @@
-  */
- 
- #include <linux/bitfield.h>
-+#include <linux/clk.h>
- #include <linux/device.h>
- #include <linux/errno.h>
- #include <linux/i3c/master.h>
-@@ -950,6 +951,7 @@ static int i3c_hci_probe(struct platform_device *pdev)
- {
- 	const struct mipi_i3c_hci_platform_data *pdata = pdev->dev.platform_data;
- 	struct i3c_hci *hci;
-+	struct clk_bulk_data *clks;
- 	int irq, ret;
- 
- 	hci = devm_kzalloc(&pdev->dev, sizeof(*hci), GFP_KERNEL);
-@@ -981,6 +983,13 @@ static int i3c_hci_probe(struct platform_device *pdev)
- 	if (!hci->quirks && platform_get_device_id(pdev))
- 		hci->quirks = platform_get_device_id(pdev)->driver_data;
- 
-+	if (hci->quirks & HCI_QUIRK_CLK_SUPPORT) {
-+		ret = devm_clk_bulk_get_all_enabled(&pdev->dev, &clks);
-+		if (ret < 0)
-+			return dev_err_probe(&pdev->dev, ret,
-+					     "Failed to get clocks\n");
-+	}
+diff --git a/arch/arm/boot/dts/microchip/sama7d65.dtsi b/arch/arm/boot/dts/microchip/sama7d65.dtsi
+index e21556f46384..f358aae3ec59 100644
+--- a/arch/arm/boot/dts/microchip/sama7d65.dtsi
++++ b/arch/arm/boot/dts/microchip/sama7d65.dtsi
+@@ -1015,5 +1015,13 @@ gic: interrupt-controller@e8c11000 {
+ 			#address-cells = <0>;
+ 			interrupt-controller;
+ 		};
 +
- 	ret = i3c_hci_init(hci);
- 	if (ret)
- 		return ret;
-@@ -1008,6 +1017,9 @@ static void i3c_hci_remove(struct platform_device *pdev)
- 
- static const __maybe_unused struct of_device_id i3c_hci_of_match[] = {
- 	{ .compatible = "mipi-i3c-hci", },
-+	{ .compatible = "microchip,sama7d65-i3c-hci",
-+	  .data = (void *)(HCI_QUIRK_PIO_MODE | HCI_QUIRK_OD_PP_TIMING |
-+			   HCI_QUIRK_RESP_BUF_THLD | HCI_QUIRK_CLK_SUPPORT) },
- 	{},
++		i3c: i3c@e9000000 {
++			compatible = "microchip,sama7d65-i3c-hci";
++			reg = <0xe9000000 0x300>;
++			interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&pmc PMC_TYPE_PERIPHERAL 105>, <&pmc PMC_TYPE_GCK 105>;
++			status = "disabled";
++		};
+ 	};
  };
- MODULE_DEVICE_TABLE(of, i3c_hci_of_match);
-diff --git a/drivers/i3c/master/mipi-i3c-hci/hci.h b/drivers/i3c/master/mipi-i3c-hci/hci.h
-index 9ac9d0e342f4..f01b959a28d9 100644
---- a/drivers/i3c/master/mipi-i3c-hci/hci.h
-+++ b/drivers/i3c/master/mipi-i3c-hci/hci.h
-@@ -150,6 +150,7 @@ struct i3c_hci_dev_data {
- #define HCI_QUIRK_OD_PP_TIMING		BIT(3)  /* Set OD and PP timings for AMD platforms */
- #define HCI_QUIRK_RESP_BUF_THLD		BIT(4)  /* Set resp buf thld to 0 for AMD platforms */
- #define HCI_QUIRK_RPM_ALLOWED		BIT(5)  /* Runtime PM allowed */
-+#define HCI_QUIRK_CLK_SUPPORT		BIT(6)  /* Enable Clocks for Microchip platforms*/
- 
- /* global functions */
- void mipi_i3c_hci_resume(struct i3c_hci *hci);
 -- 
 2.25.1
 
