@@ -1,166 +1,147 @@
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44FE5363094
-	for <linux-clk@vger.kernel.org>; Wed, 18 Mar 2026 06:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.182
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773813788; cv=pass; b=q3AXWEhTDDfrYw9AR8rPwqAbU6S+BIKZ7mPSl2ZAUzHnDN52Ydsi8loC1P4Lvf0NZWXwUbz+HZlUICD85AjGue3WULmoOzbfNR7xT1RWTWUVdzDnrrhIHMQ4fteF1wJwkW2m/SKFcFkq0NRS2Mj42OSN+f8RcsMTaxPQNhT1PDs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773813788; c=relaxed/simple;
-	bh=pAszSs/49zboyQgDtEnHp5rVuVO4D9UBOFdQEAPpg4Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M2PP888PDZG8rSn/pS0FbtX7IMzC5STRsPVpe55eLhwfsS375CUGtqj4B+aqFM+d1wuQdjt0tTpzw0HP3ly+ewlOKIIbA6ERqmV1lWZb19xIbUt73/bTXJlxvKzA1eFd7S7awYXfolN5wGJU9GIiJuw4Mx2fexrDOi0/hhu9F3o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KQsamJ+H; arc=pass smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05064A02;
+	Wed, 18 Mar 2026 06:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773816345; cv=none; b=Rvu0D+vqGi7A2gvZg26cOWEZWHmI1q5NoOMYltJvJVa+3Q26rkiAQ1RWKDxMRfSTKEl6lTCUtyWY8qOAB5pkOvGaxlRdsJpHOyzXNRKRDmNtKRwdeOhyNMlWfNWZfmKe9omUOQ/eOki0WJAbuG8IRD2QOiWlrf2oghpwWhOurFg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773816345; c=relaxed/simple;
+	bh=ZUd+CCQuUav72keML0jeubBVvaXv19It0DQBtnhtBXQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TaC14E8PnoX0Gol77pYkfhRWi5qzBQXXzIBQs33Q+EvL3KC/X8WMdWFYZ76r5J57gQXuuk86svbO82OZ7aJ/PrpDV+A5R7FySiAWFGuxXiK0NuO0RUB7vCDhyAY6AAE0fxZ2K1FVs6Q7LFqWbHD2V5VNyBdFr70qFhIfBJerxuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kFABYIaP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KQsamJ+H"
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2a9296b3926so53252965ad.1
-        for <linux-clk@vger.kernel.org>; Tue, 17 Mar 2026 23:03:07 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1773813787; cv=none;
-        d=google.com; s=arc-20240605;
-        b=Szm1RGc0SyIZY/LQmEnJB7hloPZm/9OymcRRP6SEmlrkwiuL5HekzT1EuIzIEpEmIF
-         s+YakgusISf86B4WokLJq83fapK3FsY+6/xXoDUSEZ3LdAoF9t/waIcLVwNoiSlcIxCo
-         faDynj9lv9Jo/QTsPLF4CjVbL9HRSpC8NTKk5UllKXioseAiYfgZACBcZL53ZYnsrIpp
-         bgqZPBhRAP5mSIG1e20kQZ32iJwZ0JpcjByjUTidSe/8WQwAxGjTrRfosoiAzgkZ/b+x
-         aecGIIxwt+eAzkgjZhRXignY2AhBhBGalVkm79TLiqbVgMiF9relIaslsC7ilYSnbtgE
-         39bg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=pAszSs/49zboyQgDtEnHp5rVuVO4D9UBOFdQEAPpg4Y=;
-        fh=49/JRxwEEXJTCNUfon344Rhf0FrlMKcnokdNUzsYLYI=;
-        b=PUYl5bxlDvZM6chHW7YrlSw2zuPPZfdEsG3VdH4yIdn0s2DMfVASgr1F9H/BQcQWmX
-         W0kzSoV7fkjg6p8wavgELzFR7Uc0WwBIhSTsRPdnZGxO5mXiC6HRWXOynZT00ycJVzTv
-         GMAXRr8OMzRYaoKoHXkPzsmmt4qYXmbPuKV5/HDFuXnYJzThSGAlyO8liKmXmIWhPIXo
-         w02nGnnwsQ/voBjhuwp+C/l4VgiBgclpmGUyLsIChlblgfMOxQKk1DVtbXDiFsv7xi9Q
-         4S0xxrbp/XJtke7lN9onyx2ubgwa2DY7qOhiG6C8EIm3VFqIDqoMXEDXqDiCi7UZS2+G
-         xaDA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773813787; x=1774418587; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pAszSs/49zboyQgDtEnHp5rVuVO4D9UBOFdQEAPpg4Y=;
-        b=KQsamJ+H/sTVmjjdRXvL8mZT3rdm6q+jRwuS32LehAw88OxCqP+T7O0ijPRSVa0qT/
-         P89HBihA+u1nbGKt7f+FvzEd74GCbwM9umJxHxFMYgpYhcmpNuT+ruYblm6MvVLJAWJj
-         4EtD1NW5XZXJIQRz2lou1su1lW8hnkl+5+xWJOH+tdVU5l/RNoQqSqkO7fzvrKrzm0Mx
-         e5R3juyPZpp8Lp7ge089OXXT1NaBLKXe89UVAbH6nuoE+QepwW4Bn2za4k8lMDacg5AS
-         omXFrkPaKNOI804Mz5reDXYbkO4OYdiNAizpacdA4mdJo7HVMx6/IoY/rztnC/fQbQHd
-         cWFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773813787; x=1774418587;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=pAszSs/49zboyQgDtEnHp5rVuVO4D9UBOFdQEAPpg4Y=;
-        b=CTVDReuxqMFTcUcHpjRa0mQ4J08b0xquNElWUqKZ1Kayx5pxD6TKnka5VHAICMSRXC
-         4vezt6yV+IhuOM27vnKZvyPJiF/5gofT7rra08RvnVeX9rUl+aGVyAzlX2OD41wTAu0I
-         HZrIqQ10BJ6SFZqI3uoMH5pFr2kJzFOWJS4tKFs3IK1/O9T+CRD7nW222pFOsBylOM9F
-         i+ilfCM2Ed3Ipxgb4jB440/HslB+ryDVSqwg8pwKBNS4vT71nMB/ox0kdTtl5ffUlFiB
-         nE5Ge7dZzfbi5lcT8kVPg40rwSeRrNB5VtPjy0RhsO/qNDCaM42/WhZWS0qPtxQ9cvcL
-         eUvw==
-X-Forwarded-Encrypted: i=1; AJvYcCX0UBEppm+SaZUkV7mSCDAknrK4ZzP5eWIdJrPJdUdqJ0qy6zIuIBI289DC6nkJjWpirc5Ufu4HbUY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxR5OjYMfTKj8bm8VDpf/WmU39ge1DC1vwTWK1CUtEM1aATpdl4
-	mGHXbu4PggyE36TqlxRouc1fGeRoqtaJX1i3fL4qa0tHjeUW8xFhaiKkboB5gVq+hB0QgY6s/3k
-	CeZ+VQdF5fyoPrcB/px8YlfIebnQSrfA=
-X-Gm-Gg: ATEYQzyexzh9FOQ7l3fL4207CcoHZJOvZ4u145zXtF6kL8LN9KITcl/JsZn/jsYnK/t
-	WR9dEG5VFVPBe9KC/LAA+0uA4ORpR5gG5EVHuzTHDZY+ou4iInPYqgdvxClZ+/oP+jhyRTqYjP+
-	1W4H46P2Q7xJGTIcCYUW95p6sudoI41+LzsKY+RGIqz3hWpBQM3KVWHrvAfn1mdhrkZ3VGFyYH0
-	+mAx9dd2JV4LVuc3OXV2NViBxl7gQTqkbVBrGabQ7zvwhQz06n5K+jlT18xLEmfIoHORZeGiUwa
-	85cBdN9MF2n5SrtkJFSqaaKgGHR1fO1Aca5Thw==
-X-Received: by 2002:a17:903:4b43:b0:2b0:6d2d:f1d7 with SMTP id
- d9443c01a7336-2b06e42bcb5mr23101165ad.48.1773813786487; Tue, 17 Mar 2026
- 23:03:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kFABYIaP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 200D9C19421;
+	Wed, 18 Mar 2026 06:45:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773816344;
+	bh=ZUd+CCQuUav72keML0jeubBVvaXv19It0DQBtnhtBXQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kFABYIaPiax4xCQlJLXPaC8oIZIy8Ba0eUHa85gs2pFb5hbFt/RBt7VUhxvohKy39
+	 pMaLNaiE4NekkmxzrgcNLm2telRxPgeuD3Rgr0zBDiYdFJUsZ6WOuvHB7ohEPQdXg+
+	 XEjFyLBy7CTX5lDsT2RNypMpKE0VblG7ZA5leRZ56FkHEbiP8KWaRqwhOFfRlAls4z
+	 tNHVWqQmGcXyZ4JEtB/P7+cReMD/tm5fgEr3dKgNp76QQAtC+oAg4FYNzqmVA7PyiE
+	 inkyWWje9cI/RxVn9lVHonlYAFZ9fXiu5CyQPYBYj+3ytewVkh/V5nK+yrcvGFS2Kb
+	 2vtZXIIh4P32Q==
+Message-ID: <55ce2bd8-a289-40ca-97db-7d082251ea6a@kernel.org>
+Date: Wed, 18 Mar 2026 07:45:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260306143423.19562-16-john.madieu.xa@bp.renesas.com>
- <20260311043831.2576-1-phucduc.bui@gmail.com> <TY6PR01MB17377BF5B5B59022FB39AEA12FF41A@TY6PR01MB17377.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY6PR01MB17377BF5B5B59022FB39AEA12FF41A@TY6PR01MB17377.jpnprd01.prod.outlook.com>
-From: Bui Duc Phuc <phucduc.bui@gmail.com>
-Date: Wed, 18 Mar 2026 13:02:55 +0700
-X-Gm-Features: AaiRm50Lyrt6jaVx-jDOI8ZexNpt-ne3CL_yu9V8PgLR4hVEocE_OODjZBPtK7w
-Message-ID: <CAABR9nHZsnsEVcsb08YLaZKL_ofBkKhqGyLSdH65Vh-2we8O2g@mail.gmail.com>
-Subject: Re: [PATCH v8 15/15] arm64: dts: renesas: r9a09g047e57-smarc:
-To: John Madieu <john.madieu.xa@bp.renesas.com>
-Cc: "bhelgaas@google.com" <bhelgaas@google.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"geert+renesas@glider.be" <geert+renesas@glider.be>, "john.madieu@gmail.com" <john.madieu@gmail.com>, 
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "kwilczynski@kernel.org" <kwilczynski@kernel.org>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>, "magnus.damm" <magnus.damm@gmail.com>, 
-	"mani@kernel.org" <mani@kernel.org>, "robh@kernel.org" <robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/7] Add support for Video, Camera, Graphics clock
+ controllers on Eliza
+To: Taniya Das <taniya.das@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+ Imran Shaik <imran.shaik@oss.qualcomm.com>,
+ Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20260317-eliza_mm_clock_controllers_v1-v1-0-4696eeda8cfb@oss.qualcomm.com>
+ <253ee25d-3096-407d-8d2e-3c9d1072b2ae@kernel.org>
+ <797d1615-860c-4829-a8f3-ee33ebeefad6@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <797d1615-860c-4829-a8f3-ee33ebeefad6@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi John,
+On 18/03/2026 05:05, Taniya Das wrote:
+> 
+> 
+> On 3/17/2026 10:53 PM, Krzysztof Kozlowski wrote:
+>> On 17/03/2026 18:14, Taniya Das wrote:
+>>> Add driver for Eliza SoC camera, graphics and Video clock controllers.
+>>> The camera clock controller supports the cambist clock controller and
+>>> the regular camera clock controller.
+>>>
+>>> Dependency:
+>>> https://lore.kernel.org/lkml/20260305-gpucc_sm8750_v2-v5-0-78292b40b053@oss.qualcomm.com/
+>>>
+>>> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+>>> ---
+>>> Taniya Das (7):
+>>>       dt-bindings: clock: qcom: Add video clock controller on Eliza SoC
+>>>       dt-bindings: clock: qcom: document the Eliza GPU Clock Controller
+>>>       dt-bindings: clock: qcom: Add support for CAMCC for Eliza
+>>>       clk: qcom: videocc: Add video clock controller driver for Eliza
+>>>       clk: qcom: gpucc: Add GPU Clock Controller driver for Eliza
+>>>       clk: qcom: camcc: Add support for camera clock controller for Eliza
+>>>       arm64: defconfig: Enable clock controllers on Qualcomm Eliza SoC
+>>
+>> On which device did you test it? Considering that you told me you did
+>> not hear about integration branch with patches before, I have doubts you
+>> could ever actually test it without our changes.
+>>
+> 
+> This is SoC which is already tested with our internal mobile platforms.
+> The SoC w.r.t clocks remains same and has been verified and work well.
 
-> Thanks for pointing it out. As per Biju's comment, there is a missing
-> -hog at the end of node name. Thus, if we keep the schema-friendly node
-> name 'pcie-clkreq-n-hog', then 'line-name =3D "pcie_clkreq_n";' can still
-> be useful.
+So you did not test the patches.
 
-Thanks for the clarification, that makes sense.
+> 
+>> But regardless - on which hardware exactly?
+> 
+> These are our mobile Eliza MTP platform.
 
-Regarding the line-name property, I'd like to see what the maintainers thin=
-k
-about this direction. I also noticed that the usage of line-name across exi=
-sting
-Renesas DTS files are somewhat inconsistent. If the maintainer approves you=
-r
-suggested approach, I will follow it and include the line-name in my next p=
-atch.
+???
 
-By the way, are you the author of the renowned books such as "Linux Device
-Driver Development" and "Mastering Linux Device Driver Development"?
 
-Best Regards,
-Phuc
-
-On Wed, Mar 18, 2026 at 6:31=E2=80=AFAM John Madieu
-<john.madieu.xa@bp.renesas.com> wrote:
->
-> Hi Phuc,
->
-> Thanks for the feedback.
->
-> > -----Original Message-----
-> > From: phucduc.bui@gmail.com <phucduc.bui@gmail.com>
-> > Sent: Wednesday, March 11, 2026 5:39 AM
-> > To: John Madieu <john.madieu.xa@bp.renesas.com>
-> > Subject: Re: [PATCH v8 15/15] arm64: dts: renesas: r9a09g047e57-smarc:
-> >
-> > [You don't often get email from phucduc.bui@gmail.com. Learn why this i=
-s
-> > important at https://aka.ms/LearnAboutSenderIdentification ]
-> >
-> > I noticed that for gpio-hog nodes, the kernel already uses the node nam=
-e
-> > as the default label in /sys/kernel/debug/gpio if line-name is missing.
-> > Since the node name here is already pcie-clkreq-n, the line-name proper=
-ty
-> > seems redundant. Should we remove it to keep the DTS more concise?
-> >
->
-> Thanks for pointing it out. As per Biju's comment, there is a missing
-> -hog at the end of node name. Thus, if we keep the schema-friendly node
-> name 'pcie-clkreq-n-hog', then 'line-name =3D "pcie_clkreq_n";' can still
-> be useful.
->
-> Regards,
-> John
->
->
-> > Best regards,
-> > Phuc
+Best regards,
+Krzysztof
