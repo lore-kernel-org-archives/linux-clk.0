@@ -1,105 +1,108 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F4D202F71;
-	Thu, 19 Mar 2026 16:50:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3360391E4E;
+	Thu, 19 Mar 2026 17:37:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773939039; cv=none; b=RqsbiP/kn8xkgHVgLpN8qCChszhrXNlOcLA1A2oHs3k+OXgQR7cZ3gAS3rGBhe/G52tg3edWmcZ+YaPiJK6OB6h1uiYgX2eq24ORnr4jRr6a16AnKBNCnkGyVvBaf7f+j2nO7LaJwBapLMnJ3LHJAsr7xWGS9qCrPjFaInWrN5E=
+	t=1773941879; cv=none; b=QpxnrkjG68V9hd+c8Dapt0w8kUWyGiBGx6267T1f1zrKkjrLVvjG1Ber7u6fhNi0V2e5HyH53BgojGjsi9ktylWD1nO9X7z7S/PCF8hehwpVgyr8zkLOQrTqlTJ6qbAllazUgss/cjMxBZbwfElCF+MfIAqiA+e2Wh3A9vn4FhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773939039; c=relaxed/simple;
-	bh=D77Ddz8qw4n1xbohbw2VGFHt286qHhhuOUnGY/tnSmk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C/yDHYCAYBxSxKKhYN8FiOj90Hq4+GHN18SMffq0ejx7ZvSKvzfsWzwBbwIClrohnhLaeEWifZj/mSxnTvXQ2um7fjH78f/ihFz9EGmz9jm9cmwocBe/xsH+eFm+8kpVGNtN4dF5e6MYvPJsdWF+TG+ivXbdQyuP/5wlG1r57cI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ljg/R4bb; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773941879; c=relaxed/simple;
+	bh=UUWot43aWRLnUev4xtyp/4LzVdlfOnkeR4C3S3s58IM=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=Zsp8DWNwBxE4+ZZMUGyHhdV1JH5nMN6iWmlfxohKpYTLWBNRTHMVrB5HPm1lbcXSBLQSL09QFmkiNv855pTLgWuET8tdspGjtg2c/EvDVJzyP70VpjdiVQwjqO9MwXfjgVudrfYPnApjXvY6NGY5daLd8ZkZnu3pjJUcb458Igk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mNDQyT9c; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ljg/R4bb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A612C2BCAF;
-	Thu, 19 Mar 2026 16:50:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mNDQyT9c"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08C09C19424;
+	Thu, 19 Mar 2026 17:37:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773939039;
-	bh=D77Ddz8qw4n1xbohbw2VGFHt286qHhhuOUnGY/tnSmk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ljg/R4bbBSiaM3KzZCNF04vLF0LtaB5TTp5JofndPK859nkZhiQIYOXp7lRbcq+Xn
-	 XSUTDHJ7UXb5VS5oGodmddZvcnD2xLyh9jZzRhRmtVJl8shsQdHPs5m6aiBrVMcUaT
-	 WKHdrpjLVB+HP0K/d130LSEZCnYzHfeS5KVri7LyrvGiR5wK9H0vjDuA5BEIjhq8l6
-	 SKnuZEFSFwp1i2IxXai9Mnk+kIsiBL/6XpH7RLbh9AqcHdKYbh4Xnt8sahw8lRkmVG
-	 iLmaS9uwiovoWvzMUkZ3OUj8onDSeV6da53FeLDMyTRyKGj5YwtJ2u7eyjdxniI2CI
-	 MTgjW5CpYZXAw==
-Date: Thu, 19 Mar 2026 16:50:34 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Vyacheslav Yurkov <uvv.mail@gmail.com>
-Cc: Rob Herring <robh@kernel.org>,
-	Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/2] dt-bindings: Add clock guard DT description
-Message-ID: <20260319-yearly-wrongful-883f7fd86a69@spud>
-References: <20260318-feature-clock-guard-v1-0-6137cb4084b7@bruker.com>
- <20260318-feature-clock-guard-v1-2-6137cb4084b7@bruker.com>
- <20260318225510.GA639444-robh@kernel.org>
- <7c7034a7-686a-42c2-bdba-6f31b5179f7c@gmail.com>
+	s=k20201202; t=1773941878;
+	bh=UUWot43aWRLnUev4xtyp/4LzVdlfOnkeR4C3S3s58IM=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=mNDQyT9c4y48XRSi2QtA8QkcDHLa/S0NIYX6zK0UwpVWo+0DHSaQ74dQcyVCymhse
+	 5pxHmBIUukDCcFoOV+WvddBeXJrd6h848hjdccL3q8Cv8xQce9Uh1lxE8ntTGvcvwR
+	 SoDDOPme0vBsxWCfXeI7Q04KBPoku6bQsiR2zESJyf1F0EZJXjTK2UwHFv6B8YpEy3
+	 ZtulK7yBoEQrTEMf0DkEvVI3MThkLBsXOUGVGEPEgE26dWfNao+DsuPLMQqqy/k7zZ
+	 emoYCU+Z8Fidcr+jCDFp26Q1ybW/GE3GIpgijGc3Xp9j+unAMAxO2AggEs+WRzGXIO
+	 usXN0SUjLkmcw==
+Date: Thu, 19 Mar 2026 12:37:57 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="oewIK0RQAgPXmJv9"
-Content-Disposition: inline
-In-Reply-To: <7c7034a7-686a-42c2-bdba-6f31b5179f7c@gmail.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, 
+ Magnus Damm <magnus.damm@gmail.com>, Stephen Boyd <sboyd@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, 
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+ Biju Das <biju.das.jz@bp.renesas.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, Vinod Koul <vkoul@kernel.org>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+ linux-sound@vger.kernel.org, Frank Li <Frank.Li@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ John Madieu <john.madieu@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+ Thomas Gleixner <tglx@kernel.org>, linux-kernel@vger.kernel.org, 
+ dmaengine@vger.kernel.org, linux-clk@vger.kernel.org
+To: John Madieu <john.madieu.xa@bp.renesas.com>
+In-Reply-To: <20260319155334.51278-2-john.madieu.xa@bp.renesas.com>
+References: <20260319155334.51278-1-john.madieu.xa@bp.renesas.com>
+ <20260319155334.51278-2-john.madieu.xa@bp.renesas.com>
+Message-Id: <177394187724.2938936.10407132258338013690.robh@kernel.org>
+Subject: Re: [PATCH 01/22] dt-bindings: clock: renesas: Add audio clock
+ inputs for RZ/V2H family
 
 
---oewIK0RQAgPXmJv9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 19 Mar 2026 16:53:13 +0100, John Madieu wrote:
+> RZ/V2H, RZ/V2N, and RZ/G3E support external audio clock inputs
+> (AUDIO_CLKA, AUDIO_CLKB, AUDIO_CLKC) that can be used by the Audio Clock
+> Generator (ADG) to derive internal audio clocks. These clocks are optional
+> and their frequencies are set by the board.
+> 
+> Update the bindings to allow these optional clocks for all RZ/V2H family
+> SoCs.
+> 
+> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+> ---
+>  .../devicetree/bindings/clock/renesas,rzv2h-cpg.yaml   | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
 
-On Thu, Mar 19, 2026 at 06:50:52AM +0100, Vyacheslav Yurkov wrote:
-> On 18.03.2026 23:55, Rob Herring wrote:
-> > On Wed, Mar 18, 2026 at 05:43:40PM +0000, Vyacheslav Yurkov wrote:
-> > > Describe device tree binding for virtual clock controller guard.
-> > No idea what this means. Please explain how I would identify this h/w.
-> >=20
-> > We generally don't do bindings for virtual devices and we don't do
-> > single clock bindings (other than some we are stuck with).
-> >=20
->=20
-> I described a use case in my cover letter (PATCH 0). Perhaps our approach=
- to
-> tackle the issue is not correct in the first place. The term "virtual clo=
-ck
-> controller guard" is something we named it, but it's literally just a clo=
-ck
-> provider which combines several other clocks and input GPIO signals in or=
-der
-> for the consumers to check whether they are allowed to probe already or h=
-ave
-> to wait until the input clocks are enabled.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Can you explain how this is different to gpio-gate-clock? AFAICT, you're
-trying to support clocks that are enabled by a gpio, and that's what it
-is for.
+yamllint warnings/errors:
 
->=20
-> So in essence it's like a helper driver to simplify consumers probe
-> procedure. Does it make sense? If you don't do bindings for virtual HW, h=
-ow
-> else would you approach this?
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/renesas,rzv2h-cpg.yaml: properties:clocks: {'minItems': 3, 'maxItems': 6, 'items': [{'description': 'AUDIO_EXTAL clock input'}, {'description': 'RTXIN clock input'}, {'description': 'QEXTAL clock input'}, {'description': 'AUDIO_CLKA clock input'}, {'description': 'AUDIO_CLKB clock input'}, {'description': 'AUDIO_CLKC clock input'}]} should not be valid under {'required': ['maxItems']}
+	hint: "maxItems" is not needed with an "items" list
+	from schema $id: http://devicetree.org/meta-schemas/items.yaml
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/renesas,rzv2h-cpg.yaml: properties:clock-names: {'minItems': 3, 'maxItems': 6, 'items': [{'const': 'audio_extal'}, {'const': 'rtxin'}, {'const': 'qextal'}, {'const': 'audio_clka'}, {'const': 'audio_clkb'}, {'const': 'audio_clkc'}]} should not be valid under {'required': ['maxItems']}
+	hint: "maxItems" is not needed with an "items" list
+	from schema $id: http://devicetree.org/meta-schemas/items.yaml
 
---oewIK0RQAgPXmJv9
-Content-Type: application/pgp-signature; name="signature.asc"
+doc reference errors (make refcheckdocs):
 
------BEGIN PGP SIGNATURE-----
+See https://patchwork.kernel.org/project/devicetree/patch/20260319155334.51278-2-john.madieu.xa@bp.renesas.com
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCabwpWgAKCRB4tDGHoIJi
-0mS1AQCyfP+fyjGDQgMM0Ynzsf4cG2N0hvkv75PMmo5yKprjkwEAok9cVR3iRzxh
-QIQXM6kQ9Q1ooh/QME9VlGL6Bftgxg8=
-=9Lod
------END PGP SIGNATURE-----
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
---oewIK0RQAgPXmJv9--
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
