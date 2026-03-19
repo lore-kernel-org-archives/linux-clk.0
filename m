@@ -1,104 +1,176 @@
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08AC2E06EF
-	for <linux-clk@vger.kernel.org>; Thu, 19 Mar 2026 05:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725AC39DBEF;
+	Thu, 19 Mar 2026 07:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773899458; cv=none; b=l3i++8TvOMPohOWz3xvtAeElRiDzs9eOs247ZUH4Qy1ix21XGS966rl8FRRstFzRzzMduPfsmhG0fKC+RR4pgOsCkyCyIA1MLOwBstfuDzg0AsaTvEcJMTlZo1aCxrcmMaM0RW7kvpfYa8mwvgcIiUXb+rjg5R8KycbNEh2vlf0=
+	t=1773903857; cv=none; b=t9xPAzwVhSq9TilIdAmU49E5o1KGPqnKxbMkoxTPLOBujHmCky+LPCGoaDA9JK/0IEe6ihxP2RNE4j8SzC2GDTp6eTvh+6+5Hd1hL77PbyIz1qLWi4kEW13Jz126qvxqNk/H3wezt29BD4BJePFQ+kdDDU7vK0bqHoZWLoqh7b0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773899458; c=relaxed/simple;
-	bh=MawAzpxE219MvSlVaJ+0R5jtOtD1/dpHGN0floVbngk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ghTmBliIYziL4tu7ApofXGUgKNGsbuUp8jARx4MhF1xN0GcTclb13O9AkoKYTel48w32thsBFoX+atHVD0ivkMe5UIF9i3Bh0woX4jYF1pbm1YJMud3wiA8mgnlDriAh6v7pg3VQLgT+lfagKjVY6GW52dAaFcJgZ7eDuu968YI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AHZGmw4K; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1773903857; c=relaxed/simple;
+	bh=XWRb4tG0WfjZbF3L2bUwVIdS+/4y/LWaL3SwWGs47Z8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XR298H+sR6LorSneqWhDNxNnLDScjaUUIo3D/6A8YuAm3SSIn2ff6P+hVCBIV1Wx5FVdavaWIVQIP+gMKo6YGHExwa6EyMDVvH38gbxpWIPHJ+yNrinJJb8NCj/htEuDSbBWHbXyDSGvyqh3DJeazCmSP/Y1+EgmLV5QCsGmobA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cFNRpJXf; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AHZGmw4K"
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6618bc129acso1022784a12.2
-        for <linux-clk@vger.kernel.org>; Wed, 18 Mar 2026 22:50:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773899456; x=1774504256; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FU3dYOZ5IUxYIeKpkZZZr4uovnrxVzn2MOOjX+dDH/M=;
-        b=AHZGmw4KmLX86laRxFKsxIV/TZxJB8B+eXvjU5u9jPJCN7WGm2OfwV04/pO4P8fmbq
-         xcITO5vILH2D4gSZHgmYaAmbjSMKF624jwAZfNtTh2bJqIywG9geKUfu8EhIJYTUqAuh
-         Kfcwb/ODBSG/RpVh/Jy5bbCGPEil6XBigExHs/Wb3Jgn8Vw0Pk13B4M7pPBq5pD6zvY2
-         wVRj6USWm7vaxOeoBuM9yL6fV2EAhVLTKyXwelyNFbRVeP+zfTWS+MGawOuU9pijGc5s
-         MQLidUzXhMCPKm7kYOK04c+7ixQapNH6WASCETsf1mPXzT7sNKEEbbvSMRT9w26sTPWz
-         fffg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773899456; x=1774504256;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FU3dYOZ5IUxYIeKpkZZZr4uovnrxVzn2MOOjX+dDH/M=;
-        b=CNVpmZlHe3bODhavEI7ReV6PE6FoYBcySka5fhXuh5SlE9ahxvfrcjWDn5Fbp0g8K6
-         zPRwDjZ2Q2LCvdS2zThluTIFpoHqiiw/BnmK2nyQvS8CZcjyymPgF33UhFqpppCOcAJT
-         ndipLtGI2LvLksE0zc0Jq60N9RQRGEmqM+KMfVzO5tx5vlXQpSICYQEeXLkYK8HYQ1GE
-         xRsC1K4KDwhMWU1iSwJvFGgkmw9M3/sPd/6Bn8JhJdDDDbBZnKrALqwUWwYYbMH/FjsN
-         9yFJWNdq+V7PihxkfFiCRREYL8Ucqg4TIiXjVsuUT5BOFOzKTfrDq322g27vzd+x/r4y
-         kXqg==
-X-Forwarded-Encrypted: i=1; AJvYcCX6jL4Ct32CGRxCKkvrtxXz6OU40Nx/wWo+CGFeiwf1SQ6sUtZW1wDIqoooD1KzWwMblBmYBP+rKzo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPonUAjYjrRcnUDA5M79BsK0oldvGJTFCMZVcOYO3KLAzNVCbj
-	ytgirEpnTQJc6EkeQkG9HATTDthCuzyK8xxn4FMmLgvTwrnZh/lu3c75
-X-Gm-Gg: ATEYQzyLxaJGDTzL/gS/aYhahNoVIBldu5zGph+RoWPV51Wa2l3JYCnjFGgLW+qa/A1
-	AhzKD6fkgMApzWyL48OsgAITbEtrSUOOC2dv0fsXgKpTu+4Jo5hJHDyZr/ir4omoeBJJrC5Td10
-	oR45DlJapgpECHyjULr8dDmoVvVphMhhfrGLoIkObrZDF5niIGkGKe8UYr0WObfs+5Z+AVzLw7F
-	HQDec3mA1XTiwhFnBpx4wdhSxwYCHtiYIUxeyPriwlS7eGI/hJFD7rHDOIRFvcDJM9zWZTqf9z8
-	kyIj9ECzdv5DvgIaRdhKtGvqFF09jjZ0GlkjLbJgi+aRGiNMcXKvVoeKmUiTpsZW2cJ8QHwKLtb
-	uzPKNX5By6/6u3xzeXBYd8PJRCoHk/rG+SVumFyFOkKrOznvcixUjvdbFt7mFRqUd9zhGchVpFI
-	+DCmkTwJp8gSdkA4xvQ0H05ZkTYvALErhyPY5AAQ==
-X-Received: by 2002:a05:6402:1ed5:b0:667:6eeb:9aa8 with SMTP id 4fb4d7f45d1cf-667b2c03461mr4405868a12.15.1773899455763;
-        Wed, 18 Mar 2026 22:50:55 -0700 (PDT)
-Received: from [10.52.58.58] ([193.118.55.72])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-667b129e69asm2889513a12.22.2026.03.18.22.50.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Mar 2026 22:50:55 -0700 (PDT)
-Message-ID: <7c7034a7-686a-42c2-bdba-6f31b5179f7c@gmail.com>
-Date: Thu, 19 Mar 2026 06:50:52 +0100
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cFNRpJXf"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1773903854; x=1805439854;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XWRb4tG0WfjZbF3L2bUwVIdS+/4y/LWaL3SwWGs47Z8=;
+  b=cFNRpJXffnxMDHZ/rLN7fPnVMJHtYOy3KhcIN/9nrwaPhUVFjtdnlCuq
+   rcOMHJ+01yAj6LqyZpFNua7DgLFeaVTuTWZiJp3dYtDFn/oPNfaEKV6i9
+   uPEUXrxZqeIDlnb0B7wHnv4XSE3zoE7cuTl16VOWyiXUE6s/KwOxO08pP
+   BHU5w3oEzAMVYma3uvQyowYc0c6VY73AJqaJCiRGM8KcZi+QyLn0YAgIp
+   yU/AxkWyuMGzHvAC6vhof8rvaVhnC+UdRTjCkvoQYduqmfOTFCWlHnimn
+   IOZ8ZbhxFg0BwLfH8bgPjGmQBW/lmezUuB8TywteyhV+xdZuJnQWMDMuE
+   Q==;
+X-CSE-ConnectionGUID: chdl9EKISMW4KYRSdmHGDg==
+X-CSE-MsgGUID: cg6IH3SeRfuwfZMW5k+ZUA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11733"; a="62538840"
+X-IronPort-AV: E=Sophos;i="6.23,128,1770624000"; 
+   d="scan'208";a="62538840"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2026 00:04:13 -0700
+X-CSE-ConnectionGUID: 6kIld5kyQMCuWrGShd9Iow==
+X-CSE-MsgGUID: ePfOVPAlSMy5V8WuidXKGw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,128,1770624000"; 
+   d="scan'208";a="224890375"
+Received: from lkp-server02.sh.intel.com (HELO a51c2a36b9df) ([10.239.97.151])
+  by fmviesa004.fm.intel.com with ESMTP; 19 Mar 2026 00:04:08 -0700
+Received: from kbuild by a51c2a36b9df with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1w37Ps-000000000Sn-1nKh;
+	Thu, 19 Mar 2026 07:03:42 +0000
+Date: Thu, 19 Mar 2026 15:03:23 +0800
+From: kernel test robot <lkp@intel.com>
+To: Daniele Briguglio <hello@superkali.me>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: oe-kbuild-all@lists.linux.dev, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+	Daniele Briguglio <hello@superkali.me>
+Subject: Re: [PATCH 3/3] clk: rockchip: rk3588: add GATE_GRF clocks for I2S
+ MCLK output to IO
+Message-ID: <202603191419.MH6EuPga-lkp@intel.com>
+References: <20260316-rk3588-mclk-gate-grf-v1-3-66fb9a246718@superkali.me>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] dt-bindings: Add clock guard DT description
-To: Rob Herring <robh@kernel.org>, Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-References: <20260318-feature-clock-guard-v1-0-6137cb4084b7@bruker.com>
- <20260318-feature-clock-guard-v1-2-6137cb4084b7@bruker.com>
- <20260318225510.GA639444-robh@kernel.org>
-Content-Language: en-US
-From: Vyacheslav Yurkov <uvv.mail@gmail.com>
-In-Reply-To: <20260318225510.GA639444-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260316-rk3588-mclk-gate-grf-v1-3-66fb9a246718@superkali.me>
 
-On 18.03.2026 23:55, Rob Herring wrote:
-> On Wed, Mar 18, 2026 at 05:43:40PM +0000, Vyacheslav Yurkov wrote:
->> Describe device tree binding for virtual clock controller guard.
-> No idea what this means. Please explain how I would identify this h/w.
->
-> We generally don't do bindings for virtual devices and we don't do
-> single clock bindings (other than some we are stuck with).
->
+Hi Daniele,
 
-I described a use case in my cover letter (PATCH 0). Perhaps our 
-approach to tackle the issue is not correct in the first place. The term 
-"virtual clock controller guard" is something we named it, but it's 
-literally just a clock provider which combines several other clocks and 
-input GPIO signals in order for the consumers to check whether they are 
-allowed to probe already or have to wait until the input clocks are enabled.
+kernel test robot noticed the following build errors:
 
-So in essence it's like a helper driver to simplify consumers probe 
-procedure. Does it make sense? If you don't do bindings for virtual HW, 
-how else would you approach this?
+[auto build test ERROR on b84a0ebe421ca56995ff78b66307667b62b3a900]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Daniele-Briguglio/dt-bindings-clock-rockchip-rk3588-cru-add-I2S-MCLK-output-to-IO-clock-IDs/20260316-222240
+base:   b84a0ebe421ca56995ff78b66307667b62b3a900
+patch link:    https://lore.kernel.org/r/20260316-rk3588-mclk-gate-grf-v1-3-66fb9a246718%40superkali.me
+patch subject: [PATCH 3/3] clk: rockchip: rk3588: add GATE_GRF clocks for I2S MCLK output to IO
+config: arm-allyesconfig (https://download.01.org/0day-ci/archive/20260319/202603191419.MH6EuPga-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 15.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260319/202603191419.MH6EuPga-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202603191419.MH6EuPga-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/clk/rockchip/clk-rk3588.c: In function 'rk3588_clk_early_init':
+>> drivers/clk/rockchip/clk-rk3588.c:2496:29: error: implicit declaration of function 'kzalloc_obj' [-Wimplicit-function-declaration]
+    2496 |                 sys_grf_e = kzalloc_obj(*sys_grf_e);
+         |                             ^~~~~~~~~~~
+>> drivers/clk/rockchip/clk-rk3588.c:2496:27: error: assignment to 'struct rockchip_aux_grf *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+    2496 |                 sys_grf_e = kzalloc_obj(*sys_grf_e);
+         |                           ^
+
+
+vim +/kzalloc_obj +2496 drivers/clk/rockchip/clk-rk3588.c
+
+  2447	
+  2448	static void __init rk3588_clk_early_init(struct device_node *np)
+  2449	{
+  2450		struct rockchip_clk_provider *ctx;
+  2451		struct rockchip_aux_grf *sys_grf_e;
+  2452		struct regmap *sys_grf;
+  2453		unsigned long clk_nr_clks, max_clk_id1, max_clk_id2;
+  2454		void __iomem *reg_base;
+  2455	
+  2456		max_clk_id1 = rockchip_clk_find_max_clk_id(rk3588_clk_branches,
+  2457						ARRAY_SIZE(rk3588_clk_branches));
+  2458		max_clk_id2 = rockchip_clk_find_max_clk_id(rk3588_early_clk_branches,
+  2459						ARRAY_SIZE(rk3588_early_clk_branches));
+  2460		clk_nr_clks = max(max_clk_id1, max_clk_id2) + 1;
+  2461	
+  2462		reg_base = of_iomap(np, 0);
+  2463		if (!reg_base) {
+  2464			pr_err("%s: could not map cru region\n", __func__);
+  2465			return;
+  2466		}
+  2467	
+  2468		ctx = rockchip_clk_init_early(np, reg_base, clk_nr_clks);
+  2469		if (IS_ERR(ctx)) {
+  2470			pr_err("%s: rockchip clk init failed\n", __func__);
+  2471			iounmap(reg_base);
+  2472			return;
+  2473		}
+  2474		early_ctx = ctx;
+  2475	
+  2476		rockchip_clk_register_plls(ctx, rk3588_pll_clks,
+  2477					   ARRAY_SIZE(rk3588_pll_clks),
+  2478					   RK3588_GRF_SOC_STATUS0);
+  2479	
+  2480		rockchip_clk_register_armclk(ctx, ARMCLK_L, "armclk_l",
+  2481				mux_armclkl_p, ARRAY_SIZE(mux_armclkl_p),
+  2482				&rk3588_cpulclk_data, rk3588_cpulclk_rates,
+  2483				ARRAY_SIZE(rk3588_cpulclk_rates));
+  2484		rockchip_clk_register_armclk(ctx, ARMCLK_B01, "armclk_b01",
+  2485				mux_armclkb01_p, ARRAY_SIZE(mux_armclkb01_p),
+  2486				&rk3588_cpub0clk_data, rk3588_cpub0clk_rates,
+  2487				ARRAY_SIZE(rk3588_cpub0clk_rates));
+  2488		rockchip_clk_register_armclk(ctx, ARMCLK_B23, "armclk_b23",
+  2489				mux_armclkb23_p, ARRAY_SIZE(mux_armclkb23_p),
+  2490				&rk3588_cpub1clk_data, rk3588_cpub1clk_rates,
+  2491				ARRAY_SIZE(rk3588_cpub1clk_rates));
+  2492	
+  2493		/* Register SYS_GRF for I2S MCLK output to IO gate clocks */
+  2494		sys_grf = syscon_regmap_lookup_by_compatible("rockchip,rk3588-sys-grf");
+  2495		if (!IS_ERR(sys_grf)) {
+> 2496			sys_grf_e = kzalloc_obj(*sys_grf_e);
+  2497			if (sys_grf_e) {
+  2498				sys_grf_e->grf = sys_grf;
+  2499				sys_grf_e->type = grf_type_sys;
+  2500				hash_add(ctx->aux_grf_table, &sys_grf_e->node, grf_type_sys);
+  2501			}
+  2502		}
+  2503	
+  2504		rockchip_clk_register_branches(ctx, rk3588_early_clk_branches,
+  2505					       ARRAY_SIZE(rk3588_early_clk_branches));
+  2506	
+  2507		rockchip_clk_of_add_provider(np, ctx);
+  2508	}
+  2509	CLK_OF_DECLARE_DRIVER(rk3588_cru, "rockchip,rk3588-cru", rk3588_clk_early_init);
+  2510	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
