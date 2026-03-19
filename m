@@ -1,24 +1,24 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373003E8C60;
-	Thu, 19 Mar 2026 15:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5B03E8C60;
+	Thu, 19 Mar 2026 15:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773935800; cv=none; b=JSNdUWiuRY6d2Xkbg373Xph3nrUzQga0tJ3M+sx3lq1U3mHHWki5K0Jn1VIFFrUxo9hJ6fYX9h+yfk9B1v0qcMXTTzdO1KqpuZXjB3Nxc9ZytgXwiJUgjeRenbjbN3JPKHmAWGW+orqgzCZF5tKenK2Mrbq79h7cFCubk6qtaMU=
+	t=1773935809; cv=none; b=HyN6iOVLrTKovob4nycfiebLS3Zo6VR2X0vx42HUxpOXE7KV6TUh/gDpsfJBZKQo6wD7Ux9o6SndzJq2ZuAYc2tTAw93EXTOwAxfOSg0AtVhnmdQ0lSQvWdVxRp39gNM96kLfoyk4V6uijddYogxP26NjoCQrnmDquNeSA54lxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773935800; c=relaxed/simple;
-	bh=UBOnLwm3GZOOJiBwqs7ZpyYoqYu152qMXe2ZhHRsgxc=;
+	s=arc-20240116; t=1773935809; c=relaxed/simple;
+	bh=978rvv5RyDO4c6uSVUDf09DjXhUxKQgKHDcwAqwip4k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GlPZGM4EuJ8iAmlzzcmqw/vN2b8BIvkR8xkCHAbkiQa0Qabs2+6skoTcwNzfzKRyIX5NAqmaFOD/zRQNuXQ4UbGZrUXWPk4wEu1irKO1HbhOpl8YOqSBQrrEj8ZjorxDMyraBMMfmqfUZx+gMRkrrDE2D3N/5ddZH6Exw12IBbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+	 MIME-Version; b=gZdSaTwy+2nx/MEXpWiBouymwN+euW/rHQSHQwFmcHCNgpPGWMtTZcik0p24p3K0KJ8IDOEpwBrvLVZkExbbthVnMG7nt1WVuNNflPeVCnUpQW0/7i5bpP3YlsuWobmgeX42+/yi1hvSR084GuWtexVRt10wx+ai2w8KGMG3css=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: 0WIbw9C5QUujz3gxKdxtSQ==
-X-CSE-MsgGUID: yqDSHeGMQ0ybsMGFn8Ur0Q==
+X-CSE-ConnectionGUID: AM4xPiU7QlqJXXIjp/293w==
+X-CSE-MsgGUID: OBOzu5uPTVuFPZedGTBsOA==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 20 Mar 2026 00:56:37 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 20 Mar 2026 00:56:46 +0900
 Received: from ubuntu.adwin.renesas.com (unknown [10.226.93.35])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 6B70D401B641;
-	Fri, 20 Mar 2026 00:56:28 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 0BB7A401B652;
+	Fri, 20 Mar 2026 00:56:37 +0900 (JST)
 From: John Madieu <john.madieu.xa@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
 	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
@@ -48,9 +48,9 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	dmaengine@vger.kernel.org,
 	linux-sound@vger.kernel.org,
 	John Madieu <john.madieu.xa@bp.renesas.com>
-Subject: [PATCH 12/22] ASoC: rsnd: Update SSI for RZ/G3E support
-Date: Thu, 19 Mar 2026 16:53:24 +0100
-Message-ID: <20260319155334.51278-13-john.madieu.xa@bp.renesas.com>
+Subject: [PATCH 13/22] ASoC: rsnd: Add ADG reset support for RZ/G3E
+Date: Thu, 19 Mar 2026 16:53:25 +0100
+Message-ID: <20260319155334.51278-14-john.madieu.xa@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260319155334.51278-1-john.madieu.xa@bp.renesas.com>
 References: <20260319155334.51278-1-john.madieu.xa@bp.renesas.com>
@@ -62,88 +62,44 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add SSI support for the Renesas RZ/G3E SoC, which differs from earlier
-generations in several ways:
+RZ/G3E requires the ADG reset line to be deasserted for the audio
+subsystem to operate. The ADG module clock is already managed via
+rsnd_adg_clk_enable/disable() through adg->adg, so no additional
+clock handling is needed.
 
- - The SSI block always operates in BUSIF mode; RZ/G3E does not implement
-   the SSITDR/SSIRDR registers used by R-Car Gen2/Gen3/Gen4 for direct SSI
-   DMA.
-   Consequently, all audio data must pass through BUSIF.
- - Each SSI instance has its own reset line, exposed using per-SSI names
-   such as "ssi0", "ssi1", etc., rather than a single shared reset.
-
-To support these differences, update rsnd_ssi_use_busif() to always
-return 1 on RZ/G3E, ensuring that the driver consistently selects the
-BUSIF DMA path. Also update the reset acquisition logic to request the
-appropriate per-SSI reset controller based on the SSI instance name.
+Add support for the optional "adg" reset control on Renesas RZ/G3E SoC.
 
 Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
 ---
- sound/soc/renesas/rcar/ssi.c | 22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
+ sound/soc/renesas/rcar/adg.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/renesas/rcar/ssi.c b/sound/soc/renesas/rcar/ssi.c
-index c06cebb36170..e25a4dfae90c 100644
---- a/sound/soc/renesas/rcar/ssi.c
-+++ b/sound/soc/renesas/rcar/ssi.c
-@@ -123,8 +123,15 @@ int rsnd_ssi_use_busif(struct rsnd_dai_stream *io)
- {
- 	struct rsnd_mod *mod = rsnd_io_to_mod_ssi(io);
- 	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
-+	struct rsnd_priv *priv = rsnd_mod_to_priv(mod);
- 	int use_busif = 0;
+diff --git a/sound/soc/renesas/rcar/adg.c b/sound/soc/renesas/rcar/adg.c
+index 0105c60a144e..cbb5c4432a2d 100644
+--- a/sound/soc/renesas/rcar/adg.c
++++ b/sound/soc/renesas/rcar/adg.c
+@@ -771,6 +771,7 @@ void rsnd_adg_clk_dbg_info(struct rsnd_priv *priv, struct seq_file *m)
  
-+	/*
-+	 * RZ/G3E does not support PIO mode. Always use BUSIF.
-+	 */
-+	if (rsnd_flags_has(priv, RSND_SSI_ALWAYS_BUSIF))
-+		return 1;
-+
- 	if (!rsnd_ssi_is_dma_mode(mod))
- 		return 0;
- 
-@@ -865,6 +872,8 @@ static int rsnd_ssi_common_remove(struct rsnd_mod *mod,
- 		rsnd_flags_del(ssi, RSND_SSI_PROBED);
- 	}
- 
-+	rsnd_dma_detach(io, mod, &io->dma);
-+
- 	return 0;
- }
- 
-@@ -1158,6 +1167,7 @@ int __rsnd_ssi_is_pin_sharing(struct rsnd_mod *mod)
- 
- int rsnd_ssi_probe(struct rsnd_priv *priv)
+ int rsnd_adg_probe(struct rsnd_priv *priv)
  {
 +	struct reset_control *rstc;
- 	struct device_node *node;
+ 	struct rsnd_adg *adg;
  	struct device *dev = rsnd_priv_to_dev(priv);
- 	struct rsnd_mod_ops *ops;
-@@ -1207,6 +1217,16 @@ int rsnd_ssi_probe(struct rsnd_priv *priv)
- 			goto rsnd_ssi_probe_done;
- 		}
+ 	int ret;
+@@ -779,8 +780,13 @@ int rsnd_adg_probe(struct rsnd_priv *priv)
+ 	if (!adg)
+ 		return -ENOMEM;
  
-+		/*
-+		 * RZ/G3E uses per-SSI reset controllers.
-+		 * R-Car platforms typically don't have SSI reset controls.
-+		 */
-+		rstc = devm_reset_control_get_optional(dev, name);
-+		if (IS_ERR(rstc)) {
-+			ret = PTR_ERR(rstc);
-+			goto rsnd_ssi_probe_done;
-+		}
++	rstc = devm_reset_control_get_optional_exclusive(dev, "adg");
++	if (IS_ERR(rstc))
++		return dev_err_probe(dev, PTR_ERR(rstc),
++				     "failed to get adg reset\n");
 +
- 		if (of_property_read_bool(np, "shared-pin"))
- 			rsnd_flags_set(ssi, RSND_SSI_CLK_PIN_SHARE);
- 
-@@ -1225,7 +1245,7 @@ int rsnd_ssi_probe(struct rsnd_priv *priv)
- 			ops = &rsnd_ssi_dma_ops;
- 
- 		ret = rsnd_mod_init(priv, rsnd_mod_get(ssi), ops, clk,
--				    NULL, RSND_MOD_SSI, i);
-+				    rstc, RSND_MOD_SSI, i);
- 		if (ret)
- 			goto rsnd_ssi_probe_done;
+ 	ret = rsnd_mod_init(priv, &adg->mod, &adg_ops,
+-		      NULL, NULL, 0, 0);
++		      NULL, rstc, 0, 0);
+ 	if (ret)
+ 		return ret;
  
 -- 
 2.25.1
