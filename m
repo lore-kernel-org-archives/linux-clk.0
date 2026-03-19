@@ -1,109 +1,130 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D5C2E7180;
-	Thu, 19 Mar 2026 08:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E9E3A9DA4;
+	Thu, 19 Mar 2026 08:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773908183; cv=none; b=s+3DhGmj46+qfPOafRfKv0oQRzjIarSKHAJZAeQdhxgmhlqgiYF0S+KDGSGm6GmDwbpwMye8c4gRNC/VGyDl8+aht3fZ5+wnLLceJ08d6/fyx4YwitSXh2lvvS1UEVJ1bghBPLidcprZL9bapYcA5RWy9pJop977Yv4IliMNlHE=
+	t=1773908745; cv=none; b=ONQ16BIqWLCTB6KqBiLoyFyzHxA5lQZkS7/lc9p4clJV24g+InRq4jvPnMCwIfVLpU7gkCmSjpqOn6Bb9JvZqIiQs2jLcWQnq6IlBdzSmoRm1WqZqTl+MnnVOiRG9wmiOwzXeNw2ORra0yvtOqxOVxh0ZzGbsL6qzhrdSKsR8TA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773908183; c=relaxed/simple;
-	bh=r3IeYS8hW1srdAKxbHBU3Z1pFg9Grc+Dt8XhxBV4PL8=;
+	s=arc-20240116; t=1773908745; c=relaxed/simple;
+	bh=z+TpFp6nPNBq4Ax+izUKlEte0F/VUwfkflI1noqu3+0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kix/1jZ3Iz9jn60z9ghLPm2V2hkweBbVZw30jrFJ1yrFGRXmYTFm0+ZuJz703o8Sc/e+6szDHvEqCNMr0YF3vDO/tfm+1Jq3hm3doj7ceHmisdyG2DppsM0z4DhK0vR81LRnAaOeHwnttuzytNFc+zKaZhaUZhZrCSkcJ/s2cW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VG+w61xT; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=qCozJSteoKKx0EL8RfQ+06b4HukDwjTonUKnnYCxsdYsxfOMv1zyYEs/X15YKof1xvj3AOwiJZQsSbvSgL8mV6W8FhZME+/ZRUjCQVgMhxYiexS0RJ2R62kagJqN9Qtk2uVUiLk6QfQICFn34+hgj7A2/4Ju9kQpAMgkTw3qcvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cSw7W9ZB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VG+w61xT"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1773908180; x=1805444180;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=r3IeYS8hW1srdAKxbHBU3Z1pFg9Grc+Dt8XhxBV4PL8=;
-  b=VG+w61xTgp3FXOVV2vorRb2ehfI8Tmq2ucDB2SjcO37IHALYMjsJJl9K
-   tE8zWRKgmWerLy65j0oeKRP5IS+nGkQJZeo3vTD3LBd8M7QQMMeN05G9G
-   GNPPhWAqj1wu98I8gZMifiN4JAj6d/AQhibao/YlL5z6Lk0PLX//g2o52
-   fZsCBCgwG6eKrdV0y+75BPDI3W/o1fDTNl/K+JFZusYeyiXiuZtb7KK4q
-   LMQjMeRNAhxoAkIIGielnzB8iRnP0vX2+XpVK8uzuvpulBYmhCJCW8s6R
-   eT1MlCvi4Y+TMdqkLCz6Rfue2p04+hUX78Y08nf3yjQcPZOP3hZ4W7nVM
-   g==;
-X-CSE-ConnectionGUID: h+aYAs8iSseS03QJFw7kCw==
-X-CSE-MsgGUID: jSd1vJmrQUyvvp0Tt+4z6w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11733"; a="85602415"
-X-IronPort-AV: E=Sophos;i="6.23,129,1770624000"; 
-   d="scan'208";a="85602415"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2026 01:16:20 -0700
-X-CSE-ConnectionGUID: KcOGHWmzS4ySIdEvVBXEOg==
-X-CSE-MsgGUID: bnCQ+ctGTx+SvZsKF8aOnw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,129,1770624000"; 
-   d="scan'208";a="220294281"
-Received: from igk-lkp-server01.igk.intel.com (HELO 9958d990ccf2) ([10.211.93.152])
-  by fmviesa008.fm.intel.com with ESMTP; 19 Mar 2026 01:16:18 -0700
-Received: from kbuild by 9958d990ccf2 with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1w38YB-000000004nd-3SRY;
-	Thu, 19 Mar 2026 08:16:15 +0000
-Date: Thu, 19 Mar 2026 09:15:18 +0100
-From: kernel test robot <lkp@intel.com>
-To: Vyacheslav Yurkov via B4 Relay <devnull+V.Yurkov.EXT.bruker.com@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	Vyacheslav Yurkov <uvv.mail@gmail.com>
-Subject: Re: [PATCH 1/2] clk: Add clock controller guard
-Message-ID: <202603190902.jG6JLJIo-lkp@intel.com>
-References: <20260318-feature-clock-guard-v1-1-6137cb4084b7@bruker.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cSw7W9ZB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74D94C2BCB0;
+	Thu, 19 Mar 2026 08:25:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773908745;
+	bh=z+TpFp6nPNBq4Ax+izUKlEte0F/VUwfkflI1noqu3+0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cSw7W9ZBGkxkV7OtU+THE13NqQf5fze8xwAoHQspODcTz/JbBnflomepscOdBBEAq
+	 ZPzpOtThiDvc33MyTv3TH7n+GqhQeArEwl5WPNVkbrI0OowDo88HENlGfSOTGKWh+T
+	 rehUeFXWH/A9YCVy9hdGfe+s0di9ku2drQY6bILA04lYDumaQMQCuM9vdziSWOSLWM
+	 Bos+qKhUB/LlAieN8oAKgBd9JS3ih1Nb7jRmEPoalnZ4lJ16yDHYroCsf9k3KDZaAU
+	 hqsFsOCa4IusOFBZ61B5QrY5Vyj/RLDH2B9Sr/vmfO6mDQIA1Be62FR1bB6j4nlU5Z
+	 tSDYeHxUDnrQQ==
+Date: Thu, 19 Mar 2026 09:25:42 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Manikandan Muralidharan <manikandan.m@microchip.com>
+Cc: alexandre.belloni@bootlin.com, Frank.Li@nxp.com, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, nicolas.ferre@microchip.com, 
+	claudiu.beznea@tuxon.dev, linux@armlinux.org.uk, mturquette@baylibre.com, sboyd@kernel.org, 
+	ardb@kernel.org, martin.petersen@oracle.com, ebiggers@google.com, tytso@mit.edu, 
+	cristian.birsan@microchip.com, adrian.hunter@intel.com, jarkko.nikula@linux.intel.com, 
+	kees@kernel.org, npitre@baylibre.com, linux-i3c@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 1/5] dt-bindings: i3c: mipi-i3c-hci: add Microchip
+ SAMA7D65 compatible
+Message-ID: <20260319-witty-gopher-of-teaching-b8c00e@quoll>
+References: <20260318055230.307030-1-manikandan.m@microchip.com>
+ <20260318055230.307030-2-manikandan.m@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260318-feature-clock-guard-v1-1-6137cb4084b7@bruker.com>
+In-Reply-To: <20260318055230.307030-2-manikandan.m@microchip.com>
 
-Hi Vyacheslav,
+On Wed, Mar 18, 2026 at 11:22:26AM +0530, Manikandan Muralidharan wrote:
+> Add the microchip,sama7d65-i3c-hci compatible string to the MIPI I3C
+> HCI binding. The Microchip SAMA7D65 I3C controller is based on the
+> MIPI HCI specification but requires two clocks, so add a conditional
+> constraint when this compatible is present.
+> 
+> Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
+> ---
+> Changes in v4:
+> - Define and describe the clock in the top-level properties
+> ---
+>  .../devicetree/bindings/i3c/mipi-i3c-hci.yaml | 26 ++++++++++++++++---
+>  1 file changed, 22 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/i3c/mipi-i3c-hci.yaml b/Documentation/devicetree/bindings/i3c/mipi-i3c-hci.yaml
+> index 39bb1a1784c9..a946a8920046 100644
+> --- a/Documentation/devicetree/bindings/i3c/mipi-i3c-hci.yaml
+> +++ b/Documentation/devicetree/bindings/i3c/mipi-i3c-hci.yaml
+> @@ -9,9 +9,6 @@ title: MIPI I3C HCI
+>  maintainers:
+>    - Nicolas Pitre <npitre@baylibre.com>
+>  
+> -allOf:
+> -  - $ref: /schemas/i3c/i3c.yaml#
+> -
+>  description: |
+>    MIPI I3C Host Controller Interface
+>  
+> @@ -28,7 +25,13 @@ description: |
+>  
+>  properties:
+>    compatible:
+> -    const: mipi-i3c-hci
+> +    enum:
+> +      - mipi-i3c-hci
+> +      - microchip,sama7d65-i3c-hci
+> +  clocks:
+> +    items:
+> +      - description: Peripheral bus clock
+> +      - description: System Generic clock
 
-kernel test robot noticed the following build warnings:
+Missing blank lines. Also, clocks go after reg.
 
-[auto build test WARNING on 4f3df2e5ea69f5717d2721922aff263c31957548]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Vyacheslav-Yurkov-via-B4-Relay/clk-Add-clock-controller-guard/20260319-151001
-base:   4f3df2e5ea69f5717d2721922aff263c31957548
-patch link:    https://lore.kernel.org/r/20260318-feature-clock-guard-v1-1-6137cb4084b7%40bruker.com
-patch subject: [PATCH 1/2] clk: Add clock controller guard
-reproduce: (https://download.01.org/0day-ci/archive/20260319/202603190902.jG6JLJIo-lkp@intel.com/reproduce)
+>    reg:
+>      maxItems: 1
+>    interrupts:
+> @@ -39,6 +42,21 @@ required:
+>    - reg
+>    - interrupts
+>  
+> +allOf:
+> +  - $ref: /schemas/i3c/i3c.yaml#
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: microchip,sama7d65-i3c-hci
+> +    then:
+> +      properties:
+> +        clocks:
+> +          minItems: 2
+> +          maxItems: 2
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202603190902.jG6JLJIo-lkp@intel.com/
+Drop, pointless. You already said in top-level they are exactly two
+items.
 
-versioncheck warnings: (new ones prefixed by >>)
-   INFO PATH=/opt/cross/rustc-1.88.0-bindgen-0.72.1/cargo/bin:/opt/cross/clang-20/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-   /usr/bin/timeout -k 100 3h /usr/bin/make KCFLAGS=\ -fno-crash-diagnostics\ -Wno-error=return-type\ -Wreturn-type\ -funsigned-char\ -Wundef\ -falign-functions=64 W=1 --keep-going LLVM=1 -j32 ARCH=x86_64 versioncheck 
-   find ./* \( -name SCCS -o -name BitKeeper -o -name .svn -o -name CVS -o -name .pc -o -name .hg -o -name .git \) -prune -o \
-   	-name '*.[hcS]' -type f -print | sort \
-   	| xargs perl -w ./scripts/checkversion.pl
->> ./drivers/clk/clkctrl-guard.c: 16 linux/version.h not needed.
-   ./samples/bpf/spintest.bpf.c: 8 linux/version.h not needed.
-   ./tools/lib/bpf/bpf_helpers.h: 446: need linux/version.h
-   ./tools/testing/selftests/bpf/progs/dev_cgroup.c: 9 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/netcnt_prog.c: 3 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/test_map_lock.c: 4 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/test_send_signal_kern.c: 4 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/test_spin_lock.c: 4 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/test_tcp_estats.c: 37 linux/version.h not needed.
-   ./tools/testing/selftests/wireguard/qemu/init.c: 27 linux/version.h not needed.
+> +      required:
+> +        - clocks
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+else - clocks: false. See example schema. Or explain in the commit msg
+why existing compatible gets clocks now.
+
+Best regards,
+Krzysztof
+
