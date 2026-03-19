@@ -1,63 +1,63 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E58653D34BD
-	for <linux-clk@vger.kernel.org>; Thu, 19 Mar 2026 12:51:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0BD3D3CF6
+	for <linux-clk@vger.kernel.org>; Thu, 19 Mar 2026 12:51:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773924713; cv=none; b=pLWnIF33jP4LGXTkgCFFd9jjPec+b8JH3b1hmiUZHD9WsQcZ7tNDP7xabOZ3x8W7lWfDMN7xol/JHLLQhK+3sBAJEkvm8u8I++4blDC3RpOIt+XAbD+N5J5AiyWHhe0rpJSDgNOy8ysAqeZq1BLZEp/+xqlG2jPV9ZBsKZXH3BI=
+	t=1773924714; cv=none; b=hi42ax9ndaJm1qiF5R4oEhpCEWNSwYgvZ88LOCTHzpP9+fQvEHwaRbn7shZSfbe6M91o9s7O/VNc7Gu5PVklmfkfqlSLa4H5X8CsyGhOan0w1IcZKFwXuK1u/OYu+S/TN+t/Dp2A/EGx9I69vRxostupUzJcxgOonGN5V1pbhtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773924713; c=relaxed/simple;
-	bh=13nlmgKUi2L3SFuhrtpRQP7Xi9vDHvMQ4eDV9H5RuXE=;
+	s=arc-20240116; t=1773924714; c=relaxed/simple;
+	bh=p1Dy5QwacmRT/b3H3p4y11qC+z1schtfyshS1B+/Zb0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oDNDG2VrDX/FmfKhB027a92jXpCX3HgHv2RV1K9GIJ8Xfsa/ulDhK7DpDMR/foNcgjWEi92gXiwkkOuTAtgGPS4Rn5zmds85tLgR++WPu1zbmFSam08N75KraTNF7CuikQR51x/kXvvOC9eoAd2X6BTISrTPPevupoMfoQFDd9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GyTogDT/; arc=none smtp.client-ip=209.85.128.47
+	 MIME-Version; b=pmk5QZdbSJgdB9a5tK/Ep0xMqEReMrADHv+awKKxfNFWtKUnTqJxolsRaKvcDcms1wy1GtvMc/qFmENiFJIHMYFEb+f22YD6nz9QnoX8PPZnk27dMivoRgO34RVigCbfJ6nS0oI51nVqONHzSb/td6GPcruUlskp2EE0lVPCfYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mA1lclRx; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GyTogDT/"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4852a9c6309so9161355e9.0
-        for <linux-clk@vger.kernel.org>; Thu, 19 Mar 2026 05:51:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mA1lclRx"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-439cd6b09f8so652899f8f.3
+        for <linux-clk@vger.kernel.org>; Thu, 19 Mar 2026 05:51:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773924708; x=1774529508; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1773924710; x=1774529510; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1IJjVj2MnHDjyrhWL7FSsTysjS0+QIuDubq260+aLGQ=;
-        b=GyTogDT/gNQG0a+u5ye2DWAdqaF36U1mM28u+WiABcrMMwQbpZFyZSLluaXzybm1oo
-         gWWPl8+8WSaSJVjoAqr/SAh+rQIqSKXPuANHeRz38CG6vIGNrhaD9MmqNIbBWm4q159C
-         769kO4DjNMsOxoNptGx/uCILMq/OJcoi+LfxDe4t5cnEOnn647WHjczYmphf02eK7llo
-         ZGrrKOWoJXO3ogPN7/siNxrOK/zsZlpUD3NkfO3Yi2gHEmXImOmuTu+mUK+4I/G5/Yjc
-         vKJszAWr6u49jTyq0NI5spfVJ9vs/RLmJMnCLQCVO20DO1ItHUD0JuCltPSjKuf3BRVe
-         dy3A==
+        bh=dpin9fgTSd6+Bb+khmyQR5GOT1G9JWW0tiZ2kKEgCN8=;
+        b=mA1lclRx0l5QRBMUjfpEfV5KRNAmF2cRlBKRUK+Fq5EfJ2KlfZEMiE8IjzIc4WSBFX
+         te9/eeaqyuV3WhZRRIrXarpUIihqLyg3MNfW++glTP5veO0Yo1QdsM/Y8bjsxtC7+tsP
+         sLGX1nabOE06/erqET9U1G2SER2eMoIRKVepa4U/CM1FQ39ik/oMYqWKAkD6GyF3SlB0
+         +l+OkuTI3Ab3GvFTpnJqcC4jJU/h2gnydNjWrc40c05HmOEWjJq5QfwA55XkL9b3qgyX
+         SbT5FKWtzMWZvCnLj3KYTWMT19uEkDfAC0tyac9InmKOL35uTvY+s7jeSIHsXPdIg66Q
+         rIiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773924708; x=1774529508;
+        d=1e100.net; s=20251104; t=1773924710; x=1774529510;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=1IJjVj2MnHDjyrhWL7FSsTysjS0+QIuDubq260+aLGQ=;
-        b=ljn5uDQB3IzD7zBeWi5M0PNLYHzG/LBxI7PA+Q50Cghowe3SsDzRZTsk+CRbOlkA6x
-         +Zr3K9LKtjBgbPq/tr4/H+3TXAIu4LfC7796i7hMbqG5eWasEZzURqOgc5ovR+Kgygiv
-         tJArWEoYkxw6r/q1/aXSSfW497ZrOH1bhgypf2l4h2b9V8LrLIEotzZYN5/TcDYpD6hv
-         NO7pbPuHWR6b/oPuxEYLZyeB1do0fpepLgKyQfyIrhmH/BgtFB+wTmeO5XnXExInQSZn
-         1oYdVazMHvgrTYNaGkXwkmm3I1cTGT245aVtZvsH4INNCsO9kttNh8n4zzGSAiAx2gAb
-         nPGg==
-X-Forwarded-Encrypted: i=1; AJvYcCU5XekMZpxhK+EwIoYfVoX8urn+1ikbgHDiUkiqTv6pv1ADmLk8K3KNoTvq91TzalzGQCvkoO+60u4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+HsHahSP9rcbXP5UOKdfdbgnR9E+0H1sMTagO1LfppNcjFGtg
-	bTU3VWC8wpCWJn27C4e3zm8vZtbnwYFPzLE+Enh2Y8MIp9PcE7TzvME5
-X-Gm-Gg: ATEYQzwdYaTZm3MZ5tIbympOG/hd3uyPZQ3rcfEL6UqCEYTAD4o/kOf5nm968qp3rAj
-	bYX3gxIW2a1RFm2tT+yCnwz/y3Fc3Yvbes6GZtOEApgcNLEzGzPbB5daa9s+qnl8p/0XPkQbTgf
-	bfwr4yOUgQ05j5fEFzKtK8VD2vE2H2Si/dqPUSgpb1rHX2n/9pg9SCKQPEVzyTt8FFr34eo8CsT
-	M9m56GXybX4wl5KTzy8WSp8tgXhdcJ78rjtDzfWGZk8ObKsn9h4boHWUR8EZXg0zBGacJR7Ra3k
-	hg6Q8CCuJm/rl2V6KKTQNkoFll9UT/fR6Ybl5VvkKvpvmmngfSEESO/oKODlzMm0Qv6oq5Fjxr8
-	S1JGQUaJrckkwTlLIhgSmtzCEnG0mBubdV+qdSS2mLrHsJQFJ5dC/4P6X9mJd2OQAxX3CIKBJ05
-	73DPL4z47xkNaDsjjC408mpGFZzqzlzmg=
-X-Received: by 2002:a05:600c:64c5:b0:486:fcdf:c065 with SMTP id 5b1f17b1804b1-486fcdfc16dmr16482005e9.27.1773924707968;
-        Thu, 19 Mar 2026 05:51:47 -0700 (PDT)
+        bh=dpin9fgTSd6+Bb+khmyQR5GOT1G9JWW0tiZ2kKEgCN8=;
+        b=E5yNQeOP5eqXWi3r/R/gUoMHXrhHpiYKvzNBVfyVx+5Jr64eS/TGXodxCCUIIHkqCi
+         4i/9m7n52twrrKFJGFYF50B/0ql6016LlOORQSSgQSmaNPQ6Yol0eQmiCj2vdrskoZoH
+         GxRHPM/qGPUdHl5/QHuKYfG7coFM/cZYRyd9hpwDU6FJQy9Inz7INVsuTZP2XtATs5bp
+         wgNolRzFMsy9ox2YknYWuF5sH0h0caaak8eqVBsulhpHQ7Ci/NJUFay6Oezxe7kgAV5s
+         q3GvaBhMp+3LIzDM+QReaArDtDtnsc0A3ATRzYw6rco7RLZP4zMx42OiDYlEyple3xlz
+         84dw==
+X-Forwarded-Encrypted: i=1; AJvYcCWThpED6lJW0jeqnW6YIh9H9E47unVN5p/POF9KrPPKZm8xapowamQBS+MYvTXdHP0BehOcZBLRGz8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSpxHt+voDZtSBqQTX1MY/B/AXzkfJmgx0LL+ajzTD0BqyKVXW
+	qa/MeDdSAGq1Y+xexE7X0oyiRdHZPOEKr+C6argmOpGTJPaRI6d12Lbr
+X-Gm-Gg: ATEYQzzF1VdHGKeUUcp8ciD09mQw1TAvj/NWHt+S+Dx2Avhk3//QxkyMvh8NMyFmyk+
+	Hbx1NhJN/8XDXFZ+mbn1Lldf3RZDzvpElnwRM4ra8NxoJjWVlU3+4xUvIh4EtRIwNyh5XNzKvID
+	Nbhf6PEk8II841OAFC9m7gkC6wMJPPHxFhxi1BEv24ZRO0hC8SAT79O6j4krM36QIrEStvh0XTV
+	eJUzAV9gHreva8X2p2VSxxwO0H2x5OW1YrLb25Aj6RRUZ6kQS3Zd8QCzgYSEq1fo23V0Sf3F0n+
+	DW9xWu/XpT23yn2gM1mmdIwjUchOxncQOP6ieHCRdg+HaqFm+k3Sq0R4fIKCoJQr4Gnr0g3GrEq
+	uBveVttJe/Le7DY1y8icG28pkMuS1k2piyYoLFtL757zlxDbGEcnDdlWMYRuNw/YTDebFKzx5Id
+	t8rayrbHepjJ22isHf5HIrBbNdoTP5Uzg=
+X-Received: by 2002:a05:600c:4e42:b0:480:1e40:3d2 with SMTP id 5b1f17b1804b1-486f446359emr111081835e9.29.1773924709573;
+        Thu, 19 Mar 2026 05:51:49 -0700 (PDT)
 Received: from biju.lan ([2a00:23c4:a758:8a01:8326:7b31:bf82:d2d0])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-486f4bc96c6sm72382035e9.5.2026.03.19.05.51.47
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-486f4bc96c6sm72382035e9.5.2026.03.19.05.51.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Mar 2026 05:51:47 -0700 (PDT)
+        Thu, 19 Mar 2026 05:51:49 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -70,9 +70,9 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	linux-kernel@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v6 02/10] clk: renesas: rzg2l-cpg: Add support for critical resets
-Date: Thu, 19 Mar 2026 12:51:26 +0000
-Message-ID: <20260319125143.230377-3-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v6 04/10] clk: renesas: rzg2l-cpg: Add rzg2l_mod_clock_init_mstop_helper()
+Date: Thu, 19 Mar 2026 12:51:28 +0000
+Message-ID: <20260319125143.230377-5-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260319125143.230377-1-biju.das.jz@bp.renesas.com>
 References: <20260319125143.230377-1-biju.das.jz@bp.renesas.com>
@@ -86,126 +86,63 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Some reset lines must remain deasserted at all times after boot, as
-asserting them would disable critical system functionality with no owning
-driver to restore them. This mirrors the existing crit_mod_clks mechanism
-which protects critical module clocks from being disabled.
+Refactor the mstop initialisation logic in rzg2l_mod_clock_init_mstop()
+into a dedicated helper function rzg2l_mod_clock_init_mstop_helper(). This
+decouples the logic for setting module stop state on disabled clocks from
+the iteration loop, allowing it to be reused during resume to re-enable
+critical clocks.
 
-On RZ/G2L family SoCs, the DMA reset must be remain deasserted for routing
-some peripheral interrupts to CPU.
+No functional change.
 
-Add crit_resets and num_crit_resets fields to struct rzg2l_cpg_info to
-allow SoC-specific data tables to declare reset IDs that must never be
-asserted.
-
-Introduce rzg2l_cpg_deassert_crit_resets() to iterate over all critical
-resets and deassert them. Call it both at probe time and during resume to
-ensure critical peripherals are held out of reset after power-on and
-suspend/resume cycles.
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
-v5->v6:
- * Moved loop variable declaration inside for loops in
-   __rzg2l_cpg_assert() and rzg2l_cpg_deassert_crit_resets()
- * Collected tag
-v4->v5:
- * No change
-v4:
- * Moved this patch from [1] as it is boot-dependent
- [1] https://lore.kernel.org/all/20260306134228.871815-1-biju.das.jz@bp.renesas.com/
+v6:
+ * New patch
 ---
- drivers/clk/renesas/rzg2l-cpg.c | 30 ++++++++++++++++++++++++++++++
- drivers/clk/renesas/rzg2l-cpg.h |  7 +++++++
- 2 files changed, 37 insertions(+)
+ drivers/clk/renesas/rzg2l-cpg.c | 24 +++++++++++++++---------
+ 1 file changed, 15 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index c0584bab58a3..f9e4af7f49d0 100644
+index f9e4af7f49d0..b68b0312f0e3 100644
 --- a/drivers/clk/renesas/rzg2l-cpg.c
 +++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -1765,6 +1765,13 @@ static int __rzg2l_cpg_assert(struct reset_controller_dev *rcdev,
- 	dev_dbg(rcdev->dev, "%s id:%ld offset:0x%x\n",
- 		assert ? "assert" : "deassert", id, CLK_RST_R(reg));
- 
-+	if (assert) {
-+		for (unsigned int i = 0; i < priv->info->num_crit_resets; i++) {
-+			if (id == priv->info->crit_resets[i])
-+				return 0;
-+		}
-+	}
-+
- 	if (!assert)
- 		value |= mask;
- 	writel(value, priv->base + CLK_RST_R(reg));
-@@ -1802,6 +1809,20 @@ static int rzg2l_cpg_deassert(struct reset_controller_dev *rcdev,
- 	return __rzg2l_cpg_assert(rcdev, id, false);
+@@ -1586,6 +1586,20 @@ static struct mstop *rzg2l_mod_clock_get_mstop(struct rzg2l_cpg_priv *priv, u32
+ 	return NULL;
  }
  
-+static int rzg2l_cpg_deassert_crit_resets(struct reset_controller_dev *rcdev,
-+					  const struct rzg2l_cpg_info *info)
++static void rzg2l_mod_clock_init_mstop_helper(struct rzg2l_cpg_priv *priv,
++					      struct mod_clock *clk)
 +{
-+	int ret;
-+
-+	for (unsigned int i = 0; i < info->num_crit_resets; i++) {
-+		ret = rzg2l_cpg_deassert(rcdev, info->crit_resets[i]);
-+		if (ret)
-+			return ret;
++	/*
++	 * Out of reset all modules are enabled. Set module state
++	 * in case associated clocks are disabled at probe. Otherwise
++	 * module is in invalid HW state.
++	 */
++	scoped_guard(spinlock_irqsave, &priv->rmw_lock) {
++		if (!rzg2l_mod_clock_is_enabled(&clk->hw))
++			rzg2l_mod_clock_module_set_state(clk, true);
 +	}
-+
-+	return 0;
 +}
 +
- static int rzg2l_cpg_reset(struct reset_controller_dev *rcdev,
- 			   unsigned long id)
+ static void rzg2l_mod_clock_init_mstop(struct rzg2l_cpg_priv *priv)
  {
-@@ -2051,6 +2072,10 @@ static int __init rzg2l_cpg_probe(struct platform_device *pdev)
- 	if (error)
- 		return error;
+ 	struct mod_clock *clk;
+@@ -1595,15 +1609,7 @@ static void rzg2l_mod_clock_init_mstop(struct rzg2l_cpg_priv *priv)
+ 		if (!clk->mstop)
+ 			continue;
  
-+	error = rzg2l_cpg_deassert_crit_resets(&priv->rcdev, info);
-+	if (error)
-+		return error;
-+
- 	debugfs_create_file("mstop", 0444, NULL, priv, &rzg2l_mod_clock_mstop_fops);
- 	return 0;
+-		/*
+-		 * Out of reset all modules are enabled. Set module state
+-		 * in case associated clocks are disabled at probe. Otherwise
+-		 * module is in invalid HW state.
+-		 */
+-		scoped_guard(spinlock_irqsave, &priv->rmw_lock) {
+-			if (!rzg2l_mod_clock_is_enabled(&clk->hw))
+-				rzg2l_mod_clock_module_set_state(clk, true);
+-		}
++		rzg2l_mod_clock_init_mstop_helper(priv, clk);
+ 	}
  }
-@@ -2058,6 +2083,11 @@ static int __init rzg2l_cpg_probe(struct platform_device *pdev)
- static int rzg2l_cpg_resume(struct device *dev)
- {
- 	struct rzg2l_cpg_priv *priv = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = rzg2l_cpg_deassert_crit_resets(&priv->rcdev, priv->info);
-+	if (ret)
-+		return ret;
- 
- 	rzg2l_mod_clock_init_mstop(priv);
- 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
-index 55e815be16c8..af0a003d93f7 100644
---- a/drivers/clk/renesas/rzg2l-cpg.h
-+++ b/drivers/clk/renesas/rzg2l-cpg.h
-@@ -276,6 +276,9 @@ struct rzg2l_reset {
-  * @crit_mod_clks: Array with Module Clock IDs of critical clocks that
-  *                 should not be disabled without a knowledgeable driver
-  * @num_crit_mod_clks: Number of entries in crit_mod_clks[]
-+ * @crit_resets: Array with Reset IDs of critical resets that should not be
-+ *               asserted without a knowledgeable driver
-+ * @num_crit_resets: Number of entries in crit_resets[]
-  * @has_clk_mon_regs: Flag indicating whether the SoC has CLK_MON registers
-  */
- struct rzg2l_cpg_info {
-@@ -302,6 +305,10 @@ struct rzg2l_cpg_info {
- 	const unsigned int *crit_mod_clks;
- 	unsigned int num_crit_mod_clks;
- 
-+	/* Critical Resets that should not be asserted */
-+	const unsigned int *crit_resets;
-+	unsigned int num_crit_resets;
-+
- 	bool has_clk_mon_regs;
- };
  
 -- 
 2.43.0
