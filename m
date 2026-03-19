@@ -1,173 +1,269 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC6BB30E82C
-	for <linux-clk@vger.kernel.org>; Thu, 19 Mar 2026 14:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773929637; cv=none; b=j3A59BMqfr7stXvquk5R2Izp5dj2p7YSh6ggwNVcDB7ewfuKaG6TJke3XlHZ32fl0aT0RX6keBUzsEzdmTopNbIawZ9xOKP5qNRc5/tA+DWcm5LSBYMSt6uJj45zSF4Rz0vpGNnur/1MPti0QstwlCOT9jXT+5tmuwyaxFm1gmY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773929637; c=relaxed/simple;
-	bh=4zAon2/wL1xkF183JwLxXVvEK05OvlwLI29zwOFhq2E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rzTwE6LyBzmA6JQ1f06So+hoMrdkt48sNg6riCh6W+6KzBufQYD0xJjTgTsJ8hSZYg/MbJdXOXmU50ugi2orATp/TR5wkjj+p7GrIYdV83Lcp9PjRjRmoAKu/J1eVZyxJcVso9xTv8y/z43hDuA1wrTa/Y83jgFg43ENMwX7/W4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qJFdgiFw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4jpB79yc; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OrcSAEzL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HXVk5/yP; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3052B3E1D1D
+	for <linux-clk@vger.kernel.org>; Thu, 19 Mar 2026 15:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=170.10.129.124
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773933263; cv=pass; b=APKVNDAW7mu7LbbQlVhUkQYXeQfUjCCIiSZyiorm121wuHLXmVTEwUG5pBeKQm5WMPnSTHtR3NmZ8UVOJnIh4QSllKuogBC9RvCkmwjQe3OrLcdu7I6SlJzIGUrSGWO+PGHinI0gxjFSC7+LlUPG2ZvWfD16QdBgVbnA0Y5cLXQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773933263; c=relaxed/simple;
+	bh=I898rEATnFJRZS8oK0l9dCsoQhuFpbMF0Gjd9wIK6C8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iANzXn/yeR2Wyn2UK7RZQyNkYos2AR2a/j2ip0vyUWFyDyGXAU5Pr30PqyhBj89mALtThk16ic37RhpSOdi50n845DHtJuvJW03bVDQrGgp2WFvEWI8+or15iNvMxTn0+ObQwaBAy2T1FCMH4nbvTKUF7FyPkUHy/2PON7L/3Ik=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NhpQnd1m; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=MXdVuGOc; arc=pass smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qJFdgiFw";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4jpB79yc";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OrcSAEzL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HXVk5/yP"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 233AB5BD4B;
-	Thu, 19 Mar 2026 14:13:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1773929632; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NhpQnd1m";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="MXdVuGOc"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1773933261;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4fUFXPph0d+U/6GDmGbgLZ/FXBjYuxpYsgD69WTKZEc=;
-	b=qJFdgiFwZof840urwELAyJUPmqr5R5KSb1T4rwYuc7bb8XNbCm/kv+M5FkrKSBEOM1bZiu
-	/MGyuwm/OFnFKmJm/t/Uz/+GbEcAEAQCMtEWioCbgwKOh4DWZ0qNVZOg9g66xDY+m4U+fD
-	w9Xqoe30eNI+goFz62hSwZMzWorThdA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1773929632;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4fUFXPph0d+U/6GDmGbgLZ/FXBjYuxpYsgD69WTKZEc=;
-	b=4jpB79ycXSQsxOkgtV3HKUa6Dm/vQ/wRir8pmFsiYnB6qgK3LbPe12RtulXb4tol7/E3ij
-	faYPra8B4GTfZjDQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1773929631; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4fUFXPph0d+U/6GDmGbgLZ/FXBjYuxpYsgD69WTKZEc=;
-	b=OrcSAEzL/6c4UDB40dZmtUkHL2UKN/t418W/3/WLfRE3VUYtttdOTA1LBRs2LexriSZBXr
-	IUCLAcO9QxQoLCNXA0PSitgNb7BC5cuH9t+EXroQLbXGhfbC1mTChSWj64vc6V41FfYy8R
-	mio6pb/J12e+5TPnOnmBoDRex83ce1A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1773929631;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4fUFXPph0d+U/6GDmGbgLZ/FXBjYuxpYsgD69WTKZEc=;
-	b=HXVk5/yPJtxIjyky0dtujMNvVHE9KONXRU8D1O6wb4LBxoqwDaKPYOnkGEkCrYDJmYyVOA
-	klxEA++oJw6AsaAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 14B714273B;
-	Thu, 19 Mar 2026 14:13:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id TmUEBZ8EvGlPZwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 19 Mar 2026 14:13:51 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id C850FA0B32; Thu, 19 Mar 2026 15:13:46 +0100 (CET)
-Date: Thu, 19 Mar 2026 15:13:46 +0100
-From: Jan Kara <jack@suse.cz>
-To: Philipp Hahn <phahn-oss@avm.de>
-Cc: amd-gfx@lists.freedesktop.org, apparmor@lists.ubuntu.com, 
-	bpf@vger.kernel.org, ceph-devel@vger.kernel.org, cocci@inria.fr, 
-	dm-devel@lists.linux.dev, dri-devel@lists.freedesktop.org, gfs2@lists.linux.dev, 
-	intel-gfx@lists.freedesktop.org, intel-wired-lan@lists.osuosl.org, iommu@lists.linux.dev, 
-	kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	linux-cifs@vger.kernel.org, linux-clk@vger.kernel.org, linux-erofs@lists.ozlabs.org, 
-	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-hyperv@vger.kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-mips@vger.kernel.org, 
-	linux-mm@kvack.org, linux-modules@vger.kernel.org, linux-mtd@lists.infradead.org, 
-	linux-nfs@vger.kernel.org, linux-omap@vger.kernel.org, linux-phy@lists.infradead.org, 
-	linux-pm@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org, 
-	linux-scsi@vger.kernel.org, linux-sctp@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-sh@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-trace-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, ntfs3@lists.linux.dev, 
-	samba-technical@lists.samba.org, sched-ext@lists.linux.dev, target-devel@vger.kernel.org, 
-	tipc-discussion@lists.sourceforge.net, v9fs@lists.linux.dev, Jan Kara <jack@suse.com>
-Subject: Re: [PATCH 12/61] quota: Prefer IS_ERR_OR_NULL over manual NULL check
-Message-ID: <ol2d7c5z7yfyuwo5tyfxurgqedruhr6bzmuv37bx5phhrmmoyh@4zjspbtexid3>
-References: <20260310-b4-is_err_or_null-v1-0-bd63b656022d@avm.de>
- <20260310-b4-is_err_or_null-v1-12-bd63b656022d@avm.de>
+	bh=c5r2eIqy8oBN5f5Ennk2OirN5lzwt2lI82tQuecsqsY=;
+	b=NhpQnd1m3Ggtg3T8GE8ZntcABnaLyjDlwjlyANXf6dhH7FmxBZGK+pKC7EjGEXJCUKJ3r6
+	C+eJmofWbSj7YqSSnVOr5ccOFnkGXcHSWRLWSj9TVNGElkCay/Eu9u12E23L8iMu5+xVnq
+	DWCdTTvOTEVa3nEckq/kX/ccPbZQs+w=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-351-uxY1EqReNeqAKNVxW2UPHQ-1; Thu, 19 Mar 2026 11:14:19 -0400
+X-MC-Unique: uxY1EqReNeqAKNVxW2UPHQ-1
+X-Mimecast-MFC-AGG-ID: uxY1EqReNeqAKNVxW2UPHQ_1773933258
+Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-65a11b5f24dso2675033a12.1
+        for <linux-clk@vger.kernel.org>; Thu, 19 Mar 2026 08:14:19 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1773933258; cv=none;
+        d=google.com; s=arc-20240605;
+        b=SIQbmsKFccOfvm/5mXYURGcObt183hrozcrEQIjRp47Ur+UpIiqwcjczOuW2gHPwGl
+         Q/nbflVvcktJz8bNlB66Pzh1NWNIC07Nyd+NanngJHkQU/vYnLIg7TqVfqaB126DbUKJ
+         svbiNDUzmGFDb+ee8F3jRGNShZkXJv5XCJnp7HM3LJuA/6bdhD3jvv7qZoZBu+7r5bwX
+         UvOMdf551Nmw6Q1k7rW7R0c2GsowwUfkL8hD1+mp+TRxRLvM4LH+zxT/I54Qo8wUM4gK
+         7QuMNRxStlmeaWZX02GSZbJnhO+76BzOQ7zo0oXmkREM7+0PxJra8HL1rIRlOpjK5j6m
+         C7yQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=c5r2eIqy8oBN5f5Ennk2OirN5lzwt2lI82tQuecsqsY=;
+        fh=GyZtGVpL4UNB9rlXKgp5GlO4fNeS4ug7fm2d1jQBxpU=;
+        b=Ux2gD44eDTQyfU3ycDwQ5FNZP4KzML+q9BvmlCn+w+aq8znIlnHPHkJQ2B9IUANH9c
+         5Bq43cqhAPUmChnym0+Q1ojPDWpsIqa7OQZEMkO3lbDw8Ou/eTADCO1CX+gV7Tdu9HFo
+         aKpTxyH2nOWW+mF28QcVzIGejrIq2xyqUYpWxvkzgLWtusQ6vF9Rj/v6UUAloJx9Wr7b
+         BJF4NqHpfsatfi39E6dfj59N/kivg6s40OAch+zrsSYjQGjSZ4T+IwvWNXS6Vpp6T5uC
+         zBWE6sHKN6am8i67L/S1NpUsRYXhgv2bKdFhAnvl1agh8NWByjO/4kzdtAksscIyBqWe
+         m/PA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1773933258; x=1774538058; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c5r2eIqy8oBN5f5Ennk2OirN5lzwt2lI82tQuecsqsY=;
+        b=MXdVuGOcTo9e73UNjgLo04wqPBX5BCB1v6a5/TNXw4TB9eTMH5nVuzo7cqInY3NxiN
+         iTQauthsQelKmJRLiuhjDn79LWOLx8TSKDlHgSEo3KXwI8yyCqoLpZGzEhFsh1LWY31r
+         IeiSniyxheOC+d6BWer9zVlzlsYA6X3tikiZshKVkw5veUDRs6l7iOg+H9aBuB8eHpsu
+         r0zf5e3buTXOJoa+0E8yb9mVMPFqXIV1gpAn4mWuPP6HR2o3CX3gIU8kxHIQrzsET0N6
+         wJeeg6foGvZUTn1ubGgeN8JuJHIUXGqUpBMpNcUSH/fr5VA0aWYh8llHEUi2mk578a/b
+         juxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1773933258; x=1774538058;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=c5r2eIqy8oBN5f5Ennk2OirN5lzwt2lI82tQuecsqsY=;
+        b=TunqAPmJiU/m8hVN2AT9pDj5PxJecafHJYCkW72Rmc5TXSkt84nacYQrm/ByujuxVV
+         ktEPfVk0EtXwZfZgegzJ0JIx0zvvIGP2kBlRR3viD5SGAeFFNvbVMKwDO6hDD+XDpHL6
+         YtiQX+A/X1M2niu47IMq+z72KZFOs7G3Ey/ciIhbHRc8tJOnwhkzbqbYXHJkVAJCnB50
+         wyKyajnY7fAMaejMFgfWV1rSUYwSDkz75XyWQCmdeq8zOn0grev5MvDE9CbwYWykqXce
+         ExvD7rD4Q4CmCXr+a8wTR2l0KVzk3NpNJWXJcEl5G9O0n4wscCC89hCLNO3h7kfQr0H+
+         7v6w==
+X-Forwarded-Encrypted: i=1; AJvYcCXNMSQRRHVStdEQEA8JVxorrg8Uw4ZBVAZasejXosXlPnVxsw4Oxxws+BeCfsvcnr+QokMmPP0X8N0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTwq2efCyO1SEvQ1x5xmJCz5Y+a5q+q9dlyGh/f+W3ipMdo+kI
+	njk9PKP3TMSZ/RjBDQtYPWFe88xr6+FjQNrcQqJgNjxorqTzJtkdYELVMEJK/1LyZnHpg4OobuO
+	6bpOR0AZUG+SMRSNsz2ZbUJgTPIUqE/h8gy/O8H7sIErxg8u3/C8OyTBapG43BK3lFEv86MqRtn
+	3S6bVLsftjclZxqcXD2H784XZ+1pjPmxkYggOj
+X-Gm-Gg: ATEYQzxY0SXh7KF1yXWs9JINDFzJ9QIsj1UmbmmRjs9V1Nxqu3iKOOLBrexDZAUyxUx
+	hnbW8tuQKzSq3XyWK47n5JRmTtY11SfQQbOktUf0fES8qHGxzHIjfRXo2Yb+2n4KTEU9NFMvSxw
+	c73iHYqgJSiDyerDduyvcdgLcAWvGqtGMohm7vX/AlAEj9fmoKLfqYuLMjkobUuot6+BnEP/yDD
+	G13Mw==
+X-Received: by 2002:a17:907:3f14:b0:b97:ea19:341c with SMTP id a640c23a62f3a-b980f955e2fmr284791366b.7.1773933258381;
+        Thu, 19 Mar 2026 08:14:18 -0700 (PDT)
+X-Received: by 2002:a17:907:3f14:b0:b97:ea19:341c with SMTP id
+ a640c23a62f3a-b980f955e2fmr284789066b.7.1773933257865; Thu, 19 Mar 2026
+ 08:14:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260310-b4-is_err_or_null-v1-12-bd63b656022d@avm.de>
-X-Spam-Score: -2.30
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLck44p98ib5bmd95s13xxw3gp)];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCPT_COUNT_GT_50(0.00)[55];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Flag: NO
+References: <20260313-clk-scaling-v6-0-ce89968c5247@redhat.com>
+ <20260313-clk-scaling-v6-4-ce89968c5247@redhat.com> <20260319-enchanted-flying-sparrow-5a6446@houat>
+In-Reply-To: <20260319-enchanted-flying-sparrow-5a6446@houat>
+From: Brian Masney <bmasney@redhat.com>
+Date: Thu, 19 Mar 2026 11:14:06 -0400
+X-Gm-Features: AaiRm52w9Qb_tMhAykKjYgdNYKlBo0X5b471-vgAZuPWkrdW8NOkGu2nw1GrLUA
+Message-ID: <CABx5tq+Tsui72GkktpY=ZxKw5nvrQhgXe9gKF8B3ugjbK-Eb=Q@mail.gmail.com>
+Subject: Re: [PATCH v6 4/7] clk: test: introduce additional test case showing
+ sibling clock rate change
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Alberto Ruiz <aruiz@redhat.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue 10-03-26 12:48:38, Philipp Hahn wrote:
-> Prefer using IS_ERR_OR_NULL() over using IS_ERR() and a manual NULL
-> check.
-> 
-> Change generated with coccinelle.
-> 
-> To: Jan Kara <jack@suse.com>
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Philipp Hahn <phahn-oss@avm.de>
+On Thu, Mar 19, 2026 at 5:22=E2=80=AFAM Maxime Ripard <mripard@kernel.org> =
+wrote:
+> On Fri, Mar 13, 2026 at 12:43:11PM -0400, Brian Masney wrote:
+> > Add a test case where the parent clk rate is set to a rate that's
+> > acceptable to both children, however the sibling clk rate is affected.
+> >
+> > The tests in this commit use the following simplified clk tree with
+> > the initial state:
+> >
+> >                      parent
+> >                      24 MHz
+> >                     /      \
+> >               child1        child2
+> >               24 MHz        24 MHz
+> >
+> > child1 and child2 both divider-only clocks that have CLK_SET_RATE_PAREN=
+T
+> > set, and the parent is capable of achieving any rate.
+> >
+> > child1 requests 32 MHz, and the tree should end up with the state:
+> >
+> >                      parent
+> >                      96 MHz
+> >                     /      \
+> >               child1        child2
+> >               32 MHz        24 MHz
+> >
+> > However, child2 ends up with it's parent rate due to the way the clk
+> > core currently calculates handles rate changes.
+> >
+> >                      parent
+> >                      96 MHz
+> >                     /      \
+> >               child1        child2
+> >               32 MHz        96 MHz
+> >                             ^^^^^^
+> >                             Incorrect. Should be 24 MHz.
+> >
+> > Let's document this behavior with a kunit test since some boards are
+> > unknowingly dependent on this behavior.
+> >
+> > Link: https://lore.kernel.org/linux-clk/aUSWU7UymULCXOeF@redhat.com/
+> > Link: https://lpc.events/event/19/contributions/2152/
+> > Signed-off-by: Brian Masney <bmasney@redhat.com>
+> > ---
+> >  drivers/clk/clk_test.c | 61 ++++++++++++++++++++++++++++++++++++++++++=
+++++++++
+> >  1 file changed, 61 insertions(+)
+> >
+> > diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+> > index 325da7c84ab2ecdcf6b7a023ce4c2c4ef2d49862..40bc01a0259d8d49ca4c198=
+3b6c10a3684a95f0b 100644
+> > --- a/drivers/clk/clk_test.c
+> > +++ b/drivers/clk/clk_test.c
+> > @@ -181,6 +181,26 @@ static const struct clk_ops clk_dummy_div_ops =3D =
+{
+> >       .set_rate =3D clk_dummy_div_set_rate,
+> >  };
+> >
+> > +static int clk_dummy_div_lcm_determine_rate(struct clk_hw *hw,
+> > +                                         struct clk_rate_request *req)
+> > +{
+> > +     struct clk_hw *parent_hw =3D clk_hw_get_parent(hw);
+> > +
+> > +     if (!(clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) && req->best_pa=
+rent_rate < req->rate)
+> > +             return -EINVAL;
+> > +
+> > +     req->best_parent_rate =3D clk_hw_get_children_lcm(parent_hw, hw, =
+req->rate);
+> > +     req->best_parent_hw =3D parent_hw;
+> > +
+> > +     return divider_determine_rate(hw, req, NULL, CLK_DUMMY_DIV_WIDTH,=
+ CLK_DUMMY_DIV_FLAGS);
+> > +}
+> > +
+> > +static const struct clk_ops clk_dummy_div_lcm_ops =3D {
+> > +     .recalc_rate =3D clk_dummy_div_recalc_rate,
+> > +     .determine_rate =3D clk_dummy_div_lcm_determine_rate,
+> > +     .set_rate =3D clk_dummy_div_set_rate,
+> > +};
+> > +
+> >  struct clk_multiple_parent_ctx {
+> >       struct clk_dummy_context parents_ctx[2];
+> >       struct clk_hw hw;
+> > @@ -677,6 +697,18 @@ clk_rate_change_sibling_div_div_test_regular_ops_p=
+arams[] =3D {
+> >  KUNIT_ARRAY_PARAM_DESC(clk_rate_change_sibling_div_div_test_regular_op=
+s,
+> >                      clk_rate_change_sibling_div_div_test_regular_ops_p=
+arams, desc)
+> >
+> > +static const struct clk_rate_change_sibling_div_div_test_param
+> > +clk_rate_change_sibling_div_div_test_lcm_ops_v1_params[] =3D {
+> > +     {
+> > +             .desc =3D "lcm_ops_v1",
+> > +             .ops =3D &clk_dummy_div_lcm_ops,
+> > +             .extra_child_flags =3D 0,
+> > +     },
+> > +};
+> > +
+> > +KUNIT_ARRAY_PARAM_DESC(clk_rate_change_sibling_div_div_test_lcm_ops_v1=
+,
+> > +                    clk_rate_change_sibling_div_div_test_lcm_ops_v1_pa=
+rams, desc)
+> > +
+> >  static int clk_rate_change_sibling_div_div_test_init(struct kunit *tes=
+t)
+> >  {
+> >       const struct clk_rate_change_sibling_div_div_test_param *param =
+=3D test->param_value;
+> > @@ -777,11 +809,40 @@ static void clk_test_rate_change_sibling_div_div_=
+2_v1(struct kunit *test)
+> >       KUNIT_EXPECT_EQ(test, ctx->child2.div, 1);
+> >  }
+> >
+> > +/*
+> > + * Test that, for a parent with two divider-only children with CLK_SET=
+_RATE_PARENT
+> > + * set and one requests a rate incompatible with the existing parent r=
+ate, the
+> > + * sibling rate is also affected. This preserves existing behavior in =
+the clk
+> > + * core that some drivers may be unknowingly dependent on.
+> > + */
+>
+> This description is identical to the one for
+> clk_test_rate_change_sibling_div_div_2_v1(), so it's not clear to me
+> what the difference between those two tests are.
 
-Thanks for the patch but frankly I find the original variant clearer wrt
-what is going on. So I prefer to keep the code as is.
+I put this test here to demonstrate that there are actually two
+separate items that need to be addressed in order to fix the clk
+scaling issue. So basically in the series:
 
-								Honza
+- Patch 2 demonstrates the current behavior of the clk core with
+today's behavior with the v1 scaling.
+- Patches 3/4 (This patch): introduce LCM for the parent rate, and a
+test showing the current behavior with this one change. This
+demonstrates that this change alone is not enough since the sibling
+rate is squashed and set to the parent rate.
+- Patches 5/6/7: add the v2 negotiation flag, along with a test
+showing how the two changes together give the desired behavior.
 
-> ---
->  fs/quota/quota.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/quota/quota.c b/fs/quota/quota.c
-> index 33bacd70758007129e0375bab44d7431195ec441..2e09fc247d0cf45b9e83a4f8a0be7ea694c8c2a1 100644
-> --- a/fs/quota/quota.c
-> +++ b/fs/quota/quota.c
-> @@ -965,7 +965,7 @@ SYSCALL_DEFINE4(quotactl, unsigned int, cmd, const char __user *, special,
->  	else
->  		drop_super_exclusive(sb);
->  out:
-> -	if (pathp && !IS_ERR(pathp))
-> +	if (!IS_ERR_OR_NULL(pathp))
->  		path_put(pathp);
->  	return ret;
->  }
-> 
-> -- 
-> 2.43.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+I'll update the test description here.
+
+Also, thank you for all of the feedback.
+
+Brian
+
+
+Brian
+
