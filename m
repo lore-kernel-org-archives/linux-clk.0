@@ -1,176 +1,137 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+Received: from fr5000-r.dnsiaas.com (fr5000-r.dnsiaas.com [92.42.104.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725AC39DBEF;
-	Thu, 19 Mar 2026 07:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A595A39A7E1;
+	Thu, 19 Mar 2026 07:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.42.104.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773903857; cv=none; b=t9xPAzwVhSq9TilIdAmU49E5o1KGPqnKxbMkoxTPLOBujHmCky+LPCGoaDA9JK/0IEe6ihxP2RNE4j8SzC2GDTp6eTvh+6+5Hd1hL77PbyIz1qLWi4kEW13Jz126qvxqNk/H3wezt29BD4BJePFQ+kdDDU7vK0bqHoZWLoqh7b0=
+	t=1773905653; cv=none; b=K0kRBL/R7OnRcpiNs7//Pz6DC4baob+sJmoG6BIVUDSFfevrHJ1G6GFaDlleNkQZcJv9wWabL1EzN1h08vl/v4Wc8ZrIl46UyokxhpgvEbeDET9gOp1aN5uwCd2wFs5RwqG80VYRKNkmjSle8jTQcaAueST8lo95FTRaDy+UNrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773903857; c=relaxed/simple;
-	bh=XWRb4tG0WfjZbF3L2bUwVIdS+/4y/LWaL3SwWGs47Z8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XR298H+sR6LorSneqWhDNxNnLDScjaUUIo3D/6A8YuAm3SSIn2ff6P+hVCBIV1Wx5FVdavaWIVQIP+gMKo6YGHExwa6EyMDVvH38gbxpWIPHJ+yNrinJJb8NCj/htEuDSbBWHbXyDSGvyqh3DJeazCmSP/Y1+EgmLV5QCsGmobA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cFNRpJXf; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1773905653; c=relaxed/simple;
+	bh=hwWOzRdVjXzUuETpCCZtWnOEr3ju3ZD/7cJHhaC2XaY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hHUiB67dcwinocJRPqhrIJ5AiA2mn00o6Pg2A8rP7Sz5yrxSbXzx9zLJNSI0Spl1PDfSyQi3MJv6dSbySl1nQRgrncDHaDYET2/XeDPv9oSnLrT8lgtK5TM0ih8hKQCOnkzq2pOgf1KO2s+LtqqZqAavR7EB7MWXV5XUKIkntkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=superkali.me; spf=fail smtp.mailfrom=superkali.me; dkim=pass (2048-bit key) header.d=superkali.me header.i=@superkali.me header.b=HuhqpKns; arc=none smtp.client-ip=92.42.104.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=superkali.me
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=superkali.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cFNRpJXf"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1773903854; x=1805439854;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=XWRb4tG0WfjZbF3L2bUwVIdS+/4y/LWaL3SwWGs47Z8=;
-  b=cFNRpJXffnxMDHZ/rLN7fPnVMJHtYOy3KhcIN/9nrwaPhUVFjtdnlCuq
-   rcOMHJ+01yAj6LqyZpFNua7DgLFeaVTuTWZiJp3dYtDFn/oPNfaEKV6i9
-   uPEUXrxZqeIDlnb0B7wHnv4XSE3zoE7cuTl16VOWyiXUE6s/KwOxO08pP
-   BHU5w3oEzAMVYma3uvQyowYc0c6VY73AJqaJCiRGM8KcZi+QyLn0YAgIp
-   yU/AxkWyuMGzHvAC6vhof8rvaVhnC+UdRTjCkvoQYduqmfOTFCWlHnimn
-   IOZ8ZbhxFg0BwLfH8bgPjGmQBW/lmezUuB8TywteyhV+xdZuJnQWMDMuE
-   Q==;
-X-CSE-ConnectionGUID: chdl9EKISMW4KYRSdmHGDg==
-X-CSE-MsgGUID: cg6IH3SeRfuwfZMW5k+ZUA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11733"; a="62538840"
-X-IronPort-AV: E=Sophos;i="6.23,128,1770624000"; 
-   d="scan'208";a="62538840"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2026 00:04:13 -0700
-X-CSE-ConnectionGUID: 6kIld5kyQMCuWrGShd9Iow==
-X-CSE-MsgGUID: ePfOVPAlSMy5V8WuidXKGw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,128,1770624000"; 
-   d="scan'208";a="224890375"
-Received: from lkp-server02.sh.intel.com (HELO a51c2a36b9df) ([10.239.97.151])
-  by fmviesa004.fm.intel.com with ESMTP; 19 Mar 2026 00:04:08 -0700
-Received: from kbuild by a51c2a36b9df with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1w37Ps-000000000Sn-1nKh;
-	Thu, 19 Mar 2026 07:03:42 +0000
-Date: Thu, 19 Mar 2026 15:03:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: Daniele Briguglio <hello@superkali.me>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: oe-kbuild-all@lists.linux.dev, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
-	Daniele Briguglio <hello@superkali.me>
-Subject: Re: [PATCH 3/3] clk: rockchip: rk3588: add GATE_GRF clocks for I2S
- MCLK output to IO
-Message-ID: <202603191419.MH6EuPga-lkp@intel.com>
-References: <20260316-rk3588-mclk-gate-grf-v1-3-66fb9a246718@superkali.me>
+	dkim=pass (2048-bit key) header.d=superkali.me header.i=@superkali.me header.b="HuhqpKns"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=superkali.me; s=default; h=Cc:To:Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=+sFZ1FLKiR65L4M1IonsRzZ9s3L1BFiD5c8mbE2C9B0=; b=HuhqpKnsB9WMzy9owOWVxJ77M2
+	7o4WnVvv4hvWee3S/36BP+WMIPiOT9q8iZ6yJR5iIMaoJJJlOMMVzwfZYBFA9GlxYHWAm+hbB/bQu
+	UnQFOwampOuM+DCkIjUxTZJQ7RoRGRIfDXOJJcAhgFaiA0plcfTfjtkYh/DPB63puMOvG954E7NV2
+	GKN507nImCj7yCSMeUlm1wHkV62wC6uWhWucSWQz//ExQW8M42VWSVH/eaiEc7muQOAWQQAmnqKb1
+	CSHIvXE3sNrC2l2PrcfSmXGON0o1Wy4NrWDLTSnmBHvqfgFqeQaSWngJlx+Oi0IJQk0FvHJTl9zZw
+	fuxbevcg==;
+Received: from [109.52.2.233] (port=10095 helo=mac.lan)
+	by fr5000-r.dnsiaas.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.99.1)
+	(envelope-from <hello@superkali.me>)
+	id 1w37tN-0000000DgEs-2FIc;
+	Thu, 19 Mar 2026 08:34:03 +0100
+From: Daniele Briguglio <hello@superkali.me>
+Subject: [PATCH v2 0/3] clk: rockchip: rk3588: add I2S MCLK output gate
+ clocks
+Date: Thu, 19 Mar 2026 08:33:58 +0100
+Message-Id: <20260319-rk3588-mclk-gate-grf-v2-0-c4c8daab0762@superkali.me>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260316-rk3588-mclk-gate-grf-v1-3-66fb9a246718@superkali.me>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/4WNTQ6CMBBGr0Jm7Zi2YK2svIdhUeoUGn4zRaIh3
+ N3KBVy+l3zv2yASB4pQZhswrSGGaUygThm41o4NYXgmBiWUFrnUyF1+MQYH13fY2IWwYY+uqKU
+ RRW68E5CmM5MP7yP7qBK3IS4Tf46XVf7sn+AqUaDWvr5ZVeirNPf4mok724fzQFDt+/4F2AAyE
+ rsAAAA=
+X-Change-ID: 20260316-rk3588-mclk-gate-grf-c4b180438fc0
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
+ Daniele Briguglio <hello@superkali.me>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
+ kernel test robot <lkp@intel.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1773905640; l=2504;
+ i=hello@superkali.me; s=20260316; h=from:subject:message-id;
+ bh=hwWOzRdVjXzUuETpCCZtWnOEr3ju3ZD/7cJHhaC2XaY=;
+ b=mMlo4V6ZMSIrvQtN1Pp9tg+tjEeICjCvhseV9g1Wqd/UzsZO+A2hqW5EfXzmrGcGGqdCPsp8B
+ Cs8B9xF8FZPBNunlVOcc4j395FkERMfhnWpkA/jPkfGq6nm7DStgQS+
+X-Developer-Key: i=hello@superkali.me; a=ed25519;
+ pk=5tynRWQdL93CDcapJ73FkcCRY2PeBOJOIAoIhRig53U=
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - fr5000-r.dnsiaas.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - superkali.me
+X-Get-Message-Sender-Via: fr5000-r.dnsiaas.com: authenticated_id: hello@superkali.me
+X-Authenticated-Sender: fr5000-r.dnsiaas.com: hello@superkali.me
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-Hi Daniele,
+On RK3588, the four I2S master clock (MCLK) outputs to external IO
+pins are gated by bits in SYS_GRF SOC_CON6 (offset 0x0318). These
+are set-to-disable gates with hiword mask semantics.
 
-kernel test robot noticed the following build errors:
+The TRM documents the reset value of these bits as 0 (gate open),
+but in practice the Rockchip firmware (BL31) may set them during
+early boot, preventing the MCLK signal from reaching external audio
+codecs. The kernel should manage these gates explicitly so that
+audio functionality does not depend on bootloader register state.
 
-[auto build test ERROR on b84a0ebe421ca56995ff78b66307667b62b3a900]
+This series adds GATE_GRF clock entries for all four I2S MCLK output
+gates, following the same approach used for the RK3576 SAI MCLK
+output gates [1]. Board DTS files that need MCLK on an IO pin can
+reference these clocks (e.g. clocks = <&cru I2S0_8CH_MCLKOUT_TO_IO>),
+ensuring the output gate is opened when the clock is enabled.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Daniele-Briguglio/dt-bindings-clock-rockchip-rk3588-cru-add-I2S-MCLK-output-to-IO-clock-IDs/20260316-222240
-base:   b84a0ebe421ca56995ff78b66307667b62b3a900
-patch link:    https://lore.kernel.org/r/20260316-rk3588-mclk-gate-grf-v1-3-66fb9a246718%40superkali.me
-patch subject: [PATCH 3/3] clk: rockchip: rk3588: add GATE_GRF clocks for I2S MCLK output to IO
-config: arm-allyesconfig (https://download.01.org/0day-ci/archive/20260319/202603191419.MH6EuPga-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 15.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260319/202603191419.MH6EuPga-lkp@intel.com/reproduce)
+Patch 1 adds the four clock ID bindings.
+Patch 2 removes the grf_type_sys exclusion from the aux_grf_table
+        lookup, which prevented SYS_GRF-based GATE_GRF entries from
+        being resolved on RK3588 (where ctx->grf points to PHP_GRF).
+Patch 3 registers the SYS_GRF as an auxiliary GRF and adds the four
+        GATE_GRF clock entries, each placed after its parent MCLKOUT.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202603191419.MH6EuPga-lkp@intel.com/
+Tested on a Youyeetoo YY3588 (RK3588) board with an ES8388 audio
+codec connected to I2S0. Without this series the firmware leaves the
+gate closed and the codec receives no master clock. With the series
+applied and DTS updated, audio playback works correctly.
 
-All errors (new ones prefixed by >>):
+[1] https://lore.kernel.org/r/20250305-rk3576-sai-v1-2-64e6cf863e9a@collabora.com/
 
-   drivers/clk/rockchip/clk-rk3588.c: In function 'rk3588_clk_early_init':
->> drivers/clk/rockchip/clk-rk3588.c:2496:29: error: implicit declaration of function 'kzalloc_obj' [-Wimplicit-function-declaration]
-    2496 |                 sys_grf_e = kzalloc_obj(*sys_grf_e);
-         |                             ^~~~~~~~~~~
->> drivers/clk/rockchip/clk-rk3588.c:2496:27: error: assignment to 'struct rockchip_aux_grf *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-    2496 |                 sys_grf_e = kzalloc_obj(*sys_grf_e);
-         |                           ^
+Changes in v2:
+- Patch 1: shortened commit message (Krzysztof)
+- Patch 3: added missing #include <linux/slab.h> for kzalloc_obj
+  (kernel test robot)
 
+Signed-off-by: Daniele Briguglio <hello@superkali.me>
+---
+Daniele Briguglio (3):
+      dt-bindings: clock: rockchip,rk3588-cru: add I2S MCLK output to IO clock IDs
+      clk: rockchip: allow grf_type_sys lookup in aux_grf_table
+      clk: rockchip: rk3588: add GATE_GRF clocks for I2S MCLK output to IO
 
-vim +/kzalloc_obj +2496 drivers/clk/rockchip/clk-rk3588.c
+ drivers/clk/rockchip/clk-rk3588.c               | 23 +++++++++++++++++++++++
+ drivers/clk/rockchip/clk.c                      |  7 +++----
+ include/dt-bindings/clock/rockchip,rk3588-cru.h |  4 ++++
+ 3 files changed, 30 insertions(+), 4 deletions(-)
+---
+base-commit: b84a0ebe421ca56995ff78b66307667b62b3a900
+change-id: 20260316-rk3588-mclk-gate-grf-c4b180438fc0
 
-  2447	
-  2448	static void __init rk3588_clk_early_init(struct device_node *np)
-  2449	{
-  2450		struct rockchip_clk_provider *ctx;
-  2451		struct rockchip_aux_grf *sys_grf_e;
-  2452		struct regmap *sys_grf;
-  2453		unsigned long clk_nr_clks, max_clk_id1, max_clk_id2;
-  2454		void __iomem *reg_base;
-  2455	
-  2456		max_clk_id1 = rockchip_clk_find_max_clk_id(rk3588_clk_branches,
-  2457						ARRAY_SIZE(rk3588_clk_branches));
-  2458		max_clk_id2 = rockchip_clk_find_max_clk_id(rk3588_early_clk_branches,
-  2459						ARRAY_SIZE(rk3588_early_clk_branches));
-  2460		clk_nr_clks = max(max_clk_id1, max_clk_id2) + 1;
-  2461	
-  2462		reg_base = of_iomap(np, 0);
-  2463		if (!reg_base) {
-  2464			pr_err("%s: could not map cru region\n", __func__);
-  2465			return;
-  2466		}
-  2467	
-  2468		ctx = rockchip_clk_init_early(np, reg_base, clk_nr_clks);
-  2469		if (IS_ERR(ctx)) {
-  2470			pr_err("%s: rockchip clk init failed\n", __func__);
-  2471			iounmap(reg_base);
-  2472			return;
-  2473		}
-  2474		early_ctx = ctx;
-  2475	
-  2476		rockchip_clk_register_plls(ctx, rk3588_pll_clks,
-  2477					   ARRAY_SIZE(rk3588_pll_clks),
-  2478					   RK3588_GRF_SOC_STATUS0);
-  2479	
-  2480		rockchip_clk_register_armclk(ctx, ARMCLK_L, "armclk_l",
-  2481				mux_armclkl_p, ARRAY_SIZE(mux_armclkl_p),
-  2482				&rk3588_cpulclk_data, rk3588_cpulclk_rates,
-  2483				ARRAY_SIZE(rk3588_cpulclk_rates));
-  2484		rockchip_clk_register_armclk(ctx, ARMCLK_B01, "armclk_b01",
-  2485				mux_armclkb01_p, ARRAY_SIZE(mux_armclkb01_p),
-  2486				&rk3588_cpub0clk_data, rk3588_cpub0clk_rates,
-  2487				ARRAY_SIZE(rk3588_cpub0clk_rates));
-  2488		rockchip_clk_register_armclk(ctx, ARMCLK_B23, "armclk_b23",
-  2489				mux_armclkb23_p, ARRAY_SIZE(mux_armclkb23_p),
-  2490				&rk3588_cpub1clk_data, rk3588_cpub1clk_rates,
-  2491				ARRAY_SIZE(rk3588_cpub1clk_rates));
-  2492	
-  2493		/* Register SYS_GRF for I2S MCLK output to IO gate clocks */
-  2494		sys_grf = syscon_regmap_lookup_by_compatible("rockchip,rk3588-sys-grf");
-  2495		if (!IS_ERR(sys_grf)) {
-> 2496			sys_grf_e = kzalloc_obj(*sys_grf_e);
-  2497			if (sys_grf_e) {
-  2498				sys_grf_e->grf = sys_grf;
-  2499				sys_grf_e->type = grf_type_sys;
-  2500				hash_add(ctx->aux_grf_table, &sys_grf_e->node, grf_type_sys);
-  2501			}
-  2502		}
-  2503	
-  2504		rockchip_clk_register_branches(ctx, rk3588_early_clk_branches,
-  2505					       ARRAY_SIZE(rk3588_early_clk_branches));
-  2506	
-  2507		rockchip_clk_of_add_provider(np, ctx);
-  2508	}
-  2509	CLK_OF_DECLARE_DRIVER(rk3588_cru, "rockchip,rk3588-cru", rk3588_clk_early_init);
-  2510	
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Daniele Briguglio <hello@superkali.me>
+
