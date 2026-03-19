@@ -1,48 +1,55 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26252D7DD5;
-	Thu, 19 Mar 2026 02:47:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26B0331A5E;
+	Thu, 19 Mar 2026 02:47:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773888425; cv=none; b=kVk8/jiyixA8x6d7+KboJksDJqsVCAHcGElXoJRoRSIpwDO/cmo+oj2UzxaifHzrLiP+/cmB1mFYIvO5wD/ZGdlWLnH5WSVoYJ5pCaLT7maljn2pOjJ47QI9dJWkkskIKGC5noQPfSaeTF/I4rlecmNcXn1X4essJ8FFWdwgtOM=
+	t=1773888425; cv=none; b=pTHLV0BGRTIQMdiezoWOzLMl4a3XLfMnDNWTtJrz//xZai4T/Sf0S3k9HGZrsps5Ep6XtW9AAq56jSFpaFA3x7CcbVrTQ6NX7mv1FUELh4xtNlVNEASlfb3kQ5vEInBt1vnoZZHcOtfck1bkYBWbd2Hh6VVOgtfzeowip/vtwvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1773888425; c=relaxed/simple;
-	bh=PLO9nS2n75vnUimWf1VeLbh8JTmsqbT3pzO7PHZj77o=;
+	bh=stuPA0E5EmApw42nxUnfLbMPXKMN/bw8izWDnqCow+s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jzxFKJwE7Adbo1koLljNsxm8hVnzp9SHX9ZC7kDGfWvZ/8rfmYPDymqF7607XWaR3IndhjKaby3qDricu6sxWxrypxteXpFzfZ/chqAMn3QNzsacnDYues2c/uNIWfMe81sVf8BlqD8zrT0AqdVacYPW4JWslWeMaT+wXkI+t4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uSHTjflB; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=T1INA+j+o7V7rk6DVvO9LykBhf1P0CkHkMx+xqh1m9usV07x5z+Is/yf6NSt7toDYcFOz9+tE0azrlCSDpsJb7zG1X/Ud4Mf7vHmnb3hKVCR7phOjzPtWvDFZ3eRAAtSqBQVur05oiyZO6J8Rb+yvtUIXz8/Gh7E31OtbE5+1XE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sc98aoPL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uSHTjflB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11C08C2BC9E;
-	Thu, 19 Mar 2026 02:47:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sc98aoPL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED8CCC2BCB0;
+	Thu, 19 Mar 2026 02:46:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773888424;
-	bh=PLO9nS2n75vnUimWf1VeLbh8JTmsqbT3pzO7PHZj77o=;
+	s=k20201202; t=1773888422;
+	bh=stuPA0E5EmApw42nxUnfLbMPXKMN/bw8izWDnqCow+s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=uSHTjflBGUr3JUog/3GkFrvKecwTvrKBmORc8jHsc0CHBH9eI1nCSxdwy4OYIR+XJ
-	 I25JMXSf2XezOo/bMDdckZ6jYuCFClbhRwL+wAJehm3bHRUNc9isv0cuuJoW/7nK47
-	 arGJOOAgBZWhpgMB67RLrP44p28DkJqKfNKW9FihUVq0/FnmP6YjRGv9W+qe6YzOri
-	 Ii8GOK679fiiVeil3FKY6pBbTzS18irZUDlJAylgHOyOuJeH1+uzf3lWE3tt1jUrGv
-	 4NSsBFHu9swkvDrtTHlxGpmEiOMP/CmVYU8pO9CZAUvBSZpPLd9wgqNcBQNe3MuJmf
-	 bBx1/XLCkg5Dg==
+	b=sc98aoPLz0ZUg8bPFhnN4bYCxwK4Bily9tsMhmoW+618PFuFUlf6jIHySfmICbnAC
+	 mFwZb5p1bMi0J3YCfcWej70BQV4HhOe1N1XcIhXEFYTBO5K4lZM7HvidpwRbczAkKG
+	 OPRJ/9LlcmKESHpUOBuV61Q5wbKCjhxjJFB9MN+CWmf9z/Ot2c1A+eBXQPiVfV7XL1
+	 JogOYKsLTJ+xjZ6j9MKNmZoHATJ55XfqjauCJQQhuIZhTmvCtl35jfla5kEOL/Xmmj
+	 Ob6gjZbWZ4E95cWlDGFe9FMcJ/WsphUmvj0llRLIdPPy9pPBWQiJNSAxDV9xM7d8C8
+	 PvZ5TW8K/Vn5Q==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Robert Marko <robimarko@gmail.com>,
+	Guru Das Srinagesh <linux@gurudas.dev>,
+	Linus Walleij <linusw@kernel.org>,
+	Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
 Cc: linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/5] clk: qcom: Cleanup redundant header includes
-Date: Wed, 18 Mar 2026 21:46:45 -0500
-Message-ID: <177388840382.11529.699263730640590840.b4-ty@kernel.org>
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH v2 0/6] Add minimal boot support for Qualcomm IPQ5210
+Date: Wed, 18 Mar 2026 21:46:44 -0500
+Message-ID: <177388840384.11529.3706646310858140952.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260318-clk-qcom-headers-v1-0-d5c6a3b11b67@oss.qualcomm.com>
-References: <20260318-clk-qcom-headers-v1-0-d5c6a3b11b67@oss.qualcomm.com>
+In-Reply-To: <20260318-ipq5210_boot_to_shell-v2-0-a87e27c37070@oss.qualcomm.com>
+References: <20260318-ipq5210_boot_to_shell-v2-0-a87e27c37070@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -53,26 +60,21 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Wed, 18 Mar 2026 12:08:39 +0100, Krzysztof Kozlowski wrote:
-> Newly introduced drivers keep repeating same patterns from clock
-> generation scripts...
+On Wed, 18 Mar 2026 14:09:42 +0530, Kathiravan Thirumoorthy wrote:
+> The IPQ5210 is Qualcomm's SoC for Routers, Gateways and Access Points. This
+> series adds minimal board boot support for ipq5210-rdp504 board.
 > 
-> Best regards,
-> Krzysztof
+> SoCs based on IPQ5210 is shipped under 2 different marketing names such as
+> Qualcomm Dragonwing F8 and Qualcomm Dragonwing N8. The difference being is
+> F8 parts has the Passive Optical Network(PON) interface which acts as the
+> backhaul where as in N8 parts it is ethernet backhaul.
 > 
+> [...]
 
 Applied, thanks!
 
-[1/5] clk: qcom: kaanapali: Cleanup redundant header includes
-      commit: 7b70ccfd5df61504a28a8dd316e44fcd2c8970e3
-[2/5] clk: qcom: glymur: Cleanup redundant header includes
-      commit: 320d45700c131740cb534f1fd2d7aae04d5f16a7
-[3/5] clk: qcom: sm8750: Cleanup redundant header includes
-      commit: 82e7613f5d23e9698004453c9cb1d6955373a5b5
-[4/5] clk: qcom: milos: Cleanup redundant header includes
-      commit: 84b21053fe18af080c6486cea2d68a40ce08a294
-[5/5] clk: qcom: eliza: Cleanup redundant header includes
-      commit: 04088a68258c3585767c9bae35d70812c69a5341
+[4/6] dt-bindings: firmware: qcom,scm: Document ipq5210 SCM
+      commit: e3f45d32664edd2b25746e22add3a20c088edbec
 
 Best regards,
 -- 
