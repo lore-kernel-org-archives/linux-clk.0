@@ -1,107 +1,100 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956EA3E0C65;
-	Thu, 19 Mar 2026 15:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4243E558E
+	for <linux-clk@vger.kernel.org>; Thu, 19 Mar 2026 15:32:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773933670; cv=none; b=ZxSwy1260XaCLu/8shxLoIZKgd5RtSUfLaFDDmQVKIeRqsG/xHAirirAUpnI9ayy+Ys9GxnAkoJQJ04V+PR+wpW9AE2Y6JvJn5s7QjE8oDiKTZGayw0aayVKs8h+Km5RthW6yf/8r5pwKNIy/IvQT7Vz03AXpeCEytxMFvBeYo4=
+	t=1773934334; cv=none; b=d2/xnw5Uwj/Atbv93xbnPDrjHrG1TW/bfUZctHdf9DeKkSA2lydEBKL/ZspAeZh8Qx4JpDecR0nHaaDW2vOpDVLGsaaXA7CPicCg6PgvkacDE7PlZZTf/CpylON5Xan1SITvJQAgkKeg7GS2z4ifvrsELvTSZURaWual6rBPOLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773933670; c=relaxed/simple;
-	bh=UI0Po3zZPTeRCJm+Lcg0cPTJzeJMjW8JHmmBlLQ7sv0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=WjjF1wDNXzK8z1oy/PNSWh6Z5WKwN1WJjO4T8k/sNw3dSO5+3vxqmr84uVikxU0NAfzfKHRWjNLdON2UpSBdIAj2DV3blSMdgMeFfQtTkj/7YTgB+QEzg5t5B0Acvy3hgICitNAqy9l2pa91PK2RgueKeRe8yt43OvJwKUJ7D6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DMG2IqVG; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DMG2IqVG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCB57C19424;
-	Thu, 19 Mar 2026 15:21:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773933670;
-	bh=UI0Po3zZPTeRCJm+Lcg0cPTJzeJMjW8JHmmBlLQ7sv0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=DMG2IqVGrVoHd+WDIX2nJm5k+4XOhMVlANmg90qjr23nkh9KCntc77dD1vAi/RzjL
-	 LIXXwj3k0Do/nm5Ru7H5HTfQ3/f+BaMXCn1KcLxAUL4ZMmRUWpJeZUsdAWBv0Yaxqv
-	 IWyB8WBkcHHtHhJYxu8gEZg5iVQPDKtzV6WbhTeY45wjnPHOJ8qj6D8mdOmG98AOio
-	 1c4orCeA38QUzN8g69H/CJjV0PD0ejYTiaZtAHXDLJCxgjmMDmntPAQ2jQm3PMUfJk
-	 RHQedk3piyKEU9Ju6dMRwlL7Nm9maYeCENKStGCskv5+PDk340i7QHfE2AhH+DsX2T
-	 jM9JBUSov8vlw==
-From: Mark Brown <broonie@kernel.org>
-To: tomm.merciai@gmail.com, 
- Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com, 
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, linux-spi@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-clk@vger.kernel.org
-In-Reply-To: <cover.1771344527.git.tommaso.merciai.xr@bp.renesas.com>
-References: <cover.1771344527.git.tommaso.merciai.xr@bp.renesas.com>
-Subject: Re: (subset) [PATCH 0/5] Add RSPIs support for RZ/G3E SoC
-Message-Id: <177385558537.96554.829005700471715089.b4-ty@b4>
-Date: Wed, 18 Mar 2026 17:39:45 +0000
+	s=arc-20240116; t=1773934334; c=relaxed/simple;
+	bh=vXnxLZDFMsXbZH3qKkGOnVX/RNECvFZJUjIe10GDTaA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gjq5W28CLHZ/1ZZ59SAe7HtJKvjdLXoT3Tb+KBS2LeBaAm1UdJMHoOQKDd3W91Q2vt4QdtwwoIkR0IHOi5DZu8TFFqr2yy1cCmrcG9PLW5ZwMyvtTyBYzRDVHoOkJjeEiU2SrgF3C2R0jZZGoS1hOrhOzN5Ll7GoaJmSDhqlWT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-56a9c5cb48bso259610e0c.0
+        for <linux-clk@vger.kernel.org>; Thu, 19 Mar 2026 08:32:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1773934332; x=1774539132;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pD0xj8TjVx8IaFOOza8lFHCZSv/B3KHnHlTToYvdOjc=;
+        b=M/pRDAprO/iwO8mv92yPYcPQdH9YVQ1kq720X8HlJqin678TmpAtsYRizLoeE3o14K
+         wDInmolBQq6PJO5AfSMwbia0TJLi3c3akx2Tm080QP1co/8wpZOOHE9iqKFSIZhmbuD/
+         DbdNQnqmW2SDgsA3LXnDIMI9IUauDZL/8eAy0+VablFTkH9S1ApwEtqs5yWOAoJf3wlA
+         Sl9S+UQQjTGrMJUHUWvihlIc7iRs61jlwTWDsn5btQmtELWb0oqC8BXJAdLQRXBmbYau
+         HoYaqRK2T5XEMPW9XLhTXPkYBlz3fMtAw+hbnWIy7ULO8OvMKyjs+jJEbeOYpZli/QhD
+         Nlug==
+X-Forwarded-Encrypted: i=1; AJvYcCU1F7oHEDY9dzE5zU6MM152M1QNO342MD7oaIIJwP4VyxIZYXj917I1ypn2hd9+UPFlh5gT/7/0wSw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycE0uyzIdIyy0BJE3XxJx9bCpFpywVKo2ftLRUlQlaMJJNoNM8
+	19pJmboe+h1Hn22Ujm/UWIJWyDmC7cMj5wOKD7x6C38dQyikNZoSeK+2GxwjsdEh
+X-Gm-Gg: ATEYQzyDL0ARLTFKgbhdrR8DbQ0V1HHpHJtzhT9E5i0x8JSGCXhYuREDlS8RNutGb3Q
+	Bc3qw5O3irQl3njfu1vZ37IBsO6uv36t4XBoPzXsixVOVlG1vx5sUr1GShHJf1QVRj96g2Yh5Nr
+	v6hvEo7z2O4QecDXp2w0O00w4r3xVsLlgW2Lpy3vQE43D2BnMubThCiooPhcOvbUnmp33ft2G1D
+	TEKR08vTlAjjZq3m9RZfKztijLpabQM9FSnetofgQWAGitRHB4wl72CP2b6GLPoR4q2BqoQQgFM
+	05RP/fHImCWyjICWW6Rni3MhfYrIxfP5fkz9B98g06NAO4n8Zm1yjB2gs101EfdpjYZU6I7LgRL
+	H3EZVB7v1zEtTuEAw1LibtsdEHrzaCXZCdkzLO/EBAtQn06BD50IOHWK9OQ/79kqF90SyZ6HwW0
+	yxx3W0W4a3c5yyWB72F0vyXWwH6AdvWY4iQzbQqIvCzLEkVVvbOyUgYNuVEzA3hl4R
+X-Received: by 2002:a05:6122:e46c:b0:56c:db9b:2eab with SMTP id 71dfb90a1353d-56cdb9b3039mr477793e0c.2.1773934331680;
+        Thu, 19 Mar 2026 08:32:11 -0700 (PDT)
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com. [209.85.221.174])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-9510340b845sm3050994241.8.2026.03.19.08.32.06
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Mar 2026 08:32:06 -0700 (PDT)
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-56a9c5cb48bso259559e0c.0
+        for <linux-clk@vger.kernel.org>; Thu, 19 Mar 2026 08:32:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW9pFrNOWlYgBHPSdtw70r9vBWxo0K4LmkhRbTyBwPqd4I/jWr6m3o/KEZWZJGggiVvc0des4AtlCU=@vger.kernel.org
+X-Received: by 2002:a05:6122:e183:b0:56b:7a5b:3cee with SMTP id
+ 71dfb90a1353d-56ba71419d6mr4293734e0c.12.1773934326451; Thu, 19 Mar 2026
+ 08:32:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-a9787
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1372; i=broonie@kernel.org;
- h=from:subject:message-id; bh=UI0Po3zZPTeRCJm+Lcg0cPTJzeJMjW8JHmmBlLQ7sv0=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBpvBRh+Ygk8AAonklht1UTda+DWI/9qlNX1PNYP
- VEb+8Z2DP+JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCabwUYQAKCRAk1otyXVSH
- 0NCwB/wMoTtUcWjChT/PKi3QHwGtqZHHd5DQjjjxyCRPSuU7RoSr0FZZDIk9Ivv3ots0DfZxTQJ
- qJ2sqvjDAsWtVUwx53E2p2IrLIkctEKv/uLmF2OTJMwXRQ6KeD3BNDxEioU59ExCEuqgzdNvv0r
- h/xwBMz3ALCrrFE5FgfqR0fazJNsLjp9UkQD5zuYN4sA/kSyEPrBercubhgBB5sV0yu/Zo4F2ng
- kov1d+FxmBbIMFLsaBZ3PM4jjebz5GrkHcMsLxkpnwK4Am7L8BTE3D02KUUo1FmnghYCn87f9Qe
- cWTdIJ7HbN892xdI8F3dxS8FYMArnV0IJwY9oDzSJnVIkKW7
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+References: <20260319125143.230377-1-biju.das.jz@bp.renesas.com> <20260319125143.230377-5-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20260319125143.230377-5-biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 19 Mar 2026 16:31:55 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWhU=mBKb6urrJ=wPsCANgWHWmAOfSNgRKMbgjSznMPZQ@mail.gmail.com>
+X-Gm-Features: AaiRm53xlVwi8FLwAu4pk5ImJpmsBy5XJ2IMtsQvF0FsPi9ny-Vah4lMnmzvt1Q
+Message-ID: <CAMuHMdWhU=mBKb6urrJ=wPsCANgWHWmAOfSNgRKMbgjSznMPZQ@mail.gmail.com>
+Subject: Re: [PATCH v6 04/10] clk: renesas: rzg2l-cpg: Add rzg2l_mod_clock_init_mstop_helper()
+To: Biju <biju.das.au@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 17 Feb 2026 17:23:44 +0100, Tommaso Merciai wrote:
-> Add RSPIs support for RZ/G3E SoC
-> 
-> Dear All,
-> 
-> This patch series adds RSPIs support for the Renesas
-> RZ/G3E (a.k.a R9A09G047) R9A09G047 SoC.
-> 
-> [...]
+On Thu, 19 Mar 2026 at 13:51, Biju <biju.das.au@gmail.com> wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+>
+> Refactor the mstop initialisation logic in rzg2l_mod_clock_init_mstop()
+> into a dedicated helper function rzg2l_mod_clock_init_mstop_helper(). This
+> decouples the logic for setting module stop state on disabled clocks from
+> the iteration loop, allowing it to be reused during resume to re-enable
+> critical clocks.
+>
+> No functional change.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Applied to
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-7.1
+Gr{oetje,eeting}s,
 
-Thanks!
+                        Geert
 
-[2/5] spi: dt-bindings: renesas,rzv2h-rspi: Document dmas property
-      https://git.kernel.org/broonie/spi/c/c2edd7841f58
-[3/5] spi: dt-bindings: renesas,rzv2h-rspi: Document RZ/G3E SoC support
-      https://git.kernel.org/broonie/spi/c/5b7ac8ca0eae
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
