@@ -1,55 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26B0331A5E;
-	Thu, 19 Mar 2026 02:47:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0715E277C9E;
+	Thu, 19 Mar 2026 02:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773888425; cv=none; b=pTHLV0BGRTIQMdiezoWOzLMl4a3XLfMnDNWTtJrz//xZai4T/Sf0S3k9HGZrsps5Ep6XtW9AAq56jSFpaFA3x7CcbVrTQ6NX7mv1FUELh4xtNlVNEASlfb3kQ5vEInBt1vnoZZHcOtfck1bkYBWbd2Hh6VVOgtfzeowip/vtwvg=
+	t=1773888431; cv=none; b=uhcaz02hOFYxNhedoEVaJmPRFEsDt5MclonDcGzrTA/hJ+0dPpxSF+nF3zQt9HC+U+4FgiLnHr/VjTx/fcotkRVZiSNKeNjAHk5E42jn+3BrwkywVfUuBIIpHmLX57WLnPSYKZbcvGdR062v0DuVAoKeDw12NZ+dIT6I6KUTXEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773888425; c=relaxed/simple;
-	bh=stuPA0E5EmApw42nxUnfLbMPXKMN/bw8izWDnqCow+s=;
+	s=arc-20240116; t=1773888431; c=relaxed/simple;
+	bh=WUzdWoZEsIp05iqyKAdE9Hu+zAQdC/kGFK1iJ0WN2KU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=T1INA+j+o7V7rk6DVvO9LykBhf1P0CkHkMx+xqh1m9usV07x5z+Is/yf6NSt7toDYcFOz9+tE0azrlCSDpsJb7zG1X/Ud4Mf7vHmnb3hKVCR7phOjzPtWvDFZ3eRAAtSqBQVur05oiyZO6J8Rb+yvtUIXz8/Gh7E31OtbE5+1XE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sc98aoPL; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=ZVcSD7dfj8w88u4HJIiSG+OrbLlAdYZMcaNOyV1u/ohrIu5yWy8VKRXTiNV3iIG88fOAmulmhvi5A42G75SmpD59MUfFzbwxvS2BX+HgoGkMAXNZqq4HRKtpbP91yGHWDP+cXLTMsO/5ne5zu1wlLlWKyJKPXPDIvFkI2FmURcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VhGl1KFT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sc98aoPL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED8CCC2BCB0;
-	Thu, 19 Mar 2026 02:46:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VhGl1KFT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 168CBC19421;
+	Thu, 19 Mar 2026 02:47:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773888422;
-	bh=stuPA0E5EmApw42nxUnfLbMPXKMN/bw8izWDnqCow+s=;
+	s=k20201202; t=1773888430;
+	bh=WUzdWoZEsIp05iqyKAdE9Hu+zAQdC/kGFK1iJ0WN2KU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=sc98aoPLz0ZUg8bPFhnN4bYCxwK4Bily9tsMhmoW+618PFuFUlf6jIHySfmICbnAC
-	 mFwZb5p1bMi0J3YCfcWej70BQV4HhOe1N1XcIhXEFYTBO5K4lZM7HvidpwRbczAkKG
-	 OPRJ/9LlcmKESHpUOBuV61Q5wbKCjhxjJFB9MN+CWmf9z/Ot2c1A+eBXQPiVfV7XL1
-	 JogOYKsLTJ+xjZ6j9MKNmZoHATJ55XfqjauCJQQhuIZhTmvCtl35jfla5kEOL/Xmmj
-	 Ob6gjZbWZ4E95cWlDGFe9FMcJ/WsphUmvj0llRLIdPPy9pPBWQiJNSAxDV9xM7d8C8
-	 PvZ5TW8K/Vn5Q==
+	b=VhGl1KFTGpVM7Q9wwj57RCMnyxirA7eGw4kTRQrKDJUimNQepz1u51NRpIwt6wC0o
+	 ZEptQ4Ai5KoT+SXgzn6y2CP9OczIbZyHUYS72SfKNlRgk5VKXIIl+Maq7TblMzegm3
+	 1oDNARwzF8ERycF/YBI2xxtObgs9D74g7fMb1j8OMRa49ziTJVZ8nKxx6WzhHinhQz
+	 +XeOZxfZOZa1Bclg4k44XlsTF62Mw/Y+gf/EJl3RwwpELZKv5RUAW13rKHePd6IHCQ
+	 +8fpxUZ48c0pvqvnvC5MA3twHC8mDP3E7SJlhFAxRK4dCNbG+fZIUIPtuM64V039UW
+	 xVneJ9eM5wCYw==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Robert Marko <robimarko@gmail.com>,
-	Guru Das Srinagesh <linux@gurudas.dev>,
-	Linus Walleij <linusw@kernel.org>,
-	Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org,
+To: Val Packett <val@packett.cool>
+Cc: Konrad Dybcio <konradybcio@kernel.org>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Maximilian Luz <luzmaximilian@gmail.com>,
+	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v2 0/6] Add minimal boot support for Qualcomm IPQ5210
-Date: Wed, 18 Mar 2026 21:46:44 -0500
-Message-ID: <177388840384.11529.3706646310858140952.b4-ty@kernel.org>
+	linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH v2 00/11] clk: qcom: sc8180x: PM-related fixes (and refactoring)
+Date: Wed, 18 Mar 2026 21:46:48 -0500
+Message-ID: <177388840390.11529.13605486035483008934.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260318-ipq5210_boot_to_shell-v2-0-a87e27c37070@oss.qualcomm.com>
-References: <20260318-ipq5210_boot_to_shell-v2-0-a87e27c37070@oss.qualcomm.com>
+In-Reply-To: <20260312112321.370983-1-val@packett.cool>
+References: <20260312112321.370983-1-val@packett.cool>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -60,21 +52,37 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Wed, 18 Mar 2026 14:09:42 +0530, Kathiravan Thirumoorthy wrote:
-> The IPQ5210 is Qualcomm's SoC for Routers, Gateways and Access Points. This
-> series adds minimal board boot support for ipq5210-rdp504 board.
+On Thu, 12 Mar 2026 08:12:05 -0300, Val Packett wrote:
+> v2:
+> - collect tags
+> - bring in dispcc patch mentioned in cover letter
+> - add a couple new discoveries (mostly camcc related)
+> - add refactoring to current style (qcom_cc_driver_data)
 > 
-> SoCs based on IPQ5210 is shipped under 2 different marketing names such as
-> Qualcomm Dragonwing F8 and Qualcomm Dragonwing N8. The difference being is
-> F8 parts has the Passive Optical Network(PON) interface which acts as the
-> backhaul where as in N8 parts it is ethernet backhaul.
+> v1: https://lore.kernel.org/all/20260309010214.224621-1-val@packett.cool/
 > 
 > [...]
 
 Applied, thanks!
 
-[4/6] dt-bindings: firmware: qcom,scm: Document ipq5210 SCM
-      commit: e3f45d32664edd2b25746e22add3a20c088edbec
+[01/11] dt-bindings: clock: qcom,gcc-sc8180x: Add missing GDSCs
+        commit: 76404ffbf07f28a5ec04748e18fce3dac2e78ef6
+[02/11] clk: qcom: gcc-sc8180x: Add missing GDSCs
+        commit: 3565741eb985a8a7cc6656eb33496195468cb99e
+[03/11] clk: qcom: gcc-sc8180x: Use retention for USB power domains
+        commit: 25bc96f26cd6c19dde13a0b9859183e531d6fbfc
+[04/11] clk: qcom: gcc-sc8180x: Use retention for PCIe power domains
+        commit: ccb92c78b42edd26225b4d5920847dfee3e1b093
+[05/11] clk: qcom: gcc-sc8180x: Enable runtime PM support
+        commit: 733220662679da538c5c416b3367acc7cb212f29
+[06/11] clk: qcom: gcc-sc8180x: Refactor to use qcom_cc_driver_data
+        commit: f641773e10fa5e85154554b15f2aff30e050bdcb
+[07/11] clk: qcom: dispcc-sm8250: Use shared ops on the mdss vsync clk
+        commit: 8c522da70f0c2e5148c4c13ccb1c64cca57a6fdb
+[08/11] clk: qcom: dispcc-sm8250: Enable parents for pixel clocks
+        commit: acf7a91d0b0e9e3ef374944021de62062125b7e4
+[11/11] clk: qcom: camcc-sc8180x: Refactor to use qcom_cc_driver_data
+        commit: b39ae8c2f3de2a2429caad9dd414db14f84bcc8e
 
 Best regards,
 -- 
