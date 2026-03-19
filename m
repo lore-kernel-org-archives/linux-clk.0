@@ -1,43 +1,43 @@
 Received: from fr5000-r.dnsiaas.com (fr5000-r.dnsiaas.com [92.42.104.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A595A39A7E1;
-	Thu, 19 Mar 2026 07:34:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D98F3A0E84;
+	Thu, 19 Mar 2026 07:34:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.42.104.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773905653; cv=none; b=K0kRBL/R7OnRcpiNs7//Pz6DC4baob+sJmoG6BIVUDSFfevrHJ1G6GFaDlleNkQZcJv9wWabL1EzN1h08vl/v4Wc8ZrIl46UyokxhpgvEbeDET9gOp1aN5uwCd2wFs5RwqG80VYRKNkmjSle8jTQcaAueST8lo95FTRaDy+UNrA=
+	t=1773905655; cv=none; b=egRK/YcPrOqngcTqbBwLn/4OqYRQ5G0kvcgoGpZ/TQ2kkGDvkxVwtZyn01Wmt8nOMkLcjt7hEqlxkeEZKlaRrg5CeItzfDftKhgA5TdV+ICPQ7S0l/Ys3h4jJ6wqIqsvGPYg/U/he/sirH/t37YARi6/AjFOby5LaQlpR5p2Fp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773905653; c=relaxed/simple;
-	bh=hwWOzRdVjXzUuETpCCZtWnOEr3ju3ZD/7cJHhaC2XaY=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hHUiB67dcwinocJRPqhrIJ5AiA2mn00o6Pg2A8rP7Sz5yrxSbXzx9zLJNSI0Spl1PDfSyQi3MJv6dSbySl1nQRgrncDHaDYET2/XeDPv9oSnLrT8lgtK5TM0ih8hKQCOnkzq2pOgf1KO2s+LtqqZqAavR7EB7MWXV5XUKIkntkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=superkali.me; spf=fail smtp.mailfrom=superkali.me; dkim=pass (2048-bit key) header.d=superkali.me header.i=@superkali.me header.b=HuhqpKns; arc=none smtp.client-ip=92.42.104.18
+	s=arc-20240116; t=1773905655; c=relaxed/simple;
+	bh=s/jc/s6Rzr1Mg/JbVnbKEPF1NVKRtlMfsACn6kbFdKc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=o6lb6MSscMM9FuER6azF6I5zcLZ0cxAwXeajrwvrqqevAzelZ6tz/Rv97R0r5VBQ2MHOn4vfT7XUzcJE8qw3Q8JC0pI2lLKokxZPqw4ovOEwOJF8Kz90IyZV+PTXDc/yxRLyRyrogjakHjwBngGPu4YTD0LNdcC+d0aPBSryeis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=superkali.me; spf=fail smtp.mailfrom=superkali.me; dkim=pass (2048-bit key) header.d=superkali.me header.i=@superkali.me header.b=NYiXBJIE; arc=none smtp.client-ip=92.42.104.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=superkali.me
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=superkali.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=superkali.me header.i=@superkali.me header.b="HuhqpKns"
+	dkim=pass (2048-bit key) header.d=superkali.me header.i=@superkali.me header.b="NYiXBJIE"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=superkali.me; s=default; h=Cc:To:Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	d=superkali.me; s=default; h=Cc:To:In-Reply-To:References:Message-Id:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
 	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=+sFZ1FLKiR65L4M1IonsRzZ9s3L1BFiD5c8mbE2C9B0=; b=HuhqpKnsB9WMzy9owOWVxJ77M2
-	7o4WnVvv4hvWee3S/36BP+WMIPiOT9q8iZ6yJR5iIMaoJJJlOMMVzwfZYBFA9GlxYHWAm+hbB/bQu
-	UnQFOwampOuM+DCkIjUxTZJQ7RoRGRIfDXOJJcAhgFaiA0plcfTfjtkYh/DPB63puMOvG954E7NV2
-	GKN507nImCj7yCSMeUlm1wHkV62wC6uWhWucSWQz//ExQW8M42VWSVH/eaiEc7muQOAWQQAmnqKb1
-	CSHIvXE3sNrC2l2PrcfSmXGON0o1Wy4NrWDLTSnmBHvqfgFqeQaSWngJlx+Oi0IJQk0FvHJTl9zZw
-	fuxbevcg==;
+	bh=4r6wkkKWx0HfcJZH7gXeKF9oJ6zCw/C5ilURSEcdU7I=; b=NYiXBJIEH+T+2g8hYewFkM9BDA
+	O8NdlkcreHW0y3YCQ5IrlXicy9+WNEMURIjspR8BhZUYHhPnUMFkvPhA0XMbsF12IR0cjQFaVt72/
+	rGq3KvUGxISB+2xilHnmNrM89c8oLGzxYgEkvoEzBqNTFng81gEYfr1G6YMbG5+y92Vf7M1Hm7eOh
+	VR/eMOTs6PN/rAbImC1MAnRHP4KHUPFV6XBrfTCoJ9vKkomrMAcTNAncyIjtFzYzqFIgmWx/vbu5v
+	jr5zq6nXHlj1riLO6TnNdyd6nWKkQ6LSF3KIu7+Pf79HslyyNbuCnbTihjY8Fy5KlviERPcJJKFxa
+	6o26tT5Q==;
 Received: from [109.52.2.233] (port=10095 helo=mac.lan)
 	by fr5000-r.dnsiaas.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
 	(Exim 4.99.1)
 	(envelope-from <hello@superkali.me>)
-	id 1w37tN-0000000DgEs-2FIc;
-	Thu, 19 Mar 2026 08:34:03 +0100
+	id 1w37tP-0000000DgEs-2phc;
+	Thu, 19 Mar 2026 08:34:05 +0100
 From: Daniele Briguglio <hello@superkali.me>
-Subject: [PATCH v2 0/3] clk: rockchip: rk3588: add I2S MCLK output gate
- clocks
-Date: Thu, 19 Mar 2026 08:33:58 +0100
-Message-Id: <20260319-rk3588-mclk-gate-grf-v2-0-c4c8daab0762@superkali.me>
+Date: Thu, 19 Mar 2026 08:33:59 +0100
+Subject: [PATCH v2 1/3] dt-bindings: clock: rockchip,rk3588-cru: add I2S
+ MCLK output to IO clock IDs
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -46,11 +46,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/4WNTQ6CMBBGr0Jm7Zi2YK2svIdhUeoUGn4zRaIh3
- N3KBVy+l3zv2yASB4pQZhswrSGGaUygThm41o4NYXgmBiWUFrnUyF1+MQYH13fY2IWwYY+uqKU
- RRW68E5CmM5MP7yP7qBK3IS4Tf46XVf7sn+AqUaDWvr5ZVeirNPf4mok724fzQFDt+/4F2AAyE
- rsAAAA=
-X-Change-ID: 20260316-rk3588-mclk-gate-grf-c4b180438fc0
+Message-Id: <20260319-rk3588-mclk-gate-grf-v2-1-c4c8daab0762@superkali.me>
+References: <20260319-rk3588-mclk-gate-grf-v2-0-c4c8daab0762@superkali.me>
+In-Reply-To: <20260319-rk3588-mclk-gate-grf-v2-0-c4c8daab0762@superkali.me>
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -60,14 +58,13 @@ Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, 
  Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
  Daniele Briguglio <hello@superkali.me>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
- kernel test robot <lkp@intel.com>
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1773905640; l=2504;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1773905640; l=975;
  i=hello@superkali.me; s=20260316; h=from:subject:message-id;
- bh=hwWOzRdVjXzUuETpCCZtWnOEr3ju3ZD/7cJHhaC2XaY=;
- b=mMlo4V6ZMSIrvQtN1Pp9tg+tjEeICjCvhseV9g1Wqd/UzsZO+A2hqW5EfXzmrGcGGqdCPsp8B
- Cs8B9xF8FZPBNunlVOcc4j395FkERMfhnWpkA/jPkfGq6nm7DStgQS+
+ bh=s/jc/s6Rzr1Mg/JbVnbKEPF1NVKRtlMfsACn6kbFdKc=;
+ b=1jo5TKoywLPX8VEd6ybg8rA7NdSpML9127iS51mq8dWB4mhGkrFI8KjxZTGl32BmLMwh//X8y
+ +XL5WnEh++1DPdxfHGQ0DeMYWHqoEMOAKPrOu72abkvOuEQ2Vijmsev
 X-Developer-Key: i=hello@superkali.me; a=ed25519;
  pk=5tynRWQdL93CDcapJ73FkcCRY2PeBOJOIAoIhRig53U=
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
@@ -81,57 +78,32 @@ X-Source:
 X-Source-Args: 
 X-Source-Dir: 
 
-On RK3588, the four I2S master clock (MCLK) outputs to external IO
-pins are gated by bits in SYS_GRF SOC_CON6 (offset 0x0318). These
-are set-to-disable gates with hiword mask semantics.
+Add clock identifiers for the four I2S MCLK output to IO gate clocks
+on RK3588, needed by board DTS files where the codec requires MCLK
+from the SoC on an external IO pin.
 
-The TRM documents the reset value of these bits as 0 (gate open),
-but in practice the Rockchip firmware (BL31) may set them during
-early boot, preventing the MCLK signal from reaching external audio
-codecs. The kernel should manage these gates explicitly so that
-audio functionality does not depend on bootloader register state.
-
-This series adds GATE_GRF clock entries for all four I2S MCLK output
-gates, following the same approach used for the RK3576 SAI MCLK
-output gates [1]. Board DTS files that need MCLK on an IO pin can
-reference these clocks (e.g. clocks = <&cru I2S0_8CH_MCLKOUT_TO_IO>),
-ensuring the output gate is opened when the clock is enabled.
-
-Patch 1 adds the four clock ID bindings.
-Patch 2 removes the grf_type_sys exclusion from the aux_grf_table
-        lookup, which prevented SYS_GRF-based GATE_GRF entries from
-        being resolved on RK3588 (where ctx->grf points to PHP_GRF).
-Patch 3 registers the SYS_GRF as an auxiliary GRF and adds the four
-        GATE_GRF clock entries, each placed after its parent MCLKOUT.
-
-Tested on a Youyeetoo YY3588 (RK3588) board with an ES8388 audio
-codec connected to I2S0. Without this series the firmware leaves the
-gate closed and the codec receives no master clock. With the series
-applied and DTS updated, audio playback works correctly.
-
-[1] https://lore.kernel.org/r/20250305-rk3576-sai-v1-2-64e6cf863e9a@collabora.com/
-
-Changes in v2:
-- Patch 1: shortened commit message (Krzysztof)
-- Patch 3: added missing #include <linux/slab.h> for kzalloc_obj
-  (kernel test robot)
-
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 Signed-off-by: Daniele Briguglio <hello@superkali.me>
 ---
-Daniele Briguglio (3):
-      dt-bindings: clock: rockchip,rk3588-cru: add I2S MCLK output to IO clock IDs
-      clk: rockchip: allow grf_type_sys lookup in aux_grf_table
-      clk: rockchip: rk3588: add GATE_GRF clocks for I2S MCLK output to IO
+ include/dt-bindings/clock/rockchip,rk3588-cru.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
- drivers/clk/rockchip/clk-rk3588.c               | 23 +++++++++++++++++++++++
- drivers/clk/rockchip/clk.c                      |  7 +++----
- include/dt-bindings/clock/rockchip,rk3588-cru.h |  4 ++++
- 3 files changed, 30 insertions(+), 4 deletions(-)
----
-base-commit: b84a0ebe421ca56995ff78b66307667b62b3a900
-change-id: 20260316-rk3588-mclk-gate-grf-c4b180438fc0
+diff --git a/include/dt-bindings/clock/rockchip,rk3588-cru.h b/include/dt-bindings/clock/rockchip,rk3588-cru.h
+index 0c7d3ca2d5bc..7528034cff56 100644
+--- a/include/dt-bindings/clock/rockchip,rk3588-cru.h
++++ b/include/dt-bindings/clock/rockchip,rk3588-cru.h
+@@ -734,6 +734,10 @@
+ #define PCLK_AV1_PRE			719
+ #define HCLK_SDIO_PRE			720
+ #define PCLK_VO1GRF			721
++#define I2S0_8CH_MCLKOUT_TO_IO		722
++#define I2S1_8CH_MCLKOUT_TO_IO		723
++#define I2S2_2CH_MCLKOUT_TO_IO		724
++#define I2S3_2CH_MCLKOUT_TO_IO		725
+ 
+ /* scmi-clocks indices */
+ 
 
-Best regards,
 -- 
-Daniele Briguglio <hello@superkali.me>
+2.53.0
 
