@@ -1,358 +1,96 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65649397E6A
-	for <linux-clk@vger.kernel.org>; Fri, 20 Mar 2026 10:49:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5208739F16D
+	for <linux-clk@vger.kernel.org>; Fri, 20 Mar 2026 11:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774003804; cv=none; b=bk/ow6Pd4uzKjtCUSdVArZ0GnQ+GioHUWLGkGbGNiq478xIq9WEqTspp39emZIEPPC8ClCWL4zGYNB2wk39pmuOENInq0ZgdcbRrQLl2OEa8mtqL5LQ6HSiDXh36FSxI8whaznR4c6mliNDaYSfsFfkNuncr8IZqKkw3W+hpTGs=
+	t=1774005298; cv=none; b=FLQq7b76fNt4/eEter+4GkqRBByyN8+pNv/Z2yt9vg21GcxfgdMQCAiQNB03zFyk/0YHtLQ0RQK3eQSNLAl0KrNjGMA79zvJXpPYmvt4H5MTMfzTzauPqtsiB0O66L5K+NHqqvyN25JhGJlZgqHfmJf4yQiyL1uNFKwaz6deTCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774003804; c=relaxed/simple;
-	bh=Mi7Angt6+b61A+Y1eUX46lVAMC9hj9cjD8JZmytjgik=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=R53jCLqfE+pw/+knBki9NGiR9cz8QaMPhvXOJZuRN5CCzk4NnaN5JPyAK92sA3uQjSoJJPBIXLz12tHKY3wHd0LbTcb9EAUxSH1egMDRLjTv4hBuaoG6PAUF41Lko8U7F2CCAs56Z7+yDPD/K9tLQHpfLViks2qFPqE7Lany9kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mlOMzbgT; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1774005298; c=relaxed/simple;
+	bh=9ieM0PKneLc9XAFn1kgI0QbNwUio1Qq6fWkxlV5z1Fc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=icPJhCezoMV7JS+73bTq5I9BwGrJwDhjpS5iIyve6SuaOhL6vyGOgAJaUhjQ5r8uqwshQDzH40cTxKGfy/2BS5N3YwswQaucjQdc8bvERyLRhbrnqACaWO/rUyrZ/Ab3HC+fwNma8BUWdTFsQudAxzorchJuGh17TXppRGmsBTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mlOMzbgT"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-439c6fc2910so1266798f8f.0
-        for <linux-clk@vger.kernel.org>; Fri, 20 Mar 2026 03:49:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1774003796; x=1774608596; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zu1ZwV7q3g9N7RM1SjBRgvddWM/MjicPQoKWZJBEQyU=;
-        b=mlOMzbgTsbvVHcfrgYeCh/+JHoAK8OPXcZpGj08ahAoe23POVeSwFnwXLRSqLG49PV
-         C+hzgHsmX4wj6An1dRjv/rZ4WQ9oEj8EepvKru7Vv8cyFJpaJ83extgmo41bZ6KPAQWT
-         dVs6pe740mVx8uAhRA+mZIqDIwn3pKQ14e8pAcfYUNv3smLfrPLo1HSACbElKfbDuytP
-         aOo1EEYwDfyLEXnXSvE1iwsIfCdJydJlD2X/t9ZU/KMmvh8LJmn965rGKrm8ZLCzqjZJ
-         /iUFHdiWScd6Z71bhBPtlWOPckWVqcQEA8luW+z6p0Q7VY4mKdkj77vspgh3afc2P5YK
-         XHaQ==
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-56b6c7c8d00so979426e0c.3
+        for <linux-clk@vger.kernel.org>; Fri, 20 Mar 2026 04:14:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774003796; x=1774608596;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=zu1ZwV7q3g9N7RM1SjBRgvddWM/MjicPQoKWZJBEQyU=;
-        b=GvUYGwTt3pY5BfSOesBLeT4tgkYK1K6sD2CAzor0IMzCjCVvHvCb18eji6t48JkEaf
-         xvlJs/Y0GtnE9ExXKQxZZzt/SRKVlauo7dihX0J0Gj0lGBRUt0K4PZPnmKPDOtB7w9sf
-         0oN29MLYYeU8u1pg5VrWng9G7LpvKbZhCs+iunnknI29+ix5MUt8PyzDjd9rwCPjehK1
-         12Ob6qEmI8NdBw+CnETILzMRbGNtgKQ5dKP4/aBKRUUB/CtMhsjui4bxcEpnkZr8OJ3b
-         7+RS6i1Ti3v4iQkjUHoADTFh7tVUXTA3jKZzYP2v6ZSggdcHdj9teEFA5ZGAjUIUXJzQ
-         JHog==
-X-Forwarded-Encrypted: i=1; AJvYcCW6Vfjhbs0rPt6BAm4QfuPZy+srWwZXZPH1ZEZaHucJ/PUBwp4hKRt26qlAh3awACKXGPooA0lei3Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywb3VnSPyqHOBWRww2deEWh355gPlOYp0pAIAtWcyPCL32KRDXk
-	nRbcmOyFMjRna99cddDtMns0xZ/rOvPmaTCh5tqCAzCocVjmg4myB1JU
-X-Gm-Gg: ATEYQzw3oZO0kawaO9gq5Xz0BGCGl6pAUNg4jVfYVkjn341dyP1JZ05HizM5f11/7CR
-	3qcN4swh27V4uIGx5C/f+Ly/hEAQLPz9m0OpOXD0Y4Wa7hWuA3uMRuZEImAJeUb/3vjEp0GI1C/
-	tmQW5FkLqHYWbJm2oHnxzTUCkGPvr1nVCguEYi1eXsv9k0cfVuhqJUy1UdSaUB1xfpp/ipvLM31
-	C3LLjVffr9mYF3vKFOERbP98m+RwEwvRgBpBnUmfoGwYjgArTKFBJ8VSqXbncbMXASLWtfwMb7i
-	vwdedTvD8J07zWjbdM4DdNuJRSUlM2noHivSMyYAzOp6VHHIUMyWz2GDerXoANEExlUlytYxAKP
-	rIVBd691/xQUa4kfESmes4cPgq2jhQsrvDItARPIzp/Ky9GFa8ADXRpnThyp+2bWmVp31loDGlI
-	Auu0469CSimkq/yJt62T1kGWEf7x9xASE=
-X-Received: by 2002:a05:6000:381:b0:43b:4212:2ee8 with SMTP id ffacd0b85a97d-43b64257171mr4873656f8f.24.1774003795838;
-        Fri, 20 Mar 2026 03:49:55 -0700 (PDT)
-Received: from biju.lan ([2a00:23c4:a758:8a01:5b93:d2b1:bc5c:9231])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b644ae619sm6203062f8f.5.2026.03.20.03.49.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Mar 2026 03:49:55 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v7 06/10] clk: renesas: Add support for RZ/G3L SoC
-Date: Fri, 20 Mar 2026 10:49:40 +0000
-Message-ID: <20260320104950.42220-7-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260320104950.42220-1-biju.das.jz@bp.renesas.com>
-References: <20260320104950.42220-1-biju.das.jz@bp.renesas.com>
+        d=1e100.net; s=20251104; t=1774005296; x=1774610096;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QM2QQuood2CIqMt6ghdF4q02+bVScicBaTi5mQcy40E=;
+        b=YKWQcjYgVGyZRIFpMZpEgyvSv/nFNalY8h3PoY+UcqrNdZODoTmiDLiolOj6+hSA3K
+         PLEdEL77g3hZSgqbbXoTgdQQNxRotFwLlHJ4jurU10tuAQGLVxMMg2QCNcbheRXQXF1K
+         5jHOn3i8kn78XRRFfW8LrIAIu3RK0rwVO5kPniTfHHoKTmPZkovsJtwrkhpG5h8NY1wb
+         bGUczT1MMMKNhrGCMiiq/d8+dlMkMDjuWavG/IJy9weDn01MXyu+YKAqBY2jCFuUtdmt
+         uaL+4ypdBfx0tji/VkAj60QNm02qM9TR7QOO0vhWQKlGKMmWKYuJJQRD99Ike2JvSut2
+         7bHw==
+X-Forwarded-Encrypted: i=1; AJvYcCW1HTWz3x1GPoxcyKR2F008ygMGUutqSEopeM8DYtPo9Kq6OEz8wOaFuW0IxK4OiHnhSzNCOy7teOg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQM4hM3v0j8c9OaO1+eosJxP8TCkbB3RUG/6k5EzOB4OC3KMVl
+	MXN2Obz7kxlgsKPNmukxfOOOrcBnGcnAi+2cEE0XgVTK+l9uFy47CqBx2aHMWPq/kkE=
+X-Gm-Gg: ATEYQzyH2x/FD55AYQKnSLx/61pAdiJ1D/8i90eM/QzeoHI6iuv9Z9ZFRdBMNAiIKxN
+	efOZGrXZ2kzL2IaXBG6VJjFHFLXWgLzjp/Y44KzcUagBv1XRhv/FZL/JwgM7EQ3YbLpta/sB/IY
+	qHVLFGfU10/XQmWuN+K5s5BJ4k32fdHAwPRm6qWFuhk5qenzA3mGbWcW7Farxb8dYzbUSRZLo97
+	fpFKTGwCSm6JLQoGQUvR/2AB8fBXzYcAfiUP8bvalZFv1kHzCoV1QEgkARpM2Yzvtsk+f61bLKY
+	82jIAUAoGYXN2KCqWh2GMVIwxdOx/5LmsWP+lyfR+FLB2omvWcLPvrOKVHYW/j//fkBljgU43yr
+	09JmvshHCxAbAaufQribAZHvUy+KeAa4o98KbeFAQocRPXarlwzUP7lN6kpmdNP14Z+Ybsr7Y+P
+	KVzVY5vI/Ubal8pJ7g7ddygkruwGiMeBDxprSU9NI+Pcr2BZ4m6sqTCrx6svx6
+X-Received: by 2002:a05:6122:318a:b0:566:354d:9f4a with SMTP id 71dfb90a1353d-56cde32a8e2mr1278852e0c.1.1774005296140;
+        Fri, 20 Mar 2026 04:14:56 -0700 (PDT)
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56ce54d6b6asm214368e0c.4.2026.03.20.04.14.54
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Mar 2026 04:14:55 -0700 (PDT)
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-5ffc879c1aeso915262137.2
+        for <linux-clk@vger.kernel.org>; Fri, 20 Mar 2026 04:14:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVPkvXAx3CTySwswk/yxHzHv1Zh+cET0rEA29wIrN94+CGsgvue4M4vqoSuIRgjj3NPdgAOfoVFhvc=@vger.kernel.org
+X-Received: by 2002:a05:6102:3713:b0:602:9228:34a3 with SMTP id
+ ada2fe7eead31-602ae79cdfamr1587306137.0.1774005294541; Fri, 20 Mar 2026
+ 04:14:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1771344527.git.tommaso.merciai.xr@bp.renesas.com> <c8df5202caf4e36ee5beafe78ad0940643edcbb6.1771344527.git.tommaso.merciai.xr@bp.renesas.com>
+In-Reply-To: <c8df5202caf4e36ee5beafe78ad0940643edcbb6.1771344527.git.tommaso.merciai.xr@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 20 Mar 2026 12:14:43 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWTOPYxC7r0ztuPc72T5xeDgcfo6CUi8sRcupjiJbRLGg@mail.gmail.com>
+X-Gm-Features: AaiRm506QxR9HoC6NaRd9ZijJZ6-iF5Bj8kjApAjQvVWwUbRpOpkLxT5Tya6COA
+Message-ID: <CAMuHMdWTOPYxC7r0ztuPc72T5xeDgcfo6CUi8sRcupjiJbRLGg@mail.gmail.com>
+Subject: Re: [PATCH 4/5] arm64: dts: renesas: r9a09g047: Add RSPI nodes
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org, 
+	biju.das.jz@bp.renesas.com, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-spi@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+On Tue, 17 Feb 2026 at 17:25, Tommaso Merciai
+<tommaso.merciai.xr@bp.renesas.com> wrote:
+> Add nodes for the RSPI IPs found in the Renesas RZ/G3E SoC.
+>
+> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 
-The clock structure for RZ/G3L is almost identical to that of the RZ/G3S
-SoC with more IP blocks such as LCDC, CRU, LVDS, and GPU.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v7.1.
 
-Add minimal clock and reset entries required to boot the system on Renesas
-RZ/G3L SMARC EVK and bind it with the RZ/G2L CPG core driver.
+Gr{oetje,eeting}s,
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v6->v7:
- * Replaced r9a08g046_critical_resets->r9a08g046_crit_resets
-v5->v6:
- * No change 
-v4->v5:
- * No change
-v3->v4:
- * Updated commit description
- * Updated LAST_DT_CORE_CLK with R9A08G046_USB_SCLK
- * Fixed typo 2->8 in dtable_4_128[].
- * Added critical reset table r9a08g046_critical_resets[]
- * Updated num_resets
- * Added crit_resets and num_crit_resets to r9a08g046_cpg_info.
-v2->v3:
- * No change.
-v1->v2:
- * Added CLK_ETH{0,1}_TXC_TX_CLK_IN and CLK_ETH{0,1}_RXC_RX_CLK_IN clocks.
- * Dropped R9A08G046_IA55_PCLK from critical clock list.
----
- drivers/clk/renesas/Kconfig         |   7 +-
- drivers/clk/renesas/Makefile        |   1 +
- drivers/clk/renesas/r9a08g046-cpg.c | 153 ++++++++++++++++++++++++++++
- drivers/clk/renesas/rzg2l-cpg.c     |   6 ++
- drivers/clk/renesas/rzg2l-cpg.h     |   1 +
- 5 files changed, 167 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/renesas/r9a08g046-cpg.c
+                        Geert
 
-diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
-index 6a5a04664990..0203ecbb3882 100644
---- a/drivers/clk/renesas/Kconfig
-+++ b/drivers/clk/renesas/Kconfig
-@@ -39,6 +39,7 @@ config CLK_RENESAS
- 	select CLK_R9A07G044 if ARCH_R9A07G044
- 	select CLK_R9A07G054 if ARCH_R9A07G054
- 	select CLK_R9A08G045 if ARCH_R9A08G045
-+	select CLK_R9A08G046 if ARCH_R9A08G046
- 	select CLK_R9A09G011 if ARCH_R9A09G011
- 	select CLK_R9A09G047 if ARCH_R9A09G047
- 	select CLK_R9A09G056 if ARCH_R9A09G056
-@@ -194,6 +195,10 @@ config CLK_R9A08G045
- 	bool "RZ/G3S clock support" if COMPILE_TEST
- 	select CLK_RZG2L
- 
-+config CLK_R9A08G046
-+	bool "RZ/G3L clock support" if COMPILE_TEST
-+	select CLK_RZG2L
-+
- config CLK_R9A09G011
- 	bool "RZ/V2M clock support" if COMPILE_TEST
- 	select CLK_RZG2L
-@@ -250,7 +255,7 @@ config CLK_RCAR_USB2_CLOCK_SEL
- 	  This is a driver for R-Car USB2 clock selector
- 
- config CLK_RZG2L
--	bool "RZ/{G2L,G2UL,G3S,V2L} family clock support" if COMPILE_TEST
-+	bool "RZ/{G2{L,UL},G3{S,L},V2L} family clock support" if COMPILE_TEST
- 	select RESET_CONTROLLER
- 
- config CLK_RZV2H
-diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
-index d28eb276a153..bd2bed91ab29 100644
---- a/drivers/clk/renesas/Makefile
-+++ b/drivers/clk/renesas/Makefile
-@@ -36,6 +36,7 @@ obj-$(CONFIG_CLK_R9A07G043)		+= r9a07g043-cpg.o
- obj-$(CONFIG_CLK_R9A07G044)		+= r9a07g044-cpg.o
- obj-$(CONFIG_CLK_R9A07G054)		+= r9a07g044-cpg.o
- obj-$(CONFIG_CLK_R9A08G045)		+= r9a08g045-cpg.o
-+obj-$(CONFIG_CLK_R9A08G046)		+= r9a08g046-cpg.o
- obj-$(CONFIG_CLK_R9A09G011)		+= r9a09g011-cpg.o
- obj-$(CONFIG_CLK_R9A09G047)		+= r9a09g047-cpg.o
- obj-$(CONFIG_CLK_R9A09G056)		+= r9a09g056-cpg.o
-diff --git a/drivers/clk/renesas/r9a08g046-cpg.c b/drivers/clk/renesas/r9a08g046-cpg.c
-new file mode 100644
-index 000000000000..6c77afdd34ea
---- /dev/null
-+++ b/drivers/clk/renesas/r9a08g046-cpg.c
-@@ -0,0 +1,153 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * RZ/G3L CPG driver
-+ *
-+ * Copyright (C) 2026 Renesas Electronics Corp.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+
-+#include <dt-bindings/clock/r9a08g046-cpg.h>
-+
-+#include "rzg2l-cpg.h"
-+
-+/* RZ/G3L Specific registers. */
-+#define G3L_CPG_PL2_DDIV		(0x204)
-+#define G3L_CPG_PL3_DDIV		(0x208)
-+#define G3L_CLKDIVSTATUS		(0x280)
-+
-+/* RZ/G3L Specific division configuration.  */
-+#define G3L_DIVPL2A		DDIV_PACK(G3L_CPG_PL2_DDIV, 0, 2)
-+#define G3L_DIVPL2B		DDIV_PACK(G3L_CPG_PL2_DDIV, 4, 2)
-+#define G3L_DIVPL3A		DDIV_PACK(G3L_CPG_PL3_DDIV, 0, 2)
-+
-+/* RZ/G3L Clock status configuration. */
-+#define G3L_DIVPL2A_STS		DDIV_PACK(G3L_CLKDIVSTATUS, 4, 1)
-+#define G3L_DIVPL2B_STS		DDIV_PACK(G3L_CLKDIVSTATUS, 5, 1)
-+#define G3L_DIVPL3A_STS		DDIV_PACK(G3L_CLKDIVSTATUS, 8, 1)
-+
-+enum clk_ids {
-+	/* Core Clock Outputs exported to DT */
-+	LAST_DT_CORE_CLK = R9A08G046_USB_SCLK,
-+
-+	/* External Input Clocks */
-+	CLK_EXTAL,
-+	CLK_ETH0_TXC_TX_CLK_IN,
-+	CLK_ETH0_RXC_RX_CLK_IN,
-+	CLK_ETH1_TXC_TX_CLK_IN,
-+	CLK_ETH1_RXC_RX_CLK_IN,
-+
-+	/* Internal Core Clocks */
-+	CLK_PLL2,
-+	CLK_PLL2_DIV2,
-+	CLK_PLL3,
-+	CLK_PLL3_DIV2,
-+
-+	/* Module Clocks */
-+	MOD_CLK_BASE,
-+};
-+
-+/* Divider tables */
-+static const struct clk_div_table dtable_4_128[] = {
-+	{ 0, 4 },
-+	{ 1, 8 },
-+	{ 2, 16 },
-+	{ 3, 128 },
-+	{ 0, 0 },
-+};
-+
-+static const struct clk_div_table dtable_8_256[] = {
-+	{ 0, 8 },
-+	{ 1, 16 },
-+	{ 2, 32 },
-+	{ 3, 256 },
-+	{ 0, 0 },
-+};
-+
-+static const struct cpg_core_clk r9a08g046_core_clks[] __initconst = {
-+	/* External Clock Inputs */
-+	DEF_INPUT("extal", CLK_EXTAL),
-+	DEF_INPUT("eth0_txc_tx_clk", CLK_ETH0_TXC_TX_CLK_IN),
-+	DEF_INPUT("eth0_rxc_rx_clk", CLK_ETH0_RXC_RX_CLK_IN),
-+	DEF_INPUT("eth1_txc_tx_clk", CLK_ETH1_TXC_TX_CLK_IN),
-+	DEF_INPUT("eth1_rxc_rx_clk", CLK_ETH1_RXC_RX_CLK_IN),
-+
-+	/* Internal Core Clocks */
-+	DEF_FIXED(".pll2", CLK_PLL2, CLK_EXTAL, 200, 3),
-+	DEF_FIXED(".pll3", CLK_PLL3, CLK_EXTAL, 200, 3),
-+	DEF_FIXED(".pll2_div2", CLK_PLL2_DIV2, CLK_PLL2, 1, 2),
-+	DEF_FIXED(".pll3_div2", CLK_PLL3_DIV2, CLK_PLL3, 1, 2),
-+
-+	/* Core output clk */
-+	DEF_G3S_DIV("P0", R9A08G046_CLK_P0, CLK_PLL2_DIV2, G3L_DIVPL2B, G3L_DIVPL2B_STS,
-+		    dtable_8_256, 0, 0, 0, NULL),
-+	DEF_G3S_DIV("P1", R9A08G046_CLK_P1, CLK_PLL3_DIV2, G3L_DIVPL3A, G3L_DIVPL3A_STS,
-+		    dtable_4_128, 0, 0, 0, NULL),
-+	DEF_G3S_DIV("P3", R9A08G046_CLK_P3, CLK_PLL2_DIV2, G3L_DIVPL2A, G3L_DIVPL2A_STS,
-+		    dtable_4_128, 0, 0, 0, NULL),
-+};
-+
-+static const struct rzg2l_mod_clk r9a08g046_mod_clks[] = {
-+	DEF_MOD("gic_gicclk",		R9A08G046_GIC600_GICCLK, R9A08G046_CLK_P1, 0x514, 0,
-+					MSTOP(BUS_PERI_COM, BIT(12))),
-+	DEF_MOD("ia55_pclk",		R9A08G046_IA55_PCLK, R9A08G046_CLK_P0, 0x518, 0,
-+					MSTOP(BUS_PERI_CPU, BIT(13))),
-+	DEF_MOD("ia55_clk",		R9A08G046_IA55_CLK, R9A08G046_CLK_P1, 0x518, 1,
-+					MSTOP(BUS_PERI_CPU, BIT(13))),
-+	DEF_MOD("dmac_aclk",		R9A08G046_DMAC_ACLK, R9A08G046_CLK_P3, 0x52c, 0,
-+					MSTOP(BUS_REG1, BIT(2))),
-+	DEF_MOD("dmac_pclk",		R9A08G046_DMAC_PCLK, R9A08G046_CLK_P3, 0x52c, 1,
-+					MSTOP(BUS_REG1, BIT(3))),
-+	DEF_MOD("scif0_clk_pck",	R9A08G046_SCIF0_CLK_PCK, R9A08G046_CLK_P0, 0x584, 0,
-+					MSTOP(BUS_MCPU2, BIT(1))),
-+};
-+
-+static const struct rzg2l_reset r9a08g046_resets[] = {
-+	DEF_RST(R9A08G046_GIC600_GICRESET_N, 0x814, 0),
-+	DEF_RST(R9A08G046_GIC600_DBG_GICRESET_N, 0x814, 1),
-+	DEF_RST(R9A08G046_IA55_RESETN, 0x818, 0),
-+	DEF_RST(R9A08G046_DMAC_ARESETN, 0x82c, 0),
-+	DEF_RST(R9A08G046_DMAC_RST_ASYNC, 0x82c, 1),
-+	DEF_RST(R9A08G046_SCIF0_RST_SYSTEM_N, 0x884, 0),
-+};
-+
-+static const unsigned int r9a08g046_crit_mod_clks[] __initconst = {
-+	MOD_CLK_BASE + R9A08G046_GIC600_GICCLK,
-+	MOD_CLK_BASE + R9A08G046_IA55_CLK,
-+	MOD_CLK_BASE + R9A08G046_DMAC_ACLK,
-+};
-+
-+static const unsigned int r9a08g046_crit_resets[] = {
-+	R9A08G046_DMAC_ARESETN,
-+	R9A08G046_DMAC_RST_ASYNC,
-+};
-+
-+const struct rzg2l_cpg_info r9a08g046_cpg_info = {
-+	/* Core Clocks */
-+	.core_clks = r9a08g046_core_clks,
-+	.num_core_clks = ARRAY_SIZE(r9a08g046_core_clks),
-+	.last_dt_core_clk = LAST_DT_CORE_CLK,
-+	.num_total_core_clks = MOD_CLK_BASE,
-+
-+	/* Critical Module Clocks */
-+	.crit_mod_clks = r9a08g046_crit_mod_clks,
-+	.num_crit_mod_clks = ARRAY_SIZE(r9a08g046_crit_mod_clks),
-+
-+	/* Module Clocks */
-+	.mod_clks = r9a08g046_mod_clks,
-+	.num_mod_clks = ARRAY_SIZE(r9a08g046_mod_clks),
-+	.num_hw_mod_clks = R9A08G046_BSC_X_BCK_BSC + 1,
-+
-+	/* Resets */
-+	.resets = r9a08g046_resets,
-+	.num_resets = R9A08G046_BSC_X_PRESET_BSC + 1, /* Last reset ID + 1 */
-+
-+	/* Critical Resets */
-+	.crit_resets = r9a08g046_crit_resets,
-+	.num_crit_resets = ARRAY_SIZE(r9a08g046_crit_resets),
-+
-+	.has_clk_mon_regs = true,
-+};
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index 038b3f8e85a1..a510a4d32924 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -2144,6 +2144,12 @@ static const struct of_device_id rzg2l_cpg_match[] = {
- 		.data = &r9a08g045_cpg_info,
- 	},
- #endif
-+#ifdef CONFIG_CLK_R9A08G046
-+	{
-+		.compatible = "renesas,r9a08g046-cpg",
-+		.data = &r9a08g046_cpg_info,
-+	},
-+#endif
- #ifdef CONFIG_CLK_R9A09G011
- 	{
- 		.compatible = "renesas,r9a09g011-cpg",
-diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
-index af0a003d93f7..10baf9e71a6e 100644
---- a/drivers/clk/renesas/rzg2l-cpg.h
-+++ b/drivers/clk/renesas/rzg2l-cpg.h
-@@ -316,6 +316,7 @@ extern const struct rzg2l_cpg_info r9a07g043_cpg_info;
- extern const struct rzg2l_cpg_info r9a07g044_cpg_info;
- extern const struct rzg2l_cpg_info r9a07g054_cpg_info;
- extern const struct rzg2l_cpg_info r9a08g045_cpg_info;
-+extern const struct rzg2l_cpg_info r9a08g046_cpg_info;
- extern const struct rzg2l_cpg_info r9a09g011_cpg_info;
- 
- int rzg2l_cpg_sd_clk_mux_notifier(struct notifier_block *nb, unsigned long event, void *data);
 -- 
-2.43.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
