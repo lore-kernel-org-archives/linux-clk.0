@@ -1,106 +1,67 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9AF315D40;
-	Sun, 22 Mar 2026 08:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774169761; cv=none; b=MPnUuu2Pr7ha6VDv35xZwhsDS1sKZ/+xeU2CnSiZBbzKfqNfhL/3umMlkaBssqmENL+CLDcB56EuTecafeQiYGbNQVkWIevT739gTTP1AY5RlLXlxCrG4iHlGL8ZimGUdYHtMFs51JfgVQEjmCjhsSbtM/vCTIFG+xYGQRF8hno=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774169761; c=relaxed/simple;
-	bh=JWiopU5eFXEHu3hWpvxX9xIvAtEbnl/MvHCjf8rcp6Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aEVTn6/7uxEhgu+mkdjs4m1d8Pa6YISdP/eJIHhZ+oqSzG/Ir43JM7E19jEkKo219TkfQwHvYjpyIbDrSKy7BBQAip2CvnqWjLp4hhTBmfmzxyYwq5MYUP6iwfe+lQdoBKIR49sImOm+XSP0N5txlpplB/leAa2n/VitWTEFY4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ehNjcrWD; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913971A6810;
+	Sun, 22 Mar 2026 12:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774184085; cv=pass; b=aJiRdWUzwSpLnR/SByIVmGg75WFdmV99M9n0PlEFQjU1N6L8mgxH9R9zSqThZ6FPT68jgKytoQr+xofvC6O2QPih/AQahsnec7zzeXB49if5rsc3dL25kniDxfzBsHlBp8b+yyEqJZnh/1PRxo+JC5mkbjPpM4Sf7Cj6Y/1ebTg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774184085; c=relaxed/simple;
+	bh=kK8YmrNobKxYA3KUUj6T5vQZMaKkS94DHt4c/CNipck=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IwxqeTrjtihRbiz6a8b+SUkFA+O7z5TSc3zTdHBk0qak4DKdbgacHgCYOrX3LyrUIrbTv0qMh2jIRQd7NU4+LNotx9ntlJGLV7bmfMQLd1yX/zc7GN6wudyKx3VrUoSIHuMJhcSoN5cy66rzPm0kmHCb1Y+fPJTCcJb+4eaA8lA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ziyao.cc; spf=pass smtp.mailfrom=ziyao.cc; dkim=pass (1024-bit key) header.d=ziyao.cc header.i=me@ziyao.cc header.b=SmjsFG73; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ziyao.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziyao.cc
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ehNjcrWD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5275CC19424;
-	Sun, 22 Mar 2026 08:55:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774169761;
-	bh=JWiopU5eFXEHu3hWpvxX9xIvAtEbnl/MvHCjf8rcp6Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ehNjcrWD0w9vpHxp2UpcdDpbLmIDCmN1CkSq6erafErbHMF12HbFRz4iukCPYU5/5
-	 jwpAuqhr3C1n9Sn1Rxa/L9W7jC7Djfg4aEaKpUDzb0wB1qDUXcrVaxuglNsJIjFub8
-	 oc9/LyytnDlaUwcUa5vKU13sAQua0YCGVcoZGorFUroQoyAgbZ1HFDdIGngTeq20JV
-	 xeXT28skDEk0R2oPuaDqlI4Fe1VpUmU+OnwGmWXnt8A23imVmBVUpD6KTSQAquQIQf
-	 cSZ081WckWb1Qg/RD7nJqKqrIFdKstPUDfywCgsc2fd13hP0sU0RRY0vnjzKuSEerj
-	 iouydyzlX+3wQ==
-Message-ID: <d96ff9e5-899c-472c-939a-5e8df66ae0da@kernel.org>
-Date: Sun, 22 Mar 2026 09:55:56 +0100
+	dkim=pass (1024-bit key) header.d=ziyao.cc header.i=me@ziyao.cc header.b="SmjsFG73"
+ARC-Seal: i=1; a=rsa-sha256; t=1774184061; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=eXPqSucoXJsTOL/gq9TzCD3uy/NKgNQz+BIi6zjT+gRPjZtROtqxxoBFPpnpfAjFyWTJnrXXyiGQcAE8rS8ank5dxcreaPqlCXlfy1t0V2kouRrv00ZdfMgtGDHsQeZt5OTX0B7NO/5g+kUxavBhNBc6Hx51NTkPfrpMkdOoehw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1774184061; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=SAZ/XZ7+svKGJe8JsDFrKqgEYqASCcKqQxqvSqGACmE=; 
+	b=lcR04uVX7YnSgBsega3pT3aezhhDcj3SzRoKW3DeUVKNNqdRm4apJkFKsAYCbNiPTlwQN1M7Ji601yTugIkkQWMtVtXMTa77cO+3KmykZAU6f1QawlhMEG/002ZYm1bZMuLFenDrXOuXg2Rj+fzca0nrPoFJv5mp0LGrk/oFYU8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=ziyao.cc;
+	spf=pass  smtp.mailfrom=me@ziyao.cc;
+	dmarc=pass header.from=<me@ziyao.cc>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1774184061;
+	s=zmail; d=ziyao.cc; i=me@ziyao.cc;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=SAZ/XZ7+svKGJe8JsDFrKqgEYqASCcKqQxqvSqGACmE=;
+	b=SmjsFG73xr9Vl4p0jEt20RC4Eyq1O6Ew9qyhPNdW+0m5us9gd9kIP4mEVq7DA83g
+	q8ectuVkUtjZX1f5ccPByFHwuJ1Gtq4/t9MpRWthmxgK1OFq23GMd5JZtWHhTnhKzST
+	QJc+tlDLAlAtXW/HXnF2xowN3FOOufEQGGVf9nIo=
+Received: by mx.zohomail.com with SMTPS id 17741840598081005.9843335790677;
+	Sun, 22 Mar 2026 05:54:19 -0700 (PDT)
+Date: Sun, 22 Mar 2026 12:54:05 +0000
+From: Yao Zi <me@ziyao.cc>
+To: wjjsn <wjjsn@qq.com>, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, chenhuacai@kernel.org, zhuyinbo@loongson.cn,
+	mturquette@baylibre.com, sboyd@kernel.org
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev, kernel@xen0n.name,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: loongson,ls2k: add ls2k1000
+ compatible
+Message-ID: <ab_mbVVQ9Nf7pTRt@pie>
+References: <20260322081915.1626723-1-wjjsn@qq.com>
+ <tencent_1EA9B7D351AF8169F880BAAA49B37E178A08@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: clock: loongson,ls2k: add ls2k1000
- compatible
-To: wjjsn <wjjsn@qq.com>, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, chenhuacai@kernel.org, zhuyinbo@loongson.cn,
- mturquette@baylibre.com, sboyd@kernel.org
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- loongarch@lists.linux.dev, kernel@xen0n.name, devicetree@vger.kernel.org,
- wjjsn <2858482031@qq.com>
-References: <20260322080327.1606799-1-wjjsn@qq.com>
- <tencent_09D5E459F58BDE54BD6998D7FC346A403407@qq.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <tencent_09D5E459F58BDE54BD6998D7FC346A403407@qq.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_1EA9B7D351AF8169F880BAAA49B37E178A08@qq.com>
+X-ZohoMailClient: External
 
-On 22/03/2026 09:03, wjjsn wrote:
-> From: wjjsn <2858482031@qq.com>
-> 
+On Sun, Mar 22, 2026 at 04:19:14PM +0800, wjjsn wrote:
 > Add a SoC-specific "loongson,ls2k1000-clk" compatible.
-
-Why?
-
 > Retain the existing "loongson,ls2k-clk" as a deprecated fallback
 > for backward compatibility.
 > 
@@ -127,9 +88,27 @@ Why?
 >        - loongson,ls2k0500-clk
 > -      - loongson,ls2k-clk  # This is for Loongson-2K1000
 > +      - loongson,ls2k-clk
+> +      - loongson,ls2k1000-clk
 
-Naaah, never tested.
+If you want to deprecate loongson,ls2k-clk, you should probably mark
+it as "deprecated: true", instead of describing such situation in human
+language.
 
+I don't have a strong opinion on the change, but I don't think it
+improves the situation much. We still need to document the historical
+compatible in bindings and support it in driver, the only thing gets
+improved is a slightly more clear compatible name in devicetree.
 
-Best regards,
-Krzysztof
+However, even if someone is confused by the current compatible, they
+could have a look in the binding and get an explanation quickly.
+
+Regards,
+Yao Zi
+
+>        - loongson,ls2k2000-clk
+>  
+>    reg:
+> -- 
+> 2.43.0
+> 
+> 
