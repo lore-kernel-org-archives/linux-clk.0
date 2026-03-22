@@ -1,48 +1,48 @@
-Received: from out203-205-221-240.mail.qq.com (out203-205-221-240.mail.qq.com [203.205.221.240])
+Received: from out203-205-221-205.mail.qq.com (out203-205-221-205.mail.qq.com [203.205.221.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68FB7288C2D;
-	Sun, 22 Mar 2026 08:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597B03803EF;
+	Sun, 22 Mar 2026 08:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774166628; cv=none; b=uKLo0dnVOXlK690qeviSJGzXTpjHk6m/V7hbWsIzHi7fUPUBCBWl0B3c1KlmMVTJrZ40mC8Lgzm1lt4QR5RIZalgkcU+0PBPhE9y8GgJ/DkzNgL3FpFoedKldpbw2k3IbZcMN2tosyOvre1jJYy7NDfUqFsF6dyTNtrQ1yskFEo=
+	t=1774166630; cv=none; b=Pji08MwWFr1mLK6Q/nqx6n2QevONb8jzuZ2HV8DVY/3t5lISizi1EJmlduhFIOrXaW9GirfHFMJJT0hBaWo39dn6nCF80zKM387CrXVHsrs9Zss9elIsAKwqr2WQXKYAU3z6T/XpAaPl4HdUPxeYGdajdLv1V/p/SN1c00JggGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774166628; c=relaxed/simple;
-	bh=nOwKuHnP5b4pP5nKigCa6Jg66CWkpdBNDAgdUOPLqQA=;
+	s=arc-20240116; t=1774166630; c=relaxed/simple;
+	bh=mkArss3ibgdtyGV/4MV84wk///1QYU6SuEInP/RiuTA=;
 	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=V835ScvJczO93ZlvTZNEASEwSw54CfNfPyHbEnx+RQT/hg9fKuv4HcxUCFCfdsqiem6uzP49K8IH+Tvb6eWjxN2P3msoES5gMekD4tkkoYvsF5eogYd2A1a4wu//wdyGoRuwe2p0/TMqUFnJViuwuq2v0BsuRbURV9kQqV7Ty9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Ybg+lF1L; arc=none smtp.client-ip=203.205.221.240
+	 MIME-Version; b=eMw2oNIdX7tq/TsOabR87hRIceKYO8I7eN4xacZSJLTxqdE7tqN5P4jexdtQ8TIe9cCX9Yie0ajbESpmJ4yg4bfwwLbo8ibosFPuwqOSeDX4e892s+kJsPzSMNJCI5CTx8q5e1rD5/zD05vaSIJcnSx7Ce1KxfD3eAbHM/xwng4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=DaYXbUrW; arc=none smtp.client-ip=203.205.221.205
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Ybg+lF1L"
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="DaYXbUrW"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1774166624; bh=r/KYBO4Obj4K4oCVTFttAiIPYsDg4+nomEeK0QfxJNc=;
+	t=1774166626; bh=1sJ/3VH8Sb04qajifMyJsr1grXV/UFNngZi1z/XYRWI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=Ybg+lF1LnFvyfQnXiH9sUcUlxvdMp/kH+CBnuzEepa/y/+Q7rN0gsQTJFGktiA+q1
-	 fwRL0okFHexDFIh/hFICUR+BLhuBI2VzwstZlaeFlYvPuOU1ctuWjj6Z7nNsEf7zKP
-	 vQnaFY1zP2wAN6ep68hp9W+pe1ie8CobDWg++mxg=
+	b=DaYXbUrWOv58rncxBXUP27qANJlc5sqhIXi7oz6B8EVgNeYJc6EAnvM2u+I7lWuWv
+	 QOTD1JukJtgpmwAQIcm4Qm5CvzAky0QH7LA1xWYBl1rRWmVrK+SaeJSI7taU03d3lY
+	 cLQq0sgi4iunw8j8lKcW0s07vZvccs0Equ6LLE68=
 Received: from MYJGMC.tail4697e5.ts.net ([122.195.139.226])
 	by newxmesmtplogicsvrszb51-0.qq.com (NewEsmtp) with SMTP
 	id E78F8E1; Sun, 22 Mar 2026 16:03:39 +0800
-X-QQ-mid: xmsmtpt1774166621ts9jpklb5
-Message-ID: <tencent_09D5E459F58BDE54BD6998D7FC346A403407@qq.com>
-X-QQ-XMAILINFO: MRMtjO3A6C9XDfIWje85BK8Q+de2FpNXINhB69YaDAoZPoI5pMI4cX3eAEkyT3
-	 H9NIKPITVTPNABqNzpI4VeLEWMNwFGkoEsAscyRYOJOMWUIKYo8/UOTVBD37YADa1e8WRbKuefFX
-	 rFJ6o4qE2Yz876isNyMZagtvcG79r7+ib6hqee/kqjgjr9WOEBEGKNGiUzuhTm+Dsnv2r0Nnd3pf
-	 fpsp1bJ/eFfovmlkwcL6w//MryIw5BMJwopI2r/7APfmsOvbAEO9R97TmEf9oB77IKkHoEaauzIx
-	 Aw+rxpjRir0IaiE3acYu5ZSps8GV5rRcsUkbUAFvvKesp13X5sgANoVjE/Vgyy7yja3D6XHM23et
-	 tbNeosGsS9Cu5XMVgTAIloYEL/5Ki/EKXAINJJZFVTk2jeAi7ybcjuzAkxlcSLwdM/IOqAETy8oU
-	 VLPXv4i649j6e/JIgWK8cCAlsrtLta1KPdQlXehE/1oHXDkTqLPjSmmshQC9QlpCsYOK4SQejW9y
-	 6g6YuuSGzuLb+8h0OEOBOk1m+P6fxh8JeF0fj/395bIK7DM44GPQX5laJylV/A+jF8HK/MI4MD1a
-	 9RiOODDhAbDSXJx8PTeSQIaCW7Zn4KWeN7FSuouk8+w46GaGRf98ZmDl9Vd3m8pKvtrpHLgYDfPG
-	 Uzy16hX8wH/GxejsjJjvmnqkdQjXarewMto4qyatdVPoy0jZqmGJkTzaoQ5g45V36BZZNd5xCmd2
-	 vX7RuRT3ks8oRBkfdSwn9hNO9p08KGszgv8JBBEhPFOGxSwQjHuyhhRjQjxrlhDK9O86K3DevD8N
-	 GgdrNDRWrYk5g2yENHmKAScZ3VzLClZ1oZZdCGMI1hjJ2EP0qE2NdjhFS11CXB5PckE9gdDl4/em
-	 36/7GFEvxw+O0mBRbJn22JW7Nt+BWS5LNAaGhxbqjtCYiLisag28m7JGW174Zjep+25HYpmT5yf7
-	 xC0DMqindIG+CR1sXGZ9+67et6AtJ8xhJ90q5Iyar9KykqZ+0lhMqiDjuEprg22mCCZFGLqRao3G
-	 zwLmw/Pj6ZfFbRFL7Ia0FFc6NT4dR89hw3wDSW6nL9eGwM005ivsp2vbMYiBs=
-X-QQ-XMRINFO: M/715EihBoGS47X28/vv4NpnfpeBLnr4Qg==
+X-QQ-mid: xmsmtpt1774166623tk4a3ra5k
+Message-ID: <tencent_19D06CEA85762ACE74DF6B745A2EE0BCAA06@qq.com>
+X-QQ-XMAILINFO: NnIX2CK8LSsJK+/FiL+0IOPetIgOXdNaehWxXSnYgDfassSI29UItp2PfB91WK
+	 uoPnKhhmDJuOoaQinrz4SFV6+4K9bdQRj0obQWOHn2Ro9WohvRBhuScW24U7BUxFYhsqizGOPqkU
+	 TJpnCLDDbwssy1env50z6cbZrhDfCQk7lXlKgU8XSJwB2wBiVo3hSIyQvZBDdR0bghLVqzqvPfg+
+	 C13IemkCBiEAXGay4v+4Gzm2fANazCLEzVmwtjDCfQaQ0J+8ZNwf+bbvF3dYltJqrHD4rDcGqJVX
+	 a9nvmz+8JbTFeqbWIhkMLb1hx9d1rlPF1Th4lSXrZf3StjrOSZ+/Sb1CDuCDNvbCb68ptkaPexYt
+	 QOAwYTWo1LtaaBPwQ3IIB4a4B/ZcsYseMzrGTf7fi769k6O+oOaLpFhrZrnu/FEmxs1sX+IsaNdC
+	 OYNBPFTc/8hGiFHv/MjTWl/6zJiXYZ3sOcxFC78AhNX40SQh8FRIDvQz6Cp0OzRIVwaxijZx3Juq
+	 z8W4v2xTuJmJEFSJ6u+9SnmdbT/mbYpDz/CucY5PM/UVpl7hGuDdsBiyI/TZFi3qu8/CztOetnEx
+	 AiYHfIVDlr0RJ8wMUhVnFU42BoViuCpeUOEnxoSoDjRSp8bHNz1LYoJGF+eD8q2S6ySY5GutgWD3
+	 ix55TXZKNjTyJ3P2jbMnB4a6rIIfIvJeLqIg/kGBiHIexjWoaIQ/1cvi8A//tEXJbFbngtsftJTx
+	 8xAFJiTMud8dHZ+otkLFwJaG7mqdX1Lt4LaGU3EJW/iuWEEIquzPy6ho2V3MMJCeNq2JaAN6yVrw
+	 Te9C9dsrLGI/uDcQfIx4fDkW6IfA8Wc8NqmKHwmRI4pZHmSe7dqiMUPf4N2oW+gWNnCJ3uyEGK4o
+	 6uv5Oxln0/GFTx2YJBELGXos55a8FtGbJU2Z0Wjgm+P8w8weAFoBBuduJKhT99tJh4/ElrKm3RO2
+	 ayeJErpA4x1amxBIRT/LPX0bje3jqxdQQK2T6zngO35fUIInycVEgAZXkDBiftGO1h3i7qYMQJsu
+	 R2nMclfDkNjeYzsG/8yaTC00adu/U=
+X-QQ-XMRINFO: MSVp+SPm3vtSI1QTLgDHQqIV1w2oNKDqfg==
 From: wjjsn <wjjsn@qq.com>
 To: robh@kernel.org,
 	krzk+dt@kernel.org,
@@ -58,9 +58,9 @@ Cc: linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	wjjsn <2858482031@qq.com>,
 	wjjsn <wjjsn@qq.com>
-Subject: [PATCH 1/2] dt-bindings: clock: loongson,ls2k: add ls2k1000 compatible
-Date: Sun, 22 Mar 2026 16:03:26 +0800
-X-OQ-MSGID: <20260322080327.1606799-2-wjjsn@qq.com>
+Subject: [PATCH 2/2] clk: loongson2: add support for ls2k1000 compatible
+Date: Sun, 22 Mar 2026 16:03:27 +0800
+X-OQ-MSGID: <20260322080327.1606799-3-wjjsn@qq.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260322080327.1606799-1-wjjsn@qq.com>
 References: <20260322080327.1606799-1-wjjsn@qq.com>
@@ -74,37 +74,41 @@ Content-Transfer-Encoding: 8bit
 
 From: wjjsn <2858482031@qq.com>
 
-Add a SoC-specific "loongson,ls2k1000-clk" compatible.
-Retain the existing "loongson,ls2k-clk" as a deprecated fallback
-for backward compatibility.
+Add driver support for the "loongson,ls2k1000-clk" compatible
+and update the Loongson-2K1000 DTS to use it while retaining
+"loongson,ls2k-clk" as a fallback.
 
 Signed-off-by: wjjsn <wjjsn@qq.com>
 ---
- .../devicetree/bindings/clock/loongson,ls2k-clk.yaml        | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/loongarch/boot/dts/loongson-2k1000.dtsi | 2 +-
+ drivers/clk/clk-loongson2.c                  | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml b/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
-index c07ad1f85857..4d70bc4e7a13 100644
---- a/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
-+++ b/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
-@@ -13,12 +13,16 @@ description: |
-   Loongson-2 SoC clock control module is an integrated clock controller, which
-   generates and supplies to all modules.
+diff --git a/arch/loongarch/boot/dts/loongson-2k1000.dtsi b/arch/loongarch/boot/dts/loongson-2k1000.dtsi
+index ab6a55937e9e..61cdae438cb0 100644
+--- a/arch/loongarch/boot/dts/loongson-2k1000.dtsi
++++ b/arch/loongarch/boot/dts/loongson-2k1000.dtsi
+@@ -156,7 +156,7 @@ pctrl: pinctrl@1fe00420 {
+ 		};
  
-+  The "loongson,ls2k1000-clk" string should be used for Loongson-2K1000.
-+  The "loongson,ls2k-clk" string is kept as a fallback for backward compatibility for Loongson-2K1000.
-+
- properties:
-   compatible:
-     enum:
-       - loongson,ls2k0300-clk
-       - loongson,ls2k0500-clk
--      - loongson,ls2k-clk  # This is for Loongson-2K1000
-+      - loongson,ls2k-clk
-+      - loongson,ls2k1000-clk
-       - loongson,ls2k2000-clk
- 
-   reg:
+ 		clk: clock-controller@1fe00480 {
+-			compatible = "loongson,ls2k-clk";
++			compatible = "loongson,ls2k1000-clk", "loongson,ls2k-clk";
+ 			reg = <0x0 0x1fe00480 0x0 0x58>;
+ 			#clock-cells = <1>;
+ 			clocks = <&ref_100m>;
+diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
+index 9c4c6c99db3e..48d00578b26f 100644
+--- a/drivers/clk/clk-loongson2.c
++++ b/drivers/clk/clk-loongson2.c
+@@ -441,6 +441,7 @@ static const struct of_device_id loongson2_clk_match_table[] = {
+ 	{ .compatible = "loongson,ls2k0300-clk", .data = &ls2k0300_clks },
+ 	{ .compatible = "loongson,ls2k0500-clk", .data = &ls2k0500_clks },
+ 	{ .compatible = "loongson,ls2k-clk", .data = &ls2k1000_clks },
++	{ .compatible = "loongson,ls2k1000-clk", .data = &ls2k1000_clks },
+ 	{ .compatible = "loongson,ls2k2000-clk", .data = &ls2k2000_clks },
+ 	{ }
+ };
 -- 
 2.43.0
 
