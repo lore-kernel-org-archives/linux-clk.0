@@ -1,106 +1,121 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+Received: from out203-205-221-233.mail.qq.com (out203-205-221-233.mail.qq.com [203.205.221.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960424207A;
-	Sun, 22 Mar 2026 14:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80A4335555;
+	Sun, 22 Mar 2026 15:08:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774188968; cv=none; b=afTG3v+rlfarNw1oNa2++CL/JkHUIf7WJO98df0kegwiYDP4/Hj4IePEjIO9sxzwD+eA2JELKGkkHlwdjzPUFlIfnQ5jELm4c55WwhR/B72t25ngFCMASvOUpMCLWv/snsH4o1O5M4+47jM7L9Bnu3IXqJpWPE7dLFIzyIigmwU=
+	t=1774192127; cv=none; b=FZl6S2jZQGvpTM7+s8CZ5FZ3FLwDEmqjSCYlh+LxqLl9g9NEr/SXHs47L9sp7AAt2SADWz5SAeRutXB0vPZEdejmUxievZxk1tkFc7zYuJyMFLsO2S5d4+7DmNwIyPj+eL5MlXe3yjdwRlwWZ6uxg4pH3zQBL9qy7hSjF4ik2BI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774188968; c=relaxed/simple;
-	bh=IigGF6U3blVwl7+mttTv8ABlCNI5lUMx+1rU3nKGGxA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hgC7wXyigLZZjVHnIUNENG3bFtLtshatil0famnLdqjnLqAAh8NE7IiVN1phcx58ki5RQ8sER2caqFprgBETyh+KpLEQLKqPbulk0REiBxHM9Yj1wfnWUSwHnWcEHHXtgG9w8iGubtcAlHVUVzt0wyQty4gexsPEooXYgeBgUKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IMrZqHVJ; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1774192127; c=relaxed/simple;
+	bh=WXyNGeUTRwTzRCnxFJGU1m9OmF2/9dl0Fw6Vw2XNI9g=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=Xdp7lkmHyHEhcV9JZXVAii4SF0ABa8B15bO2I+Mt2kqImMrWnvAO9tQpwGTTdNpB0hIbiftlfuGDd1rERAp++LgH1sxixOnctxRCERAgfIr+4zFuktoaToDk1IT0s15xjhwPm3diOOr+bZ7kWZ5Of+z5a5lfK1kOfPRnpPt86zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ImgjKh7u; arc=none smtp.client-ip=203.205.221.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IMrZqHVJ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1774188965; x=1805724965;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=IigGF6U3blVwl7+mttTv8ABlCNI5lUMx+1rU3nKGGxA=;
-  b=IMrZqHVJZjaR/bflI2oII5lxH9nN5Zx5BVl7azFfZo+mqa8zpR77xY2S
-   THH3eFQMiy42y/AIVSpINQI6OoOYjr5h8H7OMSQ+OzbneO0WCmxr4ZhxN
-   +yA16RdMXvcDECc9QnYBiztwHm+guVSiB02d0CRt/uCFJUc5ahk/XC4OY
-   pVLRC4bxX9C3GH5Tu+bQsQNf2SZvGhZL1aB7uGQQsibks5g6BLS5SLE4V
-   3LfLgRqbmLwuSMUrNZWozYW8G955qX35sCp0gS8oRAAtSHMLCiTJ6m9+8
-   gWEICpCPAiC/bQKsfQLu3AiLF3bUKilkz32d6f+anSqikc6NXWvDQJJys
-   w==;
-X-CSE-ConnectionGUID: 9n5tJ6l/RbWI9d5VFq6CeQ==
-X-CSE-MsgGUID: WjXgmqJ9Se6+mv+bNrGQCw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11737"; a="62765356"
-X-IronPort-AV: E=Sophos;i="6.23,135,1770624000"; 
-   d="scan'208";a="62765356"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Mar 2026 07:16:05 -0700
-X-CSE-ConnectionGUID: JRLBnVVlSqa6fLyDLAUY4Q==
-X-CSE-MsgGUID: qbzVjqmzRUKzhYMJv9+fAA==
-X-ExtLoop1: 1
-Received: from lkp-server02.sh.intel.com (HELO d7fefbca0d04) ([10.239.97.151])
-  by fmviesa003.fm.intel.com with ESMTP; 22 Mar 2026 07:16:00 -0700
-Received: from kbuild by d7fefbca0d04 with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1w4Jav-000000002Dx-1Ld7;
-	Sun, 22 Mar 2026 14:15:57 +0000
-Date: Sun, 22 Mar 2026 22:15:01 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alexey Klimov <alexey.klimov@linaro.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Sam Protsenko <semen.protsenko@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Peter Griffin <peter.griffin@linaro.org>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Alexey Klimov <alexey.klimov@linaro.org>
-Subject: Re: [PATCH 4/5] mailbox: exynos: Add support for Exynos850 mailbox
-Message-ID: <202603222239.JTuBxs7K-lkp@intel.com>
-References: <20260320-exynos850-ap2apm-mailbox-v1-4-983eb3f296fc@linaro.org>
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ImgjKh7u"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1774192124; bh=ll098vXpHSTRvv37YsMw0daMG4T8OaC6yG0B77odcbo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=ImgjKh7ub4K90Zbmd9cKfcNAHflCVjGY0kbMtvzQZuNRX43TUnu96aDJ2G8ccny/M
+	 1XVBj1ldcLXOyLYmHgbjYOQiYaxbEujKnrJqi7s/JA/OG4CjR3D3Phk1mn1Z7xq7JU
+	 i/sOxyQbHNZ6g8VqC0gOtHPo9p+Y6xY7tBvRL6AM=
+Received: from MYJGMC.lan ([122.195.139.226])
+	by newxmesmtplogicsvrszc56-0.qq.com (NewEsmtp) with SMTP
+	id 2259A43D; Sun, 22 Mar 2026 23:08:37 +0800
+X-QQ-mid: xmsmtpt1774192121tiou7imaf
+Message-ID: <tencent_4169D45792346AC02855F4D98B8BD8D4B607@qq.com>
+X-QQ-XMAILINFO: OA/62N3Jm+rTNIeB18a4F+tn75aVrVjmzgua0ugIuzj+4Dyw9cNhTQjBvTW6Yv
+	 hdGqww0NOuHgltq1Z7vn+Qs97/1hH8Nt47hxu5BjKqiJAeogr0+LPOHsUG6vFYDsiJ9mOIX36zwm
+	 l23MhU0/6O27XUUBSTjOpylfe3sCaj6n5gSp2axWcfVvfoEoADknpJWWYpwGaRjcmA9edzucA+1c
+	 HbBYeEZgi+Yke+EVuT56bf3tZdF0zre8wccSynCuupUjMgjPQqdI7bxqSjslEFU24Oe1fVizL6xW
+	 yaIWBnq+1YDQExt3IE2NvzjvukuOPpu32xVTv9RYuRVmaj6CaEgNB0MltQESyVMDM5sjHjGfEnFz
+	 TRScjphf3cbaBzYu4sdRoUJR7TDSqnPJtqTbmF+dH6D7xpLPPDfmbLNhQ0bTLVoXagwt7Ey7cO1e
+	 gWWaOKsNigmjoWCZkRULPN+kOTZlicbKYm0YCVa0oLifD1lIy3uIJu1Oe7yujE9/ZOju1wY8zXqI
+	 rWKaBnHbkHmaj5XHM80MCxB0qzjp4BiTNUjKuAWzxXzZc9ufh8yzKK4rW16m5GpG9JSJuRlo0lQZ
+	 xxgB1XsHulMYF3UvYLwCj+mj4ty9vAL8XhilhDzCMPJSdBDqmhXUPGa/roaaXgttJCxv/r0Gfqv1
+	 DmCTMBVC/gTo8nZCHVFf2aN0dl0aotKgjxsTbb9GKRVEjUWv5nyeywseYElxnvrWbSA+oa547eca
+	 zdoWq1lSwti05KEu4TABD5VnJPHB5m659eQ7Us+omhxeOUjRHhDLF0MKkXTnSwR6F8vKmLNMHvB0
+	 TDRl62H9hg1y7zHrJs3PweslB7luk/ZdRs4BSrGEIzYMgqCplsNHWIL6OppBI9Zx/ENsULV9HOkk
+	 vo+30ndc/WfMPmLfCx7HIP5wD/SeH95aENGEBuVvNEjNQ19rC/nzOrISMQ2rIRUFM0n1x5OLMvX2
+	 fdpGOYehIYiYPZwWn5N8jlHyDFVS393ccu9k1GoNcwlvMi8mQSw1umZijxv9PG7GnH7DxDh01lAO
+	 BP6HywyaKSZ16oQck1Wdtfd2ugcjiyawAkAChuoRkh+2QzFAskYM/id+5AUHcb7e5PgSfsoQ==
+X-QQ-XMRINFO: OWPUhxQsoeAVwkVaQIEGSKwwgKCxK/fD5g==
+From: wjjsn <wjjsn@qq.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	chenhuacai@kernel.org,
+	zhuyinbo@loongson.cn,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	kernel@xen0n.name,
+	devicetree@vger.kernel.org,
+	wjjsn <wjjsn@qq.com>
+Subject: [PATCH v2 2/2] clk: loongson2: Add ls2k1000 compatible
+Date: Sun, 22 Mar 2026 23:08:36 +0800
+X-OQ-MSGID: <20260322150836.55196-3-wjjsn@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260322150836.55196-1-wjjsn@qq.com>
+References: <20260322150836.55196-1-wjjsn@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260320-exynos850-ap2apm-mailbox-v1-4-983eb3f296fc@linaro.org>
+Content-Transfer-Encoding: 8bit
 
-Hi Alexey,
+Add a SoC-specific compatible string "loongson,ls2k1000-clk" for
+Loongson-2K1000.
 
-kernel test robot noticed the following build warnings:
+Update the clock controller in DTS and driver:
 
-[auto build test WARNING on 785f0eb2f85decbe7c1ef9ae922931f0194ffc2e]
+- DTS: compatible changed from "loongson,ls2k-clk" to
+    "loongson,ls2k1000-clk"
+- Driver: add { .compatible = "loongson,ls2k1000-clk" } to 
+	of_device_id table while retaining the legacy 
+	"loongson,ls2k-clk" for backward compatibility.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Alexey-Klimov/dt-bindings-clock-exynos850-Add-APM_AP-MAILBOX-clock/20260322-085441
-base:   785f0eb2f85decbe7c1ef9ae922931f0194ffc2e
-patch link:    https://lore.kernel.org/r/20260320-exynos850-ap2apm-mailbox-v1-4-983eb3f296fc%40linaro.org
-patch subject: [PATCH 4/5] mailbox: exynos: Add support for Exynos850 mailbox
-config: x86_64-buildonly-randconfig-004-20260322 (https://download.01.org/0day-ci/archive/20260322/202603222239.JTuBxs7K-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260322/202603222239.JTuBxs7K-lkp@intel.com/reproduce)
+Signed-off-by: wjjsn <wjjsn@qq.com>
+---
+ arch/loongarch/boot/dts/loongson-2k1000.dtsi | 2 +-
+ drivers/clk/clk-loongson2.c                  | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202603222239.JTuBxs7K-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> Warning: drivers/mailbox/exynos-mailbox.c:60 struct member 'irq_mask_value' not described in 'exynos_mbox_driver_data'
->> Warning: drivers/mailbox/exynos-mailbox.c:60 struct member 'irq_mask_value' not described in 'exynos_mbox_driver_data'
-
+diff --git a/arch/loongarch/boot/dts/loongson-2k1000.dtsi b/arch/loongarch/boot/dts/loongson-2k1000.dtsi
+index ab6a55937e9e..6dff7eacf3f3 100644
+--- a/arch/loongarch/boot/dts/loongson-2k1000.dtsi
++++ b/arch/loongarch/boot/dts/loongson-2k1000.dtsi
+@@ -156,7 +156,7 @@ pctrl: pinctrl@1fe00420 {
+ 		};
+ 
+ 		clk: clock-controller@1fe00480 {
+-			compatible = "loongson,ls2k-clk";
++			compatible = "loongson,ls2k1000-clk";
+ 			reg = <0x0 0x1fe00480 0x0 0x58>;
+ 			#clock-cells = <1>;
+ 			clocks = <&ref_100m>;
+diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
+index 9c4c6c99db3e..ac075e970699 100644
+--- a/drivers/clk/clk-loongson2.c
++++ b/drivers/clk/clk-loongson2.c
+@@ -440,8 +440,9 @@ static int loongson2_clk_probe(struct platform_device *pdev)
+ static const struct of_device_id loongson2_clk_match_table[] = {
+ 	{ .compatible = "loongson,ls2k0300-clk", .data = &ls2k0300_clks },
+ 	{ .compatible = "loongson,ls2k0500-clk", .data = &ls2k0500_clks },
+-	{ .compatible = "loongson,ls2k-clk", .data = &ls2k1000_clks },
++	{ .compatible = "loongson,ls2k1000-clk", .data = &ls2k1000_clks },
+ 	{ .compatible = "loongson,ls2k2000-clk", .data = &ls2k2000_clks },
++	{ .compatible = "loongson,ls2k-clk", .data = &ls2k1000_clks },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, loongson2_clk_match_table);
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
