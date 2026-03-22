@@ -1,54 +1,72 @@
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913971A6810;
-	Sun, 22 Mar 2026 12:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774184085; cv=pass; b=aJiRdWUzwSpLnR/SByIVmGg75WFdmV99M9n0PlEFQjU1N6L8mgxH9R9zSqThZ6FPT68jgKytoQr+xofvC6O2QPih/AQahsnec7zzeXB49if5rsc3dL25kniDxfzBsHlBp8b+yyEqJZnh/1PRxo+JC5mkbjPpM4Sf7Cj6Y/1ebTg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774184085; c=relaxed/simple;
-	bh=kK8YmrNobKxYA3KUUj6T5vQZMaKkS94DHt4c/CNipck=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960424207A;
+	Sun, 22 Mar 2026 14:16:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774188968; cv=none; b=afTG3v+rlfarNw1oNa2++CL/JkHUIf7WJO98df0kegwiYDP4/Hj4IePEjIO9sxzwD+eA2JELKGkkHlwdjzPUFlIfnQ5jELm4c55WwhR/B72t25ngFCMASvOUpMCLWv/snsH4o1O5M4+47jM7L9Bnu3IXqJpWPE7dLFIzyIigmwU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774188968; c=relaxed/simple;
+	bh=IigGF6U3blVwl7+mttTv8ABlCNI5lUMx+1rU3nKGGxA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IwxqeTrjtihRbiz6a8b+SUkFA+O7z5TSc3zTdHBk0qak4DKdbgacHgCYOrX3LyrUIrbTv0qMh2jIRQd7NU4+LNotx9ntlJGLV7bmfMQLd1yX/zc7GN6wudyKx3VrUoSIHuMJhcSoN5cy66rzPm0kmHCb1Y+fPJTCcJb+4eaA8lA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ziyao.cc; spf=pass smtp.mailfrom=ziyao.cc; dkim=pass (1024-bit key) header.d=ziyao.cc header.i=me@ziyao.cc header.b=SmjsFG73; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ziyao.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziyao.cc
+	 Content-Type:Content-Disposition:In-Reply-To; b=hgC7wXyigLZZjVHnIUNENG3bFtLtshatil0famnLdqjnLqAAh8NE7IiVN1phcx58ki5RQ8sER2caqFprgBETyh+KpLEQLKqPbulk0REiBxHM9Yj1wfnWUSwHnWcEHHXtgG9w8iGubtcAlHVUVzt0wyQty4gexsPEooXYgeBgUKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IMrZqHVJ; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ziyao.cc header.i=me@ziyao.cc header.b="SmjsFG73"
-ARC-Seal: i=1; a=rsa-sha256; t=1774184061; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=eXPqSucoXJsTOL/gq9TzCD3uy/NKgNQz+BIi6zjT+gRPjZtROtqxxoBFPpnpfAjFyWTJnrXXyiGQcAE8rS8ank5dxcreaPqlCXlfy1t0V2kouRrv00ZdfMgtGDHsQeZt5OTX0B7NO/5g+kUxavBhNBc6Hx51NTkPfrpMkdOoehw=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1774184061; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=SAZ/XZ7+svKGJe8JsDFrKqgEYqASCcKqQxqvSqGACmE=; 
-	b=lcR04uVX7YnSgBsega3pT3aezhhDcj3SzRoKW3DeUVKNNqdRm4apJkFKsAYCbNiPTlwQN1M7Ji601yTugIkkQWMtVtXMTa77cO+3KmykZAU6f1QawlhMEG/002ZYm1bZMuLFenDrXOuXg2Rj+fzca0nrPoFJv5mp0LGrk/oFYU8=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=ziyao.cc;
-	spf=pass  smtp.mailfrom=me@ziyao.cc;
-	dmarc=pass header.from=<me@ziyao.cc>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1774184061;
-	s=zmail; d=ziyao.cc; i=me@ziyao.cc;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=SAZ/XZ7+svKGJe8JsDFrKqgEYqASCcKqQxqvSqGACmE=;
-	b=SmjsFG73xr9Vl4p0jEt20RC4Eyq1O6Ew9qyhPNdW+0m5us9gd9kIP4mEVq7DA83g
-	q8ectuVkUtjZX1f5ccPByFHwuJ1Gtq4/t9MpRWthmxgK1OFq23GMd5JZtWHhTnhKzST
-	QJc+tlDLAlAtXW/HXnF2xowN3FOOufEQGGVf9nIo=
-Received: by mx.zohomail.com with SMTPS id 17741840598081005.9843335790677;
-	Sun, 22 Mar 2026 05:54:19 -0700 (PDT)
-Date: Sun, 22 Mar 2026 12:54:05 +0000
-From: Yao Zi <me@ziyao.cc>
-To: wjjsn <wjjsn@qq.com>, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, chenhuacai@kernel.org, zhuyinbo@loongson.cn,
-	mturquette@baylibre.com, sboyd@kernel.org
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev, kernel@xen0n.name,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: clock: loongson,ls2k: add ls2k1000
- compatible
-Message-ID: <ab_mbVVQ9Nf7pTRt@pie>
-References: <20260322081915.1626723-1-wjjsn@qq.com>
- <tencent_1EA9B7D351AF8169F880BAAA49B37E178A08@qq.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IMrZqHVJ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1774188965; x=1805724965;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=IigGF6U3blVwl7+mttTv8ABlCNI5lUMx+1rU3nKGGxA=;
+  b=IMrZqHVJZjaR/bflI2oII5lxH9nN5Zx5BVl7azFfZo+mqa8zpR77xY2S
+   THH3eFQMiy42y/AIVSpINQI6OoOYjr5h8H7OMSQ+OzbneO0WCmxr4ZhxN
+   +yA16RdMXvcDECc9QnYBiztwHm+guVSiB02d0CRt/uCFJUc5ahk/XC4OY
+   pVLRC4bxX9C3GH5Tu+bQsQNf2SZvGhZL1aB7uGQQsibks5g6BLS5SLE4V
+   3LfLgRqbmLwuSMUrNZWozYW8G955qX35sCp0gS8oRAAtSHMLCiTJ6m9+8
+   gWEICpCPAiC/bQKsfQLu3AiLF3bUKilkz32d6f+anSqikc6NXWvDQJJys
+   w==;
+X-CSE-ConnectionGUID: 9n5tJ6l/RbWI9d5VFq6CeQ==
+X-CSE-MsgGUID: WjXgmqJ9Se6+mv+bNrGQCw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11737"; a="62765356"
+X-IronPort-AV: E=Sophos;i="6.23,135,1770624000"; 
+   d="scan'208";a="62765356"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Mar 2026 07:16:05 -0700
+X-CSE-ConnectionGUID: JRLBnVVlSqa6fLyDLAUY4Q==
+X-CSE-MsgGUID: qbzVjqmzRUKzhYMJv9+fAA==
+X-ExtLoop1: 1
+Received: from lkp-server02.sh.intel.com (HELO d7fefbca0d04) ([10.239.97.151])
+  by fmviesa003.fm.intel.com with ESMTP; 22 Mar 2026 07:16:00 -0700
+Received: from kbuild by d7fefbca0d04 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1w4Jav-000000002Dx-1Ld7;
+	Sun, 22 Mar 2026 14:15:57 +0000
+Date: Sun, 22 Mar 2026 22:15:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alexey Klimov <alexey.klimov@linaro.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Sam Protsenko <semen.protsenko@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Peter Griffin <peter.griffin@linaro.org>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Alexey Klimov <alexey.klimov@linaro.org>
+Subject: Re: [PATCH 4/5] mailbox: exynos: Add support for Exynos850 mailbox
+Message-ID: <202603222239.JTuBxs7K-lkp@intel.com>
+References: <20260320-exynos850-ap2apm-mailbox-v1-4-983eb3f296fc@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -57,58 +75,32 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <tencent_1EA9B7D351AF8169F880BAAA49B37E178A08@qq.com>
-X-ZohoMailClient: External
+In-Reply-To: <20260320-exynos850-ap2apm-mailbox-v1-4-983eb3f296fc@linaro.org>
 
-On Sun, Mar 22, 2026 at 04:19:14PM +0800, wjjsn wrote:
-> Add a SoC-specific "loongson,ls2k1000-clk" compatible.
-> Retain the existing "loongson,ls2k-clk" as a deprecated fallback
-> for backward compatibility.
-> 
-> Signed-off-by: wjjsn <wjjsn@qq.com>
-> ---
->  .../devicetree/bindings/clock/loongson,ls2k-clk.yaml        | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml b/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
-> index c07ad1f85857..4d70bc4e7a13 100644
-> --- a/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
-> +++ b/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
-> @@ -13,12 +13,16 @@ description: |
->    Loongson-2 SoC clock control module is an integrated clock controller, which
->    generates and supplies to all modules.
->  
-> +  The "loongson,ls2k1000-clk" string should be used for Loongson-2K1000.
-> +  The "loongson,ls2k-clk" string is kept as a fallback for backward compatibility for Loongson-2K1000.
-> +
->  properties:
->    compatible:
->      enum:
->        - loongson,ls2k0300-clk
->        - loongson,ls2k0500-clk
-> -      - loongson,ls2k-clk  # This is for Loongson-2K1000
-> +      - loongson,ls2k-clk
-> +      - loongson,ls2k1000-clk
+Hi Alexey,
 
-If you want to deprecate loongson,ls2k-clk, you should probably mark
-it as "deprecated: true", instead of describing such situation in human
-language.
+kernel test robot noticed the following build warnings:
 
-I don't have a strong opinion on the change, but I don't think it
-improves the situation much. We still need to document the historical
-compatible in bindings and support it in driver, the only thing gets
-improved is a slightly more clear compatible name in devicetree.
+[auto build test WARNING on 785f0eb2f85decbe7c1ef9ae922931f0194ffc2e]
 
-However, even if someone is confused by the current compatible, they
-could have a look in the binding and get an explanation quickly.
+url:    https://github.com/intel-lab-lkp/linux/commits/Alexey-Klimov/dt-bindings-clock-exynos850-Add-APM_AP-MAILBOX-clock/20260322-085441
+base:   785f0eb2f85decbe7c1ef9ae922931f0194ffc2e
+patch link:    https://lore.kernel.org/r/20260320-exynos850-ap2apm-mailbox-v1-4-983eb3f296fc%40linaro.org
+patch subject: [PATCH 4/5] mailbox: exynos: Add support for Exynos850 mailbox
+config: x86_64-buildonly-randconfig-004-20260322 (https://download.01.org/0day-ci/archive/20260322/202603222239.JTuBxs7K-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260322/202603222239.JTuBxs7K-lkp@intel.com/reproduce)
 
-Regards,
-Yao Zi
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202603222239.JTuBxs7K-lkp@intel.com/
 
->        - loongson,ls2k2000-clk
->  
->    reg:
-> -- 
-> 2.43.0
-> 
-> 
+All warnings (new ones prefixed by >>):
+
+>> Warning: drivers/mailbox/exynos-mailbox.c:60 struct member 'irq_mask_value' not described in 'exynos_mbox_driver_data'
+>> Warning: drivers/mailbox/exynos-mailbox.c:60 struct member 'irq_mask_value' not described in 'exynos_mbox_driver_data'
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
