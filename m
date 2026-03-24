@@ -1,55 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE243876C0;
-	Tue, 24 Mar 2026 03:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372D338D003;
+	Tue, 24 Mar 2026 03:06:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774321569; cv=none; b=N0OaMvgg4AzF+JJ6zpiAnyLyJuj/f7Cl4h47QZG9OH4MHtJtBuGLuFFxlnj9mZ1/RdNLs5CdWHBdnSK2uFNnt5smR5XiR5wOr49FdjjF5JlXhRM8wlRjbIqbyvbOEentdEq/Ue1y21NbKmLa6tOmHCj4+WnqVJik53nGRu5T5s8=
+	t=1774321574; cv=none; b=YJFCz7R+WrXSlfpcWpprAVKvIbnA//JoclEJSVe5VK+PlGzmfLk1DNwRBnNdAZ7QkrLPBj6ylggXdofA4yLsLHWO7OeexBI+YbM7ieTojCP06jV8edJ1J6ODJnNVPR9rMaUQgO/30vJD3ujfCxgvoz4+GdwJDUJnghevS3a76Jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774321569; c=relaxed/simple;
-	bh=FTnmITopi0boG/8P8a4HNwrki9+LAZV3FYoD3p9hLtQ=;
+	s=arc-20240116; t=1774321574; c=relaxed/simple;
+	bh=Otm54ASjK0RBr3RF1WMY+rTCVZWTsGG5X2KkiI/YJWk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y44jsrSw4grKy8UEzbt4PdQ9ofy9bkVn1dhmWZWy44qKz5A1sKC6jgg+Rzy9PVYlhAVSchgSm+vWS1TV+isDiDR4zLmZmm8OXd2yMYYQG+8zM44wdTYqlPRZ2hqQI5+yK/9Ohp62qiHyfJO4PnT2+ud/NlaBvdwrVtAk/3dc2AA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ly7JD6/A; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=JrleA79xCerMr8K0NcIbctt1n10kZcttuBHd+okxS1nCzuPW87BdE8ikF65KlawCuZkxBaKiMt06NLdZykMcmtCyjRNBPpWPTEhl32MaQpZ11jyG8808ZkQFAUr86GgjgWxEOxRKWYCVWZHuflXk45RCFIBTpj7pn8I/xvIT42k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kDVoeMVy; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ly7JD6/A"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13A0CC2BCB0;
-	Tue, 24 Mar 2026 03:06:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kDVoeMVy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 185F3C4CEF7;
+	Tue, 24 Mar 2026 03:06:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774321568;
-	bh=FTnmITopi0boG/8P8a4HNwrki9+LAZV3FYoD3p9hLtQ=;
+	s=k20201202; t=1774321573;
+	bh=Otm54ASjK0RBr3RF1WMY+rTCVZWTsGG5X2KkiI/YJWk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Ly7JD6/AjSfZGDRNmdO4npO7MAFixS9M1EczfDW36Qa/b6EqXhb/3d6rHfoDBeMvA
-	 fGf9YUSG0mYlFuLTrgXI36/1c8z+BCHzJblCs0zzwnaBX/QXjpOHfT+qxk8NfIlyOP
-	 UEQ3YC/rvTvkePgNaGMi0Z2GvNXn93Qa9bvbtw1PZVeh9WK72ZuRjkzcJ1Da4vNM6D
-	 VaKzmWVfYVmcjdqrWto4JnVi7JOMcSLWVWUveDow5qfgMmVKzWIDcTkFEtTuL6O7T9
-	 EIuvE2bU4CVUVX6NGmKs0EdTxG35OO7RCnOXwhcKxF1kuVaEr4nAiGVrriC5AdqzM+
-	 +0KCBH8da6Kaw==
+	b=kDVoeMVyHlzDjb1MG2i3Sk2cqpg9URr2b9Qo2PPBUHplp3XWfoZKuG33MiAgY2APB
+	 X9nyHYVV0GcMmp3BN88KnZFqToMQTL4jHqvtSOMG67lYgYqSphdU3sbSBKTmucjurv
+	 Ced//Q5oSZxorPGPrgOottyrSX/wBhkZm9rsiSBaaHKL8iu6bD95lSkvGQxAXPkFwz
+	 HrIrjYPCwR8OT/j4w2yQOrYKFRRD/4EZat2wtObm7EsKY4RyQ6I14t0cdzXuzcuaAD
+	 NX3LgjWap56ct2klzwLnH6qBnPKBJ/O2WiITuimK1ITc41Rc0yPdpOEt7P1mRQW0MO
+	 zGuP7rCQ7mHsw==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Robert Marko <robimarko@gmail.com>,
-	Guru Das Srinagesh <linux@gurudas.dev>,
-	Linus Walleij <linusw@kernel.org>,
-	Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+	Pengyu Luo <mitltlatltl@gmail.com>
 Cc: linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v2 0/6] Add minimal boot support for Qualcomm IPQ5210
-Date: Mon, 23 Mar 2026 22:05:52 -0500
-Message-ID: <177432155640.28714.11710526578504129088.b4-ty@kernel.org>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: rcg2: expand frac table for mdss_pixel_clk_src
+Date: Mon, 23 Mar 2026 22:05:56 -0500
+Message-ID: <177432155620.28714.11572958087082246865.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260318-ipq5210_boot_to_shell-v2-0-a87e27c37070@oss.qualcomm.com>
-References: <20260318-ipq5210_boot_to_shell-v2-0-a87e27c37070@oss.qualcomm.com>
+In-Reply-To: <20260321095029.2259489-1-mitltlatltl@gmail.com>
+References: <20260321095029.2259489-1-mitltlatltl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -60,21 +49,23 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Wed, 18 Mar 2026 14:09:42 +0530, Kathiravan Thirumoorthy wrote:
-> The IPQ5210 is Qualcomm's SoC for Routers, Gateways and Access Points. This
-> series adds minimal board boot support for ipq5210-rdp504 board.
+On Sat, 21 Mar 2026 17:50:28 +0800, Pengyu Luo wrote:
+> Recently, when testing 10-bit dsi C-PHY panel, clks are different
+> from the usual. (dsi0_phy_pll_out_dsiclk's parent is dsi0_pll_bit_clk
+> now (dsiclk_sel = 0)) And we failed to set dsiclk's children.
 > 
-> SoCs based on IPQ5210 is shipped under 2 different marketing names such as
-> Qualcomm Dragonwing F8 and Qualcomm Dragonwing N8. The difference being is
-> F8 parts has the Passive Optical Network(PON) interface which acts as the
-> backhaul where as in N8 parts it is ethernet backhaul.
+> dsi_link_clk_set_rate_6g: Set clk rates: pclk=172992000, byteclk=108120000
+> 
+> byteclk was set first to 108120000, so the vco rate was set to
+> 108120000 * 7 * 1 * 1 = 756840000. When we was trying to set
+> 172992000 on mdss_pixel_clk_src later.
 > 
 > [...]
 
 Applied, thanks!
 
-[6/6] arm64: defconfig: enable IPQ5210 RDP504 base configs
-      commit: 2db93889e17e70ab516f13dbd33e1111b85a032a
+[1/1] clk: qcom: rcg2: expand frac table for mdss_pixel_clk_src
+      commit: 0f5c8f03d990f9be9908a08a701c324e113554d2
 
 Best regards,
 -- 
