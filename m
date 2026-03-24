@@ -1,115 +1,107 @@
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3448383C91
-	for <linux-clk@vger.kernel.org>; Tue, 24 Mar 2026 02:11:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF13F221FB1;
+	Tue, 24 Mar 2026 02:33:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774318282; cv=none; b=lrSPbuNzN8JM9a0HcsaDy++0141VHOpWVWZjjZ5nyy3jQAsGrr/iBj0DlEJrXgEpIk9UQ5vvvZZRoamBQ+4UuAYGi4pg+2V2qYzKg4dpyrDIzyZ1xXFWru4V5XGrS+2eKo1lrtSIo52dECaOZcNl4wpJDt0WNH7I6cdvD7EtEWE=
+	t=1774319610; cv=none; b=Ed7Jyt4aDRWB19ZGB0PdzLaeYourZ+4igrCkm8pl4v3nAotSDyKifl/G6vaY6by0ugop4laoqaZSCz9+aTG/A9z6nc/98tjc981gA4cINBWC9ArTwmglg5hKJuNVpENDzBYjY+Bh/Wy7aWB5EvcWirs7xQwNzHk+aR3BlloTJuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774318282; c=relaxed/simple;
-	bh=5LCSZy0QNtO4bzoIvyj24RyYrTxJ4vg7ZKTxOvocysw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Pc0PKWygLS7fqBavamewKH4D6BbCAIPG4mj8NpeJ+gyRo0NzzxPih8ao8GFmaDxGtv/LSv8WBUl8OiYhqwbjCZX8l28RB/VINVuIBq/Uhumnt1mNa7AcFolo9h7KqFYYFmmzXGAl7ozVkngkARQIj4iDA2/Gz9ECMOhKQ2vQwmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dr79q3pK; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1774319610; c=relaxed/simple;
+	bh=fBp/0Z0LpO1M67Jopgvd6AsAAdujYI1x1bo/Xt+QSds=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XItMdHKpEJqM0Guqhcr9KJjdCnmWoV0ole7a+1C1I1vHsuSbBkJUCL623+UCDsshzC8A2oXbvjyGtbUdTJ/Xehm6FVA9c6SRjgoBdW6fqRIb7SD78Qm7xxWqXW5BKeR9vl9U118rfpiHCq2aIrIq9S1kx9FCyZASCh6TpX2R5MY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qg+lxsBT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dr79q3pK"
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-35b97ed057cso2090099a91.1
-        for <linux-clk@vger.kernel.org>; Mon, 23 Mar 2026 19:11:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774318281; x=1774923081; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pg3BeEF/NeYvq9HpPYQyLEWkUbXwDTNUoplMULCqoG4=;
-        b=Dr79q3pKlHDZoriUdWMx6Rp0FzjGAH+djAn8d7B40mgLTveQDTs9vJY2ygw8V+/8ma
-         Dgq2Hb+09dZYJiOSBS7qX7lpoSF7NowmV+QPwK7Sk2tV658rueIF8+nCcrXuS/u2kvOh
-         gujUAVBF6XKckecqAbUGr04HCDa9HfGqDxnz16RGN3BkdhPI7ypFiQdLYYyGCB836JIs
-         lgsKHLhWucDa5s1i661bSlPnT3k+JSyqAoYV2dJIXWb+yzjQ4AjohxsbVWWOr595F7mR
-         h8EmvYe4DvK2vfOZUr1JbTkVRapjH6rebMAGBEWUP9ggKWoC2DgJzceDLj4B3IZKqSCJ
-         1A1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774318281; x=1774923081;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pg3BeEF/NeYvq9HpPYQyLEWkUbXwDTNUoplMULCqoG4=;
-        b=oCwA1/r5KvNWnD8SeXCdSyewyhqivWnbOMFLBLQPryuxYfSlsrPAI7YveF69gCU40D
-         qRHGNSPEKT8o0KmxnmA21l1/X1tCoTB1DvabWwvcEfEHkFwia9s+R9kIQ1XmYbc5O3By
-         vjS6PIyPl2r6ZNJgeQbmxwjhfihhlTJIpwE0nL5aPWbd2T1fQuoSy7nIJQ8W6QflNiAh
-         4to60yDp7Tg1R2cgHCINOYMWYwMGC6C29jQ2rHN0UxtjbpCfjKW3aZ9fDzGzydo2C+do
-         mMsuotfnhlJMcRz+TtS6aMNaD5EVSJ8ecJ0o3mcq4/zq3Ibe90X2cpfKYVZZl9f6v0rh
-         UFpA==
-X-Gm-Message-State: AOJu0Ywz8605lf8y7DnABHjHIxqcqOXy/UPkVbF+xwkpO2kHAciJt5Ok
-	KGdaxQxe8WIciLtMGnBcLYHt+yY41hqVX60qnKjPMIK7LXk2Axy2+ZuXPX9DDg==
-X-Gm-Gg: ATEYQzwmcBNnZUG4ZhhJbbGeu1V4OkLvMCpgkRH4QUv84oFZsR3GCG+I7yrxzLelZ9w
-	x933Coof6T2PxKfqAkDJmNoMgnK6TqB369vmZUlFwk5cC1PP8lWAGHWlkiL0YzBz7fHOSfpZH7d
-	PudjuRetOD+OiwoNZyNEmcFLAohHcDSYiHNtiqOeJqZ19W9wdcZCzs8Sfu+NP7TNkGxxJQoluZ6
-	Kpb2VRa0L6xlpzi7x70yMQcctQDoGNNSvAdZTl1gnKKgeuvROX6t92nXxGCjtGxKqtNnQVcuMg+
-	E3PEb1XVerfN0ya70wakMT/RK1Pkf25i6M8Resd/YzOdbFUuM/cdI7eslwhz3asEt7LvAhuX9tf
-	1NgBeZPGP47DLu4G6nHCCJwdfRuWioLJ37mmkgJYQCvwkLa1jVHTLq8T298n/xHt0MpDSajPvY/
-	p6G/Bko/3gKbWfCponGHDdkBZ6XGQPB9p7Df+hFSYGtbkbialSM76KIqU=
-X-Received: by 2002:a17:90b:1e4b:b0:35b:e6a3:41d0 with SMTP id 98e67ed59e1d1-35be6a342admr6003709a91.26.1774318280932;
-        Mon, 23 Mar 2026 19:11:20 -0700 (PDT)
-Received: from ryzen ([2601:644:8000:5b5d::8bd])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-35c03149db2sm457965a91.9.2026.03.23.19.11.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Mar 2026 19:11:20 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-renesas-soc@vger.kernel.org (open list:RENESAS CLOCK DRIVERS),
-	linux-kernel@vger.kernel.org (open list),
-	linux-hardening@vger.kernel.org (open list:KERNEL HARDENING (not covered by other areas):Keyword:\b__counted_by(_le|_be)?\b)
-Subject: [PATCH] clk: renesas: cpg-mssr: use struct_size
-Date: Mon, 23 Mar 2026 19:11:03 -0700
-Message-ID: <20260324021103.13651-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qg+lxsBT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFBABC4CEF7;
+	Tue, 24 Mar 2026 02:33:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774319609;
+	bh=fBp/0Z0LpO1M67Jopgvd6AsAAdujYI1x1bo/Xt+QSds=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Qg+lxsBTZtD11oMJoC9+k/56mZYQPde6Vwak+fbcGywe6msT+CgHV0MbXOSRtq2vv
+	 9wJ1Ja/jOqi5R83EpgyIRWkz8jITnp+MRSDjl/ZYJ8nzszqm9V57IhvhgmNdHIkbJZ
+	 /fqgLkbXHeOrzsRKFnfkQLg1qwetS8YhXfuzf4cCxKvcLkcVPbkOBOiU2FHaKWfGzf
+	 9L9djIl6h3gBKUTklf9AEOYRfUTZuG1wOqiXJxLAaY3YEt6Uq8w8ZNQkdJ+s6wgMGq
+	 b7d/Yp1xDo7jc7+oGdZkmIotIpk/xJ42GSX555TkUmnVVTFDswPzldiXu0KkKJdicB
+	 jDCVmrhz4BcqA==
+Date: Mon, 23 Mar 2026 21:33:25 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Ajit Pandey <ajit.pandey@oss.qualcomm.com>, Imran Shaik <imran.shaik@oss.qualcomm.com>, 
+	Taniya Das <taniya.das@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: gcc-x1e80100: Keep GCC USB QTB clock always ON
+Message-ID: <acH2K3-qhGMgkAtX@baldur>
+References: <20260316-hamoa-usb-qtb-clk-always-on-v1-1-a29ac94f20f5@oss.qualcomm.com>
+ <gvj7tsivu6w2fzfcus6oi3pwc7jcfqdrx62uuzny674mj5ftus@dpnn4pzizbqc>
+ <388c4c45-2338-4520-abf6-6a15aeb5db42@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <388c4c45-2338-4520-abf6-6a15aeb5db42@oss.qualcomm.com>
 
-struct_size is what is normally used when a flexible array member is
-present to avoid accidental mistakes. pm_size is still needed for the
-memcpy call below.
+On Mon, Mar 23, 2026 at 10:26:53AM +0530, Jagadeesh Kona wrote:
+> 
+> 
+> On 3/16/2026 6:26 PM, Dmitry Baryshkov wrote:
+> > On Mon, Mar 16, 2026 at 04:38:21PM +0530, Jagadeesh Kona wrote:
+> >> Keep GCC USB QTB clock always ON which is required for SMMU
+> >> invalidation on X1E80100 platform.
+> >>
+> >> Signed-off-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+> >> ---
+> >>  drivers/clk/qcom/gcc-x1e80100.c | 1 +
+> >>  1 file changed, 1 insertion(+)
+> >>
+> >> diff --git a/drivers/clk/qcom/gcc-x1e80100.c b/drivers/clk/qcom/gcc-x1e80100.c
+> >> index 74afd12c158c01c121d9aecd56e65c0c302d7cd0..73a2a5112623e5190f41129af7fd76a86603557b 100644
+> >> --- a/drivers/clk/qcom/gcc-x1e80100.c
+> >> +++ b/drivers/clk/qcom/gcc-x1e80100.c
+> >> @@ -7480,6 +7480,7 @@ static int gcc_x1e80100_probe(struct platform_device *pdev)
+> >>  	qcom_branch_set_clk_en(regmap, 0x32004); /* GCC_VIDEO_AHB_CLK */
+> >>  	qcom_branch_set_clk_en(regmap, 0x32030); /* GCC_VIDEO_XO_CLK */
+> >>  	qcom_branch_set_clk_en(regmap, 0x71004); /* GCC_GPU_CFG_AHB_CLK */
+> >> +	qcom_branch_set_clk_en(regmap, 0x7d01c); /* GCC_HLOS1_VOTE_AGGRE_NOC_MMU_USB_QTB_CLK */
+> > 
+> > Is it used during all SMMU invalidations or only for those related to
+> > the USB controller?
+> > 
+> 
+> Yes, it is required for all SMMU invalidations.
 
-Added __counted_by for extra runtime analysis.
+What happens if it's not enabled? Why isn't problem described in the
+commit message?
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+If it is _required_, wouldn't that imply that this fixes a problem, and
+if so, why isn't there a Fixes: tag?
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 64a432fd0e8a..26ea85cfaa02 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -569,7 +569,7 @@ static void __init cpg_mssr_register_mod_clk(const struct mssr_mod_clk *mod,
- struct cpg_mssr_clk_domain {
- 	struct generic_pm_domain genpd;
- 	unsigned int num_core_pm_clks;
--	unsigned int core_pm_clks[];
-+	unsigned int core_pm_clks[] __counted_by(num_core_pm_clks);
- };
- 
- static struct cpg_mssr_clk_domain *cpg_mssr_clk_domain;
-@@ -667,7 +667,7 @@ static int __init cpg_mssr_add_clk_domain(struct device *dev,
- 	size_t pm_size = num_core_pm_clks * sizeof(core_pm_clks[0]);
- 	int ret;
- 
--	pd = devm_kzalloc(dev, sizeof(*pd) + pm_size, GFP_KERNEL);
-+	pd = devm_kzalloc(dev, struct_size(pd, core_pm_clks, num_core_pm_clks), GFP_KERNEL);
- 	if (!pd)
- 		return -ENOMEM;
- 
--- 
-2.53.0
+Regards,
+Bjorn
 
+> 
+> Thanks,
+> Jagadeesh
+> 
+> >>  
+> >>  	/* Clear GDSC_SLEEP_ENA_VOTE to stop votes being auto-removed in sleep. */
+> >>  	regmap_write(regmap, 0x52224, 0x0);
+> >>
+> >> ---
+> >> base-commit: b84a0ebe421ca56995ff78b66307667b62b3a900
+> >> change-id: 20260316-hamoa-usb-qtb-clk-always-on-bcd4e5f3553e
+> >>
+> >> Best regards,
+> >> -- 
+> >> Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+> >>
+> > 
+> 
