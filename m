@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D20D78F26;
-	Tue, 24 Mar 2026 00:18:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B698B21ABBB;
+	Tue, 24 Mar 2026 00:19:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774311486; cv=none; b=cOC5Is5dZfQMlzMTxrf/ygdzKm9aMLu1ZxtzgG+/wfJXu4aaoEaQm5+d+IEUqh8BiOVoSFGqXMj0/PdBiNbOQWKVj7Qa3tRZNgb4dl34YaR55pJ1GWEfAVMjYIrLymqrr8MFivCleKU9aU+2AIpFmX+EAFOxxrVzoEJtcRCCmJM=
+	t=1774311558; cv=none; b=MqIiY0skcg1FeeRovyhQViKn2NGn23M5yFJGEFWX+ngBMx+nJop71eFXXGE6AGmlB5a+yBURX+G45czAANfbqBBOQZ/yR1vMGW81cIMzjqFqKb/McGYhy4mGBGwlw6WxyFvLmyC3V3Ni+1n0/oS4Gayy6IkF/ZTd/nLsNYhZIgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774311486; c=relaxed/simple;
-	bh=mBitpoQXvogW9UOH5+8mD5clOqD//aOwti5hId6Y2No=;
+	s=arc-20240116; t=1774311558; c=relaxed/simple;
+	bh=mUbcPZbzh1SAUSPqF1yTFN37JsPz38o6KdXbgYYsN1Q=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=tHqQGjZOkwz26X3iz4vkkDddXTxMvzheiYYa+z3sVGvnzYqeQGMMx5hkb7EXBKt1m6kaKdkk9owGuQYHToniWStzzJCOSEU7x/buZrogOd72dxw2hBxTIEeiaWmutwIGDhC1KZqdWSaptsmvVrwO6Ej/sI8VEOOzc2p48S0DMtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qkt45Pdy; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=pZ70Jc+krrkmX1dgzHUSIH9lUXb/dGUqLV2ANdA0a4Txne0TEJXTk6agIAE4yct7UXEz9RpqgvmjaF3Yn11BH2UFNYQGzt8MhQ/oM9XBhvJk9oW4S2jABHydKRZ/LExTwSjQWKYJMfzrne5QF/QYp687dX3KPYs4bWsRKh29CRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r2aDHLWc; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qkt45Pdy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E44D0C4CEF7;
-	Tue, 24 Mar 2026 00:18:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r2aDHLWc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D6E2C4CEF7;
+	Tue, 24 Mar 2026 00:19:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774311486;
-	bh=mBitpoQXvogW9UOH5+8mD5clOqD//aOwti5hId6Y2No=;
+	s=k20201202; t=1774311558;
+	bh=mUbcPZbzh1SAUSPqF1yTFN37JsPz38o6KdXbgYYsN1Q=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=qkt45Pdy1OfDzs88N1FqRGBmJDh4R/jkPlEO4A2Jz1h3Z3uFvlDmRLbCPL2cmCGJ7
-	 g1Q3RWM533SkSfddCicFK8rkKS7LqXeSRrlxv+4GlU7mVKJaANUp9Nqwv9cJmlH2xE
-	 B7X6TUFcQhIVA9T913DBq/AtGo18HdYmvfTJjViuh0gIU2VyI0FYxD5sVOEE4mZmjy
-	 BwpL4FxooZvvuiPKcJgVKKVFF4tHmF1N5au/E9qHk4zucdn/zTpcqG8/UlbTzjDe3w
-	 tBfwRlrvH18alNPakK46dsg7LXiFpn5n2JJiB04KwGJX0GYQD56C7oU1wfDpSIt+So
-	 qnsmfR4w/bpQg==
+	b=r2aDHLWcbCDL3bVlfoH1A6Y/rOnso+qbKho9XJY1FEU1Mp+5vlIHFDGLA+6l4uM6I
+	 vuYO0GjW6Vu552H4wnfwgoUpvMTf0syFJqAERIZezozP8XPzCTyS0IGO4l8SZNtdyK
+	 FnpJnsoa50K/9rYO+THMWwwGTl7FJMEHgNev6+sOO/3XkVmoDsivtrgpWFHuHt0j+F
+	 4sRZLEoLgAmZd0wE29a46JDwyQXt2eRqOLgPQk7Z62WTg2KiOYv8elXOPO91onl7az
+	 rY6+WDQAOmVypri3tJt4ZtrjjOSrjmKDQWxkQTOVh/zlipEfLaAOuMConhZwGZ4+AJ
+	 HacIdh9Yv/Ifw==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,25 +34,21 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20260224111821.3491352-1-andriy.shevchenko@linux.intel.com>
-References: <20260224111821.3491352-1-andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v4 1/1] clk: baikal-t1: Remove not-going-to-be-supported code for Baikal SoC
+In-Reply-To: <703be6fe95cad2e738c712877fcdaa63a7809802.1772705499.git.geert+renesas@glider.be>
+References: <703be6fe95cad2e738c712877fcdaa63a7809802.1772705499.git.geert+renesas@glider.be>
+Subject: Re: [PATCH] clk: Simplify clk_is_match()
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Richard Cochran <richardcochran@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Randy Dunlap <rdunlap@infradead.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Brian Masney <bmasney@redhat.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Date: Mon, 23 Mar 2026 17:18:03 -0700
-Message-ID: <177431148399.5403.17869158368644573054@lazor>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>
+Date: Mon, 23 Mar 2026 17:19:15 -0700
+Message-ID: <177431155573.5403.2205498312354695979@lazor>
 User-Agent: alot/0.12
 
-Quoting Andy Shevchenko (2026-02-24 03:17:18)
-> As noticed in the discussion [1] the Baikal SoC and platforms
-> are not going to be finalized, hence remove stale code.
+Quoting Geert Uytterhoeven (2026-03-05 02:12:33)
+> Linux style is to handle early-on failure.  Inverting the first
+> condition lets us simplify the second, and improves readability.
 >=20
-> Reviewed-by: Brian Masney <bmasney@redhat.com>
-> Link: https://lore.kernel.org/lkml/22b92ddf-6321-41b5-8073-f9c7064d3432@i=
-nfradead.org/ [1]
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
 
 Applied to clk-next
