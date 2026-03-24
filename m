@@ -1,190 +1,291 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC2D3890E4
-	for <linux-clk@vger.kernel.org>; Tue, 24 Mar 2026 02:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6ECE1FE44A;
+	Tue, 24 Mar 2026 02:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774320497; cv=none; b=lITVnc7IWZLuPx2x+ePPtcZ7tFtJUqjsnkbqDxmEWJk24hYTdhanOPqAJkm2fNBFnJzhaoDGrCLRGtKkR+GcdKzNJlmjYU7sxBmWxIdLSqKQfPB0QOOaCIwXdClexRa8YesRPGwnEJcBvP4eM0kDivH7jj3WHd5WSpStD9v5MdE=
+	t=1774321013; cv=none; b=tP7Mu9dO6jLKzwJAkew64liFJhKcJHRJZahoZajiRyLeFbxC6eETrm96lsOeGIiP+T89mUJtI/79RCKzBHyBRoycmBMoq+dHCVLp+otvuI3Ig/PV4QksVIo3iZp1OYqRkEBLQ8Oa4TzHA2btiJ5RhZyJVc2/DnVrL+4zPTRPAo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774320497; c=relaxed/simple;
-	bh=Tmd+gxRh0zMc7goWZkYjDkOhd7+39w5YPSm0QADkkW0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BJHyQCJ4RQGHHb48wk31BHF70EcYFW/caTlnR7jPqfObbtEa1+2/bpGlXZYHX5Se5kMLuIE3OC+zY46WKFuxCYJOn26OKiccnm1lqP2Cv/jaRJnZ7MtNdyUrcm/BKJcj6xFv4HkhkNuExcJf3tgx6BX9s8KFgw5K2orP4/5YKQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=inMpW2fW; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=I3IX4E/u; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1774321013; c=relaxed/simple;
+	bh=0kah365DbiYZI6c8KWPo7LoB4sSgMEbOVLMpUjxf4wY=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=m7PPnrv29W2EQSm/NOWVbfinmfzp4gjWp86kP8xV216XwzRcx+lCgf2XV3sjwy94m7jrmbzmQJD+8vHHecdAT4ulfnZFpG+buzjDEoSrteXUgDt9v7PkFf+w8KARocUJmnjKlj72siKsEyE9FJMREg2mjSH9cw40u5upYowxX5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=sv4YYUe7; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="inMpW2fW";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="I3IX4E/u"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62NHqlQl3634578
-	for <linux-clk@vger.kernel.org>; Tue, 24 Mar 2026 02:48:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=U3vJrTCvtA5VbYGj6R/QkEk6
-	GFV0eo4cVRNuQ+yDIqQ=; b=inMpW2fWU/qSTmX2KSH6MMXIdDKqKmJ8nvKaG13x
-	ntEXhARKCDcftvRPRDUUIaZPWUUlkgzn5w0PQpUGEoevgE341E1Wod6xvWzjkmvR
-	iI1PUikH5RdP+gqyOZzjzmnFjlfhazQqAl+Z9f5E4/6gmTWBUOaeE30sdFGiui/G
-	K3sdDjnq+jvg8kkgnSGNm7phiCXOaZ9ZtDPet1DTErOyQ1FIxAYGnOXgMnD4NPUU
-	kYaag5Yk98NkOsuqwJBHkecciGzS2/ScU9wHeB62v949X3Fm80HTINHVVOeTGltM
-	GDaE92RqmNG2QscAnzUVdwQ8aiMqYfuZNt2tqB1KFHrObw==
-Received: from mail-dy1-f197.google.com (mail-dy1-f197.google.com [74.125.82.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4d34k4k0fr-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 24 Mar 2026 02:48:13 +0000 (GMT)
-Received: by mail-dy1-f197.google.com with SMTP id 5a478bee46e88-2c0ba59a830so3881055eec.0
-        for <linux-clk@vger.kernel.org>; Mon, 23 Mar 2026 19:48:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1774320492; x=1774925292; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=U3vJrTCvtA5VbYGj6R/QkEk6GFV0eo4cVRNuQ+yDIqQ=;
-        b=I3IX4E/uffIBr+0oo0271hTLYP1a9CZuNRvnG0auRsuNV+s2xQ2R0lZGGActEbfsfl
-         8KoFyAirgVUlmSETDCqY7PqgRL3thAN+cLoobQzeRXh79AwVHo6tolO6HNu5KstC5dZg
-         /I5bPJ7eIkt34vrwhGWj0TTHzqYrmInZAcKbl54J9XIgW0qka4mvz+eDLcgiIcZ17p7A
-         66Z4NRIshSXrV6UkH5QTM2MfzVbFfhwbsH2jtBXnb0MxFkXBZLHoBylMDRNio3rjwHAh
-         0JE7EntGfEUhgzth1Bnvxz3hU8r0dpio7s4UMf4EK/qepMb0xrpkzJZuK20cYhl1c0d5
-         m65A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774320492; x=1774925292;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U3vJrTCvtA5VbYGj6R/QkEk6GFV0eo4cVRNuQ+yDIqQ=;
-        b=A1bsRfK3XSjtenAOxnRNlKuBPfGPQdWu/e1NTjskFD+xMDKW+aqaltSDpWkKXBqbio
-         W44fRWtKJIUn3Z833zRU5mUTOYs/Sx8zNtl8milN/YtYlFbUDFDlqntT6qSjcFphKZKb
-         WqupTZ6aGwxgCcJmgiEqTN/ELMNaMLHAvad/yhp89HeOlKIeoAiLTyOC7aIDxewP9xI8
-         FyRIDlPcXakLz/2UPWGhaGycreY9A36Q4Q6FwVLQ9RLEwK18cdjY0wV7/1BjlEpEoCmD
-         xsaQvTWHPKr+jT1msod4s/JjXtKZcOHUG5wAGz6WiY4OCSZ6eEt8AETKXktuWvnw4/6u
-         jeOg==
-X-Forwarded-Encrypted: i=1; AJvYcCXvPYNvgt2SzPkoXwNaQB4Z79YBwsc45//JYTCpP5KwMXgifemZyC8QpKb590KESX1/qmmhB4xRmY0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlksJ0T8bnFpNkSlEf2xHBkqJ8jCyzHC1GqKRQQ+WTKGCr6EUi
-	pJC7xgHJhsa594vilMlcE/rF0YQLDn6L8REZd/3lAzRvP/YmSIKCkdXqKYjbF+1YDIiDjZAjxfy
-	OcelfoG0mbLcy76Eq8EvWU/fVaYpnHrrr0d14ICEleN/o7fUONAyvkQ1WnEAv5KGEOX5Kd5JQHQ
-	==
-X-Gm-Gg: ATEYQzxLeMSbSeu/ruoEmbskx1XCxQhsmwttSpaH3HEKvkWxYPBf6Wzqf1tXV4q253B
-	isb0mWhjmbF0Dw3v1q8tyWx+3FMBwP1elZE2DGeVI5tAAO+XXx7xTu8yT2c4a+m329NuyEgFyON
-	UaA/5JICmBSBuYdlp7n2at6Q9VRVq4rEqMP+ClRf+97yXfylAyEwnB3PdcCuDLruZTp6pq7vDuC
-	1OvYYOJ7dIf66Bq5Rl9SVonYiuwEiuclBaXinBf69FrXLxElxovPDySzy7wivz7QrzsaBOMRiGC
-	YsSGpx+oSk8lkQo4cNT1fycO50NqD0J8/vvKUlPVHUDsRskzxLmNDOn/ZvdgEQIOcgrVujXsA/J
-	Icpvze+8c6a6OAzkvOB1tL0pOg3ztmdQntsV/23F4L25jMFcDsWKPGuHpgi/7SPcSDqWoUw88vZ
-	A=
-X-Received: by 2002:a05:7300:fb89:b0:2be:10a6:647e with SMTP id 5a478bee46e88-2c1096d56e4mr6573521eec.19.1774320492027;
-        Mon, 23 Mar 2026 19:48:12 -0700 (PDT)
-X-Received: by 2002:a05:7300:fb89:b0:2be:10a6:647e with SMTP id 5a478bee46e88-2c1096d56e4mr6573494eec.19.1774320491396;
-        Mon, 23 Mar 2026 19:48:11 -0700 (PDT)
-Received: from hu-mdtipton-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2c10b3253d0sm14093923eec.29.2026.03.23.19.48.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Mar 2026 19:48:10 -0700 (PDT)
-Date: Mon, 23 Mar 2026 19:48:08 -0700
-From: Mike Tipton <mike.tipton@oss.qualcomm.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-        Luca Weiss <luca.weiss@fairphone.com>,
-        Taniya Das <taniya.das@oss.qualcomm.com>,
-        Georgi Djakov <djakov@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/5] dt-bindings: clock: qcom,milos-camcc: Document
- interconnect path
-Message-ID: <acH7aEBvSbiNwhBz@hu-mdtipton-lv.qualcomm.com>
-References: <20260116-milos-camcc-icc-v1-0-400b7fcd156a@fairphone.com>
- <20260116-milos-camcc-icc-v1-2-400b7fcd156a@fairphone.com>
- <20260117-efficient-fractal-sloth-aaf7c2@quoll>
- <59d9f7ff-4111-4304-a76c-40f4000545f5@oss.qualcomm.com>
- <9f8619d4-43ac-4bc0-9598-c498d59a27b8@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="sv4YYUe7"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 62O2rXwK5278459, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1774320813; bh=s+NBfkBtjjtc9IaZWRse743V27ZK/I4WahuYAx4/Jpk=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding:Content-Type;
+	b=sv4YYUe7+BT66W+9PYYIXBHmQ+e2QwqO4p6nmyx3BylD0ZvvHqliSrEKaFlzfdTwl
+	 BhezTfePqON7ZICio2vLWKpbAZZQ2zPknePRqI86ChPXyJQdaLuFpPxfWrkeW4NVoT
+	 b2uDvmNj2XVp+9CD4BRUP5rZAl4A9394VAref3/aq7+rXpnyFu/1bxfSQgGGfqBfDH
+	 Mfod9xKQnMnMk8X8cGN+DX+Z5hw2Y85RcTqR6lvCxVV2ci2Aw743++qSsOJP++h3at
+	 hFLy8zAhuHAJL+gF6jRUR8+UtiRAWbFzg3NTVA/nez9bA+UaAqG6QdYNXZZ/6ClYnu
+	 Q+g1q9d3anh6w==
+Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
+	by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 62O2rXwK5278459
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 24 Mar 2026 10:53:33 +0800
+Received: from RTKEXHMBS01.realtek.com.tw (172.21.6.40) by
+ RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Tue, 24 Mar 2026 10:53:34 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS01.realtek.com.tw (172.21.6.40) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Tue, 24 Mar 2026 10:53:33 +0800
+Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS06.realtek.com.tw
+ (10.21.1.56) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Tue, 24 Mar 2026 10:53:33 +0800
+From: Yu-Chun Lin <eleanor.lin@realtek.com>
+To: <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <p.zabel@pengutronix.de>,
+        <cylee12@realtek.com>, <afaerber@suse.com>, <jyanchou@realtek.com>
+CC: <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-realtek-soc@lists.infradead.org>, <james.tai@realtek.com>,
+        <cy.huang@realtek.com>, <stanley_chang@realtek.com>,
+        <eleanor.lin@realtek.com>
+Subject: [PATCH v5 04/10] clk: realtek: Introduce a common probe()
+Date: Tue, 24 Mar 2026 10:53:25 +0800
+Message-ID: <20260324025332.3416977-5-eleanor.lin@realtek.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20260324025332.3416977-1-eleanor.lin@realtek.com>
+References: <20260324025332.3416977-1-eleanor.lin@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9f8619d4-43ac-4bc0-9598-c498d59a27b8@oss.qualcomm.com>
-X-Proofpoint-GUID: uA4tY8kZRo55uR5qEqc0lnDH47rfuk8A
-X-Proofpoint-ORIG-GUID: uA4tY8kZRo55uR5qEqc0lnDH47rfuk8A
-X-Authority-Analysis: v=2.4 cv=c+imgB9l c=1 sm=1 tr=0 ts=69c1fb6d cx=c_pps
- a=Uww141gWH0fZj/3QKPojxA==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=kj9zAlcOel0A:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
- a=fekkFCTB2vo3PLuB2O8A:9 a=CjuIK1q_8ugA:10 a=PxkB5W3o20Ba91AHUih5:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzI0MDAyMCBTYWx0ZWRfX6gcbECV8Xyjd
- HIZVTPV8iJtMCcVcY29Lxr0zLjPV9EePkSH9aAXjTsLkbir8Aa8Kb1tBpB8RjoegIgKWus9trts
- EQiZ/nhBi1oxyVRWV98jXR5VJL2Bi8PhV+bz9eSydQF1kJNy4nGwgFm5ndZzbBHLtVjdIlbd1Em
- aBmK+wO3US3wyyqCEZSiapJ8XEvAPtx1imWk2eWHFcWEoJbrRl8UauJrZ55yz3jodORChVn+05R
- gxqM2ePesGnj73FSiixyTEUDlZbZXNFXcBk0Uhs/FrqLgdW8+A4ntWkHMeXTxVCsn8D3AFlbAIo
- XWkDzNghbix+SaMZcNtZAkqhUvDOmgShmpZJt9K9ZGwSauef/1LZ3zSG/vjFZztolJuccspmGYM
- GIyWQRuJ2WJ9ns6edM0e2z5Yf37tuYPC5qNX6ABPPn07kIKtYhy75wMsXuW1BOJNPoXfy76XcPp
- 9qmfyHQqrxc6ci4w6bQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-24_01,2026-03-23_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 impostorscore=0 phishscore=0 lowpriorityscore=0 spamscore=0
- suspectscore=0 priorityscore=1501 bulkscore=0 adultscore=0 clxscore=1011
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603240020
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Mon, Jan 19, 2026 at 11:28:07AM +0100, Konrad Dybcio wrote:
-> 
-> 
-> On 1/19/26 11:20 AM, Konrad Dybcio wrote:
-> > On 1/17/26 12:46 PM, Krzysztof Kozlowski wrote:
-> >> On Fri, Jan 16, 2026 at 02:17:21PM +0100, Luca Weiss wrote:
-> >>> Document an interconnect path for camcc that's required to enable
-> >>> the CAMSS_TOP_GDSC power domain.
-> >>
-> >> I find it confusing. Enabling GDSC power domains is done via power
-> >> domains, not via interconnects. Do not represent power domains as
-> >> interconnects, it's something completely different.
-> > 
-> > The name of the power domains is CAMSS_TOP_GDSC (seems you misread)
-> > 
-> > For the power domain to successfully turn on, the MNoC needs to be
-> > turned on (empirical evidence). The way to do it is to request a
-> > nonzero vote on this interconnect path
-> > 
-> > (presumably because the GDSC or its invisible providers require
-> > something connected over that bus to carry out their enable sequences).
+From: Cheng-Yu Lee <cylee12@realtek.com>
 
-The GDSC itself shouldn't depend on MMNOC in order to turn on properly.
-It should turn on just fine without it. There *is* a dependency between
-CAM_TOP_GDSC and MMNOC, but it's in the opposite direction.
+Add rtk_clk_probe() to set up the shared regmap, register clock hardware,
+add the clock provider, and optionally register a reset controller when
+reset bank data is provided.
 
-For MMNOC to turn off properly when all BW votes are removed, the
-CAM_TOP_GDSC must already be off. If CAM_TOP_GDSC is still on when MMNOC
-starts turning off, then MMNOC will get stuck in its collapse sequence.
-MMNOC waits for all HW clients to de-assert their active signals before
-it'll allow itself to collapse. Most HW blocks assert this active signal
-more dynamically than camera does rather than tying it to GDSC state.
-The GDSC asserting active signals to RPMh that prevent NOC collapse is
-unique to this particular camera GDSC.
+Signed-off-by: Cheng-Yu Lee <cylee12@realtek.com>
+Co-developed-by: Yu-Chun Lin <eleanor.lin@realtek.com>
+Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
+---
+Changes in v5:
+- Synchronized with reset controller changes.
+---
+ MAINTAINERS                  |  1 +
+ drivers/clk/Kconfig          |  1 +
+ drivers/clk/Makefile         |  1 +
+ drivers/clk/realtek/Kconfig  | 28 +++++++++++++++++
+ drivers/clk/realtek/Makefile |  4 +++
+ drivers/clk/realtek/common.c | 59 ++++++++++++++++++++++++++++++++++++
+ drivers/clk/realtek/common.h | 43 ++++++++++++++++++++++++++
+ 7 files changed, 137 insertions(+)
+ create mode 100644 drivers/clk/realtek/Kconfig
+ create mode 100644 drivers/clk/realtek/Makefile
+ create mode 100644 drivers/clk/realtek/common.c
+ create mode 100644 drivers/clk/realtek/common.h
 
-If MMNOC BW is removed when CAM_TOP_GDSC is still enabled, then it
-should reproduce as an icc_set_bw() failure on MMNOC rather than a GDSC
-enable failure. The icc_set_bw(0) request would succeed because RPMh
-immediately ACKs down requests, but the collapse sequence would get
-stuck in the background. Later, when someone calls icc_set_bw() again
-with a non-zero BW to enable MMNOC, then that request would fail because
-MMNOC is still stuck in the prior collapse sequence.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9419b0497e0b..31f4a5a66394 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -22229,6 +22229,7 @@ L:	devicetree@vger.kernel.org
+ L:	linux-clk@vger.kernel.org
+ S:	Supported
+ F:	Documentation/devicetree/bindings/clock/realtek*
++F:      drivers/clk/realtek/*
+ F:	drivers/reset/realtek/*
+ F:	include/dt-bindings/clock/realtek*
+ 
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 3d803b4cf5c1..d60f6415b0a3 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -519,6 +519,7 @@ source "drivers/clk/nuvoton/Kconfig"
+ source "drivers/clk/pistachio/Kconfig"
+ source "drivers/clk/qcom/Kconfig"
+ source "drivers/clk/ralink/Kconfig"
++source "drivers/clk/realtek/Kconfig"
+ source "drivers/clk/renesas/Kconfig"
+ source "drivers/clk/rockchip/Kconfig"
+ source "drivers/clk/samsung/Kconfig"
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index f7bce3951a30..69b84d1e7bcc 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -140,6 +140,7 @@ obj-$(CONFIG_COMMON_CLK_PISTACHIO)	+= pistachio/
+ obj-$(CONFIG_COMMON_CLK_PXA)		+= pxa/
+ obj-$(CONFIG_COMMON_CLK_QCOM)		+= qcom/
+ obj-y					+= ralink/
++obj-$(CONFIG_COMMON_CLK_REALTEK)	+= realtek/
+ obj-y					+= renesas/
+ obj-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip/
+ obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
+diff --git a/drivers/clk/realtek/Kconfig b/drivers/clk/realtek/Kconfig
+new file mode 100644
+index 000000000000..63eb3fb3e79a
+--- /dev/null
++++ b/drivers/clk/realtek/Kconfig
+@@ -0,0 +1,28 @@
++# SPDX-License-Identifier: GPL-2.0-only
++config COMMON_CLK_REALTEK
++	bool "Clock driver for Realtek SoCs"
++	depends on ARCH_REALTEK || COMPILE_TEST
++	default y
++	help
++	  Enable the common clock framework infrastructure for Realtek
++	  system-on-chip platforms.
++
++	  This provides the base support required by individual Realtek
++	  clock controller drivers to expose clocks to peripheral devices.
++
++	  If you have a Realtek-based platform, say Y.
++
++if COMMON_CLK_REALTEK
++
++config RTK_CLK_COMMON
++	tristate "Realtek Clock Common"
++	depends on RESET_CONTROLLER
++	select RESET_RTK_COMMON
++	help
++	  Common helper code shared by Realtek clock controller drivers.
++
++	  This provides utility functions and data structures used by
++	  multiple Realtek clock implementations, and include integration
++	  with reset controllers where required.
++
++endif
+diff --git a/drivers/clk/realtek/Makefile b/drivers/clk/realtek/Makefile
+new file mode 100644
+index 000000000000..377ec776ee47
+--- /dev/null
++++ b/drivers/clk/realtek/Makefile
+@@ -0,0 +1,4 @@
++# SPDX-License-Identifier: GPL-2.0-only
++obj-$(CONFIG_RTK_CLK_COMMON) += clk-rtk.o
++
++clk-rtk-y += common.o
+diff --git a/drivers/clk/realtek/common.c b/drivers/clk/realtek/common.c
+new file mode 100644
+index 000000000000..18a0d82ded0c
+--- /dev/null
++++ b/drivers/clk/realtek/common.c
+@@ -0,0 +1,59 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (C) 2019 Realtek Semiconductor Corporation
++ * Author: Cheng-Yu Lee <cylee12@realtek.com>
++ */
++
++#include <linux/device.h>
++#include <linux/module.h>
++#include <linux/mfd/syscon.h>
++#include <linux/platform_device.h>
++#include "common.h"
++
++int rtk_clk_probe(struct platform_device *pdev, const struct rtk_clk_desc *desc)
++{
++	int i, ret;
++	struct regmap *regmap;
++	struct device *dev = &pdev->dev;
++	struct rtk_reset_initdata reset_initdata = {0};
++
++	regmap = device_node_to_regmap(pdev->dev.of_node);
++	if (IS_ERR(regmap))
++		return dev_err_probe(dev, PTR_ERR(regmap), "failed to get regmap\n");
++
++	for (i = 0; i < desc->num_clks; i++)
++		desc->clks[i]->regmap = regmap;
++
++	for (i = 0; i < desc->clk_data->num; i++) {
++		struct clk_hw *hw = desc->clk_data->hws[i];
++
++		if (!hw)
++			continue;
++
++		ret = devm_clk_hw_register(dev, hw);
++
++		if (ret) {
++			dev_warn(dev, "failed to register hw of clk%d: %d\n", i,
++				 ret);
++			desc->clk_data->hws[i] = NULL;
++		}
++	}
++
++	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
++					  desc->clk_data);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to add clock provider\n");
++
++	if (!desc->num_reset_descs)
++		return 0;
++
++	reset_initdata.regmap = regmap;
++	reset_initdata.num_descs = desc->num_reset_descs;
++	reset_initdata.descs = desc->reset_descs;
++
++	return rtk_reset_controller_add(dev, &reset_initdata);
++}
++EXPORT_SYMBOL_GPL(rtk_clk_probe);
++
++MODULE_DESCRIPTION("Realtek clock infrastructure");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/clk/realtek/common.h b/drivers/clk/realtek/common.h
+new file mode 100644
+index 000000000000..9cf013f9ba2b
+--- /dev/null
++++ b/drivers/clk/realtek/common.h
+@@ -0,0 +1,43 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (C) 2016-2019 Realtek Semiconductor Corporation
++ * Author: Cheng-Yu Lee <cylee12@realtek.com>
++ */
++
++#ifndef __CLK_REALTEK_COMMON_H
++#define __CLK_REALTEK_COMMON_H
++
++#include <linux/clk-provider.h>
++#include <linux/device.h>
++#include <linux/io.h>
++#include <linux/of.h>
++#include <linux/regmap.h>
++#include <linux/reset/realtek.h>
++
++#define __clk_regmap_hw(_p) ((_p)->hw)
++
++struct device;
++struct platform_device;
++
++struct clk_regmap {
++	struct clk_hw hw;
++	struct regmap *regmap;
++};
++
++struct rtk_clk_desc {
++	struct clk_hw_onecell_data *clk_data;
++	struct clk_regmap **clks;
++	size_t num_clks;
++	struct rtk_reset_desc *reset_descs;
++	size_t num_reset_descs;
++};
++
++static inline struct clk_regmap *to_clk_regmap(struct clk_hw *hw)
++{
++	return container_of(hw, struct clk_regmap, hw);
++}
++
++int rtk_clk_probe(struct platform_device *pdev,
++		  const struct rtk_clk_desc *desc);
++
++#endif /* __CLK_REALTEK_COMMON_H */
+-- 
+2.34.1
 
-Note I haven't explicitly confirmed the Milos behavior, but this has
-been the HW dependency for at least several generations of chips now.
-I've never seen this GDSC get stuck turning on because MMNOC if off, nor
-would I be able to explain offhand why that would happen. But MMNOC
-certainly does depend on this GDSC for the reasons stated above.
-
-So, regardless of the originally stated rationale, CAM_TOP_GDSC voting
-on MMNOC *is* a logical requirement to guarantee that MMNOC doesn't turn
-off when the GDSC is still on. Otherwise, that requirement would be left
-entirely up to consumers to understand and enforce.
