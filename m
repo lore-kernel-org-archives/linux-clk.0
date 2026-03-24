@@ -1,72 +1,73 @@
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA5C220687
-	for <linux-clk@vger.kernel.org>; Tue, 24 Mar 2026 01:57:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3448383C91
+	for <linux-clk@vger.kernel.org>; Tue, 24 Mar 2026 02:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774317461; cv=none; b=QF80+UCQK9xnnAqaYCTVJV6QFnkhWRiUBhbjfCCewvnMz0ArW2DyvRqyCClwyp8R0zVtq6ceSSUc9XY7H9v2uU/OMIF8BhPVPBIQ5oW/2nSEfHgOWddpdBZXmySxNE0mUPmaDa/cETey4bu1mR65ejKN/YJRvas6JXq2iAJX+KI=
+	t=1774318282; cv=none; b=lrSPbuNzN8JM9a0HcsaDy++0141VHOpWVWZjjZ5nyy3jQAsGrr/iBj0DlEJrXgEpIk9UQ5vvvZZRoamBQ+4UuAYGi4pg+2V2qYzKg4dpyrDIzyZ1xXFWru4V5XGrS+2eKo1lrtSIo52dECaOZcNl4wpJDt0WNH7I6cdvD7EtEWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774317461; c=relaxed/simple;
-	bh=I/V99haVL9JoBdH26cf+SF6eGZu4bFba7hgTA+LWCOI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=I4qeH/Na3n9P2YjmICX4F2+glfuMRau2C9IJEnRSHwy5tG6lmS9SHrlnACpDClaN5X2FlVE5KVprfBycM3kpuOUO1m09cmDOA7DERaIanqVp2VL73tSg2xHm1q4f9hs0HxDyhiwa0WEpx9LesMy5wWwmzOrJYM8A8zBiWCHwApA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z+zBCcdG; arc=none smtp.client-ip=209.85.215.180
+	s=arc-20240116; t=1774318282; c=relaxed/simple;
+	bh=5LCSZy0QNtO4bzoIvyj24RyYrTxJ4vg7ZKTxOvocysw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Pc0PKWygLS7fqBavamewKH4D6BbCAIPG4mj8NpeJ+gyRo0NzzxPih8ao8GFmaDxGtv/LSv8WBUl8OiYhqwbjCZX8l28RB/VINVuIBq/Uhumnt1mNa7AcFolo9h7KqFYYFmmzXGAl7ozVkngkARQIj4iDA2/Gz9ECMOhKQ2vQwmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dr79q3pK; arc=none smtp.client-ip=209.85.216.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z+zBCcdG"
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-c6dd5b01e14so275810a12.0
-        for <linux-clk@vger.kernel.org>; Mon, 23 Mar 2026 18:57:40 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dr79q3pK"
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-35b97ed057cso2090099a91.1
+        for <linux-clk@vger.kernel.org>; Mon, 23 Mar 2026 19:11:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774317460; x=1774922260; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1774318281; x=1774923081; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=eIXrKDA73NF+pZizlSPKEVnOH0GBazyacpmOOa1fU90=;
-        b=Z+zBCcdGkMFJPJ+mQpFnzPTzLL1T55BmFW8k791Ui9HIz1nEab61r90qHky0IBMtO3
-         vmkZu6K3+UyOa2Dh9Tax/CxabARLtVEQEU7xYnMXZz1QWs7UWMFZTIved1TSwhNmB4xt
-         zc64GslY+f+3xur5rpqvQLBEPHqNe50tJo+Popal7MNO+tW6UYch2QzG8FJReAxrubUM
-         AJV26ELNJfLBnpzkLHFgKIUgdNYXVo9+YOivHMVde0nnMLrrW8CFYL8t+tHcO/b/ADEB
-         LHF/clm/XTa+CiUAw4ghX06uyo2nTDvatQJF4lVHQZWEvHwyhQCTCX1HWYnfTIedeCEF
-         YbvA==
+        bh=pg3BeEF/NeYvq9HpPYQyLEWkUbXwDTNUoplMULCqoG4=;
+        b=Dr79q3pKlHDZoriUdWMx6Rp0FzjGAH+djAn8d7B40mgLTveQDTs9vJY2ygw8V+/8ma
+         Dgq2Hb+09dZYJiOSBS7qX7lpoSF7NowmV+QPwK7Sk2tV658rueIF8+nCcrXuS/u2kvOh
+         gujUAVBF6XKckecqAbUGr04HCDa9HfGqDxnz16RGN3BkdhPI7ypFiQdLYYyGCB836JIs
+         lgsKHLhWucDa5s1i661bSlPnT3k+JSyqAoYV2dJIXWb+yzjQ4AjohxsbVWWOr595F7mR
+         h8EmvYe4DvK2vfOZUr1JbTkVRapjH6rebMAGBEWUP9ggKWoC2DgJzceDLj4B3IZKqSCJ
+         1A1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774317460; x=1774922260;
+        d=1e100.net; s=20251104; t=1774318281; x=1774923081;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eIXrKDA73NF+pZizlSPKEVnOH0GBazyacpmOOa1fU90=;
-        b=NkXduQbUJ7E37PRBQbJ3ef9EZ3Brh0De59JDOrheC7/v7M+9f1vsDacU2G7BP7nw0x
-         DubRRbcntcry5whqyL+MosbqvOeuj6HQcngPq1XxU7G5Wcz3MoAh2dDlyugUG/7FQM+Q
-         wybsoR+YMfIvwdrdzE5swX7Z0rzMBRVmZI6rzzS9opYt/cSzdla80EMnAR2jvys9xYUX
-         6t0gt9Qe149UzQfkDw5NYU0m8Qx23dM6yXlNTW2JELMgrjCoj8HSS9Ka8am7izoozalH
-         eCoeUTMSi4uCJ7J4w3oIDoFS0ba2uK2U0VSlnWAyXZjEB1fAALAtDnNIiWUuFtgF8tOg
-         SCBg==
-X-Forwarded-Encrypted: i=1; AJvYcCWo0AOrhe7ZS2kPFcv9BmMUm6iQK0f89lQbLCa6ZwRwDcrzfiQJkCx5h9TqtpC3r0Id8ra2CiRFalk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLuLNHurivvMN1jO6PJOdyt2RVPzdyIG84p4Z94S0J1+GaKQG1
-	uybPDcRlWFOA4aDa3bl71+m62oYgT9L9muE0i/1j5Mh7/ABhb2BqjfZO
-X-Gm-Gg: ATEYQzzuPJxWX2VCBXGx2tjRimqg6boWZe/ZJwFwVVGvERKbOdztNGewTWphyo3cWbo
-	IppLuxZx2hCuZkDv+AQ+Jn3wp8O9lOxfdRkTwTJQXm+BLWxLtGETjLvwEepOM+gAbuDqs4+JTc8
-	yL6RdQnAw1x+sYbLI/cuLaHrA9fpzKqmXUOWNWTthRBHytRMnehP8ysK8Evu6ttmdTKZxd+ofWX
-	FQqFPSKtkHBpBJxU5BMssLTnhZxg00GAZ/rkBZh+X69W10UPcOgnIKgqdvRhstxdOG6L9Noz2E0
-	oy6qs6odWIbcFLaTNf7240EXfo28h2X/ZLTg9PKXz6+/YnFixBCqVfDmyUZezXmyjD7i/bYcqY9
-	HNcKgIuFroEmuHE3MJgnTgyQorVBeSPMfJO0Hkax680PYMOe2c2jxadE5phO8DYOOyXS7kYS1HX
-	oaiFb/78RM2MdWqgNd0/sPZQRbAN0SFo6JfmT8ay/X6A8h0t0iK9R+IUQ=
-X-Received: by 2002:a17:902:e551:b0:2ae:ceeb:fa5f with SMTP id d9443c01a7336-2b08276a3b9mr131483105ad.28.1774317460022;
-        Mon, 23 Mar 2026 18:57:40 -0700 (PDT)
+        bh=pg3BeEF/NeYvq9HpPYQyLEWkUbXwDTNUoplMULCqoG4=;
+        b=oCwA1/r5KvNWnD8SeXCdSyewyhqivWnbOMFLBLQPryuxYfSlsrPAI7YveF69gCU40D
+         qRHGNSPEKT8o0KmxnmA21l1/X1tCoTB1DvabWwvcEfEHkFwia9s+R9kIQ1XmYbc5O3By
+         vjS6PIyPl2r6ZNJgeQbmxwjhfihhlTJIpwE0nL5aPWbd2T1fQuoSy7nIJQ8W6QflNiAh
+         4to60yDp7Tg1R2cgHCINOYMWYwMGC6C29jQ2rHN0UxtjbpCfjKW3aZ9fDzGzydo2C+do
+         mMsuotfnhlJMcRz+TtS6aMNaD5EVSJ8ecJ0o3mcq4/zq3Ibe90X2cpfKYVZZl9f6v0rh
+         UFpA==
+X-Gm-Message-State: AOJu0Ywz8605lf8y7DnABHjHIxqcqOXy/UPkVbF+xwkpO2kHAciJt5Ok
+	KGdaxQxe8WIciLtMGnBcLYHt+yY41hqVX60qnKjPMIK7LXk2Axy2+ZuXPX9DDg==
+X-Gm-Gg: ATEYQzwmcBNnZUG4ZhhJbbGeu1V4OkLvMCpgkRH4QUv84oFZsR3GCG+I7yrxzLelZ9w
+	x933Coof6T2PxKfqAkDJmNoMgnK6TqB369vmZUlFwk5cC1PP8lWAGHWlkiL0YzBz7fHOSfpZH7d
+	PudjuRetOD+OiwoNZyNEmcFLAohHcDSYiHNtiqOeJqZ19W9wdcZCzs8Sfu+NP7TNkGxxJQoluZ6
+	Kpb2VRa0L6xlpzi7x70yMQcctQDoGNNSvAdZTl1gnKKgeuvROX6t92nXxGCjtGxKqtNnQVcuMg+
+	E3PEb1XVerfN0ya70wakMT/RK1Pkf25i6M8Resd/YzOdbFUuM/cdI7eslwhz3asEt7LvAhuX9tf
+	1NgBeZPGP47DLu4G6nHCCJwdfRuWioLJ37mmkgJYQCvwkLa1jVHTLq8T298n/xHt0MpDSajPvY/
+	p6G/Bko/3gKbWfCponGHDdkBZ6XGQPB9p7Df+hFSYGtbkbialSM76KIqU=
+X-Received: by 2002:a17:90b:1e4b:b0:35b:e6a3:41d0 with SMTP id 98e67ed59e1d1-35be6a342admr6003709a91.26.1774318280932;
+        Mon, 23 Mar 2026 19:11:20 -0700 (PDT)
 Received: from ryzen ([2601:644:8000:5b5d::8bd])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2b08366b5besm127922615ad.55.2026.03.23.18.57.38
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-35c03149db2sm457965a91.9.2026.03.23.19.11.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Mar 2026 18:57:39 -0700 (PDT)
+        Mon, 23 Mar 2026 19:11:20 -0700 (PDT)
 From: Rosen Penev <rosenp@gmail.com>
-To: linux-tegra@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
+To: linux-clk@vger.kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCHv2] firmware/tegra: add COMPILE_TEST
-Date: Mon, 23 Mar 2026 18:57:22 -0700
-Message-ID: <20260324015722.12507-1-rosenp@gmail.com>
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-renesas-soc@vger.kernel.org (open list:RENESAS CLOCK DRIVERS),
+	linux-kernel@vger.kernel.org (open list),
+	linux-hardening@vger.kernel.org (open list:KERNEL HARDENING (not covered by other areas):Keyword:\b__counted_by(_le|_be)?\b)
+Subject: [PATCH] clk: renesas: cpg-mssr: use struct_size
+Date: Mon, 23 Mar 2026 19:11:03 -0700
+Message-ID: <20260324021103.13651-1-rosenp@gmail.com>
 X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -76,53 +77,39 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-For this driver specifically, there's no arch specific stuff needed.
+struct_size is what is normally used when a flexible array member is
+present to avoid accidental mistakes. pm_size is still needed for the
+memcpy call below.
 
-Build the tegra clk stuff as tegra_bpmp_init_clocks is defined there.
-CLK_TEGRA_BPMP also depends on TEGRA_BPMP.
+Added __counted_by for extra runtime analysis.
 
 Signed-off-by: Rosen Penev <rosenp@gmail.com>
 ---
- v2: also build the tegra clk stuff.
- drivers/clk/Makefile           | 2 +-
- drivers/firmware/tegra/Kconfig | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/renesas/renesas-cpg-mssr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 760d9643705f..334d5c522394 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -154,7 +154,7 @@ obj-$(CONFIG_ARCH_STM32)		+= stm32/
- obj-y					+= starfive/
- obj-$(CONFIG_ARCH_SUNXI)		+= sunxi/
- obj-y					+= sunxi-ng/
--obj-$(CONFIG_ARCH_TEGRA)		+= tegra/
-+obj-y					+= tegra/
- obj-y					+= tenstorrent/
- obj-$(CONFIG_ARCH_THEAD)		+= thead/
- obj-y					+= ti/
-diff --git a/drivers/firmware/tegra/Kconfig b/drivers/firmware/tegra/Kconfig
-index 91f2320c0d0f..ae21f460807d 100644
---- a/drivers/firmware/tegra/Kconfig
-+++ b/drivers/firmware/tegra/Kconfig
-@@ -3,7 +3,7 @@ menu "Tegra firmware driver"
-
- config TEGRA_IVC
- 	bool "Tegra IVC protocol" if COMPILE_TEST
--	depends on ARCH_TEGRA
-+	depends on ARCH_TEGRA || COMPILE_TEST
- 	help
- 	  IVC (Inter-VM Communication) protocol is part of the IPC
- 	  (Inter Processor Communication) framework on Tegra. It maintains the
-@@ -13,7 +13,7 @@ config TEGRA_IVC
-
- config TEGRA_BPMP
- 	bool "Tegra BPMP driver"
--	depends on ARCH_TEGRA && TEGRA_HSP_MBOX
-+	depends on (ARCH_TEGRA && TEGRA_HSP_MBOX) || COMPILE_TEST
- 	depends on !CPU_BIG_ENDIAN
- 	select TEGRA_IVC
- 	help
---
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index 64a432fd0e8a..26ea85cfaa02 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -569,7 +569,7 @@ static void __init cpg_mssr_register_mod_clk(const struct mssr_mod_clk *mod,
+ struct cpg_mssr_clk_domain {
+ 	struct generic_pm_domain genpd;
+ 	unsigned int num_core_pm_clks;
+-	unsigned int core_pm_clks[];
++	unsigned int core_pm_clks[] __counted_by(num_core_pm_clks);
+ };
+ 
+ static struct cpg_mssr_clk_domain *cpg_mssr_clk_domain;
+@@ -667,7 +667,7 @@ static int __init cpg_mssr_add_clk_domain(struct device *dev,
+ 	size_t pm_size = num_core_pm_clks * sizeof(core_pm_clks[0]);
+ 	int ret;
+ 
+-	pd = devm_kzalloc(dev, sizeof(*pd) + pm_size, GFP_KERNEL);
++	pd = devm_kzalloc(dev, struct_size(pd, core_pm_clks, num_core_pm_clks), GFP_KERNEL);
+ 	if (!pd)
+ 		return -ENOMEM;
+ 
+-- 
 2.53.0
 
