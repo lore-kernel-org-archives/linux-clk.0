@@ -1,232 +1,136 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAEFF3DEAC6
-	for <linux-clk@vger.kernel.org>; Tue, 24 Mar 2026 11:13:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E1863EC2FA;
+	Tue, 24 Mar 2026 11:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774350834; cv=none; b=WtrjOBwrENqtxmuX9yJ32S8qvp+QgLcrfUq++KOv8RUrQVNTxehtMuAkVwuCiI7xkpnPCMG/cPplQOEjwikgEPjmJQOtPFr3W2yE+3sgnhpqTTa9Luuu/rGdIY8DQO44I/A9jItz3gqmsRazeQeAtD2fYdgn6eQf6wxPO3RJtIY=
+	t=1774352020; cv=none; b=QwOKUykg2EljNqmuiv9tgbN8JyBiUt4KRJRjPaLZwYkkhnqBIvOe4PWyzk9tMuebdOtKXQvS+aubgr+AhSA0CcIWhy+1NDjCeTRa3cMLAY1r787jOoJfRMkE0DppqdNt7mGeiCUu6eZrx0kufLDJx0dHv+OPMa9YX3YyOMZuhuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774350834; c=relaxed/simple;
-	bh=SQVPvZi1QiTqiL4AoVGIjHTVBooBkUpJREhkFFCm4So=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QHkm6w7aQ4t0mzf5JU+UtqKivOI5g/KXd6C+jaQ8xnqIBBDzjoICyCwPYQ1MlfekU3aScHmoCpEd0P5ikm1w89z9XNCNVNOvQ1Hbl6JJqHKQJobgIRpd/ixPWpPgF1Aq7lOgUd9lQDPBmidDPC0pHBMaH811mpmBFpTFY4x1bAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nJEkJ8O1; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=fTYx5v5f; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1774352020; c=relaxed/simple;
+	bh=99TVMl3JW+OzCcx488nZY5x3ldIcx7HNxDjx62+MIgk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HRDrjZTQYhDxl3STiV2V8sMT0/K3fd4RGdS1H80TPBosXvE7SVbFGv3+18DhJzeJzCdPeCLibPXC4pmYx5eA/BlgLRnHSBimnpLq+/i4gmUbf3+QbZwL/pqC9s8F3XFFSdQldZPRHRyBgsg/38Ui21Ghdp90ezQxWm4sn9fK4j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tY03rrAa; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nJEkJ8O1";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="fTYx5v5f"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62O9j4WX3904064
-	for <linux-clk@vger.kernel.org>; Tue, 24 Mar 2026 11:13:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	IDmXyXjtsD/lrp90016J142m+1InnYfXGgFq1lOWOzs=; b=nJEkJ8O1MVXJ77uH
-	ploITPedcb8TEnEyw0bdD3ThzsQPPfgawvLvsC0Qj04Q2GevODP/CzZremHvFgoS
-	MsWmAYqV+J2fT34aYMboNcpALJ3Ut1NhebrJCjUgAIeWZ7ulMif0VTqNIfDMngcz
-	GEV6s8AVlY3eeD9z0dcesjB1iokKQFhsPHIxhIlBxuPE8GMx2LbXDZDblIwRPjer
-	uYn+jP+LsP4q8Zn07Sjzh4Tr5yq/VBJhzVkguFZVkwbjIdpuheHLQ7toWXSypMOk
-	RifJ3KIulIaWkW2ylsfISbHbTOx1nmkC6fsYJp9eIweEPjgR2lVbP/28JM40sHPW
-	Sj6Mdw==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4d3jt0hkcn-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 24 Mar 2026 11:13:51 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-899fcb63705so39361126d6.1
-        for <linux-clk@vger.kernel.org>; Tue, 24 Mar 2026 04:13:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1774350831; x=1774955631; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IDmXyXjtsD/lrp90016J142m+1InnYfXGgFq1lOWOzs=;
-        b=fTYx5v5fLcd9dCOUO1tkJMC6neAZROdGwYUHuAJrhTsIb/ukRdQqbuapAtMclCTBIR
-         pkV7ruRym9q7jxbNsAVqSrGIBsPLJREyem1ZRBsPRsoxTZ7cA1RacBC0FamoHmtAdH/f
-         4/dgRvSim/DuhqvToRflZcZg3MIyHbC3lTkrWIydBqF/Aspoo/kW36KtLeukBwPzT0M0
-         JxTVJXH+4UpR+YNC1ZGOdlydldM84Y7cYnnNMuhILeOz/+55G2viVB/+KfXEJRGD4nns
-         8cVvuilCIhOuqV87PAcpbXw9hJq1mw1AmIoc+VHFFre3TFY3oinMrLMU7NIASlsrOWUT
-         zJ5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774350831; x=1774955631;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IDmXyXjtsD/lrp90016J142m+1InnYfXGgFq1lOWOzs=;
-        b=XLm4UY6bC8LNqW6Lo1TJ9MYHKBy81XNTlbjOzoYRn4MNsd0L7wY0UISdq7YFNipzVN
-         ZUuhgNii30r8ZhY7YZyoQr+YWKUFOWrW5yd56mygJ6p69ncXO7u1gS1+S0wI879302Fp
-         AQEJzv70OAAMUN8hckjTmUCdtJJErEm91BivzrPvrPu+rkbRFqaLZg1WgBUw1LYgpUzM
-         hktL3oyjuBrlon/yEy872Do1R3ujm/VFV8K+X/dVlVBTm7rPg9E3B81zJm3NDTDHKyGI
-         4rNybL3Pdy38ex4vNnVV7Z6nNEwttvXGTttHIitqo+XNY/NiMDohhBuxBISB9KMlIuT0
-         AdRA==
-X-Forwarded-Encrypted: i=1; AJvYcCV/JgJ9EYjEjMv51qTWajquhCld53E0KcvV164kRmHCCXq/nMMgLNujxM5z84riK5nxxkv3wS3Of4w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziEi77H3TVcjuFrjUdveWpcjdVnwH5cCwTUmF3WORCLDst4lMi
-	U7xfFDoVw3XtGO3UTMtdOdQQYTRFJGRqelpWyk6h3bd++D97zdXLVRfJvwKkDDZ1uSuNlE0sApa
-	FCe0zXH+OxQAlZVqL2arOcG/G+Xvw3JESl3XjDM0Ma0ccFfYMHLqvNAhtWjto5WA=
-X-Gm-Gg: ATEYQzwUu2V0ctdAU20lTnsFVg3l0qKLOMz2/SXj1NKdY2MfNLfO9p0X5HM9ICMuLLR
-	bMpLvj/innf/OYMbfH0aTYPK4ts1GBtmpFYzjtEa/W49L2zmN8kn+Ld5vDKZkZv0AhMyNYwFWFc
-	mS7ywCC5s/OEm04a5VXq8EGsDx+DRbg0VujpG+6gUOlqxowKLzRmOaN+SnCEnZ7lCxjh4iaQE1D
-	rxy4rdKX9RBXoQmio9QNH98szGrdGj6meapsnq1xPODSJt/ArCKwZ+ZRjXzV0YozrQAg4K3f4+w
-	QbVRBNqIXOy2iA2amRB5TPjJoq85+Hk2SLk+qFsuNu1yCvmgt8sG4E+Ii8HVK0OXuUtDGpKA+48
-	JyJ0VJ0oKA4jUAQvAdWI3AQg10KwOmNGO9c+5tDuQFkhkzq+AT9gDLWVpWtKG/t8sEt9WdEql/n
-	rsqeA=
-X-Received: by 2002:a05:6214:27c9:b0:89c:4aae:408f with SMTP id 6a1803df08f44-89c85a3e99emr186591896d6.5.1774350831079;
-        Tue, 24 Mar 2026 04:13:51 -0700 (PDT)
-X-Received: by 2002:a05:6214:27c9:b0:89c:4aae:408f with SMTP id 6a1803df08f44-89c85a3e99emr186591436d6.5.1774350830576;
-        Tue, 24 Mar 2026 04:13:50 -0700 (PDT)
-Received: from [192.168.119.254] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b98335de177sm622414966b.29.2026.03.24.04.13.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Mar 2026 04:13:49 -0700 (PDT)
-Message-ID: <acc4c006-27ec-4ee2-9d99-7efdf8249364@oss.qualcomm.com>
-Date: Tue, 24 Mar 2026 12:13:47 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tY03rrAa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B24B3C2BCB1;
+	Tue, 24 Mar 2026 11:33:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774352020;
+	bh=99TVMl3JW+OzCcx488nZY5x3ldIcx7HNxDjx62+MIgk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tY03rrAaqprhQlwExmqCkXCH4GGc7+nqQeXh/pKy/qsfRO8/eYJ3U44SVVjNHQRB8
+	 jqV+TtzVm9izG4WlL3Gkkn1J39yu3Sc05oTIOKWi5YSlNp1GsiT+Avstx9JPrhj1ln
+	 mq53FqxkA/GlRKMWy6iyUiMTJeZKagRzo2IsD3BHDzndUgSRmdP50gf0ri5PVsiOoh
+	 zQxITsJNnoxFp5a7FvUfrzyaLWOl/+XKaa8/1bvA20RU4japZZvJ2ig7Fj7NQkmO9c
+	 HmVr/g53Iy3eH2AdVMMgE09MIqCw6rt71Dhir76B2fCytzHWwgINoDnBCXGY0wgOyM
+	 6YGY40F0qC26g==
+Date: Tue, 24 Mar 2026 12:33:37 +0100
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>, linux-tegra@vger.kernel.org, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCHv2] firmware/tegra: add COMPILE_TEST
+Message-ID: <acJ1humept5gbQlF@orome>
+References: <20260324015722.12507-1-rosenp@gmail.com>
+ <2776817.iZASKD2KPV@senjougahara>
+ <CAKxU2N9E-9HLCJfGYD_r+qaW03fLz9NVW=RWuPvotCbSxv3ueA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] dt-bindings: clock: qcom,milos-camcc: Document
- interconnect path
-To: Mike Tipton <mike.tipton@oss.qualcomm.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-        Luca Weiss <luca.weiss@fairphone.com>,
-        Taniya Das <taniya.das@oss.qualcomm.com>,
-        Georgi Djakov <djakov@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20260116-milos-camcc-icc-v1-0-400b7fcd156a@fairphone.com>
- <20260116-milos-camcc-icc-v1-2-400b7fcd156a@fairphone.com>
- <20260117-efficient-fractal-sloth-aaf7c2@quoll>
- <59d9f7ff-4111-4304-a76c-40f4000545f5@oss.qualcomm.com>
- <9f8619d4-43ac-4bc0-9598-c498d59a27b8@oss.qualcomm.com>
- <acH7aEBvSbiNwhBz@hu-mdtipton-lv.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <acH7aEBvSbiNwhBz@hu-mdtipton-lv.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: uFWTAWwbCg8-WH3je--uQrEvmemsZjWf
-X-Authority-Analysis: v=2.4 cv=Nc3rFmD4 c=1 sm=1 tr=0 ts=69c271ef cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
- a=WLTbINpYHCHO6pnoh_cA:9 a=QEXdDO2ut3YA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
-X-Proofpoint-GUID: uFWTAWwbCg8-WH3je--uQrEvmemsZjWf
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzI0MDA4OSBTYWx0ZWRfX9Ru0sFiD3BIZ
- UxybC74Hwst6eGZLJ6UCxudYaUlWpFMAQLZWWVvxpc6n7XekFAgWB6cA4mNuBegFkdAdqHc0ygf
- IaqgNXWyyCkMFqPP9qrjwVqKIlPSTSYSCSeUwkvmMT0vSb8r1PN2fmtwxC9YJsqHdSCzlR+3bnE
- NcN5k8YyMGm265gn2uZnVabEKln4BiaCZWc0SSQJZiFU32BeNbt+dB98b3FWq/4s+tJZgsJQPpZ
- MOigPCyNuMGMUTks3xfgaJiAcRpW/TtG6UVvc7K8HrhT2HaB0/5PwusX7g9ubkvY/cbDBV8w0Fm
- /Imq4xZ7Atgm6m4GqfuBEsnkawsrPwP4QsoPM7B9fKalWpQ2cvUHvhyZyJzhfQIbYXD0B6BpW35
- /UT3tU56MrYPADjm9W7WwpHWiYMIUIbGCWRdF9DmYfswZML2UJTu7+0B3zdCyLgB+LBsPYfhW9/
- 11pzsHwfbVlAjtWjGKg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-24_02,2026-03-23_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 impostorscore=0 spamscore=0 clxscore=1015 priorityscore=1501
- bulkscore=0 lowpriorityscore=0 malwarescore=0 suspectscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603240089
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="n4re3oqpewphuzdd"
+Content-Disposition: inline
+In-Reply-To: <CAKxU2N9E-9HLCJfGYD_r+qaW03fLz9NVW=RWuPvotCbSxv3ueA@mail.gmail.com>
 
-On 3/24/26 3:48 AM, Mike Tipton wrote:
-> On Mon, Jan 19, 2026 at 11:28:07AM +0100, Konrad Dybcio wrote:
->>
->>
->> On 1/19/26 11:20 AM, Konrad Dybcio wrote:
->>> On 1/17/26 12:46 PM, Krzysztof Kozlowski wrote:
->>>> On Fri, Jan 16, 2026 at 02:17:21PM +0100, Luca Weiss wrote:
->>>>> Document an interconnect path for camcc that's required to enable
->>>>> the CAMSS_TOP_GDSC power domain.
->>>>
->>>> I find it confusing. Enabling GDSC power domains is done via power
->>>> domains, not via interconnects. Do not represent power domains as
->>>> interconnects, it's something completely different.
->>>
->>> The name of the power domains is CAMSS_TOP_GDSC (seems you misread)
->>>
->>> For the power domain to successfully turn on, the MNoC needs to be
->>> turned on (empirical evidence). The way to do it is to request a
->>> nonzero vote on this interconnect path
->>>
->>> (presumably because the GDSC or its invisible providers require
->>> something connected over that bus to carry out their enable sequences).
-> 
-> The GDSC itself shouldn't depend on MMNOC in order to turn on properly.
-> It should turn on just fine without it. There *is* a dependency between
-> CAM_TOP_GDSC and MMNOC, but it's in the opposite direction.
-> 
-> For MMNOC to turn off properly when all BW votes are removed, the
-> CAM_TOP_GDSC must already be off. If CAM_TOP_GDSC is still on when MMNOC
-> starts turning off, then MMNOC will get stuck in its collapse sequence.
-> MMNOC waits for all HW clients to de-assert their active signals before
-> it'll allow itself to collapse. Most HW blocks assert this active signal
-> more dynamically than camera does rather than tying it to GDSC state.
-> The GDSC asserting active signals to RPMh that prevent NOC collapse is
-> unique to this particular camera GDSC.
-> 
-> If MMNOC BW is removed when CAM_TOP_GDSC is still enabled, then it
-> should reproduce as an icc_set_bw() failure on MMNOC rather than a GDSC
-> enable failure. The icc_set_bw(0) request would succeed because RPMh
-> immediately ACKs down requests, but the collapse sequence would get
-> stuck in the background. Later, when someone calls icc_set_bw() again
-> with a non-zero BW to enable MMNOC, then that request would fail because
-> MMNOC is still stuck in the prior collapse sequence.
-> 
-> Note I haven't explicitly confirmed the Milos behavior, but this has
-> been the HW dependency for at least several generations of chips now.
-> I've never seen this GDSC get stuck turning on because MMNOC if off, nor
-> would I be able to explain offhand why that would happen. But MMNOC
-> certainly does depend on this GDSC for the reasons stated above.
 
-In case that helps, I believe Luca originally observed that keeping the
-display on, specifically voting on the:
+--n4re3oqpewphuzdd
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCHv2] firmware/tegra: add COMPILE_TEST
+MIME-Version: 1.0
 
-&mmss_noc MASTER_MDP <-> &mc_virt SLAVE_EBI1
+On Mon, Mar 23, 2026 at 11:42:18PM -0700, Rosen Penev wrote:
+> On Mon, Mar 23, 2026 at 11:01=E2=80=AFPM Mikko Perttunen <mperttunen@nvid=
+ia.com> wrote:
+> >
+> > On Tuesday, March 24, 2026 10:57=E2=80=AFAM Rosen Penev wrote:
+> > > For this driver specifically, there's no arch specific stuff needed.
+> > >
+> > > Build the tegra clk stuff as tegra_bpmp_init_clocks is defined there.
+> > > CLK_TEGRA_BPMP also depends on TEGRA_BPMP.
+> > >
+> > > Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> > > ---
+> > >  v2: also build the tegra clk stuff.
+> > >  drivers/clk/Makefile           | 2 +-
+> > >  drivers/firmware/tegra/Kconfig | 4 ++--
+> > >  2 files changed, 3 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> > > index 760d9643705f..334d5c522394 100644
+> > > --- a/drivers/clk/Makefile
+> > > +++ b/drivers/clk/Makefile
+> > > @@ -154,7 +154,7 @@ obj-$(CONFIG_ARCH_STM32)          +=3D stm32/
+> > >  obj-y                                        +=3D starfive/
+> > >  obj-$(CONFIG_ARCH_SUNXI)             +=3D sunxi/
+> > >  obj-y                                        +=3D sunxi-ng/
+> > > -obj-$(CONFIG_ARCH_TEGRA)             +=3D tegra/
+> > > +obj-y                                        +=3D tegra/
+> >
+> > clk/tegra/Makefile doesn't separately check for ARCH_TEGRA, so this wil=
+l cause
+> > much of it to get built on non-Tegra platforms as well.
+> Sure. It builds fine.
 
-path made the GDSC power on successfully, lacking that made the problem
-come back
+I think the point that Mikko was trying to make is that with the current
+setup you get the Tegra clock code built on all platforms, whether you
+enable ARCH_TEGRA or not. Meaning you will get this included in your
+kernel builds even on x86 or MIPS systems, or ARM systems that don't
+enable any Tegra code.
 
-The nodes that are hit on the way are:
+If you really want to make this build with COMPILE_TEST, the right way
+to do so is by adding a dedicated Kconfig symbol that uses something
+like:
 
-qnm_mdp (mmss_noc)
-qns_mem_noc_hf (mmss_noc)
-qnm_mnoc_hf (gem_noc)
-qns_llcc (gem_noc)
-llcc_mc (mc_virt)
-ebi (mc_virt)
+	config CLK_TEGRA
+	...
+		depends ARCH_TEGRA || COMPILE_TEST
 
-That translates into
+and then use that symbol instead of CONFIG_ARCH_TEGRA above:
 
-mmss_noc -> MM0, MM1
-gem_noc -> SH0, SH1
-mc_virt -> ACV, MC0
+	obj-$(CONFIG_CLK_TEGRA) +=3D tegra/
 
-Notably, all of the foo_camnoc_bar nodes reside on mmss_noc as well.
-May it be that voting on them ungates a clock that (perhaps recursively)
-feeds the GDSC?
+That way you ensure that it gets enabled for build testing or if Tegra
+support is explicitly enabled.
 
-Because the platform is not suspended, the latter two buses are already
-online, so I'd assume it's one of the MM BCMs that's causing something
+Thierry
 
-I can't see any details about its inputs.. In case that's useful, the
-GCC driver enables the following camera branches as always-on:
+--n4re3oqpewphuzdd
+Content-Type: application/pgp-signature; name="signature.asc"
 
-GCC_CAMERA_AHB_CLK
-GCC_CAMERA_HF_XO_CLK
-GCC_CAMERA_SF_XO_CLK
+-----BEGIN PGP SIGNATURE-----
 
-Konrad
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmnCdo0ACgkQ3SOs138+
+s6GqJxAAvKYcguGVJo3CGkeArznpCaci8udawE6f2USJR36erBNPEM1glZg211Jh
+tTSj4/MQm9baQSHUab1bBEyFSGmOM6Oc2UKb2v409gkXmsJIk4T14drAXgjGpFgA
+Xb0v/5+PVnnMGO70MJiah9ERroMsqYcDxpiuDvKXK8mEoJKYmpMMn8gzPCJbSS7V
+ZFbVHX+6SbMV0IapnFgIhWzZyDpjAtY4/pAaWlKbSdQkUTXwLhK65nLiVI3UFQSI
+TBYABgRG2qHyf+2Dws9a3A0j7aauKSOb8pRy3pRVBtbcOHQTuCnDduuJgJklZVy7
+PPu/9SWj0B+JFWVb1PI5ihORSfbPTGzy/txFrkYWprnEbfd9QjgysfOSgWmux++q
+zmwToOfC05fkKivwxsvDINGZe4siCPBs8Gx38ccPzWz5lg7bw2pPhUkP6DlIIKgT
+hzRkLWFoEmifa4fmjK9EebaizaCtPdyvg0brg+zdIKFKly5CgYxg8L0G4/S+iwyo
+iCD9gLBSVuXonLZjhaRsyrh2VexUsw6zk/qmu74iBUXkxUFEClECimPmtACmT/MO
+g+7/bz0pYUfT8A6EoBIKHOBAYFiJBHMmNpxR1UNzLLbz3Rjerb5S1cnmLH6KaKXo
+/5jpK2VWDCaUDQy39+wBYL+WTkdlzKGUuLCjN3tR2HBQzcCml5Y=
+=OG3S
+-----END PGP SIGNATURE-----
+
+--n4re3oqpewphuzdd--
