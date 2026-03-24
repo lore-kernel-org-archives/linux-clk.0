@@ -1,39 +1,87 @@
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D681F3DDDC7
-	for <linux-clk@vger.kernel.org>; Tue, 24 Mar 2026 11:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAEFF3DEAC6
+	for <linux-clk@vger.kernel.org>; Tue, 24 Mar 2026 11:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774350587; cv=none; b=d8yNYSjuxud4r6gJBPBPLTu5N8fCHFZKFQ0NdF0RZ3vtjidLEnekyzAcPdJVdXoSb00mmCNTeJyEOP2XqG5j/3iSL8uYFrQqTQ6h69SidHZneLcLTeJjUmf5y1gIvFAstRpK4wTQCNHZ1RuI8tAwBj3KwqIgyQQ8UhjuC4vvam4=
+	t=1774350834; cv=none; b=WtrjOBwrENqtxmuX9yJ32S8qvp+QgLcrfUq++KOv8RUrQVNTxehtMuAkVwuCiI7xkpnPCMG/cPplQOEjwikgEPjmJQOtPFr3W2yE+3sgnhpqTTa9Luuu/rGdIY8DQO44I/A9jItz3gqmsRazeQeAtD2fYdgn6eQf6wxPO3RJtIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774350587; c=relaxed/simple;
-	bh=2gQIHJpE7NA/RRFUfAUBaiOtCFh9cBfuo3EkoYLAnOk=;
+	s=arc-20240116; t=1774350834; c=relaxed/simple;
+	bh=SQVPvZi1QiTqiL4AoVGIjHTVBooBkUpJREhkFFCm4So=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r8hDLTF4KhIXAfRckZihCgROMlvZAGXaCAulA6WKcDORrNZh5lJ7bfVtcSVshcrRn3AGQFeiEc2FCnFxN+qQLWStNUEM/9LlaRCft0SvSz9KezCjsGunrtdijJxqvVQlUBC13r93Fy3M/Z10qgfgw3WXVAmeBtjXjWk9PtwSSjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=GRXHg8Ie; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+	 In-Reply-To:Content-Type; b=QHkm6w7aQ4t0mzf5JU+UtqKivOI5g/KXd6C+jaQ8xnqIBBDzjoICyCwPYQ1MlfekU3aScHmoCpEd0P5ikm1w89z9XNCNVNOvQ1Hbl6JJqHKQJobgIRpd/ixPWpPgF1Aq7lOgUd9lQDPBmidDPC0pHBMaH811mpmBFpTFY4x1bAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nJEkJ8O1; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=fTYx5v5f; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="GRXHg8Ie"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=ATjFSYCcu4BJBlm0ZzGR/qHWqPTMf4tN63aPgcoL1c8=; b=GRXHg8IePTtouM+vfGTKaOI4c0
-	7I7IxhwsAPoTINFRPHSPojPtvLHD/upj9MQ2q+XtQn9DGCp+fF6RhPUkZHeIF1MM4u95xaFD8yLZX
-	/xY8hBjfJ+fpIY1tYXcYlyXEemi43e29kMKPcO0LpqZq7TGdAA0Mp+qVRpQhNRkvdaCsIv8flxJ5f
-	jOBqICo8RHcUnpQGUW7KEaQC8WTgZlQnytFH3XM3pmmw/eZeplvhHiwJP+A82d+n30HA7rhwktHBV
-	AS42MUExSEyVkZ0/RtJ9wKTQMIdoryAxkRjxN3UQw9UXzCewaV7ikWaffuMLr5Ba7LUumwIdjvkxT
-	gguYk8eA==;
-Received: from [189.7.87.169] (helo=[192.168.0.2])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1w4zda-005J3Y-4l; Tue, 24 Mar 2026 12:09:30 +0100
-Message-ID: <707d805f-09bb-46f8-a3a4-d7630028ea2a@igalia.com>
-Date: Tue, 24 Mar 2026 08:09:22 -0300
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nJEkJ8O1";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="fTYx5v5f"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62O9j4WX3904064
+	for <linux-clk@vger.kernel.org>; Tue, 24 Mar 2026 11:13:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	IDmXyXjtsD/lrp90016J142m+1InnYfXGgFq1lOWOzs=; b=nJEkJ8O1MVXJ77uH
+	ploITPedcb8TEnEyw0bdD3ThzsQPPfgawvLvsC0Qj04Q2GevODP/CzZremHvFgoS
+	MsWmAYqV+J2fT34aYMboNcpALJ3Ut1NhebrJCjUgAIeWZ7ulMif0VTqNIfDMngcz
+	GEV6s8AVlY3eeD9z0dcesjB1iokKQFhsPHIxhIlBxuPE8GMx2LbXDZDblIwRPjer
+	uYn+jP+LsP4q8Zn07Sjzh4Tr5yq/VBJhzVkguFZVkwbjIdpuheHLQ7toWXSypMOk
+	RifJ3KIulIaWkW2ylsfISbHbTOx1nmkC6fsYJp9eIweEPjgR2lVbP/28JM40sHPW
+	Sj6Mdw==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4d3jt0hkcn-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 24 Mar 2026 11:13:51 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-899fcb63705so39361126d6.1
+        for <linux-clk@vger.kernel.org>; Tue, 24 Mar 2026 04:13:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1774350831; x=1774955631; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IDmXyXjtsD/lrp90016J142m+1InnYfXGgFq1lOWOzs=;
+        b=fTYx5v5fLcd9dCOUO1tkJMC6neAZROdGwYUHuAJrhTsIb/ukRdQqbuapAtMclCTBIR
+         pkV7ruRym9q7jxbNsAVqSrGIBsPLJREyem1ZRBsPRsoxTZ7cA1RacBC0FamoHmtAdH/f
+         4/dgRvSim/DuhqvToRflZcZg3MIyHbC3lTkrWIydBqF/Aspoo/kW36KtLeukBwPzT0M0
+         JxTVJXH+4UpR+YNC1ZGOdlydldM84Y7cYnnNMuhILeOz/+55G2viVB/+KfXEJRGD4nns
+         8cVvuilCIhOuqV87PAcpbXw9hJq1mw1AmIoc+VHFFre3TFY3oinMrLMU7NIASlsrOWUT
+         zJ5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774350831; x=1774955631;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IDmXyXjtsD/lrp90016J142m+1InnYfXGgFq1lOWOzs=;
+        b=XLm4UY6bC8LNqW6Lo1TJ9MYHKBy81XNTlbjOzoYRn4MNsd0L7wY0UISdq7YFNipzVN
+         ZUuhgNii30r8ZhY7YZyoQr+YWKUFOWrW5yd56mygJ6p69ncXO7u1gS1+S0wI879302Fp
+         AQEJzv70OAAMUN8hckjTmUCdtJJErEm91BivzrPvrPu+rkbRFqaLZg1WgBUw1LYgpUzM
+         hktL3oyjuBrlon/yEy872Do1R3ujm/VFV8K+X/dVlVBTm7rPg9E3B81zJm3NDTDHKyGI
+         4rNybL3Pdy38ex4vNnVV7Z6nNEwttvXGTttHIitqo+XNY/NiMDohhBuxBISB9KMlIuT0
+         AdRA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/JgJ9EYjEjMv51qTWajquhCld53E0KcvV164kRmHCCXq/nMMgLNujxM5z84riK5nxxkv3wS3Of4w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziEi77H3TVcjuFrjUdveWpcjdVnwH5cCwTUmF3WORCLDst4lMi
+	U7xfFDoVw3XtGO3UTMtdOdQQYTRFJGRqelpWyk6h3bd++D97zdXLVRfJvwKkDDZ1uSuNlE0sApa
+	FCe0zXH+OxQAlZVqL2arOcG/G+Xvw3JESl3XjDM0Ma0ccFfYMHLqvNAhtWjto5WA=
+X-Gm-Gg: ATEYQzwUu2V0ctdAU20lTnsFVg3l0qKLOMz2/SXj1NKdY2MfNLfO9p0X5HM9ICMuLLR
+	bMpLvj/innf/OYMbfH0aTYPK4ts1GBtmpFYzjtEa/W49L2zmN8kn+Ld5vDKZkZv0AhMyNYwFWFc
+	mS7ywCC5s/OEm04a5VXq8EGsDx+DRbg0VujpG+6gUOlqxowKLzRmOaN+SnCEnZ7lCxjh4iaQE1D
+	rxy4rdKX9RBXoQmio9QNH98szGrdGj6meapsnq1xPODSJt/ArCKwZ+ZRjXzV0YozrQAg4K3f4+w
+	QbVRBNqIXOy2iA2amRB5TPjJoq85+Hk2SLk+qFsuNu1yCvmgt8sG4E+Ii8HVK0OXuUtDGpKA+48
+	JyJ0VJ0oKA4jUAQvAdWI3AQg10KwOmNGO9c+5tDuQFkhkzq+AT9gDLWVpWtKG/t8sEt9WdEql/n
+	rsqeA=
+X-Received: by 2002:a05:6214:27c9:b0:89c:4aae:408f with SMTP id 6a1803df08f44-89c85a3e99emr186591896d6.5.1774350831079;
+        Tue, 24 Mar 2026 04:13:51 -0700 (PDT)
+X-Received: by 2002:a05:6214:27c9:b0:89c:4aae:408f with SMTP id 6a1803df08f44-89c85a3e99emr186591436d6.5.1774350830576;
+        Tue, 24 Mar 2026 04:13:50 -0700 (PDT)
+Received: from [192.168.119.254] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b98335de177sm622414966b.29.2026.03.24.04.13.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Mar 2026 04:13:49 -0700 (PDT)
+Message-ID: <acc4c006-27ec-4ee2-9d99-7efdf8249364@oss.qualcomm.com>
+Date: Tue, 24 Mar 2026 12:13:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,74 +89,144 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/5] clk: bcm: rpi: Manage clock rate in
- prepare/unprepare callbacks
-To: Stephen Boyd <sboyd@kernel.org>, Chema Casanova <jmcasanova@igalia.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Iago Toral Quiroga <itoral@igalia.com>, Maxime Ripard <mripard@kernel.org>,
- Melissa Wen <mwen@igalia.com>, Michael Turquette <mturquette@baylibre.com>,
- Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, Stefan Wahren <wahrenst@gmx.net>
-Cc: linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, kernel-dev@igalia.com
-References: <20260312-v3d-power-management-v7-0-9f006a1d4c55@igalia.com>
- <20260312-v3d-power-management-v7-1-9f006a1d4c55@igalia.com>
- <177431178481.5403.10860855444629990495@lazor>
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+Subject: Re: [PATCH 2/5] dt-bindings: clock: qcom,milos-camcc: Document
+ interconnect path
+To: Mike Tipton <mike.tipton@oss.qualcomm.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+        Luca Weiss <luca.weiss@fairphone.com>,
+        Taniya Das <taniya.das@oss.qualcomm.com>,
+        Georgi Djakov <djakov@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20260116-milos-camcc-icc-v1-0-400b7fcd156a@fairphone.com>
+ <20260116-milos-camcc-icc-v1-2-400b7fcd156a@fairphone.com>
+ <20260117-efficient-fractal-sloth-aaf7c2@quoll>
+ <59d9f7ff-4111-4304-a76c-40f4000545f5@oss.qualcomm.com>
+ <9f8619d4-43ac-4bc0-9598-c498d59a27b8@oss.qualcomm.com>
+ <acH7aEBvSbiNwhBz@hu-mdtipton-lv.qualcomm.com>
 Content-Language: en-US
-Autocrypt: addr=mcanal@igalia.com; keydata=
- xsBNBGcCwywBCADgTji02Sv9zjHo26LXKdCaumcSWglfnJ93rwOCNkHfPIBll85LL9G0J7H8
- /PmEL9y0LPo9/B3fhIpbD8VhSy9Sqz8qVl1oeqSe/rh3M+GceZbFUPpMSk5pNY9wr5raZ63d
- gJc1cs8XBhuj1EzeE8qbP6JAmsL+NMEmtkkNPfjhX14yqzHDVSqmAFEsh4Vmw6oaTMXvwQ40
- SkFjtl3sr20y07cJMDe++tFet2fsfKqQNxwiGBZJsjEMO2T+mW7DuV2pKHr9aifWjABY5EPw
- G7qbrh+hXgfT+njAVg5+BcLz7w9Ju/7iwDMiIY1hx64Ogrpwykj9bXav35GKobicCAwHABEB
- AAHNIE1hw61yYSBDYW5hbCA8bWNhbmFsQGlnYWxpYS5jb20+wsCRBBMBCAA7FiEE+ORdfQEW
- dwcppnfRP/MOinaI+qoFAmcCwywCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQ
- P/MOinaI+qoUBQgAqz2gzUP7K3EBI24+a5FwFlruQGtim85GAJZXToBtzsfGLLVUSCL3aF/5
- O335Bh6ViSBgxmowIwVJlS/e+L95CkTGzIIMHgyUZfNefR2L3aZA6cgc9z8cfow62Wu8eXnq
- GM/+WWvrFQb/dBKKuohfBlpThqDWXxhozazCcJYYHradIuOM8zyMtCLDYwPW7Vqmewa+w994
- 7Lo4CgOhUXVI2jJSBq3sgHEPxiUBOGxvOt1YBg7H9C37BeZYZxFmU8vh7fbOsvhx7Aqu5xV7
- FG+1ZMfDkv+PixCuGtR5yPPaqU2XdjDC/9mlRWWQTPzg74RLEw5sz/tIHQPPm6ROCACFls7A
- TQRnAsMsAQgAxTU8dnqzK6vgODTCW2A6SAzcvKztxae4YjRwN1SuGhJR2isJgQHoOH6oCItW
- Xc1CGAWnci6doh1DJvbbB7uvkQlbeNxeIz0OzHSiB+pb1ssuT31Hz6QZFbX4q+crregPIhr+
- 0xeDi6Mtu+paYprI7USGFFjDUvJUf36kK0yuF2XUOBlF0beCQ7Jhc+UoI9Akmvl4sHUrZJzX
- LMeajARnSBXTcig6h6/NFVkr1mi1uuZfIRNCkxCE8QRYebZLSWxBVr3h7dtOUkq2CzL2kRCK
- T2rKkmYrvBJTqSvfK3Ba7QrDg3szEe+fENpL3gHtH6h/XQF92EOulm5S5o0I+ceREwARAQAB
- wsB2BBgBCAAgFiEE+ORdfQEWdwcppnfRP/MOinaI+qoFAmcCwywCGwwACgkQP/MOinaI+qpI
- zQf+NAcNDBXWHGA3lgvYvOU31+ik9bb30xZ7IqK9MIi6TpZqL7cxNwZ+FAK2GbUWhy+/gPkX
- it2gCAJsjo/QEKJi7Zh8IgHN+jfim942QZOkU+p/YEcvqBvXa0zqW0sYfyAxkrf/OZfTnNNE
- Tr+uBKNaQGO2vkn5AX5l8zMl9LCH3/Ieaboni35qEhoD/aM0Kpf93PhCvJGbD4n1DnRhrxm1
- uEdQ6HUjWghEjC+Jh9xUvJco2tUTepw4OwuPxOvtuPTUa1kgixYyG1Jck/67reJzMigeuYFt
- raV3P8t/6cmtawVjurhnCDuURyhUrjpRhgFp+lW8OGr6pepHol/WFIOQEg==
-In-Reply-To: <177431178481.5403.10860855444629990495@lazor>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <acH7aEBvSbiNwhBz@hu-mdtipton-lv.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: uFWTAWwbCg8-WH3je--uQrEvmemsZjWf
+X-Authority-Analysis: v=2.4 cv=Nc3rFmD4 c=1 sm=1 tr=0 ts=69c271ef cx=c_pps
+ a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
+ a=WLTbINpYHCHO6pnoh_cA:9 a=QEXdDO2ut3YA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
+X-Proofpoint-GUID: uFWTAWwbCg8-WH3je--uQrEvmemsZjWf
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzI0MDA4OSBTYWx0ZWRfX9Ru0sFiD3BIZ
+ UxybC74Hwst6eGZLJ6UCxudYaUlWpFMAQLZWWVvxpc6n7XekFAgWB6cA4mNuBegFkdAdqHc0ygf
+ IaqgNXWyyCkMFqPP9qrjwVqKIlPSTSYSCSeUwkvmMT0vSb8r1PN2fmtwxC9YJsqHdSCzlR+3bnE
+ NcN5k8YyMGm265gn2uZnVabEKln4BiaCZWc0SSQJZiFU32BeNbt+dB98b3FWq/4s+tJZgsJQPpZ
+ MOigPCyNuMGMUTks3xfgaJiAcRpW/TtG6UVvc7K8HrhT2HaB0/5PwusX7g9ubkvY/cbDBV8w0Fm
+ /Imq4xZ7Atgm6m4GqfuBEsnkawsrPwP4QsoPM7B9fKalWpQ2cvUHvhyZyJzhfQIbYXD0B6BpW35
+ /UT3tU56MrYPADjm9W7WwpHWiYMIUIbGCWRdF9DmYfswZML2UJTu7+0B3zdCyLgB+LBsPYfhW9/
+ 11pzsHwfbVlAjtWjGKg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-24_02,2026-03-23_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 impostorscore=0 spamscore=0 clxscore=1015 priorityscore=1501
+ bulkscore=0 lowpriorityscore=0 malwarescore=0 suspectscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603240089
 
-Hi Stephen,
-
-On 23/03/26 21:23, Stephen Boyd wrote:
-> Quoting Maíra Canal (2026-03-12 14:34:23)
->> On current firmware versions, RPI_FIRMWARE_SET_CLOCK_STATE doesn't
->> actually power off the clock. To achieve meaningful power savings, the
->> clock rate must be set to the minimum before disabling. This might be
->> fixed in future firmware releases.
+On 3/24/26 3:48 AM, Mike Tipton wrote:
+> On Mon, Jan 19, 2026 at 11:28:07AM +0100, Konrad Dybcio wrote:
 >>
->> Rather than pushing rate management to clock consumers, handle it
->> directly in the clock framework's prepare/unprepare callbacks. In
->> unprepare, set the rate to the minimum before disabling the clock.
->> In prepare, for clocks marked with `maximize` (currently v3d),
->> restore the rate to the maximum after enabling.
 >>
->> Signed-off-by: Maíra Canal <mcanal@igalia.com>
->> ---
+>> On 1/19/26 11:20 AM, Konrad Dybcio wrote:
+>>> On 1/17/26 12:46 PM, Krzysztof Kozlowski wrote:
+>>>> On Fri, Jan 16, 2026 at 02:17:21PM +0100, Luca Weiss wrote:
+>>>>> Document an interconnect path for camcc that's required to enable
+>>>>> the CAMSS_TOP_GDSC power domain.
+>>>>
+>>>> I find it confusing. Enabling GDSC power domains is done via power
+>>>> domains, not via interconnects. Do not represent power domains as
+>>>> interconnects, it's something completely different.
+>>>
+>>> The name of the power domains is CAMSS_TOP_GDSC (seems you misread)
+>>>
+>>> For the power domain to successfully turn on, the MNoC needs to be
+>>> turned on (empirical evidence). The way to do it is to request a
+>>> nonzero vote on this interconnect path
+>>>
+>>> (presumably because the GDSC or its invisible providers require
+>>> something connected over that bus to carry out their enable sequences).
 > 
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> The GDSC itself shouldn't depend on MMNOC in order to turn on properly.
+> It should turn on just fine without it. There *is* a dependency between
+> CAM_TOP_GDSC and MMNOC, but it's in the opposite direction.
+> 
+> For MMNOC to turn off properly when all BW votes are removed, the
+> CAM_TOP_GDSC must already be off. If CAM_TOP_GDSC is still on when MMNOC
+> starts turning off, then MMNOC will get stuck in its collapse sequence.
+> MMNOC waits for all HW clients to de-assert their active signals before
+> it'll allow itself to collapse. Most HW blocks assert this active signal
+> more dynamically than camera does rather than tying it to GDSC state.
+> The GDSC asserting active signals to RPMh that prevent NOC collapse is
+> unique to this particular camera GDSC.
+> 
+> If MMNOC BW is removed when CAM_TOP_GDSC is still enabled, then it
+> should reproduce as an icc_set_bw() failure on MMNOC rather than a GDSC
+> enable failure. The icc_set_bw(0) request would succeed because RPMh
+> immediately ACKs down requests, but the collapse sequence would get
+> stuck in the background. Later, when someone calls icc_set_bw() again
+> with a non-zero BW to enable MMNOC, then that request would fail because
+> MMNOC is still stuck in the prior collapse sequence.
+> 
+> Note I haven't explicitly confirmed the Milos behavior, but this has
+> been the HW dependency for at least several generations of chips now.
+> I've never seen this GDSC get stuck turning on because MMNOC if off, nor
+> would I be able to explain offhand why that would happen. But MMNOC
+> certainly does depend on this GDSC for the reasons stated above.
 
-When possible, could you apply this patch to clk-next? Thank you and
-Maxime for the reviews!
+In case that helps, I believe Luca originally observed that keeping the
+display on, specifically voting on the:
 
-Best regards,
-- Maíra
+&mmss_noc MASTER_MDP <-> &mc_virt SLAVE_EBI1
+
+path made the GDSC power on successfully, lacking that made the problem
+come back
+
+The nodes that are hit on the way are:
+
+qnm_mdp (mmss_noc)
+qns_mem_noc_hf (mmss_noc)
+qnm_mnoc_hf (gem_noc)
+qns_llcc (gem_noc)
+llcc_mc (mc_virt)
+ebi (mc_virt)
+
+That translates into
+
+mmss_noc -> MM0, MM1
+gem_noc -> SH0, SH1
+mc_virt -> ACV, MC0
+
+Notably, all of the foo_camnoc_bar nodes reside on mmss_noc as well.
+May it be that voting on them ungates a clock that (perhaps recursively)
+feeds the GDSC?
+
+Because the platform is not suspended, the latter two buses are already
+online, so I'd assume it's one of the MM BCMs that's causing something
+
+I can't see any details about its inputs.. In case that's useful, the
+GCC driver enables the following camera branches as always-on:
+
+GCC_CAMERA_AHB_CLK
+GCC_CAMERA_HF_XO_CLK
+GCC_CAMERA_SF_XO_CLK
+
+Konrad
