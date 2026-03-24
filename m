@@ -1,199 +1,201 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 229763F54C7
-	for <linux-clk@vger.kernel.org>; Tue, 24 Mar 2026 13:00:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9953FCB1F
+	for <linux-clk@vger.kernel.org>; Tue, 24 Mar 2026 13:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774357218; cv=none; b=CPaRQnOJmPJ39ubiAsasg+6fGjzplJDQk7Y6DY0FRbzi8csGu5LYChvWEaKlXgLq+TyCobFJFE2ThV0D351o9AA8G5mqLVlkfF0dx50ra6+4WeJfvVIfNAZ3Ed2GDIiH/dC+plp5rAHymOr6ry8kozDdLwPxKuyhW5LC5HuDSqE=
+	t=1774359461; cv=none; b=EXgPvog8yi7NWa5KrZV8GheOB9uyPnw0q2/us/+LppKbxfKY/FTKvzS3ELXeBNLN/HVor4ZxonMg3CChh1u5Q5w0lcmgOnrf/Y6xxt5C5Xvh9msRllnRTa1GoWBb5PoDnJ6Kp7/VvkimqMEene0PHVp/XK69FKCrUeG7a7+uLWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774357218; c=relaxed/simple;
-	bh=Qo/Mik/vYS6SQbgLS8M2JqG7+aOVsZ6u8vdCMUadwzA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RXcUdvQwemunG9Qr2ToC/VqTsPgRZFeYX1EJXaMPJtV04C/CDp7WO5MhG+Fwr9IJsGMZaeC2/kwyoiClV64ikQy15bFUuSWu5cxIOUJ4XnPWU3BfYRvCQ1wHiqx+SR2K4uug5dxZubs0pyki+DNTEGw5qxZvu2FhyEQC/44OC00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ILeL5dpM; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=KrsSmxUV; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ILeL5dpM";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="KrsSmxUV"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62OACJCM1762131
-	for <linux-clk@vger.kernel.org>; Tue, 24 Mar 2026 13:00:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	VmYwnXBlvcv2hQPXBjEzajPd9eX79Z+xiIQAGDfThCY=; b=ILeL5dpM+b+Qe9eo
-	u0cS2yP8SuwWXd3xtd20iF0awNgk/KKDbanZs/cUs1ne+74zEM8XYNuAPTe0Ku4Y
-	MhXTLOP3boJ3yQdud9yzaLsR/lgj+xaY2J3pYWOas2jS1jiXOxQZNZT1Q9nn7sOc
-	XSJoJEYc2JfbbqWLV8rlPGFZ2Sd9U56jIerDtYkCprHBZokQLHS+/pjdtLS6Td8L
-	wq19ab07kWVaa1mefo65XdR5QlOT0fxUjk9ffBGw/YUSVl/joSODxMHbQU2C3LHs
-	8kSNCv/gxC/m8IFozfMH7zLb5BRNqgMT9CwZKSHL2X3hU9vgGmg8WPrF1y73paX4
-	8S7Oqg==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4d36f0cjgw-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 24 Mar 2026 13:00:13 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-50b317c4041so34384371cf.1
-        for <linux-clk@vger.kernel.org>; Tue, 24 Mar 2026 06:00:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1774357213; x=1774962013; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VmYwnXBlvcv2hQPXBjEzajPd9eX79Z+xiIQAGDfThCY=;
-        b=KrsSmxUV31Km1BEFKeD3R2vSNZ/GwjaO4Hwh/v8+Me4s68tRKBZeE1hpFLAmObxgCR
-         d/1TC4fsyO+RJh1AV54boKB/dS6QASBZlIXLSOqnWZsZUHcsogkPGoPH4xU7pA6a+mCf
-         yqrFcOBTzEVndgFII/dCBqxADi4hUgVkWQN97xUpnFCVljplznA0QpNIDHMkGySoHzoh
-         aqnPKj+nKAg0OI28t7hYjRYfqjPkAXrdMgz9XKn/jGZSH1g8tqlGTLISCskrCe27wtco
-         oVgtP1tu8vHdZ9EYeaYAU+nWoJ+1/7KImRh8HHVqbSrZjZpNLgQEzYdf7LnF4Pb/Ze/b
-         YQOA==
+	s=arc-20240116; t=1774359461; c=relaxed/simple;
+	bh=jxD2923ET52CY8fhMQtErtaWu+053QLtVBSwzxbDk0o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fiPWW25t26vdRUFryKHkXHcxU5PVOLYThv05F2usEKGu6fTb3e4iaEWmaTjHY5rHVxujeVHmtus8k44bhzxyucYISaNNvvbtm18t1JwbxA6ndeYWc0NSEjLF4Ym7tsT+vTJMeBA64N43UFcaj6yVtuFWWEXBtXaFyYOOLB2CeHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-56ce07a54e8so814011e0c.2
+        for <linux-clk@vger.kernel.org>; Tue, 24 Mar 2026 06:37:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774357213; x=1774962013;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VmYwnXBlvcv2hQPXBjEzajPd9eX79Z+xiIQAGDfThCY=;
-        b=AwaVrjzbOyAcxIU8qqzlfxDOyTd+FV51ENmtGCUwFbHQ5hleURhWjZ9a7STMLgaSNJ
-         snFlEIAzp0Kgp4poFWKehCdjDUFWX9P5vTLx0ZiUiGYFXhBo7VJ+wxKW8bGlJzE6mB1w
-         0eBhvwwPjMYOAUOgGy/5PffNQYhL/MnMxxnDnqEaiE2lbtE/bleGBI7BbiCNKHUF9pIv
-         J/NZTudNYacBHv+Di98WPM+mjE+GnhOucFdMNjSUP99FhlOe4CkYLMxvcZbvmdv/+XK7
-         1Hu1i+u+IKDsRFNYeVqmL77HOJGDbJenNkX6iqYCS2duaVj43x5n0/nRHqth00eSQRz2
-         jqPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUwIjUZv96/1VpuQSMqaSQ/csv/zAFQkuQsRA8zY1xrwOMzm8PGvB7y1LTj5eJjnCwyczwMVBwXZDg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnSON8mdGrHuy1U2fpIKMC8EpnmKScMHyNyur2HfMuxGBiLE33
-	sBoWcI78kGAEledi0GJGNL4xL+Vjx9SN8glGh2F4auxU3t7YJ3YLZOtVe/jhAu8QMgGkgv2Jx5s
-	n64hFnIw3Fyc/t6qPo4TRVXPPSDPnJfNYkDBoUjxJUZ1TS9JmyYhDS8L3tMBsLfs=
-X-Gm-Gg: ATEYQzxsfdkSDOSBnxT4JXdCBCDMgk6ceVYbMKIeThkvrTysRUqRWN4EFn7kD3Rqha5
-	lWmFvY5pOGSRxEzPaH4bGoPhTQlpO/6Swuosh/nrnd70Ql4S5npA3cUuAxswKFecL8WvaiRl0f3
-	Z6jgudRv/+ArJxxpmln/q1KQjANWLkeNV3MmVYPgmWveaPow+jNwe8Bm9HizIKpPPOsXEnDKRrr
-	+RMLwUfD8G8uu9emi5toFeiEmDy75yHHwJKV2jY1TBY2nren7kFOuRR2ypQZAoLdZSCyPR8veCr
-	uqIAvNQ2tDtC8aa9MkjK0PwSMQjP+txrI5dKxRgBzqYMlG7ACwGq4/AS4os0zlXJRBK6IJjV8Mi
-	1I9GdLjq+QregDzwDIRIUh52MyHepTu1PJDVSgHy1eizh2WNd4+nYAhsQE+pW250agV6LFBqk2w
-	Oc4J0=
-X-Received: by 2002:a05:622a:1992:b0:509:d76:fe73 with SMTP id d75a77b69052e-50b373d748amr187475921cf.3.1774357212367;
-        Tue, 24 Mar 2026 06:00:12 -0700 (PDT)
-X-Received: by 2002:a05:622a:1992:b0:509:d76:fe73 with SMTP id d75a77b69052e-50b373d748amr187473241cf.3.1774357209941;
-        Tue, 24 Mar 2026 06:00:09 -0700 (PDT)
-Received: from [192.168.119.254] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-668d22914ecsm4726697a12.21.2026.03.24.06.00.05
+        d=1e100.net; s=20251104; t=1774359457; x=1774964257;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UFHE6SbqkfrINgqOev1LeMJP9y3Lb6YlEweE9fpbW9I=;
+        b=Nu/1qbiti3/HdMlDcZFbxTrr6vpjH0L99yVFyolv7A+XBFAZdwd3LiIXO42kUMiMX4
+         RkPmNAwmd5AMPSMv9631WRcHTJukmhy8XB1lfVseL05Hba5lF6RTst1CYw41fNM+21NJ
+         dq7RZtRhj2i/Btag/+EA5AsS6LwPGy0RNZow9P40JqjN59ZZ7K7EpeaAol7nmtu6C+J5
+         aZVXyaNhaYvUEKll+HkLLc0nOmq4N8jI8AvcNiSbqQiWeH0ZonxGE6j18cWaiXWOvpYy
+         eivhQbJCCoG2TZu6OvjjZvRg2+YrrFSndiiwqqfpPRnjTk3eWKksJIzs+ip8BuQ7/j3o
+         HC8w==
+X-Forwarded-Encrypted: i=1; AJvYcCWH+6S7mMqxzFc9pXSCSp33nDnVEGgIKvAwxvdQJUEuHaloCB8sNUg8qmp2QypRvgDk3kk+IcXd+tg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJYPwRP6ebpu5LHvpsehykQxccs8/7A256JHwVAOqJXWBjgP9p
+	6F1fXMxVcrdAyJqvXkKco8S13eb/MT6JoJGS9rr/HBIU9gw6U4LDyD5rHYJvR42xeGs=
+X-Gm-Gg: ATEYQzxhHbrz2QjhVLTgGd3N/ukIViVppfdvDbQXIqBMm+9l2tji59Vj54iJviPlxsL
+	UuvgcPdlgHcZm5HlEpRJnL4n/koc1emsFk+6l6mf7RAegUjR4+C7KbD0bAX+9skMjblpXi6Fsza
+	k3GHfgetpLiVm1r9F+tjkLbMk/c3//OZy/5P4tpRTOpk8XbjdTPoZU/Whq0UuL3L5KDF2/Ssmfp
+	fxZxCSQHfWmNy3phngM7+VwVbvHsmszhrzrwrt6dMa3J90ycV47gVLgpdIaFsKjS0PGqUl8PZVi
+	MZfN54310efrlROzBr0Eeb+trY5v6hdYSUu2S7/Tv5pxRw4q1zxQsw14hPhdAIAeJAoRICcZRXP
+	Of+PSiCCjTc3yiHJqtRJF1vAZ3/S6Sgd6V0Pq5t/sBDm3A4vz8+ttxlKyyWg3Ub/l9KManwhmpz
+	IHV1r27bwfDsnGgnaye0VbST6KPuDnYoGJSSWGyPrIX5LC6w7Idmy0Wo/JL/sUtEyK4VVMIlTeK
+	mI=
+X-Received: by 2002:a05:6122:4890:b0:56b:5827:9a3d with SMTP id 71dfb90a1353d-56cde4f8868mr8537539e0c.17.1774359457400;
+        Tue, 24 Mar 2026 06:37:37 -0700 (PDT)
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com. [209.85.221.172])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56cddb6cdf8sm15076169e0c.3.2026.03.24.06.37.35
+        for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Mar 2026 06:00:09 -0700 (PDT)
-Message-ID: <bcce61b6-3fe4-43e5-9e1d-a4cba0bec0ac@oss.qualcomm.com>
-Date: Tue, 24 Mar 2026 14:00:04 +0100
+        Tue, 24 Mar 2026 06:37:36 -0700 (PDT)
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-56ce07a54e8so813974e0c.2
+        for <linux-clk@vger.kernel.org>; Tue, 24 Mar 2026 06:37:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUMsDAVTbDt9QmSxDBbcX7ig0CrjJ/WiC5S23HSgANbyg/MnjeHFyLTqEdDfKHJU1h1YyiJa6uzsTQ=@vger.kernel.org
+X-Received: by 2002:a05:6122:7d2:b0:56b:5893:d042 with SMTP id
+ 71dfb90a1353d-56cde498b94mr8236000e0c.12.1774359455206; Tue, 24 Mar 2026
+ 06:37:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: rcg2: expand frac table for mdss_pixel_clk_src
-To: Pengyu Luo <mitltlatltl@gmail.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260321095029.2259489-1-mitltlatltl@gmail.com>
- <dda88cb7-090b-4baf-91f7-e6724b506134@oss.qualcomm.com>
- <vonorgmssumelw3nkgd335lzi3eekinlslqb24k5lqwzil3tyh@epcgwiiu3xqu>
- <ca88ed26-51a8-42dd-9b1c-3266a107c180@oss.qualcomm.com>
- <CAH2e8h6PB43h08aZsHmN68Cp5HHuEEmhD3WhF7KOaQGyqvHjsw@mail.gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <CAH2e8h6PB43h08aZsHmN68Cp5HHuEEmhD3WhF7KOaQGyqvHjsw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=b+q/I9Gx c=1 sm=1 tr=0 ts=69c28add cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22
- a=qC_FGOx9AAAA:8 a=EUspDBNiAAAA:8 a=0E1OWuO-EJLwnSaZFvwA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22 a=fsdK_YakeE02zTmptMdW:22
-X-Proofpoint-ORIG-GUID: i27o6fJI7qWj7fdcBBlZoFRlJIIbz5UC
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzI0MDEwMiBTYWx0ZWRfX8bN2KNqQJ3fF
- Oyl6SCGhFPomKefxLcHdj5GIrf7+2Qw6Y/DsomnpQI3uOoSfup0aaw+3THH/JLFMHcG14lfBV+a
- zc8WXWB63vN967aWAGdJZtkNBDSE+HhGcWzV+sMW8eqi56FvTvJ02lmrhwFJnNDbRlehUpk+3B0
- ioCB10cLqcEgzHDvm0qSfQR8QCMaZkVKZ+WAMyJnDb9nXPsQ5aOuqiZhcj4lnLfHcJ2UaRPOvay
- lpxvpN9BzOZTy9wwRe7TcWbk8o5bWLu5FNCT6sy5fXJUt0PGNY2kFg+KLrQJkfK0Xc66fjl9A6J
- 6WokmSeEu5E+WsVmVb2MNY41Daam1DXz9znpB/JjuUXcK0AZee+PbG7363DVZlyl3hpHRCno8Yj
- mONwKRm8sCVB5i7wHjbOwEmMhKkVQ299NX9EmLD3y2rw8S5gSuE8Dgqg/MsmChYcryK78Kwthps
- D+q6YaDNjdiy1ha90UA==
-X-Proofpoint-GUID: i27o6fJI7qWj7fdcBBlZoFRlJIIbz5UC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-24_03,2026-03-23_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 lowpriorityscore=0 impostorscore=0 adultscore=0
- malwarescore=0 bulkscore=0 suspectscore=0 phishscore=0 clxscore=1015
- spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2603050001
- definitions=main-2603240102
+References: <20260319155334.51278-1-john.madieu.xa@bp.renesas.com> <20260319155334.51278-13-john.madieu.xa@bp.renesas.com>
+In-Reply-To: <20260319155334.51278-13-john.madieu.xa@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 24 Mar 2026 14:37:23 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdW9uvkcU789W+K38qxVTVQbFHGOaBgqNkj7SbTR8WShoA@mail.gmail.com>
+X-Gm-Features: AQROBzBcCn1BnwXSbjTDtD6HtzQVV_AICC4S_yzN7SsVw9iP4uwy2_3tUoSu3Ao
+Message-ID: <CAMuHMdW9uvkcU789W+K38qxVTVQbFHGOaBgqNkj7SbTR8WShoA@mail.gmail.com>
+Subject: Re: [PATCH 12/22] ASoC: rsnd: Update SSI for RZ/G3E support
+To: John Madieu <john.madieu.xa@bp.renesas.com>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Vinod Koul <vkoul@kernel.org>, 
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, 
+	Thomas Gleixner <tglx@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	John Madieu <john.madieu@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org, 
+	linux-sound@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 3/24/26 1:56 PM, Pengyu Luo wrote:
-> On Tue, Mar 24, 2026 at 5:22 PM Konrad Dybcio
-> <konrad.dybcio@oss.qualcomm.com> wrote:
->>
->> On 3/23/26 8:23 PM, Dmitry Baryshkov wrote:
->>> On Mon, Mar 23, 2026 at 01:54:29PM +0100, Konrad Dybcio wrote:
->>>> On 3/21/26 10:50 AM, Pengyu Luo wrote:
->>>>> Recently, when testing 10-bit dsi C-PHY panel, clks are different
->>>>> from the usual. (dsi0_phy_pll_out_dsiclk's parent is dsi0_pll_bit_clk
->>>>> now (dsiclk_sel = 0)) And we failed to set dsiclk's children.
->>>>>
->>>>> dsi_link_clk_set_rate_6g: Set clk rates: pclk=172992000, byteclk=108120000
->>>>>
->>>>> byteclk was set first to 108120000, so the vco rate was set to
->>>>> 108120000 * 7 * 1 * 1 = 756840000. When we was trying to set
->>>>> 172992000 on mdss_pixel_clk_src later.
->>>>>
->>>>> Since there was no matched ratio, we failed to set it. And dsiclk
->>>>> divider ratio was set to 15:1 (wrong cached register value 0xf and
->>>>> didn't update), we finally got 50455997, apparently wrong.
->>>>>
->>>>>   dsi0vco_clk                1       1        0        756839941
->>>>>      dsi0_pll_out_div_clk    1       1        0        756839941
->>>>>         dsi0_pll_post_out_div_clk 0       0        0        216239983
->>>>>         dsi0_pll_bit_clk     2       2        0        756839941
->>>>>            dsi0_phy_pll_out_dsiclk 2       2        0        50455997
->>>>>               disp_cc_mdss_pclk1_clk_src 1       1        0        50455997
->>>>>            dsi0_pll_by_2_bit_clk 0       0        0        378419970
->>>>>            dsi0_phy_pll_out_byteclk 2       2        0        108119991
->>>>>               disp_cc_mdss_byte1_clk_src 2       2        0        108119991
->>>>>
->>>>> Downstream clk_summary shows the mdss_pixel_clk_src support the
->>>>> ratio(35:16)
->>>>>
->>>>>  dsi0_phy_pll_out_dsiclk             2       2        0        378420000
->>>>>      disp_cc_mdss_pclk1_clk_src       1       1        0        172992000
->>>>>  dsi0_phy_pll_out_byteclk            2       2        0        108120000
->>>>>      disp_cc_mdss_byte1_clk_src       2       2        0        108120000
->>>>>
->>>>> After checking downstream source, 15:4 also seems to be supported,
->>>>> add them two.
->>>>
->>>> I don't see that, not even in the newest releases.. Is there even a reason
->>>> we have to list these divider pairs in the first place?
->>>
->>> https://git.codelinaro.org/clo/la/kernel/qcom/-/commit/f7aec4359448d25c8a8d21ad8e8733d61f6b69ab
->>
->> Ahh branching..
->>
->>> We need those dividers to correctly program pclk RCG2 clocks.
->>
->> I would assume that's the case, but perhaps the real answer is "because we
->> don't want to try all possible combinations"
->>
-> 
-> So you meant the pixel clk can support any ratio actually, and just
-> common ratio pairs are listed? That is interesting.
+Hi John,
 
-I don't know about pixel specifically, but generally RCG2 clocks can
-do any rate, only limited by the register width, see:
+On Thu, 19 Mar 2026 at 16:56, John Madieu <john.madieu.xa@bp.renesas.com> wrote:
+> Add SSI support for the Renesas RZ/G3E SoC, which differs from earlier
+> generations in several ways:
+>
+>  - The SSI block always operates in BUSIF mode; RZ/G3E does not implement
+>    the SSITDR/SSIRDR registers used by R-Car Gen2/Gen3/Gen4 for direct SSI
+>    DMA.
+>    Consequently, all audio data must pass through BUSIF.
+>  - Each SSI instance has its own reset line, exposed using per-SSI names
+>    such as "ssi0", "ssi1", etc., rather than a single shared reset.
+>
+> To support these differences, update rsnd_ssi_use_busif() to always
+> return 1 on RZ/G3E, ensuring that the driver consistently selects the
+> BUSIF DMA path. Also update the reset acquisition logic to request the
+> appropriate per-SSI reset controller based on the SSI instance name.
+>
+> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
 
-drivers/clk/qcom/clk-rcg2.c : calc_rate()
+Thanks for your patch!
 
-Konrad
+> --- a/sound/soc/renesas/rcar/ssi.c
+> +++ b/sound/soc/renesas/rcar/ssi.c
+> @@ -123,8 +123,15 @@ int rsnd_ssi_use_busif(struct rsnd_dai_stream *io)
+>  {
+>         struct rsnd_mod *mod = rsnd_io_to_mod_ssi(io);
+>         struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
+> +       struct rsnd_priv *priv = rsnd_mod_to_priv(mod);
+>         int use_busif = 0;
+>
+> +       /*
+> +        * RZ/G3E does not support PIO mode. Always use BUSIF.
+> +        */
+> +       if (rsnd_flags_has(priv, RSND_SSI_ALWAYS_BUSIF))
+> +               return 1;
+> +
+>         if (!rsnd_ssi_is_dma_mode(mod))
+>                 return 0;
+>
+> @@ -865,6 +872,8 @@ static int rsnd_ssi_common_remove(struct rsnd_mod *mod,
+>                 rsnd_flags_del(ssi, RSND_SSI_PROBED);
+>         }
+>
+> +       rsnd_dma_detach(io, mod, &io->dma);
+
+This goes BOOM on R-Car Gen3 and Gen4:
+
+    Unable to handle kernel NULL pointer dereference at virtual
+address 0000000000000004
+    Mem abort info:
+      ESR = 0x0000000096000004
+      EC = 0x25: DABT (current EL), IL = 32 bits
+      SET = 0, FnV = 0
+      EA = 0, S1PTW = 0
+      FSC = 0x04: level 0 translation fault
+    Data abort info:
+      ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+      CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+      GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+    [0000000000000004] user address but active_mm is swapper
+    Internal error: Oops: 0000000096000004 [#1]  SMP
+    CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Not tainted
+7.0.0-rc5-arm64-renesas-07233-g377893124b8a #3530 PREEMPT
+    Hardware name: Renesas Gray Hawk Single board based on r8a779h0 (DT)
+    pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+    pc : rsnd_dma_detach+0x10/0x20
+    lr : rsnd_ssi_common_remove+0x48/0x74
+    sp : ffff8000818ebac0
+    x29: ffff8000818ebac0 x28: ffff000441c02938 x27: ffff0004408a8410
+    x26: 000000000000000d x25: 0000000000000000 x24: ffff8000817b9970
+    x23: 0000000000000000 x22: 000000000000000c x21: 00000000fffffdfb
+    x20: ffff000441c02938 x19: ffff0004402bc080 x18: 00000000ffffffff
+    x17: ffff000440ba6600 x16: ffff000440ba6a00 x15: ffff8000818eb700
+    x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000030
+    x11: 0101010101010101 x10: ffff800080fa7670 x9 : 1fffe00088052d21
+    x8 : 0101010101010101 x7 : 7f7f7f7f7f7f7f7f x6 : feff636d746e722d
+    x5 : 000000000000003c x4 : ffff800080a9dcc4 x3 : ffff0004402be800
+    x2 : ffff000441c029b8 x1 : ffff000441c02938 x0 : 0000000000000000
+    Call trace:
+     rsnd_dma_detach+0x10/0x20 (P)
+     rsnd_ssi_common_remove+0x48/0x74
+     rsnd_probe+0x2d0/0x448
+     platform_probe+0x58/0x90
+     really_probe+0xb8/0x294
+     __driver_probe_device+0x74/0x124
+     driver_probe_device+0x3c/0x158
+     __driver_attach+0xe0/0x1b4
+     bus_for_each_dev+0x78/0xd4
+     driver_attach+0x20/0x28
+     bus_add_driver+0xe0/0x1e0
+     driver_register+0x58/0x114
+     __platform_driver_register+0x20/0x28
+     rsnd_driver_init+0x18/0x20
+     do_one_initcall+0x7c/0x184
+     kernel_init_freeable+0x200/0x2e0
+     kernel_init+0x20/0x1cc
+     ret_from_fork+0x10/0x20
+    Code: a9bf7bfd aa0003e1 910003fd f9400040 (b9400402)
+    ---[ end trace 0000000000000000 ]---
+
+> +
+>         return 0;
+>  }
+>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
