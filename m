@@ -1,88 +1,294 @@
-Received: from www537.your-server.de (www537.your-server.de [188.40.3.216])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D872E5B32;
-	Wed, 25 Mar 2026 16:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.3.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0AE13FE348
+	for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 17:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774456570; cv=none; b=MPzx8Ljdvd48WVWct4Lm55y4DNS6ds2XgxYcK4HMGEllo5CivGdOnYIppsdKFkdRlbV2kFk6DeSJflDB6miKay6znkx1/OeaRrHqZJmLpW3a68GusB7rd/hFQznRpKVrA3obw7ztWnY2dxFMc6JQbCQLSE9w4kdEAxoTvq4mbek=
+	t=1774459315; cv=none; b=Ri1QcuGNC4kAX4KBLyF3cssXRwZLy7uHAftiUPSt1IVcKJnPM+qyPOLg0glkLmHomyPvMieYK/RpUaZDvYmuw37PnDdnJVpsCFmRvroFPGwiHWWKpkqVo/HEy0+3Svp6ZOP6mcWPk1gGoQRcw15aWgjtTj2PEdGSCXp78YCCCQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774456570; c=relaxed/simple;
-	bh=iEJ40cjQTuA0hXqbXoq5UKF16f2kX7lK3zTmHw6nEK4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LbDaxLs63tZfh5CR4qAqs7Xhkygt6H+9YKVvzCof9f8qLWTOL+MxPLOiUlgjTWETEHFic+auzEBgreMywowmH+6wTVVbQtozSfcb8LF6LbIJ16zjzOZmQnBee3VpdRaYXhaBNNmnC/qgDkVW6dAhQR5QxI1kn8TryDRASkCRpFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=OejoQi0Y; arc=none smtp.client-ip=188.40.3.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="OejoQi0Y"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=ew.tq-group.com; s=default2602; h=Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References;
-	bh=oFiaUt994tgXIcmq5BYOVrSUdNeGQCFgDCIzyi9+nDQ=; b=OejoQi0Y9i5GenYcn8HFErdIBX
-	GYvt8H+ymO1opE5GNEdMgAXW5v+NzosX0Bv68DFT5jVoHdZ7Nm5qqm8MaCZQMHoSQIYtcwJ5jo1kZ
-	kLXcv03L/3KEcosEtxaDXWNMVAPgLOdPSHBN+jgmPtlj42QhXObPNQCZxP/pY5w+VlgbGUJq8NlU9
-	gl0sH9sG56/xwVVFAA/VBTvUGbWPEGcdoSGumLfP4qO2nWzrVv/1beBxHqn6FKAWvRCROFUm1Dx86
-	1VJ0ul2Jt2a3L+BE5aCCIOoft/FialTLMjlknyaY0kRUd69YE6eKvCviwr3Kr7MB820PFy+xb59Pu
-	F/F7PNHg==;
-Received: from sslproxy04.your-server.de ([78.46.152.42])
-	by www537.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <alexander.stein@ew.tq-group.com>)
-	id 1w5RD5-000Kxr-1f;
-	Wed, 25 Mar 2026 17:35:59 +0100
-Received: from localhost ([127.0.0.1])
-	by sslproxy04.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	s=arc-20240116; t=1774459315; c=relaxed/simple;
+	bh=RGoLyAUw8t6ofdf1nnPfBBx1IsggToI1EOe1J9z5b9o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=sxlY5CkRq5D0sQeZblCYHySJRMYRuyDWf5QIJLTsUguNPp4Xa6NQplvjBZTgD3HDLsyzer6JKz8N598zPPoSQRtRUWncRwuxDFqchMu9uBRERbAMIWSu4eexurm6IIHEKvzihU4ENUTeeOosGMmJLVuG9Zkqx9Jmmtk4NDYs4MQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1w5RvG-0006FR-RU; Wed, 25 Mar 2026 18:21:38 +0100
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
-	(envelope-from <alexander.stein@ew.tq-group.com>)
-	id 1w5RD4-000DdV-2c;
-	Wed, 25 Mar 2026 17:35:59 +0100
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Sudeep Holla <sudeep.holla@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
-	arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] clk: scmi: Add error message if SCMI protocol handler could not be found
-Date: Wed, 25 Mar 2026 17:35:50 +0100
-Message-ID: <20260325163551.1081019-1-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.43.0
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1w5RvG-0025yM-1l;
+	Wed, 25 Mar 2026 18:21:38 +0100
+Received: from pza by lupine with local (Exim 4.98.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1w5RvG-00000000Ehq-1u0w;
+	Wed, 25 Mar 2026 18:21:38 +0100
+Message-ID: <526371c3755ea7f65e46f80326742225f72fa581.camel@pengutronix.de>
+Subject: Re: [PATCH v5 03/10] reset: Add Realtek basic reset support
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Yu-Chun Lin <eleanor.lin@realtek.com>, mturquette@baylibre.com, 
+	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ 	cylee12@realtek.com, afaerber@suse.com, jyanchou@realtek.com
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-realtek-soc@lists.infradead.org, james.tai@realtek.com, 
+	cy.huang@realtek.com, stanley_chang@realtek.com
+Date: Wed, 25 Mar 2026 18:21:38 +0100
+In-Reply-To: <20260324025332.3416977-4-eleanor.lin@realtek.com>
+References: <20260324025332.3416977-1-eleanor.lin@realtek.com>
+	 <20260324025332.3416977-4-eleanor.lin@realtek.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-0+deb13u1 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: Clear (ClamAV 1.4.3/27951/Wed Mar 25 07:24:10 2026)
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-In case the protocol could not be found an error message is better than
-probe just failing with error code -22.
+On Di, 2026-03-24 at 10:53 +0800, Yu-Chun Lin wrote:
+> From: Cheng-Yu Lee <cylee12@realtek.com>
+>=20
+> Define the reset operations backed by a regmap-based register
+> interface and prepare the reset controller to be registered
+> through the reset framework.
+>=20
+> Signed-off-by: Cheng-Yu Lee <cylee12@realtek.com>
+> Co-developed-by: Yu-Chun Lin <eleanor.lin@realtek.com>
+> Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
+> ---
+> Changes in v5:
+> - Created drivers/reset/realtek/ directory and include/linux/reset/realte=
+k.h.
+> - Extracted the common reset helpers:
+>  - Moved the source code to drivers/reset/realtek/common.c and
+>  - the header to include/linux/reset/realtek.h
+> - Renamed rtk_reset_bank to rtk_reset_desc.
+> - Added 'bits' member to rtk_reset_desc structure.
+> - Removed rtk_reset_get_id() and rtk_reset_get_bank() helper.
+> - Introduced rtk_reset_get_desc().
+> ---
+>  MAINTAINERS                    |  1 +
+>  drivers/reset/Kconfig          |  1 +
+>  drivers/reset/Makefile         |  1 +
+>  drivers/reset/realtek/Kconfig  |  3 ++
+>  drivers/reset/realtek/Makefile |  2 +
+>  drivers/reset/realtek/common.c | 91 ++++++++++++++++++++++++++++++++++
+>  include/linux/reset/realtek.h  | 25 ++++++++++
+>  7 files changed, 124 insertions(+)
+>  create mode 100644 drivers/reset/realtek/Kconfig
+>  create mode 100644 drivers/reset/realtek/Makefile
+>  create mode 100644 drivers/reset/realtek/common.c
+>  create mode 100644 include/linux/reset/realtek.h
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 721356d4c02c..9419b0497e0b 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -22229,6 +22229,7 @@ L:	devicetree@vger.kernel.org
+>  L:	linux-clk@vger.kernel.org
+>  S:	Supported
+>  F:	Documentation/devicetree/bindings/clock/realtek*
+> +F:	drivers/reset/realtek/*
+>  F:	include/dt-bindings/clock/realtek*
+> =20
+>  REALTEK SPI-NAND
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index 7ce151f6a7e4..03be1931f264 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -398,6 +398,7 @@ config RESET_ZYNQMP
+> =20
+>  source "drivers/reset/amlogic/Kconfig"
+>  source "drivers/reset/hisilicon/Kconfig"
+> +source "drivers/reset/realtek/Kconfig"
+>  source "drivers/reset/spacemit/Kconfig"
+>  source "drivers/reset/starfive/Kconfig"
+>  source "drivers/reset/sti/Kconfig"
+> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+> index fc0cc99f8514..4407d1630070 100644
+> --- a/drivers/reset/Makefile
+> +++ b/drivers/reset/Makefile
+> @@ -2,6 +2,7 @@
+>  obj-y +=3D core.o
+>  obj-y +=3D amlogic/
+>  obj-y +=3D hisilicon/
+> +obj-y +=3D realtek/
+>  obj-y +=3D spacemit/
+>  obj-y +=3D starfive/
+>  obj-y +=3D sti/
+> diff --git a/drivers/reset/realtek/Kconfig b/drivers/reset/realtek/Kconfi=
+g
+> new file mode 100644
+> index 000000000000..99a14d355803
+> --- /dev/null
+> +++ b/drivers/reset/realtek/Kconfig
+> @@ -0,0 +1,3 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +config RESET_RTK_COMMON
+> +	bool
+> diff --git a/drivers/reset/realtek/Makefile b/drivers/reset/realtek/Makef=
+ile
+> new file mode 100644
+> index 000000000000..b59a3f7f2453
+> --- /dev/null
+> +++ b/drivers/reset/realtek/Makefile
+> @@ -0,0 +1,2 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +obj-$(CONFIG_RESET_RTK_COMMON) +=3D common.o
+> diff --git a/drivers/reset/realtek/common.c b/drivers/reset/realtek/commo=
+n.c
+> new file mode 100644
+> index 000000000000..b9e3219dc8f7
+> --- /dev/null
+> +++ b/drivers/reset/realtek/common.c
+> @@ -0,0 +1,91 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2019 Realtek Semiconductor Corporation
+> + */
+> +
+> +#include <linux/device.h>
+> +#include <linux/of.h>
+> +#include <linux/regmap.h>
+> +#include <linux/reset-controller.h>
+> +#include <linux/reset/realtek.h>
+> +
+> +struct rtk_reset_data {
+> +	struct reset_controller_dev rcdev;
+> +	struct rtk_reset_desc *descs;
+> +	struct regmap *regmap;
+> +};
+> +
+> +static inline struct rtk_reset_data *to_rtk_reset_controller(struct rese=
+t_controller_dev *r)
+> +{
+> +	return container_of(r, struct rtk_reset_data, rcdev);
+> +}
+> +
+> +static inline struct rtk_reset_desc *rtk_reset_get_desc(struct rtk_reset=
+_data *data,
+> +							unsigned long idx)
+> +{
+> +	return &data->descs[idx];
+> +}
+> +
+> +static int rtk_reset_assert(struct reset_controller_dev *rcdev,
+> +			    unsigned long idx)
+> +{
+> +	struct rtk_reset_data *data =3D to_rtk_reset_controller(rcdev);
+> +	struct rtk_reset_desc *desc =3D rtk_reset_get_desc(data, idx);
+> +	u32 mask =3D desc->write_en ? (0x3 << desc->bit) : BIT(desc->bit);
+> +	u32 val  =3D desc->write_en ? (0x2 << desc->bit) : 0;
+> +
+> +	return regmap_update_bits(data->regmap, desc->ofs, mask, val);
+> +}
+> +
+> +static int rtk_reset_deassert(struct reset_controller_dev *rcdev,
+> +			      unsigned long idx)
+> +{
+> +	struct rtk_reset_data *data =3D to_rtk_reset_controller(rcdev);
+> +	struct rtk_reset_desc *desc =3D rtk_reset_get_desc(data, idx);
+> +	u32 mask =3D desc->write_en ? (0x3 << desc->bit) : BIT(desc->bit);
+> +	u32 val  =3D mask;
+> +
+> +	return regmap_update_bits(data->regmap, desc->ofs, mask, val);
+> +}
+> +
+> +static int rtk_reset_status(struct reset_controller_dev *rcdev,
+> +			    unsigned long idx)
+> +{
+> +	struct rtk_reset_data *data =3D to_rtk_reset_controller(rcdev);
+> +	struct rtk_reset_desc *desc =3D rtk_reset_get_desc(data, idx);
+> +	u32 val;
+> +	int ret;
+> +
+> +	ret =3D regmap_read(data->regmap, desc->ofs, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return !((val >> desc->bit) & 1);
+> +}
+> +
+> +static const struct reset_control_ops rtk_reset_ops =3D {
+> +	.assert   =3D rtk_reset_assert,
+> +	.deassert =3D rtk_reset_deassert,
+> +	.status   =3D rtk_reset_status,
+> +};
+> +
+> +int rtk_reset_controller_add(struct device *dev,
+> +			     struct rtk_reset_initdata *initdata)
+> +{
+> +	struct rtk_reset_data *data;
+> +
+> +	data =3D devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+> +	if (!data)
+> +		return -ENOMEM;
+> +
+> +	data->regmap          =3D initdata->regmap;
+> +	data->descs           =3D initdata->descs;
+> +	data->rcdev.owner     =3D THIS_MODULE;
+> +	data->rcdev.ops       =3D &rtk_reset_ops;
+> +	data->rcdev.dev       =3D dev;
+> +	data->rcdev.of_node   =3D dev->of_node;
+> +	data->rcdev.nr_resets =3D initdata->num_descs;
+> +
+> +	return devm_reset_controller_register(dev, &data->rcdev);
+> +}
+> +EXPORT_SYMBOL_GPL(rtk_reset_controller_add);
 
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
- drivers/clk/clk-scmi.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Please implement this as an auxiliary device driver. Move the
+rtk_reset_initdata definitions in here and select them based on either
+auxiliary_device_id (see imx8mp-audiomix or spacemit) or of_device_id
+(see eyeq).
+The regmap can be retrieved from the parent (clk device) via
+dev_get_regmap (see imx8mp-audiomix).
 
-diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-index 7c562559ad8bb..c32b15b272ccd 100644
---- a/drivers/clk/clk-scmi.c
-+++ b/drivers/clk/clk-scmi.c
-@@ -384,7 +384,8 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
- 	scmi_proto_clk_ops =
- 		handle->devm_protocol_get(sdev, SCMI_PROTOCOL_CLOCK, &ph);
- 	if (IS_ERR(scmi_proto_clk_ops))
--		return PTR_ERR(scmi_proto_clk_ops);
-+		return dev_err_probe(dev, PTR_ERR(scmi_proto_clk_ops),
-+				     "No SCMI protocol handler found\n");
- 
- 	count = scmi_proto_clk_ops->count_get(ph);
- 	if (count < 0) {
--- 
-2.43.0
+> diff --git a/include/linux/reset/realtek.h b/include/linux/reset/realtek.=
+h
+> new file mode 100644
+> index 000000000000..3c2226e3ed26
+> --- /dev/null
+> +++ b/include/linux/reset/realtek.h
+> @@ -0,0 +1,25 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef __LINUX_RESET_REALTEK_H__
+> +#define __LINUX_RESET_REALTEK_H__
+> +
+> +#include <linux/types.h>
+> +
+> +struct device;
+> +struct regmap;
+> +
+> +struct rtk_reset_desc {
+> +	u32 ofs;
+> +	u32 bit;
+> +	u32 write_en;
+> +};
+> +
+> +struct rtk_reset_initdata {
+> +	struct rtk_reset_desc *descs;
+> +	u32 num_descs;
+> +	struct regmap *regmap;
+> +};
+> +
+> +int rtk_reset_controller_add(struct device *dev,
+> +			     struct rtk_reset_initdata *initdata);
+> +
+> +#endif /* __LINUX_RESET_REALTEK_H__ */
 
+With the above suggested changes, this header is not necessary.
+
+regards
+Philipp
