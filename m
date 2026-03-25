@@ -1,97 +1,88 @@
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from www537.your-server.de (www537.your-server.de [188.40.3.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1553E1CE2
-	for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 16:24:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D872E5B32;
+	Wed, 25 Mar 2026 16:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.3.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774455897; cv=none; b=kBiz/QWIodSxopF1BSTxrIGaZlp9dvz2IIcMdjgT2NcfhAl2CBcUaqC00fphaGRQUe0ZPASNvmkcC35b3V70W8q89jugCWFcLsYB1zZPTHAJVwrVoFcnran2TPfkn+l48mvqPvRPWVOISUNzaKH/bxJP9v5d2IHDkRUshiejseU=
+	t=1774456570; cv=none; b=MPzx8Ljdvd48WVWct4Lm55y4DNS6ds2XgxYcK4HMGEllo5CivGdOnYIppsdKFkdRlbV2kFk6DeSJflDB6miKay6znkx1/OeaRrHqZJmLpW3a68GusB7rd/hFQznRpKVrA3obw7ztWnY2dxFMc6JQbCQLSE9w4kdEAxoTvq4mbek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774455897; c=relaxed/simple;
-	bh=rmeZVPSOtvHKsudTVqrd29mAkraoSiHAZ4PP1RwACbo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ob+rD467WdgACJO+yNwkFLaMFHLf6pES38KdGcVMDhg7FuHzJdT263NNgz0qMakx69WDEW08Up9LsfQJE3DFUdq+ePKWNmrYDAxaioVd2h529T96M8z/VFU13yEY9f/UYbhhekYr1gqpboTQ+KOu9hVX5CLplQB3XgrgV3bCOlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-94ec56c6f05so1333781241.3
-        for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 09:24:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774455893; x=1775060693;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7gAXhHrpF27wFNXFA6QhJ48A7x34w2nxZZrvrXeYgHw=;
-        b=jynrcM1l95EX6GSjIZqRcCnS645HxbkDnxn3dhr+0h+ujng3x8m0rGQqIWuvG3GsSF
-         iatywE49stsGHwAvHgOX7yRtWLrjvRBGkWhjcwVP7zdNlUqQAT/5gVS7e9Uw6E3dEKx1
-         Rmeu/iH0qDfEg9cikBV8P+FNIfbJFG+U91FElYuWiNXyrlkxyaFibl7fWudyDqpDUb8i
-         2mwp1gwtzk9goNUfbZqNssvs5YTKW9xmMcb3ZPI6zRW6KBNX1sw+bhyW3vvqxYPdnXSd
-         JuotFZHdm+vraqFLe1J+VC54a1ktXRoUYkmrgIaexUI+ioVlteUZPktsbLkhxROkhj8q
-         3Ltw==
-X-Gm-Message-State: AOJu0YxBkPY1Bbb0ZBVpNx3F+avBC8ok37QdseF4aQQi/HbwwIFcYwQ4
-	tqGTc3Q4JvTC1QrnX2fisqMeUNjCyRSWDclrFhTAz5YAfGF1+86UjkMJ8nXuPLzKB8o=
-X-Gm-Gg: ATEYQzzTZKFJIVD7ltMjGFImCxxEy5KFetAs2tM/yaqqkj3PpL55KjC3M+rrRm+HwqM
-	3ie3ergoY0gObX6ThYffdVfidBUcqNS18T++zGqk9ONybcbVK4/+DeE+y2XxIFU94TT3P2wdbZx
-	teCoEsYIcvH0PJQMevUjJvfPNotBwekSrKncREx//bJmKBVXja/vOa4T6Wjigfykym0Psanfa+Q
-	IbYxxM5fNrdO1ubVGxG9JD7egZ758+l8KjAg4az6wDPvFsIqbOJnsnbSjUlGKDX3dCgJUm5zU7f
-	2PEdjSpBNWN/Goivov0TYbP6X8Pkv1M4O2wbpxilRysuKFChJF9Zzv5heR7K9c9oj8byVGoHLTk
-	gxzy2s/BCGXNJTJu2YbdVva7mPtmzkkZ17CefR2Q1EKb8KJDxAI2YYYE4GdfD4p6ef99uCOWnMJ
-	HBNaXb3ksauoZuFeAsyW0BXbrNtqndE+PWbIT8quHUhLJBmwT+1FuMVDbTLj2igOY+
-X-Received: by 2002:a05:6102:84c1:10b0:5ff:c289:47d with SMTP id ada2fe7eead31-603872abe9emr1529928137.22.1774455893278;
-        Wed, 25 Mar 2026 09:24:53 -0700 (PDT)
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com. [209.85.221.178])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-951be5afc43sm481177241.13.2026.03.25.09.24.52
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Mar 2026 09:24:52 -0700 (PDT)
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-56a9a7e762bso90588e0c.3
-        for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 09:24:52 -0700 (PDT)
-X-Received: by 2002:a05:6123:4c:b0:56b:a534:42c0 with SMTP id
- 71dfb90a1353d-56d220ef9f1mr2094685e0c.15.1774455891759; Wed, 25 Mar 2026
- 09:24:51 -0700 (PDT)
+	s=arc-20240116; t=1774456570; c=relaxed/simple;
+	bh=iEJ40cjQTuA0hXqbXoq5UKF16f2kX7lK3zTmHw6nEK4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LbDaxLs63tZfh5CR4qAqs7Xhkygt6H+9YKVvzCof9f8qLWTOL+MxPLOiUlgjTWETEHFic+auzEBgreMywowmH+6wTVVbQtozSfcb8LF6LbIJ16zjzOZmQnBee3VpdRaYXhaBNNmnC/qgDkVW6dAhQR5QxI1kn8TryDRASkCRpFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=OejoQi0Y; arc=none smtp.client-ip=188.40.3.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="OejoQi0Y"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=ew.tq-group.com; s=default2602; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=oFiaUt994tgXIcmq5BYOVrSUdNeGQCFgDCIzyi9+nDQ=; b=OejoQi0Y9i5GenYcn8HFErdIBX
+	GYvt8H+ymO1opE5GNEdMgAXW5v+NzosX0Bv68DFT5jVoHdZ7Nm5qqm8MaCZQMHoSQIYtcwJ5jo1kZ
+	kLXcv03L/3KEcosEtxaDXWNMVAPgLOdPSHBN+jgmPtlj42QhXObPNQCZxP/pY5w+VlgbGUJq8NlU9
+	gl0sH9sG56/xwVVFAA/VBTvUGbWPEGcdoSGumLfP4qO2nWzrVv/1beBxHqn6FKAWvRCROFUm1Dx86
+	1VJ0ul2Jt2a3L+BE5aCCIOoft/FialTLMjlknyaY0kRUd69YE6eKvCviwr3Kr7MB820PFy+xb59Pu
+	F/F7PNHg==;
+Received: from sslproxy04.your-server.de ([78.46.152.42])
+	by www537.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <alexander.stein@ew.tq-group.com>)
+	id 1w5RD5-000Kxr-1f;
+	Wed, 25 Mar 2026 17:35:59 +0100
+Received: from localhost ([127.0.0.1])
+	by sslproxy04.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <alexander.stein@ew.tq-group.com>)
+	id 1w5RD4-000DdV-2c;
+	Wed, 25 Mar 2026 17:35:59 +0100
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Sudeep Holla <sudeep.holla@kernel.org>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] clk: scmi: Add error message if SCMI protocol handler could not be found
+Date: Wed, 25 Mar 2026 17:35:50 +0100
+Message-ID: <20260325163551.1081019-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260324021103.13651-1-rosenp@gmail.com>
-In-Reply-To: <20260324021103.13651-1-rosenp@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 25 Mar 2026 17:24:40 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdV6tBG7zQX_eGuLnvp1he1kQxTxj+8QmYj=jbo2OTGbMg@mail.gmail.com>
-X-Gm-Features: AQROBzCGGCNDC4VvyRbtehsEECFBYE5hrIOwkI-_9A4YzO91h6FhBZCpQfgFjIE
-Message-ID: <CAMuHMdV6tBG7zQX_eGuLnvp1he1kQxTxj+8QmYj=jbo2OTGbMg@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: cpg-mssr: use struct_size
-To: Rosen Penev <rosenp@gmail.com>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, 
-	"open list:RENESAS CLOCK DRIVERS" <linux-renesas-soc@vger.kernel.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"open list:KERNEL HARDENING (not covered by other areas):Keyword:b__counted_by(_le|_be)?b" <linux-hardening@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: Clear (ClamAV 1.4.3/27951/Wed Mar 25 07:24:10 2026)
 
-On Tue, 24 Mar 2026 at 03:11, Rosen Penev <rosenp@gmail.com> wrote:
-> struct_size is what is normally used when a flexible array member is
-> present to avoid accidental mistakes. pm_size is still needed for the
-> memcpy call below.
->
-> Added __counted_by for extra runtime analysis.
->
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+In case the protocol could not be found an error message is better than
+probe just failing with error code -22.
 
-FTR, no changes in generated  code.
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v7.1.
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+ drivers/clk/clk-scmi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
+index 7c562559ad8bb..c32b15b272ccd 100644
+--- a/drivers/clk/clk-scmi.c
++++ b/drivers/clk/clk-scmi.c
+@@ -384,7 +384,8 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
+ 	scmi_proto_clk_ops =
+ 		handle->devm_protocol_get(sdev, SCMI_PROTOCOL_CLOCK, &ph);
+ 	if (IS_ERR(scmi_proto_clk_ops))
+-		return PTR_ERR(scmi_proto_clk_ops);
++		return dev_err_probe(dev, PTR_ERR(scmi_proto_clk_ops),
++				     "No SCMI protocol handler found\n");
+ 
+ 	count = scmi_proto_clk_ops->count_get(ph);
+ 	if (count < 0) {
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.43.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
