@@ -1,164 +1,223 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011048.outbound.protection.outlook.com [52.101.125.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1E83537E0;
-	Tue, 24 Mar 2026 23:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774393652; cv=none; b=aEJ/zaJU3OK0oHGmz7kBWQUPQ6CaHnkB1CKvfEZG5pV3QYntd4e83ga/4GZgzTsVnERiYS9bh7N0a94d+8YwOr8zIt5TOXQDjfKvOlTUCxNrug0BqawvsTyh6U9A0r5ecJcvUWm+ZThn/79zHTzuEgBQxU9k84WQnlAYXvRjlPs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774393652; c=relaxed/simple;
-	bh=Fk4wnbWrvlRCpYY7EBpy23iVhDEFFSBBmhNUHDrnqG4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ed5j6OkGRw8KHNHJ8uSC6RxP5dGum19ypDJPEX2KC4yABHAcGtb7BAAXonQT2pCTxOu8rXo0cpg56oJ850cquyGpQIC8Tmqm+ETAXM4x/tlTThUwsaR7p2M/0qpVKCwgaSyst2CIgdhoZZSTC3qI8BmIZqPUuCC5t52WmimDDTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aDSKXnum; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D316D33E7;
+	Wed, 25 Mar 2026 00:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774400330; cv=fail; b=H6wMoUmRENaWtrL9Jvp2DEJqSlTitdZrWvpGEIsqhs6ZFHmSqxyel2SgmhsExEgo0CGseIKTdmezpzTGeSjywoKG2thUaDJfHZPuczHtr2+Kq2F2D7xWDwT4cV1ycaXVXpNHblYUegcuaXhDk5W4I5GH+YZpe5STOa1SwzKRYV0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774400330; c=relaxed/simple;
+	bh=C+MldcBCQsViHQMSNykcBYxqnpvlEWBIvVtwUQGka7Q=;
+	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=PyN5uJ+XmM1Rc6rWj6yYqWt4BwMKPVt15s+wunqdxCGWzj72h4rIbTlCyDa8XX8kaMPEGhzvk2i3fuh9np7Q/tlCd24g1vzC9caIzcdBhcq+zjkDdWn3YlNS192EeF/6bTgcsigFlcnXG9TYJHXnVK1bF4sonLzHKQ47UmQ/ygQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=XJgFA6Ah; arc=fail smtp.client-ip=52.101.125.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aDSKXnum"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1774393651; x=1805929651;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Fk4wnbWrvlRCpYY7EBpy23iVhDEFFSBBmhNUHDrnqG4=;
-  b=aDSKXnumR8zhloF71Id+ISuPShHU6Dz1GIfvMd7DGvb+nnPSxTZjzchu
-   pYQvTt7VZFZnm3UJMpJTua5JBEc8alMW040s6PCzXEm4isgV2rpk//lfZ
-   ZFn94XPWhagmoJ8DDJH7IqsIkm4JOPz2maPxK9gn0fOg6nXUWf8B0gE9Z
-   jDjoVGmye5TqY/4b9B/4P4GyeI+KIGIgSEVh0y7EP7uuDH7sWRqsRvkjC
-   Jc7Zq9eVhueDhbb4N5ESaTHpHHnd7iIAc6xnteLj5Vbs4hCDd8K8O93Pm
-   EbISxbukq5vLX3wcAOmdP/a/9hSfPoKzrFdKfFddwNKMvFmuulMJj+xjN
-   w==;
-X-CSE-ConnectionGUID: +Eikmg69SaOmS+4uStbeXA==
-X-CSE-MsgGUID: yd1refesTlaNnzCsyOJLyg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11739"; a="75618051"
-X-IronPort-AV: E=Sophos;i="6.23,139,1770624000"; 
-   d="scan'208";a="75618051"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2026 16:07:31 -0700
-X-CSE-ConnectionGUID: SrpYwx6GQpubSXWUutx8/A==
-X-CSE-MsgGUID: wFIBomXZTwmmjw22K+0L0A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,139,1770624000"; 
-   d="scan'208";a="224511070"
-Received: from lkp-server01.sh.intel.com (HELO 3905d212be1b) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 24 Mar 2026 16:07:26 -0700
-Received: from kbuild by 3905d212be1b with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1w5AqJ-000000005YH-1gIj;
-	Tue, 24 Mar 2026 23:07:23 +0000
-Date: Wed, 25 Mar 2026 07:06:56 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yu-Chun Lin <eleanor.lin@realtek.com>, mturquette@baylibre.com,
-	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, p.zabel@pengutronix.de, cylee12@realtek.com,
-	afaerber@suse.com, jyanchou@realtek.com
-Cc: oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-realtek-soc@lists.infradead.org, james.tai@realtek.com,
-	cy.huang@realtek.com, stanley_chang@realtek.com,
-	eleanor.lin@realtek.com
-Subject: Re: [PATCH v5 09/10] clk: realtek: Add RTD1625-CRT clock controller
- driver
-Message-ID: <202603250636.b3J5aCGL-lkp@intel.com>
-References: <20260324025332.3416977-10-eleanor.lin@realtek.com>
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="XJgFA6Ah"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bJ5Kw9zvftF3KGPAVCsH9qc/tsHKg3iKOyrVrrW5pMdPrOAc8hOw+MPUhaudTNV4iaVzo3Uj30x8V5si383pbKQmzqs5QdLxku7HnIQ9n9R7Xbay628sjt1uJre0G4jtY70sONQlVEtYoAD0QmQhyFOj5WsWm6AiHesNms+JZC3bhaLXr5nXEAJWQNJccNKmd9bkv4w2A5vEGjedA3bvAYUQM7nqsvGfFYSzdDLrG8ME0wLdZeIyURhN6UwPjz0Qi7Dx50apIZ4epCqc2ak8P+92BQQbLWup6OhFD7lkcgdlOpaeDnYcJ/8JcqY/pK9XHHX9jEvIYeW3/fZ2XbmIwg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ud/LBhM5bWdKdXV/0PtA/0LlxtTalJW3+7+6mdcuTUk=;
+ b=rQO9v1xU/9usUShX7cxTUp2HKk5rRvSBid4eXAo65AXGli2IrF/R6y8reJl7pwD3BWNJy1vWMlyPWj7UE9sx9dB/I4LBEutwRowbdyl8mr6BaqItDg5A4sZZ1C4Hk3pZyql4XWKnCAMzmAI2WoFlZkwLjfZ1yxR10dPkAbGRtbMbkekqGbvB+QkHZwtQgMTIMJKXHThqpUB1eAMFxeXIh4htDZgZVp0MyETMOlwoGiBxROb9kavoQrAe3Vt2oWl87TeBD5gF/hVTTce+C7cG8oetRGj6/7CUyxTO9XEvdHgasC6/D7QorrLIKVsB4ttw8BDl4BX6pfterKWZElEn+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ud/LBhM5bWdKdXV/0PtA/0LlxtTalJW3+7+6mdcuTUk=;
+ b=XJgFA6AhxBTStBGQVh8ykHi8g5s24evZy61BngrL9/6nf+3LoU7LSiOIY0DdyTki80rH8hBHEdiexLhgUA0ThC9U5Du+w21i7YKsSftInRfQbUgBRxvQ5n+GvOS3gIFi+S3iUEj4CVfpTDf2q/knxLwnIlfHonbgTevWoETcXHw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+Received: from TY3PR01MB11797.jpnprd01.prod.outlook.com (2603:1096:400:373::8)
+ by OSCPR01MB13258.jpnprd01.prod.outlook.com (2603:1096:604:354::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.20; Wed, 25 Mar
+ 2026 00:58:45 +0000
+Received: from TY3PR01MB11797.jpnprd01.prod.outlook.com
+ ([fe80::1868:c915:c230:a383]) by TY3PR01MB11797.jpnprd01.prod.outlook.com
+ ([fe80::1868:c915:c230:a383%5]) with mapi id 15.20.9723.030; Wed, 25 Mar 2026
+ 00:58:45 +0000
+Message-ID: <87341opvwb.wl-kuninori.morimoto.gx@renesas.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To: John Madieu <john.madieu.xa@bp.renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Vinod Koul
+	<vkoul@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Rob Herring
+	<robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	"Michael\
+ Turquette" <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	"Conor\
+ Dooley" <conor+dt@kernel.org>,
+	Frank Li <Frank.Li@kernel.org>,
+	Liam Girdwood
+	<lgirdwood@gmail.com>,
+	magnus.damm <magnus.damm@gmail.com>,
+	Thomas Gleixner
+	<tglx@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai
+	<tiwai@suse.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Claudiu.Beznea
+	<claudiu.beznea@tuxon.dev>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	"Fabrizio\
+ Castro" <fabrizio.castro.jz@renesas.com>,
+	Prabhakar Mahadev Lad
+	<prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	John Madieu
+	<john.madieu@gmail.com>,
+	"linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>,
+	"linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+	"dmaengine@vger.kernel.org"
+	<dmaengine@vger.kernel.org>,
+	"linux-sound@vger.kernel.org"
+	<linux-sound@vger.kernel.org>
+Subject: Re: [PATCH 10/22] ASoC: rsnd: Add DMA support infrastructure for RZ/G3E
+In-Reply-To: <TY6PR01MB173777CB90871A8837834EC94FF48A@TY6PR01MB17377.jpnprd01.prod.outlook.com>
+References: <20260319155334.51278-1-john.madieu.xa@bp.renesas.com>
+	<20260319155334.51278-11-john.madieu.xa@bp.renesas.com>
+	<87jyv39wuj.wl-kuninori.morimoto.gx@renesas.com>
+	<TY6PR01MB173777CB90871A8837834EC94FF48A@TY6PR01MB17377.jpnprd01.prod.outlook.com>
+User-Agent: Wanderlust/2.15.9 Emacs/29.3 Mule/6.0
+Content-Type: text/plain; charset=US-ASCII
+Date: Wed, 25 Mar 2026 00:58:44 +0000
+X-ClientProxiedBy: TYCP286CA0356.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:405:7c::8) To TY3PR01MB11797.jpnprd01.prod.outlook.com
+ (2603:1096:400:373::8)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260324025332.3416977-10-eleanor.lin@realtek.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TY3PR01MB11797:EE_|OSCPR01MB13258:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2a659985-6344-44a5-92ce-08de8a09aa3b
+X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|52116014|376014|38350700014|18002099003|56012099003|22082099003;
+X-Microsoft-Antispam-Message-Info:
+	Mo/Jy56OQoZoJbqP+JCzdVwkfbS3Zhg+tOTbNk/5nsym1BFREz+BS1mz+xpU2GHqbaqzsys6r1C7f54njZuoqgplMhqWOSEDO/lL2EQOMSJBbfbGbpt3Lh6atpVXbm0rVtZAGKifPXj8ulsfUiXn2lWNy0pmalIuL6/Cd3r2M3EKqz/zmOgkLDa1f93eVcnBpxslW84zm0w45Z+EJ+KXqACXq3lyvzJHpe0qAu3xI8BZgQUHzpp3L6vBFUq45gQaLL/d82aErpksMb1AOG5dLm//M3zZRWxqTQpXE47F10qCySVYuvfQGukToRDw3Y18BtDUPV75OFVQgNxmj+hiORVphecB9HIaCHyf4O3LYNA+++0y9BpJ9N2b4SX/A2CFLLKhH8E0HEo9aycwrg7VDYGOyJMEYMxGZpR5fbRRwgsZwhYxKvwJgmPuWL/YhTIA7K/GizWKUDhI8cAfYRiBE1BmgqXPxq2XS6sP46ih5LTygr8nCCSJ4nB0B2iPnx9ThtGH6jOcxz8L28/tJI9B6P4p679u/+4fydyo7m/AAo5sfzzw0B+xeJ5kLPdfvQuDBeGZJ0v56zulMviDytMOUGxX2mF3qdXqUHRD5/OHsPXKuloUrHv/w9181Kgj2Qyzp9O3bi3INFvqx8yga/appQHjbRgFSKpGkbKsSkXtgk8Pl1aVLjRmLOPtCwntkh3Kpr4CXmYF5f+bRkzxcFyQb6JoTWTY+d9Bm3RjGAiLJFVxY21isLSILUPDmhgu64XiyeQM1w9HVsm+PHrNYETWUD2JN/Tev7SyyjoYs+G0q3g=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11797.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(52116014)(376014)(38350700014)(18002099003)(56012099003)(22082099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?b+1q9bnDcvkxUcZ5oDeuAsQGPCvvDttX1jnPHcL0EPMLTLz/lsmdVvChINYZ?=
+ =?us-ascii?Q?PubTaXdMfXBdaMKsBc/4N3y426NfxQgMrWR2yyvNqVgNCyvwbvOynwavoip/?=
+ =?us-ascii?Q?QTwasqkS/wynH/JE5HwjEq90jzy+8jngIYweSXjhjmRmrg9dL2NtGfnBAHU1?=
+ =?us-ascii?Q?59hatQXFEoRNTDNowuDYxM7uXusZuD48uXjZAPbGmxFLfC03O0o7tgUs7zIi?=
+ =?us-ascii?Q?6HSaKiPkECWNCwKidM+7ezerrBXqd4zIIYOh+jlBbTjazUi19SQfHhul/64Q?=
+ =?us-ascii?Q?6bMGnCV6t03a82dAYgxAyZC18ayGVzFG+vLGUVL7AQZK3+8E2T4QCMRZl6aA?=
+ =?us-ascii?Q?gQcj47b6UuOwbEFKymRcIJ+RkcEdvbFd53Fj0aOhkiRNB66oy3klA1ox98o8?=
+ =?us-ascii?Q?SZfAnO8CKtslNDVxWd8xJXW2uKRbWNgopmT+FrfT88bvbj8OW+fgSursipAR?=
+ =?us-ascii?Q?QfVxpvoGf6r8EpHtmjchDVz38gZ9mIqCVJuxD6AXQnWC9Luviq1ogd9iOdtu?=
+ =?us-ascii?Q?IlCiRLs18Q5APVPhwJMvhO2sxbV/kvvT3D5+67FGpt8Oj6XbU5hewiEOgpMe?=
+ =?us-ascii?Q?UeIpTEtSCljkgRTey0UEc9Q4ZM5mZjlcB+i7qHrj49YeL9ehZU1cmFiY5Aj2?=
+ =?us-ascii?Q?F+t/Unt1LmiAVz/mRycwmHTWQKIPdAusUE43YLLyF2fa7Vbi8WV6JJDgp1Uv?=
+ =?us-ascii?Q?7UrGw5e9GXKmuDKScVbkeT1aYiFD5nw6WaGap1/lNSWlTwKAIYP482PJhhh2?=
+ =?us-ascii?Q?XG+NCtSklNaJie0UgCsc00wkHE0FabHEgsSIUkJLejobaX6cmUcpEwsn7WK9?=
+ =?us-ascii?Q?k62ppn5uTVUMQTZBDpRXMOR6ufFbkdLLNsZqBi9QlphiUS1QqMURejeVwH+C?=
+ =?us-ascii?Q?B7DnxYKe10oK5FRTPWSMeEnHQoC1nVma6qzbl8YhQpcIhmMvNSb17so8RUzt?=
+ =?us-ascii?Q?zJvn6jgK8qOTfW1S1yXH75LAtmJ4qvvKsd7XBVIfzDvyhDpnV4rINS+FWrJm?=
+ =?us-ascii?Q?sOtVH/t8BTG40vsohyIBiJv3FYrhw5Cx7ffZcvSNnckw60UnOHj/s6JnX3xG?=
+ =?us-ascii?Q?FQ4fljP1UaH1eptpBuJeOg7q4j1cw9EE2NffDcvS6dztcY2ChmPe01rydP0W?=
+ =?us-ascii?Q?SuACyQN5m3rYsR/t3aZt67TyVWzFIYS2slGYkIVP42XI+Jh8UQyZTSvxnDnd?=
+ =?us-ascii?Q?LkRZ4gUU4czN1XfJHbjunqvDmjx48lfApHchlxGatm71ElvBvscHQOBfxVp5?=
+ =?us-ascii?Q?6oMVhTK1TiW2yU3K3vVr5DFA7Xwe6ipxT3f+Cx5D39KetAZQZ8lRca7J25V8?=
+ =?us-ascii?Q?YIGTxX9qkJJvEavAWXGpVl65rTStWNAETvqqEZXf4MDCSTu6gxmetPcnPFqh?=
+ =?us-ascii?Q?rp98GMqYcnW7I2RI2zJeyd9MetTEYfj3aLbKRnd4+XGocNsQ/NICOG7Ywgba?=
+ =?us-ascii?Q?d/uzfUK9ZCDG7FwE/llPBmuD+cghxlwWsGdgfMgKx+Q50nrYpXc3H5codA+f?=
+ =?us-ascii?Q?B4PjPZbvWCT39F179vSyjqBXTYPoivZHBMSdjVTSZ1obKAgt3Vl2sSBSth4O?=
+ =?us-ascii?Q?fLdAsb+ScAU53zBpyrUaffTZDHOVIJu6uNFwNYqFmtD1dK8oxLyoquWg5Bt0?=
+ =?us-ascii?Q?ENq6soAm8JvFzdXuvxC9capVzDsm9Nu+4MG8hMQU663kOsMn7rZUjdoL0L2c?=
+ =?us-ascii?Q?gYtADDn8bC/lcfSFLU/3Fp35i15M4RYJX/JZ95EYUeOab19Ddlb+ohLKXl2B?=
+ =?us-ascii?Q?kI6VBP8P5heU94TerfhTHOYxBav/hZxpak8tMd85/EyLN7w6k/5b?=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2a659985-6344-44a5-92ce-08de8a09aa3b
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11797.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2026 00:58:45.1065
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: sl02TLpJJjQ08Q0ND2UNdIUe9+mFomRw35Pfp2zcmQf93Qtg9yI5vt/Et6kIfQP0bOH+YDzGhsZMWgwhX5KwSPsGqngQW8aUPrx7ynJKdm2riKhy1uTMmTLHLKBWgpp4
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSCPR01MB13258
 
-Hi Yu-Chun,
 
-kernel test robot noticed the following build errors:
+Hi John
 
-[auto build test ERROR on clk/clk-next]
-[also build test ERROR on robh/for-next linus/master v7.0-rc5 next-20260324]
-[cannot apply to pza/reset/next pza/imx-drm/next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> > I think it include many features in 1 patch.
+> > You should separate it into each features.
+> 
+> Agreed, I'll split this into separate patches. One for
+> RZ/G3E DMA address support and one for audmac-pp clock/reset
+> management. What do you think of this approach ?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Yu-Chun-Lin/dt-bindings-clock-Add-Realtek-RTD1625-Clock-Reset-Controller/20260324-171912
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/20260324025332.3416977-10-eleanor.lin%40realtek.com
-patch subject: [PATCH v5 09/10] clk: realtek: Add RTD1625-CRT clock controller driver
-config: nios2-randconfig-001-20260325 (https://download.01.org/0day-ci/archive/20260325/202603250636.b3J5aCGL-lkp@intel.com/config)
-compiler: nios2-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260325/202603250636.b3J5aCGL-lkp@intel.com/reproduce)
+Thank you
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202603250636.b3J5aCGL-lkp@intel.com/
+> > rsnd_dma_probe() is common fucntion.
+> > Is above possible to keep compatible with other SoCs ?
+> 
+> Other SoCs do not need or specify these clock/reset in DTS and
+> the fact I use optional APIs makes it compatible with these other
+> SoCs. I'm wondering if you meant something else here?
 
-All errors (new ones prefixed by >>):
+OK, nice to know
 
-   nios2-linux-ld: drivers/clk/realtek/common.o: in function `rtk_clk_probe':
->> drivers/clk/realtek/common.c:54: undefined reference to `rtk_reset_controller_add'
->> drivers/clk/realtek/common.c:54:(.text+0x134): relocation truncated to fit: R_NIOS2_CALL26 against `rtk_reset_controller_add'
+> > And, we are already using "audmacpp".
+> 
+> What do you mean by the above ?
 
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for RTK_CLK_COMMON
-   Depends on [n]: COMMON_CLK [=y] && COMMON_CLK_REALTEK [=y] && RESET_CONTROLLER [=n]
-   Selected by [y]:
-   - COMMON_CLK_RTD1625 [=y] && COMMON_CLK [=y] && COMMON_CLK_REALTEK [=y]
+Naming. It is reg name but we are already using "audmapp".
+Using same naming is less confuse, I think.
 
+> Regarding rsnd_dma_probe(), I intentionally used
+> devm_clk_get_optional_enabled() and
+> devm_reset_control_get_optional_exclusive_deasserted() - these
+> return NULL when the clock/reset is not present in the device tree,
+> so they are fully transparent to existing SoCs (R-Car Gen2/3/4).
+> 
+> Adding per-SoC branches in rsnd_dma_probe() would duplicate the
+> common DMAC setup logic. I believe keeping this in the common
+> path is the cleaner approach, but I'm happy to discuss if you
+> see a specific concern beyond compatibility.
 
-vim +54 drivers/clk/realtek/common.c
+It's definitely too early to remake it.
 
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  12  
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  13  int rtk_clk_probe(struct platform_device *pdev, const struct rtk_clk_desc *desc)
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  14  {
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  15  	int i, ret;
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  16  	struct regmap *regmap;
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  17  	struct device *dev = &pdev->dev;
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  18  	struct rtk_reset_initdata reset_initdata = {0};
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  19  
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  20  	regmap = device_node_to_regmap(pdev->dev.of_node);
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  21  	if (IS_ERR(regmap))
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  22  		return dev_err_probe(dev, PTR_ERR(regmap), "failed to get regmap\n");
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  23  
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  24  	for (i = 0; i < desc->num_clks; i++)
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  25  		desc->clks[i]->regmap = regmap;
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  26  
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  27  	for (i = 0; i < desc->clk_data->num; i++) {
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  28  		struct clk_hw *hw = desc->clk_data->hws[i];
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  29  
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  30  		if (!hw)
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  31  			continue;
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  32  
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  33  		ret = devm_clk_hw_register(dev, hw);
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  34  
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  35  		if (ret) {
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  36  			dev_warn(dev, "failed to register hw of clk%d: %d\n", i,
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  37  				 ret);
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  38  			desc->clk_data->hws[i] = NULL;
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  39  		}
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  40  	}
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  41  
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  42  	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  43  					  desc->clk_data);
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  44  	if (ret)
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  45  		return dev_err_probe(dev, ret, "failed to add clock provider\n");
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  46  
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  47  	if (!desc->num_reset_descs)
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  48  		return 0;
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  49  
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  50  	reset_initdata.regmap = regmap;
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  51  	reset_initdata.num_descs = desc->num_reset_descs;
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  52  	reset_initdata.descs = desc->reset_descs;
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  53  
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24 @54  	return rtk_reset_controller_add(dev, &reset_initdata);
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  55  }
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  56  EXPORT_SYMBOL_GPL(rtk_clk_probe);
-105a817ead5cd3 Cheng-Yu Lee 2026-03-24  57  
+But please add /* for RZ/G3E */ etc on top of comment.
+We already have /* for GenX */ comment there.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+And, you added the code *before* /* for Gen4 */ comment,
+but it should be *after* that ?
+It is handling priv->xxx_audmac_pp, so maybe before audmapp_end: ?
+
+before audmapp_end: it is for dmac->xxx handling part
+after  audmapp_end: it is for priv->xxx handling part, etc.
+
+And I like priv->audmac_pp_xxx instead of prix->xxx_audmac_pp for peram naming.
+Because it is easy to find them by normal grep.
+
+Thank you for your help !!
+
+Best regards
+---
+Kuninori Morimoto
