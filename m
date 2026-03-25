@@ -1,113 +1,172 @@
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D93133859C
-	for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 07:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70835285CAE
+	for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 07:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774422486; cv=none; b=ZIQb+42vU43/edDheP8QnQkem8xs7Q7uqxDUJyjzefmEX6RCa/oI9uRgN99QxA+WvYi/RiomSiSVWHcjJaeWoSfXOdqu0xB0pjx7agmAvk+/fgbk6If3gxDkA4czFxgEijT2zwe326bsUXDdI23r2awJAUPtYqLEKlJXkIOQ5F8=
+	t=1774425508; cv=none; b=L59m+DVagLS8E0qg6oCiNn9Qyu0MOXV0gvoXW3NOITUA2Gq+T9QjRSet/q3J2doaXDPLZdcBJnptpvFTuWfAVALRi1i8e7O1YG7123C3qaxJXgBkfmT/GXO2i3kxS3iZ39ZHEjVjRStxqWXfrlhpM6Nzaqv6VDNi48x9rtDp3Fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774422486; c=relaxed/simple;
-	bh=lWhMCgGwZqY405F2HVxzFZrIU7/we6NJ0xph2yEOyQA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LMsmmxMS86VN0dcjeA+4KizK9hssp2knzeP4bnwb2uLFRyz+Gc8D4TuOkj92hBmkZlNySEwk/qHn60YdveKSDhcXyPcXBxo+nMsPZT8W8nWqCaItQcpM7zQhPy/eregHuX+q9QZz9QlDLi002ijGMuRRDZTStI8CNB7dqBumTYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HKqCKEMy; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1774425508; c=relaxed/simple;
+	bh=pgBo8/Kx1aaY0ic9ZG8/TNmyttEXy1UGyzChAT/giXg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JFbNYCKXn8EgynKNyDH5aWPLTAR0Ee5BEol141rLUd5e3sjCOBzB9ewaXGEdNfPdxD7btDrPwD/kklZOXpYIsOX8Vnf1zmNvjf09sO0fxc+AD6VSwhk2MS0yjX49S2lcc+0OwOP0sq/xCkRQ43vhhvqpkeDLUJE7f8thE9Pwc28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=mq6qVMEh; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HKqCKEMy"
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-35b88a4f123so317350a91.1
-        for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 00:08:03 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mq6qVMEh"
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2b0586d5bb8so45037725ad.3
+        for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 00:58:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1774422483; x=1775027283; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+KMORzaHZIt/O0p0OreFRdLlztvWKjQgycAj/ZTHugc=;
-        b=HKqCKEMy6ZnpVAKSdnPAEpIjuapWrSQKYnILqu6PsFiHjSp1ePioKaI54EG5aPoWBR
-         N3qdWs9fnHyu/ZH4L/SPF6jUc4la+g/Ey919OUV8NMCAQOGdMT30ZCYAq9lAe0qGw/kQ
-         2g8RUlHsVVpoS8EvkY/7OcHBiAAhfdUNXI93eY+szNi5NIJ/yeWWkbHC3u9uZWh6FWpo
-         4wmZBAxU0Gd0DN0NPewiOCvrI4gnGJOGyJzEPTVUuyCTBCRlq6R+XSh+T3Qa9nVhhSR2
-         ZUN1YywLurZnadYP3rrWsJLIeGF58SDaCjH09YYrNCQTUjxFP1bM6qut2U/9u6wqIBYp
-         uFYg==
+        d=chromium.org; s=google; t=1774425504; x=1775030304; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fzYr866Y+nhDeVzwxBplwIhb3zjPYVx7VrTJzl9KpOQ=;
+        b=mq6qVMEhWYYMrxeYG6I8mn+BihrtdvNvHJPY0D6Wvg9E29829Ii/j1FFb88h4usj0Z
+         /7FzGMrGFqCUAy1GpY2JvdbUmTcnhhOfZZq4ohw0XxB+pBOOyw17pcvqTyRLh4HO+yve
+         7nBwBCFXiDITG70W+luVhfAYUIQqjDkbmy39M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774422483; x=1775027283;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+KMORzaHZIt/O0p0OreFRdLlztvWKjQgycAj/ZTHugc=;
-        b=diAI50uORQCBpf5zLVhKxr+un0/HZ0X5WZ9MBk7PC1yZkZ1buxVKRAjhAbQ5NHDl7U
-         2w3bgV788Skb84QvizOuOvVWI8d4inYwYF2BMB/vjt8iUHjQ0ANboHxgK7bCV1BHdVsJ
-         jZaNvb9Sob7TEBGzStilo/sSeoE/qVKDUWY+V5vyjG63Kww2Ifs3EjpwQvhAi9lsj+vX
-         l4qja77f8xwxK2kbJHlsXRUSPmBU6DhYxsSEIlISxsv+BqT0UYswA5CA619+C0bRepNE
-         eRO7ixWFJVCurmSzro9+rT/5yc1Pcatw5H5/Vtijp/N2OVCQrPEJJEefx3faGcwQtre9
-         QJ5g==
-X-Forwarded-Encrypted: i=1; AJvYcCWKTjJnQI+Y19weTARxR0g06UaGq4Q0LShyadNfJpLJi0W/O4QQYcraIuLsGRCPfdprWMH0HoH+pVA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySLhnKC24n6x5VZ8k7Z2Ze1h0PHN8cFaoHmjamWJgTugEiadHe
-	D9yxYJAlebNC+cgNwR89sO/tRk8fUAEqVQpohMb0dzoRXuycyVHcBiLZLmUKD7Cgqkc=
-X-Gm-Gg: ATEYQzxXm0XYOohutumzy4X0YNyZWLxwCtCRiaqLhHHYzDhgWMVQOjlLFzRHjuKn1Dv
-	G07uudwXKgBfp0BxUB2vRrCp4S+QoYjSEtB+1CobJZ7aDqZF5m2OIW4aqLliHKBqVzr+A6c4hU7
-	M7ARTwGdvf51ZV5jXxzXA09QqyKinlTl82jqjIWWBFzPwJphxKmrpXwig8sjTnjbilOyK3C3hT3
-	NlKGAtKZEiDOC9V2Y8OOk3ih5+QJ6vLaedu+4RJsBpsbqDPA1qU/yNcQHqjMv+bgg1o9pAWmTE9
-	Fq9pr9VfNNBnv/rUK2eTf2iYyelp2UtIGjEll2yiNBOt90UbQpv0/ZECDsxXQVqZYKh88DDp596
-	i+pjgaAbCJCEHTcJLokE7O4sO3R118M/dae3odrnpARPaVy/QlFoVJ3wuAD0I/0nCHY3od9jafU
-	jWgPDz/mekvc7EVrLUihzrCA8x
-X-Received: by 2002:a17:90b:1dcd:b0:35c:69c:2a12 with SMTP id 98e67ed59e1d1-35c0cffc5eemr2303037a91.0.1774422483131;
-        Wed, 25 Mar 2026 00:08:03 -0700 (PDT)
-Received: from localhost ([122.172.81.200])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-35c0ea4807dsm442644a91.10.2026.03.25.00.08.01
+        d=1e100.net; s=20251104; t=1774425504; x=1775030304;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fzYr866Y+nhDeVzwxBplwIhb3zjPYVx7VrTJzl9KpOQ=;
+        b=Pymifgn4YKg2DbVo+LkS8uE2zvXTBQ+Cq1ojGOhUHDB6WLfhnfpiwWaSn9M/rAWCCD
+         1rv7OicD8RmzPwhy1/0diNusgbpxnyyPFDqlvSfJiQZjk6Glsb3/xn1tzYdFk8HL4oOF
+         H5fdCtKAi4E31Fp+TzaL3/NxcPpzdBgIT/+fNpUViGpYo2nKa7HkRUJpsOmuAAZPg5m9
+         YOwH8z69bLHFRo15WUR+/o5jzt900PwyqUjlLXYQ1W15Y6eYfjIUgUrWbuFd6PzzHVXB
+         AnguPMYS/k0/qVgXrHY5EtuO5FWiWPOE6THj1RV1yr4idpry4dyp/T7QAPbdtMK0ZwG+
+         bNLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU24lAVYD4favhdxsqTZZxD4i3MNBjorMvluSo8CFuCbOQSAQPrW6KaPnex75ocE2xdJ5alsm+LbCQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwETNOmwrIFCrK3IyuddePG9tp3l41G9/AREGTvnGr3V+6TBo6y
+	Y3qa89ZXozJY4dBZfLZ8X2UMcDKVtatyL0r5h8MmXOo+6FyZTt+W963IrK3DdA7t9A==
+X-Gm-Gg: ATEYQzzER69/JTREOgpMOZvyttjJ79u7lZVOduj8hRAnf41X9iKL7xgnIgy6ff2cQ+F
+	y/vUzEe2GQzx8DfVnA6CnE/QTt6OzrzSDGI3/m2nlf0Mg169HIM71FbZuDVaRxkfPbDMol2Oy+j
+	AmsLsAleJYritCY1BOURxouhW9ndIr68SL19C3W1gBYLCKhpvRNJmBXeCVmIVUQuRsUhVCdPliN
+	lvTGvmwb1+Q3djj5fsz+IeNeMBFIx7lUFoT0Kp0HSDaRXU/eWo4Aty1qC4jwitURaRkLdxneSTG
+	A7axm2uQmLXEMAesOHb2UqCOcf2liAkAb+SbhXu+BdauVPZ405A110Uo3KIGZhk1TtkZEbIH9F7
+	IFD2ZpWt8YRXCDO5LCDQH2gLe0gEbA78aiC6+OXn3fkmp/SDg1zMLvuCPNfsvm85VN56JM02/yW
+	U6IGGu839RVIpXet7mDDO8utPI1Q5KTqCOjvFX5SQCJbve/16h1mlNNojfmzAMdvPruUYRoIZaB
+	hsZMs0=
+X-Received: by 2002:a17:903:37c3:b0:2b0:5aab:c40a with SMTP id d9443c01a7336-2b0b0af4c01mr28590075ad.31.1774425503648;
+        Wed, 25 Mar 2026 00:58:23 -0700 (PDT)
+Received: from wenstp920.tpe.corp.google.com ([2a00:79e0:201d:8:7ff0:bee3:7d45:eab])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2b08366c3f7sm219682465ad.60.2026.03.25.00.58.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2026 00:08:02 -0700 (PDT)
-Date: Wed, 25 Mar 2026 12:37:59 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>
-Cc: vireshk@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	linux-arm-kernel@lists.infradead.org, soc@lists.linux.dev, linux-clk@vger.kernel.org, 
+        Wed, 25 Mar 2026 00:58:23 -0700 (PDT)
+From: Chen-Yu Tsai <wenst@chromium.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Frank Binns <frank.binns@imgtec.com>,
+	Matt Coster <matt.coster@imgtec.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Icenowy Zheng <zhengxingda@iscas.ac.cn>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Chen-Yu Tsai <wenst@chromium.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: spear: fix resource leak in clk_register_vco_pll()
-Message-ID: <brk43cgzeibwism24x5ub2uz5f3uveuljibgnztl4zrtd6jke6@lb7nipf5dq6m>
-References: <20260325062204.169648-1-lihaoxiang@isrc.iscas.ac.cn>
+Subject: [PATCH v2 0/5] powervr: MT8173 GPU support
+Date: Wed, 25 Mar 2026 15:19:44 +0800
+Message-ID: <20260325071951.544031-1-wenst@chromium.org>
+X-Mailer: git-send-email 2.53.0.1018.g2bb0e51243-goog
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260325062204.169648-1-lihaoxiang@isrc.iscas.ac.cn>
+Content-Transfer-Encoding: 8bit
 
-On 25-03-26, 14:22, Haoxiang Li wrote:
-> Add a goto label in clk_register_vco_pll(), unregister vco_clk
-> if tpll_clk is failed to be registered.
-> 
-> Signed-off-by: Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>
-> ---
->  drivers/clk/spear/clk-vco-pll.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/spear/clk-vco-pll.c b/drivers/clk/spear/clk-vco-pll.c
-> index 723a6eb67754..ceb82723fa8c 100644
-> --- a/drivers/clk/spear/clk-vco-pll.c
-> +++ b/drivers/clk/spear/clk-vco-pll.c
-> @@ -343,13 +343,15 @@ struct clk *clk_register_vco_pll(const char *vco_name, const char *pll_name,
->  
->  	tpll_clk = clk_register(NULL, &pll->hw);
->  	if (IS_ERR_OR_NULL(tpll_clk))
-> -		goto free_pll;
-> +		goto unregister_clk;
->  
->  	if (pll_clk)
->  		*pll_clk = tpll_clk;
->  
->  	return vco_clk;
->  
-> +unregister_clk:
-> +	clk_unregister(vco_clk);
->  free_pll:
->  	kfree(pll);
->  free_vco:
+Hi everyone,
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+This is v2 of my MT8173 PowerVR GPU support series.
+
+Changes since v1:
+- Adapted to changed DT bindings
+- Dropped driver change
+- Use same power domain for "a" and "b" GPU power domains
+
+This update was requested by Icenowy.
+
+
+This series enables the PowerVR GPU found in the MT8173 SoC, found in
+some Chromebooks.
+
+This version is different from the initial powervr driver submission [1]
+in that it splits out the GPU glue layer support out of the powervr
+driver and into a separate clock and power domain driver. The glue code
+is otherwise the same, and also the same as found in the ChromeOS
+kernels, with some extra comments and macro names added where possible.
+
+Patch 1 adds a binding for the glue layer, called mfgtop. The glue layer
+contains clock and power controls for the GPU.
+
+Patch 2 adds a driver for the glue layer.
+
+Patch 3 adds an entry for the MT8173 GPU and 6XT series to the PowerVR
+binding.
+
+Patch 4 adds an entry for the PowerVR 6XT series GPU to the driver.
+
+Patch 5 corrects the clock for the GPU (called MFG) power domain.
+
+Patch 6 adds device nodes for the GPU and glue layer to the MT8173 dtsi
+file.
+
+Patch 2 and 6 depend on patch 1 to build. I suppose some common
+immutable tree would be needed from the MediaTek maintainers.
+
+The kernel driver successfully probes the hardware and loads the
+"rogue_4.40.2.51_v1.fw" firmware provided by Imagination Technologies [2].
+Userspace was tested with Mesa 24.0.8 from Debian Trixie rebuilt with
+the powervr vulkan driver enabled. `vulkaninfo` gives some information
+about the GPU (attached at the end), but running the `triangle` example
+from the Sascha Willems demos [3] with -DUSE_D2D_WSI=ON as recommended [4]
+failed with:
+
+    Can't find a display and a display mode!
+
+Same program worked correctly on a BeaglePlay and displayed a color
+gradient triangle. Not sure what went wrong here.
+
+Anyway, please have a look and test.
+
+
+Thanks
+ChenYu
+
+[1] https://lore.kernel.org/dri-devel/20220815165156.118212-2-sarah.walker@imgtec.com/
+[2] https://gitlab.freedesktop.org/imagination/linux-firmware/-/tree/powervr
+[3] https://github.com/SaschaWillems/Vulkan
+[4] https://lore.kernel.org/dri-devel/f2b2671e-5acc-4dec-9c2e-3c9cd2e1f19e@imgtec.com/
+
+Chen-Yu Tsai (5):
+  dt-bindings: clock: mediatek: Add mt8173 mfgtop
+  clk: mediatek: Add mt8173-mfgtop driver
+  dt-bindings: gpu: powervr-rogue: Add MediaTek MT8173 GPU
+  arm64: dts: mediatek: mt8173: Fix MFG_ASYNC power domain clock
+  arm64: dts: mediatek: mt8173: Add GPU device nodes
+
+ .../clock/mediatek,mt8173-mfgtop.yaml         |  70 +++++
+ .../bindings/gpu/img,powervr-rogue.yaml       |   1 +
+ arch/arm64/boot/dts/mediatek/mt8173.dtsi      |  33 ++-
+ drivers/clk/mediatek/Kconfig                  |   9 +
+ drivers/clk/mediatek/Makefile                 |   1 +
+ drivers/clk/mediatek/clk-mt8173-mfgtop.c      | 243 ++++++++++++++++++
+ include/dt-bindings/clock/mt8173-clk.h        |   7 +
+ 7 files changed, 363 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt8173-mfgtop.yaml
+ create mode 100644 drivers/clk/mediatek/clk-mt8173-mfgtop.c
 
 -- 
-viresh
+2.53.0.1018.g2bb0e51243-goog
+
