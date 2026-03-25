@@ -1,152 +1,149 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11D69383C6A
-	for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 22:42:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81CC38F23D
+	for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 23:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774478574; cv=none; b=ORiDQLm5MmBD/dpsQgD7OmFccmeyRD3rUAozMhQALcj/stw2FRA44fgKJtr8Pm/BzOZLDK2UV3FoBNKPcna2gg6McIm3lkCYd3i0dUljAyYFcsrJL+TPEU2beQeT3F5BBYRaHmBWTmI10Qq6PUDPPMp4GnUNYSwcuLg91+LpXmM=
+	t=1774482765; cv=none; b=aelZTA8Xk9sLlzBUjGMJ736Chy5dP++WLSrcqc1es1kORv6RyDpzfbsKTF5CkRRqZp0tPDbsSET4WGyEAURhv6oyZX3TWM14rpeeFGkVwU8dx2rvLyfsRhsTQE8fnrn/eiNXmbl/o963CW2GxlhYUiPD6cNOKk0/UItCz1QvGTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774478574; c=relaxed/simple;
-	bh=2Zv6b2uFyPwk92Vrj2b4m4RCN3u6OwSUTKvaWzzk6gk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RqsSAIioWkRkz8hE0vFTuC5jU5jX15nCe2EOC2H4Nn+kjLHhpdQcgNMa11JoKdmnfgFvIhRQ05jgWDY0N5pBP266fpHWw0HP1A+ZeZhFacnzg/fbatURXLfps5cBgSc/ioNLHju9oBho1a/btXQTLySguN+dwaR0sT87B6fud5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LFJVtxNn; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=SnVkyYGO; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1774482765; c=relaxed/simple;
+	bh=pDlL9CglIFwRMO2//WwSLnjr7T4jqi7GVAwBYo3zUck=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hQ4yn2Wzi46bTNHw3PNjEW4kw1bbsJnejAbXCBszUjiJdKn25ZYdoNpBk0rnrA5x4JQQj1zgUtaVyLQk7DDgOa5A+eN634D6J5Errg2CdGrdGzqdzK/2n2DbZnlMwPP192KgUGGtDKmnHWvzOr3pbt2TgT/7qyTMtRbnLPPdvno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YmR7OWL3; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=cQ6K1kzS; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LFJVtxNn";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="SnVkyYGO"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62PFRLUj1432159
-	for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 22:42:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=mcP+C5mmyp3mXG+oZ5U13jAT
-	3Ccsoj1xoxf8jggQrtw=; b=LFJVtxNnemQhCUukDOSuy2mALYTo/ynQnUq7jyD4
-	/UsDzSEA2cJZRsRRPBGi1l6t0Bx3PfTvQFZDU2q164M+PA5JDOEU9heY9HTAHVz9
-	uu7/MBhUH9YvPiF2by5+1iZE3GvYyzD0OfMUunRdbs4jrMUIY4g6e1TJQSW1N5f5
-	JTxAQWaOKl/5vM5TxWQrhZj8lNNcsBNwrAaWautqrzSv8/EcibgyGtPfkrFE/rKL
-	NbPF9DKdjrjwrs27TIo9EBd9Jra2ekhQRc6c6G7VT9Aa9fRoarFtaIKFbT0/03Dz
-	Y7DLikqUWHwPk8lQsz7SdU3QufPJmHOK9w95IgeTRPmHdg==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4d4jc51g4a-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 22:42:52 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-89c5976a8eeso10981846d6.2
-        for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 15:42:52 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YmR7OWL3";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="cQ6K1kzS"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1774482762;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=yuJFXc+oSvSHiNWcGKsTw0+QoEJBqEFxVNPR1gcgJbM=;
+	b=YmR7OWL30w0gYMIGwhh8lM5hiaAfjyAq6W2MfBr5Jvregfss+kL5kvnHx/75ZFpyqDyHY6
+	HHqXzYRXmvM93JbVhVEQwyNCRKUZ5PqCKZ8hOXQoz/f6UQD60CcvHA0MyYIhBlsStbY+2V
+	sm8lmkKMca4Vvkc+/U3DUc2eiG67wp4=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-642-Un5jgTzzMgO3NTz28ounvg-1; Wed, 25 Mar 2026 19:52:40 -0400
+X-MC-Unique: Un5jgTzzMgO3NTz28ounvg-1
+X-Mimecast-MFC-AGG-ID: Un5jgTzzMgO3NTz28ounvg_1774482760
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8cd7c4ab845so140847285a.1
+        for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 16:52:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1774478571; x=1775083371; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mcP+C5mmyp3mXG+oZ5U13jAT3Ccsoj1xoxf8jggQrtw=;
-        b=SnVkyYGO+FgXwjyljnITNcNGvgc3QawI3MSiCNObVSUQN3VrFmneUWx2yWidvxILc4
-         ZPsKfk/fvNh2V0+lWatCS3qLZh+IBx3b5QLnRmwSbuGkiN6566V2HwqyBh7KVAtTI1qb
-         r5HX1zgLM6a/se8GiW1LJkwtbUw4ZaJyldBXAYCFc+O6sjZJg+t5sHN3E+NOrWO70cDX
-         z1fYjctk2HfoCr8/J7iAJUjwrNSnd4w2fEickgi4QGnOQ0s8YN99+72YN+xtbWPDl5A/
-         Y9rj/Qlj0xR/YAYbi7qYDgy4lPkajpU7JykBmVmIO+7PjJtJWMUOS+/mJPBs9lh2RDgP
-         znWg==
+        d=redhat.com; s=google; t=1774482760; x=1775087560; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yuJFXc+oSvSHiNWcGKsTw0+QoEJBqEFxVNPR1gcgJbM=;
+        b=cQ6K1kzSgy6+Pde3JMLbR+DEDzVoMPT1prAP5K2+Q67HfT18WBd15NH0chfkRsGst3
+         /vzpzMRKtPY1V56zPv8NRBKdUPZpdviOUeaq5Z7inGVHXLBbOug1hysQ4f+dh2uTmTzY
+         ZEt2wqyIS+5oMqr/nY+oPbPDVsF7GhmuE9ZOXs6h586ktjmutuNs+nApUs6ZCcwGYghe
+         iX8pq1db4tRK93BVJqnY9j6cMRA/3aJbDU68WbPkxDzY9FQ19GaMcrj19slNCy9pHXew
+         /+995YU19vpzmQxpFpeG0Fz0l0BozIEEzZMGI+eHOcnwoYiT2y1DMLekKezVQSQ21wVF
+         WfDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774478571; x=1775083371;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mcP+C5mmyp3mXG+oZ5U13jAT3Ccsoj1xoxf8jggQrtw=;
-        b=WLv0/BEPerf7nOtMXuL6k9RZvywNZicLZtK97xewM7zDcsN/U7e3ri8NslTWggA23Y
-         CkfSVGXyIrpurkiWOjnKig8Hc8yrXF3YP6wdVptA8j+sPpU+tB5MSqikTaMvH7R7JJLz
-         UlS9HNSFGt3CqSYq8BG2dleGbc9dSO6r13HZek0EtMXPeTuyCwkRK74e0dJt9tn9cULc
-         smQwBz5J3mLLKMjPodvbpKMkjc8YpF2x7REN74cpnu31TPMYvFeX6CluZv/VB4r+xWp4
-         3w0kJvktYCgag3FF0PWPOIGXUepFkztkjkyiCOyU+74NnI6xpI364hA251PSbPvuoh5R
-         yopQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV3Q9mSY8CLvVYdwQM2r6sSEdFEF+SbxXsSV57Dn9BjfJjt7dKNngdkYye2cU4n7F4UuHmKi+f3dPY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoWbpAIH7yYlhExi2j21sG+uXhTAcv9X5ve/o6OCTy1zIonbax
-	NmYniLVbjxT3CPhS3THBTI+NgmtqQrz5s42w6IdvvR02tQdOoRAT7QD6x2SQMFTI1KhtuZ6qWkn
-	SJToHBOnBOFW/LhB5RLZ/xz2c7ruezURJIKTCBPs5IyCt9uyuWwQTBprfskqegJQ=
-X-Gm-Gg: ATEYQzwtHqZd29rYcO6M1X0Q1PSXRxhP2WAwTGQFMBNRW3RNI/GHicVp7jSep/oqG7G
-	HcqgMRFWIeoU0YmE+CzW1E0UjeTd4UUCnvTlgZzY9xYYVPL3oMc9F6X/c1k5Q7il8fK73Dyte3k
-	EDhRPnKtZlAviKkskU/xV1aMCREPQ4MQGTTG7Tp/r8MjrdlSczQoeU21LYwjMkFIQ+MBh20BNG8
-	5JeZaA8FgCMQtaHPfpBR0zkGBJEaXvlwm8VjNULaRzXKtHvj4eScfzcwKSOLM2dQTgipM6QWh7J
-	/JHdELqXgwqWyqfzohbIScqRzUTlPnMh41FdqstTLC0vekGbrfEly0+MIOdvIBQM0woYYRDxlrv
-	/mVJQB6MUYPcQl6U8kQdtkVsZGKxC/azuZN/A2oRObVBJ3FKf2OgUDrdW9uLg54V8ikWC03xMX3
-	ygHLJ1jIQIpyus2RRc3A7tzyucmEyj59BtNfY=
-X-Received: by 2002:a05:622a:15cc:b0:50b:3be7:b16 with SMTP id d75a77b69052e-50b80e4b3a4mr74064961cf.37.1774478571627;
-        Wed, 25 Mar 2026 15:42:51 -0700 (PDT)
-X-Received: by 2002:a05:622a:15cc:b0:50b:3be7:b16 with SMTP id d75a77b69052e-50b80e4b3a4mr74064551cf.37.1774478571250;
-        Wed, 25 Mar 2026 15:42:51 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a2a069903bsm165984e87.76.2026.03.25.15.42.48
+        d=1e100.net; s=20251104; t=1774482760; x=1775087560;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yuJFXc+oSvSHiNWcGKsTw0+QoEJBqEFxVNPR1gcgJbM=;
+        b=C40bfMCU2DyrDiWEgfMFHr1pW4PTOn1JRUm3pdp7tbLT9K9dBVmO2lDRxYjyK68/gP
+         0YsVSDm17n44waxS9BJOsdswRCyXO/8DR66bUN8KJboFSKTwZTmR68OE+1/wRRuyUNlL
+         Taxf/TLdBAlpehI5nvbp5DQxfx+rJe3ta69uoNzhsH1qZRAe4RKapYVnnXwX6tPUMhKO
+         Ks0WXCt4epIKddxk6FaAxY1iVQc4KOhPeLiVyCdG2neZm4FCqwKTyEOBVqxMtHFZYhnx
+         +2o3YFeV52Ox6gRGAltnwGyFCNCMZ8eeLlUcFHaGlWi1kaP+PkxG7U9wx+GIdR4CYG4O
+         1EpQ==
+X-Gm-Message-State: AOJu0YwpLjW4YQ6l8WRPXZjZcr2wIB5hc1Nvjz7tWZtRJVkhF9O13nCJ
+	+l1UUMzC/pAPWNpHxmJXw55I3fxMD+Zgh0K+AvI4vxV6O95P+ZMBsjIsQ/qLuBsTrDh4zVzOTQU
+	Uz0oOOvmS4jZL/rEwYYeBE2o4pc8gcs77NzipMPb0Oj1LevFxMZJ1Wqc7Rjp06g==
+X-Gm-Gg: ATEYQzxcFaDeJlDUVNH9Qsp66af7eB5vkTSDOND0UVEAcNLPEuKBKNY5DJOp4nePjZg
+	cPMVtPdNfQVEcyUDwpjj7Ilbv0T0Z/UftOBxaiV5pXEn0O6pqQN8unA1hTf3pCL3x0cPe64FZzh
+	BozIbJPxYEzbfY95WgNhO67Es8u2kIE7d7r5/S4YhHjLc72CmXDiuOmInKuh7h4XIxOZeeY2R4q
+	BlQ1n5SpL6OpIDqknHCrKHhfiV2ktUMApmMNno/1Y9mz4eDrjpMWnPB1WkAM0z56W7AxEIabp5T
+	GBPmJOFPGnyErYhyvCHGg30HaPlzvQJ4Jy5zZZuklmQ0wjNC3rMqCtpN+NT0uOz2Av4bXw6O8zW
+	8DDm+3Ya/4uUY/uuPnhrlHtoQABrgYLqmVpn2RydydodDfNvobnhbHc2rC3zZ
+X-Received: by 2002:a05:620a:1708:b0:8cf:be85:ba84 with SMTP id af79cd13be357-8d00107923fmr778026685a.54.1774482759941;
+        Wed, 25 Mar 2026 16:52:39 -0700 (PDT)
+X-Received: by 2002:a05:620a:1708:b0:8cf:be85:ba84 with SMTP id af79cd13be357-8d00107923fmr778024085a.54.1774482759430;
+        Wed, 25 Mar 2026 16:52:39 -0700 (PDT)
+Received: from [192.168.1.3] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8d00e501eedsm106346785a.40.2026.03.25.16.52.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2026 15:42:49 -0700 (PDT)
-Date: Thu, 26 Mar 2026 00:42:46 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Biswapriyo Nath <nathbappai@gmail.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-        Pavel Machek <pavel@kernel.org>, Sean Young <sean@mess.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Martin Botka <martin.botka@somainline.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-clk@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
-        phone-devel@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH 7/7] dt-bindings: clock: qcom, dispcc-sm6125: Add
- #reset-cells property
-Message-ID: <mc7myusw7ehmcgarvndoylyhqdplgr37w7b4nttj4fn4ygw667@52nfrzyejqwl>
-References: <20260325-ginkgo-add-usb-ir-vib-v1-0-446c6e865ad6@gmail.com>
- <20260325-ginkgo-add-usb-ir-vib-v1-7-446c6e865ad6@gmail.com>
+        Wed, 25 Mar 2026 16:52:38 -0700 (PDT)
+From: Brian Masney <bmasney@redhat.com>
+Subject: [PATCH v2 0/4] clk: update kernel docs
+Date: Wed, 25 Mar 2026 19:52:09 -0400
+Message-Id: <20260325-clk-docs-v2-0-bcf660e1ceb5@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260325-ginkgo-add-usb-ir-vib-v1-7-446c6e865ad6@gmail.com>
-X-Proofpoint-GUID: RGuL_m-QxujSQvw7abCQ47kWFyy9YLAc
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzI1MDE2OCBTYWx0ZWRfXxmvV4IOcEotn
- Y735T07rpiOxvQsekfohZy5peTAcYIM7+65ByOJXCBcok8n6PR6uG2QpGiKivw2G3iu+OHmZ2Yr
- 2rwTVmuxVbRWrNA16VkHzLbkFQiF4n8A9xBQM56EspldatO5E6J2URtFIs8vZxSJDCPa4u3nOmn
- KREn99ce30/86D8JSc9E+vLWmG0MK94IBfyCVf9jB1HFc4kit5DkgbpKpHHlzwOKG9L4z/mojJn
- 1Y6x1Qqosf8AH5MxKl3RfDcZBF2hTG8EEjpTks3MdKHt+UD1oqruM9LiTxFDGKvZ14TsrFTlHeE
- 9ZgaD4s6tSEjy17shj+oMfAsVOOtPV9BzWC0kSeVN/l/iJ14BXTkZ8v2od3xEiFGaqSH64uRgx4
- 9vePDmS8DxVNSQG83yZ9ZFPR+5J+MnA9CXGusedX1D5n7P9uP5tr0WMlxKL6vU/PxS0rQVpMbUj
- XZPDPUuti+04iNKGySQ==
-X-Proofpoint-ORIG-GUID: RGuL_m-QxujSQvw7abCQ47kWFyy9YLAc
-X-Authority-Analysis: v=2.4 cv=KaLfcAYD c=1 sm=1 tr=0 ts=69c464ec cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22 a=VwQbUJbxAAAA:8
- a=QyXUC8HyAAAA:8 a=pGLkceISAAAA:8 a=TIRtq7bqiOsBIkxYvl4A:9 a=CjuIK1q_8ugA:10
- a=pJ04lnu7RYOZP9TFuWaZ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-25_06,2026-03-24_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 spamscore=0 adultscore=0 phishscore=0 bulkscore=0
- priorityscore=1501 suspectscore=0 clxscore=1015 impostorscore=0
- lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2603050001
- definitions=main-2603250168
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/23MQQ7CIBCF4as0s3bMgIitK+9humhhEKIWA02ja
+ bi72LXL/+XlWyFzCpzh3KyQeAk5xKmG3DVg/DDdGIOtDZKkpgMpNI872mgy0ng8tU5JoYmg3l+
+ JXXhv1LWv7UOeY/ps8iJ+6x9kEUjomJVu7dh1TlwSWz/MexOf0JdSvh4f6YuhAAAA
+X-Change-ID: 20260304-clk-docs-0b578f421600
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>, 
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-doc@vger.kernel.org, Brian Masney <bmasney@redhat.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1789; i=bmasney@redhat.com;
+ s=20250903; h=from:subject:message-id;
+ bh=pDlL9CglIFwRMO2//WwSLnjr7T4jqi7GVAwBYo3zUck=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDKPlFo5/vZZuG+mk1PKvYgrl3X/XDn3f2vjybkxZ+tnn
+ FZQf6Fq01HKwiDGxSArpsiyJNeoICJ1le29O5osMHNYmUCGMHBxCsBENvEyMnSd2xG4cIsok6FS
+ pEK0S/KyA7ITX1b7r++ecmNv/6FlKzcwMkwXEzkyV31+S2zVzYBbjDqb3jxwuXrIh2GTYi2r3eb
+ E2dwA
+X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
+ fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-On Wed, Mar 25, 2026 at 06:07:30PM +0000, Biswapriyo Nath wrote:
-> The '#reset-cells' property is permitted for the SM6125 SoC clock
-> controllers, but not listed as a valid property.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202603150629.GYoouFwZ-lkp@intel.com/
+Here's a small series that updates the kernel documentation for struct
+clk_core, moves the clk flags into a new enum so that they can be shown
+in the documentation, and updates the clk kunit test to use HZ_PER_MHZ.
 
-Fixes?
+Since I've been doing a lot of work in the clk subsystem lately, I would
+like to add some more documentation about this subsystem in the future
+as I have time. There's a lot of other things that I know can be done
+now, and I'd like to just start with these small changes merged.
 
-> Signed-off-by: Biswapriyo Nath <nathbappai@gmail.com>
-> ---
->  Documentation/devicetree/bindings/clock/qcom,dispcc-sm6125.yaml | 3 +++
->  1 file changed, 3 insertions(+)
-> 
+Changes in v2:
+- Add clk_core_flags enum, and kernel doc for this.
+- Update descriptions in clk_core based on feedback from Stephen.
+- Update clk kernel docs to show some of the new API documentation.
+- Link to v1: https://lore.kernel.org/r/20260304-clk-docs-v1-0-fee468db99f1@redhat.com
 
+Merge Strategy
+--------------
+Since there is a new enum that's added, and it's referenced in the
+docoumentation, all of these patches will need to go through Stephen's
+tree.
+
+Signed-off-by: Brian Masney <bmasney@redhat.com>
+---
+Brian Masney (4):
+      clk: move core flags into a new enum for kernel docs
+      clk: add kernel docs for struct clk_core
+      docs: clk: include some identifiers to keep documentation up to date
+      clk: test: convert constants to use HZ_PER_MHZ
+
+ Documentation/driver-api/clk.rst | 58 +++++++---------------------------------
+ drivers/clk/clk.c                | 51 +++++++++++++++++++++++++++++++++++
+ drivers/clk/clk_test.c           |  7 ++---
+ include/linux/clk-provider.h     | 55 ++++++++++++++++++++++---------------
+ 4 files changed, 98 insertions(+), 73 deletions(-)
+---
+base-commit: 85964cdcad0fac9a0eb7b87a0f9d88cc074b854c
+change-id: 20260304-clk-docs-0b578f421600
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Brian Masney <bmasney@redhat.com>
+
