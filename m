@@ -1,154 +1,94 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657CD3E315D;
-	Wed, 25 Mar 2026 14:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A7723E4C7F
+	for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 15:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774449857; cv=none; b=NaMmfr6R38m2MYYdjYBQuL+RGLQXMmUfJnAlDtiyyp1CDIOWszWiOdCYqAQLbjR05WhnIz0o8vmd4iPVP0FAfUXXBzX2dW6paPJIJWuaFI4IPNk1KIVnXpCGjGQEnSzZs92EyEsCdTZrEUv+t/1aF778KEq7rFL70wqZCgtmS0A=
+	t=1774454385; cv=none; b=mRxS6WbAI48vmXbkGG+IWrax+BHNzyVgr5wt+nMst22jgYstJhqxQt7NSee+WUyiO3rD6wTqvnRBIAWE7vTm26BMye/d2aYjZE2SpP2jEc6lPEb0oHbMrQzzjRJlTpGBNvkuEfSZnPTOeP6d9qzJwPE9bsRtRZ6077F+SUU1GWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774449857; c=relaxed/simple;
-	bh=jT14jpW+74aFxWT5k0JsiKiyPP15AQVRZS7/5fdgNS0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pwxEeCaP+ai/eI1w8dxCgsbmo+yN/Y6FMQedj71gHARqo0JqKkOBplORWasMSSVe+I7bGc3U28tNPtBeHqOn8gQjQ2P6keKlm3iaUWVTACY9Ax+bvtm0zwJrvgqJasXsrdld3OIhIgGK74usQNUWu3OyQp0P/b3ybqkuE3RZ8sM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gqvjBLpm; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gqvjBLpm"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 4AF2F1A2F95;
-	Wed, 25 Mar 2026 14:44:15 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 217C9601FA;
-	Wed, 25 Mar 2026 14:44:15 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 56D7D10451522;
-	Wed, 25 Mar 2026 15:43:55 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1774449852; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=JD+Fs5XfMyLydBRoehNihG/5lsm5NM0S4zMf8NGpirs=;
-	b=gqvjBLpmkSLJAYbmDeGzZRLD9Ccx0kGJ+DN1N+YpWxaW5rwGSimaQrzjJDOYlV9EYSCJXC
-	EGclYReSW/RNCSO1Hu4WTUKD57Ziz1RKr8cPgpsfGmAP4WEPw+vgCwWkjKY9MSUY9LEVJ5
-	6tZHX14Ux3GOzP2naksiasYRWY6SGCxOeInkkhKHnjF3KzqTlDE/RonHW77l2feenMrKtZ
-	cSTYd0V7ODBlSM4QX1RMj5id3x2Ob313sCSnE3Hd+xGsT3juXCzJcIYBFohtcxaPyYLz+X
-	eKq3F87xw+izeQvuGGtry4ygCvsiMBpIw+2Bl/K7VPxnw+SA0SbnFtvGb6ObSA==
-From: Herve Codina <herve.codina@bootlin.com>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Kalle Niemi <kaleposti@gmail.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Peter Rosin <peda@axentia.se>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Saravana Kannan <saravanak@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Charles Keepax <ckeepax@opensource.cirrus.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	David Rhodes <david.rhodes@cirrus.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Mark Brown <broonie@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Shawn Guo <shawnguo@kernel.org>
-Cc: Wolfram Sang <wsa@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	driver-core@lists.linux.dev,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	patches@opensource.cirrus.com,
-	linux-gpio@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-spi@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v6 27/27] misc: lan966x_pci: Add drivers needed to support SFPs in Kconfig help
-Date: Wed, 25 Mar 2026 15:35:54 +0100
-Message-ID: <20260325143555.451852-28-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260325143555.451852-1-herve.codina@bootlin.com>
-References: <20260325143555.451852-1-herve.codina@bootlin.com>
+	s=arc-20240116; t=1774454385; c=relaxed/simple;
+	bh=4RYRYnx/N+uB3nG/PmCpdDFzhigjOZcdXVf1qTaHjTU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sq2fHMw7t2QZx25Hc7tiK3sZzLGEdFmI0xkdTzdVGNqp3Zt2j0J7Xp0bQYI12s7UzveWMtyIJ2yn7ObBbgvZ12dKVnjlzofb6srzWdTDiaRQyKr9Hia4I65bB6s0tUtBe1OA2f53+xFjL7oZdKXC+TjPBcyeaq2AEqL765xjFdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-950cd03fb5eso1832061241.0
+        for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 08:59:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774454383; x=1775059183;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DTYn6c2oWhs1HU9mLDTjqKGDTTeJkf0Hf24+Mstq7Ik=;
+        b=iP+HYMOpw2og9Z0o7V9K1HJgRyQgRmXX12PKv1hlxgi8MX7KO6rA2C8BsIhSAft78q
+         WP5nlgvboE0DzOWzIF/fhha1pNa6sxh/uDwdEddWO3ghq9pzEir2cx370T6Qc5I1Hvhn
+         eqOD+Jqu+M9sG6DRkWPJF6czNtF9nj7N8VR/jeTL77wkxKXTPpBL7WGun+BkbjSGTjWT
+         HIc/VKB1CykbSJdy73XrRqowU2zAbapln0oNBMuzBHpiTm77j7bc9dwXXbgmHspLo+8t
+         cLFbb68i5Rx1lmIN7MBnOUZwfnoxSa5vV6X3035nktgFbyXutSQP6FhCbPt0sny6xERA
+         dwRA==
+X-Forwarded-Encrypted: i=1; AJvYcCUbkoT8BRZFlDeAgMpdD5OcNoPGGobKqTBh9mfmrcNKr5VldwswgDM99PTlQK40ZxjQg2mqSSxfokI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoYeZzMV8XFA5s+07kgvG/6m1S9PMa54+F2k2J2eeuWZVYGhkp
+	HQTcKmSjjjVtebBeSpMs42/4lz4x16EJSdgYmtBwAB+tT5/rUv9Onaa2WqiWq7zg180=
+X-Gm-Gg: ATEYQzwZUB0mYTXvIslk9j2q8kms+tjc8GbG0rTR/768z48ECISDpVyfyFIxCLe39oG
+	gcsqyhEM7YMOEX8a8hP/Cel2k69J5+JoRFL2HfAJU0c8h4DJWPDgBTfnNSwlQbvkpliWHlHnhGP
+	yiTCBIiLEwT/FLAJLgWo2dK5gIANqdVfDcLQEaFeAIT96Js1EdFJNxga9rU4szQndNqfYel1qTF
+	XHfzjzg2Zwd2FYDp3uQsRaVzD8zj+s8cWbQVg6/XCPbfFo9KV9jquUFj8vKRUePmahkwf+JOwKr
+	POmUwCz7+/LrfV+Jy/mz+wdS3PzpzfHOHUSXFIFG4O15rU4uw8lpg/u2plsOkAS34CDK7A1kfM5
+	RPT774e3O41FxT3gIlOb4NI8pcqF+W0qiePhXu2J91FEg9sFhMypdP92LM8sJIQXGKT2G6TCjgE
+	LiA0/cSOfr2L+wEIiQMbACkeCS63r3HlToyltrFry3ShRM4gffZ0PUzTrP3oXq
+X-Received: by 2002:a05:6102:3f51:b0:603:2432:9fe4 with SMTP id ada2fe7eead31-603873188dfmr1921503137.27.1774454383435;
+        Wed, 25 Mar 2026 08:59:43 -0700 (PDT)
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-951be1066fasm423096241.1.2026.03.25.08.59.41
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Mar 2026 08:59:42 -0700 (PDT)
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-60327793ec9so608385137.2
+        for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 08:59:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXthS23pH9XTxDXLT3lgciLG9iGgnrSJoa29YMZVNCDqkZiekzSLoSniNIcKJSTjwS3NYADKicnwBE=@vger.kernel.org
+X-Received: by 2002:a05:6102:83cb:b0:5ff:be25:8936 with SMTP id
+ ada2fe7eead31-6037901966dmr1857866137.5.1774454381452; Wed, 25 Mar 2026
+ 08:59:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20260318085119.44717-1-john.madieu.xa@bp.renesas.com> <20260318085119.44717-3-john.madieu.xa@bp.renesas.com>
+In-Reply-To: <20260318085119.44717-3-john.madieu.xa@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 25 Mar 2026 16:59:29 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXXwtniV=_gywHfDCBQ_+660aV4+K2SXbfM3c9guNrbng@mail.gmail.com>
+X-Gm-Features: AQROBzASFVBtfoGlkigJX5s9euj0nyf-Dtn2deDVkxMdGhdHzx7S7UnqewbVbV0
+Message-ID: <CAMuHMdXXwtniV=_gywHfDCBQ_+660aV4+K2SXbfM3c9guNrbng@mail.gmail.com>
+Subject: Re: [PATCH v9 2/4] arm64: dts: renesas: r9a09g047: Add PCIe node
+To: John Madieu <john.madieu.xa@bp.renesas.com>
+Cc: claudiu.beznea.uj@bp.renesas.com, lpieralisi@kernel.org, 
+	kwilczynski@kernel.org, mani@kernel.org, krzk+dt@kernel.org, robh@kernel.org, 
+	bhelgaas@google.com, conor+dt@kernel.org, magnus.damm@gmail.com, 
+	biju.das.jz@bp.renesas.com, linux-pci@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, john.madieu@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-Recently, new device-tree nodes were added in the overlay to add support
-for SFPs on LAN966x PCI device.
+On Wed, 18 Mar 2026 at 09:51, John Madieu <john.madieu.xa@bp.renesas.com> wrote:
+> The RZ/G3E SoC family features an x2 PCIe IP. Add the PCIe node.
+>
+> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
 
-The LAN966X Kconfig help section mentions drivers related to devices
-added based on the overlay description.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v7.1.
 
-Add drivers related to devices described by those new nodes in the
-already existing driver list.
+Gr{oetje,eeting}s,
 
-Signed-off-by: Herve Codina <herve.codina@bootlin.com>
----
- drivers/misc/Kconfig | 5 +++++
- 1 file changed, 5 insertions(+)
+                        Geert
 
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index 9c285a7c88ba..69825dc0f85e 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -635,13 +635,18 @@ config MCHP_LAN966X_PCI
- 	  Even if this driver does not depend on those other drivers, in order
- 	  to have a fully functional board, the following drivers are needed:
- 	    - fixed-clock (COMMON_CLK)
-+	    - i2c-mux-pinctrl (I2C_MUX_PINCTRL)
- 	    - lan966x-cpu-syscon (MFD_SYSCON)
-+	    - lan966x-gck (COMMON_CLK_LAN966X)
- 	    - lan966x-miim (MDIO_MSCC_MIIM)
- 	    - lan966x-oic (LAN966X_OIC)
- 	    - lan966x-pinctrl (PINCTRL_OCELOT)
- 	    - lan966x-serdes (PHY_LAN966X_SERDES)
- 	    - lan966x-switch (LAN966X_SWITCH)
- 	    - lan966x-switch-reset (RESET_MCHP_SPARX5)
-+	    - sam9x60-i2c (I2C_AT91)
-+	    - sama5d2-flexcom (MFD_ATMEL_FLEXCOM)
-+	    - sfp (SFP)
- 
- source "drivers/misc/c2port/Kconfig"
- source "drivers/misc/eeprom/Kconfig"
 -- 
-2.53.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
