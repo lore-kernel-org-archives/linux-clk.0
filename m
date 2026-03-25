@@ -1,114 +1,147 @@
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AAD018D636
-	for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 12:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9E53D6479;
+	Wed, 25 Mar 2026 12:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774442733; cv=none; b=IGwsNcJ/aorzlv2YDfZrnHdD8yE0mx12ETMTMr4C+ZlCl4cO7urEmq+ZPNlkbGIWrZk5ZUB7lgi2HEr4wpyrl5xxMIQGifHlLXFGfi4AR9bJgA8u3MyRFaaWiA1AAsNPFSmkV2+ARuhduOx89Mvt3mouVbcsXdIEHHKp9upcj2M=
+	t=1774442925; cv=none; b=RImIKKp44c5PJODzVhShag3N3OAzCxQw5sTnvNsQXm3Subn+8hKe+rFAZU38lsmV8ebTUFl73MCucjB6Fs4tzPNQiPKZGAcJFKAb7gO+mt7cQQr1UZnieL/56cUxz5H6eeaCzi5bna8c5+VnJhoHFUrLfe/isuCXxas2xJDRERY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774442733; c=relaxed/simple;
-	bh=XBr/cba/Zlc6n5bcrHvESQz0mtn5yxY2rSA1hEofdBs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E521m/nWzsNQ0TMqFgBZFArH2C1fUK4wbQx5PCJaNZOIvpQR2//L7PT1NDQxuwk04iNtZHiYX7bcGZuwYFUp6FMeRzL62a/+bnFAR1bC42/AEmYwBw90Nb1dB0ZDQS3lA1P/y8RoKia/cRh6TwOwnIm3YmFPMhB3j6cX6bBXb+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-56cd842b60bso1544016e0c.0
-        for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 05:45:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774442731; x=1775047531;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/1RZxkj8eIoN6WQ6j7coP9y9yKKmcQFtqClsMwvMZgA=;
-        b=AQ8MlOsiL8Vl9TNSFxLGvfk6QK9es0mP4HbhJYTaCqCZGLw3yCpnpXuQQLURIw+3uc
-         NBEZxdQS4vhBsnpivcdxHIgbTFfyYzULqIm6h3OGVzNZLzzj2YVgXPtojXPGgPBYh6oi
-         0+Cih5+xrYCgSqs+9wMLsUTufbIiDc+dGxo6659YbPt3MsYZi+dvAwKwKfpCeT5/hdAH
-         o/Uh/FgiFJWLHhbJMxUuQDCSezBx+0Zq9FHESQPmcFfn1ATBMi5Gr6TDigKhu1aJdZDd
-         TdOelsIkVPGIg8DWQAjF3W+971B+fnHkJ7YgL+nzMlPQJonqjN+jzi504KGpCInDWxcD
-         LLNA==
-X-Forwarded-Encrypted: i=1; AJvYcCWNR2XSVenGzbFa9C4mBjaMd9Yd+UloWPq3WA9Ir4x6ZHLy2XyRiCdRKKqa65McRCSddeOA/8HIcHc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5GKHFEKnmBJ16nb+JeWfiCO/C095QcDHapYJRNrITlibvtLE/
-	CZwWrZmWStek6++RLtR3haecOhrWnUdZYjrxxn514pFGG2BXViPPwth1OOSbvKFFqSI=
-X-Gm-Gg: ATEYQzxg6OuD4iJccVocvqYuwcUVfRy6jv6y3mounCq+va30m2yV0bas30YNlfXGJXL
-	gKnfkgieEyWG18HkHT1ZNMWVzK6V5fJ+y37wcasFzw0TRhKwqv5O9Wz793z8LCXjKrH3aEqsTb3
-	PnxK9CZdtb2oYRYqAAKuIsfwr5d0hqXWiSoFX6fOxVGm0lIfc8xIrMzcbXqFRu0euhV7byA1aE8
-	hpGLv2r61ekSovk1hb8yEhesA35xxzSd0UDBQib/+k71h89xnl5cc0wssqdpAvkN63aLedlCugj
-	qf0wxelWzBMGPQLN9r8LfaPyJ9NpcE2JaDi4JXpCWWnOnWGKGvOlOoD0UjL3yRsS9/Z0bLQYWDW
-	60UU8ZgVh0cYAMEsJOVQFvLi3eQDLAb6zyTZKEIXwrLvUk1QsembL2o/INoqCgtNica+YwRMV43
-	AqKPjwzrPWWhftXtlj3MJ91PBl/O94LySALefkSz6xR0cJhkmtVa1f4qnlgRD8Fk9BgACsch48V
-	Dg=
-X-Received: by 2002:a05:6122:513:b0:56b:1eb:d396 with SMTP id 71dfb90a1353d-56d220d0d3amr1567608e0c.14.1774442731217;
-        Wed, 25 Mar 2026 05:45:31 -0700 (PDT)
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com. [209.85.221.177])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56ce54d6b6asm18130718e0c.4.2026.03.25.05.45.30
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Mar 2026 05:45:30 -0700 (PDT)
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-56ce1384618so1526727e0c.1
-        for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 05:45:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVj4vAf9EiSDEPoQ8txYWceoHGkY7Y3d+p2ldC+ll21NHsZnTEwqgK/BcG6fgYW0jT+MKpTQ8QS7eI=@vger.kernel.org
-X-Received: by 2002:a05:6122:3784:b0:55e:452f:7af0 with SMTP id
- 71dfb90a1353d-56d21f36647mr1622399e0c.2.1774442730756; Wed, 25 Mar 2026
- 05:45:30 -0700 (PDT)
+	s=arc-20240116; t=1774442925; c=relaxed/simple;
+	bh=P0Ni30xRg8QLMwvZ3OqGaYPQrCWuMnf4eu5qeZBTnTg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QzJH7LaZoWQKQxXRUCuqcjbBXvnTe4xlaXT73dDLbIITjC+xgOaxFa9Ha0mH8wGzM/Nqo5cCN5E7zKQMoFrm5V30/7fHO9oZpK1AOPv+DOC+0adcgDAa30soekGCk5UeuwUTVa8AFatxEBtj7s4g3NqrzBrKyBBuz9p8bSTDZb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cg24GlqA; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cg24GlqA"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 3A50D4E4270B;
+	Wed, 25 Mar 2026 12:48:36 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 0C5CE601E2;
+	Wed, 25 Mar 2026 12:48:36 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 38C7110451386;
+	Wed, 25 Mar 2026 13:48:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1774442914; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=vrUb56OKoILRudzSP2HC6iXbV4b/pdrYXylo4VOm6Ak=;
+	b=cg24GlqAq71cIWMFccmLB7wrDVQ2wuWCHWIU+/af6+vNtyEkQQCG6DGEkUwuzkQnElrMZC
+	cpS++ZFELbzorBzb0J085cw25rOBXyejUBnbeRjlJnMXAMRSCfZgAg7LbPn2nMVjanskG3
+	a+BLte2WxI8w+RszzA933t1RjOXb7zlFAmbKdreK+zrXvUvZu4Hg6JgYyHL9FWtS57rKEj
+	Yd4yP0zv+XH1dzA2wb0myTUcswAQg7Tz7xOU1WeRBMIKndT3aQ+v1mD8McvWePoYIDTzZ+
+	PG1eDykT94b8yVmxt6VrlyzsffJf7dCvs7okzo9UvcAusXqn0rWEpc+doOILYg==
+From: =?UTF-8?B?QmVub8OudA==?= Monin <benoit.monin@bootlin.com>
+To: Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Gregory CLEMENT <gregory.clement@bootlin.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <pjw@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
+ =?UTF-8?B?VGjDqW8=?= Lebrun <theo.lebrun@bootlin.com>,
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+ Stephen Boyd <sboyd@kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-riscv@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+ Sari Khoury <sari.khoury@mobileye.com>, Brian Masney <bmasney@redhat.com>
+Subject: Re: [PATCH v5 00/10] Add clock and reset support for Mobileye EyeQ7H
+Date: Wed, 25 Mar 2026 13:48:28 +0100
+Message-ID: <2786053.vuYhMxLoTh@benoit.monin>
+In-Reply-To: <177431268711.5403.12519723172593766522@lazor>
+References:
+ <20260317-clk-eyeq7-v5-0-6f6daa2c2367@bootlin.com>
+ <177431268711.5403.12519723172593766522@lazor>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260324120435.243641-1-herve.codina@bootlin.com> <20260324120435.243641-2-herve.codina@bootlin.com>
-In-Reply-To: <20260324120435.243641-2-herve.codina@bootlin.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 25 Mar 2026 13:45:19 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXQVRH4vt_or2V2V4Ph8RGQ_CSPJtnK7iWiDcK5SxTC0w@mail.gmail.com>
-X-Gm-Features: AQROBzDfv2p-HOz70T6PfmXIvlHiKxqYHY4VCUiyQuUAkOP4Br1NI9NmB94eAak
-Message-ID: <CAMuHMdXQVRH4vt_or2V2V4Ph8RGQ_CSPJtnK7iWiDcK5SxTC0w@mail.gmail.com>
-Subject: Re: [PATCH v3 1/1] clk: renesas: r9a06g032: Enable watchdog reset sources
-To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Pascal Eberhard <pascal.eberhard@se.com>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue, 24 Mar 2026 at 13:04, Herve Codina (Schneider Electric)
-<herve.codina@bootlin.com> wrote:
-> The watchdog timeout is signaled using an interrupt and, on this
-> interrupt, a software initiated reset is performed.
->
-> This software initiated reset performs, in the end, a hardware system
-> reset using SWRST_REQ of RSTCTRL register.
->
-> The watchdog itself is able to control directly the hardware system
-> reset without any operation done by the interrupt handler. This feature
-> allows the watchdog to not depend on the software to reset the system
-> when a watchdog timeout occurs.
->
-> Indeed, when the watchdog timeout occurs, the watchdog requests a system
-> reset using its own hardware dedicated line but this reset source is
-> disabled at the reset controller level.
->
-> To benefit of this feature and be robust against software issues, enable
-> watchdogs reset sources.
->
-> Suggested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>
-> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Tuesday, 24 March 2026 at 01:38:07 CET, Stephen Boyd wrote:
+> Quoting Beno=C3=AEt Monin (2026-03-17 06:33:02)
+> > This patchset brings the support of the Other Logic Blocks (OLB)
+> > found in the first Mobileye SoC based on the RISC-V architecture, the
+> > EyeQ7H. Despite the change from MIPS to RISC-V, the Other Logic Blocks
+> > provide similar clock and reset functions to the controllers of the
+> > chip. This series introduces the device tree bindings of the SoC and
+> > the necessary changes to the clock and reset eyeq drivers.
+> >
+> [...]
+> >=20
+> > This series depends on the EyeQ6Lplus support patchset posted
+> > previously[1], which in turn depends on Th=C3=A9o's series[2]. In parti=
+cular,
+> > the changes made to the clk-eyeq driver in this patchset depend on the
+> > changes done in these two series.
+>=20
+> Is it a build time dependency or a run time dependency? Are you
+> expecting me to apply all three series to the clk tree?
+>=20
+It is a build dependency for the changes to the clk-eyeq driver. I am
+trying to figure out the best merge strategy. I propose to split the
+patches between the mips tree and the clock tree. The changes to the
+clk-eyeq driver and the auxiliary pinctrl-eyeq5 and reset-eyeq drivers
+could go through the clk tree. In detail, the following patches can
+be applied in order to avoid merge conflicts and the series is fully
+bisectable:
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v7.1.
+All the patches from Th=C3=A9o's series[1]:
+        [PATCH v7 1/3] clk: eyeq: use the auxiliary device creation helper
+        [PATCH v7 2/3] clk: eyeq: add EyeQ5 children auxiliary device for g=
+eneric PHYs
+        [PATCH v7 3/3] reset: eyeq: drop device_set_of_node_from_dev() done=
+ by parent
 
-Gr{oetje,eeting}s,
+The following patches from the eyeq6lplus series[2]:
+        [PATCH v4 02/13] dt-bindings: soc: mobileye: Add EyeQ6Lplus OLB
+        [PATCH v4 04/13] reset: eyeq: Add Mobileye EyeQ6Lplus OLB
+        [PATCH v4 05/13] pinctrl: eyeq5: Use match data
+        [PATCH v4 06/13] pinctrl: eyeq5: Add Mobileye EyeQ6Lplus OLB
+        [PATCH v4 07/13] clk: eyeq: Skip post-divisor when computing PLL fr=
+equency
+        [PATCH v4 08/13] clk: eyeq: Adjust PLL accuracy computation
+        [PATCH v4 09/13] clk: eyeq: Add Mobileye EyeQ6Lplus OLB
 
-                        Geert
+And the patches from this series:
+        [PATCH v5 01/10] dt-bindings: soc: mobileye: Add EyeQ7H OLB
+        [PATCH v5 02/10] reset: eyeq: Add EyeQ7H compatibles
+        [PATCH v5 03/10] clk: fixed-factor: Rework initialization with pare=
+nt clocks
+        [PATCH v5 04/10] clk: fixed-factor: Export __clk_hw_register_fixed_=
+factor()
+        [PATCH v5 05/10] clk: eyeq: Prefix the PLL registers with the PLL t=
+ype
+        [PATCH v5 06/10] clk: eyeq: Introduce a generic clock type
+        [PATCH v5 07/10] clk: eyeq: Convert clocks declaration to eqc_clock
+        [PATCH v5 08/10] clk: eyeq: Drop PLL, dividers, and fixed factors s=
+tructs
+        [PATCH v5 09/10] clk: eyeq: Add EyeQ7H compatibles
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+The last patch to the MAINTAINERS file can be left aside for now, I can
+include it in the series introducing the EyeQ7H SoC (not yet posted).
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
+[1]: https://lore.kernel.org/lkml/20260225-macb-phy-v7-0-665bd8619d51@bootl=
+in.com/=20
+[2]: https://lore.kernel.org/all/20260316-eyeq6lplus-v4-0-bf44dfc7a261@boot=
+lin.com/
+
+
+Best regards,
+=2D-=20
+Beno=C3=AEt Monin, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+
+
