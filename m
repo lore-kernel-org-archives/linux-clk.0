@@ -1,86 +1,52 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from gofer.mess.org (gofer.mess.org [88.97.38.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4EE83644D1;
-	Wed, 25 Mar 2026 20:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47BEE749C;
+	Wed, 25 Mar 2026 22:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.97.38.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774470039; cv=none; b=eybBcXhRxMxmPtn87BtN2tyZcMcdfxSZUt/3Vfh4OOjuGp65DIV2u0pfE6O8/JElhxGUPZWbN+VE+kgpMOocSSz+uj2NLdfs7/+hRyKUaLlNHBDZ48YuTqK1vet6nCutMXOs6JvvBjMhSR/1EDgQc3XpoF4m6mbAR1aOSS6hZyY=
+	t=1774476973; cv=none; b=poQlw4tHQt/rX67KK8Q4DMFaGuGIoFQCmE+YswilArtekXoEByYikDLr59OtlEhcgGc4iuntI41LgpXjhgsJpR2JV9VjPwvTbZiQKh+rD4wQn0g8HA2inMCNMyBQseRjgQkWjdU/ZbAYm9RXRnp4pDTTn+7bfhNwJYiO7bLZjLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774470039; c=relaxed/simple;
-	bh=EJf9EH03K048GnQyciGn9nJ/4njlCY8sY9h7aSYy5jQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=d/hwnw7DXZ71R5AFbQeXXCrtvFgOKDmscmEvalotQF+3a31/4Ma6W+uZ9Qw+wCSvMBWMNpapeMzBt22kwDRMBsextEGh8G4w2MfQoWoEFcWtHyC2rZfeue+sMkjxFXxIAkj8x6on8EibsojxQ1FTYudKAy2gjaUoASKU56Lwwjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R/sHWhQC; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774476973; c=relaxed/simple;
+	bh=Z8CurjlzVO6oEEWpQW0GpyYWUWY2tf33N/Sx0Va/zj0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N35regyZD+U4cU4TPKk2a8HVg2CdRy9i+0ZgFfHadt/unuyX/NB26/UE7A1j9Gow8y2kWfgLre08qA+B8cQJeuj1OagfoLARCQfvt1kGXWL31CfmfdZT5j7qBtQzgB44Zb87qkQIf9+yCjlVVr3cO2L/lAuiWfC5JMzsi4zXWyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org; spf=pass smtp.mailfrom=mess.org; dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b=TzDpLPyo; arc=none smtp.client-ip=88.97.38.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mess.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R/sHWhQC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 469B9C4CEF7;
-	Wed, 25 Mar 2026 20:20:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774470038;
-	bh=EJf9EH03K048GnQyciGn9nJ/4njlCY8sY9h7aSYy5jQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=R/sHWhQCzYd+ZF4ClNbFtPpjz3TwD6fZXZ1sS0wPW8AqP3rl0tovUYaWdonKVWaiJ
-	 OwlrlLGPKyQJzjTcNTMD7KHdXAJOjy/Pgec4iK1sQUwsjoZifIZYI5uC0jTlzEGcLG
-	 18viuyai68dZgzN8F87qzLT1SkxhJdMLTx9dm/6064TjKTmgnptwvlSI/XP/fcRtl4
-	 giL0rQUFbbUETMdG05uXbW4WH5fvuqaOMDFtm2P7I5VMCeTlaQAU4irvLB2JumoxMH
-	 16eIDSTM+Evjf3AQNa1cthVdIu/mws4vSuaCZCJQTTLQFydtFozsiRGP5ZJm2cF9Ry
-	 tmA3OJZNW4eqw==
-Date: Wed, 25 Mar 2026 15:20:37 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh@kernel.org>,
+	dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b="TzDpLPyo"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mess.org; s=2020;
+	t=1774476602; bh=Z8CurjlzVO6oEEWpQW0GpyYWUWY2tf33N/Sx0Va/zj0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TzDpLPyoZ/wAHO/pPjHsoyh120LxTFaW4h80MYAM9rV7YoVt10AHClEUpkrx1kM/g
+	 fkMZE8ks/rR0fUABZs55I22AZNxepGnKZoW7aDJhDHy/BfEo8Qw5ReL1xcTb3ZLTDH
+	 hxXUqUG0QsDBLANfTNdvay/4oZJtQa6xAPnRer3FEEA1L5MeEpTF0mKmJ6F3QETR6o
+	 6kWDqOGHbLe+o80oZY49MWdiRvBr8WgHB/BtZqaoSdscGr2exqcdD3WxiVQ3fX5cKO
+	 IHbE3ovO0Hnmw/ZuJUUBiCz/hOVnJ0lZr8ZA46jMMv9QHxKvPv/vS4irV8siawmDIa
+	 eWogZfU10xOjg==
+Received: by gofer.mess.org (Postfix, from userid 1000)
+	id C198E1011B2; Wed, 25 Mar 2026 22:10:02 +0000 (GMT)
+Date: Wed, 25 Mar 2026 22:10:02 +0000
+From: Sean Young <sean@mess.org>
+To: Biswapriyo Nath <nathbappai@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Kalle Niemi <kaleposti@gmail.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
+	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Peter Rosin <peda@axentia.se>, Arnd Bergmann <arnd@arndb.de>,
-	Saravana Kannan <saravanak@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Charles Keepax <ckeepax@opensource.cirrus.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	David Rhodes <david.rhodes@cirrus.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Shawn Guo <shawnguo@kernel.org>, Wolfram Sang <wsa@kernel.org>,
-	linux-kernel@vger.kernel.org, driver-core@lists.linux.dev,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-sound@vger.kernel.org, patches@opensource.cirrus.com,
-	linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v6 13/27] PCI: of: Remove fwnode_dev_initialized() call
- for a PCI root bridge node
-Message-ID: <20260325202037.GA1291636@bhelgaas>
+	Stephen Boyd <sboyd@kernel.org>,
+	Martin Botka <martin.botka@somainline.org>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+	linux-clk@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+	phone-devel@vger.kernel.org, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH 0/7] Add vibrator, IR transmitter and USB-C handling in
+ xiaomi-ginkgo
+Message-ID: <acRdOmHKQmBp-RSd@gofer.mess.org>
+References: <20260325-ginkgo-add-usb-ir-vib-v1-0-446c6e865ad6@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -89,67 +55,48 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260325143555.451852-14-herve.codina@bootlin.com>
+In-Reply-To: <20260325-ginkgo-add-usb-ir-vib-v1-0-446c6e865ad6@gmail.com>
 
-On Wed, Mar 25, 2026 at 03:35:40PM +0100, Herve Codina wrote:
-> During the instantiation of devices described by a device-tree overlay
-> applied on a PCI device, devlink displays the following kind of debug
-> messages instead of creating the expected links:
->    'Not linking xxxx - might never become dev'
+On Wed, Mar 25, 2026 at 06:07:23PM +0000, Biswapriyo Nath wrote:
+> This patch series add support for various components in Xiaomi Redmi
+> Note 8.
 > 
-> Without those expected links, the device removal order cannot be
-> correct.
-> 
-> Those debug traces are printed by fw_devlink_create_devlink(). In our
-> use case, they are all printed because the supplier of the link has at
-> least one of its ancestor with its fwnode flag FWNODE_FLAG_INITIALIZED
-> set.
-> 
-> The culprit ancestor is the PCI root bridge.
-> 
-> The fwnode related to the PCI root bridge is created dynamically by the
-> of_pci_make_host_bridge_node() function. During this creation
-> fwnode_dev_initialized() is called which set the FWNODE_FLAG_INITIALIZED
-> flag.
-> 
-> Calling fwnode_dev_initialized() tells devlink that the device related
-> to this node is handled out of the driver core. This is not correct in
-> our case. Indeed the device related to this firmware node is handled
-> using driver core mechanisms and is fully compliant devlink
-> expectations.
-> 
-> Simply remove the fwnode_dev_initialized() call. With that done, the
-> devlink debug messages are no more displayed and links that were missing
-> are correctly created.
-> 
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> Most notably:
+> - IR transmitter
 
-I would ordinarily make sure the person who added
-fwnode_dev_initialized() here was ok with its removal, but it looks
-like you added this with 1f340724419e ("PCI: of: Create device tree
-PCI host bridge node"), so I assume you're ok with removing it :)
+For the IR stuff:
 
-I suppose there could be a "Fixes: 1f340724419e" tag, but maybe
-there's no need to backport this anywhere?
+Signed-off-by: Sean Young <sean@mess.org>
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Thanks,
+Sean
 
+> - USB-C OTG
+> - Vibrator
+> 
+> Also, fix some bindings warning as reported due to previous commits.
+> These are tested with linux-next tag next-20260320.
+> 
+> Signed-off-by: Biswapriyo Nath <nathbappai@gmail.com>
 > ---
->  drivers/pci/of.c | 1 -
->  1 file changed, 1 deletion(-)
+> Biswapriyo Nath (7):
+>       arm64: dts: qcom: sm6125-xiaomi-ginkgo: Enable vibrator
+>       arm64: dts: qcom: sm6125: Enable USB-C port handling
+>       arm64: dts: qcom: sm6125-xiaomi-ginkgo: Add PMI632 Type-C property
+>       dt-bindings: leds: irled: ir-spi-led: Add new duty-cycle value
+>       arm64: dts: qcom: sm6125-xiaomi-ginkgo: Add IR transmitter
+>       arm64: dts: qcom: sm6125: Use 64 bit addressing
+>       dt-bindings: clock: qcom, dispcc-sm6125: Add #reset-cells property
 > 
-> diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-> index b694fcda16b1..0993257fe025 100644
-> --- a/drivers/pci/of.c
-> +++ b/drivers/pci/of.c
-> @@ -811,7 +811,6 @@ void of_pci_make_host_bridge_node(struct pci_host_bridge *bridge)
->  	 */
->  	of_node_set_flag(np, OF_POPULATED);
->  	fw_devlink_set_device(&np->fwnode, &bridge->dev);
-> -	fwnode_dev_initialized(&np->fwnode, true);
->  
->  	ret = of_changeset_apply(cset);
->  	if (ret)
-> -- 
-> 2.53.0
+>  .../bindings/clock/qcom,dispcc-sm6125.yaml         |   3 +
+>  .../devicetree/bindings/leds/irled/ir-spi-led.yaml |   2 +-
+>  .../boot/dts/qcom/sm6125-xiaomi-ginkgo-common.dtsi |  56 +++++++
+>  arch/arm64/boot/dts/qcom/sm6125.dtsi               | 168 +++++++++++----------
+>  4 files changed, 152 insertions(+), 77 deletions(-)
+> ---
+> base-commit: 785f0eb2f85decbe7c1ef9ae922931f0194ffc2e
+> change-id: 20260325-ginkgo-add-usb-ir-vib-4a51bd9ff64b
 > 
+> Best regards,
+> --  
+> Biswapriyo Nath <nathbappai@gmail.com>
