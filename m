@@ -1,61 +1,62 @@
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455AF3947B6
-	for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 07:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DBEF3939B0
+	for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 07:58:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774425511; cv=none; b=p4uXPQW+z75bJTOAFrec+TB2xpybvsu3KqD9+YVz2bqnQHk6qaR91QvxdGxAny00Cvz7Z0MOZ+5VjTzYWpUs6IcEmJcqEaF1k7wHACHZqYK41LQ8nXShD5tGlVU1zY0zt1UjHXErtV6Q6F/UzmgKs6EOjjdVucAowAmjuZZqkyU=
+	t=1774425515; cv=none; b=SyhfjbYw+ClOt/gU/bfG1WA9OqGvdORgZ/XkTFGdFMdAogovWFOqVJob2YZFAlhct0irZQbg3kP69OktY9wVtjjF8pjFnX48KaWfBpsqCowDJjWH1UJQEHiyRWPVHjwA+XL7LbqphcxPQToSY79jJImEGb8ez2ZNGWQoyJGgBjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774425511; c=relaxed/simple;
-	bh=RlpyggZ6shR5FmYl+Tx6RPFjW5NGILkc2LzUfQogGiA=;
+	s=arc-20240116; t=1774425515; c=relaxed/simple;
+	bh=f2O8m6d4zMN/y+57nFPFMsH5+blVJVVbtwfj9AgMxCg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=W6AbKH3ON06DdOwphvCzdsmcZR9TH01GSLNmsFoZXYig5fxnKiOcgDMm4R+tZNy5+I+JwNO9ZZgmV1ksAzz7yNIXTkdDtN5lH7pD22gY3+bxPw51whkRAWA7ZLVpld+QT087M+IKDbOH+sMiKKsGamKQ7m8bpLNpYLx6BnRJyVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NSHM7HWW; arc=none smtp.client-ip=209.85.214.179
+	 MIME-Version; b=fhFqcw5W/C1kc8ZQcKk7r55FsCyG3wUYPOH907SdkJMPdJwJZEl0LvzfFFGhOo664jfE6zQFrQ7W6qh/VT7gP3fGGX8WBedcQShZ6vNdU00lHNq4imVgEmvUsVaOZXLDbL4oQ/RArhLR8H1drJMvoLmn+gb9Gmt1486sjBMIJFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FCO20bCM; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NSHM7HWW"
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2ab46931cf1so5166275ad.0
-        for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 00:58:28 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FCO20bCM"
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2b05761bec1so3013535ad.1
+        for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 00:58:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1774425507; x=1775030307; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1774425511; x=1775030311; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ToMAIYfDdLF98AYL+fgRMtnkblofR9bxvds0Kk+i8wY=;
-        b=NSHM7HWWcHCb0YPLq4vqtxkm4EqxsIVEoaZswiCCutS0KJIA3lJcUOzT0HvqgNMJnC
-         DUeSzYQmek0/qWLmWKEvZg0eVy7qIVpJIxyODS+8umFF08Mxs94SBQ1ayeTMEzA0NFeC
-         SQ7ZEevCE0P/BjA6Krvi3eeb7VsGY2sUrJRY0=
+        bh=0hzdGjCbyDsg4HVNNFyo8yv6JV0S2hPiHL6tBzGzVl8=;
+        b=FCO20bCM0STqf8LdyCi24mZEFJaSAo5iOp5kJMt8nIaw0CG+QfC0LEhoBnnytyb8cN
+         vBNaJ//wOy0oH719YZplW5gSoTZqhvN1xVkMgy9O/CAgAogkUxrziQasA7usMlBUVXAp
+         TLJMWebQZO8S0CH6bnifmjN07q1eMUd2xIhnc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774425507; x=1775030307;
+        d=1e100.net; s=20251104; t=1774425511; x=1775030311;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=ToMAIYfDdLF98AYL+fgRMtnkblofR9bxvds0Kk+i8wY=;
-        b=ilr3F94S5cqxc0pAA+ykB+Lnv42IFM3oY9E9VogSV0PefIWPoZpB2e/ek2gOIKU0ic
-         Si1J7CjXsoy7J+uPtk1RiPslof+RzM7IEvCxS/F6r8SqN/NxFS2+LFnBOO1eWPvceWNl
-         ShFKB1KlfG6RqeGhTxFp6QdkGA2o1+KvzRkhmxCUjJ/d/iGuGTMILSvypLVer652oJUz
-         5UfTi9AOeQL182WIadylmHVAZysyiP2J+l8wPioB2zhf8xjEhiLGlWd5vqcSvAt++qhU
-         Fc7xxNNHZ1whTPACjjYbYHGjIK2ns4cQM1HFEgeQ6pbegdJiLF45Q5+EE1CEs5h2zzhB
-         vrmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU6exI+yPwrIp7bIZaDTRYi54GFVhb76vdIK/oWDm2EopdCsBeOqu9PvCO2ebjCv8ILJGZIKkwtifE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHlOZL+qeqW8aD9TLUVMq9fxzBW8/+rs1mMfP6CyDjWimmeQet
-	KOTWnlqaik5CDAp3bzak1fZl6i4QrayyVJ+gja8dqWufLf3YCMzHrDPJLOqAYUbqKw==
-X-Gm-Gg: ATEYQzynUc4W4O8iMh09W/kB9briKTQoy2MfVAWS0iXTJWOKsyPQ3wTmsdwFH3S1EVC
-	kvVIEd3wKF0Z7PETXHYnEV1yss0L4G9Y7r5wUe74HMJeoBKLTHc679vvvpCXQLuiFwgP3fIEObD
-	F28EBlvPZZ5GXLdFboigMnnrr/FOocmJHhqaBiLXovluTrgamvA9E/bjtgjPqOG/VBhYVscvG7p
-	4nAXPQ6PpNxMhmFsrBuawMJRYbtxJMne/j2WiXV1iRWJTRPC+eZCmci+ozrdA47nrYw7h5qx4VI
-	SxLJl0uXRHz9oDOw8Hbx57RLVWOoPj7hHcxGFW3V76AtSPQoc65/PUhVLhCTAOU8AKIk0gpWRGd
-	JqEi/8FZuvFgGyNoM7AX9PvoE7r8ipedf7Nv3IbBSZz8UYOzJ8S77yQ7wtFXtydHehKXF1C1HJ+
-	nvghvWf0sidbQakcNLNB3v9tH6OTvnNXa07ezkmnvASnh4+9Wl0mJR8OhTBoORMtDdDI3eXRw2B
-	hVmISs=
-X-Received: by 2002:a17:903:3bcf:b0:2b0:4d5f:1f6e with SMTP id d9443c01a7336-2b0b06cc697mr27079345ad.8.1774425507438;
-        Wed, 25 Mar 2026 00:58:27 -0700 (PDT)
+        bh=0hzdGjCbyDsg4HVNNFyo8yv6JV0S2hPiHL6tBzGzVl8=;
+        b=Tva/kQyjR9KRMr79lwXgTHxyrDIJ3P0AWP/WYEnQy8RnfU4erOj50+2Z0JqjbNi9H9
+         ccm4PBU90t4kyfEdN0+0eRJPMcye3xVeiAUV2qMXvGWYanzbDC5jDjpqc9KtT2qd5KJR
+         LWleAq1J5z7PLCTgqEeLlITo62A9Z1JhOvabQtMTz6tNCg4voTBlc7og+RqrKch2N0Ma
+         UhnWdsUxOVcd/dbDS0px5ar4NtUGgXydlIePXEPCR722Mb8HndpckjZRdqqjC+d7GExj
+         W7/gwV63kxSFrhxrB0jAfINzUfE27aDr6BfhYjGsZ/2RChAPPN2qcVH8R3ZQT9nx0UWl
+         5LNA==
+X-Forwarded-Encrypted: i=1; AJvYcCVTt5kVpA/+Jv/CF5L+85D2jei6OFUVysNG0xTk/KIkT2z4MfWlkr+u4XUTCsBQrVSktwxeBN9Fnh8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzq1gdVTdXlKyd0/llPtQyieY7oz7lJM3eqs31r8os9qyrWiYOf
+	JRYwjjLMbRuYER70hpzWqLU4jhst/gvnd3v2Jasxf9PVEfil0lECe9yNqPedhhU8KyggBLUDcW9
+	XRY8=
+X-Gm-Gg: ATEYQzxVSb09VZzxs1I6eBf/RuI3kT4Za6RYuskEdzcRrYBBCkVSyG9iSJUdxInaPW9
+	e8pzdb4woknus8x7hD2yM7cPgT8J9mLkn3rZ0AXWd9QCGbwD0LySVyQLNtVYqTbq0T+0R5+Ro8N
+	F9026iStfikmqkSwc+Ij2fhpP4KZ2EAazba6oAhe3RdeGHjH1TjpwPgznPO/Hx34ClyFj2tSJXg
+	7FhtlXzAhvYbDpRQuWNblBl6CV/Ca7vpJd0A4R0glSbcDW39DCXvuItoBngjcv6I93Wew5NXOTr
+	xTYw4g2Qt0tFWWbcVhmf2Ca+6rdkxMTugNBI3hlt8NRCBVmU1CHq+8evyJ4rBMDQCCfVoULdzUC
+	DtpACRqFyPGiMlNIaXYQQkRZo9578ZWCP7EjO/xSxyy/gbhp0ZS2uPZTVGRQTBnNJpMeKv98ibb
+	6Cx+IRUBwPS8+dIhnnGFBndg49QStmKo+2Sp4wUXaaMR1CulrhT+oC2jNiE5kwM6Zs7YndarMwZ
+	O6Y53xFNhbFe5NVZA==
+X-Received: by 2002:a17:902:f607:b0:2b0:62cf:3537 with SMTP id d9443c01a7336-2b0b06ba4b4mr25966925ad.6.1774425510896;
+        Wed, 25 Mar 2026 00:58:30 -0700 (PDT)
 Received: from wenstp920.tpe.corp.google.com ([2a00:79e0:201d:8:7ff0:bee3:7d45:eab])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2b08366c3f7sm219682465ad.60.2026.03.25.00.58.23
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2b08366c3f7sm219682465ad.60.2026.03.25.00.58.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2026 00:58:26 -0700 (PDT)
+        Wed, 25 Mar 2026 00:58:30 -0700 (PDT)
 From: Chen-Yu Tsai <wenst@chromium.org>
 To: Stephen Boyd <sboyd@kernel.org>,
 	Matthias Brugger <matthias.bgg@gmail.com>,
@@ -75,11 +76,10 @@ Cc: Icenowy Zheng <zhengxingda@iscas.ac.cn>,
 	linux-mediatek@lists.infradead.org,
 	dri-devel@lists.freedesktop.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v2 1/5] dt-bindings: clock: mediatek: Add mt8173 mfgtop
-Date: Wed, 25 Mar 2026 15:19:45 +0800
-Message-ID: <20260325071951.544031-2-wenst@chromium.org>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/5] clk: mediatek: Add mt8173-mfgtop driver
+Date: Wed, 25 Mar 2026 15:19:46 +0800
+Message-ID: <20260325071951.544031-3-wenst@chromium.org>
 X-Mailer: git-send-email 2.53.0.1018.g2bb0e51243-goog
 In-Reply-To: <20260325071951.544031-1-wenst@chromium.org>
 References: <20260325071951.544031-1-wenst@chromium.org>
@@ -100,111 +100,301 @@ The clock gates are exposed as clocks provided by a clock controller,
 while the power sequencing bits are exposed as one singular power domain.
 
 Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 ---
 Changes since v1:
-- Dropped minItems for clocks
-- Dropped label in example
+- Reduce tab after GATE_MFG() by one tab
+- Move of_match_clk_mt8173_mfgtop to just before clk_mt8173_mfgtop_drv
+- Rename power domain to "mfg-top"
+- Add FORCE_ABORT and ACTIVE_PWRCTL_EN bits and explicitly clear
+  ACTIVE_PWRCTL_EN bit
 ---
- .../clock/mediatek,mt8173-mfgtop.yaml         | 70 +++++++++++++++++++
- include/dt-bindings/clock/mt8173-clk.h        |  7 ++
- 2 files changed, 77 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt8173-mfgtop.yaml
+ drivers/clk/mediatek/Kconfig             |   9 +
+ drivers/clk/mediatek/Makefile            |   1 +
+ drivers/clk/mediatek/clk-mt8173-mfgtop.c | 243 +++++++++++++++++++++++
+ 3 files changed, 253 insertions(+)
+ create mode 100644 drivers/clk/mediatek/clk-mt8173-mfgtop.c
 
-diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt8173-mfgtop.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt8173-mfgtop.yaml
+diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+index 2c09fd729bab..8dbd9f14be62 100644
+--- a/drivers/clk/mediatek/Kconfig
++++ b/drivers/clk/mediatek/Kconfig
+@@ -537,6 +537,15 @@ config COMMON_CLK_MT8173_IMGSYS
+ 	help
+ 	  This driver supports MediaTek MT8173 imgsys clocks.
+ 
++config COMMON_CLK_MT8173_MFGTOP
++	tristate "Clock and power driver for MediaTek MT8173 mfgtop"
++	depends on COMMON_CLK_MT8173
++	default COMMON_CLK_MT8173
++	select PM_GENERIC_DOMAINS
++	select PM_GENERIC_DOMAINS_OF
++	help
++	  This driver supports MediaTek MT8173 mfgtop clocks and power domain.
++
+ config COMMON_CLK_MT8173_MMSYS
+        tristate "Clock driver for MediaTek MT8173 mmsys"
+        depends on COMMON_CLK_MT8173
+diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+index d8736a060dbd..892a54eeb281 100644
+--- a/drivers/clk/mediatek/Makefile
++++ b/drivers/clk/mediatek/Makefile
+@@ -82,6 +82,7 @@ obj-$(CONFIG_COMMON_CLK_MT8167_VDECSYS) += clk-mt8167-vdec.o
+ obj-$(CONFIG_COMMON_CLK_MT8173) += clk-mt8173-apmixedsys.o clk-mt8173-infracfg.o \
+ 				   clk-mt8173-pericfg.o clk-mt8173-topckgen.o
+ obj-$(CONFIG_COMMON_CLK_MT8173_IMGSYS) += clk-mt8173-img.o
++obj-$(CONFIG_COMMON_CLK_MT8173_MFGTOP) += clk-mt8173-mfgtop.o
+ obj-$(CONFIG_COMMON_CLK_MT8173_MMSYS) += clk-mt8173-mm.o
+ obj-$(CONFIG_COMMON_CLK_MT8173_VDECSYS) += clk-mt8173-vdecsys.o
+ obj-$(CONFIG_COMMON_CLK_MT8173_VENCSYS) += clk-mt8173-vencsys.o
+diff --git a/drivers/clk/mediatek/clk-mt8173-mfgtop.c b/drivers/clk/mediatek/clk-mt8173-mfgtop.c
 new file mode 100644
-index 000000000000..03db1ee9e594
+index 000000000000..9e18f34166ae
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/mediatek,mt8173-mfgtop.yaml
-@@ -0,0 +1,70 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
++++ b/drivers/clk/mediatek/clk-mt8173-mfgtop.c
+@@ -0,0 +1,243 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (c) 2024 Google LLC
++ * Author: Chen-Yu Tsai <wenst@chromium.org>
++ *
++ * Based on driver in downstream ChromeOS v5.15 kernel.
++ *
++ * Copyright (c) 2014 MediaTek Inc.
++ * Author: Chiawen Lee <chiawen.lee@mediatek.com>
++ */
 +
-+$id: http://devicetree.org/schemas/clock/mediatek,mt8173-mfgtop.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++#include <dt-bindings/clock/mt8173-clk.h>
 +
-+title: MediaTek MT8173 MFG TOP controller
++#include <linux/bitfield.h>
++#include <linux/clk.h>
++#include <linux/mfd/syscon.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/pm_domain.h>
++#include <linux/pm_runtime.h>
++#include <linux/regmap.h>
 +
-+maintainers:
-+  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
++#include "clk-gate.h"
++#include "clk-mtk.h"
 +
-+description:
-+  The MFG TOP glue layer controls various signals going to the MFG (GPU)
-+  block on the MT8173.
++static const struct mtk_gate_regs mfg_cg_regs = {
++	.sta_ofs = 0x0000,
++	.clr_ofs = 0x0008,
++	.set_ofs = 0x0004,
++};
 +
-+properties:
-+  compatible:
-+    const: mediatek,mt8173-mfgtop
++#define GATE_MFG(_id, _name, _parent, _shift, _flags)	\
++	GATE_MTK_FLAGS(_id, _name, _parent, &mfg_cg_regs, _shift, &mtk_clk_gate_ops_setclr, _flags)
 +
-+  reg:
-+    maxItems: 1
++/* TODO: The block actually has dividers for the core and mem clocks. */
++static const struct mtk_gate mfg_clks[] = {
++	GATE_MFG(CLK_MFG_AXI, "mfg_axi", "axi_mfg_in_sel", 0, CLK_SET_RATE_PARENT),
++	GATE_MFG(CLK_MFG_MEM, "mfg_mem", "mem_mfg_in_sel", 1, CLK_SET_RATE_PARENT),
++	GATE_MFG(CLK_MFG_G3D, "mfg_g3d", "mfg_sel", 2, CLK_SET_RATE_PARENT),
++	GATE_MFG(CLK_MFG_26M, "mfg_26m", "clk26m", 3, 0),
++};
 +
-+  clocks:
-+    maxItems: 4
++static const struct mtk_clk_desc mfg_desc = {
++	.clks = mfg_clks,
++	.num_clks = ARRAY_SIZE(mfg_clks),
++};
 +
-+  clock-names:
-+    items:
-+      - const: sys
-+      - const: mem
-+      - const: core
-+      - const: clk26m
++struct mt8173_mfgtop_data {
++	struct clk_hw_onecell_data *clk_data;
++	struct regmap *regmap;
++	struct generic_pm_domain genpd;
++	struct of_phandle_args parent_pd, child_pd;
++	struct clk *clk_26m;
++};
 +
-+  power-domains:
-+    maxItems: 1
++/* Delay count in clock cycles */
++#define MFG_ACTIVE_POWER_CON0	0x24
++ #define RST_B_DELAY_CNT	GENMASK(7, 0)	/* pwr_rst_b de-assert delay during power-up */
++ #define CLK_EN_DELAY_CNT	GENMASK(15, 8)	/* CLK_DIS deassert delay during power-up */
++ #define CLK_DIS_DELAY_CNT	GENMASK(23, 16)	/* CLK_DIS assert delay during power-down */
++ #define FORCE_ABORT		BIT(30)		/* write 1 to force abort a power event */
++ #define ACTIVE_PWRCTL_EN	BIT(31)		/* enable ACTIVE_POWER */
 +
-+  '#clock-cells':
-+    const: 1
++#define MFG_ACTIVE_POWER_CON1	0x28
++ #define PWR_ON_S_DELAY_CNT	GENMASK(7, 0)	/* pwr_on_s assert delay during power-up */
++ #define ISO_DELAY_CNT		GENMASK(15, 8)	/* ISO assert delay during power-down */
++ #define ISOOFF_DELAY_CNT	GENMASK(23, 16)	/* ISO de-assert delay during power-up */
++ #define RST__DELAY_CNT		GENMASK(31, 24) /* pwr_rsb_b assert delay during power-down */
 +
-+  '#power-domain-cells':
-+    const: 0
++static int clk_mt8173_mfgtop_power_on(struct generic_pm_domain *domain)
++{
++	struct mt8173_mfgtop_data *data = container_of(domain, struct mt8173_mfgtop_data, genpd);
 +
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - power-domains
-+  - '#clock-cells'
-+  - '#power-domain-cells'
++	/* drives internal power management */
++	clk_prepare_enable(data->clk_26m);
 +
-+additionalProperties: false
++	/* Power on/off delays for various signals */
++	regmap_write(data->regmap, MFG_ACTIVE_POWER_CON0,
++		     FIELD_PREP(RST_B_DELAY_CNT, 77) |
++		     FIELD_PREP(CLK_EN_DELAY_CNT, 61) |
++		     FIELD_PREP(CLK_DIS_DELAY_CNT, 60) |
++		     FIELD_PREP(ACTIVE_PWRCTL_EN, 0));
++	regmap_write(data->regmap, MFG_ACTIVE_POWER_CON1,
++		     FIELD_PREP(PWR_ON_S_DELAY_CNT, 11) |
++		     FIELD_PREP(ISO_DELAY_CNT, 68) |
++		     FIELD_PREP(ISOOFF_DELAY_CNT, 69) |
++		     FIELD_PREP(RST__DELAY_CNT, 77));
 +
-+examples:
-+  - |
-+        #include <dt-bindings/clock/mt8173-clk.h>
-+        #include <dt-bindings/power/mt8173-power.h>
++	/* Magic numbers related to core switch sequence and delays */
++	regmap_write(data->regmap, 0xe0, 0x7a710184);
++	regmap_write(data->regmap, 0xe4, 0x835f6856);
++	regmap_write(data->regmap, 0xe8, 0x002b0234);
++	regmap_write(data->regmap, 0xec, 0x80000000);
++	regmap_write(data->regmap, 0xa0, 0x08000000);
 +
-+        clock-controller@13fff000 {
-+            compatible = "mediatek,mt8173-mfgtop";
-+            reg = <0x13fff000 0x1000>;
-+            clocks = <&topckgen CLK_TOP_AXI_MFG_IN_SEL>,
-+                     <&topckgen CLK_TOP_MEM_MFG_IN_SEL>,
-+                     <&topckgen CLK_TOP_MFG_SEL>,
-+                     <&clk26m>;
-+            clock-names = "sys", "mem", "core", "clk26m";
-+            power-domains = <&spm MT8173_POWER_DOMAIN_MFG>;
-+            #clock-cells = <1>;
-+            #power-domain-cells = <0>;
-+        };
-diff --git a/include/dt-bindings/clock/mt8173-clk.h b/include/dt-bindings/clock/mt8173-clk.h
-index 3d00c98b9654..89e982f771db 100644
---- a/include/dt-bindings/clock/mt8173-clk.h
-+++ b/include/dt-bindings/clock/mt8173-clk.h
-@@ -243,6 +243,13 @@
- #define CLK_IMG_FD			7
- #define CLK_IMG_NR_CLK			8
- 
-+/* MFG_SYS */
++	return 0;
++}
 +
-+#define CLK_MFG_AXI			0
-+#define CLK_MFG_MEM			1
-+#define CLK_MFG_G3D			2
-+#define CLK_MFG_26M			3
++static int clk_mt8173_mfgtop_power_off(struct generic_pm_domain *domain)
++{
++	struct mt8173_mfgtop_data *data = container_of(domain, struct mt8173_mfgtop_data, genpd);
 +
- /* MM_SYS */
- 
- #define CLK_MM_SMI_COMMON		1
++	/* Magic numbers related to core switch sequence and delays */
++	regmap_write(data->regmap, 0xec, 0);
++
++	/* drives internal power management */
++	clk_disable_unprepare(data->clk_26m);
++
++	return 0;
++}
++
++static int clk_mt8173_mfgtop_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct device_node *node = dev->of_node;
++	struct mt8173_mfgtop_data *data;
++	int ret;
++
++	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	platform_set_drvdata(pdev, data);
++
++	data->clk_data = mtk_devm_alloc_clk_data(dev, ARRAY_SIZE(mfg_clks));
++	if (!data->clk_data)
++		return -ENOMEM;
++
++	/* MTK clock gates also uses regmap */
++	data->regmap = device_node_to_regmap(node);
++	if (IS_ERR(data->regmap))
++		return dev_err_probe(dev, PTR_ERR(data->regmap), "Failed to get regmap\n");
++
++	data->child_pd.np = node;
++	data->child_pd.args_count = 0;
++	ret = of_parse_phandle_with_args(node, "power-domains", "#power-domain-cells", 0,
++					 &data->parent_pd);
++	if (ret)
++		return dev_err_probe(dev, ret, "Failed to parse power domain\n");
++
++	devm_pm_runtime_enable(dev);
++	/*
++	 * Do a pm_runtime_resume_and_get() to workaround a possible
++	 * deadlock between clk_register() and the genpd framework.
++	 */
++	ret = pm_runtime_resume_and_get(dev);
++	if (ret) {
++		dev_err_probe(dev, ret, "Failed to runtime resume device\n");
++		goto put_of_node;
++	}
++
++	ret = mtk_clk_register_gates(dev, node, mfg_clks, ARRAY_SIZE(mfg_clks),
++				     data->clk_data);
++	if (ret) {
++		dev_err_probe(dev, ret, "Failed to register clock gates\n");
++		goto put_pm_runtime;
++	}
++
++	data->clk_26m = clk_hw_get_clk(data->clk_data->hws[CLK_MFG_26M], "26m");
++	if (IS_ERR(data->clk_26m)) {
++		dev_err_probe(dev, PTR_ERR(data->clk_26m), "Failed to get 26 MHz clock\n");
++		goto unregister_clks;
++	}
++
++	ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, data->clk_data);
++	if (ret) {
++		dev_err_probe(dev, ret, "Failed to add clk OF provider\n");
++		goto put_26m_clk;
++	}
++
++	data->genpd.name = "mfg-top";
++	data->genpd.power_on = clk_mt8173_mfgtop_power_on;
++	data->genpd.power_off = clk_mt8173_mfgtop_power_off;
++	ret = pm_genpd_init(&data->genpd, NULL, true);
++	if (ret) {
++		dev_err_probe(dev, ret, "Failed to add power domain\n");
++		goto del_clk_provider;
++	}
++
++	ret = of_genpd_add_provider_simple(node, &data->genpd);
++	if (ret) {
++		dev_err_probe(dev, ret, "Failed to add power domain OF provider\n");
++		goto remove_pd;
++	}
++
++	ret = of_genpd_add_subdomain(&data->parent_pd, &data->child_pd);
++	if (ret) {
++		dev_err_probe(dev, ret, "Failed to link PM domains\n");
++		goto del_pd_provider;
++	}
++
++	pm_runtime_put(dev);
++	return 0;
++
++del_pd_provider:
++	of_genpd_del_provider(node);
++remove_pd:
++	pm_genpd_remove(&data->genpd);
++del_clk_provider:
++	of_clk_del_provider(node);
++put_26m_clk:
++	clk_put(data->clk_26m);
++unregister_clks:
++	mtk_clk_unregister_gates(mfg_clks, ARRAY_SIZE(mfg_clks), data->clk_data);
++put_pm_runtime:
++	pm_runtime_put(dev);
++put_of_node:
++	of_node_put(data->parent_pd.np);
++	return ret;
++}
++
++static void clk_mt8173_mfgtop_remove(struct platform_device *pdev)
++{
++	struct mt8173_mfgtop_data *data = platform_get_drvdata(pdev);
++	struct device_node *node = pdev->dev.of_node;
++
++	of_genpd_remove_subdomain(&data->parent_pd, &data->child_pd);
++	of_genpd_del_provider(node);
++	pm_genpd_remove(&data->genpd);
++	of_clk_del_provider(node);
++	clk_put(data->clk_26m);
++	mtk_clk_unregister_gates(mfg_clks, ARRAY_SIZE(mfg_clks), data->clk_data);
++}
++
++static const struct of_device_id of_match_clk_mt8173_mfgtop[] = {
++	{ .compatible = "mediatek,mt8173-mfgtop", .data = &mfg_desc },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, of_match_clk_mt8173_mfgtop);
++
++static struct platform_driver clk_mt8173_mfgtop_drv = {
++	.probe = clk_mt8173_mfgtop_probe,
++	.remove = clk_mt8173_mfgtop_remove,
++	.driver = {
++		.name = "clk-mt8173-mfgtop",
++		.of_match_table = of_match_clk_mt8173_mfgtop,
++	},
++};
++module_platform_driver(clk_mt8173_mfgtop_drv);
++
++MODULE_DESCRIPTION("MediaTek MT8173 mfgtop clock driver");
++MODULE_LICENSE("GPL");
 -- 
 2.53.0.1018.g2bb0e51243-goog
 
