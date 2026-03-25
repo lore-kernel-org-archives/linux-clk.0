@@ -1,96 +1,89 @@
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E4B3EAC9B
-	for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 16:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1553E1CE2
+	for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 16:24:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774454536; cv=none; b=D1bXkdm8kXFtHZFCByi49TgCN5km8MoyFvLJ8gbCimx/iyBWtTmgnvXfdtWgLMsaRxW4B/cW6Md98RpNwkX8xa8eDM49kjSTezmy3j+Am4OlgsbFriMtSrY/QCDlYjWAUIgg15ST4QvMezLKlo1LmwAmTSH+1ca4Cp0sCXg4FKQ=
+	t=1774455897; cv=none; b=kBiz/QWIodSxopF1BSTxrIGaZlp9dvz2IIcMdjgT2NcfhAl2CBcUaqC00fphaGRQUe0ZPASNvmkcC35b3V70W8q89jugCWFcLsYB1zZPTHAJVwrVoFcnran2TPfkn+l48mvqPvRPWVOISUNzaKH/bxJP9v5d2IHDkRUshiejseU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774454536; c=relaxed/simple;
-	bh=V9EhkXmHhCfd6mpQBTgvR/U5ijzRrAw8mhQanHksz6I=;
+	s=arc-20240116; t=1774455897; c=relaxed/simple;
+	bh=rmeZVPSOtvHKsudTVqrd29mAkraoSiHAZ4PP1RwACbo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q/QiFXsK5RjYDi5S9+jB5COYAGAm3ZdcY0q/22m0tACzJ8YtaakBsxBwvcXY14S90vy42Xeoy6zqbxt5Gq4HRazbIARPtYioKn5hrjOdsQgzIVEp3waOd8Isl/cee/K7bA+HEYaLFXCCFhhYa7DtrcLRLNMEBGi4LTNobRHEy68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.53
+	 To:Cc:Content-Type; b=Ob+rD467WdgACJO+yNwkFLaMFHLf6pES38KdGcVMDhg7FuHzJdT263NNgz0qMakx69WDEW08Up9LsfQJE3DFUdq+ePKWNmrYDAxaioVd2h529T96M8z/VFU13yEY9f/UYbhhekYr1gqpboTQ+KOu9hVX5CLplQB3XgrgV3bCOlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-94e9810221cso1108090241.2
-        for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 09:02:14 -0700 (PDT)
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-94ec56c6f05so1333781241.3
+        for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 09:24:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774454534; x=1775059334;
+        d=1e100.net; s=20251104; t=1774455893; x=1775060693;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gZPS9rvjiCNyKh+pIYFKpxEAkHK/vWQ91zf2PSXKLkY=;
-        b=OWDWW4GkkYmBySREMxjQfPLozSmKXkzkRP3RY6p7AlEAvsyWYcneUtRxoBzjGHMPKa
-         xP5u5mf0zcK7KSR5I03sSroM4123SWYRNooPCXnf6MJWrj7l5L7284xM8i8NOZatfQU6
-         iRfhyZ+6OLJuv6pVzTLbDuHhVbaYALj6Ma1+5I0PU8oCSJcZRpW0QNa2HLngCg2RZsge
-         ZkxYzQ269CW6mYwtLW5mZp5+38dS0MHN0aZUFlIftM7fP/j7V2FOke4Az4L3D50UpqXG
-         7Xb86hahc0wHmsZAQdqgGCoZOXONM+JoUwtBxbxdshSSlPrdhNupnJAezulpkQGsE/EF
-         mULw==
-X-Forwarded-Encrypted: i=1; AJvYcCVAP/Yy8R1AMAUVKc1qvsQqAgzKH66Rw39cp6lPrd2XYOV7jdDrB6AINkmiwBfArJsxaHxDQcsNL4Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyqgj4I8Clu/Gb94fD9/3+CXuSnXdcR9Gy0w3U7wVeexUeT2sA3
-	i4n0TXIuFGuiFDx+5Uw6/HzyYVKzqgAGW7h4X9GW1SBiU78VcwqUD3R7fnTvje4fCs8=
-X-Gm-Gg: ATEYQzyhv2g4BFbW9JJve8jXYCJ3ZZAh0q883cY+Ee9E2CFaytMFziU/l/0RX4x0I17
-	Lk7H9jHEhT7izRD8yQw+rcrFn5Bv12fM5v7KfMW6bA16Yp/htwxcdY9N4COHKx++sZSJUOyvzDl
-	Ov7fH7B20sgi1nmW39sB6fWT2xeuOqeAn5reTRi3ACpv8PurfFVAzDnupk6UPNsa92cSN9HXTPz
-	hyoJ7yAl0O5nFZ6ZYUmWpTKn1y8OxMUCiCIo1BHKLGiILXugoeUP4kLEZ+F92ehc/8nPQYraFI5
-	ftmEThgK/vubWNFATApvZU3Ym03nJUDa7LWA7cuDQEmTDYgV80LNcIzb7ZK4yQdMawC5bvxQPOC
-	k877jgoIwdyA30MH3PQI+8xOLZNipCn90xLNXWILzGQ+gJS8fzaS5K8nLjHn82X0gBYPQMzekho
-	GFOTaEBvHCgdh46NLXSBQC0r5dhnJJy2Ytg4yV/3UL+avC+TFMazCS1cSDWiX42g8d
-X-Received: by 2002:a05:6102:41aa:b0:602:a9f3:74ca with SMTP id ada2fe7eead31-60378fd6a02mr1682133137.3.1774454533627;
-        Wed, 25 Mar 2026 09:02:13 -0700 (PDT)
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com. [209.85.221.180])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-604d5105e59sm87351137.6.2026.03.25.09.02.06
+        bh=7gAXhHrpF27wFNXFA6QhJ48A7x34w2nxZZrvrXeYgHw=;
+        b=jynrcM1l95EX6GSjIZqRcCnS645HxbkDnxn3dhr+0h+ujng3x8m0rGQqIWuvG3GsSF
+         iatywE49stsGHwAvHgOX7yRtWLrjvRBGkWhjcwVP7zdNlUqQAT/5gVS7e9Uw6E3dEKx1
+         Rmeu/iH0qDfEg9cikBV8P+FNIfbJFG+U91FElYuWiNXyrlkxyaFibl7fWudyDqpDUb8i
+         2mwp1gwtzk9goNUfbZqNssvs5YTKW9xmMcb3ZPI6zRW6KBNX1sw+bhyW3vvqxYPdnXSd
+         JuotFZHdm+vraqFLe1J+VC54a1ktXRoUYkmrgIaexUI+ioVlteUZPktsbLkhxROkhj8q
+         3Ltw==
+X-Gm-Message-State: AOJu0YxBkPY1Bbb0ZBVpNx3F+avBC8ok37QdseF4aQQi/HbwwIFcYwQ4
+	tqGTc3Q4JvTC1QrnX2fisqMeUNjCyRSWDclrFhTAz5YAfGF1+86UjkMJ8nXuPLzKB8o=
+X-Gm-Gg: ATEYQzzTZKFJIVD7ltMjGFImCxxEy5KFetAs2tM/yaqqkj3PpL55KjC3M+rrRm+HwqM
+	3ie3ergoY0gObX6ThYffdVfidBUcqNS18T++zGqk9ONybcbVK4/+DeE+y2XxIFU94TT3P2wdbZx
+	teCoEsYIcvH0PJQMevUjJvfPNotBwekSrKncREx//bJmKBVXja/vOa4T6Wjigfykym0Psanfa+Q
+	IbYxxM5fNrdO1ubVGxG9JD7egZ758+l8KjAg4az6wDPvFsIqbOJnsnbSjUlGKDX3dCgJUm5zU7f
+	2PEdjSpBNWN/Goivov0TYbP6X8Pkv1M4O2wbpxilRysuKFChJF9Zzv5heR7K9c9oj8byVGoHLTk
+	gxzy2s/BCGXNJTJu2YbdVva7mPtmzkkZ17CefR2Q1EKb8KJDxAI2YYYE4GdfD4p6ef99uCOWnMJ
+	HBNaXb3ksauoZuFeAsyW0BXbrNtqndE+PWbIT8quHUhLJBmwT+1FuMVDbTLj2igOY+
+X-Received: by 2002:a05:6102:84c1:10b0:5ff:c289:47d with SMTP id ada2fe7eead31-603872abe9emr1529928137.22.1774455893278;
+        Wed, 25 Mar 2026 09:24:53 -0700 (PDT)
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com. [209.85.221.178])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-951be5afc43sm481177241.13.2026.03.25.09.24.52
         for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Mar 2026 09:02:08 -0700 (PDT)
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-56adf76631cso45701e0c.1
-        for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 09:02:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXbJcv5O4S5hNymWbXjtK89n3jrL6nspPu3JeZFnrBx2XdxXGCMVtq4Rby1esnEliOoOn5+thUGD+o=@vger.kernel.org
-X-Received: by 2002:a05:6122:4f97:b0:559:5ef5:b196 with SMTP id
- 71dfb90a1353d-56d220c4f8fmr2065624e0c.13.1774454526013; Wed, 25 Mar 2026
- 09:02:06 -0700 (PDT)
+        Wed, 25 Mar 2026 09:24:52 -0700 (PDT)
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-56a9a7e762bso90588e0c.3
+        for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 09:24:52 -0700 (PDT)
+X-Received: by 2002:a05:6123:4c:b0:56b:a534:42c0 with SMTP id
+ 71dfb90a1353d-56d220ef9f1mr2094685e0c.15.1774455891759; Wed, 25 Mar 2026
+ 09:24:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260318085119.44717-1-john.madieu.xa@bp.renesas.com> <20260318085119.44717-5-john.madieu.xa@bp.renesas.com>
-In-Reply-To: <20260318085119.44717-5-john.madieu.xa@bp.renesas.com>
+References: <20260324021103.13651-1-rosenp@gmail.com>
+In-Reply-To: <20260324021103.13651-1-rosenp@gmail.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 25 Mar 2026 17:01:52 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUPvnoSVBVKFOgXFrOyVK_CDuiNXZ44v_FYkEBtYKEhOg@mail.gmail.com>
-X-Gm-Features: AQROBzDAUOx_p6wz4xdqborLEdAuZA8hQ4cgzmgeW84NqoNOTvQEgITg1E2ITKk
-Message-ID: <CAMuHMdUPvnoSVBVKFOgXFrOyVK_CDuiNXZ44v_FYkEBtYKEhOg@mail.gmail.com>
-Subject: Re: [PATCH v9 4/4] arm64: dts: renesas: r9a09g047e57-smarc: Enable PCIe
-To: John Madieu <john.madieu.xa@bp.renesas.com>
-Cc: claudiu.beznea.uj@bp.renesas.com, lpieralisi@kernel.org, 
-	kwilczynski@kernel.org, mani@kernel.org, krzk+dt@kernel.org, robh@kernel.org, 
-	bhelgaas@google.com, conor+dt@kernel.org, magnus.damm@gmail.com, 
-	biju.das.jz@bp.renesas.com, linux-pci@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-clk@vger.kernel.org, john.madieu@gmail.com
+Date: Wed, 25 Mar 2026 17:24:40 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdV6tBG7zQX_eGuLnvp1he1kQxTxj+8QmYj=jbo2OTGbMg@mail.gmail.com>
+X-Gm-Features: AQROBzCGGCNDC4VvyRbtehsEECFBYE5hrIOwkI-_9A4YzO91h6FhBZCpQfgFjIE
+Message-ID: <CAMuHMdV6tBG7zQX_eGuLnvp1he1kQxTxj+8QmYj=jbo2OTGbMg@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: cpg-mssr: use struct_size
+To: Rosen Penev <rosenp@gmail.com>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+	"open list:RENESAS CLOCK DRIVERS" <linux-renesas-soc@vger.kernel.org>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"open list:KERNEL HARDENING (not covered by other areas):Keyword:b__counted_by(_le|_be)?b" <linux-hardening@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 18 Mar 2026 at 09:51, John Madieu <john.madieu.xa@bp.renesas.com> wrote:
-> The RZ Smarc Crarrier-II board has PCIe slots mounted on it.
-> Enable PCIe support.
+On Tue, 24 Mar 2026 at 03:11, Rosen Penev <rosenp@gmail.com> wrote:
+> struct_size is what is normally used when a flexible array member is
+> present to avoid accidental mistakes. pm_size is still needed for the
+> memcpy call below.
 >
-> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
-> ---
+> Added __counted_by for extra runtime analysis.
 >
-> Changes:
->
-> v9:
->  - Renamed gpio-hog node from 'pcie-clkreq-n' to 'pcie-clkreq-n-hog'
->    to satisfy DT schema naming constraint (reported by Biju)
->  - Updated line-name with proper signal name on the board
->  - Fixed node sort order within &pinctrl (reported by Geert)
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
 
+FTR, no changes in generated  code.
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v7.1.
+i.e. will queue in renesas-clk for v7.1.
 
 Gr{oetje,eeting}s,
 
