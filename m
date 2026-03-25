@@ -1,197 +1,122 @@
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011023.outbound.protection.outlook.com [52.101.125.23])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0062773EE;
-	Wed, 25 Mar 2026 01:46:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.23
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774403165; cv=fail; b=LHXF/C1VpsuiTI83Qb7gRIrWReYHHl8Ow486niwkQaHA6I1WkCgozvwBI/RBBAr4wZpbjKqGmobULedaWNx/SiuFs5sauWaZmfSmvQngCMQ1uX2ahskiYk4iFWKQE4tx1OJymRhq+DUAidvAQKmkMrlOcZhGJnz+hgvyFpf9gPs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774403165; c=relaxed/simple;
-	bh=qOGZF/PryrkWnlVffT3tVE/bxfw0HxzbI7zdKw3bRTA=;
-	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=sdYNAIackYTUohCLxyRcdsIvUZ3eIuWNid755ieWOuk4d/fTUGUdDOIoSeljXt9aaLO1i9l79Qbj1wLmKZcFV1+z7e0fzuhweGAi/Fzs86smdVK+2m7A/1ExGAY44j9Q84Q74SeTc3eihLbtv301uXyuOL4n7zDPpD6tzem1+uA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=mYG8umg4; arc=fail smtp.client-ip=52.101.125.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F2629B22F;
+	Wed, 25 Mar 2026 02:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774406943; cv=none; b=uh4sjpiFgg/8WSPvcjmGnwzufOFQIceNgQ1uWq3C34FpyR02yZFog3Cl7ltwvDeRqlt33B9pIpTqBNVpCvMGT/ZX4NTRYrKrGeS0zhCDi/H1cox4cO4C7Ox2dlR/5sThPSQWINGwFxW8yLUvqFSwdDxCprlsxutSo21JKzr7GTE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774406943; c=relaxed/simple;
+	bh=lUXHocbr1M1b2KViD96k/UbvtkQcjf0ESNAjW/qWTXg=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=G0FwPU5o5+RRn9rV/YXGi3+d1C5p2Iw8ZeIfVMGNPB5IcrAm0RfiXf3dCb+dasQtAppONkj4A+bCcM7rWAU9AR/tlL9lAqma8B3jiW0NjgTE+OcJg5EZQ5LpkNbGEe3Szbg6HqrqIj6nh1RqCRPhN1IgLfzuKLUnriSkkpSMYzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kVnF85fe; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="mYG8umg4"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fLChXXpGafRW+yKuAXeQzo5To4DaxiyqkSCvS9ehf48Er7wqB44jullFH83R3sz5yrlCm8BLNsd+juKPQA76mEUlHOG1I2LFOVRcU0pcgfNI5aV2EOBnnVaAM/nEip7sotqo0cqjIPFi1tz9XzQDRpYZEgG5W2UyxR2sF8fquBy1ooP+u82jtqPK0S77wqLDE/a5IfB4aMnCtNSgeNB+nMgbn/xgrD0E5q2G2PIow0VQpZoW0KbhUpjvinau+LWC/GyX1yNHy5V/vwAD4xizgPCpqL5IFFRU5oB62cecj9rdTbVVJ1dxYmu28J5EN4z/1ggra+ss7pS6b2HAqHN2NA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qOGZF/PryrkWnlVffT3tVE/bxfw0HxzbI7zdKw3bRTA=;
- b=pJ4EPs6VxnXmp5tjmruURYo0Cl5h3T/UAog4N41d+ieztaxohlQT4FMzv3Z0HcFeNPdgVPkVwN6AJ/GOcWET1KjOnC2+Ln0KFxh/PQRQCRczxfiPwrcvDavBk+L9bD/b7ahfwSMVeu7vs0PrPFs7fPAUjF/CoDWhIYpcDY3Esii1IaUaJaBr5Q4fNGwg503ZzChdp9vz6fZAKYwwrTGdQ0VBSekJhOrbd2CAxpa3otcFypYsgRc9h5+YUs+KbWCfN7LiXddN/OkuGX9S87x6vlpx9CJ+Bj8RLsQbq4AWclofGNKLPEdb+SPKyAcTMeJl6LP1tl4gCLoB0U2o6338FA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qOGZF/PryrkWnlVffT3tVE/bxfw0HxzbI7zdKw3bRTA=;
- b=mYG8umg443VURNFGDBsFKJjamFjGvkj9xCIwwKEFOAsdprxT03mfO9uzN18Vyqgodw9/cZxjD51NXkdTPJW3gCgpQ8UEMh4xRdck3QJVaTNLX91XIJZcpvS+xErqFKUKVrit9RCNwN61eITDNd0POc8F2L/psbr9YEU3ZdY0nGI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-Received: from TY3PR01MB11797.jpnprd01.prod.outlook.com (2603:1096:400:373::8)
- by TY1PR01MB10882.jpnprd01.prod.outlook.com (2603:1096:400:31c::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.20; Wed, 25 Mar
- 2026 01:46:01 +0000
-Received: from TY3PR01MB11797.jpnprd01.prod.outlook.com
- ([fe80::1868:c915:c230:a383]) by TY3PR01MB11797.jpnprd01.prod.outlook.com
- ([fe80::1868:c915:c230:a383%5]) with mapi id 15.20.9723.030; Wed, 25 Mar 2026
- 01:46:00 +0000
-Message-ID: <87zf3wof54.wl-kuninori.morimoto.gx@renesas.com>
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-To: John Madieu <john.madieu.xa@bp.renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Vinod Koul
-	<vkoul@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Rob Herring
-	<robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	"Michael\
- Turquette" <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	"Conor\
- Dooley" <conor+dt@kernel.org>,
-	Frank Li <Frank.Li@kernel.org>,
-	Liam Girdwood
-	<lgirdwood@gmail.com>,
-	magnus.damm <magnus.damm@gmail.com>,
-	Thomas Gleixner
-	<tglx@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai
-	<tiwai@suse.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Claudiu.Beznea
-	<claudiu.beznea@tuxon.dev>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	"Fabrizio\
- Castro" <fabrizio.castro.jz@renesas.com>,
-	Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	John Madieu
-	<john.madieu@gmail.com>,
-	"linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>,
-	"linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-	"dmaengine@vger.kernel.org"
-	<dmaengine@vger.kernel.org>,
-	"linux-sound@vger.kernel.org"
-	<linux-sound@vger.kernel.org>
-Subject: Re: [PATCH 11/22] ASoC: rsnd: ssui: Add RZ/G3E SSIU BUSIF support
-In-Reply-To: <TY6PR01MB1737712A0D0415CF57C759D2EFF48A@TY6PR01MB17377.jpnprd01.prod.outlook.com>
-References: <20260319155334.51278-1-john.madieu.xa@bp.renesas.com>	<20260319155334.51278-12-john.madieu.xa@bp.renesas.com>	<871phb9ruc.wl-kuninori.morimoto.gx@renesas.com>	<TY6PR01MB1737712A0D0415CF57C759D2EFF48A@TY6PR01MB17377.jpnprd01.prod.outlook.com>
-User-Agent: Wanderlust/2.15.9 Emacs/29.3 Mule/6.0
-Content-Type: text/plain; charset=BIG5
-Content-Transfer-Encoding: base64
-Date: Wed, 25 Mar 2026 01:45:59 +0000
-X-ClientProxiedBy: OSTP286CA0102.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:604:219::7) To TY3PR01MB11797.jpnprd01.prod.outlook.com
- (2603:1096:400:373::8)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kVnF85fe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47199C19424;
+	Wed, 25 Mar 2026 02:49:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774406943;
+	bh=lUXHocbr1M1b2KViD96k/UbvtkQcjf0ESNAjW/qWTXg=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=kVnF85fetiOQtOWLC0T952kjOPwthqi7RV0VrM6j9gq/KlAH7Jc8BtpNjnhjtUy2p
+	 XH8OxtEFlDYrOZQPaNqiQU2RXYOqzzA/9D6GpgEH4P/nI8uTmZVwvLX6j5LgfEeuXh
+	 PyioXsGCaJ5TANFWXjfI85Y4i/QSINVjnfUSbdNii+Rm1r78NsPPXFmZCNaRGjwOaz
+	 e1jq42lA3GtcudBmi/pmLgaVGmEeu/ovCvQtCyLGppPn/DcOlh3YHeHll05/dxmMBK
+	 xuMU6OaKt87Monu4PLjz6H9SnVEuhuXtOlNfy8XyC9jDtQTlzJ4zpQ5y/Wgs3HH/aZ
+	 SHqNahPYq/UJg==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY3PR01MB11797:EE_|TY1PR01MB10882:EE_
-X-MS-Office365-Filtering-Correlation-Id: c89d7d07-b40b-4284-49d1-08de8a104477
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|7416014|376014|366016|18002099003|56012099003|22082099003|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	pXjV5gW7vwjtgHwwzPJcgzzWuuzmyVvuzybgEJY+4ZdQbkn84aNWi0yu4dc2qfO2/Tvgbo6DeJunFptmBo/4dhUeUwdOQzEdAmzKRGtT4kv2o/GDhuk/OXmOOEA1eY2Yu4OU8BvgvzQkd/Qi4H7+M0vshQkPbwWs4cHUDM2hfUf3CdyxsWQEYHgDT0QRGbBSMuH3oQ/sseFLWs+VS2+KCboJbYPLj7+jUvp2KmrNEFXeNwZ4Gx43sHhkpTbTs3AzRCs+N1jucNeu2B/ZrdAP/lDH2k92U98lGICkP/58YN2pCn8FwKQehzFkNtoRY45mU12WIGk+QvxSKqzsDt/sceIAV0oBbusnKsX9UNWlABwRi/Byw6J2QbAgyNTGksH3j64gorjNLA6oRSW50aeE2tvmpMVvkgCX5go+BIVqAKpSqUvlPjjVk9txY9VeyVLIJ3kMtokgJC3hGOLGgBpLnZn/69NvtKDey2JLVgE5LzT7mQzokfc/82fa17RDvelZIg3Fyw4c3ZpnEuW6csgayvJBpkurBJyVCSYr/gH4hKpUXMHV3NmxSyzz6l+rIEe5qVyFOakDT61v0/izWxPIsLzkqXVY3+1ko/Vix1mJXAqF4f8ML0P4GTflc4dipu8O/die8lWvMmwPUDxv0UIemfbwpg/zHAf4Znramu7D5u64P9gVeGhsjBMbAqggL2RORYCkYtY5Y52tTubMMLauuNp62+FkUDIxM8yp4A9s/h4tmN3KkF1yJ0GgOY/mCoz5VnUYa53FMoHgfFlGc3DVLLrJOVQw5P/bheF4Yk3/9Cs=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11797.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(7416014)(376014)(366016)(18002099003)(56012099003)(22082099003)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?big5?B?WkRRVkEwZkJiMVc3VzZ2K2pmNk5HUXc5c2dYdjgyOGphNk54Q1BXR1BqRVFpNmhv?=
- =?big5?B?UlROTU5Tci9SVDJYNG5pRmoyUE55Mm13RkdScFVPM2FIWjh4VkhpTklLNEx3Y0U3?=
- =?big5?B?WG9MbXk2Y3oxUTR4aUJFWXBhZThRUEN1VHhuQlVJS0xGWGlaWG5SZXRQSjZQRjlp?=
- =?big5?B?TWFaKy8vL2tJOFd4ci9XZmVuRmROT1l0Q3FVc0puUmJPZ1FqV2hOeDFNSGFwWE8r?=
- =?big5?B?TWZDcVNlN2lWUG5OOHV2QTFtYVRhQzFXYTUvak51blJobzcyRG5oSnY4U2RyVFVs?=
- =?big5?B?MkpWVm04bzY0alkwa1VMVWFxTUl1cGRSb1hOWHlCa3FaajRDUDd6SThyYzRzOSty?=
- =?big5?B?ZmlMR1RNa2dmb1g1K1JHLzhTNklJcXNIS0J2VlVIT2c3a0c5K3ZxNC91SktMSjho?=
- =?big5?B?Z2J4cEUrOW93WXNjNk5vUnltallLeTdJdU1DbGxtL1lka2NDY0ZvclNBUzBiaWUv?=
- =?big5?B?ZmN2UjNMMVBBZ3dQeXdISGpNRGxkNk9xM25VQ2dBV2pmbnhPRVNBK0k4WjNMdmZ3?=
- =?big5?B?M0dWTHB2SlJLUXRRbmdGa1JwRGNzVXNXbWlMYTRqUW0yUkxyVHlJWUk0aFArRSto?=
- =?big5?B?UTNRSDlqNlVnQUNqRGV5OS8yN2MvV1dhVlhhR0RQUWFPREVqN1RFeXk5OUphSEp1?=
- =?big5?B?SXA2dkthRGE2dTQxZFp5RnRwa0l1QTYrcnl4aTg0TmpTWFJTLy9XdzFzMXNJa1dT?=
- =?big5?B?ZUVORCtyWEhwbDlSZ0xoMTZGR3hqb2lmVFpBeXFueW53dTFOajFHa2lYMEErSmJJ?=
- =?big5?B?TDI1T2pYeGRCQ3lRbHo2Z05FM2ZCUUJVQzlnTGE5T3BRaUthRTQrZHp3czc4VFhP?=
- =?big5?B?ZGxVRUwvWTJ1WE95OWE3L3dZODhOa3B4Z09Pb093MW9XVjNxTkxjem42eDdhd0J1?=
- =?big5?B?ci8rL0VEeG5YdUhMeTkzVUkxeVhhL1ROMGFSV1RrMUQ1RWMvVjFUL1BXbUl0aFVt?=
- =?big5?B?TmdYczFha1dFNkVNSDhneG1jUlcwQ3BrbVIyMFpYRm1NNGtWY1BNbVc1Y1lyaERO?=
- =?big5?B?VG1zVUpSZnZrREpNT2JLT1hKNFlkZk03WUJtUjJ2cXJ1ekhLNkxwK2twd281aDVi?=
- =?big5?B?bjBMdHJwR0xVb2tWcGxKTHRUT3h6K2dwNDlLVXhqUktZWFVubzRYVFl6RSt2Nkcw?=
- =?big5?B?cDBlNGdPTXpZVmZ3aTZqZkMvTTFGdzgvVGg3bzlCMHhmMG5LK05UWXVRSGs3QnJ3?=
- =?big5?B?WkNoNzJLdU1tdGV3d2RPSTdITjFDMUxIVHBhY2xTRWhsMGhtcGlxUGhQUGRVbE9Y?=
- =?big5?B?SVErVklzaEhyeG5kdHcydkNuWkxEK2wzeXNxdkFRRnhKaTZXOTFUcU51Z3pKU3Vm?=
- =?big5?B?eTVXaG53KzNwYUhIR0U5Rzd5REFGUkRibUdTZTVMcHoxRDZFQVRMRDZtdGZ2eFJB?=
- =?big5?B?MStkbzJWU05oOWNsdW1iWTFvdEd1ZEI4NDNiT1ZCUjVhV1VoV2pWbjlnd0x4dTNH?=
- =?big5?B?WDNTTFFWQlNxVmF5eG9lNVBONXdIdmpzbGx5bW9hVVBxOWM1QmtKYnpHakZqOWtH?=
- =?big5?B?WVd2QTkyVEU5bXpLOVZjR1Z3L2wvei9HaDdGQWtSSVVQR0kxa2tNNXJzU2o3ZjZO?=
- =?big5?B?c1dWTEtGbDBQSkpwbGc4QVR4VTVha2ZiZ2ZraWxaQjBMRk1YWEdQa1plUGd5UHZO?=
- =?big5?B?SC9DWDBabU5qNlZpVHRGQ3NDb1ZsTThqbE1rRml5Zi9yL0pKWmpjWS9ST2VDREJZ?=
- =?big5?B?d25CeUpiVjBGejA4ZWl0SzViNlB0aDV6WTdFVFFWZGV0WitpazRsNytXOUNJd0Zz?=
- =?big5?B?YzVEUXJqZ0RqSk5CQWRaVHFIaFlsRFVlMkd0NTF3MHFGSlVBcE10VDN0NnhtZWUr?=
- =?big5?B?UUxXd3gzc2lmTmM2ekFHQmZDUS9raFpjNzRIMXlBMk9mVEtTSW9VK2laSkJpNnJ5?=
- =?big5?B?bFp0UWRZOC9vS3N2MmJsc3RuREt2b3RjdUJDa09QbXZSL21HNFJGUEx6UTlWRXdw?=
- =?big5?B?cHJWbnpUMk5XcnFLWmszWE45cXVTblZxdVRCa3dwaWZkelJNRXY5YjI0YVdCdnh6?=
- =?big5?B?TUxjSDM3TURLWThnNU9lU1QwU3BkejBTY0VPeGJEVFhZYnNnM1hHYklyakxPNXo5?=
- =?big5?B?OExuSE5zRXZacjFwRGIrNG1ySHEvNW5LM0xlNWdYRzRURGsza0E4SmpDbktwY25q?=
- =?big5?B?Qjh0cE90bi9mMHRRcTRxcit5YkFPdnlZZEZpUnFuejVrN3RESzBXcWY2UDAyY3kw?=
- =?big5?B?MmlrdnlhRGtrMkVrUHAreXJldkZUOEo0TU9JYlo5Q1RPOHJKKzVKcVRGMUlPN2RK?=
- =?big5?Q?2iGEYCV2Zh2H82Mo?=
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c89d7d07-b40b-4284-49d1-08de8a104477
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11797.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2026 01:46:00.8157
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Q1NPAiAA5PyX9Stwzvw/qZZsZrQSLjTTDH+KS0C5aqnDcY0NoFURqRbDmFVyoGcap0VX27BjEl/zwt+pRjsWdUf9ePWQexf+uqNgb0HvwVdjk6sspC9l+e0JKRE+ngmR
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB10882
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20260324025332.3416977-9-eleanor.lin@realtek.com>
+References: <20260324025332.3416977-1-eleanor.lin@realtek.com> <20260324025332.3416977-9-eleanor.lin@realtek.com>
+Subject: Re: [PATCH v5 08/10] clk: realtek: Add support for MMC-tuned PLL clocks
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-realtek-soc@lists.infradead.org, james.tai@realtek.com, cy.huang@realtek.com, stanley_chang@realtek.com, eleanor.lin@realtek.com
+To: Yu-Chun Lin <eleanor.lin@realtek.com>, afaerber@suse.com, conor+dt@kernel.org, cylee12@realtek.com, jyanchou@realtek.com, krzk+dt@kernel.org, mturquette@baylibre.com, p.zabel@pengutronix.de, robh@kernel.org
+Date: Tue, 24 Mar 2026 18:54:24 -0700
+Message-ID: <177440366488.5403.14385693004290004608@localhost.localdomain>
+User-Agent: alot/0.12
 
-DQpIaSBKb2huDQoNCj4gPiBJIGRvbid0IHRoaW5rIHdlIG5lZWQgUlNORF9TU0lfQUxXQVlTX0JV
-U0lGLCBiZWNhdXNlIFBJTyBpcyB1c2VkIGZvciBkZWJ1Zw0KPiA+IHB1cnBvc2Ugd2hlbiBuZXcg
-U29DIGhhcyBjb21taW5nLg0KPiA+IA0KPiANCj4gSSB1bmRlcnN0YW5kIHRoYXQgUElPIGlzIHVz
-ZWZ1bCBhcyBhIGRlYnVnIGZhbGxiYWNrIHdoZW4gYnJpbmdpbmcgdXAgbmV3IFNvQ3MuDQo+IExv
-b2tpbmcgYXQgdGhlIFJaL0czRSBkYXRhc2hlZXQgKHNlY3Rpb24gOC41KSwgU1NJVERSL1NTSVJE
-UiBleGlzdCBhcyBkYXRhDQo+IGJ1ZmZlcnMgaW4gdGhlIFNTSSBibG9jaywgYnV0IHRoZXkgYXJl
-IGFjY2Vzc2libGUgb25seSB0aHJvdWdoIHRoZSBETUEgYWNjZXNzDQo+IHBvcnQgLSBub3QgdGhy
-b3VnaCB0aGUgcmVnaXN0ZXIgYWNjZXNzIHBvcnQgKENQVSBhY2Nlc3MpLg0KPiANCj4gVGhlIGRh
-dGFzaGVldCBleHBsaWNpdGx5IHN0YXRlcyAiUElPIGFjY2VzcyAoc2V0dGluZyBwcm9oaWJpdGVk
-KSIgZm9yIHRoZQ0KPiBCVVNJRiBkYXRhIHBhdGguIFRoaXMgaXMgYWxzbyB3aHkgdGhlIHJlZ2lz
-dGVyIGRlc2NyaXB0aW9ucyAoOC41LjIuMy4yOaFWMzMpDQo+IGxpc3QgU1NJQ1IsIFNTSVNSLCBT
-U0lXU1IsIFNTSUZNUiwgU1NJRlNSIGJ1dCBubyBTU0lURFIvU1NJUkRSIGF0IHJlZ2lzdGVyDQo+
-IGFjY2VzcyBwb3J0IG9mZnNldHMuIFNvIFBJTyBtb2RlIChDUFUgcmVhZGluZy93cml0aW5nIFNT
-SVREUi9TU0lSRFIgZGlyZWN0bHkpDQo+IGlzIG5vdCBzdXBwb3J0ZWQgYnkgdGhlIGhhcmR3YXJl
-Lg0KPiANCj4gSWYgd2UgYXR0ZW1wdCBQSU8gZmFsbGJhY2sgb24gUlovRzNFLCByc25kX3NzaV9w
-aW9faW50ZXJydXB0KCkgd291bGQgdHJ5IHRvDQo+IGFjY2VzcyBTU0lURFIvU1NJUkRSIHdoaWNo
-IGFyZSBub3QgbWFwcGVkIGluIHRoZSByZWdtYXAsIGNhdXNpbmcgYSBmYWlsdXJlLg0KPiANCj4g
-U28sIHNob3VsZCBJIGtlZXAgUlNORF9TU0lfQUxXQVlTX0JVU0lGIHRvIGV4cHJlc3MgdGhpcywg
-b3Igd291bGQgeW91IHByZWZlcg0KPiBhIGRpcmVjdCByc25kX2lzX3J6ZzNlKCkgY2hlY2sgaW4g
-cnNuZF9zc2lfdXNlX2J1c2lmKCk/IEkgd291bGQgZ28gZm9yIHRoZQ0KPiBmaXJzdCBvcHRpb24g
-YXMgdGhpcyBjb3VsZCBiZSByZXVzYWJsZSBvbiBvdGhlciBTb0NzIGFuZCBhdm9pZCBTb0Mtc3Bl
-Y2lmaWMNCj4gY2hlY2tzIGFjcm9zcyBmdW5jdGlvbmFsIGNvZGUuDQoNClBJTyBpcyBhIGZlYXR1
-cmUgd2hpY2ggY2FuIGJlIGVuYWJsZWQgaW4gdmVyeSBzcGVjaWZpYyBjaXJjdW1zdGFuY2VzLg0K
-SXQgaXMgZW5hYmxlZCBpZiB5b3UgcmVxdWlyZWQsIGFuZCB3aWxsIG5vdCBiZSBlbmFibGVkIHVu
-aW50ZW50aW9uYWxseS4NCklmIGl0IGhhcHBlbnMsIGl0IGlzIGp1c3QgYnVnLg0KDQpUaGFuayB5
-b3UgZm9yIHlvdXIgaGVscCAhIQ0KDQpCZXN0IHJlZ2FyZHMNCi0tLQ0KS3VuaW5vcmkgTW9yaW1v
-dG8NCg==
+Quoting Yu-Chun Lin (2026-03-23 19:53:29)
+> diff --git a/drivers/clk/realtek/clk-pll-mmc.c b/drivers/clk/realtek/clk-=
+pll-mmc.c
+> new file mode 100644
+> index 000000000000..017663738c1f
+> --- /dev/null
+> +++ b/drivers/clk/realtek/clk-pll-mmc.c
+> @@ -0,0 +1,399 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2021 Realtek Semiconductor Corporation
+> + * Author: Cheng-Yu Lee <cylee12@realtek.com>
+> + */
+> +
+> +#include "clk-pll.h"
+
+Include what you use in this C file, not just this header file. That
+makes it simpler to see what is used without following include trails.
+
+> +
+> +#define PLL_EMMC1_OFFSET           0x0
+> +#define PLL_EMMC2_OFFSET           0x4
+> +#define PLL_EMMC3_OFFSET           0x8
+> +#define PLL_EMMC4_OFFSET           0xc
+> +#define PLL_SSC_DIG_EMMC1_OFFSET   0x0
+> +#define PLL_SSC_DIG_EMMC3_OFFSET   0xc
+> +#define PLL_SSC_DIG_EMMC4_OFFSET   0x10
+> +
+> +#define PLL_MMC_SSC_DIV_N_VAL      0x1b
+> +
+> +#define PLL_PHRT0_MASK             BIT(1)
+> +#define PLL_PHSEL_MASK             GENMASK(4, 0)
+> +#define PLL_SSCPLL_RS_MASK         GENMASK(12, 10)
+> +#define PLL_SSCPLL_ICP_MASK        GENMASK(9, 5)
+> +#define PLL_SSC_DIV_EXT_F_MASK     GENMASK(25, 13)
+> +#define PLL_PI_IBSELH_MASK         GENMASK(28, 27)
+> +#define PLL_SSC_DIV_N_MASK         GENMASK(23, 16)
+> +#define PLL_NCODE_SSC_EMMC_MASK    GENMASK(20, 13)
+> +#define PLL_FCODE_SSC_EMMC_MASK    GENMASK(12, 0)
+> +#define PLL_GRAN_EST_EM_MC_MASK    GENMASK(20, 0)
+> +#define PLL_EN_SSC_EMMC_MASK       BIT(0)
+> +#define PLL_FLAG_INITAL_EMMC_MASK  BIT(1)
+[...]
+> diff --git a/drivers/clk/realtek/clk-pll.h b/drivers/clk/realtek/clk-pll.h
+> index 2d27a44a270c..9cf219871218 100644
+> --- a/drivers/clk/realtek/clk-pll.h
+> +++ b/drivers/clk/realtek/clk-pll.h
+> @@ -44,4 +44,25 @@ static inline struct clk_pll *to_clk_pll(struct clk_hw=
+ *hw)
+>  extern const struct clk_ops rtk_clk_pll_ops;
+>  extern const struct clk_ops rtk_clk_pll_ro_ops;
+> =20
+> +struct clk_pll_mmc {
+> +       struct clk_regmap clkr;
+> +       int pll_ofs;
+> +       int ssc_dig_ofs;
+
+These offsets should be unsigned?
+
+> +       struct clk_hw phase0_hw;
+> +       struct clk_hw phase1_hw;
+> +       u32 set_rate_val_53_97_set_ipc: 1;
+
+bool? Doubt we care about this unless we're packing structs (which we
+shouldn't be).
+
+> +};
+> +
+> +#define __clk_pll_mmc_hw(_ptr)  __clk_regmap_hw(&(_ptr)->clkr)
+> +
+> +static inline struct clk_pll_mmc *to_clk_pll_mmc(struct clk_hw *hw)
+> +{
+> +       struct clk_regmap *clkr =3D to_clk_regmap(hw);
+> +
+> +       return container_of(clkr, struct clk_pll_mmc, clkr);
+> +}
