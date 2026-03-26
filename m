@@ -1,221 +1,344 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A97287246;
-	Thu, 26 Mar 2026 01:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D8033D4F0
+	for <linux-clk@vger.kernel.org>; Thu, 26 Mar 2026 01:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774488297; cv=none; b=CTBaUVC0uYshCdAvXGerP4XV+xB1fDz8Bj8he2gJA4KVjxYTorQxPOxdXKQgajwnaOOq8y2gRTiwB4qXSCxyJNMAJdqbyvgAyO+aIYVqVbPFV/UPm8te3Ps4ZzIEBBLnRJviLz/2yKuwpguSFmV2NtR80HQR+c3vWG5ZKuruWgk=
+	t=1774488485; cv=none; b=VPsPUgrCUyvZyY19gvO0lC3ls0OyUkFtoADn2zI5BQkRdORIY38Lo7/Ou2EGOs6wkfhJxxw9ax+dMb4Y7bSP80SwEYxtAMGacQ6wUXIY9QwSaL1SgPilr5KGdYMnMZmgOXaGYhDgNzsHQrUiDKiSBndSjQwMftc1lPuCXxLzjv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774488297; c=relaxed/simple;
-	bh=Eq6Xay26AJu925QH9dEoTNSTESWdI6fBXbTFQNVzJrc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P5hPHIN3lCY40TFBzADs7JYh0wKQjHJW75wiElGUbEaZxOj9hMDMjMafh70oHBpkB7+hyvuYLY875rV9D0YLhGRYDrbAsJJkZorhI9mrPstOBYmhLcxiV/NMFl9HsbustVnW/HKTaz9QMTx07fAAxYIER1c1mXX33Q+h/Dwlejs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gLMpKjxp; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1774488485; c=relaxed/simple;
+	bh=6Gcu8+Ao4lstBbI18dMnWxkWILaWqmEG7wVURt2eRUY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qUN4shxINVl0M84YO1aaeFTAKVGupwX6KURmWzjrg6ol5WpnB9XMngc100zwmisf0hC+YpfgKCxlmh6H1CCY6CC33DdkCZrMGRBkJojzv+oIrM8IqHOaQccdfqhn+QBHS9h5D7XRvDikKrPVmeRyRv0fAAdRINRvDsLZ7+D2UlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IQCRZu9j; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gLMpKjxp"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1774488295; x=1806024295;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Eq6Xay26AJu925QH9dEoTNSTESWdI6fBXbTFQNVzJrc=;
-  b=gLMpKjxptrQNrHE17huAy6AKgAjYqZVyFwQt3OfyiEICWLmIrr3t7S9+
-   ixJCGAms66MnGBtbVLuAAZ/oP4qFKHLWWc7qyYTSVEvLUSEYt27LGg0OK
-   EiYqd+SnRB4bGWekxFYNtWm0UbdUAu/6gwwie8pW6jLtG0xeaGaWBdxtB
-   cpH3UvgA2aMXMRETlzEs5Uy/pizePCwJVe6ObiMuPxqboj0VobWD9GXLz
-   1GNFJG+AlPzn32rMdmGBd11vYQ2mIpGmfkUrqMGmSVMtWbFGaWM2npspN
-   N/tFzJkRUA//vOpjBUUMceGRux4rD1MGUUy6zgU/i85gSxUZeRwZVuKVA
-   Q==;
-X-CSE-ConnectionGUID: zCROV1YgT8qUXAYgfzAz2w==
-X-CSE-MsgGUID: eY5+rXwLT4O8AnB7REryjg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11740"; a="78135431"
-X-IronPort-AV: E=Sophos;i="6.23,141,1770624000"; 
-   d="scan'208";a="78135431"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2026 18:24:55 -0700
-X-CSE-ConnectionGUID: Q+MclzIbSm+lrW2N1XA8Fw==
-X-CSE-MsgGUID: ZoLMXqn5RwaIMsxxafBSzg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,141,1770624000"; 
-   d="scan'208";a="225107174"
-Received: from lkp-server01.sh.intel.com (HELO 3905d212be1b) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 25 Mar 2026 18:24:50 -0700
-Received: from kbuild by 3905d212be1b with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1w5ZSo-000000007xp-25Yb;
-	Thu, 26 Mar 2026 01:24:46 +0000
-Date: Thu, 26 Mar 2026 09:24:18 +0800
-From: kernel test robot <lkp@intel.com>
-To: Chen-Yu Tsai <wenst@chromium.org>, Stephen Boyd <sboyd@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Frank Binns <frank.binns@imgtec.com>,
-	Matt Coster <matt.coster@imgtec.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>
-Cc: oe-kbuild-all@lists.linux.dev, Icenowy Zheng <zhengxingda@iscas.ac.cn>,
-	Chen-Yu Tsai <wenst@chromium.org>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] clk: mediatek: Add mt8173-mfgtop driver
-Message-ID: <202603260926.gAEaAK0A-lkp@intel.com>
-References: <20260325071951.544031-3-wenst@chromium.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IQCRZu9j"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-439b2965d4bso287376f8f.2
+        for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 18:28:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1774488482; x=1775093282; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wmh2eSNLdbGG4DbgCFQDaehdjKO6Qs7B6uRF+sCGrf8=;
+        b=IQCRZu9jbjtvE9VhHIGEDyCNwgC7kcjdXPr9gVwEH3VwD1obFdRvrCxBfXNCKIn2Cl
+         /beai+IgXBRQIzDQ4jZqmP+6QaCKVifrPj5d91BIg2G2ulXTp9RsUAt8o215y6GcmZxk
+         OMahHORV9bUV5V8l8CPOYZS76QTnWWK3zHoelGey1kU7agf8Fplwj4ilYk/ndsJHS6e1
+         FryP1gI5McvVpaSIqkjdFfVAj8d4INUr1ZmASf6J+jEDaywBiKOGVbTHyFWVTh+U0q90
+         dhs0VroADbZCF1xHX8G9Upfyg+8PQ1+fbuNCiIJR7/Ci3IFqkXMTv/y3avm7ZCpA2zf3
+         vpEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774488482; x=1775093282;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wmh2eSNLdbGG4DbgCFQDaehdjKO6Qs7B6uRF+sCGrf8=;
+        b=A+YQhKUfL/o9djEyvEBwuuS/hlGYXCOTyTayalCJboYlHuoyyXvktHF80pUC6CR32P
+         vCjk15vLwPcW6S3/ydDhRpIti+07+XZobkCQQBXuP+y7tUJDTudr1mizgfuhRSfFty1e
+         5sujrQVQb1YESr5O0VCFVCuvOLuhyBNbYk8Q2AjBEZyvYyjFwHRcffG/5dEAFyTQPbO1
+         KVLsfEt8tAs4pTrJXhb3BlcWulqWv0416qfBrHLfnExhHSl5jkaEevKDWewJdJ7bOi1l
+         TC1DQawD8qzLXvRaP+qJYlqNoL8HOE4ARyg6w7K0owBxAzTSG0pov0XZ1A5AHkINJxZX
+         +0dQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV3FJ2MfGtdHSV7tf+BjEtbYptsyZIHVgShxH2Aj70nFUsIQHlnVJ5rCxjEhoVE7yyV9RNnecuK6c8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyF22UOMCeqs4YmmIyK09w7tDRjJeg7De9NZW+ewkRmuxgznWSm
+	vbvpLLFWJszQQWz5j5xSZVsnMhyJZxXhL+GwG7VrTkj27/ZFMOCBtBxN+Gd+FuX52++D/ClisWq
+	8b7xz
+X-Gm-Gg: ATEYQzxlqgF2e1/04JrIyXOcjVwQKVbVo5UoUsLmtd0MV4yzdNTJUfSj+3njd/FFaFd
+	ujTdMYMvBuVbbibyX7yWWipIbkWtcFKiaAYLaWydrwB0lku8cVYb1R1xGJzoaFNPzOMfZRl7SZo
+	P6n34WN1Hfel/kzlLFDLduJvVjwzq/cScZ9kNJWNj9a24IuSzB51WUcWVMucgRU5fECvHHpstZW
+	NXcrSz+muyAtz6unmwlN/SZ6embsZ68RHlguvqcL1/Nur6LZwFAKR8Iq5e5UVTUL2anXdj3CWlb
+	BKDoq74EKF/BoRGyNZhtNV5qEr9E8KSo3QzM0Bvk/H9AFIXhsHrwr58pwXKt0pfAx3DiiPSKbch
+	xRChy1azgHuXLJH0mMeGXlnMxSMnqAPmbVOlDHL7bxxT3bJxLYsh8XW2H4IwzsLwIETrxW9ZTNi
+	nEG2tyDZJExP8TM0Y3e6UWB/urg55rCmqfxsE=
+X-Received: by 2002:a05:6000:2dca:b0:43b:4982:fc73 with SMTP id ffacd0b85a97d-43b88a050d7mr8671025f8f.25.1774488481970;
+        Wed, 25 Mar 2026 18:28:01 -0700 (PDT)
+Received: from [192.168.0.35] ([109.76.163.154])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b919cf1c4sm3918051f8f.23.2026.03.25.18.28.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Mar 2026 18:28:01 -0700 (PDT)
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: [PATCH v11 0/7] Add dt-bindings and PHY updates for CAMSS on
+ x1e80100 silicon
+Date: Thu, 26 Mar 2026 01:28:28 +0000
+Message-Id: <20260326-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v11-0-5b93415be6dd@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260325071951.544031-3-wenst@chromium.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALyLxGkC/53Qy2rDMBAF0F8JWldFo7e66n+ULvRMBK0dJNe4B
+ P97J4GSFK/cjWCu0LmDLqTnVnMnL4cLaXmuvY4DDgBPBxJPfjhmWhMGhDOumABBg6Qfdfha6JC
+ XiXJFmaAYp6lXukC2DBij0X/2TkExXYwMIQlPEDy3XOpya3t7x/lU+zS271v5rK7pv2pmvKRW6
+ ui8lk54+4ovfRufx3Yk155ZP9pyl63RzikGHksUwPnGNnfbAOyyDdosRJW85UVxvbHtr60ZR2q
+ PbdF2SoERTgRcf2O7R1vvsh3aXrkoChMmsbCxgd1xAftwwD+hJZXsrMRDwh99XdcfEIwIibQCA
+ AA=
+X-Change-ID: 20250313-b4-linux-next-25-03-13-dtsi-x1e80100-camss-1506f74bbd3a
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>, 
+ Todor Tomov <todor.too@gmail.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
+ Bryan O'Donoghue <bod@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-media@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Christopher Obbard <christopher.obbard@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10647;
+ i=bryan.odonoghue@linaro.org; h=from:subject:message-id;
+ bh=6Gcu8+Ao4lstBbI18dMnWxkWILaWqmEG7wVURt2eRUY=;
+ b=owEBbQKS/ZANAwAKASJxO7Ohjcg6AcsmYgBpxIu/ORb48l6eTKKq0DG1OFcPy5am7AciOOwbw
+ 3HK+iEc8LuJAjMEAAEKAB0WIQTmk/sqq6Nt4Rerb7QicTuzoY3IOgUCacSLvwAKCRAicTuzoY3I
+ Omk9D/91FuHDtHeAfI1PrOIZNntqd6V+3Ba2MTiAlrrn3CurAUe8dnqKEC1nuxZar6I17tOlI0E
+ bM3vI+Txh0cZbxaiGgt7sBMK7pmxQzrNoKWUSvgVHnlgVcwG5BSbL8kUPdlRW2hJmN2/ByVuqhd
+ Wed5jU+uA0ol51LGSGLUc//4XWQkg/H+2fqkf042+71ZgmZjnm9G6KrLYQ9PIRBd55W9kMLVYWr
+ lDFX6hs7zeVWBXv2hgJ3DijwNe/08kSLFKYG9Kj4wpU0z3+OamqHGelgBmvE0L/Oic+RLtx8Gak
+ E6sK6aef6J6kdOtzOicnXrQOYG/5RS5/8QohuEwLSuUq4MModxCvkH+YrOIAiL3kFmQSphKEuUf
+ 8Ob9YimyTt+x7QePCUC4/kTX8InOUjD+7twc8H2hzZ+ZaBstStaOM1WxWW2JjCF7K7AYhuB//vj
+ XB5p+/zT43yE6yB41eM94Iuqv+M1QekJ3FLQQIiKf70aRb+a5i2m82jdkbXmyyrC9O9x6OHtG3+
+ jcaOnQwjnvLetJQVNq+C3xB05tJxmKgIZcMKx0o+3f/rKDeAKdYUwllIapu5CefFE2f3qYmr2vE
+ j9s9LZcWvec/E/4YZ0DaGoxUQ2MHlA3tL72Stk0vZk2K3GYORN0PfC03DqYB5/t0g8LFApAt4ct
+ fiOXjmBSU2yoAHQ==
+X-Developer-Key: i=bryan.odonoghue@linaro.org; a=openpgp;
+ fpr=E693FB2AABA36DE117AB6FB422713BB3A18DC83A
 
-Hi Chen-Yu,
+Changes in v11:
+- Dropped simple-mfd in dts for devm_of_platform_populate() - Krzysztof
+- Pass polarity and position for data and clock lanes - bod
+- Remove check for PHY_TYPE_DPHY - PHY driver validates its own mode - bod
+- Depends-on: https://lore.kernel.org/r/20260325-dphy-params-extension-v1-0-c6df5599284a@linaro.org
+- Depends-on: https://lore.kernel.org/r/20260326-x1e-csi2-phy-v5-0-0c0fc7f5c01b@linaro.org
+- Link to v10: https://lore.kernel.org/r/20260316-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v10-0-fdfe984fe941@linaro.org
 
-kernel test robot noticed the following build errors:
+Changes in v10:
+- compat simple-mfd added to CAMSS allows probing sub-nodes.
+  The other way to do this would be simple-bus however, CAMSS
+  is really a collection of devices in a block as opposed to a
+  discoverable bus.
+- csiphy nodes are sub-nodes of CAMSS.
+  Sub-nodes as pointed out by Dmitry will allow us to show some love to
+  older platforms.
+- Depends-on: https://lore.kernel.org/r/20260315-x1e-csi2-phy-v4-0-90c09203888d@linaro.org
+- Link to v9: https://lore.kernel.org/r/20260226-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v9-0-a59c3f037d0b@linaro.org
 
-[auto build test ERROR on clk/clk-next]
-[also build test ERROR on robh/for-next drm-misc/drm-misc-next linus/master v7.0-rc5 next-20260325]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+v9:
+- Adds phy handles as optional nodes
+- Adds minItems: 5 for iommu entries
+  I believe this should be acceptable as maxItems: 8 continues
+  to be valid
+- Makes CAMSS-level rails optional for x1e
+  Similarly I think this should be OK as the legacy binding
+  is still valid it is simply optional instead of mandatory now
+- Supports CSIPHY nodes adjacent to CAMSS while leaving
+  csiphy regs intact.
+- Pushes dtsi drop to another series everything in this series
+  can go through linux-media
+- Depends-on: https://lore.kernel.org/r/20260226-x1e-csi2-phy-v3-0-11e608759410@linaro.org
+- Link to v8: https://lore.kernel.org/r/20260225-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v8-0-95517393bcb2@linaro.org
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Chen-Yu-Tsai/dt-bindings-clock-mediatek-Add-mt8173-mfgtop/20260325-202618
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/20260325071951.544031-3-wenst%40chromium.org
-patch subject: [PATCH v2 2/5] clk: mediatek: Add mt8173-mfgtop driver
-config: loongarch-randconfig-002-20260326 (https://download.01.org/0day-ci/archive/20260326/202603260926.gAEaAK0A-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 14.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260326/202603260926.gAEaAK0A-lkp@intel.com/reproduce)
+v8:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202603260926.gAEaAK0A-lkp@intel.com/
+- This version rebases on latest media-committers/next - bod
+- Adds support for "combo-mode" PHYs in the YAML.
+  It will be possible to build out the code to support this later - Vlad
+- Maintains the upstream model of connecting sensors to CSI decoders.
+  Every other upstream implementation does it this way so
+  CAMSS will do it this way too.
+- Reduces the number of IOMMU entires in CAMSS to those required for
+  CSID, VFE/RDI/PIX respectively.
+  Including all of the IOMMUs implies we will also "stuff" CAMSS
+  with ever increasing lists of registers but a better approach
+  is to have individual nodes for functional blocks.
+  For example this series supports CSIPHy as a separate block
+  CCI is already a separate block - and we will add ICP, BPS, IPE
+  etc as additional standalone nodes.
+  camss@someaddr {
+        //existing bindings vfe, csid, csiphy go here
+        iommus = <just what's needed for this>;
+  };
+  bps@some_other_address {
+        iommus = <bps specific iommus>;
+  }
+  In particular this model will save us from going down the same
+  path as the vpu which has ended up tripping over the total size
+  an iommu entry may span.
 
-All errors (new ones prefixed by >>):
+  Nobody really likes the legacy binding much so instead of
+  continuing to bludgeon more entries into it, I've conciously
+  not included BPS, IPE, ICP etc.
 
-   drivers/pmdomain/governor.c: In function 'default_suspend_ok':
->> drivers/pmdomain/governor.c:88:24: error: 'struct dev_pm_info' has no member named 'ignore_children'
-      88 |         if (!dev->power.ignore_children)
-         |                        ^
---
-   drivers/pmdomain/core.c: In function 'genpd_queue_power_off_work':
->> drivers/pmdomain/core.c:941:20: error: 'pm_wq' undeclared (first use in this function)
-     941 |         queue_work(pm_wq, &genpd->power_off_work);
-         |                    ^~~~~
-   drivers/pmdomain/core.c:941:20: note: each undeclared identifier is reported only once for each function it appears in
-   drivers/pmdomain/core.c: In function 'genpd_dev_pm_qos_notifier':
->> drivers/pmdomain/core.c:1138:39: error: 'struct dev_pm_info' has no member named 'ignore_children'
-    1138 |                 if (!dev || dev->power.ignore_children)
-         |                                       ^
-   drivers/pmdomain/core.c: In function 'rtpm_status_str':
->> drivers/pmdomain/core.c:3614:23: error: 'struct dev_pm_info' has no member named 'runtime_error'
-    3614 |         if (dev->power.runtime_error)
-         |                       ^
->> drivers/pmdomain/core.c:3616:28: error: 'struct dev_pm_info' has no member named 'disable_depth'
-    3616 |         else if (dev->power.disable_depth)
-         |                            ^
->> drivers/pmdomain/core.c:3618:28: error: 'struct dev_pm_info' has no member named 'runtime_status'
-    3618 |         else if (dev->power.runtime_status < ARRAY_SIZE(status_lookup))
-         |                            ^
-   drivers/pmdomain/core.c:3619:45: error: 'struct dev_pm_info' has no member named 'runtime_status'
-    3619 |                 p = status_lookup[dev->power.runtime_status];
-         |                                             ^
+Depends-on: https://lore.kernel.org/r/20260225-x1e-csi2-phy-v2-0-7756edb67ea9@linaro.org
+Link to v7: https://lore.kernel.org/r/20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-0-0bc5da82f526@linaro.org
+Working tree: https://gitlab.com/Linaro/arm64-laptops/linux/-/tree/qcom-laptops-v6.19-rc8-camss?ref_type=heads
 
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for PM_GENERIC_DOMAINS
-   Depends on [n]: PM [=n]
-   Selected by [m]:
-   - COMMON_CLK_MT8173_MFGTOP [=m] && COMMON_CLK [=y] && (ARCH_MEDIATEK || COMPILE_TEST [=y]) && COMMON_CLK_MT8173 [=m]
+v7:
 
+- Reimagine the PHYs as individual nodes.
+  A v1 of the schmea and driver for the CSI PHY has been published with
+  some review feedback from Rob Herring and Konrad Dybcio
 
-vim +88 drivers/pmdomain/governor.c
+  https://lore.kernel.org/r/20250710-x1e-csi2-phy-v1-0-74acbb5b162b@linaro.org
 
-a5bef810ad9816 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-04-29   49  
-b02c999ac325e9 drivers/base/power/domain_governor.c Rafael J. Wysocki 2011-12-01   50  /**
-9df3921e026532 drivers/base/power/domain_governor.c Ulf Hansson       2016-03-31   51   * default_suspend_ok - Default PM domain governor routine to suspend devices.
-b02c999ac325e9 drivers/base/power/domain_governor.c Rafael J. Wysocki 2011-12-01   52   * @dev: Device to check.
-3b2714c5d2d26d drivers/base/power/domain_governor.c Randy Dunlap      2023-12-05   53   *
-3b2714c5d2d26d drivers/base/power/domain_governor.c Randy Dunlap      2023-12-05   54   * Returns: true if OK to suspend, false if not OK to suspend
-b02c999ac325e9 drivers/base/power/domain_governor.c Rafael J. Wysocki 2011-12-01   55   */
-9df3921e026532 drivers/base/power/domain_governor.c Ulf Hansson       2016-03-31   56  static bool default_suspend_ok(struct device *dev)
-b02c999ac325e9 drivers/base/power/domain_governor.c Rafael J. Wysocki 2011-12-01   57  {
-66d29d802ef3bf drivers/base/power/domain_governor.c Ulf Hansson       2022-05-11   58  	struct gpd_timing_data *td = dev_gpd_data(dev)->td;
-6ff7bb0d02f829 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-05-01   59  	unsigned long flags;
-a5bef810ad9816 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-04-29   60  	s64 constraint_ns;
-b02c999ac325e9 drivers/base/power/domain_governor.c Rafael J. Wysocki 2011-12-01   61  
-b02c999ac325e9 drivers/base/power/domain_governor.c Rafael J. Wysocki 2011-12-01   62  	dev_dbg(dev, "%s()\n", __func__);
-b02c999ac325e9 drivers/base/power/domain_governor.c Rafael J. Wysocki 2011-12-01   63  
-6ff7bb0d02f829 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-05-01   64  	spin_lock_irqsave(&dev->power.lock, flags);
-6ff7bb0d02f829 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-05-01   65  
-6ff7bb0d02f829 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-05-01   66  	if (!td->constraint_changed) {
-9df3921e026532 drivers/base/power/domain_governor.c Ulf Hansson       2016-03-31   67  		bool ret = td->cached_suspend_ok;
-6ff7bb0d02f829 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-05-01   68  
-6ff7bb0d02f829 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-05-01   69  		spin_unlock_irqrestore(&dev->power.lock, flags);
-6ff7bb0d02f829 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-05-01   70  		return ret;
-6ff7bb0d02f829 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-05-01   71  	}
-6ff7bb0d02f829 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-05-01   72  	td->constraint_changed = false;
-9df3921e026532 drivers/base/power/domain_governor.c Ulf Hansson       2016-03-31   73  	td->cached_suspend_ok = false;
-0759e80b84e34a drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07   74  	td->effective_constraint_ns = 0;
-8262331eaaf751 drivers/base/power/domain_governor.c Viresh Kumar      2019-07-04   75  	constraint_ns = __dev_pm_qos_resume_latency(dev);
-6ff7bb0d02f829 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-05-01   76  
-6ff7bb0d02f829 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-05-01   77  	spin_unlock_irqrestore(&dev->power.lock, flags);
-6ff7bb0d02f829 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-05-01   78  
-0759e80b84e34a drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07   79  	if (constraint_ns == 0)
-a5bef810ad9816 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-04-29   80  		return false;
-a5bef810ad9816 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-04-29   81  
-a5bef810ad9816 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-04-29   82  	constraint_ns *= NSEC_PER_USEC;
-a5bef810ad9816 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-04-29   83  	/*
-a5bef810ad9816 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-04-29   84  	 * We can walk the children without any additional locking, because
-6ff7bb0d02f829 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-05-01   85  	 * they all have been suspended at this point and their
-6ff7bb0d02f829 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-05-01   86  	 * effective_constraint_ns fields won't be modified in parallel with us.
-a5bef810ad9816 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-04-29   87  	 */
-a5bef810ad9816 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-04-29  @88  	if (!dev->power.ignore_children)
-a5bef810ad9816 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-04-29   89  		device_for_each_child(dev, &constraint_ns,
-a5bef810ad9816 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-04-29   90  				      dev_update_qos_constraint);
-b02c999ac325e9 drivers/base/power/domain_governor.c Rafael J. Wysocki 2011-12-01   91  
-0759e80b84e34a drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07   92  	if (constraint_ns == PM_QOS_RESUME_LATENCY_NO_CONSTRAINT_NS) {
-704d2ce6603f7e drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07   93  		/* "No restriction", so the device is allowed to suspend. */
-0759e80b84e34a drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07   94  		td->effective_constraint_ns = PM_QOS_RESUME_LATENCY_NO_CONSTRAINT_NS;
-704d2ce6603f7e drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07   95  		td->cached_suspend_ok = true;
-0759e80b84e34a drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07   96  	} else if (constraint_ns == 0) {
-704d2ce6603f7e drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07   97  		/*
-704d2ce6603f7e drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07   98  		 * This triggers if one of the children that don't belong to a
-0759e80b84e34a drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07   99  		 * domain has a zero PM QoS constraint and it's better not to
-0759e80b84e34a drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07  100  		 * suspend then.  effective_constraint_ns is zero already and
-0759e80b84e34a drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07  101  		 * cached_suspend_ok is false, so bail out.
-704d2ce6603f7e drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07  102  		 */
-704d2ce6603f7e drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07  103  		return false;
-704d2ce6603f7e drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07  104  	} else {
-2b1d88cda32f81 drivers/base/power/domain_governor.c Ulf Hansson       2015-10-15  105  		constraint_ns -= td->suspend_latency_ns +
-2b1d88cda32f81 drivers/base/power/domain_governor.c Ulf Hansson       2015-10-15  106  				td->resume_latency_ns;
-704d2ce6603f7e drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07  107  		/*
-0759e80b84e34a drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07  108  		 * effective_constraint_ns is zero already and cached_suspend_ok
-0759e80b84e34a drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07  109  		 * is false, so if the computed value is not positive, return
-0759e80b84e34a drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07  110  		 * right away.
-704d2ce6603f7e drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07  111  		 */
-704d2ce6603f7e drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07  112  		if (constraint_ns <= 0)
-a5bef810ad9816 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-04-29  113  			return false;
-704d2ce6603f7e drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07  114  
-a5bef810ad9816 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-04-29  115  		td->effective_constraint_ns = constraint_ns;
-704d2ce6603f7e drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07  116  		td->cached_suspend_ok = true;
-704d2ce6603f7e drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07  117  	}
-a98f1b78ecf325 drivers/base/power/domain_governor.c Ulf Hansson       2015-10-13  118  
-a5bef810ad9816 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-04-29  119  	/*
-a5bef810ad9816 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-04-29  120  	 * The children have been suspended already, so we don't need to take
-9df3921e026532 drivers/base/power/domain_governor.c Ulf Hansson       2016-03-31  121  	 * their suspend latencies into account here.
-a5bef810ad9816 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-04-29  122  	 */
-9df3921e026532 drivers/base/power/domain_governor.c Ulf Hansson       2016-03-31  123  	return td->cached_suspend_ok;
-b02c999ac325e9 drivers/base/power/domain_governor.c Rafael J. Wysocki 2011-12-01  124  }
-b02c999ac325e9 drivers/base/power/domain_governor.c Rafael J. Wysocki 2011-12-01  125  
+  Both the clock name changes from Rob and OPP changes suggested by Konrad
+  are _not_ yet present in this submission however stipulating to those
+  changes, I think publishing this v7 of the CAMSS/DT changes is warranted.
 
+  Its important to publish a whole view of changes for reviewers without
+  necessarily munging everything together in one sprawling series.
+
+  TL;DR I moved the PHY driver to its own series review comments there
+  are not reflected here yet but "shouldn't" have a big impact here.
+
+- Having separate nodes in the DT for the PHYS allows for switching on PHYs
+  as we do for just about every other PHYs.
+  &csiphyX {
+      status = "okay";
+  };
+
+  We just list phys = <> in the core dtsi and enable the PHYs we want in
+  the platform dts.
+
+- The level of code change in CAMSS itself turns out to be quite small.
+  Adding the PHY structure to the CSIPHY device
+  Differentiating the existing camss.c -> camss-csiphy.c init functions
+  A few new function pointers to facilitate parallel support of legacy
+  and new PHY interfaces.
+
+- A key goal of this updated series is both to introduce a new PHY method
+  to CAMSS but to do it _only_ for a new SoC while taking care to ensure
+  that legacy CAMSS-PHY and legacy DT ABI continues to work.
+
+  This is a key point coming from the DT people which I've slowly imbibed
+  and hopefully succeeded in implementing.
+
+- In addition to the CRD both T14s and Slim7x are supported.
+  I have the Inspirion14 working and the XPS but since we haven't landed
+  the Inspirion upstream yet, I've chosen to hold off on the XPS too.
+
+- There is another proposal on the list to make PHY devices as sub-devices
+
+  I believe having those separate like most of our other PHYs
+  is the more appropriate way to go.
+
+  Similarly there is less code change to the CAMSS driver with this change.
+
+  Finally I believe we should contine to have endpoints go from the sensor
+  to CAMSS not the PHY as CAMSS' CSI decoder is the consumer of the data
+  not the PHY.
+
+- Working tree: https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/x1e80100-6.16-rcX-dell-inspiron14-camss-ov02c10-ov02e10-audio-iris-phy-v3
+- Link to v6: https://lore.kernel.org/r/20250314-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v6-0-edcb2cfc3122@linaro.org
+
+v6:
+- Removes 'A phandle to an OPP node describing' per Krzysztof's comment
+  on patch #1
+- Drops Fixes: from patch #1 - Krzysztof
+- The ordering of opp description MXC and MMXC is kept as it matches the
+  power-domain ordering - Krzysztof/bod
+- Link to v5: https://lore.kernel.org/r/20250313-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v5-0-846c9a6493a8@linaro.org
+
+v5:
+- Picks up a Fixes: that is a valid precursor for this series - Vlad
+- Applies RB from Vlad
+- Drops "cam" prefix in interconnect names - Krzysztof/Vlad
+- Amends sorting of regs, clocks consistent with recent 8550 - Depeng/Vlad
+- Link to v4: https://lore.kernel.org/r/20250119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v4-0-c2964504131c@linaro.org
+
+v4:
+- Applies RB from Konrad
+- Adds the second CCI I2C bus to CCI commit log description.
+  I previously considered leaving out the always on pins but, decided
+  to include them in the end and forgot to align the commit log.
+- Alphabetises the camcc.h included in the dtsi. - Vlad
+- Link to v3: https://lore.kernel.org/r/20250102-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v3-0-cb66d55d20cc@linaro.org
+
+v3:
+- Fixes ordering of headers in dtsi - Vlad
+- Changes camcc to always on - Vlad
+- Applies RB as indicated - Krzysztof, Konrad
+- Link to v2: https://lore.kernel.org/r/20241227-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v2-0-06fdd5a7d5bb@linaro.org
+
+v2:
+
+I've gone through each comment and implemented each suggestion since IMO
+they were all good/correct comments.
+
+Detail:
+
+- Moves x1e80100 camcc to its own yaml - Krzysztof
+- csid_wrapper comes first because it is the most relevant
+  register set - configuring all CSID blocks subordinate to it - bod, Krzysztof
+- Fixes missing commit log - Krz
+- Updates to latest format established @ sc7280 - bod
+- Includes CSID lite which I forgot to add @ v1 - Konrad, bod
+- Replaces static ICC parameters with defines - Konrad
+- Drops newlines between x and x-name - Konrad
+- Drops redundant iommu extents - Konrad
+- Leaves CAMERA_AHB_CLK as-is - Kronrad, Dmitry
+  Link: https://lore.kernel.org/r/3f1a960f-062e-4c29-ae7d-126192f35a8b@oss.qualcomm.com
+- Interrupt EDGE_RISING - Vladimir
+- Implements suggested regulator names pending refactor to PHY API - Vladimir
+- Drop slow_ahb_src clock - Vladimir
+
+Link to v1:
+https://lore.kernel.org/r/20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-0-54075d75f654@linaro.org
+
+Working tree:
+https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/arm-laptop/wip/x1e80100-6.13-rc3
+
+v1:
+
+This series adds dt-bindings and dtsi for CAMSS on x1e80100.
+
+The primary difference between x1e80100 and other platforms is a new VFE
+and CSID pair at version 680.
+
+Some minor driver churn will be required to support outside of the new VFE
+and CSID blocks but nothing too major.
+
+The CAMCC in this silicon requires two, not one power-domain requiring
+either this fix I've proposed here or something similar:
+
+https://lore.kernel.org/linux-arm-msm/bad60452-41b3-42fb-acba-5b7226226d2d@linaro.org/T/#t
+
+That doesn't gate adoption of the binding description though.
+
+A working tree in progress can be found here:
+https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/x1e80100-6.12-rc7+camss?ref_type=heads
+
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+Bryan O'Donoghue (7):
+      dt-bindings: media: qcom,x1e80100-camss: Add optional PHY handle definitions
+      dt-bindings: media: qcom,x1e80100-camss: Add support for combo-mode endpoints
+      dt-bindings: media: qcom,x1e80100-camss: Describe iommu entries
+      media: qcom: camss: Add support to populate sub-devices
+      media: qcom: camss: Add legacy_phy flag to SoC definition structures
+      media: qcom: camss: Add support for PHY API devices
+      media: qcom: camss: Drop legacy PHY descriptions from x1e
+
+ .../bindings/media/qcom,x1e80100-camss.yaml        | 128 ++++++++++++--
+ drivers/media/platform/qcom/camss/Kconfig          |   1 +
+ drivers/media/platform/qcom/camss/camss-csiphy.c   | 189 +++++++++++++++++++--
+ drivers/media/platform/qcom/camss/camss-csiphy.h   |   7 +
+ drivers/media/platform/qcom/camss/camss.c          | 127 ++++++++------
+ drivers/media/platform/qcom/camss/camss.h          |   1 +
+ 6 files changed, 374 insertions(+), 79 deletions(-)
+---
+base-commit: b11ac7d13db32d3a232e11b09491647179a2df5f
+change-id: 20250313-b4-linux-next-25-03-13-dtsi-x1e80100-camss-1506f74bbd3a
+
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+
