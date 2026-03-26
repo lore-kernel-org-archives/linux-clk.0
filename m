@@ -1,37 +1,37 @@
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4529034C815;
-	Thu, 26 Mar 2026 05:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB2734B1A7;
+	Thu, 26 Mar 2026 05:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774501480; cv=none; b=CahXJI2viSgRhdVv6ObE8/jxVWe99V7b4I9b4x5guEuVnFGzeTIq3uDvQgZfjXYyS8qj1LNnqUOpddXyZqm4lEESuWy7Tt4ARpHV+5vb9XthVGUMuPfiO2puI8I6sjVnFpVD+NIyatNAWcDQ2DlWwGrLNEPXN9yozBCvQAotr4w=
+	t=1774501481; cv=none; b=sEjwhSGy4a1mYwnruK1iyXdFMw5M4Q730W1ywwDGcsp1BSJ1RsAfsCh48t+WWKwdt8ZBLjTB30M2I1emaWXSxpJcYUSkRAb6Y057RI6xCWCIQGHY1SKkpXY8+JAIKiXaVP1IKkm726MNTRM5bFFmUJNn1wNnTDbQOxQBO/sxpxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774501480; c=relaxed/simple;
-	bh=/QrbQn0nEkvLTPCet5lN98pYVHK3PAEuFT41MD2TCUs=;
+	s=arc-20240116; t=1774501481; c=relaxed/simple;
+	bh=iFRNieBwy70eYK4iTBlR3AXf//nBc9stROyMfBHjJT4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lvjXV75HVsIG8dbUGh6sL8ogy3huo+ND1Hx7x6xE+tBzz+qH4046BKzfG6P/gBRu5zeLghQDiAWUoazzHI9KlhyPNbTe175L4XzV8Tf8IYgtypCd7K8+b3UdFLYSGaiwIqWDS3r3yHcBaJ0oHhlrv3POE0eXIQnhPu4FA41lync=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YCFGlVVO; arc=none smtp.client-ip=198.137.202.133
+	 In-Reply-To:Content-Type; b=XO//m/zgUJaswxqmYumoVADP6bFJW0mZNl9MSTXH2BBhlR6MDwKLezHD3li82cJicrOEbaHfggluPeIrQSFVHCUR1M+jVjtu7f3uMgOCq1btHlD6upcySSAhylDE5/erXBwmRCEnb9R5mAHFr/o/FKlu0BAfKaPwojvCEWvx578=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=AD0O91W6; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YCFGlVVO"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AD0O91W6"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
 	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=mgtCYmqykJ8RqkpBA6kWebfP5yKwccUxqYKRl0JX98o=; b=YCFGlVVOFpxVpIE4JpNDSiTgqW
-	J0NHpkW41zbcVhOouYMgKIczUwbGh45ZbCdW6bgPBtOynu8giHnZBy3PmPNWEtZ1SP3MZ2b8evDDW
-	1Q1fC3ezXCnwQSZawGlrEuSkh0D64vaKBKoSb1BtsS/+Cyxz9ChrP45OMXOUqPvHkW6oGVQ90RltH
-	DZoQmvrO8uyRNgF7byzWIG2o19KKrgYbK9AW8n4jhwOUdloEPjRRuCsZBkZYZ2IVf3O0pBQOEZIR/
-	hWQ9bl1CERXd2oLEJ4vX/nTkWu+eWlDXVQulgIwM4CTrZQ2Hw7+Z4Hbj6nhYdhCHXtjcRwS0isYGr
-	htMfXZjQ==;
+	bh=WOoteiBiG++L2NH8GdlWRlWgdt0rYx+y4dr3RBlQkfg=; b=AD0O91W6SrxNidI7NjgTDmn9Xw
+	XxATB1XFA9JZrqP+eVHxJqNp/lSCksxaq/z3kAuhcJWIFi4F31WH0O3N6VqZmdCGgVuTU/9VD/qvK
+	PtcToSLnsAPXR3OEleRdoaJ4zhfh7BhkAAoM9ODpxmpSLDZQkj8GSCrX6rpbBukdnF/Hw2gc2QzUC
+	7ZcLAbLryobGtyQpxbb9OZuAhiob+B9p5Hx3agjEqtLGTshhc28LRceGbzSe/tyP1uIyRaTReHLfn
+	UO9Yq6YkmXOH+OkFRXi+vdbh2kF01CFIAUTukyuNEW1nXHOLkvEkFHav7zDERbWqhv4PhsH0Yn8YZ
+	5qG0gJ8g==;
 Received: from [50.53.43.113] (helo=[192.168.254.34])
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1w5ctT-00000004hwq-2u7C;
-	Thu, 26 Mar 2026 05:04:31 +0000
-Message-ID: <1f5522c0-162b-4d26-9e65-2e4574971f04@infradead.org>
-Date: Wed, 25 Mar 2026 22:04:31 -0700
+	id 1w5ctR-00000004hwq-0Y5o;
+	Thu, 26 Mar 2026 05:04:29 +0000
+Message-ID: <1379cd60-2201-4b63-9b4a-069beef23433@infradead.org>
+Date: Wed, 25 Mar 2026 22:04:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -39,7 +39,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] clk: add kernel docs for struct clk_core
+Subject: Re: [PATCH v2 3/4] docs: clk: include some identifiers to keep
+ documentation up to date
 To: Brian Masney <bmasney@redhat.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>,
@@ -47,25 +48,32 @@ To: Brian Masney <bmasney@redhat.com>,
 Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-doc@vger.kernel.org
 References: <20260325-clk-docs-v2-0-bcf660e1ceb5@redhat.com>
- <20260325-clk-docs-v2-2-bcf660e1ceb5@redhat.com>
+ <20260325-clk-docs-v2-3-bcf660e1ceb5@redhat.com>
 Content-Language: en-US
 From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20260325-clk-docs-v2-2-bcf660e1ceb5@redhat.com>
+In-Reply-To: <20260325-clk-docs-v2-3-bcf660e1ceb5@redhat.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
 
 On 3/25/26 4:52 PM, Brian Masney wrote:
-> Document all of the members of struct clk_core.
+> The clk documentation currently has a separate list of some members of
+> struct clk_core and struct clk_ops. Now that all of these structures
+> have proper kernel docs, let's go ahead and just include them here via
+> the identifiers statement in kerneldoc.
+> 
+> While changes are being made here, let's also include the newly-added
+> enum clk_core_flags.
 > 
 > Signed-off-by: Brian Masney <bmasney@redhat.com>
 > ---
->  drivers/clk/clk.c | 51 +++++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 51 insertions(+)
+>  Documentation/driver-api/clk.rst | 58 +++++++---------------------------------
+>  1 file changed, 9 insertions(+), 49 deletions(-)
 
 Acked-by: Randy Dunlap <rdunlap@infradead.org>
-Thanks.
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
 
+Thanks.
 -- 
 ~Randy
