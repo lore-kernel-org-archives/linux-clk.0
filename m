@@ -1,175 +1,99 @@
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4999336883;
-	Thu, 26 Mar 2026 05:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1601F099C;
+	Thu, 26 Mar 2026 05:27:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774501880; cv=none; b=DClE02MTw2VNH9hxgMqjCBX9hxJZGFQGFNh7gXtFujtnKsytFSVXHJbaa61UzfCiXHYDjO2qqk6yDhmRcPDFk4nlFXd02GxLe/t7wrvtmkwL+KtD0MSCEKLEIfHw7OuHz+I3O3O4cu6gvw5uLG4TDn4vs5NUSo476i+P9ZZwuvs=
+	t=1774502874; cv=none; b=qfLew+dVfWOxSeKS7bUqI4F/GL4TkBHojnorF4Gwt7Lef7HU4hhyv6YYrmYcxcd4TKWpNqiS5ys7C7ax8086RLYiHevefprmdTnwyF8qVthcfhthfoXcdNbsiNRV+3gpa1yGGfQbYmvfBXMWPhw2OLVzezQZAadOXgzYpoGaE4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774501880; c=relaxed/simple;
-	bh=ovjHhxuJmR36VfPtZcQ3akjHWlGKARYQTrKMbjn6SFM=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B4JnffAjP6wX2e/LjVSO+rmn7S3TKzwkDN8aNe6q0ZVsTEBD8TMNNV1NXj6PimPc0ItYwb1wGmysgT2+dBhcdlqYPz988dSUT7n1px6yLS8WlbRbIe9s1nNvEqyGYFJYHerGr7ehLhOzWLVxFYxIceDluLk8h8WutiNdvoqDpkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.99)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1w5czz-000000006rQ-2Glz;
-	Thu, 26 Mar 2026 05:11:15 +0000
-Date: Thu, 26 Mar 2026 05:11:12 +0000
-From: Daniel Golle <daniel@makrotopia.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	=?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>,
-	Laura Nao <laura.nao@collabora.com>,
-	Chen-Yu Tsai <wenst@chromium.org>, Weiyi Lu <weiyi.lu@mediatek.com>,
-	Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-	Ikjoon Jang <ikjn@chromium.org>, Sam Shih <sam.shih@mediatek.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH v2 3/3] clk: mediatek: mt7988: use MUX_CLR_SET for gate-less
- muxes
-Message-ID: <d1a9b393d9929dc670dc6d5bfcc5cd43561d0be4.1774499536.git.daniel@makrotopia.org>
-References: <cover.1774499536.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1774502874; c=relaxed/simple;
+	bh=oSXEBHk6oHtPV4iwErn/tDaiZ3+61Aq25rVE531jGEQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RJb6rEsbf9caRgibAHscVzYLQGAlfmwtyzIPNWR8FqtU8D1AvxsyR6GdG6q475wrllb2YyYdzlJjPfok+EAu2favyeq7rodmWOHu1J4GK9+1mvPGHVyP2dTOtAZsYdJ46wlJmqpXwFW8Fgq82cm9mEarEdEUMhjgkCSM3FxHgJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=kT+04YXP; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="kT+04YXP"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1774502870;
+	bh=gPXVxe4ANUtFdLLKPWp11SGeawgPJ2lvQwnd9v54erw=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=kT+04YXPlRKFDvvUziOIQfXuDkgCsfS1eFgzZe2KSyxC6HjrP+oewnY7kk/IeO87i
+	 flJF3N4C3PU9B+v9RoNy1sVeBzI0ENkwIC4B5Y9J4JUqmLARnkNv6xUUd6Pke/HFIn
+	 FuIm7IS7I3o2dPQ8klFgikDcu3THMaj3oCFDZiLYOtufO0y4UAG5KeU3ia8+a2LTbw
+	 E2EcVsqdP2cr5Uo2pBbkHMOaGrwJT6Tk7toeyE542RnA8D9+VJUrlKejklkHBQv0hj
+	 BmUnf853E9alMZBLe8xHC8I+bmGNlju+ZBKac7X1JejtjYkUu16M8jVMIeK2oaUczu
+	 Hf4RwvlxMta/g==
+Received: from [192.168.68.115] (unknown [180.150.112.60])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id AAF4065AE0;
+	Thu, 26 Mar 2026 13:27:49 +0800 (AWST)
+Message-ID: <7867c2bb2d3fa023d0a201ff1ca24d69916fb2cc.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v3 1/2] dt-bindings: clock: ast2600: Add reset
+ definition for video
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>
+Cc: Haiyue Wang <haiyuewa@163.com>, devicetree@vger.kernel.org, 
+	linux-aspeed@lists.ozlabs.org, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "open
+ list:COMMON CLK FRAMEWORK"	 <linux-clk@vger.kernel.org>, open list
+ <linux-kernel@vger.kernel.org>
+Date: Thu, 26 Mar 2026 15:57:48 +1030
+In-Reply-To: <20260302011651.94682-1-haiyuewa@163.com>
+References: <20260302011651.94682-1-haiyuewa@163.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-0+deb13u1 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1774499536.git.daniel@makrotopia.org>
 
-All 19 muxes in the infra_muxes[] array are pure mux selectors without
-a clock gate or update register, yet they were defined using
-MUX_GATE_CLR_SET_UPD with gate_shift = -1.
+Hi Michael, Stephen,
 
-This macro assigns mtk_mux_gate_clr_set_upd_ops, whose
-enable/disable/is_enabled callbacks perform BIT(gate_shift). Since
-gate_shift is stored as u8, the -1 truncates to 255, causing a
-shift-out-of-bounds at runtime:
+On Mon, 2026-03-02 at 09:15 +0800, Haiyue Wang wrote:
+> Add ASPEED_RESET_VIDEO reset definition to the ast2600-clock binding
+> header. It is required for proper reset control of the video on the
+> AST2600 SoC for aspeed-video driver.
+>=20
+> Signed-off-by: Haiyue Wang <haiyuewa@163.com>
+> ---
+> v3:
+> =C2=A0 - Drop 'Fixes:' tag in header file patch.
+> v2: https://lore.kernel.org/all/20260227151602.829-1-haiyuewa@163.com/
+> =C2=A0 - Fix checkpatch.pl warning, and send dt-bindings as single patch =
+as
+> =C2=A0=C2=A0=C2=A0 the submitting-patches guide.
+> v1: https://lore.kernel.org/all/20260227123837.70079-1-haiyuewa@163.com/
+> ---
+> =C2=A0include/dt-bindings/clock/ast2600-clock.h | 1 +
+> =C2=A01 file changed, 1 insertion(+)
+>=20
+> diff --git a/include/dt-bindings/clock/ast2600-clock.h b/include/dt-bindi=
+ngs/clock/ast2600-clock.h
+> index f60fff261130..7b9b80c38a8b 100644
+> --- a/include/dt-bindings/clock/ast2600-clock.h
+> +++ b/include/dt-bindings/clock/ast2600-clock.h
+> @@ -124,6 +124,7 @@
+> =C2=A0#define ASPEED_RESET_PCIE_RC_OEN	18
+> =C2=A0#define ASPEED_RESET_MAC2		12
+> =C2=A0#define ASPEED_RESET_MAC1		11
+> +#define ASPEED_RESET_VIDEO		6
+> =C2=A0#define ASPEED_RESET_PCI_DP		5
+> =C2=A0#define ASPEED_RESET_HACE		4
+> =C2=A0#define ASPEED_RESET_AHB		1
 
-UBSAN: shift-out-of-bounds in drivers/clk/mediatek/clk-mux.c:76:8
-shift exponent 255 is too large for 64-bit type 'long unsigned int'
 
-UBSAN: shift-out-of-bounds in drivers/clk/mediatek/clk-mux.c:102:4
-shift exponent 255 is too large for 64-bit type 'long unsigned int'
+If you would like to take this change I can apply 2/2 later when it
+makes sense to do so:
 
-UBSAN: shift-out-of-bounds in drivers/clk/mediatek/clk-mux.c:122:16
-shift exponent 255 is too large for 64-bit type 'long unsigned int'
+Reviewed-by: Andrew Jeffery <andrew@codeconstruct.com.au>
 
-Switch these definitions to MUX_CLR_SET, which uses
-mtk_mux_clr_set_upd_ops (no gate callbacks) and does not require
-callers to pass sentinel values for unused update register fields.
-The actual clock gating for these peripherals is handled by the
-separate GATE_INFRA* definitions further down.
+Otherwise, I'm happy to take both through the aspeed/arm/dt branch in
+the bmc tree with your ack on this one.
 
-Fixes: 4b4719437d85f ("clk: mediatek: add drivers for MT7988 SoC")
-Signed-off-by: Daniel Golle <daniel@makrotopia.org>
----
- drivers/clk/mediatek/clk-mt7988-infracfg.c | 80 ++++++++++------------
- 1 file changed, 38 insertions(+), 42 deletions(-)
-
-diff --git a/drivers/clk/mediatek/clk-mt7988-infracfg.c b/drivers/clk/mediatek/clk-mt7988-infracfg.c
-index ef8267319d91b..13ffa9d88e24b 100644
---- a/drivers/clk/mediatek/clk-mt7988-infracfg.c
-+++ b/drivers/clk/mediatek/clk-mt7988-infracfg.c
-@@ -56,49 +56,45 @@ static const char *const infra_pcie_gfmux_tl_ck_o_p3_parents[] __initconst = {
- 
- static const struct mtk_mux infra_muxes[] = {
- 	/* MODULE_CLK_SEL_0 */
--	MUX_GATE_CLR_SET_UPD(CLK_INFRA_MUX_UART0_SEL, "infra_mux_uart0_sel",
--			     infra_mux_uart0_parents, 0x0018, 0x0010, 0x0014, 0, 1, -1, -1, -1),
--	MUX_GATE_CLR_SET_UPD(CLK_INFRA_MUX_UART1_SEL, "infra_mux_uart1_sel",
--			     infra_mux_uart1_parents, 0x0018, 0x0010, 0x0014, 1, 1, -1, -1, -1),
--	MUX_GATE_CLR_SET_UPD(CLK_INFRA_MUX_UART2_SEL, "infra_mux_uart2_sel",
--			     infra_mux_uart2_parents, 0x0018, 0x0010, 0x0014, 2, 1, -1, -1, -1),
--	MUX_GATE_CLR_SET_UPD(CLK_INFRA_MUX_SPI0_SEL, "infra_mux_spi0_sel", infra_mux_spi0_parents,
--			     0x0018, 0x0010, 0x0014, 4, 1, -1, -1, -1),
--	MUX_GATE_CLR_SET_UPD(CLK_INFRA_MUX_SPI1_SEL, "infra_mux_spi1_sel", infra_mux_spi1_parents,
--			     0x0018, 0x0010, 0x0014, 5, 1, -1, -1, -1),
--	MUX_GATE_CLR_SET_UPD(CLK_INFRA_MUX_SPI2_SEL, "infra_mux_spi2_sel", infra_mux_spi0_parents,
--			     0x0018, 0x0010, 0x0014, 6, 1, -1, -1, -1),
--	MUX_GATE_CLR_SET_UPD(CLK_INFRA_PWM_SEL, "infra_pwm_sel", infra_pwm_bck_parents, 0x0018,
--			     0x0010, 0x0014, 14, 2, -1, -1, -1),
--	MUX_GATE_CLR_SET_UPD(CLK_INFRA_PWM_CK1_SEL, "infra_pwm_ck1_sel", infra_pwm_bck_parents,
--			     0x0018, 0x0010, 0x0014, 16, 2, -1, -1, -1),
--	MUX_GATE_CLR_SET_UPD(CLK_INFRA_PWM_CK2_SEL, "infra_pwm_ck2_sel", infra_pwm_bck_parents,
--			     0x0018, 0x0010, 0x0014, 18, 2, -1, -1, -1),
--	MUX_GATE_CLR_SET_UPD(CLK_INFRA_PWM_CK3_SEL, "infra_pwm_ck3_sel", infra_pwm_bck_parents,
--			     0x0018, 0x0010, 0x0014, 20, 2, -1, -1, -1),
--	MUX_GATE_CLR_SET_UPD(CLK_INFRA_PWM_CK4_SEL, "infra_pwm_ck4_sel", infra_pwm_bck_parents,
--			     0x0018, 0x0010, 0x0014, 22, 2, -1, -1, -1),
--	MUX_GATE_CLR_SET_UPD(CLK_INFRA_PWM_CK5_SEL, "infra_pwm_ck5_sel", infra_pwm_bck_parents,
--			     0x0018, 0x0010, 0x0014, 24, 2, -1, -1, -1),
--	MUX_GATE_CLR_SET_UPD(CLK_INFRA_PWM_CK6_SEL, "infra_pwm_ck6_sel", infra_pwm_bck_parents,
--			     0x0018, 0x0010, 0x0014, 26, 2, -1, -1, -1),
--	MUX_GATE_CLR_SET_UPD(CLK_INFRA_PWM_CK7_SEL, "infra_pwm_ck7_sel", infra_pwm_bck_parents,
--			     0x0018, 0x0010, 0x0014, 28, 2, -1, -1, -1),
--	MUX_GATE_CLR_SET_UPD(CLK_INFRA_PWM_CK8_SEL, "infra_pwm_ck8_sel", infra_pwm_bck_parents,
--			     0x0018, 0x0010, 0x0014, 30, 2, -1, -1, -1),
-+	MUX_CLR_SET(CLK_INFRA_MUX_UART0_SEL, "infra_mux_uart0_sel",
-+		    infra_mux_uart0_parents, 0x0018, 0x0010, 0x0014, 0, 1),
-+	MUX_CLR_SET(CLK_INFRA_MUX_UART1_SEL, "infra_mux_uart1_sel",
-+		    infra_mux_uart1_parents, 0x0018, 0x0010, 0x0014, 1, 1),
-+	MUX_CLR_SET(CLK_INFRA_MUX_UART2_SEL, "infra_mux_uart2_sel",
-+		    infra_mux_uart2_parents, 0x0018, 0x0010, 0x0014, 2, 1),
-+	MUX_CLR_SET(CLK_INFRA_MUX_SPI0_SEL, "infra_mux_spi0_sel",
-+		    infra_mux_spi0_parents, 0x0018, 0x0010, 0x0014, 4, 1),
-+	MUX_CLR_SET(CLK_INFRA_MUX_SPI1_SEL, "infra_mux_spi1_sel",
-+		    infra_mux_spi1_parents, 0x0018, 0x0010, 0x0014, 5, 1),
-+	MUX_CLR_SET(CLK_INFRA_MUX_SPI2_SEL, "infra_mux_spi2_sel",
-+		    infra_mux_spi0_parents, 0x0018, 0x0010, 0x0014, 6, 1),
-+	MUX_CLR_SET(CLK_INFRA_PWM_SEL, "infra_pwm_sel",
-+		    infra_pwm_bck_parents, 0x0018, 0x0010, 0x0014, 14, 2),
-+	MUX_CLR_SET(CLK_INFRA_PWM_CK1_SEL, "infra_pwm_ck1_sel",
-+		    infra_pwm_bck_parents, 0x0018, 0x0010, 0x0014, 16, 2),
-+	MUX_CLR_SET(CLK_INFRA_PWM_CK2_SEL, "infra_pwm_ck2_sel",
-+		    infra_pwm_bck_parents, 0x0018, 0x0010, 0x0014, 18, 2),
-+	MUX_CLR_SET(CLK_INFRA_PWM_CK3_SEL, "infra_pwm_ck3_sel",
-+		    infra_pwm_bck_parents, 0x0018, 0x0010, 0x0014, 20, 2),
-+	MUX_CLR_SET(CLK_INFRA_PWM_CK4_SEL, "infra_pwm_ck4_sel",
-+		    infra_pwm_bck_parents, 0x0018, 0x0010, 0x0014, 22, 2),
-+	MUX_CLR_SET(CLK_INFRA_PWM_CK5_SEL, "infra_pwm_ck5_sel",
-+		    infra_pwm_bck_parents, 0x0018, 0x0010, 0x0014, 24, 2),
-+	MUX_CLR_SET(CLK_INFRA_PWM_CK6_SEL, "infra_pwm_ck6_sel",
-+		    infra_pwm_bck_parents, 0x0018, 0x0010, 0x0014, 26, 2),
-+	MUX_CLR_SET(CLK_INFRA_PWM_CK7_SEL, "infra_pwm_ck7_sel",
-+		    infra_pwm_bck_parents, 0x0018, 0x0010, 0x0014, 28, 2),
-+	MUX_CLR_SET(CLK_INFRA_PWM_CK8_SEL, "infra_pwm_ck8_sel",
-+		    infra_pwm_bck_parents, 0x0018, 0x0010, 0x0014, 30, 2),
- 	/* MODULE_CLK_SEL_1 */
--	MUX_GATE_CLR_SET_UPD(CLK_INFRA_PCIE_GFMUX_TL_O_P0_SEL, "infra_pcie_gfmux_tl_o_p0_sel",
--			     infra_pcie_gfmux_tl_ck_o_p0_parents, 0x0028, 0x0020, 0x0024, 0, 2, -1,
--			     -1, -1),
--	MUX_GATE_CLR_SET_UPD(CLK_INFRA_PCIE_GFMUX_TL_O_P1_SEL, "infra_pcie_gfmux_tl_o_p1_sel",
--			     infra_pcie_gfmux_tl_ck_o_p1_parents, 0x0028, 0x0020, 0x0024, 2, 2, -1,
--			     -1, -1),
--	MUX_GATE_CLR_SET_UPD(CLK_INFRA_PCIE_GFMUX_TL_O_P2_SEL, "infra_pcie_gfmux_tl_o_p2_sel",
--			     infra_pcie_gfmux_tl_ck_o_p2_parents, 0x0028, 0x0020, 0x0024, 4, 2, -1,
--			     -1, -1),
--	MUX_GATE_CLR_SET_UPD(CLK_INFRA_PCIE_GFMUX_TL_O_P3_SEL, "infra_pcie_gfmux_tl_o_p3_sel",
--			     infra_pcie_gfmux_tl_ck_o_p3_parents, 0x0028, 0x0020, 0x0024, 6, 2, -1,
--			     -1, -1),
-+	MUX_CLR_SET(CLK_INFRA_PCIE_GFMUX_TL_O_P0_SEL, "infra_pcie_gfmux_tl_o_p0_sel",
-+		    infra_pcie_gfmux_tl_ck_o_p0_parents, 0x0028, 0x0020, 0x0024, 0, 2),
-+	MUX_CLR_SET(CLK_INFRA_PCIE_GFMUX_TL_O_P1_SEL, "infra_pcie_gfmux_tl_o_p1_sel",
-+		    infra_pcie_gfmux_tl_ck_o_p1_parents, 0x0028, 0x0020, 0x0024, 2, 2),
-+	MUX_CLR_SET(CLK_INFRA_PCIE_GFMUX_TL_O_P2_SEL, "infra_pcie_gfmux_tl_o_p2_sel",
-+		    infra_pcie_gfmux_tl_ck_o_p2_parents, 0x0028, 0x0020, 0x0024, 4, 2),
-+	MUX_CLR_SET(CLK_INFRA_PCIE_GFMUX_TL_O_P3_SEL, "infra_pcie_gfmux_tl_o_p3_sel",
-+		    infra_pcie_gfmux_tl_ck_o_p3_parents, 0x0028, 0x0020, 0x0024, 6, 2),
- };
- 
- static const struct mtk_gate_regs infra0_cg_regs = {
--- 
-2.53.0
+Andrew
