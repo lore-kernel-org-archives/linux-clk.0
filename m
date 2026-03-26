@@ -1,401 +1,252 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011038.outbound.protection.outlook.com [52.101.125.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233BD4369A;
-	Thu, 26 Mar 2026 21:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774561911; cv=none; b=ZJ6CgwFDTw7bCedPOVWM0gCFGu0KGzikffemYSRfhkelLMS+5b6vceGHi1i8LvKtVdp4dalZuXY3hNeBVYr+8H05WtVjD1GW9Wp3NlGgchQRiE1NXhgbHK0G7CAvdEUr7342wgZOatbxIeCXhY3lxYZdAONMId8rPWiMlQh9Nzk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774561911; c=relaxed/simple;
-	bh=ksQxwM+OccMxa9iJv3EW5rDxkiElko9WrzO8RLo+obM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eFj7qOl06f1nRenoZfgcMc8F8tQg+vJsHIGxUNqG4qH1yqOez+cX3OiBqB4cPSFyW5obRCeWCNpLk9I8oeMudyAKgn4SeEinDeR9XJfOlTs4b0ZtYhscuTFM31RdywvAdffNCQQAyXWcZcSL8/uTHtL+4XS4W7B2+LhhnCCsf30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NHfgmTjr; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D88318ED7;
+	Thu, 26 Mar 2026 22:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.38
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774564976; cv=fail; b=Gqt989I6VvTAWvTZw8+0Qx2/qOPNGiMG/dOb489RQVpOoBaL+5lFoMmzH7w4HQTvlHR6L50SGOvVK0BTE47ABKHi8NjEru9jXf1rsDhm5enzr/cA+oQSaI2DYg7pLxKLHhGYCGF9Ym7GAUgMrxd93CQWeBYWAdGmWczBeBSoeSw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774564976; c=relaxed/simple;
+	bh=QxQF6kHDCLQn9kfOQYJWQ9/ElIzrFMc7Hm7s8bwkW10=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=FcsLpzoYmzdQgpPajRHHQJ0PC4wEUbm1OECVzp3zVTUzmockvymWbwOzwTi4uq5vH/AlImUsUeaVAOWwm7hdrBR0W/3ErdblBW+x8kQwj5Zm04C5J5izMizk9VXQ6cOsmTbBKljUTNsRQgKlYhTVaH13quBz3IXezGQEjRvv+kU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=GVeyRylY; arc=fail smtp.client-ip=52.101.125.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NHfgmTjr"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1774561908; x=1806097908;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ksQxwM+OccMxa9iJv3EW5rDxkiElko9WrzO8RLo+obM=;
-  b=NHfgmTjr2vncHNixqO+P3QyTvkSxXAKXYqBvu3vGgT8i+68ovzFykGot
-   TF4y9hpIC/MhAfB5vaPqxi7UY/ZJ6y104Qt2AbJdSLXxZcapVFUENtl38
-   a+RZcGl+vOMU4qEshbs7WATwNq66q2kTZv1ZX+LS0+kjG+k/6w5Nnnoxy
-   b1bEQz80EncG3tbOMWh53UvlOL2k3rFp0hV3EaKqbu3UAR9jkMjrhraHC
-   4742WEOzWuGyletpqEOoYFnetpe5C5RP61NdKd/FjMWpMMajPVJeVfGgT
-   bg8IB9kKXjPWpij7FpZsoYKWEEQ8KUgFSr+dRvnXGX21MqMIaL5grbcNW
-   Q==;
-X-CSE-ConnectionGUID: MbUrdvjtTSa4OBUGCPD0+A==
-X-CSE-MsgGUID: pGrzLfHLT9W/poFLzuDP6w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11741"; a="85939218"
-X-IronPort-AV: E=Sophos;i="6.23,142,1770624000"; 
-   d="scan'208";a="85939218"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2026 14:51:47 -0700
-X-CSE-ConnectionGUID: 5HsxH+RiTJKVrVxatLAu0Q==
-X-CSE-MsgGUID: Ty7k5RPuQJWBmzhu3j4qUw==
-X-ExtLoop1: 1
-Received: from igk-lkp-server01.igk.intel.com (HELO 9958d990ccf2) ([10.211.93.152])
-  by fmviesa003.fm.intel.com with ESMTP; 26 Mar 2026 14:51:45 -0700
-Received: from kbuild by 9958d990ccf2 with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1w5scA-000000007L7-36Pq;
-	Thu, 26 Mar 2026 21:51:42 +0000
-Date: Thu, 26 Mar 2026 22:51:21 +0100
-From: kernel test robot <lkp@intel.com>
-To: Rosen Penev <rosenp@gmail.com>, linux-tegra@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2] firmware/tegra: add COMPILE_TEST
-Message-ID: <202603262233.dvRyEA8v-lkp@intel.com>
-References: <20260324015722.12507-1-rosenp@gmail.com>
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="GVeyRylY"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VvaqeA6nNrrsPnoWEvEprBdzUsQs6F8O6v0Sv1p07ixHWi7FUE+Mn4f35+MdetH2okIL0b1o9JVLX3f6apJY+TBeW/GHHpscATdXpnhFt6FxhkVi/+s4mypmAJmrs3VNpYFIB/cTJMVrk+NkhS3lUiXceRGDvmtlcj7x8ZgiD1HbCX/qE3YqjIoFtAEFN2O8uKirRryi1W8tUBUVBWl7ataGwJ52sDqGQAinJKuMYqtMZ+13tefHKf2tWYxQt2eeH69/+/CxBjngk1xbAMB3oc3ysN1Dqbhwe8k2NHqFxHk2L7l3RR4Fb5MKtrQlqr74gSyUC0XWIul8fCz7ykBNfw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QxQF6kHDCLQn9kfOQYJWQ9/ElIzrFMc7Hm7s8bwkW10=;
+ b=m1Ix3Fpv//Jrgfv7+ufgfrQYnKWNJJLchqWYm3xG96Qz3Ius4UjlsIEWHedqAYj3VjV5yy7G+lxgyxWBsx9ssbw+bAbdlqWqpDQ/7+F9MBfg2Ufuok1IttMVucu0Ex2+KUvRu7EBaygQRUR5sn55Vdhi7QNHt5hODeGvsCG8MUKTp08GZ/pWKnHYI9CqX3ZhCRM9duaIWGDydeWrYi2x/QbHKqBKtKLgbH0UJ6Yx7JZly3+njAhHpHgrjT61YxkmtQWa3b/3+lXHLUnlxNGD79HADVITl+6hkl2A65w81ZKgc6129x3P5GoDSetLixaA2Ztz1WcQWNwjL+99E80jIQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QxQF6kHDCLQn9kfOQYJWQ9/ElIzrFMc7Hm7s8bwkW10=;
+ b=GVeyRylYra0efJuCAttJMTVEVzbtdsleq/GGm8oVPxJ+m066tcwE7R/4U6ehKZnxGviCo1W3d3lWMooefSLT3RQDm20ndZ5G0hiJfr6J0JhphGjM7Rmi9tLDC4qsoUhme9d5EFcI44L+SY2Xj/PEYD7u7ZzAZQyi4fhbEBlT7ZY=
+Received: from TY6PR01MB17377.jpnprd01.prod.outlook.com (2603:1096:405:35b::6)
+ by TYXPR01MB15664.jpnprd01.prod.outlook.com (2603:1096:405:2a1::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.22; Thu, 26 Mar
+ 2026 22:42:49 +0000
+Received: from TY6PR01MB17377.jpnprd01.prod.outlook.com
+ ([fe80::f373:26d6:86c4:6aa3]) by TY6PR01MB17377.jpnprd01.prod.outlook.com
+ ([fe80::f373:26d6:86c4:6aa3%4]) with mapi id 15.20.9745.019; Thu, 26 Mar 2026
+ 22:42:48 +0000
+From: John Madieu <john.madieu.xa@bp.renesas.com>
+To: geert <geert@linux-m68k.org>
+CC: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Vinod Koul
+	<vkoul@kernel.org>, Mark Brown <broonie@kernel.org>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@kernel.org>, Liam Girdwood
+	<lgirdwood@gmail.com>, magnus.damm <magnus.damm@gmail.com>, Thomas Gleixner
+	<tglx@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
+	<tiwai@suse.com>, Philipp Zabel <p.zabel@pengutronix.de>, Claudiu.Beznea
+	<claudiu.beznea@tuxon.dev>, Biju Das <biju.das.jz@bp.renesas.com>, Fabrizio
+ Castro <fabrizio.castro.jz@renesas.com>, Prabhakar Mahadev Lad
+	<prabhakar.mahadev-lad.rj@bp.renesas.com>, John Madieu
+	<john.madieu@gmail.com>, "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "dmaengine@vger.kernel.org"
+	<dmaengine@vger.kernel.org>, "linux-sound@vger.kernel.org"
+	<linux-sound@vger.kernel.org>
+Subject: RE: [PATCH 04/22] dt-bindings: dma: renesas,rz-dmac: Document
+ optional DMA ACK cell
+Thread-Topic: [PATCH 04/22] dt-bindings: dma: renesas,rz-dmac: Document
+ optional DMA ACK cell
+Thread-Index: AQHct7jHNqn7t5QHT0asIKa2SX7MdbXA+rgAgABvsOA=
+Date: Thu, 26 Mar 2026 22:42:48 +0000
+Message-ID:
+ <TY6PR01MB1737720136E84FAF590F637C4FF56A@TY6PR01MB17377.jpnprd01.prod.outlook.com>
+References: <20260319155334.51278-1-john.madieu.xa@bp.renesas.com>
+ <20260319155334.51278-5-john.madieu.xa@bp.renesas.com>
+ <CAMuHMdVbP5Bbr9KuxoEb48zUvubT3CN7sC9oVat2NcNWaBwOtQ@mail.gmail.com>
+In-Reply-To:
+ <CAMuHMdVbP5Bbr9KuxoEb48zUvubT3CN7sC9oVat2NcNWaBwOtQ@mail.gmail.com>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY6PR01MB17377:EE_|TYXPR01MB15664:EE_
+x-ms-office365-filtering-correlation-id: 2fab8071-9754-4fa2-9a48-08de8b8901a9
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700021|56012099003|22082099003|18002099003;
+x-microsoft-antispam-message-info:
+ EvO6vLAteZ+t7QKl7PTgBup60tuPMAbzIhOR70pBJ20M95AbDmnq1Tkzof+N+U3fvOAAKTywUwY1l27d+6YWLcK/MmWP8TmdgU4qV0KPwEpTeOKUF0XbAOldvYUSYnf/3TxfYLYcLv2Xnw2vddtFnXCB8u4/ppsdVmS5PUbfwgwrMbzI29wX/TSiiTegtQtJufkMjO8WC/WCVgs4qB9zjsBgNO0oMUwKs4rBHNs3ymKS+lJ5maxysk5oCicytLolWfKZ8PkNNPxXwg1H/oGumAmNuagdKcmvB/Og4qCHvSb0pumd6By8oF4FtiDjKYPcvfMCni41zbpvsP0jRuWLi/FdnxQ7g2fDK/jD7fECfCGR40LdcM+QWyN/yqntaGqg8JayPjCB/5Qi8Wlz75CET3Yu2vsu7K8dxRRPmAejvK/yAcRHVN0VdEdv4qM4z0PbTIDp1f0rqANEkaCuGtmk4ZutbdecqVm7EXDmvEsR5XCM5lBGDOxwIyh3vrGcOEUygrHcj/ZBCnjfBquLBi1iINAPqnA0h6OM3tPM9o9yMcDVnbfpFY/qwjzU06qGYUkTzGN1ukRma5mPetsrvEeJPgTCG+HpfbAElco6K33RfIvHui59AnE+A30SOIrBTNxJfKUZb4CvlY6kMdTgo/EeLxwoUO2J5IkegjJM77vknLEqMnoKrLGVeLSHOXcJbk6l6Z/ChKsDDzN0tBGapyZu9STAxYn6yLVk33Fg0+RAT3W5y7oRGzG/yMznA/qYvrSwTVX65aek8da17Jx2Ns5h6LHKGBAV118nYB/N/FsGMQs=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY6PR01MB17377.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700021)(56012099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?dTVJWlBDSTJCS1VTeEVnZmJnWXJJVk9BWkQvVVV5b0pWSjArbk9ERUE3OVNS?=
+ =?utf-8?B?QXBRdU9rSExwOGFtN3hlTUpObVNPOWV4YmMwRFJzUVdWUWtTZzdxa05DZk55?=
+ =?utf-8?B?QXF1WEhWWVcwek1wYmFJUmNhUTJFUGk3eGRDbDRsai9pcTJ1akg1emtLZTRm?=
+ =?utf-8?B?YW5saTBUMHRBaUVmV3JuQVc1Y0dEdk9LL1JSTHRhOS80dlY0cllLNXY2cmxo?=
+ =?utf-8?B?a3RuNm5HY3ZReDNNYkkyK1V1U21xV05TRXBQNjhxTHp5cUliaitjK1FsdzlO?=
+ =?utf-8?B?T0tJMVJHQk5ieEhxSWNHRUdTNFliTVhlL0FCRHoxcmcxWGY0eUJBeVoxV2tj?=
+ =?utf-8?B?dHkwbm4yZzdJTHhaMWRoVlFsOUZ6bGpPL25nNitkalQ5WEhjOThieE5ETzh6?=
+ =?utf-8?B?OHB2SGNYU3FIVWw0WUtZcUFLQUw1NHlMOFRLSERwZEs5RWZLTGcrY1lycWVO?=
+ =?utf-8?B?bmE5Z2taUytDMjBXd0tQek5UbHlxVkkvc01wNFhYTHMrckNLVEo4bGhlamNT?=
+ =?utf-8?B?VDhJNnFYVmFMMnZ5OEJUdFhEWVVBZ2loaXpObDlLcmNDMU42OE5NNWNCalRN?=
+ =?utf-8?B?R3JTd295NzhIUXplSldaQnhiUktCUWlKcmNaSWs4eTZqTkJHUUxVajJnc2dq?=
+ =?utf-8?B?TzUzNDVGVHR2M0hmVEZTcmd2aFdOR3NpdFRkcncvWEF6YXJyd0xFVThDRC9r?=
+ =?utf-8?B?Qjd2YlVXVURPWkdDU040UGNuY3NyWmtJeW1zNjdnRysxNWZtUWNROStGNlo4?=
+ =?utf-8?B?MFlqeDJEdlc5Ny95cks0OHlHM3h1ZVUvS3B0RWNQSDFYdlRVYWFEZmNrZUJR?=
+ =?utf-8?B?eGZlLzlJR1U1U0h6K2JKZGJXbEZadUl4YWxmOHZIRXhSMXd4SEhDcjcwUksy?=
+ =?utf-8?B?ekxjV2dJMlFUWVFLYVRveDhsU2VCcnBQR2FEZEw3emt3NDg1RzVpbFQxZWh1?=
+ =?utf-8?B?Mkk3QzN1b3dCK25GQTE3REZLa3FMcnpiRE15aXJQNEtaMkdONVBBVzA2L0Z0?=
+ =?utf-8?B?c0Z4eXdKZEpFc0YzajNhYzJ6NE5uVXdhMkxxOUY4ektrdXNWM2RFSytDT0dY?=
+ =?utf-8?B?cHMvWGpGQkhCUGk5TUs2eHFvR1JXKzJYM1RmSStVanE2UWQzbWZtWnZDRllG?=
+ =?utf-8?B?dldCR3EvTVlYczVjZTFpT3diUCtjM1NlYTJEVElIZ0FtSFVzVDR2a2k1VlBN?=
+ =?utf-8?B?ditzeXd5UllrRGVLbUZ5UkpnQTI1ckwxTko5MEFsbDUxQ21Ha3lHWlhPZXhY?=
+ =?utf-8?B?bnlIWHlwS1AzVmlsOHZxc012aUFWOGM2bUJXOVh2TlgvdkVIdmY3cjRoQjhF?=
+ =?utf-8?B?K2hBMTk0Qmc0YVo5N0hiOXNOQ2pDRnd6OWtoRmJ5YVIwQk9CNk9iS1Q3dUs0?=
+ =?utf-8?B?Yk1uTlRhdytFVTNCcTVmWllaMkIvTWNXM2svZHlBQ1Q0Z2RGSVVpS0daQ0oy?=
+ =?utf-8?B?Q1JpVnA4T3hTMUFvTHo5Q1pxNk1XdS9ZeW5vRy82eEtFb1dyd05jVXpGY0wx?=
+ =?utf-8?B?YW5yOEZxUWZGLzNoWFlwWSs5UXdlTWErV2NFcjJHZXo0NnZzWGt2NFppdWFS?=
+ =?utf-8?B?QVF0eVV3TU1NZ1owK01QRVN2OVExZW15MkhBQ09GbXY5OEVYaElvWllDQ2kx?=
+ =?utf-8?B?MDZWbHdEK2lLOHhCaWUzZ3VWczA5RTQxWXVxSDZCZ3ExaXpGdXFIMGtaSWtE?=
+ =?utf-8?B?L0lKUml1Y0xHbG1aNDMzMUpna2lBdVI4ZkRUanp5ODJpWXRWY21UN21GQkZo?=
+ =?utf-8?B?Ly9FbnZwSzVFaWx3QlJLa1puYnRDL0ZaeEVWc25Od3p1VXZndk5FaTExS0FU?=
+ =?utf-8?B?KzFCQXdPY2xzeDBjQk5Gelk0OVpqRDZVN0Vpb2xKa3MxYzRPSFYwYXF1UHhr?=
+ =?utf-8?B?MG9reVh4NEVvbUJvRVhFVTlUUXJ3Nk9UUkR3TjdQWStlUmMyOWFHY2gydEJJ?=
+ =?utf-8?B?dCtHME00NjcyRXFla1p5enQ5bkZLanZNTmFBbWgvaXgrN0RoRWcydE12NTFx?=
+ =?utf-8?B?U2RDakxjclRmeHVoOWE1bEpYeUJxYXgyODBJZ1pqOUlORHVtYUJVOE5wdUwv?=
+ =?utf-8?B?YmNQZUo5Yytnc0svR3p6bFpaUFJCVkJveEszdEVwVFRIQytnZFRvVDJJS0N3?=
+ =?utf-8?B?ZlAxOFBISXBidFgzS0VCdE5seEtIdTc1S3hWOVBSd1VOYmNkOWFHRHArMXNu?=
+ =?utf-8?B?UkgrbTJPUkM1Y08vWGVrZVhUYkdRSi9pZWYzQ3RXNGFNNFVoUFpqUnZ2ZmlX?=
+ =?utf-8?B?bGlJTlY3MDJYa0pJRHNuaXJka3dNbEpaQXM4OWwzVWJkVnBFT0JCWEVveW8r?=
+ =?utf-8?B?Qi9TQkd1T3ZrY3lpdHhndVBmMnBrRFRTVjdDdDBZZVBCR2FZVFg0VzJVUUQ1?=
+ =?utf-8?Q?aNf8AVRo0b6EOT94=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260324015722.12507-1-rosenp@gmail.com>
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY6PR01MB17377.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2fab8071-9754-4fa2-9a48-08de8b8901a9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Mar 2026 22:42:48.7637
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 9xRNdVJX9Uz/7X57R28FwcSYzYgqECZ7EdnJyPkx7FyNrfIkJxTgLJepMGMUxdOpJAF3H+Nf/T8xKT6Jo3/x7IBCyHJnzozUcGre1sC26Lc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYXPR01MB15664
 
-Hi Rosen,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on next-20260325]
-[cannot apply to tegra/for-next clk/clk-next drm-tegra/drm/tegra/for-next v7.0-rc5 v7.0-rc4 v7.0-rc3 linus/master v7.0-rc5]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Rosen-Penev/firmware-tegra-add-COMPILE_TEST/20260326-124230
-base:   next-20260325
-patch link:    https://lore.kernel.org/r/20260324015722.12507-1-rosenp%40gmail.com
-patch subject: [PATCHv2] firmware/tegra: add COMPILE_TEST
-config: s390-allnoconfig-bpf (https://download.01.org/0day-ci/archive/20260326/202603262233.dvRyEA8v-lkp@intel.com/config)
-compiler: s390x-linux-gnu-gcc (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260326/202603262233.dvRyEA8v-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202603262233.dvRyEA8v-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk.o: in function `tegra_register_devclks':
->> drivers/clk/tegra/clk.c:361:(.text+0x718): undefined reference to `clk_register_clkdev'
->> s390x-linux-gnu-ld: drivers/clk/tegra/clk.c:366:(.text+0x770): undefined reference to `__clk_get_name'
->> s390x-linux-gnu-ld: drivers/clk/tegra/clk.c:366:(.text+0x784): undefined reference to `clk_register_clkdev'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk.o: in function `tegra_clk_dev_register':
->> drivers/clk/tegra/clk.c:437:(.text+0x830): undefined reference to `clk_register'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk.o: in function `tegra_init_dup_clks':
->> drivers/clk/tegra/clk.c:263:(.init.text+0x17c): undefined reference to `clkdev_add'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-audio-sync.o: in function `tegra_clk_register_sync_source':
->> drivers/clk/tegra/clk-audio-sync.c:70:(.text+0x1f8): undefined reference to `clk_register'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-dfll.o: in function `dfll_unregister_clk':
->> drivers/clk/tegra/clk-dfll.c:1215:(.text+0x236): undefined reference to `clk_unregister'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-divider.o: in function `clk_divider_restore_context':
->> drivers/clk/tegra/clk-divider.c:127:(.text+0x262): undefined reference to `clk_hw_get_parent'
->> s390x-linux-gnu-ld: drivers/clk/tegra/clk-divider.c:128:(.text+0x268): undefined reference to `clk_hw_get_rate'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-divider.c:129:(.text+0x276): undefined reference to `clk_hw_get_rate'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-divider.o: in function `tegra_clk_register_divider':
->> drivers/clk/tegra/clk-divider.c:174:(.text+0x6e0): undefined reference to `clk_register'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-divider.o: in function `tegra_clk_register_mc':
->> drivers/clk/tegra/clk-divider.c:190:(.text+0x7da): undefined reference to `clk_register_divider_table'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-periph.o: in function `clk_periph_restore_context':
->> drivers/clk/tegra/clk-periph.c:119:(.text+0x676): undefined reference to `clk_hw_get_parent_index'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-periph.o: in function `_tegra_clk_register_periph':
->> drivers/clk/tegra/clk-periph.c:199:(.text+0x8ec): undefined reference to `clk_register'
->> s390x-linux-gnu-ld: drivers/clk/tegra/clk-periph.c:199:(.text+0x9b6): undefined reference to `clk_register'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-periph.c:199:(.text+0xb72): undefined reference to `clk_register'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-periph.c:199:(.text+0xdf2): undefined reference to `clk_register'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-periph.c:199:(.text+0xeb8): undefined reference to `clk_register'
->> s390x-linux-gnu-ld: drivers/clk/tegra/clk-periph.o:(.data.rel.ro+0x60): undefined reference to `clk_hw_determine_rate_no_reparent'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-periph-fixed.o: in function `tegra_clk_register_periph_fixed':
->> drivers/clk/tegra/clk-periph-fixed.c:105:(.text+0x558): undefined reference to `clk_register'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-periph-gate.o: in function `tegra_clk_register_periph_gate':
->> drivers/clk/tegra/clk-periph-gate.c:171:(.text+0x79e): undefined reference to `clk_register'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-pll.o: in function `clk_pll_determine_rate':
->> drivers/clk/tegra/clk-pll.c:852:(.text+0xbc4): undefined reference to `clk_hw_get_rate'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-pll.o: in function `clk_pll_wait_for_lock':
->> drivers/clk/tegra/clk-pll.c:319:(.text+0xdae): undefined reference to `clk_hw_get_name'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-pll.o: in function `clk_pllu_enable':
->> drivers/clk/tegra/clk-pll.c:1124:(.text+0x1eec): undefined reference to `clk_hw_get_parent'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-pll.c:1125:(.text+0x1ef2): undefined reference to `clk_hw_get_parent'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-pll.c:1137:(.text+0x1f08): undefined reference to `clk_hw_get_rate'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-pll.o: in function `clk_pll_recalc_rate':
-   drivers/clk/tegra/clk-pll.c:888:(.text+0x2b58): undefined reference to `clk_hw_get_name'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-pll.c:902:(.text+0x2c10): undefined reference to `clk_hw_get_name'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-pll.o: in function `clk_pll_set_rate':
-   drivers/clk/tegra/clk-pll.c:821:(.text+0x3a1a): undefined reference to `clk_hw_get_name'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-pll.c:811:(.text+0x3a4e): undefined reference to `clk_hw_get_name'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-pll.o: in function `tegra_clk_pll_restore_context':
-   drivers/clk/tegra/clk-pll.c:1042:(.text+0x3ae2): undefined reference to `clk_hw_get_parent'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-pll.c:1043:(.text+0x3ae8): undefined reference to `clk_hw_get_rate'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-pll.c:1044:(.text+0x3af6): undefined reference to `clk_hw_get_rate'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-pll.c:1054:(.text+0x3b5c): undefined reference to `__clk_get_enable_count'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-pll.o: in function `clk_plle_enable':
-   drivers/clk/tegra/clk-pll.c:971:(.text+0x3cc0): undefined reference to `clk_hw_get_parent'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-pll.c:971:(.text+0x3cc6): undefined reference to `clk_hw_get_rate'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-pll-out.o: in function `tegra_clk_pll_out_restore_context':
-   drivers/clk/tegra/clk-pll-out.c:74:(.text+0x432): undefined reference to `__clk_get_enable_count'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-pll-out.o: in function `tegra_clk_register_pll_out':
-   drivers/clk/tegra/clk-pll-out.c:115:(.text+0x5f8): undefined reference to `clk_register'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-sdmmc-mux.o: in function `clk_sdmmc_mux_get_parent':
-   drivers/clk/tegra/clk-sdmmc-mux.c:48:(.text+0x66c): undefined reference to `clk_hw_get_num_parents'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-sdmmc-mux.o: in function `clk_sdmmc_mux_restore_context':
-   drivers/clk/tegra/clk-sdmmc-mux.c:208:(.text+0x9e2): undefined reference to `clk_hw_get_parent'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-sdmmc-mux.c:209:(.text+0x9e8): undefined reference to `clk_hw_get_rate'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-sdmmc-mux.c:210:(.text+0x9f6): undefined reference to `clk_hw_get_rate'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-sdmmc-mux.c:213:(.text+0xa04): undefined reference to `clk_hw_get_parent_index'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-sdmmc-mux.o: in function `tegra_clk_register_sdmmc_mux_div':
-   drivers/clk/tegra/clk-sdmmc-mux.c:269:(.text+0xc06): undefined reference to `clk_register'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-super.o: in function `clk_super_restore_context':
-   drivers/clk/tegra/clk-super.c:184:(.text+0x726): undefined reference to `clk_hw_get_parent_index'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-super.o: in function `clk_super_mux_restore_context':
-   drivers/clk/tegra/clk-super.c:131:(.text+0x7a2): undefined reference to `clk_hw_get_parent_index'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-super.o: in function `tegra_clk_register_super_clk':
-   drivers/clk/tegra/clk-super.c:270:(.text+0xbba): undefined reference to `clk_register'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-super.o:(.data.rel.ro+0x60): undefined reference to `clk_hw_determine_rate_no_reparent'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-tegra-audio.o: in function `tegra_audio_sync_clk_init':
-   drivers/clk/tegra/clk-tegra-audio.c:145:(.init.text+0xda): undefined reference to `clk_register_mux_table'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-tegra-audio.c:156:(.init.text+0x172): undefined reference to `clk_register_gate'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-tegra-audio.o: in function `tegra_audio_clk_init':
-   drivers/clk/tegra/clk-tegra-audio.c:235:(.init.text+0x4a0): undefined reference to `clk_register_fixed_factor'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-tegra-periph.o: in function `init_pllp':
-   drivers/clk/tegra/clk-tegra-periph.c:952:(.init.text+0x7c): undefined reference to `clk_register_clkdev'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-tegra-periph.c:1004:(.init.text+0x326): undefined reference to `clk_register_gate'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-tegra-periph.c:1013:(.init.text+0x380): undefined reference to `clk_register_gate'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-tegra-periph.c:1017:(.init.text+0x394): undefined reference to `clk_register_clkdev'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-tegra-periph.o:(.data.rel+0xe8): undefined reference to `clk_mux_ops'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-tegra-periph.o:(.data.rel+0x208): undefined reference to `clk_mux_ops'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-tegra-periph.o:(.data.rel+0x328): undefined reference to `clk_mux_ops'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-tegra-periph.o:(.data.rel+0x448): undefined reference to `clk_mux_ops'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-tegra-periph.o:(.data.rel+0x568): undefined reference to `clk_mux_ops'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-tegra-periph.o:(.data.rel+0x688): more undefined references to `clk_mux_ops' follow
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-tegra-fixed.o: in function `tegra_osc_clk_init':
-   drivers/clk/tegra/clk-tegra-fixed.c:53:(.init.text+0xe0): undefined reference to `clk_register_fixed_rate'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-tegra-fixed.c:59:(.init.text+0x12e): undefined reference to `clk_register_fixed_factor'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-tegra-fixed.c:67:(.init.text+0x17c): undefined reference to `clk_register_fixed_factor'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-tegra-fixed.c:76:(.init.text+0x1ca): undefined reference to `clk_register_fixed_factor'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-tegra-fixed.c:87:(.init.text+0x226): undefined reference to `clk_register_fixed_factor'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-tegra-fixed.o: in function `tegra_fixed_clk_init':
-   drivers/clk/tegra/clk-tegra-fixed.c:105:(.init.text+0x2da): undefined reference to `clk_register_fixed_rate'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-tegra-super-cclk.o: in function `cclk_super_determine_rate':
-   drivers/clk/tegra/clk-tegra-super-cclk.c:71:(.text+0x200): undefined reference to `clk_hw_get_parent_by_index'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-tegra-super-cclk.c:72:(.text+0x212): undefined reference to `clk_hw_get_parent_by_index'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-tegra-super-cclk.c:84:(.text+0x246): undefined reference to `clk_hw_get_rate'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-tegra-super-cclk.c:95:(.text+0x304): undefined reference to `clk_hw_get_rate_range'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-tegra-super-cclk.c:106:(.text+0x34c): undefined reference to `clk_hw_round_rate'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-tegra-super-cclk.o: in function `tegra_clk_register_super_cclk':
-   drivers/clk/tegra/clk-tegra-super-cclk.c:200:(.text+0x6e2): undefined reference to `clk_register'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-tegra-super-gen4.o: in function `tegra_sclk_init':
-   drivers/clk/tegra/clk-tegra-super-gen4.c:117:(.init.text+0xf8): undefined reference to `clk_register_divider_table'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-tegra-super-gen4.c:141:(.init.text+0x1e8): undefined reference to `clk_register_divider_table'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-tegra-super-gen4.c:144:(.init.text+0x21a): undefined reference to `clk_register_gate'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-tegra-super-gen4.c:156:(.init.text+0x286): undefined reference to `clk_register_divider_table'
-   s390x-linux-gnu-ld: drivers/clk/tegra/clk-tegra-super-gen4.c:159:(.init.text+0x2b8): undefined reference to `clk_register_gate'
-
-
-vim +361 drivers/clk/tegra/clk.c
-
-d5ff89a82a6d27 Peter De Schrijver 2013-08-22  254  
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  255  void __init tegra_init_dup_clks(struct tegra_clk_duplicate *dup_list,
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  256  				struct clk *clks[], int clk_max)
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  257  {
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  258  	struct clk *clk;
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  259  
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  260  	for (; dup_list->clk_id < clk_max; dup_list++) {
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  261  		clk = clks[dup_list->clk_id];
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  262  		dup_list->lookup.clk = clk;
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11 @263  		clkdev_add(&dup_list->lookup);
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  264  	}
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  265  }
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  266  
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  267  void tegra_init_from_table(struct tegra_clk_init_table *tbl,
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  268  			   struct clk *clks[], int clk_max)
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  269  {
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  270  	struct clk *clk;
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  271  
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  272  	for (; tbl->clk_id < clk_max; tbl++) {
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  273  		clk = clks[tbl->clk_id];
-b9e742c3164344 Tomeu Vizoso       2014-09-17  274  		if (IS_ERR_OR_NULL(clk)) {
-b9e742c3164344 Tomeu Vizoso       2014-09-17  275  			pr_err("%s: invalid entry %ld in clks array for id %d\n",
-b9e742c3164344 Tomeu Vizoso       2014-09-17  276  			       __func__, PTR_ERR(clk), tbl->clk_id);
-b9e742c3164344 Tomeu Vizoso       2014-09-17  277  			WARN_ON(1);
-b9e742c3164344 Tomeu Vizoso       2014-09-17  278  
-b9e742c3164344 Tomeu Vizoso       2014-09-17  279  			continue;
-b9e742c3164344 Tomeu Vizoso       2014-09-17  280  		}
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  281  
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  282  		if (tbl->parent_id < clk_max) {
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  283  			struct clk *parent = clks[tbl->parent_id];
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  284  			if (clk_set_parent(clk, parent)) {
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  285  				pr_err("%s: Failed to set parent %s of %s\n",
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  286  				       __func__, __clk_get_name(parent),
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  287  				       __clk_get_name(clk));
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  288  				WARN_ON(1);
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  289  			}
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  290  		}
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  291  
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  292  		if (tbl->rate)
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  293  			if (clk_set_rate(clk, tbl->rate)) {
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  294  				pr_err("%s: Failed to set rate %lu of %s\n",
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  295  				       __func__, tbl->rate,
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  296  				       __clk_get_name(clk));
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  297  				WARN_ON(1);
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  298  			}
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  299  
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  300  		if (tbl->state)
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  301  			if (clk_prepare_enable(clk)) {
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  302  				pr_err("%s: Failed to enable %s\n", __func__,
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  303  				       __clk_get_name(clk));
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  304  				WARN_ON(1);
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  305  			}
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  306  	}
-8f8f484bf355e5 Prashant Gaikwad   2013-01-11  307  }
-61fd290d213e25 Prashant Gaikwad   2013-01-11  308  
-7ba256d2aa2a18 Philipp Zabel      2016-02-25  309  static const struct reset_control_ops rst_ops = {
-6d5b988e7dc56b Stephen Warren     2013-11-05  310  	.assert = tegra_clk_rst_assert,
-6d5b988e7dc56b Stephen Warren     2013-11-05  311  	.deassert = tegra_clk_rst_deassert,
-4236e752f19d4d Mikko Perttunen    2017-03-02  312  	.reset = tegra_clk_rst_reset,
-6d5b988e7dc56b Stephen Warren     2013-11-05  313  };
-6d5b988e7dc56b Stephen Warren     2013-11-05  314  
-6d5b988e7dc56b Stephen Warren     2013-11-05  315  static struct reset_controller_dev rst_ctlr = {
-6d5b988e7dc56b Stephen Warren     2013-11-05  316  	.ops = &rst_ops,
-6d5b988e7dc56b Stephen Warren     2013-11-05  317  	.owner = THIS_MODULE,
-6d5b988e7dc56b Stephen Warren     2013-11-05  318  	.of_reset_n_cells = 1,
-6d5b988e7dc56b Stephen Warren     2013-11-05  319  };
-6d5b988e7dc56b Stephen Warren     2013-11-05  320  
-5d797111afe12e Dmitry Osipenko    2018-05-08  321  void __init tegra_add_of_provider(struct device_node *np,
-5d797111afe12e Dmitry Osipenko    2018-05-08  322  				  void *clk_src_onecell_get)
-343a607cb79259 Peter De Schrijver 2013-09-02  323  {
-343a607cb79259 Peter De Schrijver 2013-09-02  324  	int i;
-343a607cb79259 Peter De Schrijver 2013-09-02  325  
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  326  	tegra_car_np = np;
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  327  
-343a607cb79259 Peter De Schrijver 2013-09-02  328  	for (i = 0; i < clk_num; i++) {
-343a607cb79259 Peter De Schrijver 2013-09-02  329  		if (IS_ERR(clks[i])) {
-343a607cb79259 Peter De Schrijver 2013-09-02  330  			pr_err
-343a607cb79259 Peter De Schrijver 2013-09-02  331  			    ("Tegra clk %d: register failed with %ld\n",
-343a607cb79259 Peter De Schrijver 2013-09-02  332  			     i, PTR_ERR(clks[i]));
-343a607cb79259 Peter De Schrijver 2013-09-02  333  		}
-343a607cb79259 Peter De Schrijver 2013-09-02  334  		if (!clks[i])
-343a607cb79259 Peter De Schrijver 2013-09-02  335  			clks[i] = ERR_PTR(-EINVAL);
-343a607cb79259 Peter De Schrijver 2013-09-02  336  	}
-343a607cb79259 Peter De Schrijver 2013-09-02  337  
-343a607cb79259 Peter De Schrijver 2013-09-02  338  	clk_data.clks = clks;
-343a607cb79259 Peter De Schrijver 2013-09-02  339  	clk_data.clk_num = clk_num;
-5d797111afe12e Dmitry Osipenko    2018-05-08  340  	of_clk_add_provider(np, clk_src_onecell_get, &clk_data);
-6d5b988e7dc56b Stephen Warren     2013-11-05  341  
-6d5b988e7dc56b Stephen Warren     2013-11-05  342  	rst_ctlr.of_node = np;
-66b6f3d07454a6 Mikko Perttunen    2015-05-20  343  	rst_ctlr.nr_resets = periph_banks * 32 + num_special_reset;
-6d5b988e7dc56b Stephen Warren     2013-11-05  344  	reset_controller_register(&rst_ctlr);
-343a607cb79259 Peter De Schrijver 2013-09-02  345  }
-343a607cb79259 Peter De Schrijver 2013-09-02  346  
-66b6f3d07454a6 Mikko Perttunen    2015-05-20  347  void __init tegra_init_special_resets(unsigned int num,
-66b6f3d07454a6 Mikko Perttunen    2015-05-20  348  				      int (*assert)(unsigned long),
-66b6f3d07454a6 Mikko Perttunen    2015-05-20  349  				      int (*deassert)(unsigned long))
-66b6f3d07454a6 Mikko Perttunen    2015-05-20  350  {
-66b6f3d07454a6 Mikko Perttunen    2015-05-20  351  	num_special_reset = num;
-66b6f3d07454a6 Mikko Perttunen    2015-05-20  352  	special_reset_assert = assert;
-66b6f3d07454a6 Mikko Perttunen    2015-05-20  353  	special_reset_deassert = deassert;
-66b6f3d07454a6 Mikko Perttunen    2015-05-20  354  }
-66b6f3d07454a6 Mikko Perttunen    2015-05-20  355  
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  356  void tegra_register_devclks(struct tegra_devclk *dev_clks, int num)
-73d37e4c7c4b9d Peter De Schrijver 2013-10-09  357  {
-73d37e4c7c4b9d Peter De Schrijver 2013-10-09  358  	int i;
-73d37e4c7c4b9d Peter De Schrijver 2013-10-09  359  
-73d37e4c7c4b9d Peter De Schrijver 2013-10-09  360  	for (i = 0; i < num; i++, dev_clks++)
-73d37e4c7c4b9d Peter De Schrijver 2013-10-09 @361  		clk_register_clkdev(clks[dev_clks->dt_id], dev_clks->con_id,
-73d37e4c7c4b9d Peter De Schrijver 2013-10-09  362  				dev_clks->dev_id);
-9f0030c8ad0ce3 Peter De Schrijver 2014-06-26  363  
-9f0030c8ad0ce3 Peter De Schrijver 2014-06-26  364  	for (i = 0; i < clk_num; i++) {
-9f0030c8ad0ce3 Peter De Schrijver 2014-06-26  365  		if (!IS_ERR_OR_NULL(clks[i]))
-9f0030c8ad0ce3 Peter De Schrijver 2014-06-26 @366  			clk_register_clkdev(clks[i], __clk_get_name(clks[i]),
-9f0030c8ad0ce3 Peter De Schrijver 2014-06-26  367  				"tegra-clk-debug");
-9f0030c8ad0ce3 Peter De Schrijver 2014-06-26  368  	}
-73d37e4c7c4b9d Peter De Schrijver 2013-10-09  369  }
-73d37e4c7c4b9d Peter De Schrijver 2013-10-09  370  
-b8700d506ac405 Peter De Schrijver 2013-10-14  371  struct clk ** __init tegra_lookup_dt_id(int clk_id,
-b8700d506ac405 Peter De Schrijver 2013-10-14  372  					struct tegra_clk *tegra_clk)
-b8700d506ac405 Peter De Schrijver 2013-10-14  373  {
-b8700d506ac405 Peter De Schrijver 2013-10-14  374  	if (tegra_clk[clk_id].present)
-b8700d506ac405 Peter De Schrijver 2013-10-14  375  		return &clks[tegra_clk[clk_id].dt_id];
-b8700d506ac405 Peter De Schrijver 2013-10-14  376  	else
-b8700d506ac405 Peter De Schrijver 2013-10-14  377  		return NULL;
-b8700d506ac405 Peter De Schrijver 2013-10-14  378  }
-b8700d506ac405 Peter De Schrijver 2013-10-14  379  
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  380  static struct device_node *tegra_clk_get_of_node(struct clk_hw *hw)
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  381  {
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  382  	struct device_node *np;
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  383  	char *node_name;
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  384  
-28df1500f53874 Andy Shevchenko    2023-08-04  385  	node_name = kstrdup_and_replace(hw->init->name, '_', '-', GFP_KERNEL);
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  386  	if (!node_name)
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  387  		return NULL;
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  388  
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  389  	for_each_child_of_node(tegra_car_np, np) {
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  390  		if (!strcmp(np->name, node_name))
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  391  			break;
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  392  	}
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  393  
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  394  	kfree(node_name);
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  395  
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  396  	return np;
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  397  }
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  398  
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  399  struct clk *tegra_clk_dev_register(struct clk_hw *hw)
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  400  {
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  401  	struct platform_device *pdev, *parent;
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  402  	const char *dev_name = NULL;
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  403  	struct device *dev = NULL;
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  404  	struct device_node *np;
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  405  
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  406  	np = tegra_clk_get_of_node(hw);
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  407  
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  408  	if (!of_device_is_available(np))
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  409  		goto put_node;
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  410  
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  411  	dev_name = kasprintf(GFP_KERNEL, "tegra_clk_%s", hw->init->name);
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  412  	if (!dev_name)
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  413  		goto put_node;
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  414  
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  415  	parent = of_find_device_by_node(tegra_car_np);
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  416  	if (parent) {
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  417  		pdev = of_platform_device_create(np, dev_name, &parent->dev);
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  418  		put_device(&parent->dev);
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  419  
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  420  		if (!pdev) {
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  421  			pr_err("%s: failed to create device for %pOF\n",
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  422  			       __func__, np);
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  423  			goto free_name;
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  424  		}
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  425  
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  426  		dev = &pdev->dev;
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  427  		pm_runtime_enable(dev);
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  428  	} else {
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  429  		WARN(1, "failed to find device for %pOF\n", tegra_car_np);
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  430  	}
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  431  
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  432  free_name:
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  433  	kfree(dev_name);
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  434  put_node:
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  435  	of_node_put(np);
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  436  
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01 @437  	return clk_register(dev, hw);
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  438  }
-b1bc04a2ac5b15 Dmitry Osipenko    2021-12-01  439  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgeW91ciByZXZpZXcuDQoNCj4gLS0tLS1PcmlnaW5hbCBN
+ZXNzYWdlLS0tLS0NCj4gRnJvbTogR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydEBsaW51eC1tNjhr
+Lm9yZz4NCj4gU2VudDogVGh1cnNkYXksIE1hcmNoIDI2LCAyMDI2IDQ6MjggUE0NCj4gVG86IEpv
+aG4gTWFkaWV1IDxqb2huLm1hZGlldS54YUBicC5yZW5lc2FzLmNvbT4NCj4gU3ViamVjdDogUmU6
+IFtQQVRDSCAwNC8yMl0gZHQtYmluZGluZ3M6IGRtYTogcmVuZXNhcyxyei1kbWFjOiBEb2N1bWVu
+dA0KPiBvcHRpb25hbCBETUEgQUNLIGNlbGwNCj4gDQo+IEhpIEpvaG4sDQo+IA0KPiBPbiBUaHUs
+IDE5IE1hciAyMDI2IGF0IDE2OjU1LCBKb2huIE1hZGlldSA8am9obi5tYWRpZXUueGFAYnAucmVu
+ZXNhcy5jb20+DQo+IHdyb3RlOg0KPiA+IFNvbWUgcGVyaXBoZXJhbHMgb24gUlovVjJILCBSWi9W
+Mk4sIGFuZCBSWi9HM0UgU29DcyByZXF1aXJlIGV4cGxpY2l0DQo+ID4gQUNLIHNpZ25hbCByb3V0
+aW5nIHRocm91Z2ggdGhlIElDVS4gRG9jdW1lbnQgdGhlIG9wdGlvbmFsIHNlY29uZCBjZWxsDQo+
+ID4gaW4gdGhlIERNQSBzcGVjaWZpZXIgZm9yIHNwZWNpZnlpbmcgdGhlIEFDSyBzaWduYWwgbnVt
+YmVyLg0KPiA+DQo+ID4gVGhlIGZpcnN0IGNlbGwgcmVtYWlucyB1bmNoYW5nZWQgYW5kIHNwZWNp
+ZmllcyB0aGUgZW5jb2RlZCBNSUQvUklEIGFuZA0KPiA+IGNoYW5uZWwgY29uZmlndXJhdGlvbi4g
+VGhlIG9wdGlvbmFsIHNlY29uZCBjZWxsIHNwZWNpZmllcyB0aGUgRE1BIEFDSw0KPiA+IHNpZ25h
+bCBudW1iZXIgZm9yIHBlcmlwaGVyYWxzIHJlcXVpcmluZyBsZXZlbC1iYXNlZCBoYW5kc2hha2lu
+Zy4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEpvaG4gTWFkaWV1IDxqb2huLm1hZGlldS54YUBi
+cC5yZW5lc2FzLmNvbT4NCj4gDQo+IFRoYW5rcyBmb3IgeW91ciBwYXRjaCENCj4gDQo+IEp1c3Qg
+YSBxdWljayBoZWFkLXVwLCBhcyBJIGhhdmVuJ3QgcmVhZCB0aGUgYWN0dWFsIHNlY2lvbiBpbiB0
+aGUNCj4gZG9jdW1lbnRhdGlvbiB5ZXQuDQo+IA0KPiA+IC0tLSBhL0RvY3VtZW50YXRpb24vZGV2
+aWNldHJlZS9iaW5kaW5ncy9kbWEvcmVuZXNhcyxyei1kbWFjLnlhbWwNCj4gPiArKysgYi9Eb2N1
+bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZG1hL3JlbmVzYXMscnotZG1hYy55YW1sDQo+
+ID4gQEAgLTYzLDE3ICs2MywyNyBAQCBwcm9wZXJ0aWVzOg0KPiA+ICAgICAgICAtIGNvbnN0OiBy
+ZWdpc3Rlcg0KPiA+DQo+ID4gICAgJyNkbWEtY2VsbHMnOg0KPiA+IC0gICAgY29uc3Q6IDENCj4g
+PiAtICAgIGRlc2NyaXB0aW9uOg0KPiA+ICsgICAgZGVzY3JpcHRpb246IHwNCj4gPiAgICAgICAg
+VGhlIGNlbGwgc3BlY2lmaWVzIHRoZSBlbmNvZGVkIE1JRC9SSUQgb3IgdGhlIFJFUSBObyB2YWx1
+ZXMgb2YNCj4gPiAgICAgICAgdGhlIERNQUMgcG9ydCBjb25uZWN0ZWQgdG8gdGhlIERNQSBjbGll
+bnQgYW5kIHRoZSBzbGF2ZSBjaGFubmVsDQo+ID4gICAgICAgIGNvbmZpZ3VyYXRpb24gcGFyYW1l
+dGVycy4NCj4gPiArICAgICAgVXNlIDEgY2VsbCBmb3IgYmFzaWMgRE1BIGNvbmZpZ3VyYXRpb24u
+DQo+ID4gKyAgICAgIFVzZSAyIGNlbGxzIHdoZW4gRE1BIEFDSyBzaWduYWwgcm91dGluZyB0aHJv
+dWdoIElDVSBpcyByZXF1aXJlZA0KPiA+ICsgICAgICAoUlovVjJILCBSWi9WMk4sIFJaL0czRSBh
+dWRpbyBwZXJpcGhlcmFscyBzdWNoIGFzIFNTSVUsIFNQRElGLA0KPiBTUkMsIERWQykuDQo+ID4g
+Kw0KPiA+ICsgICAgICBGaXJzdCBjZWxsOg0KPiA+ICAgICAgICBiaXRzWzA6OV0gLSBTcGVjaWZp
+ZXMgdGhlIE1JRC9SSUQgb3IgdGhlIFJFUSBObyB2YWx1ZQ0KPiA+ICAgICAgICBiaXRbMTBdIC0g
+U3BlY2lmaWVzIERNQSByZXF1ZXN0IGhpZ2ggZW5hYmxlIChISUVOKQ0KPiA+ICAgICAgICBiaXRb
+MTFdIC0gU3BlY2lmaWVzIERNQSByZXF1ZXN0IGRldGVjdGlvbiB0eXBlIChMVkwpDQo+ID4gICAg
+ICAgIGJpdHNbMTI6MTRdIC0gU3BlY2lmaWVzIERNQUFDSyBvdXRwdXQgbW9kZSAoQU0pDQo+ID4g
+ICAgICAgIGJpdFsxNV0gLSBTcGVjaWZpZXMgVHJhbnNmZXIgTW9kZSAoVE0pDQo+ID4NCj4gPiAr
+ICAgICAgU2Vjb25kIGNlbGwgKG9wdGlvbmFsLCB3aGVuICNkbWEtY2VsbHMgPSA8Mj4pOg0KPiA+
+ICsgICAgICBiaXRzWzY6MF0gLSBETUEgYWNrbm93bGVkZ2Ugc2lnbmFsIG51bWJlciAoZnJvbSBJ
+Q1UgQUNLIHRhYmxlKSwNCj4gPiArICAgICAgICAgICAgICAgICAgd2hlcmUgMCBpcyBhIHZhbGlk
+IHNpZ25hbCBudW1iZXIuDQo+ID4gKyAgICAgICAgICAgICAgICAgIFJlcXVpcmVkIGZvciBwZXJp
+cGhlcmFscyB1c2luZyBsZXZlbC1iYXNlZCBETUENCj4gPiArICAgICAgICAgICAgICAgICAgaGFu
+ZHNoYWtpbmcgKFNTSVUsIFNQRElGLCBSU1BJLCBTQ1UsIEFEQywgUERNKS4NCj4gDQo+IEhvdyBk
+byB5b3UgZXhwZWN0IHRoaXMgdG8gd29yaz8gI2RtYS1jZWxscyBhcHBsaWVzIHRvIGFsbCBETUEg
+Y29uc3VtZXJzIG9mDQo+IHRoaXMgcHJvdmlkZXIsIGFuZCB0aGVzZSBTb0NzIGFscmVhZHkgaGF2
+ZSBETUEgdXNlcnMgcmVseWluZyBvbiAjZG1hLWNlbGxzDQo+IGJlaW5nIG9uZS4NCg0KSW5kZWVk
+Lg0KDQo+IEluIGFkZGl0aW9uLCB5b3UgY2Fubm90IGhhdmUgb3B0aW9uYWwgY2VsbHM6IGlmICNk
+bWEtY2VsbHMgaXMgdHdvLCB0aGVuDQo+IGFsbCBjb25zdW1lcnMgbXVzdCBzdXBwbHkgdHdvIGNl
+bGxzIChvZiBjb3Vyc2Ugd2UgY291bGQgc3dpdGNoIGFsbCBvZiB0aGVtDQo+IHRvIHR3byBjZWxs
+cyBhdCBvbmNlKS4gIEhvd2V2ZXIsIGFzIHplcm8gaXMgYSB2YWxpZCBzaWduYWwgbnVtYmVyLCB3
+ZQ0KPiBjYW5ub3QgdXNlIHRoYXQgYXMgYSBkdW1teSB3aGVuIG5vIERNQSBhY2tub3dsZWRnZSBz
+aWduYWwgbnVtYmVyIGlzIG5lZWRlZA0KPiAod2UgY291bGQgdXNlIGUuZy4gMHhmZmZmZmZmZiBp
+bnN0ZWFkKS4NCj4gDQo+IElzIHRoZXJlIGFueSBvdGhlciB3YXkgdG8gcHJvdmlkZSB0aGlzIGlu
+Zm9ybWF0aW9uPw0KPiBFLmcuIGNvdWxkIHdlIGhhdmUgYSB0YWJsZSBpbiB0aGUgZHJpdmVyIHRo
+YXQgY29udGFpbnMgdGhpcyBpbmZvIGZvciB0aGUNCj4gKHByZXN1bWFibHkgZmV3KSBNSUQvUklE
+IHZhbHVlcyB0aGF0IG5lZWQgaXQ/DQo+IA0KDQpUaGVyZSBhcmUgYWN0dWFsbHkgODkgZW50cmll
+cywgYW5kIEkgY291bGQgaWRlbnRpZnkgMyBwZXJpcGhlcmFsDQpncm91cCB3aXRoIGxpbmVhciBB
+Q0sgYXNzaWdubWVudHMuIFRodXMgaW5zdGVhZCBvZiBzdGF0aWMgYXJyYXkNCndlIHdvdWxkIGdl
+dCBhIHNpbXBsZSBmdW5jdGlvbiBoYW5kbGluZyAzIHJlcV9ubyByYW5nZXMuDQoNClNvbWV0aGlu
+ZyBsaWtlOg0KDQovKg0KICogTWFwIE1JRC9SSUQgcmVxdWVzdCBudW1iZXIgKGJpdHNbMDo5XSBv
+ZiBETUEgc3BlY2lmaWVyKSB0byB0aGUgSUNVDQogKiBETUEgQUNLIHNpZ25hbCBudW1iZXIsIHBl
+ciBSWi9HM0UgaGFyZHdhcmUgbWFudWFsIFRhYmxlIDQuNi0yOC4NCiAqDQogKiBUaHJlZSBwZXJp
+cGhlcmFsIGdyb3VwcyB3aXRoIGxpbmVhciBBQ0sgYXNzaWdubWVudDoNCiAqDQogKiAgIFBGQyBl
+eHRlcm5hbCBETUEgcGlucyAoRFJFUTAuLkRSRVE0KToNCiAqICAgICByZXFfbm8gMHgwMDAtMHgw
+MDQgLT4gQUNLIE5vLiA4NC04OCAgKGFjayA9IHJlcV9ubyArIDg0KQ0KICoNCiAqICAgU1NJVSBC
+VVNJRnMgKHNzaXAwMC4uc3NpcDkzKToNCiAqICAgICByZXFfbm8gMHgxNjEtMHgxOTggLT4gQUNL
+IE5vLiAyOC04MyAgKGFjayA9IHJlcV9ubyAtIDB4MTQ1KQ0KICoNCiAqICAgU1BESUYgKENIMC4u
+Q0gyKSArIFNDVSBTUkMgKHNyMC4uc3I5KSArIERWQyAoY21kMC4uY21kMSk6DQogKiAgICAgcmVx
+X25vIDB4MTk5LTB4MWI0IC0+IEFDSyBOby4gMC0yNyAgIChhY2sgPSByZXFfbm8gLSAweDE5OSkN
+CiAqLw0Kc3RhdGljIGludCByel9kbWFjX2dldF9hY2tfbm8oY29uc3Qgc3RydWN0IHJ6X2RtYWNf
+aW5mbyAqaW5mbywgdTE2IHJlcV9ubykNCnsNCglpZiAoIWluZm8tPmljdV9yZWdpc3Rlcl9kbWFf
+YWNrKQ0KCQlyZXR1cm4gLUVJTlZBTDsNCg0KCS8qIFBGQyBleHRlcm5hbCBETUEgcGluczogQUNL
+IE5vLiA4NC04OCAqLw0KCWlmIChyZXFfbm8gPD0gMHgwMDQpDQoJCXJldHVybiByZXFfbm8gKyA4
+NDsNCg0KCS8qIFNTSVUgQlVTSUZzOiBBQ0sgTm8uIDI4LTgzICovDQoJaWYgKHJlcV9ubyA+PSAw
+eDE2MSAmJiByZXFfbm8gPD0gMHgxOTgpDQoJCXJldHVybiByZXFfbm8gLSAweDE0NTsNCg0KCS8q
+IFNQRElGICsgU0NVIFNSQyArIERWQzogQUNLIE5vLiAwLTI3ICovDQoJaWYgKHJlcV9ubyA+PSAw
+eDE5OSAmJiByZXFfbm8gPD0gMHgxYjQpDQoJCXJldHVybiByZXFfbm8gLSAweDE5OTsNCg0KCXJl
+dHVybiAtRUlOVkFMOw0KfQ0KDQpJJ2xsIHRoZW4gZHJvcCB0aGUgY3VycmVudCBwYXRjaCBhbmQg
+dXBkYXRlIHRoZSByZXFfbm8tcmVsYXRlZCBwYXRjaA0Kd2l0aCBzb21ldGhpbmcgbGlrZSB0aGUg
+YWJvdmUuDQoNCldoYXQgZG8geW91IHRoaW5rID8NCg0KUmVnYXJkcywNCkpvaG4uDQoNCj4gPiAr
+DQo+ID4gICAgZG1hLWNoYW5uZWxzOg0KPiA+ICAgICAgY29uc3Q6IDE2DQo+ID4NCj4gPiBAQCAt
+MjEyLDYgKzIyMiwyMCBAQCBhbGxPZjoNCj4gPiAgICAgICAgICAtIHJlbmVzYXMsaWN1DQo+ID4g
+ICAgICAgICAgLSByZXNldHMNCj4gPg0KPiA+ICsgIC0gaWY6DQo+ID4gKyAgICAgIHByb3BlcnRp
+ZXM6DQo+ID4gKyAgICAgICAgY29tcGF0aWJsZToNCj4gPiArICAgICAgICAgIGNvbnRhaW5zOg0K
+PiA+ICsgICAgICAgICAgICBjb25zdDogcmVuZXNhcyxyOWEwOWcwNTctZG1hYw0KPiA+ICsgICAg
+dGhlbjoNCj4gPiArICAgICAgcHJvcGVydGllczoNCj4gPiArICAgICAgICAnI2RtYS1jZWxscyc6
+DQo+ID4gKyAgICAgICAgICBlbnVtOiBbMSwgMl0NCj4gPiArICAgIGVsc2U6DQo+ID4gKyAgICAg
+IHByb3BlcnRpZXM6DQo+ID4gKyAgICAgICAgJyNkbWEtY2VsbHMnOg0KPiA+ICsgICAgICAgICAg
+Y29uc3Q6IDENCj4gPiArDQo+ID4gICAgLSBpZjoNCj4gPiAgICAgICAgcHJvcGVydGllczoNCj4g
+PiAgICAgICAgICBjb21wYXRpYmxlOg0KPiANCj4gR3J7b2V0amUsZWV0aW5nfXMsDQo+IA0KPiAg
+ICAgICAgICAgICAgICAgICAgICAgICBHZWVydA0KPiANCj4gLS0NCj4gR2VlcnQgVXl0dGVyaG9l
+dmVuIC0tIFRoZXJlJ3MgbG90cyBvZiBMaW51eCBiZXlvbmQgaWEzMiAtLSBnZWVydEBsaW51eC0N
+Cj4gbTY4ay5vcmcNCj4gDQo+IEluIHBlcnNvbmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNobmlj
+YWwgcGVvcGxlLCBJIGNhbGwgbXlzZWxmIGEgaGFja2VyLg0KPiBCdXQgd2hlbiBJJ20gdGFsa2lu
+ZyB0byBqb3VybmFsaXN0cyBJIGp1c3Qgc2F5ICJwcm9ncmFtbWVyIiBvciBzb21ldGhpbmcNCj4g
+bGlrZSB0aGF0Lg0KPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC0tIExpbnVzIFRv
+cnZhbGRzDQo=
