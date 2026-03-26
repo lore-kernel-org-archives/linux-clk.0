@@ -1,148 +1,83 @@
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4A619B5B1
-	for <linux-clk@vger.kernel.org>; Thu, 26 Mar 2026 02:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED60C39B951;
+	Thu, 26 Mar 2026 03:19:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774493296; cv=none; b=n8SgIX1YPtvhnWMIUCBnYBPLvMIKnz7YBXX/T6zX9U3baOEJfjES5v/A+8bu75rXZPq+z0o5g3PC7G8SIqJ4CTE6tESgxfDUdXCFhy5XGAPTP4l1x5Hv2Z0LCWQH1zHa78KzdpEBwXgSKGKydPb8C29ZJatiXwV/XWt/wEArshc=
+	t=1774495183; cv=none; b=LHY9VXvVAn2FDK/YSTZyrKz78Ld71Tx2WmOiNK08i2pPu8aGqk4K40LlHRuke1uqJBRTMqNLLSjbWBCF1JEA5YgioZofBqH5xoSnLOA3RDSIguC4kW3DSUzlS0Kver4RC10+kVVX9b/N6wzhItp7q0m9cXf77dsL6MRAH5t/y34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774493296; c=relaxed/simple;
-	bh=RrqD1NoUe4djEyb0fe5dsQb/o25xg9vxMy7cCsdcd7U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Hf7WY02i4JK4ZL7nh2xnsPW1Wu3UQRIA8lJfLkhQgvgnXxsNlmEyxCuFodnx2mEORWC1SO+Nn9E/CnP9Dl1wR48VX6iFVBL1O7wGDOE7YV+tRpfN//MuKn/tb/TQswxvgAA2FpUB2qpwN4Yw6fZ28CxjduwiPps07dt/rxygK2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=rl2PEuoi; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1774495183; c=relaxed/simple;
+	bh=Ijg98CHDkOIv763+VoXcnhCvsEG7o5MH60DndiASnyI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U1IcmWonDKsZaUxtpLl+OtumX8znhkHOis58RY0QmGhTumr+dQVWanXX7ib26EUzn06M6Z77fXwHRubEb51BkfABW2j1Cj4tnpxgjbBK1o4No30gb8pZRolHcWrWCTXJibMzXbPMPMzxt35Na7UO4YXlCDAx3F4+wVgIxZSG4/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MkBhJ9L5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rl2PEuoi"
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2aecefc7503so3305435ad.1
-        for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 19:48:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774493295; x=1775098095; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dMEzcnIaH8BHyFA6RpTtAAlerD4BYMa9dkJNVe48taA=;
-        b=rl2PEuoizce2K29EK6r2vqeTUBfL6H5P8X+z8m/6spCgKm+v0Lnot03Y270GSVUTxJ
-         O2Vtm61MiVljiRN5YUq+WuGh+VjvsvCldrvTA3cHd1jDJ87p+R1g5voINnIuHl3TJKfA
-         N3eXliS3XuUtqUsgvU3ZVP3qYjWAO3AOW4Hl55ao9QwrIHjD28VQfASwWBACB/PHRwjx
-         W7OYpZJ2jBTTsZ9Y33S8MSiKoEuruMVscMfMzEiNchgt32VsaofcffaVaaaUPQdgFtME
-         9yRouzxLbqzEx7y14VZY7G6mGXeaOTKz5mYee27L17XU+NBIS86/RgV8lTh6eDfRl5+b
-         yx3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774493295; x=1775098095;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dMEzcnIaH8BHyFA6RpTtAAlerD4BYMa9dkJNVe48taA=;
-        b=e3GyMpRuqPAPfxeog1VHcWUFkQup2oCtUhSg0YHEfVJy/Hl9BZQ4jsU+BrgqIxO9T6
-         0hpb/1EMsW4X+xUa9iFocwTVa6xvPO9dkXtI1yFhseoaZk3He/aaMzZ8kD825UoWboT0
-         /RV9B0BuMnjbKe9hn8Od/aP/lq7fankhky2VCLQx0KBWKdUuuloozuMybXxaq6L6rhSH
-         fQczSp2/Xy0x1Cu8UQvw7Ymw2+TGZQFRsuc+BDuzUJfiInvZ5xRDLzV184Pvth3V+1c9
-         NdZh4mIbhbGMYeVLnHeC/Krjc+6N7DsTNtivEG9V5Kfyjf1orMPwQ5AakufQJMzOFN+n
-         E62w==
-X-Forwarded-Encrypted: i=1; AJvYcCUbsd5kvUzJVRVRB4xTY1yhRMbbclZsEtqN6eM48q0DrJ7LgifVi+wVxBe00OImOeMJ1NM+/0LCzIQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTh5+oqUYLqaqtpzHBCtHoZ4y7ufJXlXcaHKL9pFf6vW7Ji0G5
-	GZCE8ehGbiSvF8SNgI8c2djCGcH09pz6gnImG6aonABeJU3yt3uI/E5Q
-X-Gm-Gg: ATEYQzxZonG/KRiDmKFka7brCsQtRVgTc7w7F1ir5DOS4pqgsVFrtO98Sqa1j4CtwmB
-	DtJyeNYuIShTxyenB9khQL9Y3sJsSYKLebkguTpjGdT21ffg+xTWOHW+FjBi6kbqujgcjD9Ez2s
-	Yx0aBrLBow/kv0mwaqfbKFnSfcs/rZUE6mHLqPKBr7QF0/es4eYkjgg4Pgme+06YVKJh5W7qvxF
-	Gi1EbXBWVXVlmH5cUJusbH0pOKIl2YzRAW2/dUEnabOnhaPeTszVRRq6OHANrXaGxlDBll6qKhc
-	4nximL4BxY5NDg/eIk1YB8tH7ojlyAsM5aoMm/MvQfpkCZu90QnjwecU32EbwHq8FCJCMCNShJE
-	OvIkAXKSC36y1JLytP1SowQzeSrGytaGez5lbONp7PlYdKpvx7RUWga4nqr9hdrIcnPvjos8GHT
-	u6jNTxXIAJpHCjI0FtsbBHPg6vQFiB7rvkIiCpFnTruuwbgM9iRnIOFx6/NdMEhsVTGA==
-X-Received: by 2002:a17:902:ebcb:b0:2ae:5eab:132e with SMTP id d9443c01a7336-2b0b0a35055mr67436305ad.12.1774493294597;
-        Wed, 25 Mar 2026 19:48:14 -0700 (PDT)
-Received: from ryzen ([2601:644:8000:5b5d::8bd])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2b0bc76bbdcsm13039695ad.5.2026.03.25.19.48.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2026 19:48:14 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-tegra@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MkBhJ9L5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A4D2C4CEF7;
+	Thu, 26 Mar 2026 03:19:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774495182;
+	bh=Ijg98CHDkOIv763+VoXcnhCvsEG7o5MH60DndiASnyI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=MkBhJ9L5mAwRqSqdsrLZY/Q7saPtAvPggZ93d9AAo5Zd4MlQAyn4TID7JkyUR0mbp
+	 /BTJdm279Fp6woHpVM0n7aY4sisaWvRyEOhx4XvEDZ8jKQHCi3TjlU6SupViRVbTEf
+	 GA5pX9He/PjwKfutmxfrCQ1MkGVQ7oYD9eI6WSLpEngV5Oddgl8fmn48L726x4z3/W
+	 CtN0xKX8nXSeVFHE9T6g3fYX2mu00JnN83QT9yQnXGYKRunKwFEKdDWbR68/ljXNXi
+	 n7nkN/p/bdBmUghIv+rh4oz89cZRRmgxdcS3wYdHdc4ahfJ9nA3bQj3LzIY+YKOj+T
+	 TCT9qoGQdHr8A==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCHv3] firmware/tegra: add COMPILE_TEST
-Date: Wed, 25 Mar 2026 19:47:56 -0700
-Message-ID: <20260326024756.63502-1-rosenp@gmail.com>
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Robert Marko <robimarko@gmail.com>,
+	Guru Das Srinagesh <linux@gurudas.dev>,
+	Linus Walleij <linusw@kernel.org>,
+	Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: [PATCH v3 0/2] Add minimal boot support for Qualcomm IPQ5210
+Date: Wed, 25 Mar 2026 22:19:23 -0500
+Message-ID: <177449516611.60308.13586225721353856557.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260325-ipq5210_boot_to_shell-v3-0-9c7360d19d10@oss.qualcomm.com>
+References: <20260325-ipq5210_boot_to_shell-v3-0-9c7360d19d10@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-For this driver specifically, there's no arch specific stuff needed.
 
-Build the tegra clk stuff as tegra_bpmp_init_clocks is defined there.
-CLK_TEGRA_BPMP also depends on TEGRA_BPMP.
+On Wed, 25 Mar 2026 14:49:08 +0530, Kathiravan Thirumoorthy wrote:
+> The IPQ5210 is Qualcomm's SoC for Routers, Gateways and Access Points. This
+> series adds minimal board boot support for ipq5210-rdp504 board.
+> 
+> SoCs based on IPQ5210 is shipped under 2 different marketing names such as
+> Qualcomm Dragonwing F8 and Qualcomm Dragonwing N8. The difference being is
+> F8 parts has the Passive Optical Network(PON) interface which acts as the
+> backhaul where as in N8 parts it is ethernet backhaul.
+> 
+> [...]
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- v3: add a Kconfig symbol instead.
- v2: also build the tegra clk stuff.
- drivers/clk/Kconfig            | 7 +++++++
- drivers/clk/Makefile           | 2 +-
- drivers/firmware/tegra/Kconfig | 4 ++--
- 3 files changed, 10 insertions(+), 3 deletions(-)
+Applied, thanks!
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 8cc300b90b5f..56295cc2b74f 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -335,6 +335,13 @@ config CLK_LS1028A_PLLDIG
-           features of the PLL are currently supported by the driver. By default,
-           configured bypass mode with this PLL.
+[1/2] dt-bindings: qcom: add ipq5210 boards
+      commit: 1ddff6f5dfd297c3e4177d1a251b5c04e8c1c44d
+[2/2] arm64: dts: qcom: add IPQ5210 SoC and rdp504 board support
+      commit: 6668b9bb1f0107de045ee3380ae329737a34d054
 
-+config CLK_TEGRA
-+	bool "Clock driver for Nvidia Tegra platforms"
-+	depends on ARCH_TEGRA || COMPILE_TEST
-+	help
-+	  This adds the clock driver support for Nvidia Tegra platforms
-+	  using common clock framework.
-+
- config COMMON_CLK_XGENE
- 	bool "Clock driver for APM XGene SoC"
- 	default ARCH_XGENE
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 3416eea558c6..0e1331bd6295 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -154,7 +154,7 @@ obj-$(CONFIG_ARCH_STM32)		+= stm32/
- obj-y					+= starfive/
- obj-$(CONFIG_ARCH_SUNXI)		+= sunxi/
- obj-y					+= sunxi-ng/
--obj-$(CONFIG_ARCH_TEGRA)		+= tegra/
-+obj-$(CONFIG_CLK_TEGRA)			+= tegra/
- obj-y					+= tenstorrent/
- obj-$(CONFIG_ARCH_THEAD)		+= thead/
- obj-y					+= ti/
-diff --git a/drivers/firmware/tegra/Kconfig b/drivers/firmware/tegra/Kconfig
-index 91f2320c0d0f..ae21f460807d 100644
---- a/drivers/firmware/tegra/Kconfig
-+++ b/drivers/firmware/tegra/Kconfig
-@@ -3,7 +3,7 @@ menu "Tegra firmware driver"
-
- config TEGRA_IVC
- 	bool "Tegra IVC protocol" if COMPILE_TEST
--	depends on ARCH_TEGRA
-+	depends on ARCH_TEGRA || COMPILE_TEST
- 	help
- 	  IVC (Inter-VM Communication) protocol is part of the IPC
- 	  (Inter Processor Communication) framework on Tegra. It maintains the
-@@ -13,7 +13,7 @@ config TEGRA_IVC
-
- config TEGRA_BPMP
- 	bool "Tegra BPMP driver"
--	depends on ARCH_TEGRA && TEGRA_HSP_MBOX
-+	depends on (ARCH_TEGRA && TEGRA_HSP_MBOX) || COMPILE_TEST
- 	depends on !CPU_BIG_ENDIAN
- 	select TEGRA_IVC
- 	help
---
-2.53.0
-
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
