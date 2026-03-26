@@ -1,132 +1,159 @@
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB472BE053
-	for <linux-clk@vger.kernel.org>; Thu, 26 Mar 2026 06:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.167.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774507208; cv=pass; b=tdOpGYbpK+lcTBvuex9mV6IYATCCdhQpCYK23OyqWAx8K0aaTxKrnL9al+bp2c4lX0xrOpwgB7ZU6K6DcHSWZt01nNb0dMUGYb8nNMVTj7Hg4rpAMJ50QOryP34OTW+I6KEvX8viVYHqe+2SSmjkDDahcvvy6NK/29U/0Qjp3rQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774507208; c=relaxed/simple;
-	bh=69ZaWNAxRHkgtq1KDpn1Fryz++TV1sPjQ/Hor//Od0o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PsouC2rgWZ1m/0ctrgH6y7WZx9tP7xf0C336UYw0+iSeKZHgZYZt6RRNaF1vv0YkVTo6YgQqVMjg8sTFTVQdIxsxz81VXx6zhDZZ+58RzGL5KL29dc/pFV6fZXiMTF2guv88q+X7XpIZtm9lPYSLjio1dqRZXJ9F4bB47/dteb8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Hhyl1kG9; arc=pass smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4ED6333439;
+	Thu, 26 Mar 2026 07:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774510410; cv=none; b=GNI+2BQFIqUeMvmYRAsYnCyKZpexmB3p8MlzwhIENvtuc+zKFuvtck+4rqw63T56oHP8SZf7wU0vF8FtoITJB8KVhwaQP2XvTX3LJJdeyvmmRo3S9qdQc2+Y02/JrxBiKUOS105ikmofCvcEdk66U7cixkeEx4u23RvTHsfw8hM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774510410; c=relaxed/simple;
+	bh=vKu/5H10rhdAPVui5WZj9IHM8sTyiXH3kOdeAaLHtng=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eAFn9xGWvtZ/vuKKzPQabP/u71UJAcSuACNYepngu3IYhdT9+LX6aeAecUmsn2573mBVL7kncVUuCrRvxnj0Tu7JnXLzznBWGaMuxdKJAL96m3NudrC4srybM5Daj/1lT+dKB9798L02zXDYwhrZmu64wdW5qNH0lcNOSAfrJ+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mnGjesEU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Hhyl1kG9"
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5a2a5236811so71308e87.1
-        for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 23:40:05 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1774507204; cv=none;
-        d=google.com; s=arc-20240605;
-        b=EyvBLrGIB5FKthnThXYBy8QsNJ5BQrefxyYXTa8X6VHU4si1jjjlURdOhyBF5Ch/JP
-         aK9bpMsv6VRgz6bX0BjpFxhen3DjCNhqLapa0/GaFg0rLXJV3c6uPO+i5toZxNRO+Gpf
-         iT6h+Cpb5pDQxeloZWtQCoTKW+3OMqD5dxlnWGfmu1uSOzKu3W066dZinSmnusWqnEQ5
-         MsfS+/VKno+DESafSJw8n9Sj1KYuHguIC0rf22bPkvGOrXYUncZjGVRoSQwEyPKa+C3z
-         TDAr6oQBGMgMT2IaLYhP4vKD/vUxrL6WUG7YuwKXMGLSAWSgKB7s62juoWGQIm8d2LCd
-         h9Og==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=69ZaWNAxRHkgtq1KDpn1Fryz++TV1sPjQ/Hor//Od0o=;
-        fh=+EX9hJxU41xDfXI8BljlBRQHmjUnoa1/OgtSrqaJEhQ=;
-        b=QdMNrMzHLgy1Z+vLoi7rsQg7vpQsRdU4eIGz6lh2GEIJdMIcES+sIeE3QhsEyIfFnD
-         e/+wWeAZ92YaeRK1zZOsPA9ZNJbRoBAQCKxJP/mtXvQm38ApZmMPjPdLHjWI+omA7+AX
-         3cRRpVvmYr5PBmriHnZNVGqrzFtMvMWp55qRQLaqn3wDRSHYhL5IhiSlCxQ6lH5ubwva
-         z9XmznBMNVwj3RGv1+Fi9cBcKhCjkGqqYTMQSlYL+yrXR9pWYKiFdiwoxooxuGUwX4Jx
-         OUxeet9eyn8REfChzOkKnH5JXoCsws5rwE6aQt8CuV+fH6vdF+H5qkC7U3Dua+B899To
-         EAKw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1774507204; x=1775112004; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=69ZaWNAxRHkgtq1KDpn1Fryz++TV1sPjQ/Hor//Od0o=;
-        b=Hhyl1kG9P08/0vlob6+n6qMnGl0nzv+J2ewU+l74oye/7m8Ea/UXFTfAUhslHWTCgm
-         K7e5VOnN4TduXXYlUU90sFISmg6ud0jDuXHzxSi+ikxsJmk+Wek5QsjHD45xgrY2LETh
-         FStRIjMyzK9NqWc0jxdUN30C8OW3QgkjFsRjA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774507204; x=1775112004;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=69ZaWNAxRHkgtq1KDpn1Fryz++TV1sPjQ/Hor//Od0o=;
-        b=ZU0H/fECEWe2zvpAESqUbtJK6nsibhpuOXBbAUIeSouRRXbYYpXr0gkYihsWtvDeIG
-         7If27zHfcYR1k62uOnJU0F8Ez6MPOC4hevrVUb2LB8+04bf107cULjqKS0fmZoJtIA83
-         +s9PkmGD3HUwe4FWvfyLwsj9Zvg/mwCBKzmjbsi5ildunBBlOk93Oc9juUvem2hm0KbR
-         5g2qlTnzGmW55NhYQ6+7BD7mQH/rBp0sevmN5fN7vWdGYTGsRxLZxVrCdxa9YcafmvkA
-         TyzSIrUmMyOZZ6olR8FZ47YTVrHgEYODqK1kC5fK1/uqUgNk+MWZEcgMhI7mtVA4kWoQ
-         O+0g==
-X-Forwarded-Encrypted: i=1; AJvYcCXuwVVeNgIB/mOdob8v3P920utGcnxT+xGutXy3SR53yc9djBB3T5W0mvq9UHaUtFWDqAibYS9WlZo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHJtuwXXGl6r+mPeObGBKHUKI5hcnhJfkPfQ+uvopcHlJXCGA0
-	4v3Xyw9HEw58vvxmR3KKDYBjpJpSIOBtz1v8MOlRI5WFyomhck5DxS22KwO4MPO586pcSFS+gNq
-	mpwT/GNvbOstopCnnjrx1uGuVVSbyBRBmqPCizTmn
-X-Gm-Gg: ATEYQzzvvpVNSAJe88bWOYBptCaiA0RU+QTMEIbYEbR2XFrqUQJyy19RAz5kjUAF3Bs
-	Hf+sI31lXVVUGs31ONSHSagX9brlumYdOzQYBw8sBbVg7Gi0ob/RIDKfyLBdSu4y+RurbS55mjd
-	MYhVro2EmAqif+h6Shg1RTSPm+fBL7bW2Zfh2k2GVSh5X1EEoSPE5FBseOKrbZ0NiaRQdSbLlbo
-	8BEr/Zm09Y+yoi7EB5iSMExZHhyJMQpnE9aGC28mySp4JaEfA23Y513vCZyN6XfDeZO6jIZW9FC
-	VZGS77OXjE2YG2Rm5c1zgV5VkWR58cMTyCa7sQ==
-X-Received: by 2002:a05:6512:34c8:b0:5a2:a0b0:3c with SMTP id
- 2adb3069b0e04-5a2a0b00282mr505750e87.25.1774507204124; Wed, 25 Mar 2026
- 23:40:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mnGjesEU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA35DC116C6;
+	Thu, 26 Mar 2026 07:33:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774510410;
+	bh=vKu/5H10rhdAPVui5WZj9IHM8sTyiXH3kOdeAaLHtng=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mnGjesEUZ8w47cpjwFazrR3Kl/k/ON8Wmq+x+MszIGA/nI/oNIyv8C3QCJR3/wXnp
+	 WU0JYDdS3aiQFL+Si2rzc90Fm5YWa8YDkOsh86wEV/+13v2is/S5R3N0UAXNlKko4Q
+	 KRDMH783yTRGclCiLSSOs3b1l8xHpeV6eFtAsv7raYqGZ+Qv3ifJNWMHghpEBethSi
+	 767egn+PxlKjgb+jzPZ8jMo32WQgRH04y44o4s+BINQb+a9rHop93t4g++DFO9vjYn
+	 DbKIKR3kTr33dCH52XRj+2cyqGEtxk4Q27OtNQ3eRNFQCPYS1uL38lxoHZ4Hb2982D
+	 osbr8h/GEsOdQ==
+Date: Thu, 26 Mar 2026 08:33:27 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, Bryan O'Donoghue <bod@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org
+Subject: Re: [PATCH v11 1/7] dt-bindings: media: qcom,x1e80100-camss: Add
+ optional PHY handle definitions
+Message-ID: <20260326-curly-loose-silkworm-283a3f@quoll>
+References: <20260326-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v11-0-5b93415be6dd@linaro.org>
+ <20260326-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v11-1-5b93415be6dd@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1774499536.git.daniel@makrotopia.org> <d1a9b393d9929dc670dc6d5bfcc5cd43561d0be4.1774499536.git.daniel@makrotopia.org>
-In-Reply-To: <d1a9b393d9929dc670dc6d5bfcc5cd43561d0be4.1774499536.git.daniel@makrotopia.org>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Thu, 26 Mar 2026 14:39:53 +0800
-X-Gm-Features: AQROBzBXCYK8fdBiG_gwq6eMeNBtFL35RVNDIyD5eRFrYc-fSnDonaWmeSR1w1c
-Message-ID: <CAGXv+5Fv1g75+8kFtMEvMeSW2+2tYnqcS=P4ssZfT8p9ORwXPA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] clk: mediatek: mt7988: use MUX_CLR_SET for
- gate-less muxes
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	=?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>, 
-	Laura Nao <laura.nao@collabora.com>, Weiyi Lu <weiyi.lu@mediatek.com>, 
-	Chun-Jie Chen <chun-jie.chen@mediatek.com>, Ikjoon Jang <ikjn@chromium.org>, 
-	Sam Shih <sam.shih@mediatek.com>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260326-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v11-1-5b93415be6dd@linaro.org>
 
-On Thu, Mar 26, 2026 at 1:11=E2=80=AFPM Daniel Golle <daniel@makrotopia.org=
-> wrote:
->
-> All 19 muxes in the infra_muxes[] array are pure mux selectors without
-> a clock gate or update register, yet they were defined using
-> MUX_GATE_CLR_SET_UPD with gate_shift =3D -1.
->
-> This macro assigns mtk_mux_gate_clr_set_upd_ops, whose
-> enable/disable/is_enabled callbacks perform BIT(gate_shift). Since
-> gate_shift is stored as u8, the -1 truncates to 255, causing a
-> shift-out-of-bounds at runtime:
->
-> UBSAN: shift-out-of-bounds in drivers/clk/mediatek/clk-mux.c:76:8
-> shift exponent 255 is too large for 64-bit type 'long unsigned int'
->
-> UBSAN: shift-out-of-bounds in drivers/clk/mediatek/clk-mux.c:102:4
-> shift exponent 255 is too large for 64-bit type 'long unsigned int'
->
-> UBSAN: shift-out-of-bounds in drivers/clk/mediatek/clk-mux.c:122:16
-> shift exponent 255 is too large for 64-bit type 'long unsigned int'
->
-> Switch these definitions to MUX_CLR_SET, which uses
-> mtk_mux_clr_set_upd_ops (no gate callbacks) and does not require
-> callers to pass sentinel values for unused update register fields.
-> The actual clock gating for these peripherals is handled by the
-> separate GATE_INFRA* definitions further down.
->
-> Fixes: 4b4719437d85f ("clk: mediatek: add drivers for MT7988 SoC")
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+On Thu, Mar 26, 2026 at 01:28:29AM +0000, Bryan O'Donoghue wrote:
+> Add optional PHY handle definitions. This will allow for supporting both
+> legacy PHY definitions as well as supporting the optional new handle based
+> approach.
+> 
+> Drop the legacy high-level 0p8 and 1p2 supplies as required, each PHY has
+> its own individual rails. The old binding is still valid but with
+> individual nodes we define the rails in the CSIPHY sub-nodes.
+> 
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> ---
+>  .../bindings/media/qcom,x1e80100-camss.yaml        | 33 ++++++++++++++++++++--
+>  1 file changed, 31 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml b/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
+> index 2d1662ef522b7..c17b9757b2c86 100644
+> --- a/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
+> +++ b/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
+> @@ -39,6 +39,14 @@ properties:
+>        - const: vfe_lite0
+>        - const: vfe_lite1
+>  
+> +  '#address-cells':
+> +    const: 2
+> +
+> +  '#size-cells':
+> +    const: 2
+> +
+> +  ranges: true
+> +
+>    clocks:
+>      maxItems: 29
+>  
+> @@ -126,6 +134,16 @@ properties:
+>      description:
+>        1.2V supply to a PHY.
+>  
+> +  phys:
+> +    maxItems: 4
+> +
+> +  phy-names:
+> +    items:
+> +      - const: csiphy0
+> +      - const: csiphy1
+> +      - const: csiphy2
+> +      - const: csiphy4
+> +
+>    ports:
+>      $ref: /schemas/graph.yaml#/properties/ports
+>  
+> @@ -158,6 +176,14 @@ properties:
+>              required:
+>                - data-lanes
+>  
+> +patternProperties:
+> +  "^phy@[0-9a-f]+$":
 
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+Use consistent quotes, either " or '
+
+> +    $ref: /schemas/phy/qcom,x1e80100-csi2-phy.yaml
+> +    unevaluatedProperties: false
+> +
+> +  "^opp-table(-.*)?$":
+
+Look at other code - this is just opp-table in properties.
+
+> +    type: object
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -171,8 +197,6 @@ required:
+>    - iommus
+>    - power-domains
+>    - power-domain-names
+> -  - vdd-csiphy-0p8-supply
+> -  - vdd-csiphy-1p2-supply
+>    - ports
+>  
+>  additionalProperties: false
+> @@ -184,6 +208,7 @@ examples:
+>      #include <dt-bindings/clock/qcom,x1e80100-camcc.h>
+>      #include <dt-bindings/interconnect/qcom,icc.h>
+>      #include <dt-bindings/interconnect/qcom,x1e80100-rpmh.h>
+> +    #include <dt-bindings/phy/phy.h>
+
+Unused?
+
+>      #include <dt-bindings/power/qcom-rpmpd.h>
+>  
+>      soc {
+> @@ -229,6 +254,10 @@ examples:
+>                          "vfe_lite0",
+>                          "vfe_lite1";
+>  
+> +            #address-cells = <2>;
+> +            #size-cells = <2>;
+> +            ranges;
+
+opp-table, phys, phy-names and further also child node.
+
+
+Best regards,
+Krzysztof
+
