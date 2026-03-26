@@ -1,158 +1,109 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E6929A32D;
-	Thu, 26 Mar 2026 13:49:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD822848A7
+	for <linux-clk@vger.kernel.org>; Thu, 26 Mar 2026 13:50:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774532999; cv=none; b=simChH78HnYT9q1J7fPyKfXtW3OE62c9IL+IuXi9U8ocTxhgyJCzM31VGvxrOzk/5snMEXCncQ9bp6JPWydJvGaWxHRhDS+YGUwj/BRrjE9AdY86KcRKKLWAhl3vYdvZiLWFdWvmbFfyifrb0gEczsqnD2bvRsm7ry9IsxRl38w=
+	t=1774533038; cv=none; b=Gh1lOWQj+QK2VfmAzVyy4wfVvXXDlkKtMqUgd11smd43gTHwMq8lNsEdagLUHt3BdbFIbzrd5wsCsSXdXuGgrJSj0VRcm3mN4MbBFHK06mwVXjatVzsCWussvcuoStszxXZuneWF45ITEjTDjcsvyfepGFQDZk4TdJDdHdOWKTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774532999; c=relaxed/simple;
-	bh=x+fkM6vu5h7RY1/dOIAEf+g4E+vu6Ey+LIqxNEADWHo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fwfbc8gUuje3Yfwe/pjUVl+o9d/SkfnBjV/42BTFrje4vmXNWREEVfqoRnp5C77eRk7cwsMz+iPaDBQjs2FDTEwQDlGgns/QNHqPoCbaYjTHa0J1cKGwwAutOsxzyLvvK6UeIfMMMZAZjp4kUwmVEebdSGRLAwMNFQMdkkGwoiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KrHV1CTn; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KrHV1CTn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C9DEC116C6;
-	Thu, 26 Mar 2026 13:49:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774532998;
-	bh=x+fkM6vu5h7RY1/dOIAEf+g4E+vu6Ey+LIqxNEADWHo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KrHV1CTnkTzSlumk1EEyxUu+GRLJnu+FL95+kGj/yh0MC3EMjWf1+XB/HMzf7I9RG
-	 Y5D+K7uO0JZjV9+bzASroCdyKyz7PCY4wswtiFu6dkiFSK82pDcBfEgjypEOMOeQbJ
-	 Mxp9Y21UXiA+i+PZ3If+3QesNlg8JehOOToMmJy5nJtF6HdPsIMN/ceZxEsFZCVbS6
-	 JW/km02lHPcd2mkBylT3szbC87lg93oei+pnpgOYNqV9/Wt3ihE5GCp2NjN6hARF2/
-	 yHdlaMH/n1o05XSd/zkmB/NivUVf7sxLWscU01YiPA4GV5oMuK7KudVWZFDEfopcCD
-	 RMhH+8494LkJA==
-Message-ID: <b7a4f719-b605-4d26-a5ef-9ef2ba8d07ec@kernel.org>
-Date: Thu, 26 Mar 2026 14:49:54 +0100
+	s=arc-20240116; t=1774533038; c=relaxed/simple;
+	bh=zfR0KFSHLPzL2E+STUVtGkTaWWo0Rd9uMDmN3nMDB/I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mYDm5IlDuCEiKb9Cpaf6i6YzWKoBtaopKCSQNfovPqk4MKvJwB9Da5HgMU8NpW142h6J+OhDyGKbMKAHtJBvIwPlwJ5h3IhZB6f7LkMmPCnQoJR9TycevpccdpIlEVIuotsUPjOzgL7reg+t07HzTVa9U3UB6BLlm48TsbO2qHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-668d70fabc4so1888340a12.1
+        for <linux-clk@vger.kernel.org>; Thu, 26 Mar 2026 06:50:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774533036; x=1775137836;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZZpiSciNjye0KqicJtIKQlGVq5eF91hzz2vGtpczo+k=;
+        b=H+K2TUMkaOeKO88ZxtJHh4qIjee4EbRulq0N3lwiIBbaKs5yWVXBeFBRieSFPNxlGb
+         GnI1sp8EoUt1F3scK1VhgKI9Md9kTYcaaEYX1QB8VWPlDGzbbJk+bAzvIOtjQRteHqaB
+         VPkO7gXzgPsOEq21mQrE0E+0hAbVTVBmpl5ast2QOISvb9P9Q16H8YCzLKjxslwo1kOt
+         nK1lM/iWv9+RV0gCN5w6thR2hw929v32w9MTJKSRjOugNtPUhUkJpPwperbCe3UzV0pQ
+         bKp4kVP/zy4mOn5HzC/nzV95lwACnbPkts2aJdUUZgZQMN1yHov1wNeRpj+mG2R4gJq9
+         7gJA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZfaYwDShn8SigQtB/WQmyxFTtbVxxnNlK4XgXgTdJ6pha+othpGScwOo8ojq7dLMReZSVlPNAyQY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxW8BGTjwC4D2sPCRhD2bZyYnI3edFZYexkXkhI/D1pij9f1ZDO
+	Vy/tVLT1CcnYnA301oNsjV9uzlpVRwtimPPgysbHhA3O8BcjIWfgBP5ohrJVY57a3Nk=
+X-Gm-Gg: ATEYQzy/X+wVZr3baqIoEt1zpWzuMCjpqVAHyx9KpQoKXG1zPFKtHvXMwLeADkMWGZZ
+	r5c9z6ewilXnY54uLA+EfVLZ46+mSErktnRcYEXoYNF86YvETLhOeYLw3r9M0i8HY91rm77UYRV
+	WXgCvfjjDyFsyCObXUo3DLD/lAML2rUBsMpxXTxiYlGFOZq6TYGG/ojiLhxEDPmqnQZI8QvqaiZ
+	/xYGXe4YsglzU2o8L37CjXD48zV+gVxojCh4srLQrjgHQ0WqTiUmRbH+rP+8aXbz4W3Oht2qMwo
+	yeut1DwgwCtVUbLBFa5KOVt7M43KhcHuQzUjNu6dypibcJurk3/qpwqapjWIC5sLnm7LVL1Qv1j
+	p1KIwnSYSFmHCMSE1doAnjNgtyJLf4t6uvoy7Ah79r9xpv1VX4PdJ3LXkiAHH13jupr8ufaqAtK
+	ciRHDIriRg5jxRMO7beCQu4ao0znoeGR7LuRdJpvUCEwgVhFobcWkvb7jZZvY0
+X-Received: by 2002:a17:906:9f8c:b0:b98:ad4:6208 with SMTP id a640c23a62f3a-b9a5426db1emr530815766b.38.1774533035621;
+        Thu, 26 Mar 2026 06:50:35 -0700 (PDT)
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com. [209.85.208.52])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b9b203ef450sm123688266b.47.2026.03.26.06.50.33
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Mar 2026 06:50:33 -0700 (PDT)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-667de793310so1696638a12.0
+        for <linux-clk@vger.kernel.org>; Thu, 26 Mar 2026 06:50:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXbo1U/mynOJaWJGFtDgnrw9oIZ7tP9gS8vv1bgw4LZ0+ec61mGCfrVIk4IGGzLlwFRmuo6a0PuJO0=@vger.kernel.org
+X-Received: by 2002:a17:906:da02:b0:b98:2462:959d with SMTP id
+ a640c23a62f3a-b9a54238a19mr468792266b.31.1774533033140; Thu, 26 Mar 2026
+ 06:50:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] dt-bindings: Add clock guard DT description
-To: Vyacheslav Yurkov <uvv.mail@gmail.com>, Conor Dooley <conor@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Vyacheslav Yurkov
- <V.Yurkov.EXT@bruker.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-References: <20260318-feature-clock-guard-v1-0-6137cb4084b7@bruker.com>
- <20260318-feature-clock-guard-v1-2-6137cb4084b7@bruker.com>
- <20260318225510.GA639444-robh@kernel.org>
- <7c7034a7-686a-42c2-bdba-6f31b5179f7c@gmail.com>
- <20260319-yearly-wrongful-883f7fd86a69@spud>
- <b45d9845-2d56-4fdd-a3ac-b0e0e27ba573@gmail.com>
- <20260323-sanctuary-semantic-432089feb1c7@spud>
- <d097826c-3db5-4902-acee-ffcff7436d4e@gmail.com>
- <8e7d0c53-aa23-4514-81a5-335a76bb0c45@kernel.org>
- <4d575f17-5cd5-495c-99a9-176b3393d54d@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <4d575f17-5cd5-495c-99a9-176b3393d54d@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20260324114329.268249-1-biju.das.jz@bp.renesas.com> <20260324114329.268249-2-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20260324114329.268249-2-biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 26 Mar 2026 14:50:17 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXbdNPMxPzf1hHT5vO9CVCPsL=UMtbvEXF9gtQ869ve4Q@mail.gmail.com>
+X-Gm-Features: AQROBzDNJoDmUl7Y_VlwUV8V3o47tmUPgQk5SBKE-wsihNwjTg-QGGD52bK1kjo
+Message-ID: <CAMuHMdXbdNPMxPzf1hHT5vO9CVCPsL=UMtbvEXF9gtQ869ve4Q@mail.gmail.com>
+Subject: Re: [PATCH v8 01/11] dt-bindings: clock: Document RZ/G3L SoC
+To: Biju <biju.das.au@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Conor Dooley <conor.dooley@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 26/03/2026 14:39, Vyacheslav Yurkov wrote:
-> On 26.03.2026 11:08, Krzysztof Kozlowski wrote:
-> 
->>>
->>> DTS example:
->>>     clock_guard: clock_controller_guard {
->>>       compatible = "clock-controller-guard";
->>>       #clock-cells = <1>;
->>>       clocks = <&h2f_clk 0>, <&clk_fgpa_rx 0>, <clk_fpga_tx 0>;
->>>       clock-names = "h2f_clk0", "clk_fpga_rx", "clk_fpga_tx";
->>>       gpios = <&fpga_ip 0 GPIO_ACTIVE_HIGH>, <&fpga_ip 1 GPIO_ACTIVE_HIGH>;
->>>       gpio-names = "gpio-input0", "gpio-input1";
->>>       clock-output-names = "clkctrl-guard";
->>>     };
->>>
->>>     custom_device {
->>>       compatible = "...";
->>>       ...
->>>       #clock-cells = <1>;
->>>       clocks = <&clock_guard 0>;
->>>       clock-names = "clock-guard";
->>>     };
->>
->> So a pure SW construct? Device has specific clock inputs but you do not
->> model them and instead replace with one fake-guard-input.
->>
->> I don't see how this represents the hardware at all.
->>
->> Maybe some diagrams would help, assuming we still talk about hardware.
->>
->> Best regards,
->> Krzysztof
-> 
-> Techincally that's correct, it's a software construct. If this is not a 
-> right place to submit such a helper driver, I'd appreciate a hint what 
-> subsystem is the right one.
-> 
-> I was not sure how to provide a diagram in the mailing list, so I posted 
-> in on Github https://github.com/OSS-Keepers/clock-controller-guard/issues/1
+On Tue, 24 Mar 2026 at 12:43, Biju <biju.das.au@gmail.com> wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+>
+> Document the device tree bindings for the Renesas RZ/G3L SoC Clock Pulse
+> Generator (CPG). RZ/G3L CPG is similar to RZ/G2L CPG but has 5 clocks
+> compared to 1 clock on other SoCs.
+>
+> Also define RZ/G3L (R9A08G046) Clock Pulse Generator Core Clocks, as
+> listed in section 4.4.4.1 ("Block Diagram of the Clock System"), module
+> clock outputs, as listed in section 4.4.2 ("Clock List r1.00") and add
+> Reset definitions referring to registers CPG_RST_* in Section 4.4.3
+> ("Register") of the RZ/G3L Hardware User's Manual (Rev.1.00 Oct, 2025).
+>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+> v7->v8:
+>  * Fixed the R9A08G046_ADC1_ADCLK macro value 138->139.
 
-Diagram of hardware. We talk here about hardware.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in a branch shared by DTS and driver.
 
-> 
-> It is a driver which models dependencies for other drivers. These are 
-> soft or "indirect" dependencies, because we cannot access the FPGA 
-> unless the FPGA_PLL_locked, and GPIO is telling us we are good to go.
+Gr{oetje,eeting}s,
 
-DT is not for drivers. It's not about subsystem, but concept. DT
-describes hardware.
+                        Geert
 
-Certain generic bindings which solve real and common hardware problems
-are accepted, but so far I miss what hardware problem are you solving here.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Best regards,
-Krzysztof
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
