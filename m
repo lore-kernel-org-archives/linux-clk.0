@@ -1,16 +1,16 @@
 Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CEFC336883;
-	Thu, 26 Mar 2026 05:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F50336883;
+	Thu, 26 Mar 2026 05:10:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774501783; cv=none; b=rEFzU3iKN/LF8rXEiXE8SNyaGKgMyVcboc9z0aWRVMrbHYxSh0I0PfH3JwtzyQoOB1fPCDzlBiaVDOIIfKGMW0W8Ef6Vkidy6XNg/1e1AL7AWbh6IXJYRsMr8J0XBZjVUNvy6wwot42caf6u1nF5mBBvi73yv0fcjRzL0T5k9Vo=
+	t=1774501854; cv=none; b=X9qUYRQjbihLXcQO3+02hV8mK0yFmHRvHaj7Ac+mo9IjH8IsHcKG0aiIYJrcppsnt/PEgMh+BL9w1InUZcZMc5JhTRmcXu8PUYAqobKEtHDsmAWeuaFT9FOtDesr6V2I4dnRISsb1MI+9qSwHyxHhyonFWI/cglAPeZPWXNUdds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774501783; c=relaxed/simple;
-	bh=oEHc9nj3Kd+zcyYcuHLWyWHyNNOx6le5ZHMBt+98rCE=;
+	s=arc-20240116; t=1774501854; c=relaxed/simple;
+	bh=k5E4d/WPb//He4xdWSS9UbRRyIhyYdKf/DoxrETBbJ8=;
 	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WK82e0tUZZ84mwmfyrb993cTPINK6dsRU01kQ/bRZYSIqtSRxXKlmpoYk/21JTeH/IeUongE6NsdzEZQPOJGy822cRC7+SY0+nFq5BE5VeSupQSfg2DWy9YXOJwCwsevbP2QH79ZUluJgg1E8wu3KY/ZdBzx2oUP5qvWTx+/3e8=
+	 Content-Type:Content-Disposition:In-Reply-To; b=JPI6z8kbqPcGSB9IUNr0A3ij09utcEkYX7kXKqBIJMxcu5BC7FcqsPQm8d7Ylsx55wr1CdZmVrLaoBEPfyyEA/QSMbtW5/sMFCvildLA0TfIxHp1EzT7Yjsarr9J5icJG2en5W+AbKTMufZRIgdsh/sAy9VDSMT/RQtPgHHGatE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
@@ -18,9 +18,9 @@ Received: from local
 	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
 	 (Exim 4.99)
 	(envelope-from <daniel@makrotopia.org>)
-	id 1w5cyQ-000000006qC-3Tq7;
-	Thu, 26 Mar 2026 05:09:38 +0000
-Date: Thu, 26 Mar 2026 05:09:35 +0000
+	id 1w5cza-000000006qv-0vim;
+	Thu, 26 Mar 2026 05:10:50 +0000
+Date: Thu, 26 Mar 2026 05:10:47 +0000
 From: Daniel Golle <daniel@makrotopia.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -35,8 +35,8 @@ To: Michael Turquette <mturquette@baylibre.com>,
 	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org
-Subject: [PATCH v2 1/3] clk: mediatek: add MUX_CLR_SET macro
-Message-ID: <65e504ac2c2d19b4baba6b79a241788220b19b34.1774499536.git.daniel@makrotopia.org>
+Subject: [PATCH v2 2/3] clk: mediatek: mt8192: use MUX_CLR_SET
+Message-ID: <9667e8a7a0757f7fb9d6bb3fca105df97afd007b.1774499536.git.daniel@makrotopia.org>
 References: <cover.1774499536.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -48,34 +48,36 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <cover.1774499536.git.daniel@makrotopia.org>
 
-Some MediaTek SoCs (e.g. MT7988) define infra muxes that have neither
-a clock gate nor an update register.
+The mfg_pll_sel mux has neither a clock gate nor an update register,
+and upd_ofs is stored as u32, so the -1 truncates to 0xFFFFFFFF.
 
-Add a MUX_CLR_SET convenience macro that takes only the mux register
-offsets, bit shift, and width, hardcoding upd_ofs = 0 and
-upd_shift = -1 so callers cannot accidentally pass bogus sentinel
-values to wrongly-typed fields.
+While upd_shift being -1 (as s8) prevents the update path from
+executing at runtime, the bogus upd_ofs value is still stored in the
+struct.
 
+Use MUX_CLR_SET to avoid passing sentinel values to wrongly-typed
+fields.
+
+Fixes: 710573dee31b4 ("clk: mediatek: Add MT8192 basic clocks support")
 Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 ---
- drivers/clk/mediatek/clk-mux.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/clk/mediatek/clk-mt8192.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-mux.h b/drivers/clk/mediatek/clk-mux.h
-index 151e56dcf8842..8a5d6aca43aa9 100644
---- a/drivers/clk/mediatek/clk-mux.h
-+++ b/drivers/clk/mediatek/clk-mux.h
-@@ -126,6 +126,11 @@ extern const struct clk_ops mtk_mux_gate_hwv_fenc_clr_set_upd_ops;
- 			0, _upd_ofs, _upd, CLK_SET_RATE_PARENT,		\
- 			mtk_mux_clr_set_upd_ops)
- 
-+#define MUX_CLR_SET(_id, _name, _parents, _mux_ofs,			\
-+		    _mux_set_ofs, _mux_clr_ofs, _shift, _width)		\
-+		    MUX_CLR_SET_UPD(_id, _name, _parents, _mux_ofs,	\
-+		    _mux_set_ofs, _mux_clr_ofs, _shift, _width, 0, -1)
-+
- #define MUX_GATE_HWV_FENC_CLR_SET_UPD_FLAGS(_id, _name, _parents,			\
- 				_mux_ofs, _mux_set_ofs, _mux_clr_ofs,			\
- 				_hwv_sta_ofs, _hwv_set_ofs, _hwv_clr_ofs,		\
+diff --git a/drivers/clk/mediatek/clk-mt8192.c b/drivers/clk/mediatek/clk-mt8192.c
+index 50b43807c60cf..6413619880483 100644
+--- a/drivers/clk/mediatek/clk-mt8192.c
++++ b/drivers/clk/mediatek/clk-mt8192.c
+@@ -579,8 +579,8 @@ static const struct mtk_mux top_mtk_muxes[] = {
+ 			     dsp7_parents, 0x050, 0x054, 0x058, 0, 3, 7, 0x004, 16),
+ 	MUX_GATE_CLR_SET_UPD(CLK_TOP_MFG_REF_SEL, "mfg_ref_sel",
+ 			     mfg_ref_parents, 0x050, 0x054, 0x058, 16, 2, 23, 0x004, 18),
+-	MUX_CLR_SET_UPD(CLK_TOP_MFG_PLL_SEL, "mfg_pll_sel",
+-			mfg_pll_parents, 0x050, 0x054, 0x058, 18, 1, -1, -1),
++	MUX_CLR_SET(CLK_TOP_MFG_PLL_SEL, "mfg_pll_sel", mfg_pll_parents,
++		   0x050, 0x054, 0x058, 18, 1),
+ 	MUX_GATE_CLR_SET_UPD(CLK_TOP_CAMTG_SEL, "camtg_sel",
+ 			     camtg_parents, 0x050, 0x054, 0x058, 24, 3, 31, 0x004, 19),
+ 	/* CLK_CFG_5 */
 -- 
 2.53.0
