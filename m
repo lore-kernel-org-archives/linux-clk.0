@@ -1,99 +1,126 @@
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AEF52DC77F
-	for <linux-clk@vger.kernel.org>; Thu, 26 Mar 2026 13:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C1E3F7E8E;
+	Thu, 26 Mar 2026 14:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774533211; cv=none; b=Pwqw3vLcqNlhpS2MF+br+O3nWFT4bJky7lCbX+Ds+9nF3lcZ43Zw7c/7PP6L9TBXQQxCUKy5NBI8E3lToPKli+Ic7+/RPKr0715Upck0vSlCInHUQfs791fbMUmvamXZKgrqX0YBVz7WskSUB/4ZB09cpk1rNOLCKGan3w1Daec=
+	t=1774534813; cv=none; b=FFKPO+UjzNyYLDRiXxuy667GM5BeA6FnJmQ36s8SNJ+naWANjyhNQClzwyjKOAIW4ih/u5wDz8wuF1bI1ztCdXMlBua45jqD5lFfvDAXNI7tuivNv+s+8oXdTBGl7sbcNoaSz6K55ovWS46a/YJgj7Wd3uEiCsuBsmKa3svbD5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774533211; c=relaxed/simple;
-	bh=W8Dd4FlEsGFbEKAdC04ppgwIlS4Qx8iLEtMN2s3o6MI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q4/lYWG9/F92VdxEFb2nWyDVp8xg1Kn/2ac/yhkmSP/+CFTxvaPInpGL2eZiiYjLzHv+rNDnbQ3i/i11X361fIwAaRShth5miRQ4lap/BI4DoipuUWwhdNxQtq1QN9B5PPz2CGEh68krEHSDjzOx5pVECPN4/D1SKsXiS8HSmhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-56a9076813bso558712e0c.3
-        for <linux-clk@vger.kernel.org>; Thu, 26 Mar 2026 06:53:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774533209; x=1775138009;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=naOo6LNAxTqdEVDTz8K5c9QHOQ72iH8wNq/q7MgHwUE=;
-        b=Hn7rR2OSFlsXsxD9x3AxOSsN0cVePqRGcl/wYbwrXs+K48nVj+Crkch4I3EWVVy1Mp
-         cAOArAmONZoAJO+ObNrxYVRAsu06zIoxa53tEzvKtae4O6tLq6hM1KCzAaTJIMfXvf4L
-         xsXbRzi9e0i6QJigP1RHA2ky5rn41VPohA6IEXU5/tCyFQeDNZkXegHFZN2r6JCN0bYC
-         5CChpH4UR+8Qp/1ggQVOYbmzhv5DFFoLE5C0BxsgNXkfT2baLvFYx/GBt2WxQoBMHlfa
-         MZjUqgI7WiOm15Qdk6sQeP4cQIxeSB8p86p56F6SPC/V5lhCigReVv70znYtVnHGI2Xt
-         0r0w==
-X-Forwarded-Encrypted: i=1; AJvYcCXTL05U6v1rpM9Z4PC8ODbz0HWsl3zE6kH1nV4Doo7sQK/KVYLkBIphwweDICw+IQQpJZhHiAGeMUI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypyoCVgRNn/97hFdAWX0ySOvsS2QJSLZdDZojyXObb8QmD11B4
-	adCM1pATTm7Mv2/OdaSeOBiNZ0jHvvTXxUGNcJOHPpX19c6xzzunBcrUkfry8ftPMQg=
-X-Gm-Gg: ATEYQzxRjx9i2HKDYqTmx/lPPlZrLx29TQ5a2V6lqx967xmEbHw1R+Tq3z9XmYsv3ka
-	rMqsKXBMDCVvNi7lcVaePlI2WBvyGKeozuxQ7xYHL4hN8hFZu1WhcIhsF32SWig3035hETCGPMG
-	ApDDWUZYNTlSRrJ6FHboAYcBlUSk4mZBJkEnp//BPEIBCIWPJgO3KPS4ApT3PJDwiV3iAV7P04x
-	cXuHFDzImUN3/Vu/jzeQxgreVWHuUSquCtIURx/XSTwbxP1MTVg+dnk9+l3T4TZviWJU+N9g/Cv
-	dqZI66lrBvL5uzSqOC2C2A6Z7nf7agEjiVo4d136VY5YOxLHAWXg1/cfrBJVfx9RCrvHo7od/JA
-	gOexsitjFROGnjCWnmGGCphEDOhwXrT1PxDgHRYX3ZWBfSJQxPVE2q7LqtUTOEGkWkp6MJlleYX
-	aoKFFv+uB0VVRRL59dhB7IauyDu8XnjBvnbby72K4Etftl4/+OUBbNRImxbzeB
-X-Received: by 2002:a05:6122:8c24:b0:56c:db8b:504e with SMTP id 71dfb90a1353d-56d22091c8bmr3558700e0c.13.1774533209446;
-        Thu, 26 Mar 2026 06:53:29 -0700 (PDT)
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56d31d81edbsm4164521e0c.15.2026.03.26.06.53.28
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Mar 2026 06:53:29 -0700 (PDT)
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-950cd03fb5eso281368241.0
-        for <linux-clk@vger.kernel.org>; Thu, 26 Mar 2026 06:53:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWiht0Rg9L8JU/xY/k/pHJIuZ140fdjUeyNqJxE61OKg5qYnVlytj7cIW7wWe7dXn8z//PoZ6FCf9w=@vger.kernel.org
-X-Received: by 2002:a05:6102:3f51:b0:603:2432:9fe4 with SMTP id
- ada2fe7eead31-603873188dfmr3448093137.27.1774533208645; Thu, 26 Mar 2026
- 06:53:28 -0700 (PDT)
+	s=arc-20240116; t=1774534813; c=relaxed/simple;
+	bh=1geztx7gOOOQ3Ea+6GyMatL2oKviQ5auDdltYQVNLw0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JrN4MJab/xRWeh8L6mK3/wpVsGj2pAJG6UilHpYxuold8uGEmHqkTxjS8eKZJYi3AiN4mQhDz9xRvzsCfQPvPXy0pwpXIomKlHLXA2n8xji1AwY2CVNvkEOGMsIwH3eHaWVk9qZJq+4Z0xvidPUXbr6uSoI0dwqt2Fy4hzFJiZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kSvFHBra; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kSvFHBra"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 55C55C116C6;
+	Thu, 26 Mar 2026 14:20:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774534812;
+	bh=1geztx7gOOOQ3Ea+6GyMatL2oKviQ5auDdltYQVNLw0=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=kSvFHBraFz1wHGjbdJ03QSw2gldPu8LYhgTtVpD6HCho+BtNu9q8mpTjlI2CkkaHq
+	 MeNbxSXUjBGHl+sBl5yxzlcao6xwlUWoCRV5cTvCbhaS0wt05t8RzmMFrL2uyXPoGx
+	 00mmbA7D1KZrPOQo8NC/7b+5gFgrb37HIGC7f4V5aLAJFcBK9YtXx2PyFDF8zzo7wT
+	 rLUY59FvNTIWWSY18f4bRV+qpk3TdW3hNMLBFvvDtplJByiw8gY95kjQim4S3XKUUO
+	 qGkjb2MKfGXV80GTubJ142q/6dirisVjJnBOf+RJtSN7FDam0enW5a3zmY9tLbCYrc
+	 5CL2Pk7wS7PFQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4624D10A62DB;
+	Thu, 26 Mar 2026 14:20:12 +0000 (UTC)
+From: =?utf-8?q?Nuno_S=C3=A1_via_B4_Relay?= <devnull+nuno.sa.analog.com@kernel.org>
+Date: Thu, 26 Mar 2026 14:20:58 +0000
+Subject: [PATCH] clk: clk-axi-clkgen: Add support versal timings
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260324114329.268249-1-biju.das.jz@bp.renesas.com> <20260324114329.268249-8-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20260324114329.268249-8-biju.das.jz@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 26 Mar 2026 14:53:17 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXe7WWKCgFnb4gEmU9AgOimEsTNkW7h5XzPDHWFrxrgAQ@mail.gmail.com>
-X-Gm-Features: AQROBzDJ9v-y5IGqDTpmUqEx_zp1MmiMWDxFz6VTCxNWICBWoGWwBcRnChicpzc
-Message-ID: <CAMuHMdXe7WWKCgFnb4gEmU9AgOimEsTNkW7h5XzPDHWFrxrgAQ@mail.gmail.com>
-Subject: Re: [PATCH v8 07/11] clk: renesas: Add support for RZ/G3L SoC
-To: Biju <biju.das.au@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20260326-clk-axi-clk-versal-support-v1-1-f21f5d385fcd@analog.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMQQ6CMBBG4auQWTtJKRGJVzEuSv3RUQLNDBASw
+ t2tuHr5Nm8jgwqMrsVGikVMxiGjPBUUX2F4guWRTd752lW+5th/OKxydIFa6NnmlEaduEFAV54
+ r11wc5UFSdLIe89v9b5vbN+L0O9K+fwHT1HBJfgAAAA==
+X-Change-ID: 20260326-clk-axi-clk-versal-support-8eaef1530870
+To: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+X-Mailer: b4 0.15.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1774534858; l=2135;
+ i=nuno.sa@analog.com; s=20231116; h=from:subject:message-id;
+ bh=H6vZLDBkRf0dpmeOwTvI9djAQiZUxNSKWC9aFQZVfXY=;
+ b=qpUbdMOGAu6px7J7fJs8d6gX5Pv21xt8FDdHehGEb0WmNwCbsDDZarbR8zNYFEkbQW5dWx9Xl
+ YMuAOr4wspUCsKC9Cmk/+gsoC2jJ8Qkeopk6QF/k5prOC2MzJ8FFoM4
+X-Developer-Key: i=nuno.sa@analog.com; a=ed25519;
+ pk=3NQwYA013OUYZsmDFBf8rmyyr5iQlxV/9H4/Df83o1E=
+X-Endpoint-Received: by B4 Relay for nuno.sa@analog.com/20231116 with
+ auth_id=100
+X-Original-From: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
+Reply-To: nuno.sa@analog.com
 
-On Tue, 24 Mar 2026 at 12:43, Biju <biju.das.au@gmail.com> wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
->
-> The clock structure for RZ/G3L is almost identical to that of the RZ/G3S
-> SoC with more IP blocks such as LCDC, CRU, LVDS, and GPU.
->
-> Add minimal clock and reset entries required to boot the system on Renesas
-> RZ/G3L SMARC EVK and bind it with the RZ/G2L CPG core driver.
->
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+From: Nuno Sá <nuno.sa@analog.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v7.1.
+Add proper VCO and PFD limits for versal based platforms. For that we
+need to add new Technology and Speed grade defines.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Nuno Sá <nuno.sa@analog.com>
+---
+ drivers/clk/clk-axi-clkgen.c   | 5 ++++-
+ include/linux/adi-axi-common.h | 2 ++
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
-                        Geert
+diff --git a/drivers/clk/clk-axi-clkgen.c b/drivers/clk/clk-axi-clkgen.c
+index fa5ccef73e60..26f76a6db820 100644
+--- a/drivers/clk/clk-axi-clkgen.c
++++ b/drivers/clk/clk-axi-clkgen.c
+@@ -521,7 +521,7 @@ static int axi_clkgen_setup_limits(struct axi_clkgen *axi_clkgen,
+ 		axi_clkgen->limits.fvco_max = 1200000;
+ 		axi_clkgen->limits.fpfd_max = 450000;
+ 		break;
+-	case ADI_AXI_FPGA_SPEED_2 ... ADI_AXI_FPGA_SPEED_2LV:
++	case ADI_AXI_FPGA_SPEED_2 ... ADI_AXI_FPGA_SPEED_2MP:
+ 		axi_clkgen->limits.fvco_max = 1440000;
+ 		axi_clkgen->limits.fpfd_max = 500000;
+ 		if (family == ADI_AXI_FPGA_FAMILY_KINTEX || family == ADI_AXI_FPGA_FAMILY_ARTIX) {
+@@ -546,6 +546,9 @@ static int axi_clkgen_setup_limits(struct axi_clkgen *axi_clkgen,
+ 	if (tech == ADI_AXI_FPGA_TECH_ULTRASCALE_PLUS) {
+ 		axi_clkgen->limits.fvco_max = 1600000;
+ 		axi_clkgen->limits.fvco_min = 800000;
++	} else if (tech == ADI_AXI_FPGA_TECH_VERSAL) {
++		axi_clkgen->limits.fvco_max = 4320000;
++		axi_clkgen->limits.fvco_min = 2160000;
+ 	}
+ 
+ 	return 0;
+diff --git a/include/linux/adi-axi-common.h b/include/linux/adi-axi-common.h
+index 37962ba530df..e7ba393061ee 100644
+--- a/include/linux/adi-axi-common.h
++++ b/include/linux/adi-axi-common.h
+@@ -51,6 +51,7 @@ enum adi_axi_fpga_technology {
+ 	ADI_AXI_FPGA_TECH_SERIES7,
+ 	ADI_AXI_FPGA_TECH_ULTRASCALE,
+ 	ADI_AXI_FPGA_TECH_ULTRASCALE_PLUS,
++	ADI_AXI_FPGA_TECH_VERSAL,
+ };
+ 
+ enum adi_axi_fpga_family {
+@@ -71,6 +72,7 @@ enum adi_axi_fpga_speed_grade {
+ 	ADI_AXI_FPGA_SPEED_2    = 20,
+ 	ADI_AXI_FPGA_SPEED_2L   = 21,
+ 	ADI_AXI_FPGA_SPEED_2LV  = 22,
++	ADI_AXI_FPGA_SPEED_2MP  = 23,
+ 	ADI_AXI_FPGA_SPEED_3    = 30,
+ };
+ 
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+---
+base-commit: 18023cf0dd64f67c403b85dddaada1e9f8c00482
+change-id: 20260326-clk-axi-clk-versal-support-8eaef1530870
+--
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks!
+- Nuno Sá
+
+
