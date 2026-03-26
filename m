@@ -1,87 +1,66 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 536F134CFB8
-	for <linux-clk@vger.kernel.org>; Thu, 26 Mar 2026 09:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7CAF3B0AF8
+	for <linux-clk@vger.kernel.org>; Thu, 26 Mar 2026 09:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774518070; cv=none; b=jBAov7Vsy6OmvbBYNYUlvzCB/grpfqWaMJ5nqFTpr2NiGWsks3nP91o7yBRrlHKV/iF7DpwuTjq5hfPtWvZaU4/2ufB6NnvCu3yQIzMLt04tTcHBvBUikFemqaAVc6e0IiByoqVRi46GLYJE3Fy8FhRFEDW4BIKxz2btC/Opgf8=
+	t=1774518901; cv=none; b=YgQB4gFbmblMZ5tGLuuIszTF1W3GtYQFep/u6W7yj9nFUSZqW/YqA4mZHJtwEwri7dGQjIzDc80zH9+xuQIgJvkANMCO1DFUJhn1zBzU3vPnj5nMMxSw3CdrMXXy3po2Gz9WjxkA1AXftdJxz/cB3I/mkTGK8oDqiKaTORK4tG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774518070; c=relaxed/simple;
-	bh=Rv5UhyIkY7LTM34sVRpkamMs3/VFT2zqxDOaYbDuLtg=;
+	s=arc-20240116; t=1774518901; c=relaxed/simple;
+	bh=PSzU7MOsYUD4Qy7QhpTSQYID0f1netpe1FImIG4kv5E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SKC9HfNHVfzqAHKoUSF2pJQ+6P57gYlpGmi/1UrE6QQq1y38R6wAzAc4hEtAFRNOtYtunVAzx2gryJtVxoxCRm+nCsYNRIlBMUjAMLzW2m/kBan14G1yLhr270xf8lj8Syq9derX1bF9VsArFznvww54uVmIzmFaxNoUc6SEBdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=oaPi3zxs; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=KVMQHxar; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 In-Reply-To:Content-Type; b=icbMgI1zciGoWAbVEdbviHGsWkdAPcLm6++BFO/k8wGr0zUNnSRjZbhGr22yPNMxxH9ZxsmZynGMyaspkx3cHiDzZ4DafMYIvP4fatPHbKSJ4sYQhZfFq/lwEqEkLs6VaLGGQ6NrcQBein2oZuweiLbtAEhGbYX1mDjmvxF+dwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=du8Sf7qm; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="oaPi3zxs";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="KVMQHxar"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62Q6Ee171965332
-	for <linux-clk@vger.kernel.org>; Thu, 26 Mar 2026 09:41:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	LMKFa/gZ/0WtlaOoCfp9i4fst9ROmtc3ezJMiPBlmEI=; b=oaPi3zxsIT4NpBYJ
-	bw6CS2FHFtyBZGnNKrhUKohH32lG8VHBHOCVMkU8y6fvLtZXNRAeDYfxxdBNxyyF
-	shi/PGumyUgX8zAqIoplLczOPvcHJsz/sXZBkSZvDvU3/YbMoFbfyPpYwNwRsUJS
-	FRjWg+RTbtZw7YeWwsEEMoiijjqCaTOf+T4JkgCSZvBq2+fYalM6D+Pd6L0s2VDt
-	1zqnqlFeWRlQyf4czl1XmQJAYI43vXKajhROZcidfgUGOPp4Xf6h+j9/GK5NcvbW
-	C295A7Qs98awyd0lxLIPjbmgvonGH5U5wR2gSrh+Ker83nwPEHASs1yX2owQVr3A
-	LuG85w==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4d4pymj7t5-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Thu, 26 Mar 2026 09:41:08 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-50b2955cc1eso2249471cf.2
-        for <linux-clk@vger.kernel.org>; Thu, 26 Mar 2026 02:41:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="du8Sf7qm"
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2aaf43014d0so5294465ad.2
+        for <linux-clk@vger.kernel.org>; Thu, 26 Mar 2026 02:54:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1774518068; x=1775122868; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1774518899; x=1775123699; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=LMKFa/gZ/0WtlaOoCfp9i4fst9ROmtc3ezJMiPBlmEI=;
-        b=KVMQHxar8DN1/nJ+7oXouR00s+WFPPsWK2bfGclBC9dscbW4/+AAmuel6L5/P3IN53
-         vIgJSOcs2MbDxYMDsuf1O8z5vqGruqy+rTvpuT7nA+3UdN1D82OkXvYlngT7jPgS0nh2
-         YQXw6XKHfjiBelglmQaxfDdCtyKeopGlbsS3udZybHg12b6pSNgcKd/0eK70g2pfOXQ4
-         VdeOU+K3eOREsoA+fpEY6IZPYPs6dUe5CR+C9G7EdfxnmPJJyQHVqXNJr7HZGGMs6hKz
-         Zri2OVDm6rGJbJd459rMxQw7dAHxI2XlxP45B2JngJn1BSvohMUndbSdsCxOxycneDah
-         amuw==
+        bh=v5o9Le9atm4Dc+3pXSi3olgqfG741JnzAoIdgFKRmYM=;
+        b=du8Sf7qm083RkdmQGtuv+Ne0VdgG9dgxIweCFy/tfZQd209n9Yg5CwPGqKweFYSevA
+         fWFAjggS6lyzZYWW+sbNM27f5lSuxv+9BJDiz9chlIkYgFOpRf0srBDaZfnFboZQVrPF
+         c00p/OnuEqRYr7CeL+SOPfHkQX3NVpk3B9189n9hvGebgQaz9HXbW8/3msTkz7nk0sh8
+         Mx/MPU/Z8VXQEXo/MjBasO1OfV2BXzoOzvi8bX+yTL4RF4dGvHL93oSnH9gXa2dJAInb
+         zXXJvSj6R198xVySeE/Quj8tGXOnDC1BTR4teB20GiMWYzIR0My32CeCG0ymXfAkiUwb
+         eoIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774518068; x=1775122868;
+        d=1e100.net; s=20251104; t=1774518899; x=1775123699;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=LMKFa/gZ/0WtlaOoCfp9i4fst9ROmtc3ezJMiPBlmEI=;
-        b=lWHk+cx91BCFbbKOulfltqQK6clRPzeIgoycYml/SUPQCMkMlIJRfqvdUwhusR2qdk
-         /Zfb5Je0xN9XrLHVK7MplbMzM/b1XkP4YeNpDZWGijEHPY5q+7Hpz0g+owtDeqOq2NpU
-         0GjMkd6ORQlqJNtgKhSo/hp+z5MUAmx1gj1iNgWlnYB8h173L22AYa91KnvY1Wkq0X+U
-         mqmqDG0+WRX6U+/WW/o9FURmyNOP52HcrzkObJGAGTpxYRTyvzbvrVm18eL2+6FfMjSg
-         DSvGMdBw6TrXz18Ozn/uDYESvfhcjPEslnEMK6Wibspm1dSifaBFM1lU81xyRDG2kFye
-         Qqzg==
-X-Forwarded-Encrypted: i=1; AJvYcCV3LM4ZMx/nXp3Qx+K3XhXl/oATZ76T3Swzt9MtJfC8S3+KM3a/x4DburerDL+rHvuem+JBh6CA8l4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhIx01vkONNYH1YVLshLEXr5a6L0Cam5RVZhMyhAI3GlfYQUpA
-	LCwaQmwOeNapVvMyBoIU8CmqAx4IaamMDrKW0DoR0+hhpaqSz+1xoha2f5gOTbHlXYDw9hY193M
-	XccahwfcmCIdGB1tpLrK3l+I7E8qnT4zHLfrp4rfHtHUwZNJbRpOu3pZ0B9nJ1ok=
-X-Gm-Gg: ATEYQzyptTUXXDWQf4/Pmk6LEBG44Kmw/OA+m014FVBc7iMSpKwKyKWREW2ulzycSWA
-	QCdgR81g73XD1iP2eYhmCQklja0qqOwBB6qANAxbdg/HP2JGMTDh++NQfttOMp28VrUUS9m/Iup
-	u+lxPwM3STBju1rnzz88HF5qU6PtabiBYXUKQMyYW0rB6NGaetLXMxcooo923YoNxwrkHDWEnIO
-	H9OoLSANwTx7F+QfQVnYDn4Z3zk2v+jyVEOBef+1savAUlCOfSUSZzmw0anx1n5NSFSbsNJT0G3
-	tHU24E5Bn6JZBdIqavMIL4vsJVc8E67u32XNPbfMPvNoMa58RPArNO7iIgSjHIABZV+sCBOlbbi
-	9I8/w7jYOtHW0yvxeTBOgU775QVEqKwTvHWZiu1n85IlSS8NvvyFLMsWGFVPG2U8BVy4SnD4+ro
-	GZTt4=
-X-Received: by 2002:a05:622a:5915:b0:50b:8ccc:a41f with SMTP id d75a77b69052e-50b8cccaab4mr45595071cf.6.1774518067684;
-        Thu, 26 Mar 2026 02:41:07 -0700 (PDT)
-X-Received: by 2002:a05:622a:5915:b0:50b:8ccc:a41f with SMTP id d75a77b69052e-50b8cccaab4mr45594771cf.6.1774518067265;
-        Thu, 26 Mar 2026 02:41:07 -0700 (PDT)
-Received: from [192.168.119.254] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b9b203ee83csm94343366b.43.2026.03.26.02.41.04
+        bh=v5o9Le9atm4Dc+3pXSi3olgqfG741JnzAoIdgFKRmYM=;
+        b=Okb7rnBlLm1VV4IphlguVs0SqFgdpekSbN/XEI5ujk7Jq9h1ksv6ADEjj6LtYIdZo2
+         cDhHdwrbhdW++lCaLVbGNZ6MNUnnUyyz+ByTQeYiceGhNCpLIDKMZ5IjB1c3mfr6UHkG
+         MYWge0XzUhzhKgwsE2neAOJxvoUXMeyG2Sumh0puvdkYPwktLCNFARkcAw6e7lbr8/jm
+         Iy3Ibao9t9WAUZ8xOd5od3YMUxP1YNacLq258AplykL81TTozPX++IjXNE7Qioh173hO
+         Me5Wxc8BfSt74SAH+4HltO0IcgXFHuQVzmX2MFXm81yNFmBxrpF+UZLhqZvTkFj/I6a4
+         FR7g==
+X-Forwarded-Encrypted: i=1; AJvYcCVlZzKeEnhWfK9OgHYloReOHV2WZzeI3Q5nP8N3FbmLu21JbGLdcWtokC7Js+iSXUCn1PSiBnsJWHY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFDDF5CTKDBSriUGhzzzQu8PZ/5dJpPX0w6jLl7tB8zs8Hx15x
+	XSD7XVTqKfqf5fb08KEXX12JNtdNbN4cBmcMdFBt8Uan1oZwN8qJWptN
+X-Gm-Gg: ATEYQzyQ9cAH/WRba908W1OMM0oi6sYQNFsLKV9Isu/QpJj0wA9yuxGlrIcv662wyfB
+	EWbnj9tfEDOgEi98CyznOzdkwIzhpM6gg9c56+V/bs+L7GlYCsteasWsLbAcM7Jq4X3ckkRNlZh
+	Xpv26FDx1tHw4LE3DuK5oASFbeQlzso+1gknNwaIOHsPyAagWh/ur8rzK1TvWQ73lu7EgXX3luf
+	VxUKoewhQGfNl8k0JKjkjiSmTrVYXaE1w9MXIDITO1Q2zmgfhwkJXtjoj7D3bGM9LoUwGLU7MrP
+	ORxtNtKQDdxIm3170mnJAOAjvd/BKhZCjSTYTWlPXW2cRNhLEHejg+/+3ruX8wL1frqCEKaQmQQ
+	9fypbM7dHi/rs+2c+yAfyd9dqA/R7GHX6+Fb+QjkEPEFk7/4av+6I4qBHpRg4qz/hKv167oWOQr
+	8NVyJaH9mMTlaQAPp4Ayr4v6Swn09hudb0FHmlRZx0rr4XBza0Cg==
+X-Received: by 2002:a17:903:3c25:b0:2b0:58a8:5f9b with SMTP id d9443c01a7336-2b0b0b45ffcmr84290365ad.49.1774518899022;
+        Thu, 26 Mar 2026 02:54:59 -0700 (PDT)
+Received: from [10.55.231.75] ([129.227.3.137])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2b0bc7a17c5sm29542245ad.26.2026.03.26.02.54.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Mar 2026 02:41:06 -0700 (PDT)
-Message-ID: <593b3801-a83c-4132-970f-5075ebca2bc4@oss.qualcomm.com>
-Date: Thu, 26 Mar 2026 10:41:03 +0100
+        Thu, 26 Mar 2026 02:54:58 -0700 (PDT)
+Message-ID: <d097826c-3db5-4902-acee-ffcff7436d4e@gmail.com>
+Date: Thu, 26 Mar 2026 10:54:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -89,63 +68,92 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/7] arm64: dts: qcom: sm6125: Enable USB-C port handling
-To: Biswapriyo Nath <nathbappai@gmail.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-        Pavel Machek <pavel@kernel.org>, Sean Young <sean@mess.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>,
-        Martin Botka <martin.botka@somainline.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-clk@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
-        phone-devel@vger.kernel.org
-References: <20260325-ginkgo-add-usb-ir-vib-v1-0-446c6e865ad6@gmail.com>
- <20260325-ginkgo-add-usb-ir-vib-v1-2-446c6e865ad6@gmail.com>
+Subject: Re: [PATCH 2/2] dt-bindings: Add clock guard DT description
+To: Conor Dooley <conor@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Vyacheslav Yurkov
+ <V.Yurkov.EXT@bruker.com>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+References: <20260318-feature-clock-guard-v1-0-6137cb4084b7@bruker.com>
+ <20260318-feature-clock-guard-v1-2-6137cb4084b7@bruker.com>
+ <20260318225510.GA639444-robh@kernel.org>
+ <7c7034a7-686a-42c2-bdba-6f31b5179f7c@gmail.com>
+ <20260319-yearly-wrongful-883f7fd86a69@spud>
+ <b45d9845-2d56-4fdd-a3ac-b0e0e27ba573@gmail.com>
+ <20260323-sanctuary-semantic-432089feb1c7@spud>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20260325-ginkgo-add-usb-ir-vib-v1-2-446c6e865ad6@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Vyacheslav Yurkov <uvv.mail@gmail.com>
+In-Reply-To: <20260323-sanctuary-semantic-432089feb1c7@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: hYRLo_AjgqTbIuIx1dSh7cPLyAx4M0NW
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzI2MDA2OSBTYWx0ZWRfX2STqqScpBDM3
- hIvMerWRfrlahn1SnZ8FY2UMrk/XKs/ChANpbge82ICZ85IPnrhD0gSLmfGfOB/knnOE8yMoDXO
- OLb222eZn1dTc1SLEhMe3rGlI/x/kI+8FC3b67qNAd2g3APdiegHuIrOHX1ExWOxYWVGDu+bEwp
- LtA+La1Tq+90bFyk6qQ2CWe00T3a+902rxpjhto3NUq6ugHOvZMvDPPouo6/Z24027ooEDT88Fi
- h+2dJlVLr/Wx52OJLbwX2s9HUToxrc03lICSTeYGY4TUYhy7iRt2EZ2LWifFlws7LsPxu0ByvSn
- WdGib1SDa0TxpdFXYZ/1JtY8idtYG2IRdhomfYkdfZeLsuxNegZs/DLoq+Ua9RBKP0Em5AryiMm
- 1+rZ9Xx8wuedxKma9jPX2aPUvv6R7xZDhru3wNr4xKsCEL8eQ7gJ17iAstivZOlZBaEkTzgbP9h
- lQFeDJgWMLiVYgn3GvA==
-X-Authority-Analysis: v=2.4 cv=SvedKfO0 c=1 sm=1 tr=0 ts=69c4ff34 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
- a=pGLkceISAAAA:8 a=J0hDaVVMoxkQcXr8FO4A:9 a=QEXdDO2ut3YA:10
- a=a_PwQJl-kcHnX1M80qC6:22
-X-Proofpoint-GUID: hYRLo_AjgqTbIuIx1dSh7cPLyAx4M0NW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-26_02,2026-03-24_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 malwarescore=0 suspectscore=0 lowpriorityscore=0 phishscore=0
- clxscore=1015 adultscore=0 impostorscore=0 spamscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603260069
 
-On 3/25/26 7:07 PM, Biswapriyo Nath wrote:
-> Plug in USB-C related bits and pieces to enable USB role switching.
-> Also, remove dr_mode to enable OTG capability.
+On 23.03.2026 21:14, Conor Dooley wrote:
+
 > 
-> Signed-off-by: Biswapriyo Nath <nathbappai@gmail.com>
-> ---
+> The binding you've got says "GPIOs used to control or guard the clocks",
+> which is not what you're saying that is going on in this mail. A more
+> suitable description would be "GPIOs used to check the status of the
+> clocks".
 
-I'm not sure what this is going to do for other 6125 devices
-that don't have the Type-C infra wired up.. Does just applying
-this commit alone keep peripheral mode working on your phone?
+Agree, the description I provided is not very accurate.
 
-Konrad
+> I want to see an example dts user for this please.
+
+DTS example:
+   clock_guard: clock_controller_guard {
+     compatible = "clock-controller-guard";
+     #clock-cells = <1>;
+     clocks = <&h2f_clk 0>, <&clk_fgpa_rx 0>, <clk_fpga_tx 0>;
+     clock-names = "h2f_clk0", "clk_fpga_rx", "clk_fpga_tx";
+     gpios = <&fpga_ip 0 GPIO_ACTIVE_HIGH>, <&fpga_ip 1 GPIO_ACTIVE_HIGH>;
+     gpio-names = "gpio-input0", "gpio-input1";
+     clock-output-names = "clkctrl-guard";
+   };
+
+   custom_device {
+     compatible = "...";
+     ...
+     #clock-cells = <1>;
+     clocks = <&clock_guard 0>;
+     clock-names = "clock-guard";
+   };
+
+The driver usage exaple:
+
+clk = devm_clk_get(dev, "clock-guard");
+if (IS_ERR(clk))
+	return dev_err_probe(dev, PTR_ERR(clk), "failed to get clock\n");
+
+ret = clk_prepare_enable(clk);
+if (ret) {
+	dev_warn(dev, "Clock is not ready, %d\n", ret);
+	return -EPROBE_DEFER;
+}
+
+
+> TBH, I don't understand your driver implementation either and why it has
+> 
+> +static const struct clk_ops clkctrl_guard_ops = {
+> 
+> +	.enable =	clkctrl_guard_enable,
+> +	.disable =	clkctrl_guard_disable,
+> +	.prepare =	clkctrl_guard_prepare,
+> +	.unprepare =	clkctrl_guard_unprepare,
+> +	.is_prepared =	clkctrl_guard_is_prepared,
+> 
+> any of these 4 implemented when you have no control over the clock.
+> I didn't think it was required to call your parent clocks enables in
+> your own enable either, thought that was handled by the core recursively
+> calling clk_enable() on clk->parent. The one thing I would expect you to
+> have implemented ops wise is is_enabled, which you don't have.
+> Also no sign of any rate acquisition functions, which I thought were
+> mandatory.
+> 
+> +	.get_parent =	clkctrl_guard_get_parent,
+> +};
+
+Good point on .is_enabled, I indeed missed that. As for the rate 
+acquisition functions I referred to this table 
+https://docs.kernel.org/driver-api/clk.html#id4 , and it see that 
+.set_rate is actually optional.
