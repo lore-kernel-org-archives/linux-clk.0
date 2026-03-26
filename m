@@ -1,181 +1,146 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABAF839891E
-	for <linux-clk@vger.kernel.org>; Thu, 26 Mar 2026 07:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875363AA1B9;
+	Thu, 26 Mar 2026 08:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774511922; cv=none; b=h2j81OPRTVgcNOSQfsmejWD8knYD61xCUu7f0QIFhwkvHiOUMdAGqZwnGldFGmxi4xHNjmCslA7HePzh68QOYCJS7GIhUhZFu+4ba202sdzekVD2mYg7pRwmhpZ4egY7L4zBNurOaWBYhce/anMQt7yeourZ7PyewRW/77N0s2g=
+	t=1774513136; cv=none; b=JPUeLetMw0vivymCj5eSUIC/aq9/cgoEIAIKxNfsO/MdnC5/aA1Quiyc9Aw4ebmry1bugdY3V9xFKamaY/FrnQqdgDxvjRyCQOPZFckPigDQEEtNamkMEEeeJstPALtsdBC+XqdVNCsxfhqQKmBz6N1iMqphIqEPokHdUiW+uv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774511922; c=relaxed/simple;
-	bh=b8cdI9ctw0j2dP+90IWDr2MJPXF9CdayQzz9i6A7qyU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=RSyT0vo0/MHazfxrQjjIxVB0neffoDXlLwELbTjoDSrMMSjNvGmxomBM4/Ut4gb/LKJYlBJTGV2R21QVYd+ig16cybj6HygLvp/RH+cvzVA+Ycf4YdiRV5Kdt31q2CoasmyU2FbHtJAv2SjFXXm++uov1gVaAwaH8txfD4xXX4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mWPO3g/8; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1774513136; c=relaxed/simple;
+	bh=QZYhKiS4lwwd48rBHO86C8x7uMbv/XFwiRuoHArvWw4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QgRBqSv95AZgU8fovOI5lr8I0ZEcM8DcNr72thrCEXxDdWEYB4T3I9n5PhNJvNQERkAsV8jwIHwfWXLgYMT93IyT2Nx4QnsLGxtsyUwJnO3Fftfap6c8BXeaw3vO8yPmUsJuLShSQD0r84zX80uhCxIjzpPTnfq0bq3vYAaNNJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=Fcsk5S4X; arc=none smtp.client-ip=18.194.254.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mWPO3g/8"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-439bcec8613so408344f8f.3
-        for <linux-clk@vger.kernel.org>; Thu, 26 Mar 2026 00:58:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1774511919; x=1775116719; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hJidR7QlZb7c5WIdyj3iesak/Jfa6pt2GqscpVScNO0=;
-        b=mWPO3g/8pA40nqL1Xsr+/zWzalVrAGVP6nK9ubv0+PuMtHpXw/23R7HT2B+rIaqCl/
-         f0VL5mjxlOdcd6b503KF962PuwCEMyZnQVru4VUWvrhUh0T9ZQWQIs9DL1yqoqW+8nof
-         EDUrQQ6/Q8PguH8jRZEMQliJtdxPg+kiHvY4nAsIzxBk+H/PZoTCAcqnJI2UQC3E3s8B
-         apNWicLSPU9elYzYAoBg7+BehiWMEcN1Rm2BgvIsAhRIvGLETrTAZkIk75Tk92IEMl/t
-         wdns5KEfMruZ72ifL/02VxSLTowza6Yx6ZTn4S1O2jtIWFPDmMzL9GPwyknsXcn/RX8p
-         9MuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774511919; x=1775116719;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hJidR7QlZb7c5WIdyj3iesak/Jfa6pt2GqscpVScNO0=;
-        b=W20sFQs4xrQNy7LaMJNSCzZSBYrduKSd+D68rpW+hD6VR17twcmAlve1MwFCxz8eDR
-         wIxpT3b/7XhPl8KN6dasBArxOWSDXy3nvPJTIrfCnD74eKQcF2IrnfhS8v4tDBzfLbvB
-         ntfQXr+YoV36sAMS5FmqaufgDApysqNMnFeEV7Qtin+Pk/i+C92nBg60GCzs6zWVPvvf
-         d1C0uPtduddP2/A0H8Asega2ogXkdpbUVjhRoa7+NbfeTqw7KS9DWuS/NDOP+EqxGltA
-         ofBLhqpAFf6+AEXr2i/UkgC6xfPOx4yxi1Lqah5PF0by7iHfxn7IV8Ajguqjxwj9EQ1+
-         U9BA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQA76mn/U3dE4wPHoh9IOXWzrPK3EG2z0pmBkqgODRpnz4siuAAQqLCd71eSg8nZ11FTgcnE1JjWU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbWl6UGiToVplCYA7VzrwXrmQqI4HGPVZDiHdeFVVRagoaWodt
-	QuUe7J4gHnL145YGHyd2XTWGF/4wpJacCoBaeMujQJaUR1VUavdbHYb+ivyYaHjCNh0=
-X-Gm-Gg: ATEYQzxUnjheEPRe3p8SixNy3DbFD6sS4OMWfwJYCHAys1tz3yOGR9D9i2Jk8FgvUtz
-	APOK0uiFF3GUF7mCOLsUEulNSkqmv+hz3u4NlGSN2y0mpJpYaWXp41fWnw4jrTOnKH5fSXJXmt0
-	MsKeLVtt89GbpdD9S1SjV6n3NXa/zPWJ/jHDeQ/1arjfX4TpsZlQCf8mRLV+G48t5L5e8j/j8ir
-	iXbf0A66/nFlnkEcvRipasBkb5Wx49Kn6JhlN/fFqohVlBlRl9CzJaiUI/9lK/XuH3j+Nrn4yUU
-	cAVKoSm24WcdMl5Ez3etaM2pcCu8ZWd9vMsxx9XvWQVcwmF5XHqiq+z8ib59jsGC390CgFeXYXU
-	kh+itj6elSBwhd9Fodv7KfTbtsS6k3G6JcTD1PjD6AQpJFhhWXbxWBc40xkJ+Pf1ANSbMoA7egH
-	uVdngZ309Atqhy46Gp7Uuzm1sGxgDZ
-X-Received: by 2002:a05:6000:438a:b0:43b:564d:c123 with SMTP id ffacd0b85a97d-43b8898d57amr9770384f8f.3.1774511918517;
-        Thu, 26 Mar 2026 00:58:38 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b919e7111sm5918551f8f.37.2026.03.26.00.58.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Mar 2026 00:58:37 -0700 (PDT)
-Date: Thu, 26 Mar 2026 10:58:27 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Chen-Yu Tsai <wenst@chromium.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Frank Binns <frank.binns@imgtec.com>,
-	Matt Coster <matt.coster@imgtec.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	Icenowy Zheng <zhengxingda@iscas.ac.cn>,
-	Chen-Yu Tsai <wenst@chromium.org>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] clk: mediatek: Add mt8173-mfgtop driver
-Message-ID: <202603261444.jANdMbNC-lkp@intel.com>
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="Fcsk5S4X"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1774513078;
+	bh=rRU+260XXpNc6ZQtDU8cpYIkfTiNBj6tvslzTN4JpFQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:To;
+	b=Fcsk5S4XZowMEIB14aRNuJZWwyB7hrTogztfkHlb17xaaFqW2DX6odrvYBv8xAaqM
+	 KQ2dpyNaI4dWxrFruk4FlGAHVXM94pe/U2aYiqucsuLU7HlyJ2AwUmXvFDQVS6cdJ9
+	 IsJ95CZCbf82/WjZLKerLedhz47JyiY9TnpM/cik=
+X-QQ-mid: esmtpgz14t1774513076t119d99a7
+X-QQ-Originating-IP: SyEQruZzhtsP2fkfOFgqYJ5sWBGHI2PROvsDS28KBOA=
+Received: from = ( [120.237.158.181])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 26 Mar 2026 16:17:52 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 203640637198776903
+EX-QQ-RecipientCnt: 21
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Subject: [PATCH v2 0/7] dmaengine: Add Peripheral DMA support for SpacemiT
+ K3 SoC
+Date: Thu, 26 Mar 2026 16:17:15 +0800
+Message-Id: <20260326-k3-pdma-v2-0-ca94ca7bb595@linux.spacemit.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260325071951.544031-3-wenst@chromium.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/2XMQQ6CMBCF4auQWVtCO0iDK+9hWNQyyEQLTYsEQ
+ 3p3K1uX/8vLt0OkwBThUuwQaOXI85RDnQqwo5keJLjPDapSTYVSiycK3zsjtJUa6xpljQ3ktw8
+ 08HZIty73yHGZw+eAV/lb/41VCikGbHukVt/PaK4vnt5bGb2x5Hgp7eygSyl9ARwTgkOnAAAA
+X-Change-ID: 20260317-k3-pdma-7c1734431436
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>, Yixun Lan <dlan@kernel.org>, 
+ Vinod Koul <vkoul@kernel.org>, Frank Li <Frank.Li@kernel.org>, 
+ Guodong Xu <guodong@riscstar.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ dmaengine@vger.kernel.org, linux-clk@vger.kernel.org, 
+ Troy Mitchell <troy.mitchell@linux.spacemit.com>, 
+ liyeshan <yeshan.li@spacemit.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1774513072; l=2351;
+ i=troy.mitchell@linux.spacemit.com; s=20250710; h=from:subject:message-id;
+ bh=QZYhKiS4lwwd48rBHO86C8x7uMbv/XFwiRuoHArvWw4=;
+ b=gDmQLaCbeIT3EXk4mBIUOPgp92kb86VjaSMjPN5Kwpi0jRYxJtns2hHmFjYP7tv7jA8SASiJ6
+ AnyHEpc0ly0ClqNUvYN8KKtWfpzN85L8nHYz7+JrgBfNYZ9dpPAb+Gm
+X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=ed25519;
+ pk=lQa7BzLrq8DfZnChqmwJ5qQk8fP2USmY/4xZ2/MSsXc=
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
+X-QQ-XMAILINFO: OPtS5Xt3l5tAKtpLhiOjL9eT4geL0t0ojocuJsbK4sbkwK117zJEuvWH
+	IqP+XiGrPSeWfhxaE45rGuId2FN24GV3oMdfUbMw2NhgyPGGRXnFI0AmQdJGTu3Goiw18IP
+	yfXhuSEQ1N88J0DeBYpDTbLc33dkH5YQD7czauWgdD3PgaM2ssVCM9e8a1Acp0PA2h3083w
+	B3cXUn37SUZ7qAbOjFgZjW/cE9vE37LUyxd1tO+XC7sN/PHYnF0UJuIAqDUuuPYmC/0H2zc
+	+qJ/c4P3eDb7AoEB5FmrfvDQGDNWUnggOpVux35x7Tav2r+twNmipMFqZHUhHceLd2ZJNBz
+	Tt2ckV8mCBY8YZjuhtI+cQ7eZPHONNlnI/B+/MbhqxFVyea7w9mOJY5JdoP0KElLx1mcqO4
+	tzCSBlGKYhOk+B9qcv12D/vfkNLeQsw/xBBENuAeQdIUUL+pPpvl/fdzbEgdOdnTBOQtH+h
+	2eqXIglRa2s+DHsyR4aebQoPNapK0EEow9zIocLtHfH/tlzf3zlO0RGRJr42m0gXjyqK/O/
+	ScTlyseLVIDYxFMFzNVeENZqhA/jpwlgNG3AySGGLFodTRzoT1/ONUmRf6X6CC014vVtczQ
+	O/403ACb7T3UospVJGw/0XLDCoIl1unS3KsBGqc12Ka6hPMTVkhORaSIoQBFELYH3fQLSOM
+	gefoF1qC041tg0rEY+YSAHXkrbDePXz++RgH5qXBBX4v6g05OjHk13x6Ei11PntmLf+h/T3
+	oGdQTMhjMgAD9btzad69VDAwjQffRSFj8laSFGDncD1X191QBWV7WBMmc/ndmxdLcumCDgK
+	6eb+x3weRmYwDZdchYdIhlEtc+E5pE9puejtH//5M9MsdSv1Ja5WMdxxnLjGL0xMhtlMHEE
+	mcwvgL/68gi+xWzZPAYjozOgAC5oC2EAqlMcWA6lpwMTdf3AZJSG6BSYsZ7QAhfR3E5Yzsm
+	jvWMOmymt32p6l2VIPpt2u8KZtLDgsRXSxQfJOwV66H94m6Z+wjXZfhCECyki3VmUOzmJUH
+	0OpyhUNO21AD8owp6kg1PjVQYc0TZ0V4dC3M82ajZnPWtBmxrUiXQS9Q0TeXawapGg8xZnX
+	4C3Pg8Vn2zfSM4uMdt4idLtJW3QXPkxAKTzKK7mUUEHiP5iYBuEcw0=
+X-QQ-XMRINFO: NI4Ajvh11aEjEMj13RCX7UuhPEoou2bs1g==
+X-QQ-RECHKSPAM: 0
 
-Hi Chen-Yu,
+Hi all,
 
-kernel test robot noticed the following build warnings:
+This patch series introduces Peripheral DMA (PDMA) support for the 
+SpacemiT K3 SoC, leveraging the existing mmp_pdma driver.
 
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+The K3 PDMA IP is largely based on the design found in the previous 
+SpacemiT K1 SoC, but introduces a few key architectural differences:
+1. It features a variable extended DRCMR base address for DMA request 
+   numbers (>= 64) depending on the hardware implementation.
+2. Unlike the K1 SoC, where some DMA masters had memory addressing 
+   limitations (requiring a dedicated dma-bus), the K3 DMA masters 
+   have full memory addressing capabilities.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Chen-Yu-Tsai/dt-bindings-clock-mediatek-Add-mt8173-mfgtop/20260325-202618
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/20260325071951.544031-3-wenst%40chromium.org
-patch subject: [PATCH v2 2/5] clk: mediatek: Add mt8173-mfgtop driver
-config: csky-randconfig-r073-20260326 (https://download.01.org/0day-ci/archive/20260326/202603261444.jANdMbNC-lkp@intel.com/config)
-compiler: csky-linux-gcc (GCC) 11.5.0
-smatch: v0.5.0-9004-gb810ac53
+The series is structured as follows:
+- Patch 1-3: Introduce the necessary dt-bindings, including DMA request 
+  definitions for both K1 and K3, and the new K3 compatible string.
+- Patch 4-5: Refactor the mmp_pdma driver to support variable extended 
+  DRCMR bases, and add the specific implementation/ops for the K3 SoC.
+- Patch 6: Fixes a critical clock issue where the DDR bus clock 
+  (top_dclk) could be gated by CCF, which would cause DMA engines to 
+  hang and lead to system instability.
+- Patch 7: Finally, instantiates the PDMA controller node in the 
+  SpacemiT K3 device tree.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202603261444.jANdMbNC-lkp@intel.com/
+---
+Guodong Xu (4):
+      dt-bindings: dmaengine: Add SpacemiT K1 DMA request definitions
+      dt-bindings: dmaengine: Add SpacemiT K3 DMA compatible string
+      dmaengine: mmp_pdma: support variable extended DRCMR base
+      dmaengine: mmp_pdma: add Spacemit K3 support
 
-smatch warnings:
-drivers/clk/mediatek/clk-mt8173-mfgtop.c:163 clk_mt8173_mfgtop_probe() warn: missing error code 'ret'
+Troy Mitchell (2):
+      clk: spacemit: k3: mark top_dclk as CLK_IS_CRITICAL
+      riscv: dts: spacemit: Add PDMA controller node for K3 SoC
 
-vim +/ret +163 drivers/clk/mediatek/clk-mt8173-mfgtop.c
+liyeshan (1):
+      dt-bindings: dmaengine: Add SpacemiT K3 DMA request definitions
 
-edc2074329e271 Chen-Yu Tsai 2026-03-25  153  	ret = mtk_clk_register_gates(dev, node, mfg_clks, ARRAY_SIZE(mfg_clks),
-edc2074329e271 Chen-Yu Tsai 2026-03-25  154  				     data->clk_data);
-edc2074329e271 Chen-Yu Tsai 2026-03-25  155  	if (ret) {
-edc2074329e271 Chen-Yu Tsai 2026-03-25  156  		dev_err_probe(dev, ret, "Failed to register clock gates\n");
-edc2074329e271 Chen-Yu Tsai 2026-03-25  157  		goto put_pm_runtime;
-edc2074329e271 Chen-Yu Tsai 2026-03-25  158  	}
-edc2074329e271 Chen-Yu Tsai 2026-03-25  159  
-edc2074329e271 Chen-Yu Tsai 2026-03-25  160  	data->clk_26m = clk_hw_get_clk(data->clk_data->hws[CLK_MFG_26M], "26m");
-edc2074329e271 Chen-Yu Tsai 2026-03-25  161  	if (IS_ERR(data->clk_26m)) {
-edc2074329e271 Chen-Yu Tsai 2026-03-25  162  		dev_err_probe(dev, PTR_ERR(data->clk_26m), "Failed to get 26 MHz clock\n");
-edc2074329e271 Chen-Yu Tsai 2026-03-25 @163  		goto unregister_clks;
+ .../devicetree/bindings/dma/spacemit,k1-pdma.yaml  |  4 +-
+ arch/riscv/boot/dts/spacemit/k3.dtsi               | 11 +++
+ drivers/clk/spacemit/ccu-k3.c                      |  2 +-
+ drivers/dma/mmp_pdma.c                             | 37 +++++++++-
+ include/dt-bindings/dma/k1-pdma.h                  | 56 +++++++++++++++
+ include/dt-bindings/dma/k3-pdma.h                  | 83 ++++++++++++++++++++++
+ 6 files changed, 188 insertions(+), 5 deletions(-)
+---
+base-commit: 02f90981a67f3b9ee7d6684e7503a4fed7aade0c
+change-id: 20260317-k3-pdma-7c1734431436
 
-ret = dev_err_probe() or ret = PTR_ERR(data->clk_26m)?
-
-edc2074329e271 Chen-Yu Tsai 2026-03-25  164  	}
-edc2074329e271 Chen-Yu Tsai 2026-03-25  165  
-edc2074329e271 Chen-Yu Tsai 2026-03-25  166  	ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, data->clk_data);
-edc2074329e271 Chen-Yu Tsai 2026-03-25  167  	if (ret) {
-edc2074329e271 Chen-Yu Tsai 2026-03-25  168  		dev_err_probe(dev, ret, "Failed to add clk OF provider\n");
-edc2074329e271 Chen-Yu Tsai 2026-03-25  169  		goto put_26m_clk;
-edc2074329e271 Chen-Yu Tsai 2026-03-25  170  	}
-edc2074329e271 Chen-Yu Tsai 2026-03-25  171  
-edc2074329e271 Chen-Yu Tsai 2026-03-25  172  	data->genpd.name = "mfg-top";
-edc2074329e271 Chen-Yu Tsai 2026-03-25  173  	data->genpd.power_on = clk_mt8173_mfgtop_power_on;
-edc2074329e271 Chen-Yu Tsai 2026-03-25  174  	data->genpd.power_off = clk_mt8173_mfgtop_power_off;
-edc2074329e271 Chen-Yu Tsai 2026-03-25  175  	ret = pm_genpd_init(&data->genpd, NULL, true);
-edc2074329e271 Chen-Yu Tsai 2026-03-25  176  	if (ret) {
-edc2074329e271 Chen-Yu Tsai 2026-03-25  177  		dev_err_probe(dev, ret, "Failed to add power domain\n");
-edc2074329e271 Chen-Yu Tsai 2026-03-25  178  		goto del_clk_provider;
-edc2074329e271 Chen-Yu Tsai 2026-03-25  179  	}
-edc2074329e271 Chen-Yu Tsai 2026-03-25  180  
-edc2074329e271 Chen-Yu Tsai 2026-03-25  181  	ret = of_genpd_add_provider_simple(node, &data->genpd);
-edc2074329e271 Chen-Yu Tsai 2026-03-25  182  	if (ret) {
-edc2074329e271 Chen-Yu Tsai 2026-03-25  183  		dev_err_probe(dev, ret, "Failed to add power domain OF provider\n");
-edc2074329e271 Chen-Yu Tsai 2026-03-25  184  		goto remove_pd;
-edc2074329e271 Chen-Yu Tsai 2026-03-25  185  	}
-edc2074329e271 Chen-Yu Tsai 2026-03-25  186  
-edc2074329e271 Chen-Yu Tsai 2026-03-25  187  	ret = of_genpd_add_subdomain(&data->parent_pd, &data->child_pd);
-edc2074329e271 Chen-Yu Tsai 2026-03-25  188  	if (ret) {
-edc2074329e271 Chen-Yu Tsai 2026-03-25  189  		dev_err_probe(dev, ret, "Failed to link PM domains\n");
-edc2074329e271 Chen-Yu Tsai 2026-03-25  190  		goto del_pd_provider;
-edc2074329e271 Chen-Yu Tsai 2026-03-25  191  	}
-edc2074329e271 Chen-Yu Tsai 2026-03-25  192  
-edc2074329e271 Chen-Yu Tsai 2026-03-25  193  	pm_runtime_put(dev);
-edc2074329e271 Chen-Yu Tsai 2026-03-25  194  	return 0;
-edc2074329e271 Chen-Yu Tsai 2026-03-25  195  
-edc2074329e271 Chen-Yu Tsai 2026-03-25  196  del_pd_provider:
-edc2074329e271 Chen-Yu Tsai 2026-03-25  197  	of_genpd_del_provider(node);
-edc2074329e271 Chen-Yu Tsai 2026-03-25  198  remove_pd:
-edc2074329e271 Chen-Yu Tsai 2026-03-25  199  	pm_genpd_remove(&data->genpd);
-edc2074329e271 Chen-Yu Tsai 2026-03-25  200  del_clk_provider:
-edc2074329e271 Chen-Yu Tsai 2026-03-25  201  	of_clk_del_provider(node);
-edc2074329e271 Chen-Yu Tsai 2026-03-25  202  put_26m_clk:
-edc2074329e271 Chen-Yu Tsai 2026-03-25  203  	clk_put(data->clk_26m);
-edc2074329e271 Chen-Yu Tsai 2026-03-25  204  unregister_clks:
-edc2074329e271 Chen-Yu Tsai 2026-03-25  205  	mtk_clk_unregister_gates(mfg_clks, ARRAY_SIZE(mfg_clks), data->clk_data);
-edc2074329e271 Chen-Yu Tsai 2026-03-25  206  put_pm_runtime:
-edc2074329e271 Chen-Yu Tsai 2026-03-25  207  	pm_runtime_put(dev);
-edc2074329e271 Chen-Yu Tsai 2026-03-25  208  put_of_node:
-edc2074329e271 Chen-Yu Tsai 2026-03-25  209  	of_node_put(data->parent_pd.np);
-edc2074329e271 Chen-Yu Tsai 2026-03-25  210  	return ret;
-edc2074329e271 Chen-Yu Tsai 2026-03-25  211  }
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Troy Mitchell <troy.mitchell@linux.spacemit.com>
 
