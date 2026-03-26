@@ -1,138 +1,71 @@
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20BE336880
-	for <linux-clk@vger.kernel.org>; Thu, 26 Mar 2026 04:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4529034C815;
+	Thu, 26 Mar 2026 05:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774500975; cv=none; b=smEzFfvC694PFnt1k1MnMiCMhQMC3cdUDXFVCPvS5XoiDzDSEL4DZZUEnmtpHT1RsLz8wwGWsyLQ2JMS+DIpOyOACoa9XxLzIfXOC9t3TOq5Glvo+6rbG3sNeFJsaTVljga0JuPmJJKOzpGLKERdEO6nEJZ4ZHefvbdnnOg5REI=
+	t=1774501480; cv=none; b=CahXJI2viSgRhdVv6ObE8/jxVWe99V7b4I9b4x5guEuVnFGzeTIq3uDvQgZfjXYyS8qj1LNnqUOpddXyZqm4lEESuWy7Tt4ARpHV+5vb9XthVGUMuPfiO2puI8I6sjVnFpVD+NIyatNAWcDQ2DlWwGrLNEPXN9yozBCvQAotr4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774500975; c=relaxed/simple;
-	bh=/0G1OokNS5gQF1yAnlzFoTYo6rl9HYK4TARDIpx3i8Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HsU2DjXfKW8TAif8DzTGznnHnrKt1eQ84rPApEOvubvTgaqmIeShTGH5Qe+aIlHZDmqQeSyVMNZ0BuM8CuyapmekVQCBFCH1oxodKy0vDiVXG0+sK58JD3ObF7FxADasf/C3BVtTyAZAKdVn9oZudiczcWS44yblofoENw+/q+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZNkk/FBa; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1774501480; c=relaxed/simple;
+	bh=/QrbQn0nEkvLTPCet5lN98pYVHK3PAEuFT41MD2TCUs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lvjXV75HVsIG8dbUGh6sL8ogy3huo+ND1Hx7x6xE+tBzz+qH4046BKzfG6P/gBRu5zeLghQDiAWUoazzHI9KlhyPNbTe175L4XzV8Tf8IYgtypCd7K8+b3UdFLYSGaiwIqWDS3r3yHcBaJ0oHhlrv3POE0eXIQnhPu4FA41lync=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YCFGlVVO; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZNkk/FBa"
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2ab46931cf1so12632805ad.0
-        for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 21:56:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774500974; x=1775105774; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XljdsmAvu2M9cVCCjFds2jX6qIm7BiRW226a6zw+6M0=;
-        b=ZNkk/FBaruhvolH3+gZEdrBfXiiXTUgNDOpbnsi1QlgKlAsLhAp9ot3TAW6LLcFfHS
-         son5tjmypQAxn5yqfKNhvpE72hV9J8dsVOUkmgZY6A6IO+8027hl2GljOjLsTcWN2rl+
-         2lLnMBodJsqwbHf8reBR+M6gLg+qR1CjwTGYT4WiiBu/goyC2NVESLhVpy9sqCMO0dOX
-         CqOJjirW6EJfgrche8sfwQaYdjrz4wV1YBlzSeKtOqkoGOx20x4eF0/q1F5gdC5Fq6Yo
-         fRXOAFMGvWn1cZlGU9vOt0WEiTqwNzCZ0bg/74qv2XyTs5ZEs6wpygx/wWAsuKyBiwYv
-         2fzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774500974; x=1775105774;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XljdsmAvu2M9cVCCjFds2jX6qIm7BiRW226a6zw+6M0=;
-        b=IEEEdlmOXYLQkHqTRE3e9nxDz2Oh3yFD8oiBSyn1BMiTphOr7YNiniD1aTz81EC5th
-         R34VNJ9/m+F9CnLncVqLmEWFz26QOpD2uKuIDYynD5ywOZsQhwUP/2W5MtZ7JJzqK0oP
-         2TBbyBv5Zfpg8Oz+wyK12+t7K7m7UXB0m6WGU+WaoEmHVozg+p8YIysPIb0UfpEfT//V
-         isl2lgDvU2fv6X4FNanf3OvNjV8+uo7peqRLmNahCWTlA4ThhOpLgyOenX3pRDo7Fziz
-         2SgdVW2wOmg2T0XYf1Xk0QmbOO1UHUroJFUQsE94Gp34weOgaJT6QI4788YAld8Uz/wC
-         6ptQ==
-X-Gm-Message-State: AOJu0YzAj5pOL3F8LUbofs9crbKqCLYJhntY6gNTyehsT9kPP2pqHuGK
-	cRRXgj/V1a++31KSA1g36N9uXaJgQEuO1dzOYu4nbd8FNQ6dAfxJjSaCHt351DLD
-X-Gm-Gg: ATEYQzzOTrVe3RFCgz7/uRwj16qkTd66ALlot0TLgiYSDYG2nmhXrwFdQ/JKsCSP7GJ
-	XNDHAYb5yEtp0Mro2W+RM0qN9PxiEOwpc/kTh6U96k6Ii3ahwXx9eMwMjitvD+DztaOAmsFTTIx
-	2bfbhDM6osNYhaXhqZGFQIJ6T0sVdAYNxXGFNFY6Gdkwpu/aBc57tWfgJxSR9lFzF3pgOikazmb
-	dtKdwqGFuyPN8HzLkq2QFB/DFAvz7daLxwd63dz5lc7wWwm1aAtqIofPioBGdNMiYlTRADnYjbc
-	EPbSuyYUzVxbW0MOqtaa8sG/eG1H2gBYvd6H/C6YGzzcbcUd5SztepIpqxplZBQgn7r43Zryjmm
-	OMapB05CIRs4QXESheJjj6tXXZPMFpkmJiFxgTjcs9IFDkK4xPz31nZh/jGinS1tENkVnalFe7v
-	F1uMfxaqZv3OhFthOMvNIHKj7I07CHekl8ZoewjpHoWnSCUQm9LCSJZhQ=
-X-Received: by 2002:a17:903:b90:b0:2b0:6365:217e with SMTP id d9443c01a7336-2b0c48a7f32mr2334785ad.15.1774500973771;
-        Wed, 25 Mar 2026 21:56:13 -0700 (PDT)
-Received: from ryzen ([2601:644:8000:5b5d::8bd])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2b0bc7b8adasm20087225ad.33.2026.03.25.21.56.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2026 21:56:13 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Marvell Kirkwood and Armada 370, 375, 38x,...),
-	linux-kernel@vger.kernel.org (open list),
-	linux-hardening@vger.kernel.org (open list:KERNEL HARDENING (not covered by other areas):Keyword:\b__counted_by(_le|_be)?\b)
-Subject: [PATCH] clk: kirkwood: use kzalloc_flex
-Date: Wed, 25 Mar 2026 21:55:55 -0700
-Message-ID: <20260326045555.240730-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YCFGlVVO"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=mgtCYmqykJ8RqkpBA6kWebfP5yKwccUxqYKRl0JX98o=; b=YCFGlVVOFpxVpIE4JpNDSiTgqW
+	J0NHpkW41zbcVhOouYMgKIczUwbGh45ZbCdW6bgPBtOynu8giHnZBy3PmPNWEtZ1SP3MZ2b8evDDW
+	1Q1fC3ezXCnwQSZawGlrEuSkh0D64vaKBKoSb1BtsS/+Cyxz9ChrP45OMXOUqPvHkW6oGVQ90RltH
+	DZoQmvrO8uyRNgF7byzWIG2o19KKrgYbK9AW8n4jhwOUdloEPjRRuCsZBkZYZ2IVf3O0pBQOEZIR/
+	hWQ9bl1CERXd2oLEJ4vX/nTkWu+eWlDXVQulgIwM4CTrZQ2Hw7+Z4Hbj6nhYdhCHXtjcRwS0isYGr
+	htMfXZjQ==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1w5ctT-00000004hwq-2u7C;
+	Thu, 26 Mar 2026 05:04:31 +0000
+Message-ID: <1f5522c0-162b-4d26-9e65-2e4574971f04@infradead.org>
+Date: Wed, 25 Mar 2026 22:04:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] clk: add kernel docs for struct clk_core
+To: Brian Masney <bmasney@redhat.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org
+References: <20260325-clk-docs-v2-0-bcf660e1ceb5@redhat.com>
+ <20260325-clk-docs-v2-2-bcf660e1ceb5@redhat.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20260325-clk-docs-v2-2-bcf660e1ceb5@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Simplify allocation by using a flexible array member and kzalloc_flex to
-combine allocations.
 
-Add __counted_by for extra runtime analysis. Move counting variable
-assignment to right after allocation as required by __counted_by.
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/clk/mvebu/kirkwood.c | 19 ++++++++-----------
- 1 file changed, 8 insertions(+), 11 deletions(-)
+On 3/25/26 4:52 PM, Brian Masney wrote:
+> Document all of the members of struct clk_core.
+> 
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> ---
+>  drivers/clk/clk.c | 51 +++++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 51 insertions(+)
 
-diff --git a/drivers/clk/mvebu/kirkwood.c b/drivers/clk/mvebu/kirkwood.c
-index ed061d82fb65..fc2972538008 100644
---- a/drivers/clk/mvebu/kirkwood.c
-+++ b/drivers/clk/mvebu/kirkwood.c
-@@ -253,8 +253,8 @@ struct clk_muxing_soc_desc {
- 
- struct clk_muxing_ctrl {
- 	spinlock_t *lock;
--	struct clk **muxes;
- 	int num_muxes;
-+	struct clk *muxes[] __counted_by(num_muxes);
- };
- 
- static const char *powersave_parents[] = {
-@@ -297,21 +297,18 @@ static void __init kirkwood_clk_muxing_setup(struct device_node *np,
- 	if (WARN_ON(!base))
- 		return;
- 
--	ctrl = kzalloc_obj(*ctrl);
--	if (WARN_ON(!ctrl))
--		goto ctrl_out;
--
--	/* lock must already be initialized */
--	ctrl->lock = &ctrl_gating_lock;
--
- 	/* Count, allocate, and register clock muxes */
- 	for (n = 0; desc[n].name;)
- 		n++;
- 
-+	ctrl = kzalloc_flex(*ctrl, muxes, n);
-+	if (WARN_ON(!ctrl))
-+		goto ctrl_out;
-+
- 	ctrl->num_muxes = n;
--	ctrl->muxes = kzalloc_objs(struct clk *, ctrl->num_muxes);
--	if (WARN_ON(!ctrl->muxes))
--		goto muxes_out;
-+
-+	/* lock must already be initialized */
-+	ctrl->lock = &ctrl_gating_lock;
- 
- 	for (n = 0; n < ctrl->num_muxes; n++) {
- 		ctrl->muxes[n] = clk_register_mux(NULL, desc[n].name,
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Thanks.
+
 -- 
-2.53.0
-
+~Randy
