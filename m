@@ -1,203 +1,221 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8180439E164
-	for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 23:52:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A97287246;
+	Thu, 26 Mar 2026 01:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774482773; cv=none; b=PKbmcZHBV9/krEG0TOx3fjEFGOW4MJRa37IK4eOxbb8IOXFet6EyMiuiOYbU2jHk7BBrZYwEKa6pBeFjEC4Lc7Q/zBBOCMDRIJcxt28RBKawaUDH/ToaSxljq51UKaoCakIXje+hPQINNcyG6tBQTehL1EPulwwhnJwzrp6qJ/c=
+	t=1774488297; cv=none; b=CTBaUVC0uYshCdAvXGerP4XV+xB1fDz8Bj8he2gJA4KVjxYTorQxPOxdXKQgajwnaOOq8y2gRTiwB4qXSCxyJNMAJdqbyvgAyO+aIYVqVbPFV/UPm8te3Ps4ZzIEBBLnRJviLz/2yKuwpguSFmV2NtR80HQR+c3vWG5ZKuruWgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774482773; c=relaxed/simple;
-	bh=62suQfreoiy/6IOtX/iHJTSMxZ0uXFmLFj3BP9KodwQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oYzt5XNnvV3LeuyvH7gJsi0y9O+hI9tTh20ejXQuRN42B1zTNtS70pJSHF2Qd05lQc6EvXuI2s5Mp0Db4tyJECtkoiEMLZfPiHy/uKAfAYH8mOKKVU2P7W2sBA9T33zm2UbrjrjdnXCWA5mZFMKNvQfuHq5Gus5RWtdXvNKuj3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VDKVAeJA; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=i33Jp1PV; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1774488297; c=relaxed/simple;
+	bh=Eq6Xay26AJu925QH9dEoTNSTESWdI6fBXbTFQNVzJrc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P5hPHIN3lCY40TFBzADs7JYh0wKQjHJW75wiElGUbEaZxOj9hMDMjMafh70oHBpkB7+hyvuYLY875rV9D0YLhGRYDrbAsJJkZorhI9mrPstOBYmhLcxiV/NMFl9HsbustVnW/HKTaz9QMTx07fAAxYIER1c1mXX33Q+h/Dwlejs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gLMpKjxp; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VDKVAeJA";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="i33Jp1PV"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1774482769;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2mtlEG93DWMiKtmpTAPwEdHj6VdNNl773QdBam9e/2o=;
-	b=VDKVAeJA7zuwW+LPAQC5WYvD6rdS/zulkiPMgQhJXM1xkoN7RqJhIAz7bQdXPtUCHfbFgT
-	8iuVGTBVoWFuHKVsiK7VzRpcQZQx2VkE5xGQXHfilHV0+8XEK7KxSJNiVSgIUlofHFZPYA
-	xte37GDIblHc5oE8qhLyzMn1+r3kEnY=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-481-bAafdgpUOc-okeoHtGp2BA-1; Wed, 25 Mar 2026 19:52:46 -0400
-X-MC-Unique: bAafdgpUOc-okeoHtGp2BA-1
-X-Mimecast-MFC-AGG-ID: bAafdgpUOc-okeoHtGp2BA_1774482765
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-8cfba9b4eb3so149066385a.3
-        for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 16:52:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1774482765; x=1775087565; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2mtlEG93DWMiKtmpTAPwEdHj6VdNNl773QdBam9e/2o=;
-        b=i33Jp1PVDj8MzLCNf5rYvf+svy9xHALy88HkMdbgcRpdgrwOCru1i7UpIGZORP+dMf
-         HH4wkcUAvNi1ngzGa2IpDxYSzdeo+2y8+K+dmYnzH1syIqowSsb94V9tvzKaUuVkbsyh
-         U/WEDVFg1zw6/dH56Qn+f4e9t9kCBMPdbm7q+var5Ener2QV8cvo88AXr5bV/TeXT+0D
-         98k6vcpd0m6dZWJJkETcGqKY36JhoIMSetAEjcEjiRUQ7OzDMokd9BUJzyeEjUy46XA/
-         /ucntOFqZaZCyB8wjyq5WoRevuCexHRk+M1lGVTpLMzUjz1AlXZY7v6PCiERZ0Z8sChx
-         HtsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774482765; x=1775087565;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2mtlEG93DWMiKtmpTAPwEdHj6VdNNl773QdBam9e/2o=;
-        b=Ek0xDGzbhFJL0P0/dl9yUfXAwVcAaYlCAqZkpodZQ4S5TZA6WWnMAHE8EpiZpD6ZKA
-         Ysh6R6M5dd/XGv0SfW2YpFCp8xjpdcbQ/ZlCzk1vziBQdy++e62Hu7TUg2DNWBSH5zUH
-         Ye6qIhHTFc8Jy1Xwdhzl8342wSA6LL8R8JZVxGXGQ65gNWmtOVWPsVIYnOhMHk+kxkt7
-         2aHazyGShdjHk0rWf4njIL4PFUGBBh52i+NlxeGmX8tCUZ06AXKFqsxbqxNcWmCs7ZOM
-         rIDCyjsccIzzNw+qegPuSL9WEaMGrlLDoQsYGuA7d9R6zCf85CcNnorga/gM69FJoXpA
-         1S+w==
-X-Gm-Message-State: AOJu0Yy4HrHwnt+TTQ9pGf3HA0HpAVs8Nwiv7txyV6Oxe89F/WZ/vB2j
-	lrIW8Lr/2mTw2LcxjEBNamAPKtc9eWReCunfE0hyfCSJ7kD/LPcYhoR5eChrgU4hVkob5bZ2Lps
-	HiTf/HkWN8S1kCiCQqEhJC5RlgcA01UjPgiKVL9xzKmkaNsKr5aYBO1Zva8vm5g==
-X-Gm-Gg: ATEYQzyOsn6Yt9A8GzuoYiHHEp/F8BZhmfQn+Mm9pgY/1+HN7vmf6uGYy/MiKSv4/rr
-	egiD79neLhW+8Be92sMLHC5d7+aUkww9D/2TXbb/R/1dKIRxHNK867FX+ppJ3XcMREBH1O1VrnN
-	D8Cqn91hXLCFonh9al2ETZB+JQ+hEsKwCjyfJyOh9x89Ji/8S9Yrm7MwAxQnFOWgR/2+M81fqQb
-	GxL3GKIi3vMdVg6LfChepmZzDEEJXRInpdzfFW7fNRSZdrW3i3R4bh0pFG+Bw5sMaM/N/pe2FYG
-	Q0+k0iti/dMiZu+jznYJvZua8AARs8hMYfrYLX1HdgjnMEDX/9rjZhPhNno/Z/PrWidSZL40hHf
-	hTtKu1sj75u25rzFsYAGJmMviJ3bX5ERCnL38WR+7KBdj0jf/1wkigZEhcTOI
-X-Received: by 2002:a05:620a:31a4:b0:8cd:cd30:779e with SMTP id af79cd13be357-8d0010044e9mr743188685a.42.1774482765570;
-        Wed, 25 Mar 2026 16:52:45 -0700 (PDT)
-X-Received: by 2002:a05:620a:31a4:b0:8cd:cd30:779e with SMTP id af79cd13be357-8d0010044e9mr743187385a.42.1774482765098;
-        Wed, 25 Mar 2026 16:52:45 -0700 (PDT)
-Received: from [192.168.1.3] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8d00e501eedsm106346785a.40.2026.03.25.16.52.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2026 16:52:44 -0700 (PDT)
-From: Brian Masney <bmasney@redhat.com>
-Date: Wed, 25 Mar 2026 19:52:12 -0400
-Subject: [PATCH v2 3/4] docs: clk: include some identifiers to keep
- documentation up to date
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gLMpKjxp"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1774488295; x=1806024295;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Eq6Xay26AJu925QH9dEoTNSTESWdI6fBXbTFQNVzJrc=;
+  b=gLMpKjxptrQNrHE17huAy6AKgAjYqZVyFwQt3OfyiEICWLmIrr3t7S9+
+   ixJCGAms66MnGBtbVLuAAZ/oP4qFKHLWWc7qyYTSVEvLUSEYt27LGg0OK
+   EiYqd+SnRB4bGWekxFYNtWm0UbdUAu/6gwwie8pW6jLtG0xeaGaWBdxtB
+   cpH3UvgA2aMXMRETlzEs5Uy/pizePCwJVe6ObiMuPxqboj0VobWD9GXLz
+   1GNFJG+AlPzn32rMdmGBd11vYQ2mIpGmfkUrqMGmSVMtWbFGaWM2npspN
+   N/tFzJkRUA//vOpjBUUMceGRux4rD1MGUUy6zgU/i85gSxUZeRwZVuKVA
+   Q==;
+X-CSE-ConnectionGUID: zCROV1YgT8qUXAYgfzAz2w==
+X-CSE-MsgGUID: eY5+rXwLT4O8AnB7REryjg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11740"; a="78135431"
+X-IronPort-AV: E=Sophos;i="6.23,141,1770624000"; 
+   d="scan'208";a="78135431"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2026 18:24:55 -0700
+X-CSE-ConnectionGUID: Q+MclzIbSm+lrW2N1XA8Fw==
+X-CSE-MsgGUID: ZoLMXqn5RwaIMsxxafBSzg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,141,1770624000"; 
+   d="scan'208";a="225107174"
+Received: from lkp-server01.sh.intel.com (HELO 3905d212be1b) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 25 Mar 2026 18:24:50 -0700
+Received: from kbuild by 3905d212be1b with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1w5ZSo-000000007xp-25Yb;
+	Thu, 26 Mar 2026 01:24:46 +0000
+Date: Thu, 26 Mar 2026 09:24:18 +0800
+From: kernel test robot <lkp@intel.com>
+To: Chen-Yu Tsai <wenst@chromium.org>, Stephen Boyd <sboyd@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Frank Binns <frank.binns@imgtec.com>,
+	Matt Coster <matt.coster@imgtec.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>
+Cc: oe-kbuild-all@lists.linux.dev, Icenowy Zheng <zhengxingda@iscas.ac.cn>,
+	Chen-Yu Tsai <wenst@chromium.org>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] clk: mediatek: Add mt8173-mfgtop driver
+Message-ID: <202603260926.gAEaAK0A-lkp@intel.com>
+References: <20260325071951.544031-3-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260325-clk-docs-v2-3-bcf660e1ceb5@redhat.com>
-References: <20260325-clk-docs-v2-0-bcf660e1ceb5@redhat.com>
-In-Reply-To: <20260325-clk-docs-v2-0-bcf660e1ceb5@redhat.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>, 
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-doc@vger.kernel.org, Brian Masney <bmasney@redhat.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3478; i=bmasney@redhat.com;
- s=20250903; h=from:subject:message-id;
- bh=62suQfreoiy/6IOtX/iHJTSMxZ0uXFmLFj3BP9KodwQ=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDKPlDoWHonXTH5Ws+rgsWApvgNJZuVBf62OPU3sPqJVL
- PSz9PXnjlIWBjEuBlkxRZYluUYFEamrbO/d0WSBmcPKBDKEgYtTACaicZbhf9gXvUSTMK7Wu+8v
- VJ/ufBz1tqhKSvmwzec3W235biTMSmP4730qvH33R4eP+dO8Xh76+b8+q3vqqZSZK7axON///ls
- whRMA
-X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
- fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260325071951.544031-3-wenst@chromium.org>
 
-The clk documentation currently has a separate list of some members of
-struct clk_core and struct clk_ops. Now that all of these structures
-have proper kernel docs, let's go ahead and just include them here via
-the identifiers statement in kerneldoc.
+Hi Chen-Yu,
 
-While changes are being made here, let's also include the newly-added
-enum clk_core_flags.
+kernel test robot noticed the following build errors:
 
-Signed-off-by: Brian Masney <bmasney@redhat.com>
----
- Documentation/driver-api/clk.rst | 58 +++++++---------------------------------
- 1 file changed, 9 insertions(+), 49 deletions(-)
+[auto build test ERROR on clk/clk-next]
+[also build test ERROR on robh/for-next drm-misc/drm-misc-next linus/master v7.0-rc5 next-20260325]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/Documentation/driver-api/clk.rst b/Documentation/driver-api/clk.rst
-index 93bab5336dfda06069eea700d2830089bf3bce03..d3e93519114637b3a70067128192dd302bedad4b 100644
---- a/Documentation/driver-api/clk.rst
-+++ b/Documentation/driver-api/clk.rst
-@@ -42,21 +42,8 @@ clock interface.
- Common data structures and api
- ==============================
- 
--Below is the common struct clk_core definition from
--drivers/clk/clk.c, modified for brevity::
--
--	struct clk_core {
--		const char		*name;
--		const struct clk_ops	*ops;
--		struct clk_hw		*hw;
--		struct module		*owner;
--		struct clk_core		*parent;
--		const char		**parent_names;
--		struct clk_core		**parents;
--		u8			num_parents;
--		u8			new_parent_index;
--		...
--	};
-+.. kernel-doc:: drivers/clk/clk.c
-+   :identifiers: struct clk_core
- 
- The members above make up the core of the clk tree topology.  The clk
- api itself defines several driver-facing functions which operate on
-@@ -64,41 +51,14 @@ struct clk.  That api is documented in include/linux/clk.h.
- 
- Platforms and devices utilizing the common struct clk_core use the struct
- clk_ops pointer in struct clk_core to perform the hardware-specific parts of
--the operations defined in clk-provider.h::
-+the operations defined in clk-provider.h, and can set one or more
-+framework-level flags in the enum clk_core_flags.
- 
--	struct clk_ops {
--		int		(*prepare)(struct clk_hw *hw);
--		void		(*unprepare)(struct clk_hw *hw);
--		int		(*is_prepared)(struct clk_hw *hw);
--		void		(*unprepare_unused)(struct clk_hw *hw);
--		int		(*enable)(struct clk_hw *hw);
--		void		(*disable)(struct clk_hw *hw);
--		int		(*is_enabled)(struct clk_hw *hw);
--		void		(*disable_unused)(struct clk_hw *hw);
--		unsigned long	(*recalc_rate)(struct clk_hw *hw,
--						unsigned long parent_rate);
--		long		(*round_rate)(struct clk_hw *hw,
--						unsigned long rate,
--						unsigned long *parent_rate);
--		int		(*determine_rate)(struct clk_hw *hw,
--						  struct clk_rate_request *req);
--		int		(*set_parent)(struct clk_hw *hw, u8 index);
--		u8		(*get_parent)(struct clk_hw *hw);
--		int		(*set_rate)(struct clk_hw *hw,
--					    unsigned long rate,
--					    unsigned long parent_rate);
--		int		(*set_rate_and_parent)(struct clk_hw *hw,
--					    unsigned long rate,
--					    unsigned long parent_rate,
--					    u8 index);
--		unsigned long	(*recalc_accuracy)(struct clk_hw *hw,
--						unsigned long parent_accuracy);
--		int		(*get_phase)(struct clk_hw *hw);
--		int		(*set_phase)(struct clk_hw *hw, int degrees);
--		void		(*init)(struct clk_hw *hw);
--		void		(*debug_init)(struct clk_hw *hw,
--					      struct dentry *dentry);
--	};
-+.. kernel-doc:: include/linux/clk-provider.h
-+   :identifiers: struct clk_ops
-+
-+.. kernel-doc:: include/linux/clk-provider.h
-+   :identifiers: enum clk_core_flags
- 
- Hardware clk implementations
- ============================
+url:    https://github.com/intel-lab-lkp/linux/commits/Chen-Yu-Tsai/dt-bindings-clock-mediatek-Add-mt8173-mfgtop/20260325-202618
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/20260325071951.544031-3-wenst%40chromium.org
+patch subject: [PATCH v2 2/5] clk: mediatek: Add mt8173-mfgtop driver
+config: loongarch-randconfig-002-20260326 (https://download.01.org/0day-ci/archive/20260326/202603260926.gAEaAK0A-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 14.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260326/202603260926.gAEaAK0A-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202603260926.gAEaAK0A-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/pmdomain/governor.c: In function 'default_suspend_ok':
+>> drivers/pmdomain/governor.c:88:24: error: 'struct dev_pm_info' has no member named 'ignore_children'
+      88 |         if (!dev->power.ignore_children)
+         |                        ^
+--
+   drivers/pmdomain/core.c: In function 'genpd_queue_power_off_work':
+>> drivers/pmdomain/core.c:941:20: error: 'pm_wq' undeclared (first use in this function)
+     941 |         queue_work(pm_wq, &genpd->power_off_work);
+         |                    ^~~~~
+   drivers/pmdomain/core.c:941:20: note: each undeclared identifier is reported only once for each function it appears in
+   drivers/pmdomain/core.c: In function 'genpd_dev_pm_qos_notifier':
+>> drivers/pmdomain/core.c:1138:39: error: 'struct dev_pm_info' has no member named 'ignore_children'
+    1138 |                 if (!dev || dev->power.ignore_children)
+         |                                       ^
+   drivers/pmdomain/core.c: In function 'rtpm_status_str':
+>> drivers/pmdomain/core.c:3614:23: error: 'struct dev_pm_info' has no member named 'runtime_error'
+    3614 |         if (dev->power.runtime_error)
+         |                       ^
+>> drivers/pmdomain/core.c:3616:28: error: 'struct dev_pm_info' has no member named 'disable_depth'
+    3616 |         else if (dev->power.disable_depth)
+         |                            ^
+>> drivers/pmdomain/core.c:3618:28: error: 'struct dev_pm_info' has no member named 'runtime_status'
+    3618 |         else if (dev->power.runtime_status < ARRAY_SIZE(status_lookup))
+         |                            ^
+   drivers/pmdomain/core.c:3619:45: error: 'struct dev_pm_info' has no member named 'runtime_status'
+    3619 |                 p = status_lookup[dev->power.runtime_status];
+         |                                             ^
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for PM_GENERIC_DOMAINS
+   Depends on [n]: PM [=n]
+   Selected by [m]:
+   - COMMON_CLK_MT8173_MFGTOP [=m] && COMMON_CLK [=y] && (ARCH_MEDIATEK || COMPILE_TEST [=y]) && COMMON_CLK_MT8173 [=m]
+
+
+vim +88 drivers/pmdomain/governor.c
+
+a5bef810ad9816 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-04-29   49  
+b02c999ac325e9 drivers/base/power/domain_governor.c Rafael J. Wysocki 2011-12-01   50  /**
+9df3921e026532 drivers/base/power/domain_governor.c Ulf Hansson       2016-03-31   51   * default_suspend_ok - Default PM domain governor routine to suspend devices.
+b02c999ac325e9 drivers/base/power/domain_governor.c Rafael J. Wysocki 2011-12-01   52   * @dev: Device to check.
+3b2714c5d2d26d drivers/base/power/domain_governor.c Randy Dunlap      2023-12-05   53   *
+3b2714c5d2d26d drivers/base/power/domain_governor.c Randy Dunlap      2023-12-05   54   * Returns: true if OK to suspend, false if not OK to suspend
+b02c999ac325e9 drivers/base/power/domain_governor.c Rafael J. Wysocki 2011-12-01   55   */
+9df3921e026532 drivers/base/power/domain_governor.c Ulf Hansson       2016-03-31   56  static bool default_suspend_ok(struct device *dev)
+b02c999ac325e9 drivers/base/power/domain_governor.c Rafael J. Wysocki 2011-12-01   57  {
+66d29d802ef3bf drivers/base/power/domain_governor.c Ulf Hansson       2022-05-11   58  	struct gpd_timing_data *td = dev_gpd_data(dev)->td;
+6ff7bb0d02f829 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-05-01   59  	unsigned long flags;
+a5bef810ad9816 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-04-29   60  	s64 constraint_ns;
+b02c999ac325e9 drivers/base/power/domain_governor.c Rafael J. Wysocki 2011-12-01   61  
+b02c999ac325e9 drivers/base/power/domain_governor.c Rafael J. Wysocki 2011-12-01   62  	dev_dbg(dev, "%s()\n", __func__);
+b02c999ac325e9 drivers/base/power/domain_governor.c Rafael J. Wysocki 2011-12-01   63  
+6ff7bb0d02f829 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-05-01   64  	spin_lock_irqsave(&dev->power.lock, flags);
+6ff7bb0d02f829 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-05-01   65  
+6ff7bb0d02f829 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-05-01   66  	if (!td->constraint_changed) {
+9df3921e026532 drivers/base/power/domain_governor.c Ulf Hansson       2016-03-31   67  		bool ret = td->cached_suspend_ok;
+6ff7bb0d02f829 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-05-01   68  
+6ff7bb0d02f829 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-05-01   69  		spin_unlock_irqrestore(&dev->power.lock, flags);
+6ff7bb0d02f829 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-05-01   70  		return ret;
+6ff7bb0d02f829 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-05-01   71  	}
+6ff7bb0d02f829 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-05-01   72  	td->constraint_changed = false;
+9df3921e026532 drivers/base/power/domain_governor.c Ulf Hansson       2016-03-31   73  	td->cached_suspend_ok = false;
+0759e80b84e34a drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07   74  	td->effective_constraint_ns = 0;
+8262331eaaf751 drivers/base/power/domain_governor.c Viresh Kumar      2019-07-04   75  	constraint_ns = __dev_pm_qos_resume_latency(dev);
+6ff7bb0d02f829 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-05-01   76  
+6ff7bb0d02f829 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-05-01   77  	spin_unlock_irqrestore(&dev->power.lock, flags);
+6ff7bb0d02f829 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-05-01   78  
+0759e80b84e34a drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07   79  	if (constraint_ns == 0)
+a5bef810ad9816 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-04-29   80  		return false;
+a5bef810ad9816 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-04-29   81  
+a5bef810ad9816 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-04-29   82  	constraint_ns *= NSEC_PER_USEC;
+a5bef810ad9816 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-04-29   83  	/*
+a5bef810ad9816 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-04-29   84  	 * We can walk the children without any additional locking, because
+6ff7bb0d02f829 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-05-01   85  	 * they all have been suspended at this point and their
+6ff7bb0d02f829 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-05-01   86  	 * effective_constraint_ns fields won't be modified in parallel with us.
+a5bef810ad9816 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-04-29   87  	 */
+a5bef810ad9816 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-04-29  @88  	if (!dev->power.ignore_children)
+a5bef810ad9816 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-04-29   89  		device_for_each_child(dev, &constraint_ns,
+a5bef810ad9816 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-04-29   90  				      dev_update_qos_constraint);
+b02c999ac325e9 drivers/base/power/domain_governor.c Rafael J. Wysocki 2011-12-01   91  
+0759e80b84e34a drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07   92  	if (constraint_ns == PM_QOS_RESUME_LATENCY_NO_CONSTRAINT_NS) {
+704d2ce6603f7e drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07   93  		/* "No restriction", so the device is allowed to suspend. */
+0759e80b84e34a drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07   94  		td->effective_constraint_ns = PM_QOS_RESUME_LATENCY_NO_CONSTRAINT_NS;
+704d2ce6603f7e drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07   95  		td->cached_suspend_ok = true;
+0759e80b84e34a drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07   96  	} else if (constraint_ns == 0) {
+704d2ce6603f7e drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07   97  		/*
+704d2ce6603f7e drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07   98  		 * This triggers if one of the children that don't belong to a
+0759e80b84e34a drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07   99  		 * domain has a zero PM QoS constraint and it's better not to
+0759e80b84e34a drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07  100  		 * suspend then.  effective_constraint_ns is zero already and
+0759e80b84e34a drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07  101  		 * cached_suspend_ok is false, so bail out.
+704d2ce6603f7e drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07  102  		 */
+704d2ce6603f7e drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07  103  		return false;
+704d2ce6603f7e drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07  104  	} else {
+2b1d88cda32f81 drivers/base/power/domain_governor.c Ulf Hansson       2015-10-15  105  		constraint_ns -= td->suspend_latency_ns +
+2b1d88cda32f81 drivers/base/power/domain_governor.c Ulf Hansson       2015-10-15  106  				td->resume_latency_ns;
+704d2ce6603f7e drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07  107  		/*
+0759e80b84e34a drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07  108  		 * effective_constraint_ns is zero already and cached_suspend_ok
+0759e80b84e34a drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07  109  		 * is false, so if the computed value is not positive, return
+0759e80b84e34a drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07  110  		 * right away.
+704d2ce6603f7e drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07  111  		 */
+704d2ce6603f7e drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07  112  		if (constraint_ns <= 0)
+a5bef810ad9816 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-04-29  113  			return false;
+704d2ce6603f7e drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07  114  
+a5bef810ad9816 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-04-29  115  		td->effective_constraint_ns = constraint_ns;
+704d2ce6603f7e drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07  116  		td->cached_suspend_ok = true;
+704d2ce6603f7e drivers/base/power/domain_governor.c Rafael J. Wysocki 2017-11-07  117  	}
+a98f1b78ecf325 drivers/base/power/domain_governor.c Ulf Hansson       2015-10-13  118  
+a5bef810ad9816 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-04-29  119  	/*
+a5bef810ad9816 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-04-29  120  	 * The children have been suspended already, so we don't need to take
+9df3921e026532 drivers/base/power/domain_governor.c Ulf Hansson       2016-03-31  121  	 * their suspend latencies into account here.
+a5bef810ad9816 drivers/base/power/domain_governor.c Rafael J. Wysocki 2012-04-29  122  	 */
+9df3921e026532 drivers/base/power/domain_governor.c Ulf Hansson       2016-03-31  123  	return td->cached_suspend_ok;
+b02c999ac325e9 drivers/base/power/domain_governor.c Rafael J. Wysocki 2011-12-01  124  }
+b02c999ac325e9 drivers/base/power/domain_governor.c Rafael J. Wysocki 2011-12-01  125  
 
 -- 
-2.53.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
