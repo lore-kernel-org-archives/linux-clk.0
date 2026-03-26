@@ -1,116 +1,157 @@
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD0133F370
-	for <linux-clk@vger.kernel.org>; Thu, 26 Mar 2026 18:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84BD39FCA0;
+	Thu, 26 Mar 2026 18:32:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774549717; cv=none; b=i5AxaoFciVR8WBEYit4Ab7eCd7i48uf7l5Gwgewyq9KOwUEfCIn24VcQPnu9NhIEQ9edRoYas0kUo3JLeYkHNQp7ATv7QLLz8TfaQQnrNQcQ1knumClLaRRdeomElYOBOORKlOHXDWdIGrJydsPL9F1ArjK2kQOxZI3Yt1sYuKY=
+	t=1774549967; cv=none; b=UeBlP8MeAwANu5vmfoW2d0ifyfSVQIBDQYtNPb2ST7lEbWJ7nNFWKH5CcmMiExzM3AVxruySentpHpTitBL4EG6clchrUuSu/ix43f9bBQV1drNlliSPqdhmwSSb1vtDryP0jkKUX/6Nu3ORPX0RyLOlts/C9zeyWN9ZtO93rSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774549717; c=relaxed/simple;
-	bh=Jc3WGM9+nSXAgx36gi73IUpaDeFuSOdmq7+OowChnuo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cVSepnw5vwwE91+K2TcTVX2FEVpYv4wFh420GI8JSQdYSGkIevU4ud5zNjdMoNkKZ84qT2nFqameE6UlQiZE1CjCa/s4kL/DsIbTJyc44KPfrKCc+eHfYylYnuzHViOUW++YCSWmOkNrwRy6uWlEKjE7ZTo0aOuqSYyP7CweSg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ng8H+v2f; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1774549967; c=relaxed/simple;
+	bh=e3IQSyuBkI2uxnImkTHRmeOQRMXLH8i/LlfJruNVzDU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZYM0/Hf4QY0uUDlpBorKmDy12EDZ/RP9TUTfrkd1xRemo8ypPOW2Kc4CCP7MqnbgoY+LN+/nCFKt5MavVXlwdOi0imKAaBsnEiNqP74szqD1e5uefT0BvFuUVv/z6yMcYYAA4H+qfXBl4yLD/wLPHhq7MkeIipO6jRZhMWFHZYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oXBOTXGp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ng8H+v2f"
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-354bc7c2c46so817952a91.0
-        for <linux-clk@vger.kernel.org>; Thu, 26 Mar 2026 11:28:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774549715; x=1775154515; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xq2guOjsOaSspszJVZHGbMTfXj6L3NYNNr8K8Ir/mPI=;
-        b=Ng8H+v2f2gb72FkTKL926Ur2LpFCywyblJxHiipmgBBoesWnFT9mK4JGhYLTFG+Gms
-         CfY5M4yzKUScXweA9XyaI21nEB79fAFAgDRMbj6gMLA1sMWVRWBcSbmF4vyFm+pg6FTA
-         okINvyZaUY5KdplTpCBaiPJhSW6cmDLzAgkoZxuJ1lXkOuwnVBYqxexny/0HhKkvEXaL
-         L0jDS1WkN7jAHkjegdotknB8wEO9OLsP55Aibjwb0qORUDXWd3ZdTGp+PECnuCuClWmC
-         kC7nUEyNcLXur79YXFvSJj6h8kFLoHXfFihbkjPGsq/ZJukbimctau5N50qkhz5kw2+S
-         gntw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774549715; x=1775154515;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Xq2guOjsOaSspszJVZHGbMTfXj6L3NYNNr8K8Ir/mPI=;
-        b=NaLsGNp8+t6yBohoJTxGsAadPgJnZqbFuzSxUoEnUejzcBnWeNo9oFQkCo1M7eV1jl
-         Xa8iqyAnpEXJMAlOGyzVSEDuwNG5x4hlaBzqvzRKkqWqUE7nfuCXCvz+KGbpXUVA2PwQ
-         yXOoSpyC8L/rxqWeW9xTZ2PLmIRPf+hbFcoXUc8F84NaEl+o/AzlXIsNDXRs2yV3tazX
-         WlSjL3Ef9xhbXi9w9WsE1DDpyccX5CzOnoieRqZ1IziMLOCV002FEZw6A3uy824n6w+5
-         OM96LtCsK4hNwHqlilNhyCD3vviTKNPf0RsZdNMjhGLtfVN70E9V3K1pEgmbvUuY47FL
-         dv5g==
-X-Forwarded-Encrypted: i=1; AJvYcCUeiQcaPDP614JvsKIqd2Ar7+igYhTdN0re0KDHeph7zB5bjpEKoK2uNsBuGd5dxTYFnjAe1WA1agY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxA1JRnrklX/i/y3NkVmfUoHfFysuh+mLBDRalHi7aeBPy/iNjz
-	DGmhXvNyPWJYNwiT7dFP3Vd3rxJUDx/FdNo928TAAU45kTbTWiULMjcb
-X-Gm-Gg: ATEYQzxR8TeWYTWeNfQFXeBQnRzoGPPrXoZLA8vnUHSb7dp+z2d5jNxQR/w3urq53WZ
-	gtkmdCv+I/jnCf9eSLLynuDTtN55fijNWfRlhZZKIFBN/B49gytDAursJ1jkwW9clmwywNtm6Xa
-	bu2tqMnbP4pbopB5QpPGcTeLWVTGOG4PBZzRwUQsZP8Rrlkvh7yBIkR4mBxwyvr8UmYR8mUN3Ed
-	vPN7f/NVw+hPJExmuL/VBx9G2s6toWVLoGh4RzlHP+ZbuV98yXr2xXwQuFuDHHm8I/FEDBdlWgb
-	fZsJlfoJZ2SpMXuQjquCAKp941lZ44ylL0dUCMk1ntCvTTbp7FmfPUv5VzJQpIhBQIA0wyewkMk
-	1jOOusBgR4PBg3rJaqvrela7YLfJKA5c2tVVDHJKvPfFnxZufEYaOsVsWekuRpgU9FUu9b4AY22
-	a+1wiJTtsWRm7WLHHuXJGEUtAlJYuhmz0=
-X-Received: by 2002:a17:90b:3fcd:b0:35b:a30f:8bfa with SMTP id 98e67ed59e1d1-35c0dc813dcmr8363731a91.7.1774549715010;
-        Thu, 26 Mar 2026 11:28:35 -0700 (PDT)
-Received: from ArchLinux ([43.251.91.119])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-2b0bc795f08sm47816045ad.21.2026.03.26.11.28.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Mar 2026 11:28:34 -0700 (PDT)
-From: Biswapriyo Nath <nathbappai@gmail.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Biswapriyo Nath <nathbappai@gmail.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	Sean Young <sean@mess.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oXBOTXGp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46051C19423;
+	Thu, 26 Mar 2026 18:32:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774549967;
+	bh=e3IQSyuBkI2uxnImkTHRmeOQRMXLH8i/LlfJruNVzDU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oXBOTXGp4xmTGCKJSE7gm9Xu637AwSplxv8pVowIRY2BfpbbWAUK26SxzC0EDJEBQ
+	 l9UK68GExK+Ub8zKEZ8UIP+yAPJGkOjhosdhzrlnlPzcj0AO4CzcnSj7pEZg9IFS6E
+	 gGQj9rwKa6GNBTkyFyI3sPxE/EP5vWg+ddJAdVVXGUgSI1+FRZPMIz9edXrq5w27kB
+	 90ytl2eN3oUNElRJzjzGCjvkjrSTro4qXZDMCG87HUYx+sZ6aeMXNFV7FPBCpJyZwO
+	 upr/Yd3k16qXCEUH7rBcpqwsh5cB8ksql9JnWpUb3qGb0Fd5O8iRx1piEtO0NDACD8
+	 0QwNqfuUjSNzQ==
+Date: Thu, 26 Mar 2026 18:32:42 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Vyacheslav Yurkov <uvv.mail@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+	Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Martin Botka <martin.botka@somainline.org>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht,
-	phone-devel@vger.kernel.org
-Subject: Re: [PATCH 2/7] arm64: dts: qcom: sm6125: Enable USB-C port handling
-Date: Thu, 26 Mar 2026 18:28:19 +0000
-Message-ID: <20260326182821.8332-1-nathbappai@gmail.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <593b3801-a83c-4132-970f-5075ebca2bc4@oss.qualcomm.com>
-References: 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/2] dt-bindings: Add clock guard DT description
+Message-ID: <20260326-nursery-outer-55799f675e14@spud>
+References: <20260318-feature-clock-guard-v1-0-6137cb4084b7@bruker.com>
+ <20260318-feature-clock-guard-v1-2-6137cb4084b7@bruker.com>
+ <20260318225510.GA639444-robh@kernel.org>
+ <7c7034a7-686a-42c2-bdba-6f31b5179f7c@gmail.com>
+ <20260319-yearly-wrongful-883f7fd86a69@spud>
+ <b45d9845-2d56-4fdd-a3ac-b0e0e27ba573@gmail.com>
+ <20260323-sanctuary-semantic-432089feb1c7@spud>
+ <d097826c-3db5-4902-acee-ffcff7436d4e@gmail.com>
+ <8e7d0c53-aa23-4514-81a5-335a76bb0c45@kernel.org>
+ <4d575f17-5cd5-495c-99a9-176b3393d54d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="UQ9U3XuY+nYj6U50"
+Content-Disposition: inline
+In-Reply-To: <4d575f17-5cd5-495c-99a9-176b3393d54d@gmail.com>
 
-On Thu, 26 Mar 2026 10:41:03 +0100 Konrad Dybcio <konrad.dybcio@oss.qualcomm.com> wrote:
 
-> On 3/25/26 7:07 PM, Biswapriyo Nath wrote:
-> > Plug in USB-C related bits and pieces to enable USB role switching.
-> > Also, remove dr_mode to enable OTG capability.
-> > 
-> > Signed-off-by: Biswapriyo Nath <nathbappai@gmail.com>
-> > ---
-> 
-> I'm not sure what this is going to do for other 6125 devices
-> that don't have the Type-C infra wired up.. Does just applying
-> this commit alone keep peripheral mode working on your phone?
-> 
-> Konrad
-> 
+--UQ9U3XuY+nYj6U50
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes, I have verified that USB peripheral mode is working with this
-patch only by using USB network[1].
+On Thu, Mar 26, 2026 at 02:39:22PM +0100, Vyacheslav Yurkov wrote:
+> On 26.03.2026 11:08, Krzysztof Kozlowski wrote:
+>=20
+> > >=20
+> > > DTS example:
+> > >     clock_guard: clock_controller_guard {
+> > >       compatible =3D "clock-controller-guard";
+> > >       #clock-cells =3D <1>;
+> > >       clocks =3D <&h2f_clk 0>, <&clk_fgpa_rx 0>, <clk_fpga_tx 0>;
+> > >       clock-names =3D "h2f_clk0", "clk_fpga_rx", "clk_fpga_tx";
+> > >       gpios =3D <&fpga_ip 0 GPIO_ACTIVE_HIGH>, <&fpga_ip 1 GPIO_ACTIV=
+E_HIGH>;
+> > >       gpio-names =3D "gpio-input0", "gpio-input1";
+> > >       clock-output-names =3D "clkctrl-guard";
+> > >     };
+> > >=20
+> > >     custom_device {
+> > >       compatible =3D "...";
+> > >       ...
+> > >       #clock-cells =3D <1>;
+> > >       clocks =3D <&clock_guard 0>;
+> > >       clock-names =3D "clock-guard";
+> > >     };
+> >=20
+> > So a pure SW construct? Device has specific clock inputs but you do not
+> > model them and instead replace with one fake-guard-input.
+> >=20
+> > I don't see how this represents the hardware at all.
+> >=20
+> > Maybe some diagrams would help, assuming we still talk about hardware.
+> >=20
+> > Best regards,
+> > Krzysztof
+>=20
+> Techincally that's correct, it's a software construct. If this is not a
 
-[1]: https://wiki.postmarketos.org/wiki/USB_Network
+Is it a software construct?
+I assume that the PLL status is going to be some lock bit in a register,
+and you're got some "hardware" in your FPGA fabric that reads that bit
+and sets a GPIO when it gets locked? Or maybe it's even simpler, and
+your GPIO just gets set once your custom HDL comes out of reset, which
+happens when the PLL locks?
+If that's an approximation of what you have, that's not a software
+construct.
 
+> right place to submit such a helper driver, I'd appreciate a hint what
+> subsystem is the right one.
+>=20
+> I was not sure how to provide a diagram in the mailing list, so I posted =
+in
+> on Github https://github.com/OSS-Keepers/clock-controller-guard/issues/1
+>=20
+> It is a driver which models dependencies for other drivers. These are soft
+> or "indirect" dependencies, because we cannot access the FPGA unless the
+> FPGA_PLL_locked, and GPIO is telling us we are good to go.
+>=20
+> Conor, I think this should answer your question as well.
+
+Not really, but it gets part of the way there. I want to know what this
+provider actually is. I now know it is a PLL, not an off-chip
+oscillator, but I know nothing about the interface that you have to it
+(or if you have one at all). What compatible string/kernel driver does
+it use?
+
+Because SoC-FPGAs can route GPIOs from the SoC part to the FPGA fabric
+and use them as if interacting with something off-chip, I'm not sure if
+we are dealing with an separate FPGA or a SoC-FPGA. Which is it?
+Effectively I want to understand why you cannot just read the lock bit
+=66rom the PLL directly. In my experience with *SoC*-FPGAs, things like
+PLLs that must lock for the fabric to be usable have a register
+interface from which the lock bit can be read, that is of course not
+clocked by the PLL output clock and therefore accessible before the
+PLL has locked.
+
+I think more info is needed here to guide you on where such a "helper
+driver" should be located and what the dt represetation should be.
+
+
+--UQ9U3XuY+nYj6U50
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCacV7ygAKCRB4tDGHoIJi
+0kvOAQC3Yl85Pkdjs5ANcVdE5+cS5UTtUgANY2BkzORrhG9MrwEA3Cp5Fdjq73Im
+02tAQyjZKEeIz8XYECMdVI5AiW2PsQQ=
+=TKDd
+-----END PGP SIGNATURE-----
+
+--UQ9U3XuY+nYj6U50--
