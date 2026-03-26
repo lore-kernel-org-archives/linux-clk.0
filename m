@@ -1,115 +1,123 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4735D288CA3;
-	Thu, 26 Mar 2026 18:34:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4CFC330B07
+	for <linux-clk@vger.kernel.org>; Thu, 26 Mar 2026 18:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774550083; cv=none; b=FO012ERhgBqTnWvKVgPaAjZJM/pIEzfmyWwCbxX9TkIPXNzXEne2iuCR7D1eKRmzyhc6T/W0vMiVmnbk2ClMPpIbZwpYuvgL0lJfr/ARttqgoM2lkEmN7NrrZgbXzZnR0Ljzn4U4rx2jkjdbvYDKOs2I7oy0dKNZ+VUyu8qUpH0=
+	t=1774550501; cv=none; b=JBgLC9MqeEelpH1oZ/TnhOW8dqK5tE61Vac2Rrk3ZSZdRxNxnBdnDRuU3Z3OB+2bVaphRE9xbYkxYzuu+1yEV9By/oCMiyLPwQZTvtxQMa413naWzyupnDnO68p/qr05vacsMOfjYn5mLO3X7dtPXxrjkhMG3mqgRtpaEMoAFrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774550083; c=relaxed/simple;
-	bh=+WFhHAP+I6U56ZY1SPoQXhOLT+bdcm5oHSlV3lm2fRk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AmHB+gFBIok+m/Y7Ubt0ETEhYQNvLq56BuqJACvQkZsJ5wsqw4a7TNWBtpmWRhOZrqALdg9yjnpDUrKu7sEWwbPSofT2NoQp/7r23An4WrGhpCN+vD4zK7+b9A+pQcK9OVuroCHMXx8Wl4cQhlb269GgeBklAx5KyFvbaowouus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YLQ8s2Ys; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774550501; c=relaxed/simple;
+	bh=bJ6aPe/Nui+QtwM6pXeCZFiQSEzOXhL5o526MBBhQg0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Y81EnO0Dx1mMKmWRyuCo7LnBTp12fbxubfsYMqlBBhzuQdJnwZOppdWCPdWFN57CZzxKGmW+Zj6KIS+LH92S4YVZzAohQMV2UjyYFdeVTK8SHKcc2Ve1SusIQw0Ho6inYREq+GQoOAijlCwJT9pljxL26d5mVUY9vd7AFP7S9U0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g0/avLhY; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YLQ8s2Ys"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 588ACC116C6;
-	Thu, 26 Mar 2026 18:34:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774550083;
-	bh=+WFhHAP+I6U56ZY1SPoQXhOLT+bdcm5oHSlV3lm2fRk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YLQ8s2Ys1REk6EW7Qhg3mlYZf3hKzj8IindqDfPFSPV9j2xX5TipAVNqRAUNL+Wea
-	 x4Y0N8d3LK8wCT2DArdswnWLaR795pWrpELuTVswjw2gttc7K7J4eNtCdjcjpqbJlz
-	 yK/HKpZlVj7Z37+hYHahAhIkr6dwVwIfBpaLT3hLCoQEgAeJNgF7DSLH3zUsKsCDi2
-	 ckkp3Xk9BU37wOBORGkLpHEm38eeWkBZRrpzO5xlZPT4MNuBpD4kU3BAl74GVvgSo5
-	 NsK/KDCX/pTx8/NsY9pHgcp5u+/sfcKA5UVl8fiQSP8dqqxQ67uoL7JcWFreNn9cnY
-	 ZF0JxhevI/KOQ==
-Date: Thu, 26 Mar 2026 18:34:37 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Yixun Lan <dlan@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Frank Li <Frank.Li@kernel.org>, Guodong Xu <guodong@riscstar.com>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g0/avLhY"
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-c7358a7a8d1so960727a12.3
+        for <linux-clk@vger.kernel.org>; Thu, 26 Mar 2026 11:41:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1774550499; x=1775155299; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mwjCW0nYj9p4CO0/GU2nqORuahjWsn3xAn/vBQiDUkM=;
+        b=g0/avLhYWeUQAjbmFQB51pk4QoETWtzlA3Q0BknjGbf06jt/6R9vn4B3WQhXXLjZnZ
+         6SQaGWu7aEj6MWXJ7Kxz1a+uPvgWuhV7AV85G54CLZR7c4mqFqNbRJPZzrMvOfk+D3a8
+         hwyOO20Cpyzg4euDTEikpGe1V8t4dEqv0hsNQ7JmwsIoW2TI079ACg2e68YCtincfnhh
+         GDou0kXJodeK1I+cWrS39G2RMH74/lZScCrA759yMO6QKZYiOz3ZTgvVeYXVxyfKnhpD
+         pelNt5MmZVcNZbohGy8H6Nk0IOfcQ4uyhxg8hAyHN4qm4j62FffWbKzFymWQVIC3P12m
+         D3cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774550499; x=1775155299;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=mwjCW0nYj9p4CO0/GU2nqORuahjWsn3xAn/vBQiDUkM=;
+        b=EWWnYPlMiEMLyUxA/ZkafVeCpnGeaX2ZWRDy+yrxxZpcL5fKBJ8wznJB3z6ASYWG+W
+         ui9fG83wQ072aXqVNyooVILYDlbE5DctjFP+CwlNITfBe8NO7sVGcdh+rs+dsrtjOtTx
+         2owek+eSkWBDLharFF/Eaa2ceO62mxTuWgwCRDB6qN5+rrQQReEGbzxNbDOa2+1sys8M
+         /eQt72FMn1vQr7m6upwZ8DTTMxerTcZsChF9R6HuORP2r59QpBRTGq3Woj8OkQwCra1q
+         nm6mhczSUI7RvxkwLb3ZfEzrN7HuQecBs6cGtWu7pSbDAX6EA4QmZvMkvmlqn9rwnRsI
+         edWg==
+X-Forwarded-Encrypted: i=1; AJvYcCXPxgI9qhUnuf+6GO4Z9uoet7HtwDR/LnNf6EPzyYm8/64Aj2vJ3mojgL+26Tw1BSu3gmCZYVMRrXg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzonfkQoYTXEAln9h4WrmZXYsSW6Qpd9ysXy8pSnfYC1YfyFpdr
+	8bCiqzwttLoGkHNTHgZLFrmqRL8e360+orgHic+mGuJyzdwRNTGjSnxM
+X-Gm-Gg: ATEYQzxzwOX8KKGlqpWtHraI/BotPqwLsvlSrT3Xp4vRHP8kbDXX/KnwKCIodXNtjgm
+	0nsRzOJCYq2XG0wfoGyv7QS5fdtZMrJaxZKwvuMlibNTJz9qC50E2ulohdSbm7kAlHq2myT61bg
+	UNQxMUUbya4CCDkvgEj1LStgY9bb/UxK2kDnHu6Wnd0PozvGBhKEHKtuZgI7hyFglOGY5PYTA9y
+	S1waU+PUTFBY7dHDz09/uAreIHsKpBK7d9MH6lCdTsYnOftNjees68q9+kNM+m1uezlTpdNGyHL
+	Fmd5vKW2HW+KGT8il1U2cHv95bdeBY4tgSHWpvsBXkaK455Sw/qj9OKTf4aBYmVQIdTWFFycPAw
+	lcYP0tVxI2XPmZ5UPOXIOU9mDofuxohXAw+sTVTwsjAG0vNHNeM2vNWXdfC8TgAyFK73VbIt1p0
+	f+vXhgk+N1POP9JngxaonU
+X-Received: by 2002:a05:6a20:3d81:b0:39b:edcd:d936 with SMTP id adf61e73a8af0-39c4ab8beb1mr9569115637.16.1774550499135;
+        Thu, 26 Mar 2026 11:41:39 -0700 (PDT)
+Received: from ArchLinux ([43.251.91.119])
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-c76737f42dcsm2983400a12.4.2026.03.26.11.41.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Mar 2026 11:41:38 -0700 (PDT)
+From: Biswapriyo Nath <nathbappai@gmail.com>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Biswapriyo Nath <nathbappai@gmail.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Sean Young <sean@mess.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 2/7] dt-bindings: dmaengine: Add SpacemiT K3 DMA
- compatible string
-Message-ID: <20260326-explode-surplus-24c0e0813099@spud>
-References: <20260326-k3-pdma-v2-0-ca94ca7bb595@linux.spacemit.com>
- <20260326-k3-pdma-v2-2-ca94ca7bb595@linux.spacemit.com>
+	Stephen Boyd <sboyd@kernel.org>,
+	Martin Botka <martin.botka@somainline.org>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	~postmarketos/upstreaming@lists.sr.ht,
+	phone-devel@vger.kernel.org
+Subject: Re: [PATCH 5/7] arm64: dts: qcom: sm6125-xiaomi-ginkgo: Add IR transmitter
+Date: Thu, 26 Mar 2026 18:41:24 +0000
+Message-ID: <20260326184126.9280-1-nathbappai@gmail.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <dd71e35d-5dd1-4341-bcdb-d082dba41d3a@oss.qualcomm.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3c5c3SbeQ5J8Cvcr"
-Content-Disposition: inline
-In-Reply-To: <20260326-k3-pdma-v2-2-ca94ca7bb595@linux.spacemit.com>
+Content-Transfer-Encoding: 8bit
 
+On Thu, 26 Mar 2026 10:29:49 +0100 Konrad Dybcio <konrad.dybcio@oss.qualcomm.com> wrote:
 
---3c5c3SbeQ5J8Cvcr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On 3/25/26 7:07 PM, Biswapriyo Nath wrote:
+> > The IR transmitting LED is connected to SPI8 controller.
+> > 
+> > Signed-off-by: Biswapriyo Nath <nathbappai@gmail.com>
+> > ---
+> 
+> [...]
+> 
+> > +&spi8 {
+> > +	status = "okay";
+> > +
+> > +	irled@1 {
+> > +		compatible = "ir-spi-led";
+> > +		reg = <1>;
+> > +
+> > +		duty-cycle = /bits/ 8 <30>;
+> > +		spi-max-frequency = <1000000>;
+> 
+> I see the binding allows a power-supply handle - do you need one?
+> 
+> Konrad
+> 
 
-On Thu, Mar 26, 2026 at 04:17:17PM +0800, Troy Mitchell wrote:
-> From: Guodong Xu <guodong@riscstar.com>
->=20
-> Add k3 compatible string.
+I have tested the IR transmitter with my TV and set-top box both.
+power-supply is not required and not mentioned in Android devicetree.
 
-That's obvious. What you need to explain is why it is not compatible with
-the existing k1.
-pw-bot: changes-requested
-Cheers,
-Conor.
-
->=20
-> Signed-off-by: Guodong Xu <guodong@riscstar.com>
-> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> ---
->  Documentation/devicetree/bindings/dma/spacemit,k1-pdma.yaml | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/dma/spacemit,k1-pdma.yaml =
-b/Documentation/devicetree/bindings/dma/spacemit,k1-pdma.yaml
-> index ec06235baf5c..62ce6d81526b 100644
-> --- a/Documentation/devicetree/bindings/dma/spacemit,k1-pdma.yaml
-> +++ b/Documentation/devicetree/bindings/dma/spacemit,k1-pdma.yaml
-> @@ -14,7 +14,9 @@ allOf:
-> =20
->  properties:
->    compatible:
-> -    const: spacemit,k1-pdma
-> +    enum:
-> +      - spacemit,k1-pdma
-> +      - spacemit,k3-pdma
-> =20
->    reg:
->      maxItems: 1
->=20
-> --=20
-> 2.53.0
->=20
-
---3c5c3SbeQ5J8Cvcr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCacV8PQAKCRB4tDGHoIJi
-0iSJAQCYik/5JNh07McaFHFAtO7PKvqeDrCRfWwv0LzCc+MAOQD+I6kaG8JvSER/
-6z5GZ8MFkLGErIBUFMmIqZJuwKZldAo=
-=sPth
------END PGP SIGNATURE-----
-
---3c5c3SbeQ5J8Cvcr--
