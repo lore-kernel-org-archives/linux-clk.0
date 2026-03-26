@@ -1,68 +1,68 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7B5379EE4
-	for <linux-clk@vger.kernel.org>; Thu, 26 Mar 2026 01:28:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2436A37C907
+	for <linux-clk@vger.kernel.org>; Thu, 26 Mar 2026 01:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774488491; cv=none; b=WLcQSN1fn5F2FAFfBS1f+DxqWJXOfeQqSQA34oY3MClw0aBn2jfzvLmzM3MWsiGl0sHO5XfldIAEoIvqSpkddDJwOfrL2ul5CK2aMSe6ugAruqGrfZ0KqG/AsLNVKN0dXaSYYSTDyWPRV8GiezNP8Lsj0JepezwyuJBIKCQ838A=
+	t=1774488494; cv=none; b=T2T0iba115pcrV46gbs01ofAYPtvUTLI4BkdcIZuBKVSiIPK/ZAsB53olvALXfPB0KSR67vcdZMEJxJv16p4cbxxU+O8yhN3B2xt/OHk1ow/Xslx0xfKEOehK1bZe81+Fk5I+/lrA818EWtvwPYcKtcq0s+rbltgha12cAyhlPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774488491; c=relaxed/simple;
-	bh=YKW1V7XuMJ4AeReIm3Qwtpj6WjYoSkYt9XgvGuaFoSY=;
+	s=arc-20240116; t=1774488494; c=relaxed/simple;
+	bh=RysHVq0N4+YzTb4e9cFYCnf19hquCbv9aui7fBhcLT4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LRLm81SoyVKw90/0FKmvG3t4/PuIRhx77AXSwioW39PXJIFGmZNthfOpIcPyxwyHxapHM1KkvBoOXjIS73psl29N69ta2xyOjEKV1IAOk5LCN+5pKr9lcJrmfq+KcA6b76TWRoh1RThe0t754wKyplhsg/n8/DP7Pvo/OkFj84I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c0FS7gpb; arc=none smtp.client-ip=209.85.128.41
+	 In-Reply-To:To:Cc; b=ZMvW52Lap6hfPGWZl7obxFL2jnjzr9MJ43ssftaRMjcHsio5T6TFdTcmDgHr3ea2oqUs4jrXtl0pmV7L1sGm7LieiRxoMFrgDQKREbkLb2fEs3jLd7+cmJRWRicgtVe/S8kIeHFhDPScSvA0Z3+FhbMkeUg6HocS6wvXchss6wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WmVPmPML; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c0FS7gpb"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-48704db565eso5999295e9.1
-        for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 18:28:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WmVPmPML"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-439c56e822eso408424f8f.2
+        for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2026 18:28:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1774488487; x=1775093287; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1774488488; x=1775093288; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=P21FDgbBj2GIbBZ7VBtv5L9RLy5tJ4WiwvtA0ou3a9I=;
-        b=c0FS7gpbKxS2+Xj8brsaRetc01HMQlP32vMUmD6UIpvhCifFbTq667FgcIIkjPuaLx
-         4owO6xI946gRIKuDKObsunpfEUssxPunoZpIr+fnnM4Tq2Yl5+4ClPvS4o9hvu894LA0
-         FEtj35O7R2V+Gj138aNbltNjAaXXhvrtiVvrID/WUiQ7qyguczAVzew0pYd3xqzlNq3D
-         HAz/Pdc+6DjkpoxgoBPI3sGe2agMHggxE0bGGh/WPD/HHvCmcnS+W+09OaliTItO8tJ+
-         XFR8d0VqrB+EaMMCvKljDexCwpVC1uSgRYqQ0uSdSmDCVEQgC+zOTTy0NBS5HuwkEDGv
-         ZE2w==
+        bh=AqJm1xZwLehDeiB9ZhDe2YZdoSqbYfjYIEA7QeOvbXQ=;
+        b=WmVPmPMLg5cHLA8iedgfnYlvZlnh/EKxSoE/DD0UeeIjOpsf7893oZTwou3ltuyVdq
+         TRhHyZDASKyCL6Dk8bHs5tNHImjs0tNstchbNlcnHlPBkri+mpsB7yTYhftiI3Hy0lb7
+         YOHzBqZsH0DoiGw2xQAoBhGUGLNlxRPNmIGIG+TUI3Rpog4xNwqIWJQmCEOPIQJ0x02s
+         G6F4zUlTnwd/PenIRi120yhYAvmQrA06l0XKPH3s36fR0m0zztEX8TuixjL0MerjGCv8
+         PiGcvnJcH+aFzkxMHim9gPhYeHgYhUkMT4Eo513QRs2IuJaJKA4rL6vkqtmyZngv6h/p
+         zYdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774488487; x=1775093287;
+        d=1e100.net; s=20251104; t=1774488488; x=1775093288;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=P21FDgbBj2GIbBZ7VBtv5L9RLy5tJ4WiwvtA0ou3a9I=;
-        b=OHAF2ILiOmqLBX7bcJW9MYsQo3kwqf4NFLIXYYFCfvnFtTaGkddmj2LLSRD5DPYGQw
-         JLMTfSHZKZ/XgdZ1s2oeyxMTAnbVgo2QsS83wZqM1txLim+/9HpJQizbfW2XVzQmcWaO
-         9q9YGX0pRVwZC9Oi16yHperVyT/MD9c/8Hj7iY5f8/kfeBXcoRXe2jMYK1gYOQ0vvRIm
-         Lcfrw4FIeDWpiBAclsa7puqGk8qS5EOh/tf1ObQP2zcUnsGtw4ynVGE1CmguE1XMe2AK
-         WmVsmmfL3W4Jrb3snhonzs53x88IkE7wpOrnyj6cS/LVVNR95FtI0hbpQYlzpw03cwIW
-         nf6A==
-X-Forwarded-Encrypted: i=1; AJvYcCXC7c9ufSuqQX0uITlnzTEL9jVXjAlhLMd+RomibZYiOosum7Km/50xdLav6smyCtNgc2Xh7bRbqjk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNHsZjUjgenDR/P/nPRKd3lKkwIuTkQ0PuZbPHMeKwGSdM04ek
-	ltiy4327d4EdYTYHTXGgWq3svJxT6ROEzlqS0uTGvN9GjkOAGDLEnbOpW7YepqjuJZNdgI3JZl9
-	U+igG
-X-Gm-Gg: ATEYQzwe3+idMkOlNBnc3DKxAutzv9TgBsKKaIhqr1poRA2GmAizrFW4yjkxluVM+O2
-	rnucUHDMIE3TlTRh/WXa573AM9OrXIBSj0k0sfKqFsAYnSx3nQrCkbS0GEHC9I35nUatMk+bxVo
-	rArck0IxiHYEKI0BZMsUdrPVH9U/6mPPivwkSZOM77MKQiLekPbfDMYv8uACViStEs5sHeeNGdA
-	p8t5f5mbvaIH3J1Q+hHlNLwzivc5atI0gLFA0dzSC1GoOLEDTDt0jw5W1zjKt/oabfnsoFXJFlK
-	y7AKj1njZ/u+4if4sq7aYvhkHGzsvpjXwBMdwqiwODrHVK/qnmEk4+Fx57E2nFo00NIzC5DKF15
-	YIVrNGhKmwV1DtMbm8oIXtRkx1fE0IviB5GU6y6MPVxoPsw35QUmDu/J5m0UbD0Xe65f7RYwaKG
-	w5x3WwSm4J57i2ZuFC1CzVL4Us8eifWh04Xg4=
-X-Received: by 2002:a05:600c:350f:b0:485:40c6:f528 with SMTP id 5b1f17b1804b1-487160a213bmr80479925e9.30.1774488487128;
-        Wed, 25 Mar 2026 18:28:07 -0700 (PDT)
+        bh=AqJm1xZwLehDeiB9ZhDe2YZdoSqbYfjYIEA7QeOvbXQ=;
+        b=RgQePKJGmjdMfYSinYaDf743iieczRuz53X2ldafqBpxVrcW9mkNnt0iocRUiIUq6t
+         hvvkAJBkVLKMOY5CjX1/EUH+Pe1gV9iokDK8TsKljEJUPAu21TT8Jvm4KJrHAm3ADRC0
+         giDHF7d7w8DMzQ3xZ2CCzTy3+48Tpfe9Y/VrhXWvFg4jINocBFeRUsTB7x6jJJzFNVeB
+         Um82OS2v6JTkmUEx1AV+NKWNLUfpiFowyqTpHDLI5QAsepVT0bEBt21JOuTphzBHTcrt
+         Kc972/HshgXCkVFbgWJ5G+f0Aoa+LsRFhtts6sWoEuN2340oedl/h/eBR6KgCLEzgRro
+         q2YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV5U6Wt8wI817Y669kiYNUJU+lgyOQDw2TxImnqrqttwwJJliTydGBbDZ0XoHrPNpDvTNpHNUB1aVU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/igS/oeB9QPW6Fzdid9xApEmIYgwjkdQ4nqouGeML2Pvbeoxh
+	kLkVIJI93Kr8NbOKYRdty9165xYVTiZikpd9nYy1+YKHk9OP9Tll93TVMGs4FHmhezf9rm4tmPA
+	2oPSv
+X-Gm-Gg: ATEYQzwyuuck/pY2mhav+ATu9wK7lD6EUNrWumfy6Qzwu/Zx0sCyppKViOg25xo+Wnp
+	crCSzCgWMF7RJhujazZhSajgf7dllZfC/OAy3d7xgFqszDU4qwYNwaiomOdUHRyz+N5Y5FuvJoo
+	ksfIgg3ajuGpsiQRdINKwPkwaLIBTxsXRDd9Z6qRaHSzRajmxVpvpFu8n3gquOqOIn0Sfk8Lnue
+	UB6wohyTk2ONs93ibEA/0lKvNbKPUO65NTX16l4/hTQMR1Jx/2Ik+rKAUpAQN/M4Wjgc1/USrcP
+	C7k5f3R1RD2HtAdiP7XQaqi2y6p/n53yymvF2xvRu7qUU8VfLRx/9lbGl2xqGJbPhHY9Mrw43AW
+	CCx/2stfe/L/UcYmkdyVs31ABE9t29x1oW034fryLNYowFDA9TKYzqHHeuqrZBvI2yLCbGnoYc0
+	Qp0xMRGzCNopRDooh9cwkc0Mi1i0g8i5UzQYQ=
+X-Received: by 2002:a05:6000:2890:b0:43b:4625:5933 with SMTP id ffacd0b85a97d-43b88a88baamr8337146f8f.30.1774488488352;
+        Wed, 25 Mar 2026 18:28:08 -0700 (PDT)
 Received: from [192.168.0.35] ([109.76.163.154])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b919cf1c4sm3918051f8f.23.2026.03.25.18.28.05
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b919cf1c4sm3918051f8f.23.2026.03.25.18.28.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2026 18:28:06 -0700 (PDT)
+        Wed, 25 Mar 2026 18:28:07 -0700 (PDT)
 From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Date: Thu, 26 Mar 2026 01:28:31 +0000
-Subject: [PATCH v11 3/7] dt-bindings: media: qcom,x1e80100-camss: Describe
- iommu entries
+Date: Thu, 26 Mar 2026 01:28:32 +0000
+Subject: [PATCH v11 4/7] media: qcom: camss: Add support to populate
+ sub-devices
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -71,7 +71,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260326-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v11-3-5b93415be6dd@linaro.org>
+Message-Id: <20260326-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v11-4-5b93415be6dd@linaro.org>
 References: <20260326-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v11-0-5b93415be6dd@linaro.org>
 In-Reply-To: <20260326-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v11-0-5b93415be6dd@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -87,84 +87,54 @@ To: Bjorn Andersson <andersson@kernel.org>,
 Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-media@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+ Krzysztof Kozlowski <krzk@kernel.org>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2666;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=941;
  i=bryan.odonoghue@linaro.org; h=from:subject:message-id;
- bh=YKW1V7XuMJ4AeReIm3Qwtpj6WjYoSkYt9XgvGuaFoSY=;
- b=owEBbQKS/ZANAwAKASJxO7Ohjcg6AcsmYgBpxIu/t9wn0hjOdBeGp1+ZXyrdnpvlJZRgwHIFn
- gVTWXwfNdGJAjMEAAEKAB0WIQTmk/sqq6Nt4Rerb7QicTuzoY3IOgUCacSLvwAKCRAicTuzoY3I
- OoLtEACy/NhZw3B+kOA16FZWbXQzqgmtyi90H8KVps1zpqy5P/5Wnx7Yyhack7yH/S/WazGWavk
- nu1rmIM5HpFqDEFTOiL6dtQ/4UZ4mr+NmyQMxMDRkVNmwDRlUC1wOI93eYIWl5AmF63jfhytaMl
- buqSyEga2A5R4VeocXLwPL6YrLsdYBjo85PJt4NZpL+8sMq3iIQY4c214oQ0tE7wRlYzARDSnNs
- wWs8/7XDsgC8kiXOC2X42nVFbEXyv8GROVnSllMUNXtyt8BHNtryTpmM1ecdiRa3fR+L+fpxs+/
- sxTSkko+IahfRebJPkqGcAqxlbtOz9dTUuTmfV4/Qo1ZwVAr5H6v55byB1ocViBNKde8fyq40tY
- CB6qHjT9hhz83YYLMAR9F7M6mWNc7T1L8fdstLDnHVb1VdL/r9I9MUHDopr0O0pu4ozgS36Uj9A
- Bkw/dG9zJ8DYDRRtFoWeBETVto7aIeA6sney65DtIAwgjpSA5koaVbS6JNRd9AKoeqGy0vTbunX
- MfdzrV6tsl44jMEfVq+Xk/Yag4aeLwpWLSdAhv5J/FInbVV30WgysEMIK4T2zLqYfgFHAm7Riph
- r7FZAwrJ+xJNNZSfDljO3clL/iRFQj7K96i7NbD17n5qPEW/IIzQcUL2SDj9bBBaymXEhSUp7FT
- 8GRl/ih9TlzVCdw==
+ bh=RysHVq0N4+YzTb4e9cFYCnf19hquCbv9aui7fBhcLT4=;
+ b=owEBbQKS/ZANAwAKASJxO7Ohjcg6AcsmYgBpxIu/++z8oXlchbJP/1M16TqvlqfGF301jKf2r
+ tvWAN5KfSmJAjMEAAEKAB0WIQTmk/sqq6Nt4Rerb7QicTuzoY3IOgUCacSLvwAKCRAicTuzoY3I
+ OvDmD/9IeYsBBB79Uzcq2AiGxUn5frbN2yao4rM5EyI5w/zdWIwI8vVhpwVrKUTRnPJ1DrvcovQ
+ fb6EwO+HedpbY8CYcPjKLFWRNxM8B9CymD0RJh/GyNimakpmkqsK/ZzjRW0qJyHLMwxzVcKBQgZ
+ 6STIheHOVMYoCqmuMWC5Q0yDrkia1uCszfyaARyX1V/ZNDwBQ8qX/bcl/g5hxuG+k8VQVzlVNhV
+ NOH0xS6kyAALaVifjCjL8z/A8491mvPf4ml//sVj10+4pHu5QrkcQwIRXOvbJHmIjkyz+dGDkX/
+ cyjqEiqPQK45U+k7Qwnn2ZwKVfkxiEvvmojLvfQECfFh49JvyPXTo6JvyYlKZ8o/6COYLD2IXAq
+ /1uOuMxz/5YTuuZcL/G2jvgkAJl+dVSe+t61zL6HrtGp9dRxdA1/bjwuZ4YKjcI5pVBT8dINs86
+ tPjzP5qu8CQWrvgpuuTOf9PGwr0KTMeBILGjMGsYhgI4Rf0+N5OZhoh70uXgU8V+ykJl6eDcTIO
+ WH37pYR2LCzoLFH4pKeJmXT7umNMkx9tK009I5PkmZNwM+EhJuaOJQdoISyrEqSBfXhzFdYwdHC
+ k7snsqE0XnDaEXLa0ZmLyJeJBkmf8NsFfsTzfwNZi+0N/5N+eoLzp8NVTv/fK9kAhf7NtD1cAHX
+ dzKtZJFOLXIw6Jg==
 X-Developer-Key: i=bryan.odonoghue@linaro.org; a=openpgp;
  fpr=E693FB2AABA36DE117AB6FB422713BB3A18DC83A
 
-The original iommus list included entries for ICP and BPS/IPE S1
-contexts. Only the five S1 HLOS stream IDs are required by the CAMSS
-ISP hardware: IFE/IFE_LITE read and write, SFE read and write, and
-CDM IFE. The remaining entries serve other hardware blocks which will
-be described in their own nodes as support is added.
+Use devm_of_platform_populate() to populate subs in the tree.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 ---
- .../bindings/media/qcom,x1e80100-camss.yaml        | 26 ++++++++++++++++------
- 1 file changed, 19 insertions(+), 7 deletions(-)
+ drivers/media/platform/qcom/camss/camss.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml b/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
-index f44138f522bba..d2763977a494d 100644
---- a/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
-+++ b/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
-@@ -112,7 +112,22 @@ properties:
-       - const: sf_icp_mnoc
+diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
+index 00b87fd9afbd8..66ea057291f6d 100644
+--- a/drivers/media/platform/qcom/camss/camss.c
++++ b/drivers/media/platform/qcom/camss/camss.c
+@@ -16,6 +16,7 @@
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+ #include <linux/of_graph.h>
++#include <linux/of_platform.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/pm_domain.h>
+ #include <linux/slab.h>
+@@ -4964,6 +4965,8 @@ static int camss_probe(struct platform_device *pdev)
+ 	if (!camss)
+ 		return -ENOMEM;
  
-   iommus:
--    maxItems: 8
-+    oneOf:
-+      - items:
-+          - description: S1 HLOS IFE and IFE_LITE non-protected read
-+          - description: S1 HLOS IFE and IFE_LITE non-protected write
-+          - description: S1 HLOS SFE non-protected read
-+          - description: S1 HLOS SFE non-protected write
-+          - description: S1 HLOS CDM IFE non-protected
-+          - description: Legacy slot 0 - do not use
-+          - description: Legacy slot 1 - do not use
-+          - description: Legacy slot 2 - do not use
-+      - items:
-+          - description: S1 HLOS IFE and IFE_LITE non-protected read
-+          - description: S1 HLOS IFE and IFE_LITE non-protected write
-+          - description: S1 HLOS SFE non-protected read
-+          - description: S1 HLOS SFE non-protected write
-+          - description: S1 HLOS CDM IFE non-protected
++	devm_of_platform_populate(dev);
++
+ 	camss->res = of_device_get_match_data(dev);
  
-   power-domains:
-     items:
-@@ -422,13 +437,10 @@ examples:
-                                  "sf_icp_mnoc";
- 
-             iommus = <&apps_smmu 0x800 0x60>,
-+                     <&apps_smmu 0x820 0x60>,
-+                     <&apps_smmu 0x840 0x60>,
-                      <&apps_smmu 0x860 0x60>,
--                     <&apps_smmu 0x1800 0x60>,
--                     <&apps_smmu 0x1860 0x60>,
--                     <&apps_smmu 0x18e0 0x00>,
--                     <&apps_smmu 0x1980 0x20>,
--                     <&apps_smmu 0x1900 0x00>,
--                     <&apps_smmu 0x19a0 0x20>;
-+                     <&apps_smmu 0x18a0 0x0>;
- 
-             power-domains = <&camcc CAM_CC_IFE_0_GDSC>,
-                             <&camcc CAM_CC_IFE_1_GDSC>,
+ 	atomic_set(&camss->ref_count, 0);
 
 -- 
 2.52.0
