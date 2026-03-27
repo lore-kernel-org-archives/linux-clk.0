@@ -1,42 +1,42 @@
 Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12D23921EA;
-	Fri, 27 Mar 2026 20:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E48391504;
+	Fri, 27 Mar 2026 20:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774642249; cv=none; b=TFwfnrps0Za8fMvi3FO+2VIQz7ZTeTNG7zQnNsKEsYJQFGFV/V/HBEH2ddTj8mS6ZX2XvvuSwygszaadxx8mzfemtDKlSvH0Y9Hi1J/y4aJXajmFnGmzU7adKzhznaOAqVgijttD6zI0tlQN8E4RyNwg4GafUnVBGQwIPRC0VrQ=
+	t=1774642252; cv=none; b=Bn28IVOUC9qdaRUsEaJfYkNkZW4MmsP/iWDLbVaqJk/iAVk/iaSWC+Y1TTZYOL2Cg9+bdcYTwrPVf5QLn9s2ce85yRR1cPp8GDpwrE9t5MGAwaCmc/iv6SGn3fJ60fsKFqwtkhhwJcZWhQwiQEIYnH4sjnvWrZMA6EQiL8Qt5/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774642249; c=relaxed/simple;
-	bh=PKrOSUYH0iJI9iHWHiN/7WH/2D8sWmOZLuUr5mUsIuY=;
+	s=arc-20240116; t=1774642252; c=relaxed/simple;
+	bh=Cl0hRXwYePEWxGxJz07oIc8M/6J4o9Yg2Wo2jED1xyk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bCbxcNkP4Z/kLrhshO2QTEDFlp/Pf5ITQzEIIitS3mMl0Hcux84IcHZOsSHEOPTSxBAzv9gXvWL7j4zhOKp9FnUrHdbUzp9L50Bf2bfzStzeKARF/uh6QMw2/eN8fcm1UsS6b4cDbKTWPRQhhqqnPbZeGayc+h/iVk+s7N/vk/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=aHGM3meg; arc=none smtp.client-ip=185.171.202.116
+	 In-Reply-To:To:Cc; b=FQF0fvOOlShnmAD+MWSJEKOh1Wz41k+35n9sOlx9WlvafQcFNhOp2mfzLj+CqxbJHsEMzSpqfqXJKUuEJfiYnEu4Q7ZlZc2LQWt2kma3z13f5GQEGoDccKgUM5PVMGfQwxBc8qCuMzqjm1Tl4PdGqVxlRQ4JsNSppBolUdaIHYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kB/mZr73; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="aHGM3meg"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kB/mZr73"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 388A6C58753;
-	Fri, 27 Mar 2026 20:11:09 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id D3FA5C58755;
+	Fri, 27 Mar 2026 20:11:16 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 62CE260268;
-	Fri, 27 Mar 2026 20:10:40 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1DC9F10451AD3;
-	Fri, 27 Mar 2026 21:10:35 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 0B43B60268;
+	Fri, 27 Mar 2026 20:10:48 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 700AE10451AD3;
+	Fri, 27 Mar 2026 21:10:43 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1774642239; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1774642246; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=Ddul0e9GZFCUS58sTFnpBUCJG4K93ySFv+lJJXOGGaw=;
-	b=aHGM3megSlFnSCTO/n0CbVEayHxGnRqfvs837i9jzWvBCdRvVztVvy6L03HgwgunsqaM07
-	/vv3Gfw9ozzmvOoR3GzYU/Mncapea7/fHy5MrEAR+A2AQxir+NKU7bq83SyrdR69tXupSB
-	z0mU1WaG18HgPO6HtsZNLloQJkHu40lLu8uD/diO0O8YeuxQBD9jufzfsAgB1FeYIuiLG8
-	v8E11pOPU9gCCfdZ0deuQH4LN23Hy+zf7sZF5EgwLOB0plnX5+qRLIYXX+IHhBSA7Rt4MT
-	kALEkfbO5wbrhnlfVA4wlot0iDJmI4ibmt1k7Gjz2+6sagtVfkXqH6iRrTLOfQ==
+	bh=bk7M/kBCihyHtLEm7h7jmSARtbZ2A1p+Dp2oMN0Iedw=;
+	b=kB/mZr730/FEdUo/BmeU5RaTieAK0DwrqDp6WhtkzLZmtbFoKLHPlB2l8nMsYlUFpYfJ/k
+	lEWIxAAN6BWqmDoWyNd3fGaDI/iwz5zT+RYl9c3+yyttbNVp+Kn3+/DFtimLwLq984KssP
+	JXpdtbmvJdQv3ezm0KIWFDBc8gxKzADmlqH9T+DE5g2mQcGFbrjjh26/2eaD9QB/eR3Cf2
+	IzJVKLb/5SFui4smWD/fMMineevya8SoPIC+xYFAr2wWyBT982QPook5VPFHyx1i/kIEJg
+	wJa4bSEZ/XvMJ5mpt67+F3GjsBukqh3sfF0oW1C45ibDDe8dh4qI+PXToIyQUw==
 From: "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>
-Date: Fri, 27 Mar 2026 21:09:27 +0100
-Subject: [PATCH 05/16] dt-bindings: bus: eip150: Describe the EIP-150
- container node
+Date: Fri, 27 Mar 2026 21:09:29 +0100
+Subject: [PATCH 07/16] clk: tests: Add Kunit testing for
+ of_clk_get_parent_name()
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -45,7 +45,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260327-schneider-v7-0-rc1-crypto-v1-5-5e6ff7853994@bootlin.com>
+Message-Id: <20260327-schneider-v7-0-rc1-crypto-v1-7-5e6ff7853994@bootlin.com>
 References: <20260327-schneider-v7-0-rc1-crypto-v1-0-5e6ff7853994@bootlin.com>
 In-Reply-To: <20260327-schneider-v7-0-rc1-crypto-v1-0-5e6ff7853994@bootlin.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -69,83 +69,38 @@ Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
 X-Mailer: b4 0.14.3
 X-Last-TLS-Session-Version: TLSv1.3
 
-Part of Inside-Secure's SafeXcel family, the EIP-150 is some kind of
-container node composed of:
-- a public key accelerator,
-- random number generator,
-- an interrupt controller.
-
-It also acts as proxy for the clocks.
+Make sure this helper is never broken, especially since we will soon
+make some changes in it.
 
 Signed-off-by: Miquel Raynal (Schneider Electric) <miquel.raynal@bootlin.com>
 ---
- .../bus/inside-secure,safexcel-eip150.yaml         | 58 ++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
+ drivers/clk/clk_test.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/bus/inside-secure,safexcel-eip150.yaml b/Documentation/devicetree/bindings/bus/inside-secure,safexcel-eip150.yaml
-new file mode 100644
-index 000000000000..1b3d83a852f5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/bus/inside-secure,safexcel-eip150.yaml
-@@ -0,0 +1,58 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/bus/inside-secure,safexcel-eip150.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+index b814b45f1f7e..8a17ad0d185f 100644
+--- a/drivers/clk/clk_test.c
++++ b/drivers/clk/clk_test.c
+@@ -3651,9 +3651,19 @@ static void clk_parse_clkspec_with_incorrect_index_and_name(struct kunit *test)
+ 	KUNIT_EXPECT_TRUE(test, IS_ERR(hw));
+ }
+ 
++static void clk_parse_and_get_parent_name(struct kunit *test)
++{
++	struct clk_parse_clkspec_ctx *ctx = test->priv;
 +
-+title: Inside-Secure SafeXcel EIP-150 container
++	KUNIT_EXPECT_STREQ(test,
++			   of_clk_get_parent_name(ctx->cons_np, 0),
++			   clk_parse_clkspec_1_init_data.name);
++}
 +
-+maintainers:
-+  - Miquel Raynal <miquel.raynal@bootlin.com>
-+
-+description:
-+  The EIP-150 is a hardware container, it has its own interrupt
-+  controller inside to which a random number generator and a public key
-+  accelerator are wired.
-+
-+allOf:
-+  - $ref: simple-pm-bus.yaml#
-+  - $ref: /schemas/clock/clock-nexus-node.yaml#
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: inside-secure,safexcel-eip150
-+      - {} # simple-pm-bus, but not listed here to avoid false select
-+
-+  clocks:
-+    minItems: 1
-+
-+  "#address-cells":
-+    const: 1
-+
-+  "#size-cells":
-+    const: 1
-+
-+  ranges: true
-+
-+patternProperties:
-+  "^interrupt-controller@[0-9a-f]+$":
-+    type: object
-+    $ref: /schemas/interrupt-controller/inside-secure,safexcel-eip201.yaml#
-+
-+  "^rng@[0-9a-f]+$":
-+    type: object
-+    $ref: /schemas/rng/inside-secure,safexcel-eip76.yaml#
-+
-+  "^crypto@[0-9a-f]+$":
-+    type: object
-+    $ref: /schemas/crypto/inside-secure,safexcel-eip28.yaml#
-+
-+required:
-+  - compatible
-+  - clocks
-+  - "#address-cells"
-+  - "#size-cells"
-+  - ranges
-+
-+unevaluatedProperties: false
+ static struct kunit_case clk_parse_clkspec_test_cases[] = {
+ 	KUNIT_CASE(clk_parse_clkspec_with_correct_index_and_name),
+ 	KUNIT_CASE(clk_parse_clkspec_with_incorrect_index_and_name),
++	KUNIT_CASE(clk_parse_and_get_parent_name),
+ 	{}
+ };
+ 
 
 -- 
 2.51.1
