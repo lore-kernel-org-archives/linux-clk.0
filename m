@@ -1,191 +1,212 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D573EC2E0
-	for <linux-clk@vger.kernel.org>; Fri, 27 Mar 2026 13:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=170.10.133.124
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774617564; cv=pass; b=FuPJv3OqKYfFjZ0LqTS+aFsTDxVhT1pWJU6r/ZFVs4u1inlK5sdF0WSNTxhg8wOGWgNDmg/hi0jm6y+t6SlHW3npz1avzCV5wxKdeI1TVDI7QO79mUGN53HbuEO+splBvnj4rM1ZsvW6pBdC+Vk9ZYb4sgS+1iaDVnN7aeRVB5Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774617564; c=relaxed/simple;
-	bh=O7lSs+njbRqVkVDMgsOfygnKLYu8xaGMK8nVUk8tZOs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sHip8eVSbIeVj7T/jZGhnPdaO8Rbn2wc8NjCbdoeklHQL1UqETjJLz9fBQ2rgXIoULa4nTtQn5HkR7KzN9swmiKYXE6Ii0MqnRR9oT+ce82Rqkw27d0B+eOYihcN8NesRaHdvwFw8VztL4XR4sW5FSVT2Q68a6kNg3B23bWHeOk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qhpsnojl; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=QF1+1Od+; arc=pass smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0863EC2CF
+	for <linux-clk@vger.kernel.org>; Fri, 27 Mar 2026 13:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774618255; cv=none; b=VHTOgeNHJ3h4cfEFlwmxjM8DZMPXE9faxExbIZEPWTr/de+Vvkv9rh6CB9IzJgThBtWGTxDZ4c8wOt+FRRwkfaF0x79Fec8RofumEb+kVGEIf4nP+Pfwj9D5sYerZzUFtWStP1qbhxBzvrjPjehnUSy3WCpOBtIcsHe56WnTe+4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774618255; c=relaxed/simple;
+	bh=sghX4PphvCW7X0zgsIy5ejmBRZP/ntzeJagmmu1/j2g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qg33JEaRNo9wy4qOnVp00IgX154E0pTxQLkj+oxkrWpEMWPq4JwFgkOS/jcwUAFC3Z+1j/aiD3j7HVqyzVoSa4rx9p5d89knEmQOq+IIxPbNWciJOXXwI7+EHgscADT3dWQIoS/wlttmM0YkNNZuFb25ykzn0/7m2J7ALBgHmTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PCtppmWE; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=m1zuoVUQ; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qhpsnojl";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="QF1+1Od+"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PCtppmWE";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="m1zuoVUQ"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1774617562;
+	s=mimecast20190719; t=1774618253;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=O7lSs+njbRqVkVDMgsOfygnKLYu8xaGMK8nVUk8tZOs=;
-	b=QhpsnojlFuqiGOokjxFbweLSJ9ox6LapcjREga4mAN61Xt+stDmHSZf8PgImmsW9O0unr5
-	kXPB77M3eVDk9uDdWs/fYC2iXHnb/4hG1vUrP5474/nFEeJ6lMJgwH/4wDs9LJshsfc3TV
-	LOGC8sBrGtboCscYR3imd1I5a/Y2UY0=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=wp4gmpeShrxSfN4R+47KecY7fqn2WEuVtUlQVVvdg1Y=;
+	b=PCtppmWEkGSLOs5DfJdrnNU3FRPSIlCYbwJuFuT7XJ+obNiqcpUkxjC5FXqTteQFUJZ3Od
+	ZWzQv//m+namoVAoalAnsgqxeWwOu16l1JpWDeLDXubixMPox/X/k9nH3QUz8jIOKnqP4E
+	pAbkZQWXIxgHIX/aprxnmRiHY3Dlevw=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-572-pegEp4S3MN6-7GieI2_2rQ-1; Fri, 27 Mar 2026 09:19:20 -0400
-X-MC-Unique: pegEp4S3MN6-7GieI2_2rQ-1
-X-Mimecast-MFC-AGG-ID: pegEp4S3MN6-7GieI2_2rQ_1774617559
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-b90bb54d034so318013366b.0
-        for <linux-clk@vger.kernel.org>; Fri, 27 Mar 2026 06:19:20 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1774617559; cv=none;
-        d=google.com; s=arc-20240605;
-        b=JcN0nd+02pFKR4QHTdQ1Jcg4XNmeLA9LjCaWIsceFptID96cS74TrmS49xG5cLLVby
-         JaW1I6LBCSZGDIoqRzcw2anc7dlAEqxS2Da1GCxD9p+nWrsVe9v8KnW2z7a8Wzmyzu9M
-         GKZB9kzTexBeKWlHIaoazuKMmCwtp2h6oos1tM2YEjDOfmBla1bx6MpeuRDY2WtMCmGc
-         VJcMtzc6KBMSFkRuuotzNbi9Lj/gaF/RBrtpYLAkf90bj5TskT0hWO9HojOnjeB5m3NY
-         7lKx4pCFHrUMW6MVB1db2WC5QSEQKYyhBsfium9rnE3w5IHwHVtPtKIKgMbOv12sox+k
-         qGeQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=O7lSs+njbRqVkVDMgsOfygnKLYu8xaGMK8nVUk8tZOs=;
-        fh=9clvuN5WYCgz97kpOkIajuuFkCvKTAv7GEQNLLmv7Wo=;
-        b=SkqdlxZ+oEiYvB2O6pNCLjs3/lQdwoxqEK5uDZanijW2ziah1oT6XzkECaaBX1FejY
-         3sZVFlbjUeQWK9oDD1fTJDIgYuj9z/Pmozt5TJ/KsTKAYctZeGM9L/DpYL5vPwPE+OWG
-         KvoouV2jSWvQ55QmKT8ieoEwD2Z0R2hkXAz5L1Or8HP5JnqCM5CRzmaIpbDSTqkP5RzT
-         DxIxqV3P/y1PyWEQEZVkauY8Ew3yyxfLqIBYMWnn1IPbumAO3BnbgDc+G/C9PVALMwBV
-         JG9DaiHcl8AdxODw7x9djAlkjOXOxtzHarbuFHAIsE9oOGpl9YT1SeTZKLXZCqgJIyLw
-         unDg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+ us-mta-255-VrNsxdH0Oc-6Sk000qBrXQ-1; Fri, 27 Mar 2026 09:30:52 -0400
+X-MC-Unique: VrNsxdH0Oc-6Sk000qBrXQ-1
+X-Mimecast-MFC-AGG-ID: VrNsxdH0Oc-6Sk000qBrXQ_1774618251
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8cfc5294894so673612985a.1
+        for <linux-clk@vger.kernel.org>; Fri, 27 Mar 2026 06:30:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1774617559; x=1775222359; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=redhat.com; s=google; t=1774618251; x=1775223051; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=O7lSs+njbRqVkVDMgsOfygnKLYu8xaGMK8nVUk8tZOs=;
-        b=QF1+1Od+lu0v6SXLoUiWmfc2wQaHF6IaeGlzGx8vxaU0KEjgbLmsWHS7kdZuM+6E6F
-         2r/zqBez4/G81iFb1QukUYd8Kp7anbhuxDbMomI95RydsDay+zMi81xoLhe8yDZrfSMV
-         yF35ikU2/jwXDHO2nSpPkaV48yNOw5gVpZkNzDPh5tT1Ylf6s235SUG4bKoQniobmInD
-         GEXOMMilSk4M/XAvwUNN/TrmMUGPVydz2CngdMUTeJ6m34SvRsq4kM1l/2BrB311wAo/
-         UXdPA6MfmBWMeEU6YBRG73otnf8f6MTEfU7vU87hZMM0oFzq6nYFeNR57KHy+5GJ++bp
-         V8Pg==
+        bh=wp4gmpeShrxSfN4R+47KecY7fqn2WEuVtUlQVVvdg1Y=;
+        b=m1zuoVUQTQEbtgHXErYPLubyfOS7lDcl9FCpxOHSvqpUPAZmRZZPUB50j/E3/FVVwh
+         wBYIqlKnIhwm5vEluJw3OrWmRgjcTpMEA8s1NfAj5McAoePs0y8GsR3bhq9PYm2WhRR+
+         gFG8jq0qzGbiC6BTxajqBuLDsBBg3Og9Py38ZbvwidZdvdFWV9UJNTYrHqURrh/tnqTq
+         gj2OThnlQ3AVBVsUsSMQRE9WdAxcTNlRHl48i8socNitTq4HPP/RL7czoi3PJns9EGJl
+         hfDP00ftfi2/wFbnPM+7Whmn+Tcs4u5qsBMmahTlKvFg9DQao0JW/evRQQC9zjllTPn+
+         cCog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774617559; x=1775222359;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20251104; t=1774618251; x=1775223051;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=O7lSs+njbRqVkVDMgsOfygnKLYu8xaGMK8nVUk8tZOs=;
-        b=sDQ8BMT7KtGZa2DJPWwXYc5312HI9MebOGEbPKj7h+6fDekcEM1nfhtBcIMcLeHWgQ
-         oHbzJ+MylhiSbatypnp32DlqsNMdK6hBDx1UAGBhTo5DFEcfqt0GFbfsHLCczQDM/wWT
-         thI5wKUCguA2vVZGhJvZSC1tSLKxSdehLU75VfAatP1jA0Leh08iQ/xaxJEMtuJXd5Nh
-         lTekG0wVdAz8c5s/ACG6l/aqdg/27D9WJm20Z37Dd0t7zr+oy6AAtFPBqrJln5oC6oXw
-         2eI7dnNCKwrP5NUBPWsM9DyrSyrIQs/rCypeBWg6yYQr0kkQNYPztQYNr+EhcDeMY5pF
-         WvoA==
-X-Forwarded-Encrypted: i=1; AJvYcCXUrbtEEO82XsSWKkWOghy4Z/48tds1Xj/lVMXs3Md6Gmqmcc0zKm/2YA9ECSeUUDg6DM6crt1+KDo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBuA2IfX7f3ikH30mhaS28D4MtzDv6zMVGHQCk9aLANVeNeXIg
-	uROhbtLG8oY1gnWtgmem9iOc8INLhzxq0n6Ji4oWi/+HLpcUn7/qqCyn9u1cdA2zTFv1EQ9TEBC
-	RQ2+zaH9U80SXj7mpclxPCGudsnLmAWWpyKqtldyqhPhmZcyfXQPfRXCUom5sZ/fGpEpHpGlFXV
-	0MCZ4uAgSFYPR27rhNFpFzbzP4f9c4ZlChWUaA
-X-Gm-Gg: ATEYQzx0sslGnARqXV9h9L5Tlo1Vp9u8nQIR90nXE18eMkBdgssFwLPvZnXgS7j2XjK
-	9PSU6x+KMGd468VGJyrIsHJnbrolrOzZ1bakckcZWd5SQDzz1s9nm2GgHYhAuHjbwvkZrfp2GhK
-	+2o1pv4xBvqFSALaw4JodxNu2nppHxBl0ghb7vtE3mB5j+60MjiLj+QVTaLx2QQOuKqQAEkFovc
-	ux36w==
-X-Received: by 2002:a17:907:9808:b0:b94:82e:55e7 with SMTP id a640c23a62f3a-b9b522ae87bmr156858766b.25.1774617558632;
-        Fri, 27 Mar 2026 06:19:18 -0700 (PDT)
-X-Received: by 2002:a17:907:9808:b0:b94:82e:55e7 with SMTP id
- a640c23a62f3a-b9b522ae87bmr156854566b.25.1774617558068; Fri, 27 Mar 2026
- 06:19:18 -0700 (PDT)
+        bh=wp4gmpeShrxSfN4R+47KecY7fqn2WEuVtUlQVVvdg1Y=;
+        b=ic1A5swYMW3npkqGhM3KnfcCmLwenbMX+5E6NktuECcZQH9pLVlHDcXjtdT2xTQzVT
+         PTc1P2DaUsPk2O0xqMwDtKCc4hWl7WVFEPhi2LV5zS/YuaUIjBSObZTqmuDUMg+yGaBN
+         SObojfkVQI+QksisxlWeUbaiiB0nVqu4BGLBXOuO5YfuynPxSrOheGehKzvg1QpCfepx
+         UM8SDcbR3my4xzr3O02dtnhSsia6s0xL6M1dSj3u+Ff0Khn6DnYIFpCCVAZkvcyeP+Lu
+         eqb6Ncul3q1QXJqrsg7qWklHMnQeUvcqdvcDDIFeoQN4OevOR49uxS9BtoNRVfkyXlf+
+         5yyw==
+X-Gm-Message-State: AOJu0YxSMHy/iCNkz60Lksorhefk70GDCifFEmCfte59lBSv031qPaMW
+	BBuk4EGA/ivg96IYz72RkynbZ8jiSYrxbfuhsVPRBsoB03/v8FaI+kdZmLqS+C3E83I3VgcWl5U
+	5YwVDryHL7IWMl71woy3L4ubRCC/nqPn98J/lJJX53XunNefKFjAWe/JbMNSqCQ==
+X-Gm-Gg: ATEYQzzp4o9wefAOiSv2FwkGhPrwJFKZlCFx2MZ8uJhWamKnrEOOC7t3J1jhLjECM5f
+	JnWECUoA/Yr++e15tMW4xtzqtcynmSPTD/SvXycVIrrdVBevOY0nUpRu3282h+gjHSmTwxE+l9z
+	scRAOYtGJg2IQrCNS3nc/UheW3ihq8Akr1+Xk+6++4buRATYRkE1jxjDG3NPPzAC72x2IePzq7z
+	0He5afCPA3+IW2zxSAvsu5TjCtr6S3QeQBc1uzcIDvShqKOGXXA0L5/6SPcV4A+BM06b/mhoK6f
+	4jJriSxi1BSaRePhGW5EJpxQECFpmBH1SCG7zxlM6GlGolQdWjvxrutdZzDugX01l2LMw67AFvI
+	0lUQ0imVV8mhJawLndofJSGMG9Oz7EjVMtdgNOzt/k8FCw2PQ6Q4PgkU/
+X-Received: by 2002:a05:620a:468c:b0:8cd:a76d:6305 with SMTP id af79cd13be357-8d01c7bd635mr314484985a.49.1774618244642;
+        Fri, 27 Mar 2026 06:30:44 -0700 (PDT)
+X-Received: by 2002:a05:620a:468c:b0:8cd:a76d:6305 with SMTP id af79cd13be357-8d01c7bd635mr314431985a.49.1774618239539;
+        Fri, 27 Mar 2026 06:30:39 -0700 (PDT)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8d00e4cf112sm500417285a.23.2026.03.27.06.30.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Mar 2026 06:30:38 -0700 (PDT)
+Date: Fri, 27 Mar 2026 09:30:37 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] clk: move core flags into a new enum for kernel
+ docs
+Message-ID: <acaGfUueAm7lb_2x@redhat.com>
+References: <20260325-clk-docs-v2-0-bcf660e1ceb5@redhat.com>
+ <20260325-clk-docs-v2-1-bcf660e1ceb5@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260223-clk-send-sync-v5-0-181bf2f35652@google.com>
- <DH7L09UFWGTK.2MT0OTWH1DUV4@kernel.org> <20260321-awesome-hot-kingfisher-5d9f55@houat>
- <CABx5tqJvOFEzmadeXpDxSUjkghviqtP0jo+kzSB5X6u_P_j2ig@mail.gmail.com>
-In-Reply-To: <CABx5tqJvOFEzmadeXpDxSUjkghviqtP0jo+kzSB5X6u_P_j2ig@mail.gmail.com>
-From: Brian Masney <bmasney@redhat.com>
-Date: Fri, 27 Mar 2026 09:19:06 -0400
-X-Gm-Features: AQROBzBLIY29Yr2X6VCTB1TmB9iOUiQz4yOfIMWdESx0Gr_aeFF6e9jfGR2ISWk
-Message-ID: <CABx5tqL+G9i1ZW7i5AHaTqUFTVRDmBvP=RycUdwjG-GOp4uzBA@mail.gmail.com>
-Subject: Re: [PATCH v5 0/3] Implement Send and Sync for clk
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Danilo Krummrich <dakr@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Michael Turquette <mturquette@baylibre.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Drew Fustini <fustini@kernel.org>, 
-	Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Michal Wilczynski <m.wilczynski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-pwm@vger.kernel.org, Boqun Feng <boqun@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260325-clk-docs-v2-1-bcf660e1ceb5@redhat.com>
+User-Agent: Mutt/2.3.0 (2026-01-25)
 
-Hi Danilo / Alice / Miguel,
+Hi Stephen,
 
-On Sun, Mar 22, 2026 at 8:15=E2=80=AFPM Brian Masney <bmasney@redhat.com> w=
-rote:
-> On Sat, Mar 21, 2026 at 2:17=E2=80=AFPM Maxime Ripard <mripard@kernel.org=
-> wrote:
-> > On Fri, Mar 20, 2026 at 12:43:47PM +0100, Danilo Krummrich wrote:
-> > > On Mon Feb 23, 2026 at 11:08 AM CET, Alice Ryhl wrote:
-> > > > The Clk type is thread-safe, so let's mark it as thread-safe in the=
- type
-> > > > system. This lets us get rid of hacks in drivers.
-> > > >
-> > > > For Stephen's clk tree.
-> > > >
-> > > > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> > > > ---
-> > > > Changes in v5:
-> > > > - Rebase on v7.0-rc1.
-> > > > - Pick up Reviewed-by tags.
-> > > > - Link to v4: https://lore.kernel.org/r/20260113-clk-send-sync-v4-0=
--712bc7d94a79@google.com
-> > > >
-> > > > Changes in v4:
-> > > > - Pick up Reviewed-by tags.
-> > > > - Link to v3: https://lore.kernel.org/r/20251218-clk-send-sync-v3-0=
--e48b2e2f1eac@google.com
-> > > >
-> > > > Changes in v3:
-> > > > - Rebase on v6.19-rc1.
-> > > > - Pick up tags.
-> > > > - Add fix for pwm driver as well.
-> > > > - Link to v2: https://lore.kernel.org/r/20251020-clk-send-sync-v2-0=
--44ab533ae084@google.com
-> > > >
-> > > > Changes in v2:
-> > > > - Rebase on v6.18-rc1.
-> > > > - Add patch to tyr driver.
-> > > > - Link to v1: https://lore.kernel.org/r/20250904-clk-send-sync-v1-1=
--48d023320eb8@google.com
-> > >
-> > > Alice has resent this over the past three cycles, but it hasn't been =
-picked up
-> > > yet. Please let me know if there are any concerns -- otherwise, I pla=
-n to take
-> > > it through the drm-rust tree in a few days.
-> >
-> > Stephen hasn't really been active lately, but Brian (in Cc) has been
-> > trying to pick up the patches falling through the cracks. It looks like
-> > such a candidate to me.
->
-> I'm planning to send another clk pull at the end of this week and I'll
-> include this series.
+On Wed, Mar 25, 2026 at 07:52:10PM -0400, Brian Masney wrote:
+> Let's move all of the existing clk flags into a new enum so that all of
+> the flags can be easily referenced in the kernel documentation. Note
+> that I went with name clk_core_flags for the enum since the name
+> clk_flags is already in use in clk.c for the debugfs interface.
+> 
+> Note: The comment about "Please update clk_flags..." is included as a
+> separate comment so it doesn't show up in the generated documents.
+> 
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> ---
+>  include/linux/clk-provider.h | 55 +++++++++++++++++++++++++++-----------------
+>  1 file changed, 34 insertions(+), 21 deletions(-)
+> 
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index 630705a47129453c241f1b1755f2c2f2a7ed8f77..cb167c17c4f79cf438a26bb113b4968d0f223468 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -9,29 +9,42 @@
+>  #include <linux/of.h>
+>  #include <linux/of_clk.h>
+>  
+> -/*
+> - * flags used across common struct clk.  these flags should only affect the
+> - * top-level framework.  custom flags for dealing with hardware specifics
+> - * belong in struct clk_foo
+> +/* Please update clk_flags[] in drivers/clk/clk.c when making changes here! */
+> +/**
+> + * enum clk_core_flags - framework-level clock flags
+>   *
+> - * Please update clk_flags[] in drivers/clk/clk.c when making changes here!
+> + * These flags should only affect the top-level framework. Custom flags for
+> + * dealing with hardware specifics belong in struct clk_foo.
+> + *
+> + * @CLK_SET_RATE_GATE: must be gated across rate change
+> + * @CLK_SET_PARENT_GATE: must be gated across re-parent
+> + * @CLK_SET_RATE_PARENT: propagate rate change up one level
+> + * @CLK_IGNORE_UNUSED: do not gate even if unused
+> + * @CLK_GET_RATE_NOCACHE: do not use the cached clk rate
+> + * @CLK_SET_RATE_NO_REPARENT: don't re-parent on rate change
+> + * @CLK_GET_ACCURACY_NOCACHE: do not use the cached clk accuracy
+> + * @CLK_RECALC_NEW_RATES: recalc rates after notifications
+> + * @CLK_SET_RATE_UNGATE: clock needs to run to set rate
+> + * @CLK_IS_CRITICAL: do not gate, ever
+> + * @CLK_OPS_PARENT_ENABLE: parents need enable during gate/ungate, set rate and re-parent
+> + * @CLK_DUTY_CYCLE_PARENT: duty cycle call may be forwarded to the parent clock
+>   */
+> -#define CLK_SET_RATE_GATE	BIT(0) /* must be gated across rate change */
+> -#define CLK_SET_PARENT_GATE	BIT(1) /* must be gated across re-parent */
+> -#define CLK_SET_RATE_PARENT	BIT(2) /* propagate rate change up one level */
+> -#define CLK_IGNORE_UNUSED	BIT(3) /* do not gate even if unused */
+> -				/* unused */
+> -				/* unused */
+> -#define CLK_GET_RATE_NOCACHE	BIT(6) /* do not use the cached clk rate */
+> -#define CLK_SET_RATE_NO_REPARENT BIT(7) /* don't re-parent on rate change */
+> -#define CLK_GET_ACCURACY_NOCACHE BIT(8) /* do not use the cached clk accuracy */
+> -#define CLK_RECALC_NEW_RATES	BIT(9) /* recalc rates after notifications */
+> -#define CLK_SET_RATE_UNGATE	BIT(10) /* clock needs to run to set rate */
+> -#define CLK_IS_CRITICAL		BIT(11) /* do not gate, ever */
+> -/* parents need enable during gate/ungate, set rate and re-parent */
+> -#define CLK_OPS_PARENT_ENABLE	BIT(12)
+> -/* duty cycle call may be forwarded to the parent clock */
+> -#define CLK_DUTY_CYCLE_PARENT	BIT(13)
+> +enum clk_core_flags {
+> +	CLK_SET_RATE_GATE		= BIT(0),
+> +	CLK_SET_PARENT_GATE		= BIT(1),
+> +	CLK_SET_RATE_PARENT		= BIT(2),
+> +	CLK_IGNORE_UNUSED		= BIT(3),
+> +	/* unused */
+> +	/* unused */
+> +	CLK_GET_RATE_NOCACHE		= BIT(6),
+> +	CLK_SET_RATE_NO_REPARENT	= BIT(7),
+> +	CLK_GET_ACCURACY_NOCACHE	= BIT(8),
+> +	CLK_RECALC_NEW_RATES		= BIT(9),
+> +	CLK_SET_RATE_UNGATE		= BIT(10),
+> +	CLK_IS_CRITICAL			= BIT(11),
+> +	CLK_OPS_PARENT_ENABLE		= BIT(12),
+> +	CLK_DUTY_CYCLE_PARENT		= BIT(13),
+> +};
 
-Stephen came on the list and started to merge this things this week. I
-was going to collect up more patches for him if he wasn't around, and
-intended to include this. However, since he's starting to collect
-things, I'm not going to send him a clk pull today.
+I just checked Sashiko [1] for this series and it has this comment:
 
-It's up to you if you want to send this in via drm-rust or wait for Stephen=
-.
+    Could converting these unsigned long bitmasks to an enum create a silent
+    type-safety trap if flags ever reach BIT(31)?
+    
+    The flags fields in the clock framework are explicitly designed to be 64-bit
+    on 64-bit architectures (unsigned long). The BIT() macro evaluates to an
+    unsigned long. When defined as macros, operations like clearing flags
+    produce a 64-bit inverted mask, perfectly preserving the upper 32 bits.
+    
+    By moving these flags into an enum, their types are implicitly downgraded to
+    int, since the current maximum flag BIT(13) fits in a 32-bit signed integer.
+    If the flags ever grow to include BIT(31), the enumerator value will overflow
+    a signed 32-bit int, causing the compiler to type it as an unsigned int.
+    
+    Applying a bitwise NOT to this unsigned int will produce an unsigned int.
+    When this is bitwise ANDed with the 64-bit unsigned long flags variable,
+    the unsigned mask will zero-extend to 64 bits, silently clearing all upper
+    32 bits (bits 32-63) of the flags field.
+    
+    Would it be safer to keep them as #define macros and use a DOC: block
+    to properly document the flags using kernel-doc without breaking type safety?
+
+It's up to you how we should proceed with this.
+
+[1] https://sashiko.dev/#/patchset/20260325-clk-docs-v2-0-bcf660e1ceb5%40redhat.com
 
 Brian
 
