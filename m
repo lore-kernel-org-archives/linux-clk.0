@@ -1,41 +1,41 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24E6390CAE;
-	Fri, 27 Mar 2026 20:10:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D904391505;
+	Fri, 27 Mar 2026 20:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774642239; cv=none; b=pPjB9prffk80Yq0jTLb4jLoXnE3naxz7vU01EX+3UKK/2m9xKEAbiD/V497zMAWePg5F09Jl+63gIlR071ggP2A9cNoUot2ReVcH4JQrT2zcvsWmUYXtga9FIrkwszVRqfvC5+vUoGQxamS1501wNoLHBL6h3dqCQKATgtnBZ7Y=
+	t=1774642247; cv=none; b=otKqTM0f9AN8m/aJntrIo7p8VYZNikFtGDSiUuJ7/yHR6pUQ3C8ARdnashSPsyZI3eSXMAuNl5ohWNjpvf6DCoSERYJSyEIJgJiz0Gwj5h/ykfJoSvAIYglec3ZjO1c3EmAKeEjAPyCidWrzeuAth8cL3eyS8GwbDgghaFlPvGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774642239; c=relaxed/simple;
-	bh=hsP7fHqPt9mP87f1VpCI1fLI42QC74jqzhrlvlxm5us=;
+	s=arc-20240116; t=1774642247; c=relaxed/simple;
+	bh=V2Ucjlnq6F7T0l1eyGdxDcz1FFk7mZXmicOeOjM5NZk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=d13aWhiZJYm3QsF6UKBDDMagHzcWhnYPDcUitF35JoK3ynkX/yXZ8I3TBInkX7yQp4FGVuJB1eSg/Tj1NcoT6nRbjFd6cR4Entm6sAFhBMWF3lsGDqOTH6GmdrsljPdw4AMkkzb/nJFI2/uWijBSZPof4UOQGLdpTUjeNctIrwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=iW2Xhm0W; arc=none smtp.client-ip=185.246.85.4
+	 In-Reply-To:To:Cc; b=b+6phyB4pty8mAutnEvOBrumqmsuK4uO4OM22efVwfMOy1sOdsGiKkprO1CTz6xh6ZGYgv29D9AZHTfmW9OkDCz2Pb/AO+WHQesit4DIwkj2D00APL33DEsvWRelHE2El9WpbcxQm50j0XPBFWCZ8BjUt7f5T8ELwBiw1Gh5f6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HNst5lEK; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="iW2Xhm0W"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HNst5lEK"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 821184E42829;
-	Fri, 27 Mar 2026 20:10:36 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 0C69DC58754;
+	Fri, 27 Mar 2026 20:11:13 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 5618060268;
-	Fri, 27 Mar 2026 20:10:36 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0D89F10451AFF;
-	Fri, 27 Mar 2026 21:10:31 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 3703160268;
+	Fri, 27 Mar 2026 20:10:44 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CE32310451AF7;
+	Fri, 27 Mar 2026 21:10:39 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1774642235; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1774642243; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=Bv5k4m7ct4CZYhqzZBg0LTSqAE21eXTy+4/0cBCVguk=;
-	b=iW2Xhm0WEU7YSS3l6jm/y3D79IbblvrQT76gkk4GswHH1AGqkmLkFcQ7yVEZL4rFKBn67e
-	AMmX+xIEQVIs5YOzaDAaMVVq+gKaeYDmF6mQa4o1JelpN8EcyFhNgUM82Wtgyujb5doFeS
-	WD3cHETp6pjqNpplGnAy8UCJUg5eoWqaTrPT5CP+0zvJfgKnnk1umGFd8zXlLD1T2559+U
-	Ezm/zg8pnlia+jNmOaH8ot28qNaFHE67kbawBCUgdztQKCOfj26WQbJW9U40069UAZ53so
-	dRfZLKH0ELZ6Yuy+wW6nYFi+D6dPpEMWoo3lrIxpdRCQNj63NKXgR5gD7PtQzQ==
+	bh=PoWhX1f1C+/gL0C9rOWynwwHI1wiltSKnP2Q+IJsRlQ=;
+	b=HNst5lEKiU6j6jYNf5TaNlJQO7ylUMFm6BpTeLa6X2AxcUDxa41pZPcl33ijbUWMSUN3Hm
+	2SKatKsxzVN0pB6U3B+zfCTMZDGt6rhMjs3vU+FNZbFoZnc8EqgZ1Vzce94XtOSgjE4792
+	dgV2Yl/qMppGHeILzS+KUeAM/MztHIAzxNwpl70KGgODuzpC7nNrSk4C58TcIhryossGXv
+	tnJ5EDdu3A33EiXOmDfO/d32nnlURrQ4O12pv+KVNmMZGFeVMceVI+9g755NWnyAuTOaNN
+	bknzHx87mggu9E4zp8lSIPSlM0pv+xSrCvJZVUw26iZH9mkhq8ILoLKRAjhdKg==
 From: "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>
-Date: Fri, 27 Mar 2026 21:09:26 +0100
-Subject: [PATCH 04/16] dt-bindings: crypto: eip28: Describe EIP-28 PKA
+Date: Fri, 27 Mar 2026 21:09:28 +0100
+Subject: [PATCH 06/16] clk: tests: Add clk_parse_clkspec() Kunit testing
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -44,7 +44,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260327-schneider-v7-0-rc1-crypto-v1-4-5e6ff7853994@bootlin.com>
+Message-Id: <20260327-schneider-v7-0-rc1-crypto-v1-6-5e6ff7853994@bootlin.com>
 References: <20260327-schneider-v7-0-rc1-crypto-v1-0-5e6ff7853994@bootlin.com>
 In-Reply-To: <20260327-schneider-v7-0-rc1-crypto-v1-0-5e6ff7853994@bootlin.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -68,52 +68,213 @@ Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
 X-Mailer: b4 0.14.3
 X-Last-TLS-Session-Version: TLSv1.3
 
-Describe the Public Key Accelerator named EIP-28 from Inside-Secure,
-part of the SafeXcel family, it is typically included in a bigger
-hardware container named EIP-150.
+Create a new set of kunit tests to make sure clk_parse_clkspec() is
+working as expected. We currently verify if we get a proper device when
+using indexes and names. If we make an out of bounds request we expect
+an error.
 
+For testing purposes, we must ensure of_clk_get_hw()'s symbol is
+exported.
+
+Suggested-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Miquel Raynal (Schneider Electric) <miquel.raynal@bootlin.com>
 ---
- .../crypto/inside-secure,safexcel-eip28.yaml       | 31 ++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+ drivers/clk/Makefile                     |   1 +
+ drivers/clk/clk.c                        |   1 +
+ drivers/clk/clk_test.c                   | 124 +++++++++++++++++++++++++++++++
+ drivers/clk/kunit_clk_parse_clkspec.dtso |  21 ++++++
+ 4 files changed, 147 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/crypto/inside-secure,safexcel-eip28.yaml b/Documentation/devicetree/bindings/crypto/inside-secure,safexcel-eip28.yaml
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index f7bce3951a30..97b621456bf5 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -19,6 +19,7 @@ clk-test-y			:= clk_test.o \
+ 				   kunit_clk_assigned_rates_zero.dtbo.o \
+ 				   kunit_clk_assigned_rates_zero_consumer.dtbo.o \
+ 				   kunit_clk_hw_get_dev_of_node.dtbo.o \
++				   kunit_clk_parse_clkspec.dtbo.o \
+ 				   kunit_clk_parent_data_test.dtbo.o
+ obj-$(CONFIG_COMMON_CLK)	+= clk-divider.o
+ obj-$(CONFIG_COMMON_CLK)	+= clk-fixed-factor.o
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 47093cda9df3..1795246b10a0 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -5312,6 +5312,7 @@ struct clk_hw *of_clk_get_hw(struct device_node *np, int index,
+ 
+ 	return hw;
+ }
++EXPORT_SYMBOL_GPL(of_clk_get_hw);
+ 
+ static struct clk *__of_clk_get(struct device_node *np,
+ 				int index, const char *dev_id,
+diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+index a268d7b5d4cb..b814b45f1f7e 100644
+--- a/drivers/clk/clk_test.c
++++ b/drivers/clk/clk_test.c
+@@ -3541,10 +3541,134 @@ static struct kunit_suite clk_hw_get_dev_of_node_test_suite = {
+ 	.test_cases = clk_hw_get_dev_of_node_test_cases,
+ };
+ 
++static const struct clk_init_data clk_parse_clkspec_1_init_data = {
++	.name = "clk_parse_clkspec_1",
++	.ops = &empty_clk_ops,
++};
++
++static const struct clk_init_data clk_parse_clkspec_2_init_data = {
++	.name = "clk_parse_clkspec_2",
++	.ops = &empty_clk_ops,
++};
++
++static struct clk_hw *kunit_clk_get(struct of_phandle_args *clkspec, void *data)
++{
++	return (struct clk_hw *)data;
++}
++
++struct clk_parse_clkspec_ctx {
++	struct device_node *prov1_np;
++	struct device_node *prov2_np;
++	struct device_node *cons_np;
++};
++
++static int clk_parse_clkspec_init(struct kunit *test)
++{
++	struct clk_parse_clkspec_ctx *ctx;
++	struct clk_hw *hw1, *hw2;
++
++	ctx = kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
++	test->priv = ctx;
++
++	KUNIT_ASSERT_EQ(test, 0, of_overlay_apply_kunit(test, kunit_clk_parse_clkspec));
++
++	/* Register provider 1 */
++	hw1 = kunit_kzalloc(test, sizeof(*hw1), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw1);
++	hw1->init = &clk_parse_clkspec_1_init_data;
++
++	ctx->prov1_np = of_find_compatible_node(NULL, NULL, "test,clock-provider1");
++	KUNIT_ASSERT_NOT_NULL(test, ctx->prov1_np);
++
++	KUNIT_ASSERT_EQ(test, 0, of_clk_hw_register_kunit(test, ctx->prov1_np, hw1));
++	of_clk_add_hw_provider(ctx->prov1_np, kunit_clk_get, hw1);
++	of_node_put(ctx->prov1_np);
++
++	/* Register provider 2 */
++	hw2 = kunit_kzalloc(test, sizeof(*hw2), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw2);
++	hw2->init = &clk_parse_clkspec_2_init_data;
++
++	ctx->prov2_np = of_find_compatible_node(NULL, NULL, "test,clock-provider2");
++	KUNIT_ASSERT_NOT_NULL(test, ctx->prov2_np);
++
++	KUNIT_ASSERT_EQ(test, 0, of_clk_hw_register_kunit(test, ctx->prov2_np, hw2));
++	of_clk_add_hw_provider(ctx->prov2_np, kunit_clk_get, hw2);
++	of_node_put(ctx->prov2_np);
++
++	ctx->cons_np = of_find_compatible_node(NULL, NULL, "test,clock-consumer");
++	KUNIT_ASSERT_NOT_NULL(test, ctx->cons_np);
++
++	return 0;
++}
++
++static void clk_parse_clkspec_exit(struct kunit *test)
++{
++	struct clk_parse_clkspec_ctx *ctx = test->priv;
++
++	of_node_put(ctx->prov1_np);
++	of_node_put(ctx->prov2_np);
++	of_node_put(ctx->cons_np);
++}
++
++/* Test DT phandle lookups using correct index or name succeed */
++static void clk_parse_clkspec_with_correct_index_and_name(struct kunit *test)
++{
++	struct clk_parse_clkspec_ctx *ctx = test->priv;
++	struct clk_hw *hw1, *hw2, *hw3, *hw4;
++
++	/* Get clocks by index */
++	hw1 = of_clk_get_hw(ctx->cons_np, 0, NULL);
++	KUNIT_EXPECT_NOT_ERR_OR_NULL(test, hw1);
++
++	hw2 = of_clk_get_hw(ctx->cons_np, 1, NULL);
++	KUNIT_EXPECT_NOT_ERR_OR_NULL(test, hw2);
++	KUNIT_EXPECT_PTR_NE(test, hw1, hw2);
++
++	/* Get clocks by name */
++	hw3 = of_clk_get_hw(ctx->cons_np, 0, "first_clock");
++	KUNIT_EXPECT_NOT_ERR_OR_NULL(test, hw3);
++	KUNIT_EXPECT_PTR_EQ(test, hw1, hw3);
++
++	hw4 = of_clk_get_hw(ctx->cons_np, 0, "second_clock");
++	KUNIT_EXPECT_NOT_ERR_OR_NULL(test, hw4);
++	KUNIT_EXPECT_PTR_EQ(test, hw2, hw4);
++}
++
++/* Test DT phandle lookups using wrong index or name fail */
++static void clk_parse_clkspec_with_incorrect_index_and_name(struct kunit *test)
++{
++	struct clk_parse_clkspec_ctx *ctx = test->priv;
++	struct clk_hw *hw;
++
++	/* Get clock by index */
++	hw = of_clk_get_hw(ctx->cons_np, 2, NULL);
++	KUNIT_EXPECT_TRUE(test, IS_ERR(hw));
++
++	/* Get clock by name */
++	hw = of_clk_get_hw(ctx->cons_np, 0, "third_clock");
++	KUNIT_EXPECT_TRUE(test, IS_ERR(hw));
++}
++
++static struct kunit_case clk_parse_clkspec_test_cases[] = {
++	KUNIT_CASE(clk_parse_clkspec_with_correct_index_and_name),
++	KUNIT_CASE(clk_parse_clkspec_with_incorrect_index_and_name),
++	{}
++};
++
++/* Test suite to verify clk_parse_clkspec() */
++static struct kunit_suite clk_parse_clkspec_test_suite = {
++	.name = "clk_parse_clkspec",
++	.init = clk_parse_clkspec_init,
++	.exit = clk_parse_clkspec_exit,
++	.test_cases = clk_parse_clkspec_test_cases,
++};
+ 
+ kunit_test_suites(
+ 	&clk_assigned_rates_suite,
+ 	&clk_hw_get_dev_of_node_test_suite,
++	&clk_parse_clkspec_test_suite,
+ 	&clk_leaf_mux_set_rate_parent_test_suite,
+ 	&clk_test_suite,
+ 	&clk_multiple_parents_mux_test_suite,
+diff --git a/drivers/clk/kunit_clk_parse_clkspec.dtso b/drivers/clk/kunit_clk_parse_clkspec.dtso
 new file mode 100644
-index 000000000000..96acb257450a
+index 000000000000..c93feb93e101
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/crypto/inside-secure,safexcel-eip28.yaml
-@@ -0,0 +1,31 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/crypto/inside-secure,safexcel-eip28.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/drivers/clk/kunit_clk_parse_clkspec.dtso
+@@ -0,0 +1,21 @@
++// SPDX-License-Identifier: GPL-2.0
++/dts-v1/;
++/plugin/;
 +
-+title: Inside-Secure SafeXcel EIP-28 Public Key Accelerator
++&{/} {
++	kunit_clock_provider1: kunit-clock-provider1 {
++		compatible = "test,clock-provider1";
++		#clock-cells = <1>;
++	};
 +
-+maintainers:
-+  - Miquel Raynal <miquel.raynal@bootlin.com>
++	kunit_clock_provider2: kunit-clock-provider2 {
++		compatible = "test,clock-provider2";
++		#clock-cells = <1>;
++	};
 +
-+properties:
-+  compatible:
-+    const: inside-secure,safexcel-eip28
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 3
-+
-+  clocks:
-+    minItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+
-+additionalProperties: false
++	kunit-clock-consumer {
++		compatible = "test,clock-consumer";
++		clocks = <&kunit_clock_provider1 0>, <&kunit_clock_provider2 0>;
++		clock-names = "first_clock", "second_clock";
++	};
++};
 
 -- 
 2.51.1
