@@ -1,145 +1,117 @@
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.77.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4FA3016E0
-	for <linux-clk@vger.kernel.org>; Fri, 27 Mar 2026 02:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B891F4611;
+	Fri, 27 Mar 2026 07:06:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.77.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774579251; cv=none; b=N2TYAbsI4aEQcJPeCpg1k2D1pOerfLIHKQi3t4W1BeT6YIyuKQh+p7NxEybprGr7cmkQfZs/XUfESZIN+FRX8B+gIDIEW65WMO9YeuS8PjKZclhBSJup2sAdXYbh0s0Iv6adFFr4A4iwkrozG5JWYkc6u5F6VXvECdzOiQBRx4Y=
+	t=1774595195; cv=none; b=Ar1vt94nciWmjSuM4NuujWoD5pAysTHznMixZE/Do8MMdDc4smXk1TTT54abPiSLJHzmGojvDbSq/+siaVlGVhsfO0yo3d1bYQINHkva9BWTkThCwE2YCbdIf5M6ypwWZ6zQAs0TcPPuBWdFxxnptSp6Sd6ziocpCoz/G1fOxqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774579251; c=relaxed/simple;
-	bh=bJmhah8BO4GXX1etyw5zjhRvVTRdllFSbR0mFV7t+OY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r5Wzju9uPSbREIRD70bzxCsSXmebfbx6aUNv5Ju9YrqwZ2KSa+en/b/nVORy++O3WWKhPGhFmKMeCaCOQYgYBezN2xp3E9lCawq3nPIBwgHE4NG3mhQshLc61JnOnGAlntkkP9g/tZJStAZBDMV6Y0enL+NEDTOBIuW4XN1MFWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rjh20Zpi; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1774595195; c=relaxed/simple;
+	bh=acJnhk3DhlEkQc4Hdu9XGurQ2f/IqUWKVh1uoABR9WA=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=hheAZxiareWUERUpedmCi3UjbwkiylxRckLF4PJyRdAjm8B3nIcohezEnehm+42Twq8WFMkXHplXXRatzFzNDlFVoQo65Ou8HFs90feI/sQMy9wG+AtKlnXjxvczVSeEuIdKtCBXdQEo2aFxZsweUsGSqqfJauUIPYjSaFK3Vyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=oJT4MR45; arc=none smtp.client-ip=114.132.77.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rjh20Zpi"
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-35a02f3b8feso796670a91.3
-        for <linux-clk@vger.kernel.org>; Thu, 26 Mar 2026 19:40:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774579249; x=1775184049; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lBc2P507k1klvWCoFiMHYRRdEnQHdpFoSfRfVYfjrcg=;
-        b=Rjh20ZpibS8bmuLqwyugerIhxXC9K/UVoH7D0DhGdGD4SL0C7zhRzhxwIj7a7QSX7k
-         xGMoZIXBxPT4wVqmUeaAWt+TH4Uf4yOg+POWHWN6P2pHcFUTClaRs//+vmNmIIlCuiBc
-         3YMOV7TNL/alDsoN0tx/fbRR9d/zLvRhY6OhGHr5EE4ic1JwTnIm83f0qrZhALSIf7qo
-         tS6ePzslgn4woZsw0nnHnaqVYnyuDlfzgC9ur8Y8OOWL52nLXe4Jr1cEBjWmSXXsddad
-         /T7PBVduWFO8PIE62MMLWqS3uwqIsrKGbolLdAokS+QDT4t8u3rBXTtACASg6K698Sw/
-         ntbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774579249; x=1775184049;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lBc2P507k1klvWCoFiMHYRRdEnQHdpFoSfRfVYfjrcg=;
-        b=HGWDfITXp0R6ld+YwGJyt7WYrnmJpFRqALzztSJ6kADrcN4qHMOl4X3+ai04jqSQUh
-         CLAZARZ4jgV2qc2BXO0w4nvb18Ys3YOeq+kFdlTLqXWTSNN+X57bX5fEC45/ix1U5uaV
-         0auOiLulWTK8H7F7vZWH7sRQO86IfCQBfZFyro3qRXA2cEMKx7rT3rXm0LJJURP8CwLQ
-         uhD1XPJprG3IUpBE+0Ac493RGzTq4kTmQn8GyJqxLn7NkvpDo1hKepU9eYpkh0Yz6C+/
-         2Qeal8SfWEasfXxYXkU6UEPiaVA1YVDt2fM2CQbA20nLOR+w0hs1RNTz9uD6Jfbb6D7R
-         GSgQ==
-X-Gm-Message-State: AOJu0Yw/sW7LZfmHIo+sqoxamu1IxA+V/1Xa4fuD5eRNp2KMfCnMEUMQ
-	DqGXJQAVM3+83GnnyIH/k49wi1G58OCczgddrKKQUeoVrMTmmW/C+TyIb4lX/q+0
-X-Gm-Gg: ATEYQzyzwZvHhGMPcUrrzGbvXYnXPK8C4rMFvpdcr2EYqKdH0zmSZz4gGz5MsosZQuH
-	914K05W2N62xFna4XDXixQnutxqLNCMcSXCj4SuOPejqe/GigQ7plTpl4yCn/RN2N47EbGfDnwC
-	1tHDHaPlFXmW+jQvz83M07PwFLIswzZC8otD18j3uV77DxW+h5Rm5detgNxnRdsIrcGSqT6wA4O
-	R0a5lGuJPyfx3swk91P3yJ5vPDBqzVhYNdpoHddDjVrmz/NU7wc5IRvFdayX258QKcvSpykVHT7
-	gtiEO+UHvNWIeS3hJwv3FMs1OWUQO4f5hjP/s3s1PypllDn65T3/obOVf7VzuTBmLQWQhJbPPW3
-	hXbm6rLENDhHQ4p9/gw1OdhWU55rWosQ3hz+QALrgTbUiM2fvyaCnJ/aorD97UJI4uasEYP0G7D
-	yiy5LUkf8MeS7k9/fvcFFEOGsWIZ4azDRG/kCeFhTqWtT8AC2EfPRo61k=
-X-Received: by 2002:a17:90b:3d06:b0:35a:189b:43db with SMTP id 98e67ed59e1d1-35c2ffa80ccmr841360a91.4.1774579249319;
-        Thu, 26 Mar 2026 19:40:49 -0700 (PDT)
-Received: from ryzen ([2601:644:8000:5b5d::8bd])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-35c22cba9f7sm3196073a91.11.2026.03.26.19.40.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Mar 2026 19:40:48 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] clk: hisilicon: clkdivider-hi6220: use kzalloc_flex
-Date: Thu, 26 Mar 2026 19:40:32 -0700
-Message-ID: <20260327024032.6537-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="oJT4MR45"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1774595091;
+	bh=C5sPPhxc2ESUsfKZcmePqfZSGtd39KSgY9EBT4h19Z4=;
+	h=Mime-Version:Date:Message-Id:Subject:From:To;
+	b=oJT4MR45zGFsDiQoi7e3V7hweAfxTuleEh3YMiT8E1pJVzLnTy7gQkvT3j/L9hsBT
+	 8hOTgyJ3jYWn8Snir6f6LKegADFzc6U8jLNeX1bOOYZg5wbx4a2oQwhFloMOjjkgl8
+	 dQsJpnoncULL7vYfFXAsEaGIh18sbWqT0gY9dWAI=
+X-QQ-mid: zesmtpsz9t1774595088tae86de95
+X-QQ-Originating-IP: w/WyDemxcbjpJuaCt1YW/wsPI2c2ZYwcqhNJMRnh9EA=
+Received: from = ( [120.237.158.181])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 27 Mar 2026 15:04:46 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 1752965271814094096
+EX-QQ-RecipientCnt: 21
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 27 Mar 2026 15:04:46 +0800
+Message-Id: <DHDDGG4TDFOS.2DPHBA6U2JMVE@linux.spacemit.com>
+Cc: "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Paul Walmsley"
+ <pjw@kernel.org>, "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou"
+ <aou@eecs.berkeley.edu>, "Alexandre Ghiti" <alex@ghiti.fr>, "Yixun Lan"
+ <dlan@kernel.org>, "Vinod Koul" <vkoul@kernel.org>, "Frank Li"
+ <Frank.Li@kernel.org>, "Guodong Xu" <guodong@riscstar.com>, "Michael
+ Turquette" <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+ <spacemit@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+ <dmaengine@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 2/7] dt-bindings: dmaengine: Add SpacemiT K3 DMA
+ compatible string
+From: "Troy Mitchell" <troy.mitchell@linux.spacemit.com>
+To: "Conor Dooley" <conor@kernel.org>, "Troy Mitchell"
+ <troy.mitchell@linux.spacemit.com>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20260326-k3-pdma-v2-0-ca94ca7bb595@linux.spacemit.com>
+ <20260326-k3-pdma-v2-2-ca94ca7bb595@linux.spacemit.com>
+ <20260326-explode-surplus-24c0e0813099@spud>
+In-Reply-To: <20260326-explode-surplus-24c0e0813099@spud>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
+X-QQ-XMAILINFO: McJfg7Aee/FZuqgBLJa/xaD93ptxSj5gtrQRlr2BHMhaSuQ7Hmc7FSVm
+	nIbSM/Gn9ozMbLDAzyDH+vq5F/k9zjNFar+BG0Flj5Fv5Qb3kLBOQgep/HUvaEWm+0REQgk
+	utQdzLZlWXNyZv2nn0GyzOdluz6WiLSYfnDkvmLzrjDA1IDE7LTjtyNcunyenvlBbjYaBL7
+	mEa7uvvsPio6wr4K+A8wHylXqbN1xA5Omj74pPKdJ+wtE1q9+WC3rVp1Ss5BsRB8d2ghPly
+	NbCS9jz/nQTk4C2cOLP4oNcXZ+C7rrA3EYWGj3tICHboN6UMAl1rPf7fA6NKoqLBaPD6a6E
+	b8X62kTE4p8pepTCHO0caY5TYjyPWGFznU+M06CCNS9yzqWnErMdhJQ0Pdnr5gazRMTq+kj
+	bnz6JW7yTTJ0OBaE2grKZjRUb5XfmfCOPkzi6RQoXsJ34mtxevGQKnXfUufsCCM+TasNNYF
+	bmlQf+G7vCOo+Rt952DsFtLZt4xuH05ppyLSgnFQOjXzZoj3TKEj6EOfwrfnivwaDImWGpm
+	twhLEFYC552lvFErafayaB9W64nfLbRea2jgYNRNxNK5sckvJ7IXERvCT9xDZXp2JkrZ9Zb
+	jqB9h5NezcuFHQzSd92GpEx4yB/mqPX325JDsllEaoxHm9z8tEJ1YK3mSklNr67A943Uze0
+	/Q/lTzNybK/WbckQe+DCVkk7TxkHPwmGxNgNiMgH8lSBQnZ+tTJKbnK8L+G8dDgusUS6Fps
+	CIhnSCyOr1nlHKL/tWEwK2sBNzt6DfcW4XD37Cv9CTWqQgyThhGlnVSSivvBYDqR7pOlC9V
+	herj0wt6QAME/Q62DeFPxjHm17xsYWWc9J2Eo8WvZYcI0n2BCp+4lN9f7mebQTwbtq/QSrg
+	uzgfBsa5kTO7UaFg/BDsF3Ye+YSMuI7L7nG0z6YKHWVrcOUa2Ni5leJnuDmxQb7EAaY9Slv
+	t0l42y7QZtI8y6/adItDuv1OjHxF5HeXI15wNe7gmfFLcCNbxu45AngCu038T5mo/mFAQcL
+	DTr/SpmtZPiOILKrFUksajYQkjbJT0oAAB4HCDo8zzeQQm2O8g
+X-QQ-XMRINFO: Nq+8W0+stu50tPAe92KXseR0ZZmBTk3gLg==
+X-QQ-RECHKSPAM: 0
 
-Combine allocations using kzalloc_flex and a flexible array member.
+Hi Conor,
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/clk/hisilicon/clkdivider-hi6220.c | 24 ++++++++---------------
- 1 file changed, 8 insertions(+), 16 deletions(-)
+On Fri Mar 27, 2026 at 2:34 AM CST, Conor Dooley wrote:
+> On Thu, Mar 26, 2026 at 04:17:17PM +0800, Troy Mitchell wrote:
+>> From: Guodong Xu <guodong@riscstar.com>
+>>=20
+>> Add k3 compatible string.
+>
+> That's obvious. What you need to explain is why it is not compatible with
+> the existing k1.
+>
+Thanks for the review.
 
-diff --git a/drivers/clk/hisilicon/clkdivider-hi6220.c b/drivers/clk/hisilicon/clkdivider-hi6220.c
-index 1787ecefe601..14d72fd716c2 100644
---- a/drivers/clk/hisilicon/clkdivider-hi6220.c
-+++ b/drivers/clk/hisilicon/clkdivider-hi6220.c
-@@ -35,8 +35,8 @@ struct hi6220_clk_divider {
- 	u8		shift;
- 	u8		width;
- 	u32		mask;
--	const struct clk_div_table *table;
- 	spinlock_t	*lock;
-+	struct clk_div_table table[];
- };
- 
- #define to_hi6220_clk_divider(_hw)	\
-@@ -108,24 +108,19 @@ struct clk *hi6220_register_clkdiv(struct device *dev, const char *name,
- 	u32 max_div, min_div;
- 	int i;
- 
--	/* allocate the divider */
--	div = kzalloc_obj(*div);
--	if (!div)
--		return ERR_PTR(-ENOMEM);
--
- 	/* Init the divider table */
- 	max_div = div_mask(width) + 1;
- 	min_div = 1;
- 
--	table = kzalloc_objs(*table, max_div + 1);
--	if (!table) {
--		kfree(div);
-+	/* allocate the divider */
-+	div = kzalloc_flex(*div, table, max_div + 1);
-+	if (!div)
- 		return ERR_PTR(-ENOMEM);
--	}
- 
- 	for (i = 0; i < max_div; i++) {
--		table[i].div = min_div + i;
--		table[i].val = table[i].div - 1;
-+		table = &div->table[i];
-+		table->div = min_div + i;
-+		table->val = table[i].div - 1;
- 	}
- 
- 	init.name = name;
-@@ -141,14 +136,11 @@ struct clk *hi6220_register_clkdiv(struct device *dev, const char *name,
- 	div->mask = mask_bit ? BIT(mask_bit) : 0;
- 	div->lock = lock;
- 	div->hw.init = &init;
--	div->table = table;
- 
- 	/* register the clock */
- 	clk = clk_register(dev, &div->hw);
--	if (IS_ERR(clk)) {
--		kfree(table);
-+	if (IS_ERR(clk))
- 		kfree(div);
--	}
- 
- 	return clk;
- }
--- 
-2.53.0
+The SpacemiT K3 PDMA requires a new compatible string because it is not ful=
+ly
+backward compatible with the K1 implementation due to two main hardware dif=
+ferences:
+- Variable extended DRCMR base: The DRCMR (DMA Request/Command Register) ba=
+se
+  address for extended DMA request numbers (>=3D 64) is different in the K3=
+ hardware
+  implementation.
+- Memory addressing capabilities: Unlike the K1 SoC, where some DMA masters=
+ had
+  memory addressing limitations (restricted to the 0-4GB space) and require=
+d a
+  dedicated dma-bus, the K3 DMA masters have full memory addressing capabil=
+ities.
 
+I will update the commit message in the v3 series.
+
+                                              -Troy
