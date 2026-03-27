@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB2B2494ED;
-	Fri, 27 Mar 2026 07:27:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203DC3C3BEB;
+	Fri, 27 Mar 2026 07:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774596467; cv=none; b=FoH+I1xzOWCIfuOLdqQEyeYwVbV6RXeLgOYGSPAGRn8aWs4OtKDPVmL4xQOKo9onFOEXuvsDQpIQWs1sOyCjspKge9Zn6n6tEaYAmRAj6zCTs3OBTzoHNl0hOZvwAzoeaGeenyga8kNokpOYeBh+vckFPIaz5pR2SnNZjxYCAzc=
+	t=1774596515; cv=none; b=A6noEDOaGs6kfmZ7pcbo4EQ5+TOx3RVlPU/Ulg2ygJo7XDxlg/fZRV8PLlkxfBYaxHqT6wsFpFNTdUzgGjnPMx+rFBjzjU/f+/dMq4p0Rr2Z+Jwq5Brx048rLbRBQAT7fw82kBmQQQWyaoO3TiX8Brm74hsbiCBPybOUItXKSXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774596467; c=relaxed/simple;
-	bh=MCVzKj0IwMKiyZBuXwlPOEx7tDkpVOQV0iBLV4nD+0k=;
+	s=arc-20240116; t=1774596515; c=relaxed/simple;
+	bh=kBoaD+Y3WUsK9eFptmTNmn+4Xv38yoT0ql97BiTIliU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BnL8NGzHuw5jrplMJHUhXFmPZDSGb5oQ/4jNMAtni/j6pdClo1wzWZ9Ov1hq0vHVIGhUhnieQRuL9bPqeU7/n85GtDtQ7yz67ibGvZI3H+t3JjK1qj2XW3ygn5a+qPM2ggUuQpKZSd9ADxzKA019JaW+Yz3s5FbAaUaiSeSNI04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OzR1m7VU; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=siuRceRvtGwuGbxMwe9b67jbNpTqaEijLDKpbGyAXeL3gyTvegq+flxPdNlH3TAof9+tPKvYMKtCjqCR1KcUt9qyt2HZG2xLzWXfbeNgLYDStSzaFLS+Th6UokQbLO5wCBXCuMJy7/cit2fV9Abu45lGGgH0EUWqr8Q3QoKUKoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gsiRKPQZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OzR1m7VU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EF35C19423;
-	Fri, 27 Mar 2026 07:27:46 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gsiRKPQZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 127E1C19423;
+	Fri, 27 Mar 2026 07:28:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774596466;
-	bh=MCVzKj0IwMKiyZBuXwlPOEx7tDkpVOQV0iBLV4nD+0k=;
+	s=k20201202; t=1774596514;
+	bh=kBoaD+Y3WUsK9eFptmTNmn+4Xv38yoT0ql97BiTIliU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OzR1m7VU+m3n7hqd0FwRCWj8NCiLUYdas3mWtiJjg4l2PnT9Qv6C5wNAGfA7eMPWl
-	 GOpxUp5hJHh+walrfJIjJAVtxPY4AU3vi6OcO4IPoWsUyhnrlxHpoewAU5h5RlWROj
-	 fZ6mUZVL2XNCVd7a0Wh3k4LK6X35KXZ0MXxdgxJQpkdfuAo1x2V3YubNatIUEX9CRC
-	 WZMyvhmNtFpF7J0nIrkyoABiLAdK8HO8DZZFGgnbdj/A1F9iHoE+FGpSi9hWLi/7XV
-	 hlUuTIdFaPNPQrTw2DMPrpjMJC92lqsf0NZMUa8KmaR9v7G5CVm0pSLpKijmwmkWOX
-	 y28lUHMq15c+Q==
-Date: Fri, 27 Mar 2026 08:27:44 +0100
+	b=gsiRKPQZkPr7ICtM79AfrIIH9+ubEj+iignxoxh6euOjXkN7XzFbzfnbXfxO+b3PK
+	 DH8sEul55Y8uqWLqwlzlP14b2QXb0mufoujgXaKxEY743M6IVZVF0R/Hk8Z8Z7gUiX
+	 n4643OUtJtSTTm3OhngU0doMvovGeb/BJ6DRH/9sldF1R1ftgBYENKg8DjB4tA3q+R
+	 toJZBQNHX3llI4iHdYHK7k/VEX1rcq8bCseRat/kuR5ioPMx/uCEK9C2D7Eqyweq8A
+	 qJqJeBQ5KMuCtENhlQN2mxIOgDeEMJBewvQp5LH12V8CT7HPHVnf3bvMCQIbYdo53u
+	 QDv4NN7VCjM5A==
+Date: Fri, 27 Mar 2026 08:28:32 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
 Cc: Rob Herring <robh@kernel.org>, 
@@ -40,7 +40,7 @@ Cc: Rob Herring <robh@kernel.org>,
 	linux-clk@vger.kernel.org
 Subject: Re: [PATCH v2 1/7] dt-bindings: dmaengine: Add SpacemiT K1 DMA
  request definitions
-Message-ID: <20260327-fancy-nondescript-mouse-cfd6f3@quoll>
+Message-ID: <20260327-silkworm-of-algebraic-aurora-e9bd1c@quoll>
 References: <20260326-k3-pdma-v2-0-ca94ca7bb595@linux.spacemit.com>
  <20260326-k3-pdma-v2-1-ca94ca7bb595@linux.spacemit.com>
 Precedence: bulk
@@ -62,35 +62,9 @@ On Thu, Mar 26, 2026 at 04:17:16PM +0800, Troy Mitchell wrote:
 > Signed-off-by: Guodong Xu <guodong@riscstar.com>
 > Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
 > ---
-
-No changelog - neither here, nor in commit msg.
-
 >  include/dt-bindings/dma/k1-pdma.h | 56 +++++++++++++++++++++++++++++++++++++++
 
-So previous review applies, no? Was there such?
-
->  1 file changed, 56 insertions(+)
-> 
-> diff --git a/include/dt-bindings/dma/k1-pdma.h b/include/dt-bindings/dma/k1-pdma.h
-> new file mode 100644
-> index 000000000000..061748c177dc
-> --- /dev/null
-> +++ b/include/dt-bindings/dma/k1-pdma.h
-> @@ -0,0 +1,56 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * This header provides DMA request number for non-secure peripherals of
-> + * SpacemiT K1 PDMA.
-> + *
-> + * Copyright (c) 2025 Guodong Xu <guodong@riscstar.com>
-> + */
-> +
-> +#ifndef __DT_BINDINGS_DMA_K1_PDMA_H__
-> +#define __DT_BINDINGS_DMA_K1_PDMA_H__
-> +
-> +#define K1_PDMA_UART0_TX	3
-
-abstract IDs start from 0 or 1.
+Also, this is not a separate commit.
 
 Best regards,
 Krzysztof
