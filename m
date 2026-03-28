@@ -1,74 +1,74 @@
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E8A40DFD7;
-	Sat, 28 Mar 2026 00:00:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE131319859
+	for <linux-clk@vger.kernel.org>; Sat, 28 Mar 2026 01:26:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774656058; cv=none; b=LVDBQQq0nbST0yugm576Pz36kpWTMYwlhZiQZhjHfuzzrWo2vV0DOdtc2rmEejsyKnJ1KCBrfAgGRKiMxqQwsqUdoatYbqfYfrgmkhSUhBP8KIP/bB6wVFo9v6SX4Kase8a9ZaUIjdjAu5RKqnXIh6MkY0iPRYDVG6aw1oGTRn8=
+	t=1774661185; cv=none; b=BlRDAOv6wcVzgueOAMbao6fExTlc/ayc5IJtVw8rrOHY2a9LogKUDQC+3PHHzQbwAKldzg9Txa5RC90YL5vsc0TZl9/Zbdcr01EPkYYQBXD+jsjWh8yqKakXbOvQAOiUE0ra+gnYRRqDOPYu6aRmpGcpjXaXwekGRossLiwSp64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774656058; c=relaxed/simple;
-	bh=JFDMJr30L/H5v8LvsQbGHXdNcZs08uN6Zg+HnfVFnvU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iiZSnqdxIeaJrDH4LtSLfHrX5siafl4JW7KKFSJnmBhGmotYqLwGhB0qySAG2NzOBEPhIG6XsgttSbE3Ed+BrfZjBPCc8pG9QV8642arLerGq39lbW5/PEGfigWVssS8/mq4GOuHKCTt5IMaglBfcalFVcc14bk8Pj2t95OVUUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=FjufGfrY; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=mKcWMAbh; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1774661185; c=relaxed/simple;
+	bh=IX3C4pIMJ8k9u4+4vziha/Y/uIGiYvafzFLAaw79hKQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GYWrgD9bGSZaF0UbYJu75QhV+cpbC0qD/kakBygRE4WaebP58YfNPKEZcpvzZPWbOpt3nVhnvWFlt9hKAnNsX7nJiV+JNQAiNe1SK5v34oAxoaEPnNUNtKwRAOWCqVXykBCOeslPmmsa2dAgijpeZuzRsX6y3KcwE0SQfOZ39Mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VtVxiXdw; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="FjufGfrY";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="mKcWMAbh"
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4fjHj25n6cz9tnK;
-	Sat, 28 Mar 2026 01:00:54 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1774656054;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zFj1swgZY0cQiCwL0lKNikCgBp7iDEG+eoYplYhgMbo=;
-	b=FjufGfrY7qO1BX5ZX8lFtXVxakyFCqGggktrR8SYUs3HPgrKVC0p5VysprG0CNo08vYVfZ
-	Wy70e5R4UtYozoFKqsbq8BqCDlGEu3ExgW9uIbO5YaiPrfk43tjBaoIrmWnHgMwohdu6UE
-	vuEQ0B8MVXHAFhldXDtL9/ftkCSgi5/SQELg4GSFKFWdEZLNMupn8VwW7+9Uz6rmFp7Gwt
-	Juj/VtlCh/sRHWvI9F5intQbpquqiurNzn0BZ0yEGPWRDKF3p+m4G9XIxzUCK30eiWab6w
-	Dy0lR1ZmMCOYtGLMpbLZmY0CjIxkalj5b3hFuK5L0jlM8m9d9SG3j2kYO2clOg==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=mKcWMAbh;
-	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1774656053;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zFj1swgZY0cQiCwL0lKNikCgBp7iDEG+eoYplYhgMbo=;
-	b=mKcWMAbhi/pIUzxeu86wgP4TKjd2KYrlMK7c1QMYw/PHoj1sAgJW+9SqV1ukeVVdGwdyfQ
-	Y9bOImZ7Bwtl4ymd4FckNy7cgiDY6k20+WEwQFYvfE4NPqMLS/BmlMlUo79S2xxi5UaQsm
-	nBBXQ9pGSlWUzORfJF7lFLPfVDbdfv93dgOdICH5XrCvgYyWg0tBPLSn+bvuz5ru/wIBYq
-	rzMTr2fVLgyYq8UYULy8DqYg3mnZlGyU4DSd0N1Wwovnn3zXcUP1QCmki5IM3yrH37qoaM
-	z1hBF7nwsBd387mp3Vn1gq+wLY7MyAEF08kZlXc9H4Z1nPR4KeFEfIvuuHz+Cw==
-To: linux-arm-kernel@lists.infradead.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VtVxiXdw"
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-38a33933e99so2006351fa.0
+        for <linux-clk@vger.kernel.org>; Fri, 27 Mar 2026 18:26:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1774661182; x=1775265982; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xR8gHqnNIiEnxM6fE1y2q/Bl9VFmaIbjQc2osrqR4us=;
+        b=VtVxiXdw5inbK3vw3p3qyL7tbdCvr/knUcrlTChdphADc8h8ceuTPriVMHFlBnDgfT
+         RDhqa+rZ031tniQ683eNE6stbG29OpGKH//itUuVTP0q9GEodVhrFHPk6s8qwpRrbZK9
+         ijrwZBtibitEQBsNvPcN5gHAe/pEClWX4jVIpzjjIiPqQDASs6k5VBN4ncBSLFbb6F1N
+         7BPg5nXcJmgh203kDj8+Ly2EMQxTSQXWjjjUlCT6Nhd6JKoC1FvaDUEZc9FlMHNstvAn
+         Kae1b+QH+5JKMzAxuID5Vyzb7aeefAkRLK8+F+L+AyM8XbaJVG4rs+oIABXOlGd4VF6Y
+         Dwuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774661182; x=1775265982;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xR8gHqnNIiEnxM6fE1y2q/Bl9VFmaIbjQc2osrqR4us=;
+        b=ncCKE9HkcxnWAJrAiiEU6+wlq5Hza6OG3lSsPurw+D1XM3EFgIImGnu1cMLZtpfPxQ
+         v6lHndFQLXO/vCXvusvE3wLSxxTbOTrwe9aci2JfeCp1IyuK0GWeiu9zHwB/IlJLp8m8
+         cFSEqi6MU0q6UQ+/qCAMWWPFDBH4N9XfpPEF1FAPD92Tlg4j6SgLtN7FEY/Zw10V00l8
+         Pxl2eROxTjhwrMM2fCt8KhEwSPdBKxC3QGF0RyhnjO3XLVb8UZ+WH9yKBoUTd5KZjp1f
+         xAxmV1afmUFPYFUm5AKwm0RKGZpQbeeniiHKtLJDYLKUSjervVM64xzHFZ7YwAesgr3d
+         /Gbw==
+X-Forwarded-Encrypted: i=1; AJvYcCV8QvQ8mjo17+ZXZFQQLr1PnVyNvXvcysSAGwXy4CytYihCbR8Q9IzeOWFg1je21wD8N7Ckuo7fOQY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yygn4Vh++Dw1RzQLD9qKPHPcsQpM46KgZeTevtdjxqot5dEDuBd
+	jqNBWBiWBe7LwgVKDegi61GY+wkDyHO2I8Bc8wZzEg0Ym8HrwUgSRG1T2qCogigptlK9Zz2zv4h
+	CUeTR
+X-Gm-Gg: ATEYQzyDhsbh9T35hyAz4cOrL7QFHmaG5LPxIPi3UJsHzgFJNG89P/5HaXW7YyyP6KZ
+	87NxCxcRU8x5proEfcauPlKCKtGEBdfO5UFnNLXu9w1xsrfApYLGepZ6LIVr6M73mMLVMMGds0f
+	kmtdJyWWxR+NDTqejZ3cWT1mPXnjiFi0ktmnFIQ9PL/M8IFWUdFpM+I9OnPUaFm0POIUTbTW6L+
+	XEoh7ZeHlmJGMblKn5F8TzCY9ysURux07O5lROKxka0XuYw4zYP88kORR9hXQn6tN6qOF+iHBhm
+	Tr5ocFtarBFss4PGsqw3Ngkb0Y9sRZx1LXxzLjGZF9Xtsp/Wfn2mGRy/ikIggWmN8Fx6KCGxUmZ
+	9AY0hWECW9ZJpwNt8YOwxr3jlpPIKbTJSPosfm8Di8WDm9VIgjww3djsw3RspX4Ysobu+ykxmcP
+	LjeUB9FdQOrKAhH0H0q00pgLOJCu0PJnzCC4dOOrWHq+UQl07tTA1KQwwrk3uVaZKXwKaGgYclR
+	fwr
+X-Received: by 2002:a2e:bcc1:0:b0:380:a1c:7031 with SMTP id 38308e7fff4ca-38c730d38b2mr6254411fa.1.1774661181970;
+        Fri, 27 Mar 2026 18:26:21 -0700 (PDT)
+Received: from thyme.. (91-159-24-186.elisa-laajakaista.fi. [91.159.24.186])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-38c837130basm1562201fa.12.2026.03.27.18.26.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Mar 2026 18:26:21 -0700 (PDT)
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [RFC][PATCH 4/4] ARM: dts: renesas: r8a7740: Describe coresight on R-Mobile A1
-Date: Sat, 28 Mar 2026 00:58:21 +0100
-Message-ID: <20260328000031.94645-5-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20260328000031.94645-1-marek.vasut+renesas@mailbox.org>
-References: <20260328000031.94645-1-marek.vasut+renesas@mailbox.org>
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH] clk: qcom: gdsc: Fix error path on registration of multiple pm subdomains
+Date: Sat, 28 Mar 2026 03:26:19 +0200
+Message-ID: <20260328012619.832770-1-vladimir.zapolskiy@linaro.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -76,164 +76,43 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: 11hto1pogtjuona37e5pzkj8u7wbj4gb
-X-MBO-RS-ID: f188a53aa2bb19dd3b0
-X-Rspamd-Queue-Id: 4fjHj25n6cz9tnK
 
-Describe coresight topology on R-Mobile A1. Extend the current PTM node
-with connection funnel, TPIU, ETB and replicator. The coresight on this
-hardware is clocked from the ZT/ZTR trace clock.
+Some pm subdomains may be left in added to a parent domain state, if
+gdsc_add_subdomain_list() function fails in the middle and bails from
+a GDSC power domain controller registration out.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Fixes: b489235b4dc0 ("clk: qcom: Support attaching GDSCs to multiple parents")
+Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
 ---
-Cc: Conor Dooley <conor+dt@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
- arch/arm/boot/dts/renesas/r8a7740.dtsi | 114 ++++++++++++++++++++++++-
- 1 file changed, 111 insertions(+), 3 deletions(-)
+ drivers/clk/qcom/gdsc.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/renesas/r8a7740.dtsi b/arch/arm/boot/dts/renesas/r8a7740.dtsi
-index 0a622da79dc1a..eb1abc90c4f59 100644
---- a/arch/arm/boot/dts/renesas/r8a7740.dtsi
-+++ b/arch/arm/boot/dts/renesas/r8a7740.dtsi
-@@ -18,7 +18,7 @@ / {
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		cpu@0 {
-+		cpu0: cpu@0 {
- 			compatible = "arm,cortex-a9";
- 			device_type = "cpu";
- 			reg = <0x0>;
-@@ -59,9 +59,117 @@ pmu {
- 		interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
- 	};
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index 7deabf8400cf..95aa07120245 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -518,10 +518,20 @@ static int gdsc_add_subdomain_list(struct dev_pm_domain_list *pd_list,
  
--	ptm {
--		compatible = "arm,coresight-etm3x";
-+	replicator {
-+		compatible = "arm,coresight-static-replicator";
-+		clocks = <&cpg_clocks R8A7740_CLK_ZTR>;
-+		clock-names = "atclk";
- 		power-domains = <&pd_d4>;
-+
-+		out-ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			/* replicator output ports */
-+			port@0 {
-+				reg = <0>;
-+
-+				replicator_out_port0: endpoint {
-+					remote-endpoint = <&tpiu_in_port>;
-+				};
-+			};
-+			port@1 {
-+				reg = <1>;
-+
-+				replicator_out_port1: endpoint {
-+					remote-endpoint = <&etb_in_port>;
-+				};
-+			};
-+		};
-+
-+		in-ports {
-+			/* replicator input port */
-+			port {
-+				replicator_in_port0: endpoint {
-+					remote-endpoint = <&funnel_out_port>;
-+				};
-+			};
-+		};
-+	};
-+
-+	etb@e6fa1000 {
-+		compatible = "arm,coresight-etb10", "arm,primecell";
-+		reg = <0xe6fa1000 0x1000>;
-+		clocks = <&cpg_clocks R8A7740_CLK_ZT>, <&cpg_clocks R8A7740_CLK_ZTR>;
-+		clock-names = "apb_pclk", "atclk";
-+		power-domains = <&pd_d4>;
-+
-+		in-ports {
-+			port {
-+				etb_in_port: endpoint {
-+					remote-endpoint = <&replicator_out_port1>;
-+				};
-+			};
-+		};
-+	};
-+
-+	tpiu@e6fa3000 {
-+		compatible = "arm,coresight-tpiu", "arm,primecell";
-+		reg = <0xe6fa3000 0x1000>;
-+		clocks = <&cpg_clocks R8A7740_CLK_ZT>, <&cpg_clocks R8A7740_CLK_ZTR>;
-+		clock-names = "apb_pclk", "atclk";
-+		power-domains = <&pd_d4>;
-+
-+		in-ports {
-+			port {
-+				tpiu_in_port: endpoint {
-+					remote-endpoint = <&replicator_out_port0>;
-+				};
-+			};
-+		};
-+	};
-+
-+	funnel {
-+		compatible = "arm,coresight-static-funnel";
-+
-+		/* funnel output ports */
-+		out-ports {
-+			port {
-+				funnel_out_port: endpoint {
-+					remote-endpoint =
-+						<&replicator_in_port0>;
-+				};
-+			};
-+		};
-+
-+		in-ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			/* funnel input ports */
-+			port@0 {
-+				reg = <0>;
-+				funnel0_in_port0: endpoint {
-+					remote-endpoint = <&ptm0_out_port>;
-+				};
-+			};
-+		};
-+	};
-+
-+	ptm@e6fbc000 {
-+		compatible = "arm,coresight-etm3x", "arm,primecell";
-+		reg = <0xe6fbc000 0x1000>;
-+		clocks = <&cpg_clocks R8A7740_CLK_ZT>, <&cpg_clocks R8A7740_CLK_ZTR>;
-+		clock-names = "apb_pclk", "atclk";
-+		cpu = <&cpu0>;
-+		power-domains = <&pd_d4>;
-+
-+		out-ports {
-+			port {
-+				ptm0_out_port: endpoint {
-+					remote-endpoint = <&funnel0_in_port0>;
-+				};
-+			};
-+		};
- 	};
+ 		ret = pm_genpd_add_subdomain(genpd, subdomain);
+ 		if (ret)
+-			return ret;
++			goto remove_added_subdomains;
+ 	}
  
- 	ceu0: ceu@fe910000 {
+ 	return 0;
++
++remove_added_subdomains:
++	for (i--; i >= 0; i--) {
++		struct device *dev = pd_list->pd_devs[i];
++		struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
++
++		pm_genpd_remove_subdomain(genpd, subdomain);
++	}
++
++	return ret;
+ }
+ 
+ static void gdsc_remove_subdomain_list(struct dev_pm_domain_list *pd_list,
 -- 
-2.53.0
+2.49.0
 
