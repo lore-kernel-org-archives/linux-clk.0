@@ -1,151 +1,115 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+Received: from mail-dl1-f68.google.com (mail-dl1-f68.google.com [74.125.82.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C7134F47E
-	for <linux-clk@vger.kernel.org>; Sat, 28 Mar 2026 02:58:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2DB378D84
+	for <linux-clk@vger.kernel.org>; Sat, 28 Mar 2026 09:46:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774666737; cv=none; b=ruL0iTWgOzHlzkcecUlEOSk028aPU950OMrdkQVYwuNTlKtwIApMi+U6zTLeivlk7t7GXoOvlfl79fmtJFn+TD7H21hvRSetm8cshi6ZpSSszYqlxsKnsH+2uViEyZdz//9b8cAHiO0Y+ztCxYL/P332IUXgqxbiIVW11K6BgVc=
+	t=1774691221; cv=none; b=BaE8VpeZ+ZX3oMK8eCexOiOvQftKr7S/xukkAS3kCa7wqljpGqKPuTIEIGgFlo/IPpllvFi5JWomgxP8BBtkm+neSoU5i13SDi4NiL6N1yy+nkeSDAonr8+6+pfzlFWCwSbOHLbnhXL6o6K4BEVJ7Trp6pqdq/AQ8A7icz/doZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774666737; c=relaxed/simple;
-	bh=olwM+iFW1baLC0frxkhwsk/23pWJgNDyvNMv4ihorwY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IOjaeHFNXREQGk7NBmnYNiu0u8MevjWcpZeEAot/YfaWG9eiEJd+qv/WZ2Q8dvbQj5McCBNSUGwI8yEIAQ2DxuWXVhZ6szBoFGzKUz68Gdg15fUNZfF09iTYVTT3bUXIsnWIrzq7RvvZfO1WgiSP6mSyfJnvXL6pW533bx/2fLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eWJwcpPN; arc=none smtp.client-ip=209.85.221.43
+	s=arc-20240116; t=1774691221; c=relaxed/simple;
+	bh=Mug/7k7yiQUruxGBnY8AYdjOaizJTDak/1tlC45nw+M=;
+	h=From:Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:To:
+	 References:In-Reply-To; b=OiiCU7h0dM6QQxdnxhOy/6hKYFRtyrdvbKeAthsoZXS/v5e0yLvYYqypEuUUYRH4ePR7k+4FrSyl9zhGZjbqakSqhXvkum4+8mdP4mE7vhsJdAe89Ge3YJsXvAzqkzgFK3iggMkrktux+ORmIdTCIditGau2ZhMXnEdIK3VIFfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hbCCUYnd; arc=none smtp.client-ip=74.125.82.68
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eWJwcpPN"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-43ccda008cdso290098f8f.0
-        for <linux-clk@vger.kernel.org>; Fri, 27 Mar 2026 19:58:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hbCCUYnd"
+Received: by mail-dl1-f68.google.com with SMTP id a92af1059eb24-1279eced0b9so4297495c88.0
+        for <linux-clk@vger.kernel.org>; Sat, 28 Mar 2026 02:46:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774666735; x=1775271535; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aItUBK61tk6fxXXaFLwlpx4OpsBWZ3pyf1T32wUZFWY=;
-        b=eWJwcpPNWfOLODHUnlNpHde+OXK1Qx0BoC1oMkvd28TCJhqbFUYAbH/b1IuiqC8ANu
-         cV+9HqKZVwZwCzMzDC6L34cY++7p0ZK1wqk+rX6uYLM4EtVpAB9Bnfybnx4MxGIx4SwX
-         xeHBTyCUxkzsMlJWy9xdSP8JmgQ0GRdtj9VJIT3evGaNkKeTixS66DOuGVB56ztk6Rl4
-         JJ8lWZOgNxpV/Js8NhikTxYGZWY5dlAZqrjH238Gg5jI21Wvg7ovFNEbDvkB5ayWG3Zy
-         zPwUoznKlw7WQGn9JK0zaSTPxl+Ly/C/YnLVi/1xkTf9m3nUqA8HGwii1giekuWYMcgN
-         p5hw==
+        d=gmail.com; s=20251104; t=1774691218; x=1775296018; darn=vger.kernel.org;
+        h=in-reply-to:references:to:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Mm84PKI95ws94X4le7u52sogEFGb/3XJpC4WJ7nzO9w=;
+        b=hbCCUYnd03IEV2qXqs7pGx5GJHzmQjAmJFHIUJUSoeupOjNiBiTJOvhK5n91Yr42VX
+         TkLuYzQAwKv5mVjMawF6lGGn0EMRt5TrJzDiI9cCuM4HUUVpdSY9b8JnVzkmu9H5Vjo5
+         /4KKlvt+wKCRm/5J+jepihAftOgGExBt4RYGlgXyhLEE9NCjfC0+/siGMIi8QyEp1yt4
+         bGaIfM0FzWUshpMunFz2C1xuK1oD0etOWt+GLT9hylxnuLU01HoYhxCOKMt1pIrvGvjH
+         ic4YCCEUSsZ+p4yyoE4JjrvfZTrNUjSWeZYnvul58kYyRDYnZF7fztmREO2mv1iKJ1Ed
+         M7+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774666735; x=1775271535;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aItUBK61tk6fxXXaFLwlpx4OpsBWZ3pyf1T32wUZFWY=;
-        b=CBKoZn/Y4JTnuKM001NinyVy65DnLjI7WsRlHAAgMtC9K2gwtmNYjmz5avV/Y0DILK
-         WXua3OKWMfEx4Til9mU4Z1ivxZclaKwTKm9KFdmiKSMHudJqU7dqdDbLVfSzhlLAG5vo
-         CazrSaJOnVYPZwy1wieEFqB/88HUPcUhK7ifLNfow2krhjlnLqGzO82RHS9li23T8x3h
-         yA+86uB1/8eFy3J5trr7KQ7gALx0/1o6L8YiKv+1BwtVxsmk+pxR7fE3cXa5ApovtQyo
-         wBCbJZ77VhVZ4qXkc8mVGer23o6CSblOJQN0KVxXaDg4oaJPlu1dBO7vWX32GryMQ6PF
-         sy6g==
-X-Forwarded-Encrypted: i=1; AJvYcCWdi4MbWRiZBQzIRQI21h6UL5Zpgn2hebXJr2aRN9D0hZu76IfYyXt8mdGscM1TQgCP+WNlIsLJ6ms=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytPO4DsuKWO3J3LQtsONznp4aQfGLzbMB3F4+CHAWmmnmoJeFn
-	ZpZXfSVKNI1fHphkRE+92dvzmQ+GkF61weMWOFivIHOH3EEa8ntH1xd4
-X-Gm-Gg: ATEYQzyYVhMmg+LrGIv24yWsHzptBkQoidcVDm0fYpTYQmIw7hm9MD0fELqlerrhHgA
-	y5vAOFhaBYqkBTE8DczbDzPvXQaL8EXJR/QPNl3WM1pU59Tb5yfQYd1yDpeEy79GmKIPEXkTRbr
-	Nh9Bb1hGI0SLLBOjhkdP630TVabzDf/lPboLpLIyEeUyomEhi+jQcxCD2RwwaYLy17MvaPJ+9n/
-	Krr+QDQboZHvUw9yP9twxnxuQ6G7MBZDu905kouzlVlxJ64IsPZtqDIYJATuQ3X5AYZblR2kqlw
-	K6FW3xyz6aUEjEuBQZdRr5d5leLcVYAO3H0kS+vl0G7YKLz28wcqnjVPC3221T0SRJQN6CuSdd7
-	F5Wvs0SakrlRpECO3tuPVipyAVxxZuO5Ar/4ZYvo+YMDm4MU5UVUomr2xPYFH3k+fobePekNz0t
-	3o5QQ+4G6Uax3iPhUD4V3+IYgG4+FcylIBjiWsKtAYo6aFvURW
-X-Received: by 2002:a05:6000:240d:b0:439:bb46:7457 with SMTP id ffacd0b85a97d-43b97a4b813mr13247505f8f.16.1774666734587;
-        Fri, 27 Mar 2026 19:58:54 -0700 (PDT)
-Received: from [10.34.37.37] ([185.25.49.104])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43cf245e4f5sm2316659f8f.19.2026.03.27.19.58.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Mar 2026 19:58:53 -0700 (PDT)
-Message-ID: <8129d377-8a63-4589-820b-930a2b43a2f7@gmail.com>
-Date: Sat, 28 Mar 2026 03:58:47 +0100
+        d=1e100.net; s=20251104; t=1774691218; x=1775296018;
+        h=in-reply-to:references:to:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mm84PKI95ws94X4le7u52sogEFGb/3XJpC4WJ7nzO9w=;
+        b=kZczc1lKvfumSglCHonphMdeS1WC6sZDAC5rAwbfr/049A+yeVcgSr71lfIyMAPCbw
+         k6zHNmF212MNxAu2pMkETGlea/GrScounnYIRXmr+mZtMnTaLQr1jcmKe8MXjUd84t0W
+         3dF3M+AKQQNLmKclASXrEVWDG129pqFZKUu3cCAhzoaCMZscvoS4duMw4qW7/6RtyEA5
+         YMrrP+L23Jor+z439SA+TdDuo8NG+GesuIVIrBqwAvTWf4hfheCC/7vtZUVLFVay4I7H
+         dLcqy+H3i2HLQuEcobQnmMxIuab4J6P4jKA1bTslpl1y7YNmNVhzjxVJpMIWKZqOkB72
+         MS1A==
+X-Forwarded-Encrypted: i=1; AJvYcCU+8jGab4/iyZ5o5BdvyQizhr04zNWGDn6c/tqafjBSVyL1yFEhpSpU9gt1HZ9AgvUpADr5Mm6PBr8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfsUiZ2cYDB5AOxvLC6TVQwybDIpWIO5Et4i6qLXYkie/TBjpC
+	93eu9MsHDppyWHvTOiqU2VHEoYaN+FkjHDOwNSmBEH6i+aEFgL/3Mk4O
+X-Gm-Gg: ATEYQzxX96gI5efv9eRaU22TrXu3xaqv6hZ52vCs5DWgOZKFvEHeV7a30j2pdVHBNAW
+	XizNTi/yQp7yLTkOaN6+y7OYPlPHUZqny8x2nSUmdEypxVhjGLKpUxviLJlcth2hLSg04KKIDHm
+	piEY5wdrxENYeA7/K86ZtnyJqBPde0tVsni9kVdFF1xlEH1U7m9h9766y2ThLpGf021HlqaAwJM
+	69ZGt+Wsp4QS72xCIs5TrvHvYsx7C7RycSSOFR05Ipi8yGFvU2cxtcqwPWoS+vHaV0YJEODgVv8
+	5DEM036WqxlFHKKAaxz2lBgOyz3ZA2/uFGNNe/d960o+OHmaDlf8D9tZE0HNDxehlOL/txNjNC4
+	a8gg+OtsL/GtbG+dCNuVZd/J/CQK10plb4cvnOcPuCxZPxUjPk1Cgo4Q1MYSnKLsa5vpROGgJHN
+	OAr0ZxlvyTbF+hlfyENkAmluVGeae9cYS7oaY2Ig==
+X-Received: by 2002:a05:7022:6085:b0:123:345b:ba05 with SMTP id a92af1059eb24-12ab28cb38cmr3135449c88.22.1774691218233;
+        Sat, 28 Mar 2026 02:46:58 -0700 (PDT)
+Received: from localhost ([104.28.227.186])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-12aba581027sm1773856c88.4.2026.03.28.02.46.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 28 Mar 2026 02:46:57 -0700 (PDT)
+From: Troy Mitchell <troymitchell988@gmail.com>
+X-Google-Original-From: "Troy Mitchell" <troy.mitchell@linux.spacemit.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] dt-bindings: Add clock guard DT description
-To: Conor Dooley <conor@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-References: <20260318-feature-clock-guard-v1-0-6137cb4084b7@bruker.com>
- <20260318-feature-clock-guard-v1-2-6137cb4084b7@bruker.com>
- <20260318225510.GA639444-robh@kernel.org>
- <7c7034a7-686a-42c2-bdba-6f31b5179f7c@gmail.com>
- <20260319-yearly-wrongful-883f7fd86a69@spud>
- <b45d9845-2d56-4fdd-a3ac-b0e0e27ba573@gmail.com>
- <20260323-sanctuary-semantic-432089feb1c7@spud>
- <d097826c-3db5-4902-acee-ffcff7436d4e@gmail.com>
- <8e7d0c53-aa23-4514-81a5-335a76bb0c45@kernel.org>
- <4d575f17-5cd5-495c-99a9-176b3393d54d@gmail.com>
- <20260326-nursery-outer-55799f675e14@spud>
-Content-Language: en-US
-From: Vyacheslav Yurkov <uvv.mail@gmail.com>
-In-Reply-To: <20260326-nursery-outer-55799f675e14@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 28 Mar 2026 17:46:54 +0800
+Message-Id: <DHEBJ4VVDDY2.2KRIW6EP7EXOL@linux.spacemit.com>
+Cc: "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Paul Walmsley"
+ <pjw@kernel.org>, "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou"
+ <aou@eecs.berkeley.edu>, "Alexandre Ghiti" <alex@ghiti.fr>, "Yixun Lan"
+ <dlan@kernel.org>, "Vinod Koul" <vkoul@kernel.org>, "Frank Li"
+ <Frank.Li@kernel.org>, "Guodong Xu" <guodong@riscstar.com>, "Michael
+ Turquette" <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+ <spacemit@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+ <dmaengine@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 1/7] dt-bindings: dmaengine: Add SpacemiT K1 DMA
+ request definitions
+To: "Krzysztof Kozlowski" <krzk@kernel.org>, "Troy Mitchell"
+ <troy.mitchell@linux.spacemit.com>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20260326-k3-pdma-v2-0-ca94ca7bb595@linux.spacemit.com>
+ <20260326-k3-pdma-v2-1-ca94ca7bb595@linux.spacemit.com>
+ <20260327-fancy-nondescript-mouse-cfd6f3@quoll>
+In-Reply-To: <20260327-fancy-nondescript-mouse-cfd6f3@quoll>
 
-On 26.03.2026 19:32, Conor Dooley wrote:
+On Fri Mar 27, 2026 at 3:27 PM CST, Krzysztof Kozlowski wrote:
+> On Thu, Mar 26, 2026 at 04:17:16PM +0800, Troy Mitchell wrote:
+>> From: Guodong Xu <guodong@riscstar.com>
+>>=20
+>> Add the DMA request numbers for non-secure peripherals of the K1 SoC
+>> from SpacemiT.
+>>=20
+>> Signed-off-by: Guodong Xu <guodong@riscstar.com>
+>> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+>> ---
+>
+> No changelog - neither here, nor in commit msg.
+My apologies, patches 1-6 were added in v2.
+I missed including this in the version history..
 
->> I was not sure how to provide a diagram in the mailing list, so I posted in
->> on Github https://github.com/OSS-Keepers/clock-controller-guard/issues/1
->>
->> It is a driver which models dependencies for other drivers. These are soft
->> or "indirect" dependencies, because we cannot access the FPGA unless the
->> FPGA_PLL_locked, and GPIO is telling us we are good to go.
->>
->> Conor, I think this should answer your question as well.
-> 
-> Not really, but it gets part of the way there. I want to know what this
-> provider actually is. I now know it is a PLL, not an off-chip
-> oscillator, but I know nothing about the interface that you have to it
-> (or if you have one at all). What compatible string/kernel driver does
-> it use?
-> 
-> Because SoC-FPGAs can route GPIOs from the SoC part to the FPGA fabric
-> and use them as if interacting with something off-chip, I'm not sure if
-> we are dealing with an separate FPGA or a SoC-FPGA. Which is it?
-> Effectively I want to understand why you cannot just read the lock bit
-> from the PLL directly. In my experience with *SoC*-FPGAs, things like
-> PLLs that must lock for the fabric to be usable have a register
-> interface from which the lock bit can be read, that is of course not
-> clocked by the PLL output clock and therefore accessible before the
-> PLL has locked.
-> 
-> I think more info is needed here to guide you on where such a "helper
-> driver" should be located and what the dt represetation should be.
+>
+>>  include/dt-bindings/dma/k1-pdma.h | 56 ++++++++++++++++++++++++++++++++=
++++++++
+>
+> So previous review applies, no? Was there such?
+No, since it's a new addition, there are naturally no previous reviews.
 
-I really appreciate your feedback on this. Here's an attempt to provide 
-a better exlanation.
-
-We have various use cases. Most of the time it's a PLL in the FPGA but 
-it can also be some signal from a custom FPGA IP used to indicate if 
-some preconditions are met and the IP is ready to be used (some kind of 
-inverted reset but exposed by the IP). For a PLL we typically get the 
-signal connected either to a GPIO IP block (altr,pio-1.0) OR to a bit in 
-a custom IP register.
-In addition, some of the IPs in our design do not have a proper split 
-between registers and IP core, which means that if an external clock 
-and/or PLL lock is missing and we access the registers we won’t ever get 
-an answer and thus stall the CPU.
-
-We are using a SoC-FPGA and use some GPIO IP within the FPGA 
-(altr,pio-1.0 for example).
-
-The PLL itself doesn't have any registers but the signal indicating that 
-it is locked is available and routed to such a GPIO.
-
-The point is that we will have several IPs/drivers that will depend on 
-the same preconditions (clk, gpios being high or low) and we want to use 
-this clk_guard driver as an aggregator for those pre-conditions. Define 
-once, reuse a lot.
-
-Slava
+                            - Troy
