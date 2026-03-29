@@ -1,67 +1,67 @@
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7046283FF5
-	for <linux-clk@vger.kernel.org>; Sun, 29 Mar 2026 04:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF083285050
+	for <linux-clk@vger.kernel.org>; Sun, 29 Mar 2026 04:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774759733; cv=none; b=gmI/x1APbFG06dXWDychUkCMQ5XrnrYTvHNG5JoudU8y7niD3hTDKCiQacu80XCLxoSvR2J2hGyJS/Uh4GBLPsU7W6GLNw4TWmai4Vv8jSP/r5kLesPHcvFY/pmm4coar7cgGTLAcq++z6Z3OHhkMUQzDOo6Gk0DYSDmGELzIvQ=
+	t=1774759739; cv=none; b=TgiPOgoYah5ibMaRV8Ir0GmRxiIh+bu1dRHb5CSkn7ylVQM4sTTfa8dIHg24WkhUW12fVwmzE9X+LIVvbK++ib3wXczkZKXEkIYzFpCCLa0cH8Ezpu09qbsmedJN3R9Ivnmg1XAeCOvcAA10ULmpq0nQiHLTMXR0eO91g8lxESM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774759733; c=relaxed/simple;
-	bh=jbxDqNZvBi2gj9IFvEI90pxmvLwKV+j3EaaxzyzaJTA=;
+	s=arc-20240116; t=1774759739; c=relaxed/simple;
+	bh=pGKPix7XiEt441lKBW8Y9b0Y9EmW4lxtf6JcRfDKsWo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ts/UD/PRE9DTfCRZ1EHcSVylIlyi9YF9zsBqQvJA3OtoEfXAN9G3jlI9CkOihzdJK1vh+4WkKrEV3QfdCCPJMY9BvLLKb2QzazgmX+0DpTIZlpkIChla8gLlj2T1R7Toc8ub8xAQDbzna4cCg2jroQt7vS972VclT7IqCsclK4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AdAInTUc; arc=none smtp.client-ip=209.85.216.50
+	 In-Reply-To:To:Cc; b=itoU3rxTz1WBje4H7wzeZ/eLfwvfiBY/8LW96iQ8SGzHx1fv7b3cE6emvGN8v+EKQalixKJR9+1BwVePwZp6fYeBxuYoFI19GycRXlZsNR+NJ0QqyN2sBQNmmUPb75h5i9H/p9d4RxwvbVtqJvvUJbWopym3vW6ARB227sQvB4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=pETnFdge; arc=none smtp.client-ip=209.85.216.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AdAInTUc"
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-35c1d101355so1448602a91.1
-        for <linux-clk@vger.kernel.org>; Sat, 28 Mar 2026 21:48:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pETnFdge"
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-3591cc98871so1475084a91.3
+        for <linux-clk@vger.kernel.org>; Sat, 28 Mar 2026 21:48:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774759730; x=1775364530; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1774759737; x=1775364537; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=c3tZXb9ZuOyelSj6Z0lI4WVX4+hZpWr55+BMQK3m+PI=;
-        b=AdAInTUcsFpyZtVCb7wwDIsvK9voELpIJJzB55MboIHKr6QHRj5qjl62KWMOs3m0mJ
-         HZ5ASnBqulq4Xt/l3xuMgtuUa7gol+n71M5rtEAHtup4iKVNWQ8H9xC9qYC4d0J8TfaT
-         u0FZa4KRMxGt/kjech/AamV78xelsERLrinp4ylbl9iCuuN2bqGrNlVtaN2uUH64ds9G
-         SzaRuZHHbdwqyPS/YGC5k5dXf7YzZHkCuYk4WNG4R3cEN7o5TYe7uoGwm9g3vCElAPKE
-         EgRaewXk/zu1iv/A1p6Ab81yVe5h6t0fzqyq6oITtESyRuvAYzasXaUo+y6YoX449CFu
-         AwFQ==
+        bh=sH1ZtNzw7ASBY+TGObLJ+aQIZVnb+gkilqaMw0lmvhQ=;
+        b=pETnFdgeZDjhWJx7qdfn+Q3+x4F2R0sIk8fjtKm5gRbkSs9Z24WqpPBn9ub0yFhl0I
+         DC6bIs8bmZWtmKmaB1F+lyqfJUApA5rZ4h5YiaWKtLcVeDdFm+bPxbM1W4nrAJo2+5EU
+         w+ahwNwgmNWJ27WfRY+/o5xwrezmb69/virhHfjMG3mtbjGoSh3rJtqBxWTzsCKvbsng
+         BLiHbk7V/odSxcUpiIyomaegBVI0X0pJSfoMOzPLTTczme0wagdbWCgznrIU4HEa+Lkq
+         DPKWlzxNb5mF6f9Bx72TjgvWuU6lZ99CVqzYFgwqYipVqe+JlHp0Q3gEhgCCAFXhNmUK
+         hh6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774759730; x=1775364530;
+        d=1e100.net; s=20251104; t=1774759737; x=1775364537;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=c3tZXb9ZuOyelSj6Z0lI4WVX4+hZpWr55+BMQK3m+PI=;
-        b=rA0WFGcEP/oz00EjaghO0YX6L9mdJOlJIIR0YgLLrmFAxy1h55raGn+qRo74emXvKf
-         ma4b13wFOoTUdITX4VWGjuN/NCfNPC5DkZfD07Ng4FTq5nyPRL/10lPucxlILB7+WYU3
-         vGbOt8GmLZJZPdi0rhEHLrhhnACe1uthh+ar4sT6bbMHsKUf2wnCCUH/MUWWZMLHi3dw
-         zswg5xxHpLwSHRL6lMGfGRmN6K5g/S2VCFvq4jencZHeE5TL6uLOQNhoyhkaSiay69Bx
-         HXo4Jk0LbcyGqVDCNHSLNdfe66iw+o5hD8D9ZJBI4MlvDTDmp+/qiXbEDr/miywanbIt
-         sOsw==
-X-Forwarded-Encrypted: i=1; AJvYcCWJJU4F+OX3QvgIzdDJvboFRtV1ma/rG55FcEjYJipsTXdERloGlyeJS2pkxdQgsXAeBWyyU4mm7pA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPUxiJ7Hc8Puj2xhLEE8jE4yzjpias42yh/ESlCv50yNaN0NFn
-	c84tTmGNHvgHQOB7H+4KGVQtxDg1qWutWa4ng99n9w35wloCupqKDCTE
-X-Gm-Gg: ATEYQzwx7ythvXXB2kwUd8YzhaJSjyju2fzkGZnN581QEAN6aenbt0lay0NPRua9oMr
-	nUBWwQcl8y+2WRXKQIDKwWB24KdbQBvI3/6Oz77Dulv9loIFu/UK1iCjuJDD79F5musXDepjSKc
-	81yZRWIi7ZlzIzvfqScu5MCFXMOjazYpmqcUnBXC/EzYydluozoQrJXFSu6gDdM3sl0ECS1N2yK
-	y6fSZLd5uYf+46J9uIyOC27pJQEMpm8vyM2yhzp1bbWQysr7cFFFTk0xi16U70sTBgPTYA5r1aJ
-	8pFaIPS0skwCAjkiAInzVaBBxvU9racah7fuAHEoxUOLZs+nq6Ql7RyQ6IvplxDQT81z8H4xmWJ
-	/rMJJ/iSWuIflX3N9ixEVnPn3ic6APZqrDbYld/siSBvzOegu6nbciXpL5xPfFsqqn6Lo47qU/R
-	zDIT9roctdX/y0UJ15ceyLpjMtVdGO2JxX8F8k9OA=
-X-Received: by 2002:a05:6a20:94cb:b0:39b:f026:6f7c with SMTP id adf61e73a8af0-39c87ba1d3dmr9052151637.49.1774759730149;
-        Sat, 28 Mar 2026 21:48:50 -0700 (PDT)
+        bh=sH1ZtNzw7ASBY+TGObLJ+aQIZVnb+gkilqaMw0lmvhQ=;
+        b=TUnCejy4HUO4pu5c5LOjkssW5oXawL3E6wfjLfayv8vSIScluONDXtbfXsTiU+C6/e
+         Q0ZweoxIPQtqi7EdydU7gZq1cn7KuDB8EUOPQlYOPmnPiAdCXMDfJ5PMhoXELGjZ7aTn
+         B2s/vIpNh3pVgha1b1o1btBoqUd3orbGifY2wWH0YMBP4it/80jgCePiHeQxnxXefrKA
+         2vAOSlYUQKQd5bROZdCmB4NYAQocVWwgscWZzL//JzQZmznRqXsA6ZB9nz1+1K/0RHoB
+         hZPWorMeGrCiMisHnTT8/0TV0f+uTcj2ScSiLamYw1PzxqvFWkguTeMXYsb+q1BasYPa
+         ROtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXVGu+BEoJbyuGkzpa8y5Ae8D4Yp7i6c8zIm7bBtNQKb8v7PBmePdDwkqthcRT+8GeJJOZsZtqfiwU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZZSJI7P1ibaOce0pKiqCJg7/WonuzyozAWKN6BBCe9UXmGFgv
+	QGYA0FyPkdnCl+J5Dq7k9L+FLIOswpdIV9xXJ2kz0yUMBV8R/afWzWuZ
+X-Gm-Gg: ATEYQzyC2cmpFLcd8mlyowKUpVudyNth0Klnd1BCSX3kJwHA1sURse94wfRuwKrgMoj
+	IauI1cyUqR+5vTHEBXTuo4wCyr3u7dPE7N7SIF5EGPESAIerBxX6Y++ZrzjMOLJworb+5adCP8M
+	WFkIbkk0jeW6+ylN/nBf/eHqMFmeJA2kodiPeHJCjT9a/3oPFXrk0xTC+eNLeLzCXnmbrEM/P23
+	L359PLLM21OGTIaZJp630XSFmfH/hYCCXbNiFdTWJO4ppV5Pc8pS9TSiXgJyNv0ZPNS43ssynMr
+	sBBoljt7VP3NZWzXKjkTdShajYee/uVeFfj065nQfFw/9I0mnQ+a/L93GbbiLDmz0ByG5c/Ipe1
+	u0nBC+vdqZQ8UwN8H7LyJEKjc31WI9tgFF/9HMzE7o1M1ZBmYiDSJPwT6pvTEdhv5TN4JWgAp1o
+	3TZ2skpIJHYBNOkYch3JPn16txwMIa
+X-Received: by 2002:a05:6a20:938e:b0:398:a128:d463 with SMTP id adf61e73a8af0-39c87a3c214mr8660465637.35.1774759736982;
+        Sat, 28 Mar 2026 21:48:56 -0700 (PDT)
 Received: from [192.168.0.101] ([43.226.29.240])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-c769179e31asm2899739a12.17.2026.03.28.21.48.43
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-c769179e31asm2899739a12.17.2026.03.28.21.48.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Mar 2026 21:48:49 -0700 (PDT)
+        Sat, 28 Mar 2026 21:48:56 -0700 (PDT)
 From: Biswapriyo Nath <nathbappai@gmail.com>
-Date: Sun, 29 Mar 2026 04:48:01 +0000
-Subject: [PATCH v2 6/7] dt-bindings: leds: irled: ir-spi-led: Add new
- duty-cycle value
+Date: Sun, 29 Mar 2026 04:48:02 +0000
+Subject: [PATCH v2 7/7] arm64: dts: qcom: sm6125-xiaomi-ginkgo: Add IR
+ transmitter
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -70,7 +70,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260329-ginkgo-add-usb-ir-vib-v2-6-870e0745e55e@gmail.com>
+Message-Id: <20260329-ginkgo-add-usb-ir-vib-v2-7-870e0745e55e@gmail.com>
 References: <20260329-ginkgo-add-usb-ir-vib-v2-0-870e0745e55e@gmail.com>
 In-Reply-To: <20260329-ginkgo-add-usb-ir-vib-v2-0-870e0745e55e@gmail.com>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -85,38 +85,70 @@ Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
  linux-clk@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
  phone-devel@vger.kernel.org, stable@vger.kernel.org, 
  Biswapriyo Nath <nathbappai@gmail.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 X-Mailer: b4 0.15.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1774759680; l=963;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1774759680; l=1301;
  i=nathbappai@gmail.com; s=20260118; h=from:subject:message-id;
- bh=jbxDqNZvBi2gj9IFvEI90pxmvLwKV+j3EaaxzyzaJTA=;
- b=81X8217C3DPp0B0P3hZM4aXOCm8lzOtEXnsLAMxdNbbkMgYAO3fE2YKhyEY97/IFdfQWBu+QK
- SnzdsTunBnRBxxt0Ihn4/T2XiSr+rqhd+1F/PnfcK3LZuxS90GFTwgJ
+ bh=pGKPix7XiEt441lKBW8Y9b0Y9EmW4lxtf6JcRfDKsWo=;
+ b=AjUWH+AdSOG/5ukRpNAwaXcythhtMm7E9TAuzpnElRgLKa+TAvWs+43AuNxf5Ryx8NJQ1jxE0
+ 4oBI9xuIcl0AadPRbyVh5WjXVeiB3FcSq+LKxcHqBqYrYdg9M7tkFIx
 X-Developer-Key: i=nathbappai@gmail.com; a=ed25519;
  pk=slmb/9yXbet+KTiT3EYLCp0p0MEOYa3EdjUXP+HXfjg=
 
-30 duty cycle for IR transmitter is used in Xiaomi Redmi Note 8 (ginkgo).
+The IR transmitting LED is connected to SPI8 controller.
 
 Reviewed-by: Sean Young <sean@mess.org>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 Signed-off-by: Biswapriyo Nath <nathbappai@gmail.com>
 ---
- Documentation/devicetree/bindings/leds/irled/ir-spi-led.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../boot/dts/qcom/sm6125-xiaomi-ginkgo-common.dtsi   | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/leds/irled/ir-spi-led.yaml b/Documentation/devicetree/bindings/leds/irled/ir-spi-led.yaml
-index 72cadebf6e3e..0297bfbb2750 100644
---- a/Documentation/devicetree/bindings/leds/irled/ir-spi-led.yaml
-+++ b/Documentation/devicetree/bindings/leds/irled/ir-spi-led.yaml
-@@ -25,7 +25,7 @@ properties:
+diff --git a/arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo-common.dtsi b/arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo-common.dtsi
+index f66ff5f7693b..7d8481173171 100644
+--- a/arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo-common.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo-common.dtsi
+@@ -99,6 +99,10 @@ key-volume-up {
+ 	};
+ };
  
-   duty-cycle:
-     $ref: /schemas/types.yaml#/definitions/uint8
--    enum: [50, 60, 70, 75, 80, 90]
-+    enum: [30, 50, 60, 70, 75, 80, 90]
-     description:
-       Percentage of one period in which the signal is active.
++&gpi_dma1 {
++	status = "okay";
++};
++
+ &pm6125_gpios {
+ 	vol_up_n: vol-up-n-state {
+ 		pins = "gpio5";
+@@ -160,6 +164,10 @@ &qupv3_id_0 {
+ 	status = "okay";
+ };
  
++&qupv3_id_1 {
++	status = "okay";
++};
++
+ &rpm_requests {
+ 	regulators-0 {
+ 		compatible = "qcom,rpm-pm6125-regulators";
+@@ -332,6 +340,18 @@ &sdhc_2 {
+ 	status = "okay";
+ };
+ 
++&spi8 {
++	status = "okay";
++
++	irled@1 {
++		compatible = "ir-spi-led";
++		reg = <1>;
++
++		duty-cycle = /bits/ 8 <30>;
++		spi-max-frequency = <1000000>;
++	};
++};
++
+ &tlmm {
+ 	gpio-reserved-ranges = <0 4>, <30 4>;
+ };
 
 -- 
 2.53.0
