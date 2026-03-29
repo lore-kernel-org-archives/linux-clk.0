@@ -1,159 +1,261 @@
-Received: from flow-a2-smtp.messagingengine.com (flow-a2-smtp.messagingengine.com [103.168.172.137])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8322494F0;
-	Sun, 29 Mar 2026 06:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09AE5288530
+	for <linux-clk@vger.kernel.org>; Sun, 29 Mar 2026 07:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774764661; cv=none; b=M5L4d1GNYI3/mfzf/vludHx+Gl8pox49Q/p602StWbxTeJHVTw9gwSmnymVyAbZAQO9t+MmyNorGd0mn9DD4Dk4zmtI+6QFeGh2CIX7IVzRHdwUGQbyoHigkveBtfgnmlf7A4aGbGd+UbCmnLIxu45SHu3gaR7i7yAA/a6IUPos=
+	t=1774770987; cv=none; b=dVQ9Zjcv5wu0V85F/jE3GzxgN7E27586rJlJhGPROBDeDlBnU94mWJcFln8Qr1fWvVNJ63ZrQ42akyFOE87BlU2TRKvQcLz/ydPQvKAHwDeIlyFWaO1hzei+Y9m4q46X1LWA6IHeVZAN/O2PJDcTvnEihPzxFknCwAVA4dsZgUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774764661; c=relaxed/simple;
-	bh=MfmOLigdWE8bsU7XHgwedxVC8vvi1919XD9DgZjdwi4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bTHCjNoajfLhIJGn+hq+xcywTFUu67J6TsF5VfXpgGysPqnNCEXGEeLJQdOrFOJjDc7c5MO57wDd44tf8RQ7i5SmGtVCO4CsdQMa/qyPo8c92pLqRTviZBdB5YV7l0vhUYP6AE8Mw7t68FRPUEnbdE+yp5RQouWAoAwD+bQ0y4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=LBkcIay9; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LLJMRPZ+; arc=none smtp.client-ip=103.168.172.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+	s=arc-20240116; t=1774770987; c=relaxed/simple;
+	bh=NXkO1BKIOyiirGfmId7kEdTa6tS6egLCtvOXPPxBnMY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gkpOyVPiExg59gi+/tQPoDz8lBP9n1/0IO/U3kzGVIjW8KvBBlsziIvF3SnV0vtUU0vcC/wBjyp340lnRPtUi5j4/BlXeDFCVqd/rOUYzI3rIjGaBdv3TUvyXyLKPfcoxSowcY8msAVP+dc26gCvVdHYy7Zs2banWBdndqNm8Y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R2HhQq+0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="LBkcIay9";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LLJMRPZ+"
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailflow.phl.internal (Postfix) with ESMTP id 7CB0013803E4;
-	Sun, 29 Mar 2026 02:10:58 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Sun, 29 Mar 2026 02:10:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1774764658; x=1774771858; bh=Me/2NNLQWh
-	li5jt5GB39ENZZ9ju/MKEHh68QaDIIrS0=; b=LBkcIay900en4TEqk60VRxH4gY
-	rYv5r0SS8ewN7IvSN8OSajdMlpXaIjvKrdhRLaCECGUn5abbidHNaTx2lP4SfJk6
-	js0XaYC7tTVAvmfBvXOxq32qjQmdA+mKayyis1J8bkSo9QysCRRp/OeatL5tH+pe
-	rgSHbALLc3187vQkdVGd6ZS2h9oqSr2tmBU7bDfecpOdmuNFpViqHvtMZxXgEuQw
-	st5kaBsF4FdIUIpKAIS7hHp/luQyaZtQplY9X10tKYqbvVySg66LnvqfyAfNkpVV
-	aUEdjyf2woXlZF6ZiV8W8ilKktKyIj3VgzNOZzUZLa8LKhWj1cHwONXzzSZQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1774764658; x=1774771858; bh=Me/2NNLQWhli5jt5GB39ENZZ9ju/MKEHh68
-	QaDIIrS0=; b=LLJMRPZ+yz+yNImgvl6SMQYDwauyGtQNR5Ym38EZGOowfCbUoZm
-	6zvOJX627XnoqxEqRSjVnWr/ucTWm/E2nX7q+Dkf34FX2X1RTP9ZyeTeT+xqlIID
-	dx1ZoHxAdPIvXUQtHVS5hvi4R6Jrv6eHfzqcS1cR4XOEbKTWwh9QsdkF2Zh5DYFF
-	RWXkJG15ZF9Mi7MlTMiQ96laoJiWFuBsWas18+0dNMp5J0enMRySMftULzbzsN1d
-	DzulrViTjLOXnrwjj45WCuv1OnYNLDPXCetflmq56MzCyn6dhhl+NsBxIfuycV/N
-	ogChP+yQcTH3fVPu782Tr1nfeHsYMnUQMkA==
-X-ME-Sender: <xms:ccLIae9ZIl-PvaFBq0ftyPIPtbJ0cJ7m88zg6b5itoOQtgm3qEwZhA>
-    <xme:ccLIafgo3XsYuGWUPEovPJ26cSRyWG33R7Ee9yxBQsZ28pOK5tMNor1gpcO_wp31i
-    iIpGUmcKeg4aWjqU4Jtk6O-m9PvOSBc0XGFy3Lqu1G-bHV5>
-X-ME-Received: <xmr:ccLIaSmC4epcOvkxbkau1qRne3h-nypTIHtN6hg5m2ssPpComy99fYT9xaTtyPjECN19XO21XM8h-St0o-jFjzM4B7DrZGL31vSLVN0F3hk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdeffeehfedtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepifhrvghgucfm
-    jfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrfgrthhtvghrnhepueegledvgf
-    euffetffehfffgkeegtddtudejudeiiedvuedtteelleejvddtgfefnecuffhomhgrihhn
-    pehmshhgihgurdhlihhnkhdpkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhmpdhn
-    sggprhgtphhtthhopeegkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepnhgrth
-    hhsggrphhprghisehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnuggvrhhsshhonhes
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhonhhrrgguhigstghioheskhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodguth
-    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhgvvgeskhgvrhhnvghlrdhorhhgpdhr
-    tghpthhtohepphgrvhgvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshgvrghnse
-    hmvghsshdrohhrgh
-X-ME-Proxy: <xmx:ccLIacRtSpq2hxfQN7N1HKjjGZs7UCoAiw_SCXb6QJGaH8iWm2CUIA>
-    <xmx:ccLIaeW1M8ZW696sfK9rjzo_t_HBeXq9CGb65POQUfQmkO-wuL_t2Q>
-    <xmx:ccLIaVshc5UWMaSgc98765Q-8rKO4s4jb5o7LAhgEF85m9Tki_jBmQ>
-    <xmx:ccLIacslVZOv_OBX_RcxzbRY4KmR_etruzRz6-HXCGpY6ZaBSv-5KA>
-    <xmx:csLIaRaBug03GqzpcrWhiNOAe6GeymvzonHKblRxaUznLYFQJQ70648i>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 29 Mar 2026 02:10:56 -0400 (EDT)
-Date: Sun, 29 Mar 2026 08:10:54 +0200
-From: Greg KH <greg@kroah.com>
-To: Biswapriyo Nath <nathbappai@gmail.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>, Sean Young <sean@mess.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Martin Botka <martin.botka@somainline.org>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-	linux-clk@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
-	phone-devel@vger.kernel.org, stable@vger.kernel.org,
-	kernel test robot <lkp@intel.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: Re: [PATCH v2 0/7] Add vibrator, IR transmitter and USB-C handling
- in xiaomi-ginkgo
-Message-ID: <2026032949-vice-ashen-e0c5@gregkh>
-References: <20260329-ginkgo-add-usb-ir-vib-v2-0-870e0745e55e@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R2HhQq+0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE9E2C2BCB3
+	for <linux-clk@vger.kernel.org>; Sun, 29 Mar 2026 07:56:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774770986;
+	bh=NXkO1BKIOyiirGfmId7kEdTa6tS6egLCtvOXPPxBnMY=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=R2HhQq+016fcpCRIW8zdQ0HauTKnwjFOWDOpiPxZ0WXQBBbyfTQW3FUPqpXXI9Oy5
+	 VtAO2d83xAkqNt7Ee5gX3q985bACYSFYYxw84stvuDp6WhAYUx+iSArS8HMN6z2x8y
+	 nr6aBjnxht82iQk2c4eXgOadJndzq6HElWcvooZ32IciqLT1rsDb4NGgCkGHFs3gcK
+	 sIZDZAbYI+cKTSR/LnYMFyxba+OPKsbo1ESN+fDpKklulAvrPB43b3jB0D+GNC6fr2
+	 FF/jikh8Za867TrBvmLdneQ1Zt6jL07GMPj9xNXYTgSmCzAHaX6zEovkwTkcIWnFR3
+	 g71no7e2M6Y9w==
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-3878de20527so28468931fa.3
+        for <linux-clk@vger.kernel.org>; Sun, 29 Mar 2026 00:56:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUyKGSrWVi4UDUbEf/D7FZqveAEl32HDfS9YQo4Ivi3Zm+MvJlg7BzDKXACnxRaAO1RgeLlF1sxJAU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxhv30yz6OfLC7Aal+DvNSRJgPgz3qQYe8AmmEn9CUswirBh4cA
+	zzXlHbSriPiBB+yJl5vBS74dt38Zh9htlsyLgt9lyNdW18dxTDIWqsvSqEFTjubQV72kYVUlQUg
+	HIKf4dGnH4t1d+TIJ+qnmnPEC+ueHjtQ=
+X-Received: by 2002:a2e:bea8:0:b0:38b:d89b:e285 with SMTP id
+ 38308e7fff4ca-38c731b8b78mr24317401fa.4.1774770985099; Sun, 29 Mar 2026
+ 00:56:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260329-ginkgo-add-usb-ir-vib-v2-0-870e0745e55e@gmail.com>
+References: <20260310-a733-clk-v1-0-36b4e9b24457@pigmoral.tech> <20260310-a733-clk-v1-2-36b4e9b24457@pigmoral.tech>
+In-Reply-To: <20260310-a733-clk-v1-2-36b4e9b24457@pigmoral.tech>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Sun, 29 Mar 2026 15:56:12 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65ycixbX7YS_rC6pyh-zMP6QvHqc6qdXjH4e0xpaqX=CQ@mail.gmail.com>
+X-Gm-Features: AQROBzBv23a5U8YFwC6JrpXv9HxCxK3WuA_W9E6K5Up_sT7yzO6F5aKFcWx7Jy8
+Message-ID: <CAGb2v65ycixbX7YS_rC6pyh-zMP6QvHqc6qdXjH4e0xpaqX=CQ@mail.gmail.com>
+Subject: Re: [PATCH RFC 2/8] clk: sunxi-ng: sdm: Add dual patterns support
+To: Junhui Liu <junhui.liu@pigmoral.tech>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Paul Walmsley <pjw@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Richard Cochran <richardcochran@gmail.com>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Mar 29, 2026 at 04:47:55AM +0000, Biswapriyo Nath wrote:
-> This patch series add support for various components in Xiaomi Redmi
-> Note 8.
-> 
-> Most notably:
-> - IR transmitter
-> - USB-C OTG
-> - Vibrator
-> 
-> Also, fix some bindings warning as reported due to previous commits.
-> These are tested with linux-next tag next-20260320.
-> 
-> Signed-off-by: Biswapriyo Nath <nathbappai@gmail.com>
+On Tue, Mar 10, 2026 at 4:42=E2=80=AFPM Junhui Liu <junhui.liu@pigmoral.tec=
+h> wrote:
+>
+> On newer Allwinner platforms like the A733, the Sigma-Delta Modulation
+> (SDM) control logic is more complex. The SDM enable bit, which was
+> previously located in the PLL register, is now moved to a second
+> pattern register (PATTERN1).
+>
+> To support this, rename the existing "tuning" members to "pattern0" to
+> align with the datasheet, and introduce the _SUNXI_CCU_SDM_DUAL_PAT
+> macro to provide pattern1 register support. Related operations are also
+> updated.
+>
+> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
 > ---
-> Changes in v2:
-> - Move bindings fixes to first in the series and add fixes tag.
-> - Link to v1: https://patch.msgid.link/20260325-ginkgo-add-usb-ir-vib-v1-0-446c6e865ad6@gmail.com
-> 
-> ---
-> Biswapriyo Nath (7):
->       arm64: dts: qcom: sm6125: Use 64 bit addressing
->       dt-bindings: clock: qcom, dispcc-sm6125: Add #reset-cells property
->       arm64: dts: qcom: sm6125-xiaomi-ginkgo: Enable vibrator
->       arm64: dts: qcom: sm6125: Enable USB-C port handling
->       arm64: dts: qcom: sm6125-xiaomi-ginkgo: Add PMI632 Type-C property
->       dt-bindings: leds: irled: ir-spi-led: Add new duty-cycle value
->       arm64: dts: qcom: sm6125-xiaomi-ginkgo: Add IR transmitter
-> 
->  .../bindings/clock/qcom,dispcc-sm6125.yaml         |   3 +
->  .../devicetree/bindings/leds/irled/ir-spi-led.yaml |   2 +-
->  .../boot/dts/qcom/sm6125-xiaomi-ginkgo-common.dtsi |  56 +++++++
->  arch/arm64/boot/dts/qcom/sm6125.dtsi               | 168 +++++++++++----------
->  4 files changed, 152 insertions(+), 77 deletions(-)
-> ---
-> base-commit: 785f0eb2f85decbe7c1ef9ae922931f0194ffc2e
-> change-id: 20260325-ginkgo-add-usb-ir-vib-4a51bd9ff64b
-> 
-> Best regards,
-> --  
-> Biswapriyo Nath <nathbappai@gmail.com>
-> 
-> 
+>  drivers/clk/sunxi-ng/ccu_sdm.c | 51 +++++++++++++++++++++++++++++-------=
+------
+>  drivers/clk/sunxi-ng/ccu_sdm.h | 32 +++++++++++++++++---------
+>  2 files changed, 57 insertions(+), 26 deletions(-)
+>
+> diff --git a/drivers/clk/sunxi-ng/ccu_sdm.c b/drivers/clk/sunxi-ng/ccu_sd=
+m.c
+> index c564e5f9e610..204e25feaa36 100644
+> --- a/drivers/clk/sunxi-ng/ccu_sdm.c
+> +++ b/drivers/clk/sunxi-ng/ccu_sdm.c
+> @@ -18,7 +18,10 @@ bool ccu_sdm_helper_is_enabled(struct ccu_common *comm=
+on,
+>         if (sdm->enable && !(readl(common->base + common->reg) & sdm->ena=
+ble))
+>                 return false;
+>
+> -       return !!(readl(common->base + sdm->tuning_reg) & sdm->tuning_ena=
+ble);
+> +       if (sdm->pat1_enable && !(readl(common->base + sdm->pat1_reg) & s=
+dm->pat1_enable))
+> +               return false;
+> +
+> +       return !!(readl(common->base + sdm->pat0_reg) & sdm->pat0_enable)=
+;
+>  }
+>  EXPORT_SYMBOL_NS_GPL(ccu_sdm_helper_is_enabled, "SUNXI_CCU");
+>
+> @@ -37,18 +40,27 @@ void ccu_sdm_helper_enable(struct ccu_common *common,
+>         for (i =3D 0; i < sdm->table_size; i++)
+>                 if (sdm->table[i].rate =3D=3D rate)
+>                         writel(sdm->table[i].pattern,
+> -                              common->base + sdm->tuning_reg);
+> +                              common->base + sdm->pat0_reg);
+>
+>         /* Make sure SDM is enabled */
+>         spin_lock_irqsave(common->lock, flags);
+> -       reg =3D readl(common->base + sdm->tuning_reg);
+> -       writel(reg | sdm->tuning_enable, common->base + sdm->tuning_reg);
+> +       reg =3D readl(common->base + sdm->pat0_reg);
+> +       writel(reg | sdm->pat0_enable, common->base + sdm->pat0_reg);
+>         spin_unlock_irqrestore(common->lock, flags);
+>
+> -       spin_lock_irqsave(common->lock, flags);
+> -       reg =3D readl(common->base + common->reg);
+> -       writel(reg | sdm->enable, common->base + common->reg);
+> -       spin_unlock_irqrestore(common->lock, flags);
+> +       if (sdm->enable) {
+> +               spin_lock_irqsave(common->lock, flags);
+> +               reg =3D readl(common->base + common->reg);
+> +               writel(reg | sdm->enable, common->base + common->reg);
+> +               spin_unlock_irqrestore(common->lock, flags);
+> +       }
+> +
+> +       if (sdm->pat1_enable) {
+> +               spin_lock_irqsave(common->lock, flags);
+> +               reg =3D readl(common->base + sdm->pat1_reg);
+> +               writel(reg | sdm->pat1_enable, common->base + sdm->pat1_r=
+eg);
+> +               spin_unlock_irqrestore(common->lock, flags);
+> +       }
+>  }
+>  EXPORT_SYMBOL_NS_GPL(ccu_sdm_helper_enable, "SUNXI_CCU");
+>
+> @@ -61,14 +73,23 @@ void ccu_sdm_helper_disable(struct ccu_common *common=
+,
+>         if (!(common->features & CCU_FEATURE_SIGMA_DELTA_MOD))
+>                 return;
+>
+> -       spin_lock_irqsave(common->lock, flags);
+> -       reg =3D readl(common->base + common->reg);
+> -       writel(reg & ~sdm->enable, common->base + common->reg);
+> -       spin_unlock_irqrestore(common->lock, flags);
+> +       if (sdm->enable) {
+> +               spin_lock_irqsave(common->lock, flags);
+> +               reg =3D readl(common->base + common->reg);
+> +               writel(reg & ~sdm->enable, common->base + common->reg);
+> +               spin_unlock_irqrestore(common->lock, flags);
+> +       }
+> +
+> +       if (sdm->pat1_enable) {
+> +               spin_lock_irqsave(common->lock, flags);
+> +               reg =3D readl(common->base + sdm->pat1_reg);
+> +               writel(reg & ~sdm->pat1_enable, common->base + sdm->pat1_=
+reg);
+> +               spin_unlock_irqrestore(common->lock, flags);
+> +       }
+>
+>         spin_lock_irqsave(common->lock, flags);
+> -       reg =3D readl(common->base + sdm->tuning_reg);
+> -       writel(reg & ~sdm->tuning_enable, common->base + sdm->tuning_reg)=
+;
+> +       reg =3D readl(common->base + sdm->pat0_reg);
+> +       writel(reg & ~sdm->pat0_enable, common->base + sdm->pat0_reg);
+>         spin_unlock_irqrestore(common->lock, flags);
+>  }
+>  EXPORT_SYMBOL_NS_GPL(ccu_sdm_helper_disable, "SUNXI_CCU");
+> @@ -123,7 +144,7 @@ unsigned long ccu_sdm_helper_read_rate(struct ccu_com=
+mon *common,
+>         pr_debug("%s: clock is sigma-delta modulated\n",
+>                  clk_hw_get_name(&common->hw));
+>
+> -       reg =3D readl(common->base + sdm->tuning_reg);
+> +       reg =3D readl(common->base + sdm->pat0_reg);
+>
+>         pr_debug("%s: pattern reg is 0x%x",
+>                  clk_hw_get_name(&common->hw), reg);
+> diff --git a/drivers/clk/sunxi-ng/ccu_sdm.h b/drivers/clk/sunxi-ng/ccu_sd=
+m.h
+> index c1a7159b89c3..c289be28e1b4 100644
+> --- a/drivers/clk/sunxi-ng/ccu_sdm.h
+> +++ b/drivers/clk/sunxi-ng/ccu_sdm.h
+> @@ -33,21 +33,31 @@ struct ccu_sdm_internal {
+>         u32             table_size;
+>         /* early SoCs don't have the SDM enable bit in the PLL register *=
+/
+>         u32             enable;
+> -       /* second enable bit in tuning register */
+> -       u32             tuning_enable;
+> -       u16             tuning_reg;
+> +       /* second enable bit in pattern0 register */
+> +       u32             pat0_enable;
+> +       u16             pat0_reg;
+> +       /* on some platforms, the sdm enable bit in pattern1 register */
+> +       u32             pat1_enable;
+> +       u16             pat1_reg;
+>  };
+>
+> -#define _SUNXI_CCU_SDM(_table, _enable,                        \
+> -                      _reg, _reg_enable)               \
+> -       {                                               \
+> -               .table          =3D _table,               \
+> -               .table_size     =3D ARRAY_SIZE(_table),   \
+> -               .enable         =3D _enable,              \
+> -               .tuning_enable  =3D _reg_enable,          \
+> -               .tuning_reg     =3D _reg,                 \
+> +#define __SUNXI_CCU_SDM(_table, _enable, _pat0, _pat0_enable, _pat1, _pa=
+t1_enable)     \
+> +       {                                                               \
+> +               .table                  =3D _table,                      =
+ \
+> +               .table_size             =3D ARRAY_SIZE(_table),          =
+ \
+> +               .enable                 =3D _enable,                     =
+ \
+> +               .pat0_enable            =3D _pat0_enable,                =
+ \
+> +               .pat0_reg               =3D _pat0,                       =
+ \
+> +               .pat1_enable            =3D _pat1_enable,                =
+ \
+> +               .pat1_reg               =3D _pat1,                       =
+ \
+>         }
+>
+> +#define _SUNXI_CCU_SDM(_table, _enable, _pat0, _pat0_enable)   \
+> +       __SUNXI_CCU_SDM(_table, _enable, _pat0, _pat0_enable, 0, 0)
+> +
+> +#define _SUNXI_CCU_SDM_DUAL_PAT(_table, _pat0, _pat0_enable, _pat1, _pat=
+1_enable)      \
+> +       __SUNXI_CCU_SDM(_table, 0, _pat0, _pat0_enable, _pat1, _pat1_enab=
+le)
+> +
 
-<formletter>
+Don't introduce an intermediate macro that looks _almost_ the same as the
+macro the driver is actually supposed to use.
 
-This is not the correct way to submit patches for inclusion in the
-stable kernel tree.  Please read:
-    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
-for how to do this properly.
+Just declare _SUNXI_CCU_SDM_DUAL_PAT() to expand to the full entry, and
+_SUNXI_CCU_SDM() to _SUNXI_CCU_SDM_DUAL_PAT() with the last two parameters
+as zero. That takes less lines.
 
-</formletter>
+
+ChenYu
+
+>  bool ccu_sdm_helper_is_enabled(struct ccu_common *common,
+>                                struct ccu_sdm_internal *sdm);
+>  void ccu_sdm_helper_enable(struct ccu_common *common,
+>
+> --
+> 2.52.0
+>
+>
