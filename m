@@ -1,49 +1,55 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2D63783BB;
-	Mon, 30 Mar 2026 16:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4DB37756C;
+	Mon, 30 Mar 2026 16:02:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774886513; cv=none; b=YwchhBnPRiD7amdKASbvdRp5NqyRSloSVUoABI17a8Rdop/vv5JqmG9+BwbzZGWNeh4qwxcc98ffoT475go5/zJuJ2FloWyOwtIcz8efXIQ7AXwn36psZgvz+BQL0Zmm7Vd42ouy2kx9F2wN1BZHoFtVqqohfxiwKY08o+9+JSU=
+	t=1774886535; cv=none; b=Tl/H6H7m0m/HkVXN3UGRrYk84nVA2wUENk9/YqRIYUnCot8opbOaGirWF3kkBmbFyxN21i8PpJmRMEap6u44FsDYoZG68QgPdCfF+UcqgqPzCZY50pM7/S562FCnK1er7OssZ336d5HpIp9LkU96caLYBZ6RkVLBF4NFj4ycvrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774886513; c=relaxed/simple;
-	bh=dkL6dv1UZ6tEvEkiK8k3OFHYmWohEXDgOHsN7TaAXo8=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OUFRhMcxm3N6vRkez2dxNI9nPdOgcb+6nR597nRjX6KP/XZ1zYvfV4Ni3aZ+ztDjnCL5MMRQKYVb7uueDjTMRCFGdyUKav3FSwAR9BZf4oMsANeiXHJpIdHO2gl9I9YgRbmtEe8slJemm1BuSIvv7apPK09OZOZE/VAZi+Q2QXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=peTvHo4w; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774886535; c=relaxed/simple;
+	bh=Sue1rI3ml/BRST8ghtDWbb/NTjmMdZ9F13V19Zmd8K8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ov92+8tlqGUaBWLXD7Cbhtaym/AL4wYn1MWdP8sH4rPpM3HcGjnyN7Uh8Opuh9Rem5ffedPYyjbZFhkezXNRj2TUvU6GsiKFvD7ebYW/peFgOuacByX9WnDVDM/fa4Dvjvx54sLzvOVQpfqDWz7K/ULj7mpEetOCkWlyREzWVCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u1mFAXml; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="peTvHo4w"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15D64C19423;
-	Mon, 30 Mar 2026 16:01:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u1mFAXml"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04980C2BCB3;
+	Mon, 30 Mar 2026 16:02:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774886512;
-	bh=dkL6dv1UZ6tEvEkiK8k3OFHYmWohEXDgOHsN7TaAXo8=;
-	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=peTvHo4wMPfXlvDCs2e71U/I/369QNfdTRy+2ixgLbfcFE1m2O1tewtKUYet6WZ9y
-	 EdfjyyCWuYUvDA12a43gIpdl2mh8U/WT32/+5778ADO2wLEA2BWFgSLwnzcJmd0sOI
-	 Jj/AmhylDLg2bpPAjhHfJ+vTm6yhKUSddCGP6qZTEIbI2//eEQDxP5Y3cBea8c1y6D
-	 q2NFecVehN7YPdCR5ZHywBK746D6eS2i7erU1Q9+B2mNxRJ8c20CXIWZSC9q2tem6I
-	 yDRZiTRPCG8VIN88z5jsd0fycdp7JYnQBiDJE49fuSxUGH3mOECEfZWzj3SyW/dGbO
-	 KTcxbnnNSf1Rg==
+	s=k20201202; t=1774886535;
+	bh=Sue1rI3ml/BRST8ghtDWbb/NTjmMdZ9F13V19Zmd8K8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=u1mFAXmlrTj5X3Ryo2+lxAtDFJvW9bJhnMh6hsbrxUj7Uv5CN3J4ur3XzX7C/98xi
+	 jyIIJxKQf3XWRypoSdQl4bjDeFfdNgO01PkSfCBY8Hq8mU5fYaStdIhjgY89VIq7Mp
+	 DJoXCe8OR1yv9/Wap1YVhg/BnUMxgFriYM1h7ba8DAb5Ntl7stpVhFVMrbIoUHv1+L
+	 GQwY177GMqug+HSEKuEsPQpH2DImGIo8PfYCyYs3uC+SeaI0IpWxt4OMsLGTPxKFGK
+	 XF3t1aAi0S5kq8l3gIGARr94aM/CjQSA1g2RDBSqoqAwGePG3e6HZHl4wy0pXq9bEf
+	 fEPTb7ofyX2IA==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Luo Jie <quic_luoj@quicinc.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+	Imran Shaik <imran.shaik@oss.qualcomm.com>,
+	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
 	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Christian Marangi <ansuelsmth@gmail.com>
-Subject: Re: [PATCH 0/4] clk: qcom: ipq-cmn-pll: Add IPQ6018/IPQ8074 SoC support
-Date: Mon, 30 Mar 2026 11:01:12 -0500
-Message-ID: <177488647778.633011.8836589484278812193.b4-ty@kernel.org>
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+	Abel Vesa <abel.vesa@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH v5 0/3] Add support for GPUCC and GXCLK for SM8750
+Date: Mon, 30 Mar 2026 11:01:33 -0500
+Message-ID: <177488647782.633011.6708959644343560158.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260311183942.10134-1-ansuelsmth@gmail.com>
-References: <20260311183942.10134-1-ansuelsmth@gmail.com>
+In-Reply-To: <20260305-gpucc_sm8750_v2-v5-0-78292b40b053@oss.qualcomm.com>
+References: <20260305-gpucc_sm8750_v2-v5-0-78292b40b053@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -54,31 +60,23 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Wed, 11 Mar 2026 19:39:37 +0100, Christian Marangi wrote:
-> Simple series that adds support for the common PLL for
-> IPQ6018/IPQ8074 SoC support.
+On Thu, 05 Mar 2026 16:10:07 +0530, Taniya Das wrote:
+> Support the graphics clock controller for SM8750 for Graphics SW
+> driver to use the clocks. GXCLKCTL (Graphics GX Clock Controller) is a
+> block dedicated to managing clocks for the GPU subsystem on GX power
+> domain. The GX clock controller driver manages only the GX GDSC and the
+> rest of the resources of the controller are managed by the firmware.
 > 
-> This is an initial effort to try to support the Ethernet Switch
-> present on the QualcommAX platform upstream.
-> 
-> John Crispin (4):
->   dt-bindings: clock: qcom: Add CMN PLL support for IPQ6018
->   clk: qcom: ipq-cmn-pll: Add IPQ6018 SoC support
->   dt-bindings: clock: qcom: Add CMN PLL support for IPQ8074
->   clk: qcom: ipq-cmn-pll: Add IPQ8074 SoC support
+> The Graphics GX clock controller is a reuse of the Kaanapali SW driver.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/4] dt-bindings: clock: qcom: Add CMN PLL support for IPQ6018
-      commit: a57666004f49fa5031d6bf388834213e6f961922
-[2/4] clk: qcom: ipq-cmn-pll: Add IPQ6018 SoC support
-      commit: 97eb2ac52726fbb702ced40d552a3f6f2683b664
-[3/4] dt-bindings: clock: qcom: Add CMN PLL support for IPQ8074
-      commit: 7156c65030006e6930dd99c5b8c5e84e69ca5f0b
-[4/4] clk: qcom: ipq-cmn-pll: Add IPQ8074 SoC support
-      commit: 4e36f8ab45c406420f2c2ce6ee3988e0d13ba1c9
+[1/3] dt-bindings: clock: qcom: Add SM8750 GPU clocks
+      commit: 4aeadf8a18dbbe4fbe2f8e6f03f48f3492c8d1d1
+[2/3] clk: qcom: Add a driver for SM8750 GPU clocks
+      commit: 5af11acae6608d3b1175aea86bac06f267c6db14
 
 Best regards,
 -- 
