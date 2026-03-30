@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E27C3C457B;
-	Mon, 30 Mar 2026 10:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9130F26F2B9;
+	Mon, 30 Mar 2026 10:54:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774867691; cv=none; b=oueRKI5+WgcOc13WHC3F9lvTj7XcONt6lhspTZGFBtj7RjoFxgN38MdoEDzGLz/RhwCzVrUN7oYIyo0AB0zCAYwiAk5wdxotZPLFqO6ylk4A4slKpoHVVVxEXrcpLy9n9xSQeF6dnqK7kGk/dpRi0KfgZqgTSyprhGdCIuxjlPY=
+	t=1774868045; cv=none; b=lyQOI5l4DuMC51oAgbJax9gSLGZxuB6G6RwxR2TKgKUDHUowRYT7kzn+BBtLeKrMZvXqi0r7KMw9Wdu36Ss9MU4IzvDMFzbV7Qp4897dyMeFboeMB1SFccUuhBMk9eIDi7PFu/5tFlO4kN6zFPwHTvxRIN3pQRn5oU0lCgvG1vI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774867691; c=relaxed/simple;
-	bh=sgWDsMt9x5Efn1Ex6V5em36oaanjsO0EboetHfiLBjs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sgAP9Z+92NpYG5RUjWxN3VpFFWnQ0KgvfEtuSsBoGqw5zlH+Cbh3jYJGTIvchfgYdcYD/NCHHQ8/wSGaC1Bt/79Yz2PVsofrwDZf//Durz3ls/T5dgRw4N25Efp2+d3zuk6opkKtH6mLDEWVC2cycq8L75HUFz8MDhrV5keyIL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FNRfJBAS; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774868045; c=relaxed/simple;
+	bh=MEE7gxYUNUvwMXzUPch6YApiPur4BpArrAJWoVhakJ4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=hkuFhYdf95DFQ/Kb8aYRr4H4Ffj7OewjOkI7rCtCKPish7HySkHgKIf9upxQf7Bm6Vf+LzUYuXef8uRPSJcRDqtCW0CRplC4/3gBEO9L5KNOs2G8m14EAm9M/CdGf1nM93j/oj3hZRfC7az+Ex7dYY13/sNihDnozSdbLZIjP94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I0Lq6/Hx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FNRfJBAS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3EC5C4CEF7;
-	Mon, 30 Mar 2026 10:48:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I0Lq6/Hx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B203C4CEF7;
+	Mon, 30 Mar 2026 10:54:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774867690;
-	bh=sgWDsMt9x5Efn1Ex6V5em36oaanjsO0EboetHfiLBjs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FNRfJBASnSsJrkC/hXamTCsjwkWj71Kn4XH9ezN/cXWfuq6hwv9X9oRQ8j9Q/15pR
-	 bZW+yaKY5Lfz0ydhdQJlzMZ92JhvyYTUNSDNIbE85IPoK6R8Exffg/MqAwAesQ0+rG
-	 lRIrzeoe9jE42ohvM48FDvvfga+XZheYXWaXfYdtbZuOTLrKYgsKBytxN+p+FARCJq
-	 FMxCg0/B4tpcUVhl++aPFhRYuyMjIePlZoYlR+f/qgRUtTIKfn6PQ+d/V3c5KcDUf+
-	 JWh9cq/iZ6icHeEfd9Fj7EoJPCLT6Y2RXH0/qg9HtqE6fgWIyGsCgFKG/wp2Ztv1Fl
-	 lse3/7aVARwbQ==
-Message-ID: <ebc6da60-d49f-4a44-9ecb-3ae70413a248@kernel.org>
-Date: Mon, 30 Mar 2026 12:48:05 +0200
+	s=k20201202; t=1774868045;
+	bh=MEE7gxYUNUvwMXzUPch6YApiPur4BpArrAJWoVhakJ4=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=I0Lq6/HxMNeCt+twC6dNapO2SuOUtCdaVbfHFaRyMJD7AMQ7LBaPTBQtNC8Nj6dkr
+	 1FOP0ZWdk4qCVdFaKsXLNncnXiQCyafcEzRrAyp3JR8fd9dY+dXD0TIEsa8mY3nIX6
+	 xFgwscJaQaBCxKFbnhCW72vpkf/RXIczdEAu8hfyCfahE0HY9bgmeG1TP0sD1LNy5f
+	 WliqCCy3oXWZnoQOAils5nWYgxiANN19GGynNyzze6Y35yUyx5WZUW69oYWM7ZTWpP
+	 8PKe0aK/lLZLqyCJA/IVgq03vVs7IS5G4Eu/PsoFYQ6k4EH4G6tL7RjBoQiOTC4w4S
+	 0WxYASLXD+crQ==
+Message-ID: <cf3490f1-149d-447a-bbec-de7ff8f517af@kernel.org>
+Date: Mon, 30 Mar 2026 12:53:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -37,6 +37,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v3 1/3] dt-bindings: clock: amlogic: Fix redundant hyphen
  in "amlogic,t7-gp1--pll" string.
+From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Jian Hu <jian.hu@amlogic.com>
 Cc: Jerome Brunet <jbrunet@baylibre.com>,
  Neil Armstrong <neil.armstrong@linaro.org>,
@@ -57,7 +58,7 @@ References: <20260326092645.1053261-1-jian.hu@amlogic.com>
  <20260326092645.1053261-2-jian.hu@amlogic.com>
  <20260327-rough-spry-hyrax-8236de@quoll>
  <9830ff89-a145-41d1-98e9-1412f497d3f2@amlogic.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <ebc6da60-d49f-4a44-9ecb-3ae70413a248@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -102,48 +103,55 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <9830ff89-a145-41d1-98e9-1412f497d3f2@amlogic.com>
+In-Reply-To: <ebc6da60-d49f-4a44-9ecb-3ae70413a248@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 30/03/2026 12:44, Jian Hu wrote:
-> 
-> On 3/27/2026 3:23 PM, Krzysztof Kozlowski wrote:
->> [ EXTERNAL EMAIL ]
+On 30/03/2026 12:48, Krzysztof Kozlowski wrote:
+> On 30/03/2026 12:44, Jian Hu wrote:
 >>
->> On Thu, Mar 26, 2026 at 05:26:43PM +0800, Jian Hu wrote:
->>> Fix redundant hyphen in "amlogic,t7-gp1--pll" string.
+>> On 3/27/2026 3:23 PM, Krzysztof Kozlowski wrote:
+>>> [ EXTERNAL EMAIL ]
 >>>
->>> Fixes: 5437753728ac ("dt-bindings: clock: add Amlogic T7 PLL clock controller")
->> Please run scripts/checkpatch.pl on the patches and fix reported
->> warnings. After that, run also 'scripts/checkpatch.pl --strict' on the
->> patches and (probably) fix more warnings. Some warnings can be ignored,
->> especially from --strict run, but the code here looks like it needs a
->> fix. Feel free to get in touch if the warning is not clear.
+>>> On Thu, Mar 26, 2026 at 05:26:43PM +0800, Jian Hu wrote:
+>>>> Fix redundant hyphen in "amlogic,t7-gp1--pll" string.
+>>>>
+>>>> Fixes: 5437753728ac ("dt-bindings: clock: add Amlogic T7 PLL clock controller")
+>>> Please run scripts/checkpatch.pl on the patches and fix reported
+>>> warnings. After that, run also 'scripts/checkpatch.pl --strict' on the
+>>> patches and (probably) fix more warnings. Some warnings can be ignored,
+>>> especially from --strict run, but the code here looks like it needs a
+>>> fix. Feel free to get in touch if the warning is not clear.
+>>
+>>
+>> Thanks for your review.
+>>
+>>
+>> This series is based on the clk-next branch (version v7.0-rc1).
+>>
+>>
+>> Here are the check results without --strict:
+>>
 > 
+> I checked before. Now I double checked:
 > 
-> Thanks for your review.
+> b4 shazam...
+> git format-patch -3
+> scripts/checkpatch.pl 0*
 > 
+> Clearly a warning, also on v7.0-rc1.
 > 
-> This series is based on the clk-next branch (version v7.0-rc1).
-> 
-> 
-> Here are the check results without --strict:
+> So maybe you don't do it on the kernel you are claiming or just doing it
+> on different code than you sent.
 > 
 
-I checked before. Now I double checked:
+It looks like it is b4 shazam problem which duplicates the Fixes tag. I
+don't quite get why the tag is duplicated. I don't see anything on the
+lists which would add wrong tag.
 
-b4 shazam...
-git format-patch -3
-scripts/checkpatch.pl 0*
+Well, that will be problem when applying, but nothing to be fixed here, so:
 
-Clearly a warning, also on v7.0-rc1.
-
-So maybe you don't do it on the kernel you are claiming or just doing it
-on different code than you sent.
-
-Especially the second case would be a waste of my time to investigate
-and read this patch.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 Best regards,
 Krzysztof
