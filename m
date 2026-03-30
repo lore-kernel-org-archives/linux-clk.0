@@ -1,200 +1,148 @@
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19F2391826
-	for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2026 18:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42647396571
+	for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2026 20:55:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774896488; cv=none; b=RvRZ7qMVdHxtDlAzRi8pGPPiWJyFe/yPM7LrobdXdNmHyaKBw+Okwv+1cJ9eAMPPQSMQxJW7toU0HK17AuY9T2WuH/xizwm6NCN1gcoHW1WnYNdtlSDzfbacN5RglcKAb2MUx9g+4JXRQivYvyjlUJF74sbyKhnAa/QCIk2tKvk=
+	t=1774904124; cv=none; b=axoSU4fCq/TesGyXBYpoaj6dVR0amLTLZDECCCT+qUSyyk4jJ+aq3AViUSuYGXKpcixdqPjMox0PfoctcF7ouLo/c59Ybci1ABYMkdHfzeEWakq471gvRkDA5LqiQ5dNbvwfYbok6ZLNyBGIKeCYP2CV1pvG73QPC6yf8c1P9jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774896488; c=relaxed/simple;
-	bh=PZJA8OYSHkcjEb6yeCr4bU8DRy/2gacrQ+n6Z6q9zPk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Pw6nN2O41811B+dfIoxZE7LCJYq6BocAsBLSWKBuww1pRSIyg0rVQ+sGLYnbJmbHau05wtJxaHbGpbd2U1wyzE9CB6ncpIRGimfiD7oyTsFcHt2S4+evomOzm6EWWfNVlFKVukQSVsVur9e1k+1hrlRr9Q0++MSpAcFkoP48MOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1774904124; c=relaxed/simple;
+	bh=8jn+fVkl/eNqRs3jl/U0wHO5LY3q+igW5+gBbA/y328=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T/6sER6JC8t7T0s51NWebq6k/0Msff4jvLnu7UfiRjwpi0ckZPnIOxSBB5Y6Af5SgzRXrpTanyjGwvI4/SD/uA8QEJ6rh0hyrHH3eSLRZs1iC/zxFHvAG25Kj715hQ97fAZyr5Kdd/RDTiRCoHxp3a1YTxnVYS/+f0HZW70u5xE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DOHSCJ7b; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-56cc8a021e2so3390717e0c.0
-        for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2026 11:48:06 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DOHSCJ7b"
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2ad617d5b80so34550195ad.1
+        for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2026 13:55:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1774904122; x=1775508922; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QuBN5LC4CCoVTyDBa2ABz4OuVl7GEpGiv+ePoy4pqeE=;
+        b=DOHSCJ7bKnGPv1wBbYqAqQQr3KiN/lbWv76G9RN2AEWu/smmyMmulL+CY0CZzROGTD
+         TTC2snE7LQPffsypvRQ2rUvO4UHtl8XyBTtsPdNUVjz187lLSsIB69wugQrEnuVyZyk0
+         hcPqpVWJFllabuD5iFC5AIbwSsaFB+zV2rZgvzGpIrPfYLzn1Skvlq/18CprU5Rym/lz
+         qJSUZgSMTe3VwyxqTVRxTuuFZ4rS9FgQ/RWrEBHcQUb2Bu5Og+wseKIpttPCfaQJSCcF
+         5jNhxi+1L7H5mlM98f32t1lYdJrxQrFp3w/9wCitppDZRv763ilkdLmfL/fp24Pq8cbH
+         +zhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774896485; x=1775501285;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20251104; t=1774904122; x=1775508922;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gmbdfERIdYVjSOaA8rBMP7lXVvFsi5yyzuqKEhnFPsQ=;
-        b=oorP8kLCADoIi6effEA0EyUNUX8FZbftl5dQ6eIB5QqvQyQv+aI9PcOOJAYbscC24v
-         cSOy5W6iqkCq2wxUpIwvfgA6XX6nYT7Mvk8sLyyk+TB1fuKjknGuzSSIR+KbYasMKmPf
-         kb+xvqNGbueWyleXlbGZP7PtocQfKHUVWgvMiztH0awDFeb4SUWBRkGZaUOePp2h0F3+
-         KoNs3E5NglTAov/SYC5Kmn/RFD0CuRNXDI3N8PlUKhx5It+dCTIzhm27IAbkK38Kuj70
-         iBX5H5Qyj+TAtm86Efy/hZKgkCV/Exq9fpnIbUrnyASRBmxuxHz5F41fCg/0k96sIoqh
-         koGA==
-X-Forwarded-Encrypted: i=1; AJvYcCVYpN7PYpvzytjsLr+xwevXVr97SGIGNec88GSJhcoWbZ6AbVPz1SQgx9TSQiq0l+mFWMusE4qIJnc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxfmgLAHF2WN6gTDk7o/rl/mseCTRr0+AYheLqnvYta1M1onuZ
-	oIaDJRzNfLDrTdxdUA4+MV7EcPn0LfZAjbTlUAcdfcWJv1VzWrfC/GOeK8470rw2
-X-Gm-Gg: ATEYQzwfV8rVRhH49wy7/3yY/PSPEDd+ni3Y09hVVSjwDeeAPv7JX9I0fM4oSLb38Ep
-	Snzwx5KyUqATpLGW21I8OtIk+dr6Gr0WsxD6fIcs8BD/AozqnY0zRrwlWaqCmAMENK+nG1adshs
-	EX1/ATqSlne03EXpDL+Sl33J+zxCXOJhsIP7y+u82qJMldn8CeWyR+iqyN+/wE+KktTlEmCiuhf
-	z46V/Z/EANNTeBIxpOIJ4qtN08bev72Bw1QhpS9ES/2t0251KZYOfWHMW3+utwjocQCyUQHCQTc
-	tkBJXDdPEOevOHC0vLBpMF/y7GIO39ti8eCTwcTgOogBcLxzIvb6zmPeGJ8GJV0n7mSzD67S5mZ
-	euvevsgz6E9GqwmknNK5rEJaJNkBD8NfHSoRgEpnrWUW1gyopXhCi8XikSb5XX+fEL6WGM/1LxG
-	JeiGbdZQR0CiZjoI0orxVhHzm9qFyYCWgeTrivzX5chjKpQEOCZ83/ONAIiBTidEDj
-X-Received: by 2002:a05:6122:4598:b0:56b:8ba0:fd58 with SMTP id 71dfb90a1353d-56d7c0bbc08mr380117e0c.6.1774896485394;
-        Mon, 30 Mar 2026 11:48:05 -0700 (PDT)
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com. [209.85.221.181])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56d58893d21sm9514800e0c.2.2026.03.30.11.48.05
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Mar 2026 11:48:05 -0700 (PDT)
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-56b7fce3ae6so4567031e0c.1
-        for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2026 11:48:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWaV0UDyxzRRI6lreCLND5fj6FwUnDM1HPdRFkGtybGmSlqwgoHM7J3ByWCGgdjHNIBn5eSUi5+Kac=@vger.kernel.org
-X-Received: by 2002:a05:6122:21a7:b0:56a:ed84:e2 with SMTP id
- 71dfb90a1353d-56d7bf9a1a3mr395634e0c.1.1774896484928; Mon, 30 Mar 2026
- 11:48:04 -0700 (PDT)
+        bh=QuBN5LC4CCoVTyDBa2ABz4OuVl7GEpGiv+ePoy4pqeE=;
+        b=Bx37nFSri70wvkvF2wl6cG0PciIFOf3XVoFvBeqlGT0zrBMW3v9KIW12JdP10p3o9Y
+         S1Go7K2X2Db0Wws6F9NRIdOmArlzAwRGSxCY9W9yMzR8Js9nYiq7Cg5T+eBaBTE4QoDT
+         4Svfh5l9VyVEdet2qnr7FVACPRqxf5JpuoxSD0lhM/YK4ie/byxIixBAx+z1SHyEJcIp
+         ruSN2nkwiJH8LbaFUl5/7Upd0C4ubGz/EAcfgG6e3JUGeaFmbQXrZBSSMpiMiC+GEOmj
+         3kEFYRIXKM5Kpge/U1dUyyppAgs3AZVQirU56L0CJmn2EBl8WMOpYb8kqO9n3i9SKqsP
+         mQGQ==
+X-Gm-Message-State: AOJu0YxuzBxoP9sTiyclvI9OX8qnpJbTxa+5/n8QdfUPToaiOn93k+MO
+	1gjHUKkThbhwRmI4OfAGdxbVP4e02xFI1y25NRVL9fziT+73BLuARd4Gvb44ZQ==
+X-Gm-Gg: ATEYQzx7ZKPfj+KozhXz3jiMWREkACVNslA0QyRj1Js/xOgYt4Dh65eQvv8iW92t/9b
+	4QyPtmxGo2bDXTYGNZzPKFyRBwVTQrS8QXS32NCaMVIM9SWsoJGWRLn5JFK8xX2gXqw8kgj3InL
+	jADD0B1JkJPGW3Yhm2yjOz47sI0t0cwEJ24yypoym3sKQgD2QKqlukV8F4CtETlG7M6d29Igprw
+	pt+/2C9XQJLA/hzhZ4BB+OV7oI1G3OpmEtOA0YA7uSCulW0F4lvUV1y3raAznQa4pDZjPGYkNVI
+	QcRvaxZqzu0MRoq+9q6csnVR7jXuFJJq5FHCULaGPOwbBHO0ggRqpAumG1+BSnw6EjTWeVg5VMV
+	496G7n8ouG3GgvODpmt6pGC40sulAmVgRsTpBKMs50XkIoTpViTT7Urz8dm0B0iMiGVysan8177
+	JA2nTrQ38QvTOwwB/UR2N0QJSGnslE9F3LQbTxEdMhavYqQcjA0v4ZteU=
+X-Received: by 2002:a17:902:ea05:b0:2b0:5dcb:84cb with SMTP id d9443c01a7336-2b0cdc240c6mr134127465ad.2.1774904122159;
+        Mon, 30 Mar 2026 13:55:22 -0700 (PDT)
+Received: from ryzen ([2601:644:8000:5b5d::8bd])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2b242642887sm104673825ad.1.2026.03.30.13.55.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Mar 2026 13:55:21 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Marvell Kirkwood and Armada 370, 375, 38x,...),
+	linux-kernel@vger.kernel.org (open list),
+	linux-hardening@vger.kernel.org (open list:KERNEL HARDENING (not covered by other areas):Keyword:\b__counted_by(_le|_be)?\b)
+Subject: [PATCHv2] clk: kirkwood: use kzalloc_flex
+Date: Mon, 30 Mar 2026 13:55:04 -0700
+Message-ID: <20260330205504.10143-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260319155334.51278-1-john.madieu.xa@bp.renesas.com>
- <20260319155334.51278-8-john.madieu.xa@bp.renesas.com> <20260320-peculiar-cat-of-acumen-c6f6b3@quoll>
- <TY6PR01MB173775E9970A41ED3A7FFF1DAFF52A@TY6PR01MB17377.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY6PR01MB173775E9970A41ED3A7FFF1DAFF52A@TY6PR01MB17377.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 30 Mar 2026 20:47:51 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdW6Ac_=BugNJaqWnazdDsuzBB765jpzXt8fUasbypXFxg@mail.gmail.com>
-X-Gm-Features: AQROBzBY2yW50P7_EhVQZxwFTstX-3Z9DxWPu0ijoIOHvrdSgZhFLZHzJwI06ec
-Message-ID: <CAMuHMdW6Ac_=BugNJaqWnazdDsuzBB765jpzXt8fUasbypXFxg@mail.gmail.com>
-Subject: Re: [PATCH 07/22] ASoC: dt-bindings: renesas,rsnd: Add RZ/G3E support
-To: John Madieu <john.madieu.xa@bp.renesas.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
-	Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, "magnus.damm" <magnus.damm@gmail.com>, 
-	Thomas Gleixner <tglx@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, "Claudiu.Beznea" <claudiu.beznea@tuxon.dev>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	John Madieu <john.madieu@gmail.com>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>, 
-	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi John,
+Simplify allocation by using a flexible array member and kzalloc_flex to
+combine allocations.
 
-On Mon, 30 Mar 2026 at 17:40, John Madieu <john.madieu.xa@bp.renesas.com> wrote:
-> > From: Krzysztof Kozlowski <krzk@kernel.org>
-> > > RZ/G3E has a different audio architecture from R-Car Gen2/Gen3/Gen4,
-> > > with additional clocks and resets:
-> > > - Per-SSI ADG clocks (adg.ssi.0-9)
-> > > - SCU related clocks (scu, scu_x2, scu_supply)
-> > > - SSIF supply clock
-> > > - AUDMAC peri-peri clock
-> > > - ADG clock
-> > > - Additional resets for SCU, ADG, and AUDMAC peri-peri
-> > >
-> > > RZ/G3E has 5 DMA controllers that can all be used by audio peripherals.
-> > > To allow the DMA core to distribute channels across all available
-> > > controllers, increase the maximum number of DMA entries in DVC, SRC,
-> > > and SSIU sub-nodes so that multiple providers can be listed with
-> > > repeated channel names.
-> > >
-> > > Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+Add __counted_by for extra runtime analysis. Move counting variable
+assignment to right after allocation as required by __counted_by.
 
-> > > b/Documentation/devicetree/bindings/sound/renesas,rsnd.yaml
-> > > index e8a2acb92646..bc8885c4fa24 100644
-> > > --- a/Documentation/devicetree/bindings/sound/renesas,rsnd.yaml
-> > > +++ b/Documentation/devicetree/bindings/sound/renesas,rsnd.yaml
-> > > @@ -58,6 +58,7 @@ properties:
-> > >            - renesas,rcar_sound-gen2
-> > >            - renesas,rcar_sound-gen3
-> > >            - renesas,rcar_sound-gen4
-> > > +          - renesas,rcar_sound-r9a09g047     # RZ/G3E
-> >
-> > Do not use underscores in compatibles. Previously used wrong style is not
-> > the excuse here, just like previously poor code, mistakes, bugs,
-> > unreadable approches is not justification to repeat the same.
->
-> Got it.
->
-> > >    reg:
-> > >      minItems: 1
-> > > @@ -97,20 +98,22 @@ properties:
-> > >
-> > >    resets:
-> > >      minItems: 1
-> > > -    maxItems: 11
-> > > +    maxItems: 14
-> > >
-> > >    reset-names:
-> > >      minItems: 1
-> > > -    maxItems: 11
-> > > +    maxItems: 14
-> > >
-> > >    clocks:
-> > >      description: References to SSI/SRC/MIX/CTU/DVC/AUDIO_CLK clocks.
-> > >      minItems: 1
-> > > -    maxItems: 31
-> > > +    maxItems: 47
-> > >
-> > >    clock-names:
-> > >      description: List of necessary clock names.
-> > >      # details are defined below
-> > > +    minItems: 1
-> > > +    maxItems: 47
-> > >
-> > >    # ports is below
-> > >    port:
-> > > @@ -136,9 +139,17 @@ properties:
-> > >
-> > >          properties:
-> > >            dmas:
-> > > -            maxItems: 1
-> > > +            description:
-> > > +              Must contain unique DMA specifiers, one per available
-> > > +              DMAC. On RZ/G3E, up to 5 for transmission.
-> > > +            minItems: 1
-> > > +            maxItems: 5
-> > >            dma-names:
-> > > -            const: tx
-> > > +            minItems: 1
-> > > +            maxItems: 5
-> > > +            items:
-> > > +              enum:
-> > > +                - tx
-> >
-> > Multiple levels, multiple if:then: (further) - I don't find this binding
-> > manageable/readable. You should split it, with common binding defining
-> > common part of hardware or interface if there is such.
->
-> I as you suggested, I'll split it. Just to double check, should I fix
-> any bug found in there (like existing compatible strings having underscore
-> separators) ? Or should I just split and make sure only new SoC support is
-> bug free ?
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+---
+ v2: remove unused goto.
+ drivers/clk/mvebu/kirkwood.c | 21 ++++++++-------------
+ 1 file changed, 8 insertions(+), 13 deletions(-)
 
-You cannot just change existing compatible values, as they are part
-of the DT ABI.
+diff --git a/drivers/clk/mvebu/kirkwood.c b/drivers/clk/mvebu/kirkwood.c
+index ed061d82fb65..f4f62b241193 100644
+--- a/drivers/clk/mvebu/kirkwood.c
++++ b/drivers/clk/mvebu/kirkwood.c
+@@ -253,8 +253,8 @@ struct clk_muxing_soc_desc {
 
-When you split RZ/G3E off into a separate file, please drop the
-"rcar"-part[*] in its compatible value, and move the SoC-specific part
-right after the comma.  Perhaps "renesas,r9a09g047-sound"?
+ struct clk_muxing_ctrl {
+ 	spinlock_t *lock;
+-	struct clk **muxes;
+ 	int num_muxes;
++	struct clk *muxes[] __counted_by(num_muxes);
+ };
 
-[*] Disclaimer: I haven't read the RZ/G3E audio chapter yet.
+ static const char *powersave_parents[] = {
+@@ -297,21 +297,18 @@ static void __init kirkwood_clk_muxing_setup(struct device_node *np,
+ 	if (WARN_ON(!base))
+ 		return;
 
-Gr{oetje,eeting}s,
+-	ctrl = kzalloc_obj(*ctrl);
+-	if (WARN_ON(!ctrl))
+-		goto ctrl_out;
+-
+-	/* lock must already be initialized */
+-	ctrl->lock = &ctrl_gating_lock;
+-
+ 	/* Count, allocate, and register clock muxes */
+ 	for (n = 0; desc[n].name;)
+ 		n++;
 
-                        Geert
++	ctrl = kzalloc_flex(*ctrl, muxes, n);
++	if (WARN_ON(!ctrl))
++		goto ctrl_out;
++
+ 	ctrl->num_muxes = n;
+-	ctrl->muxes = kzalloc_objs(struct clk *, ctrl->num_muxes);
+-	if (WARN_ON(!ctrl->muxes))
+-		goto muxes_out;
++
++	/* lock must already be initialized */
++	ctrl->lock = &ctrl_gating_lock;
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+ 	for (n = 0; n < ctrl->num_muxes; n++) {
+ 		ctrl->muxes[n] = clk_register_mux(NULL, desc[n].name,
+@@ -324,8 +321,6 @@ static void __init kirkwood_clk_muxing_setup(struct device_node *np,
+ 	of_clk_add_provider(np, clk_muxing_get_src, ctrl);
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+ 	return;
+-muxes_out:
+-	kfree(ctrl);
+ ctrl_out:
+ 	iounmap(base);
+ }
+--
+2.53.0
+
