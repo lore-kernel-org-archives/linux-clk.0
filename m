@@ -1,106 +1,166 @@
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12A03A7F50
-	for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2026 07:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774856944; cv=none; b=sl8lYFefm9LohVCfEj4//T5xQ+DlqeGkxTV2Z7xlZZuAUPlWwYt1K/0aHqh9NhCcZhPmS4JAogiOfzoTP1B/7cgzxwPsIJ2hv0sv+HGyR8qJ/l0hQgEc1EFr2B4yePcj+xmIeDRMegviyXtkEoG0DwizIOiX4xIgcjbqxGu6wok=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774856944; c=relaxed/simple;
-	bh=tUf2hbPu+VAmkpzo0Ox+s3NifzZbHOn/kfum96IvTTA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=OhISh86goJE1u68lzAsUJ96kKFs9iV7Rvp9BMBrI1cKHPeJN4SmPkF5eyDZJAklb4895VF2gSHW38lz9tHs/uHcaVQ1fUJiP54vlror4kSF6RDA7MLaCaINl1wVXMUFHsR9BOvESG27az0h6YlydvIk/mHMEWWRu2tLYMnYz9o8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GtsuNOlJ; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01DDE3B19B0
+	for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2026 08:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=205.220.180.131
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774860030; cv=pass; b=YzVRYDKqZVi012bi9eW2IWftxMADUFpR55ji5E5gh0U0g+S4PKBMaXJRG42NPJBst+5VRGVR82QDuilAfkNEna9ujQUd//t4/tZCrixnjTV0vI7aqE3KlJDk+Nn9e9JbjFVv2G15AOuUmgcXBJtrMy2FCFGVZc0T2xGLsV4g6Zg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774860030; c=relaxed/simple;
+	bh=rWZgHHlyKFfb8UmOMQjxbvukBuDEu3SQ0LKetZzLVaQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MaJbSzLDSO2hX9elMO1ublyyeOY6wHPGo6v7eQ1oniwf35IkuBB3BS9DSGBdsKSV4CzCoh0OvFgcgI0V/+cXvAyxxF7asCMRoqCbZbiFrecEo8w1uBs1HnlGPon9fFPO8wFZhOUu1T3z3TDL2t/FPpkrvUqc4gQMh39T7Ogr/ws=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=F8SvCnf+; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Wg2m8og7; arc=pass smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GtsuNOlJ"
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-43b3a0d25d8so2777027f8f.3
-        for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2026 00:49:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="F8SvCnf+";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Wg2m8og7"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62U6gT1f3438065
+	for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2026 08:40:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	rWZgHHlyKFfb8UmOMQjxbvukBuDEu3SQ0LKetZzLVaQ=; b=F8SvCnf+rzcEb1jr
+	SP2tBjclokgByKqhpYAePnw3KG3vXyJnA4Vrr6P8HpQXbn1WnM5UXetW3bwS1+LU
+	ahbmPt+1zgpR3EDj8kWYONI7+BOx0/eLkLyF35L+3x+FaCniz5wih6vijJZ55kYw
+	WtFwQuqGDnJgN+3meul+yZDWzSwXl4X9tyJ/1RHfYD6W3pnuBWLrV18qB0gNBhH1
+	WSs0/u51Qv0Lmmuj6bSK9B61SEVjYlxeQ39bCgIK7pk8kvQN1qf7zyOpzToDeTx/
+	Nyxzrxk+12YPsAHLYCPe7J9F7Ob4LuWImkTXxV/f/6QswRkO9Zi+eMY1qYymW8LY
+	yTxuEg==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4d66afways-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2026 08:40:25 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-50b44f7b7bbso133067621cf.3
+        for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2026 01:40:25 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1774860025; cv=none;
+        d=google.com; s=arc-20240605;
+        b=R9upk6fzSTeF51mEGFdSCGvPRVwi27z56syBlcPuXzydZ80hHW574QWKI2Ddb0K5is
+         ozJHnhgW1WwtXKLkOdw/uwz1uX2YOa5g7pKjG2kP73hiy42Nj2QNgDDziMGDc/VpclDA
+         0R7+u4zvlmC2QrAoJIzReNfLu+e3QpzOd+vNl7oZw+hzhUbl9yQH4djmsOov8n2+OyeD
+         16IdXbfO2zZi9n0eZ2fY1D1N0CmRXjVKBNN7lYM+Rfb4nIK6q1mZxtgaVuisHLCJCBW7
+         tb5AJYqCxN9b89TZEGWEZ6fGYpERCbm/HEf69Otu5q+xBNguDcdIq9/7JjHINEcYdMoo
+         nLFQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=rWZgHHlyKFfb8UmOMQjxbvukBuDEu3SQ0LKetZzLVaQ=;
+        fh=5ca+pXipy8Cz+9Xs2dty35jqdQ/rfLraKSMofFUtvto=;
+        b=EzDrzd7zEh1GLJPE01TP4t4n6m3Ui/A6nfhGFuuc+ruqeeYTz0jMIJYQjxtivlrIlZ
+         vhvZR8wnHwc1roKNPah8bh1W73zJ4mrI4OZkEuRpDQ/mKfu73cHicXhWo2PLZ4xu2Ibi
+         Dl1CCCLQvI2V/P6yEXBIU0MKbb5BoZTiUFlBN5kYsfNvxRdBbt1hTT6PA+oTpUV4E9tE
+         XTYvHDW95W2kVWiUWmmqPp8lYgg3SnC70I5jzvpyIRj7ThqgzLKGwqeooDTpPTIPCDBt
+         ugrVCBnRbLdtpyg6Ytk0G693MWgOnOf+ZPfGdOOUGwPH5mrgD4muIpEYwyy0BWH5du7o
+         ORhw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1774856941; x=1775461741; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tUf2hbPu+VAmkpzo0Ox+s3NifzZbHOn/kfum96IvTTA=;
-        b=GtsuNOlJN2mxreugfRvICRvm2SNDSc3AeACEGkCMQQtcmRguwTXgUMlqCiLCEYq6ee
-         mA2FB670VFaIzi/11nVShWOGPQyOBXa8NJ33H1RG/CtzJAJzY4Kzh4K6e5vrBBvoiauc
-         UXSE0M+QqjYwkVzJsDUkJ9QgEojwxuioG7d5u83AWcaiwbPZdfOH1vF5T8nvP83qSATQ
-         zIiFDkM1aOsZEFgtpimXRljN5XQXCOm9fsA5ZoweDB0mPjAAzPRlgCp5QR75nUaCM+Mw
-         TcJqKIwLeoNMZvvWRpvUmaePT3BdoAEsnY3MHwNefXDa9C7z0O4DlyYGpI7KusO0iO5F
-         2cAQ==
+        d=oss.qualcomm.com; s=google; t=1774860025; x=1775464825; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rWZgHHlyKFfb8UmOMQjxbvukBuDEu3SQ0LKetZzLVaQ=;
+        b=Wg2m8og7/FEOmvQmm+DWaNSOthanxPrgtiHGoC9/aLKTUumcb2xKV8YfIpjX2aCn00
+         QKAE+hc4Dl/z5bslp6Czes6ZYRr3l0YesTjZqrBPZRtENWJY5C7FtJOVKx+S5HWsyCm5
+         MaKFsEUiaELymR1rP0Fmnqd+PMRHn2Rwn936wY3+xguy1oHoF83iKU+nBbgimeyuAFqp
+         syLLfVbI9DOjWQGiwQWL5FRHIBN0Ow2a06krXHY8A/xKrmjvACNQP8BWTed7GqjTHEqt
+         JgxiNoLj61OSFYPA2KNO2lUKT3cdTk12DZZOeinQl599rg35SiJ7JzwyFUGhxWR+a9cd
+         d+0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774856941; x=1775461741;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=tUf2hbPu+VAmkpzo0Ox+s3NifzZbHOn/kfum96IvTTA=;
-        b=HGLO5PE4kJ2WcvXo2wCQn4JYpHdhxlM6/ZBj+QPWunOY1aAbm8zl3sNF/aiI7kYmYE
-         0x3TxsVmC5LCHiL+ctz0rxsPnWuJMgIs1vpVa6JSU60QW/UBpf6aguhgy6D1+86W6SXa
-         Rr79/+nkyH6S1UkJ6EmlmS6UzLQzFoRI92NwfM/QmVEur5xbR1M+PXUgpVIikE1oBlXj
-         hAgZHmFX3JUvqlIXO8UvQNhx4kRhGb876Ih/DKeYxG4YTgEd6A1j/i6mrr0tC0eb2Nvh
-         5uzNWRe1tzbpEQiz2q3HNL5GPnrxIXkcPgW7i28QzmvBuH2KeF1YBCfnLsV4QpL4n5En
-         9Yaw==
-X-Forwarded-Encrypted: i=1; AJvYcCUKi8cKbcbtyVDP13GrEa88yqHH01COz5IoOZq4ucvUjQlbc+3wSoHRhHE2IXBrAOj7fMb70V40QeQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQje+JwMU5K8XxdkB+QTjiyjt2owzMoWeS3ap7sukyVhMRadZW
-	nX3+4xeSuiVEHrvG04NqUcEUmfedMS5c+zpETljncVq8GN+VzdFkQsNx+Qegno1VccDANQMv620
-	fgInIHSUjNJXcMWZlDg==
-X-Received: from wmbd19.prod.google.com ([2002:a05:600c:58d3:b0:485:314d:637a])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:83c5:b0:477:7af8:c8ad with SMTP id 5b1f17b1804b1-487280a25c4mr203908425e9.31.1774856941203;
- Mon, 30 Mar 2026 00:49:01 -0700 (PDT)
-Date: Mon, 30 Mar 2026 07:49:00 +0000
-In-Reply-To: <CANiq72=M3H-06L7udG_LqTwLykZkAjfy2d5NXQZn5TYRJ+N37w@mail.gmail.com>
+        d=1e100.net; s=20251104; t=1774860025; x=1775464825;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=rWZgHHlyKFfb8UmOMQjxbvukBuDEu3SQ0LKetZzLVaQ=;
+        b=S8xJb+GkPL78fNF0s/27R1k0+hch5/Baeeg/IRDFLrHpYq2u/b3I2vzSpXRM83+OAY
+         eGXeZLoRqmtnDJU1d9b1pwQ+9E713nw2mq2Ejkp9JH3h9UKu1Xub20sP+5TKqSRsYZRy
+         yzh+wCpC3SvtJJWQIPKWRQyN3Sj2V85HKlSd/hxBY0JxIlaGn0RA8abGzIsWoY2YQ3uY
+         /rEivADg0nWOm3oI9AepsNvl/WzhPS6est9aS6aXMsAcT2EBD1Vl7hlmcqUYEZsoIhX/
+         BFh3bLrf17oSC60jZWvCcrwzeLwHmk9XSfsPIxNxPz4rnp1MF0Z2Be36jffONPq6TnOa
+         9aVg==
+X-Forwarded-Encrypted: i=1; AJvYcCWYSmkWFG8JsmNhB60IaNVfMW8RrHW/EQkcUENe/KMnfdkfNGUQ4FisF8vkGRGZYaNja02teIgHTC8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJhnjc6kKEL2YKErfotn6OJFftlRE9yoQxzo24lnYstm9E7tD7
+	ndILPz5FXUxAZp1clSHQXIrZfSJn+o3v02458nCbXSlRk5193kL1NQtRUnNX0oSqb8JXg2eR4Tk
+	o1pNe15iZ/4GSIsfLOiKAFNkshlFPtRFQCSHYWUmS5Sio7XONfPvA4hh/Oa9VstTL56GMdbYTeY
+	1hmNA+/HrSCCwLiIRnlRjXrBfSH89oVJLTSt42Sw==
+X-Gm-Gg: ATEYQzxVRGsMk+RX7J2T6keLVoHd/YejaPHUUExt6XGMo4OGPnemmBJCbX4aGBgvNya
+	xNvTLCFgy0BH0xvRghfgzV/MhkY/73y/4ycOdrDFkL7TiaqFw3yY4IBusT9i/q0OTFZwVgxj6fh
+	oa6+ULtw1oNxPfyELuVJjvqByCUBQtief2V8+5tJY1e8xCHln0rSAfVUmvHW+muO3xtIn2WI1n3
+	KmfDFu99cOC7Zl33+7LwS92MPW1L+nB++1cRdg=
+X-Received: by 2002:a05:622a:4a17:b0:50b:5336:1d20 with SMTP id d75a77b69052e-50ba38efe47mr159893661cf.53.1774860024917;
+        Mon, 30 Mar 2026 01:40:24 -0700 (PDT)
+X-Received: by 2002:a05:622a:4a17:b0:50b:5336:1d20 with SMTP id
+ d75a77b69052e-50ba38efe47mr159893451cf.53.1774860024529; Mon, 30 Mar 2026
+ 01:40:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20260223-clk-send-sync-v5-0-181bf2f35652@google.com>
- <DH7L09UFWGTK.2MT0OTWH1DUV4@kernel.org> <20260321-awesome-hot-kingfisher-5d9f55@houat>
- <CABx5tqJvOFEzmadeXpDxSUjkghviqtP0jo+kzSB5X6u_P_j2ig@mail.gmail.com>
- <CABx5tqL+G9i1ZW7i5AHaTqUFTVRDmBvP=RycUdwjG-GOp4uzBA@mail.gmail.com> <CANiq72=M3H-06L7udG_LqTwLykZkAjfy2d5NXQZn5TYRJ+N37w@mail.gmail.com>
-Message-ID: <acoq7E8NH-ihCq1K@google.com>
-Subject: Re: [PATCH v5 0/3] Implement Send and Sync for clk
-From: Alice Ryhl <aliceryhl@google.com>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Brian Masney <bmasney@redhat.com>, Maxime Ripard <mripard@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Drew Fustini <fustini@kernel.org>, 
-	Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
-	"Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=" <ukleinek@kernel.org>, Michal Wilczynski <m.wilczynski@samsung.com>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Daniel Almeida <daniel.almeida@collabora.com>, linux-clk@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-pwm@vger.kernel.org, 
-	Boqun Feng <boqun@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20260326-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v11-0-5b93415be6dd@linaro.org>
+ <20260326-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v11-5-5b93415be6dd@linaro.org>
+In-Reply-To: <20260326-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v11-5-5b93415be6dd@linaro.org>
+From: Loic Poulain <loic.poulain@oss.qualcomm.com>
+Date: Mon, 30 Mar 2026 10:40:13 +0200
+X-Gm-Features: AQROBzDa5JyLSXqlyeBHjiboYIc2tAkjG5mwWLhdd8C7uKXweA2tZXurYaWdQV4
+Message-ID: <CAFEp6-3w570bA0=wRLJ_b4kwwcxVbV3zs8m3JL9nCwoDTY7tTw@mail.gmail.com>
+Subject: Re: [PATCH v11 5/7] media: qcom: camss: Add legacy_phy flag to SoC
+ definition structures
+To: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
+        Todor Tomov <todor.too@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        "Bryan O'Donoghue" <bod@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Christopher Obbard <christopher.obbard@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-ORIG-GUID: OZ3jwvWedB7omJiJz7KLESwxoyzFdJdh
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzMwMDA2NyBTYWx0ZWRfX2IYtrikT2Ebk
+ KCE/K3WAVnnEQMsxopqb6rNuiGk+XuEY39D9fKbSZxqddmiyHLkFtHopDFvn6cG3wOXoHyt7o/E
+ qw4ZSCMfDu1W5oWxzhRK2/H1k2xeeVG3//Vrn+W5sm2c4bw/UZ+a65E2elXbUYXd2VSeBXbh8m6
+ LxsE2XLJJXL/Stwu0DeN8Pp5uD65KPjA897BagyD+4XT7kisI9envgOgzFmyQWJDvlIBS0cGDN9
+ MtVYOHfjXwUlMQVh2aM4xOIi1Ep3fYLAGyB5ZqwKpucZLxVXkh1KQAqfak5yGJo4tbmek1Ytm3P
+ Kvx+gNL6KP71Iurwg8YqcLCLwkZTQC4aw2AYiUDSEdhhlHHJRoqpwempVD80sSWnHyoAkJHlXWO
+ s28xlSlSZZXsVvIvDcPb34fyg0VhznmCO8hhZSkp9Zc4Yxr2+22XuS2I1BOXZyHmAO9KIr6LEKP
+ lcvcNn2YXvUFM81dWGQ==
+X-Authority-Analysis: v=2.4 cv=KN9XzVFo c=1 sm=1 tr=0 ts=69ca36f9 cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10
+ a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22
+ a=ZpdpYltYx_vBUK5n70dp:22 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
+ a=XIB30I8Fq4NfyXnsoAUA:9 a=QEXdDO2ut3YA:10 a=a_PwQJl-kcHnX1M80qC6:22
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: OZ3jwvWedB7omJiJz7KLESwxoyzFdJdh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-29_05,2026-03-28_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 priorityscore=1501 lowpriorityscore=0 phishscore=0 spamscore=0
+ adultscore=0 suspectscore=0 bulkscore=0 malwarescore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603300067
 
-On Fri, Mar 27, 2026 at 04:00:17PM +0100, Miguel Ojeda wrote:
-> On Fri, Mar 27, 2026 at 2:19=E2=80=AFPM Brian Masney <bmasney@redhat.com>=
- wrote:
-> >
-> > Stephen came on the list and started to merge this things this week. I
-> > was going to collect up more patches for him if he wasn't around, and
-> > intended to include this. However, since he's starting to collect
-> > things, I'm not going to send him a clk pull today.
-> >
-> > It's up to you if you want to send this in via drm-rust or wait for Ste=
-phen.
->=20
-> I guess it depends if he plans to pick it up this cycle or not.
->=20
-> If he doesn't, then it may be best to just go forward with your
-> Acked-bys -- Danilo can pick it up if DRM needs it in their branch,
-> otherwise I can pick it up.
+On Thu, Mar 26, 2026 at 2:32=E2=80=AFAM Bryan O'Donoghue
+<bryan.odonoghue@linaro.org> wrote:
+>
+> Flag which SoCs have legacy - builtin PHY code. This will be useful in
+> subsequent patches to inform PHY bringup logic if legacy bindings are
+> available.
+>
+> Reviewed-by: Christopher Obbard <christopher.obbard@linaro.org>
+> Tested-by: Christopher Obbard <christopher.obbard@linaro.org>
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
-The drm-rust-next branch has closed now that -rc6 is out. If we don't
-hear from Stephen, do you mind picking it up Miguel?
-
-Alice
+Reviewed-by: Loic Poulain <loic.poulain@oss.qualcomm.com>
