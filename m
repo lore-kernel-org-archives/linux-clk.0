@@ -1,165 +1,150 @@
-Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011057.outbound.protection.outlook.com [40.107.74.57])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A813A3E80;
-	Mon, 30 Mar 2026 13:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774878692; cv=fail; b=laPhrLlg6rpvkMpgms7t3gs/Clp0yAT0ctI1NRDTXfcDmPLJl5nJvz5e7BQ6I8aixnMBT/veYjwbb5xRwP09zjMtcVlCZch0N2gCMm/Rm3ZnKi2nIzINM3Jj0TVfBfVVODr3c3Q72AfLv2STAZNJcLXhfpelGdbdPjR/nP347HM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774878692; c=relaxed/simple;
-	bh=q0en0MuZpK/+PQ6JbIkqAQmZ6szzbp3tFwJV4FWuLlQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=LrVE1STJ4tWSimz+Kvi6NNtN6THDbKnRb+pEyS1vKJiX1erR2uxRJ23XBSJncW9SeHne8S7t/RUrA3w5BkvNG2sFKgdpSh5qeiy/iqS/4YNY3CoZb8i/VfQQN7EO+Y+/9YZFbgneWWvvpRY3xqx3dUIiVnZ1jEFK001GalZX0A0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=u51nr3JQ; arc=fail smtp.client-ip=40.107.74.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BACCB2E92B3
+	for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2026 14:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774881183; cv=none; b=nTz10TYsHRfH1bTHVoyFoXBQHo0TACjk6d3oFL7p/OXrpkiLK/LuQWgPguot7d46XylTHdmrBaBGvKkVtuvw3V3dRlp/5yy25FcfJEQhTcSrp7mUDzvDFRNYp2+61C6Y5JWaX7pcrFQfoviNWmcyuvyLIdwJpbFCn8k4O700ziQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774881183; c=relaxed/simple;
+	bh=aExlSSaLla1nCjUvgyoARQzBD88LhnGckG7GUkW3GbE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BlEVXTa0Hx1LjSdZZKLRi4tfvDuGMvlW5JpsmHf7KamMHaVJfPt+wh3Elllk/+ExByLFPtzR2p//kBZKHcFoNqKjCbZQHJ4IY6ev03L4v4WoOK3L6x6F3MQOoTdukUjfpCpWmfnhZR6lGY9Rr3CUezuSc0rFP3/Adr3Qk3oMDjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=axh2dPJv; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=pAtN/qUO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="u51nr3JQ"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gG2GibhFUEzZ5BUvk5BGCGpLzMpJs3i5mOMbP/pJjJ1xDpS1rfvDWJGcOj7S1hcijGn2ntOXD0xEfTujhofUEb03HtLllEGimg4dD+SRJmDtX8Yf5K2keUB81/6BNK5yk+G1cQbVxlzGDRYM9Z32cEYh/VQ+HAY0PE6WKcTg1zlKhDus9WlCb+s1lC6YlRCfWW4eri3zwO0LKB9mZUoJ7FEEWfb8DvwP08VC7wBWSwHk6KEhbp9ugUgWv2xrwCLDI4zf28NJ+Ow6G5Su/fcYeqTEyLP2BSzGa2lZoaZZHM8iBVjE8Jx6ntaliJP+hujmVnWD4/pswqmWwjY2nlfJkw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=q0en0MuZpK/+PQ6JbIkqAQmZ6szzbp3tFwJV4FWuLlQ=;
- b=GX0pIkUrl8LBa4yQ81MR0vh8vW6Z2dnbeu8PNXDhz0eFjOaPA+j4HcJ9isweHQceO/7255bNhsvj2rOW8GczSAbxd1UgdfkZcM3y0FCeaJmadsljbzVTutwe/1cqJl3I+3U/VXZ7ZPxo6T/TCtL5wkOsKGAJgNJB7migiZen20Dbp6UQdlTAlXpWFEswSOjXm9rHxEgGXiOa6Ybp0BYNS0rkjOATj9oFiAMwnvButjDCdsMQVtRiz/Npb3Ow3RY3PJxHnjT3ipMbWg6kXHuiVF0vXEoPvuF159nRcFwQf472ldtOobkFxXsoGas1sMPeND35MZMZwcIIYMSsHh2rnQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=q0en0MuZpK/+PQ6JbIkqAQmZ6szzbp3tFwJV4FWuLlQ=;
- b=u51nr3JQw9Kf+f3Bi7AT2qNrSlOANAJWQlE+CJPQBrQq/BweDPeFbTahL+J3kqiYnz2eEQIhIvXtdyLyFgZyReL9FQnpNBAKKVBN9eMiTDIQ1NaGVRjlvmfRxxljePnLGqGz3z4XZYBmPWNVY9n7NO2Y2ZBWxDxKBBC52USNaGk=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by TYCPR01MB6769.jpnprd01.prod.outlook.com (2603:1096:400:b0::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.28; Mon, 30 Mar
- 2026 13:51:22 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::87d1:4928:d55:97de%4]) with mapi id 15.20.9745.027; Mon, 30 Mar 2026
- 13:51:22 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: geert <geert@linux-m68k.org>, biju.das.au <biju.das.au@gmail.com>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@kernel.org>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [PATCH 0/5] clk: renesas: r9a08g046: Add {GPIO,CA55,WDT,SCIF,I2C}
- clk/resets
-Thread-Topic: [PATCH 0/5] clk: renesas: r9a08g046: Add
- {GPIO,CA55,WDT,SCIF,I2C} clk/resets
-Thread-Index: AQHcwEh2AfT0rFXSBES6ZWYpJr2QFbXHFdYAgAAAaZA=
-Date: Mon, 30 Mar 2026 13:51:22 +0000
-Message-ID:
- <TY3PR01MB1134696C35FCF90E70EE081328652A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20260330132349.149391-1-biju.das.jz@bp.renesas.com>
- <CAMuHMdVo6ypHJi9TVqbc+wAmFDU==HQCCG=hEOXuk-66GPXUhg@mail.gmail.com>
-In-Reply-To:
- <CAMuHMdVo6ypHJi9TVqbc+wAmFDU==HQCCG=hEOXuk-66GPXUhg@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TYCPR01MB6769:EE_
-x-ms-office365-filtering-correlation-id: 38d6cf2d-249a-498a-0a98-08de8e636d95
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|376014|22082099003|18002099003|56012099003|38070700021;
-x-microsoft-antispam-message-info:
- ZLIkN2fx23zE257Lrv9mcDzPLGKmQc995Reh/RfK6+/fgWT26nXSrpVvw8fkbepBg9XyIhUBzn4vn/ZCmY8dlGGQiG8d3C5Uv1utqhMj/rluF9GJqlYMB3wVnm3nrMSHz1JQDW7xnoiIth/VeFjfP8mJ0o0nzblkp9QcC9dVfLqEdEzHp1/437QZu3SBFBOq4X/VN7qeu4xDOGjho5YBG2+cou8njgDiExZDasMmRR/GLaeG3hywc6mbVyZyMXw1POvYYrrCKfHE8tjCTN/p8XUstf2hzpVRjnc8jY3LqOdrmZG5Wc5VCboGodreln1EOhy5fduzz5K0tyQUCmojpBnbCNBg1MQYBzFaD0mI8al2JJxxL2voAwidY/D52LmZE2Pgfl10Lq8aQyRDvRVNUFuu/bP7VmVL0G4IDQ/fhg3DqsQHcbE5yUxRSkhOUQICeQ946kkLD/q77+AC0zbZUUVx4HNZIu692bRjairG4xwtB9oj/j0xiWCCf2i7+fsLr6KxWuZKDReBQo+IQnyRB5/aJoFd9VSgZavM3r+RQjACfMBUbQr/7N7tYBriO4OH3C9G2DSZDQ8gLsuZRuskYavS+JwrhWcMClZleTPrmsMKGG9FAx7nrQHUvFPIZ+Lwa90+fP81BMKCTgurvWkF3Hi5Rzd3UhZ2Mk8j07tzsVS/NUvnjz2J1z2OFOwxTg9xbLRh69BNEGSKQnPThVJ7i4Ezd716f9SiDjYZy7O3Hl251fCoaEBOR8l68YamEzrwFziB6zNeCtSxybCKmSEwPVpt0ksdvW1kfiHU5NhZ7/s=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(22082099003)(18002099003)(56012099003)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?QXZ0TU01NkpidXQ0SUFHRUxUYmJyenRieXZDdzlhQXZPcDNucXhoZjlmdnFH?=
- =?utf-8?B?b1RMUFVOSmpYblB1MllaNmNCRUV5NEVXOXFUQzF5bmFJR1BDUnh2QkwyOFdX?=
- =?utf-8?B?N3VadWNKNjh0eW96NVgyTzE3cUcyd2FZSUE5ZkhFQ2ZRR1d4b1pUc2x1Sk4z?=
- =?utf-8?B?aVIxZmhpRXRWZVRYeFhUUXBOUnRUSng0VHRHeUtmSXpjYVpmQXZETlNOMnNF?=
- =?utf-8?B?ZGs0QTYxYVM1N3JCMnFqN2xQbUFOTTNPUTgwVUl6NzN4KzhSbnIxdk4vNUNp?=
- =?utf-8?B?RzVMY2Vpalp1UWo3SWthbTcrUWwyRTZOUTc2Q0p2Y0p1T0RmS0NqQlBpaWd3?=
- =?utf-8?B?cHFoWkhKU05DWWZzNWd0eEpVaUV6VWJsclYvd09PQWNlb1FGc1o0eW5pdkhV?=
- =?utf-8?B?bnh0OFBWZFdvU3NXN2s2bmlmNytCb0FjNUF3MmluOGM2aVgySVh6SW9WTEN5?=
- =?utf-8?B?Rmg1R0kxaFVoczd0akdNcFQ1enlHa3BMU2dRMHRyOE9nNy94aEZmdUZLTUoy?=
- =?utf-8?B?ZmlHb2kzR2JUZGpiblFuNjZ1MlVZbDBVcFlBTU1SVWU0SmZpUElISzQwQjNW?=
- =?utf-8?B?b1NEWnE2V0pleGNEdlB1R3NheWIwU09MbDBCbnhmQS9jYUlhK1czcGRKd0ZU?=
- =?utf-8?B?UW1tU2JIQlM4bzE5bFV4UDF4d05KK0tyQXE4OXNvOEd1NzB4TnI2WUFBZVU0?=
- =?utf-8?B?cnlaR3hjdDQvMEtZNWQ0WWV1SERrUXlJbkdpMWNCQjFsN29nWEQ0T1ZZZEJD?=
- =?utf-8?B?R3dRZnMzdHNsZzFldWFvZDZ3ZVkzNUpFSkhMVFA3MThrbERZYVM2Z2YxZVp6?=
- =?utf-8?B?dlNSVEJ4QmFVa1BqaEZ2aldNQmRZVGYzTTNibUxJRDkxUVB6VzliTWM3SXVM?=
- =?utf-8?B?MWx4enlwSFJrSWFGWnYwWGpRMDZPRlp1a2hzc0ZWRFZYa0dhRTdDcStTZk1V?=
- =?utf-8?B?TjNVdDJLOE1DNTVpMWVPL0FoazhIWGdiNS81YnJWa2FBWWhqYjE0SEJ0S0Fm?=
- =?utf-8?B?UWNpOVYzNyt2TUlERHBXNTUxbm82aVhjcDR4WkwxcnJDRHBjcFN5WGdoaWRr?=
- =?utf-8?B?eTB5SFpjajBMTm1RT1BmdXZBK3grRHRtT29Hekh4ZG8rRkNJak9VRFArOG9E?=
- =?utf-8?B?VWF0M0paYVJ2UUJwbm94VHJBUWpwaHExekI0aGNEUUxHeUdudHN1RDA2SDBo?=
- =?utf-8?B?Y0d1Y0RKeEdCSHppRlR1L2NHUVBzeVZmL1JhVEo2Z2paODd5U3RhVW90dHRI?=
- =?utf-8?B?S2dzMlhWMnI2M3Yzb1QvcHQ4Wk8vZGRyNmpjamlPclVWV0xYSG9uQzNTYkxy?=
- =?utf-8?B?Q1l5UFFwWG5pTVBDelY0NG1MeGNLc1FsdnFqYkZjQ3YwRUdSYWZSMnJOcUk1?=
- =?utf-8?B?L1FvYkpUUm9zYStoSGNvNXhRWUhYWGtNTkU2SGxaVTA2RUpTRnh1bTRkdWhR?=
- =?utf-8?B?ZjRkUU4yUW5SaGx0cEpyNGhyYXQ0REpuWUNTOVdIdlRmK3pvU1pLK1RLa2xv?=
- =?utf-8?B?OUxNWG1vbVdHamZkVU4rVzJERk1FT2FsSGJEN3V1cHZCRWxoaHJqVExIaGRM?=
- =?utf-8?B?dXQ0VkJjUGZoaWI2eXpLa3lkL2tsR1pqQ1Vvdmw3ekQ0V0Z5anlGWWhWRnpu?=
- =?utf-8?B?azEvQUcranorVGx3eXhNRDI1QmNjNVFlM2ljSFg2bmtQRE9nbVBQSlFYaHp3?=
- =?utf-8?B?ckt4c1Fqa01hdGtIa2VoQTRHb0hYOElpNUtmNmVUdFE0ai91TVdVcGZOdmhQ?=
- =?utf-8?B?NHpOQ3V3Qk9teHdyZ3NCUUpPc0VYM3g3bXVQQVhUc1lFbjRpT0pIenhhb0Ey?=
- =?utf-8?B?ZXpsMkhib1phK0h1S2d4OVIzVjBtYm10bC9CMmtrNHF2RGx5bjNWODZKbVhI?=
- =?utf-8?B?ODhuSDREY3ZMaW53WTRTZ1pKdHBpL3pUc1VvcXF6YXpKNDhydHprbzl1QTBu?=
- =?utf-8?B?em85OHU5dm9tTEZZem5WdmR0SmVTVkZIR3IzUlpMZ0JHV0RGaUREMC9MN0hv?=
- =?utf-8?B?cCtyOEMyekZQQmtRVElnd0FPb2pZYml5WmFOeldQNTVpdllaWUJ1ckxYa0lJ?=
- =?utf-8?B?YW1rWnlUUVQ3S2ZBcyt2WXdvQSs4NzJSdGk1ZUxlS1BKZTExQUFHRUZnNzRD?=
- =?utf-8?B?SFZFOFRxQ1d2TEsyVWtrNUl2alBnL0lkSkV3SThNQ1dQVnlOV281Z1JabERl?=
- =?utf-8?B?OG04TWNPQzFCZGJuSVZDZnBZb1RqUTYrM0lCQ0NPVVRNc1hBN3oyM1l5NUc5?=
- =?utf-8?B?cjdEYnZaL2xWa2hBWkpYcC9NY21BTTFDTUZnd3BmcXNPTTlCaytiVjFzU0pz?=
- =?utf-8?B?SnpUS0pISjh5OGpseXcrNnhHekVBN3p5c0RaQ24vTWJ5T3F0VGlaUT09?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="axh2dPJv";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="pAtN/qUO"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1774881180;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ewVCMiY2A8SH+vVFiby43Oli8Pss41RewLglHBz7dlw=;
+	b=axh2dPJvy2Tv2tBWr8tkyOUpn2VL6msVZoDI2hr1Xzbi/W+RAIzdDJzWA2M6WpVRNt5NfK
+	3jr2SGpV/eii7XT4SiFDEVQ/NB+pXfYhIZNKYpOSadYOeBn33KdvfeFECof+DPgqc8S2SS
+	Pl7FTIpzj+h3ZbjgRomi6cMCHzFrqFw=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-500-yn07VGslO8i8rM4YTALXrA-1; Mon, 30 Mar 2026 10:32:59 -0400
+X-MC-Unique: yn07VGslO8i8rM4YTALXrA-1
+X-Mimecast-MFC-AGG-ID: yn07VGslO8i8rM4YTALXrA_1774881179
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-50937cf66b5so234435091cf.3
+        for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2026 07:32:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1774881179; x=1775485979; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ewVCMiY2A8SH+vVFiby43Oli8Pss41RewLglHBz7dlw=;
+        b=pAtN/qUO35xtM2DyxJR3bfESxxTV4588FZo57r6Bg7scehwNiRePAUjyEUsfUX13Gw
+         K/Z8aIvg8QTSQ/Za+QRJAb/wMheRR/zdi2pYrFEKHwWUfkaTDJmE76tnH/190uX6JpRa
+         mduO6Vyvnm16pRe/ZuyCvV+gtFAcZgJsmCDe4dAAsYe2fXppsnm8SilMNel+4eoMQ/ss
+         VXqxdLxfQakUpSh37KCcZAj88KlcuM9iQELEeFQ+SXt7q4DkDmre638yHva2dhcfibVs
+         s952RUyyIwGl+192EaAupE3vrQA0Gd/RXBJ0yuKjcOd6q3jG5S3ekHA83xzrd3cineMR
+         pAtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774881179; x=1775485979;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ewVCMiY2A8SH+vVFiby43Oli8Pss41RewLglHBz7dlw=;
+        b=sPnikGWNsEUxHle7E6z8uxx3RMlSofbl3Wvl8bfnbqRTjddguGJx64T54JtVvlHiCl
+         qKrTjsf2gK3t7oYb86fGKYeXRd5ob9/zTaCYdxPQIM+Wt4iReuaqLa0WVNjYAaf74T1z
+         6dYEGBSoy0tuI/5478rfGsa80V5YVNd1BffLHRgZNobe7s3qJkD3px5GBJXp9u4oNlyB
+         0UZp28WU11x2vdOzz2Ngd84TSlz11x8/EfWogY81NH50P22Um1Yhh3Xwbs9oNOVMIVGA
+         k9gmpgPZ3IgkOUQCS26SaA93W/2fi5WnFHiMIqUiyicZOtqrxrARL3cfHf9CrCV3xbTo
+         +Cpg==
+X-Gm-Message-State: AOJu0YwDVRJODt1Pf6s9FpQxY1EmufyPZ+idbicw1KemS79oDNvHBQkr
+	f9uKfobZ9DH0PIbQYiEjONcRxb4Gm/OSOHpa3oPLA1QczcK6O4gsp3Q2adrvIHXNxw2if1HF9SM
+	BcmKLj2IFi0yj6iwXz7BcHcER4eUFTau9qGq2HrhsTEqmS75EydGU2OocLJtGrw==
+X-Gm-Gg: ATEYQzx92ZxSMNeWJJqRLoNSbNDguHQZ7LMnfJ+PDvRRF6VCRAElnZqXoiyfhpXSP9+
+	mm7rE0S2RlEoN0vT3F4uRxu020uoJENaPvtW82k6pHQt624zLEWuRPNnaeZxmernwkM0+T+OUo9
+	BKMwXOt4FPHvkac+rAz5hoW1hV1+A3xfW5v9z1ch2AoJPbLqI1vwOSUjsLeiHCFR75hiTlojGWx
+	Lfyy1ce6sLyokXg2WowQA3JXMjiMw+KOzgr39gMbU0AdF0q5JlWoLvcROSpiVJBCfRz8WzAM1SW
+	KoqVgpjJd19eTBMdtUnnPN2sSJKnGFLG7P5KVIcuT91FPG7ucJPY1cqwcYC8rK6gZAVL/UJPAJz
+	HlcqTxuuixm4AXQnxKX0QPHANhhUllpjFfKL5QqdPJZO35hU3k4Qk5/ZEUicM
+X-Received: by 2002:a05:622a:514c:b0:509:a9b:8a6f with SMTP id d75a77b69052e-50ba391e18amr186074501cf.56.1774881178540;
+        Mon, 30 Mar 2026 07:32:58 -0700 (PDT)
+X-Received: by 2002:a05:622a:514c:b0:509:a9b:8a6f with SMTP id d75a77b69052e-50ba391e18amr186073831cf.56.1774881177981;
+        Mon, 30 Mar 2026 07:32:57 -0700 (PDT)
+Received: from [192.168.1.3] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-50bbcbb3babsm52494131cf.25.2026.03.30.07.32.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Mar 2026 07:32:57 -0700 (PDT)
+From: Brian Masney <bmasney@redhat.com>
+Date: Mon, 30 Mar 2026 10:32:37 -0400
+Subject: [PATCH] clk: visconti: pll: initialize clk_init_data to zero
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 38d6cf2d-249a-498a-0a98-08de8e636d95
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Mar 2026 13:51:22.3939
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: NF1FlYEEp3HpeygnPe+2Syzg7zkl7T/VRMk6YKlzCIhAlalfmuNkIe4vpo0l55R0QofqBBKKsabfHnYHcFILmmupNcVtYOlxmQIbUYjGSu0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB6769
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260330-clk-visconti-init-v1-1-ac3e825e54b5@redhat.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x2MWwqAIBAAryL73YIW2eMq0YfYWkuhoRGBdPekz
+ 4GZyZAoMiUYRYZINycOvoCqBNjN+JWQl8JQy1rLppFojx2LZoO/GNnzhW3vDA2mI20UlO6M5Pj
+ 5n9P8vh/E/7fCYwAAAA==
+X-Change-ID: 20260330-clk-visconti-init-58fae9a7e6a1
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>, 
+ Rosen Penev <rosenp@gmail.com>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Brian Masney <bmasney@redhat.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1700; i=bmasney@redhat.com;
+ s=20250903; h=from:subject:message-id;
+ bh=aExlSSaLla1nCjUvgyoARQzBD88LhnGckG7GUkW3GbE=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDJPdU7dYna2I6bszrPXbBPlgqZnHgneIfFJ/71uQoJu9
+ ZayR9fYO0pZGMS4GGTFFFmW5BoVRKSusr13R5MFZg4rE8gQBi5OAZgIhwjD//SgFqGa+ybWqjvl
+ U8+EOqpHJecZ/WJqf5LYfVXZyvjEfob/aUKVHZV8+y7cW/HZRPJi+5+C7T8/X5yoVZdj3LJXafI
+ 8dgA=
+X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
+ fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-SGkgR2VlcnQsDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogR2VlcnQg
-VXl0dGVyaG9ldmVuIDxnZWVydEBsaW51eC1tNjhrLm9yZz4NCj4gU2VudDogMzAgTWFyY2ggMjAy
-NiAxNDo0NA0KPiBTdWJqZWN0OiBSZTogW1BBVENIIDAvNV0gY2xrOiByZW5lc2FzOiByOWEwOGcw
-NDY6IEFkZCB7R1BJTyxDQTU1LFdEVCxTQ0lGLEkyQ30gY2xrL3Jlc2V0cw0KPiANCj4gSGkgQmlq
-dSwNCj4gDQo+IE9uIE1vbiwgMzAgTWFyIDIwMjYgYXQgMTU6MjMsIEJpanUgPGJpanUuZGFzLmF1
-QGdtYWlsLmNvbT4gd3JvdGU6DQo+ID4gRnJvbTogQmlqdSBEYXMgPGJpanUuZGFzLmp6QGJwLnJl
-bmVzYXMuY29tPg0KPiA+DQo+ID4gVGhpcyBwYXRjaCBzZXJpZXMgYWRkcyBzdXBwb3J0IGZvciB7
-R1BJTyxDQTU1LFdEVCxTQ0lGLEkyQ30gY2xrL3Jlc2V0cw0KPiA+IGZvciBSWi9HM0wgU29DLg0K
-PiA+DQo+ID4gVGhpcyBwYXRjaCBzZXJpZXMgaXMgZGVwZW5kIHVwb24gWzFdDQo+ID4gWzFdDQo+
-ID4gaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIwMjYwMzI2MTEwNjQ4LjI5Mzg5LTEtYmlq
-dS5kYXMuanpAYnAucmVuZQ0KPiA+IHNhcy5jb20vDQo+ID4NCj4gPiBCaWp1IERhcyAoNSk6DQo+
-ID4gICBjbGs6IHJlbmVzYXM6IHI5YTA4ZzA0NjogQWRkIEdQSU8gY2xvY2tzL3Jlc2V0cw0KPiA+
-ICAgY2xrOiByZW5lc2FzOiByOWEwOGcwNDY6IEFkZCBDQTU1IGNvcmUgY2xvY2tzDQo+ID4gICBj
-bGs6IHJlbmVzYXM6IHI5YTA4ZzA0NjogQWRkIFdEVCBjbG9ja3MvcmVzZXQNCj4gPiAgIGNsazog
-cmVuZXNhczogcjlhMDhnMDQ2OiBBZGQgU0NJRnsxLi41fSBjbG9ja3MvcmVzZXQNCj4gPiAgIGNs
-azogcmVuZXNhczogcjlhMDhnMDQ2OiBBZGQgSTJDIGNsb2Nrcy9yZXNldA0KPiANCj4gTm90ZSB0
-aGF0IHlvdSBhbHJlYWR5IGhhdmUgc3VibWl0dGVkIDYwJSBvZiB0aGUgcGF0Y2hlcyBpbiB0aGlz
-IHNlcmllcyBhcyBwYXJ0IG9mIG90aGVyIHNlcmllcy4uLg0KDQpPb3BzLCB3aGVuIEkgY2hlY2tl
-ZCBbMV0sIEkgZGlkIG5vdCBmaW5kIENBNTUsIFdEVCBjbGtzLg0KVGhhdCBpcyByZWFzb24gZm9y
-IHNlbmRpbmcgdGhlIHBhdGNoIGFnYWluLg0KDQpOb3cgYWZ0ZXIgcmVjaGVja2luZywgSSBhbSBz
-ZWVpbmcgdGhlc2UgcGF0Y2hlcyBpbiBbMV0uDQpJdCBpcyBhIG1pc3Rha2UgZnJvbSBteSBlbmQs
-IHNvcnJ5IGZvciB0aGF0Lg0KDQpbMV0gaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wcm9q
-ZWN0L2xpbnV4LXJlbmVzYXMtc29jL2xpc3QvP3N1Ym1pdHRlcj0yMTIwMDMNCg0KQ2hlZXJzLA0K
-QmlqdQ0K
+Sashiko reported the following:
+
+> The struct clk_init_data init is declared on the stack without being
+> fully zero-initialized. While fields like name, flags, parent_names,
+> num_parents, and ops are explicitly assigned, the parent_data and
+> parent_hws fields are left containing stack garbage.
+
+clk_core_populate_parent_map() currently prefers the parent names over
+the parent data and hws, so this isn't a problem at the moment. If that
+ordering ever changed in the future, then this could lead to some
+unexpected crashes. Let's just go ahead and make sure that the struct
+clk_init_data is initialized to zero as a good practice.
+
+Fixes: b4cbe606dc367 ("clk: visconti: Add support common clock driver and reset driver")
+Link: https://sashiko.dev/#/patchset/20260326042317.122536-1-rosenp%40gmail.com
+Signed-off-by: Brian Masney <bmasney@redhat.com>
+---
+ drivers/clk/visconti/pll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/visconti/pll.c b/drivers/clk/visconti/pll.c
+index 6fd02c4b641ed58f1943e55dd60ae80aba30b902..805b95481281761ad7ea4f59ddac07e4cdfb9d42 100644
+--- a/drivers/clk/visconti/pll.c
++++ b/drivers/clk/visconti/pll.c
+@@ -249,7 +249,7 @@ static struct clk_hw *visconti_register_pll(struct visconti_pll_provider *ctx,
+ 					    const struct visconti_pll_rate_table *rate_table,
+ 					    spinlock_t *lock)
+ {
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 	struct visconti_pll *pll;
+ 	struct clk_hw *pll_hw_clk;
+ 	size_t len;
+
+---
+base-commit: 3b058d1aeeeff27a7289529c4944291613b364e9
+change-id: 20260330-clk-visconti-init-58fae9a7e6a1
+
+Best regards,
+-- 
+Brian Masney <bmasney@redhat.com>
+
