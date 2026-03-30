@@ -1,150 +1,256 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BACCB2E92B3
-	for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2026 14:33:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52362323416
+	for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2026 14:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774881183; cv=none; b=nTz10TYsHRfH1bTHVoyFoXBQHo0TACjk6d3oFL7p/OXrpkiLK/LuQWgPguot7d46XylTHdmrBaBGvKkVtuvw3V3dRlp/5yy25FcfJEQhTcSrp7mUDzvDFRNYp2+61C6Y5JWaX7pcrFQfoviNWmcyuvyLIdwJpbFCn8k4O700ziQ=
+	t=1774882124; cv=none; b=kOGhsrIwQmiyAVOLhEX+iasp1koS4haO436E8u7aukDgJy5yWvdC326OirYn/o6AusoyeLXbX6p+tJFSILV/EKcEUuFFpJhD/kXA5/hDvq1mRdAi2YK/74r2xwovK30ruCemxT19A/fUTdg3ZFHxdmO814Oi8OPkgtmKJBcIaDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774881183; c=relaxed/simple;
-	bh=aExlSSaLla1nCjUvgyoARQzBD88LhnGckG7GUkW3GbE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BlEVXTa0Hx1LjSdZZKLRi4tfvDuGMvlW5JpsmHf7KamMHaVJfPt+wh3Elllk/+ExByLFPtzR2p//kBZKHcFoNqKjCbZQHJ4IY6ev03L4v4WoOK3L6x6F3MQOoTdukUjfpCpWmfnhZR6lGY9Rr3CUezuSc0rFP3/Adr3Qk3oMDjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=axh2dPJv; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=pAtN/qUO; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1774882124; c=relaxed/simple;
+	bh=qRDMpKJX27w2zrmAyfZnBYRp0iKrPs7epsHO9Ew4my8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZDJYzRwSG67JIiNkGpjMnTvqis5Pkx7aO6PWGpBCLu4X50GKFp6XTvOpHmcE+NRlRX5MR6+MSTHUuxOSBLu0vnvp7cNdP/4ZbeTyV5shfI0/IZrHt0B+sOmTUVynHBLby1Z8WLksRUmSNgIi6RMPhvuTkPY7touxspbZ6pHI++E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BrEPOcJi; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=K8q6oQhJ; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="axh2dPJv";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="pAtN/qUO"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BrEPOcJi";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="K8q6oQhJ"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1774881180;
+	s=mimecast20190719; t=1774882122;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ewVCMiY2A8SH+vVFiby43Oli8Pss41RewLglHBz7dlw=;
-	b=axh2dPJvy2Tv2tBWr8tkyOUpn2VL6msVZoDI2hr1Xzbi/W+RAIzdDJzWA2M6WpVRNt5NfK
-	3jr2SGpV/eii7XT4SiFDEVQ/NB+pXfYhIZNKYpOSadYOeBn33KdvfeFECof+DPgqc8S2SS
-	Pl7FTIpzj+h3ZbjgRomi6cMCHzFrqFw=
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZPJMgxubQOT61Bt8c1TkmO+q4Ej7bdY+pNKwDemJ1Jo=;
+	b=BrEPOcJiBgKyawOW84vRe/2aaKHprKqX3AeT8xQvqyUdq26gDqzfFaE53ePL46sNJOnQ8k
+	Yf5vLuPFGKS5Fn2EfGsEjROl8Dl0gMNT7TD4D3QAgNQbIvWaoNEkawF9DRABFOGCgVkSpT
+	Rba2pLhQShN+d+br+Au/UrTmEDY1ObY=
 Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
  [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-500-yn07VGslO8i8rM4YTALXrA-1; Mon, 30 Mar 2026 10:32:59 -0400
-X-MC-Unique: yn07VGslO8i8rM4YTALXrA-1
-X-Mimecast-MFC-AGG-ID: yn07VGslO8i8rM4YTALXrA_1774881179
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-50937cf66b5so234435091cf.3
-        for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2026 07:32:59 -0700 (PDT)
+ us-mta-227-AN8FaQkEMpihG1lacRA34Q-1; Mon, 30 Mar 2026 10:48:41 -0400
+X-MC-Unique: AN8FaQkEMpihG1lacRA34Q-1
+X-Mimecast-MFC-AGG-ID: AN8FaQkEMpihG1lacRA34Q_1774882120
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-50939597b85so117265211cf.2
+        for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2026 07:48:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1774881179; x=1775485979; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ewVCMiY2A8SH+vVFiby43Oli8Pss41RewLglHBz7dlw=;
-        b=pAtN/qUO35xtM2DyxJR3bfESxxTV4588FZo57r6Bg7scehwNiRePAUjyEUsfUX13Gw
-         K/Z8aIvg8QTSQ/Za+QRJAb/wMheRR/zdi2pYrFEKHwWUfkaTDJmE76tnH/190uX6JpRa
-         mduO6Vyvnm16pRe/ZuyCvV+gtFAcZgJsmCDe4dAAsYe2fXppsnm8SilMNel+4eoMQ/ss
-         VXqxdLxfQakUpSh37KCcZAj88KlcuM9iQELEeFQ+SXt7q4DkDmre638yHva2dhcfibVs
-         s952RUyyIwGl+192EaAupE3vrQA0Gd/RXBJ0yuKjcOd6q3jG5S3ekHA83xzrd3cineMR
-         pAtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774881179; x=1775485979;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=redhat.com; s=google; t=1774882120; x=1775486920; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ewVCMiY2A8SH+vVFiby43Oli8Pss41RewLglHBz7dlw=;
-        b=sPnikGWNsEUxHle7E6z8uxx3RMlSofbl3Wvl8bfnbqRTjddguGJx64T54JtVvlHiCl
-         qKrTjsf2gK3t7oYb86fGKYeXRd5ob9/zTaCYdxPQIM+Wt4iReuaqLa0WVNjYAaf74T1z
-         6dYEGBSoy0tuI/5478rfGsa80V5YVNd1BffLHRgZNobe7s3qJkD3px5GBJXp9u4oNlyB
-         0UZp28WU11x2vdOzz2Ngd84TSlz11x8/EfWogY81NH50P22Um1Yhh3Xwbs9oNOVMIVGA
-         k9gmpgPZ3IgkOUQCS26SaA93W/2fi5WnFHiMIqUiyicZOtqrxrARL3cfHf9CrCV3xbTo
-         +Cpg==
-X-Gm-Message-State: AOJu0YwDVRJODt1Pf6s9FpQxY1EmufyPZ+idbicw1KemS79oDNvHBQkr
-	f9uKfobZ9DH0PIbQYiEjONcRxb4Gm/OSOHpa3oPLA1QczcK6O4gsp3Q2adrvIHXNxw2if1HF9SM
-	BcmKLj2IFi0yj6iwXz7BcHcER4eUFTau9qGq2HrhsTEqmS75EydGU2OocLJtGrw==
-X-Gm-Gg: ATEYQzx92ZxSMNeWJJqRLoNSbNDguHQZ7LMnfJ+PDvRRF6VCRAElnZqXoiyfhpXSP9+
-	mm7rE0S2RlEoN0vT3F4uRxu020uoJENaPvtW82k6pHQt624zLEWuRPNnaeZxmernwkM0+T+OUo9
-	BKMwXOt4FPHvkac+rAz5hoW1hV1+A3xfW5v9z1ch2AoJPbLqI1vwOSUjsLeiHCFR75hiTlojGWx
-	Lfyy1ce6sLyokXg2WowQA3JXMjiMw+KOzgr39gMbU0AdF0q5JlWoLvcROSpiVJBCfRz8WzAM1SW
-	KoqVgpjJd19eTBMdtUnnPN2sSJKnGFLG7P5KVIcuT91FPG7ucJPY1cqwcYC8rK6gZAVL/UJPAJz
-	HlcqTxuuixm4AXQnxKX0QPHANhhUllpjFfKL5QqdPJZO35hU3k4Qk5/ZEUicM
-X-Received: by 2002:a05:622a:514c:b0:509:a9b:8a6f with SMTP id d75a77b69052e-50ba391e18amr186074501cf.56.1774881178540;
-        Mon, 30 Mar 2026 07:32:58 -0700 (PDT)
-X-Received: by 2002:a05:622a:514c:b0:509:a9b:8a6f with SMTP id d75a77b69052e-50ba391e18amr186073831cf.56.1774881177981;
-        Mon, 30 Mar 2026 07:32:57 -0700 (PDT)
-Received: from [192.168.1.3] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-50bbcbb3babsm52494131cf.25.2026.03.30.07.32.56
+        bh=ZPJMgxubQOT61Bt8c1TkmO+q4Ej7bdY+pNKwDemJ1Jo=;
+        b=K8q6oQhJEx3pnwO+3jLG8oJBEAddLRbv0kk5jno3mj2g50QrUs8oKawg8K8da2ZIwd
+         r4FGXvNMTUtzI9qHaKsVrKsdVWtsD+aLqLhfwYxYl2kCKb4Bo6lUWbSZZJMHu2xlpL3k
+         UIfg6GSawlT1jqE6TNlL/UHG1VOTBy1eeTbVwKrX9xjDjzDXLb56gtWQSQGo0WrVm4pU
+         FG3yLZZ+JLOp6K+w2tfrKqpfnmsIyYN/6jM/Getsw7KqmzGl+ve5otXG3t7twa9P7Z1T
+         b/DUjJ0vHwffMFZKlBwbe/721THxHotSdu6rpCmZty8sdZhcoy0NpHVGAWYWnoMgbMte
+         RScQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774882120; x=1775486920;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=ZPJMgxubQOT61Bt8c1TkmO+q4Ej7bdY+pNKwDemJ1Jo=;
+        b=tNy8jRmPYeOG3veAurrvEfLzYclICSBbD3UM6KLjEIg2uCkjU3lcHqtbHGLr65Yyiy
+         wFt3LMFMjGf77lZc72TSdhc6xWRLa3j+15Q1kAlitpy2C97xVWl38i5IpYfrggXt2RwG
+         YIIkozSLeEaRB2Cg2vjsOMfeYtmd65nMcVgQO5G7mffCzB4k5vAHdrijyEXC9euM54pI
+         xx36B1Q7J+m+UItuQN50qC87yk/yCMiQq8F9zCopgadQr4P780IJ8D1bhKiIJAc5Rqa8
+         jFu/Fdb2BTxhepU/JeJLjn+4P8k70M4iEt58qPqGiu8wGKkR+p4+7hOGgBpnHjHSIvn1
+         jL1g==
+X-Forwarded-Encrypted: i=1; AJvYcCU8s/d1aogENqNyQFmf9yC79WyEDmqVkPDwjy5o+HZwJzph/fK8NnIwb+DtJ1XENYBJygk5RuDuD70=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzew9/Y0Jyws4N+VWAmBMVKW/8oNV7KYSkmyTwYX7ZtlxiE+6nH
+	8bxYhAgCcrK3xGytpCM++m7M+1n+VS4acXWh/WygKYyAvLMZdKe7ZyNTomjQ8IeTDzdpNeTqFm7
+	rweScD5ApAE9Mwp2g7Uuji8yw/JbiM1B+3LfECst1piL1MYWZVhI/2Jyrq/LFxA==
+X-Gm-Gg: ATEYQzxiQqCou9+k0O98UjezAbBZFE40w233mAAPO/+aWdJYGq3HkBKn2lIT8kCH2r2
+	KT9PoOCzA6NDei+0UmPvLnJlt0R6keVWxHbyS+r5h+tlqnKgFiK0V2nDJs4xudrYGbqtFVOQLRD
+	awbNyfG3vsqhCGaipvUyv3HpoTFJvILyzvw5tj54/49KQ08q9ZTRQ0zTfKY87Ag4Ha7yuQavgp8
+	lDuJ4zVteCG01s2H5AwtmmSlhZ4sVFFFNssPq1QInu8lJs0jvmV7A3MAJz331MozD3It5oIvJmp
+	dm6oA9QgTC6kuZ0nRYvtLtxLGuk6uSVlAzal8Wa28dSVQdVB9pWCJ2HtD44UQryel1wQANoZbAr
+	OUvmnj1lLsCnOEHO8Ggn27YSVvdjQM4r481kRq5640Dz7SnEp+dXAnUn1
+X-Received: by 2002:ac8:5710:0:b0:509:23c5:3291 with SMTP id d75a77b69052e-50ba39bae24mr162438021cf.65.1774882120204;
+        Mon, 30 Mar 2026 07:48:40 -0700 (PDT)
+X-Received: by 2002:ac8:5710:0:b0:509:23c5:3291 with SMTP id d75a77b69052e-50ba39bae24mr162437351cf.65.1774882119419;
+        Mon, 30 Mar 2026 07:48:39 -0700 (PDT)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-50bb2dd8b81sm66397621cf.16.2026.03.30.07.48.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2026 07:32:57 -0700 (PDT)
+        Mon, 30 Mar 2026 07:48:38 -0700 (PDT)
+Date: Mon, 30 Mar 2026 10:48:37 -0400
 From: Brian Masney <bmasney@redhat.com>
-Date: Mon, 30 Mar 2026 10:32:37 -0400
-Subject: [PATCH] clk: visconti: pll: initialize clk_init_data to zero
+To: "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thomas Gleixner <tglx@kernel.org>,
+	Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Jayesh Choudhary <j-choudhary@ti.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Antoine Tenart <atenart@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Pascal EBERHARD <pascal.eberhard@se.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Chen-Yu Tsai <wenst@chromium.org>
+Subject: Re: [PATCH 06/16] clk: tests: Add clk_parse_clkspec() Kunit testing
+Message-ID: <acqNRVLrPxABvecZ@redhat.com>
+References: <20260327-schneider-v7-0-rc1-crypto-v1-0-5e6ff7853994@bootlin.com>
+ <20260327-schneider-v7-0-rc1-crypto-v1-6-5e6ff7853994@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260330-clk-visconti-init-v1-1-ac3e825e54b5@redhat.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x2MWwqAIBAAryL73YIW2eMq0YfYWkuhoRGBdPekz
- 4GZyZAoMiUYRYZINycOvoCqBNjN+JWQl8JQy1rLppFojx2LZoO/GNnzhW3vDA2mI20UlO6M5Pj
- 5n9P8vh/E/7fCYwAAAA==
-X-Change-ID: 20260330-clk-visconti-init-58fae9a7e6a1
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>, 
- Rosen Penev <rosenp@gmail.com>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Brian Masney <bmasney@redhat.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1700; i=bmasney@redhat.com;
- s=20250903; h=from:subject:message-id;
- bh=aExlSSaLla1nCjUvgyoARQzBD88LhnGckG7GUkW3GbE=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDJPdU7dYna2I6bszrPXbBPlgqZnHgneIfFJ/71uQoJu9
- ZayR9fYO0pZGMS4GGTFFFmW5BoVRKSusr13R5MFZg4rE8gQBi5OAZgIhwjD//SgFqGa+ybWqjvl
- U8+EOqpHJecZ/WJqf5LYfVXZyvjEfob/aUKVHZV8+y7cW/HZRPJi+5+C7T8/X5yoVZdj3LJXafI
- 8dgA=
-X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
- fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260327-schneider-v7-0-rc1-crypto-v1-6-5e6ff7853994@bootlin.com>
+User-Agent: Mutt/2.3.0 (2026-01-25)
 
-Sashiko reported the following:
+Hi Miquel,
 
-> The struct clk_init_data init is declared on the stack without being
-> fully zero-initialized. While fields like name, flags, parent_names,
-> num_parents, and ops are explicitly assigned, the parent_data and
-> parent_hws fields are left containing stack garbage.
+On Fri, Mar 27, 2026 at 09:09:28PM +0100, Miquel Raynal (Schneider Electric) wrote:
+> Create a new set of kunit tests to make sure clk_parse_clkspec() is
+> working as expected. We currently verify if we get a proper device when
+> using indexes and names. If we make an out of bounds request we expect
+> an error.
+> 
+> For testing purposes, we must ensure of_clk_get_hw()'s symbol is
+> exported.
+> 
+> Suggested-by: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Miquel Raynal (Schneider Electric) <miquel.raynal@bootlin.com>
+> ---
+>  drivers/clk/Makefile                     |   1 +
+>  drivers/clk/clk.c                        |   1 +
+>  drivers/clk/clk_test.c                   | 124 +++++++++++++++++++++++++++++++
+>  drivers/clk/kunit_clk_parse_clkspec.dtso |  21 ++++++
+>  4 files changed, 147 insertions(+)
+> 
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index f7bce3951a30..97b621456bf5 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -19,6 +19,7 @@ clk-test-y			:= clk_test.o \
+>  				   kunit_clk_assigned_rates_zero.dtbo.o \
+>  				   kunit_clk_assigned_rates_zero_consumer.dtbo.o \
+>  				   kunit_clk_hw_get_dev_of_node.dtbo.o \
+> +				   kunit_clk_parse_clkspec.dtbo.o \
+>  				   kunit_clk_parent_data_test.dtbo.o
+>  obj-$(CONFIG_COMMON_CLK)	+= clk-divider.o
+>  obj-$(CONFIG_COMMON_CLK)	+= clk-fixed-factor.o
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 47093cda9df3..1795246b10a0 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -5312,6 +5312,7 @@ struct clk_hw *of_clk_get_hw(struct device_node *np, int index,
+>  
+>  	return hw;
+>  }
+> +EXPORT_SYMBOL_GPL(of_clk_get_hw);
 
-clk_core_populate_parent_map() currently prefers the parent names over
-the parent data and hws, so this isn't a problem at the moment. If that
-ordering ever changed in the future, then this could lead to some
-unexpected crashes. Let's just go ahead and make sure that the struct
-clk_init_data is initialized to zero as a good practice.
+So that we don't unnecessarily broaden the API that's available to the
+clk providers, you can use EXPORT_SYMBOL_IF_KUNIT so that this is only
+available to the kunit tests.
 
-Fixes: b4cbe606dc367 ("clk: visconti: Add support common clock driver and reset driver")
-Link: https://sashiko.dev/#/patchset/20260326042317.122536-1-rosenp%40gmail.com
-Signed-off-by: Brian Masney <bmasney@redhat.com>
----
- drivers/clk/visconti/pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Note that Chen-Yu posted a separate patch to add the includes for a
+separate test. The two patches will conflict since Stephen hasn't picked
+this up yet.
 
-diff --git a/drivers/clk/visconti/pll.c b/drivers/clk/visconti/pll.c
-index 6fd02c4b641ed58f1943e55dd60ae80aba30b902..805b95481281761ad7ea4f59ddac07e4cdfb9d42 100644
---- a/drivers/clk/visconti/pll.c
-+++ b/drivers/clk/visconti/pll.c
-@@ -249,7 +249,7 @@ static struct clk_hw *visconti_register_pll(struct visconti_pll_provider *ctx,
- 					    const struct visconti_pll_rate_table *rate_table,
- 					    spinlock_t *lock)
- {
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 	struct visconti_pll *pll;
- 	struct clk_hw *pll_hw_clk;
- 	size_t len;
+https://lore.kernel.org/linux-clk/20260225083413.3384950-1-wenst@chromium.org/
 
----
-base-commit: 3b058d1aeeeff27a7289529c4944291613b364e9
-change-id: 20260330-clk-visconti-init-58fae9a7e6a1
+>  
+>  static struct clk *__of_clk_get(struct device_node *np,
+>  				int index, const char *dev_id,
+> diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+> index a268d7b5d4cb..b814b45f1f7e 100644
+> --- a/drivers/clk/clk_test.c
+> +++ b/drivers/clk/clk_test.c
+> @@ -3541,10 +3541,134 @@ static struct kunit_suite clk_hw_get_dev_of_node_test_suite = {
+>  	.test_cases = clk_hw_get_dev_of_node_test_cases,
+>  };
+>  
+> +static const struct clk_init_data clk_parse_clkspec_1_init_data = {
+> +	.name = "clk_parse_clkspec_1",
+> +	.ops = &empty_clk_ops,
+> +};
+> +
+> +static const struct clk_init_data clk_parse_clkspec_2_init_data = {
+> +	.name = "clk_parse_clkspec_2",
+> +	.ops = &empty_clk_ops,
+> +};
+> +
+> +static struct clk_hw *kunit_clk_get(struct of_phandle_args *clkspec, void *data)
+> +{
+> +	return (struct clk_hw *)data;
+> +}
+> +
+> +struct clk_parse_clkspec_ctx {
+> +	struct device_node *prov1_np;
+> +	struct device_node *prov2_np;
+> +	struct device_node *cons_np;
+> +};
+> +
+> +static int clk_parse_clkspec_init(struct kunit *test)
+> +{
+> +	struct clk_parse_clkspec_ctx *ctx;
+> +	struct clk_hw *hw1, *hw2;
+> +
+> +	ctx = kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
+> +	test->priv = ctx;
+> +
+> +	KUNIT_ASSERT_EQ(test, 0, of_overlay_apply_kunit(test, kunit_clk_parse_clkspec));
+> +
+> +	/* Register provider 1 */
+> +	hw1 = kunit_kzalloc(test, sizeof(*hw1), GFP_KERNEL);
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw1);
+> +	hw1->init = &clk_parse_clkspec_1_init_data;
+> +
+> +	ctx->prov1_np = of_find_compatible_node(NULL, NULL, "test,clock-provider1");
+> +	KUNIT_ASSERT_NOT_NULL(test, ctx->prov1_np);
+> +
+> +	KUNIT_ASSERT_EQ(test, 0, of_clk_hw_register_kunit(test, ctx->prov1_np, hw1));
+> +	of_clk_add_hw_provider(ctx->prov1_np, kunit_clk_get, hw1);
 
-Best regards,
--- 
-Brian Masney <bmasney@redhat.com>
+Can you just use of_clk_hw_simple_get() and drop kunit_clk_get() above?
+
+> +	of_node_put(ctx->prov1_np);
+> +
+> +	/* Register provider 2 */
+> +	hw2 = kunit_kzalloc(test, sizeof(*hw2), GFP_KERNEL);
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw2);
+> +	hw2->init = &clk_parse_clkspec_2_init_data;
+> +
+> +	ctx->prov2_np = of_find_compatible_node(NULL, NULL, "test,clock-provider2");
+> +	KUNIT_ASSERT_NOT_NULL(test, ctx->prov2_np);
+> +
+> +	KUNIT_ASSERT_EQ(test, 0, of_clk_hw_register_kunit(test, ctx->prov2_np, hw2));
+> +	of_clk_add_hw_provider(ctx->prov2_np, kunit_clk_get, hw2);
+> +	of_node_put(ctx->prov2_np);
+> +
+> +	ctx->cons_np = of_find_compatible_node(NULL, NULL, "test,clock-consumer");
+> +	KUNIT_ASSERT_NOT_NULL(test, ctx->cons_np);
+> +
+> +	return 0;
+> +}
+> +
+> +static void clk_parse_clkspec_exit(struct kunit *test)
+> +{
+> +	struct clk_parse_clkspec_ctx *ctx = test->priv;
+> +
+> +	of_node_put(ctx->prov1_np);
+> +	of_node_put(ctx->prov2_np);
+
+Is there a double free of prov1_np and prov2_np? If this is dropped from
+the test exit, then they should't need to be in the ctx struct.
+
+Brian
 
