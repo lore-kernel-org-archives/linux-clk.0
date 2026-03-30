@@ -1,67 +1,67 @@
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343FA3C4569
-	for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2026 10:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C23233C65FD
+	for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2026 10:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774865689; cv=none; b=I8pGGWdinqC/8txHlCA4SbkaBVqAyPJTUvvZgkSmVPlgL9BKtgZEpoNTbNNorOSSv8ePVw9GEKv6saG3zbVsjUucn1TJBaAOdVF14+BvfJM+nXeHWUGy/cC+5xtBl+LSl9TFQAUrTcfnOGnrSQZUbn+zhxGs+UMe3lJpHDvDxA4=
+	t=1774865697; cv=none; b=Z4XHzF7XQj6EH3iHIoRwR6xJMHAeo1RekI0GErI2tVJVr+L+cT4OhX4l3EEdDsk52+WZ0N80bUZcjm0WEqUSNqR3tuiObEtPSMeu0q63ZE93r2WZhkoQhTL8HR6ognyIYPd47QFmEyYGny+cDT+nLRCP9k2X03/yqnC1vQ+2w4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774865689; c=relaxed/simple;
-	bh=dSmdH/k7eoOG7PHFk1pjfGKztHp9W6X8Whf07jDQ+ww=;
+	s=arc-20240116; t=1774865697; c=relaxed/simple;
+	bh=rYkzRcW245ELcqnW206enFLVoi53VbyHIjf+wFoTPok=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SXZ7/PZY1IgVqFWOzj2+QH+R82u2DyA+9iAyRgVXFJSSPy4SPjFHe5XXSgzPT/t6PM0KMtNfrWFfYySKLCSSjNPBQbGVXP24Eeb9GheGeLCsbn3fjFDyOFjsVb9udglK7LZbdmO18hdJexbkBAyNiUOcVABe4wB1p/tsBCDXbzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TOQ8DK7L; arc=none smtp.client-ip=209.85.210.181
+	 In-Reply-To:To:Cc; b=RixPL8CZfNsxkexLIEO36Aut5dWNufOCqfZhplrX3xe9kTlB1x/ce4L1JLPvtiwWEmw+2fTcxwP1TBVI+kVvXo4XIXk9UxYFEQfJxAIBenSHkfBmAiK2s9awLeFitikJMjD7ViSsqRbkDPb4O+0lmXeNCkSJXGSmNEOIokY/0kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jpRp9e1X; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TOQ8DK7L"
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-829ac4670c4so3151317b3a.0
-        for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2026 03:14:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jpRp9e1X"
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-82ae378fff8so2735485b3a.2
+        for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2026 03:14:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774865687; x=1775470487; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1774865694; x=1775470494; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=4PSFyUSbDPbuxXLaZDXDANomGT/xjqWL5i9LiQ50fiM=;
-        b=TOQ8DK7LHT+dBVtzFpsT7MCtN4AEWwLZY5GekTQh/Lmq3okODfSpxJIUYzCFsNVchC
-         +tMEt3vqHQmbltrfgqNux0BPC/LozqtPQj6C58of862FhdnxlyV5VcD7qviGkKErZ3/V
-         5DboiQIwZgmsvSzTjsr4L+m5DT4Q9+ehzldZ7Bs//0xMqlGdtMjoqyyIrFWbPZjgQePQ
-         qf5t5u0bi2LnNF2UrtbGTeYKRFeqp9Ad0bziRXSH7l3GDKuWwn2zea7XD45KYuLjzhl2
-         R84IU++cy/QTErXZfQYvJC9Cnwbi3nAoGg/qGevJ0R3TKYd4Vv7B1l34EtwQdnUWgoM1
-         OzTQ==
+        bh=lZezNnVQNhmXmaIcjRNqOna668OUhlUp70Pxauy9gTQ=;
+        b=jpRp9e1X5knqWzbGGzppcH+P3WLgZVHJ5F8ZtUxgybCayfP0kGTkiyJJeV51cCE8fC
+         lLhQ0QlbxbDQ+5/EjY6h2mFTEHQZQeDr9IrTNoQhRRjn7MrGWLFkiaUh/G0DFQHkOncf
+         TtOqSySk8jJmHHhoGiej7BtdDLBCB5Ql/eCjDCtzfMTkWNkc8tIKlERB4h8luwrswGis
+         daZMsB4+atfRc4+wLjljo7OKViMeANtiUeqvavAHme4YmbEDGHvINDfI52E7s4Cx+5rt
+         Tp1EqB4x2rkh9VMyDuukPhSJd/h3RNVp4od8d2FMjMWQLWnAQ0OvAvKB203DlBt6RMIe
+         hlaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774865688; x=1775470488;
+        d=1e100.net; s=20251104; t=1774865694; x=1775470494;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=4PSFyUSbDPbuxXLaZDXDANomGT/xjqWL5i9LiQ50fiM=;
-        b=UJVtAnWG8CUXfhalfekuRwyGLDSdvGDufKgU4rXBCHVwWrVK4rOEYCrye0wISUcptC
-         Jy68UAT3KVee56VdWCZEp8C2/q7UV/BhK3CRaOLGuoJkAXkhLcdU7P6WfHr+l+P4insl
-         U8i1SUB6RvAjOy9XyAx8qGUVjb0To32Cdcm8JpBVBw7XhYjEGaNmkcLQFGuf9Ojj9P+C
-         4Ijp/s3mey/XRL0MRtlwqrWbX+X+0nn1UPDXJ1wuBbIGOjg3WOOxAyLu22S3zO7oafpV
-         OBVlaIsQ9i7ANwWrbPa8PGH+2ogbD5cvz62xAKgxwY7qwPakkNdKMRPmmb2x/XM8UG1O
-         ZIQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWHs9O/mNj9Yrb26loZ9NOBhelyhWhBVwx8MyvvHNphy1IZhPgcqqxbM3Pry3l0mxcAzmQCKexgpjA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNMzWx1J3r2owH25pv8wrmCWYXg40xsg91kLc+AgM4kx7MqZzr
-	s1rtdtLtnqrz4ycbsyO63UmGkqfCGtE0Nf2PZNkD6PbgE8waXfSmGlkHrzC5DkgS
-X-Gm-Gg: ATEYQzwEaVNU8Q4Qow8AnW77XDKQAn2RTjiLKBcxf7DslD3jnU5VOCsU4PanU1SwHej
-	Bew8sVHfKhWL/WlkwBfBw7shY4+lJnKIQuSsmroIiqhZzAELPC1fjoJsucAZP+QXqzIw0oEcohs
-	grjUhyBauf//0slgxy9c+UiID3K6yk0LDBMwq2OTo9F71ryRI4eclAiGRIip8lyUfYNdT/rW20P
-	92q+SjTqnoM4zbj29L/gau5a8nG6mnuyRVvgqsbN6oRUB+LRrQNc9gj8ngrr/IJJbS9nz/2qf9N
-	JyfG7PkA5B43lG/1XBuS5GdWAvmDyFJdLn4/kL2t0OzX9vJfxDfMq0MM8eSBNEX1gBKIxdkwArD
-	finnhMHFHCSd4YglDs37aca8q+N+EgGnz6sB0snTGVy75Ps4/f2ZUiH6+ozSyjOkR4aJHnL7S13
-	jq5VOcL8AFv6wyCmRoyBauQvi28KYg
-X-Received: by 2002:a05:6a00:4107:b0:82c:20e9:fa53 with SMTP id d2e1a72fcca58-82c95af2c3amr10551087b3a.5.1774865687558;
-        Mon, 30 Mar 2026 03:14:47 -0700 (PDT)
+        bh=lZezNnVQNhmXmaIcjRNqOna668OUhlUp70Pxauy9gTQ=;
+        b=oH6DelF3z5i80tKCL54LKO5A4ZWhq/qb/xpfgGLQnX+fHsOGasFIjHUTHw2RgA7/WU
+         niUNHU3sDJaFGV3derlc20PRDkQcyYPX5xehWY4EuIqgrLN/ZnTYEllLOP07JnEczfX0
+         92F4FwVYfNf8r+sK+QVNmOLhx4cRN8cZvpdlHcZ73cJUfa/ebUwmuejJNXKpH5NEbNaK
+         kpDlO88RzvwG6dKQXGCUFr8Xo/32lhNEZMN9hZX8DFgEMZWiaf6lzILdeqTyeP+n+Pt/
+         ZIXeVKCy4tJaHa4MetxK5EoL+a9ZUUjoOQjvX0jbRBLZoG9PkNWhVSGdBNI8N5fkFS/c
+         JfWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUHEvVkbdMT4CFxxM10hgH4jRhZAmxev+Z8leyJ68Ha9IyzyVANQtuaXImfAouqvJYjdCf5K1ebq20=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUBt1Rl8p5ZRCPmb1lmeRyAoJ+0zLX+42xt3NtnZ8fjEYjSGds
+	1FUZlzDDsTkwYBSmyHq/yfqmW9JzW+TDz0A4o0J+BQP2le+RerTka5NB
+X-Gm-Gg: ATEYQzxbS8exrBSW5R6BAPHKb3KeTiRwf/1OFi/gFRrJtXNJElFMBH9ymMZLSeGbrc7
+	eHcy6RRQxswoJL9wJnIeai1NlEJK1ur/F8uzJNtSlOWL1XFBtFTAvhXTYeH+EuRYS0fSGcOMUgR
+	eHnxdqOaM4IbmgT2BYrBvTSDLNNiM8jQ8vnI6oOkMN3+mIEWCfTJ4JJFg23kHaB6pFnYu084RrP
+	I6snCLcvy+P4i5Y2FqnXWuu7ml9iHtECj/C2Whnh9s58degxV444Mbl6yWqyRcta1R3ZpiYc7N/
+	CR9AahZG4XyxbjWpOx/YdfKI3x1kx3agjovV9xhqa0dIQy+2WhybMD0S3V0Sp2pumrBrS7m3l3y
+	23F1Xc77IsSNRPivWHUcqlOcvCiD9g2J3c/D7Ka7SWwJkgNGN5nSIipw1jpGxQ+2v+PzL05Y9Eo
+	41422mtCPY7tBvrQXu7+K9BnsxNUyu
+X-Received: by 2002:a05:6a00:2e18:b0:827:2a07:231d with SMTP id d2e1a72fcca58-82c95d3974fmr11984562b3a.17.1774865694152;
+        Mon, 30 Mar 2026 03:14:54 -0700 (PDT)
 Received: from [192.168.0.101] ([43.226.29.240])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-82ca843d8e5sm8286080b3a.5.2026.03.30.03.14.41
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-82ca843d8e5sm8286080b3a.5.2026.03.30.03.14.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2026 03:14:47 -0700 (PDT)
+        Mon, 30 Mar 2026 03:14:53 -0700 (PDT)
 From: Biswapriyo Nath <nathbappai@gmail.com>
-Date: Mon, 30 Mar 2026 10:13:51 +0000
-Subject: [PATCH v3 4/7] arm64: dts: qcom: sm6125: Enable USB-C port
- handling
+Date: Mon, 30 Mar 2026 10:13:52 +0000
+Subject: [PATCH v3 5/7] arm64: dts: qcom: sm6125-xiaomi-ginkgo: Add PMI632
+ Type-C property
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -70,7 +70,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260330-ginkgo-add-usb-ir-vib-v3-4-c4b778b0d7f8@gmail.com>
+Message-Id: <20260330-ginkgo-add-usb-ir-vib-v3-5-c4b778b0d7f8@gmail.com>
 References: <20260330-ginkgo-add-usb-ir-vib-v3-0-c4b778b0d7f8@gmail.com>
 In-Reply-To: <20260330-ginkgo-add-usb-ir-vib-v3-0-c4b778b0d7f8@gmail.com>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -84,53 +84,73 @@ Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
  linux-clk@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
  phone-devel@vger.kernel.org, Biswapriyo Nath <nathbappai@gmail.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 X-Mailer: b4 0.15.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1774865654; l=1049;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1774865654; l=1398;
  i=nathbappai@gmail.com; s=20260118; h=from:subject:message-id;
- bh=dSmdH/k7eoOG7PHFk1pjfGKztHp9W6X8Whf07jDQ+ww=;
- b=iN7WUR2JFdKInanyaJ1nA7GlY5aCbeqHHyFtVL3dnjBxgeZPO8T73QxVOJKURbwx2GR+gVJdr
- PY0C+yTcSTeBAULpEXuamFoFN1U6WYjq0Th+2JdlIdUJCkN76sfl8CA
+ bh=rYkzRcW245ELcqnW206enFLVoi53VbyHIjf+wFoTPok=;
+ b=+0vgH3skU4ycp9nWrCr78txopZ6GUChHC1xjVO+8+tmuAJhd3X+0Sd35xvcmDK41qmuT2NngW
+ EQ9DxSsP+YKDR+PEDZjOimrpKCrM57VJY1ef2DzH4Pm8lYSKyJvoTau
 X-Developer-Key: i=nathbappai@gmail.com; a=ed25519;
  pk=slmb/9yXbet+KTiT3EYLCp0p0MEOYa3EdjUXP+HXfjg=
 
-Plug in USB-C related bits and pieces to enable USB role switching.
-Also, remove dr_mode to enable OTG capability.
+The USB-C port is used for powering external devices and transfer
+data from/to them.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 Signed-off-by: Biswapriyo Nath <nathbappai@gmail.com>
 ---
- arch/arm64/boot/dts/qcom/sm6125.dtsi | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ .../boot/dts/qcom/sm6125-xiaomi-ginkgo-common.dtsi | 31 ++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/sm6125.dtsi b/arch/arm64/boot/dts/qcom/sm6125.dtsi
-index a1a296f90f44..d26ca1637330 100644
---- a/arch/arm64/boot/dts/qcom/sm6125.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm6125.dtsi
-@@ -1241,7 +1241,20 @@ usb3_dwc3: usb@4e00000 {
- 				snps,dis-u1-entry-quirk;
- 				snps,dis-u2-entry-quirk;
- 				maximum-speed = "high-speed";
--				dr_mode = "peripheral";
-+
-+				usb-role-switch;
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					port@0 {
-+						reg = <0>;
-+
-+						usb_dwc3_hs: endpoint {
-+						};
-+					};
-+				};
- 			};
- 		};
+diff --git a/arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo-common.dtsi b/arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo-common.dtsi
+index 88691f1fa3a1..f66ff5f7693b 100644
+--- a/arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo-common.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo-common.dtsi
+@@ -116,6 +116,33 @@ &hsusb_phy1 {
+ 	status = "okay";
+ };
  
++&pmi632_typec {
++	status = "okay";
++
++	connector {
++		compatible = "usb-c-connector";
++
++		power-role = "dual";
++		data-role = "dual";
++		self-powered;
++
++		typec-power-opmode = "default";
++		pd-disable;
++
++		port {
++			pmi632_hs_in: endpoint {
++				remote-endpoint = <&usb_dwc3_hs>;
++			};
++		};
++	};
++};
++
++&pmi632_vbus {
++	regulator-min-microamp = <500000>;
++	regulator-max-microamp = <1000000>;
++	status = "okay";
++};
++
+ &pmi632_vib {
+ 	status = "okay";
+ };
+@@ -316,3 +343,7 @@ &uart4 {
+ &usb3 {
+ 	status = "okay";
+ };
++
++&usb_dwc3_hs {
++	remote-endpoint = <&pmi632_hs_in>;
++};
 
 -- 
 2.53.0
