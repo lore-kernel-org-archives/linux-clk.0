@@ -1,151 +1,151 @@
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9A1329391
-	for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2026 14:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CDF33358A7
+	for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2026 15:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774882544; cv=none; b=PSG58kKrexxEmXpFbF082O+YWgL1uSWoM/5WYYbqvTwksnvHi8oNzu9lDPjUnO8ZBIAcyJ6EjCXiJeeiufE42HshTBKmQBtXksyefFF26xghPq0uO2GTmfYbgJ2Fk9+qel5y7P0CctMCqXVaQDMrW60cI/Y31ZDZT7ktFccWG+0=
+	t=1774882930; cv=none; b=adgJrZ/hWnHL7tt1w6H2ng2rTTzJhyR763zE6SPaPkbQuZYtuRNTnfr8frJyCxDqvK7FQEYTG3wwSVv+WWCQqzEFvqsZV4IMGrUhiQXlcGPMC6id6x2P9XacL2cmV1ZgBgPBU/FPwdgH7cFDVEKstmAbCqY1+fqr4PqzqtoTHww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774882544; c=relaxed/simple;
-	bh=ALD3uDNicTlrTjfpZN84frj9IWM1PUG20b/GPPZcjkw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=E1nefVk3tBNntorAi1P++pokKhBRVAm8J+dUYaaAdKO6iEjJDXV7v5Dnq6YwtUGWzyZ6RdpfGc/s4yPEZoT2PaDy+VlgvbTLbZ5aU5ror/b4SoQ77YZ2eO+31v9v6JfRBUSK9/xCzxmONqBY+6wQVDAAWCRZItl+768aJJVOA5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=D0xGysUO; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+	s=arc-20240116; t=1774882930; c=relaxed/simple;
+	bh=fVkuWa4a6/cQxsnJg9pRm7tn6P2ndJyKnXupZf2dZoQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ii6ExF48h440NT8RYkrjdOAHz50phLiiuJiKZljQnKEgYp3T1xSIn6PoejfZ6X0y6pqiMjuw6tk48qdrDZtxuRajGbMoz3hWm3aGSqOp0RYxatyBGnNAGT2ZK9v/kZl3wqY+4omExFK+eW0j/v+LP1uSuaXrW16q6ekqHTFukGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SfFreR6r; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=jrE7BW84; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="D0xGysUO"
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b9961e4f71bso693688066b.3
-        for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2026 07:55:42 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SfFreR6r";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="jrE7BW84"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1774882928;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ioaGBccEulsVefeHIBPg305ScRFhJiChwS24LCLi1yU=;
+	b=SfFreR6rpM2ZOmgG5YA0lzIkhzb9Oq2LSH/Z/RMC7lQOEHHcTuCdap5ZRPgL9ohdm5mju+
+	eoV3o2Retaryh2MojrhsGURKVcttmU5Lex5MjKUJ6igG2ytDetIS0beyXk6pDYJxhrljlw
+	HO/rQcuoYRKDFNcJ7xhnOhbRstn/VDo=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-355-06mFXj5NP9ePQMm2PLOzzQ-1; Mon, 30 Mar 2026 11:02:05 -0400
+X-MC-Unique: 06mFXj5NP9ePQMm2PLOzzQ-1
+X-Mimecast-MFC-AGG-ID: 06mFXj5NP9ePQMm2PLOzzQ_1774882925
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-8a1accb970fso14494476d6.3
+        for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2026 08:02:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1774882541; x=1775487341; darn=vger.kernel.org;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+        d=redhat.com; s=google; t=1774882925; x=1775487725; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=469O081Aaa7aoFYWvcsfiJCJp8arQcJSe+eDYXLPnyA=;
-        b=D0xGysUO4tD9ilbCGSWDFxnbQ1YttanWFBZtidn+/fV6kkOfmpuTCaqgcStYnN/A2f
-         1rV0HvtQDwqgger5BwCPl1z0/A5QiF8mpqOwHvVM26IKlxdEWlHrq2QsyUjSm3XreuWJ
-         7m0vMn+w8eBNjZJv78Tvn1CWzBi9yrdl1xaI7McMKv1iivjDm98W4GZQE4sSLNoQd2as
-         ddYUeuhvPl/Qn/SsN8lKz6FqtyQ5j9YzybZeMG8R6MAv3AVgxAu7gONb+I5chp7MjUqy
-         wKaNgfYHJP2dE8xptw+CggpzCmROvoQgM/VbSsYCIo/D2/bknx4Tp30Br4NK0qz4vE1B
-         FeLQ==
+        bh=ioaGBccEulsVefeHIBPg305ScRFhJiChwS24LCLi1yU=;
+        b=jrE7BW84LjtH3vjTmBnHSlGa9i45Xcm+Eq6/D8A1g80H6L6bcPPvJe8apOSND4rGly
+         CVVgCWYGv1Lo/tBCw5MWiv3ERaKvKiiTTuBnu+sY+Oi62WrotCIphf/6k2e1sAB6feu0
+         nuccqoKu/TzSO8QoP+w9kDFJk7JfKn7ouvhphlLNKY4ja2o+HQOB7IdRJq9PV5sjuoaW
+         i4vog5D0MGMW1bppab45CNPmHcnb8htqzb4mI6aA0L/kIOLiZQG2EQ2sQFcOsusEvsoL
+         lKCBMZzARmnt6niXa0Q9nBmYH6jen297Aldk53QXMiBEwamv/3kAQoTkqvTKLxmJPVMt
+         LITA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774882541; x=1775487341;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=469O081Aaa7aoFYWvcsfiJCJp8arQcJSe+eDYXLPnyA=;
-        b=kSMaioPudUk2NmcOIsf3AQ0DhQStiy4I+knCLBT1jwPDX4wBrE+kJGO8fT8IgoxRxp
-         /nlr4koT35/MXi9qpt57QNQlKSxPsA6SkQSKblnhXDIuZkkOCwYzYbOCpoCe7DhhGGUF
-         fcV556cSHq43FTSI+vbRVUchGLQW2JbbD7vyZ2hLXhXhKoK1BGvTYzRRtvIqvN4TEWlu
-         /jCPRYiBhovOxK09V8uuCCXJEVZWhW2Cz5JwvmbQJAwPV85+CCGSR+1cUE4jakbwvUBZ
-         mcMyLU14j2QG0+SZKUm+s2HTDVOQS+RnAx8/wJ7LUl4j931DE7dFJNk2tfjAnpdkNe5m
-         o72g==
-X-Forwarded-Encrypted: i=1; AJvYcCV673Q0UK7E21fL1hNOtcmAZRm7ARoX+XfT7JbUDHmehGf5lFUHqh73EkBxyG0xqTGaqhieIfaczjk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+so4eUGhrdEG3BJGoJIMf7YgUzwqehsWKgAgcJUvgH/5GjnKv
-	czUlfXail/wcYvctdlwqHjuchQTB87/Oots1xnCx+vhrQo3Zkxfp/hwWlTjWwZoLUqA=
-X-Gm-Gg: ATEYQzxZKfeSJoU/84ePo1rs0yr58FuHOiy0FyI3CGPTvIsb9LyyjlK4Sgz9XN+Xp3K
-	d6G/h3IWBdWC8I9YhuXkq8Uq33ARYmZ7rrVfNqXc3SwQeNNW6HkZAcL+rYfa3OAAjtjDPB0L6w0
-	3QwqgSYs4MGjgIw4MQ9lNQcb1q8empSmv2tWKcATICvZP056SinaA8xS3fTV3G5vE5HomThCHD5
-	pK9BhV6QDYeyLRSP48D0baABuDTQY6+Jg7ZIievmsLnSrNWxMT+qy6eLbxoUnoXvx+oV9Mjd5yS
-	zpN2zZyAlEyGkNj/Xwb1jmilBe0uQenevQSaw2B0E7B78aLJ1OxFv8YVoVh6JWTB0s0mK3HUHMJ
-	ADV1m+MBk/f/D2Hit3PZT4nION1j0r+N6q8ca/wkYMbWqNLQaw16RWMBAYomfeQ0WEbW16sLVgS
-	lf7YLfFoU8wujgrekbeonVxnQpzwA88dE4Lgu1oMOmkl4Aifx+HZOZbv+VBPqe65dLeuqH
-X-Received: by 2002:a17:907:7a89:b0:b98:9da:4d94 with SMTP id a640c23a62f3a-b9b5095e40amr877735966b.48.1774882541028;
-        Mon, 30 Mar 2026 07:55:41 -0700 (PDT)
-Received: from localhost (144-178-202-139.static.ef-service.nl. [144.178.202.139])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b9b7b1a5fbesm301940766b.37.2026.03.30.07.55.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Mar 2026 07:55:40 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1774882925; x=1775487725;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=ioaGBccEulsVefeHIBPg305ScRFhJiChwS24LCLi1yU=;
+        b=TexMHWzLCEv6bmX2w3zxXIZlsjK/liebzXKgbedReX21Zoy/7A4KWFBXHM1/3N5tup
+         tmTAD1cfxYR7SRqdOxJKThY68YobRXpMOiYnVMhvP4BsFUDF4f1Yw7qDam2H4XZzwrzd
+         Z4xPnqOUuAYQ7ayIIziEdqc05plf33cKQnBepctr6uGDwIZBEPkHzk3GBNQbNxNT4EcZ
+         pim9/ZCWqZECud8t6SEm0QrMLlG/qAjUSWoOcbwv2vRvKAMyyLxhvBBzZ44uLRoL08Ex
+         CsYjnqqH1iGZZdu5qEL2cahtjJqTKfVfTpigixDuxAfdn8bJ/WTnAs9kGngwysPn5Prz
+         cv+w==
+X-Forwarded-Encrypted: i=1; AJvYcCXXdUhRKgL/IMhOph6VX2wsL5f597MlZZ4sI7H3bkwg7Sa55R+iWp49qwJr1GKRi/p4abbvNDW/WmM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxD3BmU7A6C4c9o9CLCEcEFGjFqLHd9rywHGg51q10bkcF6CX1u
+	Y5O8hxVOlAmP1j7YufpM/1uwi9jzgwD1gNwV9iN8hQ3oia5KzKBFHPaiARlPUGVHka9y4N3+acX
+	8FUJRqZK7UkQjFgLS1B4iprN5nOtC71w+awfCLNGqsTIdAu0dKtKVC2qQfJfJJw==
+X-Gm-Gg: ATEYQzwujhxlmnI/LCspKeQWQ3g7c3kxzfRounYC7S0e0iBbtJk6Ds1InJZZPSeW9NM
+	p0gCIPkaymoSIroMlY4nxYwzs5EJ+RUbMKxFYOIcfbpTtBR0YHlA1cRIxXmpiKjYW7pLEcRV8xQ
+	t5V21sR5rEnRkW5mQC6UbQO+5gMsKbg7SObs62XdQrfsyISEF2kXsI6s69TAx/7gyZPLu1DgV7I
+	UdZb8RexsrKj49hg9rKRAdXJsw9o3YtTYdhSsnQ58m6ceG7IDcWYn3CZDWZZM1f4FkYh8+ZepW1
+	M4zNKdYRaG8D34t6+H2iTqCXYBOWO+DotA7k9sAQkXsehx+KnuHZ/Yzj7MYaSYDJJGXWtXi/xRp
+	XhTUENWy9V96JP5p2cL3x5onR+eRYA7LApJwiqaxLsvXZOiVRSok4NNlx
+X-Received: by 2002:a05:6214:498f:b0:8a0:7c8:409b with SMTP id 6a1803df08f44-8a007c84819mr89272126d6.33.1774882923329;
+        Mon, 30 Mar 2026 08:02:03 -0700 (PDT)
+X-Received: by 2002:a05:6214:498f:b0:8a0:7c8:409b with SMTP id 6a1803df08f44-8a007c84819mr89271186d6.33.1774882922650;
+        Mon, 30 Mar 2026 08:02:02 -0700 (PDT)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-89f49cbb8besm57387836d6.43.2026.03.30.08.02.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Mar 2026 08:02:01 -0700 (PDT)
+Date: Mon, 30 Mar 2026 11:01:59 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thomas Gleixner <tglx@kernel.org>,
+	Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Jayesh Choudhary <j-choudhary@ti.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Antoine Tenart <atenart@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Pascal EBERHARD <pascal.eberhard@se.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 09/16] clk: Use the generic OF phandle parsing in only
+ one place
+Message-ID: <acqQZ5sx_WZrr4KJ@redhat.com>
+References: <20260327-schneider-v7-0-rc1-crypto-v1-0-5e6ff7853994@bootlin.com>
+ <20260327-schneider-v7-0-rc1-crypto-v1-9-5e6ff7853994@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 30 Mar 2026 16:55:40 +0200
-Message-Id: <DHG7CMLREKDF.2L5V5VQCEYDKH@fairphone.com>
-Subject: Re: [PATCH 2/5] dt-bindings: clock: qcom,milos-camcc: Document
- interconnect path
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: "Mike Tipton" <mike.tipton@oss.qualcomm.com>, "Konrad Dybcio"
- <konrad.dybcio@oss.qualcomm.com>
-Cc: "Krzysztof Kozlowski" <krzk@kernel.org>, "Luca Weiss"
- <luca.weiss@fairphone.com>, "Taniya Das" <taniya.das@oss.qualcomm.com>,
- "Georgi Djakov" <djakov@kernel.org>, "Bjorn Andersson"
- <andersson@kernel.org>, "Michael Turquette" <mturquette@baylibre.com>,
- "Stephen Boyd" <sboyd@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>, <~postmarketos/upstreaming@lists.sr.ht>,
- <phone-devel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
- <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20260116-milos-camcc-icc-v1-0-400b7fcd156a@fairphone.com>
- <20260116-milos-camcc-icc-v1-2-400b7fcd156a@fairphone.com>
- <20260117-efficient-fractal-sloth-aaf7c2@quoll>
- <59d9f7ff-4111-4304-a76c-40f4000545f5@oss.qualcomm.com>
- <9f8619d4-43ac-4bc0-9598-c498d59a27b8@oss.qualcomm.com>
- <acH7aEBvSbiNwhBz@hu-mdtipton-lv.qualcomm.com>
-In-Reply-To: <acH7aEBvSbiNwhBz@hu-mdtipton-lv.qualcomm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260327-schneider-v7-0-rc1-crypto-v1-9-5e6ff7853994@bootlin.com>
+User-Agent: Mutt/2.3.0 (2026-01-25)
 
-Hi Mike,
+On Fri, Mar 27, 2026 at 09:09:31PM +0100, Miquel Raynal (Schneider Electric) wrote:
+> There should be one single entry in the OF world, so that the way we
+> parse the DT is always the same. make sure this is the case by avoid
+> calling of_parse_phandle_with_args() from of_clk_get_parent_name(). This
+> is even more relevant as we currently fail to parse clock-ranges. As a
+> result, it seems to be safer to directly call of_parse_clkspec() there.
+> 
+> Suggested-by: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Miquel Raynal (Schneider Electric) <miquel.raynal@bootlin.com>
+> ---
+>  drivers/clk/clk.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 591c0780b61e..93e33ff30f3a 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -5375,8 +5375,7 @@ const char *of_clk_get_parent_name(const struct device_node *np, int index)
+>  	int count;
+>  	struct clk *clk;
+>  
+> -	rc = of_parse_phandle_with_args(np, "clocks", "#clock-cells", index,
+> -					&clkspec);
+> +	rc = of_parse_clkspec(np, index, NULL, &clkspec);
+>  	if (rc)
+>  		return NULL;
 
-On Tue Mar 24, 2026 at 3:48 AM CET, Mike Tipton wrote:
-> On Mon, Jan 19, 2026 at 11:28:07AM +0100, Konrad Dybcio wrote:
->>=20
->>=20
->> On 1/19/26 11:20 AM, Konrad Dybcio wrote:
->> > On 1/17/26 12:46 PM, Krzysztof Kozlowski wrote:
->> >> On Fri, Jan 16, 2026 at 02:17:21PM +0100, Luca Weiss wrote:
->> >>> Document an interconnect path for camcc that's required to enable
->> >>> the CAMSS_TOP_GDSC power domain.
->> >>
->> >> I find it confusing. Enabling GDSC power domains is done via power
->> >> domains, not via interconnects. Do not represent power domains as
->> >> interconnects, it's something completely different.
->> >=20
->> > The name of the power domains is CAMSS_TOP_GDSC (seems you misread)
->> >=20
->> > For the power domain to successfully turn on, the MNoC needs to be
->> > turned on (empirical evidence). The way to do it is to request a
->> > nonzero vote on this interconnect path
->> >=20
->> > (presumably because the GDSC or its invisible providers require
->> > something connected over that bus to carry out their enable sequences)=
-.
->
-> The GDSC itself shouldn't depend on MMNOC in order to turn on properly.
-> It should turn on just fine without it. There *is* a dependency between
-> CAM_TOP_GDSC and MMNOC, but it's in the opposite direction.
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
-I can personally just write from practical experience, as Qualcomm
-doesn't share any relevant documentation with OEMs.
+In case a Fixes tag is warranted, it's not exactly clear what should be
+used. This was introduced in commit 766e6a4ec602 ("clk: add DT clock
+binding support") in 2012. However of_parse_clkspec was introduced in
+commit 4472287a3b2f5 ("clk: Introduce of_clk_get_hw_from_clkspec()") in
+2018.
 
-Without this patch the GDSC refuses to turn on.
-
-[  291.055839] ------------[ cut here ]------------
-[  291.055860] cam_cc_camss_top_gdsc status stuck at 'off'
-[  291.055878] WARNING: drivers/clk/qcom/gdsc.c:178 at gdsc_toggle_logic+0x=
-138/0x144, CPU#4: hexdump/1995
-
-With the patch it turns on just fine, no issues seen.
-
-As Konrad has written, originally I didn't see any issue because that
-interconnect was being kept alive by simple-framebuffer where I've added
-'interconnects' to keep the framebuffer alive. However when testing
-without this, the GDSC would refuse to turn on, which led me to this
-patch series.
-
-Additionally you can see in downstream devicetree you can also see an
-interconnect defined for the "cam_cc_camss_top_gdsc" node:
-
-https://gerrit-public.fairphone.software/plugins/gitiles/platform/vendor/qc=
-om/proprietary/devicetree/+/refs/heads/odm/rc/target/15/fp6/fps_overlay/vol=
-cano.dtsi#2943
-
-Regards
-Luca
