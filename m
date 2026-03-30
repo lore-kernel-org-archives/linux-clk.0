@@ -1,67 +1,67 @@
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42563C457B
-	for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2026 10:14:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343FA3C4569
+	for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2026 10:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774865683; cv=none; b=ICgdPKwwhFmEqeaNrUjaQQ43M1MDulT2acVAMji5vVZbjJEr9aMst8aRHntJYQ/IrNNH6XxlMS45Ad+O7JM82Sik94KMT/PL5Jg6CbN/5+kKXFJXPi0HOTzmfFbZi3IeDyTIW4f9CjC3/nOwmIX1orh6UnTN6D2tlglXFqgnaSw=
+	t=1774865689; cv=none; b=I8pGGWdinqC/8txHlCA4SbkaBVqAyPJTUvvZgkSmVPlgL9BKtgZEpoNTbNNorOSSv8ePVw9GEKv6saG3zbVsjUucn1TJBaAOdVF14+BvfJM+nXeHWUGy/cC+5xtBl+LSl9TFQAUrTcfnOGnrSQZUbn+zhxGs+UMe3lJpHDvDxA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774865683; c=relaxed/simple;
-	bh=mrDnR0G7mbNJho3HlF5gQvzhoEN14/C2UquKRdZ6H1k=;
+	s=arc-20240116; t=1774865689; c=relaxed/simple;
+	bh=dSmdH/k7eoOG7PHFk1pjfGKztHp9W6X8Whf07jDQ+ww=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LelX9a4JIHwUcMxplIeBcxR+xe1jBaQNwkXE/Sr+YxklBbG/eGY/l5Ug0hZcj9mjqFzDt9AdDYp3HifF26uMQhU8eG0UT85nUNWwvuMBu1mBLI2IBhDQYBzwe9Phl3AnLKObsEar5mCGSjRqUAi8LvQliVxEQY3ZO4a/sM5XtSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E4z+A1fr; arc=none smtp.client-ip=209.85.210.180
+	 In-Reply-To:To:Cc; b=SXZ7/PZY1IgVqFWOzj2+QH+R82u2DyA+9iAyRgVXFJSSPy4SPjFHe5XXSgzPT/t6PM0KMtNfrWFfYySKLCSSjNPBQbGVXP24Eeb9GheGeLCsbn3fjFDyOFjsVb9udglK7LZbdmO18hdJexbkBAyNiUOcVABe4wB1p/tsBCDXbzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TOQ8DK7L; arc=none smtp.client-ip=209.85.210.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E4z+A1fr"
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-82a655cfab5so4032419b3a.1
-        for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2026 03:14:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TOQ8DK7L"
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-829ac4670c4so3151317b3a.0
+        for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2026 03:14:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774865681; x=1775470481; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1774865687; x=1775470487; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=X72F+IYkq8vmJ6nRPI8ppD04puTmgdxZkpkri1mXXzg=;
-        b=E4z+A1frgD7HbSHpoU/RSKkChYO+ZXoZztnuNsgGGb6F/iEX5+tceagHHeXwaIJ1WN
-         dECc/pyPwbRFOMMX26ez68MulsSMOGk6DhPbdy/DI11d6yZoEDwsug695MdKkpW3uw4J
-         9T4luZrjzcK091v18+zAHyBKpXHFmlCm2I43OKgl0YSbL0y8CNhLLzUoxplAMd8gxcPk
-         gcfVO/jOVPFzvXvjYovdAf5kV1xUXZ5YVGfmcpc6qtxeXjVtZQXdd6w3ESpUwYToAshb
-         RKz7XQj9LvOdPdQ/k/UcnsGoxFkgCtyrB5g5IbOtP5geNn5zuQT969OJEVQMLDlIH2iX
-         EW0A==
+        bh=4PSFyUSbDPbuxXLaZDXDANomGT/xjqWL5i9LiQ50fiM=;
+        b=TOQ8DK7LHT+dBVtzFpsT7MCtN4AEWwLZY5GekTQh/Lmq3okODfSpxJIUYzCFsNVchC
+         +tMEt3vqHQmbltrfgqNux0BPC/LozqtPQj6C58of862FhdnxlyV5VcD7qviGkKErZ3/V
+         5DboiQIwZgmsvSzTjsr4L+m5DT4Q9+ehzldZ7Bs//0xMqlGdtMjoqyyIrFWbPZjgQePQ
+         qf5t5u0bi2LnNF2UrtbGTeYKRFeqp9Ad0bziRXSH7l3GDKuWwn2zea7XD45KYuLjzhl2
+         R84IU++cy/QTErXZfQYvJC9Cnwbi3nAoGg/qGevJ0R3TKYd4Vv7B1l34EtwQdnUWgoM1
+         OzTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774865681; x=1775470481;
+        d=1e100.net; s=20251104; t=1774865688; x=1775470488;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=X72F+IYkq8vmJ6nRPI8ppD04puTmgdxZkpkri1mXXzg=;
-        b=qkrGxOyFnHvKH8KYND4Y2OHw5WqAxRoTZhnKyQzB5U/M9PRR8HhVUn2Leh2yJIuY76
-         cVIUL0B3+kD8O6F3HoIP5epBcMXam+o1fSYN4kUhXts5Wd3GYELCitn4W5xTBw9KJgz8
-         WRkOTJxiF4CZuo2RxaFlf2+F+v9MEc6ardwUCZjVeIqcTP6lbHmMvMdMuYkdTedbqpOg
-         K1Mhg4c3i21pVV5VxQLTOyr6rScEoitgiTchJZQklAZPeZNiZKIkRTSLeLFydQ9GgupX
-         7DR0d8NU+5+cI23v0Dlwe5ULFC7KhHG3k2FHcHexNvvM203rUYKfKkA7VA3T346efs1c
-         KTcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVg7zBUDcQSbsycqEIPtR0Kp8HX9ULFiocgnBE9lgX6mC3fJIF9sLL1zCKu/pOUcQVmG4V/rwk9z6M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSG5Z4GduFPNuNPT5s73J5Qlf/Ik1Q/QfgqPYCg5wscQRrupmz
-	JGkeO/trmTTYW/jC3iYD7jU+RrRGKmcX+WZUIYT61haff4N7lm2OWP0X
-X-Gm-Gg: ATEYQzymZB9ZCPLZyUfJaZXnXoR8rC6BS/lijtbF5z7tGB/H0+4cVICN4zbKUaBd9X2
-	b9FXqtkzqcLxxD6DdSGHvLWAIYbK1ulsj+TmsyMtThXIGEnALX5UWDgzT/Dq/OWxCjlviBwZZfw
-	VM9PwntsA2QrZ5ehGgIyS7gTO6yeIOMyieRMHDCVszfBPUkj7m1A4AtzlJkt+wo/5CBF79fyXo2
-	51nPeayF+/VVCOrVmUC+gIaz5ZDsVSL9dl7x30alZvDAPaEiCXm9ws6LFz5uHhsOwyV7d3xqWu7
-	09QiRMvgFWp4hjWrkH0L7xznwhXvP3D3KuRLaINfSuTVzG62G/BHMLRABm1ZJRH0nVfkEDwE7kt
-	Vb8Kbo/OqFobFBqlHvbO6T0g2zTOuEqqH2NTcJYIKqS9ZyTrn2rY6gTgJ85EPsaJq7P5LnOHKF+
-	lHcI7TzA3aAZZ5fonDX27VC61wZUfFpDj1cM6UYrg=
-X-Received: by 2002:a05:6a00:9a6:b0:829:86aa:e163 with SMTP id d2e1a72fcca58-82c95c16692mr12268865b3a.13.1774865681008;
-        Mon, 30 Mar 2026 03:14:41 -0700 (PDT)
+        bh=4PSFyUSbDPbuxXLaZDXDANomGT/xjqWL5i9LiQ50fiM=;
+        b=UJVtAnWG8CUXfhalfekuRwyGLDSdvGDufKgU4rXBCHVwWrVK4rOEYCrye0wISUcptC
+         Jy68UAT3KVee56VdWCZEp8C2/q7UV/BhK3CRaOLGuoJkAXkhLcdU7P6WfHr+l+P4insl
+         U8i1SUB6RvAjOy9XyAx8qGUVjb0To32Cdcm8JpBVBw7XhYjEGaNmkcLQFGuf9Ojj9P+C
+         4Ijp/s3mey/XRL0MRtlwqrWbX+X+0nn1UPDXJ1wuBbIGOjg3WOOxAyLu22S3zO7oafpV
+         OBVlaIsQ9i7ANwWrbPa8PGH+2ogbD5cvz62xAKgxwY7qwPakkNdKMRPmmb2x/XM8UG1O
+         ZIQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWHs9O/mNj9Yrb26loZ9NOBhelyhWhBVwx8MyvvHNphy1IZhPgcqqxbM3Pry3l0mxcAzmQCKexgpjA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNMzWx1J3r2owH25pv8wrmCWYXg40xsg91kLc+AgM4kx7MqZzr
+	s1rtdtLtnqrz4ycbsyO63UmGkqfCGtE0Nf2PZNkD6PbgE8waXfSmGlkHrzC5DkgS
+X-Gm-Gg: ATEYQzwEaVNU8Q4Qow8AnW77XDKQAn2RTjiLKBcxf7DslD3jnU5VOCsU4PanU1SwHej
+	Bew8sVHfKhWL/WlkwBfBw7shY4+lJnKIQuSsmroIiqhZzAELPC1fjoJsucAZP+QXqzIw0oEcohs
+	grjUhyBauf//0slgxy9c+UiID3K6yk0LDBMwq2OTo9F71ryRI4eclAiGRIip8lyUfYNdT/rW20P
+	92q+SjTqnoM4zbj29L/gau5a8nG6mnuyRVvgqsbN6oRUB+LRrQNc9gj8ngrr/IJJbS9nz/2qf9N
+	JyfG7PkA5B43lG/1XBuS5GdWAvmDyFJdLn4/kL2t0OzX9vJfxDfMq0MM8eSBNEX1gBKIxdkwArD
+	finnhMHFHCSd4YglDs37aca8q+N+EgGnz6sB0snTGVy75Ps4/f2ZUiH6+ozSyjOkR4aJHnL7S13
+	jq5VOcL8AFv6wyCmRoyBauQvi28KYg
+X-Received: by 2002:a05:6a00:4107:b0:82c:20e9:fa53 with SMTP id d2e1a72fcca58-82c95af2c3amr10551087b3a.5.1774865687558;
+        Mon, 30 Mar 2026 03:14:47 -0700 (PDT)
 Received: from [192.168.0.101] ([43.226.29.240])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-82ca843d8e5sm8286080b3a.5.2026.03.30.03.14.34
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-82ca843d8e5sm8286080b3a.5.2026.03.30.03.14.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2026 03:14:40 -0700 (PDT)
+        Mon, 30 Mar 2026 03:14:47 -0700 (PDT)
 From: Biswapriyo Nath <nathbappai@gmail.com>
-Date: Mon, 30 Mar 2026 10:13:50 +0000
-Subject: [PATCH v3 3/7] arm64: dts: qcom: sm6125-xiaomi-ginkgo: Enable
- vibrator
+Date: Mon, 30 Mar 2026 10:13:51 +0000
+Subject: [PATCH v3 4/7] arm64: dts: qcom: sm6125: Enable USB-C port
+ handling
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -70,7 +70,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260330-ginkgo-add-usb-ir-vib-v3-3-c4b778b0d7f8@gmail.com>
+Message-Id: <20260330-ginkgo-add-usb-ir-vib-v3-4-c4b778b0d7f8@gmail.com>
 References: <20260330-ginkgo-add-usb-ir-vib-v3-0-c4b778b0d7f8@gmail.com>
 In-Reply-To: <20260330-ginkgo-add-usb-ir-vib-v3-0-c4b778b0d7f8@gmail.com>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -87,46 +87,50 @@ Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
  Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
  Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 X-Mailer: b4 0.15.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1774865654; l=1039;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1774865654; l=1049;
  i=nathbappai@gmail.com; s=20260118; h=from:subject:message-id;
- bh=mrDnR0G7mbNJho3HlF5gQvzhoEN14/C2UquKRdZ6H1k=;
- b=LS49TNAgLyEV0MUfNYzBAWrsjMBXYW89M52LKh6tWjsnkPwI06uo8+pPm/rfZlnkSJ+nUrkiJ
- YfNIIlAMjLCCZ2/KOG1g59f47bu7VFvehWc3ihP1+UruyFKJPSTle7C
+ bh=dSmdH/k7eoOG7PHFk1pjfGKztHp9W6X8Whf07jDQ+ww=;
+ b=iN7WUR2JFdKInanyaJ1nA7GlY5aCbeqHHyFtVL3dnjBxgeZPO8T73QxVOJKURbwx2GR+gVJdr
+ PY0C+yTcSTeBAULpEXuamFoFN1U6WYjq0Th+2JdlIdUJCkN76sfl8CA
 X-Developer-Key: i=nathbappai@gmail.com; a=ed25519;
  pk=slmb/9yXbet+KTiT3EYLCp0p0MEOYa3EdjUXP+HXfjg=
 
-Enable the vibrator on the PMI632 which is used on this phone.
+Plug in USB-C related bits and pieces to enable USB role switching.
+Also, remove dr_mode to enable OTG capability.
 
 Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 Signed-off-by: Biswapriyo Nath <nathbappai@gmail.com>
 ---
- arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo-common.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm64/boot/dts/qcom/sm6125.dtsi | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo-common.dtsi b/arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo-common.dtsi
-index 7eecd9dc3028..88691f1fa3a1 100644
---- a/arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo-common.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo-common.dtsi
-@@ -12,6 +12,7 @@
- #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
- #include "sm6125.dtsi"
- #include "pm6125.dtsi"
-+#include "pmi632.dtsi"
- 
- /delete-node/ &adsp_pil_mem;
- /delete-node/ &cont_splash_mem;
-@@ -115,6 +116,10 @@ &hsusb_phy1 {
- 	status = "okay";
- };
- 
-+&pmi632_vib {
-+	status = "okay";
-+};
+diff --git a/arch/arm64/boot/dts/qcom/sm6125.dtsi b/arch/arm64/boot/dts/qcom/sm6125.dtsi
+index a1a296f90f44..d26ca1637330 100644
+--- a/arch/arm64/boot/dts/qcom/sm6125.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm6125.dtsi
+@@ -1241,7 +1241,20 @@ usb3_dwc3: usb@4e00000 {
+ 				snps,dis-u1-entry-quirk;
+ 				snps,dis-u2-entry-quirk;
+ 				maximum-speed = "high-speed";
+-				dr_mode = "peripheral";
 +
- &pon_pwrkey {
- 	status = "okay";
- };
++				usb-role-switch;
++
++				ports {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					port@0 {
++						reg = <0>;
++
++						usb_dwc3_hs: endpoint {
++						};
++					};
++				};
+ 			};
+ 		};
+ 
 
 -- 
 2.53.0
