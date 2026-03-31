@@ -1,63 +1,63 @@
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7201C3F9F42
-	for <linux-clk@vger.kernel.org>; Tue, 31 Mar 2026 14:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABBE83F9F31
+	for <linux-clk@vger.kernel.org>; Tue, 31 Mar 2026 14:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774965723; cv=none; b=MOsebKo4doXEOzZU9YRJ3v49GyhLlpXIo2G6iEfi3heHw2ns3C1iUiFy0pCIJQXYzZmn7x/u5atZuN7nHTVGzE8FWPsifwZJgRFeaMt/lel+FDEgygRE5IfNfodHwryegGumKglMZhwFmKIIPJhFH2bomyhO4btRmmTzm20OFjQ=
+	t=1774965724; cv=none; b=bjedQEqlL6hKjlGbz17xD2B0KZcawC8Ye6N/sjToB9Oq5ViAlzAiota+PMQc72eZ0v7Ktb4qoboGF50s/3jhr+V43UH2cCMFsOoXRkJ3Pz35Xr5XExtFjE9ugEmeq+ihU1Om69wxaLDjYG/WUW419oaJ1pHJY0PqrDY0+GkR6cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774965723; c=relaxed/simple;
-	bh=29a+QWmzRiXdRrprbsrP+/ZM7W6QdW0AI3DnrCCqPdg=;
+	s=arc-20240116; t=1774965724; c=relaxed/simple;
+	bh=PDgD9m1sXAG6hNkensMGB8zb+sGnox1Y8gux2vXUMOo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YfsCYYmfH8zka4/tJv8G6AEtp4jh2NJx9wBAP75jiMZcB9wimgzjDV4791WDlZz61THtayhsPNZ7Ss+isbyyV7mnw3KrceTCw5qk5x2z801gaQlnkEIYXOXoypa/hnJa9asc3YuGGH2qFMFjIkJ/wkDMxRPXyB6KLnGQpOum7Eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gEJ8WeFB; arc=none smtp.client-ip=209.85.167.43
+	 MIME-Version; b=fKS6JJS+8+AXx0vuVtE/blPtC6n90OEfbIzHfG26hfqM1ldCp57O4WbC4tfgfi0PcoILgR3sgPgTv8R8j7wudcTv8ftCudQkWxerPGQvAWZUgzNREQZxioilRitWEYek2ri+pTRhbiR7Sd4QG21Mv0rg17kN1Tv/C+XAGoSE0X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tMSRRxGU; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gEJ8WeFB"
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-59e6ab06167so770362e87.0
-        for <linux-clk@vger.kernel.org>; Tue, 31 Mar 2026 07:02:00 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tMSRRxGU"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5a285840940so754630e87.1
+        for <linux-clk@vger.kernel.org>; Tue, 31 Mar 2026 07:01:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1774965718; x=1775570518; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1774965717; x=1775570517; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9fRm2KLSrPDi3+vX0vzzEz5KohutdRyFsvItUKtsNxA=;
-        b=gEJ8WeFB+Ul/SASuj5zoCAW59eju+jqZmlmykK/Bb0T0Ief1m8qFlBlBNga7Hydijx
-         vW1Q5GxuzW1cVpIlrcreDA8jcscgwd2/91k+4M2geBt89OPVgLz+EPsT2PtQMkEbGBCA
-         4GfO8aVrlJZIA9zzkwMLa39NR2PdHms9E7pMvqIvKpwXE9KDdqSGSX/Coi2nqkStUlbd
-         3h7gdwX1T8LNki3hxH33n7im1Teo2BMum6HruvaD0q9iOrRHIhVVU5Ge5cEFFKDAOErr
-         Y3avWROfUYg0+PKwBU/RrByKRJNqcE2kbDDmK5Gc0x58V63Qgy/62K10cNXG/aAxqzS6
-         DdJA==
+        bh=Ac1ZXKFRDWaQXxMIkrFurE+eC1IYhavMswMXIL5j1GU=;
+        b=tMSRRxGUgKePqVYeVnd0uxfAKgZVG6A8ssA35Yv7RC/eRcm2K0jxNkMIIl2TBqUOiP
+         YpgpRg7PphuDmCtcSkXHyPOly9iz3U8LURfcMchrC6jzsNZR4yafaNCJCBAaaltm9WlS
+         T5gn40FAfRSo6GwAZ77JQgwQ/qluuC6kfMjq4JRm2JAq1iqhlJ+4u28eHxLUXSqToTJI
+         49m4cdlDDOkpO7wqOASai6aMGOcqAKRMYOpNpbExPG1ZyqfYdMQgfSiUrcoRkuPv57uZ
+         ws2iXOO4vCCekA8vBbMROmFc3d0tNuh2tWCqDy8Kr2K+lRwC/P1zLpOXnToucI9CMIH8
+         bRPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774965718; x=1775570518;
+        d=1e100.net; s=20251104; t=1774965717; x=1775570517;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=9fRm2KLSrPDi3+vX0vzzEz5KohutdRyFsvItUKtsNxA=;
-        b=LGJ+hmQ57YjaQVMmo/P4fhKEDdKxU5Af/67AHwlh0dqd7C3xDjWP5++UfZ4EWUMmDU
-         Y0uq3hRTkqHoTRozCDRBQSUa3VxSek5ByM5C727vzz59cr4lLacko1BhgfrAJp0Ug5RI
-         ylzC5jxiIwc9SkTmey5g55wE4kx61TcdfqqHat73vRKPKte2t5HY2aQG2Skhvtm0NyZp
-         zQJJpirszxNKmCROEt1zjyzhGUOhAKux1eOWcvVkw24QT3TsnF4UnPF7Mn/hquX0vni/
-         FeBzWgBKvsMm2DiD/P9vB3sIfFmjFuNCyFQiTAVcmH4rTPzcdVrv4HFap46zCW5vt2Ds
-         h/3g==
-X-Forwarded-Encrypted: i=1; AJvYcCXtriGG6z/1XiIW+spmOKLCbnCfnZymkCb+pMvl+Wuuv3QP2iErAZQV8CEXQyRMt0r3lnRcxfK87S0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAxEW5ltQKZtVMBe1vO/CLNRBepeChcMlT8G5EhoebygYgOs1t
-	8pgTB1TFmbormoDS+LdRZLMmwPejKRlbwqXYjIZBn9TFfaTRZoA1t1ovFhChJqupICQ=
-X-Gm-Gg: ATEYQzwvRLn68LrDy/jraL9KucnXcytqiaAxP6oRv2wcg6R1g780Sjcw/qRkUwtws+1
-	uSMbzyCRY++fVn2mwnKAmYPcIJrXUxwa/LZsFwhgEgW/MVOa8rIUZD5nkYowCYmLeLFQFO0pcx5
-	hBjuPb1p4Bcx3paXlC+YYown/tw6ok/DNP022yntZbZs6oBoI2kOucch9jW7zLN2bi6/+jqsD8T
-	f+9Xv0uVBt8qBVxkDdNQqKbkK3tQ14HnrqtGHOloJCvC8+1KVemb0mk8NunQlNgz9e7Z2rN89Ku
-	ykNV9g3EQC4UAfVjoRqHIv+Krn+3a4iEVw9W+tVn0SVc/KrmmGJtlOHCu5Vn7VPE3NDp/J1FF/t
-	o+J165TxObd+cf3AohYLvESwfYY/DW00a73DPCVS0Mc+a394zTqMCCKkYIszt5AxZZPOsKdM1zV
-	EMmVBwqSzCtrqkHvzIjC+Qn1k+iuCttY0NjPAQIfGqZTG17KVLdQWXJeouL77VKLpyew==
-X-Received: by 2002:a05:6512:3b9f:b0:5a2:7c19:414f with SMTP id 2adb3069b0e04-5a2ab913e44mr2639870e87.3.1774965718014;
-        Tue, 31 Mar 2026 07:01:58 -0700 (PDT)
-Received: from thyme.. (91-159-24-186.elisa-laajakaista.fi. [91.159.24.186])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a2b1456aa2sm2434745e87.68.2026.03.31.07.01.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        bh=Ac1ZXKFRDWaQXxMIkrFurE+eC1IYhavMswMXIL5j1GU=;
+        b=PW6oMDB6PJS65W8pA5P5aH92Q2m4f7dHsVitVoe1a4PpfCW2C051VC8CG4Tcvtmbsa
+         N+tpAj+eEPD+ZLACI0bzAI/OZYS8SvATKmaDhM/IoHvUl4VCdiCqpQdep3Q4nffJUlrX
+         8wYpBAekFf5Js6u0zw7kOzVwoleEpj/fvKAUQV9pJjatv0CNIcgz62V/LxEhuhsCnB26
+         vsN1Tm6ph5TkPlScUNhRESdT/ZnEOu8phDAEQAH2ld/hgPXuPTbd6uG6bP/rc2jSrpF+
+         1PP4pFYHNS3FqDxK8ktWQzZv0KY/e4bq285q0NRyljAJZhuc2W+3WkSRsGlMgDNIMlo9
+         Yijg==
+X-Forwarded-Encrypted: i=1; AJvYcCUMvEBW1pPSNbhJOIXeIyUvg3G8tpIL0egSMiPWC62rfFK1zcA7joZylXLBbBzxQclCU2ni84wPTjs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2yTMMfrRXenHnvTis5+ByPLyQaTzJ97Ez+meTEflxhfrKShbQ
+	JXtKSg/YPeLLrkahCDn/WvymYrBzx2wEUGGaYU1+OMZkTfndwhqFuuE3aiW4YA9Fgh0=
+X-Gm-Gg: ATEYQzzyIr94MIyS/dh59mKsVmfJ8L/MGbvQA9vGNiTXQ3SWmgoDoOmKqGKns8/GLRC
+	FZ2UnKpYoquYfYlvQWsTPzy+lA0pO6JhyE/D//gF9OHe3RXnLcClXmsIVENP86TDzhXC5o89/ZL
+	quFEzBVyzv3jqdfb+CID6Nsoi3jm4qKZJZm/6hTIZOrsa0YRY7hqnJJEVknZFMpaJ4OBbVjLVRt
+	i4/2YzBkGZnWaInkLF7ljVk7DpKHpjh4T+PJJWHYw7TOCzOuF7BlCTV7Ip+BKObGYCb5iSs72r0
+	h/XXwQgvfCHrIx6QVCkfzth5XZNXIjCnaz+bnDsckuq71PfQbHrCXtvnkwq9bOfgJVlLmI/Gng7
+	wG5ZWAEORki1CbskE9K9V8SJLegU8JIarsq9thpEAmtWGSFpUpCpJ5+aweviJmkfsvlxJqvQ5py
+	D/UyJGdqE5g9OtfAEdh2s5DwmK2/lOK+4jHenSJBszrpCLlQXzphXYeWr6a8HxhC+RmA==
+X-Received: by 2002:a05:6512:39d6:b0:5a2:a52a:c69e with SMTP id 2adb3069b0e04-5a2ab913ef4mr3011777e87.4.1774965717147;
         Tue, 31 Mar 2026 07:01:57 -0700 (PDT)
+Received: from thyme.. (91-159-24-186.elisa-laajakaista.fi. [91.159.24.186])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a2b1456aa2sm2434745e87.68.2026.03.31.07.01.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Mar 2026 07:01:56 -0700 (PDT)
 From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>
 Cc: Michael Turquette <mturquette@baylibre.com>,
@@ -66,9 +66,9 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
 	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Subject: [PATCH 2/2] clk: qcom: camcc: Make Titan GDSC a power domain of clock controller
-Date: Tue, 31 Mar 2026 17:01:42 +0300
-Message-ID: <20260331140142.892579-3-vladimir.zapolskiy@linaro.org>
+Subject: [PATCH 1/2] clk: qcom: common: Add option to link clock controller to power domain
+Date: Tue, 31 Mar 2026 17:01:41 +0300
+Message-ID: <20260331140142.892579-2-vladimir.zapolskiy@linaro.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20260331140142.892579-1-vladimir.zapolskiy@linaro.org>
 References: <20260331140142.892579-1-vladimir.zapolskiy@linaro.org>
@@ -80,126 +80,73 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Starting from Snapdragon 845 platform CAMCC IP is a provider of GDSCs and
-clocks for a number of CAMSS IP blocks, and the clock provider controller
-requires Titan GDSC to be turned on before getting access to the CAMCC
-clocks on the clock consumer side.
+Starting from Snapdragon 845 times CAMCC device serves as both a power
+domain provider with a special Titan GDSC as a top power domain in
+the hierarchy and as a clock controller, where the clock provider
+function of the IP strictly depends on top Titan GDSC being enabled,
+thus it makes the CAMCC clock controller to belong to Titan power domain.
 
-In case of CAMSS IP (including CCI) the devices are described as requiring
-both CAMCC Titan power domain and CAMCC clocks, and the dependency between
-the power domain and clock controller is managed in the consumer device
-driver by forged runtime PM operations, which is a great complication, but
-it was dragged to the working state.
+Today the formal hardware dependency between CAMCC power domain and clock
+controller is managed by runtime PM in every CAMCC consumer device driver
+like CAMSS and CCI, however this is terribly scalable to any future
+CAMSS IP device drivers, and unfortunately it is not scalable at all
+camera sensor drivers, which are also CAMCC clock controller consumers.
 
-Camera image sensors require to get MCLK clocks provided by CAMCC clock
-controller, however the sensors cannot be described as ones belonging to
-Titan GDSC power domain hierarchy, hence the original model of shifting
-complexity of runtime PM from the CAMCC driver to CAMCC consumer drivers
-cannot be stretched to the sensors.
-
-The change explicitly adds Titan GDSC as a power domain of CAMCC clock
-controller on a number of modern Qualcomm SoCs, where their correspondent
-CAMCC drivers are added into runtime PM framework, this allows to perform
-PM operations of sensor drivers out-of-sync and independently from CAMSS
-driver. The simplest way to reproduce the originally discivered issue is
-to attempt to unbind the sensor driver, which triggers rpm_resume():
-
-    % echo 0-0056 > /sys/bus/i2c/drivers/s5kjn1/unbind # SM8650-HDK
-    ------------[ cut here ]------------
-    cam_cc_mclk3_clk status stuck at 'off'
-    WARNING: drivers/clk/qcom/clk-branch.c:87 at clk_branch_toggle+0x168/0x188, CPU#6: sh/832
-    <snip>
-    Call trace:
-    clk_branch_toggle+0x168/0x188 (P)
-    clk_branch2_enable+0x24/0x38
-    clk_core_enable+0x7c/0x300
-    clk_enable+0x34/0x60
-    s5kjn1_power_on+0x110/0x160
-    __rpm_callback+0x50/0x1b0
-    rpm_callback+0x7c/0x90
-    rpm_resume+0x518/0x758
+The change adds an option to describe CAMCC power domain to CAMCC clock
+controller dependency properly, therefore runtime PM management can
+be simplified on the CAMCC client's side.
 
 Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
 ---
- drivers/clk/qcom/camcc-milos.c    | 1 +
- drivers/clk/qcom/camcc-sm8450.c   | 1 +
- drivers/clk/qcom/camcc-sm8550.c   | 1 +
- drivers/clk/qcom/camcc-sm8650.c   | 1 +
- drivers/clk/qcom/camcc-sm8750.c   | 1 +
- drivers/clk/qcom/camcc-x1e80100.c | 1 +
- 6 files changed, 6 insertions(+)
+ drivers/clk/qcom/common.c | 16 ++++++++++++++++
+ drivers/clk/qcom/common.h |  1 +
+ 2 files changed, 17 insertions(+)
 
-diff --git a/drivers/clk/qcom/camcc-milos.c b/drivers/clk/qcom/camcc-milos.c
-index 0077c9c9249f..15d432859843 100644
---- a/drivers/clk/qcom/camcc-milos.c
-+++ b/drivers/clk/qcom/camcc-milos.c
-@@ -2132,6 +2132,7 @@ static const struct qcom_cc_desc cam_cc_milos_desc = {
- 	.num_resets = ARRAY_SIZE(cam_cc_milos_resets),
- 	.gdscs = cam_cc_milos_gdscs,
- 	.num_gdscs = ARRAY_SIZE(cam_cc_milos_gdscs),
-+	.cc_gdsc = &cam_cc_camss_top_gdsc,
- 	.use_rpm = true,
- 	.driver_data = &cam_cc_milos_driver_data,
- };
-diff --git a/drivers/clk/qcom/camcc-sm8450.c b/drivers/clk/qcom/camcc-sm8450.c
-index ef8cf54d0eed..ce2d8c8a57ac 100644
---- a/drivers/clk/qcom/camcc-sm8450.c
-+++ b/drivers/clk/qcom/camcc-sm8450.c
-@@ -3045,6 +3045,7 @@ static const struct qcom_cc_desc cam_cc_sm8450_desc = {
- 	.num_resets = ARRAY_SIZE(cam_cc_sm8450_resets),
- 	.gdscs = cam_cc_sm8450_gdscs,
- 	.num_gdscs = ARRAY_SIZE(cam_cc_sm8450_gdscs),
-+	.cc_gdsc = &titan_top_gdsc,
- 	.use_rpm = true,
- 	.driver_data = &cam_cc_sm8450_driver_data,
- };
-diff --git a/drivers/clk/qcom/camcc-sm8550.c b/drivers/clk/qcom/camcc-sm8550.c
-index b8ece8a57a8a..ae40979b2f12 100644
---- a/drivers/clk/qcom/camcc-sm8550.c
-+++ b/drivers/clk/qcom/camcc-sm8550.c
-@@ -3545,6 +3545,7 @@ static const struct qcom_cc_desc cam_cc_sm8550_desc = {
- 	.num_resets = ARRAY_SIZE(cam_cc_sm8550_resets),
- 	.gdscs = cam_cc_sm8550_gdscs,
- 	.num_gdscs = ARRAY_SIZE(cam_cc_sm8550_gdscs),
-+	.cc_gdsc = &cam_cc_titan_top_gdsc,
- 	.use_rpm = true,
- 	.driver_data = &cam_cc_sm8550_driver_data,
- };
-diff --git a/drivers/clk/qcom/camcc-sm8650.c b/drivers/clk/qcom/camcc-sm8650.c
-index 8b388904f56f..c38dd23430fb 100644
---- a/drivers/clk/qcom/camcc-sm8650.c
-+++ b/drivers/clk/qcom/camcc-sm8650.c
-@@ -3563,6 +3563,7 @@ static const struct qcom_cc_desc cam_cc_sm8650_desc = {
- 	.num_resets = ARRAY_SIZE(cam_cc_sm8650_resets),
- 	.gdscs = cam_cc_sm8650_gdscs,
- 	.num_gdscs = ARRAY_SIZE(cam_cc_sm8650_gdscs),
-+	.cc_gdsc = &cam_cc_titan_top_gdsc,
- 	.use_rpm = true,
- 	.driver_data = &cam_cc_sm8650_driver_data,
- };
-diff --git a/drivers/clk/qcom/camcc-sm8750.c b/drivers/clk/qcom/camcc-sm8750.c
-index a797b783d4a9..969c2c80065f 100644
---- a/drivers/clk/qcom/camcc-sm8750.c
-+++ b/drivers/clk/qcom/camcc-sm8750.c
-@@ -2681,6 +2681,7 @@ static const struct qcom_cc_desc cam_cc_sm8750_desc = {
- 	.num_resets = ARRAY_SIZE(cam_cc_sm8750_resets),
- 	.gdscs = cam_cc_sm8750_gdscs,
- 	.num_gdscs = ARRAY_SIZE(cam_cc_sm8750_gdscs),
-+	.cc_gdsc = &cam_cc_titan_top_gdsc,
- 	.use_rpm = true,
- 	.driver_data = &cam_cc_sm8750_driver_data,
- };
-diff --git a/drivers/clk/qcom/camcc-x1e80100.c b/drivers/clk/qcom/camcc-x1e80100.c
-index cbcc1c9fcb34..32169879990a 100644
---- a/drivers/clk/qcom/camcc-x1e80100.c
-+++ b/drivers/clk/qcom/camcc-x1e80100.c
-@@ -2462,6 +2462,7 @@ static const struct qcom_cc_desc cam_cc_x1e80100_desc = {
- 	.num_resets = ARRAY_SIZE(cam_cc_x1e80100_resets),
- 	.gdscs = cam_cc_x1e80100_gdscs,
- 	.num_gdscs = ARRAY_SIZE(cam_cc_x1e80100_gdscs),
-+	.cc_gdsc = &cam_cc_titan_top_gdsc,
- 	.use_rpm = true,
- 	.driver_data = &cam_cc_x1e80100_driver_data,
+diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+index eec369d2173b..558823e220a8 100644
+--- a/drivers/clk/qcom/common.c
++++ b/drivers/clk/qcom/common.c
+@@ -144,6 +144,11 @@ static void qcom_cc_gdsc_unregister(void *data)
+ 	gdsc_unregister(data);
+ }
+ 
++static void qcom_cc_pm_genpd_unregister(void *data)
++{
++	pm_genpd_remove_device(data);
++}
++
+ /*
+  * Backwards compatibility with old DTs. Register a pass-through factor 1/1
+  * clock to translate 'path' clk into 'name' clk and register the 'path'
+@@ -424,6 +429,17 @@ int qcom_cc_really_probe(struct device *dev,
+ 	if (ret)
+ 		goto put_rpm;
+ 
++	if (desc->use_rpm && desc->cc_gdsc) {
++		ret = pm_genpd_add_device(&desc->cc_gdsc->pd, dev);
++		if (ret)
++			goto put_rpm;
++
++		ret = devm_add_action_or_reset(dev, qcom_cc_pm_genpd_unregister,
++					       dev);
++		if (ret)
++			goto put_rpm;
++	}
++
+ 	ret = qcom_cc_icc_register(dev, desc);
+ 
+ put_rpm:
+diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
+index 953c91f7b145..7661a01d8e82 100644
+--- a/drivers/clk/qcom/common.h
++++ b/drivers/clk/qcom/common.h
+@@ -48,6 +48,7 @@ struct qcom_cc_desc {
+ 	const struct qcom_icc_hws_data *icc_hws;
+ 	size_t num_icc_hws;
+ 	unsigned int icc_first_node_id;
++	struct gdsc *cc_gdsc;
+ 	bool use_rpm;
+ 	struct qcom_cc_driver_data *driver_data;
  };
 -- 
 2.49.0
