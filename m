@@ -1,238 +1,210 @@
-Received: from mo-csw-fb.securemx.jp (mo-csw-fb1800.securemx.jp [210.130.202.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A9E1A304A;
-	Tue, 31 Mar 2026 02:42:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=210.130.202.159
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774924971; cv=fail; b=dPSfPhcdiFh7WX38d8aiJwFHFZKXa5flTQwOROsClq3FF3maJBa/tpwTRG6J8PI7i2EJzSFNSukPzGIzJ9PGPpmZ3ZMWFGtA6kVX/biNoW0dCcam7UAmNoByH/uSAxlckCgsENI6w7EGsIT5lP3B1p9+DkW9LekeqgZ9iZCHhuY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774924971; c=relaxed/simple;
-	bh=g+yFWPaS8N8sCwO3vQev2xbAP+tGQO9pAQSONhi8718=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=BcJFKUDV3X9YeWIMJNbgRs7iFf6aTLn8mzvRGGpfNyQx0cWOY0bXrRbG76279pJc7GaTGuwgZs/ZQ8Cv9FXmHY7YoKWn5TuIoCKVbnfx25e9FNd2Mx6FprFay6T9QOTBMDLtoBE7R51iVFMoI3pHpjgl9Lm2LPpY/6HfnPcuQUo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mail.toshiba; spf=pass smtp.mailfrom=mail.toshiba; dkim=pass (2048-bit key) header.d=mail.toshiba header.i=nobuhiro.iwamatsu.x90@mail.toshiba header.b=RAXOwcmI; arc=fail smtp.client-ip=210.130.202.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mail.toshiba
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.toshiba
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2EA2F1FD0
+	for <linux-clk@vger.kernel.org>; Tue, 31 Mar 2026 05:24:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774934680; cv=none; b=Kp4EWoJcFN9Rq/vWWlrdq7ECPW7vQm3dBk/EsrKZvoA954oJyVXBjMq0YYG28xbCr2Wc53GUTvHWx69jGNQlzQUO28kAW/JRSW3+oZBBO3R9CLmVd6Vh55l8+LohgXEWZn/cRI96aj9jBOrvY2AF7A32CdrB5SOgkJeas3O3WEE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774934680; c=relaxed/simple;
+	bh=DQH7CAYitZ+juEYZvf46+Zoz7KVh9etDiLX0uFcUOB0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=FYr6VPqQRokqBYCkpBwXrFzdMum4WZnHpJfaXzweeo4cb5ttWfWadA85gc7NfEoMkEeAoBUk04csigu3jm8Jn6+omMChxg1eJKQeEWKK6EDpR6bHKh+a+LZfdgjUCgvshIpIrcDm42dscsXkf2HXzOJiN0fI2QzhmrkCD/yR/+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cRyi8v/U; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=etFqwCxN; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mail.toshiba header.i=nobuhiro.iwamatsu.x90@mail.toshiba header.b="RAXOwcmI"
-Received: by mo-csw-fb.securemx.jp (mx-mo-csw-fb1800) id 62V16qGi2378153; Tue, 31 Mar 2026 10:06:59 +0900
-DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=mail.toshiba;h=From:To:CC:
-	Subject:Date:Message-ID:References:In-Reply-To:Content-Type:
-	Content-Transfer-Encoding:MIME-Version;i=nobuhiro.iwamatsu.x90@mail.toshiba;
-	s=key2.smx;t=1774919154;x=1776128754;bh=g+yFWPaS8N8sCwO3vQev2xbAP+tGQO9pAQSON
-	hi8718=;b=RAXOwcmIO6jcV1LhGJLNok1Ty2k3oscaoGKApshQH0G6VWVxsoi5XD4oFzpl5z3vBAJ
-	+/J4OWfUAvQNol+hMRjGCu5nR0sVksbrTU0l90FW2+eUSs7fNNUOUPzpQn7OKqX6it8bueIcvO+UM
-	cxa9KIHtcAhzBmHk4WaiurhACoUbsR6uf/uUlSz7COhNUKmISpZBTq1W/xx4bMPX9BAhhlcWoFXbl
-	e7MUmZPgdwBSdwFdSOYkTtfG6ChA+oFobf+e/1oGhHV7cAvwWETGyom9y0ogjR3M6aBaYOrUB5aiD
-	B/oaONTpAq/k5N2kBRcdkdNGniLhU/4QHSCX6D16yBNg==;
-Received: by mo-csw.securemx.jp (mx-mo-csw1802) id 62V15rLu3435177; Tue, 31 Mar 2026 10:05:53 +0900
-X-Iguazu-Qid: 2yAc1FwxhVmvYajACQ
-X-Iguazu-QSIG: v=2; s=0; t=1774919153; q=2yAc1FwxhVmvYajACQ; m=mHG58P59dgiVna2ERqrBb+dT27+VoQT6uCZFKeWZdXk=
-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	 id 4fl90c15ZHz1xnk; Tue, 31 Mar 2026 10:05:51 +0900 (JST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TIFOR6pASflmqXvlV+gEoi74b1j7VBub3i1NLO9g3d89D78TyPQzFNOHtZdlZjU22tM9D4sO6+JxSVWKasn0KOUJxb5B3ErDbNOH7PS98yDid1d4EEQbDEwjC6MbhEHAaU94jEGxfxB+M3gJulgy/ftUHgBh6kHs0aS5PkLBcyojI2hUYUpaW7NgQtw6dP2ZL+zdECdlpqB9XC844d/BvBa5tSLaaOFKmWx2gVQf33GCZ9BIzIPdtTIiB1/Z1xjMEvHS3hVaYfhwww5VojYc+7jqMyPUKEJIssMou9IL0q6b9oIu6SrJh9XwZrvsr/laOH4TGBMFfdjWcBunJciHcQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=d3Wxl/l406jXkuYeb1L7n0ae8ENrvOFiJ4MKclBv7uo=;
- b=ltWS2cmeZSSuM6UaS4FAn22K50JQa0zVFY7U3DUSeWNSbLc4TQ3m63iJb8/y9IRzchtFy383IfA1k+F2HJS2vROl4LxRIm0iOWB66iXdNlc8Wj9rO8IYZAY5STQ55rwKnRcuwhKZ2DGJdD1gtqinu1eBFS8fdLzhlNKr/Gi2GYCdiflVU2vlR3leOWQOdoO+nt0MMniNDliXNTscAlBc+n/ScmseqVr+D1lUPE7r0vfKyeKwrkUODqI0Mys2HgcIQnZzxYjUnqpWuza7EUafJRhEJfy/hBxD1tcfb0hNireNqH3H+tMT2Q5+PAwLKQs/beiQ5yYXBlQoE5x32CAX4Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mail.toshiba; dmarc=pass action=none header.from=mail.toshiba;
- dkim=pass header.d=mail.toshiba; arc=none
-From: <nobuhiro.iwamatsu.x90@mail.toshiba>
-To: <rosenp@gmail.com>, <linux-clk@vger.kernel.org>
-CC: <mturquette@baylibre.com>, <sboyd@kernel.org>, <kees@kernel.org>,
-        <gustavoars@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-hardening@vger.kernel.org>
-Subject: RE: [PATCH] clk: visconti: pll: use kzalloc_flex
-Thread-Topic: [PATCH] clk: visconti: pll: use kzalloc_flex
-Thread-Index: AQHcvNhVoBnA9y4g9EmSR0/IQttWs7XH2qCw
-Date: Tue, 31 Mar 2026 01:05:49 +0000
-X-TSB-HOP2: ON
-Message-ID: 
- <TY7PR01MB1481865057C575A7D58BA7955CD53A@TY7PR01MB14818.jpnprd01.prod.outlook.com>
-References: <20260326042317.122536-1-rosenp@gmail.com>
-In-Reply-To: <20260326042317.122536-1-rosenp@gmail.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mail.toshiba;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY7PR01MB14818:EE_|OSCPR01MB14582:EE_
-x-ms-office365-filtering-correlation-id: 03419357-8d6b-4211-8bc7-08de8ec1a5a7
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|366016|376014|1800799024|38070700021|22082099003|18002099003|56012099003;
-x-microsoft-antispam-message-info: 
- nCWk98Z6z7ZAFb5oCzIWiX+1XP8obo1G28jGr9kBCiXa7tdrLYG+DoWHCBHXhoam0qo0e9jA4njKHSu7sRJ953qEr+2+QWfddYq+siZ0s0C9XOthRAA3zd6jzyWGDaYfZdOvcYwkbsQj7pWjZ86VMrnNpOVoSM2D/Ug6h8oDPh+w12RCxirMTrdihqjG4pLwoPokzgeJXuIR3PYs9a+kZ+PDOr0JJWYAW8mSzUk6bOokEjByfAG9M24fe2FDihmfAlXNUIh2AAMy1OeOFSWg7YWUPn3znVwZwc7iYWz9uBidoZ09F5c6cfPa5nR092HUM5G8lSrquHeUwJtBYd5Fwmdyl9Cqr+fM0RFQeQ/5/aMoerj23GAAJvr68SSAQN3YAY+rvG0EmCrHzxY8ttRep7zSq1cCEet0bVXF+8o6QBXDM+blmueUhELTvxwcstoj0ZqKVEYg0463uX+ItPPaxyOqlXrLStb8Zcrpae8PSSdGKJHm4bGSAnjqEyWcZzAZ4v2jQyLQuBHOst1zN+60aMdog0HWrqQkuODZoMeyQWVdrkiEBlDN5rdr7rYZ90JcUvvx5ZOaK9OlY0+bwXf3mtzO3vZTMxiNKJ/d6V7I2o2wvplw+R7hbfDpk8GUYbRmyIuBeqbElkddVxMwdPrU1EBrXmggyNrijdp9+rB4DvjsKQxpz1b6wel2RHv826YP2zIrvMrUNAds6ow6xXuvDXDkKXmLCs7fYinWEyKjH3er05ofMjOj8Zhl5LXaxoevcn6O4zRxf6GPUm/w+MFm/s4B6cevRtsr+tRQrnOaVNE=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7PR01MB14818.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700021)(22082099003)(18002099003)(56012099003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?ZWNrL24yTTV4bGxnQ2FnWk54RE5ZZW93SGx6aWxpSlIvU3RIWnFPVDla?=
- =?iso-2022-jp?B?RkJPK21PTEFnd3Yyc0FaRllOWEpSeXJhWlRrNWlMeGcyUHptcVJmZ05K?=
- =?iso-2022-jp?B?UE5BS3dvK2NsNW5oZ0xhc0E3cmFvb25GWFlTeGxuU1ZJT3lRWDkxSEsz?=
- =?iso-2022-jp?B?VXNBMXhneXlodDFOYmFEZzBuMVBnWEQyZ1hKcXYzOEYrdGJ2WjYraFlU?=
- =?iso-2022-jp?B?ZWxQaVFrTE1Mc1JvQm1MenQwUndlUUVCajByKzlzNHNqN3hKb3gxaVF0?=
- =?iso-2022-jp?B?YzFOVVZsb1FkTVR4S2FZbWhtTTcyNlhldElidnJtSDAwalRCTFVSaVNX?=
- =?iso-2022-jp?B?VksyeVFUdkFrT0svWnkwN3VXdXlJb3NCaUJSMnc5dGI3M1dnay9Na2pS?=
- =?iso-2022-jp?B?cHYvL2RjZE8wKy9pSXR0ZHgwcWpMeEk1K1RkaVBySGM2SWJpR1JhL1c4?=
- =?iso-2022-jp?B?QnJMY01aaGVOZi9iVUl0MlBpb2tlRVFaZDI2T2kzM204ZENFdlRSeER5?=
- =?iso-2022-jp?B?QTBvUVpPc2ZCRGlIenZjZTBTVHc3UEYyNDhrbTZGeTVTdmpDTFZNcHFw?=
- =?iso-2022-jp?B?VjdHVEQ2Y3JnclRmZFN4d2k5ZHdXb0tDZkxFdk96aTNwMTdDOGZpRkYx?=
- =?iso-2022-jp?B?R2ZKVVpFUCtBdnRoY1RVMmdMd2YrcStKdFRsRE05Y3FLN1g5VUdWV3c1?=
- =?iso-2022-jp?B?cWhnVXA4OGFMM1RMOFdZMWtUTy9TRUZKOTZVOFpxM2lYL1VGUHZWd3dE?=
- =?iso-2022-jp?B?UG9NYXFpYU9rL24wbWZkYjFlaDFuZlRuaEQ5UGFBWVA1RVRPOWkvSHhm?=
- =?iso-2022-jp?B?c2Q0L1h6UVNraTFIc043V3hrekJIOWtIdVFONzI0Qk5aYmxaa1g2dUd1?=
- =?iso-2022-jp?B?c1ZrYkRDMWFhMnVzN29oUlZRbFVTUXllN09BdW5MYmxQQlZrM3VucE0r?=
- =?iso-2022-jp?B?OTdhNkFkMDVXdlF0SEJBQkd6bndlRUpZc21uaENtdWtQRVczMlNpQ21P?=
- =?iso-2022-jp?B?MzdVSCs5YXJzY21aR3dBMUZtZzRjUCtJOGV5dVBPeGRiTUp2N2ZQdmRC?=
- =?iso-2022-jp?B?WjEwQXVHY3lnQWRqVGNBU1c3Wk4yVnlZNGRUTVU1QnpuVStLakxTeDVj?=
- =?iso-2022-jp?B?dWtZRklkcFNUcVA0MS94a3lkeDA3azNJS1JiUEtQckRyWnplRkZDQ1pP?=
- =?iso-2022-jp?B?VTkvM25pWnlONzlQNkcyVWQ2NnZxb2V4emlGSEI2ak1BNmFRZTd5aExO?=
- =?iso-2022-jp?B?NVIzcmlDNmZJZUlaZ0R4d2FZeUpuMGVoS0ZiMkJNSGdRNnNGT3JTVGVW?=
- =?iso-2022-jp?B?MFZVTm5yS2U1Mng2dXVyWENIeCtTQnJPanFkaUltMnp3WlVYc0ozcFZp?=
- =?iso-2022-jp?B?YXExSHNzR3B3c1YwaHdFTVFjRG52aStZYU00QjlMc0cvcTJPb1VKSDhC?=
- =?iso-2022-jp?B?WjAzV1RTNlJ2cXhBblY1QlVrU0ZVNzRSY1E4dEllRXFvYm8wOVFVTFVa?=
- =?iso-2022-jp?B?dEF2ZnZaejV5YlZZQnNyeVR1M0JwdjFjU3k1WG1MRmxyaUxRZktTMDNj?=
- =?iso-2022-jp?B?b0JkNWoyb2l6OWp2VXh3V1BHc0lndzZDUkwzMDdZRnEvT0d1eW92TFVm?=
- =?iso-2022-jp?B?SjlSTEtrSjIzTzNPVTlRQXh2OGhRSkVRYTlWejdMRmMwSTVBNmh2TVhJ?=
- =?iso-2022-jp?B?N1cyL3ZuZmw0V3JjMWduSGlkTlBHOE5iUTBlOEIzUy9CR0hLN2FveEdP?=
- =?iso-2022-jp?B?cll1VitxaEcrdm5UTmZMaEVXSC94WHh5RWhuODdRNFRYSTZiekwvbjkw?=
- =?iso-2022-jp?B?eExodXdta2FKVTBlVkdDQ05lNUh1bGg3bis4NUhOWWtFU1dSTDFXNEd5?=
- =?iso-2022-jp?B?T1pwMXdrdTNuZnFvajd0RktYTVVYaFdzbFdhcVJJV3lrQXFWWXE3Z2ND?=
- =?iso-2022-jp?B?bXcyT3NvamZpek9zelFzb1NiWmM3WkordS9TT3pLdWszWEgvdTZNSEFy?=
- =?iso-2022-jp?B?KzRSRGU0dlJTN0R6R01EUzhaMEVaZDF2TEtvUkt4S1U3RFdSTFJLajhZ?=
- =?iso-2022-jp?B?NU1zYUNNYnpSWWY4a3NxTnZtQzZrSHBBQkN5QU4rTXJIbVJxWWtBMldi?=
- =?iso-2022-jp?B?M2RaOUY2S0g1YVo5dFVueE1uOGRkTzRMeVVUN1FiM1BTb0s3b0UxQzY2?=
- =?iso-2022-jp?B?Z3lvRHBOMFJqUmVsa0c0TmEyd2FOUE9PMnJEd1NsVFlvdTdUMnZYeVND?=
- =?iso-2022-jp?B?ZEEzWWZTR1NidWt5S0dxRVQ1Mk5mcEtrU1kxKys0eVpGcGVXSDREM1JZ?=
- =?iso-2022-jp?B?MlU0dHFjVFN0eFhGMHlpS1ZOcFVmaTdobTVLemZ0aHc5dCtUcGc5Uzcy?=
- =?iso-2022-jp?B?QTc2djArdk1Lc0VpaVBteEhkSG93RnRTQjVSZG1ramZ5eUw4aDNlNU5F?=
- =?iso-2022-jp?B?Vm5vUU1JZkFCY0pQWmp3amdKY0ZteHcyNlpNaEd1clRjRWNnU3hvOXc1?=
- =?iso-2022-jp?B?TmhOclpBSmxFRXRxQlluMTUrUXBSUlZLdHFWeTNBTTdXRE1SUzJLS05B?=
- =?iso-2022-jp?B?YmNVSUdNTT0=?=
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cRyi8v/U";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="etFqwCxN"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62V2qVxb4013480
+	for <linux-clk@vger.kernel.org>; Tue, 31 Mar 2026 05:24:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=QoFOUwzIAy7frpXJeW7r6L
+	JjihXSEvQzpTqYsMrCI8o=; b=cRyi8v/ULmLBcQ4lnEESu6O8er8OU0beEckgKT
+	zDBUHs0sDylXtMLLGbbbz5vCWaKEY2nthac8M5zv2evszWSk5XnN9bhrFVXnU0pk
+	vSEeA3n+sTBmqC1pQgZyv1OFh3jM5NE3RAnueHSHN0iRQCLE2wShQ2vewkuTC70q
+	i8xEpHcMMynxtk46hOtZxDmy/DmBisV5pezY6Bk8kVl6RpJm+LXddvtdiAriFCv5
+	5NL9qLuLlky9QDVSVXZjhEumht4pFw90wlAzBoJqHqyTGkfMuX+0ni/MF3WhYr5Q
+	MiBJ/VOH8QQIHOs0t8cyAdpvMNLlJmcvH3UtF5x889bRsH9w==
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4d7reguj67-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 31 Mar 2026 05:24:38 +0000 (GMT)
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-c73781252edso10245309a12.0
+        for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2026 22:24:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1774934677; x=1775539477; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QoFOUwzIAy7frpXJeW7r6LJjihXSEvQzpTqYsMrCI8o=;
+        b=etFqwCxN8CYFdGtFn6euY/DOXz3F900lCdfXZ8IpsW5bXhfAjm9v+Xy0Nz8hPPnILs
+         Y0HP0u1LShdG0a0y37imyBnKL/HnE9WgFBlyHuSMDg6qKT/uDb4TyjMCHglUkZj32uHR
+         9uZHJiHlqLe3l6VaO6p7ueFo5B6nTgm0PSWbnJ0aG79UK0+kFKoEuVS7+aqJB5tUVypt
+         VtVih2BZL0L2j2We+rWfc5BwioYD2XJIFvRGqqfHv9im9E/gMLkYbFAo6g2oEPhufJRt
+         UxBVnmFq2i01y3GTyWPF/f7qqZRnYNXNcIuxkmHTddzZeJ702HotnpePDeGOmo14ihGs
+         IFVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774934677; x=1775539477;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QoFOUwzIAy7frpXJeW7r6LJjihXSEvQzpTqYsMrCI8o=;
+        b=lQ7+PYzx5kdjopYSdH1vapb3uMdFdABfIsL0C4udvebHg7Ky8KSs6WkaLON/18hHr9
+         IKFUD1/4tdLUej3uvJ0xYRnXuTwYYNcGK4uPtoSS79l1JT5SACrJxnmODRFZsZXZVTp1
+         eXuFFH6HaOIRxtbSjgcfZf5qseI+RhvRlRO+z4KBmMdFp0zeX//L1oGkQtUZkl7gf3ff
+         B8m8AY2SCIiVFgf0utcrSW4YdiyNBiFmUce98Fi8c2tQjVTu3nhH6n2cUduty7+ggDvY
+         bjJzL1XTZLgHdAfdaKbX1vDNmgwlFuPEOjFaHIbgjGgcXr4p7LE5FHjUY1DSu5z/G1g3
+         El4g==
+X-Forwarded-Encrypted: i=1; AJvYcCXB/u/QP6M3A7RcmHreqOK2vHIAkOOkQlZyD2ORQ+sFr01JiGulmUxSOzb1hWDMuNSrbvCROh/jwN8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzC5Lc7VZ+Gq0Eedky50z4OCDgvHwbanro7FKHnRl6yoJNfsHEl
+	xpi9suDBNMn40wH4r7UonFCPBNOv4oupWiq6M3fES5m1a9355GuOYWZvRmGVW+KV+qGCcs4JxUe
+	v70JsSeT/QSvsiyel8NdDDL5h5A7S5aS/qL57Cf7X5qCs6lbytBTJSazd9qdwPT8=
+X-Gm-Gg: ATEYQzy5iyfPWneLr2JMbRXREjOPPHqtcynRocNWhxHuELrEZmE+ziHLCriWHHY4WEc
+	ewX6StJdxU2EYgi+a8vG/kN5WVZIWl+PNWqZb82gEKDZgBfQnPc2Cb1+az382Y00gqPhoGVFlg7
+	vljLtaOh2qSyNrhuyacd+YIG8ywEKcqPVR/60vlTmLt3PGgFxLY4FLey+a4kXi+TTnnYrdunmgZ
+	ynDAn6fOpUknf7maSPN482/mGLyzSlE9Gliv4Fzol/Hvdo9V9vDe3HvnN+V54Kx+MQjxLxpkgpd
+	v3IvzQ/biEkZKhK5CieHY1xBlFVBOda/STnqicxyntPmKFRDduk24Y4RdqkGYpvV5fBhMHmn0jY
+	O/ZkVu0jWBu2qMN37mG/ytXQh/4EMV1s4DH2nXfW12SK6W6mTq2lr
+X-Received: by 2002:a05:6a00:1399:b0:82c:9126:3200 with SMTP id d2e1a72fcca58-82c95aef936mr16041613b3a.12.1774934677390;
+        Mon, 30 Mar 2026 22:24:37 -0700 (PDT)
+X-Received: by 2002:a05:6a00:1399:b0:82c:9126:3200 with SMTP id d2e1a72fcca58-82c95aef936mr16041573b3a.12.1774934676770;
+        Mon, 30 Mar 2026 22:24:36 -0700 (PDT)
+Received: from hu-jkona-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82ca843db09sm10270751b3a.7.2026.03.30.22.24.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Mar 2026 22:24:36 -0700 (PDT)
+From: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+Subject: [PATCH v3 0/7] Add support for videocc and camcc on X1P42100
+ platform
+Date: Tue, 31 Mar 2026 10:54:09 +0530
+Message-Id: <20260331-purwa-videocc-camcc-v3-0-6daca180a4b1@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Exchange-RoutingPolicyChecked: 
-	c/3r+xmuar4k4twsaQekfvuoFW8bqqgf80t7HPzln0tGGFVtMmWoqbaQQcvzb83z98/Sr7PpvId0p1TQ50Qvdx3E+Yrt1HyPLZ/gRBp+XsUaRDvSNBJxtsPosB2y0nKo+kAebgS0ab3waw6kuTwh2ehi2sxQVKJrFEvOb9tpANHXueDJI7Ig5djuxYMnsB/A41mzC/NM05qdDjxK5iiE+ithNscD1iknhk9OuiOi1GuP9ZEejFrjKNvadgS26Q+bVKfW/+4Pbh2Mm7+cWmho2e86KC5/nwIP8AeofA8b3/zUihyBfqClRxrG2sQ6DUZkzr6fBIosmnFFspc5pNY9QQ==
-X-OriginatorOrg: mail.toshiba
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY7PR01MB14818.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 03419357-8d6b-4211-8bc7-08de8ec1a5a7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Mar 2026 01:05:49.2213
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: WdlETIVMgD8hTscbVJbuyU4h3c5T4GQ3+sT457UFd+31bCaGk4OaIGBwpTYarlHSl6J5VB9JkXdh3FKPjfm+le+shrJOvGvhn0bqjLV1tt+CCfuf5wR09a9sezcnmLPe
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSCPR01MB14582
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHlay2kC/23NQQ6CMBAF0KuQri0pU6HgynsYF22nSBOh2ErVE
+ O5uwYUbNj/5k/w3MwnGWxPIKZuJN9EG64ZU+CEjupPDzVCLqRNgUDHOCzpO/iVptGic1lTLPiU
+ 2gjFkrWgEkrQcvWnte1Mv19Q7G57Of7YnsVivP6+AeteLBWVUAUdTCmxLJc8uhPwxybt2fZ+nI
+ Csb4U9xdtynIFGoFAJCWSusdqhlWb6s6GemCAEAAA==
+X-Change-ID: 20260331-purwa-videocc-camcc-d9700d0f797d
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>,
+        Taniya Das <taniya.das@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Abel Vesa <abel.vesa@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Authority-Analysis: v=2.4 cv=G6wR0tk5 c=1 sm=1 tr=0 ts=69cb5a96 cx=c_pps
+ a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22
+ a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=-aA_EJKQ9c9Fm2tRs6UA:9
+ a=QEXdDO2ut3YA:10 a=3WC7DwWrALyhR5TkjVHa:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzMxMDA0OCBTYWx0ZWRfX6icTx5x18vkf
+ F3kp2QvZTQeaT5vqf1TnjLg92sSoV0wjPxoBlmdfhV3vGUMW3cVqlErONzEwTka4C2kzm0MiORF
+ 7vH6x8XIkKshVaXGu/Bt6NBPbEP6kvermmNkuGIypPQBB3EG3nbyrUEhJ29gNFf2mGfKT80Z3F4
+ J8efeHZJymK2H3v+sbLMFJUS+yytqHdmATiiET91JiuOFQTBQjUAV+uPOu66N1+acy/32UtZOJU
+ MV/eZ7S76cZxwgQtWLzfpDfhwgE7KWId0GMdVY/7sSp/e/dpL6zSO9Jj7e3Icoy6YCZxkeOqGZW
+ 267LNEbyLHzPXLRYVF6E+nRfO6uLB2N4ZL/8r7w1EzfLOm/yn270LoGBZnll0sbM5DJ33LrvArP
+ 2fiEYG+RkYqq+rhar781Hr6WQmMfAqs+lplQwmIeHoWYug+R01EvQ/Rb/rObgeCdz4ltnM2nYoM
+ QXlGrf7t6lSW8VGAmyg==
+X-Proofpoint-ORIG-GUID: P1t1DEOwMyXfm_GhqHwCQzPPvlZXNANL
+X-Proofpoint-GUID: P1t1DEOwMyXfm_GhqHwCQzPPvlZXNANL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-31_01,2026-03-28_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 phishscore=0 clxscore=1015 suspectscore=0 bulkscore=0
+ malwarescore=0 adultscore=0 spamscore=0 priorityscore=1501 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603310048
 
-Hi Rosen,
+Add support for video and camera clock controllers on
+X1P42100 platform.
 
-Thanks for your patch.
+The purwa(X1P42100) platform includes the hamoa dtsi file
+and camcc node is already posted upstream on hamoa(X1E80100)
+platform in Bryan's series[1]. Hence included the camcc node
+patch[PATCH 06/15] from Bryan's series[1] and extended it for
+purwa(X1P42100).
 
-> -----Original Message-----
-> From: Rosen Penev <rosenp@gmail.com>
-> Sent: Thursday, March 26, 2026 1:23 PM
-> To: linux-clk@vger.kernel.org
-> Cc: Michael Turquette <mturquette@baylibre.com>; Stephen Boyd <sboyd@kern=
-el.org>; iwamatsu nobuhiro(=1B$B4d>>=1B(B =1B$B?.MN=1B(B
-> =1B$B""#D#I#T#C!{#C#P#T=1B(B) <nobuhiro.iwamatsu.x90@mail.toshiba>; Kees =
-Cook <kees@kernel.org>; Gustavo A. R. Silva
-> <gustavoars@kernel.org>; moderated list:ARM/TOSHIBA VISCONTI ARCHITECTURE
-> <linux-arm-kernel@lists.infradead.org>; open list <linux-kernel@vger.kern=
-el.org>; open list:KERNEL HARDENING (not
-> covered by other areas):Keyword:\b__counted_by(_le|_be)?\b <linux-hardeni=
-ng@vger.kernel.org>
-> Subject: [PATCH] clk: visconti: pll: use kzalloc_flex
->=20
-> Simplify allocation by using a flexible array member and kzalloc_flex.
->=20
-> Add __counted_by for extra runtime analysis. Assign after allocation as r=
-equired by __counted_by.
->=20
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+[1]: https://lore.kernel.org/all/20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-6-0bc5da82f526@linaro.org/
 
-Acked-by: Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>
+The camcc node was added in x1e80100.dtsi in above Bryan's series
+but moved it to hamoa.dtsi in this series to align as per the latest
+changes.
+
+The series also adds the camera QDSS debug clocks support for X1E80100.
+This change updates the X1E80100 camcc ABI, so X1E80100 camcc bindings
+and driver changes need to be picked together.
+
+Signed-off-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+---
+Changes in v3:
+- Added a sepearate new header for Purwa videocc
+- Dropped the fixes tags added in v2, since no user observable bug
+- Updated the commit text for few patches
+- Added R-By tags recieved on v2
+- Link to v2: https://lore.kernel.org/r/20260304-purwa-videocc-camcc-v2-0-dbbd2d258bd6@oss.qualcomm.com
+
+Changes in v2:
+- Dropped new header file for X1P42100 videocc and included
+  additional clocks and resets in SM8650 videocc header file
+- Updated commit text for videocc and camcc driver patches
+- Squashed Purwa videocc & camcc DT compatible update into previous
+  camcc node patch based on review comments
+- Added R-By tags received on v1
+- Added Fixes tags based on review comments
+- Link to v1: https://lore.kernel.org/r/20260128-purwa-videocc-camcc-v1-0-b23de57df5ba@oss.qualcomm.com
+
+---
+Bryan O'Donoghue (1):
+      arm64: dts: qcom: x1e80100: Add CAMCC block definition
+
+Jagadeesh Kona (6):
+      dt-bindings: clock: qcom: Add X1P42100 video clock controller
+      dt-bindings: clock: qcom: Add X1P42100 camera clock controller
+      clk: qcom: videocc-x1p42100: Add support for video clock controller
+      clk: qcom: camcc-x1e80100: Add support for camera QDSS debug clocks
+      clk: qcom: camcc-x1p42100: Add support for camera clock controller
+      arm64: defconfig: Enable VIDEOCC and CAMCC drivers on Qualcomm X1P42100
+
+ .../bindings/clock/qcom,sm8450-videocc.yaml        |    3 +
+ .../bindings/clock/qcom,x1e80100-camcc.yaml        |    1 +
+ arch/arm64/boot/dts/qcom/hamoa.dtsi                |   16 +
+ arch/arm64/boot/dts/qcom/purwa.dtsi                |   10 +
+ arch/arm64/configs/defconfig                       |    2 +
+ drivers/clk/qcom/Kconfig                           |   20 +
+ drivers/clk/qcom/Makefile                          |    2 +
+ drivers/clk/qcom/camcc-x1e80100.c                  |   64 +
+ drivers/clk/qcom/camcc-x1p42100.c                  | 2223 ++++++++++++++++++++
+ drivers/clk/qcom/videocc-x1p42100.c                |  585 ++++++
+ include/dt-bindings/clock/qcom,x1e80100-camcc.h    |    3 +
+ include/dt-bindings/clock/qcom,x1p42100-videocc.h  |   48 +
+ 12 files changed, 2977 insertions(+)
+---
+base-commit: cf7c3c02fdd0dfccf4d6611714273dcb538af2cb
+change-id: 20260331-purwa-videocc-camcc-d9700d0f797d
 
 Best regards,
-  Nobuhiro
-> ---
->  drivers/clk/visconti/pll.c | 17 +++++++----------
->  1 file changed, 7 insertions(+), 10 deletions(-)
->=20
-> diff --git a/drivers/clk/visconti/pll.c b/drivers/clk/visconti/pll.c inde=
-x 6fd02c4b641e..ca29d12f9316 100644
-> --- a/drivers/clk/visconti/pll.c
-> +++ b/drivers/clk/visconti/pll.c
-> @@ -21,9 +21,9 @@ struct visconti_pll {
->  	void __iomem	*pll_base;
->  	spinlock_t	*lock;
->  	unsigned long flags;
-> -	const struct visconti_pll_rate_table *rate_table;
->  	size_t rate_count;
->  	struct visconti_pll_provider *ctx;
-> +	struct visconti_pll_rate_table rate_table[] __counted_by(rate_count);
->  };
->=20
->  #define PLL_CONF_REG		0x0000
-> @@ -255,10 +255,6 @@ static struct clk_hw *visconti_register_pll(struct v=
-isconti_pll_provider *ctx,
->  	size_t len;
->  	int ret;
->=20
-> -	pll =3D kzalloc_obj(*pll);
-> -	if (!pll)
-> -		return ERR_PTR(-ENOMEM);
-> -
->  	init.name =3D name;
->  	init.flags =3D CLK_IGNORE_UNUSED;
->  	init.parent_names =3D &parent_name;
-> @@ -266,11 +262,13 @@ static struct clk_hw *visconti_register_pll(struct =
-visconti_pll_provider *ctx,
->=20
->  	for (len =3D 0; rate_table[len].rate !=3D 0; )
->  		len++;
-> +
-> +	pll =3D kzalloc_flex(*pll, rate_table, len);
-> +	if (!pll)
-> +		return ERR_PTR(-ENOMEM);
-> +
->  	pll->rate_count =3D len;
-> -	pll->rate_table =3D kmemdup_array(rate_table,
-> -					pll->rate_count, sizeof(*pll->rate_table),
-> -					GFP_KERNEL);
-> -	WARN(!pll->rate_table, "%s: could not allocate rate table for %s\n", __=
-func__, name);
-> +	memcpy(pll->rate_table, rate_table, len * sizeof(*pll->rate_table));
->=20
->  	init.ops =3D &visconti_pll_ops;
->  	pll->hw.init =3D &init;
-> @@ -282,7 +280,6 @@ static struct clk_hw *visconti_register_pll(struct vi=
-sconti_pll_provider *ctx,
->  	ret =3D clk_hw_register(NULL, &pll->hw);
->  	if (ret) {
->  		pr_err("failed to register pll clock %s : %d\n", name, ret);
-> -		kfree(pll->rate_table);
->  		kfree(pll);
->  		pll_hw_clk =3D ERR_PTR(ret);
->  	}
-> --
-> 2.53.0
-
+-- 
+Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
 
