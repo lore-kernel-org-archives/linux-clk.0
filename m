@@ -1,122 +1,141 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C34B13E5ED3
-	for <linux-clk@vger.kernel.org>; Tue, 31 Mar 2026 14:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9C9E3DFC7A;
+	Tue, 31 Mar 2026 14:28:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774966611; cv=none; b=sWaiSkv/Rurb4zvBmOu62w8NzutHmujZl08Mnz1/7HCJ0/TrWacamHC/N90MME2Q521mJG4QInrXQ+bTR5/1Jeu5+0ZeTaQyBY0pJqX78lrgUu/XMQ3TXBdnjRF1mDY0r51Hry1/S5cUri6nb4QH6Py5k0BNN+YZgVlWqan122Y=
+	t=1774967305; cv=none; b=R77Kg0xajznb6aYs1myt8SqlpihTPNDekG1z+yQdXMUAQguYB/2iDbSIS/IvptAAs/0RU6UEpWqgQhxMnepkWxXebEAhBEisW492EtQOvXhuyYGRDWKTPh8GLTt9SfjWtXyW/Y/UJt1bx6A6bmYzMSFwkIpM2Ud8VfT3DO2UmMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774966611; c=relaxed/simple;
-	bh=5Iw9URBB2+huCGNNmJnyie/vcU11kN7G+C2oBsp0qj8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EWWCJ71AW81BZelLeGx6I3/OADLqtMeqTF1CmhkXVMCxdaiS0iylFrNMU1XfyZW06gBGA2VtZwQ640+JKqthMcLJdvK/1DXay+mINCOppOZruxQwO0SfbsdnWXZknBRbi4qRN885PF7zta+F9I9DvS4z27MYP471/UlUGKUQodg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ctprOuDD; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=pSOLESHa; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1774967305; c=relaxed/simple;
+	bh=pi9+jTTjBEggYl4mVGdAIHgEUjoB84G3TUthvHDcKv4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NmXPQsHs7XPYRm8SWFycSZyQcNWmd1TVdzFVqos98QRdWO54xMroCJgt/6MaU2HLFCOV19wzmmXgOfhNb1acrgIx+9r3z8t9tQAgiHQ0+8TwH3j0gs10IAWo4qK8L+piwridZn0AqTF9JJ5uL2I8dqH0NAK8poytEiDBeeRJ5xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=J9Biep0L; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ctprOuDD";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="pSOLESHa"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1774966608;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+cvItjsGlgO+YKuRpumctJ3y5xeOoIq89E46KdlSIjg=;
-	b=ctprOuDDGs/4FF1UJ6Vuv/9WDcuUlfoc9XO+rnnlPSpvw+CAYWRKJjEMw8ogmR10pUWlJ/
-	pha70XZOOyTHtjgpBm9ue0NPlcy6ba0HFEXvt+dSaNYYP2brYEIIsQQ9nDiifQhOWUes6z
-	UFg+6wEk+CMAWwBLkY6yqk/uZfHJ45E=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-353-kLiGXXTiPhaVpdim5HbDvw-1; Tue, 31 Mar 2026 10:16:45 -0400
-X-MC-Unique: kLiGXXTiPhaVpdim5HbDvw-1
-X-Mimecast-MFC-AGG-ID: kLiGXXTiPhaVpdim5HbDvw_1774966605
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-89cc5305180so127027606d6.0
-        for <linux-clk@vger.kernel.org>; Tue, 31 Mar 2026 07:16:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1774966605; x=1775571405; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+cvItjsGlgO+YKuRpumctJ3y5xeOoIq89E46KdlSIjg=;
-        b=pSOLESHaqVDimDnxFL8zT5QRh29M1bZpMV9G7EJ+zI9/ScBml+6QddKKZO1tDDnLbf
-         816Bzo1xoGiAfTbPFvo/NWM66ZhYk29VPsLlEfaNlbnRPh0qc6rEnRumhglwjc6I6tTq
-         pBbPo+HDjCexVFif7wezwXggccbI2iNrosFF3tTyTgRgacyhxOeDH9+bVWRupaUSxdai
-         BsDwqliULXNMZh1ekJ/foQqVD2v+NC+6+g1RATdKEgGq4A4LIKyJqEsPXm1oqr+eIc8I
-         TU/Cy85eJspvGn2E7uRUePn9lFIZV6KzK3tsxMihDF/LxuDHcd6PRPdC78vIcoDRjF3t
-         2WXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774966605; x=1775571405;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=+cvItjsGlgO+YKuRpumctJ3y5xeOoIq89E46KdlSIjg=;
-        b=AdxQ05fTPKwKR0vBY0i6Qn9MIS2MfZSNBddKAVjgrSCJUOmp4YBHBxJLy7VO+QsWLE
-         1tPRQ4Zm7AmKjkpSbZp7NI//9eRX4Ra2wdCjQn80m9fCxQ0h/Izpw2Ys4TvHwpQTT4cj
-         O65TfwpqXbPPROL7YbyUxZyAFe6FjPBumbEhGpCSQAGaF+819fzpmO+JvdKOQj1rY4x8
-         25vVWYljvPyxA1zEaZL7bT+Gb0RAsjt9eJL5es+1Lchk0ENvRJlS0YWXU+LS2B7oO9NO
-         IZD0P3qLgSHM8jIf5xzQ6cDObPUZSJJTiOXWk0X9JVr5z6pF9dFNryC7Pj96o1MSnUTx
-         kufQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVdLGArg3QYwVCxitf19fX4AouJWRki1xtAfeFOtlUvN4hDqnfG7jGnINYsTuuwHrgY3lV/SOdk+to=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+yflgbKdn+xOvUqu6d6fLDNDNAPUOyDh5jrItTJFmELNMDCtl
-	5//+vQSl+STknQVTEhSXwOjb/f88oN0k9npcZhJ/zGQEsM57F0RrgbKiQD/HD9jo2PcWEtpYZbS
-	++IRMj6MjGSBZ2ReOLQp8y4ETFEcSgZZmjwUjBZSgjCdGNkPK5OBxzuvKSJX02w==
-X-Gm-Gg: ATEYQzzuaCGRGCSfA7QraRpvNdHCfB2R+4Lg/epf8nApXzEAbT/5EAD1qtG/Jlx0hXv
-	pgPokg/PoroPswtJgdMRe0JnPvzuXZJd9MaZN98KsUef8oX14YsWwyNi+VyAfKOppw76mIfdSLa
-	NEwA8JuIUH4BtS4aEfnyxlDzNju8qFgNZXN8z9chcGN1AbpZkqIFXwHACiQGesxEf42dqIO2ouw
-	FqRjTZUoJJARvRQ3vrnfoyvGlLgVxjLGE81jL63LT1i8dj2WTHKYfkQ1Jit5AVik06MhZtxff+U
-	SoJJs5an5UAzN9GQP7UslufjG53+v+zlAjngdoD4cE8XAgV6blIlqMmegh8dFmfTWudcqMJ2n3x
-	pd1VA44SWJ0uskrjm
-X-Received: by 2002:a05:622a:5e16:b0:50b:51a0:f744 with SMTP id d75a77b69052e-50ba3816a05mr227957571cf.17.1774966604490;
-        Tue, 31 Mar 2026 07:16:44 -0700 (PDT)
-X-Received: by 2002:a05:622a:5e16:b0:50b:51a0:f744 with SMTP id d75a77b69052e-50ba3816a05mr227957191cf.17.1774966603971;
-        Tue, 31 Mar 2026 07:16:43 -0700 (PDT)
-Received: from redhat.com ([96.66.166.93])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-50bb2c67fefsm86643111cf.4.2026.03.31.07.16.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Mar 2026 07:16:43 -0700 (PDT)
-Date: Tue, 31 Mar 2026 10:16:41 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Frank Li <Frank.Li@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@kernel.org>,
-	Guodong Xu <guodong@riscstar.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 4/5] clk: spacemit: k3: mark top_dclk as
- CLK_IS_CRITICAL
-Message-ID: <acvXSXNWIEcDUpQ3@redhat.com>
-References: <20260331-k3-pdma-v3-0-a4e60dd8b4b3@linux.spacemit.com>
- <20260331-k3-pdma-v3-4-a4e60dd8b4b3@linux.spacemit.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="J9Biep0L"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id A9090C59943;
+	Tue, 31 Mar 2026 14:28:50 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 17ACB6029D;
+	Tue, 31 Mar 2026 14:28:20 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 10DD9104502A1;
+	Tue, 31 Mar 2026 16:28:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1774967298; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=fPi+rGF0rYzZ+nDZLHKJl/1MAN3JGEnQt9nVv1QbgBY=;
+	b=J9Biep0L71BjUoQeNlZpBX2t+clXYySmubp3Nka6bQIUW10LmpA05/t8nj4EdA4PQHqwyB
+	A/XiVWukH9O9//OPioTUSDrYHcj0AKzVfnBKnySZY5u5JhaomYVkFbXk3e1Uc14tZX9hwL
+	lzUcKg8PZECK5r25ejhn7X1YhanhSHsW5pv6gTOF0Sn9zWBX2hOmqD228ykuUzwK5h+moE
+	kWiug8Y8OEmQ/212K/a4yABEBo1NoVtL5kbfVHDmmMUlGxHUiyIBqORzvg1bgMlgbalh9v
+	QXWjwlyBrA8LwF3qKzkD2quOV7q3rShCQqIQ+uqlIqQzMaUTWdrTZrKoxdbkNw==
+Message-ID: <91077ff2-8ae5-45b3-b799-f84db16bc964@bootlin.com>
+Date: Tue, 31 Mar 2026 16:28:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260331-k3-pdma-v3-4-a4e60dd8b4b3@linux.spacemit.com>
-User-Agent: Mutt/2.3.0 (2026-01-25)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/4] firmware: ti_sci: Introduce BOARDCFG_MANAGED mode
+ for Jacinto family
+To: Dhruva Gole <d-gole@ti.com>
+Cc: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Gregory CLEMENT <gregory.clement@bootlin.com>,
+ richard.genoud@bootlin.com, Udit Kumar <u-kumar1@ti.com>,
+ Prasanth Mantena <p-mantena@ti.com>, Abhash Kumar <a-kumar2@ti.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20260204-ti-sci-jacinto-s2r-restore-irq-v4-0-67820af39eac@bootlin.com>
+ <20260209095159.pfcthh5a4yo4q2em@lcpd911>
+Content-Language: en-US
+From: Thomas Richard <thomas.richard@bootlin.com>
+In-Reply-To: <20260209095159.pfcthh5a4yo4q2em@lcpd911>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue, Mar 31, 2026 at 04:27:07PM +0800, Troy Mitchell wrote:
-> top_dclk is the DDR bus clock. If it is gated by clk_disable_unused,
-> all memory-mapped bus transactions cease to function, causing DMA
-> engines to hang and general system instability.
+Hello Dhruva,
+
+Thanks for the review.
+
+On 2/9/26 10:51 AM, Dhruva Gole wrote:
+> On Feb 04, 2026 at 16:03:37 +0100, Thomas Richard (TI) wrote:
+>> The fourth iteration of this series adds support for two new firmware
+>> capabilities:
+>> - MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST: Indicates that DM-Firmware is not
+>>   able to restore IRQ context during resume after suspend-to-ram.
+>> - MSG_FLAG_CAPS_LPM_CLK_CONTEXT_LOST: Indicates that DM-Firmware is not
+>>   able to restore clock context (rate and parent configuration) during
+>>   resume after suspend-to-ram.
+>>
+>> Now, ti_sci driver determines whether to restore IRQs based on the
+>> MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST capability rather than the
+>> BOARDCFG_MANAGED mode. The same logic applies to the clock context.
+>>
+>> Both J784s4 and J7200 platforms support these new capabilities. A
+>> corresponding pull request has been submitted on DM-Firmware side to
+>> define and enable these capabilities.
+>>
+>> The value for the BOARDCFG_MANAGED mode has also been fixed.
+>>
+>> Public documentation for BOARDCFG_MANAGED mode and these new capabilities
+>> is currently unavailable. I will update the series with relevant
+>> documentation references as soon as they become available.
+>>
+>> I rebased the series on linux-next next-20260202.
+>>
+>> Best Regards,
+>> Thomas
+>>
+>> Signed-off-by: Thomas Richard (TI) <thomas.richard@bootlin.com>
+>> ---
+>> Changes in v4:
+>> - rebase on linux-next next-20260202.
+>> - fix BOARDCFG_MANAGED value.
+>> - add MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST firmware capability.
+>> - add MSG_FLAG_CAPS_LPM_CLK_CONTEXT_LOST firmware capability.
+>> - Link to v3: https://lore.kernel.org/r/20251205-ti-sci-jacinto-s2r-restore-irq-v3-0-d06963974ad4@bootlin.com
+>>
+>> Changes in v3:
+>> - rebased on linux-next
+>> - sci-clk: context_restore() operation restores also rate.
+>> - Link to v2: https://lore.kernel.org/r/20251127-ti-sci-jacinto-s2r-restore-irq-v2-0-a487fa3ff221@bootlin.com
+>>
+>> Changes in v2:
+>> - ti_sci: use hlist to store IRQs.
+>> - sci-clk: add context_restore operation
+>> - ti_sci: restore clock parents during resume
+>> - Link to v1: https://lore.kernel.org/r/20251017-ti-sci-jacinto-s2r-restore-irq-v1-0-34d4339d247a@bootlin.com
+>>
+>> ---
+>> Thomas Richard (TI) (4):
+>>       firmware: ti_sci: add BOARDCFG_MANAGED mode support
+>>       firmware: ti_sci: add support for restoring IRQs during resume
+>>       clk: keystone: sci-clk: add restore_context() operation
+>>       firmware: ti_sci: add support for restoring clock context during resume
 > 
-> Mark it CLK_IS_CRITICAL so the CCF never gates it during the
-> unused clock sweep.
-> 
-> Fixes: e371a77255b8 ("clk: spacemit: k3: add the clock tree")
-> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> The series looks good to me, just checking if maintainer prefers the 2/4
+> PATCH on IRQ restore to be split up. IMO similar to how you've split up
+> the clk restore support and then actually restored clk context in
+> another patch, you can do similar split up for IRQ.
+> No strong opinions from my side though.
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+Splitting clock part in 2 commits makes sense because two drivers are
+involved. For IRQ part you would have a first patch adding all the hlist
+logic only if MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST, and you just fill the
+hlist. Then a second path adds the missing part in resume() path. I
+think it is a bit odd, but no strong opinions.
 
+If someone really wants this split up please let me know.
+
+Best Regards,
+Thomas
