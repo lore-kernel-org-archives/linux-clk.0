@@ -1,190 +1,381 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9683B52E7
-	for <linux-clk@vger.kernel.org>; Tue, 31 Mar 2026 11:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 152C7405F7
+	for <linux-clk@vger.kernel.org>; Tue, 31 Mar 2026 12:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774956888; cv=none; b=gAQQPgavkvzm8PXq98twyKFRd5wXZL1zRGN3hxFZRjJZrgUNx0LU2yO4pYg8e05fslCur0zu4vobw/B8rzt8hd6Sq7fbdrcJ27Zl455SBKIrkfRQShq5B0yRf165RFZTBUeOVjOoBR+vLyKqiEP6Lqk6hnSpU0+JztRL/9tY7tI=
+	t=1774961371; cv=none; b=Jb2tH+4OJt6OY6TfFqEGQJ5aHH655Du1vkijszFOYt30VdgFGbAWyiiIkI+EwQo3oP1ZRKG4PJio/jFjmwc8Jb62r2Spc8gPr7yAXtptMrSvaU2wJW0D3D2zl6u76nZ2g4mGMV5jZ5JfhMv6myHBS26lpQ3ctCAUjwUEbDI+eRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774956888; c=relaxed/simple;
-	bh=gyBFP/b/mLiJYrmBbkDNlvJj4Cb9GsLsJxV65G81sLU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=MV8Zs76gLUC6skGsI3GPtb9Xjn9EbtNK8aq3Px5luOnNHfpqE3dFU670l4/UaTtQC1pzgGPqShd3BsSvj8hdNmvJsGOqNIAX3+3Y5Y7r/a4ACiVRpHMfTmiEn2+uVKSD4zOb5oeOFA4GKCYOg0iMHb3fTMPXxnkd9cMsWIV/Vnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ekael1d/; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=E0rpR+0M; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1774961371; c=relaxed/simple;
+	bh=Coh8LzVa9q3zCzvSOZo/SjOW9x+HwU5WnB9FOx9SW4c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iYWOeVJeiL6rzOc4mEDZ8tNqUvzcE/WK3iqXNFjpbXZ/NIy3p2m81AidbkxaGRCUoa5tKv6bZ+DL+JaxwlxBPZAl2jJEkEZh6Vc2guYiYdlVPwMizkfOV+e7bDIUuAB5Ai8wdRcV1/7ZsS96HZzIJqjjIpXeFjlibJcVH8fB2Dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jNM/Ro2t; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ekael1d/";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="E0rpR+0M"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62VBVxOD1841101
-	for <linux-clk@vger.kernel.org>; Tue, 31 Mar 2026 11:34:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	gyBFP/b/mLiJYrmBbkDNlvJj4Cb9GsLsJxV65G81sLU=; b=ekael1d/hRf/vJk3
-	4oxbIMMsXyGWTlDhIMRytzUco+jyDnRboQckc0eEJ5H+xYGxtjnIFXuOK3G1OmIO
-	Fy+9oWdSNb+QEk8zp3dJMbCwiQNfGBXAvTaLguSWkCkpQkwP0VRbExWguWU0RjPr
-	RZN9uMQwA9bd5Di+GF38ivilr5wYzL96igaKicEaU0f7VZl5Mm3o9creSDWEV8/o
-	jlKNlS1OsD2qU8UgQgb1Nm744ZC6nhcpaLlSdPtreldZsxObcpwmbs58Aqjf/tEg
-	yGLX6p1/n29rvvIY3TXikMdI6TIXBADliSaO+vyBGbmxY+qvWsE94jxu5nowXDU+
-	V30WMQ==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4d80rsju45-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 31 Mar 2026 11:34:46 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-50b3544bc7bso79301991cf.2
-        for <linux-clk@vger.kernel.org>; Tue, 31 Mar 2026 04:34:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1774956886; x=1775561686; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gyBFP/b/mLiJYrmBbkDNlvJj4Cb9GsLsJxV65G81sLU=;
-        b=E0rpR+0MFMKEjQADVi919fktCvRlhfE7OO04hg5UHPqHg8aFtvSDbO/1nlDVqL4Qh3
-         Uy2pNj3S0Eq+1opmlJDRigG3kjhtGY8b3MxvQ85fX9g7IukllkhC504NoxW4IBxcm/Bx
-         cFJ5lz9zCe5ZzhaFB2KtOHSm2nNSoNYloXwLMNyn+oWmmVfWcBtQYPjpZNJfH1uIvPfm
-         JbrhN9QP5ZadPgfbeXcJLo7EgG0Z0k3ERmLIpMkvDzJ6caW+k3E1/y1QKYQFQIfLUADs
-         V2cFjAhoRVuQdSUcfvqjFehrgm4v7J0/UtIul14OqbcrRyh68Hh4xT+mWo+J2ZjLtCty
-         RelQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774956886; x=1775561686;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gyBFP/b/mLiJYrmBbkDNlvJj4Cb9GsLsJxV65G81sLU=;
-        b=aq8wSYU5p0p//VQsriCfpXqCzgAfbWWoob3xcwX3ok9dgWSWS8E+KzpUAHeY2IpmFG
-         rYDvJnGylzUdHoki7BN7nqnWAdzlIVUgdAxUrdMsqcLFmj4a1k3q1lo7N6D16bShxoLs
-         5T25eeefSYnvLK610T+v7VKFGUOdXCRdbgBdCrEaoYNLAzwnhQfBKAFXDPep82ZJoveb
-         usACNhL/OPmVMYd/+f9hUeVlWmZVtYYu//a5n8BqmUA1Kd5JyB4dIVuxD925Vb2R6HtI
-         5yJ1ZPd7mY2OU3t2tn0Pu3Z0QE5FnyK4uZeh6scPrJLpQcxnxPR4f9OAAina16VyAvHX
-         PMEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUFUnfpP8aVxaZIj9cocnSbQFaxkn6HkxiAe0XYJ7vjX3nkONlf39oWR/u2WXsHl3J6hO8pW/3+TWY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMJdn/FU79XpvzXN4ndE/+7PqSZNyrtTsthzFyfz4ieGYwaV9W
-	pcd972hvMAsy7/9v6dK6ftIY9Bgm1xCdA5tDzIkQdVe1mr3Oo2+KAs+lzZKTtjlqoydgxX1uF84
-	r0ibu9xqp3yzkAlC1IcoWXnf68YP/MJYfeIt+qsTT5q7uhWFkd/5S3C/VP2D0aZk=
-X-Gm-Gg: ATEYQzxMWZvnfl8y6FHOfO9vny4s44yDGNPa3c4KDbY8heFx4H1mMdxQoBUESg02PEF
-	Ynf9L1L425eUvMo+CeY4GAzA1PyBBOKY/qYSL0zpDlHuqVypfIn/K/89u5FrDNFBBa1ueieZ+bA
-	Ea38jvdYQzFb2jOsmiXJVsuh75bYtXHQuGeZC0ZuVmW+PutDOROuFZOWLi6dFpIilpxG1mgbqlQ
-	dmLlq9DONfsbRq/WgBi3BuvCd5wyHPC6cMaH3LFqNZiaBpOnHIWiIEz4AAsU9JbyNZE/hpis98U
-	dXr/Ikne2IMxf6LcJEKGHz5635TDUur4ou2Vi5xdT1iR3TCD3EfIhtfGpqZ3lStME25dVhCPq78
-	wbr+ExoaUBS+U3D1QJRx3DLpWYYJcMwSK5ZkP9UNn0nYL5/lC
-X-Received: by 2002:a05:622a:142:b0:50b:51a0:f745 with SMTP id d75a77b69052e-50ba380b9bbmr212931241cf.6.1774956885816;
-        Tue, 31 Mar 2026 04:34:45 -0700 (PDT)
-X-Received: by 2002:a05:622a:142:b0:50b:51a0:f745 with SMTP id d75a77b69052e-50ba380b9bbmr212930861cf.6.1774956885413;
-        Tue, 31 Mar 2026 04:34:45 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.219.94])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43cf245e4f5sm28283132f8f.19.2026.03.31.04.34.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 31 Mar 2026 04:34:44 -0700 (PDT)
-Message-ID: <66739d18-2c3d-49d9-b456-2e8c1b81385a@oss.qualcomm.com>
-Date: Tue, 31 Mar 2026 13:34:43 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jNM/Ro2t"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6203FC19423;
+	Tue, 31 Mar 2026 12:49:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774961370;
+	bh=Coh8LzVa9q3zCzvSOZo/SjOW9x+HwU5WnB9FOx9SW4c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jNM/Ro2tOdktKX64Pu3ng6eyvThkpH7NtheDW+o7yz2NwUogFYXt2HmkazBDgGt8Y
+	 nRx8LGIZK5+pj0l6kUZ6UwsjPUhN1ubFHe+da5VF7WTjzWIn/xH14ZJSk4xH2VMo6h
+	 6onjc68c9OQvMORAE/RGZEuNNOQrpplWh7R0F8sigTDTuzmqWjWNf/1p70TtohAM7V
+	 eC3T++w0LOlnKCB28IC+S7xy7ptJFJWTJRjISDwZjNlK0eHefwU2TNM/YsN0cCjuaZ
+	 xT2y/m+nn3B8H2do3E2mXOoVJlzsOsZ6zrXry9yHD/eE9c09MTkKRtadYKYL/JEmEM
+	 sq9PCBYNFfj1A==
+Date: Tue, 31 Mar 2026 13:49:24 +0100
+From: Mark Brown <broonie@kernel.org>
+To: =?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Maxime Ripard <mripard@kernel.org>, Melissa Wen <mwen@igalia.com>,
+	Iago Toral Quiroga <itoral@igalia.com>,
+	Chema Casanova <jmcasanova@igalia.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	kernel-dev@igalia.com
+Subject: Re: [PATCH v7 1/5] clk: bcm: rpi: Manage clock rate in
+ prepare/unprepare callbacks
+Message-ID: <5f0bec08-f458-4fba-8bf3-06817a100c4c@sirena.org.uk>
+References: <20260312-v3d-power-management-v7-0-9f006a1d4c55@igalia.com>
+ <20260312-v3d-power-management-v7-1-9f006a1d4c55@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: videocc-glymur: Constify qcom_cc_desc
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260331085521.37337-2-krzysztof.kozlowski@oss.qualcomm.com>
- <ecd73358-70ee-4ddc-ab99-aecdf084c172@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@oss.qualcomm.com; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTpLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQG9zcy5xdWFsY29tbS5jb20+wsGXBBMB
- CgBBFiEEm9B+DgxR+NWWd7dUG5NDfTtBYpsFAmkknB4CGwMFCRaWdJoFCwkIBwICIgIGFQoJ
- CAsCBBYCAwECHgcCF4AACgkQG5NDfTtBYpuCRw/+J19mfHuaPt205FXRSpogs/WWdheqNZ2s
- i50LIK7OJmBQ8+17LTCOV8MYgFTDRdWdM5PF2OafmVd7CT/K4B3pPfacHATtOqQFHYeHrGPf
- 2+4QxUyHIfx+Wp4GixnqpbXc76nTDv+rX8EbAB7e+9X35oKSJf/YhLFjGOD1Nl/s1WwHTJtQ
- a2XSXZ2T9HXa+nKMQfaiQI4WoFXjSt+tsAFXAuq1SLarpct4h52z4Zk//ET6Xs0zCWXm9HEz
- v4WR/Q7sycHeCGwm2p4thRak/B7yDPFOlZAQNdwBsnCkoFE1qLXI8ZgoWNd4TlcjG9UJSwru
- s1WTQVprOBYdxPkvUOlaXYjDo2QsSaMilJioyJkrniJnc7sdzcfkwfdWSnC+2DbHd4wxrRtW
- kajTc7OnJEiM78U3/GfvXgxCwYV297yClzkUIWqVpY2HYLBgkI89ntnN95ePyTnLSQ8WIZJk
- ug0/WZfTmCxX0SMxfCYt36QwlWsImHpArS6xjTvUwUNTUYN6XxYZuYBmJQF9eLERK2z3KUeY
- 2Ku5ZTm5axvlraM0VhUn8yv7G5Pciv7oGXJxrA6k4P9CAvHYeJSTXYnrLr/Kabn+6rc0my/l
- RMq9GeEUL3LbIUadL78yAtpf7HpNavYkVureuFD8xK8HntEHySnf7s2L28+kDbnDi27WR5kn
- u/POwU0EVUNcNAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDy
- fv4dEKuCqeh0hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOG
- mLPRIBkXHqJYoHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6
- H79LIsiYqf92H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4ar
- gt4e+jum3NwtyupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8
- nO2N5OsFJOcd5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFF
- knCmLpowhct95ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz
- 7fMkcaZU+ok/+HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgN
- yxBZepj41oVqFPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMi
- p+12jgw4mGjy5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYC
- GwwWIQSb0H4ODFH41ZZ3t1Qbk0N9O0FimwUCaBdQXwUJFpZbKgAKCRAbk0N9O0Fim07TD/92
- Vcmzn/jaEBcqyT48ODfDIQVvg2nIDW+qbHtJ8DOT0d/qVbBTU7oBuo0xuHo+MTBp0pSTWbTh
- LsSN1AuyP8wFKChC0JPcwOZZRS0dl3lFgg+c+rdZUHjsa247r+7fvm2zGG1/u+33lBJgnAIH
- 5lSCjhP4VXiGq5ngCxGRuBq+0jNCKyAOC/vq2cS/dgdXwmf2aL8G7QVREX7mSl0x+CjWyrpF
- c1D/9NV/zIWBG1NR1fFb+oeOVhRGubYfiS62htUQjGLK7qbTmrd715kH9Noww1U5HH7WQzeP
- t/SvC0RhQXNjXKBB+lwwM+XulFigmMF1KybRm7MNoLBrGDa3yGpAkHMkJ7NM4iSMdSxYAr60
- RtThnhKc2kLIzd8GqyBh0nGPIL+1ZVMBDXw1Eu0/Du0rWt1zAKXQYVAfBLCTmkOnPU0fjR7q
- VT41xdJ6KqQMNGQeV+0o9X91X6VBeK6Na3zt5y4eWkve65DRlk1aoeBmhAteioLZlXkqu0pZ
- v+PKIVf+zFKuh0At/TN/618e/QVlZPbMeNSp3S3ieMP9Q6y4gw5CfgiDRJ2K9g99m6Rvlx1q
- wom6QbU06ltbvJE2K9oKd9nPp1NrBfBdEhX8oOwdCLJXEq83vdtOEqE42RxfYta4P3by0BHp
- cwzYbmi/Et7T2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <ecd73358-70ee-4ddc-ab99-aecdf084c172@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 3boqiWLK7NSHfRW_Anw53SNHooZbCRgE
-X-Authority-Analysis: v=2.4 cv=VInQXtPX c=1 sm=1 tr=0 ts=69cbb156 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=gOEeR9iKwsj33Yj5oN/cWg==:17
- a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=gowsoOTTUOVcmtlkKump:22
- a=5A7uYVEyTbBfcqsGeEgA:9 a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-ORIG-GUID: 3boqiWLK7NSHfRW_Anw53SNHooZbCRgE
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzMxMDExMiBTYWx0ZWRfX4CZT3u4Xp2Dm
- 55MZF0DjruY/nU82H3C0LkYpYybeQ852P/n5JeYQXduqVzY78sxLR9LEv54UveNFgaQowy/geDA
- jeTWg/rqILC5Lc/9ZNfK9Uf6AsdjLxwRu0sPA9u9DO25EzsYQ1uXlR09+jjZE42s3wBn7YU6E/u
- 2Tg1hhsOFEanEswb+7TetuC9sYseeGyYgn4lgMHL8GMQlxneXqxVz5vYac/gVQ7Eoe6gIy7/B//
- wmt2HOoGaxbgvWj7lPYUx5De6szUJdNHVzMTaemfV5g5eMs2AzCgolsxFSegb530PDaJNvdYJyG
- hkYt1LxWwKuB1Wkxsv9VVEe94BV5nPAalGRjYysdIPKsVgcH3xjNWL7qGDmVpNkRJRIZc4GJMqY
- MfoLoxsP72qPnmGM1zFdTBVzs4NypCnbVvo2awRkSHpC8zdjAGKbAEcADwLB9VRQMc2ZM4lCbQ7
- IAc4J2rrx9Lb/y4uvJw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-31_02,2026-03-31_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 malwarescore=0 clxscore=1015 priorityscore=1501 spamscore=0
- impostorscore=0 lowpriorityscore=0 phishscore=0 bulkscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603310112
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="OWkifeB2LU4jLg/s"
+Content-Disposition: inline
+In-Reply-To: <20260312-v3d-power-management-v7-1-9f006a1d4c55@igalia.com>
+X-Cookie: Filmed before a live audience.
 
-On 31/03/2026 10:59, Konrad Dybcio wrote:
-> You're free to contribute to the internal template that these drivers are
-> based on
 
-That's a very reversed logic. I don't use "internal template" because it
-is the wrong approach and I am always advocating against it. I am
-advocating on basing your work on UPSTREAM work.
+--OWkifeB2LU4jLg/s
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Additionally, it's internal, not open-source. I could work on many
-internal things, but they don't matter, I don't want to touch them, I
-don't care about them. Actually, I imply that no one in open source
-community should particularly care about internal stuff.
+On Thu, Mar 12, 2026 at 06:34:23PM -0300, Ma=EDra Canal wrote:
 
-So no, the users of broken internal stuff need to fix that broken stuff.
-Job of the community is not to dwell into internal Qualcomm templates...
+> On current firmware versions, RPI_FIRMWARE_SET_CLOCK_STATE doesn't
+> actually power off the clock. To achieve meaningful power savings, the
+> clock rate must be set to the minimum before disabling. This might be
+> fixed in future firmware releases.
 
-Best regards,
-Krzysztof
+> Rather than pushing rate management to clock consumers, handle it
+> directly in the clock framework's prepare/unprepare callbacks. In
+> unprepare, set the rate to the minimum before disabling the clock.
+> In prepare, for clocks marked with `maximize` (currently v3d),
+> restore the rate to the maximum after enabling.
+
+I'm seeing boot regressions in -next with NFS root on Raspberry Pi 3B+
+which bisect to this commit.  We get a likely unrelated oops from the
+firmware interface and the boot grinds to a halt some time later since
+the ethernet never comes up:
+
+[   21.898686] Firmware transaction 0x00030066 timeout
+[   21.898769] WARNING: drivers/firmware/raspberrypi.c:128 at rpi_firmware_=
+property_list+0x200/0x280, CPU#2: (udev-worker)/115
+
+=2E..
+
+[   22.067074] Call trace:
+[   22.069538]  rpi_firmware_property_list+0x200/0x280 (P)
+[   22.074824]  rpi_firmware_property+0x70/0xb8
+[   22.079140]  vc4_drm_bind+0x12c/0x354 [vc4]
+[   22.083368]  try_to_bring_up_aggregate_device+0x16c/0x1e0
+[   22.088831]  component_master_add_with_match+0xb0/0xec
+[   22.094027]  vc4_platform_drm_probe+0xc0/0xfc [vc4]
+[   22.098961]  platform_probe+0x5c/0xa4
+
+[0;1;31mTimed out while waiting for udev queue to empty.[0m
+Begin: Loading essential drivers ... done.
+Begin: Running /scripts/init-premount ... done.
+Begin: Mounting root file system ... Begin: Running /scripts/nfs-top ... do=
+ne.
+Begin: Running /scripts/nfs-premount ... Waiting up to 60 secs for any ethe=
+rnet to become available
+
+Full log:
+   https://lava.sirena.org.uk/scheduler/job/2617478#L1124
+
+bisect log:
+
+# bad: [cf7c3c02fdd0dfccf4d6611714273dcb538af2cb] Add linux-next specific f=
+iles for 20260330
+# good: [a010730e610019b6d010ec43ce737cb59a37809d] Merge branch 'for-linux-=
+next-fixes' of https://gitlab.freedesktop.org/drm/misc/kernel.git
+# good: [3398da5432899c09712f30c92a154f3bf760a3e7] Merge branch 'clk-renesa=
+s' into clk-next
+# good: [777bc3284f0360c66ac75a44f35fc96053536ca4] Merge branch 'clk-cleanu=
+p' into clk-next
+# good: [f520a492e07bc6718e26cfb7543ab4cadd8bb0e2] clk: xgene: Fix mapping =
+leak in xgene_pllclk_init()
+# good: [aeb078cebc40d421f61a8f07b0e7919aeb44d751] arm64: dts: broadcom: bc=
+m2712-d-rpi-5-b: add fixes for pinctrl/pinctrl_aon
+# good: [9be71d462c33b1a00acfa4ab8f0f5332ed592817] firmware: cs_dsp: Simpli=
+fy suppressing log messages during KUnit testing
+# good: [7b3f8db159f710d432c4edc024fcefa9e62e8b4b] ASoC: fsl_xcvr: add bitc=
+ount and timestamp controls
+# good: [8fc5c7895185d1119ae76b509892a1d14e0bd483] ASoC: wm_adsp: Combine s=
+ome similar code in firmware file search
+# good: [981b080a79724738882b0af1c5bb7ade30d94f24] spi: fsl-qspi: Use reini=
+t_completion() for repeated operations
+# good: [ed0313223ce6514dbd39c049e25f702980d7e3cc] ASoC: codecs: wcd9335: R=
+emove potential undefined behavior in wcd9335_slimbus_irq()
+# good: [97af961568c8682c44506c9ad4b26c8a5455ec1d] ASoC: cs35l56: Put OTP r=
+egister defines in correct address order
+# good: [0a208adefecb287d22321054470d4619cb303839] ASoC: cs42l43: Add suppo=
+rt for the B variant
+# good: [a8075ada4a341ce58ebf8bef0188cefe6c2f6487] ASoC: ti: davinci-mcasp:=
+ improve aux_div selection for mid-range dividers
+# good: [82169065ffb07577075a5088b313d78673ded331] memory: tegra: Add MC er=
+ror logging support for Tegra264
+# good: [aa3d0c93a333182e887426366a4f3e5f06ee0d83] regulator: max20411: sho=
+w failure on register
+# good: [ef0b4783afc211a4b120e72b5a57f3d0340a9981] ASoC: cs35l56: KUnit tes=
+ts for reading speaker ID from host GPIOs
+# good: [e7662bced2e98ffa2c572126677deb9cf55d43b3] regcache: Move HW readba=
+ck after cache initialisation
+# good: [b1ef855c62601ed4de2c4b0ff75a075877e3dac8] regmap: Simplify devres =
+handling
+# good: [96f06d055ca03d1dfb5830fd07ff6eadbd66264c] spi: dt-bindings: mpfs-s=
+pi: remove clock-names
+# good: [2adac914c72b6cb5aba2612f49050c82aecd498e] ASoC: cs35l56-test: Add =
+test cases without onchip pulls defined
+# good: [f48e7a246a567e3764112e2463274c479d95cd96] ASoC: soc-core: Use guar=
+d()/scoped_guard() for mutex lock
+# good: [9891b52ba12e9d5fed5901b6b5f6e0cdcd424390] regcache: Factor out reg=
+cache_hw_exit() helper
+# good: [e84141846decb77d2826e553318a608b256804e5] regulator: pf9453: Allow=
+ shared IRQ
+# good: [9ab637ac5d3826606947f4e861107da958eda324] regcache: Amend printf()=
+ specifiers when printing registers
+# good: [34b4fc44e4f904fbb81335d53163ffdcb0180000] ASoC: soc_sdw_utils: rem=
+ove index from sdca codec name
+# good: [1696fad8b259a2d46e51cd6e17e4bcdbe02279fa] ASoC: sti: use managed r=
+egmap_field allocations
+# good: [d3b693a13b39bce16e284e1c737874966b3a96de] spi: spi-mem: clean up k=
+ernel-doc in spi-mem.h
+# good: [06dba254de95b16e7793224d29daa5195de2e581] ASoC: dt-bindings: nvidi=
+a,tegra-audio-max9808x: document additional board pins
+# good: [17c6bf433742e0c1ff5ce175145877c0194e4a7a] ASoC: cs35l45: Hibernate=
+ wm_adsp on runtime suspend
+# good: [da37bfe76b5b4ccc01ed8132215098e20d78e5f3] ASoC: cs42xx8: add error=
+ checks for constraints in TDM mode
+# good: [501efdcb3b3ab099fc0ce2f6e668b1c4095dd476] ASoC: SDCA: Pull the Q7.=
+8 volume helpers out of soc-ops
+# good: [2974aa42e6696a1d95b727d677dc01a71af5b998] ASoC: remove snd_soc_pcm=
+_subclass
+# good: [d90c0f78379454d51a428e312ac6db573060185c] regulator: cpcap-regulat=
+or: add support for Mot regulators
+# good: [5c74a008ffc62fc57a041602b4517519c8bf9436] firmware: cs_dsp: Mark K=
+Unit test suites KUNIT_SPEED_SLOW
+# good: [260c3fff1fefc570d8f23e87953e181d7d248861] ASoC: cs-amp-lib-test: S=
+top including platform_device.h
+# good: [7c12f6ead4672cb08b74e6f6115eb04dca8ccfa4] spi: tegra210-quad: Add =
+runtime autosuspend support
+# good: [37983fad7f3ef296fa0504c8e945987459dc5487] regmap: define cleanup h=
+elper for regmap_field
+# good: [ada32396f90951e12465224c04742607ca56a982] ASoC: SDCA: Add CS47L47 =
+to class driver
+# good: [e02902dd493bf9c9b05353c761737ac514ad7a5c] spi: add devm_spi_new_an=
+cillary_device()
+# good: [507a071d9868cb60e4e76f8a06fc8eb014f59ae4] spi: pxa2xx: use min() i=
+nstead of min_t()
+# good: [fed6e5084894373d76270cad4a32eb6479ad8247] spi: atcspi200: Remove r=
+edundant assignment to .owner
+# good: [5ebc20921b7fff9feb44de465448e17a382c9965] ASoC: tas2552: Allow aud=
+io enable GPIO to sleep
+# good: [171b3663f33e1efdc97f5112f49be10b47b20fa8] ASoC: codecs: aw88261: A=
+dd firmware-name support
+# good: [c2bcf62ca75c541ec4297e6ff02a68ddc2e02029] regcache: Split regcache=
+_count_cacheable_registers() helper
+# good: [0556bb42a84ee391a2145ddba86756f9747bc27f] regulator: pf0900: Make =
+regu_irqs variable static const
+# good: [d075cef4af6327a5de4bee7bf77591e3201e54f4] ASoC: simple-card-utils:=
+ add sysclk ordering support
+# good: [78dfbd4ad0be9f51de7b9a19388809254aeccd26] ASoC: Add quirk for Leco=
+o Bellator N176
+# good: [bf122191473e26a8f195308b1ba924c98424c8e1] ASoC: rt5677-spi: Add SP=
+I device ID matching table
+# good: [fbb4c52ccdcb4a612d2b7f800aa57090eeee16d7] regulator: spacemit-p1: =
+Update supply names
+git bisect start 'cf7c3c02fdd0dfccf4d6611714273dcb538af2cb' 'a010730e610019=
+b6d010ec43ce737cb59a37809d' '3398da5432899c09712f30c92a154f3bf760a3e7' '777=
+bc3284f0360c66ac75a44f35fc96053536ca4' 'f520a492e07bc6718e26cfb7543ab4cadd8=
+bb0e2' 'aeb078cebc40d421f61a8f07b0e7919aeb44d751' '9be71d462c33b1a00acfa4ab=
+8f0f5332ed592817' '7b3f8db159f710d432c4edc024fcefa9e62e8b4b' '8fc5c7895185d=
+1119ae76b509892a1d14e0bd483' '981b080a79724738882b0af1c5bb7ade30d94f24' 'ed=
+0313223ce6514dbd39c049e25f702980d7e3cc' '97af961568c8682c44506c9ad4b26c8a54=
+55ec1d' '0a208adefecb287d22321054470d4619cb303839' 'a8075ada4a341ce58ebf8be=
+f0188cefe6c2f6487' '82169065ffb07577075a5088b313d78673ded331' 'aa3d0c93a333=
+182e887426366a4f3e5f06ee0d83' 'ef0b4783afc211a4b120e72b5a57f3d0340a9981' 'e=
+7662bced2e98ffa2c572126677deb9cf55d43b3' 'b1ef855c62601ed4de2c4b0ff75a07587=
+7e3dac8' '96f06d055ca03d1dfb5830fd07ff6eadbd66264c' '2adac914c72b6cb5aba261=
+2f49050c82aecd498e' 'f48e7a246a567e3764112e2463274c479d95cd96' '9891b52ba12=
+e9d5fed5901b6b5f6e0cdcd424390' 'e84141846decb77d2826e553318a608b256804e5' '=
+9ab637ac5d3826606947f4e861107da958eda324' '34b4fc44e4f904fbb81335d53163ffdc=
+b0180000' '1696fad8b259a2d46e51cd6e17e4bcdbe02279fa' 'd3b693a13b39bce16e284=
+e1c737874966b3a96de' '06dba254de95b16e7793224d29daa5195de2e581' '17c6bf4337=
+42e0c1ff5ce175145877c0194e4a7a' 'da37bfe76b5b4ccc01ed8132215098e20d78e5f3' =
+'501efdcb3b3ab099fc0ce2f6e668b1c4095dd476' '2974aa42e6696a1d95b727d677dc01a=
+71af5b998' 'd90c0f78379454d51a428e312ac6db573060185c' '5c74a008ffc62fc57a04=
+1602b4517519c8bf9436' '260c3fff1fefc570d8f23e87953e181d7d248861' '7c12f6ead=
+4672cb08b74e6f6115eb04dca8ccfa4' '37983fad7f3ef296fa0504c8e945987459dc5487'=
+ 'ada32396f90951e12465224c04742607ca56a982' 'e02902dd493bf9c9b05353c761737a=
+c514ad7a5c' '507a071d9868cb60e4e76f8a06fc8eb014f59ae4' 'fed6e5084894373d762=
+70cad4a32eb6479ad8247' '5ebc20921b7fff9feb44de465448e17a382c9965' '171b3663=
+f33e1efdc97f5112f49be10b47b20fa8' 'c2bcf62ca75c541ec4297e6ff02a68ddc2e02029=
+' '0556bb42a84ee391a2145ddba86756f9747bc27f' 'd075cef4af6327a5de4bee7bf7759=
+1e3201e54f4' '78dfbd4ad0be9f51de7b9a19388809254aeccd26' 'bf122191473e26a8f1=
+95308b1ba924c98424c8e1' 'fbb4c52ccdcb4a612d2b7f800aa57090eeee16d7'
+# test job: [3398da5432899c09712f30c92a154f3bf760a3e7] https://lava.sirena.=
+org.uk/scheduler/job/2608225
+# test job: [777bc3284f0360c66ac75a44f35fc96053536ca4] https://lava.sirena.=
+org.uk/scheduler/job/2608418
+# test job: [f520a492e07bc6718e26cfb7543ab4cadd8bb0e2] https://lava.sirena.=
+org.uk/scheduler/job/2608110
+# test job: [aeb078cebc40d421f61a8f07b0e7919aeb44d751] https://lava.sirena.=
+org.uk/scheduler/job/2579214
+# test job: [9be71d462c33b1a00acfa4ab8f0f5332ed592817] https://lava.sirena.=
+org.uk/scheduler/job/2548706
+# test job: [7b3f8db159f710d432c4edc024fcefa9e62e8b4b] https://lava.sirena.=
+org.uk/scheduler/job/2548248
+# test job: [8fc5c7895185d1119ae76b509892a1d14e0bd483] https://lava.sirena.=
+org.uk/scheduler/job/2548893
+# test job: [981b080a79724738882b0af1c5bb7ade30d94f24] https://lava.sirena.=
+org.uk/scheduler/job/2545092
+# test job: [ed0313223ce6514dbd39c049e25f702980d7e3cc] https://lava.sirena.=
+org.uk/scheduler/job/2544887
+# test job: [97af961568c8682c44506c9ad4b26c8a5455ec1d] https://lava.sirena.=
+org.uk/scheduler/job/2543911
+# test job: [0a208adefecb287d22321054470d4619cb303839] https://lava.sirena.=
+org.uk/scheduler/job/2542875
+# test job: [a8075ada4a341ce58ebf8bef0188cefe6c2f6487] https://lava.sirena.=
+org.uk/scheduler/job/2540933
+# test job: [82169065ffb07577075a5088b313d78673ded331] https://lava.sirena.=
+org.uk/scheduler/job/2582197
+# test job: [aa3d0c93a333182e887426366a4f3e5f06ee0d83] https://lava.sirena.=
+org.uk/scheduler/job/2531504
+# test job: [ef0b4783afc211a4b120e72b5a57f3d0340a9981] https://lava.sirena.=
+org.uk/scheduler/job/2530821
+# test job: [e7662bced2e98ffa2c572126677deb9cf55d43b3] https://lava.sirena.=
+org.uk/scheduler/job/2530804
+# test job: [b1ef855c62601ed4de2c4b0ff75a075877e3dac8] https://lava.sirena.=
+org.uk/scheduler/job/2531890
+# test job: [96f06d055ca03d1dfb5830fd07ff6eadbd66264c] https://lava.sirena.=
+org.uk/scheduler/job/2523404
+# test job: [2adac914c72b6cb5aba2612f49050c82aecd498e] https://lava.sirena.=
+org.uk/scheduler/job/2523920
+# test job: [f48e7a246a567e3764112e2463274c479d95cd96] https://lava.sirena.=
+org.uk/scheduler/job/2522185
+# test job: [9891b52ba12e9d5fed5901b6b5f6e0cdcd424390] https://lava.sirena.=
+org.uk/scheduler/job/2522240
+# test job: [e84141846decb77d2826e553318a608b256804e5] https://lava.sirena.=
+org.uk/scheduler/job/2516913
+# test job: [9ab637ac5d3826606947f4e861107da958eda324] https://lava.sirena.=
+org.uk/scheduler/job/2516426
+# test job: [34b4fc44e4f904fbb81335d53163ffdcb0180000] https://lava.sirena.=
+org.uk/scheduler/job/2513607
+# test job: [1696fad8b259a2d46e51cd6e17e4bcdbe02279fa] https://lava.sirena.=
+org.uk/scheduler/job/2514118
+# test job: [d3b693a13b39bce16e284e1c737874966b3a96de] https://lava.sirena.=
+org.uk/scheduler/job/2511841
+# test job: [06dba254de95b16e7793224d29daa5195de2e581] https://lava.sirena.=
+org.uk/scheduler/job/2513766
+# test job: [17c6bf433742e0c1ff5ce175145877c0194e4a7a] https://lava.sirena.=
+org.uk/scheduler/job/2513835
+# test job: [da37bfe76b5b4ccc01ed8132215098e20d78e5f3] https://lava.sirena.=
+org.uk/scheduler/job/2511899
+# test job: [501efdcb3b3ab099fc0ce2f6e668b1c4095dd476] https://lava.sirena.=
+org.uk/scheduler/job/2500586
+# test job: [2974aa42e6696a1d95b727d677dc01a71af5b998] https://lava.sirena.=
+org.uk/scheduler/job/2502174
+# test job: [d90c0f78379454d51a428e312ac6db573060185c] https://lava.sirena.=
+org.uk/scheduler/job/2500322
+# test job: [5c74a008ffc62fc57a041602b4517519c8bf9436] https://lava.sirena.=
+org.uk/scheduler/job/2496391
+# test job: [260c3fff1fefc570d8f23e87953e181d7d248861] https://lava.sirena.=
+org.uk/scheduler/job/2494171
+# test job: [7c12f6ead4672cb08b74e6f6115eb04dca8ccfa4] https://lava.sirena.=
+org.uk/scheduler/job/2488528
+# test job: [37983fad7f3ef296fa0504c8e945987459dc5487] https://lava.sirena.=
+org.uk/scheduler/job/2489154
+# test job: [ada32396f90951e12465224c04742607ca56a982] https://lava.sirena.=
+org.uk/scheduler/job/2489236
+# test job: [e02902dd493bf9c9b05353c761737ac514ad7a5c] https://lava.sirena.=
+org.uk/scheduler/job/2489718
+# test job: [507a071d9868cb60e4e76f8a06fc8eb014f59ae4] https://lava.sirena.=
+org.uk/scheduler/job/2486375
+# test job: [fed6e5084894373d76270cad4a32eb6479ad8247] https://lava.sirena.=
+org.uk/scheduler/job/2484717
+# test job: [5ebc20921b7fff9feb44de465448e17a382c9965] https://lava.sirena.=
+org.uk/scheduler/job/2485130
+# test job: [171b3663f33e1efdc97f5112f49be10b47b20fa8] https://lava.sirena.=
+org.uk/scheduler/job/2482581
+# test job: [c2bcf62ca75c541ec4297e6ff02a68ddc2e02029] https://lava.sirena.=
+org.uk/scheduler/job/2483282
+# test job: [0556bb42a84ee391a2145ddba86756f9747bc27f] https://lava.sirena.=
+org.uk/scheduler/job/2483207
+# test job: [d075cef4af6327a5de4bee7bf77591e3201e54f4] https://lava.sirena.=
+org.uk/scheduler/job/2483468
+# test job: [78dfbd4ad0be9f51de7b9a19388809254aeccd26] https://lava.sirena.=
+org.uk/scheduler/job/2483108
+# test job: [bf122191473e26a8f195308b1ba924c98424c8e1] https://lava.sirena.=
+org.uk/scheduler/job/2482758
+# test job: [fbb4c52ccdcb4a612d2b7f800aa57090eeee16d7] https://lava.sirena.=
+org.uk/scheduler/job/2482462
+# test job: [cf7c3c02fdd0dfccf4d6611714273dcb538af2cb] https://lava.sirena.=
+org.uk/scheduler/job/2617478
+# bad: [cf7c3c02fdd0dfccf4d6611714273dcb538af2cb] Add linux-next specific f=
+iles for 20260330
+git bisect bad cf7c3c02fdd0dfccf4d6611714273dcb538af2cb
+# test job: [c99ea8b71328bb73baf24b2fb1591e076f1617a1] https://lava.sirena.=
+org.uk/scheduler/job/2608073
+# bad: [c99ea8b71328bb73baf24b2fb1591e076f1617a1] Merge branch 'clk-rpi' in=
+to clk-next
+git bisect bad c99ea8b71328bb73baf24b2fb1591e076f1617a1
+# test job: [672299736af6c398e867782708b7400957e62c76] https://lava.sirena.=
+org.uk/scheduler/job/2608599
+# bad: [672299736af6c398e867782708b7400957e62c76] clk: bcm: rpi: Manage clo=
+ck rate in prepare/unprepare callbacks
+git bisect bad 672299736af6c398e867782708b7400957e62c76
+# first bad commit: [672299736af6c398e867782708b7400957e62c76] clk: bcm: rp=
+i: Manage clock rate in prepare/unprepare callbacks
+# test job: [672299736af6c398e867782708b7400957e62c76] https://lava.sirena.=
+org.uk/scheduler/job/2608599
+# bad: [672299736af6c398e867782708b7400957e62c76] clk: bcm: rpi: Manage clo=
+ck rate in prepare/unprepare callbacks
+git bisect bad 672299736af6c398e867782708b7400957e62c76
+# first bad commit: [672299736af6c398e867782708b7400957e62c76] clk: bcm: rp=
+i: Manage clock rate in prepare/unprepare callbacks
+
+--OWkifeB2LU4jLg/s
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnLwtMACgkQJNaLcl1U
+h9BJxgf/T0I9RCwzdF9RU0lB7BTwecfv31gB3N8KWs5AItPM90caF5KECh1txPBO
+nNZANlFFqEuBQwm14e0ld9ySySY7Tk35/0fx+PefGJMHk//JEB+MKHBNsy/xo8u2
+djQyJF3ZOs6+HYU0YecolEY5ZJHV9SaHTx7WjEP0G23GxLqy+wSd9Tc9XwU1VWtl
+TM62RnDzFTP/TAvAoU6ALs80vuQa499X0TC70PMBU1R5VdCWg/zDylePvJh9PQzq
+Pwb9T5s3kPIjHlOBIrTN3ipKTl85SnH3W9wamfOGkRQs1alnIBKiu6Sj5sflttC2
+SJMTecpd4svfkM49bfcaD/zOgDfnmg==
+=uzPe
+-----END PGP SIGNATURE-----
+
+--OWkifeB2LU4jLg/s--
