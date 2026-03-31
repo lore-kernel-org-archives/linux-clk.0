@@ -1,381 +1,117 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 152C7405F7
-	for <linux-clk@vger.kernel.org>; Tue, 31 Mar 2026 12:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D7F36655B
+	for <linux-clk@vger.kernel.org>; Tue, 31 Mar 2026 14:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774961371; cv=none; b=Jb2tH+4OJt6OY6TfFqEGQJ5aHH655Du1vkijszFOYt30VdgFGbAWyiiIkI+EwQo3oP1ZRKG4PJio/jFjmwc8Jb62r2Spc8gPr7yAXtptMrSvaU2wJW0D3D2zl6u76nZ2g4mGMV5jZ5JfhMv6myHBS26lpQ3ctCAUjwUEbDI+eRw=
+	t=1774965721; cv=none; b=dXxfPpatMm/mfKjOXtNrG/Jv3A0qjPYaOaYPBf1lUNBegkPu4UnNEQz4WuOWmWvosMxy7AfQYRVe/d45H6hMFtPzZwn7KTQh8L3l2LLfufa4zkszOwq2yIWv/i0r3H9ibTTRd8t8fGRrwiIO7pEMpDKjPQnPd3an3q1ZbSTqXtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774961371; c=relaxed/simple;
-	bh=Coh8LzVa9q3zCzvSOZo/SjOW9x+HwU5WnB9FOx9SW4c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iYWOeVJeiL6rzOc4mEDZ8tNqUvzcE/WK3iqXNFjpbXZ/NIy3p2m81AidbkxaGRCUoa5tKv6bZ+DL+JaxwlxBPZAl2jJEkEZh6Vc2guYiYdlVPwMizkfOV+e7bDIUuAB5Ai8wdRcV1/7ZsS96HZzIJqjjIpXeFjlibJcVH8fB2Dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jNM/Ro2t; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774965721; c=relaxed/simple;
+	bh=yAUREE9KXob3siMEqqlaveFtX3vU0mvtiy26uw8kM4E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F4SZNg5NCZ0eYhBc+pVhBhdPu7XPLQAjxfHHWkckgmxG/CjPzZ5yr+Djx/NsN8avmq2eu0uf5Y4WBhIYY21lOByTdiLdPmwzEouS6IG94jBnu+lQ/I1QbEgiWg8XjHMi4IMuoSNY5IvCdeF+QkMNrUNu8TJgnlwv0foZZx4xsk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tbdLjbws; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jNM/Ro2t"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6203FC19423;
-	Tue, 31 Mar 2026 12:49:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774961370;
-	bh=Coh8LzVa9q3zCzvSOZo/SjOW9x+HwU5WnB9FOx9SW4c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jNM/Ro2tOdktKX64Pu3ng6eyvThkpH7NtheDW+o7yz2NwUogFYXt2HmkazBDgGt8Y
-	 nRx8LGIZK5+pj0l6kUZ6UwsjPUhN1ubFHe+da5VF7WTjzWIn/xH14ZJSk4xH2VMo6h
-	 6onjc68c9OQvMORAE/RGZEuNNOQrpplWh7R0F8sigTDTuzmqWjWNf/1p70TtohAM7V
-	 eC3T++w0LOlnKCB28IC+S7xy7ptJFJWTJRjISDwZjNlK0eHefwU2TNM/YsN0cCjuaZ
-	 xT2y/m+nn3B8H2do3E2mXOoVJlzsOsZ6zrXry9yHD/eE9c09MTkKRtadYKYL/JEmEM
-	 sq9PCBYNFfj1A==
-Date: Tue, 31 Mar 2026 13:49:24 +0100
-From: Mark Brown <broonie@kernel.org>
-To: =?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tbdLjbws"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5a2bf521011so57637e87.2
+        for <linux-clk@vger.kernel.org>; Tue, 31 Mar 2026 07:01:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1774965717; x=1775570517; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bcETWGUFrYZgRLtRBP3C5Ptd5x026D08AAjZHrtbcUY=;
+        b=tbdLjbwsUVTHmOSDh3YcPx4SmTNlvwV09ZQFh2QgpfmFX84zWs5zdoxX9V+Ina7Ciz
+         s/3NWeXU7DO2uZISLdGdKFIdpRort073B6R8Z5mEkwDT7kxHtR4YbApbKSR6of9xmAJc
+         gcDF2xPEe0BL4yydiMf4YxliSeNZQGY+4+YDMoWyrBB8hbyPWl92xNNZvgaQFH+PpoZ8
+         ocW03X1/ZUg3GIt92KrVtf2t/GViV7qmPyphfdvi/HozLudv0LcrMlAe7/GrlzIZLOod
+         B4Zy5ztLI21h8dKYJmlVcoHFxq51QwyB/QpgeyZmH7rNJ6wKPYMLogVPox7kjSLKwzky
+         qq5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774965717; x=1775570517;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bcETWGUFrYZgRLtRBP3C5Ptd5x026D08AAjZHrtbcUY=;
+        b=RbTqxR8eP18rrG3bOjUyQ7CeMPcSnfJ1Qsps5gU5/myShu6WkzDgQMkbTWm9rfZY1t
+         1Vj+I94VizfA4eVBpUDpadBKXwXyoollwrp8BFFVN8+cpTxBmZajlsyOn2MF9ema7Nl7
+         kT+cfD6jk6B4bCJyqSC8lQ6RzRdVC1e1VE1hLNrFFQeNXh4m9LPKmpJP4ADwshiNxZrK
+         aA8/n9RrjtuIfLt5VEq3OlJwkizcuIIB9bmebEQwZ1ZitENq6e88fg30VCRfQ9WNFtgJ
+         Cq+7ZnIL8y9XGM6wYqE/3HllzZ80FpdJeNgtQpaqya4bMUbflngMLqFo1yqWDxyU8YT5
+         JHxw==
+X-Forwarded-Encrypted: i=1; AJvYcCX9bMQuOb1AeftykFiOYDNrDkKpoKYC6ZF83relKiaIcK+i43MfBD1xyWlzWu3hdyLgHUB+TswHjn8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsESdQ2AtqdNtMwNveWl8dr0Px86OsuQFZUlVhkUHWmZFi8+NS
+	JcAwE0I/ePQKBt/BxssjzNA6kHjHFZFhc7phxCIQbg70pxDICxN4wmkNMYp5ci4tojc=
+X-Gm-Gg: ATEYQzy7clAeLrlk2FwljTSMUKXev0ufyEsgfNzXa3/6Bvk86xIEwn/wBjs1J8Udcmc
+	pdGusk3l1DQJWFfjv0ktAkc6LXVbNCSz2KhoaD/r/ZXItGhebQjrpMZ1E6R2+B78wXfitxXS+lt
+	7XtPovapXGge7R+qizyX0+3dEMmNwu6t6mCqUbUaxi/BIzYNt4l7ws7GwmzRKanm+3MXyDG0ENq
+	NJVaALn22PZMRrfvTFetUautM1oVeBasmCrNnuxtEvrcq6kDJqlNypErh+SM3VvP44wHfghl/S9
+	M5DW15pFGoUODe5n+3q9M1UR7vx8Lj9Xjm2LZeOrSoj1Q9ip5PO6vv16zq8cIdcpyRRIlQNmYrK
+	XxXgDgUgyfLAuH6rolkgFKNlBvgIjGYLIaa85oCH+8pbqaYv1/dUoZ28oAa/uSZn9lFx1wvLKs7
+	nEw27QyiZYW1XU56xFv5iVtcubiHuR1g6RItzaziyU33ubg8IzTibq+xYY6S7MILaA2w==
+X-Received: by 2002:a05:6512:2308:b0:5a2:78e2:504b with SMTP id 2adb3069b0e04-5a2ab92cc38mr3048709e87.7.1774965716356;
+        Tue, 31 Mar 2026 07:01:56 -0700 (PDT)
+Received: from thyme.. (91-159-24-186.elisa-laajakaista.fi. [91.159.24.186])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a2b1456aa2sm2434745e87.68.2026.03.31.07.01.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Mar 2026 07:01:52 -0700 (PDT)
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>
 Cc: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Maxime Ripard <mripard@kernel.org>, Melissa Wen <mwen@igalia.com>,
-	Iago Toral Quiroga <itoral@igalia.com>,
-	Chema Casanova <jmcasanova@igalia.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	kernel-dev@igalia.com
-Subject: Re: [PATCH v7 1/5] clk: bcm: rpi: Manage clock rate in
- prepare/unprepare callbacks
-Message-ID: <5f0bec08-f458-4fba-8bf3-06817a100c4c@sirena.org.uk>
-References: <20260312-v3d-power-management-v7-0-9f006a1d4c55@igalia.com>
- <20260312-v3d-power-management-v7-1-9f006a1d4c55@igalia.com>
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 0/2] clk: qcom: camcc: Add clock controllers to Titan GDSC power domain
+Date: Tue, 31 Mar 2026 17:01:40 +0300
+Message-ID: <20260331140142.892579-1-vladimir.zapolskiy@linaro.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="OWkifeB2LU4jLg/s"
-Content-Disposition: inline
-In-Reply-To: <20260312-v3d-power-management-v7-1-9f006a1d4c55@igalia.com>
-X-Cookie: Filmed before a live audience.
+Content-Transfer-Encoding: 8bit
 
+Starting from Snapdragon 845 SoC CAMCC device serves as both a power
+domain provider with a special Titan GDSC as a top power domain in
+the hierarchy and as a clock controller, where the clock provider
+function of the IP strictly depends on top Titan GDSC being enabled,
+thus it makes the CAMCC clock controller to belong to Titan power domain.
 
---OWkifeB2LU4jLg/s
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Today the formal hardware dependency between CAMCC power domain and clock
+controller is managed by runtime PM in every CAMCC consumer device driver
+like CAMSS and CCI, however this is terribly scalable to any future
+CAMSS IP device drivers, and unfortunately it is not scalable at all
+camera sensor drivers, which are also CAMCC clock controller consumers.
 
-On Thu, Mar 12, 2026 at 06:34:23PM -0300, Ma=EDra Canal wrote:
+The change adds an option to describe CAMCC power domain to CAMCC clock
+controller dependency properly, therefore runtime PM management can
+be simplified on the CAMCC client's side.
 
-> On current firmware versions, RPI_FIRMWARE_SET_CLOCK_STATE doesn't
-> actually power off the clock. To achieve meaningful power savings, the
-> clock rate must be set to the minimum before disabling. This might be
-> fixed in future firmware releases.
+The series touches only platforms with CAMCC drivers, which marked as ones
+using runtime PM (see .use_rpm flag) but Kaanapali, which formally has two
+CAMCC IPs, on the opposite end e.g. MSM8996 can not be covered by this
+change, because camera clocks and GDSC power domain are not separated from
+other media clocks and GDSCs.
 
-> Rather than pushing rate management to clock consumers, handle it
-> directly in the clock framework's prepare/unprepare callbacks. In
-> unprepare, set the rate to the minimum before disabling the clock.
-> In prepare, for clocks marked with `maximize` (currently v3d),
-> restore the rate to the maximum after enabling.
+Vladimir Zapolskiy (2):
+  clk: qcom: common: Add option to link clock controller to power domain
+  clk: qcom: camcc: Make Titan GDSC a power domain of clock controller
 
-I'm seeing boot regressions in -next with NFS root on Raspberry Pi 3B+
-which bisect to this commit.  We get a likely unrelated oops from the
-firmware interface and the boot grinds to a halt some time later since
-the ethernet never comes up:
+ drivers/clk/qcom/camcc-milos.c    |  1 +
+ drivers/clk/qcom/camcc-sm8450.c   |  1 +
+ drivers/clk/qcom/camcc-sm8550.c   |  1 +
+ drivers/clk/qcom/camcc-sm8650.c   |  1 +
+ drivers/clk/qcom/camcc-sm8750.c   |  1 +
+ drivers/clk/qcom/camcc-x1e80100.c |  1 +
+ drivers/clk/qcom/common.c         | 16 ++++++++++++++++
+ drivers/clk/qcom/common.h         |  1 +
+ 8 files changed, 23 insertions(+)
 
-[   21.898686] Firmware transaction 0x00030066 timeout
-[   21.898769] WARNING: drivers/firmware/raspberrypi.c:128 at rpi_firmware_=
-property_list+0x200/0x280, CPU#2: (udev-worker)/115
+-- 
+2.49.0
 
-=2E..
-
-[   22.067074] Call trace:
-[   22.069538]  rpi_firmware_property_list+0x200/0x280 (P)
-[   22.074824]  rpi_firmware_property+0x70/0xb8
-[   22.079140]  vc4_drm_bind+0x12c/0x354 [vc4]
-[   22.083368]  try_to_bring_up_aggregate_device+0x16c/0x1e0
-[   22.088831]  component_master_add_with_match+0xb0/0xec
-[   22.094027]  vc4_platform_drm_probe+0xc0/0xfc [vc4]
-[   22.098961]  platform_probe+0x5c/0xa4
-
-[0;1;31mTimed out while waiting for udev queue to empty.[0m
-Begin: Loading essential drivers ... done.
-Begin: Running /scripts/init-premount ... done.
-Begin: Mounting root file system ... Begin: Running /scripts/nfs-top ... do=
-ne.
-Begin: Running /scripts/nfs-premount ... Waiting up to 60 secs for any ethe=
-rnet to become available
-
-Full log:
-   https://lava.sirena.org.uk/scheduler/job/2617478#L1124
-
-bisect log:
-
-# bad: [cf7c3c02fdd0dfccf4d6611714273dcb538af2cb] Add linux-next specific f=
-iles for 20260330
-# good: [a010730e610019b6d010ec43ce737cb59a37809d] Merge branch 'for-linux-=
-next-fixes' of https://gitlab.freedesktop.org/drm/misc/kernel.git
-# good: [3398da5432899c09712f30c92a154f3bf760a3e7] Merge branch 'clk-renesa=
-s' into clk-next
-# good: [777bc3284f0360c66ac75a44f35fc96053536ca4] Merge branch 'clk-cleanu=
-p' into clk-next
-# good: [f520a492e07bc6718e26cfb7543ab4cadd8bb0e2] clk: xgene: Fix mapping =
-leak in xgene_pllclk_init()
-# good: [aeb078cebc40d421f61a8f07b0e7919aeb44d751] arm64: dts: broadcom: bc=
-m2712-d-rpi-5-b: add fixes for pinctrl/pinctrl_aon
-# good: [9be71d462c33b1a00acfa4ab8f0f5332ed592817] firmware: cs_dsp: Simpli=
-fy suppressing log messages during KUnit testing
-# good: [7b3f8db159f710d432c4edc024fcefa9e62e8b4b] ASoC: fsl_xcvr: add bitc=
-ount and timestamp controls
-# good: [8fc5c7895185d1119ae76b509892a1d14e0bd483] ASoC: wm_adsp: Combine s=
-ome similar code in firmware file search
-# good: [981b080a79724738882b0af1c5bb7ade30d94f24] spi: fsl-qspi: Use reini=
-t_completion() for repeated operations
-# good: [ed0313223ce6514dbd39c049e25f702980d7e3cc] ASoC: codecs: wcd9335: R=
-emove potential undefined behavior in wcd9335_slimbus_irq()
-# good: [97af961568c8682c44506c9ad4b26c8a5455ec1d] ASoC: cs35l56: Put OTP r=
-egister defines in correct address order
-# good: [0a208adefecb287d22321054470d4619cb303839] ASoC: cs42l43: Add suppo=
-rt for the B variant
-# good: [a8075ada4a341ce58ebf8bef0188cefe6c2f6487] ASoC: ti: davinci-mcasp:=
- improve aux_div selection for mid-range dividers
-# good: [82169065ffb07577075a5088b313d78673ded331] memory: tegra: Add MC er=
-ror logging support for Tegra264
-# good: [aa3d0c93a333182e887426366a4f3e5f06ee0d83] regulator: max20411: sho=
-w failure on register
-# good: [ef0b4783afc211a4b120e72b5a57f3d0340a9981] ASoC: cs35l56: KUnit tes=
-ts for reading speaker ID from host GPIOs
-# good: [e7662bced2e98ffa2c572126677deb9cf55d43b3] regcache: Move HW readba=
-ck after cache initialisation
-# good: [b1ef855c62601ed4de2c4b0ff75a075877e3dac8] regmap: Simplify devres =
-handling
-# good: [96f06d055ca03d1dfb5830fd07ff6eadbd66264c] spi: dt-bindings: mpfs-s=
-pi: remove clock-names
-# good: [2adac914c72b6cb5aba2612f49050c82aecd498e] ASoC: cs35l56-test: Add =
-test cases without onchip pulls defined
-# good: [f48e7a246a567e3764112e2463274c479d95cd96] ASoC: soc-core: Use guar=
-d()/scoped_guard() for mutex lock
-# good: [9891b52ba12e9d5fed5901b6b5f6e0cdcd424390] regcache: Factor out reg=
-cache_hw_exit() helper
-# good: [e84141846decb77d2826e553318a608b256804e5] regulator: pf9453: Allow=
- shared IRQ
-# good: [9ab637ac5d3826606947f4e861107da958eda324] regcache: Amend printf()=
- specifiers when printing registers
-# good: [34b4fc44e4f904fbb81335d53163ffdcb0180000] ASoC: soc_sdw_utils: rem=
-ove index from sdca codec name
-# good: [1696fad8b259a2d46e51cd6e17e4bcdbe02279fa] ASoC: sti: use managed r=
-egmap_field allocations
-# good: [d3b693a13b39bce16e284e1c737874966b3a96de] spi: spi-mem: clean up k=
-ernel-doc in spi-mem.h
-# good: [06dba254de95b16e7793224d29daa5195de2e581] ASoC: dt-bindings: nvidi=
-a,tegra-audio-max9808x: document additional board pins
-# good: [17c6bf433742e0c1ff5ce175145877c0194e4a7a] ASoC: cs35l45: Hibernate=
- wm_adsp on runtime suspend
-# good: [da37bfe76b5b4ccc01ed8132215098e20d78e5f3] ASoC: cs42xx8: add error=
- checks for constraints in TDM mode
-# good: [501efdcb3b3ab099fc0ce2f6e668b1c4095dd476] ASoC: SDCA: Pull the Q7.=
-8 volume helpers out of soc-ops
-# good: [2974aa42e6696a1d95b727d677dc01a71af5b998] ASoC: remove snd_soc_pcm=
-_subclass
-# good: [d90c0f78379454d51a428e312ac6db573060185c] regulator: cpcap-regulat=
-or: add support for Mot regulators
-# good: [5c74a008ffc62fc57a041602b4517519c8bf9436] firmware: cs_dsp: Mark K=
-Unit test suites KUNIT_SPEED_SLOW
-# good: [260c3fff1fefc570d8f23e87953e181d7d248861] ASoC: cs-amp-lib-test: S=
-top including platform_device.h
-# good: [7c12f6ead4672cb08b74e6f6115eb04dca8ccfa4] spi: tegra210-quad: Add =
-runtime autosuspend support
-# good: [37983fad7f3ef296fa0504c8e945987459dc5487] regmap: define cleanup h=
-elper for regmap_field
-# good: [ada32396f90951e12465224c04742607ca56a982] ASoC: SDCA: Add CS47L47 =
-to class driver
-# good: [e02902dd493bf9c9b05353c761737ac514ad7a5c] spi: add devm_spi_new_an=
-cillary_device()
-# good: [507a071d9868cb60e4e76f8a06fc8eb014f59ae4] spi: pxa2xx: use min() i=
-nstead of min_t()
-# good: [fed6e5084894373d76270cad4a32eb6479ad8247] spi: atcspi200: Remove r=
-edundant assignment to .owner
-# good: [5ebc20921b7fff9feb44de465448e17a382c9965] ASoC: tas2552: Allow aud=
-io enable GPIO to sleep
-# good: [171b3663f33e1efdc97f5112f49be10b47b20fa8] ASoC: codecs: aw88261: A=
-dd firmware-name support
-# good: [c2bcf62ca75c541ec4297e6ff02a68ddc2e02029] regcache: Split regcache=
-_count_cacheable_registers() helper
-# good: [0556bb42a84ee391a2145ddba86756f9747bc27f] regulator: pf0900: Make =
-regu_irqs variable static const
-# good: [d075cef4af6327a5de4bee7bf77591e3201e54f4] ASoC: simple-card-utils:=
- add sysclk ordering support
-# good: [78dfbd4ad0be9f51de7b9a19388809254aeccd26] ASoC: Add quirk for Leco=
-o Bellator N176
-# good: [bf122191473e26a8f195308b1ba924c98424c8e1] ASoC: rt5677-spi: Add SP=
-I device ID matching table
-# good: [fbb4c52ccdcb4a612d2b7f800aa57090eeee16d7] regulator: spacemit-p1: =
-Update supply names
-git bisect start 'cf7c3c02fdd0dfccf4d6611714273dcb538af2cb' 'a010730e610019=
-b6d010ec43ce737cb59a37809d' '3398da5432899c09712f30c92a154f3bf760a3e7' '777=
-bc3284f0360c66ac75a44f35fc96053536ca4' 'f520a492e07bc6718e26cfb7543ab4cadd8=
-bb0e2' 'aeb078cebc40d421f61a8f07b0e7919aeb44d751' '9be71d462c33b1a00acfa4ab=
-8f0f5332ed592817' '7b3f8db159f710d432c4edc024fcefa9e62e8b4b' '8fc5c7895185d=
-1119ae76b509892a1d14e0bd483' '981b080a79724738882b0af1c5bb7ade30d94f24' 'ed=
-0313223ce6514dbd39c049e25f702980d7e3cc' '97af961568c8682c44506c9ad4b26c8a54=
-55ec1d' '0a208adefecb287d22321054470d4619cb303839' 'a8075ada4a341ce58ebf8be=
-f0188cefe6c2f6487' '82169065ffb07577075a5088b313d78673ded331' 'aa3d0c93a333=
-182e887426366a4f3e5f06ee0d83' 'ef0b4783afc211a4b120e72b5a57f3d0340a9981' 'e=
-7662bced2e98ffa2c572126677deb9cf55d43b3' 'b1ef855c62601ed4de2c4b0ff75a07587=
-7e3dac8' '96f06d055ca03d1dfb5830fd07ff6eadbd66264c' '2adac914c72b6cb5aba261=
-2f49050c82aecd498e' 'f48e7a246a567e3764112e2463274c479d95cd96' '9891b52ba12=
-e9d5fed5901b6b5f6e0cdcd424390' 'e84141846decb77d2826e553318a608b256804e5' '=
-9ab637ac5d3826606947f4e861107da958eda324' '34b4fc44e4f904fbb81335d53163ffdc=
-b0180000' '1696fad8b259a2d46e51cd6e17e4bcdbe02279fa' 'd3b693a13b39bce16e284=
-e1c737874966b3a96de' '06dba254de95b16e7793224d29daa5195de2e581' '17c6bf4337=
-42e0c1ff5ce175145877c0194e4a7a' 'da37bfe76b5b4ccc01ed8132215098e20d78e5f3' =
-'501efdcb3b3ab099fc0ce2f6e668b1c4095dd476' '2974aa42e6696a1d95b727d677dc01a=
-71af5b998' 'd90c0f78379454d51a428e312ac6db573060185c' '5c74a008ffc62fc57a04=
-1602b4517519c8bf9436' '260c3fff1fefc570d8f23e87953e181d7d248861' '7c12f6ead=
-4672cb08b74e6f6115eb04dca8ccfa4' '37983fad7f3ef296fa0504c8e945987459dc5487'=
- 'ada32396f90951e12465224c04742607ca56a982' 'e02902dd493bf9c9b05353c761737a=
-c514ad7a5c' '507a071d9868cb60e4e76f8a06fc8eb014f59ae4' 'fed6e5084894373d762=
-70cad4a32eb6479ad8247' '5ebc20921b7fff9feb44de465448e17a382c9965' '171b3663=
-f33e1efdc97f5112f49be10b47b20fa8' 'c2bcf62ca75c541ec4297e6ff02a68ddc2e02029=
-' '0556bb42a84ee391a2145ddba86756f9747bc27f' 'd075cef4af6327a5de4bee7bf7759=
-1e3201e54f4' '78dfbd4ad0be9f51de7b9a19388809254aeccd26' 'bf122191473e26a8f1=
-95308b1ba924c98424c8e1' 'fbb4c52ccdcb4a612d2b7f800aa57090eeee16d7'
-# test job: [3398da5432899c09712f30c92a154f3bf760a3e7] https://lava.sirena.=
-org.uk/scheduler/job/2608225
-# test job: [777bc3284f0360c66ac75a44f35fc96053536ca4] https://lava.sirena.=
-org.uk/scheduler/job/2608418
-# test job: [f520a492e07bc6718e26cfb7543ab4cadd8bb0e2] https://lava.sirena.=
-org.uk/scheduler/job/2608110
-# test job: [aeb078cebc40d421f61a8f07b0e7919aeb44d751] https://lava.sirena.=
-org.uk/scheduler/job/2579214
-# test job: [9be71d462c33b1a00acfa4ab8f0f5332ed592817] https://lava.sirena.=
-org.uk/scheduler/job/2548706
-# test job: [7b3f8db159f710d432c4edc024fcefa9e62e8b4b] https://lava.sirena.=
-org.uk/scheduler/job/2548248
-# test job: [8fc5c7895185d1119ae76b509892a1d14e0bd483] https://lava.sirena.=
-org.uk/scheduler/job/2548893
-# test job: [981b080a79724738882b0af1c5bb7ade30d94f24] https://lava.sirena.=
-org.uk/scheduler/job/2545092
-# test job: [ed0313223ce6514dbd39c049e25f702980d7e3cc] https://lava.sirena.=
-org.uk/scheduler/job/2544887
-# test job: [97af961568c8682c44506c9ad4b26c8a5455ec1d] https://lava.sirena.=
-org.uk/scheduler/job/2543911
-# test job: [0a208adefecb287d22321054470d4619cb303839] https://lava.sirena.=
-org.uk/scheduler/job/2542875
-# test job: [a8075ada4a341ce58ebf8bef0188cefe6c2f6487] https://lava.sirena.=
-org.uk/scheduler/job/2540933
-# test job: [82169065ffb07577075a5088b313d78673ded331] https://lava.sirena.=
-org.uk/scheduler/job/2582197
-# test job: [aa3d0c93a333182e887426366a4f3e5f06ee0d83] https://lava.sirena.=
-org.uk/scheduler/job/2531504
-# test job: [ef0b4783afc211a4b120e72b5a57f3d0340a9981] https://lava.sirena.=
-org.uk/scheduler/job/2530821
-# test job: [e7662bced2e98ffa2c572126677deb9cf55d43b3] https://lava.sirena.=
-org.uk/scheduler/job/2530804
-# test job: [b1ef855c62601ed4de2c4b0ff75a075877e3dac8] https://lava.sirena.=
-org.uk/scheduler/job/2531890
-# test job: [96f06d055ca03d1dfb5830fd07ff6eadbd66264c] https://lava.sirena.=
-org.uk/scheduler/job/2523404
-# test job: [2adac914c72b6cb5aba2612f49050c82aecd498e] https://lava.sirena.=
-org.uk/scheduler/job/2523920
-# test job: [f48e7a246a567e3764112e2463274c479d95cd96] https://lava.sirena.=
-org.uk/scheduler/job/2522185
-# test job: [9891b52ba12e9d5fed5901b6b5f6e0cdcd424390] https://lava.sirena.=
-org.uk/scheduler/job/2522240
-# test job: [e84141846decb77d2826e553318a608b256804e5] https://lava.sirena.=
-org.uk/scheduler/job/2516913
-# test job: [9ab637ac5d3826606947f4e861107da958eda324] https://lava.sirena.=
-org.uk/scheduler/job/2516426
-# test job: [34b4fc44e4f904fbb81335d53163ffdcb0180000] https://lava.sirena.=
-org.uk/scheduler/job/2513607
-# test job: [1696fad8b259a2d46e51cd6e17e4bcdbe02279fa] https://lava.sirena.=
-org.uk/scheduler/job/2514118
-# test job: [d3b693a13b39bce16e284e1c737874966b3a96de] https://lava.sirena.=
-org.uk/scheduler/job/2511841
-# test job: [06dba254de95b16e7793224d29daa5195de2e581] https://lava.sirena.=
-org.uk/scheduler/job/2513766
-# test job: [17c6bf433742e0c1ff5ce175145877c0194e4a7a] https://lava.sirena.=
-org.uk/scheduler/job/2513835
-# test job: [da37bfe76b5b4ccc01ed8132215098e20d78e5f3] https://lava.sirena.=
-org.uk/scheduler/job/2511899
-# test job: [501efdcb3b3ab099fc0ce2f6e668b1c4095dd476] https://lava.sirena.=
-org.uk/scheduler/job/2500586
-# test job: [2974aa42e6696a1d95b727d677dc01a71af5b998] https://lava.sirena.=
-org.uk/scheduler/job/2502174
-# test job: [d90c0f78379454d51a428e312ac6db573060185c] https://lava.sirena.=
-org.uk/scheduler/job/2500322
-# test job: [5c74a008ffc62fc57a041602b4517519c8bf9436] https://lava.sirena.=
-org.uk/scheduler/job/2496391
-# test job: [260c3fff1fefc570d8f23e87953e181d7d248861] https://lava.sirena.=
-org.uk/scheduler/job/2494171
-# test job: [7c12f6ead4672cb08b74e6f6115eb04dca8ccfa4] https://lava.sirena.=
-org.uk/scheduler/job/2488528
-# test job: [37983fad7f3ef296fa0504c8e945987459dc5487] https://lava.sirena.=
-org.uk/scheduler/job/2489154
-# test job: [ada32396f90951e12465224c04742607ca56a982] https://lava.sirena.=
-org.uk/scheduler/job/2489236
-# test job: [e02902dd493bf9c9b05353c761737ac514ad7a5c] https://lava.sirena.=
-org.uk/scheduler/job/2489718
-# test job: [507a071d9868cb60e4e76f8a06fc8eb014f59ae4] https://lava.sirena.=
-org.uk/scheduler/job/2486375
-# test job: [fed6e5084894373d76270cad4a32eb6479ad8247] https://lava.sirena.=
-org.uk/scheduler/job/2484717
-# test job: [5ebc20921b7fff9feb44de465448e17a382c9965] https://lava.sirena.=
-org.uk/scheduler/job/2485130
-# test job: [171b3663f33e1efdc97f5112f49be10b47b20fa8] https://lava.sirena.=
-org.uk/scheduler/job/2482581
-# test job: [c2bcf62ca75c541ec4297e6ff02a68ddc2e02029] https://lava.sirena.=
-org.uk/scheduler/job/2483282
-# test job: [0556bb42a84ee391a2145ddba86756f9747bc27f] https://lava.sirena.=
-org.uk/scheduler/job/2483207
-# test job: [d075cef4af6327a5de4bee7bf77591e3201e54f4] https://lava.sirena.=
-org.uk/scheduler/job/2483468
-# test job: [78dfbd4ad0be9f51de7b9a19388809254aeccd26] https://lava.sirena.=
-org.uk/scheduler/job/2483108
-# test job: [bf122191473e26a8f195308b1ba924c98424c8e1] https://lava.sirena.=
-org.uk/scheduler/job/2482758
-# test job: [fbb4c52ccdcb4a612d2b7f800aa57090eeee16d7] https://lava.sirena.=
-org.uk/scheduler/job/2482462
-# test job: [cf7c3c02fdd0dfccf4d6611714273dcb538af2cb] https://lava.sirena.=
-org.uk/scheduler/job/2617478
-# bad: [cf7c3c02fdd0dfccf4d6611714273dcb538af2cb] Add linux-next specific f=
-iles for 20260330
-git bisect bad cf7c3c02fdd0dfccf4d6611714273dcb538af2cb
-# test job: [c99ea8b71328bb73baf24b2fb1591e076f1617a1] https://lava.sirena.=
-org.uk/scheduler/job/2608073
-# bad: [c99ea8b71328bb73baf24b2fb1591e076f1617a1] Merge branch 'clk-rpi' in=
-to clk-next
-git bisect bad c99ea8b71328bb73baf24b2fb1591e076f1617a1
-# test job: [672299736af6c398e867782708b7400957e62c76] https://lava.sirena.=
-org.uk/scheduler/job/2608599
-# bad: [672299736af6c398e867782708b7400957e62c76] clk: bcm: rpi: Manage clo=
-ck rate in prepare/unprepare callbacks
-git bisect bad 672299736af6c398e867782708b7400957e62c76
-# first bad commit: [672299736af6c398e867782708b7400957e62c76] clk: bcm: rp=
-i: Manage clock rate in prepare/unprepare callbacks
-# test job: [672299736af6c398e867782708b7400957e62c76] https://lava.sirena.=
-org.uk/scheduler/job/2608599
-# bad: [672299736af6c398e867782708b7400957e62c76] clk: bcm: rpi: Manage clo=
-ck rate in prepare/unprepare callbacks
-git bisect bad 672299736af6c398e867782708b7400957e62c76
-# first bad commit: [672299736af6c398e867782708b7400957e62c76] clk: bcm: rp=
-i: Manage clock rate in prepare/unprepare callbacks
-
---OWkifeB2LU4jLg/s
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnLwtMACgkQJNaLcl1U
-h9BJxgf/T0I9RCwzdF9RU0lB7BTwecfv31gB3N8KWs5AItPM90caF5KECh1txPBO
-nNZANlFFqEuBQwm14e0ld9ySySY7Tk35/0fx+PefGJMHk//JEB+MKHBNsy/xo8u2
-djQyJF3ZOs6+HYU0YecolEY5ZJHV9SaHTx7WjEP0G23GxLqy+wSd9Tc9XwU1VWtl
-TM62RnDzFTP/TAvAoU6ALs80vuQa499X0TC70PMBU1R5VdCWg/zDylePvJh9PQzq
-Pwb9T5s3kPIjHlOBIrTN3ipKTl85SnH3W9wamfOGkRQs1alnIBKiu6Sj5sflttC2
-SJMTecpd4svfkM49bfcaD/zOgDfnmg==
-=uzPe
------END PGP SIGNATURE-----
-
---OWkifeB2LU4jLg/s--
