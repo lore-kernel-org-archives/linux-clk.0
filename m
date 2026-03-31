@@ -1,124 +1,233 @@
-Received: from omta040.useast.a.cloudfilter.net (omta040.useast.a.cloudfilter.net [44.202.169.39])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77A183E6DF1
-	for <linux-clk@vger.kernel.org>; Tue, 31 Mar 2026 15:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5174E38B13E
+	for <linux-clk@vger.kernel.org>; Tue, 31 Mar 2026 18:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774970957; cv=none; b=CvhuJLakqsXhu/GD6CZ1nH2sty7Jid0biqUGracOdnO24ZLvmoDDUxHdJZ8spaRxHB5NXe/wuaMVlW9KKs4RUQeobj547S52LI0BPyefFJ6HyL0Y8RdVKjYbLlIMcVoS7NBbzxyoEIq2zUKzsdEICJC5p0iCHmrzn0BQMmpZ9S8=
+	t=1774982795; cv=none; b=XefGyW0afMk5XD8+UhElztSRdOVHu/GglNs99i6WKNN6tIPESbklPVVLTFCFN/lDcHubBrHIm1G2zKHk6C/GHd3sb0CFO0ebmwlWVEgFgSL7ZdFap+JRCOXhtHDjMLsHv4p/IKloO40vhE5/sC/jDT3/96BP5F6J7CLYyc+pZJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774970957; c=relaxed/simple;
-	bh=TxM4jHBdwMd3cEwpdnxl7GgzLf90cA7gi3yegKc723w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G6ONsNFNlhPf9HFb1ygs9L3msbW5g5Eiv1lHdGktEa+vmyy1/FMLtNPOhIGB3vqH1R88weyZX2Z5bbcl9DR0pP1bzrZaqZ70Ykuv8iVx4eOJ+Wn/GfV9j6YlUxVoRpabM67fPsFK/6g3ra/RJ+oNtUo3r7BKTWIUIAbcIKfmcgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=G0QFnCez; arc=none smtp.client-ip=44.202.169.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+	s=arc-20240116; t=1774982795; c=relaxed/simple;
+	bh=zrnIMjxXkZ1FG/FBdZl1JwIEtIQ2OE7bZ+1HVn5IA1s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bfx6la24pWevoW+OTWhuEpeO6pHMcSyXjcvploROpnYxsu4WRi10qZ9CuzZpIOwIRfrvkrCzbMBp91ZXjICiTTeCtcaVRkS4r7A1majnYhbTblFgwes/ncPDhabqyKLxva1wjgIl9GFRkw97fyuCg1NoZ8NkSzzeXOYMdIauTYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OBiv0jRY; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=DEaoA71O; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="G0QFnCez"
-Received: from eig-obgw-5006b.ext.cloudfilter.net ([10.0.29.217])
-	by cmsmtp with ESMTPS
-	id 7Yo9wc90O4Rkp7b1nwNCNw; Tue, 31 Mar 2026 15:29:15 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id 7b1AwZu0fMrq17b1AwlrFs; Tue, 31 Mar 2026 15:28:36 +0000
-X-Authority-Analysis: v=2.4 cv=W+U4VQWk c=1 sm=1 tr=0 ts=69cbe84b
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=k5Y5iPg+dmTXVWgYE/XtfQ==:17
- a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
- a=_Wotqz80AAAA:8 a=pGLkceISAAAA:8 a=20KFwNOVAAAA:8 a=WdX8k5g-n6Z53etAVCAA:9
- a=QEXdDO2ut3YA:10 a=buJP51TR1BpY-zbLSsyS:22 a=2aFnImwKRvkU0tJ3nQRT:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Jpxx80URzNBRSO9M4kIAxiBfPa78VaoakULnXtYzC9w=; b=G0QFnCezdj9n0kysZVYl8kce9J
-	9vNVvW0DmKzLhMS455wQAVBM4DiRJ9Ar7Br+XUviTwI1SaDfZbEvlq8Pk5s3nHTpqyuv27Nuqjbba
-	/wKv+nxnXC/oemXF/FASe8OEDTcCYro9PnrVUQ7vW3S5DQugDhmRupj6d4LdQgZI2U3FeHLsawPj7
-	DUDCt1isfXUnEyM4dFzmeinS5YDAJK7kX2CmCKSk6mq5NSgDOR0skoU+KJhS1CQ/psIEyyJFecxpY
-	ewTZnq61Pfkklc4U87G8wLffSXmzgH81gA7mafcIInLrW8L7v0jP0ko9RLWJs99wrkRF9FON3Zvh4
-	URtCK7qg==;
-Received: from [177.238.16.13] (port=60002 helo=[192.168.0.104])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.99.1)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1w7b19-00000002CdC-0QPD;
-	Tue, 31 Mar 2026 10:28:35 -0500
-Message-ID: <f5ae767c-8d4a-424d-b11a-d2a54127895c@embeddedor.com>
-Date: Tue, 31 Mar 2026 09:27:24 -0600
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OBiv0jRY";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="DEaoA71O"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62VGdjrb1056443
+	for <linux-clk@vger.kernel.org>; Tue, 31 Mar 2026 18:46:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	o8s7tu3YObr0O+v+/4mTKF5LO/Z20gad1rhJhAKZNX0=; b=OBiv0jRYBi5BYjPH
+	3vJHjSpkA08ACZZWotSV9YnUcLoBSb6cEdEGNNvrzW5VYzn9dOu3+NsUmo7BrT11
+	WUKhs38pFLXVw5IJ1yx0kg+nZ28knGpPDFBwJYT1yOpPjootWGW+hJvXARiTzyw2
+	3D+C74X7y7vw8madNaC6LVU2CVRgWZZWzfMr1TgJ3cyuj/E5DQg6m+3+9HRaqrBM
+	oiAkzzsdLlwdPn6bgtkAt7qx1oWmoljJvjc0LI6/tOX6FKrZk5/VIF3/q9hjoNBP
+	B7rxmeLp7NbGZ1bfvy5QiGUaEyc03cIP427uZTVmZpCseHF+YgtgWYbulnuPgLcG
+	EPpxeA==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4d80hevv2e-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 31 Mar 2026 18:46:33 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-5090cc6a7d2so199129831cf.2
+        for <linux-clk@vger.kernel.org>; Tue, 31 Mar 2026 11:46:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1774982793; x=1775587593; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=o8s7tu3YObr0O+v+/4mTKF5LO/Z20gad1rhJhAKZNX0=;
+        b=DEaoA71ORKtE3TpbJ+k5YgII9N7uZqqPAyapwy0XcCHoKn3SC2w5f3mZTHk9V9sQCA
+         9aCNPwDQgfnPNoXPXcDAfrdjqNwzsax/aqdGF3Awu40SsLMEs/UErlLpcek6i9RoGue6
+         SXaJ1xmirpDZnUz9t7t3eHihTG/BxKd+a78KoyN0Q87y5EskaXR0m2Qa0SRPef05iHyO
+         4JycD2cO1nLzA2lBoXHbi7OuWqGzSbw0K+1+PNW4ReOjrN8QKTD4q9Po837Q7SXoiF8Q
+         z+1QYZ9iPqIF4qauKJ7pmHpu7+nzeLViVN2VZe8/xItlLbBeZaDeUfZFTjGEd6riWHgI
+         0oAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774982793; x=1775587593;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=o8s7tu3YObr0O+v+/4mTKF5LO/Z20gad1rhJhAKZNX0=;
+        b=dXVblnjcWX4Dtn70GkT9TpJdmjQPS1hFvoY4HfutEHCJzm4GuJX1B6lH5vL+MEICpy
+         Ug4aWGJSUlL3YzlYyJIj/hc3JM0yvSQXsvuQX1S64It8qfbVicGgr7nJDyMm05XXo3KW
+         9KDud1gEjJ6anV++H5BDAjktCX8Nbp7QBsFrO6mHgknPAQlZVoE9Am304rim+ACSW965
+         OtW21Lp60zQ1N0gu3rx0SzrAvbbTEQPBtYjE2aZu9eDdT656iEHnsZNcc3P/6rxQAvIN
+         jzODRk+7p92bMlAYOHeUMUSFTfnPJg03MYoTMHp1psLLKBWeJ7+Dx8/hJC7PULhak4/p
+         cFsw==
+X-Forwarded-Encrypted: i=1; AJvYcCWJVVoavG3mDO2AQETzxzTCgn1V68yxc4XdGL6YPb/7H/ZFFmQOyQqSvr4Kor+/8e31FeE4YV82u6s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTlifcr5kWAMFCDTHB1dtgY1vGIAlqkDE15C1AqiIJ/ehfAoM1
+	IWOvMhz4IYfFAifNcuo806Jc735k6QNbB581TakStGX4RAYn/p3ZKsrXBwZea4fI8IPBuWXHVmA
+	lcJXkfnP1CiWt9MX1MoougEk3wX4E8Uuzibe7S6ShFcvmgvo8Z8ILYx8cSeGhV2w=
+X-Gm-Gg: ATEYQzwSxqtC6P2OqsOULvnnt8nYziBJu05shh5zJHKjLCqkREY78+PYrLrSkPqOYvt
+	ikstqRTk/1PmrEkTzCy+hxv6iSIppHL7C27B8aC3nrpFKA6/V7oxlFZ7I0NNTs58oQ7UWQb+J9q
+	aAh8ed0Ko2ZJqUCaXSdybi0WL4oPim8xmh0BXf0tpfStLqwEcPVzAAJhuSd2TbS9AwsMF+A+o51
+	G9MPw5g+WR0zUKIerrnPvCxCOLaVY+0gJDpGNBQoMwhBmzqiIpxN6MuoaXGACdzNI1QMfcRSys0
+	GotGjKBr4q6S75sHYH67H+ZVKz9trHiWgg5MHABdlf3tw7X99vlf181LZAHlGAZdJbambIBORI4
+	lq38dq5Tvyb5VGTq1s09fEWhQDbRiMY9SbQXR1NC++z6zeuvwLiJ806b51AwMkCEG2E3Kymbo/e
+	CF96Gqax099JXFLXu0JKerTD3TUeiBJCRLhdA=
+X-Received: by 2002:a05:622a:209:b0:50b:460b:650e with SMTP id d75a77b69052e-50d3bcee065mr9348081cf.49.1774982792591;
+        Tue, 31 Mar 2026 11:46:32 -0700 (PDT)
+X-Received: by 2002:a05:622a:209:b0:50b:460b:650e with SMTP id d75a77b69052e-50d3bcee065mr9347561cf.49.1774982791950;
+        Tue, 31 Mar 2026 11:46:31 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a2b13fd035sm2691936e87.18.2026.03.31.11.46.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Mar 2026 11:46:30 -0700 (PDT)
+Date: Tue, 31 Mar 2026 21:46:29 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+        Jonathan Marek <jonathan@marek.ca>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Bryan O'Donoghue <bod@kernel.org>,
+        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Hans Verkuil <hverkuil@kernel.org>,
+        Stefan Schmidt <stefan.schmidt@linaro.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Dikshita Agarwal <dikshita@qti.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-media@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Subject: Re: [PATCH v5 2/5] media: iris: scale MMCX power domain on SM8250
+Message-ID: <6yfn6ux3gbin2dtopdxxv4okinspueryuey5vfdq633gsewc6r@ttp56brnpgvr>
+References: <20260209-iris-venus-fix-sm8250-v5-0-0a22365d3585@oss.qualcomm.com>
+ <20260209-iris-venus-fix-sm8250-v5-2-0a22365d3585@oss.qualcomm.com>
+ <5e2635ac-35de-645b-b5e7-235923f844ce@oss.qualcomm.com>
+ <x5gv6dxdum5klzfjyo7xjqull6o43okkmkn7avssg26epbvrz6@z2brpssbk7iv>
+ <0b41ee7c-83fe-d604-b750-8a5a0bd62bf8@oss.qualcomm.com>
+ <CAPDyKFrO3DzfG0aW4z4w87j_iWM=3dpvp=2Wgr4MX1Bin5-6ZA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2] clk: kirkwood: use kzalloc_flex
-To: Brian Masney <bmasney@redhat.com>, Rosen Penev <rosenp@gmail.com>
-Cc: linux-clk@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
- Gregory Clement <gregory.clement@bootlin.com>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Kees Cook <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- "moderated list:ARM/Marvell Kirkwood and Armada 370, 375, 38x,..."
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>,
- open "list:KERNEL" HARDENING "(not" covered by other
- "areas):Keyword:b__counted_by(_le|_be)?b" <linux-hardening@vger.kernel.org>
-References: <20260330205504.10143-1-rosenp@gmail.com>
- <acvUoSOOF_9UQC75@redhat.com>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <acvUoSOOF_9UQC75@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 177.238.16.13
-X-Source-L: No
-X-Exim-ID: 1w7b19-00000002CdC-0QPD
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.0.104]) [177.238.16.13]:60002
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 20
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfGU+U1AvzDOatb4eo0hIkZODILmKzpe931u1cV3i+asc5CGFFDjHW32wh2uZDPG3tWskGqGSwFX1PziQJM/SHgvhyYWHaZMbX7YKozbEQgyFH8i0elH9
- 6DEEmfCzK+f6a/s87xUai6fSzVH3G9E9CZabECQ4IrlzyTvAUHoVctjvHotLETK2NXsW+nAy8dWZcM/wqG3bc38vjI2K/itfc3Y=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPDyKFrO3DzfG0aW4z4w87j_iWM=3dpvp=2Wgr4MX1Bin5-6ZA@mail.gmail.com>
+X-Authority-Analysis: v=2.4 cv=Gb0aXAXL c=1 sm=1 tr=0 ts=69cc1689 cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22 a=EUspDBNiAAAA:8
+ a=b1_-gKTMq_g9t4VrXxkA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=uxP6HrT_eTzRwkO_Te1X:22
+X-Proofpoint-GUID: 1Baxf_vEzYGCumemidqb45Ys6TzYzkPY
+X-Proofpoint-ORIG-GUID: 1Baxf_vEzYGCumemidqb45Ys6TzYzkPY
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzMxMDE4MCBTYWx0ZWRfX5VHmjtqYSwev
+ QSfIs1RYXOSiR2cQUnE/8zxwnk/FidAkR4pBChCTBpq5z+s+RlP12KgcBexXFqVU6SC+7uX+Wio
+ krixE2XKmJ3c0Z06efNgciN8tfwRFNLzQ/yMSlbh8Lk8zKAyc6DIwau8cNxJi7iwuwuczCz4ih2
+ Pcxe32gbsdkE5ipva+rWB5cFetrRk83ahRBx1q+rRHckvKrQi+B49hnUDswcCLphdOHprN8rFPO
+ muX+bb9414y3E9x3jioJicyTUuz2qPOCbnNEHuvMmChaWzFfMVYjDvKz+O9/KvwFIzZjwuqsX5j
+ RSJQfBAO15suDRuqExQ8MUeDoADtUVMQPNTfGpf2HNkKXpnCtoIG/6a4lwWP5bVdmQZuZRr4N98
+ CrZj1i2hBjdZVd1Rs4dNH03RXIixilkBlaeNG2oVUf6PUdcmKSPQU3JjMuXLST8IvukThoi2M5x
+ pgIA5MhUBxaaOYICiAg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-31_04,2026-03-31_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 impostorscore=0 adultscore=0 spamscore=0 bulkscore=0
+ malwarescore=0 clxscore=1015 suspectscore=0 priorityscore=1501 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603310180
 
-
-
-On 3/31/26 08:05, Brian Masney wrote:
-> On Mon, Mar 30, 2026 at 01:55:04PM -0700, Rosen Penev wrote:
->> Simplify allocation by using a flexible array member and kzalloc_flex to
->> combine allocations.
->>
->> Add __counted_by for extra runtime analysis. Move counting variable
->> assignment to right after allocation as required by __counted_by.
-
-This is misinformation and should be phrased differently[1]
-
--Gustavo
-
-[1] https://lore.kernel.org/linux-hardening/37378f49-437f-438b-ad6c-d60480feb306@embeddedor.com/
-
->>
->> Signed-off-by: Rosen Penev <rosenp@gmail.com>
->> ---
->>   v2: remove unused goto.
+On Tue, Mar 31, 2026 at 01:33:35PM +0200, Ulf Hansson wrote:
+> On Mon, 30 Mar 2026 at 15:06, Dikshita Agarwal
+> <dikshita.agarwal@oss.qualcomm.com> wrote:
+> >
+> >
+> >
+> > On 3/30/2026 4:45 PM, Dmitry Baryshkov wrote:
+> > > On Mon, Mar 30, 2026 at 10:55:02AM +0530, Dikshita Agarwal wrote:
+> > >>
+> > >>
+> > >> On 2/9/2026 7:02 AM, Dmitry Baryshkov wrote:
+> > >>> On SM8250 most of the video clocks are powered by the MMCX domain, while
+> > >>> the PLL is powered on by the MX domain. Extend the driver to support
+> > >>> scaling both power domains, while keeping compatibility with the
+> > >>> existing DTs, which define only the MX domain.
+> > >>>
+> > >>> Fixes: 79865252acb6 ("media: iris: enable video driver probe of SM8250 SoC")
+> > >>> Reviewed-by: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
+> > >>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> > >>> ---
+> > >>>  drivers/media/platform/qcom/iris/iris_platform_gen1.c | 2 +-
+> > >>>  drivers/media/platform/qcom/iris/iris_probe.c         | 7 +++++++
+> > >>>  2 files changed, 8 insertions(+), 1 deletion(-)
+> > >>>
+> > >>> diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen1.c b/drivers/media/platform/qcom/iris/iris_platform_gen1.c
+> > >>> index df8e6bf9430e..aa71f7f53ee3 100644
+> > >>> --- a/drivers/media/platform/qcom/iris/iris_platform_gen1.c
+> > >>> +++ b/drivers/media/platform/qcom/iris/iris_platform_gen1.c
+> > >>> @@ -281,7 +281,7 @@ static const struct bw_info sm8250_bw_table_dec[] = {
+> > >>>
+> > >>>  static const char * const sm8250_pmdomain_table[] = { "venus", "vcodec0" };
+> > >>>
+> > >>> -static const char * const sm8250_opp_pd_table[] = { "mx" };
+> > >>> +static const char * const sm8250_opp_pd_table[] = { "mx", "mmcx" };
+> > >>>
+> > >>>  static const struct platform_clk_data sm8250_clk_table[] = {
+> > >>>     {IRIS_AXI_CLK,  "iface"        },
+> > >>> diff --git a/drivers/media/platform/qcom/iris/iris_probe.c b/drivers/media/platform/qcom/iris/iris_probe.c
+> > >>> index 7b612ad37e4f..74ec81e3d622 100644
+> > >>> --- a/drivers/media/platform/qcom/iris/iris_probe.c
+> > >>> +++ b/drivers/media/platform/qcom/iris/iris_probe.c
+> > >>> @@ -64,6 +64,13 @@ static int iris_init_power_domains(struct iris_core *core)
+> > >>>             return ret;
+> > >>>
+> > >>>     ret =  devm_pm_domain_attach_list(core->dev, &iris_opp_pd_data, &core->opp_pmdomain_tbl);
+> > >>> +   /* backwards compatibility for incomplete ABI SM8250 */
+> > >>> +   if (ret == -ENODEV &&
+> > >>> +       of_device_is_compatible(core->dev->of_node, "qcom,sm8250-venus")) {
+> > >>> +           iris_opp_pd_data.num_pd_names--;
+> > >>> +           ret = devm_pm_domain_attach_list(core->dev, &iris_opp_pd_data,
+> > >>> +                                            &core->opp_pmdomain_tbl);
+> > >>> +   }
+> > >>>     if (ret < 0)
+> > >>>             return ret;
+> > >>>
+> > >>>
+> > >>
+> > >> Hitting below compilation error on latest kernel
+> > >>
+> > >> drivers/media/platform/qcom/iris/iris_probe.c: In function
+> > >> ‘iris_init_power_domains’:
+> > >> drivers/media/platform/qcom/iris/iris_probe.c:71:46: error: decrement of
+> > >> read-only member ‘num_pd_names’
+> > >>    71 |                 iris_opp_pd_data.num_pd_names--;
+> > >
+> > > See commit 7ad7f43e568b ("pmdomain: de-constify fields struct
+> > > dev_pm_domain_attach_data")
 > 
-> Reviewed-by: Brian Masney <bmasney@redhat.com>
+> The intent was for this patch to be part of v7.0-rc1, but I failed
+> with my pull-request to Linus.
 > 
-> For the future, if someone asks for changes in a previous version, then
-> be sure to CC them on the next revision.
+> Instead this will be part of v7.1-rc1, assuming everything goes as expected.
 > 
+> Is it possible to drop/defer these changes until v7.2?
 
+It would be very sad.
+
+> 
+> Kind regards
+> Uffe
+
+-- 
+With best wishes
+Dmitry
