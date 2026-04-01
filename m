@@ -1,158 +1,105 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28948379996;
-	Wed,  1 Apr 2026 07:18:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7BEE3A6EEB;
+	Wed,  1 Apr 2026 08:48:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775027898; cv=none; b=EBCB7tjlC82WWJcxq/SkzBjAMvvVuaEvNFeSoFudMMWGRr/xYDdssnBEsVexOKcllObGq0q+N8a5QokaMcQh8lEaAi79xj575y93xDEgNbBTh6a0v2WCQjoieu4xrhtd11fBUfkhelpU45Szt1ug7IrZEGNOSM7muiJciatCD5A=
+	t=1775033284; cv=none; b=NbKFCb03IKxvW4FOoYsaCjbNuWbhuUxSI/tEe7fzLjcusgS8IacFxfIc2GmycNmMSclU4sGZRkpeX1L0PG8UbbLl2kk4fphPR8AkCEUssgDCPA0BQ0lusycK1qO6J1qszCJOvNT/JtS7+GGlW1coeV7eN8O0rnlz/B2qwSEqAwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775027898; c=relaxed/simple;
-	bh=+iC1OB5QHHkHRas2NRIx6CoGRErIM+b5gqVHWduvNXo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z71lSebSaI26QXxJc1vYPWGYbzwO4u43PN6qeMotprel266gQV1ro/NNApi0XA2LLCjh4WOtbjlKYQklvn5HBovUjGnnZM9kf8OVVnuvnXeoDOJtrEymyMh+0JeYUCJmfp4UbteSdeY+9l5lbfpZNGGuxAHi0PB1/gbD4Ra0awo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uiHFW+kY; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1775033284; c=relaxed/simple;
+	bh=kbzqwPjUI5FPIJ6Pezp/hV9jTHQNFhZvMfXHh1uylQM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=CFEjtTjWNbwSsPQZE7v5kvUoxcgE1WckWYU3U3Lze2WgSUuZiDv0BBy5jPaaDUPgK0IOD/mamQNGERO6bgjwykU42W3WVZQwGX134haD84496odZcI0vXoUut5ECKRhd2paUYx57AZrVT6eWOax6VfEVJDzycKn9qdfOXRlxYR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=O8gwdWor; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uiHFW+kY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 215FDC4CEF7;
-	Wed,  1 Apr 2026 07:18:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775027897;
-	bh=+iC1OB5QHHkHRas2NRIx6CoGRErIM+b5gqVHWduvNXo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uiHFW+kYJ3RQU2h5+3IRaYxrTwmNvpiQbcRmywsm69D4WUJZeYLChsZvGm4hzlRLr
-	 IcE3fyQENC/0Z0P6KucI84pLpBEYaOxTrl8IoH8ZLqEQoMIOicfwxQbujkZX1+taG+
-	 yIZLuGz5CMO4EhUAbfUFZRlNUBl5UQnm2hN8sx70wvnO4x/aoCBP1BI8anwpUtLTrM
-	 fBe4DPZLZG1CbXVSg5RqtX7n1wwgmJV5VzTmlG6tfW3G4jCDdbnZZ33YcZCY1Co499
-	 ywMJC+Z+XvAHKWyHm+L1vmYpkC8EfxCSW6PWzIFrdP2K8dc/x+U6fInYcW310WVaMP
-	 uJEQBMAuwxpLg==
-Message-ID: <6d0c1154-b249-4c44-acb4-52d43d626fa6@kernel.org>
-Date: Wed, 1 Apr 2026 09:18:12 +0200
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="O8gwdWor"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 555C64E42897;
+	Wed,  1 Apr 2026 08:48:01 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 2799F602BF;
+	Wed,  1 Apr 2026 08:48:01 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0A232104502B1;
+	Wed,  1 Apr 2026 10:47:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1775033279; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=MulX6YMpnNOMv0Pee5WdBa40QBlB89kOy61SqtPUmhY=;
+	b=O8gwdWorFGZ31oS+MUxUypavWrJm+WPFW7B9iYYf3nLc9EIVFbgNYH63p4x6hVyLOQ0owi
+	DVEKZRJGe9fKHyuKzeosSHTJjPuClPcoe3qKSHiASpnph+6DJYEI1QO86tbKGmq7tNAaCa
+	eOZa4WUj92yF+GeqNgexZfhQ6FQVTPliQN9YsLW/80Qi3IgqJuVChweuxfHjjKvFjwRShm
+	3GZ2JwjptP7jnvMgvRTcNYaI887GlPBQOYCE2fEkiYjuNSFuqKDRTX48XzHD3BxGfmK6Xj
+	ThbolGyeWrENnGcYTK/LswFcFGTPIfjdoy0tPogo5o9nL3igAjB/PihoOY+Mmw==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Brian Masney <bmasney@redhat.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd
+ <sboyd@kernel.org>,  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
+ <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Thomas
+ Gleixner <tglx@kernel.org>,  Olivia Mackall <olivia@selenic.com>,  Herbert
+ Xu <herbert@gondor.apana.org.au>,  Jayesh Choudhary <j-choudhary@ti.com>,
+  "David S. Miller" <davem@davemloft.net>,  Christian Marangi
+ <ansuelsmth@gmail.com>,  Antoine Tenart <atenart@kernel.org>,  Geert
+ Uytterhoeven <geert+renesas@glider.be>,  Magnus Damm
+ <magnus.damm@gmail.com>,  Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+  Pascal EBERHARD <pascal.eberhard@se.com>,  Wolfram Sang
+ <wsa+renesas@sang-engineering.com>,  linux-clk@vger.kernel.org,
+  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-crypto@vger.kernel.org,  linux-renesas-soc@vger.kernel.org,  Herve
+ Codina <herve.codina@bootlin.com>
+Subject: Re: [PATCH 10/16] clk: Add support for clock nexus dt bindings
+In-Reply-To: <acqT3Dh03y3JiLLc@redhat.com> (Brian Masney's message of "Mon, 30
+	Mar 2026 11:16:44 -0400")
+References: <20260327-schneider-v7-0-rc1-crypto-v1-0-5e6ff7853994@bootlin.com>
+	<20260327-schneider-v7-0-rc1-crypto-v1-10-5e6ff7853994@bootlin.com>
+	<acqT3Dh03y3JiLLc@redhat.com>
+User-Agent: mu4e 1.12.7; emacs 30.2
+Date: Wed, 01 Apr 2026 10:47:51 +0200
+Message-ID: <87y0j76p8o.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/4] dt-bindings: clock: qcom,sm8550-tcsr: Add QREF
- regulator supplies for glymur
-To: Qiang Yu <qiang.yu@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Taniya Das <taniya.das@oss.qualcomm.com>,
- Konrad Dybcio <konradybcio@kernel.org>, johan@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260331-qref_vote-v1-0-3fd7fbf87864@oss.qualcomm.com>
- <20260331-qref_vote-v1-1-3fd7fbf87864@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20260331-qref_vote-v1-1-3fd7fbf87864@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 01/04/2026 08:35, Qiang Yu wrote:
-> The glymur TCSR PCIe clkref clocks require regulator supplies for the
-> QREF block and its refgen reference voltage generator. Add the optional
-> supply properties restricted to qcom,glymur-tcsr via an allOf/if/then
-> conditional schema.
-> 
-> Switch from additionalProperties to unevaluatedProperties so that
-> properties defined inside the if/then block are correctly recognised as
-> evaluated and not rejected by the schema validator.
+Hello Brian,
 
-Sorry, but no. There is a reason for that why additionalProperties fail
-and writing-bindings explain that.
+First, thanks for the whole review.
 
-> 
-> Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
-> ---
->  .../bindings/clock/qcom,sm8550-tcsr.yaml           | 26 +++++++++++++++++++++-
->  1 file changed, 25 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
-> index ae9aef0e54e8b8b85bc70e6096d524447091f39e..88db650e69ef2388a5bfb6783a57c1d48c0e780f 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
-> @@ -49,11 +49,35 @@ properties:
->    '#reset-cells':
->      const: 1
->  
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: qcom,glymur-tcsr
-> +    then:
-> +      properties:
-> +        vdda-refgen-0p9-supply: true
-> +        vdda-refgen-1p2-supply: true
-> +        vdda-qrefrx0-0p9-supply: true
-> +        vdda-qrefrx1-0p9-supply: true
-> +        vdda-qrefrx2-0p9-supply: true
-> +        vdda-qrefrx4-0p9-supply: true
-> +        vdda-qrefrx5-0p9-supply: true
-> +        vdda-qreftx0-0p9-supply: true
-> +        vdda-qreftx0-1p2-supply: true
-> +        vdda-qreftx1-0p9-supply: true
-> +        vdda-qrefrpt0-0p9-supply: true
-> +        vdda-qrefrpt1-0p9-supply: true
-> +        vdda-qrefrpt2-0p9-supply: true
-> +        vdda-qrefrpt3-0p9-supply: true
-> +        vdda-qrefrpt4-0p9-supply: true
+On 30/03/2026 at 11:16:44 -04, Brian Masney <bmasney@redhat.com> wrote:
+>> -		ret =3D of_parse_phandle_with_args(np, "clocks", "#clock-cells",
+>> -						 index, out_args);
+>> +		ret =3D of_parse_phandle_with_args_map(np, "clocks", "clock",
+>> +						     index, out_args);
+>
+> Before I left my Reviewed-by, I should have double checked Sashiko. It
+> has several questions about this patch. The first is:
+>
+>     Are there other places in the clock framework that need to transition=
+ to the
+>     new map API to ensure assigned clocks work?
+>=20=20=20=20=20
+>     For instance, assigned-clocks and assigned-clock-parents are parsed in
+>     drivers/clk/clk-conf.c using of_parse_phandle_with_args(). If a device
+>     specifies an assigned clock that routes through a nexus node, will it=
+ fail
+>     to configure because the map is not traversed?
 
-I really doubt that TCSR, which is a small, tiny tiny block the in SoC
-have this ~15 pin supplies.
+The goal of the nexus node is to isolate what is behind. Are
+assigned-clocks et al. supposed to traverse a nexus node? I am tempted
+to say "no", but I'm open to discussing this ofc.
 
-Anyway, if it has, then device is quite different and should live in its
-own schema.
+> https://sashiko.dev/#/patchset/20260327-schneider-v7-0-rc1-crypto-v1-0-5e=
+6ff7853994%40bootlin.com?patch=3D12563
 
-Best regards,
-Krzysztof
+I have mixed feelings concerning Sashiko's feedback. I will go through
+that page nevertheless, there are interesting comments in there.
+
+Thanks,
+Miqu=C3=A8l
