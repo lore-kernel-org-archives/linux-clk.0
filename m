@@ -1,106 +1,158 @@
-Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6232BD0B;
-	Wed,  1 Apr 2026 06:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28948379996;
+	Wed,  1 Apr 2026 07:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775025975; cv=none; b=k2/zY+fvxr4nwgP285hP5c6CcXoum3V5YiNYA8G+kZ0Tj/1p188okMiZZGHf+P+usFjn9uy3QSSL6KwT3tYGUqm+tq9OBfbXcN0RaDbrleJNFag0xMmp5BKAcc1GzM1ny5/Scq/J0IZjyeuuNZ7yGrKh9EMrCIwAYZ22607NIj8=
+	t=1775027898; cv=none; b=EBCB7tjlC82WWJcxq/SkzBjAMvvVuaEvNFeSoFudMMWGRr/xYDdssnBEsVexOKcllObGq0q+N8a5QokaMcQh8lEaAi79xj575y93xDEgNbBTh6a0v2WCQjoieu4xrhtd11fBUfkhelpU45Szt1ug7IrZEGNOSM7muiJciatCD5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775025975; c=relaxed/simple;
-	bh=tsXCo8kHJxaw2PHmUna9SP8WpCxHXFWUfDWgjeE1aCk=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=aAUHVSEZmK1y+yupvKnRb7+0lgKXCgLvxKqx0Ha+WuZhqI1k3sGdulQzxzao4zzVqDg2s4UXD4bhKw7efMi1SndXHSR93pH1OwnoFqangCzKxY4Ee+fzwRdIUy5SMmYc3kbgQj1rDdXesczDbPGoZRwpXFLtI3w3LRxQYZwE+pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=jQqDFXPL; arc=none smtp.client-ip=54.207.22.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+	s=arc-20240116; t=1775027898; c=relaxed/simple;
+	bh=+iC1OB5QHHkHRas2NRIx6CoGRErIM+b5gqVHWduvNXo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z71lSebSaI26QXxJc1vYPWGYbzwO4u43PN6qeMotprel266gQV1ro/NNApi0XA2LLCjh4WOtbjlKYQklvn5HBovUjGnnZM9kf8OVVnuvnXeoDOJtrEymyMh+0JeYUCJmfp4UbteSdeY+9l5lbfpZNGGuxAHi0PB1/gbD4Ra0awo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uiHFW+kY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="jQqDFXPL"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1775025903;
-	bh=jdSh7Gkw/dQvbevK9ISn2ljXK48jqiWBgsjGy36WQ/c=;
-	h=Mime-Version:Date:Message-Id:Subject:From:To;
-	b=jQqDFXPLrpAGxQZQu+WsloIN51XWDD+ZO4a4UMAweMsPlqhjtwmLznjOrZMMJh6C6
-	 n3QQYFDoS4iLU8O1ZReUCsNmwyyttIb5lanTRgAerRGgouoU0GEk+Ch+/EvRH8SF4o
-	 xsN/dhgdHQFZzbPzlfdKvsfbPZvfmZFw+ciqOVHI=
-X-QQ-mid: esmtpsz18t1775025901t2af1da78
-X-QQ-Originating-IP: rNVcEvc/xIMzFngA6uKPDU8Cfui6+G/HVk6UwmFySyo=
-Received: from = ( [120.237.158.181])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 01 Apr 2026 14:44:58 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 1209826560755650584
-EX-QQ-RecipientCnt: 21
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uiHFW+kY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 215FDC4CEF7;
+	Wed,  1 Apr 2026 07:18:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775027897;
+	bh=+iC1OB5QHHkHRas2NRIx6CoGRErIM+b5gqVHWduvNXo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uiHFW+kYJ3RQU2h5+3IRaYxrTwmNvpiQbcRmywsm69D4WUJZeYLChsZvGm4hzlRLr
+	 IcE3fyQENC/0Z0P6KucI84pLpBEYaOxTrl8IoH8ZLqEQoMIOicfwxQbujkZX1+taG+
+	 yIZLuGz5CMO4EhUAbfUFZRlNUBl5UQnm2hN8sx70wvnO4x/aoCBP1BI8anwpUtLTrM
+	 fBe4DPZLZG1CbXVSg5RqtX7n1wwgmJV5VzTmlG6tfW3G4jCDdbnZZ33YcZCY1Co499
+	 ywMJC+Z+XvAHKWyHm+L1vmYpkC8EfxCSW6PWzIFrdP2K8dc/x+U6fInYcW310WVaMP
+	 uJEQBMAuwxpLg==
+Message-ID: <6d0c1154-b249-4c44-acb4-52d43d626fa6@kernel.org>
+Date: Wed, 1 Apr 2026 09:18:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/4] dt-bindings: clock: qcom,sm8550-tcsr: Add QREF
+ regulator supplies for glymur
+To: Qiang Yu <qiang.yu@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Taniya Das <taniya.das@oss.qualcomm.com>,
+ Konrad Dybcio <konradybcio@kernel.org>, johan@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260331-qref_vote-v1-0-3fd7fbf87864@oss.qualcomm.com>
+ <20260331-qref_vote-v1-1-3fd7fbf87864@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20260331-qref_vote-v1-1-3fd7fbf87864@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 01 Apr 2026 14:44:58 +0800
-Message-Id: <DHHM60NUGNZP.1JLBPAHKZRQFR@linux.spacemit.com>
-Cc: "Vinod Koul" <vkoul@kernel.org>, "Frank Li" <Frank.Li@kernel.org>, "Rob
- Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Yixun Lan" <dlan@kernel.org>,
- "Guodong Xu" <guodong@riscstar.com>, "Michael Turquette"
- <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Paul
- Walmsley" <pjw@kernel.org>, "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert
- Ou" <aou@eecs.berkeley.edu>, "Alexandre Ghiti" <alex@ghiti.fr>,
- <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-riscv@lists.infradead.org>, <spacemit@lists.linux.dev>,
- <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v3 1/5] dt-bindings: dmaengine: Add SpacemiT K3 DMA
- compatible string
-From: "Troy Mitchell" <troy.mitchell@linux.spacemit.com>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>, "Troy Mitchell"
- <troy.mitchell@linux.spacemit.com>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20260331-k3-pdma-v3-0-a4e60dd8b4b3@linux.spacemit.com>
- <20260331-k3-pdma-v3-1-a4e60dd8b4b3@linux.spacemit.com>
- <20260401-divergent-magenta-dalmatian-3c6c3e@quoll>
-In-Reply-To: <20260401-divergent-magenta-dalmatian-3c6c3e@quoll>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: N9m5DZSiVOZbSjfBIAHCOaI9580cNFua75cW6peU9XPs/5ClY9v4OmN4
-	owqev2zFdNAATCFOi6twzi/iF/GqezRCQWgbLUQw+lPDiXo4wqzgKbKYl8MRq9by7EqOYQw
-	e03FFqbdHOS72KDNHdlv4XNwpvBqYL+0uLu35zqzgrNgDG27HjZBEVEBo+Gg9bWGlpXSL8t
-	UbPXZTbNI04bQ0KxJAJq5a3IdodTDo/yPPjX+moWowygem1dw2rlKHuhSx1km3UdUVTXuCD
-	jVRjhtenQg7hbzqNI1IiUkiZ2PHXjQgRh0DdXX1/8aT6xlHTkbVu7bbUEQ37jVUB36TPQfJ
-	F5uSN+zNWhpsAHbLdY+7tchj/+M5r8/HPHZtcxpox+UIwRau6U1QiJlk+shqC8EOB7K/I9V
-	P3a6HlYeQR/iUkKDn/Xl7dHtvh00wW+FlSpAVegBOwF37rpAX2J3jtSIIZH+oduWaP417hl
-	VraVOmHQnu00Smo4/5fr9XyVpsID8WBHjnqsKqEOpqYU+JIaY1AIAJbN/da7BlBimMYKQcz
-	ncG5Rd3XBoHkxoKECWLBqRdYRldT9WnUXeIBEuOglG88MG/8rP0NOFEB5K77LQylvsdP8Dr
-	6EcdWQTgs7E4bz1CKoCE+TBdI3u9OpnUyVlNYBIs82/qwgvJsYHohy22JJnB+vkWqgnai50
-	OYg0pZ6nM3sDeL93DoNHTLEMAucqxX5KVpHlZonGFw0/YulAw3pXpXYU3L3h/dLdVxbAb8h
-	y9uYn8QWvM7OEPEyGjHRN/YwjWUVUle4tiXfSQ9Y0mg6ynGj5gc4X90yh3ejufllkhN1qPd
-	XwsR3tcsRoRUQx6F343MPF/+7SyGUI5CNhDGGgW0fwY2OCjaonTquc+Q6ak3dVNeuVMDEkm
-	IzojDah2TDJf3Tdryf5ryhJ2X6CsAw5JnXkRgWFRFB1QYuBTlKMnbkEtQacaHAwLzk5BMCc
-	awYWLgI7fBE7+X3mkB9vJCxvMVifTX439yVHnMHlvZ916oFaSn/QPilJSLHZxW+QvXDuMLb
-	UuJNILu1yea/cQorlRbcFt/yLfBZDHlQU3tjWN0Zs3dIJsZb1S/nXMrO+Jl6PkD0jf8Wfxl
-	d2wpM3aEKSYDAh6BbNKrQ0=
-X-QQ-XMRINFO: OWPUhxQsoeAVwkVaQIEGSKwwgKCxK/fD5g==
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: 7bit
 
-On Wed Apr 1, 2026 at 2:42 PM CST, Krzysztof Kozlowski wrote:
-> On Tue, Mar 31, 2026 at 04:27:04PM +0800, Troy Mitchell wrote:
->> From: Guodong Xu <guodong@riscstar.com>
->> - Memory addressing capabilities: Unlike the K1 SoC, which had memory ad=
-dressing
->>   limitations (e.g., restricted to the 0-4GB space) and required a dedic=
-ated
->>   dma-bus with dma-ranges to restrict memory allocations, the K3 DMA mas=
-ters
->>   possess full memory addressing capabilities.
->
-> Programming interface is still compatible, regardless of memory
-> addressing limitations, so that is rather incorrect reason.
-I'll remove this item. Thanks.
+On 01/04/2026 08:35, Qiang Yu wrote:
+> The glymur TCSR PCIe clkref clocks require regulator supplies for the
+> QREF block and its refgen reference voltage generator. Add the optional
+> supply properties restricted to qcom,glymur-tcsr via an allOf/if/then
+> conditional schema.
+> 
+> Switch from additionalProperties to unevaluatedProperties so that
+> properties defined inside the if/then block are correctly recognised as
+> evaluated and not rejected by the schema validator.
 
-                            - Troy
->
-> Best regards,
-> Krzysztof
+Sorry, but no. There is a reason for that why additionalProperties fail
+and writing-bindings explain that.
 
+> 
+> Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
+> ---
+>  .../bindings/clock/qcom,sm8550-tcsr.yaml           | 26 +++++++++++++++++++++-
+>  1 file changed, 25 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
+> index ae9aef0e54e8b8b85bc70e6096d524447091f39e..88db650e69ef2388a5bfb6783a57c1d48c0e780f 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
+> @@ -49,11 +49,35 @@ properties:
+>    '#reset-cells':
+>      const: 1
+>  
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: qcom,glymur-tcsr
+> +    then:
+> +      properties:
+> +        vdda-refgen-0p9-supply: true
+> +        vdda-refgen-1p2-supply: true
+> +        vdda-qrefrx0-0p9-supply: true
+> +        vdda-qrefrx1-0p9-supply: true
+> +        vdda-qrefrx2-0p9-supply: true
+> +        vdda-qrefrx4-0p9-supply: true
+> +        vdda-qrefrx5-0p9-supply: true
+> +        vdda-qreftx0-0p9-supply: true
+> +        vdda-qreftx0-1p2-supply: true
+> +        vdda-qreftx1-0p9-supply: true
+> +        vdda-qrefrpt0-0p9-supply: true
+> +        vdda-qrefrpt1-0p9-supply: true
+> +        vdda-qrefrpt2-0p9-supply: true
+> +        vdda-qrefrpt3-0p9-supply: true
+> +        vdda-qrefrpt4-0p9-supply: true
+
+I really doubt that TCSR, which is a small, tiny tiny block the in SoC
+have this ~15 pin supplies.
+
+Anyway, if it has, then device is quite different and should live in its
+own schema.
+
+Best regards,
+Krzysztof
