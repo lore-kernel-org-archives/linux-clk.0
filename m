@@ -1,46 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAFA2330315;
-	Wed,  1 Apr 2026 06:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C18B3126DF;
+	Wed,  1 Apr 2026 06:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775025406; cv=none; b=Q27CRGdeAeNddQsayBim0HOxyGByk/QGvrZS5YyRS5d8SSQsXdyo3ByoMSxPuarBve12/6HEc8IX4K7MxF03j6cFiSjYR9yDDdB7UC9+rFmS0B5lEZGQouD7Su1CkYW2ScbXASU7pfqDQlZtLUSiYZHKS88JhngLinxmEH2GLmE=
+	t=1775025613; cv=none; b=Y1/ctT95w3xPFOk6B8Rzw7vsXk1F2fb4P/UO3NL2/s4WJ3zrJR76+DFMhGYJRv0kBstK18wipMHM2B/1Zb0H2ba4clYRI3nW8v/x6qAqEQKygHKqsHtfZDovh+/0cNiS2RjDJB55+/g60ALJTvoBFs2RJC32yWBroCw0a9PJLO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775025406; c=relaxed/simple;
-	bh=+DFyPkJ1QSfX7H4m+XwGecn09bxaPGHmqQ4ZAuy0BBU=;
+	s=arc-20240116; t=1775025613; c=relaxed/simple;
+	bh=+cxshQa0PJoHqWtXPlTCUp0KZvbNQJ4m1DCFEL3Tv4k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OylWfSmZ+pYTA9Jt/GAjJTl8uZUWbz3Awso7NBhVP4ykOZUgFVDzEZft3HTQAcHfc63tMcKuJetW1s2a2g5SsS6V4dZNqWyT6Q0L1QAYCl40/pGmuXuIqOQqsolJcIVyRoVGFGyETTu0+PxZ8DCdjDT460c+vuxfbYzsvJRdDNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WclfYtAf; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=Var5cdga8qQ8DoeskP1XHLCE4jf+Hz6Au4cusvJf5kSrRlLYus5kjMBcPWf7e7NUiF9ELWLo44zbuGxGI8QOsOtyNdZIApiOZugRMBizFxjVxBBvOJfrU6M7ezb6XZ4olLsLsssv5ULaN3f5XVgx65DdeYS0VzDRPvI2XydwnR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XdOmBH30; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WclfYtAf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDA7CC4CEF7;
-	Wed,  1 Apr 2026 06:36:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XdOmBH30"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B2D5C4CEF7;
+	Wed,  1 Apr 2026 06:40:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775025406;
-	bh=+DFyPkJ1QSfX7H4m+XwGecn09bxaPGHmqQ4ZAuy0BBU=;
+	s=k20201202; t=1775025613;
+	bh=+cxshQa0PJoHqWtXPlTCUp0KZvbNQJ4m1DCFEL3Tv4k=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WclfYtAfA+jn1T5q2pKAdFGdE/1Z56hq/WPtVIjGLF1grcmjCmdcco2N+sVAvb8zP
-	 11+2vjA3wehcpSNIcPibPfNkLImDnpjVozhHCpKjb1N12x1NYrPxFX6gik0brUwBs6
-	 ozM8AkmjzU2MrTEXEx5Gzdkpf63/Qkc19d7K2YtrsNXPyzNDcLYd3SCI48+ypDoQ1+
-	 sm3PxF7fNJPClSpGQ5sD4jZ+D4pjn4HQ5wYwHB8sa9zAQIPLkmvM2mEBN8QwEZbJHw
-	 QVcgh+WUtH7DYHzOEgy9F1rTOznu5Jz4Da3ZrhmFPppNfx2UjUZrfGJr/mb9qEf6ax
-	 /gUpVa6CGMt6Q==
-Date: Wed, 1 Apr 2026 08:36:43 +0200
+	b=XdOmBH30XewGUd5x9uhvj6874fDyCpaEq5I+6ZSXv4CKfwSHVgAcQDmeVg7s1SKgc
+	 sgJs4GLPwtAIWbTX+zAbekkuUdmhtHFk1BIeER5/bvQdiio4i/hzotxDH8fGjXV9vM
+	 LWd+2WoqC389E/4Vvywwlo8EBWYGH7BUYYLr7z9A7RGb+f4W+tCOQmXwb5OOBxOygg
+	 MozmtnwKfVl0bNV2g+ta3xfQJS5wyMqzGH9EnRmOj+lO6AdNacU52dGVaqPdlyw6N/
+	 v2zJHx8OfeXbWG94VglCaXdqBgp2YFZPyXMccrvTP445t+b9I8iBe7TliQIsORvnwu
+	 qL2ONfNyq1t1g==
+Date: Wed, 1 Apr 2026 08:40:10 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Billy Tsai <billy_tsai@aspeedtech.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+To: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
-	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Ryan Chen <ryan_chen@aspeedtech.com>, Andrew Jeffery <andrew@aj.id.au>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
-	openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v5 2/3] dt-bindings: mfd: aspeed,ast2x00-scu: Describe
- AST2700 SCU0
-Message-ID: <20260401-adept-zebra-of-bloom-5bb68b@quoll>
-References: <20260331-upstream_pinctrl-v5-0-8994f59ff367@aspeedtech.com>
- <20260331-upstream_pinctrl-v5-2-8994f59ff367@aspeedtech.com>
+	Jagadeesh Kona <quic_jkona@quicinc.com>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Ajit Pandey <ajit.pandey@oss.qualcomm.com>, 
+	Imran Shaik <imran.shaik@oss.qualcomm.com>, Taniya Das <taniya.das@oss.qualcomm.com>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/7] dt-bindings: clock: qcom: Add X1P42100 video
+ clock controller
+Message-ID: <20260401-opalescent-sensible-pony-c0fcfc@quoll>
+References: <20260331-purwa-videocc-camcc-v3-0-6daca180a4b1@oss.qualcomm.com>
+ <20260331-purwa-videocc-camcc-v3-1-6daca180a4b1@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -49,43 +50,19 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260331-upstream_pinctrl-v5-2-8994f59ff367@aspeedtech.com>
+In-Reply-To: <20260331-purwa-videocc-camcc-v3-1-6daca180a4b1@oss.qualcomm.com>
 
-On Tue, Mar 31, 2026 at 03:31:17PM +0800, Billy Tsai wrote:
-> AST2700 consists of two interconnected SoC instances, each with its own
-> System Control Unit (SCU). The SCU0 provides pin control, interrupt
-> controllers, clocks, resets, and address-space mappings for the
-> Secondary and Tertiary Service Processors (SSP and TSP).
+On Tue, Mar 31, 2026 at 10:54:10AM +0530, Jagadeesh Kona wrote:
+> Add device tree bindings for the video clock controller on Qualcomm
+> X1P42100 (Purwa) SoC.
 > 
-> Describe the SSP/TSP address mappings using the standard
-> memory-region and memory-region-names properties.
-> 
-> Disallow legacy child nodes that are not present on AST2700, including
-> p2a-control and smp-memram. The latter is unnecessary as software can
-> access the scratch registers via the SCU syscon.
-> 
-> Also allow the AST2700 SoC0 pin controller to be described as a child
-> node of the SCU0, and add an example illustrating the SCU0 layout,
-> including reserved-memory, interrupt controllers, and pinctrl.
-> 
-> Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
+> Signed-off-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
 > ---
->  .../bindings/mfd/aspeed,ast2x00-scu.yaml           | 117 +++++++++++++++++++++
->  1 file changed, 117 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
-> index a87f31fce019..86d51389689c 100644
-> --- a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
-> @@ -46,6 +46,9 @@ properties:
->    '#reset-cells':
->      const: 1
->  
-> +  memory-region: true
-> +  memory-region-names: true
+>  .../bindings/clock/qcom,sm8450-videocc.yaml        |  3 ++
+>  include/dt-bindings/clock/qcom,x1p42100-videocc.h  | 48 ++++++++++++++++++++++
+>  2 files changed, 51 insertions(+)
 
-Missing constraints. From where did you take such syntax (so I can fix
-it)?
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 Best regards,
 Krzysztof
