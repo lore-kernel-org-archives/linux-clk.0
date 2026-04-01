@@ -1,111 +1,95 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538083F7E94
-	for <linux-clk@vger.kernel.org>; Wed,  1 Apr 2026 11:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251EF2EC083
+	for <linux-clk@vger.kernel.org>; Wed,  1 Apr 2026 11:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775041297; cv=none; b=UfJGzt1QAB2hAAT6Gxc5eCyR1JUtCdxaWpTpvtR/mSjG1/W9HzJbe8GT1Fa/4P7rBOzx+mrhUcwux2AZFew2fLFvdFuGBDe0wKlV1Eve70idWi5QI2gmsjeNvsQrxYovH1PaoZJQiT+dH/8ZqmoZHnN2dE15IvLBweetZoy/BUo=
+	t=1775041520; cv=none; b=RgLI8oUUzuDUxRqOAnwwGvz76FuFCRvCZgnWSknZXKu4gABdK5No9NhbFX/HtXWqpIFt6MzRr2soVMCZ1CXtLtoHPDq5WHnBXMInoNByspUHmGD9eA0Sy3gWltFepON+KmvXa5kbkpq1oAhmfZJNiu3dr0bMFbfJm0Qq5/12TDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775041297; c=relaxed/simple;
-	bh=Fa60T1J9NdG0M8J8bhvHiHZIs+TFsgPClwjQYrHu5nU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KVAQDTgvTrE4Vs2fwTdGsmkulms6ck0+EXGRHeplG0a0vRHecJbVpbp3E/5bq5ErK3tXiruLd3hhmvSoN35Ry/eE6A1mSboXFL4OWXyciM7hFeUJNLQUEtganMk1vMlcb6ZUUj/XSsk/ATEa4AzCxLxLS7Nd7X4qMBALaDmPRkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YmHJDtXC; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Zx2l5k1n; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1775041520; c=relaxed/simple;
+	bh=om1doAdG2PMAv9rQ6C/z/VNO3DmdhRZwcmQFk9Vnqy8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hHs+0xbN6YNvG3+atCXH7IhjhRqBUKyTD20iYIxW/Loru+xOocBNbCz8oTtTQdQbCzJwgXYsLBubEfHKSPTQfMeIxy+bJ9qLAIJ38jvmz8a0IeHtN/ZEmNJ+B15/UmV6oygWgh3TIZKGryWVeJPEjkHmGjFRwbHoDvTP5CQ1X7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MwxJJyLQ; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YmHJDtXC";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Zx2l5k1n"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6317s7Qs3081376
-	for <linux-clk@vger.kernel.org>; Wed, 1 Apr 2026 11:01:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Um9bWYbqbpemNVrExQ12MkVwZ+nPwCvsKWs7TNNv7x4=; b=YmHJDtXCinnPJ2gU
-	A6y3Ab8rzxFvUbMoxOyNnpMuzCvBi2K12IXUQvKdZ/uRtmfRJlDThZabVWBqgKwS
-	rx1g90D+TB9X8acBauwZJkxmnXZev/o9T2cd/D68HunUsq+6xE+ZUhiNc2Mdig25
-	wXiUlJvGHTKwqd29H1OVn2Df6GnzaYuCwbqB+GhXXJD4tFc2y5epaTNky3w90Xkk
-	pGfKWPed+lwJNExv5KqbpoXFc+sFysTrH4WSyJUVWJlRFwwDvOebar89AzRIg6R4
-	FxR2Pu+5ZRX/S0JJAPJqmiayrnWa0HmUGntdnLmtQahVV/odLFNmt7GhWv18PDi8
-	NVp2sA==
-Received: from mail-vk1-f199.google.com (mail-vk1-f199.google.com [209.85.221.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4d8kdkuq0e-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Wed, 01 Apr 2026 11:01:29 +0000 (GMT)
-Received: by mail-vk1-f199.google.com with SMTP id 71dfb90a1353d-56d817b03a8so1058169e0c.3
-        for <linux-clk@vger.kernel.org>; Wed, 01 Apr 2026 04:01:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MwxJJyLQ"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-486fd3a577eso61386135e9.1
+        for <linux-clk@vger.kernel.org>; Wed, 01 Apr 2026 04:05:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1775041289; x=1775646089; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Um9bWYbqbpemNVrExQ12MkVwZ+nPwCvsKWs7TNNv7x4=;
-        b=Zx2l5k1n/lhGwiPgnMrytyHht4C16Me1D9q/+LMu/xtMuuVlHHyafpKNhPLuemdXuA
-         RNTTn2JZPPTz9ZBlkZWT9rEp9n5hwTjxBotIG5RugnrFsbs9IyV00NQ/Y3nNi8spY4/c
-         UbQSQWI/EKIl1qfsNXmK5prd/KupfWEJFDiQpCbFQie/wS9Zqdfm/tNP8XnTmiaoQOcR
-         xdm3ITSLFSES/SpaalgJNqPGshwAG0ea7GbFi7LWBtDgxhhWNaP5+dgSAcotQM3V6t0S
-         t7ziD+M8LWhTFxR1kzLUTIibyHXUMUNvu40z+fGyAedbIdVSxv+n+tNnC9hYqbQghVNa
-         27ZA==
+        d=linaro.org; s=google; t=1775041517; x=1775646317; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HBGBJDQ/gRb2ZWiVOaSaUlUwjskXrH5SbODqYF4ayW4=;
+        b=MwxJJyLQ7TkzsOQEuDMS3aQ5MCPLtNV05Zx7ZFJQJg1+cVgFzygzln6QmIjgLNv4Uk
+         8eVxWSAMDMl447kLXj8sPezmkQkx5BokGxstHbLMHww10lotwivBq8E3oNWX9w6sxbw3
+         kf+Y4RwtfwJavFB8EQHmaDANJ5vOT3AFd4Wpv89/nKIpFIiE21A5bgiCGAaOplgJX3U4
+         3Y35VYdJORWmUdKA8c4ghTAPnXhQhdrJ34oX6lZYgsmL6muUHgcMP54kAP1FGUhlXNz7
+         9+AC1ajqXHKG3CMEDJRoUh/kJkLj8twvztJHq0xqHCWI9kKmQRP66TxrtRfiO/Zaw7K+
+         K7kQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775041289; x=1775646089;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Um9bWYbqbpemNVrExQ12MkVwZ+nPwCvsKWs7TNNv7x4=;
-        b=cs/GdkRLj+X09dbfQ7b+kJqyaecV9UlYJzwjULFgiW70zZf5rjPmeDHZ5OWTp8Gv8k
-         +D31WfsJQVlClRNihHY/ZUYlpqYqEXqWsWQsn+knhL7wYsRoIw1O2TBpf446kcs7Ekyd
-         OPRCflfaO299iAzek9ghXQKOcf869StClI8ZLdeo2zkbtW8M57pLAgizN3nrvq+hJQ7u
-         wkB16wOmU7VUiSvMJmYoWLQh6YGaVfivD3qmYZm4fhva4CVBkYrf6hq3ZHYFJcKILBRV
-         ffEQhn0ORQ4D53f2U7nffjfbFCXhWqOrOn2eV3SRg+eiJNOmQvHW3hFoV84+5FH3Pd+5
-         vihQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWttHKGRM1Jcl14qPUVGppwizWwx4AVtGtT5EyTFblQRSFHxWKe2ZbSVCA4Lkj9X7MR007+g7tYGwg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPmL1GO+YznEPA9AHKqh0tX0nBuRiMY8NxckKZw0R7AvVc9pvI
-	MQW7ipoZM6+fVkazINpzqfHQPlmULsJkxIaARFZYyXtKhleUXD88UL1XzClQ0NeDhrmdnn2uCwq
-	mmZYTcSeBQyh8/3+RQ8ifWX2mTWXi4RLFT6qq9hOjIPFQuAC9wMgKPY5R8bFeSxk=
-X-Gm-Gg: ATEYQzzqS66q2Ggofyo6Q4FsHVu6/uRRudwd0EtE5umvjX6GXhtoLG1lL/F7DClfnc6
-	oNuxJjL40zFSarZB7FVQw7D4pY2QbLrnGEj9j8sVwkzL1FaY16Ln0qLG7rC9/nS/zEB7Kt78N2E
-	eYDhq5OgJWxcgLQBLXxBrTHJo89ytBf4bd3JMk/4vJh7TLoOZPr4Nulak+3PprUoMGGYuUI2uLH
-	l5qyPZ9VpgfPsyUG5LherSn9wwLv8viooyldo61EIDD2R+iTxDL/A2XpcE0UbnbfiYS+2A7LOoj
-	MgsRxdAvXph/9t/sfNNNNV68LkIHD480qTUBhZLDQN+VMruX2tLi8mRDG6CoiTmFxF03dJ7xR3o
-	21EYIKn9a9La4MUKjI1b7VLbAdLLsu2AOKnMiyBl8msKzwwMCmJ601VQFhJ05SOSc/pJOcu4h14
-	Xgs5oGdSb/WfdKv1l+ireSzZO+O1cpwJAo5zY=
-X-Received: by 2002:a05:6122:ca1:b0:56d:471b:c814 with SMTP id 71dfb90a1353d-56d8a817f69mr1167211e0c.1.1775041288910;
-        Wed, 01 Apr 2026 04:01:28 -0700 (PDT)
-X-Received: by 2002:a05:6122:ca1:b0:56d:471b:c814 with SMTP id 71dfb90a1353d-56d8a817f69mr1167104e0c.1.1775041288262;
-        Wed, 01 Apr 2026 04:01:28 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a2bc5f3377sm1384251e87.74.2026.04.01.04.01.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Apr 2026 04:01:25 -0700 (PDT)
-Date: Wed, 1 Apr 2026 14:01:23 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
-        Jonathan Marek <jonathan@marek.ca>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Bryan O'Donoghue <bod@kernel.org>,
-        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Hans Verkuil <hverkuil@kernel.org>,
-        Stefan Schmidt <stefan.schmidt@linaro.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Dikshita Agarwal <dikshita@qti.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-media@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+        d=1e100.net; s=20251104; t=1775041517; x=1775646317;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HBGBJDQ/gRb2ZWiVOaSaUlUwjskXrH5SbODqYF4ayW4=;
+        b=Xga93E7GYGfpgDkmuMTbCd5dwEiUU9PGpXbu3E4gdvazus/2K02PBiDHXuGrI97suI
+         lTINb0HplOeISsPe70haX2f7jqzTYFMoOpF5uf/xQlI1eV18etC8s6rNRuCNPheB/1WG
+         IAjaaeO7S7Jbxp+MVBseDp1RDbbYoE9syFg2sOU11COffuUOU7xOCE/uPtwlauOYNB/a
+         AHAGNwjui7RZbGvS9+Ueat+zOYzFVZ2rQgY5h31kV2MUxYbpQ5kcEFhBRLZBJlH4ETGQ
+         iGrVgqkUIl8Zsh5fYpse9Lvk7fHT4VAknTOQ0DuD8LBUxJKi3Xs+Q9gQCpdr3bQIE5Da
+         LNaw==
+X-Forwarded-Encrypted: i=1; AJvYcCVALPMRsQw5nXEGKpsecY4Krg05iTXzptfLIM5BmxKKhJBDXN9HAn2R/xM6nDGd995FZVeccatS3k8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgS1TH/7ezliGyg+2w7bo/3TOCFonRE1Kg7rBfVHk/qlDTOK8g
+	F5/RmCo1LB+G8VElztnFTmjcr4YzhfxJ7gv9ceBF3oZvmjaTpoJ6X4U1qy44VKaNlvA=
+X-Gm-Gg: ATEYQzyjuUTnHvf0RAGJKg0yNIfIEGSr2XEnuzDEaFAwM2isES3g/XESknJCMdQczcf
+	KRmHLW2NBVtey8oHR9FNw0+fJbJCpFZewn6jVj2K0IWspTiDVO23dByGjCktHxxqvAICu9unIgr
+	6AEs+hYB8xbgh9/mNUOYzIPASP25VzHA8qS1xG6mYqxZ+oWSCJaCMAZrEY3CjA4zqPQhqaC95Rm
+	G8ZGN0vJqJqzBhcLQ+rUrbfZvf62WSUW5JuWXA9Ks+F5PlR9JPxdjSYiE40wvl0z4MInIDvIQhJ
+	z/gKB6VKjF5pRfCiK+3YZxRYE2UgLjVX41XxlGy4cyiA/TO+/FaA0XmdhsrPvDHw4eS7CRyuTZG
+	vOkBs9T29rGjwQDayZ0V1HNFCFQJeJAT348JaWDQgwMvPBGaQcRD13tn6WVFfiK4VnglgeUcQws
+	VuWVP8tLJkVA1QpZvEW5hQj7l6w2JibeoujDM=
+X-Received: by 2002:a05:600c:4594:b0:486:ffa3:55f with SMTP id 5b1f17b1804b1-488835d0f0cmr51363045e9.27.1775041517450;
+        Wed, 01 Apr 2026 04:05:17 -0700 (PDT)
+Received: from [192.168.0.167] ([109.76.235.19])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43cf90424fcsm30627349f8f.32.2026.04.01.04.05.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Apr 2026 04:05:16 -0700 (PDT)
+Message-ID: <69b993ce-07b8-4071-ace3-9a33147670af@linaro.org>
+Date: Wed, 1 Apr 2026 12:05:15 +0100
+Precedence: bulk
+X-Mailing-List: linux-clk@vger.kernel.org
+List-Id: <linux-clk.vger.kernel.org>
+List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v5 2/5] media: iris: scale MMCX power domain on SM8250
-Message-ID: <4fiyjcqt5smotudsfzyqrevxxnx3sf5grbgfluzkndbp2od6pq@vlyikcvl3xkb>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+ Jonathan Marek <jonathan@marek.ca>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Bryan O'Donoghue <bod@kernel.org>,
+ Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>, Hans Verkuil <hverkuil@kernel.org>,
+ Stefan Schmidt <stefan.schmidt@linaro.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Dikshita Agarwal <dikshita@qti.qualcomm.com>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-media@vger.kernel.org,
+ Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 References: <20260209-iris-venus-fix-sm8250-v5-0-0a22365d3585@oss.qualcomm.com>
  <20260209-iris-venus-fix-sm8250-v5-2-0a22365d3585@oss.qualcomm.com>
  <5e2635ac-35de-645b-b5e7-235923f844ce@oss.qualcomm.com>
@@ -114,133 +98,24 @@ References: <20260209-iris-venus-fix-sm8250-v5-0-0a22365d3585@oss.qualcomm.com>
  <CAPDyKFrO3DzfG0aW4z4w87j_iWM=3dpvp=2Wgr4MX1Bin5-6ZA@mail.gmail.com>
  <6yfn6ux3gbin2dtopdxxv4okinspueryuey5vfdq633gsewc6r@ttp56brnpgvr>
  <CAPDyKFpm7ujNw51dVpPaHCwssjgYe1JVBEyrQ_1CsPbDJuW0Ww@mail.gmail.com>
-Precedence: bulk
-X-Mailing-List: linux-clk@vger.kernel.org
-List-Id: <linux-clk.vger.kernel.org>
-List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
-List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPDyKFpm7ujNw51dVpPaHCwssjgYe1JVBEyrQ_1CsPbDJuW0Ww@mail.gmail.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDAxMDA5OCBTYWx0ZWRfXzCK1IJZawfvr
- pZzZ68G00guSio9gqszgankS41/QWCAmS0SwiYDmMUsUpRJZ2ZxKMHnaHH8MrFM4cCgfaGUF/C1
- KTiaM7Ok+O7Rf71dUqbtsCZp4V/GRpZXChTuRSMWeL7ovyuMe7XGBj0Ywc1HaD+UkOt/vmiTo6E
- /aAwZ+9nbqPcI3zxT6UGfvsXh4wzYQFhgB0UiVfOOXDXHfFGIIFu/ElcJxykKeqMZSvuLQMG5Pf
- nhOZI/O8SGceVDee/LoXstKUXca/PzvTyp0/NyGYBj/WBobLLlscL4ADWi0lGro80fQ5c2IAw3G
- xPEZCgYQMwXsVU/tQLhN3JfrU8XawoFTV8um5N5PxSbSag3IP3sYLkyASIVTS7mcAU2GmsNmpY0
- Ec8NpD5rSFhmLsOE9x2AJ+NX450RaujxVfMLcXsIVr7cTp/IDJGA/m8zqwM80/iS2wnptq3W6cM
- nRzEMZPIewz38zay2eA==
-X-Proofpoint-GUID: KI8ameAXHFRgm_KjAAtnL2yMZtZIiITa
-X-Authority-Analysis: v=2.4 cv=YsQChoYX c=1 sm=1 tr=0 ts=69ccfb0a cx=c_pps
- a=+D9SDfe9YZWTjADjLiQY5g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=A5OVakUREuEA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22 a=EUspDBNiAAAA:8
- a=sXGUrAVt7bPh_wKNbm8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=vmgOmaN-Xu0dpDh8OwbV:22
-X-Proofpoint-ORIG-GUID: KI8ameAXHFRgm_KjAAtnL2yMZtZIiITa
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-04-01_03,2026-04-01_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 spamscore=0 bulkscore=0 clxscore=1015 impostorscore=0
- phishscore=0 lowpriorityscore=0 adultscore=0 priorityscore=1501
- malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2603050001
- definitions=main-2604010098
+ <4fiyjcqt5smotudsfzyqrevxxnx3sf5grbgfluzkndbp2od6pq@vlyikcvl3xkb>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <4fiyjcqt5smotudsfzyqrevxxnx3sf5grbgfluzkndbp2od6pq@vlyikcvl3xkb>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 01, 2026 at 12:46:01PM +0200, Ulf Hansson wrote:
-> On Tue, 31 Mar 2026 at 20:46, Dmitry Baryshkov
-> <dmitry.baryshkov@oss.qualcomm.com> wrote:
-> >
-> > On Tue, Mar 31, 2026 at 01:33:35PM +0200, Ulf Hansson wrote:
-> > > On Mon, 30 Mar 2026 at 15:06, Dikshita Agarwal
-> > > <dikshita.agarwal@oss.qualcomm.com> wrote:
-> > > >
-> > > >
-> > > >
-> > > > On 3/30/2026 4:45 PM, Dmitry Baryshkov wrote:
-> > > > > On Mon, Mar 30, 2026 at 10:55:02AM +0530, Dikshita Agarwal wrote:
-> > > > >>
-> > > > >>
-> > > > >> On 2/9/2026 7:02 AM, Dmitry Baryshkov wrote:
-> > > > >>> On SM8250 most of the video clocks are powered by the MMCX domain, while
-> > > > >>> the PLL is powered on by the MX domain. Extend the driver to support
-> > > > >>> scaling both power domains, while keeping compatibility with the
-> > > > >>> existing DTs, which define only the MX domain.
-> > > > >>>
-> > > > >>> Fixes: 79865252acb6 ("media: iris: enable video driver probe of SM8250 SoC")
-> > > > >>> Reviewed-by: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
-> > > > >>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> > > > >>> ---
-> > > > >>>  drivers/media/platform/qcom/iris/iris_platform_gen1.c | 2 +-
-> > > > >>>  drivers/media/platform/qcom/iris/iris_probe.c         | 7 +++++++
-> > > > >>>  2 files changed, 8 insertions(+), 1 deletion(-)
-> > > > >>>
-> > > > >>> diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen1.c b/drivers/media/platform/qcom/iris/iris_platform_gen1.c
-> > > > >>> index df8e6bf9430e..aa71f7f53ee3 100644
-> > > > >>> --- a/drivers/media/platform/qcom/iris/iris_platform_gen1.c
-> > > > >>> +++ b/drivers/media/platform/qcom/iris/iris_platform_gen1.c
-> > > > >>> @@ -281,7 +281,7 @@ static const struct bw_info sm8250_bw_table_dec[] = {
-> > > > >>>
-> > > > >>>  static const char * const sm8250_pmdomain_table[] = { "venus", "vcodec0" };
-> > > > >>>
-> > > > >>> -static const char * const sm8250_opp_pd_table[] = { "mx" };
-> > > > >>> +static const char * const sm8250_opp_pd_table[] = { "mx", "mmcx" };
-> > > > >>>
-> > > > >>>  static const struct platform_clk_data sm8250_clk_table[] = {
-> > > > >>>     {IRIS_AXI_CLK,  "iface"        },
-> > > > >>> diff --git a/drivers/media/platform/qcom/iris/iris_probe.c b/drivers/media/platform/qcom/iris/iris_probe.c
-> > > > >>> index 7b612ad37e4f..74ec81e3d622 100644
-> > > > >>> --- a/drivers/media/platform/qcom/iris/iris_probe.c
-> > > > >>> +++ b/drivers/media/platform/qcom/iris/iris_probe.c
-> > > > >>> @@ -64,6 +64,13 @@ static int iris_init_power_domains(struct iris_core *core)
-> > > > >>>             return ret;
-> > > > >>>
-> > > > >>>     ret =  devm_pm_domain_attach_list(core->dev, &iris_opp_pd_data, &core->opp_pmdomain_tbl);
-> > > > >>> +   /* backwards compatibility for incomplete ABI SM8250 */
-> > > > >>> +   if (ret == -ENODEV &&
-> > > > >>> +       of_device_is_compatible(core->dev->of_node, "qcom,sm8250-venus")) {
-> > > > >>> +           iris_opp_pd_data.num_pd_names--;
-> > > > >>> +           ret = devm_pm_domain_attach_list(core->dev, &iris_opp_pd_data,
-> > > > >>> +                                            &core->opp_pmdomain_tbl);
-> > > > >>> +   }
-> > > > >>>     if (ret < 0)
-> > > > >>>             return ret;
-> > > > >>>
-> > > > >>>
-> > > > >>
-> > > > >> Hitting below compilation error on latest kernel
-> > > > >>
-> > > > >> drivers/media/platform/qcom/iris/iris_probe.c: In function
-> > > > >> ‘iris_init_power_domains’:
-> > > > >> drivers/media/platform/qcom/iris/iris_probe.c:71:46: error: decrement of
-> > > > >> read-only member ‘num_pd_names’
-> > > > >>    71 |                 iris_opp_pd_data.num_pd_names--;
-> > > > >
-> > > > > See commit 7ad7f43e568b ("pmdomain: de-constify fields struct
-> > > > > dev_pm_domain_attach_data")
-> > >
-> > > The intent was for this patch to be part of v7.0-rc1, but I failed
-> > > with my pull-request to Linus.
-> > >
-> > > Instead this will be part of v7.1-rc1, assuming everything goes as expected.
-> > >
-> > > Is it possible to drop/defer these changes until v7.2?
-> >
-> > It would be very sad.
-> 
-> Right.
-> 
-> Since it's my mistake, let me reconsider. If I rebase my branch and
-> share the necessary commit through an immutable branch that you can
-> pull in. Would that work for you?
+On 01/04/2026 12:01, Dmitry Baryshkov wrote:
+>> Right.
+>>
+>> Since it's my mistake, let me reconsider. If I rebase my branch and
+>> share the necessary commit through an immutable branch that you can
+>> pull in. Would that work for you?
+> I think that question goes to Vikash, Dikshita, Bryan and linux-media
+> maintainers.  Bryan, what is the plan for this patchset? Should Ulf
+> rebase the branch? Or is this patchset delayed for some other reasons?
 
-I think that question goes to Vikash, Dikshita, Bryan and linux-media
-maintainers.  Bryan, what is the plan for this patchset? Should Ulf
-rebase the branch? Or is this patchset delayed for some other reasons?
+Yeah no it's grand, immutable tag works fine.
 
--- 
-With best wishes
-Dmitry
+---
+bod
