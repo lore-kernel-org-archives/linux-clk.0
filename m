@@ -1,110 +1,89 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18BD92BCFB
-	for <linux-clk@vger.kernel.org>; Wed,  1 Apr 2026 14:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6A745090A
+	for <linux-clk@vger.kernel.org>; Wed,  1 Apr 2026 14:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775052275; cv=none; b=qnXja83dj04iMVcNJtdtzrqVXcCv4vUm2sTCKJeLuBpDN0+s82qKewuYRZ3pD1/y5tGHbflUkjsp0+ltdvw/bPMJC/ty9E/Jf/SHry/yPK4TQhi/qthpzTPuVMyPR0mBbAl7ekNXy1mTUwCeHiMi43iaW406hUH4JGpO0e5eIKY=
+	t=1775053049; cv=none; b=oRRp3oa1+yX8vwG8dYWbEv/gSK+kmU8OQ8Kue6sna+FFNtlf6t3tObNQbd3tcX4CrmDkxplPetf0BYgLcDaAJxuufa643ylcRy1ealhH1YRBV9PbW6n6Oa+I+/Mmn+GYQ45WQgftLccx0Gd9Zk9rbjQH34k9c/MHBqq8p+k0TS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775052275; c=relaxed/simple;
-	bh=ENBbqPvMtgDBrtNY5Maiukm89IlJO8HyVFmraI/eHfM=;
+	s=arc-20240116; t=1775053049; c=relaxed/simple;
+	bh=fuyaDoSZ18zB+Fga7fJ2Gexi/1IAc9pu4NOrED0oNwc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G9sJ5IV9PoM4kdjX1fYNcOkVGvuaaCQ28k52HHxDRBfQm2rivX+5oX0+BPRqsGUa/M3zSto8hdq/ex+MS9dsc+pIC3QoS1yu1oMaVXCQmInZyyDsjpjZfL7s7Z8FrntPokJgXWbzrCjAfnlYIH/7y2yv0iYgF1ptkCnuqXMI0FU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MQctaaUu; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=OsP54f9/; arc=none smtp.client-ip=170.10.133.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=CMoAQOE5xTWh0zagvRoGgnSsxJUBpgdJN1BkIGWm0JFjcpd8C9tMo67Ui1eWrjN2CcHcQs27O/mcHA1F9RNp6YvtSRDYg/8juH0XFuzrbBaWPOE5L4BGNkWIY8klO3dU0fIBiidEPt/iobqSYe5354N2bOIk7IIrRt4SRmQgDfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NKswcmXG; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=SWRjHkcJ; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MQctaaUu";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="OsP54f9/"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NKswcmXG";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="SWRjHkcJ"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1775052273;
+	s=mimecast20190719; t=1775053043;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=tcMceLtrrOoF9OBObZDKWhIp/2bPn54+SJ2oUftQ6n8=;
-	b=MQctaaUu6qEnE0fykNKj7lmbdilz+j+/wmnC+FpwPkzZFxuciX4IUR0MTdaCmL+6WxXauH
-	T+txM0iRZjFqixbPWYNNVNQVNdub3ommwu1FdTTMdcXPCOm6jcgDYJKNZfWbb+eyf0Gs7n
-	VBK+uGYC9RzmFgf5WS5qyF5ObDcx6WQ=
-Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com
- [209.85.161.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=NFMG4OKN/qOJtparR2ERc5bRfk3YRi+18w3X91osJrU=;
+	b=NKswcmXGe1VJky5HEJItDU7MpKkPntMTQD0kL1wm2I/xNgBx9OsiMtVS65qZx2K7m5X4Sy
+	GCcC84gcbSKeYBArzpCiuc4Nh2bkQdAgnqvQcOk/w7BoFK7vRpk8vmpHGXBkcZFD85jFWh
+	1+rgKJzATXv+bVIrH/c5rNMIBIOzPH4=
+Received: from mail-ua1-f70.google.com (mail-ua1-f70.google.com
+ [209.85.222.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-326--qUmvptnMa2l5u6T5vb5QA-1; Wed, 01 Apr 2026 10:04:30 -0400
-X-MC-Unique: -qUmvptnMa2l5u6T5vb5QA-1
-X-Mimecast-MFC-AGG-ID: -qUmvptnMa2l5u6T5vb5QA_1775052270
-Received: by mail-oo1-f72.google.com with SMTP id 006d021491bc7-67df0afe23dso24149493eaf.3
-        for <linux-clk@vger.kernel.org>; Wed, 01 Apr 2026 07:04:30 -0700 (PDT)
+ us-mta-35-8ewDkm5NOUiA3K6Ou0ZOzA-1; Wed, 01 Apr 2026 10:17:21 -0400
+X-MC-Unique: 8ewDkm5NOUiA3K6Ou0ZOzA-1
+X-Mimecast-MFC-AGG-ID: 8ewDkm5NOUiA3K6Ou0ZOzA_1775053040
+Received: by mail-ua1-f70.google.com with SMTP id a1e0cc1a2514c-951b086a5e6so2409510241.2
+        for <linux-clk@vger.kernel.org>; Wed, 01 Apr 2026 07:17:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1775052270; x=1775657070; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1775053040; x=1775657840; darn=vger.kernel.org;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tcMceLtrrOoF9OBObZDKWhIp/2bPn54+SJ2oUftQ6n8=;
-        b=OsP54f9/cRkV5KVwx73LS4B/Kq7ktCySUtk9oZFpaM6W0upTXpY19rwVHfRsavgDEp
-         GE4vL7VsNbVNjWJgDf70xKDWQTw/zWkPiX97MtiG+m+YJoGAwmzTqpfjtAA7H+hf/Nw7
-         0m2Doue+m/Ih9mYhVFugzbeluApxsdcFLLim/E7FBhjdqiUMmUz4hESiZZNywAJ59fYq
-         mnGcwXv3WtDYFdN5L+5rWUn7yC/v6j3XdWWM6xY3RsjxFwl7bDI8p8E2ogWE5jOokpNX
-         4dNO+7YcSMFQYjQMlYGklsOXKkXPiwGx+Wphq12pjvI0aPqM/xWnfBJ6BgUVHfEnnlJL
-         T7jQ==
+        bh=NFMG4OKN/qOJtparR2ERc5bRfk3YRi+18w3X91osJrU=;
+        b=SWRjHkcJxGsszPNNa8Tytb6pXW1ED+udTWR86BldWdOW0OszTL5JGkxhQpdguOO4QT
+         3uKObkForS7ThZub6OQUMXae24OMeLEuVjxy5sRznRJ771jNCE2l0E8o7rErLqsOT1vM
+         MRMkyQtOnZZrgAb3u/+EVp4cp/7pLeYLeUhgZ7INcKW7TJ4NWS043sYReNwZM4J56Nhd
+         p7RMMLwgJNBmUa//tHy55j10mHlaaSks6sQBjKW2ayNVmCFaAVE74wUrDCeGm/NBDJY/
+         lGA/sXfvVX814whBIgh7KP30SmRfA1FIOVd6TyNo7NsdDaOSoELBAfPog1IYfrDBrryL
+         WchQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775052270; x=1775657070;
+        d=1e100.net; s=20251104; t=1775053040; x=1775657840;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=tcMceLtrrOoF9OBObZDKWhIp/2bPn54+SJ2oUftQ6n8=;
-        b=AOkyD7qXxTbxS3kZjPV7GDirVJOKbiUWfwC33wqgOzO/LVOLwJhHUNPpfqdBw+ZzU/
-         8LpjTIqHQV8k82KU91Pl1kj+SDmYdE0osps+k2R1GKoUxb89fnQ9Ay0H5gNb6ClaCDFW
-         EWauBhCNLfQqOAA7aDG1gxYtezJtAh++I39fvOR82/IfvCuuGDuNll2Gld5pRz+L+tnR
-         qfeeFDX/IuD5GdTJ9q66g2ydKCIJSdlCD56i+7vz5uIUUCDVYlMKW/ixJNyMOvJUepHD
-         uAjqSOzp/sk9OjskViD86haOb1s6HvUg+yJGMY1vjy4WGnbA7H+inkRJciB5NbNnyU4v
-         ZmWw==
-X-Forwarded-Encrypted: i=1; AJvYcCWTNvY3eYkjyMlAdcRB3UKOE5o6MPldFT45HmVtARwUvd1aHbtWpaf72AmANfVbfQDZsOpVFmrP0zg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw30cImxN76Hek/w23TL2NxEsQZTBQj/h4M0XopftWsz9O99AZQ
-	3E4ayh0yvqNqDbz0WI1gFXOXu4sWkAPOwYGz/Hj4PEabOz4syu5C/dTKKvrlwJvGVawIRYB9p4z
-	0+I5EMBmOcvyMzW4EZtZ/42mOWUFpUAB4wnL9Bf4sCZOfjjal1MIEhR+NxBy8YA==
-X-Gm-Gg: ATEYQzxfIcP75jpstJ3nelLGV731MSymrx/Fejs34qO6jImM9yh9JWqlZmipwS96LZW
-	szzAs386531BA/WizeHsRuoK+rbSlIBqwTKblA0IMzsEKeX/97T/mO5BsU3PiW9sBthusEQ+JjA
-	pDtHs39POEffe59JqZ2KJkQGoHb94FGzpqe6Mqk5S0k7qhGkvHLbThuYC3B56uL7HrWhzs4u5Y2
-	pU025sSLxcUESq5nJJRN97+GpxlJr24sf2JJvZk604/juNY/cu/pQSxfEt2ylVN1J7QtFeLhwHF
-	WaBt6zaohKdKkprsSfRNcw33oiJFweJWJhdm/xRTOmkwodVCWkoPre72lNREkwByAXqaxe8VOqp
-	BeWZgY0mZrNIpcRuAGRLu3arxQwMC9sBX32PTPNd2jsn7D6MCn1Q6IAFr
-X-Received: by 2002:a05:6820:4b81:b0:67d:e102:da05 with SMTP id 006d021491bc7-67fabd323a0mr1831332eaf.63.1775052269874;
-        Wed, 01 Apr 2026 07:04:29 -0700 (PDT)
-X-Received: by 2002:a05:6820:4b81:b0:67d:e102:da05 with SMTP id 006d021491bc7-67fabd323a0mr1831271eaf.63.1775052269221;
-        Wed, 01 Apr 2026 07:04:29 -0700 (PDT)
+        bh=NFMG4OKN/qOJtparR2ERc5bRfk3YRi+18w3X91osJrU=;
+        b=iJaMXCC3gWZe/KR6BwhqT+iu7IsBNR1TW5Yeh7uv164aW99BM/d7UnUSsC9tRpZw+8
+         ce73jg+NB+CoS54aKWDPU3SFnc39bUsklmmAS41f+VAddC1N2e1mk3OzpplefMvSPSr/
+         Bu+I1TVjC7vYt4B7a4Uq854cTOv5IGzbDI70gxwNdX+Pk4alMlXJLtOzFVtrE9PIyqKG
+         yhi+lbpg4VdVBNHQafXnjZh7SEgEmBaLL8gi/XZQ5EmajXFsNsqP77Wom0X3NincxnY+
+         wRttghuv6CNwV/avpLpcw6q6h5XZ2jDqRiMvpu41Sv50EcwTrxPmIhCH3Bt0dJjSEvrJ
+         uqYg==
+X-Gm-Message-State: AOJu0YxuGkiwPGaBipU4OUEHT1XMEMCc9KqgnXJYwRxlQIp7TESM5Sgu
+	C+3EQl+9RyasEN15fRYsiigo4hjv1RH3Vo5lCQBMa1eBNgUa845fPknY+ae0RbbzeJdEd9O0xO8
+	ezqs+tw7Ao9mVInwUUAJkraPNlix7GFcy+RidNXbdQgWhlUGdgVM5BONSKqbbCA==
+X-Gm-Gg: ATEYQzxq7muJJAZWyxYC7U0Oz22TN58NahDqVgobIKdHhrUBesC1bOfX6Z/ulRP6Gmq
+	5GqELDG/m9h6zCqrSXNIMc5xd72H6UeP525ZQKW2udiJiJg18s9vIw8K3ZdMqcP52RkNyxUJ7d7
+	IF+1GKfUTNLPv3hNE/hea94xAVR243RTyAT7mI7UpavFiZaXLMDcVLvOF6AdFXpt9bgx8RsWC03
+	6ZbpSBYj6PQTEEq4amhHuEMm5nBJxHThn4N6lZFLxKBOULHTc2VTaRhoxw6r+cBefvZI22Kg0gQ
+	ELsGJzqeLLbv4us5t1c5RJ077HZhfWkT7dcbHzvDbgbuV7RkI2ODezl9GdZN9+myvGySCViHr6y
+	qPzF8UppuQy3BP/Er8R9jlnV43dP3BZEfB61ObY3ZEy70rZF4IC+zDnUX
+X-Received: by 2002:a05:6102:291f:b0:600:11e1:2a49 with SMTP id ada2fe7eead31-60567cf20a5mr1367782137.7.1775053040556;
+        Wed, 01 Apr 2026 07:17:20 -0700 (PDT)
+X-Received: by 2002:a05:6102:291f:b0:600:11e1:2a49 with SMTP id ada2fe7eead31-60567cf20a5mr1367740137.7.1775053040139;
+        Wed, 01 Apr 2026 07:17:20 -0700 (PDT)
 Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-89ecf960d2esm117933246d6.34.2026.04.01.07.04.24
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-89f3ba99abbsm111010486d6.28.2026.04.01.07.17.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Apr 2026 07:04:25 -0700 (PDT)
-Date: Wed, 1 Apr 2026 10:04:23 -0400
+        Wed, 01 Apr 2026 07:17:18 -0700 (PDT)
+Date: Wed, 1 Apr 2026 10:17:17 -0400
 From: Brian Masney <bmasney@redhat.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Gleixner <tglx@kernel.org>,
-	Olivia Mackall <olivia@selenic.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Jayesh Choudhary <j-choudhary@ti.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Antoine Tenart <atenart@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Pascal EBERHARD <pascal.eberhard@se.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Herve Codina <herve.codina@bootlin.com>
-Subject: Re: [PATCH 10/16] clk: Add support for clock nexus dt bindings
-Message-ID: <ac0l51ikCd_r22da@redhat.com>
-References: <20260327-schneider-v7-0-rc1-crypto-v1-0-5e6ff7853994@bootlin.com>
- <20260327-schneider-v7-0-rc1-crypto-v1-10-5e6ff7853994@bootlin.com>
- <acqT3Dh03y3JiLLc@redhat.com>
- <87y0j76p8o.fsf@bootlin.com>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCHv3] clk: hisilicon: clkdivider-hi6220: use kzalloc_flex
+Message-ID: <ac0o7XbBm8aBOa7a@redhat.com>
+References: <20260401023551.27978-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -113,47 +92,16 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87y0j76p8o.fsf@bootlin.com>
+In-Reply-To: <20260401023551.27978-1-rosenp@gmail.com>
 User-Agent: Mutt/2.3.0 (2026-01-25)
 
-Hi Miquel,
-
-On Wed, Apr 01, 2026 at 10:47:51AM +0200, Miquel Raynal wrote:
-> First, thanks for the whole review.
+On Tue, Mar 31, 2026 at 07:35:51PM -0700, Rosen Penev wrote:
+> Combine allocations using kzalloc_flex and a flexible array member.
 > 
-> On 30/03/2026 at 11:16:44 -04, Brian Masney <bmasney@redhat.com> wrote:
-> >> -		ret = of_parse_phandle_with_args(np, "clocks", "#clock-cells",
-> >> -						 index, out_args);
-> >> +		ret = of_parse_phandle_with_args_map(np, "clocks", "clock",
-> >> +						     index, out_args);
-> >
-> > Before I left my Reviewed-by, I should have double checked Sashiko. It
-> > has several questions about this patch. The first is:
-> >
-> >     Are there other places in the clock framework that need to transition to the
-> >     new map API to ensure assigned clocks work?
-> >     
-> >     For instance, assigned-clocks and assigned-clock-parents are parsed in
-> >     drivers/clk/clk-conf.c using of_parse_phandle_with_args(). If a device
-> >     specifies an assigned clock that routes through a nexus node, will it fail
-> >     to configure because the map is not traversed?
-> 
-> The goal of the nexus node is to isolate what is behind. Are
-> assigned-clocks et al. supposed to traverse a nexus node? I am tempted
-> to say "no", but I'm open to discussing this ofc.
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
 
-I agree that it's not needed as well, however I want to defer to
-Stephen's expertise here. I mainly brought this up trying to help him
-with reviews.
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
-> > https://sashiko.dev/#/patchset/20260327-schneider-v7-0-rc1-crypto-v1-0-5e6ff7853994%40bootlin.com?patch=12563
-> 
-> I have mixed feelings concerning Sashiko's feedback. I will go through
-> that page nevertheless, there are interesting comments in there.
-
-I have mixed feelings as well about the feedback from Sashiko. It finds
-issues, however not all of the feedback has been helpful. On the whole,
-I'm glad that it's available.
-
-Brian
+For the future, if someone asks for changes in a previous version, then
+be sure to CC them on the next revision.
 
