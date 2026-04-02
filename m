@@ -1,138 +1,118 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954602E0412;
-	Thu,  2 Apr 2026 13:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934C529AAF3
+	for <linux-clk@vger.kernel.org>; Thu,  2 Apr 2026 13:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775136001; cv=none; b=jz/h2U8fZlH07kLhGvvEA8tzDfM8xV4YixOY024ec9NsR965OVYi4IyoivtY1RXrksaNTJRkaHA0bgZv7SL879ppOq+GmKFFFmW3lYDzjs5TGU29jp5E/svKdDLTkeSkJbp/CNlePzFSlz2bERhjVuvJau7qoU0tlFZ7q94LVT4=
+	t=1775136609; cv=none; b=XDmOJm5RYPuy+nxWbHoZ7Ow2obd7hmVvFGsabNXP7iXOikVtWZAu+4vOqQ5tIS761WKM4Fpa8gshNwA14GnSUJD4MHCyNKyjBvcqiwAS089gGYCqj6hehMiIvZP9Rpi0Sip/2d5wwgY2hYQ2YQG/ldOJioZ7CIyA9C22XRocMV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775136001; c=relaxed/simple;
-	bh=ecLaU4G/54jqRCpPPFTWuBYhs3EGYAaVEUPDTgbRrhQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GZrQ9BHihGoX9hi5BiH5x0kgxpwPsFzl3AcLtk/WG/oZN3xVwtLXgiB75zApB1MXPTouevmGFaRmTv8ygAwE2QTj1qtJo1/PGEJynefLMx3o9LoyzzIu4mGV1p85KuE+tyTPCgwV+0JMYpjayT+V2x3GoAeaQeroY14+M00mO7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jPo8kula; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1775136609; c=relaxed/simple;
+	bh=mBTUXQ3PD2dZuBmcg7mtDUejMVNBN4mR3Nsq6fwUhdE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=cTCABBOCSVKoGI9D/HEQrVNtWtEpqxE67Vxp7qu0aDv8AsvD6U0vAG1NXfiSwKE/28iRO8Vk7YNd+BlG5A5sW1mjiEp+LJNCZa1UCMfsEqfjmGH3byYFUpqsex7qmXuQBYnbEzZPTOm/qGi2i71fE8HiZhsdHyBM3lwnDGrAox8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kJSykyLd; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jPo8kula"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39E6CC116C6;
-	Thu,  2 Apr 2026 13:19:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775136001;
-	bh=ecLaU4G/54jqRCpPPFTWuBYhs3EGYAaVEUPDTgbRrhQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jPo8kulaL1+fw0qkc9ETqp7HMGr0ezo/x/z6Fw6pBb8A7XM9xmsY0EUj+WLY8Noc5
-	 9CzYgbSZjkYepNTDmPHNxeA2V6TP+8b1cYvob2tfe0KAsZcdVtwH/CJIsRZAznaesh
-	 EfCbTCSMOOvzf0CjBbD9kLF/iopWhfUwD8ekZhsGrrlwdpyszYcffukWKGV/wkw3iE
-	 SUDm0HHD1iCT+jNVCu1fldDWaERURDAYUe9QV4LIHBqPWBrL8VNN8mrVTCHIDNQCot
-	 AR9vSymJagT8uSEI27YslZj5c4b9yLkTaZ3WuVnIJApSUQGLcs+y3gTTrWxOCKFWms
-	 xfVfQvEVx/nlw==
-Message-ID: <991f781f-e188-480f-933b-b9a342166446@kernel.org>
-Date: Thu, 2 Apr 2026 15:19:56 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kJSykyLd"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-48374014a77so10949175e9.3
+        for <linux-clk@vger.kernel.org>; Thu, 02 Apr 2026 06:30:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1775136606; x=1775741406; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8WxgO0tK9ltbloE4Oc/9lVYcELxtyYhqEk3PbV+jR6E=;
+        b=kJSykyLdApeIzmSaNWXOBQqUuLBtHsUCO3rY7BNGCQeBsOzXxKMfu3f4mT9Szv2izV
+         ASWHp4nozx4QWwwe2m7MQjvfKd2rcODsePNdDdwZ6dg2j+NpPMy0N8dID7vOPyu/fSBZ
+         spPV3vf5217uIQMoxdHh8GYPd/V19IesbLT20RZr0CBHoHaH0OHTfGdsLyW7Oad1S9+o
+         Cag81tcCj4nzHGJOeWXD62W6QzN0MDdWTQCGREMThnvTlpDDwJkR0mPTp4UI1QVZ4YW1
+         NQHhZjfiGbZloLIQnhZtnWw4U0tE8HrCLSfp+tbZ22c8XJOB3/roqVvKy5N8maecQQcg
+         Jj5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1775136606; x=1775741406;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8WxgO0tK9ltbloE4Oc/9lVYcELxtyYhqEk3PbV+jR6E=;
+        b=HLtsUhudw6HrOEayTzfiJKKXyaavHvn4cu30Hnks/myYFZrVnVQCaL+gBF4wkukxTW
+         9BfOZjfTBRFin7uLodGAGdjdKGe8+xFRzuRsRvUT4aotBoWN/4AQxw/cv0Dgn3krbHgx
+         0XaMOUfJsnWTgrDGMTfnQCiX10O5zGs8nP8V/I8c59xnGqLfgkMMrWPBdsgspzrb1uIJ
+         cNggjqGANPZGJ1fc28aTKJp17on9iEzBH4Cp1QKh/voMojaV5aiG5f/DNvnORj2D+dRe
+         eXQu2D72FbQ+35/b60t0LiRURtuGcydpSYrNTNYzjogrRfi6AJoJNikOKr4j3mpm6OJ0
+         b1CA==
+X-Forwarded-Encrypted: i=1; AJvYcCW5N1IJOtb++R0Mh+IbDftLZwAc51qZFNTz8l5exm00gOiMQI4ml7Oi7Ardd7TZzvjczrZ5XArilwk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzm20FpdjTFVSLRxm5FnlteILdd96xEoRIFxj/DyPtJm0vw2vHD
+	jEHPqPxlqZEv9PxUi2989+70m31Rxtdq13+22ZB8YgQ15ouhdas/jpsZ1maEFA4idWA=
+X-Gm-Gg: ATEYQzxPQ3aFWjL2S//F3sVXQ5fPNdJypsfh4Qe0lnswnwhDaotdnaGHoif3E+6X0g3
+	ypqjoc0+bOf6Kdhi52SC6u4Us4kmb3fZQaQqAw294EZqgrGXGPQBpmSST14Ii4TtUFw2pzHl3l3
+	91YQa/eadHx8FWQCzcZYqNp9kARAunEZ7SGfW4uNiL79JzFDY9hzGCN7dI2bRgUNuUNGc4/iKYp
+	ohDJBIq761a2oimTgkw15jaXtnYNF9v1TU08Oo1e/gGTmHP8OoSnUbfHeMT+rSQtjmduEXo+Iay
+	CWOdmTybztoW8tKGfxGpRz23+/A70wKAzlyJgYVvlKO/oVQwBnG0AYwH1lX7Oc9YKrpTVDw1rS3
+	TNLa4EuqrTx7PYt18lBr6jDY0A1GZ2T4ghw0oaFzgVwUk0LkAok9y5OIsydj7AKUipSsbcQ+lek
+	lSrQ4CnxTGoUi7HYRbkkOWZXAbAhAGEz8oYXyEmTdYWL7+oTyNH1s4uf4iq/Ur/8+EsU8fXNKMD
+	hyX+I33XkQ3CJlW
+X-Received: by 2002:a05:600c:a10f:b0:488:81b1:ae36 with SMTP id 5b1f17b1804b1-4888b78657bmr38517325e9.23.1775136605817;
+        Thu, 02 Apr 2026 06:30:05 -0700 (PDT)
+Received: from localhost ([2a00:2381:fd67:101:a0c1:4037:aafe:5dc])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4887ad8d28bsm85916235e9.10.2026.04.02.06.30.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 02 Apr 2026 06:30:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: clock: qcom: document the Milos GX clock
- controller
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260306-milos-gxclkctl-v1-0-00b09ee159a7@fairphone.com>
- <20260306-milos-gxclkctl-v1-1-00b09ee159a7@fairphone.com>
- <20260307-inventive-stingray-of-pride-5c2216@quoll>
- <768180d0-bab6-466f-9f5f-54b36f353bd6@kernel.org>
- <DHIO0VFBOHNX.381P06A2CRHAZ@fairphone.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <DHIO0VFBOHNX.381P06A2CRHAZ@fairphone.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Thu, 02 Apr 2026 14:30:04 +0100
+Message-Id: <DHIPEQ4XDUI6.297HDXTP84FFP@linaro.org>
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Krzysztof Kozlowski" <krzk@kernel.org>
+Cc: "Sylwester Nawrocki" <s.nawrocki@samsung.com>, "Chanwoo Choi"
+ <cw00.choi@samsung.com>, "Alim Akhtar" <alim.akhtar@samsung.com>, "Sam
+ Protsenko" <semen.protsenko@linaro.org>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Rob Herring"
+ <robh@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Tudor Ambarus"
+ <tudor.ambarus@linaro.org>, "Jassi Brar" <jassisinghbrar@gmail.com>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Peter Griffin"
+ <peter.griffin@linaro.org>, <linux-samsung-soc@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 3/3] arm64: dts: exynos850: Add ap2apm mailbox
+X-Mailer: aerc 0.20.0
+References: <20260402-exynos850-ap2apm-mailbox-v2-0-ca5ffdff99d4@linaro.org>
+ <20260402-exynos850-ap2apm-mailbox-v2-3-ca5ffdff99d4@linaro.org>
+ <20260402-free-foamy-gibbon-acad72@quoll>
+In-Reply-To: <20260402-free-foamy-gibbon-acad72@quoll>
 
-On 02/04/2026 14:24, Luca Weiss wrote:
->>>> +  '#power-domain-cells':
->>>> +    const: 1
->>>> +
->>>> +  reg:
->>>> +    maxItems: 1
->>>
->>> reg should be the second property, like you have it in "required" part.
->>> I guess you copied it from kaanapali-gxclkctl.yaml, so lesson - qcom
->>> bindings have acceptable quality, but not good enough to take as correct
->>> starting point.
->>>
->>
->> OTOH, why this entire binding cannot be squashed in Kaanapali one?
->> What's the difference?
-> 
-> There's no GMXC power domain on Milos. Apart from that they're
-> compatible from a bindings perspective.
+On Thu Apr 2, 2026 at 9:01 AM BST, Krzysztof Kozlowski wrote:
+> On Thu, Apr 02, 2026 at 03:20:16AM +0100, Alexey Klimov wrote:
+>> Add mailbox node that describes AP-to-APM mailbox, that can be
+>> used for communicating with APM co-processor on Exynos850 SoCs.
+>>=20
+>> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+>> ---
+>>  arch/arm64/boot/dts/exynos/exynos850.dtsi | 9 +++++++++
+>
+> What DTS is doing in the middle of the patchset? If there is going to be
+> resend, then fix the order. If the order is intended, then most likely
+> NAK but I need somewhere explanation (but I really do not see the need
+> for it).
+>
+> Please read submitting patches (both documents).
 
-Ah, right, I missed only two items here.
+The dts change goes last in this series, the commit 3 out of 3.
+There is no DTS changes in the middle of the patchset as far as I can
+trust my eyes.
 
-> 
-> However it can re-use include/dt-bindings/clock/qcom,kaanapali-gxclkctl.h
-> because the GX_CLKCTL_GX_GDSC definition would be identical.
+If the order in this series is NACK, please explain why.
+I suspect that potential confusion is because 2 clock patches from
+prev series were accepted/merged, so dts change shifted from its 5th
+place to 3-rd place.
 
-Indeed and you use the same driver, so the header can be re-used. This
-should be explained in the commit msg.
+BR,
+Alexey.
 
-> 
-> And also the driver (which can be used as-is) would be identical. In
-> that driver qcom,kaanapali-gxclkctl.h is used so it makes sense to keep
-> with the kaanapali header, or not? Making a qcom,milos-gxclkctl.h with
-> the same definition is not wanted?
-> 
-Best regards,
-Krzysztof
