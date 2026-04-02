@@ -1,57 +1,55 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06E03644BE;
-	Thu,  2 Apr 2026 11:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541DC3DCDA6;
+	Thu,  2 Apr 2026 12:14:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775130929; cv=none; b=mxVfKFugbGguXmNgpvPiuWP1EwGADRzYR7MNtwpVwMXAbSMiA9XcfojYlcnIWRR6VdZEtlokDpv1Hn7P4W6+FVx7g4YXIFmU6nP3c04tZzPD8e6jzk4s2fW8KAlSDCe9gqYtbHqE3bBYqTtB0n78pTnunPbe4cYPOLCZvR6tt7Q=
+	t=1775132092; cv=none; b=WMf6sRHJEOLH+Z3OpEm3+6Uku4gmgNHjrD5hfS3UYEfn/nKjBsw2usMXsge4aSzyu1XNzJ+Asc/0xddu+m1y09YxCNk96PB2iyUUWC84eVSEbSIRebGCs5Q82sqPX3HePJcDaDkM718i07b+qgbTS16GpJ07VIHdL49kwgfwwb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775130929; c=relaxed/simple;
-	bh=V7yEqjb63NM1xNoEYdg0sNIEwHGZ2Gv7vhBDNOGUmdU=;
+	s=arc-20240116; t=1775132092; c=relaxed/simple;
+	bh=EqYl1q6OHzj9GF2+s+7JBq9ShRG/TNsV61jcIPYVR9U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MPb+6Di2vp2C2MxsHBCFh+ItSdUg8nmQn87GMrl+tISaLPGfIYEc4qkLatyou4aj7gCYKInT+FDMiMa38+oJet56Wm1ndYo0Q3o8tIvk25VkdwChtKNLel7jV15qML0irEyt7pEx2tcsr6pUOcbZbhGn9Auqh9wu3tA6jnEY4+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oIv+5W85; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=UZlo2Z4CFJ9EP3rfiFTBiEQ5+Lya3qMMD5Eh2OTDPGsAbFi5WfZivw89FGH5fMvFXiV7PtcPX7hxdjtI4QLqsQZhtfjcFGy1eZFeX8YpUz3p200oXCvInoL+sy9TMN9sLyvsn9Zzw64M4MYmhwsTlaEL6YIWH8KzAasgR30RdKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oqIp9oK/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oIv+5W85"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4DDEC116C6;
-	Thu,  2 Apr 2026 11:55:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oqIp9oK/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59337C19423;
+	Thu,  2 Apr 2026 12:14:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775130928;
-	bh=V7yEqjb63NM1xNoEYdg0sNIEwHGZ2Gv7vhBDNOGUmdU=;
+	s=k20201202; t=1775132091;
+	bh=EqYl1q6OHzj9GF2+s+7JBq9ShRG/TNsV61jcIPYVR9U=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oIv+5W85XENi/fxklryH7DxRO63EugHlfpOCKSGeTri+Hpu544quH0fOhEHtaHbIe
-	 IGuqw4GbqRdWF69fzCxr9VhW3HwAnIxCHqiOQsNUdY46awhh1x8AgSuAprsB7Q/1QX
-	 swMNkNddsfD+/iTn99XjfuLze73n49QJxhEKch6K7D/UCif2LtKH/+KjBytnGJooyY
-	 OfKboLgTTBqSnODUsU+ySA+p4qH4Ml47A6owrOEGwQNQkOcufExY3f8J7FI0exK3UW
-	 bDT6RPiUBqVweVQ9aI6pX4zo2au8KLlzC9IzO6bpxQUdL+e/8SgsYBpGi8YgX5gO5V
-	 Ww0fsoiEZmg9A==
-Date: Thu, 2 Apr 2026 12:55:20 +0100
-From: Mark Brown <broonie@kernel.org>
-To: John Madieu <john.madieu.xa@bp.renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
+	b=oqIp9oK/CmPGFtTrYHBXVTt3YRR7hvL/Lj8X/qA4v6UR4032SX75xrawsWktC3F/k
+	 DqXrln9xWd7/rAYk5YlSaKL2NorONWEC7QstrmLMww5lHQv+fYRj3rw39v7b2uk+e4
+	 hZ/8+zV6pf/uLAXgGLuW5mJg5Oz2wRmYs/UUPF+oy/TETpwV0KVuo1s9+dj9fiQ9Ed
+	 YiojNiERmlBXh/fSNwIqZpk5tnX5IUGwLeIFo4P+8wtPr09MIGImnfaWcEmEbPj++/
+	 +ftgRIUYnchCsI2dhmx3SiJ4kcLBqa/DyTzBJpSAxvDX44c38LX0eexi21Fs/Wuu0+
+	 GQrx7liM/DJ8w==
+Date: Thu, 2 Apr 2026 13:14:44 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Changhuang Liang <changhuang.liang@starfivetech.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Frank Li <Frank.Li@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Thomas Gleixner <tglx@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
 	Philipp Zabel <p.zabel@pengutronix.de>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	John Madieu <john.madieu@gmail.com>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-sound@vger.kernel.org
-Subject: Re: [PATCH v2 00/24] ASoC: rsnd: Add audio support for the Renesas
- RZ/G3E SoC
-Message-ID: <0c5afdbd-1348-4c61-b036-89adafeb5109@sirena.org.uk>
-References: <20260402090524.9137-1-john.madieu.xa@bp.renesas.com>
+	Emil Renner Berthing <kernel@esmil.dk>, Kees Cook <kees@kernel.org>,
+	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-hardening@vger.kernel.org, netdev@vger.kernel.org,
+	Sia Jee Heng <jeeheng.sia@starfivetech.com>,
+	Hal Feng <hal.feng@starfivetech.com>,
+	Ley Foon Tan <leyfoon.tan@starfivetech.com>
+Subject: Re: [PATCH v1 22/22] riscv: dts: starfive: jhb100: Add clocks and
+ resets nodes
+Message-ID: <20260402-fox-overhand-9a45ec670bce@spud>
+References: <20260402105523.447523-1-changhuang.liang@starfivetech.com>
+ <20260402105523.447523-23-changhuang.liang@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -59,57 +57,94 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="CkH7niCKfa0KXZAX"
+	protocol="application/pgp-signature"; boundary="i9/X0Hs31jPOYl+N"
 Content-Disposition: inline
-In-Reply-To: <20260402090524.9137-1-john.madieu.xa@bp.renesas.com>
-X-Cookie: <doogie> dpkg has bugs?  no way!
+In-Reply-To: <20260402105523.447523-23-changhuang.liang@starfivetech.com>
 
 
---CkH7niCKfa0KXZAX
+--i9/X0Hs31jPOYl+N
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 02, 2026 at 11:04:59AM +0200, John Madieu wrote:
-
-> This series adds audio support for the Renesas RZ/G3E SoC and enables
-> it on the SMARC EVK board with the Dialog DA7212 codec.
-
-> The RZ/G3E audio subsystem is based on R-Car Sound IP but has several
-> differences requiring dedicated handling:
->   - SSI operates exclusively in BUSIF mode (no PIO)
->   - 2 BUSIF channels per SSI instead of 4/8 on R-Car
->   - Different register offsets for SCU, ADG, SSIU, and SSI
->   - Per-SSI ADG and SSIF supply clocks
->   - DMA ACK signal routing through ICU
+On Thu, Apr 02, 2026 at 03:55:23AM -0700, Changhuang Liang wrote:
+> Add clocks and resets nodes for JHB100 RISC-V BMC SoC. They contain
+> sys0crg/sys1crg/sys2crg/per0crg/per1crg/per2crg/per3crg.
 >=20
-> This series includes:
->   - Clock driver support for audio clocks and resets
->   - DT bindings update for DMA ACK signal field
->   - IRQ chip extension for DMA ACK signal routing
->   - RZ-DMAC driver updates for ACK signal support
->   - R-Car Sound driver updates for RZ/G3E support
->   - System suspend/resume support
->   - Device tree nodes for RZ/G3E SMARC EVK
+> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+> ---
+>  arch/riscv/boot/dts/starfive/jhb100.dtsi | 198 ++++++++++++++++++++++-
+>  1 file changed, 195 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/arch/riscv/boot/dts/starfive/jhb100.dtsi b/arch/riscv/boot/d=
+ts/starfive/jhb100.dtsi
+> index 4d03470f78ab..700d00f800bc 100644
+> --- a/arch/riscv/boot/dts/starfive/jhb100.dtsi
+> +++ b/arch/riscv/boot/dts/starfive/jhb100.dtsi
+> @@ -4,6 +4,8 @@
+>   */
+> =20
+>  /dts-v1/;
+> +#include <dt-bindings/clock/starfive,jhb100-crg.h>
+> +#include <dt-bindings/reset/starfive,jhb100-crg.h>
+> =20
+>  / {
+>  	compatible =3D "starfive,jhb100";
+> @@ -268,12 +270,96 @@ pmu {
+>  			<0x00 0x22 0xFFFFFFFF 0xFFFFFF22 0x00007FF8>;	/* Event ID 34 */
+>  	};
+> =20
+> -	clk_uart: clk-uart {
+> -		compatible =3D "fixed-clock"; /* Initial clock handler for UART */
+> +	osc: osc {
+> +		compatible =3D "fixed-clock";
+>  		#clock-cells =3D <0>;
+>  		clock-frequency =3D <25000000>;
+>  	};
 
-You said you were going to separate out the serieses:
+Is this really on the SoC?
 
-https://lore.kernel.org/all/TY6PR01MB173779BDE4BE11739D3B7DAACFF4FA@TY6PR01=
-MB17377.jpnprd01.prod.outlook.com/
+> =20
+> +	pll0: pll0 {
+> +		compatible =3D "fixed-clock";
+> +		#clock-cells =3D <0>;
+> +		clock-frequency =3D <2400000000>;
+> +	};
 
---CkH7niCKfa0KXZAX
+What's providing all of these PLLs? Are they all fixed-frequency on-chip
+PLLs without an off-chip reference? I find that somewhat unlikely.
+
+Since devicetrees are now being imported into U-Boot, it's important to
+make sure that I'm not merging fixed-clocks that later get replaced by
+dedicated drivers that U-Boot won't have.
+
+To that end, I won't apply the series this depends on without this patch
+being applied at the same time.
+
+> +
+> +	pll1: pll1 {
+
+Also, none of these follow the preferred naming scheme for
+fixed-frequency clocks. Go look at the binding for how they should be,
+if they are too be kept.
+
+> +		compatible =3D "fixed-clock";
+> +		#clock-cells =3D <0>;
+> +		clock-frequency =3D <1000000000>;
+> +	};
+
+Cheers,
+Conor.
+
+--i9/X0Hs31jPOYl+N
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnOWSgACgkQJNaLcl1U
-h9C68wf+MZsj0US6d4TmQr2yaV8ls0gzIbG9DnDhrRPorWZumeaFME9qPxyfIALP
-BT8JNC0R2KuT9nqmMMqJdKr+xpfcRaReczt8bENJXiHsU5ET/XxMR+C4Rqll+3gK
-VLV3NbYkbSLFeFvp/dpqwV5Y1PihtISdaYvIR6QNCyKGchmZ4aeVKB4ecuXNfI8b
-8E9Y6Mz6nweYfeJu0F2OHX3uqaVUQOIgkn2Y0xM8KwvtTfyAHolUJXljnO9QnJ3C
-4NjER7nMS713jJK8gwE9mBXo2NhBDyMDLT9mD7BMovknFIpj2F+omSqJ8TzF/2wr
-X6JijFphydiaJjgzrnILLf06j1vY4Q==
-=D/sa
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCac5dtAAKCRB4tDGHoIJi
+0uQHAP0WzBeqVfuYIxoQ5RQ7zJEaN6Xi9MLvyjrUg80WfHDtYwEAlx6dQ13WnFUI
+p3u5nsP2s7rO8KPeaaFAN2sMynSwWg4=
+=1yvc
 -----END PGP SIGNATURE-----
 
---CkH7niCKfa0KXZAX--
+--i9/X0Hs31jPOYl+N--
