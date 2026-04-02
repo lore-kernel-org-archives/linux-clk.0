@@ -1,293 +1,138 @@
-Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2105.outbound.protection.partner.outlook.cn [139.219.146.105])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7A33E3C53;
-	Thu,  2 Apr 2026 12:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.105
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775133290; cv=fail; b=rnVzt/yr60A+LOgMFL+yL/O6SJAmlN8Cyhxf/bUZJ/EeiPM0lMEP9eODdbEclEy6UrSHZ0unTeFHRdvOf5Je2kwDYy5cHvc9SLfMo9AXgU9Ux0yH3A8QRe1p4eLjr9SdeNDaHsUG08UpAlay0faA47CbxLqJC5JryYsOii2aSnU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775133290; c=relaxed/simple;
-	bh=5c+zTGUj5hqcxnIzbTwOqoe6tsP+yTZwB9V9b0DZofU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gi0VjqMHbSHYXbGSAl5vSY+SHmQIHUMPLOas2BYHNkLpGHkgTh3QannH6+pKhuyTQ7Kgw6OsE/8tIdeLNntSGUGjyJtL+Gj4i4ZBFfqwkGOJA9ZIb+YLTE13qnhNjy/i9as3K8l1jlQ7PZwcdRRB0Kuhs3FNugzf+2QgQMj2oEQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NUBGZ6qPbrwy/udwfFuK0jqs94AjHXdKhAdo5ImiYoFpYAj5nFG/W252/3ewiKad1c9Yd3bPKmchdnFO+GqZ1Il2fg5wu4TCfx6Xfcru0phoR71SKsJmzBGzKBoQfCp6GRS1mNixOSFcTD9C5cHKECJBYImEzBgpOlT+3//ld9BgkJCxjOxDeReeBQYYrMCmTr9WvNoviXhF8lkslGlQE3tsi8SFa/4b4hiMKnP6iA/XTq3tXQWE82vH8zXnCHcQMSloEaZxuTQ8DL1+PTg09ZjbZ5UeJchrFyr3P8QhdIY3Uyt3TL6LtKbGSVak2ZT4Kl9pwVlN1P19GTPa55VHjA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VeDPbLO3rXhL2r/iNO95UIbEDcWNB+lvh8qtNlbBnEA=;
- b=mYTJxTGCDeQ0/5hgrypSjWZn4DV38y+WCkl6ETrQVMMT5V4Mghiq/npGlhj8Q8UVH5/vgSd1bQwA1O1KJJYhEVKSrvjgXULUGY8sM+lbrnqqs7MwAKxd+BfT1bcxLEqQcz8T4RO2+1G6p8BwZAgwK2ckFpbCtb9ki5Lhlk5NdWq22gLX3En38W8ra79ZrhxPl6K8svv8zWPtrza7Oe7Eq/fLUfmeH6y8JHprdMsdcXK/2MAYclRqFhyrqSBPk32Xk7JLI7TK4H3S+rIF32Feyl3ySYgQFD60Vwc5rRS4Qkl9exm6cjsPouV65fJtsymS7++qhnAhx6KI3BQ+MUAF/A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-Received: from ZQ0PR01MB1208.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:19::5) by ZQ0PR01MB1096.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:c::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.20; Thu, 2 Apr
- 2026 10:56:01 +0000
-Received: from ZQ0PR01MB1208.CHNPR01.prod.partner.outlook.cn
- ([fe80::63d1:b688:cab7:50cb]) by
- ZQ0PR01MB1208.CHNPR01.prod.partner.outlook.cn ([fe80::63d1:b688:cab7:50cb%7])
- with mapi id 15.20.9769.017; Thu, 2 Apr 2026 10:56:01 +0000
-From: Changhuang Liang <changhuang.liang@starfivetech.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-hardening@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Sia Jee Heng <jeeheng.sia@starfivetech.com>,
-	Hal Feng <hal.feng@starfivetech.com>,
-	Ley Foon Tan <leyfoon.tan@starfivetech.com>,
-	Changhuang Liang <changhuang.liang@starfivetech.com>
-Subject: [PATCH v1 09/22] dt-bindings: clock: Add StarFive JHB100 System-2 clock and reset generator
-Date: Thu,  2 Apr 2026 03:55:10 -0700
-Message-Id: <20260402105523.447523-10-changhuang.liang@starfivetech.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20260402105523.447523-1-changhuang.liang@starfivetech.com>
-References: <20260402105523.447523-1-changhuang.liang@starfivetech.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ZQ0PR01CA0028.CHNPR01.prod.partner.outlook.cn (10.2.0.210)
- To ZQ0PR01MB1208.CHNPR01.prod.partner.outlook.cn (10.2.3.165)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954602E0412;
+	Thu,  2 Apr 2026 13:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1775136001; cv=none; b=jz/h2U8fZlH07kLhGvvEA8tzDfM8xV4YixOY024ec9NsR965OVYi4IyoivtY1RXrksaNTJRkaHA0bgZv7SL879ppOq+GmKFFFmW3lYDzjs5TGU29jp5E/svKdDLTkeSkJbp/CNlePzFSlz2bERhjVuvJau7qoU0tlFZ7q94LVT4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1775136001; c=relaxed/simple;
+	bh=ecLaU4G/54jqRCpPPFTWuBYhs3EGYAaVEUPDTgbRrhQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GZrQ9BHihGoX9hi5BiH5x0kgxpwPsFzl3AcLtk/WG/oZN3xVwtLXgiB75zApB1MXPTouevmGFaRmTv8ygAwE2QTj1qtJo1/PGEJynefLMx3o9LoyzzIu4mGV1p85KuE+tyTPCgwV+0JMYpjayT+V2x3GoAeaQeroY14+M00mO7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jPo8kula; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jPo8kula"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39E6CC116C6;
+	Thu,  2 Apr 2026 13:19:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775136001;
+	bh=ecLaU4G/54jqRCpPPFTWuBYhs3EGYAaVEUPDTgbRrhQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jPo8kulaL1+fw0qkc9ETqp7HMGr0ezo/x/z6Fw6pBb8A7XM9xmsY0EUj+WLY8Noc5
+	 9CzYgbSZjkYepNTDmPHNxeA2V6TP+8b1cYvob2tfe0KAsZcdVtwH/CJIsRZAznaesh
+	 EfCbTCSMOOvzf0CjBbD9kLF/iopWhfUwD8ekZhsGrrlwdpyszYcffukWKGV/wkw3iE
+	 SUDm0HHD1iCT+jNVCu1fldDWaERURDAYUe9QV4LIHBqPWBrL8VNN8mrVTCHIDNQCot
+	 AR9vSymJagT8uSEI27YslZj5c4b9yLkTaZ3WuVnIJApSUQGLcs+y3gTTrWxOCKFWms
+	 xfVfQvEVx/nlw==
+Message-ID: <991f781f-e188-480f-933b-b9a342166446@kernel.org>
+Date: Thu, 2 Apr 2026 15:19:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: ZQ0PR01MB1208:EE_|ZQ0PR01MB1096:EE_
-X-MS-Office365-Filtering-Correlation-Id: b6ac9e62-7848-4aaf-d3fe-08de90a66c5c
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|52116014|376014|366016|921020|38350700014|22082099003|18002099003|56012099003;
-X-Microsoft-Antispam-Message-Info:
-	BiDDErzJY1hm88NkO1bn9vEtsI3i1VgwCrvh8uKz3QggqyfOpUU/h2JUTe535KbSOLRTOhZtLrBPyZHfqMxcVvE1BK9le1mwIyhu0FsWxefVkWVxf6MyzG+qifnyeVQWmNcQGoMqBd+US6IIBgfs/G7bjHMKp9wa5/lAKwCqPfVEW65ZjwbKor7puxlScgviDfMkVK1rRlJtkqeygzcI70O853F0yKfQJcMaer5sf2B4niCYxzYoMKbaTy24bsNV+qq/DNqK5hkSy6j4cIX59HDjtJcA4/y6EahKDksvTQpT65vPyFzG2pZmq5NMvKimT7Mc4Wr+uJimVGtohwfU5pGTW+q/BNLwiEc7Kr1lGWf+jf03/ZY4IdNqeuZ70rNihamFRWtcVThukVHIjUUDKoQERj7rocTtYQpGhzvh6YWATPP0s7kkgp8C/wA7tXhO891KuWgCCzdqtCLFuIqReq7S+oWXgVn0IxaiO0c1P32AEuN3+Fi6ywBxFIDoVWYyTqN7CIfO3Hyxyfpf93hXtPMP8AjHdRdF+tmrdRin4iVnY7X4KAB6ro3rsRS40YtmQ7gIKNX10x7zKh8l3X82jQwrCmEQMvqcnO7KKKXFOIU=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ0PR01MB1208.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(52116014)(376014)(366016)(921020)(38350700014)(22082099003)(18002099003)(56012099003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?f6uarxj9U14qtJvSOW71IqIy+zXgvDg9WEPXA7t9i0M2+FZzCAGlSfh9yjkH?=
- =?us-ascii?Q?9AdtveP0Q0DQxSsOyKxwcy6weJA5W0S75gltC13Zqfp4fxddt0KJKIWto1JM?=
- =?us-ascii?Q?buIJvO9CoKgiQRUIfb3q1Is72tr3Ei+kEyoliaTJ6vIQGKfFn+EKwsupbw8z?=
- =?us-ascii?Q?hnQY3IW5SXJmlE2zgvFKmJ2qKwDWlhyeIf3W+HiZiVESG+jf558ogAsVgDC7?=
- =?us-ascii?Q?DJtyjaGkknSAZjhHbFThUsFsfB2KO0oU9c3iHYLyTqN/8bB2uXf0M5J5216i?=
- =?us-ascii?Q?3joPHg1w5PtqJ24U1XMbkNAgX25UMVgbdec3o2Qxek9TlYlRfySWesnsKLZq?=
- =?us-ascii?Q?jGwEf4iD0xcAHwNoyeOb8HBil5ffGKF6gd4tf/fn4vek9wrvNnDZUDlRzzHz?=
- =?us-ascii?Q?a0fGaMvgoo6fHrdFXsEoDPIKw5RL7rmGjaj6COm5bCwCilqqpEKzWXUu8rSa?=
- =?us-ascii?Q?L/TQlwl/0U/UZBCYSBLakEmAJlmJlzQBJeM6rMxbGynDakgMNmtscFhhpxWY?=
- =?us-ascii?Q?FDiu7RJSzHus5zDNQCR1uu0vxPJkZi2p7HjbB/e0HpcnCK9FoRCf4vcNIef9?=
- =?us-ascii?Q?7wBF+goXmWYpbQHwzsbjpIhyEUZW4+lek1zTt2TmL2zzKCYmYWIzDARIsxQ9?=
- =?us-ascii?Q?/49ZaugDWyy100XGGwElTAwzztkfimkjf6yE/4WUVhucuBozCEE85atqijjK?=
- =?us-ascii?Q?E5/kmkfLw1a7ivTUN3/mXFAy97oN6FBbMT09Jplz5GFRWJdvXSMnkMGLoc2e?=
- =?us-ascii?Q?si60HQTQuoPj9B6VTWkjSNSwemaC0Zjeo9o2ul4OY4OHhndXFYOExRGGMgDr?=
- =?us-ascii?Q?dHYI4H+oEo4q5YoGxqnTK55htUko6xczBRapVzXHVfuKVrPJPGiOsDbNX6j7?=
- =?us-ascii?Q?T7JdiHQso7iTXrPMi631WTWuqmTwkRAxF5ACMp0wTsE7ifpFdJ5I9Rv3yzee?=
- =?us-ascii?Q?jGtCpGKzqSIZAUuScQpvH8Th48gSyxO145IB9b3gPXHSDiedxBTPIsX69i0u?=
- =?us-ascii?Q?Dm4kYcRYtCpTLdM+XXatknB2BFZk8UhjZxHiyEeiu8i6Rr7qAwIgwJV+3GcI?=
- =?us-ascii?Q?XpQZDUY5MJY1uF/wspbwcFE9W5sgKcauE3Or90cL7zjoJcdlBqLAE9GifImi?=
- =?us-ascii?Q?b/ogcUEc97Pze0kv+fvSCOVtclhE7TR/1yWhoWQE1sG/FMxRcIJcObIw5DEY?=
- =?us-ascii?Q?unStU08d0JxwCUDH2GD4sobhHU/+iAU1BrzgeT/ZqqiQM9zYO83z0GN5kEqB?=
- =?us-ascii?Q?6xnj/DlwltzD2fyRhLxDzXkhAqJnCKRTcUVE1aRqgDh9fgU35agNhwWnYZWf?=
- =?us-ascii?Q?36seTdjTdyzQSL4fULH6GiGs/6emAyFCQQvDWXWdF1BYcqJF/CO+ZPeAd4JW?=
- =?us-ascii?Q?iv65Swrm5/jjJlNTD7xQ7Hk8ipEQu7FZa/JUTv/moIOu+/TlgDU2IwaxYLlZ?=
- =?us-ascii?Q?Ek9qMeGeaB12K+msysJbV6tc+CIu118EhcLNG2dOrCICVFqyuUr2YEyWByXy?=
- =?us-ascii?Q?Tbtf6DT50/Cv1W4BRmX/0bi1cuQo4dbFp5I91k/We9geXkZptCQ82HScgGPb?=
- =?us-ascii?Q?ytsUPfk01oEmUJH5MsbWUhT2VRlpZG96c65gVh86nuxbky0rwgUX1DE8N1wK?=
- =?us-ascii?Q?UrD/qe1LgY7XR9b3KbrlJtc0vdG00aWkxl6v/tWkzJAv7egR2DaIjLwqfkTy?=
- =?us-ascii?Q?WtXaFP5rp9F+4dg54TM2POA9PKlRx+FxabpUyV2Z+cliQLEEK1Isd7yLJ9Bd?=
- =?us-ascii?Q?D/qNJtBO1w5JJSJuwIJDLdVwZhsZHnI0r++ci+1aBrhX2p6yKQ9C?=
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b6ac9e62-7848-4aaf-d3fe-08de90a66c5c
-X-MS-Exchange-CrossTenant-AuthSource: ZQ0PR01MB1208.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Apr 2026 10:56:01.1824
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /prO2+86wmtqMrmfxEm+DfxwJbTemLyJVyTiWrrflNmEzM18F6r2jFN7vvTHBXg35X27AWCGfpXLIn5nnm2OTvrkz/7MQu0B6Eo4mZ6sZxwFIVdUfoZ7avF2d7nf8YHR
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ0PR01MB1096
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: clock: qcom: document the Milos GX clock
+ controller
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260306-milos-gxclkctl-v1-0-00b09ee159a7@fairphone.com>
+ <20260306-milos-gxclkctl-v1-1-00b09ee159a7@fairphone.com>
+ <20260307-inventive-stingray-of-pride-5c2216@quoll>
+ <768180d0-bab6-466f-9f5f-54b36f353bd6@kernel.org>
+ <DHIO0VFBOHNX.381P06A2CRHAZ@fairphone.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <DHIO0VFBOHNX.381P06A2CRHAZ@fairphone.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add bindings for the System-2 clocks and reset generator (SYS2CRG) on
-JHB100 SoC.
+On 02/04/2026 14:24, Luca Weiss wrote:
+>>>> +  '#power-domain-cells':
+>>>> +    const: 1
+>>>> +
+>>>> +  reg:
+>>>> +    maxItems: 1
+>>>
+>>> reg should be the second property, like you have it in "required" part.
+>>> I guess you copied it from kaanapali-gxclkctl.yaml, so lesson - qcom
+>>> bindings have acceptable quality, but not good enough to take as correct
+>>> starting point.
+>>>
+>>
+>> OTOH, why this entire binding cannot be squashed in Kaanapali one?
+>> What's the difference?
+> 
+> There's no GMXC power domain on Milos. Apart from that they're
+> compatible from a bindings perspective.
 
-Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
----
- .../clock/starfive,jhb100-sys2crg.yaml        | 64 +++++++++++++++++++
- .../dt-bindings/clock/starfive,jhb100-crg.h   | 33 ++++++++++
- .../dt-bindings/reset/starfive,jhb100-crg.h   | 26 ++++++++
- 3 files changed, 123 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/starfive,jhb100-sys2crg.yaml
+Ah, right, I missed only two items here.
 
-diff --git a/Documentation/devicetree/bindings/clock/starfive,jhb100-sys2crg.yaml b/Documentation/devicetree/bindings/clock/starfive,jhb100-sys2crg.yaml
-new file mode 100644
-index 000000000000..5f71e761be23
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/starfive,jhb100-sys2crg.yaml
-@@ -0,0 +1,64 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/starfive,jhb100-sys2crg.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: StarFive JHB100 System-2 Clock and Reset Generator
-+
-+maintainers:
-+  - Changhuang Liang <changhuang.liang@starfivetech.com>
-+
-+properties:
-+  compatible:
-+    const: starfive,jhb100-sys2crg
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: Main Oscillator (25 MHz)
-+      - description: PLL1
-+      - description: System-2 GPU0 600MHz
-+      - description: System-2 GPU1 600MHz
-+
-+  clock-names:
-+    items:
-+      - const: osc
-+      - const: pll1
-+      - const: sys2_gpu0_600
-+      - const: sys2_gpu1_600
-+
-+  '#clock-cells':
-+    const: 1
-+    description:
-+      See <dt-bindings/clock/starfive,jhb100-crg.h> for valid indices.
-+
-+  '#reset-cells':
-+    const: 1
-+    description:
-+      See <dt-bindings/reset/starfive-jhb100-crg.h> for valid indices.
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - '#clock-cells'
-+  - '#reset-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    clock-controller@13008000 {
-+      compatible = "starfive,jhb100-sys2crg";
-+      reg = <0x13008000 0x4000>;
-+      clocks = <&osc>, <&pll1>, <&sys0crg 73>,
-+               <&sys0crg 74>;
-+      clock-names = "osc", "pll1", "sys2_gpu0_600",
-+              "sys2_gpu1_600";
-+      #clock-cells = <1>;
-+      #reset-cells = <1>;
-+    };
-diff --git a/include/dt-bindings/clock/starfive,jhb100-crg.h b/include/dt-bindings/clock/starfive,jhb100-crg.h
-index 510a5c6fa89a..34e4498fc1c8 100644
---- a/include/dt-bindings/clock/starfive,jhb100-crg.h
-+++ b/include/dt-bindings/clock/starfive,jhb100-crg.h
-@@ -73,4 +73,37 @@
- #define JHB100_SYS1CLK_BMCPER3_100			18
- #define JHB100_SYS1CLK_BMCPER3_125			19
- 
-+/* SYS2CRG clocks */
-+#define JHB100_SYS2CLK_JTAGM0_200			3
-+#define JHB100_SYS2CLK_JTAGM1_200			4
-+#define JHB100_SYS2CLK_JTAGM0_100			5
-+#define JHB100_SYS2CLK_JTAGM1_100			6
-+#define JHB100_SYS2CLK_JTAGM0_ATPG_TCLOCK		7
-+#define JHB100_SYS2CLK_JTAGM1_ATPG_TCLOCK		8
-+#define JHB100_SYS2CLK_JTAG0_MST_WRAP_HCLK		9
-+#define JHB100_SYS2CLK_JTAG0_MST_WRAP_CLK_JTAG		10
-+#define JHB100_SYS2CLK_JTAG0_MST_WRAP_APB_PCLK		11
-+#define JHB100_SYS2CLK_JTAG0_MST_WRAP_ATPG_TCLOCK	12
-+#define JHB100_SYS2CLK_JTAG1_MST_WRAP_HCLK		13
-+#define JHB100_SYS2CLK_JTAG1_MST_WRAP_CLK_JTAG		14
-+#define JHB100_SYS2CLK_JTAG1_MST_WRAP_APB_PCLK		15
-+#define JHB100_SYS2CLK_JTAG1_MST_WRAP_ATPG_TCLOCK	16
-+#define JHB100_SYS2CLK_HOSTUSB_100			17
-+#define JHB100_SYS2CLK_HOSTUSBCMN_500			18
-+#define JHB100_SYS2CLK_BMCPER1_200			19
-+#define JHB100_SYS2CLK_BMCPER1_250			20
-+#define JHB100_SYS2CLK_BMCPER1_143_DFT			21
-+#define JHB100_SYS2CLK_BMCPER1_143			22
-+#define JHB100_SYS2CLK_BMCPER0_200			23
-+#define JHB100_SYS2CLK_GPU0_100				24
-+#define JHB100_SYS2CLK_GPU0_BUS_CLK			25
-+#define JHB100_SYS2CLK_GPU0_APB_CLK			26
-+#define JHB100_SYS2CLK_GPU0_OSC_CLK			27
-+#define JHB100_SYS2CLK_GPU1_100				28
-+#define JHB100_SYS2CLK_GPU1_BUS_CLK			29
-+#define JHB100_SYS2CLK_GPU1_APB_CLK			30
-+#define JHB100_SYS2CLK_GPU1_OSC_CLK			31
-+#define JHB100_SYS2CLK_MAIN_ICG_EN_JTAG0		32
-+#define JHB100_SYS2CLK_MAIN_ICG_EN_JTAG1		33
-+
- #endif /* __DT_BINDINGS_CLOCK_STARFIVE_JHB100_H__ */
-diff --git a/include/dt-bindings/reset/starfive,jhb100-crg.h b/include/dt-bindings/reset/starfive,jhb100-crg.h
-index 9a0ab64abafa..d92bc4c6d830 100644
---- a/include/dt-bindings/reset/starfive,jhb100-crg.h
-+++ b/include/dt-bindings/reset/starfive,jhb100-crg.h
-@@ -40,4 +40,30 @@
- #define JHB100_SYS1RST_BMCPERIPH3_RSTN_CRG				13
- #define JHB100_SYS1RST_BMCPERIPH3_RSTN_BUS				14
- 
-+/* SYS2CRG resets */
-+#define JHB100_SYS2RST_JTAG0_MST_WRAP_HRESETN				2
-+#define JHB100_SYS2RST_JTAG0_MST_WRAP_APB_PRESETN			3
-+#define JHB100_SYS2RST_JTAG1_MST_WRAP_HRESETN				4
-+#define JHB100_SYS2RST_JTAG1_MST_WRAP_APB_PRESETN			5
-+
-+#define JHB100_SYS2RST_HUSBCMN_HOSTCMN_RSTN_BUS_NCNOC_INIT		8
-+#define JHB100_SYS2RST_HUSBCMN_RSTN_HOSTCMN_CRG				9
-+#define JHB100_SYS2RST_HUSBCMN_HOSTUSB0_RSTN_BUS_NCNOC_BMC_TARG		10
-+#define JHB100_SYS2RST_HUSBCMN_HOSTUSB0_RSTN_BUS_NCNOC_HOST_TARG	11
-+#define JHB100_SYS2RST_HUSBCMN_RSTN_BMC_CRG				12
-+#define JHB100_SYS2RST_HUSBCMN_RSTN_HOSTUSB0_CRG			13
-+#define JHB100_SYS2RST_HUSBCMN_HOSTUSB1_RSTN_BUS_NCNOC_BMC_TARG		14
-+#define JHB100_SYS2RST_HUSBCMN_HOSTUSB1_RSTN_BUS_NCNOC_HOST_TARG	15
-+#define JHB100_SYS2RST_HUSBCMN_RSTN_HOSTUSB1_CRG			16
-+#define JHB100_SYS2RST_BMCPERIPH1_RSTN_CRG				17
-+#define JHB100_SYS2RST_BMCPERIPH1_RSTN_BUS				18
-+#define JHB100_SYS2RST_BMCPERIPH0_RSTN_CRG				19
-+#define JHB100_SYS2RST_BMCPERIPH0_RSTN_BUS				20
-+#define JHB100_SYS2RST_GPU0_RSTN_CRG					21
-+#define JHB100_SYS2RST_GPU0_RSTN_BUS					22
-+#define JHB100_SYS2RST_GPU0_HOST_PCIE_RST_N				23
-+#define JHB100_SYS2RST_GPU1_RSTN_CRG					24
-+#define JHB100_SYS2RST_GPU1_RSTN_BUS					25
-+#define JHB100_SYS2RST_GPU1_HOST_PCIE_RST_N				26
-+
- #endif /* __DT_BINDINGS_RESET_STARFIVE_JHB100_CRG_H__ */
--- 
-2.25.1
+> 
+> However it can re-use include/dt-bindings/clock/qcom,kaanapali-gxclkctl.h
+> because the GX_CLKCTL_GX_GDSC definition would be identical.
 
+Indeed and you use the same driver, so the header can be re-used. This
+should be explained in the commit msg.
+
+> 
+> And also the driver (which can be used as-is) would be identical. In
+> that driver qcom,kaanapali-gxclkctl.h is used so it makes sense to keep
+> with the kaanapali header, or not? Making a qcom,milos-gxclkctl.h with
+> the same definition is not wanted?
+> 
+Best regards,
+Krzysztof
