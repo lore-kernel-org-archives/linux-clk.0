@@ -1,220 +1,117 @@
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5026E3F54B7;
-	Thu,  2 Apr 2026 16:33:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079AE254B1F;
+	Thu,  2 Apr 2026 18:16:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775147584; cv=none; b=EtL537DWkTVLbWITEABiVUN0VvHM1FW1cvOzgbNU7j6ZMJO2rFD/k9ACeJ1QKiwfqY50dPSvSAZ7iJddL3yLBUFOQK8BrMozkb2msy5J6Jrpr8EamwPILUXj66bhzOKroP3tFQu1aZ7VH3t38KKd1CoGfbPfGse5wB9GgkyOgGo=
+	t=1775153776; cv=none; b=r6F00cj8VTCLcZK9Eo+Dhi+yJF4sLq0RfmDuxtTtR4nFvJLjnWPrpw0eWDg06l66RQxV9zT61tKSY/nbpy97mwR15lwJp0YRdYfRQOE0yMf1/YPlxT2tXxdtgMDRQO7jRdT3pVyVRXZou/jvh1DC8PfxnCwkoahDMhlhdQjsAAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775147584; c=relaxed/simple;
-	bh=ZvSCySl+xkT9Dr6YWCZiSi1/VSIKxeHwt/7iO/PVm5g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GilyvXqYZ4B5V2jydx13VF4KZr0+Hstj3xEuXm7hX6xYBBEGpNRoy/o+GM5uGcUhm6o7YReH+EM9v5L5CPFCAA70Wiyok/SYytIJgtA4/8keyNiWmnvTRXEDveyAYLOezzHNV+PyhGbUqLNt+Dl5SZc+Xj5Z+XNICjep5ft8aVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: gKzI0NIYTzWKjtHzPkgDcw==
-X-CSE-MsgGUID: orBfnzr0SiqkbGM4lon7zQ==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 03 Apr 2026 01:33:01 +0900
-Received: from ubuntu.adwin.renesas.com (unknown [10.226.92.38])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 1BE7F40083E2;
-	Fri,  3 Apr 2026 01:32:56 +0900 (JST)
-From: John Madieu <john.madieu.xa@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	john.madieu@gmail.com,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	John Madieu <john.madieu.xa@bp.renesas.com>
-Subject: [PATCh v3 8/8] arm64: dts: renesas: r9a09g047e57-smarc: add DA7212 audio codec support
-Date: Thu,  2 Apr 2026 18:31:26 +0200
-Message-ID: <20260402163126.12135-9-john.madieu.xa@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260402163126.12135-1-john.madieu.xa@bp.renesas.com>
-References: <20260402163126.12135-1-john.madieu.xa@bp.renesas.com>
+	s=arc-20240116; t=1775153776; c=relaxed/simple;
+	bh=GHooBRGIfnrcwMwKPbI3wXJX80T4Gb60IUwbLdhm+2k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g546pe9S/G28Q3tnyDUfTmPOH0NAsP8P9nKlIcUUEzbYztoEv0Ebc/bfwJOTgvVWWvTIZZ7ViAPQaQXKz6WafD/QyyW+84J1o9v1UDO1NB96m0KGrohyLHiDrIcDOJS2EelC52Zrl9vyUSSfJs+tmxv0Xd1bDfxs27uP4LAGYFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lm3zb5UK; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lm3zb5UK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63792C116C6;
+	Thu,  2 Apr 2026 18:16:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775153775;
+	bh=GHooBRGIfnrcwMwKPbI3wXJX80T4Gb60IUwbLdhm+2k=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Lm3zb5UKQcb5r/IpqFr7xMiVTLS4KSDb/SsFNksNxx4egzvj6/XTkcEYTyXp23pq4
+	 mm80dcdr7hff2M1wrx3lI/crRdkwV74f1fsJ8IvWqU85go7CvdlkjINEofqpfzkiZa
+	 1af6xKyEn+0CTRYz25qDNbl5tAc0A8s237k/DSDUmxkzI/FPcKRlS13nL6nGWQ1RVH
+	 RLPckct7Qb3a5fV2tGzQvzoEvGYXZSVYODFr1LBw2cGLud6C1xX8hzulF1A1fVLj/s
+	 Y0gBB2bc0+xvXXuCPpB33E3Xz/E9cRDv2OOszxJ2k177+8jNT4ifYuZaaPAteacH4U
+	 /hjfPUDveqYsg==
+Message-ID: <620e305f-c43f-427a-be69-a00edf4bdc16@kernel.org>
+Date: Thu, 2 Apr 2026 20:16:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] arm64: defconfig: Enable CAMCC driver on Qualcomm
+ Glymur SoC
+To: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+ Imran Shaik <imran.shaik@oss.qualcomm.com>,
+ Taniya Das <taniya.das@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20260402-glymur_camcc-v1-0-e8da05a21da7@oss.qualcomm.com>
+ <20260402-glymur_camcc-v1-4-e8da05a21da7@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20260402-glymur_camcc-v1-4-e8da05a21da7@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-RZ/G3E SMARC board has a DA7212 audio codec connected via I2C1 for
-sound input/output using SSI3/SSI4 where:
+On 02/04/2026 08:15, Jagadeesh Kona wrote:
+> Enable camera clock controller driver for camera functionality on
+> Qualcomm Glymur-CRD and similar other platforms with Glymur SoC.
+> 
+> Signed-off-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+> ---
+>  arch/arm64/configs/defconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
- - The codec receives its master clock from the Versa3 clock
-   generator present on the SoM
- - SSI4 shares clock pins with SSI3 to provide a separate data
-   line for full-duplex audio capture.
 
-Enable audio support on RZ/G3E SMARC2 EVK boards with a DA7212 audio codec.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
----
-
-Changes:
-
-v3: No changes
-v2: No changes
-
- .../boot/dts/renesas/r9a09g047e57-smarc.dts   | 114 ++++++++++++++++++
- 1 file changed, 114 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-index 6372f582a7c4..7defd342294a 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-@@ -32,6 +32,37 @@
- #include "rzg3e-smarc-som.dtsi"
- #include "renesas-smarc2.dtsi"
- 
-+/*
-+ * SSI-DA7212
-+ *
-+ * These commands are required when Playback/Capture
-+ *
-+ *	amixer -q cset name='Aux Switch' on
-+ *	amixer -q cset name='Mixin Left Aux Left Switch' on
-+ *	amixer -q cset name='Mixin Right Aux Right Switch' on
-+ *	amixer -q cset name='ADC Switch' on
-+ *	amixer -q cset name='Mixout Right Mixin Right Switch' off
-+ *	amixer -q cset name='Mixout Left Mixin Left Switch' off
-+ *	amixer -q cset name='Headphone Volume' 70%
-+ *	amixer -q cset name='Headphone Switch' on
-+ *	amixer -q cset name='Mixout Left DAC Left Switch' on
-+ *	amixer -q cset name='Mixout Right DAC Right Switch' on
-+ *	amixer -q cset name='DAC Left Source MUX' 'DAI Input Left'
-+ *	amixer -q cset name='DAC Right Source MUX' 'DAI Input Right'
-+ *	amixer -q sset 'Mic 1 Amp Source MUX' 'MIC_P'
-+ *	amixer -q sset 'Mic 2 Amp Source MUX' 'MIC_P'
-+ *	amixer -q sset 'Mixin Left Mic 1' on
-+ *	amixer -q sset 'Mixin Right Mic 2' on
-+ *	amixer -q sset 'Mic 1' 90% on
-+ *	amixer -q sset 'Mic 2' 90% on
-+ *	amixer -q sset 'Lineout' 80% on
-+ *	amixer -q set "Headphone" 100% on
-+ *
-+ * When Capture chained with DVC, use this command to amplify sound
-+ *	amixer set 'DVC In',0 80%
-+ * For playback, use: amixer set 'DVC Out',0 80%
-+ */
-+
- / {
- 	model = "Renesas SMARC EVK version 2 based on r9a09g047e57";
- 	compatible = "renesas,smarc2-evk", "renesas,rzg3e-smarcm",
-@@ -55,6 +86,22 @@ vqmmc_sd1_pvdd: regulator-vqmmc-sd1-pvdd {
- 		gpios-states = <0>;
- 		states = <3300000 0>, <1800000 1>;
- 	};
-+
-+	sound_card: sound {
-+		compatible = "audio-graph-card";
-+
-+		label = "snd-rzg3e";
-+
-+		dais = <&rsnd_port0>;	/* DA7212 */
-+	};
-+};
-+
-+&audio_clkb {
-+	clock-frequency = <11289600>;
-+};
-+
-+&audio_clkc {
-+	clock-frequency = <12288000>;
- };
- 
- &canfd {
-@@ -99,6 +146,37 @@ &i2c0 {
- 	pinctrl-names = "default";
- };
- 
-+&i2c1 {
-+	da7212: codec@1a {
-+		compatible = "dlg,da7212";
-+		#sound-dai-cells = <0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x1a>;
-+
-+		clocks = <&versa3 1>;
-+		clock-names = "mclk";
-+
-+		dlg,micbias1-lvl = <2500>;
-+		dlg,micbias2-lvl = <2500>;
-+		dlg,dmic-data-sel = "lrise_rfall";
-+		dlg,dmic-samplephase = "between_clkedge";
-+		dlg,dmic-clkrate = <3000000>;
-+
-+		VDDA-supply = <&reg_1p8v>;
-+		VDDSP-supply = <&reg_3p3v>;
-+		VDDMIC-supply = <&reg_3p3v>;
-+		VDDIO-supply = <&reg_1p8v>;
-+
-+		port {
-+			da7212_endpoint: endpoint {
-+				remote-endpoint = <&rsnd_endpoint0>;
-+				mclk-fs = <256>;
-+			};
-+		};
-+	};
-+};
-+
- &keys {
- 	pinctrl-0 = <&nmi_pins>;
- 	pinctrl-names = "default";
-@@ -280,6 +358,42 @@ &sdhi1 {
- 	vqmmc-supply = <&vqmmc_sd1_pvdd>;
- };
- 
-+&snd_rzg3e {
-+	pinctrl-0 = <&sound_clk_pins &sound_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+
-+	/* audio_clkout */
-+	#clock-cells = <0>;
-+	clock-frequency = <11289600>;
-+
-+	/* Multi DAI */
-+	#sound-dai-cells = <1>;
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		rsnd_port0: port@0 {
-+			reg = <0>;
-+			rsnd_endpoint0: endpoint {
-+				remote-endpoint = <&da7212_endpoint>;
-+
-+				dai-format = "i2s";
-+				bitclock-master = <&rsnd_endpoint0>;
-+				frame-master = <&rsnd_endpoint0>;
-+
-+				playback = <&ssi3>, <&src1>, <&dvc1>;
-+				capture = <&ssi4>, <&src0>, <&dvc0>;
-+			};
-+		};
-+	};
-+};
-+
-+&ssi4 {
-+	shared-pin;
-+};
-+
- &usb3_phy {
- 	status = "okay";
- };
--- 
-2.25.1
-
+Best regards,
+Krzysztof
