@@ -1,16 +1,16 @@
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1B0223336
-	for <linux-clk@vger.kernel.org>; Thu,  2 Apr 2026 12:22:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE216196C7C
+	for <linux-clk@vger.kernel.org>; Thu,  2 Apr 2026 12:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775132571; cv=none; b=TbHGhzj5eloO2PkV8Y143FVRLiqkIlm2EFviDj4qZ8wD3U3kzRDfOOosHUUm05PtXMunvZmzd2R8GYTZ5b5pMRAdgt3fXDMnZKqG3f8yQhtQZ+ENcBbJCC3x/SZ+ocZBZcCHu7UTFiYqOFQ74hXNC0arwpWtHqj8VksYGBW+IQE=
+	t=1775132653; cv=none; b=dWfgMlKjpUpsgdMd8gY5oiPPks0xeDW70iP+uWBaKtvJ9t8TvDkHbynH2qkhQNOcmKIzdeIIocMt07uKVLPDkjMhwZlD+LItIFirPdjzDzOILFgtX/nnT+1SUpTtzaOTDn1ikrzpNqIKSLOfSC+MwmP3PXVscQ7o1aVU2l9UC8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775132571; c=relaxed/simple;
-	bh=5Pc0OenZ3fZcs93Pg80x5PzRg92S/L7v3o65TCyhgfA=;
+	s=arc-20240116; t=1775132653; c=relaxed/simple;
+	bh=B6Wn3du+xd9k/zV7sV20cGrrWXf20VzC5GJ2Un2tpV4=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cXrThOjTkPNmkgLvM8vz80S6NFdNMN+3z+03+bXySz9KuuBb5hUXQKwxfhtAUATogysEuesKfUuaQtxLM8n2DxCkM/93DxGQPgxzTl10Pg4X0JTu7rYsS5UVtJfZKCQcMrJuS/FIqXARkfpua3QRsN+K6IT0S54X9zH4ICmKxNQ=
+	 Content-Type:MIME-Version; b=WafueubSswkYb7RMx/v9FHcIEAmsaXmOVSlWglsxQ7M3CTBIPsx3gC+kJXhnsksZUANVfj7TVCOA7I3boWqwQM+RYfPRXAwN6iSIXwhdxmMmJvSowsFQpkxFPG1FKKNlk5G4V0KyIWtffeq8HZnMNh50lHi1jIgZ2MYbueIUhdY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -18,20 +18,20 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <p.zabel@pengutronix.de>)
-	id 1w8H4B-0002P0-Bs; Thu, 02 Apr 2026 14:22:31 +0200
+	id 1w8H5Z-0002fM-Ed; Thu, 02 Apr 2026 14:23:57 +0200
 Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <p.zabel@pengutronix.de>)
-	id 1w8H49-003N51-1P;
-	Thu, 02 Apr 2026 14:22:29 +0200
+	id 1w8H5Y-003N5G-2S;
+	Thu, 02 Apr 2026 14:23:56 +0200
 Received: from pza by lupine with local (Exim 4.98.2)
 	(envelope-from <p.zabel@pengutronix.de>)
-	id 1w8H49-000000009AC-1Nzj;
-	Thu, 02 Apr 2026 14:22:29 +0200
-Message-ID: <2d3ef7359f63fb364cb7bc13b721132894428874.camel@pengutronix.de>
-Subject: Re: [PATCH v1 05/22] dt-bindings: clock: Add StarFive JHB100
- System-0 clock and reset generator
+	id 1w8H5Y-000000009Ot-2kEj;
+	Thu, 02 Apr 2026 14:23:56 +0200
+Message-ID: <9336e65273fb9a4c805c9703ad20ea803b74a860.camel@pengutronix.de>
+Subject: Re: [PATCH v1 21/22] reset: starfive: Add StarFive JHB100 reset
+ driver
 From: Philipp Zabel <p.zabel@pengutronix.de>
 To: Changhuang Liang <changhuang.liang@starfivetech.com>, Michael Turquette	
  <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Krzysztof
@@ -46,10 +46,10 @@ Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-hardening@vger.kernel.org, netdev@vger.kernel.org, Sia Jee Heng
 	 <jeeheng.sia@starfivetech.com>, Hal Feng <hal.feng@starfivetech.com>, Ley
  Foon Tan <leyfoon.tan@starfivetech.com>
-Date: Thu, 02 Apr 2026 14:22:29 +0200
-In-Reply-To: <20260402105523.447523-6-changhuang.liang@starfivetech.com>
+Date: Thu, 02 Apr 2026 14:23:56 +0200
+In-Reply-To: <20260402105523.447523-22-changhuang.liang@starfivetech.com>
 References: <20260402105523.447523-1-changhuang.liang@starfivetech.com>
-	 <20260402105523.447523-6-changhuang.liang@starfivetech.com>
+	 <20260402105523.447523-22-changhuang.liang@starfivetech.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.56.2-0+deb13u1 
@@ -65,56 +65,49 @@ X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expand
 X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
 On Do, 2026-04-02 at 03:55 -0700, Changhuang Liang wrote:
-> Add bindings for the System-0 clocks and reset generator (SYS0CRG) on
-> JHB100 SoC.
+> Add auxiliary reset driver to support StarFive JHB100 SoC.
 >=20
 > Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
 > ---
->  .../clock/starfive,jhb100-sys0crg.yaml        | 63 +++++++++++++++++++
->  .../dt-bindings/clock/starfive,jhb100-crg.h   | 56 +++++++++++++++++
->  .../dt-bindings/reset/starfive,jhb100-crg.h   | 30 +++++++++
->  3 files changed, 149 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/starfive,jhb1=
-00-sys0crg.yaml
->  create mode 100644 include/dt-bindings/clock/starfive,jhb100-crg.h
->  create mode 100644 include/dt-bindings/reset/starfive,jhb100-crg.h
->
-[...]
-> diff --git a/include/dt-bindings/reset/starfive,jhb100-crg.h b/include/dt=
--bindings/reset/starfive,jhb100-crg.h
-> new file mode 100644
-> index 000000000000..71affdcdf733
-> --- /dev/null
-> +++ b/include/dt-bindings/reset/starfive,jhb100-crg.h
-> @@ -0,0 +1,30 @@
-> +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
-> +/*
-> + * Copyright (C) 2024 StarFive Technology Co., Ltd.
-> + * Author: Changhuang Liang <changhuang.liang@starfivetech.com>
-> + *
-> + */
+>  MAINTAINERS                                   |   6 +
+>  drivers/reset/starfive/Kconfig                |   9 ++
+>  drivers/reset/starfive/Makefile               |   1 +
+>  .../reset/starfive/reset-starfive-jhb100.c    | 121 ++++++++++++++++++
+>  4 files changed, 137 insertions(+)
+>  create mode 100644 drivers/reset/starfive/reset-starfive-jhb100.c
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 3af9d79b7daf..4ddf8ba2e60d 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -25319,6 +25319,12 @@ L:	linux-riscv@lists.infradead.org
+>  S:	Maintained
+>  F:	arch/riscv/boot/dts/starfive/jhb100*
+> =20
+> +STARFIVE JHB100 RESET CONTROLLER DRIVERS
+> +M:	Changhuang Liang <changhuang.liang@starfivetech.com>
+> +S:	Maintained
+> +F:	drivers/reset/starfive/reset-starfive-jhb1*
+> +F:	include/dt-bindings/reset/starfive,jhb1*.h
 > +
-> +#ifndef __DT_BINDINGS_RESET_STARFIVE_JHB100_CRG_H__
-> +#define __DT_BINDINGS_RESET_STARFIVE_JHB100_CRG_H__
+>  STATIC BRANCH/CALL
+>  M:	Peter Zijlstra <peterz@infradead.org>
+>  M:	Josh Poimboeuf <jpoimboe@kernel.org>
+> diff --git a/drivers/reset/starfive/Kconfig b/drivers/reset/starfive/Kcon=
+fig
+> index 29fbcf1a7d83..6f9a0f24f9b9 100644
+> --- a/drivers/reset/starfive/Kconfig
+> +++ b/drivers/reset/starfive/Kconfig
+> @@ -19,3 +19,12 @@ config RESET_STARFIVE_JH7110
+>  	default ARCH_STARFIVE
+>  	help
+>  	  This enables the reset controller driver for the StarFive JH7110 SoC.
 > +
-> +/* SYS0CRG resets */
-> +#define JHB100_SYS0RST_RESOURCE_ARB					0
+> +config RESET_STARFIVE_JHB100
+> +	bool "StarFive JHB100 Reset Driver"
+> +	depends on CLK_STARFIVE_JHB100_SYS0
 
-Where are resets 1 and 2, ...
-
-> +#define JHB100_SYS0RST_SYS0_IOMUX_PRESETN				3
-> +#define JHB100_SYS0RST_SYS0H_IOMUX_PRESETN				4
-> +#define JHB100_SYS0RST_RST_ADAPTOR_TIMEOUT_RSTN				5
-
-... where are 6-13?
-
-> +
-> +#define JHB100_SYS0RST_BMCPCIERP_RSTN_BUS				14
-[...]
-
-If there are non-reset bits in these registers, please enumerate reset
-controls in a contiguous range for this binding and add a mapping table
-in the driver.
+Please make this buildable under COMPILE_TEST as well.
 
 regards
 Philipp
