@@ -1,67 +1,68 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947B829AB05
-	for <linux-clk@vger.kernel.org>; Thu,  2 Apr 2026 02:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A640333121D
+	for <linux-clk@vger.kernel.org>; Thu,  2 Apr 2026 02:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775096428; cv=none; b=VCn+6KHtezelT8LshrtK0x0m1hk8cuyR2X3uxV8ooQAGpcAAfsKUSIaFaJF/Ih/8wwhYWNQoJs8As3OfRxy6icdh+uPKeALbykzsvmJoq2nirC//qxHvB1QXxZf23+GVFJtJGn0tVF6Rcpx7A2Io10Vl2G2zVYsxq5EZeqgvXy4=
+	t=1775096429; cv=none; b=c+8LZDCr6xbn+P/KfwdhOVApL079n/jbF6F4VOLQIhO23hFb1K9vB7ksXQkrpi8bv4jHa93BL77DiEkKASMuzxZdp4ZcjHU58xaF1TAETybtPdhKYcT3IFmd+1ATHJct9SGlVOOlAImXK7Pb2kC0z7RmLLX/U/v7crDOGTbt0Fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775096428; c=relaxed/simple;
-	bh=Zvygghc4U1zVfy9V6MoGOwCMqNRKWIORDTl32yEIMvk=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=tvWO7AAt2WAS47BhEP65TwxqwcwFWosBvhBwikvIWzhEqxx7S7hLkCFKS02XQcxr/4TfOqX/r4fP9B1xF080TIY//KT4QK8evBgD+wm5UkGuF+aOTttxDdVzkAuHdhbAYjLdWfLc+WsYa/GA2phunob1MRKYla/OFHj3Upwsm8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A+lkYKzW; arc=none smtp.client-ip=209.85.128.52
+	s=arc-20240116; t=1775096429; c=relaxed/simple;
+	bh=WY9gRm4aP98ntsWvJkYIkAqwVc/Juho8BzwfyqFKlMQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=aB5U51lQpsXgTahpwp7IBCMrcKKdZqCgchtdxitQyKEpaZUGruft/yYxFDcxxTsAL/VD8Zal+VdPTlxuFcXwzbQ3DnohdX/GFiBa5W78oEFk8aANV+wr9wM/HWvEKj78lZyd7ESlKXSwZtM5/I4sErXAPG2YS5wG+5T+qAVnajw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FNvhQc5B; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A+lkYKzW"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-48558d6ef83so2760555e9.3
-        for <linux-clk@vger.kernel.org>; Wed, 01 Apr 2026 19:20:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FNvhQc5B"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-43cfb723793so236199f8f.2
+        for <linux-clk@vger.kernel.org>; Wed, 01 Apr 2026 19:20:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1775096424; x=1775701224; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PLOJdGh8Zj4JSEdcQhNVsEs0aSOI1jN7IdBHD4I9ibY=;
-        b=A+lkYKzWK1zURO6QTRm2HwB9CzRfMzsfl2vDR9KrXBqhGR4Db8pu89x7Q3DmpWgI//
-         J7mwg9PWxGivTgoHNtTQPs6SLCkNrRWG5kUpurhb51WmI1tlpqsHnHJG/IpAcRsiYUgT
-         /KqJJzpWw2/bllWhLYydbJEbUx8j5bbiMVFvqJJcdz3SdLVH9y9+jmVMEVsurfvb/35f
-         L6OU7R4vQt6isSvUMqEwLh4VE58b1NJL/lPeL5vx8yNdHIGJZ+SUfURQGQkqMQK6cU29
-         fkF+v4oXYKnHaEr3CFTdPj1dROsflihy8vCsmjI3nIoyyog8IqPTTTBfYmZbLgRSJ4a1
-         gTwQ==
+        d=linaro.org; s=google; t=1775096426; x=1775701226; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Cd/iu/aYoTfiHEl0xBfUrFFloW9Th3t3xU+FRrPDwNE=;
+        b=FNvhQc5B0w74VMgDKD6kxXTw2FglG9b3mATR4ZFwxrzvgZcZbi/+u0VYTFTQq4en0x
+         9YrePKVBHkiv6YScy2xqaCRWstBo0P2Sxe7F7zDyC6F2w/vBFKIQSR7O/ARGxO/vW1b/
+         YQ3sTvMGW4kwqpNJOd6g7i+q5+9MGa+QGPz+IqyQmJjBQAjk/CmpR1GQ0f9MPsuWs8cB
+         iP0dMsGDVJoz2Sg0Q9xquB/OCBkWAYzYU4dcAGWOW/gbPrWB5fubM42lDHlkIo7FKByR
+         zGgUJHaW0vEMz7Q/aSotJUjMoyghg50V4AHlQSO2K/pR0Bx9BindNkhPfyh2ISAURcEf
+         ybAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775096424; x=1775701224;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PLOJdGh8Zj4JSEdcQhNVsEs0aSOI1jN7IdBHD4I9ibY=;
-        b=ZqLHXWfpYUf6rRgpHbbTHnkb+bgO+h8pjLrzqtUJFAHRY8609gk7BnM/5Xuye6KAuu
-         IqForKep2Bp7fWwJ3/gaHBV2+BQGSV3hb4XMd3/jsVZLGUZ2evDpV7a4i/AqVcejeE95
-         mYL65rOexiZPM9RyXWicT8hMCka+9cTepQ4CohSSqE6ttb1oryPOv43Te3lwlGaQCRPA
-         SOMpzEGwVUtQ3C1It7KyyoKWruAyatwiCAvHq+OdTqA6LqN4fQG9DR0Lg8H63VZ6rWbY
-         ChkAnIt5TzNXhq9JCxOpW3lN9oHIrmIywa91RFIs/qc3CMccSqgLT3Bp6Hs+KnRbaY/4
-         +k6A==
-X-Forwarded-Encrypted: i=1; AJvYcCX1k7xFmWPD6fFXmZPQ5b4GJxUTO+D7MtZYjMPd3GAZR9djudgSph7M5jvvOqIRArUBrIAcj1wCQ/A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywv6UkIUz98Oy0KUoyTwNf5A0fruHu2pcC2CBdiA26gAM3gutbQ
-	t0Akg70nYY5qfGlGvsJUeO/2kPMnL3xHx56xtbmvL4i55BSObOmtIn0QjDHwmdQBc6RuUm+lYzT
-	/JkDUQLU=
-X-Gm-Gg: ATEYQzz4cdpn4Dj5OvU40Rs4U2iw9ZWuiDtKS1el9TXHozh982INJtLgQeZFpe0RByH
-	aVtY6dCWjJP2VQaeL/dq+Ob9Ud9WQBgY/itM/RnsVht41u6ZLaFqU77UbRZq+0nNtUYR4fxpf+Q
-	TywKGIlT1xThxIq9+8BBc7uuIU2U6lJWwMFNI0IGZZZupAcJeklbTMeqpQjOkBW5aqdHilQkfgj
-	O2dc0M5R5ggzDLsreIZr9hwgny0W207Ss0Ni0M6u++fw8t6RBY+HJr93fUdVON3tWbdqfv465U6
-	FFoX+78F6A12kczEOu+HB2SQTBrR5YotVkzGMd49TkCuL3FkxsuzsTuUi1L450UTub0FE89WCE1
-	lACStSKb4+2Z/GLxCDJr2obqvvAu2ibITWhapOEx/FR5HJRpnzVqRZAV9THUNJuhOqpSbFhNszl
-	B05w/Rhq4fe1gTlTh54VFs2HTBvCslXGNuOSYR4wtvAEFXmiRY/+ajoyfW0nQdjb+Tv3JFSERZS
-	NGLMtUXN5Cvli4i
-X-Received: by 2002:a05:600c:444e:b0:485:35ee:f836 with SMTP id 5b1f17b1804b1-48883569e3dmr93027505e9.2.1775096423942;
-        Wed, 01 Apr 2026 19:20:23 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1775096426; x=1775701226;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Cd/iu/aYoTfiHEl0xBfUrFFloW9Th3t3xU+FRrPDwNE=;
+        b=iK2AnhFJFwaVeCgoOooaj7u5fBxpyRqK7tX4n8j2U1LnrIKeltDBOnaf/cBO5ynlo1
+         dicTOUeEImtljA43cgV3eNaFC6XCJOQwWWAqSdXn1MTwRuWrRzvQGgQ9GkVd/Urglb8i
+         SjshpM52eXIYahkxMbsno49Wf5XfviKkVC4jCZ/AhYFE6AUdsaVBJYyK18Vlv+vJI5/c
+         cDcytYMEb/kQu3AHZM7evkuEfy47K9RRNN9Utty9KUVCR44iP4dkIwDHgyMavSQog1Q7
+         lekc2S/bjsAosSh1aW0JMiTftcjfrJ+/NS6nZPS8DhFB7vjNsqQumKX4DkgMRPHRvjJO
+         B79Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVkcZXoyazX8twQW/GVoADkjJvbhXSOsSLFMLQEMTEvC/saNNbceTarE1bJUdxtptimIkd1ZcKDurk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNcCOiu8+xzYYLf3wX+cYFkun3QzqcGXZdYnsVR7YqtKhLfuMr
+	m+Kk0M5OZ4WFfLxJrEgckk/ln7XFRf9q5ro4Ziog3h0pXicYALAKCAc56Lna2bUR8D0=
+X-Gm-Gg: ATEYQzxYKchAzBBzCVir5WeNK+osGDjIhKOBJLzk/pAue5CxjuUcZ3Msqo+KxHTe73j
+	jIWOXUKTyDNmS+v0of8blYgpFRqUe2zD6h1Kwvm8lh/YqhGxxdXlJSfcy0PJl0d0z7YqzHtKSPk
+	sGDxIm0cbb/t1VMd4lpxuYSg+gYrRVa/L9hLQfdB51XkkYVW5/xV/jST9QI5RObxKNQQ5rK40qt
+	YSqjlI4ErofmMvGD9q5hRjNm73pYDuA13xX3j7h7RvLumjxMcuTcJ2iBrAaRjheynkSpc2FnT9r
+	AxbGe9kGiM6ADR+ob4rPre6frgNOqnc0bq6Gg63B6Yedk2TboF9FklAQcyJYDqKOECDRjE47xVK
+	zLDaGO0CjsjfOTh2ZVBCbHHAO96ghZ2MgpcH/XAT39mCOuBFK0U+fJ8qHB4Sxnd8fziS+UB1UuR
+	f5cGb9mJOQd/1IRibzqWn+cLy4SUZx4t7trYbEsfFlGH2U0DmfqJ3vX58Km8L1FDmR//tg0i7Dt
+	QpfViPl8p2Pkk39
+X-Received: by 2002:a05:600c:3421:b0:488:869c:eda1 with SMTP id 5b1f17b1804b1-488869cef18mr45133425e9.15.1775096426011;
+        Wed, 01 Apr 2026 19:20:26 -0700 (PDT)
 Received: from [127.0.1.1] ([94.4.195.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4887aacb88fsm56379725e9.2.2026.04.01.19.20.21
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4887aacb88fsm56379725e9.2.2026.04.01.19.20.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Apr 2026 19:20:23 -0700 (PDT)
+        Wed, 01 Apr 2026 19:20:24 -0700 (PDT)
 From: Alexey Klimov <alexey.klimov@linaro.org>
-Subject: [PATCH v2 0/3] Exynos850 APM-to-AP mailbox support
-Date: Thu, 02 Apr 2026 03:20:13 +0100
-Message-Id: <20260402-exynos850-ap2apm-mailbox-v2-0-ca5ffdff99d4@linaro.org>
+Date: Thu, 02 Apr 2026 03:20:14 +0100
+Subject: [PATCH v2 1/3] dt-bindings: mailbox: google,gs101-mbox: Add
+ samsung,exynos850-mbox
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -70,11 +71,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAF3SzWkC/42NQQqDMBBFryKz7pQYqSRd9R7FRYwTHdBEkhIU8
- e5NPUGX78F//4BEkSnBszogUubEwReQtwrsZPxIyENhkEK2opECadt9SOoh0KzSrAsuhuc+bGi
- dE1YNrVZaQZmvkRxvV/rdFZ44fULcr6dc/+wf0VyjQK0a6hsndevsa2ZvYriHOEJ3nucXsOEZI
- MEAAAA=
-X-Change-ID: 20260320-exynos850-ap2apm-mailbox-cff0c8d69898
+Message-Id: <20260402-exynos850-ap2apm-mailbox-v2-1-ca5ffdff99d4@linaro.org>
+References: <20260402-exynos850-ap2apm-mailbox-v2-0-ca5ffdff99d4@linaro.org>
+In-Reply-To: <20260402-exynos850-ap2apm-mailbox-v2-0-ca5ffdff99d4@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
  Sylwester Nawrocki <s.nawrocki@samsung.com>, 
  Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
@@ -91,50 +90,31 @@ Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Alexey Klimov <alexey.klimov@linaro.org>
 X-Mailer: b4 0.14.3
 
-This patch series introduces support for the APM-to-AP mailbox on the 
-Exynos850 SoC. This mailbox is required for communicating with the APM 
-co-processor using ACPM.
-
-The Exynos850 mailbox operates similarly to the existing gs101 
-implementation, but the register offsets and IRQ mask bits differ. 
-This series abstracts these differences into platform-specific data 
-structures matched via the device tree.
-
-Also, it requires APM-to-AP mailbox clock in CMU_APM block. These
-were marged already (thanks Krzysztof!) so they are dropped from
-this v2.
-
-Please also advice if mailbox change should be split out as a separate
-patch.
-
-Will be appreciated if it can be tested on gs101 to make sure that I
-didn't break anything, I don't have dev gs101 devices.
+Document support for a mailbox present on Exynos850-based platforms.
+The registers offsets are different from gs101 mailbox, but the
+workflow is similar, hence new compatible.
 
 Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
 ---
-Changes in v2:
-- dropped clock patches (they seem to be merged);
-- patch 3: updated commit description mentioning that
-  exynos850 is not compatible to gs101 mbox (as suggested by Krzysztof);
-- fixed comment description for struct exynos_mbox_driver_data
-  (reported by kernel test robot <lkp@intel.com>);
-- Link to v1: https://lore.kernel.org/r/20260320-exynos850-ap2apm-mailbox-v1-0-983eb3f296fc@linaro.org
+ Documentation/devicetree/bindings/mailbox/google,gs101-mbox.yaml | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
----
-Alexey Klimov (3):
-      dt-bindings: mailbox: google,gs101-mbox: Add samsung,exynos850-mbox
-      mailbox: exynos: Add support for Exynos850 mailbox
-      arm64: dts: exynos850: Add ap2apm mailbox
+diff --git a/Documentation/devicetree/bindings/mailbox/google,gs101-mbox.yaml b/Documentation/devicetree/bindings/mailbox/google,gs101-mbox.yaml
+index e249db4c1fbc..c109c1f7af24 100644
+--- a/Documentation/devicetree/bindings/mailbox/google,gs101-mbox.yaml
++++ b/Documentation/devicetree/bindings/mailbox/google,gs101-mbox.yaml
+@@ -20,7 +20,9 @@ description:
+ 
+ properties:
+   compatible:
+-    const: google,gs101-mbox
++    enum:
++      - google,gs101-mbox
++      - samsung,exynos850-mbox
+ 
+   reg:
+     maxItems: 1
 
- .../bindings/mailbox/google,gs101-mbox.yaml        |  4 +-
- arch/arm64/boot/dts/exynos/exynos850.dtsi          |  9 +++
- drivers/mailbox/exynos-mailbox.c                   | 67 +++++++++++++++++++++-
- 3 files changed, 76 insertions(+), 4 deletions(-)
----
-base-commit: bd0f139e5fc11182777b81cefc3893ea508544ec
-change-id: 20260320-exynos850-ap2apm-mailbox-cff0c8d69898
-
-Best regards,
 -- 
-Alexey Klimov <alexey.klimov@linaro.org>
+2.51.0
 
