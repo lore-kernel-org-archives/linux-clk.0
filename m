@@ -1,70 +1,131 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAADE3783D0;
-	Thu,  2 Apr 2026 08:11:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F37D36657D;
+	Thu,  2 Apr 2026 08:23:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775117514; cv=none; b=afFA3dBCdGvSMkkdQkepbVXKv9J3pkUX9hqV5Tg4Kk+i04MGjggW6NXOHtjHet/kOGJFrK6mjpgewWSc4uJXa9XW71YYSCP9W0iClTMfQDqqIh9d13eszkcDGpGq7RzX8OkfGRnPokk5AcfFUEgggOiQXo2Jhla4XLdc5zrBEi0=
+	t=1775118215; cv=none; b=DV6x3DV5pvT1Pkk582muh4/GrzBepi9pqlctcbcrBmb6YtIdZQ9Etx4QRq8BxT/5klBs+2N4edzZDmVw8Ah+szBOZdDrXPGaEaLcC77WXIRL95v9HQl0JNG5rcffY5uO6nu3VcIkQFTt0nXODXmTPK54ojeSHOFu3vJrSTLH10k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775117514; c=relaxed/simple;
-	bh=at+kDrwKt+tLBgwx7ez/phBkLtYprqmLsRltROwZTwc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rQv0kXFAc3Rekm0PfxViMMzooJtNFsH3RWUGSqX6nyEekAaL3O62isjaA6HaR/ELIHmZjQYoEaRXCVoDy4VZ7yp2z05bqhIitcOH23mUGkwvFjF/hN6XIAHrKHjfbTO02FyPAVYUnmWJ6YtvHOBpNcMIlWft3rGjxn7CiGIt7v4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X3ZZeSZx; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1775118215; c=relaxed/simple;
+	bh=0FInPO+JEPlRAzEm5olBslJRrlbdYfFnO7iYh10Iz7Y=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=jXQWhpgHR1+lLmhB6nxjMeYt7h6FR3rET1OqGyyeabHwacnHVrsvYy9MBgOQ+/Lynql2jfomJTiTpMD9r/f+LAI51O8b+VhKbR++UD+uSJbJNVHg9df2RguqFMG7mXyQMZeEd9mL/9lQ8GwtudS9keAOnNhF5pQrl0e/+1qNivY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U08toMkE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X3ZZeSZx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9102C2BCB3;
-	Thu,  2 Apr 2026 08:11:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U08toMkE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C3B4C116C6;
+	Thu,  2 Apr 2026 08:23:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775117512;
-	bh=at+kDrwKt+tLBgwx7ez/phBkLtYprqmLsRltROwZTwc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X3ZZeSZxDTwO/kZDCLSJIwFB+fdFrowK0gmwFxGThvaL92zwAC6CrUVRyBpqC99TO
-	 3jTEF3dWcLPe4GpOPCCLxU1VOZdcAJwkAKfXxcw2LM90aqGPl90WlI30J6CS2uuHpQ
-	 e7HNF0pA/a9UCZhyRvZrA6mQE/6JKdcOIXJYBiMI7DqKKL5PV7w9qF5zioyedHDMoE
-	 6ymwv4LfOqG1hLgyti2t+FwgbERlj4jzAp9oV3+28qh6s/RcbfevkTyHmRigQLc7N6
-	 c59bRr2APNuRQFLL0GWKbZhpMGCaLJEbCajZS5iho2cFLLrLlbJIzB5MmMfB75nR/m
-	 OkgG7d7R0eC9g==
-Date: Thu, 2 Apr 2026 10:11:49 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Sam Protsenko <semen.protsenko@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Peter Griffin <peter.griffin@linaro.org>, linux-samsung-soc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: mailbox: google,gs101-mbox: Add
- samsung,exynos850-mbox
-Message-ID: <20260402-phenomenal-secret-squirrel-3efaf5@quoll>
-References: <20260402-exynos850-ap2apm-mailbox-v2-0-ca5ffdff99d4@linaro.org>
- <20260402-exynos850-ap2apm-mailbox-v2-1-ca5ffdff99d4@linaro.org>
+	s=k20201202; t=1775118215;
+	bh=0FInPO+JEPlRAzEm5olBslJRrlbdYfFnO7iYh10Iz7Y=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=U08toMkE7N41wybTQoTG9WYeM9s9r+kuPrajoRivjxDsYBwux6oyY7If7lPCW3xWT
+	 efrn5Gtm1iqH8wcV4IKj7L7530VEBydA/XVHg5Q5AeeHu54M4gKEOZevoZ4RoDWps4
+	 RyeOx3l+0nKupu0Sthe4CnjwnonN5/Wctkr0RiCJ7l1tduqLM7jdvnIBiV3uJiHe+t
+	 Gd4at37AE0inWYJ6u+au35BbGF8AzbX10QdypxRkL1kKyO4NAuXQEGYtk+wo+12LCx
+	 +2CyX6jvMwTv0QfkE7cFLYjQBjNgHAwb96q3bPTWnEjHLgSCwAEH3282XuPt41Wun4
+	 j14G8AuwY5yJQ==
+Message-ID: <768180d0-bab6-466f-9f5f-54b36f353bd6@kernel.org>
+Date: Thu, 2 Apr 2026 10:23:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260402-exynos850-ap2apm-mailbox-v2-1-ca5ffdff99d4@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: clock: qcom: document the Milos GX clock
+ controller
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260306-milos-gxclkctl-v1-0-00b09ee159a7@fairphone.com>
+ <20260306-milos-gxclkctl-v1-1-00b09ee159a7@fairphone.com>
+ <20260307-inventive-stingray-of-pride-5c2216@quoll>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20260307-inventive-stingray-of-pride-5c2216@quoll>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Apr 02, 2026 at 03:20:14AM +0100, Alexey Klimov wrote:
-> Document support for a mailbox present on Exynos850-based platforms.
-> The registers offsets are different from gs101 mailbox, but the
-> workflow is similar, hence new compatible.
+On 07/03/2026 16:30, Krzysztof Kozlowski wrote:
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - qcom,milos-gxclkctl
+>> +
+>> +  power-domains:
+>> +    description:
+>> +      Power domains required for the clock controller to operate
+>> +    items:
+>> +      - description: GFX power domain
+>> +      - description: GPUCC(CX) power domain
+>> +
+>> +  '#power-domain-cells':
+>> +    const: 1
+>> +
+>> +  reg:
+>> +    maxItems: 1
 > 
-> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
-> ---
->  Documentation/devicetree/bindings/mailbox/google,gs101-mbox.yaml | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> reg should be the second property, like you have it in "required" part.
+> I guess you copied it from kaanapali-gxclkctl.yaml, so lesson - qcom
+> bindings have acceptable quality, but not good enough to take as correct
+> starting point.
+> 
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+OTOH, why this entire binding cannot be squashed in Kaanapali one?
+What's the difference?
 
 Best regards,
 Krzysztof
-
