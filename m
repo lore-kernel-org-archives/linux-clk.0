@@ -1,62 +1,62 @@
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83194327204
-	for <linux-clk@vger.kernel.org>; Thu,  2 Apr 2026 03:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC9E344DA0
+	for <linux-clk@vger.kernel.org>; Thu,  2 Apr 2026 03:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775099094; cv=none; b=ISjZkNAzxbNa/8rx2Fummq1DRskcVC7m7pWt/kkgq330I7++rfbpeu34qSblILZ2jJLLsSVYywMl/XXIWV1PnMMJ8ZRpW6G0SAnmMSysxUz4wCmtXGqlXwEM+4gWSERyhNGhuwXblNzeD6SgsATHbUnGiZYwVsaS4EAUeEjp20A=
+	t=1775099095; cv=none; b=hlPAkj2eSoUi9G3ytDk5qp0TVQJp0poPCzE82RO3gLXbDs/SEs4jt8+y9/hDv+Mh95NX6eVu7E/BZeEv7ZBJP/JgItE7QwDUAj3SVP190NKvM6GPMO0t+bXkKxFxFoWHWcyl6+wa03AtRDoFJwVHZGCkefg9I61QO5uel8wGlIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775099094; c=relaxed/simple;
-	bh=VQV+QM3Ctswdo3o0HH0281fe1YsqIhLjc2B6oZPbNQ4=;
+	s=arc-20240116; t=1775099095; c=relaxed/simple;
+	bh=uNa3V+l2+zMvQBRPMDJlv1PjVBSkIBsWCPDk3WYqUHg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=q4pdocPoT+JKNzezeFOqkZQmYx5cTWduU86lt79ojqGtUygev74+y/r2jmOGmcJy0wCJceGnJsJL3XgpbQbD/0C4ctaaX1DpM+EmamuscmQob0dONqCQBrveDGziYD2f5xzcQJnlcnux9YbWkaHM+lRex+Yzx819oDSUIlku65w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QFX22hAr; arc=none smtp.client-ip=209.85.216.49
+	 MIME-Version; b=b6/Zj0A3LRhsKRimd4V1GAZNvRB6mXPzJqBqJLYiIgLSX0RqX4XNJmpyM9ImpHGNHU4ufHzT5ifYU97XMVzXYOTGmrQ+up3z2UHHDONreF7GQwYU7rxSKCimEkF9W5P7QyC7PHHmZ3LHQhEGEaPmcbht6jj12gKKWOFVmfHh/GI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OYhBndW9; arc=none smtp.client-ip=209.85.216.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QFX22hAr"
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-35da9692ec3so324154a91.1
-        for <linux-clk@vger.kernel.org>; Wed, 01 Apr 2026 20:04:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OYhBndW9"
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-35d90833cacso184076a91.2
+        for <linux-clk@vger.kernel.org>; Wed, 01 Apr 2026 20:04:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1775099091; x=1775703891; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1775099093; x=1775703893; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EyR0efC7OyNfusuoJO8aWY+L0AWdVHjCgZDwzGoX9xc=;
-        b=QFX22hArmIhwgcTsb0lM6iFVaEZe/hWSfRygtHqgwzsUp1JfZ1LkOaB+zUSLWVzcjQ
-         sYjYh39SgldFoHbCFUk3TJht7SXaB0WS/w/iiik1qHUw/Dk9tMF+efqCv1hAb9JYDrw7
-         LIRjNbtsSA2y5zEbnUv7xG6DBgV2bf8mWO+v8TLno81TxVXHBW/m3NdorL7IxbLGkkxX
-         E2I7UN/Nh3iwjauhNcAbZ3riD4kRGvZ7XBa9T/vbiLYiHA79nUuVvaftZ7QSJlAqE2qy
-         3i6Zddjtq36OI4KSGPkztW8kCcbqzR4VdfAU7g378rIU4x91E0pFRGwFDBmVNVAx0oeY
-         ejNg==
+        bh=u0ucHKBOty4mZVVfHvLn6hix9SbADzLEqJq1CauEJu4=;
+        b=OYhBndW9zZGJBS2rebGgm5kyBN4rBegW/DNCCcbc4jDOK2sybbphlOY05o1fYyw1jI
+         HVYdyX4tvuMgqMNFtWs/ZEX9hdH4rW5kVxaJQjQ1nDsZJ6I2qUKYF3RCxRwD29KNCcnM
+         6HJWbmwZxG6wLpjzuP38mzBh8CS5ue5wT29jSXkR/7I0tRbuwL7lUmAQeCj4OeE5KeB2
+         b97GuwYhGk7ctDmaRQFkSHSw0UI37zuk9VVTrouLZaYIXqKwcKlvcdXFCx7pdWZa5P7S
+         7LAX022qqD9oecqSDREzy7tREFl1IC1RwsAFjHACxLsvURGSxOb7m409v+LBE+WYFKA2
+         +L4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775099091; x=1775703891;
+        d=1e100.net; s=20251104; t=1775099093; x=1775703893;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=EyR0efC7OyNfusuoJO8aWY+L0AWdVHjCgZDwzGoX9xc=;
-        b=BRXYJNR09iUo7kxzTw81SqZXk4rR2cOOVi3LJKPKJtB3imqxAw0Ud9EPGavNqQpnY5
-         zRGnIImv5o173tMlHTZ1h1CxyFXCQ0oZ2T+9VRkQP3iSRTL995ICeCLQdeqCmi2QTPXW
-         +mxPOJYM+OCMYiTz23kvkDUsdF3rnZrvkdjCGHG2Cllcp67M2OgMTbB6ku0MayB2/Dxj
-         bEqH/mtR21klKxSLTcCqXYwOgniDaMQawnMr4Q5xzOWfT7726rKMWsgZN2+2j6k2rbsf
-         VES87cq3x1/k61/JYbQB1A7gQoN7H10YnLjeEIzeo0aZyGZIJOK+RHaEMcnY+XshBuqX
-         11/A==
-X-Gm-Message-State: AOJu0YymUUsHmap8IBoOvHv1bJFB6X8NVS5NqMqEMf19ZAoj/Ym83pAf
-	CMpNAQ72HVZJf1Cq4r8GJSEJnt9dVwF4UJcjeRARHggcd2vKfKY/ZxCB51MN301o
-X-Gm-Gg: ATEYQzxjMXhqmULjwMYJ/84/YbwfZ6z0SAsnOiaHvAXkSfGpcLwxtANkbETm5uHAVeA
-	YAgkHlw/rU6AsWFfAZrFarXHgjtAvYNY9kEUvOAZHNOo5MEAeuQBpaMwPsiDgrxnZpqJ+H9nHGz
-	nOh87yGNQd4y1ynOI7gVA0YD6CJ92rnVJC46q6K5y4nTu5kYXH6nOxwvbRRoRZyY+iWJ5/LyjrR
-	5c6ydowwKNxpgrJMUFuJ1GI89IkKUeSUrWyLaXImZZkAn0/GzGDQgFdCNJIDBJuPqFsX+Gvdrxi
-	MHN/XlysEB+hWi4DNpjnbvECRhI1TIocXdiZG6QS2FCPcIUxy6T7KXLry/gxWwjiiMGUbhyJVrq
-	ttvFv0FAiF6koXXsB0tgrsrSPi1n+lOCSnjzzbetHukjBOrRC1ILbyv5UXcd3Eyhpjm/Vuutedx
-	csftcGHX1jMCg6+5C8/6edKyrlpWQxw6/rov0YpD9LSIghms1J1O5s2EY1Mf7jPkY3xQ==
-X-Received: by 2002:a17:90b:2b4e:b0:35d:aeb2:25b2 with SMTP id 98e67ed59e1d1-35dc6fdd655mr5707508a91.27.1775099091470;
-        Wed, 01 Apr 2026 20:04:51 -0700 (PDT)
+        bh=u0ucHKBOty4mZVVfHvLn6hix9SbADzLEqJq1CauEJu4=;
+        b=OmqCYxqeKeWNz6y/EHiSRTr21cLwvqXXHUbykyL9P5qq3FQjy/ZyFo7a4Z8LifSMoH
+         pTLHiqUCfIG9vbJmgE+6JdDDRHB2QfuSq89eViyUPuaxkJgq2/pS+H5Z62BLWT4ZKw0n
+         numXDG7bHYGC57bp2BuRCirIi/LG1mWsYV44v95dB1g6AgpmuLoCL70YZpVvoXvmZRwn
+         U/OxuTdNt3Ym1Wvd5JhJoL8KGqaWvqC4YcWanwubWiKdzhmcE2y4GgYuA46blcGvnpFd
+         FLksXjj1juSVrfjmXFtlGzERRsI5a60Eex8KY1UkX+GzWzip5iZ5UF50hx2TBlQHPk6N
+         cdMg==
+X-Gm-Message-State: AOJu0YwpoQKw2lHR+/ywtipuX2Cj72NQcJbUvB5m7bu2vLU6uiqEF6Lz
+	D+YM69VS9e5w58nYs4QKfPJRUlMhm0LzbEvsVigpan2AHF5NAh0NwVEc3VPtDTEv
+X-Gm-Gg: ATEYQzwD1WZGcPpDRX78y0KWq2aMyr1ocvYHyhlVjuwac5nLJ9I5B0/Aa+RW/LqNGOO
+	aDW5MxOKtm8NdGjyyzEHx75IUHQ0C6OUJ6Hgl79V+quhsjB6kzVRrG4iJ9VI29lrXCwvffq8DJ8
+	hNJ+yk4qivkziBWhpDGZOVbmznagy1WC/FqkkyELV6a/f7TlHsbgSNicGQE1PCHCDwjotcwL1+n
+	gpDqpD57/GERhWgNBYnL+TI5fqqp9YMuscMId9tJTU7eEl8SQcqCPcm0bE70A7FmRsUoNQjgDTO
+	J1wrjbHMzAxr1rdogtjQ5dkKZzY2VSEVnJzYlYScfJ9ZAYAaZ6YNGq9FUzNorAgjpRzwS+pZJgr
+	0no/hl/NUmx8G9tCxM8V3RYXiK0ojXCjKGYFlFWTz4+M47bJrmu9wnJ9OF3IBQ/X5gGOZlEO+xc
+	+oqqTus8+RyZfR+DJPm00KT/EzevSdkHPbz9f6711uGDUCUaJi47TdfuA=
+X-Received: by 2002:a17:90b:2ecb:b0:35d:9482:2233 with SMTP id 98e67ed59e1d1-35dc6fc83b5mr5204534a91.24.1775099092867;
+        Wed, 01 Apr 2026 20:04:52 -0700 (PDT)
 Received: from ryzen ([2601:644:8000:5b5d::8bd])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-35dbe9379f3sm6395873a91.9.2026.04.01.20.04.50
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-35dbe9379f3sm6395873a91.9.2026.04.01.20.04.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Apr 2026 20:04:50 -0700 (PDT)
+        Wed, 01 Apr 2026 20:04:52 -0700 (PDT)
 From: Rosen Penev <rosenp@gmail.com>
 To: linux-clk@vger.kernel.org
 Cc: Krzysztof Kozlowski <krzk@kernel.org>,
@@ -70,9 +70,9 @@ Cc: Krzysztof Kozlowski <krzk@kernel.org>,
 	linux-samsung-soc@vger.kernel.org (open list:SAMSUNG SOC CLOCK DRIVERS),
 	linux-kernel@vger.kernel.org (open list),
 	linux-hardening@vger.kernel.org (open list:KERNEL HARDENING (not covered by other areas):Keyword:\b__counted_by(_le|_be)?\b)
-Subject: [PATCH 1/3] clk: samsung: use kzalloc_flex
-Date: Wed,  1 Apr 2026 20:04:30 -0700
-Message-ID: <20260402030432.101066-2-rosenp@gmail.com>
+Subject: [PATCH 2/3] clk: samsung: cpu: use kzalloc_flex
+Date: Wed,  1 Apr 2026 20:04:31 -0700
+Message-ID: <20260402030432.101066-3-rosenp@gmail.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260402030432.101066-1-rosenp@gmail.com>
 References: <20260402030432.101066-1-rosenp@gmail.com>
@@ -84,90 +84,91 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Simplify allocation by using kzalloc_flex with a flexible array member
-to combine allocations.
+Use a flexible array member to combine allocations.
 
-Add __counted_by for extra runtime analysis. Move the counting variable
-assignment right after allocation as required ny __counted_by.
+As kmemdup_array is really kcalloc + memcpy and kzalloc_flex kzalloc +
+kcalloc, kzalloc and kcalloc combine leaving the memcpy.
 
 Signed-off-by: Rosen Penev <rosenp@gmail.com>
 ---
- drivers/clk/samsung/clk.c | 28 ++++++----------------------
- drivers/clk/samsung/clk.h |  2 +-
- 2 files changed, 7 insertions(+), 23 deletions(-)
+ drivers/clk/samsung/clk-cpu.c | 30 +++++++++++-------------------
+ 1 file changed, 11 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-index 91e5cdbc79d7..12028f13e8e8 100644
---- a/drivers/clk/samsung/clk.c
-+++ b/drivers/clk/samsung/clk.c
-@@ -48,23 +48,6 @@ void samsung_clk_restore(void __iomem *base,
- 	}
- }
- 
--struct samsung_clk_reg_dump *samsung_clk_alloc_reg_dump(
--						const unsigned long *rdump,
--						unsigned long nr_rdump)
--{
--	struct samsung_clk_reg_dump *rd;
--	unsigned int i;
--
--	rd = kzalloc_objs(*rd, nr_rdump);
--	if (!rd)
--		return NULL;
--
--	for (i = 0; i < nr_rdump; ++i)
--		rd[i].offset = rdump[i];
--
--	return rd;
--}
--
- /**
-  * samsung_clk_init() - Create and initialize a clock provider object
-  * @dev:	CMU device to enable runtime PM, or NULL if RPM is not needed
-@@ -430,21 +413,22 @@ void samsung_clk_extended_sleep_init(void __iomem *reg_base,
- 			unsigned long nr_rsuspend)
- {
- 	struct samsung_clock_reg_cache *reg_cache;
-+	int i;
- 
--	reg_cache = kzalloc_obj(struct samsung_clock_reg_cache);
-+	reg_cache = kzalloc_flex(*reg_cache, rdump, nr_rdump);
- 	if (!reg_cache)
- 		panic("could not allocate register reg_cache.\n");
--	reg_cache->rdump = samsung_clk_alloc_reg_dump(rdump, nr_rdump);
- 
--	if (!reg_cache->rdump)
--		panic("could not allocate register dump storage.\n");
-+	reg_cache->rd_num = nr_rdump;
-+
-+	for (i = 0; i < nr_rdump; ++i)
-+		reg_cache->rdump[i].offset = rdump[i];
- 
- 	if (list_empty(&clock_reg_cache_list))
- 		register_syscore(&samsung_clk_syscore);
- 
- 	reg_cache->reg_base = reg_base;
- 	reg_cache->sysreg = sysreg;
--	reg_cache->rd_num = nr_rdump;
- 	reg_cache->rsuspend = rsuspend;
- 	reg_cache->rsuspend_num = nr_rsuspend;
- 	list_add_tail(&reg_cache->node, &clock_reg_cache_list);
-diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-index b1192ca03db5..098f27a6290d 100644
---- a/drivers/clk/samsung/clk.h
-+++ b/drivers/clk/samsung/clk.h
-@@ -324,10 +324,10 @@ struct samsung_clock_reg_cache {
- 	struct list_head node;
- 	void __iomem *reg_base;
- 	struct regmap *sysreg;
--	struct samsung_clk_reg_dump *rdump;
- 	unsigned int rd_num;
- 	const struct samsung_clk_reg_dump *rsuspend;
- 	unsigned int rsuspend_num;
-+	struct samsung_clk_reg_dump rdump[] __counted_by(rd_num);
+diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
+index ffc33e5decf5..ad08d6288baa 100644
+--- a/drivers/clk/samsung/clk-cpu.c
++++ b/drivers/clk/samsung/clk-cpu.c
+@@ -101,11 +101,11 @@ struct exynos_cpuclk {
+ 	const struct clk_hw			*alt_parent;
+ 	void __iomem				*base;
+ 	spinlock_t				*lock;
+-	const struct exynos_cpuclk_cfg_data	*cfg;
+ 	const unsigned long			num_cfgs;
+ 	struct notifier_block			clk_nb;
+ 	unsigned long				flags;
+ 	const struct exynos_cpuclk_chip		*chip;
++	struct exynos_cpuclk_cfg_data		cfg[];
  };
  
- /**
+ /* ---- Common code --------------------------------------------------------- */
+@@ -660,10 +660,6 @@ static int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
+ 		return -EINVAL;
+ 	}
+ 
+-	cpuclk = kzalloc_obj(*cpuclk);
+-	if (!cpuclk)
+-		return -ENOMEM;
+-
+ 	parent_name = clk_hw_get_name(parent);
+ 
+ 	init.name = clk_data->name;
+@@ -672,6 +668,15 @@ static int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
+ 	init.num_parents = 1;
+ 	init.ops = &exynos_cpuclk_clk_ops;
+ 
++	/* Find count of configuration rates in cfg */
++	for (num_cfgs = 0; clk_data->cfg[num_cfgs].prate != 0; )
++		num_cfgs++;
++
++	cpuclk = kzalloc_flex(*cpuclk, cfg, num_cfgs);
++	if (!cpuclk)
++		return -ENOMEM;
++
++	memcpy(cpuclk->cfg, clk_data->cfg, num_cfgs * sizeof(*cpuclk->cfg));
+ 	cpuclk->alt_parent = alt_parent;
+ 	cpuclk->hw.init = &init;
+ 	cpuclk->base = ctx->reg_base + clk_data->offset;
+@@ -687,29 +692,16 @@ static int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
+ 		goto free_cpuclk;
+ 	}
+ 
+-	/* Find count of configuration rates in cfg */
+-	for (num_cfgs = 0; clk_data->cfg[num_cfgs].prate != 0; )
+-		num_cfgs++;
+-
+-	cpuclk->cfg = kmemdup_array(clk_data->cfg, num_cfgs, sizeof(*cpuclk->cfg),
+-				    GFP_KERNEL);
+-	if (!cpuclk->cfg) {
+-		ret = -ENOMEM;
+-		goto unregister_clk_nb;
+-	}
+-
+ 	ret = clk_hw_register(NULL, &cpuclk->hw);
+ 	if (ret) {
+ 		pr_err("%s: could not register cpuclk %s\n", __func__,
+ 		       clk_data->name);
+-		goto free_cpuclk_data;
++		goto unregister_clk_nb;
+ 	}
+ 
+ 	samsung_clk_add_lookup(ctx, &cpuclk->hw, clk_data->id);
+ 	return 0;
+ 
+-free_cpuclk_data:
+-	kfree(cpuclk->cfg);
+ unregister_clk_nb:
+ 	clk_notifier_unregister(parent->clk, &cpuclk->clk_nb);
+ free_cpuclk:
 -- 
 2.53.0
 
