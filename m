@@ -1,43 +1,43 @@
 Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18108325726;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1824B36680F;
 	Thu,  2 Apr 2026 07:42:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775115778; cv=none; b=BdepCP+i4rjY15ZXVga/m5laN8Thba9+ENZwoPyeEugRp/csz2LMI75S+XLLAEGH6d2JE2AFTjGyFAVJwLrcNJA7mew+SHbly56YyenGJQt/Z+tDxMvtOWzcStmL3DzHV6VFp25yGyHU3MLXduBvuaJx2mDAms+MEvcFqtNqF3U=
+	t=1775115778; cv=none; b=KPIudg9bDNt1LT4RrnoaQZ5plFjCln9sw77xNGmUmtytyZ4DDEILQ734gCiGyjwnB31jwAmi7sYCV+BrV0v9SNQXNinJUwhkgC3+qpi2f+bN+lZ4CQos68VPqWFOFKWqig95P0aDu67RdeY7V5eTFt9MfQ4Cwv0NidV2gaLvw1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1775115778; c=relaxed/simple;
-	bh=lOM7UJdML7x2kkKnQBqdAiF9huC2bMIMn85rZRVNl/s=;
+	bh=5tNZELpz0svACrRhVZAXCUgEgoHvNVZFs6UmY3Y248Q=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MkHPuDiZd3OiYOmymWcKC8I2KUrMld/T1MqWVPycQ0ym/p6+TaJURyRPxZot6Cl0Gi4QJbdMwBtXMYH/qRWgNXPgXYM8lPd+QWkKT2/sJY6GMqf5tYRpRwFhR0uGA3Jc3c8Bmw+u1fTLYyxO/boq2Xte1pz6oKQhCd+7kisnbHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=KbmP2n2h; arc=none smtp.client-ip=211.75.126.72
+	 MIME-Version:Content-Type; b=c1NQAV1s6vhBueHEOrBnZgX/UQHZLLFkudTc1FI0Q4mlDVzZjQngmbfWfOvb8PLswA3sluS2fCV5a62S1IuhHPNMIrot/SpRyo6LwplxaBVw/ZAVerAr7qk0DkcYHGw2kJtuARSxSEKkhx9TCHeL9+wyPYwcpplPKgYNd5+2D2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=aByCqOnu; arc=none smtp.client-ip=211.75.126.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="KbmP2n2h"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 6327e1QL12695612, This message is accepted by code: ctloc85258
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="aByCqOnu"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 6327dwefF2694952, This message is accepted by code: ctloc85258
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1775115602; bh=hAp03RIE4ZX2JNI9VSy4kBUVv2tGpY6k+LhXl82S4do=;
+	t=1775115598; bh=4lBWYs4WqFxlGcIUC3MY37rLvGAf1tmYvTPNg6gZE0M=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=KbmP2n2hIsnsyQP4f30DjZCO+z0q+dVZXOwmB4mtitTNwvMAITFUDlq9N8hAFVoH6
-	 dxtV7VHZYuXlaD4/RESX5Dcbyhmtm2iWN+Y80U2fNEAuvcRaQf1URAlA+dMN4dI3RD
-	 EbsQnFPKCHtg1yrB9oE44wDqGGrHJisFKzTFDNl9d2KvFIjVOdUMWiG41TT6XSfYiW
-	 GX5u2LKm5BvcC5L5ogOHuXAkbHz9U+vXvNh+y1kLxhgJBGxQMzVtv3n5t1JYLll4Qh
-	 qlgxnRA8XWRfIE2BRGhPq7QGwchj7wL3a66fnDAKWK0mavafOXj/NwwZ7blyx9PB0Y
-	 etSu79sKRaQmQ==
-Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
-	by rtits2.realtek.com.tw (8.15.2/3.26/5.94) with ESMTPS id 6327e1QL12695612
+	b=aByCqOnu3r7se+5ubhQbrkrkiWlegd+tjSLyLW4x1JvFLo3U5pygLMazpHmTHoYjR
+	 P1QUyf8jdUO0TwfXQH9KeY5VcTLAkoAzRQwOqxkQkVhd70gnM6AZlmrday8kUT7d8J
+	 MAf0vtcdok79dmfJmuTblgphE8RyTF8me/AvzQv1lyBzLVF2tTQnGhl08AneHY51Vn
+	 BDXOeROSvNKQurPy0AIZsvp2vOE0hfsBeRgH29BlCzE6kGijjUYTEPm0Vp0P3JLSUg
+	 +omkDee0sVTZ95ksX++lysh1BF+KstGGn0Q7h9m0jaqR7fFoNfmTWajF/AqKa9dwlm
+	 2tLqPX7cJkVHQ==
+Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
+	by rtits2.realtek.com.tw (8.15.2/3.26/5.94) with ESMTPS id 6327dwefF2694952
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 2 Apr 2026 15:40:02 +0800
+	Thu, 2 Apr 2026 15:39:58 +0800
 Received: from RTKEXHMBS05.realtek.com.tw (10.21.1.55) by
- RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
+ RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Thu, 2 Apr 2026 15:40:00 +0800
+ 15.2.1748.10; Thu, 2 Apr 2026 15:39:58 +0800
 Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS05.realtek.com.tw
  (10.21.1.55) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Thu, 2 Apr 2026 15:40:00 +0800
+ Transport; Thu, 2 Apr 2026 15:39:57 +0800
 From: Yu-Chun Lin <eleanor.lin@realtek.com>
 To: <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
         <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <p.zabel@pengutronix.de>,
@@ -47,9 +47,9 @@ CC: <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         <linux-realtek-soc@lists.infradead.org>, <james.tai@realtek.com>,
         <cy.huang@realtek.com>, <stanley_chang@realtek.com>,
         <eleanor.lin@realtek.com>
-Subject: [PATCH v6 05/10] clk: realtek: Add support for gate clock
-Date: Thu, 2 Apr 2026 15:39:52 +0800
-Message-ID: <20260402073957.2742459-6-eleanor.lin@realtek.com>
+Subject: [PATCH v6 02/10] reset: Add Realtek basic reset support
+Date: Thu, 2 Apr 2026 15:39:49 +0800
+Message-ID: <20260402073957.2742459-3-eleanor.lin@realtek.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20260402073957.2742459-1-eleanor.lin@realtek.com>
 References: <20260402073957.2742459-1-eleanor.lin@realtek.com>
@@ -64,183 +64,218 @@ Content-Type: text/plain
 
 From: Cheng-Yu Lee <cylee12@realtek.com>
 
-Introduce clk_regmap_gate_ops supporting enable, disable, is_enabled, and
-disable_unused for standard regmap gate clocks.
+Define the reset operations backed by a regmap-based register interface
+and prepare the reset controller to be registered through the reset
+framework.
 
-Add clk_regmap_gate_ro_ops as a read-only variant exposing only is_enabled.
+Since the reset controllers on Realtek SoCs often share the same register
+space with the clock controllers, this common framework is designed to
+extract the regmap and device tree node from the parent device
+(e.g., an auxiliary device parent).
 
 Signed-off-by: Cheng-Yu Lee <cylee12@realtek.com>
 Co-developed-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 ---
 Changes in v6:
-- Add the headers used in c file to follow the "Include What You Use" principle.
+- Remove the global header include/linux/reset/realtek.h and use a local common.h
+instead.
+- Extract regmap and of_node directly from the parent device.
+- Remove struct rtk_reset_initdata. Now, pass struct rtk_reset_data directly when
+calling rtk_reset_controller_add().
 ---
- drivers/clk/realtek/Makefile          |  2 +
- drivers/clk/realtek/clk-regmap-gate.c | 69 +++++++++++++++++++++++++++
- drivers/clk/realtek/clk-regmap-gate.h | 65 +++++++++++++++++++++++++
- 3 files changed, 136 insertions(+)
- create mode 100644 drivers/clk/realtek/clk-regmap-gate.c
- create mode 100644 drivers/clk/realtek/clk-regmap-gate.h
+ MAINTAINERS                    |  1 +
+ drivers/reset/Kconfig          |  1 +
+ drivers/reset/Makefile         |  1 +
+ drivers/reset/realtek/Kconfig  |  3 ++
+ drivers/reset/realtek/Makefile |  2 +
+ drivers/reset/realtek/common.c | 85 ++++++++++++++++++++++++++++++++++
+ drivers/reset/realtek/common.h | 29 ++++++++++++
+ 7 files changed, 122 insertions(+)
+ create mode 100644 drivers/reset/realtek/Kconfig
+ create mode 100644 drivers/reset/realtek/Makefile
+ create mode 100644 drivers/reset/realtek/common.c
+ create mode 100644 drivers/reset/realtek/common.h
 
-diff --git a/drivers/clk/realtek/Makefile b/drivers/clk/realtek/Makefile
-index a89ad77993e9..74375f8127ac 100644
---- a/drivers/clk/realtek/Makefile
-+++ b/drivers/clk/realtek/Makefile
-@@ -2,5 +2,7 @@
- obj-$(CONFIG_RTK_CLK_COMMON) += clk-rtk.o
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 07e73bf621b0..8f355896583b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -22240,6 +22240,7 @@ L:	devicetree@vger.kernel.org
+ L:	linux-clk@vger.kernel.org
+ S:	Supported
+ F:	Documentation/devicetree/bindings/clock/realtek*
++F:	drivers/reset/realtek/*
+ F:	include/dt-bindings/clock/realtek*
+ F:	include/dt-bindings/reset/realtek*
  
- clk-rtk-y += common.o
-+
- clk-rtk-y += clk-pll.o
-+clk-rtk-y += clk-regmap-gate.o
- clk-rtk-y += freq_table.o
-diff --git a/drivers/clk/realtek/clk-regmap-gate.c b/drivers/clk/realtek/clk-regmap-gate.c
+diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+index 7ce151f6a7e4..03be1931f264 100644
+--- a/drivers/reset/Kconfig
++++ b/drivers/reset/Kconfig
+@@ -398,6 +398,7 @@ config RESET_ZYNQMP
+ 
+ source "drivers/reset/amlogic/Kconfig"
+ source "drivers/reset/hisilicon/Kconfig"
++source "drivers/reset/realtek/Kconfig"
+ source "drivers/reset/spacemit/Kconfig"
+ source "drivers/reset/starfive/Kconfig"
+ source "drivers/reset/sti/Kconfig"
+diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+index fc0cc99f8514..4407d1630070 100644
+--- a/drivers/reset/Makefile
++++ b/drivers/reset/Makefile
+@@ -2,6 +2,7 @@
+ obj-y += core.o
+ obj-y += amlogic/
+ obj-y += hisilicon/
++obj-y += realtek/
+ obj-y += spacemit/
+ obj-y += starfive/
+ obj-y += sti/
+diff --git a/drivers/reset/realtek/Kconfig b/drivers/reset/realtek/Kconfig
 new file mode 100644
-index 000000000000..8738d6c6f8dd
+index 000000000000..99a14d355803
 --- /dev/null
-+++ b/drivers/clk/realtek/clk-regmap-gate.c
-@@ -0,0 +1,69 @@
++++ b/drivers/reset/realtek/Kconfig
+@@ -0,0 +1,3 @@
++# SPDX-License-Identifier: GPL-2.0-only
++config RESET_RTK_COMMON
++	bool
+diff --git a/drivers/reset/realtek/Makefile b/drivers/reset/realtek/Makefile
+new file mode 100644
+index 000000000000..b59a3f7f2453
+--- /dev/null
++++ b/drivers/reset/realtek/Makefile
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0-only
++obj-$(CONFIG_RESET_RTK_COMMON) += common.o
+diff --git a/drivers/reset/realtek/common.c b/drivers/reset/realtek/common.c
+new file mode 100644
+index 000000000000..ea7ff27117e7
+--- /dev/null
++++ b/drivers/reset/realtek/common.c
+@@ -0,0 +1,85 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +/*
-+ * Copyright (C) 2017 Realtek Semiconductor Corporation
-+ * Author: Cheng-Yu Lee <cylee12@realtek.com>
++ * Copyright (C) 2019 Realtek Semiconductor Corporation
 + */
 +
++#include <linux/device.h>
++#include <linux/module.h>
++#include <linux/of.h>
 +#include <linux/regmap.h>
-+#include <linux/bits.h>
-+#include "clk-regmap-gate.h"
-+#include <linux/clk-provider.h>
-+
-+static int clk_regmap_gate_enable(struct clk_hw *hw)
-+{
-+	struct clk_regmap_gate *clkg = to_clk_regmap_gate(hw);
-+	unsigned int mask;
-+	unsigned int val;
-+
-+	mask = BIT(clkg->bit_idx);
-+	val = BIT(clkg->bit_idx);
-+
-+	if (clkg->write_en) {
-+		mask |= BIT(clkg->bit_idx + 1);
-+		val |= BIT(clkg->bit_idx + 1);
-+	}
-+
-+	return regmap_update_bits(clkg->clkr.regmap, clkg->gate_ofs, mask, val);
-+}
-+
-+static void clk_regmap_gate_disable(struct clk_hw *hw)
-+{
-+	struct clk_regmap_gate *clkg = to_clk_regmap_gate(hw);
-+	unsigned int mask;
-+	unsigned int val;
-+
-+	mask = BIT(clkg->bit_idx);
-+	val = 0;
-+
-+	if (clkg->write_en) {
-+		mask |= BIT(clkg->bit_idx + 1);
-+		val |= BIT(clkg->bit_idx + 1);
-+	}
-+
-+	regmap_update_bits(clkg->clkr.regmap, clkg->gate_ofs, mask, val);
-+}
-+
-+static int clk_regmap_gate_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_regmap_gate *clkg = to_clk_regmap_gate(hw);
-+	int ret;
-+	u32 val;
-+
-+	ret = regmap_read(clkg->clkr.regmap, clkg->gate_ofs, &val);
-+	if (ret < 0)
-+		return ret;
-+
-+	return !!(val & BIT(clkg->bit_idx));
-+}
-+
-+const struct clk_ops rtk_clk_regmap_gate_ops = {
-+	.enable     = clk_regmap_gate_enable,
-+	.disable    = clk_regmap_gate_disable,
-+	.is_enabled = clk_regmap_gate_is_enabled,
-+};
-+EXPORT_SYMBOL_NS_GPL(rtk_clk_regmap_gate_ops, "REALTEK_CLK");
-+
-+const struct clk_ops rtk_clk_regmap_gate_ro_ops = {
-+	.is_enabled = clk_regmap_gate_is_enabled,
-+};
-+EXPORT_SYMBOL_NS_GPL(rtk_clk_regmap_gate_ro_ops, "REALTEK_CLK");
-diff --git a/drivers/clk/realtek/clk-regmap-gate.h b/drivers/clk/realtek/clk-regmap-gate.h
-new file mode 100644
-index 000000000000..b93357bd5a0d
---- /dev/null
-+++ b/drivers/clk/realtek/clk-regmap-gate.h
-@@ -0,0 +1,65 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (C) 2017 Realtek Semiconductor Corporation
-+ * Author: Cheng-Yu Lee <cylee12@realtek.com>
-+ */
-+
-+#ifndef __CLK_REALTEK_CLK_REGMAP_GATE_H
-+#define __CLK_REALTEK_CLK_REGMAP_GATE_H
-+
 +#include "common.h"
 +
-+struct clk_regmap_gate {
-+	struct clk_regmap clkr;
-+	int gate_ofs;
-+	u8 bit_idx;
-+	u32 write_en : 1;
-+};
-+
-+#define __clk_regmap_gate_hw(_p) __clk_regmap_hw(&(_p)->clkr)
-+
-+#define __CLK_REGMAP_GATE(_name, _parent, _ops, _flags, _ofs, _bit_idx,     \
-+			  _write_en)                                        \
-+	struct clk_regmap_gate _name = {                                    \
-+		.clkr.hw.init = CLK_HW_INIT(#_name, _parent, _ops, _flags), \
-+		.gate_ofs = _ofs,                                           \
-+		.bit_idx = _bit_idx,                                        \
-+		.write_en = _write_en,                                      \
-+	}
-+
-+#define CLK_REGMAP_GATE(_name, _parent, _flags, _ofs, _bit_idx, _write_en)    \
-+	__CLK_REGMAP_GATE(_name, _parent, &rtk_clk_regmap_gate_ops, _flags, _ofs, \
-+			  _bit_idx, _write_en)
-+
-+#define CLK_REGMAP_GATE_RO(_name, _parent, _flags, _ofs, _bit_idx, _write_en) \
-+	__CLK_REGMAP_GATE(_name, _parent, &rtk_clk_regmap_gate_ro_ops, _flags,    \
-+			  _ofs, _bit_idx, _write_en)
-+
-+#define __CLK_REGMAP_GATE_NO_PARENT(_name, _ops, _flags, _ofs, _bit_idx,     \
-+				    _write_en)                               \
-+	struct clk_regmap_gate _name = {                                     \
-+		.clkr.hw.init = CLK_HW_INIT_NO_PARENT(#_name, _ops, _flags), \
-+		.gate_ofs = _ofs,                                            \
-+		.bit_idx = _bit_idx,                                         \
-+		.write_en = _write_en,                                       \
-+	}
-+
-+#define CLK_REGMAP_GATE_NO_PARENT(_name, _flags, _ofs, _bit_idx, _write_en)    \
-+	__CLK_REGMAP_GATE_NO_PARENT(_name, &rtk_clk_regmap_gate_ops, _flags, _ofs, \
-+				    _bit_idx, _write_en)
-+
-+#define CLK_REGMAP_GATE_NO_PARENT_RO(_name, _flags, _ofs, _bit_idx, _write_en) \
-+	__CLK_REGMAP_GATE_NO_PARENT(_name, &rtk_clk_regmap_gate_ro_ops, _flags,    \
-+				    _ofs, _bit_idx, _write_en)
-+
-+static inline struct clk_regmap_gate *to_clk_regmap_gate(struct clk_hw *hw)
++static inline struct rtk_reset_data *to_rtk_reset_controller(struct reset_controller_dev *r)
 +{
-+	struct clk_regmap *clkr = to_clk_regmap(hw);
-+
-+	return container_of(clkr, struct clk_regmap_gate, clkr);
++	return container_of(r, struct rtk_reset_data, rcdev);
 +}
 +
-+extern const struct clk_ops rtk_clk_regmap_gate_ops;
-+extern const struct clk_ops rtk_clk_regmap_gate_ro_ops;
++static inline struct rtk_reset_desc *rtk_reset_get_desc(struct rtk_reset_data *data,
++							unsigned long idx)
++{
++	return &data->descs[idx];
++}
 +
-+#endif /* __CLK_REALTEK_CLK_REGMAP_GATE_H */
++static int rtk_reset_assert(struct reset_controller_dev *rcdev,
++			    unsigned long idx)
++{
++	struct rtk_reset_data *data = to_rtk_reset_controller(rcdev);
++	struct rtk_reset_desc *desc = rtk_reset_get_desc(data, idx);
++	u32 mask = desc->write_en ? (0x3 << desc->bit) : BIT(desc->bit);
++	u32 val  = desc->write_en ? (0x2 << desc->bit) : 0;
++
++	return regmap_update_bits(data->regmap, desc->ofs, mask, val);
++}
++
++static int rtk_reset_deassert(struct reset_controller_dev *rcdev,
++			      unsigned long idx)
++{
++	struct rtk_reset_data *data = to_rtk_reset_controller(rcdev);
++	struct rtk_reset_desc *desc = rtk_reset_get_desc(data, idx);
++	u32 mask = desc->write_en ? (0x3 << desc->bit) : BIT(desc->bit);
++	u32 val  = mask;
++
++	return regmap_update_bits(data->regmap, desc->ofs, mask, val);
++}
++
++static int rtk_reset_status(struct reset_controller_dev *rcdev,
++			    unsigned long idx)
++{
++	struct rtk_reset_data *data = to_rtk_reset_controller(rcdev);
++	struct rtk_reset_desc *desc = rtk_reset_get_desc(data, idx);
++	u32 val;
++	int ret;
++
++	ret = regmap_read(data->regmap, desc->ofs, &val);
++	if (ret)
++		return ret;
++
++	return !((val >> desc->bit) & 1);
++}
++
++static const struct reset_control_ops rtk_reset_ops = {
++	.assert   = rtk_reset_assert,
++	.deassert = rtk_reset_deassert,
++	.status   = rtk_reset_status,
++};
++
++/* The caller must initialize data->rcdev.nr_resets and data->descs before
++ * calling rtk_reset_controller_add().
++ */
++int rtk_reset_controller_add(struct device *dev,
++			     struct rtk_reset_data *data)
++{
++	struct device *parent = dev->parent;
++
++	data->regmap = dev_get_regmap(parent, NULL);
++	if (!data->regmap)
++		return -ENODEV;
++
++	data->rcdev.owner     = THIS_MODULE;
++	data->rcdev.ops       = &rtk_reset_ops;
++	data->rcdev.dev       = dev;
++	data->rcdev.of_node   = parent->of_node;
++
++	return devm_reset_controller_register(dev, &data->rcdev);
++}
++EXPORT_SYMBOL_NS_GPL(rtk_reset_controller_add, "REALTEK_RESET");
+diff --git a/drivers/reset/realtek/common.h b/drivers/reset/realtek/common.h
+new file mode 100644
+index 000000000000..ed69bca458de
+--- /dev/null
++++ b/drivers/reset/realtek/common.h
+@@ -0,0 +1,29 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (C) 2026 Realtek Semiconductor Corporation
++ * Author: Yu-Chun Lin <eleanor.lin@realtek.com>
++ */
++
++#ifndef __RESET_REALTEK_COMMON_H
++#define __RESET_REALTEK_COMMON_H
++
++#include <linux/reset-controller.h>
++
++struct regmap;
++
++struct rtk_reset_desc {
++	u32 ofs;
++	u32 bit;
++	bool write_en;
++};
++
++struct rtk_reset_data {
++	struct reset_controller_dev rcdev;
++	struct rtk_reset_desc *descs;
++	struct regmap *regmap;
++};
++
++int rtk_reset_controller_add(struct device *dev,
++			     struct rtk_reset_data *initdata);
++
++#endif /* __RESET_REALTEK_COMMON_H */
 -- 
 2.34.1
 
