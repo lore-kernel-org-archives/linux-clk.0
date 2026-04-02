@@ -1,33 +1,66 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F37D36657D;
-	Thu,  2 Apr 2026 08:23:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71B238AC78
+	for <linux-clk@vger.kernel.org>; Thu,  2 Apr 2026 08:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775118215; cv=none; b=DV6x3DV5pvT1Pkk582muh4/GrzBepi9pqlctcbcrBmb6YtIdZQ9Etx4QRq8BxT/5klBs+2N4edzZDmVw8Ah+szBOZdDrXPGaEaLcC77WXIRL95v9HQl0JNG5rcffY5uO6nu3VcIkQFTt0nXODXmTPK54ojeSHOFu3vJrSTLH10k=
+	t=1775119347; cv=none; b=YhXKAJziBror5eT+0qD8ADm0qHQ2tzs1ih2MMb5jokWV1vbZlhamxPODmFZAwE5k/XOZoZU1juM5j421QICs981XlDlYqtOS8pmls20GU73ia8yI7M28gs3GY/c/38P6520Tgg5MOl8BT5ThbFflZK1kdjmIA6wy2yUVq/ZrqFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775118215; c=relaxed/simple;
-	bh=0FInPO+JEPlRAzEm5olBslJRrlbdYfFnO7iYh10Iz7Y=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=jXQWhpgHR1+lLmhB6nxjMeYt7h6FR3rET1OqGyyeabHwacnHVrsvYy9MBgOQ+/Lynql2jfomJTiTpMD9r/f+LAI51O8b+VhKbR++UD+uSJbJNVHg9df2RguqFMG7mXyQMZeEd9mL/9lQ8GwtudS9keAOnNhF5pQrl0e/+1qNivY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U08toMkE; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1775119347; c=relaxed/simple;
+	bh=fe0lhWm1wALvygtsmqfZ8jXmQNpf2RlsQm58tinNTy0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jBtWOLVLAkk1+VV0EXACTmw0EUoQYMolBaI8WwdfInUunHXblNONNWsE3ozd5dY4WcltVLvRBjVZneeuzX1zCMAGHVNvddPUQO3/5zyeP4LqbHgjy9PYH5s6uou+qKRLqEDKBZUllQkbS+XApjYcF1T1F4UFwQkPBogXFoaEKaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EWcftB4G; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U08toMkE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C3B4C116C6;
-	Thu,  2 Apr 2026 08:23:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775118215;
-	bh=0FInPO+JEPlRAzEm5olBslJRrlbdYfFnO7iYh10Iz7Y=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=U08toMkE7N41wybTQoTG9WYeM9s9r+kuPrajoRivjxDsYBwux6oyY7If7lPCW3xWT
-	 efrn5Gtm1iqH8wcV4IKj7L7530VEBydA/XVHg5Q5AeeHu54M4gKEOZevoZ4RoDWps4
-	 RyeOx3l+0nKupu0Sthe4CnjwnonN5/Wctkr0RiCJ7l1tduqLM7jdvnIBiV3uJiHe+t
-	 Gd4at37AE0inWYJ6u+au35BbGF8AzbX10QdypxRkL1kKyO4NAuXQEGYtk+wo+12LCx
-	 +2CyX6jvMwTv0QfkE7cFLYjQBjNgHAwb96q3bPTWnEjHLgSCwAEH3282XuPt41Wun4
-	 j14G8AuwY5yJQ==
-Message-ID: <768180d0-bab6-466f-9f5f-54b36f353bd6@kernel.org>
-Date: Thu, 2 Apr 2026 10:23:30 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EWcftB4G"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-43d03db7f87so338806f8f.3
+        for <linux-clk@vger.kernel.org>; Thu, 02 Apr 2026 01:42:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1775119344; x=1775724144; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/sa+a3J0QrBn+R1u+tNno8i6NoeHdBvME4wJq3fMgEs=;
+        b=EWcftB4G5u+hd21KuxGidKSETfB3/WfAt1A0dlwUx/++jqRj7SyJhzN008b0JCdnEq
+         EIAvgrt/EOSYgNU6GbckuDF7zkiucdvW5YdmuZ65PbHwUOF9JBgGUbsXqlc3e7kSEKuj
+         OfIaoVxdh3soR9CU6htHwppWQ7QRU/MMNXAi7eVcABZK2ZU+AJkQwOUqR9FDSaGCq1dI
+         CeTfGPIUdUSV29easpkiiyWiwbfG6zyxHhyCbaqwz2EC0rMKklkDIYigPTkwtiwcmGpM
+         MiakL+Tzh2B+Kun7eCL4N/SL7MP+5QY4ldiLdA1GqSy5tKfFgPVIQLTLvMOfRI+ET6+w
+         mEyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1775119344; x=1775724144;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/sa+a3J0QrBn+R1u+tNno8i6NoeHdBvME4wJq3fMgEs=;
+        b=OXPPmZXnadqX4LQYsBjwKH8Sogu9hAJsYfzbVBjjB3i+tGz9xiBoNwoGDFISLP9eVi
+         iXMLhRg27a8SRjRg3VbvCSBeB5SUGO91+mZQQLySjiByIL87swCE4kokikBVnnHkJt8N
+         5xFEnfE5PfValK88tH5xC/RXIoyqGjByhFMD8/C8wgWSycu6vOe4YvfKqL/oEhDi2s19
+         FoBf17OckSL5Ra5H+omR9yvV8o6ZdnCRox5iuecHI0vR3QlxByvMrl78f8/3la8VDyp7
+         g/0iywEgc5DD4y5dLFgJOT9nRdTgr5D7tmXoHbQwbdKzC6lc5KYHCg5yZ6m34vL+Krkq
+         lYyw==
+X-Forwarded-Encrypted: i=1; AJvYcCW9RyX63n5zEInNbFJe7NHjQEQFvOcnMy8xDQgDCjus5/l2a2FPyLn4dQUX2Gt+q6jPCPmT1EbyqNo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yze/qrAbOd1MoX43daSotZS/4HV5rsldWZ9oG+CxrbsrB9Bnfib
+	o4pLRlKaD+qI9sttjmNkFMCqkkZRqk9rOCEO4M1a4jwOpflNVrqMsU1XoYXit8gUqrE=
+X-Gm-Gg: ATEYQzw7oWxT31sEbYenM9XbKC394H6EZ08yOXzV0wa4KTCU+S0V+2O0Gg6skq6koXI
+	IB5B+iitDN3y0vmclUOpUkQT0WWnmXK59W4MFEFxO7tyKbhohmTZOGGvo5xgOn2TmX9FqqFJ8E1
+	zqy3pSHeslUp0lxOAwMbafswMZ88kaMShi5RZRJqGq/FNRT9ULRQYFSmIpNFihTdjuf4fNyk4d6
+	g426ZCvZnj3fHm3HiTqK3iFVPNdbGvBYMu4bd21dgIRRf7agFdhK0QStcb9pcP4FV13QJhe4Qay
+	7To0U3PV3aCi1W7RA2VGKhiR6xpXEHL2NxgHETEe/ABdAc7EsQc8WtZ0ZggUblliKggcdYQG1V6
+	5tLBlhkUBxpiWnC3G69GoAqvMb7Tebas2kYF9Kk5GvY2ELeOpeXL69OuiKNE8YP9IF1dmrflo26
+	wjyuKpmrYp6nwQCDI+uW+vLoMGiioFhHY=
+X-Received: by 2002:a05:6000:230c:b0:43c:e7a7:9256 with SMTP id ffacd0b85a97d-43d150513d6mr11820588f8f.12.1775119343977;
+        Thu, 02 Apr 2026 01:42:23 -0700 (PDT)
+Received: from [10.11.12.108] ([79.115.63.48])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d1e4e5890sm5989362f8f.31.2026.04.02.01.42.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 02 Apr 2026 01:42:23 -0700 (PDT)
+Message-ID: <a02a693e-b06e-43bf-ac5f-8253f298c83d@linaro.org>
+Date: Thu, 2 Apr 2026 11:42:19 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,97 +68,186 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: clock: qcom: document the Milos GX clock
- controller
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
+Subject: Re: [PATCH v2 2/3] mailbox: exynos: Add support for Exynos850 mailbox
+To: Alexey Klimov <alexey.klimov@linaro.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sam Protsenko <semen.protsenko@linaro.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ Conor Dooley <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260306-milos-gxclkctl-v1-0-00b09ee159a7@fairphone.com>
- <20260306-milos-gxclkctl-v1-1-00b09ee159a7@fairphone.com>
- <20260307-inventive-stingray-of-pride-5c2216@quoll>
+References: <20260402-exynos850-ap2apm-mailbox-v2-0-ca5ffdff99d4@linaro.org>
+ <20260402-exynos850-ap2apm-mailbox-v2-2-ca5ffdff99d4@linaro.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20260307-inventive-stingray-of-pride-5c2216@quoll>
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20260402-exynos850-ap2apm-mailbox-v2-2-ca5ffdff99d4@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 07/03/2026 16:30, Krzysztof Kozlowski wrote:
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - qcom,milos-gxclkctl
->> +
->> +  power-domains:
->> +    description:
->> +      Power domains required for the clock controller to operate
->> +    items:
->> +      - description: GFX power domain
->> +      - description: GPUCC(CX) power domain
->> +
->> +  '#power-domain-cells':
->> +    const: 1
->> +
->> +  reg:
->> +    maxItems: 1
+Hi, Alexey,
+
+On 4/2/26 5:20 AM, Alexey Klimov wrote:
+> Exynos850-based platforms support ACPM and has similar workflow
+> of communicating with ACPM via mailbox, however mailbox controller
+> registers are located at different offsets and writes/reads could be
+> different. To distinguish between such different behaviours,
+> the registers offsets for Exynos850 and the platform-specific data
+> structs are introduced and configuration is described in such structs
+> for gs101 and exynos850 based SoCs. Probe routine now selects the
+> corresponding platform-specific data via device_get_match_data().
 > 
-> reg should be the second property, like you have it in "required" part.
-> I guess you copied it from kaanapali-gxclkctl.yaml, so lesson - qcom
-> bindings have acceptable quality, but not good enough to take as correct
-> starting point.
+> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+> ---
+>  drivers/mailbox/exynos-mailbox.c | 67 ++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 64 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/mailbox/exynos-mailbox.c b/drivers/mailbox/exynos-mailbox.c
+> index d2355b128ba4..f9c59c07558a 100644
+> --- a/drivers/mailbox/exynos-mailbox.c
+> +++ b/drivers/mailbox/exynos-mailbox.c
+> @@ -31,14 +31,61 @@
+>  
+>  #define EXYNOS_MBOX_CHAN_COUNT		HWEIGHT32(EXYNOS_MBOX_INTGR1_MASK)
+>  
+> +#define EXYNOS850_MBOX_MCUCTRL		0x0	/* Mailbox Control Register		*/
+> +#define EXYNOS850_MBOX_INTGR0		0x8	/* Interrupt Generation Register 0	*/
+> +#define EXYNOS850_MBOX_INTCR0		0x0C	/* Interrupt Clear Register 0		*/
+> +#define EXYNOS850_MBOX_INTMR0		0x10	/* Interrupt Mask Register 0		*/
+> +#define EXYNOS850_MBOX_INTSR0		0x14	/* Interrupt Status Register 0		*/
+> +#define EXYNOS850_MBOX_INTMSR0		0x18	/* Interrupt Mask Status Register 0	*/
+> +#define EXYNOS850_MBOX_INTGR1		0x1C	/* Interrupt Generation Register 1	*/
+> +#define EXYNOS850_MBOX_INTMR1		0x24	/* Interrupt Mask Register 1		*/
+> +#define EXYNOS850_MBOX_INTSR1		0x28	/* Interrupt Status Register 1		*/
+> +#define EXYNOS850_MBOX_INTMSR1		0x2C	/* Interrupt Mask Status Register 1	*/
+> +#define EXYNOS850_MBOX_VERSION		0x70
+
+Please consider defining just the registers that are used, to not
+pollute the driver. You may drop the unused gs101 definitions too. 
+
+> +
+> +#define EXYNOS850_MBOX_INTMR1_MASK	GENMASK(15, 0)
+> +
+> +/**
+> + * struct exynos_mbox_driver_data - platform-specific mailbox configuration.
+> + * @irq_doorbell_offset:	offset to the IRQ generation register, doorbell
+> + *				to APM co-processor.
+> + * @irq_doorbell_shift:		shift to apply to the value written to IRQ
+> + *				generation register.
+> + * @irq_mask_offset:		offset to the IRQ mask register.
+> + * @irq_mask_value:		value to right to the mask register to mask out
+> + *				all interrupts.
+> + */
+> +struct exynos_mbox_driver_data {
+> +	u16 irq_doorbell_offset;
+> +	u16 irq_doorbell_shift;
+> +	u16 irq_mask_offset;
+> +	u16 irq_mask_value;
+> +};
+> +
+>  /**
+>   * struct exynos_mbox - driver's private data.
+>   * @regs:	mailbox registers base address.
+>   * @mbox:	pointer to the mailbox controller.
+> + * @data:	pointer to driver platform-specific data.
+>   */
+>  struct exynos_mbox {
+>  	void __iomem *regs;
+>  	struct mbox_controller *mbox;
+> +	const struct exynos_mbox_driver_data *data;
+> +};
+> +
+> +static const struct exynos_mbox_driver_data exynos850_mbox_data = {
+> +	.irq_doorbell_offset = EXYNOS850_MBOX_INTGR0,
+> +	.irq_doorbell_shift = 16,
+> +	.irq_mask_offset = EXYNOS850_MBOX_INTMR1,
+> +	.irq_mask_value = EXYNOS850_MBOX_INTMR1_MASK,
+> +};
+> +
+> +static const struct exynos_mbox_driver_data exynos_gs101_mbox_data = {
+> +	.irq_doorbell_offset = EXYNOS_MBOX_INTGR1,
+> +	.irq_doorbell_shift = 0,
+> +	.irq_mask_offset = EXYNOS_MBOX_INTMR0,
+> +	.irq_mask_value = EXYNOS_MBOX_INTMR0_MASK,
+>  };
+
+I find it strange that the SoCs use different registers. Are you sure you're
+using the right direction? i.e. ring the doorbell to APM and not to AP?
+
+>  
+>  static int exynos_mbox_send_data(struct mbox_chan *chan, void *data)
+> @@ -57,7 +104,8 @@ static int exynos_mbox_send_data(struct mbox_chan *chan, void *data)
+>  		return -EINVAL;
+>  	}
+>  
+> -	writel(BIT(msg->chan_id), exynos_mbox->regs + EXYNOS_MBOX_INTGR1);
+> +	writel(BIT(msg->chan_id) << exynos_mbox->data->irq_doorbell_shift,
+> +	       exynos_mbox->regs + exynos_mbox->data->irq_doorbell_offset);
+
+Use FIELD_PREP from <linux/bitfield.h> please. You will use a mask instead of
+a shift.
+
+I would rename irq_doorbell_offset to intgr. It aligns with the register name
+from the datasheet. You won't need to prepend _offset to the name, we already
+see it's an offset when doing the writel().
+
+
+>  
+>  	return 0;
+>  }
+> @@ -87,13 +135,21 @@ static struct mbox_chan *exynos_mbox_of_xlate(struct mbox_controller *mbox,
+>  }
+>  
+>  static const struct of_device_id exynos_mbox_match[] = {
+> -	{ .compatible = "google,gs101-mbox" },
+> +	{
+> +		.compatible = "google,gs101-mbox",
+> +		.data = &exynos_gs101_mbox_data
+> +	},
+> +	{
+> +		.compatible = "samsung,exynos850-mbox",
+> +		.data = &exynos850_mbox_data
+> +	},
+>  	{},
+>  };
+>  MODULE_DEVICE_TABLE(of, exynos_mbox_match);
+>  
+>  static int exynos_mbox_probe(struct platform_device *pdev)
+>  {
+> +	const struct exynos_mbox_driver_data *data;
+>  	struct device *dev = &pdev->dev;
+>  	struct exynos_mbox *exynos_mbox;
+>  	struct mbox_controller *mbox;
+> @@ -122,6 +178,11 @@ static int exynos_mbox_probe(struct platform_device *pdev)
+>  		return dev_err_probe(dev, PTR_ERR(pclk),
+>  				     "Failed to enable clock.\n");
+>  
+> +	data = device_get_match_data(&pdev->dev);
+> +	if (!data)
+> +		return -ENODEV;
+> +
+> +	exynos_mbox->data = data;
+>  	mbox->num_chans = EXYNOS_MBOX_CHAN_COUNT;
+>  	mbox->chans = chans;
+>  	mbox->dev = dev;
+> @@ -133,7 +194,7 @@ static int exynos_mbox_probe(struct platform_device *pdev)
+>  	platform_set_drvdata(pdev, exynos_mbox);
+>  
+>  	/* Mask out all interrupts. We support just polling channels for now. */
+> -	writel(EXYNOS_MBOX_INTMR0_MASK, exynos_mbox->regs + EXYNOS_MBOX_INTMR0);
+> +	writel(data->irq_mask_value, exynos_mbox->regs + data->irq_mask_offset);
+>  
+
+and here I would s/irq_mask_value/intmr_mask and irq_mask_offset/intmr.
+
+Cheers,
+ta
+
+>  	return devm_mbox_controller_register(dev, mbox);
+>  }
 > 
 
-OTOH, why this entire binding cannot be squashed in Kaanapali one?
-What's the difference?
-
-Best regards,
-Krzysztof
