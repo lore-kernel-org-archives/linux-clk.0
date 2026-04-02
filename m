@@ -1,68 +1,67 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A640333121D
-	for <linux-clk@vger.kernel.org>; Thu,  2 Apr 2026 02:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79CC3368A9
+	for <linux-clk@vger.kernel.org>; Thu,  2 Apr 2026 02:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775096429; cv=none; b=c+8LZDCr6xbn+P/KfwdhOVApL079n/jbF6F4VOLQIhO23hFb1K9vB7ksXQkrpi8bv4jHa93BL77DiEkKASMuzxZdp4ZcjHU58xaF1TAETybtPdhKYcT3IFmd+1ATHJct9SGlVOOlAImXK7Pb2kC0z7RmLLX/U/v7crDOGTbt0Fw=
+	t=1775096431; cv=none; b=i3l4ml3p/esjFKV2pVwChLfFBjegvIBN0mbp8KlO2etoylQLdwwLwiE4z5MJ9Mk63VRXYlyMgKCX1xW8Fx87q4IkLfG7dB9Jn8Q0eOgRoHTKp1Ewmr28108tdXWtF6mG/WCZGfA2vMatNVVhNDx9MFcm8loavA/CgV1ItOk6r0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775096429; c=relaxed/simple;
-	bh=WY9gRm4aP98ntsWvJkYIkAqwVc/Juho8BzwfyqFKlMQ=;
+	s=arc-20240116; t=1775096431; c=relaxed/simple;
+	bh=mI1c4tvqRqmTd2c4Bajssy+09eEhLGeg/XucDzIs6Fg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aB5U51lQpsXgTahpwp7IBCMrcKKdZqCgchtdxitQyKEpaZUGruft/yYxFDcxxTsAL/VD8Zal+VdPTlxuFcXwzbQ3DnohdX/GFiBa5W78oEFk8aANV+wr9wM/HWvEKj78lZyd7ESlKXSwZtM5/I4sErXAPG2YS5wG+5T+qAVnajw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FNvhQc5B; arc=none smtp.client-ip=209.85.221.50
+	 In-Reply-To:To:Cc; b=B98Q2ZGUzHEXay9VlwgZ0GhmpPJG+xv6OvuGbd+cedMv/u7tNssknT1aeO08QpwMpRtX879HRBf3vTx6dHozZb/nKqPAzXvjUFSy5DSSukhPnY7b6lbAgvF8Vcw5PUiMYUN2et9cxpGQ/HN0biXKIR4BG8vzlpUkMmU/OhMh9zI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ttlbMsdK; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FNvhQc5B"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-43cfb723793so236199f8f.2
-        for <linux-clk@vger.kernel.org>; Wed, 01 Apr 2026 19:20:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ttlbMsdK"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-482f454be5bso15688295e9.0
+        for <linux-clk@vger.kernel.org>; Wed, 01 Apr 2026 19:20:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1775096426; x=1775701226; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1775096428; x=1775701228; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Cd/iu/aYoTfiHEl0xBfUrFFloW9Th3t3xU+FRrPDwNE=;
-        b=FNvhQc5B0w74VMgDKD6kxXTw2FglG9b3mATR4ZFwxrzvgZcZbi/+u0VYTFTQq4en0x
-         9YrePKVBHkiv6YScy2xqaCRWstBo0P2Sxe7F7zDyC6F2w/vBFKIQSR7O/ARGxO/vW1b/
-         YQ3sTvMGW4kwqpNJOd6g7i+q5+9MGa+QGPz+IqyQmJjBQAjk/CmpR1GQ0f9MPsuWs8cB
-         iP0dMsGDVJoz2Sg0Q9xquB/OCBkWAYzYU4dcAGWOW/gbPrWB5fubM42lDHlkIo7FKByR
-         zGgUJHaW0vEMz7Q/aSotJUjMoyghg50V4AHlQSO2K/pR0Bx9BindNkhPfyh2ISAURcEf
-         ybAg==
+        bh=DbF9xEzoPSgu59LUq/lUmgY7AyJO2/QP6FYhaZepCm4=;
+        b=ttlbMsdKPQoyOckVLWIC9DKVYi/ZxTPYjIb+6ssOw76qWxYXk+1UWbK3RuhlX8VjHB
+         JbZCLJL70qWpwpzOvmslMxwA2MMcciYLQQTMaHHz09KcWvTTz47Kayv49SnoW2/8Sq2s
+         uu63d9C8HjM2c0hvbqfBs3QCSxqfcUmVtPNGwsXnv7liiy7nfyBTvwJm8C1qgTgbU1Rk
+         hpGXnHVZqFbSBe/IVO27Ff19JdyGV8Uetz6HcKfwTIIOxzdiGyiG4/bTjyzgsKY8p0+g
+         hS7l6Fr5zCDhtm0iUVklS6og+tq8uwXwk1qjPZSdkwBuzyRWb9ZIm2LZ7JCF0gC3kSEe
+         ju8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775096426; x=1775701226;
+        d=1e100.net; s=20251104; t=1775096428; x=1775701228;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=Cd/iu/aYoTfiHEl0xBfUrFFloW9Th3t3xU+FRrPDwNE=;
-        b=iK2AnhFJFwaVeCgoOooaj7u5fBxpyRqK7tX4n8j2U1LnrIKeltDBOnaf/cBO5ynlo1
-         dicTOUeEImtljA43cgV3eNaFC6XCJOQwWWAqSdXn1MTwRuWrRzvQGgQ9GkVd/Urglb8i
-         SjshpM52eXIYahkxMbsno49Wf5XfviKkVC4jCZ/AhYFE6AUdsaVBJYyK18Vlv+vJI5/c
-         cDcytYMEb/kQu3AHZM7evkuEfy47K9RRNN9Utty9KUVCR44iP4dkIwDHgyMavSQog1Q7
-         lekc2S/bjsAosSh1aW0JMiTftcjfrJ+/NS6nZPS8DhFB7vjNsqQumKX4DkgMRPHRvjJO
-         B79Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVkcZXoyazX8twQW/GVoADkjJvbhXSOsSLFMLQEMTEvC/saNNbceTarE1bJUdxtptimIkd1ZcKDurk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNcCOiu8+xzYYLf3wX+cYFkun3QzqcGXZdYnsVR7YqtKhLfuMr
-	m+Kk0M5OZ4WFfLxJrEgckk/ln7XFRf9q5ro4Ziog3h0pXicYALAKCAc56Lna2bUR8D0=
-X-Gm-Gg: ATEYQzxYKchAzBBzCVir5WeNK+osGDjIhKOBJLzk/pAue5CxjuUcZ3Msqo+KxHTe73j
-	jIWOXUKTyDNmS+v0of8blYgpFRqUe2zD6h1Kwvm8lh/YqhGxxdXlJSfcy0PJl0d0z7YqzHtKSPk
-	sGDxIm0cbb/t1VMd4lpxuYSg+gYrRVa/L9hLQfdB51XkkYVW5/xV/jST9QI5RObxKNQQ5rK40qt
-	YSqjlI4ErofmMvGD9q5hRjNm73pYDuA13xX3j7h7RvLumjxMcuTcJ2iBrAaRjheynkSpc2FnT9r
-	AxbGe9kGiM6ADR+ob4rPre6frgNOqnc0bq6Gg63B6Yedk2TboF9FklAQcyJYDqKOECDRjE47xVK
-	zLDaGO0CjsjfOTh2ZVBCbHHAO96ghZ2MgpcH/XAT39mCOuBFK0U+fJ8qHB4Sxnd8fziS+UB1UuR
-	f5cGb9mJOQd/1IRibzqWn+cLy4SUZx4t7trYbEsfFlGH2U0DmfqJ3vX58Km8L1FDmR//tg0i7Dt
-	QpfViPl8p2Pkk39
-X-Received: by 2002:a05:600c:3421:b0:488:869c:eda1 with SMTP id 5b1f17b1804b1-488869cef18mr45133425e9.15.1775096426011;
-        Wed, 01 Apr 2026 19:20:26 -0700 (PDT)
+        bh=DbF9xEzoPSgu59LUq/lUmgY7AyJO2/QP6FYhaZepCm4=;
+        b=MGNvMpxyBVjPod+WVuss/XEo35ZbZciHGh0WmglnAjr+8Ym7kqa8ODPMqkH2IjRhrQ
+         FQ2M6NYFX0dV6L2kKjH/78eBToLZdqQflagEU9gGqOwbsC/vKPzwhRDeCy5k8/VzKAML
+         ciJLtRGMuUELC+xnrsd1Htw4Fy/+RWH6OumM5A1vkppGasrVG18fkqZJT3t7TdYbkHcy
+         0n4ZnPeZgJ5NVWbt2gMu9i9psDASFaaXHoTUuTa9G1Ni+BbAnmVCKkVb7t5KnVWecf/c
+         gq31PFIxc8+7HwetGP4+HiYtzebWuw63Jb+RfmjRQ1jVa+xfp5v36yv/AyOZOBSeYvZn
+         knAw==
+X-Forwarded-Encrypted: i=1; AJvYcCVPaUr960vRLVbgSSgIqbs16x4kxy1OD2uwh/nHxZhkgokHR5dsab/C7E7DuPNxY91DNo65qgK/uJ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYs5xatoHxN1Ik85LQjAi56IU1Hj1gsICY880jvp1w1kTeYIKq
+	nJWa1g3JfZe2cKwrzQ5aa4th8ZQUZTiyUClNnj7bW5+ZokWlrVAyG78Mr1eL/n8txzw=
+X-Gm-Gg: ATEYQzxKcqKLkhffWTsmmuB53MRxEXRirU5nEOT2R3pbpaqEsYZRRH9f1+dOsDPuyBG
+	yLgxpdHDx/R3jlYhH3QZsfjwLNwS5Whq9Oll8y4XQ8LAdhhWiv6dh4CJVrmnN6y6/moFvDFZFt3
+	kozFbStVRbedzZurFy2dR66PWtBkHs6JVYLwfxKZQGPJ7qq4wZsfOlL04DLBygG3WRGF6c8TXr2
+	cVS+uDF4vNyVY7KHQlCaTfcJNKK2iY12LhA5wf/QoJW7nCZKM3aQgEj6k+DdNlgcdxL8S+wq/r2
+	dxhEsxK7wjqutY/xdt7n/2PZOaGcnWg4z8gZCqjcOD+8jdFOZF7uy0RhtyNqoeT21pQpL54z+4n
+	0XIIk8mWW7R1aihq3YaJVdRcx8E6Gwk6n4OupxZ4sBS4uOxGEgTBM1G15pw96NUTN2zpxWUaTkk
+	ZWWFQB3nWEeq4KoZriYSkp2XRmu8AJ8gU6dHBVUDS83ZrMAGwP8dObddawqw5GKSifqnS5emmW3
+	Buwq+wzOSZ78wRP
+X-Received: by 2002:a05:600c:890c:b0:485:3e00:944a with SMTP id 5b1f17b1804b1-4888e0990c5mr6473235e9.9.1775096428010;
+        Wed, 01 Apr 2026 19:20:28 -0700 (PDT)
 Received: from [127.0.1.1] ([94.4.195.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4887aacb88fsm56379725e9.2.2026.04.01.19.20.24
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4887aacb88fsm56379725e9.2.2026.04.01.19.20.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Apr 2026 19:20:24 -0700 (PDT)
+        Wed, 01 Apr 2026 19:20:26 -0700 (PDT)
 From: Alexey Klimov <alexey.klimov@linaro.org>
-Date: Thu, 02 Apr 2026 03:20:14 +0100
-Subject: [PATCH v2 1/3] dt-bindings: mailbox: google,gs101-mbox: Add
- samsung,exynos850-mbox
+Date: Thu, 02 Apr 2026 03:20:15 +0100
+Subject: [PATCH v2 2/3] mailbox: exynos: Add support for Exynos850 mailbox
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -71,7 +70,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260402-exynos850-ap2apm-mailbox-v2-1-ca5ffdff99d4@linaro.org>
+Message-Id: <20260402-exynos850-ap2apm-mailbox-v2-2-ca5ffdff99d4@linaro.org>
 References: <20260402-exynos850-ap2apm-mailbox-v2-0-ca5ffdff99d4@linaro.org>
 In-Reply-To: <20260402-exynos850-ap2apm-mailbox-v2-0-ca5ffdff99d4@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
@@ -90,30 +89,140 @@ Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Alexey Klimov <alexey.klimov@linaro.org>
 X-Mailer: b4 0.14.3
 
-Document support for a mailbox present on Exynos850-based platforms.
-The registers offsets are different from gs101 mailbox, but the
-workflow is similar, hence new compatible.
+Exynos850-based platforms support ACPM and has similar workflow
+of communicating with ACPM via mailbox, however mailbox controller
+registers are located at different offsets and writes/reads could be
+different. To distinguish between such different behaviours,
+the registers offsets for Exynos850 and the platform-specific data
+structs are introduced and configuration is described in such structs
+for gs101 and exynos850 based SoCs. Probe routine now selects the
+corresponding platform-specific data via device_get_match_data().
 
 Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
 ---
- Documentation/devicetree/bindings/mailbox/google,gs101-mbox.yaml | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/mailbox/exynos-mailbox.c | 67 ++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 64 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mailbox/google,gs101-mbox.yaml b/Documentation/devicetree/bindings/mailbox/google,gs101-mbox.yaml
-index e249db4c1fbc..c109c1f7af24 100644
---- a/Documentation/devicetree/bindings/mailbox/google,gs101-mbox.yaml
-+++ b/Documentation/devicetree/bindings/mailbox/google,gs101-mbox.yaml
-@@ -20,7 +20,9 @@ description:
+diff --git a/drivers/mailbox/exynos-mailbox.c b/drivers/mailbox/exynos-mailbox.c
+index d2355b128ba4..f9c59c07558a 100644
+--- a/drivers/mailbox/exynos-mailbox.c
++++ b/drivers/mailbox/exynos-mailbox.c
+@@ -31,14 +31,61 @@
  
- properties:
-   compatible:
--    const: google,gs101-mbox
-+    enum:
-+      - google,gs101-mbox
-+      - samsung,exynos850-mbox
+ #define EXYNOS_MBOX_CHAN_COUNT		HWEIGHT32(EXYNOS_MBOX_INTGR1_MASK)
  
-   reg:
-     maxItems: 1
++#define EXYNOS850_MBOX_MCUCTRL		0x0	/* Mailbox Control Register		*/
++#define EXYNOS850_MBOX_INTGR0		0x8	/* Interrupt Generation Register 0	*/
++#define EXYNOS850_MBOX_INTCR0		0x0C	/* Interrupt Clear Register 0		*/
++#define EXYNOS850_MBOX_INTMR0		0x10	/* Interrupt Mask Register 0		*/
++#define EXYNOS850_MBOX_INTSR0		0x14	/* Interrupt Status Register 0		*/
++#define EXYNOS850_MBOX_INTMSR0		0x18	/* Interrupt Mask Status Register 0	*/
++#define EXYNOS850_MBOX_INTGR1		0x1C	/* Interrupt Generation Register 1	*/
++#define EXYNOS850_MBOX_INTMR1		0x24	/* Interrupt Mask Register 1		*/
++#define EXYNOS850_MBOX_INTSR1		0x28	/* Interrupt Status Register 1		*/
++#define EXYNOS850_MBOX_INTMSR1		0x2C	/* Interrupt Mask Status Register 1	*/
++#define EXYNOS850_MBOX_VERSION		0x70
++
++#define EXYNOS850_MBOX_INTMR1_MASK	GENMASK(15, 0)
++
++/**
++ * struct exynos_mbox_driver_data - platform-specific mailbox configuration.
++ * @irq_doorbell_offset:	offset to the IRQ generation register, doorbell
++ *				to APM co-processor.
++ * @irq_doorbell_shift:		shift to apply to the value written to IRQ
++ *				generation register.
++ * @irq_mask_offset:		offset to the IRQ mask register.
++ * @irq_mask_value:		value to right to the mask register to mask out
++ *				all interrupts.
++ */
++struct exynos_mbox_driver_data {
++	u16 irq_doorbell_offset;
++	u16 irq_doorbell_shift;
++	u16 irq_mask_offset;
++	u16 irq_mask_value;
++};
++
+ /**
+  * struct exynos_mbox - driver's private data.
+  * @regs:	mailbox registers base address.
+  * @mbox:	pointer to the mailbox controller.
++ * @data:	pointer to driver platform-specific data.
+  */
+ struct exynos_mbox {
+ 	void __iomem *regs;
+ 	struct mbox_controller *mbox;
++	const struct exynos_mbox_driver_data *data;
++};
++
++static const struct exynos_mbox_driver_data exynos850_mbox_data = {
++	.irq_doorbell_offset = EXYNOS850_MBOX_INTGR0,
++	.irq_doorbell_shift = 16,
++	.irq_mask_offset = EXYNOS850_MBOX_INTMR1,
++	.irq_mask_value = EXYNOS850_MBOX_INTMR1_MASK,
++};
++
++static const struct exynos_mbox_driver_data exynos_gs101_mbox_data = {
++	.irq_doorbell_offset = EXYNOS_MBOX_INTGR1,
++	.irq_doorbell_shift = 0,
++	.irq_mask_offset = EXYNOS_MBOX_INTMR0,
++	.irq_mask_value = EXYNOS_MBOX_INTMR0_MASK,
+ };
+ 
+ static int exynos_mbox_send_data(struct mbox_chan *chan, void *data)
+@@ -57,7 +104,8 @@ static int exynos_mbox_send_data(struct mbox_chan *chan, void *data)
+ 		return -EINVAL;
+ 	}
+ 
+-	writel(BIT(msg->chan_id), exynos_mbox->regs + EXYNOS_MBOX_INTGR1);
++	writel(BIT(msg->chan_id) << exynos_mbox->data->irq_doorbell_shift,
++	       exynos_mbox->regs + exynos_mbox->data->irq_doorbell_offset);
+ 
+ 	return 0;
+ }
+@@ -87,13 +135,21 @@ static struct mbox_chan *exynos_mbox_of_xlate(struct mbox_controller *mbox,
+ }
+ 
+ static const struct of_device_id exynos_mbox_match[] = {
+-	{ .compatible = "google,gs101-mbox" },
++	{
++		.compatible = "google,gs101-mbox",
++		.data = &exynos_gs101_mbox_data
++	},
++	{
++		.compatible = "samsung,exynos850-mbox",
++		.data = &exynos850_mbox_data
++	},
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, exynos_mbox_match);
+ 
+ static int exynos_mbox_probe(struct platform_device *pdev)
+ {
++	const struct exynos_mbox_driver_data *data;
+ 	struct device *dev = &pdev->dev;
+ 	struct exynos_mbox *exynos_mbox;
+ 	struct mbox_controller *mbox;
+@@ -122,6 +178,11 @@ static int exynos_mbox_probe(struct platform_device *pdev)
+ 		return dev_err_probe(dev, PTR_ERR(pclk),
+ 				     "Failed to enable clock.\n");
+ 
++	data = device_get_match_data(&pdev->dev);
++	if (!data)
++		return -ENODEV;
++
++	exynos_mbox->data = data;
+ 	mbox->num_chans = EXYNOS_MBOX_CHAN_COUNT;
+ 	mbox->chans = chans;
+ 	mbox->dev = dev;
+@@ -133,7 +194,7 @@ static int exynos_mbox_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, exynos_mbox);
+ 
+ 	/* Mask out all interrupts. We support just polling channels for now. */
+-	writel(EXYNOS_MBOX_INTMR0_MASK, exynos_mbox->regs + EXYNOS_MBOX_INTMR0);
++	writel(data->irq_mask_value, exynos_mbox->regs + data->irq_mask_offset);
+ 
+ 	return devm_mbox_controller_register(dev, mbox);
+ }
 
 -- 
 2.51.0
