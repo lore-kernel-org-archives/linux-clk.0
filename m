@@ -1,24 +1,24 @@
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB41368962;
-	Thu,  2 Apr 2026 09:09:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA0943630AE;
+	Thu,  2 Apr 2026 09:09:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775120972; cv=none; b=urudQlts7whSviKqMpDBXBsqSKYXdzfZjD0WSUf312C8oIF3JVzcfxdBSRw3adpGoFxx5Xbkcl8oKD4hLLkMxoBA28i06Zukv6XSEW0AhKLQR1eMt2i1VxD732rdchrXmmtYPsXQe+vpiF0e7ugQ06klzz8osxyFshpeWOmPL5c=
+	t=1775120982; cv=none; b=NaNR9QS9JLDOfFBQMIrRQJ6YGAI6sWJ7cZEmSRfMin6uGlM9niP5MIZGnE1F/GCox2kEa6xYgoKI3jNB2t0gVJvAoGe7TG3mZNFFm/T600yef2vUh0kXGQtK51mLms73pugk5eny2pvwahE+cCKy6Tj03Xwvc5vCbphv7k07loQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775120972; c=relaxed/simple;
-	bh=B5gfNRLRR4fsFVk5TfophHSDAeQm4qXUUgJAphh7Udc=;
+	s=arc-20240116; t=1775120982; c=relaxed/simple;
+	bh=Pct10WFRLkBZGJP+C1MLBfIUnU9TWoUjNms62a7TZV4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BhNu0PrfFh0lDh4wDw+IwqXfhD4LfxEodZqrJjDcqg/J1eJjFHw+eY04N9S3BM1sP0qy5izT3xgOD2owzNv4Bx8vLiVfnRCEzputXQyXKbZJ4c919oxCMGfiGenRUoD+uiBRlcoVaD1eUHI15PgxD13DKRFaxRHDpq+YJJafnAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+	 MIME-Version; b=uexjnBT66J1RWR+H79pUWAP+XWyBpSTs25w+hwsqTLkLyZPYrBfa6m6Z3djQGmkV9RPepzih6Tb9z8Xr3DhvJlXYsNCXAm77hyTNgfIv/kupRngIMvV9L+Autn8XQTqF2m0x6FN8VndptoicaKA035sVZvImtgklCETxbd1gBjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: XYJiv6PpTcqv/Ua/rsmgqA==
-X-CSE-MsgGUID: ABwzT1PcTD+PJxDF5x0Wqg==
+X-CSE-ConnectionGUID: u8brfoCQSJOwT+JC7I2M1g==
+X-CSE-MsgGUID: CJleIU+LToKUCyIBLJZHKA==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 02 Apr 2026 18:09:29 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 02 Apr 2026 18:09:39 +0900
 Received: from ubuntu.adwin.renesas.com (unknown [10.226.92.136])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id E89C6413EB4D;
-	Thu,  2 Apr 2026 18:09:20 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 7F072413EABB;
+	Thu,  2 Apr 2026 18:09:30 +0900 (JST)
 From: John Madieu <john.madieu.xa@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
 	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
@@ -48,9 +48,9 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	dmaengine@vger.kernel.org,
 	linux-sound@vger.kernel.org,
 	John Madieu <john.madieu.xa@bp.renesas.com>
-Subject: [PATCH v2 16/24] ASoC: rsnd: Add rsnd_adg_mod_get() for PM support
-Date: Thu,  2 Apr 2026 11:05:15 +0200
-Message-ID: <20260402090524.9137-17-john.madieu.xa@bp.renesas.com>
+Subject: [PATCH v2 17/24] ASoC: rsnd: Export rsnd_ssiu_mod_get() for PM support
+Date: Thu,  2 Apr 2026 11:05:16 +0200
+Message-ID: <20260402090524.9137-18-john.madieu.xa@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260402090524.9137-1-john.madieu.xa@bp.renesas.com>
 References: <20260402090524.9137-1-john.madieu.xa@bp.renesas.com>
@@ -62,57 +62,49 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add rsnd_adg_mod_get() to retrieve the ADG module handle.
+Remove the static qualifier from rsnd_ssiu_mod_get() and export it
+via rsnd.h.
 
 This is preparation for system suspend/resume support, where the PM
-callbacks need to access the ADG module to manage its clock and reset
-state. Other modules (SSI, SRC, CTU, MIX, DVC) already have their
-getters exported.
+callbacks need to access SSIU modules to manage their clock and reset
+state.
 
 Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
 ---
 
 Changes:
 
-v2: Moved export part into a new patch (the next one)
+v2: New patch, resulting from a split of the previous one
 
- sound/soc/renesas/rcar/adg.c  | 10 ++++++++++
- sound/soc/renesas/rcar/rsnd.h |  1 +
- 2 files changed, 11 insertions(+)
+ sound/soc/renesas/rcar/rsnd.h | 1 +
+ sound/soc/renesas/rcar/ssiu.c | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/renesas/rcar/adg.c b/sound/soc/renesas/rcar/adg.c
-index 131a60689f6d..d73f29bc9de7 100644
---- a/sound/soc/renesas/rcar/adg.c
-+++ b/sound/soc/renesas/rcar/adg.c
-@@ -906,6 +906,16 @@ int rsnd_adg_probe(struct rsnd_priv *priv)
- 	return 0;
- }
- 
-+struct rsnd_mod *rsnd_adg_mod_get(struct rsnd_priv *priv)
-+{
-+	struct rsnd_adg *adg = rsnd_priv_to_adg(priv);
-+
-+	if (!adg)
-+		return NULL;
-+
-+	return rsnd_mod_get(adg);
-+}
-+
- void rsnd_adg_remove(struct rsnd_priv *priv)
- {
- 	struct device *dev = rsnd_priv_to_dev(priv);
 diff --git a/sound/soc/renesas/rcar/rsnd.h b/sound/soc/renesas/rcar/rsnd.h
-index 8700b39b535e..3860e1c4943f 100644
+index 3860e1c4943f..ddaac350a049 100644
 --- a/sound/soc/renesas/rcar/rsnd.h
 +++ b/sound/soc/renesas/rcar/rsnd.h
-@@ -618,6 +618,7 @@ int rsnd_adg_set_cmd_timsel_gen2(struct rsnd_mod *cmd_mod,
- #define rsnd_adg_clk_disable(priv)	rsnd_adg_clk_control(priv, 0)
- int rsnd_adg_clk_control(struct rsnd_priv *priv, int enable);
- void rsnd_adg_clk_dbg_info(struct rsnd_priv *priv, struct seq_file *m);
-+struct rsnd_mod *rsnd_adg_mod_get(struct rsnd_priv *priv);
+@@ -815,6 +815,7 @@ int rsnd_ssi_is_dma_mode(struct rsnd_mod *mod);
+ int __rsnd_ssi_is_pin_sharing(struct rsnd_mod *mod);
  
- /*
-  *	R-Car sound priv
+ #define rsnd_ssi_of_node(priv) rsnd_parse_of_node(priv, RSND_NODE_SSI)
++struct rsnd_mod *rsnd_ssiu_mod_get(struct rsnd_priv *priv, int id);
+ void rsnd_parse_connect_ssi(struct rsnd_dai *rdai,
+ 			    struct device_node *playback,
+ 			    struct device_node *capture);
+diff --git a/sound/soc/renesas/rcar/ssiu.c b/sound/soc/renesas/rcar/ssiu.c
+index f377d9414633..1462f02c2a7f 100644
+--- a/sound/soc/renesas/rcar/ssiu.c
++++ b/sound/soc/renesas/rcar/ssiu.c
+@@ -434,7 +434,7 @@ static struct rsnd_mod_ops rsnd_ssiu_ops_gen2 = {
+ 	DEBUG_INFO
+ };
+ 
+-static struct rsnd_mod *rsnd_ssiu_mod_get(struct rsnd_priv *priv, int id)
++struct rsnd_mod *rsnd_ssiu_mod_get(struct rsnd_priv *priv, int id)
+ {
+ 	if (WARN_ON(id < 0 || id >= rsnd_ssiu_nr(priv)))
+ 		id = 0;
 -- 
 2.25.1
 
