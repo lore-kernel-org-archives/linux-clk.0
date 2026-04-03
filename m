@@ -1,82 +1,82 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE04734753B
-	for <linux-clk@vger.kernel.org>; Fri,  3 Apr 2026 14:44:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6CA53C5548
+	for <linux-clk@vger.kernel.org>; Fri,  3 Apr 2026 14:54:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775227495; cv=none; b=n3+9eibnwkeljf/LVQ6Rxxn+qdEW0mUsCQ4YSmL6Xg4L3FFUFdC2EuVz3d8StEFODdjDiqHvdBPJea8WFyNf71QdAfaXOw8aA9IaNjlsJFz3DU7R2L5TMGaJVmi5glH/CSSGvw/0WgMG7DIMfwJ38GHxfci+udAUTH5mWaqkOFU=
+	t=1775228057; cv=none; b=OGF59inFM1PUunDTBK1BLV6PXNAfAfsuJ8S7YTN+jFZqUMjOaunFSMD1P44asBsEdPTIO+13Socpz+VeDXFdz319ZcmhcvC1Z0oxHru7x0xF/Xv4EAX3hp7Awos+qpHQFd8HWFWS7MqVLEizXbFR/Q/OyKovfMlgYFYpmNYm4Pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775227495; c=relaxed/simple;
-	bh=MxjZZDZZaEuYiPY927jOxN57562k/MZjNJFyBvG4prg=;
+	s=arc-20240116; t=1775228057; c=relaxed/simple;
+	bh=7PUBIgjHZ5FhHvfdpZSXiFD5EOe9PjvrkPuWk/Vegjo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=leyHGn4bRWKi2IFG9WPLRgZTSbKip/aLVNJBmKCASRSqq///OlRd2vk9w+3Zn9w9jammkXzOJ8+bnZnTZ99gvMS6h6b/D0LkHewEdTVFekNG4/mWVaPSDMVrCFnWWO37sy5/v6xdtcrigGV4kzjE+VKU1r/XSIwnrp5Z6/SXQ5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ayJlZJxt; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=M5r6JxQa; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=VQx5D0y/a3qMsO4XDaOwT10EarpIfVhwr0uDYhiU1V+9Q0/YyqTnWcQG96dsDfktb1HbxY6YaADgtudzWPxfL4kvgfW7YRoB9KIYadWfU0E1C6jg+twEV6Fvytwwa67YDhWw9l0UTX0l5OHk4L7iwTDeCUuFJh8/nRRS8bFNjk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QoVIpcD5; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=seoVZX0j; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ayJlZJxt";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="M5r6JxQa"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QoVIpcD5";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="seoVZX0j"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1775227492;
+	s=mimecast20190719; t=1775228053;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=fYCobLYtX3TeLAHy+p2pLXBgriU/XzUui5ACleydfI8=;
-	b=ayJlZJxtgxIpiscjYw+fubbHmBUMY3FKXQUv1WoGsKzBQS6Bt+tCpp/hGmc+o5Gw4kGsxk
-	l6R3iiC3VqUks8YDI56JfjT5C3QfNg6pVfGPz2XFkfivFnGNjiGZIMUYbGHsiO1UvKJb1v
-	RFEE7+dIQtsrul3mK1hAgFl0MZZk0Fk=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=EJQp4qyiVINRC2yWIozqFa0fIfPJ+S4aniFYq7A/W0o=;
+	b=QoVIpcD5KISNiXG4nI+taODP4G0DYgM6XavsA6Y8k8VcDpi9jluRrs56WAhNdzjU4Bjq+i
+	hLu4C6Iw10NJjpYKK8llDiOza9kG0G80ARwjt+Xqxer+KSqocLWfNQyAmRNtdtJ1GFPzzT
+	NT/JDgBxUsVIMP5OfDPVE3pJ3kVRrTg=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-441-5yvwUX8MO46Oo0Jq10XOhw-1; Fri, 03 Apr 2026 10:44:51 -0400
-X-MC-Unique: 5yvwUX8MO46Oo0Jq10XOhw-1
-X-Mimecast-MFC-AGG-ID: 5yvwUX8MO46Oo0Jq10XOhw_1775227491
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-5090cc6a7d2so53524341cf.2
-        for <linux-clk@vger.kernel.org>; Fri, 03 Apr 2026 07:44:51 -0700 (PDT)
+ us-mta-318-6rTsvaebM5azkmH0UKNhww-1; Fri, 03 Apr 2026 10:54:13 -0400
+X-MC-Unique: 6rTsvaebM5azkmH0UKNhww-1
+X-Mimecast-MFC-AGG-ID: 6rTsvaebM5azkmH0UKNhww_1775228052
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-89f1daa57f3so73483286d6.0
+        for <linux-clk@vger.kernel.org>; Fri, 03 Apr 2026 07:54:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1775227491; x=1775832291; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1775228052; x=1775832852; darn=vger.kernel.org;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fYCobLYtX3TeLAHy+p2pLXBgriU/XzUui5ACleydfI8=;
-        b=M5r6JxQap+FAZSBq0GEPxSQW0FvWbYodX8dBvnvn6uKNs+d++LuJR/r2kIFm1R2UXL
-         4XjIMAhwvuTySzcobvh/I0dHOzbWvkwFEc33zCzTTmc7iyQ5m9lRmBYRSBScIP1NDZtK
-         Ht+NEmScv45Pq+2XxVhp3Bb1tBGm3x8L4xZGh7gJWfUKKB1UH4q4Mcdtc5/yGXSHM+6w
-         67lmoT8DHU2eyxg07Wn5G/SR2vyeGNoS1lRyD/c94eIBCDsoStmVz+09Ap11X9L2fCPt
-         djVKSITd1NB8gp7c1Dxa76BzZZ673ks5ZbozFxIg1eZFJtGsiCMC8Ga0sMeaKTlR9mMm
-         nEgg==
+        bh=EJQp4qyiVINRC2yWIozqFa0fIfPJ+S4aniFYq7A/W0o=;
+        b=seoVZX0jmxVoFjHQS8P3l2gcnociwp2ylAe5F9CvBlUO6R9MSvjgPes81k0eE3HxsB
+         bDH0mu9XT9DjyUf4HBefwVCPAwNtNvTF6P9bOj1uqc3nN+R9fhKipRWguEgE2fVLdQ8X
+         Is6EWFDWwtEGnEeiaeNR6i7y7TV5PM83hEwS5tPsi+L8Fw3M8l1HUUryPKkXZT7OOLSe
+         ZR9cEhicgWqrcRspE8J8wSRrIj5r7GnLVZI34Eeye7LkcYvwLmKS3o0bGybjh0auAjkB
+         ek8wQ04MNa34a2vediNqKut7R6hrBFAmSyprzRTdKMwUOBWvm5zwbnIN5t9MCFs9NhzR
+         7vZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775227491; x=1775832291;
+        d=1e100.net; s=20251104; t=1775228052; x=1775832852;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=fYCobLYtX3TeLAHy+p2pLXBgriU/XzUui5ACleydfI8=;
-        b=kMXIfuiGKcw07nC1K0/XIWMzH+KGIVlrBWHV7k43ML50PMOmAR2+rrgyoRDSFvcro1
-         zHOnKTmlpok98zC7NmXXwYLc6/nUWS37CfbXfGyvAA/rSrR9LfOhHmhbjyu2ZX/YUgn6
-         UWawzwqBSCbYOU6ySs50frAf6V9vOPWYJmiIS8aG+i6LpBVZtwquoWVnSsIG9TD5QZUU
-         JDDWv+KDsofVkN9eNCpwRQgItYPd+nhSW+YPOKJvf/DzotQW50gwQTrlGAnTyVl32gZg
-         Mpjs/7xOrH21rvBhrGSZex/Hw+nH0dYrOOJ7zWdlfIll94/F4OMKp5Sf3dUvJ6Uefoqz
-         ah3w==
-X-Forwarded-Encrypted: i=1; AJvYcCX3QdrQ+546K8MfEm1saeKM+9SCeu+yxLU12rGvTQ3Ce/RO66QNbNwamMWCFtRqtZ/brM43QyrrqCw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZp1EJ6BslNZKqCJJE6LpssaLNk25ogBDju+WthdzCM4DNErAq
-	7TptH6AOPTmXfz4+t7IkRAZaLvRVjkj2fyUEgNXQM39Zot50r5RIjTntqvKUYg/TbIKSrenr21c
-	04zlBYvxK1wHcj5hOexfXsLlWbLeTm0yPXVMPMhBBXyWLSsSooXZ/5Dv6y/mqzA==
-X-Gm-Gg: AeBDiespGJe4T5IMuBLLYeEcRAnv1f/D3l4CVsDN/QjQJ1SEcvv5g4P+uC/YzZTZNsv
-	gCNwAKwbCaFXkycQanw+RApH6QsY0SUe7PnYb+YX/K8ZhmOhK6dxSPZ8xVwSfC/K9no7duASiwN
-	Vuz+kJoqliF05aPQKTTtBaHan6UgRWoA9wN961w1mO/qwhzxTa1oC9nYZYv/IWN8QXGcI+ND45B
-	xiRx8IacblgIsoEPTZKkUZfwEntjWZcciAZI71uJbHRvSQsn1eJ1uU2wF0ijrZqbGXGQNhndvjL
-	UWRJtSwJoDP/OmMEFLfA4etzgdzhdTWu/KNBv8YkYTXiKdanycZibuu+t9CZdqbGt0C2Jsz/yu7
-	a5I7yNnm8ije0T6xq1BflPF5eTrP8q02sBMHFUowS75eTmv6ajJb83SCd
-X-Received: by 2002:a05:6214:2a8c:b0:89c:6252:4a4a with SMTP id 6a1803df08f44-8a704caf687mr51587206d6.49.1775227491218;
-        Fri, 03 Apr 2026 07:44:51 -0700 (PDT)
-X-Received: by 2002:a05:6214:2a8c:b0:89c:6252:4a4a with SMTP id 6a1803df08f44-8a704caf687mr51586656d6.49.1775227490715;
-        Fri, 03 Apr 2026 07:44:50 -0700 (PDT)
+        bh=EJQp4qyiVINRC2yWIozqFa0fIfPJ+S4aniFYq7A/W0o=;
+        b=pjkn2A3L8vFc+ubJna2SlbxntEEOmrx8zplvq/kDpKpU/B87seLFq/wQXx3k/Byysf
+         LDSWqXNSY3K8rGsD1+qwyxinc3R7E3YA5HuevnWUoc0bAlIkQBoQCSUn+rVTifPbB50A
+         PN1WcFmRstU6Lad7WpmPZSHCQ04U2bdUbtRuwMlbGEnlMkwuYmbxw2bWZnUCRqta8CtH
+         MB2mLEfrk4mQdT3+xkClU9LTHVpz/kWhHmBvUgOnCqz2Fx2UJUaQve0slITzERF/YUAZ
+         ARVgIAZdJ/LyCrs9rgq9qKcpWZecvVF6PWnldApR4szIOkuP1sUX1rARcAhNu+zcK85p
+         RGVw==
+X-Forwarded-Encrypted: i=1; AJvYcCV6GQAO19xobxK/r6nC/qD62PUVZNtm/WeMa/9diwhwqNNj00l0YQ1CfDLghJqOGOkk1tfKrbR1P/A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgN8RjmU30D0JYrbiKLwz1l6kYbxJH6TtzeBLbqfS/DQqw03U3
+	uphCcnx4UQWxG3sylP4n89gQ9t8m29/ALqHFa+9SLd+IVPg1Ep3dQ1IJyPdnJLFQ2K9dxCBRCic
+	LswoMvBmLBUmhUZ2RE+5YL9xYPqs5o4QUtMVx281lNTCIhhn92g/fG0l6wqL/Ww==
+X-Gm-Gg: AeBDieujXSlRLesywgutEH4SvqNAci6eBmfd7604m9ohtLJ7ifs7PnGC70Vujg/yg5W
+	jIhrZvcpbgOElSToeS+UzdJUcAkmqDlIy7YjD2esJ4FSuF+s9npumjUC71wM+e3M65bd/uurb2x
+	ljcpqRXXe4L22f150C5Yy4pxsTDrztjhqRjeekiV/+tw+wbYMOggl4JXKMrrmXrdYa0EjtTBntw
+	6KPkeXOOiIYjH6aX+7lvAMAtoug/zQOV+zLCU/kLywGsxPbgkDnP/PVoY8mXN8LZUYCX3CmTCY2
+	mX4u2EyTXk8hlByz6ReorHOOtxDGV8Jiz5zsNGLz0yLSIggEls2ukUSsy0Ul/IhBVJ0zzC/JAFJ
+	fs0DC4Wbi3thxFVVfDqW8ml/7udbnW47FLwQ3Hnpd+fzUL+LW8rusK8GJ
+X-Received: by 2002:ad4:5961:0:b0:8a5:104b:e390 with SMTP id 6a1803df08f44-8a7043ee428mr55704356d6.32.1775228052315;
+        Fri, 03 Apr 2026 07:54:12 -0700 (PDT)
+X-Received: by 2002:ad4:5961:0:b0:8a5:104b:e390 with SMTP id 6a1803df08f44-8a7043ee428mr55703896d6.32.1775228051814;
+        Fri, 03 Apr 2026 07:54:11 -0700 (PDT)
 Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8a593ee25c9sm58197296d6.22.2026.04.03.07.44.48
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8a593330a98sm50899396d6.2.2026.04.03.07.54.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Apr 2026 07:44:50 -0700 (PDT)
-Date: Fri, 3 Apr 2026 10:44:47 -0400
+        Fri, 03 Apr 2026 07:54:11 -0700 (PDT)
+Date: Fri, 3 Apr 2026 10:54:09 -0400
 From: Brian Masney <bmasney@redhat.com>
 To: Yu-Chun Lin <eleanor.lin@realtek.com>
 Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
@@ -86,11 +86,10 @@ Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
 	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-realtek-soc@lists.infradead.org, james.tai@realtek.com,
 	cy.huang@realtek.com, stanley_chang@realtek.com
-Subject: Re: [PATCH v6 04/10] clk: realtek: Add support for phase locked
- loops (PLLs)
-Message-ID: <ac_SX1UJRqiBH2iM@redhat.com>
+Subject: Re: [PATCH v6 06/10] clk: realtek: Add support for mux clock
+Message-ID: <ac_UkRiqWb6fSc1I@redhat.com>
 References: <20260402073957.2742459-1-eleanor.lin@realtek.com>
- <20260402073957.2742459-5-eleanor.lin@realtek.com>
+ <20260402073957.2742459-7-eleanor.lin@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -99,76 +98,123 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260402073957.2742459-5-eleanor.lin@realtek.com>
+In-Reply-To: <20260402073957.2742459-7-eleanor.lin@realtek.com>
 User-Agent: Mutt/2.3.0 (2026-01-25)
 
-Hi Cheng-Yu and Yu-Chun,
+Hi Yu-Chun and Cheng-Yu,
 
-On Thu, Apr 02, 2026 at 03:39:51PM +0800, Yu-Chun Lin wrote:
+On Thu, Apr 02, 2026 at 03:39:53PM +0800, Yu-Chun Lin wrote:
 > From: Cheng-Yu Lee <cylee12@realtek.com>
 > 
-> Provide a full set of PLL operations for programmable PLLs and a read-only
-> variant for fixed or hardware-managed PLLs.
+> Add a simple regmap-based clk_ops implementation for Realtek mux clocks.
+> 
+> The implementation supports parent selection and rate determination through
+> regmap-backed register access.
 > 
 > Signed-off-by: Cheng-Yu Lee <cylee12@realtek.com>
 > Co-developed-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 > Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 > ---
-> +static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-> +			    unsigned long parent_rate)
+> Changes in v6:
+> - Add the headers used in c file to follow the "Include What You Use" principle.
+> ---
+>  drivers/clk/realtek/Makefile         |  1 +
+>  drivers/clk/realtek/clk-regmap-mux.c | 48 ++++++++++++++++++++++++++++
+>  drivers/clk/realtek/clk-regmap-mux.h | 43 +++++++++++++++++++++++++
+>  3 files changed, 92 insertions(+)
+>  create mode 100644 drivers/clk/realtek/clk-regmap-mux.c
+>  create mode 100644 drivers/clk/realtek/clk-regmap-mux.h
+> 
+> diff --git a/drivers/clk/realtek/Makefile b/drivers/clk/realtek/Makefile
+> index 74375f8127ac..f90dc57fcfdb 100644
+> --- a/drivers/clk/realtek/Makefile
+> +++ b/drivers/clk/realtek/Makefile
+> @@ -5,4 +5,5 @@ clk-rtk-y += common.o
+>  
+>  clk-rtk-y += clk-pll.o
+>  clk-rtk-y += clk-regmap-gate.o
+> +clk-rtk-y += clk-regmap-mux.o
+>  clk-rtk-y += freq_table.o
+> diff --git a/drivers/clk/realtek/clk-regmap-mux.c b/drivers/clk/realtek/clk-regmap-mux.c
+> new file mode 100644
+> index 000000000000..068b056d61f0
+> --- /dev/null
+> +++ b/drivers/clk/realtek/clk-regmap-mux.c
+> @@ -0,0 +1,48 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2017 Realtek Semiconductor Corporation
+> + * Author: Cheng-Yu Lee <cylee12@realtek.com>
+> + */
+> +
+> +#include <linux/regmap.h>
+> +#include <linux/clk-provider.h>
+
+Sort the includes.
+
+> +#include "clk-regmap-mux.h"
+> +
+> +static u8 clk_regmap_mux_get_parent(struct clk_hw *hw)
 > +{
-> +	struct clk_pll *clkp = to_clk_pll(hw);
-> +	const struct freq_table *fv;
+> +	struct clk_regmap_mux *clkm = to_clk_regmap_mux(hw);
+> +	int num_parents = clk_hw_get_num_parents(hw);
+> +	u32 val;
 > +	int ret;
 > +
-> +	fv = ftbl_find_by_rate(clkp->freq_tbl, rate);
-> +	if (!fv || fv->rate != rate)
-> +		return -EINVAL;
-> +
-> +	if (clkp->seq_pre_set_freq) {
-> +		ret = regmap_multi_reg_write(clkp->clkr.regmap, clkp->seq_pre_set_freq,
-> +					     clkp->num_seq_pre_set_freq);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	ret = regmap_update_bits(clkp->clkr.regmap, clkp->freq_reg,
-> +				 clkp->freq_mask, fv->val);
+> +	ret = regmap_read(clkm->clkr.regmap, clkm->mux_ofs, &val);
 > +	if (ret)
-> +		return ret;
+> +		return 0;
+
+This is another case where it'd be nice to get the get_parent
+declaration fixed. Stephen recently linked to some work of his from 2022
+here.
+
+https://lore.kernel.org/linux-clk/177431305509.5403.15386021337517970667@lazor/
+
+There's nothing for you to do right now.
+
 > +
-> +	if (clkp->seq_post_set_freq) {
-> +		ret = regmap_multi_reg_write(clkp->clkr.regmap, clkp->seq_post_set_freq,
-> +					     clkp->num_seq_post_set_freq);
-> +		if (ret)
-> +			return ret;
-> +	}
+> +	val = val >> clkm->shift & clkm->mask;
+
+I know there's the order of operations, however for clarity I would just
+include some () here to make it clear the expected order.
 > +
-> +	if (is_power_on(clkp)) {
-> +		ret = wait_freq_ready(clkp);
+> +	if (val >= num_parents)
 
-I should have checked Sashiko before I hit send on my last review.
-https://sashiko.dev/#/patchset/20260402073957.2742459-1-eleanor.lin%40realtek.com
+Remove newline before if.
 
-It suggested the following:
+> +		return 0;
+> +
+> +	return val;
 
-    In the Common Clock Framework, .set_rate executes under the prepare_lock
-    mutex, while .enable and .disable execute under the enable_lock spinlock.
-    
-    Could an interleaved clk_pll_enable() corrupt the hardware state by running
-    its seq_power_on sequence concurrently with these multi-step register
-    updates? 
-    
-    There also appears to be a potential race condition later in this function:
-    
-        if (is_power_on(clkp)) {
-            ret = wait_freq_ready(clkp);
-            ...
-        }
-    
-    If .disable() powers off the PLL right before wait_freq_ready() is called,
-    will wait_freq_ready() poll a disabled PLL and erroneously return
-    -ETIMEDOUT? Is a private spinlock needed to serialize these operations?
+Or you could just use a ternary operator:
+
+return val >= num_parents ? 0 : val;
+
+> +}
+> +
+> +static int clk_regmap_mux_set_parent(struct clk_hw *hw, u8 index)
+> +{
+> +	struct clk_regmap_mux *clkm = to_clk_regmap_mux(hw);
+> +
+> +	return regmap_update_bits(clkm->clkr.regmap, clkm->mux_ofs,
+> +				  clkm->mask << clkm->shift, index << clkm->shift);
+> +}
+> +
+> +const struct clk_ops rtk_clk_regmap_mux_ops = {
+> +	.set_parent = clk_regmap_mux_set_parent,
+> +	.get_parent = clk_regmap_mux_get_parent,
+> +	.determine_rate = __clk_mux_determine_rate,
+> +};
+> +EXPORT_SYMBOL_NS_GPL(rtk_clk_regmap_mux_ops, "REALTEK_CLK");
+> +
+> +const struct clk_ops rtk_clk_regmap_mux_ro_ops = {
+> +	.get_parent = clk_regmap_mux_get_parent,
+> +};
+> +EXPORT_SYMBOL_NS_GPL(rtk_clk_regmap_mux_ro_ops, "REALTEK_CLK");
+
+rtk_clk_regmap_mux_ro_ops is exported, however the declaration is not actually
+declared in any header files.
 
 Brian
 
