@@ -1,20 +1,20 @@
-Received: from zg8tmtyylji0my4xnjqumte4.icoremail.net (zg8tmtyylji0my4xnjqumte4.icoremail.net [162.243.164.118])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 955DC285406;
-	Fri,  3 Apr 2026 09:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.164.118
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.76.78.106])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 490843148B4;
+	Fri,  3 Apr 2026 09:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.76.78.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775208968; cv=none; b=VKs4xEGeeB7W26ZPxk1blJnn5JwJLsw3k9hWNB9MVhddMAt+GZiO23J/LJ6kLnqYCb13emWjKz3IwM5yR/WiE27qU1I0xV+gegZCT1qSXxJHbw+ZzTAzY/ybIAHyxak391+02zvV3SMhom5wdiPk6YXJ0f083Ddt9p78oVOZMvA=
+	t=1775208986; cv=none; b=ArqPfCkgCa1xtYD5zjBCBYoj23ar0wA65Q3B648rg+HIJzM9NF1guao/Uv0REr9zHKKpj38z49GgNYFda2hNu6ahjl81/MJmFJaYtIy9piZ2M6u9CQDhb+G2zl/xhmSeZFqeOd2nY6CS6OtTkGGjeyJBY07SPHJPa5D5GMcysxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775208968; c=relaxed/simple;
-	bh=gyk/04ck0+Zovfn3pvojUUQKj3yqNzbPBK8WPmOpUVQ=;
+	s=arc-20240116; t=1775208986; c=relaxed/simple;
+	bh=TGxbo+Em7R1XG30Bm7V/ZkilK4EO/e8vkx9f7PBg7Xs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LO6S6ryVLVzYI/4MC+xCfyn89jHSQEy9ByDuCTZQo9ytVjSfvLfZFQMD02xGBF7yQjWTPoc7yvTeu/h8cRhNMEZAfVTlBtMxS9xRQNELE46T6gC+gGJ4vrPXMZ7Srh4YLMXVPZNSqCPw098Fe2yDKH8II/FcTTs07pVrAJfV47w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=162.243.164.118
+	 MIME-Version; b=MQkC66G6nrdZc2EmyRtwzBjQvklio98nxYgY4IrZK9E857e+PvfqWrV5m5biSDsSLg7q2w2nkZjdgJspU9XMqiVa4p+EonsOJXUxu5dpzvcqQaSrd/T2gyXo4j4AgA1YWsOmsuJ2YHHFMKKY99SDteqnCcm0IZPVlNVI38XoIiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=13.76.78.106
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
 Received: from E0005152DT.eswin.cn (unknown [10.12.96.41])
-	by app1 (Coremail) with SMTP id TAJkCgC3THH1ic9pzooOAA--.55047S2;
-	Fri, 03 Apr 2026 17:35:51 +0800 (CST)
+	by app1 (Coremail) with SMTP id TAJkCgDHXHENis9p24oOAA--.58218S2;
+	Fri, 03 Apr 2026 17:36:15 +0800 (CST)
 From: dongxuyang@eswincomputing.com
 To: mturquette@baylibre.com,
 	sboyd@kernel.org,
@@ -30,9 +30,9 @@ To: mturquette@baylibre.com,
 Cc: ningyu@eswincomputing.com,
 	linmin@eswincomputing.com,
 	pinkesh.vaghela@einfochips.com
-Subject: [PATCH 1/3] dt-bindings: clock: Add ESWIN eic7700 HSP clock and reset generator
-Date: Fri,  3 Apr 2026 17:35:48 +0800
-Message-Id: <20260403093548.670-1-dongxuyang@eswincomputing.com>
+Subject: [PATCH 2/3] clk: eswin: Add eic7700 HSP clock driver
+Date: Fri,  3 Apr 2026 17:36:12 +0800
+Message-Id: <20260403093612.725-1-dongxuyang@eswincomputing.com>
 X-Mailer: git-send-email 2.31.1.windows.1
 In-Reply-To: <20260403093459.612-1-dongxuyang@eswincomputing.com>
 References: <20260403093459.612-1-dongxuyang@eswincomputing.com>
@@ -43,192 +43,413 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:TAJkCgC3THH1ic9pzooOAA--.55047S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3JF17CF4UXFy7Cw1rKr4xCrg_yoW7uw45pF
-	4kCF97Gr1vyF93ua95ta40kryfJ3ZrCry5ArWkJFnrZan8Xw1qqF4IgFyrAF9rZr4fZryx
-	XF1xWw1av3yxu3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBv14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxkIecxEwVCm-wCF04
-	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
-	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr4
-	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
-	IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
-	A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUXJ5wUUUUU=
+X-CM-TRANSID:TAJkCgDHXHENis9p24oOAA--.58218S2
+X-Coremail-Antispam: 1UD129KBjvAXoW3KrWUAw4xuF48JFWfuw4rXwb_yoW8JF1fGo
+	WxKF43ZFy8Kw18urZYkr1Sv3WrZrs7AFy3ZFn5CrnrCFyrAr45JryxGwnI9w13ta4YkrWk
+	Arn7Jry3Za9IkFyfn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+	AaLaJ3UjIYCTnIWjp_UUUYK7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20EY4v20xva
+	j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2
+	x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8
+	Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
+	xl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+	6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
+	8cxan2IY04v7M4kE6xkIj40Ew7xC0wCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE-syl42
+	xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWU
+	GwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI4
+	8JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4U
+	MIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I
+	8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUOEfODUUUU
 X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/
 
 From: Xuyang Dong <dongxuyang@eswincomputing.com>
 
-Add bindings for the high-speed peripherals clock and reset generator
-on the ESWIN EIC7700 HSP.
+Add driver for the ESWIN EIC7700 high-speed peripherals system
+clock controller and register an auxiliary device for system
+reset controller which is named as "hsp-reset".
 
 Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
 ---
- .../bindings/clock/eswin,eic7700-hspcrg.yaml  | 63 +++++++++++++++++++
- MAINTAINERS                                   |  3 +
- .../dt-bindings/clock/eswin,eic7700-hspcrg.h  | 33 ++++++++++
- .../dt-bindings/reset/eswin,eic7700-hspcrg.h  | 21 +++++++
- 4 files changed, 120 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/eswin,eic7700-hspcrg.yaml
- create mode 100644 include/dt-bindings/clock/eswin,eic7700-hspcrg.h
- create mode 100644 include/dt-bindings/reset/eswin,eic7700-hspcrg.h
+ drivers/clk/eswin/Kconfig           |  12 +
+ drivers/clk/eswin/Makefile          |   1 +
+ drivers/clk/eswin/clk-eic7700-hsp.c | 339 ++++++++++++++++++++++++++++
+ 3 files changed, 352 insertions(+)
+ create mode 100644 drivers/clk/eswin/clk-eic7700-hsp.c
 
-diff --git a/Documentation/devicetree/bindings/clock/eswin,eic7700-hspcrg.yaml b/Documentation/devicetree/bindings/clock/eswin,eic7700-hspcrg.yaml
-new file mode 100644
-index 000000000000..b0acac559df1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/eswin,eic7700-hspcrg.yaml
-@@ -0,0 +1,63 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/eswin,eic7700-hspcrg.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/clk/eswin/Kconfig b/drivers/clk/eswin/Kconfig
+index 0406ec499ec9..e6cc2a407bac 100644
+--- a/drivers/clk/eswin/Kconfig
++++ b/drivers/clk/eswin/Kconfig
+@@ -13,3 +13,15 @@ config COMMON_CLK_EIC7700
+ 	  SoC. The clock controller generates and supplies clocks to various
+ 	  peripherals within the SoC.
+ 	  Say yes here to support the clock controller on the EIC7700 SoC.
 +
-+title: ESWIN EIC7700 HSP Clock and Reset Generator
-+
-+maintainers:
-+  - Xuyang Dong <dongxuyang@eswincomputing.com>
-+
-+description:
-+  Clock and reset generator for the ESWIN EIC7700 HSP (high-speed peripherals).
-+
-+properties:
-+  compatible:
-+    const: eswin,eic7700-hspcrg
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: HSP configuration top clock
-+      - description: MMC top clock
-+      - description: SATA top clock
-+
-+  clock-names:
-+    items:
-+      - const: hsp_cfg
-+      - const: hsp_mmc
-+      - const: hsp_sata
-+
-+  '#clock-cells':
-+    const: 1
-+    description:
-+      See <dt-bindings/clock/eswin,eic7700-hspcrg.h> for valid indices.
-+
-+  '#reset-cells':
-+    const: 1
-+    description:
-+      See <dt-bindings/reset/eswin,eic7700-hspcrg.h> for valid indices.
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - '#clock-cells'
-+  - '#reset-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    clock-controller@50440000 {
-+        compatible = "eswin,eic7700-hspcrg";
-+        reg = <0x50440000 0x2000>;
-+        clocks = <&clock 171>, <&clock 254>, <&clock 187>;
-+        clock-names = "hsp_cfg", "hsp_mmc", "hsp_sata";
-+        #clock-cells = <1>;
-+        #reset-cells = <1>;
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 76e91d47d2f4..bcbb9578c043 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9506,8 +9506,11 @@ M:	Yifeng Huang <huangyifeng@eswincomputing.com>
- M:	Xuyang Dong <dongxuyang@eswincomputing.com>
- S:	Maintained
- F:	Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml
-+F:	Documentation/devicetree/bindings/clock/eswin,eic7700-hspcrg.yaml
- F:	drivers/clk/eswin/
- F:	include/dt-bindings/clock/eswin,eic7700-clock.h
-+F:	include/dt-bindings/clock/eswin,eic7700-hspcrg.h
-+F:	include/dt-bindings/reset/eswin,eic7700-hspcrg.h
++config COMMON_CLK_EIC7700_HSP
++	tristate "EIC7700 HSP Clock Driver"
++	depends on ARCH_ESWIN || COMPILE_TEST
++	select AUXILIARY_BUS
++	select COMMON_CLK_EIC7700
++	select RESET_EIC7700_HSP if RESET_CONTROLLER
++	help
++	  This driver provides support for clock controller on ESWIN EIC7700
++	  HSP. The clock controller generates and supplies clocks to high
++	  speed peripherals within the SoC.
++	  Say yes here to support the clock controller on the EIC7700 HSP.
+diff --git a/drivers/clk/eswin/Makefile b/drivers/clk/eswin/Makefile
+index 4a7c2af82164..21a09a3396df 100644
+--- a/drivers/clk/eswin/Makefile
++++ b/drivers/clk/eswin/Makefile
+@@ -6,3 +6,4 @@
+ obj-$(CONFIG_COMMON_CLK_ESWIN)		+= clk.o
  
- ET131X NETWORK DRIVER
- M:	Mark Einon <mark.einon@gmail.com>
-diff --git a/include/dt-bindings/clock/eswin,eic7700-hspcrg.h b/include/dt-bindings/clock/eswin,eic7700-hspcrg.h
+ obj-$(CONFIG_COMMON_CLK_EIC7700)	+= clk-eic7700.o
++obj-$(CONFIG_COMMON_CLK_EIC7700_HSP)	+= clk-eic7700-hsp.o
+diff --git a/drivers/clk/eswin/clk-eic7700-hsp.c b/drivers/clk/eswin/clk-eic7700-hsp.c
 new file mode 100644
-index 000000000000..1d1ff15c1154
+index 000000000000..65ad9e762ee9
 --- /dev/null
-+++ b/include/dt-bindings/clock/eswin,eic7700-hspcrg.h
-@@ -0,0 +1,33 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++++ b/drivers/clk/eswin/clk-eic7700-hsp.c
+@@ -0,0 +1,339 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Copyright 2026, Beijing ESWIN Computing Technology Co., Ltd..
 + * All rights reserved.
 + *
-+ * Device Tree binding constants for EIC7700 HSP clock controller.
++ * ESWIN EIC7700 HSP Clock Driver
 + *
 + * Authors: Xuyang Dong <dongxuyang@eswincomputing.com>
 + */
 +
-+#ifndef _DT_BINDINGS_ESWIN_EIC7700_HSPCRG_CLOCK_H_
-+#define _DT_BINDINGS_ESWIN_EIC7700_HSPCRG_CLOCK_H_
++#include <linux/auxiliary_bus.h>
++#include <linux/clk-provider.h>
++#include <linux/io.h>
++#include <linux/platform_device.h>
 +
-+#define EIC7700_HSP_CLK_FAC_CFG_DIV2		0
-+#define EIC7700_HSP_CLK_FAC_CFG_DIV4		1
-+#define EIC7700_HSP_CLK_FAC_MMC_DIV10		2
-+#define EIC7700_HSP_CLK_MUX_EMMC_3MUX1		3
-+#define EIC7700_HSP_CLK_MUX_SD0_3MUX1		4
-+#define EIC7700_HSP_CLK_MUX_SD1_3MUX1		5
-+#define EIC7700_HSP_CLK_MUX_EMMC_CQE_2MUX1	6
-+#define EIC7700_HSP_CLK_MUX_SD0_CQE_2MUX1	7
-+#define EIC7700_HSP_CLK_MUX_SD1_CQE_2MUX1	8
-+#define EIC7700_HSP_CLK_GATE_MSHC0_TMR		9
-+#define EIC7700_HSP_CLK_GATE_EMMC		10
-+#define EIC7700_HSP_CLK_GATE_MSHC1_TMR		11
-+#define EIC7700_HSP_CLK_GATE_SD0		12
-+#define EIC7700_HSP_CLK_GATE_MSHC2_TMR		13
-+#define EIC7700_HSP_CLK_GATE_SD1		14
-+#define EIC7700_HSP_CLK_GATE_USB0		15
-+#define EIC7700_HSP_CLK_GATE_USB1		16
-+#define EIC7700_HSP_CLK_GATE_SATA		17
++#include <dt-bindings/clock/eswin,eic7700-hspcrg.h>
 +
-+#endif /* _DT_BINDINGS_ESWIN_EIC7700_HSPCRG_CLOCK_H_ */
-diff --git a/include/dt-bindings/reset/eswin,eic7700-hspcrg.h b/include/dt-bindings/reset/eswin,eic7700-hspcrg.h
-new file mode 100644
-index 000000000000..413fcd08c701
---- /dev/null
-+++ b/include/dt-bindings/reset/eswin,eic7700-hspcrg.h
-@@ -0,0 +1,21 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright 2026, Beijing ESWIN Computing Technology Co., Ltd..
-+ * All rights reserved.
-+ *
-+ * Device Tree binding constants for EIC7700 HSP reset controller.
-+ *
-+ * Authors: Xuyang Dong <dongxuyang@eswincomputing.com>
-+ */
++#include "common.h"
 +
-+#ifndef _DT_BINDINGS_ESWIN_EIC7700_HSPCRG_RESET_H_
-+#define _DT_BINDINGS_ESWIN_EIC7700_HSPCRG_RESET_H_
++#define EIC7700_HSP_SATA_REG		0x300
++#define EIC7700_HSP_MSHC0_REG		0x510
++#define EIC7700_HSP_MSHC1_REG		0x610
++#define EIC7700_HSP_MSHC2_REG		0x710
++#define EIC7700_HSP_USB0_REG		0x800
++#define EIC7700_HSP_USB0_REF_REG	0x83c
++#define EIC7700_HSP_USB1_REG		0x900
++#define EIC7700_HSP_USB1_REF_REG	0x93c
 +
-+#define EIC7700_HSP_RST_SATA_P0		0
-+#define EIC7700_HSP_RST_SATA_PHY	1
-+#define EIC7700_HSP_RST_USB0		2
-+#define EIC7700_HSP_RST_USB1		3
-+#define EIC7700_HSP_RST_USB0_PHY	4
-+#define EIC7700_HSP_RST_USB1_PHY	5
++#define USB_REF_XTAL24M			0x2a
++#define EIC7700_HSP_NR_CLKS		(EIC7700_HSP_CLK_GATE_SATA + 1)
 +
-+#endif /* _DT_BINDINGS_ESWIN_EIC7700_HSPCRG_RESET_H_ */
++struct eic7700_hsp_clk_gate {
++	struct clk_hw hw;
++	unsigned int id;
++	void __iomem *reg;
++	void __iomem *ref_reg;
++	const char *name;
++	const struct clk_parent_data *parent_data;
++	unsigned long flags;
++	unsigned long offset;
++	unsigned long ref_offset;
++	u8 bit_idx;
++	u8 gate_flags;
++	spinlock_t *lock; /* protect register read-modify-write cycle */
++};
++
++static inline struct eic7700_hsp_clk_gate *to_gate_clk(struct clk_hw *hw)
++{
++	return container_of(hw, struct eic7700_hsp_clk_gate, hw);
++}
++
++#define EIC7700_HSP_GATE(_id, _name, _pdata, _flags, _offset, _idx,	\
++			 _ref_offset)					\
++	{								\
++		.id		= _id,					\
++		.name		= _name,				\
++		.parent_data	= _pdata,				\
++		.flags		= _flags,				\
++		.offset		= _offset,				\
++		.ref_offset	= _ref_offset,				\
++		.bit_idx	= _idx,					\
++	}
++
++static void hsp_clk_gate_endisable(struct clk_hw *hw, int enable)
++{
++	struct eic7700_hsp_clk_gate *gate = to_gate_clk(hw);
++	unsigned long flags;
++	u32 reg;
++
++	spin_lock_irqsave(gate->lock, flags);
++
++	reg = readl(gate->reg);
++
++	if (enable)
++		reg |= BIT(gate->bit_idx);
++	else
++		reg &= ~BIT(gate->bit_idx);
++
++	/*
++	 * Hardware bug: The reference clock is 24MHz, but the reference clock
++	 * register reset to an incorrect default value.
++	 * Workaround: Rewrite the correct value before enabling/disabling
++	 * the gate clock.
++	 */
++	writel(USB_REF_XTAL24M, gate->ref_reg);
++	writel(reg, gate->reg);
++
++	spin_unlock_irqrestore(gate->lock, flags);
++}
++
++static int hsp_clk_gate_enable(struct clk_hw *hw)
++{
++	hsp_clk_gate_endisable(hw, 1);
++
++	return 0;
++}
++
++static void hsp_clk_gate_disable(struct clk_hw *hw)
++{
++	hsp_clk_gate_endisable(hw, 0);
++}
++
++static int hsp_clk_gate_is_enabled(struct clk_hw *hw)
++{
++	struct eic7700_hsp_clk_gate *gate = to_gate_clk(hw);
++	u32 reg;
++
++	reg = readl(gate->reg);
++
++	reg &= BIT(gate->bit_idx);
++
++	return reg ? 1 : 0;
++}
++
++static const struct clk_ops hsp_clk_gate_ops = {
++	.enable = hsp_clk_gate_enable,
++	.disable = hsp_clk_gate_disable,
++	.is_enabled = hsp_clk_gate_is_enabled,
++};
++
++static struct clk_hw *
++hsp_clk_register_gate(struct device *dev, unsigned int id, const char *name,
++		      const struct clk_parent_data *parent_data,
++		      unsigned long flags, void __iomem *reg,
++		      void __iomem *ref_reg, u8 bit_idx, u8 clk_gate_flags,
++		      spinlock_t *lock)
++{
++	struct eic7700_hsp_clk_gate *gate;
++	struct clk_init_data init;
++	struct clk_hw *hw;
++	int ret;
++
++	gate = devm_kzalloc(dev, sizeof(*gate), GFP_KERNEL);
++	if (!gate)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = name;
++	init.ops = &hsp_clk_gate_ops;
++	init.flags = flags;
++	init.parent_data = parent_data;
++	init.num_parents = 1;
++
++	gate->id = id;
++	gate->reg = reg;
++	gate->ref_reg = ref_reg;
++	gate->bit_idx = bit_idx;
++	gate->gate_flags = clk_gate_flags;
++	gate->lock = lock;
++	gate->hw.init = &init;
++
++	hw = &gate->hw;
++	ret = devm_clk_hw_register(dev, hw);
++	if (ret)
++		hw = ERR_PTR(ret);
++
++	return hw;
++}
++
++static struct clk_parent_data hsp_cfg[] = {
++	{ .fw_name = "hsp_cfg" }
++};
++
++static struct clk_parent_data hsp_mmc[] = {
++	{ .fw_name = "hsp_mmc" }
++};
++
++static struct clk_parent_data hsp_usb_sata[] = {
++	{ .fw_name = "hsp_sata" }
++};
++
++static struct eswin_fixed_factor_clock eic7700_hsp_factor_clks[] = {
++	ESWIN_FACTOR(EIC7700_HSP_CLK_FAC_CFG_DIV2, "factor_hsp_cfg_div2",
++		     hsp_cfg, 1, 2, 0),
++	ESWIN_FACTOR(EIC7700_HSP_CLK_FAC_CFG_DIV4, "factor_hsp_cfg_div4",
++		     hsp_cfg, 1, 4, 0),
++	ESWIN_FACTOR(EIC7700_HSP_CLK_FAC_MMC_DIV10, "factor_hsp_mmc_div10",
++		     hsp_mmc, 1, 10, 0),
++};
++
++static struct eswin_gate_clock eic7700_hsp_gate_clks[] = {
++	ESWIN_GATE(EIC7700_HSP_CLK_GATE_SATA, "gate_clk_hsp_sata", hsp_usb_sata,
++		   CLK_SET_RATE_PARENT, EIC7700_HSP_SATA_REG, 28, 0),
++	ESWIN_GATE(EIC7700_HSP_CLK_GATE_MSHC0_TMR, "gate_clk_hsp_mshc0_tmr",
++		   hsp_mmc, CLK_SET_RATE_PARENT, EIC7700_HSP_MSHC0_REG, 8, 0),
++	ESWIN_GATE(EIC7700_HSP_CLK_GATE_MSHC1_TMR, "gate_clk_hsp_mshc1_tmr",
++		   hsp_mmc, CLK_SET_RATE_PARENT, EIC7700_HSP_MSHC1_REG, 8, 0),
++	ESWIN_GATE(EIC7700_HSP_CLK_GATE_MSHC2_TMR, "gate_clk_hsp_mshc2_tmr",
++		   hsp_mmc, CLK_SET_RATE_PARENT, EIC7700_HSP_MSHC2_REG, 8, 0),
++};
++
++static struct eic7700_hsp_clk_gate eic7700_hsp_spec_gate_clks[] = {
++	EIC7700_HSP_GATE(EIC7700_HSP_CLK_GATE_USB0, "gate_clk_hsp_usb0",
++			 hsp_usb_sata, CLK_SET_RATE_PARENT,
++			 EIC7700_HSP_USB0_REG, 28, EIC7700_HSP_USB0_REF_REG),
++	EIC7700_HSP_GATE(EIC7700_HSP_CLK_GATE_USB1, "gate_clk_hsp_usb1",
++			 hsp_usb_sata, CLK_SET_RATE_PARENT,
++			 EIC7700_HSP_USB1_REG, 28, EIC7700_HSP_USB1_REF_REG),
++};
++
++static const struct clk_parent_data mux_mmc_3mux1_p[] = {
++	{ .fw_name = "hsp_cfg" },
++	{ .hw = &eic7700_hsp_factor_clks[0].hw },
++	{ .hw = &eic7700_hsp_factor_clks[1].hw },
++};
++
++static const struct clk_parent_data mux_mmc_2mux1_p[] = {
++	{ .fw_name = "hsp_mmc" },
++	{ .hw = &eic7700_hsp_factor_clks[2].hw },
++};
++
++static u32 mux_mmc_3mux1_tbl[] = { 0x0, 0x1, 0x3 };
++
++static struct eswin_mux_clock eic7700_hsp_mux_clks[] = {
++	ESWIN_MUX_TBL(EIC7700_HSP_CLK_MUX_EMMC_3MUX1, "mux_hsp_emmc_3mux1",
++		      mux_mmc_3mux1_p, ARRAY_SIZE(mux_mmc_3mux1_p),
++		      CLK_SET_RATE_PARENT, EIC7700_HSP_MSHC0_REG, 16, 2, 0,
++		      mux_mmc_3mux1_tbl),
++	ESWIN_MUX_TBL(EIC7700_HSP_CLK_MUX_SD0_3MUX1, "mux_hsp_sd0_3mux1",
++		      mux_mmc_3mux1_p, ARRAY_SIZE(mux_mmc_3mux1_p),
++		      CLK_SET_RATE_PARENT, EIC7700_HSP_MSHC1_REG, 16, 2, 0,
++		      mux_mmc_3mux1_tbl),
++	ESWIN_MUX_TBL(EIC7700_HSP_CLK_MUX_SD1_3MUX1, "mux_hsp_sd1_3mux1",
++		      mux_mmc_3mux1_p, ARRAY_SIZE(mux_mmc_3mux1_p),
++		      CLK_SET_RATE_PARENT, EIC7700_HSP_MSHC2_REG, 16, 2, 0,
++		      mux_mmc_3mux1_tbl),
++	ESWIN_MUX(EIC7700_HSP_CLK_MUX_EMMC_CQE_2MUX1, "mux_hsp_emmc_cqe_2mux1",
++		  mux_mmc_2mux1_p, ARRAY_SIZE(mux_mmc_2mux1_p),
++		  CLK_SET_RATE_PARENT, EIC7700_HSP_MSHC0_REG, 0, 1, 0),
++	ESWIN_MUX(EIC7700_HSP_CLK_MUX_SD0_CQE_2MUX1, "mux_hsp_sd0_cqe_2mux1",
++		  mux_mmc_2mux1_p, ARRAY_SIZE(mux_mmc_2mux1_p),
++		  CLK_SET_RATE_PARENT, EIC7700_HSP_MSHC1_REG, 0, 1, 0),
++	ESWIN_MUX(EIC7700_HSP_CLK_MUX_SD1_CQE_2MUX1, "mux_hsp_sd1_cqe_2mux1",
++		  mux_mmc_2mux1_p, ARRAY_SIZE(mux_mmc_2mux1_p),
++		  CLK_SET_RATE_PARENT, EIC7700_HSP_MSHC2_REG, 0, 1, 0),
++};
++
++static struct eswin_clk_info eic7700_hsp_clks[] = {
++	ESWIN_GATE_TYPE(EIC7700_HSP_CLK_GATE_EMMC, "gate_clk_hsp_emmc",
++			EIC7700_HSP_CLK_MUX_EMMC_3MUX1,
++			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++			EIC7700_HSP_MSHC0_REG, 24, 0),
++	ESWIN_GATE_TYPE(EIC7700_HSP_CLK_GATE_SD0, "gate_clk_hsp_sd0",
++			EIC7700_HSP_CLK_MUX_SD0_3MUX1,
++			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++			EIC7700_HSP_MSHC1_REG, 24, 0),
++	ESWIN_GATE_TYPE(EIC7700_HSP_CLK_GATE_SD1, "gate_clk_hsp_sd1",
++			EIC7700_HSP_CLK_MUX_SD1_3MUX1,
++			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++			EIC7700_HSP_MSHC2_REG, 24, 0),
++};
++
++static int eic7700_hsp_clk_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct auxiliary_device *adev;
++	struct eswin_clock_data *data;
++	struct clk_hw *hw;
++	int i, ret;
++
++	data = eswin_clk_init(pdev, EIC7700_HSP_NR_CLKS);
++	if (IS_ERR(data))
++		return dev_err_probe(dev, PTR_ERR(data),
++				     "failed to get clk data!\n");
++
++	ret = eswin_clk_register_fixed_factor
++		(dev, eic7700_hsp_factor_clks,
++		ARRAY_SIZE(eic7700_hsp_factor_clks), data);
++	if (ret)
++		return dev_err_probe(dev, ret,
++				     "failed to register fixed factor clock\n");
++
++	ret = eswin_clk_register_gate(dev, eic7700_hsp_gate_clks,
++				      ARRAY_SIZE(eic7700_hsp_gate_clks), data);
++	if (ret)
++		return dev_err_probe(dev, ret,
++				     "failed to register gate clock\n");
++
++	ret = eswin_clk_register_mux(dev, eic7700_hsp_mux_clks,
++				     ARRAY_SIZE(eic7700_hsp_mux_clks),
++				     data);
++	if (ret)
++		return dev_err_probe(dev, ret,
++				     "failed to register mux clock\n");
++
++	ret = eswin_clk_register_clks(dev, eic7700_hsp_clks,
++				      ARRAY_SIZE(eic7700_hsp_clks), data);
++	if (ret)
++		return dev_err_probe(dev, ret,
++				     "failed to register clock\n");
++
++	for (i = 0; i < ARRAY_SIZE(eic7700_hsp_spec_gate_clks); i++) {
++		struct eic7700_hsp_clk_gate *gate;
++
++		gate = &eic7700_hsp_spec_gate_clks[i];
++		hw = hsp_clk_register_gate(dev, gate->id, gate->name,
++					   gate->parent_data, gate->flags,
++					   data->base + gate->offset,
++					   data->base + gate->ref_offset,
++					   gate->bit_idx, 0, &data->lock);
++		if (IS_ERR(hw))
++			return dev_err_probe(dev, PTR_ERR(hw),
++					     "failed to register gate clock\n");
++
++		data->clk_data.hws[gate->id] = hw;
++	}
++
++	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
++					  &data->clk_data);
++	if (ret)
++		return dev_err_probe(dev, ret, "add clk provider failed\n");
++
++	adev = devm_auxiliary_device_create(dev, "hsp-reset",
++					    (__force void *)data->base);
++	if (!adev)
++		return dev_err_probe(dev, -ENODEV,
++				     "register hsp-reset device failed\n");
++
++	return 0;
++}
++
++static const struct of_device_id eic7700_hsp_clock_dt_ids[] = {
++	{ .compatible = "eswin,eic7700-hspcrg", },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, eic7700_hsp_clock_dt_ids);
++
++static struct platform_driver eic7700_hsp_clock_driver = {
++	.probe	= eic7700_hsp_clk_probe,
++	.driver = {
++		.name	= "eic7700-hsp-clock",
++		.of_match_table	= eic7700_hsp_clock_dt_ids,
++	},
++};
++
++module_platform_driver(eic7700_hsp_clock_driver);
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Xuyang Dong <dongxuyang@eswincomputing.com>");
++MODULE_DESCRIPTION("ESWIN EIC7700 HSP clock controller driver");
 -- 
 2.34.1
 
