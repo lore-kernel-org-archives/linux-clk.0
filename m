@@ -1,54 +1,48 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22CD3359A9B;
-	Sun,  5 Apr 2026 19:40:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32008359A6B;
+	Sun,  5 Apr 2026 19:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775418039; cv=none; b=QvkLpZLe9qwut7MGduXxPTo8RW4VX6UXBmhJHt3Zt+q9Wq/q0+D/GjXyQ7EbCTNARnOeyziTMi9UAYSkcCCHth/QvI2fkuhplo93gv+XP4hm2je2uG35V1WpcGQkTjtS9CETX7F8IZok0rzk78M9qrtBCmfPL7pHRB5jt/31adQ=
+	t=1775418040; cv=none; b=dxHgAQbMCjIKYAAIqlx2B4VBFLBoAkHFj+0oMOeGZYmvamYVTjH7vTQEs0H6hPlbSphrvFNH6A81ya6PLfrOZcLwvGMDj//gWo/PKGnsUU/82f5PAJLoBjcA9Z8j0ATZyvDm6smM84CrSM4p89yOMo1v8NYMNAjZegI9CwsFzM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775418039; c=relaxed/simple;
-	bh=Hlw0LUTjviq/mklT94u7seOTsPycpw9Z44Gu+RWieZ8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cDgI5/xm45/4yhv2SUhsylCXszh3OXuUl6ienElZto//zwEa9xBwYh7AUW2X775qess5v81Zqa+1GKSDmkMl3v3a13Isc+7/YCmmjZRqK0s70gjPGwYnwAWtOR/YVDq90fgSePyou/+gyDw7pHhKcw+ktpYowi0dxp553eg+rKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rBPWEVR4; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1775418040; c=relaxed/simple;
+	bh=F6qst3LBccqfafD86O3ZKGJti3SyNgdle+pCAPtzzro=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jDgzQSzVyA4vkwTC3cM6m9FBOeuckCWPvimGzkI6765xWxVAAf9B+A2KuOweaWxK+qENWO9ygWnuCQ66YQ4FIDgDCSFv92gafjvuzi1qIZHmfZl6o8zrPwaREc7834o2jefZSv3mjZegCBMW6LpS8tQZ/NyDr9iahaSSSWVux80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YHHUdqlv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rBPWEVR4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBB7EC19424;
-	Sun,  5 Apr 2026 19:40:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YHHUdqlv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34AA8C116C6;
+	Sun,  5 Apr 2026 19:40:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1775418039;
-	bh=Hlw0LUTjviq/mklT94u7seOTsPycpw9Z44Gu+RWieZ8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rBPWEVR4+m3eXVYmiPr1+lTnyy3+397qqAes+ZHihhEFWsulEd7GdvobZUtW25+1m
-	 YYptG7hHjwzbufehSZ/Q8QPpbTSGdphJtr9iKwfWt2fxuhkFPCpFcwMlmm5fzb28Cj
-	 51uWBqXhnf6PxUhlNL004iWaKa74zZr72htJzaYfhDAc6pQeuZkC+8dx5dV28gIPWS
-	 u2TqldH8+FUPALH2hO/y3MfZcD7mpp3yxZxUAv/iGbw1pa0ztXo835gdQN+tEW5Cle
-	 xAqPjrwQIvokm9PUPyaRpgvem/vGtfJRjvuFjE/Ote+BmNbFS+DK3LegtvM7DqVkDc
-	 McEFKDafmm55g==
+	bh=F6qst3LBccqfafD86O3ZKGJti3SyNgdle+pCAPtzzro=;
+	h=From:To:Subject:Date:In-Reply-To:References:From;
+	b=YHHUdqlvUxvqgbqpHgiHnOJxb/bBwCTy+Ye+xBX4NLO67OqGfmJilzzO37Xi+Dk35
+	 FHELVBf4Ck80uqRyeWe020nsBrRGMkn/B8IAfc63ZqfPBJkz6q02PB28eBNxcMLRqC
+	 r+xZAWg8UXHoWJnqFlGIeQTGB2CBDNakP4i331W4Uwk8zXKaCorpIJ0PW6KpnEIB2Q
+	 FWUggyW2SZpi4oW3rY9EVn9YSsSsgI+1cMheIJbPKwnk6Gn19Ly/nJk8RDcZoICbQX
+	 Tz0KheAsRVfWnYiPCKMMHwYuEpZ4kwTDCTJj2Tw7wAYz8HFujZVjIBZBlFTwoC5GTT
+	 LbwInDF4FQo7g==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Sibi Sankar <sibi.sankar@oss.qualcomm.com>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
-Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-	Imran Shaik <imran.shaik@oss.qualcomm.com>,
-	Taniya Das <taniya.das@oss.qualcomm.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
 	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Abel Vesa <abelvesa@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Subject: Re: [PATCH v2] clk: qcom: gcc-x1e80100: Keep GCC USB QTB clock always ON
-Date: Sun,  5 Apr 2026 14:40:18 -0500
-Message-ID: <177541802161.2061229.3348847624269031060.b4-ty@kernel.org>
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH 1/2] clk: qcom: Constify qcom_cc_driver_data
+Date: Sun,  5 Apr 2026 14:40:19 -0500
+Message-ID: <177541802158.2061229.7249314871905290258.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260327-hamoa-usb-qtb-clk-always-on-v2-1-7d8a406e650f@oss.qualcomm.com>
-References: <20260327-hamoa-usb-qtb-clk-always-on-v2-1-7d8a406e650f@oss.qualcomm.com>
+In-Reply-To: <20260331091721.61613-3-krzysztof.kozlowski@oss.qualcomm.com>
+References: <20260331091721.61613-3-krzysztof.kozlowski@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -59,20 +53,20 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Fri, 27 Mar 2026 20:36:46 +0530, Jagadeesh Kona wrote:
-> In Hamoa, SMMU invalidation requires the GCC_AGGRE_USB_NOC_AXI_CLK
-> to be on for the USB QTB to be functional. This is currently
-> explicitly enabled by the DWC3 glue driver, so an invalidation
-> happening while the USB controller is suspended will fault.
+On Tue, 31 Mar 2026 11:17:22 +0200, Krzysztof Kozlowski wrote:
+> The static 'struct qcom_cc_driver_data' contains probe match-like data
+> and is not modified: neither by the driver defining it nor by common.c
+> code using it.
 > 
-> Solve this by voting for the GCC MMU USB QTB clock.
+> Make it const for code safety and code readability.
+> 
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] clk: qcom: gcc-x1e80100: Keep GCC USB QTB clock always ON
-      commit: 05566ebcc0cd170bd4f50c907ee3ed8e106251e3
+[2/2] clk: qcom: Constify list of critical CBCR registers
+      commit: 87df31ea43eef5f6b9e7be0fa2555e58a9455e05
 
 Best regards,
 -- 
