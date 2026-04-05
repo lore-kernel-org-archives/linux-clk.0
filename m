@@ -1,44 +1,46 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D342874F8;
-	Sun,  5 Apr 2026 07:24:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B3A27B340;
+	Sun,  5 Apr 2026 07:44:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775373860; cv=none; b=spPF+zJ8XZqjx6+8p4r/cgL+aEe4FfexI/GC7pkWs1b9edfaDTkMYu4bHcJaqjkachHry3MFVptIyvlIM/TPc3N5pJpSj0gCA/vMCg1sW9Nu1zLi03DRCsq2hKd7O6DisqGzYJTT8vzsdP4tSnFiIZ8csLbKyR0JKVNm16rOEao=
+	t=1775375084; cv=none; b=L3WPXEwM4hD8hevh61YMVP3LLLH+vVhQWzXVLLx+TFtdDDb7cwm0I5+XGT5ip5d38p+8hjcvkzanTlHKTZWYv2zB5UJju1nna47EOt1FHxSqxUSEoPNziu1s3hh8jLlZI4JeAqoFGz/I+L5g24ROL5KwsVZYCFc7xXoL9csA00w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775373860; c=relaxed/simple;
-	bh=42DZ9rar70RXNUvx2S1gEIaFxTQbJSiqeamqnAWSqcM=;
+	s=arc-20240116; t=1775375084; c=relaxed/simple;
+	bh=bDdkHE1AU/uZhedcEZNVRUpsw5mhpyk7nqvX3tRljGk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oac6lrv3JK4JqCawKdlcCSSY2so9ksHkizkWWLzw4TSNBIb298DkqejqG5nrAgfO/DDxm2FSAjA8q77zGt19fFHri17+sgbbj0zz4EO5K3eNqcd/fAymIzUtbM8T+VAflRcFiqRkmZXBFm7eT1gkeveYyWiConsgAi5qrwDfzD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gZeOq7YR; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=NAy8HIT+/w0bXzpw0qrGaJcP8jPtvmYzD3UTRsKknuXLB9RNDftMa/3SROdF1AePqdUlZIaKZHPJtOKHCEiVUAZEp8QpauE/YkyVX2aO0xT9nj5q0moW0uzk6jIinIrCmMdy5A05R1lDfsAEPs3Vc+5s3RKfU1Rws2wPbKFCVq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nkq9GyBe; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gZeOq7YR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93D30C116C6;
-	Sun,  5 Apr 2026 07:24:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nkq9GyBe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 284C5C116C6;
+	Sun,  5 Apr 2026 07:44:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775373860;
-	bh=42DZ9rar70RXNUvx2S1gEIaFxTQbJSiqeamqnAWSqcM=;
+	s=k20201202; t=1775375083;
+	bh=bDdkHE1AU/uZhedcEZNVRUpsw5mhpyk7nqvX3tRljGk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gZeOq7YRjP1LVYl3Kflux+L7naoVUxdq0P0bSQ7Chd/ljnZliQdMZ7mN+zihk4dY4
-	 QQpfRpcaL2TK+W2CFUXbyaW5/5T5gh9+p8Fi5iL3/ItVU05miHlw9QXgX9hmXSQ1BY
-	 NJa5t0Bs1eBSBX6ndpQkbEkBZnOEUmxmZTQOsHGrVNII8Qc0py29GvU1YiDVBs2JTT
-	 rIyWavDOl2KoRxRPlTJuqOKuasM/8iWiaDNUpbUXQLxW7WTcST4ClExJwxEVr9BjM/
-	 0ijjER6GwKoBxktcbMOBPvBrSZgzwlurFl6kNMXc+JyutplXN3fZpoSmMSvnMvf4lQ
-	 +uoMlz4xYWsnA==
-Date: Sun, 5 Apr 2026 09:24:17 +0200
+	b=nkq9GyBefGkwg4nCbSU1BMWZVh7rWYVUnN3rQkQMByAGfZqjRMnBt9F//E+h2At8m
+	 Vp1f9MjQvfsPBNIcAgOl16XrjP0d7OoLN4REx+IPtvf09HhwHmPVNogPB9QgknzxSJ
+	 rRjIRvRXhLdrOMGeTmh06CGhyXPYS2I9PSroMBlgHz71MyV19yWah8QOkjc3CinNHz
+	 KQR5IuETMlWZjaNx8gKI4lqJAfzMRtwbHofhqn2TTrlHcfFWiXzaJ0SjDgU9WoJnJq
+	 kazrlrHwAS2AIjxZqWo6iftYqi2eoTL312oKhPb74RN6jL2u+JNc7d26roKMN75F1Y
+	 Q5mXkTY8kNhLg==
+Date: Sun, 5 Apr 2026 09:44:41 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: dongxuyang@eswincomputing.com
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, p.zabel@pengutronix.de, 
-	huangyifeng@eswincomputing.com, ningyu@eswincomputing.com, linmin@eswincomputing.com, 
-	pinkesh.vaghela@einfochips.com
-Subject: Re: [PATCH 1/3] dt-bindings: clock: Add ESWIN eic7700 HSP clock and
- reset generator
-Message-ID: <20260405-resourceful-amethyst-tarsier-0cdab6@quoll>
-References: <20260403093459.612-1-dongxuyang@eswincomputing.com>
- <20260403093548.670-1-dongxuyang@eswincomputing.com>
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Taniya Das <taniya.das@oss.qualcomm.com>, Taniya Das <quic_tdas@quicinc.com>, 
+	Richard Cochran <richardcochran@gmail.com>, Shawn Guo <shengchao.guo@oss.qualcomm.com>, 
+	Deepti Jaggi <deepti.jaggi@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH 1/7] dt-bindings: clock: qcom: Document the Nord SoC TCSR
+ Clock Controller
+Message-ID: <20260405-refined-trout-of-weather-6afded@quoll>
+References: <20260403-nord-clks-v1-0-018af14979fd@oss.qualcomm.com>
+ <20260403-nord-clks-v1-1-018af14979fd@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,77 +49,24 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260403093548.670-1-dongxuyang@eswincomputing.com>
+In-Reply-To: <20260403-nord-clks-v1-1-018af14979fd@oss.qualcomm.com>
 
-On Fri, Apr 03, 2026 at 05:35:48PM +0800, dongxuyang@eswincomputing.com wrote:
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: HSP configuration top clock
-> +      - description: MMC top clock
-> +      - description: SATA top clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: hsp_cfg
-> +      - const: hsp_mmc
-> +      - const: hsp_sata
+On Fri, Apr 03, 2026 at 04:10:49PM +0200, Bartosz Golaszewski wrote:
+> From: Taniya Das <taniya.das@oss.qualcomm.com>
+> 
+> The Nord SoC TCSR block provides CLKREF clocks for DP, PCIe, UFS, SGMII
+> and USB.
+> 
+> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> [Shawn: Use compatible qcom,nord-tcsrcc rather than qcom,nord-tcsr]
+> Signed-off-by: Shawn Guo <shengchao.guo@oss.qualcomm.com>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+> ---
+>  .../bindings/clock/qcom,sm8550-tcsr.yaml           |  2 ++
+>  include/dt-bindings/clock/qcom,nord-tcsrcc.h       | 26 ++++++++++++++++++++++
+>  2 files changed, 28 insertions(+)
 
-Drop hsp_ everywhere
-
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +    description:
-> +      See <dt-bindings/clock/eswin,eic7700-hspcrg.h> for valid indices.
-> +
-> +  '#reset-cells':
-> +    const: 1
-> +    description:
-> +      See <dt-bindings/reset/eswin,eic7700-hspcrg.h> for valid indices.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - '#clock-cells'
-> +  - '#reset-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    clock-controller@50440000 {
-> +        compatible = "eswin,eic7700-hspcrg";
-> +        reg = <0x50440000 0x2000>;
-> +        clocks = <&clock 171>, <&clock 254>, <&clock 187>;
-> +        clock-names = "hsp_cfg", "hsp_mmc", "hsp_sata";
-> +        #clock-cells = <1>;
-> +        #reset-cells = <1>;
-> +    };
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 76e91d47d2f4..bcbb9578c043 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -9506,8 +9506,11 @@ M:	Yifeng Huang <huangyifeng@eswincomputing.com>
->  M:	Xuyang Dong <dongxuyang@eswincomputing.com>
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml
-> +F:	Documentation/devicetree/bindings/clock/eswin,eic7700-hspcrg.yaml
->  F:	drivers/clk/eswin/
->  F:	include/dt-bindings/clock/eswin,eic7700-clock.h
-> +F:	include/dt-bindings/clock/eswin,eic7700-hspcrg.h
-
-Why this cannot be eswin,eic7700* pattern in each directory?
-
-> +F:	include/dt-bindings/reset/eswin,eic7700-hspcrg.h
->  
->  ET131X NETWORK DRIVER
->  M:	Mark Einon <mark.einon@gmail.com>
-> diff --git a/include/dt-bindings/clock/eswin,eic7700-hspcrg.h b/include/dt-bindings/clock/eswin,eic7700-hspcrg.h
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 Best regards,
 Krzysztof
