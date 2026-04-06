@@ -1,32 +1,32 @@
-Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4BD325701;
-	Mon,  6 Apr 2026 15:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C1A33064A;
+	Mon,  6 Apr 2026 15:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775490975; cv=none; b=Aw89ALjkrqNOrACjtqgC//baBOH4XOcaNPq2mg/3UalycC9tNrmIzpONJgwyqtyOBe/Fn7GUWBRXO8UaJZNdVfEEAZgcJH7iVz6f3yGI9StEd126xl7etv/SjXBk6BubHyFqxMsvATy4IrYOCYjFQiJW+IRRjQYtqJia0FZ7JV4=
+	t=1775490976; cv=none; b=H5gKs8pfm5evLxGrPv/7yu/S7vCa8sJqhPuQ6351AOHGEIHdQ76/LRZ88kDqS2VYgGDjZrdc6lv8Q+TKfTPNKpaPtk6zjVHtH6T3uRYDRh8IH8oGLnrv/p05M6LVLGKYFRs0xoJ1swqWo4zKOElNGPPxt0vaBNPj4qS+67Vx/jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775490975; c=relaxed/simple;
-	bh=gnkUmVU1LyJnPFJoUBS9r7AF4qmy3GcAKD0eBQeszLA=;
+	s=arc-20240116; t=1775490976; c=relaxed/simple;
+	bh=j9Ned+udCcWFI6mm9PbQerggwBy7Q0gTNPAb09CLcXM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bjJVHDMpfMQogJF+BZDy0PEdodo+kkg6+95WuW6QZyCGIKQ+qn/7vhmGlrACtxphOGrSEHrd1iYxY/Huh4H0QRbNXfYgKvmFNCDyL4yfMdWAudoe4zMEgVuW7X1gNUzv1F+pMIA8YskXbVkQQYNmPtFDjlsqXeJ7NzK5MoyTCoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=18.169.211.239
+	 In-Reply-To:To:Cc; b=dPqeEoerTlyF4aAdYjnCz+OO18BZ95WNT5NfXT+biu2M88s9YuQYF2laTzkKEhITZHxmg2rjl+n5DMI2G3GYvBcuLZ6DIpdUPwmNvtT+2D5rwZ6nW5h/rMNa25T8NQU72+Qkk75qXnkPTl9ObWl4jYol8n/O0v0kn6WQNpM9QJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=54.254.200.128
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
-X-QQ-mid: zesmtpgz9t1775490892tfbe0e21d
-X-QQ-Originating-IP: bR5ZXZfIll1MIptKQxxeV+OfKwfN8IGcIP4TTnaIjIk=
+X-QQ-mid: zesmtpgz9t1775490899ta4844d97
+X-QQ-Originating-IP: kz4tg1extCWtRAZh5P45oqkn990iC9RLqZTRzwmI0eU=
 Received: from [192.168.30.32] ( [116.234.14.100])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 06 Apr 2026 23:54:50 +0800 (CST)
+	id ; Mon, 06 Apr 2026 23:54:58 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 17703681536824160484
-EX-QQ-RecipientCnt: 11
+X-BIZMAIL-ID: 13727944797770228139
+EX-QQ-RecipientCnt: 12
 From: Xilin Wu <sophon@radxa.com>
-Date: Mon, 06 Apr 2026 23:54:33 +0800
-Subject: [PATCH 1/5] clk: qcom: clk-rcg2: fix clk_rcg2_calc_mnd() producing
- wrong M/N/pre_div
+Date: Mon, 06 Apr 2026 23:54:36 +0800
+Subject: [PATCH 4/5] clk: qcom: clk-rcg2: calculate timeout based on clock
+ frequency
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,7 +35,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260406-clk-qcom-gpclk-fixes-v1-1-7a14fe64552d@radxa.com>
+Message-Id: <20260406-clk-qcom-gpclk-fixes-v1-4-7a14fe64552d@radxa.com>
 References: <20260406-clk-qcom-gpclk-fixes-v1-0-7a14fe64552d@radxa.com>
 In-Reply-To: <20260406-clk-qcom-gpclk-fixes-v1-0-7a14fe64552d@radxa.com>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -44,136 +44,139 @@ To: Bjorn Andersson <andersson@kernel.org>,
  Taniya Das <quic_tdas@quicinc.com>, Mike Turquette <mturquette@linaro.org>
 Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, 
- Xilin Wu <sophon@radxa.com>
+ Xilin Wu <sophon@radxa.com>, Mike Tipton <quic_mdtipton@quicinc.com>
 X-Mailer: b4 0.15.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3853; i=sophon@radxa.com;
- h=from:subject:message-id; bh=gnkUmVU1LyJnPFJoUBS9r7AF4qmy3GcAKD0eBQeszLA=;
- b=owGbwMvMwCVmdFg0fe08Iz/G02pJDJmXr7vPUr621IbHyb5z8aFJf8w3HVn0UrFGrnzTkZsVr
- Pu4MkIZOkpZGMS4GGTFFFkU4hnmslfmXnsqVqoHM4eVCWQIAxenAExkxnlGho9C2/jbn3JMbkox
- 29fja/NNV/XLBM8dUSscHq+ZXn9xninD/xqfbRueTfxrscFwxs53Wyv/Gt/aumuBk1fTB3Zr0Yq
- q7WwA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3489; i=sophon@radxa.com;
+ h=from:subject:message-id; bh=j9Ned+udCcWFI6mm9PbQerggwBy7Q0gTNPAb09CLcXM=;
+ b=kA0DAAoWMsMVZ62eMk4ByyZiAGnT10ijuEeVb5BZ3+PKAVXbslP+PLI0aNu77gDVd2vinthSo
+ Yh1BAAWCgAdFiEEIF8AnQd5bdblFnUuMsMVZ62eMk4FAmnT10gACgkQMsMVZ62eMk6baAD/XGgZ
+ 5idymkv3BJxty79iudaWpoqRLSit5zGUWnHoP/sA/jufIgC6fQ5aNUtHjlrZjPiWjknPbGf8PL5
+ 3aIPGT9QN
 X-Developer-Key: i=sophon@radxa.com; a=openpgp;
  fpr=205F009D07796DD6E516752E32C31567AD9E324E
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpgz:radxa.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: NC+WtJebsKNcbqM23I/D6x2h7HydLJXjUrP/3sbtB4cunSXC4buP+d7B
-	AnmrOrKNdYyJfoZ60fUG4mIDB/R+WwHIN+hC4gOuGxmKd25Ri5HPtJeWRoWlUxiDqspSry/
-	oP8UfVDTQPHr9GfEJucHbmOFuDHV8PRz+4WoEgPCrc2oPziXiPAOO57WuO//7HK2xDGvAiD
-	2PHuMg0DG02QYnIY5Iz9cywfqRY3bjgKly9WwC2TjLXSBhEGso0bDxg24TknSriMy7wNg5v
-	hqpsAwhFmuEMGOsfwW9JfkrUf05ycrunQNLxtXCLN7amlj5MmSdKD+3cSEkE/ri9iZ2yxZv
-	B59Tp7Fv+PZ8gta2GIXAy0+JYrdupHuRYwkM4cpmfw5Rm3FVohAQOdQEfBafPoy59ugVG4A
-	FlivT9wAMr90hYLHp3pFbw4Wz/dr/6zd1IqOGi5CdK/wOqhSMkrq6VliKBpMaTtCv4/BFGp
-	MmL0cVh3eSpD0ndVAtz2gleZYkHnQ/TIbC0LAp1ubldo4O/cUvccJjDqaeZfsBlF7/bO6kC
-	VIWNjrqGgnt2QfkOLVaTm7EZ8QH3HaFRVAnk82o7N6crA4SvqA43URZMzIYG2FvMJ7cFADS
-	UibKxAi88HUkzcTD2mNcTjQI2C5D3VCGkuKorBngYPj8eFtl5Y2mP64FSG5FsYJt+SUk+D1
-	WGvDIBlK9irh7l64gmiUL4o9qm7DVcVhoIjNVstYxfQZfPs79JKhjXvVk2mF94widpJf54q
-	xLqQ8iKaVhGAB13Hd2siZQbIvuPd1/bZxozEFkmPeiVXkQlAFVgqwiOT/8GZ+2QA5W5e4OP
-	go4IObIUs11nu6K6AnN/vnfnXmG17BgHyHrrwrUEcrpeJ/CYsD+bdyoYBThE6r/NCEu3ol8
-	9EHUxUBBBoM9yNqEhac3mQ7y7euxrVKfUZj3dKJ65BrR4leBkyvhOhpcDPuHakZVjpnDuu6
-	+y3a7gj4asdj6Qr31bLEGuDSsz7+yKoA6reuXH7cuPQpVMQ/LuME+e6rc6BxTCOntGx4wOb
-	kDG4xaWASobe+wf6fPizJNxh/KXiQEW5ISO5OBHJfraKf6Z6mD5vw5y4UAPA3yMFU8bFGC5
-	kJoNv7RasWE
-X-QQ-XMRINFO: M/715EihBoGS47X28/vv4NpnfpeBLnr4Qg==
+X-QQ-XMAILINFO: OfARS1tHiMjeXmwI33LqjtZFpqn/3rhG2Y0tb1NHOEMmX5ahJ3HRrPaG
+	CRblgtszAjPRqcEVsIVI+jsyQWAcB60xA8YFhGajrDH5lzMQmMhgustaWy2TVlL3fEhhzG+
+	R9iQIFF5nKFQn6O7npXAU0CF+MSL9SWmWZZB+Ort5HQ3gL4HmEWWt5LEWmUgGpy5a765jYe
+	Dx4NVGrYQReTLTKa0oraHG2BXGXxR9UK0WkF+HoAkPt4fWVM+ADgGQIwY2ZNqhMtu0sKFWy
+	viwK/6Lz02ySmDVpFzubIoyWZkIwZU3USBf0pyP/5vX4cCCD/aSqCM3MTPj0Ct8E42UIswH
+	fSSRlOBXTuV3DqjZ7g/B7IZMyjZLyl4LNVZeyplW9aeK8rZPBj3t2CVtMguBzRIMWlJ9xyt
+	XTfARU6U+1ChZl1IhVdGs/ip+0y0w6k3rKlNR0vxuARQHfZjEmd38uSK8Bruq/GTzD42POx
+	UllA1/qOencLh1zroC+EePhWQslf6OORZmMxA8Z40G1oUvaYMMgNib2jXiVsYQndsyp1Zx4
+	iE5fXSTIFZ3oT3MQfU9mab5eUZuk8FNVTW9COqMZN5dujq0ojLOwu6r+pbC86eH1lBxmEoT
+	o4SUGLwOrANOWgy+FIe9pGUnzgwCfvTolUaaC1yKkgU4hkhQBgOE1sJMV3vma35kHZ14BaN
+	7vrCpHUM9PReyWIesOVaUadUWErVLJ2WuG/yYZ++Et3jUgvi3KjBgpWV/txVKdtORdVA4Ld
+	AaW0fE3/d5kHqVkle+cmcjwNXi4o0hb8nL+L4maWvAsTgn+Lv4crYQRJvdJx1jm0KBN62I9
+	crXmPsyoQ7x+7Fuig91C991F4ew34uQoO7i9PupoKiuPxzXw7Ey+lWCA0VMcGEYSTB1cA9e
+	FTJAkNbT/luTLLFvJ8WfgjSCcPXgllIh/zgf6/B5QWXvoVBX3SXH4/uU7zw1VLUFYWQKw2R
+	R9qDYck65n/LXEbozCEeUjLnjzL22F0+6cOC1ay1KKWTjEaS5sf7fB7etBNZQ3V78PB7/xf
+	OXe/7ZEHIp458FxD5fGrf5/yWxkgkkGc5TnTG1Wsr8ZET+jIfYWr4eDLQdAanqhgUhZFnIj
+	98ZMVmPEsxtZyBLaOYJXV0=
+X-QQ-XMRINFO: MPJ6Tf5t3I/ylTmHUqvI8+Wpn+Gzalws3A==
 X-QQ-RECHKSPAM: 0
 
-Fix three related bugs in clk_rcg2_calc_mnd() that cause the GP clock
-MND divider to produce incorrect frequencies and duty cycles:
+RCGs with extremely low rates (tens of Hz to low kHz) take much longer
+to update than the fixed 500 us timeout allows. A 1 kHz clock needs at
+least 3 ms (3 cycles) for the configuration handshake.
 
-1) n_max and n_candidate are declared as u16 but can hold values
-   exceeding 65535 during computation. When mnd_width is 16 and
-   mnd_max is 65535, even m=1 gives n_max=65536 which overflows u16
-   to 0, making "n_candidate < n_max" always false. Similarly
-   n_candidate overflows on intermediate products (e.g., 15360 * 5 =
-   76800 wraps to 11264), causing the wrong value to be accepted as n.
+Instead of increasing the timeout to a huge fixed value for all clocks,
+dynamically compute the required timeout based on both the old and new
+clock rates, accounting for 3 cycles at each rate.
 
-   Fix by changing both n_max and n_candidate from u16 to u32.
+Based on a downstream patch by Mike Tipton:
+https://git.codelinaro.org/clo/la/kernel/qcom/-/commit/aa899c2d1fa31e247f04810f125ac9c60927c901
 
-2) n_max is computed as (m + mnd_max), which only accounts for the N
-   register constraint (n - m must fit in mnd_width bits). However,
-   the D register shares the same mnd_width bits but must store values
-   up to 2*n for duty cycle control. When n > mnd_max/2, the D
-   register cannot represent high duty cycles, silently clamping the
-   maximum achievable duty cycle (e.g. to 85% instead of 99%).
-
-   Fix by computing n_max as (mnd_max + 1) / 2, ensuring 2*n always
-   fits within the D register's bit width.
-
-3) When no pre-division is needed (pre_div stays at its initial value
-   of 1), "pre_div > 1 ? pre_div : 0" sets f->pre_div to 0. The
-   subsequent convert_to_reg_val() computes (0 * 2 - 1) which
-   underflows the u8 pre_div field to 255, programming a 128x
-   pre-divider into hardware.
-
-   Fix by assigning pre_div unconditionally. Since pre_div is
-   initialized to 1 and only multiplied, it is always >= 1. A value
-   of 1 correctly converts to register value 1 via
-   convert_to_reg_val(), which means no pre-division in calc_rate().
-
-Example with parent=19.2 MHz XO, requesting 25 kHz:
-
-  Before: m=1, n=48,  pre_div=15 -> 26666 Hz  (6.7% error)
-  After:  m=1, n=768, pre_div=1  -> 25000 Hz  (exact)
-
-Fixes: 898b72fa44f5 ("clk: qcom: gcc-sdm845: Add general purpose clock ops")
+Fixes: bcd61c0f535a ("clk: qcom: Add support for root clock generators (RCGs)")
+Signed-off-by: Mike Tipton <quic_mdtipton@quicinc.com>
 Signed-off-by: Xilin Wu <sophon@radxa.com>
 ---
- drivers/clk/qcom/clk-rcg2.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+ drivers/clk/qcom/clk-rcg.h  |  2 ++
+ drivers/clk/qcom/clk-rcg2.c | 27 +++++++++++++++++++++++++--
+ 2 files changed, 27 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+index 4fbdf4880d03..12c1ce0f774c 100644
+--- a/drivers/clk/qcom/clk-rcg.h
++++ b/drivers/clk/qcom/clk-rcg.h
+@@ -159,6 +159,7 @@ extern const struct clk_ops clk_dyn_rcg_ops;
+  * @clkr: regmap clock handle
+  * @cfg_off: defines the cfg register offset from the CMD_RCGR + CFG_REG
+  * @parked_cfg: cached value of the CFG register for parked RCGs
++ * @configured_freq: last configured frequency, used for timeout calculation
+  * @hw_clk_ctrl: whether to enable hardware clock control
+  */
+ struct clk_rcg2 {
+@@ -174,6 +175,7 @@ struct clk_rcg2 {
+ 	struct clk_regmap	clkr;
+ 	u8			cfg_off;
+ 	u32			parked_cfg;
++	unsigned long		configured_freq;
+ 	bool			hw_clk_ctrl;
+ };
+ 
 diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 6064a0e17d51..82ee7ca1703a 100644
+index 0e8f0473897e..732f34629ea2 100644
 --- a/drivers/clk/qcom/clk-rcg2.c
 +++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -437,27 +437,35 @@ static void clk_rcg2_calc_mnd(u64 parent_rate, u64 rate, struct freq_tbl *f,
- 	int i = 2;
- 	unsigned int pre_div = 1;
- 	unsigned long rates_gcd, scaled_parent_rate;
--	u16 m, n = 1, n_candidate = 1, n_max;
-+	u32 n_max, n_candidate = 1;
-+	u16 m, n = 1;
- 
- 	rates_gcd = gcd(parent_rate, rate);
- 	m = div64_u64(rate, rates_gcd);
- 	scaled_parent_rate = div64_u64(parent_rate, rates_gcd);
--	while (scaled_parent_rate > (mnd_max + m) * pre_div_max) {
-+
-+	/*
-+	 * Limit n so that the D register can represent the full duty cycle
-+	 * range. The D register stores values up to 2*(n-m) using mnd_width
-+	 * bits. Since m >= 1, n <= (mnd_max + 1) / 2 guarantees
-+	 * 2*(n-m) <= mnd_max - 1.
-+	 */
-+	n_max = (mnd_max + 1) / 2;
-+
-+	while (scaled_parent_rate > (unsigned long)n_max * pre_div_max) {
- 		// we're exceeding divisor's range, trying lower scale.
- 		if (m > 1) {
- 			m--;
- 			scaled_parent_rate = mult_frac(scaled_parent_rate, m, (m + 1));
- 		} else {
- 			// cannot lower scale, just set max divisor values.
--			f->n = mnd_max + m;
-+			f->n = n_max;
- 			f->pre_div = pre_div_max;
- 			f->m = m;
- 			return;
- 		}
- 	}
- 
--	n_max = m + mnd_max;
--
- 	while (scaled_parent_rate > 1) {
- 		while (scaled_parent_rate % i == 0) {
- 			n_candidate *= i;
-@@ -475,7 +483,7 @@ static void clk_rcg2_calc_mnd(u64 parent_rate, u64 rate, struct freq_tbl *f,
- 
- 	f->m = m;
- 	f->n = n;
--	f->pre_div = pre_div > 1 ? pre_div : 0;
-+	f->pre_div = pre_div;
+@@ -111,9 +111,27 @@ static u8 clk_rcg2_get_parent(struct clk_hw *hw)
+ 	return __clk_rcg2_get_parent(hw, cfg);
  }
  
- static int clk_rcg2_determine_gp_rate(struct clk_hw *hw,
++static int get_update_timeout(const struct clk_rcg2 *rcg)
++{
++	int timeout = 0;
++	unsigned long current_freq;
++
++	/*
++	 * The time it takes an RCG to update is roughly 3 clock cycles of the
++	 * old and new clock rates.
++	 */
++	current_freq = clk_hw_get_rate(&rcg->clkr.hw);
++	if (current_freq)
++		timeout += 3 * (USEC_PER_SEC / current_freq);
++	if (rcg->configured_freq)
++		timeout += 3 * (USEC_PER_SEC / rcg->configured_freq);
++
++	return max(timeout, 500);
++}
++
+ static int update_config(struct clk_rcg2 *rcg)
+ {
+-	int count, ret;
++	int timeout, count, ret;
+ 	u32 cmd;
+ 	struct clk_hw *hw = &rcg->clkr.hw;
+ 	const char *name = clk_hw_get_name(hw);
+@@ -123,8 +141,10 @@ static int update_config(struct clk_rcg2 *rcg)
+ 	if (ret)
+ 		return ret;
+ 
++	timeout = get_update_timeout(rcg);
++
+ 	/* Wait for update to take effect */
+-	for (count = 500; count > 0; count--) {
++	for (count = timeout; count > 0; count--) {
+ 		ret = regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG, &cmd);
+ 		if (ret)
+ 			return ret;
+@@ -602,6 +622,8 @@ static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+ 	if (ret)
+ 		return ret;
+ 
++	rcg->configured_freq = f->freq;
++
+ 	return update_config(rcg);
+ }
+ 
+@@ -689,6 +711,7 @@ static int clk_rcg2_set_gp_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	clk_rcg2_calc_mnd(parent_rate, rate, f, mnd_max, hid_max / 2);
+ 	convert_to_reg_val(f);
++	rcg->configured_freq = rate;
+ 	ret = clk_rcg2_configure_gp(rcg, f);
+ 
+ 	return ret;
 
 -- 
 2.53.0
