@@ -1,32 +1,32 @@
-Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C1A33064A;
-	Mon,  6 Apr 2026 15:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74183274FDC;
+	Mon,  6 Apr 2026 15:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775490976; cv=none; b=H5gKs8pfm5evLxGrPv/7yu/S7vCa8sJqhPuQ6351AOHGEIHdQ76/LRZ88kDqS2VYgGDjZrdc6lv8Q+TKfTPNKpaPtk6zjVHtH6T3uRYDRh8IH8oGLnrv/p05M6LVLGKYFRs0xoJ1swqWo4zKOElNGPPxt0vaBNPj4qS+67Vx/jo=
+	t=1775490977; cv=none; b=T1HzcMUTTsmTVwiVBe6mXSS4dWS3it6Nih7Ai7nUJQ0mePBCqSIpKPUbAZbBv3ZudUhajSmO5zaw1zwWoYYqyjqbuo9/2+a0gDYgGbH5TSw/r37BzDGKNzhTCA+BRpUvFV4IHkFThkC8JW3Ng4UYh9daulN8woY3bO2jixU/xzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775490976; c=relaxed/simple;
-	bh=j9Ned+udCcWFI6mm9PbQerggwBy7Q0gTNPAb09CLcXM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dPqeEoerTlyF4aAdYjnCz+OO18BZ95WNT5NfXT+biu2M88s9YuQYF2laTzkKEhITZHxmg2rjl+n5DMI2G3GYvBcuLZ6DIpdUPwmNvtT+2D5rwZ6nW5h/rMNa25T8NQU72+Qkk75qXnkPTl9ObWl4jYol8n/O0v0kn6WQNpM9QJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=54.254.200.128
+	s=arc-20240116; t=1775490977; c=relaxed/simple;
+	bh=Ys/9Xu/u9YLBD9mjOngQ23gaLl1IclquxZy1h3X8jGM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=MITz0mtKZIObg2yepxKrar2KCsQiUcLh5G9xAaN1JqANJNo5UlY1OwVe6RIbcR/0ZBhurCIHI3f1UIJOVByPhPjQ41zIdA8Sczmp3fCSF+wD74PDts//7z74mevfhyrEpYdiX8xSkZRW8TBz+ukhTvSAMrWCCL3y1A31jWRmQ68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=54.254.200.92
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
-X-QQ-mid: zesmtpgz9t1775490899ta4844d97
-X-QQ-Originating-IP: kz4tg1extCWtRAZh5P45oqkn990iC9RLqZTRzwmI0eU=
+X-QQ-mid: zesmtpgz9t1775490889t7b1de528
+X-QQ-Originating-IP: 1Lsp/Ay1O240QkDd9GWAToVnEq6K27VPyQk9XwoXzdk=
 Received: from [192.168.30.32] ( [116.234.14.100])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 06 Apr 2026 23:54:58 +0800 (CST)
+	id ; Mon, 06 Apr 2026 23:54:46 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 13727944797770228139
+X-BIZMAIL-ID: 7832132453133119468
 EX-QQ-RecipientCnt: 12
 From: Xilin Wu <sophon@radxa.com>
-Date: Mon, 06 Apr 2026 23:54:36 +0800
-Subject: [PATCH 4/5] clk: qcom: clk-rcg2: calculate timeout based on clock
- frequency
+Subject: [PATCH 0/5] clk: qcom: Fix RCG/branch MND divider and timeout
+ issues
+Date: Mon, 06 Apr 2026 23:54:32 +0800
+Message-Id: <20260406-clk-qcom-gpclk-fixes-v1-0-7a14fe64552d@radxa.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,9 +35,10 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260406-clk-qcom-gpclk-fixes-v1-4-7a14fe64552d@radxa.com>
-References: <20260406-clk-qcom-gpclk-fixes-v1-0-7a14fe64552d@radxa.com>
-In-Reply-To: <20260406-clk-qcom-gpclk-fixes-v1-0-7a14fe64552d@radxa.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yWMSwqDQBAFryK9TkM7iIRcJbgwM0/T+fiZVhHEu
+ zsmu1c8qjYyRIXRLdsoYlHTvkuQXzLyz7prwRoSkxNXSiEl+8+bR99/uR3O2egK4yagwDWvRYK
+ jpA4RvyOZ9+rPNj9e8NPZon0/AAsYNBJ4AAAA
+X-Change-ID: 20260406-clk-qcom-gpclk-fixes-fde4e81a00d2
 To: Bjorn Andersson <andersson@kernel.org>, 
  Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Dzmitry Sankouski <dsankouski@gmail.com>, 
@@ -46,138 +47,79 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, 
  Xilin Wu <sophon@radxa.com>, Mike Tipton <quic_mdtipton@quicinc.com>
 X-Mailer: b4 0.15.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3489; i=sophon@radxa.com;
- h=from:subject:message-id; bh=j9Ned+udCcWFI6mm9PbQerggwBy7Q0gTNPAb09CLcXM=;
- b=kA0DAAoWMsMVZ62eMk4ByyZiAGnT10ijuEeVb5BZ3+PKAVXbslP+PLI0aNu77gDVd2vinthSo
- Yh1BAAWCgAdFiEEIF8AnQd5bdblFnUuMsMVZ62eMk4FAmnT10gACgkQMsMVZ62eMk6baAD/XGgZ
- 5idymkv3BJxty79iudaWpoqRLSit5zGUWnHoP/sA/jufIgC6fQ5aNUtHjlrZjPiWjknPbGf8PL5
- 3aIPGT9QN
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2162; i=sophon@radxa.com;
+ h=from:subject:message-id; bh=Ys/9Xu/u9YLBD9mjOngQ23gaLl1IclquxZy1h3X8jGM=;
+ b=owGbwMvMwCVmdFg0fe08Iz/G02pJDJmXr7u/2fBo6THFBvYJx0IkWop19yr/8HrkZCU6U9Y6S
+ f1QxyzzjlIWBjEuBlkxRRaFeIa57JW5156KlerBzGFlAhnCwMUpABPxvMTIMO1RgTtHt7NEmJ3b
+ ysAK5z/r1/FfLeWc7NISml14Y/vKTQz/FIqf9G4xyM+e9tH4oaHr9RemT3k4zpfMb/K+PD9k2pf
+ /7AA=
 X-Developer-Key: i=sophon@radxa.com; a=openpgp;
  fpr=205F009D07796DD6E516752E32C31567AD9E324E
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpgz:radxa.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: OfARS1tHiMjeXmwI33LqjtZFpqn/3rhG2Y0tb1NHOEMmX5ahJ3HRrPaG
-	CRblgtszAjPRqcEVsIVI+jsyQWAcB60xA8YFhGajrDH5lzMQmMhgustaWy2TVlL3fEhhzG+
-	R9iQIFF5nKFQn6O7npXAU0CF+MSL9SWmWZZB+Ort5HQ3gL4HmEWWt5LEWmUgGpy5a765jYe
-	Dx4NVGrYQReTLTKa0oraHG2BXGXxR9UK0WkF+HoAkPt4fWVM+ADgGQIwY2ZNqhMtu0sKFWy
-	viwK/6Lz02ySmDVpFzubIoyWZkIwZU3USBf0pyP/5vX4cCCD/aSqCM3MTPj0Ct8E42UIswH
-	fSSRlOBXTuV3DqjZ7g/B7IZMyjZLyl4LNVZeyplW9aeK8rZPBj3t2CVtMguBzRIMWlJ9xyt
-	XTfARU6U+1ChZl1IhVdGs/ip+0y0w6k3rKlNR0vxuARQHfZjEmd38uSK8Bruq/GTzD42POx
-	UllA1/qOencLh1zroC+EePhWQslf6OORZmMxA8Z40G1oUvaYMMgNib2jXiVsYQndsyp1Zx4
-	iE5fXSTIFZ3oT3MQfU9mab5eUZuk8FNVTW9COqMZN5dujq0ojLOwu6r+pbC86eH1lBxmEoT
-	o4SUGLwOrANOWgy+FIe9pGUnzgwCfvTolUaaC1yKkgU4hkhQBgOE1sJMV3vma35kHZ14BaN
-	7vrCpHUM9PReyWIesOVaUadUWErVLJ2WuG/yYZ++Et3jUgvi3KjBgpWV/txVKdtORdVA4Ld
-	AaW0fE3/d5kHqVkle+cmcjwNXi4o0hb8nL+L4maWvAsTgn+Lv4crYQRJvdJx1jm0KBN62I9
-	crXmPsyoQ7x+7Fuig91C991F4ew34uQoO7i9PupoKiuPxzXw7Ey+lWCA0VMcGEYSTB1cA9e
-	FTJAkNbT/luTLLFvJ8WfgjSCcPXgllIh/zgf6/B5QWXvoVBX3SXH4/uU7zw1VLUFYWQKw2R
-	R9qDYck65n/LXEbozCEeUjLnjzL22F0+6cOC1ay1KKWTjEaS5sf7fB7etBNZQ3V78PB7/xf
-	OXe/7ZEHIp458FxD5fGrf5/yWxkgkkGc5TnTG1Wsr8ZET+jIfYWr4eDLQdAanqhgUhZFnIj
-	98ZMVmPEsxtZyBLaOYJXV0=
-X-QQ-XMRINFO: MPJ6Tf5t3I/ylTmHUqvI8+Wpn+Gzalws3A==
+X-QQ-XMAILINFO: OfARS1tHiMjeXmwI33LqjtaWAbDPjFx9DxqjA2gbLdFYGHQFCz6MiRfs
+	DIcArfarfLLrjDvKED3IcCLuZagTW+jKdJRraLXJ/r36+dttfd+E6E+QvrMIq3fRm6o0u37
+	gq+sVgZ6uT+5BHbFEv0GpCJqydcmwLxNBhRr7wu3Hi6OcDSHvWuHqPfDIv94trvuSwPaT/8
+	9HqCW98AWliXJM9NLW4Q+07GfLl8CSi14pHdLe7tSQ8t6Cjbc0t7vKZZ2C431mN0xzre9CA
+	ysNZrkLGJY9Ew0MBgjmjQ2IjmASpZdzB84dke2lLzs48C8eBee2CHnLM1usAx1HNkq/m8Ax
+	btlsvxmpxOIEtjAFfY8+X8YNWGeWfZ8kFM+sZIsWJ++ToDojO8M0L3BxYzFqG9Z05Vf3hsQ
+	VXJOpvCcfnMc/Ls9QS/HZlIJNxmFnC5NzrqKdoSeha/9sq2ri++fVhRalXRLACgZV+Po5oc
+	tvm3e+FtAtZzxOpV0xLnZDFy1Uusggl/sy9mbXp+sUMwf7Eti9uRnOERILjm92IAlWO3s4k
+	QUvDw82FjQmeZbIQiyMiD1vDnmUHidPq+tAbtNr4k2NOd8c4gmdOrJzdoFen/i4S0qrmyi5
+	96THGQi9vOV4F9xLu1Ul0mEBLV06hXQmzqjYPzuxYBouQfobqowEbrFurSlTgAtkxLol/Qy
+	6Y0teMkna8h8dmYMhDCajfCvF208T1IfhfWScfGEN9QUI1tLzvitYHOfJCtpSu8OFGeDSMF
+	AmpzupdNvK9LwgHaZeWEiTMX9MRHFAhIovUDgyXQEGX2JJUd4g7mlktASUQQeiJTZV9hcE8
+	xfuf6gswjoruDRbZqDudNmp4OPtSRnWuZU9AEVSALk19Aqwe+xZ1mIQwBZ6BwN+f+T/TtKt
+	jUa8+glDR5TTrkRWAc87/6L7Uszckc073IyAydzsVz4LRg9sc8cCeTYJGD9uGzJBKzUylTn
+	keVK+eyA2YRSnPhJUyX4p76omLEllIsO9Vm9h6CbLu+YxTFsHhKczz3fkrdOdmlGqMChqI+
+	7in5s2NhuODTokbq+5hS0v9lp/SztFASMTGdGmM64EHw67FTmRUs/fl9EKQkY=
+X-QQ-XMRINFO: MSVp+SPm3vtSI1QTLgDHQqIV1w2oNKDqfg==
 X-QQ-RECHKSPAM: 0
 
-RCGs with extremely low rates (tens of Hz to low kHz) take much longer
-to update than the fixed 500 us timeout allows. A 1 kHz clock needs at
-least 3 ms (3 cycles) for the configuration handshake.
+This series fixes several bugs in the Qualcomm clock RCG and branch
+drivers that surface when clocks are used at low frequencies or with
+the MND duty cycle control path (clk_rcg2_gp_ops).
 
-Instead of increasing the timeout to a huge fixed value for all clocks,
-dynamically compute the required timeout based on both the old and new
-clock rates, accounting for 3 cycles at each rate.
+Patches 1-2 fix the GP clock MND divider computation
+(clk_rcg2_calc_mnd) and the duty cycle setting path
+(clk_rcg2_set_duty_cycle). The calc_mnd function has u16 overflow
+issues and incorrect n_max/pre_div calculations that produce wrong
+frequencies. The set_duty_cycle function has a u32 overflow that
+produces wrong duty cycles when n is large.
 
-Based on a downstream patch by Mike Tipton:
-https://git.codelinaro.org/clo/la/kernel/qcom/-/commit/aa899c2d1fa31e247f04810f125ac9c60927c901
+Patches 3-4 replace the fixed polling timeouts in clk_branch_wait()
+and update_config() with dynamically computed values based on the
+configured clock rate. The existing fixed timeouts (200 us / 500 us)
+are too short for clocks running at low rates (tens of Hz to low kHz),
+causing spurious timeout warnings and clock configuration failures.
 
-Fixes: bcd61c0f535a ("clk: qcom: Add support for root clock generators (RCGs)")
-Signed-off-by: Mike Tipton <quic_mdtipton@quicinc.com>
+Patch 5 fixes an integer truncation bug in the duty cycle boundary
+checks that allows out-of-range values to be written to the D
+register, causing RCG configuration update failures.
+
+These bugs do not affect clocks using the standard clk_rcg2_ops with
+pre-defined frequency tables, but they are triggered when GP clocks
+are used with clk_rcg2_gp_ops for PWM-style output at arbitrary
+frequencies and duty cycles.
+
 Signed-off-by: Xilin Wu <sophon@radxa.com>
 ---
- drivers/clk/qcom/clk-rcg.h  |  2 ++
- drivers/clk/qcom/clk-rcg2.c | 27 +++++++++++++++++++++++++--
- 2 files changed, 27 insertions(+), 2 deletions(-)
+Xilin Wu (5):
+      clk: qcom: clk-rcg2: fix clk_rcg2_calc_mnd() producing wrong M/N/pre_div
+      clk: qcom: clk-rcg2: use 64-bit arithmetic in set_duty_cycle()
+      clk: qcom: clk-branch: calculate timeout based on clock frequency
+      clk: qcom: clk-rcg2: calculate timeout based on clock frequency
+      clk: qcom: clk-rcg2: fix set_duty_cycle() integer overflow in boundary checks
 
-diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-index 4fbdf4880d03..12c1ce0f774c 100644
---- a/drivers/clk/qcom/clk-rcg.h
-+++ b/drivers/clk/qcom/clk-rcg.h
-@@ -159,6 +159,7 @@ extern const struct clk_ops clk_dyn_rcg_ops;
-  * @clkr: regmap clock handle
-  * @cfg_off: defines the cfg register offset from the CMD_RCGR + CFG_REG
-  * @parked_cfg: cached value of the CFG register for parked RCGs
-+ * @configured_freq: last configured frequency, used for timeout calculation
-  * @hw_clk_ctrl: whether to enable hardware clock control
-  */
- struct clk_rcg2 {
-@@ -174,6 +175,7 @@ struct clk_rcg2 {
- 	struct clk_regmap	clkr;
- 	u8			cfg_off;
- 	u32			parked_cfg;
-+	unsigned long		configured_freq;
- 	bool			hw_clk_ctrl;
- };
- 
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 0e8f0473897e..732f34629ea2 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -111,9 +111,27 @@ static u8 clk_rcg2_get_parent(struct clk_hw *hw)
- 	return __clk_rcg2_get_parent(hw, cfg);
- }
- 
-+static int get_update_timeout(const struct clk_rcg2 *rcg)
-+{
-+	int timeout = 0;
-+	unsigned long current_freq;
-+
-+	/*
-+	 * The time it takes an RCG to update is roughly 3 clock cycles of the
-+	 * old and new clock rates.
-+	 */
-+	current_freq = clk_hw_get_rate(&rcg->clkr.hw);
-+	if (current_freq)
-+		timeout += 3 * (USEC_PER_SEC / current_freq);
-+	if (rcg->configured_freq)
-+		timeout += 3 * (USEC_PER_SEC / rcg->configured_freq);
-+
-+	return max(timeout, 500);
-+}
-+
- static int update_config(struct clk_rcg2 *rcg)
- {
--	int count, ret;
-+	int timeout, count, ret;
- 	u32 cmd;
- 	struct clk_hw *hw = &rcg->clkr.hw;
- 	const char *name = clk_hw_get_name(hw);
-@@ -123,8 +141,10 @@ static int update_config(struct clk_rcg2 *rcg)
- 	if (ret)
- 		return ret;
- 
-+	timeout = get_update_timeout(rcg);
-+
- 	/* Wait for update to take effect */
--	for (count = 500; count > 0; count--) {
-+	for (count = timeout; count > 0; count--) {
- 		ret = regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG, &cmd);
- 		if (ret)
- 			return ret;
-@@ -602,6 +622,8 @@ static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
- 	if (ret)
- 		return ret;
- 
-+	rcg->configured_freq = f->freq;
-+
- 	return update_config(rcg);
- }
- 
-@@ -689,6 +711,7 @@ static int clk_rcg2_set_gp_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	clk_rcg2_calc_mnd(parent_rate, rate, f, mnd_max, hid_max / 2);
- 	convert_to_reg_val(f);
-+	rcg->configured_freq = rate;
- 	ret = clk_rcg2_configure_gp(rcg, f);
- 
- 	return ret;
+ drivers/clk/qcom/clk-branch.c | 22 ++++++++++++++++--
+ drivers/clk/qcom/clk-rcg.h    |  2 ++
+ drivers/clk/qcom/clk-rcg2.c   | 53 ++++++++++++++++++++++++++++++++++---------
+ 3 files changed, 64 insertions(+), 13 deletions(-)
+---
+base-commit: 2febe6e6ee6e34c7754eff3c4d81aa7b0dcb7979
+change-id: 20260406-clk-qcom-gpclk-fixes-fde4e81a00d2
 
--- 
-2.53.0
+Best regards,
+--  
+Xilin Wu <sophon@radxa.com>
 
