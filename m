@@ -1,138 +1,95 @@
-Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5953A381E;
-	Tue,  7 Apr 2026 08:09:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775549353; cv=none; b=lJe/F8R24Vt6/ofglCs9y8uSEYD7lp2XLuu1ZmRRN9xlJzh4WE9ItoYbONEV33AFAvFRKnEFbze/4VuUkDprB2nJOrQXRmgno5GqECkWDaH2mQT2J6BxkuhKs26O90OTnG+gpfqU/ExncLvhcBlKJgxP1PKg8cSOnS8TAf24Wgs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775549353; c=relaxed/simple;
-	bh=x4CIhcKyiAyiHLRxCfzrNVNhwmG+Osil9WJy47xc4Uc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Subject:Cc:From:
-	 References:In-Reply-To; b=CvBH6EaOl5vI+7sLrhpM3uQFtJ0t828o+GZxEi2yDhIqC12MhsgSNcTVsOgdh1L9nkHN8Pp7aJxzCVF0ka0JB+hHRA5vUZh1YR92yfl52U7zumTMlk9nUcjQ/Bc5lqxZpLHG48N2u61IV1kl5Q/uBHvpRiiojSQ+ulbK0SV0fgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc; spf=pass smtp.mailfrom=walle.cc; dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b=mgE0dy0o; arc=none smtp.client-ip=159.69.201.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 138E53876AF;
+	Tue,  7 Apr 2026 08:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1775549490; cv=pass; b=BIYkRuxBeQO/OhQksrL1vZCpg8gabJhmBkUlXSaCAp+O/dcCdyOwMFijExmrcjLDpPQSSxoMD95pMKUNlxLoZoSUMqVMH0b+3EPZ1sEDlm2ydyNWhZ3wBthgbuCgz7W7YvaLfXpK6vH//qmReWB0pvxP4JFuIDrnV2eUL48Hwsc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1775549490; c=relaxed/simple;
+	bh=NzT3YRxBWCNcLAbEluJPEgLwwNDU1qLzXtOkCooYXoQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=R3Ns1y0hQfHc3+oPZNnFr/6U5HTD7aVsRzIcXOyueVeZD26Xj2IF8fqJT/r+eWPFS0gDItbZMYqUWTG16TtX+lWV6K5fRy5DvQrI+TofU9ipbr7KwqlewAF8WPqQct2q5oQhTjC/wfbqT7aXpiuSfRKSeVANTXgGIpFjDEC1A1U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=bEVWl10R; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b="mgE0dy0o"
-Received: from localhost (unknown [213.135.10.150])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.3ffe.de (Postfix) with ESMTPSA id 2591063;
-	Tue,  7 Apr 2026 10:02:21 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2022082101;
-	t=1775548945;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ad+PThozXsFVIRgJjzkr6m230pul0DpcAhIS8dHfyG8=;
-	b=mgE0dy0oYY88IBAC9FsAmUIYkWg7j5ZoIv3q58lOa4qqMSIr8BxE8rOwMoN867BC/rt3NB
-	wLAOVJzIT78D8lUoC7P/IeE1gSfSbyCGdvE2HAEwbrdUPREraKRUgvk7oIgbeB9Eob6MwM
-	o9YHmOyqUJGRtmBfEUN+TxgeETxWNqRh/2E+wPRLNW/nmrX+QijaxQwADApn3sY1rWQWXl
-	Cfbc0Vb2c3Wb4hYnjG191eM7wv8CCIHp1L2GkaQvnw5bGGFXzT9ytbI9amEcHeFV34X+3X
-	TwPahiwbHKiDbtsjxhU2yccbWx1aVvA9hfA/73LwspR5/d9lDgrhCOmUWlMO5g==
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="bEVWl10R"
+ARC-Seal: i=1; a=rsa-sha256; t=1775549428; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=WBi0XJ0BbSsT1rPp1AL3eNjXsDZlyrl/SDYEBiBDhWn0pm5DSTSzcuVoKIbb17SLKr7KJ//7qyQrOKL2WjZYE95QzXp4/KVqIdSekwI+rKZuE1oXwsvJIeX08XnnplMvCc8aUcVHVOQjMYrgoUKJG1lf6FiGGUFeWLROpDubsnQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1775549428; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=YwOkgIATGiCfLvpCgh2iVw4y707zmZ1cDQaby807Hjw=; 
+	b=nrQESSwguAS1L+yTiGaeTVpa7nkpj6m2LgxZKABb8vrEhHB0AbnXIEzbUA9tHjIRzbAn0bgaJCbOORCLnKJjMhQc0OSY37ey3oaOycv7HyzHl7MDj61OWAYdH4mYYlyBQfbQd55WGcgL2dAuIc6zO8vJS/yNgYX+OG6UMuFXhRc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1775549428;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=YwOkgIATGiCfLvpCgh2iVw4y707zmZ1cDQaby807Hjw=;
+	b=bEVWl10RDW8jT+tnbC1NpOKLXO//mFuU75mYBlFj1qettNdizXDBQu9uFQeehAop
+	YrNYbDKfvArT9QsNWMki5LlTNisTxZcSIWmOpElDIy9KelOtt/O1aFLPA4qAsjshX9b
+	WhMctqOG2QZIS9fzM92eOWeVw/zqUy23CHNOv8+U=
+Received: by mx.zohomail.com with SMTPS id 1775549425509524.2343363376186;
+	Tue, 7 Apr 2026 01:10:25 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Heiko Stuebner <heiko@sntech.de>, Daniele Briguglio <hello@superkali.me>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Daniele Briguglio <hello@superkali.me>
+Subject:
+ Re: [PATCH v3 3/4] soc: rockchip: rk3588: add SYS_GRF SOC_CON6 register
+ offset
+Date: Tue, 07 Apr 2026 10:10:21 +0200
+Message-ID: <6254685.lOV4Wx5bFT@workhorse>
+In-Reply-To: <20260320-rk3588-mclk-gate-grf-v3-3-980338eacd2c@superkali.me>
+References:
+ <20260320-rk3588-mclk-gate-grf-v3-0-980338eacd2c@superkali.me>
+ <20260320-rk3588-mclk-gate-grf-v3-3-980338eacd2c@superkali.me>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=0d2bcfc64f4ee9e083e2af46e7c1d5237e5e21b76e32ac13f6cb36dd1b9b;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Tue, 07 Apr 2026 10:02:17 +0200
-Message-Id: <DHMRKHET4G64.2OC3H718XYFTY@walle.cc>
-To: "Marek Vasut" <marex@nabladev.com>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v4 6/6] clk: fsl-sai: Add MCLK generation support
-Cc: "Michael Walle" <mwalle@kernel.org>, "Brian Masney"
- <bmasney@redhat.com>, "Conor Dooley" <conor+dt@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, "Michael Turquette"
- <mturquette@baylibre.com>, "Rob Herring" <robh@kernel.org>, "Stephen Boyd"
- <sboyd@kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-From: "Michael Walle" <michael@walle.cc>
-X-Mailer: aerc 0.20.0
-References: <20260406215150.176599-1-marex@nabladev.com>
- <20260406215150.176599-6-marex@nabladev.com>
-In-Reply-To: <20260406215150.176599-6-marex@nabladev.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
---0d2bcfc64f4ee9e083e2af46e7c1d5237e5e21b76e32ac13f6cb36dd1b9b
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-
-On Mon Apr 6, 2026 at 11:49 PM CEST, Marek Vasut wrote:
-> The driver currently supports generating BCLK. There are systems which
-> require generation of MCLK instead. Register new MCLK clock and handle
-> clock-cells =3D <1> to differentiate between BCLK and MCLK. In case of a
-> legacy system with clock-cells =3D <0>, the driver behaves as before, i.e=
-.
-> always returns BCLK.
->
-> Note that it is not possible re-use the current SAI audio driver to
-> generate MCLK and correctly enable and disable the MCLK.
->
-> If SAI (audio driver) is used to control the MCLK enablement, then MCLK
-> clock is not always enabled, and it is not necessarily enabled when the
-> codec may need the clock to be enabled. There is also no way for the
-> codec node to specify phandle to clock provider in DT, because the SAI
-> (audio driver) is not clock provider.
->
-> If SAI (clock driver) is used to control the MCLK enablement, then MCLK
-> clock is enabled when the codec needs the clock enabled, because the
-> codec is the clock consumer and the SAI (clock driver) is the clock
-> provider, and the codec driver can request the clock to be enabled when
-> needed. There is also the usual phandle to clock provider in DT, because
-> the SAI (clock driver) is clock provider.
->
-> Acked-by: Michael Walle <mwalle@kernel.org>
-> Signed-off-by: Marek Vasut <marex@nabladev.com>
+On Friday, 20 March 2026 11:34:15 Central European Summer Time Daniele Briguglio wrote:
+> Add the RK3588_SYSGRF_SOC_CON6 register offset to the RK3588 GRF
+> header. This register contains the I2S MCLK output to IO gate bits,
+> needed by the clock driver.
+> 
+> Signed-off-by: Daniele Briguglio <hello@superkali.me>
 > ---
-> Cc: Brian Masney <bmasney@redhat.com>
-> Cc: Conor Dooley <conor+dt@kernel.org>
-> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Michael Walle <michael@walle.cc>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
-> V2: No change
-> V3: - Rebase on current next, update mail address
->     - Update commit message according to clarify the difference between
->       SAI audio and SAI clock driver
->     - Pick ancient AB from Michael, although this may be outdated
->       https://patchwork.kernel.org/project/alsa-devel/patch/2024122616223=
-4.40141-4-marex@denx.de/
+>  include/soc/rockchip/rk3588_grf.h | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/include/soc/rockchip/rk3588_grf.h b/include/soc/rockchip/rk3588_grf.h
+> index 02a7b2432d99..db0092fc66ad 100644
+> --- a/include/soc/rockchip/rk3588_grf.h
+> +++ b/include/soc/rockchip/rk3588_grf.h
+> @@ -19,4 +19,6 @@
+>  /* Whether the LPDDR5 is in 2:1 (= 0) or 4:1 (= 1) CKR a.k.a. DQS mode */
+>  #define RK3588_PMUGRF_OS_REG6_LP5_CKR			BIT(0)
+>  
+> +#define RK3588_SYSGRF_SOC_CON6			0x0318
+> +
+>  #endif /* __SOC_RK3588_GRF_H */
+> 
+> 
 
-I'm fine with this, but I want to point out, that this is still a
-hack as the correct way would be to make the original SAI (audio
-driver) a clock provider. Keep in mind that both driver variants are
-mutually exclusive. So if a SoC has 6 SAIs for example, you can only
-use 5, because the one will have to be MCLK the clock provider
-driver.
+Reviewed-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-In the original LS1028A case (which doesn't have a MCLK), you
-actually have to use the hardware peripheral block to generate the
-BCLK, thus you'll loose one SAI anyway. In this case - at least from
-what I understands - this is just a software construct, because the
-original SAI driver is missing a clock provider (phandle).
+Verified the definition by comparing it to hardware documentation,
+it checks out.
 
--michael
 
---0d2bcfc64f4ee9e083e2af46e7c1d5237e5e21b76e32ac13f6cb36dd1b9b
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iKcEABMJAC8WIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCadS6CREcbWljaGFlbEB3
-YWxsZS5jYwAKCRASJzzuPgIf+HfsAYC6DBNdJDZfxQXODWnhg46KsgrP8GwmHLw1
-hjxaZ6s8dK3te04j7RWTeIXx1doxrBgBfAg8tGFYQpiOqt3cMzVapU/hXUYVj7uM
-J310VCbce7mg59wZ8ol798MjTWRIPRl9gw==
-=j1JI
------END PGP SIGNATURE-----
-
---0d2bcfc64f4ee9e083e2af46e7c1d5237e5e21b76e32ac13f6cb36dd1b9b--
