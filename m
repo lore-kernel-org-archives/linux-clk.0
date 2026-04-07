@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16D138F936;
-	Tue,  7 Apr 2026 07:02:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B3E3921DC;
+	Tue,  7 Apr 2026 07:06:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775545354; cv=none; b=Rcm/8nXIiYUgaJ6OZI+iLXBdGhwtBECzeNzqXB9iJ2cxNMmpUkrAr57qf9cDyShakFmtWJ7s36QnPKwdTs3/smvzlHf0CblFte5l7KGhj4qSx10/jstANaGMhyPDC48B6U/Fxt0qKn/WDXiULmAiZtlBeJoqytzJajemsasl7GM=
+	t=1775545606; cv=none; b=sqraIiG3/gfvKJz1jln6Y+/y8RqeU6/rIkza2EfZJ576rKmdAfrPlyqMdM7CWzkwW2rdyFTP8T3AFv2Vlp5RLkKkp3Mmgrs5VBFRkeLtZMAxUezFCYGBUboBUE/pp4q6wzYlISC5MA/+zC/uGaxJzbpMgsR3PDOUId/JgAhW1pQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775545354; c=relaxed/simple;
-	bh=mLiutvpBOTT1px2ATTfz6tAMd8Owf6XOgX/z8K9oGx0=;
+	s=arc-20240116; t=1775545606; c=relaxed/simple;
+	bh=w84JgY13B5psbJ/bCQLltCiZeluJ62uUoybI2BsB+oo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c9KLZxYR1HeH1oucwOM4nzSDDsK9zEbMIsMEWFLCn+Hya1ZgFBlCk6SIuNoiRvDCmGSJYf5FJI1XLBYZ67WNawYsuu4fxO3pLmDHAvyNU81674grU8YSBirKJZkkoZ9qdbNv1xxgwrIfrc/2k8H/1T6xwXPAMGj5TPFq6HA6mhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RkYJZOZm; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=K4sXSR+POcdi80MzRDxPEwn6trYx5nxLUiuD3ZF7mJHFAkJ01/FuejUQU79OQk14n4jQdoKItLJW4WQNhdZ5Whb0ZNurftDuAzWr7/d4bTR+C3T0CHQl7E8QAl6RqSjDi1hSeyWT//PY2M53H5+MS3k4XrjBGFMZhLCnu5LzA6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bpc5j5BU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RkYJZOZm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 257BAC116C6;
-	Tue,  7 Apr 2026 07:02:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bpc5j5BU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48734C116C6;
+	Tue,  7 Apr 2026 07:06:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775545354;
-	bh=mLiutvpBOTT1px2ATTfz6tAMd8Owf6XOgX/z8K9oGx0=;
+	s=k20201202; t=1775545606;
+	bh=w84JgY13B5psbJ/bCQLltCiZeluJ62uUoybI2BsB+oo=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RkYJZOZmzCsLI1eZnFzLjN5mPET7mvEsbdqGNR1REOpJMpOBVvm0jIQjU7Sy1TxcH
-	 faoqC/HklvPICy0nVSG8SHXb3pHodD428VldYyqh3TsLdW5WaEK2SJJVYa4DBnFCXM
-	 esrEnplOmw/BIhCWlWSiByModB0VM0fGNuTHRd/FHEFqySmF9+sfmDybK+vDRIZ/GW
-	 c4hPqmHqq7YJMMD4qYarCtXHCd6GOQHZV4AB36rF+JXx72jX4YV0RwjYmsmHj22LpC
-	 O13fAppvBw6pcRwLIu+dyzK0H44AeHoJcLbT8JOxAHuM59gwG64jbGqOCf+vJD5qCB
-	 GWvChrG0TmSjQ==
-Message-ID: <5f2a1946-9ca7-414c-a764-60f46f3b3cf5@kernel.org>
-Date: Tue, 7 Apr 2026 09:02:28 +0200
+	b=Bpc5j5BU4G90M8I9KBBLn+o39rPFY6aozmJuYi+wsuFTWG/ELsK1i6vDqHivyIr46
+	 N9wLkfpu/lJ47LKHQzH408q1EPINq+GUwEggrTAMuJTDb6gEGdOitPs/7sJEjpfoX0
+	 VfLVXDdk1bsKBai4awpx8m4I6DCsqN+aclgpJcTOgEx+sC6NRWzDdTetCO9e/H6klT
+	 7lfL7fbUlemkLT+KWdbrNw0mZ6AKWm6c6oC90vSK/1SWCd2IRexchkPu6n8oIqBYzw
+	 5D8mc8nogt66lYinMeFK9CG/Uz/hWoPk8rYMRifSLjSOe6wzoOpJy0ZNg3EgD5PBrg
+	 t3B0yLs1WDhtg==
+Message-ID: <cca821a7-de9f-4377-9c0a-3f4170230d22@kernel.org>
+Date: Tue, 7 Apr 2026 09:06:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,8 +35,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 02/13] dt-bindings: clock: Add system-0 domain PLL
- clock
+Subject: Re: [PATCH v1 11/13] dt-bindings: hwinfo: Add starfive,jhb100-socinfo
 To: Changhuang Liang <changhuang.liang@starfivetech.com>
 Cc: Michael Turquette <mturquette@baylibre.com>, Rob Herring
  <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -55,9 +54,9 @@ Cc: Michael Turquette <mturquette@baylibre.com>, Rob Herring
  "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
  Leyfoon Tan <leyfoon.tan@starfivetech.com>
 References: <20260403054945.467700-1-changhuang.liang@starfivetech.com>
- <20260403054945.467700-3-changhuang.liang@starfivetech.com>
- <20260405-godlike-pistachio-mackerel-7ab494@quoll>
- <ZQ4PR01MB120275BC5277C4FF18A738E6F25A2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
+ <20260403054945.467700-12-changhuang.liang@starfivetech.com>
+ <20260405-strong-watchful-marmot-fdfad6@quoll>
+ <ZQ4PR01MB12021DE82F5D893BBA15A659F25A2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -103,35 +102,92 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <ZQ4PR01MB120275BC5277C4FF18A738E6F25A2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
+In-Reply-To: <ZQ4PR01MB12021DE82F5D893BBA15A659F25A2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 07/04/2026 08:56, Changhuang Liang wrote:
+On 07/04/2026 08:49, Changhuang Liang wrote:
 > Hi, Krzysztof
 > 
 > Thanks for the review.
 > 
->> On Thu, Apr 02, 2026 at 10:49:34PM -0700, Changhuang Liang wrote:
->>> Add system-0 domain PLL clock for StarFive JHB100 SoC.
+>> On Thu, Apr 02, 2026 at 10:49:43PM -0700, Changhuang Liang wrote:
+>>> Add starfive,jhb100-socinfo for StarFive JHB100 SoC.
 >>>
 >>> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
 >>> ---
->>>  .../bindings/clock/starfive,jhb100-pll.yaml   | 44 +++++++++++++++++++
->>>  .../dt-bindings/clock/starfive,jhb100-crg.h   |  6 +++
+>>>  .../hwinfo/starfive,jhb100-socinfo.yaml       | 36
+>> +++++++++++++++++++
+>>>  1 file changed, 36 insertions(+)
+>>>  create mode 100644
+>>> Documentation/devicetree/bindings/hwinfo/starfive,jhb100-socinfo.yaml
+>>>
+>>> diff --git
+>>> a/Documentation/devicetree/bindings/hwinfo/starfive,jhb100-socinfo.yam
+>>> l
+>>> b/Documentation/devicetree/bindings/hwinfo/starfive,jhb100-socinfo.yam
+>>> l
+>>> new file mode 100644
+>>> index 000000000000..cc6b7d5a4c91
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/hwinfo/starfive,jhb100-socinfo
+>>> +++ .yaml
+>>> @@ -0,0 +1,36 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
+>>> +---
+>>> +$id:
+>>> +http://devicetree.org/schemas/hwinfo/starfive,jhb100-socinfo.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: StarFive JHB100 SoC platform chipid module
+>>> +
+>>> +maintainers:
+>>> +  - Changhuang Liang <changhuang.liang@starfivetech.com>
+>>> +
+>>> +description:
+>>> +  StarFive JHB100 SoC platform chipid module is represented by
+>>> +JHB100_PRODUCT_ID
+>>> +  register which contains information about revision. This register
+>>> +is located
+>>> +  under the syscon.
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    items:
+>>> +      - const: starfive,jhb100-socinfo
 >>
->> You did not test your code. Apply patch #1 and test it. Do you see build-level
->> errors?
+>> No, not a separate device.
+>>
+>>> +
+>>> +  reg:
+>>> +    maxItems: 1
+>>> +
+>>> +required:
+>>> +  - compatible
+>>> +  - reg
+>>> +
+>>> +additionalProperties: false
+>>> +
+>>> +examples:
+>>> +  - |
+>>> +    chipid@38 {
+>>> +        compatible = "starfive,jhb100-socinfo";
+>>> +        reg = <0x38 0x4>;
+>>
+>> One register is not a device. NAK.
 > 
-> I'm very sorry about this. I will reorganize my patch to avoid the related errors.
-> 
+> I noticed that other platforms have similar practices:
+> https://elixir.bootlin.com/linux/v7.0-rc7/source/arch/arm/boot/dts/aspeed/aspeed-g4.dtsi#L205
 
-Anyway this one should be folded into the parent. You have one generic,
-system-wide clock as input, so as well this can be the resource of the
-parent. And no address spaces.
+Sure, how is that DTS and platform?
 
-Other examples have one-register address spaces, so these are not really
-separate devices.
+Why did you chosen exactly this one, known of poor quality and multiple
+warnings, but did not choose something which is reviewed in detail and
+passes all expectations?
+
+> or could you provide me with alternative suggestions? Thank you very much.
+
+Fold into the parent. See also writing bindings or DTS101 talk.
 
 Best regards,
 Krzysztof
