@@ -1,89 +1,93 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257AA1F4CA9;
-	Tue,  7 Apr 2026 18:09:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4015932779D
+	for <linux-clk@vger.kernel.org>; Tue,  7 Apr 2026 18:48:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775585374; cv=none; b=m6xdbRhc0Pz9A3IhRqDEq7Qu9p7i4fyTQtdjvSj5tt3FisJ3pN8XSaoo710eifcFE2buNNnY0DEfZQvd29Orz5iR1hQ0RkN7TFIIfUuoPg9W3ukRkIrXZyvq7M/wV1qfmHSP9bDWFSZ0VbU76MkRMU/uPh3rGZ0DSJPFJumw0lI=
+	t=1775587714; cv=none; b=DxOp6HYnme088I9UCl1TpY8IxKCWcTggVSlYfmC9wCeU665Fga7O+74iDhckV5EF6c3Muk1csywuNep2Bpc8hRH1mKE3Wdhq3fnQYRNTSfEv/yL2jlHqHg21uk9xe/6S3Lo7sT3oXcVuSOf+7CYzkFRTQgw2m9oxqn+URfkvfDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775585374; c=relaxed/simple;
-	bh=6+TXhFe1ZLkWZlJdqPKfzqrTGxVXq539FFUaAib5kcw=;
+	s=arc-20240116; t=1775587714; c=relaxed/simple;
+	bh=x79Jav08+LwoUKWXg4HsvIeK4Ps7KKBZV548bW8sdk8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HIOYBhSfpeF9eqfOMlt9LffRKzjs+zLsEYXz08hGOsRuZcKZ7ibyBiAKqG0yHnK7zCfdAkwNuKo+hqGvKzHdwAsirLe9Jpj6YmHoHwvEQJbty2n0D0mzMMkbj2E8KkkEgux1dm4nf8ynhN9R7PcpfHuDHOAw06eJvFtDpxPUJsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ggWzSJFT; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=NdXxs78RpU2avStfc1kf33YoU/5sYA6bSmU8Jc+69KGLNG2JD2O2yeNpcuhjpgydTm8Zu3K6Xn/6aQEglbnZuYs1j0auWppAOidrSDW4wcEpkxrgHo8yfed11WhopTsv1Wb2DFtHQ3KJDisCU9oC8OK28Hbi/4Y8UJzaIThY8DE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NaHuCwI5; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=SEw7g8e2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ggWzSJFT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8E86C116C6;
-	Tue,  7 Apr 2026 18:09:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775585374;
-	bh=6+TXhFe1ZLkWZlJdqPKfzqrTGxVXq539FFUaAib5kcw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ggWzSJFTesIwd2YhKNu1ymWX+Ta4kTPTPY/3h9dlBpdCpYSbEFsbI0H7e9rSlT5gs
-	 Dao5q1Oa7o6HCCAUXtV9dfxMsY+RSsuhceg6FMyGrDJkgcPprSBxYixpt2oL06fUXR
-	 fjuRo2v5yqgnbv1bCJBrEFqu7JP6qlhp1w4VGWAoJt/7Hrhhki1cVd9WNdne4rtWTB
-	 tyuXA6AzboaLz0+HNY0y87qaeiqnHvvfAcNZ1m6C4p2aarv/pooDxIA23mF/3H/an3
-	 YzUeOAvZpqtqjMW5M1jIqPurebCAO7fqtckQaFMzzFVE4qnEZeH025Kb6A4AATN2Kk
-	 V0UFuhMW9MWcQ==
-Date: Tue, 7 Apr 2026 13:09:32 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-acpi@vger.kernel.org,
-	Daniel Scally <djrscally@gmail.com>,
-	Charles Keepax <ckeepax@opensource.cirrus.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Saravana Kannan <saravanak@kernel.org>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Linus Walleij <linusw@kernel.org>, imx@lists.linux.dev,
-	linux-gpio@vger.kernel.org, patches@opensource.cirrus.com,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Andrew Lunn <andrew@lunn.ch>, devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-arm-kernel@lists.infradead.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	David Rhodes <david.rhodes@cirrus.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Mark Brown <broonie@kernel.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, linux-pm@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Wolfram Sang <wsa@kernel.org>, Len Brown <lenb@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Frank Li <Frank.Li@nxp.com>,
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NaHuCwI5";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="SEw7g8e2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1775587712;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8Pnpb6SDZMkbPbYvs4u7AhPVopmFX/goNUB55645IGM=;
+	b=NaHuCwI5QpZkg92vaVqvJs8CMuGbRzINrF4K0luLKoPBG+pLIE5Q6ixdlV/wKBB71bIeDW
+	xeJ9WKrYcQjMScMjdoQ2CEShn/MF0eOO3m/2dy3TWIQDxYEMywfPS/712IhmZ5ovl1QvBa
+	3awSPbdDEYIeQcN/XLtd0Hp9//IA4Xw=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-589-j0vmwpwmPxyRKLXW_umN1Q-1; Tue, 07 Apr 2026 14:48:29 -0400
+X-MC-Unique: j0vmwpwmPxyRKLXW_umN1Q-1
+X-Mimecast-MFC-AGG-ID: j0vmwpwmPxyRKLXW_umN1Q_1775587709
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-8950562d351so77068846d6.3
+        for <linux-clk@vger.kernel.org>; Tue, 07 Apr 2026 11:48:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1775587708; x=1776192508; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8Pnpb6SDZMkbPbYvs4u7AhPVopmFX/goNUB55645IGM=;
+        b=SEw7g8e2gwM+HRIFZnsOkyJbf67kDquYs5o2ZQ5TtI72UvLFJ8F8Z3K7arGfBPg/qJ
+         F+6zp+/ry0tgdi+o83942aeWa9Ni9lKrUyHXJSSz6soNgO3Y8AfQHfcDjiR5eswDKtew
+         uyRKeQv3LlUXnuzTIo6VtJ17shT/ZRF8HAdnxKyvgU9KAfE5rkeYVzy7bboTtSNRSZXr
+         fiHe2VqWJ8wXV8U1W+6PAGbdNXX/TjUl3pl8CRGiV62XE4dcbtEX6cu5ubkb2fsjd9SB
+         wN/hFOX4FFfRjZx0a/PH6kL5OqaPhxRlcd++aciqt70vPPKWHWtdAr+J1W+vMIoW+U14
+         Xxow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1775587708; x=1776192508;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=8Pnpb6SDZMkbPbYvs4u7AhPVopmFX/goNUB55645IGM=;
+        b=Hzj2grNcD2Nd+RuHf/fJoCbTTscu8Sl4RAamN+C4ESy1y/kWSe2K1X7miMee60MCtC
+         RldBOwdU0b01sErcmfhAvDJ/8b7roOpE11Sn0ZDDdCCqfVnVoroNuZp2x64Hd7zgZOnM
+         UN81drY1aeamydcnvTIuUcT+YNAXxvIW+yzhGkk2ZmCjtPW5of7JI8Z2RBwgHR3I2gzW
+         syJLxRu6BVXxm+Wkrv6xYq4DMk7ItpZma9hc1CPajfyUpJbcduref1/JEkYwNp/3d1ln
+         VcxaXX4eQ4tDJTiUqDseZf2RolHB0Cs+9YiOATkv5SyZAaDPwc+XcVGWM+hozE+o9I60
+         fVlw==
+X-Gm-Message-State: AOJu0YyeDCYz+BlxcOvzNQ/Iv3y3O6+a31WIzfqLiiJ0OOp+iD9WMFCM
+	FaQ7j6C5Ec1YhoKWG7emowLx2UIABpMLpfIEtjU5qeqUIGkQ7ySglMp+5BAF1AGjCG8AaIZNLke
+	6uY0P1yhlgam8Sg9aA821jtUzrcOQeMp6fVbwbbXdAPsXUpATQT7LfpNBeIqSYw==
+X-Gm-Gg: AeBDietNBbyahv/6tnhi5lAjXyWt2g7hlkREFQ6Hy8i2eezKr86EnIFUeEURGfH26Wd
+	g8GaTL8mSqoahiD/GMjPJdcVi3aYRoGKGpTib/T4X+P4ncJkXvoiayV9X2WIG/P1YTb2dp9ouMk
+	aPtpEaeMy6R3N37/S1YHuHaiXbmP7GJTsvES47k3v4OitHJA1t1CurxU+5dUCCNtFj78GE6Tynm
+	AjZOz26FCchS9HbqyLdEtm0wXwj9xTGdTWP4HDgxDHdy7JFoZj6htTKxo1i8dhvDRIUvwkwRReI
+	gh2XxTbH2sYnHoC6nwQY3w0tnUDfnlKI4Rqn4wDjwH7o/tufCJwBZ2+BqILx6UHVrF2vp9qref+
+	t6DobyP23qj60UxehRqVS0SC2Z/xkSiXGkELaI5ryDo1nTE8sO7jLkVP2
+X-Received: by 2002:a05:6214:8097:b0:8a0:d5be:2407 with SMTP id 6a1803df08f44-8a7026ae50emr265416206d6.14.1775587708533;
+        Tue, 07 Apr 2026 11:48:28 -0700 (PDT)
+X-Received: by 2002:a05:6214:8097:b0:8a0:d5be:2407 with SMTP id 6a1803df08f44-8a7026ae50emr265415856d6.14.1775587708110;
+        Tue, 07 Apr 2026 11:48:28 -0700 (PDT)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8a5974ddccdsm155250326d6.41.2026.04.07.11.48.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Apr 2026 11:48:27 -0700 (PDT)
+Date: Tue, 7 Apr 2026 14:48:25 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Marek Vasut <marex@nabladev.com>
+Cc: linux-clk@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	driver-core@lists.linux.dev, linux-i2c@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Kalle Niemi <kaleposti@gmail.com>, linux-cxl@vger.kernel.org,
-	Alison Schofield <alison.schofield@intel.com>,
-	linux-clk@vger.kernel.org, linux-pci@vger.kernel.org,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-spi@vger.kernel.org, Peter Rosin <peda@axentia.se>
-Subject: Re: [PATCH v6 17/27] of: property: Allow fw_devlink device-tree on
- x86
-Message-ID: <177558537013.3212080.6337028648731238779.robh@kernel.org>
-References: <20260325143555.451852-1-herve.codina@bootlin.com>
- <20260325143555.451852-18-herve.codina@bootlin.com>
+	Michael Turquette <mturquette@baylibre.com>,
+	Michael Walle <michael@walle.cc>, Rob Herring <robh@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 4/6] clk: fsl-sai: Sort the headers
+Message-ID: <adVReVTsoUwAUxd3@redhat.com>
+References: <20260406215150.176599-1-marex@nabladev.com>
+ <20260406215150.176599-4-marex@nabladev.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -92,51 +96,13 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260325143555.451852-18-herve.codina@bootlin.com>
+In-Reply-To: <20260406215150.176599-4-marex@nabladev.com>
+User-Agent: Mutt/2.3.0 (2026-01-25)
 
+On Mon, Apr 06, 2026 at 11:49:44PM +0200, Marek Vasut wrote:
+> Sort the headers. No functional change.
+> 
+> Signed-off-by: Marek Vasut <marex@nabladev.com>
 
-On Wed, 25 Mar 2026 15:35:44 +0100, Herve Codina wrote:
-> PCI drivers can use a device-tree overlay to describe the hardware
-> available on the PCI board. This is the case, for instance, of the
-> LAN966x PCI device driver.
-> 
-> Adding some more nodes in the device-tree overlay adds some more
-> consumer/supplier relationship between devices instantiated from this
-> overlay.
-> 
-> Those fw_node consumer/supplier relationships are handled by fw_devlink
-> and are created based on the device-tree parsing done by the
-> of_fwnode_add_links() function.
-> 
-> Those consumer/supplier links are needed in order to ensure a correct PM
-> runtime management and a correct removal order between devices.
-> 
-> For instance, without those links a supplier can be removed before its
-> consumers is removed leading to all kind of issue if this consumer still
-> want the use the already removed supplier.
-> 
-> The support for the usage of an overlay from a PCI driver has been added
-> on x86 systems in commit 1f340724419ed ("PCI: of: Create device tree PCI
-> host bridge node").
-> 
-> In the past, support for fw_devlink on x86 had been tried but this
-> support has been removed in commit 4a48b66b3f52 ("of: property: Disable
-> fw_devlink DT support for X86"). Indeed, this support was breaking some
-> x86 systems such as OLPC system and the regression was reported in [0].
-> 
-> Instead of disabling this support for all x86 system, use a finer grain
-> and disable this support only for the possible problematic subset of x86
-> systems (at least OLPC and CE4100).
-> 
-> Those systems use a device-tree to describe their hardware. Identify
-> those systems using key properties in the device-tree.
-> 
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> Link: https://lore.kernel.org/lkml/3c1f2473-92ad-bfc4-258e-a5a08ad73dd0@web.de/ [0]
-> ---
->  drivers/of/property.c | 26 +++++++++++++++++++++++++-
->  1 file changed, 25 insertions(+), 1 deletion(-)
-> 
-
-Applied, thanks!
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
