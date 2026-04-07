@@ -1,41 +1,41 @@
 Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C942E3A545C
-	for <linux-clk@vger.kernel.org>; Tue,  7 Apr 2026 14:25:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3463A5E83
+	for <linux-clk@vger.kernel.org>; Tue,  7 Apr 2026 14:25:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775571926; cv=none; b=pJTZRBzDGsVMU95ooprNAxIFbudei7vs4fd3wFuLsJ6etLx8UEhXUlsAMxfpJKyBBfxj6Cg2LKQy/UtCGilxacU15PR4YXOJgKLwc+QPipInOFBA1zMfTMu6u4Ff97DTFP7gh9IdA0zgFVSSHPvvEWfLP7NiiCCxBqUiVsvY1EM=
+	t=1775571929; cv=none; b=IEq0j1aspmRh+Ds7e1R3euB2lK+S2TTv+BUYTbBjba5hYMb/CB4iH2r3gTyHEsEZrj5a1Y1iqt5e//zypZRZsckZqpMOX3Dj5lMXve5/ndS32D33tuNU5UynckFgZHU3yYbfwYKqyLsDIDnJQ1zPrr625OznAhPZzRJwVCEfH/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775571926; c=relaxed/simple;
-	bh=uMXG1+BtBCNz2BQdnSet9bFsycZ0Yq81r15tDCx64JU=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HQdJ2GkRNshH+3LPbs+g98f1T/qYzbjsfUPs1Ows3agwP5LgdZYiuK+qhU/RMbco+DkBXSVV+DKyJ5IqDbtAiFjyVsMsc/rgyhs/mhCxpb+gm49PMFMMrppS+6ewS9Ujn6yp6no5iBGTFPT8T6IRXFmXtT2ggDzVEXt6Ttg7sto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=0P4+02rE; arc=none smtp.client-ip=185.171.202.116
+	s=arc-20240116; t=1775571929; c=relaxed/simple;
+	bh=0Av2BDkFzsi6wTJoBd4Wv6QuYlxEMQZ9TJSM5EDnlFY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=GM5uNywjxa6lJryaLcV56b9KsVx26nslFHX0uoDJU+tZefisGXgvjyo1OxqG2Y6BXDWGLagKLE+7nGAeWffHBTNZjJhE13jHj4PFNGRVkXkdJbIpqLTYXUq5yN5J4k1TkL5NZFzY9zNpyEhlCr5K7IExivwYzvL1dxL79g+mc/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Xmu6wm7W; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="0P4+02rE"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Xmu6wm7W"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 076D9C5B18C;
-	Tue,  7 Apr 2026 14:25:56 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id C5852C5B18D;
+	Tue,  7 Apr 2026 14:25:57 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 27B4B603C7;
-	Tue,  7 Apr 2026 14:25:22 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DDD3B1045017A;
-	Tue,  7 Apr 2026 16:25:17 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 0516E603C7;
+	Tue,  7 Apr 2026 14:25:24 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 496F0104500A7;
+	Tue,  7 Apr 2026 16:25:21 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1775571921; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=jq+8qOzPJTUqKjsOERswRR9fpPCqfmg3Dkvvj9MmKts=;
-	b=0P4+02rEAnNDTnKE+p/qz8mP2e2c8tW6KFIf+6DEOGiZQy12/V5zWgWBwrAvZ9jGsku/kS
-	tuViNuPIpChk8j7m7GovfqUJNxCsiENd2Jx4u5k3iIrIJCjzCutDD9Iakelq05XzO3A6nB
-	ESaALpqpNr2p/ZwoJeZ13KMlTwcp+mIEfzxiHZspkQfYZQ0SVqeoSidiHlQ/WfkRZhK5Ut
-	qrhW7ExCVR9JMfNSc+R12/HqV+B1VPVQKLxy5/nxlZf2VRamrXPenD8PS4ZjWt6lS7U0yH
-	9P7pWvFmN2+XO3YDhLPRqrE9pDJkYyzTQv7vhtM9JgS2AGH47D9Xg7eSAZ1UJQ==
+	t=1775571922; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=1FYFzGVw2aSfud5YstAqYLdCYEMowvrxKyxKP8uIqwM=;
+	b=Xmu6wm7Wg2kM0sTP0JLzAgHRO912Upkhcsq7aMmuzzRuhVEZ6GfhWjJi3NzngXEFewHAmB
+	wgi6oYcNEiWje8OS2YpatlngcR1fLeW2BmFKgusYAduevlYUj/4RAHBPlhMCdyk9GWao21
+	jYEoXJYS6g8wi9iqQt5sHRgpfxiw58a9KdylUHbGdXuJYd3Ci3yxkXTONwiSqLEDE7VmRu
+	3yVNKdnIYShRxqIrl6IYoD3tiO+HslA6oq74XuBviNRDvQ4vo+xl+lUuayuX67/ixuwTpr
+	wP/nBntvZOaIALp4psgsGi9b1F1tvz1i8rJ4APJxnnXmi3dvPGy2caHrJVUt+g==
 From: "Thomas Richard (TI)" <thomas.richard@bootlin.com>
-Subject: [PATCH v5 0/4] firmware: ti_sci: Introduce BOARDCFG_MANAGED mode
- for Jacinto family
-Date: Tue, 07 Apr 2026 16:25:05 +0200
-Message-Id: <20260407-ti-sci-jacinto-s2r-restore-irq-v5-0-97b28f2d93f9@bootlin.com>
+Date: Tue, 07 Apr 2026 16:25:06 +0200
+Subject: [PATCH v5 1/4] firmware: ti_sci: add BOARDCFG_MANAGED mode support
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -44,12 +44,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAMET1WkC/4XOTU7DMBAF4KtUXmM0Hk/ihBX3QCyMf+ggiKltI
- lCVu+MUVRHqIsv3NPrenEUJmUMRD4ezyGHmwmlqobs7CHe002uQ7FsWCNgpUCAry+JYvlnHU02
- yYJY5lJpyu8wnSTgEgCF6BU405DOHyN+Xgafnv5zD6avt1K088gr8XJ6Y1dpe98ze3qwkSE2et
- B49krGPLynVd57uXfoQKz7jBircB7GBlgYTrY4RUd2CegMRul1QN9BDP/Z6NGQ93YJ0BXtAoF2
- QGtibAcFGPQbr/oPLsvwCd8L/fNYBAAA=
-X-Change-ID: 20251010-ti-sci-jacinto-s2r-restore-irq-428e008fd10c
+Message-Id: <20260407-ti-sci-jacinto-s2r-restore-irq-v5-1-97b28f2d93f9@bootlin.com>
+References: <20260407-ti-sci-jacinto-s2r-restore-irq-v5-0-97b28f2d93f9@bootlin.com>
+In-Reply-To: <20260407-ti-sci-jacinto-s2r-restore-irq-v5-0-97b28f2d93f9@bootlin.com>
 To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
  Santosh Shilimkar <ssantosh@kernel.org>, 
  Michael Turquette <mturquette@baylibre.com>, 
@@ -65,54 +62,71 @@ Cc: Gregory CLEMENT <gregory.clement@bootlin.com>,
 X-Mailer: b4 0.14.3
 X-Last-TLS-Session-Version: TLSv1.3
 
-This is the 5th iteration of this series. Nothing new, I just rebased on
-v7.0-rc7, added Dhruva's RB tags, and use kzalloc_obj() in Patch 2.
+In BOARDCFG_MANAGED mode, the low power mode configuration is done
+statically for the DM via the boardcfg. Constraints are not supported, and
+prepare_sleep() is not needed.
 
-Best Regards,
-Thomas
-
+Reviewed-by: Dhruva Gole <d-gole@ti.com>
 Signed-off-by: Thomas Richard (TI) <thomas.richard@bootlin.com>
 ---
-Changes in v5:
-- rebase on v7.0-rc7.
-- add Dhruva's RB tag.
-- use kzalloc_obj() in ti_sci driver.
-- Link to v4: https://lore.kernel.org/r/20260204-ti-sci-jacinto-s2r-restore-irq-v4-0-67820af39eac@bootlin.com
+ drivers/firmware/ti_sci.c | 10 +++++++---
+ drivers/firmware/ti_sci.h |  2 ++
+ 2 files changed, 9 insertions(+), 3 deletions(-)
 
-Changes in v4:
-- rebase on linux-next next-20260202.
-- fix BOARDCFG_MANAGED value.
-- add MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST firmware capability.
-- add MSG_FLAG_CAPS_LPM_CLK_CONTEXT_LOST firmware capability.
-- Link to v3: https://lore.kernel.org/r/20251205-ti-sci-jacinto-s2r-restore-irq-v3-0-d06963974ad4@bootlin.com
+diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
+index dd9911b1cc11..eaeaaae94142 100644
+--- a/drivers/firmware/ti_sci.c
++++ b/drivers/firmware/ti_sci.c
+@@ -3772,8 +3772,11 @@ static int ti_sci_prepare_system_suspend(struct ti_sci_info *info)
+ 			return ti_sci_cmd_prepare_sleep(&info->handle,
+ 							TISCI_MSG_VALUE_SLEEP_MODE_DM_MANAGED,
+ 							0, 0, 0);
++		} else if (info->fw_caps & MSG_FLAG_CAPS_LPM_BOARDCFG_MANAGED) {
++			/* Nothing to do in the BOARDCFG_MANAGED mode */
++			return 0;
+ 		} else {
+-			/* DM Managed is not supported by the firmware. */
++			/* DM Managed and BoardCfg Managed are not supported by the firmware. */
+ 			dev_err(info->dev, "Suspend to memory is not supported by the firmware\n");
+ 			return -EOPNOTSUPP;
+ 		}
+@@ -4011,12 +4014,13 @@ static int ti_sci_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	ti_sci_msg_cmd_query_fw_caps(&info->handle, &info->fw_caps);
+-	dev_dbg(dev, "Detected firmware capabilities: %s%s%s%s%s\n",
++	dev_dbg(dev, "Detected firmware capabilities: %s%s%s%s%s%s\n",
+ 		info->fw_caps & MSG_FLAG_CAPS_GENERIC ? "Generic" : "",
+ 		info->fw_caps & MSG_FLAG_CAPS_LPM_PARTIAL_IO ? " Partial-IO" : "",
+ 		info->fw_caps & MSG_FLAG_CAPS_LPM_DM_MANAGED ? " DM-Managed" : "",
+ 		info->fw_caps & MSG_FLAG_CAPS_LPM_ABORT ? " LPM-Abort" : "",
+-		info->fw_caps & MSG_FLAG_CAPS_IO_ISOLATION ? " IO-Isolation" : ""
++		info->fw_caps & MSG_FLAG_CAPS_IO_ISOLATION ? " IO-Isolation" : "",
++		info->fw_caps & MSG_FLAG_CAPS_LPM_BOARDCFG_MANAGED ? " BoardConfig-Managed" : ""
+ 	);
+ 
+ 	ti_sci_setup_ops(info);
+diff --git a/drivers/firmware/ti_sci.h b/drivers/firmware/ti_sci.h
+index 4616127e33ff..d90de59e29eb 100644
+--- a/drivers/firmware/ti_sci.h
++++ b/drivers/firmware/ti_sci.h
+@@ -150,6 +150,7 @@ struct ti_sci_msg_req_reboot {
+  *		MSG_FLAG_CAPS_LPM_DM_MANAGED: LPM can be managed by DM
+  *		MSG_FLAG_CAPS_LPM_ABORT: Abort entry to LPM
+  *		MSG_FLAG_CAPS_IO_ISOLATION: IO Isolation support
++ *		MSG_FLAG_CAPS_LPM_BOARDCFG_MANAGED: LPM config done statically for the DM via boardcfg
+  *
+  * Response to a generic message with message type TI_SCI_MSG_QUERY_FW_CAPS
+  * providing currently available SOC/firmware capabilities. SoC that don't
+@@ -162,6 +163,7 @@ struct ti_sci_msg_resp_query_fw_caps {
+ #define MSG_FLAG_CAPS_LPM_DM_MANAGED	TI_SCI_MSG_FLAG(5)
+ #define MSG_FLAG_CAPS_LPM_ABORT		TI_SCI_MSG_FLAG(9)
+ #define MSG_FLAG_CAPS_IO_ISOLATION	TI_SCI_MSG_FLAG(7)
++#define MSG_FLAG_CAPS_LPM_BOARDCFG_MANAGED	TI_SCI_MSG_FLAG(12)
+ #define MSG_MASK_CAPS_LPM		GENMASK_ULL(4, 1)
+ 	u64 fw_caps;
+ } __packed;
 
-Changes in v3:
-- rebased on linux-next
-- sci-clk: context_restore() operation restores also rate.
-- Link to v2: https://lore.kernel.org/r/20251127-ti-sci-jacinto-s2r-restore-irq-v2-0-a487fa3ff221@bootlin.com
-
-Changes in v2:
-- ti_sci: use hlist to store IRQs.
-- sci-clk: add context_restore operation
-- ti_sci: restore clock parents during resume
-- Link to v1: https://lore.kernel.org/r/20251017-ti-sci-jacinto-s2r-restore-irq-v1-0-34d4339d247a@bootlin.com
-
----
-Thomas Richard (TI) (4):
-      firmware: ti_sci: add BOARDCFG_MANAGED mode support
-      firmware: ti_sci: add support for restoring IRQs during resume
-      clk: keystone: sci-clk: add restore_context() operation
-      firmware: ti_sci: add support for restoring clock context during resume
-
- drivers/clk/keystone/sci-clk.c |  42 +++++++++--
- drivers/firmware/ti_sci.c      | 164 ++++++++++++++++++++++++++++++++++++++---
- drivers/firmware/ti_sci.h      |   6 ++
- 3 files changed, 192 insertions(+), 20 deletions(-)
----
-base-commit: d843b67129e266054d8fa2e41e270a9f779381bd
-change-id: 20251010-ti-sci-jacinto-s2r-restore-irq-428e008fd10c
-
-Best regards,
 -- 
-Thomas Richard (TI) <thomas.richard@bootlin.com>
+2.53.0
 
