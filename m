@@ -1,158 +1,156 @@
-Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2090.outbound.protection.partner.outlook.cn [139.219.17.90])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B530A8248B;
-	Tue,  7 Apr 2026 01:37:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.90
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775525870; cv=fail; b=CEpTZ8SH3ZHm7B9/GSAlblj9Urm6+/v2/RKcIsIHdUjFbo+wRvOqNrLxnfFxl1h9wmX5dkFm4sANvY6pfIIm0jdUgiSBb20Sbsi3w0kwUiDUZxKioiWphFPT21r5iHVQg+zh0vYkTVO+iH18EY1lCUtlEzuOKm21zit3g1t2hsQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775525870; c=relaxed/simple;
-	bh=9svDytkhrZ7DQHwJawwXS+yCnJBh0YFeMHC3PXNvR5g=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=NJu0gWSrTN+YiPBxx6SfflZQI+kNoTRlFMmbLa6gvn8y0/uqBQBMkU4A0KWnvgCkqhNdxxWOQxA2gpYwqlLtFi3S4dl/4YV8gql48duOcEI3sVQbn1c9wf/ycWFkd2S09Dix6qo9whqHelbAKJzSHCgP9/hG+SqU7ZvyQNX+Drc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hgQPe7QB8rf/RmdIHIo0eCCGFDYc5YhEnRV1aRLWXfdOe4jouAHT5psEpLzSUDWy2Nnn22cFH/wYhj6JifXg5UenLBJF4RpHPvm6QdLol3l1J5vK/bCoK18RLophcyPP3YpWIdYg8EkM++IBWKYirIPpxGIY7LjKxND9TFWC4xOqDPHh8Mlu/7pkL6NJns9Hy5vuDO5WZe84Libop+9LR+M22EgQ1DaZy6iYCjz9jg7bFsZmQgiNnHWle/d2/P+cIHTxYByRzvUy2hKXK62/qyCSrNh9ac01vVeAhihPoJN+Yu2B42oi+4jJe1CBSH/sBUkg+G03QBAgXmQse54vPw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9svDytkhrZ7DQHwJawwXS+yCnJBh0YFeMHC3PXNvR5g=;
- b=bswlf3lHns0CKPu5XhZIZjbXn9/8mpsXHceYz6FFskh1DdT77kltLcwE8i+mRXWIgJgASrISRa1Eu7arW/W6CkmwcjHsAfqxI1jGewQXN/YaAvu54mvONTb8vY9sNfVaujWt63qsVigP9XrRCVOWbf36Jw83QrL6+wESuOpeSQ4a8HpRAq3Wm9TKmOY3O0FanTEsf5KWxEAwIA8V+Wm3i6iEb33WmuJ1NA8RxTie0mBhZSq+cQBaSar7k+4AmIk/8oNAkkHaB5F/WiNzgNQ+FBsxOlijiPfT9PZWeDxURRh1i08hw8JpeAUrQiV9D8KSbBIm2W56WfeRuo2CTEmWMQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:17::6) by ZQ4PR01MB1300.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:14::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.19; Tue, 7 Apr
- 2026 01:37:37 +0000
-Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
- ([fe80::e7d4:256c:b066:850d]) by
- ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn ([fe80::e7d4:256c:b066:850d%5])
- with mapi id 15.20.9769.020; Tue, 7 Apr 2026 01:37:37 +0000
-From: Changhuang Liang <changhuang.liang@starfivetech.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Michael Turquette <mturquette@baylibre.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Paul Walmsley
-	<pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
-	<aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Emil Renner Berthing <kernel@esmil.dk>, Kees Cook
-	<kees@kernel.org>, "Gustavo A . R . Silva" <gustavoars@kernel.org>, Richard
- Cochran <richardcochran@gmail.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-riscv@lists.infradead.org"
-	<linux-riscv@lists.infradead.org>, "linux-hardening@vger.kernel.org"
-	<linux-hardening@vger.kernel.org>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, JeeHeng Sia <jeeheng.sia@starfivetech.com>, Hal
- Feng <hal.feng@starfivetech.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>
-Subject: Re: [PATCH v1 17/22] dt-bindings: clock: Add StarFive JHB100
- Peripheral-2 clock and reset generator
-Thread-Topic: [PATCH v1 17/22] dt-bindings: clock: Add StarFive JHB100
- Peripheral-2 clock and reset generator
-Thread-Index: AQHcwo9TQLfYd6wApEuyD9hxN+QHMrXOyPcAgAQQIeA=
-Date: Tue, 7 Apr 2026 01:37:37 +0000
-Message-ID:
- <ZQ4PR01MB12020E711CD7E1FAFD01B8A4F25A2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
-References: <20260402105523.447523-1-changhuang.liang@starfivetech.com>
- <20260402105523.447523-18-changhuang.liang@starfivetech.com>
- <20260404-valiant-auburn-raven-c24be6@quoll>
-In-Reply-To: <20260404-valiant-auburn-raven-c24be6@quoll>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: ZQ4PR01MB1202:EE_|ZQ4PR01MB1300:EE_
-x-ms-office365-filtering-correlation-id: f3538206-cb30-402c-f796-08de94463fb7
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|7416014|376014|366016|22082099003|38070700021|56012099003|18002099003;
-x-microsoft-antispam-message-info:
- qmEP3bjgB6m9MPjt13YYbGxaYp04mGE7lmQibnSouKS3DhYzJsXk1bmqYbo2btr7bf4x43dt6M+f0n67dVlT1aFdFSy+1oc2CO2pPeRzsQx0PFUgRtZ17RGIPAVDCNgapObjyPR6qCU1Y9Uaj186KUljwlZvSvGsZj8n9aONL3xaxVDSSDpXbFZx5+Wqs7W33aYr01ff5D72abOpjp19WxRXAefVjYLSAi6sJ0WPIDwEUOGfNxlMN1SB8db3fKCViC3irEi2RRDBtTo8O7DqAwmKG0BFemQGHYR1T/mGMkI6Ht1OJyRI/JdRRgm443lMb/5qO8PdM2DtkWYK5zkA3jM4V3VoZ1kYt5waJwge324PfVXb7tAJDm730cLVgGMOJMkZ8CQXOG3SMTI/9262EsSjFg0jX6qkdeA+CO35ojfE4NC8M7aCU0WFnhL1e7lgJl+W52D5dtLFZ65IRvbe6u46fmlWLg3cgK5HjrZGGzKH8ToFCb52MODicMNbcFU52PinkvEIfd4kb4RUcWkFQgU+ZB/vFO8PB1YYMSnLfoRBanE+fxUAVBDu5/8BEW4FnpB27C/374YiPiIznpJORN05186bnyGp0mF6QYJR0eU=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(22082099003)(38070700021)(56012099003)(18002099003);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?OVZsME1oZVBrMkw1eCszd29BbFEvWHA2Rkh3VjdDN3RneGp1R3laRFBjMThX?=
- =?utf-8?B?aFVVSS9zbmxGUGYxNm9PN2VqQ0gwRzlsR2ZVbTByQlUyTzJwZEtyN1R0R0ht?=
- =?utf-8?B?OFlhamc5T3Jva2RZSEFyS3hZU1JMZHZqWlVMT21GNDhoM1hsbzA0dU9OcEVZ?=
- =?utf-8?B?REV6UUhxaW1oSDZwMU1Pem9uVzFtMUxRR09RWC9rZVZPMTg3ejVCbUxPRWZk?=
- =?utf-8?B?bU40TmZvODFxQk1zQVBMR0NwZGNnWmV5bGxQV0dmZ1ZmSWVuTWxld3NEOElv?=
- =?utf-8?B?RE5XZm9aOVdyYmVEdHdBcFROdURsK05tK3NxUm5DaFJEaEdEbXZzTnA1MzIz?=
- =?utf-8?B?WDBIRHhYOVFJOWZCSkxXYUZaQ1JFV2xVNGdqWSs3NHFJMUJDbzYxZDYyQUJV?=
- =?utf-8?B?bURQSmlaNFBucWh4eDF0N2hDRTZNdTJwaC90WklKdXVZdEhwNzhvdlNFU3Bk?=
- =?utf-8?B?WndwMjBXZUgreWx5RDNUK0gxVDhqRmdud0x0anRZejlpOVRUOVNkRnlmRDFP?=
- =?utf-8?B?bUdiVzd1eDdkVkdTTURMR0U3MzgwVDFwTE93d3pyOG56Z3JOUm10Q3ZCMysy?=
- =?utf-8?B?YnRLQUdId2szNkVEVFZkLzd6UzdzQ2NacTdCVjNTMTBNZC9scmFDdlk5dEJh?=
- =?utf-8?B?ZTVMWkZDUEoraUR2VlJYdVl2OXV3b09EeEtXbUZCSk9ZUDNVTUJHUTNyZEht?=
- =?utf-8?B?c0pNSXMrZDBBRGpKNXlveDVIV3ZFNUJwRVZ2SHJZOTdtMkpkbDQvZmViOVNX?=
- =?utf-8?B?YS9EUXVvNmZmUUF2Rk5OZTZ5bkxhdnUrcHJnSFlzL3lFSkNPbk5sczZFR1dt?=
- =?utf-8?B?YTM4RUZiTFIwN0VkaDJuTDdNdERjZk5rc2pUcmJ5V2d1Yzd3TTkvQzlteHg3?=
- =?utf-8?B?VERSMWN5UUNtVDhoeE13WGMrNjgxcytpVFNYelVBaHlFcFlLT2FZM29ZVHlv?=
- =?utf-8?B?ZHBUSnRxMWtLYjdSc3BWc2svSkJpbDRLQVpnZ1k1TDViUjlGY0I1MFNpYlRP?=
- =?utf-8?B?aHZSRGhwWWpUMjkyMTZOUUU1N1dmdGNHWEkvczNHU1daNTV3eXBYY3FnTHlv?=
- =?utf-8?B?NzM3UEU1RFR6N3ZnMkpudDRPQVF3NEtNYmNaUXBpQlg4WThVME1TMWs5cnd5?=
- =?utf-8?B?RTVoSmtvTGNMTXBHYkc4UWpZL3BaekFDeDZPQ2tCWGdrNS9LalJKMjd4Z0NP?=
- =?utf-8?B?dHQ1c0hRL3NOYjMwVHZnbmFSUDVIN0hPVzBQeEgyaTl5MU9JZmhSS0UxWmtk?=
- =?utf-8?B?R0VLTWlJNVkwV04zVms5VkdKQmhqQzJmNUJialFFVmE2eURHcS9NREZCSXQz?=
- =?utf-8?B?NmRXZW81S3VjaXZWYzlEOHNVRnlhWFpvU0lTdGxrSjZpRlhIQWRPY2RoUVdv?=
- =?utf-8?B?akdiNHdvVTBDMUhOOU01cjloQ24wTUQwUmcreUlvazBTZU80Q2RQZzkzRDNV?=
- =?utf-8?B?WGpZb0NGVjBYOEgrZmpMcG9MRUxSNFJuSFVmaDRtY0krdEptNmphQWQ0S0RO?=
- =?utf-8?B?M2JsVkR1d2VWdlF5R05iNDB4dFNqN2hURUFMbDlrZWRLUXpGVmlzL2ViWU1x?=
- =?utf-8?B?bktuTDVnaE9rQTVpUDlFa3lMQlpyMUxoVXNTS3lCb0gxZE8zbTNHRURoWUdt?=
- =?utf-8?B?MlJ4QXhYZWRQV3RNN25HM255T0szMTZaRE42MHBic0o1ajlKNkJyOWYxNlRx?=
- =?utf-8?B?bnFwWFl3VUxNWGdPc1JEajBWMGlZRXFLK3N0MmVjVXdJUjBPcVBYcVVVcVJV?=
- =?utf-8?B?VExVamN1UXIycGx5dlc1R0RTdVhkMVFVSjUvTGVMTGVxYWFacEtET1Z0a2g4?=
- =?utf-8?B?THUrTVFQVU02NGluaDUwb3ZzeDdvQ2FJaDZqTUlPa3U0S0hYSFhteGJFME5O?=
- =?utf-8?B?aXdBSnNUU3g5VVlOeUJwMStQTTBVR0hudEtzVmN2NnVpM1hXWm1KNjI2d1Vy?=
- =?utf-8?B?SnA4aHlWOGZsbEtHdFN1UUt1YTZScFVXK3RvOHVMbVVsQzBEdXBGUW94TUFk?=
- =?utf-8?B?QjNibGRUZnhGVDdJN05GMEFGSlhXYWJ0MjN1eFhhTlp6cXFOOFpaTUcxSnRk?=
- =?utf-8?B?dXVEMVlBQzFZMEx0OWMySmZaZURrQmJwdFNKbzc5elNaR2FEVDZZdldibER6?=
- =?utf-8?B?SUNNRDA0MmJVMExoSWRTL2JodlVmZ1hTaEVFSk4xRjZuNll1cUxvV2t2SVdF?=
- =?utf-8?B?c0pUbFJNa3ZDMm1BR2x2djhWY3RMR0QrN0M3KzRtMk44dnFJZElRODFReWQv?=
- =?utf-8?B?TmhtVFNicVRIUXV3WmhzZ2c5TUIrZlFLYmhvRTZ0aW02TGxveTIybThMdm0y?=
- =?utf-8?B?dzFBaktBaDhwbUxSZ01aTmU4RHdsbDBRc0FmYVFUMUR3R2pEa2hQRE5pSmM5?=
- =?utf-8?Q?CMyUmAh2+xHVXGsQ=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74FD0375F9A
+	for <linux-clk@vger.kernel.org>; Tue,  7 Apr 2026 03:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1775534378; cv=none; b=F5v4yf9YwlQbX13NjJz5Pj4gGd/EXcVgYXnx338UrhTuX9aMYBIwDMvvKme+jO+qcHWGfqYohCuyuLjFe/532K00eYhYk+gTRLv5NTn1ayvL+a5oYijyheQ10duRbxQlk2V1Qh6GNK11IXr3jdQfwHwk7q44a9CxphbY2cABQPg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1775534378; c=relaxed/simple;
+	bh=0p1MucUCBy9HlnC2t/Ylb4wiPxkTu5iCplhs+cOZep0=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NEdKzy9t99a/8MCoMMUb2nWBq42JyzJ6NKU3JNhCAmwhjR7zM/tVQ673ci0EfP06qUvlzCOddn0q7tZt8032ngtv0Ixeya0wYsw42n7XapZ8K+9Qpez5r+rJLSwtys/rx2iKg9N+lCUhT0ydFSJuIfZ1K2v16GJ0q3anpc9wZsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jzcAzESr; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jzcAzESr"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1775534376; x=1807070376;
+  h=date:from:to:subject:message-id:references:mime-version:
+   in-reply-to;
+  bh=0p1MucUCBy9HlnC2t/Ylb4wiPxkTu5iCplhs+cOZep0=;
+  b=jzcAzESrw090vMLewaCUC3bRXLvNPVbqPY/VixeeKokytMXP5w3anvfM
+   3RPJ5qbCRfvJOTqKk7HuFiYU7pv9daDBW1/0bUhO+5uVBy5EOOsZngO8i
+   uQw9D9Fsyc+6j4IW4I8Loy3CEcnEFgfdGoJ2990B4O9CwYPtxim5Lyy0R
+   Mehud9v+5zoDDwmLHrCm/ErG+R+iJdHtm4LiCLrRoxXRMR+Is5UF952We
+   LzsdUMgmDX1TysLs+bSKisvrVEC5KxTsw5MAVQ1jVlr+ORlD3UphelJab
+   Q5JNL7hQUeBsdpYbW+rXqVWekXKkucbllPggR6xMcRUWRGE5SDIVBt19s
+   Q==;
+X-CSE-ConnectionGUID: tI1KQZSUTYCukEfgXIRtvA==
+X-CSE-MsgGUID: VamP2UGPQ42pagx8wIXnEQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11751"; a="76204313"
+X-IronPort-AV: E=Sophos;i="6.23,164,1770624000"; 
+   d="scan'208";a="76204313"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Apr 2026 20:59:36 -0700
+X-CSE-ConnectionGUID: QIRvG/KIRL6UJUCbizKSkw==
+X-CSE-MsgGUID: xzUm/JGvTCepmp2TeCUFjw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,164,1770624000"; 
+   d="scan'208";a="251193014"
+Received: from lkp-server01.sh.intel.com (HELO d00eb8a6782a) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 06 Apr 2026 20:59:35 -0700
+Received: from kbuild by d00eb8a6782a with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1w9xbB-0000000006f-15VW;
+	Tue, 07 Apr 2026 03:59:33 +0000
+Date: Tue, 7 Apr 2026 11:59:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Rosen Penev <rosenp@gmail.com>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: mvebu: use kzalloc_flex
+Message-ID: <202604051615.3w1LlikE-lkp@intel.com>
+References: <20260402002011.89926-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-Network-Message-Id: f3538206-cb30-402c-f796-08de94463fb7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Apr 2026 01:37:37.0592
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: poZ2b2XHPUzOJESYh4R4e7yLVh7YXpX3f/RJJlT0iWplisl12Dk38brZz85Mq796BbGO9I9Q5VMWEGTK+pr+MpMZOnMq/s6Yc6C+XIQCALKyvSQd77tJwbaZRtUbfV+g
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ4PR01MB1300
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260402002011.89926-1-rosenp@gmail.com>
 
-SGksIEtyenlzenRvZg0KDQpUaGFua3MgZm9yIHRoZSByZXZpZXcuDQoNCj4gT24gVGh1LCBBcHIg
-MDIsIDIwMjYgYXQgMDM6NTU6MThBTSAtMDcwMCwgQ2hhbmdodWFuZyBMaWFuZyB3cm90ZToNCj4g
-PiArICBjbG9ja3M6DQo+ID4gKyAgICBpdGVtczoNCj4gPiArICAgICAgLSBkZXNjcmlwdGlvbjog
-UGVyaXBoZXJhbC0yIDYwME1Ieg0KPiA+ICsgICAgICAtIGRlc2NyaXB0aW9uOiBQZXJpcGhlcmFs
-LTIgNDAwTUh6DQo+ID4gKyAgICAgIC0gZGVzY3JpcHRpb246IFBlcmlwaGVyYWwtMiAxMjVNSHoN
-Cj4gPiArICAgICAgLSBkZXNjcmlwdGlvbjogUGVyaXBoZXJhbC0yIEdNQUMyIFJHTUlJIFJYDQo+
-ID4gKyAgICAgIC0gZGVzY3JpcHRpb246IFBlcmlwaGVyYWwtMiBHTUFDMiBSTUlJIFJlZmVyZW5j
-ZQ0KPiA+ICsgICAgICAtIGRlc2NyaXB0aW9uOiBQZXJpcGhlcmFsLTIgR01BQzMgU0dNSUkgVFgN
-Cj4gPiArICAgICAgLSBkZXNjcmlwdGlvbjogUGVyaXBoZXJhbC0yIEdNQUMzIFNHTUlJIFJYDQo+
-ID4gKyAgICAgIC0gZGVzY3JpcHRpb246IE1haW4gT3NjaWxsYXRvciAoMjUgTUh6KQ0KPiA+ICsN
-Cj4gPiArICBjbG9jay1uYW1lczoNCj4gPiArICAgIGl0ZW1zOg0KPiA+ICsgICAgICAtIGNvbnN0
-OiBwZXIyXzYwMA0KPiANCj4gRG9lcyBub3QgaGF2ZSBhbnkgbWVhbmluZ2Z1bCBuYW1lIGluIGRh
-dGFzaGVldCAvIGNsb2NrIGhpZXJhcmNoeT8NCg0KWWVzLCBzb21lIGNsb2NrcyBhcmUgbmFtZWQg
-ZGlyZWN0bHkgYnkgZnJlcXVlbmN5Lg0KDQpJIHdpbGwgdHJ5IHRvIGZpbmQgaWYgdGhlcmUgYXJl
-IG90aGVyIG1lYW5pbmdmdWwgbmFtaW5nIG9wdGlvbnMuDQoNCkJlc3QgUmVnYXJkcywNCkNoYW5n
-aHVhbmcNCg0K
+Hi Rosen,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on linus/master v7.0-rc6 next-20260403]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Rosen-Penev/clk-mvebu-use-kzalloc_flex/20260405-093941
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/20260402002011.89926-1-rosenp%40gmail.com
+patch subject: [PATCH] clk: mvebu: use kzalloc_flex
+config: arm-defconfig (https://download.01.org/0day-ci/archive/20260405/202604051615.3w1LlikE-lkp@intel.com/config)
+compiler: clang version 23.0.0git (https://github.com/llvm/llvm-project c80443cd37b2e2788cba67ffa180a6331e5f0791)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260405/202604051615.3w1LlikE-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202604051615.3w1LlikE-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/clk/mvebu/common.c:289:1: warning: unused label 'gates_out' [-Wunused-label]
+     289 | gates_out:
+         | ^~~~~~~~~~
+   1 warning generated.
+
+
+vim +/gates_out +289 drivers/clk/mvebu/common.c
+
+a97fbc3ee3e2a53 Thierry Reding        2025-10-29  236  
+a45184099affdd5 Sebastian Hesselbarth 2013-05-11  237  void __init mvebu_clk_gating_setup(struct device_node *np,
+a45184099affdd5 Sebastian Hesselbarth 2013-05-11  238  				   const struct clk_gating_soc_desc *desc)
+a45184099affdd5 Sebastian Hesselbarth 2013-05-11  239  {
+a45184099affdd5 Sebastian Hesselbarth 2013-05-11  240  	struct clk *clk;
+a45184099affdd5 Sebastian Hesselbarth 2013-05-11  241  	void __iomem *base;
+a45184099affdd5 Sebastian Hesselbarth 2013-05-11  242  	const char *default_parent = NULL;
+a45184099affdd5 Sebastian Hesselbarth 2013-05-11  243  	int n;
+a45184099affdd5 Sebastian Hesselbarth 2013-05-11  244  
+f571053152f6607 Thomas Petazzoni      2014-11-21  245  	if (ctrl) {
+7fbb639aea35383 Colin Ian King        2019-04-16  246  		pr_err("mvebu-clk-gating: cannot instantiate more than one gateable clock device\n");
+f571053152f6607 Thomas Petazzoni      2014-11-21  247  		return;
+f571053152f6607 Thomas Petazzoni      2014-11-21  248  	}
+f571053152f6607 Thomas Petazzoni      2014-11-21  249  
+a45184099affdd5 Sebastian Hesselbarth 2013-05-11  250  	base = of_iomap(np, 0);
+a45184099affdd5 Sebastian Hesselbarth 2013-05-11  251  	if (WARN_ON(!base))
+a45184099affdd5 Sebastian Hesselbarth 2013-05-11  252  		return;
+a45184099affdd5 Sebastian Hesselbarth 2013-05-11  253  
+a45184099affdd5 Sebastian Hesselbarth 2013-05-11  254  	clk = of_clk_get(np, 0);
+a45184099affdd5 Sebastian Hesselbarth 2013-05-11  255  	if (!IS_ERR(clk)) {
+a45184099affdd5 Sebastian Hesselbarth 2013-05-11  256  		default_parent = __clk_get_name(clk);
+a45184099affdd5 Sebastian Hesselbarth 2013-05-11  257  		clk_put(clk);
+a45184099affdd5 Sebastian Hesselbarth 2013-05-11  258  	}
+a45184099affdd5 Sebastian Hesselbarth 2013-05-11  259  
+c3d0c641ee00fc0 Rosen Penev           2026-04-01  260  	/* Count, allocate, and register clock gates */
+c3d0c641ee00fc0 Rosen Penev           2026-04-01  261  	for (n = 0; desc[n].name;)
+c3d0c641ee00fc0 Rosen Penev           2026-04-01  262  		n++;
+c3d0c641ee00fc0 Rosen Penev           2026-04-01  263  
+c3d0c641ee00fc0 Rosen Penev           2026-04-01  264  	ctrl = kzalloc_flex(*ctrl, gates, n);
+a45184099affdd5 Sebastian Hesselbarth 2013-05-11  265  	if (WARN_ON(!ctrl))
+f98d007d332b819 Jisheng Zhang         2013-08-23  266  		goto ctrl_out;
+a45184099affdd5 Sebastian Hesselbarth 2013-05-11  267  
+c3d0c641ee00fc0 Rosen Penev           2026-04-01  268  	ctrl->num_gates = n;
+c3d0c641ee00fc0 Rosen Penev           2026-04-01  269  
+87e392164ab6c0f Mike Turquette        2014-08-27  270  	/* lock must already be initialized */
+87e392164ab6c0f Mike Turquette        2014-08-27  271  	ctrl->lock = &ctrl_gating_lock;
+a45184099affdd5 Sebastian Hesselbarth 2013-05-11  272  
+f571053152f6607 Thomas Petazzoni      2014-11-21  273  	ctrl->base = base;
+f571053152f6607 Thomas Petazzoni      2014-11-21  274  
+a45184099affdd5 Sebastian Hesselbarth 2013-05-11  275  	for (n = 0; n < ctrl->num_gates; n++) {
+a45184099affdd5 Sebastian Hesselbarth 2013-05-11  276  		const char *parent =
+a45184099affdd5 Sebastian Hesselbarth 2013-05-11  277  			(desc[n].parent) ? desc[n].parent : default_parent;
+a45184099affdd5 Sebastian Hesselbarth 2013-05-11  278  		ctrl->gates[n] = clk_register_gate(NULL, desc[n].name, parent,
+a45184099affdd5 Sebastian Hesselbarth 2013-05-11  279  					desc[n].flags, base, desc[n].bit_idx,
+87e392164ab6c0f Mike Turquette        2014-08-27  280  					0, ctrl->lock);
+a45184099affdd5 Sebastian Hesselbarth 2013-05-11  281  		WARN_ON(IS_ERR(ctrl->gates[n]));
+a45184099affdd5 Sebastian Hesselbarth 2013-05-11  282  	}
+a45184099affdd5 Sebastian Hesselbarth 2013-05-11  283  
+a45184099affdd5 Sebastian Hesselbarth 2013-05-11  284  	of_clk_add_provider(np, clk_gating_get_src, ctrl);
+f98d007d332b819 Jisheng Zhang         2013-08-23  285  
+a97fbc3ee3e2a53 Thierry Reding        2025-10-29  286  	register_syscore(&clk_gate_syscore);
+f571053152f6607 Thomas Petazzoni      2014-11-21  287  
+f98d007d332b819 Jisheng Zhang         2013-08-23  288  	return;
+f98d007d332b819 Jisheng Zhang         2013-08-23 @289  gates_out:
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
