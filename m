@@ -1,95 +1,92 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92770378D86
-	for <linux-clk@vger.kernel.org>; Tue,  7 Apr 2026 19:58:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1183435F178
+	for <linux-clk@vger.kernel.org>; Tue,  7 Apr 2026 20:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775591899; cv=none; b=qyqBcKOzcfO4TgGEUTYwSgFI7l1q1xvDQZq/0E3/3cVSsSCYJJMY66f14/JwEHsQ4xRhw15wLFe5pwlrrpfXHpJnLMstCT8ThhlDS1RovRzKOMLEFnbTkAMek0chfApmTTIlne9eq17RiANxpvCLyikqyUJDcNaOvSuC2Jg1UXo=
+	t=1775592129; cv=none; b=SmUX4ZteSxLl7PnWFESvQWm9+J5lMH+kX/EI/wky7J6mqDgzjEkYu0beommYiA0+KyJ3N6kyMrAOBLlrCQR7MKMlwdu/PC1Jw/FDycytTov0TaUVHjJRGubB+Hqk3YCuzZvbdv9Cz8SwBjdfOu48L0OuuOWBi7h4pfmpmiJtyRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775591899; c=relaxed/simple;
-	bh=y4dVmADXE1jrgnpP8JxM8NIiyhlZTgiZlr2F7Lxkn1E=;
+	s=arc-20240116; t=1775592129; c=relaxed/simple;
+	bh=hJtN8K1NO+1GlGmjmYQ1CDezEvY+K0yC5MUDZO/1Nm4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i2F8Ar86gxt5ebwkOj+oHFDDbg63KSwDNFFcaS+Vh4Oj9w/ayFf9LSvNOruo39w4wp6zeSKW3BYa6NCL+6dV5RAtr5Dnq+Ak+95+M7F0gGIy+TVX0TUSD+GZG07HXv+JOhHVYW0wFjyHwiBYA8G20bknUGmESftP/SMo/TQioVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bTTSxE7F; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=RyA++f8I; arc=none smtp.client-ip=170.10.133.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=pR8kn/FNIWotgWdY7JnXJF5YBpbvQoFM5/N09ATYovRVN72yoDas+OLmUKIafy+RMi0bI5KbcQ0ewsuHnSw+Q2Wv9ATcNRp3eXNtIv+r+0JWhBTEgfcr9YHeCobdW9HUp/SOvEgA0i0DDEau6/IWK9aHUPlaO360ATsd724qZVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YMvcfAxk; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=FqWx5VeI; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bTTSxE7F";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="RyA++f8I"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YMvcfAxk";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="FqWx5VeI"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1775591897;
+	s=mimecast20190719; t=1775592126;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=1lyCZReF7n3h9ZzIFPxE3qqalSIjCxvP1fRMXtPh+/M=;
-	b=bTTSxE7F/JyDROikH6h2jkAJGfyu5GinYBxakB0SUs32tk1H4pc6gYynDkvQrMSrm/ePlB
-	hYX60jk5Wo3354KTONxXx+y/gnNi637eNmHRhqWrUzxXXB6hlfx+oGXs0VzzRptI/HxJdG
-	g9p+wwdYOG2cc5lz49u2zITyj8zXke4=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=Nwpk7x3/OYthLLbkTiH6r3E3G4VZBvtoK/r2DsOIAbs=;
+	b=YMvcfAxk77m/CeyFAaAbZnOr/1SZZcbOWn+R+VmUpZ5+614dH9Nm338uzfPQE1MiNt94fy
+	j0V7gvKV3yVB0BNskjP7DAnHp89CEEYrdXHU2RYuzj4A7nlZxEGYGRRlnVgRLfIywl2JpI
+	ZAoBFe55moFmNxhjWhvzUV1rKL0ZNX8=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-332-p_Jewt0lO7O8kporRYNEFA-1; Tue, 07 Apr 2026 15:58:16 -0400
-X-MC-Unique: p_Jewt0lO7O8kporRYNEFA-1
-X-Mimecast-MFC-AGG-ID: p_Jewt0lO7O8kporRYNEFA_1775591896
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8cfd0a23243so1968423585a.2
-        for <linux-clk@vger.kernel.org>; Tue, 07 Apr 2026 12:58:16 -0700 (PDT)
+ us-mta-12-O6hlXYbRNtWx5V-ueqxdSA-1; Tue, 07 Apr 2026 16:02:05 -0400
+X-MC-Unique: O6hlXYbRNtWx5V-ueqxdSA-1
+X-Mimecast-MFC-AGG-ID: O6hlXYbRNtWx5V-ueqxdSA_1775592125
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-50b34223670so244395291cf.0
+        for <linux-clk@vger.kernel.org>; Tue, 07 Apr 2026 13:02:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1775591896; x=1776196696; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1775592125; x=1776196925; darn=vger.kernel.org;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1lyCZReF7n3h9ZzIFPxE3qqalSIjCxvP1fRMXtPh+/M=;
-        b=RyA++f8Ih12FK15i7ABmKwIM+6g6yAijIcCVkmWSpH6uzCYH6Wy7PGrF78VX41wadG
-         0Vkoj8tlGPCl8ZQwXYlqdOsh7VJaufUSBK2Q+TsOjcgFTn/FufjmqHr7v84XoE2TjPI2
-         eZOmzgcOCrlMLnt9AoaxELh/Oy9uWcaTYEZitDrSXyb+Fpd723fvdJMNTF3W9bPtJ5HR
-         ePr3DJPkpxGWIW//Toe+/lZLsh4+2OgqTsJLYHOy63mR6kIULcklAe7tLrR9EimZToC2
-         QeO4I9qQJkVLvOX7/ZWfm3TxnfOcsWg7h7zrrmyTbPQBv7BY+01UwdLLKujhjNxTKQ6H
-         gzAg==
+        bh=Nwpk7x3/OYthLLbkTiH6r3E3G4VZBvtoK/r2DsOIAbs=;
+        b=FqWx5VeIOfWSE4/QZPtqixPyXmZl9IrlsvnRZ//NWBlMIXudBruVWDjKNnhSokOEdK
+         +EdW+rCv2s5wFVVgeWnp169ci6NoZTPnwRptjRR3yrLm6v88iPCZk8ofdlfPJFdTU07F
+         6CD95+uOmTziiZsm57uj0+JdcD/VgTI1JYA7EOv5DWe/Wsb5QTdOfl7DmQe0nkTHT+nA
+         ibDLeu6uriUa3ANx+VrRuB5ET91gwoPj+u/wKqjPwMQmYz/ilCxG33eAuARwQshXzhez
+         oYaarivonjgfYRVuk+0uXvpK6NNeIGN0ptwnFDbZMaSMex2Uq+hvsVIjCS1lmbTfYP0x
+         LKuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775591896; x=1776196696;
+        d=1e100.net; s=20251104; t=1775592125; x=1776196925;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=1lyCZReF7n3h9ZzIFPxE3qqalSIjCxvP1fRMXtPh+/M=;
-        b=XKfj0jN6MwyzvdB4F5nEN+ne0zzqi8IyjIMy7SLTxa0TVcRyQr2VS10MmWGs6/4vIg
-         nFaFEjhbn7gqu00JgjiJm1eBwfxyBGKiSzOmkNeO0i1oSGhxKEChUc6S0KYklUikhvlT
-         VzV2bXkUcksoCwOuvo/EjbX7eVBohw3bckDDQjoXwZaiDSZtRjAmz2PKhiBztkmcUQh4
-         rspuJrQKFNnZFIcfob4XhXk7qgcm9YA/PH4NopA9kuBVZl9SIifelPaV/xQ8FnyoO8h5
-         yxqa6GphJbMZNqJOvgzNVFvXkEvQ9w/3rH2jJcTelzaX/9sNpkl5aMiZAx+k6rP3ZGGU
-         M66Q==
-X-Gm-Message-State: AOJu0YyDM9CSB0g4AnPIhzWWguEUdPDOjSNWQJtiOzuErxoyAGwAFhdK
-	CC80vIfud7zPNuCHZcdi3MPqXVm8g925kd/JYtLmgK7iweYnlrsh6ffxQ/6dA3qCDCjroWpHy+Z
-	cM2BTszFJaQ4mkBeubsCoHxHcDlQIPUsMrbvcgakwStlMy6/nZ0GiwfB+aNal/g==
-X-Gm-Gg: AeBDieu1BPxYqzMcRUTZChutJ7EzXRZh667cx2VZemhORyZHkz7T1WQpdWey7ofzX+M
-	86a6pm1aSSu92vivcj9a3q2bb3l8Sc3SlBD5nXQFtPOgeB3jHMSqcOOhkmXtUisPdLLwx2g0HN8
-	5M7i9IUPtJMurPIsBYESbsonVSpbLUU8EjlL0f9jku/CkpXItySb4EjZ4B8Y+8EAX6rz1r7nE7D
-	+MGic0+QKv7PD/fCM3nwlqZ36jz8ICq5L5EIcskjsQaeeiN+kg/owkXxK18lCWqD6r6STMOpjDu
-	p2meHMk8fAE3wxUkzA4TIsJPiuZglHNmskpGTTZOWG/LUFZBdKzqCnhim22J2ZbDHvpZOtx+v5T
-	YszY63K9dYrKz7Ep/oy0=
-X-Received: by 2002:a05:620a:2844:b0:8cd:9653:61de with SMTP id af79cd13be357-8d41e1427e7mr2498363885a.50.1775591895826;
-        Tue, 07 Apr 2026 12:58:15 -0700 (PDT)
-X-Received: by 2002:a05:620a:2844:b0:8cd:9653:61de with SMTP id af79cd13be357-8d41e1427e7mr2498360685a.50.1775591895273;
-        Tue, 07 Apr 2026 12:58:15 -0700 (PDT)
+        bh=Nwpk7x3/OYthLLbkTiH6r3E3G4VZBvtoK/r2DsOIAbs=;
+        b=K6dYsBzHW06CP/CPtZ/6sckh5iE3QE3Xw/Ehxx06Y5b0CMnO/q8XZMSKLn/xpet4oN
+         MC00S6xrREgWEBgjAm7ubeixtKkeaIeryiAdp3pZiSedyThMBrsgyjU4e2NayE2BCe+z
+         DyQyP6jJvdvpSXT04WCwTWdQGCeYxkFIzsvVHMbXSTOz9p/y+kwf8nxcuOIids3PwjjP
+         z+Etv9SdrjWmhFPKKGQEyumg74IwUIQlUJ9ZV7k7dnCpKyM+/zc2IzqUDtetEkiQzThX
+         aB1jAgTgPEP5f8i+7owavPErme2YgJOVYMbgS6zCgq08JLmhyBEkA5TRUijds/NuKdVf
+         0jig==
+X-Forwarded-Encrypted: i=1; AJvYcCXpG3Er8rb+JsdhjBudcN/p/nLtfunDzYmkwfiRRzGvBUE1dqV3CzsgbSZDoTa4UwQCu9+m+oCua5Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw22cVX9iSRLBOolOt3TplsSN1/sTuX/Gd+EovIkXgZL5eo0vyT
+	g1zj9vx1uoi724jkhQpV0sto4jqTFQSdzoIngH98aabsEpTqwGPfzHdeYv47V/XsP5e4xZ9RI2U
+	1d1Xx2N/gFyjb/dilOfkbtQpzdcUdAI54cy9Nydtjjuzk448ULt5WpMUmoQUl5w==
+X-Gm-Gg: AeBDieu+r5Z+IPJ7OL9Bl2EeMs3r94FSZD+KMxN3s57bGLLfLuz9HytV6PoASR6W5XL
+	XQEUwCVpck7Fz7w1ZamrblkAfvnj5pT805hgD735YTMxrDgRxgKFt1mWry6ekHpdi5zeMKabEb+
+	MwoU30Sfre6xA2bRFOLDccJU9Hz/ctIyjqZL71FY+ixE9+3HhrnNCjdItQDz8+IGRs7wptaRSje
+	Jh+WmRwGohhhPrL4GXT7yMiOVVls/jy2V8eSH5ib5Fx3njfSA9xjXtR49vOXFdHT8lh6NM4WMRd
+	iNRzusVZw0f8M9Am+/75rythljK8xuTVb7tOA+FQX2BVzl3tkYUoRHTT+VpITvTjH0enwSzrKgT
+	yA9Ps35gdd6GCjHhoAL8=
+X-Received: by 2002:ac8:7d16:0:b0:50d:66b6:1564 with SMTP id d75a77b69052e-50d66b61c27mr270620051cf.14.1775592125157;
+        Tue, 07 Apr 2026 13:02:05 -0700 (PDT)
+X-Received: by 2002:ac8:7d16:0:b0:50d:66b6:1564 with SMTP id d75a77b69052e-50d66b61c27mr270619401cf.14.1775592124495;
+        Tue, 07 Apr 2026 13:02:04 -0700 (PDT)
 Received: from redhat.com ([2600:382:772d:3619:ed0:4a9c:acd6:3fc9])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8d2a8648c17sm1388436585a.33.2026.04.07.12.58.13
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-50d4b32b59csm177586281cf.13.2026.04.07.13.02.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Apr 2026 12:58:14 -0700 (PDT)
-Date: Tue, 7 Apr 2026 15:58:12 -0400
+        Tue, 07 Apr 2026 13:02:03 -0700 (PDT)
+Date: Tue, 7 Apr 2026 16:02:01 -0400
 From: Brian Masney <bmasney@redhat.com>
-To: Marek Vasut <marex@nabladev.com>
-Cc: linux-clk@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+To: Johan Hovold <johan@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Michael Walle <michael@walle.cc>, Rob Herring <robh@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/6] clk: fsl-sai: Add i.MX8M support with 8 byte
- register offset
-Message-ID: <adVh1JLI-qfXLdMt@redhat.com>
-References: <20260406215150.176599-1-marex@nabladev.com>
- <20260406215150.176599-2-marex@nabladev.com>
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: Re: [PATCH] clk: rk808: fix OF node reference imbalance
+Message-ID: <adViubS3B7BfRlWB@redhat.com>
+References: <20260407095027.2625516-1-johan@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -98,87 +95,21 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260406215150.176599-2-marex@nabladev.com>
+In-Reply-To: <20260407095027.2625516-1-johan@kernel.org>
 User-Agent: Mutt/2.3.0 (2026-01-25)
 
-Hi Marek,
-
-On Mon, Apr 06, 2026 at 11:49:42PM +0200, Marek Vasut wrote:
-> The i.MX8M/Mini/Nano/Plus variant of the SAI IP has control registers
-> shifted by +8 bytes and requires additional bus clock. Add support for
-> the i.MX8M variant of the IP with this register shift and additional
-> clock.
+On Tue, Apr 07, 2026 at 11:50:27AM +0200, Johan Hovold wrote:
+> The driver reuses the OF node of the parent multi-function device but
+> fails to take another reference to balance the one dropped by the
+> platform bus code when unbinding the MFD and deregistering the child
+> devices.
 > 
-> Reviewed-by: Brian Masney <bmasney@redhat.com>
-> Reviewed-by: Peng Fan <peng.fan@nxp.com>
-> Signed-off-by: Marek Vasut <marex@nabladev.com>
-> ---
-> Cc: Brian Masney <bmasney@redhat.com>
-> Cc: Conor Dooley <conor+dt@kernel.org>
-> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Michael Walle <michael@walle.cc>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
-> V2: Update commit message, align it with the bindings one
-> V3: - Rebase on current next, update mail address
->     - Pick ancient RB from Peng, although this may be outdated
->       https://patchwork.kernel.org/project/alsa-devel/patch/20241226162234.40141-2-marex@denx.de/
->     - Optionally enable "bus" clock, which are needed on MX8M to operate
->       register file
-> V4: Add RB from Brian
-> ---
->  drivers/clk/Kconfig       |  2 +-
->  drivers/clk/clk-fsl-sai.c | 27 +++++++++++++++++++++++----
->  2 files changed, 24 insertions(+), 5 deletions(-)
+> Fix this by using the intended helper for reusing OF nodes.
 > 
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index cc8743b11bb1f..9f7f391a5615a 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -255,7 +255,7 @@ config COMMON_CLK_FSL_FLEXSPI
->  
->  config COMMON_CLK_FSL_SAI
->  	bool "Clock driver for BCLK of Freescale SAI cores"
-> -	depends on ARCH_LAYERSCAPE || COMPILE_TEST
-> +	depends on ARCH_LAYERSCAPE || ARCH_MXC || COMPILE_TEST
->  	help
->  	  This driver supports the Freescale SAI (Synchronous Audio Interface)
->  	  to be used as a generic clock output. Some SoCs have restrictions
-> diff --git a/drivers/clk/clk-fsl-sai.c b/drivers/clk/clk-fsl-sai.c
-> index cba45e07562da..336aa8477d0ea 100644
-> --- a/drivers/clk/clk-fsl-sai.c
-> +++ b/drivers/clk/clk-fsl-sai.c
-> @@ -26,11 +26,17 @@ struct fsl_sai_clk {
->  	spinlock_t lock;
->  };
->  
-> +struct fsl_sai_data {
-> +	unsigned int	offset;	/* Register offset */
-> +};
-> +
->  static int fsl_sai_clk_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> +	const struct fsl_sai_data *data = device_get_match_data(dev);
->  	struct fsl_sai_clk *sai_clk;
->  	struct clk_parent_data pdata = { .index = 0 };
-> +	struct clk *clk_bus;
->  	void __iomem *base;
->  	struct clk_hw *hw;
->  
-> @@ -42,19 +48,23 @@ static int fsl_sai_clk_probe(struct platform_device *pdev)
->  	if (IS_ERR(base))
->  		return PTR_ERR(base);
->  
-> +	clk_bus = devm_clk_get_optional_enabled(dev, "bus");
+> Fixes: 2dc51ca822e4 ("clk: RK808: Reduce 'struct rk808' usage")
+> Cc: stable@vger.kernel.org	# 6.5
+> Cc: Sebastian Reichel <sebastian.reichel@collabora.com>
+> Signed-off-by: Johan Hovold <johan@kernel.org>
 
-This patch needs to include <linux/clk.h> and drop it from patch 6 to
-keep bisectability.
-
-Brian
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
