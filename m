@@ -1,176 +1,138 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169051FF7C7;
-	Tue,  7 Apr 2026 07:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5953A381E;
+	Tue,  7 Apr 2026 08:09:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775547450; cv=none; b=iDHcSGTiu26B2mudofOLMRIpS7eVIQRYgT7AilQWQvPSuWbdU9Gg+puzqcM2rYLFPtrYhqO3XIL+Wx6tjQOwo0+qVMjQqls8vUyELkJIVRQF8Yg3lX58UElfpEP5NTjg+L4EFdD5naHquElWbz2dHvjbrQCpMF+ZJf6NKPTImOU=
+	t=1775549353; cv=none; b=lJe/F8R24Vt6/ofglCs9y8uSEYD7lp2XLuu1ZmRRN9xlJzh4WE9ItoYbONEV33AFAvFRKnEFbze/4VuUkDprB2nJOrQXRmgno5GqECkWDaH2mQT2J6BxkuhKs26O90OTnG+gpfqU/ExncLvhcBlKJgxP1PKg8cSOnS8TAf24Wgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775547450; c=relaxed/simple;
-	bh=BFFsI3LeN7f2LzSaom7luMGiKHZgnhrFdc4/ppxffj4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EUhjCWncWmu6vkpCyGCpwnLWnufq8CivlPC1AikQB1/6fQJ8X4WXs829p9fP36s6VIYM2wBO4cj1eKuHWEcmInbCsQxI2YcLZlvL5pqszVhzxoFphs4ApGZr1QgZ4gSAKWpWNt0VV5nSDC8IecvYNQYy7SZPpZTTbbKSP91TfYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fdS4v3Kx; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1775549353; c=relaxed/simple;
+	bh=x4CIhcKyiAyiHLRxCfzrNVNhwmG+Osil9WJy47xc4Uc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Subject:Cc:From:
+	 References:In-Reply-To; b=CvBH6EaOl5vI+7sLrhpM3uQFtJ0t828o+GZxEi2yDhIqC12MhsgSNcTVsOgdh1L9nkHN8Pp7aJxzCVF0ka0JB+hHRA5vUZh1YR92yfl52U7zumTMlk9nUcjQ/Bc5lqxZpLHG48N2u61IV1kl5Q/uBHvpRiiojSQ+ulbK0SV0fgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc; spf=pass smtp.mailfrom=walle.cc; dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b=mgE0dy0o; arc=none smtp.client-ip=159.69.201.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fdS4v3Kx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8BECC116C6;
-	Tue,  7 Apr 2026 07:37:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775547449;
-	bh=BFFsI3LeN7f2LzSaom7luMGiKHZgnhrFdc4/ppxffj4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fdS4v3Kx90ZiW1zfPnNzjMVvSi2ExUDPHP4ccdjpazBkUmlr3Luso1vA0xZDeqGGL
-	 VwIj2PC+2MPQeJs2aaxAcrk12QcFE+Fh/i0hNE6MrQHrIyobd0vbcU6batS1/dccI/
-	 UrULAUUVd61OZr9svWmE4R3lYxcnF32EUUnaXRiYlxuOV+aqe2YZEtScKWD4kcnZ8F
-	 aJZscF0dJqH8mSyipLMrWNKkTFN1VsQUleM1Prk1ZeAoyKZ2AEpYV/TR9hOZ46Mkv6
-	 7+ENnniFLo7LifiM52eEv2Hl4f97OgkFoQjmEomNX1hP385tKdtTEfiSY5Zs4/7pvI
-	 i48vzIc5INIPw==
-Message-ID: <db8e3d41-bd17-424c-8b04-7b51a0726420@kernel.org>
-Date: Tue, 7 Apr 2026 09:37:22 +0200
+	dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b="mgE0dy0o"
+Received: from localhost (unknown [213.135.10.150])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.3ffe.de (Postfix) with ESMTPSA id 2591063;
+	Tue,  7 Apr 2026 10:02:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2022082101;
+	t=1775548945;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ad+PThozXsFVIRgJjzkr6m230pul0DpcAhIS8dHfyG8=;
+	b=mgE0dy0oYY88IBAC9FsAmUIYkWg7j5ZoIv3q58lOa4qqMSIr8BxE8rOwMoN867BC/rt3NB
+	wLAOVJzIT78D8lUoC7P/IeE1gSfSbyCGdvE2HAEwbrdUPREraKRUgvk7oIgbeB9Eob6MwM
+	o9YHmOyqUJGRtmBfEUN+TxgeETxWNqRh/2E+wPRLNW/nmrX+QijaxQwADApn3sY1rWQWXl
+	Cfbc0Vb2c3Wb4hYnjG191eM7wv8CCIHp1L2GkaQvnw5bGGFXzT9ytbI9amEcHeFV34X+3X
+	TwPahiwbHKiDbtsjxhU2yccbWx1aVvA9hfA/73LwspR5/d9lDgrhCOmUWlMO5g==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 01/13] dt-bindings: soc: starfive: Add StarFive JHB100
- syscon modules
-To: Changhuang Liang <changhuang.liang@starfivetech.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Emil Renner Berthing <kernel@esmil.dk>, Chen Wang
- <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>,
- Alexey Charkov <alchark@gmail.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Keguang Zhang <keguang.zhang@gmail.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
- Leyfoon Tan <leyfoon.tan@starfivetech.com>
-References: <20260403054945.467700-1-changhuang.liang@starfivetech.com>
- <20260403054945.467700-2-changhuang.liang@starfivetech.com>
- <20260405-nocturnal-mighty-pegasus-eff399@quoll>
- <ZQ4PR01MB1202F9AC0B854D3341EB2CAFF25A2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <ZQ4PR01MB1202F9AC0B854D3341EB2CAFF25A2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
+Mime-Version: 1.0
+Content-Type: multipart/signed;
+ boundary=0d2bcfc64f4ee9e083e2af46e7c1d5237e5e21b76e32ac13f6cb36dd1b9b;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Tue, 07 Apr 2026 10:02:17 +0200
+Message-Id: <DHMRKHET4G64.2OC3H718XYFTY@walle.cc>
+To: "Marek Vasut" <marex@nabladev.com>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v4 6/6] clk: fsl-sai: Add MCLK generation support
+Cc: "Michael Walle" <mwalle@kernel.org>, "Brian Masney"
+ <bmasney@redhat.com>, "Conor Dooley" <conor+dt@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Rob Herring" <robh@kernel.org>, "Stephen Boyd"
+ <sboyd@kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+From: "Michael Walle" <michael@walle.cc>
+X-Mailer: aerc 0.20.0
+References: <20260406215150.176599-1-marex@nabladev.com>
+ <20260406215150.176599-6-marex@nabladev.com>
+In-Reply-To: <20260406215150.176599-6-marex@nabladev.com>
+
+--0d2bcfc64f4ee9e083e2af46e7c1d5237e5e21b76e32ac13f6cb36dd1b9b
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-On 07/04/2026 09:34, Changhuang Liang wrote:
-> Hi, Krzysztof
-> 
-> Thanks for the review.
-> 
->> On Thu, Apr 02, 2026 at 10:49:33PM -0700, Changhuang Liang wrote:
->>> Add documentation to describe StarFive JHB100 SoC System Controller
->>> Registers.
->>>
->>> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
->>> ---
->>>  .../soc/starfive/starfive,jhb100-syscon.yaml  | 140
->> ++++++++++++++++++
->>>  MAINTAINERS                                   |   5 +
->>>  2 files changed, 145 insertions(+)
->>>  create mode 100644
->>> Documentation/devicetree/bindings/soc/starfive/starfive,jhb100-syscon.
->>> yaml
->>>
->>> diff --git
->>> a/Documentation/devicetree/bindings/soc/starfive/starfive,jhb100-sysco
->>> n.yaml
->>> b/Documentation/devicetree/bindings/soc/starfive/starfive,jhb100-sysco
->>> n.yaml
->>> new file mode 100644
->>> index 000000000000..c0e1f6f68fa2
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/soc/starfive/starfive,jhb100-s
->>> +++ yscon.yaml
->>> @@ -0,0 +1,140 @@
->>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause) %YAML 1.2
->>> +---
->>> +$id:
->>> +http://devicetree.org/schemas/soc/starfive/starfive,jhb100-syscon.yam
->>> +l#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: StarFive JHB100 SoC system controller
->>> +
->>> +maintainers:
->>> +  - Kevin Xie <kevin.xie@starfivetech.com>
->>> +  - Changhuang Liang <changhuang.liang@starfivetech.com>
->>> +
->>> +description:
->>> +  The StarFive JHB100 SoC system controller provides register
->>> +information such
->>> +  as offset, mask and shift to configure related modules such as PLL and
->> PCIe.
->>
->> How a MMIO based device can provide a MMIO information? What exactly
->> does it provide? Register where the value is the offset of other register?
-> 
-> For example:
-> in per1 syscon:
-> offset 0x4 is the register configuration for implementing eMMC extended functions, 
-> and offsets 0x40–0x4c are used for PLL7 register configuration.
-> 
-> In sys0 syscon:
-> offsets 0x0–0x2c are used for register configuration of PLL2 to PLL5, 
-> and offset 0x38 is used for register configuration to provide the product ID.
+On Mon Apr 6, 2026 at 11:49 PM CEST, Marek Vasut wrote:
+> The driver currently supports generating BCLK. There are systems which
+> require generation of MCLK instead. Register new MCLK clock and handle
+> clock-cells =3D <1> to differentiate between BCLK and MCLK. In case of a
+> legacy system with clock-cells =3D <0>, the driver behaves as before, i.e=
+.
+> always returns BCLK.
+>
+> Note that it is not possible re-use the current SAI audio driver to
+> generate MCLK and correctly enable and disable the MCLK.
+>
+> If SAI (audio driver) is used to control the MCLK enablement, then MCLK
+> clock is not always enabled, and it is not necessarily enabled when the
+> codec may need the clock to be enabled. There is also no way for the
+> codec node to specify phandle to clock provider in DT, because the SAI
+> (audio driver) is not clock provider.
+>
+> If SAI (clock driver) is used to control the MCLK enablement, then MCLK
+> clock is enabled when the codec needs the clock enabled, because the
+> codec is the clock consumer and the SAI (clock driver) is the clock
+> provider, and the codec driver can request the clock to be enabled when
+> needed. There is also the usual phandle to clock provider in DT, because
+> the SAI (clock driver) is clock provider.
+>
+> Acked-by: Michael Walle <mwalle@kernel.org>
+> Signed-off-by: Marek Vasut <marex@nabladev.com>
+> ---
+> Cc: Brian Masney <bmasney@redhat.com>
+> Cc: Conor Dooley <conor+dt@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Michael Walle <michael@walle.cc>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+> V2: No change
+> V3: - Rebase on current next, update mail address
+>     - Update commit message according to clarify the difference between
+>       SAI audio and SAI clock driver
+>     - Pick ancient AB from Michael, although this may be outdated
+>       https://patchwork.kernel.org/project/alsa-devel/patch/2024122616223=
+4.40141-4-marex@denx.de/
 
-That's not what the text said. You wrote the device, in MMIO registers,
-provides information: offset, mask and shift.
+I'm fine with this, but I want to point out, that this is still a
+hack as the correct way would be to make the original SAI (audio
+driver) a clock provider. Keep in mind that both driver variants are
+mutually exclusive. So if a SoC has 6 SAIs for example, you can only
+use 5, because the one will have to be MCLK the clock provider
+driver.
 
+In the original LS1028A case (which doesn't have a MCLK), you
+actually have to use the hardware peripheral block to generate the
+BCLK, thus you'll loose one SAI anyway. In this case - at least from
+what I understands - this is just a software construct, because the
+original SAI driver is missing a clock provider (phandle).
 
-Best regards,
-Krzysztof
+-michael
+
+--0d2bcfc64f4ee9e083e2af46e7c1d5237e5e21b76e32ac13f6cb36dd1b9b
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKcEABMJAC8WIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCadS6CREcbWljaGFlbEB3
+YWxsZS5jYwAKCRASJzzuPgIf+HfsAYC6DBNdJDZfxQXODWnhg46KsgrP8GwmHLw1
+hjxaZ6s8dK3te04j7RWTeIXx1doxrBgBfAg8tGFYQpiOqt3cMzVapU/hXUYVj7uM
+J310VCbce7mg59wZ8ol798MjTWRIPRl9gw==
+=j1JI
+-----END PGP SIGNATURE-----
+
+--0d2bcfc64f4ee9e083e2af46e7c1d5237e5e21b76e32ac13f6cb36dd1b9b--
