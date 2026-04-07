@@ -1,196 +1,135 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5227A3A6F15
-	for <linux-clk@vger.kernel.org>; Tue,  7 Apr 2026 10:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775556796; cv=none; b=GM07hpUu4vQK9PkvrukXFoy6DQOloExCtq4k/x1+yga2eUEWAntAIv885jvqRi1mXqOrHDgMWlgAvgwanAMUgSEDIO62wESb/KSXzO6P5r9mmrWGBZSswF/boiPnS4F0eMHv2DgEHjnQPdh6dLGYzrjjYgs0ffJU6xfVrqsWmAc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775556796; c=relaxed/simple;
-	bh=BeRmkF1AixGu0dDOhZq+ut21Q+0Lj7EFqDNljeqWR/4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a3QHe2r8EAIEbWPBQBDUm+BJWQG+WO/SVSbQd06JUUQ0nBL3Auhyt6YP0IjW9MqrSWc9iz8Yl8lJvxGwx+6wnL7omqvH4HTHiXRwwSfvqW2c5pMb/0pbg13h7hr43ECurfY5T9Nud9uXUluALavHCK9ESJ/O6QfJzBy4rrbSW7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZrhP9xAJ; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=G1Q5aoha; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0013AB27F;
+	Tue,  7 Apr 2026 10:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1775558599; cv=pass; b=GKRD+pHa0zUXFjEFK6r8ljyOyfmCzhY3Qci43rLdQJGQDUEfFYnO7s0f+VNvbzAPtJ7CsKjEZLs0GgAo+zCk1s5jup19iIS9sEhtEW1ttryaskEA9xTbMwk63vlVfVnPECZ7qr7LigmlqXB07sOeHghVEzu+hwy+8VuyJCGPEPY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1775558599; c=relaxed/simple;
+	bh=jeYLxlBv9LQ/i9NurS9PNbJ2+JYh8uhTISqYpiHQpkk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WYET/zg+YYpydkSLm7tAF1ekdADCOvAQhPN3rhWGpGjA3Tr7/3WfBt53JLccaDwKRSF8eymX41bTDBzxpbqpgjS8EBYdb08qnZDpAi8RZ+pth5Ud1drrzFZ3I1rBjU9TLbAVrzOUMg65w3IvGaWQy36gj/ysil5lK252dGE+CUc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=WNaDDsmG; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZrhP9xAJ";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="G1Q5aoha"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6376dxkX2328037
-	for <linux-clk@vger.kernel.org>; Tue, 7 Apr 2026 10:13:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UwM23ebfEnjAfxbCREGtqZRfmTKIBdktg+hDX1uVW00=; b=ZrhP9xAJlnYdFeYg
-	3TW2KaGhemua03DJuleHF3XLO0NhJ2L2EliJmwKUrNcm2C4Tgt2oDloldS87gkyv
-	5+X5whcXEPtJ5c4pNQDJe1OtP5NbcBV/bc0ntjKX6J/pqXKzxwtEiEgbpxYMChP7
-	V9CMcH4beGBp88W1ZsLzVPQO6XHKWy8gz9NpFeetZE6DJKNnu+NJiZR7ZjObJhTB
-	YFD0LA20Vzk8+7RuOsdD9aNVOuVBrWhcuM5N0GNoSokWs/1omY9qMhiEj/dizZe9
-	YHPBzRl6dmyyoLsfrgQDXKIRligvbBT9+GaMNK6TC64LcJ18QZ9n4j/2AXz0aB5D
-	V8dX+w==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4dcms4t79x-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 07 Apr 2026 10:13:13 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-89e9d327913so19439166d6.1
-        for <linux-clk@vger.kernel.org>; Tue, 07 Apr 2026 03:13:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1775556792; x=1776161592; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UwM23ebfEnjAfxbCREGtqZRfmTKIBdktg+hDX1uVW00=;
-        b=G1Q5aoha68UqIW2vzRNZ2Xx8zWKq1XWBFpttnc11roC917oS2C1/7L2zmEQXVxttDn
-         CI+6NYCBv9w0FOJTNyH0eosVYJyrlMIpgOze9JYwyuZeWKdheCkUn0edQPQsrU1fZ6V2
-         vaCfdY9miXzkwVCCU0dWRRyFhTtU4GGIF/tbWrIHTpEKTYqg9txCjolwKocqksvCNlYi
-         ERfXGgBV3arpwPzUbN6+JyniH8jpeVgU7SVrNyzDk4Tx9ZRXIM+qg7B5GP2vGcEgY5KW
-         xy4zH/K4vQvJ+JOGdJ9Vtm/3FJJoZqh0FgDyzbT0tsPVujpNVRHXu7BtLvAhiuk3HdDs
-         v9Wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775556792; x=1776161592;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UwM23ebfEnjAfxbCREGtqZRfmTKIBdktg+hDX1uVW00=;
-        b=GvkcfL6VtVHw5WiS8vTVcPveNG3iMw/Ca5/Ft/mbea9faLwxynqjJTQRY2mjbiz2Zk
-         7EIgilL7oA008ClXuhDeYvja8QlK/efLD1UHEAqzfFhst1XcCmeVcd9RaYg1gcvWPPEc
-         9INkv26nigYXO43s34d9nYDLsVp5Am4k1fWkkrjoI4t+R6OKUEhfebWaG7JM6yOohBc/
-         kpOgzcoAia0aiU9n7iSjXRpzNSzx8niNmPyvbZoMtfKUMmUyl/oTzS77JA/mOGMz3hww
-         aqwRMsrxNcQ24uGT2Ua1+zGv+xe1EdwNWFBC5d2R+YWAbdtbzqmY8/gWAT+a8puEy1ep
-         lTSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWfwr35YBwRajWKTu5d9TRsUU+ef1jLlA2+E6hJHq+jBrHpXLzGmSSU61Zb7sgqoWSI7nHTJ+EU8KU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4Aj3tTQWCUqYacPtwlm6ginHi1efpOM+Zucr1xxyW4OkVcde8
-	DvtAWtJpS0eYHMDSJMKbIv0B/tKil0pRVZsj10iasyxlMdypEuaZgnE2wkOQHqDKy0xUzXhb8R1
-	N5cSy30hXscwM49O0GanXG92hTUsK9h4l+xLNHUWXm4ExUuazlAU01ynA1u2Z97c=
-X-Gm-Gg: AeBDietZrKk9tDRdlLbqCB7HCOJV1hGJ53ZNY95juJhIzMmHjxn71oyA1NAasVXI6Z0
-	7oJ9dkqEMWywjPrqMgbxsSAAUzjn6MDC9Ejf/j6E7RGXL1SkVg+f80rwHn4Zm83aMPcvSZBlwwW
-	asJfnvh1o/fv06IEU5XObrQ4LI1IanZJ1jxt7y9Tdetc+ThhoyQ6MiAbhsl+gQ1eZuPGzd1wrpG
-	LJMF8EldsKYRThNaZLnx+C6pvhU9Dk6q3WjneN9aqa/NI51lIjyrqoHf4h/6RmeREo79NmCrosv
-	PXfF36d6lowtYVvR4UkH4uzLBK4lSyPc1nm4pEkOrHHbxB920gC8UX+kDqo31p/Ebl7hpztPNG/
-	tVrnOn+yMUdRrBCb/GXCMHfgP2nrsfyZOTad6mAKzo/lIOJjFUgfTNZQ8BaeZ+EKQTBv4L5aVIh
-	4H9kg=
-X-Received: by 2002:a05:622a:5507:b0:50b:5286:f757 with SMTP id d75a77b69052e-50d62c846cbmr168680131cf.4.1775556792547;
-        Tue, 07 Apr 2026 03:13:12 -0700 (PDT)
-X-Received: by 2002:a05:622a:5507:b0:50b:5286:f757 with SMTP id d75a77b69052e-50d62c846cbmr168679951cf.4.1775556792094;
-        Tue, 07 Apr 2026 03:13:12 -0700 (PDT)
-Received: from [192.168.119.254] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-66e445e5b8dsm3182110a12.12.2026.04.07.03.13.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Apr 2026 03:13:11 -0700 (PDT)
-Message-ID: <c2cdc581-2f8f-4495-bb87-812b27a1e381@oss.qualcomm.com>
-Date: Tue, 7 Apr 2026 12:13:09 +0200
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="WNaDDsmG"
+ARC-Seal: i=1; a=rsa-sha256; t=1775558593; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=OTU2145YSyM41TZX8a5XCtO8dvHta4mAxn3nxtzIyzkOG+nNyzG6MmQLsTxmZfMJi1pkQOVpF2vl2uHIWfuLamNh1I3DejB27WGW3/f+UUatCOhomldPKKcdnHclslqwNQijM6O6iE1DA+AKC9CGoNEk/9O4ZcvOIdMTcct8Ns0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1775558593; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=JgfOJxIUdmJfcSvNPFEzIP+9h7cDv7X+vLvfF4070T4=; 
+	b=hr+J8Kd647FRXEW+SAnl7+1KRVgtR0PAK0QHky5dKbHviGka0aS9TnUt+JHbD2fw/P3lmx8qfYYOHwErQcy0MWHJcaOrtkehF8e67fUfTKWNUOXtNF9u2SGwP+sCdSeQtCaTJeDlXIzv+cc2BInOfMuBE0a63iG0B6lmqFEgZSA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1775558593;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=JgfOJxIUdmJfcSvNPFEzIP+9h7cDv7X+vLvfF4070T4=;
+	b=WNaDDsmGjzlgNgaTX/G4v1JSK57dClbYZOpooPVOFrFilj3H85H9IskWTzJymk8q
+	kJTz75ZdqwzwkMIaMDHENJhRjosvZBuXVxMYs3q/sWCPoRSngsHIegC4Ykg6YT/b5y/
+	4bQ4dUZ6cfy1KDxBrZFgKGPKchtDaMlTZgGjCXKE=
+Received: by mx.zohomail.com with SMTPS id 1775558591568667.3665506010035;
+	Tue, 7 Apr 2026 03:43:11 -0700 (PDT)
+Received: by venus (Postfix, from userid 1000)
+	id F39081824E2; Tue, 07 Apr 2026 12:43:08 +0200 (CEST)
+Date: Tue, 7 Apr 2026 12:43:08 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Johan Hovold <johan@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH] clk: rk808: fix OF node reference imbalance
+Message-ID: <adTfhqoL1YFA6WMG@venus>
+References: <20260407095027.2625516-1-johan@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] clk: qcom: clk-rcg2: calculate timeout based on clock
- frequency
-To: Xilin Wu <sophon@radxa.com>, Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>,
-        Dzmitry Sankouski <dsankouski@gmail.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Mike Turquette <mturquette@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
-        Mike Tipton <quic_mdtipton@quicinc.com>
-References: <20260406-clk-qcom-gpclk-fixes-v1-0-7a14fe64552d@radxa.com>
- <20260406-clk-qcom-gpclk-fixes-v1-4-7a14fe64552d@radxa.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20260406-clk-qcom-gpclk-fixes-v1-4-7a14fe64552d@radxa.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDA3MDA5NCBTYWx0ZWRfXz4E86yW0GSLE
- SjR9Pk48p5sphVRi5EAT8YwaEymXtijSFykOFZGG0rdGDJJuSTjaynZED/s+6jETTIjsTMLVl43
- rgGS1U4SpMPjVKXFizVpAtHpXm6GBU8QPKBaqVtADhQx9jEVP9C8xkzUTMzgRB7ulD8+wQGMEc0
- R/ww6i51xmo9lIM/cxBI9UC5tOchR7t4UHMXWCEo5kJyjzJUFeAqg9mMegHiTdVCfuvvk5kFSPK
- PXA3JwKykKHVuCn24a98KoCbUrZyZvttkz7qo1pOL8eWEMNbJNN5Dz2e6fgn5Ic9PAhXnYIoQnL
- Ah1TQjkc3sH+cz55+v24jhJI/oapJ+vIzA22bgHkIMbK10sPNAvh2sDuC90VsqezM5TNTxLmeef
- B8Lubuu7zFbAvNlCFWTi8E4hwvZqyQ7XIUs84TRY/bG4s2BIgaSDZlm5ylOau6JsudWyjxSZPru
- O/JRVZdWDwFyy99C10w==
-X-Proofpoint-ORIG-GUID: vE4M8iGAr5eWd4t_ZNf32z1l4FhRD2Vn
-X-Authority-Analysis: v=2.4 cv=WNZPmHsR c=1 sm=1 tr=0 ts=69d4d8b9 cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=A5OVakUREuEA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
- a=qC_FGOx9AAAA:8 a=COk6AnOGAAAA:8 a=Pc8_uKcFEXUdqOsFkrUA:9 a=QEXdDO2ut3YA:10
- a=OIgjcC2v60KrkQgK7BGD:22 a=fsdK_YakeE02zTmptMdW:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: vE4M8iGAr5eWd4t_ZNf32z1l4FhRD2Vn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-04-07_02,2026-04-07_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 bulkscore=0 phishscore=0 spamscore=0 impostorscore=0
- lowpriorityscore=0 suspectscore=0 clxscore=1015 malwarescore=0 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2604010000 definitions=main-2604070094
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="rjl5qil7dont7k7e"
+Content-Disposition: inline
+In-Reply-To: <20260407095027.2625516-1-johan@kernel.org>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-0.2.2.1.5.2/275.535.27
+X-ZohoMailClient: External
 
-On 4/6/26 5:54 PM, Xilin Wu wrote:
-> RCGs with extremely low rates (tens of Hz to low kHz) take much longer
-> to update than the fixed 500 us timeout allows. A 1 kHz clock needs at
-> least 3 ms (3 cycles) for the configuration handshake.
-> 
-> Instead of increasing the timeout to a huge fixed value for all clocks,
-> dynamically compute the required timeout based on both the old and new
-> clock rates, accounting for 3 cycles at each rate.
-> 
-> Based on a downstream patch by Mike Tipton:
-> https://git.codelinaro.org/clo/la/kernel/qcom/-/commit/aa899c2d1fa31e247f04810f125ac9c60927c901
-> 
-> Fixes: bcd61c0f535a ("clk: qcom: Add support for root clock generators (RCGs)")
-> Signed-off-by: Mike Tipton <quic_mdtipton@quicinc.com>
 
-Having Mike's s-o-b here is odd, given you've decided to go forward
-without his "From:"
+--rjl5qil7dont7k7e
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] clk: rk808: fix OF node reference imbalance
+MIME-Version: 1.0
 
-[...]
-> +static int get_update_timeout(const struct clk_rcg2 *rcg)
+Hi,
 
-Let's tack on a '_us'
+On Tue, Apr 07, 2026 at 11:50:27AM +0200, Johan Hovold wrote:
+> The driver reuses the OF node of the parent multi-function device but
+> fails to take another reference to balance the one dropped by the
+> platform bus code when unbinding the MFD and deregistering the child
+> devices.
+>=20
+> Fix this by using the intended helper for reusing OF nodes.
+>=20
+> Fixes: 2dc51ca822e4 ("clk: RK808: Reduce 'struct rk808' usage")
+> Cc: stable@vger.kernel.org	# 6.5
+> Cc: Sebastian Reichel <sebastian.reichel@collabora.com>
+> Signed-off-by: Johan Hovold <johan@kernel.org>
+> ---
 
-> +{
-> +	int timeout = 0;
-> +	unsigned long current_freq;
-> +
-> +	/*
-> +	 * The time it takes an RCG to update is roughly 3 clock cycles of the
-> +	 * old and new clock rates.
-> +	 */
-> +	current_freq = clk_hw_get_rate(&rcg->clkr.hw);
-> +	if (current_freq)
-> +		timeout += 3 * (USEC_PER_SEC / current_freq);
-> +	if (rcg->configured_freq)
-> +		timeout += 3 * (USEC_PER_SEC / rcg->configured_freq);
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 
-I suppose both are nonzero if we end up in this path but a check for zerodiv
-is always welcome
+Greetings,
 
-> +
-> +	return max(timeout, 500);
-> +}
-> +
->  static int update_config(struct clk_rcg2 *rcg)
->  {
-> -	int count, ret;
-> +	int timeout, count, ret;
->  	u32 cmd;
->  	struct clk_hw *hw = &rcg->clkr.hw;
->  	const char *name = clk_hw_get_name(hw);
-> @@ -123,8 +141,10 @@ static int update_config(struct clk_rcg2 *rcg)
->  	if (ret)
->  		return ret;
->  
-> +	timeout = get_update_timeout(rcg);
+-- Sebastian
 
-You can just assign count = get_update_timeout() below since you're not
-reusing this value
+>  drivers/clk/clk-rk808.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/clk-rk808.c b/drivers/clk/clk-rk808.c
+> index f7412b137e5e..5a75b5c91555 100644
+> --- a/drivers/clk/clk-rk808.c
+> +++ b/drivers/clk/clk-rk808.c
+> @@ -153,7 +153,7 @@ static int rk808_clkout_probe(struct platform_device =
+*pdev)
+>  	struct rk808_clkout *rk808_clkout;
+>  	int ret;
+> =20
+> -	dev->of_node =3D pdev->dev.parent->of_node;
+> +	device_set_of_node_from_dev(dev, dev->parent);
+> =20
+>  	rk808_clkout =3D devm_kzalloc(dev,
+>  				    sizeof(*rk808_clkout), GFP_KERNEL);
+> --=20
+> 2.52.0
+>=20
 
-Konrad
+--rjl5qil7dont7k7e
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmnU37wACgkQ2O7X88g7
++ppeog/+K5sTPyxHI43qLji+CM+YjUy0KFdAiNT6/sOJ+F+LuovKH4DC+9QgEgJI
+b/8hPaGrDgRA2m3/dcp0xFxl2dpSIJk5rmXIfUGX90Ulh7DNurUzfN38AbiHvlMg
+RotbWGm0bwTgtPHU3pM54O1gdjhau6VcCSfzZQu9Sz7An4WWpif1MiyHF/iUykaz
+sHdLmNUxahxKwWOZ4xHr8pkqKE3awSUBrBaJecEbxcocppHDySz7IAwO+AeLUvab
+d91JHNpr656lBoq8zPnSCKO3xZVCyZ4pk/X1lMfqRasbGyNCZsppXZsb3WMMeBmJ
+KWIonuXaL3FlB/YRXe3RtPSFiI0kKKvDhakHAZsiio+6bXSf4nghmqcXUAbC6kV4
+eVgerUf8hCnaTwnNvKufLzWhlpB6L2S2hKw06FXv0fdYfZQPtXMbqtFae+E0cDDQ
+SW92nMwl5kkyFIl3UypY3qFcg84+l1epob+0xgtc1ksCLZ1zxYDoZ8ufwPdW7I6O
+IpCIJpaW7SVmOxgdswV4AMfxZ4cFZuLNRC434CGEsfjJo6OIALTSXb9lLNlgk0BU
+elNU2h+yEXPB1JyIwyIxGawFahvF2PUhWteos4VhhCdEFJ/vJBGEDn9rXxgUqM0l
+TUEWbvWUyz3DBzsy8sniaqXiRqrHVnFdLIPx8BKW3nbfmK3L5xw=
+=06rL
+-----END PGP SIGNATURE-----
+
+--rjl5qil7dont7k7e--
