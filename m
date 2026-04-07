@@ -1,145 +1,188 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 401583BB9F3;
-	Tue,  7 Apr 2026 14:25:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70253C9ED6;
+	Tue,  7 Apr 2026 15:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775571932; cv=none; b=GK9ZYmSPTkhKG8IpuhCdRAcvwl92WgP1KpFcZ/3xsJNFhszwqtQXiiA53DVdgbJO6stTWbIDOWGVcVcFIBRPEWh5KpGobR9ySeGXBFhIamV05clbRMD4PDp9pvg2SdIERHSS37aTQtJpvOxeJ0i3SCoYMjEqNJoDqouTyr/E0qQ=
+	t=1775576598; cv=none; b=KnCld2I4UM/gUc0iTRsHDYEpcfhigwC3EZMXtIuLEVvPOHDtPFo+SR3iJJeFxDRV+WwxsQIz2AOZzDbnY4YFdR2cDyCLjArsDZ7umkOPC3v0wbA+Zw51XY+o0Rv5dIjtEcvrBAteT/Lx1pfyD67L0XIOAprSvYCnVWeyQZexpD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775571932; c=relaxed/simple;
-	bh=ajGZYrD4MHb+ffULflsQ0ys62N9S3Hxd27xna0BKV2M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iBn8jTo7a60X5SNS0SNaSkuJG2hRWY3VT7B2bcJMmGsA+jgCzRcBKYSG1Cv4JWyMxfTyoxIDsIA27DsD3XAX6xBx4dgVd0AqW/ToQlIrha7Of5bEm0Usw/HC1/I+HPKK1RLRFz9C9qLXgPq47kcIBXXLrMbgbHVKjEA+H/S5q6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JJMfC8Zl; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1775576598; c=relaxed/simple;
+	bh=r+FSZeLHIqlsWPbl2Ro25yNq+E1Vx6IeiDR61rp9gAM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CcyO3IgBwXkZB9aKZmGQ919KPVFxjtRBZt4YNEoFOAg7j+8Gk2lozqyXoTtxwzZuThAXoZMfo0/fK3jVf149OluPXSmSrEfuZyjJwuLlGTqFmnwmuF46T3fgcQflPTW4rnU5vLbQDBzMk5UHY00DQhhozY+E3mA6uJVXdPTGB8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tBC+xmcC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JJMfC8Zl"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id DDC741A31C3;
-	Tue,  7 Apr 2026 14:25:29 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id B306E603C7;
-	Tue,  7 Apr 2026 14:25:29 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 355AD1045021F;
-	Tue,  7 Apr 2026 16:25:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1775571928; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=owxXoVnQqiNDnVf5jRv2pYvcspeYeUGZUeev6TWekso=;
-	b=JJMfC8ZlDGTRRG88egxqkDIlNS0RCMrCGsdgFFxUvjk5B0h1W7/q2nK7kmrhzMy6nLbkOQ
-	jSy2JanIT2c/awyYChI/OaUo6QnurMXHjGx5XaOUJI62y/ujVuRDFzi7vSSKXrSXyM4HyR
-	vTUBa//VxKlgLERb7l8mIl6u48zNzv9HEB+rcjRJoKFTqUnWViNFaG3g31NmM9RxOlGdRQ
-	1wmXu8/KfjVzWmdU/IXwzKZ7+IfTvXhV2G2C3oJLiyo9ajVhwPysGGDpdmDbgMqnUF7tPR
-	yEMre/pbh4tquCpQoeJh0iA0vZ2ABH1E4jcKA0VpuF15dJsHjQDZPbbtldyEAg==
-From: "Thomas Richard (TI)" <thomas.richard@bootlin.com>
-Date: Tue, 07 Apr 2026 16:25:09 +0200
-Subject: [PATCH v5 4/4] firmware: ti_sci: add support for restoring clock
- context during resume
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tBC+xmcC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A1E4C19424;
+	Tue,  7 Apr 2026 15:43:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775576595;
+	bh=r+FSZeLHIqlsWPbl2Ro25yNq+E1Vx6IeiDR61rp9gAM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tBC+xmcCFxnqDl3cHvlYvyDQC6t9GSpomSbeKl62GfoU5KQtHF8M3bsEUxajJ0HyL
+	 zaUf8hc4K2jx0rIYcPNsXZLjxFA6pojpFD56oLU+3cL1HX1P/N9hFLtt1/H0VIq+1x
+	 VKx5UASiIgjVNkfeiSEw86MbAj9OUtVQwjjVXXmF0bfNaOlLv2t7WZ/fTcMnnUXFQA
+	 9c9e1LXPhxWpYwb5xsRpcc6gkG1GH2jtYewOZIcrtYiIMydQiGlT4DNjrBC+gqkCoE
+	 fSL1shYqAgC/vk37+oqbWf6BxJW4cVe/y9/J3G5+p8D5J6nrdXpkmh537PPeEB5DaL
+	 xperOoNUhCImg==
+Date: Tue, 7 Apr 2026 16:43:09 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Changhuang Liang <changhuang.liang@starfivetech.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Alexey Charkov <alchark@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Keguang Zhang <keguang.zhang@gmail.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Ley Foon Tan <leyfoon.tan@starfivetech.com>
+Subject: Re: [PATCH v1 12/13] soc: starfive: Add socinfo driver for JHB100 SoC
+Message-ID: <20260407-vigorous-clustered-79d62b6fa20a@spud>
+References: <20260403054945.467700-1-changhuang.liang@starfivetech.com>
+ <20260403054945.467700-13-changhuang.liang@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260407-ti-sci-jacinto-s2r-restore-irq-v5-4-97b28f2d93f9@bootlin.com>
-References: <20260407-ti-sci-jacinto-s2r-restore-irq-v5-0-97b28f2d93f9@bootlin.com>
-In-Reply-To: <20260407-ti-sci-jacinto-s2r-restore-irq-v5-0-97b28f2d93f9@bootlin.com>
-To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
- Santosh Shilimkar <ssantosh@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: Gregory CLEMENT <gregory.clement@bootlin.com>, 
- richard.genoud@bootlin.com, Udit Kumar <u-kumar1@ti.com>, 
- Prasanth Mantena <p-mantena@ti.com>, Abhash Kumar <a-kumar2@ti.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-clk@vger.kernel.org, 
- "Thomas Richard (TI)" <thomas.richard@bootlin.com>, 
- Dhruva Gole <d-gole@ti.com>
-X-Mailer: b4 0.14.3
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="/VAzyku+3yIu6BpE"
+Content-Disposition: inline
+In-Reply-To: <20260403054945.467700-13-changhuang.liang@starfivetech.com>
 
-Some DM-Firmware are not able to restore the clock rates and the clock
-parents after a suspend-resume. The CLK_CONTEXT_LOST firmware capability
-has been introduced to identify this characteristic. In this case the
-responsibility is therefore delegated to the ti_sci driver, which uses
-clk_restore_context() to trigger the context_restore() operation for all
-registered clocks, including those managed by the sci-clk. The sci-clk
-driver implements the context_restore() operation to ensure rates and clock
-parents are correctly restored.
 
-Reviewed-by: Dhruva Gole <d-gole@ti.com>
-Signed-off-by: Thomas Richard (TI) <thomas.richard@bootlin.com>
----
- drivers/firmware/ti_sci.c | 9 +++++++--
- drivers/firmware/ti_sci.h | 2 ++
- 2 files changed, 9 insertions(+), 2 deletions(-)
+--/VAzyku+3yIu6BpE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
-index b5c4324287b0..0148bafd71a0 100644
---- a/drivers/firmware/ti_sci.c
-+++ b/drivers/firmware/ti_sci.c
-@@ -9,6 +9,7 @@
- #define pr_fmt(fmt) "%s: " fmt, __func__
- 
- #include <linux/bitmap.h>
-+#include <linux/clk.h>
- #include <linux/cpu.h>
- #include <linux/debugfs.h>
- #include <linux/export.h>
-@@ -3981,6 +3982,9 @@ static int ti_sci_resume_noirq(struct device *dev)
- 					return ret;
- 			}
- 		}
-+
-+		if (info->fw_caps & MSG_FLAG_CAPS_LPM_CLK_CONTEXT_LOST)
-+			clk_restore_context();
- 		break;
- 	default:
- 		break;
-@@ -4141,14 +4145,15 @@ static int ti_sci_probe(struct platform_device *pdev)
- 	}
- 
- 	ti_sci_msg_cmd_query_fw_caps(&info->handle, &info->fw_caps);
--	dev_dbg(dev, "Detected firmware capabilities: %s%s%s%s%s%s%s\n",
-+	dev_dbg(dev, "Detected firmware capabilities: %s%s%s%s%s%s%s%s\n",
- 		info->fw_caps & MSG_FLAG_CAPS_GENERIC ? "Generic" : "",
- 		info->fw_caps & MSG_FLAG_CAPS_LPM_PARTIAL_IO ? " Partial-IO" : "",
- 		info->fw_caps & MSG_FLAG_CAPS_LPM_DM_MANAGED ? " DM-Managed" : "",
- 		info->fw_caps & MSG_FLAG_CAPS_LPM_ABORT ? " LPM-Abort" : "",
- 		info->fw_caps & MSG_FLAG_CAPS_IO_ISOLATION ? " IO-Isolation" : "",
- 		info->fw_caps & MSG_FLAG_CAPS_LPM_BOARDCFG_MANAGED ? " BoardConfig-Managed" : "",
--		info->fw_caps & MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST ? " IRQ-Context-Lost" : ""
-+		info->fw_caps & MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST ? " IRQ-Context-Lost" : "",
-+		info->fw_caps & MSG_FLAG_CAPS_LPM_CLK_CONTEXT_LOST ? " Clk-Context-Lost" : ""
- 	);
- 
- 	ti_sci_setup_ops(info);
-diff --git a/drivers/firmware/ti_sci.h b/drivers/firmware/ti_sci.h
-index 67f16e8c69a1..2d75667a6723 100644
---- a/drivers/firmware/ti_sci.h
-+++ b/drivers/firmware/ti_sci.h
-@@ -152,6 +152,7 @@ struct ti_sci_msg_req_reboot {
-  *		MSG_FLAG_CAPS_IO_ISOLATION: IO Isolation support
-  *		MSG_FLAG_CAPS_LPM_BOARDCFG_MANAGED: LPM config done statically for the DM via boardcfg
-  *		MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST: DM is not able to restore IRQ context
-+ *		MSG_FLAG_CAPS_LPM_CLK_CONTEXT_LOST: DM is not able to restore Clock context
-  *
-  * Response to a generic message with message type TI_SCI_MSG_QUERY_FW_CAPS
-  * providing currently available SOC/firmware capabilities. SoC that don't
-@@ -166,6 +167,7 @@ struct ti_sci_msg_resp_query_fw_caps {
- #define MSG_FLAG_CAPS_IO_ISOLATION	TI_SCI_MSG_FLAG(7)
- #define MSG_FLAG_CAPS_LPM_BOARDCFG_MANAGED	TI_SCI_MSG_FLAG(12)
- #define MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST	TI_SCI_MSG_FLAG(14)
-+#define MSG_FLAG_CAPS_LPM_CLK_CONTEXT_LOST	TI_SCI_MSG_FLAG(15)
- #define MSG_MASK_CAPS_LPM		GENMASK_ULL(4, 1)
- 	u64 fw_caps;
- } __packed;
+On Thu, Apr 02, 2026 at 10:49:44PM -0700, Changhuang Liang wrote:
+> Add socinfo driver for JHB100 SoC. Currently available for distinguishing
+> between the two reversions, A0 and A1.
+>=20
+> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+> ---
+>  MAINTAINERS                                   |  6 ++
+>  drivers/soc/Kconfig                           |  1 +
+>  drivers/soc/Makefile                          |  1 +
+>  drivers/soc/starfive/Kconfig                  |  6 ++
+>  drivers/soc/starfive/Makefile                 |  2 +
+>  drivers/soc/starfive/socinfo/Kconfig          | 11 +++
+>  drivers/soc/starfive/socinfo/Makefile         |  2 +
+>  drivers/soc/starfive/socinfo/jhb100-socinfo.c | 90 +++++++++++++++++++
+>  8 files changed, 119 insertions(+)
+>  create mode 100644 drivers/soc/starfive/Kconfig
+>  create mode 100644 drivers/soc/starfive/Makefile
+>  create mode 100644 drivers/soc/starfive/socinfo/Kconfig
+>  create mode 100644 drivers/soc/starfive/socinfo/Makefile
+>  create mode 100644 drivers/soc/starfive/socinfo/jhb100-socinfo.c
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index eb5f6a383146..32bd94a0b94c 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -25325,6 +25325,12 @@ S:	Maintained
+>  F:	drivers/reset/starfive/reset-starfive-jhb1*
+>  F:	include/dt-bindings/reset/starfive,jhb1*.h
+> =20
+> +STARFIVE JHB100 SOCINFO DRIVER
+> +M:	Changhuang Liang <changhuang.liang@starfivetech.com>
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/hwinfo/starfive,jhb100-socinfo.yaml
+> +F:	drivers/soc/starfive/socinfo/jhb100-socinfo.c
 
--- 
-2.53.0
+Make sure you add the drivers/soc/starfive directory back to the
+starfive soc drivers entry.
 
+> +
+>  STARFIVE JHB100 SYSCON
+>  M:	Changhuang Liang <changhuang.liang@starfivetech.com>
+>  S:	Maintained
+> diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
+> index a2d65adffb80..b3b01fc38139 100644
+> --- a/drivers/soc/Kconfig
+> +++ b/drivers/soc/Kconfig
+> @@ -24,6 +24,7 @@ source "drivers/soc/renesas/Kconfig"
+>  source "drivers/soc/rockchip/Kconfig"
+>  source "drivers/soc/samsung/Kconfig"
+>  source "drivers/soc/sophgo/Kconfig"
+> +source "drivers/soc/starfive/Kconfig"
+>  source "drivers/soc/sunxi/Kconfig"
+>  source "drivers/soc/tegra/Kconfig"
+>  source "drivers/soc/ti/Kconfig"
+> diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
+> index c9e689080ceb..009f85ff891a 100644
+> --- a/drivers/soc/Makefile
+> +++ b/drivers/soc/Makefile
+> @@ -30,6 +30,7 @@ obj-y				+=3D renesas/
+>  obj-y				+=3D rockchip/
+>  obj-$(CONFIG_SOC_SAMSUNG)	+=3D samsung/
+>  obj-y				+=3D sophgo/
+> +obj-y				+=3D starfive/
+>  obj-y				+=3D sunxi/
+>  obj-$(CONFIG_ARCH_TEGRA)	+=3D tegra/
+>  obj-y				+=3D ti/
+> diff --git a/drivers/soc/starfive/Kconfig b/drivers/soc/starfive/Kconfig
+> new file mode 100644
+> index 000000000000..04b020083d3e
+> --- /dev/null
+> +++ b/drivers/soc/starfive/Kconfig
+> @@ -0,0 +1,6 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +menu "StarFive SoC (System On Chip) specific Drivers"
+> +
+> +source "drivers/soc/starfive/socinfo/Kconfig"
+> +
+> +endmenu
+> diff --git a/drivers/soc/starfive/Makefile b/drivers/soc/starfive/Makefile
+> new file mode 100644
+> index 000000000000..ca1e609b8104
+> --- /dev/null
+> +++ b/drivers/soc/starfive/Makefile
+> @@ -0,0 +1,2 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +obj-y +=3D socinfo/
+> diff --git a/drivers/soc/starfive/socinfo/Kconfig b/drivers/soc/starfive/=
+socinfo/Kconfig
+> new file mode 100644
+> index 000000000000..0a20382da5d3
+> --- /dev/null
+> +++ b/drivers/soc/starfive/socinfo/Kconfig
+> @@ -0,0 +1,11 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +
+> +config STARFIVE_JHB100_SOCINFO
+> +	tristate "StarFive JHB100 SoC Information"
+> +	depends on ARCH_STARFIVE || COMPILE_TEST
+> +	select SOC_BUS
+> +	default ARCH_STARFIVE
+
+This can just be default y, since it depends on ARCH_STARFIVE.
+
+> +	help
+> +	  Include support for the SoC bus socinfo for the StarFive JHB100 SoC
+> +	  platforms to provide information about the SoC family and variant
+> +	  to user space.
+
+--/VAzyku+3yIu6BpE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCadUmDAAKCRB4tDGHoIJi
+0uepAQC7ntfH69ktomW75v5F61miSN/mOMGDvnF71s+HhCw7dgD/YPqMuQE+EzM/
+6pRWppBsT1NXKoSi6ShyMVOAGmLNrws=
+=iV1Y
+-----END PGP SIGNATURE-----
+
+--/VAzyku+3yIu6BpE--
