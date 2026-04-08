@@ -1,123 +1,158 @@
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D99C3B19CC
-	for <linux-clk@vger.kernel.org>; Wed,  8 Apr 2026 09:41:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB5F363C43
+	for <linux-clk@vger.kernel.org>; Wed,  8 Apr 2026 09:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775641302; cv=none; b=Nn+FcSBQmunibANgl1izhG9XCw45i49tSEWRaeHgXwZBKJU4ZDnxhhYSrQxG0Vja2vy0UV4EYdnNwUG5p6xdcelDfjjh9+tWkr02LsD6Q9JyPa0Dt6V7zhSp/zVWT5LKrOU84odEDhXma1RPZus5yxuPaymlc+vEOgkKHV+GOxE=
+	t=1775641754; cv=none; b=essNMv7K7ZT2GyFh5oE65bh/stKAJ/d10ejF8t6oTuBCu4HQ9/gSXfc+oz+btIvS3M1FzFGGvwPtuKVcga66dLWxh/zxXC32QYFH8l+TVXvJsexPkrGAMpzFR5mRlDxfAgW7FOVJSyN+5kMCJO4T+8GXNzPEX5jwQZsjObd1Ytc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775641302; c=relaxed/simple;
-	bh=O0dPKIPUwqcZQdDhmwfagNKRPoro50YwQ5jiiYuAkY8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OW6k46rJO3exnTOBR1pcbqjEEsv3ktjoO6vHZuWVZTD88nOt+/agJZiTtzMvxp8fFesz5xyAelLZos7bvK2zmeLyqfGLYUAxU2gv9N2wQEKKAiLM4NRYhSTg+baLoAs0BquLCEGzra9LbwqVnMOYo0A/MmBDnfmEAb/gvAwd47E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1775641754; c=relaxed/simple;
+	bh=mpR/q6X3i/M2BnduABDgEH02LEks6wSFU2eL75pnwGk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YxH80Zw+oFCYnabT8eXFt44G3uLI5hiy42vnURwpd/q8tLKp6qrLpRQI8pb+rRWc9RyiWakwN9XHotHQlIhH1Rr+8X3ya/86vLoUEMA0q/WTfCCKEANxYp4lAjn6cqIxChAgfqYTzpC6kpyqUt3NbosSge9Cue+SZMeTLIFc5oM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HIfZCJ0D; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-56a9a7e762bso4687247e0c.3
-        for <linux-clk@vger.kernel.org>; Wed, 08 Apr 2026 02:41:38 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HIfZCJ0D"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-488af9fdaa7so18822025e9.1
+        for <linux-clk@vger.kernel.org>; Wed, 08 Apr 2026 02:49:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1775641742; x=1776246542; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pYoGMeCz6Y1Ts2t+vdMHS9mUEhRgNq0fMUR9Htuve1Y=;
+        b=HIfZCJ0D/DvySHEPmNeKNho8Q1o0qqXhzL8g8LdFHOoUXXQqzXcHNfhbxemd5yfJ3a
+         S4bIZ5KMv38nvrzvW+k2vf8a29hA7CYiwYjd9SN5cJcobfa9/Jf/Oc/U0ytmHq/ERB/g
+         Gj3srS1WgCHjNwuUSP4hqkrmjPufq7lXhLEue0uoKyjyZqAaXVVNzlO0/ZUrVe1pkb9r
+         9DwWo7nw8B0fNJ8AbLikKKildFqMbk+oo5levvcJEXWUmReLDaZJIG+wTZop3EViJxlK
+         jogV+O7nrZPbKf2wjx6LkJkjHA0GwqkjMDsrXiWC3vQRjGYsCtOaEkrQHLI1atrKKj71
+         Hd/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775641297; x=1776246097;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20251104; t=1775641742; x=1776246542;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=quvvcejYXNcTSghIu/ABG/aBBVzSmRl0OrHbMTAKiNc=;
-        b=q8gm/I+pdEuGCd6MfMPHmpvy+kAssC7eeZu/krQ2GVpldxKbpl3meoSj6/lz0zfanj
-         d9vrMAHVcrb6lPUL+f8Y8ZKSYuJdTg1YMnILUbFdLRrrzXHH4vXglOW2A1Kp1/hzkW1G
-         MJ8D24s0KekhpyrZVdzEaacUHeRQu861LnoqzzJp5501+hqH/OvRX0scKdnXvawUBXZ6
-         8/9nGxAlH/DZnAsDDefz+sLrabvZhOziXntllQmVewbutnj/FXRvlYV4FpgnQCJToY5J
-         WP0IKtpcPy6vakoRWDthKFMHfm1cjiaKkwPR5387q/6wpmsQidS44EUwibcv2OMno3q3
-         sVAA==
-X-Forwarded-Encrypted: i=1; AJvYcCWtSa4z3EVbDJPm99/cj3a/paF5kSuO31rx2OgyZKM3BYhucc/fWSpJfNsWW42Y0Np1SrlianRFj6M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxldc0Wr7oEebTz0snLPJzzOCYtMVP9SBF126Q187DmpUqBQf6a
-	KGpcJ78mGGzDpkizwoXFvwxITiw41GIkO6mWdiRGK2rZQUIrAIv/qkHDL+bpPz8N
-X-Gm-Gg: AeBDiesW2hor6g1fDCq7ob2Btg79FpqFzUE1U5yC7MegHvtg3zq0ThNvYLaXkU91xJq
-	zs3KXYFM3sngy0DvKf64NqcYEU8didJUj4pUh7kxg4w1g9UNYdc1yDtYZVO6D9wpASSljwG9vrG
-	wtHCMRbJT1bmf5q+B3WzShqfD0x7Xcl1GYc6pUUBJ9wejRheTqdlp+aaIkujckcaM43lWxEfy4V
-	gkUBnTYGSuKUqfQ5Q4TzIXDH1X1435viipnWbAkkC46bNhI+DS/ZA3hMmtPhjWm0/fdpIgV5jvg
-	VGJrDPIE4X29m3Ud1ttoG+nHIT9YkQgVAsy0Zu7+018DJIv3xXJ+sdYdNtZdXNGiX8kTZNpYoKt
-	B1ldOlTVxL0uvVvds0+zlgDbwODpbHsZvSbdkF9bCUCQm8irJIapWEzu3PRytwkF2QGUpM7wxno
-	nHwYv8h8qztdr8X6NXXNtuT73Nebf3m8/5phScEXTlA6bZ2ZPLGSUXjOvJMEOc7I64
-X-Received: by 2002:a05:6122:3b84:b0:56e:eb08:21ca with SMTP id 71dfb90a1353d-56eeb082629mr5429777e0c.7.1775641296786;
-        Wed, 08 Apr 2026 02:41:36 -0700 (PDT)
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com. [209.85.221.176])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56d9ba81b53sm19722482e0c.4.2026.04.08.02.41.35
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Apr 2026 02:41:36 -0700 (PDT)
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-56d9c4f7f0bso4168620e0c.2
-        for <linux-clk@vger.kernel.org>; Wed, 08 Apr 2026 02:41:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWEOqFlf31YKG05TgZL7jp9f9+f4B2SJ01ED3BUe8KEk+Wvx38NV/KEeHL10f9NdTJ54aglp2w7qP0=@vger.kernel.org
-X-Received: by 2002:a05:6122:a5c9:10b0:56e:e9cf:7134 with SMTP id
- 71dfb90a1353d-56ee9cfa0fbmr3844058e0c.3.1775641295235; Wed, 08 Apr 2026
- 02:41:35 -0700 (PDT)
+        bh=pYoGMeCz6Y1Ts2t+vdMHS9mUEhRgNq0fMUR9Htuve1Y=;
+        b=ZnNRclVwnnKTBcvMyJs2X0JrpsUSFb30ptiHM/D1GJw0I2fGh3d/fMQErw8WrF0Fn9
+         bp0lePLsDik2+8+2Kkx3Jo4Gbh/BBK1LTfmq14GvWf4cMY3Tfg+D7qqyeWkxNLLMs8lW
+         7D7o0Dt30VIK4GTuTq6ssezLmlnTK+VTIHmm8yFEGVl1W81msc/WZ2+lgnQDCfJwiGVz
+         YcCBfKn/br/6+CZ27m1eSj9Q+/rQA08ljaZW0frQ5sfXOKWDzRq3YMPnO3ygcX0UtENg
+         7Qx++ZNsWS3+Tp5JBH+0zAJr/0o42mlYzbbJQo+NLFAfff8xFMUFbaLjkHgbsB0gT9KT
+         5qfw==
+X-Gm-Message-State: AOJu0YwTbWfIceaCkZCWvaYH5kAJ+HxA+6GHmPbmU69cowJ5cdVo9xko
+	JNULEvUCAPunqjsJQ42jmIDTVUZ9JmyY3Lza9/ks6Dewwj4J0LjlW/25
+X-Gm-Gg: AeBDieuiJVEfSLn/jD/X9w/yiAULqzsWOWqymTX2TCYiFYC5uneIxJe7DuRLlJp3Se5
+	wWy34+71urZp0QH6KUye1TDMSRwWDyJzcSFbx8/e5x8Du6Ge3CiHbNKlwDjzLCnkPHFsUyX3e6z
+	jqhhm+YWYrA7ztgdraMREj9FA0N0HU6DUEsGIj02HLHimmuwkTf6hK4Y1lBlLJ9yqyi/5lPap1Z
+	Oc9joynkjIjjw2ikGIp6BOIqBKAc2i1/NQAfz4jOJ3W9tHd5UW4kTFStjdANsBNB53kgvcgS0Xo
+	1Kp1AFUgq+3R4BfYaLU1JrIflJTFIXJygPuY3/d10DyBWCzdRQ6dFoYgu1F25BnZ38MOR82SiWe
+	J5WYp3LJ/INaZIT4g7GJjFpiAR+hq2KYJbBzo5gBlsirODMbVPRyZriVMA6u5KLUFU1Q+kBOUb3
+	8Ezm9TTIeZKgXJoU3XvCXxMCKn5CQSaR20lvMPrQQCcSo7YmL/VkmczORKYgqXQNTOpuK8bWrb+
+	c2wpBzuCpaLEJlZgvqmI5BLdc9npfodu6x7uw==
+X-Received: by 2002:a05:600d:8449:b0:487:1fbf:e0a1 with SMTP id 5b1f17b1804b1-488996a1e01mr217238555e9.4.1775641741935;
+        Wed, 08 Apr 2026 02:49:01 -0700 (PDT)
+Received: from iku.Home ([2a06:5906:61b:2d00:98bc:78d2:5881:a11f])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d1e4d58e5sm57689153f8f.23.2026.04.08.02.49.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Apr 2026 02:49:01 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] clk: divider: Fix overflow in clk_divider_bestdiv() for large rate requests
+Date: Wed,  8 Apr 2026 10:48:14 +0100
+Message-ID: <20260408094814.321072-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260402090524.9137-1-john.madieu.xa@bp.renesas.com> <20260402090524.9137-25-john.madieu.xa@bp.renesas.com>
-In-Reply-To: <20260402090524.9137-25-john.madieu.xa@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 8 Apr 2026 11:41:23 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVLb3Wj=4qK_5jLsiN28i2LDYPVH9ch91Y6e8XyT+yjjA@mail.gmail.com>
-X-Gm-Features: AQROBzD3bL2aOOG6EzT_imFnbWnAbXmWWZH1UF0TeTlDTbev2ZgK_ZCcpyzlvIk
-Message-ID: <CAMuHMdVLb3Wj=4qK_5jLsiN28i2LDYPVH9ch91Y6e8XyT+yjjA@mail.gmail.com>
-Subject: Re: [PATCH v2 24/24] arm64: dts: renesas: r9a09g047e57-smarc: add
- DA7212 audio codec support
-To: John Madieu <john.madieu.xa@bp.renesas.com>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Vinod Koul <vkoul@kernel.org>, 
-	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, 
-	Thomas Gleixner <tglx@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	John Madieu <john.madieu@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org, 
-	linux-sound@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi John,
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Thu, 2 Apr 2026 at 11:10, John Madieu <john.madieu.xa@bp.renesas.com> wrote:
-> RZ/G3E SMARC board has a DA7212 audio codec connected via I2C1 for
-> sound input/output using SSI3/SSI4 where:
->
->  - The codec receives its master clock from the Versa3 clock
->    generator present on the SoM
->  - SSI4 shares clock pins with SSI3 to provide a separate data
->    line for full-duplex audio capture.
->
-> Enable audio support on RZ/G3E SMARC2 EVK boards with a DA7212 audio codec.
->
-> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+clk_divider_bestdiv() clamps maxdiv using:
 
-Thanks for your patch!
+    maxdiv = min(ULONG_MAX / rate, maxdiv);
 
-> --- a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-> +++ b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
+to avoid overflow in rate * i. However requests like
+clk_round_rate(clk, ULONG_MAX), which are used to determine the maximum
+supported rate of a clock, result in maxdiv being clamped to 1. If no
+valid divider of 1 exists in the table the loop is never entered and
+bestdiv falls back to the maximum divider with the minimum parent rate,
+causing clk_round_rate(clk, ULONG_MAX) to incorrectly return the minimum
+supported rate instead of the maximum.
 
-> @@ -280,6 +358,42 @@ &sdhi1 {
->         vqmmc-supply = <&vqmmc_sd1_pvdd>;
->  };
->
-> +&snd_rzg3e {
+Fix this by replacing the maxdiv clamping and the unprotected rate * i
+multiplications with check_mul_overflow(), clamping target_parent_rate
+to ULONG_MAX on overflow. This allows the loop to iterate all valid
+dividers regardless of the requested rate, and clk_hw_round_rate() with
+ULONG_MAX will correctly return the maximum supported parent rate.
 
-Please preserve sort order (alphabetical, by label).
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/clk/clk-divider.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+index 45e7ebde4a8b..dc486c2aa946 100644
+--- a/drivers/clk/clk-divider.c
++++ b/drivers/clk/clk-divider.c
+@@ -15,6 +15,7 @@
+ #include <linux/err.h>
+ #include <linux/string.h>
+ #include <linux/log2.h>
++#include <linux/overflow.h>
+ 
+ /*
+  * DOC: basic adjustable divider clock that cannot gate
+@@ -301,6 +302,7 @@ static int clk_divider_bestdiv(struct clk_hw *hw, struct clk_hw *parent,
+ 	int i, bestdiv = 0;
+ 	unsigned long parent_rate, best = 0, now, maxdiv;
+ 	unsigned long parent_rate_saved = *best_parent_rate;
++	unsigned long target_parent_rate;
+ 
+ 	if (!rate)
+ 		rate = 1;
+@@ -315,15 +317,11 @@ static int clk_divider_bestdiv(struct clk_hw *hw, struct clk_hw *parent,
+ 		return bestdiv;
+ 	}
+ 
+-	/*
+-	 * The maximum divider we can use without overflowing
+-	 * unsigned long in rate * i below
+-	 */
+-	maxdiv = min(ULONG_MAX / rate, maxdiv);
+-
+ 	for (i = _next_div(table, 0, flags); i <= maxdiv;
+ 					     i = _next_div(table, i, flags)) {
+-		if (rate * i == parent_rate_saved) {
++		if (check_mul_overflow(rate, (unsigned long)i, &target_parent_rate))
++			target_parent_rate = ULONG_MAX;
++		if (target_parent_rate == parent_rate_saved) {
+ 			/*
+ 			 * It's the most ideal case if the requested rate can be
+ 			 * divided from parent clock without needing to change
+@@ -332,7 +330,7 @@ static int clk_divider_bestdiv(struct clk_hw *hw, struct clk_hw *parent,
+ 			*best_parent_rate = parent_rate_saved;
+ 			return i;
+ 		}
+-		parent_rate = clk_hw_round_rate(parent, rate * i);
++		parent_rate = clk_hw_round_rate(parent, target_parent_rate);
+ 		now = DIV_ROUND_UP_ULL((u64)parent_rate, i);
+ 		if (_is_best_div(rate, now, best, flags)) {
+ 			bestdiv = i;
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.53.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
