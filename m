@@ -1,102 +1,153 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8BA385513
-	for <linux-clk@vger.kernel.org>; Wed,  8 Apr 2026 08:20:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D677133F370;
+	Wed,  8 Apr 2026 08:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775636426; cv=none; b=crvah9ceUtsm3QUfwfQwZjwcoMPEpRxkZj0QBeeU5yddQuuzQVDQCdxqwGVlSaBQrEHxVnnaufaRiSyrncdY6hD85yLld2+o8az1+QAX5vIWc8I+taKPqr2ssDhDf/M9SU1Qsqdp+lAhpjObgtVeweYx2y7B38zMYkLLODkFvV0=
+	t=1775638145; cv=none; b=MlpHIPPTLNHoXuU8AmFJ7wiFcpKhJh0p7te7nWqfdd1otLh5IU7xemY8XB0tsnzGG8LnCambg4l96+1mTnlpUD0QmLgYz0yul9I7guMkmL6VQktSl/Fx6Gs5eLPxFl4xH90EaLBF3pobwqG/V7qfx9UsFWq1sBlvm7Z00TFI6pU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775636426; c=relaxed/simple;
-	bh=gtZfbxKRElMEZn8O6b4BlJRIdwl5gp/hWHEN0k3wwbw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=fWGZdHE8qcdDLQeExvH7k102rjVaciNjuDq39Y87m2YzjnhPUC0IvCbr+GfLih16QSvbhuB5GjDs7hARUqHALB1fr7dmjdRvemboNfYy4pMR5CojN1fI1aj4g5bEv2yzV6+7yUtOvdIKs/cKv1bAIMUf0H/drkdy/haiAhM/lyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20251104.gappssmtp.com header.i=@baylibre-com.20251104.gappssmtp.com header.b=z8esgjH+; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1775638145; c=relaxed/simple;
+	bh=ek8QkVOEsVbLitr6MEFaOhhmZAi7RCruP3Dygqu3nBQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q2F0sH2srufoEhEanPsCA/7TQrEG7i58mlk7Ch5uDmdJx558yKCa6mfnzt2kIiTKTxRAWHXObvns12AfIL1P4bG7ShvY+fwNRbQFm+H1ksg2n/r5Hk1AeUGFDS30eiQJ5b4iS0hW8dUoYJdGfSXo/c3zdrv1ibhDHy0n7i2oAnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EIbBesZc; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20251104.gappssmtp.com header.i=@baylibre-com.20251104.gappssmtp.com header.b="z8esgjH+"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-43cfb723698so5111302f8f.3
-        for <linux-clk@vger.kernel.org>; Wed, 08 Apr 2026 01:20:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20251104.gappssmtp.com; s=20251104; t=1775636421; x=1776241221; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VRd+Civy+geLALzWFHgxsIesA9wBU9+u1x5Mut66okY=;
-        b=z8esgjH+Gh3qIJaW05xkOEePSjAm895g8ZL0T4OekOPmHQwVIx7D5hlTSApfkA5R4b
-         SsfmdI7dXVi91x/7Icu1VaPCz9OrOhGZPjSkpNyxJ7rpgx/Inx/zT5m3PPOGYUyWqGgo
-         oI99geuB50ZWhKb9Kevjr01KFpg+wBeONiWSpJu8GsJsI086DVENyomGubXUf98OOzYz
-         QL4NPRd7u4LToomxEAq9AjEynX/ZsxMFVLuM38ZpovMaND+d8Unj1vSCgAQgbgYtZIec
-         /ICSB4tAbjEsYVjyp/FFT1lkFvzKgPPEiX7HGHCgIezp7v4zldFOEiHxZEy1g9Lswav4
-         FSXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775636421; x=1776241221;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=VRd+Civy+geLALzWFHgxsIesA9wBU9+u1x5Mut66okY=;
-        b=hGqk8XtsHBvkqdhetfy5qizCO3kGMDQPZYW1+7CCYuV5Mt5UYyXDTXI4GOzrYGbbNS
-         Fyjbur86GjPt4jTPw36+/pA9IqBDEQwCgfDY8lZMmTStZ0UMaIvCIy7WgFe3K2VNQ4Mp
-         2Q2PWzW8hg3nsjDJlzXkWFSaZFDLU9ZKIbnTB7obGERlZmGjs2KS9KJv2knI7bg9Z4Uz
-         C5ieyv9ybrFG9jRQjEjH8KzL3csmIJbsrHSb5ycedn+06DPOdcInAk0fjVzbcYT05Ziq
-         lzktA6qBa7a9SzFCO4HsgoYwp7qAYNNU8pPUyK+TD+qTQ+z6cGSBdgwt30n63RDUMlIa
-         IpjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXSom8+JHjmtVvvgMvQFYskW+KbklLr/MBNRPBN2dcSOeSxw7PFvpKfAh6P4ZHdyxwHX/+WFqNALQQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTaGy0beEAFgW78EzOqbfHRi1I6GVOO3UyLczqbEVqaLSj8dOs
-	462D7IL/2Rzgl8o/8xBAz/cNxS/1FN+QIBDLe8OE9PqGnmZqKhCr4QNCK3n6/uhbcyg=
-X-Gm-Gg: AeBDies6KQod9v9ZOGOES9H4DClw3ODYWNOoAMamCRQMzzjlFCv/fpYNXXyffCCMkBw
-	EhBAmRxuDijcTyTohBWsWDk4t2sYTyTw362hbALOCN3BltDaej5ypQdlTf8zkd4mouFcndWUUJJ
-	1XVLMtlI3K5RTH0nliF31dyyBpWXD+FNgFQ2kM2casYHPNiFtPd2ene9FRKofLE4guBAAqYRmfC
-	O4OGjOmFQqaQ6HLEhx4yvWEgO0eXwZLbNG5+gOuLl9JVd18hL+n9cmNkysaksQ6Iqr84a3qcVb5
-	NFbnxuyQ34fqwDyFj3FzXHhT1B1ubZaoExrnS3xX8kCz8I0aavOF71Vfw0NLCVWJKx3XhgoPyZz
-	a+YEPeUdZhxBW1F/4+SMzIOy7kPysx8gd+78K8fdmLe6YeY9Iw0306J/ToVq49Z7LlgWAMrLOTK
-	86hOBH2qV4IbAZf5bNjgX5+g==
-X-Received: by 2002:a05:6000:18a9:b0:43c:f90b:5663 with SMTP id ffacd0b85a97d-43d292d4753mr27905582f8f.37.1775636420996;
-        Wed, 08 Apr 2026 01:20:20 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:6715:3376:7379:78d8])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-43d1e2a6f1esm54494851f8f.2.2026.04.08.01.20.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Apr 2026 01:20:20 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, robh+dt <robh+dt@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Jian Hu <jian.hu@amlogic.com>
-Cc: devicetree <devicetree@vger.kernel.org>, 
- linux-clk <linux-clk@vger.kernel.org>, 
- linux-amlogic <linux-amlogic@lists.infradead.org>, 
- linux-kernel <linux-kernel@vger.kernel.org>, 
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
- Ronald Claveau <linux-kernel-dev@aliel.fr>, 
- Ferass El Hafidi <funderscore@postmarketos.org>
-In-Reply-To: <20260326092645.1053261-1-jian.hu@amlogic.com>
-References: <20260326092645.1053261-1-jian.hu@amlogic.com>
-Subject: Re: (subset) [PATCH v3 0/3] Add the missing mpll3 clock and clock
- controller nodes
-Message-Id: <177563641892.1659838.16115307647051827681.b4-ty@b4>
-Date: Wed, 08 Apr 2026 10:20:18 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EIbBesZc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B320C19424;
+	Wed,  8 Apr 2026 08:49:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775638145;
+	bh=ek8QkVOEsVbLitr6MEFaOhhmZAi7RCruP3Dygqu3nBQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EIbBesZcGch3iyOQSQ7h0x5wra8eWAju5Chq/VbvbCUUY+HaLOzqcN7hbcYc3TTRF
+	 iq4mEDxr3KA16xHzNlq3mJuEIcise5ucwiXCGoX1cOpGvTQ6fsFOtOcgGEDIcBkQVX
+	 jkN6TeAyz/H8sNOAMGoG5qKRrvw5WTkYLAiYPqVfYBQHwgZ3tHuRTZfksoPP648fJ3
+	 xQ+UklvAWjYWSeXCLEOwHg/VRoP5bSFMYmgEyxPUfXiQIzoKl4jkIFg0G+Scsynuhi
+	 6KF4jtGqA+iETidwuAWju2zWmNd059qJT9RFRO9Ph9DpF4N4iLDvBFkW83NBlEXw7g
+	 YxJcxSKQyYXQw==
+Date: Wed, 8 Apr 2026 09:49:00 +0100
+From: Conor Dooley <conor@kernel.org>
+To: =?utf-8?B?QWxlxaEgUGXEjW5paw==?= <ales.pecnik@skylabs.si>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH] clk: microchip: mpfs-ccc: fix out-of-bounds write
+Message-ID: <20260408-patronage-photo-0fee66023c71@spud>
+References: <20260408-mpfs-clk-oob-write-v1-1-8b3b387f2a6f@skylabs.si>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15.1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="i5gPPqlIMz55tgrd"
+Content-Disposition: inline
+In-Reply-To: <20260408-mpfs-clk-oob-write-v1-1-8b3b387f2a6f@skylabs.si>
 
-Applied to clk-meson (clk-meson-next), thanks!
 
-[1/3] dt-bindings: clock: amlogic: Fix redundant hyphen in "amlogic,t7-gp1--pll" string.
-      https://github.com/BayLibre/clk-meson/commit/6d6be1cca2c9
-[2/3] dt-bindings: clock: amlogic: t7: Add missing mpll3 parent clock
-      https://github.com/BayLibre/clk-meson/commit/87edca62c4f5
+--i5gPPqlIMz55tgrd
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
---
-Jerome
+On Wed, Apr 08, 2026 at 07:07:34AM +0200, Ale=C5=A1 Pe=C4=8Dnik wrote:
+> Issue was allocated array size for clk_data.
+> When clocks are being registered their index is taken from defines in
+> dt-bindings. The last 2 clocks had their index outside of allocated range.
+> Two defines (CLK_CCC_DLL0, CLK_CCC_DLL1) were not used and skipped over
+> which was not taken into account when allocating the array.
+>=20
+> This patch is minimal change to resolve the issue.
+>=20
+> Issue was found using KASAN when debugging unrelated xdma driver issue.
+> Consequently fixing this issue also resolved xdma driver issue.
+>=20
+> Related dmesg output:
+> [    0.290703] BUG: KASAN: slab-out-of-bounds in mpfs_ccc_register_output=
+s.constprop.0+0xd0/0x1fa
+> [    0.290984] Write of size 8 at addr ffffffe7be6e3ca8 by task swapper/0=
+/1
+> [    0.291253] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 6.1.43-linux4mic=
+rochip+fpga-2023.09 #1
+> [    0.291482] Hardware name: Skylabs HPC (DT)
+> [    0.291611] Call Trace:
+> ...
+> [    0.292999] [<ffffffff808508c8>] mpfs_ccc_register_outputs.constprop.0=
++0xd0/0x1fa
+> [    0.293245] [<ffffffff80850b66>] mpfs_ccc_probe+0x174/0x30e
+> [    0.293437] [<ffffffff808d4af2>] platform_probe+0x74/0xba
+> ...
+>=20
+> Fixes: d39fb172760e ("clk: microchip: add PolarFire SoC fabric clock supp=
+ort")
+> Signed-off-by: Ale=C5=A1 Pe=C4=8Dnik <ales.pecnik@skylabs.si>
 
+I think this should be already fixed in linux-next, in commit
+2f7ae8ab6aa73 ("clk: microchip: mpfs-ccc: fix out of bounds access
+during output registration")
+
+Regardless, thanks for your patch.
+
+> ---
+>  drivers/clk/microchip/clk-mpfs-ccc.c             | 3 +--
+>  include/dt-bindings/clock/microchip,mpfs-clock.h | 2 ++
+>  2 files changed, 3 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/clk/microchip/clk-mpfs-ccc.c b/drivers/clk/microchip=
+/clk-mpfs-ccc.c
+> index 3a3ea2d142f8..71fbb6265ea4 100644
+> --- a/drivers/clk/microchip/clk-mpfs-ccc.c
+> +++ b/drivers/clk/microchip/clk-mpfs-ccc.c
+> @@ -234,8 +234,7 @@ static int mpfs_ccc_probe(struct platform_device *pde=
+v)
+>  	unsigned int num_clks;
+>  	int ret;
+> =20
+> -	num_clks =3D ARRAY_SIZE(mpfs_ccc_pll_clks) + ARRAY_SIZE(mpfs_ccc_pll0ou=
+t_clks) +
+> -		   ARRAY_SIZE(mpfs_ccc_pll1out_clks);
+> +	num_clks =3D CLK_CCC_NUM;
+> =20
+>  	clk_data =3D devm_kzalloc(&pdev->dev, struct_size(clk_data, hw_data.hws=
+, num_clks),
+>  				GFP_KERNEL);
+> diff --git a/include/dt-bindings/clock/microchip,mpfs-clock.h b/include/d=
+t-bindings/clock/microchip,mpfs-clock.h
+> index b52f19a2b480..8d53f2b81a54 100644
+> --- a/include/dt-bindings/clock/microchip,mpfs-clock.h
+> +++ b/include/dt-bindings/clock/microchip,mpfs-clock.h
+> @@ -73,4 +73,6 @@
+>  #define CLK_CCC_DLL1_OUT0	14
+>  #define CLK_CCC_DLL1_OUT1	15
+> =20
+> +#define CLK_CCC_NUM		16
+> +
+>  #endif	/* _DT_BINDINGS_CLK_MICROCHIP_MPFS_H_ */
+>=20
+> ---
+> base-commit: bfe62a454542cfad3379f6ef5680b125f41e20f4
+> change-id: 20260407-mpfs-clk-oob-write-a0cec9a5c224
+>=20
+> Best regards,
+> -- =20
+> Ale=C5=A1 Pe=C4=8Dnik <ales.pecnik@skylabs.si>
+>=20
+
+--i5gPPqlIMz55tgrd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCadYWfAAKCRB4tDGHoIJi
+0gZfAP9gXwx3GIdyR1takM7BUXROC0W/zb5Wc1y6xvb7LI5FGQEAhDPn4T94kaVM
+LJ/lyfnYZxRMj99GuFjN/bge/tzkCgc=
+=7/jP
+-----END PGP SIGNATURE-----
+
+--i5gPPqlIMz55tgrd--
