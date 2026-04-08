@@ -1,69 +1,79 @@
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022099.outbound.protection.outlook.com [40.107.75.99])
+Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011009.outbound.protection.outlook.com [40.107.74.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8623D3333;
-	Wed,  8 Apr 2026 14:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B223D332A;
+	Wed,  8 Apr 2026 14:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.9
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775659473; cv=fail; b=u4B9hvcMmgdDYkDkvxeKMGJjEKZXz8wiENb3l4Lz6qoDtBBlTOXXmm4+EZhUWEnvJ73TrrQjFvyZDbTeidQZfU/ZMKJxbwtEme/JM036/V9dGB70QdsfBim6D5CBjeCFHC9Bf02Fpa9hlXcdLOy9oDs9wXLNYuvUBW9tD9FydRE=
+	t=1775659505; cv=fail; b=A4G3+7aDtbqfBCfAf1qmS2iD7SAn4p3DWb9zL/kbw+8icFGEurDzyG7Zppj8EKJAZLMrF2p/K010gmwPqwOCzvzHes9cKkG0R+7I9lCdQjAi7o9ucpvSb17fpMsD18NDAckKrn9+dr7plMwLvEsNeL8LbrFXqNHrwfIRDLn6SsI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775659473; c=relaxed/simple;
-	bh=Ra5pBGdfg6Gw75Mxld8qAAM0y3tADy2GIIyrIhRLgyw=;
+	s=arc-20240116; t=1775659505; c=relaxed/simple;
+	bh=hSC9gd/LjupXISOcU+KNEfqwT5UB0hXMSAWDmBFH2AU=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=LLBcOIEfa+HR71GrFaitlCsJ8iF+S/OR17uy8LB6FCYe11Z/pnKVnHLlASqtcYVETG2Q1ZIBI9gMCH3BiDeRo8PmF5U8UW/LFeqBSF7/8sFrN29vBdSf8yPTwtoF5nXP7GN5+xeJhPxBPC8x+EGFyTttxKSk2ClPr/ROowlzjIs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=Rr4J8f55; arc=fail smtp.client-ip=40.107.75.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+	 Content-Type:MIME-Version; b=VjhUYPgtmJYapjXyrSsCvnw5341toDOjOFk6NZ6h+SUXlEGIYMevi3kADgRumQgcCp8P46eCy2jc/6RaF2ggzXbuC6WZm5HvSkOkft8KR23lHrfThi4TwzY3jYaKsAJ89+wOYjndEFsJz2EKpkeip2+Ym517nEaa8XJUmTtha1s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=XpU2W5X6; arc=fail smtp.client-ip=40.107.74.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="Rr4J8f55"
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="XpU2W5X6"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=A+LyjYUWh4wKn+hpyVwwV2srfjLva8foy8q4R1lIknSN8DiqLFq/1aPthoRhRISbGqxcgXa0fn9pFy9Aaj46bf61sxuWLMSY6ITk/H+M0Gt2rA0K1qPDYpWiW8TLL+wGJC+8JoDFgg3pzYm2ofhM9NjHHhXcYkc5w4RXvSrNvAxZhQUEaR9OnoATYBKauJMGCV4TVmIB9O8f37BqQBtFtVU/OCnKbaqQlTFzVH49LnWtK5V9gOefDA6S3e7UEySrRubvxg47WXciy34JP/6VhXcIpV3oOtzNYy1BPsUMzoT6Gi57rfKS3uz6MIjlqFDAfeGqTR0QDY2hl77eCEicOw==
+ b=BXGoZuk0H5SCASeapxFAskf3CPw3QEfxbYZPaPMJsy/mzeBIXHaZcIZmytDA51MJ+g0Oqz0G1p/qvLgtoVlBkSFdwZApUyvROdFBlavjbeLwOHY4UPpDjctZny9DKSXJPjXDGQ4c9kP+Z84I3xBfWiUlA37q8OggLq84jyKFB/e2xIjbE5kZ/RubOJzlxELYj4b4T3F66evddciSOcXyokY0OsNEyaFRYlz5JF5Acf9JsSd27wrq01jMyrG67naCysV+6dVLWH2s8aQBiRdiaYqYZdLFA78R3VUvKBPp0awoSzJJ9gCjV2e/SxJaMNGc9usypxdUmTCr1vr+cGRBDA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=S+g01k85OZ66nqrujJH6SpKHDmmSi1QscCq5Ew4Jkoc=;
- b=ASoe7AunyP+3pZaYcIvrBCTc37kmZV/FAdF/qhQPzsTbA26Yds0c0TjNbvRAP0nghHC6PkSQopOx1+GBdNMSnWGYxtlTuwCZsQ2y85jfgQ/amKWBpOwKijUEaTXqDB2rFKplybI9Khws3SWDXXaDI3hzOkJbzk/d6gtfBDAiqFFeUD/3PA6vsfbcqMhkPtguyBJW90i7E7Tq5RTSG6LaRIc8JJIGDYoxFcEtayYT5Qv7k9M8OKrSAPt/j+ZHtApWxTUmfsVRHt7oxruKD8u17ahvXN1jlFoBlgIZaoyXg9aYQfH+5IejMsqTocFp5fcc3lESLhSLyFaEI+o3SqkrzA==
+ bh=IDK7fOup7eUFC4r+TUbWuTGx8/lxw0RY2Y0bwv1fCNk=;
+ b=hYGcXqq/LiecgNddqexhTJxic7hLFvIuJWIqmF9JGHr3VafmzASYuvOVhaPbusCkvVtyjIo087c0ae7OL4J+ZTPe3SeG8H+ePGGuVfg7q5RgMF9EmD5cJH5aDFcGHRLHaJBfbXKR+Xqb8MP7EDSzIKUG6eYFlRbjicuaR1t1/M00QsRh+CejL0eiqZBEnTn6vI4FP90KwK9TlmvqZaMZQChe8NGHBLA8o+09Ktoqxn0mXO8sekNbMwNiBgxZ3T7W9a4uA1Jj0bzhSWvdIHoRZmXf27RUSWj6SNASlYW6GD6Gn2QSpFaKz8y8jf7x4lnrE3OgYxjPFMsZu/V/9VTcww==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=S+g01k85OZ66nqrujJH6SpKHDmmSi1QscCq5Ew4Jkoc=;
- b=Rr4J8f55I+EtOnh5FG+TzrCvoRInc49iL/j0uDqpw1q1YdayAltNBGP8kKjbQZ9AyQl+oZbIWZ+bbr3fia9jGxl9XsYGPt/zAe7Pn7bItVpQtT1B5dj3/DUOB7wZVIBpnH+azEPJCKz9RUjwLH+YZAeq/ykZoi7hg7C/0fkqMwptqcv7f3UqskGxpk0gjebJwbczzuc4jLrny6HdxlEIRoUqBQ2N3PDqHhcPp74CR/z1S61knLT3EAojOLK9Zp++z+tGhBoq7hSWJmNeolXOho3Lcbnmcmv5MbTy/2hXHUwPQm8FBASWkgiz7m7lM15YeuuAGOIBvbPx3AapcYhw5A==
+ bh=IDK7fOup7eUFC4r+TUbWuTGx8/lxw0RY2Y0bwv1fCNk=;
+ b=XpU2W5X6uDpd5vvZjrNZeDtYiijHc3BQX7IaP2Ce+OwZEemkBShqDCWxUiZKIIULfZFMkY2daG0fifDtj94FhEDhdKTedWpgOzTi0y2q1xhIbgzLKbSUe96/pSS4AqQursobjOT17dAZIy5BbWup8mX8ZRvgwJcvuYdKERxKhqE=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com (2603:1096:820:6d::13)
- by TYZPR03MB7060.apcprd03.prod.outlook.com (2603:1096:400:337::16) with
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com (2603:1096:400:3e1::6)
+ by OS3PR01MB10232.jpnprd01.prod.outlook.com (2603:1096:604:1e4::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.17; Wed, 8 Apr
- 2026 14:44:28 +0000
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::e1e:5c95:a889:828e]) by KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::e1e:5c95:a889:828e%5]) with mapi id 15.20.9769.017; Wed, 8 Apr 2026
- 14:44:28 +0000
-Message-ID: <40e2f836-4a6a-485a-9b92-1e42dc606e0f@amlogic.com>
-Date: Wed, 8 Apr 2026 22:44:54 +0800
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.21; Wed, 8 Apr
+ 2026 14:45:00 +0000
+Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com
+ ([fe80::33f1:f7cd:46be:e4d8]) by TYCPR01MB11947.jpnprd01.prod.outlook.com
+ ([fe80::33f1:f7cd:46be:e4d8%5]) with mapi id 15.20.9769.017; Wed, 8 Apr 2026
+ 14:45:00 +0000
+Message-ID: <87a18664-d19e-4434-8f92-1c7ce4f3a131@bp.renesas.com>
+Date: Wed, 8 Apr 2026 16:44:48 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/13] clk: amlogic: Add noglitch clock driver
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+Subject: Re: [PATCH v6 10/21] dt-bindings: display: renesas,rzg2l-du: Add
+ support for RZ/G3E SoC
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: tomm.merciai@gmail.com, geert@linux-m68k.org,
+ linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20260209-a9_clock_driver-v1-0-a9198dc03d2a@amlogic.com>
- <20260209-a9_clock_driver-v1-6-a9198dc03d2a@amlogic.com>
- <CAFBinCBXFxefUkNj3sqUdnTz7vf72jV_FkCP6gd2veTtLHWnBg@mail.gmail.com>
-From: Chuan Liu <chuan.liu@amlogic.com>
-In-Reply-To: <CAFBinCBXFxefUkNj3sqUdnTz7vf72jV_FkCP6gd2veTtLHWnBg@mail.gmail.com>
+ <sboyd@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <cover.1775636898.git.tommaso.merciai.xr@bp.renesas.com>
+ <8f814f22ff62dcde6153260e2c8c29a5415c9a89.1775636898.git.tommaso.merciai.xr@bp.renesas.com>
+ <20260408122436.GH1928916@killaraus.ideasonboard.com>
+ <dafdbdcf-98db-473c-8122-296af1922e6c@bp.renesas.com>
+ <20260408141638.GA1965119@killaraus.ideasonboard.com>
+Content-Language: en-US
+From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+In-Reply-To: <20260408141638.GA1965119@killaraus.ideasonboard.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: TPYP295CA0025.TWNP295.PROD.OUTLOOK.COM
- (2603:1096:7d0:a::15) To KL1PR03MB5778.apcprd03.prod.outlook.com
- (2603:1096:820:6d::13)
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR4P281CA0271.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:e6::20) To TYCPR01MB11947.jpnprd01.prod.outlook.com
+ (2603:1096:400:3e1::6)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -71,122 +81,246 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR03MB5778:EE_|TYZPR03MB7060:EE_
-X-MS-Office365-Filtering-Correlation-Id: dd2bc379-44f9-405b-05c2-08de957d55ee
+X-MS-TrafficTypeDiagnostic: TYCPR01MB11947:EE_|OS3PR01MB10232:EE_
+X-MS-Office365-Filtering-Correlation-Id: 01fb90ed-36f2-4ed7-4453-08de957d6931
+X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|56012099003|18002099003|22082099003;
+ BCL:0;ARA:13230040|7416014|376014|366016|1800799024|18002099003|22082099003|56012099003;
 X-Microsoft-Antispam-Message-Info:
-	bF2tdxklWc22T0twfuMIO5uJqK234qCZdo2R/TolhQbjKMfFZ9nifQV87EMyrlnFQ+sA+CGcUfebmyEs7waGyCwZJN3NEDpEq4POWL9oPK9CPmnjc58M9yW6MefFEsodHwwYDlZydI9AvF7aYKfqJg6AGJrPS0jXGk9NLAQicP9R89Ofg4v228alZUlTsnE865va4CRAw44HA6wPflkCV0d86UR5HQHIrax/kFI9z3rf+qisVZsDJSTrl8b/z9jZZDZgI2YqBfXyyY2byIO+1ktd8qBMuepObhSS5eMuUQuFpEinVksT9DujMgzAE7EqSHREzvW9cxivgynDG0SHcEic/PsmWTcHEXGQCs0qL8/55SiDyQcf3b8IMtTUM4ErSClyg+eddoLh1fcLlm90rzTXgzEVgpktpOJz8e52wKLXdmCPYVtiCz8mZmT+ek7BbZzfgfv1SFr3jchuGkSmdA0RWLnYadDUOQTy/LHoyeDX9Gj11r9cyv33Q8tj3KWiVlx1qwc9VPAoL9MargANLd4djN1XzC+BwAbNa07mbCe0eexn4ypH100mpCZHqCECvD3vfVbYhvdipVG+fdewuSXI5lLoDcwFUzSrJ56lEE/fNDr9gb49qRh5BMs6MCBbGST0A2iOFH/TAc7JBdIMS8HY+1rfs/gctPaj+xGEDLR713ok4cJgNGEoYA9FqDRb
+ ySp3+tPP4BYNZqALzP4z5QT+MmbIn4zcZm+87D63zUbSoyy6aMlZ6lahEpmqENZrrHc2lVfULK9RJlwkm4gsAv13Sl5PdX01V55ya+C+iOdorzG2GLJfEA/cjLBVQiRQXLnY5GS+qi7OzJAwEcEZkKd3I3S6mxBvQvsccVq1Ok6CcarNoi4cK+AyxOfiPx0epCn5qWWlQxzWtQsEeeM3BdLw7PqGdcmBPwoVLtj6AMkg9U4UaaQTitCG278p7VhUEft6AQcq34S3x3Ydt20WV38tW5l/gb+r8pxBWK+UhCeLp5WQZtqLeScEAQ8Y1UVehrpGT5hHmoW2Lgu0NM08DMfAuDmB55N5jYM2aSY9JWDK525pdybVHQZjfgBUDY21h/SAmdgyZhM4zEe9WbVLbSlPV7tBxZMfTvl8mCsi8AAyQu5dScW+ctRgUgCjLRjpM/HKh3D2jQbMQVYZvXRSu50jp9YlrWraNUCjbobe2A33GPRRlG1PVHGDcI9Ykhj9DTNz4IqAQS3i5Yy+oftKV28XixePXvesXEzFYLx7lK6QA3G0WlMlnJT9FJ8uzB8Q72pv7/cWEiN9Xb04K8swO6Y7+6nczHOjFlz9kxJ+AQyhsMQcz0zFm0rs5k2JkDPiKv5I4iN1I0L+HY8rNhHNKDjhPrxKGiWs9ntSb63JOsnJsVRSRCzCAp0X6/mMkjqHdOF2X/v3t8IP8yZUGJ2cJW9jbCt7sxihGaDefCnEgDE=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB5778.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(56012099003)(18002099003)(22082099003);DIR:OUT;SFP:1102;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11947.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(18002099003)(22082099003)(56012099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YlNoUTB1aU9aeFcza042UFdOUzY3aGtKRnV4NlFZUjI4YWwxR1hHT0xnaXVG?=
- =?utf-8?B?cW0xN3Nyc1ZQcXRVM1lpNk8zb0tOc0t5TFd0K1dQZEZBR2U0MStLZVNhQ0NG?=
- =?utf-8?B?ZUF3Q0pPU2FvQUxIQVJsS0lvNklCTFl0Vk1KNHN5M3dYYTV6TjZPbmdTVjJm?=
- =?utf-8?B?ZkI4YzhqQ0lOSDZmQzBDcFlwTzIrbGl0dy9VYWhrSzZ5bHhldXRseEtSbS9P?=
- =?utf-8?B?d0tBemlEVW01NVpwVEdTNmtlUzZYeEZpVEQzUXNNYU5veVhyTlozYXlIM2Zq?=
- =?utf-8?B?clVtTUZqYmtIcFYyRk52ZG5UQVc3bkp4cXZpamFVQTVOZXJFOW4vZ2JaR0RD?=
- =?utf-8?B?SHhOdHJhNzYwN0hKZlBwSjI2Nlk1UUk5UGk1NWlmeEcxTi9HdXZmMkVUZ3cw?=
- =?utf-8?B?Y3Y2bUU3dS9nNGV1WGF2SmJwQnlJMVF3NW9reG9vMnVxOERLYUhRT2QzMWJV?=
- =?utf-8?B?NGFaQUE5eG1TcVRYTE1Kb01Pc1Z1MkVsdlJlcFd0ZFRidmtYa2s5QlJYSFJz?=
- =?utf-8?B?K2EzMDZ5cFo5ZEdxYXVtaDU0RndIRGpsTUY4QnlYd3QveEt6RU5CRHpGTE9Y?=
- =?utf-8?B?SGpFQXBLNWN3d3UzNGZvLzIveDFiTnpqeGtJY3haQ0s2RzQzNjVwZyt5a3JX?=
- =?utf-8?B?QzkxVUhLSzlMYjQvL1o4L2FPR1NJRFRKUkFGdk8zZXFhOUJUeVlzRUk3OHVt?=
- =?utf-8?B?cklpNDcyaDhYLzVIcmZKOGVUQmtGZlVOSEVIaFpKYXNPdHpUclVmZG1iU1RP?=
- =?utf-8?B?bUZmZTRyMWVKcHI2Z05YcDZxdnhLaktqclN5WU5tMk9vWC9ndnBtM0VWOU5y?=
- =?utf-8?B?aGJrK3owd3BiTFdTVFpKM21NL0pWM0poV3NqSTdYdnRjZGZNb1p3a3hVWEhM?=
- =?utf-8?B?UkhFVFE4NSsvWHh4bTNQYUh2RmJLcDg2dENPdXQ1VmNrUVFOTUhQenhlN0Jn?=
- =?utf-8?B?WlJKMVhqazRRRlFiSndTWVdITXpCVk1sblV4blo5SzFBMkF2a214eXlJR2NV?=
- =?utf-8?B?Nk1kaGhrOFM5ZU9wblJET3NMUFNFVVFtWldITXE0cUhlTnFzZDkycVJCeHM2?=
- =?utf-8?B?U1lOclc3NkdNdUZHanN6VUIyZ3JsZWs3aGVGaVdES2l0dTUyV2R2azJtTTZR?=
- =?utf-8?B?aHZ4am9ZWmZWUlI3Wngxakx3VkFTcFVZZUpqYTB5MGlMTUdOUTF5NTc5SUk3?=
- =?utf-8?B?NjBzdU9mLys0NjVRVVlIcExZVzVaSStXdWFwckVYdXJpa09scngxY3hhN05Y?=
- =?utf-8?B?V3BMTUQ3c0ZzTVlEUTlqUFl2djJuY1NjL2xFS3NBdVNkZmhKM0h3VnVmTDh1?=
- =?utf-8?B?dU1SNTR6c04ra0xuWmJzZGZYbjE5ZzJEYUlkcXRWN25WYmxwa0FKYXRuZ0V2?=
- =?utf-8?B?TUtKS2V0NjlQeGdLZDFxMGMxb0t6L1hqL0ZnS0l6YUlYcC8wTmh5NHJEWURD?=
- =?utf-8?B?akczbmxQVEJKcGtwcWRGYlJjeUgzamlQU1B4RU9zdXJ4eFNUclVySGVnejU1?=
- =?utf-8?B?Qk1kL3YrWnM0dFpQSXArL3d5UVBWU0hGRGRiYjBKRXRQYWdQNCtpa0xacXI5?=
- =?utf-8?B?QnU2TzRiaXdMVGRVMEdETEpJS252Yk1Dc2hWSzRmRzJSRWFTVGVTZWlRVGl2?=
- =?utf-8?B?ZC8wTmFJVXRsMUJKV1VVTzJuaWszd05iUktsVHFUOU5EQ1NxMStoQ2tTRFRh?=
- =?utf-8?B?MTM0dFBHcTdWN0w4RzdreU1ZZm9OVmd0R0FKS1pQeUh1ZmZiTTBLK0NpSlpN?=
- =?utf-8?B?aW1pZW9JYjRiU0NhQXlqZThGdXJadGJzNGR0TXkzRzBPMnErRUxqcVcrUVc5?=
- =?utf-8?B?WjFoa2p6YmJ4TTNTOWxkWkxjbTF2NHZmMkVleW5JdkV6SkF4RnFOVXAxT2p1?=
- =?utf-8?B?cHZzcjl5Z29sbWs4OHViRkxzS2Z1ald0Y29aYTh2WGZZendvQUhvWmhCSTE3?=
- =?utf-8?B?cUVsNnRRUXFPYTZBckozd3hDV3JoU0ppaDJYZHZOWXE1VTJhZkFkbnNhanEv?=
- =?utf-8?B?NFlXdTBaVS90SThINDhiUHNyQ2VGWm82QVF2WjlCdVVWZm1rbVJIUUFVWFow?=
- =?utf-8?B?Ujg2N3c0VExuMjdXZjlzVW41cEZBdmVGZXBXU25MWVd0V2p3SkZCRk5mRG8w?=
- =?utf-8?B?Z2h6ay8zSVR5SlM0bkJZQnlFN0ppRkxITGpaV1o3UEdIM1VtUUZOekhWWUdY?=
- =?utf-8?B?N1BMUWJycnRlQkdiTHVMZkw3dS8zOS9MZ0lyZkxsQzYzaEFQbGdweEtmWDZJ?=
- =?utf-8?B?T2gycVFLbnlES1JqVlY4Q1pHM2ZpaGZ1MTRuWXZVeE1rUTV4QU42VzRkcUJN?=
- =?utf-8?B?Q2s3VFJ2M3l3VnJ5cDFuQTJ2SkhzMlRpQ1J4ZE1tU3ZabVcrUU9RZz09?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dd2bc379-44f9-405b-05c2-08de957d55ee
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB5778.apcprd03.prod.outlook.com
+ =?utf-8?B?dGVDcnFxV24rSUwvTVNzZDdWcTFORER1Y0RoR0dscVAzTjhlVXR6TGR0cHgx?=
+ =?utf-8?B?QURBZFhZbS9tYkY2MzBuWFp0U1Z0SkZvbEJTazRrWUpQck9VcGlYUzdqdUtR?=
+ =?utf-8?B?bkJwbkxyOWJMM24rR0JwaUhrcmFrZHg2WEdFeFpIOHNWeVE3endaaVIrRkpx?=
+ =?utf-8?B?aFFzcWJFY2hKMFFTeVJBRHl6SXRuVkk2dXk2M3o1SW9Rb0xvdnd2VHpZbHJw?=
+ =?utf-8?B?MXpiTW50Z1hyanlISnBTMXFzNG92T1AyUFIwRUVNL212dTdCRzhBMlhHaUNE?=
+ =?utf-8?B?ZHJvaHA4SGd0UzdyZ0J5NzRRaW9SM0M2VFVSU2VDUERhSFZnaGF6U3JSb01q?=
+ =?utf-8?B?b2dlT3VYYzV3L3BSMkZkVnB5Yk45WEpEbkV3dWdhR0FHdnZHQ1dSeEIyVDdw?=
+ =?utf-8?B?ZU5NVzgvVktDOEFMcW8rVldkaFRnQ0dNaHpCcThjbmdTYkllNko0T0IvbkZu?=
+ =?utf-8?B?TytvY2piWUlUNEdzM1ZXRUg1TVhZbnp6Tzd3d0poZlhQOGdHQXNJanRkcjZG?=
+ =?utf-8?B?a3h4Nlk1b041bnJtRGs5d3E5L1pzcFdPb204VXdvL0RxeU5lOW95UjFKK1Rp?=
+ =?utf-8?B?Z3BoTjJDb2orbWRSWWVYM1BlNTJ4RDNDQTN1b2JSYUVnYjhadEpZTmVueUhU?=
+ =?utf-8?B?VzhmTndvVTFEMWVtODN0VjJScjArZ1Y0TUdYVDNWbHdMZko2akVYSWppYVZM?=
+ =?utf-8?B?SUhkU3B0cjhmVDBITzFQdzMvU2lKU0p5RXhMbTZ3SC9WbjZ1ejE3WDJnaTh1?=
+ =?utf-8?B?VlZxck0rMFJUNXFlM1NpQXZpRnBYblZWOTJKclRtdG8wUFZHM1V1aVFld3Np?=
+ =?utf-8?B?dk4xSGVjc0FYWTJFSXF0YnczTFpKS25iMFlaYmwxSmtHdVYrdFRJNEtjaHdE?=
+ =?utf-8?B?Mm90MEtQVjREcWZCSU44WFpWOEZBMUhUZ1F1U3JOR01lOHRSMzlGaWVJU1RX?=
+ =?utf-8?B?eFRhMEJhRmJ6NHRjaktFUHBKUFlDSjY1U0krUHpBV3BoZ2t4YmcrZ1c1NnEy?=
+ =?utf-8?B?N1lzd0t6dk91MmFBSmNRUmUvc0d3OW5jRmtrL3RXRjJsWElBYjRWc2l4NU1y?=
+ =?utf-8?B?YjRIT0JibE53OWxGemFLVHVPSXlWOC80Z2wyaHpHUkZBa1B3aUI3clVmTzBU?=
+ =?utf-8?B?Z05KTk8yZzBZTmNuTitOWnMwaVZEaUF0aTlqWklIa1hIT2F2SGpEem55SVVS?=
+ =?utf-8?B?OE5KZmxaOGZYZGRteWZ4bFJoZ3NqcmRzazNubzRuNituRG9zdGZ5cG9kTGVR?=
+ =?utf-8?B?bHZPbTFrMFBaZkNVU2VqemZFRHNvZ0xCMFRYS2lOZHVZWHdBbFdZakVOQnlT?=
+ =?utf-8?B?RVVVZzdjVm80M1pheHhBVzk1OWcwUlpsK3owSjYxdW5LTEFZTXp4TCthcElS?=
+ =?utf-8?B?NzNuQXZDeXpZbEZlcFJxQjJUZStWc3UzYlZOQUJISnczMlhLc1NBZ2NlMmRW?=
+ =?utf-8?B?eTE3citHMVpYbFhOSGRaZmVFelJDU3hHdUpUQ0dVRFVEcTdNU2xmdDgwVXM2?=
+ =?utf-8?B?NWozS1BuZ0daekl4U01TcE5SVUZPSFdjWlVUZnZNRlkvSnBNNlZ5UWtQbCt1?=
+ =?utf-8?B?Qk1GdWZ6OUc1ZTZVUnB6L2VOQVZKUjhlakowcmcybU8ydFVrQTlxYXJUbXo2?=
+ =?utf-8?B?Uk5tY1JTYWs1L1NFRnpkVkNkNXU0Z3hzSjdhVTRrb0srYmVCQ05pbDlJeHlx?=
+ =?utf-8?B?TUErNTcwZnVscTVsR05Dck9iK0Rsa0FUcmxTRHNER0xoTUhDMUtHdS95K2Y2?=
+ =?utf-8?B?OHRBUmt3QUdPQXIyNXVNRVFkQ1JaUE5RSksyWFg0Mmt3OFdGYmhCR09kRDE5?=
+ =?utf-8?B?SFlUZkNqVTFYZlNXOU5iRVJPUFBFUkVHaXZkQ1JPM2ZyMUxHbURyS1UrV0FB?=
+ =?utf-8?B?WDIrU3IzNUllcFF0V1NYczRnRmlNaUlDZk44ekZsUHVhTE9XY016dFBOMG84?=
+ =?utf-8?B?MHNKZEdLMEVXRlVLM3plWmw1eGUyeVhuOTFOTzVXWXQ3eFlrZ1FiNTBMbEM3?=
+ =?utf-8?B?RjF1djRvTkdObE0yckdPeGRMWlFTYkl2Uitqa0MrWWU2eWt4UEhRYmhXUC9a?=
+ =?utf-8?B?Q21DVDBpWEwvaUUxOEYrVVY1Z3B4cFJzd0h2UXI5dmlkeWlRbzBaWVZQUklQ?=
+ =?utf-8?B?MldGSHRGSzZiWGRrYzFaMjZIeG1MRDZOei9WVGVKL1lYcGl3S2MxNTA2c2tW?=
+ =?utf-8?B?R0xqU1VWcmxzbEcrRnJESWlGbFRNSjdITnF3cU9YdWswZlVBMjdXZkFmYThw?=
+ =?utf-8?B?N1ArK0RRcHFIOHRHS1JzR0VMRVdDcFNZdVBDczVnRVlHc0Y0ZlRRUi9Ga1A5?=
+ =?utf-8?B?aG1wYVBzTnhYeHVIMlRYNEpNYUIxeks2RVhVVlhXYlNtK05uaDVnOFRtTHZq?=
+ =?utf-8?Q?TI8qEMeeVYTvSxQtMMNHRr5/1IZ1uO1YqbILr?=
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 01fb90ed-36f2-4ed7-4453-08de957d6931
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11947.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Apr 2026 14:44:27.9129
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Apr 2026 14:45:00.2738
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kVlpUP3xr6Iu2zwsHYgcsFEYgMiVMBGkK8/q/OMEqUNe0bYhB4H3uiDqwJx0S47kRh4OWvR9gdqQ7qx4g03qvg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR03MB7060
+X-MS-Exchange-CrossTenant-UserPrincipalName: iQd5L14zcFimvCdMZN5j8rTLBjIPpcd9t/WLUvFz5vJ4Uo7LJt+PIczIFnx7t+BUvjOeEr3XagBQqCKgXFKxvznzJvuqHk2CrYbCjGQajEy19jHu63g86fYYTERRJTd4
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB10232
 
-Hi Martin,
-Thanks for review.
+Hi Laurent,
+Thanks for your comment.
 
-On 2/10/2026 5:51 AM, Martin Blumenstingl wrote:
-> [ EXTERNAL EMAIL ]
+On 4/8/26 16:16, Laurent Pinchart wrote:
+> On Wed, Apr 08, 2026 at 04:02:14PM +0200, Tommaso Merciai wrote:
+>> Hi Laurent,
+>> Thanks for your review.
+>>
+>> On 4/8/26 14:24, Laurent Pinchart wrote:
+>>> On Wed, Apr 08, 2026 at 12:36:55PM +0200, Tommaso Merciai wrote:
+>>>> The RZ/G3E SoC has 2 LCD controllers (LCDC), each containing a Frame
+>>>> Compression Processor (FCPVD), a Video Signal Processor (VSPD), and a
+>>>> Display Unit (DU).
+>>>>
+>>>>    - LCDC0 supports DSI and LVDS (single or dual-channel) outputs.
+>>>>    - LCDC1 supports DSI, LVDS (single-channel), and RGB outputs.
+>>>>
+>>>> Add a new SoC-specific compatible string 'renesas,r9a09g047-du'.
+>>>>
+>>>> Extend patternProperties from "^port@[0-1]$" to "^port@[0-3]$" to
+>>>> allow up to four output ports, and explicitly disable port@2 and port@3
+>>>> for existing SoCs that do not expose them.
+>>>>
+>>>> Describe the four output ports of the RZ/G3E DU:
+>>>>
+>>>>    - port@0: DSI (available on both LCDC instances)
+>>>>    - port@1: DPAD / parallel RGB (LCDC1 only)
+>>>>    - port@2: LVDS channel 0 (LCDC0 only)
+>>>>    - port@3: LVDS channel 1 (available on both LCDC instances)
+>>>>
+>>>> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+>>>> ---
+>>>> v5->v6:
+>>>>    - Extend patternProperties from "^port@[0-1]$" to "^port@[0-3]$" and
+>>>>      explicitly disable port@2 and port@3 for existing SoCs that do not expose
+>>>>      them.
+>>>>    - Reworked ports numbering + improved/fixed ports descriptions in the
+>>>>      bindings documentation.
+>>>>    - Improved commit body.
+>>>>
+>>>> v4->v5:
+>>>>    - Dropped renesas,id property and updated bindings
+>>>>      accordingly.
+>>>>
+>>>> v2->v3:
+>>>>    - No changes.
+>>>>
+>>>> v2->v3:
+>>>>    - No changes.
+>>>>
+>>>> v1->v2:
+>>>>    - Use single compatible string instead of multiple compatible strings
+>>>>      for the two DU instances, leveraging a 'renesas,id' property to
+>>>>      differentiate between DU0 and DU1.
+>>>>    - Updated commit message accordingly.
+>>>>
+>>>>    .../bindings/display/renesas,rzg2l-du.yaml    | 30 ++++++++++++++++++-
+>>>>    1 file changed, 29 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml b/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
+>>>> index 5add3b832eab..32da0b5ec88c 100644
+>>>> --- a/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
+>>>> +++ b/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
+>>>> @@ -20,6 +20,7 @@ properties:
+>>>>          - enum:
+>>>>              - renesas,r9a07g043u-du # RZ/G2UL
+>>>>              - renesas,r9a07g044-du # RZ/G2{L,LC}
+>>>> +          - renesas,r9a09g047-du # RZ/G3E
+>>>>              - renesas,r9a09g057-du # RZ/V2H(P)
+>>>>          - items:
+>>>>              - enum:
+>>>> @@ -61,7 +62,7 @@ properties:
+>>>>          model-dependent. Each port shall have a single endpoint.
+>>>>    
+>>>>        patternProperties:
+>>>> -      "^port@[0-1]$":
+>>>> +      "^port@[0-3]$":
+>>>>            $ref: /schemas/graph.yaml#/properties/port
+>>>>            unevaluatedProperties: false
+>>>>    
+>>>> @@ -103,6 +104,8 @@ allOf:
+>>>>                port@0:
+>>>>                  description: DPI
+>>>>                port@1: false
+>>>> +            port@2: false
+>>>> +            port@3: false
+>>>>    
+>>>>              required:
+>>>>                - port@0
+>>>> @@ -119,6 +122,8 @@ allOf:
+>>>>                  description: DSI
+>>>>                port@1:
+>>>>                  description: DPI
+>>>> +            port@2: false
+>>>> +            port@3: false
+>>>>    
+>>>>              required:
+>>>>                - port@0
+>>>> @@ -135,9 +140,32 @@ allOf:
+>>>>                port@0:
+>>>>                  description: DSI
+>>>>                port@1: false
+>>>> +            port@2: false
+>>>> +            port@3: false
+>>>>    
+>>>>              required:
+>>>>                - port@0
+>>>> +  - if:
+>>>> +      properties:
+>>>> +        compatible:
+>>>> +          contains:
+>>>> +            const: renesas,r9a09g047-du
+>>>> +    then:
+>>>> +      properties:
+>>>> +        ports:
+>>>> +          properties:
+>>>> +            port@0:
+>>>> +              description: DSI
+>>>> +            port@1:
+>>>> +              description: DPAD
+>>>> +            port@2:
+>>>> +              description: LVDS, Channel 0
+>>>> +            port@3:
+>>>> +              description: LVDS, Channel 1
+>>>> +
+>>>> +          required:
+>>>> +            - port@0
+>>>> +            - port@3
+>>>
+>>> Why are ports 1 and 2 not required ?
+>>
+>> About this we had a similar discussion on v5[0]
+>> We are using the same compatible and:
+>>
+>> - LCDC0 supports DSI and LVDS (single or dual-channel) outputs.
+>> |
+>> --> then has:
+>> 	port@0
+>> 	port@2
+>> 	port@3
+>> 	
+>>
+>>    - LCDC1 supports DSI, LVDS (single-channel), and RGB outputs.
+>> |
+>> --> then has:
+>> 	port@0
+>> 	port@1
+>> 	port@3
 > 
-> Hi Chuan Liu,
+> Ah yes, I forget there are two LCDC instances with different output
+> configurations.
 > 
-> On Mon, Feb 9, 2026 at 6:49 AM Chuan Liu via B4 Relay
-> <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
-> [...]
->> + * To prevent glitches from propagating to clk_out and affecting the normal
->> + * operation of glitch-sensitive modules, the no-glitch clock must be configured
->> + * following the specified sequence:
->> + *   - When the clock gate is disabled: configure it as a normal composite clock
->> + *     (any glitches generated will be blocked by the gate and will not
->> + *     propagate to clk_out).
-> This part is easy and makes sense.
-> 
->> + *   - When the clock gate is enabled: configure it according to the following
->> + *     sequence to suppress glitches:
->> + *       - Configure and enable the idle composite clock path of the
->> + *         noglitch_mux with the target frequency/parent clock.
->> + *       - Switch the noglitch_mux to the channel prepared in the previous step.
->> + *       - Disable the clock of the original noglitch_mux channel.
->> + */
->  From a previous discussion it seems that in reality things need to be
-> handled more carefully as you previously mentioned that
-> CLK_SET_RATE_GATE is not good enough (the description above is what
-> CLK_SET_RATE_GATE already achieves).
-> For the more careful handling Jerome suggested using the clock
-> protection logic: [0]
-> You wanted to try it out at some point: [1]
-> Is the verdict that Jerome's suggestion did not work? Can you please
-> share some details as to why it doesn't work.
-> 
+> Something still looks a bit weird to me though. For LCDC1, which
+> supports a single LVDS channel, you use the port described as the second
+> LVDS channel. Is there a reason not to use port@2 ?
 
-In the actual use case, this switching operation completes within the 
-nanosecond range (with a minimum clock frequency of 24 MHz in typical 
-scenarios), which is why no issues were observed on our previous SoCs.
 
-Thank you for the reminder, to be on the safe side, I will introduce 
-some explicit hardware delays in the future revision.
+9.11 Low Voltage Differential Signaling (LVDS)
+9.11.1.2 Block Diagram
+Figure 9.11-1 shows a block diagram of LVDS.
+
+LCDC1 is connected to LVDS, Channel 1
+For this reason I'm using port@3.
+
+Kind Regards,
+Tommaso
 
 > 
-> Best regards,
-> Martin
+>> Then port@1 is required for DU1 but not for DU0.
+>> Same port@2 is required for DU0 but not for DU1.
+>>
+>> [0] https://patchwork.kernel.org/project/linux-renesas-soc/patch/ca022fdbba5236c36e0cb3095db4c31e8e0cb1b8.1770996493.git.tommaso.merciai.xr@bp.renesas.com/
+>>
+>>>>
+>>>>    examples:
+>>>>      # RZ/G2L DU
 > 
-> 
-> [0] https://lore.kernel.org/linux-amlogic/1j1pnp5sg7.fsf@starbuckisacylon.baylibre.com/
-> [1] https://lore.kernel.org/linux-amlogic/1639bb9d-9cb7-409f-bbf8-bfe4a5d1b8bc@amlogic.com/
-
--- 
-Best regards,
-Chuan
 
