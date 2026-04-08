@@ -1,32 +1,32 @@
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E85B3BADA2;
-	Wed,  8 Apr 2026 10:53:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 601E826CE2C;
+	Wed,  8 Apr 2026 11:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775645592; cv=none; b=qrE7Y5qbfBNLwUETaCMAF70ON0s2MnR19Xv/LV6osz4MHVKM13MsRW4jrByrn5HFQOTe7B1zqQLYOcDRO2fFmsbFVGW0c96c18BgBofNTdpf0YJnj+3Oa5qka6pDtUTZJ2IfNVpFVNOWMhAmUg5KdbEnUu2t+HdRFWsSyt4Ffd0=
+	t=1775647943; cv=none; b=XjTwhRAiqdBIlTKY/Yc6ImmBlz+x5R6Uz+6hseDLCUsYtpLKJWOrKIJoq2VOHONJq48BtWn6oxTueYmS+AlpHY8KC3M3cA849lqtXQjDvq3yEdnjKrAv5rmDQGN/00XwmMLmGT6bKJbtNR53Q+SZm9MLgowYpGYS2wBXEiTF4XA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775645592; c=relaxed/simple;
-	bh=Rjn11KqJ94w5Tb07XxHG3O1GIwrQHeFSfrcL2oJFkFg=;
+	s=arc-20240116; t=1775647943; c=relaxed/simple;
+	bh=0z9xQ2bkMxCbehPYP0RxKCIo51HJ9ykabJPDevaX8zI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MNILUACme8r9OQwPoZDed/P0Sl8Z2YfUVpIRyhaUqW7RVsca1e90e87XdNTqX6Zbw2ZPc+7lu71A7k7/HEIR92up4CLFaGyUyL869f3gTCsrq05tUsUGF4t2qLKCk2aoyiIv0jxEX45ufTqFBo2lD7Tj5Pg7aaen5JoZg2aw6XA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=qN6GMFl8; arc=none smtp.client-ip=213.167.242.64
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZiHhdkDkYHk8sEU9LHqw0lsyHIyjDOP3FTTdYwMfgQBSl246s7Q+VZbxrU28nVMl/4eVv4RgsKRoFScZ1Cbn9TvcKORWQtQbUgvjSTO6b6PseQC/w7JCnVlO/dOi77UmVPz29l4TskJi80VxWU3NsyoisJhJCpKKeTvVRKpBkIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=DuuJODqd; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qN6GMFl8"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="DuuJODqd"
 Received: from killaraus.ideasonboard.com (2001-14ba-703d-e500--2a1.rev.dnainternet.fi [IPv6:2001:14ba:703d:e500::2a1])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id AFE13593;
-	Wed,  8 Apr 2026 12:51:41 +0200 (CEST)
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 23EBD593;
+	Wed,  8 Apr 2026 13:30:51 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1775645501;
-	bh=Rjn11KqJ94w5Tb07XxHG3O1GIwrQHeFSfrcL2oJFkFg=;
+	s=mail; t=1775647851;
+	bh=0z9xQ2bkMxCbehPYP0RxKCIo51HJ9ykabJPDevaX8zI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qN6GMFl8+gjuyjFpOAfDNN6eBaM258NATkrmnuaiBPnOK4XUxrZlMsfe25/m1/54t
-	 1Mk9JRq/R934PpCFU01TQOINmlbxV6rZIy3ukEBTs7rQj5GupYS0Mv3nXJ1MTiUROs
-	 qxQrf2/yYgzrle+cFygHUpKTbS57qyn7EJCrzC7I=
-Date: Wed, 8 Apr 2026 13:53:08 +0300
+	b=DuuJODqd45EmM8IZgQ24zMJTFDviat/fGzoWxFmdfFb06eXHxfch/amdyCxOpy9jg
+	 x6jfJMFGhnAUi5ys2p48PTm2XDGciOA7XAXExVSYUZqv5COxTOaIvj8LSa9NN5h0w+
+	 MpDOEC1GP69B6Zm3EUtHc4KQESh3O4SphF636ayc=
+Date: Wed, 8 Apr 2026 14:32:17 +0300
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 Cc: tomm.merciai@gmail.com, geert@linux-m68k.org,
@@ -44,13 +44,12 @@ Cc: tomm.merciai@gmail.com, geert@linux-m68k.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
 	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: Re: [PATCH v6 17/21] media: dt-bindings: media: renesas,fcp:
- Document RZ/G3E SoC
-Message-ID: <20260408105308.GC1928916@killaraus.ideasonboard.com>
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v6 18/21] arm64: dts: renesas: r9a09g047: Add fcpvd{0,1}
+ nodes
+Message-ID: <20260408113217.GD1928916@killaraus.ideasonboard.com>
 References: <cover.1775636898.git.tommaso.merciai.xr@bp.renesas.com>
- <5aaf561a66c24639477a99d3861ca969a81673f0.1775636898.git.tommaso.merciai.xr@bp.renesas.com>
+ <1ba6a98ace4ad9525d054cbaa308d3aeeecfa22a.1775636898.git.tommaso.merciai.xr@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -59,21 +58,13 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <5aaf561a66c24639477a99d3861ca969a81673f0.1775636898.git.tommaso.merciai.xr@bp.renesas.com>
+In-Reply-To: <1ba6a98ace4ad9525d054cbaa308d3aeeecfa22a.1775636898.git.tommaso.merciai.xr@bp.renesas.com>
 
-On Wed, Apr 08, 2026 at 12:37:02PM +0200, Tommaso Merciai wrote:
-> The FCPVD block on the RZ/G3E SoC is identical to the one found on the
-> RZ/G2L SoC.
-> 
-> No driver changes are required, as `renesas,fcpv` will be used as a
-> fallback compatible string on the RZ/G3E SoC.
+On Wed, Apr 08, 2026 at 12:37:03PM +0200, Tommaso Merciai wrote:
+> Add fcpvd{0,1} nodes to RZ/G3E SoC DTSI.
 > 
 > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-
 > ---
 > v5->v6:
 >  - No changes.
@@ -88,31 +79,52 @@ Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 >  - No changes.
 > 
 > v1->v2:
+>  - Squashed fcpvd0 and fcpvd1 patches into a single patch.
 >  - Collected tags.
 > 
->  Documentation/devicetree/bindings/media/renesas,fcp.yaml | 2 ++
->  1 file changed, 2 insertions(+)
+>  arch/arm64/boot/dts/renesas/r9a09g047.dtsi | 24 ++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/media/renesas,fcp.yaml b/Documentation/devicetree/bindings/media/renesas,fcp.yaml
-> index b5eff6fec8a9..f7e486e90e43 100644
-> --- a/Documentation/devicetree/bindings/media/renesas,fcp.yaml
-> +++ b/Documentation/devicetree/bindings/media/renesas,fcp.yaml
-> @@ -30,6 +30,7 @@ properties:
->                - renesas,r9a07g043u-fcpvd # RZ/G2UL
->                - renesas,r9a07g044-fcpvd # RZ/G2{L,LC}
->                - renesas,r9a07g054-fcpvd # RZ/V2L
-> +              - renesas,r9a09g047-fcpvd # RZ/G3E
->                - renesas,r9a09g056-fcpvd # RZ/V2N
->                - renesas,r9a09g057-fcpvd # RZ/V2H(P)
->            - const: renesas,fcpv         # Generic FCP for VSP fallback
-> @@ -77,6 +78,7 @@ allOf:
->                - renesas,r9a07g043u-fcpvd
->                - renesas,r9a07g044-fcpvd
->                - renesas,r9a07g054-fcpvd
-> +              - renesas,r9a09g047-fcpvd
->                - renesas,r9a09g056-fcpvd
->                - renesas,r9a09g057-fcpvd
->      then:
+> diff --git a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
+> index 95a4e30a064d..3115ab4b050f 100644
+> --- a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
+> @@ -1584,6 +1584,30 @@ csi2cru: endpoint@0 {
+>  				};
+>  			};
+>  		};
+> +
+> +		fcpvd0: fcp@16470000 {
+> +			compatible = "renesas,r9a09g047-fcpvd",
+> +				     "renesas,fcpv";
+> +			reg = <0 0x16470000 0 0x10000>;
+> +			clocks = <&cpg CPG_MOD 0xed>,
+> +				 <&cpg CPG_MOD 0xee>,
+> +				 <&cpg CPG_MOD 0xef>;
+> +			clock-names = "aclk", "pclk", "vclk";
+> +			resets = <&cpg 0xdc>;
+> +			power-domains = <&cpg>;
+> +		};
+> +
+> +		fcpvd1: fcp@164a0000 {
+> +			compatible = "renesas,r9a09g047-fcpvd",
+> +				     "renesas,fcpv";
+> +			reg = <0 0x164a0000 0 0x10000>;
+> +			clocks = <&cpg CPG_MOD 0x1a8>,
+> +				 <&cpg CPG_MOD 0x1a9>,
+> +				 <&cpg CPG_MOD 0x1aa>;
+> +			clock-names = "aclk", "pclk", "vclk";
+> +			resets = <&cpg 0x11e>;
+> +			power-domains = <&cpg>;
+> +		};
+
+This matches the documentation.
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+>  	};
+>  
+>  	stmmac_axi_setup: stmmac-axi-config {
 
 -- 
 Regards,
