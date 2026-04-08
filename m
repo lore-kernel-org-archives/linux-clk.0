@@ -1,197 +1,134 @@
-Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6FB37C0E3;
-	Tue,  7 Apr 2026 21:11:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.251.229.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40A570830;
+	Wed,  8 Apr 2026 05:07:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775596308; cv=none; b=kTLF8mX4h/Aqjcf8O95wgvY3oXJ1aEZaVTTMMzLn6jzLU6JKw9XyiF64L/3u/7Z9VMEjWvVZdtAX6qxuYPNvxXmQKiLD2HQE3f3xe3Xlce1627nGz85w4rjJ1EfCmUZGBWEirOroVS/pyA17+Q46cl1j9j97zb+2mJuCsL2962Q=
+	t=1775624878; cv=none; b=sBr9+ohbzQgpenbMM7VXDM2hGu36kzRTNiU9v3kdrHoHE4yq1WUYdIy9Au+1LU9IhlUsu6Xh2qYMoxV+V0A7OJcPaEzG1kmNiH+YquY2tb2iASa+QoyxWDKl0gf6wI7I23/eokiPvFfWKED6F6tmGmyu98PdSFkz3kmBxECu6Xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775596308; c=relaxed/simple;
-	bh=QVpaac3DVoJhjfoQbqDPaxM3nQuqfc3LqxBaBZ7pT8k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=omBnw929S/kBC4INboLDrXnCoWs3ciPnN5uzHFMQgLp+o5+yXzKus1E0QDQoQ3me2xZfPY7V+IJOKdCx3QTK40MCxZpM3KkuHyzOZMMOUEmHdk+ActAml6tyroNwJyGUFmnPM9HCjylPI3O3Rxcsni2iPd5XEbaFd7zFepyRXFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com; spf=pass smtp.mailfrom=nabladev.com; dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b=IVekDP7p; arc=none smtp.client-ip=178.251.229.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nabladev.com
+	s=arc-20240116; t=1775624878; c=relaxed/simple;
+	bh=bZ3QCtjblCVSujDtyBNvrogUn9jUpEJIT1QFEhb35A0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=fsAwfSZb8WQCjWP0WkqkGXMlztGqR+JoYFyl/lRjwscqy3CAkApOroPn1Ts6nZDudO3713vmMuMdMf97m9rlgfSaaDDzZ9eu0HETvrahK6nHrToav8y+T438cV3APabSoBbTkbVk9KXpz/eyB435TJWqVABNx0wVukDbvYfaRyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=isSyVd7r; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b="IVekDP7p"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F31181133A1;
-	Tue,  7 Apr 2026 23:11:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1775596293; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=Y5NvascYK9n2410VdmQFcewHyBiOdCq1U/aB+ZGXfeg=;
-	b=IVekDP7peEyyXAfkcpc8WMFUlwcjbYCItJLq8QcOCYEtVHMYGezZsxxOvJGv5zRva3Z5gL
-	TS4aNmyzsiIR4lGSx67FJDIv1Ig8HC9Ee6KhiX7zU1+qreyzZNVa3T/5GKSbLGCiKm9RxC
-	9LDt42USGgYmLatqSTEK0Dq/pwHzVw/088+Tvz/ksaJwabhYHheP5DeOcR2piS5uOMKWqa
-	wpc/XZtil1Gb9UT1pXg6JyGLnVl0ThiSkObGYo2gOL1iGA7wJh1Rt0Rwd33/4lITIDzBaA
-	JQQ7BvtDlWb8FvRM1dfwtOByixGzofsjI09uvMa8Stx94OkZJiiROHGLtlECIA==
-From: Marek Vasut <marex@nabladev.com>
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marex@nabladev.com>,
-	Michael Walle <mwalle@kernel.org>,
-	Brian Masney <bmasney@redhat.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Michael Walle <michael@walle.cc>,
-	Rob Herring <robh@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 6/6] clk: fsl-sai: Add MCLK generation support
-Date: Tue,  7 Apr 2026 23:10:03 +0200
-Message-ID: <20260407211123.77602-6-marex@nabladev.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260407211123.77602-1-marex@nabladev.com>
-References: <20260407211123.77602-1-marex@nabladev.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="isSyVd7r"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 80E47C19425;
+	Wed,  8 Apr 2026 05:07:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775624878;
+	bh=bZ3QCtjblCVSujDtyBNvrogUn9jUpEJIT1QFEhb35A0=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=isSyVd7rrddG6wGTfYjWHZRjyWdnlvKknk+a6B506fV8orxBuDi7PUol5Gm73aCMl
+	 cFAgd/e7ZbEw+MT1dHfNoTjm2R4/zDsd2nvGb4JQghF5cy3HyOnBC2QdqPgPDueir5
+	 MqfWefomgObMfAqprdRCZBn80ty3VlicA/eX83DZ8roJa8KNY+/niLZeJQCihiq4bJ
+	 1sgAUgIsBYx8oWl0cISm+mquL2agP08p1Cbb00SOqoBQDwzA75DRis0YqafA7C5ele
+	 rY74ClWmqDGc1SneuDPmngsV5z9SxZdGxDCnuz188VlnD5SP/2HxqDVH6xq92RBnok
+	 2GfgwRX/Z6l4Q==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C5AAFD5F61;
+	Wed,  8 Apr 2026 05:07:58 +0000 (UTC)
+From: =?utf-8?q?Ale=C5=A1_Pe=C4=8Dnik_via_B4_Relay?= <devnull+ales.pecnik.skylabs.si@kernel.org>
+Date: Wed, 08 Apr 2026 07:07:34 +0200
+Subject: [PATCH] clk: microchip: mpfs-ccc: fix out-of-bounds write
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Message-Id: <20260408-mpfs-clk-oob-write-v1-1-8b3b387f2a6f@skylabs.si>
+X-B4-Tracking: v=1; b=H4sIAJXi1WkC/yXMSw6DMAwA0asgr2spjfioXKXqIhgDppSgmBYkx
+ N0JZfkWMxsoB2GFMtkg8E9U/BhxvyVAnRtbRqmjwRqbm9QU+JkaRRre6H2FS5CZ0RlieriMrE0
+ hhlPgRtb/9Pm6rN+qZ5rPE+z7AU8ki+J2AAAA
+X-Change-ID: 20260407-mpfs-clk-oob-write-a0cec9a5c224
+To: Conor Dooley <conor.dooley@microchip.com>, 
+ Daire McNamara <daire.mcnamara@microchip.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ =?utf-8?q?Ale=C5=A1_Pe=C4=8Dnik?= <ales.pecnik@skylabs.si>
+X-Mailer: b4 0.15.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1775624877; l=2632;
+ i=ales.pecnik@skylabs.si; s=20260407; h=from:subject:message-id;
+ bh=SF/Vt/vUfapCwcVHEGcraGJRNd6XQ/SLekhb7sh36tU=;
+ b=mZYW6b3jCXNt5JzizDtunxJUPc0743ZKiJZy/8bxVMavCx/EPR63Rb1U6/ud20LdVEKDKQsAd
+ Fn09rQJ65lOBiQmiYkTDZJ9IIsF076kkmyUwQwO77mbeUctGL/44CEc
+X-Developer-Key: i=ales.pecnik@skylabs.si; a=ed25519;
+ pk=TOE7w9RMxEE5vdFXO1rqqYmQkLKHAP39+87kI2Q5Lrg=
+X-Endpoint-Received: by B4 Relay for ales.pecnik@skylabs.si/20260407 with
+ auth_id=724
+X-Original-From: =?utf-8?q?Ale=C5=A1_Pe=C4=8Dnik?= <ales.pecnik@skylabs.si>
+Reply-To: ales.pecnik@skylabs.si
 
-The driver currently supports generating BCLK. There are systems which
-require generation of MCLK instead. Register new MCLK clock and handle
-clock-cells = <1> to differentiate between BCLK and MCLK. In case of a
-legacy system with clock-cells = <0>, the driver behaves as before, i.e.
-always returns BCLK.
+From: Aleš Pečnik <ales.pecnik@skylabs.si>
 
-Note that it is not possible re-use the current SAI audio driver to
-generate MCLK and correctly enable and disable the MCLK.
+Issue was allocated array size for clk_data.
+When clocks are being registered their index is taken from defines in
+dt-bindings. The last 2 clocks had their index outside of allocated range.
+Two defines (CLK_CCC_DLL0, CLK_CCC_DLL1) were not used and skipped over
+which was not taken into account when allocating the array.
 
-If SAI (audio driver) is used to control the MCLK enablement, then MCLK
-clock is not always enabled, and it is not necessarily enabled when the
-codec may need the clock to be enabled. There is also no way for the
-codec node to specify phandle to clock provider in DT, because the SAI
-(audio driver) is not clock provider.
+This patch is minimal change to resolve the issue.
 
-If SAI (clock driver) is used to control the MCLK enablement, then MCLK
-clock is enabled when the codec needs the clock enabled, because the
-codec is the clock consumer and the SAI (clock driver) is the clock
-provider, and the codec driver can request the clock to be enabled when
-needed. There is also the usual phandle to clock provider in DT, because
-the SAI (clock driver) is clock provider.
+Issue was found using KASAN when debugging unrelated xdma driver issue.
+Consequently fixing this issue also resolved xdma driver issue.
 
-Acked-by: Michael Walle <mwalle@kernel.org>
-Signed-off-by: Marek Vasut <marex@nabladev.com>
+Related dmesg output:
+[    0.290703] BUG: KASAN: slab-out-of-bounds in mpfs_ccc_register_outputs.constprop.0+0xd0/0x1fa
+[    0.290984] Write of size 8 at addr ffffffe7be6e3ca8 by task swapper/0/1
+[    0.291253] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 6.1.43-linux4microchip+fpga-2023.09 #1
+[    0.291482] Hardware name: Skylabs HPC (DT)
+[    0.291611] Call Trace:
+...
+[    0.292999] [<ffffffff808508c8>] mpfs_ccc_register_outputs.constprop.0+0xd0/0x1fa
+[    0.293245] [<ffffffff80850b66>] mpfs_ccc_probe+0x174/0x30e
+[    0.293437] [<ffffffff808d4af2>] platform_probe+0x74/0xba
+...
+
+Fixes: d39fb172760e ("clk: microchip: add PolarFire SoC fabric clock support")
+Signed-off-by: Aleš Pečnik <ales.pecnik@skylabs.si>
 ---
-Cc: Brian Masney <bmasney@redhat.com>
-Cc: Conor Dooley <conor+dt@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Michael Walle <michael@walle.cc>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
-V2: No change
-V3: - Rebase on current next, update mail address
-    - Update commit message according to clarify the difference between
-      SAI audio and SAI clock driver
-    - Pick ancient AB from Michael, although this may be outdated
-      https://patchwork.kernel.org/project/alsa-devel/patch/20241226162234.40141-4-marex@denx.de/
-V4: Use the fsl_sai_clk_register() helper.
-V5: - Move include clk.h into 3/6
-    - Validate clock cells in fsl_sai_of_clk_get()
----
- drivers/clk/clk-fsl-sai.c | 34 +++++++++++++++++++++++++++++++++-
- 1 file changed, 33 insertions(+), 1 deletion(-)
+ drivers/clk/microchip/clk-mpfs-ccc.c             | 3 +--
+ include/dt-bindings/clock/microchip,mpfs-clock.h | 2 ++
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk-fsl-sai.c b/drivers/clk/clk-fsl-sai.c
-index 01c5e26f55517..97db34358f62b 100644
---- a/drivers/clk/clk-fsl-sai.c
-+++ b/drivers/clk/clk-fsl-sai.c
-@@ -16,19 +16,27 @@
+diff --git a/drivers/clk/microchip/clk-mpfs-ccc.c b/drivers/clk/microchip/clk-mpfs-ccc.c
+index 3a3ea2d142f8..71fbb6265ea4 100644
+--- a/drivers/clk/microchip/clk-mpfs-ccc.c
++++ b/drivers/clk/microchip/clk-mpfs-ccc.c
+@@ -234,8 +234,7 @@ static int mpfs_ccc_probe(struct platform_device *pdev)
+ 	unsigned int num_clks;
+ 	int ret;
  
- #define I2S_CSR		0x00
- #define I2S_CR2		0x08
-+#define I2S_MCR		0x100
- #define CSR_BCE_BIT	28
-+#define CSR_TE_BIT	31
- #define CR2_BCD		BIT(24)
- #define CR2_DIV_SHIFT	0
- #define CR2_DIV_WIDTH	8
-+#define MCR_MOE		BIT(30)
+-	num_clks = ARRAY_SIZE(mpfs_ccc_pll_clks) + ARRAY_SIZE(mpfs_ccc_pll0out_clks) +
+-		   ARRAY_SIZE(mpfs_ccc_pll1out_clks);
++	num_clks = CLK_CCC_NUM;
  
- struct fsl_sai_data {
- 	unsigned int	offset;	/* Register offset */
-+	bool		have_mclk; /* Have MCLK control */
- };
+ 	clk_data = devm_kzalloc(&pdev->dev, struct_size(clk_data, hw_data.hws, num_clks),
+ 				GFP_KERNEL);
+diff --git a/include/dt-bindings/clock/microchip,mpfs-clock.h b/include/dt-bindings/clock/microchip,mpfs-clock.h
+index b52f19a2b480..8d53f2b81a54 100644
+--- a/include/dt-bindings/clock/microchip,mpfs-clock.h
++++ b/include/dt-bindings/clock/microchip,mpfs-clock.h
+@@ -73,4 +73,6 @@
+ #define CLK_CCC_DLL1_OUT0	14
+ #define CLK_CCC_DLL1_OUT1	15
  
- struct fsl_sai_clk {
-+	const struct fsl_sai_data *data;
- 	struct clk_divider bclk_div;
-+	struct clk_divider mclk_div;
- 	struct clk_gate bclk_gate;
-+	struct clk_gate mclk_gate;
- 	struct clk_hw *bclk_hw;
-+	struct clk_hw *mclk_hw;
- 	spinlock_t lock;
- };
- 
-@@ -37,7 +45,17 @@ fsl_sai_of_clk_get(struct of_phandle_args *clkspec, void *data)
- {
- 	struct fsl_sai_clk *sai_clk = data;
- 
--	return sai_clk->bclk_hw;
-+	if (clkspec->args_count == 0)
-+		return sai_clk->bclk_hw;
++#define CLK_CCC_NUM		16
 +
-+	if (clkspec->args_count == 1) {
-+		if (clkspec->args[0] == 0)
-+			return sai_clk->bclk_hw;
-+		if (sai_clk->data->have_mclk && clkspec->args[0] == 1)
-+			return sai_clk->mclk_hw;
-+	}
-+
-+	return ERR_PTR(-EINVAL);
- }
- 
- static int fsl_sai_clk_register(struct device *dev, void __iomem *base,
-@@ -104,6 +122,7 @@ static int fsl_sai_clk_probe(struct platform_device *pdev)
- 	if (IS_ERR(clk_bus))
- 		return PTR_ERR(clk_bus);
- 
-+	sai_clk->data = data;
- 	spin_lock_init(&sai_clk->lock);
- 
- 	ret = fsl_sai_clk_register(dev, base, &sai_clk->lock,
-@@ -113,15 +132,28 @@ static int fsl_sai_clk_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	if (data->have_mclk) {
-+		ret = fsl_sai_clk_register(dev, base, &sai_clk->lock,
-+					   &sai_clk->mclk_div,
-+					   &sai_clk->mclk_gate,
-+					   &sai_clk->mclk_hw,
-+					   CSR_TE_BIT, MCR_MOE, I2S_MCR,
-+					   "MCLK");
-+		if (ret)
-+			return ret;
-+	}
-+
- 	return devm_of_clk_add_hw_provider(dev, fsl_sai_of_clk_get, sai_clk);
- }
- 
- static const struct fsl_sai_data fsl_sai_vf610_data = {
- 	.offset	= 0,
-+	.have_mclk = false,
- };
- 
- static const struct fsl_sai_data fsl_sai_imx8mq_data = {
- 	.offset	= 8,
-+	.have_mclk = true,
- };
- 
- static const struct of_device_id of_fsl_sai_clk_ids[] = {
--- 
-2.53.0
+ #endif	/* _DT_BINDINGS_CLK_MICROCHIP_MPFS_H_ */
+
+---
+base-commit: bfe62a454542cfad3379f6ef5680b125f41e20f4
+change-id: 20260407-mpfs-clk-oob-write-a0cec9a5c224
+
+Best regards,
+--  
+Aleš Pečnik <ales.pecnik@skylabs.si>
+
 
