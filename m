@@ -1,146 +1,231 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3AB93CF67D
-	for <linux-clk@vger.kernel.org>; Wed,  8 Apr 2026 17:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9522AEED8
+	for <linux-clk@vger.kernel.org>; Wed,  8 Apr 2026 21:58:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775669663; cv=none; b=DXvTEIHE7NoDOyaKFBrjZUGTlMJvf1vVuaUtLWVKN2lfJJfbuGHm4FHR21dmPEiaLg1G1ZtOXe1rvbJ75CeCK38aQhvTnyQdZduHSkb2cr2d3r6uuIrcB0HYPqFHfl2bYc3sdI9jC6/Db1AapQEIfsYcXdQSuXw525Z3w3KcOUY=
+	t=1775685533; cv=none; b=DPSXjvSFCkOejT1c2aYC6GsXGxxaFHhdmFgNsm9MIPrsIF1tAtw+7FMO+jxVoRpcfBd+gR1xrxjJkJbsEmCEWwr62e8P3Z1lyqYNiq86Ial7TgY2TZVbKhBJi0ZCb3VWAq3A/6WBHiiy/IGpvpy85BBKVdKpH86bfRlxAVL+mOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775669663; c=relaxed/simple;
-	bh=G3FHbnZIvkh4qnF0RbI8m2zIo17GnxV2+bwgVnfgM3U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=LZFYgQ5fVueHg18bJ+GOjZjVhTHK3n1Nn3vRgCxQDUomk8NubbOr6nbvHEDtDk5FlGDWYwQx6ZC0fAwGYSib5C4Imc0Go2FXbfe9EydvBiMzjhkbBrhDBKn9LsaVZWofuwlBAjdRwdA04SdyvLFp8Otg8IKA1SjCS1AFstLNJ1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20251104.gappssmtp.com header.i=@baylibre-com.20251104.gappssmtp.com header.b=Q67U35yb; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1775685533; c=relaxed/simple;
+	bh=tjE9SYROPRJSd2mp6Br8BoEwlJBxJDWqw7W6mx+PZCE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GaPzi/n8XG3KWqGfs1kh3yQgtNWTS1qOB6OtbuXT+nx34Vuhm/GilVT3d5/4Q07QH2YlPKMgOHrBwvwvEfIw/sFrUuPo3t7Arq84PNWK0T8hFDu1dGqWxXa6QLCmPr6oX2cd54UHOy84P8zzDaOn8Z7q99fvIPrlkCXrLMeM2rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Fm6A8v7P; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=OXTxlhze; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20251104.gappssmtp.com header.i=@baylibre-com.20251104.gappssmtp.com header.b="Q67U35yb"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-43b949bf4easo705319f8f.0
-        for <linux-clk@vger.kernel.org>; Wed, 08 Apr 2026 10:34:21 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Fm6A8v7P";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="OXTxlhze"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1775685530;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LOm+wk33ypCInDRQOH/vSQahWXyPcA6BwjaghqFQOQw=;
+	b=Fm6A8v7Pe3V3zbWjTsmbLjMJgCxi00mhPiGaSgeyCILovOnoJtv54HA0mfRkNSM6JW8/us
+	CRMmOyA8pJVgH6y2213uRM0dTIUvBIJSY1sVLGI9FJDpi6Yl77i1Vt+cAtTFy36a97EVd4
+	SMrvnl743XHww9CuOPZzdRH8TQWFITk=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-155-nvd_Y2yoP-e64kD_-mxjBw-1; Wed, 08 Apr 2026 17:58:49 -0400
+X-MC-Unique: nvd_Y2yoP-e64kD_-mxjBw-1
+X-Mimecast-MFC-AGG-ID: nvd_Y2yoP-e64kD_-mxjBw_1775685528
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-50da529ff48so11608261cf.3
+        for <linux-clk@vger.kernel.org>; Wed, 08 Apr 2026 14:58:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20251104.gappssmtp.com; s=20251104; t=1775669660; x=1776274460; darn=vger.kernel.org;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qbPKJoXcFiZEHjruKbVgJ9S6J16xuB0veaEwyiyvCi0=;
-        b=Q67U35yb5O0Yk80LuVjeuE3Jou8++czgnxOMErqzDr4jW0olOOREmfkO3HTZmZHTW0
-         erM13fzO5iuxNSBTGBvKOz4nnD2WntAvTSnVhSW1eOuiM9DBkFezSJ4R6Mtu+TGDU7wv
-         dx05lC+8iBz1I/+sZlX7TfG5yhhP4/TjBc38ymqgIp8zSFmmggf+d0kpmDQgVsTBIpvx
-         Q8W5WeKawJj072YdJxVN4KY6dMJ+ob9Q6wcqsQdvhY5U9PpAhkIdOHor9zU5JXiOALcw
-         DDnMCas5Dgz1ZU/hibcBRrMwA7uSlQCGJ5AOZyt9SvsUkmHH+CLRmVQsJsHWXrEp1Y4l
-         pKAg==
+        d=redhat.com; s=google; t=1775685528; x=1776290328; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LOm+wk33ypCInDRQOH/vSQahWXyPcA6BwjaghqFQOQw=;
+        b=OXTxlhzetlt95MyggV4mJW6NY+9gw93BM3nrzGVIiAx3pXBdCpmECejojg6H2+peIQ
+         /4DR9t1skbSlJv5VeC57VZfwuLbd2kb31nzr2sv3Lz+S2x2UqX+zLy/Euun0qVY5GZds
+         mXvDl8xO4SZqi1GKQKQmDQGjX5j45pfnr0QapTCU6aHREJCJQSLQMfw/DRdQwPIRWW2K
+         Qw/iPLh3wL7aJ7eWlCnx/SUxVo6bazbYjC4ewHpTk0ytANhP/DH2NFMaz3OhqVpksE05
+         LMI3kYPK5RgJ4YANAGqY8UsYRMOdzRl5kAUQwm72F4GspX1V+HuNOYQ9dgcc2vLYdoWj
+         9/og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775669660; x=1776274460;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=qbPKJoXcFiZEHjruKbVgJ9S6J16xuB0veaEwyiyvCi0=;
-        b=WxCfcAcbBjMTRMMGD/3krxafNwsTV5YB6GPUhkSrzrgpXLLDAc77xIN8P0cdU8zBwn
-         edX3i6G0Msta4VXCrYUjAElJJR+XKRbc/7Q2WvcCWRXZPk75UerY6Wmtw3/fIZpPOHxQ
-         Cd0NFLyMmL46F4KNIN/QX8VvwijOMNN6gNBFKNpA/YzqLNKeUN7MSgU36+g55Or1Ub7G
-         vlGV6hPOauGN/gXvKZOOCHIXqsQguM2bXp1Xy7Q4Bz7VGSfhCM7JQl3o5xy8CW0x+BvX
-         vVwBEbQlZReO/9cB3Av+en6lxWrm15rN0zgAHzg4508/FTzzqkUr7vZ4PqyfcEyd4Skv
-         OFCw==
-X-Forwarded-Encrypted: i=1; AJvYcCVD7vo3N/bl1JFdB5FlG5Ga2IfyQjN3UMhP2+o3wXblty6kV0fEtcd9JXTs5Xn0K20EzhEB3fcnGV4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCksZugpao/5LixGjQcXmZwgYTZIo2s3F/6JMen8O1SLcYX+ya
-	CwP3W8E3XvynAWVO3eiEghm6MqfV7815k8glqH+LctF2+Geh/FWrAHPnj2PvJXzJN5k=
-X-Gm-Gg: AeBDieuQLWxL0jz/VBH7GxxNOkY2RmarIACygbgKzhqTVS55OFO3ALsNgAfBOGr17tp
-	5q3R6/KDCbv5u7IibN0r5LlyIVZetSWmFXtMcj2MiKKoTzPop4NPAlb2bsljXRF9v809V0BFaQ+
-	sflY2x2ZFvMXpLENs/0OCiEXMMh2owlZUoxsdA2zXAWe/EUeyr85pgINKGYB80WvWj1HNE9tVR9
-	taUc/mVT/JSLD46SF/A5rD+0bl8d6JXhoad4OnTV8+4jSnY5BGtm/HzCBXLElZiWx/UI94MX/Fa
-	OdpaEiBvvqbO5+x9+DfSKp/N389edA4GDFUbYJTJ9qtLfRZcfjWeJio/oUFwUpAFiH1RFS3ZcEO
-	sqGFWfHcCS2RSr2U12u1bDy7I0nHic+9G9XfCXG5Lv6Aj4GbVdUoq98uvaZZHK0I4TIBAF6efZs
-	YcrUOlp5LjML7pHr8dzt0=
-X-Received: by 2002:a05:6000:4b0a:b0:43b:a16b:ee69 with SMTP id ffacd0b85a97d-43d595cf8c2mr485116f8f.24.1775669659987;
-        Wed, 08 Apr 2026 10:34:19 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:d54d:290b:e0:25b6])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-43d1e4d27a8sm60840731f8f.17.2026.04.08.10.34.19
+        d=1e100.net; s=20251104; t=1775685528; x=1776290328;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=LOm+wk33ypCInDRQOH/vSQahWXyPcA6BwjaghqFQOQw=;
+        b=Z+DHoRGTqiiT8VGzQ13RcKHID+G65XMIpeQD/VE4f4/Bs5FWyysY9xh6ta8djiBuZI
+         MvuH0nfvNmwPK8PfrdkH5k4JU5DMLvoS8irrVCzcWlx/Bn9o6P8eiB2yivRGQBJjlj2x
+         4W0KEXWzNIAPWCxG6XxoewefHnwGKCUHse6oOjykfC//2nE4/TAWB1hvczJdspSQZuoB
+         AvJlrwqr3MAYfoIUV9TYzCrDseK1kC7ZAyTOdNDSU+ryaakSQPbBK3+BS22xoe1vbVFP
+         yOsdfVy78t76W+UyDRVKk+UsT9fEdrYLImOSUtABs9EhNfEICbyKf+bu8GlxIbSL73Yp
+         HcJw==
+X-Gm-Message-State: AOJu0YwEyIHOtcoW41DYoVhvZOuaR0/D0fHPykQr5hjyp+5y2ujhM7ap
+	UbioEWeP5MsiTkswxqR9pfPZKwpSXGLCyCFLBbxZFkW3tWk7R4jthqLpPSiSONCKKRDHzkikRkZ
+	Et/2PiintCFg5sFO/njU79zTyURiu4Y5VVgxMZN2mG5X1aIgftb1a/UujUa5Nzw==
+X-Gm-Gg: AeBDievYBkkilpiomI7TGBiYhRhFqjqeTwmpub28Jpa3l5C4fxW+6YxjfUCQ3CqaMmw
+	YTsGid77hgnv7DTZb/UfZd1j5vrDjCepmxCdywQ//8vCQL+8T8kh/z9bJyhVrYIbZ+Wk6gSdJCr
+	D7wPHMC0J9lrsT+UtuDFgR5Mxfl6L8mcnUNdWJL3IBIqIOUvWYytZigR0b+gPcYzhw6gL8eNqsY
+	fq4P2Ob1Zc0tm9xgvoZ/pguqn6ioEDBQ3/0/YiydEmGzeYkq87AxCvRTperOHWrR7jEkhX4nj0d
+	aB83HdmSlstdT6Pmi4fYM79uwsDWlgDZsZaz1KMS026NV5e9lFsgITr8s8HGVePKv2tRPSKbFi6
+	j8oJVs7TPB021TtTJOHCtCNMu7ylqns9dq2pAefQP1hGpmtTFrRo8NfKq
+X-Received: by 2002:a05:622a:514b:b0:50d:abc3:eed5 with SMTP id d75a77b69052e-50dabc3f68bmr101178241cf.29.1775685528595;
+        Wed, 08 Apr 2026 14:58:48 -0700 (PDT)
+X-Received: by 2002:a05:622a:514b:b0:50d:abc3:eed5 with SMTP id d75a77b69052e-50dabc3f68bmr101177901cf.29.1775685528034;
+        Wed, 08 Apr 2026 14:58:48 -0700 (PDT)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-50d4b8d0904sm170469051cf.29.2026.04.08.14.58.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Apr 2026 10:34:19 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Chuan Liu <chuan.liu@amlogic.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,  Neil Armstrong
- <neil.armstrong@linaro.org>,  Michael Turquette <mturquette@baylibre.com>,
-  Stephen Boyd <sboyd@kernel.org>,  Rob Herring <robh@kernel.org>,
-  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor Dooley
- <conor+dt@kernel.org>,  linux-amlogic@lists.infradead.org,
-  linux-clk@vger.kernel.org,  devicetree@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH 04/13] clk: amlogic: Add basic clock driver
-In-Reply-To: <76ef272c-e09a-400e-b381-82d7f29760ca@amlogic.com> (Chuan Liu's
-	message of "Wed, 8 Apr 2026 22:32:56 +0800")
-References: <20260209-a9_clock_driver-v1-0-a9198dc03d2a@amlogic.com>
-	<20260209-a9_clock_driver-v1-4-a9198dc03d2a@amlogic.com>
-	<89cc0724-32a8-4da5-8070-c128cafcfc82@kernel.org>
-	<76ef272c-e09a-400e-b381-82d7f29760ca@amlogic.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Wed, 08 Apr 2026 19:34:18 +0200
-Message-ID: <1j7bqhtkyt.fsf@starbuckisacylon.baylibre.com>
+        Wed, 08 Apr 2026 14:58:47 -0700 (PDT)
+Date: Wed, 8 Apr 2026 17:58:44 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Marek Vasut <marex@nabladev.com>
+Cc: linux-clk@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Michael Walle <michael@walle.cc>, Rob Herring <robh@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 5/6] clk: fsl-sai: Extract clock setup into
+ fsl_sai_clk_register()
+Message-ID: <adbPlFzI7jrU9pCq@redhat.com>
+References: <20260407211123.77602-1-marex@nabladev.com>
+ <20260407211123.77602-5-marex@nabladev.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260407211123.77602-5-marex@nabladev.com>
+User-Agent: Mutt/2.3.0 (2026-01-25)
 
-On mer. 08 avril 2026 at 22:32, Chuan Liu <chuan.liu@amlogic.com> wrote:
+Hi Marek,
 
-> Hi Krzysztof (& ALL),
-> Thanks for review.
->
-> On 2/9/2026 9:17 PM, Krzysztof Kozlowski wrote:
->> [ EXTERNAL EMAIL ]
->> On 09/02/2026 06:48, Chuan Liu via B4 Relay wrote:
->>> From: Chuan Liu <chuan.liu@amlogic.com>
->>>
->>> Implement core clock driver for Amlogic SoC platforms, supporting
->> So how did all existing Amlogic SoC platforms work so far without basic
->> clock driver? Really, how?
->> You are suppose to grow existing code, not add your completely new
->> "basic" driver just because you have it that way in downstream.
->> 
->
-> Firstly, apologies for the delayed response. I had intended to consolidate
-> the V1 review feedback and come back with a clearer plan for V2 changes. In
-> the meantime, Martin has provided many detailed and valuable suggestions -
-> much appreciated.
->
-> The original goal of optimizing the HW based on A9 and introducing a new
-> clock driver is to reduce unnecessary complexity in the driver. On A9, we
-> optimized the Clock/PLL controller HW to simplify driver performance,
-> complexity, memory footprint, and reusability. Improvements on the HW side
-> can also help drive corresponding enhancements in the driver:
->    - Performance: Encapsulates sub-clock functions, reducing call paths
->    - Complexity: Standardized register bits eliminate a large number of
-> bit definitions (~1/3 of original code is defined register bit [1])
->    - Memory: Object-oriented design avoids copy/paste for repeated clocks
->    - Reusability: Same controller works across SoCs without driver
-> changes (or with minimal changes)
->
-> The old meson driver required compromises to unify legacy controller
-> characteristics and driver styles. On A9, we want a fresh start.
+On Tue, Apr 07, 2026 at 11:10:02PM +0200, Marek Vasut wrote:
+> Create helper function fsl_sai_clk_register() to set up and register
+> SAI clock. Rename BCLK specific struct fsl_sai_clk members with bclk_
+> prefix. Use of_node_full_name(dev->of_node) and clock name to register
+> uniquely named clock. This is done in preparation for the follow up
+> patch, which adds MCLK support.
+> 
+> Signed-off-by: Marek Vasut <marex@nabladev.com>
+> ---
+> Cc: Brian Masney <bmasney@redhat.com>
+> Cc: Conor Dooley <conor+dt@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Michael Walle <michael@walle.cc>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+> V4: New patch
+> V5: - Include fsl_sai_of_clk_get() which returns only BCLK in here already
+>     - s/hw/chw/ in fsl_sai_clk_register
+> ---
+>  drivers/clk/clk-fsl-sai.c | 90 +++++++++++++++++++++++++++------------
+>  1 file changed, 63 insertions(+), 27 deletions(-)
+> 
+> diff --git a/drivers/clk/clk-fsl-sai.c b/drivers/clk/clk-fsl-sai.c
+> index 27925893c4c27..01c5e26f55517 100644
+> --- a/drivers/clk/clk-fsl-sai.c
+> +++ b/drivers/clk/clk-fsl-sai.c
+> @@ -26,20 +26,71 @@ struct fsl_sai_data {
+>  };
+>  
+>  struct fsl_sai_clk {
+> -	struct clk_divider div;
+> -	struct clk_gate gate;
+> +	struct clk_divider bclk_div;
+> +	struct clk_gate bclk_gate;
+> +	struct clk_hw *bclk_hw;
+>  	spinlock_t lock;
+>  };
+>  
+> +static struct clk_hw *
+> +fsl_sai_of_clk_get(struct of_phandle_args *clkspec, void *data)
+> +{
+> +	struct fsl_sai_clk *sai_clk = data;
+> +
+> +	return sai_clk->bclk_hw;
+> +}
+> +
+> +static int fsl_sai_clk_register(struct device *dev, void __iomem *base,
+> +				spinlock_t *lock, struct clk_divider *div,
+> +				struct clk_gate *gate, struct clk_hw **hw,
+> +				const int gate_bit, const int dir_bit,
+> +				const int div_reg, char *name)
+> +{
+> +	const struct fsl_sai_data *data = device_get_match_data(dev);
+> +	struct clk_parent_data pdata = { .index = 0 };
+> +	struct clk_hw *chw;
+> +	char *cname;
+> +
+> +	gate->reg = base + data->offset + I2S_CSR;
+> +	gate->bit_idx = gate_bit;
+> +	gate->lock = lock;
+> +
+> +	div->reg = base + div_reg;
+> +	div->shift = CR2_DIV_SHIFT;
+> +	div->width = CR2_DIV_WIDTH;
+> +	div->lock = lock;
+> +
+> +	cname = devm_kasprintf(dev, GFP_KERNEL, "%s.%s",
+> +			       of_node_full_name(dev->of_node), name);
 
-I thought I was clear on the cover letter, apparently not.
+Sashiko has the following feedback:
+https://sashiko.dev/#/patchset/20260407211123.77602-1-marex%40nabladev.com
 
-*This is not going to happen*
+    Does using of_node_full_name() break debugfs directory creation? 
+    
+    The full node name usually contains slashes (e.g., soc/bus@1000/sai@2000),
+    which causes lookup_one_len() to reject the name with -EACCES when the CCF
+    tries to create the directories.
+    
+    Also, if the device is instantiated without Device Tree, this evaluates to
+    "<no-node>", potentially causing collisions if multiple instances exist.
+    Would dev_name(dev) be more appropriate here?
 
-You've provided no technical justification for such "a fresh start".
+> +	if (!cname)
+> +		return -ENOMEM;
+> +
+> +	chw = devm_clk_hw_register_composite_pdata(dev, cname,
+> +						   &pdata, 1, NULL, NULL,
+> +						   &div->hw,
+> +						   &clk_divider_ops,
+> +						   &gate->hw,
+> +						   &clk_gate_ops,
+> +						   CLK_SET_RATE_GATE);
+> +	if (IS_ERR(chw))
+> +		return PTR_ERR(chw);
+> +
+> +	*hw = chw;
+> +
+> +	/* Set clock direction */
+> +	writel(dir_bit, base + div_reg);
 
-There no reason for A9 HW to be supported by different drivers than the
-rest of the Amlogic SoC when it is quite clear it can fit with the
-current drivers.
+Sashiko also has the following feedback:
 
-At lot of work by a lot of different people has gone into stabilizing
-and maintaing the current driver. That's valuable too. If you are not
-happy with current level of "performance" then make your case with
-actual numbers and submit changes against the current drivers, making
-improvement available to all supported SoCs. That's how upstream works.
+    Is it safe to initialize the hardware register after registering the clock
+    with the CCF?
+    
+    During devm_clk_hw_register_composite_pdata(), the Common Clock Framework
+    inspects the hardware to calculate and cache the initial clock rate based on
+    the existing divider value.
+    
+    The subsequent writel() completely overwrites the 32-bit register, setting
+    the direction bit and zeroing out the divider bits. Because this occurs
+    after registration, the CCF is completely unaware of the change, leaving its
+    cached rate stale and mismatched with the hardware.
+    
+    Additionally, since the clock is already exposed to the system, could this
+    lockless writel() race with concurrent clock operations like clk_set_rate()
+    and clobber new divider configurations?
+    
+    The original code safely performed this initialization before registration.
 
->
->> Best regards,
->> Krzysztof
+Brian
 
--- 
-Jerome
