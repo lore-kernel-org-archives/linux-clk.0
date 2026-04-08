@@ -1,127 +1,196 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF7D2C08C4;
-	Wed,  8 Apr 2026 09:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5A7390220
+	for <linux-clk@vger.kernel.org>; Wed,  8 Apr 2026 09:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775639511; cv=none; b=EsoBZHp2LzkZXLuxTbiVGA0Nb3lIFnqolFMxwGyMUJxhkAJBxuJGv3LaEypmg4Y7vD5AQCV1k9YaGMycp+rhDlEzZWVStWyDMrJlinY4sAu5HgRQYD91afQa654et0lNyFJ0UFlZ4VdamqmlId7YEardh/SvrkYhRaexx0FqGL4=
+	t=1775639968; cv=none; b=YlHzEmgd6FiyJ/bsB/bMbIicwcPU5TkdgEcU9JHfCFmAyOPLobnelnDGFQ3gOgowh2VC6wKiNJPLMUOHARbP1zOPOsDmPFAbFd1HfCYWS9joYkTiIaTKCRx/8quf6YxaLpmeTVXwPyQac076U2x0g7nje1xJ9HQHrnW5bk60Z1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775639511; c=relaxed/simple;
-	bh=DubMFWrX8TCwWcTFPYpU7j4CJPYnyqeFDt+DGM5/3Ho=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L3mX84V+qsJKwELxyjVk54E8Z1wS/tBGYQm4Lw/VDiE1F40jiflETAlOeylntJPDCgGHrc5OAIsT8jIO7sjUto3Snxyzp7urh1yhZQLRBEDiGHKUFs9qQMXQxlgx1V+MRPqtOJua7s53O4FwOMFpXbMZQsivp6jRUvnUOoCawjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tl334rL+; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tl334rL+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D9ABC19424;
-	Wed,  8 Apr 2026 09:11:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775639510;
-	bh=DubMFWrX8TCwWcTFPYpU7j4CJPYnyqeFDt+DGM5/3Ho=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tl334rL+Tt3W2rPqpLDxlfLdEXgmPa04Fw7pjCn2yO+AdTqKvYcrK7tT4iiHqDEeg
-	 TAeW78hJqGXCcJ6LYEiAaUt356c0agqL83M2Sm+T4i8n50bLG/I3/C46s79XziaGYf
-	 ZAHh6Ez3UPsZpkEIynGHVIGZYkcpMn/H1Ga19g5E1GCTph8+J1ZWmldSSyPWbc8GJn
-	 ySkf7Xcclnev+Bu4U1uaxii6eUqNnxcib0cPX7B4nFmGJXBI8gMrjakc+R0tvBctiT
-	 xR/LAjYL771+D7abCcrm6DllafjF2SCyHWh6sabXxynIHULZ54sBJzobJftqLG/Mmr
-	 qNG/5x+hCsStg==
-Date: Wed, 8 Apr 2026 11:11:48 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: =?utf-8?B?QWxlxaEgUGXEjW5paw==?= <ales.pecnik@skylabs.si>
-Cc: Conor Dooley <conor.dooley@microchip.com>, 
-	Daire McNamara <daire.mcnamara@microchip.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH] clk: microchip: mpfs-ccc: fix out-of-bounds write
-Message-ID: <20260408-spiritual-locust-of-foundation-595aeb@quoll>
-References: <20260408-mpfs-clk-oob-write-v1-1-8b3b387f2a6f@skylabs.si>
+	s=arc-20240116; t=1775639968; c=relaxed/simple;
+	bh=BPgXj+sJRlfZoWE+gKU2Z0yrWHn8FJfF/+ZjKZA2Tk0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hH+6ahqrS1AAaS69nRlUc0a1kp0knHpSkj8cMqTGPSa7zl+YVkjysARjD5qdfU5sImwK2236J+sgpKTVkHV1Mpx060S34GInm/7JHVznCkl9qAOwJZUSA9wMFgxrnz51fmRzDqGHcyVupc9vLTvvwxiV4SPvOnN/wRVoCdssM/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1wAP48-00034B-2A; Wed, 08 Apr 2026 11:19:16 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1wAP47-004KKS-0I;
+	Wed, 08 Apr 2026 11:19:15 +0200
+Received: from pza by lupine with local (Exim 4.98.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1wAP47-000000007MM-00EF;
+	Wed, 08 Apr 2026 11:19:15 +0200
+Message-ID: <883ab53ae7e7ce3b894fef10e982deb1ea24c872.camel@pengutronix.de>
+Subject: Re: [PATCH 3/3] reset: eswin: Add eic7700 HSP reset driver
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: dongxuyang@eswincomputing.com, mturquette@baylibre.com,
+ sboyd@kernel.org, 	robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, 	linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, 	linux-kernel@vger.kernel.org,
+ huangyifeng@eswincomputing.com
+Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com, 
+	pinkesh.vaghela@einfochips.com
+Date: Wed, 08 Apr 2026 11:19:14 +0200
+In-Reply-To: <20260403093628.780-1-dongxuyang@eswincomputing.com>
+References: <20260403093459.612-1-dongxuyang@eswincomputing.com>
+	 <20260403093628.780-1-dongxuyang@eswincomputing.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-0+deb13u1 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20260408-mpfs-clk-oob-write-v1-1-8b3b387f2a6f@skylabs.si>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-On Wed, Apr 08, 2026 at 07:07:34AM +0200, Ale=C5=A1 Pe=C4=8Dnik wrote:
-> Issue was allocated array size for clk_data.
-> When clocks are being registered their index is taken from defines in
-> dt-bindings. The last 2 clocks had their index outside of allocated range.
-> Two defines (CLK_CCC_DLL0, CLK_CCC_DLL1) were not used and skipped over
-> which was not taken into account when allocating the array.
+On Fr, 2026-04-03 at 17:36 +0800, dongxuyang@eswincomputing.com wrote:
+> From: Xuyang Dong <dongxuyang@eswincomputing.com>
 >=20
-> This patch is minimal change to resolve the issue.
+> Add auxiliary driver to support ESWIN EIC7700 high-speed peripherals
+> system. The reset controller is created using the auxiliary device
+> framework and set up in the clock driver.
 >=20
-> Issue was found using KASAN when debugging unrelated xdma driver issue.
-> Consequently fixing this issue also resolved xdma driver issue.
->=20
-> Related dmesg output:
-> [    0.290703] BUG: KASAN: slab-out-of-bounds in mpfs_ccc_register_output=
-s.constprop.0+0xd0/0x1fa
-> [    0.290984] Write of size 8 at addr ffffffe7be6e3ca8 by task swapper/0=
-/1
-> [    0.291253] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 6.1.43-linux4mic=
-rochip+fpga-2023.09 #1
-> [    0.291482] Hardware name: Skylabs HPC (DT)
-> [    0.291611] Call Trace:
-> ...
-> [    0.292999] [<ffffffff808508c8>] mpfs_ccc_register_outputs.constprop.0=
-+0xd0/0x1fa
-> [    0.293245] [<ffffffff80850b66>] mpfs_ccc_probe+0x174/0x30e
-> [    0.293437] [<ffffffff808d4af2>] platform_probe+0x74/0xba
-> ...
->=20
-> Fixes: d39fb172760e ("clk: microchip: add PolarFire SoC fabric clock supp=
-ort")
-> Signed-off-by: Ale=C5=A1 Pe=C4=8Dnik <ales.pecnik@skylabs.si>
+> Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
 > ---
->  drivers/clk/microchip/clk-mpfs-ccc.c             | 3 +--
->  include/dt-bindings/clock/microchip,mpfs-clock.h | 2 ++
-
-Please run scripts/checkpatch.pl on the patches and fix reported
-warnings. After that, run also 'scripts/checkpatch.pl --strict' on the
-patches and (probably) fix more warnings. Some warnings can be ignored,
-especially from --strict run, but the code here looks like it needs a
-fix. Feel free to get in touch if the warning is not clear.
-
->  2 files changed, 3 insertions(+), 2 deletions(-)
+>  drivers/reset/Kconfig             |  13 +++
+>  drivers/reset/Makefile            |   1 +
+>  drivers/reset/reset-eic7700-hsp.c | 151 ++++++++++++++++++++++++++++++
+>  3 files changed, 165 insertions(+)
+>  create mode 100644 drivers/reset/reset-eic7700-hsp.c
 >=20
-> diff --git a/drivers/clk/microchip/clk-mpfs-ccc.c b/drivers/clk/microchip=
-/clk-mpfs-ccc.c
-> index 3a3ea2d142f8..71fbb6265ea4 100644
-> --- a/drivers/clk/microchip/clk-mpfs-ccc.c
-> +++ b/drivers/clk/microchip/clk-mpfs-ccc.c
-> @@ -234,8 +234,7 @@ static int mpfs_ccc_probe(struct platform_device *pde=
-v)
->  	unsigned int num_clks;
->  	int ret;
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index 7ce151f6a7e4..50bb0cd069ba 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -83,6 +83,19 @@ config RESET_EIC7700
+>  	  The driver supports eic7700 series chips and provides functionality f=
+or
+>  	  asserting and deasserting resets on the chip.
 > =20
-> -	num_clks =3D ARRAY_SIZE(mpfs_ccc_pll_clks) + ARRAY_SIZE(mpfs_ccc_pll0ou=
-t_clks) +
-> -		   ARRAY_SIZE(mpfs_ccc_pll1out_clks);
-> +	num_clks =3D CLK_CCC_NUM;
-> =20
->  	clk_data =3D devm_kzalloc(&pdev->dev, struct_size(clk_data, hw_data.hws=
-, num_clks),
->  				GFP_KERNEL);
-> diff --git a/include/dt-bindings/clock/microchip,mpfs-clock.h b/include/d=
-t-bindings/clock/microchip,mpfs-clock.h
-> index b52f19a2b480..8d53f2b81a54 100644
-> --- a/include/dt-bindings/clock/microchip,mpfs-clock.h
-> +++ b/include/dt-bindings/clock/microchip,mpfs-clock.h
-> @@ -73,4 +73,6 @@
->  #define CLK_CCC_DLL1_OUT0	14
->  #define CLK_CCC_DLL1_OUT1	15
-> =20
-> +#define CLK_CCC_NUM		16
+> +config RESET_EIC7700_HSP
+> +	tristate "EIC7700 HSP Reset controller"
+> +	depends on ARCH_ESWIN || COMPILE_TEST
+> +	depends on COMMON_CLK_EIC7700_HSP
 
-Not a binding, drop from bindings. Driver is the place for that.
+Why?
 
-Best regards,
-Krzysztof
+Please make this buildable under COMPILE_TEST without enabling the
+clock driver.
 
+[...]
+> diff --git a/drivers/reset/reset-eic7700-hsp.c b/drivers/reset/reset-eic7=
+700-hsp.c
+> new file mode 100644
+> index 000000000000..fe9822078bcc
+> --- /dev/null
+> +++ b/drivers/reset/reset-eic7700-hsp.c
+> @@ -0,0 +1,151 @@
+[...]
+> +static int eic7700_hsp_reset_assert(struct reset_controller_dev *rcdev,
+> +				    unsigned long id)
+> +{
+> +	struct eic7700_hsp_reset_data *data =3D to_eic7700_hsp_reset(rcdev);
+> +	int ret;
+> +
+> +	if (eic7700_hsp_reset[id].active_low)
+> +		ret =3D regmap_clear_bits(data->regmap, eic7700_hsp_reset[id].reg,
+> +					eic7700_hsp_reset[id].bit);
+> +	else
+> +		ret =3D regmap_set_bits(data->regmap, eic7700_hsp_reset[id].reg,
+> +				      eic7700_hsp_reset[id].bit);
+
+This is essentially regmap_assign_bits() open-coded.
+
+> +
+> +	return ret;
+> +}
+> +
+> +static int eic7700_hsp_reset_deassert(struct reset_controller_dev *rcdev=
+,
+> +				      unsigned long id)
+> +{
+> +	struct eic7700_hsp_reset_data *data =3D to_eic7700_hsp_reset(rcdev);
+> +	int ret;
+> +
+> +	if (eic7700_hsp_reset[id].active_low)
+> +		ret =3D regmap_set_bits(data->regmap, eic7700_hsp_reset[id].reg,
+> +				      eic7700_hsp_reset[id].bit);
+> +	else
+> +		ret =3D regmap_clear_bits(data->regmap, eic7700_hsp_reset[id].reg,
+> +					eic7700_hsp_reset[id].bit);
+
+Same as above.
+
+> +
+> +	return ret;
+> +}
+> +
+> +static int eic7700_hsp_reset_reset(struct reset_controller_dev *rcdev,
+> +				   unsigned long id)
+> +{
+> +	int ret;
+> +
+> +	ret =3D eic7700_hsp_reset_assert(rcdev, id);
+> +	if (ret)
+> +		return ret;
+> +
+> +	usleep_range(10, 15);
+> +
+> +	return eic7700_hsp_reset_deassert(rcdev, id);
+> +}
+
+Does any of the consumer drivers (SATA, USB) actually use
+reset_control_reset()? If not, don't implement this.
+
+> +
+> +static const struct reset_control_ops eic7700_hsp_reset_ops =3D {
+> +	.reset =3D eic7700_hsp_reset_reset,
+> +	.assert =3D eic7700_hsp_reset_assert,
+> +	.deassert =3D eic7700_hsp_reset_deassert,
+> +};
+> +
+> +static int eic7700_hsp_reset_probe(struct auxiliary_device *adev,
+> +				   const struct auxiliary_device_id *id)
+> +{
+> +	struct eic7700_hsp_reset_data *data;
+> +	struct device *dev =3D &adev->dev;
+> +
+> +	data =3D devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+> +	if (!data)
+> +		return -ENOMEM;
+> +
+> +	data->regmap =3D devm_regmap_init_mmio
+> +			(dev, (__force void __iomem *)adev->dev.platform_data,
+
+Consider letting the parent clk driver create the regmap und using
+dev_get_regmap().
+
+> +			&eic7700_hsp_regmap_config);
+> +	if (IS_ERR(data->regmap))
+> +		return dev_err_probe(dev, PTR_ERR(data->regmap),
+> +				     "failed to get regmap!\n");
+> +
+> +	data->rcdev.owner =3D THIS_MODULE;
+> +	data->rcdev.ops =3D &eic7700_hsp_reset_ops;
+> +	data->rcdev.of_node =3D dev->parent->of_node;
+> +	data->rcdev.of_reset_n_cells =3D 1;
+
+No need to set of_reset_n_cells, this value is ignored if of_xlate
+isn't also set.
+
+regards
+Philipp
