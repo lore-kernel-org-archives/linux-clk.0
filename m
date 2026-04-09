@@ -1,36 +1,35 @@
 Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C369E274B3B;
-	Thu,  9 Apr 2026 00:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE6627A904;
+	Thu,  9 Apr 2026 00:30:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.251.229.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775694601; cv=none; b=Ui7x+IYXsy3o+00ZBzyVUKl263I5NzL3u9WX5EDrskczbFhXtlZ0cOrAy+XioG9tnytPaqaeQJTBOfYb66mWn4fjbp2wpIc026siFYOCWE8f0zlSJtwnTSsKOMIkuLp7VLC9kyz1BwhmxoLAkCuVnek3uk/sWk/JU6HwMBE1ZiU=
+	t=1775694602; cv=none; b=IaEPVrfyew/3XYgrqraLDRrnoscWHz2/k2EVVpyNvVcT/PtEvHK1Ecv33UYQttVujqZ0seagg6zfBRFSuv/GNsaNI9SLZIvkEObD8os5u464xKPOuwm4JBAYg3/SPNIEtKCpAfoIXzmEQ8iwvKn0zOIFURTkbn+tzcZWHftGfOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775694601; c=relaxed/simple;
-	bh=/bA8h8VCRzRlY+PK4K5F7wze2y5aI+zwlBf5wX0l3To=;
+	s=arc-20240116; t=1775694602; c=relaxed/simple;
+	bh=cmQ9+QMIm2P9mJFgw+XdrZTqhILEAOycuuwgJUDcIiU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hsOGl2mKmhn4O4mWaevg+uFRF5s88xDheFNc3x5X80ncuh4SjoZNXnk16hVw4qEJViLkghLLqkN7PrpMXc6065ckVa3L1Z/85kOPMsR1Go2aT1KBj6xoNHcZzlsrPUwkmEEzvImzaobi+uMU1J+S3diU73HQbi9am2JW6NtMZPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com; spf=pass smtp.mailfrom=nabladev.com; dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b=Yipgui56; arc=none smtp.client-ip=178.251.229.89
+	 MIME-Version; b=LrVz4HLeoRNc6UHY65xFIgZtpsY6l710Vhe+eIGJLsu8B6J1NT9AuvUzPe+5UP8Te5YM9XB0ZbEvZcxfsvuX+cLl26dnn7qOErYDEtQbvfK2FK2SMzVVYzYAuN/HjqIUraoTMTJu8WAxvV5cFgCzTT1/GokZlhF1O5I8i3UYrJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com; spf=pass smtp.mailfrom=nabladev.com; dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b=MN07f+Z3; arc=none smtp.client-ip=178.251.229.89
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nabladev.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b="Yipgui56"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9FB3511352B;
-	Thu,  9 Apr 2026 02:29:57 +0200 (CEST)
+	dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b="MN07f+Z3"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6DB721134F4;
+	Thu,  9 Apr 2026 02:29:58 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1775694598; h=from:subject:date:message-id:to:cc:mime-version:
+	s=dkim; t=1775694599; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=RV61ZuVoCv9Zajh6Xz/gdgIF2UVvq07B2ECMNlovnIw=;
-	b=Yipgui56YbLjnvo3Y98V8hxpINSZwgd2MNB4vl+5ZnXCFYiRq5nHVaLE+rV8kZhlEzOsOj
-	XN7WDrYYLub3TNQKbrx7Yc2Yewy2QXTI2cDyhHTRPjVLwbbMOUe+zX8pM40NGHCun3bvQ6
-	AOi/pMraJgnxhmDxUvgclLaaAqXYL3adlfj35/e5Bsab1E44Zu/u6FsPGe9i4/im0tuN7J
-	BE+FqzGxnGMRkFYfr2FNAPuXQiXaXKBGfh0Fi9mJ9eahrFgZyR/dkLsv0nnrEnVCD026SV
-	9ZLP3Bqi2lzhgbaDWLMhIbBrQDEm6vVOi8UHbePMsfc7qnJhtQ7PoG8MLEXTCQ==
+	bh=cmJWjiHWpCYfVuvDoKYF7L4Q7qcVBBU1S2X78WMAYu4=;
+	b=MN07f+Z3cycz4SaHE+bhNsoHnnu37m8am6noG7co4tkCvu7DbrfSNbgtqgH6w1hnDZquyr
+	RtGVoUct4SJmKabpSJ8xbTVqQaryW+nPLq4aK+8onRs5CMWaofEtTjVZaQ/CI3Ken+T9VB
+	+fZeY6jJQ2DziadXIJFwiLNcrLuFWjltdmQsER7Fy+Yvhf58RmKP/5gLH6GLGcryesi3Qh
+	3jhx+3ReXn7VSwoYUrXVzs+uhNRLaEBgK7L2hWGEg930xuiWKj+TEeqybm1CMKece1BRIY
+	cZZ2+7TnbXYqCu2EdwY5tcUdfbdfZ/IIj+71CZsuFC4ucL6l9S4oWqnxTRqqqQ==
 From: Marek Vasut <marex@nabladev.com>
 To: linux-clk@vger.kernel.org
 Cc: Marek Vasut <marex@nabladev.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
 	Brian Masney <bmasney@redhat.com>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -40,9 +39,9 @@ Cc: Marek Vasut <marex@nabladev.com>,
 	Stephen Boyd <sboyd@kernel.org>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v6 4/6] dt-bindings: clock: fsl-sai: Document clock-cells = <1> support
-Date: Thu,  9 Apr 2026 02:29:04 +0200
-Message-ID: <20260409002952.319668-4-marex@nabladev.com>
+Subject: [PATCH v6 5/6] clk: fsl-sai: Extract clock setup into fsl_sai_clk_register()
+Date: Thu,  9 Apr 2026 02:29:05 +0200
+Message-ID: <20260409002952.319668-5-marex@nabladev.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260409002952.319668-1-marex@nabladev.com>
 References: <20260409002952.319668-1-marex@nabladev.com>
@@ -55,11 +54,12 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-The driver now supports generation of both BCLK and MCLK, document
-support for #clock-cells = <0> for legacy case and #clock-cells = <1>
-for the new case which can differentiate between BCLK and MCLK.
+Create helper function fsl_sai_clk_register() to set up and register
+SAI clock. Rename BCLK specific struct fsl_sai_clk members with bclk_
+prefix. Use of_node_full_name(dev->of_node) and clock name to register
+uniquely named clock. This is done in preparation for the follow up
+patch, which adds MCLK support.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: Marek Vasut <marex@nabladev.com>
 ---
 Cc: Brian Masney <bmasney@redhat.com>
@@ -73,39 +73,132 @@ Cc: devicetree@vger.kernel.org
 Cc: linux-clk@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 ---
-V2: Update commit message, align it with the bindings one
-V3: - Rebase on current next, update mail address
-    - Pick ancient AB from Conor, although this may be outdated
-      https://patchwork.kernel.org/project/alsa-devel/patch/20241226162234.40141-3-marex@denx.de/
-V4: No change
-V5: No change
-V6: No change
+V4: New patch
+V5: - Include fsl_sai_of_clk_get() which returns only BCLK in here already
+    - s/hw/chw/ in fsl_sai_clk_register
+V6: Move register initialization before devm_clk_hw_register_composite_pdata()
 ---
- Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/clk-fsl-sai.c | 90 +++++++++++++++++++++++++++------------
+ 1 file changed, 63 insertions(+), 27 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml b/Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml
-index 90799b3b505ee..041a63fa2d2b0 100644
---- a/Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml
-@@ -10,7 +10,7 @@ maintainers:
-   - Michael Walle <michael@walle.cc>
+diff --git a/drivers/clk/clk-fsl-sai.c b/drivers/clk/clk-fsl-sai.c
+index 27925893c4c27..c595d340e00f1 100644
+--- a/drivers/clk/clk-fsl-sai.c
++++ b/drivers/clk/clk-fsl-sai.c
+@@ -26,20 +26,71 @@ struct fsl_sai_data {
+ };
  
- description: |
--  It is possible to use the BCLK pin of a SAI module as a generic
-+  It is possible to use the BCLK or MCLK pin of a SAI module as a generic
-   clock output. Some SoC are very constrained in their pin multiplexer
-   configuration. E.g. pins can only be changed in groups. For example, on
-   the LS1028A SoC you can only enable SAIs in pairs. If you use only one SAI,
-@@ -47,7 +47,7 @@ properties:
-       - const: mclk1
+ struct fsl_sai_clk {
+-	struct clk_divider div;
+-	struct clk_gate gate;
++	struct clk_divider bclk_div;
++	struct clk_gate bclk_gate;
++	struct clk_hw *bclk_hw;
+ 	spinlock_t lock;
+ };
  
-   '#clock-cells':
--    const: 0
-+    maximum: 1
++static struct clk_hw *
++fsl_sai_of_clk_get(struct of_phandle_args *clkspec, void *data)
++{
++	struct fsl_sai_clk *sai_clk = data;
++
++	return sai_clk->bclk_hw;
++}
++
++static int fsl_sai_clk_register(struct device *dev, void __iomem *base,
++				spinlock_t *lock, struct clk_divider *div,
++				struct clk_gate *gate, struct clk_hw **hw,
++				const int gate_bit, const int dir_bit,
++				const int div_reg, char *name)
++{
++	const struct fsl_sai_data *data = device_get_match_data(dev);
++	struct clk_parent_data pdata = { .index = 0 };
++	struct clk_hw *chw;
++	char *cname;
++
++	gate->reg = base + data->offset + I2S_CSR;
++	gate->bit_idx = gate_bit;
++	gate->lock = lock;
++
++	div->reg = base + div_reg;
++	div->shift = CR2_DIV_SHIFT;
++	div->width = CR2_DIV_WIDTH;
++	div->lock = lock;
++
++	cname = devm_kasprintf(dev, GFP_KERNEL, "%s.%s",
++			       of_node_full_name(dev->of_node), name);
++	if (!cname)
++		return -ENOMEM;
++
++	/* Set clock direction */
++	writel(dir_bit, base + div_reg);
++
++	chw = devm_clk_hw_register_composite_pdata(dev, cname,
++						   &pdata, 1, NULL, NULL,
++						   &div->hw,
++						   &clk_divider_ops,
++						   &gate->hw,
++						   &clk_gate_ops,
++						   CLK_SET_RATE_GATE);
++	if (IS_ERR(chw))
++		return PTR_ERR(chw);
++
++	*hw = chw;
++
++	return 0;
++}
++
+ static int fsl_sai_clk_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	const struct fsl_sai_data *data = device_get_match_data(dev);
+ 	struct fsl_sai_clk *sai_clk;
+-	struct clk_parent_data pdata = { .index = 0 };
+ 	struct clk *clk_bus;
+ 	void __iomem *base;
+-	struct clk_hw *hw;
++	int ret;
  
- allOf:
-   - if:
+ 	sai_clk = devm_kzalloc(dev, sizeof(*sai_clk), GFP_KERNEL);
+ 	if (!sai_clk)
+@@ -55,29 +106,14 @@ static int fsl_sai_clk_probe(struct platform_device *pdev)
+ 
+ 	spin_lock_init(&sai_clk->lock);
+ 
+-	sai_clk->gate.reg = base + data->offset + I2S_CSR;
+-	sai_clk->gate.bit_idx = CSR_BCE_BIT;
+-	sai_clk->gate.lock = &sai_clk->lock;
+-
+-	sai_clk->div.reg = base + data->offset + I2S_CR2;
+-	sai_clk->div.shift = CR2_DIV_SHIFT;
+-	sai_clk->div.width = CR2_DIV_WIDTH;
+-	sai_clk->div.lock = &sai_clk->lock;
+-
+-	/* set clock direction, we are the BCLK master */
+-	writel(CR2_BCD, base + data->offset + I2S_CR2);
+-
+-	hw = devm_clk_hw_register_composite_pdata(dev, dev->of_node->name,
+-						  &pdata, 1, NULL, NULL,
+-						  &sai_clk->div.hw,
+-						  &clk_divider_ops,
+-						  &sai_clk->gate.hw,
+-						  &clk_gate_ops,
+-						  CLK_SET_RATE_GATE);
+-	if (IS_ERR(hw))
+-		return PTR_ERR(hw);
+-
+-	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, hw);
++	ret = fsl_sai_clk_register(dev, base, &sai_clk->lock,
++				   &sai_clk->bclk_div, &sai_clk->bclk_gate,
++				   &sai_clk->bclk_hw, CSR_BCE_BIT, CR2_BCD,
++				   data->offset + I2S_CR2, "BCLK");
++	if (ret)
++		return ret;
++
++	return devm_of_clk_add_hw_provider(dev, fsl_sai_of_clk_get, sai_clk);
+ }
+ 
+ static const struct fsl_sai_data fsl_sai_vf610_data = {
 -- 
 2.53.0
 
