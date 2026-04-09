@@ -1,114 +1,107 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A093BADBA;
-	Thu,  9 Apr 2026 12:25:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C2F282F3B;
+	Thu,  9 Apr 2026 13:19:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775737513; cv=none; b=aeU7fwBdFfWCPrOh+ZtbMEfQ+K0sjEfrRXlmx8oRatwdjFKmhLE8NbH6lbH9R4RntF/KR6aABagHXmMuMYEnH89vykRtu8Lo17jQPtodoV3AEKfzVsmbweGM9wVo361Aj9CTcqRA2M36Jam5exINQ/bxRIfS5Cej2OKJzFzBHxo=
+	t=1775740786; cv=none; b=US/i6E1zGKfrEWttBLMNdvxvm+8WnEQ3sOZx3fbf+ZQYqMjHm7bctWCrOZt1m6LmpMGJAGRjWCe6j8SzJuxDVJjtatCxpHlpF2SSX0oeg1Krxg5RWdiSzyrG2znhEn2xC55b6vN6GnBYHKN7RqmmOx4M0cW2yuBd0cn05gmspKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775737513; c=relaxed/simple;
-	bh=PzGc744IfLosoYW/4TYIUb0+vQyy/eIOqkVjcY5usVM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oCVtoAefOzoiAUqbMPHlRL/wwK+erFk/VruVKZfloYlRJI3y5wXh0IAHf4XYnQkTNNtqL19YTXnnZAbJB5ev2x5uPj30NJ43ZLmqO7GsU547JncRWlYXDKquXq1lqMSuvOzkPPgNTu0uOu2BDmqPeRFs5tljUkShaYPalTpqupA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D+mBCCTm; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1775740786; c=relaxed/simple;
+	bh=rKdLwvFDH2Z+iQDKRBba6IcKoLCahcyIw66U+XrMJLQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y7m7fcEM7uYIvT5y08JJSMyXEfu4i1eytXZdwyWt8qNyfH9BnrCa+MAkyYQviqFcOokFCdKMYfc+cUj63I4DKFe891z0mzxatMOHowB+iGWPvYP3ZXPxzFMWuXqbJW5Y+VWBuENI/X5Gk99ZJWZuGT392Hs60nt8HV6ZtfiC3Yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N7k2trJ0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D+mBCCTm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E696BC4CEF7;
-	Thu,  9 Apr 2026 12:25:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N7k2trJ0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15876C4CEF7;
+	Thu,  9 Apr 2026 13:19:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775737513;
-	bh=PzGc744IfLosoYW/4TYIUb0+vQyy/eIOqkVjcY5usVM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=D+mBCCTm9aFfhSUlUFqw7wrHppv2f4W7eKSm69uxuv5Z2uuExwh2/9eCTIjI6xH0m
-	 28Hmy03nH48fD8BLpZeHYWQgRV2z9yHvvNL+A7Xj9CQAJY7VTnkehdsCEK8SlQ/dXN
-	 8SanpPUp8lKo713jj0QT4nvCvTMxbBwnQJS8M5GYFNAW0yVt7ixghSjhYLA0X2C71X
-	 zxAupitBEFW/QW2bKOhuwAbQ8AsGI7ive/vhGkvWOywiAQlBsI+FUWfUCAdl1RV+gR
-	 lL+r8hNCTYz90ZpdUgejiQ0ufQxoWP5uKarpT/pyxot/ETPyd0BV3bPjGgQxpYaRsn
-	 todkMfrFJn0dg==
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	linux-clk@vger.kernel.org,
-	Sylwester Nawrocki <snawrocki@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk: samsung: drivers for v7.1
-Date: Thu,  9 Apr 2026 14:25:03 +0200
-Message-ID: <20260409122504.71017-2-krzk@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	s=k20201202; t=1775740786;
+	bh=rKdLwvFDH2Z+iQDKRBba6IcKoLCahcyIw66U+XrMJLQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N7k2trJ0Q9dAhUvjjBVrj/6ZmM/leBFyOT/aEmXRz7/H5LmzK3jGJlFZ3Kh58t++N
+	 NO3e4yfONZlPkR87OaWzTuhYE7yQQmMcT24RaLn+HJtYFOc3iDoFRphfn8GMtDf9tx
+	 Z6d9k45avKPNbwfFduMvuCrNiXv0TCyH6VQQOwqPDISPDgb3e6wC0qIAB/9WzzJeds
+	 9rZmavNsfNjgAWFD5Yn6jO7cpYoVhxchASjN0DQLirWX6uwTqHFte9ArOaDSxswpao
+	 OszKsu3EXtDDBBpJ2zefR4jUEfNiVQsgn+OFJZqOaT56ZOtIddNWfKUJRgGFtDJ5u5
+	 yqrT+LJHzV6XQ==
+Date: Thu, 9 Apr 2026 08:19:41 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Qiang Yu <qiang.yu@oss.qualcomm.com>
+Cc: Taniya Das <taniya.das@oss.qualcomm.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, johan@kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 3/4] clk: qcom: tcsrcc-glymur: Migrate
+ tcsr_pcie_N_clkref_en to clk_ref common helper
+Message-ID: <adem2WKh2B-Leivq@baldur>
+References: <20260331-qref_vote-v1-0-3fd7fbf87864@oss.qualcomm.com>
+ <20260331-qref_vote-v1-3-3fd7fbf87864@oss.qualcomm.com>
+ <ebce5979-0ab5-47ff-963e-68e27216821d@oss.qualcomm.com>
+ <ac306hTHe3qVORk2@hu-qianyu-lv.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2759; i=krzk@kernel.org; h=from:subject; bh=PzGc744IfLosoYW/4TYIUb0+vQyy/eIOqkVjcY5usVM=; b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBp15qggmUZ3kZpp2bVcyGYL99GjodD8u7JOCp85 BWyWyjGyHqJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCadeaoAAKCRDBN2bmhouD 1x8vD/47Otrj+RkgOUhE4x6o4gLRbj8uIwUT1Kl/+IvbYl1Zb0h0m9JVQSHu9Dljpqa8sZsLBLI +0bARVU4n5OaCpQ6gcVaGYB8TRwdiuopLwICEi6UApL0Uz9FCgtZuz6PIw/a5jo2SggD0WRAs6V n3mA6/fIs0KMoMgWnjV6ouWUib7yl/SFE8tk2H2GvyHODv3+0ZCemLCmWjjx9KlrE1UrZHlO5M5 HOO/WoRiDF5D+so1M5reTEiVdnR0KFcBcIt3SZwy1BS60mZxiodcNp2zLv50afP8l/VVAoabEP3 Ijlua8KJB+sGC3lRcNnfp6s//0APB0XZFRTMDUAadjAdz2XSc5NigHP6YZFBPThfZYJuSxIfIiF lLGQ6lxuoacmmLngyYHk41mRUOW7Ee5u/KeIB9B2u54seHTbFAq/2V+6cx7/wM08tM72/LFCqTk Lb3pIBMJnmF1iDcYMhbjJ3YqrHQsVyXcKtuF/nIecqbReLvs5B05eKl1WndGkq2JZLf6XHxbOPx CBXckWYBJesypbiIYOdqZhoSiPv6tyeaQL0Q+g/BUKxvizbMLdZlgtbEBHs2yjvpAtgYrWqSZCl hfr5lDegZpnDOkHoL92dIjv3tVZSEd+Bd4cFErlmN4z+Hc1XHOtKznZFRPRrEkD6dxqWW9P/ceD n4wloye2NfPGYZQ==
-X-Developer-Key: i=krzk@kernel.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ac306hTHe3qVORk2@hu-qianyu-lv.qualcomm.com>
 
-The following changes since commit 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f:
+On Wed, Apr 01, 2026 at 09:47:38PM -0700, Qiang Yu wrote:
+> On Wed, Apr 01, 2026 at 10:05:12PM +0530, Taniya Das wrote:
+> > On 4/1/2026 12:05 PM, Qiang Yu wrote:
+> > > diff --git a/drivers/clk/qcom/tcsrcc-glymur.c b/drivers/clk/qcom/tcsrcc-glymur.c
+[..]
+> > > +static const char * const tcsr_pcie_4_regulators[] = {
+> > > +	"vdda-refgen-0p9",
+> > > +	"vdda-refgen-1p2",
+> > > +	"vdda-qreftx1-0p9",
+> > > +	"vdda-qrefrpt0-0p9",
+> > > +	"vdda-qrefrpt1-0p9",
+> > > +	"vdda-qrefrpt2-0p9",
+> > > +	"vdda-qrefrx2-0p9",
+> > > +};
+> > > +
+> > 
+> > TCSR clock refs are just not for PCIe alone, they would have supplies
+> > for all the ref clocks. These supplies can also be shared across other
+> > clock refs. I think it is not the correct way to handle the supplies, as
+> > TCSR does not have the complete supplies map.
+> >
+> We have complete supplies map. You can get it on ipcatlog. Here is example
+> for other instances eg USB and EDP:
+> - Glymur (eDP): CXO PAD -> TX0 -> RPT0 -> RX0 -> eDP
+> - Glymur (USB4_2): CXO PAD -> TX0 -> RPT0 -> RPT1 -> RX1 -> USB4_2
+> - Glymur (USB3): CXO PAD -> TX0 -> RPT3 -> RPT4 -> RX4 -> USB3_SS3
+> 
+> I only add supplies for PCIe in this series because USB and EDP vote these
+> LDO in their PHY driver. They can remove them in PHY dts node and add same
+> regulator list here.
+> 
 
-  Linux 7.0-rc1 (2026-02-22 13:18:59 -0800)
+The regulators are reference counted. Can't we add the USB and eDP
+handling here as well now, and then after they are voted here we remove
+them from the PHY?
 
-are available in the Git repository at:
+Regards,
+Bjorn
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-7.1
-
-for you to fetch changes up to e57c36bc1a3e459239ead492ebce731a88a264b1:
-
-  clk: samsung: exynos850: Add APM-to-AP mailbox clock (2026-03-24 13:43:19 +0100)
-
-----------------------------------------------------------------
-Samsung SoC clock drivers changes for v7.1
-
-1. Axis ARTPEC-9: Add new PLL clocks and new drivers for eight clock
-   controllers on the SoC.
-2. ExynosAutov920: Add G3D (GPU) clock controller.
-3. Exynos850: Define missing clock for the APM mailbox.
-4. Few compiler warning fixes cleanups.
-
-----------------------------------------------------------------
-Alexey Klimov (2):
-      dt-bindings: clock: exynos850: Add APM_AP MAILBOX clock
-      clk: samsung: exynos850: Add APM-to-AP mailbox clock
-
-André Draszik (1):
-      clk: samsung: gs101: harmonise symbol names (clock arrays)
-
-GyoungBo Min (3):
-      dt-bindings: clock: Add ARTPEC-9 clock controller
-      clk: samsung: Add clock PLL support for ARTPEC-9 SoC
-      clk: samsung: artpec-9: Add initial clock support for ARTPEC-9 SoC
-
-Krzysztof Kozlowski (3):
-      clk: samsung: pll: Fix possible truncation in a9fraco recalc rate
-      clk: samsung: Use %pe format to simplify
-      Merge branch 'for-v7.1/dt-bindings-clk' into next/clk
-
-Raghav Sharma (2):
-      dt-bindings: clock: exynosautov920: add G3D clock definitions
-      clk: samsung: exynosautov920: add block G3D clock support
-
- .../bindings/clock/axis,artpec9-clock.yaml         |  232 ++++
- .../clock/samsung,exynosautov920-clock.yaml        |   21 +
- drivers/clk/samsung/Makefile                       |    1 +
- drivers/clk/samsung/clk-artpec9.c                  | 1224 ++++++++++++++++++++
- drivers/clk/samsung/clk-exynos850.c                |    7 +-
- drivers/clk/samsung/clk-exynosautov920.c           |   52 +
- drivers/clk/samsung/clk-gs101.c                    |   52 +-
- drivers/clk/samsung/clk-pll.c                      |  185 ++-
- drivers/clk/samsung/clk-pll.h                      |   17 +
- drivers/clk/samsung/clk.c                          |    4 +-
- include/dt-bindings/clock/axis,artpec9-clk.h       |  195 ++++
- include/dt-bindings/clock/exynos850.h              |    1 +
- include/dt-bindings/clock/samsung,exynosautov920.h |    6 +
- 13 files changed, 1960 insertions(+), 37 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/axis,artpec9-clock.yaml
- create mode 100644 drivers/clk/samsung/clk-artpec9.c
- create mode 100644 include/dt-bindings/clock/axis,artpec9-clk.h
+> - Qiang Yu
+> > 
+> > > +static const struct qcom_clk_ref_desc tcsr_cc_glymur_clk_descs[] = {
+> > > +	[TCSR_EDP_CLKREF_EN] = {
+> > > +		.name = "tcsr_edp_clkref_en",
+> > > +		.offset = 0x60,
+> > >  	},
+> > > -};
+> > >
+> > 
+> > 
+> > -- 
+> > Thanks,
+> > Taniya Das
+> > 
