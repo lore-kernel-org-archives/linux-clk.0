@@ -1,107 +1,292 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C2F282F3B;
-	Thu,  9 Apr 2026 13:19:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9482C0303;
+	Thu,  9 Apr 2026 13:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775740786; cv=none; b=US/i6E1zGKfrEWttBLMNdvxvm+8WnEQ3sOZx3fbf+ZQYqMjHm7bctWCrOZt1m6LmpMGJAGRjWCe6j8SzJuxDVJjtatCxpHlpF2SSX0oeg1Krxg5RWdiSzyrG2znhEn2xC55b6vN6GnBYHKN7RqmmOx4M0cW2yuBd0cn05gmspKk=
+	t=1775740982; cv=none; b=WEZbmSmLyaDzRv8iWE5CTtFQf2YM9VncZ87ECbodecvCH3E40z3eCTmSPqcryN1tuD3LoBI+cpm2LpKIpRisP8EnQZorcwWd5oPIOciXVtnNoz21UIciCH/T96m2gnEgMuARVbdi7BVpMUiaR5hKZyIR7sYTBC9vb/mnPWfaJKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775740786; c=relaxed/simple;
-	bh=rKdLwvFDH2Z+iQDKRBba6IcKoLCahcyIw66U+XrMJLQ=;
+	s=arc-20240116; t=1775740982; c=relaxed/simple;
+	bh=2CaA/7gm/e0paPyu7TrFnn8tpuaqK/LzLGHY75YQfCs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y7m7fcEM7uYIvT5y08JJSMyXEfu4i1eytXZdwyWt8qNyfH9BnrCa+MAkyYQviqFcOokFCdKMYfc+cUj63I4DKFe891z0mzxatMOHowB+iGWPvYP3ZXPxzFMWuXqbJW5Y+VWBuENI/X5Gk99ZJWZuGT392Hs60nt8HV6ZtfiC3Yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N7k2trJ0; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=bC2uw9omzganb6HTzXBcVJbM9rYh0dVJIUi33BhB6A7shd3rp+M2oK/tobR3OsNPuOSeE9+c7jJAz2FqzmCXqWxIEIM0IlvMZm5yQ8g1geS9Sfw1h4jupNXqSVZ3+49zoqp60lmnwR36vpJ07i/1jk379yUGurN5scjyIRqnblA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=R/qN/4aq; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N7k2trJ0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15876C4CEF7;
-	Thu,  9 Apr 2026 13:19:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775740786;
-	bh=rKdLwvFDH2Z+iQDKRBba6IcKoLCahcyIw66U+XrMJLQ=;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="R/qN/4aq"
+Received: from killaraus.ideasonboard.com (2001-14ba-703d-e500--2a1.rev.dnainternet.fi [IPv6:2001:14ba:703d:e500::2a1])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id B664D1123;
+	Thu,  9 Apr 2026 15:21:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1775740881;
+	bh=2CaA/7gm/e0paPyu7TrFnn8tpuaqK/LzLGHY75YQfCs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N7k2trJ0Q9dAhUvjjBVrj/6ZmM/leBFyOT/aEmXRz7/H5LmzK3jGJlFZ3Kh58t++N
-	 NO3e4yfONZlPkR87OaWzTuhYE7yQQmMcT24RaLn+HJtYFOc3iDoFRphfn8GMtDf9tx
-	 Z6d9k45avKPNbwfFduMvuCrNiXv0TCyH6VQQOwqPDISPDgb3e6wC0qIAB/9WzzJeds
-	 9rZmavNsfNjgAWFD5Yn6jO7cpYoVhxchASjN0DQLirWX6uwTqHFte9ArOaDSxswpao
-	 OszKsu3EXtDDBBpJ2zefR4jUEfNiVQsgn+OFJZqOaT56ZOtIddNWfKUJRgGFtDJ5u5
-	 yqrT+LJHzV6XQ==
-Date: Thu, 9 Apr 2026 08:19:41 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Qiang Yu <qiang.yu@oss.qualcomm.com>
-Cc: Taniya Das <taniya.das@oss.qualcomm.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, johan@kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 3/4] clk: qcom: tcsrcc-glymur: Migrate
- tcsr_pcie_N_clkref_en to clk_ref common helper
-Message-ID: <adem2WKh2B-Leivq@baldur>
-References: <20260331-qref_vote-v1-0-3fd7fbf87864@oss.qualcomm.com>
- <20260331-qref_vote-v1-3-3fd7fbf87864@oss.qualcomm.com>
- <ebce5979-0ab5-47ff-963e-68e27216821d@oss.qualcomm.com>
- <ac306hTHe3qVORk2@hu-qianyu-lv.qualcomm.com>
+	b=R/qN/4aqy3xoyMwCWkUG6Gvwsdu2sRf7woqPcZALczW1507DhxIzqpZsBFtqKImau
+	 MprauA00vQaZ9quZ48/hlXzYWcDf7P/NNbFch6dz73l3/pbjfvGNhKPHNFe5EaN0s4
+	 XskDRiV71RLd3KYGvvHZeV65pQKQnfzmxw3/ficM=
+Date: Thu, 9 Apr 2026 16:22:49 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: tomm.merciai@gmail.com, geert@linux-m68k.org,
+	linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v6 13/21] drm: renesas: rz-du: mipi_dsi: Add
+ RZ_MIPI_DSI_FEATURE_GPO0R feature
+Message-ID: <20260409132249.GC2634584@killaraus.ideasonboard.com>
+References: <cover.1775636898.git.tommaso.merciai.xr@bp.renesas.com>
+ <9e0f64dd5e1efb0d27219416121c91a19da96ebd.1775636898.git.tommaso.merciai.xr@bp.renesas.com>
+ <20260408123102.GA1960713@killaraus.ideasonboard.com>
+ <b8ded729-5c22-4a47-bfb7-8bffeed76e98@bp.renesas.com>
+ <20260408141719.GB1965119@killaraus.ideasonboard.com>
+ <136a9922-48ae-48e2-8cb1-14559206e7af@bp.renesas.com>
+ <20260408150807.GD1965119@killaraus.ideasonboard.com>
+ <81165cf9-b1cc-4e75-b586-0e1ef7675b9d@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ac306hTHe3qVORk2@hu-qianyu-lv.qualcomm.com>
+In-Reply-To: <81165cf9-b1cc-4e75-b586-0e1ef7675b9d@bp.renesas.com>
 
-On Wed, Apr 01, 2026 at 09:47:38PM -0700, Qiang Yu wrote:
-> On Wed, Apr 01, 2026 at 10:05:12PM +0530, Taniya Das wrote:
-> > On 4/1/2026 12:05 PM, Qiang Yu wrote:
-> > > diff --git a/drivers/clk/qcom/tcsrcc-glymur.c b/drivers/clk/qcom/tcsrcc-glymur.c
-[..]
-> > > +static const char * const tcsr_pcie_4_regulators[] = {
-> > > +	"vdda-refgen-0p9",
-> > > +	"vdda-refgen-1p2",
-> > > +	"vdda-qreftx1-0p9",
-> > > +	"vdda-qrefrpt0-0p9",
-> > > +	"vdda-qrefrpt1-0p9",
-> > > +	"vdda-qrefrpt2-0p9",
-> > > +	"vdda-qrefrx2-0p9",
-> > > +};
-> > > +
+On Thu, Apr 09, 2026 at 01:14:51PM +0200, Tommaso Merciai wrote:
+> On 4/8/26 17:08, Laurent Pinchart wrote:
+> > On Wed, Apr 08, 2026 at 04:58:01PM +0200, Tommaso Merciai wrote:
+> >> On 4/8/26 16:17, Laurent Pinchart wrote:
+> >>> On Wed, Apr 08, 2026 at 04:12:22PM +0200, Tommaso Merciai wrote:
+> >>>> On 4/8/26 14:31, Laurent Pinchart wrote:
+> >>>>> On Wed, Apr 08, 2026 at 12:36:58PM +0200, Tommaso Merciai wrote:
+> >>>>>> The MIPI DSI ip found in the RZ/G3E SoC select the video input clock
+> >>>>>> based on the DU instance actually connected using the GPO0R register.
+> >>>>>>
+> >>>>>> Add this feature to the driver using `RZ_MIPI_DSI_FEATURE_GPO0R`, update
+> >>>>>> the code accordingly to manage the vclk selection with the introduction
+> >>>>>> of `rzg2l_mipi_dsi_get_input_port()`.
+> >>>>>>
+> >>>>>> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> >>>>>> ---
+> >>>>>> v5->v6:
+> >>>>>>     - Moved rzg2l_mipi_dsi_link_write() into rzv2h_mipi_dsi_dphy_init()
+> >>>>>>       + comments from HW Manual.
+> >>>>>>
+> >>>>>> v4->v5:
+> >>>>>>     - No changes.
+> >>>>>>
+> >>>>>> v3->v4:
+> >>>>>>     - No changes.
+> >>>>>>
+> >>>>>> v2->v3:
+> >>>>>>     - No changes.
+> >>>>>>
+> >>>>>> v1->v2:
+> >>>>>>     - No changes.
+> >>>>>>
+> >>>>>>     .../gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c    | 71 +++++++++++++++++--
+> >>>>>>     .../drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h   |  3 +
+> >>>>>>     2 files changed, 68 insertions(+), 6 deletions(-)
+> >>>>>>
+> >>>>>> diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> >>>>>> index be6dbf19a24e..947c8e15fc4b 100644
+> >>>>>> --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> >>>>>> +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> >>>>>> @@ -37,7 +37,9 @@ MODULE_IMPORT_NS("RZV2H_CPG");
+> >>>>>>     
+> >>>>>>     #define RZG2L_DCS_BUF_SIZE	128 /* Maximum DCS buffer size in external memory. */
+> >>>>>>     
+> >>>>>> +#define RZ_MIPI_DSI_MAX_INPUT	2
+> >>>>>>     #define RZ_MIPI_DSI_FEATURE_16BPP	BIT(0)
+> >>>>>> +#define RZ_MIPI_DSI_FEATURE_GPO0R	BIT(1)
+> >>>>>>     
+> >>>>>>     struct rzg2l_mipi_dsi;
+> >>>>>>     
+> >>>>>> @@ -81,13 +83,14 @@ struct rzg2l_mipi_dsi {
+> >>>>>>     	struct drm_bridge bridge;
+> >>>>>>     	struct drm_bridge *next_bridge;
+> >>>>>>     
+> >>>>>> -	struct clk *vclk;
+> >>>>>> +	struct clk *vclk[RZ_MIPI_DSI_MAX_INPUT];
+> >>>>>>     	struct clk *lpclk;
+> >>>>>>     
+> >>>>>>     	enum mipi_dsi_pixel_format format;
+> >>>>>>     	unsigned int num_data_lanes;
+> >>>>>>     	unsigned int lanes;
+> >>>>>>     	unsigned long mode_flags;
+> >>>>>> +	u8 vclk_idx;
+> >>>>>>     
+> >>>>>>     	struct rzv2h_dsi_mode_calc mode_calc;
+> >>>>>>     
+> >>>>>> @@ -543,8 +546,8 @@ static int rzg2l_dphy_conf_clks(struct rzg2l_mipi_dsi *dsi, unsigned long mode_f
+> >>>>>>     	unsigned long vclk_rate;
+> >>>>>>     	unsigned int bpp;
+> >>>>>>     
+> >>>>>> -	clk_set_rate(dsi->vclk, mode_freq * KILO);
+> >>>>>> -	vclk_rate = clk_get_rate(dsi->vclk);
+> >>>>>> +	clk_set_rate(dsi->vclk[dsi->vclk_idx], mode_freq * KILO);
+> >>>>>> +	vclk_rate = clk_get_rate(dsi->vclk[dsi->vclk_idx]);
+> >>>>>>     	if (vclk_rate != mode_freq * KILO)
+> >>>>>>     		dev_dbg(dsi->dev, "Requested vclk rate %lu, actual %lu mismatch\n",
+> >>>>>>     			mode_freq * KILO, vclk_rate);
+> >>>>>> @@ -687,6 +690,19 @@ static int rzv2h_mipi_dsi_dphy_init(struct rzg2l_mipi_dsi *dsi,
+> >>>>>>     	rzg2l_mipi_dsi_phy_write(dsi, PLLCLKSET1R,
+> >>>>>>     				 FIELD_PREP(PLLCLKSET1R_PLL_K, dsi_parameters->k));
+> >>>>>>     
+> >>>>>> +	/*
+> >>>>>> +	 * From RZ/G3E HW manual (Rev.1.15) section 9.5.3 Operation,
+> >>>>>> +	 * 9.5.3.1 Power on Reset and Initial Settings for All Operations.
+> >>>>>> +	 * Figure 9.5-4 Power On/Off Sequence show that after writing to
+> >>>>>> +	 * GPO0R.VICH register we need to wait for more than 1 x tp before
+> >>>>>> +	 * writing to PLLENR.PLLEN.
+> >>>>>> +	 *
+> >>>>>> +	 * Note: GPO0R is a link register, not a PHY register. This setting
+> >>>>>> +	 * is specific to RZ/G3E.
+> >>>>>> +	 */
+> >>>>>> +	if (dsi->info->features & RZ_MIPI_DSI_FEATURE_GPO0R)
+> >>>>>> +		rzg2l_mipi_dsi_link_write(dsi, GPO0R, dsi->vclk_idx);
+> >>>>>> +
+> >>>>>>     	/*
+> >>>>>>     	 * From RZ/V2H HW manual (Rev.1.20) section 9.5.3 Operation,
+> >>>>>>     	 * (C) After write to D-PHY registers we need to wait for more than 1 x tp
+> >>>>>> @@ -1005,6 +1021,37 @@ static int rzg2l_mipi_dsi_stop_video(struct rzg2l_mipi_dsi *dsi)
+> >>>>>>     	return ret;
+> >>>>>>     }
+> >>>>>>     
+> >>>>>> +static int rzg2l_mipi_dsi_get_input_port(struct rzg2l_mipi_dsi *dsi)
+> >>>>>> +{
+> >>>>>> +	struct device_node *np = dsi->dev->of_node;
+> >>>>>> +	struct device_node *remote_ep, *ep_node;
+> >>>>>> +	struct of_endpoint ep;
+> >>>>>> +	bool ep_enabled;
+> >>>>>> +	int in_port;
+> >>>>>> +
+> >>>>>> +	/* DSI can have only one port enabled */
+> >>>>>
+> >>>>> Why is that ? The hardware supports dynamic input selection, why can't
+> >>>>> it be supported at runtime ?
+> >>>>
+> >>>> For runtime/dynamic you mean using DT overlay??
+> >>>> like, remove:
+> >>>>
+> >>>> Removing - DU0 --> DSI (input 0 | port@0 ) overlay and
+> >>>> install  - DU1 --> DSI (input 1 | port@1 ) overlay and
+> >>>> viceversa?
+> >>>
+> >>> No, I mean configurable by userspace, with two CRTCs sharing one DSI
+> >>> encoder.
+> >>
+> >> Sorry, question:
+> >>    - Is it possible to create CRTC from user space?
 > > 
-> > TCSR clock refs are just not for PCIe alone, they would have supplies
-> > for all the ref clocks. These supplies can also be shared across other
-> > clock refs. I think it is not the correct way to handle the supplies, as
-> > TCSR does not have the complete supplies map.
-> >
-> We have complete supplies map. You can get it on ipcatlog. Here is example
-> for other instances eg USB and EDP:
-> - Glymur (eDP): CXO PAD -> TX0 -> RPT0 -> RX0 -> eDP
-> - Glymur (USB4_2): CXO PAD -> TX0 -> RPT0 -> RPT1 -> RX1 -> USB4_2
-> - Glymur (USB3): CXO PAD -> TX0 -> RPT3 -> RPT4 -> RX4 -> USB3_SS3
+> > No, the CRTCs are created by the driver, but you can have one DRM device
+> > that covers two LCDCs, with one CRTC each, both connected to the same
+> > DSI encoder (and apparently this applies to the LVDS encoder too).
+> > Userspace then selects which CRTC drives which connector.
 > 
-> I only add supplies for PCIe in this series because USB and EDP vote these
-> LDO in their PHY driver. They can remove them in PHY dts node and add same
-> regulator list here.
-> 
+> Which user space tool would you suggest I use for testing this?
 
-The regulators are reference counted. Can't we add the USB and eDP
-handling here as well now, and then after they are voted here we remove
-them from the PHY?
+I usually use kmstest, part of https://github.com/tomba/kmsxx/. The
+modetest application from libdrm should work fine too. This is standard
+KMS API.
 
+> And also, which user space tool is the user supposed to use at
+> runtime on his final/production system to perform that selection?
+
+Any compositor should support this. Multiple CRTCs with configurable
+routing towards connectors is very standard.
+
+> >>   From hardware point only one DSI input is selectable out of 2 LCDC's at
+> >> a time.
+> >>
+> >> References:
+> >>    - 9.5.2.2.3 9.5 MIPI DSI Interface (DSI)
+> >>      General Purpose Output 0 Register (DSI_LINK_GPO0R)
+> >>
+> >>    - 9.5 MIPI DSI Interface (DSI)
+> >>      9.5.1.2 Block Diagram
+> >>      Figure 9.5-1 Video Input Interface
+> >>
+> >>>>>> +	for_each_endpoint_of_node(np, ep_node) {
+> >>>>>> +		of_graph_parse_endpoint(ep_node, &ep);
+> >>>>>> +		if (ep.port >= RZ_MIPI_DSI_MAX_INPUT)
+> >>>>>> +			break;
+> >>>>>> +
+> >>>>>> +		remote_ep = of_graph_get_remote_endpoint(ep_node);
+> >>>>>> +		ep_enabled = of_device_is_available(remote_ep);
+> >>>>>> +		of_node_put(remote_ep);
+> >>>>>> +
+> >>>>>> +		if (ep_enabled) {
+> >>>>>> +			in_port = ep.port;
+> >>>>>> +			break;
+> >>>>>> +		}
+> >>>>>> +	}
+> >>>>>> +
+> >>>>>> +	if (!ep_enabled)
+> >>>>>> +		return -EINVAL;
+> >>>>>> +
+> >>>>>> +	dev_dbg(dsi->dev, "input port@%d\n", in_port);
+> >>>>>> +	return in_port;
+> >>>>>> +}
+> >>>>>> +
+> >>>>>>     /* -----------------------------------------------------------------------------
+> >>>>>>      * Bridge
+> >>>>>>      */
+> >>>>>> @@ -1425,9 +1472,21 @@ static int rzg2l_mipi_dsi_probe(struct platform_device *pdev)
+> >>>>>>     	if (IS_ERR(dsi->mmio))
+> >>>>>>     		return PTR_ERR(dsi->mmio);
+> >>>>>>     
+> >>>>>> -	dsi->vclk = devm_clk_get(dsi->dev, "vclk");
+> >>>>>> -	if (IS_ERR(dsi->vclk))
+> >>>>>> -		return PTR_ERR(dsi->vclk);
+> >>>>>> +	dsi->vclk[0] = devm_clk_get(dsi->dev, "vclk");
+> >>>>>> +		if (IS_ERR(dsi->vclk[0]))
+> >>>>>> +			return PTR_ERR(dsi->vclk[0]);
+> >>>>>> +
+> >>>>>> +	if (dsi->info->features & RZ_MIPI_DSI_FEATURE_GPO0R) {
+> >>>>>> +		dsi->vclk[1] = devm_clk_get(dsi->dev, "vclk2");
+> >>>>>> +		if (IS_ERR(dsi->vclk[1]))
+> >>>>>> +			return PTR_ERR(dsi->vclk[1]);
+> >>>>>> +
+> >>>>>> +		ret = rzg2l_mipi_dsi_get_input_port(dsi);
+> >>>>>> +		if (ret < 0)
+> >>>>>> +			return dev_err_probe(dsi->dev, -EINVAL,
+> >>>>>> +					     "No available input port\n");
+> >>>>>> +		dsi->vclk_idx = ret;
+> >>>>>> +	}
+> >>>>>>     
+> >>>>>>     	dsi->lpclk = devm_clk_get(dsi->dev, "lpclk");
+> >>>>>>     	if (IS_ERR(dsi->lpclk))
+> >>>>>> diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h
+> >>>>>> index 2bef20566648..cee2e0bc5dc5 100644
+> >>>>>> --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h
+> >>>>>> +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h
+> >>>>>> @@ -83,6 +83,9 @@
+> >>>>>>     #define LINKSR_SQCHRUN1			BIT(4)
+> >>>>>>     #define LINKSR_SQCHRUN0			BIT(0)
+> >>>>>>     
+> >>>>>> +/* RZ/G3E General Purpose Output 0 Register */
+> >>>>>> +#define GPO0R				0xc0
+> >>>>>> +
+> >>>>>>     /* Tx Set Register */
+> >>>>>>     #define TXSETR				0x100
+> >>>>>>     #define TXSETR_NUMLANECAP		(0x3 << 16)
+
+-- 
 Regards,
-Bjorn
 
-> - Qiang Yu
-> > 
-> > > +static const struct qcom_clk_ref_desc tcsr_cc_glymur_clk_descs[] = {
-> > > +	[TCSR_EDP_CLKREF_EN] = {
-> > > +		.name = "tcsr_edp_clkref_en",
-> > > +		.offset = 0x60,
-> > >  	},
-> > > -};
-> > >
-> > 
-> > 
-> > -- 
-> > Thanks,
-> > Taniya Das
-> > 
+Laurent Pinchart
