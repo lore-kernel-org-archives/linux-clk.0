@@ -1,193 +1,114 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07563921C9
-	for <linux-clk@vger.kernel.org>; Thu,  9 Apr 2026 12:04:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A093BADBA;
+	Thu,  9 Apr 2026 12:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775736299; cv=none; b=tOFFKdLqDn3MBDHzJ71dEhyTSEG1/WamIDbemJKAM1zVELxN9C5peXr13gRsqsPTPqT99ChATsY5BSijeBujuA+hs56Kp74bAYwRgZSWbmrHfQyap/NjOMTxQ5diGSG/CRaA0ToyBxD3BZZ+zQEWDit1wOOD0sG5LBjqPmu+llk=
+	t=1775737513; cv=none; b=aeU7fwBdFfWCPrOh+ZtbMEfQ+K0sjEfrRXlmx8oRatwdjFKmhLE8NbH6lbH9R4RntF/KR6aABagHXmMuMYEnH89vykRtu8Lo17jQPtodoV3AEKfzVsmbweGM9wVo361Aj9CTcqRA2M36Jam5exINQ/bxRIfS5Cej2OKJzFzBHxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775736299; c=relaxed/simple;
-	bh=y1SKITBc1nOEkuIjqqPXHMikNAW+SnUOZAXWsPdkYbY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LEQZicIht3jaehZy2C3m1vZaWK5QLyvHjUy1273U5cRauRUq6IX8DU1BvinqTX8AkNPHnjSMnpiSRzHQaa/AxnBtYhtIQsw+lLRNHFN+YFRxym1HDRLavuYiuIedHaUe/TxU7o/2qrlrSQfr8xXvRw2ie/zs6DCOGqR8rLMTtvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N3bVMrOg; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1775737513; c=relaxed/simple;
+	bh=PzGc744IfLosoYW/4TYIUb0+vQyy/eIOqkVjcY5usVM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oCVtoAefOzoiAUqbMPHlRL/wwK+erFk/VruVKZfloYlRJI3y5wXh0IAHf4XYnQkTNNtqL19YTXnnZAbJB5ev2x5uPj30NJ43ZLmqO7GsU547JncRWlYXDKquXq1lqMSuvOzkPPgNTu0uOu2BDmqPeRFs5tljUkShaYPalTpqupA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D+mBCCTm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N3bVMrOg"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-48374014a77so10911735e9.3
-        for <linux-clk@vger.kernel.org>; Thu, 09 Apr 2026 05:04:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1775736296; x=1776341096; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=74KMQDyamsOqfkVKpW+KmRC64tMrk0EgM043WfdM7PY=;
-        b=N3bVMrOgA2caZm+E9dTcKVj+fJFKwzn4THIXgr2WF+xwj6l1WtxrFpZNvZLKfe++vk
-         cearJ24UMqLR6yoBVKVh/flpzj2O+R/zOeVHVgCDRiUctzgNSHMADtw2qdDVxmCAmYPN
-         ZbprktfcIFw9Q4guE2GJO93ZQuWJ5+pubkyOfd1Vy96M3zyTEUXS/GGczVNuOSlNpLBd
-         PAomU5gKAswZCLXH94PRtJkwpcye50Vdo55nUI00v0MLZSr9d3fFNq1UgTTmX4dLeYfu
-         i/DthNUPlADGkcijNG8A1e59+y0ZGMwGu9JB68s7YsVcWrLIxtTu2BDD10hYtpg+E8Om
-         qX0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775736296; x=1776341096;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=74KMQDyamsOqfkVKpW+KmRC64tMrk0EgM043WfdM7PY=;
-        b=UCXQ9usLWqgJiIEBOySMr2AxtgSLXajsxP2QzpSEl+3igQjRZWUGt0icev4miu6TWp
-         /B27kA7c7s0DuOFSTfTwp/lAPPDhlXqb7dNS2JzM1vAyWHdxEu71qRL4PzC8EWYWv2nt
-         D5ozUCxXNqjC1zepIx069XW+lw/fNWWjMPnSyGw3ViJll0HY3CPKo0IYJ5K9AXvWo+dL
-         IYJ8bkrplk2DFsEz7X/WXcSOtvN0rbZ/eSoO0DF4k28wtnrnCVYHrKVdTphiHEPvlWAH
-         2UU6d0SY2xBRb6xlnBajwcin7Cni1NlQ+EQfxVdB5oiDsEPC/amhwgPhYqM4haKQzKwi
-         QMHw==
-X-Forwarded-Encrypted: i=1; AJvYcCXCQY/UwXdEJZh5qXpgX8GSA0TtoiSea0lsODhlIVSDaZb4G/sNCQkeCdvTrp0O5JGieMpQ3lhjv+8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWQktXxR0bM3lXUMt6BBOq4VUbW+3ZgjXJh5ASsRdBQUODCrgF
-	q/WoBfB6NMQx9bMrm1sN21cWB0PJ2Buh+ogDCUyUYnnexz2Qi7DprEgbzUB+xfYzYzE=
-X-Gm-Gg: AeBDiesGWP/TcQ1jwrzjEcHPcheVqmHPEsKv4pCCj2LsO9T689Iv6u3vMuPqChMO5MV
-	3rG4dq1EarTDx0gyn69kyo5BKhRlGOO9h2krSv4vRN6FsQrGMR5BayKxlEz9idasz0jfpCueZDI
-	rwmOngfRXrgZEVzBFrX/eUHKEIdBunmnSHwbzSHtBqxLhfCyIH/5o43SrmN0hGYX4VljjzrxfPF
-	ll57bwYsfhS3C7mXqA9aSufWP4J75vtYBtQ+JooIUsuR6z1KdhuZJLjL1CVy16y4kC5UMDssZ+N
-	FxoDBINs7GZXYAajPF3YZ4R8GnXQmWACJMrMIsGt/6fLg7V8EEzZZLl2YFHo73SMVNitJl2n4G/
-	ESIuOK3laTG+SV3JN1+Tra3n+2Cwbxw3uT301B0YdrIW+KR/S9c4eIJjOEFJ5TkhUgy93wRSh7Z
-	AUziiRIwIrYF81B6MmhaqSYRae181WtELHimIIQaQuaQ==
-X-Received: by 2002:a05:600c:3f08:b0:485:40db:d40c with SMTP id 5b1f17b1804b1-488996d2323mr413895265e9.3.1775736295947;
-        Thu, 09 Apr 2026 05:04:55 -0700 (PDT)
-Received: from [10.11.12.108] ([79.115.63.48])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-488cd2181casm73225225e9.11.2026.04.09.05.04.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Apr 2026 05:04:55 -0700 (PDT)
-Message-ID: <c796e077-e061-44c4-a8e1-dbd8d3c14caa@linaro.org>
-Date: Thu, 9 Apr 2026 15:04:52 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D+mBCCTm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E696BC4CEF7;
+	Thu,  9 Apr 2026 12:25:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775737513;
+	bh=PzGc744IfLosoYW/4TYIUb0+vQyy/eIOqkVjcY5usVM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=D+mBCCTm9aFfhSUlUFqw7wrHppv2f4W7eKSm69uxuv5Z2uuExwh2/9eCTIjI6xH0m
+	 28Hmy03nH48fD8BLpZeHYWQgRV2z9yHvvNL+A7Xj9CQAJY7VTnkehdsCEK8SlQ/dXN
+	 8SanpPUp8lKo713jj0QT4nvCvTMxbBwnQJS8M5GYFNAW0yVt7ixghSjhYLA0X2C71X
+	 zxAupitBEFW/QW2bKOhuwAbQ8AsGI7ive/vhGkvWOywiAQlBsI+FUWfUCAdl1RV+gR
+	 lL+r8hNCTYz90ZpdUgejiQ0ufQxoWP5uKarpT/pyxot/ETPyd0BV3bPjGgQxpYaRsn
+	 todkMfrFJn0dg==
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	linux-clk@vger.kernel.org,
+	Sylwester Nawrocki <snawrocki@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk: samsung: drivers for v7.1
+Date: Thu,  9 Apr 2026 14:25:03 +0200
+Message-ID: <20260409122504.71017-2-krzk@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] mailbox: exynos: Add support for Exynos850 mailbox
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sam Protsenko <semen.protsenko@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Juan Yescas <jyescas@google.com>
-References: <20260402-exynos850-ap2apm-mailbox-v2-0-ca5ffdff99d4@linaro.org>
- <20260402-exynos850-ap2apm-mailbox-v2-2-ca5ffdff99d4@linaro.org>
- <a02a693e-b06e-43bf-ac5f-8253f298c83d@linaro.org>
- <DHNSP3FVR4ZQ.1PIRHF0KJGKI5@linaro.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <DHNSP3FVR4ZQ.1PIRHF0KJGKI5@linaro.org>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2759; i=krzk@kernel.org; h=from:subject; bh=PzGc744IfLosoYW/4TYIUb0+vQyy/eIOqkVjcY5usVM=; b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBp15qggmUZ3kZpp2bVcyGYL99GjodD8u7JOCp85 BWyWyjGyHqJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCadeaoAAKCRDBN2bmhouD 1x8vD/47Otrj+RkgOUhE4x6o4gLRbj8uIwUT1Kl/+IvbYl1Zb0h0m9JVQSHu9Dljpqa8sZsLBLI +0bARVU4n5OaCpQ6gcVaGYB8TRwdiuopLwICEi6UApL0Uz9FCgtZuz6PIw/a5jo2SggD0WRAs6V n3mA6/fIs0KMoMgWnjV6ouWUib7yl/SFE8tk2H2GvyHODv3+0ZCemLCmWjjx9KlrE1UrZHlO5M5 HOO/WoRiDF5D+so1M5reTEiVdnR0KFcBcIt3SZwy1BS60mZxiodcNp2zLv50afP8l/VVAoabEP3 Ijlua8KJB+sGC3lRcNnfp6s//0APB0XZFRTMDUAadjAdz2XSc5NigHP6YZFBPThfZYJuSxIfIiF lLGQ6lxuoacmmLngyYHk41mRUOW7Ee5u/KeIB9B2u54seHTbFAq/2V+6cx7/wM08tM72/LFCqTk Lb3pIBMJnmF1iDcYMhbjJ3YqrHQsVyXcKtuF/nIecqbReLvs5B05eKl1WndGkq2JZLf6XHxbOPx CBXckWYBJesypbiIYOdqZhoSiPv6tyeaQL0Q+g/BUKxvizbMLdZlgtbEBHs2yjvpAtgYrWqSZCl hfr5lDegZpnDOkHoL92dIjv3tVZSEd+Bd4cFErlmN4z+Hc1XHOtKznZFRPRrEkD6dxqWW9P/ceD n4wloye2NfPGYZQ==
+X-Developer-Key: i=krzk@kernel.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+The following changes since commit 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f:
 
+  Linux 7.0-rc1 (2026-02-22 13:18:59 -0800)
 
-On 4/8/26 4:08 PM, Alexey Klimov wrote:
-> Hi Tudor,
+are available in the Git repository at:
 
-Hi!
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-7.1
 
->> I find it strange that the SoCs use different registers. Are you sure you're
->> using the right direction? i.e. ring the doorbell to APM and not to AP?
-> 
-> Well, I am not sure I correctly understood the questions and comment. So,
-> this all was tested with ACPM TMU code with 3 temp sensors and it seems
-> to work and sensors react in the right way.
-> 
-> Downstream clearly does the following (see also [1],[2]) when sending
-> ACPM msg:
-> 
-> static void apm_interrupt_gen(unsigned int id)
-> {
-> 	/* APM NVIC INTERRUPT GENERATE */
-> 	writel((1 << id) << 16, acpm_ipc->intr + INTGR0);
-> }
-> 
+for you to fetch changes up to e57c36bc1a3e459239ead492ebce731a88a264b1:
 
-Indeed, it looks alright, thanks for the pointers.
+  clk: samsung: exynos850: Add APM-to-AP mailbox clock (2026-03-24 13:43:19 +0100)
 
-> I am aware that gs101 downstream uses INTGR1 in apm_interrupt_gen().
-> 
-> When I use INTGR1 for e850 then I observe acpm timeouts. Hence, out of
-> curiosity, what's the expected behaviour when/if I ring the doorbell to
+----------------------------------------------------------------
+Samsung SoC clock drivers changes for v7.1
 
-If you raise your own interrupt the APM remains unaware and the AP times out.
-You also have a spurious interrupt on yourself.
+1. Axis ARTPEC-9: Add new PLL clocks and new drivers for eight clock
+   controllers on the SoC.
+2. ExynosAutov920: Add G3D (GPU) clock controller.
+3. Exynos850: Define missing clock for the APM mailbox.
+4. Few compiler warning fixes cleanups.
 
-> AP (to itself as far as I understand)? My understanding that it won't
-> work at all in such case unless APM firmware does some very fast
-> polling.
-> 
-> 
-> [1]: https://gitlab.com/Linaro/96boards/e850-96/kernel/-/blob/android-exynos-4.14-linaro/drivers/soc/samsung/acpm/acpm_ipc.c?ref_type=heads#L423
-> [2]: https://github.com/samsungexynos850/android_kernel_samsung_exynos850/blob/0af517be2336bf8e09c59d576c4c314446713101/drivers/soc/samsung/acpm/acpm_ipc.c#L426
-> 
->>>  static int exynos_mbox_send_data(struct mbox_chan *chan, void *data)
->>> @@ -57,7 +104,8 @@ static int exynos_mbox_send_data(struct mbox_chan *chan, void *data)
->>>  		return -EINVAL;
->>>  	}
->>>  
->>> -	writel(BIT(msg->chan_id), exynos_mbox->regs + EXYNOS_MBOX_INTGR1);
->>> +	writel(BIT(msg->chan_id) << exynos_mbox->data->irq_doorbell_shift,
->>> +	       exynos_mbox->regs + exynos_mbox->data->irq_doorbell_offset);
->>
->> Use FIELD_PREP from <linux/bitfield.h> please. You will use a mask instead of
->> a shift.
->>
->> I would rename irq_doorbell_offset to intgr. It aligns with the register name
->> from the datasheet. You won't need to prepend _offset to the name, we already
->> see it's an offset when doing the writel().
-> 
-> Sure. Thanks. Let's use FIELD_PREP.
-> 
-> "doorbell" naming was chosen for readability and maintainability reasons.
-> It seems to be more generic enough name that better reflects the workflow
-> of what's going on in ACPM+mailbox machinery. We can rename it to just
-> "doorbell" for instance.
-> 
-> From platform data it will be clear to which register it is set, INTGR0
-> or INTGR1, to align it with datasheet (which is closed anyway).
-> 
-> Regarding intgr vs doorbell name, the intgr is a bit unclear for a
-> reader if it means interrupt generation register or something else.
+----------------------------------------------------------------
+Alexey Klimov (2):
+      dt-bindings: clock: exynos850: Add APM_AP MAILBOX clock
+      clk: samsung: exynos850: Add APM-to-AP mailbox clock
 
-interrupt generation registers sounds sane to me
+André Draszik (1):
+      clk: samsung: gs101: harmonise symbol names (clock arrays)
 
-> But if you prefer, I can go with "intgr".
+GyoungBo Min (3):
+      dt-bindings: clock: Add ARTPEC-9 clock controller
+      clk: samsung: Add clock PLL support for ARTPEC-9 SoC
+      clk: samsung: artpec-9: Add initial clock support for ARTPEC-9 SoC
 
-I think I prefer intgr, yes. If you choose doorbell, you'll have:
+Krzysztof Kozlowski (3):
+      clk: samsung: pll: Fix possible truncation in a9fraco recalc rate
+      clk: samsung: Use %pe format to simplify
+      Merge branch 'for-v7.1/dt-bindings-clk' into next/clk
 
-writel(FIELD_PREP(data->doorbell_mask), BIT(msg->chan_id),
-       exynos_mbox->regs + data->doorbell);
+Raghav Sharma (2):
+      dt-bindings: clock: exynosautov920: add G3D clock definitions
+      clk: samsung: exynosautov920: add block G3D clock support
 
-or maybe s/doorbell/doorbell_reg? But that would duplicate
-exynos_mbox->regs, we already see that doorbell is a reg offset.
-Doorbell is too generic for my taste.
-
-And then how would you refer to the interrupt mask register? You
-already have a doorbell_mask in the example above. 
-
-I won't push back too hard, I'll let you choose. If you can find a good
-naming scheme for the interrupt generation reg and interrupt mask reg,
-then fine.
-
-> 
-> One more option is add a comment, smth like /* Ring the doorbell */
-> before that writel().
-
-I'm okay with such comment.
-
-Cheers,
-ta
+ .../bindings/clock/axis,artpec9-clock.yaml         |  232 ++++
+ .../clock/samsung,exynosautov920-clock.yaml        |   21 +
+ drivers/clk/samsung/Makefile                       |    1 +
+ drivers/clk/samsung/clk-artpec9.c                  | 1224 ++++++++++++++++++++
+ drivers/clk/samsung/clk-exynos850.c                |    7 +-
+ drivers/clk/samsung/clk-exynosautov920.c           |   52 +
+ drivers/clk/samsung/clk-gs101.c                    |   52 +-
+ drivers/clk/samsung/clk-pll.c                      |  185 ++-
+ drivers/clk/samsung/clk-pll.h                      |   17 +
+ drivers/clk/samsung/clk.c                          |    4 +-
+ include/dt-bindings/clock/axis,artpec9-clk.h       |  195 ++++
+ include/dt-bindings/clock/exynos850.h              |    1 +
+ include/dt-bindings/clock/samsung,exynosautov920.h |    6 +
+ 13 files changed, 1960 insertions(+), 37 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/axis,artpec9-clock.yaml
+ create mode 100644 drivers/clk/samsung/clk-artpec9.c
+ create mode 100644 include/dt-bindings/clock/axis,artpec9-clk.h
