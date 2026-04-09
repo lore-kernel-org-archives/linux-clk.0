@@ -1,94 +1,46 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020011F4C8C
-	for <linux-clk@vger.kernel.org>; Thu,  9 Apr 2026 00:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9E5319857;
+	Thu,  9 Apr 2026 01:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775695325; cv=none; b=CUj1cBtWaz1daIVPuL1FO6I7Vb1kQJz/b2ZQ0trEq8o4zcLSaaDqEOG91rKX0LVBa3oRowZhxpzZnNtNJnRhaJbJih6HFTkCue5pTBcD15/rKdQ4EkqYqyOY1uy5YW2EiqRYWYc9BDPscjRVTDQ0+fQHN7vU5VdaT9dOS3dDtv4=
+	t=1775699744; cv=none; b=ZeJWBw5GQF8KiVoKE6FEyD3PZKlkPJ6aROL/ZULQIjvH6sEC/WFDUV/F021rbBH6AFT0h+/LqroeQc1IK/lvgLIvxq5wQhzSAj3GZ1nV2assveaSSb4OG0TJINNdB/V8NVv5/GBrarvmGWVP8pKTe0adO0HLrQaPefQ/9RWjJOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775695325; c=relaxed/simple;
-	bh=I8+D2rIPYlmBL8Vtp9AQuj++1M4cYDSlEqpsNTwvx5M=;
+	s=arc-20240116; t=1775699744; c=relaxed/simple;
+	bh=uIRWT4XYsn44bO7BULtXkBJgLgTQFka7LBzuRdpNqGo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KAMJ/kjNfMBoi25ePOULGjlSwfcBtlawJt13QIsEE7JrkFwr1BCSvgkMH7vWzQFvwVzKQjsR2FuOptetZlqyNKk2j3FW89sXoPj3ykYcikDMNFh+tERu2kneBKRDKI7f68tdv9VnLIhOO5VubcJfYCODS2oD8HR519Af310gMTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BJrdtkpA; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=KYHSRnkp; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=MCt6dahoQa+PfLKYf3Spsql6xcC+E8jomGMMyZgmhcmoF8xDsh1jg+dwcsDUCJvMIXNTrpGEWrmdjmWDQblnjkUgOApPncdaFEt28CXz4dNPPKynUce5KM71Sx2zACwZH4+mF3LIqZ8unHZ8uH/uwg28SAkPdtgVAomLLcTtFXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MWRdmfmm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BJrdtkpA";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="KYHSRnkp"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1775695323;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t4QXOBa/UPZ9Yv/mDvjcaoQFWTAL3SoG9ObyNB8G5Q0=;
-	b=BJrdtkpAGsRACgTrEWMWZwUOmvzKdwCi6DPoIE7u1Y0U5nESU0f9nLe/23Z2UKAe8V3yC8
-	aY8rNc5T4AvOkbvTmaz227o2iSF7gvBCTdtv9BZSPVjxz7pHV3sG392hyom3sKhM2xLtkd
-	SgzNf5xud0bAnS91/1y8uTZpspdM/VM=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-176-mxAAGiHGNTayRaF1JaMnkA-1; Wed, 08 Apr 2026 20:41:59 -0400
-X-MC-Unique: mxAAGiHGNTayRaF1JaMnkA-1
-X-Mimecast-MFC-AGG-ID: mxAAGiHGNTayRaF1JaMnkA_1775695319
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-50b220c72bbso17943751cf.1
-        for <linux-clk@vger.kernel.org>; Wed, 08 Apr 2026 17:41:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1775695319; x=1776300119; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t4QXOBa/UPZ9Yv/mDvjcaoQFWTAL3SoG9ObyNB8G5Q0=;
-        b=KYHSRnkpiMUsLlxHaqpbS23w8JDN/UmxRar2cvbLbFI+rIuO1mU/LXEGRTX+mlyLuQ
-         e5/ipAV0Thpdhv4B9DHqjFjbt8PawMvTvIF4Nx0RRwz9O6xfSNZTTDEa9YCaPzbqvlV8
-         FN9spV+Uibc+6zhH47llqgTmUHnRgnzyQt9SoPvNi07m0PIbK/c/AO/DBovg9uS0Ev25
-         DHXoHQalP3bENkpqS+B9VhNBi3JJFLZfXtTjKoQIHe3Ogh6IjHXJwsCboPJyea/u7PrG
-         qtTPL4Z+0UT2M64IONi8VUADiIYk+EBL/7tadfQaxHR09PrXLBDsK69skFdUTq8VAur7
-         mrHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775695319; x=1776300119;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=t4QXOBa/UPZ9Yv/mDvjcaoQFWTAL3SoG9ObyNB8G5Q0=;
-        b=Hko5ZJrhpp43laB0uPPQC294Rz7isDStHmzgG/xYQ/gDr1I2t5glpu9w2OmPf+zcNq
-         EiHdSwlRlYbMHOBJQ0hIMy0AUAsikbqt+/Zb9jdFijH1iFDYLiDOnsVke9q7UIUg1jbE
-         dBiJj2CF4o9wpPNtwkHxZpScSbM4cBdsX7vGL3O8wI7Q6ZM6Ne2nSo6Kac5cWjyKdR0f
-         ysErDHcG7U2VGg7Gpoumq8+Z3RazF1O/1/ApRX9hvMnTisFznlB8H2r6No+9keQRh1v8
-         yZZnfIu+NqEoR4MeBX6W4KW3kZhwwq4aZ3Fz22XHUu3NnT8CoNeiL6+n6uklMcNpbMEw
-         Hprw==
-X-Gm-Message-State: AOJu0YyECdsPM57oqubOCrzgcIDAXfuGMyXgXJVIhNwjc8y0NS3VmbbX
-	KypY6YhKD9NYJHmSvnsFkgQmombj6SwdaTsIRICXx/aUeoiV2U9PiALOMNSuzcT63drSgDfQv5w
-	zlvM/CzUIQRhmlYpg3qDjYPw2AJkL00gJXTz9mpTtMJJ/gMoj4VqGunAsK47CHw==
-X-Gm-Gg: AeBDiesBHGfQaXH8frSZF2F2kLX/htsPVf/Vp7UTjeIuUmj0aJmx4HzBzzeeGlFCh7q
-	axKveqywEW0///Qy4Pa1eNGfGt4r9waxHRu0QCfR17l02jWhNozZ3r5xqOFQJbMlBhWBxEKNG7P
-	gCBKkfn+eJE3R8duu7Hu43Dex/1oU/WC2IO9ABziY1ntLpeOVnxWbWyd42K5CyGxPS8YeAP6z45
-	xn6MacYy/lVJ5GxR224EX2H03RFMAn7d5dZ87YP+IfXSBlcHhjj7SXb08YF4HlM6SR47nCwsoNg
-	Sp4pL9nx/QhLJAX8efEGx8fY17OPCu2UyupnIdvJUg/u432hCzTcYoEBv4zAWoQpQJdMdkXqga7
-	O3f5LML7bDgANrczVLeUJ78KR/PSWHpUCrbENHFsQtv1i59lOlWF+kvcE
-X-Received: by 2002:a05:622a:5c07:b0:50d:84e4:e1f6 with SMTP id d75a77b69052e-50dc228af69mr23516791cf.33.1775695319032;
-        Wed, 08 Apr 2026 17:41:59 -0700 (PDT)
-X-Received: by 2002:a05:622a:5c07:b0:50d:84e4:e1f6 with SMTP id d75a77b69052e-50dc228af69mr23516491cf.33.1775695318605;
-        Wed, 08 Apr 2026 17:41:58 -0700 (PDT)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-50dac753208sm39931121cf.20.2026.04.08.17.41.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Apr 2026 17:41:57 -0700 (PDT)
-Date: Wed, 8 Apr 2026 20:41:54 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Marek Vasut <marex@nabladev.com>
-Cc: linux-clk@vger.kernel.org, Michael Walle <mwalle@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Michael Walle <michael@walle.cc>, Rob Herring <robh@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 6/6] clk: fsl-sai: Add MCLK generation support
-Message-ID: <adb10qFASiVL-xKC@redhat.com>
-References: <20260409002952.319668-1-marex@nabladev.com>
- <20260409002952.319668-6-marex@nabladev.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MWRdmfmm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77203C19421;
+	Thu,  9 Apr 2026 01:55:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775699744;
+	bh=uIRWT4XYsn44bO7BULtXkBJgLgTQFka7LBzuRdpNqGo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MWRdmfmmeBYCRQrWEsI/l3RLRj4U7Nvj5laFudd3Na+Ov7y2ER2hX+4Gmp6BjagYB
+	 qBJHSV/he0rsshY6bzc+9DzrT2J5VvfUxsLKdII7yOhOKzGGYl9qOUbyCJUM7tFo5r
+	 ziSf6pylgv1qBZEqjiS4ztNhvUn7nMcyT4TE7txkXAml3kZRLRFylnFzXjsj31YISs
+	 niw8S+jEFMvqG+JJyhYonQoe/pjtdKAIbUgquMXjIJOgPw941EKGNWVBTKqzdv9hho
+	 iW1upyT6Y1X4fHMl+MWW6AToQ7W4ip8nVRxHnudD8rCxUpofs/ufiOqKxdMh7In2Fl
+	 9Sx5wFUolly/A==
+Date: Wed, 8 Apr 2026 20:55:41 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Xilin Wu <sophon@radxa.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Dzmitry Sankouski <dsankouski@gmail.com>, Taniya Das <quic_tdas@quicinc.com>, 
+	Mike Turquette <mturquette@linaro.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, 
+	Mike Tipton <quic_mdtipton@quicinc.com>
+Subject: Re: [PATCH 4/5] clk: qcom: clk-rcg2: calculate timeout based on
+ clock frequency
+Message-ID: <adcGdXeqltQVwPLz@baldur>
+References: <20260406-clk-qcom-gpclk-fixes-v1-0-7a14fe64552d@radxa.com>
+ <20260406-clk-qcom-gpclk-fixes-v1-4-7a14fe64552d@radxa.com>
+ <c2cdc581-2f8f-4495-bb87-812b27a1e381@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -97,34 +49,78 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260409002952.319668-6-marex@nabladev.com>
-User-Agent: Mutt/2.3.0 (2026-01-25)
+In-Reply-To: <c2cdc581-2f8f-4495-bb87-812b27a1e381@oss.qualcomm.com>
 
-On Thu, Apr 09, 2026 at 02:29:06AM +0200, Marek Vasut wrote:
-> The driver currently supports generating BCLK. There are systems which
-> require generation of MCLK instead. Register new MCLK clock and handle
-> clock-cells = <1> to differentiate between BCLK and MCLK. In case of a
-> legacy system with clock-cells = <0>, the driver behaves as before, i.e.
-> always returns BCLK.
+On Tue, Apr 07, 2026 at 12:13:09PM +0200, Konrad Dybcio wrote:
+> On 4/6/26 5:54 PM, Xilin Wu wrote:
+> > RCGs with extremely low rates (tens of Hz to low kHz) take much longer
+> > to update than the fixed 500 us timeout allows. A 1 kHz clock needs at
+> > least 3 ms (3 cycles) for the configuration handshake.
+> > 
+> > Instead of increasing the timeout to a huge fixed value for all clocks,
+> > dynamically compute the required timeout based on both the old and new
+> > clock rates, accounting for 3 cycles at each rate.
+> > 
+> > Based on a downstream patch by Mike Tipton:
+> > https://git.codelinaro.org/clo/la/kernel/qcom/-/commit/aa899c2d1fa31e247f04810f125ac9c60927c901
+> > 
+> > Fixes: bcd61c0f535a ("clk: qcom: Add support for root clock generators (RCGs)")
+> > Signed-off-by: Mike Tipton <quic_mdtipton@quicinc.com>
 > 
-> Note that it is not possible re-use the current SAI audio driver to
-> generate MCLK and correctly enable and disable the MCLK.
+> Having Mike's s-o-b here is odd, given you've decided to go forward
+> without his "From:"
 > 
-> If SAI (audio driver) is used to control the MCLK enablement, then MCLK
-> clock is not always enabled, and it is not necessarily enabled when the
-> codec may need the clock to be enabled. There is also no way for the
-> codec node to specify phandle to clock provider in DT, because the SAI
-> (audio driver) is not clock provider.
-> 
-> If SAI (clock driver) is used to control the MCLK enablement, then MCLK
-> clock is enabled when the codec needs the clock enabled, because the
-> codec is the clock consumer and the SAI (clock driver) is the clock
-> provider, and the codec driver can request the clock to be enabled when
-> needed. There is also the usual phandle to clock provider in DT, because
-> the SAI (clock driver) is clock provider.
-> 
-> Acked-by: Michael Walle <mwalle@kernel.org>
-> Signed-off-by: Marek Vasut <marex@nabladev.com>
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+s/odd/wrong/ Please correct the author of the commit.
 
+Note thought that it's good etiquette to document the changes you make
+to Mike's original patch, by adding a line "[Xilin: changed x, y, z]"
+between Mike's s-o-b and yours...until you end up having more changes
+than the original author, then you're the author of the patch.
+
+Regards,
+Bjorn
+
+> [...]
+> > +static int get_update_timeout(const struct clk_rcg2 *rcg)
+> 
+> Let's tack on a '_us'
+> 
+> > +{
+> > +	int timeout = 0;
+> > +	unsigned long current_freq;
+> > +
+> > +	/*
+> > +	 * The time it takes an RCG to update is roughly 3 clock cycles of the
+> > +	 * old and new clock rates.
+> > +	 */
+> > +	current_freq = clk_hw_get_rate(&rcg->clkr.hw);
+> > +	if (current_freq)
+> > +		timeout += 3 * (USEC_PER_SEC / current_freq);
+> > +	if (rcg->configured_freq)
+> > +		timeout += 3 * (USEC_PER_SEC / rcg->configured_freq);
+> 
+> I suppose both are nonzero if we end up in this path but a check for zerodiv
+> is always welcome
+> 
+> > +
+> > +	return max(timeout, 500);
+> > +}
+> > +
+> >  static int update_config(struct clk_rcg2 *rcg)
+> >  {
+> > -	int count, ret;
+> > +	int timeout, count, ret;
+> >  	u32 cmd;
+> >  	struct clk_hw *hw = &rcg->clkr.hw;
+> >  	const char *name = clk_hw_get_name(hw);
+> > @@ -123,8 +141,10 @@ static int update_config(struct clk_rcg2 *rcg)
+> >  	if (ret)
+> >  		return ret;
+> >  
+> > +	timeout = get_update_timeout(rcg);
+> 
+> You can just assign count = get_update_timeout() below since you're not
+> reusing this value
+> 
+> Konrad
