@@ -1,29 +1,33 @@
-Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA881A23B1;
-	Thu,  9 Apr 2026 03:32:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12E8A30C372;
+	Thu,  9 Apr 2026 06:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775705569; cv=none; b=Uz6YlNfX1mFI+A/LviZCZz/BxsAeJ3lLxBW6XDCCxqy9vQotR3BoMjdBciwmSswfDzeSiHEmQT4amenpd+6joUC0Hsyg8Vet7pWis8ujqPT4bdDiEOuM9yzh5RMMNywMfRe9iDXLhxKiVWzjOWtRBQGGsboAqd0QmWZB/eVNFBU=
+	t=1775715129; cv=none; b=BXMOMENt3o3HdMmk4IzeTzaGKOAm+cB8u9GAheBMENJdF51Ty4AIobJOxQqBJ0uY+OFm3CsMMjSDajmsZ6p0U26Qkd3IqKbUys7oK2z56jEx9ocrHussesIhMPngZz78IEvgRw2gCf954ehguC2nbtW6iEwFT2E6IdIV04fqjjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775705569; c=relaxed/simple;
-	bh=HYXxuDQ723ABDQyPj00uTiG12kI8ouqjTgcYE4SLtps=;
+	s=arc-20240116; t=1775715129; c=relaxed/simple;
+	bh=OMh46ORI4PU+osUPIisdcpwLBCZ1bfwWTNclxJgOQu8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mZTixwCSReiNBnouy3aPnt9vHPnGIFlOG8krdcHt1dnMAnJvqAloVg8/gs0UogJ8uXKzrm5/5EJOIJSzwfWD2Ai9JI7O9l2fgkTfBv1tTRe8bvj+RimRpBU+ukF57JKkq9h3mN90qcdsuB0bL1oFEVUqw+RkrR8oxoPj32VAlq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=18.132.163.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
-X-QQ-mid: zesmtpgz1t1775705551t2319c7ad
-X-QQ-Originating-IP: iPdQQC9dXO4BSlTU8vQld8nhoyJkadYCcNxTYOwmP78=
-Received: from [127.0.0.1] ( [116.234.85.158])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 09 Apr 2026 11:32:29 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 11463198670806814864
-Message-ID: <FF86F4EE9CC46323+193f23fc-e72a-4171-aa4b-e13bc3465c5e@radxa.com>
-Date: Thu, 9 Apr 2026 11:32:28 +0800
+	 In-Reply-To:Content-Type; b=D90szT91lKwhfrN/4ZW2zWNHhWceq4piCCiEHaJzxubGDGRz9Fq5ThzdlFrZhgn8iLaZ9HjeE4qOAr6xdvQdofV6nCvVQ09uUiHsj4zywMkJn3xG81fu9NoCnPBLjuqsL8Bcz8kHfMIDxMFdAmf8bGfgRpjx/gyAHnFm81rt6Pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mSzM66SX; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mSzM66SX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F920C4CEF7;
+	Thu,  9 Apr 2026 06:12:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775715128;
+	bh=OMh46ORI4PU+osUPIisdcpwLBCZ1bfwWTNclxJgOQu8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mSzM66SXVJtkb5qw5RkOpsgcPsaUNag7a9PVLQnXo0s563o8D1C+4B/Tc+cSLdgyI
+	 ENYGzL2cOGE5N/ZRCu6mpLkI++zqOoUZtRiPe8St/sXUT1ALRQwZElIMEFtbu5mquL
+	 aRlYfaN/oKWaNDLhHsLXGhlrimUi2Qp3T+4t8eAhwxCyp+L37bWzLeJneM+e94Etul
+	 5SpQ3kBrBNe7Ius+HXUC3aYDcAu+K09E5Y6e/7hZLprFo6qNus0B8kX/fiG9nNOPv2
+	 C6pJJQowgjRiMhC7v4UYTr7yhK2tYNAxLebW2ca3tqCg2G86jdicQrVkXm3XcKTDjR
+	 7Chujglif7qsQ==
+Message-ID: <b97c2e64-8a43-498b-a447-6a5b67c525e5@kernel.org>
+Date: Thu, 9 Apr 2026 08:12:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -31,128 +35,116 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] clk: qcom: clk-rcg2: calculate timeout based on clock
- frequency
-To: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Dzmitry Sankouski <dsankouski@gmail.com>,
- Taniya Das <quic_tdas@quicinc.com>, Mike Turquette <mturquette@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
- Mike Tipton <quic_mdtipton@quicinc.com>
-References: <20260406-clk-qcom-gpclk-fixes-v1-0-7a14fe64552d@radxa.com>
- <20260406-clk-qcom-gpclk-fixes-v1-4-7a14fe64552d@radxa.com>
- <c2cdc581-2f8f-4495-bb87-812b27a1e381@oss.qualcomm.com>
- <adcGdXeqltQVwPLz@baldur>
+Subject: Re: [PATCH 04/13] clk: amlogic: Add basic clock driver
+To: Chuan Liu <chuan.liu@amlogic.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+References: <20260209-a9_clock_driver-v1-0-a9198dc03d2a@amlogic.com>
+ <20260209-a9_clock_driver-v1-4-a9198dc03d2a@amlogic.com>
+ <89cc0724-32a8-4da5-8070-c128cafcfc82@kernel.org>
+ <76ef272c-e09a-400e-b381-82d7f29760ca@amlogic.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Xilin Wu <sophon@radxa.com>
-In-Reply-To: <adcGdXeqltQVwPLz@baldur>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <76ef272c-e09a-400e-b381-82d7f29760ca@amlogic.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:radxa.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: MeS9sFIMWcUQocrzHanEk5p5iDeoq9arv3ln7PZtmgXEuNZzwac38qT0
-	k+nFLLGHjna8VgQRwvf0bILbR2jQWm+0l7lP9XOeDKFmqS4TkxY6CvyDZ7NWETM/kwJoT89
-	Xpth11HVpidFL/bVChMZYrKA9IYOMcxZBe51nRxQ76Vk0f71njtFacrlyfxtNFeMtYsK+bc
-	WXI4ARgLMczTAkWY98A3TAYrdDEGRoLVeV3qr+Nn4pz872BhDL7FS5FLvR2JNGcp+vEXwQn
-	+2QS91J7Onhbki7Mp7PFW5rGPZ9YZg4Vdy6gnlnHyOY1JPsiYm890fFEoUakt6DyKa8Iupr
-	2n9M5wPOXuPCmDVqb0DqYmorORRIld1nXSP9cxdE2wjWjs+MA4GgSWXzNC4/On0FeXYNkUD
-	v+ZTIb/2eURPDRQoYg7w9rPvsOTQo14sDZDCUScyL2XJsQa2KbqfDaOtfC8NElgg7tTHvEY
-	mVD+xuVYag+GBztjn6BgorYihyaSPBtiUzgANTH8uLF4YrslZ6j84TW7yHVXAA4Sk8teRig
-	7BMPztzBO7gpVFlsyBaB39neE2FeCpP4P5hASd7FhnlWQmFmHIkHpSfFTyWcWzzKwo/FryH
-	WtTz7KQY0O3y/WPCv4XE7fb5n+68Egahjfe1JX17qMMmiiu4a0/KFUNzBgMVfhT3hVPozF0
-	5l4oRSgnXgVYjGT1uf0Jsn+cJxc929RRQ+F7XkqZ0GnMTENGL/wDkJeMtnrKrFD1sagcfYi
-	QyHs/L9O0VDVltCu6+n8NERw+5sr5aEKOLYDdSCz/AcodFyFwvKfipC+l7elIgcssHxUhwb
-	NQMNdc8fciXMQ25jRFF3AUpBH9S1oMxwxXM9arhbw/4APcFY1EmxAT/S1LVOpdPLQCAxgs9
-	hWr+8AiMocTPh0moNyy5KbswNWrJv6ssHKFWDtJ//aDr5foP45kb18y0qdWW5YtaGeUTIKh
-	FkoPRY9vlZzGZdu6QIAfHdFPy4WVWQe5j5bGkoNbM8gjgdeLdZPbTIhOF5ki4vi6sA/086G
-	gy8boLwrN4nn3+X+8mREW0Y1LC7t5EV8kxMk+wO1GnK6x2qhjTa1SyZ3EbPKhD4QoBFNlP2
-	+lcIPpUrpok
-X-QQ-XMRINFO: Nq+8W0+stu50tPAe92KXseR0ZZmBTk3gLg==
-X-QQ-RECHKSPAM: 0
 
-On 4/9/2026 9:55 AM, Bjorn Andersson wrote:
-> On Tue, Apr 07, 2026 at 12:13:09PM +0200, Konrad Dybcio wrote:
->> On 4/6/26 5:54 PM, Xilin Wu wrote:
->>> RCGs with extremely low rates (tens of Hz to low kHz) take much longer
->>> to update than the fixed 500 us timeout allows. A 1 kHz clock needs at
->>> least 3 ms (3 cycles) for the configuration handshake.
+On 08/04/2026 16:32, Chuan Liu wrote:
+> Hi Krzysztof (& ALL),
+> Thanks for review.
+> 
+> On 2/9/2026 9:17 PM, Krzysztof Kozlowski wrote:
+>> [ EXTERNAL EMAIL ]
+>>
+>> On 09/02/2026 06:48, Chuan Liu via B4 Relay wrote:
+>>> From: Chuan Liu <chuan.liu@amlogic.com>
 >>>
->>> Instead of increasing the timeout to a huge fixed value for all clocks,
->>> dynamically compute the required timeout based on both the old and new
->>> clock rates, accounting for 3 cycles at each rate.
->>>
->>> Based on a downstream patch by Mike Tipton:
->>> https://git.codelinaro.org/clo/la/kernel/qcom/-/commit/aa899c2d1fa31e247f04810f125ac9c60927c901
->>>
->>> Fixes: bcd61c0f535a ("clk: qcom: Add support for root clock generators (RCGs)")
->>> Signed-off-by: Mike Tipton <quic_mdtipton@quicinc.com>
+>>> Implement core clock driver for Amlogic SoC platforms, supporting
 >>
->> Having Mike's s-o-b here is odd, given you've decided to go forward
->> without his "From:"
+>> So how did all existing Amlogic SoC platforms work so far without basic
+>> clock driver? Really, how?
+>>
+>> You are suppose to grow existing code, not add your completely new
+>> "basic" driver just because you have it that way in downstream.
 >>
 > 
-> s/odd/wrong/ Please correct the author of the commit.
+> Firstly, apologies for the delayed response. I had intended to 
+> consolidate the V1 review feedback and come back with a clearer plan for 
+> V2 changes. In the meantime, Martin has provided many detailed and 
+> valuable suggestions - much appreciated.
 > 
-> Note thought that it's good etiquette to document the changes you make
-> to Mike's original patch, by adding a line "[Xilin: changed x, y, z]"
-> between Mike's s-o-b and yours...until you end up having more changes
-> than the original author, then you're the author of the patch.
-> 
+> The original goal of optimizing the HW based on A9 and introducing a new 
+> clock driver is to reduce unnecessary complexity in the driver. On A9, 
 
-Thanks for pointing this out. I'll correct the author of the commit in v2.
+Nah, you just don't care about upstream and it is easier for you to
+duplicate new code.
 
-> Regards,
-> Bjorn
+> we optimized the Clock/PLL controller HW to simplify driver performance, 
+> complexity, memory footprint, and reusability. Improvements on the HW 
+> side can also help drive corresponding enhancements in the driver:
+>     - Performance: Encapsulates sub-clock functions, reducing call paths
+>     - Complexity: Standardized register bits eliminate a large number of
+> bit definitions (~1/3 of original code is defined register bit [1])
+>     - Memory: Object-oriented design avoids copy/paste for repeated clocks
+
+Object oriented design? Sorry, what?
+
+>     - Reusability: Same controller works across SoCs without driver
+> changes (or with minimal changes)
 > 
->> [...]
->>> +static int get_update_timeout(const struct clk_rcg2 *rcg)
->>
->> Let's tack on a '_us'
->>
->>> +{
->>> +	int timeout = 0;
->>> +	unsigned long current_freq;
->>> +
->>> +	/*
->>> +	 * The time it takes an RCG to update is roughly 3 clock cycles of the
->>> +	 * old and new clock rates.
->>> +	 */
->>> +	current_freq = clk_hw_get_rate(&rcg->clkr.hw);
->>> +	if (current_freq)
->>> +		timeout += 3 * (USEC_PER_SEC / current_freq);
->>> +	if (rcg->configured_freq)
->>> +		timeout += 3 * (USEC_PER_SEC / rcg->configured_freq);
->>
->> I suppose both are nonzero if we end up in this path but a check for zerodiv
->> is always welcome
->>
->>> +
->>> +	return max(timeout, 500);
->>> +}
->>> +
->>>   static int update_config(struct clk_rcg2 *rcg)
->>>   {
->>> -	int count, ret;
->>> +	int timeout, count, ret;
->>>   	u32 cmd;
->>>   	struct clk_hw *hw = &rcg->clkr.hw;
->>>   	const char *name = clk_hw_get_name(hw);
->>> @@ -123,8 +141,10 @@ static int update_config(struct clk_rcg2 *rcg)
->>>   	if (ret)
->>>   		return ret;
->>>   
->>> +	timeout = get_update_timeout(rcg);
->>
->> You can just assign count = get_update_timeout() below since you're not
->> reusing this value
->>
->> Konrad
-> 
+> The old meson driver required compromises to unify legacy controller
+> characteristics and driver styles. On A9, we want a fresh start.
 
+And maintainers don't want that. We expressed this many times already.
+Not only in this thread - that's one of the most known feedbacks.
 
--- 
 Best regards,
-Xilin Wu <sophon@radxa.com>
-
+Krzysztof
