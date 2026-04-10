@@ -1,47 +1,43 @@
 Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0166128D8DA;
-	Fri, 10 Apr 2026 07:56:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634A03AD52E;
+	Fri, 10 Apr 2026 08:22:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775807765; cv=none; b=BFZHaigK0T8Xnds2YEAWxnpwuOsW6gGvAmvxRXqUTzNobvYafjr0qvRmThsN7EFOqJpQ1Csr7dr/k+bS2/z87Y5RiRpEgsOwE/0eUTO7NM7cEQjKRB2Hh3tAfo6WNtwLn4qY6rj4udk+sU4xTs+LTOxb7XM2SxWUZshZS/bVumI=
+	t=1775809335; cv=none; b=NaYH10ERWOiBv/K5qb3ePqAGiKpvgvgVR+64f9Ta1gdgPgk03ftqpN5oNo5d67c5ynJW9qQkZHdbSUNIYABSaQcYhOEwVSDWDxlpVBKQynwUi3uCo7zDU9aPwamFOsjSMSjv0e5h4PvWy1j/ll6azJ5FsCq8UrcbdJ5FmGO3A8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775807765; c=relaxed/simple;
-	bh=ZmO8NKn75iaIxGBSirNTeC+xk+OMBuTTMTQ9NVejXd8=;
+	s=arc-20240116; t=1775809335; c=relaxed/simple;
+	bh=ZWzkrA/bwLbRCPvX3RFVkYa5zw99jrqSYsIl6QbfexA=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RamCjvf9kAgcatKN88FprAoLkPGcyN0Sg1EezW61p4/uYVVjEQftN/gv63Sgct8a4iS7wwIO3Z5EsGsLtg1s3MT0ydp03QfXiZZY81meRaOmiagwdDj2WMO6nzIT1glv/dELjF8x+R2V7VQZYpbwDU85d0xV57ABdHyPMZrdNvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=kmMrAIRU; arc=none smtp.client-ip=211.75.126.72
+	 MIME-Version:Content-Type; b=LgBPCOAGUQMk+GPpXb7uOTxRqwfeqO0PBoUkxZk1xuN4XtAVQwyvbsODbmVpWH0VEYZOQ5LcuH2eF454lqCd9+3VVM4XQSfOdW/9PFpNBZ/0LJP0FyFPM81AfkiuWTd5NfvAQVz8bwe1ZMACWDVEMfsLHvltMOyvEgWILBt8LsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=XgEU51QU; arc=none smtp.client-ip=211.75.126.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="kmMrAIRU"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 63A7rJ7Y12629035, This message is accepted by code: ctloc85258
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="XgEU51QU"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 63A8JcIfA2678929, This message is accepted by code: ctloc85258
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1775807599; bh=1gYxyowuHupE/P8ao3pa6ZgxztqPahT8BS261CIm2ZA=;
+	t=1775809178; bh=JS0s+sMh5+ewy1DfxEghosKaPfurtyPM6ofxGjjJm6o=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=kmMrAIRU6RE8rn9yNwdzSWQeK9lNqkY+Q0SKbuId3utRpkOIscr+P4gnkV67zmbto
-	 KSnI1nto9nNw1lToxXPdvvStyI9Rv4w6Wdug9CXcypbowX1V/w7Cul/sIiQWruNtXO
-	 DMz69JEuDjNCtZCBw3TGIiPLtdO8h1IlCXKZaRg3VDQczfkBmNnNs75IaWpO8BfxgA
-	 q5faJR5Y1I5KBOza8xxPB4QVi6+AzG1qrZrL/Hwa1oyJyrK0D71SfpndnbG1yT7+vD
-	 PNCPY/5ztoe3U0NKL3n5DF5+DtAH5YXld8WSd8iQLOtZwseEMjarFoPM+Xe/BOnkix
-	 L3NXunJTheZOw==
-Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
-	by rtits2.realtek.com.tw (8.15.2/3.26/5.94) with ESMTPS id 63A7rJ7Y12629035
+	b=XgEU51QUMR6TsTTKF7a9IJAwy7WTY0F3TSeg8RaxLuuGc0jEAT8BQOEtsut7KQWS0
+	 CTzhpI22ofswvzrziqtxepXd1N6+W/R4fUZv+BxkKFaxRgc0eXCztjmygPAd0L5Cfe
+	 tkzgfGO2DwHQyk3W0Tmc9+81in6UDRdEHBhuUzzXezZNzvvDo20svbwSNY2/HcuHh3
+	 v7MKKcl++XNSYnt5VXfNOakEDQwnY+pEy3l1268wuyBVzAiWcK8TtlVXozZ5sNg8/y
+	 TK+lxJUTtFmnTdK5XJVQsKajlYAEccfnd1XbCMp1fw76OhchjOk8vYEo5gS7OjEU8v
+	 8xLZR7kyEeV4Q==
+Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
+	by rtits2.realtek.com.tw (8.15.2/3.26/5.94) with ESMTPS id 63A8JcIfA2678929
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 10 Apr 2026 15:53:19 +0800
+	Fri, 10 Apr 2026 16:19:38 +0800
 Received: from RTKEXHMBS05.realtek.com.tw (10.21.1.55) by
- RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
+ RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Fri, 10 Apr 2026 15:53:18 +0800
-Received: from RTKEXHMBS05.realtek.com.tw (10.21.1.55) by
- RTKEXHMBS05.realtek.com.tw (10.21.1.55) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Fri, 10 Apr 2026 15:53:18 +0800
+ 15.2.1748.10; Fri, 10 Apr 2026 16:19:38 +0800
 Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS05.realtek.com.tw
  (10.21.1.55) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Fri, 10 Apr 2026 15:53:18 +0800
+ Transport; Fri, 10 Apr 2026 16:19:37 +0800
 From: Yu-Chun Lin <eleanor.lin@realtek.com>
 To: <bmasney@redhat.com>
 CC: <afaerber@suse.com>, <conor+dt@kernel.org>, <cy.huang@realtek.com>,
@@ -53,12 +49,12 @@ CC: <afaerber@suse.com>, <conor+dt@kernel.org>, <cy.huang@realtek.com>,
         <linux-realtek-soc@lists.infradead.org>, <mturquette@baylibre.com>,
         <p.zabel@pengutronix.de>, <robh@kernel.org>, <sboyd@kernel.org>,
         <stanley_chang@realtek.com>
-Subject: Re: [PATCH v6 04/10] clk: realtek: Add support for phase locked loops (PLLs)
-Date: Fri, 10 Apr 2026 15:53:18 +0800
-Message-ID: <20260410075318.2854478-1-eleanor.lin@realtek.com>
+Subject: Re: [PATCH v6 05/10] clk: realtek: Add support for gate clock
+Date: Fri, 10 Apr 2026 16:19:37 +0800
+Message-ID: <20260410081937.2859395-1-eleanor.lin@realtek.com>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <ac_SX1UJRqiBH2iM@redhat.com>
-References: <ac_SX1UJRqiBH2iM@redhat.com>
+In-Reply-To: <ac_RcGSpVBpt3S7C@redhat.com>
+References: <ac_RcGSpVBpt3S7C@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -70,78 +66,76 @@ Content-Type: text/plain
 
 Hi Brian,
 
-> Hi Cheng-Yu and Yu-Chun,
->
-> On Thu, Apr 02, 2026 at 03:39:51PM +0800, Yu-Chun Lin wrote:
+> Hi Cheng-Yu,
+> 
+> On Thu, Apr 02, 2026 at 03:39:52PM +0800, Yu-Chun Lin wrote:
 > > From: Cheng-Yu Lee <cylee12@realtek.com>
-> >
-> > Provide a full set of PLL operations for programmable PLLs and a read-only
-> > variant for fixed or hardware-managed PLLs.
-> >
+> > 
+> > Introduce clk_regmap_gate_ops supporting enable, disable, is_enabled, and
+> > disable_unused for standard regmap gate clocks.
+>
+> disable_unused is not implemented below.
+>
+
+Will remove it from commit message.
+
+> > 
+> > Add clk_regmap_gate_ro_ops as a read-only variant exposing only is_enabled.
+> > 
 > > Signed-off-by: Cheng-Yu Lee <cylee12@realtek.com>
 > > Co-developed-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 > > Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 > > ---
-> > +static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-> > +			    unsigned long parent_rate)
-> > +{
-> > +	struct clk_pll *clkp = to_clk_pll(hw);
-> > +	const struct freq_table *fv;
-> > +	int ret;
+> > Changes in v6:
+> > - Add the headers used in c file to follow the "Include What You Use" principle.
+> > ---
+> >  drivers/clk/realtek/Makefile          |  2 +
+> >  drivers/clk/realtek/clk-regmap-gate.c | 69 +++++++++++++++++++++++++++
+> >  drivers/clk/realtek/clk-regmap-gate.h | 65 +++++++++++++++++++++++++
+> >  3 files changed, 136 insertions(+)
+> >  create mode 100644 drivers/clk/realtek/clk-regmap-gate.c
+> >  create mode 100644 drivers/clk/realtek/clk-regmap-gate.h
+> > 
+> > diff --git a/drivers/clk/realtek/Makefile b/drivers/clk/realtek/Makefile
+> > index a89ad77993e9..74375f8127ac 100644
+> > --- a/drivers/clk/realtek/Makefile
+> > +++ b/drivers/clk/realtek/Makefile
+> > @@ -2,5 +2,7 @@
+> >  obj-$(CONFIG_RTK_CLK_COMMON) += clk-rtk.o
+> >  
+> >  clk-rtk-y += common.o
 > > +
-> > +	fv = ftbl_find_by_rate(clkp->freq_tbl, rate);
-> > +	if (!fv || fv->rate != rate)
-> > +		return -EINVAL;
+> >  clk-rtk-y += clk-pll.o
+> > +clk-rtk-y += clk-regmap-gate.o
+> >  clk-rtk-y += freq_table.o
+> > diff --git a/drivers/clk/realtek/clk-regmap-gate.c b/drivers/clk/realtek/clk-regmap-gate.c
+> > new file mode 100644
+> > index 000000000000..8738d6c6f8dd
+> > --- /dev/null
+> > +++ b/drivers/clk/realtek/clk-regmap-gate.c
+> > @@ -0,0 +1,69 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Copyright (C) 2017 Realtek Semiconductor Corporation
+> > + * Author: Cheng-Yu Lee <cylee12@realtek.com>
+> > + */
 > > +
-> > +	if (clkp->seq_pre_set_freq) {
-> > +		ret = regmap_multi_reg_write(clkp->clkr.regmap, clkp->seq_pre_set_freq,
-> > +					     clkp->num_seq_pre_set_freq);
-> > +		if (ret)
-> > +			return ret;
-> > +	}
-> > +
-> > +	ret = regmap_update_bits(clkp->clkr.regmap, clkp->freq_reg,
-> > +				 clkp->freq_mask, fv->val);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	if (clkp->seq_post_set_freq) {
-> > +		ret = regmap_multi_reg_write(clkp->clkr.regmap, clkp->seq_post_set_freq,
-> > +					     clkp->num_seq_post_set_freq);
-> > +		if (ret)
-> > +			return ret;
-> > +	}
-> > +
-> > +	if (is_power_on(clkp)) {
-> > +		ret = wait_freq_ready(clkp);
+> > +#include <linux/regmap.h>
+> > +#include <linux/bits.h>
+> > +#include "clk-regmap-gate.h"
+> > +#include <linux/clk-provider.h>
 >
-> I should have checked Sashiko before I hit send on my last review.
-> https://sashiko.dev/#/patchset/20260402073957.2742459-1-eleanor.lin%40realtek.com
->
-> It suggested the following:
->
->    In the Common Clock Framework, .set_rate executes under the prepare_lock
->    mutex, while .enable and .disable execute under the enable_lock spinlock.
->
->    Could an interleaved clk_pll_enable() corrupt the hardware state by running
->    its seq_power_on sequence concurrently with these multi-step register
->    updates?
->
->    There also appears to be a potential race condition later in this function:
->
->        if (is_power_on(clkp)) {
->            ret = wait_freq_ready(clkp);
->            ...
->        }
->    
->    If .disable() powers off the PLL right before wait_freq_ready() is called,
->    will wait_freq_ready() poll a disabled PLL and erroneously return
->    -ETIMEDOUT? Is a private spinlock needed to serialize these operations?
->
-> Brian
+> linux/clk-provider.h needs to be included before clk-regmap-gate.h.
 >
 
-Agreed, I will add a private spinlock here.
+Ack.
+
+> Also Sashiko reports that linux/export.h should also be included.
+https://sashiko.dev/#/patchset/20260402073957.2742459-1-eleanor.lin%40realtek.com
+> 
+> Brian
+
+Ack.
 
 Best Regards,
-Yu-Chun
+Yu-Chun.
