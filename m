@@ -1,178 +1,247 @@
-Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010028.outbound.protection.outlook.com [40.93.198.28])
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023085.outbound.protection.outlook.com [52.101.127.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18624328B62;
-	Thu,  9 Apr 2026 23:50:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD86C2C21DD;
+	Fri, 10 Apr 2026 02:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.85
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775778648; cv=fail; b=PCQ1nR8lNUmpBC4y9T1UsjOinn9xL/vT611o/19iVVnffK94rIAHIMFIdH2m9esinxQxZGscCfAnqYlHTiZZP0x0kFVoRSJZ7f8daqALqR0okl+pioRj+jVhNvvMF761kFXNjZdi6tjIx2dNEvwA+IkkyCOHeFU3ug2ARR3OCNY=
+	t=1775786436; cv=fail; b=TT6sKDvGj9SRr4HcW7Yv/ckQeFFlmFHVNTF0f4+VmQP5pSEHAkQhqQkBn5wGQAusDj8O4zZTy0Mtc1gAUhwuzWz3dudV9xVPemGX0nxVEYgPUhPXUr3urxqnSDW1t5jD3AjBMJuBV07cckaEIAGKk9TYHr3C22+u0eVtCVljTTg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775778648; c=relaxed/simple;
-	bh=Gq814uc2xoiE418q1o0Uk/5xPkwz4dgjBYV1E4Np2gE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Umn5m+JveZ9j2j2/ldiBAafKr5Px5Zus6UJYTFI0SI2fGTXQmT3m6lgoLZ+ZVneQr4j4BN4kkSF/mzU2juxuCBjLiBFDmqd5UIc+cH5U2QqW53Vkg9hm4V6MiLANmko69oKLmsYiXwM8m3saKFK9YN4Tv5OX+z3OZbJGlZOvB6Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=vh+Bs+lI; arc=fail smtp.client-ip=40.93.198.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1775786436; c=relaxed/simple;
+	bh=jdgD6MY09cHmoInU5rgarnsmCCRD888s3F7xzaHndr8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=iD5qc6cyISYbhN6jUExIvXSVh6eEX4TngHz626PP++mPjqQ5NH/KggI0d/0R9Vhq6oAF8psr1GCxrlZY4j64DCDa6dEA2fVOjI+CrT8qRm1bmtE1ha70+nv3YbElgLBSwo4xM5kmd38VwQr3SCzS37c/Vtogz3vKj5+QxnlZ4R4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=ibX7K69o; arc=fail smtp.client-ip=52.101.127.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="vh+Bs+lI"
+	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="ibX7K69o"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=o7GEbXR7yfqLimCPCmPXnWZ/ulaUh1H/Y/Ot+h6tjYtsd1OKWMGWQCkH4yBYEsGv6kTrh1rxadXSsPprelwfxKFu2O+opzIy31hw55xfoUQxYANlndkwohdSb85wFJcJp7hWK0VFPdBX1LCNGJY+nKbpWXg/fW3NqusRln5Ro6nT2FnQn3mGsSliOAMKQrX/cPXj2baRR3/CYJ6DCr1Ko2XdBM/xvooL/04vl2tef2EX+2lXqIYF6CVKn4IGkyu9XrD6gwfLyXA4aK9RYAhaOtiA1BhelwujzyKFoCgY/DkKQ7L2HP5oaWflyf9eaeQoBxMIGaxzrC64wZzeziNElA==
+ b=vJp9Nwul9/Puf8nLGXCLwhNs4LqoXAxD9etLB5x22qM/UA1srOlgM7FOA22M2Ex/3ZfW/IQx9Bmvvic8LeFSoC0q3TGvidvQopdBoNKmMmcX0jWRkcmCroVtDwFfcqATTatvUNN3aEVIHT7XJYEdWERLZvpX2uRXiv7rITCk8bqA6La35reuFM/oQJJBNEQrmM3HZsHOG+CHifSh/J+JuWlmSbtzHkg6+zbcGg5aGyMJDE+UAx7gQJnoCtEPAB5dN0PxOw7QfhrpyrFfbQQZHplRW7k3qasndMJzD5W16SsScYyFHBhPAja3VBcE9rVcnRyIngkTLjRhoBpwSJXwDQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qfZ0a62nC8gi8r2vWXeQZFxyBKPoswQZVK9G6AlCBrU=;
- b=LlDvb2XrmurERgdCQq8sEV/FImNpZkjkz82LMzaUw6SiOIKMi6lQjx/p4Wj+Fcygw3Pk5CGRHmNxkLu0S3N3LrLUWHS+dm+6xtX21lVdcLxYrr6qJUj+p0HImLuIbkh9Wzlhd5caFRIvZbURAqzQFsmagJN2Dr6fda1yXJ3rLrKRqi3lDiDVdQHY6q7wLKcxgW1Tc8jIA4NsRSfZzXJP6bHOrTllBO2+wP8ePc2R5uBAIdAMOUclS8kCdE9DfO2U/5kfKB4vUYP6dEtnVoFV11bFZhXEJWU9aAids1SuHMeBEiZqtezUFayXNb3BhZKfG2G/QhZH42a2yirCTW5jrA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.21.195) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ bh=PHK71ON6lJ+MXR67GSxYCwlNPv1i5XQntjwfSxkfAgM=;
+ b=VqgM6SFb8PTVkbeaPWS5Aroihvl8RI2coYsAisL3GXCMFS60uWyPLZJockh8C3Ulqpj76rWhelaDm1UZTBEmhuq0tLI9R7CyYlH8GPL/WixAd8JAFYPhGEVyOA679oymb1ItWzyLWTmzN2uukKKLYNDnnFZoHPzZJ1JgX72n+rD+2st4y7bJZJhG+Ku21vamN1f/Ignf8uwAuF3nWe3tIkO3ZJqT+nD4E5q0oqZ4qfgPTBMvgvK3wrLdswmnl51gOtR69dV1DHv0MaKw6hN/MrJWDu1yM8Q2dljPv/5N80Q452gOp2RFlUwrUhxCUhGyw6XBwP3kcItOR5PDYK5vkg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
+ header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qfZ0a62nC8gi8r2vWXeQZFxyBKPoswQZVK9G6AlCBrU=;
- b=vh+Bs+lIBZy5utb1FJSxbgQKw5yMV7gDlwKijoHfO3wh9vHYoYaBiB+jcWNKeKCkpAFwJ7ucyelZ6q9X6UZuvP8scsZIB8ccYgioXneVYNo1pU0JGmZ2MVjyKmmhu0tEJq0FYwDWz+sQcAbaGHmFOkc8M7cRZTE8Wr7v9pLgr9g=
-Received: from PH7P222CA0014.NAMP222.PROD.OUTLOOK.COM (2603:10b6:510:33a::16)
- by MN6PR10MB7424.namprd10.prod.outlook.com (2603:10b6:208:473::13) with
+ bh=PHK71ON6lJ+MXR67GSxYCwlNPv1i5XQntjwfSxkfAgM=;
+ b=ibX7K69ouaEMJp//eGYiU38Wp7qPuiC/U/nmzDcWtpszXG0zWiv/t2BU1fw5rHBe5bQiDUJUb6Is/c5RNwyxSpkmS98rqTMk2lebYGn7huhK8LYuBTbNjnFrvSJBAFPxLH/qHR4sIZs74lzYI7NZbjhnMRfdOSLaAlJUcE44dXgRfzYWLB1zEPNnFzCp1XuaAqOXhYFmwqQkBZEK2gNChxqNe3GequFxBwjPz/3z9Id/23XsAhIfUX6h6tTWN509kEW14oP+8c5Knl9X+sknaZtvasZ+Uh0kZqWp1UHP8lr9cOBBljPKCaj/OGe/oHu/vipiSDhSrl46GUAqy/FpLQ==
+Received: from OSQPR06MB7252.apcprd06.prod.outlook.com (2603:1096:604:29c::6)
+ by PUZPR06MB5793.apcprd06.prod.outlook.com (2603:1096:301:f3::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.20; Thu, 9 Apr
- 2026 23:50:44 +0000
-Received: from SN1PEPF0002BA50.namprd03.prod.outlook.com
- (2603:10b6:510:33a:cafe::c9) by PH7P222CA0014.outlook.office365.com
- (2603:10b6:510:33a::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9769.40 via Frontend Transport; Thu,
- 9 Apr 2026 23:50:43 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.195)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.21.195 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.21.195; helo=flwvzet201.ext.ti.com; pr=C
-Received: from flwvzet201.ext.ti.com (198.47.21.195) by
- SN1PEPF0002BA50.mail.protection.outlook.com (10.167.242.73) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9769.17 via Frontend Transport; Thu, 9 Apr 2026 23:50:42 +0000
-Received: from DFLE214.ent.ti.com (10.64.6.72) by flwvzet201.ext.ti.com
- (10.248.192.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 9 Apr
- 2026 18:50:42 -0500
-Received: from DFLE207.ent.ti.com (10.64.6.65) by DFLE214.ent.ti.com
- (10.64.6.72) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 9 Apr
- 2026 18:50:42 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE207.ent.ti.com
- (10.64.6.65) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Thu, 9 Apr 2026 18:50:42 -0500
-Received: from [128.247.81.196] (uda0506412.dhcp.ti.com [128.247.81.196])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 639NofbG3411243;
-	Thu, 9 Apr 2026 18:50:42 -0500
-Message-ID: <68f2dd55-ed2f-468f-9b64-6907668d532f@ti.com>
-Date: Thu, 9 Apr 2026 18:50:41 -0500
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.18; Fri, 10 Apr
+ 2026 02:00:29 +0000
+Received: from OSQPR06MB7252.apcprd06.prod.outlook.com
+ ([fe80::92af:c9d9:8779:d19]) by OSQPR06MB7252.apcprd06.prod.outlook.com
+ ([fe80::92af:c9d9:8779:d19%4]) with mapi id 15.20.9769.041; Fri, 10 Apr 2026
+ 02:00:29 +0000
+From: Billy Tsai <billy_tsai@aspeedtech.com>
+To: Rob Herring <robh@kernel.org>
+CC: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+	Ryan Chen <ryan_chen@aspeedtech.com>, Andrew Jeffery <andrew@aj.id.au>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
+	<linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "openbmc@lists.ozlabs.org"
+	<openbmc@lists.ozlabs.org>, "linux-gpio@vger.kernel.org"
+	<linux-gpio@vger.kernel.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v5 2/3] dt-bindings: mfd: aspeed,ast2x00-scu: Describe
+ AST2700 SCU0
+Thread-Topic: [PATCH v5 2/3] dt-bindings: mfd: aspeed,ast2x00-scu: Describe
+ AST2700 SCU0
+Thread-Index: AQHcwOBzpo2LGWLrJkiaaIjatlvHtrXJwg2AgAGLixmACeiYAIACYRWN
+Date: Fri, 10 Apr 2026 02:00:28 +0000
+Message-ID:
+ <OSQPR06MB7252443E4B4B7A4EE7CCE4818B592@OSQPR06MB7252.apcprd06.prod.outlook.com>
+References: <20260331-upstream_pinctrl-v5-0-8994f59ff367@aspeedtech.com>
+ <20260331-upstream_pinctrl-v5-2-8994f59ff367@aspeedtech.com>
+ <20260401-adept-zebra-of-bloom-5bb68b@quoll>
+ <OSQPR06MB725204B2FAE543A71AEA52C38B51A@OSQPR06MB7252.apcprd06.prod.outlook.com>
+ <20260408133114.GA1938858-robh@kernel.org>
+In-Reply-To: <20260408133114.GA1938858-robh@kernel.org>
+Accept-Language: en-US, zh-TW
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=aspeedtech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OSQPR06MB7252:EE_|PUZPR06MB5793:EE_
+x-ms-office365-filtering-correlation-id: 8e937c3e-b787-408f-b7c0-08de96a4f0bf
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|376014|7416014|366016|38070700021|18002099003|22082099003|56012099003;
+x-microsoft-antispam-message-info:
+ ww5RLuwxWKd3vwGZ6E2ZJH8plG+WxCGEpgu4SrUQpuqJ3p1JNm95jN4d/jTBIQUZ/eDxc0HB4e/xRoD2Fe2jov2GAE6DbaMEviVIjo7P8vX59/s6VpTr7uBvYIxxIw2O6d//rENvW+yIX6/Wf0NVF7iFrUKNH5SckVNC3vGmIimVj5saiHOPIJ0I3K5af2omIxf//YUc3GaVXXxwR0ScEw3t0lonu5I1Az1DypWrElPfnQwWI7iT2vlDUYQjqyt+8gXJxCP9/qh7/8XHtdRjYWqy/VUbxVhkRtzssYrCVxgZtVTXZWnSRsOLzdrEqpqf7zuljRCYK4WEjbjfz80wDGG6gYWHGS5KRpBXOAAKcJQQFX3lwYogfOaep2Rv+Y5daq9e3aQ5V8JK95aAUKie1ykiXMtoWnJjTME9iRRFRWNmV4aJgueRiVAzhmtxF4RPULlNJDvGmQFc82OYb4D2y8Gd3k+7yAv9UdAd9a8M8VKpVip/vOOUE0yrwH2oz5PjBMNppnEuEJEJkeWoESkX/YsuqejKarNF8UROPytfh6+D6xkzzu80qnlMVudHs5kCZCgUKJVJeNg14w726yyeF9KavfvR7l4gXuLQVIAGqZTe/x7qUTccz0k1H6Wlm3UVMR+udipmIJCAn7gi4gjgsFLmzxU7BWKlQwN1aXopHU4dW2G02a4OGADFZq/XI80ahJKakUZ9udP8ToiNodg5ftwVfRhn8gNEmsDJ1b2ZCJcwvPhJZ9XhFYa8T4e/K56KWt4CSjwvj91lj2YEmF3Nq1+o2qfTer1WsWdXddpicII=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSQPR06MB7252.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(38070700021)(18002099003)(22082099003)(56012099003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?7eRj9MKeKHteIwaP28hicev6bmEE8mM3ekgY3EhYTjWbDpLfltDTce4ekd?=
+ =?iso-8859-1?Q?9/9FzHWEKmKe0w2xmOPj/KIZNc+7v2TR/WQiQtXfzJcbU8eIDPVty874ZY?=
+ =?iso-8859-1?Q?e2NqixOkZN5sUf+p/OPAsdUzGsQCoGuxP4yIXm28wK7GUUctPiN4zY6kpH?=
+ =?iso-8859-1?Q?S/mqHrSUWGxjMt6S/SPSuq0stTYsyLDsUXicmtdEXfScy0zV3spf1zIA+V?=
+ =?iso-8859-1?Q?+8thBKLwR47EwqzRsaEEXEEteYoErP2DmD6cT6cfORfF8IWrHTpmA/d9vw?=
+ =?iso-8859-1?Q?NXXSTlpRJ2XvWjPwdl/mkNnYjURjRVqXba0wes22jY79Fw42KTvJZ15zX9?=
+ =?iso-8859-1?Q?I7iGBZ6KKzIM5k4JCuQXMTxWFGmIBIFZiaWsEbM8BC/MYLR279KbbtqXno?=
+ =?iso-8859-1?Q?l2nqE3FhztHX+QYW3J1kRYAOhMP0LmsBJEtiFf9N0vxC7zVOfV+YPm0oHg?=
+ =?iso-8859-1?Q?UDpM38H7z85DWnS6AenplWjGPIZ8olytyZtWgFFEZ/PpgorWfcRCqOstiV?=
+ =?iso-8859-1?Q?8wip/8zlZE2ZqteWgQKxMxJMIt4DC2nzJaXhtQI0AUBdlfHRFhi5qCkPQZ?=
+ =?iso-8859-1?Q?f2ytZXv8iGBQJlcLLdiYzvIR7Xro0iGbBPsFkMLenEzjv8PpyJdlHsBEM4?=
+ =?iso-8859-1?Q?fMqbUxGmhlZjdFqdJ7lnfwYTRacub6dDh+Kk4Ly+Os7iKrRe9z4RSfSfrF?=
+ =?iso-8859-1?Q?tvy+EqapqIPgmnRGONznib/5LRwgSNZngiZbIFR6sEcTX5OAMuK+UoOVtC?=
+ =?iso-8859-1?Q?gekspSf6nm7Z+WPL+fGM3blQFMYjcS2s7TBbRr6lmIJ62smPVuFm0rEX5N?=
+ =?iso-8859-1?Q?wDaX0MLguN/p1iL1zSaKRTcdYVcvIuaAhswQhq6XqpxSgm9c1CZUhJvCX6?=
+ =?iso-8859-1?Q?1/t4wtfOKKg+6ALF+3dJzB4+s+VNmGzgvaOaao82oPUWwLlmZciTQ3SN1I?=
+ =?iso-8859-1?Q?sn5Sz4jUIGtrccD3gHzKB/z/Q7A1ZOz5k9UbREw0s14BJGOFOtVtTtJcUM?=
+ =?iso-8859-1?Q?p6Vb0xCAiNk6qe/V4+uVRZuvpVqCqGobLHs7CQEeZwON6JrvDRZ6CreLdN?=
+ =?iso-8859-1?Q?TmaM9lzCA/I6sJUZy+lWTDzgdWjTzfv3t5e9boKTOx0Bx6bpdDSHoAgFvN?=
+ =?iso-8859-1?Q?kcvvuFYW6gL04jM5t4I2OA9gxwjzMc7qKaBkCyL09Fa6dk4SIkKopa0YM8?=
+ =?iso-8859-1?Q?8r8gM82q4rHkH01LZ4dihhMDb7RbNuAC828+wKAvIkhRd6psRZoWQLkvDn?=
+ =?iso-8859-1?Q?Cuno7A6vl5OlheDQcmUswB+ki3x5vrSd3bIroWbjQQogloZKsXmpUg0oEv?=
+ =?iso-8859-1?Q?/1IJAgPhs4bxezjcN4q3bRf7o21vReHKO6HSglGjw85P/c46KZWCFFS4Z1?=
+ =?iso-8859-1?Q?S2abj4JYFxdxzx5qMYDgnJ42WqxJWxL5b06mOVPkka9ktxONePCQGfacWM?=
+ =?iso-8859-1?Q?pLQwq9PNyjdbcBEVAgTBQPOFzb5yyqvh4YTi/kMsh/V8U8XzpYxy87hCdb?=
+ =?iso-8859-1?Q?qAeHpr3j+j99bOg3pop8dnybj1DEjNL39RyU30j+0G0R/6CwWXNk7u18Sh?=
+ =?iso-8859-1?Q?CE33rvJ4Pn+M8UH3+uyCP99RTxyJWyXKWMNk3GqiT4Dt8kre/2pbTJ/mq9?=
+ =?iso-8859-1?Q?WCgEfmya7BHywC0VQquG4t/plFZYEVme8rjhPcPeJmyCd480KreGbaeKin?=
+ =?iso-8859-1?Q?uX7go813v5FPGt09qpBcHZlnDkdjZ8ND7zvpWHZL8SilU+4zGsVnjj6h30?=
+ =?iso-8859-1?Q?vgw6xafJ7hcZrr9V+qu1WwNrAaJ3NYIuP0gWfyhi4BxE4YK58j+9SSz6SQ?=
+ =?iso-8859-1?Q?NB/tJrlaeg=3D=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/4] firmware: ti_sci: Introduce BOARDCFG_MANAGED mode
- for Jacinto family
-To: "Thomas Richard (TI)" <thomas.richard@bootlin.com>, Nishanth Menon
-	<nm@ti.com>, Tero Kristo <kristo@kernel.org>, Santosh Shilimkar
-	<ssantosh@kernel.org>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@kernel.org>
-CC: Gregory CLEMENT <gregory.clement@bootlin.com>,
-	<richard.genoud@bootlin.com>, Udit Kumar <u-kumar1@ti.com>, Prasanth Mantena
-	<p-mantena@ti.com>, Abhash Kumar <a-kumar2@ti.com>, Thomas Petazzoni
-	<thomas.petazzoni@bootlin.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>, Dhruva Gole
-	<d-gole@ti.com>
-References: <20260407-ti-sci-jacinto-s2r-restore-irq-v5-0-97b28f2d93f9@bootlin.com>
-Content-Language: en-US
-From: Kendall Willis <k-willis@ti.com>
-In-Reply-To: <20260407-ti-sci-jacinto-s2r-restore-irq-v5-0-97b28f2d93f9@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002BA50:EE_|MN6PR10MB7424:EE_
-X-MS-Office365-Filtering-Correlation-Id: 33782074-4943-4d4f-a2cc-08de9692cfb4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|376014|36860700016|7416014|56012099003|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info:
-	E9A6qfe6/euCzePj4sB/rwEsyM34ZCvOj6XwH6f03S5m+iQI3nUwuakdpkEfx3/FL5sFXeElDRsnZ3sY1rokIn3we9s246HNu4+djRXZUkN3gFz7U53jCysgNvrpyXZM3vYFYvQX2rbEG0MPvHpctwXPyIZWCWkw8s9UeVK1A2gXDfAScGFF+3TLAotsaZy08Y4RmVdmqAfwYuBcmkXKu71j3fxtqDn+OA9wYZN6MGAu9sA6pgHPlQAvxkM+T2E4vGovhzH7xm5/1VuPt8te7/vBzR5D7NJUXN3g8ZGP9tkEEQQIXIzytB/AWfdmeiqsgep8rxJpqdHuGtOo0TbnN/c6UDBFYTVg+85ZmB5drSTEH7MP1E0fObnRv/800z/R5fwEPdmHs/96HvMInIwMm+A7xKvTAAkJKYAxKul57sYRTmB16IlovATLKR3NslVHP1Yb6djv+RS6ZvaVqgkHIkkCgI1Hh+F6peCl95ayj/tQyQykWLjVXPFHj2MW+9WORqOPCilu1eHXnwyGbHGPd7FIE5gxo0FuRSyyWgwIrfsZl0iNe/mp56tX4QSnrOlOPIgJdzlfO5QJuePXawYuTzJ+5PP1b54QYKp1CYuK7LvmeqpCMpUr/pcUuUNNEmB8rCNDypJEX8oQXTlXvN835SwxKqYL0uu9dUnv530FML+6zs+wP/GkCoHnDJQRBBvCCniE9jjtR8sYPBPESFatmeZOH5W+CVu/JrjpHIa0bTa9SclfwZRaVoUyR5a5sWLnq7neb+Xl6MQA+Ar3a/TWbQ==
-X-Forefront-Antispam-Report:
-	CIP:198.47.21.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet201.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(36860700016)(7416014)(56012099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	MT1Fj93a9oDX+wxs67W6jMZ/mNmW2rJX/QmBeHn9/Z/tODRiT9P26tUGYUbeIp9QFmZAHfAtAmdyyU/is3cdWgLd8MppCX2qvtbi/wlE/EyzdVPXSSAU4KBE3IhQVM5MlDgBk2MKxNHgkv/PCAPdzT3k6D7ZlmQDzVBhhUsKhODXddLKILvKGg6a2zGOGpIAjM0tfLq8ny1Io70a9cY5axA1jXzbrHTWSi56PyDhNR9DpcnLqrgCLCA466T/Fhzr9bMLJHFNi1GzsidoUJHyI1+8d3uJ7QYGjwSC4xhoyo/fZd044h67lHbHOsQuGYZCRtt5Uqwk6oR4CJkWem7CMgKSYeU+0TAJ1rdBHsMwECEHse7YMTSzDpdRqVnH37l//+3VACJYS7o4gL/It5/zEtYt7g02jB84jLQE5SLHSOlXfDJSaZssWF/9nji6MG4a
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Apr 2026 23:50:42.6890
+X-OriginatorOrg: aspeedtech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OSQPR06MB7252.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8e937c3e-b787-408f-b7c0-08de96a4f0bf
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Apr 2026 02:00:28.9955
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 33782074-4943-4d4f-a2cc-08de9692cfb4
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.195];Helo=[flwvzet201.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF0002BA50.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR10MB7424
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: LgKteBeHeOzp1E/94/C1nxjMbmYCHcWbB6Sfr6BFQLy9B6kI8/iTtuRzzg3dXn8aqzlZA9WMvOqiWpkGhCrMvnUHb3Hjyh09nQGqmpw/dqk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB5793
 
-On 4/7/26 09:25, Thomas Richard (TI) wrote:
-> This is the 5th iteration of this series. Nothing new, I just rebased on
-> v7.0-rc7, added Dhruva's RB tags, and use kzalloc_obj() in Patch 2.
-> 
-> Best Regards,
-> Thomas
-> 
-> Signed-off-by: Thomas Richard (TI) <thomas.richard@bootlin.com>
-
-For the series,
-
-Reviewed-by: Kendall Willis <k-willis@ti.com>
-
-> ---
-> Changes in v5:
-> - rebase on v7.0-rc7.
-> - add Dhruva's RB tag.
-> - use kzalloc_obj() in ti_sci driver.
-> - Link to v4: https://lore.kernel.org/r/20260204-ti-sci-jacinto-s2r-restore-irq-v4-0-67820af39eac@bootlin.com
-> 
-> Changes in v4:
-> - rebase on linux-next next-20260202.
-> - fix BOARDCFG_MANAGED value.
-> - add MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST firmware capability.
-> - add MSG_FLAG_CAPS_LPM_CLK_CONTEXT_LOST firmware capability.
-> - Link to v3: https://lore.kernel.org/r/20251205-ti-sci-jacinto-s2r-restore-irq-v3-0-d06963974ad4@bootlin.com
-> 
-> Changes in v3:
-> - rebased on linux-next
-> - sci-clk: context_restore() operation restores also rate.
-> - Link to v2: https://lore.kernel.org/r/20251127-ti-sci-jacinto-s2r-restore-irq-v2-0-a487fa3ff221@bootlin.com
-> 
-> Changes in v2:
-> - ti_sci: use hlist to store IRQs.
-> - sci-clk: add context_restore operation
-> - ti_sci: restore clock parents during resume
-> - Link to v1: https://lore.kernel.org/r/20251017-ti-sci-jacinto-s2r-restore-irq-v1-0-34d4339d247a@bootlin.com
-> 
-> ---
-> Thomas Richard (TI) (4):
->        firmware: ti_sci: add BOARDCFG_MANAGED mode support
->        firmware: ti_sci: add support for restoring IRQs during resume
->        clk: keystone: sci-clk: add restore_context() operation
->        firmware: ti_sci: add support for restoring clock context during resume
-> 
->   drivers/clk/keystone/sci-clk.c |  42 +++++++++--
->   drivers/firmware/ti_sci.c      | 164 ++++++++++++++++++++++++++++++++++++++---
->   drivers/firmware/ti_sci.h      |   6 ++
->   3 files changed, 192 insertions(+), 20 deletions(-)
-> ---
-> base-commit: d843b67129e266054d8fa2e41e270a9f779381bd
-> change-id: 20251010-ti-sci-jacinto-s2r-restore-irq-428e008fd10c
-> 
-> Best regards,
-
+> > > > AST2700 consists of two interconnected SoC instances, each with its=
+ own=0A=
+> > > > System Control Unit (SCU). The SCU0 provides pin control, interrupt=
+=0A=
+> > > > controllers, clocks, resets, and address-space mappings for the=0A=
+> > > > Secondary and Tertiary Service Processors (SSP and TSP).=0A=
+> > > >=0A=
+> > > > Describe the SSP/TSP address mappings using the standard=0A=
+> > > > memory-region and memory-region-names properties.=0A=
+> > > >=0A=
+> > > > Disallow legacy child nodes that are not present on AST2700, includ=
+ing=0A=
+> > > > p2a-control and smp-memram. The latter is unnecessary as software c=
+an=0A=
+> > > > access the scratch registers via the SCU syscon.=0A=
+> > > >=0A=
+> > > > Also allow the AST2700 SoC0 pin controller to be described as a chi=
+ld=0A=
+> > > > node of the SCU0, and add an example illustrating the SCU0 layout,=
+=0A=
+> > > > including reserved-memory, interrupt controllers, and pinctrl.=0A=
+> > > >=0A=
+> > > > Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>=0A=
+> > > > ---=0A=
+> > > >  .../bindings/mfd/aspeed,ast2x00-scu.yaml           | 117 +++++++++=
+++++++++++++=0A=
+> > > >  1 file changed, 117 insertions(+)=0A=
+> > > >=0A=
+> > > > diff --git a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-s=
+cu.yaml b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml=0A=
+> > > > index a87f31fce019..86d51389689c 100644=0A=
+> > > > --- a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml=
+=0A=
+> > > > +++ b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml=
+=0A=
+> > > > @@ -46,6 +46,9 @@ properties:=0A=
+> > > >    '#reset-cells':=0A=
+> > > >      const: 1=0A=
+> > > >=0A=
+> > > > +  memory-region: true=0A=
+> > > > +  memory-region-names: true=0A=
+> >=0A=
+> > > Missing constraints. From where did you take such syntax (so I can fi=
+x=0A=
+> > > it)?=0A=
+> >=0A=
+> > The intention was to constrain these properties conditionally for=0A=
+> > AST2700 SCU0 as done further down in the patch.=0A=
+> >=0A=
+> > I can update the binding so that memory-region and memory-region-names=
+=0A=
+> > have baseline constraints (e.g. minItems and maxItems), and then refine=
+ them in the=0A=
+> > conditional branches for AST2700SCU0, AST2700SCU1 and others=0A=
+> >=0A=
+> >   memory-region:=0A=
+> >     minItems: 2=0A=
+> >     maxItems: 3=0A=
+> >   memory-region-names:=0A=
+> >     minItems: 2=0A=
+> >     maxItems: 3=0A=
+=0A=
+> As of this patch, you don't need that. You can just define the regions=0A=
+> and names at the top-level. And the conditional schema only needs to=0A=
+> disallow them for the appropriate case.=0A=
+=0A=
+Based on your suggestion, I will simplify the schema and define=0A=
+memory-region and memory-region-names at the top-level without item=0A=
+constraints, and only disallow them for the non-AST2700 cases.=0A=
+=0A=
+The updated structure would look like:=0A=
+=0A=
+    memory-region:=0A=
+      description:=0A=
+        Reserved memory regions used by AST2700 SCU to configure=0A=
+        coprocessor address mapping windows.=0A=
+=0A=
+    memory-region-names:=0A=
+      description:=0A=
+        Names corresponding to the AST2700 coprocessor mapping windows=0A=
+        listed in memory-region.=0A=
+=0A=
+    ...=0A=
+=0A=
+    - if:=0A=
+        properties:=0A=
+          compatible:=0A=
+            contains:=0A=
+              anyOf:=0A=
+                - const: aspeed,ast2700-scu0=0A=
+                - const: aspeed,ast2700-scu1=0A=
+      then:=0A=
+        patternProperties:=0A=
+          '^p2a-control@[0-9a-f]+$': false=0A=
+          '^smp-memram@[0-9a-f]+$': false=0A=
+      else:=0A=
+        properties:=0A=
+          memory-region: false=0A=
+          memory-region-names: false=0A=
+=0A=
+Does this match what you had in mind?=0A=
+=0A=
+Thanks=0A=
+=0A=
+Billy Tsai=
