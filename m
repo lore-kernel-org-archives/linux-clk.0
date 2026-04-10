@@ -1,164 +1,89 @@
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F7B3AA4E9;
-	Fri, 10 Apr 2026 08:25:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7ED37AA99;
+	Fri, 10 Apr 2026 08:27:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775809521; cv=none; b=J1UM10LyIvqAXkir8Z6fuytzK0NgLzp/Tm0PPNUnyldImfrOyzYh97qm6awcanDLpr44wP5K4ex83U0grmH4ZTsKGhPA1Zj8A/Cgw3F4O+ep6HSplmK0jLhs2FCXJZsdmmUnzvu7cTFxAc9kEyMwU+Nq3nXWT4rk1sqHU4AGPVU=
+	t=1775809623; cv=none; b=SlAVK4txVSRECYLnmyHyxsfI+KZQ8E2KMLZyQ+AHwLnbNK9j75MZ6nTQ9c0C4omTCxqlJOqx6k/dTwLlgDbxvPiwUn4cggx17+xws3FJ18OK+Eg7WkGGnOOo6UOTTJS5uu2mb007kRLmgUaZ/FBmMRYKzY20dWZj4SUeuz4mK3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775809521; c=relaxed/simple;
-	bh=T1L02dg6RFoVGQ/FlKFkoyuOT9BMekcepcLQCo7lU0s=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZFPGk4LxffT5XTUg27V2X8gX/Get9jaPA5KR2ycRN1L7JHh5B7CPASidnJxHeBQMhlyo/CWqQ0CI6doHXdhkNcfbGusxjtiaKLoAJW9/kxkER299f6RFdijPLlaDHHlhQNgR2XHd5MKXYPTAjor/Q53pgpf9YbzqHQBSIW2cdNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=dX7mU6hM; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+	s=arc-20240116; t=1775809623; c=relaxed/simple;
+	bh=wiVpkLOHesaDxqsTty1+qn46GjmDPchZxN/XYbW0yVY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sybdIX6wRWCu/LDB87V5CC/bL5q/ZilNhg4FvQ2+ZvNK93mGoaJYvXlNAJ/jnPGemIokGo1gc3LxVKonsaUZ433YJWtrj11i9wHp5p1NvV1WhnJA2JP/9q3J6CKVOO1Wl5OkVK0naW/dlWdAMaMLGGwBcQCiGcjMpoEV2VH0ZIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ETa0meso; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="dX7mU6hM"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 63A8OtG022684423, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1775809496; bh=T1L02dg6RFoVGQ/FlKFkoyuOT9BMekcepcLQCo7lU0s=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=dX7mU6hMx7fHwoB6gnF4ogNRjbZpMuQdusgt1SJVYLg6pxmLuFsykZvk9a5ywBncc
-	 ldEyaO5MrSe3ECtX14tY75fbIBXDflKZgl5xToL4g8WTBffZOWaFlf2mmgtTQ/HEvL
-	 YiCq2J5KFm7LMYnwIlGa2bO3aUHPItObAXdJ7FxV+k0UUzwKP7SDSxgksT3rPGmJYc
-	 6pseC9IeZC3Uti3Wk/6czSumGGSVB6hATcFY4GJvvMaOnKITPZ0ASaxbZFFW08wX/K
-	 TVO+VmXOOm6M8Vu4m/UWrCWHrbf9RZ7CZA5R/IlrEf36o8bxehJCAE4RnfRctUA1/A
-	 xyqD8zo5Z8dHw==
-Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
-	by rtits2.realtek.com.tw (8.15.2/3.26/5.94) with ESMTPS id 63A8OtG022684423
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 10 Apr 2026 16:24:55 +0800
-Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
- RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Fri, 10 Apr 2026 16:24:55 +0800
-Received: from RTKEXHMBS06.realtek.com.tw ([fe80::ed72:3015:2840:4458]) by
- RTKEXHMBS06.realtek.com.tw ([fe80::ed72:3015:2840:4458%10]) with mapi id
- 15.02.1748.010; Fri, 10 Apr 2026 16:24:55 +0800
-From: =?big5?B?WXUtQ2h1biBMaW4gW6pMr6enZ10=?= <eleanor.lin@realtek.com>
-To: Brian Masney <bmasney@redhat.com>
-CC: "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org"
-	<sboyd@kernel.org>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>,
-        "conor+dt@kernel.org" <conor+dt@kernel.org>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        =?big5?B?RWRnYXIgTGVlIFun9anTv9ld?= <cylee12@realtek.com>,
-        "afaerber@suse.com" <afaerber@suse.com>,
-        =?big5?B?SnlhbiBDaG91IFupUKrppndd?=
-	<jyanchou@realtek.com>,
-        "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>,
-        "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "linux-realtek-soc@lists.infradead.org"
-	<linux-realtek-soc@lists.infradead.org>,
-        =?big5?B?SmFtZXMgVGFpIFvAuafTrnBd?=
-	<james.tai@realtek.com>,
-        =?big5?B?Q1lfSHVhbmdbtsDgsq7LXQ==?=
-	<cy.huang@realtek.com>,
-        =?big5?B?U3RhbmxleSBDaGFuZ1up96h8vHdd?=
-	<stanley_chang@realtek.com>
-Subject: RE: [PATCH v6 06/10] clk: realtek: Add support for mux clock
-Thread-Topic: [PATCH v6 06/10] clk: realtek: Add support for mux clock
-Thread-Index: AQHcwnPq8HmZxIkpqUqMP4W7CMRK7rXM6G+AgAsZZvA=
-Date: Fri, 10 Apr 2026 08:24:55 +0000
-Message-ID: <603e602b8a294e0ea26e818226087bb7@realtek.com>
-References: <20260402073957.2742459-1-eleanor.lin@realtek.com>
- <20260402073957.2742459-7-eleanor.lin@realtek.com>
- <ac_UkRiqWb6fSc1I@redhat.com>
-In-Reply-To: <ac_UkRiqWb6fSc1I@redhat.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-Content-Type: text/plain; charset="big5"
-Content-Transfer-Encoding: base64
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ETa0meso"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82EEEC19421;
+	Fri, 10 Apr 2026 08:26:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775809622;
+	bh=wiVpkLOHesaDxqsTty1+qn46GjmDPchZxN/XYbW0yVY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ETa0mesoel9QguYJ8pV0cmtc3Cyt+G6JUpWibDvnx++QugKMurkEiMLxtwQDB5+4M
+	 52/cbsopugbayzbSPnnyAbHWsP0AdFH67TlACy8kcfjh4JdG6u2Qq/LC1oH/Eiu4g6
+	 bfyMNUg5cCwzSZz9MdhsqS4IWcLAKxeL5tYLwh3e6uu5BnTlKtyIR0LjeFSbDSstuK
+	 fFnnYkgL415whPrxMxn28Q5jI5A2U/9LwBir5p2eofF6AYQid7qaJOIQ/pBC5aLcD5
+	 osR7giAvoly013z7WULooyA3wUIaHOb5+eAjs96gtEyycEn74RadjM7s8MUn7+f7Vk
+	 LV0Sgr7ATh/ZA==
+Message-ID: <b280ad04-d4ae-4904-9e99-3d057e3d221b@kernel.org>
+Date: Fri, 10 Apr 2026 09:26:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 8/8] arm64: dts: qcom: eliza: Add support for MM clock
+ controllers
+To: Taniya Das <taniya.das@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+ Imran Shaik <imran.shaik@oss.qualcomm.com>,
+ Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org
+References: <20260409-eliza_mm_cc_v2-v2-0-bc0c6dd77bc5@oss.qualcomm.com>
+ <20260409-eliza_mm_cc_v2-v2-8-bc0c6dd77bc5@oss.qualcomm.com>
+ <cb5a40e8-e2e3-4ed9-a9c6-0daa9f408710@nxsw.ie>
+ <Z8a4y73p6MgF8gQkVtottkgG2Ok8-Vhm8zzckWEbiU_DUO84x2VlwPt-VBL2g0utw3ZwZK0aUvI4ev-p_YRGoQ==@protonmail.internalid>
+ <328b388c-438e-4f91-9384-0dad903355a5@oss.qualcomm.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bod@kernel.org>
+In-Reply-To: <328b388c-438e-4f91-9384-0dad903355a5@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-SGkgQnJpYW4sDQoNCj4gSGkgWXUtQ2h1biBhbmQgQ2hlbmctWXUsDQo+IA0KPiBPbiBUaHUsIEFw
-ciAwMiwgMjAyNiBhdCAwMzozOTo1M1BNICswODAwLCBZdS1DaHVuIExpbiB3cm90ZToNCj4gPiBG
-cm9tOiBDaGVuZy1ZdSBMZWUgPGN5bGVlMTJAcmVhbHRlay5jb20+DQo+ID4NCj4gPiBBZGQgYSBz
-aW1wbGUgcmVnbWFwLWJhc2VkIGNsa19vcHMgaW1wbGVtZW50YXRpb24gZm9yIFJlYWx0ZWsgbXV4
-IGNsb2Nrcy4NCj4gPg0KPiA+IFRoZSBpbXBsZW1lbnRhdGlvbiBzdXBwb3J0cyBwYXJlbnQgc2Vs
-ZWN0aW9uIGFuZCByYXRlIGRldGVybWluYXRpb24NCj4gPiB0aHJvdWdoIHJlZ21hcC1iYWNrZWQg
-cmVnaXN0ZXIgYWNjZXNzLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogQ2hlbmctWXUgTGVlIDxj
-eWxlZTEyQHJlYWx0ZWsuY29tPg0KPiA+IENvLWRldmVsb3BlZC1ieTogWXUtQ2h1biBMaW4gPGVs
-ZWFub3IubGluQHJlYWx0ZWsuY29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFl1LUNodW4gTGluIDxl
-bGVhbm9yLmxpbkByZWFsdGVrLmNvbT4NCj4gPiAtLS0NCj4gPiBDaGFuZ2VzIGluIHY2Og0KPiA+
-IC0gQWRkIHRoZSBoZWFkZXJzIHVzZWQgaW4gYyBmaWxlIHRvIGZvbGxvdyB0aGUgIkluY2x1ZGUg
-V2hhdCBZb3UgVXNlIg0KPiBwcmluY2lwbGUuDQo+ID4gLS0tDQo+ID4gIGRyaXZlcnMvY2xrL3Jl
-YWx0ZWsvTWFrZWZpbGUgICAgICAgICB8ICAxICsNCj4gPiAgZHJpdmVycy9jbGsvcmVhbHRlay9j
-bGstcmVnbWFwLW11eC5jIHwgNDgNCj4gPiArKysrKysrKysrKysrKysrKysrKysrKysrKysrICBk
-cml2ZXJzL2Nsay9yZWFsdGVrL2Nsay1yZWdtYXAtbXV4LmggfA0KPiA+IDQzICsrKysrKysrKysr
-KysrKysrKysrKysrKysNCj4gPiAgMyBmaWxlcyBjaGFuZ2VkLCA5MiBpbnNlcnRpb25zKCspDQo+
-ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2Nsay9yZWFsdGVrL2Nsay1yZWdtYXAtbXV4
-LmMNCj4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvY2xrL3JlYWx0ZWsvY2xrLXJlZ21h
-cC1tdXguaA0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL3JlYWx0ZWsvTWFrZWZp
-bGUNCj4gPiBiL2RyaXZlcnMvY2xrL3JlYWx0ZWsvTWFrZWZpbGUgaW5kZXggNzQzNzVmODEyN2Fj
-Li5mOTBkYzU3ZmNmZGIgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9jbGsvcmVhbHRlay9NYWtl
-ZmlsZQ0KPiA+ICsrKyBiL2RyaXZlcnMvY2xrL3JlYWx0ZWsvTWFrZWZpbGUNCj4gPiBAQCAtNSw0
-ICs1LDUgQEAgY2xrLXJ0ay15ICs9IGNvbW1vbi5vDQo+ID4NCj4gPiAgY2xrLXJ0ay15ICs9IGNs
-ay1wbGwubw0KPiA+ICBjbGstcnRrLXkgKz0gY2xrLXJlZ21hcC1nYXRlLm8NCj4gPiArY2xrLXJ0
-ay15ICs9IGNsay1yZWdtYXAtbXV4Lm8NCj4gPiAgY2xrLXJ0ay15ICs9IGZyZXFfdGFibGUubw0K
-PiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9yZWFsdGVrL2Nsay1yZWdtYXAtbXV4LmMNCj4g
-PiBiL2RyaXZlcnMvY2xrL3JlYWx0ZWsvY2xrLXJlZ21hcC1tdXguYw0KPiA+IG5ldyBmaWxlIG1v
-ZGUgMTAwNjQ0DQo+ID4gaW5kZXggMDAwMDAwMDAwMDAwLi4wNjhiMDU2ZDYxZjANCj4gPiAtLS0g
-L2Rldi9udWxsDQo+ID4gKysrIGIvZHJpdmVycy9jbGsvcmVhbHRlay9jbGstcmVnbWFwLW11eC5j
-DQo+ID4gQEAgLTAsMCArMSw0OCBAQA0KPiA+ICsvLyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjog
-R1BMLTIuMC1vbmx5DQo+ID4gKy8qDQo+ID4gKyAqIENvcHlyaWdodCAoQykgMjAxNyBSZWFsdGVr
-IFNlbWljb25kdWN0b3IgQ29ycG9yYXRpb24NCj4gPiArICogQXV0aG9yOiBDaGVuZy1ZdSBMZWUg
-PGN5bGVlMTJAcmVhbHRlay5jb20+ICAqLw0KPiA+ICsNCj4gPiArI2luY2x1ZGUgPGxpbnV4L3Jl
-Z21hcC5oPg0KPiA+ICsjaW5jbHVkZSA8bGludXgvY2xrLXByb3ZpZGVyLmg+DQo+IA0KPiBTb3J0
-IHRoZSBpbmNsdWRlcy4NCj4gDQoNCkFjay4NCg0KPiA+ICsjaW5jbHVkZSAiY2xrLXJlZ21hcC1t
-dXguaCINCj4gPiArDQo+ID4gK3N0YXRpYyB1OCBjbGtfcmVnbWFwX211eF9nZXRfcGFyZW50KHN0
-cnVjdCBjbGtfaHcgKmh3KSB7DQo+ID4gKyAgICAgc3RydWN0IGNsa19yZWdtYXBfbXV4ICpjbGtt
-ID0gdG9fY2xrX3JlZ21hcF9tdXgoaHcpOw0KPiA+ICsgICAgIGludCBudW1fcGFyZW50cyA9IGNs
-a19od19nZXRfbnVtX3BhcmVudHMoaHcpOw0KPiA+ICsgICAgIHUzMiB2YWw7DQo+ID4gKyAgICAg
-aW50IHJldDsNCj4gPiArDQo+ID4gKyAgICAgcmV0ID0gcmVnbWFwX3JlYWQoY2xrbS0+Y2xrci5y
-ZWdtYXAsIGNsa20tPm11eF9vZnMsICZ2YWwpOw0KPiA+ICsgICAgIGlmIChyZXQpDQo+ID4gKyAg
-ICAgICAgICAgICByZXR1cm4gMDsNCj4gDQo+IFRoaXMgaXMgYW5vdGhlciBjYXNlIHdoZXJlIGl0
-J2QgYmUgbmljZSB0byBnZXQgdGhlIGdldF9wYXJlbnQgZGVjbGFyYXRpb24gZml4ZWQuDQo+IFN0
-ZXBoZW4gcmVjZW50bHkgbGlua2VkIHRvIHNvbWUgd29yayBvZiBoaXMgZnJvbSAyMDIyIGhlcmUu
-DQo+IA0KPiBodHRwczovL2xvcmUua2VybmVsLm9yZy9saW51eC1jbGsvMTc3NDMxMzA1NTA5LjU0
-MDMuMTUzODYwMjEzMzc1MTc5NzA2NjcNCj4gQGxhem9yLw0KPiANCj4gVGhlcmUncyBub3RoaW5n
-IGZvciB5b3UgdG8gZG8gcmlnaHQgbm93Lg0KPiANCj4gPiArDQo+ID4gKyAgICAgdmFsID0gdmFs
-ID4+IGNsa20tPnNoaWZ0ICYgY2xrbS0+bWFzazsNCj4gDQo+IEkga25vdyB0aGVyZSdzIHRoZSBv
-cmRlciBvZiBvcGVyYXRpb25zLCBob3dldmVyIGZvciBjbGFyaXR5IEkgd291bGQganVzdCBpbmNs
-dWRlDQo+IHNvbWUgKCkgaGVyZSB0byBtYWtlIGl0IGNsZWFyIHRoZSBleHBlY3RlZCBvcmRlci4N
-Cg0KQWNrLg0KDQo+ID4gKw0KPiA+ICsgICAgIGlmICh2YWwgPj0gbnVtX3BhcmVudHMpDQo+IA0K
-PiBSZW1vdmUgbmV3bGluZSBiZWZvcmUgaWYuDQoNCkFjay4NCg0KPiANCj4gPiArICAgICAgICAg
-ICAgIHJldHVybiAwOw0KPiA+ICsNCj4gPiArICAgICByZXR1cm4gdmFsOw0KPiANCj4gT3IgeW91
-IGNvdWxkIGp1c3QgdXNlIGEgdGVybmFyeSBvcGVyYXRvcjoNCj4gDQo+IHJldHVybiB2YWwgPj0g
-bnVtX3BhcmVudHMgPyAwIDogdmFsOw0KPiANCg0KQWNrLg0KDQo+ID4gK30NCj4gPiArDQo+ID4g
-K3N0YXRpYyBpbnQgY2xrX3JlZ21hcF9tdXhfc2V0X3BhcmVudChzdHJ1Y3QgY2xrX2h3ICpodywg
-dTggaW5kZXgpIHsNCj4gPiArICAgICBzdHJ1Y3QgY2xrX3JlZ21hcF9tdXggKmNsa20gPSB0b19j
-bGtfcmVnbWFwX211eChodyk7DQo+ID4gKw0KPiA+ICsgICAgIHJldHVybiByZWdtYXBfdXBkYXRl
-X2JpdHMoY2xrbS0+Y2xrci5yZWdtYXAsIGNsa20tPm11eF9vZnMsDQo+ID4gKyAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICBjbGttLT5tYXNrIDw8IGNsa20tPnNoaWZ0LCBpbmRleCA8PA0K
-PiA+ICtjbGttLT5zaGlmdCk7IH0NCj4gPiArDQo+ID4gK2NvbnN0IHN0cnVjdCBjbGtfb3BzIHJ0
-a19jbGtfcmVnbWFwX211eF9vcHMgPSB7DQo+ID4gKyAgICAgLnNldF9wYXJlbnQgPSBjbGtfcmVn
-bWFwX211eF9zZXRfcGFyZW50LA0KPiA+ICsgICAgIC5nZXRfcGFyZW50ID0gY2xrX3JlZ21hcF9t
-dXhfZ2V0X3BhcmVudCwNCj4gPiArICAgICAuZGV0ZXJtaW5lX3JhdGUgPSBfX2Nsa19tdXhfZGV0
-ZXJtaW5lX3JhdGUsIH07DQo+ID4gK0VYUE9SVF9TWU1CT0xfTlNfR1BMKHJ0a19jbGtfcmVnbWFw
-X211eF9vcHMsICJSRUFMVEVLX0NMSyIpOw0KPiA+ICsNCj4gPiArY29uc3Qgc3RydWN0IGNsa19v
-cHMgcnRrX2Nsa19yZWdtYXBfbXV4X3JvX29wcyA9IHsNCj4gPiArICAgICAuZ2V0X3BhcmVudCA9
-IGNsa19yZWdtYXBfbXV4X2dldF9wYXJlbnQsIH07DQo+ID4gK0VYUE9SVF9TWU1CT0xfTlNfR1BM
-KHJ0a19jbGtfcmVnbWFwX211eF9yb19vcHMsICJSRUFMVEVLX0NMSyIpOw0KPiANCj4gcnRrX2Ns
-a19yZWdtYXBfbXV4X3JvX29wcyBpcyBleHBvcnRlZCwgaG93ZXZlciB0aGUgZGVjbGFyYXRpb24g
-aXMgbm90DQo+IGFjdHVhbGx5IGRlY2xhcmVkIGluIGFueSBoZWFkZXIgZmlsZXMuDQo+IA0KPiBC
-cmlhbg0KDQpTaW5jZSBpdCBpcyBjdXJyZW50bHkgdW51c2VkLCBJIHdpbGwgZHJvcCB0aGUgJ3J0
-a19jbGtfcmVnbWFwX211eF9yb19vcHMnDQppbXBsZW1lbnRhdGlvbi4NCg0KQmVzdCBSZWdhcmRz
-LA0KWXUtQ2h1bi4NCg==
+On 10/04/2026 04:55, Taniya Das wrote:
+>> Why do these two controllers have no power-domains ?
+> Bryan, on Eliza the videocc and camcc are connected on CX and MXA.
+
+Shouldn't you at least have:
+
+power-domains = <&rpmhpd RPMHPD_CX> ?
+
+And even
+
+power-domains = <&rpmhpd RPMHPD_MX>,
+                 <&rpmhpd RPMHPD_CX>;
+power-domain-names = "mx",
+                      "cx";
+
+Konrad's suggestion to me was that MXA should have a vote in my CSIPHY 
+series I think he and Jagadeesh discussed it but I'm not sure if they 
+_concluded_ what was the right thing to do.
+
+Right now I'm representing the dependency. MXA is always on ... and 
+there's nothing to do voting for it @ MX ?
+
+---
+bod
