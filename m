@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A794286D7D;
-	Sat, 11 Apr 2026 23:35:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EFC025392A;
+	Sat, 11 Apr 2026 23:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775950557; cv=none; b=HuwxptKjSaFGUu3QOCiFFIYzfv78HIfhXktLcMI+YwYPjAnWfWy7BrSVNcGGOjviBEyXV19n+KNeFXJuif58f/L5ikIdvCsmrBtDvPAPaW55Dc9cUw1RPHmdLbK7djCoMLXy8qK7NuwHpy54Xb9lYfyJCjxke7+SxBCleXIFD0g=
+	t=1775950736; cv=none; b=ipcbCCRx77jk/Xk1hUIvtmbNPdfwE6+TEOJ338WVpr+6g0vf9GllghDLyqqqx6Dvo8prNNf/PFCvbz2nq6Nmll9q7uBJ2Vd40AUD8Xz3hAshQOB/U479hDEsV61aC+adWSe7NeC5qZUpGJKO7ag3CsGJRkMA16csYHCmz7NQrls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775950557; c=relaxed/simple;
-	bh=cpxZ95ovVNBn8+qnolclvcKra4Be0iJWKicAp3XsLOw=;
+	s=arc-20240116; t=1775950736; c=relaxed/simple;
+	bh=l2VcwxsSAr9x5y3aKU4A1/44ughIiDrX1V9J5uhH0Ts=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=NrNAcJyEcsvufMR5aumYxEY+QGj4qkEo0KEX+oZkLySB42DF3+lokmzm0kmZ7hyVL9EGDOcw1S0j3aeoDjZP/wAOtO/UqSLYS3PFCB5Lrx5lMvTBvXLAqi+gdCd3P2qk46EQcon8q7gs/xW/2LslctsElcHX8rjLARyFKoZB1vU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gm9juqzu; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=o8A1Kvyrb0GuLGaBBrdV2Rh3eElMti2SoqIibmTKPjbnJcffVIH4GeyQtz+KMEqrY2RxLCfNZ5lWO/+IIJBaFmvofedv6zFH8W9f48NwZmvWXwVOKQrUQRtSYeD2jcb8nCwjpNCeLtVsC9liOsfNjQ0lfCsR1xS+M8Cvpffas0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VPfD8W+D; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gm9juqzu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF5EAC116C6;
-	Sat, 11 Apr 2026 23:35:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VPfD8W+D"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D13F8C116C6;
+	Sat, 11 Apr 2026 23:38:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775950557;
-	bh=cpxZ95ovVNBn8+qnolclvcKra4Be0iJWKicAp3XsLOw=;
+	s=k20201202; t=1775950735;
+	bh=l2VcwxsSAr9x5y3aKU4A1/44ughIiDrX1V9J5uhH0Ts=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=Gm9juqzuWxcC5ocRH1Ej3PaO/4Y16ZDa3F89i/8BXy5jC6ml43Jxdpi+sm05gqZYU
-	 va2uQ/4zd/EZESq5YK+ITiBLZ4+Ikqoc90PqiRjZ8w7aYjdHDtjSR6D+yHMjyiuOIt
-	 oCucIz6Gz2uZVLHYJTYGb0PL/lEeQclloyc3IXEEJS0MMYN/+UPW/yD4/kQrVwmEMJ
-	 cChanrabpqRw3HePVGOmk30nfZvZo78Zm8sr2ph22D7LdpRqTS/RNy7VtpeD+gFN0o
-	 YJMYtJ9dXvTWqX1LAbErCsBhJuFR+QlTl35Mv6P5QRlT7ZRHpv3EFXEryDc/C0Xqzw
-	 Uhkv5xKyBeVRA==
+	b=VPfD8W+Df43r9A0T/RiN3AusAlp+hU7GQB0kLw+Ncwr5mXgRz1bMwlvYZ10z1iUQl
+	 Xh3plgtZRUcGoBgx65iu9NWEyxVkXu1hFlq32FYqQ5lFTpse9sVMnxj0dFV60OZ0LX
+	 8okqnhI/7c8XBO357xLgl1dNV53YwL0Ck4vMzZST/hs92+5mIKf1eYPOuVNGVHmh+e
+	 rVOKv+RYzy4u/KOgYZ0rDKBk9cq6nbwOGqTbNtvMEEB2JYdgLpE3IXbCQQL2leRCBk
+	 KidOYHQW5mLJ40VnJE1YH+xrLmTumC1Kt+79w/3CZLTRQCFDim3DZJ7WejTnukW/6I
+	 5VY+FMyLeJw5A==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,17 +34,27 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20260410223840.3976134-1-andersson@kernel.org>
-References: <20260410223840.3976134-1-andersson@kernel.org>
-Subject: Re: [GIT PULL] Qualcomm clock updates for v7.1
+In-Reply-To: <aZuK4-QJCXUeSxtL@redhat.com>
+References: <aZuK4-QJCXUeSxtL@redhat.com>
+Subject: Re: [GIT PULL] clk: remove deprecated round_rate functions from the clk core for v7.1
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Taniya Das <taniya.das@oss.qualcomm.com>, Val Packett <val@packett.cool>, Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, John Crispin <john@phrozen.org>, Abel Vesa <abel.vesa@oss.qualcomm.com>, Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>, Pengyu Luo <mitltlatltl@gmail.com>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>, Prasanna Tolety <quic_ptolety@quicinc.com>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, White Lewis <liu224806@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>, linux-clk@vger.kernel.org
-Date: Sat, 11 Apr 2026 16:35:55 -0700
-Message-ID: <177595055509.5403.7319021018800938492@lazor>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Brian Masney <bmasney@redhat.com>, Michael Turquette <mturquette@baylibre.com>
+Date: Sat, 11 Apr 2026 16:38:53 -0700
+Message-ID: <177595073393.5403.14055981948733048563@lazor>
 User-Agent: alot/0.12
 
-Quoting Bjorn Andersson (2026-04-10 15:38:40)
+Quoting Brian Masney (2026-02-22 15:01:55)
+> Hi Stephen,
+>=20
+> Here's a small pull for patches that I previously posted that removes
+> several deprecated APIs from the clk core. Details are in the signed
+> tag. I assembled this pull with the following b4 commands:
+>=20
+>     b4 am 20251212-clk-remove-round-rate-v1-0-5c3d5f3edc78@redhat.com
+>     b4 am --cherry-pick 26-27 20260108-clk-divider-round-rate-v1-0-535a3e=
+d73bf3@redhat.com
+>=20
 >=20
 > The following changes since commit 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f2=
 7f:
@@ -53,13 +63,12 @@ Quoting Bjorn Andersson (2026-04-10 15:38:40)
 >=20
 > are available in the Git repository at:
 >=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qco=
-m-clk-for-7.1
+>   https://github.com/masneyb/linux tags/clk-remove-deprecated-apis-v7.1
 >=20
-> for you to fetch changes up to a4f780cd5c7aa8c0d2d044ffd153f7a3a13ca81e:
+> for you to fetch changes up to d4851759742c1322f498021dab882d322fc34a1d:
 >=20
->   clk: qcom: gcc: Add multiple global clock controller driver for Nord So=
-C (2026-04-08 21:00:09 -0500)
+>   clk: divider: remove divider_round_rate() and divider_round_rate_parent=
+() (2026-02-22 17:38:37 -0500)
 >=20
 > ----------------------------------------------------------------
 
