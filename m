@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EFC025392A;
-	Sat, 11 Apr 2026 23:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54997239E75;
+	Sun, 12 Apr 2026 00:25:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775950736; cv=none; b=ipcbCCRx77jk/Xk1hUIvtmbNPdfwE6+TEOJ338WVpr+6g0vf9GllghDLyqqqx6Dvo8prNNf/PFCvbz2nq6Nmll9q7uBJ2Vd40AUD8Xz3hAshQOB/U479hDEsV61aC+adWSe7NeC5qZUpGJKO7ag3CsGJRkMA16csYHCmz7NQrls=
+	t=1775953515; cv=none; b=Hct5y29Cn3xC5l1CU2iD7aN0B7N59Gz/fQRZXC1RMfeDFfVq4G+XSzCq/PQdB85J9tHJIC04WLAyG2iAIG7VdsxO031FEi22BzPAhqkpGflUDnNbq2xC+wycXb4sMb05HMbCi1Ma2Bp94+qwfyZUK8PAFteHj1n1u+jtywAOiKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775950736; c=relaxed/simple;
-	bh=l2VcwxsSAr9x5y3aKU4A1/44ughIiDrX1V9J5uhH0Ts=;
+	s=arc-20240116; t=1775953515; c=relaxed/simple;
+	bh=jC+7wE8oC9xbk+dHMqt+gP24pzKu1oVB11qgrU0Vvww=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=o8A1Kvyrb0GuLGaBBrdV2Rh3eElMti2SoqIibmTKPjbnJcffVIH4GeyQtz+KMEqrY2RxLCfNZ5lWO/+IIJBaFmvofedv6zFH8W9f48NwZmvWXwVOKQrUQRtSYeD2jcb8nCwjpNCeLtVsC9liOsfNjQ0lfCsR1xS+M8Cvpffas0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VPfD8W+D; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=IiTpPwS1MSb6oaAp1j2uuj54EaJOzEt5AbnNsfEfYWu6YF8S2O70pO6JyoihxB8quuEMxioQG5g7OZlFmnbDXE8AF5SZpWPo+EhxPRCWWp8Oo9GDWT96ac67dSuy7PFFOIV+0RoY8hKRV6tB8XQTYBVH1ARFDjAqkplwpcHPkps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GRMDwjlm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VPfD8W+D"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D13F8C116C6;
-	Sat, 11 Apr 2026 23:38:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GRMDwjlm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 229E5C116C6;
+	Sun, 12 Apr 2026 00:25:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775950735;
-	bh=l2VcwxsSAr9x5y3aKU4A1/44ughIiDrX1V9J5uhH0Ts=;
+	s=k20201202; t=1775953515;
+	bh=jC+7wE8oC9xbk+dHMqt+gP24pzKu1oVB11qgrU0Vvww=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=VPfD8W+Df43r9A0T/RiN3AusAlp+hU7GQB0kLw+Ncwr5mXgRz1bMwlvYZ10z1iUQl
-	 Xh3plgtZRUcGoBgx65iu9NWEyxVkXu1hFlq32FYqQ5lFTpse9sVMnxj0dFV60OZ0LX
-	 8okqnhI/7c8XBO357xLgl1dNV53YwL0Ck4vMzZST/hs92+5mIKf1eYPOuVNGVHmh+e
-	 rVOKv+RYzy4u/KOgYZ0rDKBk9cq6nbwOGqTbNtvMEEB2JYdgLpE3IXbCQQL2leRCBk
-	 KidOYHQW5mLJ40VnJE1YH+xrLmTumC1Kt+79w/3CZLTRQCFDim3DZJ7WejTnukW/6I
-	 5VY+FMyLeJw5A==
+	b=GRMDwjlmc60AlAZfLY/n5TPWlzxmJnp5nk31S9gkaQ8taO/cSeBIaOy4C4D4fSzxu
+	 Wzes7GaYSdbwURm0gVNSDIvQtPoSTaccIi2+kMUoP65SAskZ4JUy1kRj8z+AiAL9+G
+	 7EAN9CYiy2/DHGka7a3cjNDm45WnjGHOltNc/+1+pWZkPTe6O9uh0B5Gfkq7j9sFWv
+	 X6yj8WwLc5COS7w2So+ItoUKMtr692KlRd/bHOUPkaxyeNF6rVm2Nb5XXjkCKbrSJG
+	 PRAV8TFHaYU2mCt61YeFun2FVk0q5qkSnWS6xqYzbq6/K6bU7umUFA5Le/ZloMdA/h
+	 +ROCp761w1DhA==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,42 +34,29 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <aZuK4-QJCXUeSxtL@redhat.com>
-References: <aZuK4-QJCXUeSxtL@redhat.com>
-Subject: Re: [GIT PULL] clk: remove deprecated round_rate functions from the clk core for v7.1
+In-Reply-To: <c6dbf9b3-3ca0-434b-ad3a-71fe602ab809@gmail.com>
+References: <9d5724bc-e525-4f8f-b3f8-b16dd5a1164e@gmail.com> <c6dbf9b3-3ca0-434b-ad3a-71fe602ab809@gmail.com>
+Subject: Re: [PATCH v2 net-next 2/5] net: phy: make mdio_device.c part of libphy
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To: Brian Masney <bmasney@redhat.com>, Michael Turquette <mturquette@baylibre.com>
-Date: Sat, 11 Apr 2026 16:38:53 -0700
-Message-ID: <177595073393.5403.14055981948733048563@lazor>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, linux-clk@vger.kernel.org, linux-phy@lists.infradead.org
+To: Andrew Lunn <andrew@lunn.ch>, Bjorn Andersson <andersson@kernel.org>, David Miller <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Heiner Kallweit <hkallweit1@gmail.com>, Jakub Kicinski <kuba@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>, Paolo Abeni <pabeni@redhat.com>, Russell King - ARM Linux <linux@armlinux.org.uk>, Vinod Koul <vkoul@kernel.org>
+Date: Sat, 11 Apr 2026 17:25:12 -0700
+Message-ID: <177595351299.5403.14005254929672297956@lazor>
 User-Agent: alot/0.12
 
-Quoting Brian Masney (2026-02-22 15:01:55)
-> Hi Stephen,
+Quoting Heiner Kallweit (2026-03-09 10:03:31)
+> This patch
+> - makes mdio_device.c part of libphy
+> - makes mdio_device_(un)register_reset() static
+> - moves mdiobus_(un)register_device() from mdio_bus.c to mdio_device.c,
+>   stops exporting both functions and makes them private to phylib
 >=20
-> Here's a small pull for patches that I previously posted that removes
-> several deprecated APIs from the clk core. Details are in the signed
-> tag. I assembled this pull with the following b4 commands:
+> This further decouples the MDIO consumer functionality from libphy.
 >=20
->     b4 am 20251212-clk-remove-round-rate-v1-0-5c3d5f3edc78@redhat.com
->     b4 am --cherry-pick 26-27 20260108-clk-divider-round-rate-v1-0-535a3e=
-d73bf3@redhat.com
+> Note: This makes MDIO driver registration part of phylib, therefore
+>       adjust Kconfig dependencies where needed.
 >=20
->=20
-> The following changes since commit 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f2=
-7f:
->=20
->   Linux 7.0-rc1 (2026-02-22 13:18:59 -0800)
->=20
-> are available in the Git repository at:
->=20
->   https://github.com/masneyb/linux tags/clk-remove-deprecated-apis-v7.1
->=20
-> for you to fetch changes up to d4851759742c1322f498021dab882d322fc34a1d:
->=20
->   clk: divider: remove divider_round_rate() and divider_round_rate_parent=
-() (2026-02-22 17:38:37 -0500)
->=20
-> ----------------------------------------------------------------
+> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+> ---
 
-Thanks. Pulled into clk-next
+Acked-by: Stephen Boyd <sboyd@kernel.org>
