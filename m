@@ -1,138 +1,144 @@
-Received: from mail-43103.protonmail.ch (mail-43103.protonmail.ch [185.70.43.103])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81686BFCE
-	for <linux-clk@vger.kernel.org>; Sun, 12 Apr 2026 15:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.103
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC99B28C2A1
+	for <linux-clk@vger.kernel.org>; Sun, 12 Apr 2026 17:10:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776007862; cv=none; b=hqYNYl7n79dTRqgIcBPvOPEfdSnlPAPBGvx36lNS5lp582CJ9UeJqE4SXvaXEiVR1qDShMSQyZXBHA6bpCHroDZRAMIGgqbFihFdBbrv2rzajUcXbT9GdwbcbdfKK/8Asq2rS6VdDGOFj9QXGZx7Xu84p6fF8bXgY8fTBTqA5/c=
+	t=1776013817; cv=none; b=NvJc/L27EWIQXbiofxKFcEIkP6w7jngQmcA+FwpDb1meSzu+onUDpr38VtNO1+AyIiTCJfPNbuMNDedm+5J/8Jl8lbD+yhdzWeDZjiUlC2wmgPwP4VFyBRKUR73S+hxp8F8TnTDfBeuDYwO0CC4iAdVNZWUvKL/iLtGngHAn5mY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776007862; c=relaxed/simple;
-	bh=XggJd0e86ykAt4dKAnnY/6BR3Qb1DgKVf+hF8fuC3oY=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OsQGArp/J0X980UqB0acoK0wnIYIaiqfBGGdATLo+Fh5R1WX9ZqnDXuvc4zYRj5ZRvn0wl1HVnq7iTSLGaaLV6/0YiGqYb5MY3HnA/AirU3EMzrHIYFS5buwdZXUYYKeXPMZQmkTdaxNnZFesMfkJJZ9Y95HA3J05t3W514o/jM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=kt44Z/Lp; arc=none smtp.client-ip=185.70.43.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+	s=arc-20240116; t=1776013817; c=relaxed/simple;
+	bh=7F/77yW4CDMAwOZp3eERP8K4l2ouAqLz+cjdMwkPOCI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YuPTeo9neTv8IcibtuAMMWyCvdq1J612AENAUGQcMQDFq4I1LnDxUUBTejkEOXrrSjYUl7aeAeLbcx5kFIBy+ZDUUuMYVkBtD6blCSIi9qKyAE1Ro6b+bqaei+6spaVllxMw4I7YtyLNo7SBq6pKuLZAhd0qc9j0/wbXJKSxFWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QDp8qcIe; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=HNEdvZCx; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="kt44Z/Lp"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
-	s=protonmail3; t=1776007858; x=1776267058;
-	bh=EnyWghpvtGuuiAWGwtxbsibEM57ZqhgLXNuJkGlp/pU=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=kt44Z/LpqWUXAGfuv53jEOeK+oRIqRf5GhLmpvDIJoDgAzwMfdxFXRocPtAO8NA+Q
-	 uPdv41lXe5sjw7427H7hDq5rs4OCzA2Ju5iFAXDo21uMg3v0ZJOWevhOiETqEalvQC
-	 YbdZKCkfEhU226eRt6fdebEtvC2D9KiawLjP8tnrbKmdhDhQgViKJiPDzCTa1FyZX4
-	 6Ms0ZMd7ZTY2X93COGryJUN38GBfhnYB2SWtwc6u8030i6wlXOQEMdo5SxvZ0icIQd
-	 by2CUMOP9hd4D4Sy3cSJxEgKhuuZH4AEY+m5iFY8oZ84VQeTja+vF6WjPPZps172qM
-	 GdtCrPHytxqJw==
-Date: Sun, 12 Apr 2026 15:30:56 +0000
-To: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-From: Alexander Koskovich <akoskovich@pm.me>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Koskovich <akoskovich@pm.me>
-Subject: [PATCH 2/2] clk: qcom: clk-rpmh: Make all VRMs optional by default
-Message-ID: <20260412-clk-rpmh-vrm-opt-v1-2-37c890c420ff@pm.me>
-In-Reply-To: <20260412-clk-rpmh-vrm-opt-v1-0-37c890c420ff@pm.me>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QDp8qcIe";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="HNEdvZCx"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63CE52Nv3689682
+	for <linux-clk@vger.kernel.org>; Sun, 12 Apr 2026 17:10:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=ssHb3cZNSYp48eK2M4UtQCoJ
+	dgaqvzLMI4+qxv/Q2Os=; b=QDp8qcIeJ/n93bAPX9cn3ALs5ZVssaaHVjkHFQz9
+	i5q5GTaXb4s2nRteoCFg1X4J+rKwTH/Q3yGXYTTInoAl/wFyoDSCOwAPAFqGEa/D
+	52L/gT1rf8mDIlRkgGQthNPiITvbfyil/QFjDf8zEkIV1GEMKUkJPV5zXX4rmzeD
+	7r6yIeckWq5rU/2zGVj2QujAGCOU/Qd2TGjl3tTuwEidJQg95P2ntsZY2Z9bLIUt
+	2PGALLVSYbOP/0yKQfGNVjl7qjAZa22k5ZoSvjbC/v0NGrhUTHcGCjEScYmn56t9
+	3hv5XOFe9zveTSvpxYbHx8rTsljYJsQHN4zBHpNZ+TdGFw==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4dfffhtnrn-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Sun, 12 Apr 2026 17:10:15 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-50d5d1c2289so28562321cf.2
+        for <linux-clk@vger.kernel.org>; Sun, 12 Apr 2026 10:10:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1776013814; x=1776618614; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ssHb3cZNSYp48eK2M4UtQCoJdgaqvzLMI4+qxv/Q2Os=;
+        b=HNEdvZCxQu3Rgr2K/KoXn8SSBtgZelQO16LrXpqB/UR5NNxp+kXiqPlkqBilQJuURK
+         LxBnDC89ygrr2L2kTr0wQeKj+BU/7CZ2b9BEKAhLadfQfBs+oLlZLrLNl9HmbrS4LRpP
+         GGiB1jYlx8ZNUpthEQw7BL/QL9HCFhrwV3LBstpfy0DIwH7MJ1SJWcQ6xaSsteaIYCRP
+         uW0g0YpEU52dAaZEPm42xXRjhzrDQPejmjuP/VkrBDxOYt7BGuQo6L/9xUHlg6KBMycj
+         FQ4IxVuCG9VwDc6eAWiwSAfjbBjATXX1ZRUiD9RSMoHNeApMx6+I0G1QQgnD4BSpK+mG
+         c8UQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776013814; x=1776618614;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ssHb3cZNSYp48eK2M4UtQCoJdgaqvzLMI4+qxv/Q2Os=;
+        b=GTLkhG8xojSB5t3RXBVA0huI0kDWjbs+7WWb5yebpcoiNVONf7CuTtFI+oWR2TLCWj
+         +gSPuTq51t5bwPW00p34OC2Xtef2RC8fYZMqPNuQmQyPb8vP0yUzA2CryWAnIMXuEiCa
+         Mpjhhw7hXmLnDonYrk6eovyRegdfnITZgv4nLgwWQa9pcDC1Ov9jRnwft4bnar4RkdUn
+         bDSPuPiWNxjkTiEtgeixHvtbc5RfxfrBc2L86bHSUb5oX/MquTPWG0mvDeXdciyzcdim
+         CE+Lf9N2BmN/nLkygbom6x04wcI6BgxR5KRh4SbxKRGEjpCfqmAoZqioMZJtAXqWlios
+         cksA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4YuigdFdo+QNlqI9972mtr1jEm7tj9CpgcrNnRMxy5hQTAueXVs0f1jckjLU3B+Jz6lx4XFiUKng=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+Duac4Gbl6ugM6hKt0xUB6wHo9XuGpyIEcp4UmZhU4I4rUM7N
+	gPvfBBtr8wbBzb8X0/NawKAnOAIv+UFsmgE+TSe4wvTbOIyGwTHMmJIT0zJ6BmEMc2KHqYIOknG
+	za5/8ZtZK387aI0zXH9kDrlfmmIwpBq6BVRW0RYAKreocvs490Ym0p4/ooPqVNuI=
+X-Gm-Gg: AeBDievwoa0Tjy+WiQrhOWMFKSXdYTXDMid43qQ9Kkozn31s4zBH9d710FV991Y+TzP
+	ck0bqE4xmM8iARzbvHhJdzp6pskDz9TcLvpl7xVgnltCw9uemoU9J5a+rFyyLTQPcC8VuEcvGzV
+	w0WkRwhboKBILow8uYo7+aZiR5YJ5Lomn3QzDm/mBkGft8IPTON9rHRgfbtUGYpj3hkwNDj/7pd
+	3wHTRbM9ilhH8BOLbNfgCssIoMwkWZ1JsLRi5+rLBZFPNu8Y1Q7HZioSXiKWCEDhbslO5HcWwmZ
+	w7oS9DBINuoMocqYa2RF5yAHJ1Iz0VAThSgn1FT7uBwmCnUadWQnJl8IP3ynyxyac1lWuOd1a7T
+	YjkQzPH2dFSNEg/zgrLavEhVoJpoemEHmCh3F5nya//RqaXBygyqdwi030TmO1AfdHfYVJUgsXN
+	GPf36C42IjO8NoOgXzDIqIV8DvvNvKQXh4U60=
+X-Received: by 2002:a05:622a:d01:b0:50d:9175:34e0 with SMTP id d75a77b69052e-50dd5bab1e4mr151291181cf.40.1776013814025;
+        Sun, 12 Apr 2026 10:10:14 -0700 (PDT)
+X-Received: by 2002:a05:622a:d01:b0:50d:9175:34e0 with SMTP id d75a77b69052e-50dd5bab1e4mr151290731cf.40.1776013813635;
+        Sun, 12 Apr 2026 10:10:13 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-38e4929a0a5sm18870291fa.14.2026.04.12.10.10.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 12 Apr 2026 10:10:12 -0700 (PDT)
+Date: Sun, 12 Apr 2026 20:10:09 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Alexander Koskovich <akoskovich@pm.me>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] Revert "clk: qcom: rpmh: make clkaN optional"
+Message-ID: <rxjdw5cc3zn3d65md7ebztk55rmziifqxlctvn7ptfqmt32zls@cy3j3tkfpr5w>
 References: <20260412-clk-rpmh-vrm-opt-v1-0-37c890c420ff@pm.me>
-Feedback-ID: 37836894:user:proton
-X-Pm-Message-ID: 42cbca3d6a675ee1b3f0a3f069f83c4d1dd2eeb1
+ <20260412-clk-rpmh-vrm-opt-v1-1-37c890c420ff@pm.me>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260412-clk-rpmh-vrm-opt-v1-1-37c890c420ff@pm.me>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDEyMDE2NyBTYWx0ZWRfXwpo6LURHEb/L
+ airc77NwT5v62tM3rT2aA9yOnfK6u1Oj2hucg6yo1g3ZI8hntOyahMlxYv7Ti1hi3txjJz1Ua9K
+ sUuSEwKtqcbWeImuu+6fkXmssq0uWa4XoBVIOsmSYoDG/1f4OR2cQChRLbhyrXjcDBNtuXvq9eW
+ nBSQKGuvoFVKWDmL6XsBmVC4XRcthRkKdq/NxC+QZ+x+ZP3VDOYoJ7ivE+nbVznXoO0fwwyGLqs
+ s3NhsKobMgM9vBcV9875gONJ8sjsbf/zl1XJmPtUCxQDl9sEF52N3ASyXqqzu7xEdycTE3zWKdJ
+ cIglyf2HaCiKtcaY6CiSTqxfdm1bo5BgDzPQoYOI6QEwBrx+JOQs25iCfDJHOM7olJcsE55RPVV
+ y/54IcCE2ad0OfSfieLlErah1ewu7KHe28GfYrWjQ4xp2sg2p7vPzUiM6Ixv8SrV96JPa+uMVGC
+ 7zcF9jhM7QRgX/ola+Q==
+X-Proofpoint-ORIG-GUID: Yr6qWQkWE7zBBaKG1GCzG_vIkd2qLjiT
+X-Authority-Analysis: v=2.4 cv=FOkrAeos c=1 sm=1 tr=0 ts=69dbd1f7 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=A5OVakUREuEA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22 a=LHHdHzVBj1RI9S9w2dkA:9
+ a=CjuIK1q_8ugA:10 a=dawVfQjAaf238kedN5IG:22
+X-Proofpoint-GUID: Yr6qWQkWE7zBBaKG1GCzG_vIkd2qLjiT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-04-12_04,2026-04-09_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 malwarescore=0 impostorscore=0 suspectscore=0 priorityscore=1501
+ clxscore=1015 spamscore=0 phishscore=0 bulkscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2604010000 definitions=main-2604120167
 
-Some VRMs aren't present on all boards, so mark them as optional. This
-prevents probe failures on boards where not all VRMs are present.
+On Sun, Apr 12, 2026 at 03:30:52PM +0000, Alexander Koskovich wrote:
+> This reverts commit 166e65bc6ce317be41368d9340b870edbdbaa2aa.
+> 
+> Reason for revert: Better handled by just marking all VRMs as optional,
+> instead of needing to mark for each platform, done in follow up change.
+> 
+> Signed-off-by: Alexander Koskovich <akoskovich@pm.me>
+> ---
+>  drivers/clk/qcom/clk-rpmh.c | 11 -----------
+>  1 file changed, 11 deletions(-)
+> 
 
-This mirrors the downstream approach for this issue.
+If this gets landed, then between this and the next commit the tree
+becomes broken, which is not nice if you ever try running git bisect.
+Either squash both commits together or change the order, so that the
+affected VRMs are first marked as optional and then you drop the
+clkaN_optional handling.
 
-Signed-off-by: Alexander Koskovich <akoskovich@pm.me>
----
- drivers/clk/qcom/clk-rpmh.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-index fc99c2c305da..3e029d82e733 100644
---- a/drivers/clk/qcom/clk-rpmh.c
-+++ b/drivers/clk/qcom/clk-rpmh.c
-@@ -52,6 +52,7 @@ struct clk_rpmh {
- =09struct clk_hw hw;
- =09const char *res_name;
- =09u8 div;
-+=09bool optional;
- =09u32 res_addr;
- =09u32 res_on_val;
- =09u32 state;
-@@ -71,13 +72,14 @@ struct clk_rpmh_desc {
- static DEFINE_MUTEX(rpmh_clk_lock);
-=20
- #define __DEFINE_CLK_RPMH(_name, _clk_name, _res_name,=09=09=09\
--=09=09=09  _res_en_offset, _res_on, _div)=09=09\
-+=09=09=09  _res_en_offset, _res_on, _div, _optional)=09\
- =09static struct clk_rpmh clk_rpmh_##_clk_name##_ao;=09=09\
- =09static struct clk_rpmh clk_rpmh_##_clk_name =3D {=09=09=09\
- =09=09.res_name =3D _res_name,=09=09=09=09=09\
- =09=09.res_addr =3D _res_en_offset,=09=09=09=09\
- =09=09.res_on_val =3D _res_on,=09=09=09=09=09\
- =09=09.div =3D _div,=09=09=09=09=09=09\
-+=09=09.optional =3D _optional,=09=09=09=09=09\
- =09=09.peer =3D &clk_rpmh_##_clk_name##_ao,=09=09=09\
- =09=09.valid_state_mask =3D (BIT(RPMH_WAKE_ONLY_STATE) |=09\
- =09=09=09=09      BIT(RPMH_ACTIVE_ONLY_STATE) |=09\
-@@ -97,6 +99,7 @@ static DEFINE_MUTEX(rpmh_clk_lock);
- =09=09.res_addr =3D _res_en_offset,=09=09=09=09\
- =09=09.res_on_val =3D _res_on,=09=09=09=09=09\
- =09=09.div =3D _div,=09=09=09=09=09=09\
-+=09=09.optional =3D _optional,=09=09=09=09=09\
- =09=09.peer =3D &clk_rpmh_##_clk_name,=09=09=09=09\
- =09=09.valid_state_mask =3D (BIT(RPMH_WAKE_ONLY_STATE) |=09\
- =09=09=09=09=09BIT(RPMH_ACTIVE_ONLY_STATE)),=09\
-@@ -113,11 +116,11 @@ static DEFINE_MUTEX(rpmh_clk_lock);
-=20
- #define DEFINE_CLK_RPMH_ARC(_name, _res_name, _res_on, _div)=09=09\
- =09__DEFINE_CLK_RPMH(_name, _name##_##div##_div, _res_name,=09\
--=09=09=09  CLK_RPMH_ARC_EN_OFFSET, _res_on, _div)
-+=09=09=09  CLK_RPMH_ARC_EN_OFFSET, _res_on, _div, false)
-=20
- #define DEFINE_CLK_RPMH_VRM(_name, _suffix, _res_name, _div)=09=09\
- =09__DEFINE_CLK_RPMH(_name, _name##_suffix, _res_name,=09=09\
--=09=09=09  CLK_RPMH_VRM_EN_OFFSET, 1, _div)
-+=09=09=09  CLK_RPMH_VRM_EN_OFFSET, 1, _div, true)
-=20
- #define DEFINE_CLK_RPMH_BCM(_name, _res_name)=09=09=09=09\
- =09static struct clk_rpmh clk_rpmh_##_name =3D {=09=09=09\
-@@ -946,6 +949,9 @@ static struct clk_hw *of_clk_rpmh_hw_get(struct of_phan=
-dle_args *clkspec,
- =09=09return ERR_PTR(-EINVAL);
- =09}
-=20
-+=09if (!rpmh->clks[idx])
-+=09=09return ERR_PTR(-ENOENT);
-+
- =09return rpmh->clks[idx];
- }
-=20
-@@ -976,6 +982,11 @@ static int clk_rpmh_probe(struct platform_device *pdev=
-)
- =09=09rpmh_clk =3D to_clk_rpmh(hw_clks[i]);
- =09=09res_addr =3D cmd_db_read_addr(rpmh_clk->res_name);
- =09=09if (!res_addr) {
-+=09=09=09hw_clks[i] =3D NULL;
-+
-+=09=09=09if (rpmh_clk->optional)
-+=09=09=09=09continue;
-+
- =09=09=09dev_err(&pdev->dev, "missing RPMh resource address for %s\n",
- =09=09=09=09rpmh_clk->res_name);
- =09=09=09return -ENODEV;
-
---=20
-2.53.0
-
-
+-- 
+With best wishes
+Dmitry
