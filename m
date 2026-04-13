@@ -1,145 +1,135 @@
-Received: from mail.189.cn (189sx01-ptr.21cn.com [125.88.204.37])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 598863559CA;
-	Mon, 13 Apr 2026 08:01:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=125.88.204.37
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43B1C389111;
+	Mon, 13 Apr 2026 08:04:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776067313; cv=none; b=gweWUX3GUuddP3bEIGVf2KHoyZ8UDyOGZtEKgO7cLKq1zPEWRX+/8OkdhdhikyBfmDQXZ3QXVkHnBd+WUbrmMfYVHdMjeykujGr/WB+39yzk3/5QhzcBPHV746P4vIhX9TZ8qmZ80ONCdxlxmDJXg1RRjoH6jEHSQASgLhb2Bhg=
+	t=1776067475; cv=none; b=Os0JbEa5U4C05v7Nwuh700tfPpLv7ey3Whi82Bk8TkIce3LZA0HHTiYVFXFkrc97/HOvMPWeRFjoS0hDokDVObVbQjMSZ+u/bJugiUZKkclGDQc3PTN6hOo8+WT/hLYJ5InF7GD1q3BkbgTtxl6GwM47DrBrtuVel1med7crdCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776067313; c=relaxed/simple;
-	bh=VUnQLH2pPEqvFRZdcj9hGaqbHbCCyp43cVorRQ4b3rQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bg3JOOaCYiGLLOoZHGXjS6CvvQB/Y6wvtJQW6z0k+nPoImlE3K9Oty2bGJKYJ9tqNjUmMWyrdVFmPt68jSmJnraQwbGBs2ml65IIEiP0j9QiqfdPZxovveFNic5t78fnNKhCPlTiiqCBbpC/yDqTeuVDQXRiSDg/FxZJXXfmqbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn; spf=pass smtp.mailfrom=189.cn; arc=none smtp.client-ip=125.88.204.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=189.cn
-HMM_SOURCE_IP:10.158.242.145:0.2069108682
-HMM_ATTACHE_NUM:0000
-HMM_SOURCE_TYPE:SMTP
-Received: from clientip-221.238.56.48 (unknown [10.158.242.145])
-	by mail.189.cn (HERMES) with SMTP id 24E5F4002A1;
-	Mon, 13 Apr 2026 16:01:43 +0800 (CST)
-Received: from  ([221.238.56.48])
-	by gateway-153622-dep-76cc7bc9cd-r45x9 with ESMTP id 33ade6dc9ca54545a389407f17f1d0f0 for rafael@kernel.org;
-	Mon, 13 Apr 2026 16:01:46 CST
-X-Transaction-ID: 33ade6dc9ca54545a389407f17f1d0f0
-X-Real-From: chensong_2000@189.cn
-X-Receive-IP: 221.238.56.48
-X-MEDUSA-Status: 0
-Sender: chensong_2000@189.cn
-From: chensong_2000@189.cn
-To: rafael@kernel.org,
-	lenb@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	viresh.kumar@linaro.org,
-	agk@redhat.com,
-	snitzer@kernel.org,
-	mpatocka@redhat.com,
-	bmarzins@redhat.com,
-	song@kernel.org,
-	yukuai@fnnas.com,
-	linan122@huawei.com,
-	jason.wessel@windriver.com,
-	danielt@kernel.org,
-	dianders@chromium.org,
-	horms@kernel.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	paulmck@kernel.org,
-	frederic@kernel.org,
-	mcgrof@kernel.org,
-	petr.pavlu@suse.com,
-	da.gomez@kernel.org,
-	samitolvanen@google.com,
-	atomlin@atomlin.com,
-	jpoimboe@kernel.org,
-	jikos@kernel.org,
-	mbenes@suse.cz,
-	pmladek@suse.com,
-	joe.lawrence@redhat.com,
-	rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mark.rutland@arm.com,
-	mathieu.desnoyers@efficios.com
-Cc: linux-modules@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	live-patching@vger.kernel.org,
-	dm-devel@lists.linux.dev,
-	linux-raid@vger.kernel.org,
-	kgdb-bugreport@lists.sourceforge.net,
-	netdev@vger.kernel.org,
-	Song Chen <chensong_2000@189.cn>
-Subject: [RFC PATCH 0/2] Decouple ftrace/livepatch from module loader via notifier priority and reverse traversal
-Date: Mon, 13 Apr 2026 16:01:40 +0800
-Message-ID: <20260413080140.180616-1-chensong_2000@189.cn>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1776067475; c=relaxed/simple;
+	bh=nRwmameaeIsZPQfij1qNyLreaRDR+ql4yfEH+VgvVs4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=sE9fJRzOjGPfmF2Lsg1dg9bUvjLxg5CC2SjWrrJcFpHZxSI09K6YRk5IB3GvBaXV6vjlkNTd7hAdc/HEfaPmTpW9i8M1F6pkUkstCZZNZkEiARacDCP5CZhgkq/TUmdjrGLQYcych8CBdheq42v/GewiMw7m8jqgm8MAQ5JXT64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LPttxcex; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LPttxcex"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 1C880C5B19E;
+	Mon, 13 Apr 2026 08:05:07 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 923D65FFB9;
+	Mon, 13 Apr 2026 08:04:30 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8B4AF10450246;
+	Mon, 13 Apr 2026 10:04:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1776067470; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=jeaWaNAvawAg39iZTdMC6jFeHce/2BRX0MTNxqAljDM=;
+	b=LPttxcexn+oaDeFgkWoAO0WDpImIBkeUzYnlP/fWz8BA+vHb6j/2ugl//byfEYJb4JSIs6
+	DgSkSeFCio+Cti3XrG+HJe3khQRopbUduuRplWxzmdPPAE+H1MbWu9nzTMBFUP5xWgZqBG
+	PZIJz/H92OODJQSHecGxXb6WVxx9YwWLI3n/TEDOXqPiBOYBffbdddnavf8hifaDSsqzTv
+	be2bIfqYmLHfVZrhjPnXRmX7kLRDAlArdDW3crTok2ine0xEyqZlfyKCm4+VPAkGkQQXuZ
+	ecNoZ2Va04cH8idKk0uYWZdHN1b88546HTlutS+NzS9ZSvwwRt8rViRmxLsDbw==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 13 Apr 2026 10:04:27 +0200
+Message-Id: <DHRVDETB559R.1J1MUGSZ0VVEX@bootlin.com>
+Subject: Re: [PATCH v2] clk: eyeq: fix memory leak in eqc_auxdev_create()
+ error path
+Cc: <stable@vger.kernel.org>
+To: "Guangshuo Li" <lgs201920130244@gmail.com>, "Vladimir Kondratiev"
+ <vladimir.kondratiev@mobileye.com>, "Gregory CLEMENT"
+ <gregory.clement@bootlin.com>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>,
+ <linux-mips@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20260412124247.2494971-1-lgs201920130244@gmail.com>
+In-Reply-To: <20260412124247.2494971-1-lgs201920130244@gmail.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-From: Song Chen <chensong_2000@189.cn>
+Hello Guangshuo,
 
-This patchset addresses a long-standing tight coupling between the
-module loader and two of its key consumers: ftrace and livepatch.
+Subject is:
 
-Background:
+> Subject: [PATCH v2] clk: eyeq: fix memory leak in eqc_auxdev_create()
+>          error path
 
-The module loader currently hard-codes direct calls to
-ftrace_module_enable(), klp_module_coming(), klp_module_going() and
-ftrace_release_mod() inside prepare_coming_module() and the module
-unload path. This hard-coding was necessary because the module notifier
-chain could not guarantee the strict call ordering that ftrace and
-livepatch require:
+I cannot find a public V1?
+https://lore.kernel.org/lkml/?q=3Ds%3Aeyeq+f%3AGuangshuo
 
-  During MODULE_STATE_COMING, ftrace must run before livepatch, so
-  that per-module function records are ready before livepatch registers
-  its ftrace hooks.
+On Sun Apr 12, 2026 at 2:42 PM CEST, Guangshuo Li wrote:
+> eqc_auxdev_create() allocates an auxiliary_device with kzalloc() before
+> calling auxiliary_device_init().
+>
+> When auxiliary_device_init() returns an error, the function exits
+> without freeing adev. Since the release callback is only expected to
+> handle cleanup after successful initialization, adev should be freed
+> explicitly in this path.
+>
+> Add the missing kfree(adev) before returning from the
+> auxiliary_device_init() error path.
+>
+> Fixes: 25d904946a0b ("clk: eyeq: add driver")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
 
-  During MODULE_STATE_GOING, livepatch must run before ftrace, so that
-  livepatch removes its hooks before ftrace releases those records.
+I have a guess this is LLM generated?
+Are you missing the Assisted-by trailer?
+https://docs.kernel.org/process/coding-assistants.html#attribution
 
-This symmetric setup/teardown ordering could not be expressed through
-the notifier chain because the chain only supported forward (descending
-priority) traversal. Without reverse traversal, it was impossible to
-guarantee that the GOING order would be the strict inverse of the
-COMING order using a single priority value per notifier.
+The patch could be in theory useful.
+In practice however, it's a different story.
 
-Patch 1 - notifier: replace single-linked list with double-linked list.
-Patch 2 - ftrace/klp: decouple from module loader using notifier
-priority.
+ - Comit message says "Since the release callback is only expected to
+   handle cleanup after successful initialization, adev should be freed
+   explicitly in this path".
 
-headsup: somehow the smtp of my mailbox doesn't work very well lately, 
-if i receive return letter, i have to resend, sorry in advance.
+   Two things are wrong here:
 
-Song Chen (2):
-  kernel/notifier: replace single-linked list with double-linked list
-    for reverse traversal
-  kernel/module: Decouple klp and ftrace from load_module
+   1. the driver cannot be removed so there is no "release
+      callback" (guessing you mean driver remove?).
 
- drivers/acpi/sleep.c      |   1 -
- drivers/clk/clk.c         |   2 +-
- drivers/cpufreq/cpufreq.c |   2 +-
- drivers/md/dm-integrity.c |   1 -
- drivers/md/md.c           |   1 -
- include/linux/module.h    |   8 ++
- include/linux/notifier.h  |  26 ++---
- kernel/debug/debug_core.c |   1 -
- kernel/livepatch/core.c   |  29 ++++-
- kernel/module/main.c      |  34 +++---
- kernel/notifier.c         | 219 ++++++++++++++++++++++++++++++++------
- kernel/trace/ftrace.c     |  38 +++++++
- net/ipv4/nexthop.c        |   2 +-
- 13 files changed, 290 insertions(+), 74 deletions(-)
+   2. this text seems to imply eqc_auxdev_create() makes probe fail,
+      which it doesn't. It only generates a warning and keeps probing.
 
--- 
-2.43.0
+ - This driver cannot be built as module (will always be probed at boot)
+   and cannot be removed. So the "leak" we are talking about is
+   2 * sizeof(struct auxiliary_device)
+
+   But in no sensible case it can occur. The platforms that use this
+   driver probably cannot boot if our auxiliary drivers aren't present.
+   So if eqc_auxdev_create() fails then the warning is here to be nice
+   but you probably will fail booting afterwards.
+
+   My guess is: you might succeed booting without the reset driver but
+   if you fail the pinctrl one then you won't have a UART. Anyway in no
+   world do you have a sensible EyeQ kernel config that leads to
+   clk-eyeq probing but not its auxdevs.
+
+ - If you fix this then there are other resources cleanup to "fix".
+
+    - ioremap() in eqc_probe()
+    - kzalloc of cells in eqc_probe()
+    - probably others
+
+   But, same as above, "fixing" those will only be useful in kernels
+   that will panic in a few milliseconds.
+
+Thanks,
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
