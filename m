@@ -1,62 +1,60 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBAD03C8703
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259003C7E0C
 	for <linux-clk@vger.kernel.org>; Mon, 13 Apr 2026 12:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776084562; cv=none; b=JedneslPuMFh5yGsYxj+ksQBizwNKt7op5hS2IwD1ntE5yf2VFN4TVgjMwbXZ7kqVfZ2OKAtasW5htx9JbzFmTnH00jKxNEXaquxdSuMORpj3O49LTEXZ8Gv8jatbKd9iCD7eCntyvc7mc1JN8lJin8IF5fx7sPrBPpRDTa4vz4=
+	t=1776084562; cv=none; b=SS8Mky7mHPiu7JCbj27GFIVXgjRSnpNlPLlVRcEjCidvQo2hX/g7KZNtVMlXheS//+Yvs8RQm5JH3689t8VfWfQ2Gd+DOFEe9G5d7yhrk8B3IGCTBvawluiGh1VanjS9YjD4cZNCrPEWE2eg818TU5UR2ZLUrL6fzabLUlz9KfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1776084562; c=relaxed/simple;
-	bh=kBqnvQDwdiPZ+uQ0CawA0daWE+Ez/OQGt5TdVXg//xk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=k7PClpLuoJIfmwpQAwXNWB3cbcf+f494h6wTx7h8GIVCcP7yxbEbw4b2LszsH/5xHTc/tHWWZAwEqk9jnomGG0lYx7vEuvEfd45oyIW53CkjJSFjFEWMKf97TH9yBFBH5Tr1hsKsFopUxb3lclDKJ1UXIU2NKJriFj9+eRYxSxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JcvT/ODw; arc=none smtp.client-ip=209.85.221.42
+	bh=VwbgQIaq3OLeFJ6TuVKcR/q4kXymk0heOmmzGHImahQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p+vEpPvMKcH+wvKn4OquQ9ABz69uVhpmrrm4TyO+YV8wW1ZSWNwfS0/6dOls70GbJk94QP63FFYVcnTxdvvyfmZyS2UfnkX6o60PpndD8gUSg0Lib7/U6wY3k/IvJTNQ1oZunIbWg4eekB5UfgS3qmR0+LDELDRcwCuDVnfZ0sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YLRjUbPS; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JcvT/ODw"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-43cfd1f9fd1so2816606f8f.3
-        for <linux-clk@vger.kernel.org>; Mon, 13 Apr 2026 05:49:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YLRjUbPS"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-43cf906b007so2661472f8f.0
+        for <linux-clk@vger.kernel.org>; Mon, 13 Apr 2026 05:49:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1776084559; x=1776689359; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/iZLzX9bqF3lkIILNvVjrN7/XoHKLWrdf/ip5ggw2bg=;
-        b=JcvT/ODwioXnS7kcUN4oOz85buJqkdCMr6iwXK9kFiRh8s6fbWsGCkOUG6m9KV9mp3
-         lRNijl4zU6ozn3Rvu6HlY6XfIT80mqdZX0NNj2VPHgCVMRy93W/AR5SBdts8I8EFJw0L
-         xRolZnEsJbk/AfK+wyv8jr2LfXjIVJdBMTFH1xdv7zb6O0i97V5yRTgezlW/Qc6UPhcU
-         Lic8YKBn+vxJF12FmBJ1Aipr8QgQYOngI+Orn9wCiyrmmCijlMgzHUlt7P/pttWqAzcS
-         pjPAaW/qM1ONrLt7BvnJhRhn2e6X/8deKoat7VPHdlyU3vOtIq0G/25BCQox2UArKfXn
-         SdZw==
+        d=gmail.com; s=20251104; t=1776084558; x=1776689358; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DSP2hPPChRRMgpsEd3cMQjakL+sjPbtFmawJfDI4eN8=;
+        b=YLRjUbPSe5dJMfqGZ5tpyR9f439RU5Ep/0SNL2adjyDKXVDhWUYxECN7r7H6ETVz93
+         l1XMYFPcDB/An/xr00Tm6w7QcPp/fkRu2iEdXevP80oZPWlxIrOt5SnZ7De0bg5rttsv
+         NzoVBcio6qooukfJVDO++IQHqQ+UNvPmLb+tE3ZKK60/w1pJIpXVRHx/83jrV2qEXe7u
+         lSdQ7+pNK+gWPutZvhW9ItvtRMolY8ifrBslC+HeURQzpAIOsYpXjSCa5CFR2uJckxe5
+         LAdC+NSjUKoJplULjf10/9Hmz2brUa0FVKMPm7yGIUuxhi921vpY+5iJiK6l5ABBDifj
+         F1SA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776084559; x=1776689359;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=/iZLzX9bqF3lkIILNvVjrN7/XoHKLWrdf/ip5ggw2bg=;
-        b=m86L731i/ZSXM5SYJHprVieLxXugAWT9yz6oEUpgFkYnU4txdtM4st5i03jrqcHcl2
-         W31XCHBZ6J5HZ3W5ayvGCxIrWoZrcQB5iHR26TfKSXp2KGu8L1AhZBksTOnuVuMfOtzo
-         bAgCT+OeC4dNkBpqg/Hf0uoz+5JAiW5z/DNYjkuyWbPLOTq8Aj48AVNyX9jIp+ogoqK2
-         m9vG8fVcnEJR6kAqTWcxOZddR/910IoWY8x0u2UjJ+NOBM8akA6SopJZU4xUhqelvn1z
-         Fhem6heAXLFEaTTqscAF3CTYbwRD/f2aR20l4x+vPv8lmdj06Ba/smundfUbmhwTaknc
-         kWPA==
-X-Forwarded-Encrypted: i=1; AFNElJ9LpER5Wm13ngqBsR97AxvhLkVL8PRrvW4otQ0QZdkecsWUNqjfRoHBXqG5a3Fabu7swbeWNq+8Zss=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLBHC5cny2NYB8nckpniU/tzBPiMzHMMipsaRXXRhb+41Ykk4q
-	O14mduZcc5JavFBtE0gbHetOzCz0AXhhttIkuW4hAKuxMrojqS5XNas9
-X-Gm-Gg: AeBDiesAUUFFXmH7mEfvnAkY4n/m3B0Dl7QgiH2+YQck+xYIGdr1yn/FhRxQr3rjy0x
-	6E/b6ZZwW1TGyHP0b0s5tQ+jcJEmnd9r/i+mRcFXOjhlNF1uI0YlnKJNOoIImiaN/qqAthjcAq5
-	ZHG0gSjHHj4dh7ig9s6r3Xqs9QXr0QqY16LyrnyCbb/7c/N7UAtPYjmsvOVBS2YY3AAQpQCFKxu
-	uR1CcmtHVYa9cZPWggSR+CaynRVYGMXcbSX3zcKtA15cauZLllUti5M3je0f0LuvkLGKYzw7s56
-	fz9P0T7vcImWYC2kX3FJWxFWYk6xMCIybNrIsQYf+SD8F61Euelum65UNlQ9x6kawLw6PKIx0Yw
-	Tna/l1JUurLZ9KiWi+AeT941sRhZOLJYcrMKVSvdY/BOXFHHDLrQ/Id6hW1ChQ0xy6RNkzasSaa
-	kOcHxJMIX0LHK3wGlLdcbmcvbU5qah3kQBBAvB63+/E8H4LlXLXHKzEWSPILgswhBIwl58jfk++
-	KTs3a9Rrp303e9045VuKR46tJr8jC4Sekpvu6YrsWuPFKV5eBQoxITQhQ==
-X-Received: by 2002:a05:6000:400e:b0:43d:1c39:26fd with SMTP id ffacd0b85a97d-43d642dc79bmr19277103f8f.43.1776084559020;
-        Mon, 13 Apr 2026 05:49:19 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1776084558; x=1776689358;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DSP2hPPChRRMgpsEd3cMQjakL+sjPbtFmawJfDI4eN8=;
+        b=bvNMM3DBARFj/u01+8OPPOMPIhYTQwOun/8zl6lOhJKsoaYYeXc2174iZ7H+4+Aj84
+         eP2QCAspiotpZ9hDFAw2p+tMD8CqIDiydGg46qy0xpNvFc2uaIjGJUs90VLtXB4IOKhL
+         zn4oEGCzB8ciMKTjY+n+JcbuhZGux3MerNjoGUU0VKoV1K77lupsvx0EWXkqfpsBzY1z
+         GDfOoWu6GkAcC8WHz1ow71vmwapk2cu4sq6JEg+PYAJMGWQz9yakE9A10/yjdTYbHdAg
+         sviWrwu/e0SDdnLk12wFWb4kA1R1GNoHXLAXiwgmd6BB0CK/VmeTQ9Gr3pwV27m7wcCW
+         MVgA==
+X-Forwarded-Encrypted: i=1; AFNElJ/6JMVmDoSG2mtG8xmxX8IUknq030o3XThT1Es2kU7j/U8oxSij8OpjOrd5aObgIL8A4IRDx3rup9Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXFpFvEjTmO1Xy+M5Gq15ixfimFZKilXcFmycMJthNTohcKKor
+	PUzg5U9HmSy5hIVqh61nKtDivL3ljuqT2kbeNvBCgslcRTCAQfJoAR/9
+X-Gm-Gg: AeBDiesYGXy/zEzug7euJhACQBvFbydXlAUBkIg9xd8i2z9Zgqj560f8vBmZr8XLKgj
+	YC3He1DkNmXL9xA6xK837agIeLGrm/EHUhdxs3bPZV6UXAzmMhtd4/tNofjL4HAVP7CwD/CxceU
+	wXKLaA916BvPJ2BNDsALlr3l2IqaeEg6OvvjQCDAqE2pkNUTfClzLmaMV7CQ1G8TO7gayKdi1qE
+	jovK1D+ALEo1gYRH+yEnl5ruKiTRv3ynEw3qZta7cQt/1At5KGq3FiVEknE0DemKJVx2RxbAv9Y
+	HMb4V/Teyp/94INQCZDpyvepwopelN2G/PdWaqAbaTgukdlKCpILxOvnd0m/7OmSonrYbPR+qyg
+	yoFci/rjZ/v6pWe46zUswoxdq5tPUzFVftjrkFlID/gqGNEt962ozQLwPvYN0lbBoVGYd7F1HC+
+	fD95LvUE+XAeYVSVkn7virA762a6JwozBZ9bV88aXljsI5Zjp0TCBoNqgmhu2vObIHZ7lcvYkxs
+	Z72GF6LEkJNcKYEwnY9YGOvnX+pJ/nj3J48tunslx3NqNk=
+X-Received: by 2002:a05:6000:26cf:b0:43b:4212:2ee8 with SMTP id ffacd0b85a97d-43d642b9daamr18907213f8f.24.1776084558434;
+        Mon, 13 Apr 2026 05:49:18 -0700 (PDT)
 Received: from iku.example.org ([2a06:5906:61b:2d00:8060:3087:2ea2:f494])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d63e50015sm34634318f8f.27.2026.04.13.05.49.18
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d63e50015sm34634318f8f.27.2026.04.13.05.49.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Mon, 13 Apr 2026 05:49:18 -0700 (PDT)
 From: Prabhakar <prabhakar.csengg@gmail.com>
@@ -71,12 +69,10 @@ Cc: linux-kernel@vger.kernel.org,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 1/2] clk: divider: Fix clk_divider_bestdiv() returning min rate for large rate requests
-Date: Mon, 13 Apr 2026 13:49:11 +0100
-Message-ID: <20260413124912.3260571-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 0/2] Fix clk_divider_bestdiv() to get max clk rate supported and add some kunit test suites
+Date: Mon, 13 Apr 2026 13:49:10 +0100
+Message-ID: <20260413124912.3260571-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260413124912.3260571-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20260413124912.3260571-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -87,98 +83,70 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-clk_divider_bestdiv() clamps maxdiv using:
+Hi all,
 
-    maxdiv = min(ULONG_MAX / rate, maxdiv);
+This patch series includes two patches. The first patch fixes the
+clk_divider_bestdiv() function in clk-divider driver to return the
+maximum clock rate supported by the divider when the requested rate
+is larger than the parent clock rate. The second patch adds some
+kunit test suites for clk-divider driver to verify the fix.
 
-to avoid overflow in rate * i. However, requests like
-clk_round_rate(clk, ULONG_MAX), which are used to determine the maximum
-supported rate of a clock, result in maxdiv being clamped to 1. If no
-valid divider of 1 exists in the table the loop is never entered and
-bestdiv falls back to the maximum divider with the minimum parent rate,
-causing clk_round_rate(clk, ULONG_MAX) to incorrectly return the minimum
-supported rate instead of the maximum.
+kunit test case logs:
+case #1 without the fix:
+------------------------
+[   44.288459] KTAP version 1
+[   44.291655] 1..1
+[   44.293844]     KTAP version 1
+[   44.297411]     # Subtest: clk_divider_bestdiv
+[   44.302575]     # module: clk_divider_test
+[   44.302583]     1..2
+[   44.310280]     # clk_divider_bestdiv_ulong_max_returns_max_rate: EXPECTATION FAILED at drivers/clk/clk-divider_test.c:71
+[   44.310280]     Expected rate == 1000000000UL / 2, but
+[   44.310280]         rate == 125000000 (0x7735940)
+[   44.310280]         1000000000UL / 2 == 500000000 (0x1dcd6500)
+[   44.310705]     not ok 1 clk_divider_bestdiv_ulong_max_returns_max_rate
+[   44.341802]     # clk_divider_bestdiv_mux_ulong_max_returns_max_rate: EXPECTATION FAILED at drivers/clk/clk-divider_test.c:134
+[   44.341802]     Expected rate == (4 * 1000000000UL) / 2, but
+[   44.341802]         rate == 0 (0x0)
+[   44.341802]         (4 * 1000000000UL) / 2 == 2000000000 (0x77359400)
+[   44.349940]     not ok 2 clk_divider_bestdiv_mux_ulong_max_returns_max_rate
+[   44.381047] # clk_divider_bestdiv: pass:0 fail:2 skip:0 total:2
+[   44.388922] # Totals: pass:0 fail:2 skip:0 total:2
+[   44.395783] not ok 1 clk_divider_bestdiv
 
-Fix this by removing the pre-loop maxdiv clamping and replacing the
-unprotected rate * i multiplication with check_mul_overflow(). Guard
-the exact-match short-circuit with !overflow to prevent a clamped
-target_parent_rate of ULONG_MAX from falsely matching parent_rate_saved
-and causing premature loop exit. Break out of the loop after evaluating
-the first overflowing divider since clk_hw_round_rate(parent, ULONG_MAX)
-returns a constant for all subsequent iterations, meaning no better
-candidate can be found, and continuing would cause exponential recursive
-calls in chained divider clocks.
+case #2 with the fix:
+---------------------
+[   22.077769] KTAP version 1
+[   22.080931] 1..1
+[   22.083168]     KTAP version 1
+[   22.086739]     # Subtest: clk_divider_bestdiv
+[   22.091826]     # module: clk_divider_test
+[   22.091835]     1..2
+[   22.099869]     ok 1 clk_divider_bestdiv_ulong_max_returns_max_rate
+[   22.100612]     ok 2 clk_divider_bestdiv_mux_ulong_max_returns_max_rate
+[   22.107902] # clk_divider_bestdiv: pass:2 fail:0 skip:0 total:2
+[   22.115589] # Totals: pass:2 fail:0 skip:0 total:2
+[   22.122473] ok 1 clk_divider_bestdiv
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/clk/clk-divider.c | 25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+v1->v2:
+- Updated the patch#1 fixing review comments from Sashiko
+- Added a new patch#2 to add some kunit test suites for clk-divider driver
 
-diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-index 45e7ebde4a8b..9a6a2ad6f397 100644
---- a/drivers/clk/clk-divider.c
-+++ b/drivers/clk/clk-divider.c
-@@ -15,6 +15,7 @@
- #include <linux/err.h>
- #include <linux/string.h>
- #include <linux/log2.h>
-+#include <linux/overflow.h>
- 
- /*
-  * DOC: basic adjustable divider clock that cannot gate
-@@ -301,6 +302,7 @@ static int clk_divider_bestdiv(struct clk_hw *hw, struct clk_hw *parent,
- 	int i, bestdiv = 0;
- 	unsigned long parent_rate, best = 0, now, maxdiv;
- 	unsigned long parent_rate_saved = *best_parent_rate;
-+	unsigned long target_parent_rate;
- 
- 	if (!rate)
- 		rate = 1;
-@@ -315,15 +317,11 @@ static int clk_divider_bestdiv(struct clk_hw *hw, struct clk_hw *parent,
- 		return bestdiv;
- 	}
- 
--	/*
--	 * The maximum divider we can use without overflowing
--	 * unsigned long in rate * i below
--	 */
--	maxdiv = min(ULONG_MAX / rate, maxdiv);
--
- 	for (i = _next_div(table, 0, flags); i <= maxdiv;
- 					     i = _next_div(table, i, flags)) {
--		if (rate * i == parent_rate_saved) {
-+		bool overflow = check_mul_overflow(rate, (unsigned long)i, &target_parent_rate);
-+
-+		if (!overflow && target_parent_rate == parent_rate_saved) {
- 			/*
- 			 * It's the most ideal case if the requested rate can be
- 			 * divided from parent clock without needing to change
-@@ -332,13 +330,24 @@ static int clk_divider_bestdiv(struct clk_hw *hw, struct clk_hw *parent,
- 			*best_parent_rate = parent_rate_saved;
- 			return i;
- 		}
--		parent_rate = clk_hw_round_rate(parent, rate * i);
-+		/*
-+		 * Clamp target_parent_rate to ULONG_MAX on overflow. The true
-+		 * required parent rate exceeds what can be represented, so ask
-+		 * the parent for the highest rate it can produce. There is no
-+		 * point continuing the loop past this since larger dividers
-+		 * only move further from the requested rate.
-+		 */
-+		if (overflow)
-+			target_parent_rate = ULONG_MAX;
-+		parent_rate = clk_hw_round_rate(parent, target_parent_rate);
- 		now = DIV_ROUND_UP_ULL((u64)parent_rate, i);
- 		if (_is_best_div(rate, now, best, flags)) {
- 			bestdiv = i;
- 			best = now;
- 			*best_parent_rate = parent_rate;
- 		}
-+		if (overflow)
-+			break;
- 	}
- 
- 	if (!bestdiv) {
+Cheers,
+Prabhakar
+
+Lad Prabhakar (2):
+  clk: divider: Fix clk_divider_bestdiv() returning min rate for large
+    rate requests
+  clk: divider: Add some kunit test suites
+
+ drivers/clk/Kconfig            |   7 ++
+ drivers/clk/Makefile           |   1 +
+ drivers/clk/clk-divider.c      |  25 ++++--
+ drivers/clk/clk-divider_test.c | 151 +++++++++++++++++++++++++++++++++
+ 4 files changed, 176 insertions(+), 8 deletions(-)
+ create mode 100644 drivers/clk/clk-divider_test.c
+
 -- 
 2.53.0
 
