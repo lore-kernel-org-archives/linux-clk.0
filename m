@@ -1,82 +1,80 @@
-Received: from cornsilk.maple.relay.mailchannels.net (cornsilk.maple.relay.mailchannels.net [23.83.214.40])
+Received: from poodle.tulip.relay.mailchannels.net (poodle.tulip.relay.mailchannels.net [23.83.218.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4773264FD;
-	Mon, 13 Apr 2026 18:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.214.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A5B38F64E;
+	Mon, 13 Apr 2026 18:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.218.249
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776105197; cv=pass; b=nvncXJrSaOE3zpU/SOSC5zVcH822TM9B+WyLLCYFVx5x18qZBtUAKQl25+Yy5KcRUirVGZNJm+Ratl2xU5UPLttARLQu118vwkl8b74qDssotFFkDmTBOOWI0wrjQYPhFH6Eu3bLzQHzM9mambUHpGablgtNYoP2lxy7gyy5uEs=
+	t=1776105645; cv=pass; b=aFJ4pt3yok52fiUy9lBQA/8hLy4uD/HatA2YF7xqiFtHz7zs7+b/OrdMLcrFNb6Mzth5Cpky1Vpjsp+re9namhRrIL+2Ccrrugybi3c+XRTVN3dan01G7tHWsSNSFHAj8bR907hpyspdL7i3UuDhGF3iDlMciF4T9t/4Vyjlxbk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776105197; c=relaxed/simple;
-	bh=Ww2L7byaEud2wlOlPPC0VHBxefu7ArzActQ1xzQ+Xxo=;
-	h=From:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc:Date; b=TdLindtf8urLECRnp05BKqIdVa6SRxOUwOhydc/T6LFWcdVlyfayPLA1AwoO8BF4vN55MkEPVJ6n3XT7GMIm8OUIRZvgaxQ3soBGt02eQ6gSQBDGxg60t5T2E7ygB+t37Vpv9t774wXdr2aP2ftzfkHv81hdcOmnjXJBdUKT1V4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com; spf=pass smtp.mailfrom=smankusors.com; dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b=bk0ozGkX; arc=pass smtp.client-ip=23.83.214.40
+	s=arc-20240116; t=1776105645; c=relaxed/simple;
+	bh=52sN7cxj/7Bd4nf5gMwyPBNngTDrvT+m5lyiAdubMvU=;
+	h=From:Subject:Message-Id:MIME-Version:Content-Type:To:Cc:Date; b=sU39YJiu/0HD/KxuJexvgCVtOuBfZw3u4cm8gtboO+gDG0l7GG8xDNS7prlRapvoVr0EwY+zJhcW8m43xAtfY1glN+Bu3YZxwQ0Jlb249/BM4fWD/nHLVZpZktyl2gItWRqNFQm8vAdd6ocVYoyz0pu67WpYC2+JnpB4Z2GQu3c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com; spf=pass smtp.mailfrom=smankusors.com; dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b=Yinr1tDX; arc=pass smtp.client-ip=23.83.218.249
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smankusors.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b="bk0ozGkX"
+	dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b="Yinr1tDX"
 X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
 Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 7CFF21832C0;
-	Mon, 13 Apr 2026 18:33:09 +0000 (UTC)
-Received: from fr-int-smtpout18.hostinger.io (100-100-158-21.trex-nlb.outbound.svc.cluster.local [100.100.158.21])
+	by relay.mailchannels.net (Postfix) with ESMTP id 55285443094;
+	Mon, 13 Apr 2026 18:33:00 +0000 (UTC)
+Received: from fr-int-smtpout18.hostinger.io (trex-green-5.trex.outbound.svc.cluster.local [100.103.3.248])
 	(Authenticated sender: hostingeremail)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 3A7F1182E7B;
-	Mon, 13 Apr 2026 18:33:06 +0000 (UTC)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 566C6442DA1;
+	Mon, 13 Apr 2026 18:32:55 +0000 (UTC)
 ARC-Seal: i=1; a=rsa-sha256; d=mailchannels.net; s=arc-2022; cv=none;
-	t=1776105188;
-	b=3jPXJFURflBqKFGtKsX4mYhrmWivweLisoB8Q0Zca5jPbkyCS31oFuAknbn/on5AdoEWfI
-	Xa3YRQ/fNaMdInT9w0YjMMwLvPKbXTQHruxeLXBoKy0e+vvcI78ENWn7bs1NW0qJu9ytfM
-	bpy7CS7FFZjtoTRnGVhXSL8hqIL5JbbH+ciTCQhtiTwQnkmeyVYqhgY+vWOn3g1iNU2EoZ
-	/FeSc/HnWDfMspFdyR0frgzJ4//Rh0GLxY2vQQ8g40LsBodCZmo/ws55NMMStlknpNxDp4
-	9RtnDVIednbfaJO10qniZ0TkWwgGOodmaPsxT5JgBL/t2cuD03BK4NuMtDoSKg==
+	t=1776105178;
+	b=1War/9gLfY9ckwAul+BHzYyNjuXwl0H5NtWyyKgIJDC7YEE6l/v3JgSV0dmCfXgRyZICp5
+	0znDaSJEUWVCtGGN9q0606Dk1F+5hDYwRLr+K7eeaxTcuTRbvV5oKVo/iCtcBGmzI5UljI
+	SV8vwuhSumiramJKY/ypdUVIMU6A4rt0mzIGZX00bHZHVMbceRZowh7zffenkyVUCHx3J8
+	O8a+SaACZzAY5tOTdJOvPvdfTp9CeqE/mn3VbMeScqqy8FgyzuGt1zeM+7xSclFTCivS6Y
+	B1D0AT3Zj/AnZva3PZdSZs95kqLENiAXVuhXHmfydke5EwnVTA6g+ohw8zmE0Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
  d=mailchannels.net;
-	s=arc-2022; t=1776105188;
+	s=arc-2022; t=1776105178;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=hLOrt7GWzqN7L6gtEIDGfyO7wn1+PE+yeSL7v55/rCQ=;
-	b=9POWisY9OA9yDGgz6ifFCErpFW7NmxTzVStfZVf4ZJrb2dYuo6h/c0+uTZnWk010XCB3Rl
-	NfZ4BZPzLA6B4OWdy1i4K6CzjRbBg4vuTXgstIJXrz9cow4iQDlBVHcvY96g4RIGZcVqhJ
-	CACMBaUFZnrSHBz0Ytz+mbYnQrwxFp2F7nKnWjo22UICmCilC8J/eCqzst55fSkkvXkGUa
-	EfpDSY7riBlUFUQTw7OYaTPRLAZeviRwtdQMlVJ7vWCnn56tCImD6voY/ClmGHmgNT8mYj
-	FicPxaWkqlbYdj1aMDFM5g+UWZvj6ZivN0NJ3D4eyKZsNjO7jh7ankFTsvFLcg==
+	 content-transfer-encoding:content-transfer-encoding:dkim-signature;
+	bh=5VmPqTvLOfUwbsB9JR/cj2dmOe8UgYkfqn/CCYd62ps=;
+	b=pdSZJS/w3l46x/Daoe2zQ93hyU247wKZ7ejA3cZX7sQMdHJ/TqmRGuDYITkZdFH5hLcPLX
+	KUeHs7IJ8GpGbhi8F5VOpPuw5wW/ti9Uyno37ohbkfyU+9ynbkuWhSvuvvQUbkntqRqnRX
+	YuGsjLCFyTMqSYyPD5lFPAseELMFZExDlFSRR7hwJxwbZwPvMvU9Dn2T0LPuom3LmKbuC6
+	2QqTP3Tlyi/jRr7Z2sC/up8qmFM0tKz39xN2hvRqVyXzJS0IjD4n6NnTUtz/4JKrkLAPwA
+	dIkROn9bUUu8WKNhcEaHOwmZWpqbay/pM4qEmCz+SwNsfM7hPz4GBqKDQy5Isg==
 ARC-Authentication-Results: i=1;
-	rspamd-7d86dcc447-cfr64;
+	rspamd-7d86dcc447-brlgt;
 	auth=pass smtp.auth=hostingeremail smtp.mailfrom=linux@smankusors.com
 X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
 X-MC-Relay: Neutral
 X-MailChannels-SenderId: hostingeremail|x-authuser|linux@smankusors.com
 X-MailChannels-Auth-Id: hostingeremail
-X-Lettuce-Reaction: 0705a1b81426f961_1776105189319_2879898090
-X-MC-Loop-Signature: 1776105189319:1944335822
-X-MC-Ingress-Time: 1776105189318
+X-Inform-Vacuous: 5ab0c4dc75ed8708_1776105180110_2651789384
+X-MC-Loop-Signature: 1776105180110:4023615666
+X-MC-Ingress-Time: 1776105180110
 Received: from fr-int-smtpout18.hostinger.io (fr-int-smtpout18.hostinger.io
  [148.222.54.9])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.100.158.21 (trex/7.1.5);
-	Mon, 13 Apr 2026 18:33:09 +0000
+	by 100.103.3.248 (trex/7.1.5);
+	Mon, 13 Apr 2026 18:33:00 +0000
 Received: from [172.17.0.2] (unknown [180.247.251.74])
 	(Authenticated sender: linux@smankusors.com)
-	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4fvbcs2PS3z1xn8;
-	Mon, 13 Apr 2026 18:33:01 +0000 (UTC)
+	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4fvbcf14N3z1xvd;
+	Mon, 13 Apr 2026 18:32:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smankusors.com;
-	s=hostingermail-a; t=1776105184;
+	s=hostingermail-a; t=1776105173;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hLOrt7GWzqN7L6gtEIDGfyO7wn1+PE+yeSL7v55/rCQ=;
-	b=bk0ozGkXwEQDH/v6ajiPvL9YjzGSd+hmrXfEc8IZTSuOkazqwTjyqUbbms7Ib2BIa9jXsN
-	hay2cvhYXjdUFJ6m3UMSGxNoTqpdg+4YPSGbt//4fCPHEWOZ0Kfq3CCk+GnViE2/eUsnrd
-	iQN03C1fI+ykcUu5DVShSAWwpeUD3eKj/oceGYyt55gZj6F+1rJ6w79hlY2QLV+vwLmFTk
-	OcCgbUCfTAJODLB/R9ZP/xlYF/9Equ8QN5YEAXHxhrO35uHs1ROaRijdu3DWz/WIAIXJai
-	r6xh17CLPzB1NMNDQ2Z9gfNaLb0Aq6rJPnM8qtqSYz80fG0niE6fEs94P1fFYA==
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=5VmPqTvLOfUwbsB9JR/cj2dmOe8UgYkfqn/CCYd62ps=;
+	b=Yinr1tDXrBCda5iPxXoTm5zo9f/kxFu100uO1w60Arm9cnsOfELLOcYuvrNoEwkdEaDKSR
+	Tgpjf2Mb1V7dYYsCkxPpZ+2+4XnRa3q5XlF3F4CcqrxQ0bt5XoSh5V2+nYSmlUhLerz8cL
+	YIO0JgBrW7BotryFXGYtaNvVF02jN+FZQt8b2T0lApQB+rOqRypxoaH6Rru6NNXiXEkOA9
+	5NuUq1NKeISYUqU7NQJlOJJt5TN0knzMvKvzTHw+TRCWaN+qaXiUP48eaIViLLeA1ghieC
+	DVIzLpxxlK5BvgLO775jPJ7ILPfOBm1DyrJDIfQwo5Y2UnIK7Ru91LcyJwi5Mw==
 From: Antony Kurniawan Soemardi <linux@smankusors.com>
-Subject: [PATCH 03/10] mfd: qcom_rpm: add msm8960 QDSS clock resource
+Subject: [PATCH 00/10] ARM: qcom: msm8960: enable WCNSS (Bluetooth & Wi-Fi)
+Message-Id: <20260414-msm8960-wifi-v1-0-01c081e54610@smankusors.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -85,9 +83,10 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260414-msm8960-wifi-v1-3-01c081e54610@smankusors.com>
-References: <20260414-msm8960-wifi-v1-0-01c081e54610@smankusors.com>
-In-Reply-To: <20260414-msm8960-wifi-v1-0-01c081e54610@smankusors.com>
+X-B4-Tracking: v=1; b=H4sIACY23WkC/x3MQQ5AQAxA0atI15rQ0OAqYsEouhhkmiCRubuJ5
+ Vv8/4JJUDHosheCXGp67AllnoHbxn0V1DkZqKC6JGL05puWC7x1UZxE3NyyY64YUnIGWfT5d/0
+ Q4wdy1J4oXgAAAA==
+X-Change-ID: 20251226-msm8960-wifi-beecd96c6646
 To: Bjorn Andersson <andersson@kernel.org>, 
  Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -100,45 +99,74 @@ Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-msm@vger.kernel.org,
  Rudraksha Gupta <guptarud@gmail.com>, 
  Antony Kurniawan Soemardi <linux@smankusors.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1776105169; l=1108;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1776105169; l=2609;
  i=linux@smankusors.com; s=20250609; h=from:subject:message-id;
- bh=Ww2L7byaEud2wlOlPPC0VHBxefu7ArzActQ1xzQ+Xxo=;
- b=terV01MvfE3WaeCxA8rgKHdjGXWw63O128ORbbPDnYtqnkl7m5TDz+Um0GIPxvxiGZzfoT/pf
- CDFYqsOjIlHA10sZZ+KlZYFoJnIIJlRJyEULBFqU4nr+abO92yUJ35p
+ bh=52sN7cxj/7Bd4nf5gMwyPBNngTDrvT+m5lyiAdubMvU=;
+ b=ldTK2rqmxkwGe8TRHFcJ+AGxmJktLlOckn2dgPw0i8VOGS1Q3Oe8nulUmUHDGrp2k4OZE0pbf
+ oNcginx8YPbA2HNBeDPyGFX8m5MB5X8VCrTsoR/+iTXDpoLyYEJUC77
 X-Developer-Key: i=linux@smankusors.com; a=ed25519;
  pk=65wTy06fJl2/h/EJwjr704YG+yjHFhZObJBWzzK+N00=
-Date: Mon, 13 Apr 2026 18:33:01 +0000 (UTC)
-X-CM-Envelope: MS4xfB6z5m8LOp14IsAp9URsmS1NYsTtuNvLWmNZGf3ur/tL7jwNeNqej2ASdaI6Qg4zEQlcbPu20Hm2N5VJLe2AUzv2VN7RqFOfMNnjIbZpL8YX3vvaZ27W zZril+txNVFwnZzBqPPqusElnTSbyZ5iCblA61FwzdFDYWgm/NFUg5saQCnUilkbGWhDVUWmZ4i//yfhA4Ldx7SDNo/6cek6uiiJBCgVHH1DIu4SSr89Grux OGpZypvx+EesN4hDysMP4LbB2u1COj53X38B0brvHUuNHne1VqDDPmk8EDWH7wC853PmhDy5eYQ42MOk5nV1PubK8rzHiRaRDGag5xq0B5xfxFIx6MTC7xg+ wZydBYab+y1kFa6HrI1V1RFjz9LSodgBTcfNwRrhZBCbTEOjnIgdeIt38p/lt9N1VVlVApTRBOACWuzln91k4NHV/OgzTRPgXG0fBNpALqZ0SgGsU2YcCIRh H4uh7FOrzy6LVCMIobE+bqckbWHdkxyoSU3Ekjg1vzRLvMeFxBtQKF9GusXa8qjPAwnoFX1+i1HVP1PFSW7N0UkmvyOW95KMfDjjpk7+lvI2vaYLmN6jGwiD 49He1UDLRGYxDXYjvhmGBFotLWAtjSUT6O186VJq2YuqU0cx3CfpvdaKCRLZUL1rdX6KJUg8ETYAFBLONpTloMLM
-X-CM-Analysis: v=2.4 cv=GMJaEfNK c=1 sm=1 tr=0 ts=69dd36e0 a=iMBLmzX4nuXcozcv68JNPw==:117 a=iMBLmzX4nuXcozcv68JNPw==:17 a=IkcTkHD0fZMA:10 a=pGLkceISAAAA:8 a=wxLWbCv9AAAA:8 a=nJejV-BIIyzZXY0xHVoA:9 a=QEXdDO2ut3YA:10 a=QJY96suAAestDpCc5Gi9:22
+Date: Mon, 13 Apr 2026 18:32:49 +0000 (UTC)
+X-CM-Analysis: v=2.4 cv=UN2PHzfy c=1 sm=1 tr=0 ts=69dd36d5 a=iMBLmzX4nuXcozcv68JNPw==:117 a=iMBLmzX4nuXcozcv68JNPw==:17 a=IkcTkHD0fZMA:10 a=NEAV23lmAAAA:8 a=wxLWbCv9AAAA:8 a=1XrRl8l2ajt_F3_S8g0A:9 a=QEXdDO2ut3YA:10 a=QJY96suAAestDpCc5Gi9:22
+X-CM-Envelope: MS4xfOENm35fBi4cnyIyIiaBILKk8BZuKifS1T1DeSonUwk1/pgaLGxwi87AVe4eXJlArbtnNgoeE5vuh47JV+DU/PXmm1pxesoLZRYUMyS1CcNSDGHrGjrO PK8zoz+w7rxdGjjFPagx2TZZEBJi0mgc4twApQHdZmRIMo9ooeAYtyYOs6kNHK2lloV0oibATei19Y7RpEZz3hvju2xbkiP4zaHjvNnojfrWQs9U5xHW/34D NQa67CmAqYyjKVbH35TFYBwrhintUdK3DCGIWkMzyQLBP3+RHEhd/CKMw3FgSAxJuxr6z7WTE4/Dr7YMgm6oHEnvYGIKoo4Oio3W0gxJ/ILuCApAhyiw69rH kdtTmgS+WoyLL20Q8IzwhdDgd8e1MeVDd5ObKVojnocmQ7y+8b8LNLywbONYQxHUjIzcIeA7V7aUhHcSdvToP+rTzxFKUxq3eCq7+pjIbuk2UVuXFwln+KvC HApZeVW2WsSMe76uWupYhR11BLIVb0lhOXt7TZGCYBCWRobHJfsS2dn8QIFgIQX2u2j9LvjIdi76hgYh2FGUt0huDowIfABx6tpMh3L4LvcmOsuvKL+nBf51 Rw2J8ku3Q0XpNRMLx4FdvQjhW5iHS4HcbvzwXm2mnEyKzk2PUoEoJ7pyuy9RAnTdSMirvQMNWDBZ2/BJWN+cRat4
 X-AuthUser: linux@smankusors.com
 
-msm8960 uses the same clock descriptor as apq8064 but lacked the
-corresponding QDSS resource definition in its resource table. Add
-resource ID 209 to msm8960_rpm_resource_table to match apq8064's
-implementation.
+Enable the WCNSS (Riva) subsystem on MSM8960-based devices to support
+Bluetooth and Wi-Fi.
 
-Without this entry, RPM clock initialization fails on msm8960,
-preventing Bluetooth/Wi-Fi/USB from being enabled.
+Add the required device tree nodes and resources, including memory
+regions, clocks, interconnects, and communication interfaces used by
+the WCNSS firmware and drivers.
 
-Tested-by: Rudraksha Gupta <guptarud@gmail.com>
+Changes:
+- Add Riva (WCNSS) nodes: firmware memory, WCN3660 iris radio,
+  Bluetooth and Wi-Fi subdevices, and pinctrl states
+- Add SMSM and SPS nodes for coordination with the WCNSS subsystem
+- Add shared memory and hardware mutex for inter-processor communication
+- Add SCM node for secure channel manager interaction
+- Add RPM clock controller and required QDSS clock resource
+- Add bindings for SPS interrupt controller and RPM clocks
+
+Known limitations (not addressed in this series):
+The wcn36xx driver appears to misclassify 2.4 GHz networks as 5 GHz
+during hardware scanning, preventing association with 2.4 GHz networks.
+This issue has also been observed on MSM8916 and MSM8953 platforms
+using WCN3620 [1][2].
+
+Tested on:
+- Sony Xperia SP
+- Samsung Galaxy Express (SGH-I437) - secure firmware loading not yet
+  functional (separate series pending)
+
+[1] https://github.com/msm8916-mainline/linux/commit/cc4abc694fcf2c942410136bc58a61e79bf21e83
+[2] https://github.com/msm8953-mainline/linux/commit/779c9627ec0b971bf466588e64fe530cf78a414d
+
 Signed-off-by: Antony Kurniawan Soemardi <linux@smankusors.com>
 ---
- drivers/mfd/qcom_rpm.c | 1 +
- 1 file changed, 1 insertion(+)
+Antony Kurniawan Soemardi (10):
+      dt-bindings: clock: qcom,rpmcc: add msm8960 compatible
+      dt-bindings: mfd: syscon: add qcom,msm8960-sps-sic
+      mfd: qcom_rpm: add msm8960 QDSS clock resource
+      clk: qcom: clk-rpm: add msm8960 compatible
+      ARM: dts: qcom: msm8960: add RPM clock controller and fix USB clocks
+      ARM: dts: qcom: msm8960: add SCM
+      ARM: dts: qcom: msm8960: add SMEM & hwmutex
+      ARM: dts: qcom: msm8960: add SMSM & SPS
+      ARM: dts: qcom: msm8960: add Riva
+      ARM: dts: qcom: msm8960: huashan: enable Wi-Fi and Bluetooth
 
-diff --git a/drivers/mfd/qcom_rpm.c b/drivers/mfd/qcom_rpm.c
-index 27446f43e3f3af01820668d9e34c6ee3aa6c4e0b..0defb3279af1d3eab9ca2f3763c4fe50131b2e2e 100644
---- a/drivers/mfd/qcom_rpm.c
-+++ b/drivers/mfd/qcom_rpm.c
-@@ -324,6 +324,7 @@ static const struct qcom_rpm_resource msm8960_rpm_resource_table[] = {
- 	[QCOM_RPM_USB_OTG_SWITCH] =		{ 205, 119, 82, 1 },
- 	[QCOM_RPM_HDMI_SWITCH] =		{ 206, 120, 83, 1 },
- 	[QCOM_RPM_DDR_DMM] =			{ 207, 121, 84, 2 },
-+	[QCOM_RPM_QDSS_CLK] =			{ 209, ~0, 7, 1 },
- };
- 
- static const struct qcom_rpm_data msm8960_template = {
+ .../devicetree/bindings/clock/qcom,rpmcc.yaml      |   5 +-
+ Documentation/devicetree/bindings/mfd/syscon.yaml  |   2 +
+ .../boot/dts/qcom/qcom-msm8960-sony-huashan.dts    |  19 +++
+ arch/arm/boot/dts/qcom/qcom-msm8960.dtsi           | 157 ++++++++++++++++++++-
+ drivers/clk/qcom/clk-rpm.c                         |   1 +
+ drivers/mfd/qcom_rpm.c                             |   1 +
+ 6 files changed, 182 insertions(+), 3 deletions(-)
+---
+base-commit: 978e0d8216cae014f10326c9a257890cf98a6398
+change-id: 20251226-msm8960-wifi-beecd96c6646
 
--- 
-2.34.1
+Best regards,
+--
+Antony Kurniawan Soemardi <linux@smankusors.com>
 
