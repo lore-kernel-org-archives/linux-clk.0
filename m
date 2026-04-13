@@ -1,160 +1,129 @@
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C03032AAA7;
-	Mon, 13 Apr 2026 13:45:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE253DEFE4
+	for <linux-clk@vger.kernel.org>; Mon, 13 Apr 2026 14:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776087924; cv=none; b=b0D/dOkT50xAiCCN7V4BynJGLRH3jhg2bgz1hVu/i9SeMjpFXgvA6L+P8mT0S9EDpfhjfAvwoYd9DcMliyZWBQDYUKe6JFDlj7+aiTgMyrYlr86KnUB+5CGJygHw7HBfXR7wk7MyaX7WDIjtLw3jJf36RpkiGd4zCl8GeY9sjCU=
+	t=1776091017; cv=none; b=SzW2WhPYdE1/MAiBvcnND3kOP1RmQZACVH+oh6kTbl/B5Zp7qqcJxhnqLJKTgBvIyYjwOBlSAnROnvpbQrfyeXgX8T7xclLDLs9ge04ENKSZcZjU6UDDR3OqAygqdOH1icxqqnmN3/Zi/8UUWEiu1i6JpEaCgTyI2UqMB6VALac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776087924; c=relaxed/simple;
-	bh=909Q03nLYzRnV2uD3X2X/W7tkeK+QT5NOhuVd+eYU8g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FhfbsXkNDMUqbP2WUoQztqoRvbR19bDNXKCQTizLEIQZVWRLV0oDMxe8PLdM8VqSnN39AgrxIrWP7Cd8haGBg1gjJ/wxFCdgK+FpgF+gEQuqfHYN/iqsFD+/o0OPp6Jo23g1AOOE/zcqULJD5kX/wUffpHqKIcnnDkIB0QLOuvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1wCHbE-0004aH-00; Mon, 13 Apr 2026 15:45:12 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id D4B6BC0C39; Mon, 13 Apr 2026 15:44:14 +0200 (CEST)
-Date: Mon, 13 Apr 2026 15:44:14 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: =?iso-8859-1?Q?Beno=EEt?= Monin <benoit.monin@bootlin.com>
-Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
+	s=arc-20240116; t=1776091017; c=relaxed/simple;
+	bh=CQiPZwiXn4m65gWkVZkLBq+sWyMmqdp49enY7UbBcTI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l3gB6eIiiHtistWRbV7L1PNQTnEzTY920Hpy+lSZLG4qtnZyQ5TSO08tcJfBuMmjV9TK8cGKdBFCN+q4oCP/3mJqMk+ks64Juwrv2+makY6ZEp/ofRNFp9UDEE3xn7jjcRX7KmRzvHBVqhlNz1KpXubnn33RN7Lpu8FjLo4j1os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=pkA26Dz2; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pkA26Dz2"
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-3590042fa8eso3293417a91.1
+        for <linux-clk@vger.kernel.org>; Mon, 13 Apr 2026 07:36:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1776091015; x=1776695815; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HZuCdLfTzqLBe0povKqAJGPUREmpR9XWI6MvS95wZIM=;
+        b=pkA26Dz2LkVUJUFhNcw6QvzUml0nmMYLe93yOINZbfo4ah8f8fJzZqLONoPmONP3Ql
+         oC5mXPTUm6idBGU4Xp+moUK0RJRn39zc7Ww0ANa6Bx4DocuNejXWawV1lAJXbvlRzABN
+         TQ8WAR5ygL6J72L1K7y+dzI11/EyOJ8VPkT1p6D/yQ4/HmSIrGEmD63O+C8KqXUrbKpu
+         NWTK/jcjXes9alHK4c1w6j3BbW9egysCYgMjR8cRsb2EfbqxbLhjGq5y7uWkJ/+v5Evf
+         ToUUKfEHIz1bzDw8NZELT2EZszN39p8Sp+9oOyhayeyHR9vmqOTa6Xxtsfmxy67duvzL
+         hHXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776091015; x=1776695815;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HZuCdLfTzqLBe0povKqAJGPUREmpR9XWI6MvS95wZIM=;
+        b=flkHngOZsgqwt5PieSxVlBXVRkh0Ck54uY1W9V3oJeJ4VReEUI/dvUuIs0jemy2ntu
+         WY+DDBZoM1fY+Dv1dTppSamOt1apby2yORfeFYt08zmuP+Z7RBoWnA+6onwF1HmvMMTk
+         CFIb3CrgWb0P8BDvrTmNPMNwGv2SVdFVUhntLLHMoTj6MqdaeHty4m7/C9KNlN+PayRe
+         bKNOrgmnxwAUSEEUb+YceXERDf8YxbMfYELU0aqkKMcMJpULyLNZlb8XAIUhSaBuVvAa
+         0j7/EH/nhYIx+m1WwHWcJ/AjAqJhUzOT+OmubCQNJH+RrlqcOmEjQgYN1CMk9jT7dJY+
+         B2Hw==
+X-Forwarded-Encrypted: i=1; AFNElJ/QDS6Rup/ZPQ2a0FHYGkJOsURYX5lscOIeTwSNkkO2YFQTyfjOOVgjYUQ54vlZpjzMz02hWk2tF4k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymtxysrpnMXj09ABiIZ+vmElFx9JBzUfwiTx1boYV7gl3/0qL3
+	qJID7X4qp5drgUI9T3Z8Hg39e5wsuREPFTCercBekCMXSZNh2p3oWUO0oZ6UH/5ozsY=
+X-Gm-Gg: AeBDietUQHQpAQk9HqgwurGS8/XEnKc3PfOy0TWGP9uHssDffvCaC4LIDU6cJO/DXjO
+	MbhbrAPy15Xjv8rTALcU6IsDbWe/1QTjLRTjcGNP9IM9d1VHcB2uURcCpUKetDF7j6H66EWGVLz
+	ZJv5HYOXvmNe2UMYhjGae8Hx4Yyy8jMdGxC9S5W+5Cf9R4gdQal0tDO6zMvynAc+uIwqInIbpZf
+	GZZnyniRPHzmxICU5ifUaevntU3+tlesqVzc1cjmf0q4avdebIwJjM8s4rjHG6WE8ro1ykN9sQe
+	MbbXgvaW/O0TvZoQVbC3qvVHva8KFEVNhEDTrI4LWfedvnE7UI3OlOR/bM8sK210wvKFLh2uGCH
+	XNdLaq80VC9rBDr2hMqWZ70fXu68a5k9JlWMTUow7HD+aCOVeFsRBBdbfs6aEtxewBtNcMhmH6T
+	ked5A//e+WNA9P2V6HeTp7G/WiVOuUyPA=
+X-Received: by 2002:a17:90b:3c85:b0:35d:a4c0:a0ac with SMTP id 98e67ed59e1d1-35e4278b922mr13246756a91.3.1776091015423;
+        Mon, 13 Apr 2026 07:36:55 -0700 (PDT)
+Received: from lgs.. ([2409:893d:1188:142d:6c67:74e8:5200:1f39])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-35e3512f41bsm15826120a91.9.2026.04.13.07.36.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Apr 2026 07:36:54 -0700 (PDT)
+From: Guangshuo Li <lgs201920130244@gmail.com>
+To: Emil Renner Berthing <kernel@esmil.dk>,
+	Hal Feng <hal.feng@starfivetech.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Linus Walleij <linusw@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
-	linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v4 00/13] Introducing the Mobileye EyeQ6Lplus SoC
-Message-ID: <adzzLvq2tA9mzwc2@alpha.franken.de>
-References: <20260316-eyeq6lplus-v4-0-bf44dfc7a261@bootlin.com>
+	Conor Dooley <conor.dooley@microchip.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Guangshuo Li <lgs201920130244@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v3] clk: starfive: jh7110: fix memory leak in jh7110_reset_controller_register() error path
+Date: Mon, 13 Apr 2026 22:36:43 +0800
+Message-ID: <20260413143643.3002454-1-lgs201920130244@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260316-eyeq6lplus-v4-0-bf44dfc7a261@bootlin.com>
 
-On Mon, Mar 16, 2026 at 04:25:37PM +0100, Benoît Monin wrote:
-> The Eyeq6Lplus is a new system-on-chip part of Mobileye's EyeQ family
-> of SoC aimed at Advanced Driver Assistance Systems (ADAS). It is built
-> around a multicore MIPS I6500 with 2 cores and 8 threads and integrates
-> controllers and accelerators dedicated to driving assistance.
-> 
-> This patchset adds the initial support for the EyeQ6Lplus and its
-> evaluation board with the following list of controllers:
-> * The OLB ("Other Logic Block") providing clocks, resets and pin controls.
-> * One UART from DesignWare.
-> * One GPIO controller from DesignWare.
-> * Two SPI controllers from DesignWare, one in host mode and one in target
->   mode.
-> * One octoSPI flash controller from Cadence, identical to the one found
->   in the EyeQ5.
-> * Two I2C controllers from Designware.
-> 
-> The patch series adds the device tree bindings for the SoC and the OLB.
-> It also adds the Kconfig entry for the EyeQ6Lplus, the SoC and evaluation
-> board device tree, and the defconfig. For the OLB, the series adds the
-> match data to the clk-eyeq, reset-eyeq and pinctrl-eyeq5 drivers.
-> 
-> It also brings three other changes. One is for the pinctrl-eyeq5 driver
-> to access the pin descriptions, pin functions, and pin bank registers
-> via the match data instead of directly. This is needed to add support
-> for the EyeQ6Lplus alongside the EyeQ5 to the pinctrl driver.
-> 
-> To be able to match against compatible entries, an OF node is needed
-> but the pinctrl-eyeq5 does not have one as it is an auxiliary device
-> of clk-eyeq. As part of his MACB phy series[1], Théo switched to
-> devm_auxiliary_device_create() to register the auxiliary devices, and
-> this helper sets the OF node of the auxiliary device.
-> 
-> So this series depends on Théo's patchset so that eq5p_probe() can use
-> the OF node to get the match data, similar to what is done in eqr_probe()
-> in reset-eyeq.
-> 
-> The two other changes are in the clk-eyeq driver. First we skip the
-> post-divisor when computing the PLL frequency in the clk-eyeq driver,
-> to match how the clock signal is wired internally in all EyeQ PLL and
-> compute the correct frequency for the PLL of the EyeQ6Lplus. Second we
-> adjust the accuracy and down spreading computation of the PLL frequency
-> as the spread spectrum of all EyeQ PLL is in 1/1024 and not in 1/1000
-> as previously thought.
-> 
-> [1]: https://lore.kernel.org/lkml/20260225-macb-phy-v7-0-665bd8619d51@bootlin.com/
-> 
-> Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
-> ---
-> Changes in v4:
-> - Simplify entries in Kconfig for clk-eyeq and reset-eyeq, since all
->   Mobileye EyeQ SoCs use these drivers.
-> - Link to v3: https://lore.kernel.org/r/20260226-eyeq6lplus-v3-0-9cbeb59268b0@bootlin.com
-> 
-> Changes in v3:
-> - Rebase series on v7.0-rc1 + Théo's patchset[1].
-> - Refresh the defconfig.
-> - Add missing cdns,fifo-depth entry in octospi node of the SoC device tree.
-> - Simplify eq5p_probe() now that the OF node is set in clk-eyeq driver.
-> - Link to v2: https://lore.kernel.org/r/20251223-eyeq6lplus-v2-0-cd1fd21d182c@bootlin.com
-> 
-> Changes in v2:
-> - Rebased on v6.19-rc2.
-> - Drop spidev nodes from the evaluation board DT, they were
->   here for test only.
-> - Fix bug in eq5p_pinconf_set() using uninitialized value.
-> - Link to v1: https://lore.kernel.org/r/20251217-eyeq6lplus-v1-0-e9cdbd3af4c2@bootlin.com
-> 
-> ---
-> Benoît Monin (13):
->       dt-bindings: mips: Add Mobileye EyeQ6Lplus SoC
->       dt-bindings: soc: mobileye: Add EyeQ6Lplus OLB
->       MIPS: Add Mobileye EyeQ6Lplus support
->       reset: eyeq: Add Mobileye EyeQ6Lplus OLB
->       pinctrl: eyeq5: Use match data
->       pinctrl: eyeq5: Add Mobileye EyeQ6Lplus OLB
->       clk: eyeq: Skip post-divisor when computing PLL frequency
->       clk: eyeq: Adjust PLL accuracy computation
->       clk: eyeq: Add Mobileye EyeQ6Lplus OLB
->       MIPS: Add Mobileye EyeQ6Lplus SoC dtsi
->       MIPS: Add Mobileye EyeQ6Lplus evaluation board dts
->       MIPS: config: add eyeq6lplus_defconfig
->       MAINTAINERS: Mobileye: Add EyeQ6Lplus files
-> 
->  .../devicetree/bindings/mips/mobileye.yaml         |   5 +
->  .../soc/mobileye/mobileye,eyeq6lplus-olb.yaml      | 208 ++++++++++
->  MAINTAINERS                                        |   4 +-
->  arch/mips/boot/dts/mobileye/Makefile               |   1 +
->  arch/mips/boot/dts/mobileye/eyeq6lplus-epm6.dts    | 103 +++++
->  arch/mips/boot/dts/mobileye/eyeq6lplus-pins.dtsi   |  84 ++++
->  arch/mips/boot/dts/mobileye/eyeq6lplus.dtsi        | 170 ++++++++
->  arch/mips/configs/eyeq6lplus_defconfig             | 117 ++++++
->  arch/mips/mobileye/Kconfig                         |   3 +
->  arch/mips/mobileye/Platform                        |   1 +
->  drivers/clk/Kconfig                                |   4 +-
->  drivers/clk/clk-eyeq.c                             |  90 ++++-
->  drivers/pinctrl/Kconfig                            |   4 +-
->  drivers/pinctrl/pinctrl-eyeq5.c                    | 437 +++++++++++++++------
->  drivers/reset/Kconfig                              |   4 +-
->  drivers/reset/reset-eyeq.c                         |  31 ++
->  .../dt-bindings/clock/mobileye,eyeq6lplus-clk.h    |  37 ++
->  17 files changed, 1156 insertions(+), 147 deletions(-)
+jh7110_reset_controller_register() allocates a jh71x0_reset_adev with
+kzalloc() and sets jh7110_reset_adev_release() as the release callback
+for its embedded auxiliary_device before calling auxiliary_device_init().
 
-series applied to mips-next
+If auxiliary_device_init() fails, the function returns immediately
+without freeing the allocated rdev. The release callback is not
+available for this path, because it is only reached after a successful
+auxiliary_device_init(), for example when auxiliary_device_add() fails
+and auxiliary_device_uninit() is called.
 
-Thomas.
+The issue was identified by a static analysis tool I developed and
+confirmed by manual review. Free rdev explicitly when
+auxiliary_device_init() returns an error.
 
+Fixes: edab7204afe5 ("clk: starfive: Add StarFive JH7110 system clock driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
+---
+v3:
+  - clarify the changelog to describe the exact failure path
+  - note that the issue was identified by a static analysis tool
+    developed by me and confirmed by manual review
+  - apologize for sending the initial public posting as v2 by mistake
+
+v2:
+  - initial public posting; v1 was mistakenly skipped
+
+ drivers/clk/starfive/clk-starfive-jh7110-sys.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/starfive/clk-starfive-jh7110-sys.c b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
+index 52833d4241c5..55cd0ccbdb84 100644
+--- a/drivers/clk/starfive/clk-starfive-jh7110-sys.c
++++ b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
+@@ -360,8 +360,10 @@ int jh7110_reset_controller_register(struct jh71x0_clk_priv *priv,
+ 	adev->id = adev_id;
+ 
+ 	ret = auxiliary_device_init(adev);
+-	if (ret)
++	if (ret) {
++		kfree(rdev);
+ 		return ret;
++	}
+ 
+ 	ret = auxiliary_device_add(adev);
+ 	if (ret) {
 -- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+2.43.0
+
