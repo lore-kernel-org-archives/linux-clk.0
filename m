@@ -1,131 +1,184 @@
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D46A3C3420
-	for <linux-clk@vger.kernel.org>; Mon, 13 Apr 2026 12:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBAD03C8703
+	for <linux-clk@vger.kernel.org>; Mon, 13 Apr 2026 12:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776083384; cv=none; b=LljilQs1H8JqFzji02qvh5Ha0tpjTwzdBMTNZAxeY95FpMDsxaoK6oqM4+Vz/nnsdcLJXtdCAnY0uA0ln5l93nWotLO3tS2t7xMKlX0mCFyB2xzfZU/rmnf8H+EaAibIRs+mf5t+dO0IFIZCF/b4l6carjqxwMnpC1E99q9Ba6w=
+	t=1776084562; cv=none; b=JedneslPuMFh5yGsYxj+ksQBizwNKt7op5hS2IwD1ntE5yf2VFN4TVgjMwbXZ7kqVfZ2OKAtasW5htx9JbzFmTnH00jKxNEXaquxdSuMORpj3O49LTEXZ8Gv8jatbKd9iCD7eCntyvc7mc1JN8lJin8IF5fx7sPrBPpRDTa4vz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776083384; c=relaxed/simple;
-	bh=6Zfgby0cOpUu0h6XGPUoh1JZOpiNBDKAVsy5oJ6EO0w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J7BuCo7g53Wx/hksLdr3wMTQ1dSoj7tWDA6jvj+G6iIN58fiwVALXZLe+Sc8RSriWmI1IlkOZHRJfXJkfQ6JvdkCHFWXJXBXHx2kns8SFbUWCdpeYPh1gq5B0gFkOXXKFyt4u3JPRmky/RFQezy0tJjyrfjnas+tSF4zQL/w55Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=QsVW+pzP; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+	s=arc-20240116; t=1776084562; c=relaxed/simple;
+	bh=kBqnvQDwdiPZ+uQ0CawA0daWE+Ez/OQGt5TdVXg//xk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=k7PClpLuoJIfmwpQAwXNWB3cbcf+f494h6wTx7h8GIVCcP7yxbEbw4b2LszsH/5xHTc/tHWWZAwEqk9jnomGG0lYx7vEuvEfd45oyIW53CkjJSFjFEWMKf97TH9yBFBH5Tr1hsKsFopUxb3lclDKJ1UXIU2NKJriFj9+eRYxSxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JcvT/ODw; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="QsVW+pzP"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Dy7+J3Nmv3CmyBjyZLXnfY++J8xerQl5T/d1Q6AZ1bc=; b=QsVW+pzP/fktEna0S7j0QJmrsJ
-	Sv/GgoChbT8MctDEWJs9+NCQTEW7i8Ofq5fjZY1k7vTrit6euX57QMT32YEozT7MBnsNXJQjOYPr7
-	9XUFtLXPhZuBVoGXuIzfV0kYtDpl7ia5PGW7t7Fv6gaQAKZ5TuaCqVCqg5+BvfsuT4S/pETS75Q0Z
-	O3tPbSqmVt514KwYuB2YO+rHO1umNrJVgOhYuLxNjI9/fwrB0oABm+56snVkVHRhVYKrcBANu7UdH
-	KR8o7nnICXyaVsXXOHEQbcm4eAMizg+7eOdZX3/WFO8KPTHnDISgKXbVM4aoK+CptywUTRPAQ8f+W
-	U9S/D1YQ==;
-Received: from gwsc.sc.usp.br ([143.107.225.16] helo=[172.24.27.208])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1wCGPx-00FOp1-Pk; Mon, 13 Apr 2026 14:29:30 +0200
-Message-ID: <b5ab4741-1300-4a43-b491-2b73e052eed0@igalia.com>
-Date: Mon, 13 Apr 2026 09:29:24 -0300
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JcvT/ODw"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-43cfd1f9fd1so2816606f8f.3
+        for <linux-clk@vger.kernel.org>; Mon, 13 Apr 2026 05:49:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1776084559; x=1776689359; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/iZLzX9bqF3lkIILNvVjrN7/XoHKLWrdf/ip5ggw2bg=;
+        b=JcvT/ODwioXnS7kcUN4oOz85buJqkdCMr6iwXK9kFiRh8s6fbWsGCkOUG6m9KV9mp3
+         lRNijl4zU6ozn3Rvu6HlY6XfIT80mqdZX0NNj2VPHgCVMRy93W/AR5SBdts8I8EFJw0L
+         xRolZnEsJbk/AfK+wyv8jr2LfXjIVJdBMTFH1xdv7zb6O0i97V5yRTgezlW/Qc6UPhcU
+         Lic8YKBn+vxJF12FmBJ1Aipr8QgQYOngI+Orn9wCiyrmmCijlMgzHUlt7P/pttWqAzcS
+         pjPAaW/qM1ONrLt7BvnJhRhn2e6X/8deKoat7VPHdlyU3vOtIq0G/25BCQox2UArKfXn
+         SdZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776084559; x=1776689359;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=/iZLzX9bqF3lkIILNvVjrN7/XoHKLWrdf/ip5ggw2bg=;
+        b=m86L731i/ZSXM5SYJHprVieLxXugAWT9yz6oEUpgFkYnU4txdtM4st5i03jrqcHcl2
+         W31XCHBZ6J5HZ3W5ayvGCxIrWoZrcQB5iHR26TfKSXp2KGu8L1AhZBksTOnuVuMfOtzo
+         bAgCT+OeC4dNkBpqg/Hf0uoz+5JAiW5z/DNYjkuyWbPLOTq8Aj48AVNyX9jIp+ogoqK2
+         m9vG8fVcnEJR6kAqTWcxOZddR/910IoWY8x0u2UjJ+NOBM8akA6SopJZU4xUhqelvn1z
+         Fhem6heAXLFEaTTqscAF3CTYbwRD/f2aR20l4x+vPv8lmdj06Ba/smundfUbmhwTaknc
+         kWPA==
+X-Forwarded-Encrypted: i=1; AFNElJ9LpER5Wm13ngqBsR97AxvhLkVL8PRrvW4otQ0QZdkecsWUNqjfRoHBXqG5a3Fabu7swbeWNq+8Zss=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLBHC5cny2NYB8nckpniU/tzBPiMzHMMipsaRXXRhb+41Ykk4q
+	O14mduZcc5JavFBtE0gbHetOzCz0AXhhttIkuW4hAKuxMrojqS5XNas9
+X-Gm-Gg: AeBDiesAUUFFXmH7mEfvnAkY4n/m3B0Dl7QgiH2+YQck+xYIGdr1yn/FhRxQr3rjy0x
+	6E/b6ZZwW1TGyHP0b0s5tQ+jcJEmnd9r/i+mRcFXOjhlNF1uI0YlnKJNOoIImiaN/qqAthjcAq5
+	ZHG0gSjHHj4dh7ig9s6r3Xqs9QXr0QqY16LyrnyCbb/7c/N7UAtPYjmsvOVBS2YY3AAQpQCFKxu
+	uR1CcmtHVYa9cZPWggSR+CaynRVYGMXcbSX3zcKtA15cauZLllUti5M3je0f0LuvkLGKYzw7s56
+	fz9P0T7vcImWYC2kX3FJWxFWYk6xMCIybNrIsQYf+SD8F61Euelum65UNlQ9x6kawLw6PKIx0Yw
+	Tna/l1JUurLZ9KiWi+AeT941sRhZOLJYcrMKVSvdY/BOXFHHDLrQ/Id6hW1ChQ0xy6RNkzasSaa
+	kOcHxJMIX0LHK3wGlLdcbmcvbU5qah3kQBBAvB63+/E8H4LlXLXHKzEWSPILgswhBIwl58jfk++
+	KTs3a9Rrp303e9045VuKR46tJr8jC4Sekpvu6YrsWuPFKV5eBQoxITQhQ==
+X-Received: by 2002:a05:6000:400e:b0:43d:1c39:26fd with SMTP id ffacd0b85a97d-43d642dc79bmr19277103f8f.43.1776084559020;
+        Mon, 13 Apr 2026 05:49:19 -0700 (PDT)
+Received: from iku.example.org ([2a06:5906:61b:2d00:8060:3087:2ea2:f494])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d63e50015sm34634318f8f.27.2026.04.13.05.49.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Apr 2026 05:49:18 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 1/2] clk: divider: Fix clk_divider_bestdiv() returning min rate for large rate requests
+Date: Mon, 13 Apr 2026 13:49:11 +0100
+Message-ID: <20260413124912.3260571-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260413124912.3260571-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20260413124912.3260571-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: bcm: rpi: Mark VEC clock as CLK_IGNORE_UNUSED
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Mark Brown <broonie@kernel.org>,
- Maxime Ripard <mripard@kernel.org>, Stefan Wahren <wahrenst@gmx.net>,
- Dom Cobley <popcornmix@gmail.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>
-Cc: linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, kernel-dev@igalia.com
-References: <20260401111416.562279-2-mcanal@igalia.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-Autocrypt: addr=mcanal@igalia.com; keydata=
- xsBNBGcCwywBCADgTji02Sv9zjHo26LXKdCaumcSWglfnJ93rwOCNkHfPIBll85LL9G0J7H8
- /PmEL9y0LPo9/B3fhIpbD8VhSy9Sqz8qVl1oeqSe/rh3M+GceZbFUPpMSk5pNY9wr5raZ63d
- gJc1cs8XBhuj1EzeE8qbP6JAmsL+NMEmtkkNPfjhX14yqzHDVSqmAFEsh4Vmw6oaTMXvwQ40
- SkFjtl3sr20y07cJMDe++tFet2fsfKqQNxwiGBZJsjEMO2T+mW7DuV2pKHr9aifWjABY5EPw
- G7qbrh+hXgfT+njAVg5+BcLz7w9Ju/7iwDMiIY1hx64Ogrpwykj9bXav35GKobicCAwHABEB
- AAHNIE1hw61yYSBDYW5hbCA8bWNhbmFsQGlnYWxpYS5jb20+wsCRBBMBCAA7FiEE+ORdfQEW
- dwcppnfRP/MOinaI+qoFAmcCwywCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQ
- P/MOinaI+qoUBQgAqz2gzUP7K3EBI24+a5FwFlruQGtim85GAJZXToBtzsfGLLVUSCL3aF/5
- O335Bh6ViSBgxmowIwVJlS/e+L95CkTGzIIMHgyUZfNefR2L3aZA6cgc9z8cfow62Wu8eXnq
- GM/+WWvrFQb/dBKKuohfBlpThqDWXxhozazCcJYYHradIuOM8zyMtCLDYwPW7Vqmewa+w994
- 7Lo4CgOhUXVI2jJSBq3sgHEPxiUBOGxvOt1YBg7H9C37BeZYZxFmU8vh7fbOsvhx7Aqu5xV7
- FG+1ZMfDkv+PixCuGtR5yPPaqU2XdjDC/9mlRWWQTPzg74RLEw5sz/tIHQPPm6ROCACFls7A
- TQRnAsMsAQgAxTU8dnqzK6vgODTCW2A6SAzcvKztxae4YjRwN1SuGhJR2isJgQHoOH6oCItW
- Xc1CGAWnci6doh1DJvbbB7uvkQlbeNxeIz0OzHSiB+pb1ssuT31Hz6QZFbX4q+crregPIhr+
- 0xeDi6Mtu+paYprI7USGFFjDUvJUf36kK0yuF2XUOBlF0beCQ7Jhc+UoI9Akmvl4sHUrZJzX
- LMeajARnSBXTcig6h6/NFVkr1mi1uuZfIRNCkxCE8QRYebZLSWxBVr3h7dtOUkq2CzL2kRCK
- T2rKkmYrvBJTqSvfK3Ba7QrDg3szEe+fENpL3gHtH6h/XQF92EOulm5S5o0I+ceREwARAQAB
- wsB2BBgBCAAgFiEE+ORdfQEWdwcppnfRP/MOinaI+qoFAmcCwywCGwwACgkQP/MOinaI+qpI
- zQf+NAcNDBXWHGA3lgvYvOU31+ik9bb30xZ7IqK9MIi6TpZqL7cxNwZ+FAK2GbUWhy+/gPkX
- it2gCAJsjo/QEKJi7Zh8IgHN+jfim942QZOkU+p/YEcvqBvXa0zqW0sYfyAxkrf/OZfTnNNE
- Tr+uBKNaQGO2vkn5AX5l8zMl9LCH3/Ieaboni35qEhoD/aM0Kpf93PhCvJGbD4n1DnRhrxm1
- uEdQ6HUjWghEjC+Jh9xUvJco2tUTepw4OwuPxOvtuPTUa1kgixYyG1Jck/67reJzMigeuYFt
- raV3P8t/6cmtawVjurhnCDuURyhUrjpRhgFp+lW8OGr6pepHol/WFIOQEg==
-In-Reply-To: <20260401111416.562279-2-mcanal@igalia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hi Stephen,
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-It would be great to land this patch in the next release together with
-commit 672299736af6 ("clk: bcm: rpi: Manage clock rate in prepare/
-unprepare callbacks"). When possible, could you take a look at it?
+clk_divider_bestdiv() clamps maxdiv using:
 
-Best regards,
-- Maíra
+    maxdiv = min(ULONG_MAX / rate, maxdiv);
 
-On 4/1/26 08:13, Maíra Canal wrote:
-> On Raspberry Pi 3B, the VEC clock is used by the VideoCore firmware
-> display driver, which remains active until the vc4 driver loads and
-> sends NOTIFY_DISPLAY_DONE. If this clock is disabled during boot, a bus
-> lockup happens and the firmware becomes unresponsive, causing a complete
-> system lockup.
-> 
-> Mark the VEC clock with CLK_IGNORE_UNUSED so it survives the unused
-> clock disablement and remains available until the vc4 driver takes over
-> display management.
-> 
-> Fixes: 672299736af6 ("clk: bcm: rpi: Manage clock rate in prepare/unprepare callbacks")
-> Reported-by: Mark Brown <broonie@kernel.org>
-> Signed-off-by: Maíra Canal <mcanal@igalia.com>
-> ---
->   drivers/clk/bcm/clk-raspberrypi.c | 7 +++++++
->   1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
-> index df2d246eb6ef..f1a99de6de4f 100644
-> --- a/drivers/clk/bcm/clk-raspberrypi.c
-> +++ b/drivers/clk/bcm/clk-raspberrypi.c
-> @@ -160,6 +160,13 @@ raspberrypi_clk_variants[RPI_FIRMWARE_NUM_CLK_ID] = {
->   	[RPI_FIRMWARE_VEC_CLK_ID] = {
->   		.export = true,
->   		.minimize = true,
-> +
-> +		/*
-> +		 * If this clock is disabled during boot, it causes a bus
-> +		 * lockup in RPi 3B. Therefore, make sure it's left enabled
-> +		 * during boot.
-> +		 */
-> +		.flags = CLK_IGNORE_UNUSED,
->   	},
->   	[RPI_FIRMWARE_DISP_CLK_ID] = {
->   		.export = true,
+to avoid overflow in rate * i. However, requests like
+clk_round_rate(clk, ULONG_MAX), which are used to determine the maximum
+supported rate of a clock, result in maxdiv being clamped to 1. If no
+valid divider of 1 exists in the table the loop is never entered and
+bestdiv falls back to the maximum divider with the minimum parent rate,
+causing clk_round_rate(clk, ULONG_MAX) to incorrectly return the minimum
+supported rate instead of the maximum.
+
+Fix this by removing the pre-loop maxdiv clamping and replacing the
+unprotected rate * i multiplication with check_mul_overflow(). Guard
+the exact-match short-circuit with !overflow to prevent a clamped
+target_parent_rate of ULONG_MAX from falsely matching parent_rate_saved
+and causing premature loop exit. Break out of the loop after evaluating
+the first overflowing divider since clk_hw_round_rate(parent, ULONG_MAX)
+returns a constant for all subsequent iterations, meaning no better
+candidate can be found, and continuing would cause exponential recursive
+calls in chained divider clocks.
+
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/clk/clk-divider.c | 25 +++++++++++++++++--------
+ 1 file changed, 17 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+index 45e7ebde4a8b..9a6a2ad6f397 100644
+--- a/drivers/clk/clk-divider.c
++++ b/drivers/clk/clk-divider.c
+@@ -15,6 +15,7 @@
+ #include <linux/err.h>
+ #include <linux/string.h>
+ #include <linux/log2.h>
++#include <linux/overflow.h>
+ 
+ /*
+  * DOC: basic adjustable divider clock that cannot gate
+@@ -301,6 +302,7 @@ static int clk_divider_bestdiv(struct clk_hw *hw, struct clk_hw *parent,
+ 	int i, bestdiv = 0;
+ 	unsigned long parent_rate, best = 0, now, maxdiv;
+ 	unsigned long parent_rate_saved = *best_parent_rate;
++	unsigned long target_parent_rate;
+ 
+ 	if (!rate)
+ 		rate = 1;
+@@ -315,15 +317,11 @@ static int clk_divider_bestdiv(struct clk_hw *hw, struct clk_hw *parent,
+ 		return bestdiv;
+ 	}
+ 
+-	/*
+-	 * The maximum divider we can use without overflowing
+-	 * unsigned long in rate * i below
+-	 */
+-	maxdiv = min(ULONG_MAX / rate, maxdiv);
+-
+ 	for (i = _next_div(table, 0, flags); i <= maxdiv;
+ 					     i = _next_div(table, i, flags)) {
+-		if (rate * i == parent_rate_saved) {
++		bool overflow = check_mul_overflow(rate, (unsigned long)i, &target_parent_rate);
++
++		if (!overflow && target_parent_rate == parent_rate_saved) {
+ 			/*
+ 			 * It's the most ideal case if the requested rate can be
+ 			 * divided from parent clock without needing to change
+@@ -332,13 +330,24 @@ static int clk_divider_bestdiv(struct clk_hw *hw, struct clk_hw *parent,
+ 			*best_parent_rate = parent_rate_saved;
+ 			return i;
+ 		}
+-		parent_rate = clk_hw_round_rate(parent, rate * i);
++		/*
++		 * Clamp target_parent_rate to ULONG_MAX on overflow. The true
++		 * required parent rate exceeds what can be represented, so ask
++		 * the parent for the highest rate it can produce. There is no
++		 * point continuing the loop past this since larger dividers
++		 * only move further from the requested rate.
++		 */
++		if (overflow)
++			target_parent_rate = ULONG_MAX;
++		parent_rate = clk_hw_round_rate(parent, target_parent_rate);
+ 		now = DIV_ROUND_UP_ULL((u64)parent_rate, i);
+ 		if (_is_best_div(rate, now, best, flags)) {
+ 			bestdiv = i;
+ 			best = now;
+ 			*best_parent_rate = parent_rate;
+ 		}
++		if (overflow)
++			break;
+ 	}
+ 
+ 	if (!bestdiv) {
+-- 
+2.53.0
 
