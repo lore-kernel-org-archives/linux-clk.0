@@ -1,82 +1,83 @@
-Received: from slategray.cherry.relay.mailchannels.net (slategray.cherry.relay.mailchannels.net [23.83.223.169])
+Received: from dragonfly.ash.relay.mailchannels.net (dragonfly.ash.relay.mailchannels.net [23.83.222.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9238423EAB2;
-	Mon, 13 Apr 2026 18:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.223.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDDE823EAB2;
+	Mon, 13 Apr 2026 18:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.222.51
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776106181; cv=pass; b=ac/nYT/+lA5AP/QBJ82VNjWYHQAcvTaAussJPbLWmoXqom/ZGO6FaDww8PoyLOkgq2/RfddKkz3jQdCQo5fB3JoVN/ffWew0gBZCdb6L8gxnFN+gQerLISI5Z32+miSJIUnky7Ru09KmrSlSqxh92lC7U2BwiaG9tUiAQOAC+JQ=
+	t=1776106187; cv=pass; b=nEOaWW4sSNboFqXuGDKJeLJghuJ4laL/wqDVqXQzQNYGgaAUh15/AvNVDT80XIWvZGr5nknaS7tO0ZwkNBgqX6ZcC7rI1SwzdcjqgLkuT7EaOHEeUyJPhqlP81csi8clD98qdgFLEMchY9upku65Cy+cjDgRS9ymbAk36FjaRm8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776106181; c=relaxed/simple;
-	bh=fEw/y24WYxs3hZSqPEGoague+XwX1gBkuWg1clx2OLM=;
+	s=arc-20240116; t=1776106187; c=relaxed/simple;
+	bh=krAuu/0WstJknY+csLrR8SH0m8CWuJG86jpKvvPTtfg=;
 	h=From:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc:Date; b=YVU8CXZHiiVY8laMgxukE2zgN3bfltAc0NJBvPQYB0D2w7yr8OX9+ExsDDuLqfd37opzqF14t5qg23Fneas8cz/avuxJL93oLP/hIx7CQJrrHwcQEUsMoLVEz5QQD56Pf9zdHZCxM2GccRPmv7vXiWUh28sbWpMzd8EIYQHSSb0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com; spf=pass smtp.mailfrom=smankusors.com; dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b=R2dA/3n1; arc=pass smtp.client-ip=23.83.223.169
+	 In-Reply-To:To:Cc:Date; b=spUT8a+2RUjj/P2kckYmnzBPdfzgnS7YyLzyoJhTxvFAnkC+8kACg9brWtU1W294xl+ohcN4l/XOmNThPcHL2Na0KLQOhQKqHqF7E+9RrKbT+Cf0WkHct2aEeU8GGxK1aclUF2UfioiTX0G0qM+EK5fjO46ozE5hSVOhMJg0fRk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com; spf=pass smtp.mailfrom=smankusors.com; dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b=bhK9432u; arc=pass smtp.client-ip=23.83.222.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smankusors.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b="R2dA/3n1"
+	dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b="bhK9432u"
 X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
 Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id CBA117E3D08;
-	Mon, 13 Apr 2026 18:33:07 +0000 (UTC)
-Received: from fr-int-smtpout18.hostinger.io (trex-green-1.trex.outbound.svc.cluster.local [100.100.158.21])
+	by relay.mailchannels.net (Postfix) with ESMTP id 315F77E188A;
+	Mon, 13 Apr 2026 18:33:18 +0000 (UTC)
+Received: from fr-int-smtpout18.hostinger.io (100-101-159-68.trex-nlb.outbound.svc.cluster.local [100.101.159.68])
 	(Authenticated sender: hostingeremail)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 8B2237E2DA5;
-	Mon, 13 Apr 2026 18:33:02 +0000 (UTC)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 9CA4E7E0E20;
+	Mon, 13 Apr 2026 18:33:13 +0000 (UTC)
 ARC-Seal: i=1; a=rsa-sha256; d=mailchannels.net; s=arc-2022; cv=none;
-	t=1776105185;
-	b=JhV4IHRfBMve8AswBRy63ev/gOVPJaV5pnb46IMcYOgU7PAL4xP/nASSK5X2xezB+AHBEb
-	wkaOhvCEdSpvjXcF1gqQZGKQu2LTwWKt969kMAi/qloNfefsgpWSC8A/WISydn0bwWWu1O
-	2JXG5ep6Gs+B9yCYDAT+PMe2mxmgkrFhWVQWwPJcPEt1f/pA90RLGJQZSuEXtUPAbBb0+n
-	m/xhJZjMwlsmzfyh1mipXJMIZcZLEhACk06A5F489Cavz5aRNtPTCUqJhhaT+AjHjrG53H
-	E8k8Lu4LuUcMdOuO+/d9XIKoRSlXC9mlgginNC8ogSq5UKze4gQHGrf98PPBtQ==
+	t=1776105196;
+	b=mm3qaltKo1hYwXPXTNkqf7z4k9IfCU6ZyydtC0HtYYl5HfnDhirWt5mMz/BmiS+WmZVBpY
+	wiUxylwr3RJ2G2sHcj3QUrsH25Az8XSVgnPKA0p2JrZCaMHd8j2YkVODYlnmTz8ugp2D3H
+	/RKZyLnCg2yrneOjDSAFKyc+g+tziGmprvJqEb5e+uuHvRe/X+fJurZxO9CUd+y/k2dZ/r
+	wP18o/IQKVZezkxqzew+2GYD316h8Uoi6gTaGQdE8BNJLuItSyZwVyCqUniQSmgmlKT+yZ
+	H5dV3hptViwpC3cRtfyMOuODjUOrGoGwCyl1wdO+KpWrvPLYi1Xie7Oi2XbB8g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
  d=mailchannels.net;
-	s=arc-2022; t=1776105185;
+	s=arc-2022; t=1776105196;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=OLUnfi6HeX0ASpLx7V0UtygFHbY07vXAaWDDvuPcoso=;
-	b=c98iDaofH660buqK4pJI2MTTwfOzutMHaDxzgDrct6PamCuYVAx+oR9cGlniV6fTVXsYRF
-	TbWEC8Mft6FZ9x5QS8zUFZvueMb+Ay8wFG1VF2bXXb2Y/dMCz2cwzqfFJJIEo3pGXurQ2n
-	h4d3xe2JNbNwGyLvVOnCa8qe8P11kHSlqSKb2OqqPQGWXCimm1XK5VHiaVR1XWpQIeOp4u
-	OlTyb1zZuRi2BZ62o7swL0gZwacUSS2/V78Rm6RnFAdTLM5E5Ye3uXTo1B0103tkcNYR/+
-	Ff1SIM9EBnjWquP81QELUQ0ihbszUe8j17acmIyECIGm/XKcJkeiQAKY50xRFw==
+	bh=gC4QEJJYFCDp2IOgth+X/Ti9ZrwlGREYN4zuIaCIQ/A=;
+	b=Nw53ktyCDFjhAkP+fUwEy2atpFq6jg0DLRtjsmvIiExwZFbCg7V+hh6EMySoWAcfjqna4g
+	pXl+o2yvKpeKcj6LwDmhofKO4KTNRSB8Pl/66Emz15n0LhOS6qwNHTSNLc3Cz7SXQvYAEW
+	KZVhajyO37q63kgD21ZUN0e7cmncuGe3lKcfzos76m3G32JJzJJvxFot4VDMunWR1Wf68l
+	X9vx5lJImRORF31NMlpIjHt/DwBPVuL9o9VMaak4s3KNT7LBmzGsCeHNlacbxY2VmSKmx7
+	Vfj98NLlecJbqdmbl4WdIIKUHtZ7u+NUHrSpsRMGLwYxzIWIZKlIPNncMT3fFQ==
 ARC-Authentication-Results: i=1;
-	rspamd-7d86dcc447-rcb8t;
+	rspamd-7d86dcc447-fnj9k;
 	auth=pass smtp.auth=hostingeremail smtp.mailfrom=linux@smankusors.com
 X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
 X-MC-Relay: Neutral
 X-MailChannels-SenderId: hostingeremail|x-authuser|linux@smankusors.com
 X-MailChannels-Auth-Id: hostingeremail
-X-Wiry-Ski: 26e69828523c7718_1776105187665_4020689506
-X-MC-Loop-Signature: 1776105187665:2041444484
-X-MC-Ingress-Time: 1776105187664
+X-Lettuce-Quick: 4cb05ca90b9ec1db_1776105198087_2698546186
+X-MC-Loop-Signature: 1776105198087:1841770979
+X-MC-Ingress-Time: 1776105198086
 Received: from fr-int-smtpout18.hostinger.io (fr-int-smtpout18.hostinger.io
  [148.222.54.9])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.100.158.21 (trex/7.1.5);
-	Mon, 13 Apr 2026 18:33:07 +0000
+	by 100.101.159.68 (trex/7.1.5);
+	Mon, 13 Apr 2026 18:33:18 +0000
 Received: from [172.17.0.2] (unknown [180.247.251.74])
 	(Authenticated sender: linux@smankusors.com)
-	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4fvbcn58m5z1xmL;
-	Mon, 13 Apr 2026 18:32:57 +0000 (UTC)
+	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4fvbd04NwBz1xqg;
+	Mon, 13 Apr 2026 18:33:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smankusors.com;
-	s=hostingermail-a; t=1776105180;
+	s=hostingermail-a; t=1776105191;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=OLUnfi6HeX0ASpLx7V0UtygFHbY07vXAaWDDvuPcoso=;
-	b=R2dA/3n1XEqxCGaBh/ELxE4nP/ix8tznQi2Fhv0WWRGX3kn8kh4IwI/LHHB+yAvBLaqTMS
-	ueAico+WXBg5r/we9+6iGp71WWoRNUH12i59wek2uVvI5TdkmCz9a5o0TLNeBitSvKn5W1
-	OuUoEKKuICxpA83wr0fi3SoZyXI+mIWm4TRrLgFjCq68FeL2qW+bnro/rEdADJupaRtEFg
-	3FRfvqe3P2uc58NWFytsskUibJQlUpc6wQdbttxZ/QBm+qU1712XPy5+FFQF3Zv4A+q1hx
-	HzxI7v6kWI9AJ8FRsvkj3l6u+Z8mLwie80iJsGtDQKe42526udE+ZPTdi8CTjQ==
+	bh=gC4QEJJYFCDp2IOgth+X/Ti9ZrwlGREYN4zuIaCIQ/A=;
+	b=bhK9432u0yMRESuEHtfh36WLRInULMC5i1YR0WzOcd+eX5fuaSDRcJJUzx5sYaF9OuyoQ/
+	lJqPFu1wu7Lc+eafdeFTYbhoLFoB0IvsJhy0JmeRMBHQzM8bR2y9wmhzBFW90VUbkGsWMA
+	QZVgIWQd3BM88sOXLhzgwofCMjtdCfMBN59DHM72S6gJCuyLPemHUWubMOWHk4o7fcT5Yc
+	MFXmdLfD3HjSJZqAmm6M5mvN+EzbHp7rIgWT7LppWZfhiSNz6AYQcVIYuZlYKrOMiZKc88
+	PFcf1usze/r9RqxeDeVy7syK61lM34WvSAx9KhLYo+dEc+S/rgQGUHkQys7BVw==
 From: Antony Kurniawan Soemardi <linux@smankusors.com>
-Subject: [PATCH 02/10] dt-bindings: mfd: syscon: add qcom,msm8960-sps-sic
+Subject: [PATCH 05/10] ARM: dts: qcom: msm8960: add RPM clock controller
+ and fix USB clocks
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -85,7 +86,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260414-msm8960-wifi-v1-2-01c081e54610@smankusors.com>
+Message-Id: <20260414-msm8960-wifi-v1-5-01c081e54610@smankusors.com>
 References: <20260414-msm8960-wifi-v1-0-01c081e54610@smankusors.com>
 In-Reply-To: <20260414-msm8960-wifi-v1-0-01c081e54610@smankusors.com>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -100,46 +101,80 @@ Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-msm@vger.kernel.org,
  Rudraksha Gupta <guptarud@gmail.com>, 
  Antony Kurniawan Soemardi <linux@smankusors.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1776105169; l=1176;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1776105169; l=2412;
  i=linux@smankusors.com; s=20250609; h=from:subject:message-id;
- bh=fEw/y24WYxs3hZSqPEGoague+XwX1gBkuWg1clx2OLM=;
- b=aTWlKY+p/2tRwy0b+nB5DCaP1PEdFcTPGfKHraawDAetUha5eWQ0MoC8U7Tjdc4/rQTY46ipx
- 1j9hIqrsjfNAD8nfyeUAgh7C7i5CNYDrogXGWuJYDGrwmpcPXRD+cT4
+ bh=krAuu/0WstJknY+csLrR8SH0m8CWuJG86jpKvvPTtfg=;
+ b=YD/QNMISLnHbuokZ1UjLJ46X7QNOmJqkibV+2Jq2a+DXDDW8HjrPsM0kyUBcMUg1vo70hyc2Y
+ hPHCjhVQpXjCNiA0P5iFGOwOh6OpRukxylX4qX4ctjAvfmCsskJSX4s
 X-Developer-Key: i=linux@smankusors.com; a=ed25519;
  pk=65wTy06fJl2/h/EJwjr704YG+yjHFhZObJBWzzK+N00=
-Date: Mon, 13 Apr 2026 18:32:57 +0000 (UTC)
-X-CM-Envelope: MS4xfGi14sXGME7uZwgcuu4nMkT3dYKapNrFMv/kuWuSkLcxx017t84pfr8BUYrwLjYFFRnUH1dn5zwsoSIjzG+BVxoflL+aOehfnmcX27qzGHwv5dT2e9yy VXClVoyNXEYvnkM+7wuMREQeiL3GTgtHMuXMUBjK+/zhODB++ROa2lxPdzfKb1ToBMcFeeoIGtJPZrM+ONS6W+Il2kbJv1lWwKSX6byhg05uQuT5DTbZVaxW uA5NiwPoc0BOQ2fJBRhLfd+meOtTjh3Jk1XbIn02Cc5q+P1NaFSjxl85195SL75TUt3bD0uXi2YO0x+N2pG4K8YdQs8C+7l6m8+Qcvx09YFPTJFQNSDL79YY 7t/0W1ioqWW7eSHGaJd9aE88ykSTUBRgxQJjh7S5hSkN1fIRlFZ8deHQG9gEZiwNL7cSZf9heW4sDdv+wOeoHA3acnroQl13JE+m8kSWHPstb1nqDFpnnw5A DKSFjz6T1u73t1pmS8V+E6MDDe+6zBxo0dIfuCU4R1KTVh02uRm6Lhd3RIWYBscn+PBvtZF6VoCHwO6leyJABa15X2FxbnuscwRu7plKUNNYvk3W/NzTDWFz N/icmsUfHHHHymW1sL66O0L38q925Kxd7VxaWsFdLiaww2lySvOAtvXiz4a8IRXlt4aRpOUrsNFej5CxCHhNltdD
-X-CM-Analysis: v=2.4 cv=UN2PHzfy c=1 sm=1 tr=0 ts=69dd36dc a=iMBLmzX4nuXcozcv68JNPw==:117 a=iMBLmzX4nuXcozcv68JNPw==:17 a=IkcTkHD0fZMA:10 a=wxLWbCv9AAAA:8 a=Gjla_oY5Z_Fy-GYXBTcA:9 a=QEXdDO2ut3YA:10 a=QJY96suAAestDpCc5Gi9:22
+Date: Mon, 13 Apr 2026 18:33:08 +0000 (UTC)
+X-CM-Envelope: MS4xfHLah8amrRpS/czPuaRGUpMGPM0QU17E8x5b+Wgn6LlSGsbWSPU+FIimCluy+Brw8JJ0MBwL68pzUxTZCD0d4lGwueOvoDJLw074MQxNRyoJ10xWfmFH v9Rpx0ZhJlf8LBNA6iQSDSJ2ui4Tc9QfIwsg2qoKNRX9Yc6w0cp9+6qW7LL1Gck2GWNcxelm0ZYcvYDY6VJJk5nIXL3j9RLagDL0RFKDMbojumgSlOX0mDXO Qdb8ARnkvCzBq0greAnwnxWuKO8brS+PtL1a1B4pb7MfaWh6u7IkxsMrTXd4TnoewciY3Z506Npy4t/fgxWXMhUkyUKjJmFxR4xurt735O8B+Vxao9swcTTD pj8pQ+7gvZnzRZwd8av0pMNRgQyv6tFOgESxvLgziC6TR9H5gCo5hCworv7vrZYutCoigCJj1UbFpzTFa/5xRseFBaJvXD/cfC5/49+OXM63dqTSNWjP4wKW LsKiG3+/qI4eIxkhpem2yG6EyY/zPONk7k4ssWEbtmjPA3Y2MP4a2N/QZ/EF9VE3yJ+S5qp7pTdjp6FtNZJsKuCcuXvqoF3dHlarf6hx7VNtyNy4IUroWP1+ 0HYjVGxLI+aXp3iSyUtkjVMPrlzrxVcQGEqXlOggHOpD9aeoBLSI0ccyPbSxnEHQPXzpGQ2S0JX4ai8+X6orgOhK
+X-CM-Analysis: v=2.4 cv=UN2PHzfy c=1 sm=1 tr=0 ts=69dd36e7 a=iMBLmzX4nuXcozcv68JNPw==:117 a=iMBLmzX4nuXcozcv68JNPw==:17 a=IkcTkHD0fZMA:10 a=wxLWbCv9AAAA:8 a=-g1pO0pIwJ2TSlcm9fEA:9 a=QEXdDO2ut3YA:10 a=QJY96suAAestDpCc5Gi9:22
 X-AuthUser: linux@smankusors.com
 
-Add compat for Smart Peripheral System (SPS) Interrupt Controller (SIC)
-present on Qualcomm MSM8960 SoC.
+The RPM clock controller manages clocks shared between the application
+processor and the RPM firmware, including fabric and bus clocks required
+by several peripherals.
+
+With the RPM clock controller now available in the device tree, the USB
+controller must explicitly declare its dependency on
+RPM_DAYTONA_FABRIC_CLK. Without this declaration, the clock framework
+would consider it unused and disable it, breaking USB functionality.
+
+This also corrects the previous misuse of USB_HS1_XCVR_CLK as the core
+clock. The XCVR clock is in fact used for PHY/reset handling rather than
+as the main core clock.
+
+A similar issue has been observed on APQ8064, where missing the RPM
+fabric clock dependency leads to broken USB.
 
 Signed-off-by: Antony Kurniawan Soemardi <linux@smankusors.com>
 ---
- Documentation/devicetree/bindings/mfd/syscon.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/boot/dts/qcom/qcom-msm8960.dtsi | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mfd/syscon.yaml b/Documentation/devicetree/bindings/mfd/syscon.yaml
-index e57add2bacd30b0582e037ae69dd9f2b55d13066..39a24c3ff9cfb543d46ef30a21edbd074e22a0de 100644
---- a/Documentation/devicetree/bindings/mfd/syscon.yaml
-+++ b/Documentation/devicetree/bindings/mfd/syscon.yaml
-@@ -106,6 +106,7 @@ select:
-           - nxp,s32g3-gpr
-           - qcom,apq8064-mmss-sfpb
-           - qcom,apq8064-sps-sic
-+          - qcom,msm8960-sps-sic
-           - rockchip,px30-qos
-           - rockchip,rk3036-qos
-           - rockchip,rk3066-qos
-@@ -219,6 +220,7 @@ properties:
-               - nxp,s32g3-gpr
-               - qcom,apq8064-mmss-sfpb
-               - qcom,apq8064-sps-sic
-+              - qcom,msm8960-sps-sic
-               - rockchip,px30-qos
-               - rockchip,rk3036-qos
-               - rockchip,rk3066-qos
+diff --git a/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi b/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi
+index fd28401cebb5e15cf9eb5bfdeff29d7b0c580b1a..1d5e97b6aa4bdfe98469a51d25984429e5c3be5f 100644
+--- a/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi
++++ b/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi
+@@ -5,6 +5,7 @@
+ #include <dt-bindings/clock/qcom,gcc-msm8960.h>
+ #include <dt-bindings/reset/qcom,gcc-msm8960.h>
+ #include <dt-bindings/clock/qcom,lcc-msm8960.h>
++#include <dt-bindings/clock/qcom,rpmcc.h>
+ #include <dt-bindings/mfd/qcom-rpm.h>
+ #include <dt-bindings/soc/qcom,gsbi.h>
+ 
+@@ -98,6 +99,13 @@ rpm: rpm@108000 {
+ 			interrupt-names = "ack",
+ 					  "err",
+ 					  "wakeup";
++
++			rpmcc: clock-controller {
++				compatible = "qcom,rpmcc-msm8960", "qcom,rpmcc";
++				#clock-cells = <1>;
++				clocks = <&pxo_board>, <&cxo_board>;
++				clock-names = "pxo", "cxo";
++			};
+ 		};
+ 
+ 		ssbi: ssbi@500000 {
+@@ -507,8 +515,12 @@ usb1: usb@12500000 {
+ 			reg = <0x12500000 0x200>,
+ 			      <0x12500200 0x200>;
+ 			interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&gcc USB_HS1_XCVR_CLK>, <&gcc USB_HS1_H_CLK>;
+-			clock-names = "core", "iface";
++			clocks = <&rpmcc RPM_DAYTONA_FABRIC_CLK>,
++				 <&gcc USB_HS1_H_CLK>,
++				 <&gcc USB_HS1_XCVR_CLK>;
++			clock-names = "core",
++				      "iface",
++				      "fs";
+ 			assigned-clocks = <&gcc USB_HS1_XCVR_CLK>;
+ 			assigned-clock-rates = <60000000>;
+ 			resets = <&gcc USB_HS1_RESET>;
 
 -- 
 2.34.1
