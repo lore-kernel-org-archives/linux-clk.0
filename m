@@ -1,83 +1,37 @@
-Received: from dragonfly.ash.relay.mailchannels.net (dragonfly.ash.relay.mailchannels.net [23.83.222.51])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDDE823EAB2;
-	Mon, 13 Apr 2026 18:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.222.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776106187; cv=pass; b=nEOaWW4sSNboFqXuGDKJeLJghuJ4laL/wqDVqXQzQNYGgaAUh15/AvNVDT80XIWvZGr5nknaS7tO0ZwkNBgqX6ZcC7rI1SwzdcjqgLkuT7EaOHEeUyJPhqlP81csi8clD98qdgFLEMchY9upku65Cy+cjDgRS9ymbAk36FjaRm8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776106187; c=relaxed/simple;
-	bh=krAuu/0WstJknY+csLrR8SH0m8CWuJG86jpKvvPTtfg=;
-	h=From:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc:Date; b=spUT8a+2RUjj/P2kckYmnzBPdfzgnS7YyLzyoJhTxvFAnkC+8kACg9brWtU1W294xl+ohcN4l/XOmNThPcHL2Na0KLQOhQKqHqF7E+9RrKbT+Cf0WkHct2aEeU8GGxK1aclUF2UfioiTX0G0qM+EK5fjO46ozE5hSVOhMJg0fRk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com; spf=pass smtp.mailfrom=smankusors.com; dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b=bhK9432u; arc=pass smtp.client-ip=23.83.222.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smankusors.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62358390C8B;
+	Mon, 13 Apr 2026 19:00:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1776106822; cv=none; b=E4ZJ2iMYtMCRpppb/jbu4/E2RWz47jj95i55k2vYkknv9QBTJ3CZjfmSaHrfto5ZgSIMbqMtmhwfEV8frGLfuBw/M+Q8paZehc1BnzndvDf0rLpUyC9vK8xDB/MZ2RxXSSvag9tOv3EyNZR8EdWb7yD71V3y5w8vt2jNWoewGGk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1776106822; c=relaxed/simple;
+	bh=hwGFRjkjIVh+vw2wDg9M/94dpLvDuKgHoeS0o9X0fE0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=HKkC4c0ZBbp3juwfief9b3DidyVJh7jKngJG+SLdlKGKFpLo2CaV64jcathxuySo6nCjABa0VSvJAP3WLFk64DEt1BUFTIIgD3zDqGfgUT6r4A+9StcbOn4RLwAIE2ryUJ+PCAMqBnt8Hmf8fTJAOBZcW5M4X3VoAI4DM7sTVgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pAMLGmFk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b="bhK9432u"
-X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 315F77E188A;
-	Mon, 13 Apr 2026 18:33:18 +0000 (UTC)
-Received: from fr-int-smtpout18.hostinger.io (100-101-159-68.trex-nlb.outbound.svc.cluster.local [100.101.159.68])
-	(Authenticated sender: hostingeremail)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 9CA4E7E0E20;
-	Mon, 13 Apr 2026 18:33:13 +0000 (UTC)
-ARC-Seal: i=1; a=rsa-sha256; d=mailchannels.net; s=arc-2022; cv=none;
-	t=1776105196;
-	b=mm3qaltKo1hYwXPXTNkqf7z4k9IfCU6ZyydtC0HtYYl5HfnDhirWt5mMz/BmiS+WmZVBpY
-	wiUxylwr3RJ2G2sHcj3QUrsH25Az8XSVgnPKA0p2JrZCaMHd8j2YkVODYlnmTz8ugp2D3H
-	/RKZyLnCg2yrneOjDSAFKyc+g+tziGmprvJqEb5e+uuHvRe/X+fJurZxO9CUd+y/k2dZ/r
-	wP18o/IQKVZezkxqzew+2GYD316h8Uoi6gTaGQdE8BNJLuItSyZwVyCqUniQSmgmlKT+yZ
-	H5dV3hptViwpC3cRtfyMOuODjUOrGoGwCyl1wdO+KpWrvPLYi1Xie7Oi2XbB8g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1776105196;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=gC4QEJJYFCDp2IOgth+X/Ti9ZrwlGREYN4zuIaCIQ/A=;
-	b=Nw53ktyCDFjhAkP+fUwEy2atpFq6jg0DLRtjsmvIiExwZFbCg7V+hh6EMySoWAcfjqna4g
-	pXl+o2yvKpeKcj6LwDmhofKO4KTNRSB8Pl/66Emz15n0LhOS6qwNHTSNLc3Cz7SXQvYAEW
-	KZVhajyO37q63kgD21ZUN0e7cmncuGe3lKcfzos76m3G32JJzJJvxFot4VDMunWR1Wf68l
-	X9vx5lJImRORF31NMlpIjHt/DwBPVuL9o9VMaak4s3KNT7LBmzGsCeHNlacbxY2VmSKmx7
-	Vfj98NLlecJbqdmbl4WdIIKUHtZ7u+NUHrSpsRMGLwYxzIWIZKlIPNncMT3fFQ==
-ARC-Authentication-Results: i=1;
-	rspamd-7d86dcc447-fnj9k;
-	auth=pass smtp.auth=hostingeremail smtp.mailfrom=linux@smankusors.com
-X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: hostingeremail|x-authuser|linux@smankusors.com
-X-MailChannels-Auth-Id: hostingeremail
-X-Lettuce-Quick: 4cb05ca90b9ec1db_1776105198087_2698546186
-X-MC-Loop-Signature: 1776105198087:1841770979
-X-MC-Ingress-Time: 1776105198086
-Received: from fr-int-smtpout18.hostinger.io (fr-int-smtpout18.hostinger.io
- [148.222.54.9])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.101.159.68 (trex/7.1.5);
-	Mon, 13 Apr 2026 18:33:18 +0000
-Received: from [172.17.0.2] (unknown [180.247.251.74])
-	(Authenticated sender: linux@smankusors.com)
-	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4fvbd04NwBz1xqg;
-	Mon, 13 Apr 2026 18:33:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smankusors.com;
-	s=hostingermail-a; t=1776105191;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gC4QEJJYFCDp2IOgth+X/Ti9ZrwlGREYN4zuIaCIQ/A=;
-	b=bhK9432u0yMRESuEHtfh36WLRInULMC5i1YR0WzOcd+eX5fuaSDRcJJUzx5sYaF9OuyoQ/
-	lJqPFu1wu7Lc+eafdeFTYbhoLFoB0IvsJhy0JmeRMBHQzM8bR2y9wmhzBFW90VUbkGsWMA
-	QZVgIWQd3BM88sOXLhzgwofCMjtdCfMBN59DHM72S6gJCuyLPemHUWubMOWHk4o7fcT5Yc
-	MFXmdLfD3HjSJZqAmm6M5mvN+EzbHp7rIgWT7LppWZfhiSNz6AYQcVIYuZlYKrOMiZKc88
-	PFcf1usze/r9RqxeDeVy7syK61lM34WvSAx9KhLYo+dEc+S/rgQGUHkQys7BVw==
-From: Antony Kurniawan Soemardi <linux@smankusors.com>
-Subject: [PATCH 05/10] ARM: dts: qcom: msm8960: add RPM clock controller
- and fix USB clocks
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pAMLGmFk"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 27794C2BCB7;
+	Mon, 13 Apr 2026 19:00:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1776106822;
+	bh=hwGFRjkjIVh+vw2wDg9M/94dpLvDuKgHoeS0o9X0fE0=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=pAMLGmFkZSwctk5zpuJsdKwZdvM8GHlTuzNV/PiHcrRlduH74stO3xTjlRz5dj58B
+	 gYhNnmgY8d4Xb/tzEpjK0JiEg4wkDpINFn2d0ZY6r4TGWeKwWAx1G2ygwgFMqbZtcU
+	 n+huLut1OTkrSVSePAsSDPKQAcK+JnbTcoyFVbQxyVotVKDNGcAcrtwpvgIHiRpd29
+	 OGIWcTgyQstREwMXkYWCjnNHRNHuC7jXBUssdIkUBC34Vso1JcvKYwyG/qfGdSU5rH
+	 PUbkyTcf0rZkXFU0puxOwuBhuNBgPsS6WiTIbrWf2vEehPGoKNa6zDYsfRFlKVaZok
+	 kJtx9/sKsDimg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18C41F531C4;
+	Mon, 13 Apr 2026 19:00:22 +0000 (UTC)
+From: Antony Kurniawan Soemardi via B4 Relay <devnull+linux.smankusors.com@kernel.org>
+Date: Tue, 14 Apr 2026 01:55:29 +0700
+Subject: [PATCH 02/10] dt-bindings: mfd: syscon: add qcom,msm8960-sps-sic
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -86,9 +40,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260414-msm8960-wifi-v1-5-01c081e54610@smankusors.com>
-References: <20260414-msm8960-wifi-v1-0-01c081e54610@smankusors.com>
-In-Reply-To: <20260414-msm8960-wifi-v1-0-01c081e54610@smankusors.com>
+Message-Id: <20260414-msm8960-wifi-v1-2-007fda9d6134@smankusors.com>
+References: <20260414-msm8960-wifi-v1-0-007fda9d6134@smankusors.com>
+In-Reply-To: <20260414-msm8960-wifi-v1-0-007fda9d6134@smankusors.com>
 To: Bjorn Andersson <andersson@kernel.org>, 
  Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -100,82 +54,51 @@ Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-msm@vger.kernel.org,
  linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org, 
  Rudraksha Gupta <guptarud@gmail.com>, 
  Antony Kurniawan Soemardi <linux@smankusors.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1776105169; l=2412;
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1776106820; l=1120;
  i=linux@smankusors.com; s=20250609; h=from:subject:message-id;
- bh=krAuu/0WstJknY+csLrR8SH0m8CWuJG86jpKvvPTtfg=;
- b=YD/QNMISLnHbuokZ1UjLJ46X7QNOmJqkibV+2Jq2a+DXDDW8HjrPsM0kyUBcMUg1vo70hyc2Y
- hPHCjhVQpXjCNiA0P5iFGOwOh6OpRukxylX4qX4ctjAvfmCsskJSX4s
+ bh=mIW20FISbOXB32b/vpmGZrFFpfMx94QhJtXj8cpMSMk=;
+ b=cho2hesCQxrEf90foy0lm70DCmysnadQ43iMkAv0rZ9uTlR2YnFLPsee81lFbN9svpgq4zi0k
+ EjkMg+VGD4kDQO09PCs9MDLbUSK4M2EqQ9hPkOTKqm6EgiFUSsqcTXS
 X-Developer-Key: i=linux@smankusors.com; a=ed25519;
  pk=65wTy06fJl2/h/EJwjr704YG+yjHFhZObJBWzzK+N00=
-Date: Mon, 13 Apr 2026 18:33:08 +0000 (UTC)
-X-CM-Envelope: MS4xfHLah8amrRpS/czPuaRGUpMGPM0QU17E8x5b+Wgn6LlSGsbWSPU+FIimCluy+Brw8JJ0MBwL68pzUxTZCD0d4lGwueOvoDJLw074MQxNRyoJ10xWfmFH v9Rpx0ZhJlf8LBNA6iQSDSJ2ui4Tc9QfIwsg2qoKNRX9Yc6w0cp9+6qW7LL1Gck2GWNcxelm0ZYcvYDY6VJJk5nIXL3j9RLagDL0RFKDMbojumgSlOX0mDXO Qdb8ARnkvCzBq0greAnwnxWuKO8brS+PtL1a1B4pb7MfaWh6u7IkxsMrTXd4TnoewciY3Z506Npy4t/fgxWXMhUkyUKjJmFxR4xurt735O8B+Vxao9swcTTD pj8pQ+7gvZnzRZwd8av0pMNRgQyv6tFOgESxvLgziC6TR9H5gCo5hCworv7vrZYutCoigCJj1UbFpzTFa/5xRseFBaJvXD/cfC5/49+OXM63dqTSNWjP4wKW LsKiG3+/qI4eIxkhpem2yG6EyY/zPONk7k4ssWEbtmjPA3Y2MP4a2N/QZ/EF9VE3yJ+S5qp7pTdjp6FtNZJsKuCcuXvqoF3dHlarf6hx7VNtyNy4IUroWP1+ 0HYjVGxLI+aXp3iSyUtkjVMPrlzrxVcQGEqXlOggHOpD9aeoBLSI0ccyPbSxnEHQPXzpGQ2S0JX4ai8+X6orgOhK
-X-CM-Analysis: v=2.4 cv=UN2PHzfy c=1 sm=1 tr=0 ts=69dd36e7 a=iMBLmzX4nuXcozcv68JNPw==:117 a=iMBLmzX4nuXcozcv68JNPw==:17 a=IkcTkHD0fZMA:10 a=wxLWbCv9AAAA:8 a=-g1pO0pIwJ2TSlcm9fEA:9 a=QEXdDO2ut3YA:10 a=QJY96suAAestDpCc5Gi9:22
-X-AuthUser: linux@smankusors.com
+X-Endpoint-Received: by B4 Relay for linux@smankusors.com/20250609 with
+ auth_id=733
+X-Original-From: Antony Kurniawan Soemardi <linux@smankusors.com>
+Reply-To: linux@smankusors.com
 
-The RPM clock controller manages clocks shared between the application
-processor and the RPM firmware, including fabric and bus clocks required
-by several peripherals.
+From: Antony Kurniawan Soemardi <linux@smankusors.com>
 
-With the RPM clock controller now available in the device tree, the USB
-controller must explicitly declare its dependency on
-RPM_DAYTONA_FABRIC_CLK. Without this declaration, the clock framework
-would consider it unused and disable it, breaking USB functionality.
-
-This also corrects the previous misuse of USB_HS1_XCVR_CLK as the core
-clock. The XCVR clock is in fact used for PHY/reset handling rather than
-as the main core clock.
-
-A similar issue has been observed on APQ8064, where missing the RPM
-fabric clock dependency leads to broken USB.
+Add compat for Smart Peripheral System (SPS) Interrupt Controller (SIC)
+present on Qualcomm MSM8960 SoC.
 
 Signed-off-by: Antony Kurniawan Soemardi <linux@smankusors.com>
 ---
- arch/arm/boot/dts/qcom/qcom-msm8960.dtsi | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/mfd/syscon.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi b/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi
-index fd28401cebb5e15cf9eb5bfdeff29d7b0c580b1a..1d5e97b6aa4bdfe98469a51d25984429e5c3be5f 100644
---- a/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi
-+++ b/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi
-@@ -5,6 +5,7 @@
- #include <dt-bindings/clock/qcom,gcc-msm8960.h>
- #include <dt-bindings/reset/qcom,gcc-msm8960.h>
- #include <dt-bindings/clock/qcom,lcc-msm8960.h>
-+#include <dt-bindings/clock/qcom,rpmcc.h>
- #include <dt-bindings/mfd/qcom-rpm.h>
- #include <dt-bindings/soc/qcom,gsbi.h>
- 
-@@ -98,6 +99,13 @@ rpm: rpm@108000 {
- 			interrupt-names = "ack",
- 					  "err",
- 					  "wakeup";
-+
-+			rpmcc: clock-controller {
-+				compatible = "qcom,rpmcc-msm8960", "qcom,rpmcc";
-+				#clock-cells = <1>;
-+				clocks = <&pxo_board>, <&cxo_board>;
-+				clock-names = "pxo", "cxo";
-+			};
- 		};
- 
- 		ssbi: ssbi@500000 {
-@@ -507,8 +515,12 @@ usb1: usb@12500000 {
- 			reg = <0x12500000 0x200>,
- 			      <0x12500200 0x200>;
- 			interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&gcc USB_HS1_XCVR_CLK>, <&gcc USB_HS1_H_CLK>;
--			clock-names = "core", "iface";
-+			clocks = <&rpmcc RPM_DAYTONA_FABRIC_CLK>,
-+				 <&gcc USB_HS1_H_CLK>,
-+				 <&gcc USB_HS1_XCVR_CLK>;
-+			clock-names = "core",
-+				      "iface",
-+				      "fs";
- 			assigned-clocks = <&gcc USB_HS1_XCVR_CLK>;
- 			assigned-clock-rates = <60000000>;
- 			resets = <&gcc USB_HS1_RESET>;
+diff --git a/Documentation/devicetree/bindings/mfd/syscon.yaml b/Documentation/devicetree/bindings/mfd/syscon.yaml
+index e57add2bacd3..39a24c3ff9cf 100644
+--- a/Documentation/devicetree/bindings/mfd/syscon.yaml
++++ b/Documentation/devicetree/bindings/mfd/syscon.yaml
+@@ -106,6 +106,7 @@ select:
+           - nxp,s32g3-gpr
+           - qcom,apq8064-mmss-sfpb
+           - qcom,apq8064-sps-sic
++          - qcom,msm8960-sps-sic
+           - rockchip,px30-qos
+           - rockchip,rk3036-qos
+           - rockchip,rk3066-qos
+@@ -219,6 +220,7 @@ properties:
+               - nxp,s32g3-gpr
+               - qcom,apq8064-mmss-sfpb
+               - qcom,apq8064-sps-sic
++              - qcom,msm8960-sps-sic
+               - rockchip,px30-qos
+               - rockchip,rk3036-qos
+               - rockchip,rk3066-qos
 
 -- 
 2.34.1
+
 
