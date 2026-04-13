@@ -1,82 +1,82 @@
-Received: from chocolate.ash.relay.mailchannels.net (chocolate.ash.relay.mailchannels.net [23.83.222.35])
+Received: from slategray.cherry.relay.mailchannels.net (slategray.cherry.relay.mailchannels.net [23.83.223.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A308C388E71;
-	Mon, 13 Apr 2026 18:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.222.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9238423EAB2;
+	Mon, 13 Apr 2026 18:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.223.169
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776105806; cv=pass; b=Rgcy/5PXh5CVKe6kp8+7emVNSrzHW9YOCdq3pdHoNFcXEoF84mdI8Y3O3OyvEfFhzQ18TJQiMfAuJ8EK4Xs/5FqCRKjE+l0QVSZgMyUXJs3PKPzZfh020QcTrKvIe+0joCqJIEYzcreudyAZ2jH93BRmfMTtqr+Lo3WetCzpVQc=
+	t=1776106181; cv=pass; b=ac/nYT/+lA5AP/QBJ82VNjWYHQAcvTaAussJPbLWmoXqom/ZGO6FaDww8PoyLOkgq2/RfddKkz3jQdCQo5fB3JoVN/ffWew0gBZCdb6L8gxnFN+gQerLISI5Z32+miSJIUnky7Ru09KmrSlSqxh92lC7U2BwiaG9tUiAQOAC+JQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776105806; c=relaxed/simple;
-	bh=dVIwlPo4vsCXSWJ48G4/vf232p/hKTWUCfhv9QzlvPY=;
+	s=arc-20240116; t=1776106181; c=relaxed/simple;
+	bh=fEw/y24WYxs3hZSqPEGoague+XwX1gBkuWg1clx2OLM=;
 	h=From:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc:Date; b=PpW1LYwJlFqdfPZJDZD/U6740F8LXkyD08I/40IIYUjhU50wQ4Vpqp5VQdNukvpq7Zq+cH2yPVFJ9JdMGU0QpMK4KWn1vie9T6EpMfEKwDJs+UMpqqNKXl1/a1552oNv79UcwDdo/4y62Nx5d/9OOgRi90gLQ9XFYJH9U8+Fhk0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com; spf=pass smtp.mailfrom=smankusors.com; dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b=lXP+lbms; arc=pass smtp.client-ip=23.83.222.35
+	 In-Reply-To:To:Cc:Date; b=YVU8CXZHiiVY8laMgxukE2zgN3bfltAc0NJBvPQYB0D2w7yr8OX9+ExsDDuLqfd37opzqF14t5qg23Fneas8cz/avuxJL93oLP/hIx7CQJrrHwcQEUsMoLVEz5QQD56Pf9zdHZCxM2GccRPmv7vXiWUh28sbWpMzd8EIYQHSSb0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com; spf=pass smtp.mailfrom=smankusors.com; dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b=R2dA/3n1; arc=pass smtp.client-ip=23.83.223.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smankusors.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b="lXP+lbms"
+	dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b="R2dA/3n1"
 X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
 Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 9A3C41249C3;
-	Mon, 13 Apr 2026 18:33:14 +0000 (UTC)
-Received: from fr-int-smtpout18.hostinger.io (100-123-14-30.trex-nlb.outbound.svc.cluster.local [100.123.14.30])
+	by relay.mailchannels.net (Postfix) with ESMTP id CBA117E3D08;
+	Mon, 13 Apr 2026 18:33:07 +0000 (UTC)
+Received: from fr-int-smtpout18.hostinger.io (trex-green-1.trex.outbound.svc.cluster.local [100.100.158.21])
 	(Authenticated sender: hostingeremail)
-	by relay.mailchannels.net (Postfix) with ESMTPA id CF0DF1232A7;
-	Mon, 13 Apr 2026 18:33:09 +0000 (UTC)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 8B2237E2DA5;
+	Mon, 13 Apr 2026 18:33:02 +0000 (UTC)
 ARC-Seal: i=1; a=rsa-sha256; d=mailchannels.net; s=arc-2022; cv=none;
-	t=1776105192;
-	b=tD50Xse2WkJvfgCPt5P5F9V2N8WwOqBa4Jnfv2oqhQ3CFR686GPdpY9yoQ5IGbHkfpydGe
-	wijsI4a4b07zeWXPiN8wcrRERgjs13e+/SVV4R6EbPP0alEhWdNUIhqI1Y8aHj/Q//MamX
-	m8pjCAOtJVPQZnX5r9TdHq6gzuyDFwUF3h+eLWvTomGmPOZuxCjLKhGdjWTWWjbT7vcL4W
-	C6O6AIxGaR4pk2cqxuU8Ud4BumzvPmEfjLZIHIbXi0bW0IqYm7S2nqiHECkUfX+7mmVhNZ
-	fI+7i+3npHCY1cHuiwuzpZYP+mBYxCYyNPUfqp5HV84yy+u7RJdYUV6+W/VQBw==
+	t=1776105185;
+	b=JhV4IHRfBMve8AswBRy63ev/gOVPJaV5pnb46IMcYOgU7PAL4xP/nASSK5X2xezB+AHBEb
+	wkaOhvCEdSpvjXcF1gqQZGKQu2LTwWKt969kMAi/qloNfefsgpWSC8A/WISydn0bwWWu1O
+	2JXG5ep6Gs+B9yCYDAT+PMe2mxmgkrFhWVQWwPJcPEt1f/pA90RLGJQZSuEXtUPAbBb0+n
+	m/xhJZjMwlsmzfyh1mipXJMIZcZLEhACk06A5F489Cavz5aRNtPTCUqJhhaT+AjHjrG53H
+	E8k8Lu4LuUcMdOuO+/d9XIKoRSlXC9mlgginNC8ogSq5UKze4gQHGrf98PPBtQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
  d=mailchannels.net;
-	s=arc-2022; t=1776105192;
+	s=arc-2022; t=1776105185;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=4Zg5iAXA4WPycq2NW8UBsFoeCBoUtmXoLiY0h+yFQwA=;
-	b=n3SnLRzlCPPgbF2x9T0qaTu6tdWt97QmbqdRMnDEqzafZUiPFraDwMUKgBy8aCJ9jw4w2N
-	dz75GCnXh9MwYPsmiYdxrPs+Sxfg00tvDaOrmV5PXe81hGPV+7ehtYr+0EfEKGJIHm38YQ
-	gi9PrGvlfGRk0v/DKSuIlLrMGowP9nU4eyKnkkwClEpiOEhAlByuzFeodTYfXHcrcK3+OC
-	zTmX5iv+v9K/wEuSBX2Ch+PMCyhRS/Z3OgDBHw7ycDS87rjwQy85hTKVYF6ZlNrrdtqacm
-	8UltfDaiKXZL7InazBgGF7yBuyh3MEHB62F2M0nW1Rv99tCXilBVqVbA6NCb2w==
+	bh=OLUnfi6HeX0ASpLx7V0UtygFHbY07vXAaWDDvuPcoso=;
+	b=c98iDaofH660buqK4pJI2MTTwfOzutMHaDxzgDrct6PamCuYVAx+oR9cGlniV6fTVXsYRF
+	TbWEC8Mft6FZ9x5QS8zUFZvueMb+Ay8wFG1VF2bXXb2Y/dMCz2cwzqfFJJIEo3pGXurQ2n
+	h4d3xe2JNbNwGyLvVOnCa8qe8P11kHSlqSKb2OqqPQGWXCimm1XK5VHiaVR1XWpQIeOp4u
+	OlTyb1zZuRi2BZ62o7swL0gZwacUSS2/V78Rm6RnFAdTLM5E5Ye3uXTo1B0103tkcNYR/+
+	Ff1SIM9EBnjWquP81QELUQ0ihbszUe8j17acmIyECIGm/XKcJkeiQAKY50xRFw==
 ARC-Authentication-Results: i=1;
-	rspamd-7d86dcc447-6rhr4;
+	rspamd-7d86dcc447-rcb8t;
 	auth=pass smtp.auth=hostingeremail smtp.mailfrom=linux@smankusors.com
 X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
 X-MC-Relay: Neutral
 X-MailChannels-SenderId: hostingeremail|x-authuser|linux@smankusors.com
 X-MailChannels-Auth-Id: hostingeremail
-X-Tangy-Bored: 6edf7d1b03545cb1_1776105194395_632526818
-X-MC-Loop-Signature: 1776105194395:4045704726
-X-MC-Ingress-Time: 1776105194395
+X-Wiry-Ski: 26e69828523c7718_1776105187665_4020689506
+X-MC-Loop-Signature: 1776105187665:2041444484
+X-MC-Ingress-Time: 1776105187664
 Received: from fr-int-smtpout18.hostinger.io (fr-int-smtpout18.hostinger.io
  [148.222.54.9])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.123.14.30 (trex/7.1.5);
-	Mon, 13 Apr 2026 18:33:14 +0000
+	by 100.100.158.21 (trex/7.1.5);
+	Mon, 13 Apr 2026 18:33:07 +0000
 Received: from [172.17.0.2] (unknown [180.247.251.74])
 	(Authenticated sender: linux@smankusors.com)
-	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4fvbcw6zqNz1xtG;
-	Mon, 13 Apr 2026 18:33:04 +0000 (UTC)
+	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4fvbcn58m5z1xmL;
+	Mon, 13 Apr 2026 18:32:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smankusors.com;
-	s=hostingermail-a; t=1776105188;
+	s=hostingermail-a; t=1776105180;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4Zg5iAXA4WPycq2NW8UBsFoeCBoUtmXoLiY0h+yFQwA=;
-	b=lXP+lbmsNI3P6G2e4vvJ3oEAIkeh6svnRYohluzoj+Q6say4TvXdeSwy8eWx+KhDNI7vUm
-	gWX4NEBumoBs22aC2ryZTlLFm70RbuoH1I41ONfiydixb0P7nKOsXrmLJVU5kLVv/bjDLb
-	lawibR+vaJ6Q/kB8I/X0DazhYnTQw34G1SP3nj/j+yIcdPQy6C6au4ORciIO5HShV0Cb0B
-	XBnPX+KhruzPj9g+Sx+HZfoVnj79rJ9bOMJsfRwOHYseusnOwOIRJJMSL+T/6QdY5+9pPk
-	WfowClmUz2ALBWJYTCwn/OqKN4oUHyfNmX88Cs7gRKj2j0JeP3TBaNtu1YYwbA==
+	bh=OLUnfi6HeX0ASpLx7V0UtygFHbY07vXAaWDDvuPcoso=;
+	b=R2dA/3n1XEqxCGaBh/ELxE4nP/ix8tznQi2Fhv0WWRGX3kn8kh4IwI/LHHB+yAvBLaqTMS
+	ueAico+WXBg5r/we9+6iGp71WWoRNUH12i59wek2uVvI5TdkmCz9a5o0TLNeBitSvKn5W1
+	OuUoEKKuICxpA83wr0fi3SoZyXI+mIWm4TRrLgFjCq68FeL2qW+bnro/rEdADJupaRtEFg
+	3FRfvqe3P2uc58NWFytsskUibJQlUpc6wQdbttxZ/QBm+qU1712XPy5+FFQF3Zv4A+q1hx
+	HzxI7v6kWI9AJ8FRsvkj3l6u+Z8mLwie80iJsGtDQKe42526udE+ZPTdi8CTjQ==
 From: Antony Kurniawan Soemardi <linux@smankusors.com>
-Subject: [PATCH 04/10] clk: qcom: clk-rpm: add msm8960 compatible
+Subject: [PATCH 02/10] dt-bindings: mfd: syscon: add qcom,msm8960-sps-sic
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -85,7 +85,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260414-msm8960-wifi-v1-4-01c081e54610@smankusors.com>
+Message-Id: <20260414-msm8960-wifi-v1-2-01c081e54610@smankusors.com>
 References: <20260414-msm8960-wifi-v1-0-01c081e54610@smankusors.com>
 In-Reply-To: <20260414-msm8960-wifi-v1-0-01c081e54610@smankusors.com>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -100,42 +100,46 @@ Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-msm@vger.kernel.org,
  Rudraksha Gupta <guptarud@gmail.com>, 
  Antony Kurniawan Soemardi <linux@smankusors.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1776105169; l=1121;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1776105169; l=1176;
  i=linux@smankusors.com; s=20250609; h=from:subject:message-id;
- bh=dVIwlPo4vsCXSWJ48G4/vf232p/hKTWUCfhv9QzlvPY=;
- b=ddXLhxLp8d1Q6vHOa8M8DQ23SAdX30gfL7ULXWl8/YAnqvNAz+6ejOTV+HPJ0vCWQBmR/PP5v
- CpPSxxdNNfDCykaucRWg81I3CrUqczl6OvuRPN0iJcYlrROCMosr5n2
+ bh=fEw/y24WYxs3hZSqPEGoague+XwX1gBkuWg1clx2OLM=;
+ b=aTWlKY+p/2tRwy0b+nB5DCaP1PEdFcTPGfKHraawDAetUha5eWQ0MoC8U7Tjdc4/rQTY46ipx
+ 1j9hIqrsjfNAD8nfyeUAgh7C7i5CNYDrogXGWuJYDGrwmpcPXRD+cT4
 X-Developer-Key: i=linux@smankusors.com; a=ed25519;
  pk=65wTy06fJl2/h/EJwjr704YG+yjHFhZObJBWzzK+N00=
-Date: Mon, 13 Apr 2026 18:33:04 +0000 (UTC)
-X-CM-Analysis: v=2.4 cv=ZbRPNdVA c=1 sm=1 tr=0 ts=69dd36e4 a=iMBLmzX4nuXcozcv68JNPw==:117 a=iMBLmzX4nuXcozcv68JNPw==:17 a=IkcTkHD0fZMA:10 a=pGLkceISAAAA:8 a=wxLWbCv9AAAA:8 a=71QVCaQ_XApMQrzpv04A:9 a=QEXdDO2ut3YA:10 a=QJY96suAAestDpCc5Gi9:22
-X-CM-Envelope: MS4xfPeHX4nW/IyboQ78A80L/blGLkt4LYhubNtOA+MspZVVlZU83Olzku4esXkYJhwAkiYuroLMYUuZJEAgA7LuhwQkXwCPEFMhx8rz2OcVcfbwQ7hnIUXv rW4ghf4UhZvZGsi7wC3BFrk8GY5XUOZ1MQk9geVDAbo+0+dlPOMQJpXtH63jZ+s6p3UNoYiOEgqDv2IrsdAUUreNMh+ezMfEpO1dsuJcd26Yu85LM5LLE8Qo YddYo9QJWsv6m+HcdAKTr/Y7YhjHtKAxAmeYmzvmv+ELeKnSEBuCFkmH7ynA/zHs/w09SoP+vgi5bbtGSc9/2E+hTbPyuMFv3qsufBkASw5KTGs2ek38nHWG wklYDiZb87o7kUFRhTXRO20rhjB53bAxn3Ln1vp/k7JbG5Q+BkgBnHdG9lSRJA1qmYWOu3wTOyXnJwc7l+GXa0q1GNS+nt4y5uTLVEoWLo1DIZvxXaNOkXCj G9zClZBEoYiyis97RhSMTrrz4cliVS10w9HbMFDMW9H41WTdoAcNUebxRgHerec20CQ/75F+s/JtEav1WNsKEBScwVyKhwFKp3hse6BpDMUtTL8zTna9qZX6 rl/b4A0qF3a80N8x/A9VHiRO49w7r2YbTDRf8CDzd+Lq4T7gkyXt61+iFnQitcrOpEyfgXS7g4LK4utSzVHvIgti
+Date: Mon, 13 Apr 2026 18:32:57 +0000 (UTC)
+X-CM-Envelope: MS4xfGi14sXGME7uZwgcuu4nMkT3dYKapNrFMv/kuWuSkLcxx017t84pfr8BUYrwLjYFFRnUH1dn5zwsoSIjzG+BVxoflL+aOehfnmcX27qzGHwv5dT2e9yy VXClVoyNXEYvnkM+7wuMREQeiL3GTgtHMuXMUBjK+/zhODB++ROa2lxPdzfKb1ToBMcFeeoIGtJPZrM+ONS6W+Il2kbJv1lWwKSX6byhg05uQuT5DTbZVaxW uA5NiwPoc0BOQ2fJBRhLfd+meOtTjh3Jk1XbIn02Cc5q+P1NaFSjxl85195SL75TUt3bD0uXi2YO0x+N2pG4K8YdQs8C+7l6m8+Qcvx09YFPTJFQNSDL79YY 7t/0W1ioqWW7eSHGaJd9aE88ykSTUBRgxQJjh7S5hSkN1fIRlFZ8deHQG9gEZiwNL7cSZf9heW4sDdv+wOeoHA3acnroQl13JE+m8kSWHPstb1nqDFpnnw5A DKSFjz6T1u73t1pmS8V+E6MDDe+6zBxo0dIfuCU4R1KTVh02uRm6Lhd3RIWYBscn+PBvtZF6VoCHwO6leyJABa15X2FxbnuscwRu7plKUNNYvk3W/NzTDWFz N/icmsUfHHHHymW1sL66O0L38q925Kxd7VxaWsFdLiaww2lySvOAtvXiz4a8IRXlt4aRpOUrsNFej5CxCHhNltdD
+X-CM-Analysis: v=2.4 cv=UN2PHzfy c=1 sm=1 tr=0 ts=69dd36dc a=iMBLmzX4nuXcozcv68JNPw==:117 a=iMBLmzX4nuXcozcv68JNPw==:17 a=IkcTkHD0fZMA:10 a=wxLWbCv9AAAA:8 a=Gjla_oY5Z_Fy-GYXBTcA:9 a=QEXdDO2ut3YA:10 a=QJY96suAAestDpCc5Gi9:22
 X-AuthUser: linux@smankusors.com
 
-Add support for the "qcom,rpmcc-msm8960" compatible string to the
-RPM clock driver.
+Add compat for Smart Peripheral System (SPS) Interrupt Controller (SIC)
+present on Qualcomm MSM8960 SoC.
 
-msm8960 uses the same RPM clock descriptions as apq8064, so reuse
-rpm_clk_apq8064 for this compatible.
-
-Tested-by: Rudraksha Gupta <guptarud@gmail.com>
 Signed-off-by: Antony Kurniawan Soemardi <linux@smankusors.com>
 ---
- drivers/clk/qcom/clk-rpm.c | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/mfd/syscon.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/qcom/clk-rpm.c b/drivers/clk/qcom/clk-rpm.c
-index be0145631197bea65438f3bed10344f18d6de802..601f602741131f4bdc24d1d3846b12a38f5d594a 100644
---- a/drivers/clk/qcom/clk-rpm.c
-+++ b/drivers/clk/qcom/clk-rpm.c
-@@ -502,6 +502,7 @@ static const struct rpm_clk_desc rpm_clk_ipq806x = {
- static const struct of_device_id rpm_clk_match_table[] = {
- 	{ .compatible = "qcom,rpmcc-msm8660", .data = &rpm_clk_msm8660 },
- 	{ .compatible = "qcom,rpmcc-apq8060", .data = &rpm_clk_msm8660 },
-+	{ .compatible = "qcom,rpmcc-msm8960", .data = &rpm_clk_apq8064 },
- 	{ .compatible = "qcom,rpmcc-apq8064", .data = &rpm_clk_apq8064 },
- 	{ .compatible = "qcom,rpmcc-ipq806x", .data = &rpm_clk_ipq806x },
- 	{ }
+diff --git a/Documentation/devicetree/bindings/mfd/syscon.yaml b/Documentation/devicetree/bindings/mfd/syscon.yaml
+index e57add2bacd30b0582e037ae69dd9f2b55d13066..39a24c3ff9cfb543d46ef30a21edbd074e22a0de 100644
+--- a/Documentation/devicetree/bindings/mfd/syscon.yaml
++++ b/Documentation/devicetree/bindings/mfd/syscon.yaml
+@@ -106,6 +106,7 @@ select:
+           - nxp,s32g3-gpr
+           - qcom,apq8064-mmss-sfpb
+           - qcom,apq8064-sps-sic
++          - qcom,msm8960-sps-sic
+           - rockchip,px30-qos
+           - rockchip,rk3036-qos
+           - rockchip,rk3066-qos
+@@ -219,6 +220,7 @@ properties:
+               - nxp,s32g3-gpr
+               - qcom,apq8064-mmss-sfpb
+               - qcom,apq8064-sps-sic
++              - qcom,msm8960-sps-sic
+               - rockchip,px30-qos
+               - rockchip,rk3036-qos
+               - rockchip,rk3066-qos
 
 -- 
 2.34.1
