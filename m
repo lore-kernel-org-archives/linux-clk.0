@@ -1,197 +1,131 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4E535DA4F
-	for <linux-clk@vger.kernel.org>; Mon, 13 Apr 2026 12:28:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776083303; cv=pass; b=ULIWHJ+tVdU+92PTgK6KxZPf3zTUIF0ed2+n9vAG+SNgw976hRwabOiPcNkDaPi6aL3kHn7ephpzedkth0XnwFNEfTq2t2GQiE5gsSv4Aw9lmuXsvPYXiI3nIqmntw74AUcOVu09ZN/z4h2P+tgq1nBfA9MMNKstK8vGJusxX6Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776083303; c=relaxed/simple;
-	bh=xsHSmBrP8uAAlVjNBz77G4uhcSS+CwO8tygFMXbTWBE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Wy5+qDlZBgXFP2Z4v6o81eaoJ51uD51cPHj5mnhhRmdefQkKCKNrPxttjXC06hLTJzA9WeEf7cngLi/t0dApzX2bdO40ra0P3x2a766eJQjGWP1ZVdDw+RMEVfnspcnlB65szg+zp86lfRM4Rb2fDabPfL0E7Cxwb1Cb+pq9O5A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RVVAM0rh; arc=pass smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D46A3C3420
+	for <linux-clk@vger.kernel.org>; Mon, 13 Apr 2026 12:29:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1776083384; cv=none; b=LljilQs1H8JqFzji02qvh5Ha0tpjTwzdBMTNZAxeY95FpMDsxaoK6oqM4+Vz/nnsdcLJXtdCAnY0uA0ln5l93nWotLO3tS2t7xMKlX0mCFyB2xzfZU/rmnf8H+EaAibIRs+mf5t+dO0IFIZCF/b4l6carjqxwMnpC1E99q9Ba6w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1776083384; c=relaxed/simple;
+	bh=6Zfgby0cOpUu0h6XGPUoh1JZOpiNBDKAVsy5oJ6EO0w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J7BuCo7g53Wx/hksLdr3wMTQ1dSoj7tWDA6jvj+G6iIN58fiwVALXZLe+Sc8RSriWmI1IlkOZHRJfXJkfQ6JvdkCHFWXJXBXHx2kns8SFbUWCdpeYPh1gq5B0gFkOXXKFyt4u3JPRmky/RFQezy0tJjyrfjnas+tSF4zQL/w55Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=QsVW+pzP; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RVVAM0rh"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-43d75312379so759739f8f.1
-        for <linux-clk@vger.kernel.org>; Mon, 13 Apr 2026 05:28:20 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1776083299; cv=none;
-        d=google.com; s=arc-20240605;
-        b=QBjdZc/t+56TPo1FATnhGQNxRwKmNfkzkqe9sXqciztLsfZ3JLpM+PGl3jcRRoElNP
-         eA5cQi+ScF/9XQ5FJ29TAxtP39DU8e4mfBKr0V301RUxi6aRYXkzJ5mz3RPU/VVXsCwj
-         cbFipBFfFmH398vzbkvV44DLs1sIVQBaE8TEJjPL1pdWc2ARsE7GcXbW3w9mBuwNJL2/
-         FPWq31zAZZ848oy1uHHe6rNFHw5kJh50sFvXaR8OgvRs23UP97WHKzo2W3Kzp7cf90JV
-         pctgkH97enH+bToiVQFZNtpt7LjT2YDtMjogibuRkI15t02a/gLi7m8ZXHn8FM8h08NI
-         tS9A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=AfR7ekTVJM91N24iXqkZ230dnYTXWreR7I5vB/E9sQk=;
-        fh=5z/dU8IBH2iJd23PppzTkNTMVOOHTT5xNfocHJCcnas=;
-        b=cEchLxnoCtqX7B7n4b4CAwDOyqHJ/oght0cKfbg6+8bChEumtjx1yP5JdV0owlen6C
-         szOw8vcZ9r5/VAg0pabaJIOq+Y+fxW2utgtDoOLGEDkOPu+YNEMh6XRuYMREUJSGQjwt
-         F8uAB0RY/akVbeTJ6g0QJvD5K/t7UWB/ojKD09ncNyC7+MxaaVG8sgSlMLmUnMh7PAGN
-         81GxhMQ2+Mod3fmPMCLBxKASpePZCObY7bbWF7z0DDYMC/iPTA+2fEBf4i6a/U4DcPU6
-         g0pUqnZNZ3iy+9GEpolqqgRrVymYqqi9mU8+OfusaK1nDBUZcWP6Dus1XvSVRqPE2PCR
-         Enmg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1776083299; x=1776688099; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AfR7ekTVJM91N24iXqkZ230dnYTXWreR7I5vB/E9sQk=;
-        b=RVVAM0rhSCeho9yGJRfOHkjS/hBIsLDhfeYwf5o1Q0Rey2HBPTPa9spdbHbcBzQ2aD
-         4kS9ZyAFgP4bMkqRfVqUWulikOvJg8rYXfNU628zan6joGikarhwjI+lRBuGXtfM2UaN
-         VqH65C7oRApZvPpOyhOLs5lEbwHYp7EMKK5DK5ACg+oZ9rMf3DkTadvOHtFRgFgSj4wC
-         a52BQu9saKqnlQy3SMqxA3Xy4cC8uUgLoetvKEzZJW5BeIiqUHWpN46oBf5aI2Pd1baF
-         GF7zo1PjT04O53j2F9g0EnflLi4XNcaHtRthGngXV3kLrJAahpHD1fes60gQUHsSK7LS
-         9nvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776083299; x=1776688099;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=AfR7ekTVJM91N24iXqkZ230dnYTXWreR7I5vB/E9sQk=;
-        b=orSrEy/OO7HPWUWBqyLVAUG82qXCLo5dvmCBsZJAvnWmbIqWUjNTOuJlO/tCdyFGSp
-         3WCAiDNvCWpvSqCpOQaCpVY4Xc+KP/qwf5i5q4ntHvpTWjkdSRLP01WNHIozxbQycfDw
-         wHPfAPZjNDFZAqPicsSlHpLQIYeUH0hBLIcwZp4nmZ+xBg2vRAwilm1/1yUgwk1R1D5D
-         rVpwQlmHcbdbdyXExbhmNobGEKwod28ROloKg9P8kVDUFDFhZHsWvFn9wcPIncYW0mIJ
-         LnIwxjMEUJCYUrmbZKTZBogFjb8boY3KftPWviwvrLabjwtVXmhgslh7s8lCE4vFOJGc
-         TBbA==
-X-Forwarded-Encrypted: i=1; AFNElJ9m5/SS7571Fzd8r8HPIyqJiSSxvsyG/13hn6TG0GfZgrAAP0WnKE15v09f8wCCzkvoTJIcVYXHjsk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjY9ykqBZrodDN5gVQJJQx4P84LwLoF6qMVL14Hd9p1HUPyH6V
-	uoLn0SrQy5rNTvxc3HJ5xjV0N2Xpc9mUmnEH8G7UeCxMQC3l6mM6iDscyHe0PwQmq3qqqu1G+QG
-	k7rKet4Of08T2jCbUs24jRPCP5zRCCkw=
-X-Gm-Gg: AeBDieuYAh2QwVRVEAE6x6vXmwCfprdpmhQZlnfL4yWTuMnnp/jguWXohEA2MBr6e6n
-	8qPb/z/CkhTBdtuKnm3B34jKJu+XmleaHc6iQyWR6FJ/FH9BH5dNRa4GfM0YtaQLrtsjcl67iL7
-	BtYrmY/vzuiqH3nS2nV3Wn/LVmsuoJKNm5ETiqtLS2JelaPoX7CfpcUfdELP4HXxYRk+6cjX+nE
-	ICJUx2CYmOTrfR8cCDcuBNdi8+FYiG11ajI2lXWFbXcPSnuu/xVPZZAfafPkGqnWoqyk9mHfq5a
-	jatcooUSRyyhqzMTx372cfHJd7n29+29oHGU2LSVY13Mv27SS7ftvEaAc8yyuhUgpf0mT3epTVW
-	IUARW+g==
-X-Received: by 2002:a05:6000:24c2:b0:43d:1598:2d6e with SMTP id
- ffacd0b85a97d-43d6497b76amr19100204f8f.20.1776083298413; Mon, 13 Apr 2026
- 05:28:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="QsVW+pzP"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Dy7+J3Nmv3CmyBjyZLXnfY++J8xerQl5T/d1Q6AZ1bc=; b=QsVW+pzP/fktEna0S7j0QJmrsJ
+	Sv/GgoChbT8MctDEWJs9+NCQTEW7i8Ofq5fjZY1k7vTrit6euX57QMT32YEozT7MBnsNXJQjOYPr7
+	9XUFtLXPhZuBVoGXuIzfV0kYtDpl7ia5PGW7t7Fv6gaQAKZ5TuaCqVCqg5+BvfsuT4S/pETS75Q0Z
+	O3tPbSqmVt514KwYuB2YO+rHO1umNrJVgOhYuLxNjI9/fwrB0oABm+56snVkVHRhVYKrcBANu7UdH
+	KR8o7nnICXyaVsXXOHEQbcm4eAMizg+7eOdZX3/WFO8KPTHnDISgKXbVM4aoK+CptywUTRPAQ8f+W
+	U9S/D1YQ==;
+Received: from gwsc.sc.usp.br ([143.107.225.16] helo=[172.24.27.208])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1wCGPx-00FOp1-Pk; Mon, 13 Apr 2026 14:29:30 +0200
+Message-ID: <b5ab4741-1300-4a43-b491-2b73e052eed0@igalia.com>
+Date: Mon, 13 Apr 2026 09:29:24 -0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260408094814.321072-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <177595505293.5403.10549666544609254028@lazor>
-In-Reply-To: <177595505293.5403.10549666544609254028@lazor>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 13 Apr 2026 13:27:51 +0100
-X-Gm-Features: AQROBzC0PYE3EO5g6wnqK62bLxgGOY1Qxb098X6a24DD3mFd7tUNfPeu0EnDhKE
-Message-ID: <CA+V-a8vO-sq2CBiJFC_UuU5=Mm730qz3Ga_Ze=3sboV3gzQHuQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: divider: Fix overflow in clk_divider_bestdiv() for
- large rate requests
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: bcm: rpi: Mark VEC clock as CLK_IGNORE_UNUSED
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Mark Brown <broonie@kernel.org>,
+ Maxime Ripard <mripard@kernel.org>, Stefan Wahren <wahrenst@gmx.net>,
+ Dom Cobley <popcornmix@gmail.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>
+Cc: linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, kernel-dev@igalia.com
+References: <20260401111416.562279-2-mcanal@igalia.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+Autocrypt: addr=mcanal@igalia.com; keydata=
+ xsBNBGcCwywBCADgTji02Sv9zjHo26LXKdCaumcSWglfnJ93rwOCNkHfPIBll85LL9G0J7H8
+ /PmEL9y0LPo9/B3fhIpbD8VhSy9Sqz8qVl1oeqSe/rh3M+GceZbFUPpMSk5pNY9wr5raZ63d
+ gJc1cs8XBhuj1EzeE8qbP6JAmsL+NMEmtkkNPfjhX14yqzHDVSqmAFEsh4Vmw6oaTMXvwQ40
+ SkFjtl3sr20y07cJMDe++tFet2fsfKqQNxwiGBZJsjEMO2T+mW7DuV2pKHr9aifWjABY5EPw
+ G7qbrh+hXgfT+njAVg5+BcLz7w9Ju/7iwDMiIY1hx64Ogrpwykj9bXav35GKobicCAwHABEB
+ AAHNIE1hw61yYSBDYW5hbCA8bWNhbmFsQGlnYWxpYS5jb20+wsCRBBMBCAA7FiEE+ORdfQEW
+ dwcppnfRP/MOinaI+qoFAmcCwywCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQ
+ P/MOinaI+qoUBQgAqz2gzUP7K3EBI24+a5FwFlruQGtim85GAJZXToBtzsfGLLVUSCL3aF/5
+ O335Bh6ViSBgxmowIwVJlS/e+L95CkTGzIIMHgyUZfNefR2L3aZA6cgc9z8cfow62Wu8eXnq
+ GM/+WWvrFQb/dBKKuohfBlpThqDWXxhozazCcJYYHradIuOM8zyMtCLDYwPW7Vqmewa+w994
+ 7Lo4CgOhUXVI2jJSBq3sgHEPxiUBOGxvOt1YBg7H9C37BeZYZxFmU8vh7fbOsvhx7Aqu5xV7
+ FG+1ZMfDkv+PixCuGtR5yPPaqU2XdjDC/9mlRWWQTPzg74RLEw5sz/tIHQPPm6ROCACFls7A
+ TQRnAsMsAQgAxTU8dnqzK6vgODTCW2A6SAzcvKztxae4YjRwN1SuGhJR2isJgQHoOH6oCItW
+ Xc1CGAWnci6doh1DJvbbB7uvkQlbeNxeIz0OzHSiB+pb1ssuT31Hz6QZFbX4q+crregPIhr+
+ 0xeDi6Mtu+paYprI7USGFFjDUvJUf36kK0yuF2XUOBlF0beCQ7Jhc+UoI9Akmvl4sHUrZJzX
+ LMeajARnSBXTcig6h6/NFVkr1mi1uuZfIRNCkxCE8QRYebZLSWxBVr3h7dtOUkq2CzL2kRCK
+ T2rKkmYrvBJTqSvfK3Ba7QrDg3szEe+fENpL3gHtH6h/XQF92EOulm5S5o0I+ceREwARAQAB
+ wsB2BBgBCAAgFiEE+ORdfQEWdwcppnfRP/MOinaI+qoFAmcCwywCGwwACgkQP/MOinaI+qpI
+ zQf+NAcNDBXWHGA3lgvYvOU31+ik9bb30xZ7IqK9MIi6TpZqL7cxNwZ+FAK2GbUWhy+/gPkX
+ it2gCAJsjo/QEKJi7Zh8IgHN+jfim942QZOkU+p/YEcvqBvXa0zqW0sYfyAxkrf/OZfTnNNE
+ Tr+uBKNaQGO2vkn5AX5l8zMl9LCH3/Ieaboni35qEhoD/aM0Kpf93PhCvJGbD4n1DnRhrxm1
+ uEdQ6HUjWghEjC+Jh9xUvJco2tUTepw4OwuPxOvtuPTUa1kgixYyG1Jck/67reJzMigeuYFt
+ raV3P8t/6cmtawVjurhnCDuURyhUrjpRhgFp+lW8OGr6pepHol/WFIOQEg==
+In-Reply-To: <20260401111416.562279-2-mcanal@igalia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 Hi Stephen,
 
-Thank you for the review.
+It would be great to land this patch in the next release together with
+commit 672299736af6 ("clk: bcm: rpi: Manage clock rate in prepare/
+unprepare callbacks"). When possible, could you take a look at it?
 
-On Sun, Apr 12, 2026 at 1:50=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> wro=
-te:
->
-> Quoting Prabhakar (2026-04-08 02:48:14)
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > clk_divider_bestdiv() clamps maxdiv using:
-> >
-> >     maxdiv =3D min(ULONG_MAX / rate, maxdiv);
-> >
-> > to avoid overflow in rate * i. However requests like
-> > clk_round_rate(clk, ULONG_MAX), which are used to determine the maximum
-> > supported rate of a clock, result in maxdiv being clamped to 1. If no
-> > valid divider of 1 exists in the table the loop is never entered and
-> > bestdiv falls back to the maximum divider with the minimum parent rate,
-> > causing clk_round_rate(clk, ULONG_MAX) to incorrectly return the minimu=
-m
-> > supported rate instead of the maximum.
-> >
-> > Fix this by replacing the maxdiv clamping and the unprotected rate * i
-> > multiplications with check_mul_overflow(), clamping target_parent_rate
-> > to ULONG_MAX on overflow. This allows the loop to iterate all valid
-> > dividers regardless of the requested rate, and clk_hw_round_rate() with
-> > ULONG_MAX will correctly return the maximum supported parent rate.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> >  drivers/clk/clk-divider.c | 14 ++++++--------
-> >  1 file changed, 6 insertions(+), 8 deletions(-)
->
-> Please add kunit tests to show the broken behavior that you're fixing.
-> Make a clk-divider_test.c file for this instead of adding it to the
-> clk_test.c file.
->
-OK.
+Best regards,
+- Maíra
 
-> >
-> > diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-> > index 45e7ebde4a8b..dc486c2aa946 100644
-> > --- a/drivers/clk/clk-divider.c
-> > +++ b/drivers/clk/clk-divider.c
-> > @@ -15,6 +15,7 @@
-> >  #include <linux/err.h>
-> >  #include <linux/string.h>
-> >  #include <linux/log2.h>
-> > +#include <linux/overflow.h>
-> >
-> >  /*
-> >   * DOC: basic adjustable divider clock that cannot gate
-> > @@ -301,6 +302,7 @@ static int clk_divider_bestdiv(struct clk_hw *hw, s=
-truct clk_hw *parent,
-> >         int i, bestdiv =3D 0;
-> >         unsigned long parent_rate, best =3D 0, now, maxdiv;
-> >         unsigned long parent_rate_saved =3D *best_parent_rate;
-> > +       unsigned long target_parent_rate;
-> >
-> >         if (!rate)
-> >                 rate =3D 1;
-> > @@ -315,15 +317,11 @@ static int clk_divider_bestdiv(struct clk_hw *hw,=
- struct clk_hw *parent,
-> >                 return bestdiv;
-> >         }
-> >
-> > -       /*
-> > -        * The maximum divider we can use without overflowing
-> > -        * unsigned long in rate * i below
-> > -        */
-> > -       maxdiv =3D min(ULONG_MAX / rate, maxdiv);
-> > -
-> >         for (i =3D _next_div(table, 0, flags); i <=3D maxdiv;
-> >                                              i =3D _next_div(table, i, =
-flags)) {
-> > -               if (rate * i =3D=3D parent_rate_saved) {
-> > +               if (check_mul_overflow(rate, (unsigned long)i, &target_=
-parent_rate))
->
-> Please add some sort of comment above this if condition to tell us what
-> a target_parent_rate of ULONG_MAX means and why overflowing we set the
-> rate to that.
->
-Ok, I will add a comment for and send a v2.
+On 4/1/26 08:13, Maíra Canal wrote:
+> On Raspberry Pi 3B, the VEC clock is used by the VideoCore firmware
+> display driver, which remains active until the vc4 driver loads and
+> sends NOTIFY_DISPLAY_DONE. If this clock is disabled during boot, a bus
+> lockup happens and the firmware becomes unresponsive, causing a complete
+> system lockup.
+> 
+> Mark the VEC clock with CLK_IGNORE_UNUSED so it survives the unused
+> clock disablement and remains available until the vc4 driver takes over
+> display management.
+> 
+> Fixes: 672299736af6 ("clk: bcm: rpi: Manage clock rate in prepare/unprepare callbacks")
+> Reported-by: Mark Brown <broonie@kernel.org>
+> Signed-off-by: Maíra Canal <mcanal@igalia.com>
+> ---
+>   drivers/clk/bcm/clk-raspberrypi.c | 7 +++++++
+>   1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
+> index df2d246eb6ef..f1a99de6de4f 100644
+> --- a/drivers/clk/bcm/clk-raspberrypi.c
+> +++ b/drivers/clk/bcm/clk-raspberrypi.c
+> @@ -160,6 +160,13 @@ raspberrypi_clk_variants[RPI_FIRMWARE_NUM_CLK_ID] = {
+>   	[RPI_FIRMWARE_VEC_CLK_ID] = {
+>   		.export = true,
+>   		.minimize = true,
+> +
+> +		/*
+> +		 * If this clock is disabled during boot, it causes a bus
+> +		 * lockup in RPi 3B. Therefore, make sure it's left enabled
+> +		 * during boot.
+> +		 */
+> +		.flags = CLK_IGNORE_UNUSED,
+>   	},
+>   	[RPI_FIRMWARE_DISP_CLK_ID] = {
+>   		.export = true,
 
-Cheers,
-Prabhakar
-
-> > +                       target_parent_rate =3D ULONG_MAX;
-> > +               if (target_parent_rate =3D=3D parent_rate_saved) {
-> >                         /*
-> >                          * It's the most ideal case if the requested ra=
-te can be
-> >                          * divided from parent clock without needing to=
- change
