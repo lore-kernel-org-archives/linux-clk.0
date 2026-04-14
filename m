@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1915E78F26;
-	Tue, 14 Apr 2026 07:19:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51C7325490;
+	Tue, 14 Apr 2026 07:19:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776151141; cv=none; b=QxAurcFlyXQfp2pY1bpyHJSohZy5o01SUmksVBwZjz3eBBqHkcClMvEwRAUKrcsh4C7lG2mqsviqfefpz0uZSMQ4AyGt09/v17PWqWnYNJrrYE5algSXgsd0Xc6jQRTi7GK6en7KN0IQoCy0XvyNaZcceQKlw2+xryPsQ/Wt6LU=
+	t=1776151173; cv=none; b=JAZYM1gcmbtyUfU5JtdyHnGpQj7JNcyLrmUp0q3Vw/MKwBM1NnNDEG06mETVbaUP5BPP1xHYizruhB9t3KVoVuqCkbDqmJrqsKGxAfq5Nf5wGfz9CXApw1LP44y9AwSgEpB/t/qm4vlIStreMYpU6zv91mGObi51XEeLD91d8ME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776151141; c=relaxed/simple;
-	bh=cAVnFpW+txHpOYtqgzPHGD8SsQmnpiyYAfbX03kDcHU=;
+	s=arc-20240116; t=1776151173; c=relaxed/simple;
+	bh=WjtCp1npkGFU3ZdPOnwHWfZiaQFuXNRn+hUV1ktB9eU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r55mNgCnHTUpmeIj516bxd+WG/RBC7fLfrsK7LIbbv5du8wvquby8OZNwEAWXI7dzDERRaTq4YPNtmCwCkrGkLrkuqaAIIav52tIbq30tHrc/O/84/jb7j36w2XLvI4CRQAmxEWWoAbVZGHvYasQm7TySABU8ihJeCb01MfeUpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SRZ6d/Jq; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=kzGfct55Q9dvdMswTaa3bgRJK5P4TciqLAewtxwdRGnVPDwgNxK1iYRnkA5BmSMgko0pOrQq1keR1EJ9CkhQcFZhChK+htHIcCFX/olztD4qfhcDyPZh0OSPlIeB/28vC4IpjXoZtOUW8/5Ry95TkiX1v2PwK6vzuWiEAFNJH3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o/KAbUXp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SRZ6d/Jq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04767C19425;
-	Tue, 14 Apr 2026 07:18:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o/KAbUXp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D02FBC19425;
+	Tue, 14 Apr 2026 07:19:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776151140;
-	bh=cAVnFpW+txHpOYtqgzPHGD8SsQmnpiyYAfbX03kDcHU=;
+	s=k20201202; t=1776151173;
+	bh=WjtCp1npkGFU3ZdPOnwHWfZiaQFuXNRn+hUV1ktB9eU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SRZ6d/JqPzfd61MGIS2EF/jU2tOZyxLC+aafAUdRfS9YJkZ8bQwmVMWRvXpPXnTtz
-	 op6Z4Y+G/dyCBy9x+MIMu8X6lwZyb4G1cOxYqB0d8yprqHPiMHMb78h07XbAT88Afr
-	 eIUKfC9nmOhv7o27hR86bGShISsdPLvZHUzMfYOtm9JN+2DQdp+nTlIf6NMF5yWJUd
-	 +g2DDCN3T/cngN6wgEGEpLWjJj+nzv3/5XmzfuKYFCv65yfGzoA3azLWFRkgXGtBB5
-	 pHAxunzkPwIgPhucYjOR/ysigT7K1lVqa9DEpsoHkri9Jt9WvbuQPyfAxljA4EssZV
-	 DeMSxT8dvln+A==
-Date: Tue, 14 Apr 2026 09:18:58 +0200
+	b=o/KAbUXpYgp6GqGoGmFxx0fPHFViNIf9MNqzNXx/VcJkJlLinOhL/coRsx8RHwkb1
+	 3I49OVlVFz9kbZCzmedCBaSgCK9NOKR9WH1fpN/RYVdZdfAfQf1MeE1cOjaG6rcFui
+	 6GyUPdrQQWCHSMzJY1KiFT2rrjCIa2WC+CcwrnFbj7nCmDOP2n96uK+RcD/nDRAK8C
+	 25ilV6xsT83zv6xaVy/f2AdjpM4qvSCLzZR6DIelVxzGJhSDa3vjHqBegj3XSj4djw
+	 1Mxzb3UnDt4uzbVZoLhcuwp1QIG/ep40MOox53NCxY2U6zdwe6LCbFWcice+Sk9/Ev
+	 7TGKFX8j4zqnw==
+Date: Tue, 14 Apr 2026 09:19:31 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Antony Kurniawan Soemardi <linux@smankusors.com>
 Cc: Bjorn Andersson <andersson@kernel.org>, 
@@ -35,11 +35,10 @@ Cc: Bjorn Andersson <andersson@kernel.org>,
 	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org, 
 	Rudraksha Gupta <guptarud@gmail.com>
-Subject: Re: [PATCH 01/10] dt-bindings: clock: qcom,rpmcc: add msm8960
- compatible
-Message-ID: <20260414-zealous-shaggy-tanuki-b87afa@quoll>
+Subject: Re: [PATCH 02/10] dt-bindings: mfd: syscon: add qcom,msm8960-sps-sic
+Message-ID: <20260414-frisky-aloof-koala-4cbfdb@quoll>
 References: <20260414-msm8960-wifi-v1-0-007fda9d6134@smankusors.com>
- <20260414-msm8960-wifi-v1-1-007fda9d6134@smankusors.com>
+ <20260414-msm8960-wifi-v1-2-007fda9d6134@smankusors.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,21 +47,19 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260414-msm8960-wifi-v1-1-007fda9d6134@smankusors.com>
+In-Reply-To: <20260414-msm8960-wifi-v1-2-007fda9d6134@smankusors.com>
 
-On Tue, Apr 14, 2026 at 01:55:28AM +0700, Antony Kurniawan Soemardi wrote:
-> Document the qcom,rpmcc-msm8960 compatible.
-> 
-> The MSM8960 platform shares the same RPM clock definitions as
-> APQ8064, so extend the existing conditional schema to treat
-> qcom,rpmcc-msm8960 the same as qcom,rpmcc-apq8064.
+On Tue, Apr 14, 2026 at 01:55:29AM +0700, Antony Kurniawan Soemardi wrote:
+> Add compat for Smart Peripheral System (SPS) Interrupt Controller (SIC)
+> present on Qualcomm MSM8960 SoC.
 > 
 > Signed-off-by: Antony Kurniawan Soemardi <linux@smankusors.com>
 > ---
->  Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+>  Documentation/devicetree/bindings/mfd/syscon.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
 
-You already sent it some time ago. Implement previous feedback.
+This was also sent. Where is the changelog and versioning? What changed
+here?
 
 Best regards,
 Krzysztof
