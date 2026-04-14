@@ -1,187 +1,167 @@
-Received: from mail-yx1-f44.google.com (mail-yx1-f44.google.com [74.125.224.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1F53D34AC
-	for <linux-clk@vger.kernel.org>; Tue, 14 Apr 2026 11:51:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776167513; cv=pass; b=tDulhNF3H2YCSgJS+oEURCHtawpYnA9s5qoipKP6mYdpGAyVQ43kwADuZ3z6oseBVRzMAVxVGzO/okpIMcWFol59Mqswqs0Oo22dga3MqWjNFIsezh92SbhyTQlFuqB3doG08V1KqUmvp3/OODFLImoEqK2bvIajA6OBITeU2wc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776167513; c=relaxed/simple;
-	bh=MSQdTqohWprHSSGxPUw63cRNJJ4jH1n4U88mAvfhB0Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=srXne3fg0zLgDTQwO9S8zd2wtHDZwpjeXIU1HmZuqr9hhtzlVPRsq/lIXdRG5w7BbOH+4fKQePYg4eAXOZi+ItPZ/KGwN7yJ6N+KgLSZfbMdPBHi6UNp4HKLYgGAuJe6inMEuEeZY8pYw0CI0jLgKkI2luyEyFq9TCki70cbP0g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tdwna6hw; arc=pass smtp.client-ip=74.125.224.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6B03E0C5C
+	for <linux-clk@vger.kernel.org>; Tue, 14 Apr 2026 11:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1776167588; cv=none; b=ePxBWee08ODaERw7Mu235974frVPXOcAb7orA2sPtJBCQVtToe+LhGS8Bn8q64I+iNtTh6ZNKVm0L6abq4P87EWqaPNd0Ufb8SsQgjdO++IsUNZPkJCdOz5TZ00WPeVKAKk/PNjrhd7deR9IOkZJ8f+NtnnKK/n8umcWKcU7cE0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1776167588; c=relaxed/simple;
+	bh=J2iGJy9WuxQUrTwdyN0lu26cuA/fTvufaAd+d5sGPBE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZBQ1xesky9xonuPdTmohuGPN/tUgX8CqbJcxmHJhKpRpG9yNRVOnMd0cLv2oiu2PB9dwW8PoqiHGwdoBPCxG904CWPOpqGx/RtzjtW0uTjmQj8Soyucj1TnaiJhtIUmmRQ53Zpw/Yhciki2F5ySqnbU+YpKdfM8ES+AFM7FAgFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=oOfyt489; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=JYATjmug; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tdwna6hw"
-Received: by mail-yx1-f44.google.com with SMTP id 956f58d0204a3-64eb84d1e37so4128644d50.2
-        for <linux-clk@vger.kernel.org>; Tue, 14 Apr 2026 04:51:51 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1776167511; cv=none;
-        d=google.com; s=arc-20240605;
-        b=SvWi3RwC+d9IIW8bdh53kUuEivLaOI/52GsCf3fKNWwtDQgk3c7r2R+aNolVfCgjZN
-         lwM4MNLGBHr06ZSe1xR9GJ06fzMLmsy4J0ZOtQREtdk9/IweG9r/kq5EJPE0W1hNOcff
-         KQC/RVzDOPJLo3SbUoWr4d7tuAEqXtedaSakywxSznw/Do34OzYTdJUpegcOKYXZw2mz
-         2OJybL2iQHEF36Bz8ogmpDPNqvr0+AaAyjPdpgz6+ux/C3rM3UdPwIVx5xWBlr0Oq6CA
-         fSB2LE8c5h1ooXb4JxG1NvGru6h/HmimcB20I6pUJe578sQQM22wMUimh7hXldr7FuVl
-         UcTA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=nsoXP8uz7XDMohejorwTrPXwgpEvvkD5CIJw+jNU9jE=;
-        fh=ijMJDLdlIPPYY+u3A7eLay4eOOJVLUHOMDzzfq8B/OY=;
-        b=Yi6B1KJRpkjEQN5mwgJWlH9hY4Fg5wmFER/KXDP66FL1e4CpG7tl//rMXYpiVN5H8v
-         4+UQCCab/yXGSMdyLGoVxK8FiiMZleb7SOfQCMw4aUewQVYHVmD9GjjN0o+0gaugt98+
-         Zt0dntfeEQjfR4+586tc3VfdfCqDzd2ugLOrtw+WXn8YM4E5N/GBEKbOlvgLEjCBIJ2B
-         jnjWNAA7yW9d8o7rVVHh6Gpic7QQiwuqyVUBh5GhmIFaim28/7T1CoULTweV8E3O621i
-         m27P8rLHCvUdXyJf44q+8hOXH4pi4ikH6NRSiFGBJys5SXZyOFcx4lFnlye+AgDuTBi2
-         ajCA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="oOfyt489";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="JYATjmug"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63EBVRLO361811
+	for <linux-clk@vger.kernel.org>; Tue, 14 Apr 2026 11:53:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	m2lWwi811V+fX94Vbp9/sis+NUG9UP9DFXsI2Zikw4g=; b=oOfyt489R9QHYhFW
+	BCZ3qdIQdTBd9/wTH/x8aOYSD72awQd1mSDvxA/1RaRkqLtI4ICdmG7t2jKm28v8
+	Ody8b0kMXQqaNHdRisVIhw/0NU6LH3RppoFu5UuaNmObmJU2VHzKVPxNg3j06OkL
+	GL5IUomk41R4PnUzp7v9JIDN+/OEPmROc1iqDqLEm8YynsI+AJhnQdf+G1tvKDum
+	2W1LFjm40uc6ENZMAtW8Iq7FU6XMRj4BO9CzgyF3BQUPna/UuZMnpaUS9yM55StE
+	odr/WcguWwJm+oFnrTMfU9fNPKwUS7q/mirFGMuLrcYxPpJOshSi6ZqcbMoQbmQD
+	hYYUBQ==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4dh870tjr7-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 14 Apr 2026 11:53:06 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-8acb4b340f4so5488526d6.1
+        for <linux-clk@vger.kernel.org>; Tue, 14 Apr 2026 04:53:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1776167511; x=1776772311; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nsoXP8uz7XDMohejorwTrPXwgpEvvkD5CIJw+jNU9jE=;
-        b=Tdwna6hwYAIB8yoLcNRMbiiVtVJiErO5uglUlLXPyiUNW+lGyjuzeT2AIUl0AGATGh
-         v8enquRi6EoviLglLBQO8Zcvcm0Spv+kFQNHYuYe7tOJHZa5KUmZ5Cmy2/RLbXZ/Nk97
-         6o/MbSVIKIU+v02JsWO1F8tHGnzj8RP376KRWTSV9xUBj0scFAxXKzh10kxtU13Puhz2
-         2aFnpqIM7U8DQWeiEX8Fiv9U1IMv+twmlW4zTpppI+S28PyBUkSG7TKN9ojQ5KRu0Qjm
-         T+I7YMcVigs6DPmOC43xrHv0aiEJEWPxCMFBvQyRZVgg9E8HokCIMxcp+wbTe35NcAFy
-         tBVA==
+        d=oss.qualcomm.com; s=google; t=1776167585; x=1776772385; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=m2lWwi811V+fX94Vbp9/sis+NUG9UP9DFXsI2Zikw4g=;
+        b=JYATjmugqtby4C3zFS/2o5zntkP0k9/BjNPeCtAJ1RQypwcNTEnsItGLqV25O1be67
+         BrykC/kNpuqkWWTK5Ajns5qfZBGbjbjOf4V+yuScySsygsnq2ntr3SyDgbil2ZSyPnV+
+         WARCaoYCLNn9A/hky0O2RByqMOWuHbc9J5M0OpFWoll3zakzrSX5wWTkJpjZv75UQ4HW
+         q3U1FR/BeJBNMfikI+FBIriydRGICKgGk70ApPgrB8ukikApyzlQjTRCMM4HIwpageg1
+         6DaWXPOmJzJg9C0EcXllPkfkRTXABJWuVz9s0HJk5FZ6mfij/LGohuH+rCYsY/W49w/U
+         nTYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776167511; x=1776772311;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=nsoXP8uz7XDMohejorwTrPXwgpEvvkD5CIJw+jNU9jE=;
-        b=ScptSxY9DZjSJM1x+J82lQfRngI63mf+BjrTnkYE+Xx1GZcfysh4mP96MaOvhiKvrA
-         zBEWj7xbGekgNKn6GgOMpxkGR0Trts+c2MuhQdwGMloRAmdHEfo5dvyCK4QCqnIG7jnE
-         q53gp9wB+PJe7+O0pFASHPSS3y706sExQQ+zqObcs2xihKwJ7eOiD5tkMPKz1TRqxGME
-         qwOoZkjI3sglgn9xhngcKSEAFBXp4WGCfdnQwMZ0W9uqo8Vczw5/OgmAvjbMK2IdMslP
-         n23qel5oVPAbkccruWpHgla93tnYB+INtRplsJj6SJ+o9xsbxDpnXK+MSAQ+NcjwERoy
-         v+BA==
-X-Forwarded-Encrypted: i=1; AFNElJ9UDewHwja7uJ8Vx7EsIAtsOaBMEU6kxLmyu3t5JamAmZSZmnwFqo3dricu2fOUkedy9g1Fx1z+3+0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSmFUMhXr7L2U9Ef4NF4LAkrirYQ1Ei6NloePliPhM+7EzFKmi
-	6IbBUVh4Y/r7FoBVKz7uk7j4/QpXien3d1k0rKlarWWC4da9TM4IWHJBqJEYF6mL/+vZdr7K0EB
-	cjM7lO12+8F4FpX7VfNAYHvmxrvAOJhk=
-X-Gm-Gg: AeBDieun3icXC0On+nOAccHm5gldxpdmVMf0JVaqIu8GE2QAk0LKy6sgdLdIOT6UE1s
-	Rv+r3kqEd7iAYp13DcSoK/FZyU2A3RPI5UyuxKDKF9AaL/kWLTe9tiE4ZEnarI/dr1kIaDw2WIX
-	VUWpLpPoPxud7nAHs45X6/qSJotmZDhrpxGPa5Ou0gOPk/nm8Z33sw2W6gLDgLH3Nc1IGS0KN3C
-	Akf73TSXH9RZbQqT+HrD8bu6++rgs7eWdtrBmr2FU89teOR7EU7b+lV1qiE7qQRw/iGiql1GP3k
-	MIIbOzba8MUNY0yXg6vP
-X-Received: by 2002:a05:690e:12c9:b0:651:d0a5:ce2 with SMTP id
- 956f58d0204a3-651d0a52b0emr5661070d50.60.1776167511068; Tue, 14 Apr 2026
- 04:51:51 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1776167585; x=1776772385;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=m2lWwi811V+fX94Vbp9/sis+NUG9UP9DFXsI2Zikw4g=;
+        b=ek7qR56pgRjHekvzHUo5w0SP1nwCU3mxq8hoxF+V545iS0KudfHpTZI7JGyn03wt7e
+         OvAD2nHi5TO4GnO+xyCIy9UB9RZAUUY6qv4X9WJToTZws5mpVuEYXNI9+iEyaOEYNLbn
+         7XjBC489ZwX1UqHRPByIu1zH4CGriWfLEXjo+dwhvXOl/6d6Qr4AEO0r7AUU/Gw6mgjF
+         eRQGonRmkEhy5A7KzgvvT5RhshvJcOaXAorE4+yjnrmrESpzfGnYx7MF5whc39aSnKJm
+         3LFyX+8bmo79gTPkL4a74244R+uAlzoFACN7sUAfejBkCYip+N+0OwwczrkbTuedfTSx
+         4Cjg==
+X-Forwarded-Encrypted: i=1; AFNElJ81jhh7NrYG42woLVAK3Gl1iEJ5w53F4qG29EuYPVVUU53A5Fu5n9plR2Yd0Wf8CK1kA2lc7hoNid4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymUx176siv89BFBtjZ+igVWSCaFLmhe/28fpsb4wNQIPww3hs8
+	qCPhMyZBXdX4Gedrdwgbu8u6e5qdTUEVDUWBENKN1WWegyKhJj3FPu75OGf3g6SY/hAkymIaaC6
+	2y8DVccrVf689N0/aOHqGx3NBi8bWwmGcgox43Gov2Pudz+9rsUh1jLZd4bUSSD0=
+X-Gm-Gg: AeBDietcHMgUn7B3U71gUiJEfVfiLYVnt+6u7/ud7jHfsaL4T87L6881kQceDrooAOC
+	/uq41ZtLL9BIN6mYkWJUzEdx5vcjSyjnEi6cuZDd/gMf78XxumjQUeiLJIRvjPomNXbcwgF72yF
+	D1rPADUZK4xG9fF8tXrAPNd7s8Z4tzyni1oGhIKXEEc4w/PWSk484ERmIP8lB277Hxz1/dhuJzy
+	ZqJ+S0VspkNDOSPnpaR6AStGMBpOlDJKptxJSP7fSxQrkIUzxWZ1w4JeYomdqKdtSdBL1PNJTtB
+	86TBBmlAeeA9tnc86bkBKUyRY+EKbxMPp/cNJaHS6eORrjL95DlbAahG/5XyquUH3OQTF5Od/u6
+	b+2GqsA7ftluqaTrb8HkTY4wYPbXiDUKRJhNnI19jt6pC+dxISwwZ1a9YHhTm5ZnlOJ3kAJecBG
+	GbQsdjrlTKNYUZHg==
+X-Received: by 2002:a05:6214:c6e:b0:89a:732e:f805 with SMTP id 6a1803df08f44-8ac87629726mr202653406d6.7.1776167584827;
+        Tue, 14 Apr 2026 04:53:04 -0700 (PDT)
+X-Received: by 2002:a05:6214:c6e:b0:89a:732e:f805 with SMTP id 6a1803df08f44-8ac87629726mr202652976d6.7.1776167584347;
+        Tue, 14 Apr 2026 04:53:04 -0700 (PDT)
+Received: from [192.168.119.254] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b9d6e5c5b98sm397026266b.34.2026.04.14.04.53.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Apr 2026 04:53:03 -0700 (PDT)
+Message-ID: <2c1da6e3-a7eb-4c85-8933-84ba9ac7a363@oss.qualcomm.com>
+Date: Tue, 14 Apr 2026 13:53:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260412124247.2494971-1-lgs201920130244@gmail.com> <DHRVDETB559R.1J1MUGSZ0VVEX@bootlin.com>
-In-Reply-To: <DHRVDETB559R.1J1MUGSZ0VVEX@bootlin.com>
-From: Guangshuo Li <lgs201920130244@gmail.com>
-Date: Tue, 14 Apr 2026 19:51:42 +0800
-X-Gm-Features: AQROBzCY4aPdRp-vnBolaOekj7WjGOydLpVV0P-0ovLpEH5T-_12fQUc1CoHGng
-Message-ID: <CANUHTR-+Dn0uSn8ian_COzX-8=BajnkopK9iUiFNcvurh=CkLg@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: eyeq: fix memory leak in eqc_auxdev_create()
- error path
-To: =?UTF-8?B?VGjDqW8gTGVicnVu?= <theo.lebrun@bootlin.com>
-Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
-	Gregory CLEMENT <gregory.clement@bootlin.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] clk: qcom: clk-rpmh: Make all VRMs optional
+To: Alexander Koskovich <akoskovich@pm.me>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20260414-clk-rpmh-vrm-opt-v2-1-43c1073d109c@pm.me>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20260414-clk-rpmh-vrm-opt-v2-1-43c1073d109c@pm.me>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=C9vZDwP+ c=1 sm=1 tr=0 ts=69de2aa2 cx=c_pps
+ a=UgVkIMxJMSkC9lv97toC5g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=A5OVakUREuEA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22
+ a=VwQbUJbxAAAA:8 a=QKdSdXKZvfk9e0BhN10A:9 a=QEXdDO2ut3YA:10
+ a=1HOtulTD9v-eNWfpl4qZ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDE0MDExMCBTYWx0ZWRfXzKCxLDzA23Ib
+ qfs9nLLT0MKlswrJm+hIhDu7OMCST9X2cAaNym4t0nAgxE4bONicugC8gd6XIEZCSLtZcIgAMYd
+ OIS/kirh34+JH2kckJ2f7lay2VXvaHOsUOpwL122Stu+3vMMDkQ81nqJQsDO6hkd9fqo1afOH1l
+ 4M+2UV5tQCDIfsOMGMuwy/8LJiOXfvI1OntEjhOmJfm0Q8ryxF3KF5E9+eybyuKk2P02gdEhBZN
+ 9/6P1mp2w7qSMF5zKkAsoYAwatoUEIa2ao3cRUrCoKxYcV/JQED82NVMffYDX4riSOeknwT37zQ
+ cZDrhhE85UOyFXcIfiV6Yd2ti6JNpNc+RI+JrINsmqdH8z2Mu7jxlbLTtPBaIDNTi5n7C/bCDfi
+ 87t3LPqzS7aYeu0LrtjyVEoc/IV6x6Fn43oLNHqm5WSsWfkG+SWT6FAO82k0pIdiI2QSTmibJcJ
+ wWIYWIksnmA0wMk4qbQ==
+X-Proofpoint-GUID: oJn9w-RQe1GJmycUKwm_gvR1XQg56ov0
+X-Proofpoint-ORIG-GUID: oJn9w-RQe1GJmycUKwm_gvR1XQg56ov0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-04-14_03,2026-04-13_04,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 suspectscore=0 clxscore=1015 malwarescore=0
+ lowpriorityscore=0 phishscore=0 bulkscore=0 spamscore=0 impostorscore=0
+ adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2604070000
+ definitions=main-2604140110
 
-Hi Th=C3=A9o,
+On 4/14/26 1:34 PM, Alexander Koskovich wrote:
+> Some VRMs aren't present on all boards, so mark them as optional. This
+> prevents probe failures on boards where not all VRMs are present.
+> 
+> This resolves an issue seen on the Nothing Phone (4a) (Eliza) where
+> probe fails due to RPMH_RF_CLK5 not being present on the board, this is
+> due to this device having a slightly different PMIC configuration from
+> the Eliza MTP.
+> 
+> This matches the downstream approach of marking all VRMs as optional
+> and makes the previous clka_optional handling redundant.
+> 
+> Signed-off-by: Alexander Koskovich <akoskovich@pm.me>
+> ---
+> Changes in v2:
+> - Squashed clka_optional revert into patch (Dmitry)
+> - Simplified patch by just checking if CLK_RPMH_VRM_EN_OFFSET (Konrad)
+> - Squashed cover into patch commit message and expanded on background
+> - Link to v1: https://lore.kernel.org/r/20260412-clk-rpmh-vrm-opt-v1-0-37c890c420ff@pm.me
+> ---
 
-Thank you for the review, and sorry for the confusion here.
+[...]
 
-On Mon, 13 Apr 2026 at 16:04, Th=C3=A9o Lebrun <theo.lebrun@bootlin.com> wr=
-ote:
->
+>  static struct clk_hw *glymur_rpmh_clocks[] = {
+> @@ -951,6 +946,9 @@ static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
+>  		return ERR_PTR(-EINVAL);
+>  	}
+>  
+> +	if (!rpmh->clks[idx])
+> +		return ERR_PTR(-ENOENT);
 
-> Subject is:
->
-> > Subject: [PATCH v2] clk: eyeq: fix memory leak in eqc_auxdev_create()
-> >          error path
->
-> I cannot find a public V1?
-> https://lore.kernel.org/lkml/?q=3Ds%3Aeyeq+f%3AGuangshuo
+Hm, this is going to surface in some places where a nullptr has been
+happily accepted up until now..
 
-This was my mistake: I did not send a public V1 and sent this directly as V=
-2.
+Bjorn, Dmitry, WDYT?
 
-> I have a guess this is LLM generated?
-> Are you missing the Assisted-by trailer?
-> https://docs.kernel.org/process/coding-assistants.html#attribution
-
-This issue was found by a static analysis tool I developed.
-
-That said, the changelog was clearly too brief and did not explain the
-actual situation well enough, which likely caused the confusion.
-
-> The patch could be in theory useful.
-> In practice however, it's a different story.
->
->  - Comit message says "Since the release callback is only expected to
->    handle cleanup after successful initialization, adev should be freed
->    explicitly in this path".
->
->    Two things are wrong here:
->
->    1. the driver cannot be removed so there is no "release
->       callback" (guessing you mean driver remove?).
->
->    2. this text seems to imply eqc_auxdev_create() makes probe fail,
->       which it doesn't. It only generates a warning and keeps probing.
->
->  - This driver cannot be built as module (will always be probed at boot)
->    and cannot be removed. So the "leak" we are talking about is
->    2 * sizeof(struct auxiliary_device)
->
->    But in no sensible case it can occur. The platforms that use this
->    driver probably cannot boot if our auxiliary drivers aren't present.
->    So if eqc_auxdev_create() fails then the warning is here to be nice
->    but you probably will fail booting afterwards.
->
->    My guess is: you might succeed booting without the reset driver but
->    if you fail the pinctrl one then you won't have a UART. Anyway in no
->    world do you have a sensible EyeQ kernel config that leads to
->    clk-eyeq probing but not its auxdevs.
->
->  - If you fix this then there are other resources cleanup to "fix".
->
->     - ioremap() in eqc_probe()
->     - kzalloc of cells in eqc_probe()
->     - probably others
->
->    But, same as above, "fixing" those will only be useful in kernels
->    that will panic in a few milliseconds.
->
-What I intended to express with:
-
-"Since the release callback is only expected to handle cleanup after
-successful initialization, adev should be freed explicitly in this
-path"
-
-was more specifically this:
-
-eqc_auxdev_release() is the callback that eventually frees adev, but
-this path is only reachable after auxiliary_device_init() has
-succeeded. For example, when auxiliary_device_add() fails,
-auxiliary_device_uninit() can lead to that release path. By contrast,
-if auxiliary_device_init() itself fails, the function returns
-directly, and adev is not explicitly freed in that path.
-
-So the point I meant to describe was only the missing explicit free in
-the auxiliary_device_init() failure path.
-
-Sorry again for the misunderstanding caused by the previous changelog.
-
-Thanks,
-Guangshuo
+Konrad
