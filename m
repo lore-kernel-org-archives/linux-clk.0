@@ -1,67 +1,67 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0DD931DDBB
-	for <linux-clk@vger.kernel.org>; Tue, 14 Apr 2026 19:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C688E31AF31
+	for <linux-clk@vger.kernel.org>; Tue, 14 Apr 2026 19:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776196456; cv=none; b=ZIKFmPDNDm7EbRLREo/75IUHYQ6Yd7931101irUe4VJ+aAeucdzfmCyAIfABX1cFY8yv2IUy4go5A94fjlbR4QXKUplwXnqpAf82FA20Myyoin6PlHP1wolxYl5nAqm3La6W9YFpv3jBhTZdj508rOmYOg1r3s0911k+SHBN5I0=
+	t=1776196458; cv=none; b=iBYHrFmxPUTDKDIFdEdatlvMZwAaqAlNsufMPsBhCQvbV99vxEeGL2xys7vcdVa1+HIi78uICTA0yMG/bR1iEtCUgKL99VpZAobemAkNoggEDDPuhSh3z3ZguvNLPZ1poVrgj7wn+GL2OAhlgJ7mnwlXn1stsjpJnLCHCO6koTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776196456; c=relaxed/simple;
-	bh=Na2lv7sZsfV6sjTNYKi3Aocn5ECd8tG9LxfhjEXl82Q=;
+	s=arc-20240116; t=1776196458; c=relaxed/simple;
+	bh=HTSNxB0VLN3iwKGODJ3FXpLfMGanjlXryM4WhEdajys=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WSYFjs/yi8MnUfAKgkxDyxjxCE4oRWwPulSiYCsG7gZn7mYuVnlonLDGg/xfbljuybZuHBc4QiLLXAzhD6vgtEmnnhAl0fe8gg7GzvTtYuifyVu9/orHG0MkoiwBlCzG5habHChW/KilPyDN7ZozDGxAe1J07YacIlyOaa0XTJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gum7NSIE; arc=none smtp.client-ip=209.85.221.41
+	 In-Reply-To:To:Cc; b=iq37ZTW+F2+EgqorRlDbKeRLkie6+u61qO5hYt6R3jfgU70rch/nlHUyYZD/cVwvKBdMJOmNev42n/rif3tVAJ9KveGn2OjIjs7ihR0KvFnvNGcQIeBQO8dp1BFVxxEXINSGTBCtAUMtBhv6gN+NFWGNcxVdxBrqe3IdlO0JikM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YkxYcn3z; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gum7NSIE"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-43d7650202fso2073577f8f.2
-        for <linux-clk@vger.kernel.org>; Tue, 14 Apr 2026 12:54:14 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YkxYcn3z"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-43cfd832155so4135397f8f.1
+        for <linux-clk@vger.kernel.org>; Tue, 14 Apr 2026 12:54:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1776196453; x=1776801253; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1776196455; x=1776801255; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=aIpZ1KwOXCQcdsq/gACxs/fuFamyUr0HrBoVABImBLU=;
-        b=Gum7NSIE4Y+Z2j1VlaMLr2LLg961CbDarG3PJU5Q/gFFZ/aZVU1xUCAV02eYycnFb8
-         E5z/N4z2OXW5yAf5DyWKRFKnqiKZWqi+MnDnPxUs2qZq4wEcSTeB/UuKvRIoTpRYzyYr
-         bpHF3Y6yU2cHCcO2FF9CZzzbqrJlGC7poEUVgK3J6CnacZ74eD0s5rpROR9f+fTcp+Ta
-         RD+iXL0qmi/k1olAVccS/+ocfTF49P2oVL5WA9df5D6Mejgz3pegjI8L3mETH9p1ZCML
-         obCQrMSH6ydFEZFzM1R06Wnpp0dHseq49+kRlAP+P4P+ZX0dCDlt33QI/fjdBk5PDv//
-         4E4A==
+        bh=rKFuKgv0AEkRD4ZABJqA1y+s2HqCRJHpRMYf+DRn8zE=;
+        b=YkxYcn3zy1W+tCyU1OJPaIYFQUzV9jDlcbaDeEMoi5sRobFIfxh55nC1CRwFTuxN0T
+         YwZcs0sJ4b5RRPKWzI3BP1OxvvpeoxbkkbuYrH4+zmiIppaxyJdpbvbxHa4TqCri6hSw
+         xkerHO92WMagiBgvTdzMNHMkL+FF02d8CE2fWyz3068072lEyLSOs6gqbAPFD3KF4gsP
+         JN4OOi+1sqMNUhLd45KqGi6BN4dN9Ke6NkP/PNDZYZbJUFcK9lQTA8q3gezD1Pbq4WI9
+         dSirfw/MH1KbrO9p9TL+48iJ4sq8vJf9wqm2vrlLXsqmHOCr6ORShbF9m1KRUkcdOtTt
+         IEIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776196453; x=1776801253;
+        d=1e100.net; s=20251104; t=1776196455; x=1776801255;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=aIpZ1KwOXCQcdsq/gACxs/fuFamyUr0HrBoVABImBLU=;
-        b=gwSloru2p9AmOenIfgqhJkaB9X6aC+rZoPAXyfmm020J0XtTe11k14XF1Yke1XW6a/
-         U8V8Lyk1HbLWFSUYBan72J0hBz78YQGcImiv7I6FYnPivhvNDb7UAdbTvMwWMr+2TW0K
-         OKcx9g50LG3vNpgQF0h1NbqR+GeL/M79ser1mXubVRIWgSWX5hNqF0j3rXW4q7b7fp4x
-         CHUEyAXwXzRflL3QI2Ui6dDO3CSx1w6UkdKat3VGrKFrm9AVr1FakhVnkrO+sTsRx+nF
-         QJlzuItTbJArGBLbQ4amsS8xaCwuQyPbY5UMzx+41tGSGk5CggGsDOpJ3VRB/P4k6DE+
-         aCzQ==
-X-Forwarded-Encrypted: i=1; AFNElJ87SFI0cfra4G7cqCmjysuqm2wn2L2nxc3Bxqvd35SP1E2tH2LpcEH/gI5YeiFtO4WW53Z1LOyKgHg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKePcZFKU3J+PWeDlbeopC0rLV5/pNP1EZ6Uk9ScBBhXq6hB8q
-	08bUjPIse+VVa3JfEzi+c+x89W5HmubYcJgAB2fxZPbkPevZTjEy0J7S
-X-Gm-Gg: AeBDieu3inNL2Lv1H2JccNx5Si15nAWk6JjPa2xMO83ZwLYXvSZhf/azJ3cnz7Tdt1H
-	vzU14e9y4mhzDA53hR2HyQSPI3DxPIn4GAaJ+ij30w5tghucJDpgXITWlY2eWy4hTp01finar0q
-	KPAPdzKw1gCpUpPMVN3llfr/iHUqVI+B26Nvu2WEE0Df2jVq6gRHwu+7n1aRPE3ytzjOI8VWRJO
-	ZKeBqV54+eFXpe3jWYmOleDb8YdV23Lgq6WfKLL0g2kbgg6doLzFQf/EXC7pk3GEv+wVMtDAj/V
-	t1j32h+guU5d5+9bEMlBFmtuS7vI9BZalusV9ztNQ5jlI8kbkBDolV6TGhuVZILD/SXi7YdTR4S
-	ffcr/HHzR4VJYErGSdc4flAV96loO0Y8x/YW+qtUbyW8kzmOY8huxTE9C6wXmIwTQb4+wh1i7VN
-	ZcPgq4rxP0U/asv+aYH6tVUXZanJhmJYvSWokgmqb2am/w/8LvI+4ZekCRutgzAw5HaaohKHntH
-	XduP9i87wkBXGiApK848wk=
-X-Received: by 2002:a05:6000:1786:b0:43d:7722:ec05 with SMTP id ffacd0b85a97d-43d7722f1bdmr15810868f8f.8.1776196453250;
-        Tue, 14 Apr 2026 12:54:13 -0700 (PDT)
+        bh=rKFuKgv0AEkRD4ZABJqA1y+s2HqCRJHpRMYf+DRn8zE=;
+        b=N0iiB++nsbvAWSUh5SVZCjbWVYuVZ69ZqRtdlUCP6PuY0IdqcfmCwdHrpHowIpr7nz
+         UfnVZf1yb29GeyinS0VfDJbQsuj8nf0UHF/gv8Smjo+7Py0/94SS36B6O2gTlJfqAXOD
+         NdGlew8OPOWBUXf7AQpltgMYAQA6rZOWCynLTsICWNx0MjuXpeT1tjvWxJRISxfjNbb8
+         2r2UCuaU1KWw/YxUDs30v6xqXWf3uefRlV+/xt9bvNPghseRz6cBbGVTj0avzj6AbMMb
+         q2YQWmJK1hUtt4jUbg7BtNIvOweOHcE3cqODO5WrCnP30CZBogFEWrL9xr0WxIGoyp9K
+         fzNA==
+X-Forwarded-Encrypted: i=1; AFNElJ+ai9AZni0tuWMkAT77CcF3vkdnYuMp6mWtctGNMhrjn8K0/rNf/s4xEF2E+BkR9O6z79SuykHYJIU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfwFjXrhDD6zSpwoE5ER4xWMXtJ6ng4lwtcFzhROp+aQyapaeL
+	oKgHhjTr48QrcgAph7zf1bW6XPIVCmbgfVqHr6I2g3AVlKez35GJhcI8
+X-Gm-Gg: AeBDievG2N783qsFVP2ZkCDI/xolhA64EPhO9zU8xl1q6TfAxE9If2wAB+LzK/ugjh3
+	bMmPgkGgOsPgHY4TbtCbgBUCc5Ge8vdewgxp1ISNG+WEHOBwjweDjXCOxp2ikjINN4CW0DIMZvf
+	l5LyMm1nCjLWvKliOQUz5781fTsUL0HdGt04UU5w6lELbrmCYl9VFVGDhEmu38rrL2UdAO2QCXX
+	Obi/XjkKPLBunCsYo0BG16e5xDnEkz90B39prJjxSYLETxEdXnFWPkfGMcFI/nR/8wjN4TZG/PU
+	Cye2+8uWOZ+3eR9U6CP0n0N6rs2Pd7m6IN/Ltfa/JC2y9SJtD41vRfS13jLcddk0/ODgOfXLlaG
+	mAMRs3vVvcyPa67helQtj2mpFStc3uy1WBj6uYFWglAPeVsifyOzrwNuKgsj6EeIu0RSi0KHtHL
+	+92Pr145JsKZIMooqgbCmE1qySTwjbACI3NMI1WW08bNdU3AdARkfV8xDAuba6xGjtM6MhqdFe8
+	gaVDkQZAZwQIAWGiYd7jEa0JsLeVWwuVA==
+X-Received: by 2002:a05:6000:b0a:b0:43d:6787:9924 with SMTP id ffacd0b85a97d-43d67879ad8mr17176548f8f.2.1776196454943;
+        Tue, 14 Apr 2026 12:54:14 -0700 (PDT)
 Received: from [127.0.1.1] (93-143-58-160.adsl.net.t-com.hr. [93.143.58.160])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d7400708dsm25595266f8f.25.2026.04.14.12.54.11
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d7400708dsm25595266f8f.25.2026.04.14.12.54.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Apr 2026 12:54:12 -0700 (PDT)
+        Tue, 14 Apr 2026 12:54:14 -0700 (PDT)
 From: =?utf-8?q?Duje_Mihanovi=C4=87?= <dujemihanovic32@gmail.com>
-Date: Tue, 14 Apr 2026 21:51:50 +0200
-Subject: [PATCH 1/4] dt-bindings: clock: marvell,pxa1908: Add #reset-cells
+Date: Tue, 14 Apr 2026 21:51:51 +0200
+Subject: [PATCH 2/4] clk: mmp: pxa1908-apbc: Add reset cells
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -70,7 +70,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260414-pxa1908-clk-reset-v1-1-94bae5f3a8cf@dujemihanovic.xyz>
+Message-Id: <20260414-pxa1908-clk-reset-v1-2-94bae5f3a8cf@dujemihanovic.xyz>
 References: <20260414-pxa1908-clk-reset-v1-0-94bae5f3a8cf@dujemihanovic.xyz>
 In-Reply-To: <20260414-pxa1908-clk-reset-v1-0-94bae5f3a8cf@dujemihanovic.xyz>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -83,78 +83,119 @@ Cc: Karel Balej <balejk@matfyz.cz>, linux-arm-kernel@lists.infradead.org,
  ~postmarketos/upstreaming@lists.sr.ht, 
  =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1567;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5428;
  i=duje@dujemihanovic.xyz; s=20260328; h=from:subject:message-id;
- bh=BP5R8FC0EJnxLApQpaXSZEWsmn62r66uFEV2C/KCEqY=;
- b=owGbwMvMwCW2z0j3+uHIyKOMp9WSGDLvzU5kk19Q6f9Oed3e5NN7fN78Vj66ocpzyxLjw5f5N
- 13f4P1NoaOUhUGMi0FWTJGFeancJb7U8IkORbZJMHNYmUCGMHBxCsBE7FwY/js+uC+51Ywjbtls
- 0RLNJ/tPm77RCL7zUDHs9ROV61LtRosYGdYUulnavbrP/MfxxR7m9bllPQqe8ltdp0RI6blrta6
- exQUA
+ bh=y12V/0MXZNM4V87Nu8AZ7/dxPVLqCzcuUl4Cuce0an4=;
+ b=owGbwMvMwCW2z0j3+uHIyKOMp9WSGDLvzU589HF5hHZ6jMYS244ulq95DUmxvfesJ4gqdRiEV
+ O9Y92pNRykLgxgXg6yYIgvzUrlLfKnhEx2KbJNg5rAygQxh4OIUgIkILmZk6JyutO+Th3oDh8DM
+ UFUOYcsnV8q/Lao6OGvb3+O/9bm+LGdkuO2RvXP96akb7s5mWBW/UX9jyJ9zJep7N+yLW/Xod5T
+ sSRYA
 X-Developer-Key: i=duje@dujemihanovic.xyz; a=openpgp;
  fpr=9BD463017690089DAA8DC266275F544B3B1B4792
 
 From: Duje Mihanović <duje@dujemihanovic.xyz>
 
-The APBC and APBCP controllers have reset lines exposed. Give them
-a #reset-cells so that they may be used as reset controllers.
+It has been concluded by comparing the gate clock masks and vendor code
+between PXA1908/28 that PXA1908's APBC, similarly to PXA1928's APBC, has
+controllable reset lines. Describe these in the driver for correctness.
 
 Signed-off-by: Duje Mihanović <duje@dujemihanovic.xyz>
 ---
- .../devicetree/bindings/clock/marvell,pxa1908.yaml | 34 +++++++++++++++-------
- 1 file changed, 24 insertions(+), 10 deletions(-)
+ drivers/clk/mmp/clk-pxa1908-apbc.c | 58 +++++++++++++++++++++++++++++---------
+ 1 file changed, 44 insertions(+), 14 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/marvell,pxa1908.yaml b/Documentation/devicetree/bindings/clock/marvell,pxa1908.yaml
-index 6f3a8578fe2a..0db5504013d5 100644
---- a/Documentation/devicetree/bindings/clock/marvell,pxa1908.yaml
-+++ b/Documentation/devicetree/bindings/clock/marvell,pxa1908.yaml
-@@ -37,6 +37,9 @@ properties:
-   '#power-domain-cells':
-     const: 1
+diff --git a/drivers/clk/mmp/clk-pxa1908-apbc.c b/drivers/clk/mmp/clk-pxa1908-apbc.c
+index 3fd7b5e644f3..438ece4f047d 100644
+--- a/drivers/clk/mmp/clk-pxa1908-apbc.c
++++ b/drivers/clk/mmp/clk-pxa1908-apbc.c
+@@ -7,6 +7,7 @@
+ #include <dt-bindings/clock/marvell,pxa1908.h>
  
-+  '#reset-cells':
-+    const: 1
+ #include "clk.h"
++#include "reset.h"
+ 
+ #define APBC_UART0		0x0
+ #define APBC_UART1		0x4
+@@ -44,22 +45,25 @@ static const char * const uart_parent_names[] = {"pll1_117", "uart_pll"};
+ static const char * const ssp_parent_names[] = {"pll1_d16", "pll1_d48", "pll1_d24", "pll1_d12"};
+ 
+ static struct mmp_param_gate_clk apbc_gate_clks[] = {
+-	{PXA1908_CLK_TWSI0, "twsi0_clk", "pll1_32", CLK_SET_RATE_PARENT, APBC_TWSI0, 0x7, 3, 0, 0, NULL},
+-	{PXA1908_CLK_TWSI1, "twsi1_clk", "pll1_32", CLK_SET_RATE_PARENT, APBC_TWSI1, 0x7, 3, 0, 0, NULL},
+-	{PXA1908_CLK_TWSI3, "twsi3_clk", "pll1_32", CLK_SET_RATE_PARENT, APBC_TWSI3, 0x7, 3, 0, 0, NULL},
+-	{PXA1908_CLK_GPIO, "gpio_clk", "vctcxo", CLK_SET_RATE_PARENT, APBC_GPIO, 0x7, 3, 0, 0, NULL},
+-	{PXA1908_CLK_KPC, "kpc_clk", "clk32", CLK_SET_RATE_PARENT, APBC_KPC, 0x7, 3, 0, MMP_CLK_GATE_NEED_DELAY, NULL},
+-	{PXA1908_CLK_RTC, "rtc_clk", "clk32", CLK_SET_RATE_PARENT, APBC_RTC, 0x87, 0x83, 0, MMP_CLK_GATE_NEED_DELAY, NULL},
++	{PXA1908_CLK_TWSI0, "twsi0_clk", "pll1_32", CLK_SET_RATE_PARENT, APBC_TWSI0, 0x3, 3, 0, 0, NULL},
++	{PXA1908_CLK_TWSI1, "twsi1_clk", "pll1_32", CLK_SET_RATE_PARENT, APBC_TWSI1, 0x3, 3, 0, 0, NULL},
++	{PXA1908_CLK_TWSI3, "twsi3_clk", "pll1_32", CLK_SET_RATE_PARENT, APBC_TWSI3, 0x3, 3, 0, 0, NULL},
++	{PXA1908_CLK_GPIO, "gpio_clk", "vctcxo", CLK_SET_RATE_PARENT, APBC_GPIO, 0x3, 3, 0, 0, NULL},
++	{PXA1908_CLK_KPC, "kpc_clk", "clk32", CLK_SET_RATE_PARENT, APBC_KPC, 0x3, 3, 0, MMP_CLK_GATE_NEED_DELAY, NULL},
++	{PXA1908_CLK_RTC, "rtc_clk", "clk32", CLK_SET_RATE_PARENT, APBC_RTC, 0x83, 0x83, 0, MMP_CLK_GATE_NEED_DELAY, NULL},
++	{PXA1908_CLK_PWM1, "pwm1_clk", "pwm01_apb_share", CLK_SET_RATE_PARENT, APBC_PWM1, 0x2, 2, 0, 0, NULL},
++	{PXA1908_CLK_PWM3, "pwm3_clk", "pwm23_apb_share", CLK_SET_RATE_PARENT, APBC_PWM3, 0x2, 2, 0, 0, NULL},
++	{PXA1908_CLK_UART0, "uart0_clk", "uart0_mux", CLK_SET_RATE_PARENT, APBC_UART0, 0x3, 3, 0, 0, &uart0_lock},
++	{PXA1908_CLK_UART1, "uart1_clk", "uart1_mux", CLK_SET_RATE_PARENT, APBC_UART1, 0x3, 3, 0, 0, &uart1_lock},
++	{PXA1908_CLK_THERMAL, "thermal_clk", NULL, 0, APBC_THERMAL, 0x3, 3, 0, 0, NULL},
++	{PXA1908_CLK_IPC_RST, "ipc_clk", NULL, 0, APBC_IPC_RST, 0x3, 3, 0, 0, NULL},
++	{PXA1908_CLK_SSP0, "ssp0_clk", "ssp0_mux", 0, APBC_SSP0, 0x3, 3, 0, 0, NULL},
++	{PXA1908_CLK_SSP2, "ssp2_clk", "ssp2_mux", 0, APBC_SSP2, 0x3, 3, 0, 0, NULL},
++};
 +
- required:
-   - compatible
-   - reg
-@@ -44,16 +47,27 @@ required:
++static struct mmp_param_gate_clk apbc_gate_no_reset_clks[] = {
+ 	{PXA1908_CLK_PWM0, "pwm0_clk", "pwm01_apb_share", CLK_SET_RATE_PARENT, APBC_PWM0, 0x2, 2, 0, 0, &pwm0_lock},
+-	{PXA1908_CLK_PWM1, "pwm1_clk", "pwm01_apb_share", CLK_SET_RATE_PARENT, APBC_PWM1, 0x6, 2, 0, 0, NULL},
+ 	{PXA1908_CLK_PWM2, "pwm2_clk", "pwm23_apb_share", CLK_SET_RATE_PARENT, APBC_PWM2, 0x2, 2, 0, 0, NULL},
+-	{PXA1908_CLK_PWM3, "pwm3_clk", "pwm23_apb_share", CLK_SET_RATE_PARENT, APBC_PWM3, 0x6, 2, 0, 0, NULL},
+-	{PXA1908_CLK_UART0, "uart0_clk", "uart0_mux", CLK_SET_RATE_PARENT, APBC_UART0, 0x7, 3, 0, 0, &uart0_lock},
+-	{PXA1908_CLK_UART1, "uart1_clk", "uart1_mux", CLK_SET_RATE_PARENT, APBC_UART1, 0x7, 3, 0, 0, &uart1_lock},
+-	{PXA1908_CLK_THERMAL, "thermal_clk", NULL, 0, APBC_THERMAL, 0x7, 3, 0, 0, NULL},
+-	{PXA1908_CLK_IPC_RST, "ipc_clk", NULL, 0, APBC_IPC_RST, 0x7, 3, 0, 0, NULL},
+-	{PXA1908_CLK_SSP0, "ssp0_clk", "ssp0_mux", 0, APBC_SSP0, 0x7, 3, 0, 0, NULL},
+-	{PXA1908_CLK_SSP2, "ssp2_clk", "ssp2_mux", 0, APBC_SSP2, 0x7, 3, 0, 0, NULL},
+ };
  
- additionalProperties: false
+ static struct mmp_param_mux_clk apbc_mux_clks[] = {
+@@ -89,6 +93,30 @@ static void pxa1908_apb_periph_clk_init(struct pxa1908_clk_unit *pxa_unit)
+ 			ARRAY_SIZE(apbc_mux_clks));
+ 	mmp_register_gate_clks(unit, apbc_gate_clks, pxa_unit->base,
+ 			ARRAY_SIZE(apbc_gate_clks));
++	mmp_register_gate_clks(unit, apbc_gate_no_reset_clks, pxa_unit->base,
++			ARRAY_SIZE(apbc_gate_no_reset_clks));
++}
++
++/* Taken from clk-of-pxa1928.c */
++static void pxa1908_clk_reset_init(struct device_node *np,
++				   struct pxa1908_clk_unit *pxa_unit)
++{
++	struct mmp_clk_reset_cell *cells;
++	int nr_cells = ARRAY_SIZE(apbc_gate_clks);
++
++	cells = kzalloc_objs(*cells, nr_cells);
++	if (!cells)
++		return;
++
++	for (int i = 0; i < nr_cells; i++) {
++		cells[i].clk_id = apbc_gate_clks[i].id;
++		cells[i].reg = pxa_unit->base + apbc_gate_clks[i].offset;
++		cells[i].bits = BIT(2);
++		cells[i].flags = 0;
++		cells[i].lock = apbc_gate_clks[i].lock;
++	};
++
++	mmp_clk_reset_register(np, cells, nr_cells);
+ }
  
--if:
--  not:
--    properties:
--      compatible:
--        contains:
--          const: marvell,pxa1908-apmu
--
--then:
--  properties:
--    '#power-domain-cells': false
-+allOf:
-+  - if:
-+      not:
-+        properties:
-+          compatible:
-+            contains:
-+              const: marvell,pxa1908-apmu
-+    then:
-+      properties:
-+        '#power-domain-cells': false
-+  - if:
-+      not:
-+        properties:
-+          compatible:
-+            contains:
-+              enum:
-+                - marvell,pxa1908-apbc
-+                - marvell,pxa1908-apbcp
-+    then:
-+      properties:
-+        '#reset-cells': false
+ static int pxa1908_apbc_probe(struct platform_device *pdev)
+@@ -107,6 +135,8 @@ static int pxa1908_apbc_probe(struct platform_device *pdev)
  
- examples:
-   # APMU block:
+ 	pxa1908_apb_periph_clk_init(pxa_unit);
+ 
++	pxa1908_clk_reset_init(pdev->dev.of_node, pxa_unit);
++
+ 	return 0;
+ }
+ 
 
 -- 
 2.53.0
