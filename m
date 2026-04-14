@@ -1,224 +1,145 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0018F31F993
-	for <linux-clk@vger.kernel.org>; Tue, 14 Apr 2026 19:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408C6223DEA
+	for <linux-clk@vger.kernel.org>; Tue, 14 Apr 2026 20:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776196463; cv=none; b=NUQF9bPvprm8WygkCiI505G5/9X+42m4Fc+ikCTAC+dQvQWACTUMmrgQ2EJBfiAwzHgzfHo/zvUmwZDHkqCCWnUEa9ixH3PaRvmskD+6+C8cK0qHYoGAUGFkPFqgZCzMKPh4k0qIyK9H3OpgFzoHvoT3uPk8nY1uLoEvNk8nOQU=
+	t=1776197129; cv=none; b=nvRFzvrFHgOO909WvVWaL0ukgM96kaIAlqtbW4xxoYlsMVCNw3GbNac29l5RcHQ5Nymr+ij/b0HUIdsKLRljoTT5miXwXUIQ9NjnA3c3xQmtiEz0VQHibQx+PD5lpfTadVV1kWHiJPvhSNkRr1IY1TS53bnOzwTqy5DQmMoCSlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776196463; c=relaxed/simple;
-	bh=LSn3UpWfwQWxClYk23NT48+QAIlnEKcXKy1WIK6ir8U=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=t8rUU1BQnBCZgfWVU4vCtTtMptF4yexPz/kHFc8E4BtifAtsdkVzdjOsQjvqN259+EJYsw2FF29XyTQkRJOVfJJL1RSeS2bhvGusJ1/SWT0KSt391v0iEIm3Tme41Mzr495I+vD5GPYv7EYK9/U3J+S+WrnGOOE+VEiCyNsutm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=sCtH/v26; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1776197129; c=relaxed/simple;
+	bh=aATsalV8/1i5L0VFh3YiF/WCOnaKmuUJPAwqHhi9cLM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cDWk8PBZsULt3j1HM/eFLrT9txdL1PkKYjYkEigL0KlqRhSMApQmGK81OzGxZ5avFEYAXG56RZ8CO0IxmzdHIY/M59PMF9p4xZQLawyhMdDErEmMd7yV7Csz+zIUXD5NwBLt42cbOoeK7r5xT1mhyYGJz4O3SrQ43BujR4nkgX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WCIEganP; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=hsFAEeb7; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sCtH/v26"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-43d7213b6ebso1770516f8f.3
-        for <linux-clk@vger.kernel.org>; Tue, 14 Apr 2026 12:54:19 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WCIEganP";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="hsFAEeb7"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1776197127;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HT80x0fa49gU1qS9LZMVanLH0BXd2Tg/W3HJgvxGomA=;
+	b=WCIEganPs3ZHtiaBxmD9r25ZS30UnsnRLlMESZXMxnNvU4EPMYe70wqMnjAa1LGxRYY9O8
+	CPN0jW1Kz+LUUl9Eqjb5bRbB1tGvzaLmYjfSNr34q6zm2MI0zCMZerv4E0f5JpanYXStYN
+	jsqCSlkkCuM18MhhuodamErOY8Zqg4c=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-403-XeVPLXH_PxuGK1T-syVrbg-1; Tue, 14 Apr 2026 16:05:26 -0400
+X-MC-Unique: XeVPLXH_PxuGK1T-syVrbg-1
+X-Mimecast-MFC-AGG-ID: XeVPLXH_PxuGK1T-syVrbg_1776197125
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-89fa878662bso116411656d6.2
+        for <linux-clk@vger.kernel.org>; Tue, 14 Apr 2026 13:05:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1776196458; x=1776801258; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rx6Gs/k39gM6qSQMBZbg940nHO3jpX+P2ASmGy0OCbE=;
-        b=sCtH/v26SF3aRH3wg4yn/Z9l7W7XTfUo9sWilkhoe0nF8pdzyOiOE42lhDEGjwcT6D
-         IGSkXKkkRriIKMKZ/iSlZx7RCZreZqcO7LUv6JFc26vmZTU85afvrzWBuVXbK0PmrT30
-         RCRUTWDsjHm/GRo70ERW0TtHfron+pGGZC+EHQU3W+S4ZIbzs365m4JQStyI7cSRS3GL
-         4A/Wt6ITLEWHX8Ljk9Vcd7/IPpwPydRz8UkV0GqCQuHv4RvH/eqnwYvjivW+jftCF75M
-         u3uJT7+sKeRVjKvOwaR+whSTXCkWxUB2DnApn6VPlbf2GkkdTbRIEBWJ7qHhmmHBoj1z
-         EweQ==
+        d=redhat.com; s=google; t=1776197125; x=1776801925; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HT80x0fa49gU1qS9LZMVanLH0BXd2Tg/W3HJgvxGomA=;
+        b=hsFAEeb71FPX7kuYWvXNf1awhqcCZs9utsLMZXUCQEZmEhd8eSKa1Kiuo+DbcTJmDC
+         VMDIChPZ8eiXuERXkH1dzJ6U7v/pGb0jAt+RuLbaYIjQUm/CicyolUltzaQxySAZDWhs
+         gjuc5M+IdlGdupgtBeV/CA9EaGXDU2Ugq07BTCHkdbNX7OXPE+s879M/GTvVbMH9lPLp
+         OVY9+GhBcZKQoG7ltBo91kzy8N6dBhmVmDfs0jFbokyR/Be38R7+A7yudcmjp/XW/aq1
+         IkfhqUVtuc6l2P/Ixm9md8BIqeBqaXcwFCKH8cmfGPVVmRAtH1xJoxwGlBvMWNZP/HEi
+         8ygw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776196458; x=1776801258;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=rx6Gs/k39gM6qSQMBZbg940nHO3jpX+P2ASmGy0OCbE=;
-        b=FXq8lwJrckQhVSOxfa/soWk8YoGNEGpZfgb9d35Clkocg/t5sFetDNqLjS8xEqgNcO
-         +Yu3COGTid14u/NsiRmlZF2cZNkiZjiVAMlGHUlkQYYiUz482AM1MmgIGg+COODrwaST
-         bbW8w0KX3vK/yQDrWPueU0guApprYb7efBGbnhyupfLeeZDYYb08TbL1S3pUedreZj/E
-         RRjNOcMWdR6HFrUDl+n3PHclbSVas0yLpTULMAOGsySniH/BrQZaVtcd+UN56P1bMg77
-         LM5Y83tgrJo3BjCpnRT+z0MtRX0L57/b9mVXUJDPnbyzzC/PrF8lOtgVlhVdkAArWXlg
-         Zg+w==
-X-Forwarded-Encrypted: i=1; AFNElJ+JmmdJVlZit6vDPmeuNLoiBfik5VH1BsX+iI4S4X0M0mc7NvqTnoqGgcqur2wiKcJ51qNK/VSRpRo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKViUMOUF/AXs0yWA4/+BPTc9NkqslGBhM/RJbzguv2UtXrfKg
-	k1E5200tglL4x6D0ZCtAIjRhz0lpS+a0LfwamkntMGM0gHnymgA4bLPm
-X-Gm-Gg: AeBDiesXTytdWwkaBLEqsDJO0mzPsdZytHPazrEZFe7RNy97rsuBaGjeEPZlYEjcJ90
-	gKel1TuFd+h1/pSZDy0+PNEEPpUanaD/984lXzA5zC2+IorVXgrH3EOLpLmFbbTB1S0dh+XELs4
-	ICU5/xMqSAiyasK1Ioo5a0lwtNnL/e+B2Y2c226F8xl4p3eUjQj6vsdqNDXwKHIfopLZ3DOgb6O
-	o+ePPaz6AndfoXda8IB6B/GQM8TqNk3+j1mS6W4FZJ0rOxZ6CcjRrgqDg9bApSCVAdxtrIqxP9s
-	Qw8twXS7LHm547waXc/1GfVuOXh7kZwi3ePIrmNcgkbsEgt91euqlt2gJWomErswnP0jQ7grSST
-	7C2NBb10M7HGNgT8WOvuMG1nkw9xbXwDn5xrCUIB3oFeKfNi1x+y51JXs7EyUFoEMvL0JD+AvOt
-	whQA4SAGWpsDyE6lCUrHjj8cTsHEY696gdFvXhla3+rHi9L/lYFPCC2v4+GL6ilbZb6dV8vstXt
-	UnlWpAG+r6BRzEM7djeBfY=
-X-Received: by 2002:a05:6000:2211:b0:43c:fd92:f432 with SMTP id ffacd0b85a97d-43d6425968amr29336493f8f.2.1776196458135;
-        Tue, 14 Apr 2026 12:54:18 -0700 (PDT)
-Received: from [127.0.1.1] (93-143-58-160.adsl.net.t-com.hr. [93.143.58.160])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d7400708dsm25595266f8f.25.2026.04.14.12.54.16
+        d=1e100.net; s=20251104; t=1776197125; x=1776801925;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=HT80x0fa49gU1qS9LZMVanLH0BXd2Tg/W3HJgvxGomA=;
+        b=XnLm3fZbAOEMEDDE/ANaZ/JsURyajv2rk+Q2iFKVNivfFe1osGwM6bmNwYrXhaYNJX
+         7bpYRLTaelgQXjZgnC8X7jfZfatKuRxoMRSatmEvToEwsSSMdqjL4fITU3zJ7/SJpMnb
+         DWW7Z1gT8yCqZnKRtJZd/JB0SI8WTbfIlq3LoRZApza1yahQpuRSZm4AgvGv80WpAxQ7
+         WopaZq//4flILN3dsamSue+6InKN3g0JcJ+LgYxiypVDJh0mDkv8daZTyUIJnKF0XH0e
+         9tG3ZnNnMuzRUgb4A6/kTiJKx2AM703DmPKpPMKSAGoiZ10M6c6z2D/cHMk9ykRTZsVi
+         L6gw==
+X-Forwarded-Encrypted: i=1; AFNElJ/7ZAFIBqHlNYFGMUeDjl3FrgYRDsTKKQoAcy8XgBOjv3JJnbjR0k0Y6gULCejr95xfNUCM31ksc1c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnuQG0Wb7lt0jGRctfVKqIHkLafR/zHORvQPTJHYAN20ZQS0xc
+	Tc+Q1ml0qaI6VQVxu/ovwwpvmWxQut4O8PZnGgeienhZFN5A1Yyi1opWhdk7k5T3t6W+mN6h60X
+	Vf3ViS7h1Bd7CCRI1AkAEKndfpKZsjVecfzO0R/h5RLgC3a8ijpjSWbTb/73FUQ==
+X-Gm-Gg: AeBDievNEwEYmZFP0P/c4/K6YyoKcc9vmviq6umzsk44q6I2fAL5qGfJFF80hs4g81I
+	gP9OcWCB3BLHgxSCAHEPkshiXRYssh/bJ3x2AQ1HmRBYshjAToq+jbSUZywdf+PHNy1tjS+zKnz
+	GDp1St2rnEjX0r1AAfu4pGJmmyTmyx6OmE2CxZcp44EIP9pUgqOUFQxUOIhr6Uy0r3C2Xm1jLbC
+	NYurne831sQdxpRfvJciqRem6yYI4hBSoXzMLTySxFMZfaYI7ivjN8Hy255jxHhXsJFPQtf1Wha
+	5NKbgVgMZDUTNWiKvhDf6ViT69GKFBnMsoB/79Evenw0V+LZZBhNJVDPq6URlrGJ2ldLkYieaDw
+	iKA36l/ePdtpCTtAXof09
+X-Received: by 2002:a0c:e001:0:b0:8ac:a546:775f with SMTP id 6a1803df08f44-8aca5467d00mr158065526d6.1.1776197125302;
+        Tue, 14 Apr 2026 13:05:25 -0700 (PDT)
+X-Received: by 2002:a0c:e001:0:b0:8ac:a546:775f with SMTP id 6a1803df08f44-8aca5467d00mr158064646d6.1.1776197124557;
+        Tue, 14 Apr 2026 13:05:24 -0700 (PDT)
+Received: from redhat.com ([2600:382:8116:76c6:c5b1:9485:5da8:de42])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8ac849dbc0fsm133803046d6.1.2026.04.14.13.05.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Apr 2026 12:54:17 -0700 (PDT)
-From: =?utf-8?q?Duje_Mihanovi=C4=87?= <dujemihanovic32@gmail.com>
-Date: Tue, 14 Apr 2026 21:51:53 +0200
-Subject: [PATCH 4/4] arm64: dts: marvell: mmp: pxa1908: Add reset cells
+        Tue, 14 Apr 2026 13:05:22 -0700 (PDT)
+Date: Tue, 14 Apr 2026 16:05:20 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Guangshuo Li <lgs201920130244@gmail.com>
+Cc: Emil Renner Berthing <kernel@esmil.dk>,
+	Hal Feng <hal.feng@starfivetech.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v3] clk: starfive: jh7110: fix memory leak in
+ jh7110_reset_controller_register() error path
+Message-ID: <ad6eAM7a-5jzxC9V@redhat.com>
+References: <20260413143643.3002454-1-lgs201920130244@gmail.com>
+ <ad0d5fIAkjblQcIt@redhat.com>
+ <CANUHTR8JCPLMAPfdjXX95tcPTqHWBy7k3GwOo7=BcjRxfMSavg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20260414-pxa1908-clk-reset-v1-4-94bae5f3a8cf@dujemihanovic.xyz>
-References: <20260414-pxa1908-clk-reset-v1-0-94bae5f3a8cf@dujemihanovic.xyz>
-In-Reply-To: <20260414-pxa1908-clk-reset-v1-0-94bae5f3a8cf@dujemihanovic.xyz>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Karel Balej <balejk@matfyz.cz>, linux-arm-kernel@lists.infradead.org, 
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org, 
- ~postmarketos/upstreaming@lists.sr.ht, 
- =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4013;
- i=duje@dujemihanovic.xyz; s=20260328; h=from:subject:message-id;
- bh=kl4so4YGhRFTk6k5KZvqqawzD5p7cMzaSqktF31UoyA=;
- b=owGbwMvMwCW2z0j3+uHIyKOMp9WSGDLvzU68sktuSvCp0Ohk9bsnNbry6xribDI2aM+cl2Pgp
- 3nYbqp/RykLgxgXg6yYIgvzUrlLfKnhEx2KbJNg5rAygQxh4OIUgInwVjIyrF5ZvTbw2TfG8PI7
- h5onnri4Yu+G38v4S0qOBslK/zY6xcbwP+kd5y0Wl+rbMmeufLL9vP7LaeFZmddqyiocpaIVbuq
- /ZQEA
-X-Developer-Key: i=duje@dujemihanovic.xyz; a=openpgp;
- fpr=9BD463017690089DAA8DC266275F544B3B1B4792
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANUHTR8JCPLMAPfdjXX95tcPTqHWBy7k3GwOo7=BcjRxfMSavg@mail.gmail.com>
+User-Agent: Mutt/2.3.1 (2026-03-20)
 
-From: Duje Mihanović <duje@dujemihanovic.xyz>
+On Tue, Apr 14, 2026 at 07:44:18PM +0800, Guangshuo Li wrote:
+> Hi Brian,
+> 
+> Thanks for reviewing.
+> 
+> On Tue, 14 Apr 2026 at 00:46, Brian Masney <bmasney@redhat.com> wrote:
+> 
+> > There's actually another leak in the error path for
+> > auxiliary_device_add(). I think this code should be
+> > converted to devm_kzalloc().
+> >
+> > There is no devm_kzalloc_obj() yet, however according to [1] that should
+> > be coming soon.
+> >
+> > [1] https://lore.kernel.org/lkml/20260330154108.GA3389518@killaraus.ideasonboard.com/
+> >
+> > Brian
+> >
+> 
+> I may be missing something, but I think the auxiliary_device_add() error
+> path is already handled here:
+> 
+> ret = auxiliary_device_add(adev);
+> if (ret) {
+>         auxiliary_device_uninit(adev);
+>         return ret;
+> }
+> 
+> The embedded auxiliary_device has:
+> 
+> adev->dev.release = jh7110_reset_adev_release;
+> 
+> and the release callback does:
 
-Add the newly implemented reset cells to the SoC dtsi.
+You are right. Sorry about that. My original suggestion still applies
+though to move over to the devm variant since that'll allow you to
+remove the release callback.
 
-Signed-off-by: Duje Mihanović <duje@dujemihanovic.xyz>
----
- arch/arm64/boot/dts/marvell/mmp/pxa1908.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/marvell/mmp/pxa1908.dtsi b/arch/arm64/boot/dts/marvell/mmp/pxa1908.dtsi
-index 5778bfdb8567..05b56a759e27 100644
---- a/arch/arm64/boot/dts/marvell/mmp/pxa1908.dtsi
-+++ b/arch/arm64/boot/dts/marvell/mmp/pxa1908.dtsi
-@@ -132,6 +132,7 @@ twsi1: i2c@10800 {
- 				reg = <0x10800 0x64>;
- 				interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&apbc PXA1908_CLK_TWSI1>;
-+				resets = <&apbc PXA1908_CLK_TWSI1>;
- 				mrvl,i2c-fast-mode;
- 				status = "disabled";
- 			};
-@@ -143,6 +144,7 @@ twsi0: i2c@11000 {
- 				reg = <0x11000 0x64>;
- 				interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&apbc PXA1908_CLK_TWSI0>;
-+				resets = <&apbc PXA1908_CLK_TWSI0>;
- 				mrvl,i2c-fast-mode;
- 				status = "disabled";
- 			};
-@@ -154,6 +156,7 @@ twsi3: i2c@13800 {
- 				reg = <0x13800 0x64>;
- 				interrupts = <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&apbc PXA1908_CLK_TWSI3>;
-+				resets = <&apbc PXA1908_CLK_TWSI3>;
- 				mrvl,i2c-fast-mode;
- 				status = "disabled";
- 			};
-@@ -162,6 +165,7 @@ apbc: clock-controller@15000 {
- 				compatible = "marvell,pxa1908-apbc";
- 				reg = <0x15000 0x1000>;
- 				#clock-cells = <1>;
-+				#reset-cells = <1>;
- 			};
- 
- 			uart0: serial@17000 {
-@@ -169,6 +173,7 @@ uart0: serial@17000 {
- 				reg = <0x17000 0x1000>;
- 				interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&apbc PXA1908_CLK_UART0>;
-+				resets = <&apbc PXA1908_CLK_UART0>;
- 				reg-shift = <2>;
- 			};
- 
-@@ -177,6 +182,7 @@ uart1: serial@18000 {
- 				reg = <0x18000 0x1000>;
- 				interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&apbc PXA1908_CLK_UART1>;
-+				resets = <&apbc PXA1908_CLK_UART1>;
- 				reg-shift = <2>;
- 			};
- 
-@@ -188,6 +194,7 @@ gpio: gpio@19000 {
- 				gpio-controller;
- 				#gpio-cells = <2>;
- 				clocks = <&apbc PXA1908_CLK_GPIO>;
-+				resets = <&apbc PXA1908_CLK_GPIO>;
- 				interrupts = <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
- 				interrupt-names = "gpio_mux";
- 				interrupt-controller;
-@@ -215,6 +222,7 @@ pwm0: pwm@1a000 {
- 				compatible = "marvell,pxa250-pwm";
- 				reg = <0x1a000 0x10>;
- 				clocks = <&apbc PXA1908_CLK_PWM0>;
-+				resets = <&apbc PXA1908_CLK_PWM0>;
- 				#pwm-cells = <1>;
- 				status = "disabled";
- 			};
-@@ -223,6 +231,7 @@ pwm1: pwm@1a400 {
- 				compatible = "marvell,pxa250-pwm";
- 				reg = <0x1a400 0x10>;
- 				clocks = <&apbc PXA1908_CLK_PWM1>;
-+				resets = <&apbc PXA1908_CLK_PWM1>;
- 				#pwm-cells = <1>;
- 				status = "disabled";
- 			};
-@@ -231,6 +240,7 @@ pwm2: pwm@1a800 {
- 				compatible = "marvell,pxa250-pwm";
- 				reg = <0x1a800 0x10>;
- 				clocks = <&apbc PXA1908_CLK_PWM2>;
-+				resets = <&apbc PXA1908_CLK_PWM2>;
- 				#pwm-cells = <1>;
- 				status = "disabled";
- 			};
-@@ -239,6 +249,7 @@ pwm3: pwm@1ac00 {
- 				compatible = "marvell,pxa250-pwm";
- 				reg = <0x1ac00 0x10>;
- 				clocks = <&apbc PXA1908_CLK_PWM3>;
-+				resets = <&apbc PXA1908_CLK_PWM3>;
- 				#pwm-cells = <1>;
- 				status = "disabled";
- 			};
-@@ -261,6 +272,7 @@ uart2: serial@36000 {
- 				reg = <0x36000 0x1000>;
- 				interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&apbcp PXA1908_CLK_UART2>;
-+				resets = <&apbcp PXA1908_CLK_UART2>;
- 				reg-shift = <2>;
- 			};
- 
-@@ -271,6 +283,7 @@ twsi2: i2c@37000 {
- 				reg = <0x37000 0x64>;
- 				interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&apbcp PXA1908_CLK_TWSI2>;
-+				resets = <&apbcp PXA1908_CLK_TWSI2>;
- 				mrvl,i2c-fast-mode;
- 				status = "disabled";
- 			};
-@@ -279,6 +292,7 @@ apbcp: clock-controller@3b000 {
- 				compatible = "marvell,pxa1908-apbcp";
- 				reg = <0x3b000 0x1000>;
- 				#clock-cells = <1>;
-+				#reset-cells = <1>;
- 			};
- 
- 			mpmu: clock-controller@50000 {
-
--- 
-2.53.0
+Brian
 
