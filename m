@@ -1,712 +1,201 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877B9385506;
-	Wed, 15 Apr 2026 20:51:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4E838BF91
+	for <linux-clk@vger.kernel.org>; Wed, 15 Apr 2026 20:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776286283; cv=none; b=e8cJneUJ2P/g7h9EcxXjcSUiGPole5kiwi8kbFFkwoL/fKjxcuANqojbuOwrVv4jIZrxqI4JjM7vVeATUM2n3MbMwqs5JOtE+hF8QdElJ18wnlKujN7mMI2QvI97MEbRl4eViBIf5CdHze7jEbgeT33ifxgNJS9rohkQ6JB9P2A=
+	t=1776286294; cv=none; b=V0pA8RbI8mh5IYOe/GJElPRCE67//g8aJ1QxLFGvtcUMlBbLkOVHHquZHHruKlbPM/mmvQYZ129zM9HhQXZTkYeOJNNi1OppJcQomU1yKFamp8tSWj8dKRMH2rOHUtKhEWlwdtgwinB3xc0mwG6oDhJoZoLIMMd8H4rDy/s/ApI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776286283; c=relaxed/simple;
-	bh=ccxvPQ9IHLzAd7f2NYR3IfFEAhs2uYAktFiooxlp2Us=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZEpYZssPusVWcb+d6BGvjsBAbJWo0qW1x+v2q/+Lo2xZ5KHgdeKF+dnAxTQJThDmipHU5RVoHsTGwqCUtptIzA3gecfnM1qsNKtP9rokGUzY04lCvyeFyO7/R1dCOYjvS6IM44LT3AgLKqet+3t85WYqcpIsQftSdXAI0CL/kNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sHPz3lzR; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1776286294; c=relaxed/simple;
+	bh=1p8NSnHp2ZoIeGaQzlfVeCNqKATnjU5veK4IJvrBahE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IXtoSuHAIfXbnDSuZpCOosGebo9qKUex+R7TCCSBEsZMycTb8ZVtqtxfG0zcSZssV9EIuoWM8jTk47fLoTnPc7oHTk5ZL06H6sDdrbL6XMnOyPBkuwL4krLt4GIh1ovchHyIpj66CpQZYANNvMzTA+wG0F4+N1djzFnMcDQ65hM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ng5BTxKh; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Rsw83pdO; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sHPz3lzR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D801EC19424;
-	Wed, 15 Apr 2026 20:51:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776286283;
-	bh=ccxvPQ9IHLzAd7f2NYR3IfFEAhs2uYAktFiooxlp2Us=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sHPz3lzR4GChsWdyYUXCUUFjGnRPPot3R7nnKAS+FxHW6fnGddaPlzixKD9tWRoX4
-	 h2/B8ls76o3uNAxk1fQ7QliR9glvcPokjxD7yXbUhoI4rz0LLNjxUHadTix9uOxCkT
-	 0uO5fUcxmrFzW9Pz4/p6W6LkU64jptJIyyM60cXfmOME/3oljAg7D1q+EeCHn88g6Z
-	 pwXt9wH8/xF30nT/G2WtZDmXZ08w1ckrNB1S1gQolkVlPP/zbkLtL/+6oFy0jvPO1H
-	 f3c/vo66WGpET+HVxW2Kp20f2b9DFPA454limWIXzWVMPHwGJb7Eh+8Y0W2Lf8XCXa
-	 H+5tYwcjVgPEg==
-Date: Wed, 15 Apr 2026 15:51:21 -0500
-From: Rob Herring <robh@kernel.org>
-To: John Madieu <john.madieu.xa@bp.renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Frank Li <Frank.Li@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Thomas Gleixner <tglx@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	John Madieu <john.madieu@gmail.com>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-sound@vger.kernel.org
-Subject: Re: [PATCH v2 05/24] ASoC: dt-bindings: renesas,rsnd: Split into
- generic and SoC-specific parts
-Message-ID: <20260415205121.GA331204-robh@kernel.org>
-References: <20260402090524.9137-1-john.madieu.xa@bp.renesas.com>
- <20260402090524.9137-6-john.madieu.xa@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ng5BTxKh";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Rsw83pdO"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63FEoSUM2834774
+	for <linux-clk@vger.kernel.org>; Wed, 15 Apr 2026 20:51:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	uQkGrBvY1Q6Phw3ZndsRhOHv20pp4HB0vkTp3Pi0WBs=; b=ng5BTxKh1LnpJvZF
+	Dr4EpzBnHj0FodO3QYrpfICS57mZGnKyqpTHGC6imcUxDsLQ4hl9N1Pz9caxfUuJ
+	D8sZqGPQvnLloWQjuEqpEBEtRP+alrOBWFMLOzGMO9+wY8MapPJ/f/ODwEE5ILTn
+	m5kycPBXjlVj5+YO8VYK8jXHjcaP4Bkk0nQPqr3z2PP560Ymq1GrTlwwtIp1L+Mn
+	BaidGiNlV1qj41Tpi/TOGrjk475/bUZVgu1U97u8kVGryeiGnkVggF+y+z6OQy4S
+	X0cLpm5RESI3oz2TDib+P3BGgS9ZAEqKdVW/HcI0dTZHrvHUIbGsh6CGZLv3Wk3d
+	tGtGVg==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4djcsvh4s6-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Wed, 15 Apr 2026 20:51:30 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-35da4795b3cso13002833a91.2
+        for <linux-clk@vger.kernel.org>; Wed, 15 Apr 2026 13:51:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1776286290; x=1776891090; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uQkGrBvY1Q6Phw3ZndsRhOHv20pp4HB0vkTp3Pi0WBs=;
+        b=Rsw83pdOJp5i8feJouvkYfuf87uGWOhUI6gVK5slheA+1JtOMEa/jAEh1SR91XqTKJ
+         U6VvJk07n0a0gpg8R69BglX4ArFAnXplTmiGDLQZWUjy3DnVQ5EoE7j8EeLWlRrOd7S0
+         Xo5fYHuqzV0WYbo0nvbsfmAVaEx3htLfPsnM9dz0EeIcHkoa3OfsEW+iApottVKuGNZ5
+         sf3JVDJaQY35eFq7jD2HBHHHiWxAatxlDzMgRpE6VihOyDWRWp/F+zMNY2MloCKrN3+c
+         nhs+UD9X8ew13/hLul/H0SHDyUBdxVGLiZgj10meWtjQaORwhdIqF8Uskc8BfGQVxlX+
+         qBww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776286290; x=1776891090;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uQkGrBvY1Q6Phw3ZndsRhOHv20pp4HB0vkTp3Pi0WBs=;
+        b=mswSeiIm4859HEb7HUFmouusFT3/Kn9KPo/w6bXmWFMUFtD2t6HYbr16co1HgtsVBu
+         iro30/OjfA4m3hjUba+uGWKG4JWRA31oxUNgZ841oLACzZCTTK795/NvUcdb1q8RyI+w
+         dWJIeIxfNAZX/FJZy7ElHK7dJN+Eqa+1wbsRnt8h4ZqV4p8Sw5zN2FuxvA1imtymk7/5
+         n+QugeriVMvOegx9YQf24pFWWM3xurJlH3wteczVb/XiiUqhxK2z1nMvwuufX9TJd881
+         Ocuqr7fUzUCkOSfEGUl7VeZKXl10lLIl0S9lAxl4OBOcs/MuzrhSE9wXKi6Qwav5j5Uc
+         t00g==
+X-Forwarded-Encrypted: i=1; AFNElJ97hiHO3KYSk7xYah2k+udWFVtc6yPohIMH7SZOOlOuR4shf70BNY0+XHQBg3gc1OCZUyGvPNCgyY4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuDfWsopuHw1jSKC1H5XBMV6JaCJe9Ho05ksJOxlB2RLhPEFrL
+	ZGxYRaqoEb9e2NwvLdP3Vr6097q0e2hE+PelrvyuxvwPmrx6FCbsZkxg1nEViXctH/7poqVwbuY
+	gmfdVOucFg9sOvCZQ4zTIDHHt7Nbu2NyqrE9fA+ViZW3FpvnlBzt0Pv6UIeCFtlY=
+X-Gm-Gg: AeBDietewupBhd86WvNgBJslP/NbmxZXVVOjObbwZcY5hkcbBfYk1H5HbNos1G3Fmpa
+	iFZNQI7SgBi4blvS3saH5Inx4BrtPgEnTjbyFWsW/jmF5SWBD2oK3S7InVJiISAIIJX/xrpY/AL
+	ZRtspkV75U3LH93TrlrqGX/GWa+Kvpz9CgxoPpbxzwjlIkn/A4eSDy9g2HbJ2A1uMsd6r+BjtfY
+	XqxM2QQ1zUXzlBstD97yCP+ZmrYY55vMpC0q3BOU60TzxHRSwX9vn8vUEmgX3dK59hbgGjMcfhl
+	yMt6ps65QheTfyv4y+D8tijeUNQ2F5sQc4Xp38Qbj1WtkdDcR2lq5W5L/MJmzKQLMNZCcDbR9jg
+	C0TTTxxXIWoTg6QdJTz4vHJXtTc1KMkErkdCp2plIuigZJb8htylQ8/o=
+X-Received: by 2002:a05:6a20:a111:b0:398:89b6:1b41 with SMTP id adf61e73a8af0-39fe3f5a009mr26877745637.32.1776286290212;
+        Wed, 15 Apr 2026 13:51:30 -0700 (PDT)
+X-Received: by 2002:a05:6a20:a111:b0:398:89b6:1b41 with SMTP id adf61e73a8af0-39fe3f5a009mr26877711637.32.1776286289726;
+        Wed, 15 Apr 2026 13:51:29 -0700 (PDT)
+Received: from [10.206.103.12] ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c79581a3015sm2487185a12.16.2026.04.15.13.51.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Apr 2026 13:51:28 -0700 (PDT)
+Message-ID: <a7cbd382-49ec-4b3c-b8f9-b47646d6b0aa@oss.qualcomm.com>
+Date: Thu, 16 Apr 2026 02:21:20 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260402090524.9137-6-john.madieu.xa@bp.renesas.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/6] drm/msm/a6xx: Limit GXPD votes to recovery in A8x
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org,
+        Taniya Das <taniya.das@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>,
+        Abel Vesa <abel.vesa@oss.qualcomm.com>,
+        Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jesszhan0024@gmail.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+References: <20260407-gfx-clk-fixes-v1-0-4bb5583a5054@oss.qualcomm.com>
+ <20260407-gfx-clk-fixes-v1-6-4bb5583a5054@oss.qualcomm.com>
+ <8f5ffecc-007e-4a8a-9c5e-9994e7841659@oss.qualcomm.com>
+ <df708bd9-466a-4526-ba74-548896b45e74@oss.qualcomm.com>
+ <eebff16b-2671-4c7f-9930-dc4b3fa903e1@oss.qualcomm.com>
+From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <eebff16b-2671-4c7f-9930-dc4b3fa903e1@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: PBNKMCDQTI9DGgtvnXPIKnH8nWaV4-z4
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDE1MDE5NSBTYWx0ZWRfX0aWOw6RRrb6k
+ N0/kSDAFswXgrgDpkb0jU+71OEQJhkNSOIaBQCQFUk9AU8P+Q9xs2PYjI78yqRiOOBhr02IyuJL
+ YJ882gF0Dse2xGTASJkCA8xw8xQH4idraeC1VUbTyeAXEQL1j8D2zg9r87+q8iyK2CRfcRHkJIj
+ JQNR5AurFRSXgZgsHGaj0FuDr+XDAcHD4pvK/gd7/5l17bO1JY9ICLkwXQyTdnSRDRNNZUBvtLL
+ Fhm0avKoXAU94uglmot//PN+Q2k5nicRv1T2yZ6N9gDY3eqyLUatpAUyK0vrAk/q56frZcZPjFm
+ MkU5NLKXrArmj6vMic0jzmXzU0MSiynehW1jtMJLOLOGoY5kFx5+x/QSMDzKdDGBlGzAg3A1Vls
+ ipqS75cXz0Vo2bSHnuSOTqAi5EGwX+pD9ojDFGvUOgnbnl21vfBgLWE3iXVtmobpwgn10q+W04A
+ TGFSiGOajec9D4MiO8w==
+X-Authority-Analysis: v=2.4 cv=Iby3n2qa c=1 sm=1 tr=0 ts=69dffa52 cx=c_pps
+ a=0uOsjrqzRL749jD1oC5vDA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=A5OVakUREuEA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22
+ a=EUspDBNiAAAA:8 a=tjBgj1cQHot02RtnpFkA:9 a=QEXdDO2ut3YA:10
+ a=mQ_c8vxmzFEMiUWkPHU9:22
+X-Proofpoint-ORIG-GUID: PBNKMCDQTI9DGgtvnXPIKnH8nWaV4-z4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-04-15_01,2026-04-13_04,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 clxscore=1015 priorityscore=1501 suspectscore=0 phishscore=0
+ bulkscore=0 lowpriorityscore=0 impostorscore=0 malwarescore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2604070000 definitions=main-2604150195
 
-On Thu, Apr 02, 2026 at 11:05:04AM +0200, John Madieu wrote:
-> The current renesas,rsnd.yaml binding file handles all supported SoCs
-> in a single schema, resulting in deeply nested if/else/then constructs
-> that become increasingly difficult to maintain. Each new SoC addition
-> amplifies this complexity, making reviews harder and diffs noisier than
-> they need to be.
+On 4/14/2026 7:58 PM, Konrad Dybcio wrote:
+> On 4/7/26 9:16 PM, Akhil P Oommen wrote:
+>> On 4/7/2026 4:31 PM, Konrad Dybcio wrote:
+>>> On 4/7/26 11:30 AM, Taniya Das wrote:
+>>>> From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+>>>>
+>>>> In A8x GPUs, the GX GDSC is moved to a separate block called GXCLKCTL
+>>>> which is under the GX power domain. Due to the way the support for this
+>>>> block is implemented in its driver, pm_runtime votes result in a vote on
+>>>> GX/GMxC/MxC rails from the APPS RSC. This is against the Adreno
+>>>> architecture which require GMU to be the sole voter of these collapsible
+>>>> rails on behalf of GPU, except during the GPU/GMU recovery.
+>>>>
+>>>> To align with this architectural requirement and to realize the power
+>>>> benefits of the IFPC feature, remove the GXPD votes during gmu resume
+>>>> and suspend. And during the recovery sequence, enable/disable the GXPD
+>>>> along with the 'synced_poweroff' genpd hint to force collapse this GDSC.
+>>>>
+>>>> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+>>>> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+>>>> ---
+>>>
+>>> Can we simply make this change unconditional on the gen, so as not to
+>>> maintain 2 separate code paths that try to achieve mostly the same thing?
+>>
+>> We can skip the gdsc vote on A8x because the 'gdsc disable' callback is
+>> dummy when the synced_poweroff hint is not set. Otherwise, gdsc may get
+>> disabled during system resume while GMU assumes the ownership. Taniya
+>> touched upon this point in the cover letter:
+>>
+>> """
+>> when GX GDSC is managed through the generic GenPD runtime PM
+>> framework, it can be unintentionally disabled by the OS during system
+>> resume (resume_noirq/complete phases) or runtime PM suspend paths.
+>> """
 > 
-> Refactor the binding by extracting the common properties shared across
-> all SoCs into a dedicated renesas,rsnd-common.yaml schema, and keeping
-> only SoC-specific constraints (required nodes, port counts, clock names,
-> etc.) in per-SoC or per-family files that $ref the common part.
+> Right, but if we made the GDSC.disable() a dummy on all platforms this
+> could be done.
 > 
-> This prepares the ground for upcoming SoCs such as the RZ/G3E, which
-> introduces a different set of audio resources compared to existing
-> R-Car Gen variants. With the split in place, adding RZ/G3E support
-> becomes a self-contained change that neither bloats a monolithic schema
-> nor buries new constraints inside ever-deeper conditional blocks.
+> On a second thought though, this won't work for gmu_wrapper, so we'd
+> need two paths either way.
+
+gmu_wrapper uses a different code path for pm_resume/suspend anyway. So,
+that is not a problem.
+
+Perhaps, we can explore this separately as it would impact a lot of
+chipsets. I would like the get this series merged ASAP to unblock A8x
+support.
+
+-Akhil.
+
 > 
-> No functional change in validation behaviour for existing device trees.
-> 
-> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
-> ---
-> 
-> Changes:
-> 
-> v2: New patch
-> 
->  .../bindings/sound/renesas,rsnd-common.yaml   | 196 +++++++++++
->  .../bindings/sound/renesas,rsnd.yaml          | 319 +++++-------------
->  2 files changed, 274 insertions(+), 241 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/sound/renesas,rsnd-common.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/renesas,rsnd-common.yaml b/Documentation/devicetree/bindings/sound/renesas,rsnd-common.yaml
-> new file mode 100644
-> index 000000000000..ec6bf644d1a4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/renesas,rsnd-common.yaml
-> @@ -0,0 +1,196 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/sound/renesas,rsnd-common.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Renesas R-Car/RZ Sound Common Properties
-> +
-> +maintainers:
-> +  - Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> +
-> +description:
-> +  Common property and subnode definitions shared by Renesas R-Car and RZ
-> +  sound controller bindings.
-> +
-> +select: false
-> +
-> +properties:
-> +  compatible: true
-> +
-> +  reg: true
-> +
-> +  reg-names: true
+> Konrad
 
-Drop these as they should be defined in the device specfic schemas.
-
-> +
-> +  "#sound-dai-cells":
-> +    description:
-> +      Must be 0 for a single-DAI system and 1 for a multi-DAI system.
-> +    enum: [0, 1]
-> +
-> +  "#clock-cells":
-> +    description:
-> +      Must be 0 when the system has audio_clkout and 1 when it has
-> +      audio_clkout0/1/2/3.
-> +    enum: [0, 1]
-> +
-> +  "#address-cells":
-> +    const: 1
-> +
-> +  "#size-cells":
-> +    const: 0
-> +
-> +  clock-frequency:
-> +    description: Audio clock output frequency for audio_clkout0/1/2/3.
-> +
-> +  clkout-lr-asynchronous:
-> +    description: audio_clkoutn is asynchronous with lr-clock.
-> +    $ref: /schemas/types.yaml#/definitions/flag
-> +
-> +  power-domains: true
-> +
-> +  resets: true
-> +
-> +  reset-names: true
-> +
-> +  clocks: true
-> +
-> +  clock-names: true
-
-And drop these unless you have some global constraints.
-
-> +
-> +  port:
-> +    $ref: audio-graph-port.yaml#/definitions/port-base
-> +    unevaluatedProperties: false
-
-Blank line
-
-> +    patternProperties:
-> +      "^endpoint(@[0-9a-f]+)?$":
-> +        $ref: audio-graph-port.yaml#/definitions/endpoint-base
-
-Blank line
-
-> +        properties:
-> +          playback:
-> +            $ref: /schemas/types.yaml#/definitions/phandle-array
-
-Blank line
-
-(and similar throughout)
-
-> +          capture:
-> +            $ref: /schemas/types.yaml#/definitions/phandle-array
-> +        unevaluatedProperties: false
-
-Move after $ref.
-
-> +
-> +  rcar_sound,dvc:
-> +    description: DVC subnode.
-> +    type: object
-> +    patternProperties:
-> +      "^dvc-[0-1]$":
-> +        type: object
-> +        additionalProperties: false
-> +        properties:
-> +          dmas: true
-> +          dma-names: true
-> +        required:
-> +          - dmas
-> +          - dma-names
-> +    additionalProperties: false
-
-Move after 'type'.
-
-> +
-> +  rcar_sound,mix:
-> +    description: MIX subnode.
-> +    type: object
-> +    patternProperties:
-> +      "^mix-[0-1]$":
-> +        type: object
-> +        additionalProperties: false
-> +    additionalProperties: false
-> +
-> +  rcar_sound,ctu:
-> +    description: CTU subnode.
-> +    type: object
-> +    patternProperties:
-> +      "^ctu-[0-7]$":
-> +        type: object
-> +        additionalProperties: false
-> +    additionalProperties: false
-> +
-> +  rcar_sound,src:
-> +    description: SRC subnode.
-> +    type: object
-> +    patternProperties:
-> +      "^src-[0-9]$":
-> +        type: object
-> +        additionalProperties: false
-> +        properties:
-> +          interrupts:
-> +            maxItems: 1
-> +          dmas: true
-> +          dma-names: true
-> +    additionalProperties: false
-> +
-> +  rcar_sound,ssiu:
-> +    description: SSIU subnode.
-> +    type: object
-> +    patternProperties:
-> +      "^ssiu-[0-9]+$":
-> +        type: object
-> +        additionalProperties: false
-> +        properties:
-> +          dmas: true
-> +          dma-names: true
-> +        required:
-> +          - dmas
-> +          - dma-names
-> +    additionalProperties: false
-> +
-> +  rcar_sound,ssi:
-> +    description: SSI subnode.
-> +    type: object
-> +    patternProperties:
-> +      "^ssi-[0-9]$":
-> +        type: object
-> +        additionalProperties: false
-> +        properties:
-> +          interrupts:
-> +            maxItems: 1
-> +          dmas: true
-> +          dma-names: true
-> +          shared-pin:
-> +            description: Shared clock pin.
-> +            $ref: /schemas/types.yaml#/definitions/flag
-> +          pio-transfer:
-> +            description: PIO transfer mode.
-> +            $ref: /schemas/types.yaml#/definitions/flag
-> +          no-busif:
-> +            description: BUSIF is not used for the mem-to-SSI via DMA case.
-> +            $ref: /schemas/types.yaml#/definitions/flag
-> +        required:
-> +          - interrupts
-> +    additionalProperties: false
-> +
-> +patternProperties:
-> +  'rcar_sound,dai(@[0-9a-f]+)?$':
-
-Why does this have a unit-address, but no 'reg' property? That should be 
-dropped.
-
-> +    description: DAI subnode.
-> +    type: object
-> +    patternProperties:
-> +      "^dai([0-9]+)?$":
-> +        type: object
-> +        additionalProperties: false
-> +        properties:
-> +          playback:
-> +            $ref: /schemas/types.yaml#/definitions/phandle-array
-> +          capture:
-> +            $ref: /schemas/types.yaml#/definitions/phandle-array
-> +        anyOf:
-> +          - required:
-> +              - playback
-> +          - required:
-> +              - capture
-> +    additionalProperties: false
-> +
-> +  'ports(@[0-9a-f]+)?$':
-> +    $ref: audio-graph-port.yaml#/definitions/port-base
-
-This is 'ports', not 'port', so not the right ref.
-
-> +    unevaluatedProperties: false
-> +    patternProperties:
-> +      '^port(@[0-9a-f]+)?$':
-> +        $ref: "#/properties/port"
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - reg-names
-> +  - clocks
-> +  - clock-names
-> +
-> +allOf:
-> +  - $ref: dai-common.yaml#
-> +
-> +additionalProperties: true
-> diff --git a/Documentation/devicetree/bindings/sound/renesas,rsnd.yaml b/Documentation/devicetree/bindings/sound/renesas,rsnd.yaml
-> index e8a2acb92646..0d989922a5b4 100644
-> --- a/Documentation/devicetree/bindings/sound/renesas,rsnd.yaml
-> +++ b/Documentation/devicetree/bindings/sound/renesas,rsnd.yaml
-> @@ -9,8 +9,11 @@ title: Renesas R-Car Sound Driver
->  maintainers:
->    - Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
->  
-> -properties:
-> +description:
-> +  Binding for Renesas R-Car Gen1/Gen2/Gen3/Gen4 and RZ/G1/G2 sound
-> +  controllers using the standard RSND layout.
->  
-> +properties:
->    compatible:
->      oneOf:
->        # for Gen1 SoC
-> @@ -67,34 +70,6 @@ properties:
->      minItems: 1
->      maxItems: 5
->  
-> -  "#sound-dai-cells":
-> -    description: |
-> -      it must be 0 if your system is using single DAI
-> -      it must be 1 if your system is using multi  DAIs
-> -      This is used on simple-audio-card
-> -    enum: [0, 1]
-> -
-> -  "#clock-cells":
-> -    description: |
-> -      it must be 0 if your system has audio_clkout
-> -      it must be 1 if your system has audio_clkout0/1/2/3
-> -    enum: [0, 1]
-> -
-> -  "#address-cells":
-> -    const: 1
-> -
-> -  "#size-cells":
-> -    const: 0
-> -
-> -  clock-frequency:
-> -    description: for audio_clkout0/1/2/3
-> -
-> -  clkout-lr-asynchronous:
-> -    description: audio_clkoutn is asynchronizes with lr-clock.
-> -    $ref: /schemas/types.yaml#/definitions/flag
-> -
-> -  power-domains: true
-> -
->    resets:
->      minItems: 1
->      maxItems: 11
-> @@ -109,181 +84,45 @@ properties:
->      maxItems: 31
->  
->    clock-names:
-> -    description: List of necessary clock names.
-> -    # details are defined below
-> -
-> -  # ports is below
-> -  port:
-> -    $ref: audio-graph-port.yaml#/definitions/port-base
-> -    unevaluatedProperties: false
-> -    patternProperties:
-> -      "^endpoint(@[0-9a-f]+)?":
-> -        $ref: audio-graph-port.yaml#/definitions/endpoint-base
-> -        properties:
-> -          playback:
-> -            $ref: /schemas/types.yaml#/definitions/phandle-array
-> -          capture:
-> -            $ref: /schemas/types.yaml#/definitions/phandle-array
-> -        unevaluatedProperties: false
-> -
-> -  rcar_sound,dvc:
-> -    description: DVC subnode.
-> -    type: object
-> -    patternProperties:
-> -      "^dvc-[0-1]$":
-> -        type: object
-> -        additionalProperties: false
-> -
-> -        properties:
-> -          dmas:
-> -            maxItems: 1
-> -          dma-names:
-> -            const: tx
-> -        required:
-> -          - dmas
-> -          - dma-names
-> -    additionalProperties: false
-> -
-> -  rcar_sound,mix:
-> -    description: MIX subnode.
-> -    type: object
-> -    patternProperties:
-> -      "^mix-[0-1]$":
-> -        type: object
-> -        additionalProperties: false
-> -    additionalProperties: false
-> -
-> -  rcar_sound,ctu:
-> -    description: CTU subnode.
-> -    type: object
-> -    patternProperties:
-> -      "^ctu-[0-7]$":
-> -        type: object
-> -        additionalProperties: false
-> -    additionalProperties: false
-> -
-> -  rcar_sound,src:
-> -    description: SRC subnode.
-> -    type: object
-> -    patternProperties:
-> -      "^src-[0-9]$":
-> -        type: object
-> -        additionalProperties: false
-> -
-> -        properties:
-> -          interrupts:
-> -            maxItems: 1
-> -          dmas:
-> -            maxItems: 2
-> -          dma-names:
-> -            allOf:
-> -              - items:
-> -                  enum:
-> -                    - tx
-> -                    - rx
-> -    additionalProperties: false
-> -
-> -  rcar_sound,ssiu:
-> -    description: SSIU subnode.
-> -    type: object
-> -    patternProperties:
-> -      "^ssiu-[0-9]+$":
-> -        type: object
-> -        additionalProperties: false
-> -
-> -        properties:
-> -          dmas:
-> -            maxItems: 2
-> -          dma-names:
-> -            allOf:
-> -              - items:
-> -                  enum:
-> -                    - tx
-> -                    - rx
-> -        required:
-> -          - dmas
-> -          - dma-names
-> -    additionalProperties: false
-> -
-> -  rcar_sound,ssi:
-> -    description: SSI subnode.
-> -    type: object
-> -    patternProperties:
-> -      "^ssi-[0-9]$":
-> -        type: object
-> -        additionalProperties: false
-> -
-> -        properties:
-> -          interrupts:
-> -            maxItems: 1
-> -          dmas:
-> -            minItems: 2
-> -            maxItems: 4
-> -          dma-names:
-> -            allOf:
-> -              - items:
-> -                  enum:
-> -                    - tx
-> -                    - rx
-> -                    - txu # if no ssiu node
-> -                    - rxu # if no ssiu node
-> -
-> -          shared-pin:
-> -            description: shared clock pin
-> -            $ref: /schemas/types.yaml#/definitions/flag
-> -          pio-transfer:
-> -            description: PIO transfer mode
-> -            $ref: /schemas/types.yaml#/definitions/flag
-> -          no-busif:
-> -            description: BUSIF is not used when [mem -> SSI] via DMA case
-> -            $ref: /schemas/types.yaml#/definitions/flag
-> -        required:
-> -          - interrupts
-> -    additionalProperties: false
-> +    description: List of clock names.
-> +    minItems: 1
-> +    maxItems: 31
-> +
-
-> +  "#sound-dai-cells": true
-> +
-> +  "#clock-cells": true
-> +
-> +  "#address-cells": true
-> +
-> +  "#size-cells": true
-> +
-> +  clock-frequency: true
-> +
-> +  clkout-lr-asynchronous: true
-> +
-> +  power-domains: true
-> +
-> +  port: true
-> +
-> +  rcar_sound,dvc: true
-> +
-> +  rcar_sound,mix: true
-> +
-> +  rcar_sound,ctu: true
-> +
-> +  rcar_sound,src: true
-> +
-> +  rcar_sound,ssiu: true
-> +
-> +  rcar_sound,ssi: true
-
-Use 'unevaluatedProperties' and drop all of these.
-
->  
->  patternProperties:
-> -  # For DAI base
-> -  'rcar_sound,dai(@[0-9a-f]+)?$':
-> -    description: DAI subnode.
-> -    type: object
-> -    patternProperties:
-> -      "^dai([0-9]+)?$":
-> -        type: object
-> -        additionalProperties: false
-> -
-> -        properties:
-> -          playback:
-> -            $ref: /schemas/types.yaml#/definitions/phandle-array
-> -          capture:
-> -            $ref: /schemas/types.yaml#/definitions/phandle-array
-> -        anyOf:
-> -          - required:
-> -              - playback
-> -          - required:
-> -              - capture
-> -    additionalProperties: false
-> -
-> -  'ports(@[0-9a-f]+)?$':
-> -    $ref: audio-graph-port.yaml#/definitions/port-base
-> -    unevaluatedProperties: false
-> -    patternProperties:
-> -      '^port(@[0-9a-f]+)?$':
-> -        $ref: "#/properties/port"
-> -
-> -required:
-> -  - compatible
-> -  - reg
-> -  - reg-names
-> -  - clocks
-> -  - clock-names
-> +  'rcar_sound,dai(@[0-9a-f]+)?$': true
-> +  'ports(@[0-9a-f]+)?$': true
->  
->  allOf:
-> -  - $ref: dai-common.yaml#
-> +  - $ref: renesas,rsnd-common.yaml#
->  
-> -  # --------------------
-> -  # reg/reg-names
-> -  # --------------------
-> -  # for Gen1
->    - if:
->        properties:
->          compatible:
-> @@ -295,11 +134,10 @@ allOf:
->            maxItems: 3
->          reg-names:
->            items:
-> -            enum:
-> -              - sru
-> -              - ssi
-> -              - adg
-> -  # for Gen2/Gen3
-> +            - const: sru
-> +            - const: ssi
-> +            - const: adg
-> +
->    - if:
->        properties:
->          compatible:
-> @@ -310,16 +148,34 @@ allOf:
->      then:
->        properties:
->          reg:
-> -          minItems: 5
-> +          maxItems: 5
->          reg-names:
->            items:
-> -            enum:
-> -              - scu
-> -              - adg
-> -              - ssiu
-> -              - ssi
-> -              - audmapp
-> -  # for Gen4
-> +            - const: scu
-> +            - const: adg
-> +            - const: ssiu
-> +            - const: ssi
-> +            - const: audmapp
-> +        resets:
-> +          maxItems: 11
-> +        reset-names:
-> +          items:
-> +            oneOf:
-> +              - const: ssi-all
-> +              - pattern: '^ssi\.[0-9]$'
-> +        clocks:
-> +          maxItems: 31
-> +        clock-names:
-> +          items:
-> +            oneOf:
-> +              - const: ssi-all
-> +              - pattern: '^ssi\.[0-9]$'
-> +              - pattern: '^src\.[0-9]$'
-> +              - pattern: '^mix\.[0-1]$'
-> +              - pattern: '^ctu\.[0-1]$'
-> +              - pattern: '^dvc\.[0-1]$'
-> +              - pattern: '^clk_(a|b|c|i)$'
-> +
->    - if:
->        properties:
->          compatible:
-> @@ -336,38 +192,19 @@ allOf:
->                - ssiu
->                - ssi
->                - sdmc
-> -
-> -  # --------------------
-> -  # clock-names
-> -  # --------------------
-> -  - if:
-> -      properties:
-> -        compatible:
-> -          contains:
-> -            const: renesas,rcar_sound-gen4
-> -    then:
-> -      properties:
-> -        clock-names:
-> -          maxItems: 3
-> +        resets:
-> +          maxItems: 2
-> +        reset-names:
->            items:
-> -            enum:
-> -              - ssi.0
-> -              - ssiu.0
-> -              - clkin
-> -    else:
-> -      properties:
-> +            - const: ssiu.0
-> +            - const: ssi.0
-> +        clocks:
-> +          maxItems: 3
->          clock-names:
-> -          minItems: 1
-> -          maxItems: 31
->            items:
-> -            oneOf:
-> -              - const: ssi-all
-> -              - pattern: '^ssi\.[0-9]$'
-> -              - pattern: '^src\.[0-9]$'
-> -              - pattern: '^mix\.[0-1]$'
-> -              - pattern: '^ctu\.[0-1]$'
-> -              - pattern: '^dvc\.[0-1]$'
-> -              - pattern: '^clk_(a|b|c|i)$'
-> +            - const: ssiu.0
-> +            - const: ssi.0
-> +            - const: clkin
->  
->  unevaluatedProperties: false
->  
-> -- 
-> 2.25.1
-> 
