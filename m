@@ -1,138 +1,138 @@
-Received: from cornsilk.ash.relay.mailchannels.net (cornsilk.ash.relay.mailchannels.net [23.83.222.40])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 927073E3DA3;
-	Wed, 15 Apr 2026 16:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.222.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776271194; cv=pass; b=TZkN5gYkDj2m/pYUy2Sh0zYddGypDs3Rkltp1THfJPGzYNycjuyrbzClAd+9cyHlhQj/1wgxbXI8B66dTdZkIzcWKM4OMsuSf252L62dCSy4b0WVBfYUCYooSGtXSmJGKvVWH3ux6SOVYRBYRJlwgUENecj25qUoKUjooIcG044=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776271194; c=relaxed/simple;
-	bh=+WYzEfzLHubdqx0fWn2UBfsq+Ag4FeaKeCuT/+YGbX0=;
-	h=Message-ID:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:Date; b=HsRQK4GTsfQlMIMdRrolFA1yiISDqm3yICro5ZUf+NQIoKOsAs/K7y9/O4NE86j8+3IYN5MDd9++7HK9diApWdK/61/zn4JDj55dp+NK41N1+orc2/MOITFiCJL74Hnv52robnNPBE+i4iyQNlJZzWEEaFa24DGaqU82SZpGfRY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com; spf=pass smtp.mailfrom=smankusors.com; dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b=lDxBsPIa; arc=pass smtp.client-ip=23.83.222.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smankusors.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C92730DEAC
+	for <linux-clk@vger.kernel.org>; Wed, 15 Apr 2026 20:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1776285124; cv=none; b=DRRv92UFn0zgsijg1DGUPtToX8GAAIdlWDid/ndPEIDgyQImGw7L6Kyq6qHNY1obyDKSH/2XwL/nNB6xDxnqUjapr4Fs9li/kMVJxqDkPOl9W4/Xd4XaH9wmGiHnI9i+J8TcEE0JLAFmxJckgIHEHqHGEqORudCK5oonuJbPp5U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1776285124; c=relaxed/simple;
+	bh=I6GWle2A9JfWyT414rmmt0LJ6IS5rwyHqfKG/gDyJRM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XcHFZyELouoSno1HWAc5yyp+LRdWQ01YeN3Rr5LkGm690ZU0HU+P7HGwn6LSijTVXWsqZkI3u+HBvwwKlbLeFOnFqAGM8w0/+gSI7T8IBCtLwzShRmsuAIxCiIAMPovGVRKATrzEKA71Lis+NRV9qYDoJJZ++LaH5F5mhFiUs9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dZCOj6So; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bsc2hL8z; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b="lDxBsPIa"
-X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 8EB828C2652;
-	Wed, 15 Apr 2026 15:20:55 +0000 (UTC)
-Received: from de-fra-smtpout6.hostinger.io (100-101-170-129.trex-nlb.outbound.svc.cluster.local [100.101.170.129])
-	(Authenticated sender: hostingeremail)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 434C48C2A8E;
-	Wed, 15 Apr 2026 15:20:52 +0000 (UTC)
-ARC-Seal: i=1; a=rsa-sha256; d=mailchannels.net; s=arc-2022; cv=none;
-	t=1776266455;
-	b=25uoSoFF+bgBpsv11KQWbuzMKn/yTm+5kCnDht78r1L3BXAmE3b9GS8bFnaVOxGpHmpBYC
-	gcIZJF/jp/Dfk6DBtRdP8dKuC1/CcBAwu+4WMXHq7SKyA2stwSidvXy2CS+U4jEdE28K8w
-	WJxoCR2jdXSRP8kYAPrfs/ZWRdsKnpEpjv8U0S4z5feXkbmE/TwNta8JZgVIHVxSUWxxUf
-	lM7r64D/jibMJkziTQJiRYGSzeNF7c+kF+haOjAmM/woyFi4ziDiYOroCQcSuzvyWM62JH
-	c7ND2J7JI71bus14tX/q8J8tywnt5t/OvFcn4T2MfkDaGWL0Bsd2LBUVosOfew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1776266455;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dZCOj6So";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bsc2hL8z"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1776285122;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=snluGqQP7QMHLqXPP6DrgIlyfEWJ6ROQdbtKBxFTO2Y=;
-	b=W52wRAJOYDdFo0/mHk+wpvQ1o8hzpPkdyeo+YWJROHbztdTOpIrx+IZgBvWtt+6WSlz3Mg
-	AadPu/Yw8kdnp3JLMv+IuiNdIjtORoLf4QFVU0/7HmX/Jgqm5b2bxpghc8A1wytLFGkA8X
-	nvXVTmsXqJlosUfCJS6XeRz3nB8pID4UtApkMNuGdpXy8C3ufWNCGuC6dM+M9AdY17vXTw
-	B/51wA1S/QVudGT6FCEjMiW/WuthQmYsgqWqxNOijSSrK63poPATrScTt2HDmRUjRGgo8N
-	3QJgVJE/296lnWaHRucbKdPHH6qh9dOO4H43RH2KNsy2uf5t3yA3e+vsw0SvQQ==
-ARC-Authentication-Results: i=1;
-	rspamd-6c65dd77f-mhjtr;
-	auth=pass smtp.auth=hostingeremail smtp.mailfrom=linux@smankusors.com
-X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: hostingeremail|x-authuser|linux@smankusors.com
-X-MailChannels-Auth-Id: hostingeremail
-X-Rock-Name: 49e245f656abb596_1776266455365_3373235585
-X-MC-Loop-Signature: 1776266455365:2485615051
-X-MC-Ingress-Time: 1776266455365
-Received: from de-fra-smtpout6.hostinger.io (de-fra-smtpout6.hostinger.io
- [148.222.55.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.101.170.129 (trex/7.1.5);
-	Wed, 15 Apr 2026 15:20:55 +0000
-Received: from [IPV6:2001:448a:c020:f0b:7534:ccf3:5094:fe03] (unknown [IPv6:2001:448a:c020:f0b:7534:ccf3:5094:fe03])
-	(Authenticated sender: linux@smankusors.com)
-	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4fwlG04vQNz40HV;
-	Wed, 15 Apr 2026 15:20:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smankusors.com;
-	s=hostingermail-a; t=1776266450;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=snluGqQP7QMHLqXPP6DrgIlyfEWJ6ROQdbtKBxFTO2Y=;
-	b=lDxBsPIaz3WmKHq3+z0Rw236HOJ3BVNVsgWlzPCIrhLnYS/L5dM3sS1YL+4kdOVN7Vj2qM
-	Ip/D2y7nABaMnQE6oUYh0JLn0rVjACWWyK5040JdMQZVngzFn17YzOERwb82MZ5o+3eft/
-	XaAetJEz/Ao7k1Lx0NT7AOJq62A09KUGoemrWf3kHi/LMzPY3m2HRwqbq0mhc9w7bjZEFB
-	uYDagVVQsLDCuUUyis64eyK+Fh0re7IERbxryHqnSk5p07mQa9k+pGA8SJ/WPuYpeJxP4k
-	JSznJwyTZdqFYTBJuc0otxJwVbd/ovbv0WDtJ33jhQSF5FWWFMjZUV1LB1ksHg==
-Message-ID: <71751331-651d-43aa-b30f-135cc62e8915@smankusors.com>
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=6diQCnV/W5pf79C4Txi27rTrnOikjq784dpHrcyUBzk=;
+	b=dZCOj6SovhM2arSuusTd7K1766Rer3oKL9vk0hKmccs9jCf+sIORAQzqyc0D8q9litchAT
+	71LtmmcbT6XGacYaXSoM+xygG51q6Qu938X6gmEm/G0nUwVrBrF4lpHJizs6OV/MnbCU/h
+	1vINJ9nrH7hfnOXM/3llcULAf2UUKgc=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-681-YfPr-01fN_6T4BIRAVxzOA-1; Wed, 15 Apr 2026 16:32:01 -0400
+X-MC-Unique: YfPr-01fN_6T4BIRAVxzOA-1
+X-Mimecast-MFC-AGG-ID: YfPr-01fN_6T4BIRAVxzOA_1776285120
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-50b4987c698so197204531cf.0
+        for <linux-clk@vger.kernel.org>; Wed, 15 Apr 2026 13:32:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1776285120; x=1776889920; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6diQCnV/W5pf79C4Txi27rTrnOikjq784dpHrcyUBzk=;
+        b=Bsc2hL8zR8MSnsM73pHjNGPrkAMBhVK06GaRZProlRgOkPKuI9s3I0DcLPtgHB/ssJ
+         8OwEnplqOg1vCRbpNg6xc6S533khNfDTr2n8s3gbvytoiutG/67NbhgL4Osdt8bBSyFN
+         Wf2pRq1DDemln+gDa1ioMeuDTBTXgzC0o6MnTBBwNhqwjUO1N1mUplOI9QEJo2mvjkhu
+         BzlvklJmqE+QJLjfwPmuFLSDBUdMul9DsWnmwI27lLtB6R4FjzTY+NQzFMs3cI17Ug8D
+         z3NDGLiqjIRh++8L6x3z+FkMeTtuwPQxSiIQNeUSQf1hIaoGkahCeYlbrESEDtYxyglo
+         wKqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776285120; x=1776889920;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6diQCnV/W5pf79C4Txi27rTrnOikjq784dpHrcyUBzk=;
+        b=KqqDD8tzrqDqxUO2vQgqr0306PkO0FqISb6+PlH5gRIcOFG70CLP1Idfe8YSnkTykP
+         2m1kZ+1fxCjE3fcllTbyohVm3VZXfwoyizNBAwHTmYo2maDj/+Sf8QxK6LKfz8ubcEjI
+         ArGqxJ/ma3GqUy2frxhJHhtDZDt7iD/AVZkSY19iDa9tQqWz4G6xSU0dcwod9Xq0IbEQ
+         qwrUb/nGH3A9H+aR/VyPNTtDEjP7swpJEr1ni49lI2tUCY+nsfcICKGkDO8MTm6MCZlQ
+         7Cqzf2ykOx6nC3/U0xch9S6cuKLVFLlRzR7VqneS23BCeAlyK/k9CEGHWntgJu2NVO8B
+         Kd7w==
+X-Gm-Message-State: AOJu0YxSDGyZKGmRxY1XqnSt643LtRRO7EkJ4AqU2qs/XN9/LqqBVEYX
+	07kJzBpv+bR/EIuARxtK+xsgAsYduPgHcvwnh4Ka2l6lnwOWpaDRQQj+3kRwfuEWuQ6bWfPIAXj
+	RXI6IKZic2LlZX9UZx6WDalfQztv6wU9bhrL5JHfCnLTYToDyDWOUO7hR73tbPA==
+X-Gm-Gg: AeBDiev6HQ8fi2Wy9zoS/RJ59HGJIrlz95FKIcvQd6sE91Ss6wdNA6EGlLfn5czvoUA
+	Q5Z9RGqSsxnwCaadU01mjgZ8GNi3GWsmQt9Fcxp/ZOuZMYMMDMtl3w4nm3tBj6LwQ5GQa9L4jKz
+	VgZXgBwUs45lhMwz+2o0pDoUKlkoNJnUVjxFTIQpX7s/6GwffDNt2CeaO0dLPtljilFBnLHleE9
+	EycxWhcLtz48J83nnTZhASiBj9m+wtMYKpU5yINszvJ3gdO4HQMnzkjiJbWaIl5dbBSxni/GYjN
+	bBTuwdZv9Tt2Vi5uMcKSaU2ufUuFlFUamudvjt53y8VGeGMxWpM1KDytz027rxs1ur+LW7fxGmu
+	xavX2CC3YSeG7t203FleSdVGBXUeBHDqTiikSjKpvCK5FBhsyaRvW4RrmbnsG
+X-Received: by 2002:a05:622a:4603:b0:50e:18f9:b5e2 with SMTP id d75a77b69052e-50e24abd30dmr12845881cf.6.1776285120367;
+        Wed, 15 Apr 2026 13:32:00 -0700 (PDT)
+X-Received: by 2002:a05:622a:4603:b0:50e:18f9:b5e2 with SMTP id d75a77b69052e-50e24abd30dmr12845521cf.6.1776285119954;
+        Wed, 15 Apr 2026 13:31:59 -0700 (PDT)
+Received: from [192.168.1.3] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-50e1ac0ca45sm24372961cf.0.2026.04.15.13.31.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Apr 2026 13:31:59 -0700 (PDT)
+From: Brian Masney <bmasney@redhat.com>
+Date: Wed, 15 Apr 2026 16:30:49 -0400
+Subject: [PATCH] MAINTAINERS: add myself as a reviewer for the clk
+ subsystem
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/10] mfd: qcom_rpm: add msm8960 QDSS clock resource
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
- Rudraksha Gupta <guptarud@gmail.com>
-References: <20260414-msm8960-wifi-v1-0-007fda9d6134@smankusors.com>
- <20260414-msm8960-wifi-v1-3-007fda9d6134@smankusors.com>
- <c63abc0e-e060-4825-b595-a46ddf262673@oss.qualcomm.com>
- <caa589af-f026-4664-8fb9-6b23b0e087f9@oss.qualcomm.com>
-Content-Language: en-US
-From: Antony Kurniawan Soemardi <linux@smankusors.com>
-In-Reply-To: <caa589af-f026-4664-8fb9-6b23b0e087f9@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Date: Wed, 15 Apr 2026 15:20:40 +0000 (UTC)
-X-CM-Analysis: v=2.4 cv=etGNzZpX c=1 sm=1 tr=0 ts=69dfacd2 a=/xj++nRiCg+rJg+YP4cClA==:617 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=wxLWbCv9AAAA:8 a=wsXp2s140FDuPjEIReEA:9 a=QEXdDO2ut3YA:10 a=QJY96suAAestDpCc5Gi9:22
-X-CM-Envelope: MS4xfNIe7XyNq1kUinlkmwTHbt5KeWqtEuq1Q1faRjAiSSBpKIf8XSL2Ucsux3PV3Rya+8jnz333aC8v7iMw8BS8P6lySqoey5AAy2kDxYdA4u8++ZyNUN1a Kw3EIFfDeAw3c5j60LzBjSx5y0xVh+GK5o6qgeNv8AWtRblCx2DBt4PR7Wq/ijWjYbbEsQGfiqwJDpajrPS4+diJ7YCxklm9UYYOUwhWEckPCTSTb5moBmc1 4WigMbyLT2eqH3xTxqbBFk6l2Xid+tOXDF/kn7trUJ8xbNI6ygvB6RuBV9vPcgj1c1iNAnyH2aHN49CaAEWrq+2uuO9Kt5yQdvBtKFidY0dGRwEVTH4q4jsG hhbu4NuemvwjPTtlffADfw/9yLK312u9ZHcTz7zsPqiqlNApg2PRQNDo7E0pqlnxKr9xT/WaiPmGgXvQMMVCb1umvloJD0fPRdPiTd2UVGKF1J/FfSQm6cI+ M69T9LxlDCLHGOnkASkZ/1S21eWaBe5DGgJDuUc8UBzzXv0HWtB55XglWXclpXMH8AMGr2ByyjWhPjSPa25ki0Tj3dOJSuQm3vmNXkXDogkDgl7IE0LWhZnT kGg4jPr3EYOoFgoe06MwyJnFaTxoF18ftlRtevoygIwexuN4ZwtPQRYxHLeLeY49yDXyTYI/QhOkTLmaGjTYOfOXH6nIm8qCaNzbNag9c0xJEslInCOFzyvG bU3JZSCpYjTHAgbbkFl3tl9BjQsqIVGchpM5Zqx/JeAATog9VFTEgJiF/NM+sGoZYK2xo+l1UYX5rUmuc/vaOwBCY+cxfAWm
-X-AuthUser: linux@smankusors.com
+Message-Id: <20260415-bmasney-clk-reviewer-v1-1-49c71082c973@redhat.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x3MTQqAIBBA4avIrBvQqJCuEi00pxoqC4V+iO6et
+ XyL790QKTBFqMUNgXaOvPoUKhPQjcYPhOxSQy7zShaqRLuY6OnCbp7wA3RQQKuktsr11mgJiW6
+ Bej7/bdM+zwtRFy6qZgAAAA==
+X-Change-ID: 20260415-bmasney-clk-reviewer-b108b1dfba80
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Brian Masney <bmasney@redhat.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=938; i=bmasney@redhat.com;
+ s=20250903; h=from:subject:message-id;
+ bh=I6GWle2A9JfWyT414rmmt0LJ6IS5rwyHqfKG/gDyJRM=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDLvf93z9cMsldsWtu9CH3VK+W81O9S9/+Y1YZkAh9cuE
+ y8HJenP6ihlYRDjYpAVU2RZkmtUEJG6yvbeHU0WmDmsTCBDGLg4BWAiJQ4M/0PaW//ZXP445/H5
+ M8tCNvPU99yb1HimUeDNlSUfdolPXLGS4Q/n5NObfrwWMzngf1WjxFfwW7+PotQU8XrGuYtTLbJ
+ 5FzIBAA==
+X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
+ fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-On 4/14/2026 3:07 PM, Konrad Dybcio wrote:
-> On 4/14/26 10:06 AM, Konrad Dybcio wrote:
->> On 4/13/26 8:55 PM, Antony Kurniawan Soemardi via B4 Relay wrote:
->>> From: Antony Kurniawan Soemardi <linux@smankusors.com>
->>>
->>> msm8960 uses the same clock descriptor as apq8064 but lacked the
->>
->> This doesn't quite seem to be the case, some fields differ and
->> apq8064 additionally has:
->>
->> QCOM_RPM_PM8821_SMPS1
->> QCOM_RPM_PM8821_SMPS2
->> QCOM_RPM_PM8821_LDO1
->> QCOM_RPM_VDDMIN_GPIO
-> 
-> Ah hmm, the MFD driver seems to provide *all* RPM resources..
+I've reviewed a lot clk patches for parts of the subsystem that
+typically doesn't get much review. Add myself as a reviewer so that I
+don't miss anything.
 
-What I meant by "clock descriptor" in the commit message was
-specifically the subset corresponding to RPM managed clocks. From what I
-can tell based on downstream code, msm8960 and apq8064 seem to share the
-same set of RPM clocks, even though the overall resource lists differ.
+Link: https://lore.kernel.org/linux-clk/?q=f%3Abmasney%40redhat.com
+Signed-off-by: Brian Masney <bmasney@redhat.com>
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-Is that understanding correct?
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8d3c599dc118..afe72afa7e19 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6379,6 +6379,7 @@ F:	include/uapi/linux/comedi.h
+ COMMON CLK FRAMEWORK
+ M:	Michael Turquette <mturquette@baylibre.com>
+ M:	Stephen Boyd <sboyd@kernel.org>
++R:	Brian Masney <bmasney@redhat.com>
+ L:	linux-clk@vger.kernel.org
+ S:	Maintained
+ Q:	http://patchwork.kernel.org/project/linux-clk/list/
 
+---
+base-commit: 936c21068d7ade00325e40d82bfd2f3f29d9f659
+change-id: 20260415-bmasney-clk-reviewer-b108b1dfba80
+
+Best regards,
 -- 
-Thanks,
-Antony K. S.
+Brian Masney <bmasney@redhat.com>
+
