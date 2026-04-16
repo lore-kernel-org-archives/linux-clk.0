@@ -1,369 +1,125 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80EE81DE894;
-	Thu, 16 Apr 2026 16:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4E51514F8
+	for <linux-clk@vger.kernel.org>; Thu, 16 Apr 2026 16:57:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776357266; cv=none; b=JKZZuRTimSwfzW4YYn1ytns1ZoZlgLt7iSKyfzXsf+B+UIk1JZxu73Qf21h5slc/koxp6/+IDTFijplXuj3gyLemvg6JB6hbt7x7DnsAS7fZpugionwZfODUiBW+TGZ0pU488lYslNVAMaDT8uOrTobJxRehzoZiWFaPJc7QCzs=
+	t=1776358659; cv=none; b=FbQQ64758BsR075u5CZs4R1WLQ9/+U5DLuu8KhiI2WtskPozzlHvkxZ7xhnxXmxzAjdClQT8Y43v/YUVTmlgs6GgsY3A4IDhTX/RmMvV7oJQ3iaUvj/OqIlKvjl+R+yqvImrkyf6UNW0AHJWXf9ZeXEvPT3Cl7lXeSOwxSmER6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776357266; c=relaxed/simple;
-	bh=XdxahCveiLxOke7E96oRAdPQIJZzBzGzrJtXWp06WsM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ADM8nVZb26CKYCvK1tEwdzBI+MyyAYFPg9OQdyYs3yviUMNDu+8k6F971BbRP4jf1Si5vH8wgfH7/KcRfFqNuUjntbMVIqnw4UQj5nSTPO2auh9rT3tqgSrOtmXNSFGl7bgUY1ZGIvZFBF42lQPcfWvuqUvfTnRckiXSKq5oR38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=be3RVlQW; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1776358659; c=relaxed/simple;
+	bh=ZQzEC9KPPF/hi8gDo0hur4Qe56bygpOXxw15KXDnxAw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a3rfAtPpB2jO1GuQz2Vkw+Gjqtw7Tg6iAqO8XkgAafPYvIpDdidmlx4/GmyHJYVvTNyXnCXJvpoF4LJQUuyJCcqJ8QlxIucisIs/ZAtvk5y/U2iIbCxH+GoL41re7T4tqssfdkMIbIhIYrqi/zcYM57SdnBjFUGQyrtieLHVosg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A/MrKT6O; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="be3RVlQW"
-Received: from killaraus.ideasonboard.com (2001-14ba-703d-e500--2a1.rev.dnainternet.fi [IPv6:2001:14ba:703d:e500::2a1])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 2463D132;
-	Thu, 16 Apr 2026 18:32:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1776357168;
-	bh=XdxahCveiLxOke7E96oRAdPQIJZzBzGzrJtXWp06WsM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=be3RVlQWHfyDRozPaEAmAbD8NxU0//YfM+yqXlO7pds2ChlbrP3T/cdRju7FuvRe/
-	 tBS7zKumucfM2UokghPPbdJjK3Q2bvJjZwBju1WgQs50xnE3VbmnaC7WENDAMLwGY5
-	 6dd/aydIoP2UTxX/Cbl39rXSgalQD/4ujG3XvC90=
-Date: Thu, 16 Apr 2026 19:34:20 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: tomm.merciai@gmail.com, geert@linux-m68k.org,
-	linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v6 10/21] dt-bindings: display: renesas,rzg2l-du: Add
- support for RZ/G3E SoC
-Message-ID: <20260416163420.GA1827725@killaraus.ideasonboard.com>
-References: <cover.1775636898.git.tommaso.merciai.xr@bp.renesas.com>
- <8f814f22ff62dcde6153260e2c8c29a5415c9a89.1775636898.git.tommaso.merciai.xr@bp.renesas.com>
- <20260408122436.GH1928916@killaraus.ideasonboard.com>
- <dafdbdcf-98db-473c-8122-296af1922e6c@bp.renesas.com>
- <20260408141638.GA1965119@killaraus.ideasonboard.com>
- <87a18664-d19e-4434-8f92-1c7ce4f3a131@bp.renesas.com>
- <20260408150053.GC1965119@killaraus.ideasonboard.com>
- <61f294e8-f9ae-4868-8dba-60250279ef21@bp.renesas.com>
- <20260409132420.GD2634584@killaraus.ideasonboard.com>
- <191a4bc7-f19e-4771-b70d-e54dd5506799@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A/MrKT6O"
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-38e7c3a2deaso38431421fa.2
+        for <linux-clk@vger.kernel.org>; Thu, 16 Apr 2026 09:57:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1776358655; x=1776963455; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GwdYD3XnjJtBgOU3arfJQiqPM7dBusbX3FMwNNhUQFc=;
+        b=A/MrKT6O9oD6Gfu2xmuZDFlnBZTe9Jk/sv7bT4sc+7K4ZbAgwuGa56iA95WpWk8z/Y
+         E+v2A/H73A1sI0mubI0GSwIcVMuBIZMtaUT/l+FHqTR+g51zKNqsWM4oUriPaUtzNB1a
+         2PCDLQnOpAQbDbBiacp3laaM0SHVGtMUPhPosJWmuN5Z3s6CzLSAM2cQ4t6i9VdWqKoN
+         IikH+pcAqGOKGLZOPVqs7U2kZ6WVzyQb8rVJF4EDMKOAF4j5XOp6zYwQj75u0LZFRwMm
+         PbhdwrTPJZAsuYiq76tTuuj28EInyGiKeNwbr022Kae5Nd+0NIYQBP8gjE6eav+5FgtK
+         ehUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776358655; x=1776963455;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GwdYD3XnjJtBgOU3arfJQiqPM7dBusbX3FMwNNhUQFc=;
+        b=Btp+5cwBF76raR1ajDs44MQhMBuRnuoOIksCC6Z/b2g6Ss6hGyQdpUULxwvyZ+PHjy
+         FyRLvNz4h6wwYQI7AXlGW5OgEGhQBxavD7XqOPB/gx2/0yLWXkRQWEhbs1gsHY9hyBfZ
+         kYwc4OJfWcEHLl1pRC6ZaYREbVCnQZJVeflbSf2K9MVZz389X5pL+lHZWk+EFnB1kDVE
+         1NvViTP+7UPGUjVQJ8IIcu4G/iBNrEzJ19FBZn5BpNHiKpVQOmjcMhvRlhQyFVBBzd9E
+         rXqoKeHFieUUC9mBjN75n1c3hSJL0NLMuPGfgDn9r4eRCwVHRim6eEQBkYtN28QfG6tB
+         +Bqw==
+X-Forwarded-Encrypted: i=1; AFNElJ9ICGaOg+Z1dUsgiOI6nMidaAJe9q7JccfNbTYMs0ZqSPrQB5YFlyirzW/RfmuItZpFeXEuy9r/+T4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxPIkAKC8Oej4uPqFTUKx+B4rcw65YFwwm+SscRJT5rDgp98+a
+	yQbnMAfctkKPWGsHPDdPEu5HvRrP6DiBdL1QBnaA1bKxPmZhbu9nbIu9
+X-Gm-Gg: AeBDietZspFggqdJemkOdaiHXt4dmkEPRaTeBto6oiAnZzq8RcvcN2cAP6YQw+QeH4L
+	a807UwLHyO5a1h7IV3L6SRpiSBzUC9hQ/7xK9XFmnFYA7cJvV4JLQy9xlEDov0d7FRTYuxKfhYG
+	DYIqqTI4L3rMmW6RINXa9Pa1ss+Qa/SKanmq7tLFDaaqY0VZmZkhPCYdHktnVmfxWqLb07zcKB7
+	ARy6mcTykYro0lTFLUfF+ouq/upBJDX0Zy710ycIh2X/dqOkMdQG+S+45pqyFrrlROHsd4qBgmC
+	wBCzz7uyApai4caBcvLewMvv4rYrwgFcrPTXCgHlg0mLD0u004J7kpzyQgVZRVc+FbPssiXhtx9
+	oI6X+oURWXme3hiLWpnrp1oLnL5VP59sql77eu8HDZpTEQcfAZ00UsRGZWZhsR8aqIBleobt+j1
+	2BC8Z0mtIbiUCoiMl2xmLgkJMcPOLQF/z823KySnzPis+HmMpQ0iN0nK0Pe8UJ53k2
+X-Received: by 2002:a05:651c:985:b0:38e:21bb:b2dc with SMTP id 38308e7fff4ca-38e4bf67cd6mr84783971fa.32.1776358654514;
+        Thu, 16 Apr 2026 09:57:34 -0700 (PDT)
+Received: from [10.29.244.82] (m-37-0-167-201.cust.tele2.lt. [37.0.167.201])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-38e9ec6b35dsm12269011fa.37.2026.04.16.09.57.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Apr 2026 09:57:33 -0700 (PDT)
+Message-ID: <ad482bdd-2fb5-432f-be1d-dec25d9cbf5b@gmail.com>
+Date: Thu, 16 Apr 2026 19:57:30 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <191a4bc7-f19e-4771-b70d-e54dd5506799@bp.renesas.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 06/10] arm64: dts: qcom: msm8939-asus-z00t: add Venus
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Bryan O'Donoghue <bod@kernel.org>,
+ Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+ Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+ phone-devel@vger.kernel.org
+References: <20260416-msm8939-venus-rfc-v1-0-a09fcf2c23df@gmail.com>
+ <20260416-msm8939-venus-rfc-v1-6-a09fcf2c23df@gmail.com>
+ <0a5f9bd6-d3ea-4819-8be3-cc5a06ec0339@oss.qualcomm.com>
+Content-Language: en-US
+From: Erikas Bitovtas <xerikasxx@gmail.com>
+In-Reply-To: <0a5f9bd6-d3ea-4819-8be3-cc5a06ec0339@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Apr 10, 2026 at 03:21:44PM +0200, Tommaso Merciai wrote:
-> On 4/9/26 15:24, Laurent Pinchart wrote:
-> > On Thu, Apr 09, 2026 at 01:15:18PM +0200, Tommaso Merciai wrote:
-> >> On 4/8/26 17:00, Laurent Pinchart wrote:
-> >>> On Wed, Apr 08, 2026 at 04:44:48PM +0200, Tommaso Merciai wrote:
-> >>>> On 4/8/26 16:16, Laurent Pinchart wrote:
-> >>>>> On Wed, Apr 08, 2026 at 04:02:14PM +0200, Tommaso Merciai wrote:
-> >>>>>> On 4/8/26 14:24, Laurent Pinchart wrote:
-> >>>>>>> On Wed, Apr 08, 2026 at 12:36:55PM +0200, Tommaso Merciai wrote:
-> >>>>>>>> The RZ/G3E SoC has 2 LCD controllers (LCDC), each containing a Frame
-> >>>>>>>> Compression Processor (FCPVD), a Video Signal Processor (VSPD), and a
-> >>>>>>>> Display Unit (DU).
-> >>>>>>>>
-> >>>>>>>>      - LCDC0 supports DSI and LVDS (single or dual-channel) outputs.
-> >>>>>>>>      - LCDC1 supports DSI, LVDS (single-channel), and RGB outputs.
-> >>>>>>>>
-> >>>>>>>> Add a new SoC-specific compatible string 'renesas,r9a09g047-du'.
-> >>>>>>>>
-> >>>>>>>> Extend patternProperties from "^port@[0-1]$" to "^port@[0-3]$" to
-> >>>>>>>> allow up to four output ports, and explicitly disable port@2 and port@3
-> >>>>>>>> for existing SoCs that do not expose them.
-> >>>>>>>>
-> >>>>>>>> Describe the four output ports of the RZ/G3E DU:
-> >>>>>>>>
-> >>>>>>>>      - port@0: DSI (available on both LCDC instances)
-> >>>>>>>>      - port@1: DPAD / parallel RGB (LCDC1 only)
-> >>>>>>>>      - port@2: LVDS channel 0 (LCDC0 only)
-> >>>>>>>>      - port@3: LVDS channel 1 (available on both LCDC instances)
-> >>>>>>>>
-> >>>>>>>> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> >>>>>>>> ---
-> >>>>>>>> v5->v6:
-> >>>>>>>>      - Extend patternProperties from "^port@[0-1]$" to "^port@[0-3]$" and
-> >>>>>>>>        explicitly disable port@2 and port@3 for existing SoCs that do not expose
-> >>>>>>>>        them.
-> >>>>>>>>      - Reworked ports numbering + improved/fixed ports descriptions in the
-> >>>>>>>>        bindings documentation.
-> >>>>>>>>      - Improved commit body.
-> >>>>>>>>
-> >>>>>>>> v4->v5:
-> >>>>>>>>      - Dropped renesas,id property and updated bindings
-> >>>>>>>>        accordingly.
-> >>>>>>>>
-> >>>>>>>> v2->v3:
-> >>>>>>>>      - No changes.
-> >>>>>>>>
-> >>>>>>>> v2->v3:
-> >>>>>>>>      - No changes.
-> >>>>>>>>
-> >>>>>>>> v1->v2:
-> >>>>>>>>      - Use single compatible string instead of multiple compatible strings
-> >>>>>>>>        for the two DU instances, leveraging a 'renesas,id' property to
-> >>>>>>>>        differentiate between DU0 and DU1.
-> >>>>>>>>      - Updated commit message accordingly.
-> >>>>>>>>
-> >>>>>>>>      .../bindings/display/renesas,rzg2l-du.yaml    | 30 ++++++++++++++++++-
-> >>>>>>>>      1 file changed, 29 insertions(+), 1 deletion(-)
-> >>>>>>>>
-> >>>>>>>> diff --git a/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml b/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
-> >>>>>>>> index 5add3b832eab..32da0b5ec88c 100644
-> >>>>>>>> --- a/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
-> >>>>>>>> +++ b/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
-> >>>>>>>> @@ -20,6 +20,7 @@ properties:
-> >>>>>>>>            - enum:
-> >>>>>>>>                - renesas,r9a07g043u-du # RZ/G2UL
-> >>>>>>>>                - renesas,r9a07g044-du # RZ/G2{L,LC}
-> >>>>>>>> +          - renesas,r9a09g047-du # RZ/G3E
-> >>>>>>>>                - renesas,r9a09g057-du # RZ/V2H(P)
-> >>>>>>>>            - items:
-> >>>>>>>>                - enum:
-> >>>>>>>> @@ -61,7 +62,7 @@ properties:
-> >>>>>>>>            model-dependent. Each port shall have a single endpoint.
-> >>>>>>>>      
-> >>>>>>>>          patternProperties:
-> >>>>>>>> -      "^port@[0-1]$":
-> >>>>>>>> +      "^port@[0-3]$":
-> >>>>>>>>              $ref: /schemas/graph.yaml#/properties/port
-> >>>>>>>>              unevaluatedProperties: false
-> >>>>>>>>      
-> >>>>>>>> @@ -103,6 +104,8 @@ allOf:
-> >>>>>>>>                  port@0:
-> >>>>>>>>                    description: DPI
-> >>>>>>>>                  port@1: false
-> >>>>>>>> +            port@2: false
-> >>>>>>>> +            port@3: false
-> >>>>>>>>      
-> >>>>>>>>                required:
-> >>>>>>>>                  - port@0
-> >>>>>>>> @@ -119,6 +122,8 @@ allOf:
-> >>>>>>>>                    description: DSI
-> >>>>>>>>                  port@1:
-> >>>>>>>>                    description: DPI
-> >>>>>>>> +            port@2: false
-> >>>>>>>> +            port@3: false
-> >>>>>>>>      
-> >>>>>>>>                required:
-> >>>>>>>>                  - port@0
-> >>>>>>>> @@ -135,9 +140,32 @@ allOf:
-> >>>>>>>>                  port@0:
-> >>>>>>>>                    description: DSI
-> >>>>>>>>                  port@1: false
-> >>>>>>>> +            port@2: false
-> >>>>>>>> +            port@3: false
-> >>>>>>>>      
-> >>>>>>>>                required:
-> >>>>>>>>                  - port@0
-> >>>>>>>> +  - if:
-> >>>>>>>> +      properties:
-> >>>>>>>> +        compatible:
-> >>>>>>>> +          contains:
-> >>>>>>>> +            const: renesas,r9a09g047-du
-> >>>>>>>> +    then:
-> >>>>>>>> +      properties:
-> >>>>>>>> +        ports:
-> >>>>>>>> +          properties:
-> >>>>>>>> +            port@0:
-> >>>>>>>> +              description: DSI
-> >>>>>>>> +            port@1:
-> >>>>>>>> +              description: DPAD
-> >>>>>>>> +            port@2:
-> >>>>>>>> +              description: LVDS, Channel 0
-> >>>>>>>> +            port@3:
-> >>>>>>>> +              description: LVDS, Channel 1
-> >>>>>>>> +
-> >>>>>>>> +          required:
-> >>>>>>>> +            - port@0
-> >>>>>>>> +            - port@3
-> >>>>>>>
-> >>>>>>> Why are ports 1 and 2 not required ?
-> >>>>>>
-> >>>>>> About this we had a similar discussion on v5[0]
-> >>>>>> We are using the same compatible and:
-> >>>>>>
-> >>>>>> - LCDC0 supports DSI and LVDS (single or dual-channel) outputs.
-> >>>>>> |
-> >>>>>> --> then has:
-> >>>>>> 	port@0
-> >>>>>> 	port@2
-> >>>>>> 	port@3
-> >>>>>> 	
-> >>>>>>
-> >>>>>>      - LCDC1 supports DSI, LVDS (single-channel), and RGB outputs.
-> >>>>>> |
-> >>>>>> --> then has:
-> >>>>>> 	port@0
-> >>>>>> 	port@1
-> >>>>>> 	port@3
-> >>>>>
-> >>>>> Ah yes, I forget there are two LCDC instances with different output
-> >>>>> configurations.
-> >>>>>
-> >>>>> Something still looks a bit weird to me though. For LCDC1, which
-> >>>>> supports a single LVDS channel, you use the port described as the second
-> >>>>> LVDS channel. Is there a reason not to use port@2 ?
-> >>>>
-> >>>> 9.11 Low Voltage Differential Signaling (LVDS)
-> >>>> 9.11.1.2 Block Diagram
-> >>>> Figure 9.11-1 shows a block diagram of LVDS.
-> >>>>
-> >>>> LCDC1 is connected to LVDS, Channel 1
-> >>>> For this reason I'm using port@3.
-> >>>
-> >>> Re-reading that, I think I've misinterpreted the hardware architecture.
-> >>> Doesn't the DU have a single output, that is connected the multiple
-> >>> encoders (LVDS and DSI for LCDC0 and LVDS, DSI and DPI for LCDC1) ? It
-> >>> seems modelling it with a single port and multiple endpoints would
-> >>> better match the device.
-> >>>
-> >>> For LVDS in particular, I see a single LVDS encoder with two channels,
-> >>> so there should not be two LVDS output ports in the DU. The two ports
-> >>> should be on the output of the LVDS device.
-> >>
-> >> You are suggesting the following dt architecture:
-> >>
-> >> du0: display@16460000 {
-> >> 	compatible = "renesas,r9a09g047-du";
-> >> 	reg = <0 0x16460000 0 0x10000>;
-> >> 	interrupts = <GIC_SPI 882 IRQ_TYPE_LEVEL_HIGH>;
-> >> 	clocks = <&cpg CPG_MOD 0xed>,
-> >> 			<&cpg CPG_MOD 0xee>,
-> >> 			<&cpg CPG_MOD 0xef>;
-> >> 	clock-names = "aclk", "pclk", "vclk";
-> >> 	power-domains = <&cpg>;
-> >> 	resets = <&cpg 0xdc>;
-> >> 	renesas,vsps = <&vspd0 0>;
-> >> 	status = "disabled";
-> >>
-> >> 	port {
-> >> 		du0_out_dsi: endpoint@0 {
-> >> 			reg = <0>;
-> >> 		};
-> >>
-> >> 		du0_out_lvds0: endpoint@2 {
-> >> 			reg = <2>;
-> >> 		};
-> >>
-> >> 		du0_out_lvds1: endpoint@3 {
-> >> 			reg = <3>;
-> >> 		};
-> >> 	}
-> >> };
-> >>
-> >> du1: display@16490000 {
-> >> 	compatible = "renesas,r9a09g047-du";
-> >> 	reg = <0 0x16490000 0 0x10000>;
-> >> 	interrupts = <GIC_SPI 922 IRQ_TYPE_LEVEL_HIGH>;
-> >> 	clocks = <&cpg CPG_MOD 0x1a8>,
-> >> 			<&cpg CPG_MOD 0x1a9>,
-> >> 			<&cpg CPG_MOD 0x1aa>;
-> >> 	clock-names = "aclk", "pclk", "vclk";
-> >> 	power-domains = <&cpg>;
-> >> 	resets = <&cpg 0x11e>;
-> >> 	renesas,vsps = <&vspd1 0>;
-> >> 	status = "disabled";
-> >>
-> >> 	port {
-> >> 		du1_out_dsi: endpoint@0 {
-> >> 			reg = <0>;
-> >> 		};
-> >>
-> >> 		du1_out_rgb: endpoint@1 {
-> >> 			reg = <1>;
-> >> 		};
-> >>
-> >> 		du1_out_lvds1: endpoint@3 {
-> >> 			reg = <3>;
-> >> 		};
-> >> 	}
-> >> };
-> >>
-> >>
-> >> Please correct me if I'm wrong.
-> > 
-> > That's right. It would match the hardware, or at least my understanding
-> > of the hardware based on the documentation. As far as I can tell, each
-> > DU has a single 24-bit output port connected to multiple encoders.
-> 
-> Thanks for the clarification.
-> 
-> I want to make sure I understand the intended architecture correctly,
-> because I see a potential conflict between your feedback on the two patches.
-> 
-> For [1], you confirmed the two separate DU nodes (DU0 and DU1) with the
-> single-port/multi-endpoint model. That maps to two separate platform 
-> devices, which means two separate DRM devices.
 
-Not necessarily, it would be possible to instantiate a single drm_device
-to cover both platform_device instances. It would require a bit of
-manual work in the driver though.
 
-> For [2], you suggested:
+On 4/16/26 6:17 PM, Konrad Dybcio wrote:
+> On 4/16/26 3:43 PM, Erikas Bitovtas wrote:
+>> Enable Venus video encoder/decoder for Asus ZenFone 2 Laser/Selfie.
+>>
+>> Signed-off-by: Erikas Bitovtas <xerikasxx@gmail.com>
+>> ---
+>>  arch/arm64/boot/dts/qcom/msm8939-asus-z00t.dts | 8 ++++++++
+>>  1 file changed, 8 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/msm8939-asus-z00t.dts b/arch/arm64/boot/dts/qcom/msm8939-asus-z00t.dts
+>> index 90e966242720..231a3e9c1929 100644
+>> --- a/arch/arm64/boot/dts/qcom/msm8939-asus-z00t.dts
+>> +++ b/arch/arm64/boot/dts/qcom/msm8939-asus-z00t.dts
+>> @@ -267,6 +267,14 @@ &usb_hs_phy {
+>>  	extcon = <&usb_id>;
+>>  };
+>>  
+>> +&venus {
+>> +	status = "okay";
 > 
-> "you can have one DRM device that covers two LCDCs, with one CRTC each,
-> both connected to the same DSI encoder. Userspace then selects which
-> CRTC drives which connector."
-> 
-> Please correct me if I'm wrong but to me these two appear to be 
-> incompatible. With two separate DRM devices,the DSI encoder and its 
-> connector can only belong to one of them. Userspace cannot select 
-> between CRTCs across two DRM devices.
-> 
-> To support the single-DRM-device model you describe, both DU0 and DU1 
-> would need to be managed by a single driver instance, similar to R-Car 
-> DU which aggregate multiple LCDC channels into one DRM device.
-> 
-> Using a single DRM device that spawn 2 crtc (1 du dt node ) this use 
-> case can be tested with the following cmds:
-> 
-> 	modetest -M rzg2l-du -s 58@55:800x600-56.25@XR24
-> 	modetest -M rzg2l-du -s 58@56:800x600-56.25@XR24
-> 
-> Could you clarify which architecture is the intended direction?
-> 
-> Option A: Two separate DRM devices (2 DU dt nodes, current approach),
->            with the DSI input selected via DT configuration.
->            The dynamic vclk selection I implemented still applies,
->            but runtime CRTC switching from userspace is not possible.
-> 
-> Option B: A single DRM device aggregating both DU instances (1 DU dt node),
->            with two CRTCs both connected to the DSI encoder.
+> You need a firmware path here
 
-I meant option B.
+When I tested Venus on my device, it loaded without one specified -
+msm-firmware-loader creates a symbolic link from modem partition for
+firmware. Additionally, none of the MSM8916 devices seem to include a
+firmware name. Has something changed since then?
 
-> [1] https://patchwork.kernel.org/project/linux-renesas-soc/patch/8f814f22ff62dcde6153260e2c8c29a5415c9a89.1775636898.git.tommaso.merciai.xr@bp.renesas.com/
-> [2] https://patchwork.kernel.org/project/linux-renesas-soc/patch/9e0f64dd5e1efb0d27219416121c91a19da96ebd.1775636898.git.tommaso.merciai.xr@bp.renesas.com/
-> 
-> >>>>>> Then port@1 is required for DU1 but not for DU0.
-> >>>>>> Same port@2 is required for DU0 but not for DU1.
-> >>>>>>
-> >>>>>> [0] https://patchwork.kernel.org/project/linux-renesas-soc/patch/ca022fdbba5236c36e0cb3095db4c31e8e0cb1b8.1770996493.git.tommaso.merciai.xr@bp.renesas.com/
-> >>>>>>
-> >>>>>>>>
-> >>>>>>>>      examples:
-> >>>>>>>>        # RZ/G2L DU
+> Konrad
 
--- 
-Regards,
-
-Laurent Pinchart
