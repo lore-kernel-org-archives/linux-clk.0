@@ -1,134 +1,134 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C42735DA79
-	for <linux-clk@vger.kernel.org>; Thu, 16 Apr 2026 19:15:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2CE38E5E1
+	for <linux-clk@vger.kernel.org>; Thu, 16 Apr 2026 20:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776366948; cv=none; b=FU54P1xzVZI2epnfU0h4/YoMlgVonRUaa3kKz17anNb7r2xBgc8owXvZpYU4m5++LrYmBODf399UcSg1apvOp9TwOPMUip9UVHk9IwHIa9tce8++cMLRL02WWZROPtw65HWESQwlJIccw+8brdqqpfTqeXuiIKqp56J5OeGlk00=
+	t=1776370876; cv=none; b=gEW6oYN0WAzteYGCmZwx+vjDgh+u0ZJs2FHkJNhhILSDOMkSi+5lSNVcdirjDXpOVSgUZQ7xvGrZ8dRk83gICFXfVmN/iYAhZfovn7+Z2RuygYct/ZIiko/7i8LYC3SJHCURSUa6/hQgrly1gUM9IA8Ka0ImkWp77bljFIaQ25A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776366948; c=relaxed/simple;
-	bh=OJeI+3mV9W6ncnLD1OqQ+pA6ULnbFdUSlKq0JT7njbc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hnizFMH3ge9vhFDgW4VuyuFBfDIOnUlxBbXFPcOHdTzY/cokbpAN5XYDrWhIVUAe/49BA1FOZuBJ5l3yL7DGaPqX3P5oeSUXySFNZUJkOQtsFg5EpRREnKKEm5LV/Vcw4R9RSMjA04uHtgvNs1IrslsQv6XPXIGBB+rSQ/DJXr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QY8Id/xC; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1776370876; c=relaxed/simple;
+	bh=ZfvcK1WQYSQJxYFWmliN2X/yjZzr6jKD2FEgu0OfU5I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TkTRY8Npvy/fXarIpu2IdglBLsZm1KopvNk+VftJ6thGhJOoMEdVuDS4dUrn5LgEBMVO0mWAcBIfKr2MBz4j7NRUV2MvV+SbHnFCuyKkUrhZg9JKqPZHnh3xNM8F4w/GOQwuniHAdaXoiXXj+BrHNr69DW3VIUvvQhbCFQihoms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AZ9acQeY; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=r/dEdhyx; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QY8Id/xC"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-488a4bc360bso46846795e9.0
-        for <linux-clk@vger.kernel.org>; Thu, 16 Apr 2026 12:15:43 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AZ9acQeY";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="r/dEdhyx"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1776370871;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QRF8BvcogoOppv5L+uU5WDgQWw4rh47WltzIyMUbMng=;
+	b=AZ9acQeYvqGLi61+EP66nEj1P8vCcUo3eAUjyGsx4qZ/H54+2YNkLXBxrSiSJkJ2GFYuQn
+	joC3shlIt52QxBdyRm9KDHw06yJ4j1dHifIIEw9UXHLY8f2NLOxEoci8iLGIqEQx2Bh/zz
+	/RkgDx9Di3I44vNuWFqiVxgYDe+O5NE=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-284-6Us5fq-2Ny2EU8Akx98eew-1; Thu, 16 Apr 2026 16:21:10 -0400
+X-MC-Unique: 6Us5fq-2Ny2EU8Akx98eew-1
+X-Mimecast-MFC-AGG-ID: 6Us5fq-2Ny2EU8Akx98eew_1776370868
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-50d9a6a853bso205796131cf.0
+        for <linux-clk@vger.kernel.org>; Thu, 16 Apr 2026 13:21:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1776366942; x=1776971742; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
+        d=redhat.com; s=google; t=1776370868; x=1776975668; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GI2dSkxrwqhQpR5uFXP6GxtJ/asEeAYI1RS8A1ZzV9c=;
-        b=QY8Id/xCkNSDyRp/6Ia+IhGODB81KC4sCUqlBNfTsAhr60CKClN3QAh6bbWUbx9w0F
-         bowURat77zHN+ZHlfvOuP63DWSZJLS9CB67JIgVAKCi6+vwdDnB0WCbS+mhqXyCZvNgH
-         3LgovKTZOOZSrowianOqjoxUQU00rBtvbO969KTtzDkyjg4GJlw/bqQS1tjsfKG/nQPm
-         ogEfTFcSlOlyCQukZYVXoZ8VBq3hePPIvwrDjEotzfkKEEGQrm4PF/3sJRfFVVsqc4hv
-         U3krfzau87CZFEd4MdPgtiuytDHml1jLJtOQsqDYRuR1b6pukPY/ROgrGM7JVAH/3WFp
-         ckmQ==
+        bh=QRF8BvcogoOppv5L+uU5WDgQWw4rh47WltzIyMUbMng=;
+        b=r/dEdhyx/ltF06DChrUth1eiX15hXppPstSUN8EUgTx1xMWBsqfmBwWhqVqnCH5rfE
+         x1fNYyavvNWk0bPCoDsHsuTn9OFBFROZtS9BDEhzLEbC28caEzwVSvhEjswaJ8wpWQ7q
+         V5yAW6q2H4nQqETkU9R66SqRW+iARtpWcRk4vv1IenPUnL3TVllUqxPZTUBRy8h7ZVy8
+         PTf2rf/0GN0Puoss6XnbwF20ZJvNQDP18pEsWrHKFmPQfJq7+IQUxAWpLkhj1aBBOH2E
+         YDVlOg6g1c0NBYdJXS2Ebo0E7hHJ+WIFuZBvoP1gD0AOLd1yIjwU6irvhiYOny49dcJT
+         7iTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776366942; x=1776971742;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
+        d=1e100.net; s=20251104; t=1776370868; x=1776975668;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=GI2dSkxrwqhQpR5uFXP6GxtJ/asEeAYI1RS8A1ZzV9c=;
-        b=E6I76Sc5Zwokind57IHnTb1aiJpeRi0Q0hUxFZyPJ6w6OaYvuXuTOD0AG+SStWLh7y
-         ggNHkSQou79Dk2WmweEt+6XrKyF0Ezy6VSjvcvYAqMR2GC6v7rMxREdtMCu6DRj4WY1m
-         ij64YrwrsuBRbRJVENg/m8gLM2Me1DIB5rwLijOgbaOZQjyLIbYQ9H6Yl4Rp+k25N99B
-         68Iiu8Llk6zGAsbV/Qy/CWOVvRA3xTPzywdRERPizwB5RkcQspYRyDruhhhGtbm2nHoj
-         KGMldp9TXjxEJshdSmJXp1DCkI6qoi4HZMWrIYYKekcprtMcPorfp1BZ44jT1sxkk1TN
-         J37Q==
-X-Forwarded-Encrypted: i=1; AFNElJ98k7BTeHu5SKfE7GJhk0ovl82l/+Ixx31gbVviDyL54IkRUuPhwoy9nFQq/wL5OhsXhQ3NFSOMlaw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzzjIBUAxdXhJHlXyT8N5dwRzhjFyXwAE81XjvQOJQYCNApHyI
-	52R903kI00/MwqlFd6w0472N3YJ+0CgCXVRYlpHPd7BUFGjKYJsOPiRY
-X-Gm-Gg: AeBDieu8GMmFW8J9iS+AoQIufa4fzJA2ciJWOhBeaGPGAC7iMnv3zlAMVjRlp+3ji3w
-	oQ930r63KEeN+WifAohPGuZ26CGVnU+F80jPXwJgKS8wcm/+M4oouYjEe6UMua27JtISoluEXaL
-	xQuQe6X5j1RV0pDz1yCaypy3cR9QwT/HEFsuD61mgMv5614HepaR/fFxvm/RW8QsMW5NYvlAQE4
-	/ACek6uBOaESPP4YSS513zvw4a/nBD5aqD0KjA2z8qeqDL6QBHDg4lk3quiQJZtPaOx3GO2NPoa
-	6IM4Zu734VIhL+glZOLNRy/wtSYwcXuX6W8Xh/W+OeS8xUSEtITOH4D/k5PQ4KWGtWd3V4/bAiI
-	YOSgmkWW1cmxY+LC6/UOuPXFPsY9vdo7oXOF5pe/jJc8KNWZxiK8U7hA2hjD7oOyPgnG5JXmNih
-	+nz3Ia3rCXKRHWdfqBKkd5WPKgCuC4F9A0JvV+ZU02EJDLccvBtXrm+aXHIdJkbtC8+GpJPdKNZ
-	Lw=
-X-Received: by 2002:a05:600c:a415:b0:485:419c:4eba with SMTP id 5b1f17b1804b1-488fb26d43fmr1783635e9.1.1776366941546;
-        Thu, 16 Apr 2026 12:15:41 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43ead3d5f06sm16561608f8f.17.2026.04.16.12.15.40
+        bh=QRF8BvcogoOppv5L+uU5WDgQWw4rh47WltzIyMUbMng=;
+        b=TAaFzSYnOir4QtudlGBF2l57f7PRwMfDZboE6X9QhvlnLAa+E7t4Pgm5uzdYkt0zjD
+         r0usve9q/0tq1eTotFQMjPruzOCn0kOOaPLrLdsgce7oScb9q/1awd4vrnOXUNTLqVZc
+         gtkHu1ZgC6DczStqVBgbrN1SSxcuAY3Bc3BjaYPWbm5L3TqucTfiNktun35Z5bX/1K1E
+         2DTUjcIkw3zmGM6D8QdseSket6lY0SGj9z5uHTc88jMXZ3OvsuJ7PCWVB0J6oyhzVBpP
+         zbvnENf4ydDGdwyIMPyzRRJj1D015FH/e8DGyiEzX8jgMhrGkTBO8AzzRvWDopJQf81Z
+         ABBw==
+X-Forwarded-Encrypted: i=1; AFNElJ/MvjutNtKEQOgxtRUyuxd2hAAh4ystd8eeMdBy1DgUD/0rWB2OFEw6VNYrImp31Jf/oEDRB3Gpvgs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1SzYV7q/PqMwZSxQmgluOLFkmH0r6o3tqvl2zSdCEye/hXnG7
+	YNQ+1BZw2JZJBDempr7Wv9/AQMKuTTERiJ0anvr41ywqAdOYAOcwSRS3XrdZpOPPFmN5rwmsH03
+	PvQ540fLG4DTckDdCZjRk+g1rXVcV8KxCuA1m8+r5l+mnQXYtrU2ZnRlxjdg8tw==
+X-Gm-Gg: AeBDiet6kltQZ/aaXrsNByCbCyhbqkSyluwMGOse8UkS68wpGksl4j251XqHDZa8dcK
+	10STHf0myKsORuM3X+l5fPeOueT+ZV8sYrtR3AlAAMaVptOIfqK0YWtoxx6sW4tQpU5EYoLQ6NC
+	0IbiVNg9IVuL2s+I1ifKnXXxLkCeBGREnbwZJYtee4YwnskKY1VMrA+u3Jilw74inK/r9uR4HvF
+	C8MK2LBoteVY4ro+xWed+ktFT6CuiUmKiRxS/qsCcKELeKE4mgbsLzFDbHF3AoVA67rLvdvRY3o
+	ijIj/+cnLO3z4bO3M0CUTiPgi2NsGo4/Gdb8V8qKxhx4zdCXIZ03u37K/VrY62OuWzlzFEnYhVZ
+	Hdrrro7CZRv8XzY5kS+zN8j8WBncZJrs=
+X-Received: by 2002:a05:622a:aa43:20b0:50d:ce35:6e67 with SMTP id d75a77b69052e-50e34a012ebmr7853101cf.42.1776370868325;
+        Thu, 16 Apr 2026 13:21:08 -0700 (PDT)
+X-Received: by 2002:a05:622a:aa43:20b0:50d:ce35:6e67 with SMTP id d75a77b69052e-50e34a012ebmr7852751cf.42.1776370867876;
+        Thu, 16 Apr 2026 13:21:07 -0700 (PDT)
+Received: from redhat.com ([2600:382:8128:ce33:b0f6:e3dc:ef2e:339b])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-50e1ad963ccsm55132891cf.2.2026.04.16.13.21.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Apr 2026 12:15:41 -0700 (PDT)
-Date: Thu, 16 Apr 2026 20:15:39 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: chensong_2000@189.cn, rafael@kernel.org, lenb@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, viresh.kumar@linaro.org,
- agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com,
- bmarzins@redhat.com, song@kernel.org, yukuai@fnnas.com,
- linan122@huawei.com, jason.wessel@windriver.com, danielt@kernel.org,
- dianders@chromium.org, horms@kernel.org, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- paulmck@kernel.org, frederic@kernel.org, mcgrof@kernel.org,
- petr.pavlu@suse.com, da.gomez@kernel.org, samitolvanen@google.com,
- atomlin@atomlin.com, jpoimboe@kernel.org, jikos@kernel.org, mbenes@suse.cz,
- joe.lawrence@redhat.com, rostedt@goodmis.org, mhiramat@kernel.org,
- mark.rutland@arm.com, mathieu.desnoyers@efficios.com,
- linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- live-patching@vger.kernel.org, dm-devel@lists.linux.dev,
- linux-raid@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net,
- netdev@vger.kernel.org
-Subject: Re: [RFC PATCH 1/2] kernel/notifier: replace single-linked list
- with double-linked list for reverse traversal
-Message-ID: <20260416201539.2cee3b99@pumpkin>
-In-Reply-To: <aeD4H8P1DiPQoM8V@pathway.suse.cz>
-References: <20260415070137.17860-1-chensong_2000@189.cn>
-	<20260416133004.07bd2886@pumpkin>
-	<aeD4H8P1DiPQoM8V@pathway.suse.cz>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        Thu, 16 Apr 2026 13:21:07 -0700 (PDT)
+Date: Thu, 16 Apr 2026 16:21:04 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v2 1/2] clk: divider: Fix clk_divider_bestdiv() returning
+ min rate for large rate requests
+Message-ID: <aeFEsKQ3sfGLM6jl@redhat.com>
+References: <20260413124912.3260571-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260413124912.3260571-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260413124912.3260571-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+User-Agent: Mutt/2.3.1 (2026-03-20)
 
-On Thu, 16 Apr 2026 16:54:23 +0200
-Petr Mladek <pmladek@suse.com> wrote:
-
-> On Thu 2026-04-16 13:30:04, David Laight wrote:
-> > On Wed, 15 Apr 2026 15:01:37 +0800
-> > chensong_2000@189.cn wrote:
-> >   
-> > > From: Song Chen <chensong_2000@189.cn>
-> > > 
-> > > The current notifier chain implementation uses a single-linked list
-> > > (struct notifier_block *next), which only supports forward traversal
-> > > in priority order. This makes it difficult to handle cleanup/teardown
-> > > scenarios that require notifiers to be called in reverse priority order.  
-> > 
-> > If it is only cleanup/teardown then the list can be order-reversed
-> > as part of that process at the same time as the list is deleted.  
+On Mon, Apr 13, 2026 at 01:49:11PM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > 
-> Interesting idea. But it won't work in all situations.
-
-It is useful for things like locklessy queuing a request to be processed later.
-Items can be added with a cmpxchg and the list grabbed by xchg of NULL.
-The only downside is that reversing a list isn't cache friendly.
-Thinks... although that may not be any worse than accessing the current 'tail'
-to add to the end of a doubly linked (or singly linked with a tail ptr) list.
-
-	David
-
+> clk_divider_bestdiv() clamps maxdiv using:
 > 
-> Note that the motivation for this update are the module loader
-> notifiers which are called several times for each loaded/removed module.
+>     maxdiv = min(ULONG_MAX / rate, maxdiv);
 > 
-> Best Regards,
-> Petr
+> to avoid overflow in rate * i. However, requests like
+> clk_round_rate(clk, ULONG_MAX), which are used to determine the maximum
+> supported rate of a clock, result in maxdiv being clamped to 1. If no
+> valid divider of 1 exists in the table the loop is never entered and
+> bestdiv falls back to the maximum divider with the minimum parent rate,
+> causing clk_round_rate(clk, ULONG_MAX) to incorrectly return the minimum
+> supported rate instead of the maximum.
 > 
+> Fix this by removing the pre-loop maxdiv clamping and replacing the
+> unprotected rate * i multiplication with check_mul_overflow(). Guard
+> the exact-match short-circuit with !overflow to prevent a clamped
+> target_parent_rate of ULONG_MAX from falsely matching parent_rate_saved
+> and causing premature loop exit. Break out of the loop after evaluating
+> the first overflowing divider since clk_hw_round_rate(parent, ULONG_MAX)
+> returns a constant for all subsequent iterations, meaning no better
+> candidate can be found, and continuing would cause exponential recursive
+> calls in chained divider clocks.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
