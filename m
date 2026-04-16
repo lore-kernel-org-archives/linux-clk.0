@@ -1,81 +1,87 @@
-Received: from toucan.tulip.relay.mailchannels.net (toucan.tulip.relay.mailchannels.net [23.83.218.254])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979393A0B2B;
-	Thu, 16 Apr 2026 15:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.218.254
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776352634; cv=pass; b=g149Jd5yMRgvihS/vSHGF3lx9CHzRZmVzZSTPEncw3kUGEmdKf6Qi/yxOFxgSewrXj+1NULqyZF1XTIxU5ZyLIGS+O3YX3ihlvEnbRKgdqreAmyTGsllJKaclkoQYKLpf7/ZWZnLGF41AdfytFl5SObEuhwopRDNak2m/SKgRs4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776352634; c=relaxed/simple;
-	bh=k5MUKGOVrCVrBWwmnXvVxw9XxdH4Lvc7kPSIVFfh5KY=;
-	h=Message-ID:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:Date; b=gJ/7PUphhflRlDS3VvXWolNrZTZLyz1Hxnb/KlM69tFZmLcofNxLki/c74wwqsoJV0WR5q8Tg9HG0oWSdRoXw4PgqVSPfboangTC+QOnx4tuaGxqiWKoiFwH02DDV8aSlqqSxEJr5Er3OcARlgg2zv1mNQBr9NraYu5NGljfmlc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com; spf=pass smtp.mailfrom=smankusors.com; dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b=lEv7agIW; arc=pass smtp.client-ip=23.83.218.254
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smankusors.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA8F3DEFE6
+	for <linux-clk@vger.kernel.org>; Thu, 16 Apr 2026 15:17:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1776352653; cv=none; b=Qf/vUk5ID3RxLhjnKxmYUlDICXhmhPZG8fXMEiZOHZrIpsryNMDNL6vuxKW/sNpznW2mVBN7CI3PVznWdpiyCTdnN0Q95qU18a2+GRA87KEVf6Ucu1k3vtGpO5xOzML5JwPNrJp/bQbhJsbRGwP/Pe/vrARIM2FejR+BTyX/MP8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1776352653; c=relaxed/simple;
+	bh=OoDxQ6JnCdkvOIF3hQyinUzkThw8zBb3mtjvgZ2UdeQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ImNZt+gOoIUi755Pc+rY7hzX7CtqvEjV3LwhLFaxpeS+NYcU9SwaGZtSlKCOFtGRft2XaSD3egi3kY2EzZvujTLe2CgOnrUfO4fXsZnIifkom8JCSmTtdvzY1pzpVSa+HP65+xQTHP238tuE+3pPD9fvacu5G3LJT+vLzLD9oIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Cyiw650j; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=MFa7woHw; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b="lEv7agIW"
-X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 11E3B62972;
-	Thu, 16 Apr 2026 14:18:18 +0000 (UTC)
-Received: from fr-int-smtpout11.hostinger.io (100-104-232-135.trex-nlb.outbound.svc.cluster.local [100.104.232.135])
-	(Authenticated sender: hostingeremail)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 65E1562156;
-	Thu, 16 Apr 2026 14:18:14 +0000 (UTC)
-ARC-Seal: i=1; a=rsa-sha256; d=mailchannels.net; s=arc-2022; cv=none;
-	t=1776349097;
-	b=KkrIPuYuIa1s626KFZrMp4kd+TG40trShL9RHkBCAyCCFCvSCyvDSddm0yyP+xylp1YkCT
-	vJVp0bde4utCUhFfLbzB9c5kPoFNfIWPcooGb7RCbURlujStBoeSv8o5wbg96FzfoDHHxj
-	wfEjJr02KIOdWcBPJN1Pn/Xc3bFGN01ZMfillqrhxFNotezXeKm63AiukhqIVKo7AabdpS
-	Mdd/NgO1poTRBYZ1lAv/06ryg+q9t3aZ7KfIox+ECjtK66H1iGJ3u9rwm1ulDgmR4HcZVx
-	QueAX5e5iDqoFyNEP3/Uh37fqw3qau09JLMVQSXoOdogaiCyjU+ajqmb2G0BXA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1776349097;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=Hn6SBBKIBqaGEQumTEmlP67MmqncRnqILDOCk7wtFDs=;
-	b=3FD/HUIHpOhQpipCg/YCIwraGX409AcFy0DQMsPNpRo5Jui8Os9LwEMliX6maPCJksspRV
-	wuecWR2CHA+WUYQuDaPcQySHiVmLXcnlWg16bnGNDzSF1EZCBt2bD7FnnaISdIksZJ3bzf
-	yLkHX24Ik4Dg9aoCQxzQ1KxB75j5TK17wfg01W25BluPlPcPEVkBhzCt458iLkrMY+Ru7i
-	j32hdqXyg6uD4/xLSgm6yPKaliesHsgMGSKe+bQ4RJEu7efvj2WVRZvgPMPEpJDxSPLnk7
-	NDDePxyNGtDkL8rH/EWEpZ1n68wiYf1Z4GomVAIs8SeiVVwLuUp/+ivWDG13jg==
-ARC-Authentication-Results: i=1;
-	rspamd-6c65dd77f-lfrr8;
-	auth=pass smtp.auth=hostingeremail smtp.mailfrom=linux@smankusors.com
-X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: hostingeremail|x-authuser|linux@smankusors.com
-X-MailChannels-Auth-Id: hostingeremail
-X-Soft-Squirrel: 4a053fd44af3bbf4_1776349097333_988753514
-X-MC-Loop-Signature: 1776349097333:2263129882
-X-MC-Ingress-Time: 1776349097333
-Received: from fr-int-smtpout11.hostinger.io (fr-int-smtpout11.hostinger.io
- [148.222.54.47])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.104.232.135 (trex/7.1.5);
-	Thu, 16 Apr 2026 14:18:17 +0000
-Received: from [IPV6:2001:448a:c020:bc7:ac88:b14e:d67a:9dbd] (unknown [IPv6:2001:448a:c020:bc7:ac88:b14e:d67a:9dbd])
-	(Authenticated sender: linux@smankusors.com)
-	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4fxKqP3jdgzyZq;
-	Thu, 16 Apr 2026 14:18:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smankusors.com;
-	s=hostingermail-a; t=1776349092;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Hn6SBBKIBqaGEQumTEmlP67MmqncRnqILDOCk7wtFDs=;
-	b=lEv7agIWouzZiTX/q3GviFd5zRkt3hLZEedCn9EgArxYRRzbOmMcCEMvJw0xVP1fn2lrh+
-	32TwqbsRJ1q5p1r0gwucg57ZHqd3nRhawTxd8H6c+BYdBg2lvlKf9s62Zq2GJQ6QA2HL48
-	tkRIh+qVzRpvnHZaJHH6Hj1ELtF/JMReu90N1lp7tCL6Ck/DcWs3Afeqa0jpXlYeKh6eOR
-	ir8hm6HQzjOMDPDI497y1HFwdIhnBE/uGbG+HGaAZzGYRf7u4MyjpD72Zk3I3wbjgwFSOs
-	El4s9gliFLNOqaGHADFF7n96uLNrcG4txqfvbnSVTih1h1GCVmtNXsqhlLWVrg==
-Message-ID: <92c8ad93-8e7f-4714-91ea-ebdfa31a4ac0@smankusors.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Cyiw650j";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="MFa7woHw"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63GEBIOx2576005
+	for <linux-clk@vger.kernel.org>; Thu, 16 Apr 2026 15:17:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	alGNKkLw21+BrqlqmkPplSlaervhuZpi/jOw7KRz/LE=; b=Cyiw650jP1GvuZns
+	XT2bm1qDSlwzCTgSyeUxpj0iSWM+xmATXjOEN2tq5YX6sDQvk3ccCsjWRhy7Jkxl
+	dPo1WhG9TnHjt0o8vvLE42SY5m7WkyTaOnckdFWmfZLlYj24x4VJOuoWgi5UHWly
+	NkXJactehdyih9M4G7hZOH0RImh4lJo5XvGSyEtkzShm6y5wX5Qq33Y/wmeKoHo3
+	mEc96UxRtKC86B7yd8M9XLRwTpDCKbglUKXctifyp4/jj579uauva1oyzrtPrUbi
+	EbSVnJLCkK8kSstuTyY8YTRbG/Y+aR6JsSyJoTKICn2cqkK3xNWTxtN/XmOJnjDg
+	HrEuDQ==
+Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com [209.85.167.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4djv27hhr7-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Thu, 16 Apr 2026 15:17:25 +0000 (GMT)
+Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-472c7f16ac7so1402420b6e.1
+        for <linux-clk@vger.kernel.org>; Thu, 16 Apr 2026 08:17:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1776352644; x=1776957444; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=alGNKkLw21+BrqlqmkPplSlaervhuZpi/jOw7KRz/LE=;
+        b=MFa7woHwYGxeFHnhCebOngApdmzxgicc4v3jXPQyhwoKayqhWL9ON7I09tiIukrjF1
+         JlVC3rkno9sQFab03s4AlgpkCYlgifmTimdK6aemjSzk6XM3tTKPkBEv12eReJX7YzR/
+         wRBP5tTxLVjxfZlde9M0d2VmWD2PNnWYfZI7kRtXOa2KanupoC+SZw1y7lKDtbqOvj6g
+         ESZzI8hem6CBjRKdblXO/Hnw+syec1p3dvga4MVcFEfkqc2VvpFbuYtcgTH3YdmXOKnO
+         beM1Qq3/toeTseRA17IY5M7Vcr33DJddBs09SV1ndI4zcnRsBAC0j8moexzM4yNw+sX9
+         mbkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776352644; x=1776957444;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=alGNKkLw21+BrqlqmkPplSlaervhuZpi/jOw7KRz/LE=;
+        b=YlUk82W+2tecW1w9gWdaZL8xNvfsBoBxle4TdyFJ8yjNctPXNXdA+xQRx6XGSLoN7i
+         yoxGDWpXc5peNR0k8mPxczaFGmrfyGH3Ti6YgVsad3HVCjwVKy5GFB7nycmmJqASRV9T
+         0uewbrdRMqJEugEvfE7r86I7a6knzmxWhS3YMIlNiMHRB3J3DbOX36iLD9UMQTgEcehL
+         CwixW3/TPd1T/Pip5i28ukm+iNP3NgmP8fjtU98AOOh7/9vG+ztEHwPOSCjGPR35Wpr9
+         IDuAsI3gPgz+ShmHgKJtZNSfKLY69QR7Nl9cT7pnV40i7aFUNq+lKe+HALxMY/zq/tlx
+         3tQg==
+X-Forwarded-Encrypted: i=1; AFNElJ/04s4DiW/jW7+qzkrO7GxL845FbZdANrhxVRtT+bKq7zbFnMliF3JtBInZONqcOh2mUnvM3VAlm0g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzlt72YicX4GFSMz32mEUX5sj9X9YyfKp9FIh6K6s4hRdsJ8OHH
+	i1feYK6a8C2pGvjiwsYIuam4vE+0F60hl3vyH/GYdDzNX5vL8K60em4RPOTE6yP9AWgRnV5qXIi
+	HmBelsXrNIeJxBeHr9xeIslzpUsUnm++Tb/dYr1kn5OQ4gNhn87lIeMHSwQxYOSw=
+X-Gm-Gg: AeBDietFGNxoAoDHXkB7srp8k6wca7DYGH9yY1XY8sdg6gZil3cBkeVdVVZJg1nl9/Q
+	tiygC2Yj6RE3xdcyzmK0tJdCE4/TqNR7Lc3cP9EQQKNZch+fFtPJ3yZUKiGkiVgPG/H8uLehha+
+	A4AiP2OlcFyU89YqvAn7OzxBFnxs42hk+8oXLEldzg1ZtrO7tMVmg/4hTZ7zjxiqRSXHJdiYvXE
+	zRzdeYwrRptjn/VSkwiOUdDbhAkibWgOgyoDiMK5tuv96ld0Q1lJvHsGF/gXUpeI2sk3eqqKibX
+	MxPjqQYJPJAEoqM7c79Y7kn3fGyK550Xw4srLNwUs34F1h4QunMg9vETq64cn1ZVTtgn6qgZgGJ
+	U4uc4kDsXb3JsxxFezzbNBYexN+beIxxHL4yZgkV7GgN7MQjjL+KEjFLFwJydT9gNVID7lqhDIj
+	/S5JBmBGddUjowUw==
+X-Received: by 2002:a05:6808:2225:b0:459:f0c5:781d with SMTP id 5614622812f47-4798903ba3dmr901505b6e.5.1776352644383;
+        Thu, 16 Apr 2026 08:17:24 -0700 (PDT)
+X-Received: by 2002:a05:6808:2225:b0:459:f0c5:781d with SMTP id 5614622812f47-4798903ba3dmr901486b6e.5.1776352643869;
+        Thu, 16 Apr 2026 08:17:23 -0700 (PDT)
+Received: from [192.168.119.254] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ba299f51c01sm93170766b.4.2026.04.16.08.17.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Apr 2026 08:17:22 -0700 (PDT)
+Message-ID: <0a5f9bd6-d3ea-4819-8be3-cc5a06ec0339@oss.qualcomm.com>
+Date: Thu, 16 Apr 2026 17:17:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -83,61 +89,76 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/10] dt-bindings: mfd: syscon: add qcom,msm8960-sps-sic
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
- Rudraksha Gupta <guptarud@gmail.com>
-References: <20260414-msm8960-wifi-v1-0-007fda9d6134@smankusors.com>
- <20260414-msm8960-wifi-v1-2-007fda9d6134@smankusors.com>
- <20260414-frisky-aloof-koala-4cbfdb@quoll>
- <b80727eb-6a7a-44fc-b6a2-56c4ee199b57@smankusors.com>
- <bac33524-1caa-4bff-be36-df909917cf3b@kernel.org>
+Subject: Re: [PATCH RFC 06/10] arm64: dts: qcom: msm8939-asus-z00t: add Venus
+To: Erikas Bitovtas <xerikasxx@gmail.com>, Bryan O'Donoghue <bod@kernel.org>,
+        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+        Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        =?UTF-8?Q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+        phone-devel@vger.kernel.org
+References: <20260416-msm8939-venus-rfc-v1-0-a09fcf2c23df@gmail.com>
+ <20260416-msm8939-venus-rfc-v1-6-a09fcf2c23df@gmail.com>
 Content-Language: en-US
-From: Antony Kurniawan Soemardi <linux@smankusors.com>
-In-Reply-To: <bac33524-1caa-4bff-be36-df909917cf3b@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20260416-msm8939-venus-rfc-v1-6-a09fcf2c23df@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Date: Thu, 16 Apr 2026 14:18:09 +0000 (UTC)
-X-CM-Analysis: v=2.4 cv=Gq4Q+V1C c=1 sm=1 tr=0 ts=69e0efa4 a=qlZgJvs7r4/QxD5CpBykdQ==:617 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=nC9N5ERdtgYCITw5gnEA:9 a=QEXdDO2ut3YA:10
-X-CM-Envelope: MS4xfIJNXRkwk6UfT2R1d4BLhZd8iSaOBTVF8KQ1LY2UKWlxoF4S1yfNAIk0bCspaFT+wBZCapQ9ThGLYZgIg6WrmM0e0VdU2JG4LL4Lg8n7ghFuNdXqsabh lTBBeIl8Kf23ush2n294cAyp3dkDsKx/NjVjWL03b/paRb/REC1DubGf65J7UdRxw1F+9yMuQmEfn7WaskcUBQpy7GatV1w+4Vvq+rJC/aPF+ZCCc/ylkjgJ ykHjFCTpZOMoVKrR6KDILzLMfEJfSVWtjQpXhGxBlfqi88MqyeO8hsR0G3B9jlDZb+g2TdE7HEuDThahTrGKqJG7m7GGAKy5IgKI/NpnFvtL2PVRUjcwYEH2 aSCMo7cK14lVXCoDDkEszO2eUISDf0h4RlJt2SP55dFzve8AzpDF5n31Uz08qICfzSonG0vGFFA+A+6wL2k7aWgFMJd1j/WhH1qLaLiqYQn1HJmSfX3A3Til 04zcUAGg5I0JGNsb9iq++dcYBvq7fb/M8aOkswTPs5eMmgBQcgUgk2UJ20hwE6hEUgdSAfpCIzCO8s2xb2Q+54bGksxMvF8VjXalPkhiAO8PJumsBreLZ/5c IUbpOuEPj/vj5Iv44u7k5GdQe5BZDXfOkC+3Z7CZB1Zz8H9lcXITkVU9S6jh1d0nUYrYMdWGrfZogYPp+C+YRUt7t8VPhbzyL8Y38l6B8JRjKgH2t+e1gnrw UI+5UXfhCgOP/UfTNgqfyO9r7gMS7lVm5CUISqaBjhEVoHtSfWGrOw==
-X-AuthUser: linux@smankusors.com
+X-Authority-Analysis: v=2.4 cv=PJQ/P/qC c=1 sm=1 tr=0 ts=69e0fd85 cx=c_pps
+ a=AKZTfHrQPB8q3CcvmcIuDA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=A5OVakUREuEA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22
+ a=pGLkceISAAAA:8 a=sGea1UAM9DjOSmaL17QA:9 a=QEXdDO2ut3YA:10
+ a=pF_qn-MSjDawc0seGVz6:22
+X-Proofpoint-GUID: sbXzZGBNQiM-ewsEULbdIjkEvSSRI8c5
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDE2MDE0NCBTYWx0ZWRfX522WATeNqiPN
+ +4hxo9pPMYxN3V92IIhKQMOabxHpX6UAC2bPqbEgLAXryt3pr3Je8It0XgFYAOEzQKHz7vYf87d
+ ZNjn2QkPLmfUgYGN0dJfhUtHQDMUgm3gwdj71oUVB92M8MfvEt5GPodW4hyZvSdnaktx0ouOOyv
+ IlOuXgE31OWjgPZcYZdb60ySyrRDecFoEbX2e1NsYTNQHWGsVoS2/jp9Tken/iqzDx0xr8p8n9b
+ um81UTY16adgMahpYner91gHWaR1JSpVfIjZWV7oT439FmsRFxaAjlEdB52TCzFtGNJOUQWw4Jf
+ kUR7z9JQbs1pGt/AN6cPxviEACNDLgBVrfbJcpfzy56Mc5VBCb0Np9tblpay+PrbTCHKDyMgM7h
+ OaRKRn+taFliFyKFg2Rbrd/gQ8Nw60Oz7VEWemolN0ganq1EQyiIR+9kzdnatmVrJwaVxcMFlxZ
+ fHn607qVAE5SUTnpB6Q==
+X-Proofpoint-ORIG-GUID: sbXzZGBNQiM-ewsEULbdIjkEvSSRI8c5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-04-16_03,2026-04-16_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 suspectscore=0 spamscore=0 adultscore=0 phishscore=0
+ impostorscore=0 bulkscore=0 priorityscore=1501 clxscore=1015
+ lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2604070000
+ definitions=main-2604160144
 
-On 4/15/2026 1:51 PM, Krzysztof Kozlowski wrote:
-> On 14/04/2026 20:34, Antony Kurniawan Soemardi wrote:
->> On 4/14/2026 2:19 PM, Krzysztof Kozlowski wrote:
->>> This was also sent. Where is the changelog and versioning? What changed
->>> here?
->> Sorry, the cover letter should have referenced the earlier dt-bindings
->> series [1] and explained about it.
->>
->> In this patch series, I combined the original 2 patches into a larger 10
->> patch series to make it more complete. Especially since earlier feedback
->> noted that the bindings were not used by any in-tree consumers. Since
->> the scope changed significantly from the original, I resent it as a new
->> series rather than a v2.
->>
->> Would you prefer splitting this series into separate series like before,
->> for example:
+On 4/16/26 3:43 PM, Erikas Bitovtas wrote:
+> Enable Venus video encoder/decoder for Asus ZenFone 2 Laser/Selfie.
 > 
-> No, you need to keep versioning, changelogs and make clear how previous
-> comments got resolved.
+> Signed-off-by: Erikas Bitovtas <xerikasxx@gmail.com>
+> ---
+>  arch/arm64/boot/dts/qcom/msm8939-asus-z00t.dts | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/msm8939-asus-z00t.dts b/arch/arm64/boot/dts/qcom/msm8939-asus-z00t.dts
+> index 90e966242720..231a3e9c1929 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8939-asus-z00t.dts
+> +++ b/arch/arm64/boot/dts/qcom/msm8939-asus-z00t.dts
+> @@ -267,6 +267,14 @@ &usb_hs_phy {
+>  	extcon = <&usb_id>;
+>  };
+>  
+> +&venus {
+> +	status = "okay";
 
-I see, thanks for the clarification.
+You need a firmware path here
 
-To confirm my understanding, since this series already went out without
-proper versioning, the next resend should be labeled v3, with a
-changelog covering both what changed from the original dt-bindings
-series (v1) and from this series (v2).
-
-Is that correct?
-
--- 
-Thanks,
-Antony K. S.
+Konrad
