@@ -1,154 +1,277 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A253B27D8
-	for <linux-clk@vger.kernel.org>; Thu, 16 Apr 2026 15:21:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D46C257423;
+	Thu, 16 Apr 2026 15:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776352896; cv=none; b=HHKfO32kNmyHJ6C139kw3LFxIvnXRmgdaBoZVRr+Tpng/FZY/7Ki1pGdF2nBeWjavhzO+nE3IzrD3kk0lytsaCVv3xOZEqFL29Cn5sclHSOq/yPQ4C/VYUFVZTVsRTakw+5uJ4cq5vg44RDOOa/6gYBHzg4onUGi8FTr6xUjlIs=
+	t=1776354851; cv=none; b=kwiw4l0inw/HN+YUs0SyKHHZAMKA5Kh3KRagjGDkS+EsWAdDSRroLqaH7CD6uUbDI2/Ic5JT6v9niL6Au0p65hLqpRfMT/Vvyx9WbAM99oSWEkBsG5QR4FG2XpoPRoPgE//Q3WxN6iMzWy96VEWi1ZOPgQ+iolueTQxNORG+tl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776352896; c=relaxed/simple;
-	bh=YICVe7onyRZm1cIU0ABm6cP0eaJuEsK/X3wiAhTzNoo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rtrW4jcklj7M+AAn2/DYHdg5ovt1ysoqfg9aEanTXcXaMbQ7iJ0qKXN8b11+wcgCJ88zttcO0t0uJ3yKia8ptC7iy3Xc2IVdRacjrdDjenpW9PdC9W2lnhd06ScNBNgmYllEf4/CafCy+UK7zB+34wcsR1BBjN9r/8ypXe4DAMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AYCbXC2m; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=fgshXezz; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1776354851; c=relaxed/simple;
+	bh=A6PmtdwoxMFwfTIxnTYwHoYQS2S6o0smJnblGS/cOiY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AYO/dVfzEVSos3q6EDIVQll94Omjv0EgaPjjJ0dPN26h6pA3DqaMzqGjXPNY9DJCA7NuaruED1EOkpTGUd/pJ6eOGxkrH8EqEY22+40k7+Jvu5Q3nA3fnMkCtXPVdgDJlstoz+55CDdCsEpVFkFE54C49SnJBPhUJYrf4KdwXWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oj41PPQr; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AYCbXC2m";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="fgshXezz"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63GD7Sr8218928
-	for <linux-clk@vger.kernel.org>; Thu, 16 Apr 2026 15:21:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	FyovkIqLQf554SqJTIyBdWxmLdxJG0+TibFnTWEbPws=; b=AYCbXC2mXQiuahsX
-	Q7/stFtLHZjHs59or3bQVxEohitjkd6L1fjnTGb7RM4NLrTLiJzk3kW7TwUtP05h
-	spk3InPE9WM/BqSV4IptViyyykNpVrdHrQHU0v5epM52rwMfPZjQZkBUF/k5hS7W
-	/EyCEW12JRckofJtjT7W5uUSoAAU7jGlrKx/HO3qmmPjBm5PXatz/kvdBG0d0pYH
-	6iPEDDghVrb7A5Pp46Ftrhk0Bn7PSYXRg1vhEi5rCRHLd7BWPYqcQkyrtFmUhLRl
-	QlrZPOpbLiFe20gR52gaGbF8HXniSJSsEJU4YeQl1ohoJITdwUNVWGFRJJHvjBcJ
-	V79Ziw==
-Received: from mail-vk1-f198.google.com (mail-vk1-f198.google.com [209.85.221.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4djtuyhsjc-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Thu, 16 Apr 2026 15:21:34 +0000 (GMT)
-Received: by mail-vk1-f198.google.com with SMTP id 71dfb90a1353d-56f8a5c02b4so178544e0c.2
-        for <linux-clk@vger.kernel.org>; Thu, 16 Apr 2026 08:21:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1776352893; x=1776957693; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FyovkIqLQf554SqJTIyBdWxmLdxJG0+TibFnTWEbPws=;
-        b=fgshXezzmGPVyTyW4PE2kfYFg7Ua/iXV/1Ux8sN9tH+2eqlXzSoUV4SRhSMk5UPpIP
-         XEccPHWftZYLoRitqYDlsELFo38f1cAJ8K5iqxMn/7V2fp0ov7RswinJ061+Q6xWuYyP
-         zn8ndcio/AgUovF5COuymu0T5K+fNt0nckDTOTlbVTnwp7lizTRUjmsdnwKTkNiyTQ18
-         R1C+5KrQbgdgeAIW9iRD3KqdfGWHkQS5U074G/5t+XjvQ+iaPC5lQVAwyVkn8xg8mqkW
-         bxZ8C+siF7wLhToSuLyr/MZHNSYcXrQJ72Pv+sR5vPobUdF4qj6uExCxt4jdlulHkTX1
-         5Z9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776352893; x=1776957693;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FyovkIqLQf554SqJTIyBdWxmLdxJG0+TibFnTWEbPws=;
-        b=dCDS+w19Yp+n7MuG55J5JmC9O1p4FcneG8BbEWX1thdmqxZ9iT5pRVFju/Rt1lJEXk
-         n2gQMwwYWVyFlUr+7f9q+1QF0NAp3D990cdWrKf+IhtCn+qWcImJa253g3vcWrOgYBlR
-         HcXT9H8vGA79AjAnG3RWQ+GJ4wdXbsycgMJDqP9T7k1PWWhGPmVURrbWH9cQT7/cqpAX
-         n702Bh6q95dv0wb7HAx6KPfIH6fblkRwRkwe57WgC3RKO16ajCmmzDHUb3aRs+htvXZr
-         5evyQtseuObyJQ+JO4QHxCwE93cVzSObFIOsnZFhD9H+0TB7pmzxPvBakxbH1QPwM2HX
-         E5fA==
-X-Forwarded-Encrypted: i=1; AFNElJ8zwPv2hDi6nUiOjvgtP0Ts3NgwHU3y50ZxY8dp79LbyJhBA+YzyqOghShLAmpd7fBm5adVOOP5LFU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmwG9oTIw9XNpjtEevFU8+K/0pxj6oR8HXIwmVnLlW9PpYqi59
-	bsnJU48sZ7zx5UKMHCVrRNFQmN+23ogcMWDZGA6bue2hIvQ1kwi8eSGfVS/inb6iGdHGd0SpQXA
-	HKkXsoyfXwkWpQCAjlvjmi+cdPgt2qS/wsDxG0HkZVvJRkcoKNQI0xeB9vMHHca4=
-X-Gm-Gg: AeBDievFNP1OMsPa+MYFr9a61lY1D4+M5n1YiDHSGmRDQ3PwHB4b4exz8nXFErhg/UI
-	9B95ouO6ufBBh8m22RGfy9JamkmUx0fVEKmEuai9Th8jSuMRZ0bREOUnoNpU5JjcThEx7TNyBPk
-	BpOC2Iuz5UhpbGE/qFGKmFZ1PzkP9vCsEvH1CyRSSiK55h7bG5nM2nQjmcrojpjgqkapffWJX3J
-	HaDHgNLs/Yg99qtiRpNpQk9+i0YWywxQ2L4wkL0kQ52F3eMKNcV/c1M67MftH0VNsO46g/SqHdh
-	yjRzG/JMt7VuhKORQApQxskgXDxsOWOYydKUKDp0sBHcPWS4B9qwYfi4K6Mfk1M48ajw2zSrMKo
-	2YdqG8gnzytJg36zzfTn6qBLwISjcC3UfW9xqYRPK/neBZuptsgBQDCcRSyHrmxQ5W1Xtv+3B/a
-	FWg2UOPZYcK7ggXg==
-X-Received: by 2002:a05:6102:116a:b0:602:b87a:3524 with SMTP id ada2fe7eead31-6141e262470mr490395137.8.1776352893450;
-        Thu, 16 Apr 2026 08:21:33 -0700 (PDT)
-X-Received: by 2002:a05:6102:116a:b0:602:b87a:3524 with SMTP id ada2fe7eead31-6141e262470mr490377137.8.1776352893012;
-        Thu, 16 Apr 2026 08:21:33 -0700 (PDT)
-Received: from [192.168.119.254] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ba173d57fecsm181221066b.22.2026.04.16.08.21.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Apr 2026 08:21:31 -0700 (PDT)
-Message-ID: <23574203-187e-4fd4-b143-e53ae17a7a00@oss.qualcomm.com>
-Date: Thu, 16 Apr 2026 17:21:28 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oj41PPQr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54DF5C2BCAF;
+	Thu, 16 Apr 2026 15:54:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1776354850;
+	bh=A6PmtdwoxMFwfTIxnTYwHoYQS2S6o0smJnblGS/cOiY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oj41PPQr4urm3jmdEHQld+x/hq5vcKf+0oRYTBilCdX6ioul/2rHuuqOaI588SFkM
+	 j63PF99F+bmFIw8RsSLouiYzz4N25hKzx+inOkOCc0GrTulum2nJXqU8JbIGg/4Oqj
+	 sG6MuwQq3eidTpb+kJQvX+jjv00YMyDSdDBab1cD5wYIxYs2B1e/0Nl9tbxVAwTsgs
+	 FQfV7cq0V2yJEUjRvwY0IcIbsrLwAyDTSYNvJfUkt+/dNzy4AK5nUt0OcfIEwE3tqE
+	 8imsmrb5NLeLor0VoNqTTmgBTjB8oYu+SCl25g4HiLjkUFe8xvXSKS9LLNUp4gylcE
+	 VndHwdRKDCdlA==
+Date: Thu, 16 Apr 2026 16:54:05 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Billy Tsai <billy_tsai@aspeedtech.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Ryan Chen <ryan_chen@aspeedtech.com>,
+	Andrew Jeffery <andrew@aj.id.au>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
+	linux-gpio@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v7 1/3] dt-bindings: pinctrl: Add
+ aspeed,ast2700-soc0-pinctrl
+Message-ID: <20260416-brutishly-saga-ba7168a4cd14@spud>
+References: <20260416-upstream_pinctrl-v7-0-d72762253163@aspeedtech.com>
+ <20260416-upstream_pinctrl-v7-1-d72762253163@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 07/10] clk: qcom: gcc-msm8939: mark Venus core GDSCs
- as hardware controlled
-To: Erikas Bitovtas <xerikasxx@gmail.com>, Bryan O'Donoghue <bod@kernel.org>,
-        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-        Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        =?UTF-8?Q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
-        phone-devel@vger.kernel.org
-References: <20260416-msm8939-venus-rfc-v1-0-a09fcf2c23df@gmail.com>
- <20260416-msm8939-venus-rfc-v1-7-a09fcf2c23df@gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20260416-msm8939-venus-rfc-v1-7-a09fcf2c23df@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDE2MDE0NCBTYWx0ZWRfXwlKhe/bXMZhU
- dTglGOgUpavPb5g+Vg+5+rhpLMLGgSD4qnsorv20v4IeLuHIFDE+4iY5GOaWrCDT0s3zUaGVGN9
- EU5ZszNRFzE+2QG9cZZEvDAFjIdRaLv0JvZ+zMkUUGzzLWgkIeUjuAgJgMClXygE0U0EeV68X1j
- gvnWrFMGD5P07u9CJtbMDbwtKXSUzMbF3PfADd1zICXTLEquVM8lRk3f15jMMRA2wnO87495REm
- 8nTOD0778m07/0ihC4eT4xFjrid7R5QGXiSfpXxN/VyfPhzckk6YP/S+38d+WjKmsPFKkegaPcJ
- DQMvbdIY9yLeFAPOFlpJtqVyYodcvHpEAqBE5OhsFkEvgoumaqXPRUvX5qfTMjq1085WV4lo3Hc
- lkyJFME/5RIGaj82sSFm7HPwC7Khh06pXCfjULaVcjUBvgxQfm9ZXg3+axtSjle6kRFiQpWFN1R
- XxyJyn3zcV5wVomywOw==
-X-Proofpoint-ORIG-GUID: Kd2bH87MFPuy1OvB5fNMekk9I-BmUeY9
-X-Authority-Analysis: v=2.4 cv=Ipgutr/g c=1 sm=1 tr=0 ts=69e0fe7e cx=c_pps
- a=1Os3MKEOqt8YzSjcPV0cFA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=A5OVakUREuEA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22
- a=d5ByKtP1W7CnrCxYHJUA:9 a=QEXdDO2ut3YA:10 a=hhpmQAJR8DioWGSBphRh:22
-X-Proofpoint-GUID: Kd2bH87MFPuy1OvB5fNMekk9I-BmUeY9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-04-16_03,2026-04-16_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 bulkscore=0 clxscore=1015 impostorscore=0
- lowpriorityscore=0 adultscore=0 malwarescore=0 phishscore=0 spamscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2604070000
- definitions=main-2604160144
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="F+crD9IVk8CdCT4u"
+Content-Disposition: inline
+In-Reply-To: <20260416-upstream_pinctrl-v7-1-d72762253163@aspeedtech.com>
 
-On 4/16/26 3:43 PM, Erikas Bitovtas wrote:
-> Since in downstream kernel VENUS_CORE0_GDSC and VENUS_CORE1_GDSC have a
-> device tree property "qcom,supports-hw-trigger", add a HW_CTRL flag
-> to these GDSCs to indicate that they are hardware controlled.
-> 
-> Because they can be switched off at any moment, also skip voting for
-> it so it can be enabled later.
 
-The second paragraph bears no connection with what the effect of
-the changes you made is, whatsoever
+--F+crD9IVk8CdCT4u
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Konrad
+On Thu, Apr 16, 2026 at 03:29:43PM +0800, Billy Tsai wrote:
+> Add a device tree binding for the pin controller found in the
+> ASPEED AST2700 SoC0.
+>=20
+> The controller manages various peripheral functions such as eMMC, USB,
+> VGA DDC, JTAG, and PCIe root complex signals.
+>=20
+> Describe the AST2700 SoC0 pin controller using standard pin multiplexing
+> and configuration properties.
+>=20
+> Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
+> ---
+>  .../pinctrl/aspeed,ast2700-soc0-pinctrl.yaml       | 162 +++++++++++++++=
+++++++
+>  1 file changed, 162 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/pinctrl/aspeed,ast2700-soc=
+0-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2700-s=
+oc0-pinctrl.yaml
+> new file mode 100644
+> index 000000000000..947f3cd09fcc
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2700-soc0-pinct=
+rl.yaml
+> @@ -0,0 +1,162 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/aspeed,ast2700-soc0-pinctrl.y=
+aml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: ASPEED AST2700 SoC0 Pin Controller
+> +
+> +maintainers:
+> +  - Billy Tsai <billy_tsai@aspeedtech.com>
+> +
+> +description:
+> +  The AST2700 features a dual-SoC architecture with two interconnected S=
+oCs,
+> +  each having its own System Control Unit (SCU) for independent pin cont=
+rol.
+> +  This pin controller manages the pin multiplexing for SoC0.
+> +
+> +  The SoC0 pin controller manages pin functions including eMMC, VGA DDC,
+> +  dual USB3/USB2 ports (A and B), JTAG, and PCIe root complex interfaces.
+> +
+> +properties:
+> +  compatible:
+> +    const: aspeed,ast2700-soc0-pinctrl
+> +  reg:
+> +    maxItems: 1
+> +
+> +patternProperties:
+> +  '-state$':
+> +    type: object
+> +    allOf:
+> +      - $ref: pinmux-node.yaml#
+> +      - $ref: pincfg-node.yaml#
+> +
+> +    additionalProperties: false
+> +
+> +    properties:
+> +      function:
+> +        enum:
+> +          - EMMC
+> +          - JTAGDDR
+> +          - JTAGM0
+> +          - JTAGPCIEA
+> +          - JTAGPCIEB
+> +          - JTAGPSP
+> +          - JTAGSSP
+> +          - JTAGTSP
+> +          - JTAGUSB3A
+> +          - JTAGUSB3B
+> +          - PCIERC0PERST
+> +          - PCIERC1PERST
+> +          - TSPRSTN
+> +          - UFSCLKI
+> +          - USB2AD0
+> +          - USB2AD1
+> +          - USB2AH
+> +          - USB2AHP
+> +          - USB2AHPD0
+> +          - USB2AXH
+> +          - USB2AXH2B
+> +          - USB2AXHD1
+> +          - USB2AXHP
+> +          - USB2AXHP2B
+> +          - USB2AXHPD1
+> +          - USB2BD0
+> +          - USB2BD1
+> +          - USB2BH
+> +          - USB2BHP
+> +          - USB2BHPD0
+> +          - USB2BXH
+> +          - USB2BXH2A
+> +          - USB2BXHD1
+> +          - USB2BXHP
+> +          - USB2BXHP2A
+> +          - USB2BXHPD1
+> +          - USB3AXH
+> +          - USB3AXH2B
+> +          - USB3AXHD
+> +          - USB3AXHP
+> +          - USB3AXHP2B
+> +          - USB3AXHPD
+> +          - USB3BXH
+> +          - USB3BXH2A
+> +          - USB3BXHD
+> +          - USB3BXHP
+> +          - USB3BXHP2A
+> +          - USB3BXHPD
+> +          - VB
+> +          - VGADDC
+> +
+> +      groups:
+> +        enum:
+> +          - EMMCCDN
+> +          - EMMCG1
+> +          - EMMCG4
+> +          - EMMCG8
+> +          - EMMCWPN
+> +          - JTAG0
+> +          - PCIERC0PERST
+> +          - PCIERC1PERST
+> +          - TSPRSTN
+> +          - UFSCLKI
+> +          - USB2A
+> +          - USB2AAP
+> +          - USB2ABP
+> +          - USB2ADAP
+> +          - USB2AH
+> +          - USB2AHAP
+> +          - USB2B
+> +          - USB2BAP
+> +          - USB2BBP
+> +          - USB2BDBP
+> +          - USB2BH
+> +          - USB2BHBP
+> +          - USB3A
+> +          - USB3AAP
+> +          - USB3ABP
+> +          - USB3B
+> +          - USB3BAP
+> +          - USB3BBP
+> +          - VB0
+> +          - VB1
+> +          - VGADDC
+> +      pins:
+> +        enum:
+> +          - AB13
+> +          - AB14
+> +          - AC13
+> +          - AC14
+> +          - AD13
+> +          - AD14
+> +          - AE13
+> +          - AE14
+> +          - AE15
+> +          - AF13
+> +          - AF14
+> +          - AF15
+
+Why do you have groups and pins?
+
+Is it valid in your device to have groups and pins in the same node?
+
+> +
+> +      drive-strength:
+> +        enum: [3, 6, 8, 11, 16, 18, 20, 23, 30, 32, 33, 35, 37, 38, 39, =
+41]
+> +
+> +      bias-disable: true
+> +      bias-pull-up: true
+> +      bias-pull-down: true
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +allOf:
+> +  - $ref: pinctrl.yaml#
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    pinctrl@400 {
+> +        compatible =3D "aspeed,ast2700-soc0-pinctrl";
+> +        reg =3D <0x400 0x318>;
+> +        emmc-state {
+> +            function =3D "EMMC";
+> +            groups =3D "EMMCG1";
+> +        };
+> +    };
+>=20
+> --=20
+> 2.34.1
+>=20
+
+--F+crD9IVk8CdCT4u
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaeEGHQAKCRB4tDGHoIJi
+0hrJAQCL/qPAeh9PhP0f+9cy9zlA9Di9yMRwuiovxWHDxpgp2QEAzMKci8tRvglD
+bIbgOLVyP2ugZhGFkQQHHd7o6vRTLQg=
+=QgdD
+-----END PGP SIGNATURE-----
+
+--F+crD9IVk8CdCT4u--
