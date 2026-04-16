@@ -1,113 +1,134 @@
-Received: from mx3.wp.pl (mx3.wp.pl [212.77.101.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65DCD29A9E9
-	for <linux-clk@vger.kernel.org>; Thu, 16 Apr 2026 18:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C42735DA79
+	for <linux-clk@vger.kernel.org>; Thu, 16 Apr 2026 19:15:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776362653; cv=none; b=tD2q/vcjOOBGB+bYp3xRrmG7jkim7u/WKqa/CVssF0EuyIw+FChsYKnXshgnXeI+jNYd5nTKWz/0d/S3VPkh7aSBM3qsmGw5gZtoArVXhinB4HS/8JEBLx/y/aNddvwCv9ltW0NhVhC9fWsYPGGYMFOlh7z6nCyvfW/XzEYf/pc=
+	t=1776366948; cv=none; b=FU54P1xzVZI2epnfU0h4/YoMlgVonRUaa3kKz17anNb7r2xBgc8owXvZpYU4m5++LrYmBODf399UcSg1apvOp9TwOPMUip9UVHk9IwHIa9tce8++cMLRL02WWZROPtw65HWESQwlJIccw+8brdqqpfTqeXuiIKqp56J5OeGlk00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776362653; c=relaxed/simple;
-	bh=1aJB64SpCLSB+TqXKVC4Eo6mW4snqfD2tZf6JN6ekUk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FtJ2aUPV3oMW9jA8zHOZvCGYANQT5LGWZso9/k89/sPOGeEzSHkGbq5gH6nVSJB4sncBJUhFI5ANq9Rau3yqZURDro5+dq3oKkO8Mg6MdasjoUDgBSa6YkMpsGlhzxJFRVU5L5hL/w8c91JyjWmMvixj2lgWhEICxnO/5TOmzpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=bNZv8G4S; arc=none smtp.client-ip=212.77.101.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
+	s=arc-20240116; t=1776366948; c=relaxed/simple;
+	bh=OJeI+3mV9W6ncnLD1OqQ+pA6ULnbFdUSlKq0JT7njbc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hnizFMH3ge9vhFDgW4VuyuFBfDIOnUlxBbXFPcOHdTzY/cokbpAN5XYDrWhIVUAe/49BA1FOZuBJ5l3yL7DGaPqX3P5oeSUXySFNZUJkOQtsFg5EpRREnKKEm5LV/Vcw4R9RSMjA04uHtgvNs1IrslsQv6XPXIGBB+rSQ/DJXr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QY8Id/xC; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="bNZv8G4S"
-Received: (wp-smtpd smtp.wp.pl 28894 invoked from network); 16 Apr 2026 20:04:04 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
-          t=1776362644; bh=q2TLkBLJgx5iZgaI4yK1wJo0nl+wnUsigpfkHfj26wo=;
-          h=Subject:To:Cc:From;
-          b=bNZv8G4S4o5+V5wPHaAst1IsRHZxM/suNW+W7V59KiBJ9WHPirx0Yr8wrBYaPYGp/
-           8stCJm7EhJ3ZlkqWGi0rPsPtqnK0ZtAj+9ORqhkOqcTJ5InqYz8NwbtNaaR2URznLp
-           jQ0HvbCKrAfhOC04zh3Q9vroty62tI0HHpAtZeoqXs92rcrhFwcEJvGAQ86550uXFt
-           Dh99zMUvZqyGkr+i1uzI9yPkm46P1x/2xtArvO6eqT5Pprt1ehleLq60/UwtPa3SoV
-           VIndGzx4fdoul/pqZcglagPy6a/Jf9G61N3HKbt7U40y1F5J4TmJbX/T2RmqSvwxad
-           z4KsgncRhu2+A==
-Received: from 83.24.120.84.ipv4.supernova.orange.pl (HELO [192.168.3.203]) (olek2@wp.pl@[83.24.120.84])
-          (envelope-sender <olek2@wp.pl>)
-          by smtp.wp.pl (WP-SMTPD) with TLS_AES_256_GCM_SHA384 encrypted SMTP
-          for <miquel.raynal@bootlin.com>; 16 Apr 2026 20:04:04 +0200
-Message-ID: <444b4349-3873-4da6-aadd-3605e738ad0d@wp.pl>
-Date: Thu, 16 Apr 2026 20:04:03 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QY8Id/xC"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-488a4bc360bso46846795e9.0
+        for <linux-clk@vger.kernel.org>; Thu, 16 Apr 2026 12:15:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1776366942; x=1776971742; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GI2dSkxrwqhQpR5uFXP6GxtJ/asEeAYI1RS8A1ZzV9c=;
+        b=QY8Id/xCkNSDyRp/6Ia+IhGODB81KC4sCUqlBNfTsAhr60CKClN3QAh6bbWUbx9w0F
+         bowURat77zHN+ZHlfvOuP63DWSZJLS9CB67JIgVAKCi6+vwdDnB0WCbS+mhqXyCZvNgH
+         3LgovKTZOOZSrowianOqjoxUQU00rBtvbO969KTtzDkyjg4GJlw/bqQS1tjsfKG/nQPm
+         ogEfTFcSlOlyCQukZYVXoZ8VBq3hePPIvwrDjEotzfkKEEGQrm4PF/3sJRfFVVsqc4hv
+         U3krfzau87CZFEd4MdPgtiuytDHml1jLJtOQsqDYRuR1b6pukPY/ROgrGM7JVAH/3WFp
+         ckmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776366942; x=1776971742;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=GI2dSkxrwqhQpR5uFXP6GxtJ/asEeAYI1RS8A1ZzV9c=;
+        b=E6I76Sc5Zwokind57IHnTb1aiJpeRi0Q0hUxFZyPJ6w6OaYvuXuTOD0AG+SStWLh7y
+         ggNHkSQou79Dk2WmweEt+6XrKyF0Ezy6VSjvcvYAqMR2GC6v7rMxREdtMCu6DRj4WY1m
+         ij64YrwrsuBRbRJVENg/m8gLM2Me1DIB5rwLijOgbaOZQjyLIbYQ9H6Yl4Rp+k25N99B
+         68Iiu8Llk6zGAsbV/Qy/CWOVvRA3xTPzywdRERPizwB5RkcQspYRyDruhhhGtbm2nHoj
+         KGMldp9TXjxEJshdSmJXp1DCkI6qoi4HZMWrIYYKekcprtMcPorfp1BZ44jT1sxkk1TN
+         J37Q==
+X-Forwarded-Encrypted: i=1; AFNElJ98k7BTeHu5SKfE7GJhk0ovl82l/+Ixx31gbVviDyL54IkRUuPhwoy9nFQq/wL5OhsXhQ3NFSOMlaw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzzjIBUAxdXhJHlXyT8N5dwRzhjFyXwAE81XjvQOJQYCNApHyI
+	52R903kI00/MwqlFd6w0472N3YJ+0CgCXVRYlpHPd7BUFGjKYJsOPiRY
+X-Gm-Gg: AeBDieu8GMmFW8J9iS+AoQIufa4fzJA2ciJWOhBeaGPGAC7iMnv3zlAMVjRlp+3ji3w
+	oQ930r63KEeN+WifAohPGuZ26CGVnU+F80jPXwJgKS8wcm/+M4oouYjEe6UMua27JtISoluEXaL
+	xQuQe6X5j1RV0pDz1yCaypy3cR9QwT/HEFsuD61mgMv5614HepaR/fFxvm/RW8QsMW5NYvlAQE4
+	/ACek6uBOaESPP4YSS513zvw4a/nBD5aqD0KjA2z8qeqDL6QBHDg4lk3quiQJZtPaOx3GO2NPoa
+	6IM4Zu734VIhL+glZOLNRy/wtSYwcXuX6W8Xh/W+OeS8xUSEtITOH4D/k5PQ4KWGtWd3V4/bAiI
+	YOSgmkWW1cmxY+LC6/UOuPXFPsY9vdo7oXOF5pe/jJc8KNWZxiK8U7hA2hjD7oOyPgnG5JXmNih
+	+nz3Ia3rCXKRHWdfqBKkd5WPKgCuC4F9A0JvV+ZU02EJDLccvBtXrm+aXHIdJkbtC8+GpJPdKNZ
+	Lw=
+X-Received: by 2002:a05:600c:a415:b0:485:419c:4eba with SMTP id 5b1f17b1804b1-488fb26d43fmr1783635e9.1.1776366941546;
+        Thu, 16 Apr 2026 12:15:41 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43ead3d5f06sm16561608f8f.17.2026.04.16.12.15.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Apr 2026 12:15:41 -0700 (PDT)
+Date: Thu, 16 Apr 2026 20:15:39 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: chensong_2000@189.cn, rafael@kernel.org, lenb@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, viresh.kumar@linaro.org,
+ agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com,
+ bmarzins@redhat.com, song@kernel.org, yukuai@fnnas.com,
+ linan122@huawei.com, jason.wessel@windriver.com, danielt@kernel.org,
+ dianders@chromium.org, horms@kernel.org, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ paulmck@kernel.org, frederic@kernel.org, mcgrof@kernel.org,
+ petr.pavlu@suse.com, da.gomez@kernel.org, samitolvanen@google.com,
+ atomlin@atomlin.com, jpoimboe@kernel.org, jikos@kernel.org, mbenes@suse.cz,
+ joe.lawrence@redhat.com, rostedt@goodmis.org, mhiramat@kernel.org,
+ mark.rutland@arm.com, mathieu.desnoyers@efficios.com,
+ linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ live-patching@vger.kernel.org, dm-devel@lists.linux.dev,
+ linux-raid@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net,
+ netdev@vger.kernel.org
+Subject: Re: [RFC PATCH 1/2] kernel/notifier: replace single-linked list
+ with double-linked list for reverse traversal
+Message-ID: <20260416201539.2cee3b99@pumpkin>
+In-Reply-To: <aeD4H8P1DiPQoM8V@pathway.suse.cz>
+References: <20260415070137.17860-1-chensong_2000@189.cn>
+	<20260416133004.07bd2886@pumpkin>
+	<aeD4H8P1DiPQoM8V@pathway.suse.cz>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/16] dt-bindings: interrupt-controller: Describe EIP-201
- AIC
-To: "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Thomas Gleixner <tglx@kernel.org>,
- Olivia Mackall <olivia@selenic.com>, Herbert Xu
- <herbert@gondor.apana.org.au>, Jayesh Choudhary <j-choudhary@ti.com>,
- "David S. Miller" <davem@davemloft.net>,
- Christian Marangi <ansuelsmth@gmail.com>, Antoine Tenart
- <atenart@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Pascal EBERHARD <pascal.eberhard@se.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-crypto@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20260327-schneider-v7-0-rc1-crypto-v1-0-5e6ff7853994@bootlin.com>
- <20260327-schneider-v7-0-rc1-crypto-v1-2-5e6ff7853994@bootlin.com>
-Content-Language: pl
-From: Aleksander Jan Bajkowski <olek2@wp.pl>
-In-Reply-To: <20260327-schneider-v7-0-rc1-crypto-v1-2-5e6ff7853994@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-WP-MailID: 7de5bd77c80430cfb5ca2f9c375fd890
-X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
-X-WP-SPAM: NO 0000000 [wfNc]                               
 
-Hi Miquel,
+On Thu, 16 Apr 2026 16:54:23 +0200
+Petr Mladek <pmladek@suse.com> wrote:
 
-On 27/03/2026 21:09, Miquel Raynal (Schneider Electric) wrote:
-> diff --git a/include/dt-bindings/interrupt-controller/inside-secure,safexcel-eip201.h b/include/dt-bindings/interrupt-controller/inside-secure,safexcel-eip201.h
-> new file mode 100644
-> index 000000000000..ead73bd96296
-> --- /dev/null
-> +++ b/include/dt-bindings/interrupt-controller/inside-secure,safexcel-eip201.h
-> @@ -0,0 +1,14 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
-> +
-> +#ifndef _DT_BINDINGS_IRQ_SAFEXCEL_EIP201_AIC_H
-> +#define _DT_BINDINGS_IRQ_SAFEXCEL_EIP201_AIC_H
-> +
-> +#define AIC_PKA_INT0 0
-> +#define AIC_PKA_INT1 1
-> +#define AIC_PKA_INT2 2
-> +#define AIC_TRNG_INT 3
-> +#define AIC_RESERVED 4
-> +#define AIC_SL_ERR_INT  5
-> +#define AIC_PROTECTION_INT 6
-> +
-> +#endif
+> On Thu 2026-04-16 13:30:04, David Laight wrote:
+> > On Wed, 15 Apr 2026 15:01:37 +0800
+> > chensong_2000@189.cn wrote:
+> >   
+> > > From: Song Chen <chensong_2000@189.cn>
+> > > 
+> > > The current notifier chain implementation uses a single-linked list
+> > > (struct notifier_block *next), which only supports forward traversal
+> > > in priority order. This makes it difficult to handle cleanup/teardown
+> > > scenarios that require notifiers to be called in reverse priority order.  
+> > 
+> > If it is only cleanup/teardown then the list can be order-reversed
+> > as part of that process at the same time as the list is deleted.  
+> 
+> Interesting idea. But it won't work in all situations.
 
-This interrupt mapping is specific to the EIP-150. The EIP-201 is also 
-integrated
-into other accelerators, such as the EIP-97, EIP-196, and EIP-197, and the
-interrupt mapping is likely different there. Maybe it would be better to use
-eip150 name instead of eip201?
+It is useful for things like locklessy queuing a request to be processed later.
+Items can be added with a cmpxchg and the list grabbed by xchg of NULL.
+The only downside is that reversing a list isn't cache friendly.
+Thinks... although that may not be any worse than accessing the current 'tail'
+to add to the end of a doubly linked (or singly linked with a tail ptr) list.
 
-As for EIP-28, it is also part of EIP-94. EIP-94 is supported by the 
-amcc driver.
-EIP-94 consists of four components:
-* crypto accelerator (unnamed?),
-* PRNG (EIP-73d),
-* TRNG (unnamed?),
-* PKA (EIP-28).
-Only the first three components are supported by the amcc driver.
+	David
 
-
-Best regards,
-Aleksander
+> 
+> Note that the motivation for this update are the module loader
+> notifiers which are called several times for each loaded/removed module.
+> 
+> Best Regards,
+> Petr
+> 
 
