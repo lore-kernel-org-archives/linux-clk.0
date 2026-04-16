@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E691339B94C;
-	Thu, 16 Apr 2026 09:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E8739C002;
+	Thu, 16 Apr 2026 09:35:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776332054; cv=none; b=kqJIgf/sVvamhbAMAnQng8WqzSelGQSgstwTqxxF5GJ6jYMrQCZg4ykwhKVlTK9VhPj+n8G+Yw1a7IfinbA6a0pVztXddPZp1gQSAJQXc29OGlVG8zj60yAjSK9LVR0P8p0q8O9ml6xahj5cuVjYQAyWGncLTEg11JG0BEO/r4c=
+	t=1776332143; cv=none; b=ql9ad3rfae3m1znsWqdZMziUy9EPXBGeKJdcPCRIfMiKLodkMeMxIZ6k7nOKOh8oH2KFBUJoAUE43GrAzgxLl0A7ut4qe5tKepG/18emOPGRbLqL2gbiIq+q/G0l5T4xmGU21twaBbH2tyKx+luDRcg/sbvVFog9QMzp0+gM6oM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776332054; c=relaxed/simple;
-	bh=B1RRUqquVdW0Z2ScrPkyprikjhhe5wk1q42Jz8yQIMI=;
+	s=arc-20240116; t=1776332143; c=relaxed/simple;
+	bh=Na4TpuUuc6fAl3ui0+vDl787FpKfXjMymOJKEX2Kqxk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q8vi6r7w5Novz9c++3Hr25yOaK/wImkSwH9kqj2grk4ajDPb773c5XjsfWlBGhx3G8kH6S/RjL1AJRw6kg3Z/rfGEG4jyMQvLi5QW/zx3t11/CftZmU1K6wRpGkNpI7CBOReC0WU8tOkWKA1V9sAM4A0IOFBiB1m1pBQbgyOJbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qFnmPiGR; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=t/K8VSr8eNaohHaEH+TvnDteKcKJuyr/mVJy4AmC7kJiPB7HXg9+ImAycL1oXSADM8Yqq1FMKZvMnvp5iYZpKGlEOHo3xelUzVfOUx0MgcnyoVD3JHa3Xf1XKD6Bg3xJ6YFyT0+HBmolDWovYKuhzzVO8wZ2r+nYt1ItzoliuqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hqNrE+8N; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qFnmPiGR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2CD7C2BCAF;
-	Thu, 16 Apr 2026 09:34:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hqNrE+8N"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 998B9C2BCAF;
+	Thu, 16 Apr 2026 09:35:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776332053;
-	bh=B1RRUqquVdW0Z2ScrPkyprikjhhe5wk1q42Jz8yQIMI=;
+	s=k20201202; t=1776332143;
+	bh=Na4TpuUuc6fAl3ui0+vDl787FpKfXjMymOJKEX2Kqxk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qFnmPiGRG2g4u3cAAxEUnbKmElcjOOGCiS/ozQ4tyShGTWY2tCzIgbDcMXBN1pg1c
-	 FGWO0RAe0Ns9Uaf1i6IYr9HB/u9WHecwxHy60TMFocXhEVHOP460TTqg/jfyNhyO05
-	 oZQNzr1MZBX+aEtr/B/n9RcrUmZBVIHGfqWgebk+9vlNbN6IsQlDkAxonCYHNdiTuJ
-	 jxhSmX4EA1OldOWDP7Xl8R9LHejvWfP73p0tL1Re/lI9YQKcOiXk2UoXaiT+JAuogz
-	 ex0Kng3vt+IBtnZJ9eefrJPw7/VVHeh7ZjRPfd13obqE6kcVOCZXkGQALa3ZMuHNeL
-	 NWpZwKQBQnEvg==
-Date: Thu, 16 Apr 2026 11:34:10 +0200
+	b=hqNrE+8N4RGODIxVEx4DzoS1vXFzYMvqlD42LlDfYjaK38NXFNb6ke0g9pMqe5Ktl
+	 xS9X/k77rumIsBH4VmEMaUSqvB9kkclyPucYw/321Xfk9wT61d6l6Qi1IuWlo1M3dn
+	 Ue/TIIwTT5mwYsSI0klz5v29a7g6ifXmpnhc6rwk5x/dB1bUsrpXqcBEWdn5vDa2qx
+	 S/Kz1t8WTURQSTRrjfnsUwwq4SYl6NIm0lQS8KoM1D+dEy9thSWMetYL5es7DH6VT3
+	 YxDAWNPZ7C3UbvPPyZLw6e2mk08u8YA9Uifl5jWTse5XvLlD07m3eSpGIREt+scSv7
+	 hqc28/lTA95BQ==
+Date: Thu, 16 Apr 2026 11:35:40 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
 Cc: Bjorn Andersson <andersson@kernel.org>, 
@@ -35,10 +35,11 @@ Cc: Bjorn Andersson <andersson@kernel.org>,
 	Philipp Zabel <p.zabel@pengutronix.de>, Konrad Dybcio <konradybcio@kernel.org>, 
 	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] dt-bindings: qcom: add IPQ9650 boards
-Message-ID: <20260416-ruddy-bug-of-karma-95e841@quoll>
+Subject: Re: [PATCH 4/5] arm64: dts: qcom: add IPQ9650 SoC and rdp488 board
+ support
+Message-ID: <20260416-khaki-goose-of-will-ec76bf@quoll>
 References: <20260415-ipq9650_boot_to_shell-v1-0-b37eb4c3a1d1@oss.qualcomm.com>
- <20260415-ipq9650_boot_to_shell-v1-3-b37eb4c3a1d1@oss.qualcomm.com>
+ <20260415-ipq9650_boot_to_shell-v1-4-b37eb4c3a1d1@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,17 +48,22 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260415-ipq9650_boot_to_shell-v1-3-b37eb4c3a1d1@oss.qualcomm.com>
+In-Reply-To: <20260415-ipq9650_boot_to_shell-v1-4-b37eb4c3a1d1@oss.qualcomm.com>
 
-On Wed, Apr 15, 2026 at 07:03:18PM +0530, Kathiravan Thirumoorthy wrote:
-> Document the new IPQ9650 SoC/board device tree bindings.
-> 
-> Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-> ---
->  Documentation/devicetree/bindings/arm/qcom.yaml | 5 +++++
->  1 file changed, 5 insertions(+)
+On Wed, Apr 15, 2026 at 07:03:19PM +0530, Kathiravan Thirumoorthy wrote:
+> +		xo_board: xo-board-clk {
+> +			compatible = "fixed-clock";
+> +			#clock-cells = <0>;
+> +		};
+> +	};
+> +
+> +	cpus {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		CPU0: cpu@0 {
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Labels should be lowercase.
 
 Best regards,
 Krzysztof
