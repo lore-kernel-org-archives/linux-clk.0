@@ -1,252 +1,223 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406F33A4F5E
-	for <linux-clk@vger.kernel.org>; Thu, 16 Apr 2026 10:33:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6AA391500
+	for <linux-clk@vger.kernel.org>; Thu, 16 Apr 2026 11:18:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776335633; cv=none; b=nDFXjHwAqw2QWnjGfXHwx3ykD7wM70FTRO1XzLGr/lr5zIeEc0jiIeAIZwcpQ4c/2iH3BWMl/8woOwFmD4AbhzwkX0ZNESL1MaGvCE6G6KHFChfJqyoGIDte+D3p2DurJoGOIBT19snsmOTtJWS42oAx0Do+w8CQr4ClTkqxpQk=
+	t=1776338315; cv=none; b=BL0Tt7M4srxpiMF2yak/rqFxU2h9Qu2WZACm07GWMCqS54IkeyJ4W+KVNaCbQA5Y5Ee8VWExt85NM4aaqIGjmqpWVLi/Sx2szh8gvJ1t23F2fk4Yja5ayU4Nf1j5Ax6ILJV/fKN0ZuTKNMg4n6PxpMc8pZvOCMkI/Qr1DzL5ghc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776335633; c=relaxed/simple;
-	bh=PnkhtnPlWqR69u9/G7kOgPwF0gnYlgcUF1nrMIPg0fc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NVCRFyPgAtEZyuMb6Wrtn+9JMHmdMDuxZ8pcgEuEbVOJIA8NawHSUnnvs1xHUP1E5mGJHBLkEoC5l1YbFC2ToRocllsktoQvu6bRKwIEaDPfcDCUZwDHu4mu+yuNep1eBdhB9v8ESr9QLNgQibJ1uEi7dDk2W5g9293SilDXKfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Yw99Yy5m; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1776338315; c=relaxed/simple;
+	bh=0I1hQQOfuGn7nbMyH5rccfAqTH9pDQIfcJ5oxQD7bhU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E4EQYIpPDKe6SMSFkykYL4inXo5iFGk6ONGzGfTU4zmaVZleSi+2IblQ+qqhVhnXr5OSHJaokh7yvRRcqR0pQQuptZl4yJ3tAG61uWuZibW7vtI/R6mFJpR/BWrTIQdjr3+rvlQ5/Zmh4dO8UpNePrvHJwNe6LoZkKufGWCjhzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QPsa6x4S; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Yw99Yy5m"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-483487335c2so85991985e9.2
-        for <linux-clk@vger.kernel.org>; Thu, 16 Apr 2026 03:33:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QPsa6x4S"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4887ca8e529so4028985e9.0
+        for <linux-clk@vger.kernel.org>; Thu, 16 Apr 2026 04:18:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1776335627; x=1776940427; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PFX0kfy1JVc6bVB6CE0bGMq+YH6jFLY5/9CO0YM6hrU=;
-        b=Yw99Yy5m7kvN1KSa9pxCJ+rj4LVOuiacf7mjAZ1+hedrfUk5JyPIN6zYHYbyElzPIe
-         x9JebNsVvvlrV/hoQwDjPkr/KB/PctEr7qKlO6OLJoafdSkZB9jeLeiL/a4vvE1M0t3/
-         om3eA/uaTfwen6E5V1J4ngTZ+wAbgwElWypa4jFVmTWBptmpaTJTIPBbe6XRWVKrTzwu
-         tebPL2lxwUgYQLNII1kDn9OyLAGJsxMAwVBH4Hvo76H6AxeHISu9mKkqAdAa5je+hRlh
-         rg54EVzzcMHE6qqQpg2GAWy6DRWd74af5HXg0FkOYrlGVCqvUn9fRdyfGdcpNr1UxK7W
-         J7gg==
+        d=suse.com; s=google; t=1776338312; x=1776943112; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Qd1VopekJz5FiTxyx67UMNjXFF9UUIXLsOl680XCCf0=;
+        b=QPsa6x4SOVHFIcDZBLBIeYk2JTeQWGgH1I/3lTPPEg1m3CfUzXMuqkg1W7krRJmT8j
+         9PXwgbaKw1ChOtXp26dqLlViRMzLu2DIJH1nHlwCGOHuo0AorVSeI1xTup0gRAjK2bQq
+         h2BSS8KanKLcEwhgMrGj/RBly7Hb6Evel3xOgFrrlH8ZgdGbtI87vgHZknkFSC6QYc0y
+         d55RgDHO4PWB//XwatZe0m+EOVhgp3plLy2baygOj2HBXeeG0OwHFIqcV8WGnHEDVEXZ
+         v1AnAsdtZ6KLTgLiH/Fejvk9cpuu1fdVQ3GsqGpmBMFw9AxIVSFKWzwDj2V/vREOJjHz
+         /XlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776335627; x=1776940427;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PFX0kfy1JVc6bVB6CE0bGMq+YH6jFLY5/9CO0YM6hrU=;
-        b=V3o6QB0U4c91+blmtUAN1NoI7/7FpEIdhARkN8//EQ1XydDKNLpV8CsJbphZys3PS2
-         T2z81Efn+QW4Ode57HJ7FaIjnViBhhZfAgB+iW3CNdLZE/eARykGZBhTquXJb+PvaPp+
-         AIz99sJ2rW1oC6HgJSM1C158gLEqaxuy/dAWzeU9BK/2fy/aCMSDMi77thAYwTDWNNqQ
-         geD83CwXQ9SMIjImm1koJaGPQHz1hXuLmdAT4EA8jmtdFa84l7SwQRxAhyatC1PUTNkB
-         zKPt4X6tpcsoJHZ6bhrDWKPUeAv525a/BjwOcPJ0AtIvIPLnrUFRkIoY0oPbhRvldjkT
-         F3cw==
-X-Forwarded-Encrypted: i=1; AFNElJ8dNH5nfEfzYz2PlrqzvFtveDB8P1sagIcNvYQPazWX3lb3IXqkZpmyzb9Dw8tR1GrUL+pd5wo1OrY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxu4wsP79+651wXwX3VFUXnsozRQscPc9YevBsqSypoBrJdasKE
-	Io+1ILLh1u7XvEV1/6KzyKUH/rhewZroy0jTPw0DafjFjFHqMkBulH/7JEiSFNfGEEA=
-X-Gm-Gg: AeBDievsCKASbdcPlV5rweJoQw6cgv3TccJgYr0VXF2VCYykCGksJ6sYQJEVhnhElnc
-	TqVoKIHSU4WjRr2tzRklP6pTjKkNPf995/snOhPPGFrr1znBQ25fkjnFvnoPTZjZiItCsQCWo/P
-	xmO8fXHmcbcCthvnbSD4KkWHKeHt/QKdPLvocyKy9SOKqU5MJbD/gPLBTwpzRHHfq+lvhaM6fUe
-	bP70CzAWlbvH1SWSv3b8Kdb/6pzuzrlgS4hVMt4GrQw7hO869w5cbXA/zDJDr+vasj12hl3fnb4
-	xmjZueP5TI85GA3bDMI3hpI0PKPDI877DBGGY+QFtptFjdFU2vjxT0g4y679yL8dNuQAO7hV3qk
-	8Lat80v0Zf0/XptxFoaf6NA35B/p+WrOU7tIfqaY01gr9bpMzF/RK+b4PZtlVwU/RZhAtfdKR2q
-	fni0+1UpCC6TwUU4joxaSsfKBzJQ==
-X-Received: by 2002:a05:600c:3b96:b0:488:b098:b653 with SMTP id 5b1f17b1804b1-488d67f0a8amr350880245e9.13.1776335626808;
-        Thu, 16 Apr 2026 03:33:46 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43ead402ee8sm12369872f8f.37.2026.04.16.03.33.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Apr 2026 03:33:46 -0700 (PDT)
-Date: Thu, 16 Apr 2026 12:33:43 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: chensong_2000@189.cn
-Cc: rafael@kernel.org, lenb@kernel.org, mturquette@baylibre.com,
-	sboyd@kernel.org, viresh.kumar@linaro.org, agk@redhat.com,
-	snitzer@kernel.org, mpatocka@redhat.com, bmarzins@redhat.com,
-	song@kernel.org, yukuai@fnnas.com, linan122@huawei.com,
-	jason.wessel@windriver.com, danielt@kernel.org,
-	dianders@chromium.org, horms@kernel.org, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	paulmck@kernel.org, frederic@kernel.org, mcgrof@kernel.org,
-	petr.pavlu@suse.com, da.gomez@kernel.org, samitolvanen@google.com,
-	atomlin@atomlin.com, jpoimboe@kernel.org, jikos@kernel.org,
-	mbenes@suse.cz, joe.lawrence@redhat.com, rostedt@goodmis.org,
-	mhiramat@kernel.org, mark.rutland@arm.com,
-	mathieu.desnoyers@efficios.com, linux-modules@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, live-patching@vger.kernel.org,
-	dm-devel@lists.linux.dev, linux-raid@vger.kernel.org,
-	kgdb-bugreport@lists.sourceforge.net, netdev@vger.kernel.org
-Subject: Re: [RFC PATCH 1/2] kernel/notifier: replace single-linked list with
- double-linked list for reverse traversal
-Message-ID: <aeC7ByGA5MHBcGQR@pathway.suse.cz>
-References: <20260415070137.17860-1-chensong_2000@189.cn>
+        d=1e100.net; s=20251104; t=1776338312; x=1776943112;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Qd1VopekJz5FiTxyx67UMNjXFF9UUIXLsOl680XCCf0=;
+        b=ouq3WE1LWFspYOJDfqdEcTEMDHJS8i0lu2vFE1fDchXanFX/BOTwSRBnjK4z9cI3ID
+         LzzxtIlr6+CGQtW5O/ig220t2b+62Brup9rdJp4serGRJMnDNFC161/MS2EGtJk7LJwk
+         D1hblOA1PrAzWjDFNeFAD5jjI389JFWI5AfSCboSP5deJaNOm/n673Ga6YBROLN4Xleo
+         DlKxXp3U869/tTKp2BsYYXqAoxo+9rfcy7kJM/RT69nlo6UDMfPPYy5p4B9ayzu7Tuzn
+         f4/BEx76mUWmL+Yylab+oBjOteGoHPHKevyqGr1P9zJSYGVT2oh/itRNuBzHw+jqaHpT
+         TPlA==
+X-Forwarded-Encrypted: i=1; AFNElJ/OHmnq4lE2kocY0mapwBFnwSwimFNWosTIsSWIUzjbp0xIauY7vSNl9EOZD7p2X3nKHjPIQ7VtvMc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcpbNY6cPRr+AsVd4rwTRcXfltZTw1ATyHQJCz0zL9Tto+IqiE
+	jJRUoIYl6B2fcdKJoD0Wt53zdxnAXc8dZhE64Knj2S8kvKf5PQ40aUodDBGOi5ARNLk=
+X-Gm-Gg: AeBDievmmXFKn5Z9Pan22dA8AhdpwOy1rOHibqQ5OKT2rphkLfXxjsRAZHwS2QvtiI+
+	djqFRfJgkzJp/D38C6kY9afUhF69Nd58j5YB2C6DEWNHQWaIzKGZRFgkC82tXavUg3ec4mbtRlE
+	BZDXLgWJwU535aaP0KqNo48C0vSMPCAwdsl7mLgTyRyfnp70wTYgSFyKkjQE8/XcjVc8yBwiPPr
+	/+aDX4yd9mulRczsfOxS5yY3UVwhqYAe7s6BS6rd5N7fIZhz6wlUESIlm+rcOmH/y3eGWLLKaO2
+	41vlRzg4cJO0IzuzkgV7K8WZa+mDe1jCCVfnO17HslTNUkrZUxkQWzMuEvSCbPRbIJMAsBebegj
+	n/Vc1IlP1PJLV4MfuU0opDb3a1ZcO6dkJT3ZXSAfkpXBOWd3VbNDlywBHS3uMxwlU6nsQsXRGg/
+	+b06ijUTMBr5+Gu9EJjGWhqBjjKK67LuoP2EBWvLT0OUCs0o2ZObod8c61092nTvcXhufF41g9h
+	G0Bk2VPAjwrIC0/mFHEfWqxUe4iKophZgVJSU05SlIkZTmwIttHKiU/rUVni5GdOJZRqrpk3/gj
+	xV0z
+X-Received: by 2002:a05:600c:31a9:b0:485:3038:72c2 with SMTP id 5b1f17b1804b1-488f4804d19mr27439205e9.17.1776338312207;
+        Thu, 16 Apr 2026 04:18:32 -0700 (PDT)
+Received: from ?IPV6:2a00:1028:838d:271e:8e3b:4aff:fe4c:a100? (dynamic-2a00-1028-838d-271e-8e3b-4aff-fe4c-a100.ipv6.o2.cz. [2a00:1028:838d:271e:8e3b:4aff:fe4c:a100])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43ead3d5ea9sm13089525f8f.21.2026.04.16.04.18.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Apr 2026 04:18:31 -0700 (PDT)
+Message-ID: <1db425bf-58a9-4768-8c38-3ae25d7662a5@suse.com>
+Date: Thu, 16 Apr 2026 13:18:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260415070137.17860-1-chensong_2000@189.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 2/2] kernel/module: Decouple klp and ftrace from
+ load_module
+To: Song Chen <chensong_2000@189.cn>
+Cc: rafael@kernel.org, lenb@kernel.org, mturquette@baylibre.com,
+ sboyd@kernel.org, viresh.kumar@linaro.org, agk@redhat.com,
+ snitzer@kernel.org, mpatocka@redhat.com, bmarzins@redhat.com,
+ song@kernel.org, yukuai@fnnas.com, linan122@huawei.com,
+ jason.wessel@windriver.com, danielt@kernel.org, dianders@chromium.org,
+ horms@kernel.org, davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, paulmck@kernel.org, frederic@kernel.org,
+ mcgrof@kernel.org, da.gomez@kernel.org, samitolvanen@google.com,
+ atomlin@atomlin.com, jpoimboe@kernel.org, jikos@kernel.org, mbenes@suse.cz,
+ pmladek@suse.com, joe.lawrence@redhat.com, rostedt@goodmis.org,
+ mhiramat@kernel.org, mark.rutland@arm.com, mathieu.desnoyers@efficios.com,
+ linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ live-patching@vger.kernel.org, dm-devel@lists.linux.dev,
+ linux-raid@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net,
+ netdev@vger.kernel.org
+References: <20260413080701.180976-1-chensong_2000@189.cn>
+ <1191caf5-6a61-4622-a15e-854d3701f4fc@suse.com>
+ <a35f5f94-7d5a-4347-974b-b270c89ef241@189.cn>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <a35f5f94-7d5a-4347-974b-b270c89ef241@189.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed 2026-04-15 15:01:37, chensong_2000@189.cn wrote:
-> From: Song Chen <chensong_2000@189.cn>
+On 4/15/26 8:43 AM, Song Chen wrote:
+> On 4/14/26 22:33, Petr Pavlu wrote:
+>> On 4/13/26 10:07 AM, chensong_2000@189.cn wrote:
+>>> diff --git a/include/linux/module.h b/include/linux/module.h
+>>> index 14f391b186c6..0bdd56f9defd 100644
+>>> --- a/include/linux/module.h
+>>> +++ b/include/linux/module.h
+>>> @@ -308,6 +308,14 @@ enum module_state {
+>>>       MODULE_STATE_COMING,    /* Full formed, running module_init. */
+>>>       MODULE_STATE_GOING,    /* Going away. */
+>>>       MODULE_STATE_UNFORMED,    /* Still setting it up. */
+>>> +    MODULE_STATE_FORMED,
+>>
+>> I don't see a reason to add a new module state. Why is it necessary and
+>> how does it fit with the existing states?
+>>
+> because once notifier fails in state MODULE_STATE_UNFORMED (now only ftrace has someting to do in this state), notifier chain will roll back by calling blocking_notifier_call_chain_robust, i'm afraid MODULE_STATE_GOING is going to jeopardise the notifers which don't handle it appropriately, like:
 > 
-> The current notifier chain implementation uses a single-linked list
-> (struct notifier_block *next), which only supports forward traversal
-> in priority order. This makes it difficult to handle cleanup/teardown
-> scenarios that require notifiers to be called in reverse priority order.
+> case MODULE_STATE_COMING:
+>      kmalloc();
+> case MODULE_STATE_GOING:
+>      kfree();
+
+My understanding is that the current module "state machine" operates as
+follows. Transitions marked with an asterisk (*) are announced via the
+module notifier.
+
+---> UNFORMED --*> COMING --*> LIVE --*> GOING -.
+        ^            |                     ^    |
+        |            '---------------------*    |
+        '---------------------------------------'
+
+The new code aims to replace the current ftrace_module_init() call in
+load_module(). To achieve this, it adds a notification for the UNFORMED
+state (only when loading a module) and introduces a new FORMED state for
+rollback. FORMED is purely a fake state because it never appears in
+module::state. The new structure is as follows:
+
+        ,--*> (FORMED)
+        |
+--*> UNFORMED --*> COMING --*> LIVE --*> GOING -.
+        ^            |                     ^    |
+        |            '---------------------*    |
+        '---------------------------------------'
+
+I'm afraid this is quite complex and inconsistent. Unless it can be kept
+simple, we would be just replacing one special handling with a different
+complexity, which is not worth it.
+
+>>
+>>> +    if (err)
+>>> +        goto ddebug_cleanup;
+>>>         /* Finally it's fully formed, ready to start executing. */
+>>>       err = complete_formation(mod, info);
+>>> -    if (err)
+>>> +    if (err) {
+>>> +        blocking_notifier_call_chain_reverse(&module_notify_list,
+>>> +                MODULE_STATE_FORMED, mod);
+>>>           goto ddebug_cleanup;
+>>> +    }
+>>>   -    err = prepare_coming_module(mod);
+>>> +    err = prepare_module_state_transaction(mod,
+>>> +                MODULE_STATE_COMING, MODULE_STATE_GOING);
+>>>       if (err)
+>>>           goto bug_cleanup;
+>>>   @@ -3522,7 +3519,6 @@ static int load_module(struct load_info *info, const char __user *uargs,
+>>>       destroy_params(mod->kp, mod->num_kp);
+>>>       blocking_notifier_call_chain(&module_notify_list,
+>>>                        MODULE_STATE_GOING, mod);
+>>
+>> My understanding is that all notifier chains for MODULE_STATE_GOING
+>> should be reversed.
+> yes, all, from lowest priority notifier to highest.
+> I will resend patch 1 which was failed due to my proxy setting.
+
+What I meant here is that the call:
+
+blocking_notifier_call_chain(&module_notify_list, MODULE_STATE_GOING, mod);
+
+should be replaced with:
+
+blocking_notifier_call_chain_reverse(&module_notify_list, MODULE_STATE_GOING, mod);
+
 > 
-> A concrete example is the ordering dependency between ftrace and
-> livepatch during module load/unload. see the detail here [1].
+>>
+>>> -    klp_module_going(mod);
+>>>    bug_cleanup:
+>>>       mod->state = MODULE_STATE_GOING;
+>>>       /* module_bug_cleanup needs module_mutex protection */
+>>
+>> The patch removes the klp_module_going() cleanup call in load_module().
+>> Similarly, the ftrace_release_mod() call under the ddebug_cleanup label
+>> should be removed and appropriately replaced with a cleanup via
+>> a notifier.
+>>
+>     err = prepare_module_state_transaction(mod,
+>                 MODULE_STATE_UNFORMED, MODULE_STATE_FORMED);
+>     if (err)
+>         goto ddebug_cleanup;
 > 
-> This patch replaces the single-linked list in struct notifier_block
-> with a struct list_head, converting the notifier chain into a
-> doubly-linked list sorted in descending priority order. Based on
-> this, a new function notifier_call_chain_reverse() is introduced,
-> which traverses the chain in reverse (ascending priority order).
-> The corresponding blocking_notifier_call_chain_reverse() is also
-> added as the locking wrapper for blocking notifier chains.
+> ftrace will be cleanup in blocking_notifier_call_chain_robust rolling back.
 > 
-> The internal notifier_call_chain_robust() is updated to use
-> notifier_call_chain_reverse() for rollback: on error, it records
-> the failing notifier (last_nb) and the count of successfully called
-> notifiers (nr), then rolls back exactly those nr-1 notifiers in
-> reverse order starting from last_nb's predecessor, without needing
-> to know the total length of the chain.
+>     err = prepare_module_state_transaction(mod,
+>                 MODULE_STATE_COMING, MODULE_STATE_GOING);
 > 
-> With this change, subsystems with symmetric setup/teardown ordering
-> requirements can register a single notifier_block with one priority
-> value, and rely on blocking_notifier_call_chain() for forward
-> traversal and blocking_notifier_call_chain_reverse() for reverse
-> traversal, without needing hard-coded call sequences or separate
-> notifier registrations for each direction.
+> each notifier including ftrace and klp will be cleanup in blocking_notifier_call_chain_robust rolling back.
 > 
-> [1]:https://lore.kernel.org/all
-> 	/alpine.LNX.2.00.1602172216491.22700@cbobk.fhfr.pm/
+> if all notifiers are successful in MODULE_STATE_COMING, they all will be clean up in
+>  coming_cleanup:
+>     mod->state = MODULE_STATE_GOING;
+>     destroy_params(mod->kp, mod->num_kp);
+>     blocking_notifier_call_chain(&module_notify_list,
+>                      MODULE_STATE_GOING, mod);
 > 
-> --- a/include/linux/notifier.h
-> +++ b/include/linux/notifier.h
-> @@ -53,41 +53,41 @@ typedef	int (*notifier_fn_t)(struct notifier_block *nb,
-[...]
->  struct notifier_block {
->  	notifier_fn_t notifier_call;
-> -	struct notifier_block __rcu *next;
-> +	struct list_head __rcu entry;
->  	int priority;
->  };
-[...]
->  #define ATOMIC_INIT_NOTIFIER_HEAD(name) do {	\
->  		spin_lock_init(&(name)->lock);	\
-> -		(name)->head = NULL;		\
-> +		INIT_LIST_HEAD(&(name)->head);		\
+> if  something wrong underneath.
 
-I would expect the RCU variant here, aka INIT_LIST_HEAD_RCU().
+My point is that the patch leaves a call to ftrace_release_mod() in
+load_module(), which I expected to be handled via a notifier.
 
-> --- a/kernel/notifier.c
-> +++ b/kernel/notifier.c
-> @@ -14,39 +14,47 @@
->   *	are layered on top of these, with appropriate locking added.
->   */
->  
-> -static int notifier_chain_register(struct notifier_block **nl,
-> +static int notifier_chain_register(struct list_head *nl,
->  				   struct notifier_block *n,
->  				   bool unique_priority)
->  {
-> -	while ((*nl) != NULL) {
-> -		if (unlikely((*nl) == n)) {
-> +	struct notifier_block *cur;
-> +
-> +	list_for_each_entry(cur, nl, entry) {
-> +		if (unlikely(cur == n)) {
->  			WARN(1, "notifier callback %ps already registered",
->  			     n->notifier_call);
->  			return -EEXIST;
->  		}
-> -		if (n->priority > (*nl)->priority)
-> -			break;
-> -		if (n->priority == (*nl)->priority && unique_priority)
-> +
-> +		if (n->priority == cur->priority && unique_priority)
->  			return -EBUSY;
-> -		nl = &((*nl)->next);
-> +
-> +		if (n->priority > cur->priority) {
-> +			list_add_tail(&n->entry, &cur->entry);
-> +			goto out;
-> +		}
->  	}
-> -	n->next = *nl;
-> -	rcu_assign_pointer(*nl, n);
-> +
-> +	list_add_tail(&n->entry, nl);
-
-I would expect list_add_tail_rcu() here.
-
-> @@ -59,25 +67,25 @@ static int notifier_chain_unregister(struct notifier_block **nl,
->   *			value of this parameter is -1.
->   *	@nr_calls:	Records the number of notifications sent. Don't care
->   *			value of this field is NULL.
-> + *	@last_nb:  Records the last called notifier block for rolling back
->   *	Return:		notifier_call_chain returns the value returned by the
->   *			last notifier function called.
->   */
-> -static int notifier_call_chain(struct notifier_block **nl,
-> +static int notifier_call_chain(struct list_head *nl,
->  			       unsigned long val, void *v,
-> -			       int nr_to_call, int *nr_calls)
-> +			       int nr_to_call, int *nr_calls,
-> +				   struct notifier_block **last_nb)
->  {
->  	int ret = NOTIFY_DONE;
-> -	struct notifier_block *nb, *next_nb;
-> -
-> -	nb = rcu_dereference_raw(*nl);
-> +	struct notifier_block *nb;
->  
-> -	while (nb && nr_to_call) {
-> -		next_nb = rcu_dereference_raw(nb->next);
-> +	if (!nr_to_call)
-> +		return ret;
->  
-> +	list_for_each_entry(nb, nl, entry) {
-
-I would expect the RCU variant here, aka list_for_each_rcu()
-
-These are just two random examples which I found by a quick look.
-
-I guess that the notifier API is very old and it does not use all
-the RCU API features which allow to track safety when
-CONFIG_PROVE_RCU and CONFIG_PROVE_RCU_LIST are enabled.
-
-It actually might be worth to audit the code and make it right.
-
->  #ifdef CONFIG_DEBUG_NOTIFIERS
->  		if (unlikely(!func_ptr_is_kernel_text(nb->notifier_call))) {
->  			WARN(1, "Invalid notifier called!");
-> -			nb = next_nb;
->  			continue;
->  		}
->  #endif
-
-That said, I am not sure if the ftrace/livepatching handlers are
-the right motivation for this. Especially when I see the
-complexity of the 2nd patch [*]
-
-After thinking more about it. I am not even sure that the ftrace and
-livepatching callbacks are good candidates for generic notifiers.
-They are too special. It is not only about ordering them against
-each other. But it is also about ordering them against other
-notifiers. The ftrace/livepatching callbacks must be the first/last
-during module load/release.
-
-[*] The 2nd patch is not archived by lore for some reason.
-    I have found only a review but it gives a good picture, see
-    https://lore.kernel.org/all/1191caf5-6a61-4622-a15e-854d3701f4fc@suse.com/
-
-Best Regards,
+-- 
+Thanks,
 Petr
