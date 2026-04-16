@@ -1,277 +1,369 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D46C257423;
-	Thu, 16 Apr 2026 15:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80EE81DE894;
+	Thu, 16 Apr 2026 16:34:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776354851; cv=none; b=kwiw4l0inw/HN+YUs0SyKHHZAMKA5Kh3KRagjGDkS+EsWAdDSRroLqaH7CD6uUbDI2/Ic5JT6v9niL6Au0p65hLqpRfMT/Vvyx9WbAM99oSWEkBsG5QR4FG2XpoPRoPgE//Q3WxN6iMzWy96VEWi1ZOPgQ+iolueTQxNORG+tl4=
+	t=1776357266; cv=none; b=JKZZuRTimSwfzW4YYn1ytns1ZoZlgLt7iSKyfzXsf+B+UIk1JZxu73Qf21h5slc/koxp6/+IDTFijplXuj3gyLemvg6JB6hbt7x7DnsAS7fZpugionwZfODUiBW+TGZ0pU488lYslNVAMaDT8uOrTobJxRehzoZiWFaPJc7QCzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776354851; c=relaxed/simple;
-	bh=A6PmtdwoxMFwfTIxnTYwHoYQS2S6o0smJnblGS/cOiY=;
+	s=arc-20240116; t=1776357266; c=relaxed/simple;
+	bh=XdxahCveiLxOke7E96oRAdPQIJZzBzGzrJtXWp06WsM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AYO/dVfzEVSos3q6EDIVQll94Omjv0EgaPjjJ0dPN26h6pA3DqaMzqGjXPNY9DJCA7NuaruED1EOkpTGUd/pJ6eOGxkrH8EqEY22+40k7+Jvu5Q3nA3fnMkCtXPVdgDJlstoz+55CDdCsEpVFkFE54C49SnJBPhUJYrf4KdwXWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oj41PPQr; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=ADM8nVZb26CKYCvK1tEwdzBI+MyyAYFPg9OQdyYs3yviUMNDu+8k6F971BbRP4jf1Si5vH8wgfH7/KcRfFqNuUjntbMVIqnw4UQj5nSTPO2auh9rT3tqgSrOtmXNSFGl7bgUY1ZGIvZFBF42lQPcfWvuqUvfTnRckiXSKq5oR38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=be3RVlQW; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oj41PPQr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54DF5C2BCAF;
-	Thu, 16 Apr 2026 15:54:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776354850;
-	bh=A6PmtdwoxMFwfTIxnTYwHoYQS2S6o0smJnblGS/cOiY=;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="be3RVlQW"
+Received: from killaraus.ideasonboard.com (2001-14ba-703d-e500--2a1.rev.dnainternet.fi [IPv6:2001:14ba:703d:e500::2a1])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 2463D132;
+	Thu, 16 Apr 2026 18:32:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1776357168;
+	bh=XdxahCveiLxOke7E96oRAdPQIJZzBzGzrJtXWp06WsM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oj41PPQr4urm3jmdEHQld+x/hq5vcKf+0oRYTBilCdX6ioul/2rHuuqOaI588SFkM
-	 j63PF99F+bmFIw8RsSLouiYzz4N25hKzx+inOkOCc0GrTulum2nJXqU8JbIGg/4Oqj
-	 sG6MuwQq3eidTpb+kJQvX+jjv00YMyDSdDBab1cD5wYIxYs2B1e/0Nl9tbxVAwTsgs
-	 FQfV7cq0V2yJEUjRvwY0IcIbsrLwAyDTSYNvJfUkt+/dNzy4AK5nUt0OcfIEwE3tqE
-	 8imsmrb5NLeLor0VoNqTTmgBTjB8oYu+SCl25g4HiLjkUFe8xvXSKS9LLNUp4gylcE
-	 VndHwdRKDCdlA==
-Date: Thu, 16 Apr 2026 16:54:05 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Billy Tsai <billy_tsai@aspeedtech.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	b=be3RVlQWHfyDRozPaEAmAbD8NxU0//YfM+yqXlO7pds2ChlbrP3T/cdRju7FuvRe/
+	 tBS7zKumucfM2UokghPPbdJjK3Q2bvJjZwBju1WgQs50xnE3VbmnaC7WENDAMLwGY5
+	 6dd/aydIoP2UTxX/Cbl39rXSgalQD/4ujG3XvC90=
+Date: Thu, 16 Apr 2026 19:34:20 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: tomm.merciai@gmail.com, geert@linux-m68k.org,
+	linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Ryan Chen <ryan_chen@aspeedtech.com>,
-	Andrew Jeffery <andrew@aj.id.au>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
-	linux-gpio@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v7 1/3] dt-bindings: pinctrl: Add
- aspeed,ast2700-soc0-pinctrl
-Message-ID: <20260416-brutishly-saga-ba7168a4cd14@spud>
-References: <20260416-upstream_pinctrl-v7-0-d72762253163@aspeedtech.com>
- <20260416-upstream_pinctrl-v7-1-d72762253163@aspeedtech.com>
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v6 10/21] dt-bindings: display: renesas,rzg2l-du: Add
+ support for RZ/G3E SoC
+Message-ID: <20260416163420.GA1827725@killaraus.ideasonboard.com>
+References: <cover.1775636898.git.tommaso.merciai.xr@bp.renesas.com>
+ <8f814f22ff62dcde6153260e2c8c29a5415c9a89.1775636898.git.tommaso.merciai.xr@bp.renesas.com>
+ <20260408122436.GH1928916@killaraus.ideasonboard.com>
+ <dafdbdcf-98db-473c-8122-296af1922e6c@bp.renesas.com>
+ <20260408141638.GA1965119@killaraus.ideasonboard.com>
+ <87a18664-d19e-4434-8f92-1c7ce4f3a131@bp.renesas.com>
+ <20260408150053.GC1965119@killaraus.ideasonboard.com>
+ <61f294e8-f9ae-4868-8dba-60250279ef21@bp.renesas.com>
+ <20260409132420.GD2634584@killaraus.ideasonboard.com>
+ <191a4bc7-f19e-4771-b70d-e54dd5506799@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="F+crD9IVk8CdCT4u"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260416-upstream_pinctrl-v7-1-d72762253163@aspeedtech.com>
+In-Reply-To: <191a4bc7-f19e-4771-b70d-e54dd5506799@bp.renesas.com>
 
+On Fri, Apr 10, 2026 at 03:21:44PM +0200, Tommaso Merciai wrote:
+> On 4/9/26 15:24, Laurent Pinchart wrote:
+> > On Thu, Apr 09, 2026 at 01:15:18PM +0200, Tommaso Merciai wrote:
+> >> On 4/8/26 17:00, Laurent Pinchart wrote:
+> >>> On Wed, Apr 08, 2026 at 04:44:48PM +0200, Tommaso Merciai wrote:
+> >>>> On 4/8/26 16:16, Laurent Pinchart wrote:
+> >>>>> On Wed, Apr 08, 2026 at 04:02:14PM +0200, Tommaso Merciai wrote:
+> >>>>>> On 4/8/26 14:24, Laurent Pinchart wrote:
+> >>>>>>> On Wed, Apr 08, 2026 at 12:36:55PM +0200, Tommaso Merciai wrote:
+> >>>>>>>> The RZ/G3E SoC has 2 LCD controllers (LCDC), each containing a Frame
+> >>>>>>>> Compression Processor (FCPVD), a Video Signal Processor (VSPD), and a
+> >>>>>>>> Display Unit (DU).
+> >>>>>>>>
+> >>>>>>>>      - LCDC0 supports DSI and LVDS (single or dual-channel) outputs.
+> >>>>>>>>      - LCDC1 supports DSI, LVDS (single-channel), and RGB outputs.
+> >>>>>>>>
+> >>>>>>>> Add a new SoC-specific compatible string 'renesas,r9a09g047-du'.
+> >>>>>>>>
+> >>>>>>>> Extend patternProperties from "^port@[0-1]$" to "^port@[0-3]$" to
+> >>>>>>>> allow up to four output ports, and explicitly disable port@2 and port@3
+> >>>>>>>> for existing SoCs that do not expose them.
+> >>>>>>>>
+> >>>>>>>> Describe the four output ports of the RZ/G3E DU:
+> >>>>>>>>
+> >>>>>>>>      - port@0: DSI (available on both LCDC instances)
+> >>>>>>>>      - port@1: DPAD / parallel RGB (LCDC1 only)
+> >>>>>>>>      - port@2: LVDS channel 0 (LCDC0 only)
+> >>>>>>>>      - port@3: LVDS channel 1 (available on both LCDC instances)
+> >>>>>>>>
+> >>>>>>>> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> >>>>>>>> ---
+> >>>>>>>> v5->v6:
+> >>>>>>>>      - Extend patternProperties from "^port@[0-1]$" to "^port@[0-3]$" and
+> >>>>>>>>        explicitly disable port@2 and port@3 for existing SoCs that do not expose
+> >>>>>>>>        them.
+> >>>>>>>>      - Reworked ports numbering + improved/fixed ports descriptions in the
+> >>>>>>>>        bindings documentation.
+> >>>>>>>>      - Improved commit body.
+> >>>>>>>>
+> >>>>>>>> v4->v5:
+> >>>>>>>>      - Dropped renesas,id property and updated bindings
+> >>>>>>>>        accordingly.
+> >>>>>>>>
+> >>>>>>>> v2->v3:
+> >>>>>>>>      - No changes.
+> >>>>>>>>
+> >>>>>>>> v2->v3:
+> >>>>>>>>      - No changes.
+> >>>>>>>>
+> >>>>>>>> v1->v2:
+> >>>>>>>>      - Use single compatible string instead of multiple compatible strings
+> >>>>>>>>        for the two DU instances, leveraging a 'renesas,id' property to
+> >>>>>>>>        differentiate between DU0 and DU1.
+> >>>>>>>>      - Updated commit message accordingly.
+> >>>>>>>>
+> >>>>>>>>      .../bindings/display/renesas,rzg2l-du.yaml    | 30 ++++++++++++++++++-
+> >>>>>>>>      1 file changed, 29 insertions(+), 1 deletion(-)
+> >>>>>>>>
+> >>>>>>>> diff --git a/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml b/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
+> >>>>>>>> index 5add3b832eab..32da0b5ec88c 100644
+> >>>>>>>> --- a/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
+> >>>>>>>> +++ b/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
+> >>>>>>>> @@ -20,6 +20,7 @@ properties:
+> >>>>>>>>            - enum:
+> >>>>>>>>                - renesas,r9a07g043u-du # RZ/G2UL
+> >>>>>>>>                - renesas,r9a07g044-du # RZ/G2{L,LC}
+> >>>>>>>> +          - renesas,r9a09g047-du # RZ/G3E
+> >>>>>>>>                - renesas,r9a09g057-du # RZ/V2H(P)
+> >>>>>>>>            - items:
+> >>>>>>>>                - enum:
+> >>>>>>>> @@ -61,7 +62,7 @@ properties:
+> >>>>>>>>            model-dependent. Each port shall have a single endpoint.
+> >>>>>>>>      
+> >>>>>>>>          patternProperties:
+> >>>>>>>> -      "^port@[0-1]$":
+> >>>>>>>> +      "^port@[0-3]$":
+> >>>>>>>>              $ref: /schemas/graph.yaml#/properties/port
+> >>>>>>>>              unevaluatedProperties: false
+> >>>>>>>>      
+> >>>>>>>> @@ -103,6 +104,8 @@ allOf:
+> >>>>>>>>                  port@0:
+> >>>>>>>>                    description: DPI
+> >>>>>>>>                  port@1: false
+> >>>>>>>> +            port@2: false
+> >>>>>>>> +            port@3: false
+> >>>>>>>>      
+> >>>>>>>>                required:
+> >>>>>>>>                  - port@0
+> >>>>>>>> @@ -119,6 +122,8 @@ allOf:
+> >>>>>>>>                    description: DSI
+> >>>>>>>>                  port@1:
+> >>>>>>>>                    description: DPI
+> >>>>>>>> +            port@2: false
+> >>>>>>>> +            port@3: false
+> >>>>>>>>      
+> >>>>>>>>                required:
+> >>>>>>>>                  - port@0
+> >>>>>>>> @@ -135,9 +140,32 @@ allOf:
+> >>>>>>>>                  port@0:
+> >>>>>>>>                    description: DSI
+> >>>>>>>>                  port@1: false
+> >>>>>>>> +            port@2: false
+> >>>>>>>> +            port@3: false
+> >>>>>>>>      
+> >>>>>>>>                required:
+> >>>>>>>>                  - port@0
+> >>>>>>>> +  - if:
+> >>>>>>>> +      properties:
+> >>>>>>>> +        compatible:
+> >>>>>>>> +          contains:
+> >>>>>>>> +            const: renesas,r9a09g047-du
+> >>>>>>>> +    then:
+> >>>>>>>> +      properties:
+> >>>>>>>> +        ports:
+> >>>>>>>> +          properties:
+> >>>>>>>> +            port@0:
+> >>>>>>>> +              description: DSI
+> >>>>>>>> +            port@1:
+> >>>>>>>> +              description: DPAD
+> >>>>>>>> +            port@2:
+> >>>>>>>> +              description: LVDS, Channel 0
+> >>>>>>>> +            port@3:
+> >>>>>>>> +              description: LVDS, Channel 1
+> >>>>>>>> +
+> >>>>>>>> +          required:
+> >>>>>>>> +            - port@0
+> >>>>>>>> +            - port@3
+> >>>>>>>
+> >>>>>>> Why are ports 1 and 2 not required ?
+> >>>>>>
+> >>>>>> About this we had a similar discussion on v5[0]
+> >>>>>> We are using the same compatible and:
+> >>>>>>
+> >>>>>> - LCDC0 supports DSI and LVDS (single or dual-channel) outputs.
+> >>>>>> |
+> >>>>>> --> then has:
+> >>>>>> 	port@0
+> >>>>>> 	port@2
+> >>>>>> 	port@3
+> >>>>>> 	
+> >>>>>>
+> >>>>>>      - LCDC1 supports DSI, LVDS (single-channel), and RGB outputs.
+> >>>>>> |
+> >>>>>> --> then has:
+> >>>>>> 	port@0
+> >>>>>> 	port@1
+> >>>>>> 	port@3
+> >>>>>
+> >>>>> Ah yes, I forget there are two LCDC instances with different output
+> >>>>> configurations.
+> >>>>>
+> >>>>> Something still looks a bit weird to me though. For LCDC1, which
+> >>>>> supports a single LVDS channel, you use the port described as the second
+> >>>>> LVDS channel. Is there a reason not to use port@2 ?
+> >>>>
+> >>>> 9.11 Low Voltage Differential Signaling (LVDS)
+> >>>> 9.11.1.2 Block Diagram
+> >>>> Figure 9.11-1 shows a block diagram of LVDS.
+> >>>>
+> >>>> LCDC1 is connected to LVDS, Channel 1
+> >>>> For this reason I'm using port@3.
+> >>>
+> >>> Re-reading that, I think I've misinterpreted the hardware architecture.
+> >>> Doesn't the DU have a single output, that is connected the multiple
+> >>> encoders (LVDS and DSI for LCDC0 and LVDS, DSI and DPI for LCDC1) ? It
+> >>> seems modelling it with a single port and multiple endpoints would
+> >>> better match the device.
+> >>>
+> >>> For LVDS in particular, I see a single LVDS encoder with two channels,
+> >>> so there should not be two LVDS output ports in the DU. The two ports
+> >>> should be on the output of the LVDS device.
+> >>
+> >> You are suggesting the following dt architecture:
+> >>
+> >> du0: display@16460000 {
+> >> 	compatible = "renesas,r9a09g047-du";
+> >> 	reg = <0 0x16460000 0 0x10000>;
+> >> 	interrupts = <GIC_SPI 882 IRQ_TYPE_LEVEL_HIGH>;
+> >> 	clocks = <&cpg CPG_MOD 0xed>,
+> >> 			<&cpg CPG_MOD 0xee>,
+> >> 			<&cpg CPG_MOD 0xef>;
+> >> 	clock-names = "aclk", "pclk", "vclk";
+> >> 	power-domains = <&cpg>;
+> >> 	resets = <&cpg 0xdc>;
+> >> 	renesas,vsps = <&vspd0 0>;
+> >> 	status = "disabled";
+> >>
+> >> 	port {
+> >> 		du0_out_dsi: endpoint@0 {
+> >> 			reg = <0>;
+> >> 		};
+> >>
+> >> 		du0_out_lvds0: endpoint@2 {
+> >> 			reg = <2>;
+> >> 		};
+> >>
+> >> 		du0_out_lvds1: endpoint@3 {
+> >> 			reg = <3>;
+> >> 		};
+> >> 	}
+> >> };
+> >>
+> >> du1: display@16490000 {
+> >> 	compatible = "renesas,r9a09g047-du";
+> >> 	reg = <0 0x16490000 0 0x10000>;
+> >> 	interrupts = <GIC_SPI 922 IRQ_TYPE_LEVEL_HIGH>;
+> >> 	clocks = <&cpg CPG_MOD 0x1a8>,
+> >> 			<&cpg CPG_MOD 0x1a9>,
+> >> 			<&cpg CPG_MOD 0x1aa>;
+> >> 	clock-names = "aclk", "pclk", "vclk";
+> >> 	power-domains = <&cpg>;
+> >> 	resets = <&cpg 0x11e>;
+> >> 	renesas,vsps = <&vspd1 0>;
+> >> 	status = "disabled";
+> >>
+> >> 	port {
+> >> 		du1_out_dsi: endpoint@0 {
+> >> 			reg = <0>;
+> >> 		};
+> >>
+> >> 		du1_out_rgb: endpoint@1 {
+> >> 			reg = <1>;
+> >> 		};
+> >>
+> >> 		du1_out_lvds1: endpoint@3 {
+> >> 			reg = <3>;
+> >> 		};
+> >> 	}
+> >> };
+> >>
+> >>
+> >> Please correct me if I'm wrong.
+> > 
+> > That's right. It would match the hardware, or at least my understanding
+> > of the hardware based on the documentation. As far as I can tell, each
+> > DU has a single 24-bit output port connected to multiple encoders.
+> 
+> Thanks for the clarification.
+> 
+> I want to make sure I understand the intended architecture correctly,
+> because I see a potential conflict between your feedback on the two patches.
+> 
+> For [1], you confirmed the two separate DU nodes (DU0 and DU1) with the
+> single-port/multi-endpoint model. That maps to two separate platform 
+> devices, which means two separate DRM devices.
 
---F+crD9IVk8CdCT4u
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Not necessarily, it would be possible to instantiate a single drm_device
+to cover both platform_device instances. It would require a bit of
+manual work in the driver though.
 
-On Thu, Apr 16, 2026 at 03:29:43PM +0800, Billy Tsai wrote:
-> Add a device tree binding for the pin controller found in the
-> ASPEED AST2700 SoC0.
->=20
-> The controller manages various peripheral functions such as eMMC, USB,
-> VGA DDC, JTAG, and PCIe root complex signals.
->=20
-> Describe the AST2700 SoC0 pin controller using standard pin multiplexing
-> and configuration properties.
->=20
-> Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
-> ---
->  .../pinctrl/aspeed,ast2700-soc0-pinctrl.yaml       | 162 +++++++++++++++=
-++++++
->  1 file changed, 162 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/pinctrl/aspeed,ast2700-soc=
-0-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2700-s=
-oc0-pinctrl.yaml
-> new file mode 100644
-> index 000000000000..947f3cd09fcc
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2700-soc0-pinct=
-rl.yaml
-> @@ -0,0 +1,162 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pinctrl/aspeed,ast2700-soc0-pinctrl.y=
-aml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: ASPEED AST2700 SoC0 Pin Controller
-> +
-> +maintainers:
-> +  - Billy Tsai <billy_tsai@aspeedtech.com>
-> +
-> +description:
-> +  The AST2700 features a dual-SoC architecture with two interconnected S=
-oCs,
-> +  each having its own System Control Unit (SCU) for independent pin cont=
-rol.
-> +  This pin controller manages the pin multiplexing for SoC0.
-> +
-> +  The SoC0 pin controller manages pin functions including eMMC, VGA DDC,
-> +  dual USB3/USB2 ports (A and B), JTAG, and PCIe root complex interfaces.
-> +
-> +properties:
-> +  compatible:
-> +    const: aspeed,ast2700-soc0-pinctrl
-> +  reg:
-> +    maxItems: 1
-> +
-> +patternProperties:
-> +  '-state$':
-> +    type: object
-> +    allOf:
-> +      - $ref: pinmux-node.yaml#
-> +      - $ref: pincfg-node.yaml#
-> +
-> +    additionalProperties: false
-> +
-> +    properties:
-> +      function:
-> +        enum:
-> +          - EMMC
-> +          - JTAGDDR
-> +          - JTAGM0
-> +          - JTAGPCIEA
-> +          - JTAGPCIEB
-> +          - JTAGPSP
-> +          - JTAGSSP
-> +          - JTAGTSP
-> +          - JTAGUSB3A
-> +          - JTAGUSB3B
-> +          - PCIERC0PERST
-> +          - PCIERC1PERST
-> +          - TSPRSTN
-> +          - UFSCLKI
-> +          - USB2AD0
-> +          - USB2AD1
-> +          - USB2AH
-> +          - USB2AHP
-> +          - USB2AHPD0
-> +          - USB2AXH
-> +          - USB2AXH2B
-> +          - USB2AXHD1
-> +          - USB2AXHP
-> +          - USB2AXHP2B
-> +          - USB2AXHPD1
-> +          - USB2BD0
-> +          - USB2BD1
-> +          - USB2BH
-> +          - USB2BHP
-> +          - USB2BHPD0
-> +          - USB2BXH
-> +          - USB2BXH2A
-> +          - USB2BXHD1
-> +          - USB2BXHP
-> +          - USB2BXHP2A
-> +          - USB2BXHPD1
-> +          - USB3AXH
-> +          - USB3AXH2B
-> +          - USB3AXHD
-> +          - USB3AXHP
-> +          - USB3AXHP2B
-> +          - USB3AXHPD
-> +          - USB3BXH
-> +          - USB3BXH2A
-> +          - USB3BXHD
-> +          - USB3BXHP
-> +          - USB3BXHP2A
-> +          - USB3BXHPD
-> +          - VB
-> +          - VGADDC
-> +
-> +      groups:
-> +        enum:
-> +          - EMMCCDN
-> +          - EMMCG1
-> +          - EMMCG4
-> +          - EMMCG8
-> +          - EMMCWPN
-> +          - JTAG0
-> +          - PCIERC0PERST
-> +          - PCIERC1PERST
-> +          - TSPRSTN
-> +          - UFSCLKI
-> +          - USB2A
-> +          - USB2AAP
-> +          - USB2ABP
-> +          - USB2ADAP
-> +          - USB2AH
-> +          - USB2AHAP
-> +          - USB2B
-> +          - USB2BAP
-> +          - USB2BBP
-> +          - USB2BDBP
-> +          - USB2BH
-> +          - USB2BHBP
-> +          - USB3A
-> +          - USB3AAP
-> +          - USB3ABP
-> +          - USB3B
-> +          - USB3BAP
-> +          - USB3BBP
-> +          - VB0
-> +          - VB1
-> +          - VGADDC
-> +      pins:
-> +        enum:
-> +          - AB13
-> +          - AB14
-> +          - AC13
-> +          - AC14
-> +          - AD13
-> +          - AD14
-> +          - AE13
-> +          - AE14
-> +          - AE15
-> +          - AF13
-> +          - AF14
-> +          - AF15
+> For [2], you suggested:
+> 
+> "you can have one DRM device that covers two LCDCs, with one CRTC each,
+> both connected to the same DSI encoder. Userspace then selects which
+> CRTC drives which connector."
+> 
+> Please correct me if I'm wrong but to me these two appear to be 
+> incompatible. With two separate DRM devices,the DSI encoder and its 
+> connector can only belong to one of them. Userspace cannot select 
+> between CRTCs across two DRM devices.
+> 
+> To support the single-DRM-device model you describe, both DU0 and DU1 
+> would need to be managed by a single driver instance, similar to R-Car 
+> DU which aggregate multiple LCDC channels into one DRM device.
+> 
+> Using a single DRM device that spawn 2 crtc (1 du dt node ) this use 
+> case can be tested with the following cmds:
+> 
+> 	modetest -M rzg2l-du -s 58@55:800x600-56.25@XR24
+> 	modetest -M rzg2l-du -s 58@56:800x600-56.25@XR24
+> 
+> Could you clarify which architecture is the intended direction?
+> 
+> Option A: Two separate DRM devices (2 DU dt nodes, current approach),
+>            with the DSI input selected via DT configuration.
+>            The dynamic vclk selection I implemented still applies,
+>            but runtime CRTC switching from userspace is not possible.
+> 
+> Option B: A single DRM device aggregating both DU instances (1 DU dt node),
+>            with two CRTCs both connected to the DSI encoder.
 
-Why do you have groups and pins?
+I meant option B.
 
-Is it valid in your device to have groups and pins in the same node?
+> [1] https://patchwork.kernel.org/project/linux-renesas-soc/patch/8f814f22ff62dcde6153260e2c8c29a5415c9a89.1775636898.git.tommaso.merciai.xr@bp.renesas.com/
+> [2] https://patchwork.kernel.org/project/linux-renesas-soc/patch/9e0f64dd5e1efb0d27219416121c91a19da96ebd.1775636898.git.tommaso.merciai.xr@bp.renesas.com/
+> 
+> >>>>>> Then port@1 is required for DU1 but not for DU0.
+> >>>>>> Same port@2 is required for DU0 but not for DU1.
+> >>>>>>
+> >>>>>> [0] https://patchwork.kernel.org/project/linux-renesas-soc/patch/ca022fdbba5236c36e0cb3095db4c31e8e0cb1b8.1770996493.git.tommaso.merciai.xr@bp.renesas.com/
+> >>>>>>
+> >>>>>>>>
+> >>>>>>>>      examples:
+> >>>>>>>>        # RZ/G2L DU
 
-> +
-> +      drive-strength:
-> +        enum: [3, 6, 8, 11, 16, 18, 20, 23, 30, 32, 33, 35, 37, 38, 39, =
-41]
-> +
-> +      bias-disable: true
-> +      bias-pull-up: true
-> +      bias-pull-down: true
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +allOf:
-> +  - $ref: pinctrl.yaml#
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    pinctrl@400 {
-> +        compatible =3D "aspeed,ast2700-soc0-pinctrl";
-> +        reg =3D <0x400 0x318>;
-> +        emmc-state {
-> +            function =3D "EMMC";
-> +            groups =3D "EMMCG1";
-> +        };
-> +    };
->=20
-> --=20
-> 2.34.1
->=20
+-- 
+Regards,
 
---F+crD9IVk8CdCT4u
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaeEGHQAKCRB4tDGHoIJi
-0hrJAQCL/qPAeh9PhP0f+9cy9zlA9Di9yMRwuiovxWHDxpgp2QEAzMKci8tRvglD
-bIbgOLVyP2ugZhGFkQQHHd7o6vRTLQg=
-=QgdD
------END PGP SIGNATURE-----
-
---F+crD9IVk8CdCT4u--
+Laurent Pinchart
