@@ -1,367 +1,269 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023111.outbound.protection.outlook.com [40.107.44.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A1233554F
-	for <linux-clk@vger.kernel.org>; Thu, 16 Apr 2026 21:35:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776375330; cv=none; b=kA18sjsWpKmFlIh8Ir1HL0McUKcJN95o5/KOoJuUKupFhkegQgo6R8ZdQLF4u8yPWGimTJb2zWSiZgOzs5rXXyVTRyH/LPjZKV7crl0xNu6l3K7acGuHSb7bEcvPunyGTj20ubD1hWi4h2eu0JB61eFOarOwwLC74Y3Lxm+EAjA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776375330; c=relaxed/simple;
-	bh=bQYDWw2yWRrPDsipu0p8v7TVMWjI3sci/lJJ3WtUqI8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qkj05rr1mLCy1z/eXghGvkaEXvrma8AvNuJc7v7a8BlsuV8zAkFck6SBJ34V5bFxleqYQfHTXCUfQbNtVOm1mcU+X1E7Z4MAQJMLuBwrVotBEe3H8jJI01zLMvCowZ6j6tHyAhggub52xR8W1rNy0lv+yyZvK2SwKLzKoWCoaTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YTXiTz/L; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=LjpGSOO7; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 458A4148850;
+	Fri, 17 Apr 2026 02:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.111
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1776392433; cv=fail; b=gmOyme//45b6WDwNuGlhiwvLtb0Zk2LRFqO6HnEY5IVT35sqps8NwRjesWFL94CwUD3ujum5YRzOgIiK1DkYHH4hEeKh4IknJsDiYM1IjbijX1tKAb/BODuP/9vJ8JOQmDyRayAaQuKX8nY+8kJQDsKQ54rdBGHleZ/aOH9olHM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1776392433; c=relaxed/simple;
+	bh=d3WLg8vvFb6Qhbc+8v5AgFx7ktdzzVGafzCtIr17Jbg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=WZHqclq37Mb8L/CSwc8RSWcANTqJPmuU2uiCPDTBrDVMhw9OpAiyDiVHP+El0AgWFUKhn+F/lMhSejPlYe/pfz/IkhYrzCFtaxszQS6oZj9JPzzALjJ5CnTM4NI28T8s9vtYgdIFCc9BbGQDtm49/KonfmDL0M1gCDJes5vT5GM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=qE1j2f0i; arc=fail smtp.client-ip=40.107.44.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YTXiTz/L";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="LjpGSOO7"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1776375328;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YRG/q659xesZWxPYzzEVSdkuUOn2ZHM5fkzo4uR4sjQ=;
-	b=YTXiTz/L0MEDLvvTswp7cdzl6Md2GKMfKTaAj0t0XtwacvlNs9qTOUY/PdUnqtjrnRFMQ4
-	gZhh6h6V5TEgDyNL0o+ojd5rnQW2Udrv2LwLk5rOVegRM5q2ZAyhPR5puugaHa59AVwB51
-	SHj8XqYosF3DFlDxb11SW6/wTw70g5E=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-609-YD1c89l9MDGuCTIUNM_zbQ-1; Thu, 16 Apr 2026 17:35:26 -0400
-X-MC-Unique: YD1c89l9MDGuCTIUNM_zbQ-1
-X-Mimecast-MFC-AGG-ID: YD1c89l9MDGuCTIUNM_zbQ_1776375326
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-8acad256115so151924906d6.3
-        for <linux-clk@vger.kernel.org>; Thu, 16 Apr 2026 14:35:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1776375326; x=1776980126; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YRG/q659xesZWxPYzzEVSdkuUOn2ZHM5fkzo4uR4sjQ=;
-        b=LjpGSOO7lKoizq5MRyY8hUfqoLUZgbLwNwTqY+oGo7PKu1FX54r+lDV5lVj0Uw0iNC
-         orpUK5wT+Lx9uqKc55qamSGSW9xZNXH+PltsddwvJfC3GWyk7VvD9xiKtXeNMUmXCBlj
-         JL8R4S5QghbN1p5sR5zd+noBOvzDs3131UA7SlgYG2HyWaXasAKDNBg2YhCt9/fyktoL
-         tm8K5gAEGtWr3sM32D2uApXdTkV2zFiSBVz9DNE3uWz6l+ORomRTI77Vxl6MZsR3cyYB
-         cfJ1aLOiZ2azEKn9bkYzk10eM5yRhbAkhCfl/cc++6kJ7snnN+JrtqdBhvPsOFIBTPXk
-         NQag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776375326; x=1776980126;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=YRG/q659xesZWxPYzzEVSdkuUOn2ZHM5fkzo4uR4sjQ=;
-        b=g2Mz1icOMHv9Iy9oAUULcl3/3Ms3sjvtNv2FhJYplwU/EOj2gr05zwLBQcoP5OK4qt
-         iHcdERi1iyHgpt73FCYW0/wHrQgHnNGtuwlfLddv3Da0f5/wTXpE937yUtY0cdUuyoSj
-         8nUeFPvqIctxuADr5GKple3AoVkXUqh4rlfkZUqlO3LM9hvhhtgT6jbjFUiJliqdEYIV
-         uoGJeLSnmIEzu70UmIMbhrpTq/AaQyxNz5hTQYU62rHRm306ed5Ae+fsmROPadPDoCRk
-         V+I/LKBAfPB/uqh6zXi1WAV6CZzQEYhf/H7MWBiJ66n3lY0CiEV65rdGM7Ei/FIbH3F1
-         BO3Q==
-X-Forwarded-Encrypted: i=1; AFNElJ9ndkTdlolZV942mR31znStMXexFHsnJMMy9n4lFBnacXjq4ujoCpKhkD+97mFQil16pk8HvNB/Aso=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDaofIWp1jruvm0ID1QKuMdp6qGb9lRBbc441VFPc+e70rnJbj
-	6SQGxSoqSLM/SyW1fdB5UUh6n4xizBcoNHBV0oCUp8l5gdJ+vSMgRAX/ueT099Ywc2F7Jscde0Z
-	Km2B/0YsFTafgfjO9T7bzj0cFdG67UVuQoow24ECUCybsnxnylsxAq3KkNSfF/Q==
-X-Gm-Gg: AeBDieuJ8R0Mb/NtNiCO2DKwWzU+JNEy/ddmKFkA/PvFIyZS7r7yhMfsKf6SXw5SXmZ
-	VVOKMCOvyHQWVtpULeP9Y73hOS2GjE1oHADoVNwGZqz8qyCefucePiQ6TgqThVr42XbMeQtOQqO
-	Mre2xaMGvLQFVG41d1/7bDd+RLfnz9rNPRUxA9hJynsLjCSAJyXddLx+/k+yNeeLXeUPjqTLL0i
-	E46IapG1MZE+tJ+X/m6fwm2Tq6KCO83LXCNQsUua4a8nlsvcnCipLTSCvvJ7WyBV2Mk/eK9lH7X
-	/UOWkCycxsw0rBTPASuscktY+8tlXHQdxgGIKh++DzQ2nsfrnL6+RqySS5kPbKjceKj8h+/o7/K
-	N/xswq8mBdILqTX9wpiTVx5eOBcnF6RrOq402CWg1jlfEV6dVz9TquYGCgR7V0/IkVFA=
-X-Received: by 2002:a05:6214:3211:b0:895:498e:e9dd with SMTP id 6a1803df08f44-8b028024c49mr5543666d6.2.1776375326026;
-        Thu, 16 Apr 2026 14:35:26 -0700 (PDT)
-X-Received: by 2002:a05:6214:3211:b0:895:498e:e9dd with SMTP id 6a1803df08f44-8b028024c49mr5543066d6.2.1776375325583;
-        Thu, 16 Apr 2026 14:35:25 -0700 (PDT)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8ae6cda5a2bsm45376176d6.33.2026.04.16.14.35.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Apr 2026 14:35:24 -0700 (PDT)
-Date: Thu, 16 Apr 2026 17:35:21 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v2 2/2] clk: divider: Add some kunit test suites
-Message-ID: <aeFWGYaRownx1jdp@redhat.com>
-References: <20260413124912.3260571-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260413124912.3260571-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="qE1j2f0i"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vVpfh+KAX1Sv8+V4NpxJ4YC3LaLgl1Dr3V3qEHXplYtU0sUfFtjAwPHpo4BTuBNAH9Etw7NtXgQjKFDQkgkk6TahPtQ6WhIz0I1ovFFF95MNUMcQ1Rb0LEJgCqC4sNVEolICHlTzeYYIkPKW3SfwMMLYxherrpxpw25qQabatA0mvtp3bDdMpOYsQMVa8VdEiO2pHifnC1wkf6Y9xASRBJPdJgkLpy4L9KmIAyvUiPh98Pto9vqttctYW/NsVVIv8YS5LhqNMiYo2UN6N7vSb5u5LYRTOcY5FqmE6qym8cdonuUY0tmFOsEwhti5d3gZD4QPn1aRZ/BF+7EgDm3EqQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JPlIlpRji94s9ZmuRboL8s0FcNpnXN1rLHkInhPBPsQ=;
+ b=FgiJIMjrIPo9mXw99GpMAvHP5+yisEl9FDi0m7dQXOvwyzCpczDTNH0MZqWqxVA7jSzbod1MsiWFN4c4iow5RE7gd0KXYF3DA7QYFV9SnlrDRVvy38c4PZcZkmQ8/zvCKdQrKN+JLdasZeK48Fz0R8Bsa/BBrXRbKLYWA53cOjzCB5SJ8tKqJZ56tqJmr43K4e1k6KMsBY6mZ6qvbRMwG4Qt9EpEN2CAbakleIFtaWp0AenR77bQuKI8s9OgXXFtwfwW+fUQbFVLBPggYSfCFp4lUsppGuKC9JgJgQ9YQUEkBbA+w+Nag2CTjkecl3tHyDaRRiiy2Tmi4/qbDq1bTA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
+ header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JPlIlpRji94s9ZmuRboL8s0FcNpnXN1rLHkInhPBPsQ=;
+ b=qE1j2f0iRAa7CiwY0eh9JFX7MmSER+Az73lZt7JXBn2jeIhkBbmqkUBtMYsKEeWfl3WQxeOrfbicjrlIEUcin12qV7R9f1xDhTvBh6f3fySUPbllV1i29jJBu28OE+PsVAdVW78dDzhmo3Vti69qYwduoC78Mm803d6q6um/P8fROtcDS0Pp64LqQizYD3sBjyiNV1B0Ufqq7KOGvfQWGsskTP73Mw8A+kyjVWtzEHLdwHyq9uKZ13pZ2LsshJJVne67j6ReUTzLl4CfHkCMsvrZWyXeF74Ba6BJhWwYn4qudwstqd2TQJlRqhzJUIF3ukAbTES+E3DhuD6rRBjIIA==
+Received: from OSQPR06MB7252.apcprd06.prod.outlook.com (2603:1096:604:29c::6)
+ by TYPPR06MB8280.apcprd06.prod.outlook.com (2603:1096:405:396::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9818.25; Fri, 17 Apr
+ 2026 02:20:26 +0000
+Received: from OSQPR06MB7252.apcprd06.prod.outlook.com
+ ([fe80::92af:c9d9:8779:d19]) by OSQPR06MB7252.apcprd06.prod.outlook.com
+ ([fe80::92af:c9d9:8779:d19%4]) with mapi id 15.20.9818.023; Fri, 17 Apr 2026
+ 02:20:25 +0000
+From: Billy Tsai <billy_tsai@aspeedtech.com>
+To: Conor Dooley <conor@kernel.org>
+CC: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel
+ Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, Linus
+ Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Ryan Chen
+	<ryan_chen@aspeedtech.com>, Andrew Jeffery <andrew@aj.id.au>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
+	<linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "openbmc@lists.ozlabs.org"
+	<openbmc@lists.ozlabs.org>, "linux-gpio@vger.kernel.org"
+	<linux-gpio@vger.kernel.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v7 1/3] dt-bindings: pinctrl: Add
+ aspeed,ast2700-soc0-pinctrl
+Thread-Topic: [PATCH v7 1/3] dt-bindings: pinctrl: Add
+ aspeed,ast2700-soc0-pinctrl
+Thread-Index: AQHczXLoc0DWafBAUU23YFhFi4LfGrXh15uAgACsm2Q=
+Date: Fri, 17 Apr 2026 02:20:25 +0000
+Message-ID:
+ <OSQPR06MB7252EB0C2A1A3313DE49406B8B202@OSQPR06MB7252.apcprd06.prod.outlook.com>
+References: <20260416-upstream_pinctrl-v7-0-d72762253163@aspeedtech.com>
+ <20260416-upstream_pinctrl-v7-1-d72762253163@aspeedtech.com>
+ <20260416-brutishly-saga-ba7168a4cd14@spud>
+In-Reply-To: <20260416-brutishly-saga-ba7168a4cd14@spud>
+Accept-Language: en-US, zh-TW
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=aspeedtech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OSQPR06MB7252:EE_|TYPPR06MB8280:EE_
+x-ms-office365-filtering-correlation-id: c4799b52-57c8-48d1-94f9-08de9c27e2fa
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|7416014|376014|366016|38070700021|56012099003|18002099003|22082099003;
+x-microsoft-antispam-message-info:
+ ImKxIORntg+GSzMgXzxPo8ov+7H5xkDQ0MwZlP+weRjhqOHnNULsOSgXJu5Wttr/L+XdWlIDXdUnxzV7Zl91rOPAjZbHF8ITKOGtd+wBVhg3Ap9qH5Jx1dMgb7K7XNZfyGiKBx5RjY8pod5Veur/0D5yUJCFbbfRbJScHIT2CKAFTyrJxrIRi49a/kZFKafgASxZ6Zqq59rhJvTgYF9v4LCRz7j7XtBYY0pB1FskVMgtw4I90rqVTb+MKEpJb5+v+mbeQdRFPAc4lBZzeDaXjFvlpL2b7DrJrFM6SM2VX5DKCY1vGdZp9bdh8/zkyXGbKA0fWg4eeT9mYTCtecB5Z6HNAa1f5xv+uC50SfglZDgojmjBEqtJ+lChpRrkbeKS52YulVCf4qX692TpdGCpC339I+Rs437Z2lTACO49Kzb5/3fC2V9E7pJiCrc9mmgiaEhdhiG/zp2pGgDex0g/J+3uxlm7xDBrsUY+NFitDqNGuj5UouCfB1rwiZ831+yI55F94FRliU8pk9UJCc/XPD4VlvcUTzkIkq5hIdr52EYbX8rniWVYrHqQrRePXs+ZomdzuWGwXB0aiR2TQ5C9Ylswep14WiclXZdxR4KczHsYl4odhg8QdfT+3KnCbFgeDWuJmbqbV87mdBNa/VO2xOckdtDkQiOsQ7+Yxhbs2aeue2E5BrAu8iV+eFTRpBNMARE1rMTVsyJeSI0UajuquHgTvizi/ASIKUdjTP0v32q44n446ZAEci2p1xmuA7PyB58z+CYbGqA/S8HKES/1CdV5iI4oIjEy+DNkdGY3BM4=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSQPR06MB7252.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(38070700021)(56012099003)(18002099003)(22082099003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?mbgvt/3xM1/7onQJ1Ckdpqnrb7Fqw2Wi5nxMO+8200o9Me8lPUVI+MiDRP?=
+ =?iso-8859-1?Q?Uu8vAJKyZXvrDKtXvmsKQJU2CcHkggsdp4QW77N1cSnhhcG3dvuFCd6NyC?=
+ =?iso-8859-1?Q?9AjlT2Vc+fEUm7UAwVyQGkY+sjoDLIrrAuucK5KGUmlM/lDiF0t05YIXnC?=
+ =?iso-8859-1?Q?bOKYRt91rXLt1mSYuGSSqU/Aog3cSa0ppZrIHRAxXBgn7jhR7/FFoH8BIb?=
+ =?iso-8859-1?Q?seAvR0NjVqSD8BrmrnZgr6KpeTYzpPXxeZYtH+fzzTdnauaEyrrGGop62/?=
+ =?iso-8859-1?Q?2F74q8tiHt2wQR1Z+J10SHqsjYMsJnknnmyF1vPFCK6s+0D19XZqF8xBIT?=
+ =?iso-8859-1?Q?zcAbHRWy4ZVLzddxrlPjmzcAVrfVmzZpjisz5NylAIzIMKj7O/pSo/fQLa?=
+ =?iso-8859-1?Q?FE1En8BNI3XDofmmRMHf/m5EYoyFslmkomBa7zdYg+FzLrZ7LBLdoMBGjH?=
+ =?iso-8859-1?Q?RZX0yc7A3DnugQQ09Y3YPFwXMIcFdagdfGrlFf7/y7P82kcB+BZzrcReIg?=
+ =?iso-8859-1?Q?OsTwHD7B067HlC7MCiI2TUmFH0VlKK4RIcaw0/T//8O6ZD9UlDVs2v7arv?=
+ =?iso-8859-1?Q?pI3V2ZPFiPyYjIqXfYs6Xd++KiUNSgnDkwBjBJOemBcbxNKeABsITbnm6w?=
+ =?iso-8859-1?Q?HmeVNabcv2f1/ThEO/OGx70vkac9z1cBca3ue1API9wmhnXgWkfLH0A3lE?=
+ =?iso-8859-1?Q?rfesJf0WUkeB4RVg74ay5ukNhg1ZspISNmXKB7deAgBxDHj4+Z8Bg71YmN?=
+ =?iso-8859-1?Q?zOASuHcZuldHIKuPTnTl1fBSrq+84IMDoaTFWNKkDqggikrfkFHgxjG8hJ?=
+ =?iso-8859-1?Q?ZJdoTpqcRSUkjuyLh1WYGZcqauD84gDkg2Jzds8QSC7ZtIRK6jdLhpv27h?=
+ =?iso-8859-1?Q?y8iAM7C4qBT/ycmT7krewNmRcYK4YyGGsbN9AR8cWKMiBwmgAZrXkwkhAK?=
+ =?iso-8859-1?Q?44A1izVk1L1R9GIF1k4B1cFOUyqEWTgCzbROVsZpdkEWSdWING2Gkj5Fr8?=
+ =?iso-8859-1?Q?0HCFzKNM4dN8+M51H5HcZndRHP8gsZ71kum3DNLeY8owae4VTpIrqkWZ3k?=
+ =?iso-8859-1?Q?tkbUzTwWxg2nzHmDucIyDjbzUv6lsKU3mQO7RwKb/029VE/YfRYkp0x1x0?=
+ =?iso-8859-1?Q?YD7prBFpmtIxNkZaqd9EnJoGY0GHCT8uKs4cI2+w7fMzvd9d/scw7nKJVY?=
+ =?iso-8859-1?Q?L3LRXKufZJgp1uxyphorFKzCFdkJgkkIS1NY1dwN5ynO0O6Z+HvR3RniyD?=
+ =?iso-8859-1?Q?iRhdr1RhR+De9epHSuppcHLESjyIUuyQHFhdzTKgsPDX8/KgrWXpabVDTu?=
+ =?iso-8859-1?Q?5AWmODHuM0X8cU/DdW0CEFTeOPm9ausCpHr3xhbFXcDRatzovXWGmK5ITr?=
+ =?iso-8859-1?Q?g9OM3p+9KzOog6xBAIzahPZ57wArZ60NOoDq3kNES0OGpd4vIztPFRQE21?=
+ =?iso-8859-1?Q?BdR09sqpn+fwgY2qDX+wtK2kOtzIpxXC+zsqCARiMs5z8NWMvjxiFGHjUp?=
+ =?iso-8859-1?Q?lrMppqHiBG//5iPr5go2taOIHF9RR+mBqtfeHcjJFh109+EWhHz0ZScwfk?=
+ =?iso-8859-1?Q?D0OiNLO7iEATpNWD9Be1jVhg8ry8xCP3vbzhxtsHxOindglJaWzdAPeGd/?=
+ =?iso-8859-1?Q?CAUDgaovVxwHhV35AAb9QO9Lt2ooLHCK8AEZQJTQfrKAbBjjIzMw3UW8q2?=
+ =?iso-8859-1?Q?OjhnmGIgVM/AMouZXTF7/QqnmzsFcA8+jedK1xJKQMFAF9VW3nPLECYadM?=
+ =?iso-8859-1?Q?hUiz2y/0kN/8bdQ5B+aLI6IaOiiZ+m3Hjz5iJ81xEDvRkr1A7/0IjF011B?=
+ =?iso-8859-1?Q?vC7AwpsJTg=3D=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260413124912.3260571-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-User-Agent: Mutt/2.3.1 (2026-03-20)
+X-OriginatorOrg: aspeedtech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OSQPR06MB7252.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c4799b52-57c8-48d1-94f9-08de9c27e2fa
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Apr 2026 02:20:25.8809
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: QFDOS0itSkEXdRHCADi//tcuSgDGHhNM8iecIpFpOTCCKuSGlEs2Fx8aVuPPO3UmwWDCyb34t+EmhTPDN9xtrleFYiLL3BG1qVvAutyEezA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYPPR06MB8280
 
-Hi Lad,
-
-On Mon, Apr 13, 2026 at 01:49:12PM +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> Add KUnit tests to verify clk_divider_bestdiv() returns the maximum
-> achievable rate when clk_round_rate() is called with ULONG_MAX, which
-> is the canonical way to probe the maximum rate a clock can produce.
-> 
-> The first test uses a fixed-rate parent driving a table-based divider
-> with no div=1 entry. The second test places a two-input mux between
-> the divider and its root clocks to verify correct parent selection and
-> that the divider loop does not make redundant calls to
-> clk_hw_round_rate() for each remaining table entry after the first
-> overflow.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
->  drivers/clk/Kconfig            |   7 ++
->  drivers/clk/Makefile           |   1 +
->  drivers/clk/clk-divider_test.c | 151 +++++++++++++++++++++++++++++++++
->  3 files changed, 159 insertions(+)
->  create mode 100644 drivers/clk/clk-divider_test.c
-> 
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index cc8743b11bb1..c8f9eaef6f6b 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -573,4 +573,11 @@ config CLK_FD_KUNIT_TEST
->  	help
->  	  Kunit test for the clk-fractional-divider type.
->  
-> +config CLK_DIVIDER_KUNIT_TEST
-> +	tristate "KUnit tests for clk divider bestdiv" if !KUNIT_ALL_TESTS
-> +	depends on KUNIT
-
-Since the clk divider calls writel(), you also will need to
-unfortunately add:
-
-    depends on !S390
-
-This is already on CLK_GATE_KUNIT_TEST. For the reason why, look at
-commit a6c3da03ead11 ("clk: disable clk gate tests for s390")
-
-> +	default KUNIT_ALL_TESTS
-> +	help
-> +	  Kunit test for the clk-divider type.
-> +
->  endif
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index a3e2862ebd7e..0c915c6cf3fa 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -20,6 +20,7 @@ clk-test-y			:= clk_test.o \
->  				   kunit_clk_assigned_rates_zero_consumer.dtbo.o \
->  				   kunit_clk_hw_get_dev_of_node.dtbo.o \
->  				   kunit_clk_parent_data_test.dtbo.o
-> +obj-$(CONFIG_CLK_DIVIDER_KUNIT_TEST) += clk-divider_test.o
->  obj-$(CONFIG_COMMON_CLK)	+= clk-divider.o
-
-Swap the order of these two lines above for consistency with the
-clk-fixed-rate and clk-gate tests where the actual implementation is
-first, and then the test.
-
->  obj-$(CONFIG_COMMON_CLK)	+= clk-fixed-factor.o
->  obj-$(CONFIG_COMMON_CLK)	+= clk-fixed-rate.o
-> diff --git a/drivers/clk/clk-divider_test.c b/drivers/clk/clk-divider_test.c
-> new file mode 100644
-> index 000000000000..3a5e3adccb2e
-> --- /dev/null
-> +++ b/drivers/clk/clk-divider_test.c
-> @@ -0,0 +1,151 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * KUnit tests for clk_divider_bestdiv()
-> + */
-> +#include <kunit/test.h>
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/limits.h>
-> +#include <linux/units.h>
-> +
-> +#define PARENT_RATE_1GHZ	GIGA
-> +#define PARENT_RATE_2GHZ	(2 * GIGA)
-> +#define PARENT_RATE_4GHZ	(4 * GIGA)
-> +
-> +static u32 fake_reg_a, fake_reg_b;
-
-Right now this limits this to one implementation. Put these in a
-structure and use kunit_kzalloc() so that there can be multiple, and the
-runner can execute them in parallel.
-
-> +
-> +static const struct clk_div_table no_div1_table[] = {
-> +	{0, 2},
-> +	{1, 4},
-> +	{2, 8},
-> +	{0, 0},
-> +};
-
-You can pass NULL for the table to simplify this code further. I don't
-see where you are testing anything special related to the table. I think
-you'll need to pass CLK_DIVIDER_ONE_BASED to the flags when you create
-the divider if you use a NULL table.
-
-> +
-> +static void unregister_fixed_rate(void *hw)
-> +{
-> +	clk_hw_unregister_fixed_rate(hw);
-> +}
-> +
-> +static void unregister_divider(void *hw)
-> +{
-> +	clk_hw_unregister_divider(hw);
-> +}
-> +
-> +static void unregister_mux(void *hw)
-> +{
-> +	clk_hw_unregister_mux(hw);
-> +}
-> +
-> +/*
-> + * Test that clk_round_rate(clk, ULONG_MAX) returns the maximum achievable
-> + * rate for a divider clock.
-> + */
-> +static void clk_divider_bestdiv_ulong_max_returns_max_rate(struct kunit *test)
-> +{
-> +	struct clk_hw *parent_hw, *div_hw;
-> +	unsigned long rate;
-> +
-> +	parent_hw = clk_hw_register_fixed_rate(NULL, "bestdiv-parent",
-> +					       NULL, 0, PARENT_RATE_1GHZ);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent_hw);
-> +	kunit_add_action(test, unregister_fixed_rate, parent_hw);
-
-You can put clk_hw_unregister_fixed_rate() in the call here, and then
-drop unregister_fixed_rate(). There's some cases of this below as well.
-
-Check the return value of kunit_add_action() here and below as well.
-
-> +
-> +	fake_reg_a = 0;
-> +	div_hw = clk_hw_register_divider_table(NULL, "bestdiv-div",
-> +					       "bestdiv-parent",
-> +					       CLK_SET_RATE_PARENT,
-> +					       (void __iomem *)&fake_reg_a,
-
-You'll need __force for the cast for sparse as well.
-
-> +					       0, 2, 0, no_div1_table, NULL);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, div_hw);
-> +	kunit_add_action(test, unregister_divider, div_hw);
-
-Same here... you can just put clk_hw_unregister_divider() here and drop
-the function above.
-
-> +
-> +	/*
-> +	 * ULONG_MAX is the canonical way to probe the maximum rate a clock
-> +	 * can produce. With a parent at 1 GHz and the smallest table divider
-> +	 * being 2, the expected maximum is 500 MHz.
-> +	 *
-> +	 * Before the fix this returned 125 MHz (PARENT_RATE / 8), the
-> +	 * minimum rate, because the search loop was bypassed entirely.
-
-The "Before the fix" comment should go in the commit log. The comment in
-the code should describe how the code is right now.
-
-> +	 */
-> +	rate = clk_hw_round_rate(div_hw, ULONG_MAX);
-> +	KUNIT_EXPECT_EQ(test, rate, PARENT_RATE_1GHZ / 2);
-> +}
-> +
-> +/*
-> + * Test that clk_round_rate(clk, ULONG_MAX) returns the correct maximum rate when
-> + * a mux clock sits between a divider and its parent candidates.
-> + *
-> + * Topology:
-> + *
-> + *   [fixed 4 GHz] --\
-> + *                    +--> [mux CLK_SET_RATE_PARENT] --> [div {2,4,8} CLK_SET_RATE_PARENT]
-> + *   [fixed 2 GHz] --/
-> + *
-> + */
-> +static void clk_divider_bestdiv_mux_ulong_max_returns_max_rate(struct kunit *test)
-> +{
-> +	static const char *const mux_parents[] = {
-> +		"bestdiv-mux-parent-a",
-> +		"bestdiv-mux-parent-b",
-> +	};
-> +	struct clk_hw *parent_a_hw, *parent_b_hw, *mux_hw, *div_hw;
-> +	unsigned long rate;
-> +
-> +	/* Higher-rate parent: the mux should select this for ULONG_MAX. */
-> +	parent_a_hw = clk_hw_register_fixed_rate(NULL, "bestdiv-mux-parent-a",
-> +						 NULL, 0, PARENT_RATE_4GHZ);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent_a_hw);
-> +	kunit_add_action(test, unregister_fixed_rate, parent_a_hw);
-> +
-> +	/* Lower-rate parent: should not be selected. */
-> +	parent_b_hw = clk_hw_register_fixed_rate(NULL, "bestdiv-mux-parent-b",
-> +						 NULL, 0, PARENT_RATE_2GHZ);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent_b_hw);
-> +	kunit_add_action(test, unregister_fixed_rate, parent_b_hw);
-> +
-> +	/*
-> +	 * 1-bit mux register selects between the two parents.
-> +	 * CLK_SET_RATE_PARENT allows the divider's rate request to
-> +	 * propagate into clk_mux_determine_rate().
-> +	 */
-> +	fake_reg_a = 0;
-> +	mux_hw = clk_hw_register_mux(NULL, "bestdiv-mux",
-> +				     mux_parents, ARRAY_SIZE(mux_parents),
-> +				     CLK_SET_RATE_PARENT,
-> +				     (void __iomem *)&fake_reg_a,
-> +				     0, 1, 0, NULL);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, mux_hw);
-> +	kunit_add_action(test, unregister_mux, mux_hw);
-
-You can put clk_hw_unregister_mux() here and drop this function above.
-
-> +
-> +	fake_reg_b = 0;
-> +	div_hw = clk_hw_register_divider_table(NULL, "bestdiv-mux-div",
-> +					       "bestdiv-mux",
-> +					       CLK_SET_RATE_PARENT,
-> +					       (void __iomem *)&fake_reg_b,
-> +					       0, 2, 0, no_div1_table, NULL);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, div_hw);
-> +	kunit_add_action(test, unregister_divider, div_hw);
-> +
-> +	/*
-> +	 * Expected maximum: mux selects the 4 GHz parent, divider applies
-> +	 * the smallest table entry (2): 4 GHz / 2 = 2 GHz.
-> +	 */
-> +	rate = clk_hw_round_rate(div_hw, ULONG_MAX);
-> +	KUNIT_EXPECT_EQ(test, rate, PARENT_RATE_4GHZ / 2);
-> +}
-> +
-> +static struct kunit_case clk_divider_bestdiv_test_cases[] = {
-> +	KUNIT_CASE(clk_divider_bestdiv_ulong_max_returns_max_rate),
-> +	KUNIT_CASE(clk_divider_bestdiv_mux_ulong_max_returns_max_rate),
-> +	{}
-> +};
-
-Usually I'd ask for a few other tests for basic functionality to be
-added rather than just testing the maximum. However there's actually
-some stuff broken with the existing dividers and the clk core where a
-clk can change the rate of it's siblings. I have a series to address
-this at:
-
-https://lore.kernel.org/linux-clk/20260327-clk-scaling-v8-0-86cd0aba3c5f@redhat.com/
-
-I think the tests that you have are fine.
-
-Stephen: If you have time after the merge window closes I'd appreciate
-it if you could take time to provide feedback about that series.
-
-Puss in Boots please... :)
-https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExaXg5cGFhbGdmbTZjdnRkdWs4aXM5d3FlYnFmbTNudWFsZ3Fwc3o5NiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/qUIm5wu6LAAog/giphy.gif
-
-Brian
-
+> > +=A0=A0=A0 properties:=0A=
+> > +=A0=A0=A0=A0=A0 function:=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0 enum:=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - EMMC=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - JTAGDDR=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - JTAGM0=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - JTAGPCIEA=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - JTAGPCIEB=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - JTAGPSP=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - JTAGSSP=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - JTAGTSP=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - JTAGUSB3A=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - JTAGUSB3B=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - PCIERC0PERST=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - PCIERC1PERST=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - TSPRSTN=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - UFSCLKI=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2AD0=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2AD1=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2AH=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2AHP=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2AHPD0=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2AXH=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2AXH2B=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2AXHD1=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2AXHP=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2AXHP2B=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2AXHPD1=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2BD0=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2BD1=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2BH=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2BHP=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2BHPD0=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2BXH=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2BXH2A=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2BXHD1=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2BXHP=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2BXHP2A=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2BXHPD1=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3AXH=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3AXH2B=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3AXHD=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3AXHP=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3AXHP2B=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3AXHPD=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3BXH=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3BXH2A=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3BXHD=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3BXHP=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3BXHP2A=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3BXHPD=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - VB=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - VGADDC=0A=
+> > +=0A=
+> > +=A0=A0=A0=A0=A0 groups:=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0 enum:=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - EMMCCDN=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - EMMCG1=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - EMMCG4=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - EMMCG8=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - EMMCWPN=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - JTAG0=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - PCIERC0PERST=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - PCIERC1PERST=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - TSPRSTN=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - UFSCLKI=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2A=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2AAP=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2ABP=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2ADAP=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2AH=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2AHAP=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2B=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2BAP=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2BBP=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2BDBP=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2BH=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2BHBP=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3A=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3AAP=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3ABP=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3B=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3BAP=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3BBP=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - VB0=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - VB1=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - VGADDC=0A=
+> > +=A0=A0=A0=A0=A0 pins:=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0 enum:=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - AB13=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - AB14=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - AC13=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - AC14=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - AD13=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - AD14=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - AE13=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - AE14=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - AE15=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - AF13=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - AF14=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - AF15=0A=
+=0A=
+> Why do you have groups and pins?=0A=
+=0A=
+> Is it valid in your device to have groups and pins in the same node?=0A=
+=0A=
+The intent is to support both group-based mux selection and=0A=
+configuration, as well as per-pin configuration.=0A=
+=0A=
+In our hardware:=0A=
+=0A=
+- `function` + `groups` are used for pinmux selection.=0A=
+- `pins` is used for per-pin configuration (e.g. drive strength,=0A=
+  bias settings).=0A=
+- `groups` may also be used for group-level configuration.=0A=
+=0A=
+As a result, both `groups` and `pins` may appear in the same node,=0A=
+but they serve different purposes and do not conflict:=0A=
+=0A=
+- `groups` selects the mux function and may apply configuration to=0A=
+  the entire group.=0A=
+- `pins` allows overriding or specifying configuration for individual=0A=
+  pins.=0A=
+=0A=
+In most cases, only one of them is needed, but both are allowed when=0A=
+both group-level and per-pin configuration are required.=0A=
+=0A=
+Thanks=0A=
+Billy Tsai=0A=
