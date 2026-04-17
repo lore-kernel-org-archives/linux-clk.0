@@ -1,131 +1,95 @@
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85EB533F8DA
-	for <linux-clk@vger.kernel.org>; Fri, 17 Apr 2026 07:07:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA403793C8
+	for <linux-clk@vger.kernel.org>; Fri, 17 Apr 2026 07:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776409678; cv=none; b=YCUXaHJh9V54TrwQdbA6Hzd7lShx8WpOj7QVPd8Rh5SNe4TO6CcAkUPFdhlLZb1evQfhb4kXharBYFiEFBinKRscqfORk147HxNYzeUZfpAnczJBwL4aq8OyfomW3wqAV9pHheHx4P20aYvZjk0iDx95Ano9lxHISmlYPJ9U7gs=
+	t=1776411439; cv=none; b=sEM13vDRcafoPxjXcj7IC1Hu/GKFRrUo4W3avfr+VVO7QB5bCvxdZZIhitSRdXUjlha1Z+ONb9RR5A7X88DtY8JwofBLdNIaALz84dgTwpVj2ATPxjHiQuK80Np4Il9Kw6ojlydFePlbVnLYRfr3/tU37u8u9hiFWLoWwrTaUbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776409678; c=relaxed/simple;
-	bh=++e5FZB0tsvADRX7W3I2ua7//VvtHVnA0IB0LJVNzdk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=A+RcT4Ol8lagJ6AG28z55RfZCmIqyQ+wokWB03ZdBd0yVuPLU9W7Cyd7CxwqiNZMuvHxIRc9FNJXVU/PP3A/+PKOqBjPh7uPzOGQNuq6y9u0inTxMMHk/CI73NTDvbhh8SeAb5UJRKQaXbc5PsQW6KP6HDaxSOW5qZSGK+2Up7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=KI0gSCtr; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+	s=arc-20240116; t=1776411439; c=relaxed/simple;
+	bh=XcTpqX3ydnmlIVYB2Pz6P25RXMh6Xhwymj4ICa/xzbI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Qg9P+khwFML5DEHb8CavytHipLoKwTngjweRrGlYkXux3ZGKKWZPaBx4JWGLuabh87PU7etqdWdQpDB3haKiIgcJPaBkNKY6DzNeCPoYntiTCVpBzLlSG3dx/bBxboB1NLpLBG6fZ6y3d8a9InruOHPg0sOBCdYeBEz+xJo3LvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ISfRekBt; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="KI0gSCtr"
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b9c755b2cdeso64150366b.2
-        for <linux-clk@vger.kernel.org>; Fri, 17 Apr 2026 00:07:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ISfRekBt"
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5a40502e63bso422146e87.0
+        for <linux-clk@vger.kernel.org>; Fri, 17 Apr 2026 00:37:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1776409674; x=1777014474; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JjyHbpSUyn7H1fP6Lf1b6SGYz/5Pq+5nMg5uPxkZH/0=;
-        b=KI0gSCtr1Vqld7CvrdNWBKb6UUd+HiAFPp4Id5DFUBk7QOcmTvJDgbidO7AKF8vu7B
-         w9tx1ezniuwjYlGUcChECpk9VvGmHokLHnKNamSFthjuyyOLO3sDIzZbZwkkBA0oCEK5
-         xtW6pP74QqeBjYgbhXKczwBEnP4E4QV+T3+GiBD6oGTukDSoISJs9t4vFDxsrEp+JH01
-         U4T8eedDbPSZ+dbVLFeJK9M0wgTail30zkreQUW3G01EbqWi9CXtZrR6LqDRnNJC0ZM/
-         01IvuDRcxsrjCtzleWwT2+1x0+d1Q4Kam1me3yqcymF2TzmqEMnHdxjgpxAd1Dhlawi+
-         glvA==
+        d=gmail.com; s=20251104; t=1776411437; x=1777016237; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=314R3/793GME6eVVWj9ZOy0Jnf6xNE5QAaULeE1OxQM=;
+        b=ISfRekBtRa4kVj+WYV1yNj7RucY1P+CzD/fx8sdg6cLDuzh196QcoY51dpjgkfBLrS
+         puu9PuNPynTn89QXIeWFFcqbgh6PAoxgHT+uOTf7YM3FLGUMPpwl9wG6xqc3+vgj7ulA
+         bIBBxt/p2x7pnDsiLIfhtdfX+H1gRbEQ41l88/dTLeGA7w0pbfhCxluwPAxCqXOASyRK
+         EZSKkD5e9Yy9TjzxLw5S9J6H8KvDpDSVHv0cI37UaqCgoN3RnyurOq86VArkExfeWXC+
+         dEsNgmVDDTp/9uBSLW2VI6T9x3d9GkHJOzLMJrGpIzgBClOmz65mvOf9/u3oTVR/eGJJ
+         tW+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776409674; x=1777014474;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=JjyHbpSUyn7H1fP6Lf1b6SGYz/5Pq+5nMg5uPxkZH/0=;
-        b=US1S3M5W5jtTVcK3nvjTX2ehZYGlq2YCj/GOcUXSfOl6nmVxUP5QKhyUgDtCFEgslF
-         bdqRU5a+GkitFbjgwVT9l5UUydlZItzMeVuvgFHe51rPCyNu47tqzbeTjDEw/9mN7LXQ
-         zDPTjWoLXjTvy4ycpMgY5k5EijYKLOlW7JxjFKvc4syPYF3sl9wgllTlW2PoTRklKYVq
-         Fuf+T3QmMRcrGowM9ClwqpR4BLbwUekiQXdoBBDhPE6y3BK1g9gNWn2r2NXWuN3hdMk5
-         lgx4rNRY6O6FK3epxety72upPm7V/TPm+KaU8G0Q38eqRQEzsmeWvom6m60u0ffSvtVp
-         LJcQ==
-X-Forwarded-Encrypted: i=1; AFNElJ8swc8zt2vf4rHGE/y5/p1HG3V4hTtd1QT7It9RVuOmYFgF1pbMAytTd28EHQD2YqJANLgAjOLq89A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwU0e4ODIOe6HpmT2bYuIvLbo6nu19Bg1XeCP2rt28CypdHAFke
-	YvpYeJ1w2gh3gEGrM2KGSboYsSjyYW+R3qNgSiiIIkzEczILT5+Z+tEwY5yNvUooYwc=
-X-Gm-Gg: AeBDiesNbOgnKQIMAmtnSms+mrGhJ95Lw5RWTpip2DhPZIMJM99CPpp0PzF3BXgbFSu
-	rfLUCZm5oz+lhZv7VDEzO89bdX2C/t18Sy2Xk/svokruQSHCPePlvPsEL7TxGDogkQH3Z/y+efV
-	mR0kYXz++igFEfk0FDFJ7VXuhyLuJPiuboq0hpscH1wZKTOddOgo/1IBjr1dzgfbZqEbYUJ148d
-	4+yPbZDw2nCBPtf+Y/rQT3PMmfilr2rpNinckt2gaVJqiffzNCWqXMThRvRyljIg6CgmwXSgSrd
-	Qt93XflXVV0JRFoqsZmfnk6FPbuBc0xcaoNBvmLAKUZVycxzJKHtiBJnJDLgW1Cw090kinqskQm
-	ccw8qIvzxMSXIOoDwgcqeQdhLw8zmH7lWi27q5vodX3Y017aRzG/aEMG6ZyNHnR2K6Qw0xZO/hK
-	A4N2nGs/VYTAJisYSXP4xLDKOS8+9ZFoc/HOmoMCs3gksn9FOHfk+lLeOf0ydmEiI+x7eLk9Frl
-	iE29BiawJK4jjfA
-X-Received: by 2002:a17:906:dc89:b0:b98:6926:13cb with SMTP id a640c23a62f3a-ba418b7e13cmr85858466b.9.1776409673778;
-        Fri, 17 Apr 2026 00:07:53 -0700 (PDT)
-Received: from [172.16.240.100] (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ba451cdfd27sm26448466b.26.2026.04.17.00.07.52
+        d=1e100.net; s=20251104; t=1776411437; x=1777016237;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=314R3/793GME6eVVWj9ZOy0Jnf6xNE5QAaULeE1OxQM=;
+        b=SK/8RfwbFtffIQtisEHs8l0hsFNfq+bQTQ4cg4iowNa3thU+GhaxIm6VljzjE3fdZ4
+         Cp2sYAjFjmsPqLK5tZQH/kaVyStFMwnUuq9IAr2NPs2A8ZQ4nz3TVpqjCeXpVOuSVLJH
+         aw19Y+iljJb/oXiNfnHEPtug6quErG6hYRSjNTIFSg+ShD09t6R+5NyG2civf8NttSlT
+         NcfU9Sr3ziDxLs0sgh9HCF+k5vLSDMqjUfRYE15iEfgoa2gaNi6VgAzci9SHTlf7u69K
+         jxxTdKdAsieLfgIVY5L0kIP6raWArL8/NIWjTzNG87M2g2WBY4HdFcFpTWD+rXCrHUNF
+         mEeA==
+X-Gm-Message-State: AOJu0YzQwF5JeR8HVK+7cfIR81bKDSmdX33RLdXVU4C5wdCnYFFb1m7V
+	3I9vHMOrb5bKN8luJR0fm5c2ijlUzbenbmpbOUu3ZKJQPlk04B2k93RY
+X-Gm-Gg: AeBDies3DxqJ6NMOqNTtagQcItubN935TpfwZMJ7ILgMfUs+et7kdaLywyfG+taF5/J
+	nRlRHM300KL23PKAGKKVw10yzzDkiYLLHnZhXAd71ULC/RJzlqBh88GlqzkTsaMvWWEL9eUYXqb
+	KGlD7ft1JnS1uEKHijJZFJW3YtdfIyCyiKt2hE8XkWU3sz4Hb+71AvkjvCCWE5cpXcIN41gR6Bz
+	WjHvVZ6UG547//NK0rEJuj8udH3pQlcd+JUlRp3GaVxj3Pg8tzJbprv2tZlrJWvFMNQzsqOVLC1
+	lrvBhETXil/BBiuXfAbNNZgTc6MSxOKTLZV6sgqRrIslKzi5uw6i6rRfLQ84ZHN10zg0oYhTMlL
+	k0lfDJ8+cs31+ebQxCTrCMAg3Ixm4lgTKZvvvKUsQqpwmOdyx7pbGYzjbsDUR9R5ytqGk4lV6gI
+	EbUBvSnbOWNklysp2+d+IKMFA=
+X-Received: by 2002:a05:6512:1295:b0:5a1:3d7f:8f99 with SMTP id 2adb3069b0e04-5a4172e310emr523530e87.33.1776411436614;
+        Fri, 17 Apr 2026 00:37:16 -0700 (PDT)
+Received: from xeon ([188.163.112.56])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-38ecb5f64ebsm1692661fa.10.2026.04.17.00.37.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Apr 2026 00:07:52 -0700 (PDT)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Fri, 17 Apr 2026 09:07:46 +0200
-Subject: [PATCH v3 3/3] arm64: dts: qcom: milos: Add GX clock controller
+        Fri, 17 Apr 2026 00:37:16 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/1] clk: tegra: support 48MHz clock for pll_p_out1
+Date: Fri, 17 Apr 2026 10:34:51 +0300
+Message-ID: <20260417073452.23342-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260417-milos-gxclkctl-v3-3-08f5988c43a2@fairphone.com>
-References: <20260417-milos-gxclkctl-v3-0-08f5988c43a2@fairphone.com>
-In-Reply-To: <20260417-milos-gxclkctl-v3-0-08f5988c43a2@fairphone.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
- Alexander Koskovich <akoskovich@pm.me>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Luca Weiss <luca.weiss@fairphone.com>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
- Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1776409667; l=1066;
- i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
- bh=++e5FZB0tsvADRX7W3I2ua7//VvtHVnA0IB0LJVNzdk=;
- b=8898ctpJBm3z6J1Uj5QTf6yngGfQCbUWxKiZsXVNy4Ta5P8d/CK0C0G4aB6tnCpRQPEcfJeNB
- L8jWLKqiTU4Av8SW1RkWv8ZYRUHrsnE6+elqbkdzzz/fze4rBXJsT2v
-X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
- pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Add a node for the GX clock controller, which provides a power domain to
-consumers.
+UEFI on Surface2 sets pll_p_out1 to 48MHz which is not supported
+by kernel and causes BUG() early on. Fix this by adding 48MHz
+clock support for pll_p_out1 along with 48MHz support for pll_a,
+main pll_p_out1 descendant.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Reviewed-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
- arch/arm64/boot/dts/qcom/milos.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Dmitry Osipenko (1):
+  clk: tegra: support 48MHz clock for pll_p_out1
 
-diff --git a/arch/arm64/boot/dts/qcom/milos.dtsi b/arch/arm64/boot/dts/qcom/milos.dtsi
-index 4a64a98a434b..4bd9181ca03e 100644
---- a/arch/arm64/boot/dts/qcom/milos.dtsi
-+++ b/arch/arm64/boot/dts/qcom/milos.dtsi
-@@ -1542,6 +1542,16 @@ lpass_ag_noc: interconnect@3c40000 {
- 			qcom,bcm-voters = <&apps_bcm_voter>;
- 		};
- 
-+		gxclkctl: clock-controller@3d64000 {
-+			compatible = "qcom,milos-gxclkctl";
-+			reg = <0x0 0x03d64000 0x0 0x6000>;
-+
-+			power-domains = <&rpmhpd RPMHPD_GFX>,
-+					<&gpucc GPU_CC_CX_GDSC>;
-+
-+			#power-domain-cells = <1>;
-+		};
-+
- 		gpucc: clock-controller@3d90000 {
- 			compatible = "qcom,milos-gpucc";
- 			reg = <0x0 0x03d90000 0x0 0x9800>;
+ drivers/clk/tegra/clk-pll.c      | 1 +
+ drivers/clk/tegra/clk-tegra114.c | 6 ++++--
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
 -- 
-2.53.0
+2.51.0
 
