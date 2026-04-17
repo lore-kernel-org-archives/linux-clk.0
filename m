@@ -1,147 +1,205 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C74A34E74B
-	for <linux-clk@vger.kernel.org>; Fri, 17 Apr 2026 13:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=170.10.129.124
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776432087; cv=pass; b=V4ZSLERoZmVPf7bC69Xpg4AqtwbaCCcxY5ilTc17SEr5TZCEv+BIZXAlORhvhMjksgUv3gj5C0KEIc9niquTxpOctPPrYZShA88nldYkVhQzcMlUWEIasHtZ72RC9mTJJl+kmeC9ey8POpZmyUxWSAFsbpeKsX5WAomDWnL+91o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776432087; c=relaxed/simple;
-	bh=kI0N6QQjh0tI4EIny2tcL+kK2lCNv5JgbdSFpCdFlec=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=npL+6grMmw7iH/Kz2alGyqGOx3aGh6ysRi46rNYrAuWW2shHPwRmNGcein8893g4vgwW9cgllWPq8MoxdtnG9dYaxfswD771jc/YhpYyipW58upcOp65M3g9xUxHFd9te54D77cVVoT92XjY+BTiA9SL080AqETNKELg+2WFvjY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MSoIMcoc; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=DCGx/w1i; arc=pass smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A161B279DCA
+	for <linux-clk@vger.kernel.org>; Fri, 17 Apr 2026 15:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1776438718; cv=none; b=gBJRH2GqjjtVt14IZIK2tsGzNm+6fLZwJKS2COt/82Bpnz4Zh/TTBMxNwSTtxx9A/84RolOTPfNlCjjUdsRaKcSfS6UR1fuqjVlsejbmH98JTer/DXQn0qSF09leLopkWnxbiiBrSCv+nRAtF1j/Y7dmrbF5FaI83j2qVmUYRaw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1776438718; c=relaxed/simple;
+	bh=eG6IXyh4y0jftfvJQuYeuV3rZuFLFef4kpCOHmG+mBg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UNtBLgYXwiJiAs1qnJpfYicetPenqkCCP4+c4eKKFzEJ5QxDsVW2o60zMd4Kin+a4GKYC0sUgIuIK4DnZ9dCLgThFSN58Qlt+hJX0ZB0Sp9B4XUWtFb1g5EfSuvc1P3nSzp4GhrUe2HxhjtUVPjkwNVDOaMuFZEq2gIoIeuBgrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=flipper.net; spf=pass smtp.mailfrom=flipper.net; dkim=pass (2048-bit key) header.d=flipper.net header.i=@flipper.net header.b=QkxLvHVx; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=flipper.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flipper.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MSoIMcoc";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="DCGx/w1i"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1776432085;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vhkR8ww9uqquP99F0+9R4fQYgPW3ejfry8pMlRoU26k=;
-	b=MSoIMcocxjbd53eb8lDOJl/j0yF+Cz/N+OdNSgO1CpK9HKEnBaTJzeor3UUwTXiTy2uZf9
-	K2h0sTF1DNPrpnJEis9MNWRjTBflF3Yp3sZZOUcBQWLVKfdwQVACik3nftghtrBmSWtDzQ
-	mLBqfBhffJEqJCAoqRFpLFQZ89J8+PA=
-Received: from mail-vk1-f198.google.com (mail-vk1-f198.google.com
- [209.85.221.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-477-KigC4IyLMeWUfrw8Z1BVnw-1; Fri, 17 Apr 2026 09:21:24 -0400
-X-MC-Unique: KigC4IyLMeWUfrw8Z1BVnw-1
-X-Mimecast-MFC-AGG-ID: KigC4IyLMeWUfrw8Z1BVnw_1776432083
-Received: by mail-vk1-f198.google.com with SMTP id 71dfb90a1353d-56ee7e84f9eso474649e0c.1
-        for <linux-clk@vger.kernel.org>; Fri, 17 Apr 2026 06:21:24 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1776432083; cv=none;
-        d=google.com; s=arc-20240605;
-        b=kK2YGcGzl8+Cpm4Mpb4cH6k4E7N6cFDl5fOrhpEmip0VJ2stlpBwPLD/6qBtxI0ket
-         tfAaXyqgTRa10dh+C2tNWYtSf5r1Thiy3nC88PB0oNIXBwpBXALm73RVeF7Z1jmoJRM9
-         afQDAEutsUK4w0nqKPIwNSZKee/NfBWOO4RHnUFlKY/Wv2hDVsHHbFot9dolOQWerHvZ
-         QZ/qWFFEONuNyc0hhr2suXYMk7BIm+XM0NTDE+Q7Dkriid3YILqT40p/1N7YYlM9PYM/
-         wHIUOd/Bbzvaz/qYVTyulebDSw3FMTcJXBth+BrMzLFmv90k7T0c7iAYxg9iNDRqda1L
-         EOww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=vhkR8ww9uqquP99F0+9R4fQYgPW3ejfry8pMlRoU26k=;
-        fh=Y0w5bqKa5gPnRjMf6OocWJPPAdDii/DfwwYNH6SMa7s=;
-        b=ZkNKcxMeoFbahgp8Uq2n6M0hz08CbksZvXP6BCO6yZNke1h8tlogqQh93M1+SiEQOV
-         2vFhHtvHZl0KQnoSZmuQBn5RiXvmPLukru0SHadol9fF/RvbevnzN4GyKGlvxrWs/a7G
-         SCdUD29NgwPPsKLo+6sPfGpAtqANJg4YpqzQI+hguQ3+JAmPv2L11s+tBM6Napu8UpdU
-         IWtBtFsKQ5ApNzNEjeZ3D7ztH/uAey3duWL+4djiSXoc3hVo1y42O9rTEhjlMF6RO3+w
-         0CNJ0mzk2D/bnVHgauqRIBqbhrQGNs0O24Ho8Ya8CUqmHPf4d+Vu3K2PwISAFdRb0Ur7
-         HQQg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=flipper.net header.i=@flipper.net header.b="QkxLvHVx"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-43d73422431so600650f8f.2
+        for <linux-clk@vger.kernel.org>; Fri, 17 Apr 2026 08:11:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1776432083; x=1777036883; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vhkR8ww9uqquP99F0+9R4fQYgPW3ejfry8pMlRoU26k=;
-        b=DCGx/w1itbMuA6yjzfe5J931mGm18c94X/jLhRscBdudH5X+/jj9WQ540fESevYyBC
-         V2JavNkhoEXBpXSKuqMC7lNwyolMSSlm3YlelNUrxUp7YhZGQfXwJSm3oDhEhF+hIbAz
-         juwEHrxJEkhI/ShjcGaRLVXpGFkIEL1YyaiS+1d98Q0XAa3Aj5R8d57SGcQ67GodBtui
-         IPBc65YLJw0czjvzBzrdRSr0PVn9kIlUgCSzkW0t7uY0pWcSRGYhlbbi0m/JkgqzYw3d
-         /bEbvbWuKNwN67JvVHCJdQmbu+pJPg2CVEqeq6s94C7+lcCm5rT4i9E6ZOqygeHNXcEP
-         MXyw==
+        d=flipper.net; s=google; t=1776438715; x=1777043515; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sQg7mK9oWEfVQ2/f5M3NYZgfP1n9UD9hwZDhumEKaq0=;
+        b=QkxLvHVxW2Z+SHbiI0NK7acDx14gZVT5ucGVy81JqXKA3lIFWUUwTf6MN540dn+nqX
+         81LwSVZpZuQgVWuMMmpsavd06WghCRFDw8AP2/WHNTtwrPrJnDNxBM7WGoh6uVVYwJt2
+         ENCY3pfshDEOHCGEAN5AZBOk9uvE/CIVNkyzkV4ayUiNdLErUUhOcx2Sd6F7sDDqhdk5
+         f9SkFC55mR6J8CcqjA94ElgPM/3qaaeFpLCm+HG1tvRqtV8Y/8FI2jISWpx/54Ci4DsG
+         mqOR+aTWuRCNvIYgXtrQMbBlf9cPyDLrE5bEigKIVpIuhPmknaudhccPFkp9QBE+79iG
+         jeKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776432083; x=1777036883;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=vhkR8ww9uqquP99F0+9R4fQYgPW3ejfry8pMlRoU26k=;
-        b=mFa/lyUsw3MTfJAdEwXvOR9AmwBNk8J2agshUlHSxDfjK4tBElder0HRhig2qqF7kw
-         x2RsEVx9OUGgZAX3Yf3pbJ0F37NaxcdRbSSAyR5eBdrO4ipXTiX6jkbAjyS1vs/gGy/9
-         i0kqTC3XOumERMBZu03ghxHk+EOfu39WneYah7KXz7s06+wT78ZRz1tIQKbWeN/HzR5U
-         2cUrOeIH0XAV0a/+wPsVaynBSkIEIu2GtCISjPF95K6/7aEPT5QtacIfsBzma7SaT4WJ
-         BADXfB7NgJjq1lnpI5OOUn50kVz1jN7DBr8vbRj6sZqEUdiyv8Vy4mnivVcSZFwYd1Ti
-         C7qw==
-X-Forwarded-Encrypted: i=1; AFNElJ8xGuKX/A4qnSt7Jppxh2DF7h6WEJT9ZNGBIgEqYpLpaN+KElDMYnfjeR8dqE1TcUfzxG5P94+S+38=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUL4e8tJzQdshRdDer8eDNABW44DfbaN33ak36TgcNne2B7tB3
-	4tV3bYqxEV2ZPIVSpCsus19EkV2+7lM6cm82o6mgDsdqRXkJjGsOa/VcAe2VKmhjmbMJBj5OFgz
-	VIX4Onm7nPXZT7+GPtwdfv2g2kKr1SwREak5Ol3pF/8z06GBXLV7c8ptZCyoY3INZpqI3weotiO
-	g7eeyylizGWqjodT/ETSDxG3LCVcw9HTPhwrZAxiZOdzKp
-X-Gm-Gg: AeBDiesDa1FMF1ltBCGfUPzMimC1Pm2NwXClhqlk/P6A7N5aMjgmtKi348GJt8blSnQ
-	IUQ8RlQ/jqL+GK9aPkzDOL97cmFuvS58eEMKDOUTsOlea1GP8I2ZGPsj6nObiL6dTUhCS13acE0
-	shNMtci9F1ziw6vtxq+/cwFxWXacOSrfhxrF6p0t8x8oDb4kFt8z1ZTYY7R2lBV0z6VUVejIKkA
-	7NEZwPDct07orBRbp+aytL0
-X-Received: by 2002:a05:6122:4d0f:b0:56f:6d11:b962 with SMTP id 71dfb90a1353d-56fa57fac70mr1252983e0c.2.1776432083283;
-        Fri, 17 Apr 2026 06:21:23 -0700 (PDT)
-X-Received: by 2002:a05:6122:4d0f:b0:56f:6d11:b962 with SMTP id
- 71dfb90a1353d-56fa57fac70mr1252936e0c.2.1776432082793; Fri, 17 Apr 2026
- 06:21:22 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1776438715; x=1777043515;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sQg7mK9oWEfVQ2/f5M3NYZgfP1n9UD9hwZDhumEKaq0=;
+        b=re+14APZiA68BbYvhwwRNIEL43XS4K5WvEd1B9PQd1lv8rFFAbiMsY2g8ijU8hdGOW
+         vzyn0taOVgtZToWoK8SSwOzw5c12Sgh5/flq024QD/mgeyt+fPXYo4ttGUSN2zGy3CAw
+         bQzO+pQKd9EBj8pT8WvK6cq60r/zKkooSxDNdpfXBQ8THlrfkbJfYX1B0K4RvquU2rKy
+         AL5BORN7i3fxGEb9bEPUwqOK0+3oolLNjsGKBYXs/PZ6ObvVL150Qkhq9IOC0koerrLc
+         3i9fX766YdznZXsESveO++ghIxs0Qguxh0Ygqfatb7W3NEBPGEgax1sYaaachyKTmeoI
+         q/NA==
+X-Forwarded-Encrypted: i=1; AFNElJ+V86hSBE1LW/1Ipfb1JPpPne9M1SvxMeieqPVjMeH4xRU2ykNREBoSU+n2JBJVDmG92blfWpJMWYU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaVZ97N37duqkZJUyQlqtpg00l7cmdqJKRCSH/E9gP0DVF8dWq
+	X+iZ6zokfCkO9l1OAVus7Rz9nAcafyY9YERBepzf2osvK0pfHfbfihdEkXtD6/E/IvE=
+X-Gm-Gg: AeBDieuMFKd0SpmJkTGrFglue65NkZwebcj3yuXxIv6Jux7UT3YCtsQ6PdqybGO2r3a
+	cBVYWhfOHcDPzRj/q+up2aIIrwSl7hZvyOn7wPWJoWHsLQS1/g5JGkgrnLXjdr8b/OKn+TPHruB
+	JWH7Xr4qQvffWmsKGpdvrvkz6az2MZ8XBSaQQE+3QDELwnxNsChG2Ujb1IvdsNdmVR1+STSLNJu
+	9r/nwjb72Dnz1UchIiAOSTGHc3ntUFhmi01dfS55FHhipRx9uuqT5fI+JL/PfbuF4we6FrUPPOx
+	KR6Stn07IuvgWXPR/yzmOqWIifW1r3fusKCuk8hGP6vMFkKP9kqu3wweBtibEH++0+C5sGLzIVT
+	Nby7kIALRclE9LWBmaT8d2tAIKIA8OwYvx6yGib5KvpKZgfolfhYbNAgdWfcfA6thK4T/Mlare5
+	xGJvYJKyK9Bpy+Y/8CEbfJRmGNxrs+XXL1rSdMSdoVtnrvP6U5NTjSt+L8UoDLzxbriUtBjw60O
+	FmYAG56Y+DDbCvH
+X-Received: by 2002:a05:6000:25c6:b0:43d:7af0:3a7c with SMTP id ffacd0b85a97d-43fe3e0d44emr5071076f8f.29.1776438714844;
+        Fri, 17 Apr 2026 08:11:54 -0700 (PDT)
+Received: from alchark-surface.localdomain (bba-86-98-192-109.alshamil.net.ae. [86.98.192.109])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43fe4e591cesm7376426f8f.36.2026.04.17.08.11.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Apr 2026 08:11:54 -0700 (PDT)
+From: Alexey Charkov <alchark@flipper.net>
+Subject: [PATCH RFC 0/4] arm64: rockchip: The hunt for exact pixel clocks
+ on RK3576
+Date: Fri, 17 Apr 2026 19:11:43 +0400
+Message-Id: <20260417-rk3576-dclk-v1-0-26a9d0dcb2de@flipper.net>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260413124912.3260571-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260413124912.3260571-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <aeFWGYaRownx1jdp@redhat.com>
-In-Reply-To: <aeFWGYaRownx1jdp@redhat.com>
-From: Brian Masney <bmasney@redhat.com>
-Date: Fri, 17 Apr 2026 09:21:10 -0400
-X-Gm-Features: AQROBzDWBqSJnk8R9ke7imMJ1S0GHgJWPy1mQjjbiQQkF57D15ZbbfpRJtYXdyQ
-Message-ID: <CABx5tqJ2PJQgiHpq=wBrobhHzU9bPgE0A_Y7khg9PK-pZUzX0A@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] clk: divider: Add some kunit test suites
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAK9N4mkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIzMDE0Nz3aJsY1NzM92U5JxsXZNkS9OkpCQzc1MLQyWgjoKi1LTMCrBp0Up
+ Bbs5KsbW1AIDnryliAAAA
+X-Change-ID: 20260417-rk3576-dclk-4c95bbb67581
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: Pavel Zhovner <pavel@flipper.net>, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>, 
+ Andy Yan <andy.yan@rock-chips.com>, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ Alexey Charkov <alchark@flipper.net>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5622; i=alchark@flipper.net;
+ h=from:subject:message-id; bh=eG6IXyh4y0jftfvJQuYeuV3rZuFLFef4kpCOHmG+mBg=;
+ b=owGbwMvMwCW2adGNfoHIK0sZT6slMWQ+8t2WWV9R/clycvGR0/uPTWCN3dJ9VT99gcTL/Hd5f
+ GmKaUv4OiayMIhxMViKKbLM/bbEdqoR36xdHh5fYeawMoEMkRZpYAACFga+3MS8UiMdIz1TbUM9
+ QyMdYx0jBi5OAZjq9xmMDGuFlPK4MlSmfOu6l9yp8VWFYYnYIr53Sd8+n/vLFHqtfTsjw/UZxlM
+ 2PbvjOunWdh5h59QtF+ewbtocl+W88rtRnJeeISsA
+X-Developer-Key: i=alchark@flipper.net; a=openpgp;
+ fpr=9DF6A43D95320E9ABA4848F5B2A2D88F1059D4A5
 
-Hi Lad,
+Dear all,
 
-On Thu, Apr 16, 2026 at 5:35=E2=80=AFPM Brian Masney <bmasney@redhat.com> w=
-rote:
-> On Mon, Apr 13, 2026 at 01:49:12PM +0100, Prabhakar wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > +     /*
-> > +      * ULONG_MAX is the canonical way to probe the maximum rate a clo=
-ck
-> > +      * can produce. With a parent at 1 GHz and the smallest table div=
-ider
-> > +      * being 2, the expected maximum is 500 MHz.
-> > +      *
-> > +      * Before the fix this returned 125 MHz (PARENT_RATE / 8), the
-> > +      * minimum rate, because the search loop was bypassed entirely.
->
-> The "Before the fix" comment should go in the commit log. The comment in
-> the code should describe how the code is right now.
+Need the help of the collective wisdom of the community.
 
-To demonstrate the existing issue, you could structure your series by:
+The problem I'm trying to solve is reliably obtaining the exact pixel
+clock for arbitrary display modes supported by the RK3576 SoC.
 
-- Introduce the test as the first patch and have it show the issue and
-the current behavior.
-- Put the divider fix in, and update the test for the new behavior.
+Rockchip RK3576 has three display output processors VP0~VP2, each
+supporting different ranges of display modes, roughly as follows:
+- VP0: 4K 120Hz
+- VP1: 2.5k 60Hz
+- VP2: 1080p 60Hz
 
-Brian
+Each one obviously needs a pixel clock. The required frequencies for the
+pixel clocks vary greatly depending on the display mode, and need to be
+matched within a tight tolerance, or else many displays will refuse to
+work. E.g. the preferred (maximum) display mode out of VP1 is particularly
+awkward, because it requires a pixel clock of 248.88 MHz, which cannot
+be obtained using integer dividers from its default clock source (GPLL
+at 1188 MHz), and the nearest approximation is 237.6 MHz, which is well
+outside the tolerance of e.g. DP specification, resulting in a blank
+screen on most displays by default.
+
+The clock sources are of course configurable, in particular there are muxes
+connected to each VP for selecting the source of the pixel clock:
+- Each VP can take the clock either from the (single!) HDMI PHY or from
+  its dedicated dclk_vpX_src mux
+- The dclk_vpX_src mux can select the clock from a number of system PLLs
+  (GPLL, CPLL, VPLL, BPLL, LPLL)
+
+While the system PLLs can be configured to output a wide range of
+frequencies, they are shared between many system components. E.g. on the
+current mainline kernel on one of my RK3576 boards I've got the following:
+GPLL: 1188 MHz, enable count 20
+CPLL: 1000 MHz, enable count 17
+VPLL: 594 MHz, enable count 0 (yaay!)
+BPLL, LPLL: 816 MHz, enable count 0 (but these last ones don't have
+            predividers, so are less flexible)
+
+So ultimately there is exactly one free fractional PLL (VPLL) which can be
+used to generate arbitrary pixel clocks, but we have up to three consumers
+trying to drive different display modes from it (e.g. HDMI on VP0, DP on
+VP1 and MIPI DSI on VP2). We also want to be able to adjust the PLL output
+frequency on the fly to satisfy the requirements of the selected display
+mode.
+
+And this is where I'm stuck. Trying to satisfy the requirements of up to
+three consumers while changing the PLL frequency on the fly sounds like
+a poorly tractable mathematical problem (is it 3-SAT?). We can take the
+HDMI output out of the equation, because it can be driven from the HDMI
+PHY (which is capable of arbitrary rates) instead of the mux, but that
+makes the decision of which dclk source to use for a VP block dependent on
+which downstream consumer is connected to it (HDMI vs. something else).
+Even then we somehow need two devices to cooperate in picking a PLL
+frequency that satisfies the requirements of both of them, and change to it
+without display corruption. I'm not even sure if the CCF has mechanisms
+for that?..
+
+What follows is a brief set of patches which illustrate a partial solution
+for the case of "I just need 2.5k60Hz on VP1 via DP and don't care about
+the rest". It switches the VP1 unconditionally to use VPLL as the source
+for its dclk mux, allows changing the VPLL frequency on the fly, and also
+changes the frequency calculation logic to allow for nearest-match
+frequencies which are not necessarily rounded down. These are not meant
+to be merged as-is, as I see the following issues:
+- The flag allowing the PLL to change rate is in the clock driver, while
+  the reparenting to an unused PLL is in the device tree. If these go out
+  of sync, we might end up trying to change the frequency of a PLL which
+  is used by other consumers (I presume that could be dangerous)
+- If VP0 happens to be driving DP output, it won't be able to produce the
+  2560x1440@60Hz mode for the same reasons as VP1 - then it must also be
+  reparented to VPLL and allowed to change its frequency on the fly
+
+It does bring me from a state of "always blank screen on DP output until
+the mode is switched to something magically working" to a state of
+"most monitors work at the default preferred mode" though.
+
+It is tempting to just reparent both VP0 and VP1 to VPLL and allow both of
+them to change its frequency, while leaving VP2 on the default (fixed)
+GPLL and relying on the fact that 148.5 MHz (the required frequency for
+its maximum supported mode of 1920x1080@60Hz) is conveniently 1188/8 MHz -
+just what GPLL can provide. Then also force whichever VP is driving HDMI
+output to use the HDMI PHY as its clock source. But we still have the
+problem of DT vs. driver coordination, and I'm not sure how to define
+the policy for "if you've got HDMI connected, you must use the HDMI PHY
+clock for the respective VP, whichever VP that is".
+
+I would very much appreciate any thoughts on how to approach this.
+
+Signed-off-by: Alexey Charkov <alchark@flipper.net>
+---
+Alexey Charkov (4):
+      arm64: dts: rockchip: rk3576: assign dclk_vp1_src to VPLL
+      clk: rockchip: pll: use round-nearest in determine_rate
+      clk: rockchip: rk3576: allow dclk_vp1_src to propagate rate to parent PLL
+      clk: rockchip: rk3576: add ROUND_CLOSEST to dclk_vp1_src divider
+
+ arch/arm64/boot/dts/rockchip/rk3576.dtsi |  2 ++
+ drivers/clk/rockchip/clk-pll.c           | 16 ++++++++--------
+ drivers/clk/rockchip/clk-rk3576.c        |  4 ++--
+ 3 files changed, 12 insertions(+), 10 deletions(-)
+---
+base-commit: c7275b05bc428c7373d97aa2da02d3a7fa6b9f66
+change-id: 20260417-rk3576-dclk-4c95bbb67581
+
+Best regards,
+-- 
+Alexey Charkov <alchark@flipper.net>
 
