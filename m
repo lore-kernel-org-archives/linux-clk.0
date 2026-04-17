@@ -1,174 +1,214 @@
-Received: from mx4.wp.pl (mx4.wp.pl [212.77.101.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA12230DD1C
-	for <linux-clk@vger.kernel.org>; Fri, 17 Apr 2026 15:22:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0E029A32D;
+	Fri, 17 Apr 2026 16:07:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776439352; cv=none; b=GtcOnwBxhB2GiEFuE5K1mHNYXcGirQZRs2Vg+UNNUvgefRpKPxBEyAjM3tyxnG+rQF8bR5pM8yGjaB4LZMUNcWyZNUB2IYl64sSwdfRjMX922W8/4eJNWSqCPQActUSpaAu89pNfE6rSlL+VNdkib7rhyg3QS66GZ0azYxxi5BY=
+	t=1776442025; cv=none; b=L8eYIhGtxw1NhS+ImkTr799FD+Q02nOfXrSqUjQCxjsIDl5lKb6ZuDPj4pF6LGvbXbP4vik/2O49OooeQyLTIbcDhN6ZiaVGOOXGcS21X/c3UndC54q4PpLXzURUTF8Nd9SnrDxGyLfgozRs5NV2j1kL93mC67oOy41X9wir/VU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776439352; c=relaxed/simple;
-	bh=K2kd/re1hrM8vjf2USkWWBQah6xYlWMVfQBlT6ZdAEk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FYecC94nb5mB9QFGFPyDLrJ8P/iGy1znYWWfrCdbZRN3ozMv+t3yOvSGU9yLN4RHqvkZB+KCA8ZAz3M+JDp668FCHCsftl6lMOZwzL3Kl/XQfv2CaWjQ90C6UIHspP1RLK00nhdWa0nQtdzhDnexWbnfyHVl3Y2VLn3ljrj8s14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=ETVGpyy/; arc=none smtp.client-ip=212.77.101.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
+	s=arc-20240116; t=1776442025; c=relaxed/simple;
+	bh=NQgku0XmKRU6rgKiAn/DW7pVK31ikSdLl/YitlLG/B0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QCz8Il82Rx4y9MLjGSGPiRChjQBH487j4BCr8fCC/wK9jPM6Jva8I2ZHsemKsUho/G/pE5eWkloTV783OJUoZS+x1ux1Pp7F2DRNmjbwvuWQehpDqGU6nGVuuO9vbMvu3n65+IJHpj4pblc0A3BU9BOV3pwLtTZjheF4yBNQths=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O+ZilaRD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="ETVGpyy/"
-Received: (wp-smtpd smtp.wp.pl 14707 invoked from network); 17 Apr 2026 17:22:21 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
-          t=1776439341; bh=Xi8TMBxp0BSry8/JFMeye6deCm8xd1AIT0mWI9VoFQI=;
-          h=Subject:To:Cc:From;
-          b=ETVGpyy/h1lmQIM/LNdBK8Q7Ps0guVrRjzMDXeIlvyGYbXST1B3DJns5VQ2JGFeE0
-           UIns2ErK2QLuiFaFZ6tww2i7GV4iiZcShkqQp+pVKJe7cK9VLI9vzJ+O9yjgnz4K4Y
-           mNyuWTHrL6vQG332g/KynWEGPtmA7r2cRou1sNcCSwtsk/yZlcFg5rGr7YYO2+ddK+
-           aVf/GY3st4ADnWKwA+ar+sgeimFCFK16o3Y8InE0DnwLzOnsxw9qLm4Xp6s/pqz9Q4
-           cdnHB0DqL+ShPSQuESDxzygxrM6//c4tiK0yNma/fTXlkENXn6KeoJGov7XzipDlqS
-           6tOirNuRgWwgA==
-Received: from 83.24.138.154.ipv4.supernova.orange.pl (HELO [192.168.3.203]) (olek2@wp.pl@[83.24.138.154])
-          (envelope-sender <olek2@wp.pl>)
-          by smtp.wp.pl (WP-SMTPD) with TLS_AES_256_GCM_SHA384 encrypted SMTP
-          for <miquel.raynal@bootlin.com>; 17 Apr 2026 17:22:21 +0200
-Message-ID: <b41fdead-71c2-4c85-8b62-237d305a80d7@wp.pl>
-Date: Fri, 17 Apr 2026 17:22:19 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O+ZilaRD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C29ACC19425;
+	Fri, 17 Apr 2026 16:07:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1776442025;
+	bh=NQgku0XmKRU6rgKiAn/DW7pVK31ikSdLl/YitlLG/B0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=O+ZilaRDHbIpuk+btUy0PJqf2nDXeW9zyi9F0lc1bgO07JLLXlhdnIAxV0pt3QMbJ
+	 OZFjEc0Y4ag0wOuAXrdgkKVpb+Ivj0UkYvf9rieoR7CGQXx1W4NmEtWs+AuaMI/nrH
+	 hugHPhq3slfvFe/Yk0er0AkKjCzK1BYcR9U0RlhZmJAaDri7QRdLTGRBBGRu6USD84
+	 HnJe9ERiefV9hM7c0qA11VHA8ZpivyLxv/QjHa5cMtcfm2Aico6mlC+UUyCPz/RVI5
+	 dVsYHkDOne5Z1zIpQyWFf4YLtAkzqyKyOyVcKiyGzyaaZkpHkgMGS9qB/orNZUrrGG
+	 8yLX+nhkmwKeg==
+Date: Fri, 17 Apr 2026 17:06:57 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Billy Tsai <billy_tsai@aspeedtech.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Ryan Chen <ryan_chen@aspeedtech.com>,
+	Andrew Jeffery <andrew@aj.id.au>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v7 1/3] dt-bindings: pinctrl: Add
+ aspeed,ast2700-soc0-pinctrl
+Message-ID: <20260417-anemia-borrower-fb90ac02b417@spud>
+References: <20260416-upstream_pinctrl-v7-0-d72762253163@aspeedtech.com>
+ <20260416-upstream_pinctrl-v7-1-d72762253163@aspeedtech.com>
+ <20260416-brutishly-saga-ba7168a4cd14@spud>
+ <OSQPR06MB7252EB0C2A1A3313DE49406B8B202@OSQPR06MB7252.apcprd06.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/16] dt-bindings: interrupt-controller: Describe EIP-201
- AIC
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Thomas Gleixner <tglx@kernel.org>,
- Olivia Mackall <olivia@selenic.com>, Herbert Xu
- <herbert@gondor.apana.org.au>, Jayesh Choudhary <j-choudhary@ti.com>,
- "David S. Miller" <davem@davemloft.net>,
- Christian Marangi <ansuelsmth@gmail.com>, Antoine Tenart
- <atenart@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Pascal EBERHARD <pascal.eberhard@se.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-crypto@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20260327-schneider-v7-0-rc1-crypto-v1-0-5e6ff7853994@bootlin.com>
- <20260327-schneider-v7-0-rc1-crypto-v1-2-5e6ff7853994@bootlin.com>
- <444b4349-3873-4da6-aadd-3605e738ad0d@wp.pl> <87tstac9fn.fsf@bootlin.com>
-Content-Language: pl
-From: Aleksander Jan Bajkowski <olek2@wp.pl>
-In-Reply-To: <87tstac9fn.fsf@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-WP-MailID: c9eb1343a5c3b7e25f82a1734231c32a
-X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
-X-WP-SPAM: NO 0000002 [ATFs]                               
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="/e075MT9JwuwmUji"
+Content-Disposition: inline
+In-Reply-To: <OSQPR06MB7252EB0C2A1A3313DE49406B8B202@OSQPR06MB7252.apcprd06.prod.outlook.com>
 
-Hi Miquel,
 
-On 17/04/2026 09:50, Miquel Raynal wrote:
-> Hi Aleksander,
->
-> On 16/04/2026 at 20:04:03 +02, Aleksander Jan Bajkowski <olek2@wp.pl> wrote:
->
->> Hi Miquel,
->>
->> On 27/03/2026 21:09, Miquel Raynal (Schneider Electric) wrote:
->>> diff --git
->>> a/include/dt-bindings/interrupt-controller/inside-secure,safexcel-eip201.h
->>> b/include/dt-bindings/interrupt-controller/inside-secure,safexcel-eip201.h
->>> new file mode 100644
->>> index 000000000000..ead73bd96296
->>> --- /dev/null
->>> +++ b/include/dt-bindings/interrupt-controller/inside-secure,safexcel-eip201.h
->>> @@ -0,0 +1,14 @@
->>> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
->>> +
->>> +#ifndef _DT_BINDINGS_IRQ_SAFEXCEL_EIP201_AIC_H
->>> +#define _DT_BINDINGS_IRQ_SAFEXCEL_EIP201_AIC_H
->>> +
->>> +#define AIC_PKA_INT0 0
->>> +#define AIC_PKA_INT1 1
->>> +#define AIC_PKA_INT2 2
->>> +#define AIC_TRNG_INT 3
->>> +#define AIC_RESERVED 4
->>> +#define AIC_SL_ERR_INT  5
->>> +#define AIC_PROTECTION_INT 6
->>> +
->>> +#endif
->> This interrupt mapping is specific to the EIP-150. The EIP-201 is also
->> integrated
->> into other accelerators, such as the EIP-97, EIP-196, and EIP-197, and the
->> interrupt mapping is likely different there. Maybe it would be better to use
->> eip150 name instead of eip201?
-> Thanks a lot for the heads up, I didn't had that information, I will
-> adapt the naming to make it more accurate future proof.
->
->> As for EIP-28, it is also part of EIP-94. EIP-94 is supported by the
->> amcc driver.
->> EIP-94 consists of four components:
->> * crypto accelerator (unnamed?),
->> * PRNG (EIP-73d),
->> * TRNG (unnamed?),
->> * PKA (EIP-28).
->> Only the first three components are supported by the amcc driver.
-> Is this driver upstream? I didn't find it. Anyhow, thanks for the
-> feedback, I will update with this knowledge in mind.
+--/e075MT9JwuwmUji
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-You can find the driver in the drivers/crypto/amcc directory. It contains
-no references to EIP-94. It’s likely that when it was added, it wasn’t
-clear that it was a generic IP core.
+On Fri, Apr 17, 2026 at 02:20:25AM +0000, Billy Tsai wrote:
+> > > +=A0=A0=A0 properties:
+> > > +=A0=A0=A0=A0=A0 function:
+> > > +=A0=A0=A0=A0=A0=A0=A0 enum:
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - EMMC
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - JTAGDDR
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - JTAGM0
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - JTAGPCIEA
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - JTAGPCIEB
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - JTAGPSP
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - JTAGSSP
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - JTAGTSP
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - JTAGUSB3A
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - JTAGUSB3B
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - PCIERC0PERST
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - PCIERC1PERST
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - TSPRSTN
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - UFSCLKI
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2AD0
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2AD1
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2AH
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2AHP
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2AHPD0
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2AXH
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2AXH2B
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2AXHD1
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2AXHP
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2AXHP2B
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2AXHPD1
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2BD0
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2BD1
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2BH
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2BHP
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2BHPD0
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2BXH
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2BXH2A
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2BXHD1
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2BXHP
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2BXHP2A
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2BXHPD1
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3AXH
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3AXH2B
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3AXHD
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3AXHP
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3AXHP2B
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3AXHPD
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3BXH
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3BXH2A
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3BXHD
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3BXHP
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3BXHP2A
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3BXHPD
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - VB
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - VGADDC
+> > > +
+> > > +=A0=A0=A0=A0=A0 groups:
+> > > +=A0=A0=A0=A0=A0=A0=A0 enum:
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - EMMCCDN
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - EMMCG1
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - EMMCG4
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - EMMCG8
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - EMMCWPN
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - JTAG0
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - PCIERC0PERST
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - PCIERC1PERST
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - TSPRSTN
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - UFSCLKI
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2A
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2AAP
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2ABP
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2ADAP
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2AH
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2AHAP
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2B
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2BAP
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2BBP
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2BDBP
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2BH
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB2BHBP
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3A
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3AAP
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3ABP
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3B
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3BAP
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - USB3BBP
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - VB0
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - VB1
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - VGADDC
+> > > +=A0=A0=A0=A0=A0 pins:
+> > > +=A0=A0=A0=A0=A0=A0=A0 enum:
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - AB13
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - AB14
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - AC13
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - AC14
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - AD13
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - AD14
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - AE13
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - AE14
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - AE15
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - AF13
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - AF14
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 - AF15
+>=20
+> > Why do you have groups and pins?
+>=20
+> > Is it valid in your device to have groups and pins in the same node?
+>=20
+> The intent is to support both group-based mux selection and
+> configuration, as well as per-pin configuration.
+>=20
+> In our hardware:
+>=20
+> - `function` + `groups` are used for pinmux selection.
+> - `pins` is used for per-pin configuration (e.g. drive strength,
+>   bias settings).
+> - `groups` may also be used for group-level configuration.
+>=20
+> As a result, both `groups` and `pins` may appear in the same node,
+> but they serve different purposes and do not conflict:
+>=20
+> - `groups` selects the mux function and may apply configuration to
+>   the entire group.
+> - `pins` allows overriding or specifying configuration for individual
+>   pins.
+>=20
+> In most cases, only one of them is needed, but both are allowed when
+> both group-level and per-pin configuration are required.
 
-A while ago, I was looking for information about the PRNGs built into
-Rambus crypto accelerators. I found out that all these accelerators are
-made up of blocks and have some common components.
+To be honest, that sounds like your groups are not sufficiently
+granular and should be reduced such that you can use them for pin
+settings.=20
 
-EIP-93:
-* PE (various IP cores),
-* PRNG (EIP-73a),
-* Interrupt controller (unnamed?)
-EIP-94:
-* PE (various IP cores),
-* PRNG (EIP-73d),
-* TRNG (unnamed?),
-* PKA (EIP-28),
-* Interrupt Controller (unnamed?).
-EIP-97:
-* PE (EIP-96)
-* AIC (EIP-201),
-* PRNG (EIP-73d),
-* HIA (EIP-202),
-* PP (EIP-206).
-EIP-196:
-* PE (EIP-96)
-* AIC (EIP-201),
-* PRNG (EIP-73d),
-* HIA (EIP-202),
-* PP (EIP-206).
-EIP-197:
-* PE (EIP-96)
-* AIC (EIP-201),
-* PRNG (EIP-74),
-* HIA (EIP-202),
-* PP (EIP-206),
-* ICE/OCE (EIP-207),
-* Buffers (EIP-208).
+--/e075MT9JwuwmUji
+Content-Type: application/pgp-signature; name="signature.asc"
 
-You can find some documentation online:
-* EIP-93: 
-https://www.analog.com/media/en/dsp-documentation/processor-manuals/BF70x_BlackfinProcessorHardwareReference.pdf
-* EIP-94: 
-https://www.scribd.com/document/734250956/Safexcel-Ip-94-Plb-Sas-v1-5
-* EIP-96: 
-https://www.scribd.com/document/665924605/Security-IP-96-HW4-6-Hardware-Reference-and-Programmer-Manual-RevB
-* EIP-197: 
-https://www.scribd.com/document/665924595/Security-IP-197-HW3-4-Hardware-Reference-Manual-RevA
+-----BEGIN PGP SIGNATURE-----
 
-Best regards,
-Aleksander
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaeJaoQAKCRB4tDGHoIJi
+0oi8AQDp1gAb3AolAjABIl6fBvoBypslFDHqFAcNj6E2DlBE3QEA6Q6j2LCAIPOl
+0A+dbl1IvfSrQZC4005IZCZMYdRgOgE=
+=ZteU
+-----END PGP SIGNATURE-----
 
+--/e075MT9JwuwmUji--
