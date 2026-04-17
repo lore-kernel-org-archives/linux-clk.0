@@ -1,123 +1,135 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E9F2475D0
-	for <linux-clk@vger.kernel.org>; Fri, 17 Apr 2026 06:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776408785; cv=pass; b=k3JjaWi59aytpfrX+hLlnX+j/nYhg7YUF6T9PZAnQFxjQiIE/S861QZZJ6agHhuU56heNHItHUgsYihfcEQXw5Kg5QI+XPWjtWW6Qz8+p5TLHu2gKQNbKWFhjV4tgXr8jMsqyt0yah2gaQieNSDGh3khYHcJu5bhFm/KoG20Xq4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776408785; c=relaxed/simple;
-	bh=RCRjSgJm3KwWFKtPgSKvfy+sw1dQJ8qsB6Bkm6WrNVU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iX9sG3wgYwWBvjNdG6h5UEOEiCyBJ8ibcmOvGfwhq/1SuMvvDZC+8vQfhr3NQhx8gWyR0nTBXu2jzyJTgtMXF0EDcnYkExAZ2UolFFdesT3g2sVOMNiE8W7fy6937SVa/X62U64i8NRiun676UiJ2yxzYjTgxJFPfD0h1bPlRQ8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fQka4rSb; arc=pass smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69ABF238D54
+	for <linux-clk@vger.kernel.org>; Fri, 17 Apr 2026 07:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1776409673; cv=none; b=QEqrm6ECjLF1ixPGU3ikwEX6tKCqw6Dod+JcvDBhtVeAW4iBTRCRYtpX1HswKA0s9qY2qqELF2RRUHTrwxYeeGdr7lsWEYCIUPJvbeKylA7Rn2fqIZHqdyRxnukE1ZSJ+6C/SDDeXdWLZamXLXSVLYu4Z78HIK2fCqywlTLXNQQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1776409673; c=relaxed/simple;
+	bh=Q3U+5k1MvoRdWNZqyqWnSS2ZPwFJtCBfEHKSkleJKtU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rvJXRmAKNvagqUDNzpfLEO5Ca8koexGFUKC/k/iiDMrbRXndSTSKXh0XiQvPO2BVSp4uUrb90qYkK+hrcjrfv9NJOf6CLPEuyOPzteEol8RiU1KIQ6qhNQzfQQlfD4pLBkbWdZOizKBMvup71HZaZ2E4gQu63V4NN1Y5hzRaD9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=yej2iAN2; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fQka4rSb"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-488afb0427eso4070435e9.1
-        for <linux-clk@vger.kernel.org>; Thu, 16 Apr 2026 23:53:03 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1776408782; cv=none;
-        d=google.com; s=arc-20240605;
-        b=OKdR48H/5dyMRskp4u1bfm73xVDmiQGS/4gk0cGoOLV0QNLDMaTg9PPA1C1S0YPtA3
-         /0kJvootApBf0TeIQKoDYj2k/58WqUxgZB1PSfKAaF0kE2pQImlE4IgIUkZZEQd/xjIR
-         Lvcl9L8N6PJ19VKGQhaiV6k7HlaxH0Dq870uz1x5irSC2PEZKClTfe2M0CDiVIYwJb3l
-         Z7PcfeNWbo6KGwPSKnDeUcXejKfStN2ZztjH2hsjkVrt/3+s/+y4hhODuf7Nw/rNB26A
-         dVvfHEXPTMk2I/1jI2lXOiTXVaJbRfdDN42Tr464evXK5icHg96ySCoFAwb4S9qx+0YF
-         eekA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=8U+WOJv2yvWPYUUfMhDGPMV15Mhn6imfX8H3e1n54UQ=;
-        fh=Ly15GtR83QY/tEV+awGJ5dBvv9EGNUOwKlPCU68YdEQ=;
-        b=VuAG3Ah8gG/ozzQbcJwqzvjWu8wcyMGGiDPyOkIQb3dkSHG2KF9UJddiQaZvvnbyKG
-         B0LvoYLUNRN3cdPoUlx4pKO9f6id0lIeQyjL5QFcT4Pr1ZqYVj86nJPLXmrLJphYMqT8
-         MuTWrrLTuG+fLTgWaOCw4aNBQgEwQfKw1Y0DkcywpLL54ycGZU5Bcm8MP/66zNzVzh/D
-         GRdQ+6MtiebMMZc7CCgowWjdtxNExTWJ9v2VUpRB+A3EMNyw0qFwU7TDGrgdDtioOkZF
-         kGM6fLVR0/MdGG9LH6wDBT0HkKh7dJSd6TMMTmLqexhsMiEjQguItOzq/XK3zvnoXgYc
-         97PQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="yej2iAN2"
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-671d60ef9c6so433955a12.2
+        for <linux-clk@vger.kernel.org>; Fri, 17 Apr 2026 00:07:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1776408782; x=1777013582; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8U+WOJv2yvWPYUUfMhDGPMV15Mhn6imfX8H3e1n54UQ=;
-        b=fQka4rSbVdhgCX1iSRmAfV51QKhKJtmL4ReNreTu56aortp1j6aahTJsN9MeeP11rj
-         GWMgUEJ+jq8Bx3UtggnTVInCkuRAud/yTlI55vUOi5IdVgjDGsK24/RLMYgB3gHyBuMi
-         Gzovgy/YifbjwDk67ZSfvROlLHgQERQF9/oF7h5edy9xy/qp6Bbmx55DWKPbRAkVJFNI
-         lll3ydBogNECustdy0lcgVK6MSixh6HZkeAGjIAQH3IE1LUdNb3eGiI1aE/5Ht78H5C+
-         CsRSMhluTwCeEl/dYOaOEVRMyIRAO1yhDudnayP+GGLLpekyqAdH9W7kjXNwweNaWjDk
-         g1mw==
+        d=fairphone.com; s=fair; t=1776409670; x=1777014470; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qWDoup54yGiZZn5FFTCb80LFjkN7Dfch2gvN3C5FWn0=;
+        b=yej2iAN2TiOabVBGu4MF72oav8gO6COSCaEFnb2pMitC+FJwkZEkTDwxtY/V1/Hx61
+         m5URZWjrirH8MjppvMOddIMiQzTMIbgL//Aw917PQnQCfN3joQC1y4fA/lrajFm4YwTj
+         bT/wcfMmULtvI93dCECuFlYKepTdFu+h6VIhqbdGuxcBVS/5EoAZ6gOXJRb3oJHOmz2Z
+         QzfXJ6D78yE7qGHUm97Sm90NzzzXB0/fRaUP3TkdkttGp/zED+DnbDRH2G0WCjhNPq1T
+         cwzNp1DOW1j8+jKsnvzsFtV+PXFt1fnRRavco+u987WCttfdX3zfGrhiEvxTf5xoioRE
+         hMJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776408782; x=1777013582;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=8U+WOJv2yvWPYUUfMhDGPMV15Mhn6imfX8H3e1n54UQ=;
-        b=jaaC2i5vg8ISGyYTwbKZDN3nI8cAKQsrtLNk4EQQJbuOGFXVwHGCJTZQij+K31TEx0
-         yn82zw9uP6cTSE8PqMx5VeHhgP5YVAAiUAXYJnBEx01hEXUNN5NqYtOKymbyLu0pbVrN
-         2zaLl29uIXwq2puIOZSapkW7w7FzY3j/7xrhnfEO4LSzOp1LNNxmJ3tZIBejvjL+eNYU
-         LbWFFqQxY+fPslQMUK7ehU/9NuOUtWP960xN5hi/NotpkyQX7shv7UHND+CquId0k8a8
-         GiEsBoZofNqXV5fP+vLmuHmHksmg2J6SxfZW1v8EH5cxIeqSE0uxHuw2gEghoQvcfbEj
-         Ic0A==
-X-Forwarded-Encrypted: i=1; AFNElJ8QG/4idpiq97n6og0/jUwjJRbjpr+SnnyirOydMfA9STReYdSoBOGRieoHj5g99RyQQI30PJeiFiQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcTVLU23etA2bqQpQfbDPNeeqYn3n9Lh00EJXr8PbYGuEMHuRy
-	UxI4jb03E8wkEiT7kWCafNd3v9zMrLWbH8BCpSnb+D7PxS5vN/ZDNwifv7qdIlzFh+UsK5TeaVX
-	+HGJKgLNnQNFtDcBmMVawDT/vcbxclDg=
-X-Gm-Gg: AeBDieufRvJS0gqWWnUM60eT+e4FStW4RGuTOCaIHt2ZrPrTokNXq0P0IiqaJDR0oPH
-	v3/KFgGaUinYAbd9IpCkeScYWcRC20rbunW04KV6PhpkkTDHwftZBWt92RtQvdi+IakTL/Cq6bl
-	cmGamLwbDNZ5I1btCoqJlaA/jgZ39R+MqrUoExXbmg4oM3vYDbO4wMndac7pBmjOI6dePSswE5U
-	NDXZ1teEqStAkgm3bwtw+jB+P6GSQBYjdDbKR18vQUInUIdrbjzHB3wSW2m3XYb6O9nfkct7kKz
-	yzlxZq8Pv2Vc82Mr/0Y=
-X-Received: by 2002:a5d:5f43:0:b0:43d:73d4:b27 with SMTP id
- ffacd0b85a97d-43fe3e1575dmr2125969f8f.32.1776408781948; Thu, 16 Apr 2026
- 23:53:01 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1776409670; x=1777014470;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qWDoup54yGiZZn5FFTCb80LFjkN7Dfch2gvN3C5FWn0=;
+        b=AJWR2FEdpEKZ136anbi55ikLPinWW1iCxMLIPYu96z0rnOc3xjInj8YAFK/ZBQNtD5
+         vXwD3dkxPXCqGLj4sYTH1XznhCHcLB33iazmKxw7mwvQ8BB/YMjPZL7uIitiQN5XDEwH
+         MWVtCT8O3zCoW3bL7+HvPZ6Zoa5Fc8I51w9YGq3GfXGwtSQ9YfLgNiY/uYkJCUhblX0t
+         Ycu6FDld6DKYf3bXoce2HpbBwwGCac2Goz/EuJh5G5zMxdHklLuwET73I0CWBEdLZt80
+         kxvo9wJdoBGFkkGrunectwkv17OvK1duylBw6+PvRiiJ5Nwtf9gwxhKs8KDMcBOyfsAN
+         mwEw==
+X-Forwarded-Encrypted: i=1; AFNElJ8MNc1qWsR6ZROUz+7ZqPq8yQ66GXGROhDvBEMmqS4mB0/giTh+q2ZuJODCkJtu7fWvG3q45834qPU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxC9HBtiuM9UcSvO5rE6JtponuVuL1O9TbTO/Htsmb10MQkMnr4
+	/FXL/YKwroi1LcSkuEoSSNJisjxVXXQh/jgfsWi5Nup9vUEDKEhmPekNhopAF5QLbpg=
+X-Gm-Gg: AeBDievB1kwvk1CqeBE26jJzpHFr/yvsuz5ohF8kyxzZ3FL5uM2DYzun7Zo7BpTWCKi
+	dyplH72W6ogEG75lltDGcGNN/vbVXAjzKoQHJ5VUFN+q2lQt9brPISKOSNMWhZjQvcxpU4RJ5K3
+	bGYuAtvFp0e+/nv5L3eeKYqPMYwNoo9dgOpekDEnCKWRyo6Xp1f3Kbphi8i74cdsg5lTDzFUMyz
+	7OqMCOK79ze8V5WMno79KhX7Csup7jH3z8oQC9We9ZCpBkWtNeGWxRC3/a0x1V/YDK7Ni6+Cmrs
+	iJBWcIUC+ujNADrxfovrfjuyxvKiAqKZUhHxHs65EEiDhzZRpij2JIJDocXXq79ekzMdIM82/ZB
+	yh4sGi0NLDix1h+YVueQnacWW81yXL0bjB3kgxQLQEjfCovntHR3/haVBfLqhVj0sWA/hexe1Jl
+	RyqMIrp1JRPF+DRpZppU5CyDxRdylWGxHiZDeiZmKYWwDEiwhvK85PIBT93oipssXe0ciw+IqZZ
+	DE/JjPKUAe0Pd2IuE2DC4NXs0s=
+X-Received: by 2002:a17:907:8e0e:b0:b9a:cb5e:5379 with SMTP id a640c23a62f3a-ba419171db1mr84163466b.15.1776409669646;
+        Fri, 17 Apr 2026 00:07:49 -0700 (PDT)
+Received: from [172.16.240.100] (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ba451cdfd27sm26448466b.26.2026.04.17.00.07.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Apr 2026 00:07:48 -0700 (PDT)
+From: Luca Weiss <luca.weiss@fairphone.com>
+Subject: [PATCH v3 0/3] Add support for GXCLK for Milos
+Date: Fri, 17 Apr 2026 09:07:43 +0200
+Message-Id: <20260417-milos-gxclkctl-v3-0-08f5988c43a2@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260126185818.78003-1-clamor95@gmail.com> <20260126185818.78003-2-clamor95@gmail.com>
- <acadwXDbBi4y99e2@orome>
-In-Reply-To: <acadwXDbBi4y99e2@orome>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Fri, 17 Apr 2026 09:52:50 +0300
-X-Gm-Features: AQROBzDJUsv0c10KEk-OckCv0HeNslGwyNfIIEYLdh9v3XdESuYcNKHmFmVOi_E
-Message-ID: <CAPVz0n3SXHdTTE55MvwZeogYaTgg9mD8Jh3Yy3snnSkjgfcyJQ@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] clk: tegra: set up proper EMC clock implementation
- for Tegra114
-To: Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>
-Cc: Thierry Reding <thierry.reding@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, 
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, linux-clk@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/3XOQQ6CMBAF0KuQrq2ZFgRh5T2MiwIDTIRW20owh
+ rtb68JE4/JP8t+fB3NoCR2rkgezOJMjo0NINwlrBqV75NSGzCTIHFLI+USjcbxfmvHc+JHv1T4
+ tZJsrgcBC6WKxoyWCx9M7W7zeguvfR1Yrh7wx00S+SjQunkc7Ezl7FQZy3th7fGgWsfFvexYcO
+ EANJaLYlao4dIrsZTAat2EgcrP8EBmkP4QMRLnDusxU0YLKvol1XZ/2T318JAEAAA==
+X-Change-ID: 20260306-milos-gxclkctl-8a8372d6a1e0
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+ Alexander Koskovich <akoskovich@pm.me>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Luca Weiss <luca.weiss@fairphone.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
+ Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>, 
+ Taniya Das <taniya.das@oss.qualcomm.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1776409667; l=1290;
+ i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
+ bh=Q3U+5k1MvoRdWNZqyqWnSS2ZPwFJtCBfEHKSkleJKtU=;
+ b=ItnCRFeepb3xdXIGRx23ePVoTpbsJ6cicQ7SXkETPWOcf6/bgmzgAVAUFXbGC8dnDknPIxtNv
+ fqY038lsnThDHoJOTNJwKhswdIWVpMfu/JbcooXn+erEEhddbITdwvz
+X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
+ pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
 
-=D0=BF=D1=82, 27 =D0=B1=D0=B5=D1=80. 2026=E2=80=AF=D1=80. =D0=BE 17:10 Thie=
-rry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Mon, Jan 26, 2026 at 08:58:18PM +0200, Svyatoslav Ryhel wrote:
-> > Remove current emc and emc_mux clocks and replace them with the proper =
-EMC
-> > clock implementation for correct EMC driver support.
-> >
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
-> > ---
-> >  drivers/clk/tegra/clk-tegra114.c | 39 ++++++++++++++++++++------------
-> >  1 file changed, 25 insertions(+), 14 deletions(-)
->
-> Acked-by: Thierry Reding <treding@nvidia.com>
+Similar to other new SoCs, Milos also contains the GXCLKCTL block that
+we need to control for GPU. Add support for it.
 
-Hello clock subsystem maintainers!
+Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+---
+Changes in v3:
+- Replace unevaluatedProperties with additionalProperties
+- Pick up tags
+- Link to v2: https://patch.msgid.link/20260403-milos-gxclkctl-v2-0-95eb94a7d0a4@fairphone.com
 
-May this patch be picked if everyone is fine with it? It is pretty
-important for Tegra114 EMC driver to work properly.
+Changes in v2:
+- Update casing of binding title, reg goes as second property (Krzysztof)
+- Rebase on linux-next
+- Pick up tags
+- Link to v1: https://lore.kernel.org/r/20260306-milos-gxclkctl-v1-0-00b09ee159a7@fairphone.com
+
+---
+Luca Weiss (3):
+      dt-bindings: clock: qcom: document the Milos GX clock controller
+      clk: qcom: Add support for GXCLK for Milos
+      arm64: dts: qcom: milos: Add GX clock controller
+
+ .../bindings/clock/qcom,milos-gxclkctl.yaml        | 61 ++++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/milos.dtsi                | 10 ++++
+ drivers/clk/qcom/Makefile                          |  2 +-
+ drivers/clk/qcom/gxclkctl-kaanapali.c              |  1 +
+ 4 files changed, 73 insertions(+), 1 deletion(-)
+---
+base-commit: f4d9dc7f102a8d7e7fa018ae048aa324349122a4
+change-id: 20260306-milos-gxclkctl-8a8372d6a1e0
 
 Best regards,
-Svyatoslav R.
+--  
+Luca Weiss <luca.weiss@fairphone.com>
+
