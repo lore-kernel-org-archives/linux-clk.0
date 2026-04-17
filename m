@@ -1,469 +1,174 @@
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013023.outbound.protection.outlook.com [40.107.159.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7DF3306B08;
-	Fri, 17 Apr 2026 08:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776413532; cv=none; b=jeF4hcrG3zrMLG9WaVTI3Nzw6YxwkWRsoguRwCjXmo3+06WLQOXyGgTlm9H4skuC4Md8dTNmaCcN9WJJx/1vF1nxA5ycD48oX8LRvpMLLxwam806/k1ATGRiTalYoSo1lYmggyoHyKMHbBqJraaQw+OrBoMwdfJbRgsOoIMDUwA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776413532; c=relaxed/simple;
-	bh=S1PVGX+ejP7Fpd/EFCjtwCuwlpg8zF7V19FiHWq/LIE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GLnjDfUhF1w4uZmbCEVl9E7rDPIBtKa2d9eCHviR2oxgonGj8OcdwQtjuxysulN6Rme2yxKC+ZtIl70c+5pt4wRYGtVWhYVahljAmD4BD2zURU2sz7oBJeFX1qI3dY5z47pgS4aL0pYbmzh8lVysbVbqfJfMsgSWquYsVPVRe/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=FOSvC3wI; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13235349AE0;
+	Fri, 17 Apr 2026 08:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.23
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1776414440; cv=fail; b=JtDuCPam8TK79P1XrTXcIejh72V7Mm3FH+rL8moFF36f6uKeriRwrJO+LvPS/ebHrz2vbPfrdk1uDBBWXW805TtOrkJZxx2PCMKp0TIzxhPegW9iusCTjwOfm9at5EmJ8H2ubmVxWSwr/iozEetKErQO4xVYWXWomBpMXUHi3n8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1776414440; c=relaxed/simple;
+	bh=quAhHlCjyqfBNBsIpF4OSDmYXLRla5Ik0kA0DgmCwgE=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=SyeVBBmwo+hC41AU1sb63XDzFhlTDnesYjmIZQGUg0Ey3GSHEl+J1cJdLGcSBiUQ9t9UWAIvrlpjaslrNCMMB1Qg9GeeY9+NmbuXxkYtQYbEdGiP3ef/H2jUtY576TaNePb4aqoLYEXHPRhKKDS40e5T5JsBNg/1rSKeGxnXMEA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=OWKdcolZ; arc=fail smtp.client-ip=40.107.159.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="FOSvC3wI"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 63H89amL63505415, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1776413377; bh=U1XCcAazvQvpYCj9sk4DO88ug7qWb0rtSvXA3EMWoiM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=FOSvC3wIMPgNodjfh4VRGPKMUhYzcbtfdkSnDMMzVe/y6R1aO40M1RY+3YS0utiWx
-	 F2gss09yIuNLy4x3gzddD9g4Gg0YlHRS7/yAanJh7dAj0PtR3V7y5SREgLTQsqVFGX
-	 D3cAC1juDgs5h1MoPne7axgRPmBs3Ekc1ojJlYlX/CQi+edJVDHkWyLirrgAql49OA
-	 BRkXs0qGeqtxC85SUsSC98HBrAwWlIXFwIMjIHh7p7GqVmt1aMdDDNyxfJDzzY/4Xx
-	 uUgmLnlMhTXVU8QTaQUYiLJDeqoZX0dO5zy6FHRJRO/vdyne1/YXmfm95/XJKivFM2
-	 Zw3hrRrS4dH1Q==
-Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
-	by rtits2.realtek.com.tw (8.15.2/3.26/5.94) with ESMTPS id 63H89amL63505415
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 17 Apr 2026 16:09:36 +0800
-Received: from RTKEXHMBS04.realtek.com.tw (10.21.1.54) by
- RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Fri, 17 Apr 2026 16:09:36 +0800
-Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS04.realtek.com.tw
- (10.21.1.54) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Fri, 17 Apr 2026 16:09:36 +0800
-From: Yu-Chun Lin <eleanor.lin@realtek.com>
-To: <bmasney@redhat.com>
-CC: <afaerber@suse.com>, <conor+dt@kernel.org>, <cy.huang@realtek.com>,
-        <cylee12@realtek.com>, <devicetree@vger.kernel.org>,
-        <eleanor.lin@realtek.com>, <james.tai@realtek.com>,
-        <jyanchou@realtek.com>, <krzk+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-realtek-soc@lists.infradead.org>, <mturquette@baylibre.com>,
-        <p.zabel@pengutronix.de>, <robh@kernel.org>, <sboyd@kernel.org>,
-        <stanley_chang@realtek.com>
-Subject: Re: [PATCH v6 09/10] clk: realtek: Add RTD1625-ISO clock controller driver
-Date: Fri, 17 Apr 2026 16:09:36 +0800
-Message-ID: <20260417080936.3352078-1-eleanor.lin@realtek.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <ac_c6BkBQyvvOpeq@redhat.com>
-References: <ac_c6BkBQyvvOpeq@redhat.com>
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="OWKdcolZ"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=j1KryYrkqyu2vXWDcI24jcdFP5gCE8xiyZlcqy+OG96AGVyC9yKcoq8b/HnpaA3XAwxbjuYFUW/4TuqNyUOYfD1yhcyXmJu48SBFbg3AXSQq+y9bzyNcNsTsvU0Bb+edePV/XGMwudwkMzh1giERntsHiQsfGfIjc2s/0ptdBCSX6qvcqB+JstvbLdXPAA2eVW5VlocEhuWwO9zgdcM5ASOq+EG0pxIWZQnV/1W89rOBDZwUCqGuySj6RC7Y64JbKvOuhjQC0IC52E1bK60rX2nmSVGRhnoYEkuJJ8a85VGihjf3c4wdNgdCKBILsW8yGm+f2L8z1Pv8gqw7Dz86GQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7grnC+hHgum27QUpVZGzuDYH+wc2fGSm/9THj/vqoyU=;
+ b=mOKjBkeORJy+BRc3ODiUHVVoBzPPyAEg0XuvJhoMsyfYYe+frdUEenfRdsIrUG0VBXjSovQ2qnjBJqYEm6MdXIFsPIu/H8ZrGswUXsylfBTCIaJJbsGkbYu2SwDJZChqVCu5lk1QjgkI0qnSkJUrJbgG8AcGV7LFm0S+SOKciOKrCDfYluwRqteKa+OlbsNZrmxES8kFbLdUR4a+mpBm+rUBKNKRR9ORcFVarg3BTg1Te6ZOASCmH7Em6QbmKJ/iSu8If6VU6gNI5CusAINNodlm3NokvKj9zri77vQLQ2ZUp4u8M9ijvq2ryyEtfiqUIjpAofmJ9d9CBgsD94n7/g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7grnC+hHgum27QUpVZGzuDYH+wc2fGSm/9THj/vqoyU=;
+ b=OWKdcolZKozibUZ9YBmcnxZtTLfO5r5GpnNBaU5grDIHTegxvPIwI+6kYDkK7915fEmCwnukqxQHiC2cJVbeLXhwCvD84DInDOcDxktXIz83Lgxau5QLr/mdMWBgRjq9bbyAiLWfHt4hvIEsfXuE31rOJ+X34/MBmfJMopu4TSZeab17YPjGCNslF78ymAFw9JlukQOVugFkHz/cR0kDBsKlaBZ/9kkmlCGATKY2E4JcqUP1QZi5f+//P4DpYTTbWicIuGiNF+4evIdBNZ4rilouFoxnOiteEmJ/cy/OrJK+1cfM2//z7GcpaBDFPCznrpa6xjql9fT/Rj8QWHlf6g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM0PR04MB5220.eurprd04.prod.outlook.com (2603:10a6:208:c2::19)
+ by AS8PR04MB7719.eurprd04.prod.outlook.com (2603:10a6:20b:29a::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9818.25; Fri, 17 Apr
+ 2026 08:27:16 +0000
+Received: from AM0PR04MB5220.eurprd04.prod.outlook.com
+ ([fe80::cbbc:93fd:f7b0:76e5]) by AM0PR04MB5220.eurprd04.prod.outlook.com
+ ([fe80::cbbc:93fd:f7b0:76e5%5]) with mapi id 15.20.9769.046; Fri, 17 Apr 2026
+ 08:27:15 +0000
+From: Richard Zhu <hongxing.zhu@nxp.com>
+To: abelvesa@kernel.org,
+	peng.fan@nxp.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	Frank.Li@nxp.com,
+	s.hauer@pengutronix.de,
+	festevam@gmail.com
+Cc: linux-clk@vger.kernel.org,
+	imx@nxp.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	kernel@pengutronix.de,
+	Richard Zhu <hongxing.zhu@nxp.com>
+Subject: [PATCH v1] clk: imx95-blk-ctl: Fix REFCLK rise-fall mismatch on i.MX95
+Date: Fri, 17 Apr 2026 16:29:10 +0800
+Message-Id: <20260417082910.489995-1-hongxing.zhu@nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MA5PR01CA0119.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:1a7::7) To AM0PR04MB5220.eurprd04.prod.outlook.com
+ (2603:10a6:208:c2::19)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM0PR04MB5220:EE_|AS8PR04MB7719:EE_
+X-MS-Office365-Filtering-Correlation-Id: 119a063b-d0e5-4965-6cb6-08de9c5b21c4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|19092799006|38350700014|56012099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	t5LMG7JsW1s2J5n89SNMZ1RJaKUcOw4qLmDWmCQhmq+YMduXhcXTMYeIq1uyjpPCc48UazmyVtXLfCwFfYre2Az3RrShu2tz5jMnrmSypAN9HYE0bGv97i/BuvG+6N/p6Ng43LLZXY4GnJhz48IK2uloy2pTXnRqHOO7a0ilgptaNmjC3OkxJ24uLe7JvPmLrV222HjerbvqDznupSymAIqJ/5SEwaKQh6u+8gXL8mPFedSYiSb9/4ZbQ4wcNjhUewdleIJbfbOWf0Y1Zms2MtUA5MN0KOgdclfSHjWfQjnuC5RpNeMt+TAvfz8pG5EpdihDwAJvAjRKquPd3B7pGgiIRPoSVJljzdaG6/bYMOhrcm4yG0kM0s5mf8bWkzTF9fBEt3mpQn4jfOrhBN6GTFWre+DQ45QShgzFYiLJ0yGaexruWLtsoxFiwGUVc0LeYscsAQb3nL7LilNKliuhfyteCgNimzw6tSAzDcqqTf0ZY/j1DS7L945TI+nRXJwsvaY7zPhswMm9mtnZIeafOgj7J6STu1I+1UqaM53AhkiLNgqzHqUqJiK+GB6/qdOS9e+mdC59Mmd2WuZeXDYWmyv/l2IKBpTtue8gJQE3nZDGZLcsSBV40F9xYHx/AvNicymAqm1RMHrlL+fYs+ahFl1LdjA/o/Q+cj+7TYg896RYGOh3LgJ/WR7+hB+66JMpH7up8+DH1jJ7S0JKN5gIkVCzhVjPMmxyj7El+dylspkhvoDIRX1urzhMWJHISvEZiCzbhiEciB4dLUs9PRLvNlr7lEQex+Jpmr8KPM8bqVU=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB5220.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(19092799006)(38350700014)(56012099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?fzYlrAWXk2nGjrhdaGEIal58aPlM6er/idw4jfoOD39AceWwyh84Lvd15tqL?=
+ =?us-ascii?Q?YYUWXItaiCEhfnLICdZ6k+zDBUU5+8hceRLT1s3FhVroGv0eXZg+8cQjKYzV?=
+ =?us-ascii?Q?xDOtHRkHTc9zRmtBqvpwqfbXNHVnFhCIi8XQ5oQeWKSAYLmviqozUJb2mONH?=
+ =?us-ascii?Q?qm+KzaAwN67j/F32NnTedu+UkbHa+xo1nid7pSFnAI5KebzWS3Z2QLH0H45j?=
+ =?us-ascii?Q?jNA0ec1dBXzwHBKbbgKgG10r9H6ogSsoAkyBOx+9OpvCNLJedrCqCYsmt/Vj?=
+ =?us-ascii?Q?I57UCzKMRiHVZIlGJhmu1uZzFTEL4jyjiOMsMUrz0hfzNsnxGs6Ff5vqHz4M?=
+ =?us-ascii?Q?B+TN5MFsEOiunaLOqq7us8gmmm9CaYhUs2/7Sygq2RcAG2L1X9sAC1oeRwYo?=
+ =?us-ascii?Q?QiuBzhz85cKhYGz7a1QnrZP+ghmeBs1cEbkC8vzqpIOfRLrKX+zR4CZImQoG?=
+ =?us-ascii?Q?gf3v/bidwgMYBtcgOPMcTwGjUAvUXVzpmZn7Ee+mGi26axPxGTOGQAx6dDZR?=
+ =?us-ascii?Q?Dgxi09iczTPeiKAI4CuyaGdl8jp/WYht4kL0tfNUvPsXnHp6ztcerV6Q+ITq?=
+ =?us-ascii?Q?NqtjJOGm9hcRQHjp6yVkTE+4fkl+6XvTQ/zU+5eyynScPYJ36Smu9VtrqdF0?=
+ =?us-ascii?Q?sZbc9YJhSwyhO+GX3CqDxxrIMqKfEEco9wrU7FAfj4loCWgeOVWeyXIU6I1v?=
+ =?us-ascii?Q?fyUI8BpL90IMSXE3gtHVRWk0RnTWyIo95yvBZpaKHSth/GF24RDzvO4iVAh2?=
+ =?us-ascii?Q?kJJ95TMDYPYqI3WJNwZarHqgTPc69qCVZAhlMIA0DLFMqLx0hG5G1fnvynuP?=
+ =?us-ascii?Q?OeXcGAf4AU/fKsY0h84QSUZKmrCA64Eruea8+/7LkPi1t9528VS9U/3avEKL?=
+ =?us-ascii?Q?ofpAauogm0bmoy9/JlmqU3ifNDgkTm91IfA4oiS+knrftS+Ov6g1pvbn6eIG?=
+ =?us-ascii?Q?Fy8HmpaUgdWAe8vYlAf83w6zrsQWbKvJq70tBLFmN+MdpXYMwPNdepzhizcv?=
+ =?us-ascii?Q?GhqENFmSJnTwl7GjMM22CWbHF20CaPui9+N50VjuWHYoQApt8XX3IrJqO8Sn?=
+ =?us-ascii?Q?BcEumfiXZ1D5cm1QOEEqcELiAdJF6g4LzQOCxWbcwQ53X6TjtAXwz6QfND8c?=
+ =?us-ascii?Q?jShwexc6NnSgleYVvXCx2ANt5Q+XyXXPIFmGKx7hkG6ZOnpS2dP/Ewn3SwN9?=
+ =?us-ascii?Q?WB99D9bRFQVJbsG71KjPAwLcTVbBswKc5iJcrhjTCeQrKv1nAntO1GvJrKXj?=
+ =?us-ascii?Q?6UewRG7A06p/Bc9vZ0O/6okmQSYbPCuzkTnPPhuFHxSJgej95F8gM7Tyj5w3?=
+ =?us-ascii?Q?SJp/J/UB9mOv6j2pgdQ8K5bFTztPN9pBlVjC0eBSAeezGa2ZHC4lDSygqKGo?=
+ =?us-ascii?Q?AAG3Wi7ypnlXkyW5iWPlUQ+UISq5dN7w3kWVran+mjWSb05mKwRiG0LBfXHP?=
+ =?us-ascii?Q?f36UKHm4i8jiGJJ+3KfAJ1X1V+Y12AM8hSJuzg5FLUjENn5X/au0xNQUOVth?=
+ =?us-ascii?Q?ccFkHaHllcZrOq7dRjDFe0H1iaEqk/3zc+cgxxfp50YDy8QrmObOb924CoeL?=
+ =?us-ascii?Q?E32fafsNoA6/b/sgPAGhrvuNWxt7ONT2nqyeiMApgBqrZvHMzPnVXSRqIm7e?=
+ =?us-ascii?Q?7cAfY94MOnPQRxhLmj30/oH4KBHrsmttrlt/aw7HWclWlgJd2JnjTmlG18KQ?=
+ =?us-ascii?Q?xO21TBI00bpr+E4LYQ0b6o3lZJ/uR1w6AuXQ27DyHUzRGmxtsQ4O4fmBJUz0?=
+ =?us-ascii?Q?YkL38vN2iw=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 119a063b-d0e5-4965-6cb6-08de9c5b21c4
+X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB5220.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2026 08:27:15.9032
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /SUSibQ9d9lydHtYfg3lOGli4vn+uz8h1fksqgPc3eDiEFHZ9EdsdQPESSAg6gYF5nT/DQA/ueRp9nQQG3ZkVA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7719
 
-Hi Brian,
+When the internal PLL is used as the PCIe reference clock source on i.MX95,
+a REFCLK rise-fall time mismatch is observed during PCIe Gen1 compliance
+testing with the Lfast IO analyzer.
 
-> Hi Yu-Chun,
-> 
-> On Thu, Apr 02, 2026 at 03:39:56PM +0800, Yu-Chun Lin wrote:
-> > From: Cheng-Yu Lee <cylee12@realtek.com>
-> >
-> > Add support for the ISO (Isolation) domain clock controller on the
-> > Realtek
-> > RTD1625 SoC. This controller manages clocks in the always-on power
-> > domain, ensuring essential services remain functional even when the
-> > main system power is gated.
-> >
-> > Since the reset controller shares the same register space with the ISO
-> > clock controller, it is instantiated as an auxiliary device by the
-> > core clock driver. This patch also includes the corresponding
-> > auxiliary reset driver to handle the ISO domain resets.
-> >
-> > Signed-off-by: Cheng-Yu Lee <cylee12@realtek.com>
-> > Co-developed-by: Yu-Chun Lin <eleanor.lin@realtek.com>
-> > Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
-> > ---
-> > Changes in v6:
-> > - Add the headers used in c file to follow the "Include What You Use"
-> principle.
-> > - Move struct rtk_reset_desc arrays from the clock driver to the dedicated
-> reset driver.
-> > - Implement and register a dedicated reset auxiliary driver.
-> > ---
-> >  drivers/clk/realtek/Makefile              |   1 +
-> >  drivers/clk/realtek/clk-rtd1625-iso.c     | 144 ++++++++++++++++++++++
-> >  drivers/reset/realtek/Makefile            |   2 +-
-> >  drivers/reset/realtek/reset-rtd1625-iso.c |  96 +++++++++++++++
-> >  4 files changed, 242 insertions(+), 1 deletion(-)  create mode 100644
-> > drivers/clk/realtek/clk-rtd1625-iso.c
-> >  create mode 100644 drivers/reset/realtek/reset-rtd1625-iso.c
-> >
-> > diff --git a/drivers/clk/realtek/Makefile
-> > b/drivers/clk/realtek/Makefile index c992f97dfbc7..1680435e1e0f 100644
-> > --- a/drivers/clk/realtek/Makefile
-> > +++ b/drivers/clk/realtek/Makefile
-> > @@ -10,3 +10,4 @@ clk-rtk-y += freq_table.o
-> >
-> >  clk-rtk-$(CONFIG_RTK_CLK_PLL_MMC) += clk-pll-mmc.o
-> >  obj-$(CONFIG_COMMON_CLK_RTD1625) += clk-rtd1625-crt.o
-> > +obj-$(CONFIG_COMMON_CLK_RTD1625) += clk-rtd1625-iso.o
-> > diff --git a/drivers/clk/realtek/clk-rtd1625-iso.c
-> > b/drivers/clk/realtek/clk-rtd1625-iso.c
-> > new file mode 100644
-> > index 000000000000..027a131363f9
-> > --- /dev/null
-> > +++ b/drivers/clk/realtek/clk-rtd1625-iso.c
-> > @@ -0,0 +1,144 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Copyright (C) 2024 Realtek Semiconductor Corporation
-> > + * Author: Cheng-Yu Lee <cylee12@realtek.com>  */
-> > +
-> > +#include <dt-bindings/clock/realtek,rtd1625-clk.h>
-> > +#include <linux/array_size.h>
-> > +#include <linux/init.h>
-> > +#include <linux/module.h>
-> > +#include <linux/of_device.h>
-> > +#include <linux/platform_device.h>
-> > +#include "clk-regmap-gate.h"
-> > +
-> > +#define RTD1625_ISO_CLK_MAX  19
-> > +#define RTD1625_ISO_RSTN_MAX 29
-> > +#define RTD1625_ISO_S_CLK_MAX        5
-> > +#define RTD1625_ISO_S_RSTN_MAX       5
-> > +
-> > +static CLK_REGMAP_GATE_NO_PARENT(clk_en_usb_p4, 0, 0x4, 0, 0); static
-> > +CLK_REGMAP_GATE_NO_PARENT(clk_en_usb_p3, 0, 0x4, 1, 0); static
-> > +CLK_REGMAP_GATE(clk_en_misc_cec0, "clk_en_misc", 0, 0x4, 2, 0);
-> > +static CLK_REGMAP_GATE_NO_PARENT(clk_en_cbusrx_sys, 0, 0x4, 3, 0);
-> > +static CLK_REGMAP_GATE_NO_PARENT(clk_en_cbustx_sys, 0, 0x4, 4, 0);
-> > +static CLK_REGMAP_GATE_NO_PARENT(clk_en_cbus_sys, 0, 0x4, 5, 0);
-> > +static CLK_REGMAP_GATE_NO_PARENT(clk_en_cbus_osc, 0, 0x4, 6, 0);
-> > +static CLK_REGMAP_GATE_NO_PARENT(clk_en_i2c0, 0, 0x4, 9, 0); static
-> > +CLK_REGMAP_GATE_NO_PARENT(clk_en_i2c1, 0, 0x4, 10, 0); static
-> > +CLK_REGMAP_GATE_NO_PARENT(clk_en_etn_250m, 0, 0x4, 11, 0); static
-> > +CLK_REGMAP_GATE_NO_PARENT(clk_en_etn_sys, 0, 0x4, 12, 0); static
-> > +CLK_REGMAP_GATE_NO_PARENT(clk_en_usb_drd, 0, 0x4, 13, 0); static
-> > +CLK_REGMAP_GATE_NO_PARENT(clk_en_usb_host, 0, 0x4, 14, 0); static
-> > +CLK_REGMAP_GATE_NO_PARENT(clk_en_usb_u3_host, 0, 0x4, 15, 0); static
-> > +CLK_REGMAP_GATE_NO_PARENT(clk_en_usb, 0, 0x4, 16, 0); static
-> > +CLK_REGMAP_GATE_NO_PARENT(clk_en_vtc, 0, 0x4, 17, 0); static
-> > +CLK_REGMAP_GATE(clk_en_misc_vfd, "clk_en_misc", 0, 0x4, 18, 0);
-> > +
-> > +static struct clk_regmap *rtd1625_clk_regmap_list[] = {
-> 
-> static const? Same for some others below as well.
-> 
+Fix this issue by configuring the IREF_TX field to 0xF (15), which adjusts
+the transmitter current reference to meet the PCIe specification timing
+requirements.
 
-I initially tried to add const, but it triggered a "read-only object"
-compilation error during the probe phase ('desc->clks[i]->regmap = regmap;')
+Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+---
+ drivers/clk/imx/clk-imx95-blk-ctl.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-To properly address, the code will be modified as follows:
+diff --git a/drivers/clk/imx/clk-imx95-blk-ctl.c b/drivers/clk/imx/clk-imx95-blk-ctl.c
+index 1f9259f45607..bc6957299cec 100644
+--- a/drivers/clk/imx/clk-imx95-blk-ctl.c
++++ b/drivers/clk/imx/clk-imx95-blk-ctl.c
+@@ -44,6 +44,8 @@ struct imx95_blk_ctl_clk_dev_data {
+ 	const char * const *parent_names;
+ 	u32 num_parents;
+ 	u32 reg;
++	u32 reg_init_msk;
++	u32 reg_init_val;
+ 	u32 bit_idx;
+ 	u32 bit_width;
+ 	u32 clk_type;
+@@ -289,6 +291,8 @@ static const struct imx95_blk_ctl_clk_dev_data hsio_blk_ctl_clk_dev_data[] = {
+ 		.parent_names = (const char *[]){ "func_out_en", },
+ 		.num_parents = 1,
+ 		.reg = 0,
++		.reg_init_msk = GENMASK(10, 7),
++		.reg_init_val = GENMASK(10, 7),
+ 		.bit_idx = 6,
+ 		.bit_width = 1,
+ 		.type = CLK_GATE,
+@@ -410,6 +414,9 @@ static int imx95_bc_probe(struct platform_device *pdev)
+ 		const struct imx95_blk_ctl_clk_dev_data *data = &bc->pdata->clk_dev_data[i];
+ 		void __iomem *reg = base + data->reg;
+ 
++		if (data->reg_init_msk)
++			writel((readl(reg) & ~data->reg_init_msk) | data->reg_init_val, reg);
++
+ 		if (data->type == CLK_MUX) {
+ 			hws[i] = clk_hw_register_mux(dev, data->name, data->parent_names,
+ 						     data->num_parents, data->flags, reg,
+-- 
+2.37.1
 
-static struct clk_regmap * const rtd1625_clk_regmap_list[] = { ... };
-
-// in drivers/clk/realtek/common.h
-struct rtk_clk_desc {
-	struct clk_hw_onecell_data *clk_data;
-	struct clk_regmap * const *clks;
-	size_t num_clks;
-};
-
-> > +     &clk_en_usb_p4.clkr,
-> > +     &clk_en_usb_p3.clkr,
-> > +     &clk_en_misc_cec0.clkr,
-> > +     &clk_en_cbusrx_sys.clkr,
-> > +     &clk_en_cbustx_sys.clkr,
-> > +     &clk_en_cbus_sys.clkr,
-> > +     &clk_en_cbus_osc.clkr,
-> > +     &clk_en_i2c0.clkr,
-> > +     &clk_en_i2c1.clkr,
-> > +     &clk_en_etn_250m.clkr,
-> > +     &clk_en_etn_sys.clkr,
-> > +     &clk_en_usb_drd.clkr,
-> > +     &clk_en_usb_host.clkr,
-> > +     &clk_en_usb_u3_host.clkr,
-> > +     &clk_en_usb.clkr,
-> > +     &clk_en_vtc.clkr,
-> > +     &clk_en_misc_vfd.clkr,
-> > +};
-> > +
-> > +static struct clk_hw_onecell_data rtd1625_iso_clk_data = {
-> > +     .num = RTD1625_ISO_CLK_MAX,
-> > +     .hws = {
-> > +             [RTD1625_ISO_CLK_EN_USB_P4]      =
-> &__clk_regmap_gate_hw(&clk_en_usb_p4),
-> > +             [RTD1625_ISO_CLK_EN_USB_P3]      =
-> &__clk_regmap_gate_hw(&clk_en_usb_p3),
-> > +             [RTD1625_ISO_CLK_EN_MISC_CEC0]   =
-> &__clk_regmap_gate_hw(&clk_en_misc_cec0),
-> > +             [RTD1625_ISO_CLK_EN_CBUSRX_SYS]  =
-> &__clk_regmap_gate_hw(&clk_en_cbusrx_sys),
-> > +             [RTD1625_ISO_CLK_EN_CBUSTX_SYS]  =
-> &__clk_regmap_gate_hw(&clk_en_cbustx_sys),
-> > +             [RTD1625_ISO_CLK_EN_CBUS_SYS]    =
-> &__clk_regmap_gate_hw(&clk_en_cbus_sys),
-> > +             [RTD1625_ISO_CLK_EN_CBUS_OSC]    =
-> &__clk_regmap_gate_hw(&clk_en_cbus_osc),
-> > +             [RTD1625_ISO_CLK_EN_I2C0]        =
-> &__clk_regmap_gate_hw(&clk_en_i2c0),
-> > +             [RTD1625_ISO_CLK_EN_I2C1]        =
-> &__clk_regmap_gate_hw(&clk_en_i2c1),
-> > +             [RTD1625_ISO_CLK_EN_ETN_250M]    =
-> &__clk_regmap_gate_hw(&clk_en_etn_250m),
-> > +             [RTD1625_ISO_CLK_EN_ETN_SYS]     =
-> &__clk_regmap_gate_hw(&clk_en_etn_sys),
-> > +             [RTD1625_ISO_CLK_EN_USB_DRD]     =
-> &__clk_regmap_gate_hw(&clk_en_usb_drd),
-> > +             [RTD1625_ISO_CLK_EN_USB_HOST]    =
-> &__clk_regmap_gate_hw(&clk_en_usb_host),
-> > +             [RTD1625_ISO_CLK_EN_USB_U3_HOST] =
-> &__clk_regmap_gate_hw(&clk_en_usb_u3_host),
-> > +             [RTD1625_ISO_CLK_EN_USB]         =
-> &__clk_regmap_gate_hw(&clk_en_usb),
-> > +             [RTD1625_ISO_CLK_EN_VTC]         =
-> &__clk_regmap_gate_hw(&clk_en_vtc),
-> > +             [RTD1625_ISO_CLK_EN_MISC_VFD]    =
-> &__clk_regmap_gate_hw(&clk_en_misc_vfd),
-> > +             [RTD1625_ISO_CLK_MAX] = NULL,
-> > +     },
-> > +};
-> > +
-> > +static const struct rtk_clk_desc rtd1625_iso_desc = {
-> > +     .clk_data = &rtd1625_iso_clk_data,
-> > +     .clks     = rtd1625_clk_regmap_list,
-> > +     .num_clks = ARRAY_SIZE(rtd1625_clk_regmap_list),
-> > +};
-> > +
-> > +static CLK_REGMAP_GATE_NO_PARENT(clk_en_irda, 0, 0x4, 6, 1); static
-> > +CLK_REGMAP_GATE_NO_PARENT(clk_en_ur10, 0, 0x4, 8, 1);
-> > +
-> > +static struct clk_regmap *rtd1625_iso_s_clk_regmap_list[] = {
-> > +     &clk_en_irda.clkr,
-> > +     &clk_en_ur10.clkr,
-> > +};
-> > +
-> > +static struct clk_hw_onecell_data rtd1625_iso_s_clk_data = {
-> > +     .num = RTD1625_ISO_S_CLK_MAX,
-> > +     .hws = {
-> > +             [RTD1625_ISO_S_CLK_EN_IRDA] =
-> &__clk_regmap_gate_hw(&clk_en_irda),
-> > +             [RTD1625_ISO_S_CLK_EN_UR10] =
-> &__clk_regmap_gate_hw(&clk_en_ur10),
-> > +             [RTD1625_ISO_S_CLK_MAX] = NULL,
-> > +     },
-> > +};
-> > +
-> > +static const struct rtk_clk_desc rtd1625_iso_s_desc = {
-> > +     .clk_data = &rtd1625_iso_s_clk_data,
-> > +     .clks     = rtd1625_iso_s_clk_regmap_list,
-> > +     .num_clks = ARRAY_SIZE(rtd1625_iso_s_clk_regmap_list),
-> > +};
-> > +
-> > +static int rtd1625_iso_probe(struct platform_device *pdev) {
-> > +     const struct rtk_clk_desc *desc;
-> > +
-> > +     desc = of_device_get_match_data(&pdev->dev);
-> > +     if (!desc)
-> > +             return -EINVAL;
-> > +     return rtk_clk_probe(pdev, desc, "iso_rst");
-> 
-> Add newline before return.
-> 
-
-Ack.
-
-> > +}
-> > +
-> > +static const struct of_device_id rtd1625_iso_match[] = {
-> > +     {.compatible = "realtek,rtd1625-iso-clk", .data = &rtd1625_iso_desc},
-> > +     {.compatible = "realtek,rtd1625-iso-s-clk", .data =
-> &rtd1625_iso_s_desc},
-> > +     { /* sentinel */ }
-> > +};
-> > +
-> > +static struct platform_driver rtd1625_iso_driver = {
-> > +     .probe = rtd1625_iso_probe,
-> > +     .driver = {
-> > +             .name = "rtk-rtd1625-iso-clk",
-> > +             .of_match_table = rtd1625_iso_match,
-> > +     },
-> > +};
-> > +
-> > +static int __init rtd1625_iso_init(void) {
-> > +     return platform_driver_register(&rtd1625_iso_driver);
-> > +}
-> > +subsys_initcall(rtd1625_iso_init);
-> > +
-> > +MODULE_DESCRIPTION("Realtek RTD1625 ISO Controller Driver");
-> > +MODULE_AUTHOR("Cheng-Yu Lee <cylee12@realtek.com>");
-> > +MODULE_LICENSE("GPL"); MODULE_IMPORT_NS("REALTEK_CLK");
-> > diff --git a/drivers/reset/realtek/Makefile
-> > b/drivers/reset/realtek/Makefile index 8ca1fa939f10..26b3ddc75ada
-> > 100644
-> > --- a/drivers/reset/realtek/Makefile
-> > +++ b/drivers/reset/realtek/Makefile
-> > @@ -1,2 +1,2 @@
-> >  # SPDX-License-Identifier: GPL-2.0-only
-> > -obj-$(CONFIG_RESET_RTK_COMMON) += common.o reset-rtd1625-crt.o
-> > +obj-$(CONFIG_RESET_RTK_COMMON) += common.o reset-rtd1625-crt.o
-> > +reset-rtd1625-iso.o
-> 
-> Some comment as the previous patch. CONFIG_RESET_RTK_COMMON is
-> expected to be common, right? If so, a SoC-specific driver shouldn't be listed
-> here.
-
-This Makefile will change to
-
-obj-$(CONFIG_RESET_RTK_COMMON) += common.o
-obj-$(CONFIG_RESET_RTD1625) += reset-rtd1625-crt.o reset-rtd1625-iso.o
-
-> 
-> > diff --git a/drivers/reset/realtek/reset-rtd1625-iso.c
-> > b/drivers/reset/realtek/reset-rtd1625-iso.c
-> > new file mode 100644
-> > index 000000000000..f2a0478382ae
-> > --- /dev/null
-> > +++ b/drivers/reset/realtek/reset-rtd1625-iso.c
-> > @@ -0,0 +1,96 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Copyright (C) 2026 Realtek Semiconductor Corporation  */
-> > +
-> > +#include <dt-bindings/reset/realtek,rtd1625.h>
-> > +#include <linux/auxiliary_bus.h>
-> > +#include <linux/device.h>
-> > +#include <linux/errno.h>
-> > +#include <linux/of.h>
-> > +#include <linux/slab.h>
-> > +#include "common.h"
-> > +
-> > +#define RTD1625_ISO_RSTN_MAX 29
-> > +#define RTD1625_ISO_S_RSTN_MAX       5
-> > +
-> > +static struct rtk_reset_desc rtd1625_iso_reset_descs[] = {
-> 
-> static const?
-> 
-
-Ack.
-
-> > +     [RTD1625_ISO_RSTN_VFD]                 = { .ofs = 0x88, .bit =
-> 0 },
-> > +     [RTD1625_ISO_RSTN_CEC0]                = { .ofs = 0x88, .bit =
-> 2 },
-> > +     [RTD1625_ISO_RSTN_CEC1]                = { .ofs = 0x88, .bit =
-> 3 },
-> > +     [RTD1625_ISO_RSTN_CBUSTX]              = { .ofs = 0x88, .bit =
-> 5 },
-> > +     [RTD1625_ISO_RSTN_CBUSRX]              = { .ofs = 0x88, .bit =
-> 6 },
-> > +     [RTD1625_ISO_RSTN_USB3_PHY2_XTAL_POW]  = { .ofs = 0x88, .bit =
-> 7 },
-> > +     [RTD1625_ISO_RSTN_UR0]                 = { .ofs = 0x88, .bit =
-> 8 },
-> > +     [RTD1625_ISO_RSTN_GMAC]                = { .ofs = 0x88, .bit =
-> 9 },
-> > +     [RTD1625_ISO_RSTN_GPHY]                = { .ofs = 0x88, .bit =
-> 10 },
-> > +     [RTD1625_ISO_RSTN_I2C_0]               = { .ofs = 0x88, .bit =
-> 11 },
-> > +     [RTD1625_ISO_RSTN_I2C_1]               = { .ofs = 0x88, .bit =
-> 12 },
-> > +     [RTD1625_ISO_RSTN_CBUS]                = { .ofs = 0x88, .bit =
-> 13 },
-> > +     [RTD1625_ISO_RSTN_USB_DRD]             = { .ofs = 0x88, .bit =
-> 14 },
-> > +     [RTD1625_ISO_RSTN_USB_HOST]            = { .ofs = 0x88, .bit =
-> 15 },
-> > +     [RTD1625_ISO_RSTN_USB_PHY_0]           = { .ofs = 0x88, .bit =
-> 16 },
-> > +     [RTD1625_ISO_RSTN_USB_PHY_1]           = { .ofs = 0x88, .bit =
-> 17 },
-> > +     [RTD1625_ISO_RSTN_USB_PHY_2]           = { .ofs = 0x88, .bit =
-> 18 },
-> > +     [RTD1625_ISO_RSTN_USB]                 = { .ofs = 0x88, .bit =
-> 19 },
-> > +     [RTD1625_ISO_RSTN_TYPE_C]              = { .ofs = 0x88, .bit =
-> 20 },
-> > +     [RTD1625_ISO_RSTN_USB_U3_HOST]         = { .ofs = 0x88, .bit =
-> 21 },
-> > +     [RTD1625_ISO_RSTN_USB3_PHY0_POW]       = { .ofs = 0x88, .bit =
-> 22 },
-> > +     [RTD1625_ISO_RSTN_USB3_P0_MDIO]        = { .ofs = 0x88, .bit =
-> 23 },
-> > +     [RTD1625_ISO_RSTN_USB3_PHY1_POW]       = { .ofs = 0x88, .bit =
-> 24 },
-> > +     [RTD1625_ISO_RSTN_USB3_P1_MDIO]        = { .ofs = 0x88, .bit =
-> 25 },
-> > +     [RTD1625_ISO_RSTN_VTC]                 = { .ofs = 0x88, .bit =
-> 26 },
-> > +     [RTD1625_ISO_RSTN_USB3_PHY2_POW]       = { .ofs = 0x88, .bit =
-> 27 },
-> > +     [RTD1625_ISO_RSTN_USB3_P2_MDIO]        = { .ofs = 0x88, .bit =
-> 28 },
-> > +     [RTD1625_ISO_RSTN_USB_PHY_3]           = { .ofs = 0x88, .bit =
-> 29 },
-> > +     [RTD1625_ISO_RSTN_USB_PHY_4]           = { .ofs = 0x88, .bit =
-> 30 },
-> > +};
-> > +
-> > +static struct rtk_reset_desc rtd1625_iso_s_reset_descs[] = {
-> > +     [RTD1625_ISO_S_RSTN_ISOM_MIS] = { .ofs = 0x310, .bit =
-> 0, .write_en = 1 },
-> > +     [RTD1625_ISO_S_RSTN_GPIOM]    = { .ofs = 0x310, .bit =
-> 2, .write_en = 1 },
-> > +     [RTD1625_ISO_S_RSTN_TIMER7]   = { .ofs = 0x310, .bit =
-> 4, .write_en = 1 },
-> > +     [RTD1625_ISO_S_RSTN_IRDA]     = { .ofs = 0x310, .bit =
-> 6, .write_en = 1 },
-> > +     [RTD1625_ISO_S_RSTN_UR10]     = { .ofs = 0x310, .bit =
-> 8, .write_en = 1 },
-> > +};
-> > +
-> > +static int rtd1625_iso_reset_probe(struct auxiliary_device *adev,
-> > +                                const struct auxiliary_device_id *id)
-> > +{
-> > +     struct device *dev = &adev->dev;
-> > +     struct device *parent = dev->parent;
-> > +     struct rtk_reset_data *data;
-> > +
-> > +     data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-> > +     if (!data)
-> > +             return -ENOMEM;
-> > +
-> > +     if (of_device_is_compatible(parent->of_node,
-> "realtek,rtd1625-iso-s-clk")) {
-> > +             data->descs           = rtd1625_iso_s_reset_descs;
-> > +             data->rcdev.nr_resets = RTD1625_ISO_S_RSTN_MAX;
-> > +     } else {
-> > +             data->descs           = rtd1625_iso_reset_descs;
-> > +             data->rcdev.nr_resets = RTD1625_ISO_RSTN_MAX;
-> > +     }
-> > +     return rtk_reset_controller_add(dev, data);
-> 
-> Newline before return.
-> 
-
-Ack.
-
-> > +}
-> > +
-> > +static const struct auxiliary_device_id rtd1625_iso_reset_ids[] = {
-> > +     {
-> > +             .name = "clk_rtk.iso_rst",
-> > +     },
-> 
-> I would combine the { .name } all on one line.
-> 
-
-Ack.
-
-Best Regards,
-Yu-Chun
-
-> Brian
-> 
