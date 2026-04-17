@@ -1,136 +1,322 @@
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702A737AA7E
-	for <linux-clk@vger.kernel.org>; Fri, 17 Apr 2026 07:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B163815FB;
+	Fri, 17 Apr 2026 07:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776411441; cv=none; b=lshIco0u8S3w3cXGn17D/woSAe2fFubQpTCrCr2BL3go683hEu+SCSRNEADq9SJkN9r6uyRfi4PJKKKzvTForHXDTWdyOFyW6//rLrK7K776fMhrXLtjGdmDE+ESXfssY8i78Fd8few530swrX76r1hIH4TVnleXs+qeA0CzAiU=
+	t=1776411808; cv=none; b=W4LlT8KMvS970mgG+Q5rFbtkznCu6XDLEXTWhWkebWSAsPUazMTMTl+IhPZZ/p4BtyYYpzFRZ6L1ZbqnCfXlu0BsspQSsruNTUul9xq3cNWmKTLDuJG+ENVgCYy5q5BRscQaRP/z3TlNvCHENpzPfRm4NaNkcQ/rZ/vyu5b5cME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776411441; c=relaxed/simple;
-	bh=ntjX0N5F41OJckwHhjFndO5tDkiyPj/m0ruzo3MkSbw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Cfh0OYZeiVQNvhxvelFhM+8RkFF0XvLJ3bmLLskWMhN5yiRXCWaVNHTXWjllvL6ctd8qjzpGw+pFQxarebP98Z8AtFkQlUJ6VxLOrvp59DjSupEbZRF50evg51ybf/XBq+D71rVhySI7oANKSgAdDGkxV60uTIAqUlRvn0edwuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X9EEjVpq; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1776411808; c=relaxed/simple;
+	bh=rmCu0v0USkpwDe2jBOhMYOJEeBKXUyAdSRRO40th+Cw=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EvxqhlWO56uQkU5OtGJq7eVS3ZlrbQ4yKosgY3FwRYERSmfPAMer6DqUW/h9Zf+2UFFH6kZu4vmun1ysk4ttDGgvv990nXAg9lx9s9387Qgw/4Ll4HuK2LyX2Vq88cdx//ftG3UJbkFwinohs7iQfqekN7zaU85invSXd1oAbBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=ikYCYNIv; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X9EEjVpq"
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-38e7d983f91so4031751fa.2
-        for <linux-clk@vger.kernel.org>; Fri, 17 Apr 2026 00:37:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1776411438; x=1777016238; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Pt779CeCGZE6QhsteVfBznH3GnAaSQgHdsYoK27GZto=;
-        b=X9EEjVpq/Xq3yNvXcjBcjw95UpQ4maA8e2T7l4RfOKVJx3CoVyQtgIRDZbyWRVL6F0
-         iH6XvhVEhzykk4AVWkBOW2GEEHaVIu+5mvvIXW1jNRUh2hJetJCAgXXbV0d8E23qfPjj
-         /rDhVhZhw/h2o/FddR5RTIZA1r7kiLA0kd954iqU2e8TbO6UrTPNVrFeVoqtmDhKA8P5
-         JFL9O6M0m94eyVuIo++scZKKUrbP2leezdCogVG8I92YHH8dIR+sFAI/dpXZaozCivgw
-         bP66/PLaNpk7CEASzAzsv7DrTJd824jd8B+0IfSnWBaM0VsXbnTCzdSwFc+YGRD08PoW
-         b2Ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776411438; x=1777016238;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Pt779CeCGZE6QhsteVfBznH3GnAaSQgHdsYoK27GZto=;
-        b=D7EyMwOEAH4eEYjdfEQ2vGERH9Z0gW7Wo+wn8qsA2mZaDe9ikF6CHX/2PmXGZwA6kp
-         UP4S4DfqhVLOFSuMk1ln8x6z48mg7x8wjfcBumUdpbSK99LGka/mY6ykffGltBAudCeG
-         cEgJv0bMc3+aulB1Hsw1MI0peLfFl+pyUPmdB1p0Q5cpMmwuN1QcWafobzYO5HI79jG3
-         iVCqbSz3EZtQdLKBcSe7FiJXijnUhIK+xEe+/8n+s0so12QlIRAseAjWvjm8EO71ZhXr
-         sb+8Ty0/i55/NvDsbjQBcP5lN5wOCHePDnMtffnZvZTtvGdhVvdVIGpFSsG++b9gasCh
-         CT/g==
-X-Gm-Message-State: AOJu0YxgkOcMMZh2kx3UIr4J1K8hQWtRIbeD4dNswCLVMcMj9t7cLnVF
-	IPahGxCjWNLtV/oZEpd4rVKN4Rz57M9rsNmpQrhOPi3OW8NyEDQ0pkkk
-X-Gm-Gg: AeBDiev4wjGV7KHxiD31osabShrXXRp1GKyHtUEcGqg421HWCjfjepQ9/5NriDcUpiQ
-	tzVI89KdMgGVbqGurZLI08Yvnw2IBx6E1yyq9UnhqPIz2ak5jcj3TCCHKL/GCktkdqWTj/tX3JT
-	yzzvIOXijxjD3YSIUs2OjOk62gye4RtUQw8q2vcIWr2oo71Y6up9d7o0sfbrJ3EdAjnn2y3cYSk
-	V7TDjIuljLY4aMZOCI/EPnLb4OVLVDrGx63vBKR8HRXJ6nwz/5Zf8WO+OUi8VbV+siS88ut7xm0
-	H87BMJJmzvLO8e+qeYNuvx+fXP6IrRVdQjYOwsK9UwHWvxX8Zp5N8cFCFCtFNWqkv9uICKb7vmW
-	bo/gprdOBtWI+tPs7PrTnJ+69QPl22FpuetTFopCdPbzrMGEWM5hSD6oBCaWOVGGldUSi/Sx4oW
-	fjnZeALGVuAZB/Z0W5UbIFfkU=
-X-Received: by 2002:a05:651c:19a1:b0:38e:84e3:3476 with SMTP id 38308e7fff4ca-38ec7ac74acmr5569871fa.25.1776411437544;
-        Fri, 17 Apr 2026 00:37:17 -0700 (PDT)
-Received: from xeon ([188.163.112.56])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-38ecb5f64ebsm1692661fa.10.2026.04.17.00.37.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Apr 2026 00:37:17 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/1] clk: tegra: support 48MHz clock for pll_p_out1
-Date: Fri, 17 Apr 2026 10:34:52 +0300
-Message-ID: <20260417073452.23342-2-clamor95@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260417073452.23342-1-clamor95@gmail.com>
-References: <20260417073452.23342-1-clamor95@gmail.com>
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="ikYCYNIv"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 63H7eJVS13458892, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1776411619; bh=7bAnNbDSyQm2tbM9RfAjxsUZhyF08bOCjXCLhVyYxIo=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding:Content-Type;
+	b=ikYCYNIvaltaimo4dwiRBzSVzmihzvmdYD7TJf2OPt27HwAJK2pvp050wzbnNDpoD
+	 gI5FrY5GukW4H9GNS7Z1kcIf6SmsIhBmp3lZBv7QroZaIC0eTqzWICbkEY+G5h1d5r
+	 3KySmlaUooQp2CV67wFWLnIO+hhX2I/FRBCq/V2yq0ASMgAoGvv6lYlojwTWhpXoPh
+	 eSbvmaeKr0NDnEu6K2z8a6li55KM7/sDIec9azlCM1nMEvdpD/uJsfm157bMmn8M8s
+	 NYOKKenr+GvPwy/Ed06c0MASG+m4oK9R9L1LAzV0mJHCRlnur+0mlzIOzv6/UrvlV6
+	 KZNWlIB+mr0AA==
+Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
+	by rtits2.realtek.com.tw (8.15.2/3.26/5.94) with ESMTPS id 63H7eJVS13458892
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 17 Apr 2026 15:40:19 +0800
+Received: from RTKEXHMBS04.realtek.com.tw (10.21.1.54) by
+ RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Fri, 17 Apr 2026 15:40:18 +0800
+Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS04.realtek.com.tw
+ (10.21.1.54) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Fri, 17 Apr 2026 15:40:17 +0800
+From: Yu-Chun Lin <eleanor.lin@realtek.com>
+To: <bmasney@redhat.com>
+CC: <afaerber@suse.com>, <conor+dt@kernel.org>, <cy.huang@realtek.com>,
+        <cylee12@realtek.com>, <devicetree@vger.kernel.org>,
+        <eleanor.lin@realtek.com>, <james.tai@realtek.com>,
+        <jyanchou@realtek.com>, <krzk+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-realtek-soc@lists.infradead.org>, <mturquette@baylibre.com>,
+        <p.zabel@pengutronix.de>, <robh@kernel.org>, <sboyd@kernel.org>,
+        <stanley_chang@realtek.com>
+Subject: Re: [PATCH v6 07/10] clk: realtek: Add support for MMC-tuned PLL clocks
+Date: Fri, 17 Apr 2026 15:40:17 +0800
+Message-ID: <20260417074017.1198940-1-eleanor.lin@realtek.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <ac_XtHzDpIjHW8xT@redhat.com>
+References: <ac_XtHzDpIjHW8xT@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: Dmitry Osipenko <digetx@gmail.com>
+Hi Brian,
 
-UEFI on Surface2 sets pll_p_out1 to 48MHz which is not supported
-by kernel and causes BUG() early on. Fix this by adding 48MHz
-clock support for pll_p_out1 along with 48MHz support for pll_a,
-main pll_p_out1 descendant.
+Sorry for the late reply.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Signed-off-by: Jonas Schwöbel <jonasschwoebel@yahoo.de>
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- drivers/clk/tegra/clk-pll.c      | 1 +
- drivers/clk/tegra/clk-tegra114.c | 6 ++++--
- 2 files changed, 5 insertions(+), 2 deletions(-)
+> Hi Yu-Chun and Cheng-Yu,
+>
+> On Thu, Apr 02, 2026 at 03:39:54PM +0800, Yu-Chun Lin wrote:
+> > From: Cheng-Yu Lee <cylee12@realtek.com>
+> > 
+> > Add clk_pll_mmc_ops for enable/disable, prepare, rate control, and status
+> > operations on MMC PLL clocks.
+> > 
+> > Also add clk_pll_mmc_phase_ops to support phase get/set operations.
+> > 
+> > Signed-off-by: Cheng-Yu Lee <cylee12@realtek.com>
+> > Co-developed-by: Jyan Chou <jyanchou@realtek.com>
+> > Signed-off-by: Jyan Chou <jyanchou@realtek.com>
+> > Co-developed-by: Yu-Chun Lin <eleanor.lin@realtek.com>
+> > Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
+> > ---
+> > Changes in v6:
+> > - Add the headers used in c file to follow the "Include What You Use" principle.
+> > - Move to_clk_pll_mmc() from clk-pll.h to clk-pll-mmc.c to limit its scope.
+> > - Change offset type from int to unsigned int.
+> > ---
+> >  MAINTAINERS                       |   8 +
+> >  drivers/clk/realtek/Kconfig       |   3 +
+> >  drivers/clk/realtek/Makefile      |   2 +
+> >  drivers/clk/realtek/clk-pll-mmc.c | 410 ++++++++++++++++++++++++++++++
+> >  drivers/clk/realtek/clk-pll.h     |  13 +
+> >  5 files changed, 436 insertions(+)
+> >  create mode 100644 drivers/clk/realtek/clk-pll-mmc.c
+> > 
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index d86003b6d94f..eae732320bec 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -564,6 +564,7 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
- 	switch (parent_rate) {
- 	case 12000000:
- 	case 26000000:
-+	case 48000000:
- 		cfreq = (rate <= 1000000 * 1000) ? 1000000 : 2000000;
- 		break;
- 	case 13000000:
-diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-index a4f40533cc43..6a77742aaad2 100644
---- a/drivers/clk/tegra/clk-tegra114.c
-+++ b/drivers/clk/tegra/clk-tegra114.c
-@@ -363,13 +363,15 @@ static struct tegra_clk_pll_freq_table pll_a_freq_table[] = {
- 	{ 28800000, 282240000, 245, 25, 1, 8 },
- 	{ 28800000, 368640000, 320, 25, 1, 8 },
- 	{ 28800000, 240000000, 200, 24, 1, 8 },
-+	{ 48000000, 282240000, 147, 25, 1, 8 },
-+	{ 48000000, 368640000, 192, 25, 1, 8 },
-+	{ 48000000, 564480000, 294, 25, 1, 8 },
- 	{        0,         0,   0,  0, 0, 0 },
- };
- 
--
- static struct tegra_clk_pll_params pll_a_params = {
- 	.input_min = 2000000,
--	.input_max = 31000000,
-+	.input_max = 48000000,
- 	.cf_min = 1000000,
- 	.cf_max = 6000000,
- 	.vco_min = 200000000,
--- 
-2.51.0
+(snip)
+
+> > +
+> > +static inline int get_phrt0(struct clk_pll_mmc *clkm, u32 *val)
+> > +{
+> > +	u32 reg;
+> > +	int ret;
+> > +
+> > +	ret = regmap_read(clkm->clkr.regmap, clkm->pll_ofs + PLL_EMMC1_OFFSET, &reg);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	*val = (reg >> PLL_PHRT0_SHIFT) & PLL_PHRT0_MASK;
+>
+> Sashiko reports the following:
+> https://sashiko.dev/#/patchset/20260402073957.2742459-1-eleanor.lin%40realtek.com
+> 
+>    With PLL_PHRT0_SHIFT defined as 1 and PLL_PHRT0_MASK as BIT(1) (0x02), shifting
+>    right by 1 moves the target bit 1 to position 0, but masking with 0x02 checks
+>    position 1 of the shifted value.
+>    
+>    Will this cause clk_pll_mmc_is_enabled() to always evaluate to false since it
+>    expects val == 0x1?
+>
+
+Thank you for catching this critical bug! You're absolutely right.
+The issue is that I incorrectly used BIT() for the mask values
+I will correct them, like PLL_PHRT0_MASK from BIT(1) to 0x1.
+
+> > +	return 0;
+> > +}
+> > +
+> > +static inline int set_phrt0(struct clk_pll_mmc *clkm, u32 val)
+> > +{
+> > +	return regmap_update_bits(clkm->clkr.regmap, clkm->pll_ofs + PLL_EMMC1_OFFSET,
+> > +				  PLL_PHRT0_MASK, val << PLL_PHRT0_SHIFT);
+> > +}
+> > +
+> > +static inline int get_phsel(struct clk_pll_mmc *clkm, int id, u32 *val)
+> > +{
+> > +	int ret;
+> > +	u32 raw_val;
+> > +	u32 sft = id ? 8 : 3;
+>
+> Put variables in reverse Christmas tree order.
+>
+
+Ack.
+
+(snip)
+
+> > +
+> > +static int clk_pll_mmc_phase_set_phase(struct clk_hw *hw, int degrees)
+> > +{
+> > +	struct clk_hw *hwp = clk_hw_get_parent(hw);
+> > +	struct clk_pll_mmc *clkm;
+> > +	int phase_id;
+> > +	int ret;
+> > +	u32 val;
+> > +
+> > +	if (!hwp)
+> > +		return -ENOENT;
+> > +
+> > +	clkm = to_clk_pll_mmc(hwp);
+> > +	phase_id = (hw - &clkm->phase0_hw) ? 1 : 0;
+> 
+> Are you checking to see if these two pointers are the same? If so, what
+> do you think about this instead?
+>
+>    hw == &clkm->phase0_hw
+>
+>
+> Does you mean phase_id = (hw == &clkm->phase0_hw) ? 0 : 1; ?
+>
+
+Yes, I will revise it according to your suggestion.
+
+> > +	val = DIV_ROUND_CLOSEST(degrees * 100, PHASE_SCALE_FACTOR);
+> > +	ret = set_phsel(clkm, phase_id, val);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	usleep_range(10, 20);
+> > +	return 0;
+> > +}
+> > +
+
+(snip)
+
+> > +
+> > +static unsigned long clk_pll_mmc_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+> > +{
+> > +	struct clk_pll_mmc *clkm = to_clk_pll_mmc(hw);
+> > +	u32 val, ext_f;
+> > +	int ret;
+> > +
+> > +	ret = get_ssc_div_n(clkm, &val);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret = get_ssc_div_ext_f(clkm, &ext_f);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	return parent_rate / 4 * (val + 2) + (parent_rate / 4 * ext_f) / 8192;
+> > +}
+> > +
+> > +static int clk_pll_mmc_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
+> > +{
+>
+> Should there be a check for a parent rate of zero before the division is
+> done?
+>
+
+Ack, I will do it.
+
+> > +	u32 val = DIV_ROUND_CLOSEST(req->rate * 4, req->best_parent_rate);
+> > +
+> > +	req->rate = req->best_parent_rate * val / 4;
+> > +	return 0;
+> > +}
+> > +
+> > +static int clk_pll_mmc_set_rate(struct clk_hw *hw, unsigned long rate, unsigned long parent_rate)
+> > +{
+> > +	struct clk_pll_mmc *clkm = to_clk_pll_mmc(hw);
+> > +	u32 val = PLL_MMC_SSC_DIV_N_VAL;
+> > +	int ret;
+> > +
+> > +	ret = regmap_update_bits(clkm->clkr.regmap,
+> > +				 clkm->ssc_dig_ofs + PLL_SSC_DIG_EMMC1_OFFSET,
+> > +				 PLL_FLAG_INITAL_EMMC_MASK, 0x0 << PLL_FLAG_INITAL_EMMC_SHIFT);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret = set_ssc_div_n(clkm, val);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret = set_ssc_div_ext_f(clkm, 1517);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	switch (val) {
+> > +	case 31 ... 46:
+> > +		ret |= set_pi_ibselh(clkm, 3);
+> > +		ret |= set_sscpll_rs(clkm, 3);
+> > +		ret |= set_sscpll_icp(clkm, 2);
+> > +		break;
+> > +
+> > +	case 20 ... 30:
+> > +		ret |= set_pi_ibselh(clkm, 2);
+> > +		ret |= set_sscpll_rs(clkm, 3);
+> > +		ret |= set_sscpll_icp(clkm, 1);
+> > +		break;
+> > +
+> > +	case 10 ... 19:
+> > +		ret |= set_pi_ibselh(clkm, 1);
+> > +		ret |= set_sscpll_rs(clkm, 2);
+> > +		ret |= set_sscpll_icp(clkm, 1);
+> > +		break;
+> > +
+> > +	case 5 ... 9:
+> > +		ret |= set_pi_ibselh(clkm, 0);
+> > +		ret |= set_sscpll_rs(clkm, 2);
+> > +		ret |= set_sscpll_icp(clkm, 0);
+> > +		break;
+> > +	}
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret = regmap_update_bits(clkm->clkr.regmap,
+> > +				 clkm->ssc_dig_ofs + PLL_SSC_DIG_EMMC3_OFFSET,
+> > +				 PLL_NCODE_SSC_EMMC_MASK,
+> > +				 27 << PLL_NCODE_SSC_EMMC_SHIFT);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret = regmap_update_bits(clkm->clkr.regmap,
+> > +				 clkm->ssc_dig_ofs + PLL_SSC_DIG_EMMC3_OFFSET,
+> > +				 PLL_FCODE_SSC_EMMC_MASK, 321);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret = regmap_update_bits(clkm->clkr.regmap,
+> > +				 clkm->ssc_dig_ofs + PLL_SSC_DIG_EMMC4_OFFSET,
+> > +				 PLL_GRAN_EST_EM_MC_MASK, 5985);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret = regmap_update_bits(clkm->clkr.regmap,
+> > +				 clkm->ssc_dig_ofs + PLL_SSC_DIG_EMMC1_OFFSET,
+> > +				 PLL_EN_SSC_EMMC_MASK, 0x1);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret = regmap_update_bits(clkm->clkr.regmap,
+> > +				 clkm->ssc_dig_ofs + PLL_SSC_DIG_EMMC1_OFFSET,
+> > +				 PLL_EN_SSC_EMMC_MASK, 0x0);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret = regmap_update_bits(clkm->clkr.regmap,
+> > +				 clkm->ssc_dig_ofs + PLL_SSC_DIG_EMMC1_OFFSET,
+> > +				 PLL_FLAG_INITAL_EMMC_MASK,
+> > +				 0x1 << PLL_FLAG_INITAL_EMMC_SHIFT);
+>
+> It looks like the rate and parent rate are not used in this function.
+> Will this always end up with the same rate when everything is
+> successful?
+>
+> Brian
+
+Despite receiving various rate requests (26MHz, 52MHz, 200MHz), this function
+consistently returns 0x1b (represents the 27MHz) because it reflects the input
+reference clock frequency to the SSCPLL, not the PLL output frequency.
+
+However, the emmc host controller handles frequency division internally to
+achieve the requested eMMC frequency.
+
+Best Regards,
+Yu-Chun
 
