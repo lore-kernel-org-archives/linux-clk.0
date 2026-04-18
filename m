@@ -1,150 +1,147 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA5E72622;
-	Sat, 18 Apr 2026 18:47:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7232857EA
+	for <linux-clk@vger.kernel.org>; Sat, 18 Apr 2026 20:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776538038; cv=none; b=HVUyyc9wlh+5O36Zdxp5AVoJYLTHXHGEJQt4ns75OXofZteSIAFbc2MFS/sNQHt0d8xYESdsqZtG7aDy/el54nq18fcQv65JRs93+Vl550Bz6/ZEOGxkbaHQ9ag/RfzKK5LCIHC95GTlTHUhGgt8CvQODUMsMOUFIEG9trNMaJM=
+	t=1776543837; cv=none; b=IhW3cb1Gcxw6HpJs9UbIwxtJ/EsHXxqdd/lRLbwBBrY1PqPL5KSJXdDysLL59G/YrnvXGdyxb84RyHMGKRUvDULrX8rvP/k7iDUwcoOo1ZtwAs5QrTVrG8hDFAbb62Yis75F+1k/tN7URjkKwTN+GIwkkLQTe6fIeyNarh7KjsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776538038; c=relaxed/simple;
-	bh=4W57M5/mbIjePklm+SzLKzfdSMOBHotfFHZsmG0a1sc=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=i9h3WCgyOI6Gh2ujaBDdCLPGKJ3xzZoJ5J6VP7bNqBsi9Qf3QFe1CCjPnAjg4hSQWLXlljO38eel/x6kteBJSAVyDFP0Bd4Aj5Kbbxhq4lY3mWbsl/bYVE8Tk81W0KLEM4Ky+7dly8aUpQwKgkeH5+f7XhjfZIUXhhFGiwo3OYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ClxWbbkB; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1776543837; c=relaxed/simple;
+	bh=g9NDcf1smfF8vm46KWA60/glnAzkSOqt0MO682JSkIQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oLbqyklF2AMSgtAJkdbawO001o7ZtSJG0rh07zrhlSl5zeqVMX8QLmMBqmHkXNRJZYF6H34vVyA/L8nY52OkU9TLvHmRwcUlmZ/i+Ab6sCgWtsZqIdGkBQ+QWtTNeMDiZp1QBMvooqA6gzZYo/GThMSmE2MRSj6excA+9UjRA1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Fahkhzad; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Ejgpdd2I; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ClxWbbkB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41AA1C19424;
-	Sat, 18 Apr 2026 18:47:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776538038;
-	bh=4W57M5/mbIjePklm+SzLKzfdSMOBHotfFHZsmG0a1sc=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=ClxWbbkBtDbs9B+9Pm9EQ9uvupmnQclGfNgWajOsWZRhGU6QbdjNuC9bYNi7ncFcD
-	 05UCGuLleo2OsPTDzhrdzu1QddN/KnBSFaFBiHb4BkEUF7GzFV6z/+i01+gG/Ttm1h
-	 kF5KVOX+Cjy3E2tpHJmSVf+ADz6iOVQWgzHWs1w9+oXj77oJipXXRUoymSfgAC+YEz
-	 QI9fAWLw2e+EodVdvLwIi7HJ2Q0G4RemdzBXxbyKSRdYi6hltnd+t246QqyDFwIsnk
-	 KkLsfsE1bQH2nEP4j8z5k7PB5iq+n8HczoFEW3H2lQj0iXhUeuUgpKLZOzLVw80fFC
-	 XBmZyioMNoQkw==
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Fahkhzad";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Ejgpdd2I"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63IC1HAG942487
+	for <linux-clk@vger.kernel.org>; Sat, 18 Apr 2026 20:23:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=Unkrq/OjgBeyx4OlaQcXktpk
+	Zj59I96fgHikJLzhnok=; b=FahkhzadnXWSzUSFX8ylrov8v/eca/m8++AS+PQ6
+	sGv9/pNWH5QIpAFkQ6dPIb6wJRP5R+jDTRTtDrrc59v/oSDWbjOoRzWRecIAG7fr
+	q4jCYDBz3GIBEW2V/HIpiYeBT7NorzNlEbfsvz9adFQ9tDLVn5vikvamVXf34zGh
+	YBWuA547yz82/WYjq0vAUD0wEcEF2GoBc6pR3XE2jSfz4bRbffgI9526VtpafeXE
+	88bGOPCYst9VSTR1bOqTFVPplXa6w+pWyYIuaWx8DXuV6c+rrMN3sXa3tD8XG2sM
+	+bBvbqjdqSvrlx74ZpqGqLjt+Pxe9oOcmd03Bl8aez5ZEg==
+Received: from mail-vk1-f198.google.com (mail-vk1-f198.google.com [209.85.221.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4dm1hx1f4y-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Sat, 18 Apr 2026 20:23:54 +0000 (GMT)
+Received: by mail-vk1-f198.google.com with SMTP id 71dfb90a1353d-56db8ed8e40so1374210e0c.3
+        for <linux-clk@vger.kernel.org>; Sat, 18 Apr 2026 13:23:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1776543834; x=1777148634; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Unkrq/OjgBeyx4OlaQcXktpkZj59I96fgHikJLzhnok=;
+        b=Ejgpdd2IUpmeof9XLnGn0RSY6eu5xTn2VoOgkS+0p2WAvYYomTxiZcMaOgkI7bnXHn
+         37W5K44vIRsOoNXfuTy2muD+AIwj3nDqnKA4W98Yet/uGr8jWBvUzmRPDtiXwTuVcztp
+         dDrfYDik12cl+9O+lcYYw7JBK9TvBr5sObwYF0YLKTCBa3ivWQK/V36aB4uSwgnYp2o0
+         n7nYPMZWs5bxw9zpWuyPuzeC2u5LQdDKsaqQad0NI58V5nNE+dczxlSZ3C5JDtTpChS2
+         +/SechPrwqFUGsc8/IDXfjJdeYPs8fyUEVp8ehExTlq0rsuIL5Z8Es/vHacuNE5Azyq1
+         cpoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776543834; x=1777148634;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Unkrq/OjgBeyx4OlaQcXktpkZj59I96fgHikJLzhnok=;
+        b=bX/u1g1f/2bOLZNzqdbH6WGGmQTv7p8VbazNhufBvFh+7KA8JKPR+nL4BYU9f5Kl6V
+         G5uZqeeNOS5FiPWZAQzJ813eMc8Rh0BeEae3cqYzhrUVG3XfOZl4KPY97yBtFZqP3gZa
+         dKpyfbjokP7ljbPQIF6daXqtfmOS9Je51ElqFi4bAhH/qRlodHkZ2UwPa+NmLWtQGCMx
+         bPrgTnc4mT8KKTXxJqEPNsAi+GAlCy7G1pYAZUUNBm5VF8skwtz2t2+AAIGfbqBN9m4m
+         nstsHOuY7d/icolyvQnnVWzgrynw2SMy29tQMrLU7ArpZZIhPyV1XlMNOFqjPBHohfER
+         kKXg==
+X-Forwarded-Encrypted: i=1; AFNElJ8PLyewCE5n6gMR+vjIOt5fKJBg+z0Fn3cMdov3NlH54SNp5X94uDXO/8xNCdY/d0//qKxz5CzXT7w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwePlGdpaQNjP6x7LNHmxCUbKtxUvRQrpoFvqYpz2xJuN3bkc7M
+	ka7B+mBsQBj8iiPZ2FkDEpUwWdr/lA3Xy4JF7WwZX7m7+lrtlOqDAYQxaxhO0BRP3gtoQtznCll
+	EY88XTK+i92jNE+tFODxdsWCUdYN5Ze05lGxqV61ZcNOVVRasSXbXjRYZIkp/jTE=
+X-Gm-Gg: AeBDievYMczn3azGpMqfr1qzEDGl0bl2uxhchP4+pGDP09nz+KvJs1+qDIyax2LxRNd
+	byiFHk4oGLRyYCALaUvctJ9lwmE+f/N9px/nbIMWfnNUi6eStVQ4ol3RSlqIqjBZJtkKUfxstO9
+	XiHLz1p475MnBHJrRecE4SYKj4hpTCF0etQCVeBhANOV8YCQfeRlkvLRCBbmyNqtussZRjXtHDd
+	IbC5BiFwbwhxt4fB5DOcPE3zfPP0sC8p2e6OtzffypHf4GPUUT4RY+adTkujGrWkli/0EN03uT9
+	09UzD8COdS4VgI5ilv/otMFm2bUK4RFbzQuWBqhsDDM01y8ovs7wSlsQwFwEHJnraEoSTEEsMS6
+	abaqA14NW8FcvnOWhyylNFsfVuzfI/MkWH9xjU/Co+79xrCa6fX54DPRqEXBTMWUjx+Qdjzo9nM
+	5arY/TL7yQhM7wITfxN+As3piM5vIeIwG+LvWS4i4tB9QeBQ==
+X-Received: by 2002:a05:6102:149d:b0:613:3fff:feb8 with SMTP id ada2fe7eead31-616f91e60cdmr3492502137.29.1776543834264;
+        Sat, 18 Apr 2026 13:23:54 -0700 (PDT)
+X-Received: by 2002:a05:6102:149d:b0:613:3fff:feb8 with SMTP id ada2fe7eead31-616f91e60cdmr3492497137.29.1776543833817;
+        Sat, 18 Apr 2026 13:23:53 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-38ecb5f652asm12679001fa.12.2026.04.18.13.23.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 18 Apr 2026 13:23:51 -0700 (PDT)
+Date: Sat, 18 Apr 2026 23:23:50 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] clk: qcom: Restrict IPQ5424, IPQ6018,IPQ9574,
+ QCM2290 and others to ARM64
+Message-ID: <ycqlsccmlzrsiggg2f7rps34qxjzpbqf3x43jyajaecn3t3qxo@giplsfboimuw>
+References: <20260416-clk-qcom-defaults-v1-0-579e75c4cfe5@oss.qualcomm.com>
+ <20260416-clk-qcom-defaults-v1-1-579e75c4cfe5@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20260225083413.3384950-1-wenst@chromium.org>
-References: <20260225083413.3384950-1-wenst@chromium.org>
-Subject: Re: [PATCH RESEND v2] clk: tests: Add tests for clk lookup by name
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Chen-Yu Tsai <wenst@chromium.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Brian Masney <bmasney@redhat.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Date: Sat, 18 Apr 2026 11:26:05 -0700
-Message-ID: <177653676535.5403.14630700858352386940@localhost.localdomain>
-User-Agent: alot/0.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260416-clk-qcom-defaults-v1-1-579e75c4cfe5@oss.qualcomm.com>
+X-Proofpoint-ORIG-GUID: gePMNaJBHwFQu3BNlQluvimFwrJ_ky8V
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDE4MDIwNSBTYWx0ZWRfX0hKPCyof/3sF
+ d7YyVl614IKDECrqtbZwiDKr7PhrJIeO47oVl07L/k3ocp0kJ94E+l01iQERAmSIl2vHdoUaqFB
+ NCuPWg3xyrM/nJ/zYidmdEra01p9VhrJKFxhRwNob9Zpam/+jdZDW18TB0kecGLodYU4leJepWC
+ 5CMETqoJaWqAs0F6cdzusbROhOkpdssBKVwU9hc1eKIuCdVPia8hnjFty8NpreVEyXn/meXiuOO
+ UlYHkxoOcMEyTJxUBAmNYzPZqMnaz2vQVbffap5yL3WN1Q9FrtPz56ShGRfrKPkEglQjseEdcHg
+ Yj2sg+zonPeS9Z9S1RNMeOaFEs+BP4c/R5zWJyzAbWeaS9czAMZqd8uhfr1Mt81Ff88VFzXPZNi
+ se/nHKRuZOkNcXkH/BI+aiKzhfUc5CxxuTdUa8sbFXzHd8qJ4NT3nJA5wLWOek8rajMRoQMjp6V
+ 2+MjpqImDZouwZeVhfA==
+X-Proofpoint-GUID: gePMNaJBHwFQu3BNlQluvimFwrJ_ky8V
+X-Authority-Analysis: v=2.4 cv=RoX16imK c=1 sm=1 tr=0 ts=69e3e85a cx=c_pps
+ a=1Os3MKEOqt8YzSjcPV0cFA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=A5OVakUREuEA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22 a=EUspDBNiAAAA:8
+ a=XY21xBfZkjNNQA91HVkA:9 a=CjuIK1q_8ugA:10 a=ZXulRonScM0A:10
+ a=hhpmQAJR8DioWGSBphRh:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-04-18_06,2026-04-17_04,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 adultscore=0 spamscore=0 phishscore=0
+ clxscore=1015 bulkscore=0 lowpriorityscore=0 suspectscore=0
+ priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2604070000
+ definitions=main-2604180205
 
-Quoting Chen-Yu Tsai (2026-02-25 00:34:11)
-> Clk lookup (by name) recently gained some performance improvements at
-> the expense of more complexity within the lookup code.
->=20
-> To make sure that this works as intended and doesn't break, add some
-> basic tests for this part of the CCF.
->=20
-> A new "clk_hw_lookup()" function is added purely for running kunit
-> tests.
->=20
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
->=20
+On Thu, Apr 16, 2026 at 10:10:29AM +0200, Krzysztof Kozlowski wrote:
+> Some clock drivers for IPQ5424, IPQ9574, QCM2290, QDU1000 and SA8775
+> already depend on ARM64.  IPQ6018 is ARM64 only SoC (at least upstream)
+> so should not be a choice for ARM 32-bit builds, to make kernels smaller
+> and user choices easier.
+> 
+> IPQ_CMN_PLL is used only by the SoCs already having clock controllers
+> restricted to ARM64
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 > ---
+>  drivers/clk/qcom/Kconfig | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
 
-Thanks. One nit below that I can likely fix before merging unless you
-send again.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-> diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
-> index a268d7b5d4cb..a8989566946b 100644
-> --- a/drivers/clk/clk_test.c
-> +++ b/drivers/clk/clk_test.c
-> @@ -175,6 +175,8 @@ static const struct clk_ops clk_multiple_parents_no_r=
-eparent_mux_ops =3D {
->         .set_parent =3D clk_multiple_parents_mux_set_parent,
->  };
-> =20
-> +#define DUMMY_CLK_NAME "test_dummy_rate"
-> +
->  static int clk_test_init_with_ops(struct kunit *test, const struct clk_o=
-ps *ops)
->  {
->         struct clk_dummy_context *ctx;
-> @@ -187,7 +189,7 @@ static int clk_test_init_with_ops(struct kunit *test,=
- const struct clk_ops *ops)
->         ctx->rate =3D DUMMY_CLOCK_INIT_RATE;
->         test->priv =3D ctx;
-> =20
-> -       init.name =3D "test_dummy_rate";
-> +       init.name =3D DUMMY_CLK_NAME;
->         init.ops =3D ops;
->         ctx->hw.init =3D &init;
-> =20
-> @@ -3541,6 +3543,67 @@ static struct kunit_suite clk_hw_get_dev_of_node_t=
-est_suite =3D {
->         .test_cases =3D clk_hw_get_dev_of_node_test_cases,
->  };
-> =20
-> +/*
-> + * Test that clk lookup with a name that is not registered returns NULL.
-> + */
-> +static void clk_lookup_not_registered_clk_returns_NULL(struct kunit *tes=
-t)
-> +{
-> +       KUNIT_EXPECT_PTR_EQ(test, NULL, clk_hw_lookup(DUMMY_CLK_NAME));
-> +}
-> +
-> +/*
-> + * Test that clk lookup with a name that is registered returns the clk.
-> + */
-> +static void clk_lookup_registered_clk_returns_clk(struct kunit *test)
-> +{
-> +       struct clk_hw *hw;
-> +       struct clk_init_data init =3D {
-> +               .name =3D DUMMY_CLK_NAME,
-> +               .ops =3D &empty_clk_ops,
-> +       };
-> +
-> +       hw =3D kunit_kzalloc(test, sizeof(*hw), GFP_KERNEL);
-> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
-> +
-> +       hw->init =3D &init;
-> +       KUNIT_ASSERT_EQ(test, 0, clk_hw_register_kunit(test, NULL, hw));
-> +
-> +       KUNIT_EXPECT_PTR_EQ(test, hw, clk_hw_lookup(DUMMY_CLK_NAME));
-> +}
-> +
-> +/*
-> + * Test that clk lookup with a name that was unregistered returns NULL.
-> + */
-> +static void clk_lookup_unregistered_clk_returns_NULL(struct kunit *test)
-> +{
-> +       struct clk_hw *hw;
-> +       struct clk_init_data init =3D {
-> +               .name =3D DUMMY_CLK_NAME,
-> +               .ops =3D &empty_clk_ops,
-> +       };
-> +
-> +       hw =3D kunit_kzalloc(test, sizeof(*hw), GFP_KERNEL);
-> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
-> +
-> +       hw->init =3D &init;
-> +       KUNIT_ASSERT_FALSE(test, clk_hw_register(NULL, hw));
 
-Should be
-
-	KUNIT_ASSERT_EQ(test, 0, clk_hw_register(NULL, hw))
-
-because clk_hw_register() returns an int.
-
-> +
-> +       clk_hw_unregister(hw);
-> +
-> +       KUNIT_EXPECT_PTR_EQ(test, NULL, clk_hw_lookup(DUMMY_CLK_NAME));
-> +}
+-- 
+With best wishes
+Dmitry
