@@ -1,53 +1,53 @@
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF67D2EDD70;
-	Sun, 19 Apr 2026 19:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2136730171A;
+	Sun, 19 Apr 2026 19:38:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776627479; cv=none; b=Fer4mj3YOlbdDr+csLR7ZRjtvPSmYwTxj2KHKmZck2m0orWOCm8fuxtyWhH4VobmEog+sx9ZvuNcu7IfcwDZW5wcb9oxthYdkOGyCLMiTOFVq2cY0wuGZO8llPauvkni+dvcyAIjEg2qOvwgeJhy4AlTg5TQ8Db9E5MFR8S2PdM=
+	t=1776627483; cv=none; b=QEKpbEWo3GfQ9WswWDqOeVfuvEEHjs5385Nmo8Zs7LeVOqagb+ZLWMKPe/xDWsgARa1sRm530AxK6r68KR+mJj1GN+xIaNV6VzumHv6yTo7DJvr73JkMdKSfXMXu4youja7N7fn1ItafIy7b+O3MlIKnSIKj6GtYLNnLlzJfqWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776627479; c=relaxed/simple;
-	bh=xn3sx91AOT2UCnu75F8IODZpoT2vxWJw2snY+X8XA30=;
+	s=arc-20240116; t=1776627483; c=relaxed/simple;
+	bh=Zxu8dREGFRjOJ1PVMTabT0WFvs+NHkqQgyeNux5B/yU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y7mpW+BbgIytLTJarv+q142qgqurYJAxTnuS7YohT41D/rImhFwnFxQYoEtrwdtO2Yny/8ZBu8IKkolFVH6s6EeSwshEBCoFj2F3TRonMXY2z2tzK1wc9hbV81Gtu4qfYTb/FQUj61NwOjZOOeYwX/1rGt16AbKtlcwqF7KzNak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=QzS/E9A8; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=QFo+ZNB0; arc=none smtp.client-ip=80.241.56.161
+	 MIME-Version; b=XGSSiP3u6VtIGS4mT0yFj5x0dFRL5Y3AsjbNIay7i3sMKV/7sjzBnBk0UHyxeokU46NAgfo20foOMQ4yZayyVAaSjezYPBE5zGN+8u2d9OainJEh3B1oavHrl5V5O/erl39Peb4zvgvSzHKWHogBjTcjK04u8wurz+d1iy7w4Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Tbqd6Cfk; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=SIFYPnl4; arc=none smtp.client-ip=80.241.56.152
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="QzS/E9A8";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="QFo+ZNB0"
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Tbqd6Cfk";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="SIFYPnl4"
 Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4fzJms0xwNz9t1S;
-	Sun, 19 Apr 2026 21:37:49 +0200 (CEST)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4fzJn32LWtz9vPH;
+	Sun, 19 Apr 2026 21:37:59 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1776627469;
+	t=1776627479;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=8FnNg3TksIMKumKzmZ4qUSNJ8kwt6MtGt9eMb0slpS8=;
-	b=QzS/E9A8qbdRfZ82ZU//neqAH0aN4qYwALAQoguS7PgkBwRdAyqXTVanjExUYKBtyFnobu
-	AMpHMbPDNyexpqXhp6Udy5IN222P+FndrijyYgNOs5sqnIVpndzJ/cWn0yszgd25x+26fJ
-	RAPWy6PIB/CfNqG0wnLNo64ZE2jb1x7+lcKHesK+9BcNdZImRuUUrr2oOZK7i54CPbD/Tp
-	qktdA47Gk6sTd7JPKO8T7sosBgFmTsPKdH/2pNbw0SQyycwEoSTZe9WGcsnJ7SZYEWKLT4
-	j4E8wSQXYhNcGDNbn7RbBY0T0w9edGMn8DklzG84MYIrauYn9tyAGeUDK5qRRA==
+	bh=Wrf/Lt76mF0ZTNTXk/pAtiJpTtv3oNIg+cUa00ckXrE=;
+	b=Tbqd6CfkOg//GEeMcUswfK5eQZKB6q0nLkknCqPXhEhfDRS4U/kVuhN3Q9dwaiAA++W4ws
+	kbpVmVeteVvmBvu4XMjCjG0uQiXqiA4X33QuQPg6C+jy3ZusyHtEhX7k+F3Pg3F9Jey+I8
+	TU0EoSqGuMCb6/ZZccaZmcGktMXxyu0k+qRB7xt4LYyWG1R5bvR71o0qiXWaNeFGvYfZQD
+	4k5J7pWUBdJt7bZTRsNaFGkBzFtDGLbftQg6V94kYxAHgwhJAiMhIhfv0on2o96X0IGu4L
+	zlCYYBWmie4PkSOCcdYvihZkG4kCsEGi6P/NrBZf6I6KCDSzC1QZ1abQnEiaUA==
 From: Marek Vasut <marek.vasut+renesas@mailbox.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1776627467;
+	t=1776627477;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=8FnNg3TksIMKumKzmZ4qUSNJ8kwt6MtGt9eMb0slpS8=;
-	b=QFo+ZNB0Yk+IPkjQPCaavvfHqUv62C/gB4pjU/s1YXkkwwmKlylo6v5UVqXKJ+trKaxx3t
-	MxsmGOFJ9fcF7V5oT14w9loAlh9hndqecRRU7Fjxm1YGqnNW0JzN2Fvy2JUdpnE7QFA4v/
-	4Z9S4yc0uGYd5xRb7k+VXJkgxOmoEw5ECBJlZyY9aAq/aBEizIj8JwrVUx/ZKtRpYOfQ7R
-	RRW38GYjdrb88OcsaoyuwMd8tKK3V9EcZvz3ewMGO35dynbd8SdmKn6byMgr6XLB+/87CK
-	huXHaIqu3UFmwBUod4GiqTxWwzdMKE+Sp4GtgYmUxa7UbpdgwT4/UFesAd3OuA==
+	bh=Wrf/Lt76mF0ZTNTXk/pAtiJpTtv3oNIg+cUa00ckXrE=;
+	b=SIFYPnl4CW0IkgVIp7+bUBY8ayXDXlK6GlKY7XE9AOmS8+rtOVE9nBLgj+Ot3P4ZmJ+bG4
+	Y+YwdrjJ9Fo+HZ+XGv5SUaQmwNIx97hX6DlgcRNVzj3gp5r3qDMuw/YHGU1XQ6IL8JWvcZ
+	lRwhCyYIB10JuXNbtAJj/N+uT3ltIV3kpaBPuxFg2CgffjMpxcY+ptVeLFZ3Hx/EiDp72i
+	ne/0fKMMoZbGuhsY6qnE1SfOO9euMWGIwE3mGiILbEXMxIi1+KUk9SpgHkzPD7YJDiSaQI
+	p29TAyfo0fKrVRxl3EdnQlYAE8DgF15bND4aFn5UbGs1DJqF/8vv6KGm+pVD7w==
 To: linux-arm-kernel@lists.infradead.org
 Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	Conor Dooley <conor+dt@kernel.org>,
@@ -70,9 +70,9 @@ Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 2/7] drm/rcar-du: Add support for Renesas R-Car R8A779MD M3Le
-Date: Sun, 19 Apr 2026 21:35:33 +0200
-Message-ID: <20260419193718.133174-3-marek.vasut+renesas@mailbox.org>
+Subject: [PATCH 4/7] dt-bindings: soc: renesas: Document Renesas R-Car R8A779MD Geist
+Date: Sun, 19 Apr 2026 21:35:35 +0200
+Message-ID: <20260419193718.133174-5-marek.vasut+renesas@mailbox.org>
 In-Reply-To: <20260419193718.133174-1-marek.vasut+renesas@mailbox.org>
 References: <20260419193718.133174-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
@@ -82,12 +82,14 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: rbd44fn6ncr4kgk3y9o1gka984aws4zr
-X-MBO-RS-ID: 73455de26dd40f857e2
+X-MBO-RS-META: a5yjuzwujp9cyfz1yr7tg6dc63sko3y9
+X-MBO-RS-ID: fae731ed30b2c377de1
 
-Add support the Renesas R-Car R8A779MD M3Le SoC. This SoC is
-similar to R-Car R8A77965 M3-N SoC, except the HDMI port@1 is
-not present.
+Document the compatible value for the Renesas R-Car M3Le (R8A779MD)
+SoC and the Renesas Geist development board. The Renesas M3Le SoC is
+a register-compatible variant of the R8A77965 (M3-N) with reduced set
+of peripherals. The Geist board is derived from Renesas Salvator-X/XS
+boards, with adjustment for the R8A779MD SoC.
 
 Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 ---
@@ -112,52 +114,26 @@ Cc: linux-clk@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org
 ---
- drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c | 25 +++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ Documentation/devicetree/bindings/soc/renesas/renesas.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c
-index 031d07f4508e9..be862b5524fd2 100644
---- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c
-@@ -564,6 +564,30 @@ static const struct rcar_du_device_info rcar_du_r8a779h0_info = {
- 	.dsi_clk_mask = BIT(0),
- };
+diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+index 5c22c51b1533d..bda223237c812 100644
+--- a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
++++ b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+@@ -473,6 +473,12 @@ properties:
+           - const: renesas,r8a779mb
+           - const: renesas,r8a7795
  
-+static const struct rcar_du_device_info rcar_du_r8a779md_info = {
-+	.gen = 3,
-+	.features = RCAR_DU_FEATURE_CRTC_IRQ
-+		  | RCAR_DU_FEATURE_CRTC_CLOCK
-+		  | RCAR_DU_FEATURE_VSP1_SOURCE
-+		  | RCAR_DU_FEATURE_INTERLACED
-+		  | RCAR_DU_FEATURE_TVM_SYNC,
-+	.channels_mask = BIT(1) | BIT(0),
-+	.routes = {
-+		/* R8A779MD has one RGB output and one LVDS output. */
-+		[RCAR_DU_OUTPUT_DPAD0] = {
-+			.possible_crtcs = BIT(1),
-+			.port = 0,
-+		},
-+		[RCAR_DU_OUTPUT_LVDS0] = {
-+			.possible_crtcs = BIT(0),
-+			.port = 2,
-+		},
-+	},
-+	.num_lvds = 1,
-+	.num_rpf = 5,
-+	.dpll_mask = BIT(1),
-+};
++      - description: R-Car M3Le (R8A779MD)
++        items:
++          - const: renesas,geist    # M3Le Geist
++          - const: renesas,r8a779md
++          - const: renesas,r8a77965
 +
- static const struct of_device_id rcar_du_of_table[] = {
- 	{ .compatible = "renesas,du-r8a7742", .data = &rcar_du_r8a7790_info },
- 	{ .compatible = "renesas,du-r8a7743", .data = &rzg1_du_r8a7743_info },
-@@ -591,6 +615,7 @@ static const struct of_device_id rcar_du_of_table[] = {
- 	{ .compatible = "renesas,du-r8a779a0", .data = &rcar_du_r8a779a0_info },
- 	{ .compatible = "renesas,du-r8a779g0", .data = &rcar_du_r8a779g0_info },
- 	{ .compatible = "renesas,du-r8a779h0", .data = &rcar_du_r8a779h0_info },
-+	{ .compatible = "renesas,du-r8a779md", .data = &rcar_du_r8a779md_info },
- 	{ }
- };
- 
+       - description: R-Car X5H (R8A78000)
+         items:
+           - enum:
 -- 
 2.53.0
 
