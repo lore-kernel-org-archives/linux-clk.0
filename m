@@ -1,159 +1,171 @@
-Received: from fr5000-r.dnsiaas.com (fr5000-r.dnsiaas.com [92.42.104.18])
+Received: from dog.elm.relay.mailchannels.net (dog.elm.relay.mailchannels.net [23.83.212.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BADF335AC24;
-	Sun, 19 Apr 2026 12:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.42.104.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776600017; cv=none; b=NGOPgJzp4lNE5OLX4znAR8zkAwH8xo1HXExfbsuZQ1oS4+e2zuMEM13Hm8zxDAMiwgQRHG7y4j7d//uppeJ8eXtjNYfNq1ipByNH64rkkB7LOBI57/7fj5+BoBqq+7T/k/Ops7lXMgV2k2Zckq17CVYvAuHowRkxvEuxkQNiykw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776600017; c=relaxed/simple;
-	bh=r1SkPPydlBOIm8udGkFqPv+zpQaBol9w5Mkm43oRDw0=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Xt6738MXZTpQpgznaIjDw9cnGFmr1kTjpG3ZOUQawJ58ZuwTGwS97vu0gop+8SIdu03wwlWxLdH8jiT8bH7z8M5XskOBxYQFE+gT1PIGxXH8ljg+1A+xCQS/F8jWJ7hcnchtpkE1Yw/xJ55JzRRY6iTEoUaASO4EvhboNW+l4o4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=superkali.me; spf=pass smtp.mailfrom=superkali.me; dkim=pass (2048-bit key) header.d=superkali.me header.i=@superkali.me header.b=Y2lyVA/+; arc=none smtp.client-ip=92.42.104.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=superkali.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=superkali.me
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B87E1378D84;
+	Sun, 19 Apr 2026 13:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.212.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1776604954; cv=pass; b=Oy74I+3M94YoRHEs9bCwuPggycT9Gi5DYua4uGh6vPENcLOR97xdhjBC8t1OSK1KTDhwRJmTGo1yyPLC4ZlTn28h2I1Aapr6OngZZppDPcS+Hgru6yfJE/h13icxAvzbB1/+QG6jfuU12YYOKlhEH4j1mpZmM4It1ORz87KuxeM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1776604954; c=relaxed/simple;
+	bh=kbdezKdy9n1Z+EmrfrTSzAuisz3gfPItrQLUQdy4kJA=;
+	h=Message-ID:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:Date; b=jl2NiDi5WaRJf9zawJzqmue8VdFsvOY2RIc9dfBoCGPd29uqr1ie4ry7/qhRbQEPPwO+cF2BXebv+VpAyLtbtrpakq19Buzz5W9diucWym36oEPai4VSfSdMyhNkcuGj4ijxp324Ok7/aWUIruZuiLVshh/9zF8vj0JY43aUTj4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com; spf=pass smtp.mailfrom=smankusors.com; dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b=eGMkwv8z; arc=pass smtp.client-ip=23.83.212.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smankusors.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=superkali.me header.i=@superkali.me header.b="Y2lyVA/+"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=superkali.me; s=default; h=Cc:To:Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=TZqO5/zYANJpAE1cS811lXxJvdTPmWyQ/PwqDeOFtrE=; b=Y2lyVA/+6Slvj3tM0jYEF/seQU
-	WU/bjvfV6cGpb0ug+3mWc8anm+Z26nKt/oMqSIAELHjgdMrFLbUlEcQDAw/JteR8Vb0xkbY7o/ctA
-	q8vy9EbHfdzNxA7TyMVncDgYbnw1GwdlM0IoZHYA7m0yMYDOAtad0+T3R7YDkanU6oEX3zZfOVhfF
-	9U1oT4xn4zi2EWqZkxKKLpolP5kF+mth7vQLeVHq+SSM6GXruXv0mijTpCzg8t/U/ss9/owsCrQOO
-	6+o4GTQkw3N/4/qWCOwD1corym25ee3ZuJ+77MIG+iuebhdngVtR6+HeXQlJFCBkEnzQKSMoU6tz5
-	HRKXdhGQ==;
-Received: from [2a0d:52c0:500f:0:89e7:36b:a29f:1abe] (port=50188 helo=1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa)
-	by fr5000-r.dnsiaas.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.99.1)
-	(envelope-from <hello@superkali.me>)
-	id 1wEQYV-00000000aDt-27Ex;
-	Sun, 19 Apr 2026 13:43:15 +0200
-From: Daniele Briguglio <hello@superkali.me>
-Subject: [PATCH v4 0/5] clk: rockchip: rk3588: add I2S MCLK output gate
- clocks
-Date: Sun, 19 Apr 2026 13:43:05 +0200
-Message-Id: <20260419-rk3588-mclk-gate-grf-v4-0-513a42dd1dcc@superkali.me>
+	dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b="eGMkwv8z"
+X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 338CB4400CB;
+	Sun, 19 Apr 2026 13:02:51 +0000 (UTC)
+Received: from de-fra-smtpout1.hostinger.io (100-101-167-79.trex-nlb.outbound.svc.cluster.local [100.101.167.79])
+	(Authenticated sender: hostingeremail)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 9AC8A441FCD;
+	Sun, 19 Apr 2026 13:02:47 +0000 (UTC)
+ARC-Seal: i=1; a=rsa-sha256; d=mailchannels.net; s=arc-2022; cv=none;
+	t=1776603770;
+	b=lVBn1Oh+I7baBLfIeuk1MJKM8Cb60BWIeADYIUEVdTUw7Larh4hMX9Z9JTUk/1ObtIj7uc
+	9YL9CWXWZNeJbDQFUTD2AwPCjry6bLOG5A9jbmPVlcs0kyKdgM6+7EBd87fLbA3mKaJuZE
+	LpZN4/b0dmIj9MSUs4P6BsFOmteY3Z0jvltv2E7z2O2QWJFeUN6KJ6jUcHCvdZdTp3u3eh
+	e5vYrpG75FS3+ODxJRY4YJ4BlUkIlxotJedXxJKGLqHEPouuvAHERfScB+TeufGZykJ0z5
+	JOb85KuFgfYVoneyq4RaLqHq3k2tmmrH3b0lAGGagzA3wDUNW0niPzaC5z+HlQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1776603770;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=4X91Jm71JdGFejxNB2NzaiAeGdnRYzhGzaEASuCVPCc=;
+	b=cShFOz7ViomBwkjxfM7AKzxxOqLGX+ITnWXwWiokRNcIbo2AilFY3/GIPCgsVfl3uTFQzw
+	RPLkUb3JjExBDwAs8hF3YOxfZiL8LtZl5Ss7tW9uyhrXgeZhIPNNMIgoAD60d7+vDY/e8/
+	+dyIXEbX/ImxgZcuI/Dcz4bQGdlzwj/4L/1fei7FufxTbwyPTvp6ibGkbdoii9oK7w6OFf
+	Biet27ykwH5JXc726xUkyzAHUp2RHzODgyH/LJAHzTr7BhKiMhtqmqFJLGN2e2hZZpllp9
+	OSZ7jSUmpj1jPTw1MK+OaDgSAu7YdgHuvzq1SXKOjM4OLnVPkOQlHOsVZLs0BQ==
+ARC-Authentication-Results: i=1;
+	rspamd-5895b9784c-2s8zv;
+	auth=pass smtp.auth=hostingeremail smtp.mailfrom=linux@smankusors.com
+X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: hostingeremail|x-authuser|linux@smankusors.com
+X-MailChannels-Auth-Id: hostingeremail
+X-Tart-Spill: 0cb3a38d61e2caa1_1776603770916_1766329072
+X-MC-Loop-Signature: 1776603770916:2376270110
+X-MC-Ingress-Time: 1776603770915
+Received: from de-fra-smtpout1.hostinger.io (de-fra-smtpout1.hostinger.io
+ [148.222.55.8])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.101.167.79 (trex/7.1.5);
+	Sun, 19 Apr 2026 13:02:50 +0000
+Received: from [IPV6:2001:448a:c020:c3c:d097:d42a:836e:79a] (unknown [IPv6:2001:448a:c020:c3c:d097:d42a:836e:79a])
+	(Authenticated sender: linux@smankusors.com)
+	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4fz80y17vPz405x;
+	Sun, 19 Apr 2026 13:02:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smankusors.com;
+	s=hostingermail-a; t=1776603765;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4X91Jm71JdGFejxNB2NzaiAeGdnRYzhGzaEASuCVPCc=;
+	b=eGMkwv8zL5UPQ0kcFH3PZhVyRaJOUB3P9n0U8ucRzhWtr0wLfnDQdgg9+oIzyrGIhUVzH1
+	+5VAeieEtqkNQ9D6ldHZ4mK73A2xXW0bGoqDU7OrStfQxR8Dtn8NyJ/sEGyPcHD0yW7Ofx
+	r5sfr+f15nFfNzlQZRfPlWGrywalteiiWHypnrlq6Riqq+xPIqBbZacAhqkiAbEv0Zc92w
+	XeaxB8LyTElxIjdgYzGLm+hQJ+JkNiXA9HG/SkuBYZOWhkQn7KjCmPIOb84t4Tufmoy4by
+	x/Tr2hABuPX71H6nZiuLUIyn4FwczBEHhs/ZW2AbQalxwytMyqBJX3FYUeumbA==
+Message-ID: <c3219cad-8563-4bb4-b1f7-94b8db54c09e@smankusors.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/10] mfd: qcom_rpm: add msm8960 QDSS clock resource
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Krzysztof Kozlowski
+ <krzk@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ phone-devel@vger.kernel.org, Rudraksha Gupta <guptarud@gmail.com>
+References: <20260414-msm8960-wifi-v1-0-007fda9d6134@smankusors.com>
+ <20260414-msm8960-wifi-v1-3-007fda9d6134@smankusors.com>
+ <c63abc0e-e060-4825-b595-a46ddf262673@oss.qualcomm.com>
+ <caa589af-f026-4664-8fb9-6b23b0e087f9@oss.qualcomm.com>
+ <71751331-651d-43aa-b30f-135cc62e8915@smankusors.com>
+ <00e40481-9e62-437e-ac75-a04594ef6879@oss.qualcomm.com>
+ <rnpbdbjlpx6wemeuzsm33njmnihhli6mvjzhwu4m64vpgbxait@7pnk2rdt2djk>
+Content-Language: en-US
+From: Antony Kurniawan Soemardi <linux@smankusors.com>
+In-Reply-To: <rnpbdbjlpx6wemeuzsm33njmnihhli6mvjzhwu4m64vpgbxait@7pnk2rdt2djk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/4XNSw6CMBSF4a2Qjq3py1IcuQ/joJQLNDzTYqMh7
- N3CiBiJw/8k97sz8uAseHRNZuQgWG+HPoY4JcjUuq8A2yI2YoRJwqnEruEXpXBn2gZXegJcuRI
- bkVNFBFelISiejg5K+9rY+yN2bf00uPf2JdB1/QMGigmWsswzzYRMqbr55wiu0a09d4BWM7C9k
- x04LDpGGFVonZNUsh8O3zmMHDg8OpkinCvQpmDmy1mW5QMfzyzySwEAAA==
-X-Change-ID: 20260316-rk3588-mclk-gate-grf-c4b180438fc0
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
-Cc: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Daniele Briguglio <hello@superkali.me>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
- Ricardo Pardini <ricardo@pardini.net>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1776598989; l=3569;
- i=hello@superkali.me; s=20260316; h=from:subject:message-id;
- bh=r1SkPPydlBOIm8udGkFqPv+zpQaBol9w5Mkm43oRDw0=;
- b=lubJrv9kgpydRivH8D+BbR9768NZY1HEJ3CqujvrxTzXg8fOrmAqoWeMWuvpDCyyXu8nuEB/3
- 2A+j1q252vBCmghEYREvT2Jhp0U0Pvpe93GdoI6+3rHr1isnoe8BSHW
-X-Developer-Key: i=hello@superkali.me; a=ed25519;
- pk=5tynRWQdL93CDcapJ73FkcCRY2PeBOJOIAoIhRig53U=
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - fr5000-r.dnsiaas.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - superkali.me
-X-Get-Message-Sender-Via: fr5000-r.dnsiaas.com: authenticated_id: hello@superkali.me
-X-Authenticated-Sender: fr5000-r.dnsiaas.com: hello@superkali.me
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Date: Sun, 19 Apr 2026 13:02:41 +0000 (UTC)
+X-CM-Analysis: v=2.4 cv=ALriHGRn c=1 sm=1 tr=0 ts=69e4d275 a=q8XfeKLTkGORBkIvkVRlwA==:617 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=wxLWbCv9AAAA:8 a=mUryVpMS6HeJfSHEwLcA:9 a=QEXdDO2ut3YA:10 a=QJY96suAAestDpCc5Gi9:22
+X-CM-Envelope: MS4xfFupofheZFz+YPyWAx2XbSBOcml5hGXAcuqP7Qlv8ZpSvWhMTH4OaBnQ2Ey/IuTBdQEN341kxCGMpgoRBE8/Duv9Fe/chU7wXiyxYVcuR4QeMVT3KwKG q6B7rrdXdRXGM6j9U8LZ3W+tfo7R+ObirFS8amb0aey40YBHo4ApTXnDJbTTVRO2H2/1hL8tBUgADtVunkVbuhkrlG0wEswvMJhVQQjaBRJzI0ztUOa2ZOu/ rNA1HMxUxih/MGOOrzx6LXk0hgZ7R9ypLj4nXElYTlfNt+TPKd7iExrNa7Ye7LrQiG93L1jv/m7L/ZexF9vaof8tHsq3L9GX6U+8y9Z04hpDmtJ5DNbcMF/r nfrIpKL66g1WHkgPPEOt10cdkEenPz7ai5pDooNVmpWBo47ybZTRRweloOcZhlwYDuW56FBHpytQrMNafta1U6nwNJHWfVH7unPUUHyhIyHeyTYV8hGHn/sA ixvbQjiv0O3cuAP5oP3UWanKh6sh1/OIuqt+M0HpOU372YX5rM3SUER54VGhu+ZkAai26a13RJ/02jqyAbX8DPybjY6xmDh78fObWiIWzMngbua4PHgms9G1 nlh2GhomazVVrSvUfMjWD+3SNd9LzCa27txBcpfMBiJERZdncJALmJ8Io6TigVYN5IXutF+tL1feLCFcBH9wnoXfR0eS1d6kHPN6krwOkV3scwvhBRBtjOCe kHo+orO3CDSMD/SbfZjbPZjLkWEBpMMQ22OfKs4gZga6pewx20PxLX8k7FrjWhgQju/Qco8cFXrue6a2pGQIXEkI0F311k77nh+lrtO0+Xts4wBMIL6+RJnC 99ohA5DWH8yt6B3cH44=
+X-AuthUser: linux@smankusors.com
 
-On RK3588, the four I2S master clock (MCLK) outputs to external IO
-pins are gated by bits in SYS_GRF SOC_CON6 (offset 0x0318). These
-are set-to-disable gates with hiword mask semantics.
+On 4/18/2026 11:11 PM, Dmitry Baryshkov wrote:
+> On Thu, Apr 16, 2026 at 03:49:33PM +0200, Konrad Dybcio wrote:
+>> On 4/15/26 5:20 PM, Antony Kurniawan Soemardi wrote:
+>>> On 4/14/2026 3:07 PM, Konrad Dybcio wrote:
+>>>> On 4/14/26 10:06 AM, Konrad Dybcio wrote:
+>>>>> On 4/13/26 8:55 PM, Antony Kurniawan Soemardi via B4 Relay wrote:
+>>>>>> From: Antony Kurniawan Soemardi <linux@smankusors.com>
+>>>>>>
+>>>>>> msm8960 uses the same clock descriptor as apq8064 but lacked the
+>>>>>
+>>>>> This doesn't quite seem to be the case, some fields differ and
+>>>>> apq8064 additionally has:
+>>>>>
+>>>>> QCOM_RPM_PM8821_SMPS1
+>>>>> QCOM_RPM_PM8821_SMPS2
+>>>>> QCOM_RPM_PM8821_LDO1
+>>>>> QCOM_RPM_VDDMIN_GPIO
+>>>>
+>>>> Ah hmm, the MFD driver seems to provide *all* RPM resources..
+>>>
+>>> What I meant by "clock descriptor" in the commit message was
+>>> specifically the subset corresponding to RPM managed clocks. From what I
+>>> can tell based on downstream code, msm8960 and apq8064 seem to share the
+>>> same set of RPM clocks, even though the overall resource lists differ.
+>>>
+>>> Is that understanding correct?
+>>
+>> If that's struct msm_rpm_map_data on msm-3.x, then I see that 8x60 has:
+>>
+>> +MSM_RPM_MAP(PLL_4, PLL_4, 1),
+>> +MSM_RPM_MAP(SMI_CLK, SMI_CLK, 1),
+>>
+>> While 8960 has:
+>> -MSM_RPM_MAP(QDSS_CLK, QDSS_CLK, 1),
+> 
+> You are comparing 8x60 to 8960, while it should be 8960 to 8064.
+> 
+> I see that there are differences, but the QDSS is the same.
 
-The TRM documents the reset value of these bits as 0 (gate open),
-but in practice the Rockchip firmware (BL31) may set them during
-early boot, preventing the MCLK signal from reaching external audio
-codecs. The kernel should manage these gates explicitly so that
-audio functionality does not depend on bootloader register state.
+I'm looking at downstream code from my Sony Xperia SP (based on
+android-msm-mako-3.4 for LG Nexus 4 / APQ8064). Both apq8064 and msm8960
+uses the same clock-8960.c file in that tree, including the RPM clock
+descriptions, so I assumed their RPM clock sets were identical.
 
-This series adds GATE_GRF clock entries for all four I2S MCLK output
-gates, following the same approach used for the RK3576 SAI MCLK
-output gates [1]. Board DTS files that need MCLK on an IO pin can
-reference these clocks (e.g. clocks = <&cru I2S0_8CH_MCLKOUT_TO_IO>),
-ensuring the output gate is opened when the clock is enabled.
+That's why later commit 1da13533627d ("clk: qcom: clk-rpm: add msm8960
+compatible") reuses rpm_clk_apq8064 for qcom,rpmcc-msm8960 compatible.
+But the problem is rpm_clk_apq8064 includes QDSS, which is not yet
+present on msm8960_rpm_resource_table, causing rpmcc init to fail, hence
+this patch.
 
-Patch 1 adds the four clock ID bindings.
-Patch 2 removes the grf_type_sys exclusion from the aux_grf_table
-        lookup, which prevented SYS_GRF-based GATE_GRF entries from
-        being resolved on RK3588 (where ctx->grf points to PHP_GRF).
-Patch 3 introduces rockchip_clk_add_grf(), a helper to register
-        auxiliary GRFs, so SoC drivers don't open-code the aux_grf
-        allocation and hashtable insertion.
-Patch 4 adds the RK3588_SYSGRF_SOC_CON6 register define.
-Patch 5 adds the four GATE_GRF clock entries and registers the
-        SYS_GRF via the new helper.
+That said, I agree with Dmitry on the other email reply. I will update
+the commit message to match with android-msm-mako-3.4 downstream code
+instead of claiming both SoC has the same clock descriptions.
 
-clk-rk3576.c currently open-codes the same GRF registration pattern
-twice and is an obvious candidate for conversion to the new helper,
-but that refactor is left as a separate follow-up to keep this
-series focused.
-
-Tested on a Youyeetoo YY3588 (RK3588) board with an ES8388 audio
-codec connected to I2S0, and independently on a Mekotronics R58X-Pro
-(ES8388) by Ricardo Pardini.
-
-[1] https://lore.kernel.org/r/20250305-rk3576-sai-v1-2-64e6cf863e9a@collabora.com/
-
-Changes in v4:
-- Introduced rockchip_clk_add_grf() helper and used it in clk-rk3588.c
-  instead of open-coding the aux_grf registration (Heiko)
-- Dropped Reviewed-by from patch 5 since the code was refactored
-
-Changes in v3:
-- Added separate patch for RK3588_SYSGRF_SOC_CON6 register define
-  in rk3588_grf.h, replacing magic 0x0318 (Nicolas)
-- Dropped Reported-by/Closes tags from the driver patch (Nicolas)
-- Added Tested-by from Ricardo Pardini (Mekotronics R58X-Pro)
-
-Changes in v2:
-- Patch 1: shortened commit message (Krzysztof)
-- Driver patch: added missing #include <linux/slab.h> for kzalloc_obj
-  (kernel test robot)
-
-Signed-off-by: Daniele Briguglio <hello@superkali.me>
----
-Daniele Briguglio (5):
-      dt-bindings: clock: rockchip,rk3588-cru: add I2S MCLK output to IO clock IDs
-      clk: rockchip: allow grf_type_sys lookup in aux_grf_table
-      clk: rockchip: add helper to register auxiliary GRFs
-      soc: rockchip: rk3588: add SYS_GRF SOC_CON6 register offset
-      clk: rockchip: rk3588: add GATE_GRF clocks for I2S MCLK output to IO
-
- drivers/clk/rockchip/clk-rk3588.c               | 16 ++++++++++++++++
- drivers/clk/rockchip/clk.c                      | 25 +++++++++++++++++++++----
- drivers/clk/rockchip/clk.h                      |  3 +++
- include/dt-bindings/clock/rockchip,rk3588-cru.h |  4 ++++
- include/soc/rockchip/rk3588_grf.h               |  2 ++
- 5 files changed, 46 insertions(+), 4 deletions(-)
----
-base-commit: b84a0ebe421ca56995ff78b66307667b62b3a900
-change-id: 20260316-rk3588-mclk-gate-grf-c4b180438fc0
-
-Best regards,
---  
-Daniele Briguglio <hello@superkali.me>
-
+-- 
+Thanks,
+Antony K. S.
