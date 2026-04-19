@@ -1,53 +1,56 @@
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D0BD301471;
-	Sun, 19 Apr 2026 19:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF4A3019A9;
+	Sun, 19 Apr 2026 19:38:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776627484; cv=none; b=Vws1wHGDhI4/h+41SF37HcZBYMupuLrsBEDhz5Gjwoohk/FA+sMFn+kJVEceQn6ecuKlW9JS1L352dMdoH2bYNsTzPBXsAI2L0gByuWgQHabzvwi7HdPX3hDiy0h7THyBwbWs4a67UqnVR3QwtdbIzDA4IxcgbohxyN693bkJZs=
+	t=1776627488; cv=none; b=u8A4mr50wQtvzz8TNRQNjdeSHu2UYP00KTcgOr3wo6NLNTrsBA/8HFSHfUnOICnje6La+FlmwcML2OlWQSziqdr/5lliN2xu9QUn3LnIcjAtnTVVao0jqd5W2GtzHQB1MMcHHpOq8CVfG+Lzm6zeagAjqFtg2wF3bhu0H3XsdMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776627484; c=relaxed/simple;
-	bh=QwO018XjVhkeoONy4Rdr9TcaOhVLm4OfWNvvfZXp9/Y=;
+	s=arc-20240116; t=1776627488; c=relaxed/simple;
+	bh=g4qfYKW1NnWJZ945fCoxTXOX9qLyrjmzBQLDEvtD5xA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=roc4NbOz0Bxl08JAbZnDbF+V1NV6K/oH8hhru98ZRBvmjHkS0QR1mXt32ntV4NxyYhkU025ytBKOTDqFBVcfy5B0euXE1BdZgpovDKVr1Jud86WyhBfv53uBg6QrHHcU3iPJ92vQr0w5BRABsfiisJp2dU8a9NA6Sz1fltQ54kU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=rBHIQCt1; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=l8x4Xy+l; arc=none smtp.client-ip=80.241.56.151
+	 MIME-Version; b=q2zeWNAuLvwHQR9GBkjACdlhxToEyTWrlYLf1J1xUJb584aFc8Y472y+g1mySCG7aHfHz4SWwvkkuej2vf60a+ub+6QmhKc5dk+tdF7EXu3LinxRz+MbdlZK3ke2qjVyh0FVNlfhguScZ0ZNeuHn4mIfZp1C75EnBw3QgrTTbAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=SN/ysULC; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=NStd01G/; arc=none smtp.client-ip=80.241.56.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="rBHIQCt1";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="l8x4Xy+l"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="SN/ysULC";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="NStd01G/"
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4fzJmy5YFtz9tYm;
-	Sun, 19 Apr 2026 21:37:54 +0200 (CEST)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4fzJn86M0pz9tsW;
+	Sun, 19 Apr 2026 21:38:04 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1776627474;
+	t=1776627484;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=5kerIpWs4ed0z7OiQKw7XLC1mV5Et0TeBc5iTrzRy2w=;
-	b=rBHIQCt1CT508WBrV9/B/LA88ArwCh/J2l9DpZP2lZPqFAZ7D0HV7bx+85/uSL6OqfNlSf
-	jVZAz6JdgjDQs/pYN2Kp67gK2EiK7ZPXHCCGLaCKmZP8P6tNJYVllQkTm2uidz4gzXM107
-	DyTYpLdhjvP7K/ovEYeUEmow2Q193RRy9As0eVDTLiWxxCAG0rxQSqe2BQmt/w/lo4jauw
-	gdohFhgyfPWq7D7uEiWEp8lS5aCRTPgAgrmO5TQFSB8RsE8XNp0ScZq6hRpmJMqaUDPjbc
-	L5RzifLeG3sA97wX0k6V+XjDpLOjGhS0GDOVbtebj84A87qeE2xianhqAUZo0Q==
+	bh=we5xyIHs0NFWcvYDbi577e9O31rX0Xej1rSPQzWrHfo=;
+	b=SN/ysULCvLb/0n0ZmFal+NPz5SKWYgcMbk4fG9AJQVSyqdJSi0IZT2hmuwTMM767lLOUSJ
+	T2YuZoa8F7RvztKZRjBUpxTqcPc3bIYYi4Afr3AgJlhtp2Q359PlcS//D4oP2sYkwRCuug
+	g3qtLlqiDlXjbhZqtvWoZ67lZsnIFhzwEDOHKxuFvoMKK4nZGsh1OH+Z3rg6prLr/Kkdj5
+	2RKdCTsAzm8MAY82l1PC/7oHOCuvGWVHjpDj8I10BAfv8aEUQn2rRc7mib/waQ8W+JttN8
+	qW8pn7RWA4ZMfVTKiVrYqnipbvi03MI0EDkw3Xp3/nAQxX85jhJky7LpFNtj9w==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b="NStd01G/";
+	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
 From: Marek Vasut <marek.vasut+renesas@mailbox.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1776627472;
+	t=1776627482;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=5kerIpWs4ed0z7OiQKw7XLC1mV5Et0TeBc5iTrzRy2w=;
-	b=l8x4Xy+lj/mdLG8jFFgtzqnJpKwQDQOsC3UTD27udtR4N0oZUMZMixypXHp9cmLWB72FSM
-	HfPNRhE2Y5VtuaRgF+Zu4rI3quaI03Hd8BkkaRZ0imlL8RUY+Or3nby+TkoRnGFWHvWOFm
-	FV8MOEspdlzyTVMBX4+S2f2fG5461wGkcYcGFB+vF6cTb07ZoIEypX9MPSksIf07FiJ68x
-	nie9w99SwFBp+szO+CPi8a58GWv++UeBP/qprt7njBkStJa/zVqxCAtpjmBogrAVn0XK3e
-	1y/OPEZjDWJhxWvhhah1Y0rPIvf+t9UIjSKOFrZFH6z7S/2kYhy1Vyof006Mhg==
+	bh=we5xyIHs0NFWcvYDbi577e9O31rX0Xej1rSPQzWrHfo=;
+	b=NStd01G/EbLl/qePHAnC2ZYPTFzRaYKmE9Ye/jnrEPYC1t0aPEf8HBfsh0G1Nnbyb5uwjU
+	dZG3Sxzwb3Flt77gH8hSayLMB3SLLPT7tDSRk0w0eR5jMD1KVcYyEP41C51JRfHl9FXzbN
+	DuxI12UNjqFDh9dbRthX8Us6H77dBCe5hmrAsnH0mCzDldS0nFojeh1mihtNNI18TUvsKH
+	5+UECiT+8Qw1d2AFQmbBHdyb7UC7hj/riBL1YRn2AdkvnWfnWKbeSUOt9g4aeGv+WHwdSD
+	KGpkVoE8utKFDo7ZAkeVtxWq06H7SiUOVDMBr96pg7VCyfIO6/4vUG0rPcVlig==
 To: linux-arm-kernel@lists.infradead.org
 Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	Conor Dooley <conor+dt@kernel.org>,
@@ -70,9 +73,9 @@ Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 3/7] dt-bindings: clock: cs2000-cp: document CS2500
-Date: Sun, 19 Apr 2026 21:35:34 +0200
-Message-ID: <20260419193718.133174-4-marek.vasut+renesas@mailbox.org>
+Subject: [PATCH 5/7] soc: renesas: Identify Renesas R-Car R8A779MD M3Le SoC
+Date: Sun, 19 Apr 2026 21:35:36 +0200
+Message-ID: <20260419193718.133174-6-marek.vasut+renesas@mailbox.org>
 In-Reply-To: <20260419193718.133174-1-marek.vasut+renesas@mailbox.org>
 References: <20260419193718.133174-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
@@ -82,11 +85,16 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: 36e649b870f355af3cf
-X-MBO-RS-META: zuy53sxh3x97kehzz717wbpq8pnhyido
+X-MBO-RS-META: 6k9pyw1bts61ocsepbripihpw48mfryf
+X-MBO-RS-ID: cba69b7caed497c583b
+X-Rspamd-Queue-Id: 4fzJn86M0pz9tsW
 
-Document backward compatibility support for CS2500 chip, which
-is a drop-in replacement for CS2000 chip.
+Add support for identifying the R-Car M3Le (R8A779MD) SoC.
+
+The Renesas R-Car R8A779MD M3Le SoC is a variant of the
+already supported R-Car M3-N SoC with reduced peripherals.
+Enable support for the M3Le SoC through already existing
+ARCH_R8A77965 configuration symbol. PRR reads 0x67c05501 .
 
 Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 ---
@@ -111,35 +119,21 @@ Cc: linux-clk@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org
 ---
- .../devicetree/bindings/clock/cirrus,cs2000-cp.yaml    | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/soc/renesas/renesas-soc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml b/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
-index d416c374e8534..031c52b2e5cec 100644
---- a/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
-+++ b/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
-@@ -11,14 +11,18 @@ maintainers:
- 
- description: |
-   The CS2000-CP is an extremely versatile system clocking device that
--  utilizes a programmable phase lock loop.
-+  utilizes a programmable phase lock loop. CP2500-CP is a compatible
-+  drop-in replacement for CP2000-CP.
- 
-   Link: https://www.cirrus.com/products/cs2000/
- 
- properties:
-   compatible:
--    enum:
--      - cirrus,cs2000-cp
-+    oneOf:
-+      - items:
-+          - const: cirrus,cs2500-cp
-+          - const: cirrus,cs2000-cp
-+      - const: cirrus,cs2000-cp
- 
-   clocks:
-     description:
+diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
+index 38ff0b823bdaf..c82835cf6d8e9 100644
+--- a/drivers/soc/renesas/renesas-soc.c
++++ b/drivers/soc/renesas/renesas-soc.c
+@@ -361,6 +361,7 @@ static const struct of_device_id renesas_socs[] __initconst __maybe_unused = {
+ 	{ .compatible = "renesas,r8a77965",	.data = &soc_rcar_m3_n },
+ 	{ .compatible = "renesas,r8a779m4",	.data = &soc_rcar_m3_n },
+ 	{ .compatible = "renesas,r8a779m5",	.data = &soc_rcar_m3_n },
++	{ .compatible = "renesas,r8a779md",	.data = &soc_rcar_m3_n },
+ #endif
+ #ifdef CONFIG_ARCH_R8A77970
+ 	{ .compatible = "renesas,r8a77970",	.data = &soc_rcar_v3m },
 -- 
 2.53.0
 
