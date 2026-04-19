@@ -1,147 +1,236 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7232857EA
-	for <linux-clk@vger.kernel.org>; Sat, 18 Apr 2026 20:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+Received: from mail.189.cn (189sx01-ptr.21cn.com [125.88.204.37])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 616EE33EC;
+	Sun, 19 Apr 2026 00:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=125.88.204.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776543837; cv=none; b=IhW3cb1Gcxw6HpJs9UbIwxtJ/EsHXxqdd/lRLbwBBrY1PqPL5KSJXdDysLL59G/YrnvXGdyxb84RyHMGKRUvDULrX8rvP/k7iDUwcoOo1ZtwAs5QrTVrG8hDFAbb62Yis75F+1k/tN7URjkKwTN+GIwkkLQTe6fIeyNarh7KjsA=
+	t=1776557265; cv=none; b=fXNPWz4tXeWKmiAQZRKRlcnMG6tCszTkRw/oqMRhoxE1TkEyxlzw1GA6cpniyre60ZZbkrYArosoTrf8iF0qN8ALRYsc5EEg8SLUxtY3GTWX/JF7hZG9X/iZNi0nx+dYU2/LNx78Jy8AEdlIeh2XzBBW8Vrenx+eHcZZTD7b+Fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776543837; c=relaxed/simple;
-	bh=g9NDcf1smfF8vm46KWA60/glnAzkSOqt0MO682JSkIQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oLbqyklF2AMSgtAJkdbawO001o7ZtSJG0rh07zrhlSl5zeqVMX8QLmMBqmHkXNRJZYF6H34vVyA/L8nY52OkU9TLvHmRwcUlmZ/i+Ab6sCgWtsZqIdGkBQ+QWtTNeMDiZp1QBMvooqA6gzZYo/GThMSmE2MRSj6excA+9UjRA1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Fahkhzad; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Ejgpdd2I; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Fahkhzad";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Ejgpdd2I"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63IC1HAG942487
-	for <linux-clk@vger.kernel.org>; Sat, 18 Apr 2026 20:23:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=Unkrq/OjgBeyx4OlaQcXktpk
-	Zj59I96fgHikJLzhnok=; b=FahkhzadnXWSzUSFX8ylrov8v/eca/m8++AS+PQ6
-	sGv9/pNWH5QIpAFkQ6dPIb6wJRP5R+jDTRTtDrrc59v/oSDWbjOoRzWRecIAG7fr
-	q4jCYDBz3GIBEW2V/HIpiYeBT7NorzNlEbfsvz9adFQ9tDLVn5vikvamVXf34zGh
-	YBWuA547yz82/WYjq0vAUD0wEcEF2GoBc6pR3XE2jSfz4bRbffgI9526VtpafeXE
-	88bGOPCYst9VSTR1bOqTFVPplXa6w+pWyYIuaWx8DXuV6c+rrMN3sXa3tD8XG2sM
-	+bBvbqjdqSvrlx74ZpqGqLjt+Pxe9oOcmd03Bl8aez5ZEg==
-Received: from mail-vk1-f198.google.com (mail-vk1-f198.google.com [209.85.221.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4dm1hx1f4y-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Sat, 18 Apr 2026 20:23:54 +0000 (GMT)
-Received: by mail-vk1-f198.google.com with SMTP id 71dfb90a1353d-56db8ed8e40so1374210e0c.3
-        for <linux-clk@vger.kernel.org>; Sat, 18 Apr 2026 13:23:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1776543834; x=1777148634; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Unkrq/OjgBeyx4OlaQcXktpkZj59I96fgHikJLzhnok=;
-        b=Ejgpdd2IUpmeof9XLnGn0RSY6eu5xTn2VoOgkS+0p2WAvYYomTxiZcMaOgkI7bnXHn
-         37W5K44vIRsOoNXfuTy2muD+AIwj3nDqnKA4W98Yet/uGr8jWBvUzmRPDtiXwTuVcztp
-         dDrfYDik12cl+9O+lcYYw7JBK9TvBr5sObwYF0YLKTCBa3ivWQK/V36aB4uSwgnYp2o0
-         n7nYPMZWs5bxw9zpWuyPuzeC2u5LQdDKsaqQad0NI58V5nNE+dczxlSZ3C5JDtTpChS2
-         +/SechPrwqFUGsc8/IDXfjJdeYPs8fyUEVp8ehExTlq0rsuIL5Z8Es/vHacuNE5Azyq1
-         cpoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776543834; x=1777148634;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Unkrq/OjgBeyx4OlaQcXktpkZj59I96fgHikJLzhnok=;
-        b=bX/u1g1f/2bOLZNzqdbH6WGGmQTv7p8VbazNhufBvFh+7KA8JKPR+nL4BYU9f5Kl6V
-         G5uZqeeNOS5FiPWZAQzJ813eMc8Rh0BeEae3cqYzhrUVG3XfOZl4KPY97yBtFZqP3gZa
-         dKpyfbjokP7ljbPQIF6daXqtfmOS9Je51ElqFi4bAhH/qRlodHkZ2UwPa+NmLWtQGCMx
-         bPrgTnc4mT8KKTXxJqEPNsAi+GAlCy7G1pYAZUUNBm5VF8skwtz2t2+AAIGfbqBN9m4m
-         nstsHOuY7d/icolyvQnnVWzgrynw2SMy29tQMrLU7ArpZZIhPyV1XlMNOFqjPBHohfER
-         kKXg==
-X-Forwarded-Encrypted: i=1; AFNElJ8PLyewCE5n6gMR+vjIOt5fKJBg+z0Fn3cMdov3NlH54SNp5X94uDXO/8xNCdY/d0//qKxz5CzXT7w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwePlGdpaQNjP6x7LNHmxCUbKtxUvRQrpoFvqYpz2xJuN3bkc7M
-	ka7B+mBsQBj8iiPZ2FkDEpUwWdr/lA3Xy4JF7WwZX7m7+lrtlOqDAYQxaxhO0BRP3gtoQtznCll
-	EY88XTK+i92jNE+tFODxdsWCUdYN5Ze05lGxqV61ZcNOVVRasSXbXjRYZIkp/jTE=
-X-Gm-Gg: AeBDievYMczn3azGpMqfr1qzEDGl0bl2uxhchP4+pGDP09nz+KvJs1+qDIyax2LxRNd
-	byiFHk4oGLRyYCALaUvctJ9lwmE+f/N9px/nbIMWfnNUi6eStVQ4ol3RSlqIqjBZJtkKUfxstO9
-	XiHLz1p475MnBHJrRecE4SYKj4hpTCF0etQCVeBhANOV8YCQfeRlkvLRCBbmyNqtussZRjXtHDd
-	IbC5BiFwbwhxt4fB5DOcPE3zfPP0sC8p2e6OtzffypHf4GPUUT4RY+adTkujGrWkli/0EN03uT9
-	09UzD8COdS4VgI5ilv/otMFm2bUK4RFbzQuWBqhsDDM01y8ovs7wSlsQwFwEHJnraEoSTEEsMS6
-	abaqA14NW8FcvnOWhyylNFsfVuzfI/MkWH9xjU/Co+79xrCa6fX54DPRqEXBTMWUjx+Qdjzo9nM
-	5arY/TL7yQhM7wITfxN+As3piM5vIeIwG+LvWS4i4tB9QeBQ==
-X-Received: by 2002:a05:6102:149d:b0:613:3fff:feb8 with SMTP id ada2fe7eead31-616f91e60cdmr3492502137.29.1776543834264;
-        Sat, 18 Apr 2026 13:23:54 -0700 (PDT)
-X-Received: by 2002:a05:6102:149d:b0:613:3fff:feb8 with SMTP id ada2fe7eead31-616f91e60cdmr3492497137.29.1776543833817;
-        Sat, 18 Apr 2026 13:23:53 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-38ecb5f652asm12679001fa.12.2026.04.18.13.23.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 Apr 2026 13:23:51 -0700 (PDT)
-Date: Sat, 18 Apr 2026 23:23:50 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] clk: qcom: Restrict IPQ5424, IPQ6018,IPQ9574,
- QCM2290 and others to ARM64
-Message-ID: <ycqlsccmlzrsiggg2f7rps34qxjzpbqf3x43jyajaecn3t3qxo@giplsfboimuw>
-References: <20260416-clk-qcom-defaults-v1-0-579e75c4cfe5@oss.qualcomm.com>
- <20260416-clk-qcom-defaults-v1-1-579e75c4cfe5@oss.qualcomm.com>
+	s=arc-20240116; t=1776557265; c=relaxed/simple;
+	bh=0ipQ/PLQ6jhEKQTcQGumSpMwCnoayW4daignXtWP0L0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YSCuLPWEG1vAyGaMivKTRSwJ99dvW9N0v92w+W7dtZNey6P/3Hi7PMQ5TOLfNht51gcaOs+4JZsE5utW2LGu+8EVE2c8q6w+zgEeBXw8vX2NSaUUZnyI26oaSXzghpTURKTSAaUo4exUgnreQQCy8PPleDMztQZPcn+YBp7pYzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn; spf=pass smtp.mailfrom=189.cn; arc=none smtp.client-ip=125.88.204.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=189.cn
+HMM_SOURCE_IP:10.158.243.18:0.362915355
+HMM_ATTACHE_NUM:0000
+HMM_SOURCE_TYPE:SMTP
+Received: from clientip-60.27.224.181 (unknown [10.158.243.18])
+	by mail.189.cn (HERMES) with SMTP id 1BEC840029A;
+	Sun, 19 Apr 2026 08:07:30 +0800 (CST)
+Received: from  ([60.27.224.181])
+	by gateway-153622-dep-76cc7bc9cd-8dbpn with ESMTP id 299ad2dedf004eb4b49ca2003e46e8d1 for pmladek@suse.com;
+	Sun, 19 Apr 2026 08:07:33 CST
+X-Transaction-ID: 299ad2dedf004eb4b49ca2003e46e8d1
+X-Real-From: chensong_2000@189.cn
+X-Receive-IP: 60.27.224.181
+X-MEDUSA-Status: 0
+Sender: chensong_2000@189.cn
+Message-ID: <7486bf8e-9713-43ed-af4d-ecefec00c980@189.cn>
+Date: Sun, 19 Apr 2026 08:07:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260416-clk-qcom-defaults-v1-1-579e75c4cfe5@oss.qualcomm.com>
-X-Proofpoint-ORIG-GUID: gePMNaJBHwFQu3BNlQluvimFwrJ_ky8V
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDE4MDIwNSBTYWx0ZWRfX0hKPCyof/3sF
- d7YyVl614IKDECrqtbZwiDKr7PhrJIeO47oVl07L/k3ocp0kJ94E+l01iQERAmSIl2vHdoUaqFB
- NCuPWg3xyrM/nJ/zYidmdEra01p9VhrJKFxhRwNob9Zpam/+jdZDW18TB0kecGLodYU4leJepWC
- 5CMETqoJaWqAs0F6cdzusbROhOkpdssBKVwU9hc1eKIuCdVPia8hnjFty8NpreVEyXn/meXiuOO
- UlYHkxoOcMEyTJxUBAmNYzPZqMnaz2vQVbffap5yL3WN1Q9FrtPz56ShGRfrKPkEglQjseEdcHg
- Yj2sg+zonPeS9Z9S1RNMeOaFEs+BP4c/R5zWJyzAbWeaS9czAMZqd8uhfr1Mt81Ff88VFzXPZNi
- se/nHKRuZOkNcXkH/BI+aiKzhfUc5CxxuTdUa8sbFXzHd8qJ4NT3nJA5wLWOek8rajMRoQMjp6V
- 2+MjpqImDZouwZeVhfA==
-X-Proofpoint-GUID: gePMNaJBHwFQu3BNlQluvimFwrJ_ky8V
-X-Authority-Analysis: v=2.4 cv=RoX16imK c=1 sm=1 tr=0 ts=69e3e85a cx=c_pps
- a=1Os3MKEOqt8YzSjcPV0cFA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=A5OVakUREuEA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22 a=EUspDBNiAAAA:8
- a=XY21xBfZkjNNQA91HVkA:9 a=CjuIK1q_8ugA:10 a=ZXulRonScM0A:10
- a=hhpmQAJR8DioWGSBphRh:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-04-18_06,2026-04-17_04,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 adultscore=0 spamscore=0 phishscore=0
- clxscore=1015 bulkscore=0 lowpriorityscore=0 suspectscore=0
- priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2604070000
- definitions=main-2604180205
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/2] kernel/notifier: replace single-linked list with
+ double-linked list for reverse traversal
+To: Petr Mladek <pmladek@suse.com>
+Cc: rafael@kernel.org, lenb@kernel.org, mturquette@baylibre.com,
+ sboyd@kernel.org, viresh.kumar@linaro.org, agk@redhat.com,
+ snitzer@kernel.org, mpatocka@redhat.com, bmarzins@redhat.com,
+ song@kernel.org, yukuai@fnnas.com, linan122@huawei.com,
+ jason.wessel@windriver.com, danielt@kernel.org, dianders@chromium.org,
+ horms@kernel.org, davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, paulmck@kernel.org, frederic@kernel.org,
+ mcgrof@kernel.org, petr.pavlu@suse.com, da.gomez@kernel.org,
+ samitolvanen@google.com, atomlin@atomlin.com, jpoimboe@kernel.org,
+ jikos@kernel.org, mbenes@suse.cz, joe.lawrence@redhat.com,
+ rostedt@goodmis.org, mhiramat@kernel.org, mark.rutland@arm.com,
+ mathieu.desnoyers@efficios.com, linux-modules@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-pm@vger.kernel.org, live-patching@vger.kernel.org,
+ dm-devel@lists.linux.dev, linux-raid@vger.kernel.org,
+ kgdb-bugreport@lists.sourceforge.net, netdev@vger.kernel.org
+References: <20260415070137.17860-1-chensong_2000@189.cn>
+ <aeC7ByGA5MHBcGQR@pathway.suse.cz>
+Content-Language: en-US
+From: Song Chen <chensong_2000@189.cn>
+In-Reply-To: <aeC7ByGA5MHBcGQR@pathway.suse.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Apr 16, 2026 at 10:10:29AM +0200, Krzysztof Kozlowski wrote:
-> Some clock drivers for IPQ5424, IPQ9574, QCM2290, QDU1000 and SA8775
-> already depend on ARM64.  IPQ6018 is ARM64 only SoC (at least upstream)
-> so should not be a choice for ARM 32-bit builds, to make kernels smaller
-> and user choices easier.
+Hi,
+
+
+On 4/16/26 18:33, Petr Mladek wrote:
+> On Wed 2026-04-15 15:01:37, chensong_2000@189.cn wrote:
+>> From: Song Chen <chensong_2000@189.cn>
+>>
+>> The current notifier chain implementation uses a single-linked list
+>> (struct notifier_block *next), which only supports forward traversal
+>> in priority order. This makes it difficult to handle cleanup/teardown
+>> scenarios that require notifiers to be called in reverse priority order.
+>>
+>> A concrete example is the ordering dependency between ftrace and
+>> livepatch during module load/unload. see the detail here [1].
+>>
+>> This patch replaces the single-linked list in struct notifier_block
+>> with a struct list_head, converting the notifier chain into a
+>> doubly-linked list sorted in descending priority order. Based on
+>> this, a new function notifier_call_chain_reverse() is introduced,
+>> which traverses the chain in reverse (ascending priority order).
+>> The corresponding blocking_notifier_call_chain_reverse() is also
+>> added as the locking wrapper for blocking notifier chains.
+>>
+>> The internal notifier_call_chain_robust() is updated to use
+>> notifier_call_chain_reverse() for rollback: on error, it records
+>> the failing notifier (last_nb) and the count of successfully called
+>> notifiers (nr), then rolls back exactly those nr-1 notifiers in
+>> reverse order starting from last_nb's predecessor, without needing
+>> to know the total length of the chain.
+>>
+>> With this change, subsystems with symmetric setup/teardown ordering
+>> requirements can register a single notifier_block with one priority
+>> value, and rely on blocking_notifier_call_chain() for forward
+>> traversal and blocking_notifier_call_chain_reverse() for reverse
+>> traversal, without needing hard-coded call sequences or separate
+>> notifier registrations for each direction.
+>>
+>> [1]:https://lore.kernel.org/all
+>> 	/alpine.LNX.2.00.1602172216491.22700@cbobk.fhfr.pm/
+>>
+>> --- a/include/linux/notifier.h
+>> +++ b/include/linux/notifier.h
+>> @@ -53,41 +53,41 @@ typedef	int (*notifier_fn_t)(struct notifier_block *nb,
+> [...]
+>>   struct notifier_block {
+>>   	notifier_fn_t notifier_call;
+>> -	struct notifier_block __rcu *next;
+>> +	struct list_head __rcu entry;
+>>   	int priority;
+>>   };
+> [...]
+>>   #define ATOMIC_INIT_NOTIFIER_HEAD(name) do {	\
+>>   		spin_lock_init(&(name)->lock);	\
+>> -		(name)->head = NULL;		\
+>> +		INIT_LIST_HEAD(&(name)->head);		\
 > 
-> IPQ_CMN_PLL is used only by the SoCs already having clock controllers
-> restricted to ARM64
+> I would expect the RCU variant here, aka INIT_LIST_HEAD_RCU().
+
+I'm not familiar with list rcu, but i will look into it and give it a try.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-> ---
->  drivers/clk/qcom/Kconfig | 11 +++++++++++
->  1 file changed, 11 insertions(+)
+>> --- a/kernel/notifier.c
+>> +++ b/kernel/notifier.c
+>> @@ -14,39 +14,47 @@
+>>    *	are layered on top of these, with appropriate locking added.
+>>    */
+>>   
+>> -static int notifier_chain_register(struct notifier_block **nl,
+>> +static int notifier_chain_register(struct list_head *nl,
+>>   				   struct notifier_block *n,
+>>   				   bool unique_priority)
+>>   {
+>> -	while ((*nl) != NULL) {
+>> -		if (unlikely((*nl) == n)) {
+>> +	struct notifier_block *cur;
+>> +
+>> +	list_for_each_entry(cur, nl, entry) {
+>> +		if (unlikely(cur == n)) {
+>>   			WARN(1, "notifier callback %ps already registered",
+>>   			     n->notifier_call);
+>>   			return -EEXIST;
+>>   		}
+>> -		if (n->priority > (*nl)->priority)
+>> -			break;
+>> -		if (n->priority == (*nl)->priority && unique_priority)
+>> +
+>> +		if (n->priority == cur->priority && unique_priority)
+>>   			return -EBUSY;
+>> -		nl = &((*nl)->next);
+>> +
+>> +		if (n->priority > cur->priority) {
+>> +			list_add_tail(&n->entry, &cur->entry);
+>> +			goto out;
+>> +		}
+>>   	}
+>> -	n->next = *nl;
+>> -	rcu_assign_pointer(*nl, n);
+>> +
+>> +	list_add_tail(&n->entry, nl);
+> 
+> I would expect list_add_tail_rcu() here.
+> 
+>> @@ -59,25 +67,25 @@ static int notifier_chain_unregister(struct notifier_block **nl,
+>>    *			value of this parameter is -1.
+>>    *	@nr_calls:	Records the number of notifications sent. Don't care
+>>    *			value of this field is NULL.
+>> + *	@last_nb:  Records the last called notifier block for rolling back
+>>    *	Return:		notifier_call_chain returns the value returned by the
+>>    *			last notifier function called.
+>>    */
+>> -static int notifier_call_chain(struct notifier_block **nl,
+>> +static int notifier_call_chain(struct list_head *nl,
+>>   			       unsigned long val, void *v,
+>> -			       int nr_to_call, int *nr_calls)
+>> +			       int nr_to_call, int *nr_calls,
+>> +				   struct notifier_block **last_nb)
+>>   {
+>>   	int ret = NOTIFY_DONE;
+>> -	struct notifier_block *nb, *next_nb;
+>> -
+>> -	nb = rcu_dereference_raw(*nl);
+>> +	struct notifier_block *nb;
+>>   
+>> -	while (nb && nr_to_call) {
+>> -		next_nb = rcu_dereference_raw(nb->next);
+>> +	if (!nr_to_call)
+>> +		return ret;
+>>   
+>> +	list_for_each_entry(nb, nl, entry) {
+> 
+> I would expect the RCU variant here, aka list_for_each_rcu()
+> 
+> These are just two random examples which I found by a quick look.
+> 
+> I guess that the notifier API is very old and it does not use all
+> the RCU API features which allow to track safety when
+> CONFIG_PROVE_RCU and CONFIG_PROVE_RCU_LIST are enabled.
+> 
+> It actually might be worth to audit the code and make it right.
+> 
+>>   #ifdef CONFIG_DEBUG_NOTIFIERS
+>>   		if (unlikely(!func_ptr_is_kernel_text(nb->notifier_call))) {
+>>   			WARN(1, "Invalid notifier called!");
+>> -			nb = next_nb;
+>>   			continue;
+>>   		}
+>>   #endif
+> 
+> That said, I am not sure if the ftrace/livepatching handlers are
+> the right motivation for this. Especially when I see the
+> complexity of the 2nd patch [*]
+> 
+> After thinking more about it. I am not even sure that the ftrace and
+> livepatching callbacks are good candidates for generic notifiers.
+> They are too special. It is not only about ordering them against
+> each other. But it is also about ordering them against other
+> notifiers. The ftrace/livepatching callbacks must be the first/last
+> during module load/release.
+> 
+> [*] The 2nd patch is not archived by lore for some reason.
+>      I have found only a review but it gives a good picture, see
+>      https://lore.kernel.org/all/1191caf5-6a61-4622-a15e-854d3701f4fc@suse.com/
+> 
+> Best Regards,
+> Petr
 > 
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Thanks.
 
+BR
 
--- 
-With best wishes
-Dmitry
+Song
