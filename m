@@ -1,168 +1,143 @@
-Received: from buffalo.tulip.relay.mailchannels.net (buffalo.tulip.relay.mailchannels.net [23.83.218.24])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3DE333998;
-	Sun, 19 Apr 2026 13:41:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.218.24
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776606083; cv=pass; b=cvDYmt1DaoT/iXUW6DvyrBCrw6oTNNnHxy5A15acSjUZbeVbEIbfbI2nkoL0kUD1QAfzg1OijoN4FNVKh1TGIe21NyLsRyj95+ZfIZ3aVT/sAD79s1KYi9vZAgmhLP+evPTH1Vx7SUzw8Gy0/8FPc7j9rLdacuPKhzYOiHv6G6M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776606083; c=relaxed/simple;
-	bh=VnFxSTJogffl2XE7uVUb6etkwqqG5nQ1gKXcU/nILEs=;
-	h=Message-ID:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:Date; b=TP6XY5kTjNIqdljvSE2I21ZuniIPFlL9D6kZ6hHgsQEReaFVAGs1/4HePJefxk38ZiRSd+sGAVhoXD76ghYmiurWGpnO9ybqaFDYSMqpKfHod/7jWbFEjkX46Ri4KoN/LFgYiErsiTgt/3HnncF97p0ESJPgBNS05BaLnKNCM54=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com; spf=pass smtp.mailfrom=smankusors.com; dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b=sRVkW/Lt; arc=pass smtp.client-ip=23.83.218.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smankusors.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11DF91A683B;
+	Sun, 19 Apr 2026 19:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1776627461; cv=none; b=myBrJLP3Md379I9KAbyiNKt3LYeH3eWnpfG1XrHciNS/XmCVFm2bVennN7ah52GAqcjVhgtzq7ozeeq9em7slBTZOgcbIMa4kIzEGzfQeyGLTEMr3fieZN8UAiE7whNqu6Hun+NQqNb1QNKPlJa1wDiLsZIrXMNCZ+t8C1FCwF8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1776627461; c=relaxed/simple;
+	bh=hM0Ot1BC4msAiqEYhZKOQrZ+8uTcEmNfpDHaO7fqTQc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b7Xg3v8LQwZTDtqTMJnJlxeXgDxK925ewX1Ae4cHy6WAeIhUyVgLwHIrRwiFgkmV+HFXEpoVXMD4ZP1qsw7Wtg/HonaJKAURpK+vwyPEYffHU/MwnzU94XsrNwQI7oU7Le1KJKt1O1HKtVNO8bSX+m5R6OjcTM6oBWfMzTzasRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=v8VjAsMT; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=w7GRN8/2; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b="sRVkW/Lt"
-X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id C4BC176216A;
-	Sun, 19 Apr 2026 13:41:15 +0000 (UTC)
-Received: from fr-int-smtpout26.hostinger.io (100-103-3-248.trex-nlb.outbound.svc.cluster.local [100.103.3.248])
-	(Authenticated sender: hostingeremail)
-	by relay.mailchannels.net (Postfix) with ESMTPA id A806B7625CD;
-	Sun, 19 Apr 2026 13:41:12 +0000 (UTC)
-ARC-Seal: i=1; a=rsa-sha256; d=mailchannels.net; s=arc-2022; cv=none;
-	t=1776606075;
-	b=5DiXgn5IjiaI0LEZp3wLsuPdKvUrdNUIf79gh3vibkWPKpw91rGAEoag+sHismIrahBBzF
-	BqsbBN8ylHhF/XcM3W1UOqfzdYyfydqb3jDo3qy2CZtHHMB/FJO+k/XACidaDlMp9wBB82
-	93vwsSHerKgFoFYzvMjhg9PAmL+OxyC0pgjZu6/m3o3jWvMKy4aMlHZ77pJfSC5D53gH54
-	fjrgHtl6XajdibIL3I88CLpl/ZqfpJjZUBqX3F9W3m/m5gkFIP67bpqa0AN4kzNnvxIMNv
-	9gUf65hTVai5bzmT+Am+B4oPeaODDTyso/QDZ0NMMMPONqB2W70qi96H7SbX7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1776606075;
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="v8VjAsMT";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="w7GRN8/2"
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4fzJmf1flBz9tsS;
+	Sun, 19 Apr 2026 21:37:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1776627458;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=k3ZegHV/Cy+Vd7QHA2PrtnXvjHee6c7TW3JGeMrYaQs=;
-	b=evGteiemUyJ7t424zGfbZWENhvr5iuVUAlzDFktk6z4lmx0V7ttnV/avvUi0qhma7yCOEL
-	ZElRAumGAGo/WH+x/TBcx4mQZJ62zgkGkFrNz9U8wGlViOz/13T2YZmXrNUDA5aNDBUn9B
-	F/c1nnOw4IorkG6VNE2vZLURoJjIo0Iz7eyKC1FoOit0LBNYrvS7bzp/ql1OMOSnIz0wgG
-	H42xVcSLaSae2k2aUX1guN+Hx8CjKbt3VeI10uozeu6AnXmwakL08Abd1Q/089NPy2S/Xd
-	mDXjj+OBfVHIMP0tvbkJGvuNYJdQgvTtdUbwGcMNTr6qEhdoUfczTSGhsDi6eA==
-ARC-Authentication-Results: i=1;
-	rspamd-5895b9784c-cklvk;
-	auth=pass smtp.auth=hostingeremail smtp.mailfrom=linux@smankusors.com
-X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: hostingeremail|x-authuser|linux@smankusors.com
-X-MailChannels-Auth-Id: hostingeremail
-X-Shoe-Tasty: 6f71109443f2d5fb_1776606075658_2962281406
-X-MC-Loop-Signature: 1776606075658:2584535058
-X-MC-Ingress-Time: 1776606075657
-Received: from fr-int-smtpout26.hostinger.io (fr-int-smtpout26.hostinger.io
- [148.222.54.11])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.103.3.248 (trex/7.1.5);
-	Sun, 19 Apr 2026 13:41:15 +0000
-Received: from [IPV6:2001:448a:c020:c3c:d097:d42a:836e:79a] (unknown [IPv6:2001:448a:c020:c3c:d097:d42a:836e:79a])
-	(Authenticated sender: linux@smankusors.com)
-	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4fz8sH2FWqz1xml;
-	Sun, 19 Apr 2026 13:41:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smankusors.com;
-	s=hostingermail-a; t=1776606071;
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Cp83c5BG9ViMtdfEgKoWZ8ShkaQqJKSJjfZOv6vUN3o=;
+	b=v8VjAsMTkpzoEgpLAGLJka0n0hkuT+J4/aAih96YxvIhze7hRaT2bRHPGOrCKGXH7XfmHK
+	3iNy+AY7iSdHHwSv/0DSjS2ZG9/5mNnkp9xlZyQlCl5bE1rHFXOi2xka+PdRQwBCrv/wrr
+	aWzf3NXQrGFjMG4dbkcSRimV0KbPs/ekYqIP2PrdYEbMQ3NNCINQGHkJw3LxWdE135LMJe
+	e4teUBvCZ9HkSTpvC+svz/3Kx565KNSOOX1hDc0A5Rw0qWp0SEfGhPFnMBPdZUuYQog0hy
+	kPYWjQliwlWsZKjiNfys7duvYSsilQnOJ7Y7DbtPIIGs0i3mk84lE9SH4nIhTQ==
+From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1776627456;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k3ZegHV/Cy+Vd7QHA2PrtnXvjHee6c7TW3JGeMrYaQs=;
-	b=sRVkW/Ltusmhkvn8dBC2v/Kcm7c87/nVx+exry90S4iyrTOLzdoozM2Xn65wmlYARLgZDw
-	nUJf8xW+Yg9aot3JHQ4Q8BqJ8HcgHml+h3JLnbqIE4zdziGx1UDJVUoIhy23cj032DeBuT
-	v52b9b3nb3v+Oy58YiVL/SrPAXerHLU9/eJJp39hBiTyY8ZbWss67iihZDOsIgluXQ/uFq
-	TCPrfhhyMINeA7vcCCQ34dBNnQSXb+6vXuRyyJpisn0qzw2COt/7sq+2zwxbf3+nVfW7k0
-	DyVqV0jMdobi07i52PGU4mFeqIl3gPPHcX47MWfRBwXXvBIbZei4Vex5rj/VFA==
-Message-ID: <71196906-0a06-4647-9080-ac6e7d2741ad@smankusors.com>
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Cp83c5BG9ViMtdfEgKoWZ8ShkaQqJKSJjfZOv6vUN3o=;
+	b=w7GRN8/2Wm3MAQ88k5My5vMrNKZQ2uwHq5wr52dUbj5Ozpm+IaYuqnG3BgrunF2eTfLPaQ
+	y1wpGgo/Q7PQ0fqdgnw1LeWJuGySITl89u2NiCqS4eI9QjKarroA/3q8J1/TogsFRruFrE
+	UDP3Yh0dqvWEjEZOYs0k9WILOpGpe9honc/LcCQ6Pt/MrnJlsvRG8pbYTanW1+CpzDk5pV
+	IzgyvhVR/SQbCrgRe8QOIdL1iuSPynAJ56XvJQBOoilnmxzslzfRgGqXANeOV8OatvVqrf
+	0HI4uCCHOkRsPsqhEFv13XXNBN3vcEC2xl1Qs2Jq71rIGDcR20T2jx0llnuSzQ==
+To: linux-arm-kernel@lists.infradead.org
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Simona Vetter <simona@ffwll.ch>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 0/7] arm64: dts: renesas: r8a779md: Add support for R-Car M3Le R8A779MD SoC and Geist board
+Date: Sun, 19 Apr 2026 21:35:31 +0200
+Message-ID: <20260419193718.133174-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/10] ARM: dts: qcom: msm8960: add SMSM & SPS
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Krzysztof Kozlowski
- <krzk@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- phone-devel@vger.kernel.org, Rudraksha Gupta <guptarud@gmail.com>
-References: <20260414-msm8960-wifi-v1-0-007fda9d6134@smankusors.com>
- <20260414-msm8960-wifi-v1-8-007fda9d6134@smankusors.com>
- <u7buljdmiu2kf5unlqs2jh5u24ymteyrfvbb2drc6ntsei2mqq@yuhjpchgpgh3>
-Content-Language: en-US
-From: Antony Kurniawan Soemardi <linux@smankusors.com>
-In-Reply-To: <u7buljdmiu2kf5unlqs2jh5u24ymteyrfvbb2drc6ntsei2mqq@yuhjpchgpgh3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Sun, 19 Apr 2026 13:41:07 +0000 (UTC)
-X-CM-Envelope: MS4xfMHuAEyLu7fY7qdSQn1P7SJ3nktyA4wwwWmntaxPCTCwN7T0+fI9gq32cd86IoZ/CZizMu9sce47R5J3igRoOF28ezWgc9wwSPvyvZoZ1sfzAW+OqiLj 7kfGFPYbESJC1Pkmf2Wczry1JSrPdkJ3e/YPcJ4SdlqCKFBlEG+/j2TXDiPi4CLslY12rRzZc98aUp+kcJ5TJdvfzhY9l8RGhxlYcPH+O1CKh0J8yuENAr5I grNidR3JB2HsiOoA3Okjk6kxcPBINJLhSWwTfcZbeIXMpy1ptJDaVdNIGa40Bm0PaCis1PCR4N2icVc8g+gUtpAlppmNzhSyrAgLFylazbqlrAhj1t16HLn/ YM9Pf0cLDsSUU0LVsSpezoq+lEiG22tLBp4EDwHv72RtXRjnB5+SZC+G8tVnaEDq2Idizx0nB5RDKKEintAYEXzp3DvZRtu1IuUPGoi8ot9gmHnHN4lE3QW4 NLu09iyGkxnyW5AiZpx4COulyw9PhY3cMaJiPGtKJOw+udIu7eJtqMAoDkZ29/sGcTz1b+Ku9oVBCH4CtLUVyL6sX2HbjhIlFzKqWx82FxoUFqShDSIX+8sd EWo7tFRbmZNWfziYCei1XNGUMJiHl3nEn13BifEym0CXZIg3SsGFImBvz8Ejf04Ju3q06x0PmwmibmETOtagncmkvrcASO4OTcdCeKdyLtuLyluNpZdZVDXm m184KlolMWJASbtZ6Lc6yh7fMib1v6/V6yxfhOrkeXZ0PK45tvbMmaGfNVCnI+TufFDxqH/GFQnhauwMAnGuRzSXoKU7iZJL
-X-CM-Analysis: v=2.4 cv=ZbRPNdVA c=1 sm=1 tr=0 ts=69e4db77 a=q8XfeKLTkGORBkIvkVRlwA==:617 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=wxLWbCv9AAAA:8 a=pGLkceISAAAA:8 a=2Liv2LJbaJilggPZqoAA:9 a=QEXdDO2ut3YA:10 a=QJY96suAAestDpCc5Gi9:22
-X-AuthUser: linux@smankusors.com
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-ID: 5b7ad3aa5645162c028
+X-MBO-RS-META: s1wnqocyhj9w55px7iozj8ixtw9k5sg4
 
-On 4/18/2026 11:53 PM, Dmitry Baryshkov wrote:
-> On Tue, Apr 14, 2026 at 01:55:35AM +0700, Antony Kurniawan Soemardi via B4 Relay wrote:
->> From: Antony Kurniawan Soemardi <linux@smankusors.com>
->>
->> Add the Shared Memory State Machine node to coordinate state transitions
->> between the Applications processor and the Riva subsystem.
->>
->> Tested-by: Rudraksha Gupta <guptarud@gmail.com>
->> Signed-off-by: Antony Kurniawan Soemardi <linux@smankusors.com>
->> ---
->>   arch/arm/boot/dts/qcom/qcom-msm8960.dtsi | 30 ++++++++++++++++++++++++++++++
->>   1 file changed, 30 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi b/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi
->> index 218cf3158dfb..107c5613aa4a 100644
->> --- a/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi
->> +++ b/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi
->> @@ -109,6 +109,31 @@ smem {
->>   		hwlocks = <&sfpb_mutex 3>;
->>   	};
->>   
->> +	smsm {
->> +		compatible = "qcom,smsm";
->> +
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +
->> +		qcom,ipc-1 = <&l2cc 8 4>;
->> +		qcom,ipc-2 = <&l2cc 8 14>;
->> +		qcom,ipc-3 = <&l2cc 8 23>;
->> +		qcom,ipc-4 = <&sps_sic_non_secure 0x4094 0>;
->> +
->> +		apps_smsm: apps@0 {
->> +			reg = <0>;
->> +			#qcom,smem-state-cells = <1>;
->> +		};
->> +
->> +		wcnss_smsm: wcnss@3 {
->> +			reg = <3>;
->> +			interrupts = <GIC_SPI 204 IRQ_TYPE_EDGE_RISING>;
->> +
->> +			interrupt-controller;
->> +			#interrupt-cells = <2>;
->> +		};
-> 
-> Are there other SMSMs (modem, Q6, DSPS)? If so and if you are going to
-> send another revision, could you please add those?
-Yes there are. But I've intentionally left them out for now since
-they're unrelated to this Wi-Fi enablement series and I currently have
-no way to test them without bringing up the modem, audio, and/or video
-subsystems first.
+Add support for the Renesas R-Car M3Le (R8A779MD) SoC, a register-compatible
+variant of the R8A77965 (M3-N) with reduced set of peripherals. Add support
+for the Geist board based on the Renesas R-Car R8A779MD (M3Le).
 
-I think it's cleaner to keep this series focused on what's verifiable
-today and handle the rest in a future separate series. What do you
-think?
+The DU part does probe, and to the best of my knowledge, should correctly
+describe the hardware, but is otherwise untested due to no remote display
+access. Note that the DU uses ports 0 and 2, which is unusual.
+
+VIN is also untested due to no remote hardware access.
+
+Marek Vasut (5):
+  dt-bindings: display: renesas,du: Document Renesas R-Car R8A779MD M3Le
+  drm/rcar-du: Add support for Renesas R-Car R8A779MD M3Le
+  dt-bindings: clock: cs2000-cp: document CS2500
+  dt-bindings: soc: renesas: Document Renesas R-Car R8A779MD Geist
+  soc: renesas: Identify Renesas R-Car R8A779MD M3Le SoC
+
+Nguyen Tran (2):
+  arm64: dts: renesas: r8a779md: Add Renesas R-Car R8A779MD M3Le DTs
+  arm64: dts: renesas: r8a779md: Add support for R-Car M3Le R8A779MD
+    Geist
+
+ .../bindings/clock/cirrus,cs2000-cp.yaml      |  10 +-
+ .../bindings/display/renesas,du.yaml          |  70 ++
+ .../bindings/soc/renesas/renesas.yaml         |   6 +
+ arch/arm64/boot/dts/renesas/Makefile          |   3 +
+ .../dts/renesas/geist-panel-aa104xd12.dtso    |  17 +
+ .../arm64/boot/dts/renesas/r8a779md-geist.dts | 832 ++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a779md.dtsi     |  48 +
+ drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c |  25 +
+ drivers/soc/renesas/renesas-soc.c             |   1 +
+ 9 files changed, 1009 insertions(+), 3 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/geist-panel-aa104xd12.dtso
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a779md-geist.dts
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a779md.dtsi
+
+---
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: David Airlie <airlied@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Cc: Maxime Ripard <mripard@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Simona Vetter <simona@ffwll.ch>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Cc: devicetree@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
 
 -- 
-Thanks,
-Antony K. S.
+2.53.0
+
