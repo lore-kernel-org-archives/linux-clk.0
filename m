@@ -1,130 +1,229 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF0E3A873A
-	for <linux-clk@vger.kernel.org>; Mon, 20 Apr 2026 17:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC533A7F52
+	for <linux-clk@vger.kernel.org>; Mon, 20 Apr 2026 17:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776706819; cv=none; b=I88VS5HQuHooTBtce3FqSOlOtp1mS6hGueFNWjjct+4Eozc6+P5oJMhA1XwAWHuBVCuwuhuXzniThU+GLtYSmJgRTc8X6dpF/BJhZhBSvAltyFLVvUx0/YNG651NIgLLBbx7v4NXr2m9IF4sJfMtyN9untkoduPUKpinh01FX7s=
+	t=1776707164; cv=none; b=kx8FE3yx3rYdSpzl7wgl6C2winEK7wOMc08rNmfMfscb1trL50PkI/W2XUhm5VnTTF8InCwln7fhueXXdxFbmXIUEqLk59GGQ4kTXrdoixNXMolZ2DL7HTFJ6lROiiqYolYrRRMWFwpMo9BG27cToZa2p1PVAUvfieNwWff/FG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776706819; c=relaxed/simple;
-	bh=b4zN6V69pfC0jSn1B6TPnsLWLax41ajhjGEGhYeLmtA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=h3pZXultBPT5s9K5DGNaGKPArEMbGcsU1XENexEkBUBFQzBvdtA+q4ansIbF/S0KrC7q5zrVq7gFTA31l+g5jeHzLsKfFSA/WtUb6aBPrUItBq+7n8w3HgnPkmiAVfPE0oxXuRu9wshPZCLyWvPOWm4Ywm5NEWckgZeFOrxCPxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CAupjM4Z; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1776707164; c=relaxed/simple;
+	bh=PK3Og+Wr7SWodQIPe7b9VhqU2ni5wqa2k0fzpY/+vuM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oBsy0HWvZ8mBs6cx7mhxI+tiTuq5iut0cdnHrPS1F0MmyP7iD57hQyuXriyAQ/udlSQs4Qm0Bk3KY7a+KaddRWhsdCnaW5q5Ze4J7eomccCCg56qA8ZZ7xsmJBEMctSDdydRzC1IQcBAHCCV4GsnUgZjulkqzpm2TjExgEaHLgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SS25jlsb; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=V+7ceZUx; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CAupjM4Z"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-48334ee0aeaso33605095e9.1
-        for <linux-clk@vger.kernel.org>; Mon, 20 Apr 2026 10:40:14 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SS25jlsb";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="V+7ceZUx"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63KFHJG52281687
+	for <linux-clk@vger.kernel.org>; Mon, 20 Apr 2026 17:46:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=JTG3cvdPMdhP4qQMHJXwSELA
+	V02IJif0JhtB+/RFegQ=; b=SS25jlsblDDx6UNZewZFwpFAieQRVxRF6z1IAh6J
+	OtJXbGE1Y0EIpf6Qrou/50N1lTDMesF2nvemw113zsZxxp/SWhHVIDXvelLkFgb+
+	ETW4hA/PPYfXv9qEYsUeI11uVegNo1j6FXTXUjcXy6BcYzeFz4G0Rg1JfEmsoqbt
+	pMpKM70SlBafkyBe6UAqNwkw4si2cN+MMK335Xv4A7cK2ra4QUxhBvYUMJA6DjxH
+	yhPD4lb55gxuJFHQIv7q2QTgjXccHTUy99ofzJVKBO8cZ7uFXlAooSKxetBnlM3I
+	/CWNiGOunzkbYoTli4czzOT2nuuEk/vAxUuILD5wGp9p6Q==
+Received: from mail-ua1-f70.google.com (mail-ua1-f70.google.com [209.85.222.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4dnh599xx1-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Mon, 20 Apr 2026 17:46:01 +0000 (GMT)
+Received: by mail-ua1-f70.google.com with SMTP id a1e0cc1a2514c-950bdef305bso4737752241.3
+        for <linux-clk@vger.kernel.org>; Mon, 20 Apr 2026 10:46:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1776706812; x=1777311612; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/fwlZkaqAkipgy6piybX/zlZcoSztD08jPD+bFmkPvg=;
-        b=CAupjM4Z1Cnnk5+fUwu87eU5F0dqCJ4DBy5J9OWidnQGgRD9cM/KpImYqzvDJVoR0y
-         qK25eH4CxGXCSHFOi7ojOdumtqNojW2f7h3fBBkoDdesm5MiMRaAJaQK3HvFzDd3Mao2
-         9V4isxGMmC2yBBzQeHsC5YZDls1NzsnuA9MkcJWJB/TM/gTolma2J26Ye5KQvUA5MjHH
-         7bHzCATBvSXp0Vi1ij6ibGXYd4nmZR241kra+6TBuL4NyDm1Jht0Qh/a03zGYfHK2FpQ
-         E971bDsl75zhjMpNJ6/lYn1iujfcc4LPG+Rd0qzCtk3rTW7c4Ka/3YKGQ63jh8xC33/l
-         rHpQ==
+        d=oss.qualcomm.com; s=google; t=1776707161; x=1777311961; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JTG3cvdPMdhP4qQMHJXwSELAV02IJif0JhtB+/RFegQ=;
+        b=V+7ceZUx2bb4GdLHaAHgipShpUgKLPNqzy9O5fW8DlJSi6TOHH8dtsu44aoPXWQB1W
+         qHriCTHSAjvDlHBLuLGHnEkE7UJUPpg7OvT/HhqEYD6l1NqxKS1N1jVFrmrvGVSJa1W4
+         5MDRF9IK6XOwt9id7Wltx98thGycRT718XwDcKyzidLJFBQABv0UT+TCQ/5W8jYcUKgM
+         ta8WqlXQjjxg+g8kipP8qto9uGF6oVYxucLbHYek48C6LINHPJ1Qfq0JTBqwS7nIthC8
+         O4tzOnBaxXTuNPHFwRth4v6rptiftPMqrq4zeEFlhCcJlQaHqDMj3L1dCGqypgoxO2YD
+         Q/og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776706812; x=1777311612;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/fwlZkaqAkipgy6piybX/zlZcoSztD08jPD+bFmkPvg=;
-        b=le58FlqjPuIVpkZVzHhOnzYirE0Fpc+ftdwAT99MGRmaY3zAVRyEoEr6df4aPHlFrd
-         69TDFvmdZ938T+feHlREOWetQbzIND/UbwWmzQU6rrHS5Lb+DP1GxkmNitCQJGqYfKIE
-         7Pw5pKImUyHvUngLCg5eMF0obTIYkoQYNsUa4D5VRvOZA1ft0WemD5PgjvQiVTTRchCn
-         qsOhj2lfzn3fu66FJkkR7anUandN2lEYxAaBIDCh1dQhSwf6eXX09310JCXn66+pGN+j
-         o5wsTTXb181QPWEVw1cN4hYWFaEsb+nT1XfntL1JysXb0Z5M2jdRfy7bqJGbj7xuVmwF
-         bGrw==
-X-Forwarded-Encrypted: i=1; AFNElJ9fnhCptSIgK/ulLKM4tzhD8g1HB5wM9XixfYRxJ8g9vlRgCfnGaBravAaRu6H258avq8mCDxTXZtw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyea/eJfVpfREdNNY8i0sZrahM4Yky/GGZSXCucTxKfDtQHrLuE
-	jz4E+heosj3ZUw8sdXcwYLrt8X3ziWqsD+ARekSnH70716x9Z+HalYdFLE6RsDCcc50=
-X-Gm-Gg: AeBDieveRTyGIw7HEuZCqXUPUEq/TupERg66NOeM17TmA7MX+zLyImK6TeCNvSzvM5g
-	6CnLC3rGvymPba/q7tZjxjQbP2qxYd3Rx9U4KqYfwN3jJPtHZ5bZYvYqDlVM1KGHeZ6wqm8UnDL
-	p1wjbuYYTqQtqLSl3t3/857LB3E+ftJj2S77KMrCu0Dfr3j2IGrzzpib46lTzy50P0e1+1nhmY1
-	VqL7En0vRUjaZ+rOvINrXMCBOzkOSP1gx9g8yf7ma9hMOYYsIJMHXMYh8duLDqOYxtdb8xSLqjm
-	/lYMclXJn2y8ZoOjtN82ngHCSVfSGzcA1ksTs0+51vvuOh4+MizJ6lcFWDmwuQK/Mv04iowFLSd
-	oDmTCLROlxIbBUwtPh7Gpnuv12nkuIj4o+ohoe8oIFHTP7rxlqZiolz83XQbooLsJn3zYHC5W40
-	6Jj5P7q12AlHunMMb8+kZEe88dOEEk/s/q8+LjCqdtgQNFEA2OxNegjAJfX9ST7/VfSbbQ7VDqS
-	dVeJye4RHRGi+2cHw==
-X-Received: by 2002:a05:600c:a108:b0:480:69b6:dfed with SMTP id 5b1f17b1804b1-488fb78ba6fmr175032275e9.24.1776706812164;
-        Mon, 20 Apr 2026 10:40:12 -0700 (PDT)
-Received: from ta2.c.googlers.com (17.83.155.104.bc.googleusercontent.com. [104.155.83.17])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-488fb72d365sm144280285e9.1.2026.04.20.10.40.11
+        d=1e100.net; s=20251104; t=1776707161; x=1777311961;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JTG3cvdPMdhP4qQMHJXwSELAV02IJif0JhtB+/RFegQ=;
+        b=p/+4xVPQ3iCkH4rsJfjXIN+UKdON8yPUSkizpjJXlk+9P8HULISpoioaICwsn5IxO9
+         zlBD0Cd6oefz09dmNglHx07OwpmtrJ2undUwe2mejj5mcNhBIsvcfZSut0HJffBDbUUn
+         ugiAs/Th9N5zvr6InuX7eWsi7ydRkNtfEhGqGzr4XRVSpZSS4GVHEEXPOiYWwkwnXYof
+         c4QWGYAuOpCUNZexBBvQqrvgocHbQnaEEmj8WwRFAA5TUfTKyEtSqFBCIHfFulofREK4
+         VadDP7FH3nw8yXu7rn/AlEN3aIR6lCrST9ke5ycCioEz9feVzxCxLTPW6QvjrJAMQspl
+         fLYw==
+X-Forwarded-Encrypted: i=1; AFNElJ9E4uBvEFJ5ijpLWCJs1E19DxYovUZx6MOcdDjsx29pXzNqKpT5bo0CtmvVjHTOG0JChGaNMEFwRbg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywqlwn0JbpbJfQx+esZzttZPT72e6CSsqg8exywViqq6ndH7F+r
+	xs/doUPm617GqcZvgMLBWJ6UlY5/k1eu+gBJq/NVaFJBolmXohovYRzfIS1y0fW7SomE0ys7iLB
+	4ABrmgXSkD5EBavf2H+NmSPHXuR2fXu/OHd//eiFiGdC4bCBnxNqMq/28mwi/Ys4=
+X-Gm-Gg: AeBDievi6ieSFD7EWfZeiBZ6pi0bBe94zRbHko84DnSauZQ4B4p1h5g02msfEJ6AFlv
+	CwXCvKZ7dpBRngR+vhZmVYWuBmBW967NJ6MM5jD+YuNQrDScsJ1mUGCZSBETm33EHllF2aXC7Dz
+	ScnLu4lsjz6u2/Gs7yTjqiE1dhYYVaPP3X6D0qhiE85CBVuymOFSaXo2uPd2yRFl4l7zAp1h4ur
+	F1sydgqu7RXazNdTlbtnt+hUg3WKmO94kpFApuRkfzt6iheSqtKWFpjUsCi8TVOWZwPJdWddrmg
+	DiNSCHI64ZsREwXIpQOjCHesAPnqlHfgn+F3zcajJZ7pmFAKcRhTvXKbgRJ0P7Jib+v+ZDhj39g
+	23bazLOJ6eHin54Sf3GWUYPH7ynM7xqkPzRmoaeCHP/zwqvaxijbXXzGc7BfJuAOynegvlTcpRT
+	xL5H89cEJhP2Jmp9kXxn/EvIHgFMwJWm2GhVtwDszMVji8Fw==
+X-Received: by 2002:a05:6102:3581:b0:611:b9be:1199 with SMTP id ada2fe7eead31-616f6ee96damr6894885137.14.1776707160467;
+        Mon, 20 Apr 2026 10:46:00 -0700 (PDT)
+X-Received: by 2002:a05:6102:3581:b0:611:b9be:1199 with SMTP id ada2fe7eead31-616f6ee96damr6894846137.14.1776707159957;
+        Mon, 20 Apr 2026 10:45:59 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-38ecb6f0d49sm25711771fa.19.2026.04.20.10.45.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Apr 2026 10:40:11 -0700 (PDT)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Mon, 20 Apr 2026 17:39:56 +0000
-Subject: [PATCH v3 10/10] arm64: defconfig: enable Exynos ACPM thermal
- support
+        Mon, 20 Apr 2026 10:45:58 -0700 (PDT)
+Date: Mon, 20 Apr 2026 20:45:57 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>, Lee Jones <lee@kernel.org>,
+        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Maulik Shah <maulik.shah@oss.qualcomm.com>,
+        Taniya Das <taniya.das@oss.qualcomm.com>
+Subject: Re: [PATCH 02/13] dt-bindings: clock: qcom,sm8550-dispcc: Add
+ display CESTA support on SM8750
+Message-ID: <hpun2wdw3lnthjfwmycufzqrwl5ssiohdjf73kxcpm2reuyqqf@oc672sww2pqe>
+References: <20260420-cesta-sm870-dispcc-v1-0-eb27d845df9c@oss.qualcomm.com>
+ <20260420-cesta-sm870-dispcc-v1-2-eb27d845df9c@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260420-acpm-tmu-v3-10-3dc8e93f0b26@linaro.org>
-References: <20260420-acpm-tmu-v3-0-3dc8e93f0b26@linaro.org>
-In-Reply-To: <20260420-acpm-tmu-v3-0-3dc8e93f0b26@linaro.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Kees Cook <kees@kernel.org>, 
- "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Daniel Lezcano <daniel.lezcano@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Lee Jones <lee@kernel.org>
-Cc: willmcvicker@google.com, jyescas@google.com, shin.son@samsung.com, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org, 
- linux-clk@vger.kernel.org, Tudor Ambarus <tudor.ambarus@linaro.org>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1776706804; l=816;
- i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=b4zN6V69pfC0jSn1B6TPnsLWLax41ajhjGEGhYeLmtA=;
- b=WOxgRvOtzj9KL76srvu0GVEREFLVVJ/F/w3yzCSjd20IjCwgYQ6jiBj/Qn2GHV5jR3DQEJmfQ
- HziKyX9JAqtC2Ws4BV2sIldy6WYYbWuh1/1Pc0VmL0pBFzg1xMme3pe
-X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
- pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260420-cesta-sm870-dispcc-v1-2-eb27d845df9c@oss.qualcomm.com>
+X-Proofpoint-ORIG-GUID: adE2aoOoQ24yxIXJDDvbw5YMkE0RAHnF
+X-Proofpoint-GUID: adE2aoOoQ24yxIXJDDvbw5YMkE0RAHnF
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDIwMDE3MiBTYWx0ZWRfX7rM1IRFL7oDx
+ Uo4bSsFmF4nt00zxj3NnVecW+T57s9byp1+zlN9eEJHZ0AB+d2X5dL+Hq7SmtPyIn////zJLYj2
+ v4PIBxPwMXpsGoBFXg7CczkGKxK7AXzdhThbboIap5hXfx8AN2FR9684mR2DiDCH+YdiIFZ/yvH
+ qlVgptYbYOj/7XRBhnSIKWJSJJ+kndx2pfkNbOz2itntLwGOLozBlvmFvHKt5u+DoUOEFQada/d
+ yBR3buAsbZln7NR+k3q9X1Lf9qcZdDEDkLhOwFemGEpvNOuJwPh93GZdHUuQxnYycJ9uPMyD4Ep
+ 4Pgx4VfnZSFL3fCx7XAXL8kwHEgKhTVb0+mfZmcGMu/ikgTeKo225Vqv7zlwRGvvxsa7Gi6Xul8
+ PUnyHJHGly4q07xSziSwRAowuAuwaVcr8doYqzhe+YVwzCyeuB+zDVeGq2ZVzECqa4808rGhwbc
+ Q2KFpWs5Vx/WsPTtKOg==
+X-Authority-Analysis: v=2.4 cv=HNrz0Itv c=1 sm=1 tr=0 ts=69e66659 cx=c_pps
+ a=R6oCqFB+Yf/t2GF8e0/dFg==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=A5OVakUREuEA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22 a=EUspDBNiAAAA:8
+ a=RHCnOHRpr3UYmH0CO9YA:9 a=CjuIK1q_8ugA:10 a=TD8TdBvy0hsOASGTdmB-:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-04-20_03,2026-04-20_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 suspectscore=0 adultscore=0 spamscore=0 phishscore=0
+ impostorscore=0 malwarescore=0 bulkscore=0 lowpriorityscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2604070000 definitions=main-2604200172
 
-Enable the Exynos ACPM thermal driver (CONFIG_EXYNOS_ACPM_THERMAL)
-to allow temperature monitoring and thermal management on Samsung
-Exynos SoCs that use the Alive Clock and Power Manager (ACPM)
-protocol.
+On Mon, Apr 20, 2026 at 09:58:55PM +0530, Jagadeesh Kona wrote:
+> On SM8750, a subset of DISPCC clocks is controlled by the display CESTA
+> (Client State Aggregator) hardware. These clocks can be scaled to the
+> desired frequency by sending votes to the display CRM(CESTA Resource
+> manager) instead of programming DISPCC registers directly.
+> 
+> Add bindings to allow the DISPCC node to reference the display CRM node
+> for sending votes to CESTA hardware and the CRMC syscon regmap node
+> which is used to read the frequency look up tables provided by CRM and
+> populate this data in RCG's frequency tables for CESTA controlled clocks.
+> 
+> Signed-off-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+> ---
+>  .../bindings/clock/qcom,sm8550-dispcc.yaml         | 48 ++++++++++++++++++++++
+>  1 file changed, 48 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8550-dispcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8550-dispcc.yaml
+> index 591ce91b8d54dd6f78a66d029882bcd94b53beda..3e049b2160a1781c866bb30b29f0da5c9e156b61 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,sm8550-dispcc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8550-dispcc.yaml
+> @@ -60,6 +60,18 @@ properties:
+>        A phandle to an OPP node describing required MMCX performance point.
+>      maxItems: 1
+>  
+> +  qcom,crm:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      Phandle to the display CRM (CESTA Resource Manager) node, used to communicate
+> +      with the display CESTA (Client State Aggregator) hardware.
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Is it going to be shared by several entities? If not, can be make a part
+of the dispcc and get rid of the extra CC <-> CRM API?
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index d905a0777f93..3fe76a4c2633 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -793,6 +793,7 @@ CONFIG_BCM2711_THERMAL=m
- CONFIG_BCM2835_THERMAL=m
- CONFIG_BRCMSTB_THERMAL=m
- CONFIG_EXYNOS_THERMAL=y
-+CONFIG_EXYNOS_ACPM_THERMAL=m
- CONFIG_TEGRA_SOCTHERM=m
- CONFIG_TEGRA_BPMP_THERMAL=m
- CONFIG_GENERIC_ADC_THERMAL=m
+> +
+> +  qcom,crmc-regmap:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      Phandle to the syscon providing the CRMC (CRM clock) regmap used
+> +      to read frequency LUTs (lookup tables) populated by the CRM.
+
+Why is this coming as a syscon? Why isn't it just a register region of
+the dispcc?
+
+> +
+>  required:
+>    - compatible
+>    - clocks
+> @@ -100,4 +112,40 @@ examples:
+>        power-domains = <&rpmhpd RPMHPD_MMCX>;
+>        required-opps = <&rpmhpd_opp_low_svs>;
+>      };
+> +
+> +  - |
+> +    // Display clock controller node that controls some clocks
+> +    // using display CESTA(Client state Aggregator) hardware
+> +    #include <dt-bindings/clock/qcom,rpmh.h>
+> +    #include <dt-bindings/power/qcom,rpmhpd.h>
+> +
+> +    clock-controller@af00000 {
+> +      compatible = "qcom,sm8750-dispcc";
+> +      reg = <0x0af00000 0x20000>;
+> +      clocks = <&rpmhcc RPMH_CXO_CLK>,
+> +               <&rpmhcc RPMH_CXO_CLK_A>,
+> +               <&gcc GCC_DISP_AHB_CLK>,
+> +               <&sleep_clk>,
+> +               <&dsi0_phy 0>,
+> +               <&dsi0_phy 1>,
+> +               <&dsi1_phy 0>,
+> +               <&dsi1_phy 1>,
+> +               <&dp0_phy 0>,
+> +               <&dp0_phy 1>,
+> +               <&dp1_phy 0>,
+> +               <&dp1_phy 1>,
+> +               <&dp2_phy 0>,
+> +               <&dp2_phy 1>,
+> +               <&dp3_phy 0>,
+> +               <&dp3_phy 1>;
+> +      power-domains = <&rpmhpd RPMHPD_MMCX>;
+> +      required-opps = <&rpmhpd_opp_low_svs>;
+> +
+> +      qcom,crm = <&disp_crm>;
+> +      qcom,crmc-regmap = <&disp_crmc>;
+> +
+> +      #clock-cells = <1>;
+> +      #power-domain-cells = <1>;
+> +      #reset-cells = <1>;
+> +    };
+>  ...
+> 
+> -- 
+> 2.34.1
+> 
 
 -- 
-2.54.0.rc1.555.g9c883467ad-goog
-
+With best wishes
+Dmitry
