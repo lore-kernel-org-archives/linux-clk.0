@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C042D3EC1;
-	Tue, 21 Apr 2026 08:01:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B29D283CAF;
+	Tue, 21 Apr 2026 08:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776758492; cv=none; b=YD9D23O/fJJzRf/AgNiO+kO/bzj3nLzV7QELXwoBetNjbL4DbaKdOpov4N02Pe3XYy/JAoCYWRtS9AEJT+bXbxSg8TEjh6Qhp7XMQCVnKD1vLzkXHQwhGpUlBF8QNipSDRsghvMP0ipCc2zj4luYvzmxE2+wstEt9Z24bwRZ7ok=
+	t=1776758569; cv=none; b=ifnQ2Lmr/UvkEWhddQHbAQIobrika4cFnKShOHRvzS8FhhEVi2s/MgdUEY4fb7322S8gHmub43QsO7bh/rY9cPuH4aBAY6G3BKuIIluB5Li+Jqe+Qdtw4NIKGVHM68CY7cqv6GgWuKE5rbDzWV234aMo2pW1/5ZB4GieIkBohC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776758492; c=relaxed/simple;
-	bh=Bh5LRx81nbqhJwYjgRVmUhWRtZK8Afq26DLHliNqUQE=;
+	s=arc-20240116; t=1776758569; c=relaxed/simple;
+	bh=MQ0U64TDsK6alrkDhbgHgLn1qQ1ZkRwtQIWdPthswAU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y979ovL1Z1AERRJG8t9CDwagD9DKDCKqbwGyK30720ENbRUIvU0gY1l5fVaTf0Oc6MH2hq0bWwoUZbrGBYY6h9sR94jJqSHLpRiff8DuJZVvX1DQrUjhfr86WaLcTn+gQdbXbr3sMPnP4f6OzW0cHdsztPVt8kOqgvckg6R5gBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=onxTJEfF; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=LBxG4HwSJb7Y5An3zhcpJ2A3+1AVoOOppB2LjuCgwFYPMJqXY/Lt6gVKxJDhn1jJcCZKn8m+J6xYFizd6Klbav0AgLAjnDnejRBH+ZFv7krYeqaRxqmqxEEz25Cqw8S+vD8h4ER6BVMY5GWadVKr4viisRwxYa3b0kpsPzLArO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e+gg2Cbd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="onxTJEfF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60075C2BCB0;
-	Tue, 21 Apr 2026 08:01:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e+gg2Cbd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EA89C2BCB0;
+	Tue, 21 Apr 2026 08:02:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776758491;
-	bh=Bh5LRx81nbqhJwYjgRVmUhWRtZK8Afq26DLHliNqUQE=;
+	s=k20201202; t=1776758569;
+	bh=MQ0U64TDsK6alrkDhbgHgLn1qQ1ZkRwtQIWdPthswAU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=onxTJEfFcyepC+3QmTMGPLzrFKWFrQIHJhWvIUp0H6bL59wPSK7h8qqZJSdzr+TO4
-	 Ttk1WlQ6WyS8AD+jnDTKypCv3WVoPNu+6uRJs0ficKNS9OGY1yec1zlMdN1iWk1del
-	 x5kiJfIrBj638U7mXv5wPiYSmZyZ7pxHkBOii9cADCKB0qXo7GUt6dUPpBbxkhJMn+
-	 KClavwfNMF8Fzuji9qwiPV6U+bpGsY2xuOYMl+mSq9udqwMS7TtFwvu5tuslnH9vdG
-	 vYVwzxK2jSa4osaBoTrnbupnZ7LHMdgHN94OduGIwiola9lZe/cgDuKSZNT84C7JsL
-	 VMwfmxHLFewMg==
-Date: Tue, 21 Apr 2026 10:01:29 +0200
+	b=e+gg2Cbd1haul0eQWTsWxDtkeavAQp3FOX/Mjjg+xuwmc8r/VOZgVKFEtUIwG1DV2
+	 o8rLztNt/XYzS3qCwM9H0lOlDvLCbylHUoVstwGPVJ0pYNV6DQfRO1ntRNcSmu9iYl
+	 jBH+qUMNrDfKKuCK8aEK5gd+KF7XxhuzMy4tObvzfSzZrehdV79TIWenii8KNvpQ/m
+	 f/osnI8xOzAUtRDCjUmMP+8lXVn81+NCBGvDPlpHDg7oIRP2yxYb9lKnYClYfYNk6D
+	 mC1Vip6GkLF/A+WEI+dA3ip4R5xLk8BvN6w3aK65RSiJvW3AO+Ge1JcpQihNO+iram
+	 o0puqKESaGvwA==
+Date: Tue, 21 Apr 2026 10:02:46 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Marek Vasut <marek.vasut+renesas@mailbox.org>
 Cc: linux-arm-kernel@lists.infradead.org, 
@@ -35,11 +35,11 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
 	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] dt-bindings: clock: renesas,cpg-clocks: Document
- ZT/ZTR trace clock on R-Mobile A1
-Message-ID: <20260421-attentive-cockle-of-finesse-e5bfb1@quoll>
+Subject: Re: [PATCH v2 3/4] ARM: dts: renesas: r8a7740: Add ZT/ZTR trace
+ clock on R-Mobile A1
+Message-ID: <20260421-cherubic-urban-beluga-49ee00@quoll>
 References: <20260415233300.457892-1-marek.vasut+renesas@mailbox.org>
- <20260415233300.457892-2-marek.vasut+renesas@mailbox.org>
+ <20260415233300.457892-4-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,23 +48,34 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260415233300.457892-2-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20260415233300.457892-4-marek.vasut+renesas@mailbox.org>
 
-On Thu, Apr 16, 2026 at 01:31:38AM +0200, Marek Vasut wrote:
-> Document ZT trace bus and ZTR trace clock on the R-Mobile A1.
+On Thu, Apr 16, 2026 at 01:31:40AM +0200, Marek Vasut wrote:
+> Add ZT trace bus and ZTR trace clock on the R-Mobile A1.
 > 
 > Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 > ---
+> Cc: Conor Dooley <conor+dt@kernel.org>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> Cc: Magnus Damm <magnus.damm@gmail.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+> V2: Add ztr/zt clock at the end of the list to match bindings
+> ---
+>  arch/arm/boot/dts/renesas/r8a7740.dtsi    | 2 +-
 
-This might affect ABI, because you are basically requiring DTS to have
-additional two clocks.  Probably it does not affect anyone, but
-technically is an ABI change, so should be explained in commit msg WHY
-you are doing it and what is the impact, instead of saying WHAT you did.
+>  include/dt-bindings/clock/r8a7740-clock.h | 2 ++
 
-If there is going to be a new version, please fix it and please keep the
-feedback for future commits.
+This goes to the binding patch.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Didn't you have also a checkpatch warning?
 
 Best regards,
 Krzysztof
