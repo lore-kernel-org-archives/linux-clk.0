@@ -1,53 +1,60 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A6753019DC;
-	Tue, 21 Apr 2026 17:28:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663D83469F5;
+	Tue, 21 Apr 2026 17:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776792503; cv=none; b=cOWEey79cwW9OxWm+b/0Z6eT2BNq7Ivg26JB5whPa953EGbeHCIvgJp4pI2sVYoWYRMnQ81Av0ZLjvo9XIPZFOj+fwTWKSLtUq47HXpi5B8c8vx2VfZnPl2Hq2uf+4CaCJBqGIiOnxvAxMUgxXZwGEeOpzPm5GsMVAewYls3xy8=
+	t=1776794245; cv=none; b=C6CUSB4xnBoxeoB+j4oJA9xg+e4y/rWqhKW8QusDcdRuudAJuCP/j+ePQUN8fq0waRhkJO8YNOlRljKeynzzgSPpCowtzmxYkcbE5CX+jZjkLpIblhMVCSbz28gzJwLzaUKz4h/q0Z/gV0OuePd6Lj3mJph/EWfqIZvcNp/XNfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776792503; c=relaxed/simple;
-	bh=kUM5ZHDKanu2VPHEDO+nSYWK4KrspVotTh/Lcq7hvoI=;
+	s=arc-20240116; t=1776794245; c=relaxed/simple;
+	bh=xPXf7LTENtfyjseOPX2ZzZFz4nnRhDy+MLhipzCmuqg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LHcUbB312OohAJyyxpYpNGAAgjNV07ba8/7M6dCLE8RwGq2IQXLcScYEPZOIoEH3c15iBttr4ecUSNn1wHT/aQ6fMeHLgNPzIJ4TljGOb8g6AhzG6kzvMwSZTag6mI8KWRoj9ySp+EBul3PVggImY/iF0xD6bpksgpsBOblAWFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MCMJmNtX; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hlil2J9pPNDwktxi0o0KNilsS3UBEGY7Cnl07eBKoaxzLxG0Dfw6cu6KHZoAVoCl343KG+jkJ2+SGD8hxr9h1/XSkGD2LBPU1Vs2eo02nrP/lZe7kiwqxbyq1nIBw82iq7pQ1EknXPVBBeFaawHbrylqTAcz5NsLOH49ClxPNNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dgfqeyUi; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MCMJmNtX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0F3CC2BCB0;
-	Tue, 21 Apr 2026 17:28:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dgfqeyUi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE4EEC2BCB0;
+	Tue, 21 Apr 2026 17:57:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776792502;
-	bh=kUM5ZHDKanu2VPHEDO+nSYWK4KrspVotTh/Lcq7hvoI=;
+	s=k20201202; t=1776794245;
+	bh=xPXf7LTENtfyjseOPX2ZzZFz4nnRhDy+MLhipzCmuqg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MCMJmNtXpK7lT7F7DCl0rcDChg9i5obQpSMX64HcWQuHICW0V/UCABYOm2CqDbfnw
-	 xPM/LdH0E/VXrNs35Ge8qu4/CNQopZbwVfePxqDPLvMTaf2WMkUwgr1LaPp7lkuKg3
-	 JUP2gwqtpIX56c2lAO5TTJrW5yvn+HAy1ySwIVnpgnLx8Tbqc5z/VI9QBgK7+RD5+w
-	 311nSstBsO3l/6twCVoBPIt1ysWt14lK1ayUwHf3qawfRNvmuvo+Qf/R8eTV6R1sSa
-	 pVLg04q789KqtQETMGtBvfSl4YSx58Yarpyu7tQ7B10YiLnSK89q7fXki/u1SLZkeS
-	 5210px/gLQuFQ==
-Date: Tue, 21 Apr 2026 18:28:18 +0100
+	b=dgfqeyUiTJMOTd4FOP1xIgVEHIDDgHn26SLXHbyk2+09VFA/8aAuxEVwgfeDGCkUZ
+	 Md+qmpTZmx21oSG82v6jjqSBIZk7nN+npw4mFcIy3sPor4SbI91HpVyIz5E3COfpmR
+	 p97rSJ63+NqXvUwGmn1kUaw2q+d6Lu6cfGhanCVp7CtsR9sysh5BLa9hXcghjfwd1s
+	 awKC4R6prDKFylGAbMBYlU23Fa7ku2Ze4u1gHMEaelP4QHjjtsmy6Mp/10uIRzkLg2
+	 NQ8wTHO4szxiTvoFNJ0a0oDDGrW1ZnskidMTOmURswFQbe0gRE4764mvrs6LbKmJkM
+	 QeRs1EtC4HN6w==
+Date: Tue, 21 Apr 2026 18:57:19 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Vyacheslav Yurkov <uvv.mail@gmail.com>
-Cc: Rob Herring <robh@kernel.org>,
-	Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
+To: Billy Tsai <billy_tsai@aspeedtech.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/2] dt-bindings: Add clock guard DT description
-Message-ID: <20260421-each-candy-67380b760d26@spud>
-References: <20260318-feature-clock-guard-v1-0-6137cb4084b7@bruker.com>
- <20260318-feature-clock-guard-v1-2-6137cb4084b7@bruker.com>
- <20260318225510.GA639444-robh@kernel.org>
- <7c7034a7-686a-42c2-bdba-6f31b5179f7c@gmail.com>
- <20260319-yearly-wrongful-883f7fd86a69@spud>
- <b45d9845-2d56-4fdd-a3ac-b0e0e27ba573@gmail.com>
- <20260323-sanctuary-semantic-432089feb1c7@spud>
- <d097826c-3db5-4902-acee-ffcff7436d4e@gmail.com>
- <20260326-lustiness-borrower-530898a5ce28@spud>
- <f3e27db5-d84d-4b6a-9d6f-25fcc9044efc@gmail.com>
+	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Ryan Chen <ryan_chen@aspeedtech.com>,
+	Andrew Jeffery <andrew@aj.id.au>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v7 1/3] dt-bindings: pinctrl: Add
+ aspeed,ast2700-soc0-pinctrl
+Message-ID: <20260421-valid-expanse-ae6b5a9289f2@spud>
+References: <20260416-upstream_pinctrl-v7-0-d72762253163@aspeedtech.com>
+ <20260416-upstream_pinctrl-v7-1-d72762253163@aspeedtech.com>
+ <20260416-brutishly-saga-ba7168a4cd14@spud>
+ <OSQPR06MB7252EB0C2A1A3313DE49406B8B202@OSQPR06MB7252.apcprd06.prod.outlook.com>
+ <20260417-anemia-borrower-fb90ac02b417@spud>
+ <OSQPR06MB7252BD7967D2567AD6DA7A1D8B2F2@OSQPR06MB7252.apcprd06.prod.outlook.com>
+ <20260420-footprint-both-967ccd6c120c@spud>
+ <OSQPR06MB725251546BFEB158F9AA1C4D8B2C2@OSQPR06MB7252.apcprd06.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -55,154 +62,249 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Oqli5VmO2nW07SBw"
+	protocol="application/pgp-signature"; boundary="e/yrNYrOHY6xz2Ct"
 Content-Disposition: inline
-In-Reply-To: <f3e27db5-d84d-4b6a-9d6f-25fcc9044efc@gmail.com>
+In-Reply-To: <OSQPR06MB725251546BFEB158F9AA1C4D8B2C2@OSQPR06MB7252.apcprd06.prod.outlook.com>
 
 
---Oqli5VmO2nW07SBw
-Content-Type: text/plain; charset=us-ascii
+--e/yrNYrOHY6xz2Ct
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 20, 2026 at 07:56:31PM +0200, Vyacheslav Yurkov wrote:
-> On 26.03.2026 11:44, Conor Dooley wrote:
-> > On Thu, Mar 26, 2026 at 10:54:52AM +0100, Vyacheslav Yurkov wrote:
-> > > On 23.03.2026 21:14, Conor Dooley wrote:
-> > >=20
-> > > >=20
-> > > > The binding you've got says "GPIOs used to control or guard the clo=
-cks",
-> > > > which is not what you're saying that is going on in this mail. A mo=
-re
-> > > > suitable description would be "GPIOs used to check the status of the
-> > > > clocks".
-> > >=20
-> > > Agree, the description I provided is not very accurate.
-> > >=20
-> > > > I want to see an example dts user for this please.
-> > >=20
-> > > DTS example:
-> > >    clock_guard: clock_controller_guard {
-> > >      compatible =3D "clock-controller-guard";
-> > >      #clock-cells =3D <1>;
-> > >      clocks =3D <&h2f_clk 0>, <&clk_fgpa_rx 0>, <clk_fpga_tx 0>;
-> >=20
-> > Unfortunately, this doesn't contain the part that I wanted to see - who
-> > the providers of these clocks here actually are.
-> >=20
-> > To be frank, I am not sure how this block would know that these clocks
-> > are enabled but their providers do not. I can think of a few ideas for
-> > how this block would know, but I don't understand why the providers
-> > themselves don't, and therefore why you need this gpio to tell you.
-> >=20
-> > >      clock-names =3D "h2f_clk0", "clk_fpga_rx", "clk_fpga_tx";
-> > >      gpios =3D <&fpga_ip 0 GPIO_ACTIVE_HIGH>, <&fpga_ip 1 GPIO_ACTIVE=
-_HIGH>;
-> > >      gpio-names =3D "gpio-input0", "gpio-input1";
-> > >      clock-output-names =3D "clkctrl-guard";
-> > >    };
-> > >=20
-> > >    custom_device {
-> > >      compatible =3D "...";
-> > >      ...
-> > >      #clock-cells =3D <1>;
-> > >      clocks =3D <&clock_guard 0>;
-> > >      clock-names =3D "clock-guard";
-> > >    };
-> > >=20
-> > > The driver usage exaple:
-> > >=20
-> > > clk =3D devm_clk_get(dev, "clock-guard");
-> > > if (IS_ERR(clk))
-> > > 	return dev_err_probe(dev, PTR_ERR(clk), "failed to get clock\n");
-> > >=20
-> > > ret =3D clk_prepare_enable(clk);
-> > > if (ret) {
-> > > 	dev_warn(dev, "Clock is not ready, %d\n", ret);
-> > > 	return -EPROBE_DEFER;
-> > > }
-> > >=20
-> > >=20
-> > > > TBH, I don't understand your driver implementation either and why i=
-t has
-> > > >=20
-> > > > +static const struct clk_ops clkctrl_guard_ops =3D {
-> > > >=20
-> > > > +	.enable =3D	clkctrl_guard_enable,
-> > > > +	.disable =3D	clkctrl_guard_disable,
-> > > > +	.prepare =3D	clkctrl_guard_prepare,
-> > > > +	.unprepare =3D	clkctrl_guard_unprepare,
-> > > > +	.is_prepared =3D	clkctrl_guard_is_prepared,
-> > > >=20
-> > > > any of these 4 implemented when you have no control over the clock.
-> > > > I didn't think it was required to call your parent clocks enables in
-> > > > your own enable either, thought that was handled by the core recurs=
-ively
-> > > > calling clk_enable() on clk->parent. The one thing I would expect y=
-ou to
-> > > > have implemented ops wise is is_enabled, which you don't have.
-> > > > Also no sign of any rate acquisition functions, which I thought were
-> > > > mandatory.
-> > > >=20
-> > > > +	.get_parent =3D	clkctrl_guard_get_parent,
-> > > > +};
-> > >=20
-> > > Good point on .is_enabled, I indeed missed that. As for the rate acqu=
-isition
-> > > functions I referred to this table
-> > > https://docs.kernel.org/driver-api/clk.html#id4 , and it see that .se=
-t_rate
-> > > is actually optional.
-> >=20
-> > .set_rate is not rate acquisition. .round_rate and .determine_rate are.
-> > I thought they were mandatory, but for a gate clock I guess they are not
-> > and the parent rate gets used automatically.
+Billy, Linus,
+
+On Tue, Apr 21, 2026 at 06:15:44AM +0000, Billy Tsai wrote:
+> > > > > > > +    properties:
+> > > > > > > +      function:
+> > > > > > > +        enum:
+> > > > > > > +          - EMMC
+> > > > > > > +          - JTAGDDR
+> > > > > > > +          - JTAGM0
+> > > > > > > +          - JTAGPCIEA
+> > > > > > > +          - JTAGPCIEB
+> > > > > > > +          - JTAGPSP
+> > > > > > > +          - JTAGSSP
+> > > > > > > +          - JTAGTSP
+> > > > > > > +          - JTAGUSB3A
+> > > > > > > +          - JTAGUSB3B
+> > > > > > > +          - PCIERC0PERST
+> > > > > > > +          - PCIERC1PERST
+> > > > > > > +          - TSPRSTN
+> > > > > > > +          - UFSCLKI
+> > > > > > > +          - USB2AD0
+> > > > > > > +          - USB2AD1
+> > > > > > > +          - USB2AH
+> > > > > > > +          - USB2AHP
+> > > > > > > +          - USB2AHPD0
+> > > > > > > +          - USB2AXH
+> > > > > > > +          - USB2AXH2B
+> > > > > > > +          - USB2AXHD1
+> > > > > > > +          - USB2AXHP
+> > > > > > > +          - USB2AXHP2B
+> > > > > > > +          - USB2AXHPD1
+> > > > > > > +          - USB2BD0
+> > > > > > > +          - USB2BD1
+> > > > > > > +          - USB2BH
+> > > > > > > +          - USB2BHP
+> > > > > > > +          - USB2BHPD0
+> > > > > > > +          - USB2BXH
+> > > > > > > +          - USB2BXH2A
+> > > > > > > +          - USB2BXHD1
+> > > > > > > +          - USB2BXHP
+> > > > > > > +          - USB2BXHP2A
+> > > > > > > +          - USB2BXHPD1
+> > > > > > > +          - USB3AXH
+> > > > > > > +          - USB3AXH2B
+> > > > > > > +          - USB3AXHD
+> > > > > > > +          - USB3AXHP
+> > > > > > > +          - USB3AXHP2B
+> > > > > > > +          - USB3AXHPD
+> > > > > > > +          - USB3BXH
+> > > > > > > +          - USB3BXH2A
+> > > > > > > +          - USB3BXHD
+> > > > > > > +          - USB3BXHP
+> > > > > > > +          - USB3BXHP2A
+> > > > > > > +          - USB3BXHPD
+> > > > > > > +          - VB
+> > > > > > > +          - VGADDC
+> > > > > > > +
+> > > > > > > +      groups:
+> > > > > > > +        enum:
+> > > > > > > +          - EMMCCDN
+> > > > > > > +          - EMMCG1
+> > > > > > > +          - EMMCG4
+> > > > > > > +          - EMMCG8
+> > > > > > > +          - EMMCWPN
+> > > > > > > +          - JTAG0
+> > > > > > > +          - PCIERC0PERST
+> > > > > > > +          - PCIERC1PERST
+> > > > > > > +          - TSPRSTN
+> > > > > > > +          - UFSCLKI
+> > > > > > > +          - USB2A
+> > > > > > > +          - USB2AAP
+> > > > > > > +          - USB2ABP
+> > > > > > > +          - USB2ADAP
+> > > > > > > +          - USB2AH
+> > > > > > > +          - USB2AHAP
+> > > > > > > +          - USB2B
+> > > > > > > +          - USB2BAP
+> > > > > > > +          - USB2BBP
+> > > > > > > +          - USB2BDBP
+> > > > > > > +          - USB2BH
+> > > > > > > +          - USB2BHBP
+> > > > > > > +          - USB3A
+> > > > > > > +          - USB3AAP
+> > > > > > > +          - USB3ABP
+> > > > > > > +          - USB3B
+> > > > > > > +          - USB3BAP
+> > > > > > > +          - USB3BBP
+> > > > > > > +          - VB0
+> > > > > > > +          - VB1
+> > > > > > > +          - VGADDC
+> > > > > > > +      pins:
+> > > > > > > +        enum:
+> > > > > > > +          - AB13
+> > > > > > > +          - AB14
+> > > > > > > +          - AC13
+> > > > > > > +          - AC14
+> > > > > > > +          - AD13
+> > > > > > > +          - AD14
+> > > > > > > +          - AE13
+> > > > > > > +          - AE14
+> > > > > > > +          - AE15
+> > > > > > > +          - AF13
+> > > > > > > +          - AF14
+> > > > > > > +          - AF15
 >=20
-> Before I send a v2 I'd like to clarify a few more things:
-> - I provided a schematics by means of the URL. I believe there's no unifi=
-ed
-> way to provide something like that in the documentation, is there? So the
-> only way to describe it properly would be to summarize the description fr=
-om
-> the mailing list, right?
+> > > > > > Why do you have groups and pins?
+> > > > > > Is it valid in your device to have groups and pins in the same =
+node?
+>=20
+> > > > > The intent is to support both group-based mux selection and
+> > > > > configuration, as well as per-pin configuration.
+>=20
+> > > > > In our hardware:
+> > > > > - `function` + `groups` are used for pinmux selection.
+> > > > > - `pins` is used for per-pin configuration (e.g. drive strength,
+> > > > >   bias settings).
+> > > > > - `groups` may also be used for group-level configuration.
+>=20
+> > > > > As a result, both `groups` and `pins` may appear in the same node,
+> > > > > but they serve different purposes and do not conflict:
+> > > > > - `groups` selects the mux function and may apply configuration to
+> > > > >   the entire group.
+> > > > > - `pins` allows overriding or specifying configuration for indivi=
+dual
+> > > > >   pins.
+>=20
+> > > > > In most cases, only one of them is needed, but both are allowed w=
+hen
+> > > > > both group-level and per-pin configuration are required.
+>=20
+> > > > To be honest, that sounds like your groups are not sufficiently
+> > > > granular and should be reduced such that you can use them for pin
+> > > > settings.
+>=20
+> > > The intent was to keep the binding flexible, but in practice the mixed
+> > > use of `groups` and `pins` in the same node is not expected to be use=
+d.
+> > >=20
+> > > Given that, I agree this flexibility is unnecessary and makes the
+> > > binding semantics less clear. I'll rework the binding to make the
+> > > expected usage explicit rather than allowing combinations that do not
+> > > correspond to a real use case.
+> > >=20
+> > > In particular, I'll split the constraints as follows:
+> > >=20
+> > > - For pinmux, the presence of `function` will require `groups`, and
+> > >   `pins` will not be allowed. This reflects the hardware design, where
+> > >   the groups are defined by the pins affected by a given mux expressi=
+on
+> > >=20
+> > > - For pin configuration, exactly one of `groups` or `pins` will be
+> > >   required (using oneOf), so that configuration is applied either at
+> > >   group level or per-pin, but not both.
+> > >=20
+> > >=20
+> > > - if:
+> > >     required:
+> > >       - function
+> > >   then:
+> > >     required:
+> > >       - groups
+> > >     not:
+> > >       required:
+> > >         - pins
+> > >   else:
+> > >     oneOf:
+> > >       - required:
+> > >           - groups
+> > >         not:
+> > >           required:
+> > >             - pins
+> > >       - required:
+> > >           - pins
+> > >         not:
+> > >           required:
+> > >             - groups
+> > > Does this match what you had in mind?
+>=20
+> > It's an improvement I think, but I am wondering why you cannot do
+> > without pins entirely and apply pinconf stuff at the group level?
+> > Of course that may not be possible with the current groups, but if you
+> > made the groups more granular, would it be possible?
+>=20
+> Within a given group, it is not always the case that all pins share the
+> same configuration requirements (e.g. drive strength or bias settings),
+> so applying pinconf purely at the group level would be too restrictive.
 
-I don't believe anything we have at the moment is what you're looking
-for.
+Right. That's pretty normal.
 
-> - I'm going over the Common Clk Framework again, and perhaps I understood=
- it
-> wrong. You mentioned that I have to implement is_enabled, but I implement=
-ed
-> is_prepared. It seems that I just have to move my is_prepared implementat=
-ion
-> to is_enabled. Does that sound correct?
+> Making the groups more granular to match all possible configuration
+> combinations would not reflect the actual mux granularity and would
+> significantly increase the number of groups.
 
-Effectively yes, I think.
+>=20
+> For example, we have encountered a timing issue due to the PCB layout,
+> where only the eMMC clock pin requires a different drive strength:
+>=20
+>   # The EMMCG4 group includes pins AC14, AE15, AD14, AE14, AF14, AB13
+>   # AC14: clock
+>   # AE15: command
+>   # AD14=E2=80=93AB13: data
+>=20
+>   pinconf_emmc_clk: emmc-clk-pinconf {
+>       pins =3D "AC14";
+>       drive-strength =3D <8>;
+>   };
+>=20
+> In this case, applying pin configuration at the group level would affect
+> all pins in the group, which is not desirable. Allowing per-pin
+> configuration via `pins` is therefore necessary.
+>=20
+> For this reason, `groups` is used for mux selection, while `pins` is
+> required to express per-pin configuration where needed.
 
-> - In my particular use case I don't need enable/disable ops, but to keep =
-the
-> driver generic, I'd probably want to have the bulk_enable implementation
-> inside, because I don't know which clocks are assigned in a device tree. =
-The
-
-Why don't you know this? I'd expect there to be 1:1 mapping of gpios to
-clocks, with an equal number of input and output clocks, since all
-you're doing is detecting if the clocks are ready to go?
-
-> clk_core_enable function only enables 1 parent clock, not the the list of
-> parent clocks. Or I'm missing something here?
+Right, yeah, I figured your objection to it was because of how
+annoyingly small it would make the groups. I suppose the alternative is
+going without groups and always using pins.
+Having groups and pins seems really suboptimal to me, but there are
+some other bindings where this is done. Linus, what is your take on
+nodes supporting both? I'm biased towards having a more straightforward
+binding but if you think this mix makes sense then I'll defer to your
+vastly greater experience with these devices.
 
 
---Oqli5VmO2nW07SBw
+--e/yrNYrOHY6xz2Ct
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaeezsgAKCRB4tDGHoIJi
-0nvOAQCTrme7fq//tFBMUwF0/4UV7bRtW7tZbWQ1wynmxGDRBQD/Q1ozIIf836La
-AXhJbuM7PZlVRYlTkGsfFTw8yHsaVAE=
-=p8dP
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaee6fwAKCRB4tDGHoIJi
+0noaAP9jYP09SYhW2PHzSVQFFiUEdcOsiFAlMGJHXxpV2+SxZgEAzvMeVc+SrBA4
+Ker/dZO9rTEAMa9/23liJlGnUhKVJQA=
+=BQ+S
 -----END PGP SIGNATURE-----
 
---Oqli5VmO2nW07SBw--
+--e/yrNYrOHY6xz2Ct--
