@@ -1,258 +1,212 @@
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11023078.outbound.protection.outlook.com [40.107.159.78])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF1DD317143;
-	Tue, 21 Apr 2026 12:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.78
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776772851; cv=fail; b=AgEyHTD6xLFqJCLsPgLpxsDpUupdHsL99I9abIYKBPcN3i7hh/C3yLLri/LQ8/MWVvRsRXtCDt4knjD+D8O9ZpNaCJCYWacNLCoUq0dgt6W2v7xXzxtWpkioLs6vu2W9ttvzFDuM6hvOmsmiL3eEbPE7vm0i64Y0UKn7RjUI1jA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776772851; c=relaxed/simple;
-	bh=ccWSANgq+bosDEpg4XUyOiFDiebu9bwbAU6wcwshjR0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=AO40Q0ViPcpsC76mozw+RplMqkb//k7F0/NvYg+LwopgkzhgdTC+PM0aCeOC+0emD3ToqsM9qtsCanihQqOfw0wEpP8wxGokubDwngCZqWxbP8m/1qBWQh9s5JkqyiFDOTFC22dOjz8hqlCskwZ3Srs1LLMs5VFQstlYm7lE9xE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prodrive-technologies.com; spf=pass smtp.mailfrom=prodrive-technologies.com; dkim=pass (1024-bit key) header.d=prodrive-technologies.com header.i=@prodrive-technologies.com header.b=CNA+dka/; arc=fail smtp.client-ip=40.107.159.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prodrive-technologies.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prodrive-technologies.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5618EEED8
+	for <linux-clk@vger.kernel.org>; Tue, 21 Apr 2026 14:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1776781140; cv=none; b=Xt7q1y0PGlUoRUzZtk0rN3byMRBk3lzNMfLq5a+Mo/npl+xRSsMn6cI9AJ8ORbiTdqqyQaoBk7rdC1BvyInS64NQ3l+zLAAesLtYP8T4o5GtJ05MmPx5k8Yn9nBcyLW/dcyZ1LetZvlovalW7/JywSzkx3sLvs8T75fDml0/5gQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1776781140; c=relaxed/simple;
+	bh=QSjra5bg9ku+My/hVMHn6lvM4yG5JgbWs2lHlIq6YHk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U+/Gl8XNMKndnAv6Z8wSudnkoGSvgmXCz9vOl/2/2r31BPwBaU+/mIH3oUaEWBML8B6cmkt0gExDd4wmNfCFEPVh0tdR0XaDI68wjsoubxon1PrpWvizm2F1opZr81WZ91kgo8GodcRYHaMcDSFVdEx6ttOQ6cEB5Y7Nka+OJUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eI4ZEody; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=DP31YRs3; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=prodrive-technologies.com header.i=@prodrive-technologies.com header.b="CNA+dka/"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SkZmQgOwHalU+ibmAxM4yxW+Sq9sGJg6ZbscI2Q+qqsviR/ZRXNN+rcxA2EWhPA/p+MRhkaMFpEdZKA+pSGsJZ7XtG8AxlRIdnRlQ3occv5QD+pqHdBWUzpggRm6PIN8uQULwisQOyQ0YtOKHywSZ8ykvdq67RhXPJhD2VzlysF8ygC2yILCLPq5OelLjkLnGWL3rBRu2HyTvlObd6KSoMNSepsqu2CTBx8558GenUo+Kc+TXPxXJZHhLW6FEe+SKsrVGA+jIPrw+2sidyV81tm9yiirT8tVy1YLEJVEZfT3Vv3LKxuoDIY/E2MT1HRKqWRW3ddoLl8t0Rm63SFcrw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ccWSANgq+bosDEpg4XUyOiFDiebu9bwbAU6wcwshjR0=;
- b=ltESjEu/YogDGU3RCzqY50q1BYgbN9sdeUMz+2s4KmxH/RBZOlsBqtyiBJPCb62kALVn3ER8vFjPTmDSh+bcyqwI22ofWRadAy+mwrmao5c9TQ4nSIBbUz63QKc8qa13glsnoUe5L6rES3x97XcgWPHiUpAb04liqPfI93+KQRjbdvuQTyZXTF4K3iFREVxyMuCiK68tD/wODB6FcwDHSgvpR8+AdneTVUGTikXxJooRNBUCJN6EuFkm+1Soay0v7ziPAmVF+hs63X6ix9r3/GVriH23JELozmztA84GGF+QBk4XKKafBtkSscKZeCSrcaClpysE0pTER0KZkQM4Eg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=prodrive-technologies.com; dmarc=pass action=none
- header.from=prodrive-technologies.com; dkim=pass
- header.d=prodrive-technologies.com; arc=none
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eI4ZEody";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="DP31YRs3"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1776781138;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Fd0pSxqVE2XBnNijY7cnmD9nWZLu9zqooCWoQGlMm3Q=;
+	b=eI4ZEodyt5yWJZSv2uPKpyy+6ctuXl2znjZqVYE0M3G/0Fl1cJi2XFH6RZEkqizuwfAum1
+	kFHXrt4TRGAWxTYU2CnokeozgG8SNIw2bG8aq3jVVfW7hrof8v+boWyczl33p1NCNzoXNg
+	nuztk87eyaXyEqRTZQznbO7iKy3FnoA=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-357-mK0Z48fCNTaaDgsR4BlJRA-1; Tue, 21 Apr 2026 10:18:55 -0400
+X-MC-Unique: mK0Z48fCNTaaDgsR4BlJRA-1
+X-Mimecast-MFC-AGG-ID: mK0Z48fCNTaaDgsR4BlJRA_1776781135
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-50d58bed44aso68623731cf.3
+        for <linux-clk@vger.kernel.org>; Tue, 21 Apr 2026 07:18:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=prodrive-technologies.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ccWSANgq+bosDEpg4XUyOiFDiebu9bwbAU6wcwshjR0=;
- b=CNA+dka/WSKHcucMz4z2theHlCQah8DGXM+LeE3toARQv0+yYBDaA7FJ3T8Wm7ym1pTpP25gsNKlsUlzbKensAgtLa0rQP8Rf5l9PH3bjUtSVyYya7v3bzN1ZTL+rP57PuMxNqRnLUv/oE1g+VHqnOipRs6QtJLY23vLOKKyC7A=
-Received: from GVXPR02MB10968.eurprd02.prod.outlook.com
- (2603:10a6:150:215::17) by AS1PR02MB7822.eurprd02.prod.outlook.com
- (2603:10a6:20b:4ad::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9818.33; Tue, 21 Apr
- 2026 12:00:43 +0000
-Received: from GVXPR02MB10968.eurprd02.prod.outlook.com
- ([fe80::8e51:5ecd:e517:94c6]) by GVXPR02MB10968.eurprd02.prod.outlook.com
- ([fe80::8e51:5ecd:e517:94c6%4]) with mapi id 15.20.9818.033; Tue, 21 Apr 2026
- 12:00:43 +0000
-From: Paul Geurts <paul.geurts@prodrive-technologies.com>
-To: Ahmad Fatoum <a.fatoum@pengutronix.de>
-CC: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>, Saravana
- Kannan <saravanak@google.com>, "abelvesa@kernel.org" <abelvesa@kernel.org>,
-	"peng.fan@nxp.com" <peng.fan@nxp.com>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
-	"Frank.Li@nxp.com" <Frank.Li@nxp.com>, "s.hauer@pengutronix.de"
-	<s.hauer@pengutronix.de>, "kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"festevam@gmail.com" <festevam@gmail.com>, "shawnguo@kernel.org"
-	<shawnguo@kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: clk-imx8mm: Initialize clocks in arch_initcall
-Thread-Topic: [PATCH] clk: clk-imx8mm: Initialize clocks in arch_initcall
-Thread-Index: AQHcx0BZshCSHbJ2F0KbyTY8AjuDcLXU9FUAgAGm1GiAEteMRQ==
-Date: Tue, 21 Apr 2026 12:00:43 +0000
-Message-ID:
- <GVXPR02MB109689E26A9BAE94C2BAA34FDBD2C2@GVXPR02MB10968.eurprd02.prod.outlook.com>
-References: <9f36af74-ef1a-4777-a1c3-ff13b68c2221@pengutronix.de>
- <20260409091643.3787112-1-paul.geurts@prodrive-technologies.com>
- <95e718b9-c281-4336-9c1e-3bf8aff68457@pengutronix.de>
-In-Reply-To: <95e718b9-c281-4336-9c1e-3bf8aff68457@pengutronix.de>
-Accept-Language: en-NL, en-US
-Content-Language: aa
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=prodrive-technologies.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: GVXPR02MB10968:EE_|AS1PR02MB7822:EE_
-x-ms-office365-filtering-correlation-id: f49ac141-b027-46c7-3f9d-08de9f9d9d85
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700021|22082099003|18002099003|56012099003;
-x-microsoft-antispam-message-info:
- LKgH8g2EeOGp7jZInF+MimJo0boq08Agc3qvYuA6iNywyXM1b1uLbFKBYPJmEvyev30NKXQOnGldobTHP3YQxyVHwzTUVlSn1KKKAUIcesObH4YgAoiXUkggYWPumwl+jhwWp1yjQRp1d8VulSeJOFOJtIFhaCQpccjp/AW7aOheMKsZECbs0G3crnTXQNBFFYMMJqVRowrN/FTBW+dfVAkImNPHtvInA2GxLnExDZJDKJ2dAJXFAICqzmONQda2HErEgYlWEidHfZ01cyNb/1fjHHQOmN/zvxI55iU60JnkC/tF2IlrGf/YnJmGmqoKyBoqkgRcvEzeUcDUGDxCVZOpBFAfly/hs2TV/s2wCwU27Y1NZL7Zd8z4TgoONrxCQRAFbLxgV/ghwWdripUSUE2qK7xwDiaqPGk+w4rUEx8QGIZ8C8V7Sxn8wzhAq/QrHhSYqb+x04EZU590s+n7NS/w4Gz89OPCEUvueNaAjXaRgpoaDiasyCM7T7ZoQFksgRDP1ZIvCCfTzM+0ry4LHYDHF9Irz/OtPDNfFG7+3P5QjM2txHOxmWdhUQl51ZQQlqUxXLlIieh/Eh4u0exj5g1PdbqPKqxmNNUTWxPbA9Ir6S3fcEnRMasxLPa3PhZ+2AHr99c1twljo2rXGbXcQL/HJGyoYMd07lDzDy0spwc/WjmEKbmzNYVfkQkFjlCXy91XgRAVZFXFwAzsUeqMuQNpGxYU6swmfso1REhYgLG/2d8M0NqFNC0+SEvI4AAHP4Xy3tZgCS5XmrrIKFD9At+uPWn2gFjW8HaW/SAh5Cs=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GVXPR02MB10968.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700021)(22082099003)(18002099003)(56012099003);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?fadYcTALJF5fUCe6WMOjGvntfMV4nFEZPylHwjaQ5pF+WOQKPxb752Sfnn?=
- =?iso-8859-1?Q?dHUt4XCS24bBiC9AXTIA3Fk7Gu+n2yVs6RgN3a8LxDW5KwTTE3BiCvr7Ht?=
- =?iso-8859-1?Q?WM3iKVHMIK8TnQPOdDJA+e6VJY8wgtnmZ4QHTbigY8tovFbkcNhNmYfZ+q?=
- =?iso-8859-1?Q?ZNFtK12HXuYYrtpdwDTst0NUhhebjBxwtbi6ViPzDmVpBTJeeKAwOGz0x1?=
- =?iso-8859-1?Q?CMdnSxuM5N1oXdWRQn1JnXauMNWnvXlx3HW+dq3aqXw31TrRzDU4l8SKXZ?=
- =?iso-8859-1?Q?DL2F2fdUI7qwwZc0/n3bx8Hr+Uu25BrYLGruTQJN5R9SebhPL/SavuQc2N?=
- =?iso-8859-1?Q?KZJ985jVH9IleejYY/SWXrFJA0vvmmFOesD5eb8dvELtNRY1UuHEktxc5R?=
- =?iso-8859-1?Q?5n8n4djnSRoC4vKj5bheWUkdiobunbMlVk9WnlA7LSaaDYAMCgQwsblbyy?=
- =?iso-8859-1?Q?Jc2OmjI0tSn+T5Pji3aHrKExuKr7XtUma6+Io+5co4fnZpXIEqKVM7XEmS?=
- =?iso-8859-1?Q?VpF87MHE99Yn75VufDyGbIhThthcl6Qeo9iFVhJPE903+IqOoAAnlSaAgR?=
- =?iso-8859-1?Q?LAm3j4t+cC44NGRM5tzdhzGbhpn1jD6WTwFTriSK0njeTRi15ABFB+rM8Z?=
- =?iso-8859-1?Q?bukLjfK3tLtM5IBFtxoIytLMusI+8VDSAyNIQUXNmgshGisH4VbG8goe0n?=
- =?iso-8859-1?Q?T3W4D1xlXDbZ8Mm699gnBlxHCnTsRQghsIKMCfxI6ciBT81SEega8DCPSq?=
- =?iso-8859-1?Q?bDXJyKvREQJPh5Vu8mdKplHTLLMGTQv+66V9hbAMyMPm51oyzuRItK5CV5?=
- =?iso-8859-1?Q?KaIlwKPN2GDjIDAupX/mmNP8RkuOpdF2BgQUP5atbK2/+B1PbMF4hQQYQd?=
- =?iso-8859-1?Q?pvX+UtuuZ2YTljpbtjWvcyLgRf0SOxspyP/Jr5uunmRQpa6vnvByZo4I/C?=
- =?iso-8859-1?Q?y03/046uSCNSdbZMz2ciEFW9QLv8QR2z9jygHdZGO+gSvgC3jDlxNVVT2l?=
- =?iso-8859-1?Q?WnfwdTmmX/Xv8IDqJCej64ePzr+gj+p+Ry/lmiOF2qplsiUckEkgQqfcg0?=
- =?iso-8859-1?Q?ujg+cAyiOplHBUwwZp6llQwvSUneJx0NyBnZ3IS9FskapEP0p9wz8/syNd?=
- =?iso-8859-1?Q?zXPQMWkXN9DKMyaX4kpu1dv2/G6+HucxXlUbFQSizVU1uoGwdWiiczToDH?=
- =?iso-8859-1?Q?XPL8+BNz5GolIT4jufhC0heAdLVrjMXg/j8j/9y3VYgcNIB0H6r7XkD9ar?=
- =?iso-8859-1?Q?lto+GBmyKLY45IgUOXEapM2Vj3+VqAevRv+QJLWxANKdxSqz/G3sDMo7jg?=
- =?iso-8859-1?Q?foiVMxdlSJKpQ5GIwmRLj0IoeEtW4DbrnZ0JcG0J7J4lJ60D5+W0twLM4G?=
- =?iso-8859-1?Q?hZrynWaJ+KXZC8lYu0IX3H75cV9J3PRxLaNRT6EdFHEMCpyf86zkn44WLW?=
- =?iso-8859-1?Q?XX4fi8rB7oYy4P/ayUs2D3GSxBaHs+e2GZ2dSg2wm2goqWJjEsNlueMfkU?=
- =?iso-8859-1?Q?WPhv3zP9UfHFkADiLnivBr52ldMVo241PNMH2SHvF69uuRujEF6H+i7jgk?=
- =?iso-8859-1?Q?6i6QbJuP0GpqcMI45w0zJZwuVCvbeo5Db/FlmOUwDiW4HDWn5mhfaQKeW+?=
- =?iso-8859-1?Q?BAK7zDqXAtj3KtrSVKhLdr6czjqtohUjE2hWzRpZ1aitqp3Xr925u3LPCX?=
- =?iso-8859-1?Q?MQtQQLI0zbUxeUSwdNSmMR2B/v1wrfVjS9vqH2GWW7wgEuMLaiKwPxmdu+?=
- =?iso-8859-1?Q?5J/NvgKHLoj1pAqV37qSJNfC365ciS977QtJUJ+HgVBtvLlCZSk4Jy72OK?=
- =?iso-8859-1?Q?82qkmrS2VEKLSm5QfNR+84Bdf4BXxEU=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        d=redhat.com; s=google; t=1776781135; x=1777385935; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fd0pSxqVE2XBnNijY7cnmD9nWZLu9zqooCWoQGlMm3Q=;
+        b=DP31YRs32Qb4tJsjk/XBY/Dxx5F3jgqfXF8dbKrZosUwILPwz0y9R3FMR3n3Qa5VMg
+         T/XIciC8IWBm3Va5pnYe/isQERKFy60x20M5b6/FHYXdlLKXGPtDIBjJ8SKY8Eg+Um6N
+         k4lZTHsTuaiJxi5uZPyXTi2RIChc6rRumEPpb4g3211cHoy6ZlUd2fe4lBgxKI93lm66
+         HEJBNsvQYgmF77bdp2FKyYDyi4s/jN2Cl5rgdnBXnkOnUDkYALuriWba44dCnq3tK1PY
+         KzmO37NiiLGlWuw2Q6CnftqsaYR5SzH563nV5LFNPrBph0ajl8QsFIDUqjB7DC+vO3vO
+         6gjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776781135; x=1777385935;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fd0pSxqVE2XBnNijY7cnmD9nWZLu9zqooCWoQGlMm3Q=;
+        b=eXlyHeW8GB+jyzixex6pRX/tq7HfWVsVuGk162+00dbg2Liul+phcVUVUvSNSa5p5g
+         U+zcNwHHhHJRgqY/d1uBbLlYJUHOjbym319q+r4DBSfAvoAHfaIcD9wYbaikyoQd2NCb
+         wzgLDg2FA1SggpvGz7x/WHL+dFJEyUCxTDKW1nx2nuARk/FKTaX6HGpDMlx3XQDH3BMr
+         zBEOLbQl9oCkZTn7TFnryMWLsMjmkCNjaDnzW5ZWBHg0zzh7P/FjqV90ZGV4vXq37CCc
+         78u+o+VIK1GA+adj4T1hNdc+JXPZ+fQPh+r+LKkhzDQgrng7yJB9eu9+5bGClXRUfAxw
+         qOVA==
+X-Forwarded-Encrypted: i=1; AFNElJ9INHhhwpKRCUgpVMTK2sjUBddouU7jAexWMDk1I8wqois7cUl7irGhgKdL3G1P8qB1AViBZy+RO7k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWSgVI6i+TuhMUERInQsFXOdT36dwkXJCSQjUuP9dhC3vI451g
+	xlJnXIdewTO4Tb8Wini73u9P1vZJsIx31qf+ITMvKKwedh/opo3NdFFTp4rxlLmiXcCkWNakePU
+	c5W0NGgKBQw16csgtcVNKjv0f4f8mWLLToFTGLR2bvnxd17nM2sZLycm6PhcaXA==
+X-Gm-Gg: AeBDiesWxfttdaOmBgH3Ng/rpJfRR+zuCsL69oSH//ktJK0Z9mi8ekletnHGq09n7a0
+	J8WEP/AykmWlFxv6rvsVNx/59xOY5LeAwgEQYxkVm5TBVIjUIV3VZj5don1QhCHOnvAuGRhk3Jr
+	DvTaitfkjykD/wZyUeuK1Tv7PIAKgeZWWI42Ax/GJ5nZufgdOkUJik/t4LK/bBCHG0UTYbEX0IC
+	R3PTgs6Vjk6JXhdVkp3pEEuhHzveJNYbHlvEi3bknVtOu/1tChhS7sUmkf+YtYPluByaNF1mCzH
+	HXvTBJcDWgGV4iZ/dAdyk9yGMu4DeP/FyoWFU3GSI0jLOg+1dWnPHCR91dTosCy2voSp9RTHI2I
+	dcXzRFfrOhnv0UGIDPvPZ5kMNy1X3VO8HxHv/u8ibp8xsd/uLacEXXveqIEfFepT9vko=
+X-Received: by 2002:ac8:7dc5:0:b0:50e:6054:ba with SMTP id d75a77b69052e-50e60540c69mr101241201cf.9.1776781134798;
+        Tue, 21 Apr 2026 07:18:54 -0700 (PDT)
+X-Received: by 2002:ac8:7dc5:0:b0:50e:6054:ba with SMTP id d75a77b69052e-50e60540c69mr101240621cf.9.1776781134080;
+        Tue, 21 Apr 2026 07:18:54 -0700 (PDT)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-50e392e4db4sm107869201cf.11.2026.04.21.07.18.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Apr 2026 07:18:51 -0700 (PDT)
+Date: Tue, 21 Apr 2026 10:18:50 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] clk changes for the merge window
+Message-ID: <aeeHSrZmAqE4ugXY@redhat.com>
+References: <20260420183208.2287306-1-sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: prodrive-technologies.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: GVXPR02MB10968.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f49ac141-b027-46c7-3f9d-08de9f9d9d85
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Apr 2026 12:00:43.4489
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 612607c9-5af7-4e7f-8976-faf1ae77be60
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: q/+d9PYf/u0mUPdadSQyU7zwMTjiNm0oYdSXQABMXIIMFV0Ha7xLczHaoIAgHMCOksl5yMOsw223hsOmWR/0KNYcOmgCRXIiC2Hg47GuQduoIiMcahS3UiJr3CMdLpD5
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR02MB7822
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260420183208.2287306-1-sboyd@kernel.org>
+User-Agent: Mutt/2.3.1 (2026-03-20)
 
-> Hello Paul,=0A=
-> =0A=
-> Cc +=3D Saravana=0A=
-> =0A=
-> On 4/9/26 11:16 AM, Paul Geurts wrote:=0A=
->>> Hello Paul,=0A=
->>>=0A=
->>> On 4/8/26 12:13 PM, Paul Geurts wrote:=0A=
->>>> The i.MX8MM clock driver is implemented as module_platform_driver();,=
-=0A=
->>>> which makes it initialize in device_initcall(). This means that all=0A=
->>>> drivers referencing the clock driver nodes in the device tree are=0A=
->>>> deferred by fw_devlink, which are most of the i.MX8M platform drivers.=
-=0A=
->>>>=0A=
->>>> Explicitly initialize the clock driver in arch_initcall(), to make sur=
-e=0A=
->>>> the clock driver is ready when the rest of the drivers are probed.=0A=
->>>>=0A=
->>>> Fixes: af7e7ee0e428 ("clk: imx8mm: Switch to platform driver")=0A=
->>>=0A=
->>> Your commit message doesn't explain why this was a problem for you.=0A=
->>> Does it delay your boot? What makes this patch a fix?=0A=
->>=0A=
->> Yes I could update that in the commit description. The problem is that b=
-ecause=0A=
->> of this, _all_ hardware is initialized in late_initcall, as that is wher=
-e=0A=
->> deferred probes are handled.=0A=
-> =0A=
-> There's no one initcall order that will make drivers across all systems=
-=0A=
-> equally happy. That's why there are probe deferrals in the first place.=
-=0A=
-=0A=
-I understand. But this order makes all i.MX systems equally unhappy :-P.=0A=
-=0A=
-> =0A=
->> For embedded devices, some sign of life is=0A=
->> expected by most people during boot. Especially when an initrd needs to =
-be=0A=
->> unpacked, this sign of life is going to take a very long time.=0A=
-> =0A=
-> Ok, so the problem is that the probes happen too late. Does the total=0A=
-> boot time take considerably longer or are you just unhappy with the=0A=
-> ordering?=0A=
-=0A=
-Both. It takes longer, and interfaces I would expect to be live "early" are=
- very late.=0A=
-=0A=
-> =0A=
->> Some display=0A=
->> controllers don't even get enough time to show the boot logo because of =
-this.=0A=
->> I don't think the idea behind the initcall levels is that _everything_ i=
-s=0A=
->> initialized in late.=0A=
-> =0A=
-> I suspect we could improve the situation with "post-init-providers"=0A=
-> hints, but I haven't used it myself so far.=0A=
-> Maybe Saravana could give some advice once the problem is better understo=
-od?=0A=
-=0A=
-I could look into this, thanks!=0A=
-=0A=
-> =0A=
->>> What happens if you build the driver as module with your changes applie=
-d?=0A=
->>=0A=
->> On module insertion, there is no initcall level, and initialization is=
-=0A=
->> performed on insertion (AFAIK). Fact is that the system would probably=
-=0A=
->> not boot when this is built as a module, as there are no peripheral cloc=
-ks=0A=
->> without it.=0A=
-> =0A=
-> Ok, then this is patch is not acceptable. What's buildable as module=0A=
-> should work as module. I don't personally build it as module either, but=
-=0A=
-> removing the possibility will break users relying on it for Android GKI,=
-=0A=
-> I presume.=0A=
-=0A=
-This patch doesn't change anything about whether the driver is usable as=0A=
-a module. I think the original driver is already not useable as a module,=
-=0A=
-independent of this patch.=0A=
-=0A=
-> =0A=
-> We thus need to find a different, better, way.=0A=
-> =0A=
-> Cheers,=0A=
-> Ahmad=0A=
-> =0A=
->>=0A=
->>>=0A=
->>> Cheers,=0A=
->>> Ahmad=0A=
->>>=0A=
->>>> +=0A=
->>>> +static void __exit imx8mm_clk_exit(void)=0A=
->>>> +{=0A=
->>>> +=A0=A0=A0=A0 platform_driver_unregister(&imx8mm_clk_driver);=0A=
->>>> +}=0A=
->>>> +module_exit(imx8mm_clk_exit);=0A=
->>>> +=0A=
->>>>=A0 module_param(mcore_booted, bool, S_IRUGO);=0A=
->>>>=A0 MODULE_PARM_DESC(mcore_booted, "See Cortex-M core is booted or not"=
-);=0A=
->>>>=0A=
->>=0A=
->> Thanks!=0A=
->> Paul=0A=
->>=0A=
->>=0A=
-=0A=
-Thanks!=0A=
-Paul=0A=
-=0A=
+Hi Stephen,
+
+On Mon, Apr 20, 2026 at 11:32:08AM -0700, Stephen Boyd wrote:
+> The following changes since commit b822fb82505af4cc3f14fed05b8069c67d2ed5fb:
+> 
+>   dt-bindings: clock: renesas,rzg2l-cpg: Document RZ/G3L SoC (2026-03-26 19:44:48 +0100)
+> 
+> are available in the Git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
+> 
+> for you to fetch changes up to 6b701fde9b31f085f39fc2a371cb33212fab6f68:
+> 
+>   Merge branches 'clk-samsung', 'clk-qcom', 'clk-round', 'clk-sai' and 'clk-cleanup' into clk-next (2026-04-16 10:12:43 -0700)
+> 
+> ----------------------------------------------------------------
+> We've finally gotten rid of the struct clk_ops::round_rate() code after months
+> of effort from Brian Masney. Now the only option is to use determine_rate(),
+> which is good because that takes a struct argument instead of just a couple
+> unsigned longs, allowing us to easily modify the way we determine and set rates
+> in the clk tree.
+> 
+> Beyond that core framework change we've got the typical pile of new SoC clk
+> driver additions, fixes for clk data and/or adding missing clks because the
+> consumer driver using those clks wasn't ready, etc. The usual suspects are all
+> here: Qualcomm, Samsung, Mediatek, and Rockchip along with some newcomers
+> making RISC-V SoCs like ESWIN's eic700 and Tenstorrent's Atlantis. The clk
+> driver side of this looks pretty normal.
+> 
+> Core:
+>  - Remove the round_rate() clk op (yay!)
+> 
+> New Drivers:
+>  - ESWIN eic700 SoC clk support
+>  - Econet EN751221 SoC clock/reset support
+>  - Global TCSR, RPMh, and display clock controller support for
+>    the Qualcomm Eliza platform
+>  - TCSR, the multiple global, and the RPMh clock controller
+>    support for the Qualcomm Nord platform
+>  - GPU clock controller support for Qualcomm SM8750
+>  - Video and GPU clock controller support for Qualcomm Glymur
+>  - Global clock controller support for Qualcomm IPQ5210
+>  - Axis ARTPEC-9: Add new PLL clocks and new drivers for eight clock
+>    controllers on the SoC
+>  - ExynosAutov920: Add G3D (GPU) clock controller
+>  - Clock driver for the Rockchip RV1103B SoC
+>  - Initial support for the Renesas RZ/G3L (R9A08G046) SoC
+>  - Clock and reset controllers (e.g. PRCM) in the Tenstorrent Atlantis SoC
+
+Here's some additional patch sets that were posted this development
+cycle that I feel are ready. I don't see any objections from the
+community, and some such as the Mobileye series, looked like they
+were going to be picked up during this development cycle.
+
+- Feb 18 - Felix Gu <ustc.gu@gmail.com>
+  [PATCH] clk: aspeed: ast2700: Add missing NULL pointer check for devm_kasprintf()
+  https://lore.kernel.org/linux-clk/20260218-ast2700-v1-1-2388e0fe3597@gmail.com/
+
+- Feb 24 - Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+  [PATCH v2 0/3] clk: x86: lpss-atom: A couple of cleanups and a feature
+  https://lore.kernel.org/linux-clk/20260224121159.3503754-1-andriy.shevchenko@linux.intel.com/
+
+- Feb 24 - Shawn Guo <shawnguo@kernel.org>
+  [PATCH] clk: hisilicon: reset: Use kzalloc instead of kmalloc
+  https://lore.kernel.org/linux-clk/20260224021912.54365-1-shawnguo@kernel.org/
+
+- Mar 3 - "J. Neuschäfer via B4 Relay" <devnull+j.ne.posteo.net@kernel.org>
+  [PATCH v2] clk: hisilicon: Improve deallocation in error path
+  https://lore.kernel.org/linux-clk/20260303-hisi-error-v2-1-7cd9b43d8fbb@posteo.net/
+
+- Mar 12 - Peng Fan <peng.fan@oss.nxp.com>
+  [PATCH v9 0/6] clk: Support spread spectrum and use it in clk-scmi
+  https://lore.kernel.org/linux-clk/20260312-clk-ssc-v7-1-v9-0-0a9d2e188d9e@nxp.com/
+
+- Mar 25 - Rosen Penev <rosenp@gmail.com>
+  [PATCH] clk: visconti: pll: use kzalloc_flex
+  https://lore.kernel.org/linux-clk/20260326042317.122536-1-rosenp@gmail.com/
+
+- Mar 25 - Rosen Penev <rosenp@gmail.com>
+  [PATCH] clk: bcm: iproc-asiu: simplify allocation
+  https://lore.kernel.org/linux-clk/20260326045324.240150-1-rosenp@gmail.com/
+
+- Mar 25 - Rosen Penev <rosenp@gmail.com>
+  [PATCH] clk: clk-max77686: kzalloc + kcalloc to kzalloc
+  https://lore.kernel.org/linux-clk/20260326052847.335089-1-rosenp@gmail.com/
+
+- Mar 25 - Benoît Monin <benoit.monin@bootlin.com>
+  Mobileye EyeQ7H
+  This message lists the merge strategy for 3 different patch sets.
+  https://lore.kernel.org/linux-clk/2786053.vuYhMxLoTh@benoit.monin/
+
+- Mar 31 - Rosen Penev <rosenp@gmail.com>
+  [PATCHv3] clk: hisilicon: clkdivider-hi6220: use kzalloc_flex
+  https://lore.kernel.org/linux-clk/20260401023551.27978-1-rosenp@gmail.com/
+
+- Apr 3 - Rosen Penev <rosenp@gmail.com>
+  [PATCHv2] clk: mvebu: use kzalloc_flex
+  https://lore.kernel.org/linux-clk/20260403194701.11902-1-rosenp@gmail.com/
+
+- Apr 7 - Johan Hovold <johan@kernel.org>
+  [PATCH] clk: rk808: fix OF node reference imbalance
+  https://lore.kernel.org/linux-clk/20260407095027.2625516-1-johan@kernel.org/
+
+I know it's getting late in the merge window, but if possible, it would
+be nice to get these in via a second pull.
+
+I don't want to hold up this pull since everything there looks fine.
+
+Thanks,
+Brian
+
