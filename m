@@ -1,124 +1,162 @@
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52408373C1D
-	for <linux-clk@vger.kernel.org>; Wed, 22 Apr 2026 22:48:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1171233B6E3;
+	Wed, 22 Apr 2026 23:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776898121; cv=none; b=ctE+jVG1Z9iYdYWIJCLB2sHrYgvUy7CfGDcmHLSSDPu+8DuQJM82hdkxOJg+Hv7O1AVSWUBRyGDnAT1LIolf3HSa+SMsXabyrK5xczxOBcdUkazYLqX0YRUHQEprq5DlZiiGvykhOTObMNtDUGCjAOOEiJ3hjWw3oWbbMJ3BQgE=
+	t=1776901081; cv=none; b=czdsTVk872wiu9F/004D19Uws2dpDaUEBIBOQLyeIHC8HwuJjFBNCFLNGcktkE43hX5uPVgjzVUWCm66h3uC31leLtUTGt2GDqiYYxeOmLp+DOzXEbhD8BF1JrKwTl4icsFVE/zH5C8IFyYnWDOXKhHI3z9kf+A9SMSd0677zdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776898121; c=relaxed/simple;
-	bh=NRWSIj1awYbKDb7XDOAYoJaNnOVQ29rl0pbbuAh0CXA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Vhxn77BmXpTDnu6HbdM4GTMMnFPdC3mA0XMif2R/tLQ+9afQz5e26BwdOMxXc5yachAKp62bfGaqGS3TWsKVKafXgobgIeJz+4dNCSAXoPQQPtaSiPxaJvAykyf6G/Xeqe3pRk+tpSypQiyWqiyWwN955/CrAlJpqPPgKMQI0Tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20251104.gappssmtp.com header.i=@baylibre-com.20251104.gappssmtp.com header.b=xP0Kzkm4; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1776901081; c=relaxed/simple;
+	bh=PDCzZApDvKNTqbT/Gt9TpVWpxIDYrlmgfe7196TqER8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=LC2sMv4jH00P9dYXS4EH8hVcM3mCQhJXIaLqGBvGYXqwLqNE3H8r+9f1tpMfpHc7ZMDlRWtDCewmx5gyCK4o5LXPmin+CeoBHQP4jc5E3GxTc5qUQ591r7zCnp5cfb8PvAyNp9EAUamjP4G0WKb59MA1QzPvIgnRXSifS0YnE/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=CKdi3uC1; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Di4XIANh; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20251104.gappssmtp.com header.i=@baylibre-com.20251104.gappssmtp.com header.b="xP0Kzkm4"
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-82fa8d6425bso2015823b3a.0
-        for <linux-clk@vger.kernel.org>; Wed, 22 Apr 2026 15:48:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20251104.gappssmtp.com; s=20251104; t=1776898118; x=1777502918; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4qI6kGELEoPNIDxXAqpiIcX3kz3Y96gemHsRdJV8MIo=;
-        b=xP0Kzkm4cdE8FArVwyURRIHBqxgKXjsZXcCImcT9GabegLK8BxG5yXw7MeEN+gWO7c
-         2iJgGQFINJgAKN4BIjv2ysJkJXWZlOQxbXwci6oucu29d124FfVSkzHu8hXbi/VexCWw
-         hjwhyIsDf6MUPD82KchjGOPlF86Z5AZ0DIdldkzm/ImvFY5UnGqprIWIN/8ggT8MHI7x
-         C7bkUNY/zv9Slh+EsjBw7mM+szwXkfl5dyNd+ipkpHdIFjyG3Dc2g+IoVn7132uP1t7O
-         wXQk5Z9aE5FO4TfJFxv4BHrYkyNiuRepGZURqK7AOiZEUE8x6Gx8H0zBwRCrirocoUvd
-         v4/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776898118; x=1777502918;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4qI6kGELEoPNIDxXAqpiIcX3kz3Y96gemHsRdJV8MIo=;
-        b=gzehWnWG5xbrxpAiAhGHdiSUjnXayHeV1kC27GKqn2ysfJEoStXACoMhyxlVMF1UtX
-         +Xs7RAj72jgjI1+L2PRDImzWZsxKV1f3mNbM+prvAUbhmwahVLNoDSzhsInSwPwuzdM+
-         9uIYy3TExSUbcpRrGup3Y2v/bYOeX4sEVpuXivbgGWpGYclM/WDQ2dOPeCteR8bMxzkH
-         sVZESBqWzINN0qUhFQrs4M4hUy/wx9vkEblCawADgu4vx8MYc9KdC1quuzKRdGIy1ey2
-         ywpZF7dbEMElsjfre5tr3mCqjm1mZ7xE0NPy3QaBItk/5oHjsuKVPjvEUVjaNz8VjGYI
-         lAEQ==
-X-Forwarded-Encrypted: i=1; AFNElJ92dODwsZ88z5yWxWk2b1PS3z7q3DKxflKVCA3CGCU6srbc0wCw3VcUgDrMCOJMF/P/SrQ5q9k8hV8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz441/MUc72bHetWqKOCLNie3vJxEq9D+U4bW4i5WT25r6rKBwu
-	MQcqRD/Mk7mhzySEZl7RI9ThF/3ndzFtIQxszVzlvd6pk9MYvsJBciZbjhbUJng7V+I=
-X-Gm-Gg: AeBDieudHjD9KEsm2dtgkKRgilq1Yc+/Md4UNOu2wGwC8qmiZXfrLw4XctfKv15zWkZ
-	PFhvkMfd908MI3Poncxlt2lSrcI74ow48EYt3T5PF94+YxksUhoiERbvRd2HYZxdA4yjtUHzARr
-	XDLE14RpgSTLMKTcm1YHC9Q1szi+j29lHPxGrJsfNQxNBcJ5z5Wp7ayZvmoC3+tm+jB/ZxFiBA4
-	u7zLxKu0xeGQlo7MDe1KjfuC7ig3Jo05/uwgH7Izy5ajDJe0sY6lXxo77oZL1kK22F6+S/hxrHR
-	v808SgWlVUXkHPvATTjZIZJMA5YYJL/8K+H6J+qvfypRgXvhN0EpfF5sFHmoCesZHBQ7zJIPb5U
-	ORoLfGj+xNqFz4qxRaejs7iT6kgQ18f90RTrnAo96RJ0iOURiJSTLUrk8Jxyl5t2dk87G2g+JKQ
-	JPeZX3XyIkDleHKi5jSHW3nPm9zCebOQ==
-X-Received: by 2002:a05:6a00:c8a:b0:82f:98c:1465 with SMTP id d2e1a72fcca58-82f8c8fb258mr26682792b3a.27.1776898118539;
-        Wed, 22 Apr 2026 15:48:38 -0700 (PDT)
-Received: from localhost ([97.126.187.42])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82f8ec04448sm21836313b3a.55.2026.04.22.15.48.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Apr 2026 15:48:37 -0700 (PDT)
-From: Kevin Hilman <khilman@baylibre.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Sudeep Holla
- <sudeep.holla@kernel.org>, Cristian Marussi <cristian.marussi@arm.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
- Saravana Kannan <saravanak@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Philipp Zabel
- <p.zabel@pengutronix.de>, Ulf Hansson <ulfh@kernel.org>, "Rafael J .
- Wysocki" <rafael@kernel.org>, Florian Fainelli
- <florian.fainelli@broadcom.com>, Wolfram Sang
- <wsa+renesas@sang-engineering.com>, Marek Vasut
- <marek.vasut+renesas@mailbox.org>, Kuninori Morimoto
- <kuninori.morimoto.gx@renesas.com>
-Cc: arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH/RFC 00/14] R-Car X5H Ironhide SCMI CPG/MDLC remapping
-In-Reply-To: <cover.1776793163.git.geert+renesas@glider.be>
-References: <cover.1776793163.git.geert+renesas@glider.be>
-Date: Wed, 22 Apr 2026 15:48:37 -0700
-Message-ID: <7hcxzqr4qi.fsf@baylibre.com>
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="CKdi3uC1";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Di4XIANh"
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4g1FyZ06hcz9tkP;
+	Thu, 23 Apr 2026 01:37:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1776901078;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ykaQTPs4MXLdq+pisWbjv6fySKC2/pHPThbtMrxU8mE=;
+	b=CKdi3uC1Fj2C9Ssp4xfQ1d28Q3kiHkpD9EfPAD3ffrEKzgKhWWLRhiy4uS7Y3lIw84SvfS
+	rVZ8O2KhGnwdGWB3bCUMRsgseGUcqoBEWypXaLD3kXMXLMZDbRUn+5ElrmQDIAwpInR0gL
+	1LBoS89GG0tjEXM2iJVzyo/G24bl60P/P03NcMUx8t2PPOcHe66w/sBp+g0i092Yrnh4dT
+	+JknqI/+UzwQj5gRTyJOsrPc5sD1iCd9wf5ek0ninrOHgbURRbGDl66EGkYKhp6CrAITbq
+	rmr02zgHNTIq8ManspkXOl1X/movswbg2wq1Im1U+6jdyFrUMUKhaGz0cqTrpA==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=Di4XIANh;
+	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
+From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1776901076;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ykaQTPs4MXLdq+pisWbjv6fySKC2/pHPThbtMrxU8mE=;
+	b=Di4XIANhb1AqW3UIVoAjXxs2ezfA9squD5OhcjH/QpY4VZWLILfcZ0N4EGm8jWN/grQILy
+	WLcohpI5eKnBuB7RgZxifoV3i1SfcUUYoNDqodWQM5Yx4lpvjfd3CHr/bFB0+YlGqPsi1K
+	zEYVAaafAm+8i3EfiLrgkKHFS11Qx4mBT2mGHjChLDz04gkGhV5Od7Ugx5GMlGpM6f6cNb
+	2RscH1mIsyfwc14EnAlZ06ilg76tP/Mx/W4ccSiNm0w+6Bbmzb2/1OLmG00CfdKrU0UKNu
+	eucOoLoDW7mkhLJo3ehiIoscXo4YI6yjEydi7vPxdqE3UPPzYcMPjf6sECZBkw==
+To: linux-arm-kernel@lists.infradead.org
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v3 1/4] dt-bindings: clock: renesas,cpg-clocks: Document ZT/ZTR trace clock on R-Mobile A1
+Date: Thu, 23 Apr 2026 01:36:27 +0200
+Message-ID: <20260422233744.149872-2-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20260422233744.149872-1-marek.vasut+renesas@mailbox.org>
+References: <20260422233744.149872-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-META: ikoizzgqzufbf7z5zr6yzuubsxrzpzpy
+X-MBO-RS-ID: 53fa9743ed3e2c3b3ba
+X-Rspamd-Queue-Id: 4g1FyZ06hcz9tkP
 
-Geert Uytterhoeven <geert+renesas@glider.be> writes:
+Document ZT trace bus and ZTR trace clock on the R-Mobile A1.
+These clock supply the coresight tracing modules, PTM, TPIU,
+ETB and replicator. Without these clock, the coresight tracing
+can not be operated. While this does change the ABI, it does so
+by extending the existing clock-output-names, therefore if an
+old software is used with new DT, the coresight tracing parts
+will likely fail to probe, otherwise if new software is used
+with an old DT, there is no impact.
 
-> 	Hi all,
->
-> TL;DR:
->
->     Describe hardware in DT, and perform the mapping to SCMI in Linux.
->
-> The Renesas R-Car X5H-based Ironhide board is the first Renesas
-> SoC/board combination that implements the ARM System Control and
-> Management Interface (SCMI).
->
-> This means Linux can no longer perform various system operations (e.g.
-> clock, power domain, and reset control) by accessing the hardware
-> directly.  Instead, these operations are abstracted according to various
-> SCMI sub-protocols, and Linux has to send messages to an SCMI-compliant
-> firmware running on a System Control Processor (SCP).
-> More specifically, the R-Car X5H SCP FW SCMI controls access to:
->   1. Core clocks and module clocks,
->   2. Module resets,
->   3. Power domains,
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+---
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: devicetree@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+---
+V2: Reorder new clock at the end to match bindings
+V3: - Clarify why this change has to be done and its impact
+    - Include include/dt-bindings/clock/r8a7740-clock.h change here
+    - Add RB from Krzysztof
+---
+ .../devicetree/bindings/clock/renesas,cpg-clocks.yaml       | 6 ++++--
+ include/dt-bindings/clock/r8a7740-clock.h                   | 2 ++
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-I'm very curious how power domain hierarchy is described on this SoC,
-because one more issue to add to your list is that hierarchy cannot be
-described for power domains in SCMI.
-
-I know you're aware of it already, but just FYI for anyone else
-exploring this space, I have a series[1] in-flight right now to address
-this limitation of SCMI so that we can at least describe this hierarchy
-in DT and the pmdomain framework.
-
-Kevin
-
-[1] https://lore.kernel.org/linux-pm/20260420-topic-lpm-pmdomain-child-ids-v3-0-c2c40bef238c@baylibre.com/
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-clocks.yaml b/Documentation/devicetree/bindings/clock/renesas,cpg-clocks.yaml
+index a0e09b7002f07..925ed35d6658a 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-clocks.yaml
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-clocks.yaml
+@@ -41,7 +41,7 @@ properties:
+ 
+   clock-output-names:
+     minItems: 3
+-    maxItems: 17
++    maxItems: 19
+ 
+   renesas,mode:
+     description: Board-specific settings of the MD_CK* bits on R-Mobile A1
+@@ -123,6 +123,8 @@ allOf:
+             - const: zb
+             - const: m3
+             - const: cp
++            - const: ztr
++            - const: zt
+ 
+       required:
+         - renesas,mode
+@@ -240,6 +242,6 @@ examples:
+             #clock-cells = <1>;
+             clock-output-names = "system", "pllc0", "pllc1", "pllc2", "r",
+                                  "usb24s", "i", "zg", "b", "m1", "hp", "hpp",
+-                                 "usbp", "s", "zb", "m3", "cp";
++                                 "usbp", "s", "zb", "m3", "cp", "ztr", "zt";
+             renesas,mode = <0x05>;
+     };
+diff --git a/include/dt-bindings/clock/r8a7740-clock.h b/include/dt-bindings/clock/r8a7740-clock.h
+index 1b3fdb39cc426..8a8816b2ff6ac 100644
+--- a/include/dt-bindings/clock/r8a7740-clock.h
++++ b/include/dt-bindings/clock/r8a7740-clock.h
+@@ -24,6 +24,8 @@
+ #define R8A7740_CLK_ZB		14
+ #define R8A7740_CLK_M3		15
+ #define R8A7740_CLK_CP		16
++#define R8A7740_CLK_ZTR		17
++#define R8A7740_CLK_ZT		18
+ 
+ /* MSTP1 */
+ #define R8A7740_CLK_CEU21	28
+-- 
+2.53.0
 
