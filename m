@@ -1,59 +1,50 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E44D84414;
-	Wed, 22 Apr 2026 18:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D012DA759;
+	Wed, 22 Apr 2026 18:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776883552; cv=none; b=qnB4HM3TIf4gYaIQtnH/XsXu0rfuYVHwwGUVKySK4SEUGcLvepX90/gjkrfPSZwQXFcvf/IuZLM9oovDHXYYqW2ykz8d+gD+1rI75/11i53Gpw1uBWJnX610tAusPEOIiqq0Rh+BHPtnY9yllMVYyDN37OylNlrae5/HjGOTQrM=
+	t=1776883869; cv=none; b=TlARYadJYD6mGepwT55cxf7CNyvtHgZIsuGnEPt1CxJDWo3DgqgYs6zHSr/D05HAiH77MvANjBZ6zGWej9NZgY70bT6wSbE4AzDCsHi3Khp2iNsN1aD7o6BeYgmm/ohUGE1SirMj8exHxF8WugUc6R5PjlCp3o0wZv6XNd3gBK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776883552; c=relaxed/simple;
-	bh=hkA5KjlIl5jwh4GkTXHA4vVNwgDxaznRvBx/RdhhKnA=;
+	s=arc-20240116; t=1776883869; c=relaxed/simple;
+	bh=QAnJAPXdDP9ZUgfbNMD+G/bRQFx5oM9LjIYK7IpcsGc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U2UkPGcPkGYL780deNI/v00YzpuJdMWC+O00M2Dm31yfSB5J/FQ5DWb0LWqN1LHYuo81KyjozfP268thAmQ7PHvDhFA00iQk0wL7l21h31TIL3eFD8QJ0q9IZOUgo4+rMR78vYDUhtO40S+dZuUlOS3nErZq1YLXPuoWHaXl+HE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=YR5vqQX1; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=CBznxE2de2CybKVNTJMe+589S56UNa/+dvDTexudDeyjEnrqIeuRhJw4vBxLUUyuEpmRzsGS8u1DvVCMICvVMkM8gQHSsmZ+bQMVdN4l+sJMl31zVf3VEE2OWeHBrUjtCnEX7BkjawDlrVasN7X4quCtDFPf0OK3+gIjULifJho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bCAp4JPX; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="YR5vqQX1"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 797ED1E8D;
-	Wed, 22 Apr 2026 11:45:43 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8F7BC3F641;
-	Wed, 22 Apr 2026 11:45:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1776883549; bh=hkA5KjlIl5jwh4GkTXHA4vVNwgDxaznRvBx/RdhhKnA=;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bCAp4JPX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 334ACC19425;
+	Wed, 22 Apr 2026 18:51:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1776883869;
+	bh=QAnJAPXdDP9ZUgfbNMD+G/bRQFx5oM9LjIYK7IpcsGc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YR5vqQX1RwlqvU3irJVsmTCjnxjrT6BB9Mobx9TN8DuowUioHwsuy9oU1pnpwNL11
-	 1dlH18U+1iqag2bVyl/WX8QGsNBDr23tbm4Y62yq+fUD39OYy8G20AUnr3jzLYs74m
-	 6vfxb5Ccpxy/4VArdBH/MSuXTFo62aj6EQPD8FS0=
-Date: Wed, 22 Apr 2026 19:45:38 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Sudeep Holla <sudeep.holla@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Rob Herring <robh@kernel.org>,
+	b=bCAp4JPX+e+nvkLxiw3/olEBTK1qHhsLYsH+n2yn2yUAKZQD2u/v3Z9BU4H4gDnNl
+	 +y9aEGTLvpbfYVWWLf/ArlanlmwwVD0Ik1jGbeTGev6Al8B5MOdItw01rn0X0iP2sO
+	 q+o4rxGAIA+mlVi1VFFn24gQaGvmpK2SAfjtQn6ReEE5VWHybOEVUVgsiHfeMAAUZR
+	 VBlH7XyyS59i82MBTaTy5nIzrbjlszTJNt8S4E/0SSGRxM9Q4h+OyuqZr7lVncaSZ2
+	 9svshMGjxS8h5aMHXTzWbpDk+PIjVom8nEJ4HSbOx6Ngt5BAl9+lIt7sNWrAoZUd9W
+	 1owGLZ18teIPg==
+Date: Wed, 22 Apr 2026 19:51:03 +0100
+From: Sudeep Holla <sudeep.holla@kernel.org>
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Sudeep Holla <sudeep.holla@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Saravana Kannan <saravanak@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Ulf Hansson <ulfh@kernel.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH/RFC 05/14] firmware: arm_scmi: Add scmi_get_base_info()
-Message-ID: <aekXUvIPb8nkhdKu@pluto>
-References: <cover.1776793163.git.geert+renesas@glider.be>
- <72e2a0e7a5abda02fe36b3f5851842f7a77b2593.1776793163.git.geert+renesas@glider.be>
+	Cristian Marussi <cristian.marussi@arm.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH RFC 2/2] clk: scmi: Add support for two #clock-cells to
+ pass rate rounding mode
+Message-ID: <20260422-satisfied-rough-mongrel-aabca1@sudeepholla>
+References: <20260306-scmi-clk-round-v1-0-61e2a5df9051@nxp.com>
+ <20260306-scmi-clk-round-v1-2-61e2a5df9051@nxp.com>
+ <20260422-huge-kiwi-of-tornado-4fce89@sudeepholla>
+ <aejUd6L1AfbsflxR@shlinux89>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,70 +53,102 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <72e2a0e7a5abda02fe36b3f5851842f7a77b2593.1776793163.git.geert+renesas@glider.be>
+In-Reply-To: <aejUd6L1AfbsflxR@shlinux89>
 
-On Tue, Apr 21, 2026 at 08:11:38PM +0200, Geert Uytterhoeven wrote:
-> Currently non-SCMI drivers cannot find out what the specific versions of
-> each SCMI provider implementation on the running system are.
-
-Hi Geert,
-
-Thanks for your patches....this is not a proper full review of the series,
-BUT this patch catched my eye..
-
-Indeed, yes, it is deliberate that the SCMI version information is NOT
-exposed out of the SCMI world, since being the SCMI an attempt to
-standardize a common FW interface (as in [1] of course), you should not
-know what runs inside the black-box, it should be irrelevant...
-
-...indeed the versioning is used inside the SCMI stack to deal properly
-with different protocol versions implemented by the server OR to apply
-proper quirks when needed, but all the rest should be standard....
-
-...you should NOT really behave differently based on the underneath
-protocol or firmare implementation version...it is the SCMI stack that
-should behave properly, transparently...
-
-Having said that...I understand that at least it could be useful to be able
-to query the SCMI stack to know, even from non-SCMI drivers, WHICH quirks
-have been applied/activated at run time...but anything more than that it
-seems to me dangerous and prone to a number of abuses of the SCMI stack
-itself...
-
-(Also...exposing the versions itself means also tracking that bit of info
-in more than one place: the quirk framework and your drivers.)
-
+On Wed, Apr 22, 2026 at 10:00:23PM +0800, Peng Fan wrote:
+> Hi Sudeep,
 > 
-> However, different versions may use different ABIs (e.g. different clock
-> IDs), or behave different, requiring remapping or workarounds in other
-> drivers.
+> Thanks for giving a look.
+> 
+> On Wed, Apr 22, 2026 at 02:14:56PM +0100, Sudeep Holla wrote:
+> >On Fri, Mar 06, 2026 at 02:20:13PM +0800, Peng Fan (OSS) wrote:
+> >> From: Peng Fan <peng.fan@nxp.com>
+> >> 
+> >> SCMI CLOCK_RATE_SET allows the caller to specify the rounding behaviour
+> >> when setting a clock rate. The previously added dt-bindings header
+> >> defines three modes:
+> >> 
+> >>   ROUND_DOWN / ROUND_UP / ROUND_AUTO
+> >> 
+> >> To enable device tree clients to select a rounding mode, extend the
+> >> SCMI clock provider to support "#clock-cells = <2>", where the second
+> >> cell encodes the desired rounding mode. The default remains
+> >> ROUND_DOWN for backwards compatibility with existing device trees.
+> >> 
+> >
+> >Where is the binding update documented ? It's not in 1/2.
+> 
+> This was missed in this patchset, I will fix in new version, if this
+> patchset does not have big design flaw.
+> 
+> >
+> >Also if it can be static in the device tree, why can't it be
+> >autonomously handled in the platform firmware ? I think I know the
+> 
+> Linux passes ROUND_DOWN, SCMI firmware uses round down for clk calculation.
+> 
+> >answer for this but I want to make sure it is a valid use-case and
+> >gets documented here as part of binding updates.
+> 
+> Per info from our video software team.
+> We have some video modes where the best pixel clock rate is slightly above the
+> nominal rate, and the default round down rule (CLOCK_ROUND_RULE_CEILING in SM
+> firmware) can cause the resulting clock rate to be much lower than expected.
+> 
+> disp1pix = 96200000 Hz (desired pixel clock rate)
+> 
+> The MIPI DPHY cannot hit the exact frequency of 288600000 Hz needed for this
+> pixel clock rate, so the next best DPHY PLL frequency is 289000000 Hz. This
+> corresponds to a pixel clock frequency of 96333333 Hz, which is slightly higher
+> than the nominal rate of 96200000 Hz the video mode specifies.
+> 
+> Setting the VIDEOPLL (disp1pix parent) to 289000000 Hz should divide down to
+> the adjusted disp1pix frequency of 96333333 Hz, but here is what happens in the
+> SM firmware:
+> 
+> quotient = 289000000 / (96200000 + 1) = 3.004 => 3 (notice that the SM always
+> receives the nominal clock rate, not the adjusted rate)
+> 
+> If the rounding rule is round down (CLOCK_ROUND_RULE_CEILING),
+> quotient = quotient + 1. Therefore, quotient becomes 4.
+> 
+> disp1pix = 289000000 / 4 = 72250000, which is nowhere close to the target of
+> 96333333.
+> 
 
-...abuse like this indeed :P ... the SCMI server is supposed to be that
-one entity remapping the IDs in the background if the same IDs happen to
-be representing different physical resources across a number of distinct
-platforms all supported by the same firmware blob...so as to present
-a consistent set of contiguos IDs...
+I do not think this is the correct interpretation of `CLOCK_ROUND_DOWN/UP`.
 
-Also because this should be one of the selling point of the SCMI stack
-in a virtualized environment: you can ship the same kernel drivers with
-the same DT and you know that ID=<N> will always identify the specific
-resource that is needed by your driver without worrying about the fact
-that in reality in the backstage the effectively managed physical resource
-could be different across different platforms, because that does not matter
-if the SCMI platform server had properly remapped (at build time/run-time ?)
-the resources to your expected ID...alternatively of course you can ship
-with different DTs to describe different hardware...BUT remmapping stuff
-in the drivers themselves guessing on the vendor/subvendor/impl_vers
-seems a dangerous abuse...
+`CLOCK_ROUND_DOWN/UP` should apply to the requested `disp1pix` rate itself,
+not to the divider choice in a way that forces selection of the next integer
+divisor and produces a much lower output clock.
 
-I watched a bit of the LPC discussions around this (from Marek I think)
-but sincerely most of those problems had one (not necessarily simple)
-solution: fix your firmwares AND/OR apply quirks in the meantime...
+Here, the requested `disp1pix` is `96,200,000 Hz`, and the parent rate is
+`289,000,000 Hz`. The achievable child rates nearby are:
 
-Sorry, I am sure this not a welcomed answer :P ...thoughts ? 
+`289,000,000 / 3 = 96,333,333 Hz`
+`289,000,000 / 4 = 72,250,000 Hz`
 
-Thanks,
-Cristian
+Given those options, the firmware should be able to round the request
+autonomously to the nearest supported `disp1pix` rate, which is `96,333,333
+Hz` (`289,000,000 / 3`).
 
-[1]: https://xkcd.com/927/
+Under that interpretation:
 
+`CLOCK_ROUND_UP` would permit choosing `96,333,333`
+`CLOCK_ROUND_AUTO` would also likely choose `96,333,333`
+Choosing `/4` and ending up at `72,250,000` does not look like a meaningful
+rounding of `96,200,000`
+
+So the issue appears to be that the firmware is applying the rounding rule to
+divider selection rather than to the resulting `disp1pix` frequency.
+
+> However, if we can use `ROUND_AUTO` the SM firmware would select a quotient of 3
+> in this case, and `disp1pix` would match our target: `289000000 / 3 = 96333333`.
+
+Given the explanation above, I would not support this approach. `ROUND_AUTO`
+should be sufficient for this case if the firmware is making a sensible
+selection.
+
+-- 
+Regards,
+Sudeep
