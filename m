@@ -1,319 +1,305 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70D582609C5;
-	Wed, 22 Apr 2026 07:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776844226; cv=none; b=b6QOF9WAmOZqhmUWDQqpbGlPjIZqdkCsQAsMSrJZ/ZyvEbwwnSaw4iHYM+7bEAjkN4k1v3xdPyT+WRRO6My1jSsWtKKq6CBkp9lt5aHhqejciqo9vQJMfJrVFtkBAKwxcisqEg6FJDDR0ZC3T/s4yU4pZv3n68vprg9q3iaq3vI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776844226; c=relaxed/simple;
-	bh=d6/6i3xUhPYgQ6s56JeFkRx77F+D3+xkqXOayMXSPEo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ub4ZUCp2VpbSp+ad4R11JWSV8o1MIHir+Rw7XmMOMq0hFakssjfntW6fZtxHQ7M393HgpAbFiu6few0mUR1eFtwtrP5Ca5P5W9aCaM12Ta9a/3EATuPnGHQFaLA0BjXd2eEgk9cZy5Zc9yhcI92bW/QsvuxAYfh7NYMLx35P0kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j5LdyOLy; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B262ED15F
+	for <linux-clk@vger.kernel.org>; Wed, 22 Apr 2026 08:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1776845493; cv=pass; b=APv6sOlk5b7gQE8B6ep22yrZeodYseWnwMjhk+qwkeMegqKVFNZlYJLMVoYtX+GqUeWQMgAgG7XNmi/ZOG7SQ/wM05PuH7nNVGkxjnjNbPhlge0N15Vi+6z5lBBwSxjuL/GUyPvV3f/LMkZDgOGgNRlEgs2ySJbEZ75IOTP5q38=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1776845493; c=relaxed/simple;
+	bh=Uj2dfvAmdvVsmr9BwtADebPDycT+EnGzdroVrjGKN3M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YWs9LrG3RsRAvzu1ixVgSKBnBB7M9l4HxsKTOhFpiK40L1aplu6DQA5858w5cVyUXlzZ7X5mPeDGf+/8UP9OcYBcgq+p4BAVw7q16kUWY8E+kKUcbO1jDRberWhSAKSrZmmJ2T99gV70W7Ri1ylC0O4DNbfZFmTbbXGW4gGmLJ0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=flipper.net; spf=pass smtp.mailfrom=flipper.net; dkim=pass (2048-bit key) header.d=flipper.net header.i=@flipper.net header.b=8HNOcSpd; arc=pass smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=flipper.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flipper.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j5LdyOLy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFDC2C19425;
-	Wed, 22 Apr 2026 07:50:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776844226;
-	bh=d6/6i3xUhPYgQ6s56JeFkRx77F+D3+xkqXOayMXSPEo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j5LdyOLyXIVAF9bJhdJMSobtHL5KNDWOFSDrCv1yDBWHfTURWBySZ8tdBxWOIaLAP
-	 bKvMX2WH0MKJUykNSmKe9KGmNogWzMx06iuySG+42I/1vZTQpxtfh5aJ5DJD2ncLV+
-	 BvXj7vLZzgi+fzB+RUVi7X4TUQYHEvAHgr0K0Jrtn0vV/g5vYDklI9rlqXT46+FrKI
-	 b/1431qCG1UD2/cRuCLzpyZYmggKw0aaHnY9snfYuPR6pa1IduhN9vKoyJ5AIyrUZ+
-	 Kar/ZHwZVFzA0hGioRTq5T5T8UFBvCQbpwO352mAVLacKNCN7RqlTuPj5ppBRqJOCM
-	 Q8kIOmfKmd2zQ==
-Date: Wed, 22 Apr 2026 09:50:23 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Lee Jones <lee@kernel.org>, 
-	Ajit Pandey <ajit.pandey@oss.qualcomm.com>, Imran Shaik <imran.shaik@oss.qualcomm.com>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, Maulik Shah <maulik.shah@oss.qualcomm.com>, 
-	Taniya Das <taniya.das@oss.qualcomm.com>
-Subject: Re: [PATCH 04/13] soc: qcom: Introduce CESTA resource manager driver
-Message-ID: <20260422-funny-devious-gharial-a5e5c8@quoll>
-References: <20260420-cesta-sm870-dispcc-v1-0-eb27d845df9c@oss.qualcomm.com>
- <20260420-cesta-sm870-dispcc-v1-4-eb27d845df9c@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=flipper.net header.i=@flipper.net header.b="8HNOcSpd"
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b9c9d03524cso712795266b.3
+        for <linux-clk@vger.kernel.org>; Wed, 22 Apr 2026 01:11:31 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1776845490; cv=none;
+        d=google.com; s=arc-20240605;
+        b=G1fkPudkuZW7agFRnLiNTpIgG9ZVSnHjXa58MP15sIIX3oNSWYDjfmERwGooAZBt92
+         eqi/walbt5gA+413W7GHdB1mcTxuZBrh/1fxkdlixz6gXM8aNRme+xGYW7vxWxLcVq65
+         oUHt/3EZxvrDZeY8CwSdKmGfkfEaFLCV2KIKOi5R57BAmg5lejoyi9pisH3Og0MW3PLN
+         HEoY7935Xs5rG7uBkVReS6W2hc2YQx9jJ4BLLrz2PuSbAnmBUFmQo66HR3GdL8DCR8IE
+         AATU9cbvHj+y++mhVytlBVLi8qFJor4Rn5bEPu9XDspxEIEk9Xik+mUDZgUtYwEolAzR
+         pqCQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=kHhSfVuYhrjw/BhaVzSyk6LT5DFSKZyqA2uUtt4y784=;
+        fh=7uAB8t/+dR9KnWx5H1lJEl+9+zkiFMtJqIoTiIezN/Q=;
+        b=i+oDqzHe/OcBrF4XMEWMW0z+O3LXlmVtFup8VYP0OQDTThd/2vmFFRlSYjSswVd51M
+         2i/kRPfbxaH/rWbb5LS245u3iAiyfo0E4AykMk1+RpGIF0v8xsTNKBmAZfqtkmWtUi8L
+         Uv4FTR+lV8piSKL+1o3YiR3p+pJVB31fXmKYGFwpeYjkcGAtBqDumkUIJBbf5W0nxU/u
+         SzW7JEf3hgN10HEfXilpU31bS8gpMRUCoi8FS5iFbjTDQ6lTtURM6Zw840+MGIa/ML4/
+         Go8yLdNn582NjO4xYHWn0MaI+77QMWCekdEXHyfzjxZlu7bwHfXyCgGmMgdStLtSogPD
+         YvUA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=flipper.net; s=google; t=1776845490; x=1777450290; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kHhSfVuYhrjw/BhaVzSyk6LT5DFSKZyqA2uUtt4y784=;
+        b=8HNOcSpd+uE1Hs3uQUf7Pv9qppyedmlMdMpLRPz/vPuI98xOba3O1kxO8f5iu/NJXA
+         ixg4sLV/7s9cZp/WY/HpWGAiL6kIeeBF1nHKmSKSrsNIkJ+aOoAzDVqLFaMidmiURV9e
+         HGtKhi4xpPPZu+CJaBPDUthL5cn7gRxB+pHYvkZ66eLMgUStVe8TFVQklPzdP84y349n
+         QnHRWJDiBWZF3GjaqQZ31k/OB1lxAAyb4fp/jVij+dZAHWArEdfDfYUZDN5eeHXy/IDW
+         HBFWwPPIWQffjWXg5jqO3lxZIpeoBxKSNq/YqQ0rSXGPJAaJ5ur32L1COSF3YSbYZNxR
+         dJCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776845490; x=1777450290;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=kHhSfVuYhrjw/BhaVzSyk6LT5DFSKZyqA2uUtt4y784=;
+        b=j7YCvc5DMDlwAd3dEWcmC6ugziCYw+MSrUrMI66vqOv93XiacX4k8FOuJICeS7ZhmU
+         7Gz6DP/MAMb3Fz9WjuJ4uGGcFUgrefyWP2xfyw8lkJVkFYTBJLJQ+Vvi+kdLK01onlm5
+         5rlLG1tFgX2XMvl2Mi8kIbK9BKP8gYpJGuZ1uhw2XEc90Nxq4rwyYsP6QyG9CgMuGOiB
+         MLxKXUxz1t8umsz6nn4MXayDQOf7yFHBDS0dbgCetVLN2RlXEfMOLxFwnsyfbMP5z9Pg
+         sXPUJRbdEEO25ltvXeMx9m1V9jWDkMiDtOXlr3m9c27ZvXZ9pbZNmDOP8FGvkx5O51UM
+         bXGQ==
+X-Forwarded-Encrypted: i=1; AFNElJ+zSRW50an5Oqx6UclpKEf4D/wxGoad0lmJtZIUcqawEgmLhaW8FG+yoN/qGb3M1cTBxdBCRbeYe2E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0U/4QuLgyxebWLL94UjaoOfQf7vDD2+/bDoT5/rZ1TVDitlKN
+	bWc8v80N9L98HBXbCzleTAQjWimGAL66zz412fFCofQdlbv4hBXQjjh+w8Hi3Y4rhAqlITAxkVx
+	kVKebSEhMSKXlFLQOBFPAnFBUOPDZmXWY0hmze2QPhw==
+X-Gm-Gg: AeBDiesQ+Dc0so1x90/S6du+cQYK+PBdUBaNo1s0gLHllEwseItoQs392G2JpXMg1Z6
+	Dh9UzhLCQ5BiWhzFpJ1pahh8xra/Trp7FXHE9PsLbM8ewgMQX+x3BKfyxa8M/XZKcG9rnn65QmZ
+	sfaqLIQWpxIJYrF03+bQ/S/zjCLL8woV5SVDgNh9ua6hXMSSIln2WqaSQp7yapxeb9VW/nbQSM8
+	g303NmLck9B/GodNPZ2l1Y+NAl+9d654lELb86CmLhJqA89tbr4nWOMFSfXvTHUAAGyGMzvUCGF
+	MrT57lyw4e9BGdh90w==
+X-Received: by 2002:a17:907:cc01:b0:ba2:5226:95f8 with SMTP id
+ a640c23a62f3a-ba41aa1611fmr746041966b.23.1776845490067; Wed, 22 Apr 2026
+ 01:11:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260420-cesta-sm870-dispcc-v1-4-eb27d845df9c@oss.qualcomm.com>
+References: <20260417-rk3576-dclk-v1-0-26a9d0dcb2de@flipper.net>
+ <aeKtNf8CCAWduI-f@venus> <aeZOMnZfBcBHzR8c@redhat.com> <20260421-quirky-tough-robin-817a1c@houat>
+In-Reply-To: <20260421-quirky-tough-robin-817a1c@houat>
+From: Alexey Charkov <alchark@flipper.net>
+Date: Wed, 22 Apr 2026 12:11:21 +0400
+X-Gm-Features: AQROBzBMDLMpArAbO6yUVTJdEOlFOlX7S11D2R-MG4mKqqwVH-2tRc5cksKPqqI
+Message-ID: <CAKTNdwHcN8w1_12Zd-2Xp90GEDLvwd8Q6XxTdS12QBbCZuUk5Q@mail.gmail.com>
+Subject: Re: [PATCH RFC 0/4] arm64: rockchip: The hunt for exact pixel clocks
+ on RK3576
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Brian Masney <bmasney@redhat.com>, Sebastian Reichel <sebastian.reichel@collabora.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Pavel Zhovner <pavel@flipper.net>, Andy Yan <andy.yan@rock-chips.com>, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, 
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 20, 2026 at 09:58:57PM +0530, Jagadeesh Kona wrote:
-> From: Maulik Shah <maulik.shah@oss.qualcomm.com>
-> 
-> Add driver for QCOM SoC that have hardware based resource management.
-> 
-> The hardware IP known as CESTA (Client State Aggregation) have different
-> Resource Manager (CESTA Resource Manager) or CRM.
-> 
-> CRM can be of 4 different types,
->   - CRMC is CRM for clocks local to subsystem
->   - CRMB is CRM for bandwidth votes local to subsystem
->   - CRMB_PT is pass through CRM for bandwidth votes global to subsystem
->   - CRMV is CRM for voltage rail / LDO requirements global to subsystem
-> 
-> A set of SW DRVs (Direct Resource Voters) can vote to all/subset of
-> CRMC/CRMB/CRMB_PT which then takes care of the respective resource voting.
-> There is no direct voter on CRMV, rather the CRMC votes picks up the
-> respective voltage from LUTs and scales the voltage accordingly required
-> for clocks or bandwidth votes.
-> 
-> Some important aspects of the CRM communication -
->  - Resource votes can be placed in the form of performance operating
->    levels or bandwidth votes for local/global NoCs
->  - SW DRVs vote can be of the Active / Sleep / Wake type
->  - All the resource votes are in the form of CESTA command
->    (resource id, value) pair.
-> 
-> Signed-off-by: Maulik Shah <maulik.shah@oss.qualcomm.com>
-> Signed-off-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
-> ---
->  drivers/soc/qcom/Kconfig     |  10 +
->  drivers/soc/qcom/Makefile    |   2 +
->  drivers/soc/qcom/crm.c       | 996 +++++++++++++++++++++++++++++++++++++++++++
->  drivers/soc/qcom/trace-crm.h | 111 +++++
->  include/soc/qcom/crm.h       |  72 ++++
->  5 files changed, 1191 insertions(+)
-> 
-> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-> index 2caadbbcf8307ff94f5afbdd1481e5e5e291749f..50f6c3cbf12f87ca2bab183e7996dba7312b9f58 100644
-> --- a/drivers/soc/qcom/Kconfig
-> +++ b/drivers/soc/qcom/Kconfig
-> @@ -26,6 +26,16 @@ config QCOM_COMMAND_DB
->  	  resource on a RPM-hardened platform must use this database to get
->  	  SoC specific identifier and information for the shared resources.
->  
-> +config QCOM_CRM
-> +	tristate "Qualcomm Technologies, Inc. (QTI) CESTA Resource Manager (CRM) driver"
+Hi Sebastian, Brian, Maxime,
 
-Just "Qualcomm CESTA Resource Manager (CRM) driver"
+Thanks a lot for your inputs!
 
-Eveyrthing is Qualcomm Technologies, Inc. (QTI) and you make it
-completely unreadable for the menuconfig.
+On Tue, Apr 21, 2026 at 8:10=E2=80=AFPM Maxime Ripard <mripard@kernel.org> =
+wrote:
+>
+> Hi Brian, Alexey,
+>
+> On Mon, Apr 20, 2026 at 12:02:58PM -0400, Brian Masney wrote:
+> > On Sat, Apr 18, 2026 at 12:24:57AM +0200, Sebastian Reichel wrote:
+> > > On Fri, Apr 17, 2026 at 07:11:43PM +0400, Alexey Charkov wrote:
+> > > > Dear all,
+> > > >
+> > > > Need the help of the collective wisdom of the community.
+> > > >
+> > > > The problem I'm trying to solve is reliably obtaining the exact pix=
+el
+> > > > clock for arbitrary display modes supported by the RK3576 SoC.
+> > > >
+> > > > Rockchip RK3576 has three display output processors VP0~VP2, each
+> > > > supporting different ranges of display modes, roughly as follows:
+> > > > - VP0: 4K 120Hz
+> > > > - VP1: 2.5k 60Hz
+> > > > - VP2: 1080p 60Hz
+>
+> Do any of those have an additional multiplier or divider after the PLL?
+>
+> I'm asking because 4k@120Hz is 1188MHz, and 1080p@60Hz is 148.5 (so 1188
+> / 8). 2.5k @ 60 might be a bit more problematic, but my point is that
+> for HDMI/DP, most resolutions all have a pixel clock that are multiples
+> of 148.5MHz.
+>
+> If you manage to get the PLL to the highest you need (1188MHz), and then
+> apply dividers, you don't need to change the PLL frequency anymore.
 
+Yes, each of them has an (integer-only) divider between the PLL and
+the respective mux. The problem though is that displays' EDIDs want
+modes that are all over the place and don't seem to converge to any
+common numbers generally (it looks like display manufacturers haven't
+heard of VESA modes these days).
 
+Following Heiko's nudge from the other sub-thread (thanks for the
+pointers Heiko!), I derived the fractional PLL parameters for the
+modes which couldn't be obtained cleanly from existing PLL values. It
+ended up being 35(!) different rates for just the 7 displays my
+colleagues and I could get our hands on, majority of which only
+representable with the fractional delta-sigma component. That's after
+consolidating the clocks which can be driven from the same
+higher-frequency PLL configuration with small integer dividers. Seeing
+all of that I couldn't help but think, "Surely those should be
+possible to consolidate further by allowing for some error margin!" -
+but had to guess again. Even a deviation as small as 0.2% of the
+effective clock from the requested rate causes blank screens in my
+sample - sometimes less than that.
 
-> +	depends on QCOM_RPMH && (ARCH_QCOM || COMPILE_TEST)
+This further leads me to believe that Brian's rate negotiation series
+won't save me here, as the chances of two different displays at two
+different weird modes magically agreeing on a PLL rate that is a
+common multiple of their respective pixel clocks seem infinitesimal.
+And their modes will most likely differ, as VP outputs are asymmetric.
+Unless of course everything is 1920x1080@60 with a standard 148.5 MHz
+pixel clock or its integer multiple - then the problem doesn't exist,
+as this particular mode works even in the current configuration on all
+VPs.
 
-What do you need from rpmh for compile test?
+> > > > Each one obviously needs a pixel clock. The required frequencies fo=
+r the
+> > > > pixel clocks vary greatly depending on the display mode, and need t=
+o be
+> > > > matched within a tight tolerance, or else many displays will refuse=
+ to
+> > > > work. E.g. the preferred (maximum) display mode out of VP1 is parti=
+cularly
+> > > > awkward, because it requires a pixel clock of 248.88 MHz, which can=
+not
+> > > > be obtained using integer dividers from its default clock source (G=
+PLL
+> > > > at 1188 MHz), and the nearest approximation is 237.6 MHz, which is =
+well
+> > > > outside the tolerance of e.g. DP specification, resulting in a blan=
+k
+> > > > screen on most displays by default.
+> > > >
+> > > > The clock sources are of course configurable, in particular there a=
+re muxes
+> > > > connected to each VP for selecting the source of the pixel clock:
+> > > > - Each VP can take the clock either from the (single!) HDMI PHY or =
+from
+> > > >   its dedicated dclk_vpX_src mux
+> > > > - The dclk_vpX_src mux can select the clock from a number of system=
+ PLLs
+> > > >   (GPLL, CPLL, VPLL, BPLL, LPLL)
+> > > >
+> > > > While the system PLLs can be configured to output a wide range of
+> > > > frequencies, they are shared between many system components. E.g. o=
+n the
+> > > > current mainline kernel on one of my RK3576 boards I've got the fol=
+lowing:
+> > > > GPLL: 1188 MHz, enable count 20
+> > > > CPLL: 1000 MHz, enable count 17
+> > > > VPLL: 594 MHz, enable count 0 (yaay!)
+> > > > BPLL, LPLL: 816 MHz, enable count 0 (but these last ones don't have
+> > > >             predividers, so are less flexible)
+> > > >
+> > > > So ultimately there is exactly one free fractional PLL (VPLL) which=
+ can be
+> > > > used to generate arbitrary pixel clocks, but we have up to three co=
+nsumers
+> > > > trying to drive different display modes from it (e.g. HDMI on VP0, =
+DP on
+> > > > VP1 and MIPI DSI on VP2). We also want to be able to adjust the PLL=
+ output
+> > > > frequency on the fly to satisfy the requirements of the selected di=
+splay
+> > > > mode.
+> > > >
+> > > > And this is where I'm stuck. Trying to satisfy the requirements of =
+up to
+> > > > three consumers while changing the PLL frequency on the fly sounds =
+like
+> > > > a poorly tractable mathematical problem (is it 3-SAT?). We can take=
+ the
+> > > > HDMI output out of the equation, because it can be driven from the =
+HDMI
+> > > > PHY (which is capable of arbitrary rates) instead of the mux, but t=
+hat
+> > > > makes the decision of which dclk source to use for a VP block depen=
+dent on
+> > > > which downstream consumer is connected to it (HDMI vs. something el=
+se).
+> > >
+> > > It becomes more messy: The HDMI PHY cannot be used as clock source
+> > > for modes exceeding 4K@60Hz.
 
-> +	help
-> +	  Support for communication with the hardened-CRM blocks in
-> +	  Qualcomm Technologies, Inc. (QTI) SoCs. CRM provides interface
-> +	  to vote desired power state of resources local or global to a subsystem.
-> +	  A set of hardware components aggregate requests for these resources and
-> +	  help apply the aggregated power state on the resource.
-> +
->  config QCOM_GENI_SE
->  	tristate "QCOM GENI Serial Engine Driver"
->  	depends on ARCH_QCOM || COMPILE_TEST
-> diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-> index b7f1d2a5736748b8772c090fd24462fa91f321c6..7f465e86c1b8a4c2657870783a22acc4315a7407 100644
-> --- a/drivers/soc/qcom/Makefile
-> +++ b/drivers/soc/qcom/Makefile
-> @@ -1,9 +1,11 @@
->  # SPDX-License-Identifier: GPL-2.0
-> +CFLAGS_crm.o := -I$(src)
->  CFLAGS_rpmh-rsc.o := -I$(src)
->  CFLAGS_qcom_aoss.o := -I$(src)
->  obj-$(CONFIG_QCOM_AOSS_QMP) +=	qcom_aoss.o
->  obj-$(CONFIG_QCOM_GENI_SE) +=	qcom-geni-se.o
->  obj-$(CONFIG_QCOM_COMMAND_DB) += cmd-db.o
-> +obj-$(CONFIG_QCOM_CRM)	+= crm.o
->  obj-$(CONFIG_QCOM_GSBI)	+=	qcom_gsbi.o
->  obj-$(CONFIG_QCOM_MDT_LOADER)	+= mdt_loader.o
->  obj-$(CONFIG_QCOM_OCMEM)	+= ocmem.o
-> diff --git a/drivers/soc/qcom/crm.c b/drivers/soc/qcom/crm.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..9fc4460a65f7f0b4cc262da48f49b769db434082
-> --- /dev/null
-> +++ b/drivers/soc/qcom/crm.c
-> @@ -0,0 +1,996 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-> + */
-> +
-> +#include <linux/bitfield.h>
-> +#include <linux/delay.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/io.h>
-> +#include <linux/iopoll.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/slab.h>
-> +#include <linux/spinlock.h>
-> +#include <linux/wait.h>
-> +
-> +#include <soc/qcom/crm.h>
-> +
-> +#define CREATE_TRACE_POINTS
-> +#include "trace-crm.h"
-> +
-> +#undef field_get
-> +#define field_get(_mask, _reg) (((_reg) & (_mask)) >> (ffs(_mask) - 1))
-> +
-> +#define MAX_NAME_LENGTH			20
-> +
-> +/* Applicable for SW DRVs BW Registers */
-> +#define PERF_OL_VALUE_BITS		0x7
-> +
-> +/* Applicable for SW DRVs BW Registers */
-> +#define BW_VOTE_VALID			BIT(29)
-> +/* Applicable only for SW DRVs BW PT Registers */
-> +#define BW_PT_VOTE_VALID		BIT(29)
-> +#define BW_PT_VOTE_TRIGGER		BIT(0)
-> +/* Applicable only for SW DRVs BW Registers */
-> +#define BW_VOTE_RESP_REQ		BIT(31)
-> +
-> +/* Set 1 to Enable IRQ for each VCD */
-> +#define IRQ_ENABLE_BIT			BIT(0)
-> +#define IRQ_CLEAR_BIT			BIT(0)
-> +
-> +/* SW DRV has ACTIVE, SLEEP and WAKE PWR STATES */
-> +
-> +#define MAX_SW_DRV_PWR_STATES		3
-> +/* Time out for ACTIVE Only PWR STATE completion IRQ */
-> +#define CRM_TIMEOUT_MS			msecs_to_jiffies(10000)
-> +
-> +/*
-> + * Here's a high level overview of CESTA - Client State Aggregation
-> + *
-> + * - CESTA resource manager (CRM) is used for client side resource management.
-> + *   These local resources can be clocks or NoCs. A vote can be placed by DRVs
-> + *   (Direct Resource Voters) which can be either SW DRV or HW DRV.
-> + *
-> + * - Current driver supports placing votes via SW DRVs.
-> + *
-> + * - A resource vote can be placed by voting to VCD (Virtual Clock Domain) or
-> + *   Node (ND).
-> + *   Vote can be in the form of
-> + *   (1) performance operating level votes - Local clocks scaling
-> + *   (2) bandwidth votes - Local NoCs scaling (Camera / Display NoC)
-> + *   (3) bandwidth pass through votes - Global resource scaling (DDR)
-> + *   Not all CRM can vote via all three forms
-> + *
-> + * - The base crm address is the DRV base of a register space that is used to place votes.
-> + *   Each VCD/ND/PT_ND has IRQ Status/Clear/Enable registers.
-> + *
-> + * - The config crm address is used to find overall configuration of the hardware including
-> + *   version, num_perf_ol_vcds, num_nds and num_nds_pt and no. of SW DRVs.
+Thanks for the pointer! I've checked, and indeed it automatically
+switches to the PHY clock for anything below 600 MHz.
 
-Wrap the code to match Linux coding style.
+This is in fact a notable improvement, because then only a handful of
+higher-rate modes out of my modest sample need a dedicated PLL for the
+VP0+HDMI setup: specifically, 3840x2160@160 (1478740 kHz),
+3840x2160@144 (1275830 kHz), 3840x2160@119.88 (1186813 kHz - this one
+might work with 1188000 if CCF allows returning higher-than-requested
+effective rates) and 2560x1440@165.08 (645000 kHz).
 
-...
+3840x2160@120 can be driven from the current GPLL, as it's exactly 1188 MHz=
+.
 
+The configuration / policy to enable that transparently for the user
+seems non-trivial though:
+- If the output is HDMI and the display clock is <=3D600 MHz, always
+source it from HDMI PHY (easy)
+- Otherwise, if the display clock is 1188 MHz or its integer quotient,
+always source it from GPLL, and disallow parent rate changes
+- Otherwise, reparent to any active PLL whose current rate is an
+integer multiple of the required display clock, and disallow parent
+rate changes
+- Otherwise, see if VPLL is free. If it is, reparent to it and request
+its rate change to the required display clock (or its integer
+multiple)
+- Otherwise, tell the user the mode set failed (and let them retry
+with a different mode, or own the pieces)
 
-> +static int crm_probe(struct platform_device *pdev)
-> +{
-> +	struct device_node *dn = pdev->dev.of_node;
+I'd love to learn if the above (or anything close) is representable in
+the kernel, although I suspect it's not:
+- Allowing or disallowing parent rate changes depends on the selected
+parent here, while in the current clock implementation it's an
+attribute of the child
+- All PLLs are equal, but one (VPLL) is more equal than the others by
+the virtue of being free more often, and also having the required
+delta-sigma component
+- Reparenting to an already running PLL if its rate permits should be
+preferred to monopolizing the VPLL
 
-This is NOT called 'dn', but 'np'. Always. Don't copy buggy rpmh code or
-other weird drivers.
+> > > > Even then we somehow need two devices to cooperate in picking a PLL
+> > > > frequency that satisfies the requirements of both of them, and chan=
+ge to it
+> > > > without display corruption. I'm not even sure if the CCF has mechan=
+isms
+> > > > for that?..
+>
+> It's not *just* the CCF though. You will disrupt the other, already
+> active display, which might affect the user because the screen will
+> blank, throw off the vblank timings and thus userspace, etc.
 
-> +	struct crm_drv_top *crm;
-> +	const char *name;
-> +	int ret;
-> +
-> +	crm = devm_kzalloc(&pdev->dev, sizeof(*crm), GFP_KERNEL);
-> +	if (!crm)
-> +		return -ENOMEM;
-> +
-> +	crm->desc = of_device_get_match_data(&pdev->dev);
-> +	if (!crm->desc)
-> +		return -EINVAL;
-> +
-> +	name = of_get_property(dn, "label", NULL);
-> +	if (!name)
-> +		name = dev_name(&pdev->dev);
-> +
-> +	crm->pdev = pdev;
-> +	crm->dev = &pdev->dev;
-> +	scnprintf(crm->name, sizeof(crm->name), "%s", name);
-> +
-> +	crm->base = devm_platform_get_and_ioremap_resource(pdev, 0, NULL);
-> +	if (IS_ERR(crm->base))
-> +		return -ENOMEM;
-> +
-> +	crm->cfg = devm_platform_get_and_ioremap_resource(pdev, 1, NULL);
-> +	if (IS_ERR(crm->cfg))
-> +		return -ENOMEM;
-> +
-> +	if (pdev->dev.pm_domain) {
-> +		ret = devm_pm_runtime_enable(&pdev->dev);
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret = pm_runtime_resume_and_get(&pdev->dev);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	crm->crm_enabled = readl_relaxed(crm->cfg + crm->desc->cfg_regs[CRM_ENABLE]);
-> +	if (!crm->crm_enabled) {
-> +		dev_err(crm->dev, "%s not enabled, exiting\n", crm->name);
+Indeed. Changing the rate of a PLL while it's in use sounds scary,
+even if a solution for the rate exists and can be found in reasonable
+time.
 
-How is this an error? If FW did not enable CRM, it did it on purpose, so
-why are you reporting it as an error to the user? What user should do
-with that? File a bug report for the FW?
+> Brian's solution is great progress on that front already, but if you can
+> just save yourself the trouble, I'd advise you to do that instead :)
 
-> +		ret = -ENODEV;
-> +		goto exit;
-> +	}
-> +
-> +	ret = crm_probe_drvs(crm, dn);
-> +	if (ret)
-> +		goto exit;
-> +
-> +	ret = crm_probe_get_irqs(crm);
-> +	if (ret)
-> +		goto exit;
-> +
-> +	dev_set_drvdata(&pdev->dev, crm);
-> +exit:
-> +	if (pdev->dev.pm_domain)
-> +		pm_runtime_put(&pdev->dev);
-> +
-> +	return ret;
-> +}
-> +
-> +static u32 crm_v2_cfg[] = {
+I'd love to, but it seems that displays won't let me :-D
 
-Why isn't this const?
-
-> +	[CRM_VERSION]			= 0x0,
-> +	[MAJOR_VERSION]			= GENMASK(23, 16),
-> +	[MINOR_VERSION]			= GENMASK(15, 8),
-> +	[CRM_CFG_PARAM_1]		= 0x4,
-> +	[NUM_OF_NODES_PT]		= GENMASK(31, 27),
-> +	[NUM_VCD_VOTED_BY_BW]		= GENMASK(26, 24),
-> +	[NUM_SW_DRVS]			= GENMASK(23, 20),
-> +	[NUM_OF_RAILS]			= GENMASK(15, 12),
-> +	[NUM_VCD_VOTED_BY_PERF_OL]	= GENMASK(11, 8),
-> +	[CRM_CFG_PARAM_2]		= 0x8,
-> +	[NUM_OF_NODES]			= GENMASK(30, 26),
-> +	[CRM_ENABLE]			= 0xc,
-> +};
+It might be helpful to pre-filter the allowed display modes to only
+offer those which can be derived from the currently available PLL
+frequencies. The problem is that it makes an extremely limited subset
+on real-world displays.
 
 Best regards,
-Krzysztof
-
+Alexey
