@@ -1,154 +1,209 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D012DA759;
-	Wed, 22 Apr 2026 18:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36CA82DA76F
+	for <linux-clk@vger.kernel.org>; Wed, 22 Apr 2026 18:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776883869; cv=none; b=TlARYadJYD6mGepwT55cxf7CNyvtHgZIsuGnEPt1CxJDWo3DgqgYs6zHSr/D05HAiH77MvANjBZ6zGWej9NZgY70bT6wSbE4AzDCsHi3Khp2iNsN1aD7o6BeYgmm/ohUGE1SirMj8exHxF8WugUc6R5PjlCp3o0wZv6XNd3gBK8=
+	t=1776883916; cv=none; b=Sd4hUJ3LF3qlf3dIQjXsjrs17KHplVMGuthKpJ3ArnBTea0wsovUopCsXvgmVDa7LThLuT7HCpZJXj7U1j3xhK+ym2dZltwbIkzMRZM9zghbSqphWj6pE60iyCygJT6Hw5UaZSwl6a69dHUuzq8rP4cA5Tytdz3fRPLUt/8e7vQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776883869; c=relaxed/simple;
-	bh=QAnJAPXdDP9ZUgfbNMD+G/bRQFx5oM9LjIYK7IpcsGc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CBznxE2de2CybKVNTJMe+589S56UNa/+dvDTexudDeyjEnrqIeuRhJw4vBxLUUyuEpmRzsGS8u1DvVCMICvVMkM8gQHSsmZ+bQMVdN4l+sJMl31zVf3VEE2OWeHBrUjtCnEX7BkjawDlrVasN7X4quCtDFPf0OK3+gIjULifJho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bCAp4JPX; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1776883916; c=relaxed/simple;
+	bh=W3gJGhETv1i99hgZ4Qzxlq7+a/rqAi15n3RaJvZubfA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OfrE0LQvcEoPzTe2Zkrk0Izsrlf3ZyLp8iIewvgqLHsarMvJ2qqi8iGnIboQ9vmhZAZqz1rENtHC13myf2LsFIFK2mqNKBz8p24qAB+pNMPR4Sm+2N72UyGeN9UDqkyaIh443qaFmdpEhUh/mYo1Qj0cmgHHF4IpdllTrBi5uRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WoM6PqKc; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bCAp4JPX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 334ACC19425;
-	Wed, 22 Apr 2026 18:51:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776883869;
-	bh=QAnJAPXdDP9ZUgfbNMD+G/bRQFx5oM9LjIYK7IpcsGc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bCAp4JPX+e+nvkLxiw3/olEBTK1qHhsLYsH+n2yn2yUAKZQD2u/v3Z9BU4H4gDnNl
-	 +y9aEGTLvpbfYVWWLf/ArlanlmwwVD0Ik1jGbeTGev6Al8B5MOdItw01rn0X0iP2sO
-	 q+o4rxGAIA+mlVi1VFFn24gQaGvmpK2SAfjtQn6ReEE5VWHybOEVUVgsiHfeMAAUZR
-	 VBlH7XyyS59i82MBTaTy5nIzrbjlszTJNt8S4E/0SSGRxM9Q4h+OyuqZr7lVncaSZ2
-	 9svshMGjxS8h5aMHXTzWbpDk+PIjVom8nEJ4HSbOx6Ngt5BAl9+lIt7sNWrAoZUd9W
-	 1owGLZ18teIPg==
-Date: Wed, 22 Apr 2026 19:51:03 +0100
-From: Sudeep Holla <sudeep.holla@kernel.org>
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Sudeep Holla <sudeep.holla@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH RFC 2/2] clk: scmi: Add support for two #clock-cells to
- pass rate rounding mode
-Message-ID: <20260422-satisfied-rough-mongrel-aabca1@sudeepholla>
-References: <20260306-scmi-clk-round-v1-0-61e2a5df9051@nxp.com>
- <20260306-scmi-clk-round-v1-2-61e2a5df9051@nxp.com>
- <20260422-huge-kiwi-of-tornado-4fce89@sudeepholla>
- <aejUd6L1AfbsflxR@shlinux89>
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WoM6PqKc"
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-67845996252so195387a12.3
+        for <linux-clk@vger.kernel.org>; Wed, 22 Apr 2026 11:51:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1776883912; x=1777488712; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R4vBmmJ5gC2QCrFlTLiSjZ3SPsY2SAKP5dBxbzswxUI=;
+        b=WoM6PqKcFGAZijsVlYaTV7HUC2SjrXF6WfuOD7YDK++1HOLw0++InBBJO15E0r1t1M
+         NsiZ4iwaOijfnO3ZwXs/vh8PMaG8RLBtlJuJyHSjUuWrMpkk5NeD/42ZFUjpZY4kxjbq
+         MKMOyi64S2J3RRN8WHgdPOhfI8vw6I3q1IRJc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776883912; x=1777488712;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=R4vBmmJ5gC2QCrFlTLiSjZ3SPsY2SAKP5dBxbzswxUI=;
+        b=pzvnocPJPi5B+FOnzKEFBlBfaWF3j8GJ4aW5txf07d2bHprNHJmqTsYYbX57dWndlh
+         N2Reh4mjkxGheIlsYsf+EiRq+AxKbI0yTTz1JQMPaTaFWO0NDFrksyEDfLkWQi095oZj
+         8j2U93km7YEnjDlglJ1bN120aETibduQmBiGSCxhsymDNkSTtlsPvLG84DibljJzcI0S
+         hs/LrktGYtAn2e0XaofGwpKfin0EoVtuul6/l5tGzbV75KyI8Tn0ClqZmNCDOdi5xY/w
+         w6/hVRx2wJSuswRteWZ7t2TkTE0U0XjkY+HDrWmHPQUztYtOof8MO8Xacmbm6y0YGwMv
+         z4Ww==
+X-Forwarded-Encrypted: i=1; AFNElJ9Cr1Hky+qBWIXIr1aXXBZTmI0nFG5nSS4yqUfB1UBS3jUTrmhQrzGRKdDzn2J28iVmsRnwM7ABDiM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgfEiMV7ONGiSpnMrFtAO0cQ4L7O08sNYmZY25aPP9uRQCkqsD
+	NNg0/563KVxUgjuBKEq6ivjnPDAX4G3YD/wAbn02FMmKAeVxjPW6DpQS9/Ww3awjwV6MFTtFTEq
+	2NU2Btw==
+X-Gm-Gg: AeBDieutROTlBK0lF3ZSdHSYWuJHqvHmnFJb1Bo4r1ECKqsabala92/hjYGrYeVZdBT
+	SdwY2uKS7FVjtOuDPHWAGrjh60js6HAPaKpd3vq1RRaU5BhNt70ryW3+RW+7BJgZ9rjjGraybXf
+	xzWnAzo+/qcVwy8UXrnlZtnUhMsxa4sEbIuiF8tT1doX5aCgVUc/3VImMouZWHgFs7RNuGlkUiC
+	hHzHR9YnY3PzD4Fhiz8xsVN8C7shd4EZn7tT/AhfqkyX1v9uvEcJBL9+Z+mZhGJ+epuT4ougnvs
+	K8We2V5/IzIhyA++bGDybxo7HjPih+acEWQTG6Ypo3VZ5xUwTtzDSQRUN1OG7ysEuwuEJZZQ9pk
+	kw9aKK4ueNpzFZDKie5WzrC9U3/XqklBvFW8U43OEzS4YgiHxH3+yMKuMtxJ4kYwbEwldp7RNJD
+	4F2TAC6fAQlVzqdiJ8/vIk0ymAaM6Q+Oi2xBom8cAAzofujv8U+M8vczHvW563D3lc1mOqPIf/
+X-Received: by 2002:a17:907:3e1b:b0:baa:a2be:9e02 with SMTP id a640c23a62f3a-baaa2be9e2emr273877666b.40.1776883911920;
+        Wed, 22 Apr 2026 11:51:51 -0700 (PDT)
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com. [209.85.221.52])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ba451210e54sm586928866b.9.2026.04.22.11.51.50
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Apr 2026 11:51:51 -0700 (PDT)
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-43d43e09de5so3305547f8f.1
+        for <linux-clk@vger.kernel.org>; Wed, 22 Apr 2026 11:51:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ8BqAAiPc7VhSDHXzlNJYbMOxeBewP2pjh6CUWJPJwwHjbfucAbyIrs7QjA27CjYt9X/QPMlpsTxsM=@vger.kernel.org
+X-Received: by 2002:a05:6000:2f8a:b0:43d:7a08:a5e6 with SMTP id
+ ffacd0b85a97d-43fe3e073c9mr39087653f8f.29.1776883909243; Wed, 22 Apr 2026
+ 11:51:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aejUd6L1AfbsflxR@shlinux89>
+References: <20260325143555.451852-1-herve.codina@bootlin.com>
+ <20260325143555.451852-3-herve.codina@bootlin.com> <CAMuHMdU7x7LWFkD9xiq+wyOqnn0bdzr+JLfvbBexoiWyv8kftA@mail.gmail.com>
+In-Reply-To: <CAMuHMdU7x7LWFkD9xiq+wyOqnn0bdzr+JLfvbBexoiWyv8kftA@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 22 Apr 2026 11:51:36 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=UK3NQKQN7FXyG4nGdDKO=LQYhnL4ZweomQ_4R9-EAYag@mail.gmail.com>
+X-Gm-Features: AQROBzAV3w_CPq4qi5veiP_uOv4VWrOsaTYpBbypDAKqTbu6jiZzeNsnLIn0Vds
+Message-ID: <CAD=FV=UK3NQKQN7FXyG4nGdDKO=LQYhnL4ZweomQ_4R9-EAYag@mail.gmail.com>
+Subject: Re: [PATCH v6 02/27] of: dynamic: Fix overlayed devices not probing
+ because of fw_devlink
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Herve Codina <herve.codina@bootlin.com>, Andrew Lunn <andrew@lunn.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Kalle Niemi <kaleposti@gmail.com>, Matti Vaittinen <mazziesaccount@gmail.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, 
+	Arnd Bergmann <arnd@arndb.de>, Saravana Kannan <saravanak@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Charles Keepax <ckeepax@opensource.cirrus.com>, 
+	Richard Fitzgerald <rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, 
+	Linus Walleij <linusw@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Davidlohr Bueso <dave@stgolabs.net>, 
+	Jonathan Cameron <jonathan.cameron@huawei.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Alison Schofield <alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, 
+	Ira Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Wolfram Sang <wsa@kernel.org>, linux-kernel@vger.kernel.org, 
+	driver-core@lists.linux.dev, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-sound@vger.kernel.org, 
+	patches@opensource.cirrus.com, linux-gpio@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-spi@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org, 
+	Allan Nielsen <allan.nielsen@microchip.com>, Horatiu Vultur <horatiu.vultur@microchip.com>, 
+	Steen Hegelund <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Saravana Kannan <saravanak@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 22, 2026 at 10:00:23PM +0800, Peng Fan wrote:
-> Hi Sudeep,
-> 
-> Thanks for giving a look.
-> 
-> On Wed, Apr 22, 2026 at 02:14:56PM +0100, Sudeep Holla wrote:
-> >On Fri, Mar 06, 2026 at 02:20:13PM +0800, Peng Fan (OSS) wrote:
-> >> From: Peng Fan <peng.fan@nxp.com>
-> >> 
-> >> SCMI CLOCK_RATE_SET allows the caller to specify the rounding behaviour
-> >> when setting a clock rate. The previously added dt-bindings header
-> >> defines three modes:
-> >> 
-> >>   ROUND_DOWN / ROUND_UP / ROUND_AUTO
-> >> 
-> >> To enable device tree clients to select a rounding mode, extend the
-> >> SCMI clock provider to support "#clock-cells = <2>", where the second
-> >> cell encodes the desired rounding mode. The default remains
-> >> ROUND_DOWN for backwards compatibility with existing device trees.
-> >> 
+Hi,
+
+On Wed, Apr 22, 2026 at 10:44=E2=80=AFAM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+>
+> Hi Herv=C3=A9,
+>
+> CC Douglas
+>
+> On Wed, 25 Mar 2026 at 15:36, Herve Codina <herve.codina@bootlin.com> wro=
+te:
+> > From: Saravana Kannan <saravanak@google.com>
 > >
-> >Where is the binding update documented ? It's not in 1/2.
-> 
-> This was missed in this patchset, I will fix in new version, if this
-> patchset does not have big design flaw.
-> 
+> > When an overlay is applied, if the target device has already probed
+> > successfully and bound to a device, then some of the fw_devlink logic
+> > that ran when the device was probed needs to be rerun. This allows newl=
+y
+> > created dangling consumers of the overlayed device tree nodes to be
+> > moved to become consumers of the target device.
 > >
-> >Also if it can be static in the device tree, why can't it be
-> >autonomously handled in the platform firmware ? I think I know the
-> 
-> Linux passes ROUND_DOWN, SCMI firmware uses round down for clk calculation.
-> 
-> >answer for this but I want to make sure it is a valid use-case and
-> >gets documented here as part of binding updates.
-> 
-> Per info from our video software team.
-> We have some video modes where the best pixel clock rate is slightly above the
-> nominal rate, and the default round down rule (CLOCK_ROUND_RULE_CEILING in SM
-> firmware) can cause the resulting clock rate to be much lower than expected.
-> 
-> disp1pix = 96200000 Hz (desired pixel clock rate)
-> 
-> The MIPI DPHY cannot hit the exact frequency of 288600000 Hz needed for this
-> pixel clock rate, so the next best DPHY PLL frequency is 289000000 Hz. This
-> corresponds to a pixel clock frequency of 96333333 Hz, which is slightly higher
-> than the nominal rate of 96200000 Hz the video mode specifies.
-> 
-> Setting the VIDEOPLL (disp1pix parent) to 289000000 Hz should divide down to
-> the adjusted disp1pix frequency of 96333333 Hz, but here is what happens in the
-> SM firmware:
-> 
-> quotient = 289000000 / (96200000 + 1) = 3.004 => 3 (notice that the SM always
-> receives the nominal clock rate, not the adjusted rate)
-> 
-> If the rounding rule is round down (CLOCK_ROUND_RULE_CEILING),
-> quotient = quotient + 1. Therefore, quotient becomes 4.
-> 
-> disp1pix = 289000000 / 4 = 72250000, which is nowhere close to the target of
-> 96333333.
-> 
+> > Fixes: 1a50d9403fb9 ("treewide: Fix probing of devices in DT overlays")
+> > Reported-by: Herve Codina <herve.codina@bootlin.com>
+> > Closes: https://lore.kernel.org/lkml/CAMuHMdXEnSD4rRJ-o90x4OprUacN_rJgy=
+o8x6=3D9F9rZ+-KzjOg@mail.gmail.com/
+> > Closes: https://lore.kernel.org/all/20240221095137.616d2aaa@bootlin.com=
+/
+> > Closes: https://lore.kernel.org/lkml/20240312151835.29ef62a0@bootlin.co=
+m/
+> > Signed-off-by: Saravana Kannan <saravanak@google.com>
+> > Link: https://lore.kernel.org/lkml/20240411235623.1260061-3-saravanak@g=
+oogle.com/
+> > [Herve: Rebase on top of recent kernel]
+> > [Herve: Add the call to driver_deferred_probe_trigger()]
+> > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> > Tested-by: Kalle Niemi <kaleposti@gmail.com>
+> > Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> > --- a/drivers/base/core.c
+> > +++ b/drivers/base/core.c
+> > @@ -235,6 +235,79 @@ static void __fw_devlink_pickup_dangling_consumers=
+(struct fwnode_handle *fwnode,
+> >                 __fw_devlink_pickup_dangling_consumers(child, new_sup);
+> >  }
+> >
+> > +static void fw_devlink_pickup_dangling_consumers(struct device *dev)
+> > +{
+> > +       struct fwnode_handle *child;
+> > +
+> > +       guard(mutex)(&fwnode_link_lock);
+> > +
+> > +       fwnode_for_each_available_child_node(dev->fwnode, child)
+> > +               __fw_devlink_pickup_dangling_consumers(child, dev->fwno=
+de);
+> > +       __fw_devlink_link_to_consumers(dev);
+> > +}
+> > +
+> > +/**
+> > + * fw_devlink_refresh_fwnode - Recheck the tree under this firmware no=
+de
+> > + * @fwnode: The fwnode under which the fwnode tree has changed
+> > + *
+> > + * This function is mainly meant to adjust the supplier/consumer depen=
+dencies
+> > + * after a fwnode tree overlay has occurred.
+> > + */
+> > +void fw_devlink_refresh_fwnode(struct fwnode_handle *fwnode)
+> > +{
+> > +       struct device *dev;
+> > +
+> > +       /*
+> > +        * Find the closest ancestor fwnode that has been converted to =
+a device
+> > +        * that can bind to a driver (bus device).
+> > +        */
+> > +       fwnode_handle_get(fwnode);
+> > +       do {
+> > +               if (fwnode->flags & FWNODE_FLAG_NOT_DEVICE)
+>
+> After commit f72e77c33e4b5657 ("device property: Make modifications
+> of fwnode "flags" thread safe"), this must be changed to:
+>
+>     if (fwnode_test_flag(fwnode, FWNODE_FLAG_NOT_DEVICE))
+>
+> With this change my DT overlays are working again.
+>
+> I guess keeping the FWNODE_FLAG_* names, but changing their values
+> from bit masks to bit numbers was probably not such a good idea,
+> as it fails to catch missing conversions...
 
-I do not think this is the correct interpretation of `CLOCK_ROUND_DOWN/UP`.
+Crud, I should have thought about that. :( Do you think it's worth it
+to do a rename at this point to catch future problems?
 
-`CLOCK_ROUND_DOWN/UP` should apply to the requested `disp1pix` rate itself,
-not to the divider choice in a way that forces selection of the next integer
-divisor and produces a much lower output clock.
-
-Here, the requested `disp1pix` is `96,200,000 Hz`, and the parent rate is
-`289,000,000 Hz`. The achievable child rates nearby are:
-
-`289,000,000 / 3 = 96,333,333 Hz`
-`289,000,000 / 4 = 72,250,000 Hz`
-
-Given those options, the firmware should be able to round the request
-autonomously to the nearest supported `disp1pix` rate, which is `96,333,333
-Hz` (`289,000,000 / 3`).
-
-Under that interpretation:
-
-`CLOCK_ROUND_UP` would permit choosing `96,333,333`
-`CLOCK_ROUND_AUTO` would also likely choose `96,333,333`
-Choosing `/4` and ending up at `72,250,000` does not look like a meaningful
-rounding of `96,200,000`
-
-So the issue appears to be that the firmware is applying the rounding rule to
-divider selection rather than to the resulting `disp1pix` frequency.
-
-> However, if we can use `ROUND_AUTO` the SM firmware would select a quotient of 3
-> in this case, and `disp1pix` would match our target: `289000000 / 3 = 96333333`.
-
-Given the explanation above, I would not support this approach. `ROUND_AUTO`
-should be sufficient for this case if the firmware is making a sensible
-selection.
-
--- 
-Regards,
-Sudeep
+-Doug
