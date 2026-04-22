@@ -1,200 +1,167 @@
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB1A38B152
-	for <linux-clk@vger.kernel.org>; Wed, 22 Apr 2026 17:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63807399007
+	for <linux-clk@vger.kernel.org>; Wed, 22 Apr 2026 18:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776879807; cv=none; b=Jx8RJE0+dwGprYERSu2SZL/Zb95NZqNZRT4iRzQpuBN+1oFljLteRIt210t6esYnYWyjDKDvC3GYehxYJiDj0agMKeoEPDK7ffzBpI90Xr8MbBOnbUoC5G/1XV82Mw1aRlHWo1sg/Za5WZ/CMqntI1KD+MD1d3O046tc45YsIsg=
+	t=1776882339; cv=none; b=AZcfzz1iGj2BBwcrk7QHdubAnFBePJo0qyWSOZp9mhc27S2CUR+ADcM8DZWV0ZU8c4N/8zXjvTxBz1gdsDHdZngCq8HMU4O4OEVjDKneJgjvCzHARebp9srP6Mb2keZSKE7FH+mOj4PIGRqOC6hZrjfdsN9IqM5guwQGrxMXCE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776879807; c=relaxed/simple;
-	bh=PEC67Z72ISCMHUutb9qe1/Y1CIJmRcte33AN4p2R2vs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l0uXa+MUQEL1WC5tip9Wu2mbIkHhim5AwKyo7+eyzUGeRSm9b//1+2z19IrpTSw0359mQ1if397mLPb1Gt2F6IJExgILQfOEbv72GjfL0aJAG2g4GAXEeJc+D1r07yCbJ9ikKUB+8jF3Zoqh+GHfsBqNogsFjFUHT5WJat67dJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-38e68e4389cso61081901fa.3
-        for <linux-clk@vger.kernel.org>; Wed, 22 Apr 2026 10:43:25 -0700 (PDT)
+	s=arc-20240116; t=1776882339; c=relaxed/simple;
+	bh=9DKRl8QYVl9x5TgPt370YkzjxrOSzgrdiRjOVx4OIG8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SLJW5Lj8JzhQuNca8dqqVcVbb7f8/ZGxhSfJiZ+neT4K4P7L9WMl2iA2muakHY/jIddOhXGU1mppxCHpq+Fvm5LrRSNe/GwsSgSwjxN62x9eI2g/CL9MoFDgWjcpKT2IjslAPaFPddeE49xsetvVzVIwHZ82ATOOLc3JpNKkJnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=o17J0P+z; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=YmBhH47J; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="o17J0P+z";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="YmBhH47J"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63MFfmp53528279
+	for <linux-clk@vger.kernel.org>; Wed, 22 Apr 2026 18:25:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=nTvaeUQtF7QTlnD5MjA8eD/C
+	AAUi0oyVrLZtmtZBRXQ=; b=o17J0P+zrrORnHuLub1eXptrRoY1Eyi2k13i4qNj
+	hvzVmg2I57Uv70Nzg81dNyXXx9fIozBLgI+PHt7+MRxJc59oFut9ogj14JZX97bz
+	wX9FTH8xK/bmZjy0+Pl4sD51aw/oy4IePRkB9l/CNK6W93ZML7bbDTyi80PBuVhg
+	mjzVFLHli3CD7BGRlzOkuEhzz9kq9kEAyWlwQAo9h9i/PTXmqW7+AH/vDM5zVbns
+	AdHY2u0XRDGegtBHKOnyBwAjBudOKYEkq/oYg6rv5MYlmDxhC2FoLUmDuFp3bWJ8
+	592vwM5aMB73poeVcwfuKhhcLVs0B6oihi55ljCyVVBfsA==
+Received: from mail-ua1-f72.google.com (mail-ua1-f72.google.com [209.85.222.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4dq16wrkdy-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Wed, 22 Apr 2026 18:25:32 +0000 (GMT)
+Received: by mail-ua1-f72.google.com with SMTP id a1e0cc1a2514c-9484dbd65a7so2363838241.1
+        for <linux-clk@vger.kernel.org>; Wed, 22 Apr 2026 11:25:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1776882332; x=1777487132; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nTvaeUQtF7QTlnD5MjA8eD/CAAUi0oyVrLZtmtZBRXQ=;
+        b=YmBhH47JPUno6S/HVlA/JrU2EZOUJzfpgHGapQ4z4TzbPV93C6vlUQb96v0P3G1DAU
+         jeeYG1c5AHM5ANmbBvxmx4lM7yNzxvvprCGJoGFYvJM9203rsY4P3gXAHNWQrKTEakYG
+         4TmZ/6D45fXpKqAloPK7fv99CyrDtoTnTL4ZmSLIZ0lWwEPXd68hjOSDRwZpipa2g/xq
+         rKjvFRr7kugu65cAsu5gdT96ru8aDtLXuaN4uTHkFuadsHi9KkJF07t+b0C7ltrP7qfP
+         8VHLVc5hrVh1TkT3/6ArupvvjJYs9Pjfsm6vrHkR4srWU8zGcC/Ck6DHEmYHCG/A0ovI
+         8K2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776879804; x=1777484604;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=XycB5P8XTGXaeVGqnVmOVfspQ1laZv9fkJpPGtynpSA=;
-        b=Vm4hYzmagN+0JmpMGZi8Ow5g00uXXfl4Me6QG/Ueh5ororVZv4WIaI5s5qln4+16FR
-         1OxDN6LBPsZ5nlztORgQwAAQtnbZ6SppRasDy8CdeqdevwyO3YI+IeFugjObnq1wC/C1
-         3tcFjlUl0iC7YdtznxR8PrebAPCBSucXtzdd+enG5W+a5SFQXVAICjGBaohRoL3kj6mR
-         ua1Sd86Z12845B7ncDUW7wqGy2BO0t2RF2zT4LyiIYYx1iHjIiYOw9ni2sIRX0SH5atL
-         f8PuSTctyoTZTA7WiYckTJQqaIfZNaQxz+bexENZQW+aiXJxqBFICOxu2z5sx9WurkEx
-         6nCw==
-X-Forwarded-Encrypted: i=1; AFNElJ8dvjNqgWfSslUeoWxlz8FeEwNBYz5aS3HNn5Ea+QwTTXJ5QMV/iOrDbcyVWPI8FIm9r1QmdgJbtYE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxK1MVpvyKq2mt79Z56DSq7vi3y4BisHGzwPHJboHKnQLjFgzQC
-	nlpcVyuEYMwXVoo+7PGbxZRZJEQH3pgiP5+3nb/anjSkzj3wE3+o3E1G5MM0JvROhU0=
-X-Gm-Gg: AeBDiesCXfKYljXwRjJxoiTZblEk3sQk8K2lyCt6BYXJX0Hx8OQZQad7tK5UNWuw5ru
-	kXtTM026Bp2WafQReVDYpSIlQn8M4kmE0ffCfMaudJsEbOpbEaG4AYgHzUNu3wscxnKLsjYtOgN
-	uZBATLaZc5JAhjAbSutZTe2CiPuoEGV3dU/uETuCoypXpNbd7UUaHSt4Fxv0NvhIcw5/RDMtVC1
-	7JNFTCENbBrVFlAATmBnCZnr+laYupDLOUYMAOAuuPHBdHlPi28OgE+POeZLsXJakViDo1Cd9a4
-	WnZTGhBjiKXBQ8wGO1SyKw1lwQCiyAXw3dDxwmw/d4K4KUmXE13xCDn+7YZ5+TSdP8TiJDuaGT4
-	zPAjcUbycqQtmP+mKULDU3eeCO1vySXhIdxj4b3sXK8lMcbwniFF2lgufJkPCjb2w0AFQsCpgEN
-	3xiw0m9++Nerk/854iyvwLfwG1Flxx43AilMzhWL1WlYOk1j0CPcZJdzQt1iMZKaUZ5xLAJjGvM
-	ZQ=
-X-Received: by 2002:a2e:a5c1:0:b0:38e:8a6a:ac6e with SMTP id 38308e7fff4ca-38ec7b6623bmr71356881fa.32.1776879803681;
-        Wed, 22 Apr 2026 10:43:23 -0700 (PDT)
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-38ecb5f669dsm37767791fa.14.2026.04.22.10.43.23
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Apr 2026 10:43:23 -0700 (PDT)
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-38e936caafeso57282431fa.2
-        for <linux-clk@vger.kernel.org>; Wed, 22 Apr 2026 10:43:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ/p2ddJ4cPgmbBT2hMH5Ekf5d0o7SJ5qSUrolbtBlSRY0awHsPDnprnLiPGK1eaZ6oL9fGtg4/tcpw=@vger.kernel.org
-X-Received: by 2002:a17:907:7295:b0:ba7:3d21:c136 with SMTP id
- a640c23a62f3a-ba73d3108d8mr812474966b.18.1776879429078; Wed, 22 Apr 2026
- 10:37:09 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1776882332; x=1777487132;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nTvaeUQtF7QTlnD5MjA8eD/CAAUi0oyVrLZtmtZBRXQ=;
+        b=KvarzTFp9SLiRfjYXNKBVN3VQcTLcxeLzys72kZFfyKPafPjsKHiGeum5K+L+5havj
+         gBqJtqt3uIWqFQ4GwXquvOe5jBq8XrrO+BP69I/pd3ha+RJYg2TDE3DY8wvd7c37Ayjh
+         XuZVFLIi8K9GgCJFmnm+ifDdT28L7HzQwAMyfgj+BXC39gk3N8fZ99nb1hu/mEds2Dm/
+         wPyQJ3+mxA0nldsfdc/PLI25e1E+SY9E692FVNUbNfERYMRWv1z2wyUqxijTlD0gzbAT
+         1ZrD2i12NDkKBBlvkXEeWKYoKhCxbUOyCt2UeeXDliV4Xn3ZgOP0t77qdWN/PGU4GgsQ
+         D+RA==
+X-Forwarded-Encrypted: i=1; AFNElJ9A2Zvh1yIF1+Dw38nJ831/TUBPvXJCcPmkOswk94NhM5S1CxY8BBcJup8Zq/SNjMU+pW6Ot7+SC4s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywlh5L9kSmTGBBB2U0ZuZIHq++AqNkKuaubyi2fyxD1gCM0Jkvp
+	tqoHXdlHU6LEfes7OeBF/XuzjE94+lecBnJOGkSMjzWckQ4VE+7MuN+952fUl6x9fZmuEe7Wgb5
+	4i3W9gXA8oMLnmkrlDf/ZlGCEdIDwNjpM9j6hWbq5f1mctSs7ksyPa3OVdzi83Q4=
+X-Gm-Gg: AeBDieuiF6flFMBRyKjMPLMsh4EjXaWKh/OxkKqPeLOxDLmssjrtz7sABxISo53H3T5
+	UTsDVjsUmER580YQ1/zqo4z0Pyj2WgQYdEStenfyjHSy6J4Pa6+vyp9v+zMlTU12uSStR+AiuJF
+	pL+HwDz3+kxLEJtsEgX1qYc6hskEwdaK3iFgKdNi+6LXLFaO423IX0uvFD3vyjGAbNzHxMIhqax
+	/aDSaEvsZA5LOIQHPir/m67gvCf7SxOI/OWOTFwm2zFIF2B2wXeWNADstnzcyhLx6KjFLG0Wzwg
+	EEZSCcgaFl5s885130BezVUz7S89JMhQS4qm1Z35ll+ArIJEnNAtgvWZAksNdl4vMuUr1Y2aAiE
+	Fo8NIfZnQpUGjcKA6NeeyVPVmGBx8u1W7RUoapiwwR4pOOWiEF8LmEkuu3ie2EPnXvdw2393WT1
+	5HmW9IwxELD3bYieYEsF+Ng2SJzmrzfGJzm/wmaO34REyYHA==
+X-Received: by 2002:a05:6102:689c:b0:608:94e4:1c00 with SMTP id ada2fe7eead31-616f4e7a272mr10488482137.2.1776882332132;
+        Wed, 22 Apr 2026 11:25:32 -0700 (PDT)
+X-Received: by 2002:a05:6102:689c:b0:608:94e4:1c00 with SMTP id ada2fe7eead31-616f4e7a272mr10488468137.2.1776882331561;
+        Wed, 22 Apr 2026 11:25:31 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-38ecb5f652asm36295321fa.12.2026.04.22.11.25.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Apr 2026 11:25:30 -0700 (PDT)
+Date: Wed, 22 Apr 2026 21:25:28 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>, Lee Jones <lee@kernel.org>,
+        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Maulik Shah <maulik.shah@oss.qualcomm.com>,
+        Taniya Das <taniya.das@oss.qualcomm.com>
+Subject: Re: [PATCH 06/13] clk: qcom: clk-alpha-pll: Add support for CRM
+ based PLL ops
+Message-ID: <olwylygq2ljeqa2jobis3nfryqtqfqui3uhtb5rpl6ix4gegli@sioyi3kyvb5f>
+References: <20260420-cesta-sm870-dispcc-v1-0-eb27d845df9c@oss.qualcomm.com>
+ <20260420-cesta-sm870-dispcc-v1-6-eb27d845df9c@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260325143555.451852-1-herve.codina@bootlin.com> <20260325143555.451852-3-herve.codina@bootlin.com>
-In-Reply-To: <20260325143555.451852-3-herve.codina@bootlin.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 22 Apr 2026 19:36:55 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU7x7LWFkD9xiq+wyOqnn0bdzr+JLfvbBexoiWyv8kftA@mail.gmail.com>
-X-Gm-Features: AQROBzDRSuCo9KZmmr5oDnyHv4O1KWNwiPD4Dqbl5BIkN4nUOYnL3G8AwjYfgqE
-Message-ID: <CAMuHMdU7x7LWFkD9xiq+wyOqnn0bdzr+JLfvbBexoiWyv8kftA@mail.gmail.com>
-Subject: Re: [PATCH v6 02/27] of: dynamic: Fix overlayed devices not probing
- because of fw_devlink
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Kalle Niemi <kaleposti@gmail.com>, Matti Vaittinen <mazziesaccount@gmail.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, 
-	Arnd Bergmann <arnd@arndb.de>, Saravana Kannan <saravanak@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Charles Keepax <ckeepax@opensource.cirrus.com>, 
-	Richard Fitzgerald <rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, 
-	Linus Walleij <linusw@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Davidlohr Bueso <dave@stgolabs.net>, 
-	Jonathan Cameron <jonathan.cameron@huawei.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Alison Schofield <alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Wolfram Sang <wsa@kernel.org>, linux-kernel@vger.kernel.org, 
-	driver-core@lists.linux.dev, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-sound@vger.kernel.org, 
-	patches@opensource.cirrus.com, linux-gpio@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org, 
-	Allan Nielsen <allan.nielsen@microchip.com>, Horatiu Vultur <horatiu.vultur@microchip.com>, 
-	Steen Hegelund <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Saravana Kannan <saravanak@google.com>, 
-	Douglas Anderson <dianders@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260420-cesta-sm870-dispcc-v1-6-eb27d845df9c@oss.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDIyMDE3OCBTYWx0ZWRfXyzDg9YroTn+y
+ EHTAB8kFDU3wf2J74Xj+1b0Vp1EBcm5domV/ROJaV0/z+vSDeCBI+Cq3l6pYudZbJtzlHpZqpjw
+ BH4XfNmEiKDx3hvxUBnbcKtL2cFPfFp8MWV3xjnebKpV/KXTSrnNtdKzDCDL7gJIHS9XCgJjDyH
+ XDS23IMVgW/Y4DnuzUkRLsExt1pmRG69lC0S9jq3TdAY1cCquBOeLzJl/KFRxt+WzqtKu4+iiWA
+ 9vs+funYzVOdJP32F2L8a9GI4WeS6Y06FPlcYp7dj8STjJ+A0DyOByz9OBsaQxzC0N1HrkOl5mf
+ AtE9BKjADCTpvV7U3Wx8rJ5zzXb6cBaTmjMBxntJwJboVr1F7/qSZYLCZqMk++x3Y5hmsajrk5j
+ xExM+EM7c15P+0wX0lZMpxnhaspVK2JLDdl8JFmFtr7wKRWLsiS9RQLqqu08HHaUxnCHjHcaOU+
+ qYLK6j3jocIK+0ep/DQ==
+X-Authority-Analysis: v=2.4 cv=dL+WXuZb c=1 sm=1 tr=0 ts=69e9129c cx=c_pps
+ a=ULNsgckmlI/WJG3HAyAuOQ==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=A5OVakUREuEA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22 a=EUspDBNiAAAA:8
+ a=x0UCZEZdVX72ttqwImEA:9 a=CjuIK1q_8ugA:10 a=1WsBpfsz9X-RYQiigVTh:22
+X-Proofpoint-GUID: Dr8_IQW9Ls5q8tWmjjK-z_8sTUhSjLfh
+X-Proofpoint-ORIG-GUID: Dr8_IQW9Ls5q8tWmjjK-z_8sTUhSjLfh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-04-22_02,2026-04-21_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 bulkscore=0 spamscore=0 priorityscore=1501 malwarescore=0
+ adultscore=0 clxscore=1015 suspectscore=0 lowpriorityscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2604200000 definitions=main-2604220178
 
-Hi Herv=C3=A9,
+On Mon, Apr 20, 2026 at 09:58:59PM +0530, Jagadeesh Kona wrote:
+> Add clock ops for PLLs that are controlled by the CESTA Resource
+> Manager(CRM). For these PLLs, CRM programs the hardware based on
+> aggregated votes, so the clock driver does not need to program the
+> PLL registers directly, but can still model the PLLs and expose
+> them as parents to RCGs in the common clock framework.
+> 
+> Co-developed-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> Signed-off-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+> ---
+>  drivers/clk/qcom/clk-alpha-pll.c | 7 +++++++
+>  drivers/clk/qcom/clk-alpha-pll.h | 3 +++
+>  2 files changed, 10 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+> index f8313f9d0e30ffd5393e3163ebc0e51b2bd96437..67fc97739d0d4c26aec0bac5d43d1b87d297bc6a 100644
+> --- a/drivers/clk/qcom/clk-alpha-pll.c
+> +++ b/drivers/clk/qcom/clk-alpha-pll.c
+> @@ -2,6 +2,7 @@
+>  /*
+>   * Copyright (c) 2015, 2018, The Linux Foundation. All rights reserved.
+>   * Copyright (c) 2021, 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
+> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
 
-CC Douglas
+Note: you are supposed to absorb th QuIC copyright.
 
-On Wed, 25 Mar 2026 at 15:36, Herve Codina <herve.codina@bootlin.com> wrote=
-:
-> From: Saravana Kannan <saravanak@google.com>
->
-> When an overlay is applied, if the target device has already probed
-> successfully and bound to a device, then some of the fw_devlink logic
-> that ran when the device was probed needs to be rerun. This allows newly
-> created dangling consumers of the overlayed device tree nodes to be
-> moved to become consumers of the target device.
->
-> Fixes: 1a50d9403fb9 ("treewide: Fix probing of devices in DT overlays")
-> Reported-by: Herve Codina <herve.codina@bootlin.com>
-> Closes: https://lore.kernel.org/lkml/CAMuHMdXEnSD4rRJ-o90x4OprUacN_rJgyo8=
-x6=3D9F9rZ+-KzjOg@mail.gmail.com/
-> Closes: https://lore.kernel.org/all/20240221095137.616d2aaa@bootlin.com/
-> Closes: https://lore.kernel.org/lkml/20240312151835.29ef62a0@bootlin.com/
-> Signed-off-by: Saravana Kannan <saravanak@google.com>
-> Link: https://lore.kernel.org/lkml/20240411235623.1260061-3-saravanak@goo=
-gle.com/
-> [Herve: Rebase on top of recent kernel]
-> [Herve: Add the call to driver_deferred_probe_trigger()]
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> Tested-by: Kalle Niemi <kaleposti@gmail.com>
-> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>   */
+>  
+>  #include <linux/kernel.h>
 
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -235,6 +235,79 @@ static void __fw_devlink_pickup_dangling_consumers(s=
-truct fwnode_handle *fwnode,
->                 __fw_devlink_pickup_dangling_consumers(child, new_sup);
->  }
->
-> +static void fw_devlink_pickup_dangling_consumers(struct device *dev)
-> +{
-> +       struct fwnode_handle *child;
-> +
-> +       guard(mutex)(&fwnode_link_lock);
-> +
-> +       fwnode_for_each_available_child_node(dev->fwnode, child)
-> +               __fw_devlink_pickup_dangling_consumers(child, dev->fwnode=
-);
-> +       __fw_devlink_link_to_consumers(dev);
-> +}
-> +
-> +/**
-> + * fw_devlink_refresh_fwnode - Recheck the tree under this firmware node
-> + * @fwnode: The fwnode under which the fwnode tree has changed
-> + *
-> + * This function is mainly meant to adjust the supplier/consumer depende=
-ncies
-> + * after a fwnode tree overlay has occurred.
-> + */
-> +void fw_devlink_refresh_fwnode(struct fwnode_handle *fwnode)
-> +{
-> +       struct device *dev;
-> +
-> +       /*
-> +        * Find the closest ancestor fwnode that has been converted to a =
-device
-> +        * that can bind to a driver (bus device).
-> +        */
-> +       fwnode_handle_get(fwnode);
-> +       do {
-> +               if (fwnode->flags & FWNODE_FLAG_NOT_DEVICE)
-
-After commit f72e77c33e4b5657 ("device property: Make modifications
-of fwnode "flags" thread safe"), this must be changed to:
-
-    if (fwnode_test_flag(fwnode, FWNODE_FLAG_NOT_DEVICE))
-
-With this change my DT overlays are working again.
-
-I guess keeping the FWNODE_FLAG_* names, but changing their values
-from bit masks to bit numbers was probably not such a good idea,
-as it fails to catch missing conversions...
-
-> +                       continue;
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+-- 
+With best wishes
+Dmitry
