@@ -1,20 +1,21 @@
-Received: from zg8tmja2lje4os4yms4ymjma.icoremail.net (zg8tmja2lje4os4yms4ymjma.icoremail.net [206.189.21.223])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF1734D907;
-	Thu, 23 Apr 2026 09:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.21.223
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [4.193.249.245])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563B73DFC9E;
+	Thu, 23 Apr 2026 09:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=4.193.249.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776935372; cv=none; b=fe+6D+JzJfPHnEDwC+CaGTqtXzIRc7/t9ZFyplK+MuSM5gfJZzXDhNnyLYPoscHV+GExCWcrNSB25CEXhoSRaLvsRb1kl+cVpMrb0fQwrn3evM9TH/y2HrQSTHg8d3VVwV3i+jXvkf4R5HRjNYhb6wQhpUqb3Q7jpuajsRhHp2w=
+	t=1776935471; cv=none; b=K8p2VTRLcM4eksnMbndCHP5Uc3DYzZvY5T+e5tQPmvo3JW8u1Sdi6ckGySOg7NMm4B/4XjA9wrVqdDJUGO8kU1CXFfLtMCAbSqldwcxmxV92BohL/+BCvnJDRJYqqFyBLo9r//tHjV4H6J6sflwb9/pyh7weK3ONML5n1LAHi2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776935372; c=relaxed/simple;
-	bh=Ns8dbRJs5FRrA60axp+t9uYgSDDS+Jk/SJ1IFmAX6v0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rFMUsLhTWyIAeXSNQdjH/VLRKrEMLWzdxmcP4/qJMhW1PTacYn2W6YuG4lEWyEHOQc0qRf8frBYq6u8FOrmG9/R/6Ieje+nXeLYPugbmg697wj+zTuXTC6Fql5g+VBH7ZetPpa5CYxGpwfI677DIK9QqqpjjQ/NaeOD3nsAVHMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=206.189.21.223
+	s=arc-20240116; t=1776935471; c=relaxed/simple;
+	bh=FSLx77+vwZESFBb5H3bPcrODbIhebmdPm7d31rbmhWg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=kCHJme0XETm4vPOzFzl8biM+QrUpCoijVnAXhFgtS0RgXgBovt/GIozCWKd6Q1qoXK/nPao2tiPeUxG3+cdJw7abM3FxZfBbkAQJ+yiN8kXLHZmhs/ePDd0MpInB4HYurRAZhDJ76VOyGEB+6TsK729Rs1y2SPzC4zygCmv6mCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=4.193.249.245
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
 Received: from E0005152DT.eswin.cn (unknown [10.12.96.41])
-	by app2 (Coremail) with SMTP id TQJkCgDX7aC24elpovoTAA--.23702S2;
-	Thu, 23 Apr 2026 17:09:12 +0800 (CST)
-From: Xuyang Dong <dongxuyang@eswincomputing.com>
+	by app2 (Coremail) with SMTP id TQJkCgAnPaAc4ulpvfoTAA--.22061S2;
+	Thu, 23 Apr 2026 17:10:54 +0800 (CST)
+From: dongxuyang@eswincomputing.com
 To: mturquette@baylibre.com,
 	sboyd@kernel.org,
 	robh@kernel.org,
@@ -30,11 +31,14 @@ To: mturquette@baylibre.com,
 	bmasney@redhat.com
 Cc: ningyu@eswincomputing.com,
 	linmin@eswincomputing.com,
-	pinkesh.vaghela@einfochips.com
-Subject: [PATCH v3 0/3] Add driver support for ESWIN EIC7700 HSP clock and reset generator
-Date: Thu, 23 Apr 2026 17:09:04 +0800
-Message-Id: <20260423090904.2108-1-dongxuyang@eswincomputing.com>
+	pinkesh.vaghela@einfochips.com,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v3 1/3] dt-bindings: clock: Add ESWIN eic7700 HSP clock and reset generator
+Date: Thu, 23 Apr 2026 17:10:47 +0800
+Message-Id: <20260423091047.2271-1-dongxuyang@eswincomputing.com>
 X-Mailer: git-send-email 2.31.1.windows.1
+In-Reply-To: <20260423090904.2108-1-dongxuyang@eswincomputing.com>
+References: <20260423090904.2108-1-dongxuyang@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -42,132 +46,194 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:TQJkCgDX7aC24elpovoTAA--.23702S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxKw17Zr1UtF18CFW3tr48Crg_yoW7Aw1xpF
-	Z8WF93Gr1UXrWxuan7t3WIvFZxJa13JFyakws7J3W7ZanIyFyUJF40ka45AFZrZr1fX3y5
-	J3W7tryF9FyUZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9G14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+X-CM-TRANSID:TQJkCgAnPaAc4ulpvfoTAA--.22061S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3JF17CF4UXFy7Cw1rKr4xCrg_yoW7trWfpF
+	4kCF97Gr1vyF93ua95ta40kryfJ3ZrCry5ArWkJFnrZa1DJw4qqF4IgFyrAF9rZr4fXrWx
+	XF1xXw1av34xu3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBv14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
 	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
 	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
 	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
 	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK6svPMxAIw28IcxkI7VAKI48JMx
-	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
-	wI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
-	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v2
-	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
-	W8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUb_Ma5UUUUU==
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r4a6rW5MxkIecxEwVCm-wCF04
+	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
+	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr4
+	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
+	IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
+	A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pR7EfOUUUUU=
 X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/
 
-Add support for the ESWIN EIC7700 HSP (high-speed peripherals). The drivers
-provide basic functionality to manage and control the clock and reset
-signals for EIC7700 HSP, including mmc, USB, ethernet, SATA and DMAC.
+From: Xuyang Dong <dongxuyang@eswincomputing.com>
 
-The clock and reset registers are mapped to overlapping I/O address ranges.
-This causes a resource conflict when two drivers attempt to request the
-same region. Use the auxiliary device framework: the main driver
-allocates the shared register region and passes it to auxiliary
-devices, avoiding resource contention and duplicate remapping.
+Add bindings for the high-speed peripherals clock and reset generator
+on the ESWIN EIC7700 HSP.
 
-Features:
-Implements support for the ESWIN EIC7700 HSP clock and reset controller.
-Provide API to manage clock and reset signals for the EIC7700 HSP.
-
-Supported chips:
-ESWIN EIC7700 series SoC.
-
-Test:
-Test this patch on the Sifive HiFive Premier P550 (which used the EIC7700
-SoC), include USB and other peripherals. All the drivers of these modules
-use the clock module and reset module.
-
-This patch depends on ESWIN EIC7700 clock controller patch [1], [2] and [3].
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?h=next-20260331&id=8add6d87dc69c0620c7e60bdc6be6b3b0092d9fa
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?h=next-20260331&id=cd44f127c1d42833a32ba0a0965255ee6184f8c1
-[3] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?h=next-20260331&id=858f6273cf003e97c817903a07d8001b483fe40b
-
-Updates:
-  Changes in v3:
-  - Bindings:
-    - Added "Acked-by: Conor Dooley <conor.dooley@microchip.com>" for bindings.
-  - Clock driver:
-    - Remove 'gate_flags'.
-    - Add __acquires for eic7700_hsp_regmap_lock() and add __releases for
-      eic7700_hsp_regmap_unlock().
-    - Move writel(USB_REF_XTAL24M, gate->ref_reg) into enable. Because this
-      is only used for USB gate clock on the enable path. And modify the
-      comments.
-    - Simplify to: 'return !!(readl(gate->reg) & BIT(gate->bit_idx));'.
-    - Drop const from eic7700_hsp_regmap_config.
-    - Declare eic7700_hsp_regmap_config as a regular variable at the top.
-    - Dropping const will cause a warning when checked with checkpatch.pl.
-
-  - Link to v2: https://lore.kernel.org/all/20260420093929.1895-1-dongxuyang@eswincomputing.com/
-
-  Changes in v2:
-  - Bindings:
-    - Remove "hsp_" from clock-names.
-    - Replace "eswin,eic7700-clock.yaml" and "eswin,eic7700-hspcrg.yaml" with
-      "eswin,eic7700*".
-    - Replace "eswin,eic7700-clock.h" and "eswin,eic7700-hspcrg.h" with
-      "eswin,eic7700*".
-  - Clock driver:
-    - Use guard(spinlock_irqsave)(gate->lock) instead of spin_lock_irqsave()
-      and remove spin_unlock_irqrestore().
-    - Remove the newline in function hsp_clk_gate_is_enabled().
-    - Use struct clk_init_data init = {}.
-    - Replace 'static struct clk_parent_data' with
-      'static const struct clk_parent_data'.
-    - Change '.fw_name' to '.index', because the function
-      eswin_clk_register_fixed_factor() uses .index.
-    - The structures of clocks should use static struct. When registering a clock,
-      the 'hw' field in the structure will be assigned.
-    - Remove __force.
-    - Create the regmap in the clock driver and remove (__force void*)data->base.
-      The reset driver uses dev_get_regmap() to get the regmap from the clock.
-    - Move 'const struct regmap_config eic7700_hsp_regmap_config' from reset
-      driver to clock driver.
-    - The USB clock gate (hsp_clk_gate_endisable) and the reset driver both
-      perform read-modify-write cycles on registers 0x800 and 0x900. Use
-      custom regmap lock callbacks so that regmap operations hold data->lock
-      with IRQs disabled, the same lock the clock gate path uses, preventing
-      concurrent RMW races on those shared registers.
-    - Change to 'ret = eswin_clk_register_fixed_factor(dev, eic7700_hsp_factor_clks,'.
-      The next line will be over 80 characters and under 100 characters.
-  - Reset driver:
-    - Remove 'depends on COMMON_CLK_EIC7700_HSP' and 'default COMMON_CLK_EIC7700_HSP'.
-    - Use regmap_assign_bits() in assert and deassert functions.
-    - Remove eic7700_hsp_reset_reset().
-    - The clock driver creates the regmap, and the reset driver uses dev_get_regmap().
-    - Remove of_reset_n_cells.
-
-  - Link to v1: https://lore.kernel.org/all/20260403093459.612-1-dongxuyang@eswincomputing.com/
-
-Xuyang Dong (3):
-  dt-bindings: clock: Add ESWIN eic7700 HSP clock and reset generator
-  clk: eswin: Add eic7700 HSP clock driver
-  reset: eswin: Add eic7700 HSP reset driver
-
- .../bindings/clock/eswin,eic7700-hspcrg.yaml  |  63 +++
- MAINTAINERS                                   |   5 +-
- drivers/clk/eswin/Kconfig                     |  12 +
- drivers/clk/eswin/Makefile                    |   1 +
- drivers/clk/eswin/clk-eic7700-hsp.c           | 384 ++++++++++++++++++
- drivers/reset/Kconfig                         |  11 +
- drivers/reset/Makefile                        |   1 +
- drivers/reset/reset-eic7700-hsp.c             | 118 ++++++
- .../dt-bindings/clock/eswin,eic7700-hspcrg.h  |  33 ++
- .../dt-bindings/reset/eswin,eic7700-hspcrg.h  |  21 +
- 10 files changed, 647 insertions(+), 2 deletions(-)
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
+---
+ .../bindings/clock/eswin,eic7700-hspcrg.yaml  | 63 +++++++++++++++++++
+ MAINTAINERS                                   |  5 +-
+ .../dt-bindings/clock/eswin,eic7700-hspcrg.h  | 33 ++++++++++
+ .../dt-bindings/reset/eswin,eic7700-hspcrg.h  | 21 +++++++
+ 4 files changed, 120 insertions(+), 2 deletions(-)
  create mode 100644 Documentation/devicetree/bindings/clock/eswin,eic7700-hspcrg.yaml
- create mode 100644 drivers/clk/eswin/clk-eic7700-hsp.c
- create mode 100644 drivers/reset/reset-eic7700-hsp.c
  create mode 100644 include/dt-bindings/clock/eswin,eic7700-hspcrg.h
  create mode 100644 include/dt-bindings/reset/eswin,eic7700-hspcrg.h
 
---
+diff --git a/Documentation/devicetree/bindings/clock/eswin,eic7700-hspcrg.yaml b/Documentation/devicetree/bindings/clock/eswin,eic7700-hspcrg.yaml
+new file mode 100644
+index 000000000000..43df689ae647
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/eswin,eic7700-hspcrg.yaml
+@@ -0,0 +1,63 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/eswin,eic7700-hspcrg.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ESWIN EIC7700 HSP Clock and Reset Generator
++
++maintainers:
++  - Xuyang Dong <dongxuyang@eswincomputing.com>
++
++description:
++  Clock and reset generator for the ESWIN EIC7700 HSP (high-speed peripherals).
++
++properties:
++  compatible:
++    const: eswin,eic7700-hspcrg
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: HSP configuration top clock
++      - description: MMC top clock
++      - description: SATA top clock
++
++  clock-names:
++    items:
++      - const: cfg
++      - const: mmc
++      - const: sata
++
++  '#clock-cells':
++    const: 1
++    description:
++      See <dt-bindings/clock/eswin,eic7700-hspcrg.h> for valid indices.
++
++  '#reset-cells':
++    const: 1
++    description:
++      See <dt-bindings/reset/eswin,eic7700-hspcrg.h> for valid indices.
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - '#clock-cells'
++  - '#reset-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    clock-controller@50440000 {
++        compatible = "eswin,eic7700-hspcrg";
++        reg = <0x50440000 0x2000>;
++        clocks = <&clock 171>, <&clock 254>, <&clock 187>;
++        clock-names = "cfg", "mmc", "sata";
++        #clock-cells = <1>;
++        #reset-cells = <1>;
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f031c86b37d2..4578dad859b5 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9587,9 +9587,10 @@ ESWIN EIC7700 CLOCK DRIVER
+ M:	Yifeng Huang <huangyifeng@eswincomputing.com>
+ M:	Xuyang Dong <dongxuyang@eswincomputing.com>
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml
++F:	Documentation/devicetree/bindings/clock/eswin,eic7700*
+ F:	drivers/clk/eswin/
+-F:	include/dt-bindings/clock/eswin,eic7700-clock.h
++F:	include/dt-bindings/clock/eswin,eic7700*
++F:	include/dt-bindings/reset/eswin,eic7700-hspcrg.h
+ 
+ ET131X NETWORK DRIVER
+ M:	Mark Einon <mark.einon@gmail.com>
+diff --git a/include/dt-bindings/clock/eswin,eic7700-hspcrg.h b/include/dt-bindings/clock/eswin,eic7700-hspcrg.h
+new file mode 100644
+index 000000000000..1d1ff15c1154
+--- /dev/null
++++ b/include/dt-bindings/clock/eswin,eic7700-hspcrg.h
+@@ -0,0 +1,33 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright 2026, Beijing ESWIN Computing Technology Co., Ltd..
++ * All rights reserved.
++ *
++ * Device Tree binding constants for EIC7700 HSP clock controller.
++ *
++ * Authors: Xuyang Dong <dongxuyang@eswincomputing.com>
++ */
++
++#ifndef _DT_BINDINGS_ESWIN_EIC7700_HSPCRG_CLOCK_H_
++#define _DT_BINDINGS_ESWIN_EIC7700_HSPCRG_CLOCK_H_
++
++#define EIC7700_HSP_CLK_FAC_CFG_DIV2		0
++#define EIC7700_HSP_CLK_FAC_CFG_DIV4		1
++#define EIC7700_HSP_CLK_FAC_MMC_DIV10		2
++#define EIC7700_HSP_CLK_MUX_EMMC_3MUX1		3
++#define EIC7700_HSP_CLK_MUX_SD0_3MUX1		4
++#define EIC7700_HSP_CLK_MUX_SD1_3MUX1		5
++#define EIC7700_HSP_CLK_MUX_EMMC_CQE_2MUX1	6
++#define EIC7700_HSP_CLK_MUX_SD0_CQE_2MUX1	7
++#define EIC7700_HSP_CLK_MUX_SD1_CQE_2MUX1	8
++#define EIC7700_HSP_CLK_GATE_MSHC0_TMR		9
++#define EIC7700_HSP_CLK_GATE_EMMC		10
++#define EIC7700_HSP_CLK_GATE_MSHC1_TMR		11
++#define EIC7700_HSP_CLK_GATE_SD0		12
++#define EIC7700_HSP_CLK_GATE_MSHC2_TMR		13
++#define EIC7700_HSP_CLK_GATE_SD1		14
++#define EIC7700_HSP_CLK_GATE_USB0		15
++#define EIC7700_HSP_CLK_GATE_USB1		16
++#define EIC7700_HSP_CLK_GATE_SATA		17
++
++#endif /* _DT_BINDINGS_ESWIN_EIC7700_HSPCRG_CLOCK_H_ */
+diff --git a/include/dt-bindings/reset/eswin,eic7700-hspcrg.h b/include/dt-bindings/reset/eswin,eic7700-hspcrg.h
+new file mode 100644
+index 000000000000..413fcd08c701
+--- /dev/null
++++ b/include/dt-bindings/reset/eswin,eic7700-hspcrg.h
+@@ -0,0 +1,21 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright 2026, Beijing ESWIN Computing Technology Co., Ltd..
++ * All rights reserved.
++ *
++ * Device Tree binding constants for EIC7700 HSP reset controller.
++ *
++ * Authors: Xuyang Dong <dongxuyang@eswincomputing.com>
++ */
++
++#ifndef _DT_BINDINGS_ESWIN_EIC7700_HSPCRG_RESET_H_
++#define _DT_BINDINGS_ESWIN_EIC7700_HSPCRG_RESET_H_
++
++#define EIC7700_HSP_RST_SATA_P0		0
++#define EIC7700_HSP_RST_SATA_PHY	1
++#define EIC7700_HSP_RST_USB0		2
++#define EIC7700_HSP_RST_USB1		3
++#define EIC7700_HSP_RST_USB0_PHY	4
++#define EIC7700_HSP_RST_USB1_PHY	5
++
++#endif /* _DT_BINDINGS_ESWIN_EIC7700_HSPCRG_RESET_H_ */
+-- 
 2.34.1
 
