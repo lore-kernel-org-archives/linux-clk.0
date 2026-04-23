@@ -1,157 +1,317 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010014.outbound.protection.outlook.com [52.101.229.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476293DE455;
-	Thu, 23 Apr 2026 08:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776933728; cv=none; b=YzGU1yVa04HBHH0CadfgeSshaqSqkGpOjynniQzoGVK1FuWU+sYmF1+YHY2CglpjC4CnABp3NOG6aWO+baOHWIBz/YunrYs0kTBwWz/P7djDAbG3jj/e1BFGfcU3GVGTSLhQYSB/p9d78z3kVXDX5rG+Yhf3ry7pZ35jqEY7obg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776933728; c=relaxed/simple;
-	bh=qbmvRxNwjPJySkdRlLxR16VTUeX6pN7MhszSZBGGJgE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D3tUTt9qSDMJaZSePrLeWPO5cHTCK6kviLMSarFalOXb8j2mo3mY4AiizQgdqh9SgrRfWiLVbyBL1E1aBDZoGJ0zEnZmSNraVl9eciqhzlCNTmrpE66wMkt6Gt1cv7PdLfDxLjfypRWEcUweYQ2t+OiY/1tMXGyw6xSGg96H/80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RHSMPu0z; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A50636492A;
+	Thu, 23 Apr 2026 08:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1776933784; cv=fail; b=IkZsaWOg6NFOFwhUwmsEz2q2JN0HpeyInvsJIg44vwRi/gXUe5Uqnoxc/i9lEcr6jrra7UKKOUrtoYYrcPTlub+mhRNWqZrShTfOtzKYah5viA4RuHXjFFw/c533jOqF1d5e5bM7xfL+7PtIvY8BkYQJUalP78cP3toXfr0xWpU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1776933784; c=relaxed/simple;
+	bh=ce5YnD6Dd8m0lnLI6wFKhE9uW2udocLpK6owIFj4+kM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=MFUHYLWHyNJr4oke1Cdx9qy14V6fwcC8deUhD2uV4QN7crOJyvq6LtcYBP491+QhfeTsnU+5C/ZmbfNJH9ph4uArz0t68cRA2qj8FAUF4CNpRsL9+w9bvBbHdq6ZyYGqRNSgM1dZ2q758cenTf++qhk8U5RNYwh4AOtUpuIF7Bs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=v4N7Vg0o; arc=fail smtp.client-ip=52.101.229.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RHSMPu0z"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id C68BEC5EF0B;
-	Thu, 23 Apr 2026 08:42:45 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 81637604EB;
-	Thu, 23 Apr 2026 08:42:04 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E551910460B49;
-	Thu, 23 Apr 2026 10:41:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1776933721; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=hpnJk/yJbY+uVhKNecCDBid6JdXHXsFWMSbXliiAR00=;
-	b=RHSMPu0z0hSdt3mn4ffe5+6hUm/ZCjtCUZUKE3rWKy/r3VhfZhbKf1a9Ulxwtthkq/Wtgh
-	ronPMyU1B2CxZw6JMN3u3wI3DLWBsdkToYIBM80eaHi7YgAeDyH1Z2ue1q/847GcERxQOk
-	g0JXmw3tYv6IvZXdp7pb5HMp5Kl7KsJKyYniqOHUilIBM3mmL0cJgDls1/VLPGNufaZTfw
-	v2x1SEkJspkHM37hhCeIXdZLX8dFFZdF2oY0Y3ytw9DTXzpHCHxarn2MoEkQvoK+911wsc
-	ELgVc4CKa9SO2hHeYBProWT6SvtWBufgTUp8YNP4tGFwdFM5Ild9qV3eo9YpxA==
-Date: Thu, 23 Apr 2026 10:41:39 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Doug Anderson <dianders@chromium.org>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Andrew Lunn <andrew@lunn.ch>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Kalle Niemi <kaleposti@gmail.com>, Matti
- Vaittinen <mazziesaccount@gmail.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Danilo Krummrich <dakr@kernel.org>, Frank Li <Frank.Li@nxp.com>, Sascha
- Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
- <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Andi
- Shyti <andi.shyti@kernel.org>, Wolfram Sang
- <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, Arnd
- Bergmann <arnd@arndb.de>, Saravana Kannan <saravanak@kernel.org>, Bjorn
- Helgaas <bhelgaas@google.com>, Charles Keepax
- <ckeepax@opensource.cirrus.com>, Richard Fitzgerald
- <rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, Linus
- Walleij <linusw@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Mark
- Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>, Daniel Scally
- <djrscally@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Davidlohr Bueso <dave@stgolabs.net>, Jonathan Cameron
- <jonathan.cameron@huawei.com>, Dave Jiang <dave.jiang@intel.com>, Alison
- Schofield <alison.schofield@intel.com>, Vishal Verma
- <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Shawn Guo
- <shawnguo@kernel.org>, Wolfram Sang <wsa@kernel.org>,
- linux-kernel@vger.kernel.org, driver-core@lists.linux.dev,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
- devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-sound@vger.kernel.org, patches@opensource.cirrus.com,
- linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-spi@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-cxl@vger.kernel.org, Allan Nielsen <allan.nielsen@microchip.com>,
- Horatiu Vultur <horatiu.vultur@microchip.com>, Steen Hegelund
- <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v6 02/27] of: dynamic: Fix overlayed devices not probing
- because of fw_devlink
-Message-ID: <20260423104139.0246ca0a@bootlin.com>
-In-Reply-To: <CAMuHMdUDCQrQ2Z9D7-ZOKiuDznDJVf2R_b_8P9+Xhk4RiJ3vdw@mail.gmail.com>
-References: <20260325143555.451852-1-herve.codina@bootlin.com>
-	<20260325143555.451852-3-herve.codina@bootlin.com>
-	<CAMuHMdU7x7LWFkD9xiq+wyOqnn0bdzr+JLfvbBexoiWyv8kftA@mail.gmail.com>
-	<CAD=FV=UK3NQKQN7FXyG4nGdDKO=LQYhnL4ZweomQ_4R9-EAYag@mail.gmail.com>
-	<aekg_IELc65BFrWp@ashevche-desk.local>
-	<CAD=FV=XTvvq11y7kxmrfBe3dZsKro7N9=i-Hj9aqsLBay2Q9Rw@mail.gmail.com>
-	<CAMuHMdUDCQrQ2Z9D7-ZOKiuDznDJVf2R_b_8P9+Xhk4RiJ3vdw@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-redhat-linux-gnu)
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="v4N7Vg0o"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vMz/vEf05h6uU4QdT+2Ifjfe4wi5fLfg5VN8Q+zV0NCOCyznjokZiRD6z7zQSY6JRaWuh4M6duYRaqjjJIuNyRLpBRICANV3ebMs8+ng1XvJaIjdDfphCcdimDBNAb4ZbrkrkALZjF8+O6mMWbBzn7B/5Qs9+0CGPEo10v/JDJ0lXEN7OPjBFyoayeWm5+i5Vfr5v9yo/DhnLUNJJ4XTu+FC2dkuhdH4bIWGPJyfRPro5GTdP/tu2O4fqicAxDdZ0t6xaPB5r2aVdROI5waWUBpnYnE1zAeZjnNbfyUb6CJtubv+NudWEv450ru7puDoL2QJDVeWfpVTQJAkT+saWA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vJfVin2w08yklHKOlEqd6NWTobx8Nr8JimQ1fpHxfdU=;
+ b=c0hoBTx5ZbQSUQifFNPZqjquZfmoSzdJUZZhETHBjyjS38blakVdqbu0pTEQVAKZpnzHWRDJf0Y3lqi2+J//A1bBNgOlJnJJrLyHxX7qJrsy73Yfg/zq/6VKMYOGGecpKm6d49oad8uiSyDRh0C1WeXc5QLN/oJxLwSv+qu4YLFqAZYlq3YQ/SVon55JUEco3Zy8gIfm5lxgjwjrDqVQyaIFxs5d3B3Cw0MCZ8tVlkD4RIevQSira7Du0ejhu/RfTgp4xEyrvRJWpvupfJLjY0V2wjefSuuyZlh6SsFcOFRGrrRnde2JwXb0PgCOmn5ZI6cBlAyaTSJjld5Mmz3bNA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vJfVin2w08yklHKOlEqd6NWTobx8Nr8JimQ1fpHxfdU=;
+ b=v4N7Vg0o72rbE3g0R/qGcc9PZyEbmQZ8UkdIDyIS/YaTxy6/uqAtATMOJhXK04akdeLlJvxhAbjeLxim79n6Mx2PHKGFlR7pBtPq/5UPwq1rvY1CU/RtCUh3OCfkNR9C2G4g7iCgq2NWwJwrcBYfeiY0RunUVa44ure7Vjkgz/4=
+Received: from TY6PR01MB17377.jpnprd01.prod.outlook.com (2603:1096:405:35b::6)
+ by OSCPR01MB15578.jpnprd01.prod.outlook.com (2603:1096:604:3c1::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9846.21; Thu, 23 Apr
+ 2026 08:42:59 +0000
+Received: from TY6PR01MB17377.jpnprd01.prod.outlook.com
+ ([fe80::f373:26d6:86c4:6aa3]) by TY6PR01MB17377.jpnprd01.prod.outlook.com
+ ([fe80::f373:26d6:86c4:6aa3%6]) with mapi id 15.20.9846.021; Thu, 23 Apr 2026
+ 08:42:59 +0000
+From: John Madieu <john.madieu.xa@bp.renesas.com>
+To: Rob Herring <robh@kernel.org>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>, Kuninori Morimoto
+	<kuninori.morimoto.gx@renesas.com>, Vinod Koul <vkoul@kernel.org>, Mark Brown
+	<broonie@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@kernel.org>, Liam Girdwood
+	<lgirdwood@gmail.com>, magnus.damm <magnus.damm@gmail.com>, Thomas Gleixner
+	<tglx@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
+	<tiwai@suse.com>, Philipp Zabel <p.zabel@pengutronix.de>, Claudiu.Beznea
+	<claudiu.beznea@tuxon.dev>, Biju Das <biju.das.jz@bp.renesas.com>, Fabrizio
+ Castro <fabrizio.castro.jz@renesas.com>, Prabhakar Mahadev Lad
+	<prabhakar.mahadev-lad.rj@bp.renesas.com>, John Madieu
+	<john.madieu@gmail.com>, "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "dmaengine@vger.kernel.org"
+	<dmaengine@vger.kernel.org>, "linux-sound@vger.kernel.org"
+	<linux-sound@vger.kernel.org>
+Subject: RE: [PATCH v2 06/24] ASoC: dt-bindings: Add RZ/G3E (R9A09G047) sound
+ binding
+Thread-Topic: [PATCH v2 06/24] ASoC: dt-bindings: Add RZ/G3E (R9A09G047) sound
+ binding
+Thread-Index: AQHcwoA3qbwp6I+hdUiOegM/HOfDd7Xgr/WAgAvBIxA=
+Date: Thu, 23 Apr 2026 08:42:58 +0000
+Message-ID:
+ <TY6PR01MB17377A994ADC23E7513E585F5FF2A2@TY6PR01MB17377.jpnprd01.prod.outlook.com>
+References: <20260402090524.9137-1-john.madieu.xa@bp.renesas.com>
+ <20260402090524.9137-7-john.madieu.xa@bp.renesas.com>
+ <20260415205733.GA354660-robh@kernel.org>
+In-Reply-To: <20260415205733.GA354660-robh@kernel.org>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY6PR01MB17377:EE_|OSCPR01MB15578:EE_
+x-ms-office365-filtering-correlation-id: d130320e-a8ae-4ae4-8b8e-08dea1145292
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|1800799024|366016|376014|18002099003|38070700021|56012099003|22082099003;
+x-microsoft-antispam-message-info:
+ MpfORgNINFLLHuv//89n/AapInSZKgCDRGDQ+NIsSHDO1xBKZ5XwN8nmX7EOYDnienxhqqqd/KC0/h29lsZdAPDT1W0WCCs9X/RsNNgNobL7FD/JIQ8tzTk2hhouDFJzfnS0UAZCzoBrMiD3lXvami4+v/4trRraHNh3fPGNMzLob47MmoaDhcmqxxd+MGFeUiqJrRtTbN4WvRPA5XV20ITWb6/1GZRXo5RoQlWFOkQj7MBha39VdKWRDEPFEK9xhGMnd6aESMZ/pgrAIp31gbbAcZpOxCrxDcdbQJ5nZ+RwBkXwRC5T4nQSBGtQ2DpLum7MNrbX/usUNzZLufFBn1B8dbYCW2lcYP3fxEO0AN9zGDttF5q6aLO+8YosT4cWwOGO35z5tNalkYeh8EjceJ0YVTPdQNDaaYXoWLUdS/2b7CV2A5AEIo6FwYx8r1fLc7+wJEuTwCOc/VPy5e44Fd7uqEBKL+RCnbZpni0CbkZLtg1/ssWYTJ51Ad0JssTLcqnNg1HTEtqjnkbikWMMMikwVBWcLAX77W7aVn2B0A74lfsriC9JfMM6bJu2En5/gTspbsYS9RGrDVeiZRye0L/K8XKxZkulcGz2uBwdjE2+ZobiLTmSLUZvZFgC+ddO98jMbdY+HaFYeLufoy56fVLuKjem8WrgRplJfuFTUcl7SMRrTP8Bqiy/cX/Se3IBk2d1h5QBwfWUVqnnGRTIiLSPK/eqredaBdJTV16SENoouwk7z61xwOlRNYdLRF0T
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY6PR01MB17377.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014)(18002099003)(38070700021)(56012099003)(22082099003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?76/uNsjNGbo6UbU4apHhqISe0g2X9eR1T2BOko2PA/yP3TWOx9y76piJ1PtB?=
+ =?us-ascii?Q?+kPbfNhnscGgQVlqDj1J1SlVOZUusM0RRqNFl+7Zw0wvXrAht2H+tyoXQZmW?=
+ =?us-ascii?Q?BrzlFxfbXbA7iNki3SyGp433amZbusqqzXseaLG4+f4+kjH3FnHPQvc3TR4p?=
+ =?us-ascii?Q?SzNri1QPdFJ4VufL5FVdhG5oaqoOKdPdToCUpX0oNMzmQbTJO51pgHOzjpHN?=
+ =?us-ascii?Q?3x77XW6AnsnFku2xrtZ962VJHpd0n7YXlpblpsswJYLbY++MXOVfAbFOv72v?=
+ =?us-ascii?Q?/9Am3faPGGH1Zyfe8oa1CL/jfbMwNB2RIuuuO0jAn7tXY041m6oPlw1hODlJ?=
+ =?us-ascii?Q?pwSZB1Yhnpl95Yk+gDnfypb+E2Sx+ZgwheEAA/DyDQ/Y3hvJyRZjoZINs9nG?=
+ =?us-ascii?Q?SC3BsuQPMUu5IEHKQpeFJCcvp7G+S6N4c1nbfYL+hpu6qRg4G9yLS49CBwZT?=
+ =?us-ascii?Q?JOtOPESXW8uzWsmOby4KKkqBSrl0lqv3C+K7PpiX3We94FX+TfM62S4qpnlU?=
+ =?us-ascii?Q?EX8Zet0wux/VTLVGofwHIfaU8zFfR68Uj5ikJpU3aKUsKZJTGM9APjnMGp5V?=
+ =?us-ascii?Q?hE14WqnoLpaxsiAY2J0WWQAzQQKu+yPw8tyMxCK2TtWwdX+SqxdRqPlK2Krv?=
+ =?us-ascii?Q?XIxIfFfaEsJ42OMnE2ScGrf4GPXcrBlNWWuuPve4xEuYjnEhFzIOL7z8Gxi/?=
+ =?us-ascii?Q?kbgHbhnvyCjWdIabJaV1qt523eMDPtdCvpa9+It381FkOsb/j6o2gJvt7NRB?=
+ =?us-ascii?Q?mssYRYIRwcBx8rCccfZefayMIRw4dr3izDFXve9rEJKkY6OmiPmnLDeHAJup?=
+ =?us-ascii?Q?ufTCYT37S6+gjiajp+1F/YHqgrNHhhw3BuMv5AlC+DWWZC4VA22DOiQpZOtT?=
+ =?us-ascii?Q?/cS91doMpGrT+DPZqP4NI8JnzZIoTeIkdqfcl24FrteY6Z66gTmztIm68LFZ?=
+ =?us-ascii?Q?btq8ccTU4qMsTfkQ4KXCUR1mO8TmI0Bz2B2cyFlUIckIssI4URYpCiP6SH5r?=
+ =?us-ascii?Q?uSHi9EB2fgLx49WuZuWTUvDGp3LWU6wBmdAJkeLfDsK8dGEX/B4548SS7tEI?=
+ =?us-ascii?Q?+cu8SSI/HFkvPCTUa+3f2FOkjsKC1BZ6G2Cxol3PAUUJcYrS6S/a3DRz+6qd?=
+ =?us-ascii?Q?gWVFAuJCDJuWaq14RyabPW7tYt+QjmwUYqRquKlqltgciCU9NBdeCrqp+Rmb?=
+ =?us-ascii?Q?RjS2dvh0aAn9goFWbOOP/OL0vNJbGP7BayNN9buSVCQwKhwr9esHVo/tyf9C?=
+ =?us-ascii?Q?E2I8E80dOWW7iFflN25nb5Dn+3/K053XMyUt7UVc+fbuGIqRMF6SoAxJbmQf?=
+ =?us-ascii?Q?9woeFWCs03qJUAoywEBo0Cuq1dzmHI9sLA1QLZ/gB7ZBP1U6Lgy9m2CPzL0O?=
+ =?us-ascii?Q?H+oVzTOJewgIoqAEp5tufh1aFBuc6oA6rmS8drA3cH+cUgM8GnbGFeCtqBBZ?=
+ =?us-ascii?Q?MMcbreL6bxDemqKi9BkY4FNW0dHvypYS6oEifF3NF6f32D3fUMaiuvSEixXi?=
+ =?us-ascii?Q?HROPkEdzA8xB9iLzHG36WULEWg5w5UBvZ/2JDOW721LstLIUotFfuDGISlwJ?=
+ =?us-ascii?Q?rihRHonpZvKwjGvqmIannfqmjk+VQIGtCq2sNGi0knU9WW71dA5MgeTIpA4+?=
+ =?us-ascii?Q?1/He0EcqK1VZw6PQ63dP30REYbPp5qCWYwwa9K7cTzJFzZcavCDZziIJw0Ct?=
+ =?us-ascii?Q?cUAy1ukcCUHuIMJcQe36Z/KoLuQYmSe7yiETjFXkSD6zx0R5tn3hHjAvjBEX?=
+ =?us-ascii?Q?Ak4kxie8Of19uGR8gT1h3Uf64Iqk4nM=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY6PR01MB17377.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d130320e-a8ae-4ae4-8b8e-08dea1145292
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Apr 2026 08:42:58.9914
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: QxaYnkq/oO/cXZaDiRgTLjVdeydq5tHqNXxtnHIL+0sUv/cE4f95yACZUNnDFjF1vHqkQL0YZ4RcrjBT5CtWC+w08bn3/TXsF2X+zo3Jsag=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSCPR01MB15578
 
-Hi Geert, Doug,
+Hi Rob,
 
-On Thu, 23 Apr 2026 08:53:33 +0200
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+Thanks fort he review.
 
-> Hi Doug,
-> 
-> On Wed, 22 Apr 2026 at 21:40, Doug Anderson <dianders@chromium.org> wrote:
-> > On Wed, Apr 22, 2026 at 12:27 PM Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:  
-> > > On Wed, Apr 22, 2026 at 11:51:36AM -0700, Doug Anderson wrote:  
-> > > > On Wed, Apr 22, 2026 at 10:44 AM Geert Uytterhoeven
-> > > > <geert@linux-m68k.org> wrote:  
-> > > > > On Wed, 25 Mar 2026 at 15:36, Herve Codina <herve.codina@bootlin.com> wrote:  
-> > >
-> > > ...
-> > >  
-> > > > > > +               if (fwnode->flags & FWNODE_FLAG_NOT_DEVICE)  
-> > > > >
-> > > > > After commit f72e77c33e4b5657 ("device property: Make modifications
-> > > > > of fwnode "flags" thread safe"), this must be changed to:
-> > > > >
-> > > > >     if (fwnode_test_flag(fwnode, FWNODE_FLAG_NOT_DEVICE))
-> > > > >
-> > > > > With this change my DT overlays are working again.
-> > > > >
-> > > > > I guess keeping the FWNODE_FLAG_* names, but changing their values
-> > > > > from bit masks to bit numbers was probably not such a good idea,
-> > > > > as it fails to catch missing conversions...  
-> > > >
-> > > > Crud, I should have thought about that. :( Do you think it's worth it
-> > > > to do a rename at this point to catch future problems?  
-> 
-> I am afraid it is too late (it is already in Linus' tree), and would
-> add only more to the confusion.  We just have to take care when this
-> patch (and 01/27) is backported to stable.  Fortunately the reverse
-> is caught, as the fwnode_*_flag() helpers did not exist before.
-> 
-> > > You can try locally with allyesconfig / allmodconfig and see the outcome.
-> > > If there are missed cases, and their amount reasonably low, I won't bother
-> > > in this case.  
+> -----Original Message-----
+> From: Rob Herring <robh@kernel.org>
+> Sent: Mittwoch, 15. April 2026 22:58
+> To: John Madieu <john.madieu.xa@bp.renesas.com>
+> Subject: Re: [PATCH v2 06/24] ASoC: dt-bindings: Add RZ/G3E (R9A09G047)
+> sound binding
+>=20
+> On Thu, Apr 02, 2026 at 11:05:05AM +0200, John Madieu wrote:
+> > The RZ/G3E shares the same audio IP as the R-Car variants but differs
+> > in several aspects: it supports up to 5 DMA controllers per audio
+> > channel, requires additional clocks (47 total including per-SSI ADG
+> > clocks, SCU domain clocks and SSIF supply) and additional reset lines
+> > (14 total including SCU, ADG and Audio DMAC peri-peri resets).
 > >
-> > I believe I caught all of them at the time of my CL, but the problem
-> > is in-flight stuff, right? I think the problem Geert is pointing out
-> > isn't something I missed in my original patch but rather an
-> > interaction between my patch and this in-flight patch.  
-> 
-> There are no unconverted cases in upstream or linux-next
-> (I checked yesterday, and rechecked this morning).
-> 
+> > Add a dedicated devicetree binding for the RZ/G3E sound controller.
+> > The binding references the common renesas,rsnd-common.yaml schema for
+> > shared property and subnode definitions.
+> >
+> > Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+> > ---
+> >
+> > Changes:
+> >
+> > v2: New patch
+> >
+> >  .../sound/renesas,r9a09g047-sound.yaml        | 371 ++++++++++++++++++
+> >  1 file changed, 371 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/sound/renesas,r9a09g047-sound.yaml
+> >
+> > diff --git
+> > a/Documentation/devicetree/bindings/sound/renesas,r9a09g047-sound.yaml
+> > b/Documentation/devicetree/bindings/sound/renesas,r9a09g047-sound.yaml
+> > new file mode 100644
+> > index 000000000000..1dfe9bab3382
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/sound/renesas,r9a09g047-sound.
+> > +++ yaml
+> > @@ -0,0 +1,371 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
+> > +---
+> > +$id:
+> > +http://devicetree.org/schemas/sound/renesas,r9a09g047-sound.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Renesas RZ/G3E Sound Controller
+> > +
+> > +maintainers:
+> > +  - Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> > +  - John Madieu <john.madieu.xa@bp.renesas.com>
+> > +
+> > +description:
+> > +  The RZ/G3E (R9A09G047) integrates an R-Car compatible sound
+> > +controller
+> > +  with extended DMA channel support (up to 5 DMACs per direction),
+> > +additional
+> > +  clock domains, and additional reset lines compared to the R-Car
+> > +Gen2/Gen3
+> > +  variants.
+> > +
+> > +allOf:
+> > +  - $ref: renesas,rsnd-common.yaml#
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: renesas,r9a09g047-sound
+> > +
+> > +  reg:
+> > +    maxItems: 5
+> > +
+> > +  reg-names:
+> > +    items:
+> > +      - const: scu
+> > +      - const: adg
+> > +      - const: ssiu
+> > +      - const: ssi
+> > +      - const: audmapp
+> > +
+> > +  clocks:
+> > +    maxItems: 47
+> > +
+> > +  clock-names:
+> > +    items:
+> > +      - const: ssi-all
+> > +      - const: ssi.9
+> > +      - const: ssi.8
+> > +      - const: ssi.7
+> > +      - const: ssi.6
+> > +      - const: ssi.5
+> > +      - const: ssi.4
+> > +      - const: ssi.3
+> > +      - const: ssi.2
+> > +      - const: ssi.1
+> > +      - const: ssi.0
+> > +      - const: src.9
+> > +      - const: src.8
+> > +      - const: src.7
+> > +      - const: src.6
+> > +      - const: src.5
+> > +      - const: src.4
+> > +      - const: src.3
+> > +      - const: src.2
+> > +      - const: src.1
+> > +      - const: src.0
+> > +      - const: mix.1
+> > +      - const: mix.0
+> > +      - const: ctu.1
+> > +      - const: ctu.0
+> > +      - const: dvc.0
+> > +      - const: dvc.1
+> > +      - const: clk_a
+> > +      - const: clk_b
+> > +      - const: clk_c
+> > +      - const: clk_i
+> > +      - const: ssif_supply
+> > +      - const: scu
+> > +      - const: scu_x2
+> > +      - const: scu_supply
+> > +      - const: adg.ssi.9
+> > +      - const: adg.ssi.8
+> > +      - const: adg.ssi.7
+> > +      - const: adg.ssi.6
+> > +      - const: adg.ssi.5
+> > +      - const: adg.ssi.4
+> > +      - const: adg.ssi.3
+> > +      - const: adg.ssi.2
+> > +      - const: adg.ssi.1
+> > +      - const: adg.ssi.0
+> > +      - const: audmapp
+> > +      - const: adg
+> > +
+> > +  resets:
+> > +    maxItems: 14
+> > +
+> > +  reset-names:
+> > +    items:
+> > +      - const: ssi-all
+> > +      - const: ssi.9
+> > +      - const: ssi.8
+> > +      - const: ssi.7
+> > +      - const: ssi.6
+> > +      - const: ssi.5
+> > +      - const: ssi.4
+> > +      - const: ssi.3
+> > +      - const: ssi.2
+> > +      - const: ssi.1
+> > +      - const: ssi.0
+> > +      - const: scu
+> > +      - const: adg
+> > +      - const: audmapp
+> > +
+> > +  rcar_sound,dvc:
+> > +    description: DVC subnode.
+> > +    type: object
+>=20
+> Move 'additionalProperties' here.
+>=20
 
-Thanks for having pointed out this modification.
-It will save some debug hours on my side when I test the next iteration. 
+I share your opinion, but version 5 [1] has already been published.
+I received feedback from Krzysztof throughout the series, which
+aligned with your views. I hope you don't mind if we continue from v5
+(where there is no longer a split due to a major divergence following
+Krzysztof's recommendations). Is that Ok for you ?
 
-For this in-flight series, I will use new accessors introduced in
-f72e77c33e4b5657 ("device property: Make modifications of fwnode "flags"
-thread safe")
+[1] https://lore.kernel.org/all/20260417-energetic-practical-frigatebird-5b=
+93ad@quoll/=20
 
-Best regards,
-Hervé
-
+Regards,
+john
