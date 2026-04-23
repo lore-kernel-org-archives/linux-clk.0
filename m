@@ -1,317 +1,173 @@
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010014.outbound.protection.outlook.com [52.101.229.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A50636492A;
-	Thu, 23 Apr 2026 08:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776933784; cv=fail; b=IkZsaWOg6NFOFwhUwmsEz2q2JN0HpeyInvsJIg44vwRi/gXUe5Uqnoxc/i9lEcr6jrra7UKKOUrtoYYrcPTlub+mhRNWqZrShTfOtzKYah5viA4RuHXjFFw/c533jOqF1d5e5bM7xfL+7PtIvY8BkYQJUalP78cP3toXfr0xWpU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776933784; c=relaxed/simple;
-	bh=ce5YnD6Dd8m0lnLI6wFKhE9uW2udocLpK6owIFj4+kM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=MFUHYLWHyNJr4oke1Cdx9qy14V6fwcC8deUhD2uV4QN7crOJyvq6LtcYBP491+QhfeTsnU+5C/ZmbfNJH9ph4uArz0t68cRA2qj8FAUF4CNpRsL9+w9bvBbHdq6ZyYGqRNSgM1dZ2q758cenTf++qhk8U5RNYwh4AOtUpuIF7Bs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=v4N7Vg0o; arc=fail smtp.client-ip=52.101.229.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="v4N7Vg0o"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vMz/vEf05h6uU4QdT+2Ifjfe4wi5fLfg5VN8Q+zV0NCOCyznjokZiRD6z7zQSY6JRaWuh4M6duYRaqjjJIuNyRLpBRICANV3ebMs8+ng1XvJaIjdDfphCcdimDBNAb4ZbrkrkALZjF8+O6mMWbBzn7B/5Qs9+0CGPEo10v/JDJ0lXEN7OPjBFyoayeWm5+i5Vfr5v9yo/DhnLUNJJ4XTu+FC2dkuhdH4bIWGPJyfRPro5GTdP/tu2O4fqicAxDdZ0t6xaPB5r2aVdROI5waWUBpnYnE1zAeZjnNbfyUb6CJtubv+NudWEv450ru7puDoL2QJDVeWfpVTQJAkT+saWA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vJfVin2w08yklHKOlEqd6NWTobx8Nr8JimQ1fpHxfdU=;
- b=c0hoBTx5ZbQSUQifFNPZqjquZfmoSzdJUZZhETHBjyjS38blakVdqbu0pTEQVAKZpnzHWRDJf0Y3lqi2+J//A1bBNgOlJnJJrLyHxX7qJrsy73Yfg/zq/6VKMYOGGecpKm6d49oad8uiSyDRh0C1WeXc5QLN/oJxLwSv+qu4YLFqAZYlq3YQ/SVon55JUEco3Zy8gIfm5lxgjwjrDqVQyaIFxs5d3B3Cw0MCZ8tVlkD4RIevQSira7Du0ejhu/RfTgp4xEyrvRJWpvupfJLjY0V2wjefSuuyZlh6SsFcOFRGrrRnde2JwXb0PgCOmn5ZI6cBlAyaTSJjld5Mmz3bNA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vJfVin2w08yklHKOlEqd6NWTobx8Nr8JimQ1fpHxfdU=;
- b=v4N7Vg0o72rbE3g0R/qGcc9PZyEbmQZ8UkdIDyIS/YaTxy6/uqAtATMOJhXK04akdeLlJvxhAbjeLxim79n6Mx2PHKGFlR7pBtPq/5UPwq1rvY1CU/RtCUh3OCfkNR9C2G4g7iCgq2NWwJwrcBYfeiY0RunUVa44ure7Vjkgz/4=
-Received: from TY6PR01MB17377.jpnprd01.prod.outlook.com (2603:1096:405:35b::6)
- by OSCPR01MB15578.jpnprd01.prod.outlook.com (2603:1096:604:3c1::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9846.21; Thu, 23 Apr
- 2026 08:42:59 +0000
-Received: from TY6PR01MB17377.jpnprd01.prod.outlook.com
- ([fe80::f373:26d6:86c4:6aa3]) by TY6PR01MB17377.jpnprd01.prod.outlook.com
- ([fe80::f373:26d6:86c4:6aa3%6]) with mapi id 15.20.9846.021; Thu, 23 Apr 2026
- 08:42:59 +0000
-From: John Madieu <john.madieu.xa@bp.renesas.com>
-To: Rob Herring <robh@kernel.org>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>, Kuninori Morimoto
-	<kuninori.morimoto.gx@renesas.com>, Vinod Koul <vkoul@kernel.org>, Mark Brown
-	<broonie@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@kernel.org>, Liam Girdwood
-	<lgirdwood@gmail.com>, magnus.damm <magnus.damm@gmail.com>, Thomas Gleixner
-	<tglx@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
-	<tiwai@suse.com>, Philipp Zabel <p.zabel@pengutronix.de>, Claudiu.Beznea
-	<claudiu.beznea@tuxon.dev>, Biju Das <biju.das.jz@bp.renesas.com>, Fabrizio
- Castro <fabrizio.castro.jz@renesas.com>, Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>, John Madieu
-	<john.madieu@gmail.com>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "dmaengine@vger.kernel.org"
-	<dmaengine@vger.kernel.org>, "linux-sound@vger.kernel.org"
-	<linux-sound@vger.kernel.org>
-Subject: RE: [PATCH v2 06/24] ASoC: dt-bindings: Add RZ/G3E (R9A09G047) sound
- binding
-Thread-Topic: [PATCH v2 06/24] ASoC: dt-bindings: Add RZ/G3E (R9A09G047) sound
- binding
-Thread-Index: AQHcwoA3qbwp6I+hdUiOegM/HOfDd7Xgr/WAgAvBIxA=
-Date: Thu, 23 Apr 2026 08:42:58 +0000
-Message-ID:
- <TY6PR01MB17377A994ADC23E7513E585F5FF2A2@TY6PR01MB17377.jpnprd01.prod.outlook.com>
-References: <20260402090524.9137-1-john.madieu.xa@bp.renesas.com>
- <20260402090524.9137-7-john.madieu.xa@bp.renesas.com>
- <20260415205733.GA354660-robh@kernel.org>
-In-Reply-To: <20260415205733.GA354660-robh@kernel.org>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY6PR01MB17377:EE_|OSCPR01MB15578:EE_
-x-ms-office365-filtering-correlation-id: d130320e-a8ae-4ae4-8b8e-08dea1145292
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|1800799024|366016|376014|18002099003|38070700021|56012099003|22082099003;
-x-microsoft-antispam-message-info:
- MpfORgNINFLLHuv//89n/AapInSZKgCDRGDQ+NIsSHDO1xBKZ5XwN8nmX7EOYDnienxhqqqd/KC0/h29lsZdAPDT1W0WCCs9X/RsNNgNobL7FD/JIQ8tzTk2hhouDFJzfnS0UAZCzoBrMiD3lXvami4+v/4trRraHNh3fPGNMzLob47MmoaDhcmqxxd+MGFeUiqJrRtTbN4WvRPA5XV20ITWb6/1GZRXo5RoQlWFOkQj7MBha39VdKWRDEPFEK9xhGMnd6aESMZ/pgrAIp31gbbAcZpOxCrxDcdbQJ5nZ+RwBkXwRC5T4nQSBGtQ2DpLum7MNrbX/usUNzZLufFBn1B8dbYCW2lcYP3fxEO0AN9zGDttF5q6aLO+8YosT4cWwOGO35z5tNalkYeh8EjceJ0YVTPdQNDaaYXoWLUdS/2b7CV2A5AEIo6FwYx8r1fLc7+wJEuTwCOc/VPy5e44Fd7uqEBKL+RCnbZpni0CbkZLtg1/ssWYTJ51Ad0JssTLcqnNg1HTEtqjnkbikWMMMikwVBWcLAX77W7aVn2B0A74lfsriC9JfMM6bJu2En5/gTspbsYS9RGrDVeiZRye0L/K8XKxZkulcGz2uBwdjE2+ZobiLTmSLUZvZFgC+ddO98jMbdY+HaFYeLufoy56fVLuKjem8WrgRplJfuFTUcl7SMRrTP8Bqiy/cX/Se3IBk2d1h5QBwfWUVqnnGRTIiLSPK/eqredaBdJTV16SENoouwk7z61xwOlRNYdLRF0T
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY6PR01MB17377.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014)(18002099003)(38070700021)(56012099003)(22082099003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?76/uNsjNGbo6UbU4apHhqISe0g2X9eR1T2BOko2PA/yP3TWOx9y76piJ1PtB?=
- =?us-ascii?Q?+kPbfNhnscGgQVlqDj1J1SlVOZUusM0RRqNFl+7Zw0wvXrAht2H+tyoXQZmW?=
- =?us-ascii?Q?BrzlFxfbXbA7iNki3SyGp433amZbusqqzXseaLG4+f4+kjH3FnHPQvc3TR4p?=
- =?us-ascii?Q?SzNri1QPdFJ4VufL5FVdhG5oaqoOKdPdToCUpX0oNMzmQbTJO51pgHOzjpHN?=
- =?us-ascii?Q?3x77XW6AnsnFku2xrtZ962VJHpd0n7YXlpblpsswJYLbY++MXOVfAbFOv72v?=
- =?us-ascii?Q?/9Am3faPGGH1Zyfe8oa1CL/jfbMwNB2RIuuuO0jAn7tXY041m6oPlw1hODlJ?=
- =?us-ascii?Q?pwSZB1Yhnpl95Yk+gDnfypb+E2Sx+ZgwheEAA/DyDQ/Y3hvJyRZjoZINs9nG?=
- =?us-ascii?Q?SC3BsuQPMUu5IEHKQpeFJCcvp7G+S6N4c1nbfYL+hpu6qRg4G9yLS49CBwZT?=
- =?us-ascii?Q?JOtOPESXW8uzWsmOby4KKkqBSrl0lqv3C+K7PpiX3We94FX+TfM62S4qpnlU?=
- =?us-ascii?Q?EX8Zet0wux/VTLVGofwHIfaU8zFfR68Uj5ikJpU3aKUsKZJTGM9APjnMGp5V?=
- =?us-ascii?Q?hE14WqnoLpaxsiAY2J0WWQAzQQKu+yPw8tyMxCK2TtWwdX+SqxdRqPlK2Krv?=
- =?us-ascii?Q?XIxIfFfaEsJ42OMnE2ScGrf4GPXcrBlNWWuuPve4xEuYjnEhFzIOL7z8Gxi/?=
- =?us-ascii?Q?kbgHbhnvyCjWdIabJaV1qt523eMDPtdCvpa9+It381FkOsb/j6o2gJvt7NRB?=
- =?us-ascii?Q?mssYRYIRwcBx8rCccfZefayMIRw4dr3izDFXve9rEJKkY6OmiPmnLDeHAJup?=
- =?us-ascii?Q?ufTCYT37S6+gjiajp+1F/YHqgrNHhhw3BuMv5AlC+DWWZC4VA22DOiQpZOtT?=
- =?us-ascii?Q?/cS91doMpGrT+DPZqP4NI8JnzZIoTeIkdqfcl24FrteY6Z66gTmztIm68LFZ?=
- =?us-ascii?Q?btq8ccTU4qMsTfkQ4KXCUR1mO8TmI0Bz2B2cyFlUIckIssI4URYpCiP6SH5r?=
- =?us-ascii?Q?uSHi9EB2fgLx49WuZuWTUvDGp3LWU6wBmdAJkeLfDsK8dGEX/B4548SS7tEI?=
- =?us-ascii?Q?+cu8SSI/HFkvPCTUa+3f2FOkjsKC1BZ6G2Cxol3PAUUJcYrS6S/a3DRz+6qd?=
- =?us-ascii?Q?gWVFAuJCDJuWaq14RyabPW7tYt+QjmwUYqRquKlqltgciCU9NBdeCrqp+Rmb?=
- =?us-ascii?Q?RjS2dvh0aAn9goFWbOOP/OL0vNJbGP7BayNN9buSVCQwKhwr9esHVo/tyf9C?=
- =?us-ascii?Q?E2I8E80dOWW7iFflN25nb5Dn+3/K053XMyUt7UVc+fbuGIqRMF6SoAxJbmQf?=
- =?us-ascii?Q?9woeFWCs03qJUAoywEBo0Cuq1dzmHI9sLA1QLZ/gB7ZBP1U6Lgy9m2CPzL0O?=
- =?us-ascii?Q?H+oVzTOJewgIoqAEp5tufh1aFBuc6oA6rmS8drA3cH+cUgM8GnbGFeCtqBBZ?=
- =?us-ascii?Q?MMcbreL6bxDemqKi9BkY4FNW0dHvypYS6oEifF3NF6f32D3fUMaiuvSEixXi?=
- =?us-ascii?Q?HROPkEdzA8xB9iLzHG36WULEWg5w5UBvZ/2JDOW721LstLIUotFfuDGISlwJ?=
- =?us-ascii?Q?rihRHonpZvKwjGvqmIannfqmjk+VQIGtCq2sNGi0knU9WW71dA5MgeTIpA4+?=
- =?us-ascii?Q?1/He0EcqK1VZw6PQ63dP30REYbPp5qCWYwwa9K7cTzJFzZcavCDZziIJw0Ct?=
- =?us-ascii?Q?cUAy1ukcCUHuIMJcQe36Z/KoLuQYmSe7yiETjFXkSD6zx0R5tn3hHjAvjBEX?=
- =?us-ascii?Q?Ak4kxie8Of19uGR8gT1h3Uf64Iqk4nM=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Received: from zg8tmja2lje4os4yms4ymjma.icoremail.net (zg8tmja2lje4os4yms4ymjma.icoremail.net [206.189.21.223])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF1734D907;
+	Thu, 23 Apr 2026 09:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.21.223
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1776935372; cv=none; b=fe+6D+JzJfPHnEDwC+CaGTqtXzIRc7/t9ZFyplK+MuSM5gfJZzXDhNnyLYPoscHV+GExCWcrNSB25CEXhoSRaLvsRb1kl+cVpMrb0fQwrn3evM9TH/y2HrQSTHg8d3VVwV3i+jXvkf4R5HRjNYhb6wQhpUqb3Q7jpuajsRhHp2w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1776935372; c=relaxed/simple;
+	bh=Ns8dbRJs5FRrA60axp+t9uYgSDDS+Jk/SJ1IFmAX6v0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rFMUsLhTWyIAeXSNQdjH/VLRKrEMLWzdxmcP4/qJMhW1PTacYn2W6YuG4lEWyEHOQc0qRf8frBYq6u8FOrmG9/R/6Ieje+nXeLYPugbmg697wj+zTuXTC6Fql5g+VBH7ZetPpa5CYxGpwfI677DIK9QqqpjjQ/NaeOD3nsAVHMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=206.189.21.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0005152DT.eswin.cn (unknown [10.12.96.41])
+	by app2 (Coremail) with SMTP id TQJkCgDX7aC24elpovoTAA--.23702S2;
+	Thu, 23 Apr 2026 17:09:12 +0800 (CST)
+From: Xuyang Dong <dongxuyang@eswincomputing.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	p.zabel@pengutronix.de,
+	huangyifeng@eswincomputing.com,
+	dongxuyang@eswincomputing.com,
+	benoit.monin@bootlin.com,
+	bmasney@redhat.com
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	pinkesh.vaghela@einfochips.com
+Subject: [PATCH v3 0/3] Add driver support for ESWIN EIC7700 HSP clock and reset generator
+Date: Thu, 23 Apr 2026 17:09:04 +0800
+Message-Id: <20260423090904.2108-1-dongxuyang@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY6PR01MB17377.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d130320e-a8ae-4ae4-8b8e-08dea1145292
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Apr 2026 08:42:58.9914
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: QxaYnkq/oO/cXZaDiRgTLjVdeydq5tHqNXxtnHIL+0sUv/cE4f95yACZUNnDFjF1vHqkQL0YZ4RcrjBT5CtWC+w08bn3/TXsF2X+zo3Jsag=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSCPR01MB15578
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:TQJkCgDX7aC24elpovoTAA--.23702S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxKw17Zr1UtF18CFW3tr48Crg_yoW7Aw1xpF
+	Z8WF93Gr1UXrWxuan7t3WIvFZxJa13JFyakws7J3W7ZanIyFyUJF40ka45AFZrZr1fX3y5
+	J3W7tryF9FyUZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9G14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK6svPMxAIw28IcxkI7VAKI48JMx
+	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
+	wI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
+	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v2
+	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
+	W8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUb_Ma5UUUUU==
+X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/
 
-Hi Rob,
+Add support for the ESWIN EIC7700 HSP (high-speed peripherals). The drivers
+provide basic functionality to manage and control the clock and reset
+signals for EIC7700 HSP, including mmc, USB, ethernet, SATA and DMAC.
 
-Thanks fort he review.
+The clock and reset registers are mapped to overlapping I/O address ranges.
+This causes a resource conflict when two drivers attempt to request the
+same region. Use the auxiliary device framework: the main driver
+allocates the shared register region and passes it to auxiliary
+devices, avoiding resource contention and duplicate remapping.
 
-> -----Original Message-----
-> From: Rob Herring <robh@kernel.org>
-> Sent: Mittwoch, 15. April 2026 22:58
-> To: John Madieu <john.madieu.xa@bp.renesas.com>
-> Subject: Re: [PATCH v2 06/24] ASoC: dt-bindings: Add RZ/G3E (R9A09G047)
-> sound binding
->=20
-> On Thu, Apr 02, 2026 at 11:05:05AM +0200, John Madieu wrote:
-> > The RZ/G3E shares the same audio IP as the R-Car variants but differs
-> > in several aspects: it supports up to 5 DMA controllers per audio
-> > channel, requires additional clocks (47 total including per-SSI ADG
-> > clocks, SCU domain clocks and SSIF supply) and additional reset lines
-> > (14 total including SCU, ADG and Audio DMAC peri-peri resets).
-> >
-> > Add a dedicated devicetree binding for the RZ/G3E sound controller.
-> > The binding references the common renesas,rsnd-common.yaml schema for
-> > shared property and subnode definitions.
-> >
-> > Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
-> > ---
-> >
-> > Changes:
-> >
-> > v2: New patch
-> >
-> >  .../sound/renesas,r9a09g047-sound.yaml        | 371 ++++++++++++++++++
-> >  1 file changed, 371 insertions(+)
-> >  create mode 100644
-> > Documentation/devicetree/bindings/sound/renesas,r9a09g047-sound.yaml
-> >
-> > diff --git
-> > a/Documentation/devicetree/bindings/sound/renesas,r9a09g047-sound.yaml
-> > b/Documentation/devicetree/bindings/sound/renesas,r9a09g047-sound.yaml
-> > new file mode 100644
-> > index 000000000000..1dfe9bab3382
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/sound/renesas,r9a09g047-sound.
-> > +++ yaml
-> > @@ -0,0 +1,371 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
-> > +---
-> > +$id:
-> > +http://devicetree.org/schemas/sound/renesas,r9a09g047-sound.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Renesas RZ/G3E Sound Controller
-> > +
-> > +maintainers:
-> > +  - Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> > +  - John Madieu <john.madieu.xa@bp.renesas.com>
-> > +
-> > +description:
-> > +  The RZ/G3E (R9A09G047) integrates an R-Car compatible sound
-> > +controller
-> > +  with extended DMA channel support (up to 5 DMACs per direction),
-> > +additional
-> > +  clock domains, and additional reset lines compared to the R-Car
-> > +Gen2/Gen3
-> > +  variants.
-> > +
-> > +allOf:
-> > +  - $ref: renesas,rsnd-common.yaml#
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: renesas,r9a09g047-sound
-> > +
-> > +  reg:
-> > +    maxItems: 5
-> > +
-> > +  reg-names:
-> > +    items:
-> > +      - const: scu
-> > +      - const: adg
-> > +      - const: ssiu
-> > +      - const: ssi
-> > +      - const: audmapp
-> > +
-> > +  clocks:
-> > +    maxItems: 47
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: ssi-all
-> > +      - const: ssi.9
-> > +      - const: ssi.8
-> > +      - const: ssi.7
-> > +      - const: ssi.6
-> > +      - const: ssi.5
-> > +      - const: ssi.4
-> > +      - const: ssi.3
-> > +      - const: ssi.2
-> > +      - const: ssi.1
-> > +      - const: ssi.0
-> > +      - const: src.9
-> > +      - const: src.8
-> > +      - const: src.7
-> > +      - const: src.6
-> > +      - const: src.5
-> > +      - const: src.4
-> > +      - const: src.3
-> > +      - const: src.2
-> > +      - const: src.1
-> > +      - const: src.0
-> > +      - const: mix.1
-> > +      - const: mix.0
-> > +      - const: ctu.1
-> > +      - const: ctu.0
-> > +      - const: dvc.0
-> > +      - const: dvc.1
-> > +      - const: clk_a
-> > +      - const: clk_b
-> > +      - const: clk_c
-> > +      - const: clk_i
-> > +      - const: ssif_supply
-> > +      - const: scu
-> > +      - const: scu_x2
-> > +      - const: scu_supply
-> > +      - const: adg.ssi.9
-> > +      - const: adg.ssi.8
-> > +      - const: adg.ssi.7
-> > +      - const: adg.ssi.6
-> > +      - const: adg.ssi.5
-> > +      - const: adg.ssi.4
-> > +      - const: adg.ssi.3
-> > +      - const: adg.ssi.2
-> > +      - const: adg.ssi.1
-> > +      - const: adg.ssi.0
-> > +      - const: audmapp
-> > +      - const: adg
-> > +
-> > +  resets:
-> > +    maxItems: 14
-> > +
-> > +  reset-names:
-> > +    items:
-> > +      - const: ssi-all
-> > +      - const: ssi.9
-> > +      - const: ssi.8
-> > +      - const: ssi.7
-> > +      - const: ssi.6
-> > +      - const: ssi.5
-> > +      - const: ssi.4
-> > +      - const: ssi.3
-> > +      - const: ssi.2
-> > +      - const: ssi.1
-> > +      - const: ssi.0
-> > +      - const: scu
-> > +      - const: adg
-> > +      - const: audmapp
-> > +
-> > +  rcar_sound,dvc:
-> > +    description: DVC subnode.
-> > +    type: object
->=20
-> Move 'additionalProperties' here.
->=20
+Features:
+Implements support for the ESWIN EIC7700 HSP clock and reset controller.
+Provide API to manage clock and reset signals for the EIC7700 HSP.
 
-I share your opinion, but version 5 [1] has already been published.
-I received feedback from Krzysztof throughout the series, which
-aligned with your views. I hope you don't mind if we continue from v5
-(where there is no longer a split due to a major divergence following
-Krzysztof's recommendations). Is that Ok for you ?
+Supported chips:
+ESWIN EIC7700 series SoC.
 
-[1] https://lore.kernel.org/all/20260417-energetic-practical-frigatebird-5b=
-93ad@quoll/=20
+Test:
+Test this patch on the Sifive HiFive Premier P550 (which used the EIC7700
+SoC), include USB and other peripherals. All the drivers of these modules
+use the clock module and reset module.
 
-Regards,
-john
+This patch depends on ESWIN EIC7700 clock controller patch [1], [2] and [3].
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?h=next-20260331&id=8add6d87dc69c0620c7e60bdc6be6b3b0092d9fa
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?h=next-20260331&id=cd44f127c1d42833a32ba0a0965255ee6184f8c1
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?h=next-20260331&id=858f6273cf003e97c817903a07d8001b483fe40b
+
+Updates:
+  Changes in v3:
+  - Bindings:
+    - Added "Acked-by: Conor Dooley <conor.dooley@microchip.com>" for bindings.
+  - Clock driver:
+    - Remove 'gate_flags'.
+    - Add __acquires for eic7700_hsp_regmap_lock() and add __releases for
+      eic7700_hsp_regmap_unlock().
+    - Move writel(USB_REF_XTAL24M, gate->ref_reg) into enable. Because this
+      is only used for USB gate clock on the enable path. And modify the
+      comments.
+    - Simplify to: 'return !!(readl(gate->reg) & BIT(gate->bit_idx));'.
+    - Drop const from eic7700_hsp_regmap_config.
+    - Declare eic7700_hsp_regmap_config as a regular variable at the top.
+    - Dropping const will cause a warning when checked with checkpatch.pl.
+
+  - Link to v2: https://lore.kernel.org/all/20260420093929.1895-1-dongxuyang@eswincomputing.com/
+
+  Changes in v2:
+  - Bindings:
+    - Remove "hsp_" from clock-names.
+    - Replace "eswin,eic7700-clock.yaml" and "eswin,eic7700-hspcrg.yaml" with
+      "eswin,eic7700*".
+    - Replace "eswin,eic7700-clock.h" and "eswin,eic7700-hspcrg.h" with
+      "eswin,eic7700*".
+  - Clock driver:
+    - Use guard(spinlock_irqsave)(gate->lock) instead of spin_lock_irqsave()
+      and remove spin_unlock_irqrestore().
+    - Remove the newline in function hsp_clk_gate_is_enabled().
+    - Use struct clk_init_data init = {}.
+    - Replace 'static struct clk_parent_data' with
+      'static const struct clk_parent_data'.
+    - Change '.fw_name' to '.index', because the function
+      eswin_clk_register_fixed_factor() uses .index.
+    - The structures of clocks should use static struct. When registering a clock,
+      the 'hw' field in the structure will be assigned.
+    - Remove __force.
+    - Create the regmap in the clock driver and remove (__force void*)data->base.
+      The reset driver uses dev_get_regmap() to get the regmap from the clock.
+    - Move 'const struct regmap_config eic7700_hsp_regmap_config' from reset
+      driver to clock driver.
+    - The USB clock gate (hsp_clk_gate_endisable) and the reset driver both
+      perform read-modify-write cycles on registers 0x800 and 0x900. Use
+      custom regmap lock callbacks so that regmap operations hold data->lock
+      with IRQs disabled, the same lock the clock gate path uses, preventing
+      concurrent RMW races on those shared registers.
+    - Change to 'ret = eswin_clk_register_fixed_factor(dev, eic7700_hsp_factor_clks,'.
+      The next line will be over 80 characters and under 100 characters.
+  - Reset driver:
+    - Remove 'depends on COMMON_CLK_EIC7700_HSP' and 'default COMMON_CLK_EIC7700_HSP'.
+    - Use regmap_assign_bits() in assert and deassert functions.
+    - Remove eic7700_hsp_reset_reset().
+    - The clock driver creates the regmap, and the reset driver uses dev_get_regmap().
+    - Remove of_reset_n_cells.
+
+  - Link to v1: https://lore.kernel.org/all/20260403093459.612-1-dongxuyang@eswincomputing.com/
+
+Xuyang Dong (3):
+  dt-bindings: clock: Add ESWIN eic7700 HSP clock and reset generator
+  clk: eswin: Add eic7700 HSP clock driver
+  reset: eswin: Add eic7700 HSP reset driver
+
+ .../bindings/clock/eswin,eic7700-hspcrg.yaml  |  63 +++
+ MAINTAINERS                                   |   5 +-
+ drivers/clk/eswin/Kconfig                     |  12 +
+ drivers/clk/eswin/Makefile                    |   1 +
+ drivers/clk/eswin/clk-eic7700-hsp.c           | 384 ++++++++++++++++++
+ drivers/reset/Kconfig                         |  11 +
+ drivers/reset/Makefile                        |   1 +
+ drivers/reset/reset-eic7700-hsp.c             | 118 ++++++
+ .../dt-bindings/clock/eswin,eic7700-hspcrg.h  |  33 ++
+ .../dt-bindings/reset/eswin,eic7700-hspcrg.h  |  21 +
+ 10 files changed, 647 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/eswin,eic7700-hspcrg.yaml
+ create mode 100644 drivers/clk/eswin/clk-eic7700-hsp.c
+ create mode 100644 drivers/reset/reset-eic7700-hsp.c
+ create mode 100644 include/dt-bindings/clock/eswin,eic7700-hspcrg.h
+ create mode 100644 include/dt-bindings/reset/eswin,eic7700-hspcrg.h
+
+--
+2.34.1
+
