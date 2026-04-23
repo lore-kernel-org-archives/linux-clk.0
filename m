@@ -1,167 +1,98 @@
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D0B3DB63B
-	for <linux-clk@vger.kernel.org>; Thu, 23 Apr 2026 07:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC21630FF37
+	for <linux-clk@vger.kernel.org>; Thu, 23 Apr 2026 07:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776927656; cv=none; b=Br4rpby5n0X5uCNCkONfPcTNn+IrUKxtJBWWeenMGrHExjCRYPFNbIf2Mhtr5jNi4BbZWczNqBygHXSKTAVZIfw5dfWQoAMzkFN0PhKbWg/CGLIhBTJfgVIvNreYlARhxSmNITM0hKqQHPyLR02agxQhheIe0F/tUSaPbBmdvlM=
+	t=1776930534; cv=none; b=q35CKLCw00DOL59VArE9LFrSsu/hiiKZKFuGPorucrtxeP7447yiscSGV4lb1Qk3P4H0WZs+S9lmKAbCQLUD+zH4cpNNjhbfw7Mag8Y1J58az9QS30Fr9G86FC/sJgYAI7Q8nwqwzK8tuspOfMfDQH1GOkEGaJKGQh43rKhA1R8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776927656; c=relaxed/simple;
-	bh=hexwbOGW/6m/Df6+GU12KM4IKYYaGu617h9GqYfIhNY=;
+	s=arc-20240116; t=1776930534; c=relaxed/simple;
+	bh=bV6aTtX0hDvOCc3SXegbi1yOc8CAutUCssPxRF8+8rI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CE6RuET8JuwQpbunnUVGPdv5pG5KeDjW7HVckfha74WgLcXSq+JALB3Ma3//b3MNTaa4KmFD8LxnQAhau/iGCCC/QVHtlmFGKY4cF/VZOT9YlNbVsRQUPQE93Fsntt0oHCRwwPIXEG3rWHnH4qFkkQ4b9YrkOIdA+N8QXlSHuUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.42
+	 To:Cc:Content-Type; b=ZbiZFUR35tCJDhze0aE8gXOU0YkpUj/nohbTVaCJGTKfaeXZwtz3dCDWMUr33TKjDMlrrCj6irHKo73Ndtn2Fhfyu7yGm6v5fVMYN0EDWLy7OqeGDtAYCI1g0Jcynczx+ce5T4FD2IzOCirdkV/zE2bP0Ux9gcWntYxu/fqnocM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-8a093c784b0so74810176d6.3
-        for <linux-clk@vger.kernel.org>; Thu, 23 Apr 2026 00:00:55 -0700 (PDT)
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-5675d609621so4792509e0c.2
+        for <linux-clk@vger.kernel.org>; Thu, 23 Apr 2026 00:48:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776927654; x=1777532454;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=FB5PTwtw54UUlBS193h15pAhGHmMjXQQ1mJTpaYMvb8=;
-        b=Uh9HZumegpSs+VHG0oD4ikCWGB2DneRWtzlXVumTZYxSU+NlcFpib1ZMpVJS3J4uZv
-         +HVvWuAcarhZdRuBLnSVXYis5BbK9vj4Sos7XK0asXHuM8776cWf7AP/CAXYxlblWf0n
-         DhujWxjhqhS0XmhC1CYMDlMvHfFzUxeIrVGs7EOsyrGWxx9GAiuoxgZGUpIXH54XGiLj
-         alaljBGbn+AqwNopJaQH/cjK8p72qUKR6POXogcfn7d/B5tKbkIJFS3wYpALr4bZmrDr
-         QdDuSqVeSYAUzay5mDggqn3GRa1IDu120yDpN39rC7tuIZqrSiTC9aY9EOXRG+7IhdrT
-         EqRw==
-X-Forwarded-Encrypted: i=1; AFNElJ/R6mYNkLKpCH7r4UXZxb6b8HC6CuVU2kHrkZeOaO8hnmO/PmeO4Ip8v0jYwtBkeCPNcDhwqDV7nhM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwT7vIM9BXUKjOL0XSGKQkThItHILhEg2w+qQxuwwiAfpXKP/dh
-	SykW8yqTbiZLa2ahqivAjdjfZyJl8W0Y8L04hY+Ayg826hAfLrqvn5/huRZWHWNokZ0=
-X-Gm-Gg: AeBDieuF3DD/fMAZqmqsqlhDuBaqCNxZ1uMIuMg9QE2to0MLw1t7iP7g3e/YGhS+VcY
-	wREkYvniCGHkiEEJUYxgUnBGLkaZ0EvtHhaMhsg1aT35yTa9u6sgkVWwCgik7pwStYdy3DFoSo4
-	L9qgiMvhLf/wUFDcglLqubZXdyz6hVir/N6CBKIuaaZn3YNSyw/jqFNdJOth5gVhLZoJL3uysMq
-	fpHr7YMkEcP0mwtnGABhK0iAGUtrgPh5Pmow4QZU8EmnixR6URhY4tR0gFDS5uf+3aQTb85/jqF
-	iyYIRYS5ksvDDCQz2XMuVJCxDTVVW1+xleSeP6OgtQVAKt12tPAYfq4B+WpHJSpe3+1Tc3qAER/
-	f6WTdicHopMTvlH6ZIUdiV8XbNRZkERKjWGHJmw/pFbpH51eW88Fws4g1buPkwRgqj6rzbOWL+X
-	pCx5IIa2yZkk1UESFB72F759LZaGBM68LqNZUBql50bVDDa6dPheECaEHfvujd2vxME47MiJhHx
-	4s=
-X-Received: by 2002:a05:6214:5d82:b0:8ac:7616:569c with SMTP id 6a1803df08f44-8b028081f15mr416572066d6.21.1776927654097;
-        Thu, 23 Apr 2026 00:00:54 -0700 (PDT)
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com. [209.85.160.179])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8b02ac42b3bsm145335746d6.5.2026.04.23.00.00.53
+        d=1e100.net; s=20251104; t=1776930532; x=1777535332;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0rz4Ubyu3jfWWynl0S5lveC14mxcG1dEX9l+5mJrbEc=;
+        b=f94cEAF/Gb1Ql72AeO4G7WwvMd35tl0JHwzzrwjcvgoyZ5xcf4hNuVEsDefxhsOrf0
+         yg8q76gf8wv+R7CCvKfdnAniOLeXgGB7z8AMTLdlpj5BCbQujgc34DBJdM8o7gpH7C56
+         0Zz60WFda9zlMm8B+j7UVBsHZu+lTqGCrpb3wDtbQQISkZ7Y8zBmEnnPRBgXKAnYmCSb
+         acRNo3Pv6VU2DDJY3TguA6VGsSunhtkftyrNqtzJYwkF4e1pbUf6Ekkjvu+kskvpSAcv
+         drp6fMHd9r62s8Ww5+47DLy5nihvm4oWXM0rkuFvjtO9vkwGBMbtCbbiYZQNaoR9zXGs
+         pzPw==
+X-Forwarded-Encrypted: i=1; AFNElJ8w9IpzveKU2bE3wX0rQ5Azlz5D4MbD7YRTccTFJ8Nj9VIqLjl1VcJzf0r9WkUEs1GljxnNNJ1pseU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx69UnS9nM1kVzJrkYBxDLMAl8oLpp/Idax9JZCfaFKuCwPe1jJ
+	Fiv8fCyKbCkJ0FOium79fTQSSl3s/sMVyqK6yHc8IMJ7QxC9CMjPdmwNUxnkd/9ZDM4=
+X-Gm-Gg: AeBDievQHjtwzd+pvX6oFi/WLLJRL9yd+9DToQfCgjv/ZLWWcY6eau0O4L6BqhFigpZ
+	/44Yp2ni3r7+mjxeL92BOWQG/LiY1mUS091bFm+D8nFVcVf/8PcYxFzf8lCk2deNjqtarVANq6v
+	u26N7S+w3mhRB1W+EBtgTOZkSXUk1I7u5NI5plaAUM1zy341y2eK/yWHI4NrH4jhPfznUvG5t6w
+	ftUVXc0BiCVlW0oN6yh/RXQ1QxeNpeLV4hhWmREAV1qSl+IXyjAz9icIodR6LjI512PvpgZZNgt
+	tkGwprE4d3XEFQsYW/ZMbhZz6hyZcf96CK31g943UElwgwSYrt7VWE/N+lHZWLoIYkJ+VtCPLA/
+	4HvYBBh0cv46mieAI0PljslE1BqkVUTE38LcyVGOoURLAsJ+FysXx3nPt2vl1iGQ0WmyXZHkUJT
+	j3e/dk5gQFnHszuWDvTFrJGGoEBA1S4SbE73pJBxGFYnhCNlaGdJsTTe8Bn1uOGlR17uMeXDCt/
+	Uo=
+X-Received: by 2002:a05:6123:5d9:10b0:56f:bb91:4861 with SMTP id 71dfb90a1353d-572278284b4mr3012750e0c.0.1776930531700;
+        Thu, 23 Apr 2026 00:48:51 -0700 (PDT)
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com. [209.85.221.180])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56fa91bf90fsm11083194e0c.1.2026.04.23.00.48.51
         for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Apr 2026 00:00:53 -0700 (PDT)
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-50d6ab4476eso62435921cf.2
-        for <linux-clk@vger.kernel.org>; Thu, 23 Apr 2026 00:00:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ/bf7DG42ksyvrB+5GgMJGpYPK3QRpVMg0MpAuxlPw/ZL++sIXjyg+7vzayEinrYlkJAUtnEYEKcqc=@vger.kernel.org
-X-Received: by 2002:a05:6102:441d:b0:611:6fef:905 with SMTP id
- ada2fe7eead31-616f750858emr13450072137.20.1776927225241; Wed, 22 Apr 2026
- 23:53:45 -0700 (PDT)
+        Thu, 23 Apr 2026 00:48:51 -0700 (PDT)
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-5675d609621so4792497e0c.2
+        for <linux-clk@vger.kernel.org>; Thu, 23 Apr 2026 00:48:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ//c/j7YqiIg51HkyZj5jbQSrPHbLcedkV88Rf3lV+5gNI0n+Zr71MP5MNmHxl1nSSU1xCOUL6rDd0=@vger.kernel.org
+X-Received: by 2002:a05:6123:5d9:10b0:56f:bb91:4861 with SMTP id
+ 71dfb90a1353d-572278284b4mr3012743e0c.0.1776930531157; Thu, 23 Apr 2026
+ 00:48:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260325143555.451852-1-herve.codina@bootlin.com>
- <20260325143555.451852-3-herve.codina@bootlin.com> <CAMuHMdU7x7LWFkD9xiq+wyOqnn0bdzr+JLfvbBexoiWyv8kftA@mail.gmail.com>
- <CAD=FV=UK3NQKQN7FXyG4nGdDKO=LQYhnL4ZweomQ_4R9-EAYag@mail.gmail.com>
- <aekg_IELc65BFrWp@ashevche-desk.local> <CAD=FV=XTvvq11y7kxmrfBe3dZsKro7N9=i-Hj9aqsLBay2Q9Rw@mail.gmail.com>
-In-Reply-To: <CAD=FV=XTvvq11y7kxmrfBe3dZsKro7N9=i-Hj9aqsLBay2Q9Rw@mail.gmail.com>
+References: <20260326110648.29389-1-biju.das.jz@bp.renesas.com> <20260326110648.29389-2-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20260326110648.29389-2-biju.das.jz@bp.renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 23 Apr 2026 08:53:33 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUDCQrQ2Z9D7-ZOKiuDznDJVf2R_b_8P9+Xhk4RiJ3vdw@mail.gmail.com>
-X-Gm-Features: AQROBzAvgx3axNivzcvHu1RjLcwZ8ZssrkMMWMoOA6QWZi8LwGEf_PBN_biPlMM
-Message-ID: <CAMuHMdUDCQrQ2Z9D7-ZOKiuDznDJVf2R_b_8P9+Xhk4RiJ3vdw@mail.gmail.com>
-Subject: Re: [PATCH v6 02/27] of: dynamic: Fix overlayed devices not probing
- because of fw_devlink
-To: Doug Anderson <dianders@chromium.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Herve Codina <herve.codina@bootlin.com>, Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Kalle Niemi <kaleposti@gmail.com>, Matti Vaittinen <mazziesaccount@gmail.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, 
-	Arnd Bergmann <arnd@arndb.de>, Saravana Kannan <saravanak@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Charles Keepax <ckeepax@opensource.cirrus.com>, 
-	Richard Fitzgerald <rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, 
-	Linus Walleij <linusw@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Daniel Scally <djrscally@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Davidlohr Bueso <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>, 
-	Dave Jiang <dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Wolfram Sang <wsa@kernel.org>, linux-kernel@vger.kernel.org, 
-	driver-core@lists.linux.dev, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-sound@vger.kernel.org, 
-	patches@opensource.cirrus.com, linux-gpio@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org, 
-	Allan Nielsen <allan.nielsen@microchip.com>, Horatiu Vultur <horatiu.vultur@microchip.com>, 
-	Steen Hegelund <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Thu, 23 Apr 2026 09:48:39 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXVZfsEHRSJO=C3iuEpa+2k2Xgji3uNxnkyzUrEEtz9xw@mail.gmail.com>
+X-Gm-Features: AQROBzDG_5783iyOqKuu3KbfFJR0HwgxpR86ZMXywqtk_FNHF0_cGI7fUu1kcT4
+Message-ID: <CAMuHMdXVZfsEHRSJO=C3iuEpa+2k2Xgji3uNxnkyzUrEEtz9xw@mail.gmail.com>
+Subject: Re: [PATCH v5 1/4] clk: renesas: rzg2l: Drop a check in rzg3s_cpg_pll_clk_recalc_rate()
+To: Biju <biju.das.au@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Doug,
-
-On Wed, 22 Apr 2026 at 21:40, Doug Anderson <dianders@chromium.org> wrote:
-> On Wed, Apr 22, 2026 at 12:27=E2=80=AFPM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Wed, Apr 22, 2026 at 11:51:36AM -0700, Doug Anderson wrote:
-> > > On Wed, Apr 22, 2026 at 10:44=E2=80=AFAM Geert Uytterhoeven
-> > > <geert@linux-m68k.org> wrote:
-> > > > On Wed, 25 Mar 2026 at 15:36, Herve Codina <herve.codina@bootlin.co=
-m> wrote:
-> >
-> > ...
-> >
-> > > > > +               if (fwnode->flags & FWNODE_FLAG_NOT_DEVICE)
-> > > >
-> > > > After commit f72e77c33e4b5657 ("device property: Make modifications
-> > > > of fwnode "flags" thread safe"), this must be changed to:
-> > > >
-> > > >     if (fwnode_test_flag(fwnode, FWNODE_FLAG_NOT_DEVICE))
-> > > >
-> > > > With this change my DT overlays are working again.
-> > > >
-> > > > I guess keeping the FWNODE_FLAG_* names, but changing their values
-> > > > from bit masks to bit numbers was probably not such a good idea,
-> > > > as it fails to catch missing conversions...
-> > >
-> > > Crud, I should have thought about that. :( Do you think it's worth it
-> > > to do a rename at this point to catch future problems?
-
-I am afraid it is too late (it is already in Linus' tree), and would
-add only more to the confusion.  We just have to take care when this
-patch (and 01/27) is backported to stable.  Fortunately the reverse
-is caught, as the fwnode_*_flag() helpers did not exist before.
-
-> > You can try locally with allyesconfig / allmodconfig and see the outcom=
-e.
-> > If there are missed cases, and their amount reasonably low, I won't bot=
-her
-> > in this case.
+On Thu, 26 Mar 2026 at 12:06, Biju <biju.das.au@gmail.com> wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
 >
-> I believe I caught all of them at the time of my CL, but the problem
-> is in-flight stuff, right? I think the problem Geert is pointing out
-> isn't something I missed in my original patch but rather an
-> interaction between my patch and this in-flight patch.
+> Drop the unwanted check in rzg3s_cpg_pll_clk_recalc_rate() as the function
+> is SoC specific.
+>
+> Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-There are no unconverted cases in upstream or linux-next
-(I checked yesterday, and rechecked this morning).
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v7.2.
 
 Gr{oetje,eeting}s,
 
                         Geert
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
                                 -- Linus Torvalds
