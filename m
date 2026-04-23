@@ -1,241 +1,141 @@
-Received: from zg8tmja5ljk3lje4mi4ymjia.icoremail.net (zg8tmja5ljk3lje4mi4ymjia.icoremail.net [209.97.182.222])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF46E3CEB8C;
-	Thu, 23 Apr 2026 09:13:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.182.222
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3943BD64A;
+	Thu, 23 Apr 2026 09:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776935599; cv=none; b=j6Kqic7KQQDgCuRRYXdTMgx/sDFeBIRiVAB6MNCuSMBg3291KeLwXdi7wkOtKUTx+oOjyyliBa7UQGDFCVo6z91AzIy/6XMKFrOLksYCjQmy1RgQnqRW3T/KSlE66VqPnDp+mdA1cNIw08wsDKSBopn7Ba+2JBpMcahXArK9hzE=
+	t=1776936419; cv=none; b=OeCW69e9MPOH6pw8e8k142Z5uzG5sISIueNR7wd/8CG9xM9njrrmR4PulJsM3NJ6s3qP41fnDkqvq1x95auZox7iDZ5JYXb/OMIu01Ji5LCwLCzQcSTwt6warGvHK6j+g9vFuDF7n77WSu/LZnOIemcKF57gRdhJg4XA+4VSBAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776935599; c=relaxed/simple;
-	bh=ltVZ1BWBbVWgutQjJCtCXRGv69cANMEKYPWAdQ6OqeQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TKw6XWIM6dGfhf+e1AnGTjZjUxA3XepFP1tUcLqT8zCRLhz+ZLyzm9E1qERShQWa0AVv1YmnA77yW04V1s3dy4unTt9eZKE1w004c/mWxOXIfBs9eBks+wpDj4/33ZFijxTIkQ9kgfNCowXfSFvo1GXILFGDRPe2+pb5dQW4cWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=209.97.182.222
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from E0005152DT.eswin.cn (unknown [10.12.96.41])
-	by app2 (Coremail) with SMTP id TQJkCgBHXqGc4ulpyvoTAA--.24150S2;
-	Thu, 23 Apr 2026 17:13:02 +0800 (CST)
-From: dongxuyang@eswincomputing.com
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	p.zabel@pengutronix.de,
-	huangyifeng@eswincomputing.com,
-	dongxuyang@eswincomputing.com,
-	benoit.monin@bootlin.com,
-	bmasney@redhat.com
-Cc: ningyu@eswincomputing.com,
-	linmin@eswincomputing.com,
-	pinkesh.vaghela@einfochips.com
-Subject: [PATCH v3 3/3] reset: eswin: Add eic7700 HSP reset driver
-Date: Thu, 23 Apr 2026 17:12:56 +0800
-Message-Id: <20260423091256.2542-1-dongxuyang@eswincomputing.com>
-X-Mailer: git-send-email 2.31.1.windows.1
-In-Reply-To: <20260423090904.2108-1-dongxuyang@eswincomputing.com>
-References: <20260423090904.2108-1-dongxuyang@eswincomputing.com>
+	s=arc-20240116; t=1776936419; c=relaxed/simple;
+	bh=IJQoi93g06s5TEZR726Ww16nBaRuPBUVtJIgR6lTmks=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J2ts0Rn2j/qIJQjnXHESUK4miUbgBHriWCJDNkPvf9147cWKokpzw4biv2G+u4xeYF+8Iz8EcQ8J80L1GpXuYTFZi5aJqv1+TP5mZaEaPkl8e79EHKPY4Naxf2CpUqSHG9ZS0exXT12OBvSqtCR4rVes05nroFOS88Img0Wx4lY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DQ2m9l5i; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DQ2m9l5i"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1F47C2BCAF;
+	Thu, 23 Apr 2026 09:26:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1776936418;
+	bh=IJQoi93g06s5TEZR726Ww16nBaRuPBUVtJIgR6lTmks=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DQ2m9l5i0MMWCPdCaH0Jp4uz3QQwfdlAZa6YPi28bJmEMPARnACNf5SF5oMWaZ5b3
+	 Y1+ieONWDZcpjfmSpiT4sUp8GLSo/kTKy0IGF+RV3lhzoIMP6y55D+l4Ez0QjWUIuo
+	 rtPoj3rqn7ZmNpfFhDQtasiCvw2yMuT8I0/5mgGNUapzpt47RQweYgCN17OlnnhEk7
+	 5F6c5fcmKxEA2JR/U6TUCHIks49dm2DDUlZA7ePkZ3KRQo/4nFrPi3pIVe9xLbwegw
+	 kJoeobwyZ0AxayIfcydvppm3eKSv0fcErLZNfX2yks7fwB6i3FAOq3caRomsmt2G2H
+	 v7nWo6WBs4VBg==
+Message-ID: <161eb29f-2d07-455a-bd74-4f22061b5dfb@kernel.org>
+Date: Thu, 23 Apr 2026 11:26:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:TQJkCgBHXqGc4ulpyvoTAA--.24150S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxuFy3KF4DGr1fZw1rXF1DZFb_yoW7Kr1DpF
-	WrAF43Ar45XrWfGFZ3GF1qyFy3Xan3try5C3yxJ3WS9rsxWryUJrWUta40yr9rJry7Gry5
-	JF13KF1xuFnIyrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxkIecxEwVCm-wCF04
-	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
-	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr4
-	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1U
-	MIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I
-	8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7VUjEksPUUUUU==
-X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/4] ARM: dts: renesas: r8a7740: Add ZT/ZTR trace clock
+ on R-Mobile A1
+To: Marek Vasut <marek.vasut@mailbox.org>,
+ Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm
+ <magnus.damm@gmail.com>, Michael Turquette <mturquette@baylibre.com>,
+ Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20260415233300.457892-1-marek.vasut+renesas@mailbox.org>
+ <20260415233300.457892-4-marek.vasut+renesas@mailbox.org>
+ <20260421-cherubic-urban-beluga-49ee00@quoll>
+ <0f933506-c196-4503-844f-2a375e2cf690@mailbox.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <0f933506-c196-4503-844f-2a375e2cf690@mailbox.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Xuyang Dong <dongxuyang@eswincomputing.com>
+On 23/04/2026 01:33, Marek Vasut wrote:
+> On 4/21/26 10:02 AM, Krzysztof Kozlowski wrote:
+>> On Thu, Apr 16, 2026 at 01:31:40AM +0200, Marek Vasut wrote:
+>>> Add ZT trace bus and ZTR trace clock on the R-Mobile A1.
+>>>
+>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+>>> ---
+>>> Cc: Conor Dooley <conor+dt@kernel.org>
+>>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>>> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+>>> Cc: Magnus Damm <magnus.damm@gmail.com>
+>>> Cc: Michael Turquette <mturquette@baylibre.com>
+>>> Cc: Rob Herring <robh@kernel.org>
+>>> Cc: Stephen Boyd <sboyd@kernel.org>
+>>> Cc: devicetree@vger.kernel.org
+>>> Cc: linux-clk@vger.kernel.org
+>>> Cc: linux-kernel@vger.kernel.org
+>>> Cc: linux-renesas-soc@vger.kernel.org
+>>> ---
+>>> V2: Add ztr/zt clock at the end of the list to match bindings
+>>> ---
+>>>   arch/arm/boot/dts/renesas/r8a7740.dtsi    | 2 +-
+>>
+>>>   include/dt-bindings/clock/r8a7740-clock.h | 2 ++
+>>
+>> This goes to the binding patch.
+>>
+>> Didn't you have also a checkpatch warning?
+> I only got this warning, but the docs 1/4 and includes 3/4 are a 
+> separate patch in this series:
+> 
+> "
+> WARNING: DT binding docs and includes should be a separate patch. See: 
+> Documentation/devicetree/bindings/submitting-patches.rst
 
-Add auxiliary driver to support ESWIN EIC7700 high-speed peripherals
-system. The reset controller is created using the auxiliary device
-framework and set up in the clock driver.
+So you did not implement it... Include goes with the binding. Always.
+Look at other commits.
 
-Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
----
- drivers/reset/Kconfig             |  11 +++
- drivers/reset/Makefile            |   1 +
- drivers/reset/reset-eic7700-hsp.c | 118 ++++++++++++++++++++++++++++++
- 3 files changed, 130 insertions(+)
- create mode 100644 drivers/reset/reset-eic7700-hsp.c
-
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index d009eb0849a3..f63e89ed6a4e 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -83,6 +83,17 @@ config RESET_EIC7700
- 	  The driver supports eic7700 series chips and provides functionality for
- 	  asserting and deasserting resets on the chip.
- 
-+config RESET_EIC7700_HSP
-+	tristate "EIC7700 HSP Reset controller"
-+	depends on ARCH_ESWIN || COMPILE_TEST
-+	select AUXILIARY_BUS
-+	help
-+	  This enables the HSP reset controller driver for ESWIN SoCs. This
-+	  driver is specific to ESWIN SoCs and should only be enabled if using
-+	  such hardware.
-+	  The driver supports EIC7700 series chips and provides functionality
-+	  for asserting and deasserting resets on the chip.
-+
- config RESET_EYEQ
- 	bool "Mobileye EyeQ reset controller"
- 	depends on EYEQ || COMPILE_TEST
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index 3e52569bd276..a75af831ef58 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -15,6 +15,7 @@ obj-$(CONFIG_RESET_BERLIN) += reset-berlin.o
- obj-$(CONFIG_RESET_BRCMSTB) += reset-brcmstb.o
- obj-$(CONFIG_RESET_BRCMSTB_RESCAL) += reset-brcmstb-rescal.o
- obj-$(CONFIG_RESET_EIC7700) += reset-eic7700.o
-+obj-$(CONFIG_RESET_EIC7700_HSP) += reset-eic7700-hsp.o
- obj-$(CONFIG_RESET_EYEQ) += reset-eyeq.o
- obj-$(CONFIG_RESET_GPIO) += reset-gpio.o
- obj-$(CONFIG_RESET_HSDK) += reset-hsdk.o
-diff --git a/drivers/reset/reset-eic7700-hsp.c b/drivers/reset/reset-eic7700-hsp.c
-new file mode 100644
-index 000000000000..dde1f9bffa61
---- /dev/null
-+++ b/drivers/reset/reset-eic7700-hsp.c
-@@ -0,0 +1,118 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright 2026, Beijing ESWIN Computing Technology Co., Ltd..
-+ * All rights reserved.
-+ *
-+ * ESWIN EIC7700 HSP Reset Driver
-+ *
-+ * Authors: Xuyang Dong <dongxuyang@eswincomputing.com>
-+ */
-+
-+#include <linux/auxiliary_bus.h>
-+#include <linux/device.h>
-+#include <linux/regmap.h>
-+#include <linux/reset-controller.h>
-+
-+#include <dt-bindings/reset/eswin,eic7700-hspcrg.h>
-+
-+/**
-+ * struct eic7700_hsp_reset_data - reset controller information structure
-+ * @rcdev: reset controller entity
-+ * @regmap: regmap handle containing the memory-mapped reset registers
-+ */
-+struct eic7700_hsp_reset_data {
-+	struct reset_controller_dev rcdev;
-+	struct regmap *regmap;
-+};
-+
-+struct eic7700_hsp_reg {
-+	u32 reg;
-+	u32 bit;
-+	bool active_low;
-+};
-+
-+static inline struct eic7700_hsp_reset_data *
-+to_eic7700_hsp_reset(struct reset_controller_dev *rcdev)
-+{
-+	return container_of(rcdev, struct eic7700_hsp_reset_data, rcdev);
-+}
-+
-+static const struct eic7700_hsp_reg eic7700_hsp_reset[] = {
-+	[EIC7700_HSP_RST_SATA_P0]	= {0x340, BIT(0), false},
-+	[EIC7700_HSP_RST_SATA_PHY]	= {0x340, BIT(1), false},
-+	[EIC7700_HSP_RST_USB0]		= {0x800, BIT(24), true},
-+	[EIC7700_HSP_RST_USB1]		= {0x900, BIT(24), true},
-+	[EIC7700_HSP_RST_USB0_PHY]	= {0x800, BIT(25), false},
-+	[EIC7700_HSP_RST_USB1_PHY]	= {0x900, BIT(25), false},
-+};
-+
-+static int eic7700_hsp_reset_assert(struct reset_controller_dev *rcdev,
-+				    unsigned long id)
-+{
-+	struct eic7700_hsp_reset_data *data = to_eic7700_hsp_reset(rcdev);
-+	int ret;
-+
-+	ret = regmap_assign_bits(data->regmap, eic7700_hsp_reset[id].reg,
-+				 eic7700_hsp_reset[id].bit,
-+				 !eic7700_hsp_reset[id].active_low);
-+
-+	return ret;
-+}
-+
-+static int eic7700_hsp_reset_deassert(struct reset_controller_dev *rcdev,
-+				      unsigned long id)
-+{
-+	struct eic7700_hsp_reset_data *data = to_eic7700_hsp_reset(rcdev);
-+	int ret;
-+
-+	ret = regmap_assign_bits(data->regmap, eic7700_hsp_reset[id].reg,
-+				 eic7700_hsp_reset[id].bit,
-+				 eic7700_hsp_reset[id].active_low);
-+
-+	return ret;
-+}
-+
-+static const struct reset_control_ops eic7700_hsp_reset_ops = {
-+	.assert = eic7700_hsp_reset_assert,
-+	.deassert = eic7700_hsp_reset_deassert,
-+};
-+
-+static int eic7700_hsp_reset_probe(struct auxiliary_device *adev,
-+				   const struct auxiliary_device_id *id)
-+{
-+	struct eic7700_hsp_reset_data *data;
-+	struct device *dev = &adev->dev;
-+
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	data->regmap = dev_get_regmap(dev->parent, NULL);
-+	if (!data->regmap)
-+		return dev_err_probe(dev, -EINVAL, "failed to get regmap!\n");
-+
-+	data->rcdev.owner = THIS_MODULE;
-+	data->rcdev.ops = &eic7700_hsp_reset_ops;
-+	data->rcdev.of_node = dev->parent->of_node;
-+	data->rcdev.dev = dev;
-+	data->rcdev.nr_resets = ARRAY_SIZE(eic7700_hsp_reset);
-+
-+	return devm_reset_controller_register(dev, &data->rcdev);
-+}
-+
-+static const struct auxiliary_device_id eic7700_hsp_reset_dt_ids[] = {
-+	{ .name = "clk_eic7700_hsp.hsp-reset", },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(auxiliary, eic7700_hsp_reset_dt_ids);
-+
-+static struct auxiliary_driver eic7700_hsp_reset_driver = {
-+	.probe	= eic7700_hsp_reset_probe,
-+	.id_table = eic7700_hsp_reset_dt_ids,
-+};
-+
-+module_auxiliary_driver(eic7700_hsp_reset_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Xuyang Dong <dongxuyang@eswincomputing.com>");
-+MODULE_DESCRIPTION("ESWIN EIC7700 HSP Reset Controller Driver");
--- 
-2.34.1
-
+Best regards,
+Krzysztof
