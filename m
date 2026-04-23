@@ -1,209 +1,179 @@
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4DD7364934
-	for <linux-clk@vger.kernel.org>; Thu, 23 Apr 2026 09:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39033DE438
+	for <linux-clk@vger.kernel.org>; Thu, 23 Apr 2026 10:21:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776937181; cv=none; b=JGhGBC7Ah19tJqfbp+48J3lOr+kiufIdw9nW8FknR7FaJZ98MYmurUf18LRNA7XWOHb7n2PHc9WDRtWcQ0qs9GIk8SDewu4Zd/O5txQZzmHYMkXiNfAGpgR7+f8ClzYMr4RqP5DRambzibYnQStTY8F2YotqTmjkdTdaiymZxJE=
+	t=1776939692; cv=none; b=a3P3vcN1a3hVYL7yWVktPm9Elcq7cu4wn1ZfvApVW+v5qJsPY9bzPY1qZrifhZxgJ6j6crvKO22oegHcSoJuOjpQowa7vuSwnyK9hYMdhFBCja8htlgv8yuocEHb99JxEaBtO9fPF2wGXOHtckWOfkPpZB2Aqbg2ls2YVHj096o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776937181; c=relaxed/simple;
-	bh=8KfRKWnC2a8QhyOPBB1Am1veLoXXyq9MoBmrXeFLDAc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=laBo9xtQt2fnoGDf2aRfyifZabLc7iXfpAyagHtfKiqnHE9ZdhiqTUnZpfTKzWfhTVmamnc248fiBsaMdoUC3YoNZW1aK3bGpxhxesVc3WDaVQ6S1ubTs3G9g68jeFQ08E6e6dHA+eZn7Ij2xNL823VYx0TNEIB2PtCXpWQ6Jbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-6108228a851so2163333137.0
-        for <linux-clk@vger.kernel.org>; Thu, 23 Apr 2026 02:39:37 -0700 (PDT)
+	s=arc-20240116; t=1776939692; c=relaxed/simple;
+	bh=MQj+NkvzLGbphyghyqnRUydWH75Iu4oOv77s2k1GF64=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PLKzn5wrUeTFWmDuCvMSIAPHFkaCUGRFS0KM97T1DXG2y0fVKk1eS2JqlRLaLd/KmQT3UDF2iGRsnImINbbjVeCJXZjLMnkZczLMH8vWIntiZ/Z8//vFWAYFTWhH+rrAtqp0vItFcefPD6MFcbjseir2bGZ+bft0gkx7aYt8BN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QZKTbzvc; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=pWBneR7L; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QZKTbzvc";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="pWBneR7L"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1776939689;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mTg9sbHKN+9vulckMtUQdG+5iYxTHu8NLB2gac+S3kM=;
+	b=QZKTbzvccLTzLMN5bmA1MVLqWCqmI6cwUf+J7gYdgYTBsWy6nRO7ti7ZLtnyuFdKvEkUD+
+	AlSKOLhdUWZq0q88A4BKJqCNfNnJa3nmyr19g8vcECTlNDlzFjeO5XeNU7Ws5LHhWkU+bE
+	Mo/R2dg8z0fTIU61NjNZGjbZrRXuVTQ=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-646-8Gd22qoMMYqT_J09MByvAw-1; Thu, 23 Apr 2026 06:21:28 -0400
+X-MC-Unique: 8Gd22qoMMYqT_J09MByvAw-1
+X-Mimecast-MFC-AGG-ID: 8Gd22qoMMYqT_J09MByvAw_1776939688
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8cd722c1a69so1156984385a.0
+        for <linux-clk@vger.kernel.org>; Thu, 23 Apr 2026 03:21:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1776939688; x=1777544488; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mTg9sbHKN+9vulckMtUQdG+5iYxTHu8NLB2gac+S3kM=;
+        b=pWBneR7LKLIrjhqdxRfwut6x2g4wJVm+3x2R6wey+uaK2MUZJ4TosyYQh9CYoe6Rpf
+         qvc87H6SraFtNaXdmgM6QAW7tr2ydXdZs/24cjEWbrbLbFAgNL0wDh+HBEVO+vKsu4DI
+         dWfBhfkXjNbFA3GWup8U7xlzvPgjC22/OIsrNZP0FUN5L/zJGdqi5wcPTzd+DGbgiSSN
+         /BJ/0Lk9SmW5G8xe2q8gN7zTSI/IOasE2SRiluk3KoXJdsSAUpCLQHeebr5uIBZGSbyP
+         wUD9BDXC+4FaNB17tUSgwCeWbuFHkUH92sFYoLIxf8JE3BIN5nXRYswInphla5hChl4k
+         9M/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776937176; x=1777541976;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20251104; t=1776939688; x=1777544488;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=go1WMIAsem5LEjre+Mt82iaNq/eWdJ4DT2hUHXWyutw=;
-        b=Sl5KqaUhVYerz+xjLpZt7TBDpfLLBB+qv70+vNpa/zPyG79luhnuuu9SztFdhFHq/N
-         SYgCuMaruEepjak0mdi5VxbAoUpbLzhxQQzauCiNawa9gNFUhfGyzRC5//KzwAhh16S6
-         alTRgVy4camtJjg0973+XtaD3doY1ijKNh7G7Kz8272L1rSrRJufkPomf/IKWnCVuzG8
-         DyMcX8AqrMreJQuE4JLGIyN28G0/GpnPDI8xMrh0EkqbiEcgoPdGBwhF/7NXwPZoZgkS
-         RJ9Pdwk+1PEQ8sCfeq6M2z8Bu3pwHPQL54EwzRAxhOKeUDz9e0LWX2z0tGG6IWE/q8Vb
-         V8lQ==
-X-Forwarded-Encrypted: i=1; AFNElJ+XifqL2wv2ic9AemFzhlJ7xtvRIR8axJto/RiJV/YySVisQCO+nC9HBqI8aXdAxZKerkM/lBcgeGo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0cmdyZcrclwviacfZXDa5hSodsK4S4VK7mQlaRnMqPAaY6huz
-	4DD4odymYq9xUIbDYtOhyghlpFsdP1zRD4SQwItDq96A7Ly0plYAUV6xybkoLNqiWk0=
-X-Gm-Gg: AeBDieuq33FfrA7DmgaA/D2wuC4AlznTVuZlbhTKDZSG+dHg57R1Hw2krsd8hwcEuLq
-	nkTfeGNktaWOsLsfNbyJcAtqmhcr/Gx/SbP4UGjta6nxekL0hvECrS1cyBkOE5QXWu9H/eGYyNc
-	uMr1KNDLUY0YDdWMCOuYd+tpX0VJCuehBigXeXzulYWGMUOs5Y8tpU+VlyG0ojWV4S20kQm06NK
-	XMwH3pjYFo1vBxDLfV3JL8D1M4aQ4g4VKdM0Yu6qrl4ps2QKAsI+pqMraHUX9cd2UypwStcgW+L
-	vVqgi8rsnKr4r/g8534tSlh1Gjb8iNqRnC71n2rVP0wmZynbz4jh1//fwkxRKq5JW31WlkY5XTH
-	8Cs449+a0klGAgDxKxum/yrMvadUVioOEOIhrGakK5LSfAx2lvQqdytkht3CmUX0vp0D+f1kCAC
-	RlvKJ1D1I0F9Ok3NPFQCuz0YzirS4jR+ED+o3aRlYpDZGJYatHZrYT/lbACA7HjWvPbLLvcc4=
-X-Received: by 2002:a05:6102:6b02:b0:602:a9f3:74d8 with SMTP id ada2fe7eead31-616f74063a4mr12564245137.25.1776937176384;
-        Thu, 23 Apr 2026 02:39:36 -0700 (PDT)
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-61745c9e53esm9378724137.5.2026.04.23.02.39.35
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Apr 2026 02:39:36 -0700 (PDT)
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-9569825dc57so945670241.2
-        for <linux-clk@vger.kernel.org>; Thu, 23 Apr 2026 02:39:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ/WG3ulEOz9aY2jmHJauOkuaXXhVtebLhyJrISVs9Vqpvb3UpTT4xiJNx1P19AZxVGgpoOEE3A2Y38=@vger.kernel.org
-X-Received: by 2002:a05:6102:41a6:b0:60a:8515:9097 with SMTP id
- ada2fe7eead31-616f4741ef9mr12358337137.3.1776937175679; Thu, 23 Apr 2026
- 02:39:35 -0700 (PDT)
+        bh=mTg9sbHKN+9vulckMtUQdG+5iYxTHu8NLB2gac+S3kM=;
+        b=UmE/2YVjq0wt6T/HD9964ZXUtE2BSPyUxNREnHQSGl1XOPZGFrPYRmiLAybJNpGNcr
+         SwZwV4D0zCX7ff/4MDK4RUtJW15GZC92w80qHZ6XsWC4xUenGXmhn8/ym4AQRb0fFHcd
+         neMatmPIiJY84Y+E4gGOJlHM4rmupkYxxLBdZ43fJN+OyOO6CZA6MHcAWRIl4Og8JF9R
+         zuSMC+jv+ho5boYsvNjvI+ypGV2M//oF2MfcV97lYfe8X8Or3/PNUm4InXeB4cEcqfPp
+         u+zaTKR8xH1vMCstgRySJ57BrMqjC2rgB/ZEf5VGcsScYBcQlxy41IaMV97oc1j3PHMk
+         Q2Zw==
+X-Forwarded-Encrypted: i=1; AFNElJ+F6fFpAR6WQ+2NpjEWItEwlDBYU7c5G/KmjCqqL1NLc3SWDwEC/DB6KEHgTkM0jUYYgEgW+omood4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQJRfAnbo02P7J7jkORCETBJE212orrSJt1cBE+tU1ZHMn569d
+	bkRcRKva+zW3LQD5P3rwlRjK7TGBWzm1+Yzm+jC4/cmgtcekqpnCYq7Cgf3GycDxpaD03tU2IrD
+	rA/SqkqiezC2Ldc3B7m4F1qLmCxn8Y7HL6gkXD9zsXeHfpKLUGEUMoLYyzhBTZw==
+X-Gm-Gg: AeBDiety1q/6IVpwN0kPO0qQmeDpLRPi6AG6ZCgYSsRVcwdsC/iXwdzvg5vbTOzEOun
+	uRruWT82SjRkIpU26DyVirB889bCw09wQODwgKp90kQ1Eez2RFZfKX3lK/hEkA6C8TGu7b/seWI
+	37ZOl9bRwTerxI4N9Kmo3mBZ6zqX9J3LU5oZ6649zi78/OjBeGHQPJOyoXH7B3aVoWp03fi9vUs
+	5QUiKgIMYXF51bu/S9g7PUlHEN7xy3TjlUtY0/YkIwlpGW8Wb95SJaFfVOPO8swpjO7PXvtWgqa
+	ftaJ6RE34+YSmGuNI6Vq3HhZGP4KpdJ5aIh5APFg2CmbfL6aJCC5Iij25ZX2YFaj+jRGeF1zDvV
+	URKfxNZlhLN7i2MN6ZLnG3RqXgBib0Ctnkj4/9reFap0LStHEzb7mDT880PAE6bTvOrA=
+X-Received: by 2002:a05:620a:4101:b0:8cf:e946:bb56 with SMTP id af79cd13be357-8e792276307mr3859064085a.44.1776939687818;
+        Thu, 23 Apr 2026 03:21:27 -0700 (PDT)
+X-Received: by 2002:a05:620a:4101:b0:8cf:e946:bb56 with SMTP id af79cd13be357-8e792276307mr3859060785a.44.1776939687339;
+        Thu, 23 Apr 2026 03:21:27 -0700 (PDT)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8e7d69abee3sm1541253785a.17.2026.04.23.03.21.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Apr 2026 03:21:26 -0700 (PDT)
+Date: Thu, 23 Apr 2026 06:21:24 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>
+Subject: Re: [GIT PULL] clk changes for the merge window
+Message-ID: <aenypBUNgqrr9nCE@redhat.com>
+References: <20260420183208.2287306-1-sboyd@kernel.org>
+ <aeeHSrZmAqE4ugXY@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260326110648.29389-1-biju.das.jz@bp.renesas.com> <20260326110648.29389-5-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20260326110648.29389-5-biju.das.jz@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 23 Apr 2026 11:39:24 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU4wqFCNobN7mkMNCArP41cGmnbEi5cmuc576EdUL6+bQ@mail.gmail.com>
-X-Gm-Features: AQROBzCRF5GnRj_CGoI5SvJDP-G6tqsoc-CT24ZWU0ZSnYkK6CwPToD4dB2ND5E
-Message-ID: <CAMuHMdU4wqFCNobN7mkMNCArP41cGmnbEi5cmuc576EdUL6+bQ@mail.gmail.com>
-Subject: Re: [PATCH v5 4/4] clk: renesas: r9a08g046: Add clock and reset
- signals for the GBETH IPs
-To: Biju <biju.das.au@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aeeHSrZmAqE4ugXY@redhat.com>
+User-Agent: Mutt/2.3.1 (2026-03-20)
 
-Hi Biju,
+Hi Stephen,
 
-On Thu, 26 Mar 2026 at 12:06, Biju <biju.das.au@gmail.com> wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
->
-> Add clock and reset entries for the Gigabit Ethernet Interfaces
-> (GBETH 0-1) IPs found on the RZ/G3L SoC. This includes various dividers
-> and mux clocks needed by these two GBETH IPs. Also add tx, tx-180, rx,
-> rx-180, rmii, rmii-tx and rmii-rx clocks to r9a08g046_no_pm_mod_clk
-> table to avoid enabling both normal and rmii clocks by the PM framework.
->
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+On Tue, Apr 21, 2026 at 10:18:50AM -0400, Brian Masney wrote:
+> Here's some additional patch sets that were posted this development
+> cycle that I feel are ready. I don't see any objections from the
+> community, and some such as the Mobileye series, looked like they
+> were going to be picked up during this development cycle.
+> 
+> - Feb 18 - Felix Gu <ustc.gu@gmail.com>
+>   [PATCH] clk: aspeed: ast2700: Add missing NULL pointer check for devm_kasprintf()
+>   https://lore.kernel.org/linux-clk/20260218-ast2700-v1-1-2388e0fe3597@gmail.com/
+> 
+> - Feb 24 - Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>   [PATCH v2 0/3] clk: x86: lpss-atom: A couple of cleanups and a feature
+>   https://lore.kernel.org/linux-clk/20260224121159.3503754-1-andriy.shevchenko@linux.intel.com/
+> 
+> - Feb 24 - Shawn Guo <shawnguo@kernel.org>
+>   [PATCH] clk: hisilicon: reset: Use kzalloc instead of kmalloc
+>   https://lore.kernel.org/linux-clk/20260224021912.54365-1-shawnguo@kernel.org/
+> 
+> - Mar 3 - "J. Neuschäfer via B4 Relay" <devnull+j.ne.posteo.net@kernel.org>
+>   [PATCH v2] clk: hisilicon: Improve deallocation in error path
+>   https://lore.kernel.org/linux-clk/20260303-hisi-error-v2-1-7cd9b43d8fbb@posteo.net/
+> 
+> - Mar 12 - Peng Fan <peng.fan@oss.nxp.com>
+>   [PATCH v9 0/6] clk: Support spread spectrum and use it in clk-scmi
+>   https://lore.kernel.org/linux-clk/20260312-clk-ssc-v7-1-v9-0-0a9d2e188d9e@nxp.com/
+> 
+> - Mar 25 - Rosen Penev <rosenp@gmail.com>
+>   [PATCH] clk: visconti: pll: use kzalloc_flex
+>   https://lore.kernel.org/linux-clk/20260326042317.122536-1-rosenp@gmail.com/
+> 
+> - Mar 25 - Rosen Penev <rosenp@gmail.com>
+>   [PATCH] clk: bcm: iproc-asiu: simplify allocation
+>   https://lore.kernel.org/linux-clk/20260326045324.240150-1-rosenp@gmail.com/
+> 
+> - Mar 25 - Rosen Penev <rosenp@gmail.com>
+>   [PATCH] clk: clk-max77686: kzalloc + kcalloc to kzalloc
+>   https://lore.kernel.org/linux-clk/20260326052847.335089-1-rosenp@gmail.com/
+> 
+> - Mar 25 - Benoît Monin <benoit.monin@bootlin.com>
+>   Mobileye EyeQ7H
+>   This message lists the merge strategy for 3 different patch sets.
+>   https://lore.kernel.org/linux-clk/2786053.vuYhMxLoTh@benoit.monin/
+> 
+> - Mar 31 - Rosen Penev <rosenp@gmail.com>
+>   [PATCHv3] clk: hisilicon: clkdivider-hi6220: use kzalloc_flex
+>   https://lore.kernel.org/linux-clk/20260401023551.27978-1-rosenp@gmail.com/
+> 
+> - Apr 3 - Rosen Penev <rosenp@gmail.com>
+>   [PATCHv2] clk: mvebu: use kzalloc_flex
+>   https://lore.kernel.org/linux-clk/20260403194701.11902-1-rosenp@gmail.com/
+> 
+> - Apr 7 - Johan Hovold <johan@kernel.org>
+>   [PATCH] clk: rk808: fix OF node reference imbalance
+>   https://lore.kernel.org/linux-clk/20260407095027.2625516-1-johan@kernel.org/
+> 
+> I know it's getting late in the merge window, but if possible, it would
+> be nice to get these in via a second pull.
+> 
+> I don't want to hold up this pull since everything there looks fine.
 
-Thanks for your patch!
+Mark Brown reported a boot regression on March 31st on the on Raspberry
+Pi 3B+ in this thread that's now in mainline:
 
-> --- a/drivers/clk/renesas/r9a08g046-cpg.c
-> +++ b/drivers/clk/renesas/r9a08g046-cpg.c
+https://lore.kernel.org/linux-clk/18719902-4b4f-4766-ba92-658f3576f68b@sirena.org.uk/
 
-> @@ -86,6 +140,17 @@ static const struct cpg_core_clk r9a08g046_core_clks[] __initconst = {
->                     500000000UL),
->         DEF_FIXED(".pll2_div2", CLK_PLL2_DIV2, CLK_PLL2, 1, 2),
->         DEF_FIXED(".pll3_div2", CLK_PLL3_DIV2, CLK_PLL3, 1, 2),
-> +       DEF_FIXED(".pll6_div10", CLK_PLL6_DIV10, CLK_PLL6, 1, 10),
-> +       DEF_MUX(".sel_eth0_tx", CLK_SEL_ETH0_TX, G3L_SEL_ETH0_TX, sel_eth0_tx),
-> +       DEF_MUX(".sel_eth0_rx", CLK_SEL_ETH0_RX, G3L_SEL_ETH0_RX, sel_eth0_rx),
-> +       DEF_MUX(".sel_eth0_rm", CLK_SEL_ETH0_RM, G3L_SEL_ETH0_RM, sel_eth0_rm),
-> +       DEF_MUX(".sel_eth1_tx", CLK_SEL_ETH1_TX, G3L_SEL_ETH1_TX, sel_eth1_tx),
-> +       DEF_MUX(".sel_eth1_rx", CLK_SEL_ETH1_RX, G3L_SEL_ETH1_RX, sel_eth1_rx),
-> +       DEF_MUX(".sel_eth1_rm", CLK_SEL_ETH1_RM, G3L_SEL_ETH1_RM, sel_eth1_rm),
-> +       DEF_DIV(".div_eth0_tr", CLK_ETH0_TR, CLK_PLL6, G3L_SDIV_ETH_A, dtable_4_200),
-> +       DEF_DIV(".div_eth1_tr", CLK_ETH1_TR, CLK_PLL6, G3L_SDIV_ETH_C, dtable_4_200),
-> +       DEF_DIV(".div_eth0_rm", CLK_ETH0_RM, CLK_SEL_ETH0_RM, G3L_SDIV_ETH_B, dtable_2_20),
-> +       DEF_DIV(".div_eth1_rm", CLK_ETH1_RM, CLK_SEL_ETH1_RM, G3L_SDIV_ETH_D, dtable_2_20),
->
->         /* Core output clk */
->         DEF_G3S_DIV("P0", R9A08G046_CLK_P0, CLK_PLL2_DIV2, G3L_DIVPL2B, G3L_DIVPL2B_STS,
-> @@ -94,6 +159,21 @@ static const struct cpg_core_clk r9a08g046_core_clks[] __initconst = {
->                     dtable_4_128, 0, 0, 0, NULL),
->         DEF_G3S_DIV("P3", R9A08G046_CLK_P3, CLK_PLL2_DIV2, G3L_DIVPL2A, G3L_DIVPL2A_STS,
->                     dtable_4_128, 0, 0, 0, NULL),
-> +       DEF_FIXED("HP", R9A08G046_CLK_HP, CLK_PLL6_DIV10, 1, 1),
-> +       DEF_MUX_FLAGS("ETHTX01", R9A08G046_CLK_ETHTX01, G3L_SEL_ETH0_CLK_TX_I, sel_eth0_clk_tx_i,
-> +                     CLK_SET_RATE_PARENT),
-> +       DEF_MUX_FLAGS("ETHRX01", R9A08G046_CLK_ETHRX01, G3L_SEL_ETH0_CLK_RX_I, sel_eth0_clk_rx_i,
-> +                     CLK_SET_RATE_PARENT),
-> +       DEF_MUX_FLAGS("ETHTX11", R9A08G046_CLK_ETHTX11, G3L_SEL_ETH1_CLK_TX_I, sel_eth1_clk_tx_i,
-> +                     CLK_SET_RATE_PARENT),
-> +       DEF_MUX_FLAGS("ETHRX11", R9A08G046_CLK_ETHRX11, G3L_SEL_ETH1_CLK_RX_I, sel_eth1_clk_rx_i,
-> +                     CLK_SET_RATE_PARENT),
-> +       DEF_FIXED("ETHRM0", R9A08G046_CLK_ETHRM0, CLK_ETH0_RM, 1, 1),
+The corresponding fix was quickly provided the next day:
 
-Shouldn't the parent be CLK_SEL_ETH0_RM (i.e. before the 1/2 or 1/20 divider)?
+https://lore.kernel.org/all/20260401111416.562279-2-mcanal@igalia.com/
 
-> +       DEF_FIXED("ETHTX02", R9A08G046_CLK_ETHTX02, CLK_SEL_ETH0_TX, 1, 1),
-> +       DEF_FIXED("ETHRX02", R9A08G046_CLK_ETHRX02, CLK_SEL_ETH0_RX, 1, 1),
-> +       DEF_FIXED("ETHRM1", R9A08G046_CLK_ETHRM1, CLK_ETH1_RM, 1, 1),
+Could you also get this in?
 
-Likewise, CLK_SEL_ETH1_RM?
+Thanks,
+Brian
 
-If you agree, I can fix this up while applying.
-
-> +       DEF_FIXED("ETHTX12", R9A08G046_CLK_ETHTX12, CLK_SEL_ETH1_TX, 1, 1),
-> +       DEF_FIXED("ETHRX12", R9A08G046_CLK_ETHRX12, CLK_SEL_ETH1_RX, 1, 1),
->  };
->
->  static const struct rzg2l_mod_clk r9a08g046_mod_clks[] = {
-> @@ -107,6 +187,50 @@ static const struct rzg2l_mod_clk r9a08g046_mod_clks[] = {
->                                         MSTOP(BUS_REG1, BIT(2))),
->         DEF_MOD("dmac_pclk",            R9A08G046_DMAC_PCLK, R9A08G046_CLK_P3, 0x52c, 1,
->                                         MSTOP(BUS_REG1, BIT(3))),
-> +       DEF_MOD("eth0_clk_axi",         R9A08G046_ETH0_CLK_AXI, R9A08G046_CLK_P1, 0x57c, 0,
-> +                                       MSTOP(BUS_PERI_COM, BIT(2))),
-> +       DEF_MOD("eth1_clk_axi",         R9A08G046_ETH1_CLK_AXI, R9A08G046_CLK_P1, 0x57c, 1,
-> +                                       MSTOP(BUS_PERI_COM, BIT(3))),
-> +       DEF_MOD("eth0_clk_chi",         R9A08G046_ETH0_CLK_CHI, R9A08G046_CLK_P1, 0x57c, 2,
-> +                                       MSTOP(BUS_PERI_COM, BIT(2))),
-> +       DEF_MOD("eth1_clk_chi",         R9A08G046_ETH1_CLK_CHI, R9A08G046_CLK_P1, 0x57c, 3,
-> +                                       MSTOP(BUS_PERI_COM, BIT(3))),
-> +       DEF_COUPLED("eth0_tx_i",        R9A08G046_ETH0_CLK_TX_I, R9A08G046_CLK_ETHTX01, 0x57c, 4,
-> +                                       MSTOP(BUS_PERI_COM, BIT(2))),
-> +       DEF_COUPLED("eth0_tx_180_i", R9A08G046_ETH0_CLK_TX_180_I, R9A08G046_CLK_ETHTX02, 0x57c, 4,
-> +                                       MSTOP(BUS_PERI_COM, BIT(2))),
-> +       DEF_COUPLED("eth1_tx_i",        R9A08G046_ETH1_CLK_TX_I, R9A08G046_CLK_ETHTX11, 0x57c, 5,
-> +                                       MSTOP(BUS_PERI_COM, BIT(3))),
-> +       DEF_COUPLED("eth1_tx_180_i", R9A08G046_ETH1_CLK_TX_180_I, R9A08G046_CLK_ETHTX12, 0x57c, 5,
-
-Inconsistent alignment (more below).
-
-> +                                       MSTOP(BUS_PERI_COM, BIT(3))),
-> +       DEF_COUPLED("eth0_rx_i",        R9A08G046_ETH0_CLK_RX_I, R9A08G046_CLK_ETHRX01, 0x57c, 6,
-> +                                       MSTOP(BUS_PERI_COM, BIT(2))),
-> +       DEF_COUPLED("eth0_rx_180_i", R9A08G046_ETH0_CLK_RX_180_I, R9A08G046_CLK_ETHRX02, 0x57c, 6,
-> +                                       MSTOP(BUS_PERI_COM, BIT(2))),
-> +       DEF_COUPLED("eth1_rx_i",        R9A08G046_ETH1_CLK_RX_I, R9A08G046_CLK_ETHRX11, 0x57c, 7,
-> +                                       MSTOP(BUS_PERI_COM, BIT(3))),
-> +       DEF_COUPLED("eth1_rx_180_i", R9A08G046_ETH1_CLK_RX_180_I, R9A08G046_CLK_ETHRX12, 0x57c, 7,
-> +                                       MSTOP(BUS_PERI_COM, BIT(3))),
-> +       DEF_MOD("eth0_ptp_ref_i",       R9A08G046_ETH0_CLK_PTP_REF_I, R9A08G046_CLK_HP, 0x57c, 8,
-> +                                       MSTOP(BUS_PERI_COM, BIT(2))),
-> +       DEF_MOD("eth1_ptp_ref_i",       R9A08G046_ETH1_CLK_PTP_REF_I, R9A08G046_CLK_HP, 0x57c, 9,
-> +                                       MSTOP(BUS_PERI_COM, BIT(3))),
-> +       DEF_MOD("eth0_rmii_i",          R9A08G046_ETH0_CLK_RMII_I, R9A08G046_CLK_ETHRM0, 0x57c, 10,
-> +                                       MSTOP(BUS_PERI_COM, BIT(2))),
-> +       DEF_MOD("eth1_rmii_i",          R9A08G046_ETH1_CLK_RMII_I, R9A08G046_CLK_ETHRM1, 0x57c, 11,
-> +                                       MSTOP(BUS_PERI_COM, BIT(3))),
-> +       DEF_COUPLED("eth0_tx_i_rmii",
-
-Inconsistent line break / alignment (more below).
-
-> +                               R9A08G046_ETH0_CLK_TX_I_RMII, R9A08G046_CLK_ETHTX01, 0x57c, 12,
-> +                                       MSTOP(BUS_PERI_COM, BIT(2))),
-> +       DEF_COUPLED("eth0_rx_i_rmii",
-> +                               R9A08G046_ETH0_CLK_RX_I_RMII, R9A08G046_CLK_ETHRX01, 0x57c, 12,
-> +                                       MSTOP(BUS_PERI_COM, BIT(2))),
-> +       DEF_COUPLED("eth1_tx_i_rmii",
-> +                               R9A08G046_ETH1_CLK_TX_I_RMII, R9A08G046_CLK_ETHTX11, 0x57c, 13,
-> +                                       MSTOP(BUS_PERI_COM, BIT(3))),
-> +       DEF_COUPLED("eth1_rx_i_rmii",
-> +                               R9A08G046_ETH1_CLK_RX_I_RMII, R9A08G046_CLK_ETHRX11, 0x57c, 13,
-> +                                       MSTOP(BUS_PERI_COM, BIT(3))),
->         DEF_MOD("scif0_clk_pck",        R9A08G046_SCIF0_CLK_PCK, R9A08G046_CLK_P0, 0x584, 0,
->                                         MSTOP(BUS_MCPU2, BIT(1))),
->  };
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
