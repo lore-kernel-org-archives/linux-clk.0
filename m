@@ -1,182 +1,121 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C321526E173;
-	Thu, 23 Apr 2026 13:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A0C2F25F3
+	for <linux-clk@vger.kernel.org>; Thu, 23 Apr 2026 13:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776951371; cv=none; b=rESG+4Hx6gQHXOxXEhVpNhrLWlXNQR6eHsV+Ms3l0wnnHk44mRFxY1yX/jzGuzLnbCzR9n2g7Mknw5Dfbha9TsCDKFt0ZMbUz0GKfab2Wsi8xfCEbmlNnWXg3Ic9qpNPshhhasW/FMgCOz2DUc3Ff5Ik1FQ4zkd1ZNxcflEdbqM=
+	t=1776952259; cv=none; b=LD7GcAZPqs3/Of3ls3y4RT+mbA4LrIwnOvk3RjdhmUqM1J30IwhOsCANKA861Wdfaf45N3UWTCi8wms9yZknV4+WHg45d+XL4TJhARq0//fBdZcWzRwpPE2uNNMD7tLTW5SEsWE4VjOItEufk/rbKWgolTVpRbzLXhETfWGk37w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776951371; c=relaxed/simple;
-	bh=ZFU4l/iBrfXM5tV9OPlIMU+QtKYk/aYRrlUcfs8lPhg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qPzo/heAyW8FVEgLuu5+Oo+S0uBFiiqAlEFBkInG0UqZcWBPhnCYf0KJ1i2y4WdMbhdc2YfRDrh7lG5a+n/5gUx+U56aFjJXnqkF5CJsrQeiy+ho/eRCQd6Pm014l1m0XP//on6yUSuGGlp4UOFGlnSZ96Z3YoateuBsJlRm8Mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Pz3vvJ4f; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1776952259; c=relaxed/simple;
+	bh=LVv6C3wWXaLkV4DdI3hN/QdZVOBTFV5yN0je6Bf6Cjw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=su2W8KSktHoTMHyR1cMlu7llIrVJwLqYbF534oYKXoYvtwQ/+qFd5JAhI1LBWH/a0JSH541WxQDqSbQtdHFDllIzt9/Qrwu9WpXwuQxzajDM4USeZTGw7IHwW/ChY/DiHI20djXmlel4u+b/P5eonir8uZAWpEHXD450q+UkiEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=duh+HJaK; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Pz3vvJ4f"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 7C195C5EF11;
-	Thu, 23 Apr 2026 13:36:48 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 1524A60495;
-	Thu, 23 Apr 2026 13:36:07 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2E5D710460C18;
-	Thu, 23 Apr 2026 15:36:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1776951366; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=CjrfipUfn72B1GDWgNgVviWkaBvqYztmuDRubrD3LXo=;
-	b=Pz3vvJ4fYEOwzaZmRWnzS9iiPptCFYLxeOEM4jj09xuO22X4TrR7W7xkmjFSAfp7DUpV/W
-	GVDKstGvnixc9s754sXiAV2LpV0k/D52xfk9N9xxHWra/ULCGRpJBkYzz0iKIje87/t32A
-	1rafq+lFLIttmnjdgBYeyvjWlNoxFfqY2IQB/AbXdpnmLVGFP3xO6E7hQfHQYzvRrj+ncL
-	VXk7N8VeVeq8bCxxN1K+HjkGuxQncOBmX9GYjaXApZxtbNjOWhS6qGCP2R+3qt9BI3Ly8x
-	uuLmOp45r+7tuxvWd7/wVE4u/t2XwJ/fNGBynh4lgJ+KtlZ4Hxq1rbr0UMekWw==
-Message-ID: <7e6eeb33-ca4e-4067-b886-121dbb37a1dc@bootlin.com>
-Date: Thu, 23 Apr 2026 15:35:59 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="duh+HJaK"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4890098abbaso49607535e9.0
+        for <linux-clk@vger.kernel.org>; Thu, 23 Apr 2026 06:50:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1776952255; x=1777557055; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fbtbCkYzI4GEfR3Ru2SUnpymypehkZuVfFRi6unx5xg=;
+        b=duh+HJaKEfodB7+DybIEYQvR72WqJ+RAQXSirMIT1r0L1TasP5RxU1RtQyJvxs0g+c
+         DYILagZ/1i8BGsMArC7737FgxIytAIhakq/wa9WlvNyTntW8+7qYgQ0fOe/pdFlUv8Ok
+         vSMuUMNru0SZ1Czs+aQ3L0j1PU2rF4hpXfe+QQAufkH6rXOVAkjMc3GU5a45WXRf2/27
+         kwmb52t+uYTa9YwCirfIQN9GdqWlceS1VQS3Y2cN2D1RrPOuhXGvmt0MDLxcK+CXaqjx
+         seV4JgosHAK63yfPRxjOyWKaCLSZHeXg3SwwOKKsoPwX0fmmwXSxh93duZWK1M3+LDdq
+         U2bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776952255; x=1777557055;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fbtbCkYzI4GEfR3Ru2SUnpymypehkZuVfFRi6unx5xg=;
+        b=C08RXWFlDVF8/YrsGZSVMRmZtDToPQLLM+7RwUwH8J92lFriWMoK+n8TrnAK1CXBoM
+         DzErNKA+afz5fflskC/ZVAzDC84qXrq3ou0jA9QT3veTzFTJK3UDm57b+U2CtS6XPMmi
+         odvsatSBenR6dZclKU3E7G1HCZ8ADyfgtd1YjWjNqoB6/0h4b+hBX5/esZPvs12av5WY
+         vuU0bawUXYAp7qJHGaIi9KLdhshu1/jPjc3OWtZUXVyoVX41GA/3JWFCqG6Q2QQwXZpV
+         7a6Nh6xfX1TYgYAWhNZ9gr/0SM1fYL4ud4d1r/mkainv2gClVVL2tXAz5NVvHq4pI+xx
+         QFOQ==
+X-Forwarded-Encrypted: i=1; AFNElJ/OTix2qSbeCzBAhXTEJ9DA/qeQQPfKlv5B+ATsomNp8Wj/WW25Mj+fuUEMYIirR6fS58zgyLKd9BM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgFirrmYbAwBEQLnQDJjmRfAUQ3XllVvO0SyhFna2apFrK4Xc1
+	OPXtxoYSHsp7T3gr69AoELgShv0LtGvicjH9AMA5sZ+G+WyTLQme6IVU
+X-Gm-Gg: AeBDieu+w4q8a+b13kh9Zs+nQ7ekbofvlobUoAoZTfuXDMxAx9SjtjWsD1tNJqZ/WdX
+	ejVNE6uCsn1zGI+hNDvA5mJ3vVFBGdWIoErdJelg6OSDRNtrwNLLUfrxNDhN3k0sMt6MjnVYyfo
+	QFAENOv9xWKqHy2swcvlVawYBxC4ePkC1TOU9J/gZpdgZREubhSa++SI1k8BbuNXWalRB2eS00J
+	wTdltratErXv81ci2ZdsgwoqIRa9UL8ANUFQcmnpteEwRCg87gNK7V5Jr++B9Lpfl4rn6jUaype
+	qZa/KjPvvQZGUPNRezD/HNKsPpEbkdEFHIyziLW3BvWdJuqgQngo2zTym5iy/ochH0ITaxzZoA9
+	jfFntgFT754sMWybD+eOxmTxUTfrTTUkzMghvrlStQlTXvxF97n6T2SbmAC4fO4Qxr7vcDWd/0a
+	Nt1D8uyyyly1N4kotBJuAA+yzzljSLKTzPohTCZo1BM574od7Vx4M/uty8ps8=
+X-Received: by 2002:a05:600c:444a:b0:487:1520:d107 with SMTP id 5b1f17b1804b1-488fb793580mr362776015e9.31.1776952254428;
+        Thu, 23 Apr 2026 06:50:54 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:23c4:a758:8a01:c2c5:eec8:9509:382e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a52583fe7sm228134335e9.13.2026.04.23.06.50.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Apr 2026 06:50:54 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v6 0/3] Add support for Renesas RZ/G3L GBETH clocks
+Date: Thu, 23 Apr 2026 14:50:44 +0100
+Message-ID: <20260423135050.238400-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/4] clk: keystone: sci-clk: add restore_context()
- operation
-To: Brian Masney <bmasney@redhat.com>
-Cc: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
- Santosh Shilimkar <ssantosh@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Gregory CLEMENT <gregory.clement@bootlin.com>,
- richard.genoud@bootlin.com, Udit Kumar <u-kumar1@ti.com>,
- Prasanth Mantena <p-mantena@ti.com>, Abhash Kumar <a-kumar2@ti.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, Dhruva Gole <d-gole@ti.com>
-References: <20260407-ti-sci-jacinto-s2r-restore-irq-v5-0-97b28f2d93f9@bootlin.com>
- <20260407-ti-sci-jacinto-s2r-restore-irq-v5-3-97b28f2d93f9@bootlin.com>
- <adbXBwKC_cNxGlpr@redhat.com>
-Content-Language: en-US
-From: Thomas Richard <thomas.richard@bootlin.com>
-In-Reply-To: <adbXBwKC_cNxGlpr@redhat.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-Hello Brian,
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-On 4/9/26 12:30 AM, Brian Masney wrote:
-> Hi Thomas,
-> 
-> On Tue, Apr 07, 2026 at 04:25:08PM +0200, Thomas Richard (TI) wrote:
->> Implement the restore_context() operation to restore the clock rate and the
->> clock parent state. The clock rate is saved in sci_clk struct during
->> set_rate() operation. The parent index is saved in sci_clk struct during
->> set_parent() operation. During clock registration, the core retrieves each
->> clock’s parent using get_parent() operation to ensure the internal clock
->> tree reflects the actual hardware state, including any configurations made
->> by the bootloader. So we also save the parent index in get_parent().
->>
->> Reviewed-by: Dhruva Gole <d-gole@ti.com>
->> Signed-off-by: Thomas Richard (TI) <thomas.richard@bootlin.com>
->> ---
->>  drivers/clk/keystone/sci-clk.c | 42 ++++++++++++++++++++++++++++++++++--------
->>  1 file changed, 34 insertions(+), 8 deletions(-)
->>
->> diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
->> index 9d5071223f4c..428050a05de3 100644
->> --- a/drivers/clk/keystone/sci-clk.c
->> +++ b/drivers/clk/keystone/sci-clk.c
->> @@ -47,6 +47,8 @@ struct sci_clk_provider {
->>   * @node:	 Link for handling clocks probed via DT
->>   * @cached_req:	 Cached requested freq for determine rate calls
->>   * @cached_res:	 Cached result freq for determine rate calls
->> + * @parent_id:	 Parent index for this clock
->> + * @rate:	 Clock rate
->>   */
->>  struct sci_clk {
->>  	struct clk_hw hw;
->> @@ -58,6 +60,8 @@ struct sci_clk {
->>  	struct list_head node;
->>  	unsigned long cached_req;
->>  	unsigned long cached_res;
->> +	u8 parent_id;
->> +	unsigned long rate;
->>  };
->>  
->>  #define to_sci_clk(_hw) container_of(_hw, struct sci_clk, hw)
->> @@ -210,10 +214,16 @@ static int sci_clk_set_rate(struct clk_hw *hw, unsigned long rate,
->>  			    unsigned long parent_rate)
->>  {
->>  	struct sci_clk *clk = to_sci_clk(hw);
->> +	int ret;
->> +
->> +	ret = clk->provider->ops->set_freq(clk->provider->sci, clk->dev_id,
->> +					   clk->clk_id, rate / 10 * 9, rate,
->> +					   rate / 10 * 11);
->>  
->> -	return clk->provider->ops->set_freq(clk->provider->sci, clk->dev_id,
->> -					    clk->clk_id, rate / 10 * 9, rate,
->> -					    rate / 10 * 11);
->> +	if (!ret)
->> +		clk->rate = rate;
->> +
->> +	return ret;
->>  }
-> 
-> Should the computed rate from sci_clk_recalc_rate() be saved as well?
+Add support for Renesas RZ/G3L GBETH clocks and  reset signals.
 
-Yes you're right. As recal_rate() is called for each clock at
-registration, I'll be able to restore rate for all configured clocks
-including the ones which were configured by the bootloader but not by Linux.
+v5->v6:
+ * Dropped patch#1 from series as it is accepted for 7.2.
+ * Fixed the typo in comment stanby->standby.
+ * Updated parent of ETHRM{0,1} clocks to CLK_SEL_ETH{0,1}_RM
+ * Fixed various DEF_COUPLED macro alignment issues by splitting it into 3
+   lines.
+ * Collected the tags.
+v4->v5:
+ * Rebased to boot series [2]
+v3->v4:
+ * Updated commit description
+ * Fixed mstop bit for eth1_clk_chi and eth0_{tx,rx}_i_rmii clocks
+ * Added r9a08g046_no_pm_mod_clks to avoid PM framework enabling both
+   rgmii and rmii clocks together as they are mutually exclusive.
+ * Fixed checkpatch warning for more than 100 columns
+v2->v3:
+ * Added eth{0,1}_{tx,rx}_i_rmii clocks.
+ * Collected tag for patch#1
+v1->v2:
+ * Separated ethernet patches from series [1]
 
-> 
->>  
->>  /**
->> @@ -237,9 +247,9 @@ static u8 sci_clk_get_parent(struct clk_hw *hw)
->>  		return 0;
->>  	}
->>  
->> -	parent_id = parent_id - clk->clk_id - 1;
->> +	clk->parent_id = (u8)(parent_id - clk->clk_id - 1);
->>  
->> -	return (u8)parent_id;
->> +	return clk->parent_id;
->>  }
->>  
->>  /**
->> @@ -252,12 +262,27 @@ static u8 sci_clk_get_parent(struct clk_hw *hw)
->>  static int sci_clk_set_parent(struct clk_hw *hw, u8 index)
->>  {
->>  	struct sci_clk *clk = to_sci_clk(hw);
->> +	int ret;
->>  
->>  	clk->cached_req = 0;
->>  
->> -	return clk->provider->ops->set_parent(clk->provider->sci, clk->dev_id,
->> -					      clk->clk_id,
->> -					      index + 1 + clk->clk_id);
->> +	ret = clk->provider->ops->set_parent(clk->provider->sci, clk->dev_id,
->> +					     clk->clk_id,
->> +					     index + 1 + clk->clk_id);
->> +	if (!ret)
->> +		clk->parent_id = index;
->> +
->> +	return ret;
->> +}
->> +
->> +static void sci_clk_restore_context(struct clk_hw *hw)
->> +{
->> +	struct sci_clk *clk = to_sci_clk(hw);
->> +
->> +	sci_clk_set_parent(hw, clk->parent_id);
-> 
-> Are all of these clocks muxes?
+[1] https://lore.kernel.org/all/20260128125850.425264-1-biju.das.jz@bp.renesas.com/
 
-Not all.
-I will check if the clock has more than one parent before to call
-set_parent().
+Biju Das (3):
+  clk: renesas: rzg2l: Add support for enabling PLLs
+  clk: renesas: r8a08g046: Add support for PLL6 clk
+  clk: renesas: r9a08g046: Add clock and reset signals for the GBETH IPs
 
-Best Regards,
-Thomas
+ drivers/clk/renesas/r9a08g046-cpg.c | 157 ++++++++++++++++++++++++++++
+ drivers/clk/renesas/rzg2l-cpg.c     |  67 ++++++++++++
+ drivers/clk/renesas/rzg2l-cpg.h     |  10 ++
+ 3 files changed, 234 insertions(+)
+
+-- 
+2.43.0
+
