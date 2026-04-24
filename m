@@ -1,67 +1,67 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B7B38552C
-	for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2026 09:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED1C386567
+	for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2026 09:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777021686; cv=none; b=WsAqun1pW1CcI5F1IFofZOJUIn1NRs/UDB8z2DPb99yNUdzPA++Abu7IrMOxAw5Dom6DVeMpYUxpAUaGZe0X/R+Ibx33Jff8RoRedbHaeuHV6ly/byf+lcUpQJiyGIzTa5HdPntGUS0vYfeWdoi+g8tzqnP5YjTyBDkSb995LXE=
+	t=1777021688; cv=none; b=mAJtNRO5UFqX0TKgfXfBA9J+pRX2sZlDA9bR1KIK9e1IEpdsSChSa8hi76QX5OyMZNonzzHL/NVQe1fXn6cJsgmN1PiPvDiwo1jU3VNJ2Ab6Dr72cKGZEURFUYpuLd12AU1HoWvrU3O0kS7NfyzY3Gek33isQnc65NsKgh/xYoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777021686; c=relaxed/simple;
-	bh=IwkmBkAuWbKdA+FQU3eOvcwJRVeHTGMjU2R5rw8ly3w=;
+	s=arc-20240116; t=1777021688; c=relaxed/simple;
+	bh=+12tfzqfW/Tk83MgWfc0iGAjrf/JciQj1xvyj8kbjjk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Jv8zzqP0BxQLqQrItP63OpSt7+idzIXTRw+yf1uhz9+PWhF7VtxOO+Fix7WWeEVMC+uO71CuM64rBKwpEoiK3+4aJM5TZEZ55Vw8a/MduSJdy4pd5vPEGlEIsjHOYr8jYTZy47AabsWyXgdFpfSMwHR2drRRDNE7tNzsxGROdzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QwmBuErC; arc=none smtp.client-ip=209.85.128.51
+	 In-Reply-To:To:Cc; b=Odu6NUPaa19iden7fHGFwuwwuo6ui+gHEkgEeRXvO4IwwHuJldcGQd41ye9bBAapJUKo3kBCtSv2Fj6VHQ63lXJFKRG7HtZK/hwF90Aq1+7CRWYsEKh30auRrtpGUp4z2trqXIIDf3hwBtf1OafX82KzJqK9qEZSjvG8zJGtT5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qBJ1tjTA; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QwmBuErC"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-48984d29fe3so80714585e9.0
-        for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2026 02:08:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qBJ1tjTA"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-48a3e9862f0so37743165e9.1
+        for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2026 02:08:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1777021683; x=1777626483; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1777021685; x=1777626485; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=hTJIDuh1c9B+y7w8n0vHIO8xz2jJldQ3ENPocwBUryE=;
-        b=QwmBuErCaC5psT/BN/7tnpgr7zyPKG5stFgNkqTTsy2Gd6QxtE+k2r4OpfcjCpOxR9
-         AJNwFqysvhEfqpUD1cBZSiyXSHKJDvbXvGTtNBUeHrTVZ7S6D7ep5pNhlanPY1SLZJ70
-         eBPlPtIn89g1SZJlQbDBCE+fY48ERbGZ4GMGqOcvulTmu2ULqlJgsnc8yiYY8FKU/Sb9
-         LmpK2wWkySp+xk3cqBpwwl1ma2Si22b4mtgGQcfP++O6mDBsMyr1HfpK3bvhr1WJoQjC
-         Ol7Tp516FeGUtfWMBdSItRXLgy3kImduEK9peOjjOGyQQqjCzPWFoIy3LG9mo0Lqh6o9
-         SzAg==
+        bh=Gnpe7VWv66BG7EMfRroY3FJSHMxHpQ7t0W9fMqyK3xI=;
+        b=qBJ1tjTAG9rwsyYrYPFV8+537HMSAI7g2G81cNXlFPS0QpBFciZ53yIpkwMjbC+XOY
+         G3SkqYQ4hYpfrgZmqf5B/KGaViZE+Tlo5++0kJP1yk2tjt0v3kKctqDCJYOF3KA8UEgW
+         qqjoGd9E6aaH+2WcGt+k+BsY1mVhEQ9JBZZWJx6vP6XOIxBl/8ZqvOfpTiWIhfHapl+h
+         z/I6rPV85yEWjuwpCiM/4Peu4L1aqucH2vZuwDAjiRxMCmmx3XFxaAK3GiAvVlk8Zacj
+         X0K9w2I5XSuBj7+BKoeuVgH3qqemtEO/BT5nbQh/vomwvYR85F6+OouqSTDLZUJA0kMA
+         Mf1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777021683; x=1777626483;
+        d=1e100.net; s=20251104; t=1777021685; x=1777626485;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=hTJIDuh1c9B+y7w8n0vHIO8xz2jJldQ3ENPocwBUryE=;
-        b=FsdyhBLwMOVEZ4oosrljnmM7jzNe0PO2FvetMchl3UQchgqdrpIG53Az0xrEG5BU/a
-         jb3I5AehHns9G3vNlYJ4fJK4HqlSFYyTeZ8XnIkNgbeNUGBXVuhYiD4RijtEkQ1l+DAB
-         OqWWFb3J4Ppi4QxwPrc6Xdg8Bmg3qvcW7M5u/K/ChLJv/eJsQbFax/eJJ6Ibw03dK74P
-         VNcWqHBlFmpJiodpcqN2fZKUr94aH7EaY9LYBJXKsBnZavzGREPooySr6cACzVLEBxnS
-         4nFTUS8ZbxlRt1S9dpup33NpqevyLFEHPcCCk+slrsw7kByFdZGk5ONZLYzTKPlI+lf+
-         9ZMQ==
-X-Forwarded-Encrypted: i=1; AFNElJ/IwMC6Ca/+A0332HTw7eoq9pYszBa2GeOEo5SoU3nO3FuB2uNB47+3/lykg6KnbNrJn6tZQqVx4Mo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzOJru70mfBixC7c6vrjnSVrib/MkVtHQsF7vc/ULmVBacsyED
-	bhSBJpOsnl/p762cHrOL8ZjPgQsX0npNaHwUR9pgo3KupmwqO3UbLQMroZKUHUkBO7Y15LcBAsK
-	xfHtqRxk=
-X-Gm-Gg: AeBDieuMiWonfhsJcgp8NBPeIC0tDojkYfUwV73E36UofFJWiB/2rYMSICWMdJ/UdRX
-	5Itd/jy029hRycWZC2HPHTJqnwlbzH5lU5LPgAEluIRLeAhF454PcwqkpXij0C2tbo4H7dXKyrH
-	vKjEyRdTe76OJRbSAqMdfMFlaurep/paabED7KnGxGCwDZQQYx4Vh/BDZ1oUwvyZBogO5KNwhjV
-	lPqbLy2YnepupIFGADF4/bY2sFSDE2HIZtcCH3t1IGQx2RiiSn8uUB+2tjYJlAjSPjpdYz69FN2
-	78dLTSHO8ahJXY/UsS7tAA3cqa6rHp1J6WCChde1xN2CYa8xUSrCqFfQair6dWIzDGYiGiUGHpR
-	MnwJ8NGEhOu1eFCuDsCvUXyZZfOQpcVMKpkwKl4RyHL2EqEvFnfImL44kKPSimtHM7BzVl6Ic/R
-	mztlr9HtnH9RzSDIDYVI3M3LksXejo443qO6gvOA6KjPgLSxvjNbN6FSQ=
-X-Received: by 2002:a05:600d:b:b0:48a:563c:c8e2 with SMTP id 5b1f17b1804b1-48a563cd137mr173435695e9.3.1777021682880;
-        Fri, 24 Apr 2026 02:08:02 -0700 (PDT)
+        bh=Gnpe7VWv66BG7EMfRroY3FJSHMxHpQ7t0W9fMqyK3xI=;
+        b=SaFf2bvBvtd4GL7cDIn1MwQuG8WsHqcXRDzbss39z+1N6qvZFbNyALs3oWSYdF7R8w
+         IckjvM50VzJ8/RgjHx9cdYjfsUKVf/VtJ3nWJ/eX318ojsRXeqwxs/9vul7+b2lTHAZX
+         sTyEYOfaQseuRJddSVBbyz5/X846oUdbBnGWXIuCiEYeHwi6iiSAcqM5+eIh3fGeCo9V
+         PoqzJ78X5pKt3Bz0RdDAzDyrLqN5I/OO6HbiSJ9OdCkf35oJoDofVvaEWwwDhNEPFoiK
+         6VQKR1TgWb8JAQLdJXr5FLA5Ff/Ot3n7EGD9XGsvNehSNGNQkspPqGjXvQ/ll30xe9ro
+         So7Q==
+X-Forwarded-Encrypted: i=1; AFNElJ+jzeII3C5Wj5Q0/Qs0iftUwjpaPiE+RxKFJTnB4EpSgh+7lcXVnpVfMMOb2ody6/Gp9mGRte4FAAU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQ6krwCooyXX7J2NqpMN77KQV6L9SwlnPnZUA2fnzOjwkn8+Jk
+	1tTL9mU4zV+Pbx5s2pT/iX8Vj8w7RvBZmZkKQL720OekkOH/+eGIxyv7sb1hcERBdKNaioNlxXb
+	mInMKoDw=
+X-Gm-Gg: AeBDievBV0hYd8iFqkheSfcYQm8K1uC+8xwjSP1r1DgbiHGyYpU3KryTI4FSHgvR4lf
+	6OTjuoa8vvnAzzB1bzDulg6CSeTjet3JFPrNEqHep2mP9asV/nPrHjm/u4+s4gJpAaGZuN1vtZX
+	OAqS24543GdrxdRqYZE9mVD92QilVspOdbPvLndxBoMKkQGuwQGMuF1532JSdDn9xC8NYMVdkMf
+	f+DXkAByAknVYxovK65oXM0rq3cDm2svZ7obZhOnDvglQLknDu9QiSnT1pTEfL3lgt2OFXMOr+k
+	wApv0SGDm0bsENhN/DetlWSN9STv7lADInTEhNhe/pDWgwVy4n0vofX40CaehWk3mgqXvpRhn/j
+	cr/xis1PJavoHTSfqCeiKK9BJdRZDhdsvrZGG7v4jFXaglwiXlEFHiLalIUJlVyuoUzoLsV/uvx
+	zfiSViJgkBfbWAcX+6Wnl3FdvwwsoWAw/VcAcOxuEwtLSwBqGSK1XaTTg=
+X-Received: by 2002:a05:600c:c112:b0:486:fe83:861c with SMTP id 5b1f17b1804b1-488fb896910mr353911685e9.7.1777021684083;
+        Fri, 24 Apr 2026 02:08:04 -0700 (PDT)
 Received: from arrakeen.starnux.net ([2a01:e0a:106d:1080:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-488fc1c0354sm537222545e9.11.2026.04.24.02.08.02
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-488fc1c0354sm537222545e9.11.2026.04.24.02.08.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Apr 2026 02:08:02 -0700 (PDT)
+        Fri, 24 Apr 2026 02:08:03 -0700 (PDT)
 From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Fri, 24 Apr 2026 11:07:56 +0200
-Subject: [PATCH 2/6] dt-bindings: clock: qcom: sm8550-gcc: Add missing
+Date: Fri, 24 Apr 2026 11:07:57 +0200
+Subject: [PATCH 3/6] dt-bindings: clock: qcom: sm8650-gcc: Add missing
  power-domains property
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -71,7 +71,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260424-topic-sm8x50-tie-gcc-to-cx-v1-2-4b6e09d532ce@linaro.org>
+Message-Id: <20260424-topic-sm8x50-tie-gcc-to-cx-v1-3-4b6e09d532ce@linaro.org>
 References: <20260424-topic-sm8x50-tie-gcc-to-cx-v1-0-4b6e09d532ce@linaro.org>
 In-Reply-To: <20260424-topic-sm8x50-tie-gcc-to-cx-v1-0-4b6e09d532ce@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -86,20 +86,20 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  Krzysztof Kozlowski <krzk@kernel.org>, 
  Neil Armstrong <neil.armstrong@linaro.org>
 X-Mailer: b4 0.15.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1085;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1114;
  i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=IwkmBkAuWbKdA+FQU3eOvcwJRVeHTGMjU2R5rw8ly3w=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBp6zLta7gwiJ/on/YhF8Netw60TBjWggYjPha7STkA
- 1XZQCE6JAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCaesy7QAKCRB33NvayMhJ0cqnD/
- 9BF1CqOKgUv5pGbD+oyYkx0JMogo5opYqZcmzeK7n3iZjZ+DEUWIKu29hHh4YhDqWc3yRTGsxIndHX
- 2k67GLH/xgKm+IouegCD/4gM9KDEMb8Lg7Tu1VWRDfHetmVe8D78EhKieWWAoG/lyiblqNq0PrjpC7
- BWp2OJIB6pic2kuJ0qx7iTYOoQc2tML9IeanM+PoM+6toR0646j8ELgY6LHZ5PcTdrAFFVG6ics30y
- nmnmRcPW+NQ4r7tCYwtREE4nXaDB0+keYW6Y/wpySvUqFVr5aj0EBNPbnNmpfZtgyK66X99YHrxiti
- GTz4DFauw08t5WeU8Qy4YJbyqk1HkEotnsiSD1Rr5PBYQQo+W9A3vDuG009cTmSbTkNahuwTgAo12x
- h0r8tqAXE0BW9woL5rZRPx2dmBeiMeTQDbIzdqq6bFmvSc7USbX7UmdcdJTaW0ge2L6yFB/cXuhot8
- lOnN8/LRKT6F237DH+E2Xk4HfgvJ8Ts/yqdKNJ7IIgoKVTUk9Y4orQlW+pnB1C8BPVWzVtCFuNsDJ4
- TKxMHWDgshDghaAJ3PPemAb9bsCSmaY5vWzpvCiUT40x/djSBjcn6M9n2FQobziakP7IMXPYf61+yC
- SftzlBy905Uo5wydxR57etbGXRh9SDfQtHHDrUaC0HJM2gXmW0zx8CMOAC+A==
+ bh=+12tfzqfW/Tk83MgWfc0iGAjrf/JciQj1xvyj8kbjjk=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBp6zLuLZkMPJDr268l+m921m3jF91DlclPnR+Of8tZ
+ 4B0me9yJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCaesy7gAKCRB33NvayMhJ0W1gEA
+ CKwLPQQou8T+FSdimuDZHKVX8qOjgIgOFrWhQ1uuRhlAQMe0DVhTTKHMKJI4WV4b27Vv4a8XhYyopa
+ djFOIUSDd79QCEhddBghp3kvWTNNAAv+aflwRWPx1sPpzmkDAcrU0n2t6f57GnJqq00Ytf14FLTDJw
+ Tyg/6cX7qTbjVE6f2tV6+8HDhwDjicgwxOhTYfCFUvTM3dLDVeYTWW6qSHeDeweg3UPp/9luIjozd9
+ mjJXT6uF1etp2ZBcu8L+eYOwFz5Ux6stvm65Thr4nFjAtwB5MitkH6uKBkLbngvJJ1F8ZvaoiETjOe
+ DB0JsFN9+5XqKeacUVSl38Ajh7yiES2IPEeEC6u6gNG9wCNC+jrU7oUPx/jUwzI5uRNyLAuAJcQgm+
+ sRpYsQd6lXWSxIFUGxcW+tECxDqhnEAScpRtky2GVB02pcdiOp/c3yBiA9aitBJHOphDTNuB2Lt+Gb
+ fEq8kjBOBavIhkkeG9ANvuFHKy5OEtEBZAq5y4dAGd2onCWcwK6D7/SXDOqhQ/OAiU95kc1AwP7Wsl
+ FXWggrQ9ufoOvqU/mceGPOqStMYMstuURvlK7Wy8EwlYGG6gBRjPAlNqutkl2/2lKTtnA8CVObDn1a
+ XtLo7/B35/hopY76it3j06vvu2JA0BX2p8u5zy57cWwdUeDASfI0oKZK132g==
 X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
  fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
@@ -108,17 +108,17 @@ to CX, CX needs to be declared as power domain of the GCC.
 
 Document the missing power-domains property to that purpose.
 
-Fixes: 47ba9c50bbeb ("dt-bindings: clock: Add SM8550 GCC clocks")
+Fixes: b69d932154dc ("dt-bindings: clock: qcom: document the SM8650 General Clock Controller")
 Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
- Documentation/devicetree/bindings/clock/qcom,sm8550-gcc.yaml | 5 +++++
+ Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml | 5 +++++
  1 file changed, 5 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8550-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8550-gcc.yaml
-index c4e9b9bb63f5..8c40e93bf336 100644
---- a/Documentation/devicetree/bindings/clock/qcom,sm8550-gcc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,sm8550-gcc.yaml
-@@ -31,9 +31,14 @@ properties:
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml
+index c7143e2abc80..43b06e0abd1d 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml
+@@ -32,9 +32,14 @@ properties:
        - description: UFS Phy Tx symbol 0 clock source
        - description: USB3 Phy wrapper pipe clock source
  
