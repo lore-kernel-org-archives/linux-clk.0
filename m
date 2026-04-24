@@ -1,134 +1,128 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D9D38944D
-	for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2026 09:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084F932938D;
+	Fri, 24 Apr 2026 09:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777021700; cv=none; b=kEN3IYw8I9Zr1nh1SQspZZC6mpQEPja0HLmg7gxMXEUSr6YMah4NahG+QVo3swklbECyCagGMiUeU/oRg58eIRpp3HvaOhQh4jsaW0wjvW7VUkNn7hWIQSqknuHQdBvbLiEnAsizZFxx4ZIxR/ze+BWz7YEs/BtZf25raTJAHwQ=
+	t=1777021803; cv=none; b=k4zmOkOLkqxto5Pc8R4W3KS0upfY7ZffSK7IlxsDYJJSn+DTmkHSyAXttQBmI4ZjVrvq26KCsFzqq7uSvTOI3fymU7CDZrkCoKTK6FX+P2y4eNr6D3aUsnBcq85/kkKIMlRFY/Ew3DwT02em0o5nlCFa4L3Ef/5fXHlTotvZKr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777021700; c=relaxed/simple;
-	bh=cjheP4H0PwmMUZGzXHCF/PwWHjhyTfpHFF0F+eUTSpI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qqVY4QD1ZQAZf/IuxPjmkNdp9VWE2+u+CqH2eFZXj3mA9jFzuIHRcs0y2sOfD6Rk1ochBdiyFgxQ4wf1i5EY3fGdS5IhQqJc5WdGKG08kSWzh6qEeR5hhJd2bLWuVd+Bl9536tEq+s/druh5qxW5U4NJ9r7fRdqYxWJee34h+2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mlDGF99K; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1777021803; c=relaxed/simple;
+	bh=+hVpk+v7Y6tOSZywhlMGqvWkqx1y7WHIKoJjgNCijhs=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=AJD4LSHpgCAdEYP1oXMcM//mZgl4N3/AT5QYbkDjyx+CsuGLzrM97T+tQkosWfLAVQXRhIK+l8a4F8HY4ohvrftPdVMblxLbqlKrwO6I95FhxQyI/a5FgxojTRpTwdgxuAIULkyrcinGPqIlDDdQiwDYm2iZgKXCzRblagSncjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kocs+oa1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mlDGF99K"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-488d2079582so88496805e9.2
-        for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2026 02:08:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1777021689; x=1777626489; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1cvEvBA/4PYjw500G7t1DTztuhJdzXFRKOSaHuj0ipo=;
-        b=mlDGF99KcGwOLpXtACmP5C6kzloTPzvAFzkVXKBRFkDDhnfmh5akSCHo6LkSG5g544
-         A5RJG6Fevvwbgf5jyWq3iZ79qSYqSxiSvbJXY7ZPJLujxyBgZe/rxKzBPakbgsLZSMCX
-         r4w4Ezk3Hyl4eQrVMXWfH/AtFO+UEyIRPWvi4c1cqv0A1+TJTa38VymL9oaFui4Lg8S5
-         ZtnZtqS71LAP4V61eQuTrRnOoexpAxj35t4i2v4NRxeo27RxStRWJ+rSKgJNdRGLs+ub
-         aMbS206qF/UtER/aZKUfzQYVkeeI0JX30OWyaqIIO70Go/h5Y0jOtDHJlOqXjLrMgeu7
-         USZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777021689; x=1777626489;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=1cvEvBA/4PYjw500G7t1DTztuhJdzXFRKOSaHuj0ipo=;
-        b=TaUZcwhVzdL3S4QTooOPtDJHAi7ZDZ56arXUs0ut49K42lugcmLClxe2iRBiBqwN2x
-         WW9Z18XXHBiMoHnMs7UIi9eAg1rGDTI5nUtZUuNbx92BYBAiYq1RlY+xSooR7kHRllAg
-         gZm35sX2je5uUgabfMJM9dOC7qCTMdOlBIxG6qq2NVrVAJKfSKF5YjFE+8/J1gPsP2wH
-         70TSN16PXIu4UVn/bsslgTScBRdEyCNY0Stm5n+IqQmr/CFRtUvS4EdiuSxADTriqUoV
-         DYP8MG77mf7B72bIhwWiPsUU5tKhvQHHjRbdYbz1Eh22hpJk1MYK7nfEGzPst56SV9Gn
-         mfLg==
-X-Forwarded-Encrypted: i=1; AFNElJ+EREZ9wKl9oj85aneLcv6gs2q3KxDKxXQf9wvm5GnpxuvsRCipYjYedzdvD/F8NoYFgvCUDTWfVx8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsU+J6IJR8j+xhasNQgL30ZfvYyAQzsCodsQPbeHNGfJzgCKuH
-	sK2Z0my6l0vEI1S6trWUESECtDOu496AY1ZipjhP3IDDOjARiT/VnevgPLkhbsAGYtdeOxQ1+3n
-	vQSPguTA=
-X-Gm-Gg: AeBDies1EELBVAx9iN6mzKpSIZJsQF9en9VsdYj2MbVBMti5M0tBpKk4Ilp2pCokDLY
-	CgkyAMackvGjylmZ5/7eSNYBSvLuWm+2bdLN0LWnNCKOOMUZ/AaarXAY8NpUkhxsaHVinUPKGWR
-	UJXW7H2zEmiGdTdW1zhnUjIQSQ3PyTEuB11HG2L6QyuIz45q+LN4LhH+aGdM4QF45NPOGHtpgX6
-	xJc/EYSSmxiylIKI8e5RZrIl8mESp50ljdpElc2fwm7HDQDmF8OxOEfbyyAz3g7kydk0YJ2siE4
-	CmB2hszzeobiwPtzBUiLHjp/CqeScwyGPiuR4eLDdRFWqRrQFuJzBjRCJf9bSqporp8054cgXKj
-	hkDDinp14c4bEdZ1ATL3Ue3AyMo0voABO10YM7Byq0vDecV5+YXdYo2QdamaW4oiTfAQGy37KvG
-	ToGQh4z+wsds8UrswKc+rF6g3mJsH2lCHGDA1tP8GVItrJOJYqS/AmZ8U=
-X-Received: by 2002:a05:600d:8447:b0:489:1ff5:edda with SMTP id 5b1f17b1804b1-4891ff5efe1mr218788105e9.6.1777021686901;
-        Fri, 24 Apr 2026 02:08:06 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:106d:1080:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-488fc1c0354sm537222545e9.11.2026.04.24.02.08.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Apr 2026 02:08:06 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Fri, 24 Apr 2026 11:08:00 +0200
-Subject: [PATCH 6/6] arm64: dts: qcom: sm8650: Add missing CX power domain
- to GCC
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kocs+oa1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87A04C19425;
+	Fri, 24 Apr 2026 09:09:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1777021802;
+	bh=+hVpk+v7Y6tOSZywhlMGqvWkqx1y7WHIKoJjgNCijhs=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=Kocs+oa1gm9JXFWfGZK2x+SbxhGToBfBVU9esU5HmV/DZFMrP2yJ0o6Ae3q3+tZUs
+	 UPQBgn32SD/xk13n3Whsv4QUfSTXDE/wJUgfIMDq0x8T6yfdsfUG5Ih0Fbpm6MIAN1
+	 Jx52bBTWIGSE19nkysPGoF+qyMJL4uPoAnBaGuAwHZtyIX0lnvtQFVj8fPaobKfkRh
+	 9z95uQP0J8TdINkAABKRGqQmd2bjG2TtBu4cKibw8h6FUyTqil6RPRPv0SM/UKVr0I
+	 iU4fqz933Ff+X38ArwreZxIeJNaYO7+CxlrMk2WmaDFefdJou+xAIdZEdYMf6q1vaE
+	 d/umFf/jbNfCA==
+Message-ID: <3ea2c4a2-4a1b-4062-b332-9d5d0a53379b@kernel.org>
+Date: Fri, 24 Apr 2026 11:09:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/13] dt-bindings: clock: qcom,sm8550-dispcc: Add display
+ CESTA support on SM8750
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Lee Jones <lee@kernel.org>, Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+ Imran Shaik <imran.shaik@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, Maulik Shah <maulik.shah@oss.qualcomm.com>,
+ Taniya Das <taniya.das@oss.qualcomm.com>
+References: <20260420-cesta-sm870-dispcc-v1-0-eb27d845df9c@oss.qualcomm.com>
+ <20260420-cesta-sm870-dispcc-v1-2-eb27d845df9c@oss.qualcomm.com>
+ <20260422-savvy-wolverine-of-chivalry-9ae6fc@quoll>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20260422-savvy-wolverine-of-chivalry-9ae6fc@quoll>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260424-topic-sm8x50-tie-gcc-to-cx-v1-6-4b6e09d532ce@linaro.org>
-References: <20260424-topic-sm8x50-tie-gcc-to-cx-v1-0-4b6e09d532ce@linaro.org>
-In-Reply-To: <20260424-topic-sm8x50-tie-gcc-to-cx-v1-0-4b6e09d532ce@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
- Abel Vesa <abelvesa@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
- Sai Prakash Ranjan <quic_saipraka@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.15.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=970;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=cjheP4H0PwmMUZGzXHCF/PwWHjhyTfpHFF0F+eUTSpI=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBp6zLvNnJdZU5ZlYNnUi0u1g2pFQCN62UQfj6XSqYM
- Id9mGZOJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCaesy7wAKCRB33NvayMhJ0Rj7EA
- CAcsyGSldN2J0xl88Vcgleo/lbKWR1Es8VCnpI7KMVoLb6cdNgLmyqsB7NXnbIZ/Z93aLcAd+sNDgC
- 2Crd0I7zxhjdI16bbLlfBGI0aiqhoXIu97na2H3zgKZzyCv2p7t/RWQfNKBw/Lx/pScpFPJPTX4NJx
- eiSbwl5fFzNAY3At+RXuKX1G+IN2/M04537m6gGjdWwEs13OmzZRwd2E5wDzp5Ay22Ew9v+PbudBV3
- rx8BFyIQakWkCqy5lASkv/RotXy5nS1Zh/RNf2yfNe8Fs8q7Eh6hS43n4/+WbyCxxb5za9YasNPAg8
- 1ZHd5WZkn2Q7t8OMqFo/vvpY/yCLXBLj0BhmOoCM0d5vW/AaU/b0GycPjZMtQoYb+RR4p9E72eB1YH
- BQIN9+gs7KYGN652Eewy3APavYyMgwk5oYcv2QKF9CKfm1ELgbqOuqyasrtErxZE2mpoobKabR8e+g
- kVGbwaNQPwv8BHtvQq7QHaHRsBFhfKXcz1Bcb03yv3pq5gx/Ylh2mfB9n9hRmke151L/15Eh5szKUb
- igW/TcyhPCi8IkzUFlSp0zxMg6iv2fX73Ea4Ex0gveJ1SkzdIQiW7Yz3WgXA6kdHdjb38sHeFSjjpF
- 8WTjyT1O+p4q37fUv7NQEJx2+nzvtCoVIs3U5EfGAGnB2MFXNxqer23hWb7w==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-Unless CX is declared as the power-domain of GCC, votes (power and
-performance) on the GDSCs it provides will not propagate to the CX,
-which might result in under-voltage conditions.
+On 22/04/2026 09:41, Krzysztof Kozlowski wrote:
+> On Mon, Apr 20, 2026 at 09:58:55PM +0530, Jagadeesh Kona wrote:
+>> On SM8750, a subset of DISPCC clocks is controlled by the display CESTA
+>> (Client State Aggregator) hardware. These clocks can be scaled to the
+>> desired frequency by sending votes to the display CRM(CESTA Resource
+>> manager) instead of programming DISPCC registers directly.
+> 
+> This looks like completely new, vendor clock API, so no.
+> 
+> Resource voting or clock scaling is nothing new and you do not get a
+> vendor phandle to do it. That's like basic upstreaming 101: we do not
+> want another vendor re-implementation of common or typical solutions.
 
-Add the missing power-domains property to associate GCC with RPMHPD_CX.
+I'll provide a bit more context, what I am looking for:
+Are CESTA and CRMC truly separate blocks? Do they have their own
+resources or maybe something is shared with clock controller, e.g. parts
+of address space?
 
-Fixes: d2350377997f ("arm64: dts: qcom: add initial SM8650 dtsi")
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
- arch/arm64/boot/dts/qcom/sm8650.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+If they manage clocks, they should receive some of the clocks as inputs,
+because I don't imagine a block which gates clock somewhere else, to
+which it has no access (IOW, that gate to manage clock is part of the
+clock). Or maybe it's some shadow registers? Or display clock controller
+does not have direct clock access in the first place?
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-index 1604bc8cff37..adfb737afefe 100644
---- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-@@ -1963,6 +1963,8 @@ gcc: clock-controller@100000 {
- 				 <&ufs_mem_phy 2>,
- 				 <&usb_dp_qmpphy QMP_USB43DP_USB3_PIPE_CLK>;
- 
-+			power-domains = <&rpmhpd RPMHPD_CX>;
-+
- 			#clock-cells = <1>;
- 			#reset-cells = <1>;
- 			#power-domain-cells = <1>;
-
--- 
-2.34.1
-
+Best regards,
+Krzysztof
