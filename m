@@ -1,90 +1,182 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAAA2353EEB
-	for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2026 13:47:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284123DA7D4
+	for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2026 13:55:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777038480; cv=none; b=kEYPvDugmhtM62VVzHQ5/YiyMvnWahj5ew7QsgOuTK+0es2npOWHcIiuPPCMe5ArR6jLEnkvbiuTfjsgdkp/wdB9s5aqV4YjSz2ACf9VTjtIVNGzfSXCDz+NSjh6KleavORM635HvWtDa2aUAY6IQ0ekNt6ZMk4zP0Npc8igdbc=
+	t=1777038937; cv=none; b=BEmMg1cYnTfO43kxQWQpgX5A8M/0BR6RXNxOM2JqwMUH/srCw27GmP5x+8w+J/ro1BYPgI3n8rdZn3Cnf31ipwVC+feCemtNVY2ZNR3iDHaW/w5LZ3qmD/bIUx583W9gbdSlT2s3riO+KwAYfbHhtBX0s10dONaz+bg/Sm3kazk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777038480; c=relaxed/simple;
-	bh=09Sh707RFRsbA4Cpc6VOVQ7w630BPN+H1W5SBQ8X4i4=;
+	s=arc-20240116; t=1777038937; c=relaxed/simple;
+	bh=3WWUYT1S+sWCthHEyd69qr4QRMOSskrJUjp0/GRNRCc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RhcBn6C8lFo68P01TG3dNVAp5jnyBuhw/c+7oL/zI2WtthL0T0eVf7tDIOQfvnHCMGi2/M6K7okMSOJAXgt5HlPLszeM3armqW/knmGYnrkIvzQwBdNSc5N3JNfw7e8Zj2N/LFP+syyGje5c8tPoIJe7+Kw1Ov+ggAO1NDW2mPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.52
+	 To:Cc:Content-Type; b=k7Hy8y0RElhPvvD/7OB/ozhEbVZszne/lBAmNGxAyZM/mwitpzF5qeinKayGj/ZCzYWd+QMrMSwNMpFoeemBYEvSA/M/U27qxatX3Ld1YJ2Iro/vWg2WMLJv01tmrJm4zh7mvwIHWsvHeN0CtsBqD8YR6DC7oV7yMxa8QNtCSJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b9d9971d059so1153434566b.2
-        for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2026 06:47:58 -0700 (PDT)
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-56f65f62b4cso2617076e0c.1
+        for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2026 06:55:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777038477; x=1777643277;
+        d=1e100.net; s=20251104; t=1777038923; x=1777643723;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MxbBEAEmkzXg8sufmQelLSZfpgBcx3HXgkzS292cULs=;
-        b=LMvlO+lmIWyR2qQpIcW89BcEs+X20+1IvM2NG3x22JyV4XQm1u0MWyb+imqDV3l2Wp
-         kHf3eID8AVahtFB7h/j8gy5aKDs5VyfpEs8CDCuRCcIBDMzG2X0yAO28Qii/e6W5lrIb
-         D3ZZD1/5QGawaF02kddWPpzl6wZKBxbkkYpzskVL3RDc/h2kuiIVN4PHrXycnvFNFFQi
-         lQ1R4E+KZicfclkCGX0itAMdk2y7L+CLE/NBUYCiIlE7J50qC3dW3UNnByF7+p+gSjK4
-         OkJ2QTaAW7Oqel6s1RB9WCnDadLnmYToDQmKoVet7AM0i9t1dfNRqSdkXaalGB1dxXoI
-         UoBA==
-X-Forwarded-Encrypted: i=1; AFNElJ/OItAQ0rPeGOGOGqFBGfchfXvEFVpLBIQTeRPb3Wx8S8t0SitxdtUVTPvjFZemovddE8HwQlMHnbc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHEy3AIy2tldPbhiAC/F135fQniCz7uEoLqYKFw4BXcQgdnRob
-	MZTSpGjqR5ODMHMlH4Z+vnkKidff3+JWz+mB0t5Gx+P05EbH6ebdeQABpBvhUTzegnY=
-X-Gm-Gg: AeBDietpeLVmAmwLevbliPRI/xzB0uQqsm+tSQrwSzSa+tDSHzx2oOPVIxel2mpK0j3
-	5oDGpUD/bGB/YU+iMHnvAPF6UAW0w39Yw0pHUssY/4fH27zEkNK1V7b8gGZrlmp4T+nwv00x78U
-	UbAFYpu6icSFUIs7YzbRI/0IbDypN2/m2jZLDoapcE8YpTYfgbFH+cO8iBFlHLi+mCg2cxXGWVb
-	r8M5An/7KWgtTRACEeUzfLuDDs8XR2YLyhTt3vl1pkKuaRFc4ywSCRxCmsQQnr2uxX9wu+T8tzn
-	QU8CE+txlWaQySjD1ThrOc8m5U84rayG0tbSiGKyQ3IxGeQ+ewav14BHqODwlese6mhlZoN1f5/
-	AK6YipH5ulM5/OttOkosMcBMI6n5jfh9wCnC1I5IYUC4WOjyP7/0PHNI9aGs9v6U2iaWh/GHi29
-	z6+5ACsvYPgkMD1ZnuhSzRM4thQM9/nhu9kJAswq+agAGE89x5G25D98Dpt3WLTpR0hjq6x64=
-X-Received: by 2002:a17:907:a0d6:b0:b98:595c:a76f with SMTP id a640c23a62f3a-ba418888cfdmr1557205866b.16.1777038477029;
-        Fri, 24 Apr 2026 06:47:57 -0700 (PDT)
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-672c4d50922sm4660097a12.21.2026.04.24.06.47.55
+        bh=5W09Put2d2jcS6dMqMtNkVaKBleBYHmqz0mTuj06mJ8=;
+        b=EcPdKKI87r4/xHgY0tNrXfFeElvj0ZkD2JMFN/jUo+eUpMBqJHy5+PgJ4qqAjRDaIX
+         ff1RGJEXaq88zqthDJR/H2AOWSSlFqhgEywaAsmLXLsZQ1j6YGY2IrYm9I9482UWnXl7
+         6zPU1MVXErmdNo3ghh3qhGemLLitA5AYC0xNW+iSWhtwO4L3FmZpM0zWRdko9oPodMw/
+         0hsxv3M32emUZU6n+byBfleakjGGitfLDzZeIZ7SvAmCdln4UofesHJxNkPhCtWlR0MI
+         WrwSIVoZkrEok7x9gB/WD4tRklODp3HH7h4zaqRp3RwMTPQTXJsBsF7ep5lkjMPGty2J
+         fULQ==
+X-Forwarded-Encrypted: i=1; AFNElJ9X0P7ebT2FWcEi6KrfjLsEnfFvDv0Y2SfiDotcQ4tapU77HViY6oBvUcUhbqlEg/6cYTNK376WJro=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHMxiH5sKQfDgVe7byioZTe/G/rr09NKsI8k93uGSUlPWArWSN
+	6MUGQBidSefpv+2rQgYb6/lewB6Inn0y+/lGs6wbF7FTfcJwloREcimLQBDbbXE56CA=
+X-Gm-Gg: AeBDietGfpwhMdwKWiFhUdY5UeW5M7QE0aMBREIvIJyaln73K5UwS/7mo92BnVzCinP
+	6v45AHi9ypM9Jhn7zK+RSdil+vNvAaYBDnZpmRGbiUYL5QFBMz0LgqNxjQnJ5ghQDQ15T1RTvfy
+	JxAJc1dijp7rqdYQJXv0FBrInybZh12VsUDgH9y0WC3TWn3R+aBoMaJq7+0ndsHgU8EpNac5b5W
+	363Let+ivaaFwUWeqeCpXR4t0yTKgalPjLw61OHdrTMNGZQCZLiGeoFQ9NALXOUCYUvZhpLmpX+
+	hnN/Nee675oVI4qn06uHSzv06boXfbckCgNHiceF7cJKMxDig8OtGcXptV2b/9Y3piLZ+kH1M4C
+	8+8WkBsV2jAqzy5BoqOrVZj32l5fYE74u5yzz8lS9SW7ZHyEGtTXHuSZ6lDe55U8BMyiz3jajFv
+	sSlTOuIUFTpxrd0M7r82rGSpNNVDhsQFfWxKiCVtw8I+DQ1jEYgodr21EORUnFvw6ttEq2ODaKj
+	jo=
+X-Received: by 2002:a05:6122:3124:b0:56b:7484:39b with SMTP id 71dfb90a1353d-56fa57fe337mr17077456e0c.4.1777038923351;
+        Fri, 24 Apr 2026 06:55:23 -0700 (PDT)
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com. [209.85.221.178])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56fa90335e6sm14254438e0c.0.2026.04.24.06.55.20
         for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Apr 2026 06:47:55 -0700 (PDT)
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b9d9971d059so1153428866b.2
-        for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2026 06:47:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ8HAO2ueeiAlbtoK/a49xrPn7jh/vgVqwC/uasels5Gq2gSwx1WsBkX8+b2OrzwdGlGFHvNypUILlY=@vger.kernel.org
-X-Received: by 2002:a17:906:f593:b0:ba5:234:13cb with SMTP id
- a640c23a62f3a-ba502347802mr1522477166b.4.1777038475099; Fri, 24 Apr 2026
- 06:47:55 -0700 (PDT)
+        Fri, 24 Apr 2026 06:55:21 -0700 (PDT)
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-56d933b555cso2564525e0c.0
+        for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2026 06:55:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ+hX3SK4Fngxl/7d80Q98EEv/64qKdBlGus05Cp9P/34UiA6KjR0DL0eiVYL05yYsfVAhO9nbzhL44=@vger.kernel.org
+X-Received: by 2002:a05:6122:888b:b0:56f:adb8:7c54 with SMTP id
+ 71dfb90a1353d-56fadb88baemr9569375e0c.3.1777038919660; Fri, 24 Apr 2026
+ 06:55:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260422233744.149872-1-marek.vasut+renesas@mailbox.org> <20260422233744.149872-5-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20260422233744.149872-5-marek.vasut+renesas@mailbox.org>
+References: <20260310184030.3669330-1-cristian.marussi@arm.com>
+ <20260310184030.3669330-9-cristian.marussi@arm.com> <WNCeTzosRbKm_zGsbSPx8w@collabora.com>
+ <aetw1WcSCDxk11AV@pluto>
+In-Reply-To: <aetw1WcSCDxk11AV@pluto>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 24 Apr 2026 15:47:41 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXtAcB1SoYz4jZo4s7shMi3+=Ovt2pw6YgRedvSiDT=3A@mail.gmail.com>
-X-Gm-Features: AQROBzCeSX9qxN5yqtzC3-PAZZnXar2rEL_AsOuEwJq4ANARfzjj6L8MVrx53_Q
-Message-ID: <CAMuHMdXtAcB1SoYz4jZo4s7shMi3+=Ovt2pw6YgRedvSiDT=3A@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] ARM: dts: renesas: r8a7740: Describe coresight on
- R-Mobile A1
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, 
-	Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Date: Fri, 24 Apr 2026 15:55:08 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXYGRzq2j3z1io=kHj_QsWtJBirPhbZPa5bFBD7U9e0sw@mail.gmail.com>
+X-Gm-Features: AQROBzDgUwf7y8JAYn7HmssU55ZLu_QWLKDdr6HYpgz_IN4dOPPU1wpFaeXKzVc
+Message-ID: <CAMuHMdXYGRzq2j3z1io=kHj_QsWtJBirPhbZPa5bFBD7U9e0sw@mail.gmail.com>
+Subject: Re: [PATCH v2 08/13] firmware: arm_scmi: Harden clock protocol initialization
+To: Cristian Marussi <cristian.marussi@arm.com>
+Cc: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, arm-scmi@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	sudeep.holla@arm.com, philip.radford@arm.com, james.quinlan@broadcom.com, 
+	f.fainelli@gmail.com, vincent.guittot@linaro.org, 
+	etienne.carriere@foss.st.com, peng.fan@oss.nxp.com, michal.simek@amd.com, 
+	dan.carpenter@linaro.org, geert+renesas@glider.be, 
+	kuninori.morimoto.gx@renesas.com, marek.vasut+renesas@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 23 Apr 2026 at 01:38, Marek Vasut
-<marek.vasut+renesas@mailbox.org> wrote:
-> Describe coresight topology on R-Mobile A1. Extend the current PTM node
-> with connection funnel, TPIU, ETB and replicator. The coresight on this
-> hardware is clocked from the ZT/ZTR trace clock.
->
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Hi Cristian,
 
-LGTM, so
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v7.2.
+On Fri, 24 Apr 2026 at 15:32, Cristian Marussi <cristian.marussi@arm.com> wrote:
+> On Fri, Apr 24, 2026 at 02:07:59PM +0200, Nicolas Frattaroli wrote:
+> > On Tuesday, 10 March 2026 19:40:25 Central European Summer Time Cristian Marussi wrote:
+> > > Add proper error handling on failure to enumerate clocks features or
+> > > rates.
+
+> > > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+> > > ---
+> > >  drivers/firmware/arm_scmi/clock.c | 22 ++++++++++++++++------
+> > >  1 file changed, 16 insertions(+), 6 deletions(-)
+> > >
+> > > diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
+> > > index c9b62edce4fd..bf956305a8fe 100644
+> > > --- a/drivers/firmware/arm_scmi/clock.c
+> > > +++ b/drivers/firmware/arm_scmi/clock.c
+> > > @@ -402,10 +402,16 @@ static int scmi_clock_attributes_get(const struct scmi_protocol_handle *ph,
+> > >                 SUPPORTS_RATE_CHANGE_REQUESTED_NOTIF(attributes))
+> > >                     clk->rate_change_requested_notifications = true;
+> > >             if (PROTOCOL_REV_MAJOR(ph->version) >= 0x3) {
+> > > -                   if (SUPPORTS_PARENT_CLOCK(attributes))
+> > > -                           scmi_clock_possible_parents(ph, clk_id, cinfo);
+> > > -                   if (SUPPORTS_GET_PERMISSIONS(attributes))
+> > > -                           scmi_clock_get_permissions(ph, clk_id, clk);
+> > > +                   if (SUPPORTS_PARENT_CLOCK(attributes)) {
+> > > +                           ret = scmi_clock_possible_parents(ph, clk_id, cinfo);
+> > > +                           if (ret)
+> > > +                                   return ret;
+> > > +                   }
+> > > +                   if (SUPPORTS_GET_PERMISSIONS(attributes)) {
+> > > +                           ret = scmi_clock_get_permissions(ph, clk_id, clk);
+> > > +                           if (ret)
+> > > +                                   return ret;
+> > > +                   }
+> > >                     if (SUPPORTS_EXTENDED_CONFIG(attributes))
+> > >                             clk->extended_config = true;
+> > >             }
+> > > @@ -1143,8 +1149,12 @@ static int scmi_clock_protocol_init(const struct scmi_protocol_handle *ph)
+> > >     for (clkid = 0; clkid < cinfo->num_clocks; clkid++) {
+> > >             cinfo->clkds[clkid].id = clkid;
+> > >             ret = scmi_clock_attributes_get(ph, clkid, cinfo);
+> > > -           if (!ret)
+> > > -                   scmi_clock_describe_rates_get(ph, clkid, cinfo);
+> > > +           if (ret)
+> > > +                   return ret;
+> > > +
+> > > +           ret = scmi_clock_describe_rates_get(ph, clkid, cinfo);
+> > > +           if (ret)
+> > > +                   return ret;
+> > >     }
+> > >
+> > >     if (PROTOCOL_REV_MAJOR(ph->version) >= 0x3) {
+> > >
+> >
+> > I see that a quirk is being added for this, but I thought I should chime
+> > in with my opinion for future approaches in this direction.
+> >
+> > I don't see how this hardens anything. All this does is break platforms
+> > that were previously working by returning early. At most, this should
+>
+> Certainly the naming in the subject was chosen badly (by me!)...indeed it
+> should be more something like "Enforce strict protocol compliance",
+> because at the end all of the broken platforms really run a slighly odd
+> out of spec SCMI firmware that does NOT implement one or more of the SCMI
+> mandatory command...
+>
+> > be a warning (as in not WARN but pr_warn/dev_warn/...). If firmware
+> > returns nonsense, a clock driver should imho try its best to work
+> > around the nonsense in a safe way, because the alternative is that
+> > a major part of the system (and thus likely the entire system) no
+>
+> ..well yes we definitely dont want to break deployed platforms BUT also
+> we dont want to legalize this kind of out of spec behaviour in future
+> firmwares...hence (a number ?) of quirks an FW_BUG warns probably to
+> let already broken deployed platforms survive while discouraging such
+> implementation in future fw implementations...
+>
+> These firmware most certainly wont pass the SCMI compliance test suite [1],
+> which indeed we do not mandate, but the reason these bugs happened is
+> exactly because the kernel SCMI stack was buggy and left that door open...
+>
+> More specifically these kind of out-of-spec behaviours are not really just
+> a matter being 'picky', the problem is that any resource set in any
+> SCMI protocol is defined by the spec such as to be described by a
+> contiguos set of IDs and the drivers are designed anyway under that
+> assumption from the allocation point of view, so allowing a clock ID to
+> just fail one of the mandatory commands and skip a domain would jeopardize
+> all of this and, even if clearly is NOT a problem here, seems a fragile
+> assumption.
+
+How can you have all of:
+  1. a contiguous list of IDs,
+  2. implement all mandatory commands,
+  2. restrict the use of some clocks to a subset of the agents in the system?
+Use a different list of IDs for each agent?
+What if a mistake was made, and a clock was exposed to an agent by
+accident?
 
 Gr{oetje,eeting}s,
 
