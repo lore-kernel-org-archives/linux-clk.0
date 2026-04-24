@@ -1,148 +1,110 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B6E1DF74F
-	for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2026 17:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=170.10.133.124
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777052742; cv=pass; b=WBx9YrmXCjw/6mKUhP7qAiAxewLZUl3XKiRP7n00Zs1YDK6AVrcVO7wE1HMS8hxPhQKVTXrODiw4h7WVVWBpdQbty6LIpJV3a/QJ/yzJb6L6NOy/sLQ3XPjDrq/496am6KmgsyK/2UM9ldRHyAwaxU0Fp85nXRbSNS8F2GmKsIU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777052742; c=relaxed/simple;
-	bh=lBO+8IWkOvmjF/T33XnJITsxmwW3WOXDRY40g24a8T8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XymeocrDPCNhokcGOrxcYCMfazZYyx/svCPgNEFhYaXNnanuHAPae1MVQZqLyld1sO1VNZE5hFCWrpwM2KWs5zCMLqw4t2QFIZ0e+CxDodu5dVWH+qalytYCpoNyUlIWM3foauYRYsTltDMem0/3lf0WkOPRRwmllzo6bEQuoro=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jFzjDblt; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=p5OwjO+O; arc=pass smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC4203F787F
+	for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2026 18:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1777056862; cv=none; b=VP3WfL8J89fj8+ZQYH5YzDn0AGtgAEh6K2eB/r79nopibC0EbKDUTlJdywidE+/EBSSkyMmLa50fpjL4zU1rSOvz+8cm8HN6wOyyR4MP8XeNi/fW64bqtuMxWihEykuIGKYpHFT+6c1Z80DQ8nyvV5Eo3qmkz13fb6zrcGWyFoE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1777056862; c=relaxed/simple;
+	bh=xVEb4qSclTbInsRR3yFG61G/9vCF/i7x/vxBHtt4LtA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c3kJna5n1ZpB1q0Kkczm+T7075COLV+KevhBKuRxAjOaw1Wce+VFu93gnWME/ABlmleeGB/Shtirc+B65FBvFI2aVITA0w9dNpsUJYGSgat5B3cGPi2F7Xddv264CLCmHsEPjduR7MGl6AgkO1g5W/KnGzilW2cmNGlgdCBbGb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BX2+q+93; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=t7+oTq39; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jFzjDblt";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="p5OwjO+O"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BX2+q+93";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="t7+oTq39"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1777052739;
+	s=mimecast20190719; t=1777056860;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=lBO+8IWkOvmjF/T33XnJITsxmwW3WOXDRY40g24a8T8=;
-	b=jFzjDblt/h7jts2YQ0n6B8g/pvLJf76y/RCVajDozX4yxIQM30aIriwsP4peLxdYmkIx/T
-	epj94TGWidI4oeZpggSf2gWYuiRMXThvy7Sfvjwx59sRNBdzgnOc5IOUGP+YMQCMslIi9c
-	b5Eq+EN8hDq2nnSsGSWbfG8RFAKMn6w=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=H/9A7iuFrOYMmAapoPc+GFqNn3p54vDLrt5ol9PNJ3Y=;
+	b=BX2+q+93Aeb/IXfUW+GWCv0KS3JXOEV1ePqUa1Xo6tNGJzAXEYmuzNuPD7WVgbYyvVx+F6
+	LaaVw2EqRbJvDDLOzykKe5zQzkBXuHr49bg+M6w9UOtrJqwgH2Ls0NIhfNIENwy84bQ0O4
+	SpNlgUPTTP4inMQo5V09a1Twq4qjlng=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-106-V3EdcOE5PH-UnxzBpUmzHg-1; Fri, 24 Apr 2026 13:45:37 -0400
-X-MC-Unique: V3EdcOE5PH-UnxzBpUmzHg-1
-X-Mimecast-MFC-AGG-ID: V3EdcOE5PH-UnxzBpUmzHg_1777052735
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-b9417a552d0so294240366b.2
-        for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2026 10:45:37 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1777052735; cv=none;
-        d=google.com; s=arc-20240605;
-        b=h6mBGgMloFi6yZbKrkzYqlxy4De9CfNoMGCX8BJaZsewC4oxVlURqqMjWIRwljxkEf
-         hztMyYvoYiSAHB7VVvP74tip76Rg4VhFW3kyKY12m06B/28WEDh0ZJyooV2zIktkM2f7
-         lMaD6tksR6ERQl5l+MnwBS3msxnZ5b6R0grpjl4sEpOYWtgYHd7k75Ir4g7uJKyNTqpx
-         ZbHbDa5wHWTxk6hmZKSdBrGq21a06+SHyuv99zQu166SMCLs5xWkrYIk94a+MYjgxt1z
-         eUCa2myq/a1WESMcMO6ampAUAtGPoiWeOV8KhQTbFlOf4lKv/2vN087gbni2PAu/Kg7S
-         NWzg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=lBO+8IWkOvmjF/T33XnJITsxmwW3WOXDRY40g24a8T8=;
-        fh=HlFLN4CU2iUIiVaVWco7cUHCDqdL1XyLsuDWXUCJgCA=;
-        b=QsjuYEn+62izcgSlDEI/9947kth+L5/yLLDN1pa3cItixnswJb4ewRFu6yZXK99DGp
-         GFhmi1ApQqzMynAvwEECxNLievni3R4cHRYA2la520zwaUaemAMwokp+MwArCouvQJcE
-         dW49zU5X9sJNK4NaO5iKmuWQuvWFPROVjzyDkTFZaLVxDtRdUibN26fGRlY3ZkNXazQj
-         KkycJW+vu1NiyJJ+od/B4d4EgxqR7/kjNBzXRNIJtT6S/9OfjLdSnwUTyDAkB0F9Sznq
-         RuYoa1CLOh/mWdTkPmt47//QXDjnrchUyrkKkGvxbcWD2kDp+A0caUcYZJ2b3/F2Wn9b
-         kaKw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+ us-mta-690-qEdmnwWbP8CEZvVF9v3qnA-1; Fri, 24 Apr 2026 14:54:18 -0400
+X-MC-Unique: qEdmnwWbP8CEZvVF9v3qnA-1
+X-Mimecast-MFC-AGG-ID: qEdmnwWbP8CEZvVF9v3qnA_1777056858
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-50e575a50bcso79993761cf.0
+        for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2026 11:54:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1777052735; x=1777657535; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lBO+8IWkOvmjF/T33XnJITsxmwW3WOXDRY40g24a8T8=;
-        b=p5OwjO+ObTdChTn79OKnB2XMwVAQadPu9wZsui81YJV86pum6JazG9ptY2aDUTqQJx
-         dtLtzaLOSW+RDVXhU/3omYzZFVSUVYfRXIpVY6NdrfW/DMTAgCtb8fXc0F5ne9wi45qm
-         bTl92+hcMvRDsG8Y0iQLs3Q/6MShijaLxX7+1pQqvsu0PoLFe4t16plPMdzgy5n9Sxzz
-         xyiXvJAVl/JtHYivWOLdrs90x0xxC6UwMGliqe5tWPJm5A5VbbMvSqcsE8fs/u7M7zEp
-         HEEh1NiKcBJs8DnPg0/GPS+70ImbbftHkbeDM/pl6kh4bwc7teddV6H55EJpas7JaF+Y
-         B0XQ==
+        d=redhat.com; s=google; t=1777056858; x=1777661658; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=H/9A7iuFrOYMmAapoPc+GFqNn3p54vDLrt5ol9PNJ3Y=;
+        b=t7+oTq39/9ktKnrlV3rO6odYeU+aYdT3x6c26ppxkGOKOx0RHDM8iy5SZCynfvXrDe
+         +V+wqrGtC7EDhOu3nqMJrHnlVcmjswWeuvaEr2+UQLEqvrnAzrjGo8abxtOEeCtVJ0S3
+         jQmQ+gfObTu+KodtniPC+a7sAYTgryEC0gUCa4l8NSH0zq1SVB4WMq8eU1zVKbW8ySzq
+         W/KiT7sB5GzGoIcHcdINX4bCGWLes0cJiXRT5ytIyEErNb4Dsh9Y7EduwD+KrFjZSlct
+         S0wex7IgtwwxKFq7K6gVUueYa9lqfLiV5hBj4Dqj1R9J6pBA6RP3QW4PeayYuF/hjfqD
+         VRJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777052735; x=1777657535;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=lBO+8IWkOvmjF/T33XnJITsxmwW3WOXDRY40g24a8T8=;
-        b=KAv6wdKsvpvLIsNSPQl2HWwHxOcJwVjZISfKe4CZA43xz3VuweHPVKbCKWpV9KnmlX
-         8beY2EP4ki0k+D/+H8EDmDjWsr1x1ogjdeaFu8lSabXRo/9U1pbCjhFjouNhPNF9r77O
-         mscx/eW5eRtnMCwnCoZn7af7QPGopfj8rDXIQxiy3IhlQlr/6YLTPZRHd6rAGwj9YmTu
-         FLyvitpTUKkfj2SiD3QSSWmDj3cAIflgQ8/2FpQEx3YZWUf/Ki0yF7Eg1KfmKyaFXA9F
-         boOdx2u0AoeTHHA9LX75LwAGgljWYJVlREyU3Xu0RP3Afk4yxyzlDX2fzs1EODK6fTso
-         btJg==
-X-Forwarded-Encrypted: i=1; AFNElJ/D/OrTKtcpYvr1JgPNVOW1cOtZM+5EzX0qfd63ZSeRTim77bo4Wd0joHjB1yF72Wr85xexWl9YE48=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDEHdgofKEryGA6LE+sudJWY6pERBt5HxaPbpvqu7voog80NX5
-	EDELgVpYSk5sM7QlpK2C5Ckp2n9spKVhB/rP90UUADH3GZKaUC4CehXsj9g6CSyHdW8a0sIw2qh
-	7aEV/1Ap1Kl81/kw0HTwTH13n4n5hw893wgjiC0RgdBSv2VPH0Y2mXcqtMFqNUdwVyWG58k3hGX
-	wmEcyFdKLnmsnkZk1Bo7Mkrkj2H4i2Ycpnn6vU
-X-Gm-Gg: AeBDietJI5akifIQRltMjyJt8yL2AJjZZKu5eh/fhlDcTzWstnLIMlw7PTr6/c+m6yd
-	fWEhuz3ld+ldLGwvN6IvWR8NHB6nYCzKCq44T5WpFXZSjuCijcto0pGj0adZHKBxJqtkr2cjlp6
-	zMw57+AZYcZZZZhQ4fJOsKLxJ09gpXyUpVCfX5JSbZNqs4Kcs7LJzLSBd3KhH6Do8T5nZ6FxOoq
-	uCQGQlhQOL+Xws2
-X-Received: by 2002:a17:907:3f12:b0:ba7:f5fd:ede0 with SMTP id a640c23a62f3a-ba7f5fdf234mr1199006566b.6.1777052735333;
-        Fri, 24 Apr 2026 10:45:35 -0700 (PDT)
-X-Received: by 2002:a17:907:3f12:b0:ba7:f5fd:ede0 with SMTP id
- a640c23a62f3a-ba7f5fdf234mr1199004066b.6.1777052734793; Fri, 24 Apr 2026
- 10:45:34 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1777056858; x=1777661658;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H/9A7iuFrOYMmAapoPc+GFqNn3p54vDLrt5ol9PNJ3Y=;
+        b=l1lwwyvKu0eFq3dh+prK+E8A1pW4C1+vkRBcHuMhtmhxTM7AKcmy5LTRcdiggTm5Q2
+         p6XP/pHPBs5vxWPyuEstwxBvNHPPQXJkgAnDC77qyOqdwfa7Q8orkPZh1/3vGn3dV6dO
+         gqkpmlgQimHcYqVmnIqOdzggn6AFbxH5Y5l+HHKfDfeOMZUBNiWeQ6esCWNpi05xU3K1
+         D3rZXkJ9NyY8/wZZC524dqEUNDTqiDugm9BehiKfwBgi6YGwrlvWEYIqY4Y8NVjQOHQP
+         +C5y99RLC1+ggSDBECKcbtdSRN5j7xo9Toi4olMPE5d3JOXfQTbHlaiI9ZagrYU4PNOL
+         BJbQ==
+X-Gm-Message-State: AOJu0YyEep1Igre3cJO6VefaGUWOnW/Jd6g0NEGam6+sc3Xy/09dOIR2
+	FAQS8SmfJE6B1qWPnKN0P4h7C4SSbeA6XXAV0DdW1FZU4jcyQoV4R3Z0TMeToC3gbsbWWf8EeVy
+	NXPEWTAzjRxkbyWHSM0+fOCZWZg2XXMKp41QreT6BIVNxJsFne8M8LbtWw/54hA==
+X-Gm-Gg: AeBDieuye0P8FhplaJ5I6VDiTtSD/KHwQBW8kZAqn7VCxAEEk5BJ/fV3REjAjmPoXwr
+	yYlH4oGTbTosX1pj/G9znGDFXCmRJY7Cwdh+lF5Lp0VMzKWGvQ3e/9gK6WtLT5rsr/YA7Qh0p3r
+	voQsS3WzWgJ3cvBU3qIaXrNUZbfmJmuPEHfwqSx/h6cSnK1K/HiSS2K5EBYAbl3hMAGAbuUl6dX
+	qZgW3Ir8v9jPhIUfzOx03DvliwzvcOghtPHZY3ptB4nWfme2Cv+WC9PuG5wOT4DJsQahfPyGy4X
+	MmfnX6qA7EXj39Ucm0oCm7A1vwgkaG6xEf3YYxXS6ui6NMW9Lyszoqjsk687gXMHbX5pvwt1bdl
+	dOkl/M4E8l2g84oSaPrzuRCozPqGsFivGemvuLOpZLy8P3M6ylH6Bd2Gbud7T2tbH45s=
+X-Received: by 2002:a05:622a:858b:b0:50e:5ca9:d25a with SMTP id d75a77b69052e-50e5ca9d6cemr270059131cf.10.1777056858072;
+        Fri, 24 Apr 2026 11:54:18 -0700 (PDT)
+X-Received: by 2002:a05:622a:858b:b0:50e:5ca9:d25a with SMTP id d75a77b69052e-50e5ca9d6cemr270058861cf.10.1777056857584;
+        Fri, 24 Apr 2026 11:54:17 -0700 (PDT)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-50fb92db861sm98432901cf.5.2026.04.24.11.54.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Apr 2026 11:54:17 -0700 (PDT)
+Date: Fri, 24 Apr 2026 14:54:15 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: nuno.sa@analog.com
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH RESEND] clk: clk-axi-clkgen: Add support versal timings
+Message-ID: <aeu8V83mqUdNfGmH@redhat.com>
+References: <20260424-clk-axi-clk-versal-support-v1-1-ea070f83db7e@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260424-clk-bcm-fix-pi3-v1-1-8a734e94cecb@kernel.org>
-In-Reply-To: <20260424-clk-bcm-fix-pi3-v1-1-8a734e94cecb@kernel.org>
-From: Brian Masney <bmasney@redhat.com>
-Date: Fri, 24 Apr 2026 13:45:23 -0400
-X-Gm-Features: AQROBzDecVKqp3-2I5CdQ01F9dTmpiznpdnxhUyA0LuMXG2eXkUSRX6qFY8D1FY
-Message-ID: <CABx5tqJQtgAWboRYR8VLmzUUZn297c7sz7YmJB=uKaAY7iw=mw@mail.gmail.com>
-Subject: Re: [PATCH] clk: bcm: rpi: Mark VEC clock as CLK_IGNORE_UNUSED
-To: Mark Brown <broonie@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Maxime Ripard <mripard@kernel.org>, 
-	=?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, linux-clk@vger.kernel.org, 
-	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260424-clk-axi-clk-versal-support-v1-1-ea070f83db7e@analog.com>
+User-Agent: Mutt/2.3.1 (2026-03-20)
 
-On Fri, Apr 24, 2026 at 11:37=E2=80=AFAM Mark Brown <broonie@kernel.org> wr=
-ote:
-> From: Ma=C3=ADra Canal <mcanal@igalia.com>
->
-> On Raspberry Pi 3B, the VEC clock is used by the VideoCore firmware
-> display driver, which remains active until the vc4 driver loads and
-> sends NOTIFY_DISPLAY_DONE. If this clock is disabled during boot, a bus
-> lockup happens and the firmware becomes unresponsive, causing a complete
-> system lockup.
->
-> Mark the VEC clock with CLK_IGNORE_UNUSED so it survives the unused
-> clock disablement and remains available until the vc4 driver takes over
-> display management.
->
-> Fixes: 672299736af6 ("clk: bcm: rpi: Manage clock rate in prepare/unprepa=
-re callbacks")
-> Reported-by: Mark Brown <broonie@kernel.org>
-> Closes: https://lore.kernel.org/r/5f0bec08-f458-4fba-8bf3-06817a100c4c@si=
-rena.org.uk
-> Signed-off-by: Ma=C3=ADra Canal <mcanal@igalia.com>
-> Link: https://patch.msgid.link/20260401111416.562279-2-mcanal@igalia.com
-> Tested-by: Mark Brown <broonie@kernel.org>
-> Signed-off-by: Mark Brown <broonie@kernel.org>
+On Fri, Apr 24, 2026 at 06:29:04PM +0100, Nuno Sá via B4 Relay wrote:
+> From: Nuno Sá <nuno.sa@analog.com>
+> 
+> Add proper VCO and PFD limits for versal based platforms. For that we
+> need to add new Technology and Speed grade defines.
+> 
+> Signed-off-by: Nuno Sá <nuno.sa@analog.com>
 
-Acked-by: Brian Masney <bmasney@redhat.com> # Active contributor to clk
-
-I agree that this would be great to go in direct if possible.
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
