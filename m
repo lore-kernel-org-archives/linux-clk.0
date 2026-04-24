@@ -1,189 +1,192 @@
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816A13C3C1E
-	for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2026 12:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13AA83C65FE
+	for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2026 12:17:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777032942; cv=none; b=emSDzHDspNoESpcVVGgAq1VqGJ6aCYG3QdUJemI4454assZh45pC56Sy0zioFGr74H6Fmf0uHhQwyOn0dT6OcMS4oo4/NZkvNnxb/XFLbJyvjtrQLNrAzk/SaRAnM/QHT2wkrjWLCRDvL4a15X49SC873wKXvXqblnJ5eI/1kl0=
+	t=1777033036; cv=none; b=gtLw8DSReYuQDpn13AjZWsJhfYtChmj9d1jdc7cBg1WYs6gcBJfEQSBBIQM5c3PZ01dSjoZI0sLW704KHwviol+JE4CLAwQ90j1sKwdAXj/0RioMFU0lapUn2VukbZRFd4KF+lt3Rxpn6hMo2BuluRJnJBABNEf5mLddez/rCf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777032942; c=relaxed/simple;
-	bh=6x8AaL0soP/QvCrhUlcKrRT+37cNHuikR53lCEKEpMg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g/7RoZAtMdGHLobzylE3KVkbYbfH4OUrZ+pSxjaaPb4k59HQMD/CWaLgeABKdACp8bELMhjoDGfPGCOuAky7oWd6CIY0Vd4Q8Klg0/05uDxIlOGFgny4zppZDoNBqmvE/LyEw72sCRstHX7LzI532G8bzWxm9DxHaLLr0W0MdL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-bad54961385so198600866b.2
-        for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2026 05:15:40 -0700 (PDT)
+	s=arc-20240116; t=1777033036; c=relaxed/simple;
+	bh=pPuoFRQxJfAFFUeV5WPhraCPAwF1U+Vv1E+a3uywyL4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hNDVpbIGYyOK8XhxSoWyDf96T3GVIfS3r8NamihUC9GU+fSl6O028TJJkcmdfdJWnZV7fPHqEsuXXeDHi02hc273Xxdz5DLIsrP3+jsE/rrpbJYoQzbYCKVlP4S7EYQal1A42eWJ/NEYdd02mAWKqNfIz9sQLbOlz5GLIT5Q48w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UOjw4hBc; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=crYLlpWb; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UOjw4hBc";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="crYLlpWb"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63O7Z1bU4167383
+	for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2026 12:17:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ZzWcgJ/Dtl8c/5T8awq70D37ra01xcQo1QTV/P6feBk=; b=UOjw4hBcPoQ6FuiV
+	PNOfrnC+gUlQe/TO9OlDKMNpqaKtlvwbdazOBbPqS6AXQhS7D/S8ca4dSV515zJ3
+	TYEBOI7cdm4Q4LcC5SXoM6OL/XBtMVu+OZjgW0X2hvxWkCgrUUMzJLEPtuTzz5ph
+	zAdZTau9MeITlbH4h2t4HyY4a2OdHQHGHbrsTGmMprFYcLOuyte4NEGv63X2phr7
+	awCROwPDJln4aJ6jeQgQWSOO3jqX2zxQsLK3NPl86rvqqg+Ra/FqVJ+K+EHnMcIC
+	iBANg3KahC8MLXKACxEKjvHpisOZbW1mS2Jg1RCdv6bYN05Bsul6ndBH/P6fBKu4
+	05dBBg==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4dr48n1c05-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2026 12:17:10 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-8aca281aaa4so13488486d6.1
+        for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2026 05:17:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1777033030; x=1777637830; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZzWcgJ/Dtl8c/5T8awq70D37ra01xcQo1QTV/P6feBk=;
+        b=crYLlpWbjZWTiT99w92oHWBLByonn9NrMXOcgu3Zsm7N+ljk9O7v7OBKWTSUM31yLc
+         KFam9qw/AzCmIwWzvnLDDW6TyC6T3Ob++ZYIzelPh760zQRARaw5aEWf+5RTljQSKByD
+         gMZtVT+Q836f2gB4zV1QhWPHh1ojphq2pOdSD0akVBs+9pn+7sWPD0jh47DIQcL1FoHZ
+         3ZgN6uEfwi9hiiL8TxdIi/1ZSH1ng/IDWBZYgFz+MKHl1Z6Z5Jpamtcd/sErHbzJYcNf
+         992Xclh0zeYfDWZm8+fAPMvs5/YszXzej/KbyA41uC3Vx3u6x2HBaphstHMNF70lSCVs
+         aKsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777032939; x=1777637739;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DlPOzsbSlIKF8HuNfduxYXPi56LqB7rH+tGNemLx+GY=;
-        b=bXLfXn0lq92xT677k58VZkW/KPTy3TraIRA4nhYtCTGuFZXrF3tKBCqbg3x91GUzGg
-         QT2L9jXOJj1Z9k6Ab/OLT0fcyRIgWigvAHPKGg1/Zj0RV9hwXz8VsYlEbGtk0oTlj4RZ
-         viktm2BNZiPHTOq+nnULG+Oetf0DE8tcy2ci/xW7BTDjFdFBZdKpOUS+u7BlHusTLRQd
-         xQCMUJ2cs1Upp11LivstKbewWXNt83/6uwgAIzZ2k5iBas8eh11JvfhW3U656n/8Qs9Q
-         ONOvn14i4A5SqXjzysogcUUsIgVkaFv6h/hIvFpILDjYU4rfmD2tq7FJtOudOmM21+pf
-         bPbg==
-X-Forwarded-Encrypted: i=1; AFNElJ9AF2Iy74cJ7QeL64FRgsTHnLzUV/nPicbiRmRLbrd110u4kZ0sQOWwV83iN0Sy8uth3OYvHwHqVVs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4QoMtY+YGNaeeFrDxT0pPLi123Fmn9KsYxM+OIKfU/tM6+Ukt
-	q2LgA3gr/iCnMMf/2gjJ5xo6O+HZSCSAu973n7ll0t8N8onc1tDkqcqSLcn6DOHpnXM=
-X-Gm-Gg: AeBDietszdd0R7iQ7cOFaQc8h7F2S4I5ha3qp7EeWzbccb3qxEICOLIqfLvKdrViKWh
-	IcHBSxoXn5+d9DKljdgwMoC5nhP6320PM6hF6KEtSow1aG+iDPrpRevaGK+qZ5NSsb2ymmevlUI
-	bcEX0QwOhDYt1mcLIy/Nt3SADQ3jKdqNJtrZ7tTNE6bA9bUU6oDYlYUUm9o26qlr4mqY90V/cdz
-	jQYBlp+/XRMy4v+XtZ4jbur7C+4pafrWoa3x8+AcqiifvD3yHrE4v2MhO97cttncVsuGwMLRRab
-	t1YdVaXkZ0FhqgQTy6EycyupYWLUFOuBuzUvGT8IwQuQub0BlqDyWGHBhBzP67ZtAFXhPtFpjES
-	1L30MajqCqqgsQn1KT63g18gVIA4sKeElUFj6XFXGBimj4DvxVI65Gr1VKAuhZQPvfjXUMji25z
-	Tem/EOQEhDyulyHVMGJXl1htKKR9Bbo7G/pUot3c5O2HF2imeXcJwCQrWaCuGtJAOE/JAF3NA=
-X-Received: by 2002:a17:906:6a19:b0:ba7:7f6d:be4a with SMTP id a640c23a62f3a-ba77f6dcc54mr1267494466b.26.1777032938622;
-        Fri, 24 Apr 2026 05:15:38 -0700 (PDT)
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ba45504441bsm766505366b.45.2026.04.24.05.15.38
-        for <linux-clk@vger.kernel.org>
+        d=1e100.net; s=20251104; t=1777033030; x=1777637830;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZzWcgJ/Dtl8c/5T8awq70D37ra01xcQo1QTV/P6feBk=;
+        b=L3SKO7ROMb1L7PRhrQACDk6Nb2oYJ8xc2Ta3Cbf9mYMasT19+u+pZLsXnjxZaS4cRw
+         bMCF5lAaDrhp8s+g5P3bh6/wB9j3J3iXROfAD0+wXZhvix3aBL1NOjrERZDJOnZsuKE4
+         QD32RzitgkKivodikGn+JmUspLejLGdg8lNAf0y3vAioFkoNNAGc/0q0mua1q/LWKS9P
+         hFYwrgi0ChSM/3FJEHHC92b/hhw2cOAmI3arAuTOadUGJAeZlFdoG7Agvdx60CNqVFUd
+         B5mM0J3xlZdI0CrOm+GH+dCbBmWp22dTns9osOyukmzx48o/KnN/eRZpblqT+AJHl1Pp
+         rtaw==
+X-Forwarded-Encrypted: i=1; AFNElJ/83oAGY5A/yUpBWKQ9lJap8EqndxZJggxSQXi7Ft0WB0NlLbr7aEFByWNqCpAkcSNVQ4zI8E936ak=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQ4LImzfk5i8sK2dPKcuhMV6XI/5sYl/m43oUCRo+gPi7tm8dJ
+	SszUcRNIYEac/Q4vv/eiu+Vkd49x78vscoq68e8szgAf1WpO/8S4SSXpmikFc2nGTQsWcQEmipq
+	borH0r3FFJnNY8enT4X79gA0gvXpaZSgx/ajc6ZXNhMNs0CuNTksFBG5hMKmvIJI=
+X-Gm-Gg: AeBDietjgWyXGbPTVIuGb9Iwx1IkFr0mmA8BGZ9Sc8tSB1XcRWl6oXqLNlIpmohUAUn
+	hQRjnn2U5UR8TWLj+1kTSQY1Nf8Zh1b1/dgmL0hWRKj/lPb9DnORv0Ldd7xXFjo+uNC0Ja7ZwJd
+	H1Bp6iIfeDygpRIuvouz9poVnf1QozeKzgPejVOTIVwK6x/Ty2HCRDu729+GQ8Mphwk5DCa+OQD
+	FKTmfjikhc9u/xYimAIIo9Am0QMtYOGp/WVaPeVWw0lgGTf6HFbmD4Cm4CoZyiki6+gW4AxSW2+
+	Q0fZSFQutzebfp5PqyKi26QSG2XXtaCfVVAryvJtllodlwMllUqSEEDp6v5zIMRkZSkTZ2dBP9j
+	dcNZ3QVNX+CGla7IiDp9WXadIIODT3P8mwn1ra1/bJ7GEqytK8EHWOyBheLoCSOvu2ItqQPK4Uy
+	WDSPzm5UqIAkOvMA==
+X-Received: by 2002:a05:6214:2466:b0:8ac:8337:ca0e with SMTP id 6a1803df08f44-8b0281d5f4cmr340871416d6.6.1777033029586;
+        Fri, 24 Apr 2026 05:17:09 -0700 (PDT)
+X-Received: by 2002:a05:6214:2466:b0:8ac:8337:ca0e with SMTP id 6a1803df08f44-8b0281d5f4cmr340871116d6.6.1777033029158;
+        Fri, 24 Apr 2026 05:17:09 -0700 (PDT)
+Received: from [192.168.119.254] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ba454d1b694sm784657366b.29.2026.04.24.05.17.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Apr 2026 05:15:38 -0700 (PDT)
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-67790429f71so4386700a12.2
-        for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2026 05:15:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ+hIjeR5bac3ex+7lEAmFtHpBiUzLXNPt4xsI5dVCjOzpNUtVeHirbt7ROxIV6eSEJZ5DRx4ROWM0A=@vger.kernel.org
-X-Received: by 2002:a17:907:3da4:b0:bac:1263:2562 with SMTP id
- a640c23a62f3a-bac12632637mr434030666b.24.1777032550820; Fri, 24 Apr 2026
- 05:09:10 -0700 (PDT)
+        Fri, 24 Apr 2026 05:17:08 -0700 (PDT)
+Message-ID: <1397ecd5-89a6-4666-bfe9-014ff8553a97@oss.qualcomm.com>
+Date: Fri, 24 Apr 2026 14:17:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1776793163.git.geert+renesas@glider.be> <72e2a0e7a5abda02fe36b3f5851842f7a77b2593.1776793163.git.geert+renesas@glider.be>
- <aekXUvIPb8nkhdKu@pluto>
-In-Reply-To: <aekXUvIPb8nkhdKu@pluto>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 24 Apr 2026 14:08:55 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWJvMH+a1RqozbaCxxH_8M569JcruTFa8PW+87FysnjHw@mail.gmail.com>
-X-Gm-Features: AQROBzCeAVXP6DoeEYDD8I1FaXSTP-ZpY0v2OnIf6zjZFA9mNfY85ZLl0E87BuA
-Message-ID: <CAMuHMdWJvMH+a1RqozbaCxxH_8M569JcruTFa8PW+87FysnjHw@mail.gmail.com>
-Subject: Re: [PATCH/RFC 05/14] firmware: arm_scmi: Add scmi_get_base_info()
-To: Cristian Marussi <cristian.marussi@arm.com>
-Cc: Sudeep Holla <sudeep.holla@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Saravana Kannan <saravanak@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Ulf Hansson <ulfh@kernel.org>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Marek Vasut <marek.vasut+renesas@mailbox.org>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, arm-scmi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/9] remoteproc: qcom_q6v5_wcss: add native ipq9574
+ support
+To: "Alex G." <mr.nuke.me@gmail.com>, andersson@kernel.org, krzk+dt@kernel.org,
+        mturquette@baylibre.com, linux-remoteproc@vger.kernel.org
+Cc: mathieu.poirier@linaro.org, robh@kernel.org, conor+dt@kernel.org,
+        konradybcio@kernel.org, sboyd@kernel.org, p.zabel@pengutronix.de,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20260109043352.3072933-1-mr.nuke.me@gmail.com>
+ <4814455.tdWV9SEqCh@nukework.gtech>
+ <577d547e-6311-49b3-9c74-84797b281447@oss.qualcomm.com>
+ <27098742.6Emhk5qWAg@nukework.gtech>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <27098742.6Emhk5qWAg@nukework.gtech>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: -Rck2VXBvu1ElNpo4jsaH6kmU7zXtRO7
+X-Authority-Analysis: v=2.4 cv=VOjtWdPX c=1 sm=1 tr=0 ts=69eb5f46 cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=A5OVakUREuEA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22
+ a=-XRhzjy3v26zEYFifkcA:9 a=QEXdDO2ut3YA:10 a=OIgjcC2v60KrkQgK7BGD:22
+X-Proofpoint-ORIG-GUID: -Rck2VXBvu1ElNpo4jsaH6kmU7zXtRO7
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDI0MDExNyBTYWx0ZWRfX2IBtk+BqYr3e
+ pgnoQa4wlXHvuRqLah/Ai7qKzaDpDMUmQG90YNZHGRndi6blhOAx1mSoiRzwfH53tosSkr7GQ6a
+ UCdpqhkGCJ5HaKV7EtL3nJPAEo1pVGvxlZK45tMMsF2BjH4x/+cdwlGCFdW2Jz01A/gxpxTkRqB
+ 9cQwCL8K+gGP/5V/dbrX17fxqZivtprEUMNf9f+Nj065d4cUqhBdL8dW6bmLHP2vmkHMdrBmR8e
+ pYlkHBffBt5NhBFHmGTrNxFbYz0rpnpSQK5KMnhPTtpPCfo20STRJewthj63oOXbdutarr5Wh1A
+ iCVyat766L0xuSvjmZFqlCZmPccfDrL8FDX+E+VTgKiVlhNMZkRcY03fDOIUqrdnlLAKWxXOwKj
+ OeB3KJOa19j7aPs2m8mqxwi/vTRkdGIYgRpfAfw1Pk3e85d/A0V2z5ogjTP4RJQ+6exF2Q31ahQ
+ DcwoUhxXjNamreiecUw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-04-23_03,2026-04-21_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 lowpriorityscore=0 impostorscore=0 spamscore=0
+ priorityscore=1501 bulkscore=0 suspectscore=0 malwarescore=0 clxscore=1015
+ adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2604200000
+ definitions=main-2604240117
 
-Hi Cristian,
+On 1/15/26 6:27 AM, Alex G. wrote:
+> On Wednesday, January 14, 2026 4:26:36 AM CST Konrad Dybcio wrote:
+>> On 1/14/26 4:54 AM, Alex G. wrote:
+>>> On Tuesday, January 13, 2026 8:28:11 AM CST Konrad Dybcio wrote:
+>>>> On 1/9/26 5:33 AM, Alexandru Gagniuc wrote:
+>>>>> Support loading remoteproc firmware on IPQ9574 with the qcom_q6v5_wcss
+>>>>> driver. This firmware is usually used to run ath11k firmware and enable
+>>>>> wifi with chips such as QCN5024.
+>>>>>
+>>>>> When submitting v1, I learned that the firmware can also be loaded by
+>>>>> the trustzone firmware. Since TZ is not shipped with the kernel, it
+>>>>> makes sense to have the option of a native init sequence, as not all
+>>>>> devices come with the latest TZ firmware.
+>>>>>
+>>>>> Qualcomm tries to assure us that the TZ firmware will always do the
+>>>>> right thing (TM), but I am not fully convinced
+>>>>
+>>>> Why else do you think it's there in the firmware? :(
+>>>
+>>> A more relevant question is, why do some contributors sincerely believe
+>>> that the TZ initialization of Q6 firmware is not a good idea for their
+>>> use case?
+>>>
+>>> To answer your question, I think the TZ initialization is an afterthought
+>>> of the SoC design. I think it was only after ther the design stage that
+>>> it was brought up that a remoteproc on AHB has out-of-band access to
+>>> system memory, which poses security concerns to some customers. I think
+>>> authentication was implemented in TZ to address that. I also think that
+>>> in order to prevent clock glitching from bypassing such verification,
+>>> they had to move the initialization sequence in TZ as well.
+>>
+>> I wouldn't exactly call it an afterthought.. Image authentication (as in,
+>> verifying the signature of the ELF) has always been part of TZ, because
+>> doing so in a user-modifiable context would be absolutely nonsensical
+>>
+>> qcom_scm_pas_auth_and_reset() which configures and powers up the rproc
+>> has been there for a really long time too (at least since the 2012 SoCs
+>> like MSM8974) and I would guesstimate it's been there for a reason - not
+>> all clocks can or should be accessible from the OS (from a SW standpoint
+>> it would be convenient to have a separate SECURE_CC block where all the
+>> clocks we shouldn't care about are moved, but the HW design makes more
+>> sense as-is, for the most part), plus there is additional access control
+>> hardware on the platform that must be configured from a secure context
+>> (by design) which I assume could be part of this sequence, based on
+>> the specifics of a given SoC
+> 
+> What was the original use case for the Q6 remoteproc? I see today's use case 
+> is as a conduit for ath11k firmware to control PCIe devices. Was that always 
+> the case? I imagine a more modern design would treat the remoteproc as 
+> untrusted by putting it under a bridge or IOMMU with more strict memory access 
+> control, so that firmware couldn't access OS memory.
 
-On Wed, 22 Apr 2026 at 20:45, Cristian Marussi <cristian.marussi@arm.com> wrote:
-> On Tue, Apr 21, 2026 at 08:11:38PM +0200, Geert Uytterhoeven wrote:
-> > Currently non-SCMI drivers cannot find out what the specific versions of
-> > each SCMI provider implementation on the running system are.
->
-> Thanks for your patches....this is not a proper full review of the series,
-> BUT this patch catched my eye..
->
-> Indeed, yes, it is deliberate that the SCMI version information is NOT
-> exposed out of the SCMI world, since being the SCMI an attempt to
-> standardize a common FW interface (as in [1] of course), you should not
-> know what runs inside the black-box, it should be irrelevant...
->
-> ...indeed the versioning is used inside the SCMI stack to deal properly
-> with different protocol versions implemented by the server OR to apply
-> proper quirks when needed, but all the rest should be standard....
->
-> ...you should NOT really behave differently based on the underneath
-> protocol or firmare implementation version...it is the SCMI stack that
-> should behave properly, transparently...
+There is an SMMU on this SoC.
 
-Oh well...
+I don't know the original backstory, but if anything, the through-Q6
+approach is probably *more* secure, since there's additional access
+control hardware inbetween
 
-> Having said that...I understand that at least it could be useful to be able
-> to query the SCMI stack to know, even from non-SCMI drivers, WHICH quirks
-> have been applied/activated at run time...but anything more than that it
-
-I see no need for that, but we can discover which quirks have been
-applied from the kernel log ;-)
-
-> seems to me dangerous and prone to a number of abuses of the SCMI stack
-> itself...
->
-> (Also...exposing the versions itself means also tracking that bit of info
-> in more than one place: the quirk framework and your drivers.)
-
-I'll see if I can get everything handled as quirks instead...
-
-> > However, different versions may use different ABIs (e.g. different clock
-> > IDs), or behave different, requiring remapping or workarounds in other
-> > drivers.
->
-> ...abuse like this indeed :P ... the SCMI server is supposed to be that
-> one entity remapping the IDs in the background if the same IDs happen to
-> be representing different physical resources across a number of distinct
-> platforms all supported by the same firmware blob...so as to present
-> a consistent set of contiguos IDs...
-
-In our case it is just a single platform, with different ID number
-spaces for different firmware versions.
-
-> Also because this should be one of the selling point of the SCMI stack
-> in a virtualized environment: you can ship the same kernel drivers with
-> the same DT and you know that ID=<N> will always identify the specific
-> resource that is needed by your driver without worrying about the fact
-> that in reality in the backstage the effectively managed physical resource
-> could be different across different platforms, because that does not matter
-
-This sounds strange to me, do I understand it correctly?
-So the ID should (1) be tied to the use-case, and not to the underlying
-hardware, and (2) be the same for different platforms?
-
-For (1): Then we must not put these IDs in DT at all, as DT is supposed
-    to describe the hardware (and firmware IDs in DT were IMHO already
-    a stretch before).
-For (2): How can there be a contiguous list of IDs, as not all platforms
-    may have the same underlying hardware?
-
-> if the SCMI platform server had properly remapped (at build time/run-time ?)
-> the resources to your expected ID...alternatively of course you can ship
-> with different DTs to describe different hardware...BUT remmapping stuff
-
-That is a different issue: as SCMI covers the full platform, not just
-the SoC, the IDs can be board-specific, and thus should be specified
-in the board .dts, not in the SoC .dtsi?
-Then the SoC .dtsi should describe the hardware, and we end up with
-things like arch/arm/boot/dts/st/stm32mp157a-dk1-scmi.dts?
-
-> in the drivers themselves guessing on the vendor/subvendor/impl_vers
-> seems a dangerous abuse...
-
-There is no guessing.
-
-> I watched a bit of the LPC discussions around this (from Marek I think)
-> but sincerely most of those problems had one (not necessarily simple)
-> solution: fix your firmwares AND/OR apply quirks in the meantime...
-
-Unfortunately (at this point) we have to work with the firmware that exists.
-
-From that LPC discussion, we learned that we are actually the lucky
-guys: some other vendors tend to change the IDs and/or behavior without
-bumping the version, so Linux cannot even act upon that...
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Konrad
