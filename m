@@ -1,153 +1,134 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF703BD641
-	for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2026 11:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777030820; cv=none; b=kCrufMkdA9cp2Wfplwf0hjJ+ZN61HbrCBy/pHmkfKk6vu7qg5aUFnBXN1vm0SkbdSFQnktIxWaCKpIzAX40ackwQfL/sa6JcO6YRhjGDPW2+6HDq201Gx2KSpoim/VfyjSR56lvAf5LZIgPT40JMx6Jv1f0PGJw8pgIArQ7cQ1M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777030820; c=relaxed/simple;
-	bh=zAGY6O2hizEENAg918dpM+0m5lOBf40PuOwM/h9En8w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FUto+nZiDmLvzHWkjKAVaCAGp1y4WyKbmiva9fddO5eVp3xx7j2iiR1SLIYEJdJl4dSfOkQmNR2D0lpUjPMrBgPTCfSdnIswx7FEs6cq0VozHY+Ej/a+JfTyhibvUfgm6PmCFMEYwc7sySJWi/VcYhB7Blym+JBd2qi4A8ZdbAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kMcXYtU2; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=QeqYvANB; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B431D6BB;
+	Fri, 24 Apr 2026 12:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1777032511; cv=pass; b=XRgHUDK30GVQ1AnY1/eq68s+b95ek2hbsDriCevUICor31ae3AoLLhNDkCKxPjX/3gg8OYwSLPaNcFDxiPp+yq1u1gqzWjRlUNPBOviKqverDPJDbhAAil5xB7QJddqoClrutJSGbYubmFZjB+5IwdopsZd+HjI4btsObgInv4g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1777032511; c=relaxed/simple;
+	bh=zlUGO38FPiyQvD9ieoSKSc911j6QvX1BTq5ikOqzFZ4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oPQJfdDQ7iSCe0H84zX2FPx9Ey7lcOjZiKKyCujZBkR6wCA51ymRTDul6X2KVkf8jrDZkI2Vf5ojqTbohOfZ8CXvJpzGBrndQsFvjcerZj4ZW+i1lhCDlIPO+Gl9/RO2/RN7qTww/JdsLAF+xAfgLYukyBvEWkF49or7/RSE8XI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=GNjp24LT; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kMcXYtU2";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="QeqYvANB"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63O7Z2Se4167478
-	for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2026 11:40:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	LPbX4HtvAPXyPhYOHpIX5qSzN0AjUwOwX5mxwxSzf6U=; b=kMcXYtU2JntMEEVO
-	vzxBHYitkpG0WikSf8OZ/TXJl6KZ9jjhaRbOODsSjyJlXFlG48/rS7Fck1x647fv
-	fwsblb0RLUjoQCY8RhGr0osUsuf/pLR99qOYB4djWLOcNP0nvtWjbrqy7CRL2deZ
-	F+BD0eLyge+FHFd2zkaH9rWqbHTslKQCSjtBYxPumXsqXZfrgrgyqJPai1pQW/y1
-	3OpzEDSGU4LAVNIih+bGsmC/L4zF46teE5m/SdYZYoOgwzTROGYXJf3Do9VDHLLh
-	hw8vzazFn576CfZd7gbGM995J1swZI4kHpSc61GSMZn0jjHZYcEGpzfnJ/7yRiM8
-	W4352w==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4dr48n13yb-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2026 11:40:18 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-8b047093195so14484706d6.3
-        for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2026 04:40:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1777030817; x=1777635617; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LPbX4HtvAPXyPhYOHpIX5qSzN0AjUwOwX5mxwxSzf6U=;
-        b=QeqYvANBq0jm4eop6FBI9KAIOA3FeG8pfpFRMOHQSOUmOB3de0u8SxrKs510fA2gRB
-         UUWp3I64KpgRsSnpN7mnwpamQSpd0qmK7bZz5efDVyO9BPHDCLGs1UkO+l5SAUWZnOFd
-         ytZA+nFZHVTOJR4GrQ/L8FKLmSKlc2DXXSsY91aVe7SylXOMknSxCcB5BzOafH64IpXl
-         Fg7ZVaqI6Z3eLtiuA8XX+a3JogIEvIpIQJCn8iOhMcyHudyRPlGNznXeJwIBi7RDTwVE
-         jwMkpN3k/Zp6wR3oQkyO5fGbcr4G5G32gU9TWQylwba5CRDaSJX1k+xOYLYy6Spqpgyg
-         6p9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777030817; x=1777635617;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LPbX4HtvAPXyPhYOHpIX5qSzN0AjUwOwX5mxwxSzf6U=;
-        b=hqYxKmVmY44DUowKNZnVtaPWw1CXIKoaIgY9IsXXzxkm76aLdDXBv+eg+My+ugpawq
-         l8PgFQdvJlHhj6hjORt25pxmZhhIF1F4bzeC2SegOMv+q6dFNhUJsWdc3T34pO/lKQFB
-         bWd2mueeVmlFHCn0PFAy7p+V5tVmpRieE2H6sirshPjrS03UYY6AO6aziY/M+EjQni/F
-         cEbqyYj8I+G0iufbHfh0p+0f08fI8bWGo0ss9F5T5YvSPbjJ3lv0x5xDmYVLeFZSxPHB
-         b4IaTByV1rhxZwI4vafdgJE56SjEM7gatdsukvNJfIyi1YQpoZTF7QBGR9f3yYnyyR/9
-         u7Tw==
-X-Forwarded-Encrypted: i=1; AFNElJ+mKbleuqo8gdD4vZmivPFzVqAZpPHtIk3xqp8T29OA6+v8Jsv16y3ab9fGNQ98rZ8uEaNZExSADy0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9AUZmBl7eybtYg1s/FETqnlim53DAY/S2DxoWVehEwrbpXumM
-	IhFykYuy5VTTDRHvmS1+h2bexmMnBNphAQZup0LWjLHLpku8Wrcpv/dTsdS3dYtGGAbA/khmNHn
-	2SK2LxfSJo0qm9Lcce9d+59vSSxiy1OnJT7R6dlcTO6Pi7R2t/vWT4n5NuF2rMd4=
-X-Gm-Gg: AeBDietVDVG0O4b6M2WZ3MSEnA7d+oXetQRXRHHuco3sPyiqRNMgGFGbE9zwCEblQKo
-	9FTKWcu/OnqFiXl9wKg++Hu43B7mIdLvUAKZZU2sjxAc3tD11M95DPjxQfLbm3SQWuwuwHjAWUP
-	z8ULNY7SWOxrxmdOr3LLFknlB2+AxvN7/7xIWwfJQ03wbQWwVzMSLee/lzyS7fWVB+uONP84CPr
-	bBqLZViEmBv7WgJ06uxYDEersex3gR+D6DznqKB2cFMnvJeRiDCwmopRSRcApKdKviWNxbbj/Y1
-	86N7wYZ4hrRqB2VcTcW8C8sSMq6UQ+XETY7M4n5GQAiA2qmPC8OJSxsiv5X/vsbhyNpudA3NSjv
-	azI5aULKqGIQn0K6/oQYx/7IgzfviTbztHi1+FT65Jaf/ry8WiUE1DKQqAujoZrQGNBVpvsAQwb
-	6QmlwiX1GFDqaJEQ==
-X-Received: by 2002:a05:6214:411a:b0:8ac:a91c:c9c with SMTP id 6a1803df08f44-8b0281fe001mr342499346d6.7.1777030817368;
-        Fri, 24 Apr 2026 04:40:17 -0700 (PDT)
-X-Received: by 2002:a05:6214:411a:b0:8ac:a91c:c9c with SMTP id 6a1803df08f44-8b0281fe001mr342498976d6.7.1777030816944;
-        Fri, 24 Apr 2026 04:40:16 -0700 (PDT)
-Received: from [192.168.119.254] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a4187e7dfesm5896580e87.71.2026.04.24.04.40.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Apr 2026 04:40:16 -0700 (PDT)
-Message-ID: <b0690213-da71-4b8c-bab8-8581fc3d0211@oss.qualcomm.com>
-Date: Fri, 24 Apr 2026 13:40:12 +0200
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="GNjp24LT"
+ARC-Seal: i=1; a=rsa-sha256; t=1777032487; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=HXNAqMyoHqMgojwx6MnSPNk+yj4GSKW7Qn83OGawyK+hTs3JO0eL+PoijG73hKgQLLVJeMVJ3QSNtR//RCwJNcx+sJxAZk2E8JWMOSDdi6CV7MjafiBiAo8btLABSx1cARDKtbJaRyLVby/3cADoDoYOdQUXGiwtf8K1zaQUvDY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1777032487; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=eFoNQkR4m6ISqcP4PxzgHhBXbH5/ARCp3z5MOkbHYek=; 
+	b=gmeNvQ9vTiST3jlKgMWx5sbT0O2IlcJF+XMlcqiijASRHoR7EiMnq+YxJop8AzGxbgMQP+7CAqGIkCtJyU81en0g+r+FbJJotCdfMkzMthsmYmmMJXkTtU8NlZGQmSbQ/EK/04GEzlugsDOI57xVIvVJvWcec64wrXoNGL7m/kI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1777032486;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=eFoNQkR4m6ISqcP4PxzgHhBXbH5/ARCp3z5MOkbHYek=;
+	b=GNjp24LTPgImMeeRy9ecSwNznTfZzqE0PBV40tgjM9DgNaleLQMsytVbXmci0k6K
+	OQZBY2eIVgIOhF3g1Cy8As2FqCV+XIhVwxvvE4PYFHXyyYo9Il+jjcqqiTPLciUBLem
+	pD/+780Rmjwb8L1lBrA1xCFI2yHk6hZuttzqvOgU=
+Received: by mx.zohomail.com with SMTPS id 1777032485578973.2634566723241;
+	Fri, 24 Apr 2026 05:08:05 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ arm-scmi@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org,
+ Cristian Marussi <cristian.marussi@arm.com>
+Cc: sudeep.holla@arm.com, philip.radford@arm.com, james.quinlan@broadcom.com,
+ f.fainelli@gmail.com, vincent.guittot@linaro.org,
+ etienne.carriere@foss.st.com, peng.fan@oss.nxp.com, michal.simek@amd.com,
+ dan.carpenter@linaro.org, geert+renesas@glider.be,
+ kuninori.morimoto.gx@renesas.com, marek.vasut+renesas@gmail.com,
+ Cristian Marussi <cristian.marussi@arm.com>
+Subject:
+ Re: [PATCH v2 08/13] firmware: arm_scmi: Harden clock protocol initialization
+Date: Fri, 24 Apr 2026 14:07:59 +0200
+Message-ID: <WNCeTzosRbKm_zGsbSPx8w@collabora.com>
+In-Reply-To: <20260310184030.3669330-9-cristian.marussi@arm.com>
+References:
+ <20260310184030.3669330-1-cristian.marussi@arm.com>
+ <20260310184030.3669330-9-cristian.marussi@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/8] clk: qcom: gpucc: Add GPU Clock Controller driver
- for Eliza
-To: Taniya Das <taniya.das@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-        Imran Shaik <imran.shaik@oss.qualcomm.com>,
-        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org
-References: <20260409-eliza_mm_cc_v2-v2-0-bc0c6dd77bc5@oss.qualcomm.com>
- <20260409-eliza_mm_cc_v2-v2-5-bc0c6dd77bc5@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20260409-eliza_mm_cc_v2-v2-5-bc0c6dd77bc5@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: _9kp1gI3wef-NkA0zEaN2WF1kRFD36QO
-X-Authority-Analysis: v=2.4 cv=VOjtWdPX c=1 sm=1 tr=0 ts=69eb56a2 cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=A5OVakUREuEA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22
- a=EUspDBNiAAAA:8 a=whjPl3NbLinN2m9j5McA:9 a=QEXdDO2ut3YA:10
- a=pJ04lnu7RYOZP9TFuWaZ:22
-X-Proofpoint-ORIG-GUID: _9kp1gI3wef-NkA0zEaN2WF1kRFD36QO
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDI0MDExMSBTYWx0ZWRfX7SZocjdf29EC
- aAio2ZQ6JF3s421mSAVwqBbj/1Uj4fTRqO+d8V/qebe6XTa12CYQ9QleeeJzI/v1eW86zwuNf6G
- FJBNC24J4Q8GWheJGbmRRos3Eug4Ivwjji/CIYTk7/+bAZol/a2+qIW80XvZawvdLZvtRn0oUPu
- Vx9gdxS1vtjQGz9Eu/DgcB45kGcFv+tlJYt+mS/V9xFqNLII3Wv+JyJehxEHBgBVdHJwcZ/Zywt
- l1UHPqQNybAN9hQDS2e9rBXHml7mtPqi/+iwvHeS5lZvV6L18PKURYlKiVJT/8IgHUm7pSn0juB
- UWWtU3x+socvk+F+kD1E8LuKD7HMtkPEvvuGj+57zew88jmxFZzmZfNGg08ieE1Yd9c60E6K+HF
- hwoQ7lE/twemLZZd2kgsBSFktG5KWgYYP14Q+/5Vxb0Ff2ahn3NToA91/YIsKqAPwZHdNdcTk/l
- YwLGGha4dix70gJLx+Q==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-04-23_03,2026-04-21_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 lowpriorityscore=0 impostorscore=0 spamscore=0
- priorityscore=1501 bulkscore=0 suspectscore=0 malwarescore=0 clxscore=1015
- adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2604200000
- definitions=main-2604240111
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-On 4/9/26 8:10 PM, Taniya Das wrote:
-> Add Graphics Clock Controller (GPUCC) support for Eliza platform.
+On Tuesday, 10 March 2026 19:40:25 Central European Summer Time Cristian Marussi wrote:
+> Add proper error handling on failure to enumerate clocks features or
+> rates.
 > 
-> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
 > ---
+>  drivers/firmware/arm_scmi/clock.c | 22 ++++++++++++++++------
+>  1 file changed, 16 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
+> index c9b62edce4fd..bf956305a8fe 100644
+> --- a/drivers/firmware/arm_scmi/clock.c
+> +++ b/drivers/firmware/arm_scmi/clock.c
+> @@ -402,10 +402,16 @@ static int scmi_clock_attributes_get(const struct scmi_protocol_handle *ph,
+>  		    SUPPORTS_RATE_CHANGE_REQUESTED_NOTIF(attributes))
+>  			clk->rate_change_requested_notifications = true;
+>  		if (PROTOCOL_REV_MAJOR(ph->version) >= 0x3) {
+> -			if (SUPPORTS_PARENT_CLOCK(attributes))
+> -				scmi_clock_possible_parents(ph, clk_id, cinfo);
+> -			if (SUPPORTS_GET_PERMISSIONS(attributes))
+> -				scmi_clock_get_permissions(ph, clk_id, clk);
+> +			if (SUPPORTS_PARENT_CLOCK(attributes)) {
+> +				ret = scmi_clock_possible_parents(ph, clk_id, cinfo);
+> +				if (ret)
+> +					return ret;
+> +			}
+> +			if (SUPPORTS_GET_PERMISSIONS(attributes)) {
+> +				ret = scmi_clock_get_permissions(ph, clk_id, clk);
+> +				if (ret)
+> +					return ret;
+> +			}
+>  			if (SUPPORTS_EXTENDED_CONFIG(attributes))
+>  				clk->extended_config = true;
+>  		}
+> @@ -1143,8 +1149,12 @@ static int scmi_clock_protocol_init(const struct scmi_protocol_handle *ph)
+>  	for (clkid = 0; clkid < cinfo->num_clocks; clkid++) {
+>  		cinfo->clkds[clkid].id = clkid;
+>  		ret = scmi_clock_attributes_get(ph, clkid, cinfo);
+> -		if (!ret)
+> -			scmi_clock_describe_rates_get(ph, clkid, cinfo);
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = scmi_clock_describe_rates_get(ph, clkid, cinfo);
+> +		if (ret)
+> +			return ret;
+>  	}
+>  
+>  	if (PROTOCOL_REV_MAJOR(ph->version) >= 0x3) {
+> 
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+I see that a quirk is being added for this, but I thought I should chime
+in with my opinion for future approaches in this direction.
 
-Konrad
+I don't see how this hardens anything. All this does is break platforms
+that were previously working by returning early. At most, this should
+be a warning (as in not WARN but pr_warn/dev_warn/...). If firmware
+returns nonsense, a clock driver should imho try its best to work
+around the nonsense in a safe way, because the alternative is that
+a major part of the system (and thus likely the entire system) no
+longer works. It's basically the same reason why we avoid BUG(): sure,
+you prevented a problem, but you tore down the entire system to tell
+the user about it.
+
+Kind regards,
+Nicolas Frattaroli
+
+
