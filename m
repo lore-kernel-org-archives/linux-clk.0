@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C45364949;
-	Sat, 25 Apr 2026 18:06:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36BCB364942;
+	Sat, 25 Apr 2026 18:10:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777140374; cv=none; b=OWZ7A+Pus5v/MFtUiG/A8SAj3Huaa0ss3YIwGu1pqXHfmXIByOAWGZ4qcgbkmIbbECEI2M2vocH5L3CFqf0rFHuDzY92XoF4LTFN0rsHMhGXNSVSU5MvBEEjeIbTFYUFUNFiMoZbaOHBmDOANtl/04s9NlanunyAb2m2URKTivo=
+	t=1777140630; cv=none; b=pW45uHrY2nCoFO4CzSdFs91Ip8dG7DXkL7uOgWsXjr6TihhAtZQ8IFo47B+kndQBnTU2S7vKkVCug/nzL07ZtZNAA9XFJKDUn/ElYtKCO6wwNjYovdugV8IATygUAfZeLqCt0R64Z5udlth81UH+uzKCLT3/7vu2VFQ0kM+o4hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777140374; c=relaxed/simple;
-	bh=kQhugXnKZaFsFk2VLARnVsEPScbazA/Qt6kI51WMme8=;
+	s=arc-20240116; t=1777140630; c=relaxed/simple;
+	bh=4UseIi6/4cEexD8PoYw5ApPhHH+2eEMqOMHJSU0aqFU=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=WVy5eIwDN0tsgxFQJ93TL/YPeugBcZW52kVL5WQzQnoEwS7Nj/Ekvw3lAW/CkboIvOdXX56tEoArsaFpij+IQdH/wSXaNPmynLiwTTMp0pVVvu06nE7fc8/LzicV/wouSHqpsbXKOIT9AI9gKNl9DL2mnNPgmcHcIv4A8vEFXRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fXlPDe3t; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=OlLlXHxWow665DuluesQxS/FHt5nH2Z2Hua7iXer4nblW3PJO1wusaXbqep1rKp/a85vM+ij3ugTsTfeyafZcDwBJLloIUeVRXiCNolR3/ivxD8le1zlbFfT+9OvPL/4BuCJdfZe0pRWwRb9qhu0JTnPmrCTDY/6xnGdcrnh6Ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=souE4j29; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fXlPDe3t"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A4C1C2BCB0;
-	Sat, 25 Apr 2026 18:06:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="souE4j29"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C49EEC2BCB3;
+	Sat, 25 Apr 2026 18:10:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777140374;
-	bh=kQhugXnKZaFsFk2VLARnVsEPScbazA/Qt6kI51WMme8=;
+	s=k20201202; t=1777140629;
+	bh=4UseIi6/4cEexD8PoYw5ApPhHH+2eEMqOMHJSU0aqFU=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=fXlPDe3tmLMH6p3KtZGTKhXWROWTdMMVOTo/Q43zxNtaVYBGKJZRchulG88X5+A/R
-	 dxgGIUm1Hp/3dsybuRA8/zAua+D/Tu9NNxO472o+DE6sOFhua03zBeAaU+05gYLPDE
-	 hv9Zx0OA9e5bap083O5F+Shj6cm9kEVKggMKkhCkAlONQJQ1Ju2kaqVXHwdujjxamM
-	 ZKUvniEuZvZDnEs1Lp3AprQinL/7zWSAbHfC+8Py8yHkQ6fiXJaiSfMvtZ9C65ZNjh
-	 B38F8vw7ns/nDihDXj6o+uGx1BM3vA9fijb1tO9mmtUQM+eWi4CMOMCrebpFrN3nA7
-	 00Z5bm/Yj1R7g==
+	b=souE4j29xsJM1GgWAVqf9q8SvLPYZrgzqOXQOdTymqn7x1J6t4b5ZAbPpzsy3e8Op
+	 G2F/V8PFjbYeDqDb8pnDID9ayl99idnpdRZT7Gk5AM0fBF5k+SB66KorlG7jLsfrZd
+	 /Wwl1Gh+k7i7Sezv8xxRhvUb7cAhbH/czeZ6umaqKXqqoIk9C2OyKLPqn1JABiWlvN
+	 D2WSkdb9Z0prqwfIvvxw2uxP6iPYjkilxehiUC4fFBmT+5E6I3cNOI0acqZdvdR+w+
+	 n+tIwJe5G16aJaJuPWoAJYodqG9p0sLbZdWGxUJTOtRt00XkJg9DrkpmfXUxcTjwOs
+	 ZsCvIC0R/CGRQ==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,38 +34,49 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20260424-clk-bcm-fix-pi3-v1-1-8a734e94cecb@kernel.org>
-References: <20260424-clk-bcm-fix-pi3-v1-1-8a734e94cecb@kernel.org>
-Subject: Re: [PATCH] clk: bcm: rpi: Mark VEC clock as CLK_IGNORE_UNUSED
+In-Reply-To: <20260407095027.2625516-1-johan@kernel.org>
+References: <20260407095027.2625516-1-johan@kernel.org>
+Subject: Re: [PATCH] clk: rk808: fix OF node reference imbalance
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Florian Fainelli <florian.fainelli@broadcom.com>, Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Maxime Ripard <mripard@kernel.org>, =?utf-8?q?Ma=C3=ADra?= Canal <mcanal@igalia.com>, Brian Masney <bmasney@redhat.com>, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>, Mark Brown <broonie@kernel.org>
-Date: Sat, 25 Apr 2026 10:51:51 -0700
-Message-ID: <177713951108.5403.14915756699205242219@localhost.localdomain>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>, stable@vger.kernel.org, Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Johan Hovold <johan@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Date: Sat, 25 Apr 2026 11:10:27 -0700
+Message-ID: <177714062701.5403.1177541832751457755@lazor>
 User-Agent: alot/0.12
 
-Quoting Mark Brown (2026-04-24 08:34:52)
-> From: Ma=C3=ADra Canal <mcanal@igalia.com>
+Quoting Johan Hovold (2026-04-07 02:50:27)
+> The driver reuses the OF node of the parent multi-function device but
+> fails to take another reference to balance the one dropped by the
+> platform bus code when unbinding the MFD and deregistering the child
+> devices.
 >=20
-> On Raspberry Pi 3B, the VEC clock is used by the VideoCore firmware
-> display driver, which remains active until the vc4 driver loads and
-> sends NOTIFY_DISPLAY_DONE. If this clock is disabled during boot, a bus
-> lockup happens and the firmware becomes unresponsive, causing a complete
-> system lockup.
+> Fix this by using the intended helper for reusing OF nodes.
 >=20
-> Mark the VEC clock with CLK_IGNORE_UNUSED so it survives the unused
-> clock disablement and remains available until the vc4 driver takes over
-> display management.
->=20
-> Fixes: 672299736af6 ("clk: bcm: rpi: Manage clock rate in prepare/unprepa=
-re callbacks")
-> Reported-by: Mark Brown <broonie@kernel.org>
-> Closes: https://lore.kernel.org/r/5f0bec08-f458-4fba-8bf3-06817a100c4c@si=
-rena.org.uk
-> Signed-off-by: Ma=C3=ADra Canal <mcanal@igalia.com>
-> Link: https://patch.msgid.link/20260401111416.562279-2-mcanal@igalia.com
-> Tested-by: Mark Brown <broonie@kernel.org>
-> Signed-off-by: Mark Brown <broonie@kernel.org>
+> Fixes: 2dc51ca822e4 ("clk: RK808: Reduce 'struct rk808' usage")
+> Cc: stable@vger.kernel.org      # 6.5
+> Cc: Sebastian Reichel <sebastian.reichel@collabora.com>
+> Signed-off-by: Johan Hovold <johan@kernel.org>
 > ---
 
-Applied to clk-fixes
++Heiko
+
+>  drivers/clk/clk-rk808.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/clk-rk808.c b/drivers/clk/clk-rk808.c
+> index f7412b137e5e..5a75b5c91555 100644
+> --- a/drivers/clk/clk-rk808.c
+> +++ b/drivers/clk/clk-rk808.c
+> @@ -153,7 +153,7 @@ static int rk808_clkout_probe(struct platform_device =
+*pdev)
+>         struct rk808_clkout *rk808_clkout;
+>         int ret;
+> =20
+> -       dev->of_node =3D pdev->dev.parent->of_node;
+> +       device_set_of_node_from_dev(dev, dev->parent);
+> =20
+>         rk808_clkout =3D devm_kzalloc(dev,
+>                                     sizeof(*rk808_clkout), GFP_KERNEL);
+> --=20
+> 2.52.0
+>
