@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713F830DEA5;
-	Sat, 25 Apr 2026 18:06:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C45364949;
+	Sat, 25 Apr 2026 18:06:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777140372; cv=none; b=QUaB2v7iUbt5pRViPLi+My32gc+tEqApqY7vRFr0qxxnXGnzUfCIs7h5M85epLW47k2zS69DNp4065XXy+Zuw5diCmcZ0VvmuoPSmyn16d0bUxkQn+Jz2a0D718eebDiPvQT/PBjD/9jOjtfkROZsoTSruQan8g55Pa9//S8pWI=
+	t=1777140374; cv=none; b=OWZ7A+Pus5v/MFtUiG/A8SAj3Huaa0ss3YIwGu1pqXHfmXIByOAWGZ4qcgbkmIbbECEI2M2vocH5L3CFqf0rFHuDzY92XoF4LTFN0rsHMhGXNSVSU5MvBEEjeIbTFYUFUNFiMoZbaOHBmDOANtl/04s9NlanunyAb2m2URKTivo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777140372; c=relaxed/simple;
-	bh=j4x77fxXY22WXvwryDVC86O+Q1rVaLtByjJ8OgF8+LY=;
+	s=arc-20240116; t=1777140374; c=relaxed/simple;
+	bh=kQhugXnKZaFsFk2VLARnVsEPScbazA/Qt6kI51WMme8=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=qTEP3JqieCN/LMQV2MKRlC7NFbuO8e+hf4k8KMnmn4SsbPlwRRGN5SDScCCptFXZgsO9A/auiHwC+iaX+8Fdz4LJ1Sc+329KeaVCDctOgE2ZMoK+SnAD/cW/Jh21KnOyQVStcGrVutb4WRT5iVIYIrbiLfylNwYJwRZnMh4TtD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LNx3KmxQ; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=WVy5eIwDN0tsgxFQJ93TL/YPeugBcZW52kVL5WQzQnoEwS7Nj/Ekvw3lAW/CkboIvOdXX56tEoArsaFpij+IQdH/wSXaNPmynLiwTTMp0pVVvu06nE7fc8/LzicV/wouSHqpsbXKOIT9AI9gKNl9DL2mnNPgmcHcIv4A8vEFXRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fXlPDe3t; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LNx3KmxQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06B6CC2BCB0;
-	Sat, 25 Apr 2026 18:06:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fXlPDe3t"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A4C1C2BCB0;
+	Sat, 25 Apr 2026 18:06:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777140372;
-	bh=j4x77fxXY22WXvwryDVC86O+Q1rVaLtByjJ8OgF8+LY=;
+	s=k20201202; t=1777140374;
+	bh=kQhugXnKZaFsFk2VLARnVsEPScbazA/Qt6kI51WMme8=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=LNx3KmxQLFWN1Dw4QmBHWaAWOVmT4Y4Xxe1HAiBwWQ4J4k4rr55F/Y3BibKZ6toiZ
-	 bhXCBd5xVLlLEkaud+y2P2as6atWflgmCCQk+X66PEUknK9Up7u1SS8fEeVfuF2pC3
-	 mCk9qz9MgDJ1WTqtiUS57pkkhVB0H109kalsH/ZHr47J2zIoCnmYzZI88nxKJyci/3
-	 kTArO8m3uX9tI66kReEM0sECs5YWhi8it+HOZyCyOx02FxPJxA6oNgPGqIkjteWsmp
-	 PdK28MdUCOQIHzBwT6ecef9xZZ+l/K0/Hh6kqsiWze/7jpSwc1CYQ5jRQayF+SZ37C
-	 /2F4G+Sbvqp2w==
+	b=fXlPDe3tmLMH6p3KtZGTKhXWROWTdMMVOTo/Q43zxNtaVYBGKJZRchulG88X5+A/R
+	 dxgGIUm1Hp/3dsybuRA8/zAua+D/Tu9NNxO472o+DE6sOFhua03zBeAaU+05gYLPDE
+	 hv9Zx0OA9e5bap083O5F+Shj6cm9kEVKggMKkhCkAlONQJQ1Ju2kaqVXHwdujjxamM
+	 ZKUvniEuZvZDnEs1Lp3AprQinL/7zWSAbHfC+8Py8yHkQ6fiXJaiSfMvtZ9C65ZNjh
+	 B38F8vw7ns/nDihDXj6o+uGx1BM3vA9fijb1tO9mmtUQM+eWi4CMOMCrebpFrN3nA7
+	 00Z5bm/Yj1R7g==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,51 +34,38 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAHk-=wiKrwKPye8PRhvHxY3DB6cq+_Xby-OAigJOrcPHEZbDjQ@mail.gmail.com>
-References: <20260420183208.2287306-1-sboyd@kernel.org> <CAHk-=wiKrwKPye8PRhvHxY3DB6cq+_Xby-OAigJOrcPHEZbDjQ@mail.gmail.com>
-Subject: Re: [GIT PULL] clk changes for the merge window
+In-Reply-To: <20260424-clk-bcm-fix-pi3-v1-1-8a734e94cecb@kernel.org>
+References: <20260424-clk-bcm-fix-pi3-v1-1-8a734e94cecb@kernel.org>
+Subject: Re: [PATCH] clk: bcm: rpi: Mark VEC clock as CLK_IGNORE_UNUSED
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 25 Apr 2026 10:30:33 -0700
-Message-ID: <177713823341.5403.13182816167027469071@lazor>
+Cc: Michael Turquette <mturquette@baylibre.com>, Florian Fainelli <florian.fainelli@broadcom.com>, Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Maxime Ripard <mripard@kernel.org>, =?utf-8?q?Ma=C3=ADra?= Canal <mcanal@igalia.com>, Brian Masney <bmasney@redhat.com>, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>, Mark Brown <broonie@kernel.org>
+Date: Sat, 25 Apr 2026 10:51:51 -0700
+Message-ID: <177713951108.5403.14915756699205242219@localhost.localdomain>
 User-Agent: alot/0.12
 
-Quoting Linus Torvalds (2026-04-21 08:45:33)
-> On Mon, 20 Apr 2026 at 11:32, Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> >  179 files changed, 19422 insertions(+), 5066 deletions(-)
+Quoting Mark Brown (2026-04-24 08:34:52)
+> From: Ma=C3=ADra Canal <mcanal@igalia.com>
 >=20
-> I get something *completely* different.
+> On Raspberry Pi 3B, the VEC clock is used by the VideoCore firmware
+> display driver, which remains active until the vc4 driver loads and
+> sends NOTIFY_DISPLAY_DONE. If this clock is disabled during boot, a bus
+> lockup happens and the firmware becomes unresponsive, causing a complete
+> system lockup.
 >=20
-> I can approximate those numbers with "git diff -C" that takes file
-> copies into account, but your summary just then has "create" and
-> "delete" lines, nothing like
+> Mark the VEC clock with CLK_IGNORE_UNUSED so it survives the unused
+> clock disablement and remains available until the vc4 driver takes over
+> display management.
 >=20
->    copy drivers/clk/qcom/{gcc-milos.c =3D> gcc-eliza.c} (74%)
->=20
-> to indicate that that's how you got there.
->=20
-> I do see the
->=20
->    drivers/clk/qcom/{gcc-milos.c =3D> gcc-eliza.c}
->=20
-> in the file listing, so that must be how you generated this diffstat,
-> but your summary is then very misleading and just says
->=20
->    create mode 100644 drivers/clk/qcom/gcc-eliza.c
->=20
-> instead.
->=20
-> How did you actually generate that diffstat? Very strange.
->=20
+> Fixes: 672299736af6 ("clk: bcm: rpi: Manage clock rate in prepare/unprepa=
+re callbacks")
+> Reported-by: Mark Brown <broonie@kernel.org>
+> Closes: https://lore.kernel.org/r/5f0bec08-f458-4fba-8bf3-06817a100c4c@si=
+rena.org.uk
+> Signed-off-by: Ma=C3=ADra Canal <mcanal@igalia.com>
+> Link: https://patch.msgid.link/20260401111416.562279-2-mcanal@igalia.com
+> Tested-by: Mark Brown <broonie@kernel.org>
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
 
-I merged the tag into your tree and then diffed the merge to the parent.
-
-  git checkout linus/master
-  git merge clk-next
-  git diff --stat HEAD~..
-
-When I used 'git request-pull' it gave me a super wrong diffstat. I
-forgot to add --summary to the diff command above so I didn't replace
-the super wrong summary from request-pull. Sorry.
+Applied to clk-fixes
