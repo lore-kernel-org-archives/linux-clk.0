@@ -1,391 +1,204 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6454A3246EF
-	for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2026 19:35:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777059329; cv=none; b=i0LxnzuiOPeVxm4725RM64GrQokkbEeFmpkc8LY4zeVd8rWHuixJOR9cSUzlX14tAZdouFtOGmVkzJFL1Sw+14LooYJFvgHGiEkvO8andyNP7PANKYnRdaIvQZCwT6jP22n6+2czUaf+dp5RKMlPP6JshP1Tk7ytOev8qMMtb/A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777059329; c=relaxed/simple;
-	bh=8T2h/xXNxVMpGNLo4TJ2AaQXR3upn9cMcFlZih5hV6U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JYjZJWOCcMqFILgzUfqiDkuqPWo4uRNwZcC0yhg5buMf5vhp5XUC6rQsfaH5bVayYtVAGqpRSflKtEsErfW5VZqWxzw84y0iXF0FSd5MO+eRIt+KYEJFIDjhhWVpx2i0eqv7+P0CXatlEss857u7U+RzVDosz5JlBdMQYuljGQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cLyRl1n7; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=NR9mHbvy; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0645E35898;
+	Sat, 25 Apr 2026 09:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1777109422; cv=pass; b=VZV1ET0CDoEGfTPJOS+RlqU3eZQZRas71L30ce3jZGBFEuG0PMVdYpXgQRI/fGa44SnjhUGVN1l9sS5IU0LikHcwYXgh/xQM70e5mL2eOKyUjDU4BXexuYnhHAxAyVWaZbyvZU3ubmAHGdYJEr0oChg2ud464iN964oRamTP/TE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1777109422; c=relaxed/simple;
+	bh=wUqUnts+jUUPmFamqRuxmi6vVC+cINxoNQTGXLxjCAU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=D0Ubr8yatm2C8K9SQmYdLMMn3oOZZQx4cKtB3FvVG5bCuzd8IakaT6wivKb2J0rlwvX2J66KA6fgtJg1d0fENwXqmD51HWExMBaBRja4hqaLC4dQqgmqfGSBOOuk4tB4ddTyZURsg3RFkhkMkaHV1BwiRRfXlyirD5O6cm72Bic=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=WKr/a9hb; arc=pass smtp.client-ip=136.143.188.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cLyRl1n7";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="NR9mHbvy"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1777059326;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rC1UcT5G0LjtrhKB5Hz3oEWFi7KPBAZMScKEUyovlfQ=;
-	b=cLyRl1n7l3AX/alVprNBnqi5lZz/dZvvTEnV0QOptqt6hFH5UVb9LypnRvbPT2k1MQ+vFX
-	qRub5oV1Ciscrd303luPGvwXMFQ66hyBRALtK5rluNuV0H/GU+jEShTY1XvsMIeGQGg9ip
-	vAjbchZKpPQ4OcqlBrYkGQ/24fYtabg=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-186-QJacwQQkNbW1BpG9yzJFdg-1; Fri, 24 Apr 2026 15:35:24 -0400
-X-MC-Unique: QJacwQQkNbW1BpG9yzJFdg-1
-X-Mimecast-MFC-AGG-ID: QJacwQQkNbW1BpG9yzJFdg_1777059324
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-8a16036c90eso205526786d6.2
-        for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2026 12:35:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1777059324; x=1777664124; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rC1UcT5G0LjtrhKB5Hz3oEWFi7KPBAZMScKEUyovlfQ=;
-        b=NR9mHbvyNi+f0qSrfauFSqVJZc7pT2a46Hq1Qb6IW2CKradDBV8uJ1smkW8ALg2sFD
-         ovlkqdq5MHvof0/3bnKlNf+1xIy++O3Oi5OVBNza/5mToAifvpCCmmAoSlamM8mXoqwA
-         qp3oay+zKYQltIvfOjg6RcZWwTFYRMxJel1lIHXTiU58Pj4DBcAoYZGXlwQ8djFRsonh
-         cOeaQoNZIO6pNpsJ1hSMqiKR+EVaNH/AIxkGxzOjeEEhCD6BDtl97kZrnAprFQOGbz9e
-         ZYd2FgJ+5Iyr7KuHXyqT35Lqa8Jtt7HsD6QKipY54u5HuVORiFOMZz408Yg/5pO6PQQS
-         jwJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777059324; x=1777664124;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=rC1UcT5G0LjtrhKB5Hz3oEWFi7KPBAZMScKEUyovlfQ=;
-        b=VynZKfJj4r08ZS2gTwsXm8Cr8zQDy5pAbaLwJo9qrhIiRHGSPQGZOi9+Teg7kmnzCO
-         9X+sngokCfmw2RlPTN7WHTjUEtqenfQ5dmz4NazYRJyiil8vz1tWKGnljKmVZ4vtZS/3
-         S1ouRwHt7qIXG2kwlZbrp1I/NvxWoe9b0Ua+JBQxsQuvH9TD+DaCsp9R8m1bcRqc6B1g
-         IdUvISixspQDT1CUfhUBdxzHuLzy7vjZshUsI20v1TszNdIKzvP6yRUa3+J8Y40EXCv/
-         lPhVtLTkSg1CJpIkbgFuiU5N9uqZeXwXgJ6T35gyx3JdxGMsqetZ90L8jkeBrHF437ww
-         NkSw==
-X-Forwarded-Encrypted: i=1; AFNElJ8ISk7Eo4YDQucNBbyQgXw/9V4jELYn4UB+t0ttjZiTzfXqMGUyQxCbMmoIM6sqNMHp8x3MkXK+HlU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+2O4BTC7J8W/u5HE5qcxXgLz/J/e0Y99GsqID8sSgZYO5fSYz
-	GK5UwMhqAlVyvQ4RUaq7mkfcGZcvL1gJ8U176YcOfUUcCAUhjvVLG8QErwvpzDbTEfTG3zBbCKt
-	yTuf9p+ZU7CkZHxKkYiuVsWUkp3tdxlwU4j+zmAP83ibyIUPqYv6RcUc0yIB1nA==
-X-Gm-Gg: AeBDiet4Az+nOX9K83XuuG5zK7efB6lNHl/jYnkGWGRYsk+6ZYeOdT3ZRlvZ8j7dZMA
-	7Rw6tKPGylMlU43IUXag89gDT9Xl9T1ta1qAOQS3rgrnnBraBdWDpKSzL2yq5cjrC4Krf8+97s6
-	+qCgsVQy2WLoD4GFI9RhLepJGVUi/gYzT/54QboqHmKtUId1pgHzjmsu4wkp44ziwqR5YorrOrn
-	ncITswrxXIMYvazSIkNoBarLGDs1y73jVM4eSOWHVPFqWPkmC7P3npbKUfvsmya1Cwc5kJHCdTy
-	4FD0Oyli7C2g9/b8mLks4gFwfulxZRUfml0KSc6xQT3ctobFjeWknVvc2wx6hty1IEl+6W1oJxo
-	NHd8Ni15rg52G6HbvP4zy//Xtsyg57U5txT1Zq5qJh2Byr5Lhq41phsWikBI2ha8EKeY=
-X-Received: by 2002:a05:6214:20a5:b0:8ac:aaac:4034 with SMTP id 6a1803df08f44-8b0280e9efdmr537408286d6.29.1777059324289;
-        Fri, 24 Apr 2026 12:35:24 -0700 (PDT)
-X-Received: by 2002:a05:6214:20a5:b0:8ac:aaac:4034 with SMTP id 6a1803df08f44-8b0280e9efdmr537407666d6.29.1777059323731;
-        Fri, 24 Apr 2026 12:35:23 -0700 (PDT)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8b02ae7d79esm188461036d6.36.2026.04.24.12.35.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Apr 2026 12:35:23 -0700 (PDT)
-Date: Fri, 24 Apr 2026 15:35:21 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v3 1/2] clk: divider: Add KUnit tests for
- clk_divider_bestdiv() ULONG_MAX handling
-Message-ID: <aevF-aA0FMp00wHW@redhat.com>
-References: <20260421182529.3055114-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260421182529.3055114-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="WKr/a9hb"
+ARC-Seal: i=1; a=rsa-sha256; t=1777109404; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Nspleh2GmyFf2r/pJ2GOFKge8qPi8pQezodwTTyvXuA5aXmNqwaYExUTEaA5KN6XIgiGOPXqpA94xU1LhRKn/J+dxwEOK8IzDx7w6tc0Ou2WTFtsfWdl+hjhvsAk+zCaS13GrwJG6aFXRKZSn+uFCZh4K+ElrYiNipgIxtKkAEE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1777109404; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=DRzUk09wYdlZvAMaiqNPnLyeSBXvi/+KYzcmS+ojk4s=; 
+	b=JZoB8GZdWNuS74kmRwHM89XiOdn0gNpLaFjjUdiEGZTXSHWdkVucRxUI9ZcciOjAhWMEM4lyp62yQFUmQ2SBzFkMBSosCmX98AWVZrR8Eoh2G+KR3jyH7UhozOLkKTLyfb3MzGYA99iPd6yLCEW+RLykd+lm3WG5Fd7dbcM43aI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
+	dmarc=pass header.from=<kingxukai@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1777109404;
+	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Feedback-ID:Reply-To;
+	bh=DRzUk09wYdlZvAMaiqNPnLyeSBXvi/+KYzcmS+ojk4s=;
+	b=WKr/a9hbI3UJk9m8wyPMufPYZ+DakaMF9X1+Wvw8Htu026rAB1pDPM74ySLnhwS5
+	JNXHCTckWgzvybDjgyrj+JwfCwfGlHYjOiz/g/yF+jgxpD9lhZse0eD3p2CPqReXq+D
+	FjQAWXPoiVljcNBy5B1vEd7BdfjwAkypa+zvY9RU=
+Received: by mx.zohomail.com with SMTPS id 1777109402383598.1986598340992;
+	Sat, 25 Apr 2026 02:30:02 -0700 (PDT)
+From: Xukai Wang <kingxukai@zohomail.com>
+Subject: [PATCH v12 0/3] riscv: canaan: Add support for K230 clock
+Date: Sat, 25 Apr 2026 17:29:30 +0800
+Message-Id: <20260425-b4-k230-clk-v12-0-7d5ced1f5da8@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260421182529.3055114-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-User-Agent: Mutt/2.3.1 (2026-03-20)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAHqJ7GkC/3WTy5LTMBBFfyXlNabU3WpJnRX/QbHQk7jmEUhCC
+ pjKv9POMGTsiJ2l8rn39kMvw7EepnoctpuX4VDP03HaP+sB8MNmyLv4/LWOU9GLAQ1aQOPGZMc
+ HJDPmx4dRkBtRq8VlHJT4dqht+nmV+/zl9Xyo33+o6un1ckjxWMe8f3qaTttNbBKqUOZMUl0xK
+ fhksZlIWAoZ55oX9hCu0vGUd5plu5GIxUBjZm8TUyixsMcKQi1AttY5aCYwDXOC3XQ87Q+/rvW
+ d6RrhbyV+UcmZRv1IoIYQQvX+0+/9bv8Up8ePmnYOoBgbQLzHUmueOWbJLfcxNHSPkcPsBdBq+
+ iU2Bz/bd2HBLnGrOGQjObpENsT/uIK/xzgKR7IcnEDHFd65oixxUBwRooCvwdTSwfEN11aZsMR
+ xxn0iEzFHxh7ON5zWLWPFvQ1Fu4GBKvVrJjT3mKlSTJDMNoSOq7u5WuAl7mbXVoI0i15/6OD+h
+ ntauft5q9gXSomFCnXwcMPFrNyD4uJyjAYLW+yFl384AK7mLfOWKSwVfIuNe/M2b7wzAG41cG3
+ dWCqLIX2k+iJ7AnATuNtTmFfGlUpOWy8pyErgcrn8AcJGvceCBAAA
+X-Change-ID: 20241206-b4-k230-clk-925f33fed6c2
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Xukai Wang <kingxukai@zohomail.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Conor Dooley <conor@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ Samuel Holland <samuel.holland@sifive.com>, 
+ Troy Mitchell <TroyMitchell988@gmail.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>
+X-Mailer: b4 0.15.2
+Feedback-ID: zu0801122726191866bfa4a93bcf00d9ae0000da70cfaafd2930a6cc1f67597bbaba4a1e3e80edf3295bfffd:ZohoMail
+X-Zoho-CM-AccountID: 2ee5dd3c83366259b2ba1e9826250ffebed1ef2dd213857d649ad25aba73b429
+X-ZohoMailClient: External
 
-Hi Lad,
+This patch series adds clock controller support for the Canaan Kendryte
+K230 SoC. The K230 SoC includes an external 24MHz OSC, 4 internal
+PLLs and an external pulse input, with the controller managing these
+sources and their derived clocks.
 
-On Tue, Apr 21, 2026 at 07:25:25PM +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> Add KUnit tests to verify the behaviour of clk_divider_bestdiv() when
-> clk_round_rate() is called with ULONG_MAX, which is the canonical way
-> to probe the maximum rate a clock can produce.
-> 
-> Two test cases are introduced:
-> 
-> - clk_divider_bestdiv_ulong_max_returns_max_rate: registers a 1 GHz
->   fixed-rate parent driving a table-based divider whose smallest entry
->   is div=2 (entries: 2, 4, 8). Calls clk_hw_round_rate(div_hw, ULONG_MAX)
->   and checks the result.
-> 
-> - clk_divider_bestdiv_mux_ulong_max_returns_max_rate: places a two-input
->   mux (4 GHz and 2 GHz fixed-rate parents, CLK_SET_RATE_PARENT) ahead of
->   the same table-based divider to verify correct parent selection under
->   ULONG_MAX.
-> 
-> Both tests use an explicit clk_div_table with a minimum divider of 2 so
-> that the pre-loop maxdiv clamping in clk_divider_bestdiv():
-> 
->     maxdiv = min(ULONG_MAX / rate, maxdiv);
-> 
-> clamps maxdiv to 1, causing _next_div() to return 2 on the first
-> iteration and skip the loop body entirely. This makes bestdiv fall back
-> to the maximum divider, returning the minimum rate rather than the
-> maximum.
-> 
-> The expected values intentionally reflect the buggy output:
->   - test 1: PARENT_RATE_1GHZ / 8  (minimum rate, not maximum)
->   - test 2: 0                      (invalid, loop never populated bestdiv)
-> 
-> These will be corrected to PARENT_RATE_1GHZ / 2 and PARENT_RATE_4GHZ / 2
-> respectively once the fix to clk_divider_bestdiv() is applied.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> v2->v3:
-> - Added false positive expected values
-> - Updated the commit message
-> - Added dependency on !S390 in Kconfig
-> ---
->  drivers/clk/Kconfig            |   8 ++
->  drivers/clk/Makefile           |   1 +
->  drivers/clk/clk-divider_test.c | 158 +++++++++++++++++++++++++++++++++
->  3 files changed, 167 insertions(+)
->  create mode 100644 drivers/clk/clk-divider_test.c
+The clock tree and hardware-specific definition can be found in the
+vendor's DTS [1],
+and this series is based on the K230 initial series [2].
 
-CONFIG_CLK_DIVIDER_KUNIT_TEST=y needs to be added to
-drivers/clk/.kunitconfig.
+Link: https://github.com/ruyisdk/linux-xuantie-kernel/blob/linux-6.6.36/arch/riscv/boot/dts/canaan/k230_clock_provider.dtsi [1]
+Link: https://lore.kernel.org/linux-clk/tencent_F76EB8D731C521C18D5D7C4F8229DAA58E08@qq.com/ [2]
 
-> 
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index b2efbe9f6acb..fdeb87ff8fd9 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -573,4 +573,12 @@ config CLK_FD_KUNIT_TEST
->  	help
->  	  Kunit test for the clk-fractional-divider type.
->  
-> +config CLK_DIVIDER_KUNIT_TEST
-> +	tristate "KUnit tests for clk divider bestdiv" if !KUNIT_ALL_TESTS
-> +	depends on KUNIT
-> +	depends on !S390
-> +	default KUNIT_ALL_TESTS
-> +	help
-> +	  Kunit test for the clk-divider type.
-> +
->  endif
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index a3e2862ebd7e..dc653b458f56 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -21,6 +21,7 @@ clk-test-y			:= clk_test.o \
->  				   kunit_clk_hw_get_dev_of_node.dtbo.o \
->  				   kunit_clk_parent_data_test.dtbo.o
->  obj-$(CONFIG_COMMON_CLK)	+= clk-divider.o
-> +obj-$(CONFIG_CLK_DIVIDER_KUNIT_TEST) += clk-divider_test.o
->  obj-$(CONFIG_COMMON_CLK)	+= clk-fixed-factor.o
->  obj-$(CONFIG_COMMON_CLK)	+= clk-fixed-rate.o
->  obj-$(CONFIG_CLK_FIXED_RATE_KUNIT_TEST)	+= clk-fixed-rate-test.o
-> diff --git a/drivers/clk/clk-divider_test.c b/drivers/clk/clk-divider_test.c
-> new file mode 100644
-> index 000000000000..3087c77fb157
-> --- /dev/null
-> +++ b/drivers/clk/clk-divider_test.c
-> @@ -0,0 +1,158 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * KUnit tests for clk_divider_bestdiv()
-> + */
-> +#include <kunit/test.h>
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/limits.h>
-> +#include <linux/units.h>
-> +
-> +#define PARENT_RATE_1GHZ	GIGA
-> +#define PARENT_RATE_2GHZ	(2 * GIGA)
-> +#define PARENT_RATE_4GHZ	(4 * GIGA)
-> +
-> +static const struct clk_div_table bestdiv_table[] = {
-> +	{ .val = 0, .div = 2 },
-> +	{ .val = 1, .div = 4 },
-> +	{ .val = 2, .div = 8 },
-> +	{ /* sentinel */ }
-> +};
+Co-developed-by: Troy Mitchell <TroyMitchell988@gmail.com>
+Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
+Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
 
-Is it possible to drop the table like I suggested in v2? You can use
-CLK_DIVIDER_ONE_BASED. (See docs in include/linux/clk-provider.h).
-You can also use CLK_DIVIDER_POWER_OF_TWO if you want the divider to be
-larger.
+---
+Changes in v12:
+- Rebase onto linux-next (next-20260421).
+- Migrate from deprecated round_rate() clk_ops to determine_rate() API.
+- dt-bindings: Drop redundant "bindings for" in commit subject.
+- Link to v11: https://lore.kernel.org/r/20260214-b4-k230-clk-v11-0-6de365489b89@zohomail.com
 
-> +
-> +static void unregister_fixed_rate(void *hw)
-> +{
-> +	clk_hw_unregister_fixed_rate(hw);
-> +}
-> +
-> +static void unregister_divider(void *hw)
-> +{
-> +	clk_hw_unregister_divider(hw);
-> +}
-> +
-> +static void unregister_mux(void *hw)
-> +{
-> +	clk_hw_unregister_mux(hw);
-> +}
+Changes in v11:
+- Rename hs_hclk_high_src to hs_hclk_high and hs_hclk_src to hs_hclk.
+- Rebase base-commit to linux-next.
+- Update prerequisite-patch-id.
+- Link to v10: https://lore.kernel.org/r/20260116-b4-k230-clk-v10-0-de59033c5d30@zohomail.com
 
-Can these 3 wrapper functions be dropped, and you just call the inner
-function in the call to kunit_add_action_or_reset()? For example,
-instead of:
+Changes in v10:
+- Drop clock node: cpu1_apb_rate.
+- Rename hs_ospi_src to hs_ssi0.
+- Rename fixed clocks format in dts.
+- Fix missing clk member registration in driver.
+- Fix incorrect clk ID: k230_cpu1_src_rate → K230_CPU1_SRC_RATE.
+- Fix bit index of hs_hclk_src_gate: 1 → 0.
+- Add CLK_IS_CRITICAL to CPU-related gate clocks.
+- Update parent clocks: display_clkext_rate, sec_apb_gate, ai_axi_gate,
+cpu1_src_mux and hs_sd_card_src_rate.
+- Link to v9: https://lore.kernel.org/r/20251127-b4-k230-clk-v9-0-3aa09e17faf5@zohomail.com
 
-    static void unregister_fixed_rate(void *hw)
-    {
-        clk_hw_unregister_fixed_rate(hw);
-    }
-    ...
-    KUNIT_ASSERT_EQ(test, 0,
-                    kunit_add_action_or_reset(test, unregister_fixed_rate,
-                                              parent_hw));
+Changes in v9:
+- Rebase base-commit to v6.18-rc1
+- Simplified PLL field extraction with FIELD_GET() macro
+- Drop MODULE_DEVICE_TABLE for k230_clk_ids
+- Replace k230_clk_find_approximate_mul_div's step with
+  Rational_best_approximation
+- Reorder declaration and defination for clk_ops
+- Link to v8: https://lore.kernel.org/r/20250905-b4-k230-clk-v8-0-96caa02d5428@zohomail.com
 
-You should be able to do this:
+Changes in v8:
+- Rename dts node name "timer_pulse_in" to "clock-50m"
+- Drop redundant comment and 'minItems' of hardware in dt-binding.
+- Link to v7: https://lore.kernel.org/r/20250730-b4-k230-clk-v7-0-c57d3bb593d3@zohomail.com
 
-    KUNIT_ASSERT_EQ(test, 0,
-                    kunit_add_action_or_reset(test, clk_hw_unregister_fixed_rate,
-                                              parent_hw));
+Changes in v7:
+- Rename K230_PLL_STATUS_MASK to K230_PLL_LOCK_STATUS_MASK
+- Add clkdev for PLLs to register lookup
+- Add macros to generate repeat variables definition
+- Refine the definitions of k230 clocks
+- Split composite clks into rate, gate, mux, fixed_factor clk
+- Replace k230_clk_hw_onecell_get with of_clk_hw_onecell_get for
+  clock provider
+- Drop k230_sysclk and use clk_mux, clk_gate and clk_fixed_factor
+  as the data structures.
+- Replace one loop registration with individual registration for
+  each type.
+- Link to v6: https://lore.kernel.org/r/20250415-b4-k230-clk-v6-0-7fd89f427250@zohomail.com
 
-I think we should just drop the wrappers completely if they aren't
-needed. If more functionality is needed in the future, then the wrappers
-can be added then.
+Changes in v6:
+- Remove some redundant comments in struct declaration.
+- Replace the Vendor's code source link with a new one.
+- Link to v5: https://lore.kernel.org/r/20250320-b4-k230-clk-v5-0-0e9d089c5488@zohomail.com
 
-> +
-> +/*
-> + * Test that clk_round_rate(clk, ULONG_MAX) returns the maximum achievable
-> + * rate for a divider clock.
-> + */
-> +static void clk_divider_bestdiv_ulong_max_returns_max_rate(struct kunit *test)
-> +{
-> +	struct clk_hw *parent_hw, *div_hw;
-> +	u32 *fake_reg;
-> +	unsigned long rate;
+Changes in v5:
+- Fix incorrect base-commit and add prerequisite-patch-id.
+- Replace dummy apb_clk with real ones for UARTs.
+- Add IDs of UARTs clock and DMA clocks in the binding header.
+- Replace k230_clk_cfgs[] array with corresponding named variables.
+- Remove some redundant checks in clk_ops.
+- Drop the unnecessary parenthesis and type casts.
+- Modify return value handling in probe path to avoid redundant print.
+- Link to v4: https://lore.kernel.org/r/20250217-b4-k230-clk-v4-0-5a95a3458691@zohomail.com
 
-Reverse Christmas tree order.
+Changes in v4:
+- Remove redundant onecell_get callback and add_provider function
+for pll_divs.
+- Modify the base-commit in cover letter.
+- Link to v3: https://lore.kernel.org/r/20250203-b4-k230-clk-v3-0-362c79124572@zohomail.com
 
-> +
-> +	fake_reg = kunit_kzalloc(test, sizeof(*fake_reg), GFP_KERNEL);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, fake_reg);
-> +
-> +	parent_hw = clk_hw_register_fixed_rate(NULL, "bestdiv-parent",
-> +					       NULL, 0, PARENT_RATE_1GHZ);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent_hw);
-> +	KUNIT_ASSERT_EQ(test, 0,
-> +			kunit_add_action_or_reset(test, unregister_fixed_rate,
-> +						  parent_hw));
-> +
-> +	div_hw = clk_hw_register_divider_table(NULL, "bestdiv-div",
-> +					       "bestdiv-parent",
-> +					       CLK_SET_RATE_PARENT,
-> +					       (void __iomem __force *)fake_reg,
-> +					       0, 2, 0, bestdiv_table, NULL);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, div_hw);
-> +	KUNIT_ASSERT_EQ(test, 0,
-> +			kunit_add_action_or_reset(test, unregister_divider, div_hw));
-> +
-> +	/*
-> +	 * ULONG_MAX is the canonical way to probe the maximum rate a clock
-> +	 * can produce.
-> +	 */
-> +	rate = clk_hw_round_rate(div_hw, ULONG_MAX);
-> +	KUNIT_EXPECT_EQ(test, rate, PARENT_RATE_1GHZ / 8);
-> +}
-> +
-> +/*
-> + * Test that clk_round_rate(clk, ULONG_MAX) returns the correct maximum rate
-> + * when a mux clock sits between a divider and its parent candidates.
-> + *
-> + * Topology:
-> + *
-> + *   [fixed 4 GHz] --\
-> + *                    +--> [mux CLK_SET_RATE_PARENT] --> [div {2,4,8} CLK_SET_RATE_PARENT]
-> + *   [fixed 2 GHz] --/
-> + *
-> + */
-> +static void clk_divider_bestdiv_mux_ulong_max_returns_max_rate(struct kunit *test)
-> +{
-> +	static const char * const mux_parents[] = {
-> +		"bestdiv-mux-parent-a",
-> +		"bestdiv-mux-parent-b",
-> +	};
-> +	struct clk_hw *parent_a_hw, *parent_b_hw, *mux_hw, *div_hw;
-> +	u32 *fake_reg_mux, *fake_reg_div;
-> +	unsigned long rate;
-> +
-> +	fake_reg_mux = kunit_kzalloc(test, sizeof(*fake_reg_mux), GFP_KERNEL);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, fake_reg_mux);
-> +
-> +	fake_reg_div = kunit_kzalloc(test, sizeof(*fake_reg_div), GFP_KERNEL);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, fake_reg_div);
-> +
-> +	/* Higher-rate parent: the mux should select this for ULONG_MAX. */
-> +	parent_a_hw = clk_hw_register_fixed_rate(NULL, "bestdiv-mux-parent-a",
-> +						 NULL, 0, PARENT_RATE_4GHZ);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent_a_hw);
-> +	KUNIT_ASSERT_EQ(test, 0,
-> +			kunit_add_action_or_reset(test, unregister_fixed_rate,
-> +						  parent_a_hw));
-> +
-> +	/* Lower-rate parent: should not be selected. */
-> +	parent_b_hw = clk_hw_register_fixed_rate(NULL, "bestdiv-mux-parent-b",
-> +						 NULL, 0, PARENT_RATE_2GHZ);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent_b_hw);
-> +	KUNIT_ASSERT_EQ(test, 0,
-> +			kunit_add_action_or_reset(test, unregister_fixed_rate,
-> +						  parent_b_hw));
-> +
-> +	/*
-> +	 * 1-bit mux register selects between the two parents.
-> +	 * CLK_SET_RATE_PARENT allows the divider's rate request to
-> +	 * propagate into clk_mux_determine_rate().
-> +	 */
-> +	mux_hw = clk_hw_register_mux(NULL, "bestdiv-mux",
-> +				     mux_parents, ARRAY_SIZE(mux_parents),
-> +				     CLK_SET_RATE_PARENT,
-> +				     (void __iomem __force *)fake_reg_mux,
-> +				     0, 1, 0, NULL);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, mux_hw);
-> +	KUNIT_ASSERT_EQ(test, 0,
-> +			kunit_add_action_or_reset(test, unregister_mux, mux_hw));
-> +
-> +	div_hw = clk_hw_register_divider_table(NULL, "bestdiv-mux-div",
-> +					       "bestdiv-mux",
-> +					       CLK_SET_RATE_PARENT,
-> +					       (void __iomem __force *)fake_reg_div,
-> +					       0, 2, 0, bestdiv_table, NULL);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, div_hw);
-> +	KUNIT_ASSERT_EQ(test, 0,
-> +			kunit_add_action_or_reset(test, unregister_divider, div_hw));
-> +
-> +	rate = clk_hw_round_rate(div_hw, ULONG_MAX);
-> +	KUNIT_EXPECT_EQ(test, rate, 0);
-> +}
-> +
-> +static struct kunit_case clk_divider_bestdiv_test_cases[] = {
-> +	KUNIT_CASE(clk_divider_bestdiv_ulong_max_returns_max_rate),
-> +	KUNIT_CASE(clk_divider_bestdiv_mux_ulong_max_returns_max_rate),
-> +	{}
-> +};
-> +
-> +static struct kunit_suite clk_divider_bestdiv_test_suite = {
-> +	.name = "clk_divider_bestdiv",
-> +	.test_cases = clk_divider_bestdiv_test_cases,
-> +};
-> +
-> +kunit_test_suite(clk_divider_bestdiv_test_suite);
-> +
-> +MODULE_DESCRIPTION("KUnit tests for clk_divider_bestdiv()");
+Changes in v3:
+- Reorder the defination and declaration in drivers code.
+- Reorder the properties in dts node.
+- Replace global variable `k230_sysclk` with dynamic memory allocation.
+- Rename the macro K230_NUM_CLKS to K230_CLK_NUM.
+- Use dev_err_probe for error handling.
+- Remove unused includes.
+- Link to v2: https://lore.kernel.org/r/20250108-b4-k230-clk-v2-0-27b30a2ca52d@zohomail.com
 
-KUnit tests for clk divider.
+Changes in v2:
+- Add items and description.
+- Rename k230-clk.h to canaan,k230-clk.h
+- Link to v1: https://lore.kernel.org/r/20241229-b4-k230-clk-v1-0-221a917e80ed@zohomail.com
 
-I have another tests that will eventually be added to this file.
+---
+Xukai Wang (3):
+      dt-bindings: clock: Add Canaan K230 clock controller
+      clk: canaan: Add clock driver for Canaan K230
+      riscv: dts: canaan: Add clock definition for K230
 
-Brian
+ .../devicetree/bindings/clock/canaan,k230-clk.yaml |   59 +
+ arch/riscv/boot/dts/canaan/k230-canmv.dts          |   11 +
+ arch/riscv/boot/dts/canaan/k230-evb.dts            |   11 +
+ arch/riscv/boot/dts/canaan/k230.dtsi               |   26 +-
+ drivers/clk/Kconfig                                |    6 +
+ drivers/clk/Makefile                               |    1 +
+ drivers/clk/clk-k230.c                             | 2452 ++++++++++++++++++++
+ include/dt-bindings/clock/canaan,k230-clk.h        |  220 ++
+ 8 files changed, 2778 insertions(+), 8 deletions(-)
+---
+base-commit: af98e93c5c39e6d0b87b42f0a32dd3066f795718
+change-id: 20241206-b4-k230-clk-925f33fed6c2
+prerequisite-patch-id: 9a2d01f55574b538dad572e193f81c44661f0853
+
+Best regards,
+--  
+Xukai Wang <kingxukai@zohomail.com>
 
