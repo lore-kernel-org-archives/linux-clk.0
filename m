@@ -1,82 +1,95 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36BCB364942;
-	Sat, 25 Apr 2026 18:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A91C3537EB
+	for <linux-clk@vger.kernel.org>; Sat, 25 Apr 2026 18:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777140630; cv=none; b=pW45uHrY2nCoFO4CzSdFs91Ip8dG7DXkL7uOgWsXjr6TihhAtZQ8IFo47B+kndQBnTU2S7vKkVCug/nzL07ZtZNAA9XFJKDUn/ElYtKCO6wwNjYovdugV8IATygUAfZeLqCt0R64Z5udlth81UH+uzKCLT3/7vu2VFQ0kM+o4hs=
+	t=1777141170; cv=none; b=iCJA4LTWjjlsSY1BcWYUoPv66k3jQ7dWiF35xsOzGpvCkaVw6tPwDgUjW2Q64R9UWncgXhfUzBk9W9Op8ZqPc1X5f+9S93U0OWctM+Eg2r1cjRacbG0rG9qnlSGnGTmnQeREqOQ1oWbDDW73F/uuHskMbgXsPyB+B1s3QLb2k2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777140630; c=relaxed/simple;
-	bh=4UseIi6/4cEexD8PoYw5ApPhHH+2eEMqOMHJSU0aqFU=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=OlLlXHxWow665DuluesQxS/FHt5nH2Z2Hua7iXer4nblW3PJO1wusaXbqep1rKp/a85vM+ij3ugTsTfeyafZcDwBJLloIUeVRXiCNolR3/ivxD8le1zlbFfT+9OvPL/4BuCJdfZe0pRWwRb9qhu0JTnPmrCTDY/6xnGdcrnh6Ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=souE4j29; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1777141170; c=relaxed/simple;
+	bh=7NI+kyEAuv88aboJndPXVzSWW6x8YPO26PFJcyR5N2Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Af1V+umT7crYg0i9XcmzKa1atgCAWMBgGwVQZ2+rdU6Bso+/5aPKg8jne9fN7y1O974TMdp1k9gLn4oTDJIURU17P8Lhs2GQeMMevqJJZr1i+Zjclg/H6B5d+i1kjpizq4JgZXKBHRwilcBSOCAStxeZoxbNeEn9LsRsn7ZEyCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Y89TVYmA; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="souE4j29"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C49EEC2BCB3;
-	Sat, 25 Apr 2026 18:10:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777140629;
-	bh=4UseIi6/4cEexD8PoYw5ApPhHH+2eEMqOMHJSU0aqFU=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=souE4j29xsJM1GgWAVqf9q8SvLPYZrgzqOXQOdTymqn7x1J6t4b5ZAbPpzsy3e8Op
-	 G2F/V8PFjbYeDqDb8pnDID9ayl99idnpdRZT7Gk5AM0fBF5k+SB66KorlG7jLsfrZd
-	 /Wwl1Gh+k7i7Sezv8xxRhvUb7cAhbH/czeZ6umaqKXqqoIk9C2OyKLPqn1JABiWlvN
-	 D2WSkdb9Z0prqwfIvvxw2uxP6iPYjkilxehiUC4fFBmT+5E6I3cNOI0acqZdvdR+w+
-	 n+tIwJe5G16aJaJuPWoAJYodqG9p0sLbZdWGxUJTOtRt00XkJg9DrkpmfXUxcTjwOs
-	 ZsCvIC0R/CGRQ==
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Y89TVYmA"
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-672645dbfeaso9961613a12.0
+        for <linux-clk@vger.kernel.org>; Sat, 25 Apr 2026 11:19:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1777141168; x=1777745968; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=KIgSYeBMSxdwk12mHWLmmWSRABbpmkyXaWtiAj6PwkA=;
+        b=Y89TVYmA6weXZBM6lB68EpWVLa9qgXG/o8qCi9XOI68RZ3UB15fnW9O4GXRNwXl/Yg
+         6wNCpDLlcjygcnGso0n1pGDB7TF0zf+U9y8J35ITkKifBaAj+5Y3bLCUXuREBcguJNfz
+         sR4GzgAVd67cSAG5d+hMUDskYzmdHZE3rKKH8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777141168; x=1777745968;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KIgSYeBMSxdwk12mHWLmmWSRABbpmkyXaWtiAj6PwkA=;
+        b=JuJJWd8ENZVJpMMhEcihLKWLcxkmCuSQGjw/3HTy5ljegjoEbMfwec9rUrGltW1qSq
+         Qz3/3wki75hknFtpiHMmNYdDoV6C7guAeGYLOkfnk+5Eko79Hlcexkq89wFZLuuJ7xCG
+         /dhWOIdJA/HP1+DsbJ23/NUo7uXTlJZA1p1/0rkSHtK6kV79VmbHqviWrn8Rj1SDPaXN
+         ch9Aom0OK4QyYLlT2fokgLsAz9piVpu1qiTAYqTgFO1g0yLMfuX7qZ0L5rDx8hNpq+eP
+         0fGgS/OTybn/eX+fAoxeYaub3pYgvDytNP4OJj4oEgXYeVp2V689EgtDHGjbDimaYTAF
+         yMTg==
+X-Forwarded-Encrypted: i=1; AFNElJ+njJxvGJ3pEp1sqy39CnDykULOHY8Di1hpDKHB4xUH9NviGB1aRFU9H467HtaTGYQrOpCFP/z0vEA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypHvGJAGRg5cbIVnBSyV49iWki1xb1YclhmZ63UoJ8mJMvhjWE
+	99X80Huf6DgDwiXg8HAon/DllYBGI1Es/DJBs3TVoVnSbd52wbm3t1SUd4/bc+DfmzduarvhtY5
+	BKizPRNI=
+X-Gm-Gg: AeBDieuCaz2HeOMSt3pMHMkK1CCvVNPrZuvppKcjBSVW5uazlnFZL4KYB2UcYoTGPhG
+	Ml0nyzVwfVBRd/3/bvkc9WSA3yfJnon72DC4BqFQHieRSvL277aM5f1Rx9qAA3sFq2rGU8THKI6
+	0ZilhSaH+eJ/VP3iGHlX31Ut/3OVIOUA1PG8INme5YzXPT0WKvNaoJau2z2xWp6wRifWx6JmL3z
+	wcEiACNefWu6evzMuRCMeWS705/LaEUCobQ3Nepx7vzNZIwlGzvVR4gWaO6FgMYe5QPzRSYa1hm
+	B1DVccdT0bwXN/seUku2KYe/F7s56gzoQGX4TZU8576v8oNQTdRq/XA6/S0ibxyEM/vZYattZYa
+	AhKvR+zgor8yhZtpn+nlGmGiZYFjwB9ovePT54+cWYYy8iZKxFAjt9IQ/egtxFfrDeiaSuJtem9
+	p/cNwduTDi/LNJieSkVgrpU8t1vEJouNTzK450ietGz4IOqOY3k027x+TqRegaJxb0kEWgRFxVc
+	dBaiIaOz2s=
+X-Received: by 2002:a17:907:980b:b0:bae:456f:fbb2 with SMTP id a640c23a62f3a-bae457f483emr315366466b.23.1777141167647;
+        Sat, 25 Apr 2026 11:19:27 -0700 (PDT)
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ba455045652sm914332366b.51.2026.04.25.11.19.26
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 25 Apr 2026 11:19:26 -0700 (PDT)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-676fec7e946so5863983a12.3
+        for <linux-clk@vger.kernel.org>; Sat, 25 Apr 2026 11:19:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ9d0ZSm4HtMx1EHoxgAtTwEZRd7AT8C8eNjxvdGIBGOYizC20B3REn8mpIObNW1LCGzlEqPEyTlvd0=@vger.kernel.org
+X-Received: by 2002:a05:6402:1598:b0:671:4f9c:f664 with SMTP id
+ 4fb4d7f45d1cf-672bfde1bd4mr15623685a12.27.1777141165834; Sat, 25 Apr 2026
+ 11:19:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20260407095027.2625516-1-johan@kernel.org>
-References: <20260407095027.2625516-1-johan@kernel.org>
-Subject: Re: [PATCH] clk: rk808: fix OF node reference imbalance
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>, stable@vger.kernel.org, Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Johan Hovold <johan@kernel.org>, Heiko Stuebner <heiko@sntech.de>
-Date: Sat, 25 Apr 2026 11:10:27 -0700
-Message-ID: <177714062701.5403.1177541832751457755@lazor>
-User-Agent: alot/0.12
+References: <20260420183208.2287306-1-sboyd@kernel.org> <CAHk-=wiKrwKPye8PRhvHxY3DB6cq+_Xby-OAigJOrcPHEZbDjQ@mail.gmail.com>
+ <177713823341.5403.13182816167027469071@lazor>
+In-Reply-To: <177713823341.5403.13182816167027469071@lazor>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 25 Apr 2026 11:19:09 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjmNv2gvfLVM59LbTSzUQf12Ss8JfJ5kYJrKumGPn3xxw@mail.gmail.com>
+X-Gm-Features: AQROBzCZOmDPRngJ5tyvX2atyM5O7olvfss5gFMYlCMfSu4tBON3AXCSDZGQQ5g
+Message-ID: <CAHk-=wjmNv2gvfLVM59LbTSzUQf12Ss8JfJ5kYJrKumGPn3xxw@mail.gmail.com>
+Subject: Re: [GIT PULL] clk changes for the merge window
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Quoting Johan Hovold (2026-04-07 02:50:27)
-> The driver reuses the OF node of the parent multi-function device but
-> fails to take another reference to balance the one dropped by the
-> platform bus code when unbinding the MFD and deregistering the child
-> devices.
->=20
-> Fix this by using the intended helper for reusing OF nodes.
->=20
-> Fixes: 2dc51ca822e4 ("clk: RK808: Reduce 'struct rk808' usage")
-> Cc: stable@vger.kernel.org      # 6.5
-> Cc: Sebastian Reichel <sebastian.reichel@collabora.com>
-> Signed-off-by: Johan Hovold <johan@kernel.org>
-> ---
-
-+Heiko
-
->  drivers/clk/clk-rk808.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/clk-rk808.c b/drivers/clk/clk-rk808.c
-> index f7412b137e5e..5a75b5c91555 100644
-> --- a/drivers/clk/clk-rk808.c
-> +++ b/drivers/clk/clk-rk808.c
-> @@ -153,7 +153,7 @@ static int rk808_clkout_probe(struct platform_device =
-*pdev)
->         struct rk808_clkout *rk808_clkout;
->         int ret;
-> =20
-> -       dev->of_node =3D pdev->dev.parent->of_node;
-> +       device_set_of_node_from_dev(dev, dev->parent);
-> =20
->         rk808_clkout =3D devm_kzalloc(dev,
->                                     sizeof(*rk808_clkout), GFP_KERNEL);
-> --=20
-> 2.52.0
+On Sat, 25 Apr 2026 at 11:06, Stephen Boyd <sboyd@kernel.org> wrote:
 >
+> When I used 'git request-pull' it gave me a super wrong diffstat. I
+> forgot to add --summary to the diff command above so I didn't replace
+> the super wrong summary from request-pull. Sorry.
+
+Ahh. I tried to figure out how you could possibly have gotten that end
+result, but mixing two different diff runs does explain it..
+
+            Linus
