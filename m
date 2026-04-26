@@ -1,32 +1,43 @@
-Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.8])
+Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E35A33EAF9;
-	Sun, 26 Apr 2026 14:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.8
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777213882; cv=none; b=B4oCBBO6iYDhQ8giyyXVRSDYh7nFHxxmC5tHnCaseh2r23yaOGze81USIKuocMa53Q7oXXR+rkl2ejKCqlgdvSAXI5oemgKUwTmSKoqFCSgucPgl2Op4F+HM6R9c+w1r9dV+AysgYZR/jqr8rMPJtTV1pnQHWiF8AjYogHW77aY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777213882; c=relaxed/simple;
-	bh=+bORunN9DihtZKlWmsbyAGvFX7FDw4aL3SCDlhq8TbQ=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38C823ED6A;
+	Sun, 26 Apr 2026 15:48:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1777218535; cv=pass; b=Qv8aKj5fGaFmWEhNe+XjVcUhhLWSFDDOEWKW4s1AoBNA0H2bIgT83X0Nvb5zlHZnw6UmotABpkVoTH0jZr2yWaHv3lQCnw25hYX+v9B42CKi9Ft/KhXx+XW2Bz0GZiySwniobgHdtqVA9UtGg1W+s05BGuO7LELtJ8XEvBrKTv4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1777218535; c=relaxed/simple;
+	bh=yoYfzf58sRjZKrl8mS8TnVn4FWNBE4yMA33oFOMS0Yw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Iq9JWsNU47zulAjTpwkWEIwLER16AYo9OwggxexnsmZK24z0Yql8/OeoVS6CER/gIXBb6dC6A3qQ/+NKhsAKiNVFK1heGf81ZC4Zv+OLUOuvyDJzbyjCyCYTunE0oZN64Bmuk3cpLSDORbjXDbR0JqMZ/wHKebfn45k23jGSpNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=GJr6WW1F; arc=none smtp.client-ip=117.135.210.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+	 In-Reply-To:Content-Type; b=Mv9HTfuV5+g+ym3zKcC4PiKH1EbRG78lPK9XPbJkNaUlclG01lserXQ3H6n+mQPLZpB4tXXzD1/JgJLDvwf7DaptA/hZUoj7Zs4E75O9wKJhi2G4wyIfRCT6HAfxC3ZSVcCs4tJf0wBXnagc3b93yIqd1KCMxf6y8hDwkK0Ir/M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=SKIFxUuY; arc=pass smtp.client-ip=136.143.188.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="GJr6WW1F"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=E9QmRybu2HwGPax/8gg8zi6sH9jkn1UXfiltYEM9caY=;
-	b=GJr6WW1FFj6/yFQO/D5b9Z35SC7l1yTBhxhkj4vkJEDWXnmtfwNBf1YT1GYzae
-	P0Gt/eizsqh6vY6sMw6Mw1boLItuuLSQUjjE1+H0HF3nkXamKKPRxDHvIBIeT+aq
-	TIDE6L1lz40dD6JtPB2Ok5ChCODfw8DCkX8wZ/USbRfTA=
-Received: from [IPV6:2408:8210:480a:2590:ec66:74e8:68a7:a44b] (unknown [])
-	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wD3lxKMIO5pdslVAQ--.7227S2;
-	Sun, 26 Apr 2026 22:26:22 +0800 (CST)
-Message-ID: <c646232a-f2bf-439a-88c9-737dde9b1725@126.com>
-Date: Sun, 26 Apr 2026 22:26:20 +0800
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="SKIFxUuY"
+ARC-Seal: i=1; a=rsa-sha256; t=1777218519; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=JjibXD4sygWMo+Df6YqQusPH4UQWQxa0cfZ92AWP2cOIrfJjzWNZSGck5GXrBPUVFL6kXaaMKaLBcs0RJ8yI3POyONVfeosKmuO1iyd4A3WjssyY7FJ/qCxsgpC1Scn63Cs9etCAmKoyJxihlnbnCQOW370m/bNgfM8LBlItfwM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1777218519; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Ijb+gmFHkCxXaaFAPSl6qTeoZPHOS1bdIoKGk2/fFEQ=; 
+	b=PH7LUDD7OTn9IqspVS8DnuazrrhOmvpEtGeugbQUf3hl7+XQR+iKC2I67vc2cqB5JhWV9h8h5u50/2GraCrKCLEQVI3M7v5EyIwH9+uHRHHbBlUeZmqokbmuXqBcIfhm30iel2QcF8hkshY4OlVFil961B2zDk5/w+q8PYGA7zk=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
+	dmarc=pass header.from=<kingxukai@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1777218519;
+	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=Ijb+gmFHkCxXaaFAPSl6qTeoZPHOS1bdIoKGk2/fFEQ=;
+	b=SKIFxUuYoBnyuJv7aUzdbDmNu8IIssTdNx2WpfupC7FoxuR8le/p4OK4bt1mGej9
+	YSTKbh7HvQ0CGLld8haJbTyNQ1YPFQnclM7XrvqdZhDAEdZ3rNlLi84f5m0KAc5snqF
+	5RO9d234fj3mq7kMUzPgR0ZlacvhBYrvjPzoyZAw=
+Received: by mx.zohomail.com with SMTPS id 1777218517046578.5353745649002;
+	Sun, 26 Apr 2026 08:48:37 -0700 (PDT)
+Message-ID: <6e17bfeb-8cc6-4eca-8a94-983444aaef35@zohomail.com>
+Date: Sun, 26 Apr 2026 23:48:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -34,243 +45,175 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/2] kernel/module: Decouple klp and ftrace from
- load_module
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
- Petr Mladek <pmladek@suse.com>
-Cc: Petr Pavlu <petr.pavlu@suse.com>, rafael@kernel.org, lenb@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, viresh.kumar@linaro.org,
- agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com,
- bmarzins@redhat.com, song@kernel.org, yukuai@fnnas.com, linan122@huawei.com,
- jason.wessel@windriver.com, danielt@kernel.org, dianders@chromium.org,
- horms@kernel.org, davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, paulmck@kernel.org, frederic@kernel.org,
- mcgrof@kernel.org, da.gomez@kernel.org, samitolvanen@google.com,
- atomlin@atomlin.com, jpoimboe@kernel.org, jikos@kernel.org, mbenes@suse.cz,
- joe.lawrence@redhat.com, rostedt@goodmis.org, mark.rutland@arm.com,
- mathieu.desnoyers@efficios.com, linux-modules@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-pm@vger.kernel.org, live-patching@vger.kernel.org,
- dm-devel@lists.linux.dev, linux-raid@vger.kernel.org,
- kgdb-bugreport@lists.sourceforge.net, netdev@vger.kernel.org
-References: <20260413080701.180976-1-chensong_2000@189.cn>
- <1191caf5-6a61-4622-a15e-854d3701f4fc@suse.com>
- <a35f5f94-7d5a-4347-974b-b270c89ef241@189.cn>
- <1db425bf-58a9-4768-8c38-3ae25d7662a5@suse.com>
- <aeD2_FrFL6E3dbAC@pathway.suse.cz>
- <20260420112707.aa3627ca9f975eeaf7d8ea0e@kernel.org>
+Subject: Re: [PATCH v12 0/3] riscv: canaan: Add support for K230 clock
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Conor Dooley <conor@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ Samuel Holland <samuel.holland@sifive.com>,
+ Troy Mitchell <TroyMitchell988@gmail.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>
+References: <20260425-b4-k230-clk-v12-0-7d5ced1f5da8@zohomail.com>
+From: Xukai Wang <kingxukai@zohomail.com>
 Content-Language: en-US
-From: Song Chen <chensong_2000@126.com>
-In-Reply-To: <20260420112707.aa3627ca9f975eeaf7d8ea0e@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wD3lxKMIO5pdslVAQ--.7227S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3JrW8Wry8Gr4xKw15uFy3Jwb_yoW3GFWDpF
-	9xWF17Gr4DXr9rCa1Ivw1UZr17K34UGr4jqr15GFyxGryqyFn7JFy8Gr109FykJrWkZry2
-	qr4UAry7A345JrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UG-eOUUUUU=
-X-CM-SenderInfo: xfkh02prqjsjqqqqqiyswou0bp/xtbBsw5BwGnuII7qoQAA3e
-
-Hi,
+In-Reply-To: <20260425-b4-k230-clk-v12-0-7d5ced1f5da8@zohomail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Feedback-ID: zu08011227633b5f713e3a517a8598a0a9000010364e0b41babe00eb9193364f041af476389543d9a6119019:ZohoMail
+X-Zoho-CM-AccountID: 2ee5dd3c83366259b2ba1e9826250ffebed1ef2dd213857d649ad25aba73b429
+X-ZohoMailClient: External
 
 
-On 4/20/26 10:27, Masami Hiramatsu (Google) wrote:
-> On Thu, 16 Apr 2026 16:49:32 +0200
-> Petr Mladek <pmladek@suse.com> wrote:
-> 
->> On Thu 2026-04-16 13:18:30, Petr Pavlu wrote:
->>> On 4/15/26 8:43 AM, Song Chen wrote:
->>>> On 4/14/26 22:33, Petr Pavlu wrote:
->>>>> On 4/13/26 10:07 AM, chensong_2000@189.cn wrote:
->>>>>> diff --git a/include/linux/module.h b/include/linux/module.h
->>>>>> index 14f391b186c6..0bdd56f9defd 100644
->>>>>> --- a/include/linux/module.h
->>>>>> +++ b/include/linux/module.h
->>>>>> @@ -308,6 +308,14 @@ enum module_state {
->>>>>>        MODULE_STATE_COMING,    /* Full formed, running module_init. */
->>>>>>        MODULE_STATE_GOING,    /* Going away. */
->>>>>>        MODULE_STATE_UNFORMED,    /* Still setting it up. */
->>>>>> +    MODULE_STATE_FORMED,
->>>>>
->>>>> I don't see a reason to add a new module state. Why is it necessary and
->>>>> how does it fit with the existing states?
->>>>>
->>>> because once notifier fails in state MODULE_STATE_UNFORMED (now only ftrace has someting to do in this state), notifier chain will roll back by calling blocking_notifier_call_chain_robust, i'm afraid MODULE_STATE_GOING is going to jeopardise the notifers which don't handle it appropriately, like:
->>>>
->>>> case MODULE_STATE_COMING:
->>>>       kmalloc();
->>>> case MODULE_STATE_GOING:
->>>>       kfree();
->>>
->>> My understanding is that the current module "state machine" operates as
->>> follows. Transitions marked with an asterisk (*) are announced via the
->>> module notifier.
->>>
->>> ---> UNFORMED --*> COMING --*> LIVE --*> GOING -.
->>>          ^            |                     ^    |
->>>          |            '---------------------*    |
->>>          '---------------------------------------'
->>>
->>> The new code aims to replace the current ftrace_module_init() call in
->>> load_module(). To achieve this, it adds a notification for the UNFORMED
->>> state (only when loading a module) and introduces a new FORMED state for
->>> rollback. FORMED is purely a fake state because it never appears in
->>> module::state. The new structure is as follows:
->>>
->>>          ,--*> (FORMED)
->>>          |
->>> --*> UNFORMED --*> COMING --*> LIVE --*> GOING -.
->>>          ^            |                     ^    |
->>>          |            '---------------------*    |
->>>          '---------------------------------------'
->>>
->>> I'm afraid this is quite complex and inconsistent. Unless it can be kept
->>> simple, we would be just replacing one special handling with a different
->>> complexity, which is not worth it.
->>
->>>>>
->>>>>> +    if (err)
->>>>>> +        goto ddebug_cleanup;
->>>>>>          /* Finally it's fully formed, ready to start executing. */
->>>>>>        err = complete_formation(mod, info);
->>>>>> -    if (err)
->>>>>> +    if (err) {
->>>>>> +        blocking_notifier_call_chain_reverse(&module_notify_list,
->>>>>> +                MODULE_STATE_FORMED, mod);
->>>>>>            goto ddebug_cleanup;
->>>>>> +    }
->>>>>>    -    err = prepare_coming_module(mod);
->>>>>> +    err = prepare_module_state_transaction(mod,
->>>>>> +                MODULE_STATE_COMING, MODULE_STATE_GOING);
->>>>>>        if (err)
->>>>>>            goto bug_cleanup;
->>>>>>    @@ -3522,7 +3519,6 @@ static int load_module(struct load_info *info, const char __user *uargs,
->>>>>>        destroy_params(mod->kp, mod->num_kp);
->>>>>>        blocking_notifier_call_chain(&module_notify_list,
->>>>>>                         MODULE_STATE_GOING, mod);
->>>>>
->>>>> My understanding is that all notifier chains for MODULE_STATE_GOING
->>>>> should be reversed.
->>>> yes, all, from lowest priority notifier to highest.
->>>> I will resend patch 1 which was failed due to my proxy setting.
->>>
->>> What I meant here is that the call:
->>>
->>> blocking_notifier_call_chain(&module_notify_list, MODULE_STATE_GOING, mod);
->>>
->>> should be replaced with:
->>>
->>> blocking_notifier_call_chain_reverse(&module_notify_list, MODULE_STATE_GOING, mod);
->>>
->>>>
->>>>>
->>>>>> -    klp_module_going(mod);
->>>>>>     bug_cleanup:
->>>>>>        mod->state = MODULE_STATE_GOING;
->>>>>>        /* module_bug_cleanup needs module_mutex protection */
->>>>>
->>>>> The patch removes the klp_module_going() cleanup call in load_module().
->>>>> Similarly, the ftrace_release_mod() call under the ddebug_cleanup label
->>>>> should be removed and appropriately replaced with a cleanup via
->>>>> a notifier.
->>>>>
->>>>      err = prepare_module_state_transaction(mod,
->>>>                  MODULE_STATE_UNFORMED, MODULE_STATE_FORMED);
->>>>      if (err)
->>>>          goto ddebug_cleanup;
->>>>
->>>> ftrace will be cleanup in blocking_notifier_call_chain_robust rolling back.
->>>>
->>>>      err = prepare_module_state_transaction(mod,
->>>>                  MODULE_STATE_COMING, MODULE_STATE_GOING);
->>>>
->>>> each notifier including ftrace and klp will be cleanup in blocking_notifier_call_chain_robust rolling back.
->>>>
->>>> if all notifiers are successful in MODULE_STATE_COMING, they all will be clean up in
->>>>   coming_cleanup:
->>>>      mod->state = MODULE_STATE_GOING;
->>>>      destroy_params(mod->kp, mod->num_kp);
->>>>      blocking_notifier_call_chain(&module_notify_list,
->>>>                       MODULE_STATE_GOING, mod);
->>>>
->>>> if  something wrong underneath.
->>>
->>> My point is that the patch leaves a call to ftrace_release_mod() in
->>> load_module(), which I expected to be handled via a notifier.
->>
->> I think that I have got it. The ftrace code needs two notifiers when
->> the module is being loaded and two when it is going.
->>
->> This is why Sond added the new state. But I think that we would
->> need two new states to call:
->>
->>      + ftrace_module_init() in MODULE_STATE_UNFORMED
->>      + ftrace_module_enable() in MODULE_STATE_FORMED
->>
->> and
->>
->>      + ftrace_free_mem() in MODULE_STATE_PRE_GOING
->>      + ftrace_free_mem() in MODULE_STATE_GOING
->>
->>
->> By using the ascii art:
->>
->>   -*> UNFORMED -*> FORMED -> COMING -*> LIVE -*> PRE_GOING -*> GOING -.
->>                |          |         |                ^           ^    ^
->>                |          |         '----------------'           |    |
->>                |          '--------------------------------------'    |
->>                '------------------------------------------------------'
->>
->>
->> But I think that this is not worth it.
-> 
-> Agree.
-> 
-> If this needs to be ordered so strictly, why we will use a "single"
-> module notifier chain for this complex situation?
-> 
-> I think the notifier call chain is just for notice a single signal,
-> instead of sending several different signals, especially if there is
-> any dependency among the callbacks.
-> 
-> If notification callbacks need to be ordered, they are currently
-> sorted by representing priority numerically, but this is quite
-> fragile for updating. It has to look up other registered priorities
-> and adjust the order among dependencies each time. For this reason,
-> this mechanism is not suitable for global ordering. (It's like line
-> numbers in BASIC.)
-> It is probably only useful for representing dependencies between
-> two components maintained by the same maintainer.
-> 
-> I'm against a general-purpose system that makes everything modular.
-> It unnecessarily complicates things. If there are processes that
-> require strict ordering, especially processes that must be performed
-> before each stage as part of the framework, they should be called
-> directly from the framework, not via notification callbacks.
-> 
-> This makes it simpler and more robust to maintain.
-> 
-> Only the framework's end users should utilize notification callbacks.
-> 
-> Thank you,
-> 
-> 
+On 2026/4/25 17:29, Xukai Wang wrote:
+> This patch series adds clock controller support for the Canaan Kendryte
+> K230 SoC. The K230 SoC includes an external 24MHz OSC, 4 internal
+> PLLs and an external pulse input, with the controller managing these
+> sources and their derived clocks.
+>
+> The clock tree and hardware-specific definition can be found in the
+> vendor's DTS [1],
+> and this series is based on the K230 initial series [2].
+>
+> Link: https://github.com/ruyisdk/linux-xuantie-kernel/blob/linux-6.6.36/arch/riscv/boot/dts/canaan/k230_clock_provider.dtsi [1]
+> Link: https://lore.kernel.org/linux-clk/tencent_F76EB8D731C521C18D5D7C4F8229DAA58E08@qq.com/ [2]
+>
+> Co-developed-by: Troy Mitchell <TroyMitchell988@gmail.com>
+> Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
+> Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
+>
+> ---
+> Changes in v12:
+> - Rebase onto linux-next (next-20260421).
+> - Migrate from deprecated round_rate() clk_ops to determine_rate() API.
+> - dt-bindings: Drop redundant "bindings for" in commit subject.
+> - Link to v11: https://lore.kernel.org/r/20260214-b4-k230-clk-v11-0-6de365489b89@zohomail.com
+Hi Stephen,
 
-my motivation is to decouple ftrace and klp from module loader and make 
-blocking_notifier_chain more generic, but it doesn't become generic 
-completely. I understand your and Petr's comments and agree.
+I hope this email finds you well. I am writing to politely inquire about
+the status of the Canaan K230 clock controller driver patch series.
 
-Thanks
+It has been approximately one and a half years since I first submitted
+this series, and it has now reached version 12. Most of the intermediate
+versions contained only minor adjustments and rebases, and I have been
+resending it periodically without receiving any review feedback.
 
-Best regards
+I would greatly appreciate it if you could let me know whether this
+series is ready for merging, or if there are any specific issues that
+need to be addressed. I am ready to make any required changes immediately.
 
-Song
-
->>
->> Best Regards,
->> Petr
->>
-> 
-> 
+I apologize for the intrusion and thank you for your time and hard work
+maintaining the clock subsystem.
+>
+> Changes in v11:
+> - Rename hs_hclk_high_src to hs_hclk_high and hs_hclk_src to hs_hclk.
+> - Rebase base-commit to linux-next.
+> - Update prerequisite-patch-id.
+> - Link to v10: https://lore.kernel.org/r/20260116-b4-k230-clk-v10-0-de59033c5d30@zohomail.com
+>
+> Changes in v10:
+> - Drop clock node: cpu1_apb_rate.
+> - Rename hs_ospi_src to hs_ssi0.
+> - Rename fixed clocks format in dts.
+> - Fix missing clk member registration in driver.
+> - Fix incorrect clk ID: k230_cpu1_src_rate → K230_CPU1_SRC_RATE.
+> - Fix bit index of hs_hclk_src_gate: 1 → 0.
+> - Add CLK_IS_CRITICAL to CPU-related gate clocks.
+> - Update parent clocks: display_clkext_rate, sec_apb_gate, ai_axi_gate,
+> cpu1_src_mux and hs_sd_card_src_rate.
+> - Link to v9: https://lore.kernel.org/r/20251127-b4-k230-clk-v9-0-3aa09e17faf5@zohomail.com
+>
+> Changes in v9:
+> - Rebase base-commit to v6.18-rc1
+> - Simplified PLL field extraction with FIELD_GET() macro
+> - Drop MODULE_DEVICE_TABLE for k230_clk_ids
+> - Replace k230_clk_find_approximate_mul_div's step with
+>   Rational_best_approximation
+> - Reorder declaration and defination for clk_ops
+> - Link to v8: https://lore.kernel.org/r/20250905-b4-k230-clk-v8-0-96caa02d5428@zohomail.com
+>
+> Changes in v8:
+> - Rename dts node name "timer_pulse_in" to "clock-50m"
+> - Drop redundant comment and 'minItems' of hardware in dt-binding.
+> - Link to v7: https://lore.kernel.org/r/20250730-b4-k230-clk-v7-0-c57d3bb593d3@zohomail.com
+>
+> Changes in v7:
+> - Rename K230_PLL_STATUS_MASK to K230_PLL_LOCK_STATUS_MASK
+> - Add clkdev for PLLs to register lookup
+> - Add macros to generate repeat variables definition
+> - Refine the definitions of k230 clocks
+> - Split composite clks into rate, gate, mux, fixed_factor clk
+> - Replace k230_clk_hw_onecell_get with of_clk_hw_onecell_get for
+>   clock provider
+> - Drop k230_sysclk and use clk_mux, clk_gate and clk_fixed_factor
+>   as the data structures.
+> - Replace one loop registration with individual registration for
+>   each type.
+> - Link to v6: https://lore.kernel.org/r/20250415-b4-k230-clk-v6-0-7fd89f427250@zohomail.com
+>
+> Changes in v6:
+> - Remove some redundant comments in struct declaration.
+> - Replace the Vendor's code source link with a new one.
+> - Link to v5: https://lore.kernel.org/r/20250320-b4-k230-clk-v5-0-0e9d089c5488@zohomail.com
+>
+> Changes in v5:
+> - Fix incorrect base-commit and add prerequisite-patch-id.
+> - Replace dummy apb_clk with real ones for UARTs.
+> - Add IDs of UARTs clock and DMA clocks in the binding header.
+> - Replace k230_clk_cfgs[] array with corresponding named variables.
+> - Remove some redundant checks in clk_ops.
+> - Drop the unnecessary parenthesis and type casts.
+> - Modify return value handling in probe path to avoid redundant print.
+> - Link to v4: https://lore.kernel.org/r/20250217-b4-k230-clk-v4-0-5a95a3458691@zohomail.com
+>
+> Changes in v4:
+> - Remove redundant onecell_get callback and add_provider function
+> for pll_divs.
+> - Modify the base-commit in cover letter.
+> - Link to v3: https://lore.kernel.org/r/20250203-b4-k230-clk-v3-0-362c79124572@zohomail.com
+>
+> Changes in v3:
+> - Reorder the defination and declaration in drivers code.
+> - Reorder the properties in dts node.
+> - Replace global variable `k230_sysclk` with dynamic memory allocation.
+> - Rename the macro K230_NUM_CLKS to K230_CLK_NUM.
+> - Use dev_err_probe for error handling.
+> - Remove unused includes.
+> - Link to v2: https://lore.kernel.org/r/20250108-b4-k230-clk-v2-0-27b30a2ca52d@zohomail.com
+>
+> Changes in v2:
+> - Add items and description.
+> - Rename k230-clk.h to canaan,k230-clk.h
+> - Link to v1: https://lore.kernel.org/r/20241229-b4-k230-clk-v1-0-221a917e80ed@zohomail.com
+>
+> ---
+> Xukai Wang (3):
+>       dt-bindings: clock: Add Canaan K230 clock controller
+>       clk: canaan: Add clock driver for Canaan K230
+>       riscv: dts: canaan: Add clock definition for K230
+>
+>  .../devicetree/bindings/clock/canaan,k230-clk.yaml |   59 +
+>  arch/riscv/boot/dts/canaan/k230-canmv.dts          |   11 +
+>  arch/riscv/boot/dts/canaan/k230-evb.dts            |   11 +
+>  arch/riscv/boot/dts/canaan/k230.dtsi               |   26 +-
+>  drivers/clk/Kconfig                                |    6 +
+>  drivers/clk/Makefile                               |    1 +
+>  drivers/clk/clk-k230.c                             | 2452 ++++++++++++++++++++
+>  include/dt-bindings/clock/canaan,k230-clk.h        |  220 ++
+>  8 files changed, 2778 insertions(+), 8 deletions(-)
+> ---
+> base-commit: af98e93c5c39e6d0b87b42f0a32dd3066f795718
+> change-id: 20241206-b4-k230-clk-925f33fed6c2
+> prerequisite-patch-id: 9a2d01f55574b538dad572e193f81c44661f0853
+>
+> Best regards,
+> --  
+> Xukai Wang <kingxukai@zohomail.com>
+>
+-- 
+Best regards,
+Xukai Wang
 
