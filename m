@@ -1,256 +1,127 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70FBB2D12EE;
-	Sun, 26 Apr 2026 23:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 927851917F0;
+	Mon, 27 Apr 2026 01:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777245110; cv=none; b=EgPiOE+Isjxd1nGZycIKgR2WuIh+WZjzLB6sJFT04VfPU55Hr64HCGGtQ+9DCV4R2vjy9Ds2fmjKUb7kBKwIWDbxje9usjdN8gd8mYClSke39sAYvcBz5zYyndmwkEKAxuyPbcixaNhxLqmRg/EmS1vkLFDOElu1n6WoHSIEwgU=
+	t=1777252375; cv=none; b=Svd4U4QK/Nz3kcXPY5YB4c5Dmr+mB/TfLaamMMG0m411I5b4mvPzdPIXbqLVGkm0x/hYbd3NwtnaGc+WxhJWWlWDe8Jwz0Viad8J900O1NCqTQby5FBJxQCpuBiF7e7VEzttDccGK8eunUUQfioQKx0eavU+RtkWewZPojx/tIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777245110; c=relaxed/simple;
-	bh=JXnG5gM43KDfdXTQxTdUvNUB0kaa5mek58fQuwFm/hk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ozcK1m9Kq3o7XNpai2nNQIam5uodjYTuGGo1LVxGBtHm2vSSWaJAGI6ERFti/2RGkDlv2xmSjkSrqw4j3t83xYwzV+ypIyp8iFzwJN4dB5VQjatJX7qTd6cA4NaHzDWUeWX0FbNb+UGHE9ipPI9IuJxhzUmcp27d0Gb9UY6gwzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=n7AajchL; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	s=arc-20240116; t=1777252375; c=relaxed/simple;
+	bh=voPRn9jezyFPizf/WKNRYjidyxo5ge6q1b7zHR9UuzU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VD93k3aPIB1ZvSySgqYAq/42lx+m7W/4FCsp5SM5j49n+Qnh7ZQcfGf9I0y5fWpj4f3qjmlmdAupNfbP53GJ+0ULsVT5KptX2vHl55c2nJhMqvhkY9gK1QCUhB1ffze+58G0iJhcBGSffYtbaNaFDaS/lMWr7ndkWcnhbr1AkTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=rJqb2EOV; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=eqb8BHgg; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="n7AajchL"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C94AE1682;
-	Sun, 26 Apr 2026 16:03:09 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E31683F763;
-	Sun, 26 Apr 2026 16:03:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1777244595; bh=JXnG5gM43KDfdXTQxTdUvNUB0kaa5mek58fQuwFm/hk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n7AajchLwbx/0BmM/IQ3Ui56MqRfDBKADMu4Q+OOxX5NgT1u9/A9ZgSemUzLSTyFJ
-	 r9Kfecxi0k2P871WuxNmv4FIOfjWyx42fDTL8cNWFfIE5hZrtRiufhhgMBSiwo7KHb
-	 Emb68D8xzTo0/aRfbFMbu7dIZAOteXQm1lkqRfJE=
-Date: Mon, 27 Apr 2026 00:03:03 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	Sudeep Holla <sudeep.holla@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Saravana Kannan <saravanak@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Ulf Hansson <ulfh@kernel.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH/RFC 05/14] firmware: arm_scmi: Add scmi_get_base_info()
-Message-ID: <ae6Zp54NhKlVes8J@pluto>
-References: <cover.1776793163.git.geert+renesas@glider.be>
- <72e2a0e7a5abda02fe36b3f5851842f7a77b2593.1776793163.git.geert+renesas@glider.be>
- <aekXUvIPb8nkhdKu@pluto>
- <CAMuHMdWJvMH+a1RqozbaCxxH_8M569JcruTFa8PW+87FysnjHw@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="rJqb2EOV";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="eqb8BHgg"
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4g3lt53xPVz9tHp;
+	Mon, 27 Apr 2026 03:12:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1777252365;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=n/vau+b8Z6KXPKxb16NGp/J2UsKe/YefmAdKbBEzfzI=;
+	b=rJqb2EOVxm7zLUY4fPO9GnFcM3dw6TF/pgQAlMOJhi2HY+fHRGEb1V48IERordu2LOJ5lq
+	Jxb4ogzTB0a0eUvKtKYsqBZcGMRiJ61MESefVbChA7FQz7NRRDVaiyAsVw+fL6tHcfclG0
+	AbrMRWgE3PSbC5KNJtOpK/8iRbf+YAxV1lcAsi5yI9KUrR5+4yJMa+eJEdUf+/lDm9JL7D
+	xM+FJUCRkcMf2Un0PrOdIxl9sc1QrniOuN+o8wIMU4IzgY4dK4jP09vcKdQteIgE/HHN+G
+	1iLcLVjb4NZprCXHP/sYLBl0LFyqZVJKStAD7l1TQbH1QQJL+9IXLlnK7eigtg==
+Message-ID: <b3a8bf69-bdd2-4122-93c4-4c4d94240da4@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1777252363;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=n/vau+b8Z6KXPKxb16NGp/J2UsKe/YefmAdKbBEzfzI=;
+	b=eqb8BHggIKW7Id+ffGHthTGnuw06a9FekWbi8S/mMrzYYyEQ4HfPpWFfsMsnX78BOi5Wqv
+	vE5G8hpZEJxNQU5Xbm6EuVsyOn9ydMp3Hi6qpPsuGo18Rv3RCQNJp4HBXCW9JCu4SKTgGe
+	nFS+Sx6/hsowqquk/9Jpx2gm79TwA3PB3uTh+6LdN2uTVhtuRUco5YEiU27TsQ40hxYIdP
+	HABJEi2s0HaC9Fw9eiq1erxE2rwIqtfN1ERyhe69VNXsj1miaTqZ2jZllZ/g+/W03v9ZLd
+	tfRXGTn6z+58/prjLiT3VgG+tN21g3LZH6Tbjbsxdfpi6GMgDz/QKr6JP8Xaew==
+Date: Mon, 27 Apr 2026 02:32:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWJvMH+a1RqozbaCxxH_8M569JcruTFa8PW+87FysnjHw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] ARM: dts: renesas: r8a7740: Add ZT/ZTR trace clock
+ on R-Mobile A1
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm
+ <magnus.damm@gmail.com>, Michael Turquette <mturquette@baylibre.com>,
+ Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20260415233300.457892-1-marek.vasut+renesas@mailbox.org>
+ <20260415233300.457892-4-marek.vasut+renesas@mailbox.org>
+ <20260421-cherubic-urban-beluga-49ee00@quoll>
+ <0f933506-c196-4503-844f-2a375e2cf690@mailbox.org>
+ <161eb29f-2d07-455a-bd74-4f22061b5dfb@kernel.org>
+ <c9ef9d73-6f1b-42ea-b5f0-09fcf904c78e@mailbox.org>
+ <d246edd2-5f9d-4e95-850d-abff175088a6@kernel.org>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <d246edd2-5f9d-4e95-850d-abff175088a6@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: jxpzoosb6bbjrefbcyhnhqa7tzzogyhw
+X-MBO-RS-ID: e708615267761e85859
 
-On Fri, Apr 24, 2026 at 02:08:55PM +0200, Geert Uytterhoeven wrote:
-> Hi Cristian,
+On 4/23/26 4:00 PM, Krzysztof Kozlowski wrote:
 
-Hi Geert,
+Hello Krzysztof,
 
+>>>> "
+>>>> WARNING: DT binding docs and includes should be a separate patch. See:
+>>>> Documentation/devicetree/bindings/submitting-patches.rst
+>>>
+>>> So you did not implement it... Include goes with the binding. Always.
+>>> Look at other commits.
+>> The warning says the exact opposite thing , does it not ?
+>>
+>> Maybe the warning text needs to be updated ?
 > 
-> On Wed, 22 Apr 2026 at 20:45, Cristian Marussi <cristian.marussi@arm.com> wrote:
-> > On Tue, Apr 21, 2026 at 08:11:38PM +0200, Geert Uytterhoeven wrote:
-> > > Currently non-SCMI drivers cannot find out what the specific versions of
-> > > each SCMI provider implementation on the running system are.
-> >
-> > Thanks for your patches....this is not a proper full review of the series,
-> > BUT this patch catched my eye..
-> >
-> > Indeed, yes, it is deliberate that the SCMI version information is NOT
-> > exposed out of the SCMI world, since being the SCMI an attempt to
-> > standardize a common FW interface (as in [1] of course), you should not
-> > know what runs inside the black-box, it should be irrelevant...
-> >
-> > ...indeed the versioning is used inside the SCMI stack to deal properly
-> > with different protocol versions implemented by the server OR to apply
-> > proper quirks when needed, but all the rest should be standard....
-> >
-> > ...you should NOT really behave differently based on the underneath
-> > protocol or firmare implementation version...it is the SCMI stack that
-> > should behave properly, transparently...
-> 
-> Oh well...
-> 
-> > Having said that...I understand that at least it could be useful to be able
-> > to query the SCMI stack to know, even from non-SCMI drivers, WHICH quirks
-> > have been applied/activated at run time...but anything more than that it
-> 
-> I see no need for that, but we can discover which quirks have been
-> applied from the kernel log ;-)
+> The warning is shown for patches mixing stuff, like DTSI+header, so for
+> this context the AND means binding doc plus header are separate FROM
+> this patch. Not separate from each other.
 
-Ok so I may have misunderstood...it seemed to me, glancing through the
-series that you wanted sort of reconfigure other non-SCMI drivers based
-on the SCMI FW version assuming that some quirks were applied BUT also
-that some sort of corrective workaround was needed additionally...so
-what I was saying was that: is not more straightforward to be possibly
-able to check if a quirk has been applied instead of querying the
-version from outside ?
+Oh, thank you for the clarification.
 
-> 
-> > seems to me dangerous and prone to a number of abuses of the SCMI stack
-> > itself...
-> >
-> > (Also...exposing the versions itself means also tracking that bit of info
-> > in more than one place: the quirk framework and your drivers.)
-> 
-> I'll see if I can get everything handled as quirks instead...
-> 
-> > > However, different versions may use different ABIs (e.g. different clock
-> > > IDs), or behave different, requiring remapping or workarounds in other
-> > > drivers.
-> >
-> > ...abuse like this indeed :P ... the SCMI server is supposed to be that
-> > one entity remapping the IDs in the background if the same IDs happen to
-> > be representing different physical resources across a number of distinct
-> > platforms all supported by the same firmware blob...so as to present
-> > a consistent set of contiguos IDs...
-> 
-> In our case it is just a single platform, with different ID number
-> spaces for different firmware versions.
+> To me it is clear, so I don't feel like finding different text. If you
+> find it unclear or confusing, you should propose something better.
 
-Yes understood.
+How about this:
 
-> 
-> > Also because this should be one of the selling point of the SCMI stack
-> > in a virtualized environment: you can ship the same kernel drivers with
-> > the same DT and you know that ID=<N> will always identify the specific
-> > resource that is needed by your driver without worrying about the fact
-> > that in reality in the backstage the effectively managed physical resource
-> > could be different across different platforms, because that does not matter
-> 
-> This sounds strange to me, do I understand it correctly?
-> So the ID should (1) be tied to the use-case, and not to the underlying
-> hardware, and (2) be the same for different platforms?
-> 
-> For (1): Then we must not put these IDs in DT at all, as DT is supposed
->     to describe the hardware (and firmware IDs in DT were IMHO already
->     a stretch before).
-> For (2): How can there be a contiguous list of IDs, as not all platforms
->     may have the same underlying hardware?
->
-
-I would NOT say that an SCMI FW must behave like this regarding IDs, but it
-is a possible SCMI deployed setup that can be useful in virtualized setups
-
-I mean, the DT describes the hardware of course BUT when you refer to
-some of this hardware DT bits from some other subsystem by referencing a
-phandle, even in the non-SCMI world, you are in fact selecting a specific
-resource that fit you use case, right ? Can we say this ?
-I mean you needed that specific clock or regulator that you described
-previously so as to be able to enable some other piece of HW...
-
-Now, the SCMI provides an abstraction on top of this, since you really
-discover domain IDs of a specific class (clocks/regulators etc) you are
-in fact describing an HW abstraction that you then refer with the usual
-phandle...also because there is NOT so much SCMI hardware to describe,
-given that the HW is handled transparently (opaquely really :P) by the
-driver on the FW side...
-
-...you basically obtain such domain ID, usable as phandles through dynamic
-SCMI enumeration so that you can use it all over your DT to make use of such
-resources...
-
-...on top of this, consider that the SCMI server CAN provide to its agents
-a per-agent-view of the world, IOW it can (and should) expose to a specific
-agent ONLY the resources needed by that agent, i.e. it can expose the set
-of resources 1-N to two distinct agents and that does NOT mean that the
-underlying physical resource mapped by ID=3 in both agents has to be
-effectively the same piece of hardware: it could be the case, and this 
-would be useful to exposed and managed properly a shared resource, or
-it could also be that the same ID=3 could refer to completely distinct
-pieces of the same class of hardware...(same protocol same class of
-resource...)
-
-In fact the SCMI server provides an abstraction, sometime a mere illusion
-to the agents...
-
-So in a virtualized ennvironment you could expose the same ID to a pair
-of distinct agents on distinct VMs, so that you can use the same driver
-and same DT despite the fact that maybe the underlying resources are
-distinct pieces of hardware ...
-
-...OR on the other side you could decide to share the same resource with
-different agents (say a clock) and take care, as a server, of armonizing
-conflicting requests from different agents (e.g. by refcounting enable/disable
-across all agents), WITHOUT necessarily need to expose that same resource
-with the same ID to both agents...
-
-...and you can easily draw a parallel from this virtualization dynamic
-scenario to a more static usecase where you have a FW shipped on
-multiple boards and so capable of serving, in fact, multiple distinct
-agents, but this time, just NOT all together like the VM, but one at time
-depending on which board configuration is booted...
-
-....all of this madness of course has a chance to work ONLY if the SCMI
-server takes care to remap such resources properly at build-time or
-run-time as a contiguos set of IDs, based on the expected agents that
-it has to serve
-
-I am, of course, disillusioned enough NOT to believe that many FW were
-shipped around trying to fit this ideal SCMI deployment scenario BUT at
-least we try, kernel side, NOT to ease these kind of design that goes
-pretty much against the SCMI ideas of a system (and the spec to some
-extent if you punch holes in the IDs sets), and even more we try NOT
-to legalize/normalize out-of-spec FW behaviours by fixing the driver,
-where required, and deploying needed quirks to let existing boards survive
-(..and that becomes quickly much more a pain in the ass for us then for the
-FW guys :P)
- 
-> > if the SCMI platform server had properly remapped (at build time/run-time ?)
-> > the resources to your expected ID...alternatively of course you can ship
-> > with different DTs to describe different hardware...BUT remmapping stuff
-> 
-> That is a different issue: as SCMI covers the full platform, not just
-> the SoC, the IDs can be board-specific, and thus should be specified
-> in the board .dts, not in the SoC .dtsi?
-> Then the SoC .dtsi should describe the hardware, and we end up with
-> things like arch/arm/boot/dts/st/stm32mp157a-dk1-scmi.dts?
-> 
-> > in the drivers themselves guessing on the vendor/subvendor/impl_vers
-> > seems a dangerous abuse...
-> 
-> There is no guessing.
-> 
-> > I watched a bit of the LPC discussions around this (from Marek I think)
-> > but sincerely most of those problems had one (not necessarily simple)
-> > solution: fix your firmwares AND/OR apply quirks in the meantime...
-> 
-> Unfortunately (at this point) we have to work with the firmware that exists.
-> 
-> From that LPC discussion, we learned that we are actually the lucky
-> guys: some other vendors tend to change the IDs and/or behavior without
-> bumping the version, so Linux cannot even act upon that...
-> 
-
-Oh I know that :P ... the whole SCMI quirk framework has been introduced
-to cope with FW issue from one vendor that afterwards fixed their FW
-issue BUT did NOT take care to update properly their FW versions upon
-each release...so their quirks will be like diamonds, forever !
-... no matter how many fixed-FW they will deploy :P
-
-Thanks,
-Cristian
+"
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 0d18771f1b013..715a98ccc69f7 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -2957,7 +2957,7 @@ sub process {
+                                 if (($last_binding_patch != -1) &&
+                                     ($last_binding_patch ^ 
+$is_binding_patch)) {
+                                         WARN("DT_SPLIT_BINDING_PATCH",
+-                                            "DT binding docs and 
+includes should be a separate patch. See: 
+Documentation/devicetree/bindings/submitting-patches.rst\n");
++                                            "DT binding docs and 
+includes should be a single patch, but separate from this patch. See: 
+Documentation/devicetree/bindings/submitting-patches.rst\n");
+                                 }
+                         }
+"
