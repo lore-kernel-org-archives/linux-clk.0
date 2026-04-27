@@ -1,88 +1,74 @@
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0523B8BBB;
-	Mon, 27 Apr 2026 12:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1CDA3B8BCB;
+	Mon, 27 Apr 2026 12:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777292623; cv=none; b=dGdF6HJ9fRrZc9dwKWmKy+cnHVgTPNqDswjuCxDQeBSEPPith7/3tAeYda/y0uNtB1AEn5S34cH5+rQsedL2tU6gtXRUtpi5v6w9SYsYPXDvF/9T6GoAzZ9SMsIHu1wzKPf105wfT6PiaCRZq7IKrdVOqwdCBGkjXuvUkr5B75U=
+	t=1777293284; cv=none; b=cor52NGUcQjBIiT5/k86zO1FWSYZaXc8K4MsJLVzOOJjTX05mm9uIDmTlFZGspZOUFuq/bHskgg23yn93z8Mx0gyyzshk3vqtaKzhITxC1VGX9GwAmzU0wq69B2n2CuCTrd4mGCIVGNAJJjUlTR+tYK0op85YMRiiHrTkT8R54Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777292623; c=relaxed/simple;
-	bh=5L5LUDTfFwN+G9RkjEMRbWrHXt1VPez++wKTPqDVgZI=;
+	s=arc-20240116; t=1777293284; c=relaxed/simple;
+	bh=sOz8A9YPihzEd99kRu8ucJArY5Hj2NaBY/3RDQjotVs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CCSmwL/vUn2XSPpNL8z63k7NHg990OPl89CFHIr7i5XXpC9yy+27nnc1zJaMi88SxnM1VlKxBI+WrWOO29ppOnv66A0HetorW2UYAtxS0Yslfdq34lIm71JhkR6hJgk+EXSJ0XMc040d2m2f0rJ40P4TnVHeKbbRhfZbNN+hnDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=qzViLN7H; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version:Content-Type; b=fRVpxM6rgwYGGdsyELA5N51tvASTzSIMloUpn4EKXDk8LStK418d+4ETpIRocbi1jNXHRW/JO/ofd98eYHo9XpRs6u0pvYyIfXzcL/Q1UfzxZWN/NwHEYiV/7vaK1qXqUoIBZ21TwHxdd4luRifxnhVWF5GTRUO1zFN5XkxkP2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=r8ETKXg9; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="qzViLN7H"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="r8ETKXg9"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=jjfLTmcyKD0hrkOGEYEgBYNd9aUyIP8bdXAALh7Ab8g=; b=qzViLN7HGQxYtfONvHpZgmKw3o
-	eJMHy8bhLVX624B78Rb2+FrCMB67RXfZmovbCA5qe6ZgW8NrKkaX0hqZc9E0OFTik5ldpsxIThJf7
-	GEZihLQ135ZMQVp6/ZgRxZdr/Z78OmQXVSR3m3mZvUbgMl2RLDpx/L/0kRVV1gYRvsbflv7hApfmE
-	v24OrauXEdTct7U2yFuqi6DPCuJm6gTwTByvqvk9MiRtcc9OkxCMDAxQ3HQ9aPIJQyswmhQYHMmZ0
-	4IXHF8KiLfY2HCv+DH3HBbqCTwA8Wk6XfdO5KGTx8NboZyFYtuRQFPy2ZbvDJQFH6PDfxu7g164Zy
-	Ti0PyRiw==;
+	bh=h7oEJShaFloAJ3rLxurIsdLzrXqr4IFYv+DPlRiRe2g=; b=r8ETKXg9r3VtVQBW+/XwowA8Sl
+	J4rYTq+XAvlLPnexbb37uxHWyetQAE9qyMveyF8rzTHUlZVkBm7IJ0K8YrKRweiu/X5Rb5Qne1PDE
+	k4Cn/A9dRbyQ1axlXa7ly1c8nzuR929l2MCtTt41bOGrVDFTJGBXymhpSIJj6ndPvGlMBaXwEVERZ
+	PNy9DGQ/bW59Qf8DqRqVe6tnEaYzXpHt6ylH2twL7udJsO2/FyZuOHOVHC/sAaitEG46cHnEiPaGE
+	HLdM/GwKfFty/gp2kQezySTd1rwrS5AYxvZt8KCTOiCbHo9bKuem2s/R6saCYAv1QNNp7PQxeNQW8
+	LJujnduw==;
 From: Heiko Stuebner <heiko@sntech.de>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Daniele Briguglio <hello@superkali.me>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-	Ricardo Pardini <ricardo@pardini.net>
-Subject: Re: [PATCH v4 0/5] clk: rockchip: rk3588: add I2S MCLK output gate clocks
-Date: Mon, 27 Apr 2026 14:23:21 +0200
-Message-ID: <177729258228.1866089.5793149531492182650.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260419-rk3588-mclk-gate-grf-v4-0-513a42dd1dcc@superkali.me>
-References: <20260419-rk3588-mclk-gate-grf-v4-0-513a42dd1dcc@superkali.me>
+To: Johan Hovold <johan@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: Re: [PATCH] clk: rk808: fix OF node reference imbalance
+Date: Mon, 27 Apr 2026 14:34:38 +0200
+Message-ID: <4062384.Icojqenx9y@phil>
+In-Reply-To: <ae9QiGGPB9gJ0HhG@hovoldconsulting.com>
+References:
+ <20260407095027.2625516-1-johan@kernel.org> <10504733.NyiUUSuA9g@phil>
+ <ae9QiGGPB9gJ0HhG@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+
+Am Montag, 27. April 2026, 14:03:20 Mitteleurop=C3=A4ische Sommerzeit schri=
+eb Johan Hovold:
+> On Mon, Apr 27, 2026 at 01:17:39PM +0200, Heiko Stuebner wrote:
+>=20
+> > Looking at the device_set_of_node_from_dev() function, this is the
+> > right move, so
+> >=20
+> > Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+>=20
+> Thanks for reviewing.
+>=20
+> > It also seems the rk808-regulator.c might be another candidate for
+> > this, as it also takes the node without of_node_get and manually
+> > setting the of_node_reused flag.
+>=20
+> That's fixed in 7.1-rc1:
+>=20
+> 	65290b24d8a5 ("regulator: rk808: fix OF node reference imbalance")
+
+nice ... should've looked there, instead of v7.0 :-)
 
 
-On Sun, 19 Apr 2026 13:43:05 +0200, Daniele Briguglio wrote:
-> On RK3588, the four I2S master clock (MCLK) outputs to external IO
-> pins are gated by bits in SYS_GRF SOC_CON6 (offset 0x0318). These
-> are set-to-disable gates with hiword mask semantics.
-> 
-> The TRM documents the reset value of these bits as 0 (gate open),
-> but in practice the Rockchip firmware (BL31) may set them during
-> early boot, preventing the MCLK signal from reaching external audio
-> codecs. The kernel should manage these gates explicitly so that
-> audio functionality does not depend on bootloader register state.
-> 
-> [...]
+Heiko
 
-Applied, thanks!
 
-[1/5] dt-bindings: clock: rockchip,rk3588-cru: add I2S MCLK output to IO clock IDs
-      commit: 56c2ca0ae7cb9254c4c2b82baa0afe29feaa274e
-[2/5] clk: rockchip: allow grf_type_sys lookup in aux_grf_table
-      commit: 28820fc7983b9c8e160c0095067a570bdfcae1f0
-[3/5] clk: rockchip: add helper to register auxiliary GRFs
-      commit: 32d1d88c4165d0da31d3bfda912e80e8110d6fc1
-[4/5] soc: rockchip: rk3588: add SYS_GRF SOC_CON6 register offset
-      commit: 06c990bffdbea7cf655e728f4423ecd13fb030f6
-[5/5] clk: rockchip: rk3588: add GATE_GRF clocks for I2S MCLK output to IO
-      commit: 02b9b0bb626989b947d82bbe4e050f0254e2046d
-
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
