@@ -1,111 +1,197 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from galaxy.gendns.com (galaxy.gendns.com [66.235.175.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D433B9D83
-	for <linux-clk@vger.kernel.org>; Mon, 27 Apr 2026 13:25:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26CFE3CEB9D;
+	Mon, 27 Apr 2026 14:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.235.175.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777296309; cv=none; b=rzxjHy4HopR5l1+yPTs9uy6o0/r/JRJCg3kO8h6Edv3mh65b9+K2SQTXNgT/f+lH7lzSPG2mFS+DhY/ZOaqCDBBlc6xABS6D6gN4x5VKogwFjxWtv4N8PGygQJDjF/LUznBhi2GAL6H7XFxQm/CA3Ovkhod9FF+Y4+I91un57hE=
+	t=1777301111; cv=none; b=oNogsO2PPSDJoJMCjDBV/fTxrzGp7TuTAnLbzEbK3WTKbBWCmvzrLt80Mx51HEcqe48rUheeexWUx3elRFbu5KrHaom3O7GTjiy+3hcxkTl7JXyYevCFg0kauAb43/sGxlCEnsujGQbRSq5f2+GTEUV3aOVF8cjj7oT/JlxGtes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777296309; c=relaxed/simple;
-	bh=c3R/swjZY4AwoGs459klumnQ8ywJ7rDXnjScQrebkz0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AieO+rzS7Ah17eoS7lFJnYkdLlG3f3g1RiU85Q7n5DLh5DrB8d0HFItwHKIUX/WlPSW2sGWPRGGkK6+IxzbD2ZuYhYo5lb3bUl90kNozJVIRW4chvfOtz7fUvL4TouzgUpiWf9Vy+4Hbq/PppgJxTqlzzBqK4mdhBe0TF5IyR0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VNV/lT6w; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1777301111; c=relaxed/simple;
+	bh=M1lkakGtuezEnltF1lKyaylL89loHBUmB8AdpleR0hY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tQ2Dq5jZL13PMXP2YjzQY5JRYurC8hKF6Zc26pKNY1Ovf89HBoQHBGdLI5ZQdPRl5+a7fZbZm0NDwNQWybPksjMJQBJzRl4CMvjv+ZufQePD2l7WM8z65WoGYIXBdpIklJDR6EyjFZKYRsfol3szYmyxvZDrbs7frMXBdnZqgLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com; spf=pass smtp.mailfrom=lechnology.com; dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b=Df7URaQi; arc=none smtp.client-ip=66.235.175.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lechnology.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VNV/lT6w"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-43fe62837baso6009537f8f.3
-        for <linux-clk@vger.kernel.org>; Mon, 27 Apr 2026 06:25:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1777296306; x=1777901106; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5VgLNT+dcdf1dMnPDi6oMraw8/VencpOpP+MRjX9HkY=;
-        b=VNV/lT6wEsOMYXa3LyIJ7HpYKryuT3Zr9xoeQRZlgLo0/9q6TNJ8lLSPuhHrp0yiwf
-         ZGIn2R8YRQzQDPlJlimn/ygNUWezFG1PtgYh/uPWEebDFWXTLTPy558OjZE2C0MEg5u0
-         fRbl0HeyR0an3eMIKm5PgL1UsiHbXXXsBblx+F9KGa7A4fLD2lBt8idhLiGmPxPFqMSX
-         I9hJLqgE8JFeJQt/ByFyDFNg37sUolSFNsjFtyP9cLDVOqLb8BXw2iLFCcItn3gCXHfL
-         PdzL0lvwRypGjRiOMSuNBBFMXfmNKNwbWqm9xRwrcZusdt1V01B51mFwTBMydM1r0yXK
-         wxdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777296306; x=1777901106;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=5VgLNT+dcdf1dMnPDi6oMraw8/VencpOpP+MRjX9HkY=;
-        b=EgVRXJoqVtCgDy+Z1aptWg95UE52a+RTJ658zxM0qSDCFIm9d2eJuzEv1Up85PhWEy
-         UUOnn54BAKky7cKnfx9KCWqADU+HsAPkPoTlMZ3/xBmkoSBUkIDCHM0i9cBueaZrNy/q
-         ecqnwca/rSq6mntfDwAcayh6U7qSOAUYSs4AB4+8f7EwXW6xGqRIrNgYVe0YQ+jLVOAv
-         zGuOMyt194Vsr+p+acaz6Wujz9qSGI14WspM19d7X7tF49C9NlZiIZ7uBVsaE9L25gRF
-         P/YATLqeYn0zoSbtCmmbjDPsR4fWm0hGcYjEMFLFrX/1zGtC6/0M6NndCuw8e5hTpam/
-         V3Ww==
-X-Gm-Message-State: AOJu0YxhyYO9A1bRbh/KL++4uePPWaHMHngXV8ihf4yTVKesc0xNvhOq
-	y2lLS46TTu5hIFEk3FvOiIpTqHp/vC4AWlKJo2SMpG0kLrZvYMAu4Rx5
-X-Gm-Gg: AeBDietEt6fI+MxnWIpTR2msjtSb21MWYDQSAsdvP2A2TyVJkseRbbYsEiQZ8/4gbv0
-	9lZzUHSsr/zmT9BuZLjQBWZ0KKVhFUD19eXn8ozrM7Gd9EfEKJr5957bMTHvUiBC6hwkHooOBb4
-	OxlfP2MpvZDdgrYViWo44K3lHBwKB7NQQhAfKzfbKWBQIPYyg7LI+fQEon0170K7Of1Wsj1K9WE
-	yNSTN9f8u983+puL6jpwPTeW/8TrJMNAn3PLE3YqNAMKlhCsIOlLGOCQ90TIR3ejYBTz6/Nmg6k
-	A6zrYeo1RUN2tkuPaEVyqvUhvqa1ZVzhjvWcEKlqTZIJ1UMEy+8KlQQD40zjkJMRDrv3ge1EyX/
-	G0W41zGe8yeUDQc76bjZBYmdLGaATTcpoMYuC4iSSwIr5B3vFXI0yk1uys3d037HDjcSMHgzkhD
-	BxuwPP4jhppQmojVs16+033+PrtDDf3DmGpQ==
-X-Received: by 2002:a05:6000:1a8c:b0:43e:b0f8:66f1 with SMTP id ffacd0b85a97d-43fe3e0b86emr65122947f8f.43.1777296305936;
-        Mon, 27 Apr 2026 06:25:05 -0700 (PDT)
-Received: from xeon ([188.163.112.56])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43fe4e3a166sm79933901f8f.19.2026.04.27.06.25.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Apr 2026 06:25:05 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/1] clk: tegra: support 48MHz clock for pll_p_out1
-Date: Mon, 27 Apr 2026 16:24:47 +0300
-Message-ID: <20260427132447.118272-2-clamor95@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260427132447.118272-1-clamor95@gmail.com>
-References: <20260427132447.118272-1-clamor95@gmail.com>
+	dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="Df7URaQi"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=wYJujYU3XdRRwVSUe/afEV3wKw/4cFjt4OQFzsp8TZQ=; b=Df7URaQi6bDGWol6huJHu7TYFV
+	wxAXiSnLIax5uDfW4nNhTyylgddHqD3/S6HirHpQhNWFXSYlgDsWeE36o1lNXNcXMUc0GtWzYc4oA
+	qvvzFt0oCyI9TuUvHodbLk232pbf9ATKBAw9un4f9BB89blICoRH//T6jwQUK1Y6kXF8CGMl8E5NX
+	gGs+GFcyTmmu1eTBg6hc40sbOfY0F+Dm8I8R8o7I9Npt7U44T0VsT5w71jvASHe7XHUrdi07TYCFJ
+	hjDUi8QRqXU80VTAjcBG8fAjS0yQysKdmKxTi0gedReEbRZ9tpRq/czmNO3q/YxL7xoAIK74yt1Vu
+	xjhyWkmA==;
+Received: from ip98-183-112-25.ok.ok.cox.net ([98.183.112.25]:41110 helo=[192.168.1.142])
+	by galaxy.gendns.com with essmtpa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
+	(Exim 4.99.1)
+	(envelope-from <david@lechnology.com>)
+	id 1wHMvt-0000000HGJa-2sSI;
+	Mon, 27 Apr 2026 10:27:31 -0400
+Message-ID: <6a6b9cdf-60c2-438f-a55e-bc3972b57882@lechnology.com>
+Date: Mon, 27 Apr 2026 09:27:31 -0500
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: davinci: add Kconfig symbol
+To: Rosen Penev <rosenp@gmail.com>, linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, open list <linux-kernel@vger.kernel.org>
+References: <20260427052354.959139-1-rosenp@gmail.com>
+Content-Language: en-US
+From: David Lechner <david@lechnology.com>
+Autocrypt: addr=david@lechnology.com; keydata=
+ xsFNBFFxkZ8BEADXzbnj9t8XSZYxKJGHdHqYgEBVzRElb3+f11qhDZKzVCMsn1+AN+PlHqC7
+ VrCWLsWTSY7WsHB2fW3aXaoidtac5FYoX2IXAun1Sbv15NcBdapImkMv6zxhAyWz6LqPfdCp
+ QV+3x6qwUPFeLHdmew8mkSq56qTFgDQr9oQhsrXKHkXFD7aIAf5bM6janQCHgGTVDraRDfEO
+ rV9rj7Wu/SfjUCVSCvW/SuWBa3IXTLNgbrNwBfo7Pl/tHuto0jxkVCIJ6J3xa85BKMw1WjA+
+ jKzh12S6KWrLUfhEUt64G9WJHiZOnVAjxgCR7TUahVM2OQHcp49ouG/JZsGNniulXH4ErA2O
+ Wt6seUEx8XQIm48H96RWgKrwKJ+1WoLEmUcYOJDZUcguMZVc3Astx8aSaRjf6IRBO8XlJSJV
+ OorkguvrTQBZJfjoicuFx7VlpdMggMZayv0cqEvzZMSHUt8DCUG74rLhtab9LCg/9wdCwqyE
+ JEi/8jaV7JWxwiCmzVpw0mHn1DiUlp5kapZT+Hart0Gc1WW915psA4G6KneisFM5DJe+S5mn
+ dUJb5IttTOx37jQQi2igwlSBdSC/M+Zy3sb+DXYJUVjVxK56RGAnlSvjHUx/TkID6Vb6HXvm
+ Fgm9vQamTEf+C3XzlY2v1YaMMX8yQjfrzQSoGfB0+9zaD9J/cwARAQABzSREYXZpZCBMZWNo
+ bmVyIDxkYXZpZEBsZWNobm9sb2d5LmNvbT7CwdIEEwEIAIYFgmeVPmMECwkIBwkQH4r4jIL3
+ fANHFAAAAAAAHgAgc2FsdEBub3RhdGlvbnMuc2VxdW9pYS1wZ3Aub3JnDM6jI9LThow7adCF
+ tC3vi3zrklAc6o/kt42Hifhjwk8DFQgKBBYCAwECF4ACGwMCHgEWIQSKc9gqah9QmQfzc4gf
+ iviMgvd8AwAAEm4P/04Ou1k+zfSz2Di+wzFiIzz7c3zyU+R04sj0rFx4KRKIBYQQxgQOTkM/
+ zbKLMlggKMsbgICjDlWLp6ANCH0A22gGZQx5PJBDfjIl05G+GnK6XilpLyd3U18Xj/7PbB/t
+ GHER2Llpf/ePe1YgZPqUuI7fTtFz5QLdIjr/ygb+HWJI/H/IydaJfFDWxQWU6quGi852oKv8
+ KMhmhGjgahPF+am6p0iPjkm+PfhHchxgKIneBixpwxFaOlikODcNuo0E+wp3gGLkaDIoGv15
+ H3BMZklu96EOKeKQYctpCj8RvTKzjEbn6JxGyXhVGoPMnic2Mwc0TNrXccqDqlQh48FEK6+L
+ zAbQrPE3wWl1PFxSUvUc6b3jZ1JAjcVU2GfqhzHC0U1cjJX/XKA3jn60jl9vBgU+DkvT6Gq6
+ +pzj2nQszEx+N0+71I2v/vgoB8+kRKlibh2ydDRXfpipn2r4qR5imONrbW7OkLCEJ8nHmpmK
+ N8iZKJjjTFmktLesE1s2L0hb9eoWz7i4YGCcIMOZISRTv/w860ebOrH787Bg3JNRz+edvKU8
+ TM3twZrCedbi+wBZcgGUBpPkWLH9dUTgpycjRcCOPqOzuHQIOqCMXWFq2cQ9Oy5szMdwsEzh
+ Zf1Ys7e2++tAuALI/HXJNk4/BuddZYoorLyw7MV2mVEV91ERPIx4zsFNBFFxkZ8BEADSVjyc
+ eG8Up24FFXwv5YmV7yX520kM97N11e1RJVMI1RSU+Na3Xo9J1BW6EFMAdibD6hH8PiMmToKx
+ BrfYSLStLh2MbHA2T/3zqicU1nuk376LMyrAuoV/fl8/7Jldwh1c9AADaYXNQfZ84R6nyaTR
+ jy4fqcc/dG2kw5ZMln909SMKZc3HdVynmo9pLT2HBOnXu2d3bIGmzuDnDXzh1X8+ods4gViu
+ vB31xU1WiANr4TbhaNU+/LmEVfvhS+34Cmz3U5Xs5x7nWdpM6fFfDOSz2sIYXOGAcaV3oJ12
+ 1Uul2U2bMTsXxiwdbjmZP9jrzEfvhD5KIOutX+0OzdtM9QVB70QQOEh3maW/FwGdL5stYcad
+ sBiEEI6Y2ymVpBgzrPS6HzC+UZLUShOE+aLx+SYBYAuypikMPvG9W3MqWHCsXXEfyp2mCeor
+ Kb7PafyaBO/E5REjPmYUpkGMNZH1lGV3jegE9WdOBfXW9xvCwf0UefoFaVhjsjtzvl8lMQnd
+ rDBdKPpJ7zIIG6FGSsUYmCtvE+JAk83tfpUpSZKDSzsqtLTI8GE2fQzEuZcBqm6Yk2V1+u6r
+ jUjmqEBIzunyeUupaUc+p00JiwNE8v/wcx7UbD5m+PGOkNoLMLe0ti0O7nFlY8avZzy3eLBQ
+ enu4WsJjPVYeQGeGB3oLvCGIhT9/WwARAQABwsFfBBgBAgAJBQJRcZGfAhsMAAoJEB+K+IyC
+ 93wDC44P/0bAjHgFUPHl7jG5CrWGwgdTNN8NrjpmIxSk37kIuKMzcwP9BWhFF0mx6mCUEaxv
+ GdAQ9Va/uXB2TOyhLCGXhlf8uCwxcIyrOlhi2bK6ZIwwovyjjh7GCRnm8cP8ohDCJlDUpHkO
+ pmU4tcapbZiBrFaFAahxPMjwK9GJ3JY0lx63McgCEIwm6txNcMnVX5Y3HeW5Wo8DtmeM3Xaj
+ JLFaBXIhEfoNHMfDON6UGiXFeR8S9W8dpaX8XEwzPUjZyOG2LvOMAEPXx+kB9mZPTogong8L
+ ekL1HZHSY4OYffzQy5fVE+woHAMADkrmuosGkTRCP4IQHXOagoax/Dox01lKTLnlUL1iWWQj
+ fRaFXVKxEc2PF1RZUpoO/IQYFB1twcaF2ibT3TlGolbmb3qUYBo/Apl5GJUj/xOWwrbikD+C
+ i+vx8yuFUlulbS9Ht+3z1dFjBUDbtZ4Bdy/1heNpA9xORiRs+M4GyTil33pnBXEZp29nh7ev
+ 4VJ96sVvnQFzls3motvG+pq/c37Ms1gYayeCzA2iCDuKx6ZkybHg7IzNEduqZQ4bkaBpnEt+
+ vwE3Gg5l4dAUFWAs9qY13nyBANQ282FNctziEHCUJZ/Map6TdzHWO6hU1HuvmlwcJSFCOey8
+ yhkt386E6KfVYzrIhwTtabg+DLyMZK40Rop1VcU7Nx0M
+In-Reply-To: <20260427052354.959139-1-rosenp@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - galaxy.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: galaxy.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: galaxy.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-From: Dmitry Osipenko <digetx@gmail.com>
+On 4/27/26 12:23 AM, Rosen Penev wrote:
+> Add COMPILE_TEST support as a result so that the buildbots can run
+> through this driver. There's nothing architecture specific about it.
+> 
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> ---
+>  drivers/clk/Kconfig          | 7 +++++++
+>  drivers/clk/Makefile         | 2 +-
+>  drivers/clk/davinci/Makefile | 6 +++---
+>  3 files changed, 11 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 06a7ac971edf..42d84c0ed5fc 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -317,6 +317,13 @@ config COMMON_CLK_AXI_CLKGEN
+>  	  Support for the Analog Devices axi-clkgen pcore clock generator for Xilinx
+>  	  FPGAs. It is commonly used in Analog Devices' reference designs.
+>  
+> +config CLK_DA850
+> +	bool "DaVinci DA850 CLK support"
 
-UEFI on Surface2 sets pll_p_out1 to 48MHz which is not supported by kernel
-and causes BUG() early on. Add 48MHz clock support for pll_p_out1.
+Should this be `default y` so that it gets enabled? Or have
+config ARCH_DAVINCI_DA850 select CLK_DA850?
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Signed-off-by: Jonas Schwöbel <jonasschwoebel@yahoo.de>
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- drivers/clk/tegra/clk-pll.c | 1 +
- 1 file changed, 1 insertion(+)
+Otherwise, we would need to modify the defconfigs as well to
+enable it.
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index d86003b6d94f..adfb74f111ef 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -575,6 +575,7 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
- 		break;
- 	case 9600000:
- 	case 28800000:
-+	case 48000000:
- 		/*
- 		 * PLL_P_OUT1 rate is not listed in PLLA table
- 		 */
--- 
-2.51.0
+> +	depends on ARCH_DAVINCI_DA850 || COMPILE_TEST
+
+We should also make this `depend on COMMON_CLK`. (see related comment
+below.)
+
+> +	help
+> +	  This adds the clock driver support for DaVinci DA850 platform
+> +	  using common clock framework.
+> +
+>  config CLK_QORIQ
+>  	bool "Clock driver for Freescale QorIQ platforms"
+>  	depends on OF
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index 0fc8f20b0fb1..6e13c001a544 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -118,7 +118,7 @@ obj-$(CONFIG_ARCH_ARTPEC)		+= axis/
+>  obj-$(CONFIG_ARC_PLAT_AXS10X)		+= axs10x/
+>  obj-y					+= bcm/
+>  obj-$(CONFIG_ARCH_BERLIN)		+= berlin/
+> -obj-$(CONFIG_ARCH_DAVINCI)		+= davinci/
+> +obj-$(CONFIG_CLK_DAVINCI)		+= davinci/
+
+Did you mean CONFIG_CLK_DA850? I don't think CONFIG_CLK_DAVINCI exists.
+
+>  obj-$(CONFIG_COMMON_CLK_ESWIN)		+= eswin/
+>  obj-$(CONFIG_ARCH_HISI)			+= hisilicon/
+>  obj-y					+= imgtec/
+> diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+> index f9d5c9a392e4..5ff30ceb2092 100644
+> --- a/drivers/clk/davinci/Makefile
+> +++ b/drivers/clk/davinci/Makefile
+> @@ -1,11 +1,11 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  
+>  ifeq ($(CONFIG_COMMON_CLK), y)
+
+Then we can drop this if statement.
+
+> -obj-$(CONFIG_ARCH_DAVINCI_DA8XX)	+= da8xx-cfgchip.o
+> +obj-$(CONFIG_CLK_DA850)		+= da8xx-cfgchip.o
+>  
+>  obj-y += pll.o
+
+Since there is only one platform left supported, it would probably
+make more sense to make everything (including pll.o and psc.o)
+`obj-$(CONFIG_CLK_DA850)` or perhaps even better, make everything
+(including da8xx-cfgchip.o, pll-da850.o and psc-da850.o) `obj-y`
+since the containing directory already has the conditional (and
+include a comment to this effect).
+
+> -obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
+> +obj-$(CONFIG_CLK_DA850)		+= pll-da850.o
+>  
+>  obj-y += psc.o
+> -obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= psc-da850.o
+> +obj-$(CONFIG_CLK_DA850)		+= psc-da850.o
+>  endif
 
