@@ -1,99 +1,141 @@
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [207.46.229.174])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECC802EDD7D;
-	Tue, 28 Apr 2026 09:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.46.229.174
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 148D437B03B;
+	Tue, 28 Apr 2026 09:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777368089; cv=none; b=t8TyeFSUFwTkvKCCLbYO2/ReFyqOSSknKK4iPuHb0AGFUrgSbGEVVkjxfKtN4PUKM7R70M3DQRVTVjUjSDTvR15FC6ajEuHuGMXZF0yYhVJeNOeq44UP6VGtBNPOlBEhZuCOIKTYDILp5elDz58Bml8KWC6qbX8Lyu86bX4fwCs=
+	t=1777368265; cv=none; b=lx6HgDgE1CotxSgrgszD58b+SeebfH0rS2if/7rGAZMsSb3eY4TEoINtZbiJ7Nnl3bVCVC0o9eAqufXt9kpEZ92G4dvXMJS1MQkieQIKyp58Grj4q27eGFCF2xfKThtBDUorIOm5yWTq1GSDZ/UQIxeS6yQABMvj9gWITS3U3ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777368089; c=relaxed/simple;
-	bh=v8LXrQIVoM6DimkApjlfe38xr3LI/bTiCB3B86vSJLE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=ETClgs5tY6UmqSIH45F/XwijrqivoBJijHil0+/tZIoCVph/D0zLQEImN/gV3Ip7kq2boppi4BP7UGvWnZjXYEJ7xvx9N6fDeD1xGBwp7ld/9iqYP/JdeqcNxCAicL1pKwMmhUJ6Co33Q/Q5lcUW7UserHK39ltEIPDUauwEZlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=207.46.229.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from dongxuyang$eswincomputing.com ( [10.12.96.41] ) by
- ajax-webmail-app2 (Coremail) ; Tue, 28 Apr 2026 17:21:03 +0800 (GMT+08:00)
-Date: Tue, 28 Apr 2026 17:21:03 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: "Xuyang Dong" <dongxuyang@eswincomputing.com>
-To: "Stephen Boyd" <sboyd@kernel.org>, "Brian Masney" <bmasney@redhat.com>
-Cc: mturquette@baylibre.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	p.zabel@pengutronix.de, huangyifeng@eswincomputing.com,
-	benoit.monin@bootlin.com, ningyu@eswincomputing.com,
-	linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com
-Subject: Re: Re: Re: [PATCH v3 2/3] clk: eswin: Add eic7700 HSP clock driver
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
- 20241203(6b039d88) Copyright (c) 2002-2026 www.mailtech.cn
- mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
-In-Reply-To: <177733570840.5403.12558106273673899411@lazor>
-References: <20260423090904.2108-1-dongxuyang@eswincomputing.com>
- <20260423091114.2326-1-dongxuyang@eswincomputing.com>
- <aeo8nn-eigzlojWx@redhat.com>
- <4e5c887.5a31.19dbf179fb6.Coremail.dongxuyang@eswincomputing.com>
- <CABx5tqK7p_XJHfXZ70gXhR88PzAteV7cVSFPoRzccgmjanADMw@mail.gmail.com>
- <177733570840.5403.12558106273673899411@lazor>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1777368265; c=relaxed/simple;
+	bh=ZU3pGIeRljMZdqSe4gX8oj+DZuUxGHHbFuDwnDlOQjU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pqKX+8zbGCtI3H7NSvN+MjwRJ52yNA9HrYhKpOA2b8vhAfZnSIGRaJkq/C8Zq3WgaG7DbOzkhoBRg381OQROBtc2jlKY9a+TBeUs3DVq4lKa8B1Th6a+/dCN0OW6YoPjbBDEW1BReqTu+yN03P/5GxMSuBV0ArrDmKHxuWvQFbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BsdPb/42; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BsdPb/42"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A3ECC2BCAF;
+	Tue, 28 Apr 2026 09:24:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1777368264;
+	bh=ZU3pGIeRljMZdqSe4gX8oj+DZuUxGHHbFuDwnDlOQjU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BsdPb/42YzMd9F2xIYEva5cAI6HoFwjWj+zQq/tU4sGlIDC6BZbxOGnRfy9+/XLYY
+	 oYAH4yQu42cwZ087bMxBwy/h50EXjosGmrXBZ47MDcvELjrTuXZAKFhiUwZWw8ab0D
+	 fq2k5tBZgRhYVaex280JgqFuM1qSfOyohswFJcG3TdIVdwwZ/zS2RuaOO2i7+YkwBs
+	 iSR8YzD4e/iJASrsbBKw5y7SXwy10+T6wDpHwf7FNWUqWqrfb50YC8SlfWOpHbl3DT
+	 aAqVeyi1FQhOw3KLcPABEadH8jk2GUkkwJ2UyB86yEJo9MUrKdqz2NjEgV0sjORa1C
+	 shTtMonslVCvw==
+Message-ID: <41ebf31c-89ca-497e-b206-ece332d0260e@kernel.org>
+Date: Tue, 28 Apr 2026 11:24:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <7a76d8cb.5bab.19dd3645d4e.Coremail.dongxuyang@eswincomputing.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:TQJkCgAnPJ__e_BpqlUVAA--.2984W
-X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/1tbiAQELAmnvj5ohs
-	QABsL
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VW3Jw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 00/11] thermal: samsung: Add support for Google GS101
+ TMU
+To: Tudor Ambarus <tudor.ambarus@linaro.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Daniel Lezcano <daniel.lezcano@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Lee Jones <lee@kernel.org>
+Cc: willmcvicker@google.com, jyescas@google.com, shin.son@samsung.com,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
+ linux-clk@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+References: <20260423-acpm-tmu-v4-0-8b59f8548634@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20260423-acpm-tmu-v4-0-8b59f8548634@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-PiAKPiBRdW90aW5nIEJyaWFuIE1hc25leSAoMjAyNi0wNC0yNCAwNDoxNTo0NikKPiA+IE9uIEZy
-aSwgQXByIDI0LCAyMDI2IGF0IDY6NDXigK9BTSBYdXlhbmcgRG9uZwo+ID4gPGRvbmd4dXlhbmdA
-ZXN3aW5jb21wdXRpbmcuY29tPiB3cm90ZToKPiA+ID4gVGhhbmtzIGZvciB0aGUgZmVlZGJhY2su
-IEkgZGlkIHNvbWUgcmVzZWFyY2ggYmFzZWQgb24geW91ciBjb21tZW50cy4KPiA+ID4KPiA+ID4g
-bG9ja19jdHggaXMgYSBsb2NhbCB2YXJpYWJsZSBkZWNsYXJlZCBpbnNpZGUgdGhlIGZ1bmN0aW9u
-IGJvZHkuIEl0IGlzIG5vdAo+ID4gPiBpbiBzY29wZSBhdCB0aGUgYXR0cmlidXRlIHNpdGUuIFRo
-ZSBhdHRyaWJ1dGUgZXhwYW5kcyB0bwo+ID4gPiBfX2F0dHJpYnV0ZV9fKChhY3F1aXJlX2NhcGFi
-aWxpdHkobG9ja19jdHgtPmxvY2spKSksIGFuZCBzaW5jZSBsb2NrX2N0eAo+ID4gPiBkb2Vzbid0
-IGV4aXN0IGF0IHRoZSBkZWNsYXJhdGlvbiBwb2ludCwgY2xhbmcncyBhbmFseXNpcyBjYW5ub3Qg
-cmVzb2x2ZSBpdAo+ID4gPiBhbmQgc2lsZW50bHkgZHJvcHMgdGhlIGFubm90YXRpb24uIFRoYXQn
-cyB3aHkgeW91IHNlZSBubyB3YXJuaW5ncyBmcm9tCj4gPiA+IG1ha2UgQz0yIG9yIC1XdGhyZWFk
-LXNhZmV0eS4KPiA+ID4KPiA+ID4gV2h5IC1XdGhyZWFkLXNhZmV0eSBwcm9kdWNlcyBubyBvdXRw
-dXQKPiA+ID4gVHdvIHJlYXNvbnM6Cj4gPiA+ICAgMS4gVGhlIGxvY2tfY3R4LT5sb2NrIGV4cHJl
-c3Npb24gaXMgdW5yZXNvbHZhYmxlIGF0IHRoZSBhdHRyaWJ1dGUgc2l0ZSwKPiA+ID4gICBzbyBj
-bGFuZyBkcm9wcyB0aGUgYW5ub3RhdGlvbiBzaWxlbnRseSDigJQgbm8gYWNxdWlyZS9yZWxlYXNl
-IHRyYWNraW5nLAo+ID4gPiAgIG5vIHdhcm5pbmdzLgo+ID4gPiAgIDIuIEV2ZW4gaWYgdGhlIGV4
-cHJlc3Npb24gd2VyZSByZXNvbHZhYmxlLCBzcGlubG9ja190IGluIHRoaXMgZHJpdmVyIGlzCj4g
-PiA+ICAgYSBwbGFpbiBwb2ludGVyIGZpZWxkIChzcGlubG9ja190ICpsb2NrKSBhY2Nlc3NlZCB0
-aHJvdWdoIGEgdm9pZCAqCj4gPiA+ICAgY2FsbGJhY2sg4oCUIHRoZSBhbmFseXNpcyBjYW4ndCB0
-cmFjayBsb2NrIHN0YXRlIHRocm91Z2ggdGhhdCBpbmRpcmVjdGlvbi4KPiA+ID4KPiA+ID4gVGhl
-IGNsb3Nlc3QgY29ycmVjdCBleHByZXNzaW9uIHdvdWxkIGJlOgo+ID4gPiBfX2FjcXVpcmVzKCgo
-c3RydWN0IGVpYzc3MDBfaHNwX3JlZ21hcF9sb2NrICopYXJnKS0+bG9jaykKPiA+ID4gQnV0IHRo
-YXQgYWxzbyB3b24ndCB3b3JrOiBhcmcgaXMgdm9pZCAqLCBhbmQgY2xhbmcncyB0aHJlYWQtc2Fm
-ZXR5Cj4gPiA+IGFuYWx5c2lzIGlzIHR5cGUtYmFzZWQuIEl0IGNhbid0IHRyYWNlIHRocm91Z2gg
-YSB2b2lkIHBvaW50ZXIgY2FzdCB0bwo+ID4gPiBkZXRlcm1pbmUgd2hpY2ggc3BpbmxvY2tfdCBp
-bnN0YW5jZSBpcyBiZWluZyBhY3F1aXJlZC4gVGhlIGFuYWx5c2lzCj4gPiA+IHdvdWxkIHN0aWxs
-IHNpbGVudGx5IGlnbm9yZSBpdC4KPiA+ID4KPiA+ID4gRm9yIHZvaWQgKiByZWdtYXAgY2FsbGJh
-Y2tzLCB0aGVyZSBpcyBubyBjbGVhbiB3YXkgdG8gbWFrZSBfX2FjcXVpcmVzKCkKPiA+ID4gd29y
-aywgYmVjYXVzZSB0aGUgbG9jayBpcyBhbHdheXMgaGlkZGVuIGJlaGluZCB0aGUgb3BhcXVlIHBv
-aW50ZXIuCj4gPiA+IFRoZSBhbm5vdGF0aW9ucyBzaG91bGQgYmUgZHJvcHBlZC4KPiA+ID4KPiA+
-ID4gQmFzZWQgb24gdGhlIGFib3ZlIGFuYWx5c2lzLCBJIHN1Z2dlc3QgcmVtb3ZpbmcgdGhlIGFu
-bm90YXRpb25zIGVudGlyZWx5Lgo+ID4gPiBIb3dldmVyLCBJJ2QgbGlrZSB0byBoZWFyIHlvdXIg
-dGhvdWdodHMgb24gdGhpcyBhcHByb2FjaC4KPiA+IAo+ID4gSSBhZ3JlZSB0byByZW1vdmUgdGhl
-IGFubm90YXRpb25zLiBCZWZvcmUgeW91IHBvc3QgYSBuZXcgdmVyc2lvbiwKPiA+IGxldCdzIGxl
-dCB0aGlzIHNlcmllcyBzaXQgb3V0IG9uIHRoZSBsaXN0IGZvciBhIHdlZWsgb3IgdHdvLCBhbmQg
-c2VlCj4gPiBpZiBhbnlvbmUgZWxzZSByZXBsaWVzIHdpdGggdGhlIHByb3BlciB3YXkgdG8gZG8g
-dGhpcy4KPiA+IAo+IAo+IFdoeSBub3QgdXNlIGEgcmVnbWFwIGluc3RlYWQ/IFRoYXQgd291bGQg
-ZW5mb3JjZSBsb2NraW5nIG9uIHJlZ2lzdGVycwo+IGFuZCB0aGVuIHlvdSB1c2UgdGhlIHJpZ2h0
-IHJlZ21hcCBBUElzIHRvIHVwZGF0ZSB0aGUgcmVnaXN0ZXIgdW5kZXIgdGhlCj4gbG9jayAobGlr
-ZSByZWdtYXBfdXBkYXRlX2JpdHMoKSBvciBzb21ldGhpbmcpLgoKSGkgU3RlcGhlbiwKClRoZSBj
-b21tb24gZ2F0ZSBBUEksIHRoZSBIU1AgcHJpdmF0ZSBBUEksIGFuZCB0aGUgcmVzZXQgZHJpdmVy
-IGFsbCBhY2Nlc3PCoAp0aGUgc2FtZSByZWdpc3RlciBzcGFjZS4KVGhlcmVmb3JlLCB0aGV5IG5l
-ZWQgdG8gYmUgcHJvdGVjdGVkIGJ5IHRoZSBzYW1lIGRhdGEtPmxvY2suCgpCZXN0IHJlZ2FyZHMs
-Clh1eWFuZyBEb25nCg==
+On 23/04/2026 17:22, Tudor Ambarus wrote:
+> Add support for the Thermal Management Unit (TMU) on the Google GS101
+> SoC.
+> 
+> The GS101 TMU implementation utilizes a hybrid architecture where
+> management is shared between the kernel and the Alive Clock and
+> Power Manager (ACPM) firmware. This hybrid ACPM TMU architecture is 
+> also present on other Samsung Exynos SoCs (e.g., AutoV920, Exynos850).
+> 
+> Dependencies
+> ============
+> - context dependency on the ACPM fixes sent at:
+>   Link: https://lore.kernel.org/linux-samsung-soc/20260423-acpm-fixes-sashiko-reports-v1-0-2217b790925e@linaro.org/T/#t
+> - cleanup and prep firmware patches 2, 3, 4, 5, 6, 7: required by the
+>   thermal driver (patch 8).
+
+Well, cleanup in one driver cannot be a dependency for other driver.
+
+> - bindings (patch 1): required for DTS validation.
+> - thermal driver patch 8: required by defconfig (patch 11) - logical
+> dependency. 
+
+Most of the patches should be taken before, which would leave you only
+final new firmware interface as dependency. Creating such unnecessary
+dependencies is not helping.
+
+And the patchset even grew and will conflict with other firmware work,
+so I will deal with firmware bits and I can provide them via stable tag
+to thermal for the last patch.
+
+Best regards,
+Krzysztof
