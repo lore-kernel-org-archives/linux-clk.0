@@ -1,294 +1,131 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B1539527C;
-	Tue, 28 Apr 2026 20:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71C728469A
+	for <linux-clk@vger.kernel.org>; Tue, 28 Apr 2026 20:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777407443; cv=none; b=fi3ixzsBdwp8IJRgXytIXjv/AG9RbRdre4b8ftTEaDsvXRAyfuukRnieYoZWvb+HrhDJaRNeuCAEXEk+mG/W9j8OwsB4UAiQ1CBearUzuLpF4mQGnH0fJtWerap6xOLLSG4K2GASEUQR0eB1z6Tgx/eqMpfov6+mgDZuu8Edmbg=
+	t=1777407992; cv=none; b=FyJ/AyGVEfVldXCCeY2uY4DPkyT/CbcjcPxGfjwMTNWGnDyDzThRudK1IBe14+81BedPhogTwMXYLapLe6iYh1ih/EK8HB387DcO6L6jzxSl1Ie+fXPZY5wHvGvQiQgM3J2B3ySgDkh7biJoltNVw9zM8U21bbCgvs7QOoVFi7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777407443; c=relaxed/simple;
-	bh=cinOs3FUzEPcdTbTkmYDC2KeojNRYuDSqaYF95xRaEE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PiCbGKCXDpUmAU1Q27/+cAKQkrUHUj9075ryB1CJ4/f/7BI7oZIB4qaMS+tumMzQNsqOrYgm+nl+CEmRGBl/sWJkUHOQNOoC3dRayJ3HJNHZX/AFbZAT6puv3VfLMxMFvcLw3aMy2RnKqYGjI8nhVywdouYjsr4Vc52oFzJQxfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=NtgNhkQO; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	s=arc-20240116; t=1777407992; c=relaxed/simple;
+	bh=bikCYCChr7YkCUSK+pLWX18yTfLp9aN20MtL2K2GstY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=XbbChX5yjBr90aPePqg0d+mV61t4qndEEfK1pNQaUR3iNAd561s9wZK99cJzEAzzaeelNOYI3+F0PwPVdHPZTRIBpvSQkQQ7I8kv0AvINh52DenoVLYptO4cvKRwzKppNgvBTh5dPpCrpjynkYkwpWKjYrn9fEX4i4xzdCRWW0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UZ7Uy8nI; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="NtgNhkQO"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4C3FC3296;
-	Tue, 28 Apr 2026 13:17:15 -0700 (PDT)
-Received: from pluto.fritz.box (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C44323F763;
-	Tue, 28 Apr 2026 13:17:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1777407440; bh=cinOs3FUzEPcdTbTkmYDC2KeojNRYuDSqaYF95xRaEE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NtgNhkQOPzrpXCvuuBj7InMLpjtPlyueQ0+wSAnEIlKG6qH9rONfJiyyoGZGn82OD
-	 wxZu2++vFuX3jjcCy9nQ7d55xoFhEgRhP59P5E3qxLf3oKiae7i4G0D8aux6z1eEcC
-	 ZnMyHwl1KV0FBl9laXYPeM4doJ9EztzKwJXDVtOU=
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Cc: sudeep.holla@arm.com,
-	philip.radford@arm.com,
-	james.quinlan@broadcom.com,
-	f.fainelli@gmail.com,
-	vincent.guittot@linaro.org,
-	etienne.carriere@foss.st.com,
-	peng.fan@oss.nxp.com,
-	michal.simek@amd.com,
-	geert+renesas@glider.be,
-	kuninori.morimoto.gx@renesas.com,
-	marek.vasut+renesas@gmail.com,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH v3 15/15] firmware: arm_scmi: Introduce all_rates_get clock operation
-Date: Tue, 28 Apr 2026 21:15:22 +0100
-Message-ID: <20260428201522.903875-16-cristian.marussi@arm.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260428201522.903875-1-cristian.marussi@arm.com>
-References: <20260428201522.903875-1-cristian.marussi@arm.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UZ7Uy8nI"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-488b0046078so106616895e9.1
+        for <linux-clk@vger.kernel.org>; Tue, 28 Apr 2026 13:26:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1777407989; x=1778012789; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U2z5CJStQaZH5C1yDNgwonipIcrAGaww4SYiAIYI8F8=;
+        b=UZ7Uy8nI2+NOm8dpnjNNSb11MMuUBVTWQorG96Z9b22UBZwbnwkPAlHmmG85il8AD9
+         Sw/7FzGb5F4wzlj8+Y3OyDOM4ppwwpIirs7Kj3J+v8VNDqbrfgsGVQF1EvygTCYRou3L
+         /Mk49+Yniu2XxoFd6+lkgHP2oXe0dukmmxcS6r03r6O20G0jXHVP0+omwb7zryAdhZej
+         J1FNxtA4O8j7148p3VYhlRRKwwiJuk9NLnFv4JZ5f0nS9wYYNlDucsZZA4HmU9veB9Bq
+         WmYG3AlKNL5FdweLUdqaLopCeDszF0c/l50xoXhP0Ci557j7xiRsUfwhi2wOcotYdI6y
+         yCkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777407989; x=1778012789;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=U2z5CJStQaZH5C1yDNgwonipIcrAGaww4SYiAIYI8F8=;
+        b=eRkNOy4JKMQwOWKXcGbDzqVfvxjXYlz4Z0pexe6wYXWxldsOJdATeNxVje08Epgtmn
+         gL5jy8qvMlchxFnpVaEj8eE6on2XiIr5BpNOUuSfolyLIwhKvbFE/wFlBquRNaXH0CCq
+         jwsyZMJZH6nx1UxDoN8quKq5CyfBbOID+6lmIxebFspk86Jf5YvROUf49hpS+hNv02FZ
+         y0Bs12XIFNZgOrc9Oi4hCwaH2I5RjUdFF/GyjNwX/SV92g4+em9LJCfki3VVCzB2oP8a
+         p7Aid8WxmvhtFvC/miAHeAqog5Vk4bk+ujQWP6GYyZW9S0I/OefSsclD8bSQCt+F2cSv
+         PLcA==
+X-Forwarded-Encrypted: i=1; AFNElJ8ZfU3x17QAC766STWwxemzpJJ7UepQGLkG2dJBMUOVapHqrUU9fiXGTRNeEi13BJRpEUy3x4ZHdzU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQSLHo/l2g5JkQ/LsOk5nfCfQ9z+ghLAlKL/HXzrCd4/gWIBQT
+	jPLfEQN6c10jGooZ42cYyfIALWuULuCGp4rODgpQfJDEjsb585Lpq7bwBj+R6Ogidpo=
+X-Gm-Gg: AeBDiesL30bCT103hvg9M5zE+T1w094dgxniiJO7VvkXW8HE8bt7064E0WjMLGvdmUF
+	gv6nig9NEFf7MNeTshvbMbePewsDD+LyW3k6TtaDYst+pZunqJdp20YeEVOgWwoC2GwCOLnmeoj
+	gWhAVl1IijJGcg4lojjM8D+oH8kGbn7JI83xlG/5ikLjng6XD9arVbJyiLj6UO8wPucg+hDAnNh
+	RBAeWE213oIBHD2JxQTzO4TNNSHyyTrjacb0/G9L/zOZ+Y7t+6htv3ukkkIkyfVtXOaHLyfmzkV
+	L06QhkpziBZDLXqIrflurUb9VAEXPuI4XP71dLVEErez8NlbMPDmJC070ns+wR5LC+7WAsierat
+	zVncBnER4PHghmxpzn+X35qa5vAdPL8q0y5UwcSghXzYWLDOKWT+YWMCdLX6+5TY0S9WmFbVY42
+	ppTG8d/+GATl+9vZVdIwVdzgBBcdmwMinaW0THAuUAbxSJJxWwolG+59hRMorORN4icxzkx5WsR
+	ZjzIU1UQZXcEQraOWybMANb
+X-Received: by 2002:a05:600c:4f0c:b0:489:1c2d:211e with SMTP id 5b1f17b1804b1-48a77ae5386mr75966715e9.5.1777407989369;
+        Tue, 28 Apr 2026 13:26:29 -0700 (PDT)
+Received: from localhost ([94.4.195.193])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a7bc11fcbsm10511235e9.3.2026.04.28.13.26.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Apr 2026 13:26:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 28 Apr 2026 21:26:27 +0100
+Message-Id: <DI52JP9JH6AH.3I5OKWOZ56MIU@linaro.org>
+Cc: "Krzysztof Kozlowski" <krzk@kernel.org>, "Sylwester Nawrocki"
+ <s.nawrocki@samsung.com>, "Chanwoo Choi" <cw00.choi@samsung.com>, "Alim
+ Akhtar" <alim.akhtar@samsung.com>, "Sam Protsenko"
+ <semen.protsenko@linaro.org>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Rob Herring"
+ <robh@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Jassi Brar"
+ <jassisinghbrar@gmail.com>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Peter Griffin" <peter.griffin@linaro.org>,
+ <linux-samsung-soc@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/3] mailbox: exynos: Add support for Exynos850
+ mailbox
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Tudor Ambarus" <tudor.ambarus@linaro.org>
+X-Mailer: aerc 0.21.0
+References: <20260402-exynos850-ap2apm-mailbox-v2-0-ca5ffdff99d4@linaro.org>
+ <20260402-exynos850-ap2apm-mailbox-v2-2-ca5ffdff99d4@linaro.org>
+ <a02a693e-b06e-43bf-ac5f-8253f298c83d@linaro.org>
+ <DHNSP3FVR4ZQ.1PIRHF0KJGKI5@linaro.org>
+In-Reply-To: <DHNSP3FVR4ZQ.1PIRHF0KJGKI5@linaro.org>
 
-Add a clock operation to get the whole set of rates available to a specific
-clock: when needed this request could transparently trigger a full rate
-discovery enumeration if this specific clock-rates were previously only
-lazily enumerated.
+On Wed Apr 8, 2026 at 2:08 PM BST, Alexey Klimov wrote:
 
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
-Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
----
-v2 --> v3
- - collected Reviewed tags
----
- drivers/firmware/arm_scmi/clock.c | 85 +++++++++++++++++++++----------
- include/linux/scmi_protocol.h     |  9 ++++
- 2 files changed, 67 insertions(+), 27 deletions(-)
+[...]
 
-diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
-index ba25a9c6d3ae..316d3cd90c81 100644
---- a/drivers/firmware/arm_scmi/clock.c
-+++ b/drivers/firmware/arm_scmi/clock.c
-@@ -159,10 +159,8 @@ struct scmi_clock_rate_notify_payld {
- 
- struct scmi_clock_desc {
- 	u32 id;
--	bool rate_discrete;
- 	unsigned int tot_rates;
--	unsigned int num_rates;
--	u64 *rates;
-+	struct scmi_clock_rates r;
- #define	RATE_MIN	0
- #define	RATE_MAX	1
- #define	RATE_STEP	2
-@@ -469,10 +467,10 @@ iter_clk_describe_update_state(struct scmi_iterator_state *st,
- 	flags = le32_to_cpu(r->num_rates_flags);
- 	st->num_remaining = NUM_REMAINING(flags);
- 	st->num_returned = NUM_RETURNED(flags);
--	p->clkd->rate_discrete = RATE_DISCRETE(flags);
-+	p->clkd->r.rate_discrete = RATE_DISCRETE(flags);
- 
- 	/* Warn about out of spec replies ... */
--	if (!p->clkd->rate_discrete &&
-+	if (!p->clkd->r.rate_discrete &&
- 	    (st->num_returned != 3 || st->num_remaining != 0)) {
- 		dev_warn(p->dev,
- 			 "Out-of-spec CLOCK_DESCRIBE_RATES reply for %s - returned:%d remaining:%d rx_len:%zd\n",
-@@ -486,9 +484,9 @@ iter_clk_describe_update_state(struct scmi_iterator_state *st,
- 	if (!st->max_resources) {
- 		unsigned int tot_rates = st->num_returned + st->num_remaining;
- 
--		p->clkd->rates = devm_kcalloc(p->dev, tot_rates,
--					      sizeof(*p->clkd->rates), GFP_KERNEL);
--		if (!p->clkd->rates)
-+		p->clkd->r.rates = devm_kcalloc(p->dev, tot_rates,
-+						sizeof(*p->clkd->r.rates), GFP_KERNEL);
-+		if (!p->clkd->r.rates)
- 			return -ENOMEM;
- 
- 		/* max_resources is used by the iterators to control bounds */
-@@ -507,10 +505,10 @@ iter_clk_describe_process_response(const struct scmi_protocol_handle *ph,
- 	struct scmi_clk_ipriv *p = priv;
- 	const struct scmi_msg_resp_clock_describe_rates *r = response;
- 
--	p->clkd->rates[p->clkd->num_rates] = RATE_TO_U64(r->rate[st->loop_idx]);
-+	p->clkd->r.rates[p->clkd->r.num_rates] = RATE_TO_U64(r->rate[st->loop_idx]);
- 
- 	/* Count only effectively discovered rates */
--	p->clkd->num_rates++;
-+	p->clkd->r.num_rates++;
- 
- 	return 0;
- }
-@@ -531,7 +529,13 @@ scmi_clock_describe_rates_get_full(const struct scmi_protocol_handle *ph,
- 		.dev = ph->dev,
- 	};
- 
--	iter = ph->hops->iter_response_init(ph, &ops, 0, CLOCK_DESCRIBE_RATES,
-+	/*
-+	 * Using tot_rates as max_resources parameter here so as to trigger
-+	 * the dynamic allocation only when strictly needed: when trying a
-+	 * full enumeration after a lazy one tot_rates will be non-zero.
-+	 */
-+	iter = ph->hops->iter_response_init(ph, &ops, clkd->tot_rates,
-+					    CLOCK_DESCRIBE_RATES,
- 					    sizeof(struct scmi_msg_clock_describe_rates),
- 					    &cpriv);
- 	if (IS_ERR(iter))
-@@ -542,12 +546,12 @@ scmi_clock_describe_rates_get_full(const struct scmi_protocol_handle *ph,
- 		return ret;
- 
- 	/* empty set ? */
--	if (!clkd->num_rates)
-+	if (!clkd->r.num_rates)
- 		return 0;
- 
--	if (clkd->rate_discrete)
--		sort(clkd->rates, clkd->num_rates,
--		     sizeof(clkd->rates[0]), rate_cmp_func, NULL);
-+	if (clkd->r.rate_discrete && PROTOCOL_REV_MAJOR(ph->version) == 0x1)
-+		sort(clkd->r.rates, clkd->r.num_rates,
-+		     sizeof(clkd->r.rates[0]), rate_cmp_func, NULL);
- 
- 	return 0;
- }
-@@ -586,7 +590,7 @@ scmi_clock_describe_rates_get_lazy(const struct scmi_protocol_handle *ph,
- 	 * If discrete and we don't already have it, grab the last value, which
- 	 * should be the max
- 	 */
--	if (clkd->rate_discrete && clkd->tot_rates > clkd->num_rates) {
-+	if (clkd->r.rate_discrete && clkd->tot_rates > clkd->r.num_rates) {
- 		first = clkd->tot_rates - 1;
- 		last = clkd->tot_rates - 1;
- 		ret = ph->hops->iter_response_run_bound(iter, &first, &last);
-@@ -618,16 +622,16 @@ scmi_clock_describe_rates_get(const struct scmi_protocol_handle *ph,
- 	if (ret)
- 		return ret;
- 
--	clkd->info.min_rate = clkd->rates[RATE_MIN];
--	if (!clkd->rate_discrete) {
--		clkd->info.max_rate = clkd->rates[RATE_MAX];
-+	clkd->info.min_rate = clkd->r.rates[RATE_MIN];
-+	if (!clkd->r.rate_discrete) {
-+		clkd->info.max_rate = clkd->r.rates[RATE_MAX];
- 		dev_dbg(ph->dev, "Min %llu Max %llu Step %llu Hz\n",
--			clkd->rates[RATE_MIN], clkd->rates[RATE_MAX],
--			clkd->rates[RATE_STEP]);
-+			clkd->r.rates[RATE_MIN], clkd->r.rates[RATE_MAX],
-+			clkd->r.rates[RATE_STEP]);
- 	} else {
--		clkd->info.max_rate = clkd->rates[clkd->num_rates - 1];
-+		clkd->info.max_rate = clkd->r.rates[clkd->r.num_rates - 1];
- 		dev_dbg(ph->dev, "Clock:%s DISCRETE:%d -> Min %llu Max %llu\n",
--			clkd->info.name, clkd->rate_discrete,
-+			clkd->info.name, clkd->r.rate_discrete,
- 			clkd->info.min_rate, clkd->info.max_rate);
- 	}
- 
-@@ -732,7 +736,7 @@ static int scmi_clock_determine_rate(const struct scmi_protocol_handle *ph,
- 	 * If we can't figure out what rate it will be, so just return the
- 	 * rate back to the caller.
- 	 */
--	if (clkd->rate_discrete)
-+	if (clkd->r.rate_discrete)
- 		return 0;
- 
- 	fmin = clk->min_rate;
-@@ -746,14 +750,40 @@ static int scmi_clock_determine_rate(const struct scmi_protocol_handle *ph,
- 	}
- 
- 	ftmp = *rate - fmin;
--	ftmp += clkd->rates[RATE_STEP] - 1; /* to round up */
--	ftmp = div64_ul(ftmp, clkd->rates[RATE_STEP]);
-+	ftmp += clkd->r.rates[RATE_STEP] - 1; /* to round up */
-+	ftmp = div64_ul(ftmp, clkd->r.rates[RATE_STEP]);
- 
--	*rate = ftmp * clkd->rates[RATE_STEP] + fmin;
-+	*rate = ftmp * clkd->r.rates[RATE_STEP] + fmin;
- 
- 	return 0;
- }
- 
-+static const struct scmi_clock_rates *
-+scmi_clock_all_rates_get(const struct scmi_protocol_handle *ph, u32 clk_id)
-+{
-+	struct clock_info *ci = ph->get_priv(ph);
-+	struct scmi_clock_desc *clkd;
-+	struct scmi_clock_info *clk;
-+
-+	clk = scmi_clock_domain_lookup(ci, clk_id);
-+	if (IS_ERR(clk) || !clk->name[0])
-+		return NULL;
-+
-+	clkd = to_desc(clk);
-+	/* Needs full enumeration ? */
-+	if (clkd->r.rate_discrete && clkd->tot_rates != clkd->r.num_rates) {
-+		int ret;
-+
-+		/* rates[] is already allocated BUT we need to re-enumerate */
-+		clkd->r.num_rates = 0;
-+		ret = scmi_clock_describe_rates_get_full(ph, clkd);
-+		if (ret)
-+			return NULL;
-+	}
-+
-+	return &clkd->r;
-+}
-+
- static int
- scmi_clock_config_set(const struct scmi_protocol_handle *ph, u32 clk_id,
- 		      enum clk_state state,
-@@ -1067,6 +1097,7 @@ static const struct scmi_clk_proto_ops clk_proto_ops = {
- 	.rate_get = scmi_clock_rate_get,
- 	.rate_set = scmi_clock_rate_set,
- 	.determine_rate = scmi_clock_determine_rate,
-+	.all_rates_get = scmi_clock_all_rates_get,
- 	.enable = scmi_clock_enable,
- 	.disable = scmi_clock_disable,
- 	.state_get = scmi_clock_state_get,
-diff --git a/include/linux/scmi_protocol.h b/include/linux/scmi_protocol.h
-index 5552ac04c820..c710107c2120 100644
---- a/include/linux/scmi_protocol.h
-+++ b/include/linux/scmi_protocol.h
-@@ -40,6 +40,12 @@ struct scmi_revision_info {
- 	char sub_vendor_id[SCMI_SHORT_NAME_MAX_SIZE];
- };
- 
-+struct scmi_clock_rates {
-+	bool rate_discrete;
-+	unsigned int num_rates;
-+	u64 *rates;
-+};
-+
- struct scmi_clock_info {
- 	char name[SCMI_MAX_STR_SIZE];
- 	unsigned int enable_latency;
-@@ -85,6 +91,7 @@ enum scmi_clock_oem_config {
-  *		    clock calculating the closest allowed rate.
-  *		    Note that @rate is an input/output parameter used both to
-  *		    describe the requested rate and report the closest match
-+ * @all_rates_get: get the list of all available rates for the specified clock.
-  * @enable: enables the specified clock
-  * @disable: disables the specified clock
-  * @state_get: get the status of the specified clock
-@@ -104,6 +111,8 @@ struct scmi_clk_proto_ops {
- 			u64 rate);
- 	int (*determine_rate)(const struct scmi_protocol_handle *ph, u32 clk_id,
- 			      unsigned long *rate);
-+	const struct scmi_clock_rates __must_check *(*all_rates_get)
-+		(const struct scmi_protocol_handle *ph, u32 clk_id);
- 	int (*enable)(const struct scmi_protocol_handle *ph, u32 clk_id,
- 		      bool atomic);
- 	int (*disable)(const struct scmi_protocol_handle *ph, u32 clk_id,
--- 
-2.53.0
+> On Thu Apr 2, 2026 at 9:42 AM BST, Tudor Ambarus wrote:
+>>>  static int exynos_mbox_send_data(struct mbox_chan *chan, void *data)
+>>> @@ -57,7 +104,8 @@ static int exynos_mbox_send_data(struct mbox_chan *c=
+han, void *data)
+>>>  		return -EINVAL;
+>>>  	}
+>>> =20
+>>> -	writel(BIT(msg->chan_id), exynos_mbox->regs + EXYNOS_MBOX_INTGR1);
+>>> +	writel(BIT(msg->chan_id) << exynos_mbox->data->irq_doorbell_shift,
+>>> +	       exynos_mbox->regs + exynos_mbox->data->irq_doorbell_offset);
+>>
+>> Use FIELD_PREP from <linux/bitfield.h> please. You will use a mask inste=
+ad of
+>> a shift.
+>>
+>> I would rename irq_doorbell_offset to intgr. It aligns with the register=
+ name
+>> from the datasheet. You won't need to prepend _offset to the name, we al=
+ready
+>> see it's an offset when doing the writel().
+>
+> Sure. Thanks. Let's use FIELD_PREP.
+
++       /* Ring the doorbell */
++       writel(BIT(msg->chan_id) << exynos_mbox->data->intgr_shift,
++              exynos_mbox->regs + exynos_mbox->data->intgr);
+
+FIELD_PREP() wants a mask as a compile-time constant. Unless you want me to
+add switch/case for different SoCs or I misunderstood something I don't see
+how this is gonna fly.
+
+Best regards,
+Alexey
 
