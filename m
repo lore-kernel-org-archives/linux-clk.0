@@ -1,31 +1,31 @@
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5645231AA8F;
-	Tue, 28 Apr 2026 20:16:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F1C31E824;
+	Tue, 28 Apr 2026 20:17:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777407419; cv=none; b=TppEL1RcChaU4hQUXAdeWrpCPX4e6X6iLWjutPdsAorGnGXnyEs46gPMTu2n2uKf3Om/k3xbXFBD1Yqd1gBKL1bAM+InJ2I7LxBXZODSiiM65kA0UkJ4QkF9fZqL1+izrMaC2Zi9A5FWlxg/3DK38Py/CHjWqVG9jXFOLe4/wk0=
+	t=1777407423; cv=none; b=fFh3G0urWh2Aw1rTe+oeRayC4v0lrtNtdk5uPVqfErU1Gs29HsIl5FmdrBC0QmJtwKkK7diMG1pE/JvnsWbE4B5h7vJXSMjNSX+u6emVsstXGc+5zElj44MjTWuNDPwd6ort8ecSkvpOzaonaWcpj6YTb+jntsbstLg8c4tDYxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777407419; c=relaxed/simple;
-	bh=FCP9MWDXBkmpmaTgWI8hodUMzwfIaYuwHBhh3J2kcKA=;
+	s=arc-20240116; t=1777407423; c=relaxed/simple;
+	bh=ydGSxVs7029/nGMXlye2/Mws9V6mzCtDA5RxCjGimS4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=b2z5+dXbFf1KCX/VRnXzRyP6R0EI39IH0rE+99VjGhhDH/1oqlaHvgpEY9zCDWgEiO48HneTy0oGLZKzKyggWzJvG0iHfkj4OMNjpMnANYwIcWGO+ffVXUTHEUUhSm2sJlTq6x8F4dyPWK1qL9J6s2yGjvH9E+0HAxBGacNjcbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=dpe6DzK+; arc=none smtp.client-ip=217.140.110.172
+	 MIME-Version; b=JtIpuDal4PlvkYgkCa1isIjq74ebz5HSIn+eKVux3GlaYQUbklCY65TzFh+IAiXJ6GBg6HzDGt/rlC4JP1zQc5mRJsG3piC/v/kePFLZbAaxklXXBaEOGxGipMKYyZ9WwPLZxM7EblzqjTs5LHQkfKDRek1jwnFj1sZiW5SBSCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=a3Qh79Fc; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="dpe6DzK+"
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="a3Qh79Fc"
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 41B531C01;
-	Tue, 28 Apr 2026 13:16:52 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 943063295;
+	Tue, 28 Apr 2026 13:16:55 -0700 (PDT)
 Received: from pluto.fritz.box (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AF53B3F763;
-	Tue, 28 Apr 2026 13:16:54 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 16B9E3F763;
+	Tue, 28 Apr 2026 13:16:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1777407417; bh=FCP9MWDXBkmpmaTgWI8hodUMzwfIaYuwHBhh3J2kcKA=;
+	t=1777407421; bh=ydGSxVs7029/nGMXlye2/Mws9V6mzCtDA5RxCjGimS4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dpe6DzK+9m+K4NwKt0FoWDDVcTtvjQx2HvJxkemaZkUvsIQJKuYWheQ4vdWRez6Yp
-	 cGOfYFbzoVxSHMCqcmUH4hwdRfeUSoDeL0ll58r2/4zFHqUh8PaIseJTS2wZXP7WC+
-	 RVEenmDDDlLc1YP58my65VERLEe0b0BwuVgwvHI8=
+	b=a3Qh79FcFLY+WZHqhFshbyqDMI0ZEI/lttWBT2xTG/3PYcQvNakAhxiqIeYjiMCTb
+	 CM9c94RV3iQrnX/hV0LEF1PLliKKXLnV1ZjnxWvTSbKpDkXNe8NW5m9UNtWwdEbQ8E
+	 wxWd71AItpmxHq0RbICj7ttjf/+389AthdIPVSYE=
 From: Cristian Marussi <cristian.marussi@arm.com>
 To: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
@@ -45,9 +45,9 @@ Cc: sudeep.holla@arm.com,
 	marek.vasut+renesas@gmail.com,
 	Cristian Marussi <cristian.marussi@arm.com>,
 	Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH v3 08/15] firmware: arm_scmi: Harden clock parents discovery
-Date: Tue, 28 Apr 2026 21:15:15 +0100
-Message-ID: <20260428201522.903875-9-cristian.marussi@arm.com>
+Subject: [PATCH v3 09/15] firmware: arm_scmi: Refactor iterators internal allocation
+Date: Tue, 28 Apr 2026 21:15:16 +0100
+Message-ID: <20260428201522.903875-10-cristian.marussi@arm.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260428201522.903875-1-cristian.marussi@arm.com>
 References: <20260428201522.903875-1-cristian.marussi@arm.com>
@@ -59,58 +59,111 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Fix clock parents enumeration to account only for effectively discovered
-parents during enumeration, avoiding to trust the total number of parents
-declared upfront by the platform.
+Use cleanup handlers to manage iterator data structures.
+
+No functional change.
 
 Reviewed-by: Peng Fan <peng.fan@nxp.com>
 Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
 ---
 v2 --> v3
- - collected Reviewed-by tags
+ - collected Reviewed tags
 ---
- drivers/firmware/arm_scmi/clock.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+ drivers/firmware/arm_scmi/driver.c | 35 +++++++++++++++---------------
+ 1 file changed, 18 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
-index c9b62edce4fd..d07cfef243fd 100644
---- a/drivers/firmware/arm_scmi/clock.c
-+++ b/drivers/firmware/arm_scmi/clock.c
-@@ -270,15 +270,15 @@ static int iter_clk_possible_parents_update_state(struct scmi_iterator_state *st
- 	 * assume it's returned+remaining on first call.
- 	 */
- 	if (!st->max_resources) {
--		p->clkd->info.num_parents = st->num_returned + st->num_remaining;
--		p->clkd->info.parents = devm_kcalloc(p->dev,
--						     p->clkd->info.num_parents,
-+		int num_parents = st->num_returned + st->num_remaining;
+diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
+index f167194f7cf6..66cb64c8ed3d 100644
+--- a/drivers/firmware/arm_scmi/driver.c
++++ b/drivers/firmware/arm_scmi/driver.c
+@@ -17,6 +17,7 @@
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
+ #include <linux/bitmap.h>
++#include <linux/cleanup.h>
+ #include <linux/debugfs.h>
+ #include <linux/device.h>
+ #include <linux/export.h>
+@@ -1789,39 +1790,41 @@ static void *scmi_iterator_init(const struct scmi_protocol_handle *ph,
+ 				size_t tx_size, void *priv)
+ {
+ 	int ret;
+-	struct scmi_iterator *i;
+ 
+-	i = devm_kzalloc(ph->dev, sizeof(*i), GFP_KERNEL);
++	struct scmi_iterator *i __free(kfree) = kzalloc(sizeof(*i), GFP_KERNEL);
+ 	if (!i)
+ 		return ERR_PTR(-ENOMEM);
+ 
++	if (!ops || !ph)
++		return ERR_PTR(-EINVAL);
 +
-+		p->clkd->info.parents = devm_kcalloc(p->dev, num_parents,
- 						     sizeof(*p->clkd->info.parents),
- 						     GFP_KERNEL);
--		if (!p->clkd->info.parents) {
--			p->clkd->info.num_parents = 0;
-+		if (!p->clkd->info.parents)
- 			return -ENOMEM;
+ 	i->ph = ph;
+ 	i->ops = ops;
+ 	i->priv = priv;
+ 
+ 	ret = ph->xops->xfer_get_init(ph, msg_id, tx_size, 0, &i->t);
+-	if (ret) {
+-		devm_kfree(ph->dev, i);
++	if (ret)
+ 		return ERR_PTR(ret);
+-	}
+ 
+ 	i->state.max_resources = max_resources;
+ 	i->msg = i->t->tx.buf;
+ 	i->resp = i->t->rx.buf;
+ 
+-	return i;
++	return no_free_ptr(i);
+ }
+ 
+ static int scmi_iterator_run(void *iter)
+ {
+-	int ret = -EINVAL;
++	int ret;
+ 	struct scmi_iterator_ops *iops;
+ 	const struct scmi_protocol_handle *ph;
+ 	struct scmi_iterator_state *st;
+-	struct scmi_iterator *i = iter;
+ 
+-	if (!i || !i->ops || !i->ph)
+-		return ret;
++	if (!iter)
++		return -EINVAL;
++
++	/* Take ownership of the iterator */
++	struct scmi_iterator *i __free(kfree) = iter;
+ 
+ 	iops = i->ops;
+ 	ph = i->ph;
+@@ -1846,12 +1849,12 @@ static int scmi_iterator_run(void *iter)
+ 			break;
+ 		}
+ 
+-		for (st->loop_idx = 0; st->loop_idx < st->num_returned;
+-		     st->loop_idx++) {
++		for (st->loop_idx = 0; !ret && st->loop_idx < st->num_returned;
++		     st->loop_idx++)
+ 			ret = iops->process_response(ph, i->resp, st, i->priv);
+-			if (ret)
+-				goto out;
 -		}
 +
-+		/* max_resources is used by the iterators to control bounds */
- 		st->max_resources = st->num_returned + st->num_remaining;
- 	}
++		if (ret)
++			break;
  
-@@ -293,9 +293,11 @@ static int iter_clk_possible_parents_process_response(const struct scmi_protocol
- 	const struct scmi_msg_resp_clock_possible_parents *r = response;
- 	struct scmi_clk_ipriv *p = priv;
+ 		st->desc_index += st->num_returned;
+ 		ph->xops->reset_rx_to_maxsz(ph, i->t);
+@@ -1861,10 +1864,8 @@ static int scmi_iterator_run(void *iter)
+ 		 */
+ 	} while (st->num_returned && st->num_remaining);
  
--	u32 *parent = &p->clkd->info.parents[st->desc_index + st->loop_idx];
-+	p->clkd->info.parents[st->desc_index + st->loop_idx] =
-+		le32_to_cpu(r->possible_parents[st->loop_idx]);
+-out:
+ 	/* Finalize and destroy iterator */
+ 	ph->xops->xfer_put(ph, i->t);
+-	devm_kfree(ph->dev, i);
  
--	*parent = le32_to_cpu(r->possible_parents[st->loop_idx]);
-+	/* Count only effectively discovered parents */
-+	p->clkd->info.num_parents++;
- 
- 	return 0;
+ 	return ret;
  }
 -- 
 2.53.0
