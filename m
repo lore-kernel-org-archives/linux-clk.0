@@ -1,49 +1,52 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C8C423A9A;
-	Tue, 28 Apr 2026 10:43:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EABE428838;
+	Tue, 28 Apr 2026 10:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777372983; cv=none; b=uZVa0SrSzNBdUT29PR2IQlob1wa2FZc69i8YfDkRitSSVFPnvw7+2hznJCs2+YaKy9Eds02YMGnGEkjIidl3ZM5eQB4PhbRS2Z8rijCi408HHAeTgnG3fMT656jERy33H6qleEkPlwAM/Ncq7nioRWdv8LeeqnN8KMq2ubXT2RE=
+	t=1777373002; cv=none; b=C8Pewf/rmzEsPeG0gPa7rY1eu1Pw/5DTbFdOiUIUM9rwhByt7IClJfalUJlfSST7gbdoxzFOf7ZBLW1NHQtIumo1TjnHp6OccsTPleKzm8/0xOejqXi3vov6qWA1rilURNN8Mq2ZVPQdFaWMf4YzdAWOEzctewDY75GfI2j5t/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777372983; c=relaxed/simple;
-	bh=+ZRNSpMxbtL6pi+004vKl0lGTMAHazGZBWSYX+mLXR0=;
+	s=arc-20240116; t=1777373002; c=relaxed/simple;
+	bh=yA9GlsKbZPA0q0wYtAV3srus1XhU361ZRCUkz2/ZKKs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WCJhcGF8ncNAo5ltQG4KXy8KiwI3ggb3Up+uUYknR8FyzmJkKnF7OpkB7v5I6IEM5kBkfrM4weaenpiCOuSGgyp/VyA4N7xIfWvHPCE/Trgff+SVK/TO1U+bUVb5O+kSf3TpgTJfvLqRQSEL0Gi+lw9G/TyRxUQTeEExkdMuskM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qwfN6GIu; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=HsseqPI/WLSg8jXuWsp7M4BZyw/I50EINgtj82Pvb2G7czLhq7JMaOTMXMyKp21GxUvHEwXjGvL5hjDcl3QcAkmqUGDC4FqvkBoftszXUaSLlk8pdUOPKzgWj8j/RMH8FSTxEqEQlHZ19VwonpvrkiPS7gkRP4SU7eioFOeFmOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nd5YifBL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qwfN6GIu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 495F7C2BCB7;
-	Tue, 28 Apr 2026 10:43:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nd5YifBL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D83AC2BCB5;
+	Tue, 28 Apr 2026 10:43:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777372983;
-	bh=+ZRNSpMxbtL6pi+004vKl0lGTMAHazGZBWSYX+mLXR0=;
+	s=k20201202; t=1777373001;
+	bh=yA9GlsKbZPA0q0wYtAV3srus1XhU361ZRCUkz2/ZKKs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qwfN6GIuenPNQYzZ38EI2quHWFLfR8Eqvu20YmsSn1X9U3z4iK1LxIjPOBfUoFXAe
-	 6YJwtOW/MK1fcXT9SmrllL7zPC9XKk+8ZgpS6ko7aQCz/qxXhu7EaareypFmkDv/KB
-	 J4dYX68yNg9ChNdvtWZ6d/w9QO+kw/MgScedRxTuFUudbsYVSgV12yKZP0wCCh+ohw
-	 605Vem7+MfIa/PmPMiTtzrRQXCKM6bcS34N3K+vl9636LkKX7cnkOBwsXOKK8Hwp7P
-	 QPp8vbD3ZXxsC01VqcJc3vuVHmcbQhz2C6aeouV0GXUpf7JVoapr2hevH6hhIXGOJn
-	 hy4D2QRNW/v3g==
+	b=Nd5YifBLnlNJYcBrxP9ouMf4MW2VJ40F69lAtGDeg9QENKHa9XxdtIU6UQuq2OdGd
+	 66aBabNAWCqR9GHNHX/S6r7cqBNTJic75gVZ04HQrmcCcE3RrOFsejz42ATf0OrzZc
+	 DrsDKBM9PnGAiKE2+TTM8vtF/iqQ4HhSoVFUoAPfwkTeaq5Cl1rWozKbwKHoEnhTgf
+	 l7CdHB4PyRmcSDgTkiK+DlLTYJ5kjsJIDFRAcu29lZiOAXfjOzJGoWjs7K9V8bjkYO
+	 dVKrmW8lyNcrTfn5ZfMrtPj5PNIq5/r3GgF2GmysR36nWtVSc9mn/KXdmwrYANvs9b
+	 ZOX7ah3yAy5aA==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Pengyu Luo <mitltlatltl@gmail.com>,
-	Taniya Das <taniya.das@oss.qualcomm.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+Cc: Val Packett <val@packett.cool>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
 	Bjorn Andersson <andersson@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
 	agross@kernel.org,
 	konrad.dybcio@linaro.org,
 	mturquette@baylibre.com,
 	sboyd@kernel.org,
+	robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org,
 	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 7.0-5.10] clk: qcom: rcg2: expand frac table for mdss_pixel_clk_src
-Date: Tue, 28 Apr 2026 06:41:13 -0400
-Message-ID: <20260428104133.2858589-62-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 7.0-5.15] dt-bindings: clock: qcom,gcc-sc8180x: Add missing GDSCs
+Date: Tue, 28 Apr 2026 06:41:26 -0400
+Message-ID: <20260428104133.2858589-75-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260428104133.2858589-1-sashal@kernel.org>
 References: <20260428104133.2858589-1-sashal@kernel.org>
@@ -59,328 +62,315 @@ X-stable-base: Linux 7.0.2
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Pengyu Luo <mitltlatltl@gmail.com>
+From: Val Packett <val@packett.cool>
 
-[ Upstream commit 0f5c8f03d990f9be9908a08a701c324e113554d2 ]
+[ Upstream commit 76404ffbf07f28a5ec04748e18fce3dac2e78ef6 ]
 
-Recently, when testing 10-bit dsi C-PHY panel, clks are different
-from the usual. (dsi0_phy_pll_out_dsiclk's parent is dsi0_pll_bit_clk
-now (dsiclk_sel = 0)) And we failed to set dsiclk's children.
+There are 5 more GDSCs that we were ignoring and not putting to sleep,
+which are listed in downstream DTS. Add them.
 
-dsi_link_clk_set_rate_6g: Set clk rates: pclk=172992000, byteclk=108120000
-
-byteclk was set first to 108120000, so the vco rate was set to
-108120000 * 7 * 1 * 1 = 756840000. When we was trying to set
-172992000 on mdss_pixel_clk_src later.
-
-Since there was no matched ratio, we failed to set it. And dsiclk
-divider ratio was set to 15:1 (wrong cached register value 0xf and
-didn't update), we finally got 50455997, apparently wrong.
-
-  dsi0vco_clk                1       1        0        756839941
-     dsi0_pll_out_div_clk    1       1        0        756839941
-        dsi0_pll_post_out_div_clk 0       0        0        216239983
-        dsi0_pll_bit_clk     2       2        0        756839941
-           dsi0_phy_pll_out_dsiclk 2       2        0        50455997
-              disp_cc_mdss_pclk1_clk_src 1       1        0        50455997
-           dsi0_pll_by_2_bit_clk 0       0        0        378419970
-           dsi0_phy_pll_out_byteclk 2       2        0        108119991
-              disp_cc_mdss_byte1_clk_src 2       2        0        108119991
-
-Downstream clk_summary shows the mdss_pixel_clk_src support the
-ratio(35:16)
-
- dsi0_phy_pll_out_dsiclk             2       2        0        378420000
-     disp_cc_mdss_pclk1_clk_src       1       1        0        172992000
- dsi0_phy_pll_out_byteclk            2       2        0        108120000
-     disp_cc_mdss_byte1_clk_src       2       2        0        108120000
-
-After checking downstream source, 15:4 also seems to be supported,
-add them two.
-
-Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
-Reviewed-by: Taniya Das <taniya.das@oss.qualcomm.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Link: https://lore.kernel.org/r/20260321095029.2259489-1-mitltlatltl@gmail.com
+Signed-off-by: Val Packett <val@packett.cool>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Link: https://lore.kernel.org/r/20260312112321.370983-2-val@packett.cool
 Signed-off-by: Bjorn Andersson <andersson@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-Now I have all the information I need to complete this analysis.
+I have all the evidence I need. Now let me write my analysis.
 
-## Phase 1: COMMIT MESSAGE FORENSICS
+## Phase 1: Commit Message Forensics
 
-**Step 1.1 - Parse subject line:**
-- Subsystem: `clk: qcom: rcg2:`
-- Action verb: "expand" (non-standard fix verb, but describes adding
-  entries)
-- Record: Qualcomm Root Clock Generator 2 driver - expand fractional
-  ratio table for MDSS pixel clock source
+**Step 1.1: Parse subject line**
+Record: Subsystem: `dt-bindings: clock: qcom,gcc-sc8180x`. Action verb:
+"Add". Summary: Adds 5 missing GDSC (Global Distributed Switch
+Controller) #defines to the binding header.
 
-**Step 1.2 - Parse tags:**
-- Reviewed-by: Taniya Das <taniya.das@oss.qualcomm.com> (Qualcomm clock
-  expert, original author of prior frac-table update b527358cb4cd5)
-- Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> (msm
-  subsystem maintainer)
-- Link: lore.kernel.org reference to discussion
-- Signed-off-by: Bjorn Andersson <andersson@kernel.org> (Qualcomm SoC
-  maintainer, applied it)
-- **NO** Fixes: tag (expected absence - this is why it's being reviewed)
-- **NO** Cc: stable (expected absence)
-- **NO** Reported-by: (author found it while testing)
+**Step 1.2: Parse all tags**
+Record: Tags found: `Signed-off-by: Val Packett`, `Acked-by: Krzysztof
+Kozlowski` (DT bindings maintainer), `Link:` to lore.kernel.org thread,
+`Signed-off-by: Bjorn Andersson` (Qualcomm maintainer who applied). No
+`Fixes:` tag on this bindings patch (but its companion driver patch
+`3565741eb985a` has `Fixes: 4433594bbe5d`). No `Cc: stable` tag.
 
-**Step 1.3 - Analyze commit body:**
-- Bug: When using a 10-bit DSI C-PHY panel with `pclk=172992000,
-  byteclk=108120000`, `mdss_pixel_clk_src` fails to find a matching
-  ratio in `frac_table_pixel[]`.
-- Failure mode: `clk_pixel_determine_rate()` returns `-EINVAL`, the
-  divider register keeps a stale cached value (0xf = 15:1), so actual
-  pclk becomes ~50.4 MHz instead of required ~173 MHz — a ~3.4x wrong
-  clock rate. Display output is corrupted/broken.
-- Root cause: Table lacks the 16/35 and 4/15 ratios that downstream
-  Qualcomm driver supports.
-- Record: concrete runtime bug on real hardware; downstream driver
-  carries the needed ratios.
+**Step 1.3: Analyze commit body**
+Record: "There are 5 more GDSCs that we were ignoring and not putting to
+sleep" — explicitly describes missing PM/power management support. The
+commit adds 5 new #define identifiers (values 11-15) for MMNOC MMU TBU
+(HF0/HF1/SF) and Turing MMU TBU0/TBU1 GDSCs. No version info mentioned.
+Author's explanation: these were missing from mainline driver but
+present in downstream DTS.
 
-**Step 1.4 - Hidden fix detection:** Subject says "expand" but the body
-clearly documents a failure mode. This is a bug fix disguised as an
-enhancement. The "expand" verb hides that `clk_set_rate()` completely
-fails without it.
+**Step 1.4: Detect hidden fix**
+Record: Language uses "Add missing" — typical hidden-fix pattern. The
+driver companion has `Fixes: 4433594bbe5d` tag pointing to the original
+SC8180x driver (v5.12). This is a bug fix by nature (missing power
+management), but THIS patch is only the header definitions.
 
-## Phase 2: DIFF ANALYSIS
+## Phase 2: Diff Analysis
 
-**Step 2.1 - Inventory:** 1 file (`drivers/clk/qcom/clk-rcg2.c`), +2 /
--0 lines. Single-file surgical change.
+**Step 2.1: Inventory**
+Record: Single file modified: `include/dt-bindings/clock/qcom,gcc-
+sc8180x.h`. 5 lines added, 0 removed. Zero functions modified — purely
+adding preprocessor macros.
 
-**Step 2.2 - Code flow:**
-- Before: `frac_table_pixel[] = { {3,8}, {2,9}, {4,9}, {1,1}, {2,3}, {}
-  }`
-- After: adds `{16,35}` and `{4,15}` before the sentinel
-- Only affects `clk_pixel_determine_rate()` and `clk_pixel_set_rate()`
-  iteration logic
+**Step 2.2: Code flow change**
+Record: Before: header defined GDSC IDs 0-10. After: header defines GDSC
+IDs 0-15 (adds 11-15). No execution-path change; these are constants
+used by other code (driver `drivers/clk/qcom/gcc-sc8180x.c` in the
+companion patch) and potentially DTS files.
 
-**Step 2.3 - Bug mechanism:** Hardware workaround/enablement category.
-The table defines numerator/denominator pairs used to compute parent
-rate requests. Without the new entries, the iteration loop falls off the
-end and returns `-EINVAL` for specific legitimate hardware
-configurations.
+**Step 2.3: Bug mechanism category**
+Record: Category (h) Hardware enablement — adds IDs needed to expose
+hardware GDSCs. This is a prerequisite for the follow-on driver patch
+that actually registers the 5 GDSCs so they can be power-managed.
 
-**Step 2.4 - Fix quality:**
-- Obviously correct: pure data table addition, cannot affect previously
-  working cases.
-- Cannot cause regression: iteration checks each entry in order, new
-  entries only kick in when existing ones don't match.
-- No risk of deadlock, UAF, etc.
+**Step 2.4: Fix quality**
+Record: Trivially correct — just #define additions. Zero regression risk
+on its own (unused constants). Obvious correctness verifiable by reading
+the names and numbering. No red flags.
 
-## Phase 3: GIT HISTORY INVESTIGATION
+## Phase 3: Git History Investigation
 
-**Step 3.1 - Blame:**
-- `frac_table_pixel[]` was introduced by `99cbd064b059f` ("clk: qcom:
-  Support display RCG clocks", May 2014)
-- Entry `{2, 3}` was added by `b527358cb4cd5` (Feb 2022, Taniya Das)
-  with a `Fixes:` tag
+**Step 3.1: Blame**
+Record: The file was introduced in commit 4433594bbe5d (SC8180x GCC
+driver, v5.12-rc1, January 2021). The existing GDSC section (IDs 0-10)
+has been stable since then. This patch only appends new IDs.
 
-**Step 3.2 - No Fixes: tag to follow.** The missing ratios have
-effectively been absent since original commit `99cbd064b059f` (2014,
-v3.17-era). Code exists in every active stable tree.
+**Step 3.2: Fixes target**
+Record: This bindings patch has no Fixes: tag. The driver companion
+`3565741eb985a` has `Fixes: 4433594bbe5d` ("clk: qcom: gcc: Add global
+clock controller driver for SC8180x"). That target commit is in v5.12
+and every stable tree since (5.15, 6.1, 6.6, 6.12).
 
-**Step 3.3 - Related file history:** Prior similar fix (`b527358cb4cd5`,
-"Update the frac table for pixel clock") added a single entry and was
-backported broadly. Same author context (Taniya Das reviewed both).
+**Step 3.3: File history**
+Record: Recent changes to the file have been small additions (GPLL9
+support, USB MP resets, UFS QREF clocks) — standard "add missing"
+completions. This fits the same pattern. Part of an 11-patch series
+"clk: qcom: sc8180x: PM-related fixes (and refactoring)" but this
+specific commit + the driver commit (patches 01/11 and 02/11) are the
+only "fix missing GDSCs" pair.
 
-**Step 3.4 - Author:** Pengyu Luo is a regular contributor to qcom
-subsystem with multiple DSI-related fixes (`e4eb11b34d6c8`,
-`ac47870fd7955`, `fd941c787cbb4`). Patch reviewed by actual subsystem
-experts.
+**Step 3.4: Author context**
+Record: Author Val Packett has submitted Qualcomm platform work
+previously; the patch is Acked-by the DT binding maintainer (Krzysztof
+Kozlowski) and applied by the Qualcomm SoC maintainer (Bjorn Andersson).
+The driver commit got Reviewed-by from two additional Qualcomm
+maintainers (Dmitry Baryshkov, Konrad Dybcio).
 
-**Step 3.5 - Dependencies:** Standalone, self-contained. No
-prerequisites.
+**Step 3.5: Dependencies**
+Record: This bindings patch is a prerequisite for the driver patch
+`3565741eb985a`, which references `HLOS1_VOTE_MMNOC_MMU_TBU_HF0_GDSC`
+etc. Without this header change, the driver patch won't compile
+(verified: `drivers/clk/qcom/gcc-sc8180x.c:17` includes this header).
 
-## Phase 4: MAILING LIST RESEARCH
+## Phase 4: Mailing List Research
 
-**Step 4.1 - `b4 dig -c 0f5c8f03d990f`:** Found thread at `https://lore.
-kernel.org/all/20260321095029.2259489-1-mitltlatltl@gmail.com/`. Single-
-patch, v1 only, applied as-is by Bjorn Andersson with "Applied,
-thanks!".
+**Step 4.1: Original discussion**
+Record: `b4 dig -c 76404ffbf07f2` found
+https://patch.msgid.link/20260312112321.370983-2-val@packett.cool. Part
+of v2 series (v1 had 7 patches, v2 expanded to 11 patches). Applied
+version is v2. Thread saved; no stable nominations, no NAKs, no concerns
+raised on this specific patch.
 
-**Step 4.2 - Reviewers:** Taniya Das (Qualcomm clock expert), Dmitry
-Baryshkov (msm maintainer), Konrad Dybcio (Qualcomm engineer). Proper
-maintainer review.
+**Step 4.2: Reviewers**
+Record: Acked-by Krzysztof Kozlowski (DT bindings maintainer). The
+broader series was reviewed by subsystem maintainers Dmitry Baryshkov
+and Konrad Dybcio.
 
-**Step 4.3 - Discussion:** Konrad asked a clarifying question about
-whether these divider pairs are needed at all; Dmitry pointed to the
-Qualcomm downstream commit `f7aec4359448d25c8a8d21ad8e8733d61f6b69ab`
-confirming the ratios come from the vendor reference code. No NAK, no
-concerns about stability.
+**Step 4.3: Bug report search**
+Record: No Reported-by tag, no bug link. The issue was identified by
+comparing against downstream DTS.
 
-**Step 4.4 - Series context:** Not part of a series.
+**Step 4.4: Series context**
+Record: 11-patch series. Patches 01-02 are the "add missing GDSCs" pair
+(bindings + driver). Patches 03-06 are PM retention/runtime-PM
+enablement (larger functional changes). Patches 07-08 are dispcc
+changes, 09-11 are camcc refactoring. Only 01+02 are tight bug-fix
+material.
 
-**Step 4.5 - Stable discussion:** None found in the thread.
+**Step 4.5: Stable list**
+Record: No stable-list discussion found about this specific patch.
 
-## Phase 5: CODE SEMANTIC ANALYSIS
+## Phase 5: Code Semantic Analysis
 
-**Step 5.1 - Key data:** `frac_table_pixel[]` array only.
+**Step 5.1: Key symbols**
+Record: 5 preprocessor constants:
+HLOS1_VOTE_MMNOC_MMU_TBU_HF0/HF1/SF_GDSC and
+HLOS1_VOTE_TURING_MMU_TBU0/1_GDSC. No functions modified.
 
-**Step 5.2 - Callers:** `clk_pixel_ops` (set via `.set_rate =
-clk_pixel_set_rate` and `.determine_rate = clk_pixel_determine_rate`) is
-used by 17+ Qualcomm dispcc drivers: SDM845, SM6350, SM7150, SM8250,
-SM8450, SM8550, SM8750, X1E80100, SC7180, SC7280, SC8280XP, QCM2290,
-SM4450, SM6375, SA8775P (dispcc0/1), etc. This is a HIGH IMPACT SURFACE
-— affects display on almost every modern Qualcomm SoC.
+**Step 5.2-5.4: Callers/callees**
+Record: Used by `drivers/clk/qcom/gcc-sc8180x.c` to index into the
+`gcc_sc8180x_gdscs[]` array (verified via grep). Not directly reachable
+from user code; these IDs reference power domains managed by the clock
+framework and consumed by SMMU/Turing subsystems on SC8180x hardware
+(e.g. Microsoft Surface Pro X).
 
-**Step 5.3 - Callees:** Pure table lookup.
+**Step 5.5: Similar patterns**
+Record: **Strong precedent found**. An essentially identical SC8280XP
+pair exists:
+- `9eba4db02a88` (SC8280XP bindings: "Add missing GDSCs") +
+  `4712eb7ff85b` (SC8280XP driver fix)
+- Both were backported to stable as `66120ba55999a` (explicitly labeled
+  `Stable-dep-of: 4712eb7ff85b`) and `a92a9604e8a43` respectively. The
+  SC8280XP commit message is almost verbatim identical, and the Qualcomm
+  stable process treated the bindings half as a required dependency.
 
-**Step 5.4 - Reachability:** Reached from `clk_set_rate()` on any MDSS
-pixel clock → userspace-triggerable via normal display driver operations
-(DRM probe, panel enable, mode set).
+## Phase 6: Cross-referencing / Stable Tree
 
-**Step 5.5 - Similar patterns:** The `b527358cb4cd5` commit is the exact
-same pattern (add ratio to `frac_table_pixel`) and was backported to 8
-stable trees.
+**Step 6.1: Code in stable**
+Record: The header file and driver exist in all stable trees ≥5.12. The
+incomplete GDSC list is present in all active stable trees.
 
-## Phase 6: STABLE TREE ANALYSIS
+**Step 6.2: Backport cleanliness**
+Record: Bindings file context from line 320-325 is unchanged since 2023
+(last modification 19ac3579af14e "Add missing bindings on gcc-sc8180x").
+The addition appends at end of GDSC section — should apply cleanly to
+all stable trees without conflicts.
 
-**Step 6.1 - Code exists in stable:** Verified `frac_table_pixel[]` is
-identical (`{3,8}, {2,9}, {4,9}, {1,1}, {2,3}`) on 5.10, 5.15, 6.1, 6.6,
-6.12, 6.18, 6.19. Every active stable tree has the same buggy state.
+**Step 6.3: Related fixes in stable**
+Record: SC8280XP equivalent already in stable (same fix pattern for
+sibling SoC).
 
-**Step 6.2 - Backport complexity:** The `frac_table_pixel[]` array is in
-the same place across all trees. Will apply cleanly or with trivial
-context adjustment.
+## Phase 7: Subsystem
 
-**Step 6.3 - Related fixes in stable:** `b527358cb4cd5` (adding `{2,3}`)
-is in all stable trees. This new commit is the continuation.
+**Step 7.1**: Record: `drivers/clk/qcom/` (via header it defines) and
+`include/dt-bindings/` — Qualcomm clock/PM subsystem. Criticality:
+PERIPHERAL (specific to SC8180x, used in Microsoft Surface Pro X-class
+laptops and similar devices).
 
-## Phase 7: SUBSYSTEM CONTEXT
+**Step 7.2**: Record: Qualcomm clock driver area is actively maintained;
+this patch went through normal review cycle (v1→v2).
 
-**Step 7.1 - Subsystem:** `drivers/clk/qcom/` - Qualcomm clock driver.
-Level: IMPORTANT (affects many SoC families, any user with a Qualcomm
-device using `clk_pixel_ops`).
+## Phase 8: Impact / Risk
 
-**Step 7.2 - Activity:** Actively maintained subsystem; regular flow of
-fixes.
+**Step 8.1: Affected users**
+Record: SC8180x platform users (notably Surface Pro X; ARM64 laptops).
+When combined with driver patch, affects power consumption on these
+devices.
 
-## Phase 8: IMPACT & RISK
+**Step 8.2: Trigger**
+Record: Always active — SMMU TBU / Turing TBU GDSCs remain powered-on
+because kernel doesn't vote them off.
 
-**Step 8.1 - Affected users:** Users of Qualcomm SoCs with DSI panels
-requiring the specific pixel clock ratios — explicitly 10-bit DSI C-PHY
-panels and other configurations where pclk/byteclk combinations force a
-16:35 or 4:15 ratio.
+**Step 8.3: Severity of this patch alone**
+Record: This bindings-only patch has ZERO runtime effect by itself.
+Severity of the **combined fix** (with companion driver patch): MEDIUM —
+power waste, excess heat, degraded battery. Not a crash, not a
+corruption, but real user-facing PM issue.
 
-**Step 8.2 - Trigger conditions:** Normal display operation with
-affected panels. No special privileges needed (display usage is common).
+**Step 8.4: Risk-benefit**
+Record: Benefit: enables the companion driver fix to apply and build.
+Risk: essentially zero (5 unused preprocessor macros if driver patch not
+applied). As Stable-dep-of — safe and necessary.
 
-**Step 8.3 - Failure mode severity:** HIGH — pixel clock is set to
-completely wrong rate (e.g., 50 MHz instead of 173 MHz, a 3.4x error).
-This causes visible display corruption / non-functional display on
-affected hardware. Not a crash, but user-visible broken functionality
-with no workaround.
+## Phase 9: Synthesis
 
-**Step 8.4 - Risk/benefit:**
-- Benefit: HIGH (fixes display for a class of panels across many SoCs)
-- Risk: VERY LOW (2 lines of data, table iteration is in-order; existing
-  ratios still match first)
-- Ratio: Strongly favors backport.
+**Evidence FOR:**
+- Companion driver fix has `Fixes: 4433594bbe5d` pointing to v5.12;
+  valid bug fix
+- Strong, nearly identical precedent: SC8280XP pair was backported to
+  stable exactly this way (Stable-dep-of marker)
+- Five trivial macro additions; zero regression risk
+- Applies cleanly to all stable trees (no conflicts in the appended
+  section)
+- Acked by DT bindings maintainer, reviewed by Qualcomm maintainers
+- Required prerequisite — without it the driver fix will not compile in
+  stable
 
-## Phase 9: SYNTHESIS
-
-**Evidence FOR backporting:**
-- Fixes real observed runtime failure with detailed clk_summary evidence
-- Same pattern (adding ratio to `frac_table_pixel`) was previously
-  backported to 8 stable trees (`b527358cb4cd5` went to 4.9.y, 4.14.y,
-  4.19.y, 5.4.y, 5.10.y, 5.15.y, 5.16.y, 5.17.y)
-- Minimal 2-line change in a const data table
-- Zero functional risk (iteration is ordered; additions cannot break
-  existing cases)
-- Reviewed by two subsystem experts + applied by Qualcomm SoC maintainer
-- Falls into "hardware quirk/workaround" exception category (analogous
-  to device ID addition)
-- Code exists identically in all active stable trees
-- Used by 17+ SoC drivers → broad user impact
-
-**Evidence AGAINST backporting:**
-- No explicit Fixes: tag (though prior identical-pattern fix had one,
-  and absence of tag is explicitly not a signal per the guidelines)
-- Commit message uses "expand" instead of "fix" (but body describes
-  concrete failure)
-- No Cc: stable from the author
+**Evidence AGAINST:**
+- This patch alone has no runtime effect; it's a dependency, not a
+  standalone fix
+- The underlying issue is "missing PM" not "crash/corruption"
+- Part of a larger 11-patch series, most of which is NOT stable material
 
 **Stable rules check:**
-1. Obviously correct? YES — pure data addition
-2. Fixes real bug? YES — pixel clock misprogrammed to ~3.4x wrong rate
-3. Important? YES — broken display on affected hardware
-4. Small and contained? YES — 2 lines in one file
-5. No new features/APIs? YES — extends internal lookup table, not
-   exposed
-6. Applies to stable? YES — verified identical state across stable trees
+1. Obviously correct — yes (5 #define lines)
+2. Fixes real bug — yes, when paired with driver patch (power waste)
+3. Important issue — borderline: PM/power waste, not crash
+4. Small & contained — yes (5 lines, 1 file)
+5. No new features/APIs — yes (enables existing hardware features
+   already in DT bindings header)
+6. Applies to stable — yes (verified file structure unchanged)
 
-**Exception category:** Fits "hardware quirks/workarounds" — enables
-specific hardware configurations (10-bit DSI C-PHY panels) that were
-previously non-functional due to missing table entries, directly
-analogous to adding PCI/USB device IDs or codec quirks.
+**Exception category**: This is effectively a DT binding additions for
+existing hardware (exception category 3) AND a required Stable-dep-of
+for a Fixes:-tagged driver commit — which was the exact rationale used
+for the SC8280XP precedent.
 
 ## Verification
 
-- [Phase 1] Parsed tags: two Reviewed-by from Qualcomm experts, Link to
-  lore, no Fixes:/Cc:stable (expected)
-- [Phase 2] Diff analysis: 2-line const data addition to
-  `frac_table_pixel[]` before sentinel; no control-flow change
-- [Phase 3] `git log -- drivers/clk/qcom/clk-rcg2.c` + `git show
-  b527358cb4cd5`: confirmed precedent commit adding `{2,3}` was accepted
-  with Fixes: tag
-- [Phase 3] `git log --author="Pengyu Luo"`: confirmed author has
-  multiple legitimate DSI/Qualcomm fixes
-- [Phase 4] `b4 dig -c 0f5c8f03d990f`: returned
-  `lore.kernel.org/all/20260321095029.2259489-1-mitltlatltl@gmail.com/`
-- [Phase 4] `b4 dig -c 0f5c8f03d990f -a`: single v1, no revisions
-- [Phase 4] Thread contents via mbox: Taniya Das, Dmitry Baryshkov
-  Reviewed-by; Konrad asked a non-blocking question; Bjorn applied with
-  "Applied, thanks!"; no NAKs; no stable discussion
-- [Phase 5] `grep -rln "clk_pixel_ops" drivers/clk/qcom/`: 17+
-  dispcc/gcc drivers use the affected ops (SDM845, SM8250, SM8450,
-  SM8550, SM8750, X1E80100, SC7180, SC7280, SC8280XP, QCM2290, SM4450,
-  SM6350, SM6375, SM7150, SA8775P, etc.)
-- [Phase 6] Examined `drivers/clk/qcom/clk-rcg2.c` at for-greg/5.10-200,
-  5.15-200, 6.1-200, 6.6-200, 6.12-200, 6.18-200, 6.19-200:
-  `frac_table_pixel[]` identical across all trees — will apply cleanly
-- [Phase 6] `grep -rl "b527358cb4cd" /home/sasha/stable-
-  queue/releases/`: confirmed prior similar commit was backported to
-  4.9.311, 4.14.276, 4.19.238, 5.4.189, 5.10.110, 5.15.33, 5.16.19,
-  5.17.2
-- [Phase 8] Failure mode from commit body: pclk set to 50455997 Hz
-  instead of 172992000 Hz (3.4x off) on 10-bit DSI C-PHY panels — user-
-  visible display failure
+- [Phase 1] Parsed tags via `git show 76404ffbf07f2`: Acked-by Krzysztof
+  Kozlowski, Signed-off-by Bjorn Andersson, Link to lore. No
+  Fixes:/stable tags on bindings commit.
+- [Phase 1] Companion `git show 3565741eb985a` confirmed `Fixes:
+  4433594bbe5d` and two Reviewed-by tags.
+- [Phase 2] Diff analysis: 5 line additions in one file, pure #define
+  macros.
+- [Phase 3] `git show 4433594bbe5d` and `git describe --contains
+  4433594bbe5d` → v5.12-rc1~110^2^4~33. Bug present since v5.12.
+- [Phase 3] `git log --oneline -- include/dt-bindings/clock/qcom,gcc-
+  sc8180x.h`: confirms file has been amended via "Add missing X" commits
+  repeatedly.
+- [Phase 4] `b4 dig -c 76404ffbf07f2`: found
+  https://patch.msgid.link/20260312112321.370983-2-val@packett.cool
+- [Phase 4] `b4 dig -c 76404ffbf07f2 -a`: found v1 (7-patch) and v2
+  (11-patch). Applied = v2 (latest).
+- [Phase 4] Thread saved and searched for "stable": no stable
+  nominations or objections.
+- [Phase 5] `grep qcom,gcc-sc8180x.h drivers/clk/qcom/gcc-sc8180x.c`:
+  confirms line 17 includes this header — driver build depends on these
+  defines.
+- [Phase 5] `git show 3565741eb985a | grep HLOS1_VOTE_`: driver patch
+  uses all 5 new defines.
+- [Phase 5] Precedent: `git show 66120ba55999a`: confirmed "[ Upstream
+  commit 9eba4db02a88e7a810aabd70f7a6960f184f391f ]" and "Stable-dep-of:
+  4712eb7ff85b" — identical pattern backported to stable for SC8280XP.
+- [Phase 5] `git show a92a9604e8a43`: confirmed companion SC8280XP
+  driver fix was also backported.
+- [Phase 6] `git describe --contains 9eba4db02a88` → v6.6-rc1. Stable
+  backports landed in older branches with Stable-dep-of marker.
+- [Phase 6] Read current file (lines 300-327): confirmed GDSC section
+  ends at USB30_SEC_GDSC=10; appending 5 new IDs won't conflict with any
+  downstream state in stable.
+- UNVERIFIED: Could not fetch the actual lore thread content (anti-bot
+  wall); relied on saved mbox and local commit metadata. Could not
+  verify stable maintainer's intention for this specific pair, but
+  SC8280XP precedent is unambiguous.
 
----
+## Conclusion
 
-This is a well-reviewed, minimal hardware-enablement fix (analogous to a
-hardware quirk) that addresses a documented, reproducible runtime
-failure on real hardware. The fix is a 2-line data-table extension with
-zero regression risk. There is strong precedent: a commit with the exact
-same pattern (`b527358cb4cd5`) was backported broadly to stable. The
-affected code is used by 17+ Qualcomm SoC drivers, giving wide user
-impact.
+This is a pure DT-bindings header addition that is safe on its own (zero
+runtime impact) and is a **required prerequisite** for the companion
+driver patch `3565741eb985a` which has a `Fixes:` tag pointing to v5.12.
+The almost identical SC8280XP bindings commit (`9eba4db02a88`) was
+backported to stable as `Stable-dep-of: 4712eb7ff85b`, establishing a
+clear precedent. Without this patch, the driver fix cannot compile in
+stable trees. It is small, obviously correct, applies cleanly, and
+follows an exception category (DT bindings for existing hardware +
+required dependency for a Fixes:-tagged fix).
 
 **YES**
 
- drivers/clk/qcom/clk-rcg2.c | 2 ++
- 1 file changed, 2 insertions(+)
+ include/dt-bindings/clock/qcom,gcc-sc8180x.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index fc696b66ccda9..6064a0e17d519 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -1117,6 +1117,8 @@ static const struct frac_entry frac_table_pixel[] = {
- 	{ 4, 9 },
- 	{ 1, 1 },
- 	{ 2, 3 },
-+	{ 16, 35},
-+	{ 4, 15},
- 	{ }
- };
+diff --git a/include/dt-bindings/clock/qcom,gcc-sc8180x.h b/include/dt-bindings/clock/qcom,gcc-sc8180x.h
+index b9d8438a15ffb..9ed7b794aacc4 100644
+--- a/include/dt-bindings/clock/qcom,gcc-sc8180x.h
++++ b/include/dt-bindings/clock/qcom,gcc-sc8180x.h
+@@ -322,5 +322,10 @@
+ #define USB30_MP_GDSC						8
+ #define USB30_PRIM_GDSC						9
+ #define USB30_SEC_GDSC						10
++#define HLOS1_VOTE_MMNOC_MMU_TBU_HF0_GDSC		11
++#define HLOS1_VOTE_MMNOC_MMU_TBU_HF1_GDSC		12
++#define HLOS1_VOTE_MMNOC_MMU_TBU_SF_GDSC		13
++#define HLOS1_VOTE_TURING_MMU_TBU0_GDSC			14
++#define HLOS1_VOTE_TURING_MMU_TBU1_GDSC			15
  
+ #endif
 -- 
 2.53.0
 
