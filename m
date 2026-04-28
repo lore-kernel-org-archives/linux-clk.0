@@ -1,176 +1,148 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0013B285CA2
-	for <linux-clk@vger.kernel.org>; Mon, 27 Apr 2026 19:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777318835; cv=pass; b=Q32GIHSE66t+FdEB1+JUxPL/P1VZyE2/LxjD1X8iFy+pMoNY+4pMTzvzfTJBCTJIlruBIovZYrGyEaVlxLZydVH0aqEivlJMPpCPggoBYZvHHoLyL9xnxt1k3iaQVDV7pNbJqivBwylCaQ0JwQ3kQ167zZaq0MhbfiKpykwv0Ks=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777318835; c=relaxed/simple;
-	bh=ygGcJnN9WVRJNS+yiYYNkS29kIFHkLuMZQJgWl1yhr8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NEeoC7Zxuf5OToCXBB1LYkFi1wNPIY090PSdpndXFgfV6lJRXktNDS2RIvnOcQgwHUnB8/OIRp/Tn0mzgmzNcM+21M19uQH0Tf2ruGMnaRCBUx3QvB7ci1sHJliai+G3R/SDGHF9ZFst8qOrhjELik2dwfMTYTmni6cVirSiikI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O+1dsbRQ; arc=pass smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C58283C83
+	for <linux-clk@vger.kernel.org>; Tue, 28 Apr 2026 00:52:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1777337575; cv=none; b=Nlr5UD8Je4hhTzCzbQ9t5AGlMVnczAI1PzPyAVe2VDtwQDzwkX0qyEgjRkIlsKazOmAUbbsuNPXNFq2XJ+jK5H69A7S8Ol2YHUjSvYUD0BtfTFXDrWH/WQXhGCoLDZDwFXOegkQuT/rI10CxqAqkjAjJwH1xjMfZysnvYYGUeNE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1777337575; c=relaxed/simple;
+	bh=8Uem3oqRD7Kri2DSyAgANGL+qzMirF3VGc9HlXIQYOs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=LALFqhnwe/zcTFGynD2V5yU//e87bOrKqe/Qw5culGWvxGyuHEg1qHA1M2XUvBXifhG8pyN2R7GoFWZLj52m4tJxECPQa0gzuiNgylHe/Ri3a64oneuXpS3W5HFAMO/NiY5mOtZfUit/qdlByAMkUoW1vgWxVjkItrTogpvD3FA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20251104.gappssmtp.com header.i=@baylibre-com.20251104.gappssmtp.com header.b=UmLvCjgn; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O+1dsbRQ"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-488a9033b2cso113162505e9.2
-        for <linux-clk@vger.kernel.org>; Mon, 27 Apr 2026 12:40:33 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1777318832; cv=none;
-        d=google.com; s=arc-20240605;
-        b=BX2x5BvroGeBzDERggDvPZgKkDGmcF+xNI6aVjaP5HO49HkAR9pPaAzWbV8BFtMUaC
-         ZJ6fPYpsysrWZmWWjsmlXhQ1KB2x0B2Huv4r27qUSz4paGEkyg2dmuaL/g0lvZ/idXeC
-         QTMJfZJ/G1B4rm05V6pOlIW5EyiKCGul4aPlkeHxn6KST5Vsp9QKYvyEs2H7Qq8IM+gR
-         TD/RMjsTxD51rHTRRsuq8LYfyTrNoTO9V4Ud9KDMbolbFeKF3Kf0UEo7myAOD4E4Y3Vj
-         kkeetEQ79QeupOfPUhwLe/+l2eqgO31aHWps144vPITZeVd0SQeHjZdiL/P84n1mb33v
-         rGPw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=EgCEMaKeQwn6Nx1ZFnoUZ74Xp+Kv4ne+E3wSIOgk/8w=;
-        fh=Da3JmOWXfyAMS0iZ7xr9VwXhtEIjaF04oDT7NdPQT84=;
-        b=dgjPCm5K0wLIqDcNU1FnGyS6u9eOO44E0V/+x2ts0bBPK6efstRqoCjqYBZHG16aOA
-         ByhI0IESlYDLTgWu2VpXW/OvKxJKx6zh8j4wXoPJ6dcc3B5192HBv6D+RdKSyN7QVcuV
-         qvoehiQpnvLShKDfUMn5gOFbdK3BI+dsY76gBNC3kBjw6Ytb8QUkBBUN2olM/B/LKQ24
-         fjarRN8M+x+xWJHFm3FggzguBgLnUp0i02O3qHqa4guWXrhjwtVNjlmmBG4vWeZRHIty
-         AOsIK75oFjnFZDbjuNHksKYYsnUwXvQCyYKgJU+JNLSDy/JdwEJ1Eps6Gq6ZVYfGlxbE
-         4l/g==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=baylibre-com.20251104.gappssmtp.com header.i=@baylibre-com.20251104.gappssmtp.com header.b="UmLvCjgn"
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-c7973bbc16dso7059889a12.0
+        for <linux-clk@vger.kernel.org>; Mon, 27 Apr 2026 17:52:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1777318832; x=1777923632; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EgCEMaKeQwn6Nx1ZFnoUZ74Xp+Kv4ne+E3wSIOgk/8w=;
-        b=O+1dsbRQ12YD/zSe2y8yCzpGSAy4dyualdVBI5qwskrHUxhbLAECiY5l9KUIuZLetG
-         S1uLxGj7XPquNSH2Pqfv46wzUr7di3Db2z/AggTX5IUst37hHTJovqyldZRet/Lx9gbl
-         asuZFbas8lf+n0jWGexZeQ9YbObJz4isqJPjesWdlYBeV1DQLpYkhPvmocqptifLRcft
-         Ga1npEo5I8//ZY/3oaj2wnsM4UCPVDXS1d9jgLRP8UecL7hPbIIvjsDTh+JoCqTmFNU2
-         ig64yupI0TmgIZi19ZeAxwI60hoJXAeuil42Z5jYud5xFsDvpvmOcEk1UX6fd8ozmg6g
-         BEuA==
+        d=baylibre-com.20251104.gappssmtp.com; s=20251104; t=1777337573; x=1777942373; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=t3FnaIBp0espZORVL/rfnjBPdcVtbw4VckmuHvIfsjM=;
+        b=UmLvCjgncUFnkOkej4+wGBHe0fTbbx54IoP/u0gXvql2aNFmqqno+yqwl+Ccx54FTN
+         gkS26kFBc2qdrgwLMIhHZo9xqUwAylAU2efyVow9NXrRClAnEBtKOtj/Mp0qDcDB/4pb
+         j2zd9BfXxrR086oPDlyxqLHwu+R15O3ovW4uYngGN7f5NWjRPVzDTRD+39B9JVFrd16p
+         DobTC1E1tD9X+FTQaV5U2PD9+FJcFOxI/fIqxRCnGTh9g/geoS2QDELG7DPvgPquAd8u
+         YrsmS/8TVtKpJgNA9HeCptCErNwn5dpt/rcBqDGk/iUM1o8rRq4SZxubM1IjxyIxGeAj
+         +hGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777318832; x=1777923632;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=EgCEMaKeQwn6Nx1ZFnoUZ74Xp+Kv4ne+E3wSIOgk/8w=;
-        b=eN9YklEH2GKo6Yn9CZFXaIMwqcALQ9b8jbpp7BWcwxgVgHEAqFtezlCmb4RxPrvo0M
-         GChoqYGuBdFifZ37ciXiVayDhQyZzb+QE/n4JbyvGzRKYNfgmQa0lIdTD+SKqTIpqGi0
-         BfniS+efgFZEUGtmQ1furU8Wtnc1kWYrDyXD+A4lG5nTUzDzcjHpzU0moGGivabHUJJM
-         5wHglKFhiQfWwbJW90Zr8zVU/h5R0FhkVYlTOJyAZ42oDZgIMdCIV4dVR4HQVSvShtwL
-         XwwqZGNZ9edX66Rl1Q7qZu3cuzOauMsqYI6emg64jOfm27rCcGhG2/DJ2obDVaMk2Mm8
-         Sf7Q==
-X-Forwarded-Encrypted: i=1; AFNElJ+QsJvzTo/Uxgfx7MBi2MAVyc0Oywtz9oWV37CiimHUtvTamulM5mVIq0oM8bKic1/vsP2FEsxtNTs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZkoq4vh0hmjpDeyV8yBld+WzvUIn5RHZZcU08ycDRxN7EaGR+
-	7SMA12BcIrUITFle32bUcm7NkEx5o67fvCvKCwhwS0bRsRaEggcX2R3dW5S4I6Za40JSHZNdxa4
-	1HM4F14mHfohKdGeINu7ixqlgNzhtmzc=
-X-Gm-Gg: AeBDievxhxtEVV38Mqsrc3eNAdqoTJh8InJxYDfCYGfbh2k8oNRmHhRmK4/CPwYOZVD
-	6+65NBmTOsvQb1axGHNaaJ1avSLXARe66u+EGSjFziucwOsxnR24PpPN/hHSRlToOHJz16KlVaV
-	gO3D24Z9usZBrbB1tKgPN9riLXC4wwfhRl6Nmasr9s+OTjqL37ZAuxG8oAflFjFPWs2VhMx6J1x
-	pgE/DqEt/RRaPhycdm271wfhTDY5qgipvorrc/jCSd/8be+iUxSCiczSqtMlAt92/qzktUdmYVp
-	oX5IP/ysnMHp5ozfmhw9tf6WLlpAMKqHptAynE4JOcJ6w9Khp7ZRkAEht/508oWebh1EDKp+Gcb
-	Ydh8=
-X-Received: by 2002:a05:600c:a103:b0:48a:761:57fe with SMTP id
- 5b1f17b1804b1-48a779b1e37mr1303525e9.0.1777318832222; Mon, 27 Apr 2026
- 12:40:32 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1777337573; x=1777942373;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=t3FnaIBp0espZORVL/rfnjBPdcVtbw4VckmuHvIfsjM=;
+        b=mtpEXPoQ0amxDkX+0HXip5ZdzfgfhGiTBd/WmZoPCsgguiWDFDiTvc56PZdgY7ZP0g
+         XmMPbXkdwmmiNZk8pPdBi+RcRYVuuL/vT1z069r8ELOQFq8jZF/tI2vnY2+OMFObZqee
+         Snlt95Rd2pffDhQO+wO1nJi4Q3W8JCAFDJxJfSddSMod+1tUnuO5T3Rs8JAL7JtNZEOz
+         tNDSdtdTMWglKnA9q3Bpt7kgH4ZeVoLfwSIwz8/zJUOgaZHYD5fhAufZodESt1o9zrnZ
+         tGIQF7LtRKAmgvxhefJxajZleDGFtXvN7W0wyvsgnQB3MXNKPOX2GKxX5sSkspOCSyR/
+         VFxQ==
+X-Forwarded-Encrypted: i=1; AFNElJ+Id63ZchTM6L65qBDStSsRV8VguX6eTAa7916jU3R+4o4RbnGPYI1m+tbwu/Z1FkIiKTK9p8IF2is=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0kPOBT7wgHCmOz/e8pDZfHUNSnfYnx4+Q/p0jIsWo2hg9J3Sq
+	+VZzNzrsgVDP7JudpvaUbb+oVA73bZxKW+FzTPR6QMCwS05z4rnhmrreYLz6lNsnZsY=
+X-Gm-Gg: AeBDievp3T2II8RZoNDYXbNfRZFICBbkqYPnjgvBZbBwJcGhIknuV1gm8c6bpnu3A40
+	25T0n8gIr+jq8ffl0D3kOiIXeNGQliRdOTUDj2dqmFnOCi0xrnCRdEMWHMe7JGskwFVbKaU53WX
+	uxKZlwZz4w5PYanTAAwdaL2QrK+eWxcVP6B8q4fTrPqPXPIEGPyc60VnrUSBeniS1kr4WkJEYiP
+	STs4H6hWh16M1C0mZDwN9ZEzW6PlJIhUSVCKSsIQUhzgTNS5YhK1WtOfrAXKjXOPB2NlF4/V/AR
+	N4lPymX6f3LS47yoOn5fc5DCQ+pyvuVYy7YSTHklOoiJhIg39CRgZ9yazLsyTvm+fMBR7IZfjcu
+	1eGtajlMhfUvFiJucdhIO+YPfy2nvpcRgrupAKAe7yP/Tl1BWbvUWHZ/WqvncWB4+ED0wqD/vYI
+	IadpnLbOiMWtwuAI0GLj6qnwa0d4gNuA==
+X-Received: by 2002:a05:6a21:339a:b0:3a2:ecb8:56f0 with SMTP id adf61e73a8af0-3a39c214537mr1036677637.33.1777337572752;
+        Mon, 27 Apr 2026 17:52:52 -0700 (PDT)
+Received: from localhost ([97.126.187.42])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-834dae1ff95sm798672b3a.17.2026.04.27.17.52.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Apr 2026 17:52:52 -0700 (PDT)
+From: Kevin Hilman <khilman@baylibre.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sudeep Holla <sudeep.holla@kernel.org>, Cristian Marussi
+ <cristian.marussi@arm.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Magnus
+ Damm <magnus.damm@gmail.com>, Saravana Kannan <saravanak@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Ulf Hansson
+ <ulfh@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>, Florian
+ Fainelli <florian.fainelli@broadcom.com>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>, Marek Vasut
+ <marek.vasut+renesas@mailbox.org>, Kuninori Morimoto
+ <kuninori.morimoto.gx@renesas.com>, arm-scmi@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH/RFC 00/14] R-Car X5H Ironhide SCMI CPG/MDLC remapping
+In-Reply-To: <CAMuHMdU=3AN8wHbnO2Cx4WsLuYWhv_fRfTA50fmrqyREO3nrbQ@mail.gmail.com>
+References: <cover.1776793163.git.geert+renesas@glider.be>
+ <7hcxzqr4qi.fsf@baylibre.com>
+ <CAMuHMdU=3AN8wHbnO2Cx4WsLuYWhv_fRfTA50fmrqyREO3nrbQ@mail.gmail.com>
+Date: Mon, 27 Apr 2026 17:52:51 -0700
+Message-ID: <7hcxzjewik.fsf@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260427112824.231150-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260427112824.231150-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <ae9_afsqmGDcczhW@redhat.com>
-In-Reply-To: <ae9_afsqmGDcczhW@redhat.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 27 Apr 2026 20:40:05 +0100
-X-Gm-Features: AVHnY4JzJ2U4LeHB9K-Y3U0QY9v7Tbii2KPRfbKBGk3czlEv-B3AFYoxs0riKi0
-Message-ID: <CA+V-a8teW5RghDJYAth0ZPndavt4HbsPA5Z-fzngsdvqbTBHhQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] clk: divider: Add KUnit tests for
- clk_divider_bestdiv() ULONG_MAX handling
-To: Brian Masney <bmasney@redhat.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-Hi Brian,
+Geert Uytterhoeven <geert@linux-m68k.org> writes:
 
-Thank you for the review.
+> Hi Kevin,
+>
+> On Thu, 23 Apr 2026 at 00:48, Kevin Hilman <khilman@baylibre.com> wrote:
+>> Geert Uytterhoeven <geert+renesas@glider.be> writes:
+>> > TL;DR:
+>> >
+>> >     Describe hardware in DT, and perform the mapping to SCMI in Linux.
+>> >
+>> > The Renesas R-Car X5H-based Ironhide board is the first Renesas
+>> > SoC/board combination that implements the ARM System Control and
+>> > Management Interface (SCMI).
+>> >
+>> > This means Linux can no longer perform various system operations (e.g.
+>> > clock, power domain, and reset control) by accessing the hardware
+>> > directly.  Instead, these operations are abstracted according to various
+>> > SCMI sub-protocols, and Linux has to send messages to an SCMI-compliant
+>> > firmware running on a System Control Processor (SCP).
+>> > More specifically, the R-Car X5H SCP FW SCMI controls access to:
+>> >   1. Core clocks and module clocks,
+>> >   2. Module resets,
+>> >   3. Power domains,
+>>
+>> I'm very curious how power domain hierarchy is described on this SoC,
+>> because one more issue to add to your list is that hierarchy cannot be
+>> described for power domains in SCMI.
+>
+> So far I had no need for such a description. AFAIK, this is handled
+> inside the SCMI firmware, which does know the hierarchy.  Hence the
+> firmware can power up a domain when any of its children is powered up,
+> and power it down when the last of its children is powered down?
 
-On Mon, Apr 27, 2026 at 4:23=E2=80=AFPM Brian Masney <bmasney@redhat.com> w=
-rote:
->
-> Hi Lad,
->
-> On Mon, Apr 27, 2026 at 12:28:23PM +0100, Prabhakar wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Add KUnit tests to verify the behaviour of clk_divider_bestdiv() when
-> > clk_round_rate() is called with ULONG_MAX, which is the canonical way
-> > to probe the maximum rate a clock can produce.
-> >
-> > Two test cases are introduced:
-> >
-> > - clk_divider_bestdiv_ulong_max_returns_max_rate: registers a 1 GHz
-> >   fixed-rate parent driving a table-based divider whose smallest entry
-> >   is div=3D2 (entries: 2, 4, 8). Calls clk_hw_round_rate(div_hw, ULONG_=
-MAX)
-> >   and checks the result.
-> >
-> > - clk_divider_bestdiv_mux_ulong_max_returns_max_rate: places a two-inpu=
-t
-> >   mux (4 GHz and 2 GHz fixed-rate parents, CLK_SET_RATE_PARENT) ahead o=
-f
-> >   the same table-based divider to verify correct parent selection under
-> >   ULONG_MAX.
-> >
-> > Both tests use an explicit clk_div_table with a minimum divider of 2 so
-> > that the pre-loop maxdiv clamping in clk_divider_bestdiv():
-> >
-> >     maxdiv =3D min(ULONG_MAX / rate, maxdiv);
-> >
-> > clamps maxdiv to 1, causing _next_div() to return 2 on the first
-> > iteration and skip the loop body entirely. This makes bestdiv fall back
-> > to the maximum divider, returning the minimum rate rather than the
-> > maximum.
-> >
-> > The expected values intentionally reflect the buggy output:
-> >   - test 1: PARENT_RATE_1GHZ / 8  (minimum rate, not maximum)
-> >   - test 2: 0                      (invalid, loop never populated bestd=
-iv)
-> >
-> > These will be corrected to PARENT_RATE_1GHZ / 2 and PARENT_RATE_4GHZ / =
-2
-> > respectively once the fix to clk_divider_bestdiv() is applied.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> [snip]
->
-> > +     KUNIT_ASSERT_EQ(test, 0,
-> > +                     kunit_add_action_or_reset(test,
-> > +                                               (kunit_action_t *)clk_h=
-w_unregister_fixed_rate,
-> > +                                               parent_hw));
->
-> You can use KUNIT_DEFINE_ACTION_WRAPPER() to avoid that cast. There's
-> some examples in drivers/clk/clk_kunit_helpers.c.
->
-Thank you for the pointer, I will make use of the
-KUNIT_DEFINE_ACTION_WRAPPER() macro.
+Yes, but this firwmare behavior is subject to the normal list of 
+limitations/quirks/lack-of-bugs/etc. that we usually run into with
+firmware.  So if there's ever a need for linux to understand hierarchy
+for those reasons, you may find yourself stuck. :)
 
-Cheers,
-Prabhakar
+> I think the clue lies in having a PSCI top-level domain, cfr. what
+> you wrote in [1]:
+>
+>    "But... how do I describe the relationship of this hierarchy? In
+>     particular, when the SCMI-controlled PDs are actually subdomains of a
+>     top-level, non-SCMI PD."
+>
+> Or am I missing something?
 
-> With that fixed:
->
-> Reviewed-by: Brian Masney <bmasney@redhat.com>
->
+Indeed, the tricky part is when the domains may have CPUs/clusters in
+them, and in my case with the TI SoCs, the top-level domain with CPU
+clusters is PSCI controlled.
+
+It wouldn't suprise me that other SoCs have similar features where some
+domains are children or siblings of domains with CPUs in them.  This
+kind of dependency is pretty complex to manage in just SCP firmware,
+because it involves TF-A/PSCI as well, so it's a likely spot for
+firmware "quirks".
+
+Kevin
