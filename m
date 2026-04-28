@@ -1,131 +1,135 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71C728469A
-	for <linux-clk@vger.kernel.org>; Tue, 28 Apr 2026 20:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E1D1862A
+	for <linux-clk@vger.kernel.org>; Tue, 28 Apr 2026 20:33:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777407992; cv=none; b=FyJ/AyGVEfVldXCCeY2uY4DPkyT/CbcjcPxGfjwMTNWGnDyDzThRudK1IBe14+81BedPhogTwMXYLapLe6iYh1ih/EK8HB387DcO6L6jzxSl1Ie+fXPZY5wHvGvQiQgM3J2B3ySgDkh7biJoltNVw9zM8U21bbCgvs7QOoVFi7g=
+	t=1777408426; cv=none; b=l2PhkgZ/sYFn8660+fLbpykEsJZ8IjcyRDIFEuMIeZb8UJjAIk8/9rVMRfslrKSoscQFGRgZF/ffqLSTg4gl5lABNeJNgDyfHVq1BFSoYpqSt9csymG+NJgAvO6/BdBeZ3OhsLimCzt9hP9cJLhY0etLRx3VWgb0YnDYvzQ3q6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777407992; c=relaxed/simple;
-	bh=bikCYCChr7YkCUSK+pLWX18yTfLp9aN20MtL2K2GstY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=XbbChX5yjBr90aPePqg0d+mV61t4qndEEfK1pNQaUR3iNAd561s9wZK99cJzEAzzaeelNOYI3+F0PwPVdHPZTRIBpvSQkQQ7I8kv0AvINh52DenoVLYptO4cvKRwzKppNgvBTh5dPpCrpjynkYkwpWKjYrn9fEX4i4xzdCRWW0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UZ7Uy8nI; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1777408426; c=relaxed/simple;
+	bh=5W63L7vJAPPbkNRffUZ8GPvklygiDlr1K33wJZ2BgAc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F8SElsMW/7fAUamEC7soYfOxZdPMrmkfa1X/8uo+cRM+/u+vacCptkE69yBQ/Waj07apNZPrF0s85WomlC05JmFc8TXq/4xnuczOUta/ur9SNRWdI3sTrv83rOKEM3poeQHlEQLil98/Z7lHWWPUbnfk6AGwczHb9ZG66t0sdaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CmONUsrk; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=k413qycX; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UZ7Uy8nI"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-488b0046078so106616895e9.1
-        for <linux-clk@vger.kernel.org>; Tue, 28 Apr 2026 13:26:30 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CmONUsrk";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="k413qycX"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1777408424;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VHwv8IafpIjW7d96DL7qFjkHOZaLx+9q+VBMqdpAtL0=;
+	b=CmONUsrkr2XghnHP7VDcp/KTtBBWfzXkhW3OWNWv68ttv5ZKvmeujqYQDjmxWaKZy5IBqA
+	VOs+IqtRFC+Y8RZTiE5jLJBxVRdXqjEgGtBvMc8rdiKc6ERO0Z8h6jr3Lnf8vc0yIxUzLB
+	DruexHjgdDBO5QmsWN5fSNoIQpAIFXk=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-571-zm2aXmHdOSmFNytzIQWKzg-1; Tue, 28 Apr 2026 16:33:42 -0400
+X-MC-Unique: zm2aXmHdOSmFNytzIQWKzg-1
+X-Mimecast-MFC-AGG-ID: zm2aXmHdOSmFNytzIQWKzg_1777408422
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-50fb007bc36so22596791cf.3
+        for <linux-clk@vger.kernel.org>; Tue, 28 Apr 2026 13:33:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1777407989; x=1778012789; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+        d=redhat.com; s=google; t=1777408422; x=1778013222; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=U2z5CJStQaZH5C1yDNgwonipIcrAGaww4SYiAIYI8F8=;
-        b=UZ7Uy8nI2+NOm8dpnjNNSb11MMuUBVTWQorG96Z9b22UBZwbnwkPAlHmmG85il8AD9
-         Sw/7FzGb5F4wzlj8+Y3OyDOM4ppwwpIirs7Kj3J+v8VNDqbrfgsGVQF1EvygTCYRou3L
-         /Mk49+Yniu2XxoFd6+lkgHP2oXe0dukmmxcS6r03r6O20G0jXHVP0+omwb7zryAdhZej
-         J1FNxtA4O8j7148p3VYhlRRKwwiJuk9NLnFv4JZ5f0nS9wYYNlDucsZZA4HmU9veB9Bq
-         WmYG3AlKNL5FdweLUdqaLopCeDszF0c/l50xoXhP0Ci557j7xiRsUfwhi2wOcotYdI6y
-         yCkQ==
+        bh=VHwv8IafpIjW7d96DL7qFjkHOZaLx+9q+VBMqdpAtL0=;
+        b=k413qycXZ1s7AQV+o4V9BdWtSu+G7FgiNU2M9ZM9NlPyZ9jlbG/NxXJSZ8LjkVAVt2
+         1yxHF2+3dMCnwVYReqzcMAg6N8OUNzo6XBBm+6PGNuyDGh7Rp1TOddqv3FTDPOuG8+m2
+         Y3+1fAsW2jRmGXmL04Hz4S3cXi+nbnxIMQ/W34HQta70+Nc93ApI+pxrD3BxXiu8kdwf
+         eB6lQXrg+jNtKgH6/XgPD/ALtEkZ+VBCVvOxhtsGWmeyloepWiITAKL7cuuyN1kLAJzh
+         ORxUO4t1rtIkAF5HgNc1m9s3G1HJZg6uPwTK8P6XN6Y5Js4eGxfS6nSznxow5BqsjlPn
+         zMbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777407989; x=1778012789;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=U2z5CJStQaZH5C1yDNgwonipIcrAGaww4SYiAIYI8F8=;
-        b=eRkNOy4JKMQwOWKXcGbDzqVfvxjXYlz4Z0pexe6wYXWxldsOJdATeNxVje08Epgtmn
-         gL5jy8qvMlchxFnpVaEj8eE6on2XiIr5BpNOUuSfolyLIwhKvbFE/wFlBquRNaXH0CCq
-         jwsyZMJZH6nx1UxDoN8quKq5CyfBbOID+6lmIxebFspk86Jf5YvROUf49hpS+hNv02FZ
-         y0Bs12XIFNZgOrc9Oi4hCwaH2I5RjUdFF/GyjNwX/SV92g4+em9LJCfki3VVCzB2oP8a
-         p7Aid8WxmvhtFvC/miAHeAqog5Vk4bk+ujQWP6GYyZW9S0I/OefSsclD8bSQCt+F2cSv
-         PLcA==
-X-Forwarded-Encrypted: i=1; AFNElJ8ZfU3x17QAC766STWwxemzpJJ7UepQGLkG2dJBMUOVapHqrUU9fiXGTRNeEi13BJRpEUy3x4ZHdzU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQSLHo/l2g5JkQ/LsOk5nfCfQ9z+ghLAlKL/HXzrCd4/gWIBQT
-	jPLfEQN6c10jGooZ42cYyfIALWuULuCGp4rODgpQfJDEjsb585Lpq7bwBj+R6Ogidpo=
-X-Gm-Gg: AeBDiesL30bCT103hvg9M5zE+T1w094dgxniiJO7VvkXW8HE8bt7064E0WjMLGvdmUF
-	gv6nig9NEFf7MNeTshvbMbePewsDD+LyW3k6TtaDYst+pZunqJdp20YeEVOgWwoC2GwCOLnmeoj
-	gWhAVl1IijJGcg4lojjM8D+oH8kGbn7JI83xlG/5ikLjng6XD9arVbJyiLj6UO8wPucg+hDAnNh
-	RBAeWE213oIBHD2JxQTzO4TNNSHyyTrjacb0/G9L/zOZ+Y7t+6htv3ukkkIkyfVtXOaHLyfmzkV
-	L06QhkpziBZDLXqIrflurUb9VAEXPuI4XP71dLVEErez8NlbMPDmJC070ns+wR5LC+7WAsierat
-	zVncBnER4PHghmxpzn+X35qa5vAdPL8q0y5UwcSghXzYWLDOKWT+YWMCdLX6+5TY0S9WmFbVY42
-	ppTG8d/+GATl+9vZVdIwVdzgBBcdmwMinaW0THAuUAbxSJJxWwolG+59hRMorORN4icxzkx5WsR
-	ZjzIU1UQZXcEQraOWybMANb
-X-Received: by 2002:a05:600c:4f0c:b0:489:1c2d:211e with SMTP id 5b1f17b1804b1-48a77ae5386mr75966715e9.5.1777407989369;
-        Tue, 28 Apr 2026 13:26:29 -0700 (PDT)
-Received: from localhost ([94.4.195.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a7bc11fcbsm10511235e9.3.2026.04.28.13.26.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Apr 2026 13:26:28 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1777408422; x=1778013222;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=VHwv8IafpIjW7d96DL7qFjkHOZaLx+9q+VBMqdpAtL0=;
+        b=aDIXelWwD2PTF78TAzqZwW3gLhZRq2pwgtrowxahno4uf1zEfu3iDbZNFG5sMucts3
+         IxqZ2R58E1g2i4TFr/IlKBu2hj/gqCzOXJIK1m7stLjn981FBGTygyMbvtnTadhzdwac
+         T+RtOntXaNhWPZv96E3J+/xkeR8bBKtIrtQ+8ApciQQ//O0CprMZTBX4lnYmL3ber5N0
+         epifcCtBtRJPW7XP6KYLEoqtzEFPPq0AGGtwriEMGzxlqFyLuRrGTleXkQS9w/LChu/m
+         uMpstvh07DtrVAoxPHO8HI0LxXGgkWwbTECJS7Gb4OHFSDtIe6RcffhgM/2UrkgF62SJ
+         FH6w==
+X-Forwarded-Encrypted: i=1; AFNElJ9Ky0F5Ke5tCl55D8VQckP6+C3gWx9oaR5xlPWBBbSRd4P+BArSWs2hskUOhF0Pr1Jc70kDPNuQ1kY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV9jeU1C6VSf+GmfqDAL8aKNKCrXDX68DL06TpJL7M9P/y63fc
+	H91WfRS8AfJt4lkAFexQhQX5ybXKV8WweU1e1U8F6x3A5c/jXRnsTbn3OU7RCkU+oPWkznb/6U6
+	i9V1rA4itqf0P4zRgFT1yNtdqfNTZw+FpmJvaM/6qlfRoMzbJHGpPSDTngawQfQ==
+X-Gm-Gg: AeBDiesDGZOWUuNLlIf4o5FgqIunDwISnwmpipIL906PRak5FEcvFc7QlNvfxiOfj9R
+	olVkhnBhkbxIJUlrge+EuN9OjtkIdLLn2Eajydehz/mfQescZcuaqOLThz5HWRt0JkmsYz1FeBK
+	JLuLU/QLEZ513onwsbfh9lVr+YetXrkrOTEMFhOgefDEKpap2oPBzC4wQWb43X7unIONCsi+9Gc
+	gmNwONJJ5ltcXeRiODrbzd+CXcny3/nt+ePUtbeWfLu/nX/ItZRIr2hnp3b0cQZ9FV6ZRbU4d7h
+	T3cBeP1WdmVHTjDfBOXDLYbNqtYMAWjiQgm8mai7ZEAC/E410fkjoEqocmNdV0plcONSpLYtsGV
+	GjV09upIyZwsNiLCn/VpxfYr5LLc6fp4=
+X-Received: by 2002:a05:622a:1f8f:b0:50f:be4f:4664 with SMTP id d75a77b69052e-51018a4727fmr18458281cf.32.1777408422371;
+        Tue, 28 Apr 2026 13:33:42 -0700 (PDT)
+X-Received: by 2002:a05:622a:1f8f:b0:50f:be4f:4664 with SMTP id d75a77b69052e-51018a4727fmr18457831cf.32.1777408421914;
+        Tue, 28 Apr 2026 13:33:41 -0700 (PDT)
+Received: from redhat.com ([2600:382:8104:bdc6:d862:7b9c:1d01:62e0])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5100da4d312sm25243291cf.1.2026.04.28.13.33.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Apr 2026 13:33:41 -0700 (PDT)
+Date: Tue, 28 Apr 2026 16:33:38 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Cristian Marussi <cristian.marussi@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, sudeep.holla@arm.com,
+	philip.radford@arm.com, james.quinlan@broadcom.com,
+	f.fainelli@gmail.com, vincent.guittot@linaro.org,
+	etienne.carriere@foss.st.com, peng.fan@oss.nxp.com,
+	michal.simek@amd.com, geert+renesas@glider.be,
+	kuninori.morimoto.gx@renesas.com, marek.vasut+renesas@gmail.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v3 03/15] clk: scmi: Use new determine_rate clock
+ operation
+Message-ID: <afEZotnIZYXEtMiC@redhat.com>
+References: <20260428201522.903875-1-cristian.marussi@arm.com>
+ <20260428201522.903875-4-cristian.marussi@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 28 Apr 2026 21:26:27 +0100
-Message-Id: <DI52JP9JH6AH.3I5OKWOZ56MIU@linaro.org>
-Cc: "Krzysztof Kozlowski" <krzk@kernel.org>, "Sylwester Nawrocki"
- <s.nawrocki@samsung.com>, "Chanwoo Choi" <cw00.choi@samsung.com>, "Alim
- Akhtar" <alim.akhtar@samsung.com>, "Sam Protsenko"
- <semen.protsenko@linaro.org>, "Michael Turquette"
- <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Rob Herring"
- <robh@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Jassi Brar"
- <jassisinghbrar@gmail.com>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Peter Griffin" <peter.griffin@linaro.org>,
- <linux-samsung-soc@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/3] mailbox: exynos: Add support for Exynos850
- mailbox
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: "Tudor Ambarus" <tudor.ambarus@linaro.org>
-X-Mailer: aerc 0.21.0
-References: <20260402-exynos850-ap2apm-mailbox-v2-0-ca5ffdff99d4@linaro.org>
- <20260402-exynos850-ap2apm-mailbox-v2-2-ca5ffdff99d4@linaro.org>
- <a02a693e-b06e-43bf-ac5f-8253f298c83d@linaro.org>
- <DHNSP3FVR4ZQ.1PIRHF0KJGKI5@linaro.org>
-In-Reply-To: <DHNSP3FVR4ZQ.1PIRHF0KJGKI5@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260428201522.903875-4-cristian.marussi@arm.com>
+User-Agent: Mutt/2.3.1 (2026-03-20)
 
-On Wed Apr 8, 2026 at 2:08 PM BST, Alexey Klimov wrote:
+Hi Cristian,
 
-[...]
+On Tue, Apr 28, 2026 at 09:15:10PM +0100, Cristian Marussi wrote:
+> Use the Clock protocol layer determine_rate logic to calculate the closest
+> rate that can be supported by a specific clock.
+> 
+> No functional change.
+> 
+> Cc: Brian Masney <bmasney@redhat.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-clk@vger.kernel.org
+> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+> ---
+> @brian: I'd modify further this clk-scmi driver, with a patch on top of
+> this series, to properly use your new CLK_ROUNDING_NOOP flag once your
+> series AND another (already reviewed) series on clk-scmi from Peng are in.
 
-> On Thu Apr 2, 2026 at 9:42 AM BST, Tudor Ambarus wrote:
->>>  static int exynos_mbox_send_data(struct mbox_chan *chan, void *data)
->>> @@ -57,7 +104,8 @@ static int exynos_mbox_send_data(struct mbox_chan *c=
-han, void *data)
->>>  		return -EINVAL;
->>>  	}
->>> =20
->>> -	writel(BIT(msg->chan_id), exynos_mbox->regs + EXYNOS_MBOX_INTGR1);
->>> +	writel(BIT(msg->chan_id) << exynos_mbox->data->irq_doorbell_shift,
->>> +	       exynos_mbox->regs + exynos_mbox->data->irq_doorbell_offset);
->>
->> Use FIELD_PREP from <linux/bitfield.h> please. You will use a mask inste=
-ad of
->> a shift.
->>
->> I would rename irq_doorbell_offset to intgr. It aligns with the register=
- name
->> from the datasheet. You won't need to prepend _offset to the name, we al=
-ready
->> see it's an offset when doing the writel().
->
-> Sure. Thanks. Let's use FIELD_PREP.
+I don't know if Stephen is going to pick up my CLK_ROUNDING_NOOP series.
+We talked about it in person at LPC in Tokyo, and he was the one that
+suggested the flag rather than a new shared noop function. However he
+didn't pick it up last development cycle.
 
-+       /* Ring the doorbell */
-+       writel(BIT(msg->chan_id) << exynos_mbox->data->intgr_shift,
-+              exynos_mbox->regs + exynos_mbox->data->intgr);
+I would recommend NOT basing on that series of mine to reduce
+dependencies, and so that your stuff doesn't get held up by series.
 
-FIELD_PREP() wants a mask as a compile-time constant. Unless you want me to
-add switch/case for different SoCs or I misunderstood something I don't see
-how this is gonna fly.
-
-Best regards,
-Alexey
+Brian
 
