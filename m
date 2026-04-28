@@ -1,376 +1,163 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EABE428838;
-	Tue, 28 Apr 2026 10:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB6737C0F3
+	for <linux-clk@vger.kernel.org>; Tue, 28 Apr 2026 11:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777373002; cv=none; b=C8Pewf/rmzEsPeG0gPa7rY1eu1Pw/5DTbFdOiUIUM9rwhByt7IClJfalUJlfSST7gbdoxzFOf7ZBLW1NHQtIumo1TjnHp6OccsTPleKzm8/0xOejqXi3vov6qWA1rilURNN8Mq2ZVPQdFaWMf4YzdAWOEzctewDY75GfI2j5t/g=
+	t=1777376242; cv=none; b=A8XiV8lXpyeol4jCMpUADK44hANLhZiuSUjWZkEgUdq0LT79NZavGbXH82Ar3bohJcj13Sis+PNtmD05pgnyFckijDrldr8ZyhJJb5RrkbWOs5sBhbaZRORrmGw2Jhm6l5kN+q0FptbTrwyqhBVTsgw8yFOBQJuVKn438wuH54A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777373002; c=relaxed/simple;
-	bh=yA9GlsKbZPA0q0wYtAV3srus1XhU361ZRCUkz2/ZKKs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HsseqPI/WLSg8jXuWsp7M4BZyw/I50EINgtj82Pvb2G7czLhq7JMaOTMXMyKp21GxUvHEwXjGvL5hjDcl3QcAkmqUGDC4FqvkBoftszXUaSLlk8pdUOPKzgWj8j/RMH8FSTxEqEQlHZ19VwonpvrkiPS7gkRP4SU7eioFOeFmOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nd5YifBL; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1777376242; c=relaxed/simple;
+	bh=kbRNN/tv2J3rKiiyN4xLMpeHmY7TIZd6B0cqKTVUBww=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vFGSVthgw5xlgzp6HfXH+48ax8DyTxHkHEaNEd1d/yG5zTyBHUELq8fWnKTdyqcg5Zln0rs98/q6T8cj/ydd11j1cp+trJOqogDRLVAy/Bbb/XIaKM8BZ7JDdxUEjlRzg/JGIJFlXGqbssz69tl5jACiLEeA8p+d2wOo/yOu7p0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=b2KOqIdr; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=DP5Hbanc; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nd5YifBL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D83AC2BCB5;
-	Tue, 28 Apr 2026 10:43:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777373001;
-	bh=yA9GlsKbZPA0q0wYtAV3srus1XhU361ZRCUkz2/ZKKs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Nd5YifBLnlNJYcBrxP9ouMf4MW2VJ40F69lAtGDeg9QENKHa9XxdtIU6UQuq2OdGd
-	 66aBabNAWCqR9GHNHX/S6r7cqBNTJic75gVZ04HQrmcCcE3RrOFsejz42ATf0OrzZc
-	 DrsDKBM9PnGAiKE2+TTM8vtF/iqQ4HhSoVFUoAPfwkTeaq5Cl1rWozKbwKHoEnhTgf
-	 l7CdHB4PyRmcSDgTkiK+DlLTYJ5kjsJIDFRAcu29lZiOAXfjOzJGoWjs7K9V8bjkYO
-	 dVKrmW8lyNcrTfn5ZfMrtPj5PNIq5/r3GgF2GmysR36nWtVSc9mn/KXdmwrYANvs9b
-	 ZOX7ah3yAy5aA==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Val Packett <val@packett.cool>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	agross@kernel.org,
-	konrad.dybcio@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 7.0-5.15] dt-bindings: clock: qcom,gcc-sc8180x: Add missing GDSCs
-Date: Tue, 28 Apr 2026 06:41:26 -0400
-Message-ID: <20260428104133.2858589-75-sashal@kernel.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260428104133.2858589-1-sashal@kernel.org>
-References: <20260428104133.2858589-1-sashal@kernel.org>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="b2KOqIdr";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="DP5Hbanc"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63SACak12112521
+	for <linux-clk@vger.kernel.org>; Tue, 28 Apr 2026 11:37:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=OSO+rDsc9UB5kYuyvWnZGSTS
+	2+qL+UxF4AmO719r5kc=; b=b2KOqIdr3iY7w74gRjWUMA+Z18SyXm6a0/7+Au+P
+	jkiWyyCnlpI9ERTJaUv8PrDwoTxCc4usdVuma7QT3zTupckKhvQRmc9clsL1q2AZ
+	S5LDZYd4guuBPi/wrgkmBAXVT2HZO9KzgyLpAzl9+NbEBZKQSfyoD/uacF5tzVkh
+	BdRYHPHN4iS5mrMgb5w+bhvj546A5dzetGysJyCpEUEjR1sqBDGni/7YRd/7Y9gL
+	t555LA4vGS+pvmU66HhEVJTTj8EjH0qrPu0g+G5pP4X+jz8wE0kfb7PrzfhnarD4
+	gcwd6NSAAb+8Jbq3earRlvabE6bG2Ul1rg1OXTMF8TdmVA==
+Received: from mail-vk1-f199.google.com (mail-vk1-f199.google.com [209.85.221.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4dtdmbka0b-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 28 Apr 2026 11:37:20 +0000 (GMT)
+Received: by mail-vk1-f199.google.com with SMTP id 71dfb90a1353d-56eeaefec9bso11005488e0c.2
+        for <linux-clk@vger.kernel.org>; Tue, 28 Apr 2026 04:37:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1777376239; x=1777981039; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OSO+rDsc9UB5kYuyvWnZGSTS2+qL+UxF4AmO719r5kc=;
+        b=DP5Hbancr7QKEttsxIKen209hUY4rW08llSx+XKs3a+/Ar+r50qxsZNDkqNvPCdzZB
+         9dYjaKkMOJNJ/CI8TofJi6gD2SH5GeQP+Lxn57i6Fs08jjXxHUumccD4doRmyib5SEUS
+         X2PM4pPtK8eDqfTPL854eGtDwBe5Jg6UqHSczJh5Pb8hTfOLbJWLghayuLKf+FZN8No4
+         X/O5cXohT+4LxfKj+qLknlfswWnXRYxc7wkvNE5O/waI1ZBeg33AZTpKJdbuAOnd5dbN
+         4Py9DE5w1efIS1RenqJkttuZY0tDilkvqWMmyL6wk21c4CMgh7moQT2Claqyi2dkAitG
+         IWZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777376239; x=1777981039;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OSO+rDsc9UB5kYuyvWnZGSTS2+qL+UxF4AmO719r5kc=;
+        b=Q7AofFI2FvyI+CzAOHsTSP2wBIZR4GjAijHu/U+xCtj0x8t/iWEczpeFTuLZOSatZv
+         /vYqxC7Foj4/0mfyaEwBGkT713PKtKhZgoxBiAlgn4B7RPJhcA84xOh5Th7RiWfYn/qp
+         zB3lDmi0nVWNeJBFyDuGnJJLNkhaaxF1KCLnCdcebQSGGp2/auKf5HYURcgUWmFy+N5P
+         zSPbDvKo6CLGagCijNhs8HGN2rLu9lbsG4TKSSpUkdN6jeV4TI45ORCnAX4kfYHvOPxd
+         +IIhV3NOY3XV40KEr7DZYH0bTrEfZshBZ+dEssFsYLK1WCmSOU40AaMGhCVTNjGLVZmX
+         yuOA==
+X-Forwarded-Encrypted: i=1; AFNElJ83c4fR8pBjnconP+4ipA7MhLvE3J542WGSKQubuvwwClGo7VQ5sdwoj0SE9oG9Xxl+sYFiQndHCA8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXnGIu0m7IyGZw9ahCvyoK2Y2VuNCNMAPLU9o1rOl5M1fAwBqR
+	l8oxSkNXUyodkSPouzyDHwAQVVTh3tK6IKidlC/LrkhABsNEzAHm1mqUEHlVoVPrkNdbqgH9JQp
+	1uWhnHnzMS0x6YR+x2+BrTKxFp05WGwo+jFINbDRpuA7bq5LukCsOTK6/1hL3D2Q=
+X-Gm-Gg: AeBDiesXk8ifSJ2rqAEUjnaTl8O5l14rgL95Hlaz0H57ajwr0D2X92bPVsP1QFuUM70
+	PCXXEfkTwBIjfQXOyyUxFBF4iX+ASv2kWxas1OMH02BLiTf7mdJ90zwu86ecqyUpn0kin89G1un
+	gZuFp2AwSh6Nod0a0GB8IWeh5MxRrtRTTqNfSKR6Ma85geVARsAWE58gpZctxwp4t5YAbipR1hf
+	YnRGIobUTTkZgcxdpUSny5ErDZsnJkl1yVdtaD6jQZddy8C/KhMoY6P5ksqINcL7s0f95iNXsIl
+	VYVEzTQ9M4/9ynFklt4kDCm0Hy7w3Bc9B03fku5EGUyLdnKcPT9/iQq+zkoPWq9cIfZm2SFWuB4
+	GtZ9wg+HBxil4dbYvF937EC0nAzyzULZAprANkda7bysuU8vZi0XIbQ3oAc0NfgfXKZcGLAMcoW
+	tLZJjkHM8htmRZB7WyPzf1Mbpy40jxJfwL7x5y+E5bWCd3Eg==
+X-Received: by 2002:a05:6122:2805:b0:56a:f576:cfca with SMTP id 71dfb90a1353d-573a553f767mr1005914e0c.2.1777376239001;
+        Tue, 28 Apr 2026 04:37:19 -0700 (PDT)
+X-Received: by 2002:a05:6122:2805:b0:56a:f576:cfca with SMTP id 71dfb90a1353d-573a553f767mr1005900e0c.2.1777376238377;
+        Tue, 28 Apr 2026 04:37:18 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3923f2e3237sm6280951fa.3.2026.04.28.04.37.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Apr 2026 04:37:17 -0700 (PDT)
+Date: Tue, 28 Apr 2026 14:37:15 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Hans de Goede <johannes.goede@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: x1e80100-dispcc: Stop
+ disp_cc_mdss_mdp_clk_src from getting parked
+Message-ID: <u2ypsha4t5hrzjnzihut5zdef2oijkakl6nzeqr7nlzted3kpq@efc2geb27z5g>
+References: <20260425123351.6292-1-johannes.goede@oss.qualcomm.com>
+ <ae-YlXZAuWqgPd-c@baldur>
+ <67a51928-1c16-48a6-ac65-f67c36297e5e@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 7.0.2
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <67a51928-1c16-48a6-ac65-f67c36297e5e@oss.qualcomm.com>
+X-Proofpoint-GUID: vxkbOqUqzvIUvGvUyp-P7tErSzFO_WRq
+X-Authority-Analysis: v=2.4 cv=PcrPQChd c=1 sm=1 tr=0 ts=69f09bf0 cx=c_pps
+ a=+D9SDfe9YZWTjADjLiQY5g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=A5OVakUREuEA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22 a=EUspDBNiAAAA:8
+ a=wuprHcOFQ_25lWwXxKAA:9 a=CjuIK1q_8ugA:10 a=vmgOmaN-Xu0dpDh8OwbV:22
+X-Proofpoint-ORIG-GUID: vxkbOqUqzvIUvGvUyp-P7tErSzFO_WRq
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDI4MDEwNiBTYWx0ZWRfX7ifhGYvfijV+
+ 906127Tmf13xJkMiv8GY4gcEoxND0ZvhZgwBSVAm1+8MPh0268iKHbUZvJ3YzbnfpyiauCvGF2h
+ YEIHF4DJVwEx4MqO0S7cVBDkFlYGUFHlANJ8ghvDpek5SIcykx3ZqOs+LJSMmTrFekPyY3J3MZi
+ RlskIVSOtezrabRbTb9LEebf/BEbtiJhfEPapimEQIFIkCJnXIEP880ksxhrjSuKNhz+iZkqWtK
+ bV7pEKFw4kOH4edNwBnKQvZQ4gwybnN4FWGypMHLyzIWTUBjX1vSb3C1kTjfPN4yh29+uSCBeH1
+ ZPTU1j/ROhbo9R5QCuSYdk9oBk34K2OrSCo+cZNHJ4bzd2EKbiX7JvwQmtXx+vnMI5T4Fsouepw
+ QReEhibIe4YLg8aBF3ZxiwfOWQkonfH3uuqMoVT/HGQrK1DzDl0MElJTQXYn4zCEGogHy7ut2Ib
+ lMmJR0pcY4UQ4uvBYog==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-04-28_03,2026-04-21_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 spamscore=0 lowpriorityscore=0 suspectscore=0 clxscore=1015
+ malwarescore=0 adultscore=0 priorityscore=1501 bulkscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2604200000 definitions=main-2604280106
 
-From: Val Packett <val@packett.cool>
+On Tue, Apr 28, 2026 at 10:39:24AM +0200, Hans de Goede wrote:
+> Hi,
+> 
+> On 27-Apr-26 19:12, Bjorn Andersson wrote:
+> > On Sat, Apr 25, 2026 at 02:33:51PM +0200, Hans de Goede wrote:
+> >> Parking disp_cc_mdss_mdp_clk_src at 19.2MHz causing the EFI GOP framebuffer
+> >> to stop functioning. The EFI GOP framebuffer should keep working until
+> >> the msm display driver loads, to help with boot debugging and to ensure
+> >> display output when the msm module is not in the initramfs.
+> >>
+> >> Switch disp_cc_mdss_mdp_clk_src over to clk_rcg2_shared_no_init_park_ops
+> >> to keep the EFI GOP working after binding the x1e80100-dispcc driver.
+> >>
+> > 
+> > Wonderful, thank you!
+> > 
+> >> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> >> Signed-off-by: Hans de Goede <johannes.goede@oss.qualcomm.com>
+> > 
+> > Could we attribute this to one of the commits that changed the parking
+> > behavior and get a Fixes: here, so that we could pick it for -rc?
+> 
+> Ok, looking at the clk-rcg2.c git log I think that should be:
+> 
+> Fixes: 01a0a6cc8cfd ("clk: qcom: Park shared RCGs upon registration")
+> 
 
-[ Upstream commit 76404ffbf07f28a5ec04748e18fce3dac2e78ef6 ]
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-There are 5 more GDSCs that we were ignoring and not putting to sleep,
-which are listed in downstream DTS. Add them.
+> Please let me know if you want a v2 with that tag added instead
+> of having the tag separately in thread here.
 
-Signed-off-by: Val Packett <val@packett.cool>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Link: https://lore.kernel.org/r/20260312112321.370983-2-val@packett.cool
-Signed-off-by: Bjorn Andersson <andersson@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
+Usually patchwork and b4 will pick the Fixes tags from the replies
 
-LLM Generated explanations, may be completely bogus:
 
-I have all the evidence I need. Now let me write my analysis.
-
-## Phase 1: Commit Message Forensics
-
-**Step 1.1: Parse subject line**
-Record: Subsystem: `dt-bindings: clock: qcom,gcc-sc8180x`. Action verb:
-"Add". Summary: Adds 5 missing GDSC (Global Distributed Switch
-Controller) #defines to the binding header.
-
-**Step 1.2: Parse all tags**
-Record: Tags found: `Signed-off-by: Val Packett`, `Acked-by: Krzysztof
-Kozlowski` (DT bindings maintainer), `Link:` to lore.kernel.org thread,
-`Signed-off-by: Bjorn Andersson` (Qualcomm maintainer who applied). No
-`Fixes:` tag on this bindings patch (but its companion driver patch
-`3565741eb985a` has `Fixes: 4433594bbe5d`). No `Cc: stable` tag.
-
-**Step 1.3: Analyze commit body**
-Record: "There are 5 more GDSCs that we were ignoring and not putting to
-sleep" — explicitly describes missing PM/power management support. The
-commit adds 5 new #define identifiers (values 11-15) for MMNOC MMU TBU
-(HF0/HF1/SF) and Turing MMU TBU0/TBU1 GDSCs. No version info mentioned.
-Author's explanation: these were missing from mainline driver but
-present in downstream DTS.
-
-**Step 1.4: Detect hidden fix**
-Record: Language uses "Add missing" — typical hidden-fix pattern. The
-driver companion has `Fixes: 4433594bbe5d` tag pointing to the original
-SC8180x driver (v5.12). This is a bug fix by nature (missing power
-management), but THIS patch is only the header definitions.
-
-## Phase 2: Diff Analysis
-
-**Step 2.1: Inventory**
-Record: Single file modified: `include/dt-bindings/clock/qcom,gcc-
-sc8180x.h`. 5 lines added, 0 removed. Zero functions modified — purely
-adding preprocessor macros.
-
-**Step 2.2: Code flow change**
-Record: Before: header defined GDSC IDs 0-10. After: header defines GDSC
-IDs 0-15 (adds 11-15). No execution-path change; these are constants
-used by other code (driver `drivers/clk/qcom/gcc-sc8180x.c` in the
-companion patch) and potentially DTS files.
-
-**Step 2.3: Bug mechanism category**
-Record: Category (h) Hardware enablement — adds IDs needed to expose
-hardware GDSCs. This is a prerequisite for the follow-on driver patch
-that actually registers the 5 GDSCs so they can be power-managed.
-
-**Step 2.4: Fix quality**
-Record: Trivially correct — just #define additions. Zero regression risk
-on its own (unused constants). Obvious correctness verifiable by reading
-the names and numbering. No red flags.
-
-## Phase 3: Git History Investigation
-
-**Step 3.1: Blame**
-Record: The file was introduced in commit 4433594bbe5d (SC8180x GCC
-driver, v5.12-rc1, January 2021). The existing GDSC section (IDs 0-10)
-has been stable since then. This patch only appends new IDs.
-
-**Step 3.2: Fixes target**
-Record: This bindings patch has no Fixes: tag. The driver companion
-`3565741eb985a` has `Fixes: 4433594bbe5d` ("clk: qcom: gcc: Add global
-clock controller driver for SC8180x"). That target commit is in v5.12
-and every stable tree since (5.15, 6.1, 6.6, 6.12).
-
-**Step 3.3: File history**
-Record: Recent changes to the file have been small additions (GPLL9
-support, USB MP resets, UFS QREF clocks) — standard "add missing"
-completions. This fits the same pattern. Part of an 11-patch series
-"clk: qcom: sc8180x: PM-related fixes (and refactoring)" but this
-specific commit + the driver commit (patches 01/11 and 02/11) are the
-only "fix missing GDSCs" pair.
-
-**Step 3.4: Author context**
-Record: Author Val Packett has submitted Qualcomm platform work
-previously; the patch is Acked-by the DT binding maintainer (Krzysztof
-Kozlowski) and applied by the Qualcomm SoC maintainer (Bjorn Andersson).
-The driver commit got Reviewed-by from two additional Qualcomm
-maintainers (Dmitry Baryshkov, Konrad Dybcio).
-
-**Step 3.5: Dependencies**
-Record: This bindings patch is a prerequisite for the driver patch
-`3565741eb985a`, which references `HLOS1_VOTE_MMNOC_MMU_TBU_HF0_GDSC`
-etc. Without this header change, the driver patch won't compile
-(verified: `drivers/clk/qcom/gcc-sc8180x.c:17` includes this header).
-
-## Phase 4: Mailing List Research
-
-**Step 4.1: Original discussion**
-Record: `b4 dig -c 76404ffbf07f2` found
-https://patch.msgid.link/20260312112321.370983-2-val@packett.cool. Part
-of v2 series (v1 had 7 patches, v2 expanded to 11 patches). Applied
-version is v2. Thread saved; no stable nominations, no NAKs, no concerns
-raised on this specific patch.
-
-**Step 4.2: Reviewers**
-Record: Acked-by Krzysztof Kozlowski (DT bindings maintainer). The
-broader series was reviewed by subsystem maintainers Dmitry Baryshkov
-and Konrad Dybcio.
-
-**Step 4.3: Bug report search**
-Record: No Reported-by tag, no bug link. The issue was identified by
-comparing against downstream DTS.
-
-**Step 4.4: Series context**
-Record: 11-patch series. Patches 01-02 are the "add missing GDSCs" pair
-(bindings + driver). Patches 03-06 are PM retention/runtime-PM
-enablement (larger functional changes). Patches 07-08 are dispcc
-changes, 09-11 are camcc refactoring. Only 01+02 are tight bug-fix
-material.
-
-**Step 4.5: Stable list**
-Record: No stable-list discussion found about this specific patch.
-
-## Phase 5: Code Semantic Analysis
-
-**Step 5.1: Key symbols**
-Record: 5 preprocessor constants:
-HLOS1_VOTE_MMNOC_MMU_TBU_HF0/HF1/SF_GDSC and
-HLOS1_VOTE_TURING_MMU_TBU0/1_GDSC. No functions modified.
-
-**Step 5.2-5.4: Callers/callees**
-Record: Used by `drivers/clk/qcom/gcc-sc8180x.c` to index into the
-`gcc_sc8180x_gdscs[]` array (verified via grep). Not directly reachable
-from user code; these IDs reference power domains managed by the clock
-framework and consumed by SMMU/Turing subsystems on SC8180x hardware
-(e.g. Microsoft Surface Pro X).
-
-**Step 5.5: Similar patterns**
-Record: **Strong precedent found**. An essentially identical SC8280XP
-pair exists:
-- `9eba4db02a88` (SC8280XP bindings: "Add missing GDSCs") +
-  `4712eb7ff85b` (SC8280XP driver fix)
-- Both were backported to stable as `66120ba55999a` (explicitly labeled
-  `Stable-dep-of: 4712eb7ff85b`) and `a92a9604e8a43` respectively. The
-  SC8280XP commit message is almost verbatim identical, and the Qualcomm
-  stable process treated the bindings half as a required dependency.
-
-## Phase 6: Cross-referencing / Stable Tree
-
-**Step 6.1: Code in stable**
-Record: The header file and driver exist in all stable trees ≥5.12. The
-incomplete GDSC list is present in all active stable trees.
-
-**Step 6.2: Backport cleanliness**
-Record: Bindings file context from line 320-325 is unchanged since 2023
-(last modification 19ac3579af14e "Add missing bindings on gcc-sc8180x").
-The addition appends at end of GDSC section — should apply cleanly to
-all stable trees without conflicts.
-
-**Step 6.3: Related fixes in stable**
-Record: SC8280XP equivalent already in stable (same fix pattern for
-sibling SoC).
-
-## Phase 7: Subsystem
-
-**Step 7.1**: Record: `drivers/clk/qcom/` (via header it defines) and
-`include/dt-bindings/` — Qualcomm clock/PM subsystem. Criticality:
-PERIPHERAL (specific to SC8180x, used in Microsoft Surface Pro X-class
-laptops and similar devices).
-
-**Step 7.2**: Record: Qualcomm clock driver area is actively maintained;
-this patch went through normal review cycle (v1→v2).
-
-## Phase 8: Impact / Risk
-
-**Step 8.1: Affected users**
-Record: SC8180x platform users (notably Surface Pro X; ARM64 laptops).
-When combined with driver patch, affects power consumption on these
-devices.
-
-**Step 8.2: Trigger**
-Record: Always active — SMMU TBU / Turing TBU GDSCs remain powered-on
-because kernel doesn't vote them off.
-
-**Step 8.3: Severity of this patch alone**
-Record: This bindings-only patch has ZERO runtime effect by itself.
-Severity of the **combined fix** (with companion driver patch): MEDIUM —
-power waste, excess heat, degraded battery. Not a crash, not a
-corruption, but real user-facing PM issue.
-
-**Step 8.4: Risk-benefit**
-Record: Benefit: enables the companion driver fix to apply and build.
-Risk: essentially zero (5 unused preprocessor macros if driver patch not
-applied). As Stable-dep-of — safe and necessary.
-
-## Phase 9: Synthesis
-
-**Evidence FOR:**
-- Companion driver fix has `Fixes: 4433594bbe5d` pointing to v5.12;
-  valid bug fix
-- Strong, nearly identical precedent: SC8280XP pair was backported to
-  stable exactly this way (Stable-dep-of marker)
-- Five trivial macro additions; zero regression risk
-- Applies cleanly to all stable trees (no conflicts in the appended
-  section)
-- Acked by DT bindings maintainer, reviewed by Qualcomm maintainers
-- Required prerequisite — without it the driver fix will not compile in
-  stable
-
-**Evidence AGAINST:**
-- This patch alone has no runtime effect; it's a dependency, not a
-  standalone fix
-- The underlying issue is "missing PM" not "crash/corruption"
-- Part of a larger 11-patch series, most of which is NOT stable material
-
-**Stable rules check:**
-1. Obviously correct — yes (5 #define lines)
-2. Fixes real bug — yes, when paired with driver patch (power waste)
-3. Important issue — borderline: PM/power waste, not crash
-4. Small & contained — yes (5 lines, 1 file)
-5. No new features/APIs — yes (enables existing hardware features
-   already in DT bindings header)
-6. Applies to stable — yes (verified file structure unchanged)
-
-**Exception category**: This is effectively a DT binding additions for
-existing hardware (exception category 3) AND a required Stable-dep-of
-for a Fixes:-tagged driver commit — which was the exact rationale used
-for the SC8280XP precedent.
-
-## Verification
-
-- [Phase 1] Parsed tags via `git show 76404ffbf07f2`: Acked-by Krzysztof
-  Kozlowski, Signed-off-by Bjorn Andersson, Link to lore. No
-  Fixes:/stable tags on bindings commit.
-- [Phase 1] Companion `git show 3565741eb985a` confirmed `Fixes:
-  4433594bbe5d` and two Reviewed-by tags.
-- [Phase 2] Diff analysis: 5 line additions in one file, pure #define
-  macros.
-- [Phase 3] `git show 4433594bbe5d` and `git describe --contains
-  4433594bbe5d` → v5.12-rc1~110^2^4~33. Bug present since v5.12.
-- [Phase 3] `git log --oneline -- include/dt-bindings/clock/qcom,gcc-
-  sc8180x.h`: confirms file has been amended via "Add missing X" commits
-  repeatedly.
-- [Phase 4] `b4 dig -c 76404ffbf07f2`: found
-  https://patch.msgid.link/20260312112321.370983-2-val@packett.cool
-- [Phase 4] `b4 dig -c 76404ffbf07f2 -a`: found v1 (7-patch) and v2
-  (11-patch). Applied = v2 (latest).
-- [Phase 4] Thread saved and searched for "stable": no stable
-  nominations or objections.
-- [Phase 5] `grep qcom,gcc-sc8180x.h drivers/clk/qcom/gcc-sc8180x.c`:
-  confirms line 17 includes this header — driver build depends on these
-  defines.
-- [Phase 5] `git show 3565741eb985a | grep HLOS1_VOTE_`: driver patch
-  uses all 5 new defines.
-- [Phase 5] Precedent: `git show 66120ba55999a`: confirmed "[ Upstream
-  commit 9eba4db02a88e7a810aabd70f7a6960f184f391f ]" and "Stable-dep-of:
-  4712eb7ff85b" — identical pattern backported to stable for SC8280XP.
-- [Phase 5] `git show a92a9604e8a43`: confirmed companion SC8280XP
-  driver fix was also backported.
-- [Phase 6] `git describe --contains 9eba4db02a88` → v6.6-rc1. Stable
-  backports landed in older branches with Stable-dep-of marker.
-- [Phase 6] Read current file (lines 300-327): confirmed GDSC section
-  ends at USB30_SEC_GDSC=10; appending 5 new IDs won't conflict with any
-  downstream state in stable.
-- UNVERIFIED: Could not fetch the actual lore thread content (anti-bot
-  wall); relied on saved mbox and local commit metadata. Could not
-  verify stable maintainer's intention for this specific pair, but
-  SC8280XP precedent is unambiguous.
-
-## Conclusion
-
-This is a pure DT-bindings header addition that is safe on its own (zero
-runtime impact) and is a **required prerequisite** for the companion
-driver patch `3565741eb985a` which has a `Fixes:` tag pointing to v5.12.
-The almost identical SC8280XP bindings commit (`9eba4db02a88`) was
-backported to stable as `Stable-dep-of: 4712eb7ff85b`, establishing a
-clear precedent. Without this patch, the driver fix cannot compile in
-stable trees. It is small, obviously correct, applies cleanly, and
-follows an exception category (DT bindings for existing hardware +
-required dependency for a Fixes:-tagged fix).
-
-**YES**
-
- include/dt-bindings/clock/qcom,gcc-sc8180x.h | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/include/dt-bindings/clock/qcom,gcc-sc8180x.h b/include/dt-bindings/clock/qcom,gcc-sc8180x.h
-index b9d8438a15ffb..9ed7b794aacc4 100644
---- a/include/dt-bindings/clock/qcom,gcc-sc8180x.h
-+++ b/include/dt-bindings/clock/qcom,gcc-sc8180x.h
-@@ -322,5 +322,10 @@
- #define USB30_MP_GDSC						8
- #define USB30_PRIM_GDSC						9
- #define USB30_SEC_GDSC						10
-+#define HLOS1_VOTE_MMNOC_MMU_TBU_HF0_GDSC		11
-+#define HLOS1_VOTE_MMNOC_MMU_TBU_HF1_GDSC		12
-+#define HLOS1_VOTE_MMNOC_MMU_TBU_SF_GDSC		13
-+#define HLOS1_VOTE_TURING_MMU_TBU0_GDSC			14
-+#define HLOS1_VOTE_TURING_MMU_TBU1_GDSC			15
- 
- #endif
 -- 
-2.53.0
-
+With best wishes
+Dmitry
