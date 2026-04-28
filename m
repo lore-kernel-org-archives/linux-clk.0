@@ -1,101 +1,119 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC9FC331A7E
-	for <linux-clk@vger.kernel.org>; Tue, 28 Apr 2026 17:25:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777397140; cv=none; b=tFmWVEQ1cog/LcMP5WokuJdzLqPWf+dJcFKR/0neTX8zH6MA9dYMO4oxglSaRKKu3exZT6cwriFK8PKXjIItDabccepOAziNqa6ikZWNXg9d3asV7YUagOhdHaKI4FGSPBjAMQNO+kWVHi3urh78ivlvwBaXkcKsO43kB/6/F/0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777397140; c=relaxed/simple;
-	bh=fGEvSKKrJp5vnG05fgLesw2rCs8hn7Cq83GP49OrIb4=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=QOxv7sOQLxOb6zCZ7ViOK+gzgvdG926VxBsiJGYxQ1k0X+NMOR6SRKZ8tCe35cHV60KeNZcu7e93HE045LUuyAm9LFewC7ptXgX4HPjWATTuVqBG4Aenucz4XftXKqXq1Eu7VNph4AJza99xeE5/eyCtcJYyF/OEapYZ2mcdDiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fdjC78W5; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=jrUzf2G4; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2638624501D
+	for <linux-clk@vger.kernel.org>; Tue, 28 Apr 2026 18:55:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=205.220.180.131
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1777402515; cv=pass; b=QBerccbs2a642BkMCFKTf4477XeGUnhqb/zpWGytXoPY9eN48TdbdM3ssOc6pwI5BbmIjaHvfC7ZSuIebXr0HVUe9e5p8GDD6wLIEJ/bCYg10Y8RktO26VM63o5fYLv4tvhvc12eCXph9yv1gLQ6vsOckw9Kf7wk9uGC6+UyshY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1777402515; c=relaxed/simple;
+	bh=48YB3Ndqy1orkOBGaDNajZ3kV1mp4TNcdrH+V5/Taa4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LWmurJ5G82cvwggNPefvaJBzWYceBNhvZ2aFZRJ7BhXFbshoyCLXvjR92RpOC6A1gtGTVg68Yedhk25rDQFZ2OPC/BqQl8OvCyKiTYpk2qS5s+39UK41i8CNVcwHxtut2SlLtVK2j6yZt4nPMkZmLv0cUfvtOIi0qNrckKSa2+o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=or8t01Tz; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=kjDiTBAP; arc=pass smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fdjC78W5";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="jrUzf2G4"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63SFsXiA863011
-	for <linux-clk@vger.kernel.org>; Tue, 28 Apr 2026 17:25:38 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="or8t01Tz";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="kjDiTBAP"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63SFsR1X3705150
+	for <linux-clk@vger.kernel.org>; Tue, 28 Apr 2026 18:55:13 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ZmRlkAry5rxLITNug1gUNrl6wTOkbnqP0LFzwMZv0uY=; b=fdjC78W5GCImrW1h
-	D8P5M4uUVcH5n9Cstz7WPpPaknVgkWui2/y63Un/KWzPQI4Zk7VVVymSVeZ6ZFEn
-	F7GSZm5atGso46WxaPoKKNrQ77lyEbm12Y/15w+i71RHUzjNRYv+UR/f9qIefXxt
-	ebYO/tHS/hidCSHH44/mBnUsId0aoXzWNQdBPZGotjXoXcc42aeYETkZU92KEc9t
-	7SIzvkRXkJWwxPBHb10dz2ttJ86aD8dfJPjAUzMRIj7VN9DNyfl/b9ddYscOiebU
-	ID/BbBWNFcS+eio+gml9M8946N44h+ybr+Nvxruv/4wa/Emb2y9UiavjzJ+Zq3Z3
-	JYooGw==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4dtry0ja00-1
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=442/8iOej5uMFBsrBy8C8V1f
+	bre1zWZUcI0+Mu9/ZKE=; b=or8t01Tz4Y1qEm952d/nrUpv8nh2kDFsOPGBOH74
+	WfVes2r44YAE84N4PaJ4tcozPzqROiqVg2M11dEEwahBvY6am9IpItoHf/4RTweH
+	+por1ztFf97oGh9ef7rhH+6szEiGS+OTLab3yKfwI2AxYkA8JeN/POlHaXcoqsoK
+	ASoqQUjw73dh7hj8nInq9uhLDWVJ5X0zAg9kwANaoA6kyN67DZc8ECC2SBzpaMMv
+	5SCA+c2nkmepwnAV0FV8IynSkD2ZZ+taeUPnrKnHTzlJI/KgM0yOezh4pYYiUrcw
+	b49rgL5rw664VtPF2X6lX4voeYrGff9tMp2JZ+a6EjAFgg==
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4dttxha0k2-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 28 Apr 2026 17:25:37 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2b241be0126so226755625ad.3
-        for <linux-clk@vger.kernel.org>; Tue, 28 Apr 2026 10:25:37 -0700 (PDT)
+	for <linux-clk@vger.kernel.org>; Tue, 28 Apr 2026 18:55:12 +0000 (GMT)
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-82f460260cfso11967797b3a.2
+        for <linux-clk@vger.kernel.org>; Tue, 28 Apr 2026 11:55:12 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1777402512; cv=none;
+        d=google.com; s=arc-20240605;
+        b=EuSnqY9ayo0HdaUwiCseko9YdhzfMVkNTGhuGlvBGIxjnkSkmnbcP24gmR3Ve505vt
+         ku6xDS96Ug4LJMWm1mfhKvDRBAbwiEnVvLseiLyIFF6mk3KB5v84e1yAgpx+U4tYaIgz
+         uElPv7p5xdR00Q9vZhE8aab0QTd0firm2vdX6iwG47neuuQLO6ZtBt0v5R8kyFb8GHM9
+         DKkt8CoyEX6zuTcupVhmER4pm9oox7wD0MVMae9lr5R5yscfPAFDEx3xokxQFz/ClJQs
+         zrbJZL0Pm60ws6cmhqUFzc38ohHkNtqUXNlIa31CF668zXVTQpSdOrvnucD9Te6kOqEI
+         /76A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=442/8iOej5uMFBsrBy8C8V1fbre1zWZUcI0+Mu9/ZKE=;
+        fh=OydfDTW1JT7YZpITCp1u9K9KxyM9qzplPzARR1qt9xU=;
+        b=CY4b2FMrCQd+wucEcofZbh0Dcx/K2KdnWtqti4dpXoCcLATB0V9UholfmsBC7kgYIP
+         geBFvD2qo/nPEI4/x6SxZWblK4mmSMsKd4EiQ2/Swf3B+QlzXfVxeRRyRQvjIXEtmMKm
+         joxbUcVYIuRIZi6doq2vYCOC7rLXOOi8wfgx+IwJDuSeHKv8bkZ3BD25yrDWNxx8mZEt
+         gXoo+YzoUBzb7ZSWnKVhHUbdgzL7e+hIPYs4CsWzcU8DB5LENnVNTB5sOvUcLImdoyUf
+         nhU7eE9O5b11VHiCucSuW6FRPbJnDcBqlLQj8ES7e9rvyZsp5STTu8wUm2TFLAfH1SDy
+         XZ1A==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1777397137; x=1778001937; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ZmRlkAry5rxLITNug1gUNrl6wTOkbnqP0LFzwMZv0uY=;
-        b=jrUzf2G49rD0nK4nmtX+bES4rzw7AJhSxkoLpvEtRtkVHyD6+8EdLwTn1c682lF6Hv
-         c0WFmeJGkYF2zzt7RgQgSv2B02gqkC4CCjJcktbmxwlJcIzcK+bluDxOgSmxrzhZD74E
-         nN0L3YqgdXVwoqecu1z3CJ0aK+pdr2dG/Rk9xlO+fdCBe/S2GsxV6RvfnZw2J/QaKABp
-         v2j9BC+5Ji9GoWonpemt1/Jstz2Ggjnoyh++o9UTWKPxQGrYICwWtJMPal5ydvOkwhYC
-         P8TciEB/lHh0/vgsdH/4rfPc1cR1ohW8vZiWlgLmNYoQwuPk1oiBVLFFP6D+r79hhaJQ
-         Yrww==
+        d=oss.qualcomm.com; s=google; t=1777402512; x=1778007312; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=442/8iOej5uMFBsrBy8C8V1fbre1zWZUcI0+Mu9/ZKE=;
+        b=kjDiTBAPpTpQfr8TvSyZy7jjcbwhWdx362hfAblCd0WaA8MQ8jd5roHCDkGxLef6Xf
+         w7it05j5t9s2CuJvWSXajPXD3l1iQhTlo8YvXu6MQYwwVmFYVyLxMC1A8fpy2/qsTLgJ
+         Bk0238zf+x7tHXRbjK9rUaYYLzYfvuATKRmP6y7pQeB2Mq74kbKTfaAyxb+0fRZnhauO
+         gVb9kG3vecz3AlBAcGljF7+MftxaKmzab7dKD2yp2uP7zRuukGQqC7m7nnDkLSEcbIJa
+         SoIETQTOjbMl3w0aPfUkFvwA6yz2TqzulIvs/1s5SVNC/iMahEnc02ZiVFpV1z/ilppw
+         xDKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777397137; x=1778001937;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZmRlkAry5rxLITNug1gUNrl6wTOkbnqP0LFzwMZv0uY=;
-        b=gjJQYkaWg6sK4+XBfsV6Ym71CtnQY4XargeGCIJPRt2hJ+pbZoFq8Nj46U6j4SC9VR
-         f5lIiyE5M4RHrwMLGaiYt0uRaqK+UStK3AWe0r3FHA5GGqDact5V8QyOBTledR97+eVO
-         u+gDyHFu6kbWvc8CdnHEVdaYZRm+FxF8K2aOi2aTucI6KnCl0INAWQ9ydYSTVBPtSnkt
-         I7HfgwlsMTi6zOrqMGLcZJIaqUySEH4fikjiZhxIQN3hG/ShsYkQB9+lYy53PeWjJwsD
-         gAZxUT6cPSwotGUzABNT/bRB9QcxvZ37ThdmcBbAgn1/aR6EHE02hoIfTbvAZJ3qG0Wu
-         AYmg==
-X-Forwarded-Encrypted: i=1; AFNElJ+hu4C93frOid5Pp6QKIueu8URkxGi/bcCeJ3HpUqGi3yp3DcXR2IAotIz5n/WotC4mYtAp/98jugc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yww+lW27kSyZDlcEKNHeLCn99faWBEM/fV1yiQUwXoRK9k/c7ux
-	oY59XQ2xJm2DV95LVWoaAhRy21c9oBE/Amgf0iAghUL4rNk5Mh+LxD05D0KYslvdKGP0r5/1spU
-	g02iTlR009YWWLo5kjufwQM1HaD3gDvZD4KAu+sd94okGmzKHZn53rq1/Z+rqztE=
-X-Gm-Gg: AeBDiev+U8J7v69OrYUCuYzWwbmhZDtN3tLWoazJ8mzRPX2K9YytgspWu0QvUo29TeC
-	jE5QnbTHbvzCZsvBjotd5uOvdQVyNZ9zUUrC3ityAo2motmrKXbFM5JQdWDsBcNGElc3uw0vZVK
-	1ASTsY2xy+yRaPyj5ANcFlCYy/vHnPWW1Bli0ViWtq4BFp/1ZYGVdSCGhZTagy5qXpyqpOGecEK
-	dfS9im2f5c9lrpSHdml58+vOSUqSDxzZK9HIf8X9FeQx8qpP2RvS9M/0hljrELmwyojW85LKjO1
-	xQ4s37ubxCHl+QUxdThZpexzZktIwqj+ZClOuw0zZlbnMrDUBRVOlN1CShW6SKvVB2NRGQGPaCd
-	pgtOJqmhmr8fTrsuxaeYlAaXzrimI+II93BXwzhA3bQsmv4sn9v4rN98WpBk/SUdR
-X-Received: by 2002:a17:903:3503:b0:2b5:f105:52b2 with SMTP id d9443c01a7336-2b98739675cmr3922785ad.9.1777397136762;
-        Tue, 28 Apr 2026 10:25:36 -0700 (PDT)
-X-Received: by 2002:a17:903:3503:b0:2b5:f105:52b2 with SMTP id d9443c01a7336-2b98739675cmr3922325ad.9.1777397136215;
-        Tue, 28 Apr 2026 10:25:36 -0700 (PDT)
-Received: from [192.168.1.4] ([122.177.243.58])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2b97aca8b4esm32088765ad.73.2026.04.28.10.25.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Apr 2026 10:25:35 -0700 (PDT)
-Message-ID: <94a49f16-2e1f-4d32-9d4c-483d56fd2731@oss.qualcomm.com>
-Date: Tue, 28 Apr 2026 22:55:27 +0530
+        d=1e100.net; s=20251104; t=1777402512; x=1778007312;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=442/8iOej5uMFBsrBy8C8V1fbre1zWZUcI0+Mu9/ZKE=;
+        b=FVy6ZpHreB2ZDsrG2q5UXVjS31Wv8jkap79lrTsnd1E70XrukV7GdJqF1t6WUV74Jj
+         cEI/B7C0FZ1UfuTQYgN0AXBEH0SFAWdxIMn6VaeEBAtI56mGftqQBWmICW23H16FtUMx
+         hrl7cnnIhlgKz5Y1wcRrUCHSJ7Cro8ypTiW84pJZqBSuzT1o4SoApKC0w8fb5J9+ZON3
+         MEKnizJJJGqLmMt8vfxUe/ZLxDFPmZYreOzk4kSi9rrwluWcIxUJekkbsREezlibJDUv
+         fYwmWzqzmV/ERuJT1T0f2ot8TeutGzmOCXn07SOIpDKYvM2Rk7ZBiGXcS6JY3PbLgKar
+         VO2g==
+X-Forwarded-Encrypted: i=1; AFNElJ+dFRVi202mKGqsxIaDDz2njv4LaSsu+8prIYe8pjex58OAIj7pc5CnitdOsoET6Tg4LC+gFZSLQrk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhsiobUIDe2gOfx0tNDuCMQvGbtSmVPdee/SbOiBGXnpE/5pqr
+	nDzPs6rXyIMafI4O1M47z+UF0xBIJf6wh1PRN55gjUZo7otR3nRaoeGdqy5U4id3u8riJviH/8z
+	tZIncDorF4GP8Hnak3j9jxWPQKkpfalfCm9L8axelwnuJmk/lqlj4tlITYDwtQe7cM4JLy1ohHs
+	PCCcArkTyKRyyUzupGaVZ8nn0KdTPzeMjlHRyQIg==
+X-Gm-Gg: AeBDietmVE1uAzqtCo2M4QKhvk+b27QtJmXbZuQasBpM/PMB7dski9MN5o6/0vXsLrI
+	7E7z5WNZI1tdHQ+Pklperdf42WAoPkA8PScY2LOmRY4pxJRqmbEfbA3+vh2o0edsiU7rwS8GDiZ
+	wrPa6fC8mtOnBUB6SHXHxJV/yt1I4gIOxaYjHdOTFViaXxFkeuf/U/dpr//1S0Jn0HAxCOw1QVv
+	OjKxk0Bm41+zQoM0DVIqg1gCICxnetd9CzIvyVPhzrKkCQD
+X-Received: by 2002:a05:6a00:4206:b0:82c:9223:cc95 with SMTP id d2e1a72fcca58-834ea57fb2cmr557830b3a.1.1777402511955;
+        Tue, 28 Apr 2026 11:55:11 -0700 (PDT)
+X-Received: by 2002:a05:6a00:4206:b0:82c:9223:cc95 with SMTP id
+ d2e1a72fcca58-834ea57fb2cmr557786b3a.1.1777402511417; Tue, 28 Apr 2026
+ 11:55:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
-Subject: Re: [PATCH 02/13] dt-bindings: clock: qcom,sm8550-dispcc: Add display
- CESTA support on SM8750
-To: Krzysztof Kozlowski <krzk@kernel.org>
+References: <20260420-cesta-sm870-dispcc-v1-0-eb27d845df9c@oss.qualcomm.com>
+ <20260420-cesta-sm870-dispcc-v1-10-eb27d845df9c@oss.qualcomm.com>
+ <vnil4gbkpenxo5o2a2df2ziuygqyyrzsj2bygqewm7n2rq5kbv@qbntqftfpsky> <008f2f0a-2367-4d8e-b6b7-2421a4de88cb@oss.qualcomm.com>
+In-Reply-To: <008f2f0a-2367-4d8e-b6b7-2421a4de88cb@oss.qualcomm.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Date: Tue, 28 Apr 2026 21:54:59 +0300
+X-Gm-Features: AVHnY4IiC0s9loCkcUtYnjwZYf6U05xc0VvVRDkF4BRux375tv-oGwdPaCptzn4
+Message-ID: <CAO9ioeXQHDYRPW6HYQ7XXsmf1ovpJyqaXgnGaDVnACb3PW7oOA@mail.gmail.com>
+Subject: Re: [PATCH 10/13] clk: qcom: dispcc-sm8750: Add support to control
+ MDP clocks using CESTA
+To: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
 Cc: Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
         Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Neil Armstrong <neil.armstrong@linaro.org>, Lee Jones <lee@kernel.org>,
@@ -105,80 +123,107 @@ Cc: Bjorn Andersson <andersson@kernel.org>,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Maulik Shah <maulik.shah@oss.qualcomm.com>,
         Taniya Das <taniya.das@oss.qualcomm.com>
-References: <20260420-cesta-sm870-dispcc-v1-0-eb27d845df9c@oss.qualcomm.com>
- <20260420-cesta-sm870-dispcc-v1-2-eb27d845df9c@oss.qualcomm.com>
- <20260422-savvy-wolverine-of-chivalry-9ae6fc@quoll>
- <3ea2c4a2-4a1b-4062-b332-9d5d0a53379b@kernel.org>
-Content-Language: en-US
-In-Reply-To: <3ea2c4a2-4a1b-4062-b332-9d5d0a53379b@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=KuJ9H2WN c=1 sm=1 tr=0 ts=69f0ed91 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=EwI1ikYXukqkrg4G3Narhw==:17
- a=IkcTkHD0fZMA:10 a=A5OVakUREuEA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=gowsoOTTUOVcmtlkKump:22
- a=HjAgAaymx-b2fZWta2cA:9 a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-GUID: yJlr_FcBtTG5FdqdR-53ejp3wafoEoFB
-X-Proofpoint-ORIG-GUID: yJlr_FcBtTG5FdqdR-53ejp3wafoEoFB
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDI4MDE2OCBTYWx0ZWRfX06MrOjgLNHuU
- QbvcmPbuP90ErqzpBQ0mZ8zdo/Fv1hL1sWroMiLicqNsnizagJXfkNWvCnM22xBNKNVBOigcBkm
- NH2Rn41hAjU4k59bhP45ObTTslnx3Qu8UJM4Sj9WD/w/61CkhFFzIY9F789z2cIDBMzciF11tVm
- HMB/OMMSQpWZ6swiY6xuOKEED0BDaEu7uufqpIiKlzs/Xc1X1WIZ2dLlh3cB3DJzHMCgwT4B7jp
- 69wfzLj6Em26s0hm3hA7P4/7Wct3iDcDBu6dtbRwuYV9uViDSn8KOoWKeIEN+prCez2VSsO7Wij
- 8EGp8WgLp01AEt5QoEY5jtA0TgWISuV+IEkgUUWbi4C7hJ0ZaK7uowK48JKea/a3btef4BHZx/a
- Q8SDpaR80v3W+ikuVXnlJ9Hqao+GBJQSD4zbNJrxn402zhhEM6QfU7pd7l7pd6uBW7d0IrT4YV7
- cwWFszSwE+MOfgtDa/Q==
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDI4MDE4MyBTYWx0ZWRfX0HIM63K1CR6Z
+ J88PISMcyapfbQ2gU7WSEG829ocCDZUlN8SkYfe8b9D0i9aMubiKYSw789F8xdcs+hyCsIk5geq
+ e5R7h7PSSJMBUu73YCYJj5auC9VykFhvTkniJ2BjadB4x/W+GXj9SoMFZq+h1PE1cd0+jnjhfUa
+ dgkbJxHDMOgTh4XCrmYlhnUEFJLbBRHIkM6h+itZfV/471c+xX8NmBrdUiqlbRt/EX3FUcmM40L
+ 37EWgPplFZFlj5MkTscT8cvnHNfqThDd+7kRwkdQQyJSMpO1Jvmex77CdCbStq5JU1jrqF/aY9R
+ e9x5Z8LHPM5vpkQFtyCFy1KjSrKlzBU6FreMoMcceeDx153R1ZcT/Ib7+vEYsVR56gaMyDgEUWz
+ MHj4q4U4ap7GN3oZ7+MH52HuMTUa2C3Nmr9MElp3heJGTtrTX8nPx0IfyXzQC88Q+hn2ExwEfRm
+ UGsD5Z2qMP5MQOR2Diw==
+X-Authority-Analysis: v=2.4 cv=Uu5T8ewB c=1 sm=1 tr=0 ts=69f10291 cx=c_pps
+ a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=IkcTkHD0fZMA:10 a=A5OVakUREuEA:10
+ a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22
+ a=3WHJM1ZQz_JShphwDgj5:22 a=EUspDBNiAAAA:8 a=4jyo0phO276cF_ToP1MA:9
+ a=QEXdDO2ut3YA:10 a=IoOABgeZipijB_acs4fv:22
+X-Proofpoint-ORIG-GUID: oQQwekFnu7DMTMWrEL_rED59XG4bX341
+X-Proofpoint-GUID: oQQwekFnu7DMTMWrEL_rED59XG4bX341
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-04-28_05,2026-04-28_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 suspectscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 phishscore=0 bulkscore=0 malwarescore=0 impostorscore=0
- adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ malwarescore=0 spamscore=0 phishscore=0 adultscore=0 clxscore=1015
+ suspectscore=0 impostorscore=0 bulkscore=0 priorityscore=1501
+ lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2604200000
- definitions=main-2604280168
+ definitions=main-2604280183
 
+On Tue, 28 Apr 2026 at 20:22, Jagadeesh Kona
+<jagadeesh.kona@oss.qualcomm.com> wrote:
+>
+>
+>
+> On 4/23/2026 12:03 AM, Dmitry Baryshkov wrote:
+> > On Mon, Apr 20, 2026 at 09:59:03PM +0530, Jagadeesh Kona wrote:
+> >> Add support to control the DISPCC MDSS MDP RCG and the associated display
+> >> PLL0 using display CESTA hardware on SM8750 platform. If display CRM is
+> >> enabled, the clock ops of these clocks will be updated by the common code
+> >> before registration to use CRM specific clock ops, allowing these clocks
+> >> to be controlled using display CRM (CESTA Resource Manager) hardware.
+> >>
+> >> Co-developed-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> >> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> >> Signed-off-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+> >> ---
+> >>  drivers/clk/qcom/dispcc-sm8750.c | 89 +++++++++++++++++++++++++---------------
+> >>  1 file changed, 56 insertions(+), 33 deletions(-)
+> >>
+> >> diff --git a/drivers/clk/qcom/dispcc-sm8750.c b/drivers/clk/qcom/dispcc-sm8750.c
+> >> index ca09da111a50e811481fd862b54d454de024d1c9..328e43b52192702dbbfd1ed65737520acdd4a649 100644
+> >> --- a/drivers/clk/qcom/dispcc-sm8750.c
+> >> +++ b/drivers/clk/qcom/dispcc-sm8750.c
+> >> @@ -71,6 +71,16 @@ enum {
+> >>      P_SLEEP_CLK,
+> >>  };
+> >>
+> >> +static struct clk_crm disp_crm = {
+> >> +    .max_perf_ol = 10,
+> >> +    .regs = {
+> >> +            .reg_cfg_rcgr_lut_base = 0xd8,
+> >> +            .reg_l_val_lut_base = 0xdc,
+> >> +            .vcd_offset = 0x268,
+> >> +            .lut_level_offset = 0x28,
+> >
+> > Seeing this configuration makes me even more sure. There is no separate
+> > CRM or disp-crm. The CRM resources should be consumed by dispcc.
+> >
+>
+> The CRM can be used by interconnect drivers also for BW voting via CESTA.
+> Hence it cannot be consumed by dispcc alone.
 
+At least mention it in the commit message, please. How is it going to
+be used by interconnect? Will it use the same API?
 
-On 4/24/2026 2:39 PM, Krzysztof Kozlowski wrote:
-> On 22/04/2026 09:41, Krzysztof Kozlowski wrote:
->> On Mon, Apr 20, 2026 at 09:58:55PM +0530, Jagadeesh Kona wrote:
->>> On SM8750, a subset of DISPCC clocks is controlled by the display CESTA
->>> (Client State Aggregator) hardware. These clocks can be scaled to the
->>> desired frequency by sending votes to the display CRM(CESTA Resource
->>> manager) instead of programming DISPCC registers directly.
->>
->> This looks like completely new, vendor clock API, so no.
->>
->> Resource voting or clock scaling is nothing new and you do not get a
->> vendor phandle to do it. That's like basic upstreaming 101: we do not
->> want another vendor re-implementation of common or typical solutions.
-> 
-> I'll provide a bit more context, what I am looking for:
-> Are CESTA and CRMC truly separate blocks? Do they have their own
-> resources or maybe something is shared with clock controller, e.g. parts
-> of address space?
-> 
+>
+> >> +    },
+> >> +};
+> >> +
+> >>  static const struct pll_vco pongo_elu_vco[] = {
+> >>      { 38400000, 38400000, 0 },
+> >>  };
+> >> @@ -89,21 +99,22 @@ static struct alpha_pll_config disp_cc_pll0_config = {
+> >>      .user_ctl_hi_val = 0x00000002,
+> >>  };
+> >>
+> >> +static struct clk_init_data disp_cc_pll0_init = {
+> >> +    .name = "disp_cc_pll0",
+> >> +    .parent_data = &(const struct clk_parent_data) {
+> >> +            .index = DT_BI_TCXO,
+> >> +    },
+> >> +    .num_parents = 1,
+> >> +    .flags = CLK_GET_RATE_NOCACHE,
+> >
+> > Why? It wasn't there beforehand.
+> >
+>
+> The PLL rate can be changed by CESTA outside of the PLL callbacks, when a perf level request
+> is sent via CRM API in RCG's prepare()/set_rate() callbacks. Having this flag ensures that the
+> PLL rate is recalculated from hardware every time when users query the PLL's clk_rate node,
+> providing the correct PLL rate configured by CESTA.
 
-Thanks Krzysztof for your review
+=> commit message.
 
-CRMC is sub-block within the CESTA block. CRMC block contains the clocks frequency lookup tables
-information for CESTA controlled RCGs, which clock driver needs to read and populate the RCG's
-frequency tables. DISPCC block is outside of CESTA block, so CRMC block is mapped as syscon device
-and is used in DISPCC node only to read & populate the CESTA controlled RCGs frequency lookup tables.
-The actual clock scaling is done later by converting the frequency into a perf level & sending it
-to CESTA HW via CRM APIs.
-
-> If they manage clocks, they should receive some of the clocks as inputs,
-> because I don't imagine a block which gates clock somewhere else, to
-> which it has no access (IOW, that gate to manage clock is part of the
-> clock). Or maybe it's some shadow registers? Or display clock controller
-> does not have direct clock access in the first place?
-> 
-
-Yes, there are few dispcc clocks required for accessing the display CRM/CRMC register
-blocks but those clocks are already kept ON from bootloader and they will stay ON as
-long as MMCX rail is voted. So if MMCX is ON, we can access CRM/CRMC blocks.
-
-Thanks,
-Jagadeesh
+-- 
+With best wishes
+Dmitry
