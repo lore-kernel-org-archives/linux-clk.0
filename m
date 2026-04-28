@@ -1,225 +1,141 @@
-Received: from twmbx01.aspeedtech.com (mail.aspeedtech.com [211.20.114.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F2283E123A;
-	Tue, 28 Apr 2026 10:00:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7111DFDE
+	for <linux-clk@vger.kernel.org>; Tue, 28 Apr 2026 10:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777370409; cv=none; b=XhZPapy4OovcIpGoLyvqgVT+C8WpbXyH40njtX6DqNWexdA6D7wlgg3uDTCMKEJqVsgYtJL1DyGTFZPXz/PkK/yIbt3WVKtJmeWd7f0gXd4M3+av20ZvPFeQ6dTru7Es7LEyFBetEFs61Ets1N1VEzVIptSn3+uvHS7tJrgaxeU=
+	t=1777371228; cv=none; b=qN+txr6JOJbwyedKJX3EwaYY69iIHxKNgI49tMRPXA4XefWWSboxlrrrzl2ZNJjpIiy6ym+Zyp4D6OHS1O0GA++rCjESxgxQw3syBZZNkZDDpb+EM7zbQWRH9slyHGO/bXKGutvgUinuVNxu7oRtfldwv+NjoBJwnOdZzh/LDks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777370409; c=relaxed/simple;
-	bh=mrdhNPya3jJ61yZHR8p2pd3TxVaF8xWbxCDhBpD9L1w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=BY+4ZGy3MoAAIqRNlUNnLdFeGgfNbsWtWY3YT2BQJl8Z1UbFYJu8rbH/GQD0m1wdgueBw+nBS9Jp4ux8gtlu6QBaejmz8/8HIUEY3FMsscIikAP8AM5rL0cCVhPHq70GmUpJO67+2CCkgCEJ6HwxoqZFmZ84Fnj+avK+J56478E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 28 Apr
- 2026 17:54:42 +0800
-Received: from [127.0.1.1] (192.168.10.13) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Tue, 28 Apr 2026 17:54:42 +0800
-From: Billy Tsai <billy_tsai@aspeedtech.com>
-Date: Tue, 28 Apr 2026 17:49:46 +0800
-Subject: [PATCH v8 2/3] dt-bindings: mfd: aspeed,ast2x00-scu: Describe
- AST2700 SCU0
+	s=arc-20240116; t=1777371228; c=relaxed/simple;
+	bh=oV3rqKJGZ1HkBUoBCPoyp8xk38jGcMLgZZmmQFjwxHk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YHqDIIG9XzgrfNr81j/uHXIeXgpVlExtGHOeuejijqfKFAI3wdEfDxQWk7dgtec9EqmbRV/jyGFfmC3q6sIQxiYLz8vPD9WiTJF/8YhE9t1cbVNXptNQUU7NXa7GkZrpAaIQ3jGPPwk9PRFXXf39ZVri9oK5nNA3eb5QGhDEudw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=qQAPnR7l; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qQAPnR7l"
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ba9ad0fbc3aso1076975966b.1
+        for <linux-clk@vger.kernel.org>; Tue, 28 Apr 2026 03:13:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1777371225; x=1777976025; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yKtU8WldknGdF11CtSWFK34v/bIhyBVaz4iMdrQ//bw=;
+        b=qQAPnR7l4FTSwZziBOzucVBWLB9PaNOp0TsjirSw7gt6oO+3TB1yZrdHTQ/aBo5+ZG
+         OZ33MBNrxkCtZKeA/yLY+U+w9nQQ7Ezo2sf7QVbzoz85T9PKYnKYpiO8YorchXiditXu
+         pMi28XndwjNFAzOp9wBh41DVe3ikDHZkvqLqTG4GELnfEZZlbu9ganXgsSY1jAyk8y04
+         RgdoOHg5oKMZIQbWwppheDBJZ/tByBZTNBngoxxsbjCzTbyIu9h+6RmIFXvbtMe3bFOp
+         QpzsCNHosvMdngnxO6eQftlwySCm4UOHAYE2sR+XAO6lloEEf5OsvVqNhggOkv7ipS7X
+         6uSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777371225; x=1777976025;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yKtU8WldknGdF11CtSWFK34v/bIhyBVaz4iMdrQ//bw=;
+        b=oQd7tuust05EdyUarCWF8J2ych1nCIVErccxlMSmTo2BTuDHHW+pqgNYjxKzHJ6OA8
+         8NTGDScuociSaDDiEfnwOyXiJ730seMX+ZIX8vy2fQNXZpRTV3HeXeyguQC4lhCwdN5z
+         GaQtt29kWTbrCjBad4A6r5i2UDoGNZ9e4PZXscvX0bfz0qqdzCc7fTz57rloUtVeLHTB
+         OFmmk47CJZmwvcnbK9Euv9Ml3e0SscztEGL8TbLIe5Eoac8QbmuSUzti/8K9lTJfmSYd
+         i3AYtGhkJe5s3X943uAw6b9dOP5nXZDN/Cjg8/CKjq/CN5CCNlinRDQwWMlSyZ0Lz1E5
+         RDVQ==
+X-Forwarded-Encrypted: i=1; AFNElJ9GtTDfXSkJix8tSJXwW5TnSRSKzOwWGA6yqxVvtBCXbQ8pGP1+aS29GXj+PvhUTT6EHx9VJlqHu5E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRZ/Jyd2Nm2hXkjC1o5TLahpAhdrooKlKeYQ1EcVmZTwR3uWgL
+	WM4QunqGAGYIzK9NK6EROHQ9hZvIJxUmvR0HJ3djksbRLTk96wOm+sdW
+X-Gm-Gg: AeBDietUfeP9prlWtoMMSIwUuDHI9qSwjYod3fW83K9uEw4wnS4COW89mQrYQUgRCZT
+	AyBhUtnyRoyq0+Mva9TD2uN7gtYVHwe+KoyH9hyhX2DhLBd7DVFNZ7jEujEsMwBDhtcn2B6LGM7
+	ctwKMggnuw6lisBSp9bd9y9wdk5gAcCaeZ15ZmaDTSM6Yp/wNXRkQogHLRVAWjaeGiZLT9pzNsK
+	vPqk4Snxqxv2Wxy5S9H57Nleda04iBTdL3vo2ONSCGO8DUlBXRZl2hSRM2n9UCOb17n/FQuzHce
+	1cSCHua1UdxqyWHwZxPtAHVUPN3oO0gtkcaBNzgifDQMSs1zWlCww2DMWKKBti7JVYxm4+W69jq
+	RwwlxBvVqZzxcc1UDmNHYUcAY3uX511BRjGDrZJfw0NSvpLjNpEBiX0qeZYx80NEX8zlI0svPDq
+	LyqTQqP/OnV7Ya2TB1b/a0dUmN1qLSJ+N8uMyE6ESpQ++3795Sfcg=
+X-Received: by 2002:a17:906:6206:b0:ba5:95b1:f152 with SMTP id a640c23a62f3a-bb7ff559c2cmr134415066b.0.1777371224996;
+        Tue, 28 Apr 2026 03:13:44 -0700 (PDT)
+Received: from [10.43.64.110] ([185.94.190.188])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-bb80b887edcsm77045166b.47.2026.04.28.03.13.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Apr 2026 03:13:43 -0700 (PDT)
+Message-ID: <30758adf-0ec1-4f20-ae3f-e5ca92bac730@gmail.com>
+Date: Tue, 28 Apr 2026 12:13:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] dt-bindings: Add clock guard DT description
+To: Conor Dooley <conor@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Vyacheslav Yurkov
+ <V.Yurkov.EXT@bruker.com>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+References: <20260318-feature-clock-guard-v1-0-6137cb4084b7@bruker.com>
+ <20260318-feature-clock-guard-v1-2-6137cb4084b7@bruker.com>
+ <20260318225510.GA639444-robh@kernel.org>
+ <7c7034a7-686a-42c2-bdba-6f31b5179f7c@gmail.com>
+ <20260319-yearly-wrongful-883f7fd86a69@spud>
+ <b45d9845-2d56-4fdd-a3ac-b0e0e27ba573@gmail.com>
+ <20260323-sanctuary-semantic-432089feb1c7@spud>
+ <d097826c-3db5-4902-acee-ffcff7436d4e@gmail.com>
+ <20260326-lustiness-borrower-530898a5ce28@spud>
+ <f3e27db5-d84d-4b6a-9d6f-25fcc9044efc@gmail.com>
+ <20260421-each-candy-67380b760d26@spud>
+Content-Language: en-US
+From: Vyacheslav Yurkov <uvv.mail@gmail.com>
+In-Reply-To: <20260421-each-candy-67380b760d26@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-ID: <20260428-upstream_pinctrl-v8-2-eb8ef9ab0498@aspeedtech.com>
-References: <20260428-upstream_pinctrl-v8-0-eb8ef9ab0498@aspeedtech.com>
-In-Reply-To: <20260428-upstream_pinctrl-v8-0-eb8ef9ab0498@aspeedtech.com>
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Joel
- Stanley" <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>,
-	"Linus Walleij" <linusw@kernel.org>, Billy Tsai <billy_tsai@aspeedtech.com>,
-	"Bartosz Golaszewski" <brgl@kernel.org>, Ryan Chen <ryan_chen@aspeedtech.com>
-CC: Andrew Jeffery <andrew@aj.id.au>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
-	<linux-kernel@vger.kernel.org>, <openbmc@lists.ozlabs.org>,
-	<linux-gpio@vger.kernel.org>, <linux-clk@vger.kernel.org>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1777370081; l=5291;
- i=billy_tsai@aspeedtech.com; s=20251118; h=from:subject:message-id;
- bh=mrdhNPya3jJ61yZHR8p2pd3TxVaF8xWbxCDhBpD9L1w=;
- b=qnsT6QW0wFMWJxBnDEcDkCSRh2R9he1t+g4varVLV/zfZVtvlEYCofpsTBarULV55gZbC5j93
- Bfe6McMuKHnDdG1ZH+u+bWwIWcPTWLrSjdOvVFNfmJxbsgRSflJRmHw
-X-Developer-Key: i=billy_tsai@aspeedtech.com; a=ed25519;
- pk=/A8qvgZ6CPfnwKgT6/+k+nvXOkN477MshEGJvVdzeeQ=
 
-AST2700 consists of two interconnected SoC instances, each with its own
-System Control Unit (SCU). The SCU0 provides pin control, interrupt
-controllers, clocks, resets, and address-space mappings for the
-Secondary and Tertiary Service Processors (SSP and TSP).
+On 21.04.2026 19:28, Conor Dooley wrote:
 
-Describe the SSP/TSP address mappings using the standard
-memory-region and memory-region-names properties.
+>> Before I send a v2 I'd like to clarify a few more things:
+>> - I provided a schematics by means of the URL. I believe there's no unified
+>> way to provide something like that in the documentation, is there? So the
+>> only way to describe it properly would be to summarize the description from
+>> the mailing list, right?
+> 
+> I don't believe anything we have at the moment is what you're looking
+> for.
+> 
+>> - I'm going over the Common Clk Framework again, and perhaps I understood it
+>> wrong. You mentioned that I have to implement is_enabled, but I implemented
+>> is_prepared. It seems that I just have to move my is_prepared implementation
+>> to is_enabled. Does that sound correct?
+> 
+> Effectively yes, I think.
+> 
+>> - In my particular use case I don't need enable/disable ops, but to keep the
+>> driver generic, I'd probably want to have the bulk_enable implementation
+>> inside, because I don't know which clocks are assigned in a device tree. The
+> 
+> Why don't you know this? I'd expect there to be 1:1 mapping of gpios to
+> clocks, with an equal number of input and output clocks, since all
+> you're doing is detecting if the clocks are ready to go?
+> 
+>> clk_core_enable function only enables 1 parent clock, not the the list of
+>> parent clocks. Or I'm missing something here?
+> 
 
-Disallow legacy child nodes that are not present on AST2700, including
-p2a-control and smp-memram. The latter is unnecessary as software can
-access the scratch registers via the SCU syscon.
+Thanks for your support. Yes, I talked to the HW team and I have this 
+information.
 
-Also allow the AST2700 SoC0 pin controller to be described as a child
-node of the SCU0, and add an example illustrating the SCU0 layout,
-including reserved-memory, interrupt controllers, and pinctrl.
+One last important bit, which I'm trying to figure out, is how to notify 
+the users of the driver about the state change. I understand that Common 
+Clock Framework doesn't support clocks drifting to unlocked state, and 
+I'm OK with this limitation. Right now what happens on the clock 
+consumer side is that it gets -EPROBE_DEFER when any providers are not 
+there or not initialized. But if the state of GPIO is not the expected 
+one, then -EBUSY is propagated to the probe of the dependent driver. I 
+can also change EBUSY to EPROBE_DEFER, but how to trigger the deferred 
+probe again is something I don't know. The only alternative I can think 
+of is a call to rmmod / insmod from the userspace.
 
-Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
----
- .../bindings/mfd/aspeed,ast2x00-scu.yaml           | 114 +++++++++++++++++++++
- 1 file changed, 114 insertions(+)
+Is there any other way to achieve this?
 
-diff --git a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
-index a87f31fce019..0d5e168b0309 100644
---- a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
-+++ b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
-@@ -46,6 +46,18 @@ properties:
-   '#reset-cells':
-     const: 1
- 
-+  memory-region:
-+    items:
-+      - description: Region mapped through the first SSP address window.
-+      - description: Region mapped through the second SSP address window.
-+      - description: Region mapped through the TSP address window.
-+
-+  memory-region-names:
-+    items:
-+      - const: ssp-0
-+      - const: ssp-1
-+      - const: tsp
-+
- patternProperties:
-   '^p2a-control@[0-9a-f]+$':
-     description: >
-@@ -87,6 +99,7 @@ patternProperties:
-             - aspeed,ast2400-pinctrl
-             - aspeed,ast2500-pinctrl
-             - aspeed,ast2600-pinctrl
-+            - aspeed,ast2700-soc0-pinctrl
- 
-     required:
-       - compatible
-@@ -156,6 +169,30 @@ required:
-   - '#clock-cells'
-   - '#reset-cells'
- 
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - aspeed,ast2700-scu0
-+              - aspeed,ast2700-scu1
-+    then:
-+      patternProperties:
-+        '^p2a-control@[0-9a-f]+$': false
-+        '^smp-memram@[0-9a-f]+$': false
-+
-+  - if:
-+      not:
-+        properties:
-+          compatible:
-+            contains:
-+              const: aspeed,ast2700-scu0
-+    then:
-+      properties:
-+        memory-region: false
-+        memory-region-names: false
-+
- additionalProperties: false
- 
- examples:
-@@ -180,4 +217,81 @@ examples:
-             reg = <0x7c 0x4>, <0x150 0x8>;
-         };
-     };
-+
-+  - |
-+    / {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        reserved-memory {
-+            #address-cells = <2>;
-+            #size-cells = <2>;
-+            ranges;
-+
-+            ssp_region_0: memory@400000000 {
-+                reg = <0x4 0x00000000 0x0 0x01000000>;
-+                no-map;
-+            };
-+
-+            ssp_region_1: memory@401000000 {
-+                reg = <0x4 0x01000000 0x0 0x01000000>;
-+                no-map;
-+            };
-+
-+            tsp_region: memory@402000000 {
-+                reg = <0x4 0x02000000 0x0 0x01000000>;
-+                no-map;
-+            };
-+        };
-+
-+        bus {
-+            #address-cells = <2>;
-+            #size-cells = <2>;
-+
-+            syscon@12c02000 {
-+                compatible = "aspeed,ast2700-scu0", "syscon", "simple-mfd";
-+                reg = <0 0x12c02000 0 0x1000>;
-+                ranges = <0x0 0x0 0x12c02000 0x1000>;
-+                #address-cells = <1>;
-+                #size-cells = <1>;
-+                #clock-cells = <1>;
-+                #reset-cells = <1>;
-+
-+                memory-region = <&ssp_region_0>, <&ssp_region_1>,
-+                                <&tsp_region>;
-+                memory-region-names = "ssp-0", "ssp-1", "tsp";
-+
-+                silicon-id@0 {
-+                    compatible = "aspeed,ast2700-silicon-id", "aspeed,silicon-id";
-+                    reg = <0x0 0x4>;
-+                };
-+
-+                interrupt-controller@1b0 {
-+                    compatible = "aspeed,ast2700-scu-ic0";
-+                    reg = <0x1b0 0x4>;
-+                    #interrupt-cells = <1>;
-+                    interrupts-extended = <&intc0 97>;
-+                    interrupt-controller;
-+                };
-+
-+                interrupt-controller@1e0 {
-+                    compatible = "aspeed,ast2700-scu-ic1";
-+                    reg = <0x1e0 0x4>;
-+                    #interrupt-cells = <1>;
-+                    interrupts-extended = <&intc0 98>;
-+                    interrupt-controller;
-+                };
-+
-+                pinctrl@400 {
-+                    compatible = "aspeed,ast2700-soc0-pinctrl";
-+                    reg = <0x400 0x318>;
-+                    emmc-state {
-+                        function = "EMMC";
-+                        groups = "EMMCG1";
-+                    };
-+                };
-+            };
-+        };
-+    };
-+
- ...
-
--- 
-2.34.1
-
+Slava
