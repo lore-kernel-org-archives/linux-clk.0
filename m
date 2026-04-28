@@ -1,141 +1,386 @@
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7111DFDE
-	for <linux-clk@vger.kernel.org>; Tue, 28 Apr 2026 10:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C8C423A9A;
+	Tue, 28 Apr 2026 10:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777371228; cv=none; b=qN+txr6JOJbwyedKJX3EwaYY69iIHxKNgI49tMRPXA4XefWWSboxlrrrzl2ZNJjpIiy6ym+Zyp4D6OHS1O0GA++rCjESxgxQw3syBZZNkZDDpb+EM7zbQWRH9slyHGO/bXKGutvgUinuVNxu7oRtfldwv+NjoBJwnOdZzh/LDks=
+	t=1777372983; cv=none; b=uZVa0SrSzNBdUT29PR2IQlob1wa2FZc69i8YfDkRitSSVFPnvw7+2hznJCs2+YaKy9Eds02YMGnGEkjIidl3ZM5eQB4PhbRS2Z8rijCi408HHAeTgnG3fMT656jERy33H6qleEkPlwAM/Ncq7nioRWdv8LeeqnN8KMq2ubXT2RE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777371228; c=relaxed/simple;
-	bh=oV3rqKJGZ1HkBUoBCPoyp8xk38jGcMLgZZmmQFjwxHk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YHqDIIG9XzgrfNr81j/uHXIeXgpVlExtGHOeuejijqfKFAI3wdEfDxQWk7dgtec9EqmbRV/jyGFfmC3q6sIQxiYLz8vPD9WiTJF/8YhE9t1cbVNXptNQUU7NXa7GkZrpAaIQ3jGPPwk9PRFXXf39ZVri9oK5nNA3eb5QGhDEudw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=qQAPnR7l; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1777372983; c=relaxed/simple;
+	bh=+ZRNSpMxbtL6pi+004vKl0lGTMAHazGZBWSYX+mLXR0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WCJhcGF8ncNAo5ltQG4KXy8KiwI3ggb3Up+uUYknR8FyzmJkKnF7OpkB7v5I6IEM5kBkfrM4weaenpiCOuSGgyp/VyA4N7xIfWvHPCE/Trgff+SVK/TO1U+bUVb5O+kSf3TpgTJfvLqRQSEL0Gi+lw9G/TyRxUQTeEExkdMuskM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qwfN6GIu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qQAPnR7l"
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ba9ad0fbc3aso1076975966b.1
-        for <linux-clk@vger.kernel.org>; Tue, 28 Apr 2026 03:13:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1777371225; x=1777976025; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yKtU8WldknGdF11CtSWFK34v/bIhyBVaz4iMdrQ//bw=;
-        b=qQAPnR7l4FTSwZziBOzucVBWLB9PaNOp0TsjirSw7gt6oO+3TB1yZrdHTQ/aBo5+ZG
-         OZ33MBNrxkCtZKeA/yLY+U+w9nQQ7Ezo2sf7QVbzoz85T9PKYnKYpiO8YorchXiditXu
-         pMi28XndwjNFAzOp9wBh41DVe3ikDHZkvqLqTG4GELnfEZZlbu9ganXgsSY1jAyk8y04
-         RgdoOHg5oKMZIQbWwppheDBJZ/tByBZTNBngoxxsbjCzTbyIu9h+6RmIFXvbtMe3bFOp
-         QpzsCNHosvMdngnxO6eQftlwySCm4UOHAYE2sR+XAO6lloEEf5OsvVqNhggOkv7ipS7X
-         6uSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777371225; x=1777976025;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yKtU8WldknGdF11CtSWFK34v/bIhyBVaz4iMdrQ//bw=;
-        b=oQd7tuust05EdyUarCWF8J2ych1nCIVErccxlMSmTo2BTuDHHW+pqgNYjxKzHJ6OA8
-         8NTGDScuociSaDDiEfnwOyXiJ730seMX+ZIX8vy2fQNXZpRTV3HeXeyguQC4lhCwdN5z
-         GaQtt29kWTbrCjBad4A6r5i2UDoGNZ9e4PZXscvX0bfz0qqdzCc7fTz57rloUtVeLHTB
-         OFmmk47CJZmwvcnbK9Euv9Ml3e0SscztEGL8TbLIe5Eoac8QbmuSUzti/8K9lTJfmSYd
-         i3AYtGhkJe5s3X943uAw6b9dOP5nXZDN/Cjg8/CKjq/CN5CCNlinRDQwWMlSyZ0Lz1E5
-         RDVQ==
-X-Forwarded-Encrypted: i=1; AFNElJ9GtTDfXSkJix8tSJXwW5TnSRSKzOwWGA6yqxVvtBCXbQ8pGP1+aS29GXj+PvhUTT6EHx9VJlqHu5E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRZ/Jyd2Nm2hXkjC1o5TLahpAhdrooKlKeYQ1EcVmZTwR3uWgL
-	WM4QunqGAGYIzK9NK6EROHQ9hZvIJxUmvR0HJ3djksbRLTk96wOm+sdW
-X-Gm-Gg: AeBDietUfeP9prlWtoMMSIwUuDHI9qSwjYod3fW83K9uEw4wnS4COW89mQrYQUgRCZT
-	AyBhUtnyRoyq0+Mva9TD2uN7gtYVHwe+KoyH9hyhX2DhLBd7DVFNZ7jEujEsMwBDhtcn2B6LGM7
-	ctwKMggnuw6lisBSp9bd9y9wdk5gAcCaeZ15ZmaDTSM6Yp/wNXRkQogHLRVAWjaeGiZLT9pzNsK
-	vPqk4Snxqxv2Wxy5S9H57Nleda04iBTdL3vo2ONSCGO8DUlBXRZl2hSRM2n9UCOb17n/FQuzHce
-	1cSCHua1UdxqyWHwZxPtAHVUPN3oO0gtkcaBNzgifDQMSs1zWlCww2DMWKKBti7JVYxm4+W69jq
-	RwwlxBvVqZzxcc1UDmNHYUcAY3uX511BRjGDrZJfw0NSvpLjNpEBiX0qeZYx80NEX8zlI0svPDq
-	LyqTQqP/OnV7Ya2TB1b/a0dUmN1qLSJ+N8uMyE6ESpQ++3795Sfcg=
-X-Received: by 2002:a17:906:6206:b0:ba5:95b1:f152 with SMTP id a640c23a62f3a-bb7ff559c2cmr134415066b.0.1777371224996;
-        Tue, 28 Apr 2026 03:13:44 -0700 (PDT)
-Received: from [10.43.64.110] ([185.94.190.188])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-bb80b887edcsm77045166b.47.2026.04.28.03.13.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Apr 2026 03:13:43 -0700 (PDT)
-Message-ID: <30758adf-0ec1-4f20-ae3f-e5ca92bac730@gmail.com>
-Date: Tue, 28 Apr 2026 12:13:41 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qwfN6GIu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 495F7C2BCB7;
+	Tue, 28 Apr 2026 10:43:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1777372983;
+	bh=+ZRNSpMxbtL6pi+004vKl0lGTMAHazGZBWSYX+mLXR0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=qwfN6GIuenPNQYzZ38EI2quHWFLfR8Eqvu20YmsSn1X9U3z4iK1LxIjPOBfUoFXAe
+	 6YJwtOW/MK1fcXT9SmrllL7zPC9XKk+8ZgpS6ko7aQCz/qxXhu7EaareypFmkDv/KB
+	 J4dYX68yNg9ChNdvtWZ6d/w9QO+kw/MgScedRxTuFUudbsYVSgV12yKZP0wCCh+ohw
+	 605Vem7+MfIa/PmPMiTtzrRQXCKM6bcS34N3K+vl9636LkKX7cnkOBwsXOKK8Hwp7P
+	 QPp8vbD3ZXxsC01VqcJc3vuVHmcbQhz2C6aeouV0GXUpf7JVoapr2hevH6hhIXGOJn
+	 hy4D2QRNW/v3g==
+From: Sasha Levin <sashal@kernel.org>
+To: patches@lists.linux.dev,
+	stable@vger.kernel.org
+Cc: Pengyu Luo <mitltlatltl@gmail.com>,
+	Taniya Das <taniya.das@oss.qualcomm.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	agross@kernel.org,
+	konrad.dybcio@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH AUTOSEL 7.0-5.10] clk: qcom: rcg2: expand frac table for mdss_pixel_clk_src
+Date: Tue, 28 Apr 2026 06:41:13 -0400
+Message-ID: <20260428104133.2858589-62-sashal@kernel.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260428104133.2858589-1-sashal@kernel.org>
+References: <20260428104133.2858589-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] dt-bindings: Add clock guard DT description
-To: Conor Dooley <conor@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Vyacheslav Yurkov
- <V.Yurkov.EXT@bruker.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-References: <20260318-feature-clock-guard-v1-0-6137cb4084b7@bruker.com>
- <20260318-feature-clock-guard-v1-2-6137cb4084b7@bruker.com>
- <20260318225510.GA639444-robh@kernel.org>
- <7c7034a7-686a-42c2-bdba-6f31b5179f7c@gmail.com>
- <20260319-yearly-wrongful-883f7fd86a69@spud>
- <b45d9845-2d56-4fdd-a3ac-b0e0e27ba573@gmail.com>
- <20260323-sanctuary-semantic-432089feb1c7@spud>
- <d097826c-3db5-4902-acee-ffcff7436d4e@gmail.com>
- <20260326-lustiness-borrower-530898a5ce28@spud>
- <f3e27db5-d84d-4b6a-9d6f-25fcc9044efc@gmail.com>
- <20260421-each-candy-67380b760d26@spud>
-Content-Language: en-US
-From: Vyacheslav Yurkov <uvv.mail@gmail.com>
-In-Reply-To: <20260421-each-candy-67380b760d26@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 7.0.2
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 21.04.2026 19:28, Conor Dooley wrote:
+From: Pengyu Luo <mitltlatltl@gmail.com>
 
->> Before I send a v2 I'd like to clarify a few more things:
->> - I provided a schematics by means of the URL. I believe there's no unified
->> way to provide something like that in the documentation, is there? So the
->> only way to describe it properly would be to summarize the description from
->> the mailing list, right?
-> 
-> I don't believe anything we have at the moment is what you're looking
-> for.
-> 
->> - I'm going over the Common Clk Framework again, and perhaps I understood it
->> wrong. You mentioned that I have to implement is_enabled, but I implemented
->> is_prepared. It seems that I just have to move my is_prepared implementation
->> to is_enabled. Does that sound correct?
-> 
-> Effectively yes, I think.
-> 
->> - In my particular use case I don't need enable/disable ops, but to keep the
->> driver generic, I'd probably want to have the bulk_enable implementation
->> inside, because I don't know which clocks are assigned in a device tree. The
-> 
-> Why don't you know this? I'd expect there to be 1:1 mapping of gpios to
-> clocks, with an equal number of input and output clocks, since all
-> you're doing is detecting if the clocks are ready to go?
-> 
->> clk_core_enable function only enables 1 parent clock, not the the list of
->> parent clocks. Or I'm missing something here?
-> 
+[ Upstream commit 0f5c8f03d990f9be9908a08a701c324e113554d2 ]
 
-Thanks for your support. Yes, I talked to the HW team and I have this 
-information.
+Recently, when testing 10-bit dsi C-PHY panel, clks are different
+from the usual. (dsi0_phy_pll_out_dsiclk's parent is dsi0_pll_bit_clk
+now (dsiclk_sel = 0)) And we failed to set dsiclk's children.
 
-One last important bit, which I'm trying to figure out, is how to notify 
-the users of the driver about the state change. I understand that Common 
-Clock Framework doesn't support clocks drifting to unlocked state, and 
-I'm OK with this limitation. Right now what happens on the clock 
-consumer side is that it gets -EPROBE_DEFER when any providers are not 
-there or not initialized. But if the state of GPIO is not the expected 
-one, then -EBUSY is propagated to the probe of the dependent driver. I 
-can also change EBUSY to EPROBE_DEFER, but how to trigger the deferred 
-probe again is something I don't know. The only alternative I can think 
-of is a call to rmmod / insmod from the userspace.
+dsi_link_clk_set_rate_6g: Set clk rates: pclk=172992000, byteclk=108120000
 
-Is there any other way to achieve this?
+byteclk was set first to 108120000, so the vco rate was set to
+108120000 * 7 * 1 * 1 = 756840000. When we was trying to set
+172992000 on mdss_pixel_clk_src later.
 
-Slava
+Since there was no matched ratio, we failed to set it. And dsiclk
+divider ratio was set to 15:1 (wrong cached register value 0xf and
+didn't update), we finally got 50455997, apparently wrong.
+
+  dsi0vco_clk                1       1        0        756839941
+     dsi0_pll_out_div_clk    1       1        0        756839941
+        dsi0_pll_post_out_div_clk 0       0        0        216239983
+        dsi0_pll_bit_clk     2       2        0        756839941
+           dsi0_phy_pll_out_dsiclk 2       2        0        50455997
+              disp_cc_mdss_pclk1_clk_src 1       1        0        50455997
+           dsi0_pll_by_2_bit_clk 0       0        0        378419970
+           dsi0_phy_pll_out_byteclk 2       2        0        108119991
+              disp_cc_mdss_byte1_clk_src 2       2        0        108119991
+
+Downstream clk_summary shows the mdss_pixel_clk_src support the
+ratio(35:16)
+
+ dsi0_phy_pll_out_dsiclk             2       2        0        378420000
+     disp_cc_mdss_pclk1_clk_src       1       1        0        172992000
+ dsi0_phy_pll_out_byteclk            2       2        0        108120000
+     disp_cc_mdss_byte1_clk_src       2       2        0        108120000
+
+After checking downstream source, 15:4 also seems to be supported,
+add them two.
+
+Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
+Reviewed-by: Taniya Das <taniya.das@oss.qualcomm.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Link: https://lore.kernel.org/r/20260321095029.2259489-1-mitltlatltl@gmail.com
+Signed-off-by: Bjorn Andersson <andersson@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+
+LLM Generated explanations, may be completely bogus:
+
+Now I have all the information I need to complete this analysis.
+
+## Phase 1: COMMIT MESSAGE FORENSICS
+
+**Step 1.1 - Parse subject line:**
+- Subsystem: `clk: qcom: rcg2:`
+- Action verb: "expand" (non-standard fix verb, but describes adding
+  entries)
+- Record: Qualcomm Root Clock Generator 2 driver - expand fractional
+  ratio table for MDSS pixel clock source
+
+**Step 1.2 - Parse tags:**
+- Reviewed-by: Taniya Das <taniya.das@oss.qualcomm.com> (Qualcomm clock
+  expert, original author of prior frac-table update b527358cb4cd5)
+- Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> (msm
+  subsystem maintainer)
+- Link: lore.kernel.org reference to discussion
+- Signed-off-by: Bjorn Andersson <andersson@kernel.org> (Qualcomm SoC
+  maintainer, applied it)
+- **NO** Fixes: tag (expected absence - this is why it's being reviewed)
+- **NO** Cc: stable (expected absence)
+- **NO** Reported-by: (author found it while testing)
+
+**Step 1.3 - Analyze commit body:**
+- Bug: When using a 10-bit DSI C-PHY panel with `pclk=172992000,
+  byteclk=108120000`, `mdss_pixel_clk_src` fails to find a matching
+  ratio in `frac_table_pixel[]`.
+- Failure mode: `clk_pixel_determine_rate()` returns `-EINVAL`, the
+  divider register keeps a stale cached value (0xf = 15:1), so actual
+  pclk becomes ~50.4 MHz instead of required ~173 MHz — a ~3.4x wrong
+  clock rate. Display output is corrupted/broken.
+- Root cause: Table lacks the 16/35 and 4/15 ratios that downstream
+  Qualcomm driver supports.
+- Record: concrete runtime bug on real hardware; downstream driver
+  carries the needed ratios.
+
+**Step 1.4 - Hidden fix detection:** Subject says "expand" but the body
+clearly documents a failure mode. This is a bug fix disguised as an
+enhancement. The "expand" verb hides that `clk_set_rate()` completely
+fails without it.
+
+## Phase 2: DIFF ANALYSIS
+
+**Step 2.1 - Inventory:** 1 file (`drivers/clk/qcom/clk-rcg2.c`), +2 /
+-0 lines. Single-file surgical change.
+
+**Step 2.2 - Code flow:**
+- Before: `frac_table_pixel[] = { {3,8}, {2,9}, {4,9}, {1,1}, {2,3}, {}
+  }`
+- After: adds `{16,35}` and `{4,15}` before the sentinel
+- Only affects `clk_pixel_determine_rate()` and `clk_pixel_set_rate()`
+  iteration logic
+
+**Step 2.3 - Bug mechanism:** Hardware workaround/enablement category.
+The table defines numerator/denominator pairs used to compute parent
+rate requests. Without the new entries, the iteration loop falls off the
+end and returns `-EINVAL` for specific legitimate hardware
+configurations.
+
+**Step 2.4 - Fix quality:**
+- Obviously correct: pure data table addition, cannot affect previously
+  working cases.
+- Cannot cause regression: iteration checks each entry in order, new
+  entries only kick in when existing ones don't match.
+- No risk of deadlock, UAF, etc.
+
+## Phase 3: GIT HISTORY INVESTIGATION
+
+**Step 3.1 - Blame:**
+- `frac_table_pixel[]` was introduced by `99cbd064b059f` ("clk: qcom:
+  Support display RCG clocks", May 2014)
+- Entry `{2, 3}` was added by `b527358cb4cd5` (Feb 2022, Taniya Das)
+  with a `Fixes:` tag
+
+**Step 3.2 - No Fixes: tag to follow.** The missing ratios have
+effectively been absent since original commit `99cbd064b059f` (2014,
+v3.17-era). Code exists in every active stable tree.
+
+**Step 3.3 - Related file history:** Prior similar fix (`b527358cb4cd5`,
+"Update the frac table for pixel clock") added a single entry and was
+backported broadly. Same author context (Taniya Das reviewed both).
+
+**Step 3.4 - Author:** Pengyu Luo is a regular contributor to qcom
+subsystem with multiple DSI-related fixes (`e4eb11b34d6c8`,
+`ac47870fd7955`, `fd941c787cbb4`). Patch reviewed by actual subsystem
+experts.
+
+**Step 3.5 - Dependencies:** Standalone, self-contained. No
+prerequisites.
+
+## Phase 4: MAILING LIST RESEARCH
+
+**Step 4.1 - `b4 dig -c 0f5c8f03d990f`:** Found thread at `https://lore.
+kernel.org/all/20260321095029.2259489-1-mitltlatltl@gmail.com/`. Single-
+patch, v1 only, applied as-is by Bjorn Andersson with "Applied,
+thanks!".
+
+**Step 4.2 - Reviewers:** Taniya Das (Qualcomm clock expert), Dmitry
+Baryshkov (msm maintainer), Konrad Dybcio (Qualcomm engineer). Proper
+maintainer review.
+
+**Step 4.3 - Discussion:** Konrad asked a clarifying question about
+whether these divider pairs are needed at all; Dmitry pointed to the
+Qualcomm downstream commit `f7aec4359448d25c8a8d21ad8e8733d61f6b69ab`
+confirming the ratios come from the vendor reference code. No NAK, no
+concerns about stability.
+
+**Step 4.4 - Series context:** Not part of a series.
+
+**Step 4.5 - Stable discussion:** None found in the thread.
+
+## Phase 5: CODE SEMANTIC ANALYSIS
+
+**Step 5.1 - Key data:** `frac_table_pixel[]` array only.
+
+**Step 5.2 - Callers:** `clk_pixel_ops` (set via `.set_rate =
+clk_pixel_set_rate` and `.determine_rate = clk_pixel_determine_rate`) is
+used by 17+ Qualcomm dispcc drivers: SDM845, SM6350, SM7150, SM8250,
+SM8450, SM8550, SM8750, X1E80100, SC7180, SC7280, SC8280XP, QCM2290,
+SM4450, SM6375, SA8775P (dispcc0/1), etc. This is a HIGH IMPACT SURFACE
+— affects display on almost every modern Qualcomm SoC.
+
+**Step 5.3 - Callees:** Pure table lookup.
+
+**Step 5.4 - Reachability:** Reached from `clk_set_rate()` on any MDSS
+pixel clock → userspace-triggerable via normal display driver operations
+(DRM probe, panel enable, mode set).
+
+**Step 5.5 - Similar patterns:** The `b527358cb4cd5` commit is the exact
+same pattern (add ratio to `frac_table_pixel`) and was backported to 8
+stable trees.
+
+## Phase 6: STABLE TREE ANALYSIS
+
+**Step 6.1 - Code exists in stable:** Verified `frac_table_pixel[]` is
+identical (`{3,8}, {2,9}, {4,9}, {1,1}, {2,3}`) on 5.10, 5.15, 6.1, 6.6,
+6.12, 6.18, 6.19. Every active stable tree has the same buggy state.
+
+**Step 6.2 - Backport complexity:** The `frac_table_pixel[]` array is in
+the same place across all trees. Will apply cleanly or with trivial
+context adjustment.
+
+**Step 6.3 - Related fixes in stable:** `b527358cb4cd5` (adding `{2,3}`)
+is in all stable trees. This new commit is the continuation.
+
+## Phase 7: SUBSYSTEM CONTEXT
+
+**Step 7.1 - Subsystem:** `drivers/clk/qcom/` - Qualcomm clock driver.
+Level: IMPORTANT (affects many SoC families, any user with a Qualcomm
+device using `clk_pixel_ops`).
+
+**Step 7.2 - Activity:** Actively maintained subsystem; regular flow of
+fixes.
+
+## Phase 8: IMPACT & RISK
+
+**Step 8.1 - Affected users:** Users of Qualcomm SoCs with DSI panels
+requiring the specific pixel clock ratios — explicitly 10-bit DSI C-PHY
+panels and other configurations where pclk/byteclk combinations force a
+16:35 or 4:15 ratio.
+
+**Step 8.2 - Trigger conditions:** Normal display operation with
+affected panels. No special privileges needed (display usage is common).
+
+**Step 8.3 - Failure mode severity:** HIGH — pixel clock is set to
+completely wrong rate (e.g., 50 MHz instead of 173 MHz, a 3.4x error).
+This causes visible display corruption / non-functional display on
+affected hardware. Not a crash, but user-visible broken functionality
+with no workaround.
+
+**Step 8.4 - Risk/benefit:**
+- Benefit: HIGH (fixes display for a class of panels across many SoCs)
+- Risk: VERY LOW (2 lines of data, table iteration is in-order; existing
+  ratios still match first)
+- Ratio: Strongly favors backport.
+
+## Phase 9: SYNTHESIS
+
+**Evidence FOR backporting:**
+- Fixes real observed runtime failure with detailed clk_summary evidence
+- Same pattern (adding ratio to `frac_table_pixel`) was previously
+  backported to 8 stable trees (`b527358cb4cd5` went to 4.9.y, 4.14.y,
+  4.19.y, 5.4.y, 5.10.y, 5.15.y, 5.16.y, 5.17.y)
+- Minimal 2-line change in a const data table
+- Zero functional risk (iteration is ordered; additions cannot break
+  existing cases)
+- Reviewed by two subsystem experts + applied by Qualcomm SoC maintainer
+- Falls into "hardware quirk/workaround" exception category (analogous
+  to device ID addition)
+- Code exists identically in all active stable trees
+- Used by 17+ SoC drivers → broad user impact
+
+**Evidence AGAINST backporting:**
+- No explicit Fixes: tag (though prior identical-pattern fix had one,
+  and absence of tag is explicitly not a signal per the guidelines)
+- Commit message uses "expand" instead of "fix" (but body describes
+  concrete failure)
+- No Cc: stable from the author
+
+**Stable rules check:**
+1. Obviously correct? YES — pure data addition
+2. Fixes real bug? YES — pixel clock misprogrammed to ~3.4x wrong rate
+3. Important? YES — broken display on affected hardware
+4. Small and contained? YES — 2 lines in one file
+5. No new features/APIs? YES — extends internal lookup table, not
+   exposed
+6. Applies to stable? YES — verified identical state across stable trees
+
+**Exception category:** Fits "hardware quirks/workarounds" — enables
+specific hardware configurations (10-bit DSI C-PHY panels) that were
+previously non-functional due to missing table entries, directly
+analogous to adding PCI/USB device IDs or codec quirks.
+
+## Verification
+
+- [Phase 1] Parsed tags: two Reviewed-by from Qualcomm experts, Link to
+  lore, no Fixes:/Cc:stable (expected)
+- [Phase 2] Diff analysis: 2-line const data addition to
+  `frac_table_pixel[]` before sentinel; no control-flow change
+- [Phase 3] `git log -- drivers/clk/qcom/clk-rcg2.c` + `git show
+  b527358cb4cd5`: confirmed precedent commit adding `{2,3}` was accepted
+  with Fixes: tag
+- [Phase 3] `git log --author="Pengyu Luo"`: confirmed author has
+  multiple legitimate DSI/Qualcomm fixes
+- [Phase 4] `b4 dig -c 0f5c8f03d990f`: returned
+  `lore.kernel.org/all/20260321095029.2259489-1-mitltlatltl@gmail.com/`
+- [Phase 4] `b4 dig -c 0f5c8f03d990f -a`: single v1, no revisions
+- [Phase 4] Thread contents via mbox: Taniya Das, Dmitry Baryshkov
+  Reviewed-by; Konrad asked a non-blocking question; Bjorn applied with
+  "Applied, thanks!"; no NAKs; no stable discussion
+- [Phase 5] `grep -rln "clk_pixel_ops" drivers/clk/qcom/`: 17+
+  dispcc/gcc drivers use the affected ops (SDM845, SM8250, SM8450,
+  SM8550, SM8750, X1E80100, SC7180, SC7280, SC8280XP, QCM2290, SM4450,
+  SM6350, SM6375, SM7150, SA8775P, etc.)
+- [Phase 6] Examined `drivers/clk/qcom/clk-rcg2.c` at for-greg/5.10-200,
+  5.15-200, 6.1-200, 6.6-200, 6.12-200, 6.18-200, 6.19-200:
+  `frac_table_pixel[]` identical across all trees — will apply cleanly
+- [Phase 6] `grep -rl "b527358cb4cd" /home/sasha/stable-
+  queue/releases/`: confirmed prior similar commit was backported to
+  4.9.311, 4.14.276, 4.19.238, 5.4.189, 5.10.110, 5.15.33, 5.16.19,
+  5.17.2
+- [Phase 8] Failure mode from commit body: pclk set to 50455997 Hz
+  instead of 172992000 Hz (3.4x off) on 10-bit DSI C-PHY panels — user-
+  visible display failure
+
+---
+
+This is a well-reviewed, minimal hardware-enablement fix (analogous to a
+hardware quirk) that addresses a documented, reproducible runtime
+failure on real hardware. The fix is a 2-line data-table extension with
+zero regression risk. There is strong precedent: a commit with the exact
+same pattern (`b527358cb4cd5`) was backported broadly to stable. The
+affected code is used by 17+ Qualcomm SoC drivers, giving wide user
+impact.
+
+**YES**
+
+ drivers/clk/qcom/clk-rcg2.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index fc696b66ccda9..6064a0e17d519 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -1117,6 +1117,8 @@ static const struct frac_entry frac_table_pixel[] = {
+ 	{ 4, 9 },
+ 	{ 1, 1 },
+ 	{ 2, 3 },
++	{ 16, 35},
++	{ 4, 15},
+ 	{ }
+ };
+ 
+-- 
+2.53.0
+
