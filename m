@@ -1,177 +1,1034 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E8132C942
-	for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 13:55:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F65D149C7B
+	for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 13:59:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777470947; cv=none; b=E0nlrO0N5IfgyCth3cGjGsb0QLAbG2RmQeeakfqNAjk2O/ed2xIjzSfn92oIikYCJy9nYXMWhaAbNZrXUnf23ZBB1JV/nVxcYM4LnrXT1HzRspnOeacuz9IJQLM4RCuACrXGVgW24bA5N4/2fvnEGUZ/G2W69xtgWDq3PbD4/ts=
+	t=1777471200; cv=none; b=cy11jascD6B9qrbCA6IXY8DTM1ottVWRXbQwsJHXf2CKzr9QzRb+EXwjyAq8soP+v6cbHAexKf+/oKSS1L6iZWmlJQALmuoXYefujQIceghnZ+ZCZgK0woe/CWr3nBeEpZKo/wIUxdvGmfBw3kpTKBZyBHP1brBfocXfumcR5ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777470947; c=relaxed/simple;
-	bh=buDqtxL5iiA+P59BL7gOogsMTPfTAbw/6u3MZ3bRXX0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TYDrNFPW8vOK7Ifd3qzdD3NWVD5TNgb0ohtgBazE98w/0DH1GSIcr85Y86E1R1QnjUi7DDZ1TPUrUArI3LP9z/9RRXiOOsMHbFJcGRQLEXnhIfelNPDVrvgucTyVtWOhcgZAWwdrb4BFckQdLM4c+WTjsDHXjlz4GQ9Wpuk48AI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aaye5le9; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=aIpiukdD; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aaye5le9";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="aIpiukdD"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1777470945;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E4gmtst5bATy4vi+nqQOmDuupzzNRv5w7Vbola4ydK4=;
-	b=aaye5le9VF60v6sPq4CiCo/9qzuijopOb5flH3s2LuBRfAMvPzMGoAoqOxQUO0Mah2s6I7
-	xZwl9Rt/ndjWlsIfBeDqIBI5tNcIpm5MaQnpq6TY6iuFhvQPjgIjN4ZmdwPGdTCf/gn/hW
-	6NQxs60dSSYqLLlGdFhQxLqCDm4jyOA=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-111-JgH63f3oMXKxfvNwrou03A-1; Wed, 29 Apr 2026 09:55:44 -0400
-X-MC-Unique: JgH63f3oMXKxfvNwrou03A-1
-X-Mimecast-MFC-AGG-ID: JgH63f3oMXKxfvNwrou03A_1777470943
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-8acb85a973cso179568226d6.3
-        for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 06:55:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1777470943; x=1778075743; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E4gmtst5bATy4vi+nqQOmDuupzzNRv5w7Vbola4ydK4=;
-        b=aIpiukdDtwMfeu5U8x7pAWQk1igCGTDDEl1VOIRCChHAvLkCYOLBCQMfizk5Wc6fa1
-         GOG7IQiJq7VDTj0HSc8ckVqTRf1S3/KpuB0/d32uzyX0YHIZtw7RBZqAx+ZKrN4UVTfo
-         Wk1sSJ6utW7+ydSYNVH+UhTbbxJlUjVTI7IZn1ILhR0IfiXHZB5FK1FPmbY826fn3LT0
-         VwS6vJoA4sAMMTPJlEBvIFwXLFoDtJDwsQN34h9RA3ZoKjoIjywy/A2laQ+5cpldXa7L
-         yxl2MXhjHWhVfwRurbF3kN1ap7u0rixf/xvcabi7NTBsFk9RW779MIc6azHgnNL/kLMM
-         gDcQ==
+	s=arc-20240116; t=1777471200; c=relaxed/simple;
+	bh=8/gqbBByUF/qj+40FkmH/ZBXiKltS+d8RSJnRFVG0V4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ice5dJJ+X1WtESIWApAu1LTPiTFIwrwyaBfR70aQJ2DJ3n10B3aqsl8ojpau3jL+3o6xFqLZtSBfQJhlWBdCU+/Hhjb9RjZJ4nAwe2E4PCDj2A8gDLIHLpwNSRuub1QkPstKx5orDXHDdEEQ2nkm8bPJZHU6vvjUpOXPsC2XPQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-677f7c29af6so12866616a12.2
+        for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 06:59:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777470943; x=1778075743;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=E4gmtst5bATy4vi+nqQOmDuupzzNRv5w7Vbola4ydK4=;
-        b=Y+uBKPFDUIpAJ88b7+Kin8CfUsPOQTmwHMLEIcrgoywOF67MwKCtVD50q5nw2gY7tz
-         cwyBD1gV423nIIW50BCxRe8U7UYRoMJ9f5ujBnTeogUQTQwaz80iNofB4Bsm52N9LZDV
-         ehdZrhmWHrJhNuRIMaloZuI8AoMQOasHQxkfv9UFHskUGvrux9topevLh1InxVT0uGfa
-         i5zTizj76GR8nDrh1rHdh+lYkasNWj7OzXPu5wvYzN7FkVJMrX4Y3UfB+lWEtJmixWDB
-         oVQ1zMAhW/ZTAGCMat31CH471YrV0ghQORIx5o+KowgTvkp5sId+k76KQ1WUXDFWSP9k
-         WcgA==
-X-Forwarded-Encrypted: i=1; AFNElJ/GWkx9uVps9ye5BdTIwOdiMGobKSpQX9KQEIzyJjKHd9tX7ZUqKDeDLXpZMGpQSql3J5DaV1WjDk0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJwLKTQr8UOwA2v6pDKeJ+iA4gB6T2y8xleEHIuERAr0Si3jZi
-	piGzULGP3VT0qYEzin9/lTDeW8UAkzcEErYV4l3ap0xn0y+GUcJXPcf3tWtJOmLTEnsziVHpjB7
-	nfgsMMsRAx5XUIII3vaJrG1/wH3EFlrEZXJp7VV19kBQxdUC3G1K/rkWCt/QGUA==
-X-Gm-Gg: AeBDies7oxWPHSMwrV7nRJtVRXTd1CchGJ2lHYSN/HcGdyVyFTe2R98ATqaokHWd4P6
-	jhVbUtSmtMuUkXQxu/BLzdXKdcZ0wR/UmHuhiXLgI0xdfHQm13/d59Gc47Lb+AgSzpN6yjGJ5oT
-	SxdONcrh2E1icn3z46PBwKhTLFZ0ZuC32H4CR150v8nO9RH+C+w+WyUV+hpUiDTuErSB8UOwWOC
-	YeySvxtmhEtYIS2hQAJUnXw03b7ONlfQPGNszJOivHi8++g1r8JbWy9v0Z5wMTohR3Luwur+4ff
-	K8L3fVXprhNT7fJ+RkWFNTJwpQnkS463ow1BuitWh0tTGMOqHhfWXq1vybSkayN/9DZBIOemVFb
-	h2/BU/OVHFXJjcFYNts8kSbCgoagPWfjD0vomRmYrXm7BX1PBQf4XFGVp8Ue04OZYNNc=
-X-Received: by 2002:a05:6214:600e:b0:8ac:aeb0:2eb4 with SMTP id 6a1803df08f44-8b3ede04448mr57443736d6.45.1777470943488;
-        Wed, 29 Apr 2026 06:55:43 -0700 (PDT)
-X-Received: by 2002:a05:6214:600e:b0:8ac:aeb0:2eb4 with SMTP id 6a1803df08f44-8b3ede04448mr57443326d6.45.1777470943011;
-        Wed, 29 Apr 2026 06:55:43 -0700 (PDT)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8b3ef86e2f1sm21005096d6.48.2026.04.29.06.55.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Apr 2026 06:55:42 -0700 (PDT)
-Date: Wed, 29 Apr 2026 09:55:39 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Sudeep Holla <sudeep.holla@kernel.org>,
-	Abel Vesa <abelvesa@kernel.org>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>, Frank Li <Frank.Li@nxp.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>, arm-scmi@vger.kernel.org,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: Re: [PATCH v2 01/12] clk: add new flag CLK_ROUNDING_NOOP
-Message-ID: <afIN2y_PCGofGAKD@redhat.com>
-References: <20260309-clk-det-rate-fw-managed-v2-0-c48ef5a3100a@redhat.com>
- <20260309-clk-det-rate-fw-managed-v2-1-c48ef5a3100a@redhat.com>
- <177742893645.5403.3938693995862346406@localhost.localdomain>
+        d=1e100.net; s=20251104; t=1777471196; x=1778075996;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tEcO5cbI0n9F5LchVLXteROvOFwjs6PtrH4uY/Hp5EQ=;
+        b=Wq9o4+6ZFl3Rkw50STqw7V4JDDQka8+z0ArD5WPiDpaAPzv0gjkMw/9C5KoS2m8Edv
+         hzX0COsOyUUWmL50HaxXYvHosu8wt8n8JEQjS0aRFYk9yCrfTNr5Degq0r/LrC7RBIWA
+         /w9ZkmMKgFoQC1ZvFJLi64VHtS0ZkX5RRCDL84xf+ZR2ojhIHlIlePj8zuBUJoz5eIv7
+         AkgxcEHMrHEUMSoqM0Wbk34pKqwMarS8bfHSNVKYgdBbbIWhY+g3heokLPr9Y2RUSi83
+         967NlnKi9+uH5Ydr69h6fE3CrRk6dSJr1PCydxi/VN7GWt0kpcoo3WAxIGbPYTf6OMYr
+         hufA==
+X-Forwarded-Encrypted: i=1; AFNElJ9Yzn9x0wQGAyV29tnksxs10afojl+93TQjOOJg5u1h2MdUiNGgWG/Yulkq2mPkK4b7r53hJtPzTac=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7uwUC2TSbr9rUmJpirrsi8mj4Z07N+IDtf2lxS7jhBPXXZ1Eh
+	3RYn3348+xmwZkjrXGVUGCZBdmOastr3LG8oYSZ4P/ePZNC/obv+Bu/Qht3oUHmBYU0=
+X-Gm-Gg: AeBDiesmVQnXZDP2u0LuBQ2vifcWjD5eKdNGltVN+O7eUq7qFDWC1boKo5G7rdRyJUD
+	Ltzlh0kXDfpJLmeiR6tIvL8FcEWRflCqiQ0wi1oq74BiYr3SHVq85+we5YTJyRhl7qFmEX2P63T
+	RF96yJEF2XIvJRWFRpSii4+wCAR2onhNbcMcW0fR69TTqtKWvrnImyT/elOH73nCJSff5ff14FN
+	LdaQ8ouF4g65pKMrRfHJyH4HBv40yOoYbiInxmuC+drfKyXIs5/ic0qHmMFhuPyCFCVnveP0kZ7
+	5ZGjog+4TLuLbHC/lly3/ZmXw3V9OP4/1fsOphr6bpwE8Msbna8FrrdXNRpCTcPQ/YR7OEgIZdU
+	7DR9DZ8NUJTpqHM4SC9JXy3WGBgmzKqhiA9oN1BdKJUjtFcatbYErNbWvS0xjNgGxjrl8lZhrN5
+	f8ZV1KrxkCTtdKHLE6fOkijeaqab3j0arZx9jySzsL83zPUU95xuEEi1lDg/ARsC6CPB7aslg=
+X-Received: by 2002:a17:907:970a:b0:b98:6984:6630 with SMTP id a640c23a62f3a-bb80100e5e1mr452507466b.8.1777471195325;
+        Wed, 29 Apr 2026 06:59:55 -0700 (PDT)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-bb985e1a0a9sm98022466b.49.2026.04.29.06.59.50
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Apr 2026 06:59:52 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-677f7c29af6so12866451a12.2
+        for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 06:59:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ9U3lFxni1yMCD3ytrxA9VHNsGNTpZom3xyq4biaFxwHmjuoiMvDV+MtJHuyEp0PETCtMvfR+yVwac=@vger.kernel.org
+X-Received: by 2002:a05:6402:548c:b0:670:a244:6eea with SMTP id
+ 4fb4d7f45d1cf-679bb0574e3mr3821293a12.10.1777471190487; Wed, 29 Apr 2026
+ 06:59:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <177742893645.5403.3938693995862346406@localhost.localdomain>
-User-Agent: Mutt/2.3.1 (2026-03-20)
+References: <20260419193718.133174-1-marek.vasut+renesas@mailbox.org> <20260419193718.133174-8-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20260419193718.133174-8-marek.vasut+renesas@mailbox.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 29 Apr 2026 15:59:36 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX17D3n_5vxsvmaSmionjOqrEdPygjPdYuu6a0DR7b83w@mail.gmail.com>
+X-Gm-Features: AVHnY4IgxJNRLMmWlOJ_GSU2Ddw5woY9f107UyS0lARqjrE0d4QZQc3E5sY57FI
+Message-ID: <CAMuHMdX17D3n_5vxsvmaSmionjOqrEdPygjPdYuu6a0DR7b83w@mail.gmail.com>
+Subject: Re: [PATCH 7/7] arm64: dts: renesas: r8a779md: Add support for R-Car
+ M3Le R8A779MD Geist
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-arm-kernel@lists.infradead.org, 
+	Nguyen Tran <nguyen.tran.pz@bp.renesas.com>, Conor Dooley <conor+dt@kernel.org>, 
+	David Airlie <airlied@gmail.com>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Magnus Damm <magnus.damm@gmail.com>, Maxime Ripard <mripard@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, 
+	Simona Vetter <simona@ffwll.ch>, Stephen Boyd <sboyd@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, devicetree@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Apr 28, 2026 at 07:15:36PM -0700, Stephen Boyd wrote:
-> Quoting Brian Masney (2026-03-09 07:38:40)
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index fd418dc988b1c60c49e3ac9c0c44aa132dd5da28..1187e5b1dbc123d2d2c1f43690d7dcf75a7c4ac3 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -1673,7 +1690,7 @@ EXPORT_SYMBOL_GPL(clk_hw_forward_rate_request);
-> >  
-> >  static bool clk_core_can_round(struct clk_core * const core)
-> >  {
-> > -       return core->ops->determine_rate;
-> > +       return core->ops->determine_rate || clk_is_rounding_noop(core);
-> >  }
-> >  
-> >  static int clk_core_round_rate_nolock(struct clk_core *core,
-> > @@ -3528,6 +3545,7 @@ static const struct {
-> >         ENTRY(CLK_IS_CRITICAL),
-> >         ENTRY(CLK_OPS_PARENT_ENABLE),
-> >         ENTRY(CLK_DUTY_CYCLE_PARENT),
-> > +       ENTRY(CLK_ROUNDING_NOOP),
-> >  #undef ENTRY
-> >  };
-> >  
-> > @@ -3906,13 +3924,19 @@ static int __clk_core_init(struct clk_core *core)
-> >  
-> >         /* check that clk_ops are sane.  See Documentation/driver-api/clk.rst */
-> >         if (core->ops->set_rate && !core->ops->determine_rate &&
-> > -             core->ops->recalc_rate) {
-> > +             core->ops->recalc_rate && !clk_is_rounding_noop(core)) {
-> >                 pr_err("%s: %s must implement .determine_rate in addition to .recalc_rate\n",
-> >                        __func__, core->name);
-> >                 ret = -EINVAL;
-> >                 goto out;
-> >         }
-> >  
-> > +       if (clk_is_rounding_noop(core) && core->ops->determine_rate) {
-> > +               pr_err("%s: %s cannot implement both .determine_rate and CLK_ROUNDING_NOOP\n",
-> > +                      __func__, core->name);
-> > +               goto out;
-> > +       }
-> > +
-> 
-> This hunk has me irked. I'd rather we export some function like
-> clk_determine_rate_noop() that just returns 0 instead of adding another
-> flag. The chance that someone can get it wrong goes down and you can
-> naturally grep for any clks that are using determine_rate() without
-> having to also include this flag in the grep. It makes it easier to
-> reason about as well because we can have code that just checks for
-> determine_rate presence instead of both (i.e. clk_core_can_round() isn't
-> changed). Plus a clk_ops structure is more self-contained because it
-> doesn't rely on the clk flags to go with it.
+Hi Marek,
 
-I also like the clk_determine_rate_noop() approach much better as well.
-I'll send a new version.
+Thanks for your patch!
 
-Thanks,
-Brian
+On Sun, 19 Apr 2026 at 21:38, Marek Vasut
+<marek.vasut+renesas@mailbox.org> wrote:
+> From: Nguyen Tran <nguyen.tran.pz@bp.renesas.com>
+>
+> Add support for the Geist board based on the Renesas R-Car R8A779MD (M3Le)
+> SoC, a register-compatible variant of the R8A77965 (M3-N) with reduced set
+> of peripherals. The Geist board design references the Renesas Salvator-X/XS
+> boards, adapting their configuration for the R8A779MD SoC.
 
+The latter is only true for the panel overlay, which should IMHO be
+a separate patch.
+
+> Signed-off-by: Nguyen Tran <nguyen.tran.pz@bp.renesas.com>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+
+> --- a/arch/arm64/boot/dts/renesas/Makefile
+> +++ b/arch/arm64/boot/dts/renesas/Makefile
+> @@ -60,6 +60,9 @@ r8a77965-salvator-xs-panel-aa104xd12-dtbs := r8a77965-salvator-xs.dtb salvator-p
+>  dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-xs-panel-aa104xd12.dtb
+>  dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-ulcb.dtb
+>  dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-ulcb-kf.dtb
+> +dtb-$(CONFIG_ARCH_R8A77965) += r8a779md-geist.dtb
+> +r8a779md-geist-panel-aa104xd12-dtbs := r8a779md-geist.dtb geist-panel-aa104xd12.dtbo
+> +dtb-$(CONFIG_ARCH_R8A77965) += r8a779md-geist-panel-aa104xd12.dtb
+>
+>  dtb-$(CONFIG_ARCH_R8A77970) += r8a77970-eagle.dtb
+>  dtb-$(CONFIG_ARCH_R8A77970) += r8a77970-eagle-function-expansion.dtbo
+> diff --git a/arch/arm64/boot/dts/renesas/geist-panel-aa104xd12.dtso b/arch/arm64/boot/dts/renesas/geist-panel-aa104xd12.dtso
+> new file mode 100644
+> index 0000000000000..c8e39811eb051
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/renesas/geist-panel-aa104xd12.dtso
+> @@ -0,0 +1,17 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Device Tree overlay for the AA104XD12 panel connected to LVDS0 on a Geist board
+> + *
+> + * Copyright 2026 Marek Vasut
+> + */
+> +
+> +/dts-v1/;
+> +/plugin/;
+> +
+> +#include <dt-bindings/gpio/gpio.h>
+
+This include is not needed?
+
+> +
+> +#include "salvator-panel-aa104xd12.dtso"
+> +
+> +&{/panel} {
+> +       data-mapping = "jeida-24";
+
+Is there any specific reason Geist needs "jeida-24", while all other
+boards use "jeida-18"?
+
+It looks like the major difference between Salvator-X(S) and Geist vs.
+Draak and Ebisu is that the former connect to lvds0, and the latter to lvds1.
+So what about renaming
+salvator-panel-aa104xd12.dtso to lvds0-panel-aa104xd12.dtso, and
+draak-ebisu-panel-aa104xd12.dtso to lvds1-panel-aa104xd12.dtso?
+
+> +};
+
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/renesas/r8a779md-geist.dts
+> @@ -0,0 +1,832 @@
+> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +/*
+> + * Device Tree Source for the Geist board with R-Car M3Le
+> + *
+> + * Copyright (C) 2025-2026 Renesas Electronics Corp.
+> + */
+> +
+> +/dts-v1/;
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/input/input.h>
+> +#include "r8a779md.dtsi"
+> +
+> +/ {
+> +       model = "Renesas Geist board based on r8a779md";
+> +       compatible = "renesas,geist", "renesas,r8a779md", "renesas,r8a77965";
+> +
+> +       aliases {
+> +               serial0 = &scif2;
+> +               serial1 = &hscif1;
+> +               ethernet0 = &avb;
+> +               mmc0 = &sdhi2;
+> +               mmc1 = &sdhi0;
+> +       };
+> +
+> +       chosen {
+> +               bootargs = "ignore_loglevel rw root=/dev/nfs ip=on";
+> +               stdout-path = "serial0:115200n8";
+> +       };
+> +
+> +       memory@48000000 {
+> +               device_type = "memory";
+> +               /* first 128MB is reserved for secure area. */
+> +               reg = <0x0 0x48000000 0x0 0x78000000>;
+
+MT53E1G32D2FW-046 is a 32 Gib part, so there should be 4 GiB of RAM
+in total.
+
+> +       };
+> +
+> +       reserved-memory {
+> +               #address-cells = <2>;
+> +               #size-cells = <2>;
+> +               ranges;
+> +
+> +               /* Device specific region for Lossy Decompression */
+> +               lossy_decompress: linux,lossy_decompress@54000000 {
+> +                       no-map;
+> +                       reg = <0x00000000 0x54000000 0x0 0x03000000>;
+> +               };
+
+Please drop this node.  It should be added by the firmware stack
+when needed.
+
+> +       };
+> +
+> +       audio_clkout: audio-clkout {
+
+Please sort nodes without unit address by name (everywhere).
+
+> +               /*
+> +                * FIXME
+
+Please drop the literal "FIXME".
+
+> +                * This is same as <&rcar_sound 0>
+> +                * but needed to avoid cs2500/rcar_sound probe dead-lock
+> +                */
+> +               compatible = "fixed-clock";
+> +               #clock-cells = <0>;
+> +               clock-frequency = <12288000>;
+> +       };
+> +
+> +       backlight: backlight {
+> +               compatible = "pwm-backlight";
+> +               pwms = <&pwm1 0 50000>;
+> +
+> +               brightness-levels = <256 128 64 16 8 4 0>;
+> +               default-brightness-level = <6>;
+> +
+> +               power-supply = <&reg_12v>;
+> +               enable-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
+> +       };
+> +
+> +       cvbs-in {
+> +               compatible = "composite-video-connector";
+> +               label = "CVBS IN";
+> +
+> +               port {
+> +                       cvbs_con: endpoint {
+> +                               remote-endpoint = <&adv7482_ain7>;
+> +                       };
+> +               };
+> +       };
+> +
+> +       hdmi-in {
+> +               compatible = "hdmi-connector";
+> +               label = "HDMI IN";
+> +               type = "a";
+> +
+> +               port {
+> +                       hdmi_in_con: endpoint {
+> +                               remote-endpoint = <&adv7482_hdmi>;
+> +                       };
+> +               };
+> +       };
+> +
+> +       keys {
+> +               compatible = "gpio-keys";
+> +
+> +               pinctrl-0 = <&keys_pins>;
+> +               pinctrl-names = "default";
+> +
+> +               key-1 {
+> +                       gpios = <&gpio5 17 GPIO_ACTIVE_LOW>;
+> +                       linux,code = <KEY_1>;
+> +                       label = "SW4-1";
+> +                       wakeup-source;
+> +                       debounce-interval = <20>;
+> +               };
+> +
+> +               key-2 {
+> +                       gpios = <&gpio5 20 GPIO_ACTIVE_LOW>;
+> +                       linux,code = <KEY_2>;
+> +                       label = "SW4-2";
+> +                       wakeup-source;
+> +                       debounce-interval = <20>;
+> +               };
+> +
+> +               key-3 {
+> +                       gpios = <&gpio5 22 GPIO_ACTIVE_LOW>;
+> +                       linux,code = <KEY_3>;
+> +                       label = "SW4-3";
+> +                       wakeup-source;
+> +                       debounce-interval = <20>;
+> +               };
+> +
+> +               key-4 {
+> +                       gpios = <&gpio5 23 GPIO_ACTIVE_LOW>;
+> +                       linux,code = <KEY_4>;
+> +                       label = "SW4-4";
+> +                       wakeup-source;
+> +                       debounce-interval = <20>;
+> +               };
+> +
+> +               key-a {
+> +                       gpios = <&gpio6 11 GPIO_ACTIVE_LOW>;
+> +                       linux,code = <KEY_A>;
+> +                       label = "TSW0";
+> +                       wakeup-source;
+> +                       debounce-interval = <20>;
+> +               };
+> +
+> +               key-b {
+> +                       gpios = <&gpio6 12 GPIO_ACTIVE_LOW>;
+> +                       linux,code = <KEY_B>;
+> +                       label = "TSW1";
+> +                       wakeup-source;
+> +                       debounce-interval = <20>;
+> +               };
+> +
+> +               key-c {
+> +                       gpios = <&gpio6 13 GPIO_ACTIVE_LOW>;
+> +                       linux,code = <KEY_C>;
+> +                       label = "TSW2";
+> +                       wakeup-source;
+> +                       debounce-interval = <20>;
+> +               };
+> +       };
+> +
+> +       reg_1p8v: regulator0 {
+
+Please no indexed regulators (everywhere), as they cause conflicts:
+regulator-1p8v.
+
+> +               compatible = "regulator-fixed";
+> +               regulator-name = "fixed-1.8V";
+> +               regulator-min-microvolt = <1800000>;
+> +               regulator-max-microvolt = <1800000>;
+> +               regulator-boot-on;
+> +               regulator-always-on;
+> +       };
+> +
+> +       reg_3p3v: regulator1 {
+> +               compatible = "regulator-fixed";
+> +               regulator-name = "fixed-3.3V";
+> +               regulator-min-microvolt = <3300000>;
+> +               regulator-max-microvolt = <3300000>;
+> +               regulator-boot-on;
+> +               regulator-always-on;
+> +       };
+> +
+> +       reg_12v: regulator2 {
+> +               compatible = "regulator-fixed";
+> +               regulator-name = "fixed-12V";
+> +               regulator-min-microvolt = <12000000>;
+> +               regulator-max-microvolt = <12000000>;
+> +               regulator-boot-on;
+> +               regulator-always-on;
+> +       };
+> +
+> +       sound_card: sound {
+> +               compatible = "audio-graph-card";
+> +
+> +               label = "rcar-sound";
+> +               dais = <&rsnd_port0>; /* AK4619 Audio Codec */
+> +       };
+> +
+> +       vbus0_usb2: regulator-vbus0-usb2 {
+> +               compatible = "regulator-fixed";
+> +
+> +               regulator-name = "USB20_VBUS0";
+> +               regulator-min-microvolt = <5000000>;
+> +               regulator-max-microvolt = <5000000>;
+> +
+> +               gpio = <&gpio6 16 GPIO_ACTIVE_HIGH>;
+> +               enable-active-high;
+> +       };
+> +
+> +       vcc_sdhi0: regulator-vcc-sdhi0 {
+> +               compatible = "regulator-fixed";
+> +
+> +               regulator-name = "SDHI0 Vcc";
+> +               regulator-min-microvolt = <3300000>;
+> +               regulator-max-microvolt = <3300000>;
+> +
+> +               gpio = <&gpio5 2 GPIO_ACTIVE_HIGH>;
+> +               enable-active-high;
+> +       };
+> +
+> +       vccq_sdhi0: regulator-vccq-sdhi0 {
+> +               compatible = "regulator-gpio";
+> +
+> +               regulator-name = "SDHI0 VccQ";
+> +               regulator-min-microvolt = <1800000>;
+> +               regulator-max-microvolt = <3300000>;
+> +
+> +               gpios = <&gpio5 1 GPIO_ACTIVE_HIGH>;
+> +               gpios-states = <1>;
+> +               states = <3300000 1>, <1800000 0>;
+> +       };
+> +
+> +       vga {
+> +               compatible = "vga-connector";
+> +
+> +               port {
+> +                       vga_in: endpoint {
+> +                               remote-endpoint = <&adv7123_out>;
+> +                       };
+> +               };
+> +       };
+> +
+> +       vga-encoder {
+> +               compatible = "adi,adv7123";
+> +
+> +               ports {
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +
+> +                       port@0 {
+> +                               reg = <0>;
+> +                               adv7123_in: endpoint {
+> +                                       remote-endpoint = <&du_out_rgb>;
+> +                               };
+> +                       };
+> +                       port@1 {
+> +                               reg = <1>;
+> +                               adv7123_out: endpoint {
+> +                                       remote-endpoint = <&vga_in>;
+> +                               };
+> +                       };
+> +               };
+> +       };
+> +
+> +       x12_clk: x12 {
+
+x12-clock
+
+> +               compatible = "fixed-clock";
+> +               #clock-cells = <0>;
+> +               clock-frequency = <24576000>;
+> +       };
+> +
+> +       /* External DU dot clocks */
+> +       x21_clk: x21-clock {
+> +               compatible = "fixed-clock";
+> +               #clock-cells = <0>;
+> +               clock-frequency = <33000000>;
+> +       };
+> +
+> +       x22_clk: x22-clock {
+> +               compatible = "fixed-clock";
+> +               #clock-cells = <0>;
+> +               clock-frequency = <33000000>;
+> +       };
+
+X22 is not wired to anything; should we keep it?
+
+> +
+> +       x23_clk: x23-clock {
+> +               compatible = "fixed-clock";
+> +               #clock-cells = <0>;
+> +               clock-frequency = <25000000>;
+> +       };
+> +
+> +       x3013_clk: x3013-clock {
+> +               compatible = "fixed-clock";
+> +               #clock-cells = <0>;
+> +               clock-frequency = <25000000>;
+> +       };
+> +};
+> +
+> +&audio_clk_a {
+> +       clock-frequency = <22579200>;
+> +};
+> +
+> +&avb {
+> +       pinctrl-0 = <&avb_pins>;
+> +       pinctrl-names = "default";
+> +       phy-handle = <&phy0>;
+> +       tx-internal-delay-ps = <2000>;
+> +       status = "okay";
+> +
+> +       phy0: ethernet-phy@0 {
+
+compatible = "ethernet-phy-id0022.1622";
+
+> +               rxc-skew-ps = <1500>;
+> +               reg = <0>;
+> +               interrupt-parent = <&gpio2>;
+> +               interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
+
+interrupts-extended = <&gpio2 11 IRQ_TYPE_LEVEL_LOW>;
+
+> +               reset-gpios = <&gpio2 10 GPIO_ACTIVE_LOW>;
+> +               reset-assert-us = <100>;
+> +               reset-deassert-us = <100>;
+
+Do we need these two? We don't have them in e.g.
+arch/arm64/boot/dts/renesas/salvator-common.dtsi
+
+> +       };
+> +};
+> +
+> +&csi40 {
+> +       status = "okay";
+> +
+> +       ports {
+> +               port@0 {
+> +                       csi40_in: endpoint {
+> +                               clock-lanes = <0>;
+> +                               data-lanes = <1 2 3 4>;
+> +                               remote-endpoint = <&adv7482_txa>;
+> +                       };
+> +               };
+> +       };
+> +};
+> +
+> +&du {
+> +       pinctrl-0 = <&du_pins>;
+> +       pinctrl-names = "default";
+> +       clocks = <&cpg CPG_MOD 724>,
+> +                <&cpg CPG_MOD 723>,
+> +                <&cpg CPG_MOD 721>,
+> +                <&versaclock5 1>,
+> +                <&x21_clk>,
+> +                <&versaclock5 2>;
+> +       clock-names = "du.0", "du.1", "du.3",
+> +                     "dclkin.0", "dclkin.1", "dclkin.3";
+> +       status = "okay";
+> +
+> +       ports {
+> +               port@0 {
+> +                       du_out_rgb: endpoint {
+> +                               remote-endpoint = <&adv7123_in>;
+> +                       };
+> +               };
+> +       };
+> +};
+> +
+> +&ehci0 {
+> +       dr_mode = "otg";
+> +       status = "okay";
+> +};
+> +
+> +&ehci1 {
+> +       status = "okay";
+> +};
+
+R-Car M3Le does not have the second USB2 channel.
+
+> +
+> +&extalr_clk {
+> +       clock-frequency = <32768>;
+> +};
+> +
+> +&extal_clk {
+> +       clock-frequency = <16666666>;
+> +};
+> +
+> +&hscif1 {
+> +       pinctrl-0 = <&hscif1_pins>;
+> +       pinctrl-names = "default";
+> +
+> +       uart-has-rtscts;
+> +       /* Please only enable hscif1 or scif1 */
+> +       status = "okay";
+> +};
+> +
+> +&hsusb {
+> +       dr_mode = "otg";
+> +       status = "okay";
+> +};
+> +
+> +&i2c2 {
+> +       pinctrl-0 = <&i2c2_pins>;
+> +       pinctrl-names = "default";
+> +       clock-frequency = <100000>;
+> +       status = "okay";
+> +
+> +       ak4619: codec@10 {
+> +               compatible = "asahi-kasei,ak4619";
+> +               reg = <0x10>;
+> +               clocks = <&rcar_sound 3>;
+> +               clock-names = "mclk";
+> +               #sound-dai-cells = <0>;
+> +
+> +               port {
+> +                       ak4619_endpoint: endpoint {
+> +                               remote-endpoint = <&rsnd_endpoint0>;
+> +                       };
+> +               };
+> +       };
+> +
+> +       /* Pin-to-pin, register map, and control compatible with CS2000 and CS2200 */
+> +       cs2500: clk_multiplier@4f {
+
+clock-controller
+
+> +               #clock-cells = <0>;
+> +               compatible = "cirrus,cs2500-cp", "cirrus,cs2000-cp";
+
+probably the "-cp" should be dropped from the first compatible value,
+cfr. my comment on the DT bindings patch.
+
+> +               reg = <0x4f>;
+> +               clocks = <&audio_clkout>, <&x12_clk>;
+> +               clock-names = "clk_in", "ref_clk";
+> +
+> +               assigned-clocks = <&cs2500>;
+> +               assigned-clock-rates = <24576000>; /* 1/1 divide */
+> +       };
+> +};
+> +
+> +&i2c4 {
+> +       clock-frequency = <400000>;
+> +       status = "okay";
+> +
+> +       versaclock3: clock-generator@68 {
+
+clock-controller?
+
+> +               compatible = "renesas,5p35023";
+> +               reg = <0x68>;
+> +               #clock-cells = <1>;
+> +               clocks = <&x3013_clk>;
+> +               assigned-clocks = <&versaclock3 4>, <&versaclock3 5>;
+> +               assigned-clock-rates = <100000000>, <100000000>;
+> +       };
+> +
+> +       versaclock5: clock-generator@6a {
+
+clock-controller?
+
+> +               compatible = "idt,5p49v5923";
+> +               reg = <0x6a>;
+> +               #clock-cells = <1>;
+> +               clocks = <&x23_clk>;
+> +               clock-names = "xin";
+> +       };
+> +
+> +       video-receiver@70 {
+> +               compatible = "adi,adv7482";
+> +               reg = <0x70 0x71 0x72 0x73 0x74 0x75
+> +                      0x60 0x61 0x62 0x63 0x64 0x65>;
+> +               reg-names = "main", "dpll", "cp", "hdmi", "edid", "repeater",
+> +                           "infoframe", "cbus", "cec", "sdp", "txa", "txb" ;
+> +
+> +               interrupt-parent = <&gpio6>;
+> +               interrupts = <30 IRQ_TYPE_LEVEL_LOW>,
+> +                            <31 IRQ_TYPE_LEVEL_LOW>;
+
+interrupts-extended = <&gpio6 30 IRQ_TYPE_LEVEL_LOW>,
+                      <&gpio6 31 IRQ_TYPE_LEVEL_LOW>;
+
+> +               interrupt-names = "intrq1", "intrq2";
+> +
+> +               ports {
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +
+> +                       port@7 {
+> +                               reg = <7>;
+> +
+> +                               adv7482_ain7: endpoint {
+> +                                       remote-endpoint = <&cvbs_con>;
+> +                               };
+> +                       };
+> +
+> +                       port@8 {
+> +                               reg = <8>;
+> +
+> +                               adv7482_hdmi: endpoint {
+> +                                       remote-endpoint = <&hdmi_in_con>;
+> +                               };
+> +                       };
+> +
+> +                       port@a {
+> +                               reg = <10>;
+> +
+> +                               adv7482_txa: endpoint {
+> +                                       clock-lanes = <0>;
+> +                                       data-lanes = <1 2 3 4>;
+> +                                       remote-endpoint = <&csi40_in>;
+> +                               };
+> +                       };
+> +               };
+> +       };
+> +
+> +       csa_vdd: adc@7c {
+> +               compatible = "maxim,max9611";
+> +               reg = <0x7c>;
+> +
+> +               shunt-resistor-micro-ohms = <5000>;
+> +       };
+> +
+> +       csa_dvfs: adc@7f {
+> +               compatible = "maxim,max9611";
+> +               reg = <0x7f>;
+> +
+> +               shunt-resistor-micro-ohms = <5000>;
+> +       };
+> +};
+> +
+> +&i2c_dvfs {
+> +       status = "okay";
+> +
+> +       clock-frequency = <400000>;
+> +
+> +       eeprom@50 {
+> +               compatible = "rohm,br24t01", "atmel,24c01";
+> +               reg = <0x50>;
+> +               pagesize = <8>;
+> +       };
+> +};
+> +
+> +&ohci0 {
+> +       dr_mode = "otg";
+> +       status = "okay";
+> +};
+> +
+> +&ohci1 {
+> +       status = "okay";
+> +};
+
+R-Car M3Le does not have the second USB2 channel.
+
+> +
+> +&pcie_bus_clk {
+> +       status = "disabled";
+> +};
+> +
+> +&pciec0 {
+> +       clocks = <&cpg CPG_MOD 319>, <&versaclock3 4>;
+> +       status = "okay";
+> +};
+> +
+> +&pciec0_rp {
+> +       clocks = <&versaclock3 5>;
+> +};
+> +
+> +&pfc {
+> +       pinctrl-0 = <&scif_clk_pins>;
+> +       pinctrl-names = "default";
+> +
+> +       avb_pins: avb {
+> +               mux {
+> +                       groups = "avb_link", "avb_mdio", "avb_mii";
+> +                       function = "avb";
+> +               };
+> +
+> +               pins_mdio {
+> +                       groups = "avb_mdio";
+> +                       drive-strength = <24>;
+> +               };
+> +
+> +               pins_mii_tx {
+> +                       pins = "PIN_AVB_TX_CTL", "PIN_AVB_TXC", "PIN_AVB_TD0",
+> +                              "PIN_AVB_TD1", "PIN_AVB_TD2", "PIN_AVB_TD3";
+> +                       drive-strength = <12>;
+> +               };
+> +       };
+> +
+> +       du_pins: du {
+> +               groups = "du_rgb888", "du_sync", "du_oddf", "du_clk_out_0";
+> +               function = "du";
+> +       };
+> +
+> +       hscif1_pins: hscif1 {
+> +               groups = "hscif1_data_a", "hscif1_ctrl_a";
+> +               function = "hscif1";
+> +       };
+> +
+> +       i2c2_pins: i2c2 {
+> +               groups = "i2c2_a";
+> +               function = "i2c2";
+> +       };
+> +
+> +       irq0_pins: irq0 {
+> +               groups = "intc_ex_irq0";
+> +               function = "intc_ex";
+> +       };
+> +
+> +       keys_pins: keys {
+> +               pins = "GP_5_17", "GP_5_20", "GP_5_22";
+> +               bias-pull-up;
+> +       };
+> +
+> +       pwm1_pins: pwm1 {
+> +               groups = "pwm1_a";
+> +               function = "pwm1";
+> +       };
+> +
+> +       pwm2_pins: pwm2 {
+> +               groups = "pwm2_a";
+> +               function = "pwm2";
+> +       };
+
+What is pwm2 used for?
+
+> +
+> +       scif1_pins: scif1 {
+> +               groups = "scif1_data_a", "scif1_ctrl";
+> +               function = "scif1";
+> +       };
+> +
+> +       scif2_pins: scif2 {
+> +               groups = "scif2_data_a";
+> +               function = "scif2";
+> +       };
+> +
+> +       scif_clk_pins: scif_clk {
+> +               groups = "scif_clk_a";
+> +               function = "scif_clk";
+> +       };
+> +
+> +       sdhi0_pins: sd0 {
+> +               groups = "sdhi0_data4", "sdhi0_ctrl";
+> +               function = "sdhi0";
+> +               power-source = <3300>;
+> +       };
+> +
+> +       sdhi0_pins_uhs: sd0_uhs {
+> +               groups = "sdhi0_data4", "sdhi0_ctrl";
+> +               function = "sdhi0";
+> +               power-source = <1800>;
+> +       };
+> +
+> +       sdhi2_pins: sd2 {
+> +               groups = "sdhi2_data8", "sdhi2_ctrl", "sdhi2_ds";
+> +               function = "sdhi2";
+> +               power-source = <1800>;
+> +       };
+> +
+> +       sound_pins: sound {
+> +               groups = "ssi01239_ctrl", "ssi0_data", "ssi1_data_a";
+> +               function = "ssi";
+> +       };
+> +
+> +       sound_clk_pins: sound_clk {
+> +               groups = "audio_clk_a_a", "audio_clk_b_a", "audio_clk_c_a",
+> +                        "audio_clkout_a", "audio_clkout3_a";
+> +               function = "audio_clk";
+> +       };
+> +
+> +       usb0_pins: usb0 {
+> +               groups = "usb0";
+> +               function = "usb0";
+> +       };
+> +
+> +       usb1_pins: usb1 {
+> +               mux {
+> +                       groups = "usb1";
+> +                       function = "usb1";
+> +               };
+> +
+> +               ovc {
+> +                       pins = "GP_6_27";
+> +                       bias-pull-up;
+> +               };
+> +
+> +               pwen {
+> +                       pins = "GP_6_26";
+> +                       bias-pull-down;
+> +               };
+> +       };
+
+R-Car M3Le does not have the second USB2 channel.
+
+> +};
+> +
+> +&pwm1 {
+> +       pinctrl-0 = <&pwm1_pins>;
+> +       pinctrl-names = "default";
+> +
+> +       status = "okay";
+> +};
+> +
+> +&pwm2 {
+> +       pinctrl-0 = <&pwm2_pins>;
+> +       pinctrl-names = "default";
+> +
+> +       status = "okay";
+> +};
+
+What is pwm2 used for?
+
+> +
+> +&rcar_sound {
+> +       pinctrl-0 = <&sound_pins>, <&sound_clk_pins>;
+> +       pinctrl-names = "default";
+> +
+> +       /* Single DAI */
+> +       #sound-dai-cells = <0>;
+> +
+> +       /* audio_clkout0/1/2/3 */
+> +       #clock-cells = <1>;
+> +       clock-frequency = <12288000 11289600>;
+> +
+> +       status = "okay";
+> +
+> +       /* update <audio_clk_b> to <cs2500> */
+> +       clocks = <&cpg CPG_MOD 1005>,
+> +                <&cpg CPG_MOD 1006>, <&cpg CPG_MOD 1007>,
+> +                <&cpg CPG_MOD 1008>, <&cpg CPG_MOD 1009>,
+> +                <&cpg CPG_MOD 1010>, <&cpg CPG_MOD 1011>,
+> +                <&cpg CPG_MOD 1012>, <&cpg CPG_MOD 1013>,
+> +                <&cpg CPG_MOD 1014>, <&cpg CPG_MOD 1015>,
+> +                <&cpg CPG_MOD 1022>, <&cpg CPG_MOD 1023>,
+> +                <&cpg CPG_MOD 1024>, <&cpg CPG_MOD 1025>,
+> +                <&cpg CPG_MOD 1026>, <&cpg CPG_MOD 1027>,
+> +                <&cpg CPG_MOD 1028>, <&cpg CPG_MOD 1029>,
+> +                <&cpg CPG_MOD 1030>, <&cpg CPG_MOD 1031>,
+> +                <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
+> +                <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
+> +                <&cpg CPG_MOD 1019>, <&cpg CPG_MOD 1018>,
+> +                <&audio_clk_a>, <&cs2500>,
+> +                <&audio_clk_c>,
+> +                <&cpg CPG_MOD 922>;
+> +
+> +       ports {
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+> +
+> +               rsnd_port0: port {
+
+port@0 {
+        reg = <0>;
+
+> +                       rsnd_endpoint0: endpoint {
+> +                               remote-endpoint = <&ak4619_endpoint>;
+> +                               dai-format = "left_j";
+> +                               bitclock-master = <&rsnd_endpoint0>;
+> +                               frame-master = <&rsnd_endpoint0>;
+> +                               playback = <&ssi0>, <&src0>, <&dvc0>;
+> +                               capture = <&ssi1>, <&src1>, <&dvc1>;
+> +                       };
+> +               };
+> +       };
+> +};
+> +
+> +&rwdt {
+> +       timeout-sec = <60>;
+> +       status = "okay";
+> +};
+> +
+> +&scif1 {
+> +       pinctrl-0 = <&scif1_pins>;
+> +       pinctrl-names = "default";
+> +
+> +       uart-has-rtscts;
+> +       /* Please only enable hscif1 or scif1 */
+> +       /* status = "okay"; */
+> +};
+> +
+> +&scif2 {
+> +       pinctrl-0 = <&scif2_pins>;
+> +       pinctrl-names = "default";
+> +
+> +       status = "okay";
+> +};
+> +
+> +&scif_clk {
+> +       clock-frequency = <14745600>;
+> +};
+> +
+> +&sdhi0 {
+> +       pinctrl-0 = <&sdhi0_pins>;
+> +       pinctrl-1 = <&sdhi0_pins_uhs>;
+> +       pinctrl-names = "default", "state_uhs";
+> +
+> +       vmmc-supply = <&vcc_sdhi0>;
+> +       vqmmc-supply = <&vccq_sdhi0>;
+> +       cd-gpios = <&gpio3 12 GPIO_ACTIVE_LOW>;
+> +       wp-gpios = <&gpio3 13 GPIO_ACTIVE_HIGH>;
+> +       bus-width = <4>;
+> +       sd-uhs-sdr50;
+> +       sd-uhs-sdr104;
+> +       status = "okay";
+> +};
+> +
+> +&sdhi2 {
+> +       /* used for on-board 8bit eMMC */
+> +       pinctrl-0 = <&sdhi2_pins>;
+> +       pinctrl-1 = <&sdhi2_pins>;
+> +       pinctrl-names = "default", "state_uhs";
+> +
+> +       iommus = <&ipmmu_ds1 34>;
+
+This belongs in the .dtsi file, and it is already there.
+
+> +
+> +       vmmc-supply = <&reg_3p3v>;
+> +       vqmmc-supply = <&reg_1p8v>;
+> +       bus-width = <8>;
+> +       mmc-hs200-1_8v;
+> +       no-sd;
+> +       no-sdio;
+> +       non-removable;
+> +       fixed-emmc-driver-type = <1>;
+> +       full-pwr-cycle-in-suspend;
+> +       status = "okay";
+> +};
+> +
+> +&ssi1 {
+> +       shared-pin;
+> +};
+> +
+> +&usb_extal_clk {
+> +       clock-frequency = <50000000>;
+> +};
+> +
+> +&usb2_phy0 {
+> +       pinctrl-0 = <&usb0_pins>;
+> +       pinctrl-names = "default";
+> +
+> +       vbus-supply = <&vbus0_usb2>;
+> +       status = "okay";
+> +};
+> +
+> +&usb2_phy1 {
+> +       pinctrl-0 = <&usb1_pins>;
+> +       pinctrl-names = "default";
+> +
+> +       status = "okay";
+> +};
+
+R-Car M3Le does not have the second USB2 channel.
+
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
