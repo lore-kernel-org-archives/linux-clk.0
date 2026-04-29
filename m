@@ -1,74 +1,75 @@
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31E1337F746
-	for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 11:37:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01882175A81
+	for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 11:50:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777462669; cv=none; b=SrXLwU7UReeobeLfKsFrYQE9y7MJpyRYowqLhx6/md0CeM6oSmL8sZmJXXkj2RCECf+i5ndMQfqy8lrMgFv2SSsArQPMOHuD8PP0BZabBmNbipk2pHOOv7KjxJ+gzSA11SOyjpFTBc//qAEiAhwG+xwTVHV9+hHhP10ebVrDnRo=
+	t=1777463427; cv=none; b=bH8i/vS/L+TD1broDwJModaKPsYam/19VA2ra7LIiBEvcqjUIb0YqpD5+tnawtaYl5PSxqlEsEsUC+BuUfz+UQ0z+p17B45cMsEu5mgwCzvjPglS9d1masAzUMAi3pOmhPKOsAPtiAEkV484fQaKIwa3T4CZxjjl1gIQgk436yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777462669; c=relaxed/simple;
-	bh=GQd283GbRHcL1eMa5GJkNHY5pKpECh6vPQSJWAlvGH0=;
+	s=arc-20240116; t=1777463427; c=relaxed/simple;
+	bh=k3006wJqxnTat9Xj8MW2QjrO2YW2+jD6t20DobBX4xo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e5TAqeceFx11junFSxnqKT5R4LM3B5IXK/ESNQH+nSJULrwWmcb8CzucnXAhcEsP1TQoyntHd7XXe2jTe6Z42I0uv6UHh99Qr8fPMr2oEeioPygA1K9fm/AWqyVsMjtc47xrrjXHy/6rVkbIq41G5mMTqzD8MEOHe1Kc6gQiwrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.179
+	 To:Cc:Content-Type; b=ZHiNetfesJYZsAEKVcofjT1QuY8cUmBAmDoaUgoJOFiv3OtaWm/dyvgdzspCsIZ198qt1wzhKsk9QeK84Y4nNp8pNIvT6FiQDwi4nmDjPBu42bZ4oWII9TAa3Y0QlAbxOVsoVQtJAjFuz0GewYvG9vD9ewKSBsN0LW+bqaUR/Kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2b7d3ecc10dso41961055ad.2
-        for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 04:37:48 -0700 (PDT)
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-35da9692ec3so10458671a91.1
+        for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 04:50:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777462667; x=1778067467;
+        d=1e100.net; s=20251104; t=1777463425; x=1778068225;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=h4uRNs5kbsz3D4/C3TCXfPmMeHwT6iVUCZwC9U3W8vY=;
-        b=YZt0cQmfVJlJgQpPqx+k0ixvcLH6ujki41jN8FxGAvi+0EHCVutHCC0gFZgbA9UATC
-         JT6t/ZuaR36e1L87lwhUCJ4mE1kSgfazkbpKx78ITC+25EAX9ic6T6BqLLAIqhXgqt+i
-         CoPMtHOB0MxvOuNxmZPfvth6Faeq0eJUYjVVS7l+wlFwwS02Xwlv+Fqi6TbNrPLSekIL
-         EMkFxW/dESjIR/MZKalxIbaqjQdgeNdV4Ut1QtDlxuDcsscxOu5UaFISZ49TP4l9I7yf
-         dVA4FdNqS3CN4Ww7z4VBLzPHEAdmEZv3DdX3CgiSoNpRayhAAahv5b+0m4iueCe5eYj6
-         2a7g==
-X-Forwarded-Encrypted: i=1; AFNElJ8mbciAWB3TOrNZ458Zy2lcQ0DGYOlYFm+h/XBtjwnXewHaxbKWSzvil0oo6ndttZios5SHek0ri0Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzquLRTZywUpiG0z0MycB+vgEoFS1FsTfZ96Wxjs9gUoRBGdzjv
-	8b3S8y1hm/RHEq4LDo/PcJbMOym/WjwoX/OZqOmysuAyzM13PZAyHwkv+uIj5eE1SJY=
-X-Gm-Gg: AeBDieuHrliELl+Jqt16a18PerdBBKjr+X1cDsrttJMDKi752YnH9U7LaAJj/y6jaSs
-	DFzl0IIQimrqXOx/ESjUVjCl/vIBh1FGhAc0/PlAd+GbCgNKmJ/7fTwIy7jvHrulZQ2Xg5aoeVa
-	oo7bVCfOpgSzRH+YlqviWuni+FHqvtF/pslpqQkX0dNZ2mxFdiU+EaLsvc2uwSqTJQAfHjMVMGz
-	kotOYlts4HlPc4WVLFhKkkz7JfJhl27A0PJjCcGxDtmY5GwfcL58T8aIYANV3P5wR+GGt21le6u
-	zQk8Rm+zKoQyw1cpEHUgIJCBHHSynrrlgbhG/AcbGl1s3WeZDieSUph4KRos8NbOYLWkNmxGCEW
-	5Y1iQjJ+k9Hcik9vavkHk3IHMauFqiEbR4OIV6wx+n4FMcrT0GV6H2Vfdqh0Gkg+DCk4A7cjl32
-	KadhsPTvpYOOap/9yO398iOGMYUAjS7hTJb3DUQvM2k8Mv9P1N8u6cqYWOrhbQV0xAPG4/rUi16
-	28=
-X-Received: by 2002:a17:903:2ace:b0:2b0:4f9a:b794 with SMTP id d9443c01a7336-2b97c4eda76mr74678955ad.37.1777462667449;
-        Wed, 29 Apr 2026 04:37:47 -0700 (PDT)
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com. [209.85.215.170])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2b9887853a2sm21575925ad.18.2026.04.29.04.37.47
+        bh=07iUR/sIOeK9OY28Ao/jBJ40ezKJgRa8Xi1S5qNmXhs=;
+        b=IMMOob1KBFXObysepYqdLqGtg/lv7uzjhlu6vj8dCZ5YIz4qNuwaUs16QNimKSMZK6
+         oYlNdJTmNNUjRnm7mjpqFL6JNJYELQALlorCoKAxiJa/bwDcxnYuNFxDqgy2mEBrb+99
+         Vjb2HRLaQNbOvdKiJiK/tEPXwa0UsOJqtUoMddTqQuIbcrthu76cKcH7UNZTEoJD9RBS
+         ukgbE9OOhhQy0HOcMwB4juJUqrt0yhDnSqabv9cqxuijMLht3Q/mKoV39mO43QpBSrJB
+         bu1/ZRInDqGzcamPLO2JWMOlFpLhSYYvQfTnjUZIAAOQUI2dmd2OhxmaCZWMr5wlcgdG
+         hQ4g==
+X-Forwarded-Encrypted: i=1; AFNElJ+YouLJQewdH4dHFyQeUsOrOxb2mBbg74Af0ijq2aEcGfc0h1nwW+pRss/1/2V8JO8uFgXHdzZlZGI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNkWYaWpZTrZFHy1w/KLEqCv6/Va6IPjzW83ylVkEUkERd2yHa
+	p0RVfxXvzrpXBgv1IN7Qb1IAoG7FBihO2NNpzwCvUAmyHhpm020VJALUPeR2IgqAJtE=
+X-Gm-Gg: AeBDieuOk0UoxFUojhQkfa2uwyZgmODJGlyMHFWQdFIUE8akTccVJDK9bxL1ZDCL89R
+	RC7icU3yE37mDh9n4axsxLY0gRFYYU3ETNIPKHTX5UuF2dvBgJXxeWGFSRx3PePYmHHeOsFe0+h
+	uzsXxDs1ijffHhechSSxfT5LOdr4f+HAkR8zwHJFz1phsBxdfapL/8GUVjtm9+REJibeXJoFdme
+	RfpxcW0UHmUDY2ibaupKP/wl6oPKCkzvEZnphrQqMj6wHKcWASCPbqDS9wqZFUzOYYToTyXL+Ri
+	x7Hxeh1QOHTPEOnzjDqe7dUbVTdcqcMIShbsf90kgTaqbeIO17UKHH71TJM9L3QPBdh36e4U3qS
+	BC6AYI4pnLGYK2RVSNCByE3ItHFLt2aBzu4sS6eQnWdXJmbwcporT5iVNNzFtZvsasOT2KE3Yvf
+	uvrSQd3rY/1TyngXJar1K/ZffFyuem1hWJNGwcO5r4v2kBREpvyWHikjKsT+TZbk77qBAKvdtcI
+	Hg=
+X-Received: by 2002:a17:90b:3fc5:b0:364:74c1:53b7 with SMTP id 98e67ed59e1d1-364a0adec05mr3506376a91.2.1777463425261;
+        Wed, 29 Apr 2026 04:50:25 -0700 (PDT)
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com. [209.85.210.178])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-364a27f32b1sm1193678a91.5.2026.04.29.04.50.24
         for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Apr 2026 04:37:47 -0700 (PDT)
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-c79467f11abso8465461a12.2
-        for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 04:37:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ9uV3kmph9qN1DpK9uhQvswHbUlln+P2Bv31/o7PoDhtxymCPxlUxyxb62wUStRx8xC0dMtT5KuDeU=@vger.kernel.org
-X-Received: by 2002:a05:6122:1814:b0:56f:b2df:1791 with SMTP id
- 71dfb90a1353d-573a566e6camr3723066e0c.9.1777462361508; Wed, 29 Apr 2026
- 04:32:41 -0700 (PDT)
+        Wed, 29 Apr 2026 04:50:25 -0700 (PDT)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-827270d50d4so11361394b3a.3
+        for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 04:50:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ/uO9ve0w0KeF4RrZTihzTeUST2Abe8YNCBJjkv0emyE7gad6KCcTsNwMGl3C6Wd2sHehkRfR2SZYo=@vger.kernel.org
+X-Received: by 2002:a05:6122:8b0c:b0:56f:7300:37c9 with SMTP id
+ 71dfb90a1353d-573b368cf79mr1448638e0c.10.1777463106983; Wed, 29 Apr 2026
+ 04:45:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260419193718.133174-1-marek.vasut+renesas@mailbox.org> <20260419193718.133174-4-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20260419193718.133174-4-marek.vasut+renesas@mailbox.org>
+References: <20260419193718.133174-1-marek.vasut+renesas@mailbox.org> <20260419193718.133174-5-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20260419193718.133174-5-marek.vasut+renesas@mailbox.org>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 29 Apr 2026 13:32:30 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUkT6wO=mCSbJt1dQueW62=_o3r589MvFyHhz-zSfw_9w@mail.gmail.com>
-X-Gm-Features: AVHnY4LCd6eTq9wcyp22X0zMAv4PuhD2Uo4vLw9bsPU9plD7Rc1VJGY_TMU-X5Y
-Message-ID: <CAMuHMdUkT6wO=mCSbJt1dQueW62=_o3r589MvFyHhz-zSfw_9w@mail.gmail.com>
-Subject: Re: [PATCH 3/7] dt-bindings: clock: cs2000-cp: document CS2500
+Date: Wed, 29 Apr 2026 13:44:55 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVLUFZzwUjvMuZOOTJk9jn-pTM4-rYHE8OZzp9RpQd2tw@mail.gmail.com>
+X-Gm-Features: AVHnY4LhTK0YHEkXOgViPxtDX3drSx5eXMIsHWPwRkcxiJzGfAV6beExDjAOpFs
+Message-ID: <CAMuHMdVLUFZzwUjvMuZOOTJk9jn-pTM4-rYHE8OZzp9RpQd2tw@mail.gmail.com>
+Subject: Re: [PATCH 4/7] dt-bindings: soc: renesas: Document Renesas R-Car
+ R8A779MD Geist
 To: Marek Vasut <marek.vasut+renesas@mailbox.org>
 Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
-	David Airlie <airlied@gmail.com>, 
+	David Airlie <airlied@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
 	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
 	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
@@ -83,49 +84,38 @@ Content-Type: text/plain; charset="UTF-8"
 
 Hi Marek,
 
-On Sun, 19 Apr 2026 at 21:37, Marek Vasut
+On Sun, 19 Apr 2026 at 21:38, Marek Vasut
 <marek.vasut+renesas@mailbox.org> wrote:
-> Document backward compatibility support for CS2500 chip, which
-> is a drop-in replacement for CS2000 chip.
+> Document the compatible value for the Renesas R-Car M3Le (R8A779MD)
+> SoC and the Renesas Geist development board. The Renesas M3Le SoC is
+> a register-compatible variant of the R8A77965 (M3-N) with reduced set
+> of peripherals. The Geist board is derived from Renesas Salvator-X/XS
+> boards, with adjustment for the R8A779MD SoC.
 >
 > Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
 Thanks for your patch!
 
-> --- a/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
-> +++ b/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
-> @@ -11,14 +11,18 @@ maintainers:
+> --- a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+> +++ b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+> @@ -473,6 +473,12 @@ properties:
+>            - const: renesas,r8a779mb
+>            - const: renesas,r8a7795
 >
->  description: |
->    The CS2000-CP is an extremely versatile system clocking device that
-> -  utilizes a programmable phase lock loop.
-> +  utilizes a programmable phase lock loop. CP2500-CP is a compatible
-> +  drop-in replacement for CP2000-CP.
+> +      - description: R-Car M3Le (R8A779MD)
+> +        items:
+> +          - const: renesas,geist    # M3Le Geist
 
-While CP2000 exists in two variants (-CP and -OTP, cfr. the link below),
-there is just "CP2500"[2].
+"Geist (RTP8A779MDASKB0F10S)"
 
->
->    Link: https://www.cirrus.com/products/cs2000/
->
->  properties:
->    compatible:
-> -    enum:
-> -      - cirrus,cs2000-cp
-> +    oneOf:
-> +      - items:
-> +          - const: cirrus,cs2500-cp
+> +          - const: renesas,r8a779md
+> +          - const: renesas,r8a77965
+> +
+>        - description: R-Car X5H (R8A78000)
+>          items:
+>            - enum:
 
-cirrus,cs2500
-
-> +          - const: cirrus,cs2000-cp
-> +      - const: cirrus,cs2000-cp
->
->    clocks:
->      description:
-
-
-[1] ttps://www.cirrus.com/products/cs2500
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
