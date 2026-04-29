@@ -1,33 +1,66 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BDEC34E771;
-	Wed, 29 Apr 2026 14:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2265377EDA
+	for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 15:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777473169; cv=none; b=Wvi0+kLuH6fUSk3YNccCa7eVKCqU1B+jzahkY/lJ6a+jv9m+1nfcuq66DziuOBxPmEXfFQUPtjuwpq5weYwKevz8Lvu8/AkHNh1F7qUR6XhKZJ/3FnJXYc5FC0Y7BPl6OD1JNIslwpZ9QRAhc+Gm9vVKYk5LkXnzFNP0jHRKbS8=
+	t=1777476059; cv=none; b=hzzIllJCpbVPDlEs65GxxmJbplSvWUmCrOL55NRKeV1OrBg9ExTAKVwzrqSttiPy2/kck07vLbxnSJgvZMseEAs8KWemZOXtyhguIG0KpMpKC/xS8421gPVBNMMQ3asA4apLVekj2yMatsK5wQlSyKpQKy60v3zD9JbJsESYZEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777473169; c=relaxed/simple;
-	bh=sp4jfoH91t8AdtH30k3paRNXb44IaG4v91cn80HfkUA=;
+	s=arc-20240116; t=1777476059; c=relaxed/simple;
+	bh=G01D3imQ7+o35Ef3KRuQfIV17JN9Pd0G6yv1+UrifFE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F3Mld7rEK95SVPCe+ABZlZPMh4gr3S4O2I5eznpUk6gdsti4a1IEpi272JrJ7SW6PfsW195qAO4oaGMMbweXV9HXcUASHYV2PRY2x63rklA8u9OG9YGYypZkt6w9uuLNtN3aDKbrEf87xHy/1Y3U2Qp4T2OwgCLXSJVp1XtNOCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IgkJcJD+; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=JVQEYuMYTJ3GRauDHdXgUhBi77756Tn+LB48q44UslhOqF+mZFapRBq0oSe8jlPcIEZ+o1swXtbuqXJWVj8jbiM8dN7OboqCCvLYgMh9FP3rY1TrK65AKVXEHLWN5JxAt4PRG+aOUmFiCs7JdNb7vC71GxuyVz0bQo91L5rvFK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lzsNQwSE; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IgkJcJD+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9841C19425;
-	Wed, 29 Apr 2026 14:32:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777473169;
-	bh=sp4jfoH91t8AdtH30k3paRNXb44IaG4v91cn80HfkUA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IgkJcJD+y5lF0/f8/luIsr5eBkjf7OZ26ecVqUd+K9YC6LM9sAcdHRzkJhQfNkCdq
-	 QMDOkPijxHY9REhvrR6ru09gulNkNi/SqH1S8Eki6nc8kdq44WFp7e4JouqkVfrtW3
-	 DDvFoMGjgMFQv51SxuyJfkEFA1sLX1ZKSo1SFBhVH3RcJlBp+NIQN1mjR/AdgEUTnI
-	 C6vY4ZKL8cQcBPFBE/oaKNZGwthpKH+H4dtQum19WRQ+K6RvVLtUm/vcb4PkFA310F
-	 x1LToHsr0u7p/OHKoz1ECS3ptLPoIEjth+x7BZf2uFiY341vhIVYMHxq1e/5N3uKqO
-	 +aSB0g9CSlPqw==
-Message-ID: <6f76dd8a-2007-4012-980f-268076fff5ad@kernel.org>
-Date: Wed, 29 Apr 2026 16:32:43 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lzsNQwSE"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4891cd41959so111002055e9.3
+        for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 08:20:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1777476056; x=1778080856; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=S1mflq2JmCovYJyevIlYYXkXeU9o+ZpGv13YTJw53l4=;
+        b=lzsNQwSEhng+nLmcAb+SX5pYjDtxV1pJcPLQSsS05vnrhXcquTsxitaPN2BdI9LMl7
+         r+nftcDlD6HWNI491c5hHBNXY0CC3W48sTY52d5ib4zxvhBaQsEZA//z5p5IHjD3D+/s
+         8NDlhjYuchKHpTpk2AR0KMWrCRV3TIY5QbxkkTkeGxhDotq3aWTuKAzawknPHXxs3YxV
+         rXvJ+A+xGdSR2afXoF96Wbgezi7L3HsQFdy+1L9UHraG5I/1z1sgUeSgjSRvAzPQ2R67
+         pTc1CgB5YjBThxB9OJJa0RV0wmoiu3xApBCUyNydZQCA7SBfeT+irEHpeB5//9rFibiR
+         iNTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777476056; x=1778080856;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=S1mflq2JmCovYJyevIlYYXkXeU9o+ZpGv13YTJw53l4=;
+        b=cESJcUZlluXw0wpS0Q0n/9uJY/PhDIRZXQuUASm93RV8qtNheHRvLhqgqkfAxSHCkF
+         qse5n9OVF+Zrgn9Jn3H/Wp05HrnQ1qpJrXRXrjtvWMUF1uTD0ePeL/z3m3PrEh4jSBO2
+         rmhtrmEcU+gCEqUGahcO67ZhNtoHd6bvDIg3Jp4gFHxLED0zP8d//hJzY/YQ8b2QnBVh
+         53CRfQ/jzNsobMUDQfoaQEsgAMULGgrWwvwNxL3pIxLFQsMpfDGdDRqUEYbNgWxqSLBR
+         CsFRo6/Co/29JnBhNJtHfiWdtDe8pYN2qHKpV+HTDCucxeS7+N1wETx0UIuptRrmXgkK
+         QCyQ==
+X-Forwarded-Encrypted: i=1; AFNElJ/tvUdMgULXhh272NdUl2T+E/oLFVmr4rKEE+9+AjYk68eaPWBDV5lAuqGrhCNa6NRPQF2jMNZoyGk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHDRmFso7JBqqdmxMTdQuvylzbFDPayzwiJmKrS3FkALAKCavJ
+	SW+joqa3TDvaQ/StcfxIUFAczgIkHQrgFB/Y2fpmQTTXlMAwWo5ShTw7tnC4Z8YH5MM=
+X-Gm-Gg: AeBDiesDy+jRzg936HBu8aceQZ63MqxLim6cDHTb5jf7tNnyXDKT+9MQY0vV1yBlVaw
+	9bPkU94Am3wyqqmw00fwcZ3ReZ2umK+9uJQqyvC8aBEb5lm7fNsvGwzwZ64T3LT3d8tusir4rjN
+	ElBDorcxkGyWAD7Hcz/smt+a7aWw1tyQ9LdplyjdQu6FodyveZexlXd8Q6FNC/FsjOncMyzypad
+	S+eDngvtYt9cTIG6sAZo3dj4jZ4fyMFJuvMDlVmWMDiw+xuGbWkrj13IS1aUkNHxNvDIe5SUT8t
+	RkvMVTZZdi2+8hZAN6dVVGPXxaa66RE2N2mr4fMsDQFNb/e2YIFWzRuOV6w7ZjCGAIXGjFOm7cW
+	Adkm0HiroRwv1Z88TnPNAJzQQl8kPjINL8LhlfnyiWVpunjIvwl435f1vxc/oDSSEcw0AkEjULw
+	Oh4sX4SiRQR7LBRiy09N3r+nc5E1O2caaQyEoW+nAf25k=
+X-Received: by 2002:a05:600c:4745:b0:488:9bf8:7f17 with SMTP id 5b1f17b1804b1-48a77b054d8mr122018735e9.14.1777476056171;
+        Wed, 29 Apr 2026 08:20:56 -0700 (PDT)
+Received: from [10.11.12.108] ([79.115.63.228])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-447b76e5afesm5634461f8f.30.2026.04.29.08.20.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Apr 2026 08:20:55 -0700 (PDT)
+Message-ID: <001a226f-606a-41fe-a684-c208d8898e17@linaro.org>
+Date: Wed, 29 Apr 2026 18:20:52 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,90 +68,68 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] arm64: defconfig: Enable Qualcomm Shikra SoC Global
- clock controller
-To: Imran Shaik <imran.shaik@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH v4 00/11] thermal: samsung: Add support for Google GS101
+ TMU
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Richard Cochran <richardcochran@gmail.com>
-Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
- Taniya Das <taniya.das@oss.qualcomm.com>,
- Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org
-References: <20260429-shikra-gcc-rpmcc-clks-v1-0-c3cd77558b7a@oss.qualcomm.com>
- <20260429-shikra-gcc-rpmcc-clks-v1-5-c3cd77558b7a@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Daniel Lezcano <daniel.lezcano@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Lee Jones <lee@kernel.org>
+Cc: willmcvicker@google.com, jyescas@google.com, shin.son@samsung.com,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
+ linux-clk@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+References: <20260423-acpm-tmu-v4-0-8b59f8548634@linaro.org>
+ <41ebf31c-89ca-497e-b206-ece332d0260e@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20260429-shikra-gcc-rpmcc-clks-v1-5-c3cd77558b7a@oss.qualcomm.com>
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <41ebf31c-89ca-497e-b206-ece332d0260e@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 29/04/2026 12:51, Imran Shaik wrote:
-> Enable the Global clock controller driver on Qualcomm Shikra EVK board.
-> 
-> Signed-off-by: Imran Shaik <imran.shaik@oss.qualcomm.com>
-> ---
->  arch/arm64/configs/defconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index dd1ac01ee29bf631d517c38486f6896ffd82dcc9..13e04080b37160129ccd47b0148a64277b8e0e4c 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -1461,6 +1461,7 @@ CONFIG_CLK_IMX8QXP=y
->  CONFIG_CLK_IMX8ULP=y
->  CONFIG_CLK_IMX93=y
->  CONFIG_CLK_IMX95_BLK_CTL=y
-> +CONFIG_CLK_SHIKRA_GCC=y
+Hi, Krzysztof,
 
-Beside some really odd order, this patch should not be needed.
+On 4/28/26 12:24 PM, Krzysztof Kozlowski wrote:
+>> Dependencies
+>> ============
+>> - context dependency on the ACPM fixes sent at:
+>>   Link: https://lore.kernel.org/linux-samsung-soc/20260423-acpm-fixes-sashiko-reports-v1-0-2217b790925e@linaro.org/T/#t
+>> - cleanup and prep firmware patches 2, 3, 4, 5, 6, 7: required by the
+>>   thermal driver (patch 8).
+> Well, cleanup in one driver cannot be a dependency for other driver.
+> 
+>> - bindings (patch 1): required for DTS validation.
+>> - thermal driver patch 8: required by defconfig (patch 11) - logical
+>> dependency. 
+> Most of the patches should be taken before, which would leave you only
+> final new firmware interface as dependency. Creating such unnecessary
+> dependencies is not helping.
+> 
+> And the patchset even grew and will conflict with other firmware work,
+> so I will deal with firmware bits and I can provide them via stable tag
+> to thermal for the last patch.
 
-Best regards,
-Krzysztof
+Sounds good, thank you!
+
+I'll send the firmware cleanup and preparatory patches in their own patch
+set after the firmware fixes get in.
+
+Then I will resend the thermal driver once all the firmware patches are
+sorted out and a stable tag is provided.
+
+In the meantime the thermal maintainers can still check the thermal driver
+proposal.
+
+Cheers,
+ta
