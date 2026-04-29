@@ -1,75 +1,73 @@
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01882175A81
-	for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 11:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0C53EDAB6
+	for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 11:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777463427; cv=none; b=bH8i/vS/L+TD1broDwJModaKPsYam/19VA2ra7LIiBEvcqjUIb0YqpD5+tnawtaYl5PSxqlEsEsUC+BuUfz+UQ0z+p17B45cMsEu5mgwCzvjPglS9d1masAzUMAi3pOmhPKOsAPtiAEkV484fQaKIwa3T4CZxjjl1gIQgk436yc=
+	t=1777463584; cv=none; b=H8dHHRjPo5Phv9KbwO5PYACA5Kiza4BYbYIRfC9blaXEQpH60aF+vEm86t9km/sNFAcxz8LfdKWEwlNesblqeqmV3l5Yex0GJiqwSW0dI8k/A/LT5Vx4SifcvQ765cyelFLP6J9dPdkEHuQQHTUWGo1YYlf7JGl+3vW0tdkK6ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777463427; c=relaxed/simple;
-	bh=k3006wJqxnTat9Xj8MW2QjrO2YW2+jD6t20DobBX4xo=;
+	s=arc-20240116; t=1777463584; c=relaxed/simple;
+	bh=XXFyujGrM3k+GZFKEyqRdilaXBG204QClf2AQk9kJz0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZHiNetfesJYZsAEKVcofjT1QuY8cUmBAmDoaUgoJOFiv3OtaWm/dyvgdzspCsIZ198qt1wzhKsk9QeK84Y4nNp8pNIvT6FiQDwi4nmDjPBu42bZ4oWII9TAa3Y0QlAbxOVsoVQtJAjFuz0GewYvG9vD9ewKSBsN0LW+bqaUR/Kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.45
+	 To:Cc:Content-Type; b=bm/zjZMBNEMGyi1Bxa8OoRCWDXhskIV9Sh+XXaNVZKnPkV1rfwc/JeUTWWarP5WX//8mokA9VYe9cyqlWb3hM9jsZjTiyPIW1J3rvolnoyx+1XS6+vzkwSrOi/4YEp0F61lYqVOvAzFBLhi47S1rlMXGnsH/6Qrf0EOmjCGQMNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-35da9692ec3so10458671a91.1
-        for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 04:50:25 -0700 (PDT)
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-8a016799d2cso135844896d6.1
+        for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 04:53:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777463425; x=1778068225;
+        d=1e100.net; s=20251104; t=1777463582; x=1778068382;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=07iUR/sIOeK9OY28Ao/jBJ40ezKJgRa8Xi1S5qNmXhs=;
-        b=IMMOob1KBFXObysepYqdLqGtg/lv7uzjhlu6vj8dCZ5YIz4qNuwaUs16QNimKSMZK6
-         oYlNdJTmNNUjRnm7mjpqFL6JNJYELQALlorCoKAxiJa/bwDcxnYuNFxDqgy2mEBrb+99
-         Vjb2HRLaQNbOvdKiJiK/tEPXwa0UsOJqtUoMddTqQuIbcrthu76cKcH7UNZTEoJD9RBS
-         ukgbE9OOhhQy0HOcMwB4juJUqrt0yhDnSqabv9cqxuijMLht3Q/mKoV39mO43QpBSrJB
-         bu1/ZRInDqGzcamPLO2JWMOlFpLhSYYvQfTnjUZIAAOQUI2dmd2OhxmaCZWMr5wlcgdG
-         hQ4g==
-X-Forwarded-Encrypted: i=1; AFNElJ+YouLJQewdH4dHFyQeUsOrOxb2mBbg74Af0ijq2aEcGfc0h1nwW+pRss/1/2V8JO8uFgXHdzZlZGI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNkWYaWpZTrZFHy1w/KLEqCv6/Va6IPjzW83ylVkEUkERd2yHa
-	p0RVfxXvzrpXBgv1IN7Qb1IAoG7FBihO2NNpzwCvUAmyHhpm020VJALUPeR2IgqAJtE=
-X-Gm-Gg: AeBDieuOk0UoxFUojhQkfa2uwyZgmODJGlyMHFWQdFIUE8akTccVJDK9bxL1ZDCL89R
-	RC7icU3yE37mDh9n4axsxLY0gRFYYU3ETNIPKHTX5UuF2dvBgJXxeWGFSRx3PePYmHHeOsFe0+h
-	uzsXxDs1ijffHhechSSxfT5LOdr4f+HAkR8zwHJFz1phsBxdfapL/8GUVjtm9+REJibeXJoFdme
-	RfpxcW0UHmUDY2ibaupKP/wl6oPKCkzvEZnphrQqMj6wHKcWASCPbqDS9wqZFUzOYYToTyXL+Ri
-	x7Hxeh1QOHTPEOnzjDqe7dUbVTdcqcMIShbsf90kgTaqbeIO17UKHH71TJM9L3QPBdh36e4U3qS
-	BC6AYI4pnLGYK2RVSNCByE3ItHFLt2aBzu4sS6eQnWdXJmbwcporT5iVNNzFtZvsasOT2KE3Yvf
-	uvrSQd3rY/1TyngXJar1K/ZffFyuem1hWJNGwcO5r4v2kBREpvyWHikjKsT+TZbk77qBAKvdtcI
-	Hg=
-X-Received: by 2002:a17:90b:3fc5:b0:364:74c1:53b7 with SMTP id 98e67ed59e1d1-364a0adec05mr3506376a91.2.1777463425261;
-        Wed, 29 Apr 2026 04:50:25 -0700 (PDT)
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com. [209.85.210.178])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-364a27f32b1sm1193678a91.5.2026.04.29.04.50.24
+        bh=1eQI/JeVJWqMxkzWYnwpYH2rFZzbRa7DUVbDEpXwBWE=;
+        b=odIvAJSBHPyGqCmGuPsNLPwEm5zdP23MHQgYZ4cMCtGcWmNowIqZ4crERHte+Qe+G7
+         h1kQZ4cWHmaEkfBE6QsA7jWNlnRd4lqQHFdq2AOoSphtyQGl/rCDUAmBp0zi4lKnr7rs
+         vYCxixjiCvXjvOYcu0ec0oJcQMgIfyxuJy22Zv1x3dc5yzQ7lQkOp+V3vqAZCItgtiaj
+         ES1OjOd4qI6JnmqhEzcMy5ynE5dVHN7ztXHhMbxzTJXXRHgbnE3lAWbgmt4zP6tBJyFG
+         aVUUmxgPEqW25LGQnXQ3bbt795MoK3k5a4XxuMl5umkFRiievbjnEdobLrbDF2lmabCO
+         0A6Q==
+X-Forwarded-Encrypted: i=1; AFNElJ8d12F7dCpQdGOnJtBElM1kxjvAnamahYDF0yOBZNg6gQziOOMF+Y23EE785VyzUDXIm4HcUO9vdxY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCG3IksAp5Q0BJeAM+AWI1Q3AIKEcKKTcz7Xcu2F7cNy6NpVCK
+	LxuawL3hT4vAkJPgAH6lmWNp9gKihoCo/pRiUsewWQzVQu9nxGyU3m8btGAzlMRHDEI=
+X-Gm-Gg: AeBDievFWC7/Q/oauxFgYcZ1bLze+CJBa42H+mJUK5El8xiUkVMxYCQF50WsM6IlKi+
+	Rfq5VPLiDowg4geL2YdNYrTIj++mbDupPQv/AO1j/4BiQtMScXQj2Vti+7aP3TPbxE2nVPEwkFL
+	oF/CW5POtxCTe6nmtldXZ68zwc/rUAo4FXI/o5WKBltg8Wb3TVf4L6Hs53e51yWL3AoUCYpbvt7
+	GfBMj55aHxPpBwOBQyIgG1tQtUJjyyn2ob/e1UR9qkHGBne1zl+qGKatJfmR/H08fwt+3ndHhv9
+	eLsTilYirKunRtrHvWMTxMURKBUMSf8FoGQ+7lAvxHVNUMURvfUEJj2XsUaL/+1sEz9NA3r1fUj
+	RCXZyVP+M1fTd82SIKe6lxaApax5hBK6isPxpnjmazgvEPfhmkFQpxo4Z6jFomjUUB5SBPVO9Qc
+	T/9nHBsjhbU7js3/vGMvnP3Rytt4gJIWityFyyG5UhC/l9jbp3lkeKKNEu84GnEE7IF1ffRq0=
+X-Received: by 2002:a05:6214:4f03:b0:8ac:b542:1063 with SMTP id 6a1803df08f44-8b3e3041c18mr105247456d6.15.1777463582194;
+        Wed, 29 Apr 2026 04:53:02 -0700 (PDT)
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com. [209.85.219.43])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8b3ef70b10asm16630566d6.13.2026.04.29.04.53.01
         for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Apr 2026 04:50:25 -0700 (PDT)
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-827270d50d4so11361394b3a.3
-        for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 04:50:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ/uO9ve0w0KeF4RrZTihzTeUST2Abe8YNCBJjkv0emyE7gad6KCcTsNwMGl3C6Wd2sHehkRfR2SZYo=@vger.kernel.org
-X-Received: by 2002:a05:6122:8b0c:b0:56f:7300:37c9 with SMTP id
- 71dfb90a1353d-573b368cf79mr1448638e0c.10.1777463106983; Wed, 29 Apr 2026
- 04:45:06 -0700 (PDT)
+        Wed, 29 Apr 2026 04:53:01 -0700 (PDT)
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-8a016799d2cso135844816d6.1
+        for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 04:53:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ+KNoRFFonjtTokExTcPGcpI+BrSXH/L6UtDWIozxvq83vgdRq3UhRd+8cNqMEY3MegIxNmdIBqFAo=@vger.kernel.org
+X-Received: by 2002:a05:6102:8496:20b0:60c:fe65:7dbd with SMTP id
+ ada2fe7eead31-62808c547e7mr2534931137.5.1777463176356; Wed, 29 Apr 2026
+ 04:46:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260419193718.133174-1-marek.vasut+renesas@mailbox.org> <20260419193718.133174-5-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20260419193718.133174-5-marek.vasut+renesas@mailbox.org>
+References: <20260419193718.133174-1-marek.vasut+renesas@mailbox.org> <20260419193718.133174-6-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20260419193718.133174-6-marek.vasut+renesas@mailbox.org>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 29 Apr 2026 13:44:55 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVLUFZzwUjvMuZOOTJk9jn-pTM4-rYHE8OZzp9RpQd2tw@mail.gmail.com>
-X-Gm-Features: AVHnY4LhTK0YHEkXOgViPxtDX3drSx5eXMIsHWPwRkcxiJzGfAV6beExDjAOpFs
-Message-ID: <CAMuHMdVLUFZzwUjvMuZOOTJk9jn-pTM4-rYHE8OZzp9RpQd2tw@mail.gmail.com>
-Subject: Re: [PATCH 4/7] dt-bindings: soc: renesas: Document Renesas R-Car
- R8A779MD Geist
+Date: Wed, 29 Apr 2026 13:46:05 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU7Wv=ff34PGtauGE=pxu-gz60bYckFvC0s_7+NGF2sSQ@mail.gmail.com>
+X-Gm-Features: AVHnY4LIrMWzlW7YEacrKVCpl1tXW3XTPU8aR2UA76Yz1rMTuJKkQscGTQj67Yc
+Message-ID: <CAMuHMdU7Wv=ff34PGtauGE=pxu-gz60bYckFvC0s_7+NGF2sSQ@mail.gmail.com>
+Subject: Re: [PATCH 5/7] soc: renesas: Identify Renesas R-Car R8A779MD M3Le SoC
 To: Marek Vasut <marek.vasut+renesas@mailbox.org>
 Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
-	David Airlie <airlied@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	David Airlie <airlied@gmail.com>, 
 	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
 	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
@@ -82,38 +80,16 @@ Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>,
 	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Marek,
-
 On Sun, 19 Apr 2026 at 21:38, Marek Vasut
 <marek.vasut+renesas@mailbox.org> wrote:
-> Document the compatible value for the Renesas R-Car M3Le (R8A779MD)
-> SoC and the Renesas Geist development board. The Renesas M3Le SoC is
-> a register-compatible variant of the R8A77965 (M3-N) with reduced set
-> of peripherals. The Geist board is derived from Renesas Salvator-X/XS
-> boards, with adjustment for the R8A779MD SoC.
+> Add support for identifying the R-Car M3Le (R8A779MD) SoC.
+>
+> The Renesas R-Car R8A779MD M3Le SoC is a variant of the
+> already supported R-Car M3-N SoC with reduced peripherals.
+> Enable support for the M3Le SoC through already existing
+> ARCH_R8A77965 configuration symbol. PRR reads 0x67c05501 .
 >
 > Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-
-Thanks for your patch!
-
-> --- a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
-> +++ b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
-> @@ -473,6 +473,12 @@ properties:
->            - const: renesas,r8a779mb
->            - const: renesas,r8a7795
->
-> +      - description: R-Car M3Le (R8A779MD)
-> +        items:
-> +          - const: renesas,geist    # M3Le Geist
-
-"Geist (RTP8A779MDASKB0F10S)"
-
-> +          - const: renesas,r8a779md
-> +          - const: renesas,r8a77965
-> +
->        - description: R-Car X5H (R8A78000)
->          items:
->            - enum:
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
