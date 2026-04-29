@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E759D1482E8;
-	Wed, 29 Apr 2026 03:56:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B679437B00A;
+	Wed, 29 Apr 2026 03:57:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777434964; cv=none; b=XZh4/sVkczuz4uHHJ+qr1Q7rmWCPwxDl4shjDAUz1zQVmUIKCzZdrkKXHGHk8c2rwHLQ8Ika908AVO5pGKIZJwaKw8UpzbS96B0i3h9XAufeHmz9u7QSHKtty0fdah/n+iT/agCF189EHRjJUBEuYX2cFx141RPrff3UvDMVAVE=
+	t=1777435072; cv=none; b=K5KRXqY9E0MTm7pct+aw6ghCKmGQ5X10rVFqMk3E/9itMmuMZ/u79yJviAhuCIPolhTLn9SZke5d1LEhVrU1l4VrAJX+DNzR36QlhWpBAtGfaEbdAQ3yDnNdbLmrkNBzi1V62jst8qfx0zrGCRFoxxl9iU7HbeO6maYsowrM/Bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777434964; c=relaxed/simple;
-	bh=Jrfdd4yDdOOFCkCWFH5jlNXN6a29Na2bHTv7VSRjVKk=;
+	s=arc-20240116; t=1777435072; c=relaxed/simple;
+	bh=IiZDEYd3G61roEvM82iRLsIal6Ch/P/n1ZmhGvjYTDw=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=t/Kb3wt1Zl0lXr8LztRyrVo9EjwF5XYgCjhfoUM9q96ZkRZs0GszwRSBXJ+tedx9N+2zZMMSYV4pvM3rW+a5a94/iUhTlEVlIs/CDffRk5GE3X4dncm3YXFhNpqd2hVAQcJF+25QDxRrigxiEPMtALEyuFAstwTUpfa4l2EF8tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iwoc4hn7; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=ryHEBvWQXXbBbAIbsEbv+BaCf9tNxxnMUgGkYQUmHRvbIFsDkL/t4yzYN4NZN87TDfKq3w+X7dSwy5e1NMJx+lReE0jPIzcm6bVwmW9FZDEBGZ07J9weKzysXCC6H58PrU6x+kf01xih+hREu0ihxVDaIVAbImc5bSJl8Q/I0pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ItCGFWpD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iwoc4hn7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE115C2BCB4;
-	Wed, 29 Apr 2026 03:56:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ItCGFWpD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53EF8C19425;
+	Wed, 29 Apr 2026 03:57:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777434963;
-	bh=Jrfdd4yDdOOFCkCWFH5jlNXN6a29Na2bHTv7VSRjVKk=;
+	s=k20201202; t=1777435072;
+	bh=IiZDEYd3G61roEvM82iRLsIal6Ch/P/n1ZmhGvjYTDw=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=iwoc4hn7VcbfOsobopVdc80tpyHydUsrvbM9D9tXbIO3paB5tT7CkdyPQ2mT0OPP1
-	 JEJsedEUMAF5LX5uvTiiL44kcYW1Px+w7ze0Vwqq1CD2vSvqGr6+7jTMJB7Rs6DCc1
-	 n4nr/rmI5IzS4uvnJfkD5rg9C7PiZZpdntcCjSSa1dChP4ckMQl4CysfPy1BfVzTvu
-	 GbKjoB6yW2uEUJQ+MElJiTkRrUhNI62FtnH9cexPh0RyCgcYyMjSft7KA7XqxqTkz5
-	 Fel1QG+48WV1bMpc/mohQ6vgTtehJQe4a7WnLwlR+9xUXXTakdJolNKyoyl33zt87k
-	 mxVb5GNjkZ/uA==
+	b=ItCGFWpD2QdkMGgAOOfEqBEPyHdxHMWSPK5W9gUSAkzumDJgSp2UuWVMxKs5LCr6g
+	 iHRNL3nUdwHMlZaepTB2yCLadReoPGH972UALJ/buLg2z5E27/sZeuXbBjbB0LBw5Q
+	 H0wHHiOacPPWTSCunZbj5v6hZMMD5kvLsg/v4XEpiL/m18wV7HZZM3E8RZXuDDebX5
+	 gzpDktsnvn2//N1pHFVc2J4qtOJW9XEpQqTF1WkPsJWdrmWp4Q3ejDSQnsLBWdBhLS
+	 /oRK+s02HPU+NUZHtdvrfY/a+sRITFedGx5keKf2QjzGcZL57cxDrjRUkVF0U+qEPV
+	 NRbPt6769I9ng==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,28 +34,31 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20260407095027.2625516-1-johan@kernel.org>
-References: <20260407095027.2625516-1-johan@kernel.org>
-Subject: Re: [PATCH] clk: rk808: fix OF node reference imbalance
+In-Reply-To: <20260427-ti-sci-jacinto-s2r-restore-irq-v6-3-72c6468cb2ab@bootlin.com>
+References: <20260427-ti-sci-jacinto-s2r-restore-irq-v6-0-72c6468cb2ab@bootlin.com> <20260427-ti-sci-jacinto-s2r-restore-irq-v6-3-72c6468cb2ab@bootlin.com>
+Subject: Re: [PATCH v6 3/4] clk: keystone: sci-clk: add restore_context() operation
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>, stable@vger.kernel.org, Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Johan Hovold <johan@kernel.org>
-Date: Tue, 28 Apr 2026 20:56:01 -0700
-Message-ID: <177743496193.5403.16042641406791146582@lazor>
+Cc: Gregory CLEMENT <gregory.clement@bootlin.com>, richard.genoud@bootlin.com, Udit Kumar <u-kumar1@ti.com>, Abhash Kumar <a-kumar2@ti.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, "Thomas Richard (TI)" <thomas.richard@bootlin.com>, Dhruva Gole <d-gole@ti.com>, Kendall Willis <k-willis@ti.com>
+To: "Thomas Richard (TI)" <thomas.richard@bootlin.com>, Michael Turquette <mturquette@baylibre.com>, Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Tero Kristo <kristo@kernel.org>
+Date: Tue, 28 Apr 2026 20:57:50 -0700
+Message-ID: <177743507054.5403.221436011297776412@lazor>
 User-Agent: alot/0.12
 
-Quoting Johan Hovold (2026-04-07 02:50:27)
-> The driver reuses the OF node of the parent multi-function device but
-> fails to take another reference to balance the one dropped by the
-> platform bus code when unbinding the MFD and deregistering the child
-> devices.
+Quoting Thomas Richard (TI) (2026-04-27 05:21:36)
+> Implement the restore_context() operation to restore the clock rate and t=
+he
+> clock parent state. The clock rate is saved in sci_clk struct during
+> set_rate() and recalc_rate() operations. The parent index is saved in
+> sci_clk struct during set_parent() operation. During clock registration,
+> the core retrieves each clock=E2=80=99s parent using get_parent() operati=
+on to
+> ensure the internal clock tree reflects the actual hardware state,
+> including any configurations made by the bootloader. So we also save the
+> parent index in get_parent().
 >=20
-> Fix this by using the intended helper for reusing OF nodes.
->=20
-> Fixes: 2dc51ca822e4 ("clk: RK808: Reduce 'struct rk808' usage")
-> Cc: stable@vger.kernel.org      # 6.5
-> Cc: Sebastian Reichel <sebastian.reichel@collabora.com>
-> Signed-off-by: Johan Hovold <johan@kernel.org>
+> Reviewed-by: Dhruva Gole <d-gole@ti.com>
+> Reviewed-by: Kendall Willis <k-willis@ti.com>
+> Signed-off-by: Thomas Richard (TI) <thomas.richard@bootlin.com>
 > ---
 
-Applied to clk-fixes
+Acked-by: Stephen Boyd <sboyd@kernel.org>
