@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7753A393DD8;
-	Wed, 29 Apr 2026 03:47:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF70A3939AF;
+	Wed, 29 Apr 2026 03:47:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777434432; cv=none; b=TlSvTBliDO98wa3O7EgxzZkI2o9dU+wpBcS8LfqfXPTsAF76FP2fLG2OHbXuw8oqmja+eOJTkw06yKdlA48QmOMzjjFk1Q7NTozMO/eLozwBLAKlaQO5tfmQeO2/jdipboXc/ISDLJCPAoG6/tI1HocLmeXEAfr8iPE9bGwG33E=
+	t=1777434434; cv=none; b=m3ZHzxstZhE1hroy6meD0B0FhNNrXV0ofi+sP2Ko4cEJ6pbNvEHFlaAxxzUsKM0F+aEIjdKaatmYONZHuDcOhNIEXIbexH3lfaSD8j/ch4k1E4hhhHcoobd6BYSARXeE26uORNvoRf3g/Q2/h278FXL6/25z4MquNIhpn5yqmo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777434432; c=relaxed/simple;
-	bh=kmlYhPPO7si0Y03tGLFg/g4545mtNj4YJC/GOASuHs8=;
+	s=arc-20240116; t=1777434434; c=relaxed/simple;
+	bh=KWz0aAZB1SwnncfHZ9VoaJOseFg3hiw6XXrMGkHja3A=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=gSXrUGxooi1vm/M7dj9qS3MolOrc0RqRRCo8HyvuiGblgwoItt2obMMf058qOv0T3bHo5Y0rfPzPjIipE9DGGurMG9YdxX7Q/0TjGCv1uVn1Ez6/pErrYgGpE+yZOe//gf9KlGlx8pmsJVb5VONuF7I2KzShsxnZuLYF6Umao5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z7i+osfd; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=lhJkGdiQJ/cLrsQ8S9jnrNDPp0Z5ljvlSMJDfPKgx9DQ5mueZzHzJ/Wdv15QkLbOIsZZr//ycyL7pdAD9b/jxnb2a3LEsNg5sgBEOpPwo2MlrqO2TUQVnpqO6bsCCNGi+2E0+L91SDFxMP+54FC353PiBJIcSbCly5UB6HvTyVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DID0rkay; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z7i+osfd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 036F4C2BCB4;
-	Wed, 29 Apr 2026 03:47:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DID0rkay"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA1D6C2BCC4;
+	Wed, 29 Apr 2026 03:47:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777434432;
-	bh=kmlYhPPO7si0Y03tGLFg/g4545mtNj4YJC/GOASuHs8=;
+	s=k20201202; t=1777434433;
+	bh=KWz0aAZB1SwnncfHZ9VoaJOseFg3hiw6XXrMGkHja3A=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=Z7i+osfdORJpLv7U6encAiWyXyx6atxjZPWZVVbqE2/pL83dB8+zxlHAfglmmEiFw
-	 zGSJX/ihv8yAC+/otyArnUyZRppIPrjwD3iBv7NuzZIxAvd1lJMpm8z5nOAgO8ZQuN
-	 eCtxgFCbgjutDuN+OeIsZ6Z/zkBVWZS6+K9rnXJqDwtMyJcmawuuMJxxVisZKmA+s2
-	 lUHDG90TeAgWyK7aPoAINvcsDaTLjAsJb9qGEdadMzkeP5eDAj3JVkTff6zoAbrAmC
-	 bJ1Bi6rOQtTqptfN6MrH3a2rrWATqrg1Hmwm3aB3LDBJ8rPd3tJ7p3vWsT/1H7Au+P
-	 JJ1j3PTYt7Sew==
+	b=DID0rkaypJyTfnjgkLJXl3v/8m0CCcXvJMGKxTtNVEzvZv+ZB8pZzD/byGRaTzBg1
+	 GLdc0RoKWPzDBFgdf9+4W3GqvwIvXFxv49M4KzzOyoEe8+sanZ/VVcRb3H5Enk1VTc
+	 oBjYAgjRWHfjEdQozbXZSRurTwqGXRdXbO8w6O7HS7JjTJ+EsICpGRllI6QX5rhyr7
+	 WPz7xiB0vOZPDRZkoKbwIGw+2El3T+3t9uUXR20VX5HSk4NapIUeg3eFXvwIvf5D+y
+	 VbeH5wvHkA2/VU2pyjojz3qGBYdpXVUMmVFSvIf0U1rR/cb/z7IrdypN+5DjchuhFS
+	 1y8gkcvqVtYRA==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,67 +34,23 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20260309-clk-det-rate-fw-managed-v2-1-c48ef5a3100a@redhat.com>
-References: <20260309-clk-det-rate-fw-managed-v2-0-c48ef5a3100a@redhat.com> <20260309-clk-det-rate-fw-managed-v2-1-c48ef5a3100a@redhat.com>
-Subject: Re: [PATCH v2 01/12] clk: add new flag CLK_ROUNDING_NOOP
+In-Reply-To: <20260424-clk-axi-clk-versal-support-v1-1-ea070f83db7e@analog.com>
+References: <20260424-clk-axi-clk-versal-support-v1-1-ea070f83db7e@analog.com>
+Subject: Re: [PATCH RESEND] clk: clk-axi-clkgen: Add support versal timings
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Brian Masney <bmasney@redhat.com>, Sudeep Holla <sudeep.holla@kernel.org>, Abel Vesa <abelvesa@kernel.org>, Andrea della Porta <andrea.porta@suse.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, Bjorn Andersson <andersson@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Frank Li <Frank.Li@nxp.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Krzysztof Kozlowski <krzk@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, Sascha Hauer <s.hauer@pengutronix.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tudor Ambarus <tudor.ambarus@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, arm-scmi@vger.kernel.org, Chunyan Zhang <zhang.lyra@gmail.com>, Cristian Marussi <cristian.marussi@arm.com>, Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Peng Fan <peng.fan@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>
-To: Brian Masney <bmasney@redhat.com>, Michael Turquette <mturquette@baylibre.com>
-Date: Tue, 28 Apr 2026 19:15:36 -0700
-Message-ID: <177742893645.5403.3938693995862346406@localhost.localdomain>
+Cc: Michael Turquette <mturquette@baylibre.com>
+To: Nuno =?utf-8?q?S=C3=A1?= via B4 Relay <devnull+nuno.sa.analog.com@kernel.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, nuno.sa@analog.com
+Date: Tue, 28 Apr 2026 19:16:26 -0700
+Message-ID: <177742898605.5403.497070367355773947@localhost.localdomain>
 User-Agent: alot/0.12
 
-Quoting Brian Masney (2026-03-09 07:38:40)
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index fd418dc988b1c60c49e3ac9c0c44aa132dd5da28..1187e5b1dbc123d2d2c1f4369=
-0d7dcf75a7c4ac3 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1673,7 +1690,7 @@ EXPORT_SYMBOL_GPL(clk_hw_forward_rate_request);
-> =20
->  static bool clk_core_can_round(struct clk_core * const core)
->  {
-> -       return core->ops->determine_rate;
-> +       return core->ops->determine_rate || clk_is_rounding_noop(core);
->  }
-> =20
->  static int clk_core_round_rate_nolock(struct clk_core *core,
-> @@ -3528,6 +3545,7 @@ static const struct {
->         ENTRY(CLK_IS_CRITICAL),
->         ENTRY(CLK_OPS_PARENT_ENABLE),
->         ENTRY(CLK_DUTY_CYCLE_PARENT),
-> +       ENTRY(CLK_ROUNDING_NOOP),
->  #undef ENTRY
->  };
-> =20
-> @@ -3906,13 +3924,19 @@ static int __clk_core_init(struct clk_core *core)
-> =20
->         /* check that clk_ops are sane.  See Documentation/driver-api/clk=
-.rst */
->         if (core->ops->set_rate && !core->ops->determine_rate &&
-> -             core->ops->recalc_rate) {
-> +             core->ops->recalc_rate && !clk_is_rounding_noop(core)) {
->                 pr_err("%s: %s must implement .determine_rate in addition=
- to .recalc_rate\n",
->                        __func__, core->name);
->                 ret =3D -EINVAL;
->                 goto out;
->         }
-> =20
-> +       if (clk_is_rounding_noop(core) && core->ops->determine_rate) {
-> +               pr_err("%s: %s cannot implement both .determine_rate and =
-CLK_ROUNDING_NOOP\n",
-> +                      __func__, core->name);
-> +               goto out;
-> +       }
-> +
+Quoting Nuno S=C3=A1 via B4 Relay (2026-04-24 10:29:04)
+> From: Nuno S=C3=A1 <nuno.sa@analog.com>
+>=20
+> Add proper VCO and PFD limits for versal based platforms. For that we
+> need to add new Technology and Speed grade defines.
+>=20
+> Signed-off-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+> ---
 
-This hunk has me irked. I'd rather we export some function like
-clk_determine_rate_noop() that just returns 0 instead of adding another
-flag. The chance that someone can get it wrong goes down and you can
-naturally grep for any clks that are using determine_rate() without
-having to also include this flag in the grep. It makes it easier to
-reason about as well because we can have code that just checks for
-determine_rate presence instead of both (i.e. clk_core_can_round() isn't
-changed). Plus a clk_ops structure is more self-contained because it
-doesn't rely on the clk flags to go with it.
+Applied to clk-next
