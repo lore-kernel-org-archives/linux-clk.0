@@ -1,161 +1,124 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425FC276028
-	for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 14:16:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BDEC34E771;
+	Wed, 29 Apr 2026 14:32:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777472167; cv=none; b=m+G5l/oVSMj1o6lEvEvn0d65W3IFDxgNnvgj0Xxlghy6al7/HI/c2rfIuvYkHtf3BqYHZCmJXD13Os2iKeoDSJFhhXJY1wf2gOn8SlBCVdP8I8crS1T6ihcmT06xhOxYaADvY2nkY8NC8HWPODSN14EQQr4/MjMjOITGiBswl8w=
+	t=1777473169; cv=none; b=Wvi0+kLuH6fUSk3YNccCa7eVKCqU1B+jzahkY/lJ6a+jv9m+1nfcuq66DziuOBxPmEXfFQUPtjuwpq5weYwKevz8Lvu8/AkHNh1F7qUR6XhKZJ/3FnJXYc5FC0Y7BPl6OD1JNIslwpZ9QRAhc+Gm9vVKYk5LkXnzFNP0jHRKbS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777472167; c=relaxed/simple;
-	bh=p1psAY240TWjrNT/9/A2dEWv0oKUcybspgY7ZKfLuuc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hxi5WXT0RSyEBe1/uCsu328mRrRXEY/CDfXuQOmn0yWpLjlGynn4Kgt+AFG/uNRtdmJN7BLo5UTXdtBBqObr058uEIyxCmG5jlCJ2/kLYYZ4juFLL+2AMN6h9o1+pAXPfjCKw49BZpJmvroc0c73tXUR4zusH4wfniTm9dEeT7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lLmtZVB+; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ZivmOOOS; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1777473169; c=relaxed/simple;
+	bh=sp4jfoH91t8AdtH30k3paRNXb44IaG4v91cn80HfkUA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F3Mld7rEK95SVPCe+ABZlZPMh4gr3S4O2I5eznpUk6gdsti4a1IEpi272JrJ7SW6PfsW195qAO4oaGMMbweXV9HXcUASHYV2PRY2x63rklA8u9OG9YGYypZkt6w9uuLNtN3aDKbrEf87xHy/1Y3U2Qp4T2OwgCLXSJVp1XtNOCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IgkJcJD+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lLmtZVB+";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ZivmOOOS"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63T8qF2N1642726
-	for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 14:16:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	kMmu6Z1AbggkXe6d/8V5ix+QevuBAB+OmmG2XjWhkEc=; b=lLmtZVB+ljGYLIap
-	DzB9ITB3OjLrgvcLtIZ2KJF8hMFWYGod1IzWcVKu6JmZHXouJBcNCNfqYtL6r8vN
-	OlEgvocC7HV8nwTctrOFuwk0Q3JKfcKnetMvIO6nrM+u7QGT8eDgooBM+OyC56mO
-	JBDcXDXChsxCp7utqjXhHCli9VUCUHEGsAKr3g68MnUFxMG5TJmZg3AKiPLJGajd
-	3DaPm6pd3+i/JDb7HWhSxcVXGmuW0rF61uqnxT7vXJpz2dKNWxVYbQXaIkMwD8k7
-	MSpRxot9k4IouIUeR9NyM6N5bi153EtNwiG07juGc8mfCZxGnhkFiqMMW9sB9IKa
-	YPT8CA==
-Received: from mail-yx1-f69.google.com (mail-yx1-f69.google.com [74.125.224.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ducj81vp3-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 14:16:05 +0000 (GMT)
-Received: by mail-yx1-f69.google.com with SMTP id 956f58d0204a3-64956932a51so17680394d50.0
-        for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 07:16:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1777472165; x=1778076965; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kMmu6Z1AbggkXe6d/8V5ix+QevuBAB+OmmG2XjWhkEc=;
-        b=ZivmOOOSvFGIqvMXa88L6CPsebBjKmZ8Be323Z/RXayiuQIIGH0DaYqsATcZq6tYIp
-         Dq4k3BpILOeJSqdt4s+dY3fLrWzC49WvhGoQvRM7oDlaqbzR2DSjyhMS4XlKI4ZAByUd
-         uWQNW+c20KiyWt/Kd6OFj4UZ2D926fgNsVzBe7QW4uwKJOx0mT5dXJkaocZu4ll2PIxx
-         WVnmVs9kKI6v3axE9TnpcoaJzS18rLUjz4Ig2Ki6WW3+zw/PzZrwRaLHHvGshFGwmIWg
-         ZNr92PFWKOzOIvFO2fGuDZdbFU4OGQ9xQC4+/FaLxLnwfXqJsGTWo0tm9FJ1ZGvtdRrR
-         VuBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777472165; x=1778076965;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=kMmu6Z1AbggkXe6d/8V5ix+QevuBAB+OmmG2XjWhkEc=;
-        b=Z+QN4vQkm/3RXxRpW6y0qQoO5PekN/4r3TAVXDsFMV8FwbftKHpmkRwH16S9AdFiOK
-         21OJqXErYQ9v59uRJD7FJNkLFHzgeKcjXcup/hKPAy5i9rDBLF6UE7JEAx3ao9V2fm6f
-         0NzBF5mCqmUi29b9iTsgtC+rlU92cY3UitxkDUsHplBebJqpzLJXwKjbE5b6A7q7vEWE
-         8oX+0fAxDxPn1i+IVVl7Y1weIfDQlUNHl61/WtocLKqkI8357xDn2zRz5KenlR7twLdt
-         nSPh2uS+sNAv+0gM1kJhR1Ft3DFrMa/Q9Hz4WeE3anNK2oa1YDcV12VY5gqd5EZ5YbwV
-         1kgA==
-X-Forwarded-Encrypted: i=1; AFNElJ9V66GdpPdpMCEELo+v4ZGnnKxD/EYCilRc1M4vPiWUORuUKRpaexgtJbRF22iHYfmdbN4hQWsTczI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxo40pXHjTKek4vu62efFQ+OEn5A2urmrIbqh5pyvrV82dfe4cx
-	LS9mOGxKf6aQYfIokS/3j/REhLn79BRLuFSV7pzs9BTpngo8hrwG29QokHYM2v5VBacr2QDe9l3
-	Y2MkBP5DLnW7MCpP1tbD//kP+NL5NNI1QIE8C1P/n3gjfK32O21ayvmza6gFR+jnQvMfJO+U=
-X-Gm-Gg: AeBDieuJIwCBdcPidGLkBaNBL4XhkAF4ZqVs82Qskm9racQpv90vboZcHxDcIane0BI
-	VEwGaOH7CUSbMejM0qz/NsWMhvjNP8XrHAGJcFJ/uybmZgSfnmgR+1BekFDEZoGh7Eo/jCklVxs
-	KQByTc2b/OKmdAgvJeHb1/ryT0hsWIX8Fw+b/HgC5mEIktSw+nYG/UXCob7wyBk7+KdN3V33FCG
-	tex66mkiOqCpJFi+X6quzWIPNm85B+P8+jU3dokaJiTJ3/8oiPFrqcVUPbzebI8TlJ6zpZ6wSAI
-	37Q5eIPKXNSbdfIytzE3k+Jcinl1PCwmdlbn6p7ZzMrdkj+zLsxMucdJdEgEW691gjZPrzjWvro
-	OD2WlKKWB1AMOQaEVGkvhdydkPupHh4h30SVr4mvSYer6pHFMgF1Svci7+joxkvs=
-X-Received: by 2002:a05:690e:438b:b0:651:c6e0:6bdb with SMTP id 956f58d0204a3-65bfb5f9cddmr3360828d50.18.1777472164408;
-        Wed, 29 Apr 2026 07:16:04 -0700 (PDT)
-X-Received: by 2002:a05:690e:438b:b0:651:c6e0:6bdb with SMTP id 956f58d0204a3-65bfb5f9cddmr3360759d50.18.1777472163749;
-        Wed, 29 Apr 2026 07:16:03 -0700 (PDT)
-Received: from hu-jkona-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-65bff2c2eccsm1379533d50.0.2026.04.29.07.15.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Apr 2026 07:16:03 -0700 (PDT)
-From: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
-Date: Wed, 29 Apr 2026 19:44:59 +0530
-Subject: [PATCH v2 4/4] arm64: defconfig: Enable CAMCC driver on Qualcomm
- Glymur SoC
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IgkJcJD+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9841C19425;
+	Wed, 29 Apr 2026 14:32:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1777473169;
+	bh=sp4jfoH91t8AdtH30k3paRNXb44IaG4v91cn80HfkUA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IgkJcJD+y5lF0/f8/luIsr5eBkjf7OZ26ecVqUd+K9YC6LM9sAcdHRzkJhQfNkCdq
+	 QMDOkPijxHY9REhvrR6ru09gulNkNi/SqH1S8Eki6nc8kdq44WFp7e4JouqkVfrtW3
+	 DDvFoMGjgMFQv51SxuyJfkEFA1sLX1ZKSo1SFBhVH3RcJlBp+NIQN1mjR/AdgEUTnI
+	 C6vY4ZKL8cQcBPFBE/oaKNZGwthpKH+H4dtQum19WRQ+K6RvVLtUm/vcb4PkFA310F
+	 x1LToHsr0u7p/OHKoz1ECS3ptLPoIEjth+x7BZf2uFiY341vhIVYMHxq1e/5N3uKqO
+	 +aSB0g9CSlPqw==
+Message-ID: <6f76dd8a-2007-4012-980f-268076fff5ad@kernel.org>
+Date: Wed, 29 Apr 2026 16:32:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260429-glymur_camcc-v2-4-0c3fd1977869@oss.qualcomm.com>
-References: <20260429-glymur_camcc-v2-0-0c3fd1977869@oss.qualcomm.com>
-In-Reply-To: <20260429-glymur_camcc-v2-0-0c3fd1977869@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] arm64: defconfig: Enable Qualcomm Shikra SoC Global
+ clock controller
+To: Imran Shaik <imran.shaik@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Richard Cochran <richardcochran@gmail.com>
 Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-        Imran Shaik <imran.shaik@oss.qualcomm.com>,
-        Taniya Das <taniya.das@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Proofpoint-ORIG-GUID: jIyua5Edp4c_gpvWmVxVSTWYwZl9posr
-X-Authority-Analysis: v=2.4 cv=RI6D2Yi+ c=1 sm=1 tr=0 ts=69f212a5 cx=c_pps
- a=J+5FMm3BkXb42VdG8aMU9w==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=A5OVakUREuEA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22
- a=EUspDBNiAAAA:8 a=2tOI7iOMnFxh-ToW9usA:9 a=QEXdDO2ut3YA:10
- a=Epx66wHExT0cjJnnR-oj:22
-X-Proofpoint-GUID: jIyua5Edp4c_gpvWmVxVSTWYwZl9posr
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDI5MDE0NSBTYWx0ZWRfX6Lw8dieVsCAW
- x0QnjYQiK+ypZV6UuZLUTuce/68bfGrIBm/gjKrxRrUrkYUrnaJ72ql3hZKx5XJRKlsTTf5HVz3
- poSNHCOynoUzUJfyM+m+9rjTIlTAadcEK3x0kmdUa4HkDT2Z6iNsUSLX2/O5LzZ0qVvIV+P62XE
- 9rHuEZaJKoMAgk922SOBV4qeEe6U0sPRiMeV0BW4biCJmw2R6PI/JUevQW/1xyYgXX4QTwVyYs1
- A4DwK3XeEiKzrPBmLmL7Kis251JvUNm07MxYD39gaKbU1BsHtreNG7TbJkt3FP7y2Qc4PJ2s9ad
- hNwfi9O5d/wb5Vv6+ddMeIWuMXOMIrv0POCy5d0WwGZslPfcBTJsIy20yz3KdUDclTMwKdg5sjw
- nKrR/hVCKv4uzCmMWHMR8Y3f0ZmxzAn4HBQQwL0IKVCyc3z6q2qHhtH/D2Pt+tEUSaaZISIIZc/
- 7xRyePpUBc+M44NwU4g==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-04-28_05,2026-04-28_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 priorityscore=1501 malwarescore=0 suspectscore=0
- lowpriorityscore=0 adultscore=0 clxscore=1015 impostorscore=0 bulkscore=0
- spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2604200000
- definitions=main-2604290145
+ Taniya Das <taniya.das@oss.qualcomm.com>,
+ Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org
+References: <20260429-shikra-gcc-rpmcc-clks-v1-0-c3cd77558b7a@oss.qualcomm.com>
+ <20260429-shikra-gcc-rpmcc-clks-v1-5-c3cd77558b7a@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20260429-shikra-gcc-rpmcc-clks-v1-5-c3cd77558b7a@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Enable camera clock controller driver for camera functionality on
-Qualcomm Glymur-CRD and similar other platforms with Glymur SoC.
+On 29/04/2026 12:51, Imran Shaik wrote:
+> Enable the Global clock controller driver on Qualcomm Shikra EVK board.
+> 
+> Signed-off-by: Imran Shaik <imran.shaik@oss.qualcomm.com>
+> ---
+>  arch/arm64/configs/defconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index dd1ac01ee29bf631d517c38486f6896ffd82dcc9..13e04080b37160129ccd47b0148a64277b8e0e4c 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -1461,6 +1461,7 @@ CONFIG_CLK_IMX8QXP=y
+>  CONFIG_CLK_IMX8ULP=y
+>  CONFIG_CLK_IMX93=y
+>  CONFIG_CLK_IMX95_BLK_CTL=y
+> +CONFIG_CLK_SHIKRA_GCC=y
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Signed-off-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Beside some really odd order, this patch should not be needed.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index e44e83bc57812aaed21bff1b12d36ae4a373ce11..f5aa905a6feb48e7d65dbf076f778bcea54aef02 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1478,6 +1478,7 @@ CONFIG_COMMON_CLK_QCOM=y
- CONFIG_CLK_ELIZA_DISPCC=m
- CONFIG_CLK_ELIZA_GCC=y
- CONFIG_CLK_ELIZA_TCSRCC=m
-+CONFIG_CLK_GLYMUR_CAMCC=m
- CONFIG_CLK_GLYMUR_DISPCC=m
- CONFIG_CLK_GLYMUR_GCC=y
- CONFIG_CLK_GLYMUR_TCSRCC=m
-
--- 
-2.34.1
-
+Best regards,
+Krzysztof
