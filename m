@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5679237D120;
-	Wed, 29 Apr 2026 03:46:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C373890F0;
+	Wed, 29 Apr 2026 03:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777434402; cv=none; b=Tfq9HQCz+NCRV8aXXy4epvQCFyqso2Ok36z+yqEPi5EkQZAyD8dVbGt0NpuDRQ29HmcSw5EtZpGiPkoxKjgPQ2+uNw1kz2hplg8ZZ3jvH3YMq3TgcVQD2qvttme3Q1UV/GjshCxk10KoWXrRiU4WHX1WOmVDOgShNjkWxYfoLSw=
+	t=1777434404; cv=none; b=fmNd59sE0pET3mS4TR4RknOxfq3zCQcLQ1iBnsE259M+yTEe1LwAvk6zZxS23duGBCcWDsMBDU1M8BJ9upKeAGK28M/+HAG6KlRRbp2jacXg1Tfd5N2+GUHfwq2/bXYaLgDPW+ojiP/mm/tMlcOsddkIQSRdcDSX99xX3MH1pkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777434402; c=relaxed/simple;
-	bh=IdIfEWX7olz0iURPKOWIl8AkzSfMwzCnL9O27sqheew=;
+	s=arc-20240116; t=1777434404; c=relaxed/simple;
+	bh=gd6WH5Z2Y9pPHA5ZlnmmPDlhqK92DmbEQgMULDuoV3Y=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=DKRV8wyeemxM5EQ2KmtuGlrW3X1Gd2LPhxW4pTmfJYwps5BRUhcMUmfDVv1jbNRWgLlnaqGicNN3yfxnns+h/DUN1kaf+LfvsaVTNCwPvwHHHpnQiM4gCvK8ByaM305eVM3srbuiJpaTqrKGnxpv3P0HFLr5s0Bi6HwLuomUqwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U8Eotjvg; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=Jwer5DochsSTwJ/hRtP3W9OEZlt7RYDvTbsjxoSWBG8sxaAEiCqHcNzz+2pCxIHvu/oLVG0cVJccKKK+gv4S3eSWwdndW95mI7Vqf4QypOzjRtAdwMDDJBKBBXL5fnI7AZ7UP3tP5fTB1PeGzK2igfZVPbo5YNdW46IMtYF/fbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NfcnoBJk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U8Eotjvg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 246A7C19425;
-	Wed, 29 Apr 2026 03:46:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NfcnoBJk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A4E3C19425;
+	Wed, 29 Apr 2026 03:46:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777434402;
-	bh=IdIfEWX7olz0iURPKOWIl8AkzSfMwzCnL9O27sqheew=;
+	s=k20201202; t=1777434404;
+	bh=gd6WH5Z2Y9pPHA5ZlnmmPDlhqK92DmbEQgMULDuoV3Y=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=U8EotjvgksxUWKR1QYatGEcKuoigOQX7KNn2Fnd7V+M+UL/g9OqoKgCFZD4mlBPWH
-	 GOvtPEVQR9ePk4EH1FgJI6dPPc/CQpA1z1PuvFjxF3k7ADaeebyDDgPLPyXdkk2yG1
-	 9weVVekbjvfKJGMUA7A7nRXHCCW5N5qhIYTg5xT4m7CTDJb0lUO9w2vTQcnGEr+HxA
-	 L0oyamiGiWikQVrFwGMQR6GCBTcV/FNzavXgRoaQMyJJHRi28+qs32lhxAiozUCLdR
-	 LmUwq8FDBmeYOy50z8AS6CQzWflirDk1+Ib6TVeyV3dDNNtYmNgV7M0vl1/ZpUdR3Y
-	 m8QSAyMYbN1ww==
+	b=NfcnoBJkFJVEe4KUMKZ4qVKNI4tK5IzsIxGn4AONb6zTrrrEB5dWbwlzw7iiCV0NJ
+	 0KYACEtfFUdrzdl8fkRwUwONmNbHocM2p9NJGWAui8imgcJnmFgjhsAVY/5i+gncNM
+	 GGFieiLoffbsLqrPx1PH6mlZStqqE5ywAjOth7/pDKk5XOahRRA/qdTAZdvBB6ZmI3
+	 Q0JiAlSZ58QfSY3QjKt7bR3eNcasxQL4DB8B//xjYrLUeYqZDhYI1ellAFO6cw1bLq
+	 hgCQ7JW8kcdL2WkdoDT+R6HTgYcUBYCGCfpSzBGu6xM0/Jx161tM94/LhTeu+Hm3Eq
+	 v5HET6pOLKoIw==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,22 +34,21 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20260326052847.335089-1-rosenp@gmail.com>
-References: <20260326052847.335089-1-rosenp@gmail.com>
-Subject: Re: [PATCH] clk: clk-max77686: kzalloc + kcalloc to kzalloc
+In-Reply-To: <20260326045324.240150-1-rosenp@gmail.com>
+References: <20260326045324.240150-1-rosenp@gmail.com>
+Subject: Re: [PATCH] clk: bcm: iproc-asiu: simplify allocation
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Kees Cook <kees@kernel.org>, Gustavo A. R. Silva <gustavoars@kernel.org>, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 To: Rosen Penev <rosenp@gmail.com>, linux-clk@vger.kernel.org
-Date: Tue, 28 Apr 2026 18:44:43 -0700
-Message-ID: <177742708384.5403.17744131008877382744@localhost.localdomain>
+Date: Tue, 28 Apr 2026 18:45:36 -0700
+Message-ID: <177742713688.5403.2563831165371967368@localhost.localdomain>
 User-Agent: alot/0.12
 
-Quoting Rosen Penev (2026-03-25 22:28:47)
-> Simplify allocation by using a flexible array member to combine
-> allocations. Use struct_size to calculate size properly.
+Quoting Rosen Penev (2026-03-25 21:53:24)
+> Use kzalloc_flex and a flexible array member to combine allocations
 >=20
-> Use __counted_by to get extra runtime analysis. Assign counting variable
-> right after allocation as required by __counted_by.
+> While at it, take clk_data out of the struct and move it into probe.
+> It's not used anywhere else.
 >=20
 > Signed-off-by: Rosen Penev <rosenp@gmail.com>
 > ---
