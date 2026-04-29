@@ -1,147 +1,239 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18459381AED
-	for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 17:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D221841323A
+	for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 17:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777482171; cv=none; b=dYTYdsKY9QEMzd1Al8NlOJTSAB3wsbG9FJEphflrYolR3dukFjIOlyJ05HnPCGNMKrdKTjNIiYS8rHupG+tSiLYC52C8n9RINXPBppnS5Dk4JCDcs4Pp9yQ7x/wL8INVAt8EZWHMxfWVwVwKC00ytviYiF7tWGspZjY46uvuR3I=
+	t=1777482550; cv=none; b=CCTeBTNV4VYLNQu3b52rmqad4QfofFqF/wSsVZwN317cbYbjKZG/2ir7Q7o6QeVj/b0uhYTqk2+1ORNDgwdKWJqyiX26/4JttAYS5efuh8kbUTsUIV15ZK20jE36JUxLvL+48lnEYW8YdjtxFUx0ZM8/tF/Ci9XL8NB1ZeVJPyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777482171; c=relaxed/simple;
-	bh=oP0CV+puQtnqAudPjWQ6eG2kcGlvGEf4j8WHFrP4gG4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YgpxMTslAKRu+EsIUdQRdKTqn3GCqO9oH4BDkKCYehA3K0nOmyudbWWNuwTgrmQxv/elP19MicU5j9O+86BzUMbEwxRkA969Q0tD8QuUPkk/Yjy0cFzmyZ7ynu+aRavVjH0y7/e/WtXBOI3MP99nGZ1lGcO8JpLGSj4b+bYIIZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M8ZDn9J8; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1777482550; c=relaxed/simple;
+	bh=3ukGjQkgcOyujuxOwfozhWdE/4CyKPr9Iuvtl55GFSA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EeJmhSkJmmVz6pUuehpsS8MjTE7zN2O/DM6L/MmLcBjof1qy+zDLtGkMYt8lDOY+CAyP1VLrfeSTUprkIGvAU0EiKgr7LNAfvhfP4d5JYsBIf3loBJnE9npQR/BdtYx7lvyTGXap7d53NYxXStluwJKZ1ho9bRHgDF8HAORo1QQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NEY9tahK; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=kk63e0g7; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M8ZDn9J8"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-488b0046078so115811965e9.1
-        for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 10:02:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NEY9tahK";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="kk63e0g7"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63TFarcP901600
+	for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 17:09:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=IQVFeLQXqpsYVFcqmblWt7Agfv/TcKUA8DG
+	WTFXWnf0=; b=NEY9tahKmvNgsybfATUZaOkNEhC7fOWNN1qSBmagwuLfbtIBL8Z
+	f6sG9upgftfp6fHjQcx8Ng/PfqjmhGGRFlflgNoJpRysLP9kwW9CQgvnZuIz+blG
+	fldmmc9lCdnQXCHe24E4mbrQ/4kJiM6Y07wf7xzA3Sa56fhI4EZsSKGkyth6umIT
+	HjFPPb5t+x7DKmXkvjN14vpi69U/oy28p9QDVAGOTtXAJJYRvTa1OlJvBk4j1mHE
+	cGjVLqcU5sRZUEjQOTPQ8Et+wBFKT3ZU0Qx+/e1sAD6CO2SKtiMZJFSSYTuPNdxO
+	8b5doezvob5U4VpeV+15saSETDNd+Q5npVw==
+Received: from mail-vs1-f70.google.com (mail-vs1-f70.google.com [209.85.217.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4dubq9jt2h-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 17:09:08 +0000 (GMT)
+Received: by mail-vs1-f70.google.com with SMTP id ada2fe7eead31-605664a1046so10991137.0
+        for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 10:09:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1777482168; x=1778086968; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0DSk2ikmD/TKHxP326DjLJj6TQaKaQdWjt46lW8P0oM=;
-        b=M8ZDn9J8Msr3NDylCnVIxwOwQz08PjGveWyRb7/XjqkWB5UDx082NPsg34OU9g6aPJ
-         TqcQJpVTaakQuUf9Y2g6yj5Isf7op9kV6MbFG6wACZofFn8TMj35e5KyPoSFl5pwuuQH
-         6sBItpme8djYXD0GoY5kYPmKOhFpbKCPS4EJ17m5wVjlZBSMk+CDzN8c5Zr0jz5tJdkS
-         u9taszG5vc0LCQ2EzpSe3MoyXYj0Uv4DSNEEmOVtt5oJTf1jy6mfnPWkvb/UkjmGs/D1
-         NN3BAwVUlMXWaxesZAR6VG/PGwIDyqYgC2PevACW14bE7u61kuE0DbDN5FruguT3Y4Zz
-         Mqjg==
+        d=oss.qualcomm.com; s=google; t=1777482547; x=1778087347; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IQVFeLQXqpsYVFcqmblWt7Agfv/TcKUA8DGWTFXWnf0=;
+        b=kk63e0g7SOoKNReW4Yhz6W65udjO8M6t5mY7KUcyD/VmYioFdLB98eX1Wv06/QFOdK
+         M126HfMbUhS2InaOT0LcAwclfgxo2jPivycSq/WVmg7rDLUJHmFcNUv1k1e6gDFewFrd
+         GjiMZKSJFDwMCR4dohhsLfy7xHc2E3OKyQ8kazqXl08iAyQsDkEeEgvD1Xlq8AGmBlRL
+         C5GBTmSD7KKfB3LQE8DsVr+rBxhx3KbTZLh+055wlIVNCkVSHxRtDyvNUHeCFXCbilU1
+         LrTeuAl3BeiHMRz6vR50J4CB8XoOX3y3Jfq7H5ohbvVdmHzQeNv8prVnz9Q5/7GfdQ3m
+         HHpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777482168; x=1778086968;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0DSk2ikmD/TKHxP326DjLJj6TQaKaQdWjt46lW8P0oM=;
-        b=a7T7fxSzBypRKik+3jQidULKfpEEmClX3NYyLOhFTTYN5oRncKPJ6wwYu4pBENzA2B
-         udlCyyWdnh3ook+4AMBxopJcL9RRiOG0+LrLucFWe2PMMyv9DYZ6M0HN2mmCVMrRFLb0
-         qWIMQDvSiNA3yS3FoE5lgjmy8NLCY2Sla1Hqb4i1qXocpdoF2WpcP+PAV/0Lz8QyzIjH
-         zONbiJ/KLxCJLeFsWhhaE54HuFmwl7NxFm8hwJFHPhY6oUdXAxLRCyDwqQEgjORhP0Za
-         GRwB6nRAIsW0wLfk90mb2gs/mC751cpyVFXPoAoiRKvjsL450sAtWJKMrylSPNsEGt3R
-         XtlA==
-X-Forwarded-Encrypted: i=1; AFNElJ/ghlhRDxBvkSI/uQXM4OAKP0ZHWpkFZoT+OMGe/B9ugVLOmxIXk9rwE/5rFuISQhRcOzpO8mcEs9A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyIBPczi4LyaSPB2p73iqNNm4mO4yrnbCZGECkkSj3cIsNNS5Z
-	l+C+ydcezMvOJ/9V+GYKD+gNMj5z63oGmqw8TG7hiHdk+BGuCy3oCqk2qlGM4dyqiuw=
-X-Gm-Gg: AeBDiesdzx82NQ8gksp8gxKFgrEmhgzMmlgD1GphBqw28lNCmMP60FxkJJ64W5BeB+8
-	gkHIqfZBNEoH5K2qyDzvrb1krgmAiPersdt9NFAKWeTdFxo1s3c4tZwgh1MoWxq1aKoKyuA/3p4
-	p+aSOMFYTjMuHYFuJcJMjdk2+2N1W2HiiKvP6cg1LY0wtW7CuwlkmbDLpWGL0a1I7PEVRZA9E3M
-	KKgzyJYA4CVHbBCkCNCS7qmfTg8rS+/q3M5R3aoZU1ZVDWVMpiuOGNKJPy5DSZRCzB7yw8o1t0C
-	94gB80ocO4E32Jt4ss5I3RyfrBF/pKF8rFRBRdd+WeKPXbcItCivX2HWBBUmEGTfE+ZnZbFKe8T
-	HxbaAkoH2ViVcJJliblh29viy1DdBsDYlqcnmmc6w7dlFlXYntPIe0w0tdLzgxnj0tWmJArPk1i
-	8ABLcqgZpOzyrFMwPlWMIrtNvd6sLKNCEIRtL+9KyTk48=
-X-Received: by 2002:a05:600c:4f0c:b0:489:1c2d:211e with SMTP id 5b1f17b1804b1-48a77ae5386mr141380935e9.5.1777482168330;
-        Wed, 29 Apr 2026 10:02:48 -0700 (PDT)
-Received: from [10.11.12.108] ([79.115.63.228])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-447b3d481fdsm7255405f8f.8.2026.04.29.10.02.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Apr 2026 10:02:47 -0700 (PDT)
-Message-ID: <83c64dc4-6dd8-4edb-8acf-3c731048d73d@linaro.org>
-Date: Wed, 29 Apr 2026 20:02:44 +0300
+        d=1e100.net; s=20251104; t=1777482547; x=1778087347;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IQVFeLQXqpsYVFcqmblWt7Agfv/TcKUA8DGWTFXWnf0=;
+        b=QDvpg7IBNz9lkfxtxICkdcEK6x/lvrX32BIZ8AcFF7POym1Urf9AhS8HIh2WhLzgvc
+         +Wf7QloPIOaBhUH405CVCuk6qIJP0aa55LWRRIT9OvzVUS9swNHHQeTvGX62JjZM/Cv3
+         Ny8zNTi2CMgtkMpgL37SCu1Pqi/lWa8K1enf4zwcMXUMGM4JTCw7gN2AmyzgNruIkj33
+         VUr0x6ZbdRprrK9WCzNU/sbVgq3QfD7WOCZC/VoB9IeU/QX5ZXz85wxfn+acosri/jwb
+         ZU03ysJqh7iHlt/feSarK9dlbdR8ue83MeKnRD1xZOs/ovEZMdpvTS6/bd8A3cYysAQ4
+         cuNA==
+X-Forwarded-Encrypted: i=1; AFNElJ/K4tIVs2llvEMPgRrOwPpDR0mbJN9eA/bBTNUNvmpR+8oLxZvpJdi6v0kc25Hpjsl1U36I8+hY/JE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJu2zuccklB4SakqEvcF4awVpTff+cdjDBwB2MOGvD+8HG0O14
+	wUsymhyZR9ZUgxNpaXvwn5XWp1gx/3Yu2WcYtCuwWc5pyiuwucyhoP6LObOBtwnpGH+01qCBg0U
+	loqI9ofUrHYfeXIj0kMvjrNRorNPxH++saaRfayqpUTvswLg2EefFe7qCMXPoMkE=
+X-Gm-Gg: AeBDieugRnnHSeioLVE4XrOniKvOQvn24doWWcSAMQw0gb4Na2m40XWue2YlODDWTPe
+	NJBXUPvHlfBG+lSI43bfjJJKM6+obZq7GxnwL1DPJekfk2tHmyEJwEkoHjlp2+hvHgnb6pG2pN6
+	4zLNaQnwU7Zvl/E0U6V1nSQH9NCpZzTsMpccgbTPSNflf7X2YI4SFfz7y41wiFnK/eUc5ob23Pj
+	OxsSN2sAOyqayO9lw2fTB7i2F+aB+7Kn5rQdFuRa0fj/4ApOjNbRdRFekkbNYBga2/wmelkHRp1
+	ubqd2FGoYCqg8SyiFRI+rVl7MHO+MNm/MF9lYjQiRv21gU8KWuUnujsvSC8YsiIh/DQv5frBfi9
+	jD02ENfSFyQTjquLlpc/1g8vGdq92Ax4Gs04WH0NL4WDTO5Q=
+X-Received: by 2002:a05:6122:3906:b0:56f:2aaa:450c with SMTP id 71dfb90a1353d-573a5518300mr5157024e0c.1.1777482546981;
+        Wed, 29 Apr 2026 10:09:06 -0700 (PDT)
+X-Received: by 2002:a05:6122:3906:b0:56f:2aaa:450c with SMTP id 71dfb90a1353d-573a5518300mr5156981e0c.1.1777482546589;
+        Wed, 29 Apr 2026 10:09:06 -0700 (PDT)
+Received: from quoll ([178.197.219.94])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a7c2e8a6csm34918405e9.5.2026.04.29.10.09.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Apr 2026 10:09:05 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Subject: [PATCH v2] clk: qcom: Constify qcom_cc_driver_data and list of critical CBCR registers
+Date: Wed, 29 Apr 2026 19:09:00 +0200
+Message-ID: <20260429170859.247165-2-krzysztof.kozlowski@oss.qualcomm.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 02/11] firmware: samsung: acpm: Consolidate transfer
- initialization helper
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Kees Cook <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Daniel Lezcano <daniel.lezcano@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Lee Jones <lee@kernel.org>
-Cc: willmcvicker@google.com, jyescas@google.com, shin.son@samsung.com,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20260423-acpm-tmu-v4-0-8b59f8548634@linaro.org>
- <20260423-acpm-tmu-v4-2-8b59f8548634@linaro.org>
- <a63d4dc7-b01a-4da2-ac1f-6679c9030db6@kernel.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <a63d4dc7-b01a-4da2-ac1f-6679c9030db6@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4182; i=krzysztof.kozlowski@oss.qualcomm.com;
+ h=from:subject; bh=3ukGjQkgcOyujuxOwfozhWdE/4CyKPr9Iuvtl55GFSA=;
+ b=kA0DAAoBwTdm5oaLg9cByyZiAGnyOyuhJa45RXpLwBFAxFyXQGDPy/qEtUf7O9WX16absaTHh
+ okCMwQAAQoAHRYhBN3SYig9ERsjO264qME3ZuaGi4PXBQJp8jsrAAoJEME3ZuaGi4PXGz4P/iBB
+ uJxcX03jzpzBvBiMpskZ7/4uSVzThalMfzCYha3IGAMssXDHtvwpeNcA7/u+AxHDPuHxrxvn/2u
+ MB3xMCjIJB2Ot6fCraC0N4b0TkxzJk0fEwY1ra1itgZRW8IdDlYIzxeu8ndLrRuDInrGa4YcH7K
+ dC2nNi6c/HDYlEH46YSlxDd8ro78vOMz+itRiDqQDp5aCELnFm7jscABFpeyyyOxFqHadUkVvyJ
+ jC0xcmnCPfUMCPnB0AaUE7XmXpi2Bia/+W1BooHr7f8Vi/feY1uBq8XgeoawyP287cA3Ex3Oh7F
+ GIJK43s5dyMm7z6V0uARWyn3OTSEBA4F4gdzR+Y5j6Dbw0QWN4f/73AVO0V1PrXVJmRizdJ1oeS
+ RRQ1O10WRZid5kQbepMf/q9iKSsTd7prlf1ApQ5clo0nic5AREwk/F0E5iEERDEwRWusXFrMTha
+ xnjQTBeW/0PF0QMmMeRxiNmpErewnq31xDgEHqvdwXRD1J8PEXnPFQUdxKZ+PqQjKGm6YnpvxOU
+ 5yuJCUjtKLhRRjyJ4WLeFwgMHLKJdNmaMAbB2U+90Gc+DlgKRaNVAIJyNL59XxqbLyefQucIsix
+ OQGziwVt71Fpu/OOvtJxIM0ZT+HZAps+IAEhAF5w9BNTN9LUQj2Bqnf10lWufmYdyOae69pAdPS HDiBN
+X-Developer-Key: i=krzysztof.kozlowski@oss.qualcomm.com; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: zQxEve5h9jKkurySFP3oLWSvZOpaOkm3
+X-Proofpoint-ORIG-GUID: zQxEve5h9jKkurySFP3oLWSvZOpaOkm3
+X-Authority-Analysis: v=2.4 cv=Wak8rUhX c=1 sm=1 tr=0 ts=69f23b34 cx=c_pps
+ a=N1BjEkVkxJi3uNfLdpvX3g==:117 a=gOEeR9iKwsj33Yj5oN/cWg==:17
+ a=A5OVakUREuEA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22 a=EUspDBNiAAAA:8
+ a=VRa37pfzgGlg-717BZ8A:9 a=crWF4MFLhNY0qMRaF8an:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDI5MDE3MiBTYWx0ZWRfX87pjS7pYGZR9
+ ij2lHNREq1Ka7HRU/CzZh+vFLXCCW9fDmck4nZtnATsiFyDAioDL6OmyZSJlHlGdV07eEcsRh55
+ Yui2MSTtDkb2aT0X3tvEtQH/rVSOZTy3SL3Oc9DnXeBpIW+o0aAk0rkNjIuvyYuI51elQh1z+br
+ 0TK0IPlWKI45QFfrPB2cJ87Ss5u5Q0kYG2KlvBMwfE9DFFzFlm+cRaKF+JkYdNC8o075LF73n1q
+ 0aPg7d9XKzKep+T8jiWadduCafeK9IlFCYUIYq+Yswj/jNVvP9ei3CnvcWM/mBKaslcoUY3L5Mk
+ bGnbcD2hHDAFYfso5fgUHPZiiba9I9YisMNtuykjz4YImUnHj0H2QN1b4s1WIvVlLJOZjU2PkkX
+ fHDbtQVNDS/n0zKp5o1wHZoBKf0E2hjzuFpXgzmxr1MLIkl7FBzCK+Ig6VUgpquCz4yw9Wm9TUr
+ wRulyT+uXqcq5X+CYtA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-04-29_01,2026-04-28_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 malwarescore=0 suspectscore=0 spamscore=0 clxscore=1015
+ bulkscore=0 impostorscore=0 adultscore=0 phishscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2604200000 definitions=main-2604290172
 
+The static 'struct qcom_cc_driver_data' and array 'xxx_critical_cbcrs'
+are already treated by common.c code as pointers to const, so constify
+few remaining pieces.
 
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-On 4/28/26 12:25 PM, Krzysztof Kozlowski wrote:
-> On 23/04/2026 17:22, Tudor Ambarus wrote:
->>  	acpm_dvfs_init_get_rate_cmd(cmd, clk_id);
->> -	acpm_dvfs_set_xfer(&xfer, cmd, ARRAY_SIZE(cmd), acpm_chan_id, true);
->> +	acpm_set_xfer(&xfer, cmd, ARRAY_SIZE(cmd), acpm_chan_id, true);
->>  
->>  	ret = acpm_do_xfer(handle, &xfer);
->>  	if (ret)
->> diff --git a/drivers/firmware/samsung/exynos-acpm-pmic.c b/drivers/firmware/samsung/exynos-acpm-pmic.c
->> index 0c50993cc9a8..f032f2c69685 100644
->> --- a/drivers/firmware/samsung/exynos-acpm-pmic.c
->> +++ b/drivers/firmware/samsung/exynos-acpm-pmic.c
->> @@ -58,16 +58,6 @@ static inline u32 acpm_pmic_get_bulk(u32 data, unsigned int i)
->>  	return (data >> (ACPM_PMIC_BULK_SHIFT * i)) & ACPM_PMIC_BULK_MASK;
->>  }
->>  
->> -static void acpm_pmic_set_xfer(struct acpm_xfer *xfer, u32 *cmd, size_t cmdlen,
->> -			       unsigned int acpm_chan_id)
->> -{
->> -	xfer->txd = cmd;
->> -	xfer->rxd = cmd;
->> -	xfer->txcnt = cmdlen;
->> -	xfer->rxcnt = cmdlen;
->> -	xfer->acpm_chan_id = acpm_chan_id;
-> 
-> The code is not equivalent. RX bits were always cleared. This should be
-> explained in the commit msg which would also provide a proof that you
-> actually analyzed if it has any impact.
-> 
-Indeed, my commit message is inaccurate because I claimed the
-acpm_pmic/dvfs_set_xfer() were identical.
+---
 
-There's no change in functionality: in the original
-`acpm_pmic_set_xfer()`, the RX parameters were unconditionally assigned
-(`xfer->rxd = cmd;` and `xfer->rxcnt = cmdlen;`). In this patch, all the
-updated PMIC call sites now pass `true` for the `response` argument.
-This ensures the unified helper takes the `if (response)` branch, which
-performs those exact same assignments, preserving the original PMIC
-behavior.
+Changes in v2:
+1. Constify also nw_gcc_nord_critical_cbcrs (Sashiko)
+2. Add rb tag
+---
+ drivers/clk/qcom/gcc-nord.c     | 2 +-
+ drivers/clk/qcom/gpucc-sm8750.c | 4 ++--
+ drivers/clk/qcom/negcc-nord.c   | 2 +-
+ drivers/clk/qcom/nwgcc-nord.c   | 4 ++--
+ drivers/clk/qcom/segcc-nord.c   | 2 +-
+ 5 files changed, 7 insertions(+), 7 deletions(-)
 
-Will update the commit message. And revisit the other patches when
-splitting the firmware patches into their own set.
+diff --git a/drivers/clk/qcom/gcc-nord.c b/drivers/clk/qcom/gcc-nord.c
+index 3098d8fac0fb..8a6e429f2640 100644
+--- a/drivers/clk/qcom/gcc-nord.c
++++ b/drivers/clk/qcom/gcc-nord.c
+@@ -1850,7 +1850,7 @@ static const struct regmap_config gcc_nord_regmap_config = {
+ 	.fast_io = true,
+ };
+ 
+-static struct qcom_cc_driver_data gcc_nord_driver_data = {
++static const struct qcom_cc_driver_data gcc_nord_driver_data = {
+ 	.dfs_rcgs = gcc_nord_dfs_clocks,
+ 	.num_dfs_rcgs = ARRAY_SIZE(gcc_nord_dfs_clocks),
+ };
+diff --git a/drivers/clk/qcom/gpucc-sm8750.c b/drivers/clk/qcom/gpucc-sm8750.c
+index 5d52c6d8b5e5..1466bd36403f 100644
+--- a/drivers/clk/qcom/gpucc-sm8750.c
++++ b/drivers/clk/qcom/gpucc-sm8750.c
+@@ -421,7 +421,7 @@ static struct clk_alpha_pll *gpu_cc_alpha_plls[] = {
+ 	&gpu_cc_pll0,
+ };
+ 
+-static u32 gpu_cc_sm8750_critical_cbcrs[] = {
++static const u32 gpu_cc_sm8750_critical_cbcrs[] = {
+ 	0x9004, /* GPU_CC_RSCC_XO_AON_CLK */
+ 	0x9008, /* GPU_CC_CXO_AON_CLK */
+ 	0x9064, /* GPU_CC_GX_AHB_FF_CLK */
+@@ -430,7 +430,7 @@ static u32 gpu_cc_sm8750_critical_cbcrs[] = {
+ 	0x93a8, /* GPU_CC_RSCC_HUB_AON_CLK */
+ };
+ 
+-static struct qcom_cc_driver_data gpu_cc_sm8750_driver_data = {
++static const struct qcom_cc_driver_data gpu_cc_sm8750_driver_data = {
+ 	.alpha_plls = gpu_cc_alpha_plls,
+ 	.num_alpha_plls = ARRAY_SIZE(gpu_cc_alpha_plls),
+ 	.clk_cbcrs = gpu_cc_sm8750_critical_cbcrs,
+diff --git a/drivers/clk/qcom/negcc-nord.c b/drivers/clk/qcom/negcc-nord.c
+index 1aa24e2784e5..2cb66b0691a6 100644
+--- a/drivers/clk/qcom/negcc-nord.c
++++ b/drivers/clk/qcom/negcc-nord.c
+@@ -1945,7 +1945,7 @@ static void clk_nord_regs_configure(struct device *dev, struct regmap *regmap)
+ 	qcom_branch_set_force_mem_core(regmap, ne_gcc_ufs_phy_axi_clk, true);
+ }
+ 
+-static struct qcom_cc_driver_data ne_gcc_nord_driver_data = {
++static const struct qcom_cc_driver_data ne_gcc_nord_driver_data = {
+ 	.dfs_rcgs = ne_gcc_nord_dfs_clocks,
+ 	.num_dfs_rcgs = ARRAY_SIZE(ne_gcc_nord_dfs_clocks),
+ 	.clk_regs_configure = clk_nord_regs_configure,
+diff --git a/drivers/clk/qcom/nwgcc-nord.c b/drivers/clk/qcom/nwgcc-nord.c
+index 163ab63c872b..961cae47ff7c 100644
+--- a/drivers/clk/qcom/nwgcc-nord.c
++++ b/drivers/clk/qcom/nwgcc-nord.c
+@@ -626,7 +626,7 @@ static const struct qcom_reset_map nw_gcc_nord_resets[] = {
+ 	[NW_GCC_VIDEO_BCR] = { 0x1a000 },
+ };
+ 
+-static u32 nw_gcc_nord_critical_cbcrs[] = {
++static const u32 nw_gcc_nord_critical_cbcrs[] = {
+ 	0x16004, /* NW_GCC_CAMERA_AHB_CLK */
+ 	0x16030, /* NW_GCC_CAMERA_XO_CLK */
+ 	0x18004, /* NW_GCC_DISP_0_AHB_CLK */
+@@ -641,7 +641,7 @@ static u32 nw_gcc_nord_critical_cbcrs[] = {
+ 	0x1a044, /* NW_GCC_VIDEO_XO_CLK */
+ };
+ 
+-static struct qcom_cc_driver_data nw_gcc_nord_driver_data = {
++static const struct qcom_cc_driver_data nw_gcc_nord_driver_data = {
+ 	.clk_cbcrs = nw_gcc_nord_critical_cbcrs,
+ 	.num_clk_cbcrs = ARRAY_SIZE(nw_gcc_nord_critical_cbcrs),
+ };
+diff --git a/drivers/clk/qcom/segcc-nord.c b/drivers/clk/qcom/segcc-nord.c
+index 1aab0999de4d..c82a56d97154 100644
+--- a/drivers/clk/qcom/segcc-nord.c
++++ b/drivers/clk/qcom/segcc-nord.c
+@@ -1568,7 +1568,7 @@ static const struct regmap_config se_gcc_nord_regmap_config = {
+ 	.fast_io = true,
+ };
+ 
+-static struct qcom_cc_driver_data se_gcc_nord_driver_data = {
++static const struct qcom_cc_driver_data se_gcc_nord_driver_data = {
+ 	.dfs_rcgs = se_gcc_nord_dfs_clocks,
+ 	.num_dfs_rcgs = ARRAY_SIZE(se_gcc_nord_dfs_clocks),
+ };
+-- 
+2.51.0
 
-Thanks,
-ta
