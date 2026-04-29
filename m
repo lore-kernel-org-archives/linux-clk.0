@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F7938F235;
-	Wed, 29 Apr 2026 03:46:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183CE38F923;
+	Wed, 29 Apr 2026 03:47:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777434419; cv=none; b=G4eygRLKKUtg6I/NOLaRu1tyWHvjdoLCIFtj879GpoAUrlduD+Dn3cbf85QwIXNxqADxKVXHdxivLsxrPHzP3o/m8NPlNYG1eupRyUhSqpaSo6mW4DytcRuwl1nNCJSdug9YhsY/IijTIxDlcyfoBoZe0y5m/yu61//5cffSjQo=
+	t=1777434421; cv=none; b=EAj/j3iFhFpkWbb0yk7txZyXguDj4vXgDXwkm2fy3plhNlZ0bZGORX29p6yl8FDUXPI/QNmnqsCeJ744DImJgPTodJceOQGjx+Uz4EjDLamH0nUvkBkYXiR+hrSvLpp9j254ucMLLmx884fSy72exLdxBK/8YDHznVfZJQrOLtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777434419; c=relaxed/simple;
-	bh=/MEa2Fq2BTYER4OXlPjCrO9/O5Ew6iOB5RCGtNlKWcE=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=utDJ905O2763noFbq5UwM1P9r67bkNW2TYZ/X0pz1Nq/SjI9Kj9jLP+LUM3dkeArsI7/ybRfx+bZVdVBbsEHew9FF1KsFZ3nzeldSeuJKpgSAOOomMGty09KC1OPR3J1GV7z4KJvXje7KYr16pFuUvcUAEJW6LiP2v4xQV+tazM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aNVm7WTB; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1777434421; c=relaxed/simple;
+	bh=AO19yXsn37qBgG5Tsrn/S/WN0SBnx/bhiec2Iy+vZTg=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:To:
+	 Date:Message-ID; b=e5hdNPUKXnD00ycvsNgEjkLmumBRIG3dnuNXA8bDzWGg/5RjduLF8FHtqq/TmV+Tr0fTZT1yGxKHlZfnAqPZZHiVOf9kgRPZpxGchPuwrSwjyNBy1y4Ecz3qf2w415z0erJAYENtLjGo0D6pXKyTYluBXyBHJnQqLPVMpl0WoZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fwx5xoFb; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aNVm7WTB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD8F9C2BCB4;
-	Wed, 29 Apr 2026 03:46:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fwx5xoFb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF12EC19425;
+	Wed, 29 Apr 2026 03:47:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777434418;
-	bh=/MEa2Fq2BTYER4OXlPjCrO9/O5Ew6iOB5RCGtNlKWcE=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=aNVm7WTB7e7SzAk10BZaFoD/ajSUxoQqIpS29VvLOv96dhn2Z9aqj1HtOOjfj7uQ/
-	 X9LpKHpFmif1daqh926lk3zHtOonIyEU2fAAd+wBcwYbkOym4tPU3jUIB9Mdr9qOcK
-	 09YYqw5fCfZJSdMdVgsKajmBOTsDrTHhX22yzSaiA7VeCTjjd0vGUTCu7M6gjUL50x
-	 gsLIg3XngSO/S76dTqk+IO15kswblakumIGF7JYr6xv9yf2si0OzrwHo72C4wNgzan
-	 WJB13VLsrCaAu9RD1H+IKUcMLKrCkyNyx5G6Cr6ydjsmg388OuElynCbPd5ROl/+Is
-	 71selElWnjidQ==
+	s=k20201202; t=1777434420;
+	bh=AO19yXsn37qBgG5Tsrn/S/WN0SBnx/bhiec2Iy+vZTg=;
+	h=In-Reply-To:References:Subject:From:To:Date:From;
+	b=Fwx5xoFb8vRtgQI1/v3ubSpVpkUkR6bcJVqa/IB1Nnwht+zlh6Vk4Y1hJFXvND/wv
+	 V0C+wy7l7YBAZzh8lZrPwvd/LpbECP8hMffMBSOLc6IlXrQ/Y9Rl/69UxGo+FRIFHU
+	 zCOopn80cBuV5FfPQhZlVNToahcyy7SffVhaDbIYfn49HxT0spn/P/VtYsNw9kNg9a
+	 Akl4tbOCe/GHmIH4M8dTj7OXWOtMd5LV60vrW61k2vJLegWu31C8+G9MJY2EJLU0IH
+	 CnlyVD6urCfP/HqBTVj5J7mWuQjCcdst2ICCf+Em88H09Txs4qCYv91Conh0hCwA4P
+	 0lIQ/MAwdGG+g==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,29 +34,42 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20260225-macb-phy-v7-3-665bd8619d51@bootlin.com>
-References: <20260225-macb-phy-v7-0-665bd8619d51@bootlin.com> <20260225-macb-phy-v7-3-665bd8619d51@bootlin.com>
-Subject: Re: [PATCH v7 3/3] reset: eyeq: drop device_set_of_node_from_dev() done by parent
+In-Reply-To: <d1a9b393d9929dc670dc6d5bfcc5cd43561d0be4.1774499536.git.daniel@makrotopia.org>
+References: <cover.1774499536.git.daniel@makrotopia.org> <d1a9b393d9929dc670dc6d5bfcc5cd43561d0be4.1774499536.git.daniel@makrotopia.org>
+Subject: Re: [PATCH v2 3/3] clk: mediatek: mt7988: use MUX_CLR_SET for gate-less muxes
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, Gregory CLEMENT <gregory.clement@bootlin.com>, =?utf-8?q?Beno=C3=AEt?= Monin <benoit.monin@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>, Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>
-Date: Tue, 28 Apr 2026 19:04:08 -0700
-Message-ID: <177742824867.5403.11815560359227140766@localhost.localdomain>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Chen-Yu Tsai <wenst@chromium.org>, Chun-Jie Chen <chun-jie.chen@mediatek.com>, Daniel Golle <daniel@makrotopia.org>, Ikjoon Jang <ikjn@chromium.org>, Laura Nao <laura.nao@collabora.com>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, =?utf-8?q?N=C3=ADcolas?= F. R. A. Prado <nfraprado@collabora.com>, Sam Shih <sam.shih@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+Date: Tue, 28 Apr 2026 19:06:09 -0700
+Message-ID: <177742836924.5403.8826035930365293683@localhost.localdomain>
 User-Agent: alot/0.12
 
-Quoting Th=C3=A9o Lebrun (2026-02-25 08:55:07)
-> Our parent driver (clk-eyeq) now does the
->         device_set_of_node_from_dev(dev, dev->parent)
-> call through the newly introduced devm_auxiliary_device_create() helper.
+Quoting Daniel Golle (2026-03-25 22:11:12)
+> All 19 muxes in the infra_muxes[] array are pure mux selectors without
+> a clock gate or update register, yet they were defined using
+> MUX_GATE_CLR_SET_UPD with gate_shift =3D -1.
 >=20
-> Doing it again in the reset-eyeq probe would be redundant.
-> Drop both the WARN_ON() and the device_set_of_node_from_dev() call.
-> Also fix the following comment that talks about "our newfound OF node".
+> This macro assigns mtk_mux_gate_clr_set_upd_ops, whose
+> enable/disable/is_enabled callbacks perform BIT(gate_shift). Since
+> gate_shift is stored as u8, the -1 truncates to 255, causing a
+> shift-out-of-bounds at runtime:
 >=20
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-> Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
-> Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
+> UBSAN: shift-out-of-bounds in drivers/clk/mediatek/clk-mux.c:76:8
+> shift exponent 255 is too large for 64-bit type 'long unsigned int'
+>=20
+> UBSAN: shift-out-of-bounds in drivers/clk/mediatek/clk-mux.c:102:4
+> shift exponent 255 is too large for 64-bit type 'long unsigned int'
+>=20
+> UBSAN: shift-out-of-bounds in drivers/clk/mediatek/clk-mux.c:122:16
+> shift exponent 255 is too large for 64-bit type 'long unsigned int'
+>=20
+> Switch these definitions to MUX_CLR_SET, which uses
+> mtk_mux_clr_set_upd_ops (no gate callbacks) and does not require
+> callers to pass sentinel values for unused update register fields.
+> The actual clock gating for these peripherals is handled by the
+> separate GATE_INFRA* definitions further down.
+>=20
+> Fixes: 4b4719437d85f ("clk: mediatek: add drivers for MT7988 SoC")
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 > ---
 
-Applied to clk-fixes
+Applied to clk-next
