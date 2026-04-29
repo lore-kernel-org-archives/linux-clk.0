@@ -1,138 +1,88 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD163B9D9F
-	for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 09:07:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 621263BC693;
+	Wed, 29 Apr 2026 09:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777453656; cv=none; b=bC7qY9OIGd5393GavaILTSbZw7LihgM7fh1MxIb1X/7TQUeWujrLiiozhYSmsNtSKbaVOJoAqqKFstQalXERk5YWyR2MmDf0TNP7v5Nh5Cn87n5NRkn80M72rRbzUHTXc90JXw2kmcsa83vQUMysdZUml2SUHT3ZPNJCKeX4lJI=
+	t=1777453913; cv=none; b=apx9rqUuwvnHurqr/HEF+9COOCspEcU0IyoycZtlMRo5paSUgufG2vyzSiBTFhVH0cLT0AVjBME7xPlgX5h5KSrOCQheXku7xYPNCPItR/yknIA3TNHmZOXNYx1pcZGuDhgw8SQZhNna2T0jPW5LEsMxCvTGo7gkphsOJpIoTF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777453656; c=relaxed/simple;
-	bh=AwZuUXPk4/WpmF+r8jDpB7wrDuVU3zFwiYudmOuTakQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BSBbup4XWb/2xd9NYVmNu5D2SaX6373qt0rLNXA0Vp0AwecTdGpC3VQVCKpB+MYmf5uNSGuaB30eIigsYoRv9vOcmeznk9KemFWKLiZTLpZ2DkF3orqwYshrQv9S4K85ftX0EhvA6zE0CKJ4ebRm/7HSRAxoGd7E7zsld8E+Mtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WzlnfwAr; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1777453913; c=relaxed/simple;
+	bh=afQnCziSQw9RqyG0RZJ7CbnfZsgxFMZUmM5i6GoRTAE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=tNU6H5vmKfPtn6FIv55Ol80Kcx1CGJ14s7N2F/Y3sPbUGXUvBv5t60mKOExnUx4qz+BHfrQTAzwGm8o0b7ZwwqZ6dY9B7b2tcu67ScvyrlqYbz7YDXRrW2W48Xw5YAC/0gWNnOoMdCWeMZ5G8sbMdAxSsftfdxws2kmimIp372c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=zmRS1fZc; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WzlnfwAr"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-488af96f6b2so162766155e9.0
-        for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 02:07:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1777453653; x=1778058453; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8Lj5tmUBXJFmzYH2N7Dd27gLNCll+S51FdGFIIdlW1Y=;
-        b=WzlnfwAr4DJID5MtMtZ5nD/hIInr+BJPMOmbnxGKYJdc5oZo19tk5YD9fLAkzZx6XQ
-         t3oQIb8ONLqCn/clp6+dSaUcXmlYA3KCj10APjyZq7ZodhQmXFSqwnaLOmUGNbyCleTm
-         06KP2V5WK1ba+Rto9wLX78pIU7NRQJ04Q0CVYPJrBu62F7rfNGcphlKxmE4TuIEXtKCL
-         cvgXoI3me+BsJRE8jRB9xrFiYKz/sWrAL/oJepsxfZK1x95WzrxSfx7SCcR3wacUGxKy
-         CrMfpKo5lqE5pUI2WOG5Vws/QVrqM3u92g9nBypyXlW7YbdWoFLZ72kYqIFcDXyRtY+7
-         r+6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777453653; x=1778058453;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8Lj5tmUBXJFmzYH2N7Dd27gLNCll+S51FdGFIIdlW1Y=;
-        b=Z2n0VQyJBFKxEChp43Y6y3cz7mu7Q5A88c+hvBxB6wMNvATnxmPPJ/34VGb1flHP3T
-         tYHKD9lo8Ttmq2H4Nw/2iPZBD5aO5IqSFeehyya0wYXYEe41wGajmvyf5BuPFsQm0+G+
-         4iUj4zH0iLtUBR72bFplHFLi3fVVTZnVOvJ0+rkzVyU+VoUDfRK9dD27irjxESz1xzm2
-         LU8Ivyw6QcDiKT05v44i/YT2XvFONjVswB6m2Wgq2dw/FPbUyJEDXSg/h+7Zbfpt0jbS
-         FJq3ETvSzQl15sC3Pu7k6vQlx9JMFCe3UwyWT6znb7Z0yQMIBCBN+tWyLx60//VvjvKQ
-         GgCQ==
-X-Forwarded-Encrypted: i=1; AFNElJ8H27zsrelAXfHPeoLsNCnVT3/RadAqV/Ml/EZhnSZFPFVG03rz9vB70Z7m0hlQI+Ud3Ob4vLKuucc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUO6LBJQ9TCY57aU5R1edkmUMEzxjlNNUgFiZLz33CoDxEqnHf
-	cWytb5b+adQ8jrB0IO0g89gzylBF60LbgFhHjK5bkB4RH2tqRxEOj1Oy7cD9qtlgcgs=
-X-Gm-Gg: AeBDievSL673q0HB9y6MkIdU5dVdKXdhLhfn0FJAA/tNgPH0ynVIve9Q01ibj/WXsup
-	c/rT+FmHpxWN/2mo0tfiaBUvDS2+kOfYdoYFW7SlBBu0jne5hQ1QZ0Bj59ZSBmQjUzN5v1iJEDW
-	44CQW0PuVH2SNtfIHGPojfAVlRp4Rhf3xbzhpAysVlb1oD2W6Jk2fXz1+ocRXEYKdBtBIDKsNNl
-	ERT4YNu2qcYwRdgyd9pQ3MC9+9TY0VedFAxXd/QaPAt2DnxCfrQ7Hyc4agerx7TkYINDqE7PXQi
-	+HEHrVmJCMjFZMCbSJtYAj5+0RsUd3Y5t/zsb73TENEEisVbM9ZADQPnwFw3cVHHrAgbMsT9Xhj
-	jiUjVc5ENNbI8k/n/iDc5BdHGOposvneCriPLN4IhWM7Wt6hDEnjn5eQRS/TImi0wbn/0tvWX1o
-	yIU/jtsJ3knYXDNqRcPWgyDRykUrb8j2KQ+a6R4FRt8R4=
-X-Received: by 2002:a05:600c:2e55:b0:48a:7b55:12a6 with SMTP id 5b1f17b1804b1-48a7b55131amr28563845e9.0.1777453652729;
-        Wed, 29 Apr 2026 02:07:32 -0700 (PDT)
-Received: from [10.11.12.108] ([79.115.63.228])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a7c5d1a53sm40803645e9.14.2026.04.29.02.07.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Apr 2026 02:07:32 -0700 (PDT)
-Message-ID: <6dcb5348-e973-494d-adf1-7fa2dc5655f2@linaro.org>
-Date: Wed, 29 Apr 2026 12:07:28 +0300
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="zmRS1fZc"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 932494E42B3E;
+	Wed, 29 Apr 2026 09:11:43 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 4AFCE601DF;
+	Wed, 29 Apr 2026 09:11:43 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5F6F91072981A;
+	Wed, 29 Apr 2026 11:11:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1777453902; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=i3fH3BpVMeeL6++Hnod35PBAc+GS+PtWdmZnjJ4bk/w=;
+	b=zmRS1fZcRQcufPaj2iR31c+INVvnAYOmBMP2BMYDwjW9StiHpyVBDzZth60XATUgOafcBl
+	iYKPVuAiddpcI3nVvFRltfkEMY52E8zag0A9xFINsCpYyHk5zQ7q4kiotQ1r02B1jdGNfY
+	Gi9MIArPBeco30jJyZLWFdstaLnPu8e3OTHzdwmr7fmmQMTWIoLK9LI38PO/K2irBfFMJJ
+	D3AvWnBEjR4vJeqacFj1sHSQXiwXXZwMvCTpmkv2ODLCnNTumQhAHyvjGNJAxICwgKJlMD
+	i1zqy2+CE3P22+0Ax4k2ot8ynf7JOC/1pD6nSpcFGf+gz0iqW7XS1J86SZPjzw==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] mailbox: exynos: Add support for Exynos850 mailbox
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sam Protsenko <semen.protsenko@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260402-exynos850-ap2apm-mailbox-v2-0-ca5ffdff99d4@linaro.org>
- <20260402-exynos850-ap2apm-mailbox-v2-2-ca5ffdff99d4@linaro.org>
- <a02a693e-b06e-43bf-ac5f-8253f298c83d@linaro.org>
- <DHNSP3FVR4ZQ.1PIRHF0KJGKI5@linaro.org>
- <DI52JP9JH6AH.3I5OKWOZ56MIU@linaro.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <DI52JP9JH6AH.3I5OKWOZ56MIU@linaro.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Wed, 29 Apr 2026 11:11:39 +0200
+Message-Id: <DI5ITKXOJOEE.28MZGWL8UPDOA@bootlin.com>
+Cc: <linux-mips@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Vladimir Kondratiev"
+ <vladimir.kondratiev@mobileye.com>, "Gregory CLEMENT"
+ <gregory.clement@bootlin.com>, =?utf-8?q?Beno=C3=AEt_Monin?=
+ <benoit.monin@bootlin.com>, "Tawfik Bayouk" <tawfik.bayouk@mobileye.com>,
+ "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>, "Luca Ceresoli"
+ <luca.ceresoli@bootlin.com>, "Jerome Brunet" <jbrunet@baylibre.com>
+To: "Stephen Boyd" <sboyd@kernel.org>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Philipp Zabel" <p.zabel@pengutronix.de>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH v7 3/3] reset: eyeq: drop device_set_of_node_from_dev()
+ done by parent
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20260225-macb-phy-v7-0-665bd8619d51@bootlin.com>
+ <20260225-macb-phy-v7-3-665bd8619d51@bootlin.com>
+ <177742824867.5403.11815560359227140766@localhost.localdomain>
+In-Reply-To: <177742824867.5403.11815560359227140766@localhost.localdomain>
+X-Last-TLS-Session-Version: TLSv1.3
 
+On Wed Apr 29, 2026 at 4:04 AM CEST, Stephen Boyd wrote:
+> Quoting Th=C3=A9o Lebrun (2026-02-25 08:55:07)
+>> Our parent driver (clk-eyeq) now does the
+>>         device_set_of_node_from_dev(dev, dev->parent)
+>> call through the newly introduced devm_auxiliary_device_create() helper.
+>>=20
+>> Doing it again in the reset-eyeq probe would be redundant.
+>> Drop both the WARN_ON() and the device_set_of_node_from_dev() call.
+>> Also fix the following comment that talks about "our newfound OF node".
+>>=20
+>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+>> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+>> Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+>> Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
+>> ---
+>
+> Applied to clk-fixes
 
+Thanks Stephen!
 
-On 4/28/26 11:26 PM, Alexey Klimov wrote:
-> On Wed Apr 8, 2026 at 2:08 PM BST, Alexey Klimov wrote:
-> 
-> [...]
-> 
->> On Thu Apr 2, 2026 at 9:42 AM BST, Tudor Ambarus wrote:
->>>>  static int exynos_mbox_send_data(struct mbox_chan *chan, void *data)
->>>> @@ -57,7 +104,8 @@ static int exynos_mbox_send_data(struct mbox_chan *chan, void *data)
->>>>  		return -EINVAL;
->>>>  	}
->>>>  
->>>> -	writel(BIT(msg->chan_id), exynos_mbox->regs + EXYNOS_MBOX_INTGR1);
->>>> +	writel(BIT(msg->chan_id) << exynos_mbox->data->irq_doorbell_shift,
->>>> +	       exynos_mbox->regs + exynos_mbox->data->irq_doorbell_offset);
->>>
->>> Use FIELD_PREP from <linux/bitfield.h> please. You will use a mask instead of
->>> a shift.
->>>
->>> I would rename irq_doorbell_offset to intgr. It aligns with the register name
->>> from the datasheet. You won't need to prepend _offset to the name, we already
->>> see it's an offset when doing the writel().
->>
->> Sure. Thanks. Let's use FIELD_PREP.
-> 
-> +       /* Ring the doorbell */
-> +       writel(BIT(msg->chan_id) << exynos_mbox->data->intgr_shift,
-> +              exynos_mbox->regs + exynos_mbox->data->intgr);
-> 
-> FIELD_PREP() wants a mask as a compile-time constant. Unless you want me to
-
-Indeed, I forgot, sorry.
-
-> add switch/case for different SoCs or I misunderstood something I don't see
-> how this is gonna fly.
-
-other option is to have a .ring_doorbell callback defined in the SoC data,
-and then you can use FIELD_PREP. But it increases boilerplate code just to
-ring a doorbell. I wouldn't go via switch/case. I think we'll have to live
-with the mask and shift.
-
-Cheers,
-ta
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
