@@ -1,81 +1,66 @@
-Received: from mail-vk1-f228.google.com (mail-vk1-f228.google.com [209.85.221.228])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F2137B415
-	for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 15:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.228
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18459381AED
+	for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 17:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777477198; cv=none; b=P382g48d9hKmJrGI3WsTrVh68qbZG6XOBM472m/JF2/SEz4fZWqqEtw7G0xXy4+kUCQQU1RrXn1/8Ew1tOW1YTaFL2UCxSdz5c1iVU2oGpwwV3CldayoNgQGiNghdjiWmBjAwJODo5fj+ZPP5f3Npo6+drm3qPtID1oGc7VMJuY=
+	t=1777482171; cv=none; b=dYTYdsKY9QEMzd1Al8NlOJTSAB3wsbG9FJEphflrYolR3dukFjIOlyJ05HnPCGNMKrdKTjNIiYS8rHupG+tSiLYC52C8n9RINXPBppnS5Dk4JCDcs4Pp9yQ7x/wL8INVAt8EZWHMxfWVwVwKC00ytviYiF7tWGspZjY46uvuR3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777477198; c=relaxed/simple;
-	bh=z9tjCiDomJUS16kqSqnbRm4EHxgfQjNSyK2cJXYp/VA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=YF4cxFfaxGyJ4cW6MDtq44D6V7dY1s6H3O5R0M/viGJFGeidBTrTKyDio2m4ML/uPoDM/aCb85rD2oDqoZR+TEvA7Bf/ZVJ2Sw6We5F+1rKJSSk/RTUNhg4QXaZhEosLXydTNWBvyAbEvVENhoE2BOwXk8vFeelG1/+EHb0IRV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=MkIO8/Na; arc=none smtp.client-ip=209.85.221.228
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+	s=arc-20240116; t=1777482171; c=relaxed/simple;
+	bh=oP0CV+puQtnqAudPjWQ6eG2kcGlvGEf4j8WHFrP4gG4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YgpxMTslAKRu+EsIUdQRdKTqn3GCqO9oH4BDkKCYehA3K0nOmyudbWWNuwTgrmQxv/elP19MicU5j9O+86BzUMbEwxRkA969Q0tD8QuUPkk/Yjy0cFzmyZ7ynu+aRavVjH0y7/e/WtXBOI3MP99nGZ1lGcO8JpLGSj4b+bYIIZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M8ZDn9J8; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="MkIO8/Na"
-Received: by mail-vk1-f228.google.com with SMTP id 71dfb90a1353d-56db1b3626bso8182849e0c.1
-        for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 08:39:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777477196; x=1778081996;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:subject:from:user-agent:mime-version:date
-         :message-id:dkim-signature:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dNID+xnAT4/eagYcPb2Np/6K90V+gH/f73uugiIiXTw=;
-        b=KN8c6VIDy8v+fjd4pSYBXkk4wQqeFO7zpUtGvzx5lXJ87Q4ucpugVYtOzeOCaATn0f
-         3zRTjKi7vS9UK8Prc1go+QfG9nr/R5BXuLflqv6tP8wsjaMuYPsk9f14hHP23x9X8D72
-         pfyUg95sFCc5bYo1mnpYN3nsCO4D70yM+PY/1OIv6gAH4KvuI8JuLsmS7O/Zo6pZQngE
-         InE79DsZQ925F/mHbh7sRP7D8fJ11CqdddVdscttWeGxQteJvZtXHHVko6UAZDkrK9JP
-         +3/SWqLY3+8+58UtSKcKcXO80LXGyRThmB2PFlNgCj01Y0FB2yS9cmaEvdO5uvoiV7d3
-         KINA==
-X-Forwarded-Encrypted: i=1; AFNElJ8YNNTNgTiMALUlrhdpVSnNy8P6fGbB3+cFRrV5GilFRZxX7TX7nles0CWIcaSI4ZsYvxOZb+fewDc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywozn2AnxIUnfVMgjJYwlBDfckPJ+wAvjz7TbJqKKn6kUyy7W9m
-	mZLcJOxGF4z83niuEBvrUayYNJqrNHXTuocduwsgWucCBS5b72Zl5j/fIKb22/4iK72ZJOhOz83
-	v2HSzAkveiHZH1bjZeCkaRslPQr+5KSUX7GxOsN8DRm3/EY0O+e4QgVh2c9TlTBGn/xILNBQodr
-	bIGreIlBflD/iz6FY9cK7VN17sDBNPmj41c3qrBcfyZ8Nc7xYrxazSdw9J9JTy5zQO3p7Kkt4fw
-	+83UxLXb3LHLZA3xzm6
-X-Gm-Gg: AeBDieshh5P3LNYFMqvpgyd5GbtftZ74t/rFc16sdAGLknNlYo9KZhLWygtbhdhqBg2
-	Jv2LCiwRzT4aUk25AzPocO+fMBGNq8mYvwPYOzQYiaH9vUurGk65NlGzyTA+yeyqIwnDHUT2Cye
-	P1JYYsOURqE2AOB+0zhMTtxos1PKbb0pVkJ0x4qk52uwkqIkCrVN9SJskKn4ojhHzSKp1+GTP5o
-	BoyYgG3UbXajfu0GMBa5K3+6wsHzmWDx67xI2mOZqkiqOW6A2Gy1P+TOzRMohE8vODK2xD+Mv/7
-	tf26UlRqW6VK6WF4je2TVDHI/OsaMDm/FnRvkNl2XG11fIc8FDViXVUWKux2ohqOBifDOrqp+7Y
-	dDNASfcUvehYaMehuKswKC3mXigFyVB+mYGOYqR6vcbWJ7vGfF1RATYtG/SFHiIN0ykz2lQrjts
-	NxyKKeqjhtf0JxfRchbCT8b7FIT15BTwFKTsyH7R7zuYHGdiIf6XhTcZKXlrwsuvb1bCquYPtNu
-	4I=
-X-Received: by 2002:a05:6122:1350:b0:567:44ba:bd8a with SMTP id 71dfb90a1353d-573a566c896mr5050485e0c.9.1777477196183;
-        Wed, 29 Apr 2026 08:39:56 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-121.dlp.protect.broadcom.com. [144.49.247.121])
-        by smtp-relay.gmail.com with ESMTPS id 71dfb90a1353d-573b6ce36b4sm165289e0c.3.2026.04.29.08.39.54
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 Apr 2026 08:39:56 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-dl1-f70.google.com with SMTP id a92af1059eb24-1275c6fc58aso20677327c88.0
-        for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 08:39:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M8ZDn9J8"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-488b0046078so115811965e9.1
+        for <linux-clk@vger.kernel.org>; Wed, 29 Apr 2026 10:02:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1777477194; x=1778081994; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:subject:from:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=dNID+xnAT4/eagYcPb2Np/6K90V+gH/f73uugiIiXTw=;
-        b=MkIO8/NaEllsIa/cKn40SrRP1E/A3vFWkhhJyuZ27V90nA2y7tgiBMhANuNxxrJOUb
-         R9nqFOhtedJ1qGANcP9KxXI/iqOAXf/rvmg/Vj+iwtwyz0IjFBGqBcAycfUN67QK1wzp
-         1vUe0rwh18uORmNM2MVTjMaMr1H2gjIanygf4=
-X-Forwarded-Encrypted: i=1; AFNElJ8P7tCPBx9OqLUTE3KVTqMZPp1/l7JFIe4XMXpJjAkt6ieLS4RnTlODBzwjBUM5lHG5J/ihGVNs+Pk=@vger.kernel.org
-X-Received: by 2002:a05:7022:eacd:b0:12c:2cf8:2f30 with SMTP id a92af1059eb24-12ddd9614a5mr3768780c88.15.1777477193981;
-        Wed, 29 Apr 2026 08:39:53 -0700 (PDT)
-X-Received: by 2002:a05:7022:eacd:b0:12c:2cf8:2f30 with SMTP id a92af1059eb24-12ddd9614a5mr3768748c88.15.1777477193388;
-        Wed, 29 Apr 2026 08:39:53 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-12de3216e81sm3765626c88.4.2026.04.29.08.39.52
+        d=linaro.org; s=google; t=1777482168; x=1778086968; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0DSk2ikmD/TKHxP326DjLJj6TQaKaQdWjt46lW8P0oM=;
+        b=M8ZDn9J8Msr3NDylCnVIxwOwQz08PjGveWyRb7/XjqkWB5UDx082NPsg34OU9g6aPJ
+         TqcQJpVTaakQuUf9Y2g6yj5Isf7op9kV6MbFG6wACZofFn8TMj35e5KyPoSFl5pwuuQH
+         6sBItpme8djYXD0GoY5kYPmKOhFpbKCPS4EJ17m5wVjlZBSMk+CDzN8c5Zr0jz5tJdkS
+         u9taszG5vc0LCQ2EzpSe3MoyXYj0Uv4DSNEEmOVtt5oJTf1jy6mfnPWkvb/UkjmGs/D1
+         NN3BAwVUlMXWaxesZAR6VG/PGwIDyqYgC2PevACW14bE7u61kuE0DbDN5FruguT3Y4Zz
+         Mqjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777482168; x=1778086968;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0DSk2ikmD/TKHxP326DjLJj6TQaKaQdWjt46lW8P0oM=;
+        b=a7T7fxSzBypRKik+3jQidULKfpEEmClX3NYyLOhFTTYN5oRncKPJ6wwYu4pBENzA2B
+         udlCyyWdnh3ook+4AMBxopJcL9RRiOG0+LrLucFWe2PMMyv9DYZ6M0HN2mmCVMrRFLb0
+         qWIMQDvSiNA3yS3FoE5lgjmy8NLCY2Sla1Hqb4i1qXocpdoF2WpcP+PAV/0Lz8QyzIjH
+         zONbiJ/KLxCJLeFsWhhaE54HuFmwl7NxFm8hwJFHPhY6oUdXAxLRCyDwqQEgjORhP0Za
+         GRwB6nRAIsW0wLfk90mb2gs/mC751cpyVFXPoAoiRKvjsL450sAtWJKMrylSPNsEGt3R
+         XtlA==
+X-Forwarded-Encrypted: i=1; AFNElJ/ghlhRDxBvkSI/uQXM4OAKP0ZHWpkFZoT+OMGe/B9ugVLOmxIXk9rwE/5rFuISQhRcOzpO8mcEs9A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyIBPczi4LyaSPB2p73iqNNm4mO4yrnbCZGECkkSj3cIsNNS5Z
+	l+C+ydcezMvOJ/9V+GYKD+gNMj5z63oGmqw8TG7hiHdk+BGuCy3oCqk2qlGM4dyqiuw=
+X-Gm-Gg: AeBDiesdzx82NQ8gksp8gxKFgrEmhgzMmlgD1GphBqw28lNCmMP60FxkJJ64W5BeB+8
+	gkHIqfZBNEoH5K2qyDzvrb1krgmAiPersdt9NFAKWeTdFxo1s3c4tZwgh1MoWxq1aKoKyuA/3p4
+	p+aSOMFYTjMuHYFuJcJMjdk2+2N1W2HiiKvP6cg1LY0wtW7CuwlkmbDLpWGL0a1I7PEVRZA9E3M
+	KKgzyJYA4CVHbBCkCNCS7qmfTg8rS+/q3M5R3aoZU1ZVDWVMpiuOGNKJPy5DSZRCzB7yw8o1t0C
+	94gB80ocO4E32Jt4ss5I3RyfrBF/pKF8rFRBRdd+WeKPXbcItCivX2HWBBUmEGTfE+ZnZbFKe8T
+	HxbaAkoH2ViVcJJliblh29viy1DdBsDYlqcnmmc6w7dlFlXYntPIe0w0tdLzgxnj0tWmJArPk1i
+	8ABLcqgZpOzyrFMwPlWMIrtNvd6sLKNCEIRtL+9KyTk48=
+X-Received: by 2002:a05:600c:4f0c:b0:489:1c2d:211e with SMTP id 5b1f17b1804b1-48a77ae5386mr141380935e9.5.1777482168330;
+        Wed, 29 Apr 2026 10:02:48 -0700 (PDT)
+Received: from [10.11.12.108] ([79.115.63.228])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-447b3d481fdsm7255405f8f.8.2026.04.29.10.02.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Apr 2026 08:39:52 -0700 (PDT)
-Message-ID: <25d267b9-7839-413a-ad91-9c6802bcf292@broadcom.com>
-Date: Wed, 29 Apr 2026 08:39:51 -0700
+        Wed, 29 Apr 2026 10:02:47 -0700 (PDT)
+Message-ID: <83c64dc4-6dd8-4edb-8acf-3c731048d73d@linaro.org>
+Date: Wed, 29 Apr 2026 20:02:44 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -83,111 +68,80 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Subject: Re: [PATCH v3 00/15] SCMI Clock rates discovery rework
-To: Cristian Marussi <cristian.marussi@arm.com>,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- arm-scmi@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org
-Cc: sudeep.holla@arm.com, philip.radford@arm.com, james.quinlan@broadcom.com,
- vincent.guittot@linaro.org, etienne.carriere@foss.st.com,
- peng.fan@oss.nxp.com, michal.simek@amd.com, geert+renesas@glider.be,
- kuninori.morimoto.gx@renesas.com, marek.vasut+renesas@gmail.com
-References: <20260428201522.903875-1-cristian.marussi@arm.com>
+Subject: Re: [PATCH v4 02/11] firmware: samsung: acpm: Consolidate transfer
+ initialization helper
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Daniel Lezcano <daniel.lezcano@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Lee Jones <lee@kernel.org>
+Cc: willmcvicker@google.com, jyescas@google.com, shin.son@samsung.com,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20260423-acpm-tmu-v4-0-8b59f8548634@linaro.org>
+ <20260423-acpm-tmu-v4-2-8b59f8548634@linaro.org>
+ <a63d4dc7-b01a-4da2-ac1f-6679c9030db6@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20260428201522.903875-1-cristian.marussi@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <a63d4dc7-b01a-4da2-ac1f-6679c9030db6@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
 
 
-On 4/28/2026 1:15 PM, Cristian Marussi wrote:
-> Hi,
+On 4/28/26 12:25 PM, Krzysztof Kozlowski wrote:
+> On 23/04/2026 17:22, Tudor Ambarus wrote:
+>>  	acpm_dvfs_init_get_rate_cmd(cmd, clk_id);
+>> -	acpm_dvfs_set_xfer(&xfer, cmd, ARRAY_SIZE(cmd), acpm_chan_id, true);
+>> +	acpm_set_xfer(&xfer, cmd, ARRAY_SIZE(cmd), acpm_chan_id, true);
+>>  
+>>  	ret = acpm_do_xfer(handle, &xfer);
+>>  	if (ret)
+>> diff --git a/drivers/firmware/samsung/exynos-acpm-pmic.c b/drivers/firmware/samsung/exynos-acpm-pmic.c
+>> index 0c50993cc9a8..f032f2c69685 100644
+>> --- a/drivers/firmware/samsung/exynos-acpm-pmic.c
+>> +++ b/drivers/firmware/samsung/exynos-acpm-pmic.c
+>> @@ -58,16 +58,6 @@ static inline u32 acpm_pmic_get_bulk(u32 data, unsigned int i)
+>>  	return (data >> (ACPM_PMIC_BULK_SHIFT * i)) & ACPM_PMIC_BULK_MASK;
+>>  }
+>>  
+>> -static void acpm_pmic_set_xfer(struct acpm_xfer *xfer, u32 *cmd, size_t cmdlen,
+>> -			       unsigned int acpm_chan_id)
+>> -{
+>> -	xfer->txd = cmd;
+>> -	xfer->rxd = cmd;
+>> -	xfer->txcnt = cmdlen;
+>> -	xfer->rxcnt = cmdlen;
+>> -	xfer->acpm_chan_id = acpm_chan_id;
 > 
-> it was a known limitation, in the SCMI Clock protocol support, the lack of
-> dynamic allocation around per-clock rates discovery: fixed size statically
-> per-clock rates arrays did not scale and was increasingly a waste of memory
-> (see [1]).
+> The code is not equivalent. RX bits were always cleared. This should be
+> explained in the commit msg which would also provide a proof that you
+> actually analyzed if it has any impact.
 > 
-> This series aim at solving this in successive steps:
-> 
->   - simplify and reduce to the minimum possible the rates data info exposed
->     to the SCMI driver by scmi_clock_info
->   - move away from static fixed allocation of per-clock rates arrays in
->     favour of a completely dynamic runtime allocation: just allocate what
->     is needed based on the effectively discovered
-> 
-> This is done in patches 2-6.
-> 
-> A further bigger optimization suggested in a past series [2] by Etienne
-> would be, whenever allowed by the spec, to limit upfront the number of
-> queries in order to simply retrieve min and max rate, that are indeed the
-> only rates needed by the CLK SCMI driver.
-> 
-> The approach proposed in [1] was open coding and duplicating some of the
-> functionalities already provided by SCMI iterators, though.
-> 
-> Patch 7-14 implement such optimization instead by:
-> 
->   - reworking core SCMI iterators to support bound enumerations
->   - use such new bound iterators to perform the minimum number of queries
->     in order to only retrieve min an max rate
-> 
-> As a final result now the rates enumeration triggered by the CLK SCMI
-> driver, while still allocating for all the existent rates, miminize the
-> number of SCMI CLK_DESCRIBE_RATE messages needed to obtain min and max.
-> 
-> Finally, patch 15 introduces a new clock protocol operation to be able to
-> trigger anytime on demand a full enumeration and obtain the full list of
-> rates when needed, not only min/max: this latter method is really only used
-> currently by some dowstream SCMI Test driver of mine.
-> 
-> Most notably in this V3 I had:
-> 
->   - picked up Geert fixes on V2: these could have been squashed in the
->     original series while maintaining proper Geert's authorship but as of
->     now I have simply picked them up and changed their order to be near the
->     commit they fix
-> 
->   - dropped the "Harden Clock protocol initialization" patch that caused a
->     number of out-of-spec vendor FW to break
-> 
-> Based on v7.1-rc1.
-> Tested on ARM/JUNO, RADXA/ROCK5B and an emulated environment.
+Indeed, my commit message is inaccurate because I claimed the
+acpm_pmic/dvfs_set_xfer() were identical.
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+There's no change in functionality: in the original
+`acpm_pmic_set_xfer()`, the RX parameters were unconditionally assigned
+(`xfer->rxd = cmd;` and `xfer->rxcnt = cmdlen;`). In this patch, all the
+updated PMIC call sites now pass `true` for the `response` argument.
+This ensures the unified helper takes the `if (response)` branch, which
+performs those exact same assignments, preserving the original PMIC
+behavior.
+
+Will update the commit message. And revisit the other patches when
+splitting the firmware patches into their own set.
+
+Thanks,
+ta
