@@ -1,133 +1,130 @@
-Received: from zg8tmja2lje4os4yms4ymjma.icoremail.net (zg8tmja2lje4os4yms4ymjma.icoremail.net [206.189.21.223])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F9E2371071;
-	Thu, 30 Apr 2026 05:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.21.223
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B963639EF10
+	for <linux-clk@vger.kernel.org>; Thu, 30 Apr 2026 07:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777528766; cv=none; b=rmF5/lf/hed4pkqOen1+HPbOUuiiYpp4QrNB/j0zoHhOTrz0Y1i2JSYvAWVuj1c4gEnOwxE6P95uIG3QjTPTUP8QltOc83uYZoOxrvo3WS+Ikq7jZBwCOZ8XVsclT5Oe9sXdK/IK2NXNfvoWQUvcn5aahQ8ii8L+Upv++A2/+II=
+	t=1777533341; cv=none; b=VEW2isQboOFsElFw1dYkqCgiRmXfFpDX1VLluKEQDCgm7fJYPzaxsK65g47xmV8bxtZH34dLT0Y1GcghDRxtcHIQ7rthK9AzK/XVZ5doRz2G4HTAotxwHDhePbLDQxIjL8Dd633ToyQvDFavtQmCPU9miD8EkHtH3b/0FjxuxSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777528766; c=relaxed/simple;
-	bh=30MkLiDqya1mJgqXwRDC/SXQ8gqISldg8AaX6Y43Phg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=U79h9hK/EcclD7jfT9/pIDQJTEzWTw7PDjULHVkzvFRBWAfUwdvvTgtQTidDZvxMQk1Zz+JGyX0dKe5TASN7S8DLzwavwXc3INwiYglkOvhJqfr3u2S+7juVre0MxSaZlPw1oUJsexTLh8yol6geJ3w8nzT2745Rqwg/YbfUUV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=206.189.21.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from dongxuyang$eswincomputing.com ( [10.12.96.41] ) by
- ajax-webmail-app2 (Coremail) ; Thu, 30 Apr 2026 13:58:58 +0800 (GMT+08:00)
-Date: Thu, 30 Apr 2026 13:58:58 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: "Xuyang Dong" <dongxuyang@eswincomputing.com>
-To: "Stephen Boyd" <sboyd@kernel.org>, "Brian Masney" <bmasney@redhat.com>
-Cc: mturquette@baylibre.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	p.zabel@pengutronix.de, huangyifeng@eswincomputing.com,
-	benoit.monin@bootlin.com, ningyu@eswincomputing.com,
-	linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com
-Subject: Re: Re: Re: Re: Re: [PATCH v3 2/3] clk: eswin: Add eic7700 HSP
- clock driver
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
- 20241203(6b039d88) Copyright (c) 2002-2026 www.mailtech.cn
- mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
-In-Reply-To: <afINjhKluCxeb9LK@redhat.com>
-References: <20260423090904.2108-1-dongxuyang@eswincomputing.com>
- <20260423091114.2326-1-dongxuyang@eswincomputing.com>
- <aeo8nn-eigzlojWx@redhat.com>
- <4e5c887.5a31.19dbf179fb6.Coremail.dongxuyang@eswincomputing.com>
- <CABx5tqK7p_XJHfXZ70gXhR88PzAteV7cVSFPoRzccgmjanADMw@mail.gmail.com>
- <177733570840.5403.12558106273673899411@lazor>
- <7a76d8cb.5bab.19dd3645d4e.Coremail.dongxuyang@eswincomputing.com>
- <177742748214.5403.15526965667317467444@localhost.localdomain>
- <4257942f.5c6d.19dd89b06f8.Coremail.dongxuyang@eswincomputing.com>
- <afINjhKluCxeb9LK@redhat.com>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1777533341; c=relaxed/simple;
+	bh=943u9tGah9fZKkBwSz2vWV6zvES2zNY+ugxae7nl5oY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mrLz/SyJCth60DHMqPvS5cKE3nMqazbv083gaITrcFrPa2d7hM3EtsQmE6+OZA9Uia9MO92F9Wim2D//TC3BTy/zc7YuIfYkTb0y7lHSrzA/8iVoGE2571zg6wk0Zgwa4ILhDlwdG0sZix5YpJNoqiXJSehfPFXYY7oaiG+/3Qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qOpWjSls; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qOpWjSls"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-43d7645adbdso344705f8f.1
+        for <linux-clk@vger.kernel.org>; Thu, 30 Apr 2026 00:15:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1777533338; x=1778138138; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VmRymc3GPUbLGGqxDSkazp7UPTgnpwv2CEs1VA6yd2g=;
+        b=qOpWjSlshHfX2QfWoTTjkcCTyIqnQYo5T6I8dnS5wKZOZG91IPvbBHH5p7naasmH6N
+         7MN6PJePxwV8U69lrB+ch3lvFOMOSycneyiLh68PV+fcznyoI8FFC6aLj06nitOI20JT
+         tZRgxL3XplTq1dJA/OQq2pwhFCBZpO29JmxxK5FtpojsaOAStm02C/bkJpenwo9UjAO1
+         dgdCcI/vhAX9F3KKIYHIgQe9/pMJQckGI0vhXAxEGUxBpGsuByGhBVaaHo5D5W6bs2oh
+         t6W0cnkLZXM+l5S53mkbdwnKRQHnvV9oQNsMgaJWVxhia7/0cFE8bXRQv5t4fjbYuJba
+         nzXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777533338; x=1778138138;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VmRymc3GPUbLGGqxDSkazp7UPTgnpwv2CEs1VA6yd2g=;
+        b=Zuj+IRC0Rf4oTbDhFT9x8NSWJuZrFwcJkfgdKAJwdK9dCNN2/Ys+AW+OTQUDt/oRDK
+         MUshPiCe1xnSjAhkARsXzvWffnyMqyAuY0tBhlx6rHhVyySkFmXN3cWRg9jAt+ttNh6L
+         vSl5TVGfaxnWQmEzOzE68OfMtA9uzpuDfwDgS6WSqfJE6CCm849v7tv6WMCNoI7hHsHU
+         60uSvZu77+wIJM2UWI2rIGhG7zzEPrcJVwT4O+Srn65ZIMau1BXiCVk6yozV/2XDEqqP
+         jzOH4PcJpyt6tUgV6EeoNEZsOzNyhEFN0azAWutS/MHPBSSKScpPOzWTyqbWY1FfgfPZ
+         3qYg==
+X-Forwarded-Encrypted: i=1; AFNElJ+x5LKhimb+PkPNTA65GklfZPpuX7JuC6Qmq1XwfgEUFRmIU8ezoe3Qb3MC1fJiXWNT5H2V1zo74cQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzl+T+mrGbDIheO0ViEt4qHChUl269Vvn6P4BVPoOYP+vzqzYXi
+	uG0lXh9aXXRMB2Mio+nG/JZn5BIn4kzCk5CiBNePwlzatD0y4IyKdo4I8h9s4BJxm50=
+X-Gm-Gg: AeBDiespSXrg5Kwtxe+PprgaDE8EBG2o979QksxnOfl0DMGGwjG1TXtvPBJbcygWqtw
+	DI9awgaRoQgMqoHMrQTDBAcj+1IL3JnshItvJI4eeIxn6LesfNDD7KpM3VhdoLVxywPSoMYqI42
+	N8Ta9IrAUjz/A6Os4t0G/Sn6VB/hl36wFJQS03wzWhLmDBnFutT1eYwJrCyicu/aBbnb9+8z/m0
+	oc4wy3FUBp+DLMavz1LGzkQCVM5yqjkC+r//4+OSfQysA2Er4IJVuc05O9YZxNh/U6da38Qrs18
+	6l7s3iuNiOKJzM/31XFqv++Z73uX2RvFw8LntaMGa8Dv0UHOsGXkP20AF5ondzH6WXneRR0v88t
+	O842CqSAjXZJYQNzXjer3/ETGIbACECNrtUu9OBSbMQee5ELVryrFT6G75NKLnaWrfqTwOVwmCT
+	IpONh9w+v2dksURu/w/bbKw/bHzEpQu+mKVJwWHEV9XLsA7DLk
+X-Received: by 2002:a5d:5f82:0:b0:43d:2be:e54 with SMTP id ffacd0b85a97d-449403a9bb7mr2449221f8f.39.1777533337875;
+        Thu, 30 Apr 2026 00:15:37 -0700 (PDT)
+Received: from [192.168.42.159] ([83.240.169.14])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-447b7217c56sm10970745f8f.20.2026.04.30.00.15.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Apr 2026 00:15:37 -0700 (PDT)
+Message-ID: <749460c6-2111-4729-a5f1-711d674bacfb@linaro.org>
+Date: Thu, 30 Apr 2026 08:15:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <1f0a2d11.5cd2.19ddcf8114a.Coremail.dongxuyang@eswincomputing.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:TQJkCgAnPqGi7_JpIuUVAA--.5116W
-X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/1tbiAgEMAmnw4Y8kd
-	AADsp
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/4] arm64: dts: qcom: glymur: Add camera clock
+ controller support
+To: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+ Imran Shaik <imran.shaik@oss.qualcomm.com>,
+ Taniya Das <taniya.das@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20260429-glymur_camcc-v2-0-0c3fd1977869@oss.qualcomm.com>
+ <20260429-glymur_camcc-v2-3-0c3fd1977869@oss.qualcomm.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20260429-glymur_camcc-v2-3-0c3fd1977869@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-PiAKPiBPbiBXZWQsIEFwciAyOSwgMjAyNiBhdCAwNTozODo1MVBNICswODAwLCBYdXlhbmcgRG9u
-ZyB3cm90ZToKPiA+ID4gPiAKPiA+ID4gPiBUaGUgY29tbW9uIGdhdGUgQVBJLCB0aGUgSFNQIHBy
-aXZhdGUgQVBJLCBhbmQgdGhlIHJlc2V0IGRyaXZlciBhbGwgYWNjZXNzwqAKPiA+ID4gPiB0aGUg
-c2FtZSByZWdpc3RlciBzcGFjZS4KPiA+ID4gPiBUaGVyZWZvcmUsIHRoZXkgbmVlZCB0byBiZSBw
-cm90ZWN0ZWQgYnkgdGhlIHNhbWUgZGF0YS0+bG9jay4KPiA+ID4gPiAKPiA+ID4gCj4gPiA+IElm
-IGV2ZXJ5dGhpbmcgaXMgYWNjZXNzaW5nIHJlZ2lzdGVycyB0aHJvdWdoIHJlZ21hcCB3aHkgYXJl
-bid0IHdlIHVzaW5nCj4gPiA+IHRoZSBidWlsdGluIGxvY2sgd2l0aCBzdHJ1Y3QgcmVnbWFwX2Nv
-bmZpZzo6dXNlX3Jhd19zcGlubG9jaz8gSSBkb24ndAo+ID4gPiB1bmRlcnN0YW5kIHdoeSB3ZSdy
-ZSByb2xsaW5nIG91ciBvd24gaGVyZS4KPiA+IAo+ID4gSGkgU3RlcGhlbiwKPiA+IAo+ID4gSW4g
-dGhlIEhTUCBjbG9jayBkcml2ZXIgYW5kIHJlc2V0IGRyaXZlciwgdGhlcmUgYXJlIHRocmVlIGNv
-bXBvbmVudHMgdGhhdAo+ID4gYWNjZXNzIHRoZSBIU1AgcmVnaXN0ZXIgc3BhY2U6IGEgY29tbW9u
-IGdhdGUgY2xvY2ssIGEgY3VzdG9tIGdhdGUgY2xvY2vCoAo+ID4gKGkuZS4sIDB4ODAwKSwgYW5k
-IGEgcmVzZXQuCj4gPiAKPiA+IDEuIFRoZSBjb21tb24gZ2F0ZSB1c2VzIGVzd2luX2Nsa19yZWdp
-c3Rlcl9nYXRlKCkgdG8gcmVnaXN0ZXIgYSBnYXRlIGNsb2NrwqAKPiA+IHZpYSBkZXZtX2Nsa19o
-d19yZWdpc3Rlcl9nYXRlX3BhcmVudF9kYXRhKCkuIEl0IGFjY2Vzc2VzIHRoZSByZWdpc3RlcsKg
-Cj4gPiB1c2luZyBjbGtfZ2F0ZV9lbmRpc2FibGUoKS4KPiA+IAo+ID4gc3RhdGljIHZvaWQgY2xr
-X2dhdGVfZW5kaXNhYmxlKHN0cnVjdCBjbGtfaHcgKmh3LCBpbnQgZW5hYmxlKQo+ID4gewo+ID4g
-CXN0cnVjdCBjbGtfZ2F0ZSAqZ2F0ZSA9IHRvX2Nsa19nYXRlKGh3KTsKPiA+IAl1bnNpZ25lZCBs
-b25nIGZsYWdzOwo+ID4gCj4gPiAJaWYgKGdhdGUtPmxvY2spCj4gPiAJCXNwaW5fbG9ja19pcnFz
-YXZlKGdhdGUtPmxvY2ssIGZsYWdzKTsKPiA+IAllbHNlCj4gPiAJCV9fYWNxdWlyZShnYXRlLT5s
-b2NrKTsKPiA+IC4uLgo+ID4gCWlmIChnYXRlLT5sb2NrKQo+ID4gCQlzcGluX3VubG9ja19pcnFy
-ZXN0b3JlKGdhdGUtPmxvY2ssIGZsYWdzKTsKPiA+IAllbHNlCj4gPiAJCV9fcmVsZWFzZShnYXRl
-LT5sb2NrKTsKPiA+IH0KPiA+IAo+ID4gVGhlIGdhdGUtPmxvY2sgaW4gdXNlIGlzIHRoZSBkYXRh
-LT5sb2NrIHBhc3NlZCBpbiBmcm9tIHRoZSBjbG9jayBkcml2ZXIuCj4gPiAKPiA+IDIuIFRoZSBj
-dXN0b20gZ2F0ZSB1c2VzIGhzcF9jbGtfcmVnaXN0ZXJfZ2F0ZSgpIHRvIHJlZ2lzdGVyIGEgZ2F0
-ZSBjbG9jay4gCj4gPiBJdCBhY2Nlc3NlcyB0aGUgcmVnaXN0ZXIgdXNpbmcgaHNwX2Nsa19nYXRl
-X2VuZGlzYWJsZSgpLgo+ID4gCj4gPiBzdGF0aWMgdm9pZCBoc3BfY2xrX2dhdGVfZW5kaXNhYmxl
-KHN0cnVjdCBjbGtfaHcgKmh3LCBpbnQgZW5hYmxlKQo+ID4gewo+ID4gCXN0cnVjdCBlaWM3NzAw
-X2hzcF9jbGtfZ2F0ZSAqZ2F0ZSA9IHRvX2dhdGVfY2xrKGh3KTsKPiA+IAo+ID4gCWd1YXJkKHNw
-aW5sb2NrX2lycXNhdmUpKGdhdGUtPmxvY2spOwo+ID4gLi4uCj4gPiB9Cj4gPiAKPiA+IFRoZSBn
-YXRlLT5sb2NrIGluIHVzZSBpcyB0aGUgc2FtZSBkYXRhLT5sb2NrIHBhc3NlZCBpbiBmcm9tIHRo
-ZSBjbG9ja8KgCj4gPiBkcml2ZXIuCj4gPiAKPiA+IDMuIFRoZSByZXNldCB1c2VzIGVpYzc3MDBf
-aHNwX3Jlc2V0X2Fzc2VydCgpIGFuZMKgCj4gPiBlaWM3NzAwX2hzcF9yZXNldF9kZWFzc2VydCgp
-LCB3aGljaCBjYWxsIHJlZ21hcF9hc3NpZ25fYml0cygpIHRvIGFjY2Vzc8KgCj4gPiB0aGUgcmVn
-aXN0ZXIuCj4gPiAKPiA+IEFsbCB0aHJlZSBtZXRob2RzIGFjY2VzcyB0aGUgc2FtZSByZWdpc3Rl
-ciBzcGFjZTsgdGhlcmVmb3JlLCB0aGV5IG11c3QgYmXCoAo+ID4gcHJvdGVjdGVkIGJ5IHRoZSBz
-YW1lIGxvY2sgKGRhdGEtPmxvY2spLgo+ID4gCj4gPiBUaGF0J3Mgd2h5IHdlIGludHJvZHVjZWQg
-ZWljNzcwMF9oc3BfcmVnbWFwX2xvY2svdW5sb2NrIGZvcsKgCj4gPiBlaWM3NzAwX2hzcF9yZWdt
-YXBfY29uZmlnLgo+ID4gCWVpYzc3MDBfaHNwX3JlZ21hcF9jb25maWcgPSB7Cj4gPiAJCS5sb2Nr
-ID0gZWljNzcwMF9oc3BfcmVnbWFwX2xvY2ssCj4gPiAJCS51bmxvY2sgPSBlaWM3NzAwX2hzcF9y
-ZWdtYXBfdW5sb2NrLAo+ID4gCQkubG9ja19hcmcgPSBsb2NrX2N0eCwKPiA+IAl9Owo+ID4gCj4g
-PiBUaGUgJ2xvY2tfY3R4LT5sb2NrJyBpbiBlaWM3NzAwX2hzcF9yZWdtYXBfbG9jay91bmxvY2sg
-aXMgdGhlICdkYXRhLT5sb2NrJy4KPiA+IAlzdGF0aWMgdm9pZCBlaWM3NzAwX2hzcF9yZWdtYXBf
-bG9jayh2b2lkICphcmcpCj4gPiAJX19hY3F1aXJlcyhsb2NrX2N0eC0+bG9jaykKPiA+IAl7Cj4g
-PiAJCXN0cnVjdCBlaWM3NzAwX2hzcF9yZWdtYXBfbG9jayAqY29uc3QgbG9ja19jdHggPSBhcmc7
-Cj4gPiAJCXVuc2lnbmVkIGxvbmcgZmxhZ3M7Cj4gPiAJCj4gPiAJCXNwaW5fbG9ja19pcnFzYXZl
-KGxvY2tfY3R4LT5sb2NrLCBmbGFncyk7Cj4gPiAJCWxvY2tfY3R4LT5mbGFncyA9IGZsYWdzOwo+
-ID4gCX0KPiA+IAo+ID4gVGhlIHNpbWlsYXIgYXBwcm9hY2ggY2FuIGJlIGZvdW5kIGluIGNsay1p
-bXg4dWxwLXNpbS1scGF2LmMuCj4gPiAKPiA+IFRoZSBhbm5vdGF0aW9ucyB3aGF0IHdlIG1lbnRp
-b25lZCBwcmV2aW91c2x5IGlzIHRoZSBhYm92ZcKgCj4gPiAiX19hY3F1aXJlcyhsb2NrX2N0eC0+
-bG9jaykiLgo+IAo+IEkgc2VlIHdoYXQgU3RlcGhlbiBpcyBzYXlpbmcuIFRha2UgYSBsb29rIGF0
-IF9fcmVnbWFwX2luaXQoKSBpbgo+IGRyaXZlcnMvYmFzZS9yZWdtYXAvcmVnbWFwLmMuIElmIHRo
-ZSBsb2NrL3VubG9jayBvcHMgYXJlIG5vdCBzcGVjaWZpZWQsCj4gdGhlbiB0aGUgZmluYWwgZWxz
-ZSB3aWxsIGF1dG9tYXRpY2FsbHkgc2V0dXAgbG9ja2luZy4gQnkgZGVmYXVsdCwgaXQnbGwKPiB1
-c2UgYSBtdXRleCwgYnV0IHRoZXJlIGlzIHRoZSBhYmlsaXR5IHRvIHVzZSBhIHNwaW5sb2NrLgo+
-IAo+IFNvIHlvdSBjYW4gZHJvcCB0aGUgbG9jay91bmxvY2sgb3BzIGZyb20gdGhlIGRyaXZlciwg
-YW5kIGFkZCB0byB0aGUgb3BzOgo+IAo+IAlmYXN0X2lvOiAxLAo+IAl1c2VfcmF3X3NwaW5sb2Nr
-OiAxLAo+IAo+IEdpdmVuIHRoZSBjcml0Y2FsIG5hdHVyZSBvZiBjbGtzLCBJIGFncmVlIHdpdGgg
-U3RlcGhlbiB0aGF0IGEgcmF3Cj4gc3BpbmxvY2sgc2hvdWxkIGJlIHVzZWQgaGVyZS4KPiAKCkhp
-IFN0ZXBoZW4gYW5kIEJyaWFuLAoKSW4gdGhlIEhTUCBjbG9jayBkcml2ZXIsIGhzcF9jbGtfZ2F0
-ZV9lbmRpc2FibGUoKSBvbmx5IGFjY2Vzc2VzIHRoZcKgCnJlZ2lzdGVycyBhdCAweDgwMC8weDkw
-MCwgYW5kIHJlc2V0IGFjY2Vzc2VzIHRoZSBzYW1lIHJlZ2lzdGVycyBhcyB3ZWxsLMKgCndoaWNo
-IGxlYWRzIHRvIGNvbmN1cnJlbnQgUk1XIChyZWFkLW1vZGlmeS13cml0ZSkgcmFjZXMuCgpUaGVy
-ZSBhcmUgdHdvIGFwcHJvYWNoZXMgdG8gc29sdmUgdGhlc2UgcmFjZXMuCgpUaGUgZmlyc3QgbWV0
-aG9kIGlzIHRoZSBjdXJyZW50IGltcGxlbWVudGF0aW9uLiBBbGwgdGhyZWUgZnVuY3Rpb25zwqAK
-KGNsa19nYXRlX2VuZGlzYWJsZSgpLCBoc3BfY2xrX2dhdGVfZW5kaXNhYmxlKCkswqAKYW5kIGVp
-Yzc3MDBfaHNwX3Jlc2V0X2Fzc2VydCgpKSB1c2UgZGF0YS0+bG9jayB0byBwcmV2ZW50IGNvbmN1
-cnJlbnTCoApSTVcgcmFjZXMuCgpUaGUgc2Vjb25kIG1ldGhvZCBpcyBhcyBTdGVwaGVuIHNhaWQu
-IElmIEkgdW5kZXJzdGFuZCBjb3JyZWN0bHksIGl0IGlzIHRvwqAKY2hhbmdlIHRoZSByZWdpc3Rl
-ciByZWFkL3dyaXRlIG9wZXJhdGlvbnMgaW4gaHNwX2Nsa19nYXRlX2VuZGlzYWJsZSgpIHRvwqAK
-dXNlIHRoZSByZWdtYXAgQVBJIGFuZCB1c2UgdGhlIHNhbWUgbG9jayAobWFwLT5yYXdfc3Bpbmxv
-Y2spIGFzIHJlc2V0LgoKSXMgdGhlIHNlY29uZCBhcHByb2FjaCBwcmVmZXJhYmxlPwoKQmVzdCBy
-ZWdhcmRzLApYdXlhbmcgRG9uZwoKCg==
+On 29/04/2026 15:14, Jagadeesh Kona wrote:
+> Add support for camera clock controller for camera clients to
+> be able to request for camera clocks on Glymur SoC's.
+> 
+> Signed-off-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+> ---
+>   arch/arm64/boot/dts/qcom/glymur.dtsi | 16 ++++++++++++++++
+>   1 file changed, 16 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/glymur.dtsi b/arch/arm64/boot/dts/qcom/glymur.dtsi
+> index f23cf81ddb77a4138deeb4e00dd8b316930a2feb..8e2a872988d1c3d97506856e2e5325646db59746 100644
+> --- a/arch/arm64/boot/dts/qcom/glymur.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/glymur.dtsi
+> @@ -4163,6 +4163,22 @@ usb_mp: usb@a400000 {
+>   			status = "disabled";
+>   		};
+>   
+> +		camcc: clock-controller@ade0000 {
+> +			compatible = "qcom,glymur-camcc";
+> +			reg = <0x0 0x0ade0000 0x0 0x20000>;
+> +			clocks = <&gcc GCC_CAMERA_AHB_CLK>,
+> +				 <&rpmhcc RPMH_CXO_CLK>,
+> +				 <&rpmhcc RPMH_CXO_CLK_A>,
+> +				 <&sleep_clk>;
+> +			power-domains = <&rpmhpd RPMHPD_MXC>,
+> +					<&rpmhpd RPMHPD_MMCX>;
+> +			required-opps = <&rpmhpd_opp_low_svs>,
+> +					<&rpmhpd_opp_low_svs>;
+> +			#clock-cells = <1>;
+> +			#reset-cells = <1>;
+> +			#power-domain-cells = <1>;
+> +		};
+> +
+>   		mdss: display-subsystem@ae00000 {
+>   			compatible = "qcom,glymur-mdss";
+>   			reg = <0x0 0x0ae00000 0x0 0x1000>;
+> 
+
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
