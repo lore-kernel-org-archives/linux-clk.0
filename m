@@ -1,174 +1,133 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6FC3BED42;
-	Thu, 30 Apr 2026 11:00:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C52A40626B
+	for <linux-clk@vger.kernel.org>; Thu, 30 Apr 2026 11:53:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777546807; cv=none; b=Gvgt4MTLFXbm4aHS2CcN8wzN0Pk3Y1NW4xgjnNCKqgmOFGJil0ZqPl3hG+Nbpd0LhKf4IFWv6mb7crMd/2Oemk+PXcp30ps9I+QVqcwKuLtPbTK9f1KvjUz13WULmyFyX04KHFLZzMVOxMbZkJS054Fbw8o7kC5DedHxV//do1c=
+	t=1777550016; cv=none; b=DYtP+56/23XND+HVf0AEWMrL4oZL4+TOmakfM/WNqpAyvtVTYju/58ez7Gg4D5DbMkvTNMfV5Ulnt+HLHNqnbBosHuCwCtgr8fPWAjmszqOTuK0rtRcVGSPkkIL8CsB80XI479OyInqk006h6ACavJe1PgUBl9iTcVLTdz0VbOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777546807; c=relaxed/simple;
-	bh=uQlYssfnDnIC6IGTmBlQ3cIPatRkMPMVF+dJm4QH2Os=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bP3Q09OH3iEg/kC3BHniKUxIOFG00cxz9uJpIqRRzninSYmOt6wMAFZMtcwbQiprTaEkvjY844gp6C44xx972vz59YSHpC/ocmE4f0mw+ehd/pFZPXeWQEl0MMPR10l5ZAAOqHoQVX9PapnLUDU9RUJV8X6hcYyeKaeumMedQ+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I2B5ya4E; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1777550016; c=relaxed/simple;
+	bh=f8+OQO/DhVnwaHYN8tReceYFnWeQTCE+B4hgCfi/GOU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=M0pkoYsotUIdQmaLTxDzog9XZqxW+tUZ4WB+tZiIcMwCza84i+hGnv+eG58z3UbXs/gIEJod2GEBM5VPxOvsb3558ug79roj5hJ54F4UQxat/MRmq8qkXgNtV0OkPi6/oPd/9/IC9uN5DImNB6d7J7LvPljqkgQ+qhLy7pV9fmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ij0fc6ZH; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I2B5ya4E"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 461F5C2BCB3;
-	Thu, 30 Apr 2026 11:00:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777546807;
-	bh=uQlYssfnDnIC6IGTmBlQ3cIPatRkMPMVF+dJm4QH2Os=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=I2B5ya4ESQXzKHqePhmd1Q0ZOXmyEREFizdjz5y4SlUE1PBy65W8XQihxoOXhVz9w
-	 Nqv9qHfsNVPb+fGrLkbBgGiJgKzOs9xP9iAwlVQRQMjrdSWD8xnr+Qj1cGMrboysPP
-	 vHhZ4PsRtnivXJCRgBZ1gEVuv5Mo4yjrq0c+JMxff9kkN87u2BrTv6osLXYBj8scYe
-	 crOEV/C/Gf/hQWpBb+VGgpRJBCLQ+gzZOguf+wfnuaGOgFMz+8hTAw/OncE33le6Jb
-	 yfLJ4AELw13cgjMTWwGTqVjdsACs/jSSaVsDL4ky3dlhJ8R3RTzTqGYLEIJty8i+31
-	 HlXc+pinrp2tQ==
-Message-ID: <5337c2c4-8f04-4185-9d09-130d9e99d147@kernel.org>
-Date: Thu, 30 Apr 2026 13:00:01 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ij0fc6ZH"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4891c0620bcso6157695e9.1
+        for <linux-clk@vger.kernel.org>; Thu, 30 Apr 2026 04:53:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1777550010; x=1778154810; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HmgXHjLeIkbk+Rv0NJChDX5ZVnbAwfmHTE3lyoBocNY=;
+        b=ij0fc6ZHYcAICy5HRaSwNqbImSM4GpCfJlnKR34xk8OA3kI/1LINViqDo7FfQ07pAt
+         SVaOO8nbQIkHeDe/F9X4XYabeFsHl2aCWvgTSaUTD/EwKQbSoO0+LyGmHIQIzSt1O9y5
+         SeCd8ZTmaY79tbZDXvaHaN+7xy0AooHI4vG379BeMvrkoRGg/dYrSAEydqS6RPKCxds3
+         izq/8UgsaEiGZfuTuzU9d5bHZKA3Z/8D8CXNeqtbMu8JzZgSP0PhdoMd7jbN8tQqMeEj
+         xV45N3p9SBgoXJqyQbqDLBOApCr8h1ZqN9LjiPObP7HRpMSQlFA4tUYia88ocWXk8B3i
+         T2SA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777550010; x=1778154810;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HmgXHjLeIkbk+Rv0NJChDX5ZVnbAwfmHTE3lyoBocNY=;
+        b=AnoYn+WbW9n/9N1TQO6A+3M4WeSEIppO9SXEpuAPuN06X+Y4nexP5bAkPm8zH0tp5C
+         MfqeziCctvqWvlA1I3vZVFmSrlUBIeQ6vQZy8/q0fm9iu5Jr8CTH+3fDCQBm8hAUiFbh
+         Piholx8C4OtctslIY8pJrHzeUOWkasQrRNsyB6pSuSLXq3FucXZCozVO65MOKKu+O0f3
+         TUmlK4ZVEm7FxTBccFZTnkb31U26ZI64KRsG/wCLJj/VUt43XrGQ+M0b1fl3pcctdoyd
+         91Pua2AOqCPsjsYhMGe5hUH/F2xuhTtDPDDTEXO5eb7QAMmvtmLt+3+eRWvZXAQ/9EhU
+         ONNg==
+X-Forwarded-Encrypted: i=1; AFNElJ99L4X9pCepcRSg+8diNu2eewpi3bAWoPy1s3Dd1Rirr63ZufnnXIhkZIMJGgjAPWfF/vplml4o02M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeLEAghsg2q4AclkSrLaXdw0cqJFLVZzCkF68DVTRT8LGT7FVH
+	4kDm0lCI2/pS85jPrEcy591OmDPBnmM3ws5bLkOZS5wZgxq1AvksJoF8cbVmmzh5Hkw=
+X-Gm-Gg: AeBDievma2ui1c6AeCRkWYEBLVmDnZ/BCSRi6KyLZ2hDIXFyiRjr23PB7d7q9kUPcY1
+	fU4RN2OInq5bm0XOHTUfGkkzaELAOwXb+jkx2LuEGfEpAoXpgL8FQbVrnkgsvHTlRV+HkAHVLUI
+	7BIfTznxH76n49yGAe5SA8jfagJHlhSTHz8KVxuKRQxxlhqK7h9fZRiMJWLEJ6wZFXbStvlhOtC
+	TN0d1h/EcN0g6HNlnxyTpmm4JoxZE2SQ/bBtpDJnEVnNEij06tDJPeFjNzPZ2cKy9uRDjVq2mRu
+	3Y4SJr1zpMhgiTNUlQchig/C1shXQz44+ie/lR9Uzxmpx7cPI1rl7nXo7weAOpoE2TF+7LVY4rX
+	tMonvU8u71gfvrC8Fr1Bxc7h0LXI3e/g/9YgW8I4ivVY7zmT5O4qaoZcplDNghWbX6fv7UCw/Ke
+	lO6cmvSoujevMX3QTBd131ip/xomFO2D9EyuBLIBJkq/QnOobAvGYseBqgvIS4Im5c02vZdzbjB
+	fHMjk8x3b5KGKZ7/PhxHmWgRy8nTXQ=
+X-Received: by 2002:a05:600c:c117:b0:48a:6798:52e9 with SMTP id 5b1f17b1804b1-48a844a1528mr30995585e9.0.1777550009764;
+        Thu, 30 Apr 2026 04:53:29 -0700 (PDT)
+Received: from ltux.linaro ([2a00:2381:fd67:101:9e61:b264:2b8d:1e57])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a7c3058e5sm40886905e9.16.2026.04.30.04.53.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Apr 2026 04:53:29 -0700 (PDT)
+From: Alexey Klimov <alexey.klimov@linaro.org>
+Date: Thu, 30 Apr 2026 12:53:27 +0100
+Subject: [PATCH] clk: samsung: exynos850: mark APM I3C clocks as critical
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/13] dt-bindings: clock: qcom,sm8550-dispcc: Add display
- CESTA support on SM8750
-To: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
- Lee Jones <lee@kernel.org>, Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
- Imran Shaik <imran.shaik@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, Maulik Shah <maulik.shah@oss.qualcomm.com>,
- Taniya Das <taniya.das@oss.qualcomm.com>
-References: <20260420-cesta-sm870-dispcc-v1-0-eb27d845df9c@oss.qualcomm.com>
- <20260420-cesta-sm870-dispcc-v1-2-eb27d845df9c@oss.qualcomm.com>
- <20260422-savvy-wolverine-of-chivalry-9ae6fc@quoll>
- <3ea2c4a2-4a1b-4062-b332-9d5d0a53379b@kernel.org>
- <94a49f16-2e1f-4d32-9d4c-483d56fd2731@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <94a49f16-2e1f-4d32-9d4c-483d56fd2731@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20260430-exynos850-i3c-criticalclocks-v1-1-6e1fd8dfa21b@linaro.org>
+X-B4-Tracking: v=1; b=H4sIALZC82kC/x3MSwqDMBAA0KvIrB2In1TpVaSLZBztoCQlI8Uiu
+ XuDy7d5FygnYYVndUHir6jEUNDUFdDbhZVR5mJoTfswfWeQz1+IOlqD0hFSkkPI7bRH2hRnct4
+ Po18a20MpPokXOe9+euX8BwC6cFluAAAA
+X-Change-ID: 20260430-exynos850-i3c-criticalclocks-dcabb78bf154
+To: Sam Protsenko <semen.protsenko@linaro.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Brian Masney <bmasney@redhat.com>, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
 
-On 28/04/2026 19:25, Jagadeesh Kona wrote:
-> 
-> 
-> On 4/24/2026 2:39 PM, Krzysztof Kozlowski wrote:
->> On 22/04/2026 09:41, Krzysztof Kozlowski wrote:
->>> On Mon, Apr 20, 2026 at 09:58:55PM +0530, Jagadeesh Kona wrote:
->>>> On SM8750, a subset of DISPCC clocks is controlled by the display CESTA
->>>> (Client State Aggregator) hardware. These clocks can be scaled to the
->>>> desired frequency by sending votes to the display CRM(CESTA Resource
->>>> manager) instead of programming DISPCC registers directly.
->>>
->>> This looks like completely new, vendor clock API, so no.
->>>
->>> Resource voting or clock scaling is nothing new and you do not get a
->>> vendor phandle to do it. That's like basic upstreaming 101: we do not
->>> want another vendor re-implementation of common or typical solutions.
->>
->> I'll provide a bit more context, what I am looking for:
->> Are CESTA and CRMC truly separate blocks? Do they have their own
->> resources or maybe something is shared with clock controller, e.g. parts
->> of address space?
->>
-> 
-> Thanks Krzysztof for your review
-> 
-> CRMC is sub-block within the CESTA block. CRMC block contains the clocks frequency lookup tables
-> information for CESTA controlled RCGs, which clock driver needs to read and populate the RCG's
-> frequency tables. DISPCC block is outside of CESTA block, so CRMC block is mapped as syscon device
-> and is used in DISPCC node only to read & populate the CESTA controlled RCGs frequency lookup tables.
-> The actual clock scaling is done later by converting the frequency into a perf level & sending it
-> to CESTA HW via CRM APIs.
+The Exynos850 APM co-processor relies on the I3C bus to communicate with
+the PMIC. Currently, there is no dedicated PMIC consumer driver managing
+these clocks, so the clock subsystem automatically gates them during the
+initialisation. Once gated, any subsequent ACPM communication with APM
+results in timeouts.
 
-Perf levels should use proper bindings and Linux abstractions, not
-custom APIs.
+As a temporary workaround (and let's hope it doesn't become permanent),
+mark both `gout_i3c_pclk` and `gout_i3c_sclk` as CLK_IS_CRITICAL ones to
+prevent the clock subsystem from disabling them. This makes the ACPM
+communication functional. This workaround should be reverted once a
+proper ACPM PMIC driver is implemented to manage these clocks.
 
-But what's more important, I don't get the hardware here - clocks are
-fully within clock controller (DISPCC), but somehow their interface is
-exposed to CESTA as well, yet CESTA is not a consumer or provider of
-these clocks.
+Cc: Sam Protsenko <semen.protsenko@linaro.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>
+Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+---
+ drivers/clk/samsung/clk-exynos850.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Usually the provider of some resource is in control of that resource,
-e.g. clock gates or dividers. If some other block (not provider)
-controls the resource, does that mean that other block is basically part
-of the provider?
+diff --git a/drivers/clk/samsung/clk-exynos850.c b/drivers/clk/samsung/clk-exynos850.c
+index eb9c80b60225efa33d85f5f3c284eb8a63a48015..b143a42293f5a154f53a86d4e97e17a3e61164f3 100644
+--- a/drivers/clk/samsung/clk-exynos850.c
++++ b/drivers/clk/samsung/clk-exynos850.c
+@@ -686,10 +686,11 @@ static const struct samsung_gate_clock apm_gate_clks[] __initconst = {
+ 	     CLK_CON_GAT_GOUT_APM_APBIF_RTC_PCLK, 21, 0, 0),
+ 	GATE(CLK_GOUT_TOP_RTC_PCLK, "gout_top_rtc_pclk", "dout_apm_bus",
+ 	     CLK_CON_GAT_GOUT_APM_APBIF_TOP_RTC_PCLK, 21, 0, 0),
++	/* TODO: Should be dealt with or enabled in PMIC ACPM driver */
+ 	GATE(CLK_GOUT_I3C_PCLK, "gout_i3c_pclk", "dout_apm_bus",
+-	     CLK_CON_GAT_GOUT_APM_I3C_APM_PMIC_I_PCLK, 21, 0, 0),
++	     CLK_CON_GAT_GOUT_APM_I3C_APM_PMIC_I_PCLK, 21, CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_GOUT_I3C_SCLK, "gout_i3c_sclk", "mout_apm_i3c",
+-	     CLK_CON_GAT_GOUT_APM_I3C_APM_PMIC_I_SCLK, 21, 0, 0),
++	     CLK_CON_GAT_GOUT_APM_I3C_APM_PMIC_I_SCLK, 21, CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_GOUT_SPEEDY_PCLK, "gout_speedy_pclk", "dout_apm_bus",
+ 	     CLK_CON_GAT_GOUT_APM_SPEEDY_APM_PCLK, 21, 0, 0),
+ 	/* TODO: Should be enabled in GPIO driver (or made CLK_IS_CRITICAL) */
 
-Well, you claim not, but how otherwise does it work?
-
-> 
->> If they manage clocks, they should receive some of the clocks as inputs,
->> because I don't imagine a block which gates clock somewhere else, to
->> which it has no access (IOW, that gate to manage clock is part of the
->> clock). Or maybe it's some shadow registers? Or display clock controller
->> does not have direct clock access in the first place?
-
-Heh, I basically repeated myself here... but your answer here:
-
->>
-> 
-> Yes, there are few dispcc clocks required for accessing the display CRM/CRMC register
-> blocks but those clocks are already kept ON from bootloader and they will stay ON as
-> long as MMCX rail is voted. So if MMCX is ON, we can access CRM/CRMC blocks.
-
-is not really answering the problem.
-
-Please figure out how a non-provider block can act as provider on some
-other provider, without access to any of its resources.
-
+---
+base-commit: 0787c45ea08a13b5482e701fabc741877cf681f6
+change-id: 20260430-exynos850-i3c-criticalclocks-dcabb78bf154
 
 Best regards,
-Krzysztof
+-- 
+Alexey Klimov <alexey.klimov@linaro.org>
+
