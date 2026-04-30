@@ -1,107 +1,96 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E51337E2F8
-	for <linux-clk@vger.kernel.org>; Thu, 30 Apr 2026 10:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A41C2228CB8;
+	Thu, 30 Apr 2026 10:30:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777543724; cv=none; b=Z0rfuX6qJ77eVc/huh6ATlr+gjsuHLXKqguI4jkP8bgMm0I8uGQzBz4VIvxO+Q0TmbnKmOlwJN8jr4Bigv8NZZfYGxzPN8pANBnsuHy2e9fQby1moKmrc21lpxPTPUAK5POnMIcdtPZ7z7yWjQO0gThndZKJnYaciPurK/+Juzk=
+	t=1777545058; cv=none; b=moVe2rslKWuwdrocFq65YtP3QrHLwLX9Ld7zbCxA3tcFHoYx4D2HL5GKns5XCAHM5pkicCkkaNeZC74lDB8J3q2ITZ6dN3GAxquvGSgLv6P+HvF1CTnC7wNBfzL9TWWBje65AmVypjtiI6vhvLQiLkRVZzl4fxkp+ZpKgUMNcXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777543724; c=relaxed/simple;
-	bh=CvWbtYBi8ENn+U8ThAwDO3/26YkOEu1S3TBFGLINxNI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PhfBDc9OaoufcbZngriNp5Ggwr0krKR84XDclNk2RK8IPju+zCJ3OH00OGrTadsfd+CqVds6jEnzj24C5N5RT0t1R0ru+kAIqD0ShesWhtCI9Kn5Tu7kWVFunxCClmgbxZ4V9zjFqyt/evm59WOZJBHMdh35QFfdXgpOtZVr/3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=il9l5Jln; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1777545058; c=relaxed/simple;
+	bh=DmeSSTIGufqnT9oymE4UEk/rZkHHJ5nwP7hD8//UdrQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Q8Y4ICJ407VRJn6YvVTz2ZUHFqrvb0D20IMY79Y4FIzOSdkQTry//q5CZJ/ckioCtG/GsUQ/Q6Mda6/B6VQIQA9Fy+DNe5uOzQidH/sqSkbmHfsDSOP37kkFXUJ99nRorkYig1dLOEiMBtC2V/D19KKQhuNoPopLMBZs1Wo8KRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aWSfmgyx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="il9l5Jln"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-48a563e4ef7so7029855e9.0
-        for <linux-clk@vger.kernel.org>; Thu, 30 Apr 2026 03:08:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1777543722; x=1778148522; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1ChshJVS8LUKfqw0vxyMwMMt0DdEqRzBhSpf+u1agpg=;
-        b=il9l5Jln6gt+vOQ+qmr4fQLT5Qq0qk8ddEfjWX7KObljQnCCf5qz9WsRt2p9KQk3rv
-         bgcOhshi79vKd1FpZh90oM2L264neOo8aQ1OHhNUzBfbd3En3ahShkkYzf+GbnV/zwrM
-         LylvLvSCg2LSxKGV0zrhyvh6Qwj2uRQBFDYpI/fNVfPD7IWpXNiKUKPxr/llbWp8/QV6
-         QWHE+ghWLWfeZEL0ApN4apGvUYB0QDymizd1YRcWBrqoDPkWkmoN2TroHPtwsPfNKpdX
-         IwsU0VFZf24kvJVMNnNmHrEmf1L4+PLaOvi8fCbAOdPMso69Ace3YC2d8lfcqkbeyp9Q
-         xolQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777543722; x=1778148522;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1ChshJVS8LUKfqw0vxyMwMMt0DdEqRzBhSpf+u1agpg=;
-        b=gTe75A0grtv+fN8CmjmbYZUyBq+9A+bTIUq/0XH6/F5Zggcy6PXcaPoMv58oiERs7U
-         FJ3kff62ma+VNvyD6SWxFNzior8CgD53J13lejWf/RL9ZUlkeUu+zbiB1bSUMNEIcbhV
-         yHUu2S9H3287vdteHxAo50ulXcl5AWQlr03szpll4idWTG33d24IutxXSg+oSZsc3OHv
-         52gTJUIkcvAANslPalA5p2qTSlAwWmVVGocmYP8fTW4metEB/N60zOpMXp9Lf+rMavdp
-         s9U77wPtl4DnHarBqVFjLLgsc3ISNc9+aWijMIEIpMdj7a9mokR6LkRaSMYUwAN7tv45
-         yeug==
-X-Forwarded-Encrypted: i=1; AFNElJ/KP146lDMR3q8DQaBJ2WzS4gBk65P6a0fMj+a3I0m/J9+ALFb2T/1SixIoQFMI5DBn7AzwDcSJPFM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBROh5fT3TNimxZpArOcBrAcWlkCQ2IOtwbK+uaZJHE/92Lpl4
-	uW3WBAZOwr44t4+5aUIR45lrCsxtHDiZEyFX7gK0p6gPUxM044JN1u9h
-X-Gm-Gg: AeBDieveoythm2e6jpaGj5P9zWtBrKLFM2bOOpNhhlxr4utLPuwGFtZHVKIHozWkMHF
-	S8ttJ7egtthH3NF84h8cZzl+ee3jOYm1b5Yk8qdDiulAMx0QkMus/yjGn3T3QckeEBcFlRkMAyC
-	RGndjs2bePNnot7x7k27CA28Z3k/GPzG7UsO/zecCLkLv8PsQrwXXyLYiLMwZDLaeXyaGTNFEvx
-	GwY0kIzwavsC/jZcw5/8IAHNG0VyLLQasEzh8g96RlyMK7j/ibXq7wuxtBDC3imzWW7geanldrP
-	wP9CD9mN+XDoAKXAhjFx8+SzAjU+hso2SLMcTBR18a6uq/xQ9K56UfBztsSRK0k1IVs6hp9mHeX
-	4A5O+M68frOO8R0X1B/OimSbFyhrB4SI268PXKozWiA0oX796L75hW7tlTK37lDp82m1jlUxaS5
-	SYvBQY+7eS6nNxClsSM7kTw3MvFoee0Bku7RlGLIUt4FDgzSgIP8pc0jo1
-X-Received: by 2002:a05:600c:3594:b0:488:c40b:c8bf with SMTP id 5b1f17b1804b1-48a83f6e20emr37376795e9.2.1777543721451;
-        Thu, 30 Apr 2026 03:08:41 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:23c4:a758:8a01:342:901:e785:f7d2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a822bf3ffsm60925245e9.7.2026.04.30.03.08.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Apr 2026 03:08:41 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH] clk: renesas: r9a08g046: Add IA55_PCLK to critical module clocks
-Date: Thu, 30 Apr 2026 11:08:16 +0100
-Message-ID: <20260430100838.157306-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aWSfmgyx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E729FC2BCB3;
+	Thu, 30 Apr 2026 10:30:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1777545058;
+	bh=DmeSSTIGufqnT9oymE4UEk/rZkHHJ5nwP7hD8//UdrQ=;
+	h=From:Subject:Date:To:Cc:From;
+	b=aWSfmgyxckA5I2LQl2tRlWPVi9qkuSzqU7XBzwtvqKm1KhejCvSOQpDYAnR8/ghAa
+	 jGuIl6wU+kbizMFQFParI6Xx5bf2vMFJGYaT6RzFuBOKG+vesj+cG3uJuxXPFp14VI
+	 DEN2Jy2GWttleO8xyEjSKGoSVWYbsf0ijRJJaZA47A7bKMRq4slbPVILfNFn2JPSk2
+	 92T4+eI96MRRpyS3Vz1Pd183+3DUjzUFLR9Uw6VPD1cqGBxnFpzr6pGsKycN5DddPw
+	 V15CJzYmsaEoIKkw4HW4okayE77MAy8brLA5UvMIeqeSL//kubsSSgDAMzKwzlxe+f
+	 hhucfVKamqZTQ==
+From: Yixun Lan <dlan@kernel.org>
+Subject: [PATCH 0/4] riscv: spacemit: k3: some clock fixes related to PCIe
+Date: Thu, 30 Apr 2026 10:30:25 +0000
+Message-Id: <20260430-06-pci-clk-fix-v1-0-32fdc77c02ab@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEIv82kC/x2MSQqAMAwAvyI5G4gLrfgV8aA1alCqtCBC6d8NH
+ mdgJkHkIByhLxIEfiTK5RWqsgC3T35jlEUZaqoNtQ0hGbydoDsPXOVFVtvZmawhCxrdgVX/w2H
+ M+QO8afqrYAAAAA==
+X-Change-ID: 20260430-06-pci-clk-fix-e60487b07607
+To: Stephen Boyd <sboyd@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Inochi Amaoto <inochiama@gmail.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
+ linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ devicetree@vger.kernel.org, spacemit@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, Yixun Lan <dlan@kernel.org>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=898; i=dlan@kernel.org;
+ h=from:subject:message-id; bh=DmeSSTIGufqnT9oymE4UEk/rZkHHJ5nwP7hD8//UdrQ=;
+ b=owEB6QIW/ZANAwAKATGq6kdZTbvtAcsmYgBp8y9Pbw0UXF6v+Sxj7RgIpbKiDLeZUszFWSa/s
+ 2RNtRpR/1OJAq8EAAEKAJkWIQS1urjJwxtxFWcCI9wxqupHWU277QUCafMvTxsUgAAAAAAEAA5t
+ YW51MiwyLjUrMS4xMiwyLDJfFIAAAAAALgAoaXNzdWVyLWZwckBub3RhdGlvbnMub3BlbnBncC5
+ maWZ0aGhvcnNlbWFuLm5ldEI1QkFCOEM5QzMxQjcxMTU2NzAyMjNEQzMxQUFFQTQ3NTk0REJCRU
+ QACgkQMarqR1lNu+1hYRAAhpFGnBLjpvTIg3GcabvxnDktWdIcTYxFZLlnhrNe2Ro7+57RbD4ea
+ Qv1HiMYuaxCfFtdgcvg9AqIkPmcojzHYegSn62QlqCuFXIOV/I+caqbaM3ejVOnpUPMelJnxZBY
+ JG8wXf9k2MouF/IGZs5zPeg+Bc1DAHfEYl5FPvQFXTnLF4Zd6v+sOwVDbhU7LfsFcXMqtey0qI+
+ 9HomizpGDOISaSqh6RS6ttodaeuxNFVEfqddNJ7jU9l8S20IyUT7qocn5/XcDryEjgigStE30Wt
+ N/Bjv5itBBMJ7e2tJ37A6pwp3vsbSrjljj2hp1HYQ/VTekKNpD4qewFEDD34md8jk4+YJOmcRPW
+ MGcmJJ4hDcP6kmb6JYLFwEdp9bVpiNyzOXMqwDvfeyTUiELbyarxsXxjccv6nGG4yT4oFcbknTs
+ NFERPN1sM4HdEOUmNZEz+tWyuruchuP3l65kPTUlycOFdZmN+Kaz4ZxJxXUjkAe+mbT6FyMbuLd
+ ar1IQboD+GA39OlkGuy/d49jQMvfcWgFDiGD867I2MH8MXoqO6HYODTuHqHQt/8T/1AFWT/qWIR
+ HJqleS4bRxzD7TNyB5I47GjheZmug+zFmwb5GHXX0fF/rnliKzpn4Mja2nB5pkV492Cxs5zycuF
+ laMbdX4dbuRuQeCRGcCx0RCToMeX2k=
+X-Developer-Key: i=dlan@kernel.org; a=openpgp;
+ fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+Here are some fixes for previous patch set in order to make PCIe work,
+Add PCIe DBI clock which was missing, Fix the parent clock, And correct
+the PCIe Clock CTRL register offset.
 
-Add R9A08G046_IA55_PCLK to the critical module clocks list to prevent
-the clock from being gated during suspend, as it is required for the
-interrupt controller (IA55) to function correctly.
-
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Signed-off-by: Yixun Lan <dlan@kernel.org>
 ---
- drivers/clk/renesas/r9a08g046-cpg.c | 1 +
- 1 file changed, 1 insertion(+)
+Yixun Lan (4):
+      dt-bindings: soc: spacemit: k3: Add PCIe DBI clock IDs
+      clk: spacemit: k3: Add PCIe DBI clock
+      clk: spacemit: k3: Switch to pll2_d6 as parent for PCIe clock
+      clk: spacemit: k3: Fix PCIe clock register offset
 
-diff --git a/drivers/clk/renesas/r9a08g046-cpg.c b/drivers/clk/renesas/r9a08g046-cpg.c
-index ce9503c3cfd1..0004b9516fdf 100644
---- a/drivers/clk/renesas/r9a08g046-cpg.c
-+++ b/drivers/clk/renesas/r9a08g046-cpg.c
-@@ -312,6 +312,7 @@ static const struct rzg2l_reset r9a08g046_resets[] = {
- 
- static const unsigned int r9a08g046_crit_mod_clks[] __initconst = {
- 	MOD_CLK_BASE + R9A08G046_GIC600_GICCLK,
-+	MOD_CLK_BASE + R9A08G046_IA55_PCLK,
- 	MOD_CLK_BASE + R9A08G046_IA55_CLK,
- 	MOD_CLK_BASE + R9A08G046_DMAC_ACLK,
- };
+ drivers/clk/spacemit/ccu-k3.c                  | 30 +++++++++++++++++---------
+ include/dt-bindings/clock/spacemit,k3-clocks.h |  5 +++++
+ include/soc/spacemit/k3-syscon.h               |  4 ++--
+ 3 files changed, 27 insertions(+), 12 deletions(-)
+---
+base-commit: 254f49634ee16a731174d2ae34bc50bd5f45e731
+change-id: 20260430-06-pci-clk-fix-e60487b07607
+
+Best regards,
 -- 
-2.43.0
+Yixun Lan <dlan@kernel.org>
 
