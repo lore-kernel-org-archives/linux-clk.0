@@ -1,100 +1,142 @@
-Received: from mail5.25mail.st (mail5.25mail.st [74.50.62.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE84820E030
-	for <linux-clk@vger.kernel.org>; Fri,  1 May 2026 04:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.50.62.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2730C3803F1
+	for <linux-clk@vger.kernel.org>; Fri,  1 May 2026 09:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777608278; cv=none; b=M47Kp3l4k88gr/cZXM31QpHv8n4jBZrgdr61hozxRV6fq7vHXPPFC9eWijsF/TtUmnWbB3VCxdqt0bFIUF5fxXjhkBip7X00AWk/GCh+wXGE6YgY5AN9vxC8ov6G5w3sNpFALHrAimWskZF2toMLEExxaqIlpJUunKjK1vaA36o=
+	t=1777627118; cv=none; b=iV3BgBjR5y3rxnWnEmsjYhZi4ir3vU9E1NX6W9Uq7TJtZPClzFzEReDsBNFSILQHy1gX8qqW+GrW1Hodn3rp+cq1YIjrEpR1jd31+tl7KDDnvzoTIF1XV3wFBdXsGPOCXEODkP+3/9nlqMe/Be3DIV3EgcYG93qEgFduKgf16po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777608278; c=relaxed/simple;
-	bh=tvtQgtkqnvLHx5y70LLW7z6TviXATrCYDjxplWp8COk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tS+9LD4DElkuPn0jZKgPvjiEVd2weAgKcHbpcAADsp7Nf7yuEJ8raNoNiXq+icERYMhXRU7hNBRm7X6Ip4vDOiNYY7DAICyOnVLpRllDNuensLvW0WiThOTjpOYu4ejXxivYrKUK3x9++q9ULqewZ6SEbmc2EM8aPmku+AzHlMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com; spf=fail smtp.mailfrom=atomide.com; dkim=pass (2048-bit key) header.d=atomide.com header.i=@atomide.com header.b=Dl3uUoMJ; arc=none smtp.client-ip=74.50.62.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=atomide.com
+	s=arc-20240116; t=1777627118; c=relaxed/simple;
+	bh=WGw15wnrL3hMI5E1OHDA/5Y1FK0IInxfQr7juzg6tUQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UzH2KbF17bvNOn6/FoZxpxQvsmhIcC1SeBFRustPbG9TmNhirdUp2Vn8/8S2dWow+xWhywen8R8BO7zArYIeBR2jpS8jtZ+tVnmZle+JFem/bsdq7qNXJgS2cOKnAIEV0EgOPNaq+PSdhJWa+rkOD517tzgIUBafKm6MTJiA/Sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=HRaf4H39; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=atomide.com header.i=@atomide.com header.b="Dl3uUoMJ"
-Received: from localhost (84-231-218-136.elisa-mobile.fi [84.231.218.136])
-	by mail5.25mail.st (Postfix) with ESMTPSA id A3BBC60AE3;
-	Fri,  1 May 2026 04:04:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=atomide.com;
-	s=25mailst; t=1777608268;
-	bh=tvtQgtkqnvLHx5y70LLW7z6TviXATrCYDjxplWp8COk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Dl3uUoMJfIixrMguPVQ4PHPaSHEcbkZt9ctzoohdUq0nMJCLWs7ZHJGpreeE2b5wF
-	 FEAOnpmY5moSXJYBNocaiGAkxndZbt83WVNjcFKmhLIKcgk3tPO1PT07anBflifc45
-	 cF2fdNWmIRHVnT4OHEinYRRyXEGeAUvCy3gPDY4BTsDOKiqNcHxk66UJE1UZNTdBn5
-	 uljE1GPq0k2SId5gsORTIBRz5LahjD2Oo7vKsY6/FlrQMoHY9j/69GFj8u6T8WvL9v
-	 +0ojzT1Z+0/Zz/eZKGc0gX51qzeHGmRaaM+cJAqiouTVEip5RVA3Z9CE9rlGIbZNrk
-	 qsYpd/hKxkRuQ==
-Date: Fri, 1 May 2026 07:04:15 +0300
-From: Tony Lindgren <tony@atomide.com>
-To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	=?utf-8?Q?Gr=C3=A9gory?= Clement <gregory.clement@bootlin.com>,
-	Tero Kristo <kristo@kernel.org>
-Subject: Re: Issue with Clock Parent Assignment on AM335x SoC (Watchdog Timer)
-Message-ID: <20260501040415.GX39595@atomide.com>
-References: <DI4RUFQNSSNP.2QMSSQWJW9I2O@bootlin.com>
- <177742766345.5403.3603095308836655844@localhost.localdomain>
- <20260430034034.GW39595@atomide.com>
- <DI6HNGVRC3YT.OX7YC070Q14J@bootlin.com>
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="HRaf4H39"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-43d76dd4ee8so1394943f8f.2
+        for <linux-clk@vger.kernel.org>; Fri, 01 May 2026 02:18:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1777627114; x=1778231914; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BDZosYsDgpbdMxXQX/sZK+i7ik/+NlYq5noK0zNARiA=;
+        b=HRaf4H39WdELAQDTdStWHUY7iU3sXOISHpXwCeU9xuAI5Ulppv5hrkD52nRlTymc1g
+         k98/rV7qOEg6PBNkTOWgcBWMElNg8h5cUopAnmfr9wVYe7sYFe4tHHOAUarjSTms9D2s
+         1GJp3wQ/R0Tg7Wu1L/H1ny95lOzsyby9kqcjBXo5MLvtkVWRyJ8ZrGn92E7mzTH+3rjJ
+         Dp110nLE+5LsdPOa2jeiKwzCGBV5DXaK05ggi+0K3Z/hL5g3Z7maR0hk4IGGy7ETmg2B
+         F4RH+p4C8WT8lbVmRuLkuU4VGjWSLuqj0hTIAGUvyqWuEIrJXsOwMCAY+GmgrdxRkM4N
+         TE2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777627114; x=1778231914;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BDZosYsDgpbdMxXQX/sZK+i7ik/+NlYq5noK0zNARiA=;
+        b=sTjS4Hj4EzH7wcIzdgr8WCfALGWQpmdSqtQNCbVUVZVz85VUpydKiVE/OalsYYVClp
+         yIQna1w6WwcFbAQMF1YH3nfnz29mgzwMdgmei+yEXn0LPX4ZEvJugRYoFpG8r/56qYaF
+         t5KjGHUUvOMqbRJQDAiidbMRx2XhFadhm9PViX24p2pi+RtrL/fMHWchlBCZbeDenfjV
+         IqWzVOE4AUcRwJ0rhV0AiyVLzPQ9mlmABl0RoTbWOBp4DnrsxcPjQ2FyLGF/bpsx80Ec
+         7r2T3Qg7i1e6lQFmOxoQ9jTAnaCqta+V5pLr2wvD7Dv5POxMSQ3A1Pm2Jogg+TNAe5Vm
+         Z9MA==
+X-Forwarded-Encrypted: i=1; AFNElJ+t67Uim4z+VC5f0u1FrxTktcLCjU+04PiGgVeiBPpY+Fm72wTBcsBjhQsG5iGqdO6D9IGvnzX94qg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypxL3/AFsLxFA5TVmQB7Tc72l10/V28K+zZrG8lawUb2K9fnhh
+	MzhYNgK5DorUUpPKLtv0OymNt1kVRyx5u6xW/BYRpCmrlhgG2ruZ3vGVrwd12y1dA9M=
+X-Gm-Gg: AeBDies38WAp486RZTZworFTUUQTt6xe92WJRe92w3JBJ28+SgzvTlMRHjZ4jeAScV0
+	ZwL2Zh7gpW90vWmb2vXRUoQSKvI0OCn0vnOfImUzvCZfeFTDMe2JDms+V+LcvmlYfEx5PZ6XRQP
+	pk66ihynTCp/2B0rIFQe5JKjtP6F2BiPIFS31DFCkFxyBij9pLPguibbkxkf4jVu/bBxmSE8fiK
+	XhQTIQ8oWhHZdD4e9LJj/qoWysnNOfJd5bmMeSpcysUgsENFH95JKal+u/h7Mu1e6t/yAopIV9R
+	oc/jAG9QTMj0gXJiRSotTQcgLTePFLpfLRqECypO42sO4gpTEZf0t2LI9DkkcH5DmM3XU0rrgZe
+	qo6ZocgGffzkOV2iaAChsFwlf2DdaGfXuwgBXEnS5QT8sQWaogOAoesb9aFopesRe8rHMQ88KFA
+	DYZtZ31RyXSA5IboSd6TCgQR7XYt12kIqnmcB848cqTZPQHWUd+FwcuW1lG8cZWF9CgEw/kNEa4
+	nA6QPHyJK2SkQ9ALu0=
+X-Received: by 2002:a5d:5f91:0:b0:449:fb9e:4b4e with SMTP id ffacd0b85a97d-44a85d97773mr3498972f8f.15.1777627114550;
+        Fri, 01 May 2026 02:18:34 -0700 (PDT)
+Received: from [192.168.178.36] (046124199213.public.t-mobile.at. [46.124.199.213])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-44a98b76fd0sm3820787f8f.35.2026.05.01.02.18.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 May 2026 02:18:34 -0700 (PDT)
+From: Luca Weiss <luca.weiss@fairphone.com>
+Subject: [PATCH v2 0/5] Support enabling interconnect path for GDSC for
+ fixing Milos camcc
+Date: Fri, 01 May 2026 11:18:28 +0200
+Message-Id: <20260501-milos-camcc-icc-v2-0-bb83c1256cc3@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DI6HNGVRC3YT.OX7YC070Q14J@bootlin.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/3WNwQrCMBBEf6Xs2Ug21iqe+h/SQ5rs2gXblESCU
+ vLvxt49zOENzJsNEkWhBLdmg0hZkoSlgjk04Ca7PEiJrwxGm04jdmqWZ0jK2dk5JTW+xdEzn5D
+ 4CnW1RmJ578b7UHmS9Arxsx9k/LX/XRmVVq3W44Wdx3Nne7YS1yksdHRhhqGU8gWfxpmOsgAAA
+ A==
+X-Change-ID: 20260116-milos-camcc-icc-d41bdff31ef8
+To: Georgi Djakov <djakov@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+ Mike Tipton <mike.tipton@oss.qualcomm.com>, 
+ Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1777627112; l=1757;
+ i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
+ bh=WGw15wnrL3hMI5E1OHDA/5Y1FK0IInxfQr7juzg6tUQ=;
+ b=y9ZOv7Hz76149N7Pj/D9PMsrbeI3dZtb7wHBWIaRE92i7fwvPhqmH/Q9tyA9kVEcFZD6SwEHZ
+ psNpwpDjV8pCCusCyi2SuQMqPN2+E8tgey/9b47aPVmJ9ZvLaL7FV3u
+X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
+ pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
 
-* Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com> [260430 12:29]:
-> On Thu Apr 30, 2026 at 5:40 AM CEST, Tony Lindgren wrote:
-> > Just a quick guess.. You can use assigned-clocks in the dts file to
-> > configure how your board is wired up.
-> 
-> Just to be clear: I believe this is entirely independent from how the
-> board is wired up. On both my custom board and the Beagle Bone Black, I
-> can successfully use any of the two muxing possibilities, if I manually
-> write the correct data into the registers. My only issue is the kernel
-> does not handle the clocks correctly when one these muxing possibilities
-> is enabled.
+Some power domains like CAMSS_TOP_GDSC requires the enablement of the
+multimedia NoC on newer SoCs like Milos.
 
-OK
+Add support for getting an interconnect path as specified in the SoC
+clock driver, and enabling/disabling that interconnect path when the
+GDSC is being enabled/disabled.
 
-> Yet I tried to add an assigned-clocks property to the clock-wdt1-fck@538
-> node. Is that what you had in mind? This had no visible effect.
+Then specify that dependency in the camcc-milos driver and add it to the
+dt-bindings and milos.dtsi.
 
-Yes I was thinking adding assigned-clocks and assigned-clock-parents
-similar to what the timers do.
+Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+---
+Changes in v2:
+- Move icc_set_bw() calls to gdsc_toggle_logic() (Mike)
+- Try to make dt-bindings commit message clearer
+- Pick up tags
+- Link to v1: https://lore.kernel.org/r/20260116-milos-camcc-icc-v1-0-400b7fcd156a@fairphone.com
 
-There's also the am33xx_dt_clk_init() reparenting of wdt1_fck that's worth
-checking for why the chosen parent is not getting set.
+---
+Luca Weiss (5):
+      interconnect: Add devm_of_icc_get_by_index() as exported API for users
+      dt-bindings: clock: qcom,milos-camcc: Document interconnect path
+      clk: qcom: gdsc: Support enabling interconnect path for power domain
+      clk: qcom: camcc-milos: Declare icc path dependency for CAMSS_TOP_GDSC
+      arm64: dts: qcom: milos: Add interconnects to camcc
 
-> > Please check the system timers configuration too, sounds like timers may
-> > not be configured properly either. Some timer examples can be seen with:
-> >
-> > $ git grep -A10 "Preferred " arch/arm/boot/dts/
-> 
-> So I had a look at existing preferred timer configurations, but they are
-> all applied to the "timer.*_target" [1][2] nodes, that do correspond to
-> SoC timers (DMTIMER.*) and I fail to see how this is linked with the
-> peripheral clocks involved here (in CM_PER module) and my current clock
-> issues.
-> 
-> Nevertheless, I can see these being defined in
-> arch/arm/boot/dts/ti/omap/am33xx.dtsi [3][4], so they are indeed applied
-> in my situation.
-> 
-> So, I believe timers configuration are correct. Should I add something
-> else?
+ .../bindings/clock/qcom,milos-camcc.yaml           |  8 ++++++
+ arch/arm64/boot/dts/qcom/milos.dtsi                |  3 ++
+ drivers/clk/qcom/camcc-milos.c                     |  7 +++++
+ drivers/clk/qcom/gdsc.c                            | 33 ++++++++++++++++++++++
+ drivers/clk/qcom/gdsc.h                            |  5 ++++
+ drivers/interconnect/core.c                        | 20 +++++++++++++
+ include/linux/interconnect.h                       |  6 ++++
+ 7 files changed, 82 insertions(+)
+---
+base-commit: 9f5d28c2bae83e051ab7f807c819a634693ebffc
+change-id: 20260116-milos-camcc-icc-d41bdff31ef8
 
-OK no, so the issue is limited to wdt1 like you described earlier.
+Best regards,
+--  
+Luca Weiss <luca.weiss@fairphone.com>
 
-> [1]: https://elixir.bootlin.com/linux/v7.0.1/source/arch/arm/boot/dts/ti/omap/am33xx-l4.dtsi#L357
-> [2]: https://elixir.bootlin.com/linux/v7.0.1/source/arch/arm/boot/dts/ti/omap/am33xx-l4.dtsi#L1280
-> [3]: https://elixir.bootlin.com/linux/v7.0.1/source/arch/arm/boot/dts/ti/omap/am33xx.dtsi#L702
-> [4]: https://elixir.bootlin.com/linux/v7.0.1/source/arch/arm/boot/dts/ti/omap/am33xx.dtsi#L715
