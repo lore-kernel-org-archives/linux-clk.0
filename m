@@ -1,107 +1,124 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCD78273D6D;
-	Sat,  2 May 2026 20:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223A61D7E41;
+	Sat,  2 May 2026 21:17:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777753689; cv=none; b=cWEXsaI+DkPWH96Bq615RAx8XllLJs3xgDvU7Qo07W/QZdXVWELvhiJ+HbMql2m9/Ro+kXo/Xv6P4SjqIPq/FRisEsbJFDSS7bCC2cVHHFnPYMRZq5fKYn38nh4AauzXLiFKdcKFvBGR+W6EDjHbEyPqW0v5MthlW3PLzussT64=
+	t=1777756653; cv=none; b=qihOHtgjnEbUwehIu2W1WK12fD/96tEsvJfARk8Ss7O4rW8X3OWyfBAcrEJgJW1ArXvGVoN3OmPxeG8alh0NM/gwvC1UPIB2rQm5gvaukH4u2kiLIMP5nHrElcCNDHdo2R3ZXcg9NSGi+fvRNdf4EOouytRd/R7Izm5z2l2gE50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777753689; c=relaxed/simple;
-	bh=wRbkd2E40k/miu3YkMKKA9nNsJMs+bJw1b3/I6M3AwQ=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=RJ2RvVzpXtTJVYgVorfqA09k28fM54/CijToxHBr67ZVIvD0a2ReT8MrrcCtLGWv1lDoTTgbhS2WTQCUTPKoa+5BOY1xhu65m1FNf9D8OK2zk8yW7A0VrkkiMvqcHlVhjRDUFiv+sT0kvhoqemQpg1J8CULAlCHHm/St7bNhO9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FqBPVkO9; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1777756653; c=relaxed/simple;
+	bh=B8fqhJVPuKUMZq7ZfEIZ4M5o0DHOK9ZiM9hwPUsNW+E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e01Kr9ipjiW6GVIUBJvWL89TQI/g6AvdHpY/l2sBNkedkc1yw1L4vGPsra27+HbVlp/UBJvdlVmI3VBfA4jzAJkMqJflSShgyGwYM/goofF/8LBjn9iA5W0P+PuPWpzUfq3FA/LjvVlqCjlY/UCLZyfT8ctVL0Mag1uOJa5TFXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=LCK7vt8y; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FqBPVkO9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B1DFC19425;
-	Sat,  2 May 2026 20:28:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777753689;
-	bh=wRbkd2E40k/miu3YkMKKA9nNsJMs+bJw1b3/I6M3AwQ=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=FqBPVkO9/xwN4v0u+LK9FbfjH2K6r1xvKXFhR9duvAGEKl28e8z+4K5s9mOo+7KyE
-	 WdbrTfuuK2B5FI3Gl6cC/toMDCfucqCXv+bn1MnyfgIwzUmpfOROWpPNrhRqH6cCCS
-	 W0X2NREQgwwaEgk39QOsHTRmkTf5X6htBTFEqqZEr3sVtdrp+cYGlaqMiOfKUVkqQT
-	 jSfy/+4jwA21QUsdcg433JALfIVt2ixqBDFRdRUQJlH2fGauRxrXKV6h7KjjvKFbWM
-	 ccGsPmVAVh0GwiqoDsNcldvGF3Dnqzpa7pWXmwBO6d99csCMdkT+k2sTWhnS3pIhD4
-	 FJIQxUwaQt6Pw==
-Date: Sat, 02 May 2026 15:28:06 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="LCK7vt8y"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4g7LMr6WTvz9tFH;
+	Sat,  2 May 2026 23:17:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1777756648;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7RqPKh7sZHF+28JeEz6CG7pr0J0NFZKqUhuzHW8CkS4=;
+	b=LCK7vt8ywGFsDdethYein7AVOvM26O4jQ9Sj3DG5Xxm30lSzd6GGRhCm4zndiMUjtJzpgG
+	TW2jcM9fV0MxczPq4R400BQkm7zzIZharv3QvcfJrQ9R9qR70pymuDUGFVDGo2W7aF6BSe
+	jgQNpRpZOJPyzmtfJqdK2rEfFnA1BC8iXcy5vv6uYNYoCW3k7snTwkShxwZux5gEVd6ArP
+	BBVMt09eySjv4oNKWeX9E+3sUhNHhpnzxlZLDAyCI8W7Pk5k5AN/v0qMi+bML9iObdk6+B
+	K1ObvvGcSLG+5SIFWwGg+Y3kfTGvTSUQ08eypdez+00C56a6acb39N1HDNnueg==
+Message-ID: <71b24195-2a3c-46a4-8587-f5055a015eb8@mailbox.org>
+Date: Sat, 2 May 2026 23:17:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org, 
- linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20260502185557.93061-2-marek.vasut+renesas@mailbox.org>
-References: <20260502185557.93061-1-marek.vasut+renesas@mailbox.org>
- <20260502185557.93061-2-marek.vasut+renesas@mailbox.org>
-Message-Id: <177775368688.2906489.15956699735661007768.robh@kernel.org>
-Subject: Re: [PATCH 1/4] dt-bindings: clock: renesas,cpg-clocks: Document
- ZT/ZTR trace clock on R-Mobile APE6
+Subject: Re: [PATCH 1/7] dt-bindings: display: renesas,du: Document Renesas
+ R-Car R8A779MD M3Le
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>,
+ David Airlie <airlied@gmail.com>,
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ Magnus Damm <magnus.damm@gmail.com>, Maxime Ripard <mripard@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
+ Simona Vetter <simona@ffwll.ch>, Stephen Boyd <sboyd@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+ devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org
+References: <20260419193718.133174-1-marek.vasut+renesas@mailbox.org>
+ <20260419193718.133174-2-marek.vasut+renesas@mailbox.org>
+ <CAMuHMdUzRoELGedrM3ELUjZr-N6DnF4TXtdQR_k74Xmfppu9fA@mail.gmail.com>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <CAMuHMdUzRoELGedrM3ELUjZr-N6DnF4TXtdQR_k74Xmfppu9fA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: 39hpsyab6hn1upgtg1dgny8ski4mntmu
+X-MBO-RS-ID: 22ba611169e36e18812
 
+On 4/29/26 11:57 AM, Geert Uytterhoeven wrote:
 
-On Sat, 02 May 2026 20:55:42 +0200, Marek Vasut wrote:
-> Document ZT trace bus and ZTR trace clock on the R-Mobile APE6.
-> These clock supply the coresight tracing modules, PTM, TPIU,
-> ETB and replicator. Without these clock, the coresight tracing
-> can not be operated. While this does change the ABI, it does so
-> by extending the existing clock-output-names, therefore if an
-> old software is used with new DT, the coresight tracing parts
-> will likely fail to probe, otherwise if new software is used
-> with an old DT, there is no impact.
+Hello Geert,
+
+> On Sun, 19 Apr 2026 at 21:37, Marek Vasut
+> <marek.vasut+renesas@mailbox.org> wrote:
+>> Extend the Renesas DU display bindings to support the Renesas R-Car
+>> R8A779MD M3Le SoC. This SoC is similar to R-Car R8A77965 M3-N SoC,
+>> except the HDMI port@1 is not present.
 > 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> ---
-> Cc: Conor Dooley <conor+dt@kernel.org>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> Cc: Magnus Damm <magnus.damm@gmail.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-renesas-soc@vger.kernel.org
-> ---
->  Documentation/devicetree/bindings/clock/renesas,cpg-clocks.yaml | 2 ++
->  include/dt-bindings/clock/r8a73a4-clock.h                       | 2 ++
->  2 files changed, 4 insertions(+)
+> "and DU1 is unused." (whatever that may mean...)
+
+Fixed in V2.
+
+>> +++ b/Documentation/devicetree/bindings/display/renesas,du.yaml
+>> @@ -42,6 +42,7 @@ properties:
+>>         - renesas,du-r8a779a0 # for R-Car V3U compatible DU
+>>         - renesas,du-r8a779g0 # for R-Car V4H compatible DU
+>>         - renesas,du-r8a779h0 # for R-Car V4M compatible DU
+>> +      - renesas,du-r8a779md # for R-Car M3Le compatible DU
 > 
+> I am not sure you need a new compatible value: is the DU really
+> different than on R-Car M3-N, or does it just lack some wiring? ...
+It seems the DU is identical to the M3N one, so I will add another entry 
+to R8A77965 DU to handle the M3Le one, just like R8A774B1 and R8A774E1 
+DUs . I hope that is acceptable, and also addresses the feedback on this 
+patch ?
 
-My bot found errors running 'make dt_binding_check' on your patch:
+I dumped the VSP and FCP versions on M3N and M3Le and compared them, and 
+I also wrote and read-back the CMM registers to confirm CMM IPs are all 
+present on both M3N and M3Le:
 
-yamllint warnings/errors:
+FCP is identical on M3N and M3Le:
+fe950000.fcp FCP_VCR=0x106
+fe96f000.fcp FCP_VCR=0x106
+fe9af000.fcp FCP_VCR=0x106
+fea27000.fcp FCP_VCR=0x106
+fea2f000.fcp FCP_VCR=0x106
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clock.example.dtb: cpg_clocks@e6150000 (renesas,r8a73a4-cpg-clocks): clock-output-names: ['main', 'pll0', 'pll1', 'pll2', 'pll2s', 'pll2h', 'z', 'z2', 'i', 'm3', 'b', 'm1', 'm2', 'zx', 'zs', 'hp'] is too short
-	from schema $id: http://devicetree.org/schemas/clock/renesas,cpg-clocks.yaml
+VSP is identical on M3N and M3Le:
+fe960000.vsp IP_VERSION=0x01011504
+fe9a0000.vsp IP_VERSION=0x01011404
+fea20000.vsp IP_VERSION=0x01011904
+fea28000.vsp IP_VERSION=0x01011704
 
-doc reference errors (make refcheckdocs):
+CMMs are present on M3N and M3Le, tested with write of bits 28 and 24 
+into CM2_CLU_CTRL and then readback:
+fea40000.cmm CM2_CLU_CTRL readback 0x11000000
+fea50000.cmm CM2_CLU_CTRL readback 0x11000000
+fea70000.cmm CM2_CLU_CTRL readback 0x11000000
 
-See https://patchwork.kernel.org/project/devicetree/patch/20260502185557.93061-2-marek.vasut+renesas@mailbox.org
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+And it does indeed look like we do have DOTCLKIN1 .
