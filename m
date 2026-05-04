@@ -1,81 +1,74 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 473813E0C5A
-	for <linux-clk@vger.kernel.org>; Mon,  4 May 2026 14:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C753DE42C;
+	Mon,  4 May 2026 14:45:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777905933; cv=none; b=QoN57fAEvy4C3BJbSq2OmiQDblE5DnuNSP3r1m1TT0A7wMDpVdwGPC+j7mdtsRWPJ9LF8vDnFyh6YtrIbhtmbnErkdfdo9EyxEQO1D96CbGsZTVWlEEcsan5MfxxtZNeTvnRIaAA2zZrqOvP5qYdugLA/IJkhqzOf2m2OjHGB3o=
+	t=1777905954; cv=none; b=a4mzSPlobpkXQ+VmOEIv9vc9FiTzQ1BnTCHKBRmUwGs2HS4/ahVY+gr5VXjMCpcmP0IAgk28S7EPhAkwNuKqlsGsrznCsO0iY3502EDF170fm9lcCId1WfHTSzE1/rVXi48V2pZOT0wx5Tdis1lxMTEYlOee0qjlU2J4Ps2ph3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777905933; c=relaxed/simple;
-	bh=DvSb/KRNVV3hvhkSLVMtHE11LLpVX9uZOzPUpgHDgA4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nlf0txrUeGCHW26b5hxKej/HjPWIt8Mn48wD2c/uIwHwGGSxwWh3OwjDov11sigBujafMPkhj70PCkUpl2pF5xeJESM4utw3ujsWpahcl4pXLe+kTuVzH1l8P1mIpN1WMTl2OmUCooHy6klzV5jEVuAYEbjBfb4s5T9yWRI5Nh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C7CFAv+7; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1777905954; c=relaxed/simple;
+	bh=Nfqv5uxx7EBcjwdgdKF+jqYsQ0J6nz03vDE/GxZcC4c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c58phQCnskifqxha5hlE5So715tCz+pxu1MwIMtvDaZXWg2/0jObA8+ymxkUNZirpDFjQFnIO1Zoqs955mHRgNeaavS9XTGsxERaPwft6xIDYqufXky6Ozk+ewjA5/CM6Q6QbZ0HudY9kUZ/Kku0RLJY2HGTXmtTaUoYw55Jp34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=gZydUKKJ; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=izKQTwOs; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C7CFAv+7"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-43d75312379so2915715f8f.1
-        for <linux-clk@vger.kernel.org>; Mon, 04 May 2026 07:45:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1777905930; x=1778510730; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XuEh6EHtxHCxSq+G/rcSFvtM5yky+sac6bh6RW7yjz0=;
-        b=C7CFAv+7lNgu5wMmZO94TyRa6Rd3QI7huAJUY9KE+lZ/uLUECkyq7deSfH9O/IDpmj
-         WRY9FoTNT7u/LOh2Dlz5At4x2+Nmu74BC10NpZz4PSAoF9Kiqp2Tx9v6vFqs6/zFbDBS
-         xLmvUV+/yc8sBugphH9KCIz4dy5dKvomzEtBxAzAFeocqmlECGygo6qk/u9Zc+odJjxm
-         oo+7H32b6H9/Qxu5QwlaUPrlGmy5RYREYhoGCLuXJDY2Y/IkSb7TygSC4YP+LZHSN96w
-         ZHwyQ1CPyt3nFjWuCa8bPz3wdOeCNhBZ079xeSla1qXIENo0sqZi2aDJR0fZ0rZ9w2ni
-         A24A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777905930; x=1778510730;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=XuEh6EHtxHCxSq+G/rcSFvtM5yky+sac6bh6RW7yjz0=;
-        b=QSE6tiMWuq7EuyH0dINS1vX9yZjyaQg0WiqEK1VXKLgfmq1K+jUjEJOS3oTRaLfOl+
-         8T+PMTWIVEiEUto9wf5sRRd1HyjfSATGBwnyLTpXGRCyNKwz/y3PcXEhtaWstGoZRz61
-         mZEwJjLJy76YGom8iFosXw72xeA7z7MMWzjfcNtidHtYRfPvsZ+6kikjPlFXRMQNRm05
-         XdLsnUWh0nTGEgdks1GTw5NezcxJSkJq17qwTpC6LA+x3b1el7RCDrp6ly+g7sYt3jHL
-         tQd2LaI7IRTJlkYrZ5PsSD8zFESh34hjZiCL7F1xI3nqFgAdzLVJlp9c4KAIK6j1sm5D
-         Fvwg==
-X-Forwarded-Encrypted: i=1; AFNElJ85GHkZHfGedzRU6iQf/kKSBRsiOperg1WYBnthUuUq3sX6bW1J/knnbL4+1juXE/kRpCjgr5GOl9c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8Jr291HWQGMpYXzrSmU3nUTOjOMvcnbiwpSzCAJE+TzLQMYak
-	XraRNTCBC3qexTDgxaM4Xqg4vLRLZ/SZElYMZwzpUhY5J9Q8/nlv9tUz
-X-Gm-Gg: AeBDievMrBR1Qje0Oa3YKYRWTtmDsPOZJECIqCSymT5WIx8JMatK1Xp1z+Ug6yDl+Zi
-	njOWG2DwFgQ+pURmvvYjQtyVdkGWLP6guDhhGq4pbSTpbn7ObeCh/E6enlkeNs/l0QYwAjzYd+V
-	2vc9GhorpQyoQE4NPXkAlWTb+xqKEvCZhvDIYtq5cOhl94mxokbaQdZelEuxvIZD7iqh3JObA7B
-	vMub5f2kWlgaIvL3m1Jr+QYER4Al3jk5oLvjPbfl6aHKlOOc/+FpqFu403vLA7ny1/1/zwN0i1t
-	t3+WK10K9Jxi9zYI/zeBA/IOJW2enoTS8PV8g6aLXyo+FjYGH6sbRdZQLopZvI/sG/Ti0KXbgDO
-	tKZIfRQboDtITLMPw9+nZFISOOq9mfwmZJCDWc5j01bmtHuAeVVRagyhiWwJohpfgosWpSrDF2b
-	8CToNt8QbdrqlxKor07HAHSEG8NQkgkvdYdoiWWj+Kt7ED7srOjRBvrcUp6FU=
-X-Received: by 2002:a5d:648d:0:b0:43f:e571:184d with SMTP id ffacd0b85a97d-44951508317mr19130124f8f.28.1777905928444;
-        Mon, 04 May 2026 07:45:28 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:23c4:a758:8a01:6444:b23f:58b2:338c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-44a981defa6sm24371239f8f.24.2026.05.04.07.45.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 May 2026 07:45:28 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="gZydUKKJ";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="izKQTwOs"
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4g8Pb246f5z9scQ;
+	Mon,  4 May 2026 16:45:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1777905950;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=cYYAh5UCl+y7lrHPwfOHemfwVIweJ/p4wEN7zniKp1Q=;
+	b=gZydUKKJeQfGWT6E9CrCKkxUPNhZ5FqAUCliv4alubwDoRcsAVANUD87jniG8URKQNfYdu
+	NMfl1RujBt4iC5z3UHztTSczr18I8iTyYWDeczHJxPkeCuQfnZKMmN24V0W2RTsMRfu7or
+	9JI2PlJCfsXs56AgO/mJYfQ2w/m13cVOqR0CCGJT40ckiwocIfPrQ4405dTFTM7oGDI4z3
+	LKzw+njp/qJv81sDJu3qhT5D3FmXAeZP2rhM8yBZ4ieZQVywgXJmOdZlWqieiPCiGmxJjN
+	ECx+QcdoPcLGFglOmzN6p4PmjvlZKV+D2eDRBMW0pFyqVXXjLQBepySDE/jaJA==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=izKQTwOs;
+	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
+From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1777905948;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=cYYAh5UCl+y7lrHPwfOHemfwVIweJ/p4wEN7zniKp1Q=;
+	b=izKQTwOsbrpz2J9+xHigUa6Prty6ca8Ao+2CBJi7050qGZTsCvZLza/h5mtv4BuiZUGS2z
+	tMpNQe/QY7AUnEl0PbOGI2mRIYLxTsWwoUuvW6Zrty1nl+l9n++k7jD2w+icD4VVM3U77H
+	3s8j8c7d3mbP62IusEYcDYk/xUx8fRztYLFngfs0rUrbcLwvaUGDqNYvaXl95KaKbOSIuc
+	/Z7bAIzY0tEyBpQn+8t40Q9w1TeWIVnvIfPC0/pvNvNkwQ6nyMVDuRWHjGAYrhSn4sSYIR
+	OnLbHDFFx31wQzzRI6HicuKOFpyRbCkjsdraTJEHZSVCZGQkGv+h4E4T5aqmng==
+To: linux-arm-kernel@lists.infradead.org
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	Brian Masney <bmasney@redhat.com>,
-	linux-renesas-soc@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ulf Hansson <ulfh@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	devicetree@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH 3/3] clk: renesas: rzg2l: Rename RZG3L-prefixed PLL macros to CPG-prefixed ones
-Date: Mon,  4 May 2026 15:45:19 +0100
-Message-ID: <20260504144523.153906-4-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260504144523.153906-1-biju.das.jz@bp.renesas.com>
-References: <20260504144523.153906-1-biju.das.jz@bp.renesas.com>
+	linux-mmc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 0/7] arm64: dts: renesas: r8a779md: Add support for R-Car M3Le R8A779MD SoC and Geist board
+Date: Mon,  4 May 2026 16:43:22 +0200
+Message-ID: <20260504144534.43745-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -83,81 +76,59 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-MBO-RS-META: kpbj889koap7puwmoxoz8u9st4n53md5
+X-MBO-RS-ID: ab31f21b33fd55f0820
+X-Rspamd-Queue-Id: 4g8Pb246f5z9scQ
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+Add support for the Renesas R-Car M3Le (R8A779MD) SoC, a register-compatible
+variant of the R8A77965 (M3-N) with reduced set of peripherals. Add support
+for the Geist board based on the Renesas R-Car R8A779MD (M3Le).
 
-Rename RZG3L_PLL_STBY_OFFSET(), RZG3L_PLL_STBY_RESETB,
-RZG3L_PLL_STBY_RESETB_WEN, RZG3L_PLL_MON_OFFSET(), RZG3L_PLL_MON_RESETB,
-and RZG3L_PLL_MON_LOCK to their CPG_PLL_* equivalents to reflect that
-these macros are not RZG3L-specific and are shared across SoCs.
+The DU part is currently removed until it can be tested.
+VIN is also untested due to no remote hardware access.
 
-Also fold CPG_PLL_MON_OFFSET() into rzg2l-cpg.c alongside the other
-CPG_PLL_*_OFFSET() helpers introduced in previous patches.
+Marek Vasut (5):
+  dt-bindings: mmc: renesas,sdhi: Document R-Car M3Le support
+  mmc: renesas_sdhi: add R-Car M3Le compatibility string
+  dt-bindings: clock: cs2000-cp: document CS2500
+  dt-bindings: soc: renesas: Document Renesas R-Car R8A779MD Geist
+  soc: renesas: Identify Renesas R-Car R8A779MD M3Le SoC
 
-No functional changes.
+Nguyen Tran (2):
+  arm64: dts: renesas: r8a779md: Add Renesas R-Car R8A779MD M3Le DTs
+  arm64: dts: renesas: r8a779md: Add support for R-Car M3Le R8A779MD
+    Geist
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+ .../bindings/clock/cirrus,cs2000-cp.yaml      |  11 +-
+ .../devicetree/bindings/mmc/renesas,sdhi.yaml |   1 +
+ .../bindings/soc/renesas/renesas.yaml         |   6 +
+ arch/arm64/boot/dts/renesas/Makefile          |   1 +
+ .../arm64/boot/dts/renesas/r8a779md-geist.dts | 732 ++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a779md.dtsi     |  59 ++
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c |   1 +
+ drivers/soc/renesas/renesas-soc.c             |   1 +
+ 8 files changed, 809 insertions(+), 3 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a779md-geist.dts
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a779md.dtsi
+
 ---
- drivers/clk/renesas/rzg2l-cpg.c | 25 ++++++++++++-------------
- 1 file changed, 12 insertions(+), 13 deletions(-)
+Cc: Brian Masney <bmasney@redhat.com>
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Ulf Hansson <ulfh@kernel.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: devicetree@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index 7e5173a37f3a..498f2f1030cc 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -62,13 +62,12 @@
- #define CPG_PLL_STBY_OFFSET(conf)	FIELD_GET(GENMASK(23, 12), (conf))
- #define CPG_PLL_CLK1_OFFSET(x)		(CPG_PLL_STBY_OFFSET(x) + 0x4)
- #define CPG_PLL_CLK2_OFFSET(x)		(CPG_PLL_STBY_OFFSET(x) + 0x8)
-+#define CPG_PLL_MON_OFFSET(x)		(CPG_PLL_STBY_OFFSET(x) + 0xc)
- 
--#define RZG3L_PLL_STBY_OFFSET(x)	(CPG_PLL1_SETTING_OFFSET(x))
--#define RZG3L_PLL_STBY_RESETB		BIT(0)
--#define RZG3L_PLL_STBY_RESETB_WEN	BIT(16)
--#define RZG3L_PLL_MON_OFFSET(x)		(CPG_PLL_STBY_OFFSET(x) + 0xc)
--#define RZG3L_PLL_MON_RESETB		BIT(0)
--#define RZG3L_PLL_MON_LOCK		BIT(4)
-+#define CPG_PLL_STBY_RESETB		BIT(0)
-+#define CPG_PLL_STBY_RESETB_WEN		BIT(16)
-+#define CPG_PLL_MON_RESETB		BIT(0)
-+#define CPG_PLL_MON_LOCK		BIT(4)
- 
- #define CLK_ON_R(reg)		(reg)
- #define CLK_MON_R(reg)		(0x180 + (reg))
-@@ -1218,8 +1217,8 @@ static int rzg3l_cpg_pll_clk_is_enabled(struct clk_hw *hw)
- {
- 	struct pll_clk *pll_clk = to_pll(hw);
- 	struct rzg2l_cpg_priv *priv = pll_clk->priv;
--	u32 val = readl(priv->base + RZG3L_PLL_MON_OFFSET(pll_clk->conf));
--	u32 mon_val = RZG3L_PLL_MON_RESETB | RZG3L_PLL_MON_LOCK;
-+	u32 val = readl(priv->base + CPG_PLL_MON_OFFSET(pll_clk->conf));
-+	u32 mon_val = CPG_PLL_MON_RESETB | CPG_PLL_MON_LOCK;
- 
- 	/* Ensure both RESETB and LOCK bits are set */
- 	return (mon_val == (val & mon_val));
-@@ -1229,17 +1228,17 @@ static int rzg3l_cpg_pll_clk_endisable(struct clk_hw *hw, bool enable)
- {
- 	struct pll_clk *pll_clk = to_pll(hw);
- 	struct rzg2l_cpg_priv *priv = pll_clk->priv;
--	u32 mon_mask = RZG3L_PLL_MON_RESETB | RZG3L_PLL_MON_LOCK;
--	u32 val = RZG3L_PLL_STBY_RESETB_WEN;
-+	u32 mon_mask = CPG_PLL_MON_RESETB | CPG_PLL_MON_LOCK;
-+	u32 val = CPG_PLL_STBY_RESETB_WEN;
- 	u32 stby_offset, mon_offset;
- 	u32 mon_val = 0;
- 	int ret;
- 
--	stby_offset = RZG3L_PLL_STBY_OFFSET(pll_clk->conf);
--	mon_offset = RZG3L_PLL_MON_OFFSET(pll_clk->conf);
-+	stby_offset = CPG_PLL_STBY_OFFSET(pll_clk->conf);
-+	mon_offset = CPG_PLL_MON_OFFSET(pll_clk->conf);
- 
- 	if (enable) {
--		val |= RZG3L_PLL_STBY_RESETB;
-+		val |= CPG_PLL_STBY_RESETB;
- 		mon_val = mon_mask;
- 	}
- 
 -- 
-2.43.0
+2.53.0
 
