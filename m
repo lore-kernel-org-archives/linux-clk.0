@@ -1,161 +1,173 @@
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3757F37BE6F
-	for <linux-clk@vger.kernel.org>; Mon,  4 May 2026 09:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A56553D565E
+	for <linux-clk@vger.kernel.org>; Mon,  4 May 2026 12:46:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777887128; cv=none; b=WShcBj35wn0ENjAfD0PRvV3UWx5eJ0Ou+BR0hOi4wkvh/xcGYIjNYDobjwfsQFU+rw5DOQfF4zRN1aaN3hAs/Sqov+6W0Twgh+bQf6UUEdRBNpzWUu33c3Xll7tolrxOh323bEi2NCyjMOTYpD0YA/5Qj+vZA2zWzkJGDAgZlp0=
+	t=1777898800; cv=none; b=LfDcae/mZkQgPMm2a53IF/5bS7hb33tCu59eJwz1qGrIF3a1KdFoV/iG2Q9A2pFWYDmXqoaXWjt/6kLVsq2fFci3ABufvZzO2yng3Hubn1oOVsHQmv1wxLkiaG0BJ1GkdXGGKc2RmhTK7f8FuAMtmhbV19PbkLbAMQkDwWUwNAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777887128; c=relaxed/simple;
-	bh=lhMXoZX5EKaIKEyMd6/+4ptCK/lC4Z3mYLu5uWl9Ca8=;
+	s=arc-20240116; t=1777898800; c=relaxed/simple;
+	bh=mf48U3dZmpqt3p7RmvGUUMOB0UHyUtn3OAbikvFAdqk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=scosxR7t/nHHd6/cmw5nDt3gBHtLmzFsBwlvL5J6j2nguv66Btb7fv0s1VHqmidctFBAyKrPdUpIdlTWU8OI5MfD7WR6H+/g2FwYQEjHviNKl6fbh/bPJgo4+RWuH9pb6z0ElS2g/MF0EMiF4ECwxVAJbwK41C+iATQU/TSboOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.43
+	 To:Cc:Content-Type; b=lfx2/DAWf8P938MPBUjUmm06fxo8Tchjs/yG25Y04O92WjEwCq7ihJ3nPD68BjPr+uFOjFIegvD7WB7AxxhMOMy+GXTHZG5X1zh0TeBlG751SBX1zO/z1Uittppce8I01cW8CthtJCYa9nAn5T9crsM6rbIkd9grX7/o9W05ET4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.161.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-7de46b8e432so3755279a34.1
-        for <linux-clk@vger.kernel.org>; Mon, 04 May 2026 02:32:07 -0700 (PDT)
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-6966f99716fso1975319eaf.0
+        for <linux-clk@vger.kernel.org>; Mon, 04 May 2026 05:46:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777887126; x=1778491926;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=XiyjHCJDl/rogPwAqEoOmuI7BlhASDQQxZixIp7ihY8=;
-        b=m3zd64L2ckBVi9jY+ftkleXtwrmIfZpGBnrC9QqI60ddqXfsKy9+jAifBGwI/Za9tL
-         jYvTPcK+a/AxLCh0gKLj6bY52+3gTbNo4m0EltV90n59WQBV/yvggaaYLuhhDRIyEt0i
-         8BrE4c5AiKNQBQqS9jkpDECmlOnqvkQSy2r4hM4a0ZdFSUU7QuwR7rq/OkSZkVGPq9zu
-         6QQOcJOvjRn8xPCzTK9I9Zxt+7JEgwvGo+zDIiNRIthGAJCA81LOlTNMwsfg4MG4Hmhp
-         6OytCR7pKwJDCn6DuH9//Ce24Q8mUyjXfqcoN+GMlkWZST0bRqsrUSyc0DpX8hdgFE57
-         ZkWA==
-X-Forwarded-Encrypted: i=1; AFNElJ9J4gSdZMIiJyKasyOgdpS00d3wJy8VJS+vmGP/praU1GLYvmTeLMPR0Nuw2LvLUIq+V7UtmwIa1U8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgqGlOfRaBRRRzKqWjgw5fbV1Y6hDU0bPkWy4kPXjjbKK0srVM
-	K3wwoGioG8WzOekJ8xCZdMS9I99pfkONgLIOL2w7I2WYLaZ8NSScXJEYu8O56x9g
-X-Gm-Gg: AeBDies2cloecGslNt7080wSCnj3b78ttqKdySPGZkA/w2fnyfKwkFfn+k9eYpWnm6w
-	OKhQx3tC473deE6P9uQh/h0O11/tLpfw/P6VPvsk8wvVZcASpMrxPYkyWsg4Bf9LoBCz1Y3VFRs
-	4+gX2EULeOO9xbvvGqnRwqOiqZ5H5GGH2vvoeYT5qWAmFBx3rqGUW9njBlxWYHveNZHI/D1bB5l
-	rA7TApDWiFqoORgR0WPnrrrvlWRtXQavtmYBPsdtYtm//rzeDiKG2/YZ+3VVQ+A1V8/j2L14fA2
-	+CS7F/zTx+IxIBMmgRGFfO6jwu9swbHfZC5rT9zpctZuBLizF1kZtjziP8OnvzBa8nMrT46SteR
-	GvvWSt46vZxNq3hH+94yqDUt8EB7z2XG9yTnK1XTxnw/QVRNAFL71MOCtHk+cNNrH0KHUvHivez
-	RF/xOLn7F6funFW5QsD2zjJQQmdU3m5Sev3P0s4ykePvx/Qw1KwB65zJupiG1CZxlUBrS1unI=
-X-Received: by 2002:a05:6830:6d2d:b0:7dc:d2ad:fb17 with SMTP id 46e09a7af769-7dee13e34b4mr5214929a34.20.1777887126078;
-        Mon, 04 May 2026 02:32:06 -0700 (PDT)
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com. [209.85.210.46])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7deca7a5e6asm8044679a34.3.2026.05.04.02.32.05
+        d=1e100.net; s=20251104; t=1777898796; x=1778503596;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=znJkm+yheaBiOtiXBHrScjCf5aNJhz18eCP9uLN0zvY=;
+        b=cN0yho8mqX54wUikEpmAH+vopeRtXHw952lYpc1tYfQkENCPZpmgLqGGHNhkL0N5t9
+         vm14P0sqGODXppkv9/eTyLajMeg4Mlz3swEyDimMwZ0uJ/7XwRuFrpTS12VY1v25quBs
+         GaZHXAtTfmehPskrX+Jy1F16z9wm9a6LQba9uEefTVBJLZI2wY6Hn3vS3+60YgExObA2
+         CruRT/IUumPFZpcrAp3Sx2k1RagTJdYlvPZj/tNg5VTNgYwnyBo4Gsy3TNlxRudrKFH2
+         h8QQkO64IpwnIXHUlb1uNO0EQMFd7C5n516Tk70tnwKlwSYpLuygTrv6rkjAy+v6q0P7
+         oK0A==
+X-Forwarded-Encrypted: i=1; AFNElJ8Bp31jp/d4YtafP/AciUnDGYvy+Yz2r9pyEB2kgZnEnAcvvAnJ8FrjaqMu34UeC/z4nNW9rKIJh9Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1KfrcWtEqJyKL6jPl4FxIcmfJPWaOEZhZdgxS1XF/w3k7P3Zv
+	pX5JklplmATjD6yGh7Kdas7h17XA6Z6/g72/0ePH09O4ylZUfo1bKH8IAO96QgKS
+X-Gm-Gg: AeBDietWI+o+nnW0w/TwdtFWBT3lcmMu5lBJBkfdpWzjegG3amQ7PibXCCVBQsjJ3QP
+	/zmnjKHh+raUGbZbcTI4Ogle0exyS/gFlxWhp+0uLAxi3KPTLXUBDynmWvqR44WM9hUOSj/iAYE
+	uquszVKSER+h0ovxnpz+yqxQ4JVhKIi20DZ89YdZb12wLVC2ISQNdPdZ0YsbM6S4vRRTBNsDFAG
+	RfPkGVmuJhVVkmiqXGluTJJ+4cZR5JP5QwlSCBetU10DNzT6e5fnb5SFA+rDhPxd6Yig+h+4BTT
+	4JQTFUGodoiFeLFdwYpNleaAMyP7gXmjUWTtImbnDt9tMwQN0DNZuTN82S3QyJKK1CFIkJkK+g6
+	aFbz0S23+FpnFDWmgY24X5iu2PwYjA8pt+lHzb3fOLuXjCDKyo7F3M+tr8hGL9NidShGntSzxSk
+	L0up3z7PtBbgMMIMc6FFTgtUTz/NtYbhv7YpCgofnQUZneXzJGxwCHNt0wG/gsl9LmOyvthtyAa
+	08jsiaXTw==
+X-Received: by 2002:a05:6820:f022:b0:694:991f:62e5 with SMTP id 006d021491bc7-69697df95e7mr4172689eaf.58.1777898796026;
+        Mon, 04 May 2026 05:46:36 -0700 (PDT)
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com. [209.85.161.43])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-69689479359sm6515487eaf.7.2026.05.04.05.46.35
         for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 May 2026 02:32:05 -0700 (PDT)
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-7de7dc85b74so3618605a34.2
-        for <linux-clk@vger.kernel.org>; Mon, 04 May 2026 02:32:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ9BdKOu7r5dsaUSRHxXQEJlJLYF29fQzkhMjlODWXl2w9TKSnhu6x8X4sVSRZaW7IwSIsspF9WmAbE=@vger.kernel.org
-X-Received: by 2002:a05:6122:2884:b0:56d:b639:5c0d with SMTP id
- 71dfb90a1353d-5750ca1f022mr3391522e0c.13.1777886706296; Mon, 04 May 2026
- 02:25:06 -0700 (PDT)
+        Mon, 04 May 2026 05:46:35 -0700 (PDT)
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-685017d0fbcso2170277eaf.3
+        for <linux-clk@vger.kernel.org>; Mon, 04 May 2026 05:46:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ9VCDGTh7eg4tTqu1jVqbajLPB/VoGPJErjFzONWyOYqhfyNddtubfE0OC/IGAo8sXpt4j/zBXdDH0=@vger.kernel.org
+X-Received: by 2002:a05:6122:130a:b0:56c:da22:6921 with SMTP id
+ 71dfb90a1353d-5750c5281a9mr3577419e0c.5.1777898480344; Mon, 04 May 2026
+ 05:41:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260419193718.133174-1-marek.vasut+renesas@mailbox.org>
- <20260419193718.133174-8-marek.vasut+renesas@mailbox.org> <CAMuHMdX17D3n_5vxsvmaSmionjOqrEdPygjPdYuu6a0DR7b83w@mail.gmail.com>
- <0875e4a1-f112-4619-a229-2f6f9197f21c@mailbox.org>
-In-Reply-To: <0875e4a1-f112-4619-a229-2f6f9197f21c@mailbox.org>
+References: <cover.1775636898.git.tommaso.merciai.xr@bp.renesas.com>
+In-Reply-To: <cover.1775636898.git.tommaso.merciai.xr@bp.renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 4 May 2026 11:24:55 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXJvrsXitGagqZJ_STdTTh_s1cBAKf6+esihaVWjfn40g@mail.gmail.com>
-X-Gm-Features: AVHnY4LakVD8SFWNnLvI5N41V0dwMs_sPKYjvoWQU3neqkGpISJJCy9fOpu_jcA
-Message-ID: <CAMuHMdXJvrsXitGagqZJ_STdTTh_s1cBAKf6+esihaVWjfn40g@mail.gmail.com>
-Subject: Re: [PATCH 7/7] arm64: dts: renesas: r8a779md: Add support for R-Car
- M3Le R8A779MD Geist
-To: Marek Vasut <marek.vasut@mailbox.org>
-Cc: linux-arm-kernel@lists.infradead.org, 
-	Nguyen Tran <nguyen.tran.pz@bp.renesas.com>, Conor Dooley <conor+dt@kernel.org>, 
-	David Airlie <airlied@gmail.com>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+Date: Mon, 4 May 2026 14:41:08 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUqdEZaK4C2zNjZ3Rh0TaiLrROUeWK-R5WZU+ULpArBrQ@mail.gmail.com>
+X-Gm-Features: AVHnY4LvtR9sYYwFkbyXTFSDx7n1q3qDBs-g1S0RCiV3vvmXtOpqt-05ZZXwFh0
+Message-ID: <CAMuHMdUqdEZaK4C2zNjZ3Rh0TaiLrROUeWK-R5WZU+ULpArBrQ@mail.gmail.com>
+Subject: Re: [PATCH v6 00/21] Add support for DU and DSI on the Renesas RZ/G3E SoC
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: tomm.merciai@gmail.com, laurent.pinchart@ideasonboard.com, 
+	linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
 	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
-	Magnus Damm <magnus.damm@gmail.com>, Maxime Ripard <mripard@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, 
-	Simona Vetter <simona@ffwll.ch>, Stephen Boyd <sboyd@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, 
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, devicetree@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Marek,
+Hi Tommaso,
 
-On Sun, 3 May 2026 at 04:50, Marek Vasut <marek.vasut@mailbox.org> wrote:
-> On 4/29/26 3:59 PM, Geert Uytterhoeven wrote:
-> >> +&avb {
-> >> +       pinctrl-0 =3D <&avb_pins>;
-> >> +       pinctrl-names =3D "default";
-> >> +       phy-handle =3D <&phy0>;
-> >> +       tx-internal-delay-ps =3D <2000>;
-> >> +       status =3D "okay";
-> >> +
-> >> +       phy0: ethernet-phy@0 {
-> >
-> > compatible =3D "ethernet-phy-id0022.1622";
-> >
-> >> +               rxc-skew-ps =3D <1500>;
-> >> +               reg =3D <0>;
-> >> +               interrupt-parent =3D <&gpio2>;
-> >> +               interrupts =3D <11 IRQ_TYPE_LEVEL_LOW>;
-> >
-> > interrupts-extended =3D <&gpio2 11 IRQ_TYPE_LEVEL_LOW>;
-> >
-> >> +               reset-gpios =3D <&gpio2 10 GPIO_ACTIVE_LOW>;
-> >> +               reset-assert-us =3D <100>;
-> >> +               reset-deassert-us =3D <100>;
-> >
-> > Do we need these two? We don't have them in e.g.
-> > arch/arm64/boot/dts/renesas/salvator-common.dtsi
+On Wed, 8 Apr 2026 at 12:37, Tommaso Merciai
+<tommaso.merciai.xr@bp.renesas.com> wrote:
+> This patch series adds support for the 2 Display Units (DUs) and MIPI DSI
+> interface found on the Renesas RZ/G3E SoC.
 >
-> I believe we should add them, the KSZ9031 PHY does require 100us delay
-> after reset is deasserted and before MDIO access is possible:
+> RZ/G3E SoC has 2 LCD controller (LCDC0 and LCDC1), both are composed
+> of Frame Compression Processor (FCPVD), Video Signal Processor (VSPD),
+> and Display Unit (DU).
 >
-> https://ww1.microchip.com/downloads/aemDocuments/documents/UNG/ProductDoc=
-uments/DataSheets/KSZ9031RNX-Data-Sheet-DS00002117.pdf
->
-> FIGURE 7-5: POWER-UP/POWER-DOWN/RESET TIMING
->
-> "
-> Note 2: After the de-assertion of reset, wait a minimum of 100 =C2=B5s be=
-fore
-> starting programming on the MIIM (MDC/MDIO)
-> interface
-> "
+> LCDC0 is connected to LVDS (single or dual channel) and DSI.
+> LCDC1 is connected to LVDS (single ch), DSI, and GPIO (Parallel I/F).
 
-OK. So please add it to the other boards, too.
+Thanks for your series!
 
-> [...]
->
-> >> +       pwm2_pins: pwm2 {
-> >> +               groups =3D "pwm2_a";
-> >> +               function =3D "pwm2";
-> >> +       };
-> >
-> > What is pwm2 used for?
->
-> The signal is accessible on the EXIO connector D (LBSC) .
-> It is up to user to use the pin for their purposes.
+> Tommaso Merciai (21):
+>   clk: renesas: rzv2h: Add PLLDSI clk mux support
+>   clk: renesas: r9a09g047: Add CLK_PLLETH_LPCLK support
+>   clk: renesas: r9a09g047: Add CLK_PLLDSI{0,1} clocks
+>   clk: renesas: r9a09g047: Add CLK_PLLDSI{0,1}_DIV7 clocks
+>   clk: renesas: r9a09g047: Add CLK_PLLDSI{0,1}_CSDIV clocks
+>   clk: renesas: r9a09g047: Add support for SMUX2_DSI{0,1}_CLK
+>   clk: renesas: r9a09g047: Add support for DSI clocks and resets
+>   clk: renesas: r9a09g047: Add support for LCDC{0,1} clocks and resets
 
-Usually we do not enable support for random user wirings on EXIO connectors=
-.
+I have queued these in an immutable branch, targeted for renesas-clk
+for v7.2, and for consumption by the DRM patch(es) that have a hard
+dependency on the addition to include/linux/clk/renesas.h.
+
+>   dt-bindings: display: renesas,rzg2l-du: Refuse port@1 for RZ/G2UL
+>   dt-bindings: display: renesas,rzg2l-du: Add support for RZ/G3E SoC
+>   dt-bindings: display: bridge: renesas,dsi: Add support for RZ/G3E SoC
+>   drm: renesas: rz-du: mipi_dsi: Add out_port to OF data
+>   drm: renesas: rz-du: mipi_dsi: Add RZ_MIPI_DSI_FEATURE_GPO0R feature
+>   drm: renesas: rz-du: mipi_dsi: Add support for RZ/G3E
+>   drm: renesas: rz-du: Add RZ/G3E support
+>   media: dt-bindings: media: renesas,vsp1: Document RZ/G3E
+>   media: dt-bindings: media: renesas,fcp: Document RZ/G3E SoC
+>   arm64: dts: renesas: r9a09g047: Add fcpvd{0,1} nodes
+>   arm64: dts: renesas: r9a09g047: Add vspd{0,1} nodes
+>   arm64: dts: renesas: r9a09g047: Add DU{0,1} and DSI nodes
+>   arm64: dts: renesas: r9a09g047e57-smarc: Enable DU0 and DSI support
+
+The following changes since commit 254f49634ee16a731174d2ae34bc50bd5f45e731:
+
+  Linux 7.1-rc1 (2026-04-26 14:19:00 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
+tags/clk-renesas-rzg3e-plldsi-tag
+
+for you to fetch changes up to 272a6e2ad164094045af520299b5df3ce1763061:
+
+  clk: renesas: r9a09g047: Add support for LCDC{0,1} clocks and resets
+(2026-05-04 14:03:08 +0200)
+
+----------------------------------------------------------------
+clk: renesas: rzg3e: Add support for DSI clocks
+
+RZ/G3E Clock Pulse Generator PLLDSI limits, shared by clock and MIPI DSI
+driver source files.
+
+----------------------------------------------------------------
+Tommaso Merciai (8):
+      clk: renesas: rzv2h: Add PLLDSI clk mux support
+      clk: renesas: r9a09g047: Add CLK_PLLETH_LPCLK support
+      clk: renesas: r9a09g047: Add CLK_PLLDSI{0,1} clocks
+      clk: renesas: r9a09g047: Add CLK_PLLDSI{0,1}_DIV7 clocks
+      clk: renesas: r9a09g047: Add CLK_PLLDSI{0,1}_CSDIV clocks
+      clk: renesas: r9a09g047: Add support for SMUX2_DSI{0,1}_CLK
+      clk: renesas: r9a09g047: Add support for DSI clocks and resets
+      clk: renesas: r9a09g047: Add support for LCDC{0,1} clocks and resets
+
+ drivers/clk/renesas/r9a09g047-cpg.c |  84 +++++++++++++++++
+ drivers/clk/renesas/rzv2h-cpg.c     | 181 ++++++++++++++++++++++++++++++++++++
+ drivers/clk/renesas/rzv2h-cpg.h     |  12 +++
+ include/linux/clk/renesas.h         |  20 ++++
+ 4 files changed, 297 insertions(+)
 
 Gr{oetje,eeting}s,
 
                         Geert
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
                                 -- Linus Torvalds
