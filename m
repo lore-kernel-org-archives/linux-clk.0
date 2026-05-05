@@ -1,150 +1,130 @@
-Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF01A3644A1;
-	Tue,  5 May 2026 16:33:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED9F4A2E14
+	for <linux-clk@vger.kernel.org>; Tue,  5 May 2026 17:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777998782; cv=none; b=HJi6fSCNfW6e5+3NlHMELARZvfvEJbbmemHaCcliVhvipR8o9EvfIlIjDD8duVOsvp64SDsnC1QSXQL+ZcK68KcMs6sNm5D8XKt+HitWTsqmSeHIhShCvSfaivZfJ0PvmxM0B31BR0i2mQahB4bLSjb1fYI2V4N8JOz+5aZ3QwQ=
+	t=1778001313; cv=none; b=KWkX+jg/llUZl+Ax6KAZqGM9Z73ZF/pUr99g6IWRZ5W4Q50lKZoTGEHLjx/dfTz/wGoFWUepJt93NjoWzN/Lj8c3pos5hRX/ESjKhsqU0jD6yZHXyYqFEcilNXEOBVUslEdjMybN60j3SM438Prnq/wWrJH0C+Vq4N0gFvWBLVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777998782; c=relaxed/simple;
-	bh=h+WTtL0bj9Z8btw/vRdQkzaH0xaKnAYTnbozdOgXX9U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D4rOIQcEjfzE2rrdFKrwtIOjLOv3iGIpD4S5Sg75N6ZcBzzJU+Srjs5MqAEnyfGiAp3T8GZgIZOcKVCJ6Lhf0ioTNi4+1vox3SB1CfUxqZljMlE/ZxWQJYb7Ld4jOchjGiUBG9bd2j2sS+HiFP7x20m92x+M4QuI6CpF3FDWi4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
-Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
-	by leonov.paulk.fr (Postfix) with ESMTPS id 3DA961F80041;
-	Tue,  5 May 2026 16:32:51 +0000 (UTC)
-Received: by laika.paulk.fr (Postfix, from userid 65534)
-	id 9C7BDB40578; Tue,  5 May 2026 16:32:49 +0000 (UTC)
-X-Spam-Level: 
-Received: from collins (unknown [192.168.1.1])
-	by laika.paulk.fr (Postfix) with ESMTPSA id 84B44B40578;
-	Tue,  5 May 2026 16:32:47 +0000 (UTC)
-Date: Tue, 5 May 2026 18:32:45 +0200
-From: Paul Kocialkowski <paulk@sys-base.io>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 08/14] clk: sunxi-ng: a523: add system mod clocks
-Message-ID: <afobrW9UFtNW0B1k@collins>
-References: <20250307002628.10684-1-andre.przywara@arm.com>
- <20250307002628.10684-9-andre.przywara@arm.com>
- <afoRe6DI4GJIVtg4@shepard>
- <20260505182017.10d71c11@ryzen.lan>
+	s=arc-20240116; t=1778001313; c=relaxed/simple;
+	bh=lfOOkuIV2FBobVlnnDylaAQ9MU8rXE54JgCvXidilto=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L7sjJaC++YT+h0F8/oNaWd1GfmLeSS5EoREM0NSN3vpEOD55vJTqFiVHOAAYIiP6+gNF5HSqrVZpW5YZ1C2QZRCmbSkliXdYo425mQtFr939V/ib3a7sdI/9W4SSdSuw3MxwzuuuHLu6HntcxcJSvST4BoSsp2bIQgT9y0FzcGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M89DZlva; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M89DZlva"
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-36528851d7dso1412699a91.1
+        for <linux-clk@vger.kernel.org>; Tue, 05 May 2026 10:15:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1778001311; x=1778606111; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oU5jBJsvD6k1Jx6JWFG09TBpMXR8dm6+HY33LOBovk4=;
+        b=M89DZlvatxaPVTeCDQZu8zgk3IQTfLk62Cje8BNqcKqfWvvtUab/Arqliz/ztILDuE
+         AEqO4o7QYC3I0xyED17ZIYoXIQ4QEJSZRjwFuEOOpuJfekLR2Oez5pUUSvKGQMzqbNxu
+         4KQI6jgcwbJgS29Rqkl+0ahQI0pLPQ7hnpp4/VEYcVqhn3AEUsQgeRGpcuDFuLZftOd5
+         b01aVbvH968/dDRauVWBxdwlb3VXQtW2wPEylqsYLybw0Dmq8jIb1zeJAoWo0tyN8GrQ
+         OjMckYdzvJmxpz7eBnnx21ReB4dTq35tpqdZBGi71H9cwLhvX020qWd30dFSHpmrnxGK
+         dtzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778001311; x=1778606111;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oU5jBJsvD6k1Jx6JWFG09TBpMXR8dm6+HY33LOBovk4=;
+        b=o5lIjIBExnBbbbcI+64qF6P2gBGuyUFNTZD0q/MsGv9V/jlK9Fgzwc31O2qIiVEOXn
+         JmbMsA0HMjx/iAMIc2ysledTQkOrCaxxbjarXqZE0barce35/ZnKAUwj/5u/aPSS0fQw
+         +gxMd+p6VXrRXbT0STBo21aD4m7THVwsLrwew6B6MCGax4y0Rl79j9MQwBCf5nDXgi/Q
+         hCx/e/b2BHnxmdeD/klSAMwx+JieX09Zt3n4GZrB7RWA/yS4Vl1QNihZNC10EHCdjlY8
+         dzT5Zjx6PqnlAcI6BQ9zVehcToUlr1JjyWI9mWrOag1OOLiaS+Ivdzik541UMM+seLEl
+         n+aQ==
+X-Forwarded-Encrypted: i=1; AFNElJ/0xDYZ1bC17suitkQaOGIn/JvNPRpB/mjq5EQvdlUujyjRE1N06LcYoG6wwIknKF0OVAu1TY16Wqk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZLZS3sfa7zP0c4JshYSXPTSPhHQQjYKXVpstzNA1nZrVec9ih
+	hpUTTcvtHugtN/jcVTFHyMVXMM76RPvNwR0vS+T1vx+XwO1YRdyg5NVr
+X-Gm-Gg: AeBDieuh0STJh3lLi8wPa9bNZjKnTYPrtVA9F75qCSZe2ta94FHg5OPHrLz8gu/DL92
+	PBwzjDwFl4+/tLgGjbIj0QaKYq0qMQikBpeB+hSgDyS4SbrVTWtHuSioFWM5VkwH6PM0bR8A1nn
+	DS9BEMh2ShIVq+gLajp4qQUuTVaYpn2ZRKpIRo5A6Rr0tOn+0M/bcQlTtkhMT/pxUetTbmVKu2z
+	G4WlWasEjbb76qNvR06QVwmtccftwL1ZhnR3k5q1Qn4vbCCf+4YZZO99DKs+HuspdmuaVu95x2X
+	WlAGEeMYW/zmq52Wmqmg4/Gtw+/QIKmk0xnAQi6wZt7GxqzpVCsa0AobcC2jueIlGPvLajP8WyF
+	GjU0nTqgnCX+lA2mNImz5xT5MMJvUCm72rKZTAbRgXgSRLTCcti9Yt097XG81HrALeeiVKZe5xB
+	tVJsyLr79/OhizeJNYYTHgiOv5G+ePF33qMuoFsgvADjgkdc0qEcJkUKYDHsPd6dCBmhTkSU1Yy
+	esfShOMWxCE63B+rOs8uMF/aMoQ7MW3nLs0EG17mJbi
+X-Received: by 2002:a05:6a20:6a0a:b0:39c:643e:f062 with SMTP id adf61e73a8af0-3a7f1a1c8a6mr16302989637.7.1778001310824;
+        Tue, 05 May 2026 10:15:10 -0700 (PDT)
+Received: from visitorckw-work01.c.googlers.com.com (32.237.80.34.bc.googleusercontent.com. [34.80.237.32])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c7ffbbbf298sm13414509a12.13.2026.05.05.10.15.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 May 2026 10:15:10 -0700 (PDT)
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: peter.griffin@linaro.org,
+	krzk@kernel.org,
+	s.nawrocki@samsung.com,
+	cw00.choi@samsung.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: andre.draszik@linaro.org,
+	tudor.ambarus@linaro.org,
+	alim.akhtar@samsung.com,
+	semen.protsenko@linaro.org,
+	wllee@google.com,
+	hsuanting@google.com,
+	marscheng@google.com,
+	jserv@ccns.ncku.edu.tw,
+	eleanor15x@gmail.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	visitorckw@google.com,
+	Kuan-Wei Chiu <visitorckw@gmail.com>
+Subject: [PATCH] clk: samsung: gs101: Fix missing USI7_USI DIV clock in peric0_clk_regs
+Date: Tue,  5 May 2026 17:14:57 +0000
+Message-ID: <20260505171457.1960837-1-visitorckw@gmail.com>
+X-Mailer: git-send-email 2.54.0.545.g6539524ca2-goog
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rq9iZSTGYiEAWlha"
-Content-Disposition: inline
-In-Reply-To: <20260505182017.10d71c11@ryzen.lan>
+Content-Transfer-Encoding: 8bit
 
+In the peric0_clk_regs array, the divider register offset for USI6 was
+accidentally listed twice, while the divider for USI7 was omitted.
 
---rq9iZSTGYiEAWlha
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Missing this DIV register causes the USI7 clock divider setting to be
+lost and reset to its hardware default value during a suspend/resume
+cycle.
 
-Hi Andre,
+Replace the duplicated USI6 DIV entry with the correct USI7 DIV
+register.
 
-Le Tue 05 May 26, 18:20, Andre Przywara a =C3=A9crit :
-> On Tue, 5 May 2026 17:49:15 +0200
-> Paul Kocialkowski <paulk@sys-base.io> wrote:
->=20
-> Hi Paul,
->=20
-> > On Fri 07 Mar 25, 00:26, Andre Przywara wrote:
-> > > Add the clocks driving some core system related subsystems of the SoC:
-> > > the "CE" crypto engine, the high speed timers, the DRAM and the assoc=
-iated
-> > > MBUS clock, and the PCIe clock.
-> > >=20
-> > > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> > > ---
-> > >  drivers/clk/sunxi-ng/ccu-sun55i-a523.c | 135 +++++++++++++++++++++++=
-++
-> > >  1 file changed, 135 insertions(+)
-> > >=20
-> > > diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c b/drivers/clk/sun=
-xi-ng/ccu-sun55i-a523.c
-> > > index 17a4ffc0b7f52..c59f3f789d052 100644
-> > > --- a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
-> > > +++ b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c =20
-> >=20
-> > [...]
-> >=20
-> > > +static const struct clk_parent_data hstimer_parents[] =3D {
-> > > +	{ .fw_name =3D "hosc" },
-> > > +	{ .fw_name =3D "iosc" },
-> > > +	{ .fw_name =3D "losc" },
-> > > +	{ .hw =3D &pll_periph0_200M_clk.hw },
-> > > +};
-> > > +static SUNXI_CCU_MP_DATA_WITH_MUX_GATE(hstimer0_clk, "hstimer0",
-> > > +				       hstimer_parents, 0x730,
-> > > +				       0, 0,	/* M */ =20
-> >=20
-> > I was looking at the A523 ccu code and see lots of
-> > SUNXI_CCU_MP_DATA_WITH_MUX_GATE with no M.
-> >=20
-> > Was there a particular reason for not using SUNXI_CCU_M_DATA_WITH_MUX_G=
-ATE
-> > instead? It would surely be less confusing.
-> >=20
-> > One difference would be that the ops end up as ccu_div_ops instead of
-> > ccu_mp_ops. Do you need ccu_mp_ops for some reason?
->=20
-> Yes, please double check that (as it *is* confusing), but to me it
-> looks like the CCU_M_ version has just a pure divider, whereas in
-> CCU_MP_ the P is a *shift*, and the M a divider. Those timer clocks just
-> feature a shift, which I don't think we have seen before?
+Fixes: 893f133a040b ("clk: samsung: gs101: add support for cmu_peric0")
+Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+---
+Build test only. Found via manual review.
+Setting up an upstream kernel on hardware would probably take
+considerable effort right now. Since this is an obvious typo, I'm
+submitting it compile tested only.
 
-Oh right I think I got confused! These clocks have no M but they have P.
+ drivers/clk/samsung/clk-gs101.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Sorry for the noise there.
+diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs101.c
+index d2bcd3a9daf8..b44bb31f38b3 100644
+--- a/drivers/clk/samsung/clk-gs101.c
++++ b/drivers/clk/samsung/clk-gs101.c
+@@ -3921,7 +3921,7 @@ static const unsigned long peric0_clk_regs[] __initconst = {
+ 	CLK_CON_DIV_DIV_CLK_PERIC0_USI4_USI,
+ 	CLK_CON_DIV_DIV_CLK_PERIC0_USI5_USI,
+ 	CLK_CON_DIV_DIV_CLK_PERIC0_USI6_USI,
+-	CLK_CON_DIV_DIV_CLK_PERIC0_USI6_USI,
++	CLK_CON_DIV_DIV_CLK_PERIC0_USI7_USI,
+ 	CLK_CON_DIV_DIV_CLK_PERIC0_USI8_USI,
+ 	CLK_CON_BUF_CLKBUF_PERIC0_IP,
+ 	CLK_CON_GAT_CLK_BLK_PERIC0_UID_PERIC0_CMU_PERIC0_IPCLKPORT_PCLK,
+-- 
+2.54.0.545.g6539524ca2-goog
 
-All the best,
-
-Paul
-
---=20
-Paul Kocialkowski,
-
-Independent contractor - sys-base - https://www.sys-base.io/
-Free software developer - https://www.paulk.fr/
-
-Expert in multimedia, graphics and embedded hardware support with Linux.
-
---rq9iZSTGYiEAWlha
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAmn6G60ACgkQhP3B6o/u
-lQxmzhAAgwGpo6Kmj27yWIQtH71oCqnC0lDHBP6All8FXvNIA4nxm+oerCxRpcwa
-5pJkouva0w07D1W3+2f5ctrnPeRxEM/SmppEkEZqeoiaZCVdRgH9+XhULT6GuuP7
-JsqKSow7rW2Fd620cNHNoH/STGwybziFzrgwauDmrHYFOfp/52RjvXssreLkS2Y1
-FC2ehf1UVRVPsaV2Ae5Q8UB4gkLOfQBiL7R2OukqrwU5YaOZ9SUOYD2x79YsAHxp
-oGgQD0ZEQIJIaVl+d3WmXyRomRK+Ah2AOVQxaUvKjHgQFfEmqs9Ut9k1CWZznZ2l
-isu05RSc8Dgwo15vDTRJGp1zeCBo7RX6AZbhNJz7W4kbn8CKl1bamkBfG3/Jd77C
-zhDbzJcRWusfI1YmSLDbOdypmDoZd/FFjyG8ZrH3qzt7HZoJihLMiqZ5FrZX0egs
-je3DCmsHdn3AG5OT91kLqchwg9WGtM/GQTclS/I4AY9tHrdHOPRPjUp+o6uUKi7l
-OMGjqbkbRgBXkC/jaq45of5eed7ND45QJUnea+hLq14RH7/yAIATLR70muHhUfRa
-LoyrtJogmYE8QyGmsCxF2XotvJ1Fh2ZhGc28oaKTp8WG+Q3wYZVSRdCUs+4a1FQ8
-AoLEvT97Y+2B0qG3LUsjNxJOOPD8LDm6+tJcGS62DRag4APqV+I=
-=h3+g
------END PGP SIGNATURE-----
-
---rq9iZSTGYiEAWlha--
