@@ -1,94 +1,98 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from mail.chunchunmaru.org (mail.chunchunmaru.org [45.79.219.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6983B19A9;
-	Tue,  5 May 2026 18:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2003D3C2763;
+	Tue,  5 May 2026 20:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.219.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778006177; cv=none; b=VAvi+kJd4dj2uEQrtI+6iXYkAV23Ubodhrv8m+icDBDcWNe0/J+v62MlKlweHsq7+We235MjErfC5le/Q12r+dW6/Vx/lsg2bpo5sExdGrxrAsLFos5fzElVF8yOiovvhgV0TrPeS+x68y2wZkQY1lAibzkwu4FWi8/Ycwd9uVU=
+	t=1778013537; cv=none; b=paNGkz1qvCW73GRMQJV6ggmiVo/c+Wz9d0imjCDJp9UwewWxHu6f+f8Msw9gpOmHa1GxkB8IWm1PxsSZxovQxjffVFEKKRNCLEZFF0+dhu/I1Qy17qjASOpK6fHX3jeAlQfPCxWNWz3+ZrUewxA5pl1WqwIihR2KLmN74driafk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778006177; c=relaxed/simple;
-	bh=fJNLh7vlWBmLtkgJ+eGR18nb9EkD+2PPfCUJu2JN5vc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FjN/7lN31KOPk7CVgrR56uPC0n+VDSxmQm/N5ulGCXBmGquG2PHnE3S0/qVwZliHFRNU+Rz3wcimLjplIQec9aeb7IOHj8WpbIm9vvKG+9pDTqlW6KFa+OpuelmqK4FIOO7jf2Y/vNqYlQsjjaXMcHaoGDgYbgTH5NcdnQT1gDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=jon8/EDe; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="jon8/EDe"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=4dK8dGl/0EI/DjbmEcBMbo8RnhHPnsLTlshvyB5AK6E=; b=jon8/EDe5bki1ULUH1d6giVxcn
-	tCb8OCgP9jYmtkI4aivHoD0YwjBA4Z7D3Ajm6KCkMVYuR+C4AsP9VRbdPl2Hdhg89HFiDqolv+Fqe
-	W64mG8B937HTPjaDLa+j6EJr54Fe/E+mM9JplmqOIobxfWDM6qUvlO/B050wn4mn/cSBSEER0IJtT
-	/zeEDRhRXLr2Ij7hFpRgq7Z2iLVBbPZJVIkrjynAyfVZ0XLAn3aPpUQtIsIU7kdLKI8rA77ewMMIB
-	oKHFdQmXV0GZbDyKeKuAQ3Dsomy++jWF6P+E1iAiVHYbREwsvISjB1Zj1uqBc7V+9d8Yr/5NJU7tt
-	X2MkkgmQ==;
-From: Heiko Stuebner <heiko@sntech.de>
-To: Johan Hovold <johan@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>,
- stable@vger.kernel.org, Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: Re: [PATCH] clk: rk808: fix OF node reference imbalance
-Date: Tue, 05 May 2026 20:36:11 +0200
-Message-ID: <3672033.3VsfAaAtOV@phil>
-In-Reply-To: <177714062701.5403.1177541832751457755@lazor>
-References:
- <20260407095027.2625516-1-johan@kernel.org>
- <177714062701.5403.1177541832751457755@lazor>
+	s=arc-20240116; t=1778013537; c=relaxed/simple;
+	bh=dHd2KDKnBvYMY1x5Ql4RD/wy9CzzB4WBj1LykRhnhTI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cYKw8w3CZWjBpnVAuW/9/4G5RirJmy32MoB8jcA13MJyQFjsS2nTJVLvwqjVzbM7a9viPva1PsuLIMq9LprEI/84RMbOzZfNoqZr4jNpwo1PjsWQnNNbvjbq80yX8a/7cZ6ZkIXLUIWUFcByrxqLkcmJFHUe9VFEYF57pLAZjWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=floorchan.org; spf=none smtp.mailfrom=floorchan.org; arc=none smtp.client-ip=45.79.219.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=floorchan.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=floorchan.org
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9517A32254A;
+	Tue,  5 May 2026 20:38:53 +0000 (EDT)
+From: "Catherine A. Frederick" <serenity@floorchan.org>
+To: andersson@kernel.org,
+	sboyd@kernel.org,
+	krzk+dt@kernel.org
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Catherine A. Frederick" <serenity@floorchan.org>
+Subject: [PATCH 1/3] clk: qcom: smd-rpm: Add clocks for MSM8920
+Date: Tue,  5 May 2026 16:38:39 -0400
+Message-ID: <20260505203845.192140-1-serenity@floorchan.org>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Am Samstag, 25. April 2026, 20:10:27 Mitteleurop=C3=A4ische Sommerzeit schr=
-ieb Stephen Boyd:
-> Quoting Johan Hovold (2026-04-07 02:50:27)
-> > The driver reuses the OF node of the parent multi-function device but
-> > fails to take another reference to balance the one dropped by the
-> > platform bus code when unbinding the MFD and deregistering the child
-> > devices.
-> >=20
-> > Fix this by using the intended helper for reusing OF nodes.
-> >=20
-> > Fixes: 2dc51ca822e4 ("clk: RK808: Reduce 'struct rk808' usage")
-> > Cc: stable@vger.kernel.org      # 6.5
-> > Cc: Sebastian Reichel <sebastian.reichel@collabora.com>
-> > Signed-off-by: Johan Hovold <johan@kernel.org>
-> > ---
->=20
-> +Heiko
+MSM8920 is very similar to MSM8917, but adds IPA clocks.
 
-I've looked that up, and that is the right way to go
+Signed-off-by: Catherine A. Frederick <serenity@floorchan.org>
+---
+ drivers/clk/qcom/clk-smd-rpm.c | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-
->=20
-> >  drivers/clk/clk-rk808.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/clk/clk-rk808.c b/drivers/clk/clk-rk808.c
-> > index f7412b137e5e..5a75b5c91555 100644
-> > --- a/drivers/clk/clk-rk808.c
-> > +++ b/drivers/clk/clk-rk808.c
-> > @@ -153,7 +153,7 @@ static int rk808_clkout_probe(struct platform_devic=
-e *pdev)
-> >         struct rk808_clkout *rk808_clkout;
-> >         int ret;
-> > =20
-> > -       dev->of_node =3D pdev->dev.parent->of_node;
-> > +       device_set_of_node_from_dev(dev, dev->parent);
-> > =20
-> >         rk808_clkout =3D devm_kzalloc(dev,
-> >                                     sizeof(*rk808_clkout), GFP_KERNEL);
-> >
->=20
-
-
-
+diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+index 103db984a40b..cdabe373aabc 100644
+--- a/drivers/clk/qcom/clk-smd-rpm.c
++++ b/drivers/clk/qcom/clk-smd-rpm.c
+@@ -666,6 +666,36 @@ static const struct rpm_smd_clk_desc rpm_clk_msm8917 = {
+ 	.num_icc_clks = ARRAY_SIZE(bimc_pcnoc_snoc_smmnoc_icc_clks),
+ };
+ 
++static struct clk_smd_rpm *msm8920_clks[] = {
++	[RPM_SMD_XO_CLK_SRC]		= &clk_smd_rpm_branch_bi_tcxo,
++	[RPM_SMD_XO_A_CLK_SRC]		= &clk_smd_rpm_branch_bi_tcxo_a,
++	[RPM_SMD_BIMC_GPU_CLK]		= &clk_smd_rpm_bimc_gpu_clk,
++	[RPM_SMD_BIMC_GPU_A_CLK]	= &clk_smd_rpm_bimc_gpu_a_clk,
++	[RPM_SMD_IPA_CLK]		= &clk_smd_rpm_ipa_clk,
++	[RPM_SMD_IPA_A_CLK]		= &clk_smd_rpm_ipa_a_clk,
++	[RPM_SMD_QDSS_CLK]		= &clk_smd_rpm_qdss_clk,
++	[RPM_SMD_QDSS_A_CLK]		= &clk_smd_rpm_qdss_a_clk,
++	[RPM_SMD_BB_CLK1]		= &clk_smd_rpm_bb_clk1,
++	[RPM_SMD_BB_CLK1_A]		= &clk_smd_rpm_bb_clk1_a,
++	[RPM_SMD_BB_CLK2]		= &clk_smd_rpm_bb_clk2,
++	[RPM_SMD_BB_CLK2_A]		= &clk_smd_rpm_bb_clk2_a,
++	[RPM_SMD_RF_CLK2]		= &clk_smd_rpm_rf_clk2,
++	[RPM_SMD_RF_CLK2_A]		= &clk_smd_rpm_rf_clk2_a,
++	[RPM_SMD_DIV_CLK2]		= &clk_smd_rpm_div_clk2,
++	[RPM_SMD_DIV_A_CLK2]		= &clk_smd_rpm_div_clk2_a,
++	[RPM_SMD_BB_CLK1_PIN]		= &clk_smd_rpm_bb_clk1_pin,
++	[RPM_SMD_BB_CLK1_A_PIN]		= &clk_smd_rpm_bb_clk1_a_pin,
++	[RPM_SMD_BB_CLK2_PIN]		= &clk_smd_rpm_bb_clk2_pin,
++	[RPM_SMD_BB_CLK2_A_PIN]		= &clk_smd_rpm_bb_clk2_a_pin,
++};
++
++static const struct rpm_smd_clk_desc rpm_clk_msm8920 = {
++	.clks = msm8920_clks,
++	.num_clks = ARRAY_SIZE(msm8920_clks),
++	.icc_clks = bimc_pcnoc_snoc_smmnoc_icc_clks,
++	.num_icc_clks = ARRAY_SIZE(bimc_pcnoc_snoc_smmnoc_icc_clks),
++};
++
+ static struct clk_smd_rpm *msm8936_clks[] = {
+ 	[RPM_SMD_XO_CLK_SRC]		= &clk_smd_rpm_branch_bi_tcxo,
+ 	[RPM_SMD_XO_A_CLK_SRC]		= &clk_smd_rpm_branch_bi_tcxo_a,
+@@ -1295,6 +1325,7 @@ static const struct of_device_id rpm_smd_clk_match_table[] = {
+ 	{ .compatible = "qcom,rpmcc-msm8909", .data = &rpm_clk_msm8909 },
+ 	{ .compatible = "qcom,rpmcc-msm8916", .data = &rpm_clk_msm8916 },
+ 	{ .compatible = "qcom,rpmcc-msm8917", .data = &rpm_clk_msm8917 },
++	{ .compatible = "qcom,rpmcc-msm8920", .data = &rpm_clk_msm8920 },
+ 	{ .compatible = "qcom,rpmcc-msm8936", .data = &rpm_clk_msm8936 },
+ 	{ .compatible = "qcom,rpmcc-msm8937", .data = &rpm_clk_msm8937 },
+ 	{ .compatible = "qcom,rpmcc-msm8940", .data = &rpm_clk_msm8940 },
+-- 
+2.53.0
 
