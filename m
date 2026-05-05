@@ -1,136 +1,241 @@
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3910A421EE5
-	for <linux-clk@vger.kernel.org>; Tue,  5 May 2026 12:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3141540DFC9
+	for <linux-clk@vger.kernel.org>; Tue,  5 May 2026 13:16:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777983479; cv=none; b=r3U1wOE0E9S7ySLdI0D7KWYzLQcTOi4kKZ9KpqzRG44Qv64R8n2xFaQWJJYcxhxoATGahkG0AOl+vhTshWR5QG65zfxuMrR3ItDkqsUmEieQ1bsrxBoiQkChWyN3u2UhvsRnO8uEM4mDWQbkt5GE2sKCrxoL/zXCuZFUaaOlPE8=
+	t=1777986987; cv=none; b=Z6WYPdpJgW3vtDWTDmcoQCqi//fD+McUfQi0id978Ys9lFgWUBmHfpqtZfR84x6bpPbSNIATpeSr+4slZTKe3ofURcsq8ycF4aaNh7uRBIjRPoCMOeXAt4wamAdlX82HWL3ifs3yeboYSY2I8zIPZIOCKvSMsnV6q88v8NPQcvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777983479; c=relaxed/simple;
-	bh=l/41ncjvsWNG/pOaCT3/ej2L9B5PHEMsEQj3Jxazb6M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cfdnSrIMps6oA+5jHLUisI7PRe6lyONFsTivNkbLDe33RDI1UEz1mGKiPTwzBSjsRvwoFgx+a5SGUF3VuspbDipEHJTF6t+TT7K0ZY2ct6diHSrA0SZXjOeFmffipaWseKNqa7i2qDIX5uLrFq/CJveDitc5geZLeHv+rxrImYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-95d3492fb1eso324422241.3
-        for <linux-clk@vger.kernel.org>; Tue, 05 May 2026 05:17:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777983477; x=1778588277;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Mx10RFm2VbKGi60P1ByLYAwwUUKZhzhPZIKANt76f2M=;
-        b=rROZIcTxoOXFESASVhxztkbnosGge60RiNgeudMhK6Le6m3Ss/pjWWfKL7PeQUvBTa
-         fvNRX7QGYW2N+Oq/EreMZBkwah20qDSo+B0E3PHWL/PcTtSMBClp/B2/g9P7AK8oYhPJ
-         6kL/Mk5FPse4TpPzDii73MQOU5c7mKxCVcghadW3zUitRfx3zACbx53OaxKRBxCnjM72
-         F6FuvaGl030hDW4mBUqrOCW3e27F5iprz+mtBk4H8KFOMrpIiibsUj8x4B1QG+hYN2jY
-         70LNOs89Ycyl2HYo02r5p8UJiEy2XFVd7/lyLvf8gip0vGkqgpa9ofqf9t8y0VLSOLE+
-         vPlA==
-X-Forwarded-Encrypted: i=1; AFNElJ9EyXfc6Ee3ZdFpsifoy9msTgfUjY53n6X5s1JBXI7s2pIZ/g3G9BksGk1wiE1/SIoD+zNylCOmhQw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yztf2jSsIZi2pfjP8mhdQwV38l5MgdNQoiSrCeLU93APSi8/+Hu
-	VXBUJf+mTdfLFz8MSfESAYENoKdnnpUcujVwVgxT9rnzxhaPlqP3yCZKKUg3IDlx
-X-Gm-Gg: AeBDieuekxQC6E0fWeb94oDigsvyrdKtt4OSDE807ZwX2COtGrm2by1v7Nug7qfvrYn
-	GmtRKt0+WU+czhxosVdtYJDfFA9zL4h68Lq920gTfA/IpOHePwA5gDTsFN8d6+Y29OpJhGMAanA
-	Wj5KTLZep8R97pgG1WQPQMVpYzvBnr8Jq3Xfhz6FzgOPQaH/x6A4lMrL3jIcNUVRWDZlq+pOAMG
-	xRqfVdO3c6xUkthNHqhI1wdBUBwL8xidOAdCX89dxOU7+seCcq4NrejJ1EgRFhJfhf/vi7MQcFW
-	bqPo22U/H54/50Ub42OI3NmzbuWAHzIIFxD0sPfW5t4DA9f96rAha+LjZtKAnSg2kre8TdYAxwh
-	y0nTw0mc7KuFs+RanTo5Tt11BqbZK+LrdsPS14BkA8B6ZS35uaaZQ8OYkSg+nSOy7jaeojQPKTP
-	cDXYVJY6b1CTsBzdjt/3un+JVpB3hwOPkO0NdvHDDcu3/3p8ZMfyJV48JqN0POdSULeoKoM6zae
-	RE=
-X-Received: by 2002:a05:6102:508a:b0:60a:cd0e:5cee with SMTP id ada2fe7eead31-62f590bfaedmr1242329137.12.1777983477056;
-        Tue, 05 May 2026 05:17:57 -0700 (PDT)
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com. [209.85.221.171])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-62bfddbc09csm6686883137.11.2026.05.05.05.17.56
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 May 2026 05:17:56 -0700 (PDT)
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-573a81abef0so3301158e0c.2
-        for <linux-clk@vger.kernel.org>; Tue, 05 May 2026 05:17:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ9L4t8GHIVOZNgNfK15z6TzvqMRfDAz6JrjGCeVdub4sOXjoIcUMVrBAI0lv8yjD4mYwiD2p+tfQJQ=@vger.kernel.org
-X-Received: by 2002:a05:6122:3c44:b0:56f:7c7e:f33a with SMTP id
- 71dfb90a1353d-57547fd53a0mr1268108e0c.0.1777983476537; Tue, 05 May 2026
- 05:17:56 -0700 (PDT)
+	s=arc-20240116; t=1777986987; c=relaxed/simple;
+	bh=cXqD6L5ZgGDOjaRakM6IhHDH07275qAKvJ3/w4t7AvA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TXjH8bJ9i5FLx8VoC6eLN1aF/vgosVmsP0FsB/kI/wzsFnC2ACKZZ+i2OUpPEzT9P++zysHcFp1Qj9QbYXNWBb9mPVCeffLCsoS63kBm0q9+kZ9elGkd2Sziby6UeTnJbD1powZvn7KcCKv5Ofqg0IbcSiOFcCeQv5s4umXpc3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YoFL9TeD; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YoFL9TeD"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id D85434E42BC6;
+	Tue,  5 May 2026 13:16:22 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id A3A846053C;
+	Tue,  5 May 2026 13:16:22 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BA5E811AD0179;
+	Tue,  5 May 2026 15:16:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1777986981; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=0Ay5j5jF2czJyodsxELYPre6pXvfnrOxt7H2FRKhYNQ=;
+	b=YoFL9TeDIlgs+4UdO6TLJUbdRIFRxIC68L5gBvqBPEdsZERSZYnPetT+i8GPets2aozpms
+	wPjVS4wuImYqjkIm81YvLU4zzCTIdLWfrA8tPOTATI+i7ARIGj4h4o5Djs87nLq0UZsdIw
+	x5qVtN1e8AtZlsuN4YfqcR3S3+FG04AP7hKPMVU93Xx2ymPh3crIprUkFHtu39DKqMgvoP
+	ZI0mGi1jLYWSjtANE9pYlamZR7K0ttTayBGwytqnFGrpjlzTKl4/KERzOukirXo5d4S6E5
+	abCcXnasvG4EVhZLUyf6BNVbAcAYiUWh1sKn7Yl8jXIUNc6kvPAnU/V/TupTaw==
+Message-ID: <9fe10a63-3dc5-4bbc-bbd0-08cc3f625975@bootlin.com>
+Date: Tue, 5 May 2026 15:16:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260428201522.903875-1-cristian.marussi@arm.com> <20260428201522.903875-5-cristian.marussi@arm.com>
-In-Reply-To: <20260428201522.903875-5-cristian.marussi@arm.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 5 May 2026 14:17:45 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUF1dW0hR-UZMVVqTnpWbMcv1D41jfL_4rEj6Vzj9wGSg@mail.gmail.com>
-X-Gm-Features: AVHnY4JwQvUlXCNsMN5caeA9aMIeCzl1Epu5sphmxX2UtNuOS2ulpV9OaCHfntE
-Message-ID: <CAMuHMdUF1dW0hR-UZMVVqTnpWbMcv1D41jfL_4rEj6Vzj9wGSg@mail.gmail.com>
-Subject: Re: [PATCH v3 04/15] firmware: arm_scmi: Simplify clock rates exposed interface
-To: Cristian Marussi <cristian.marussi@arm.com>, sudeep.holla@arm.com
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	arm-scmi@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, philip.radford@arm.com, 
-	james.quinlan@broadcom.com, f.fainelli@gmail.com, vincent.guittot@linaro.org, 
-	etienne.carriere@foss.st.com, peng.fan@oss.nxp.com, michal.simek@amd.com, 
-	kuninori.morimoto.gx@renesas.com, marek.vasut+renesas@gmail.com, 
-	Peng Fan <peng.fan@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/4] firmware: ti_sci: add support for restoring IRQs
+ during resume
+To: Nishanth Menon <nm@ti.com>
+Cc: Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Gregory CLEMENT <gregory.clement@bootlin.com>,
+ richard.genoud@bootlin.com, Udit Kumar <u-kumar1@ti.com>,
+ Abhash Kumar <a-kumar2@ti.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, Dhruva Gole <d-gole@ti.com>,
+ Kendall Willis <k-willis@ti.com>
+References: <20260427-ti-sci-jacinto-s2r-restore-irq-v6-0-72c6468cb2ab@bootlin.com>
+ <20260427-ti-sci-jacinto-s2r-restore-irq-v6-2-72c6468cb2ab@bootlin.com>
+ <20260505113213.fz7qrovpgn4lbesn@zodiac>
+Content-Language: en-US
+From: Thomas Richard <thomas.richard@bootlin.com>
+In-Reply-To: <20260505113213.fz7qrovpgn4lbesn@zodiac>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Cristian, Sudeep,
+On 5/5/26 1:32 PM, Nishanth Menon wrote:
+> On 14:21-20260427, Thomas Richard (TI) wrote:
+> 
+> [..]
+> 
+>>  /**
+>>   * ti_sci_set_irq() - Helper api to configure the irq route between the
+>>   *		      requested source and destination
+>> @@ -2324,15 +2363,43 @@ static int ti_sci_set_irq(const struct ti_sci_handle *handle, u32 valid_params,
+>>  			  u16 dst_host_irq, u16 ia_id, u16 vint,
+>>  			  u16 global_event, u8 vint_status_bit, u8 s_host)
+>>  {
+>> +	struct ti_sci_info *info = handle_to_ti_sci_info(handle);
+>> +	struct ti_sci_msg_req_manage_irq *desc;
+>> +	struct ti_sci_irq *irq;
+>> +	int ret;
+>> +
+>>  	pr_debug("%s: IRQ set with valid_params = 0x%x from src = %d, index = %d, to dst = %d, irq = %d,via ia_id = %d, vint = %d, global event = %d,status_bit = %d\n",
+>>  		 __func__, valid_params, src_id, src_index,
+>>  		 dst_id, dst_host_irq, ia_id, vint, global_event,
+>>  		 vint_status_bit);
+>>  
+>> -	return ti_sci_manage_irq(handle, valid_params, src_id, src_index,
+>> -				 dst_id, dst_host_irq, ia_id, vint,
+>> -				 global_event, vint_status_bit, s_host,
+>> -				 TI_SCI_MSG_SET_IRQ);
+>> +	ret = ti_sci_manage_irq(handle, valid_params, src_id, src_index,
+>> +				dst_id, dst_host_irq, ia_id, vint,
+>> +				global_event, vint_status_bit, s_host,
+>> +				TI_SCI_MSG_SET_IRQ);
+>> +
+>> +	if (ret || !(info->fw_caps & MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST))
+>> +		return ret;
+>> +
+>> +	irq = kzalloc_obj(*irq, GFP_KERNEL);
+>> +	if (!irq)
+>> +		return -ENOMEM;
+> 
+> Do we need to handle cleanup of ti_sci_manage_irq if the allocation fails?
 
-On Tue, 28 Apr 2026 at 22:16, Cristian Marussi <cristian.marussi@arm.com> wrote:
-> Introduce a new internal struct scmi_clock_desc so as to be able to hide,
-> in the future, some of the needlessly public fields currently kept inside
-> scmi_clock_info, while keeping exposed only the two new min_rate and
-> max_rate fields for each clock.
->
-> No functional change.
->
-> Reviewed-by: Peng Fan <peng.fan@nxp.com>
-> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+Yes to keep hash list and allocated IRQs consistent.
 
-Thanks for your patch, which is now commit 83fd9d34b6b75be5 ("firmware:
-arm_scmi: Simplify clock rates exposed interface") in scmi/for-linux-next.
+> 
+>> +
+>> +	desc = &irq->desc;
+>> +	desc->valid_params = valid_params;
+>> +	desc->src_id = src_id;
+>> +	desc->src_index = src_index;
+>> +	desc->dst_id = dst_id;
+>> +	desc->dst_host_irq = dst_host_irq;
+>> +	desc->ia_id = ia_id;
+>> +	desc->vint = vint;
+>> +	desc->global_event = global_event;
+>> +	desc->vint_status_bit = vint_status_bit;
+>> +	desc->secondary_host = s_host;
+>> +
+>> +	hash_add(info->irqs, &irq->node, ti_sci_irq_hash(desc));
+> 
+> No locking? set_irq can be invoked in parallel paths, no?
+> Further, should'nt we check if the same src_id and src_index is already
+> present before adding to hash list?
 
-> --- a/drivers/firmware/arm_scmi/clock.c
-> +++ b/drivers/firmware/arm_scmi/clock.c
+ti_sci_manage_irq(TI_SCI_MSG_SET_IRQ) is the lock. If it succeeds we
+have to add it in hash list.
 
-> @@ -457,14 +466,14 @@ iter_clk_describe_update_state(struct scmi_iterator_state *st,
->         flags = le32_to_cpu(r->num_rates_flags);
->         st->num_remaining = NUM_REMAINING(flags);
->         st->num_returned = NUM_RETURNED(flags);
-> -       p->clk->rate_discrete = RATE_DISCRETE(flags);
+Can set_irq() and free_irq() be invoked in parallel paths? In this case
+maybe I should add a lock for set_irq() and free_irq().
 
-This removes the last setter of scmi_clock_info.rate_discrete.
-However, it is still used until the next commit cd73d1bfaa8d34bb
-("clk: scmi: Use new simplified per-clock rate properties").
-V2 did now have this issue, as the patches were ordered differently
-in that series.
+> 
+>> +
+>> +	return 0;
+>>  }
+>>  
+>>  /**
+>> @@ -2358,15 +2425,46 @@ static int ti_sci_free_irq(const struct ti_sci_handle *handle, u32 valid_params,
+>>  			   u16 dst_host_irq, u16 ia_id, u16 vint,
+>>  			   u16 global_event, u8 vint_status_bit, u8 s_host)
+>>  {
+>> +	struct ti_sci_info *info = handle_to_ti_sci_info(handle);
+>> +	struct ti_sci_msg_req_manage_irq irq_desc;
+>> +	struct ti_sci_irq *this_irq;
+>> +	struct hlist_node *tmp_node;
+>> +	int ret;
+>> +
+>>  	pr_debug("%s: IRQ release with valid_params = 0x%x from src = %d, index = %d, to dst = %d, irq = %d,via ia_id = %d, vint = %d, global event = %d,status_bit = %d\n",
+>>  		 __func__, valid_params, src_id, src_index,
+>>  		 dst_id, dst_host_irq, ia_id, vint, global_event,
+>>  		 vint_status_bit);
+>>  
+>> -	return ti_sci_manage_irq(handle, valid_params, src_id, src_index,
+>> -				 dst_id, dst_host_irq, ia_id, vint,
+>> -				 global_event, vint_status_bit, s_host,
+>> -				 TI_SCI_MSG_FREE_IRQ);
+>> +	ret = ti_sci_manage_irq(handle, valid_params, src_id, src_index,
+>> +				dst_id, dst_host_irq, ia_id, vint,
+>> +				global_event, vint_status_bit, s_host,
+>> +				TI_SCI_MSG_FREE_IRQ);
+>> +
+>> +	if (ret || !(info->fw_caps & MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST))
+>> +		return ret;
+>> +
+>> +	irq_desc.valid_params = valid_params;
+>> +	irq_desc.src_id = src_id;
+>> +	irq_desc.src_index = src_index;
+>> +	irq_desc.dst_id = dst_id;
+>> +	irq_desc.dst_host_irq = dst_host_irq;
+>> +	irq_desc.ia_id = ia_id;
+>> +	irq_desc.vint = vint;
+>> +	irq_desc.global_event = global_event;
+>> +	irq_desc.vint_status_bit = vint_status_bit;
+>> +	irq_desc.secondary_host = s_host;
+>> +
+>> +	hash_for_each_possible_safe(info->irqs, this_irq, tmp_node, node,
+>> +				    ti_sci_irq_hash(&irq_desc)) {
+>> +		if (ti_sci_irq_equal(&irq_desc, &this_irq->desc)) {
+>> +			hlist_del(&this_irq->node);
+>> +			kfree(this_irq);
+>> +			return 0;
+>> +		}
+>> +	}
+>> +
+> 
+> We should ideally not be here, correct? Add a dev_warn?
 
-After both commits, there are no more users of
-scmi_clock_info.rate_discrete, so it can be removed.
+yes
 
-> +       p->clkd->rate_discrete = RATE_DISCRETE(flags);
->
->         /* Warn about out of spec replies ... */
-> -       if (!p->clk->rate_discrete &&
-> +       if (!p->clkd->rate_discrete &&
->             (st->num_returned != 3 || st->num_remaining != 0)) {
->                 dev_warn(p->dev,
->                          "Out-of-spec CLOCK_DESCRIBE_RATES reply for %s - returned:%d remaining:%d rx_len:%zd\n",
-> -                        p->clk->name, st->num_returned, st->num_remaining,
-> +                        p->clkd->info.name, st->num_returned, st->num_remaining,
->                          st->rx_len);
->
->                 SCMI_QUIRK(clock_rates_triplet_out_of_spec,
+> 
+>> +	return 0;
+>>  }
+>>  
+>>  /**
+>> @@ -3847,7 +3945,10 @@ static int ti_sci_suspend_noirq(struct device *dev)
+>>  static int ti_sci_resume_noirq(struct device *dev)
+>>  {
+>>  	struct ti_sci_info *info = dev_get_drvdata(dev);
+>> -	int ret = 0;
+>> +	struct ti_sci_msg_req_manage_irq *irq_desc;
+>> +	struct ti_sci_irq *irq;
+>> +	struct hlist_node *tmp_node;
+>> +	int ret = 0, i;
+>>  	u32 source;
+>>  	u64 time;
+>>  	u8 pin;
+>> @@ -3859,6 +3960,32 @@ static int ti_sci_resume_noirq(struct device *dev)
+>>  			return ret;
+>>  	}
+>>  
+>> +	switch (pm_suspend_target_state) {
+>> +	case PM_SUSPEND_MEM:
+>> +		if (info->fw_caps & MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST) {
+>> +			hash_for_each_safe(info->irqs, i, tmp_node, irq, node) {
+>> +				irq_desc = &irq->desc;
+>> +				ret = ti_sci_manage_irq(&info->handle,
+>> +							irq_desc->valid_params,
+>> +							irq_desc->src_id,
+>> +							irq_desc->src_index,
+>> +							irq_desc->dst_id,
+>> +							irq_desc->dst_host_irq,
+>> +							irq_desc->ia_id,
+>> +							irq_desc->vint,
+>> +							irq_desc->global_event,
+>> +							irq_desc->vint_status_bit,
+>> +							irq_desc->secondary_host,
+>> +							TI_SCI_MSG_SET_IRQ);
+>> +				if (ret)
+>> +					return ret;
+> 
+> Do you want to attempt to restore the rest of the entries rather than give
+> up on the first fail? Maybe just log the error for debug and attempt the
+> rest?
 
-Gr{oetje,eeting}s,
+In this case, if I get more than one error what value should I return?
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best Regards,
+Thomas
