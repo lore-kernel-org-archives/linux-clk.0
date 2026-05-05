@@ -1,104 +1,87 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 795F5389452;
-	Tue,  5 May 2026 16:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999C22E4257;
+	Tue,  5 May 2026 16:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777998057; cv=none; b=qNPXbf3MEPjo3fDZ0WXq92cDA4P/XvaPPtURmUaLBXjGoeGngOZ/cBqOm/436OOcZLVhChAyd7FhUEhCqeUvnjVJOItW/GXVyNlGNfzVCXbWeQtsNPXqwetWBDoSr0glFt62nVXSrlCUK9rXLpm3SDjjCmeGPMANoNBvjChxs1c=
+	t=1777998268; cv=none; b=s/8mMvfU2rohnatsVwuEMv2K3NOeWJYPsp1G/1dpleFFQ2tv4tJqxHgI9yTBpvlM5aT6K57Cz1eBwRiO+DVBTzGUNJOuWQIDbVxZZ5AGopG7Qd1unAMnKMbJy9DlkaEkCzIW6ytWlbRaLLXVR5iJll65qzC3K8Z/BxKfHl/wRsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777998057; c=relaxed/simple;
-	bh=C8efCugq5/wF4si+DgA/qFTAdUR0kg1MpKn17jk6yuM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AQaw+fW3PGLy2ZkpYZZt8XmeSdPc05OnofHIUkO/hMgzGRiasC7KwiAcuIWHcOMV6CylV7k2PE0AdCG18CcpyQsu6MJa/MlMpi6ppROn8Cm+I+CWL7Mpu4yumzfxJvUiDsmFe9iYkbi5KBMd7mf7gXbWd6u21NABjUSDjLdjX2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=FnqFTI+o; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	s=arc-20240116; t=1777998268; c=relaxed/simple;
+	bh=/UB6MuZVu1wH16AzcLmdudUfOsdVTK2ldP8gyOgjFPU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C2AeWCii3tFVdULl87sOr9iDQqV76VJQWld7/MTw+1G41NFNCXJeMhVxEaAQ4F50DM0wWPj3qbeprEEg4F0movHYYxcl7ncZYkok/ZtHqCBo8FeFMO8o6akOus8dYYBQ7uW8+0t/qcnF/lHqw8ZEIMN2JmeE3n8c9p1lZq6T4bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DymjIbDB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="FnqFTI+o"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 887F21C2B;
-	Tue,  5 May 2026 09:20:48 -0700 (PDT)
-Received: from ryzen.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0581E3F763;
-	Tue,  5 May 2026 09:20:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1777998053; bh=C8efCugq5/wF4si+DgA/qFTAdUR0kg1MpKn17jk6yuM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=FnqFTI+oE0YtcnjRCbvYHUF8oZI18TcjaZur9kjU8zGkkPPaFMnJykcV6ZwmQYroB
-	 QbYiwMfaZHg/ifnCvZ4ddY0gQIN1gwFUQRdBnC6UlAhZdUMKM4Lyw2RZVYYj4YV56p
-	 0EZDUcGxKllp0vr0FwW5BhjWUmsBTMH/KDsod0II=
-Date: Tue, 5 May 2026 18:20:17 +0200
-From: Andre Przywara <andre.przywara@arm.com>
-To: Paul Kocialkowski <paulk@sys-base.io>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai
- <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
- <samuel@sholland.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 08/14] clk: sunxi-ng: a523: add system mod clocks
-Message-ID: <20260505182017.10d71c11@ryzen.lan>
-In-Reply-To: <afoRe6DI4GJIVtg4@shepard>
-References: <20250307002628.10684-1-andre.przywara@arm.com>
-	<20250307002628.10684-9-andre.przywara@arm.com>
-	<afoRe6DI4GJIVtg4@shepard>
-Organization: Arm Ltd.
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DymjIbDB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FE04C2BCB4;
+	Tue,  5 May 2026 16:24:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1777998268;
+	bh=/UB6MuZVu1wH16AzcLmdudUfOsdVTK2ldP8gyOgjFPU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DymjIbDBQ7v6YinmHZT129hxnR1yEV9gg47ge9IsQCkBSYyRCpSnwcOrTtIeDZDRh
+	 0lMbiFmww7nZ0Vc30/FxtzNNXkIt1sqUU9YhfUVbedlc+fBHvZhMyf+N4wa1sPF4AH
+	 Yvq99bP9c9LrJoFISFgD+7ySYNdysewK9HCAdvPWIpXHbd2OV769hoK0xYjUGqDshr
+	 mTvvF2tbXoWHqTJVd/EBKql9FqCBn0mhCYk24ReAK0GGiTr4bnwomSLpBF1HuHn3lQ
+	 /CJAuDuf+GPU4TTIxhJbEHibX5pN2ELu+nKCiyruCzepomKKL7fQGGGi9l/5LlWvV+
+	 /+TuUeEJv3YPg==
+Date: Tue, 5 May 2026 17:24:21 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Manikandan Muralidharan <manikandan.m@microchip.com>
+Cc: alexandre.belloni@bootlin.com, Frank.Li@nxp.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org,
+	nicolas.ferre@microchip.com, claudiu.beznea@tuxon.dev,
+	linux@armlinux.org.uk, mturquette@baylibre.com, sboyd@kernel.org,
+	Ryan.Wanner@microchip.com, tytso@mit.edu,
+	romain.sioen@microchip.com, aubin.constans@microchip.com,
+	cristian.birsan@microchip.com, adrian.hunter@intel.com,
+	jarkko.nikula@linux.intel.com, npitre@baylibre.com,
+	linux-i3c@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v5 1/5] dt-bindings: i3c: mipi-i3c-hci: add Microchip
+ SAMA7D65 compatible
+Message-ID: <20260505-prewar-disarm-04392f03d61e@spud>
+References: <20260505071327.125787-1-manikandan.m@microchip.com>
+ <20260505071327.125787-2-manikandan.m@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="0l+HBF2vu6FcRNjE"
+Content-Disposition: inline
+In-Reply-To: <20260505071327.125787-2-manikandan.m@microchip.com>
 
-On Tue, 5 May 2026 17:49:15 +0200
-Paul Kocialkowski <paulk@sys-base.io> wrote:
 
-Hi Paul,
+--0l+HBF2vu6FcRNjE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Fri 07 Mar 25, 00:26, Andre Przywara wrote:
-> > Add the clocks driving some core system related subsystems of the SoC:
-> > the "CE" crypto engine, the high speed timers, the DRAM and the associated
-> > MBUS clock, and the PCIe clock.
-> > 
-> > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> > ---
-> >  drivers/clk/sunxi-ng/ccu-sun55i-a523.c | 135 +++++++++++++++++++++++++
-> >  1 file changed, 135 insertions(+)
-> > 
-> > diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
-> > index 17a4ffc0b7f52..c59f3f789d052 100644
-> > --- a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
-> > +++ b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c  
-> 
-> [...]
-> 
-> > +static const struct clk_parent_data hstimer_parents[] = {
-> > +	{ .fw_name = "hosc" },
-> > +	{ .fw_name = "iosc" },
-> > +	{ .fw_name = "losc" },
-> > +	{ .hw = &pll_periph0_200M_clk.hw },
-> > +};
-> > +static SUNXI_CCU_MP_DATA_WITH_MUX_GATE(hstimer0_clk, "hstimer0",
-> > +				       hstimer_parents, 0x730,
-> > +				       0, 0,	/* M */  
-> 
-> I was looking at the A523 ccu code and see lots of
-> SUNXI_CCU_MP_DATA_WITH_MUX_GATE with no M.
-> 
-> Was there a particular reason for not using SUNXI_CCU_M_DATA_WITH_MUX_GATE
-> instead? It would surely be less confusing.
-> 
-> One difference would be that the ops end up as ccu_div_ops instead of
-> ccu_mp_ops. Do you need ccu_mp_ops for some reason?
+On Tue, May 05, 2026 at 12:43:23PM +0530, Manikandan Muralidharan wrote:
+> Add the microchip,sama7d65-i3c-hci compatible string to the MIPI I3C
+> HCI binding. The Microchip SAMA7D65 I3C controller is based on the
+> MIPI HCI specification but requires two clocks, so add a conditional
+> constraint when this compatible is present.
+>=20
+> Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
 
-Yes, please double check that (as it *is* confusing), but to me it
-looks like the CCU_M_ version has just a pure divider, whereas in
-CCU_MP_ the P is a *shift*, and the M a divider. Those timer clocks just
-feature a shift, which I don't think we have seen before?
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+pw-bot: not-applicable
 
-Cheers,
-Andre
+--0l+HBF2vu6FcRNjE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCafoZtQAKCRB4tDGHoIJi
+0t5tAP9j1Ts8TV5Nm9gBaXbBndqBbbHst/jK10FipNvviPDt+wD/T1eaRHjorVh5
+jpi/+IbbVA5d+oR7IgRe2HlgNZMqRQU=
+=SHjI
+-----END PGP SIGNATURE-----
+
+--0l+HBF2vu6FcRNjE--
