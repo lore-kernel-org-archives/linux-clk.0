@@ -1,130 +1,104 @@
-Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3879848A2AC;
-	Tue,  5 May 2026 15:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 795F5389452;
+	Tue,  5 May 2026 16:20:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777996179; cv=none; b=Em9ELKE4DbmSDP1DOIID+hKfL51IQtRYp7vWflaFRpFDeLunANLDuKOFFYad/+XMtTiEghhzYj6tYMy4iMaDzMrzuMQfkpQ6l3v2fINNEH5jFaH053FwX+xYP/1iYQwHxwW97mRZ5yceyuJbfsIcx/WeCwsiC4OcItKVaJGGYjc=
+	t=1777998057; cv=none; b=qNPXbf3MEPjo3fDZ0WXq92cDA4P/XvaPPtURmUaLBXjGoeGngOZ/cBqOm/436OOcZLVhChAyd7FhUEhCqeUvnjVJOItW/GXVyNlGNfzVCXbWeQtsNPXqwetWBDoSr0glFt62nVXSrlCUK9rXLpm3SDjjCmeGPMANoNBvjChxs1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777996179; c=relaxed/simple;
-	bh=WI8kcPMKepreWLOrEIywV6c45S8hONwGyzveuvAxIfI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HG76ngyj9960JeAg6k83yYYCVHu26xkHR/XzMYGN1LDVPVCgdcGFKuWd6Yhb3rz0cr/5hN0yv5rk+mCy3QTTVRrBBF+FNqw8Zmh371mvCi2Gc5DEIrMfnHa6x5wO/lPDTEwt7jkvVYTQ6pMS25CyKrGTx1v5R5sPnxPik0CF64Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
-Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
-	by leonov.paulk.fr (Postfix) with ESMTPS id 32CB51F80044;
-	Tue,  5 May 2026 15:49:26 +0000 (UTC)
-Received: by laika.paulk.fr (Postfix, from userid 65534)
-	id 656A6B4057B; Tue,  5 May 2026 15:49:24 +0000 (UTC)
-X-Spam-Level: 
-Received: from shepard (unknown [192.168.1.1])
-	by laika.paulk.fr (Postfix) with ESMTPSA id 70205B40573;
-	Tue,  5 May 2026 15:49:17 +0000 (UTC)
-Date: Tue, 5 May 2026 17:49:15 +0200
-From: Paul Kocialkowski <paulk@sys-base.io>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1777998057; c=relaxed/simple;
+	bh=C8efCugq5/wF4si+DgA/qFTAdUR0kg1MpKn17jk6yuM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AQaw+fW3PGLy2ZkpYZZt8XmeSdPc05OnofHIUkO/hMgzGRiasC7KwiAcuIWHcOMV6CylV7k2PE0AdCG18CcpyQsu6MJa/MlMpi6ppROn8Cm+I+CWL7Mpu4yumzfxJvUiDsmFe9iYkbi5KBMd7mf7gXbWd6u21NABjUSDjLdjX2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=FnqFTI+o; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="FnqFTI+o"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 887F21C2B;
+	Tue,  5 May 2026 09:20:48 -0700 (PDT)
+Received: from ryzen.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0581E3F763;
+	Tue,  5 May 2026 09:20:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1777998053; bh=C8efCugq5/wF4si+DgA/qFTAdUR0kg1MpKn17jk6yuM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FnqFTI+oE0YtcnjRCbvYHUF8oZI18TcjaZur9kjU8zGkkPPaFMnJykcV6ZwmQYroB
+	 QbYiwMfaZHg/ifnCvZ4ddY0gQIN1gwFUQRdBnC6UlAhZdUMKM4Lyw2RZVYYj4YV56p
+	 0EZDUcGxKllp0vr0FwW5BhjWUmsBTMH/KDsod0II=
+Date: Tue, 5 May 2026 18:20:17 +0200
+From: Andre Przywara <andre.przywara@arm.com>
+To: Paul Kocialkowski <paulk@sys-base.io>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai
+ <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
+ <samuel@sholland.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v4 08/14] clk: sunxi-ng: a523: add system mod clocks
-Message-ID: <afoRe6DI4GJIVtg4@shepard>
+Message-ID: <20260505182017.10d71c11@ryzen.lan>
+In-Reply-To: <afoRe6DI4GJIVtg4@shepard>
 References: <20250307002628.10684-1-andre.przywara@arm.com>
- <20250307002628.10684-9-andre.przywara@arm.com>
+	<20250307002628.10684-9-andre.przywara@arm.com>
+	<afoRe6DI4GJIVtg4@shepard>
+Organization: Arm Ltd.
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="IcCSgzqLbu8G5Ifh"
-Content-Disposition: inline
-In-Reply-To: <20250307002628.10684-9-andre.przywara@arm.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Tue, 5 May 2026 17:49:15 +0200
+Paul Kocialkowski <paulk@sys-base.io> wrote:
 
---IcCSgzqLbu8G5Ifh
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Paul,
 
-Hi Andre,
+> On Fri 07 Mar 25, 00:26, Andre Przywara wrote:
+> > Add the clocks driving some core system related subsystems of the SoC:
+> > the "CE" crypto engine, the high speed timers, the DRAM and the associated
+> > MBUS clock, and the PCIe clock.
+> > 
+> > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> > ---
+> >  drivers/clk/sunxi-ng/ccu-sun55i-a523.c | 135 +++++++++++++++++++++++++
+> >  1 file changed, 135 insertions(+)
+> > 
+> > diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
+> > index 17a4ffc0b7f52..c59f3f789d052 100644
+> > --- a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
+> > +++ b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c  
+> 
+> [...]
+> 
+> > +static const struct clk_parent_data hstimer_parents[] = {
+> > +	{ .fw_name = "hosc" },
+> > +	{ .fw_name = "iosc" },
+> > +	{ .fw_name = "losc" },
+> > +	{ .hw = &pll_periph0_200M_clk.hw },
+> > +};
+> > +static SUNXI_CCU_MP_DATA_WITH_MUX_GATE(hstimer0_clk, "hstimer0",
+> > +				       hstimer_parents, 0x730,
+> > +				       0, 0,	/* M */  
+> 
+> I was looking at the A523 ccu code and see lots of
+> SUNXI_CCU_MP_DATA_WITH_MUX_GATE with no M.
+> 
+> Was there a particular reason for not using SUNXI_CCU_M_DATA_WITH_MUX_GATE
+> instead? It would surely be less confusing.
+> 
+> One difference would be that the ops end up as ccu_div_ops instead of
+> ccu_mp_ops. Do you need ccu_mp_ops for some reason?
 
-On Fri 07 Mar 25, 00:26, Andre Przywara wrote:
-> Add the clocks driving some core system related subsystems of the SoC:
-> the "CE" crypto engine, the high speed timers, the DRAM and the associated
-> MBUS clock, and the PCIe clock.
->=20
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> ---
->  drivers/clk/sunxi-ng/ccu-sun55i-a523.c | 135 +++++++++++++++++++++++++
->  1 file changed, 135 insertions(+)
->=20
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c b/drivers/clk/sunxi-n=
-g/ccu-sun55i-a523.c
-> index 17a4ffc0b7f52..c59f3f789d052 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
+Yes, please double check that (as it *is* confusing), but to me it
+looks like the CCU_M_ version has just a pure divider, whereas in
+CCU_MP_ the P is a *shift*, and the M a divider. Those timer clocks just
+feature a shift, which I don't think we have seen before?
 
-[...]
-
-> +static const struct clk_parent_data hstimer_parents[] =3D {
-> +	{ .fw_name =3D "hosc" },
-> +	{ .fw_name =3D "iosc" },
-> +	{ .fw_name =3D "losc" },
-> +	{ .hw =3D &pll_periph0_200M_clk.hw },
-> +};
-> +static SUNXI_CCU_MP_DATA_WITH_MUX_GATE(hstimer0_clk, "hstimer0",
-> +				       hstimer_parents, 0x730,
-> +				       0, 0,	/* M */
-
-I was looking at the A523 ccu code and see lots of
-SUNXI_CCU_MP_DATA_WITH_MUX_GATE with no M.
-
-Was there a particular reason for not using SUNXI_CCU_M_DATA_WITH_MUX_GATE
-instead? It would surely be less confusing.
-
-One difference would be that the ops end up as ccu_div_ops instead of
-ccu_mp_ops. Do you need ccu_mp_ops for some reason?
-
-Thanks,
-
-Paul
-
---=20
-Paul Kocialkowski,
-
-Independent contractor - sys-base - https://www.sys-base.io/
-Free software developer - https://www.paulk.fr/
-
-Expert in multimedia, graphics and embedded hardware support with Linux.
-
---IcCSgzqLbu8G5Ifh
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAmn6EXsACgkQhP3B6o/u
-lQwfow/+Nmt6lPhpLN/DGQatcYI/cvk6GcczulX9uuLLoTSneynxgeZy25VIhA9r
-gDmZowD4hA4UILkiAczLx0yazfTnpXjYRGqfIDchLwaRBrdflY/lPe/Kz+OkRj35
-/InUMORdlfLrOKqADax33IVLZEBre+sZ5laGld+MWQnRjmsGyzb8xyfeygWMS/0E
-vPEtQfeSOETnAH9JO8p6t4b+rCj34Z1s9A4kBD93M873OB/IwPrhRebCqDMb9V6y
-ASujwO/X4e6FRmZIJfgGH+vL1Ghi9QIoLlEdDMM9JcQzJ9BvHU7d1n+Y4kALHW+m
-R9wrg88suUU2UngfiHeF2UlxldTY/0Kj0+2YdeZsoe/v/3LEwj4+p0rdnyb2/KDR
-1mkAJG+Z0ww7mAsECDGttSYLX3D7koO2LENC3ADYjO2kauZXE/3br3WjwNsQKusk
-PTVwWaGCjyoETzcEGU4Yzw0QTC+jjuGfpEn6KaGRojzuV9ZWbzMquNh0OJA18Hgz
-hB2GQrHAVVV6wSJPd/xGlU/1ADSANHg7s8waKT6z/kWchUlV/KtWeAtfK8agb2Hj
-vfD2Vl7yBHgRd460lBffM8QhMB9ySPmiBtrh4hzbCnm5+EvvM7gNFsSYHHtu4orI
-iOQSyV/2V1w7uOXnpWnHlv1NaAgSg69oN7sZc4ejz6VlinneNIc=
-=rNoU
------END PGP SIGNATURE-----
-
---IcCSgzqLbu8G5Ifh--
+Cheers,
+Andre
