@@ -1,113 +1,97 @@
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6316738757D;
-	Mon,  4 May 2026 22:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83E73ACA77;
+	Tue,  5 May 2026 07:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777935245; cv=none; b=kr5pFAucB96dDziL4wbwxcvRPH63el+L4Wr0jWpWfOnGFvEvS6Fkwyqxss0KFBCneb0WxAyt4IPr6NasZjiDjqYv3oTpWluQdoo+ddtmc0415xqVOgVAtOZjsusaBoWih/HaF77jcpO/R2WxMZm2yvv22gD6e5z3OmpI3rOFxpw=
+	t=1777965224; cv=none; b=RsPGz1m/kWvwDClKw0r2fhTWXOuqatu47nag8GIT4mllSdjRWDzznWiIBjyGBYb20prjGLqen+x2HaIOSWZWRJFsc6hYTGWiw7bUW5jBjGUJ94sMib8Ll8K1Kn/bb76POZcjyN2HJKKS2Mw2xu+uz65ThzZeHElF0hXejS6BjKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777935245; c=relaxed/simple;
-	bh=IeYdyg+c0wfLWSiUDFciO3AOSrOYt6CZULUeuH67dwM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e5vdSH6zEctzet4X8TL/rfTRSCascUMlKT6cqLTcnQAEPc+f8pLBdlbzmi0/crPNighjl9UpDuwTumgqBfhqGijqepOohU2GeUgrNbKicEsdzOQ9GQ7O8lIbQeISARG9zBRXdqs4Yr651h3gQU5lK0y1j++QUXzayygYEv6CjQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=NEL0nBiD; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1777965224; c=relaxed/simple;
+	bh=iwXssjVwXEDAaIusnOPanGw93zeO92i+J3UbzMTOgxg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tALpdPr9nUAJd5pO6fWCpxTts11qLfItlxCRbNHfNDtmpfvyrAye/WthFSx6WiCRvzpd6jeZ0XVnIUlk1wQUGshcGtrjDI3PsoojeQAYwWAxrdTsboy4ZSSvD+V+ZePqjZ2H1NXy2VkN30WgBqp2Njcd2cxWSzi9P4UW1Lb/Reo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=aUt7hcQF; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="NEL0nBiD"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4g8cQG2K5bz9tpY;
-	Tue,  5 May 2026 00:53:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1777935238;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VukkESAFe3Dz4ubR3JzkbP1ey9khSmUL81vcflLLR9I=;
-	b=NEL0nBiDrxWMgFQ5JESDVgyazhUvcXpuJD86ARYio6oZH8DC7Ds2jFMZSLv85pm17lVz8i
-	rCDmhGR7jEnlxdht26yOp41wy9JuVqHVTju0gNN0L2hnHDm1kwMEPS0SBgYj8tFwClrc5C
-	nNCxr68taV+QM03lbeYph4OxB2fb7uU1GBfJEh31fITvSnpnYpwo7SpSrjyZubvhJzU4Gu
-	36Y1SXbG1RoRdr/+blUlyywZm+jhbsVQw72mCbcIQQU616cFIzk1G1DxuktlFmnG3gyZ69
-	/38iZWVKcn1VfN553gSwkg0mSuDwhWOBGEazuxO6lCeFboL0gO2TszVzJONUKQ==
-Message-ID: <5aaf1bc2-351d-4bd6-ad8d-206f58af1c26@mailbox.org>
-Date: Tue, 5 May 2026 00:53:52 +0200
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="aUt7hcQF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1777965223; x=1809501223;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=iwXssjVwXEDAaIusnOPanGw93zeO92i+J3UbzMTOgxg=;
+  b=aUt7hcQF6RcCA+WbDcHlpEgtiO1Zh6togUueobzA4oiBEJBQhgsPA464
+   BBOBx7UG+R2JbsKMUlL3GcYNHVjIQUkS9/xlfBFf/ochjKK2LxgQdaQXP
+   4/Z0TS1Xokrsx6Qei03zkWGQAVgYEJMXeguZkWJXBKZCe/r9EM4SZ0HQk
+   w4amG+ajTbYz2dAz/QBNKgcIl5dDi1QmNcgsG15biKTPyUQ4tCedysMh1
+   3hWMYZkh8Fd4ojwNWqM464B/QFy/M5nR+nVv09furloHLqbEk285alVGf
+   MPnFsLMtBjtwsqGB/Q2XhTcF84yYYDB5kpexe2GpGNUdJjGfgV3BRBwxY
+   g==;
+X-CSE-ConnectionGUID: PjmAzx6DT7WFLSUsQRH7eQ==
+X-CSE-MsgGUID: y95fZyx9Qz2BMZILXZ8CqQ==
+X-IronPort-AV: E=Sophos;i="6.23,217,1770620400"; 
+   d="scan'208";a="57457000"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2026 00:13:42 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.87.152) by
+ chn-vm-ex1.mchp-main.com (10.10.87.30) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.37; Tue, 5 May 2026 00:13:41 -0700
+Received: from che-lt-i67131.microchip.com (10.10.85.11) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2507.58 via Frontend Transport; Tue, 5 May 2026 00:13:33 -0700
+From: Manikandan Muralidharan <manikandan.m@microchip.com>
+To: <alexandre.belloni@bootlin.com>, <Frank.Li@nxp.com>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <nicolas.ferre@microchip.com>,
+	<claudiu.beznea@tuxon.dev>, <linux@armlinux.org.uk>,
+	<mturquette@baylibre.com>, <sboyd@kernel.org>, <Ryan.Wanner@microchip.com>,
+	<tytso@mit.edu>, <romain.sioen@microchip.com>,
+	<aubin.constans@microchip.com>, <cristian.birsan@microchip.com>,
+	<adrian.hunter@intel.com>, <jarkko.nikula@linux.intel.com>,
+	<npitre@baylibre.com>, <linux-i3c@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+CC: <manikandan.m@microchip.com>
+Subject: [PATCH v5 0/5] Add microchip sama7d65 SoC I3C support
+Date: Tue, 5 May 2026 12:43:22 +0530
+Message-ID: <20260505071327.125787-1-manikandan.m@microchip.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 7/7] arm64: dts: renesas: r8a779md: Add support for R-Car
- M3Le R8A779MD Geist
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-arm-kernel@lists.infradead.org,
- Nguyen Tran <nguyen.tran.pz@bp.renesas.com>,
- Conor Dooley <conor+dt@kernel.org>, David Airlie <airlied@gmail.com>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- Magnus Damm <magnus.damm@gmail.com>, Maxime Ripard <mripard@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
- Simona Vetter <simona@ffwll.ch>, Stephen Boyd <sboyd@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
- devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org
-References: <20260419193718.133174-1-marek.vasut+renesas@mailbox.org>
- <20260419193718.133174-8-marek.vasut+renesas@mailbox.org>
- <CAMuHMdX17D3n_5vxsvmaSmionjOqrEdPygjPdYuu6a0DR7b83w@mail.gmail.com>
- <0875e4a1-f112-4619-a229-2f6f9197f21c@mailbox.org>
- <CAMuHMdXJvrsXitGagqZJ_STdTTh_s1cBAKf6+esihaVWjfn40g@mail.gmail.com>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <CAMuHMdXJvrsXitGagqZJ_STdTTh_s1cBAKf6+esihaVWjfn40g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: db7b2fc70112bc46d8d
-X-MBO-RS-META: 3ezkm5km4odom3wm4cyftc36h38gwj6t
+Content-Type: text/plain
 
-On 5/4/26 11:24 AM, Geert Uytterhoeven wrote:
+Add support for microchip sama7d65 SoC I3C master only IP which is
+based on mipi-i3c-hci from synopsys implementing version 1.0
+specification. The platform specific changes are integrated in the
+mipi-i3c-hci driver using existing quirks
 
-Hello Geert,
+I3C in master mode supports up to 12.5MHz, SDR mode data transfer in
+mixed bus mode (I2C and I3C target devices on same i3c bus).
 
->>> Do we need these two? We don't have them in e.g.
->>> arch/arm64/boot/dts/renesas/salvator-common.dtsi
->>
->> I believe we should add them, the KSZ9031 PHY does require 100us delay
->> after reset is deasserted and before MDIO access is possible:
->>
->> https://ww1.microchip.com/downloads/aemDocuments/documents/UNG/ProductDocuments/DataSheets/KSZ9031RNX-Data-Sheet-DS00002117.pdf
->>
->> FIGURE 7-5: POWER-UP/POWER-DOWN/RESET TIMING
->>
->> "
->> Note 2: After the de-assertion of reset, wait a minimum of 100 µs before
->> starting programming on the MIIM (MDC/MDIO)
->> interface
->> "
-> 
-> OK. So please add it to the other boards, too.
+Durai Manickam KR (3):
+  clk: at91: sama7d65: add peripheral clock for I3C
+  ARM: dts: microchip: add I3C controller
+  ARM: configs: at91: sama7: add sama7d65 i3c-hci
 
-Will do.
+Manikandan Muralidharan (2):
+  dt-bindings: i3c: mipi-i3c-hci: add Microchip SAMA7D65 compatible
+  i3c: mipi-i3c-hci: add microchip sama7d65 SoC compatible with the
+    required quirk
 
->> [...]
->>
->>>> +       pwm2_pins: pwm2 {
->>>> +               groups = "pwm2_a";
->>>> +               function = "pwm2";
->>>> +       };
->>>
->>> What is pwm2 used for?
->>
->> The signal is accessible on the EXIO connector D (LBSC) .
->> It is up to user to use the pin for their purposes.
-> 
-> Usually we do not enable support for random user wirings on EXIO connectors.
-I'll remove that in V3, thanks !
+ .../devicetree/bindings/i3c/mipi-i3c-hci.yaml | 27 ++++++++++++++++---
+ arch/arm/boot/dts/microchip/sama7d65.dtsi     |  8 ++++++
+ arch/arm/configs/sama7_defconfig              |  2 ++
+ drivers/clk/at91/sama7d65.c                   |  1 +
+ drivers/i3c/master/mipi-i3c-hci/core.c        | 10 +++++++
+ 5 files changed, 44 insertions(+), 4 deletions(-)
+
+-- 
+2.25.1
+
