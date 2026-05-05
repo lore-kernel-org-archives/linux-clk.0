@@ -1,258 +1,195 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012047.outbound.protection.outlook.com [52.101.48.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA83314A98;
-	Tue,  5 May 2026 13:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C25D33D4F0;
+	Tue,  5 May 2026 13:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.47
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777987185; cv=fail; b=a93BiA0JPzdVjW7gpC3HIHx0BCctKZ+J8h9bH9Z5JlKM0RJxJDY5Ln3+x+83ok3ALPEXyVawBQ0K7qWPxSrpUqfI9lRfvI4m1NAirQqKEWI+KWvulahIzXHnOp1XtWoBeU5cTqT9ddEfRe2b6A8jk03isFftm3VYR6NLJaaE0Fc=
+	t=1777987237; cv=fail; b=UWslkQxIA8YJT/HxsTGDEIcVH4Wf6II1cTqWn8pP0cGqs58XuICrZsjcNbqd4jQtbaZR3nJswUl4UwVQSDxGTKm/01pQGOZmPfL9+UVsB6XuOkGyXoVJ4hvFaCZdopvxDsMxSwrX6FIh90ZoStwEl8ByVSkXCJw/k4EsY31PRcc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777987185; c=relaxed/simple;
-	bh=t60cpKTqF6WAMsnbRjqZQU8b+ZteJhJ7lZprL8MSmgQ=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=D7SwphY9uNTt1ezR5kmC0t7xtSenzvxH4Dr3MFKmCSVpGi8jrsi3kj/DFmk/2DV57pHXOh+P2P2XOXRqWCyNicz3qgv4g6EbTPyzleuwAlUo5CdXenhIXsUCklP7Pnh3o8X9ovHles96bGJfHObNKCYYFYDzdQ8ScoootMDVCys=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LRyP3nIx; arc=fail smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1777987237; c=relaxed/simple;
+	bh=S9lhrwhqDuWYKYrdInw5IuvmadYKAGB2Z6fZoh6785I=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V/7+IUvcpTzHwonXa0N/DEgfdRYqH8FcXmEw29gxZx75HhYcfYVrdsbOB8z/+FHPH8gR6RjKDUUAHoKIgxw/2sP/9G9pP/i5V+YH5JyWwzIieDGmvIGcBVu91IT+Nhim3RcJnL8hYzM7Dz5rXidhvMiWoUkCSSzs8pYtnywI9ZA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=XMgQsPgF; arc=fail smtp.client-ip=52.101.48.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LRyP3nIx"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1777987184; x=1809523184;
-  h=message-id:date:subject:to:references:from:in-reply-to:
-   content-transfer-encoding:mime-version;
-  bh=t60cpKTqF6WAMsnbRjqZQU8b+ZteJhJ7lZprL8MSmgQ=;
-  b=LRyP3nIxF1e1c9NVcJQzJUzna1IYQEFoP7xJrF0h4Ke1piKD8rS9mCyV
-   rUvlI3xoY1Jq4gHF9QnHRYSlxJVjjzMutWt/yRDKCAGCJzegahNPeZHKB
-   FP3vddmwR7L9qc/jrPNe0B7Yond26SikdnWeAhnmAcT2j2yyOQfi//UUp
-   5cYPnFlKQ2JpI3umerzUz/vUVYbvW8Hlew5xjM3f2ZzF+ltO9QSZsT1Nr
-   BjewkF4CVcWcGQYIK0Y1YK+NRtUpYGjAdg9bczeJTtNE36DCgfJv1l9Mz
-   hobMKXxj0XPPjoZgKDteihpX58q64/m7JZ+ycPspmWKIhUjtPQNbON4Ez
-   Q==;
-X-CSE-ConnectionGUID: HLRT2UjJS8CvPRWQJ8UEFw==
-X-CSE-MsgGUID: SOZACu/RTWWiIlWMyAuWYg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11777"; a="79046432"
-X-IronPort-AV: E=Sophos;i="6.23,217,1770624000"; 
-   d="scan'208";a="79046432"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2026 06:19:43 -0700
-X-CSE-ConnectionGUID: 0zeomjSJTaeqpYIl42z0RQ==
-X-CSE-MsgGUID: K7uh3kt5TwuncCbxLZZtjw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,217,1770624000"; 
-   d="scan'208";a="232670725"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2026 06:19:42 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Tue, 5 May 2026 06:19:39 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Tue, 5 May 2026 06:19:39 -0700
-Received: from MW6PR02CU001.outbound.protection.outlook.com (52.101.48.55) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Tue, 5 May 2026 06:19:30 -0700
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XMgQsPgF"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Kwl9okNSrQEUdJpNWyqxq29XZx+jevrg5SciAc02oxXN+ZFLM9E4uDh/dpiZSoEp+RP9ZWBNgoTEm4N9Fm8JbF//mxs2pz75AZls1jNyyEtJ4pRqJtEJF/k3iJ15+RVSXIDWCNpR0OO0NdNCO6+nTEtaNyUK7ckTn3fJ6UJMNWW+1jrnSkpAi9Vy7Z1+WEU4p3Gw4XWylmTj4mcy3UlLGAVxytx49ggNpHkEMbLrHg0dv1mwQiJD9d6BPcO/EAagfQqeXvp3OiXmiOc/lekPTvJEhQcZ7CPDESjAPTQWYCTTMwdx8ANpYeWEMrWH536AN4eCES3mX+nf2iaxNdzlTA==
+ b=khUk067qiVMrvimRxfgg0SN+lpXn7MMCCZpHiHdr9CZTyzsHDa98oLJcav33ZxQKUrJKqTkxGHQlEfJRf+xRpSYErZYUxSkYZbBM/j8SKIbgWy0e+pEgX4g4HvQLCkORBnnsqpyzeE8ch+lBF2/+00BS43dzWB3Gea+UtgVHRm11xFTITRUnhQj0PqJb/QWbfXIYIc/NRf1TSo9hRXObEgEctiTxfJtPv/SB532+r0k2NX4TbHkamcLI0Hw6arO9L8zm2lcSFBX7gANITiG7rEGk0f/jmXD39QsQlhDRmTx0jM2Z1Vz7C2FTrmzfTGTKrhwGxExMZIgf3yagtbv+Rw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=z8y7CYMYGsdoNB+HuHEm9oROBYv2gSaBGykRuzpn5Q8=;
- b=bWQ/VveUP4/Swmn4JMXzAGjPT7jUiY5Rk7dOg8SZ4Q1PIQ9q5wYH0e2n3QzIB/PVaSvRxELylPolkwyHkdKgw0oLU0shvBtEm/+l9f7i8zM/hM1ZDN1p86tMlKGfV5JpVtAlvziwHAycglm5DUxHp1epHdD4vbKWT8mIco1mtLkVzolWAXlVmNyIMn6mj9Pkdb3rsH7/DqOFHfMSO2tRYxH74+WB6mIlvY234bfAW64Qz0eHIJ+JnAYPwlgc8RoHa5wV8h7AQkdZWTxrftqHzJeZxBsOzdPTt8l0H6W1r1omnVjYl6gbY9ssL4EuRVJ5H7cRVs93tJwPpm1kCuQ8Xg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from IA1PR11MB7198.namprd11.prod.outlook.com (2603:10b6:208:419::15)
- by IA4PR11MB9154.namprd11.prod.outlook.com (2603:10b6:208:55e::13) with
+ bh=b8UzirRma+d3QgUVH3Rcj8o+UEs7DfTYjvKVQ54lqT8=;
+ b=wfKTHlqcDE4F1+ZyWrsqYj5gEnFjsFSXyQ4awEXMcJuUO/4lBTjvyVZzeVjBo4YWu7hl2OyukvTk+rBSOfYfDpqEuiXaaTWlwJ+SDT5948l9zO3XjKnJb5cYI7f7tQmhMEkMfbJbmDA49ClcFoUyhSBMXYZtts17Ic2NMuNXO89WUI683msoZ7z3UkozO7E5JtY2JdxyF6HKpCKcMULrilcy21zdCbkq9UIjsneg/swvPcocl0MZUNyqbzjnWBzLL88MQSSKz75zSUZjCneyh7kIKC1Ytf+/DVihD0uKK8/s9o2CGjJ0c+BS4ApuCBirAgxFqW69BH040sCDqwHCsA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.23.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=b8UzirRma+d3QgUVH3Rcj8o+UEs7DfTYjvKVQ54lqT8=;
+ b=XMgQsPgFR0LBwxvKClGCUefBenFhRbrYGDT4Uad1fyKhy2XmVIyyAbjb7s5IJBGGU/Wstx03dBvB7fK2/vQqhW6KKPVfpDqPkUldDXm11KUiJJg1pHH9Hb3C1TYFaoveqWgbhUBgn31NauiJkhl24WRJYKG13mA/K0bZWq3dzjQ=
+Received: from BL1PR13CA0260.namprd13.prod.outlook.com (2603:10b6:208:2ba::25)
+ by CH3PR10MB7260.namprd10.prod.outlook.com (2603:10b6:610:12e::15) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9870.25; Tue, 5 May
- 2026 13:19:16 +0000
-Received: from IA1PR11MB7198.namprd11.prod.outlook.com
- ([fe80::2c4e:e92a:4fa:a456]) by IA1PR11MB7198.namprd11.prod.outlook.com
- ([fe80::2c4e:e92a:4fa:a456%3]) with mapi id 15.20.9870.023; Tue, 5 May 2026
- 13:19:16 +0000
-Message-ID: <13607cc5-b724-4fbc-8595-8fd5c7f1b4c3@intel.com>
-Date: Tue, 5 May 2026 16:19:09 +0300
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/5] i3c: mipi-i3c-hci: add microchip sama7d65 SoC
- compatible with the required quirk
-To: Manikandan Muralidharan <manikandan.m@microchip.com>,
-	<alexandre.belloni@bootlin.com>, <Frank.Li@nxp.com>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <nicolas.ferre@microchip.com>,
-	<claudiu.beznea@tuxon.dev>, <linux@armlinux.org.uk>,
-	<mturquette@baylibre.com>, <sboyd@kernel.org>, <Ryan.Wanner@microchip.com>,
-	<tytso@mit.edu>, <romain.sioen@microchip.com>,
-	<aubin.constans@microchip.com>, <cristian.birsan@microchip.com>,
-	<jarkko.nikula@linux.intel.com>, <npitre@baylibre.com>,
-	<linux-i3c@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>
-References: <20260505071327.125787-1-manikandan.m@microchip.com>
- <20260505071327.125787-4-manikandan.m@microchip.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: c/o Alberga Business Park,
- 6 krs, Bertel Jungin Aukio 5, 02600 Espoo, Business Identity Code: 0357606 -
- 4, Domiciled in Helsinki
-In-Reply-To: <20260505071327.125787-4-manikandan.m@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DUZPR01CA0191.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4b6::20) To IA1PR11MB7198.namprd11.prod.outlook.com
- (2603:10b6:208:419::15)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9870.27; Tue, 5 May
+ 2026 13:20:31 +0000
+Received: from BL02EPF00021F6B.namprd02.prod.outlook.com
+ (2603:10b6:208:2ba:cafe::e6) by BL1PR13CA0260.outlook.office365.com
+ (2603:10b6:208:2ba::25) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9891.15 via Frontend Transport; Tue,
+ 5 May 2026 13:20:31 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.194)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.23.194 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.23.194; helo=lewvzet200.ext.ti.com; pr=C
+Received: from lewvzet200.ext.ti.com (198.47.23.194) by
+ BL02EPF00021F6B.mail.protection.outlook.com (10.167.249.7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9891.9 via Frontend Transport; Tue, 5 May 2026 13:20:30 +0000
+Received: from DLEE212.ent.ti.com (157.170.170.114) by lewvzet200.ext.ti.com
+ (10.4.14.103) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 5 May
+ 2026 08:20:28 -0500
+Received: from DLEE209.ent.ti.com (157.170.170.98) by DLEE212.ent.ti.com
+ (157.170.170.114) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 5 May
+ 2026 08:20:21 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE209.ent.ti.com
+ (157.170.170.98) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 5 May 2026 08:20:21 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 645DKLGZ3324103;
+	Tue, 5 May 2026 08:20:21 -0500
+Date: Tue, 5 May 2026 08:20:21 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Thomas Richard <thomas.richard@bootlin.com>
+CC: Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>, <richard.genoud@bootlin.com>,
+	Udit Kumar <u-kumar1@ti.com>, Abhash Kumar <a-kumar2@ti.com>, "Thomas
+ Petazzoni" <thomas.petazzoni@bootlin.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, Dhruva Gole <d-gole@ti.com>, Kendall Willis
+	<k-willis@ti.com>
+Subject: Re: [PATCH v6 2/4] firmware: ti_sci: add support for restoring IRQs
+ during resume
+Message-ID: <20260505132021.6qv37kom7oo6fc7r@pointless>
+References: <20260427-ti-sci-jacinto-s2r-restore-irq-v6-0-72c6468cb2ab@bootlin.com>
+ <20260427-ti-sci-jacinto-s2r-restore-irq-v6-2-72c6468cb2ab@bootlin.com>
+ <20260505113213.fz7qrovpgn4lbesn@zodiac>
+ <9fe10a63-3dc5-4bbc-bbd0-08cc3f625975@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <9fe10a63-3dc5-4bbc-bbd0-08cc3f625975@bootlin.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR11MB7198:EE_|IA4PR11MB9154:EE_
-X-MS-Office365-Filtering-Correlation-Id: 85380632-2969-4f68-9181-08deaaa8e815
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-TrafficTypeDiagnostic: BL02EPF00021F6B:EE_|CH3PR10MB7260:EE_
+X-MS-Office365-Filtering-Correlation-Id: c905f9be-a4bb-414d-29e8-08deaaa914eb
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014|921020|22082099003|56012099003|18002099003;
-X-Microsoft-Antispam-Message-Info: K4iVZ5pzIKRdwzO9CLBbyc5w7nIu3ja43Hj3f6woZjKjqECL/6m5hU2R0dlGSZRe746A7R9D109OjXgAkuEG0WXoOCzqB7kKMTZnZiy+NPbqwnRD49pWT3vunnsX8bHZ4IWqCO7l9yDmlsEUsqCli+7lotvQLGMyZprVj06jW75ZiqjvBHRHAgssAhBhXbXGSG7Mj5AcclIaUUbR/NX+n8jikCevtzDT7v3i4Xrhu02yr/HyrxoOHCAz22Z3faQF3+On7zUtgua6rBBxvn8ZV77Ib6q3yceYcYtdh1PEkr09RjbvY6LOJo8mRCi/GTTNmTdsCTbQddSZQvW0cwuunLQUtvjNdC1dMXhqeMV8jsgSzs+4Z3+2YiVo7OlE68TMxEMiz3gFxnXQud1hCGt1izUeu9K05Ix7clJ3Q5oediEACnwpcxDlD1v2cthQZTvEZRwSpxzs59XV3y2t8MJISYTERfgJuzQRl5gLaGiUq3M8KDRkD2PLsVilbdmS5luufo5GlESK6ykZ0qdNZgGSEbe6Jugq4C90DNCY8lBwhaY2+c1g+ePOSV4xDLXdVjmMoeS3kf9KtfKvj96vN7ZD8AkApaWgDNqIzVfs6MaYPTMPKU/wevf3yE1qns/hoEq/Ejp4BvpfTj3pfDyc7y2Sd1OvDL+mT4ajA3UoWz0g2NavRcMrRPhJa90LPJq45kwVpxgLpqJS+aYfULHFmeKZnOaL3g5OOWyuZ+zm5R7jy78=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR11MB7198.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(921020)(22082099003)(56012099003)(18002099003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|36860700016|1800799024|82310400026|22082099003|18002099003|56012099003;
+X-Microsoft-Antispam-Message-Info:
+	q8cD/5Rbhn14ehiOY/eyGKIVQr9E55XQFONp2A/mAD7WPJJIGRwZvNfI37nigcSGE3/Dd424raRktpTmVFDR6La58217CfCN9s7sMqEFja812bMA050hI3Zcc8V3xF7O1k8bglFcO1KI3TKbJHqyUQhP1sOQnz8VITVblLqrYYxmpsuIaZPDHnznypw/Yn+eTAUU4JRFZl9otQwERJdknxB4X+g4JJi1Lt2yyR39xFU+o7UFLkHO6BlcINQhRp3Z3QfVVrZwh6z2Z+nOS3RUSxe4JFNpoBLo72aYPO2ueZRrxUu/+3Bl1cNpchW63HYc7lbRYj+LYkdOEIKi3OPr3EAyFsd9uMAzyjL//Xcl7gTP3AJo0x1w3DrPbY3eUcdE7kgLrHzOL7maXHAuP12amD4OlbbX6n0u0sC8fvmgUIJk5m9K9aVcD3dW0ix3oL2hYsiWabox0fPbZ497NDtjwDCFAKr+0vI0qU43yt30XGxZdAWTHCiMEF9vj+y6C5tt3Iy5blUztOBp43onf4+2taLzSJZcPpjj5i2qsIkdd+iLDCVHRQhW7Idr4YpRTRkan+T6pvulIUy9vEmX8bvirnBp4XFRbMuOMe0UVdRqUf5Mt9ASLErvmvTkAG8BechQ24bGVi/8oaYI63JW9AIcY7Ch/JYIOt8DP4vd3G/9Has246akFYN0OxlrTr9dt3WZrwbNE3AOgzx52AZVMdEujzGXZ3v1ARKmFwlGGKbGLGg=
+X-Forefront-Antispam-Report:
+	CIP:198.47.23.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet200.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(36860700016)(1800799024)(82310400026)(22082099003)(18002099003)(56012099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?bTFyUTdqbWRFc3RiMUhURW9Fakh0RHpGNXluRU5FMzFHR1BHcEZyMFJ2VHgz?=
- =?utf-8?B?dzEwTDVxUjYyMVl6cHdEMTB5ZFprZGhjWHdhd0VPZG1USjB6aHFiWUlFNm5j?=
- =?utf-8?B?TkpOZy9IUzZMQ1BTdzE2SklDZERTdllTS3lIYkJpOWpRcmtDU3RLUGN4SWN5?=
- =?utf-8?B?TFYvTG1mTWlaLzZRWXplY1BzOGwzU3B0eXhxTTNkYndycHhZbnFwcndOeHRv?=
- =?utf-8?B?bjEveTJRc3pPa1g5L0ttbERvaEpvV0F4Z2tISHJBNmhQWnVnUHN2VGlPZHcx?=
- =?utf-8?B?a3RHcmRUNkVPSHJEUzBuci9oYUd1L3VBRmkyUmR1Skd5ZVR6YlZ1Tjhiendp?=
- =?utf-8?B?MU4xKzl5WTcyWjlIOGlyekpyVmZQK1dIU3BxNlo3RUtmdTRTVGdmV3U1Y2NV?=
- =?utf-8?B?Y1plQldwUDdaWHVwRitYTFdYaEJWY3pKMGJYbTdndk5XZ0lnajdEbWFJSDZ4?=
- =?utf-8?B?YnA4bGllRURuUFJBRmYweENJRW9pUlMrdytmbWQyNVBzRUR0V3dwZk55cXhQ?=
- =?utf-8?B?a0Z4dGpObDduOCtuVFFjNENkdVdEK29LN1lLVmpnMENjUkY2OHJhNW9uc04r?=
- =?utf-8?B?dUNYL1BVamNPWGRKVHZySEZZRWNINE1QQXZoVzlreVYyOG5TYlF1R3paS3Zo?=
- =?utf-8?B?dWFoMTZOQll3bmRiWHo4U1JaQk1BY1ZpbXkrVG8rdE5yY3Vwc1VYalRuV0NT?=
- =?utf-8?B?QStJY054MW85UDhoRzZxdkpXS3ByV25BWVgzTFpxdjdkaWczY3M5bnUxVXUw?=
- =?utf-8?B?S3hEK0xFM2F3cytjUWp0cjNQZktQOWFIa01LQUs5blFrRCsvL1FDTStnQjFm?=
- =?utf-8?B?cHNoVG1jbyt4dGRiNUVHUnhtT05sMVJ0MGJBQ0MzNktBWkdGNklKaGVDQzd4?=
- =?utf-8?B?b0ZReG5ENjErSCtFMlVydk8yT0xHcnZ1K3k1dmxYeXFhSVVUZFNySmRuV3Rj?=
- =?utf-8?B?Y21IMUpyRlBwZ25LQ01TQ2VTY1FlUkhXWDRrT2JXYWJHeTJTMHdYaVNDV20x?=
- =?utf-8?B?ZnR2WWoxZmluWUwraHpPaVg4ZFRKL1BJa1hBOXhuVWRrNlo2NWR0RXBKaHVY?=
- =?utf-8?B?NncraUFsdzhmVlVFeXR6VXArWVNHRWtUR3ZpYXpwRlVwU0ZCNUUyTWNYNjFJ?=
- =?utf-8?B?UU9pc2pPS3o2MUl2L3BXOXpXa2VERndReDdiVGFGZE9JR2VzelhKRXcxeTRZ?=
- =?utf-8?B?SXAybGtmNWhNWmVXQXU0MjVhSHFsdldQK0NXVzhqR21nUllYMWhhV0JKdHpw?=
- =?utf-8?B?VEllT1hVSXM4UUpZN0h0QVVBSTZkcDJTcG1ZM1N5VnhmRjlJVjhHc2p6MFMz?=
- =?utf-8?B?M28vWXNwN3FOVGdzUEl6TE4zK2dhR2xqdjlyRXArczFuYjBxSXdYK3VJdmFL?=
- =?utf-8?B?YzZVWjJpWEl2U3FCb0xOZ3V1ZEQwQXNOTCt6ejNNRzJOdGxGMFBOOXRvSmZv?=
- =?utf-8?B?UzNXb01HdVpJODMxTHlTMjIreVl5aVdHeVRaVllyUy9FVkZDUHp1ZkJIVGpK?=
- =?utf-8?B?WEpDcTNFSVZLb0ExWVkyUDVYczBZYy9HSHJ0Vzcrd1hqL0ltY2pJR0UwdWtM?=
- =?utf-8?B?OTZ3TmpLRzZFanhQa0cxYXJTR3U4STdwNTV0V2NuZ1FXZS9VdXBEYW9VZE1E?=
- =?utf-8?B?TFNxYTdBeXhnZ0xjSy8xVy95dlYxbEQwclBkaEpPRlJ5UEFtOTdmN2hWd0kr?=
- =?utf-8?B?WStmWWVNa0ZuZWl1ZlE5NFY2QmV4YkczdEwrUnRGWUh5bklTLzMrL3dkbEJo?=
- =?utf-8?B?cmN6dUUzUjI0clRHaUlLTUlJWGxVZnFtS1pld1dhMEdxRkpsYjZvV1BoNHpk?=
- =?utf-8?B?MnZQKzlWYmltdEhDY1YwNjI1Ym5Zc29za0dlTDUxcUNWR3VYK2VQK0hnbHlR?=
- =?utf-8?B?RjlDc3h0U1JGdGxxcksyc2pEcFJPR3RMVmhxbXJvNmtrbjlFNEtmV21zaWUw?=
- =?utf-8?B?ajI4S3NRMUZvenNBTzBpRm1XZTlubzJSR2g0M29aVldVNVk4UzdLUXJ5TCtw?=
- =?utf-8?B?YXF3UGoyUTFwQndJTTJVOHp1bnVSTGF3NFFHUkFSU1hvMmhvdXNvQUgvbzAv?=
- =?utf-8?B?M2RKUjNLdE5VbktOTlN5d1FOcmpTRmtEQnlNbCtkVUxVK1Noc3RSMjNUNVlV?=
- =?utf-8?B?eXc1eUkyZnZ3Y2hHeUNldk92YVR3LzVHQnkwR3prNTczN3JmdE9vWGxaUG93?=
- =?utf-8?B?MklqVjJ6ajhzWW0zNUs5MkV5cFZIM21TWmhUaTVYZEFkazlNVGVLSmJkdzZ6?=
- =?utf-8?B?bWxuNGl0Y2JhV0hEcEV4NWZsbVpIRHc0RzBPTzZocFR6eHUxMU1wam5oa2FX?=
- =?utf-8?B?K1dFN2p3eTlmZmxEbGgzWTVlRFNmSXNDcU96aDIyb0k2ekVxUWloY3d4MGNm?=
- =?utf-8?Q?YZnjj8vxNJTam1HY=3D?=
-X-Exchange-RoutingPolicyChecked: ogi/uMBAscPhss4rvLNumkdTPY8DL9aeOEM/VWL73Is4Yp43AEkyisOb0gcXL9SsS9PfNukSNrsJ+GTPghSBE+z7aBcwc8IdfdBRfZ6zbZ3agmbmQ870a1z71qnbrazDkzxnBfCiZyfq3rgHy6wAznw3oDz6N6JV/hykPvdvO7l4Nhyb53GLqvxL+TWnEvLiLrGGBKE/AeTAMuR/N29fj/ZPz43eSQT8XAQXckZUDNwv2goKqI2PsfAcl7OuevM+0/Ts2vIw5aD8jhlhZ5FsRCFJAJj4o66hBbay0rSkl1AFIq6xinxpGM2Khj4k96tIRgMY9jCHNS3vostkes+1mA==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 85380632-2969-4f68-9181-08deaaa8e815
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR11MB7198.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2026 13:19:16.0304
+X-MS-Exchange-AntiSpam-MessageData-0:
+	Pu/0b5TQ76r+yoYXxSPKnqq7xCFehW1nAEs/HQHAgafqCwHyhMZh3/ZEkDj0zrQYzUuhR+4sWi6tsaj3IC55ysh8uEQZ6MyYCVe8vEYlStpk+vyvWgE6ruCtz3V/90oUDZ51e7TzUT3CBrt+n2OpeanasFFT/mnqMQBmW55vxKtVvgP81KRr68igaxSb34qrYUOWhkZkQM7O5ZLMr66Rrv6W5nBpQjfk5At/efaZq/5NgNiTG3V62GQR2/KEAteBflO19yH7CI3O+/4rLlJYZqT38wCCRGY1LuqihKoy7IcWfyeVoCFYIkq9gF8EsrgqGc4Dve5FCWNjkKcZNpr3h/O68WbZ81d4sv2ES+v8b81ewyHxX6/SSmfWSFziBZDhNr6T6QnomnzhrJjbU8OAvSper3SNGhM+91IbNGsR5xcZWW6MpLgOFQf613jsaB9K
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2026 13:20:30.9199
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aoGgwM8c3TrKv3rDqJj+EUCVdukcEfeg7gXcUBp6YLJjunz13rZ/oP8oMpFbDFoPceidR4659cH+OrlTwbT8Qg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR11MB9154
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c905f9be-a4bb-414d-29e8-08deaaa914eb
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.194];Helo=[lewvzet200.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF00021F6B.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB7260
 
-On 05/05/2026 10:13, Manikandan Muralidharan wrote:
-> Add support for microchip sama7d65 SoC I3C HCI master only IP
-> with additional clock support to enable bulk clock acquisition
+On 15:16-20260505, Thomas Richard wrote:
+
+[...]
+
+> > 
+> >> +
+> >> +	desc = &irq->desc;
+> >> +	desc->valid_params = valid_params;
+> >> +	desc->src_id = src_id;
+> >> +	desc->src_index = src_index;
+> >> +	desc->dst_id = dst_id;
+> >> +	desc->dst_host_irq = dst_host_irq;
+> >> +	desc->ia_id = ia_id;
+> >> +	desc->vint = vint;
+> >> +	desc->global_event = global_event;
+> >> +	desc->vint_status_bit = vint_status_bit;
+> >> +	desc->secondary_host = s_host;
+> >> +
+> >> +	hash_add(info->irqs, &irq->node, ti_sci_irq_hash(desc));
+> > 
+> > No locking? set_irq can be invoked in parallel paths, no?
+> > Further, should'nt we check if the same src_id and src_index is already
+> > present before adding to hash list?
 > 
-> Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
+> ti_sci_manage_irq(TI_SCI_MSG_SET_IRQ) is the lock. If it succeeds we
+> have to add it in hash list.
 
-One minor cosmetic comment below, nevertheless:
+Do document it in code. it is not an obvious path.
 
-Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
-
-> ---
-> Changes in v5:
-> - Remove HCI_QUIRK_CLK_SUPPORT quirk and call
-> devm_clk_bulk_get_all_enabled unconditionally
 > 
-> Changes in v4:
-> - Remove the clock index variable MCHP_I3C_CLK_IDX
+> Can set_irq() and free_irq() be invoked in parallel paths? In this case
+> maybe I should add a lock for set_irq() and free_irq().
+
+Yes - drivers are running all in parallel, right?
+
+[...]
+
+> >>  
+> >> +	switch (pm_suspend_target_state) {
+> >> +	case PM_SUSPEND_MEM:
+> >> +		if (info->fw_caps & MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST) {
+> >> +			hash_for_each_safe(info->irqs, i, tmp_node, irq, node) {
+> >> +				irq_desc = &irq->desc;
+> >> +				ret = ti_sci_manage_irq(&info->handle,
+> >> +							irq_desc->valid_params,
+> >> +							irq_desc->src_id,
+> >> +							irq_desc->src_index,
+> >> +							irq_desc->dst_id,
+> >> +							irq_desc->dst_host_irq,
+> >> +							irq_desc->ia_id,
+> >> +							irq_desc->vint,
+> >> +							irq_desc->global_event,
+> >> +							irq_desc->vint_status_bit,
+> >> +							irq_desc->secondary_host,
+> >> +							TI_SCI_MSG_SET_IRQ);
+> >> +				if (ret)
+> >> +					return ret;
+> > 
+> > Do you want to attempt to restore the rest of the entries rather than give
+> > up on the first fail? Maybe just log the error for debug and attempt the
+> > rest?
 > 
-> Changes in v3:
-> - Make use of existing HCI_QUIRK_* code base
-> - Introduce HCI_QUIRK_CLK_SUPPORT to handle/enable the required Peripheral
-> and system generic clk in bulk
-> 
-> Changes in v2:
-> - Platform specific changes are integrated in the existing mipi-i3c-hci
-> driver by introducing separate MCHP_HCI_QUIRK_* quirks and vendor
-> specific quirk files
-> ---
->  drivers/i3c/master/mipi-i3c-hci/core.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/drivers/i3c/master/mipi-i3c-hci/core.c b/drivers/i3c/master/mipi-i3c-hci/core.c
-> index b781dbed2165..20d32a9eb62c 100644
-> --- a/drivers/i3c/master/mipi-i3c-hci/core.c
-> +++ b/drivers/i3c/master/mipi-i3c-hci/core.c
-> @@ -8,6 +8,7 @@
->   */
->  
->  #include <linux/bitfield.h>
-> +#include <linux/clk.h>
->  #include <linux/device.h>
->  #include <linux/errno.h>
->  #include <linux/i3c/master.h>
-> @@ -970,6 +971,7 @@ static int i3c_hci_probe(struct platform_device *pdev)
->  {
->  	const struct mipi_i3c_hci_platform_data *pdata = pdev->dev.platform_data;
->  	struct i3c_hci *hci;
-> +	struct clk_bulk_data *clks;
+> In this case, if I get more than one error what value should I return?
 
-If you roll a new version of this patch, prefer to arrange local variable
-definitions in descending order of line length e.g.
+Probably the first one (or the last one - i wouldn't think it matters)
+- we might need to log the other errors though.
 
-  	const struct mipi_i3c_hci_platform_data *pdata = pdev->dev.platform_data;
-	struct clk_bulk_data *clks;
-  	struct i3c_hci *hci;
-
->  	int irq, ret;
->  
->  	hci = devm_kzalloc(&pdev->dev, sizeof(*hci), GFP_KERNEL);
-> @@ -1001,6 +1003,11 @@ static int i3c_hci_probe(struct platform_device *pdev)
->  	if (!hci->quirks && platform_get_device_id(pdev))
->  		hci->quirks = platform_get_device_id(pdev)->driver_data;
->  
-> +	ret = devm_clk_bulk_get_all_enabled(&pdev->dev, &clks);
-> +	if (ret < 0)
-> +		return dev_err_probe(&pdev->dev, ret,
-> +				     "Failed to get clocks\n");
-> +
->  	ret = i3c_hci_init(hci);
->  	if (ret)
->  		return ret;
-> @@ -1031,6 +1038,9 @@ static void i3c_hci_remove(struct platform_device *pdev)
->  
->  static const __maybe_unused struct of_device_id i3c_hci_of_match[] = {
->  	{ .compatible = "mipi-i3c-hci", },
-> +	{ .compatible = "microchip,sama7d65-i3c-hci",
-> +	  .data = (void *)(HCI_QUIRK_PIO_MODE | HCI_QUIRK_OD_PP_TIMING |
-> +			   HCI_QUIRK_RESP_BUF_THLD) },
->  	{},
->  };
->  MODULE_DEVICE_TABLE(of, i3c_hci_of_match);
-
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+https://ti.com/opensource
