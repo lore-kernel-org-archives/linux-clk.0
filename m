@@ -1,122 +1,204 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7290417AE11;
-	Tue,  5 May 2026 23:33:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8200233149
+	for <linux-clk@vger.kernel.org>; Wed,  6 May 2026 00:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778024025; cv=none; b=kK4MZglc/foUOucgB9e0XZ4l8o7LTJO6BKaNAr46WmEfjmTphfAz+6xIwI9cTt4wdjag3SAuUu3GrgjiAz3D3GIsOTv0CBzZRWSIl9TbyE9cVPUao635HW7RmvfB0u8h++I1mXjZij0NHuB+NAwxsnvnHUkcWqJdjzmQGfSe0wY=
+	t=1778028633; cv=none; b=WBI6SWgYf2pDz+48KqXwYx6ilLezbOMhIGz37KD+wONx8Lp+FJyKsiyX9u/i08t+ZtwZpiZlNbrTgaS6I8kUe5lZwpQyZtNji/8Bx/sQ8CQRd7W82DjYovJAu9+ikM2dReGjlwIBroI4RIdG9KPikZvvsKT78rC3VzZufBDBiBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778024025; c=relaxed/simple;
-	bh=Fh+pc8iiwZvkDlM/WcbsplroNBSMDu4Ciha4LqkRgOY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LqKVU/bdXyLulu1QIVXOh3SPepirp2h0ltxSDdMVyvgz6AiidrEOZ6UfR7k7qi29KRk5E1EmrcyDskbykzK5BamN+jYrBkO1+9td1XayNbsk/6HrOgCwsoJq+U0oSfxg44QS44KY48GIzx1RExOmQDI6v4TmkYI5Ke+DGmrCLHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BJbcnDez; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778028633; c=relaxed/simple;
+	bh=zMeXAyyLpb1ycANNIw7NwRnIidpI1as921qDmQJS1JY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OV/G5MeQUDzNsEE66dOJCw3cy5vrXtyJKhxajPBkhHq6TywDYw7ALkHNzxs2wkrSgB0dDwYVq1Oeec0ihxecbxMcJ10s7DAsE4JAndYHHCJCD+g1oKqb8lXRC4ak2/fXPQ9VbrjYnMLWo2oB42RxbPP8XzL82yFHAzP+L5q1oN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZohWz6HQ; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=E4QpPJ8k; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BJbcnDez"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E73EC2BCB4;
-	Tue,  5 May 2026 23:33:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778024025;
-	bh=Fh+pc8iiwZvkDlM/WcbsplroNBSMDu4Ciha4LqkRgOY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BJbcnDezKubf1NhExDoT/qbCbfgj3/fkiaeVhzgpCjvaWIujV2V73Nndbr/qMneUT
-	 yNGJgrV5qx2N4oFW4U06bCJChiAr57LnDHFHQy3av2yucCwY/6Hr3lLIN2O9LCKcqd
-	 NGIsxFYQCFBEdlYJqNlXpubVz+Wz6ug8ohOh0lWchA0Bb8rKHBGUT1wiMyvwJ9qmVe
-	 2PRZqb5AoiMe8TozSp48UrrFLY5ZxgyU0N5nx+RmNhmWfVyZ+ZIAojdqSEyS1om4cX
-	 wdg7RIQ1+Htcmkh0tDsAFc4ypCbBBOYcQLF6ajxb8ko/ph13SD6xgCqlRBUl9zG4i0
-	 QafU9kNcRtvuA==
-Message-ID: <108401cb-040a-441c-b463-b69df195378e@kernel.org>
-Date: Wed, 6 May 2026 00:33:39 +0100
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZohWz6HQ";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="E4QpPJ8k"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1778028629;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=b9H8cYKTCyIKnl9+d/AL5JHJT5IYmUArCaFMH4v5EuY=;
+	b=ZohWz6HQUllvYrwQGEODoMsIiQ3IY3+ACIHrwjzLt7LaVHKXDKqcWHSTZ9lir9SiDQDZmB
+	b/jQW6qFvbPBB9ikCFxjYhr3F9jnJHYhJOnjB+Pf4b1qIajGNB43tnpw7SCulgAZxRfgSG
+	HBs1ZwsXGyfyjkAkxaeQKnTdtKN0eaw=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-456-HGCk2rO0Ohm8dE9j1e4SNg-1; Tue, 05 May 2026 20:50:28 -0400
+X-MC-Unique: HGCk2rO0Ohm8dE9j1e4SNg-1
+X-Mimecast-MFC-AGG-ID: HGCk2rO0Ohm8dE9j1e4SNg_1778028628
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8f87d6ce659so1212839585a.3
+        for <linux-clk@vger.kernel.org>; Tue, 05 May 2026 17:50:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1778028628; x=1778633428; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=b9H8cYKTCyIKnl9+d/AL5JHJT5IYmUArCaFMH4v5EuY=;
+        b=E4QpPJ8kLNMULdl1YUVfQ+6z8lKShLBKXd7TCIveG2890PqK9Mh7LgyYlTyyoTK2G5
+         2SF+c2k+doCaAWqCQA7UOe3N25PlSAo/6/B5szG/SyIovtfDxb6IOP5ACS5UBqlbGXw/
+         W8gApWSglPcBKSP4qIHNsxa1sGJGNeQQO5w+b0wHasU07ErS6CFFF45dEyLxenmFtHK0
+         mtKT1785hYBCHQhdFxCEQkhFaD9iFGI/Vd5GAimENg9l4sUmAG3OBs0xa5uAeja/LCwa
+         k1VpPs5eGR7SmcoFLFckkHr7QJCsg6RSCNcZT3JbhiqW1QrKPmh1UkyJtTfI1CRDOTqV
+         umig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778028628; x=1778633428;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b9H8cYKTCyIKnl9+d/AL5JHJT5IYmUArCaFMH4v5EuY=;
+        b=iq43v8CNVhtDEi/JURIAVj/U419cUGb3HAp2oZNzr3w82aZ6ojRHHXMa6tdcDFziJu
+         Yc8yJ1nLOX6zoL15f5km0H6w1CLb0U2PKF9+0OB2mYCMHa9QkPlxVhC4DTx81zQZrqVR
+         DCRl5fxOoejjcSRQBuHl1ArF909MbroEaiP2Ndy6CVFDcxZq7kjID6Jff5gGNimO4QKj
+         B0RJaJTbwbShyNrE5yoGjddjwcKb9UrVfVh8JLJogRxrmP8JizVqUXnsaTYur9U3x8+7
+         24wBPM7JSlWuQNmzgAw3eIZ5oNhIuIrYc/lQS1OP6yLWNRoMpoX82XbDq4MPe/4ODBb3
+         uxWg==
+X-Gm-Message-State: AOJu0YzhG3/Z68NuvP82kchYo2ghKP9RjrPEJjyJ7GVN6maHYpDL+qig
+	9FVaqtrXd++YwWVxoqTuENN91Ft066sY/Oy/XHrE9kulozJq6xPZsKDnbqRsx56TQCtjYCEdoR3
+	KZw2z6eoTaEOrKafodnNaEEmzbdJ2L+G8dOXiFRvhhVEs5ClQV2i6lu2AmcEMDA==
+X-Gm-Gg: AeBDiesjuIJGgoYQy+omlxx9FCeY2AVok/c+yoOMvUXxng0Ay4C//NdV3gE1sEJcoaj
+	GX4vtc5R/giehr1oczzqLITyHHbEL8AKPddQHKwl0vtMuM2L7yaOeP3KEfqEpSJL7P30KvsMaqH
+	Exm9shp8JxhNpfQRIN+NtzK8pOIsWLdeGAXTGIVtHj9Geb/b6X91HwVcXoFln/VDqlilOPime7S
+	q3kdY2ewogjp9ydcKsCGNpAwPLEwS+AjS3onVkDgS2RljHDHCLFl5z8DiKKwA/75rRx9CU1Af8p
+	l6leu5ytBYgQsNPR5uTxXHaIcOxn8srjNR58GmWByfKvpFvlkZePZmnxv6ayNEAfqPXcSwKwrzq
+	JoJ3DeugFMEL/L6ESGhVaADBUtDBr/UQy0lM6KOVHA/KEwgD18gaxYy3wgblLy9CNWqkPqlXR
+X-Received: by 2002:a05:620a:454d:b0:8cd:7952:d449 with SMTP id af79cd13be357-904d5f00d9emr231853485a.29.1778028627981;
+        Tue, 05 May 2026 17:50:27 -0700 (PDT)
+X-Received: by 2002:a05:620a:454d:b0:8cd:7952:d449 with SMTP id af79cd13be357-904d5f00d9emr231848285a.29.1778028627449;
+        Tue, 05 May 2026 17:50:27 -0700 (PDT)
+Received: from [192.168.1.15] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8fc2c91fb3bsm1464933385a.41.2026.05.05.17.50.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 May 2026 17:50:26 -0700 (PDT)
+From: Brian Masney <bmasney@redhat.com>
+Subject: [PATCH v3 00/15] clk: introduce clk_determine_rate_noop() and
+ update drivers to use it
+Date: Tue, 05 May 2026 20:48:56 -0400
+Message-Id: <20260505-clk-determine-rate-noop-v3-0-f3f829fbacdf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/9] media: qcom: venus: Add msm8939 resource struct
-To: Erikas Bitovtas <xerikasxx@gmail.com>,
- Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
- Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- phone-devel@vger.kernel.org,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-References: <20260506-msm8939-venus-rfc-v4-0-994f5eb22acb@gmail.com>
- <0TaxINYCitQd2DsGsbhRviwmrQkaaVMaE9vABS3gSsSPNfrgS3JPTIo_kvTzyEhGOAZuMVq-k-5T8mqDM7dnIw==@protonmail.internalid>
- <20260506-msm8939-venus-rfc-v4-3-994f5eb22acb@gmail.com>
-From: Bryan O'Donoghue <bod@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=bod@kernel.org; keydata=
- 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
-In-Reply-To: <20260506-msm8939-venus-rfc-v4-3-994f5eb22acb@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x3MQQqDMBBG4avIrDsQNVHpVYqLoH90aJvIREpBv
+ LvB5bd476AMFWR6VgcpfpIlxYL2UdG0+riAZS6mxjSdccbx9HnzjB36lQhWv4NjShvXvXfWhn4
+ w9UCl3hRB/vf5NZ7nBVsAcIVpAAAA
+X-Change-ID: 20260505-clk-determine-rate-noop-17a544f78018
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Peng Fan <peng.fan@nxp.com>, Abel Vesa <abelvesa@kernel.org>, 
+ Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, Anson Huang <anson.huang@nxp.com>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Andrea della Porta <andrea.porta@suse.com>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Sudeep Holla <sudeep.holla@kernel.org>, 
+ Cristian Marussi <cristian.marussi@arm.com>, 
+ Orson Zhai <orsonzhai@gmail.com>, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, 
+ Chunyan Zhang <zhang.lyra@gmail.com>, 
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Ulf Hansson <ulfh@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ linux-renesas-soc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ arm-scmi@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ linux-mediatek@lists.infradead.org, linux-phy@lists.infradead.org, 
+ linux-pm@vger.kernel.org
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3477; i=bmasney@redhat.com;
+ s=20250903; h=from:subject:message-id;
+ bh=zMeXAyyLpb1ycANNIw7NwRnIidpI1as921qDmQJS1JY=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDJ/TXBhDD/HJ+irfPCG5f8LBYvv8Dx9dmqr4NPkLyFFK
+ ++kbGS41lHKwiDGxSArpsiyJNeoICJ1le29O5osMHNYmUCGMHBxCsBEFrEwMqxq53uRvrC91Ddt
+ SpiPrVzUGZG/vn+yPrXy74upe2fVfJGRYcr2/5NeNj+qTdRbHh6S2B+gniyyo6Z0VsK7yHUStra
+ VbAA=
+X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
+ fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-On 05/05/2026 22:44, Erikas Bitovtas wrote:
-> +	.vcodec_clks = { "core0", "core1" },
-> +	.vcodec_clks_num = 2,
+There are some clocks where the determine_rate clk op is just an empty
+function that returns 0. This can be either because the rounding is
+managed by the firmware/hardware, or the clock is capable of any rate.
+Let's add a new new shared function to clk.c named
+clk_determine_rate_noop(), and update all of the drivers that have an
+empty determine_rate() ops to use this new shared function.
 
-This smells a bit dodgy to me.
+The first patch in this series also includes a minor cleanup to
+drivers/clk/imx/clk-scu.c. I included it as the first patch so it
+doesn't get buried in the middle of this series. I change this same
+driver later in the series to use clk_determine_rate_noop().
 
-You already have
+Changes since v2:
+https://lore.kernel.org/all/20260309-clk-det-rate-fw-managed-v2-0-c48ef5a3100a@redhat.com/
+- Dropped the NOOP flag and just use a dedicated noop function.
 
-struct clk *vcodec0_clks[VIDC_VCODEC_CLKS_NUM_MAX];
-struct clk *vcodec1_clks[VIDC_VCODEC_CLKS_NUM_MAX];
+Merge Strategy
+--------------
+All of this needs to be directly merged by Stephen as one series into
+his tree. Subsystem maintainers: please leave a Reviewed-by or Acked-by
+for Stephen. To reduce the noise, I am only CCing people on their
+respective drivers.
 
-so why add vcodec_clks and put core0 and core1 into a new array. 
-vcodec0_clks and vcodec1_clks seem like a very natural place for core0 
-and core1 clocks to live ?
+Since there's only 3 drivers outside of drivers/clk that need to be
+updated, I included them in this same series for completeness. These
+should go through Stephen's tree as well.
 
+Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
-bod
+Brian Masney (15):
+      clk: imx: scu: drop redundant init.ops variable assignment
+      clk: add clk_determine_rate_noop()
+      clk: hisilicon: hi3660-stub: use clk_determine_rate_noop()
+      clk: imx: scu: use clk_determine_rate_noop()
+      clk: qcom: rpm: use clk_determine_rate_noop()
+      clk: qcom: rpmh: use clk_determine_rate_noop()
+      clk: qcom: smd-rpm: use clk_determine_rate_noop()
+      clk: renesas: rzg2l-cpg: use clk_determine_rate_noop()
+      clk: rp1: use clk_determine_rate_noop()
+      clk: samsung: acpm: use clk_determine_rate_noop()
+      clk: scpi: use clk_determine_rate_noop()
+      clk: sprd: use clk_determine_rate_noop()
+      phy: mediatek: phy-mtk-hdmi-mt2701: use clk_determine_rate_noop()
+      pmdomain: mediatek: airoha: use clk_determine_rate_noop()
+      pmdomain: mediatek: mtk-mfg: use clk_determine_rate_noop()
+
+ drivers/clk/clk-rp1.c                           |  8 +-------
+ drivers/clk/clk-scpi.c                          | 14 +-------------
+ drivers/clk/clk.c                               | 18 ++++++++++++++++++
+ drivers/clk/hisilicon/clk-hi3660-stub.c         | 12 +-----------
+ drivers/clk/imx/clk-scu.c                       | 24 +++---------------------
+ drivers/clk/qcom/clk-rpm.c                      | 15 ++-------------
+ drivers/clk/qcom/clk-rpmh.c                     |  8 +-------
+ drivers/clk/qcom/clk-smd-rpm.c                  | 13 +------------
+ drivers/clk/renesas/rzg2l-cpg.c                 |  8 +-------
+ drivers/clk/samsung/clk-acpm.c                  | 14 +-------------
+ drivers/clk/sprd/pll.c                          |  8 +-------
+ drivers/phy/mediatek/phy-mtk-hdmi-mt2701.c      |  8 +-------
+ drivers/pmdomain/mediatek/airoha-cpu-pmdomain.c |  8 +-------
+ drivers/pmdomain/mediatek/mtk-mfg-pmdomain.c    | 23 ++---------------------
+ include/linux/clk-provider.h                    |  1 +
+ 15 files changed, 36 insertions(+), 146 deletions(-)
+---
+base-commit: 4cd074ae20bbcc293bbbce9163abe99d68ae6ae0
+change-id: 20260505-clk-determine-rate-noop-17a544f78018
+
+Best regards,
+-- 
+Brian Masney <bmasney@redhat.com>
+
