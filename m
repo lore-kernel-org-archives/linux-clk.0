@@ -1,84 +1,85 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C497C233723
-	for <linux-clk@vger.kernel.org>; Wed,  6 May 2026 00:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283D9199931
+	for <linux-clk@vger.kernel.org>; Wed,  6 May 2026 00:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778028657; cv=none; b=OLr/yf1lYEc4UlPiQHFCj8Mg3SR5blpdGfbGnkX/qvrugJmvECprmVUJ/srDgNwlAovrGcrRYac8swzQH/JQSxulosFd+nKF2I4Ro73KPMc1bK3ycNPyBgeoiIbI9mniLXa5p3UjQlqz5lcdQYhtVVOTcf2CsIbcI66gHVvmvMM=
+	t=1778028659; cv=none; b=Vvh7dj+0/VeRiPNfqZDeqrZPAcfJu048jxF3AcGOC+OlxgYYDLyKgX7WXAFm0qFGcBsLtgDvW0kpHAZR4XUcTXimeky4M2dGgXpsHDWz2qb6NrFtFh3uLGSGOZzDvfiITc8MySk1TgD/woNVfE2nCgSyG1MirdsnW6HPlyNQx6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778028657; c=relaxed/simple;
-	bh=p2MpxXnzLI/ZMeCq8d35+6JBb5NSPSUB0mvLioIPWxo=;
+	s=arc-20240116; t=1778028659; c=relaxed/simple;
+	bh=r3QOqnwHXmLLcaVHe5A12btsP0xShC4lB7CnUlOyugw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=P5yH4Lv7CjMexMyk4qz5V0UfGiI73L47E9/JzBV5NWyk1IjVjLKEnBRTZwaKoiKf5PQU5U8pYXgb1edbt/KiUavFe5YYtJ+gtAcMjcaU3Q78FrS4ciZMI1/yGw7kkXspVBrzdcs8sqZnZIipCGoV90IgorrbYnY6Wxe9ZCekJMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KlQ1jCDl; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=G6M3fiYH; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:To:Cc; b=oX5gZqK9Z2nKw1Cwc5JhejdkmNlRdoNLN5/vUq0y1Og1tcgs1e0dwea3mS7eZHEwIWZRorMC5hCpl8Rsie+nnKU1X3BhFb8cvRbVkTuQoBgk4ves3890BTaFkjbwTvNeOFjp0NWDQ8vCJidmPs6dWVdS34J5MS4C7YlkB4FltXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SZSvRA2K; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Hkbx+s+Z; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KlQ1jCDl";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="G6M3fiYH"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SZSvRA2K";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Hkbx+s+Z"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1778028652;
+	s=mimecast20190719; t=1778028656;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=XejcufsdVf/PSzRjXhVCXk19UmqRwwGIgyVDxw88dFI=;
-	b=KlQ1jCDlT+83qc2jIlecGUq/2MuHSCCLJSTlaDKbcpz4ZAbRCMjGlRzw8/6riAbnCc5uDP
-	E/vmUcIa4E0XbkSOyg0Uvh7Sx3N8U1wchJtP5uAYzujqCvD42zQA36wFvi4q4oxyBKSlDg
-	N8Q+rvUsbgYXAS4qodylZF0mHM+Qj+A=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=Nzw65F5VfPDb2y7ArF4gTKJVyd7SnCEPRI2Y7Ifp68M=;
+	b=SZSvRA2KZXTzuH0IzLxILu5Viv2UKfhj/HFwZnUl8b41DDniCXTbIPdaJV0A1p8n5bGUwC
+	sJwvPSf/cvf6INa586pXjkXpH8AzPdFG5dpA0ZBmzo4Id65yJREZnxjx1vTOmzYntPx7/W
+	bBKfBCpZoPR11ku1662y8fEnUU+Nixk=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-593-EcknB6VwN8ecZGW_fZT0qA-1; Tue, 05 May 2026 20:50:50 -0400
-X-MC-Unique: EcknB6VwN8ecZGW_fZT0qA-1
-X-Mimecast-MFC-AGG-ID: EcknB6VwN8ecZGW_fZT0qA_1778028650
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-8b0312bb1dcso51537776d6.1
-        for <linux-clk@vger.kernel.org>; Tue, 05 May 2026 17:50:50 -0700 (PDT)
+ us-mta-387-SH9NirQIO_2IfID60uKMuA-1; Tue, 05 May 2026 20:50:54 -0400
+X-MC-Unique: SH9NirQIO_2IfID60uKMuA-1
+X-Mimecast-MFC-AGG-ID: SH9NirQIO_2IfID60uKMuA_1778028654
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8d5b5d607d1so800122885a.3
+        for <linux-clk@vger.kernel.org>; Tue, 05 May 2026 17:50:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1778028650; x=1778633450; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1778028654; x=1778633454; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=XejcufsdVf/PSzRjXhVCXk19UmqRwwGIgyVDxw88dFI=;
-        b=G6M3fiYHGwPRkvil//R/PE1fkrz+EsKRuIBS39z8jlV5a1CVJZxeSYqcVUu1sptDMY
-         bz51fMQ0TFxYyHilc2d50nAtYs2ZPb4b4jFL9e6VoKnr59Do/xRQjRQfTz60Icq+G5Mi
-         b8dj9KawyhOXnfoA7Lvj+nkppSNyNR5ANsmuNVIevPmySfNl/RY5BZFzi3IzPbT6iLLB
-         v/a9p7rERLtnPslJce2GJxVk1mlTixHOYShALwtuRA13IUBeeoCVOMuA6FllSi5C7cFZ
-         hur4SA/+x9+aox/s7S4q8Bm4Hu1heN97JADIrqFXllBO10hg8gXuU0Zz4x0l7a3Cpi9Z
-         WuWw==
+        bh=Nzw65F5VfPDb2y7ArF4gTKJVyd7SnCEPRI2Y7Ifp68M=;
+        b=Hkbx+s+ZKzapnBMd3PcCyHbR6neDE2ivLACFGLDFUKbbKxvMozbZMSzzN3ePTW+LJn
+         PAWWu0rZ4Ae5j/Xs7PTRkpFNQeq47kOkHgqYB4PdezROanNNT/mMvpa7ypTvsJu+wi2N
+         FM4CDJA2ILfngyJxDdIaIRQAd1KRfmz4CeqPHoP2fXOO/VE7d7K81qFGkYIO1Z4z4wvH
+         APlm8jq4O10wHnOUBUMfOwbL7kHBpeRg4P8e8BxictiwpAJ+XYJ76ljSpqgpaOye9NsH
+         sFOnN8pvg9g+zLuWBpHGyB28t1sy6Sx/s6HUSxoGq7QZiQcpH4v3NeJxD8r8ahwW7gXj
+         wifg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778028650; x=1778633450;
+        d=1e100.net; s=20251104; t=1778028654; x=1778633454;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=XejcufsdVf/PSzRjXhVCXk19UmqRwwGIgyVDxw88dFI=;
-        b=nNZoV/X2Y57sAaH3f4IN3Boy5wsHsAdH+9N3cMpTz3YRRTCb4A+FXSArpmAv/hZCuJ
-         Bp9oEH7U7E1XCTgvlSoUCwW2yI9RaC21MLBLROwj+b6pQU5P5sUM5AqUYiQxCluz5Fsy
-         nfOM4xZ0lvLwV4yzPU7AdF9jx9JQ87e1lEDyr/njv1NcDn7siZyRwtF4/WzMJFkNzEGp
-         HXlGeg7DlcqG2DIiphBeyggCmPTszpGBFxDs3fKES9pOLK5iDZgT5obVyJHEeXpO27ph
-         pqYweI4SUQt4RXBJeEUNRC+2j+d+xpNnmksB0A+se52xyUGEoovwSl9y7+d9oQr30rEQ
-         Tmkg==
-X-Gm-Message-State: AOJu0Ywu+bS31B5Ldc4LqidwmbJwLVj6vnNFIsjfaT19EUtf7i21PESl
-	p/mbnP1UvoDkhCaLmpNxEjnT9Felprihu9hclUMeaD2CcW8C/+yjlyG/nBR+K58btI010lT5xPV
-	6k00QhEBu+cyzEDZ+L8kYWEtCnlE/QzdRPes3jADtidxf6fL9TqsLmzPK4WziIx9X8sqEag==
-X-Gm-Gg: AeBDietwPmHrAuI3E6KYaCrafIWs/Do2jzJZQBWcqq4OsUBqRurtd3mb1PmGaiHwuFM
-	GuDm+Ty4ANVEXMaRq5/QE7b2pl2aEemNNGjxmm5uEZ/Wy4h2emIsmd1UrBEUiVOkTn2bOFoVuzx
-	TACpamgiAGjrqJC+SuJIhiASD0oVPlS8O72UZxySIcQTVlBPA9WgcEDJna/l1uDvnCabz0HcST3
-	IJqBNf98ai6p8IxHbS3Sf7pVPzOkfGDdBhSmUQ2E/q4QIp7hTCCgOeqXH524T4/S5wsyYbxKy9E
-	C1ZrCn/MoFfTfg3/bK4SS6rCJZSP1G/KYXkTkO9RfFNQ3KtsWhamTvVIigUVrZ0TlcoyEaNrElV
-	PpgcMVklW+yYrdyKmeaIoSr1S94kYcw3tb79Eve8kZLwxJDZWfVaelml4/6HqrTyKl74f4kNb
-X-Received: by 2002:a05:620a:bd3:b0:8cb:62c3:3690 with SMTP id af79cd13be357-904d40a38ddmr231565885a.13.1778028650025;
-        Tue, 05 May 2026 17:50:50 -0700 (PDT)
-X-Received: by 2002:a05:620a:bd3:b0:8cb:62c3:3690 with SMTP id af79cd13be357-904d40a38ddmr231563385a.13.1778028649583;
-        Tue, 05 May 2026 17:50:49 -0700 (PDT)
+        bh=Nzw65F5VfPDb2y7ArF4gTKJVyd7SnCEPRI2Y7Ifp68M=;
+        b=QuOatUElHWI+1kh6+aSdcD9CSXMV90mpKvCOXkVs3dN8En411kCqsgLKlcbogcuZLt
+         LkRvAWPSS4HwDtUTxg96z9ztyPc4VKxEMJHo+KVnjV29JCCF5lEfSuqeYesU3kAxE/2V
+         xI2bhKEPOqljtnj/+KhRP9VaYC8fWtfYINvfdLLg3aC0VRFLVIZFFqkdBWB4CcoyJQsJ
+         Hfm+6K8JVqvJeMYIzwiTV/dhJHOg+VYhTrwJVSbeff2nRL9y3y33edPpPNJ78fT/gcJs
+         mctPHHox1hFesPIMGGu1dVXfwWw9tE8xi13k2dpYGnfhciKe6Vvn6bQlEA6xiOYV5j4r
+         Zs4g==
+X-Gm-Message-State: AOJu0YwHRsyliwjhXWlrBfCFpYTvtdF59JnEW2hhwNVy4MINqVvVo/Td
+	uZGXtUa245QA5JDCo//ZtVtJ/d+T7nUPOK7Q4U7eWYPqToBIt4UQJcmKkpljAtidXmml07kNsRh
+	77Dl//kWjvNXFEOxDAhEub0SHpVPWA/DB0RafsJMjKUU1FHhs0INxc1p3a2OfCZSKLBMfB8Jpd7
+	WMinz3nOPvqBFTO6j9aq1rsdT4frZXM4UZkpMHAfQt405W
+X-Gm-Gg: AeBDieuLspgdMBsK6dXaezP4GV0fpNLMQ0jTg8LzNAV7Ff09/Tbl+L8v9zDSolI2vbs
+	HNDmj+2P+1uf6nSEQo8bIKdMC+lIUcVQ9nvhFPaCRDvPltwoTLg5dFgurVCdykKYY8wcCDxKakT
+	Oq2IbrhbFRqUqnfEgE003RTm76UTJJuc27UCYE6tYw/lhus1jLyjKkZQcjx7d2827tT7ukvToMh
+	Mstlc2qV11pwAnLE62BSEV/DzbAlhKAp4KsrsFUxTXnF+EIczS9Y+nxzL/GkTzSEN3i/9QVt13Q
+	nesbACtaSu56qmqFdHJ13YjcLFwMQq/lYkhxA8WZFjwvMWWv7/cxyqymgLEV81DOkFxGPBkjod6
+	6rT70Xs6fhVl/flUxOpO6WlZKyMQo6dbq23NrlXN9kUXq0yOzcUmU9tY0Bodp5f9ZzqdvC8Pw
+X-Received: by 2002:a05:620a:414b:b0:8f8:5905:8291 with SMTP id af79cd13be357-904d69da21cmr215528685a.47.1778028654327;
+        Tue, 05 May 2026 17:50:54 -0700 (PDT)
+X-Received: by 2002:a05:620a:414b:b0:8f8:5905:8291 with SMTP id af79cd13be357-904d69da21cmr215524985a.47.1778028653736;
+        Tue, 05 May 2026 17:50:53 -0700 (PDT)
 Received: from [192.168.1.15] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8fc2c91fb3bsm1464933385a.41.2026.05.05.17.50.46
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8fc2c91fb3bsm1464933385a.41.2026.05.05.17.50.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 May 2026 17:50:48 -0700 (PDT)
+        Tue, 05 May 2026 17:50:53 -0700 (PDT)
 From: Brian Masney <bmasney@redhat.com>
-Date: Tue, 05 May 2026 20:49:05 -0400
-Subject: [PATCH v3 09/15] clk: rp1: use clk_determine_rate_noop()
+Date: Tue, 05 May 2026 20:49:08 -0400
+Subject: [PATCH v3 12/15] clk: sprd: use clk_determine_rate_noop()
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -87,21 +88,23 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260505-clk-determine-rate-noop-v3-9-f3f829fbacdf@redhat.com>
+Message-Id: <20260505-clk-determine-rate-noop-v3-12-f3f829fbacdf@redhat.com>
 References: <20260505-clk-determine-rate-noop-v3-0-f3f829fbacdf@redhat.com>
 In-Reply-To: <20260505-clk-determine-rate-noop-v3-0-f3f829fbacdf@redhat.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>
 Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Andrea della Porta <andrea.porta@suse.com>
+ Orson Zhai <orsonzhai@gmail.com>, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, 
+ Chunyan Zhang <zhang.lyra@gmail.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1413; i=bmasney@redhat.com;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1259; i=bmasney@redhat.com;
  s=20250903; h=from:subject:message-id;
- bh=p2MpxXnzLI/ZMeCq8d35+6JBb5NSPSUB0mvLioIPWxo=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDJ/TfDeME14zZqLZjKzb/RfDDoj/TlhzrpqBqvnU5nPz
- bFxTnvk31HKwiDGxSArpsiyJNeoICJ1le29O5osMHNYmUCGMHBxCsBEOrYw/OHX3uCWmVWzKOf3
- Ab33nz3Pibqf9DB8x60W+ksi+cT3GA9Gho8SDjwvVy6sN0lYtdA7w/9bTnSk96c4n233Nm+PWMT
- oww4A
+ bh=r3QOqnwHXmLLcaVHe5A12btsP0xShC4lB7CnUlOyugw=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDJ/TfA9Nbkmjo3nRreL7JKAMxXT6586HK1i5S/9sn9i2
+ YwFbxamdpSyMIhxMciKKbIsyTUqiEhdZXvvjiYLzBxWJpAhDFycAjCRDUoM/zPW/H4/wU3qzaXZ
+ RrkJl2sN+ZnWOfx4Eqpx65ahz7bV32oZfjG59v19kMkl1XXqwizlJQbtvzV93i8pedC0PJJn57W
+ FD1gB
 X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
  fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
@@ -110,42 +113,40 @@ shared clk_determine_rate_noop() helper.
 
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
-To: Andrea della Porta <andrea.porta@suse.com>
 To: Michael Turquette <mturquette@baylibre.com>
 To: Stephen Boyd <sboyd@kernel.org>
+To: Orson Zhai <orsonzhai@gmail.com>
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
 Cc: Brian Masney <bmasney@redhat.com>
+Cc: Chunyan Zhang <zhang.lyra@gmail.com>
 Cc: linux-clk@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 ---
- drivers/clk/clk-rp1.c | 8 +-------
+ drivers/clk/sprd/pll.c | 8 +-------
  1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/clk/clk-rp1.c b/drivers/clk/clk-rp1.c
-index fd144755b879..0f7d9fd77481 100644
---- a/drivers/clk/clk-rp1.c
-+++ b/drivers/clk/clk-rp1.c
-@@ -1174,12 +1174,6 @@ static unsigned long rp1_varsrc_recalc_rate(struct clk_hw *hw,
- 	return clock->cached_rate;
+diff --git a/drivers/clk/sprd/pll.c b/drivers/clk/sprd/pll.c
+index bc2db19aec0e..4aec30777d8a 100644
+--- a/drivers/clk/sprd/pll.c
++++ b/drivers/clk/sprd/pll.c
+@@ -254,16 +254,10 @@ static int sprd_pll_clk_prepare(struct clk_hw *hw)
+ 	return 0;
  }
  
--static int rp1_varsrc_determine_rate(struct clk_hw *hw,
--				     struct clk_rate_request *req)
+-static int sprd_pll_determine_rate(struct clk_hw *hw,
+-				   struct clk_rate_request *req)
 -{
 -	return 0;
 -}
 -
- static const struct clk_ops rp1_pll_core_ops = {
- 	.is_prepared = rp1_pll_core_is_on,
- 	.prepare = rp1_pll_core_on,
-@@ -1227,7 +1221,7 @@ static const struct clk_ops rp1_clk_ops = {
- static const struct clk_ops rp1_varsrc_ops = {
- 	.set_rate = rp1_varsrc_set_rate,
- 	.recalc_rate = rp1_varsrc_recalc_rate,
--	.determine_rate = rp1_varsrc_determine_rate,
+ const struct clk_ops sprd_pll_ops = {
+ 	.prepare = sprd_pll_clk_prepare,
+ 	.recalc_rate = sprd_pll_recalc_rate,
+-	.determine_rate = sprd_pll_determine_rate,
 +	.determine_rate = clk_determine_rate_noop,
+ 	.set_rate = sprd_pll_set_rate,
  };
- 
- static struct clk_hw *rp1_register_pll(struct rp1_clockman *clockman,
+ EXPORT_SYMBOL_GPL(sprd_pll_ops);
 
 -- 
 2.54.0
