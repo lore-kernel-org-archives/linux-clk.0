@@ -1,153 +1,114 @@
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990D030EF68;
-	Wed,  6 May 2026 22:58:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4503AA1B5
+	for <linux-clk@vger.kernel.org>; Wed,  6 May 2026 23:35:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778108328; cv=none; b=A57sIe9hv7hyLEzPBctd5WBj0RuQt5Wq6D25kWj4h3ipQqfo2BgB+QasQGj7wjFP6oH7PyT2UlLJLMVLi0OQlqmWzFqX4HeCJg+6iAMfmxhGD74YR8p1hc/HBrihGiGwdi7911i+9pdF4yq6RDougW0gIbG0H/o51T1lc1TlIQ0=
+	t=1778110554; cv=none; b=lk0cGakgyUIEI0ZhmWNK5bnXpNKlTc0KTAF7n4KBZNYbrXFQaa/In3h3mO/q3zt0lW9fFPCI23WuYCeLoOvt0lTh/YBZDSe8FG/0EBQYjQfrNjIh9oqGfrQ1gmWX12EQraSNpbkQeo5EYkbeIFoKnDR0OVSCghfvW76yuQpm6VY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778108328; c=relaxed/simple;
-	bh=oNLQZSbK04/prfcMLEioah991sa/+gb+evzqC4vuhIk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sC80cxBmcKg9JMl5W7o+EM9VrHVA7gOlSJ0v0tMrto4nc2C7u/bD80bj7OXfLUKhyv+4u9tADCMNtnFl4PS78dYbp8wB7Kuoj2pgmofCHZ+nCj4e9ln5k4UbVBwSSJLdL1P/FGxLI6P/iiIhKvhqkwV8DH6ESzQht0d0dKZXoDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=rk2TtR2S; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=f0q+JUWO; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1778110554; c=relaxed/simple;
+	bh=GmYDlpqwpDdKe37tqZS+sDyT+KtS7LQzo13KylSxoFs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=icBuCvO9NKXjIEeR7ldfoJwUTAdcocO5lsHB206jfUas8CA+p7m+1kgX1QwxFcRSvyInKZ/kpZju8Im8rC5VEDPhD+bj4hM0cPX5u4njXOZgVEJ7IpOWHoA/EV0D/CAURad4jPpZZPMS4DDQn6VsyHb3AW+tD/o4Uzo24/5SwfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EkE/BZs+; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="rk2TtR2S";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="f0q+JUWO"
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4g9rQl2TyWz9vCW;
-	Thu,  7 May 2026 00:58:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1778108319;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iDoZIe7cacwjgr2IgClnfQvj7kilI/Zh72g7ogapULs=;
-	b=rk2TtR2SEO2oNt1Mhqh/TZQaAHEKk5x9u2Oy3WARJGQbfKEZu+9ubSIEmGwrRoQ/URnH7E
-	qrwdFN40GZ5hvG4FBsRaOLDrbWqxo+9v0jbdpxcrrIWMB/jmEJ6WPJXK71whVJdmc6mtmO
-	SXu1+XE5GN0Ns86v8Wo31EercEZ39oMgJNZOHzGojSpLbQtA1Lz1PROsfAnkFEP71b9Hvr
-	7UBKRuFsPchRdatHNgIROxG6F/h0JI5vzMbUd/cpICHa/DvtmlZWNPjw6d8vGFwcj748RA
-	FS4KahuuBDIaHm2nOGgmVHQHxSvQrLN63moWCMZs4eeOq8DUFjwX/1u1b27Ozw==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=f0q+JUWO;
-	spf=pass (outgoing_mbo_mout: domain of marek.vasut@mailbox.org designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=marek.vasut@mailbox.org
-Message-ID: <bf83a028-3ef3-482a-9ce3-8aec16f6ebed@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1778108317;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iDoZIe7cacwjgr2IgClnfQvj7kilI/Zh72g7ogapULs=;
-	b=f0q+JUWOkGRmhBrE1hoMgtbuAvmQpMU9IKyiIGcxcgLfLHo5EKQRlqadplNqAyenizG/LO
-	iOJuyDV9AUUUfheNeME1txDR3uTGo75oAjHLXIcgW+XYlCKQJCeeyRn55j7jqdj98URlYc
-	4XXQDgvT0kli2p1FXd13OKiTLnXEDy9Nzzk6xVqCa3mKLp8BfUzF9jw01T97HXSxKND3Ie
-	LYb5laSnP9VER6YA3+fuQAz74AGvtGc3wUSvAbmSQ3asCtKtChGVHlByGzUieWvFUFpziI
-	ijoad+dGP2r6K24qf14NYrRVhkpGbO4n50rn59j2kdNIauxFrH5OJ2DeC2fvzA==
-Date: Thu, 7 May 2026 00:58:31 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EkE/BZs+"
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-366087480d8so73107a91.3
+        for <linux-clk@vger.kernel.org>; Wed, 06 May 2026 16:35:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1778110553; x=1778715353; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eB4O/ATINYGyNg85SLaEAEaMf7em3sOInmWwQolQgBk=;
+        b=EkE/BZs++WgPHhhb49Z3iJ8W6QCCV/SsNi8gLOI8mO0lnA+POR22rOZUfZPpmSBpjc
+         Ht8QQbYh4rzFejy3JTkKhpu4MmhhWRHTpvSk9lGsJvIQAljyIDgI3w+0vd+rVaF19bbQ
+         MTEI2NySDanIIdqAQ5EwzN7178yX2s+xJnJnNsV+wJbAQ4lwCfgOPfPw0FoTVI9No7ET
+         KtkopKJomXLVKHqlvzbfMFw1xHh+zMZfSBc31q5R5AH8HjLSWin18Hf0d2cZzx+FWz3r
+         58Dkm2o7A7BgXkJUQToYol93e4cQG7Y7yQUE3QArQH2rHKHm/Wqc/WX9MTqtLYuExuyj
+         5qrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778110553; x=1778715353;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eB4O/ATINYGyNg85SLaEAEaMf7em3sOInmWwQolQgBk=;
+        b=f2EhmwoM5I+uFHg1ImlVSVqEt+32IgzGYR8OkGtiKlMNOxs8wZB1R/eHAbAu2bfGNS
+         rWwYWaY8Z1o2hgRHt8BV0nppQgWpUUgp4XRjwNvTSQq1gckF0XVKO3s13Hv1aqMffVjm
+         Eww08yi6Fc2MzR5ztvzCUK4IkZWsXnKaOEqEa0bpHycmqeop9AigNRIoP8EaZrpvZFQe
+         VGpNYmmX9/++hOoGSdwlnPAxYEhVXT1yBwtNBiaQXZTUAhOzslzSff2jLrYtD40Rmb3R
+         kArIMkRaF+Xvh2UP9cY8kDzR6k6KIjgzRxpctF4TPa3RkSQb3PT3ar9EIbsZ8+ovbC1W
+         htmg==
+X-Gm-Message-State: AOJu0Yz6AzxvSTPr17ikvcnNV0MKXENTrLJJgTfh3e/syI2mfFceKsHl
+	IUWJVj7VcZfMNamzaO2y5TelxvSR4B848ASHY3Eo75sNY4nqkXgrhmK9dZGr2K0J
+X-Gm-Gg: AeBDiesSAuTaM4BcZNE8Xgx/zMSNBlxspCpQOBbeUqRv4m2dZeW3YVVt5VxtprECtX9
+	RmfV/Oza9ea5VgurSx/lcWTutzvzkwjECAYgGN2/E63jTemdIvtzpBgJmQN2569gc70qk2WI4vn
+	o0ZRyXmPHtnuzSX9tNM4te/9XxrkP96Gtc8xB3Y5Vx0fO2DCOKDs4Fb9D19t1XKasOdvt3mjdms
+	If3V1859ItAN9Cvwm/+LhBjFNN0vbwg0ru1t2EZ3OPoEMtr7+33R2EN1WNZ4rgSt0oP65U+422G
+	XCktMUEZYiSt/zW8cr/D32JOjfxy2r/JfanW1v0wASA9YtRUij/4/bTJN65i5QSPF2TYQxSD5/H
+	M1JsMp3REqT71Zh8EiMB1aYv8xXTeMN5qARyfofL+kxwTV0OjpyubEs0R+3GtOXDVr0/D71EPEe
+	t1wMuL+weAoIctFwLVgZswzzZoHReQOYXsZ7Hz2JwB7URT8b1fvKnTBpEo8dMKHr+2PJmeej7XZ
+	7FX9IETtUr7wG0HF44EjOiBGYVJm0AtaOO287a4EH8/910isJ1Ssvwj
+X-Received: by 2002:a17:90b:224f:b0:364:6f27:43ea with SMTP id 98e67ed59e1d1-365ac47ae1dmr5692779a91.21.1778110552743;
+        Wed, 06 May 2026 16:35:52 -0700 (PDT)
+Received: from ryzen ([2601:644:8000:5b5d:7285:c2ff:fe45:8a32])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-365df6f88cesm1697466a91.3.2026.05.06.16.35.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 May 2026 16:35:50 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney@redhat.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] clk: lan966x: use devm_platform_ioremap_resource()
+Date: Wed,  6 May 2026 16:35:32 -0700
+Message-ID: <20260506233532.176285-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH/RFC 10/14] dt-bindings: power: Document Renesas R-Car X5H
- Module Controller
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Sudeep Holla <sudeep.holla@kernel.org>,
- Cristian Marussi <cristian.marussi@arm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
- Saravana Kannan <saravanak@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Ulf Hansson <ulfh@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>,
- Kevin Hilman <khilman@baylibre.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Marek Vasut <marek.vasut+renesas@mailbox.org>,
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1776793163.git.geert+renesas@glider.be>
- <053c312d07445517d8f9c84bfe3cc8fb72d4cd9a.1776793163.git.geert+renesas@glider.be>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <053c312d07445517d8f9c84bfe3cc8fb72d4cd9a.1776793163.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-META: y67k4gbrwjrropr38ftqiejbbiydm78h
-X-MBO-RS-ID: 09b24947cb12ed1c575
-X-Rspamd-Queue-Id: 4g9rQl2TyWz9vCW
+Content-Transfer-Encoding: 8bit
 
-On 4/21/26 8:11 PM, Geert Uytterhoeven wrote:
+Use it as another instance is used above. This one is optional so treat
+it as such.
 
-Hello Geert,
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+---
+ drivers/clk/clk-lan966x.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-> +  '#power-domain-cells':
-> +    description: |
-> +      - The first power domain specifier cell must be either the Module
-> +        Power Domain Gating (MPDG) register index (0x00-0x3f) from the
-> +        datasheet,
+diff --git a/drivers/clk/clk-lan966x.c b/drivers/clk/clk-lan966x.c
+index 3c7a48c616bb..8c7b273eb756 100644
+--- a/drivers/clk/clk-lan966x.c
++++ b/drivers/clk/clk-lan966x.c
+@@ -253,7 +253,6 @@ static int lan966x_clk_probe(struct platform_device *pdev)
+ 	struct clk_hw_onecell_data *hw_data;
+ 	struct device *dev = &pdev->dev;
+ 	void __iomem *gate_base;
+-	struct resource *res;
+ 	int i, ret;
+ 
+ 	data = device_get_match_data(dev);
+@@ -283,12 +282,8 @@ static int lan966x_clk_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-	if (res) {
+-		gate_base = devm_ioremap_resource(&pdev->dev, res);
+-		if (IS_ERR(gate_base))
+-			return PTR_ERR(gate_base);
+-
++	gate_base = devm_platform_ioremap_resource(pdev, 1);
++	if (!IS_ERR(gate_base)) {
+ 		hw_data->num = data->num_total_clks;
+ 
+ 		ret = lan966x_gate_clk_register(dev, data, hw_data, gate_base);
+-- 
+2.54.0
 
-I agree with this part.
-
-> or a Power Domain number, as defined in
-> +        <dt-bindings/power/renesas,r8a78000-mdlc.h>,
-
-I do not understand this part, please see end of this email ...
-
-> +      - The second power domain specifier cell must be the module number
-> +        (0x00-0xff), composed of the Module System Reset (MSRES) register index
-> +        in the high nibble, and the Module Reset Destination bitfield index in
-> +        the low nibble.
-> +    const: 2
-
-I am unsure about this part.
-
-There are multiple MDLC blocks, AON, SCP, HSCN, and so on. Each MDLC 
-block contains multiple Module Power Domain Gating registers (MPDGn) and 
-multiple Module System RESet register (MSRES) .
-
-I do understand and agree that the first power-domains-cells cell must 
-be the identifier of power domain within the MDLC block.
-
-However, I do not understand the second cell. The MDLC bindings already 
-contain reset-cells, which should be used to refer to a reset within the 
-MDLC block. Resets within the MDLC block are operated using the MSRES 
-registers. Why are resets conflated into power-domain-cells ?
-
-> +  '#reset-cells':
-> +    description:
-> +      The single reset specifier cell must be the module number (0x00-0xff).
-> +    const: 1
-
-[...]
-
-> +#ifndef __DT_BINDINGS_POWER_RENESAS_R8A78000_MDLC_H__
-> +#define __DT_BINDINGS_POWER_RENESAS_R8A78000_MDLC_H__
-> +
-> +/* R-Car X5H MDLC Power Domains */
-> +
-> +#define R8A78000_MDLC_PD_AON			0x40
-> +#define R8A78000_MDLC_PD_SCP			0x41
-> +#define R8A78000_MDLC_PD_APL			0x42
-> +#define R8A78000_MDLC_PD_CMN			0x43
-> +#define R8A78000_MDLC_PD_ACL			0x44
-... what do these numbers represent ? Shouldn't those be register 
-offsets from MDLC MPDG00 according to power-domain-cells ?
-
-If those are power domain IDs, then I am unsure why e.g. for SCIF the 
-domain ID is R8A78000_MDLC_PD_APL in [PATCH/RFC 13/14] arm64: dts: 
-renesas: r8a78000: Add CPG/MDLC nodes . Could you please expand on that ?
-
-Thank you !
