@@ -1,30 +1,41 @@
-Received: from twmbx01.aspeedtech.com (mail.aspeedtech.com [211.20.114.72])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19E53E3C41;
-	Wed,  6 May 2026 08:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 502B235DA46
+	for <linux-clk@vger.kernel.org>; Wed,  6 May 2026 08:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778055134; cv=none; b=ZKliovSy9gFxWAS4cTS69M1zNWtnXBwlRMitXwKf1dZqGfZ4pvFbwtTDM47O0fuZ8zGOe0xJb+SGik9oM00gd69z+tbD0MOOAIK67XfZgOIcNXqSajJbYyidhitizobPSfweQZrfSNajzYLyoVCmEzyfk7FRNxQY9Y5MJFNEQDE=
+	t=1778056543; cv=none; b=Nr/GWlWYmqjQ9CfTF2vxbJyR9M6BX17VliGFgHdqZfrscnMqcdkqioAfqSnWPLp4zTYpI+n8VNupMgvkN/+7eNWJVbI9rQH+XAwV1ZLRmqjfVPeF2QsoeX7aApZsi/GVy10vjBhBR8UTHlYG659Ke+IPwZpiPNX69tTZchZzUs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778055134; c=relaxed/simple;
-	bh=ruVKvpSBaq4Bcz/8i9J/C5cM6Jsi0IxDofl/fqhw4Bs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=NCLGgacGjSx+HrTT8HVNW4RqI31l6XrOwyomhiX06sV7HIt0TIO9ls3cKwtvvpb9smmKSIFvh12999n7SaYvGDl3vcWCa4NrQDJVfVH405vUsrRkWDTyk/jQlh7QTX49yGskhEGwx043dhGUDnhRfyq0PBSmLJSssXqswBxzVQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 6 May
- 2026 16:06:58 +0800
-Received: from [127.0.1.1] (192.168.10.13) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Wed, 6 May 2026 16:06:58 +0800
-From: Billy Tsai <billy_tsai@aspeedtech.com>
-Date: Wed, 6 May 2026 16:06:19 +0800
-Subject: [PATCH v9 2/3] dt-bindings: mfd: aspeed,ast2x00-scu: Describe
- AST2700 SCU0
+	s=arc-20240116; t=1778056543; c=relaxed/simple;
+	bh=HAiQmO+z8IeD/W593afVtN4GzhIjjZe1C6P2MGGJsYY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qFg4IAU9zCB3Md3KLOQF6V49geNQPyDt+ZQrdinW/k2xybc698oKo8Dy4seaJDmtQJs61/jlfNq/SRdmZ8WiVI7jXrTFf1rzpyc4xvhSfGgLF/XvKlTW3Kyrqzu+mnE9tRlfcfpr5hKlkjUUIioH2ENnkmdMiTLIIRjBWuZOkkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=y9r6s6b3; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="y9r6s6b3"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id C8B1DC5DC42;
+	Wed,  6 May 2026 08:36:25 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 99DC66053C;
+	Wed,  6 May 2026 08:35:38 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id AD13E102F15A2;
+	Wed,  6 May 2026 10:35:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1778056537; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=lH41RhbrOBVmzAN2aH8NZzQVqD5v4xoPzx/V0+1gYWk=;
+	b=y9r6s6b3+UKDswZjRBEqAmQpJmBbrY4xhxe6kcxqVl0njbd/MgX5C+KXX/MUsix0IwhG6k
+	4jly7ugPfKa3e/uIgSZA168Q6RnAV7DOYl4JHZ1ZMJAxnAfAmnyZk0DsurV1su0AkStfAz
+	2kDeWaaocW2xmvTlGA9mvkDgMxL/muthVv0LjcXl7VhfUyR7m01pIzSeWPbYV9j1p8UOB8
+	nuIAf6uGIW1vw7D/4rcum+QlhqPB2Q+03hzFAXL0ZpsJM4h89XcTUAHL1O7l1KON35yg6E
+	IW9KWQ/W/FHkyIoa5lvdZ5zzu2K50p23WQrEi5MnrVyrO9xURp2stzb5WNZbSQ==
+From: "Thomas Richard (TI)" <thomas.richard@bootlin.com>
+Subject: [PATCH v7 0/4] firmware: ti_sci: Introduce BOARDCFG_MANAGED mode
+ for Jacinto family
+Date: Wed, 06 May 2026 10:35:24 +0200
+Message-Id: <20260506-ti-sci-jacinto-s2r-restore-irq-v7-0-037098a35215@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -33,194 +44,104 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20260506-upstream_pinctrl-v9-2-0636e22343ad@aspeedtech.com>
-References: <20260506-upstream_pinctrl-v9-0-0636e22343ad@aspeedtech.com>
-In-Reply-To: <20260506-upstream_pinctrl-v9-0-0636e22343ad@aspeedtech.com>
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Joel
- Stanley" <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>,
-	"Linus Walleij" <linusw@kernel.org>, Billy Tsai <billy_tsai@aspeedtech.com>,
-	"Bartosz Golaszewski" <brgl@kernel.org>, Ryan Chen <ryan_chen@aspeedtech.com>
-CC: Andrew Jeffery <andrew@aj.id.au>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
-	<linux-kernel@vger.kernel.org>, <openbmc@lists.ozlabs.org>,
-	<linux-gpio@vger.kernel.org>, <linux-clk@vger.kernel.org>
+X-B4-Tracking: v=1; b=H4sIAEz9+mkC/43Qy07DMBAF0F+pvMZoPHb86Ir/QCwcP6gRxNQOE
+ ajKv+MUVQFlEZZ3ZJ07ngupoaRQyfFwISVMqaY8tKDuDsSd7PAcaPItEwTsGDCgY6LVJfpiXRr
+ GTCsWWkIdc2kvy5kK1AFAR8/AkYa8lxDT57Xg8eknl3D+aD3jOjylBfi6LjGxZXrrU3t9E6NAu
+ fCCc+NRKPvQ5zy+puHe5Tey4BOuIMN9EBtohVbR8hgR2RbkK4jQ7YK8gR6kkdwoYb3YguIGSkA
+ Qu6BooFQawUZugnVbsFtBAftf7hpoVI86ojc8mi0of4H/uKFsoEInhdSuR9v/Bed5/gaaihq/e
+ AIAAA==
+X-Change-ID: 20251010-ti-sci-jacinto-s2r-restore-irq-428e008fd10c
+To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
+ Santosh Shilimkar <ssantosh@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: Gregory CLEMENT <gregory.clement@bootlin.com>, 
+ richard.genoud@bootlin.com, Udit Kumar <u-kumar1@ti.com>, 
+ Abhash Kumar <a-kumar2@ti.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-clk@vger.kernel.org, 
+ "Thomas Richard (TI)" <thomas.richard@bootlin.com>, 
+ Dhruva Gole <d-gole@ti.com>, Kendall Willis <k-willis@ti.com>, 
+ Brian Masney <bmasney@redhat.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1778054817; l=5341;
- i=billy_tsai@aspeedtech.com; s=20251118; h=from:subject:message-id;
- bh=ruVKvpSBaq4Bcz/8i9J/C5cM6Jsi0IxDofl/fqhw4Bs=;
- b=g4mts3EpgRaqlZT68vfmeJIROUXUeVmr2BXXASjDlKn4DkI0PF/HKeFkamE+fA9GKE4/2H1vF
- e5Dv8klvwk1BtAF7fHxHNJ+EC1LVVOFpN/ivA0euuuOEJTClBMilRyn
-X-Developer-Key: i=billy_tsai@aspeedtech.com; a=ed25519;
- pk=/A8qvgZ6CPfnwKgT6/+k+nvXOkN477MshEGJvVdzeeQ=
+X-Last-TLS-Session-Version: TLSv1.3
 
-AST2700 consists of two interconnected SoC instances, each with its own
-System Control Unit (SCU). The SCU0 provides pin control, interrupt
-controllers, clocks, resets, and address-space mappings for the
-Secondary and Tertiary Service Processors (SSP and TSP).
+This is the 7th iteration of this series. I did some changes as suggested
+by Nishanth. In ti_sci driver I added a lock around set_irq() and
+free_irq() to keep hash list consistent in case of concurrent accesses, and
+now ti_sci driver tries to restore all IRQs even in case of error.
+On the clock side, get_parent() errors are now handled. If we fail to get
+parent_id for a clock, set_parent() is not called anymore in
+restore_context().
+Other minor changes are listed in the changelog.
 
-Describe the SSP/TSP address mappings using the standard
-memory-region and memory-region-names properties.
+Best Regards,
+Thomas
 
-Disallow legacy child nodes that are not present on AST2700, including
-p2a-control and smp-memram. The latter is unnecessary as software can
-access the scratch registers via the SCU syscon.
-
-Also allow the AST2700 SoC0 pin controller to be described as a child
-node of the SCU0, and add an example illustrating the SCU0 layout,
-including reserved-memory, interrupt controllers, and pinctrl.
-
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
+Signed-off-by: Thomas Richard (TI) <thomas.richard@bootlin.com>
 ---
- .../bindings/mfd/aspeed,ast2x00-scu.yaml           | 114 +++++++++++++++++++++
- 1 file changed, 114 insertions(+)
+Changes in v7:
+- ti_sci: add a lock around set_irq() and free_irq() to keep hash list
+  consistent.
+- ti_sci: in free_irq() add warning in case we are in a path that shall not
+  be run.
+- ti_sci: free an IRQ if we failed to add it in the hash list.
+- ti_sci: during resume in case of error, try to restore remaining IRQs and
+  logs all errors, then return the latest one.
+- sci-clk: add Stephen's AB tag and Brian's RB tag.
+- sci-clk: handle get_parent() error, in restore_context() do not call
+  set_parent() with parent_id=0 if get_parent() failed.
+- Link to v6: https://lore.kernel.org/r/20260427-ti-sci-jacinto-s2r-restore-irq-v6-0-72c6468cb2ab@bootlin.com
 
-diff --git a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
-index a87f31fce019..0d5e168b0309 100644
---- a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
-+++ b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
-@@ -46,6 +46,18 @@ properties:
-   '#reset-cells':
-     const: 1
- 
-+  memory-region:
-+    items:
-+      - description: Region mapped through the first SSP address window.
-+      - description: Region mapped through the second SSP address window.
-+      - description: Region mapped through the TSP address window.
-+
-+  memory-region-names:
-+    items:
-+      - const: ssp-0
-+      - const: ssp-1
-+      - const: tsp
-+
- patternProperties:
-   '^p2a-control@[0-9a-f]+$':
-     description: >
-@@ -87,6 +99,7 @@ patternProperties:
-             - aspeed,ast2400-pinctrl
-             - aspeed,ast2500-pinctrl
-             - aspeed,ast2600-pinctrl
-+            - aspeed,ast2700-soc0-pinctrl
- 
-     required:
-       - compatible
-@@ -156,6 +169,30 @@ required:
-   - '#clock-cells'
-   - '#reset-cells'
- 
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - aspeed,ast2700-scu0
-+              - aspeed,ast2700-scu1
-+    then:
-+      patternProperties:
-+        '^p2a-control@[0-9a-f]+$': false
-+        '^smp-memram@[0-9a-f]+$': false
-+
-+  - if:
-+      not:
-+        properties:
-+          compatible:
-+            contains:
-+              const: aspeed,ast2700-scu0
-+    then:
-+      properties:
-+        memory-region: false
-+        memory-region-names: false
-+
- additionalProperties: false
- 
- examples:
-@@ -180,4 +217,81 @@ examples:
-             reg = <0x7c 0x4>, <0x150 0x8>;
-         };
-     };
-+
-+  - |
-+    / {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        reserved-memory {
-+            #address-cells = <2>;
-+            #size-cells = <2>;
-+            ranges;
-+
-+            ssp_region_0: memory@400000000 {
-+                reg = <0x4 0x00000000 0x0 0x01000000>;
-+                no-map;
-+            };
-+
-+            ssp_region_1: memory@401000000 {
-+                reg = <0x4 0x01000000 0x0 0x01000000>;
-+                no-map;
-+            };
-+
-+            tsp_region: memory@402000000 {
-+                reg = <0x4 0x02000000 0x0 0x01000000>;
-+                no-map;
-+            };
-+        };
-+
-+        bus {
-+            #address-cells = <2>;
-+            #size-cells = <2>;
-+
-+            syscon@12c02000 {
-+                compatible = "aspeed,ast2700-scu0", "syscon", "simple-mfd";
-+                reg = <0 0x12c02000 0 0x1000>;
-+                ranges = <0x0 0x0 0x12c02000 0x1000>;
-+                #address-cells = <1>;
-+                #size-cells = <1>;
-+                #clock-cells = <1>;
-+                #reset-cells = <1>;
-+
-+                memory-region = <&ssp_region_0>, <&ssp_region_1>,
-+                                <&tsp_region>;
-+                memory-region-names = "ssp-0", "ssp-1", "tsp";
-+
-+                silicon-id@0 {
-+                    compatible = "aspeed,ast2700-silicon-id", "aspeed,silicon-id";
-+                    reg = <0x0 0x4>;
-+                };
-+
-+                interrupt-controller@1b0 {
-+                    compatible = "aspeed,ast2700-scu-ic0";
-+                    reg = <0x1b0 0x4>;
-+                    #interrupt-cells = <1>;
-+                    interrupts-extended = <&intc0 97>;
-+                    interrupt-controller;
-+                };
-+
-+                interrupt-controller@1e0 {
-+                    compatible = "aspeed,ast2700-scu-ic1";
-+                    reg = <0x1e0 0x4>;
-+                    #interrupt-cells = <1>;
-+                    interrupts-extended = <&intc0 98>;
-+                    interrupt-controller;
-+                };
-+
-+                pinctrl@400 {
-+                    compatible = "aspeed,ast2700-soc0-pinctrl";
-+                    reg = <0x400 0x318>;
-+                    emmc-state {
-+                        function = "EMMC";
-+                        groups = "EMMCG1";
-+                    };
-+                };
-+            };
-+        };
-+    };
-+
- ...
+Changes in v6:
+- rebase on v7.1-rc1.
+- add Kendall's RB tag.
+- sci-clk: call set_parent() during restore_context() only for clocks which
+  have more than one parent.
+- sci-clk: save also rate returned by recalc_rate().
+- Link to v5: https://lore.kernel.org/r/20260407-ti-sci-jacinto-s2r-restore-irq-v5-0-97b28f2d93f9@bootlin.com
 
+Changes in v5:
+- rebase on v7.0-rc7.
+- add Dhruva's RB tag.
+- use kzalloc_obj() in ti_sci driver.
+- Link to v4: https://lore.kernel.org/r/20260204-ti-sci-jacinto-s2r-restore-irq-v4-0-67820af39eac@bootlin.com
+
+Changes in v4:
+- rebase on linux-next next-20260202.
+- fix BOARDCFG_MANAGED value.
+- add MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST firmware capability.
+- add MSG_FLAG_CAPS_LPM_CLK_CONTEXT_LOST firmware capability.
+- Link to v3: https://lore.kernel.org/r/20251205-ti-sci-jacinto-s2r-restore-irq-v3-0-d06963974ad4@bootlin.com
+
+Changes in v3:
+- rebased on linux-next
+- sci-clk: context_restore() operation restores also rate.
+- Link to v2: https://lore.kernel.org/r/20251127-ti-sci-jacinto-s2r-restore-irq-v2-0-a487fa3ff221@bootlin.com
+
+Changes in v2:
+- ti_sci: use hlist to store IRQs.
+- sci-clk: add context_restore operation
+- ti_sci: restore clock parents during resume
+- Link to v1: https://lore.kernel.org/r/20251017-ti-sci-jacinto-s2r-restore-irq-v1-0-34d4339d247a@bootlin.com
+
+---
+Thomas Richard (TI) (4):
+      firmware: ti_sci: add BOARDCFG_MANAGED mode support
+      firmware: ti_sci: add support for restoring IRQs during resume
+      clk: keystone: sci-clk: add restore_context() operation
+      firmware: ti_sci: add support for restoring clock context during resume
+
+ drivers/clk/keystone/sci-clk.c |  45 +++++++--
+ drivers/firmware/ti_sci.c      | 212 ++++++++++++++++++++++++++++++++++++++---
+ drivers/firmware/ti_sci.h      |   6 ++
+ 3 files changed, 242 insertions(+), 21 deletions(-)
+---
+base-commit: a8afe52b5e5050c0c5825d7931a21b687a628d9a
+change-id: 20251010-ti-sci-jacinto-s2r-restore-irq-428e008fd10c
+
+Best regards,
 -- 
-2.34.1
+Thomas Richard (TI) <thomas.richard@bootlin.com>
 
