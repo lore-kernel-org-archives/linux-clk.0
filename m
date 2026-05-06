@@ -1,83 +1,85 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8200233149
-	for <linux-clk@vger.kernel.org>; Wed,  6 May 2026 00:50:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916A11EB5F8
+	for <linux-clk@vger.kernel.org>; Wed,  6 May 2026 00:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778028633; cv=none; b=WBI6SWgYf2pDz+48KqXwYx6ilLezbOMhIGz37KD+wONx8Lp+FJyKsiyX9u/i08t+ZtwZpiZlNbrTgaS6I8kUe5lZwpQyZtNji/8Bx/sQ8CQRd7W82DjYovJAu9+ikM2dReGjlwIBroI4RIdG9KPikZvvsKT78rC3VzZufBDBiBE=
+	t=1778028635; cv=none; b=X0njksRka65xZ3nVBl/8kPp+aIYWOCol8ru0fHHHhb60jXQ0URy7Nf4YTiYx0nydeHJOT0EUPR+rK/LRG6VOEPLhM6DhYMzO+j/z4zCkmC1uuaveQ/Oi3GWt0OnL9FyKCVcg/uX7zT2VmLpLNQob4apuOrSp6VDKtFfe6+m0ic4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778028633; c=relaxed/simple;
-	bh=zMeXAyyLpb1ycANNIw7NwRnIidpI1as921qDmQJS1JY=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OV/G5MeQUDzNsEE66dOJCw3cy5vrXtyJKhxajPBkhHq6TywDYw7ALkHNzxs2wkrSgB0dDwYVq1Oeec0ihxecbxMcJ10s7DAsE4JAndYHHCJCD+g1oKqb8lXRC4ak2/fXPQ9VbrjYnMLWo2oB42RxbPP8XzL82yFHAzP+L5q1oN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZohWz6HQ; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=E4QpPJ8k; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1778028635; c=relaxed/simple;
+	bh=9eLgOe84G1+qgxzBhagvDPxImGCu+A+SFA5V4275HKI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=XIzSGEZnepjLgFM6wDDGq4Kqj+XybwbKiQ+jddKaqtj0ABKdyN9QSZcCj9oxtfMZlfDn0yqVVfprBJifZYs8AphPB9s32w4zKOxE33j6dUSyb5J7cmIVqKQTzxwVBJjLGAPuL9bVsKzi0wzL0UzEK8RwiBmMaYaMpAVli40M5AU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ahrtdzqh; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=BnH0jmtm; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZohWz6HQ";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="E4QpPJ8k"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ahrtdzqh";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="BnH0jmtm"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1778028629;
+	s=mimecast20190719; t=1778028633;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=b9H8cYKTCyIKnl9+d/AL5JHJT5IYmUArCaFMH4v5EuY=;
-	b=ZohWz6HQUllvYrwQGEODoMsIiQ3IY3+ACIHrwjzLt7LaVHKXDKqcWHSTZ9lir9SiDQDZmB
-	b/jQW6qFvbPBB9ikCFxjYhr3F9jnJHYhJOnjB+Pf4b1qIajGNB43tnpw7SCulgAZxRfgSG
-	HBs1ZwsXGyfyjkAkxaeQKnTdtKN0eaw=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PYWI5q6IWS0HuGrhMbiY7MLQV/QjiFOEif4XZnD0XaI=;
+	b=ahrtdzqh6SRLRNSrnhHrdm8VAhcaHkqSMbLJTlh33zen4XJaMtBFB9fm7nK37H3iqb2Tgm
+	rzk1kCJ7a/G+0qX5pf4D5xmVdIfp/f1G71XfaMN3QzbKnVwoSE78nfDJJ8IjQ2XEkYLvE9
+	6jTumw9AtTauq/p311F7LpM049HVvm4=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-456-HGCk2rO0Ohm8dE9j1e4SNg-1; Tue, 05 May 2026 20:50:28 -0400
-X-MC-Unique: HGCk2rO0Ohm8dE9j1e4SNg-1
-X-Mimecast-MFC-AGG-ID: HGCk2rO0Ohm8dE9j1e4SNg_1778028628
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8f87d6ce659so1212839585a.3
-        for <linux-clk@vger.kernel.org>; Tue, 05 May 2026 17:50:28 -0700 (PDT)
+ us-mta-362-0FMTGtOANaGaZZqE_ukk6w-1; Tue, 05 May 2026 20:50:31 -0400
+X-MC-Unique: 0FMTGtOANaGaZZqE_ukk6w-1
+X-Mimecast-MFC-AGG-ID: 0FMTGtOANaGaZZqE_ukk6w_1778028631
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-8ece46c4ba9so1140698285a.0
+        for <linux-clk@vger.kernel.org>; Tue, 05 May 2026 17:50:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1778028628; x=1778633428; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=b9H8cYKTCyIKnl9+d/AL5JHJT5IYmUArCaFMH4v5EuY=;
-        b=E4QpPJ8kLNMULdl1YUVfQ+6z8lKShLBKXd7TCIveG2890PqK9Mh7LgyYlTyyoTK2G5
-         2SF+c2k+doCaAWqCQA7UOe3N25PlSAo/6/B5szG/SyIovtfDxb6IOP5ACS5UBqlbGXw/
-         W8gApWSglPcBKSP4qIHNsxa1sGJGNeQQO5w+b0wHasU07ErS6CFFF45dEyLxenmFtHK0
-         mtKT1785hYBCHQhdFxCEQkhFaD9iFGI/Vd5GAimENg9l4sUmAG3OBs0xa5uAeja/LCwa
-         k1VpPs5eGR7SmcoFLFckkHr7QJCsg6RSCNcZT3JbhiqW1QrKPmh1UkyJtTfI1CRDOTqV
-         umig==
+        d=redhat.com; s=google; t=1778028631; x=1778633431; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PYWI5q6IWS0HuGrhMbiY7MLQV/QjiFOEif4XZnD0XaI=;
+        b=BnH0jmtmF18peEbVQEXSFr55igFSCAIoEr2m+OhGCS+jYxyni8tEAkdqejBR6eY13t
+         qFN8gvaKjrMGliS+wQE4+31RjzNIMPw4N6hstV3WiGac8cKzxkpK7EtlAkvBEDgoSR5N
+         e05q+BroH3UQKxVtES7ZCwihT6BPom917iXGwD7FKZomPiHRRq2BDU2FPiaKBFikWm6q
+         36fE9aHLxsw8QZUL8nH/DN4DGAG0kvHr5k7vqbpmp4NJDOBKF+pZj6IdqG/LFYp936QQ
+         6nezJMegm+hbcZo+3gTVVsUIGLM0cgIIf6iuZ621iap1SHsLVli8K7xSLENRcOVz8I5q
+         wiWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778028628; x=1778633428;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b9H8cYKTCyIKnl9+d/AL5JHJT5IYmUArCaFMH4v5EuY=;
-        b=iq43v8CNVhtDEi/JURIAVj/U419cUGb3HAp2oZNzr3w82aZ6ojRHHXMa6tdcDFziJu
-         Yc8yJ1nLOX6zoL15f5km0H6w1CLb0U2PKF9+0OB2mYCMHa9QkPlxVhC4DTx81zQZrqVR
-         DCRl5fxOoejjcSRQBuHl1ArF909MbroEaiP2Ndy6CVFDcxZq7kjID6Jff5gGNimO4QKj
-         B0RJaJTbwbShyNrE5yoGjddjwcKb9UrVfVh8JLJogRxrmP8JizVqUXnsaTYur9U3x8+7
-         24wBPM7JSlWuQNmzgAw3eIZ5oNhIuIrYc/lQS1OP6yLWNRoMpoX82XbDq4MPe/4ODBb3
-         uxWg==
-X-Gm-Message-State: AOJu0YzhG3/Z68NuvP82kchYo2ghKP9RjrPEJjyJ7GVN6maHYpDL+qig
-	9FVaqtrXd++YwWVxoqTuENN91Ft066sY/Oy/XHrE9kulozJq6xPZsKDnbqRsx56TQCtjYCEdoR3
-	KZw2z6eoTaEOrKafodnNaEEmzbdJ2L+G8dOXiFRvhhVEs5ClQV2i6lu2AmcEMDA==
-X-Gm-Gg: AeBDiesjuIJGgoYQy+omlxx9FCeY2AVok/c+yoOMvUXxng0Ay4C//NdV3gE1sEJcoaj
-	GX4vtc5R/giehr1oczzqLITyHHbEL8AKPddQHKwl0vtMuM2L7yaOeP3KEfqEpSJL7P30KvsMaqH
-	Exm9shp8JxhNpfQRIN+NtzK8pOIsWLdeGAXTGIVtHj9Geb/b6X91HwVcXoFln/VDqlilOPime7S
-	q3kdY2ewogjp9ydcKsCGNpAwPLEwS+AjS3onVkDgS2RljHDHCLFl5z8DiKKwA/75rRx9CU1Af8p
-	l6leu5ytBYgQsNPR5uTxXHaIcOxn8srjNR58GmWByfKvpFvlkZePZmnxv6ayNEAfqPXcSwKwrzq
-	JoJ3DeugFMEL/L6ESGhVaADBUtDBr/UQy0lM6KOVHA/KEwgD18gaxYy3wgblLy9CNWqkPqlXR
-X-Received: by 2002:a05:620a:454d:b0:8cd:7952:d449 with SMTP id af79cd13be357-904d5f00d9emr231853485a.29.1778028627981;
-        Tue, 05 May 2026 17:50:27 -0700 (PDT)
-X-Received: by 2002:a05:620a:454d:b0:8cd:7952:d449 with SMTP id af79cd13be357-904d5f00d9emr231848285a.29.1778028627449;
-        Tue, 05 May 2026 17:50:27 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1778028631; x=1778633431;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=PYWI5q6IWS0HuGrhMbiY7MLQV/QjiFOEif4XZnD0XaI=;
+        b=BAk1cxpc3nu72gXMIGaa9yj4oDyRpaVr31MpuepQo+qHV9+rkiB348QBxeh7DvbqaE
+         vQGF6HF5YaxX27vdYr9g7Vwt+2KQhLqJQpcsJX7ABBtRXpmJbHYpsk87aeJXgF5yJDk9
+         eYpz+zD1nNSivzNKF44Ru2NdkrZ0H5tZDlWnw0z87epGhyxJg6ugUspALebdZ+Y41fZ8
+         fubF4o1MfG6fO/GPdT8LEDpTL6nXT1IsfHsqMlsR5LPd6Vq+gGA7OrDKADhkcTTFitM7
+         7l8UO0Zi4avQwFfgn7ZcWXdWGsSrNp24Kp9L5oBrswHLEziQ6I0qwvD1SZp+xIVqgJH+
+         cRMw==
+X-Gm-Message-State: AOJu0YxlALaSlXjodSgMUlc8b81+m2d5xtlF+WhhnobRPsNRA7wt4nca
+	t7JbvC0o3B3bk89gcjz71fwVFc/cki2kROIrqXfgaEFetXkuDliQGwKSK62f3SgSFq1D6CMszId
+	bOV1jYkNsPAFa0hju/NKHlOAvmsVtst9qbcUKljeH4gM0ym6rDDCkqy6FC9J3UQ==
+X-Gm-Gg: AeBDiesEuhS0dPL3uWnCbsF6SC037rBa6uGvLQ1Yod3ZGxWEbMDi1CbgCmPbRIT0+wF
+	9JMaCb64v/qSzKJxI3DUBG78IPCUeL9ySIGRKjAnYEEUHJkOuxeHpVja7o4Vp21dF1eK5fySymY
+	/RbK0Eq/WGfVqdwlncFMbJYaWIvBriZX5Vvoaq0wIMoWV2MESPYq85xV569OnnNTlSdJINw4MoF
+	J+//6Sbl2i4Po8X35EOV/0tYVQ0IM06colJtJuJe4mqkvKNBcKWYcWgdgKEUbCkuMQANtI/eRtw
+	CxZUq012yWW//3Fnh0gDOmri80yEcEqDxwzayBwQs2cj+H/Ez+52lThqktjepX6HKAO3r2VRe9U
+	GDfFt0thkbn0RjO1L57EUY19gViwQ8UOR/fhpxBYDgG4HTH3WFXXb5qi0huU8ggO8aeYYiYgm
+X-Received: by 2002:a05:620a:372c:b0:8cf:d441:c7c0 with SMTP id af79cd13be357-904d5d0d8cbmr224561685a.34.1778028631315;
+        Tue, 05 May 2026 17:50:31 -0700 (PDT)
+X-Received: by 2002:a05:620a:372c:b0:8cf:d441:c7c0 with SMTP id af79cd13be357-904d5d0d8cbmr224558885a.34.1778028630882;
+        Tue, 05 May 2026 17:50:30 -0700 (PDT)
 Received: from [192.168.1.15] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8fc2c91fb3bsm1464933385a.41.2026.05.05.17.50.23
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8fc2c91fb3bsm1464933385a.41.2026.05.05.17.50.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 May 2026 17:50:26 -0700 (PDT)
+        Tue, 05 May 2026 17:50:29 -0700 (PDT)
 From: Brian Masney <bmasney@redhat.com>
-Subject: [PATCH v3 00/15] clk: introduce clk_determine_rate_noop() and
- update drivers to use it
-Date: Tue, 05 May 2026 20:48:56 -0400
-Message-Id: <20260505-clk-determine-rate-noop-v3-0-f3f829fbacdf@redhat.com>
+Date: Tue, 05 May 2026 20:48:57 -0400
+Subject: [PATCH v3 01/15] clk: imx: scu: drop redundant init.ops variable
+ assignment
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -86,10 +88,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x3MQQqDMBBG4avIrDsQNVHpVYqLoH90aJvIREpBv
- LvB5bd476AMFWR6VgcpfpIlxYL2UdG0+riAZS6mxjSdccbx9HnzjB36lQhWv4NjShvXvXfWhn4
- w9UCl3hRB/vf5NZ7nBVsAcIVpAAAA
-X-Change-ID: 20260505-clk-determine-rate-noop-17a544f78018
+Message-Id: <20260505-clk-determine-rate-noop-v3-1-f3f829fbacdf@redhat.com>
+References: <20260505-clk-determine-rate-noop-v3-0-f3f829fbacdf@redhat.com>
+In-Reply-To: <20260505-clk-determine-rate-noop-v3-0-f3f829fbacdf@redhat.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>
 Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -97,108 +98,56 @@ Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
  Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
  Pengutronix Kernel Team <kernel@pengutronix.de>, 
  Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, Anson Huang <anson.huang@nxp.com>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Andrea della Porta <andrea.porta@suse.com>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Sudeep Holla <sudeep.holla@kernel.org>, 
- Cristian Marussi <cristian.marussi@arm.com>, 
- Orson Zhai <orsonzhai@gmail.com>, 
- Baolin Wang <baolin.wang@linux.alibaba.com>, 
- Chunyan Zhang <zhang.lyra@gmail.com>, 
- Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Ulf Hansson <ulfh@kernel.org>, linux-arm-msm@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- arm-scmi@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- linux-mediatek@lists.infradead.org, linux-phy@lists.infradead.org, 
- linux-pm@vger.kernel.org
+ linux-arm-kernel@lists.infradead.org
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3477; i=bmasney@redhat.com;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1461; i=bmasney@redhat.com;
  s=20250903; h=from:subject:message-id;
- bh=zMeXAyyLpb1ycANNIw7NwRnIidpI1as921qDmQJS1JY=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDJ/TXBhDD/HJ+irfPCG5f8LBYvv8Dx9dmqr4NPkLyFFK
- ++kbGS41lHKwiDGxSArpsiyJNeoICJ1le29O5osMHNYmUCGMHBxCsBEFrEwMqxq53uRvrC91Ddt
- SpiPrVzUGZG/vn+yPrXy74upe2fVfJGRYcr2/5NeNj+qTdRbHh6S2B+gniyyo6Z0VsK7yHUStra
- VbAA=
+ bh=9eLgOe84G1+qgxzBhagvDPxImGCu+A+SFA5V4275HKI=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDJ/TXANuDRLyTWHUaDKdJaMwAzB7R3Pfnv5yCwtvfb6U
+ ddMzn7vjlIWBjEuBlkxRZYluUYFEamrbO/d0WSBmcPKBDKEgYtTACZSrsTw3zFTdlNm3AUz4Xtf
+ 7Tsey7+LnPmRUYwnJ1vGaX/d7ndVHxn+1x++IHLLq5njd8Jpswt3Snfeyr//rde/ev17i+l3jge
+ eYwEA
 X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
  fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-There are some clocks where the determine_rate clk op is just an empty
-function that returns 0. This can be either because the rounding is
-managed by the firmware/hardware, or the clock is capable of any rate.
-Let's add a new new shared function to clk.c named
-clk_determine_rate_noop(), and update all of the drivers that have an
-empty determine_rate() ops to use this new shared function.
+The init.ops is assigned a default value, however right below it is an
+if, else if, and else where all of them also assign a value to init.ops.
+Drop the redundant init.ops assignment at the top.
 
-The first patch in this series also includes a minor cleanup to
-drivers/clk/imx/clk-scu.c. I included it as the first patch so it
-doesn't get buried in the middle of this series. I change this same
-driver later in the series to use clk_determine_rate_noop().
-
-Changes since v2:
-https://lore.kernel.org/all/20260309-clk-det-rate-fw-managed-v2-0-c48ef5a3100a@redhat.com/
-- Dropped the NOOP flag and just use a dedicated noop function.
-
-Merge Strategy
---------------
-All of this needs to be directly merged by Stephen as one series into
-his tree. Subsystem maintainers: please leave a Reviewed-by or Acked-by
-for Stephen. To reduce the noise, I am only CCing people on their
-respective drivers.
-
-Since there's only 3 drivers outside of drivers/clk that need to be
-updated, I included them in this same series for completeness. These
-should go through Stephen's tree as well.
-
+Fixes: 3b9ea606cda53 ("clk: imx: scu: add cpu frequency scaling support")
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
-Brian Masney (15):
-      clk: imx: scu: drop redundant init.ops variable assignment
-      clk: add clk_determine_rate_noop()
-      clk: hisilicon: hi3660-stub: use clk_determine_rate_noop()
-      clk: imx: scu: use clk_determine_rate_noop()
-      clk: qcom: rpm: use clk_determine_rate_noop()
-      clk: qcom: rpmh: use clk_determine_rate_noop()
-      clk: qcom: smd-rpm: use clk_determine_rate_noop()
-      clk: renesas: rzg2l-cpg: use clk_determine_rate_noop()
-      clk: rp1: use clk_determine_rate_noop()
-      clk: samsung: acpm: use clk_determine_rate_noop()
-      clk: scpi: use clk_determine_rate_noop()
-      clk: sprd: use clk_determine_rate_noop()
-      phy: mediatek: phy-mtk-hdmi-mt2701: use clk_determine_rate_noop()
-      pmdomain: mediatek: airoha: use clk_determine_rate_noop()
-      pmdomain: mediatek: mtk-mfg: use clk_determine_rate_noop()
-
- drivers/clk/clk-rp1.c                           |  8 +-------
- drivers/clk/clk-scpi.c                          | 14 +-------------
- drivers/clk/clk.c                               | 18 ++++++++++++++++++
- drivers/clk/hisilicon/clk-hi3660-stub.c         | 12 +-----------
- drivers/clk/imx/clk-scu.c                       | 24 +++---------------------
- drivers/clk/qcom/clk-rpm.c                      | 15 ++-------------
- drivers/clk/qcom/clk-rpmh.c                     |  8 +-------
- drivers/clk/qcom/clk-smd-rpm.c                  | 13 +------------
- drivers/clk/renesas/rzg2l-cpg.c                 |  8 +-------
- drivers/clk/samsung/clk-acpm.c                  | 14 +-------------
- drivers/clk/sprd/pll.c                          |  8 +-------
- drivers/phy/mediatek/phy-mtk-hdmi-mt2701.c      |  8 +-------
- drivers/pmdomain/mediatek/airoha-cpu-pmdomain.c |  8 +-------
- drivers/pmdomain/mediatek/mtk-mfg-pmdomain.c    | 23 ++---------------------
- include/linux/clk-provider.h                    |  1 +
- 15 files changed, 36 insertions(+), 146 deletions(-)
+To: Abel Vesa <abelvesa@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Peng Fan <peng.fan@nxp.com>
+Cc: Brian Masney <bmasney@redhat.com>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: linux-clk@vger.kernel.org
+Cc: imx@lists.linux.dev
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
 ---
-base-commit: 4cd074ae20bbcc293bbbce9163abe99d68ae6ae0
-change-id: 20260505-clk-determine-rate-noop-17a544f78018
+ drivers/clk/imx/clk-scu.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Best regards,
+diff --git a/drivers/clk/imx/clk-scu.c b/drivers/clk/imx/clk-scu.c
+index 9b33df9967ec..658b6d94de9b 100644
+--- a/drivers/clk/imx/clk-scu.c
++++ b/drivers/clk/imx/clk-scu.c
+@@ -475,7 +475,6 @@ struct clk_hw *__imx_clk_scu(struct device *dev, const char *name,
+ 	clk->clk_type = clk_type;
+ 
+ 	init.name = name;
+-	init.ops = &clk_scu_ops;
+ 	if (rsrc_id == IMX_SC_R_A35 || rsrc_id == IMX_SC_R_A53 || rsrc_id == IMX_SC_R_A72)
+ 		init.ops = &clk_scu_cpu_ops;
+ 	else if (rsrc_id == IMX_SC_R_PI_0_PLL)
+
 -- 
-Brian Masney <bmasney@redhat.com>
+2.54.0
 
