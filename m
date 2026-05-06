@@ -1,66 +1,65 @@
 Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB80A423A63
-	for <linux-clk@vger.kernel.org>; Wed,  6 May 2026 11:54:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43960421F01
+	for <linux-clk@vger.kernel.org>; Wed,  6 May 2026 11:55:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778068450; cv=none; b=jmhgfkuQ3U6y8Yd8SuPou4CNAdBVbEX7HFh2UqVf4qvxglIwhyH7pJmdxNcDIvkTnURm0bSvEC/sLfe/OdDBeqtH2UYoH2jvRob4uj6dLQ3S/5ihw4eCNryQLkJSDYrTspe1KIh1nguEJxjdeGfTlnPczFhur+lAyJQiVf8gx/Q=
+	t=1778068548; cv=none; b=stlLHF6r7wODpEY2RsYX3TyZiilvvXgBdgdWAAsnuWL6Ehd0nZ1AClMRXU9lEyMQoi4cEuRxlepP92VWn/9nE1CJQqFlM7TwpWsVT7xELmGrj7iazZMrPhDztg9tJOLVJCbVePaHlc2WUXeaCWcLTsnd15eGgYn+GSp1a5oLwDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778068450; c=relaxed/simple;
-	bh=Yyfk8X7hQAsUD9G+4fe4CzUE4boCyIRsCV8/4Z21Gnc=;
+	s=arc-20240116; t=1778068548; c=relaxed/simple;
+	bh=15pEe5GNPxLteORBQfGrvAQ4jQMZUEhpWDnsiYVvo5o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n8VL290iZhlkprtI3nZC4Sp9ZjrluSHhIb1netQGT8d6Um1jDm9gaZyORO4lh0wiGR5GUmGoVCeVxTRrS58Gu4dX4mbjQJ2R3KBZM/WA+LXbJag7cdyF7K+xfQpor/KmvVJ2CIOdgKYQyZiDF0ul9ThbGethLdEHe3LvV+auwFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vCDhER9Y; arc=none smtp.client-ip=209.85.128.51
+	 In-Reply-To:Content-Type; b=J/GurlWvW5IX0SlxdKszGsiBatAyuLD1mDL9z0ww6Z84Y+N5V5MvN/4zdKhn27beISkEvcYChFWTXux7aFCFq5DkBGyx/p2STZG9NCqT73c/d/wcdrVgk4FI+vVupE2p/ygp8vD5oFR2QbUJBm2OtgM0PPxM1sUAj/Ojt6+oK0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PPszSXkZ; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vCDhER9Y"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-488a88aeec9so71101095e9.2
-        for <linux-clk@vger.kernel.org>; Wed, 06 May 2026 04:54:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PPszSXkZ"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-48909558b3aso69592555e9.0
+        for <linux-clk@vger.kernel.org>; Wed, 06 May 2026 04:55:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1778068448; x=1778673248; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1778068546; x=1778673346; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Yyfk8X7hQAsUD9G+4fe4CzUE4boCyIRsCV8/4Z21Gnc=;
-        b=vCDhER9YWn7V6zQ7i4yxR+/yve7kiShNsDKsvail0HAUNIQlnv1sbmYPrwJqaLFnJf
-         1ZVBVKjRGLF0EWrG+cqo0SY0ryrxgNiO5LHOaDd49ruBeBnrx46aSwCkXp9JT2z/xaCX
-         IOkmKrCNTa0TYW9+w45jQ7cr0EG5YruABlonZx294FwWjg7vpwaIchDBEWBTkJSzMlLX
-         aHn4hQnQsqj4w1XxZEmF29ftBoMMPUVQ/niXnhydVPJJFlo2duwyxVKWOS7eo8w55K3A
-         fxK9OUci4fSsrFTc7KkfNCFPzAgHudDV+WbKgpfT0OG94SDV2WMK7Wwccz0WNJxioavI
-         9DdA==
+        bh=15pEe5GNPxLteORBQfGrvAQ4jQMZUEhpWDnsiYVvo5o=;
+        b=PPszSXkZdHjtJzs5MjldOEAoC4JUfD38aaWzAyeJfgphJuos45Iqg4EN/pqYjtVqUD
+         oI1ofk5IVEvTqETtL0HJdpD+9tSiK+uJ4H94UGgNta74tebyQ4pYNW9b9a5dlJd3WL/0
+         0NHslSg0MSQ9EweYBd+kwNtAeIKQ5ZdvxMuE2/I5EZw2sSEBFV6PSvNoPbdpDri3E1Lr
+         4HznolFdwh0UcIvaPARDWlM2/mC7lZ5cK6vlR6zIJK+oMPEOKGQpe5T5zuq8Xf1RLS7n
+         3WCMaqrga2vkMos7Y8EQwSFoElxnoDOZ3R8QMP6X1qilw6RGJ2zHPK1izLTajWNvz5ym
+         y8pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778068448; x=1778673248;
+        d=1e100.net; s=20251104; t=1778068546; x=1778673346;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Yyfk8X7hQAsUD9G+4fe4CzUE4boCyIRsCV8/4Z21Gnc=;
-        b=s+Kv8Ku+kVN9aD0cD/+oSCSXIUytqbZZFfUO0ggeZNrPbL+KO3b074IeprSH1tSzjm
-         YIuh9yAT4xqMz9i5NtTsPGUOxx0d6Ek4gMXuPd+s3nJxe8V8OqesHKKyLRJyTqNqh+x6
-         yhF5Zr1SroxCgWLLSGiI5nC8G3rhWmUyCv8SIiDBGOvOUdkziKYVO9DXdLHav7tHxPHZ
-         yGubadI9jvbhMnDHuv1i4UuV8YGGgg6zomPabAuvPVu5Qo3f6yH0IDENCcN3b6V+Y3Uj
-         3MnJXE+noOAKG4+WhgVyqlMMN/ShEW4LoIbkvPSf8BxEph8ugeWgbZza2/McKVYnYGVN
-         yR4g==
-X-Forwarded-Encrypted: i=1; AFNElJ9ITn/UeOaLvUxBJ6TLsls/hJ1rgbUxZeAIcYqZIk/hdVillYKylLC6CFcG9+DFL6W/teqJMTzZ2P0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdrAjsCQdeq7Qxuo7KhQbN5BvSxdKvI6QZIm8ZdPLUZY//7ItS
-	0GXvklYsLg7YwvXqAt6SXxBZK8EsO/K9ExHiKsqZSJroOK7SY2hbo72/3JJp+W2tzkM=
-X-Gm-Gg: AeBDies5r2UD+Jr0H+t/NrnKCfNaNw63Z0TwYUr9WfUfHRx+8hQsMjIIN6pp557b1IV
-	O+BDjKoExDfciyjAAnsKeylRXd93erpip7KIr/QWt4r8zXt7hgQGjngvP4mc2POGVzrHLtF56y5
-	KNjyoycHCa8OEvJkWuabsspDeD79bO/cu30CdefMPSls1y4XjPX8tQqxl+kt4UFQLD1xNZI7S5O
-	O4p1uiHFciybuALItHr7PPBoR2X/iRU97/qBsPgBOOd/6nbHYlNoWQiFHbYBx0JvWaoNEpG/frd
-	nL/ET9Kw7ncuHJBzFxHLyYUOjFcRIqpIKMuk+3DUxM5wRNsnRuNFdPR+HF8VuOtYePMrksw4PvY
-	CxW4H9xHfAE/G49luK+IOO9i1kSNFchssBL/HGC93fU9UVq7Py/AXSkzDFiOoarIQ6UgRb3J7m4
-	mJ9HxHiBfFNsgb57eIzYgQN0oZNUlWuXAVBqBP6JXC65c=
-X-Received: by 2002:a05:600c:8b8b:b0:48a:97b6:7420 with SMTP id 5b1f17b1804b1-48e51f4143fmr55989735e9.24.1778068448039;
-        Wed, 06 May 2026 04:54:08 -0700 (PDT)
+        bh=15pEe5GNPxLteORBQfGrvAQ4jQMZUEhpWDnsiYVvo5o=;
+        b=KujbbaIWLrrBZQxZRZ8M32OfGZwMjZKTSpUpCxh5gUrVIPBLepZ5ek7OGFNVNN353v
+         xwB9zvJpWJYZzRCtBMUl7wbfG+g1HI1kquoWVOC1qedBHNwdqX3UEE0a3nhpIzGFJkPb
+         4CfzinRVH97ifA+J+GHCk9L9jeHfgnU6O79dOkyx4O/uUxYxFvDgxvKs3mPj9UCLZ3D8
+         +xHzZovosYvPUV4MbYw/+5WGaDgxqojPFoWUs75T7A9puMiFv1Q7p6ymquz2ROsSclYh
+         YJ2xceG0qAinCVGG5SE26+osnWgREWLtqiSpCvGUEXfzV55JFKOoNWIlnJijrpgBMVX4
+         Xu5Q==
+X-Gm-Message-State: AOJu0YyZiqCKIIMHZXijAJU6xtj9hQnoIe4RKmfVAIbl6QPiefa7Rdyp
+	cLgqzrxsflZfwBmNQblgjJkkbAq0H/2Oc43B/A9XRngl1isBmL1Dka3S8F3JWTJeDok=
+X-Gm-Gg: AeBDievB7uzh/lPIjJeya09LmpajTdLsPVxnlz/yJlat6L+zXqe0fXO71r681WNmE2C
+	7VCmgHcEAEMTHLcj9MSS0oSMWdWGrSwxDRUy7dcdr+FjZBny5nNFR6Krvg5m6z0qJfwyj05JacF
+	7LvnKqsLfflIMvOq6HD9RTG6DdN3NDmyX01n7SOPqjP0BgPlq3rdRLcR09AVMgoDbt5WJh0NEoB
+	EUnRlRdj064+sGAb151pftXsGfYUcQfLD6q/WYdo/YUYWq1XF3BggxsF45xaiVj4H2R1SifL+lr
+	L+a+fSYG7PuMU0q9wK0/ksLSiJz7i2bQo3JznhI4kyoS4LYjJEDDOKWHCtaB45gjFEhU832r4uY
+	A+sB1AQ5Setl32hetDIODImAbsk1LSh2pWLr4rCFGwA4ZUC26eF2ryyUcKpYbLyQzopdOkIZvZ4
+	IqG57tyKymTtJtS9t/BRfYS2d5No/3eJJ9NyDrBRDaN4Y=
+X-Received: by 2002:a05:600c:8b65:b0:48a:53ea:140b with SMTP id 5b1f17b1804b1-48e51f4e5fdmr60307745e9.28.1778068545639;
+        Wed, 06 May 2026 04:55:45 -0700 (PDT)
 Received: from [10.11.12.108] ([79.115.63.228])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48e530cf964sm29851845e9.1.2026.05.06.04.54.06
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48e538d2878sm69999385e9.15.2026.05.06.04.55.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 May 2026 04:54:07 -0700 (PDT)
-Message-ID: <c38cec65-e8fe-45d8-98c2-c86c27dfa6c1@linaro.org>
-Date: Wed, 6 May 2026 14:54:04 +0300
+        Wed, 06 May 2026 04:55:45 -0700 (PDT)
+Message-ID: <f094b0e2-3c45-42fe-9228-3a3eb2b90185@linaro.org>
+Date: Wed, 6 May 2026 14:55:42 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,23 +67,24 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: samsung: gs101: Fix missing USI7_USI DIV clock in
- peric0_clk_regs
-To: Kuan-Wei Chiu <visitorckw@gmail.com>, peter.griffin@linaro.org,
- krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
- mturquette@baylibre.com, sboyd@kernel.org
-Cc: andre.draszik@linaro.org, alim.akhtar@samsung.com,
- semen.protsenko@linaro.org, wllee@google.com, hsuanting@google.com,
- marscheng@google.com, jserv@ccns.ncku.edu.tw, eleanor15x@gmail.com,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- visitorckw@google.com
-References: <20260505171457.1960837-1-visitorckw@gmail.com>
+Subject: Re: [PATCH v3 10/15] clk: samsung: acpm: use
+ clk_determine_rate_noop()
+To: Brian Masney <bmasney@redhat.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, Juan Yescas <jyescas@google.com>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+References: <20260505-clk-determine-rate-noop-v3-0-f3f829fbacdf@redhat.com>
+ <20260505-clk-determine-rate-noop-v3-10-f3f829fbacdf@redhat.com>
 Content-Language: en-US
 From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20260505171457.1960837-1-visitorckw@gmail.com>
+In-Reply-To: <20260505-clk-determine-rate-noop-v3-10-f3f829fbacdf@redhat.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+Acked-by: Tudor Ambarus <tudor.ambarus@linaro.org>
