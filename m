@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091F537EFE1;
-	Thu,  7 May 2026 09:10:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D1AB36E498;
+	Thu,  7 May 2026 09:11:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778145045; cv=none; b=n0n8ddZf1YT5KJ2pgmk2qEk2xv3L7yYXIYvZ7Xx5ZSg9LhCPxmqxsWNj/1jKCwpTDJKYw1MmfnL2ubQJlwIFvKUBRCfCdu+zORZP4aHxEF4SpA7KfCh42ZTMzoXXZuGK9McTRo+ZxcgRYMSa6HqHhk54rxfNB3Sv/FaOYoKjgyU=
+	t=1778145108; cv=none; b=Fn26fgZxem99+HwUhtGe3GUs4k9OD9QCcDSr/zAjIIXyHvy5QxDbdeYO2NYeHSWphOaf9cyu5pQYHqu2cZLTaUq0vEPtGuqU8qYPpVMx9fREgIvzWZT6TLh1tRI95uYg28Szxy+tx3PK+1+pVrKWiQ2oRCsO+XSKI16vVRvqA3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778145045; c=relaxed/simple;
-	bh=KrOWVyklxktWUvuewCX59mvY1PbJ8FeIsvjCSRqvlPc=;
+	s=arc-20240116; t=1778145108; c=relaxed/simple;
+	bh=CiLKQGOT/ceTUxKe8JM15pVVpEgcdx5CdZ00g4zML3k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K9fQ5VIBWHu3YPKozj2GTlcUwmUu8IXMETRigGxDfzbjYdzduhMWGhMo77fAqWEFWeMss01BhELZnLwN9Hkvldpgpg8iplCFXgRgPdc7/IeSngm8pSQvwqQaOvEAcQ1AK67emsnrvASGFc8F9QrcIFycHzuL7JA5KHX202BkkP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A9OYY5/z; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=DF8JsBmKuXQn9YrznyeRBNc7XZZaxSuuFoLD4RqlaDcMVadUih4ug0aRQBI8uNy2xcoTXiuaLnyB4BxTI4jhCkdtRYePjpp3Z0icbznc+p++xMt3N5nujq0DSvBw9es/8e779daEIAvWaWwY7R+MWj4a6ydCL26zbdslZvU8SUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FYOkxvk/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A9OYY5/z"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2D67C2BCB2;
-	Thu,  7 May 2026 09:10:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FYOkxvk/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7716C2BCB2;
+	Thu,  7 May 2026 09:11:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778145044;
-	bh=KrOWVyklxktWUvuewCX59mvY1PbJ8FeIsvjCSRqvlPc=;
+	s=k20201202; t=1778145107;
+	bh=CiLKQGOT/ceTUxKe8JM15pVVpEgcdx5CdZ00g4zML3k=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=A9OYY5/zu2m0DD+/b0kTfHy/pYdA1QeAHmZfnVpZQ9jYFytL0FsWvRZFZGGC7QGOD
-	 9E+Tis7KzBLQAfNwo8/RiSGHw2MoD4QBnr/5rSSfAsAQI1Z8GOZ98+N7JdmG4ZOA0t
-	 7DNA9p6aUWrDrPMkpk72/j6N5BVonIc1gcZJfxtLnZpxLH9+9xe0kOOtkjCSgWtaqL
-	 kJrW21IRkNMYPybSU7mBad1JWuOZ20+h/JPRyzr27kXq0Fj0pImv+Qg7ax++XgdH1Y
-	 GtsY6iBnGPzDCGP35phY+BZEMkCI0JhuA7kvx5G0R2xqT4DtzmiNINskb+8GwA1M9Z
-	 LZ3/Z6NLEbHnA==
-Message-ID: <91ef405e-28c8-470c-af8f-ead3fbb310b9@kernel.org>
-Date: Thu, 7 May 2026 10:10:37 +0100
+	b=FYOkxvk/SRmmwDQH9XUsvwxI5TNAocKgPEC7HxBz2kApTFRsEJP+/UYY/Tuq57/9j
+	 zHJYzM8tMEoT8Pd/VvE1+zIXz3Nx5SJ7f0JqM9xGXkyr5kang6Nf7ynCo7pnEoEZKc
+	 fEvtPtzSWRlJsQC1U1cWPgi9nbjcTnVwS0sx/cg8Ipz2f6jmtmrPRYNvHZpJDcrW9j
+	 4i8y+xdQM7rqd1aXNVQ0lC8xOiUL7zr7Ss4dYk6H1MPyveLNattnGH+CS68BGeOGff
+	 tbLTIxIRuQXUR8PmDuL/pVxaD/6v5g4rd55OS6yk/VSa6vNHYR+LP/BUtsa2UMBrTd
+	 z3dsYg43wc6uA==
+Message-ID: <a220c981-e4fd-4fd4-8eab-52442b83c20c@kernel.org>
+Date: Thu, 7 May 2026 10:11:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,8 +35,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 6/8] media: qcom: venus: add power domain enable logic
- for Venus cores
+Subject: Re: [PATCH v5 7/8] media: qcom: venus: Add msm8939 resource struct
 To: Erikas Bitovtas <xerikasxx@gmail.com>,
  Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
  Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
@@ -50,10 +49,11 @@ To: Erikas Bitovtas <xerikasxx@gmail.com>,
 Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-clk@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- phone-devel@vger.kernel.org
+ phone-devel@vger.kernel.org,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 References: <20260507-msm8939-venus-rfc-v5-0-d7b5ea2ce591@gmail.com>
- <NKDr05opwdmbkLx617QRk-R0foXgb0E2_3_RD2qymAYEMnCYw8dD-dsSmj2Lrknh9Edo-M5KNzSxk91GWgtNZQ==@protonmail.internalid>
- <20260507-msm8939-venus-rfc-v5-6-d7b5ea2ce591@gmail.com>
+ <GmChRVpxcWVGV9vQDFSbIP-JJkTF6fFa53h2WBoPKjY09Ps6tIzFlG2PGP9pK5CzI_3hgcFMtuxWVdAWfOeE-w==@protonmail.internalid>
+ <20260507-msm8939-venus-rfc-v5-7-d7b5ea2ce591@gmail.com>
 From: Bryan O'Donoghue <bod@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=bod@kernel.org; keydata=
@@ -99,18 +99,85 @@ Autocrypt: addr=bod@kernel.org; keydata=
  LKSGEglMpiX07M1AotgvylN5C8fjbouoK+/RAMsXkk8jba6rPfuuXPaDjCyyKn6zSVHETnHW
  3AJbgVY50T8STpnxayBQvWbCvu+6NOEjXCbyaOJig+5l0zlGN9XHjdANXC5HnwmyaGRL9YDq
  Jh2nVXVJDincOdQRdKcJjYLqaOAoWrYWSDi1iZGspHBTDrnOvfMQzzHY
-In-Reply-To: <20260507-msm8939-venus-rfc-v5-6-d7b5ea2ce591@gmail.com>
+In-Reply-To: <20260507-msm8939-venus-rfc-v5-7-d7b5ea2ce591@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
 On 07/05/2026 09:32, Erikas Bitovtas wrote:
-> Attach power domains for vdec and venc cores and power them up if a vdec
-> or venc session is started.
+> From: André Apitzsch <git@apitzsch.eu>
 > 
+> Add msm8939 configuration data and related compatible.
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Signed-off-by: André Apitzsch <git@apitzsch.eu>
 > Signed-off-by: Erikas Bitovtas <xerikasxx@gmail.com>
-This looks fine to me but, will need to be tested/verified on 8916 to 
-make sure nothing explodes there prior to hitting -next.
-
+> ---
+>   drivers/media/platform/qcom/venus/core.c | 41 ++++++++++++++++++++++++++++++++
+>   1 file changed, 41 insertions(+)
+> 
+> diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
+> index 7e639760c41d..6ad20d58dda2 100644
+> --- a/drivers/media/platform/qcom/venus/core.c
+> +++ b/drivers/media/platform/qcom/venus/core.c
+> @@ -688,6 +688,46 @@ static const struct venus_resources msm8916_res = {
+>   	.enc_nodename = "video-encoder",
+>   };
+> 
+> +static const struct freq_tbl msm8939_freq_table[] = {
+> +	{ 489600, 266670000 },	/* 1080p @ 60 */
+> +	{ 244800, 133330000 },	/* 1080p @ 30 */
+> +	{ 244800, 200000000 },	/* 1080p @ 30 */
+> +	{ 220800, 133330000 },	/* 720p @ 60 */
+> +	{ 108000, 133330000 },	/* 720p @ 30 */
+> +	{ 108000, 200000000 },	/* 720p @ 30 */
+> +	{ 72000, 133330000 },	/* VGA @ 60 */
+> +	{ 36000, 133330000 },	/* VGA @ 30 */
+> +};
+> +
+> +static const struct reg_val msm8939_reg_preset[] = {
+> +	{ 0xe0020, 0x0aaaaaaa },
+> +	{ 0xe0024, 0x0aaaaaaa },
+> +	{ 0x80124, 0x00000003 },
+> +};
+> +
+> +static const struct venus_resources msm8939_res = {
+> +	.freq_tbl = msm8939_freq_table,
+> +	.freq_tbl_size = ARRAY_SIZE(msm8939_freq_table),
+> +	.reg_tbl = msm8939_reg_preset,
+> +	.reg_tbl_size = ARRAY_SIZE(msm8939_reg_preset),
+> +	.clks = { "core", "iface", "bus", },
+> +	.clks_num = 3,
+> +	.vcodec0_clks = { "vcodec0_core", "vcodec1_core" },
+> +	.vcodec1_clks = { "vcodec0_core", "vcodec1_core" },
+> +	.vcodec_clks_num = 2,
+> +	.vcodec_pmdomains = (const char *[]) { "venus", "vcodec0", "vcodec1" },
+> +	.vcodec_pmdomains_num = 3,
+> +	.max_load = 489600, /* 1080p@30 + 1080p@30 */
+> +	.hfi_version = HFI_VERSION_1XX,
+> +	.vmem_id = VIDC_RESOURCE_NONE,
+> +	.vmem_size = 0,
+> +	.vmem_addr = 0,
+> +	.dma_mask = 0xddc00000 - 1,
+> +	.fwname = "qcom/venus-1.8/venus.mbn",
+> +	.dec_nodename = "video-decoder",
+> +	.enc_nodename = "video-encoder",
+> +};
+> +
+>   static const struct freq_tbl msm8996_freq_table[] = {
+>   	{ 1944000, 520000000 },	/* 4k UHD @ 60 (decode only) */
+>   	{  972000, 520000000 },	/* 4k UHD @ 30 */
+> @@ -1121,6 +1161,7 @@ static const struct venus_resources qcm2290_res = {
+> 
+>   static const struct of_device_id venus_dt_match[] = {
+>   	{ .compatible = "qcom,msm8916-venus", .data = &msm8916_res, },
+> +	{ .compatible = "qcom,msm8939-venus", .data = &msm8939_res, },
+>   	{ .compatible = "qcom,msm8996-venus", .data = &msm8996_res, },
+>   	{ .compatible = "qcom,msm8998-venus", .data = &msm8998_res, },
+>   	{ .compatible = "qcom,qcm2290-venus", .data = &qcm2290_res, },
+> 
+> --
+> 2.54.0
+> 
 Reviewed-by: Bryan O'Donoghue <bod@kernel.org>
 
 ---
