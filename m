@@ -1,98 +1,206 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA8437B3E1;
-	Thu,  7 May 2026 08:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7961A3A8FE6;
+	Thu,  7 May 2026 08:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778143754; cv=none; b=I2/0xWmuJ2XOV+CVIPtnGpFF8amT8B+bRHqaDr/yHf5zRnVJ8+8+jgQEIezH9xkex6+Qn/fj6iJco2TReTlI11C/lSjlHScYuLDV2yd93uBAHf3l7snR3Aeg3mx36xAmz3vhhVYwrxlKGl/HUr19ewU5BRhwgsRqz+c63REQXv8=
+	t=1778144023; cv=none; b=IEWwKrWPoAa2X2R9P5mwi97DCFA6Ti3k6IgR1M11PSyrLjJL5hl9K2Tq7Pqk51CVKZnrPww8CaJyU8q6UwdZEQYMBVPFigjFMe8gnsuBfS7sOWAcsC5GsgzHLUYswKCQLL0eTiwVl1883Jtvt/FBrvtAyUzl8EwULoiAtiazLic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778143754; c=relaxed/simple;
-	bh=IjmyKrRs5bSU2CVMI2YglfCQfHmycQAZGSeoqpQ2FxM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EsfRK6oCIUM/OMCQGEJw+0x7ayaFZFGyWY8Pd8xzCFLfZrGddwWRLmzt7/qDuYTy50IbvAJN1F9x131ybmI81gtkiXGMVzY8O8d7Jop2JUkiP6s7bObL52OoIo3pAYV6HbSGPAmFSRnj2FmqHFcbHy2sfVujiPoCz73zDIzoDjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=XniS21eZ; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1778144023; c=relaxed/simple;
+	bh=hwkttDSz43O1IP3XMXY82kyLuXMeR+AJDYgnc+scSCk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XK1afk6vGGm+JGeNSUrW5jnFDCCHVX1zx1kgfTPiWRwJ/xpvjCyc1jXHSkzb03x1dv1ScXpDcpA1+bxRFQRrsHyquPnXkB+GLv2JMsxcd1X2q0vdP8efjCQcFsR9Jf9NlSu7UpYYkInCmCvPmt0xKU69D/LVKC6qewIDN0ZK3aE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ETE/Pffe; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="XniS21eZ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1778143749; x=1809679749;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=IjmyKrRs5bSU2CVMI2YglfCQfHmycQAZGSeoqpQ2FxM=;
-  b=XniS21eZg1J6Aydjrs421BPjkWh2UcdkuxnMrKRpVrWKXntzTLgaT9Gq
-   n/lPupHRSObyWPrk8BozHB251NPM+FAXAjRHWrFQjJS7bmdfaQnz1BP1n
-   HDCz/asokJ4xFzCP26vw0Z32Ng2sCJZVRDMkyxIT2il5JAuqVeSR1004K
-   DNhoVD6Anok/5ehAQArAoKls1LxTkJms/I8PbuEK3hwd8E8v/GAnotb/h
-   XQvGlGmwU43O/Q7Co5dnXyVSStXvyr0xvuU09x/XJT+L0hqX0bvfDosUK
-   UUcMpeGWOnRfKzUoA4AEqGKOTBrIsTBwKZKUE6vHl8SE2R5QDq4kVHb3X
-   w==;
-X-CSE-ConnectionGUID: 5g54zo4oSXqjCAVENxCvvA==
-X-CSE-MsgGUID: MISv4/VQQWmMAERkCqQgxg==
-X-IronPort-AV: E=Sophos;i="6.23,221,1770620400"; 
-   d="scan'208";a="65430976"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 07 May 2026 01:49:04 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Thu, 7 May 2026 01:49:05 -0700
-Received: from che-lt-i67131.microchip.com (10.10.85.11) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Thu, 7 May 2026 01:48:57 -0700
-From: Manikandan Muralidharan <manikandan.m@microchip.com>
-To: <alexandre.belloni@bootlin.com>, <Frank.Li@nxp.com>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <nicolas.ferre@microchip.com>,
-	<claudiu.beznea@tuxon.dev>, <linux@armlinux.org.uk>,
-	<mturquette@baylibre.com>, <sboyd@kernel.org>, <tytso@mit.edu>,
-	<aubin.constans@microchip.com>, <Ryan.Wanner@microchip.com>,
-	<romain.sioen@microchip.com>, <durai.manickamkr@microchip.com>,
-	<cristian.birsan@microchip.com>, <adrian.hunter@intel.com>,
-	<jarkko.nikula@linux.intel.com>, <npitre@baylibre.com>,
-	<linux-i3c@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>
-CC: <manikandan.m@microchip.com>
-Subject: [PATCH v6 5/5] ARM: configs: at91: sama7: add sama7d65 i3c-hci
-Date: Thu, 7 May 2026 14:18:05 +0530
-Message-ID: <20260507084805.481737-6-manikandan.m@microchip.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20260507084805.481737-1-manikandan.m@microchip.com>
-References: <20260507084805.481737-1-manikandan.m@microchip.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ETE/Pffe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8799AC2BCC4;
+	Thu,  7 May 2026 08:53:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1778144022;
+	bh=hwkttDSz43O1IP3XMXY82kyLuXMeR+AJDYgnc+scSCk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ETE/Pffe6hubFc4sLc01rGx6rkkJwmoX090PUvwSrD/6jrnC65jAIfYHLacdx4Bql
+	 KO8cXis0yJrgboVnS21QJh4NDdQQohYuWRoC+VZwrNjpavkIeL1UDRTUr/gLouXIqJ
+	 X5+kOwBOXK33kTMRjPWFE/CdN969E5k+1eTxk5bl914dehzQmC1hTnHruNlKqGmOYr
+	 ZZiD0oQofnR9o9V7qaWgPNWyFX7EbY9jfm4kwwqT/1OzwXbygnyi/7Sy15NmfWkjTY
+	 m1OabTIgKVuXW/TsYw7bgd/W5SbAFHQG5IRlR/L8iuTSStSDPUlik/VUYXkRwTByt+
+	 uEVIJZPOS/zGg==
+Message-ID: <d16447a8-a1e5-40d8-b9a0-72590d8ef288@kernel.org>
+Date: Thu, 7 May 2026 09:53:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/8] media: dt-bindings: venus: Add qcom,msm8939 schema
+To: Erikas Bitovtas <xerikasxx@gmail.com>,
+ Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+ Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+ phone-devel@vger.kernel.org
+References: <20260507-msm8939-venus-rfc-v5-0-d7b5ea2ce591@gmail.com>
+ <F_-Hi9LsMqtxe6qL66l9Btr90AbjmEPhqWNeyJU40OcNT-QVY75FHc6dp7j2W5QSeYiqc93lxbKKBtDpTYDf_Q==@protonmail.internalid>
+ <20260507-msm8939-venus-rfc-v5-1-d7b5ea2ce591@gmail.com>
+From: Bryan O'Donoghue <bod@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=bod@kernel.org; keydata=
+ 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
+In-Reply-To: <20260507-msm8939-venus-rfc-v5-1-d7b5ea2ce591@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 
-Enable the configs needed for I3C framework and microchip
-sama7d65 i3c-hci driver.
-
-Signed-off-by: Durai Manickam KR <durai.manickamkr@microchip.com>
-Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
----
- arch/arm/configs/sama7_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm/configs/sama7_defconfig b/arch/arm/configs/sama7_defconfig
-index e52f671ccec4..6470c7d3fe8a 100644
---- a/arch/arm/configs/sama7_defconfig
-+++ b/arch/arm/configs/sama7_defconfig
-@@ -117,6 +117,8 @@ CONFIG_HW_RANDOM=y
- CONFIG_I2C=y
- CONFIG_I2C_CHARDEV=y
- CONFIG_I2C_AT91=y
-+CONFIG_I3C=y
-+CONFIG_MIPI_I3C_HCI=y
- CONFIG_SPI=y
- CONFIG_SPI_ATMEL=y
- CONFIG_SPI_ATMEL_QUADSPI=y
--- 
-2.25.1
-
+On 07/05/2026 09:32, Erikas Bitovtas wrote:
+> From: André Apitzsch <git@apitzsch.eu>
+> 
+> Add a schema description for the Venus video decoder/encoder IP in
+> MSM8939.
+> 
+> Signed-off-by: André Apitzsch <git@apitzsch.eu>
+> Signed-off-by: Erikas Bitovtas <xerikasxx@gmail.com>
+> ---
+>   .../bindings/media/qcom,msm8939-venus.yaml         | 79 ++++++++++++++++++++++
+>   1 file changed, 79 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/qcom,msm8939-venus.yaml b/Documentation/devicetree/bindings/media/qcom,msm8939-venus.yaml
+> new file mode 100644
+> index 000000000000..10a50a410748
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/qcom,msm8939-venus.yaml
+> @@ -0,0 +1,79 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/qcom,msm8939-venus.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm MSM8939 Venus video encode and decode accelerators
+> +
+> +maintainers:
+> +  - André Apitzsch <git@apitzsch.eu>
+> +  - Erikas Bitovtas <xerikasxx@gmail.com>
+> +
+> +description:
+> +  The Venus IP is a video encode and decode accelerator present
+> +  on Qualcomm platforms
+> +
+> +allOf:
+> +  - $ref: qcom,venus-common.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,msm8939-venus
+> +
+> +  power-domains:
+> +    maxItems: 3
+> +
+> +  power-domain-names:
+> +    items:
+> +      - const: venus
+> +      - const: vcodec0
+> +      - const: vcodec1
+> +
+> +  clocks:
+> +    maxItems: 5
+> +
+> +  clock-names:
+> +    items:
+> +      - const: core
+> +      - const: iface
+> +      - const: bus
+> +      - const: vcodec0_core
+> +      - const: vcodec1_core
+> +
+> +  iommus:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - iommus
+> +  - power-domain-names
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/clock/qcom,gcc-msm8939.h>
+> +
+> +    video-codec@1d00000 {
+> +      compatible = "qcom,msm8939-venus";
+> +      reg = <0x01d00000 0xff000>;
+> +      interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
+> +      clocks = <&gcc GCC_VENUS0_VCODEC0_CLK>,
+> +               <&gcc GCC_VENUS0_AHB_CLK>,
+> +               <&gcc GCC_VENUS0_AXI_CLK>,
+> +               <&gcc GCC_VENUS0_CORE0_VCODEC0_CLK>,
+> +               <&gcc GCC_VENUS0_CORE1_VCODEC0_CLK>;
+> +      clock-names = "core",
+> +                    "iface",
+> +                    "bus",
+> +                    "vcodec0_core",
+> +                    "vcodec1_core";
+> +      power-domains = <&gcc VENUS_GDSC>,
+> +                      <&gcc VENUS_CORE0_GDSC>,
+> +                      <&gcc VENUS_CORE1_GDSC>;
+> +      power-domain-names = "venus", "vcodec0", "vcodec1";
+> +      iommus = <&apps_iommu 5>;
+> +      memory-region = <&venus_mem>;
+> +    };
+> 
+> --
+> 2.54.0
+> 
+Reviewed-by: Bryan O'Donoghue <bod@kernel.org>
