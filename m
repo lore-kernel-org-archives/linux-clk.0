@@ -1,149 +1,110 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B7F3B8939;
-	Thu,  7 May 2026 09:21:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F173C3C1995
+	for <linux-clk@vger.kernel.org>; Thu,  7 May 2026 09:27:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778145714; cv=none; b=kMeB3TvJ40nC4FbGcVN2Xby5Ojw2mlwKZudRCv2V+zNEfEOfiFeCDX9D13jQ3t5Nl1+DopcqVt3pWUsE83mpJWfFEO1vMs2sYb6L0s0il5Gl5SvzevacQNuX6AUw2rtM1SxSwLLG3EEUVVY8BD6eL0jQYZmqyYeKC5bvz6YrWys=
+	t=1778146053; cv=none; b=bS2vHuLT325+XplGppYlKjQHvtkDlmdsbK22eqTjF/jaN/lOmp3B07Glsl48b43AJyLbuY01HlKYXvKkJTj4kirAsBLrOUrCW6rCLAviqAmxJ8gW5uNhmCLjv1qoFgk3+iFyUGn+j5EIhTCjV4TrLUu40YYRCxvvt6I5+RrYbS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778145714; c=relaxed/simple;
-	bh=WIv4qrJIYeBj2gwII3FA4uTYKA0g/+q+WhKHGSNvcB4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L6WRDD41ICfYGjEGH0so8981/F8ghYrV/VHjVDkqj7LlXija+MGhGZ8PPQJK7hkMk1RmNIm8ywZmQ5Kh2n6FF0FrraCvUlOqLd6vd8NU0Vnq7tOwN7YSQ0dPgKNFdkPVeu8l0eTs8PwxcglUwd7V9zGSLiOkM3DCdd/cGNnAQWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OdQ1tfLs; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778146053; c=relaxed/simple;
+	bh=x/JAxKHI7Ael5G6MScPlk2H+HssAyXfZZlY70tK9iiU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JeJnYEXcJrGn4XDQWpz9AFKbzCHtKmOZipOcz3ditdt6LWZQYkd93VA1AZiJniuUznWXa7+xc4f4IBY5aACs0HZONq4mHTvP45FpELSUzZKWA8FveKuJe2n9ZmZ2lnCAz69yuGL2t28X0yuv0iEd5fluDOFC5AIRG1Sslw2xW6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M0rprqbA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OdQ1tfLs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EB6CC2BCB2;
-	Thu,  7 May 2026 09:21:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M0rprqbA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3426C2BCC7
+	for <linux-clk@vger.kernel.org>; Thu,  7 May 2026 09:27:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778145713;
-	bh=WIv4qrJIYeBj2gwII3FA4uTYKA0g/+q+WhKHGSNvcB4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OdQ1tfLsxasSAMlCYWQ/wV/xoPWIQ2iuAwtAY2GomijEzDKjNLOqja5/XlAdgs+T9
-	 1KxImNlfGwtjE1HS4O3YXGUYD3GdwwwCpgpMzBV1eTqKN/WPrAWtTuY6JZO/SQPRQs
-	 Nlwp4rDfCBkfJ5qg5uqwxoQRzTO1hgKC3wB3B3uNWjFb6xsHF1Mbz7O45VwpzoNkZM
-	 gA3+3iYxLDgieIOZIi4TcSurdaIAiSlaezHNDNX3pK0RrUik7foDYsMaxzZY/jQ/J4
-	 JS+jasV/iBRv8uA3kvri/8BaoKiwSO7rH3q+LPBOGEpdxyBc0eTcfE9xJr20maqMt9
-	 pWw65dZGW983A==
-Message-ID: <9d80272f-34af-4423-9e86-a153cb219388@kernel.org>
-Date: Thu, 7 May 2026 10:21:47 +0100
+	s=k20201202; t=1778146052;
+	bh=x/JAxKHI7Ael5G6MScPlk2H+HssAyXfZZlY70tK9iiU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=M0rprqbASG9AzM5L1LoCdxk36ssdaXCyannccq+gQqgcNbj1cx719RJBDVV3bb4dG
+	 oLT/r6JTAbAuNB26XMU7HHp6cDkKBiYx3jN993WhWhZ6kfi+qMGLgO0G8fQGJpRJia
+	 Rpu5solDUtB9CV0evm1gwu3/GX6cqyKIjJLF2YlSZ1CIvL2LYruBuBV/6ZzR29YVmN
+	 +UmK6BCu/NQKuvEQmqLRV3a3ZVy4l6WAo9/EUUwrLIfYVgY5x/TaIglHYErxlJS+l8
+	 4Ec1tWvIAlyKoFjj01NnecWNOa/mexcdaTbvHwmLzL86VJeL087WfJaJMARbT1XVU7
+	 jhVz9zWSmDrhQ==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5a8738c178dso384358e87.1
+        for <linux-clk@vger.kernel.org>; Thu, 07 May 2026 02:27:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ9kZFf/Q0dLTil5a1sZN+i5odIHQ5kASugb1dKhdo9cb8aihmEfKpwMycF1CJkS1kZts8Aop11upqg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweNpakGdxZJpV9UlODxnw2HbtxYtLIO/onp73MVowRUE/PclCi
+	VuMmxsq1pAr4X3pTGI8+HsgK81uwfPlnBxisoSVA7Q7gYNbEe/i2tzDWzxvWOlxguaevThLzh2x
+	h1yRegbvnDiEZeXkV0fu2iapnCfBA2nc=
+X-Received: by 2002:a05:6512:3ba7:b0:5a4:d34:5b38 with SMTP id
+ 2adb3069b0e04-5a887ada944mr2206033e87.2.1778146051005; Thu, 07 May 2026
+ 02:27:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 8/8] media: qcom: venus: Enable HEVC decoding for
- MSM8939
-To: Erikas Bitovtas <xerikasxx@gmail.com>,
- Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
- Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- phone-devel@vger.kernel.org
-References: <20260507-msm8939-venus-rfc-v5-0-d7b5ea2ce591@gmail.com>
- <fZnRy9sgUV1-FCQCS3YiWC9r2U6dDgZvq6Cs3zMNFDdL4gFLl1JQqbxp3KYtWRvlZcr7F9wvteURLBFZOMGAVQ==@protonmail.internalid>
- <20260507-msm8939-venus-rfc-v5-8-d7b5ea2ce591@gmail.com>
-From: Bryan O'Donoghue <bod@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=bod@kernel.org; keydata=
- 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
-In-Reply-To: <20260507-msm8939-venus-rfc-v5-8-d7b5ea2ce591@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20260325143555.451852-1-herve.codina@bootlin.com>
+ <20260325143555.451852-21-herve.codina@bootlin.com> <CAD++jLkFu+Z22QBFiaa9S+Epeh=RJZOYX8BOLVDFw4bhEoYF1Q@mail.gmail.com>
+ <20260507092326.2f8e3b47@bootlin.com>
+In-Reply-To: <20260507092326.2f8e3b47@bootlin.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Thu, 7 May 2026 11:27:19 +0200
+X-Gmail-Original-Message-ID: <CAD++jLmsaddK4MLYhfK+1OkK263QqJfMZ3HF=L0Y7QdDsgX4XQ@mail.gmail.com>
+X-Gm-Features: AVHnY4J4kpHKlWyF60L1gEgZ_kRiVmUaWPxnRdg2mF7S7on9qK93oGWvqiVfuCU
+Message-ID: <CAD++jLmsaddK4MLYhfK+1OkK263QqJfMZ3HF=L0Y7QdDsgX4XQ@mail.gmail.com>
+Subject: Re: [PATCH v6 20/27] misc: lan966x_pci: Fix dtso nodes ordering
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Kalle Niemi <kaleposti@gmail.com>, 
+	Matti Vaittinen <mazziesaccount@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, 
+	Arnd Bergmann <arnd@arndb.de>, Saravana Kannan <saravanak@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Charles Keepax <ckeepax@opensource.cirrus.com>, 
+	Richard Fitzgerald <rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Davidlohr Bueso <dave@stgolabs.net>, 
+	Jonathan Cameron <jonathan.cameron@huawei.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Alison Schofield <alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, 
+	Ira Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Wolfram Sang <wsa@kernel.org>, linux-kernel@vger.kernel.org, 
+	driver-core@lists.linux.dev, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-sound@vger.kernel.org, 
+	patches@opensource.cirrus.com, linux-gpio@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-spi@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org, 
+	Allan Nielsen <allan.nielsen@microchip.com>, Horatiu Vultur <horatiu.vultur@microchip.com>, 
+	Steen Hegelund <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 07/05/2026 09:32, Erikas Bitovtas wrote:
-> MSM8939 supports HEVC decoding. Do not disable the HEVC codec HFI bit
-> and add it to codec type converter method so it can be recognized.
-> 
-> Signed-off-by: Erikas Bitovtas <xerikasxx@gmail.com>
-> ---
->   drivers/media/platform/qcom/venus/core.c       | 2 ++
->   drivers/media/platform/qcom/venus/hfi_parser.c | 3 ++-
->   2 files changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
-> index 6ad20d58dda2..89798ad1087b 100644
-> --- a/drivers/media/platform/qcom/venus/core.c
-> +++ b/drivers/media/platform/qcom/venus/core.c
-> @@ -178,6 +178,8 @@ static void venus_sys_error_handler(struct work_struct *work)
->   static u32 to_v4l2_codec_type(u32 codec)
->   {
->   	switch (codec) {
-> +	case HFI_VIDEO_CODEC_HEVC:
-> +		return V4L2_PIX_FMT_HEVC;
->   	case HFI_VIDEO_CODEC_H264:
->   		return V4L2_PIX_FMT_H264;
->   	case HFI_VIDEO_CODEC_H263:
-> diff --git a/drivers/media/platform/qcom/venus/hfi_parser.c b/drivers/media/platform/qcom/venus/hfi_parser.c
-> index 92765f9c8873..178274d10c02 100644
-> --- a/drivers/media/platform/qcom/venus/hfi_parser.c
-> +++ b/drivers/media/platform/qcom/venus/hfi_parser.c
-> @@ -207,7 +207,8 @@ static int parse_codecs(struct venus_core *core, void *data)
->   	core->enc_codecs = codecs->enc_codecs;
-> 
->   	if (IS_V1(core)) {
-> -		core->dec_codecs &= ~HFI_VIDEO_CODEC_HEVC;
-> +		if (!device_is_compatible(core->dev, "qcom,msm8939-venus"))
-> +			core->dec_codecs &= ~HFI_VIDEO_CODEC_HEVC;
-Stylistically I think this should be a flag in a struct.
+On Thu, May 7, 2026 at 9:23=E2=80=AFAM Herve Codina <herve.codina@bootlin.c=
+om> wrote:
 
-I'm not a big fan of doing a bunch of strstr()/strcmp() generally. If 
-you extend the struct venus_resource in some way - I think this will 
-work better and be more runtime friendly.
+> > Recommended practice is:
+> >
+> > ethernet-switch@...
+(...)
+> > Recommended practice is:
+> > ethernet-port@...
+>
+> Yes, it should be but the DT binding [0] says "switch" and "port".
+(...)
+> Those node names have to follow the DT binding even if this binding doesn=
+'t
+> follow recommended practice.
 
-u32 dec_codecs_blacklist; perhaps
+Aha this binding is not referencing the standard ethernet-switch.yaml,
+that's why I got confused.
 
----
-bod
+OK let's just fix it then, I sent a patch.
+
+Yours,
+Linus Walleij
