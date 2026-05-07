@@ -1,110 +1,170 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F173C3C1995
-	for <linux-clk@vger.kernel.org>; Thu,  7 May 2026 09:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF38B2F1FEF
+	for <linux-clk@vger.kernel.org>; Thu,  7 May 2026 09:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778146053; cv=none; b=bS2vHuLT325+XplGppYlKjQHvtkDlmdsbK22eqTjF/jaN/lOmp3B07Glsl48b43AJyLbuY01HlKYXvKkJTj4kirAsBLrOUrCW6rCLAviqAmxJ8gW5uNhmCLjv1qoFgk3+iFyUGn+j5EIhTCjV4TrLUu40YYRCxvvt6I5+RrYbS4=
+	t=1778147612; cv=none; b=OTtmdcBzFVu7ie6ybxxZxe4lK5tBzSPg6HH60ASzGtVgx9oyU1zRMMV6GesnpFaiEt1hT8XwHIa+kBM7mc0Nfz21BFQcf0V5RbbZJg33lFGHdBVEwVpF79GP3mr+SmqGGE208lmiocXASxWh8WAVMpwMraqb5XQq2RlO3E9KwqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778146053; c=relaxed/simple;
-	bh=x/JAxKHI7Ael5G6MScPlk2H+HssAyXfZZlY70tK9iiU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JeJnYEXcJrGn4XDQWpz9AFKbzCHtKmOZipOcz3ditdt6LWZQYkd93VA1AZiJniuUznWXa7+xc4f4IBY5aACs0HZONq4mHTvP45FpELSUzZKWA8FveKuJe2n9ZmZ2lnCAz69yuGL2t28X0yuv0iEd5fluDOFC5AIRG1Sslw2xW6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M0rprqbA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778147612; c=relaxed/simple;
+	bh=esOQNYyk4S+1vRyuW54BvvEdRBVJYjf+jiRBNIb46VM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lB3fFShwQIs3O1yq7QbjMTK9S9rdaWearREdpiP6rSIOOBnpjh7uTrvV4mfhvutp5BpuabstjS4BrwDN/EtVzJ/ivl7e+f3YgHRNH8QPTpHpGBkbgP9SJXyDPwLMLLakRBOVlXRJ6geB0XrbcsJWS0PbFsnSadKyPOLUIVfeKlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=pj9woii6; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M0rprqbA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3426C2BCC7
-	for <linux-clk@vger.kernel.org>; Thu,  7 May 2026 09:27:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778146052;
-	bh=x/JAxKHI7Ael5G6MScPlk2H+HssAyXfZZlY70tK9iiU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=M0rprqbASG9AzM5L1LoCdxk36ssdaXCyannccq+gQqgcNbj1cx719RJBDVV3bb4dG
-	 oLT/r6JTAbAuNB26XMU7HHp6cDkKBiYx3jN993WhWhZ6kfi+qMGLgO0G8fQGJpRJia
-	 Rpu5solDUtB9CV0evm1gwu3/GX6cqyKIjJLF2YlSZ1CIvL2LYruBuBV/6ZzR29YVmN
-	 +UmK6BCu/NQKuvEQmqLRV3a3ZVy4l6WAo9/EUUwrLIfYVgY5x/TaIglHYErxlJS+l8
-	 4Ec1tWvIAlyKoFjj01NnecWNOa/mexcdaTbvHwmLzL86VJeL087WfJaJMARbT1XVU7
-	 jhVz9zWSmDrhQ==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5a8738c178dso384358e87.1
-        for <linux-clk@vger.kernel.org>; Thu, 07 May 2026 02:27:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ9kZFf/Q0dLTil5a1sZN+i5odIHQ5kASugb1dKhdo9cb8aihmEfKpwMycF1CJkS1kZts8Aop11upqg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweNpakGdxZJpV9UlODxnw2HbtxYtLIO/onp73MVowRUE/PclCi
-	VuMmxsq1pAr4X3pTGI8+HsgK81uwfPlnBxisoSVA7Q7gYNbEe/i2tzDWzxvWOlxguaevThLzh2x
-	h1yRegbvnDiEZeXkV0fu2iapnCfBA2nc=
-X-Received: by 2002:a05:6512:3ba7:b0:5a4:d34:5b38 with SMTP id
- 2adb3069b0e04-5a887ada944mr2206033e87.2.1778146051005; Thu, 07 May 2026
- 02:27:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pj9woii6"
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-7bd87e5d8ffso20865817b3.1
+        for <linux-clk@vger.kernel.org>; Thu, 07 May 2026 02:53:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1778147610; x=1778752410; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=u67GhOwi0lZemgHuDxTmq2QqkO8Lp6ag0DvuYlZNi8c=;
+        b=pj9woii65iLNLmKkAWR0E9QTnZAQFuYEjZM15452wL+5/pcj6YkY1cdTEz8UprUL95
+         h7CmtDoKjDVN7nGQ575jfba+hcGXDQRyy8+RU84ohz9xEdQljvCRLGv837ILKipL+dQK
+         maRBwGfrVpOg3ZnXyEjqBHaPifBywSn0PIUXcFTYLT8CIWEmV+pWobphA9LWW7uFMMGq
+         S26D4alltH6q+35f9/3cpBm1YJ9Lsc5PuwUk6Ak0uwV+asODDM62EGVuysHjfJhA1tfR
+         6Y+jEUiT6wW721iCQjv5uMOgXRqVu5pR7rp04vhq8Yvylc6pnb/v+QjwBxNTLyRjP5HG
+         8DdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778147610; x=1778752410;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=u67GhOwi0lZemgHuDxTmq2QqkO8Lp6ag0DvuYlZNi8c=;
+        b=r/Lbnxl1rwh+dab4O8iEUOORwSYKWvB94Z+ddzqTfUCPBZSv8aqytFWIq1FZpFnD6B
+         oZEBZqkusc7t7qqb4B1xwlViMuJHaAHznD+uPCyklUfO7JrUVVSUfhll2e+5VzrQF927
+         VIeQfIi2yJ3SW5y3ijdMyBjmJ+FHlqFP8pRcq+CuxcWyCWtgrJkQHUSbXLpACDKwqU8A
+         BOmqSoy0o+/aBTqsXtiOMAPrhmnxE/SpmapgaHu2ffzplwp7X5T/zUuYaLWSSZYjxrFA
+         8cItpouh62D9VaYGGDIgS2Gjgdwr9Q7KpHkjAj7iwBRrWa5EIYN7EQp5lxIf74PhEneJ
+         mL+w==
+X-Forwarded-Encrypted: i=1; AFNElJ86z6fEwx3d2kaQlqK6dmhxTdGrOlO75wTHXNrgJdeWp18z98YDVwZT6O2IheYVAK9lFCOD2c2RlM4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yya0Z6t8oLQHMVGW362s42rjEYqCFg3fzkosJMwjmNT9XA5i0Uv
+	ixlTSfteVhjWPovb4HKD52NzTylAjyiuxGwytYhA/9IGQ42JPa8q4kzg
+X-Gm-Gg: Acq92OFaVHSvJP49kyUG0OgcfgGharK+jJn8b6nMKa5Hl2KWc5aiY4DDH1azBRkICGJ
+	hHkn/QBlIEA+ZoFWrVviGOiWoXum1u4R7tppdbNgdz1kXkVXGk/U6HfPEaehldtgIJh+bvxgzYm
+	/u3IyGnkoY56b7XDRQUskIe09MwpIzfuug7hXGZW+oX3FQFIADDVGfpKCvaH+sXznljESgikWnB
+	k+jHBxYxkY8qBjWfJPChin/VNyAWmz360RJi8wxyg22zH6yGoKXsakuffNzZ5t4TOsmP9kn/04h
+	7YuCeLLqqve8qnwKZN8OQ8OcdF1R0weiFAgs1lERS3ekTnGlXAkfNtJMJbPF8Dh8ZTuKYl+kEP6
+	bgVb7cUTOFoTQMYWqmOSI02HyO3I1di6t74xmUnTD3wXQzlqllK1UnCVgL0khGfMI4nQUOKvQRT
+	Mf4y/L4jU4AJ9X4xF8t7cro6QloY/56Kw0Dc7d
+X-Received: by 2002:a05:690c:d90:b0:7bf:b4a:179b with SMTP id 00721157ae682-7bf0b4a1951mr7423237b3.18.1778147609957;
+        Thu, 07 May 2026 02:53:29 -0700 (PDT)
+Received: from [192.168.0.39] ([79.133.247.80])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-7bd66837872sm90497647b3.30.2026.05.07.02.53.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 May 2026 02:53:28 -0700 (PDT)
+Message-ID: <4f1ab5b8-3bfe-43a6-8b91-317456188544@gmail.com>
+Date: Thu, 7 May 2026 12:53:22 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260325143555.451852-1-herve.codina@bootlin.com>
- <20260325143555.451852-21-herve.codina@bootlin.com> <CAD++jLkFu+Z22QBFiaa9S+Epeh=RJZOYX8BOLVDFw4bhEoYF1Q@mail.gmail.com>
- <20260507092326.2f8e3b47@bootlin.com>
-In-Reply-To: <20260507092326.2f8e3b47@bootlin.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 7 May 2026 11:27:19 +0200
-X-Gmail-Original-Message-ID: <CAD++jLmsaddK4MLYhfK+1OkK263QqJfMZ3HF=L0Y7QdDsgX4XQ@mail.gmail.com>
-X-Gm-Features: AVHnY4J4kpHKlWyF60L1gEgZ_kRiVmUaWPxnRdg2mF7S7on9qK93oGWvqiVfuCU
-Message-ID: <CAD++jLmsaddK4MLYhfK+1OkK263QqJfMZ3HF=L0Y7QdDsgX4XQ@mail.gmail.com>
-Subject: Re: [PATCH v6 20/27] misc: lan966x_pci: Fix dtso nodes ordering
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Kalle Niemi <kaleposti@gmail.com>, 
-	Matti Vaittinen <mazziesaccount@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, 
-	Arnd Bergmann <arnd@arndb.de>, Saravana Kannan <saravanak@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Charles Keepax <ckeepax@opensource.cirrus.com>, 
-	Richard Fitzgerald <rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Davidlohr Bueso <dave@stgolabs.net>, 
-	Jonathan Cameron <jonathan.cameron@huawei.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Alison Schofield <alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Wolfram Sang <wsa@kernel.org>, linux-kernel@vger.kernel.org, 
-	driver-core@lists.linux.dev, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-sound@vger.kernel.org, 
-	patches@opensource.cirrus.com, linux-gpio@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org, 
-	Allan Nielsen <allan.nielsen@microchip.com>, Horatiu Vultur <horatiu.vultur@microchip.com>, 
-	Steen Hegelund <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 5/8] clk: qcom: gcc-msm8939: mark Venus core GDSCs as
+ hardware controlled
+To: Bryan O'Donoghue <bod@kernel.org>,
+ Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+ Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+ phone-devel@vger.kernel.org
+References: <20260507-msm8939-venus-rfc-v5-0-d7b5ea2ce591@gmail.com>
+ <f5TsKnC12rLsH63vAi01aN4oXUFLrfgIhn14IQFDb9gcac6anLzzhJdkGNdQ2dRs4vYbFKUptfEgWuKdgIgGsQ==@protonmail.internalid>
+ <20260507-msm8939-venus-rfc-v5-5-d7b5ea2ce591@gmail.com>
+ <17c4626e-8926-4cad-842d-a1b171d1e962@kernel.org>
+Content-Language: en-US
+From: Erikas Bitovtas <xerikasxx@gmail.com>
+In-Reply-To: <17c4626e-8926-4cad-842d-a1b171d1e962@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 7, 2026 at 9:23=E2=80=AFAM Herve Codina <herve.codina@bootlin.c=
-om> wrote:
 
-> > Recommended practice is:
-> >
-> > ethernet-switch@...
-(...)
-> > Recommended practice is:
-> > ethernet-port@...
->
-> Yes, it should be but the DT binding [0] says "switch" and "port".
-(...)
-> Those node names have to follow the DT binding even if this binding doesn=
-'t
-> follow recommended practice.
 
-Aha this binding is not referencing the standard ethernet-switch.yaml,
-that's why I got confused.
+On 5/7/26 11:59 AM, Bryan O'Donoghue wrote:
+> On 07/05/2026 09:32, Erikas Bitovtas wrote:
+>> Since in downstream kernel VENUS_CORE0_GDSC and VENUS_CORE1_GDSC have a
+>> device tree property "qcom,supports-hw-trigger", add a HW_CTRL flag
+>> to these GDSCs to indicate that they are hardware controlled.
+> 
+> This is a misreading/misunderstanding - supports-hw-trigger means the
+> GDSC is capable of being configured this way - not that it _must_ be
+> configured this way.
+> 
+> Which leads me back to my previous point/feedback to you in the previous
+> cycle.
+> 
+> If you _don't_ apply this patch, do you get different behaviour when
+> trying to switch on the encoder ?
+> 
+Running the following ffmpeg command:
+ffmpeg -i Videos/big_buck_bunny_1080p_H264_AAC_25fps_7200K.mp4
+-input_format h264 -c:v vp8_v4l2m2m -pix_fmt nv12
+big_buck_bunny_1080p_H264_AAC_25fps_7200K.vp8.mp4
 
-OK let's just fix it then, I sent a patch.
+Fails with:
+[vp8_v4l2m2m @ 0xffffb0386870] Using device /dev/video1
+[vp8_v4l2m2m @ 0xffffb0386870] driver 'qcom-venus' on card 'Qualcomm
+Venus video encoder' in mplane mode
+[vp8_v4l2m2m @ 0xffffb0386870] requesting formats: output=NV12/nv12
+capture=VP80/none
+[mp4 @ 0xffffb4b3b7e0] Could not find tag for codec vp8 in stream #0,
+codec not currently supported in container
+[out#0/mp4 @ 0xffffb4265e70] Could not write header (incorrect codec
+parameters ?): Invalid argument
+[vf#0:0 @ 0xffffb72105b0] Error sending frames to consumers: Invalid
+argument
+[vf#0:0 @ 0xffffb72105b0] Task finished with error code: -22 (Invalid
+argument)
+[vf#0:0 @ 0xffffb72105b0] Terminating thread with return code -22
+(Invalid argument)
 
-Yours,
-Linus Walleij
+If I revert the patch, both decoder and encoder fail. This time, encoder
+fails with the following error:
+[vp8_v4l2m2m @ 0xffff8d356870] Could not find a valid device
+[vp8_v4l2m2m @ 0xffff8d356870] can't configure encoder
+[vost#0:0/vp8_v4l2m2m @ 0xffff91b3ba80] [enc:vp8_v4l2m2m @
+0xffff8eb78f40] Error while opening encoder - maybe incorrect parameters
+such as bit_rate, rate, width or height.
+[vf#0:0 @ 0xffff941f25b0] Error sending frames to consumers: Invalid
+argument
+[vf#0:0 @ 0xffff941f25b0] Task finished with error code: -22 (Invalid
+argument)
+[vf#0:0 @ 0xffff941f25b0] Terminating thread with return code -22
+(Invalid argument)
+[vost#0:0/vp8_v4l2m2m @ 0xffff91b3ba80] [enc:vp8_v4l2m2m @
+0xffff8eb78f40] Could not open encoder before EOF
+[vost#0:0/vp8_v4l2m2m @ 0xffff91b3ba80] Task finished with error code:
+-22 (Invalid argument)
+[vost#0:0/vp8_v4l2m2m @ 0xffff91b3ba80] Terminating thread with return
+code -22 (Invalid argument)
+[out#0/mp4 @ 0xffff91265e70] Nothing was written into output file,
+because at least one of its streams received no packets.
+>> Venus core clock cannot be enabled if Venus core GDSCs are switched off.
+> 
+> True.
+> 
+>> But since they are hardware controlled
+> 
+> False. Your patch makes it so.
+> 
+> The question is, is that change actually required and/or beneficial here ?
+> 
+>  they can be switched off at
+>> any moment. Vote for the Venus core clock to enable it later when GDSCs
+>> get turned on.
