@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D1AB36E498;
-	Thu,  7 May 2026 09:11:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B7F3B8939;
+	Thu,  7 May 2026 09:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778145108; cv=none; b=Fn26fgZxem99+HwUhtGe3GUs4k9OD9QCcDSr/zAjIIXyHvy5QxDbdeYO2NYeHSWphOaf9cyu5pQYHqu2cZLTaUq0vEPtGuqU8qYPpVMx9fREgIvzWZT6TLh1tRI95uYg28Szxy+tx3PK+1+pVrKWiQ2oRCsO+XSKI16vVRvqA3I=
+	t=1778145714; cv=none; b=kMeB3TvJ40nC4FbGcVN2Xby5Ojw2mlwKZudRCv2V+zNEfEOfiFeCDX9D13jQ3t5Nl1+DopcqVt3pWUsE83mpJWfFEO1vMs2sYb6L0s0il5Gl5SvzevacQNuX6AUw2rtM1SxSwLLG3EEUVVY8BD6eL0jQYZmqyYeKC5bvz6YrWys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778145108; c=relaxed/simple;
-	bh=CiLKQGOT/ceTUxKe8JM15pVVpEgcdx5CdZ00g4zML3k=;
+	s=arc-20240116; t=1778145714; c=relaxed/simple;
+	bh=WIv4qrJIYeBj2gwII3FA4uTYKA0g/+q+WhKHGSNvcB4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DF8JsBmKuXQn9YrznyeRBNc7XZZaxSuuFoLD4RqlaDcMVadUih4ug0aRQBI8uNy2xcoTXiuaLnyB4BxTI4jhCkdtRYePjpp3Z0icbznc+p++xMt3N5nujq0DSvBw9es/8e779daEIAvWaWwY7R+MWj4a6ydCL26zbdslZvU8SUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FYOkxvk/; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=L6WRDD41ICfYGjEGH0so8981/F8ghYrV/VHjVDkqj7LlXija+MGhGZ8PPQJK7hkMk1RmNIm8ywZmQ5Kh2n6FF0FrraCvUlOqLd6vd8NU0Vnq7tOwN7YSQ0dPgKNFdkPVeu8l0eTs8PwxcglUwd7V9zGSLiOkM3DCdd/cGNnAQWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OdQ1tfLs; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FYOkxvk/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7716C2BCB2;
-	Thu,  7 May 2026 09:11:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OdQ1tfLs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EB6CC2BCB2;
+	Thu,  7 May 2026 09:21:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778145107;
-	bh=CiLKQGOT/ceTUxKe8JM15pVVpEgcdx5CdZ00g4zML3k=;
+	s=k20201202; t=1778145713;
+	bh=WIv4qrJIYeBj2gwII3FA4uTYKA0g/+q+WhKHGSNvcB4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FYOkxvk/SRmmwDQH9XUsvwxI5TNAocKgPEC7HxBz2kApTFRsEJP+/UYY/Tuq57/9j
-	 zHJYzM8tMEoT8Pd/VvE1+zIXz3Nx5SJ7f0JqM9xGXkyr5kang6Nf7ynCo7pnEoEZKc
-	 fEvtPtzSWRlJsQC1U1cWPgi9nbjcTnVwS0sx/cg8Ipz2f6jmtmrPRYNvHZpJDcrW9j
-	 4i8y+xdQM7rqd1aXNVQ0lC8xOiUL7zr7Ss4dYk6H1MPyveLNattnGH+CS68BGeOGff
-	 tbLTIxIRuQXUR8PmDuL/pVxaD/6v5g4rd55OS6yk/VSa6vNHYR+LP/BUtsa2UMBrTd
-	 z3dsYg43wc6uA==
-Message-ID: <a220c981-e4fd-4fd4-8eab-52442b83c20c@kernel.org>
-Date: Thu, 7 May 2026 10:11:41 +0100
+	b=OdQ1tfLsxasSAMlCYWQ/wV/xoPWIQ2iuAwtAY2GomijEzDKjNLOqja5/XlAdgs+T9
+	 1KxImNlfGwtjE1HS4O3YXGUYD3GdwwwCpgpMzBV1eTqKN/WPrAWtTuY6JZO/SQPRQs
+	 Nlwp4rDfCBkfJ5qg5uqwxoQRzTO1hgKC3wB3B3uNWjFb6xsHF1Mbz7O45VwpzoNkZM
+	 gA3+3iYxLDgieIOZIi4TcSurdaIAiSlaezHNDNX3pK0RrUik7foDYsMaxzZY/jQ/J4
+	 JS+jasV/iBRv8uA3kvri/8BaoKiwSO7rH3q+LPBOGEpdxyBc0eTcfE9xJr20maqMt9
+	 pWw65dZGW983A==
+Message-ID: <9d80272f-34af-4423-9e86-a153cb219388@kernel.org>
+Date: Thu, 7 May 2026 10:21:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,7 +35,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 7/8] media: qcom: venus: Add msm8939 resource struct
+Subject: Re: [PATCH v5 8/8] media: qcom: venus: Enable HEVC decoding for
+ MSM8939
 To: Erikas Bitovtas <xerikasxx@gmail.com>,
  Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
  Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
@@ -49,11 +50,10 @@ To: Erikas Bitovtas <xerikasxx@gmail.com>,
 Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-clk@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- phone-devel@vger.kernel.org,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+ phone-devel@vger.kernel.org
 References: <20260507-msm8939-venus-rfc-v5-0-d7b5ea2ce591@gmail.com>
- <GmChRVpxcWVGV9vQDFSbIP-JJkTF6fFa53h2WBoPKjY09Ps6tIzFlG2PGP9pK5CzI_3hgcFMtuxWVdAWfOeE-w==@protonmail.internalid>
- <20260507-msm8939-venus-rfc-v5-7-d7b5ea2ce591@gmail.com>
+ <fZnRy9sgUV1-FCQCS3YiWC9r2U6dDgZvq6Cs3zMNFDdL4gFLl1JQqbxp3KYtWRvlZcr7F9wvteURLBFZOMGAVQ==@protonmail.internalid>
+ <20260507-msm8939-venus-rfc-v5-8-d7b5ea2ce591@gmail.com>
 From: Bryan O'Donoghue <bod@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=bod@kernel.org; keydata=
@@ -99,86 +99,51 @@ Autocrypt: addr=bod@kernel.org; keydata=
  LKSGEglMpiX07M1AotgvylN5C8fjbouoK+/RAMsXkk8jba6rPfuuXPaDjCyyKn6zSVHETnHW
  3AJbgVY50T8STpnxayBQvWbCvu+6NOEjXCbyaOJig+5l0zlGN9XHjdANXC5HnwmyaGRL9YDq
  Jh2nVXVJDincOdQRdKcJjYLqaOAoWrYWSDi1iZGspHBTDrnOvfMQzzHY
-In-Reply-To: <20260507-msm8939-venus-rfc-v5-7-d7b5ea2ce591@gmail.com>
+In-Reply-To: <20260507-msm8939-venus-rfc-v5-8-d7b5ea2ce591@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
 On 07/05/2026 09:32, Erikas Bitovtas wrote:
-> From: André Apitzsch <git@apitzsch.eu>
+> MSM8939 supports HEVC decoding. Do not disable the HEVC codec HFI bit
+> and add it to codec type converter method so it can be recognized.
 > 
-> Add msm8939 configuration data and related compatible.
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> Signed-off-by: André Apitzsch <git@apitzsch.eu>
 > Signed-off-by: Erikas Bitovtas <xerikasxx@gmail.com>
 > ---
->   drivers/media/platform/qcom/venus/core.c | 41 ++++++++++++++++++++++++++++++++
->   1 file changed, 41 insertions(+)
+>   drivers/media/platform/qcom/venus/core.c       | 2 ++
+>   drivers/media/platform/qcom/venus/hfi_parser.c | 3 ++-
+>   2 files changed, 4 insertions(+), 1 deletion(-)
 > 
 > diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
-> index 7e639760c41d..6ad20d58dda2 100644
+> index 6ad20d58dda2..89798ad1087b 100644
 > --- a/drivers/media/platform/qcom/venus/core.c
 > +++ b/drivers/media/platform/qcom/venus/core.c
-> @@ -688,6 +688,46 @@ static const struct venus_resources msm8916_res = {
->   	.enc_nodename = "video-encoder",
->   };
+> @@ -178,6 +178,8 @@ static void venus_sys_error_handler(struct work_struct *work)
+>   static u32 to_v4l2_codec_type(u32 codec)
+>   {
+>   	switch (codec) {
+> +	case HFI_VIDEO_CODEC_HEVC:
+> +		return V4L2_PIX_FMT_HEVC;
+>   	case HFI_VIDEO_CODEC_H264:
+>   		return V4L2_PIX_FMT_H264;
+>   	case HFI_VIDEO_CODEC_H263:
+> diff --git a/drivers/media/platform/qcom/venus/hfi_parser.c b/drivers/media/platform/qcom/venus/hfi_parser.c
+> index 92765f9c8873..178274d10c02 100644
+> --- a/drivers/media/platform/qcom/venus/hfi_parser.c
+> +++ b/drivers/media/platform/qcom/venus/hfi_parser.c
+> @@ -207,7 +207,8 @@ static int parse_codecs(struct venus_core *core, void *data)
+>   	core->enc_codecs = codecs->enc_codecs;
 > 
-> +static const struct freq_tbl msm8939_freq_table[] = {
-> +	{ 489600, 266670000 },	/* 1080p @ 60 */
-> +	{ 244800, 133330000 },	/* 1080p @ 30 */
-> +	{ 244800, 200000000 },	/* 1080p @ 30 */
-> +	{ 220800, 133330000 },	/* 720p @ 60 */
-> +	{ 108000, 133330000 },	/* 720p @ 30 */
-> +	{ 108000, 200000000 },	/* 720p @ 30 */
-> +	{ 72000, 133330000 },	/* VGA @ 60 */
-> +	{ 36000, 133330000 },	/* VGA @ 30 */
-> +};
-> +
-> +static const struct reg_val msm8939_reg_preset[] = {
-> +	{ 0xe0020, 0x0aaaaaaa },
-> +	{ 0xe0024, 0x0aaaaaaa },
-> +	{ 0x80124, 0x00000003 },
-> +};
-> +
-> +static const struct venus_resources msm8939_res = {
-> +	.freq_tbl = msm8939_freq_table,
-> +	.freq_tbl_size = ARRAY_SIZE(msm8939_freq_table),
-> +	.reg_tbl = msm8939_reg_preset,
-> +	.reg_tbl_size = ARRAY_SIZE(msm8939_reg_preset),
-> +	.clks = { "core", "iface", "bus", },
-> +	.clks_num = 3,
-> +	.vcodec0_clks = { "vcodec0_core", "vcodec1_core" },
-> +	.vcodec1_clks = { "vcodec0_core", "vcodec1_core" },
-> +	.vcodec_clks_num = 2,
-> +	.vcodec_pmdomains = (const char *[]) { "venus", "vcodec0", "vcodec1" },
-> +	.vcodec_pmdomains_num = 3,
-> +	.max_load = 489600, /* 1080p@30 + 1080p@30 */
-> +	.hfi_version = HFI_VERSION_1XX,
-> +	.vmem_id = VIDC_RESOURCE_NONE,
-> +	.vmem_size = 0,
-> +	.vmem_addr = 0,
-> +	.dma_mask = 0xddc00000 - 1,
-> +	.fwname = "qcom/venus-1.8/venus.mbn",
-> +	.dec_nodename = "video-decoder",
-> +	.enc_nodename = "video-encoder",
-> +};
-> +
->   static const struct freq_tbl msm8996_freq_table[] = {
->   	{ 1944000, 520000000 },	/* 4k UHD @ 60 (decode only) */
->   	{  972000, 520000000 },	/* 4k UHD @ 30 */
-> @@ -1121,6 +1161,7 @@ static const struct venus_resources qcm2290_res = {
-> 
->   static const struct of_device_id venus_dt_match[] = {
->   	{ .compatible = "qcom,msm8916-venus", .data = &msm8916_res, },
-> +	{ .compatible = "qcom,msm8939-venus", .data = &msm8939_res, },
->   	{ .compatible = "qcom,msm8996-venus", .data = &msm8996_res, },
->   	{ .compatible = "qcom,msm8998-venus", .data = &msm8998_res, },
->   	{ .compatible = "qcom,qcm2290-venus", .data = &qcm2290_res, },
-> 
-> --
-> 2.54.0
-> 
-Reviewed-by: Bryan O'Donoghue <bod@kernel.org>
+>   	if (IS_V1(core)) {
+> -		core->dec_codecs &= ~HFI_VIDEO_CODEC_HEVC;
+> +		if (!device_is_compatible(core->dev, "qcom,msm8939-venus"))
+> +			core->dec_codecs &= ~HFI_VIDEO_CODEC_HEVC;
+Stylistically I think this should be a flag in a struct.
+
+I'm not a big fan of doing a bunch of strstr()/strcmp() generally. If 
+you extend the struct venus_resource in some way - I think this will 
+work better and be more runtime friendly.
+
+u32 dec_codecs_blacklist; perhaps
 
 ---
 bod
