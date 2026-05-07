@@ -1,104 +1,95 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2AE317715;
-	Thu,  7 May 2026 13:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1057C3FB7FF
+	for <linux-clk@vger.kernel.org>; Thu,  7 May 2026 13:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778161041; cv=none; b=H57xtQOsYYE+5BF6JyvvDfoHJqy1BM/Iso1MbR5IMoI/CwZLKgSAFYsspN6gS0vPx3u67obKHh6UzMmEYsAT25n3DhkVVOusWXtwarV6x1G9j+280f80Bz0ofd87Qcz1QBNg8Tvu1vW7p+DQ4qpHO5Uoa2d8dPTgu716Es9+jqg=
+	t=1778162021; cv=none; b=uuks5y29cvLHqSbd3GtrO8JuIlQIMck/zVDw7GANQi2Z3/E+d5umIoQX4HlWbb7gz56FtIjaEEHfS1gN0tsO/2MG4PdE5Tne538out2MDtUwDQkipCXVnsZdaHT2eXjO12gZxFcSIb1S9eRf0XkwO7TV7MQPCo0C4jzG/pRAOMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778161041; c=relaxed/simple;
-	bh=uDgYd9wh4Z9uLJzVcDJBnzL4XsVwe1cJlFbdJ08Kj0Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X5Y5inRe4u9cmlFdj5XcbCIcP8YtMztr6izZ5QrWAs7OFBGlweoKX5jNBbZB63z1Ruj5XOYtsaDFz04W4ig0HG3HOlBSxaHcIyiFWrXHiID3TDn60pD+S5DshRiRyiJnHjfJnSrXOEwUaRw+zEi++757Iqu7oGNkbaXHMIfV5M4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KzsNHHA6; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778162021; c=relaxed/simple;
+	bh=L9AP7K7IS/BQIX048gXZafEbvq5i3LmZ5GjfHPcHmZY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sGAVYIhkYdUI29Seh3gSmJyORWRXRcTztMr2jIK2ls/vkrwUGx3aB5gAV0hVxVDwU6FZFSY3Q776eCP23qjYp0RCxyI+JSZVQzZF4oIahv29iG3b0OyPNgDr6LWqZibV+dABgQCxkAy+Ixl85xQ49LAspSdPdX5LL/AC0Tn+dIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W7z343mY; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KzsNHHA6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B84DC2BCB2;
-	Thu,  7 May 2026 13:37:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778161041;
-	bh=uDgYd9wh4Z9uLJzVcDJBnzL4XsVwe1cJlFbdJ08Kj0Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KzsNHHA6beTFahQZ7Pi3tQF+/zMWTVg6scWEkqAYmrC3+ysDGZ5syFyjCw1oavkv3
-	 9d8RANik2DKN7viWqESognvyAfNP0L0pIRlpIHo0rsN/DqUlqz9np4p3FsV6vDdPyu
-	 +46yByKJsfJdlj6KOyXSuLMUcDQO+1ScOsriKWzoEITUgKNjwIpXQKCvBv5sDEPRkJ
-	 UgZLUsKrngxRx6UAEkY2ZfXnHTitu4xs4WbYl7TJJPH0LRmFjcnOmWfKXokMBfXAD3
-	 Zr775i2S1thuIK1ZYsRg6KcKJNaCrP2txRr4ssopAKx4hbEEjcVSdUl09DDYLNROUn
-	 TuQgNRGJ7AENA==
-Message-ID: <614a087d-d219-49cb-85ee-772044558649@kernel.org>
-Date: Thu, 7 May 2026 14:37:15 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W7z343mY"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4891f625344so10340215e9.0
+        for <linux-clk@vger.kernel.org>; Thu, 07 May 2026 06:53:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1778162018; x=1778766818; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YVQeX6F69iLnc7u2WDbtyBci9ESFJbN+KlbTGvK+NNU=;
+        b=W7z343mYO7RU2hEA3AmVm+rctv1+bJdUwB9uk7jjHeb8jpnuEp0pgg8dpgrI5pfmSH
+         /AxosvDQuWzkbxDHQpMViC2YupJ9X3ZhCEKAqrgWhh5eJNdsQlSbWzYZSWTOSNZ+1Vf6
+         oAXGO2xifexFTbTEST5AGJxPMc580CreoWVd9sSKznCrqZpiLSC6ODr9er1rF4zYunXj
+         YrthltcUhq5K/lrGDR4iBvJwoav8GIri8nGZQJj6TGlAVrZDgPpBsLovx1FtFBSOwlcR
+         o4AQZwZHgVtp8RLuZjF6Ix083e1WQvJwWDSwJrCmRF4L116wEPx3WXeZlm1GSic39Y5/
+         Vlkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778162018; x=1778766818;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YVQeX6F69iLnc7u2WDbtyBci9ESFJbN+KlbTGvK+NNU=;
+        b=FT40a51gdKd2gvCNlud9lwgu3CZpX9ilUF+KzSURQ+3UbVBapN9xUJjWyJJ0heVMAr
+         9Xex7dQcUkeeAbgOd4G81k/nv5EHKH2jo8IiSX3x1+FYaOTkFZLKU5t2vfKnIXtkeSlI
+         Qtpan/YUS5jdTYjPUdWFWj4Y9RZCMPTZR26HRHJL1E2G0FzSKKt5+ZDDH+pNqH1zz9Kx
+         ELnQKcNi6MvBZyGxy+FYllfURzCMXvlsL3d8qM9VL3EUjlLxxExOjd9jSLiS1OOcGWf4
+         2c7pNNtvLBPMfZBBwKGHzhn0blYWqimVLdGrGEWW8HJ6tYWTgHOjp5JWXv3nA1KfkJx4
+         6jTg==
+X-Gm-Message-State: AOJu0YwRUwxR9mgu9ZZWl2t7hvtUS45cBqP3mcdWKcZA5ci3XEvXIox3
+	e+F7S66ym8bncyJTJ+TXaahvK2PUD+a+lqeuWj/wFH1E1U/WazrxSRTy
+X-Gm-Gg: AeBDietja4Yk1V/nOCfP75qNK/yC2NF7S48iBzNsMRUgxkgaG9Ai9aTzuVcu0/7awXv
+	NuJ6K6pSXUOb2XI/xINK9iYWX2jY7FW8zVjH0QOUV2aqHLIehN4EJcDd3TItcfk50aL4xVCwXdm
+	Gw3aOp/HSlnt0EQ3BqEgHyxHTEtXMY3I1BZ+6qQz4P9IdRDwTpDXOYwyqZunbE/tP9Om6dvnVrJ
+	On7xSSAKZA2A8IEyESw0pkZOz9qfCyF83yhmq8PPG7mku1bNMifTsyqON0V+KKyu0uFl9iionIh
+	Qsfzz4A7Yo6jC5bXna7g0xxvAoLckldFHuutFfLJtSXuLZAKgye9gKeiNkpArR9h9C0qbeGJXJw
+	VMG7FCN9K8mGfjyWDn1zK5z0Ddwq9P4Vjj3Fek9nO7YuKxzjUjkqL7MuAW3cMEv/TyxaIGCXvnu
+	G6htA9LAq7l/t+TQvRGKrqNWU=
+X-Received: by 2002:a05:600c:8b6e:b0:485:3c2e:60d5 with SMTP id 5b1f17b1804b1-48e5dfcd72emr49319315e9.2.1778162018318;
+        Thu, 07 May 2026 06:53:38 -0700 (PDT)
+Received: from xeon ([188.163.112.56])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48e538fad5fsm137882125e9.10.2026.05.07.06.53.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 May 2026 06:53:36 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Thierry Reding <treding@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/1 RESEND] clk: tegra: set up proper EMC clock implementation for Tegra114
+Date: Thu,  7 May 2026 16:53:13 +0300
+Message-ID: <20260507135314.76817-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 5/8] clk: qcom: gcc-msm8939: mark Venus core GDSCs as
- hardware controlled
-To: Erikas Bitovtas <xerikasxx@gmail.com>,
- Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
- Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- phone-devel@vger.kernel.org
-References: <20260507-msm8939-venus-rfc-v5-0-d7b5ea2ce591@gmail.com>
- <f5TsKnC12rLsH63vAi01aN4oXUFLrfgIhn14IQFDb9gcac6anLzzhJdkGNdQ2dRs4vYbFKUptfEgWuKdgIgGsQ==@protonmail.internalid>
- <20260507-msm8939-venus-rfc-v5-5-d7b5ea2ce591@gmail.com>
- <17c4626e-8926-4cad-842d-a1b171d1e962@kernel.org>
- <CYaHtccGOWlaUtl3QIKva44ybJiRHsPOZmHEkl2KKGmnDxJ8vTH-SVNMGbL7bjkYjI692nplORzOhpfjs3XJfg==@protonmail.internalid>
- <4f1ab5b8-3bfe-43a6-8b91-317456188544@gmail.com>
- <7df3bff7-b872-4b20-8e7c-698157a41f33@kernel.org>
- <tawGGT4rtpw22Ng-MgM--GhoEihBU7tY_TrFUHf8raMKApyqTcSkKHyfSuRIL_bqNp_5zWD4SBG_C4c8CB7_6Q==@protonmail.internalid>
- <18998766-62fe-4a5e-95d8-1bfae712d8fb@gmail.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bod@kernel.org>
-In-Reply-To: <18998766-62fe-4a5e-95d8-1bfae712d8fb@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 07/05/2026 13:46, Erikas Bitovtas wrote:
->> Try:
->>
->> v4l2-ctl --verbose --set-fmt-video-
->> out=width=1280,height=720,pixelformat=NV12 --set-selection-output
->> target=crop,top=0,left=0,width=1280,height=720 --set-fmt-
->> video=pixelformat=H264 --stream-mmap --stream-out-mmap --stream-from=/
->> media/cyclists_1280x720_92frames.yuv --stream-to=/tmp/
->> cyclists_1280x720_92frames.h264 -d /dev/video1
->>
->> v4l2-ctl --verbose --set-fmt-video-
->> out=width=1280,height=720,pixelformat=NV12 --set-selection-output
->> target=crop,top=0,left=0,width=1280,height=720 --set-fmt-
->> video=pixelformat=HEVC --stream-mmap --stream-out-mmap --stream-from=/
->> media/cyclists_1280x720_92frames.yuv --stream-to=/tmp/
->> cyclists_1280x720_92frames.hevc -d /dev/video1
->>
-> Sorry, but I couldn't find the file you were referring to. Do you happen
-> to have a link where I could download it? Thank you in advance.
->> ---
->> bod
-> 
+Remove current emc and emc_mux clocks and replace them with the proper EMC
+clock implementation for correct EMC driver support.
 
-wget https://media.xiph.org/video/derf/y4m/crowd_run_1080p50.y4m
-ffmpeg -i crowd_run_1080p50.y4m -vf scale=1280:720 -pix_fmt nv12 
--frames:v 92 -f rawvideo cyclists_1280x720_92frames.yuv
+Part of previous patchset: https://lore.kernel.org/lkml/20251125120559.158860-1-clamor95@gmail.com/
 
-v4l2-ctl --verbose 
---set-fmt-video-out=width=1280,height=720,pixelformat=NV12 
---set-selection-output target=crop,top=0,left=0,width=1280,height=720 
---set-fmt-video=pixelformat=H264 --stream-mmap --stream-out-mmap 
---stream-from=cyclists_1280x720_92frames.yuv 
---stream-to=/tmp/cyclists_1280x720_92frames.h264 -d /dev/video1
+Svyatoslav Ryhel (1):
+  clk: tegra: set up proper EMC clock implementation for Tegra114
 
----
-bod
+ drivers/clk/tegra/clk-tegra114.c | 39 ++++++++++++++++++++------------
+ 1 file changed, 25 insertions(+), 14 deletions(-)
+
+-- 
+2.51.0
+
