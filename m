@@ -1,184 +1,117 @@
-Received: from smtp-usa1.onexmail.com (smtp-usa1.onexmail.com [52.205.10.60])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8910D3EBF06;
-	Thu,  7 May 2026 10:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.205.10.60
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778150286; cv=none; b=E9fRqabVj9txi1iwGl3cfEs3C3ihC7X+fxz1+aZg+SIwv4pQwfe/AOfqf93fnUh41gcRAlNZ1qgiEaLdlvWqSnCGDicQF4RZCCUh0OBuN+jj3PH9F9VlAZr+oTn5JqUJ9OLm50+9yWWGWU9oIDf4E7KQv2H0bg7ZMjcnsYZVzho=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778150286; c=relaxed/simple;
-	bh=ldqSgxXBwNiVbDM1IvgqKUTueYaDUJx3Byc33LhWAOM=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=punMsRCI/bKnp6jzbGcWE81dCRfYHTAaSm5TQ2B5ZfYIoASG+8gIJ6wZswwHeEGxuh5N7J+e1Z/JuQk3bFvArzJeysf2REAibAnkmZZ4nuHxwy5RuwsRQA6nP99Mmyyw+BnfqmYkzjaCw7wNYWBJu9HcVoe3gQSQzVnQz9wHxpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=pPm9zhAA; arc=none smtp.client-ip=52.205.10.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EE13D646A
+	for <linux-clk@vger.kernel.org>; Thu,  7 May 2026 10:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778151260; cv=pass; b=hmet+ASv5P5GFebHHH1Viud+7gNFBd2OH2qPHaaFsCzYdIlfYAbGpurtGMqYIlFN8kgb/VZ7qJ3QKuggFZYGn+um+gMKeafu/29pvkSEV7cGn8vkYE3dw2Y1q42hBSbSn9bvABbk3heP62KdVMAE/UUiK5U127m4XdJEF3KuoIs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778151260; c=relaxed/simple;
+	bh=IF7uiHUYLYrhqG+FspNFwJJCVwTRPmqazl4TaUyXmq0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hDKpuroH3pHGb/Z7sS3T4GVR7+p6+KnbG5OSwEiZN5vVSMT5a3SnWNZnaA9wiEuxIhmuibxrn2qGhBPv2sUswUe++lAy5d9TbxwIyDksmZC7aNznWOAxTH2BaTIXEezx1FXn0TVioZF9BZUmkS6PtKIZvbzgZ/dz9NRU/xgciL8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=If+aXJer; arc=pass smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="pPm9zhAA"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1778150196;
-	bh=U2qvUhvca7YAn4TE9hm8vvaV7bUDGvf9K7jZFzPWNAI=;
-	h=From:Subject:Date:Message-Id:MIME-Version:To;
-	b=pPm9zhAAlXtpOm6BoZX4qYpXhwjvB+FCQzQ8gujrpM3bnIz3Ez2FM3tCJ3y4nFDd8
-	 +H83HN+6oz/1X5jDXjaI40C1kHAWzKGdHhkXhXyohRbDIOFRARU8U1/L3Sl7l8Hax3
-	 bAct4QzPrTSStplLcpU3GhsUydp2jDNEE6dNCVGc=
-X-QQ-mid: esmtpgz10t1778150187tf7d04fee
-X-QQ-Originating-IP: yFNw69ncz+AtuuWyoTlmv2W5F2yGPj6skwsJzi6XUCo=
-Received: from = ( [120.237.158.181])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 07 May 2026 18:36:23 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 9081812575552162141
-EX-QQ-RecipientCnt: 21
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Subject: [PATCH v5 0/4] dmaengine: Add Peripheral DMA support for SpacemiT
- K3 SoC
-Date: Thu, 07 May 2026 18:36:19 +0800
-Message-Id: <20260507-k3-pdma-v5-0-6b9743038026@linux.spacemit.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="If+aXJer"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-67bb5ad91bfso1140503a12.0
+        for <linux-clk@vger.kernel.org>; Thu, 07 May 2026 03:54:13 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1778151248; cv=none;
+        d=google.com; s=arc-20240605;
+        b=RDKmyekzIp/Iq5VYtyMsVHXhuDDkfqI3V5+2j0y5wEkR+e0ROc/Y6ZzxoVBDgNLDIv
+         c2qmkz6ReZ9ATyr9gAwRJQ1z0gRJWZBuSKHuYf613BXXhs9CFisxiMfctTF6ZruDh8dM
+         xGcYR40Pb6DH/Nati8cC5hYO4EDe1VGpqNv3Zi0S2GyFvm2ivQci7b477I2aVefvroFH
+         wtuNGYQwJlC4TtNf03YTxns0PWIYiUGCZ1xbjif0tlbvCqH9D3qKl7JmOkeAEhnJX3ZM
+         aDCObWlUrbCVz6eoolrs4uWTN8tk5vpIu7EwiIAfg+PnMgIfELMnVN5NLploBWzmvEZs
+         SctA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=IF7uiHUYLYrhqG+FspNFwJJCVwTRPmqazl4TaUyXmq0=;
+        fh=R+rrqhuvzP8t8w9Khylr4q/GPN90fAqrieO3qewMl+4=;
+        b=Y5GvshC/iwWA5ffHUIVly4q0SlTUnVJjtBKuNejB677WH1TlagWR/8ETenoQHwr9HM
+         iWLaeZrfNpRww+RA2NdBUEyXA9MFDLkCUoNmDxeDBz8i+eoxGqZcQ6Js5DraKMhUmhWB
+         xkKp/iQHcgw6jGKfoyFBQXo5AgyjB5uOQQ/BFb2R+m7iaXPixZvWEqsg1/vVW1cABNJW
+         7iY/bSCQRmAiLqhF65xR6Ye200cr2kAiy33w7fFdSoXfI1o2C9wiTkBqa0zbDykR07rD
+         pGZ2S9KVWwUgtswgDwDgRvwEoUl1s7JrkBz7PTvEI79E6CxcGs3XRJcXn44OZM08GB/6
+         8EAg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1778151248; x=1778756048; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=IF7uiHUYLYrhqG+FspNFwJJCVwTRPmqazl4TaUyXmq0=;
+        b=If+aXJer1wEhFbQu/wVtADCwb9PZjxhYmN59JyeQnmZXVwkyjcNt6Qmw7xB50cPUOm
+         /OlY0+i7T5e5/aQx7oYaRttZ3RKH/BZ9tfkWxjXZHNInYieI1nkx3Zlqxi2rcYx5T6sk
+         IEUY0zyENZ0xHx6oM7U4cDmsW7AKfR5BHS+iFFAPK98xLJ5duldRN3hZ+MopFbWIC8cJ
+         U7IscOVA/HPfWntbeeDdWUJUpwPt0ZXiFCDCDgnpQXwMl9PmJLRmUFvaYe/KcYyY6Qpt
+         3e5BSTaOtWwxzFdakQiEKSM3+UNJZ8fR9kH+dnJ6OmF0aB7AHYRxWvBDdit6kR89/E9p
+         iIJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778151248; x=1778756048;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IF7uiHUYLYrhqG+FspNFwJJCVwTRPmqazl4TaUyXmq0=;
+        b=IvH3Fm6/Bj4YuDCnbRt/uAbhO9++NTmdp06s+WWfFgBK7vFFMP6ICn/2vE3Gm67d9S
+         CvVyUtdVE1/AQPWMCRSoWkVNruYel4SbHkJOIUu269HOHAxT/OFH6nGkRumcUWNDCacR
+         eFh8WUJZrdgHNlgkIAcTZquPh21ARMQWmRXIucElelZqDy/unMbijPCxzfMUy3Mh/S34
+         qzJ7TZFDMMy1hYl0Jgq9AiaOi/VlFahIJXpyW2k4mnQ05nwRFszo62Y18hxfUdkGXzph
+         QUjneu0YozdsYvWIpukHpkoWZPcqVY0gvQh9L47HjjEspW8NZKMWIwPXBiI1XvyyxEJ5
+         gyGQ==
+X-Forwarded-Encrypted: i=1; AFNElJ9pMDOQrrYzTdgCvzvyjVxnQHDZW1IbWRdh7S0r3c1a+siKyyG5VBYa4FY5TnIAQum6phO+YGfX4Fk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxm16Ti0k4zrBJDVH4E/VmUJw3uNiXrdx3PJf1cqGlgWBgZ0YR7
+	OhlIr71+XCyP62tXtJYYRitiezrUhM4eaSrIQRaDemMmaLQ5zuLG3LBR/mM5hSHMKzI5UD8HIt2
+	amGA4uooGT2HsYz01vHTWznBWhziDOTmKowPhFAQ6mA==
+X-Gm-Gg: AeBDiev/3AnnpW6Lkno0l9bO6BXAqBF9jlNK8PjX+4a8sJLu10nvzKsV8akv91ujafY
+	oOQmkBa7C/uGBbYnfp0hutXCxYwFHHmjPHyYwmknifglLh9dIVZO/Fk7e0Bm34d/OWldYezwxdW
+	HA+3+tMxi1pfMEMa7MunFQcphA9t/+7tG2IqU/N0JzyHii4U5KoTThsqgUc9RdhBrjOsdUGtbxA
+	8VYY+GOZ+GRG8TeODJ+Noc0AYUjMaYWBu4hEO0P+jTHqlOr6EjLAhSLn/5TXHaDfw/I406rJfRN
+	cfthErl5q8TrMc0SVbEWxPCmShDM2crk7vI1/E8ckdLnF4l712k=
+X-Received: by 2002:a05:6402:3137:b0:67c:4e1b:9134 with SMTP id
+ 4fb4d7f45d1cf-67d642c320fmr2566539a12.14.1778151248006; Thu, 07 May 2026
+ 03:54:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/3XMSw6CMBSF4a2Qji1pe1sqjtyHcVDKRRrlkRYJh
- rB3CxNM1OF/cvLNJKB3GMgpmYnH0QXXtTHUISG2Nu0NqStjE8FExoBregfal42h2nINUgKXkJH
- 47j1WbtqkyzV27cLQ+dcGj3xdv42RU04ryEvAXBcKzPnh2ueUht5YbNyQ2q4hKzaKD0BkOyAoo
- 9bk0hpdFCpXfwHYASnkDkAEsCorgZJLw44/gWVZ3qmLEAQpAQAA
-X-Change-ID: 20260317-k3-pdma-7c1734431436
-To: Vinod Koul <vkoul@kernel.org>, Frank Li <Frank.Li@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@kernel.org>, 
- Guodong Xu <guodong@riscstar.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Paul Walmsley <pjw@kernel.org>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>
-Cc: dmaengine@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
- Conor Dooley <conor.dooley@microchip.com>, 
- Troy Mitchell <troy.mitchell@linux.spacemit.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1778150183; l=3272;
- i=troy.mitchell@linux.spacemit.com; s=20250710; h=from:subject:message-id;
- bh=ldqSgxXBwNiVbDM1IvgqKUTueYaDUJx3Byc33LhWAOM=;
- b=crauHPeI0mIdx6vwQqL8WvpzOBga3EoQhdCyHmS5ieLVfZc/nzjT1BuCoHxHx4CdvoQTArni9
- bLTzDEmaHzJB57b4mqdcIVF/sCejA68rcVo9Di7dCHMen4zWLdftqNh
-X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=ed25519;
- pk=lQa7BzLrq8DfZnChqmwJ5qQk8fP2USmY/4xZ2/MSsXc=
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: MpCQQy/6khKPen/hkdZhEGd2VxONjZrFsrRw3OeICzwgyhhhjPF+jdCw
-	MT91bCLgpE/gz5kS/sE4AyjuU037MtZmSg2MociK431sCQEa6Z2jwp6t/d/zl5Su7gNGu2K
-	60rCWrUaXvt3Xdr/xK5byV5ahtZLpnw/k6DLnfbo+tsx0pARZJC5GUjzp4kCuOf/uhJlBli
-	S9uUddS2810LkfNEbp3oL1BR2LCbjBtoafO5NxwN5tdGDysgnw7zV2tNGerUDjRXsXg248K
-	UBRcs7WJHkJJKYGjYPshIUBumi0Xs+m34udyfj+t01dAVVQIaJgx6YHLd9Wr62MO+68VPR/
-	VaLbuQSThUaUb/RC0R/LBw25aJCjlTlxsTrCH85zZFTLjP02E20avloSfxfk+pD1U0MXJwJ
-	c8UK2eVXAfJQTzgP6eOg2e4dhDbuFHKdGhpubbvO1vplhdrC0sg35kI/sBT2OUSR2L25REb
-	eVgnYruAGzg7AlxvFeZ14kUOflT1tyStQIDXzKubXHiSrNdoTBdhKVLyaeQTmv53wAVefI6
-	iXXX9BmLnq3CrHl3rqfsNddnBtt9YR9c3yFX0jtFQzzbtKJzubyKlwjZAiKYsWd0VMEAKIr
-	bvjHHBcGbnuXE0GFJ0jFuOvu+HnI+aSgLgGRhh3MmQZWJmqpXEIXzxGS3Z1cnpb5IxPH5KE
-	1kr1bVswc5gat9kDmFq1naCPmL441FQCj9hfGzbjf2hPpoFD9vQELohtSVYcqhEa9DQRvUM
-	Zm+LRaHHsbhSa9hLsTVb/IaP16lIscBNp7MZ+CInl4gQu4zkedwgf80esQ5kKDn1LZc9Hu2
-	l0Wybd4F1L+cIwmw1SrR4u1+C6oYnCd+TO4w8UHDFjrd1iEmlEmrzV25224AkRy2UBbWVes
-	vyNjkFN76eWVDrmClNVEMWV5XhKQqwZaMpu/+TXSa1vQEI0koLBiLqiNGn7xXy4fQDnH9fv
-	CPtEY7hJsuOtGy7MOKSokujH0vr9GQuJ7nV/vOqsqhs+NRL70k1VC4bJ0Q2MgIKGUrSuTeL
-	FcjS/YeiBmjA60g+bbVjCYhtgVx3WqsA5ijz2bFiq1dCI6zRWMcSAEkypKtidEZweI84CXR
-	seUUM8fAjca6AaS3HGzVlBSPSRaBrCmffivuMSW5OJk7Vyo9UivP5U8N9YvUGD2eg0odJJv
-	rK+d1kGuXhb7NvP4GKCuAdbw5o1WqJSUyLSoklh6MwfZjWu/mR7rZZ/bBif1oKZOoKH6w++
-	U53Fp9ek=
-X-QQ-XMRINFO: MSVp+SPm3vtSI1QTLgDHQqIV1w2oNKDqfg==
-X-QQ-RECHKSPAM: 0
+References: <20260505171457.1960837-1-visitorckw@gmail.com>
+In-Reply-To: <20260505171457.1960837-1-visitorckw@gmail.com>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Thu, 7 May 2026 11:53:56 +0100
+X-Gm-Features: AVHnY4LKSqPHnQncQquj9gD7adTrcRRUygj_CaGGPmUeQcE-vkzmMD9ri7yM0M8
+Message-ID: <CADrjBPp321nAD1nKs3VApd-6t6guK7b6k-cjsXHhS19_fJiOVQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: samsung: gs101: Fix missing USI7_USI DIV clock in peric0_clk_regs
+To: Kuan-Wei Chiu <visitorckw@gmail.com>
+Cc: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com, 
+	mturquette@baylibre.com, sboyd@kernel.org, andre.draszik@linaro.org, 
+	tudor.ambarus@linaro.org, alim.akhtar@samsung.com, semen.protsenko@linaro.org, 
+	wllee@google.com, hsuanting@google.com, marscheng@google.com, 
+	jserv@ccns.ncku.edu.tw, eleanor15x@gmail.com, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	visitorckw@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi all,
+On Tue, 5 May 2026 at 18:15, Kuan-Wei Chiu <visitorckw@gmail.com> wrote:
+>
+> In the peric0_clk_regs array, the divider register offset for USI6 was
+> accidentally listed twice, while the divider for USI7 was omitted.
+>
+> Missing this DIV register causes the USI7 clock divider setting to be
+> lost and reset to its hardware default value during a suspend/resume
+> cycle.
+>
+> Replace the duplicated USI6 DIV entry with the correct USI7 DIV
+> register.
+>
+> Fixes: 893f133a040b ("clk: samsung: gs101: add support for cmu_peric0")
+> Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+> ---
 
-This patch series introduces Peripheral DMA (PDMA) support for the
-SpacemiT K3 SoC, leveraging the existing mmp_pdma driver.
-
-The K3 PDMA IP is largely based on the design found in the previous
-SpacemiT K1 SoC, but introduces a few key architectural differences:
-1. It features a variable extended DRCMR base address for DMA request
-   numbers (>= 64) depending on the hardware implementation.
-2. Unlike the K1 SoC, where some DMA masters had memory addressing
-   limitations (requiring a dedicated dma-bus), the K3 DMA masters
-   have full memory addressing capabilities.
-
-The series is structured as follows:
-- Patch 1: Introduce the necessary dt-bindings: K3 compatible string.
-- Patch 2-3: Refactor the mmp_pdma driver to support variable extended
-  DRCMR bases, and add the specific implementation/ops for the K3 SoC.
-- Patch 4: Fixes a critical clock issue where the DDR bus clock
-  (top_dclk) could be gated by CCF, which would cause DMA engines to
-  hang and lead to system instability.
-- Patch 5: Finally, instantiates the PDMA controller node in the
-  SpacemiT K3 device tree.
-
----
-Changes in v5:
-- drop patch 4/5 (has been merged)
-- add Conor's tag
-- Link to v4: https://lore.kernel.org/all/20260424-k3-pdma-v3-0-efdf2e414a08@linux.spacemit.com/
-
-Changes in v4:
-- patch 4/5:
-  - add Brian's RB tag
-- patch 1/5:
-  - update commit message
-Link to v3: https://lore.kernel.org/all/20260331-k3-pdma-v3-0-a4e60dd8b4b3@linux.spacemit.com/
-
-Changes in v3:
-- Removed the dt-bindings patches related to the DMA number.
-- patch 1/5:
-  - update commit message
-- patch 2-5: nothing
-- Link to v2: https://lore.kernel.org/r/20260326-k3-pdma-v2-0-ca94ca7bb595@linux.spacemit.com
-
-Changes in v2:
-- patch 1-6 are added in this version
-- patch 7/7
-  - update commit message
-  - using k3 compatible string
-  - Link to v1: https://lore.kernel.org/all/20260317-k3-pdma-v1-1-f39d3e97b53a@linux.spacemit.com/
-
-To: Vinod Koul <vkoul@kernel.org>
-To: Frank Li <Frank.Li@kernel.org>
-To: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Conor Dooley <conor+dt@kernel.org>
-To: Yixun Lan <dlan@kernel.org>
-To: Guodong Xu <guodong@riscstar.com>
-To: Paul Walmsley <pjw@kernel.org>
-To: Palmer Dabbelt <palmer@dabbelt.com>
-To: Albert Ou <aou@eecs.berkeley.edu>
-To: Alexandre Ghiti <alex@ghiti.fr>
-Cc: dmaengine@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-riscv@lists.infradead.org
-Cc: spacemit@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org
-
----
-Guodong Xu (3):
-      dt-bindings: dmaengine: Add SpacemiT K3 DMA compatible string
-      dmaengine: mmp_pdma: support variable extended DRCMR base
-      dmaengine: mmp_pdma: add Spacemit K3 support
-
-Troy Mitchell (1):
-      riscv: dts: spacemit: Add PDMA controller node for K3 SoC
-
- .../devicetree/bindings/dma/spacemit,k1-pdma.yaml  |  4 ++-
- arch/riscv/boot/dts/spacemit/k3.dtsi               | 11 +++++++
- drivers/dma/mmp_pdma.c                             | 37 ++++++++++++++++++++--
- 3 files changed, 48 insertions(+), 4 deletions(-)
----
-base-commit: 02f90981a67f3b9ee7d6684e7503a4fed7aade0c
-change-id: 20260317-k3-pdma-7c1734431436
-
-Best regards,
---  
-Troy Mitchell <troy.mitchell@linux.spacemit.com>
-
+Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
