@@ -1,174 +1,183 @@
-Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com [74.125.224.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012032.outbound.protection.outlook.com [40.93.195.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB0344CAC1
-	for <linux-clk@vger.kernel.org>; Thu,  7 May 2026 15:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778169081; cv=none; b=J9czUTsKlDwTJ7S5WfMKcxqappGzjjr76z72I9QB6sbFoo9Qg9o1QElK6U5fp8FphN306vbxO8pLGowjqkcrecYynYKGawRbF3JcYoIqc8wy+pw2Ec7rx5YBkMYKwPO634IT90cZuDnrBK8VW78IcPMl0fh5WMQXjaI9y4WI1xU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778169081; c=relaxed/simple;
-	bh=Nh1ttZ7apvcu4spD78Oi7RZ4MQs+MxjT4kjH8gqR2QI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M/GPkJiQwRrCwfOXpgpe+CRvSmPMXX5dtvzcshI9L6NAS3uNE8t8gxJ0hq5t/IAn0Ueu3fQ1g4LdXhrJkzJ4MM15l3DOS4bSw6dRLv/0+4TtOJ/TKRZxAuzDYl4JWTQYTnopRV0NQTi+7xZsafhBO8krNdjzFmBAaHo2n3qDy+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PYQKnE31; arc=none smtp.client-ip=74.125.224.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 231E9346FBC;
+	Thu,  7 May 2026 16:09:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778170187; cv=fail; b=Y3fm6Ephx55KlDqaBCKw3VaOwqIipTZhRgjy2b7zpRMSB3eFYxaMT5WwlgDRCDFcnEf5FWOvgYMvckrDGvkFvpTNgndo+idlrWnejR6YAhHWnDkufBbwXNkN4DSM+54FZaKsnqtGFmofEc33r02FUySMGN+zXGITflsnlrn/4AI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778170187; c=relaxed/simple;
+	bh=6JOIIfW104pdvqVy+zneCKDlSzr+mkaY8PUGy9Ghv0A=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=Rn1/vSDKCSBH0PN1H9XnZ8jerkpSKAKof3iKE3ErhcJKkgsuTHorX2jBHCKznH2jfTjZP6+oeBTMzx1gN2P0G9aQgraFkOYKxaQBLIDAduEqnSL095h0Z/BetvxvIFRPHEcDIlUTCuItCpFT+mIVm5uJqgBw7aZTyEnWIers6dU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=So6X3dxg; arc=fail smtp.client-ip=40.93.195.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PYQKnE31"
-Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-65318dafbcbso1054770d50.2
-        for <linux-clk@vger.kernel.org>; Thu, 07 May 2026 08:51:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778169079; x=1778773879; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=C2yYmWd9mJdnEyzzwS7hgRL4uZz7swPezTy7TkKWYGI=;
-        b=PYQKnE31qqBqzjTYBs96p+lagvLcynxBhOLappefc0i87O6MwwGDTQkho7EAYN85+m
-         hSYGpBNXRh77sLIkd4cFOQYVkcwYTF9fXpsnmKKSFVU+90Pco7gixGUXsRopWwA/l3Zl
-         u0pXJoSwHNUco3Pn75FcZhjWOczRxpfGOa+cLNXTCFgiedMg9DkRyiJ0/kAQ+i0Ibnpq
-         /V8MhPxXc1nytoxmUVp+9ZFBGc28SYcExWW88SXN8E26R52rT+hkMpEomO1qQhY3fAob
-         q5FcTwUdI0Fxrzg07oNa5rzj6SDiDwgCaugsgHWKS2Oe0u63vWkVMm4GCC0CnfhFATCh
-         UWJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778169079; x=1778773879;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C2yYmWd9mJdnEyzzwS7hgRL4uZz7swPezTy7TkKWYGI=;
-        b=I6rvQMffjFOfcvnU+tHvPmJBaWp5RseqTSMTIAtbtFSOdABKndtfUZOQx0UfBRoNFX
-         dkPVclUwVNbKdMa4YuI7F0WaFvUUUoVZicu0Z9Hwg0heb1SztHkC3lDTfv53Ji1q05dX
-         YLAoseDtAl9RfEBY8P/h2V1eqk0FN7ar0fK8EN2hkmix+M7j7VtLdKYyyzD+miYRWYHn
-         MIv1w3tGgG3H7YslgaYdBpSwT+UqQJDEcY06bmg+hVHseO6xNiCDGmgfdeI9rwdfEc6G
-         dhyMNDfyR7FsdS7Nd7liGw0b+cQDhSr4ZmZZLrqh+2KKty75DF4HpHrNv9/5yJ7UaEPf
-         14ww==
-X-Forwarded-Encrypted: i=1; AFNElJ+V+HJWCzDpduPiLyQYnEEugOF2ZZ15sza6HsWgYMyGVyV2ZOW5SWutCdXlx0lV0LLLlUIiuc1gp8E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyF5ZfqkRfOG9lgKnPCCxQIlmA7w9Wf9CKHP6fDdv+3mn1FRy0G
-	PL9Ha+SspLaqX/L7Rm/s5MMyvubHH9LiSEdbAchpczx+8Y+MqYK/pfqi
-X-Gm-Gg: Acq92OEksytGlqHfwtMc8G3/fCqyK4tFcB8st/I5tsOY29TI4bHJLYCGvM+k0wk2rkT
-	3OkqcvfRwh4F7x4XEoNaFgq7aM6y+JOd1jhKkxlOl3agrXfqqzML6eZsfD7h6A6s4XGzUgaXq4q
-	kLo9aVogyMXz1ChVx0sR7jX7ogeURnAC2fgjG5dHsf+CEEgR1I5wYYYkY8Kh2D6Ur9keXQVgFxv
-	gxhjzU8A40j9si7A/KdWbOW9T3dG4cMZsJPow5Uq9wbfzUjLSTWnSWQa38GL2C5U/SuLMon8Z+N
-	ZhS5LHFxfF6K2vUzib2VOYZG2xpnw4tR0c0H9TkFG6mQWvYYmQQeSVJ1EmJAc033aM8Kq9wXqnc
-	pTAzRldvO9dbhrUHbdzjWnbGJcNiOxYTNQ/OHt7HK5uDBa42JgPzivZQZsqfjpSIuT2mTvjgjOp
-	CBRgfj+LkNWhbga9eCqKhIJLVdOvjG8eoMZh2q
-X-Received: by 2002:a05:690e:144b:b0:65c:febd:c0b7 with SMTP id 956f58d0204a3-65cfebdc8b0mr5697087d50.20.1778169078832;
-        Thu, 07 May 2026 08:51:18 -0700 (PDT)
-Received: from [192.168.0.39] ([79.133.247.80])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-65d901b9275sm73091d50.11.2026.05.07.08.51.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 May 2026 08:51:18 -0700 (PDT)
-Message-ID: <0cee27b6-f566-4958-8634-2c43e099281e@gmail.com>
-Date: Thu, 7 May 2026 18:51:11 +0300
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="So6X3dxg"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JiDSF6Igoufrz7IOwMUxSypQSxyfzAnVHpYL+HVfxYdx6hRCUjSeyVcUtBKtFGO8S8p3Ta59IqNY6oaGJSPJAD7kMu7cxubYV4+vm2HZHpZQh+BfXVQa95hjTD2vFGvqNKcmcknI+KwInf1t7Ge+hfcEsGg0U8Ln5B6cHgO3wOoZAQ8toV+YpxNhHuVFkKSYct5FeVPxldqe6fFlzk6ox2C10n0Euwetl719qkil98KKG8MwcJJYrJVVaoNmrMhdbD5yWk9rPSr8QdrfRE74vu1WqIZypzsSb6Fw3UWwK6Nre2WGIFixpLu3/+gBSkEf/XqMZSi3pPlXhMQLecuf0w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KLZVzB5gguW5ckbJFT4MWRxu9RwecJodm2oeC+LPCy4=;
+ b=tZhUebFspPfKSv5KkUfHpny2mCioGxAKeEGJhSKV7aLmQJCPR/wDNyzs2xM/NL6BWRu+gbrVerNucP1XNeZka4EZk+DwAgj2aqBf3ARF4NdjyKD/Vc/IboAA1susZKvAhjXxoNa2gUV0skRIS3Yw+YCZT4SRAHys64ZFdpsLTEZj2oOlY0Kmt+CcYm4/c/C91CVZpxIA7HeUkuvoA5B+h5CcwF0y1xPKv3/WrzSjrYhD3kvDpYi/gFVcxaIyjoc3xWEeWHlD0g0zLWJsIR9Lj0aoS59+xEWdnaf6t9ILwaGDmVIPBiGU8mF3FTHQyAN+qTB3U/KvhqCAOBVjvyz6Aw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.23.195) smtp.rcpttodomain=baylibre.com smtp.mailfrom=ti.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KLZVzB5gguW5ckbJFT4MWRxu9RwecJodm2oeC+LPCy4=;
+ b=So6X3dxgNTz/uDN68flgqrMe3MUFZvelRsYkrCMSl7Gzs3ng/MCYSf0dm+WWeH4CHfjfRwGYGPuNWKoFHcqieTDzA6dCpihKxucctNzjFVXB9mpY4znUcskEpY73e3mipjYatNpEy37/lVc00Y4+KfbZ6ANf8ZO/LPCEiJI7Pe8=
+Received: from BY5PR20CA0001.namprd20.prod.outlook.com (2603:10b6:a03:1f4::14)
+ by SA1PR10MB5782.namprd10.prod.outlook.com (2603:10b6:806:23f::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9891.15; Thu, 7 May
+ 2026 16:09:40 +0000
+Received: from SJ5PEPF000001D2.namprd05.prod.outlook.com
+ (2603:10b6:a03:1f4:cafe::66) by BY5PR20CA0001.outlook.office365.com
+ (2603:10b6:a03:1f4::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9891.17 via Frontend Transport; Thu,
+ 7 May 2026 16:09:39 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.195)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.23.195 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.23.195; helo=lewvzet201.ext.ti.com; pr=C
+Received: from lewvzet201.ext.ti.com (198.47.23.195) by
+ SJ5PEPF000001D2.mail.protection.outlook.com (10.167.242.54) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9891.9 via Frontend Transport; Thu, 7 May 2026 16:09:39 +0000
+Received: from DLEE211.ent.ti.com (157.170.170.113) by lewvzet201.ext.ti.com
+ (10.4.14.104) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.37; Thu, 7 May
+ 2026 11:09:38 -0500
+Received: from DLEE205.ent.ti.com (157.170.170.85) by DLEE211.ent.ti.com
+ (157.170.170.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.37; Thu, 7 May
+ 2026 11:09:38 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE205.ent.ti.com
+ (157.170.170.85) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.37 via Frontend
+ Transport; Thu, 7 May 2026 11:09:38 -0500
+Received: from [127.0.1.1] (antonios-thinkstation-p3-tower.dhcp.ti.com [128.247.81.216])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 647G9cRb3985466;
+	Thu, 7 May 2026 11:09:38 -0500
+From: <a-christidis@ti.com>
+Date: Thu, 7 May 2026 11:09:34 -0500
+Subject: [PATCH v2] clk: keystone: don't cache clock rate
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 5/8] clk: qcom: gcc-msm8939: mark Venus core GDSCs as
- hardware controlled
-To: Bryan O'Donoghue <bod@kernel.org>,
- Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
- Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- phone-devel@vger.kernel.org
-References: <20260507-msm8939-venus-rfc-v5-0-d7b5ea2ce591@gmail.com>
- <f5TsKnC12rLsH63vAi01aN4oXUFLrfgIhn14IQFDb9gcac6anLzzhJdkGNdQ2dRs4vYbFKUptfEgWuKdgIgGsQ==@protonmail.internalid>
- <20260507-msm8939-venus-rfc-v5-5-d7b5ea2ce591@gmail.com>
- <17c4626e-8926-4cad-842d-a1b171d1e962@kernel.org>
- <CYaHtccGOWlaUtl3QIKva44ybJiRHsPOZmHEkl2KKGmnDxJ8vTH-SVNMGbL7bjkYjI692nplORzOhpfjs3XJfg==@protonmail.internalid>
- <4f1ab5b8-3bfe-43a6-8b91-317456188544@gmail.com>
- <7df3bff7-b872-4b20-8e7c-698157a41f33@kernel.org>
- <tawGGT4rtpw22Ng-MgM--GhoEihBU7tY_TrFUHf8raMKApyqTcSkKHyfSuRIL_bqNp_5zWD4SBG_C4c8CB7_6Q==@protonmail.internalid>
- <18998766-62fe-4a5e-95d8-1bfae712d8fb@gmail.com>
- <614a087d-d219-49cb-85ee-772044558649@kernel.org>
-Content-Language: en-US
-From: Erikas Bitovtas <xerikasxx@gmail.com>
-In-Reply-To: <614a087d-d219-49cb-85ee-772044558649@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-ID: <20260507-clk-sci-v2-1-38f59b48777a@ti.com>
+X-B4-Tracking: v=1; b=H4sIAD25/GkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHQUlJIzE
+ vPSU3UzU4B8JSMDIzMDUwNz3eScbN3i5ExdQ3PTNGNLi9TklGQDJaDqgqLUtMwKsEnRsbW1AGL
+ P1GxZAAAA
+X-Change-ID: 20260507-clk-sci-175f398ecdc0
+To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, "Santosh
+ Shilimkar" <ssantosh@kernel.org>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Brian Masney
+	<bmasney@redhat.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, Michael Walle <mwalle@kernel.org>, Kevin Hilman
+	<khilman@baylibre.com>, Randolph Sapp <rs@ti.com>, Antonios Christidis
+	<a-christidis@ti.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1778170178; l=2038;
+ i=a-christidis@ti.com; s=20260224; h=from:subject:message-id;
+ bh=nzZb5KX8QE7F8wiJTbfv2Zd+erQgyqYICWcP56uq61k=;
+ b=GwDDsHAvoeIkISSuSV1nBCF5AT6G9bTi9bR9xaItKrHnLZ5ILWRDbRfAEDVbxTH0iwT89YyuN
+ sffdFRcW1RqCKI2g+aeEfMPqre4hOcg3p0ZGzjnRL9unEGZYwqfpkdr
+X-Developer-Key: i=a-christidis@ti.com; a=ed25519;
+ pk=HcbNQnPnde8WLoob9CZpry+ZyXrXg5+wessZiBGMaFw=
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001D2:EE_|SA1PR10MB5782:EE_
+X-MS-Office365-Filtering-Correlation-Id: 947c0e9e-a475-40c6-3f05-08deac530ab7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|7416014|376014|36860700016|1800799024|56012099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	sYcQqg6wozXSQ7CHOGS9luwvA99TUAiZxyayN0Yq0/P0wJWkXQizEMMlfasuJkW0VZEdrGVAXYHkGL22I8v3A00CbnXlTtmbL6Q1czBlU7mCGvcB21LKNr4FWwAfI3RsbG2+z7KXFZqhvRGcJvzDvAclLxKacM4QynzvatbzNLQo1wUazajbJyUD9z2L9yKBtnVyY/QM0Va0o6ohNX/Hh7C02aAsQ2WdNXso/0WU0VdG7SZJNxn0zLwIa1YHYB1V8GWI5WYoGQDIIFFezkYTcG/tuf5gNtrYc00Kom3fKanhUgjtWb5sONuc8Ql/9Dh41kZCbp2E0TkBv8dfW0Ox4EsXbSZkJ4UwNLDciKf9HKgoMtUaTUMSqYAjrw3Q9+T3fv+WSURWfONuVrDmIiR256fmGWmxGrdf58hgJXkSoss6qKq3rYKmX2v7U8XMFEXhnB5mu1+UzyTcKsW8YRaaWATJdSFr6GuH8KoAhT44D8j+dBIaecp9ikV+U3aed5in/GpzHoHLGa96oUGbegGmApL9VlkeAMfmQws3BPRQwzplOQkk6RucHt8avl/jInLggw1eTZBG0ONDknWBuc+1sfUORT3j3YNEVEFD7voOib9+uzOTou0JxdgsHQGCVYP5St1hlSFEixlWFdfKcWbOb/F94UcKT7I3p9C+sL42SIauUr+0mkp6Kh4l0cSJuxKksHg0of4LylcUciaVabSMQGRHx8lorBOLctimJfIqaq8=
+X-Forefront-Antispam-Report:
+	CIP:198.47.23.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet201.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(376014)(36860700016)(1800799024)(56012099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	/aA2bZB7DA4NGc87mqGm9V3lIh+lmZh9+G0VFhVl3+LjnnUEAz9qWEpP1pAaJ/2wUErH3fvGTkyQ6w2ovrmVfNW63eYnmt+OyVQwzu/XMXpOxyzZWISUqgytE2HfKRb2F+uaiC7WoEe2tPmPnHYh8GferTQ76y3XwJFwFUg6jtuOt5uO9Cj06y+7jxfnUXNMeUAZo5LlhL3xwsEgjYDaYIL8ca+nucGEGRlFEQYU+mxAfjiQiPMfwNFzvN1NTRdA3teFGleI/Lf0/64I2uOELm+yXyIwWQJxfC8ipwUdj5Ivp8bwwMy5buVgeKTl5xxPRRW0hM/vTL+sq1/hZ9JYFjbK+ZKC3e/uLoRQGgr/wjKh9v7SjmuRM/LVeuhBLqmZfJYdGIu13G6mq6mZqxrpLzT6DRfMBqRjikSw+5ktpZQzJMn3+SANZ3s9ZJnk4+cP
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2026 16:09:39.3903
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 947c0e9e-a475-40c6-3f05-08deac530ab7
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.195];Helo=[lewvzet201.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001D2.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR10MB5782
 
+From: Michael Walle <mwalle@kernel.org>
 
+The TISCI firmware will return 0 if the clock or consumer is not
+enabled although there is a stored value in the firmware. IOW a call to
+set rate will work but at get rate will always return 0 if the clock is
+disabled.
+The clk framework will try to cache the clock rate when it's requested
+by a consumer. If the clock or consumer is not enabled at that point,
+the cached value is 0, which is wrong. Thus, disable the cache
+altogether.
 
-On 5/7/26 4:37 PM, Bryan O'Donoghue wrote:
-> v4l2-ctl --verbose --set-fmt-video-
-> out=width=1280,height=720,pixelformat=NV12 --set-selection-output
-> target=crop,top=0,left=0,width=1280,height=720 --set-fmt-
-> video=pixelformat=H264 --stream-mmap --stream-out-mmap --stream-
-> from=cyclists_1280x720_92frames.yuv --stream-to=/tmp/
-> cyclists_1280x720_92frames.h264 -d /dev/video1
+Signed-off-by: Michael Walle <mwalle@kernel.org>
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+Reviewed-by: Randolph Sapp <rs@ti.com>
+Reviewed-by: Nishanth Menon <nm@ti.com>
+Signed-off-by: Antonios Christidis <a-christidis@ti.com>
+---
+v2:
+- Resent as part of series [1], separated from series per reviewer feedback [2]
+- Original patch was sent here [3]
+    
+[1]: https://lore.kernel.org/all/20260224-gpu_dts-v1-5-cc5ddffe140c@ti.com/
+[2]: https://lore.kernel.org/all/20260225010507.flvt775fs5kfe7ez@unknotted/
+[3]: https://lore.kernel.org/all/20260109120728.2wku6akxof2ddn4h@tastiness/
+---
+ drivers/clk/keystone/sci-clk.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-With the patch kept:
-v4l2-ctl --verbose
---set-fmt-video-out=width=1280,height=720,pixelformat=NV12
---set-selection-output target=crop,top=0,left=0,width=1280,height=720
---set-fmt-video=pixelformat=H26
-4 --stream-mmap --stream-out-mmap
---stream-from=cyclists_1280x720_92frames.yuv
---stream-to=/tmp/cyclists_1280x720_92frames.h264 -d /dev/video1
-VIDIOC_QUERYCAP: ok
-VIDIOC_G_FMT: ok
-VIDIOC_S_FMT: ok
-Format Video Capture Multiplanar:
-	Width/Height      : 1280/736
-	Pixel Format      : 'H264' (H.264)
-	Field             : None
-	Number of planes  : 1
-	Flags             :
-	Colorspace        : Default
-	Transfer Function : Default
-	YCbCr/HSV Encoding: Default
-	Quantization      : Default
-	Plane 0           :
-	   Bytes per Line : 0
-	   Size Image     : 708608
-VIDIOC_G_FMT: ok
-VIDIOC_S_FMT: ok
-Format Video Output Multiplanar:
-	Width/Height      : 1280/736
-	Pixel Format      : 'NV12' (Y/UV 4:2:0)
-	Field             : None
-	Number of planes  : 1
-	Flags             :
-	Colorspace        : Default
-	Transfer Function : Default
-	YCbCr/HSV Encoding: Default
-	Quantization      : Default
-	Plane 0           :
-	   Bytes per Line : 1280
-	   Size Image     : 1425408
-VIDIOC_G_SELECTION: ok
-VIDIOC_S_SELECTION: ok
-		VIDIOC_G_FMT returned 0 (No error information)
-		VIDIOC_G_FMT returned 0 (No error information)
-		VIDIOC_G_FMT returned 0 (No error information)
-		VIDIOC_REQBUFS returned -1 (Invalid argument)
+diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
+index 9d5071223f4c..0a1565fdbb3b 100644
+--- a/drivers/clk/keystone/sci-clk.c
++++ b/drivers/clk/keystone/sci-clk.c
+@@ -333,6 +333,14 @@ static int _sci_clk_build(struct sci_clk_provider *provider,
+ 
+ 	init.ops = &sci_clk_ops;
+ 	init.num_parents = sci_clk->num_parents;
++
++	/*
++	 * A clock rate query to the SCI firmware will return 0 if either the
++	 * clock itself is disabled or the attached device/consumer is disabled.
++	 * This makes it inherently unsuitable for the caching of the clk
++	 * framework.
++	 */
++	init.flags = CLK_GET_RATE_NOCACHE;
+ 	sci_clk->hw.init = &init;
+ 
+ 	ret = devm_clk_hw_register(provider->dev, &sci_clk->hw);
 
-With the patch reverted:
-v4l2-ctl --verbose
---set-fmt-video-out=width=1280,height=720,pixelformat=NV12
---set-selection-output target=crop,top=0,left=0,width=1280,height=720
---set-fmt-video=pixelformat=H26
-4 --stream-mmap --stream-out-mmap
---stream-from=cyclists_1280x720_92frames.yuv
---stream-to=/tmp/cyclists_1280x720_92frames.h264 -d /dev/video1
-VIDIOC_QUERYCAP: ok
-VIDIOC_G_FMT: ok
-The pixelformat 'H264' is invalid
-VIDIOC_G_FMT: ok
-The pixelformat 'NV12' is invalid
+---
+base-commit: 17c7841d09ee7d33557fd075562d9289b6018c90
+change-id: 20260507-clk-sci-175f398ecdc0
 
-Decoding breaks if I revert the patch as well, it fails with a power
-collapse fail.
+Best regards,
+-- 
+Antonios Christidis <a-christidis@ti.com>
+
