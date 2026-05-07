@@ -1,163 +1,118 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7FB3AB29C;
-	Thu,  7 May 2026 12:39:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F15B3C4540
+	for <linux-clk@vger.kernel.org>; Thu,  7 May 2026 12:43:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778157550; cv=none; b=Rbic3yCWRMPyYa+32C0ri1HMmHJ8V553N8hq2EsqBA3n1kLXQAX+wQExYbDpHEBlsJtFcpjEj4OkHwFsSDtAmN/ARjC/f6879gHvXwmjdwUI/D21bCaR3QcRfhQBoyEMuc6flMqEZAxAcd1QizwTBNHVwPRev6k002BZNMkxr5Y=
+	t=1778157838; cv=none; b=fptQctwZhyM0MfZWWTyC161H/8pVN7oja/aPbeWUJFgfJRnjSnjphOuKNnrL4SkL4crlDrdUonslZtfm4sgAnxhciUCchOWyhiQ6TRuAe7lDwJlGUMW1VpKzH0oZXg8L9ip8Kw40Qh8upoDdbzPnzviDTB3rgSrV05iiHOXQBVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778157550; c=relaxed/simple;
-	bh=ZRoerlwEnzlnNkH9tTetVKXXmZ5mHTFiMjf1xYjx6jM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HEFGuhS+5T/Y4mF1jZXEdjSVr0DK3Kmgg7XYKPXPoNH95gwQtR/WXUi0KGvHNXZcj2O/OG8CgsPLe9jA2tP6OZYlJQeMhv6EZYabDptn1LiU3+7WohWmIdQL+hqAZkJVCeZtbxImSY32ykhBj3rAV520PvTX582+MhrU+BmQECQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qcv4v1bH; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qcv4v1bH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04848C2BCC4;
-	Thu,  7 May 2026 12:39:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778157549;
-	bh=ZRoerlwEnzlnNkH9tTetVKXXmZ5mHTFiMjf1xYjx6jM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Qcv4v1bHfWBgMevqFCqAQOdpI90mi+npBfY7W8swT2Ju6lQnLsuIvctXCQbxVzjlr
-	 49NXik3IE4zybYGODcxm3cp8pGzYf26ZJVP73VGSmTCkvrL3HOJRRnFszMempQ9p+g
-	 v/Vp9enMEG55eV/JqeX1dyY0vlfsSCnt4oSQuH6/vKbTuywg8O7/cXGzUtuNfeB9HC
-	 //278odiUWL2x8pd3LvMLSmL9wHrVEJfAv9aZUUk+OaG7PcTlt73VozO95Y+qvFozl
-	 YEzLEzt3qxpE9EVf2CrwKtcKkgE8IczTApLwxDKWVNYWYYtExLLsAHJ39wwQTit6MB
-	 Lt6uH0sxibB4A==
-Date: Thu, 7 May 2026 13:39:03 +0100
-From: Lee Jones <lee@kernel.org>
-To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Thomas Gleixner <tglx@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-iio@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 02/10] mfd: rz-mtu3: use device-managed reset deassert
-Message-ID: <20260507123903.GI305027@google.com>
-References: <20260410163530.383818-1-cosmin-gabriel.tanislav.xa@renesas.com>
- <20260410163530.383818-3-cosmin-gabriel.tanislav.xa@renesas.com>
+	s=arc-20240116; t=1778157838; c=relaxed/simple;
+	bh=rft0aVnDH8ZzPFslD/JdSdefiUxSK0vyAFPTrermtaI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZoftrWMX53J0YganzAe8Jc8zQDhTrkoXNq6UIPlyThKRTuUzKX1t9sT7C2vslCir7cFQU6lqWB87m1D4YBLs12VXbVVCqbM50yTorVGbOGIyN2Nmax+SfZy0DYAGqKAYcrxHqhispjCYseTEGYgcxgk9WEvejcKUGhWsZPXwagY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-bc2a455fd55so114732366b.2
+        for <linux-clk@vger.kernel.org>; Thu, 07 May 2026 05:43:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778157836; x=1778762636;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XU1MIdjdd4TqOwGpxaQwie0Eo0zv2bJJ/ujL1e37AW0=;
+        b=GpUO39kABaCp32TToz6+1jhl6/9+jTIT9CvY77ESKCT7Fc7CyjeZVxwbTw2am9ZNTo
+         ssUUgkl1ONfSVolKCNraresqm6xSg7IlumxNCnTlqrnvb0BmZJWCrNchs60VJWgYJzGb
+         v5q3IQaeW9JlYIaAaqzUT9LJ0eSNazqPHsHA8yu7PlbXNsco3b7H4433zjgMfilQhpdy
+         oMv4KpSVntVvHZecD7P+8lj++w4qXSuE3WtssN5BLeEOLy9ZRsq0c1A0wJV7nnIRHJtk
+         1qqc1XBia6qYjZynj8ewD4GlMKqUuF3/EgsCKtrUoREze1GValS9RqsTz4j30yC8l9gf
+         NdLw==
+X-Forwarded-Encrypted: i=1; AFNElJ91VMDZQzP4VGQyjTcJsUcXoR/Bxbx2m942z6nOaqnfbZnIu1qfxZZWxR8HhpI2iwPWJGW6Ck0wbVg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZxSCgCyoyB/RctT4RBi+QTmN8vkXnEME0DqkyO0J2brU7YOla
+	9eekesXLkJyVs+v5n2wlBN+Q8fzD0wJv2TEFg8HIRSISXA7ysnPpOfwASaD1vCnr4Fc=
+X-Gm-Gg: AeBDieuYmqx7RVw47bJD87kq4BQlOZfMldYFErTV6Rb3vytv2aVNodyXxK15lswQ2Is
+	bdHJW+FpN+HFV3XIqIWiV6QzhLVrUR22cpvE9DtXcZ1JnwhUQwJhLgaJb9PnoS7WXZHXlpn5l33
+	lyfBCrgNYWC5F3XQkFtShHl81AHxe02N5pyvLoj60t8ggriMH4fSQGK3s8RbEpVkfTb43TS0lnO
+	Z9WEWKXGadzApETUo4kQLgkrwmKAnSB/pfOvPCSEdlzNlSg9e63h4V6MeJwDDLNL6kaCTsAfeP3
+	Jjd7Pi2tA8eWzNZZ+4brJhG4WPHD5jR1vyaTHBCjO8xNwu014ZFVLMeXj5ygdQ5t1c34QdGPeWz
+	h7YN8C5Yv8nVxF5nEuJpU4EjV16JX8aDCUhjRfOc0qCJLD/kpiPNchzZth2cy3mTrLD81txLF5x
+	pKuUn5cfqJGmAv3HrmLYn83SzaeMEEEYnBUw4It+5ZxcmfjvVHhGmDj4tgNpPwEE4qTW1g18b6o
+	v8KT0XmRQ==
+X-Received: by 2002:a17:907:7b94:b0:bc3:6acd:f3f with SMTP id a640c23a62f3a-bc56b8394d1mr422466066b.19.1778157835042;
+        Thu, 07 May 2026 05:43:55 -0700 (PDT)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com. [209.85.218.53])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-bc81cd34da8sm80950866b.11.2026.05.07.05.43.53
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 May 2026 05:43:53 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b941762394aso126555966b.1
+        for <linux-clk@vger.kernel.org>; Thu, 07 May 2026 05:43:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ8ZdlZ72Hf8vms4OOgAOxkEIJdPb1MUec/qoUYxqdrvQ5f+rsyWsoKPTQOwxQWcc/U7SzuInTmkb+g=@vger.kernel.org
+X-Received: by 2002:a17:906:7944:b0:bb7:be3b:ba3e with SMTP id
+ a640c23a62f3a-bc56e01902emr413569866b.45.1778157833530; Thu, 07 May 2026
+ 05:43:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260410163530.383818-3-cosmin-gabriel.tanislav.xa@renesas.com>
+References: <20260505071544.8965-1-biju.das.jz@bp.renesas.com> <20260505071544.8965-2-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20260505071544.8965-2-biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 7 May 2026 14:43:40 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU2Dt4=ptwoaXNttV6gAa=G4mtGRYtA_z3qdqcUtd8A2w@mail.gmail.com>
+X-Gm-Features: AVHnY4I9idqK1VcaIrFYUBfD3vXqjTzr4uBBYEWs1epY9RmzhXeZEn8Y3hIUwgM
+Message-ID: <CAMuHMdU2Dt4=ptwoaXNttV6gAa=G4mtGRYtA_z3qdqcUtd8A2w@mail.gmail.com>
+Subject: Re: [PATCH 1/3] clk: renesas: r9a08g046: Add clock and reset entries
+ for the RSCI
+To: Biju <biju.das.au@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Brian Masney <bmasney@redhat.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 10 Apr 2026, Cosmin Tanislav wrote:
+Hi Biju,
 
-> Replace devm_reset_control_get_exclusive() and the manual
-> reset_control_deassert()/reset_control_assert() with handling by
-> devm_reset_control_get_exclusive_deasserted().
-> 
-> While at it, remove struct rz_mtu3_priv::rstc and use a local variable
-> for it as it is not needed inside rz_mtu3_reset_assert().
-> 
-> Rename rz_mtu3_reset_assert() to rz_mtu3_mfd_remove() to accurately
-> describe its usage since it no longer calls reset_control_assert().
-> 
-> Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-> ---
-> 
-> V2:
->  * no changes
-> 
->  drivers/mfd/rz-mtu3.c | 23 +++++++----------------
->  1 file changed, 7 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/mfd/rz-mtu3.c b/drivers/mfd/rz-mtu3.c
-> index 9cdfef610398f..6b9c6831dffa9 100644
-> --- a/drivers/mfd/rz-mtu3.c
-> +++ b/drivers/mfd/rz-mtu3.c
-> @@ -21,7 +21,6 @@
->  
->  struct rz_mtu3_priv {
->  	void __iomem *mmio;
-> -	struct reset_control *rstc;
->  	spinlock_t lock;
->  };
->  
-> @@ -301,13 +300,9 @@ void rz_mtu3_disable(struct rz_mtu3_channel *ch)
->  }
->  EXPORT_SYMBOL_GPL(rz_mtu3_disable);
->  
-> -static void rz_mtu3_reset_assert(void *data)
-> +static void rz_mtu3_mfd_remove(void *data)
+On Tue, 5 May 2026 at 09:15, Biju <biju.das.au@gmail.com> wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+>
+> Add clock and reset entries for the Serial Communications Interface (RSCI)
+> found on the RZ/G3L SoC. This includes various dividers and mux clocks
+> needed for the four RSCI channels.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Remove any mention of "mfd".
+Thanks for your patch!
 
->  {
-> -	struct rz_mtu3 *mtu = dev_get_drvdata(data);
-> -	struct rz_mtu3_priv *priv = mtu->priv_data;
-> -
->  	mfd_remove_devices(data);
+> --- a/drivers/clk/renesas/r9a08g046-cpg.c
+> +++ b/drivers/clk/renesas/r9a08g046-cpg.c
+> @@ -137,6 +167,7 @@ static const char * const sel_eth0_rm[] = { ".pll6_div10", "eth0_rxc_rx_clk" };
+>  static const char * const sel_eth1_tx[] = { ".div_eth1_tr", "eth1_txc_tx_clk" };
+>  static const char * const sel_eth1_rx[] = { ".div_eth1_tr", "eth1_rxc_rx_clk" };
+>  static const char * const sel_eth1_rm[] = { ".pll6_div10", "eth1_rxc_rx_clk" };
+> +static const char * const sel_rsci[] = { ".pll2_div5", ".pll2_div6", ".pll2_div7", ".pll2_div2_4" };
 
-Why not use devm_mfd_add_devices() instead?
+OK if I rename sel_rsci to sel_rsci_rspi while applying, so it can
+be reused?
 
-> -	reset_control_assert(priv->rstc);
->  }
->  
->  static const struct mfd_cell rz_mtu3_devs[] = {
-> @@ -321,6 +316,7 @@ static const struct mfd_cell rz_mtu3_devs[] = {
->  
->  static int rz_mtu3_probe(struct platform_device *pdev)
->  {
-> +	struct reset_control *rstc;
+>  static const char * const sel_eth0_clk_tx_i[] = { ".sel_eth0_tx", ".div_eth0_rm" };
+>  static const char * const sel_eth0_clk_rx_i[] = { ".sel_eth0_rx", ".div_eth0_rm" };
+>  static const char * const sel_eth1_clk_tx_i[] = { ".sel_eth1_tx", ".div_eth1_rm" };
 
-This shouldn't go above the main device data structs.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v7.2.
 
->  	struct rz_mtu3_priv *priv;
->  	struct rz_mtu3 *ddata;
->  	unsigned int i;
-> @@ -340,15 +336,14 @@ static int rz_mtu3_probe(struct platform_device *pdev)
->  	if (IS_ERR(priv->mmio))
->  		return PTR_ERR(priv->mmio);
->  
-> -	priv->rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
-> -	if (IS_ERR(priv->rstc))
-> -		return PTR_ERR(priv->rstc);
-> +	rstc = devm_reset_control_get_exclusive_deasserted(&pdev->dev, NULL);
-> +	if (IS_ERR(rstc))
-> +		return PTR_ERR(rstc);
->  
->  	ddata->clk = devm_clk_get(&pdev->dev, NULL);
->  	if (IS_ERR(ddata->clk))
->  		return PTR_ERR(ddata->clk);
->  
-> -	reset_control_deassert(priv->rstc);
->  	spin_lock_init(&priv->lock);
->  	platform_set_drvdata(pdev, ddata);
->  
-> @@ -361,14 +356,10 @@ static int rz_mtu3_probe(struct platform_device *pdev)
->  	ret = mfd_add_devices(&pdev->dev, 0, rz_mtu3_devs,
->  			      ARRAY_SIZE(rz_mtu3_devs), NULL, 0, NULL);
->  	if (ret < 0)
-> -		goto err_assert;
-> +		return ret;
->  
-> -	return devm_add_action_or_reset(&pdev->dev, rz_mtu3_reset_assert,
-> +	return devm_add_action_or_reset(&pdev->dev, rz_mtu3_mfd_remove,
->  					&pdev->dev);
-> -
-> -err_assert:
-> -	reset_control_assert(priv->rstc);
-> -	return ret;
->  }
->  
->  static const struct of_device_id rz_mtu3_of_match[] = {
-> -- 
-> 2.53.0
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Lee Jones
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
