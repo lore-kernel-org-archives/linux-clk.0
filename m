@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7961A3A8FE6;
-	Thu,  7 May 2026 08:53:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C1F389471;
+	Thu,  7 May 2026 08:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778144023; cv=none; b=IEWwKrWPoAa2X2R9P5mwi97DCFA6Ti3k6IgR1M11PSyrLjJL5hl9K2Tq7Pqk51CVKZnrPww8CaJyU8q6UwdZEQYMBVPFigjFMe8gnsuBfS7sOWAcsC5GsgzHLUYswKCQLL0eTiwVl1883Jtvt/FBrvtAyUzl8EwULoiAtiazLic=
+	t=1778144072; cv=none; b=nvyVr4/9hKpXvwPM/ZSIK+OH3loGGy/00F5mZIHCfNSV2URlrSjSJFNy0Pun87svc1+q3wI+/ktaTzaqeAHzbH7y1iNs8cZ2DTw5OmFeluLqkm3spk9r9yg9Qf/zbf4k8pZNJzgoIk1+vG1HZNQ6LB07zO4UluaFwm2BuDEEq/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778144023; c=relaxed/simple;
-	bh=hwkttDSz43O1IP3XMXY82kyLuXMeR+AJDYgnc+scSCk=;
+	s=arc-20240116; t=1778144072; c=relaxed/simple;
+	bh=Eip7+cbl7qm+VvPI1p4+pDtRP0n8W8Pecc8xhZ7LA2Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XK1afk6vGGm+JGeNSUrW5jnFDCCHVX1zx1kgfTPiWRwJ/xpvjCyc1jXHSkzb03x1dv1ScXpDcpA1+bxRFQRrsHyquPnXkB+GLv2JMsxcd1X2q0vdP8efjCQcFsR9Jf9NlSu7UpYYkInCmCvPmt0xKU69D/LVKC6qewIDN0ZK3aE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ETE/Pffe; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=kjnPpniwf6pKMC4cmdSL4r1vqzxrll7zorq4gsUsiPYWHfQV8VQEbv1SmzjlrNQ0f23IwJLyV7aQbtCEBKs1Rjtd151UPHgbtTT0jmd1SdPRtFz7ewIs36WAUMYIPlWCkZgRxMlsAev6XzmVJuXHg6UMF5Kd9dJQTWQ5ujxy6zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FEr77z35; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ETE/Pffe"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8799AC2BCC4;
-	Thu,  7 May 2026 08:53:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FEr77z35"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5E95C2BCF5;
+	Thu,  7 May 2026 08:54:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778144022;
-	bh=hwkttDSz43O1IP3XMXY82kyLuXMeR+AJDYgnc+scSCk=;
+	s=k20201202; t=1778144069;
+	bh=Eip7+cbl7qm+VvPI1p4+pDtRP0n8W8Pecc8xhZ7LA2Q=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ETE/Pffe6hubFc4sLc01rGx6rkkJwmoX090PUvwSrD/6jrnC65jAIfYHLacdx4Bql
-	 KO8cXis0yJrgboVnS21QJh4NDdQQohYuWRoC+VZwrNjpavkIeL1UDRTUr/gLouXIqJ
-	 X5+kOwBOXK33kTMRjPWFE/CdN969E5k+1eTxk5bl914dehzQmC1hTnHruNlKqGmOYr
-	 ZZiD0oQofnR9o9V7qaWgPNWyFX7EbY9jfm4kwwqT/1OzwXbygnyi/7Sy15NmfWkjTY
-	 m1OabTIgKVuXW/TsYw7bgd/W5SbAFHQG5IRlR/L8iuTSStSDPUlik/VUYXkRwTByt+
-	 uEVIJZPOS/zGg==
-Message-ID: <d16447a8-a1e5-40d8-b9a0-72590d8ef288@kernel.org>
-Date: Thu, 7 May 2026 09:53:36 +0100
+	b=FEr77z35cpGCXorHLMCYjeSRtclWZzrzXf+9AOSaaHCsXfLEnWK+osDYsxVfSfntl
+	 Q+M8z6rpm8D+/pCV1fqdPH6/1EiairlaBFiqX9vEic3XTusGdQFyaI3dimVMlxjJ8I
+	 SZ5DAWW/isFfBwfSgknfgYNwwuQMTh8z37er1zAgToxuJffaMgUVzR3T5WDFQVgF4E
+	 hExC7WTbhfIHYkLALki4uS55yGAAVGmLYXOhKYw03gZXakCC1MYH1OUDsCx7sSNZE7
+	 b0hpPAxIEEgrxTpzqejAh4LQEXS4OQW3itsx+UIutcF1EyqviywP+YEijUXFsuguIZ
+	 pdaVH6G0XFNDg==
+Message-ID: <3c518fbf-8dde-4277-9836-88f23d8e4774@kernel.org>
+Date: Thu, 7 May 2026 09:54:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,7 +35,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/8] media: dt-bindings: venus: Add qcom,msm8939 schema
+Subject: Re: [PATCH v5 2/8] arm64: dts: qcom: msm8939: Add venus node
 To: Erikas Bitovtas <xerikasxx@gmail.com>,
  Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
  Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
@@ -51,8 +51,8 @@ Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
  linux-clk@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
  phone-devel@vger.kernel.org
 References: <20260507-msm8939-venus-rfc-v5-0-d7b5ea2ce591@gmail.com>
- <F_-Hi9LsMqtxe6qL66l9Btr90AbjmEPhqWNeyJU40OcNT-QVY75FHc6dp7j2W5QSeYiqc93lxbKKBtDpTYDf_Q==@protonmail.internalid>
- <20260507-msm8939-venus-rfc-v5-1-d7b5ea2ce591@gmail.com>
+ <wfN_XM88kMMOb8egBg0VbuNfgIZju5QJ1ZZphjgBWtXw6kH4z2wLkSiRIZPh_H4TC7SivyYXqp5FhA6wle93UA==@protonmail.internalid>
+ <20260507-msm8939-venus-rfc-v5-2-d7b5ea2ce591@gmail.com>
 From: Bryan O'Donoghue <bod@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=bod@kernel.org; keydata=
@@ -98,107 +98,55 @@ Autocrypt: addr=bod@kernel.org; keydata=
  LKSGEglMpiX07M1AotgvylN5C8fjbouoK+/RAMsXkk8jba6rPfuuXPaDjCyyKn6zSVHETnHW
  3AJbgVY50T8STpnxayBQvWbCvu+6NOEjXCbyaOJig+5l0zlGN9XHjdANXC5HnwmyaGRL9YDq
  Jh2nVXVJDincOdQRdKcJjYLqaOAoWrYWSDi1iZGspHBTDrnOvfMQzzHY
-In-Reply-To: <20260507-msm8939-venus-rfc-v5-1-d7b5ea2ce591@gmail.com>
+In-Reply-To: <20260507-msm8939-venus-rfc-v5-2-d7b5ea2ce591@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
 On 07/05/2026 09:32, Erikas Bitovtas wrote:
 > From: André Apitzsch <git@apitzsch.eu>
 > 
-> Add a schema description for the Venus video decoder/encoder IP in
-> MSM8939.
+> Add DT entries for the msm8939 venus encoder/decoder.
 > 
 > Signed-off-by: André Apitzsch <git@apitzsch.eu>
 > Signed-off-by: Erikas Bitovtas <xerikasxx@gmail.com>
 > ---
->   .../bindings/media/qcom,msm8939-venus.yaml         | 79 ++++++++++++++++++++++
->   1 file changed, 79 insertions(+)
+>   arch/arm64/boot/dts/qcom/msm8939.dtsi | 23 +++++++++++++++++++++++
+>   1 file changed, 23 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/media/qcom,msm8939-venus.yaml b/Documentation/devicetree/bindings/media/qcom,msm8939-venus.yaml
-> new file mode 100644
-> index 000000000000..10a50a410748
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/qcom,msm8939-venus.yaml
-> @@ -0,0 +1,79 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/qcom,msm8939-venus.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> diff --git a/arch/arm64/boot/dts/qcom/msm8939.dtsi b/arch/arm64/boot/dts/qcom/msm8939.dtsi
+> index d4d7b0c9206c..71e22584a46b 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8939.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8939.dtsi
+> @@ -1627,6 +1627,29 @@ opp-19200000 {
+>   			};
+>   		};
+> 
+> +		venus: video-codec@1d00000 {
+> +			compatible = "qcom,msm8939-venus";
+> +			reg = <0x01d00000 0xff000>;
+> +			interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&gcc GCC_VENUS0_VCODEC0_CLK>,
+> +				 <&gcc GCC_VENUS0_AHB_CLK>,
+> +				 <&gcc GCC_VENUS0_AXI_CLK>,
+> +				 <&gcc GCC_VENUS0_CORE0_VCODEC0_CLK>,
+> +				 <&gcc GCC_VENUS0_CORE1_VCODEC0_CLK>;
+> +			clock-names = "core",
+> +				      "iface",
+> +				      "bus",
+> +				      "vcodec0_core",
+> +				      "vcodec1_core";
+> +			power-domains = <&gcc VENUS_GDSC>,
+> +					<&gcc VENUS_CORE0_GDSC>,
+> +					<&gcc VENUS_CORE1_GDSC>;
+> +			power-domain-names = "venus", "vcodec0", "vcodec1";
+> +			iommus = <&apps_iommu 5>;
+> +			memory-region = <&venus_mem>;
+> +			status = "disabled";
+> +		};
 > +
-> +title: Qualcomm MSM8939 Venus video encode and decode accelerators
-> +
-> +maintainers:
-> +  - André Apitzsch <git@apitzsch.eu>
-> +  - Erikas Bitovtas <xerikasxx@gmail.com>
-> +
-> +description:
-> +  The Venus IP is a video encode and decode accelerator present
-> +  on Qualcomm platforms
-> +
-> +allOf:
-> +  - $ref: qcom,venus-common.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,msm8939-venus
-> +
-> +  power-domains:
-> +    maxItems: 3
-> +
-> +  power-domain-names:
-> +    items:
-> +      - const: venus
-> +      - const: vcodec0
-> +      - const: vcodec1
-> +
-> +  clocks:
-> +    maxItems: 5
-> +
-> +  clock-names:
-> +    items:
-> +      - const: core
-> +      - const: iface
-> +      - const: bus
-> +      - const: vcodec0_core
-> +      - const: vcodec1_core
-> +
-> +  iommus:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - iommus
-> +  - power-domain-names
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/clock/qcom,gcc-msm8939.h>
-> +
-> +    video-codec@1d00000 {
-> +      compatible = "qcom,msm8939-venus";
-> +      reg = <0x01d00000 0xff000>;
-> +      interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
-> +      clocks = <&gcc GCC_VENUS0_VCODEC0_CLK>,
-> +               <&gcc GCC_VENUS0_AHB_CLK>,
-> +               <&gcc GCC_VENUS0_AXI_CLK>,
-> +               <&gcc GCC_VENUS0_CORE0_VCODEC0_CLK>,
-> +               <&gcc GCC_VENUS0_CORE1_VCODEC0_CLK>;
-> +      clock-names = "core",
-> +                    "iface",
-> +                    "bus",
-> +                    "vcodec0_core",
-> +                    "vcodec1_core";
-> +      power-domains = <&gcc VENUS_GDSC>,
-> +                      <&gcc VENUS_CORE0_GDSC>,
-> +                      <&gcc VENUS_CORE1_GDSC>;
-> +      power-domain-names = "venus", "vcodec0", "vcodec1";
-> +      iommus = <&apps_iommu 5>;
-> +      memory-region = <&venus_mem>;
-> +    };
+>   		apps_iommu: iommu@1ef0000 {
+>   			compatible = "qcom,msm8916-iommu", "qcom,msm-iommu-v1";
+>   			reg = <0x01ef0000 0x3000>;
 > 
 > --
 > 2.54.0
