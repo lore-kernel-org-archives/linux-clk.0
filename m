@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BCA23AA182;
-	Thu,  7 May 2026 08:59:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091F537EFE1;
+	Thu,  7 May 2026 09:10:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778144385; cv=none; b=YcyXceZ3PQcQ0zSmc77inSHr1HqPkXwqNRQGhnBCZ6yfEMklqnL189ifgY4T6pXStxG9n/L7oom5WOCk42gesb/fVfH6X76BQ9lmwjLdxfVjGOugYaq1RZ8IVpV+wRbz33sjqpDP4pAVhHvA9hIzRJExbTXCOT0boUfei0lCeRE=
+	t=1778145045; cv=none; b=n0n8ddZf1YT5KJ2pgmk2qEk2xv3L7yYXIYvZ7Xx5ZSg9LhCPxmqxsWNj/1jKCwpTDJKYw1MmfnL2ubQJlwIFvKUBRCfCdu+zORZP4aHxEF4SpA7KfCh42ZTMzoXXZuGK9McTRo+ZxcgRYMSa6HqHhk54rxfNB3Sv/FaOYoKjgyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778144385; c=relaxed/simple;
-	bh=A+oGwPL1XNUh0c0Two5S73J+Xy3VSTABP8fVm0BZ18g=;
+	s=arc-20240116; t=1778145045; c=relaxed/simple;
+	bh=KrOWVyklxktWUvuewCX59mvY1PbJ8FeIsvjCSRqvlPc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ty2744RAuZgjaIBZd62dhgLw/MsAoGNe6SCtC6JlrSrzsng3oFIr1OVx6G0gaoUeCHLUXnJRJH0+8xafGCQVuOYcGS0qYSW4zPQvuCDXilDMZ7bTAK0eS61RIA2nZljPfLLIEExY/jdqF+QrJKYpoK5ZruAYQrOC/BDhBubUCNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mqpVYeUK; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=K9fQ5VIBWHu3YPKozj2GTlcUwmUu8IXMETRigGxDfzbjYdzduhMWGhMo77fAqWEFWeMss01BhELZnLwN9Hkvldpgpg8iplCFXgRgPdc7/IeSngm8pSQvwqQaOvEAcQ1AK67emsnrvASGFc8F9QrcIFycHzuL7JA5KHX202BkkP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A9OYY5/z; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mqpVYeUK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6A21C2BCB8;
-	Thu,  7 May 2026 08:59:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A9OYY5/z"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2D67C2BCB2;
+	Thu,  7 May 2026 09:10:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778144383;
-	bh=A+oGwPL1XNUh0c0Two5S73J+Xy3VSTABP8fVm0BZ18g=;
+	s=k20201202; t=1778145044;
+	bh=KrOWVyklxktWUvuewCX59mvY1PbJ8FeIsvjCSRqvlPc=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mqpVYeUKMg1GCNQNW19NUjQzk41//TXoMseX/4a1IFBtkWKEZ01RBBmd3zmkNRRe2
-	 BFQvkcA+Hy5jjgYMpeYYDSVUBUtSTjuStSVW1tBs5o0Ajl69nP5utxciFzXG5pY4nP
-	 2wFV2rljw4xdvNOBqufYoBVRIhHxW8D4mtMhNMZM9BwvQremNgpIye3Y3Ho0NaMTZx
-	 g74nSu/CwlbIEir6oTcgqgpZnS4t7QD/ZMs2sG0ZfIYeJGR3I1xYk5aD57YZrkezI3
-	 RuK2S6FcMYJy+JHppzGjDHVwzsxEhsHiXBMzQfHFLumT51UNyYsJx8/Ga/Gl7n/DeX
-	 e+R4wKJQf5ARg==
-Message-ID: <17c4626e-8926-4cad-842d-a1b171d1e962@kernel.org>
-Date: Thu, 7 May 2026 09:59:38 +0100
+	b=A9OYY5/zu2m0DD+/b0kTfHy/pYdA1QeAHmZfnVpZQ9jYFytL0FsWvRZFZGGC7QGOD
+	 9E+Tis7KzBLQAfNwo8/RiSGHw2MoD4QBnr/5rSSfAsAQI1Z8GOZ98+N7JdmG4ZOA0t
+	 7DNA9p6aUWrDrPMkpk72/j6N5BVonIc1gcZJfxtLnZpxLH9+9xe0kOOtkjCSgWtaqL
+	 kJrW21IRkNMYPybSU7mBad1JWuOZ20+h/JPRyzr27kXq0Fj0pImv+Qg7ax++XgdH1Y
+	 GtsY6iBnGPzDCGP35phY+BZEMkCI0JhuA7kvx5G0R2xqT4DtzmiNINskb+8GwA1M9Z
+	 LZ3/Z6NLEbHnA==
+Message-ID: <91ef405e-28c8-470c-af8f-ead3fbb310b9@kernel.org>
+Date: Thu, 7 May 2026 10:10:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 5/8] clk: qcom: gcc-msm8939: mark Venus core GDSCs as
- hardware controlled
+Subject: Re: [PATCH v5 6/8] media: qcom: venus: add power domain enable logic
+ for Venus cores
 To: Erikas Bitovtas <xerikasxx@gmail.com>,
  Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
  Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
@@ -52,8 +52,8 @@ Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
  linux-clk@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
  phone-devel@vger.kernel.org
 References: <20260507-msm8939-venus-rfc-v5-0-d7b5ea2ce591@gmail.com>
- <f5TsKnC12rLsH63vAi01aN4oXUFLrfgIhn14IQFDb9gcac6anLzzhJdkGNdQ2dRs4vYbFKUptfEgWuKdgIgGsQ==@protonmail.internalid>
- <20260507-msm8939-venus-rfc-v5-5-d7b5ea2ce591@gmail.com>
+ <NKDr05opwdmbkLx617QRk-R0foXgb0E2_3_RD2qymAYEMnCYw8dD-dsSmj2Lrknh9Edo-M5KNzSxk91GWgtNZQ==@protonmail.internalid>
+ <20260507-msm8939-venus-rfc-v5-6-d7b5ea2ce591@gmail.com>
 From: Bryan O'Donoghue <bod@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=bod@kernel.org; keydata=
@@ -99,84 +99,19 @@ Autocrypt: addr=bod@kernel.org; keydata=
  LKSGEglMpiX07M1AotgvylN5C8fjbouoK+/RAMsXkk8jba6rPfuuXPaDjCyyKn6zSVHETnHW
  3AJbgVY50T8STpnxayBQvWbCvu+6NOEjXCbyaOJig+5l0zlGN9XHjdANXC5HnwmyaGRL9YDq
  Jh2nVXVJDincOdQRdKcJjYLqaOAoWrYWSDi1iZGspHBTDrnOvfMQzzHY
-In-Reply-To: <20260507-msm8939-venus-rfc-v5-5-d7b5ea2ce591@gmail.com>
+In-Reply-To: <20260507-msm8939-venus-rfc-v5-6-d7b5ea2ce591@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 07/05/2026 09:32, Erikas Bitovtas wrote:
-> Since in downstream kernel VENUS_CORE0_GDSC and VENUS_CORE1_GDSC have a
-> device tree property "qcom,supports-hw-trigger", add a HW_CTRL flag
-> to these GDSCs to indicate that they are hardware controlled.
-
-This is a misreading/misunderstanding - supports-hw-trigger means the 
-GDSC is capable of being configured this way - not that it _must_ be 
-configured this way.
-
-Which leads me back to my previous point/feedback to you in the previous 
-cycle.
-
-If you _don't_ apply this patch, do you get different behaviour when 
-trying to switch on the encoder ?
-
-> Venus core clock cannot be enabled if Venus core GDSCs are switched off.
-
-True.
-
-> But since they are hardware controlled
-
-False. Your patch makes it so.
-
-The question is, is that change actually required and/or beneficial here ?
-
-  they can be switched off at
-> any moment. Vote for the Venus core clock to enable it later when GDSCs
-> get turned on.
-
-
+> Attach power domains for vdec and venc cores and power them up if a vdec
+> or venc session is started.
 > 
 > Signed-off-by: Erikas Bitovtas <xerikasxx@gmail.com>
-> ---
->   drivers/clk/qcom/gcc-msm8939.c | 4 ++++
->   1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/gcc-msm8939.c b/drivers/clk/qcom/gcc-msm8939.c
-> index 45193b3d714b..420997b00ae0 100644
-> --- a/drivers/clk/qcom/gcc-msm8939.c
-> +++ b/drivers/clk/qcom/gcc-msm8939.c
-> @@ -3664,6 +3664,7 @@ static struct clk_branch gcc_venus0_vcodec0_clk = {
-> 
->   static struct clk_branch gcc_venus0_core0_vcodec0_clk = {
->   	.halt_reg = 0x4c02c,
-> +	.halt_check = BRANCH_HALT_SKIP,
->   	.clkr = {
->   		.enable_reg = 0x4c02c,
->   		.enable_mask = BIT(0),
-> @@ -3681,6 +3682,7 @@ static struct clk_branch gcc_venus0_core0_vcodec0_clk = {
-> 
->   static struct clk_branch gcc_venus0_core1_vcodec0_clk = {
->   	.halt_reg = 0x4c034,
-> +	.halt_check = BRANCH_HALT_SKIP,
->   	.clkr = {
->   		.enable_reg = 0x4c034,
->   		.enable_mask = BIT(0),
-> @@ -3753,6 +3755,7 @@ static struct gdsc venus_core0_gdsc = {
->   	.pd = {
->   		.name = "venus_core0",
->   	},
-> +	.flags = HW_CTRL,
->   	.pwrsts = PWRSTS_OFF_ON,
->   };
-> 
-> @@ -3761,6 +3764,7 @@ static struct gdsc venus_core1_gdsc = {
->   	.pd = {
->   		.name = "venus_core1",
->   	},
-> +	.flags = HW_CTRL,
->   	.pwrsts = PWRSTS_OFF_ON,
->   };
-> 
-> 
-> --
-> 2.54.0
-> 
+This looks fine to me but, will need to be tested/verified on 8916 to 
+make sure nothing explodes there prior to hitting -next.
 
+Reviewed-by: Bryan O'Donoghue <bod@kernel.org>
+
+---
+bod
