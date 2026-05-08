@@ -1,318 +1,392 @@
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFCEB33F8A2
-	for <linux-clk@vger.kernel.org>; Fri,  8 May 2026 08:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504703CD8C1
+	for <linux-clk@vger.kernel.org>; Fri,  8 May 2026 10:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778228785; cv=none; b=tQJnABl9vG9HEdaYB+rITUeIaDRcOT88Y5B3lUuakH2+3RzQPABnsTvJPItES9TPZwu633u1kOOPqrKnwZ2bHP0z6/RTpaB0ClhZuHaiQW15y2rnGytNMjAFFYnDw42lxferF+Dhgo/+jSTWslgfUISZ/kDzVQ6tSkW0NPxxhnM=
+	t=1778234536; cv=none; b=H5Ay0FRkLEhL9KMoEMhZV/l/VSQ+cDmkG7yzX40AuVtJxug4Gl1sa/+Aqpxzlv3gD9VYvJxo+pVpEezx8H0xIuKHK6YpoCdyb4+wrJC0xLhxMwTuIW3kSAFBRGwdHxcn/CVzNoQqNb0fkdAIeHiRsIYUPIBiZ6FdasGm95JE3gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778228785; c=relaxed/simple;
-	bh=OF+KbbPBry4fiTqCO/A0vEBAM9IFzJmbWYXTqxwsniM=;
+	s=arc-20240116; t=1778234536; c=relaxed/simple;
+	bh=xvmoJSJ1vW711/dM2ob3bppJLYip6cz95f5WmwJa1pE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A9M+BEZ4DDUB7nfT+jbkFOJXwdtK5CXHnikF7OPmKPa356ZDBQVNNbhsiO1WpOgc99IxTMLXdbnhkAz1c8IrfJxdBACdNfaa3if4f1WnJfWSnlbYrChn67lJxTbF5Da5SOQJHst630NyRPzCSDfEwiZa9VTB5l5z1EUkkHRzhZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.177
+	 To:Cc:Content-Type; b=OR2Aa1+2eRyjNMqOq7ZaHJ/u+eFqNWWNpuEGHS2vvfgTcljBxjdjp22LkwFARlQOGAaf5+i6nWTF+a0+OgGMqA9cl406FkNEj0hOuFLKACuDBYg/Txu3lb3JCtl+q2MOkH2j4DWwLarUljx9XdS/PfQGBdCbynlAmba+YUSSjpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-575124e716fso656129e0c.1
-        for <linux-clk@vger.kernel.org>; Fri, 08 May 2026 01:26:23 -0700 (PDT)
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-5637886c92aso879806e0c.0
+        for <linux-clk@vger.kernel.org>; Fri, 08 May 2026 03:02:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778228783; x=1778833583;
+        d=1e100.net; s=20251104; t=1778234531; x=1778839331;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vUNwtFp7LXv7nOLjMf/BlzJYT09wzG6WamyTo0Ov/no=;
-        b=JcNT5cYSMzB91ou9LRjzF1fdRz2Uk04XWIMTDUl6v5wwGlED8+B+1R635Q3HPmppxM
-         M+xB1E4rJAZYa8aJ5Q+uiHQ7cRcBtrOc7IRIYksBC8XYlMJA12SLSfwggXwOPP1Ljs9D
-         /ojKffq7g0xcAvoXXVjEcT7ATulUXFg3xiH32wrm3rL1av4iIr20MRSwBYWz0TsgprR4
-         bmBsjuSMrCv1fzTT9PVECXAWgWCAticGko/JtHvgoYCoxFxgZHeSp1C5cy59ubt6DeVk
-         NA5Hof5X/ss9WLRcOgAM5z28O2HR0vWBWLJMlZVkdtv4rQK0YjpG8kmYnWCITjhi9L8S
-         KdcQ==
-X-Forwarded-Encrypted: i=1; AFNElJ/n2oseonkxlItBfXpUX2bB8TpEMyujfeRW5MktGJiOcfuVwFZJ9QYLk6GS6vyxikgNLJIuc6kVorA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzga74jk/2tOn/EZfaB9iV5mk1RJfFiwPGplZhsjC6vvRIw21ur
-	Zp1Eb4iHq76Dry20CD4bhZN5fKYVNhsbRo491Fp5BTm5idQPX9op364HhpWfsJBKnSk=
-X-Gm-Gg: Acq92OHUBANSfPTS1Wa4FTjJFWenut2O8BPgCb5h1q02gyrtYx2gK20rw99cpDuEcJO
-	2klwqqS+lPw0HNWlGf61Or+IcC4W7Y5QIawzULm12rziXCqiymI+tvwAzJOiU8EkTUehV8FYu9F
-	CdwI/6H2ONl2CsJV0woGjldI0sRVLiFi/qFpahBS7+nONnTQlZs2WmKixkAzDZ9oLy4SDg5KzM/
-	uQ5CumcbWpOAlvp1wo31esQxWM8TP/qH0KzBFVtPUe0u/nIDjeOXkT1Yjwp1r+4c5fxublGnt2Y
-	1S2Zr+HJVqW84IushY1plh7qiHYBr/233Jd7C/tJWle9qhnTrHp93hGsdgjuDJaclHFT8mV4f+3
-	1O2N6wia7obmElzpFuMpqkTM/TcIOlAb5Z+w8tt9f2mmmazyywaCeatLZQ4h70uaK6oTMpf/fUB
-	odgZSr6OtxzggwLPtJM99+nkpnBJQMVfbc80uSzJvT1LJ2sXJOM1wchfWfV44K
-X-Received: by 2002:a05:6122:6583:b0:56f:1c32:bd07 with SMTP id 71dfb90a1353d-575594ce54bmr6515345e0c.2.1778228782588;
-        Fri, 08 May 2026 01:26:22 -0700 (PDT)
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com. [209.85.217.46])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-574a6c6d4e8sm14443073e0c.11.2026.05.08.01.26.22
+        bh=pcl8IC5svK1OXmJv9TpTHeh/oYwzMHlG3MjWZjSCGcQ=;
+        b=E3lu4k0cwPhUf+ZDOSpi8tSiS3eWESX6Zy7Fg0d9b8E4knngktSriu6D6Ztuu6wIsB
+         pQOPvfQPVLwzktdKu2TBzFqCuYJ+v05D5ugy0v7JoYeeHnmfZD/jHuiMrZTRlDrHtWOA
+         ZjSc/P9GVwyGkuUk8tQdOTM1rxV2tSARk/OM942dNPHoAfwPDIrePXwrtPfMmL+vq4Pe
+         zFyZzPZ2T6pnFoxTn6wxfm2a0lmo7KqOlnvPvjCUa2tMEjcJuWYTgsuSKxS00YXJf56S
+         TEaWKMGq6bSgSRohxNzqEWh0EQ9RKeKVron/n+IfACLVY/2DhpyRkGoxQ2Zs9/i3l6cO
+         tUJw==
+X-Forwarded-Encrypted: i=1; AFNElJ+580QUkM468/C4j1wkDGZChAIT7Clu4fBL8ViUPK8I3WkUkn+FkbJXMn/eRJQHiXaIqId5cTw/wdg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVBlUp6qAPnYuxSHA7kqac/qRU5nBLz+86eWXdnhPgLK42LwNM
+	/7iiNrZ0T5g6e1Yrx+BW4M7SCnbik80m5f8M/3aS5XV9D0r1zxvB02HHL/uynGMvRMU=
+X-Gm-Gg: Acq92OEuITs6iLGJoR0KOtdrsyyWEwzk8p3dF6q3k8S67VSmaKbseh+vQsl99d+x+Aq
+	uESMYYphnEH9ycv4NrNAPmkLo2AhrHb9afDO7NgKkhrMFAanoEFAHcJhpXsaxlHAONLePD/To5L
+	72cvESvFL5mvMP5gzBV8R5u/cKueKsaBv9ZZYXCJ3pzcPJVGnet7IebpYJg5sI0MPdeTF234GHA
+	82mSf4LHb4PM0eE8PLhD4fgn7MAoi7kq3git3o/4ZV1y6KaJjO0WQZV7yM7kowAzUCUxS9+L3Dy
+	BVhNTc/9VbrwyjID8smFo+3EOGpCmuBbYeOUgEY3WmFgbildCNNN4SmeemwnbwfZiloCJeZBOJJ
+	GYrPstfh++YZgP9JGxX+eaSexEppv7pYXoe2SnO36t8nI9PTUzea7vAqb+ukA1ugje0CTL+dNEs
+	Z1kSl8IiNkcp/gn2tiUtYdf1UP+RRyvtXRuz16Es3qJcPbwds5c4hjfecjoOb1+JWBnBqKiku9o
+	MA=
+X-Received: by 2002:a05:6122:915:b0:575:29ef:7e13 with SMTP id 71dfb90a1353d-575594f743dmr6232134e0c.3.1778234521233;
+        Fri, 08 May 2026 03:02:01 -0700 (PDT)
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com. [209.85.221.181])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-95f21ba2c2fsm594445241.12.2026.05.08.03.01.59
         for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 May 2026 01:26:22 -0700 (PDT)
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-6221c7251d1so631983137.2
-        for <linux-clk@vger.kernel.org>; Fri, 08 May 2026 01:26:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ+BNK681/ozYYDEcWFXrMK7CiCqXJnLEYgRWmGMocZtya8DXMHMmG4Kn37CVQMdwTO18iwY54lFAV0=@vger.kernel.org
-X-Received: by 2002:a67:e709:0:b0:604:ec90:ba14 with SMTP id
- ada2fe7eead31-630f8ee2fa0mr5929351137.11.1778228781677; Fri, 08 May 2026
- 01:26:21 -0700 (PDT)
+        Fri, 08 May 2026 03:01:59 -0700 (PDT)
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-5751e12c524so645579e0c.1
+        for <linux-clk@vger.kernel.org>; Fri, 08 May 2026 03:01:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ8n4ApBkJnp8u+UgWKX3xBq3YWR+G42rXkEyOLLrNOpXLXb1yPCmhRTJcA3Ibmb4L28dTO+HWsIDOs=@vger.kernel.org
+X-Received: by 2002:a05:6123:a8:b0:56e:e7b5:17d3 with SMTP id
+ 71dfb90a1353d-575595d06b6mr6630766e0c.8.1778234516982; Fri, 08 May 2026
+ 03:01:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1776793163.git.geert+renesas@glider.be> <053c312d07445517d8f9c84bfe3cc8fb72d4cd9a.1776793163.git.geert+renesas@glider.be>
- <bf83a028-3ef3-482a-9ce3-8aec16f6ebed@mailbox.org> <CAMuHMdWN2zaZrY2jKKXpNqrP8xSqc-uJTr-siTBgaA=-EY_4BQ@mail.gmail.com>
- <fa28c6fe-484c-4133-824e-649c52ef2200@mailbox.org>
-In-Reply-To: <fa28c6fe-484c-4133-824e-649c52ef2200@mailbox.org>
+References: <20260402163126.12135-1-john.madieu.xa@bp.renesas.com> <20260402163126.12135-3-john.madieu.xa@bp.renesas.com>
+In-Reply-To: <20260402163126.12135-3-john.madieu.xa@bp.renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 8 May 2026 10:26:09 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUU=RohST4LDDD27W5dj=HwJFApMcDpsXATQ1MaMH-tUA@mail.gmail.com>
-X-Gm-Features: AVHnY4JJUxMOqvyoeb-hr7ynluUAgTja2N2yaP-Ep1K9EfNyRckxSh-cxJzmeNw
-Message-ID: <CAMuHMdUU=RohST4LDDD27W5dj=HwJFApMcDpsXATQ1MaMH-tUA@mail.gmail.com>
-Subject: Re: [PATCH/RFC 10/14] dt-bindings: power: Document Renesas R-Car X5H
- Module Controller
-To: Marek Vasut <marek.vasut@mailbox.org>
-Cc: Sudeep Holla <sudeep.holla@kernel.org>, Cristian Marussi <cristian.marussi@arm.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Saravana Kannan <saravanak@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Ulf Hansson <ulfh@kernel.org>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Marek Vasut <marek.vasut+renesas@mailbox.org>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, arm-scmi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Fri, 8 May 2026 12:01:44 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUyf1HPqAArdy8nsOuW3qxExOEAeO72221A0w1mCtXrVg@mail.gmail.com>
+X-Gm-Features: AVHnY4LLjavjc6b4hOixot-jTxjcDtq_QAYXdyxTt9JPymFC7dc2OhGNdgp1wPY
+Message-ID: <CAMuHMdUyf1HPqAArdy8nsOuW3qxExOEAeO72221A0w1mCtXrVg@mail.gmail.com>
+Subject: Re: [PATCh v3 2/8] clk: renesas: r9a09g047: Add audio clock and reset support
+To: John Madieu <john.madieu.xa@bp.renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, john.madieu@gmail.com, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Marek,
+Hi John,
 
-On Thu, 7 May 2026 at 23:36, Marek Vasut <marek.vasut@mailbox.org> wrote:
-> On 5/7/26 9:37 AM, Geert Uytterhoeven wrote:
-> > On Thu, 7 May 2026 at 00:58, Marek Vasut <marek.vasut@mailbox.org> wrote:
-> >> On 4/21/26 8:11 PM, Geert Uytterhoeven wrote:
-> >>> +  '#power-domain-cells':
-> >>> +    description: |
-> >>> +      - The first power domain specifier cell must be either the Module
-> >>> +        Power Domain Gating (MPDG) register index (0x00-0x3f) from the
-> >>> +        datasheet,
-> >>
-> >> I agree with this part.
-> >>
-> >>> or a Power Domain number, as defined in
-> >>> +        <dt-bindings/power/renesas,r8a78000-mdlc.h>,
-> >>
-> >> I do not understand this part, please see end of this email ...
-> >>
-> >>> +      - The second power domain specifier cell must be the module number
-> >>> +        (0x00-0xff), composed of the Module System Reset (MSRES) register index
-> >>> +        in the high nibble, and the Module Reset Destination bitfield index in
-> >>> +        the low nibble.
-> >>> +    const: 2
-> >>
-> >> I am unsure about this part.
-> >>
-> >> There are multiple MDLC blocks, AON, SCP, HSCN, and so on. Each MDLC
-> >> block contains multiple Module Power Domain Gating registers (MPDGn) and
-> >> multiple Module System RESet register (MSRES) .
-> >>
-> >> I do understand and agree that the first power-domains-cells cell must
-> >> be the identifier of power domain within the MDLC block.
-> >>
-> >> However, I do not understand the second cell. The MDLC bindings already
-> >> contain reset-cells, which should be used to refer to a reset within the
-> >> MDLC block. Resets within the MDLC block are operated using the MSRES
-> >> registers. Why are resets conflated into power-domain-cells ?
-> >
-> > The Module Reset Destination bitfields in the MSRES registers are
-> > 2-bit wide, and control both Reset and Module Standby.  Hence the
-> > same register bitfields are referred to in the power-domains and
-> > resets properties, through the module number.
-> >
-> > Module Standby controls the clock(s) going into the module,
-> > and is modelled as an SCMI clock (SCP_CLOCK_ID_MDLC_*) by the SCP
-> > firmware. This is very similar to how MSTP (Module Stop) clocks are
-> > handled on earlier R-Car SoCs (except that the SCP_CLOCK_ID_MDLC_*
-> > clocks have a zero rate :-(.
-> >
-> > Summarized, the first cell is the power domain part, and the second
-> > cell is the clock domain part.
+On Thu, 2 Apr 2026 at 18:32, John Madieu <john.madieu.xa@bp.renesas.com> wrote:
+> Add clock and reset entries for audio-related modules on the RZ/G3E SoC.
 >
-> Thank you for the clarification.
+> Target modules are:
+>  - SSIU (Serial Sound Interface Unit) with SSI ch0-ch9
+>  - SCU (Sampling Rate Converter Unit) with SRC ch0-ch9, DVC ch0-ch1,
+>    CTU/MIX ch0-ch1
+>  - ADMAC (Audio DMA Controller)
+>  - ADG (Audio Clock Generator) with divider input clocks and audio
+>    master clock outputs
 >
-> Since there are up to 32 MPDG registers, and 256 resets, can we encode
-> both into a single cell ?
+> While at it, reorder plldty_div16 to group it with other plldty fixed
+> dividers.
 >
-> (mpdg_register_offset << 16) | (reset_bit_offset << 0)
+> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
 
-We could.  I did consider it (with a shift of 8 cfr. 256 modules),
-but see below...
+Thanks for your patch!
 
-> I cannot tell whether this is much better, but it at least ties the PD
-> components (power domain and clock domain) into a single value, which
-> matches reality a bit better. The current split power domain and clock
-> domain description in two cells gives me the illusion that it is
-> possible to mix and match power domains and clock domains in DT
-> description, but in fact the two cells are strongly tied together.
+> --- a/drivers/clk/renesas/r9a09g047-cpg.c
+> +++ b/drivers/clk/renesas/r9a09g047-cpg.c
+> @@ -22,6 +22,9 @@ enum clk_ids {
+>         CLK_AUDIO_EXTAL,
+>         CLK_RTXIN,
+>         CLK_QEXTAL,
+> +       CLK_AUDIO_CLKA,
 
-They are only tied together in the sense that a module (hardware block)
-is part of a power domain, and has module standby (clock) control.
-Some power domains are backed by MDLC hardware registers,
-others are not, hence the need for the additional definitions in
-<dt-bindings/power/renesas,r8a78000-mdlc.h>.
-I am not aware (yet) of modules that are part of a power domain,
-but do not have module standby control. If these exist, we
-need an additional definition (R8A78000_MDLC_MODULE_NONE?) in
-<dt-bindings/power/renesas,r8a78000-mdlc.h>.
+Please drop this, as the AUDIO_CLKA clock is provided by the
+existing CLK_AUDIO_EXTAL pin.
 
-Due to this separation, and due to a possible future need for expansion
-(R8A78000_MDLC_MODULE_NONE, MDLCs with more than 256 modules, ...),
-I went for two cells.
-
-> If we cannot encode the two into a single cell, maybe we can at least
-> have some sort of macro for this, e.g. this (0xff as no MPDG register
-> bits for this block):
-> #define R8A78000_MDLC_PD_HSCIF0 (0xff << 16) ((0x5 << 4) | (0x3 << 0))
+> +       CLK_AUDIO_CLKB,
+> +       CLK_AUDIO_CLKC,
 >
-> What do you think ?
-
-I (and I believe the DT maintainers) are not so fond of defines for
-numbers that can be (more or less) just read from the documentation.
-(and 0xff should be R8A78000_MDLC_PD_APL?)
-
-> > So perhaps I will clarify like this:
-> >
-> >        - The first power domain specifier cell is the power domain part, and
-> >          must be either the Module Power Domain Gating (MPDG) register index
+>         /* PLL Clocks */
+>         CLK_PLLCM33,
+> @@ -34,6 +37,8 @@ enum clk_ids {
+>         /* Internal Core Clocks */
+>         CLK_PLLCM33_DIV3,
+>         CLK_PLLCM33_DIV4,
+> +       CLK_PLLCM33_DIV4_DDIV2,
+> +       CLK_PLLCM33_DIV4_DDIV2_DIV2,
+>         CLK_PLLCM33_DIV5,
+>         CLK_PLLCM33_DIV16,
+>         CLK_PLLCM33_GEAR,
+> @@ -41,15 +46,19 @@ enum clk_ids {
+>         CLK_SMUX2_XSPI_CLK1,
+>         CLK_PLLCM33_XSPI,
+>         CLK_PLLCLN_DIV2,
+> +       CLK_PLLCLN_DIV4,
+>         CLK_PLLCLN_DIV8,
+>         CLK_PLLCLN_DIV16,
+>         CLK_PLLCLN_DIV20,
+> +       CLK_PLLCLN_DIV32,
+>         CLK_PLLCLN_DIV64,
+>         CLK_PLLCLN_DIV256,
+>         CLK_PLLCLN_DIV1024,
+>         CLK_PLLDTY_ACPU,
+>         CLK_PLLDTY_ACPU_DIV2,
+>         CLK_PLLDTY_ACPU_DIV4,
+> +       CLK_PLLDTY_DIV2,
+> +       CLK_PLLDTY_DIV4,
+>         CLK_PLLDTY_DIV8,
+>         CLK_PLLDTY_RCPU,
+>         CLK_PLLDTY_RCPU_DIV4,
+> @@ -64,6 +73,7 @@ enum clk_ids {
+>         CLK_PLLDTY_DIV16,
+>         CLK_PLLVDO_CRU0,
+>         CLK_PLLVDO_GPU,
+> +       CLK_CDIV5_MAINOSC,
 >
-> ... for power domains which are backed by MDPG bits, and which can be
-> controlled in that manner ...
+>         /* Module Clocks */
+>         MOD_CLK_BASE,
+> @@ -120,6 +130,9 @@ static const struct cpg_core_clk r9a09g047_core_clks[] __initconst = {
+>         DEF_INPUT("audio_extal", CLK_AUDIO_EXTAL),
+>         DEF_INPUT("rtxin", CLK_RTXIN),
+>         DEF_INPUT("qextal", CLK_QEXTAL),
+> +       DEF_INPUT("audio_clka", CLK_AUDIO_CLKA),
 
-OK.
+Please drop this.
 
-> >          (0x00-0x3f) from the datasheet, or a Power Domain number, as defined in
-> >          <dt-bindings/power/renesas,r8a78000-mdlc.h>,
+> +       DEF_INPUT("audio_clkb", CLK_AUDIO_CLKB),
+> +       DEF_INPUT("audio_clkc", CLK_AUDIO_CLKC),
 >
-> ... for power domains which are always on, and for which there are no
-> MPDG bits which can be used to control them ...
-
-OK,
-
+>         /* PLL Clocks */
+>         DEF_FIXED(".pllcm33", CLK_PLLCM33, CLK_QEXTAL, 200, 3),
+> @@ -135,6 +148,11 @@ static const struct cpg_core_clk r9a09g047_core_clks[] __initconst = {
+>         DEF_FIXED(".pllcm33_div5", CLK_PLLCM33_DIV5, CLK_PLLCM33, 1, 5),
+>         DEF_FIXED(".pllcm33_div16", CLK_PLLCM33_DIV16, CLK_PLLCM33, 1, 16),
 >
-> >        - The second power domain specifier cell is the clock domain part, and
+> +       DEF_DDIV(".pllcm33_div4_ddiv2", CLK_PLLCM33_DIV4_DDIV2, CLK_PLLCM33_DIV4,
+> +                CDDIV0_DIVCTL1, dtable_2_64),
+> +       DEF_FIXED(".pllcm33_div4_ddiv2_div2", CLK_PLLCM33_DIV4_DDIV2_DIV2,
+> +                 CLK_PLLCM33_DIV4_DDIV2, 1, 2),
 
-Upon second thought: s/clock domain/module standby/
+These two clocks are unused?
 
-> >          must be the module number (0x00-0xff), composed of the Module System
-> >          Reset (MSRES) register index in the high nibble, and the Module Reset
-> >          Destination bitfield index in the low nibble.
+> +
+>         DEF_DDIV(".pllcm33_gear", CLK_PLLCM33_GEAR, CLK_PLLCM33_DIV4, CDDIV0_DIVCTL1, dtable_2_64),
 >
-> I can understand this.
->
-> >>> +  '#reset-cells':
-> >>> +    description:
-> >>> +      The single reset specifier cell must be the module number (0x00-0xff).
-> >>> +    const: 1
-> >>
-> >> [...]
-> >>
-> >>> +#ifndef __DT_BINDINGS_POWER_RENESAS_R8A78000_MDLC_H__
-> >>> +#define __DT_BINDINGS_POWER_RENESAS_R8A78000_MDLC_H__
-> >>> +
-> >>> +/* R-Car X5H MDLC Power Domains */
-> >>> +
-> >>> +#define R8A78000_MDLC_PD_AON                 0x40
-> >>> +#define R8A78000_MDLC_PD_SCP                 0x41
-> >>> +#define R8A78000_MDLC_PD_APL                 0x42
-> >>> +#define R8A78000_MDLC_PD_CMN                 0x43
-> >>> +#define R8A78000_MDLC_PD_ACL                 0x44
-> >> ... what do these numbers represent ? Shouldn't those be register
-> >> offsets from MDLC MPDG00 according to power-domain-cells ?
-> >
-> > These are Power Domains that are not backed by any of the 64 Module
-> > Power Domain Gating (MPDG) registers in MDLC blocks.
->
-> I suspect that might not be entirely correct for all of them, please
-> read on and see CMN below.
+>         DEF_SMUX(".smux2_xspi_clk0", CLK_SMUX2_XSPI_CLK0, SSEL1_SELCTL2, smux2_xspi_clk0),
+> @@ -142,9 +160,11 @@ static const struct cpg_core_clk r9a09g047_core_clks[] __initconst = {
+>         DEF_CSDIV(".pllcm33_xspi", CLK_PLLCM33_XSPI, CLK_SMUX2_XSPI_CLK1, CSDIV0_DIVCTL3,
+>                   dtable_2_16),
+>         DEF_FIXED(".pllcln_div2", CLK_PLLCLN_DIV2, CLK_PLLCLN, 1, 2),
+> +       DEF_FIXED(".pllcln_div4", CLK_PLLCLN_DIV4, CLK_PLLCLN, 1, 4),
+>         DEF_FIXED(".pllcln_div8", CLK_PLLCLN_DIV8, CLK_PLLCLN, 1, 8),
+>         DEF_FIXED(".pllcln_div16", CLK_PLLCLN_DIV16, CLK_PLLCLN, 1, 16),
+>         DEF_FIXED(".pllcln_div20", CLK_PLLCLN_DIV20, CLK_PLLCLN, 1, 20),
+> +       DEF_FIXED(".pllcln_div32", CLK_PLLCLN_DIV32, CLK_PLLCLN, 1, 32),
 
-Thanks, looks like R8A78000_MDLC_PD_CMN should be dropped.
+This clock is unused?
 
-> Let's take PD_AC00 , AP core 0 , as a domain of interest. My
-> understanding is, that the domain structure for PD_AC00 looks as follows:
->
-> PD_AON {
->    PD_SCP { };
->    PD_APL {
->      hierarchy is SYSSS
->      always-power-on
->      PD_CMN {
->        hierarchy is CMNN
->        power-gating-bit is MDLC_CMNN 20
->        PD_APU0 {
->          hierarchy is SYSSS
->          power-gating is done by APMU
->          PD_ACL0 {
->            hierarchy is CMNN
->            power-gating-bit is MDLC_CMNN 16
->            PD_AC00 {
->              hierarchy is CMNN
->              power-gating-bit is MDLC_CMNN 0
->            };
->            ...
->          };
->          ...
->        };
->        ...
->      };
->      ...
->      PD_HSCIF0 {
->        hierarchy is PERW
->        power-gating-bit is MDLC_PERW 23
->      };
->    };
->    ...
-> };
->
-> With this in mind, I think CPU 0 DT node should refer to the PD_AC00
-> power domain this way:
->
-> cpu@0 {
->    ...
->    power-domains = <&mdlc_cmnn R8A78000_MDLC_PD_AC00>;
->    ...
-> };
+>         DEF_FIXED(".pllcln_div64", CLK_PLLCLN_DIV64, CLK_PLLCLN, 1, 64),
+>         DEF_FIXED(".pllcln_div256", CLK_PLLCLN_DIV256, CLK_PLLCLN, 1, 256),
+>         DEF_FIXED(".pllcln_div1024", CLK_PLLCLN_DIV1024, CLK_PLLCLN, 1, 1024),
+> @@ -152,7 +172,10 @@ static const struct cpg_core_clk r9a09g047_core_clks[] __initconst = {
+>         DEF_DDIV(".plldty_acpu", CLK_PLLDTY_ACPU, CLK_PLLDTY, CDDIV0_DIVCTL2, dtable_2_64),
+>         DEF_FIXED(".plldty_acpu_div2", CLK_PLLDTY_ACPU_DIV2, CLK_PLLDTY_ACPU, 1, 2),
+>         DEF_FIXED(".plldty_acpu_div4", CLK_PLLDTY_ACPU_DIV4, CLK_PLLDTY_ACPU, 1, 4),
+> +       DEF_FIXED(".plldty_div2", CLK_PLLDTY_DIV2, CLK_PLLDTY, 1, 2),
+> +       DEF_FIXED(".plldty_div4", CLK_PLLDTY_DIV4, CLK_PLLDTY, 1, 4),
 
-So we do have a few modules (I found a few more) that are part of
-power domains, but do no support module standby.  One more reason to
-decouple them in power-domains.
+These two clocks are unused?
 
-However, CPU cores are controlled through PSCI (the slightly less evil
-brother of SCMI? ;-), so
-Documentation/devicetree/bindings/arm/psci.yaml applies, too?
+>         DEF_FIXED(".plldty_div8", CLK_PLLDTY_DIV8, CLK_PLLDTY, 1, 8),
+> +       DEF_FIXED(".plldty_div16", CLK_PLLDTY_DIV16, CLK_PLLDTY, 1, 16),
+>
+>         DEF_FIXED(".plleth_250_fix", CLK_PLLETH_DIV_250_FIX, CLK_PLLETH, 1, 4),
+>         DEF_FIXED(".plleth_125_fix", CLK_PLLETH_DIV_125_FIX, CLK_PLLETH_DIV_250_FIX, 1, 2),
+> @@ -164,9 +187,9 @@ static const struct cpg_core_clk r9a09g047_core_clks[] __initconst = {
+>         DEF_SMUX(".smux2_gbe0_rxclk", CLK_SMUX2_GBE0_RXCLK, SSEL0_SELCTL3, smux2_gbe0_rxclk),
+>         DEF_SMUX(".smux2_gbe1_txclk", CLK_SMUX2_GBE1_TXCLK, SSEL1_SELCTL0, smux2_gbe1_txclk),
+>         DEF_SMUX(".smux2_gbe1_rxclk", CLK_SMUX2_GBE1_RXCLK, SSEL1_SELCTL1, smux2_gbe1_rxclk),
+> -       DEF_FIXED(".plldty_div16", CLK_PLLDTY_DIV16, CLK_PLLDTY, 1, 16),
+>         DEF_DDIV(".plldty_rcpu", CLK_PLLDTY_RCPU, CLK_PLLDTY, CDDIV3_DIVCTL2, dtable_2_64),
+>         DEF_FIXED(".plldty_rcpu_div4", CLK_PLLDTY_RCPU_DIV4, CLK_PLLDTY_RCPU, 1, 4),
+> +       DEF_FIXED(".cdiv5_mainosc", CLK_CDIV5_MAINOSC, CLK_QEXTAL, 1, 5),
+
+This clock is unused?
 
 >
-> The MDLC driver would pass the PD_AC00 domain ID to matching SCMI power
-> domain management protocol call, or, for bare-metal MDLC driver, would
-> have to internally encode PD hierarchy, walk it, and apply PD operations
-> in each step.
->
-> I think even for SCIF/HSCIF, the power domain reference should be
-> something along the lines of the following description. The MDLC driver
-> should internally encode that R8A78000_MLDC_PD_HSCIF0 is a sub-domain of
-> R8A78000_MDLC_PD_APL .
->
-> serial@c0710000 {
->    ...
->    power-domains = <&mdlc_perw R8A78000_MDLC_PD_HSCIF0>;
->    ...
-> };
+>         DEF_DDIV(".pllvdo_cru0", CLK_PLLVDO_CRU0, CLK_PLLVDO, CDDIV3_DIVCTL3, dtable_2_4),
+>         DEF_DDIV(".pllvdo_gpu", CLK_PLLVDO_GPU, CLK_PLLVDO, CDDIV3_DIVCTL1, dtable_2_64),
+> @@ -460,6 +483,96 @@ static const struct rzv2h_mod_clk r9a09g047_mod_clks[] __initconst = {
+>                                                 BUS_MSTOP(3, BIT(4))),
+>         DEF_MOD("tsu_1_pclk",                   CLK_QEXTAL, 16, 10, 8, 10,
+>                                                 BUS_MSTOP(2, BIT(15))),
+> +       DEF_MOD("ssif_clk",                     CLK_PLLCLN_DIV8, 15, 5, 7, 21,
 
-R8A78000_MLDC_PD_HSCIF0 is a not a full sub-domain, but merely standby
-(clock) control inside the PD_APL clock domain?
+ssif_0_clk?
 
+> +                                               BUS_MSTOP(2, BIT(3) | BIT(4))),
+> +       DEF_MOD("scu_clk",                      CLK_PLLCLN_DIV8, 15, 6, 7, 22,
+
+scu_0_clk?
+
+> +                                               BUS_MSTOP(2, BIT(0) | BIT(1))),
+> +       DEF_MOD("scu_clkx2",                    CLK_PLLCLN_DIV4, 15, 7, 7, 23,
+
+scu_0_clkx2?
+
+> +                                               BUS_MSTOP(2, BIT(0) | BIT(1))),
+> +       DEF_MOD("admac_clk",                    CLK_PLLCLN_DIV8, 15, 8, 7, 24,
+
+dmacpp_0_clk?
+
+> +                                               BUS_MSTOP(2, BIT(5))),
+> +       DEF_MOD("adg_clks1",                    CLK_PLLCLN_DIV8, 15, 9, 7, 25,
+
+adg_0_clks1?
+
+> +                                               BUS_MSTOP(2, BIT(2))),
+> +       DEF_MOD("adg_clk_200m",                 CLK_PLLCLN_DIV8, 15, 10, 7, 26,
+
+adg_0_clk_195m?
+
+> +                                               BUS_MSTOP(2, BIT(2))),
+> +       DEF_MOD("adg_audio_clka",               CLK_AUDIO_CLKA, 15, 11, 7, 27,
+
+adg_0_audio_clka?
+Parent is CLK_AUDIO_EXTAL.
+
+> +                                               BUS_MSTOP(2, BIT(2))),
+> +       DEF_MOD("adg_audio_clkb",               CLK_AUDIO_CLKB, 15, 12, 7, 28,
+
+adg_0_audio_clkb?
+
+> +                                               BUS_MSTOP(2, BIT(2))),
+> +       DEF_MOD("adg_audio_clkc",               CLK_AUDIO_CLKC, 15, 13, 7, 29,
+
+adg_0_audio_clk_c?
+
+> +                                               BUS_MSTOP(2, BIT(2))),
+> +       DEF_MOD("adg_ssi0_clk",                 CLK_PLLCLN_DIV8, 22, 0, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(2))),
+> +       DEF_MOD("adg_ssi1_clk",                 CLK_PLLCLN_DIV8, 22, 1, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(2))),
+> +       DEF_MOD("adg_ssi2_clk",                 CLK_PLLCLN_DIV8, 22, 2, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(2))),
+> +       DEF_MOD("adg_ssi3_clk",                 CLK_PLLCLN_DIV8, 22, 3, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(2))),
+> +       DEF_MOD("adg_ssi4_clk",                 CLK_PLLCLN_DIV8, 22, 4, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(2))),
+> +       DEF_MOD("adg_ssi5_clk",                 CLK_PLLCLN_DIV8, 22, 5, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(2))),
+> +       DEF_MOD("adg_ssi6_clk",                 CLK_PLLCLN_DIV8, 22, 6, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(2))),
+> +       DEF_MOD("adg_ssi7_clk",                 CLK_PLLCLN_DIV8, 22, 7, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(2))),
+> +       DEF_MOD("adg_ssi8_clk",                 CLK_PLLCLN_DIV8, 22, 8, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(2))),
+> +       DEF_MOD("adg_ssi9_clk",                 CLK_PLLCLN_DIV8, 22, 9, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(2))),
+
+Specifying CLK_PLLCLN_DIV8 as the parent for these ten clocks
+is probably a (temporary?) simplication, as they are generated by the
+ADG, from adg_0_clk_195m or adg_audio_clk[abc]?
+
+> +       DEF_MOD("dvc0_clk",                     CLK_PLLCLN_DIV8, 23, 0, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(0) | BIT(1))),
+> +       DEF_MOD("dvc1_clk",                     CLK_PLLCLN_DIV8, 23, 1, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(0) | BIT(1))),
+> +       DEF_MOD("ctu0_mix0_clk",                CLK_PLLCLN_DIV8, 23, 2, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(0) | BIT(1))),
+> +       DEF_MOD("ctu1_mix1_clk",                CLK_PLLCLN_DIV8, 23, 3, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(0) | BIT(1))),
+> +       DEF_MOD("src0_clk",                     CLK_PLLCLN_DIV8, 23, 4, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(0) | BIT(1))),
+> +       DEF_MOD("src1_clk",                     CLK_PLLCLN_DIV8, 23, 5, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(0) | BIT(1))),
+> +       DEF_MOD("src2_clk",                     CLK_PLLCLN_DIV8, 23, 6, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(0) | BIT(1))),
+> +       DEF_MOD("src3_clk",                     CLK_PLLCLN_DIV8, 23, 7, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(0) | BIT(1))),
+> +       DEF_MOD("src4_clk",                     CLK_PLLCLN_DIV8, 23, 8, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(0) | BIT(1))),
+> +       DEF_MOD("src5_clk",                     CLK_PLLCLN_DIV8, 23, 9, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(0) | BIT(1))),
+> +       DEF_MOD("src6_clk",                     CLK_PLLCLN_DIV8, 23, 10, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(0) | BIT(1))),
+> +       DEF_MOD("src7_clk",                     CLK_PLLCLN_DIV8, 23, 11, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(0) | BIT(1))),
+> +       DEF_MOD("src8_clk",                     CLK_PLLCLN_DIV8, 23, 12, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(0) | BIT(1))),
+> +       DEF_MOD("src9_clk",                     CLK_PLLCLN_DIV8, 23, 13, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(0) | BIT(1))),
+> +       DEF_MOD("scu_supply_clk",               CLK_PLLCLN_DIV8, 23, 14, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(0) | BIT(1))),
+> +       DEF_MOD("ssif_supply_clk",              CLK_PLLCLN_DIV8, 24, 0, -1, -1,
+
+ssiu_supply_clk?
+
+> +                                               BUS_MSTOP(2, BIT(3) | BIT(4))),
+> +       DEF_MOD("ssi0_clk",                     CLK_PLLCLN_DIV8, 24, 1, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(3) | BIT(4))),
+> +       DEF_MOD("ssi1_clk",                     CLK_PLLCLN_DIV8, 24, 2, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(3) | BIT(4))),
+> +       DEF_MOD("ssi2_clk",                     CLK_PLLCLN_DIV8, 24, 3, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(3) | BIT(4))),
+> +       DEF_MOD("ssi3_clk",                     CLK_PLLCLN_DIV8, 24, 4, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(3) | BIT(4))),
+> +       DEF_MOD("ssi4_clk",                     CLK_PLLCLN_DIV8, 24, 5, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(3) | BIT(4))),
+> +       DEF_MOD("ssi5_clk",                     CLK_PLLCLN_DIV8, 24, 6, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(3) | BIT(4))),
+> +       DEF_MOD("ssi6_clk",                     CLK_PLLCLN_DIV8, 24, 7, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(3) | BIT(4))),
+> +       DEF_MOD("ssi7_clk",                     CLK_PLLCLN_DIV8, 24, 8, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(3) | BIT(4))),
+> +       DEF_MOD("ssi8_clk",                     CLK_PLLCLN_DIV8, 24, 9, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(3) | BIT(4))),
+> +       DEF_MOD("ssi9_clk",                     CLK_PLLCLN_DIV8, 24, 10, -1, -1,
+> +                                               BUS_MSTOP(2, BIT(3) | BIT(4))),
+>  };
+>
+>  static const struct rzv2h_reset r9a09g047_resets[] __initconst = {
+> @@ -538,6 +651,20 @@ static const struct rzv2h_reset r9a09g047_resets[] __initconst = {
+>         DEF_RST(13, 13, 6, 14),         /* GE3D_RESETN */
+>         DEF_RST(13, 14, 6, 15),         /* GE3D_AXI_RESETN */
+>         DEF_RST(13, 15, 6, 16),         /* GE3D_ACE_RESETN */
+> +       DEF_RST(14, 1, 6, 18),          /* SSIF_0_ASYNC_RESET_SSI */
+> +       DEF_RST(14, 2, 6, 19),          /* SSIF_0_SYNC_RESET_SSI0 */
+> +       DEF_RST(14, 3, 6, 20),          /* SSIF_0_SYNC_RESET_SSI1 */
+> +       DEF_RST(14, 4, 6, 21),          /* SSIF_0_SYNC_RESET_SSI2 */
+> +       DEF_RST(14, 5, 6, 22),          /* SSIF_0_SYNC_RESET_SSI3 */
+> +       DEF_RST(14, 6, 6, 23),          /* SSIF_0_SYNC_RESET_SSI4 */
+> +       DEF_RST(14, 7, 6, 24),          /* SSIF_0_SYNC_RESET_SSI5 */
+> +       DEF_RST(14, 8, 6, 25),          /* SSIF_0_SYNC_RESET_SSI6 */
+> +       DEF_RST(14, 9, 6, 26),          /* SSIF_0_SYNC_RESET_SSI7 */
+> +       DEF_RST(14, 10, 6, 27),         /* SSIF_0_SYNC_RESET_SSI8 */
+> +       DEF_RST(14, 11, 6, 28),         /* SSIF_0_SYNC_RESET_SSI9 */
+> +       DEF_RST(14, 12, 6, 29),         /* SCU_RESET_SRU */
+
+SCU_0_RESET_SRU?
+
+> +       DEF_RST(14, 13, 6, 30),         /* ADMAC_ARESETN */
+
+DMACPP_0_ARST?
+
+> +       DEF_RST(14, 14, 6, 31),         /* ADG_RST_RESET_ADG */
+
+ADG_0_RST_RESET_ADG?
+
+>         DEF_RST(15, 8, 7, 9),           /* TSU_1_PRESETN */
+>  };
+>
 
 Gr{oetje,eeting}s,
 
                         Geert
+
 
 --
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
