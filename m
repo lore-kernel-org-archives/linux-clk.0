@@ -1,147 +1,248 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 710F1355F42
-	for <linux-clk@vger.kernel.org>; Fri,  8 May 2026 11:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C93392C20;
+	Fri,  8 May 2026 11:18:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778238645; cv=none; b=DKNVGyBWmaEzaTDNRVlr1mB79Y897hro1iVyU73Q/wk9JI2DUM3BumrJZ6DG3esOy99RkARlOwaf7nMi8uNfyVJCsd4IC+UzXr6KRXdaW0gvT1FdENm0ruNRCfY9LY9b/28/N/DHxCViiUKB+qhDxD1e65P9b3mefJjWais8mlc=
+	t=1778239093; cv=none; b=cLbL2zeGlKy3/3tN5sGJK9iYISIQGUuEr5bhHJc/jFzWQAyBRv1ncwZI89OEUTQz72+A65V+kOkiwDJRbDRBYTaxhVMWSIDHyWnAHRUssaS9cD9wYbUX3CcdOJkR6zR/U467QYDYaHxOTmSinJry+qo0Y2V8yMtFSO4Ixt3D+sI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778238645; c=relaxed/simple;
-	bh=eDeswBy3kVQ1hC4y2p4RYl4HS+G9UG3EGp3csnqRyko=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=TTiWsv+SI7hVjJnSUeR9LzcDK670OvcGlrgzWpVEKuWO3cbfUjskk9iLKmG65hhK56BD5lprHcqzNp7vJMvFvTCJbd4tReLkXj+cf6Cs6aD+h7CYmQR3GqADRkCWSMpphgKOmMJtWOXqx8R51xDczCwoK3wJd8I6LINKBR4LPl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=j+ecELfT; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=FnZGZSLF; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1778239093; c=relaxed/simple;
+	bh=oA+QkJ6oUbumc1ykPwgnnKxFhD0ovXrsMuwJ6dEAcws=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XammpsmSBgDH2ttftzqlqiLNliohqzFvKXgKBm4FrfbKoT76savwF1+dwNHdFgXy7pWYGGIKjh9wGcmunP+PjPUuatnurQ2aUiWrRcUL86eMm5b4joQAve8WsJdNSUHjQ8IotthgJ2gqeWcBkPI0gIFa1QcBDIm1Kf3ncqXmr3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=ulgyukbF; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="j+ecELfT";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="FnZGZSLF"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6489hXoO1417690
-	for <linux-clk@vger.kernel.org>; Fri, 8 May 2026 11:10:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	45GkX2zQJ5wcTLHOqlJdrhMLCKR0ClrSuRBtygDbg48=; b=j+ecELfT5+YRfp1b
-	HkmITfvsoGcZhF2apBjIvgzcZCafwDa9l+rIrxBCBmDUKDrKY3I+YzVi2r7x81ra
-	aRicmlfIimFCokiNmfQGd4Ba8AWKI2bftKkXvM8TFx0oxXK8pd2fW7scNxvBK0lK
-	lXgJuQtEj07PSvvKrV9hMCPlJXnAHe0v1+s9+EhE/DzsOxLR2YffaiqngoSsgfKO
-	kfyosSJJNzQXFPb7wzVgUDyywRAkPqhbacf2F5/9SVhwwua7uVpbGocaibQVpe+W
-	8sQn5lKU7kC731Hb3SItXgUm4VfbwTXsUCjn+TKb/LDe+tiF7DjPwo0+HimzsEOd
-	VnyU/g==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4e0ywhkab1-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 08 May 2026 11:10:43 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-50faec938fcso3164861cf.3
-        for <linux-clk@vger.kernel.org>; Fri, 08 May 2026 04:10:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1778238643; x=1778843443; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=45GkX2zQJ5wcTLHOqlJdrhMLCKR0ClrSuRBtygDbg48=;
-        b=FnZGZSLFjOrdy6g6EVbTjscZpM6U2HldRysepnQIWzXTXeV6dafGWAtmGXnupTjWhz
-         eJj/DYsYT15qY5a6PiJ27PQ7hTQS8AvJNy1Z4Z22YHS2oXGyZePj3TNEytg5BLaS9vT6
-         /XiskTO5KkKFQ9mtThriCDx8KDJutxmG5lmLB1kOR9H5oI62WF/RbXC2L/fccLMhawa5
-         DpXiFIRKY+3DpTfetph59cr0gMzeSQuECMrLOUKVUMjKBPH6x+xHENqnymSlLfhyflba
-         /6JNrhAKCgfU0GuVRwH0bK9PHbX2ToHxTz/LJWhfrmXEEqRDHlzNyWPDbX7lN/iKHbYu
-         9biw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778238643; x=1778843443;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=45GkX2zQJ5wcTLHOqlJdrhMLCKR0ClrSuRBtygDbg48=;
-        b=IaL3JRl6lfpt3b9N1iA2etuFTaDlU2n2tjnc31eibF+zhnQfstweBYcUpBVckJ5g3B
-         PjjMqwue0n+nybuqhCmcNq5aEE1T4Dp38LW9HXLs58CD+61PZL6MgnPBJ7ikcBttocuR
-         o3TfGnFAsI8AYq4dudLwcS38E9USWCq/tCdz7hjLcK1T46//R2vB8ts6aWEOOosPanc3
-         fzebnQ+T47GXK1FLaxSPrHGzvzunksCx+wZUSvyI27LqHYND2qXek9lO9D3dSWdq4RbB
-         UWQVn1UGG6GtGyC+71F72uXrwJAubyCOTxO66+SMv+dYS4rRyRFM9NBvULdsog66Jia8
-         H9Cw==
-X-Forwarded-Encrypted: i=1; AFNElJ8AGz0gmhnHrZnZ2arqwrnHgNFFGQPWELIcBGUwtD1SH224+WSg7fq6i0xtq8/ZBDMHCNW/0TuOiKU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzS9986J7FkswluYcjRFUYh6eSfUBYVuPvi3UsVkhA8y4Lo9ydM
-	3k+lEvLtXU+0Fjb4jP/40zdvkYx64m3jCPGPChWnZfzHtiEcY6GJgWM9gLjLfT0InM+rU55cejt
-	mFeI0FopD7LhEpt0RCzzOMlx8xdyJJJM0QpAvqVobjrOGgKJOgHDXmK7iLSJ9o9c=
-X-Gm-Gg: AeBDieu0MIo+ZLZ/RQuLwEUVhT9jN7XMu1RXxt8xVU42SJSLE94wi6tq3UK+0y5YFPt
-	hMP0L45M16mbqxogafYyF2oSzGkzVoeyADsEgNwToXzUmUy9KeXTDZASToQBtZhwqZaxGYkeyWi
-	nvDjAjjyFXaVGkYgldGkMiuIdJ9GeN5SOC3jp/0DSlwDr0YMKzV2qCFpTcmCRuC0xVB2uWODon0
-	c0Gjiong0QfLao/sE74hOs7lRAP0DnCwYX4o4MdAmekHcB+/N0e/OoSBDcUsIxmUJ1qWJcTap1R
-	dPL3nyvuPB+5EZ8ASLGw7w/t6UuxwdmUZjUsxINy4bm2hZOSSl/x9rj3H35N9vdjZMrjhYWLUfl
-	ZQFoJE5RAFLgslskxymnYDfYTwSveW2oYogFAZZK66eOoKH+UbrNXgFU4U/oHaqeVONCPb8MGZe
-	4sRz0=
-X-Received: by 2002:a05:622a:1e92:b0:509:d76:fe73 with SMTP id d75a77b69052e-5146288fc59mr116475521cf.3.1778238642593;
-        Fri, 08 May 2026 04:10:42 -0700 (PDT)
-X-Received: by 2002:a05:622a:1e92:b0:509:d76:fe73 with SMTP id d75a77b69052e-5146288fc59mr116475291cf.3.1778238642129;
-        Fri, 08 May 2026 04:10:42 -0700 (PDT)
-Received: from [192.168.119.254] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-67ef0b6a534sm567288a12.9.2026.05.08.04.10.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 May 2026 04:10:40 -0700 (PDT)
-Message-ID: <2d3a515e-d8d4-4cc1-985e-89d4fe31e618@oss.qualcomm.com>
-Date: Fri, 8 May 2026 13:10:38 +0200
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="ulgyukbF"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 648BGhyZ63763949, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1778239003; bh=RpziKj4et8rStZxAiwxuwI5rcoDYU7M+cPSWungKGpY=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding:Content-Type;
+	b=ulgyukbFjXz/tTVCU0lp+7lh91MUdpxzYD/r9PnY8JyQye42U3dsmZ0nqfDQmlNkf
+	 acmDvpd8rEW81M1ShaJnJ2eoXuww8dNPqQ6RBNaGeq5Cf1r3MR3nUMtWnsAmk1ebiI
+	 yfDwfswwRwRBku27v0x1mWpKBBXBoLD/GwBn3EE1JnKCU++OSOVSWUl4CV26c4f7Fh
+	 AnCzV0H1No1xIVaUi7T77auqvQZr8hXTvuNJzMiSS4MbvQZRE8D5L9mxDXgSgW64xn
+	 3futw4Ut05k8NN8GQt4mD0P2WVABZGmMUVunE4R+72IaSVqha34zWVMiGVV0DwDMov
+	 KJ8H/6hWoPqXA==
+Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
+	by rtits2.realtek.com.tw (8.15.2/3.27/5.94) with ESMTPS id 648BGhyZ63763949
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 8 May 2026 19:16:43 +0800
+Received: from RTKEXHMBS01.realtek.com.tw (172.21.6.40) by
+ RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Fri, 8 May 2026 19:16:43 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS01.realtek.com.tw (172.21.6.40) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Fri, 8 May 2026 19:16:42 +0800
+Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS06.realtek.com.tw
+ (10.21.1.56) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Fri, 8 May 2026 19:16:42 +0800
+From: Yu-Chun Lin <eleanor.lin@realtek.com>
+To: <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <p.zabel@pengutronix.de>,
+        <cylee12@realtek.com>, <afaerber@suse.com>, <jyanchou@realtek.com>
+CC: <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-realtek-soc@lists.infradead.org>, <james.tai@realtek.com>,
+        <cy.huang@realtek.com>, <stanley_chang@realtek.com>,
+        <eleanor.lin@realtek.com>, <bmasney@redhat.com>
+Subject: [PATCH v7 05/10] clk: realtek: Add support for gate clock
+Date: Fri, 8 May 2026 19:16:36 +0800
+Message-ID: <20260508111641.3192177-6-eleanor.lin@realtek.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20260508111641.3192177-1-eleanor.lin@realtek.com>
+References: <20260508111641.3192177-1-eleanor.lin@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFT PATCH] clk: qcom: dispcc-glymur: Fix (possibly) dumping
- regmap
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20260505153717.303414-2-krzysztof.kozlowski@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20260505153717.303414-2-krzysztof.kozlowski@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=bMAm5v+Z c=1 sm=1 tr=0 ts=69fdc4b3 cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22
- a=EUspDBNiAAAA:8 a=GZO67VJtuFZV25e5ZKUA:9 a=QEXdDO2ut3YA:10
- a=kacYvNCVWA4VmyqE58fU:22
-X-Proofpoint-GUID: 4YLtfO2PwqJrMRiceJzDibKD4bfwmQ05
-X-Proofpoint-ORIG-GUID: 4YLtfO2PwqJrMRiceJzDibKD4bfwmQ05
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTA4MDExNiBTYWx0ZWRfX/ZRXLqrKiKYu
- AxG4mNiPlEe7RiZkrKJSfHEmTnEGRSYp92xwyBYv7yfgXVrPhhGpkQFCqKjF9WA4wyxfrR+OM+C
- ipBBArD6iDRVvTtmhnhfZrnEbJT7vRNFhOKekDnDaynX/h+U8jQ1aUc378IbXJxPhrSi7AXlyCq
- 1VCzUUAwxymn1tVtK0X8M1W2YD8AxO5lRBB1z0TqrAmR6W0mj8SbdROVOft0tkZq9WDUfH5S2GH
- S4t2ZMskj+RmnW0s+QVaeLjUkuGs30HPN+jcCaNQQQWtQsxMhIHwn2Sm/dv4DlHUU93Lz55gTbO
- Ea8+0AS0kvoWIEDBiIQD8Ioo8s5cKSCEtyq7e5hB/L7UfDShO1tSH4yy/8XyOQsi4WlsGFG/IoB
- 1dB6wGmBsXmmc7l6j+ZT/1b81ajOmmFSbHvvxFPGiWATDXK/AfRDCQ81OsWfnhHI2iCQd1s/x1P
- 6CoxVPSOvYfSdhhx1wQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-05-07_02,2026-05-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 phishscore=0 spamscore=0 bulkscore=0 priorityscore=1501
- lowpriorityscore=0 malwarescore=0 adultscore=0 clxscore=1015 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2604200000 definitions=main-2605080116
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 5/5/26 5:37 PM, Krzysztof Kozlowski wrote:
-> Reading few registers at the end of the block (e.g. 0x10000) might
-> result in synchronous external abort, so limit the regmap to the last
-> readable register which allows dumping the regs for debugging.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-> 
-> ---
-> 
-> Register map is the same as for x1e80100 and sm8750, so I am guessing
-> same problem.
-> ---
+From: Cheng-Yu Lee <cylee12@realtek.com>
 
-This is not necessary on Glymur, possibly in relation to lack of Gunyah
+Introduce clk_regmap_gate_ops supporting enable, disable, is_enabled, and
+for standard regmap gate clocks.
 
-Konrad
+Add clk_regmap_gate_ro_ops as a read-only variant exposing only is_enabled.
+
+Signed-off-by: Cheng-Yu Lee <cylee12@realtek.com>
+Co-developed-by: Yu-Chun Lin <eleanor.lin@realtek.com>
+Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
+---
+ drivers/clk/realtek/Makefile          |  2 +
+ drivers/clk/realtek/clk-regmap-gate.c | 70 +++++++++++++++++++++++++++
+ drivers/clk/realtek/clk-regmap-gate.h | 65 +++++++++++++++++++++++++
+ 3 files changed, 137 insertions(+)
+ create mode 100644 drivers/clk/realtek/clk-regmap-gate.c
+ create mode 100644 drivers/clk/realtek/clk-regmap-gate.h
+
+diff --git a/drivers/clk/realtek/Makefile b/drivers/clk/realtek/Makefile
+index a89ad77993e9..74375f8127ac 100644
+--- a/drivers/clk/realtek/Makefile
++++ b/drivers/clk/realtek/Makefile
+@@ -2,5 +2,7 @@
+ obj-$(CONFIG_RTK_CLK_COMMON) += clk-rtk.o
+ 
+ clk-rtk-y += common.o
++
+ clk-rtk-y += clk-pll.o
++clk-rtk-y += clk-regmap-gate.o
+ clk-rtk-y += freq_table.o
+diff --git a/drivers/clk/realtek/clk-regmap-gate.c b/drivers/clk/realtek/clk-regmap-gate.c
+new file mode 100644
+index 000000000000..0db0057215e3
+--- /dev/null
++++ b/drivers/clk/realtek/clk-regmap-gate.c
+@@ -0,0 +1,70 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (C) 2017-2026 Realtek Semiconductor Corporation
++ * Author: Cheng-Yu Lee <cylee12@realtek.com>
++ */
++
++#include <linux/bits.h>
++#include <linux/clk-provider.h>
++#include <linux/export.h>
++#include <linux/regmap.h>
++#include "clk-regmap-gate.h"
++
++static int clk_regmap_gate_enable(struct clk_hw *hw)
++{
++	struct clk_regmap_gate *clkg = to_clk_regmap_gate(hw);
++	unsigned int mask;
++	unsigned int val;
++
++	mask = BIT(clkg->bit_idx);
++	val = BIT(clkg->bit_idx);
++
++	if (clkg->write_en) {
++		mask |= BIT(clkg->bit_idx + 1);
++		val |= BIT(clkg->bit_idx + 1);
++	}
++
++	return regmap_update_bits(clkg->clkr.regmap, clkg->gate_ofs, mask, val);
++}
++
++static void clk_regmap_gate_disable(struct clk_hw *hw)
++{
++	struct clk_regmap_gate *clkg = to_clk_regmap_gate(hw);
++	unsigned int mask;
++	unsigned int val;
++
++	mask = BIT(clkg->bit_idx);
++	val = 0;
++
++	if (clkg->write_en) {
++		mask |= BIT(clkg->bit_idx + 1);
++		val |= BIT(clkg->bit_idx + 1);
++	}
++
++	regmap_update_bits(clkg->clkr.regmap, clkg->gate_ofs, mask, val);
++}
++
++static int clk_regmap_gate_is_enabled(struct clk_hw *hw)
++{
++	struct clk_regmap_gate *clkg = to_clk_regmap_gate(hw);
++	int ret;
++	u32 val;
++
++	ret = regmap_read(clkg->clkr.regmap, clkg->gate_ofs, &val);
++	if (ret < 0)
++		return ret;
++
++	return !!(val & BIT(clkg->bit_idx));
++}
++
++const struct clk_ops rtk_clk_regmap_gate_ops = {
++	.enable     = clk_regmap_gate_enable,
++	.disable    = clk_regmap_gate_disable,
++	.is_enabled = clk_regmap_gate_is_enabled,
++};
++EXPORT_SYMBOL_NS_GPL(rtk_clk_regmap_gate_ops, "REALTEK_CLK");
++
++const struct clk_ops rtk_clk_regmap_gate_ro_ops = {
++	.is_enabled = clk_regmap_gate_is_enabled,
++};
++EXPORT_SYMBOL_NS_GPL(rtk_clk_regmap_gate_ro_ops, "REALTEK_CLK");
+diff --git a/drivers/clk/realtek/clk-regmap-gate.h b/drivers/clk/realtek/clk-regmap-gate.h
+new file mode 100644
+index 000000000000..711e168071f6
+--- /dev/null
++++ b/drivers/clk/realtek/clk-regmap-gate.h
+@@ -0,0 +1,65 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (C) 2017-2026 Realtek Semiconductor Corporation
++ * Author: Cheng-Yu Lee <cylee12@realtek.com>
++ */
++
++#ifndef __CLK_REALTEK_CLK_REGMAP_GATE_H
++#define __CLK_REALTEK_CLK_REGMAP_GATE_H
++
++#include "common.h"
++
++struct clk_regmap_gate {
++	struct clk_regmap clkr;
++	int gate_ofs;
++	u8 bit_idx;
++	u32 write_en : 1;
++};
++
++#define __clk_regmap_gate_hw(_p) __clk_regmap_hw(&(_p)->clkr)
++
++#define __CLK_REGMAP_GATE(_name, _parent, _ops, _flags, _ofs, _bit_idx,     \
++			  _write_en)                                        \
++	struct clk_regmap_gate _name = {                                    \
++		.clkr.hw.init = CLK_HW_INIT(#_name, _parent, _ops, _flags), \
++		.gate_ofs = _ofs,                                           \
++		.bit_idx = _bit_idx,                                        \
++		.write_en = _write_en,                                      \
++	}
++
++#define CLK_REGMAP_GATE(_name, _parent, _flags, _ofs, _bit_idx, _write_en)    \
++	__CLK_REGMAP_GATE(_name, _parent, &rtk_clk_regmap_gate_ops, _flags, _ofs, \
++			  _bit_idx, _write_en)
++
++#define CLK_REGMAP_GATE_RO(_name, _parent, _flags, _ofs, _bit_idx, _write_en) \
++	__CLK_REGMAP_GATE(_name, _parent, &rtk_clk_regmap_gate_ro_ops, _flags,    \
++			  _ofs, _bit_idx, _write_en)
++
++#define __CLK_REGMAP_GATE_NO_PARENT(_name, _ops, _flags, _ofs, _bit_idx,     \
++				    _write_en)                               \
++	struct clk_regmap_gate _name = {                                     \
++		.clkr.hw.init = CLK_HW_INIT_NO_PARENT(#_name, _ops, _flags), \
++		.gate_ofs = _ofs,                                            \
++		.bit_idx = _bit_idx,                                         \
++		.write_en = _write_en,                                       \
++	}
++
++#define CLK_REGMAP_GATE_NO_PARENT(_name, _flags, _ofs, _bit_idx, _write_en)    \
++	__CLK_REGMAP_GATE_NO_PARENT(_name, &rtk_clk_regmap_gate_ops, _flags, _ofs, \
++				    _bit_idx, _write_en)
++
++#define CLK_REGMAP_GATE_NO_PARENT_RO(_name, _flags, _ofs, _bit_idx, _write_en) \
++	__CLK_REGMAP_GATE_NO_PARENT(_name, &rtk_clk_regmap_gate_ro_ops, _flags,    \
++				    _ofs, _bit_idx, _write_en)
++
++static inline struct clk_regmap_gate *to_clk_regmap_gate(struct clk_hw *hw)
++{
++	struct clk_regmap *clkr = to_clk_regmap(hw);
++
++	return container_of(clkr, struct clk_regmap_gate, clkr);
++}
++
++extern const struct clk_ops rtk_clk_regmap_gate_ops;
++extern const struct clk_ops rtk_clk_regmap_gate_ro_ops;
++
++#endif /* __CLK_REALTEK_CLK_REGMAP_GATE_H */
+-- 
+2.34.1
+
