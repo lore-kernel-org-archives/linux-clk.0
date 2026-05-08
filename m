@@ -1,33 +1,73 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010044.outbound.protection.outlook.com [52.101.193.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF22E37FF45;
-	Fri,  8 May 2026 15:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778255749; cv=none; b=dkR0FdQ03DJW80gDTLQCwY3xf7NqeU4KWxiw+keK1DF5sp194jLe7m1Iwf52A8FQb0UXq8mG57m5C7EdyrKJfU6ADawiZbRO5XWns0w0atHAIh95F/klR9FFWarhPtUW56xwbAJToeP5z2GC8LsxnAQIlaJHzyDoAJQEmHyJWas=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778255749; c=relaxed/simple;
-	bh=tQNMO77q1RoFS2peTCeV+chY0UHWgS+ahepCs6y9Ctk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nPHXcahxIPO+ZVwjBvw3aaFQsLrhDuzrpDY12DC8rpW5HZMaAS3rra9xsCEpYTlh8H9gVZKRg5wtVeFSR5ESzaYzSf38eSrsg7hMZZquZ6qHm+qWTM0Br+LNN06Am2SyG6EKuf0tUqXCvWrtNT/jjHNLBO5O2vHblG6XbuebKmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kgFjvecf; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5C33F787F;
+	Fri,  8 May 2026 16:59:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778259560; cv=fail; b=gT954Q4Pf9rNbJOBPz7CgkZAl6QokqwNU/SRsDNsk7WV9U/j/F4uIJmE7SaOSYW5WQggUdqzvTbSmGwzedcYdv7yqfdHDemjMvoiMisVPW/HJmq6485sCTneYt4TaaYOCGsofFjXAInC1AjW/1bp3irsOdhg9OVM6gRpYeZN9oA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778259560; c=relaxed/simple;
+	bh=VRhdBrbkKp/lqMAooeaJVoD06GobO9687qCpwcH85ic=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FlnRP7lRWP9oI9bYeCM0DnqOcbSyOnjR9dYgyON6WWpLmUJTD5OweyqywkwfK9uODpr7n2J5OJUxSf3FCSpPEZQKBY+4LcQfG67dvItrJCiIZDJ7llpwuvAIrMjNtfirlI1Wo57OwPgaPBQ9SyhpJS0Orfw8gG3G5fLVxgGJedM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=IL0PRxKr; arc=fail smtp.client-ip=52.101.193.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kgFjvecf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3EE9C2BCB0;
-	Fri,  8 May 2026 15:55:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778255748;
-	bh=tQNMO77q1RoFS2peTCeV+chY0UHWgS+ahepCs6y9Ctk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kgFjvecfojaqR78q3o6iDGs+GwLXxE3ijza9xULSKjaUZw6YIzXHSHuR853JNtLPp
-	 qFaJXLnGL9paEPyR1VJ9kimT7O1+8rqWJnWhqPUxpuhLqPODM5Fmcm7QoHFctGHnBL
-	 8B9dH5vU39E/8tDzB18G2UaZGshRkpG+TRCMirmpn/JawTHo5L45PrIA2nbGTzhi/A
-	 +2ruuC3zmP5RwK1dVu/lpb8CJ3Yj0Zoeg7MdPK5nLM1b4izkEqiRlODCqDXalxTz0u
-	 H1KxN3ekmoxHOJXJTwx725F41oCVJ1ikDvq3SEIuBpv3MImCWOKujZe0FskUp3jB2A
-	 Vh5kUp1Qk/myQ==
-Message-ID: <dd435489-0cf7-4274-99bf-a591a15e91e4@kernel.org>
-Date: Fri, 8 May 2026 16:55:40 +0100
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="IL0PRxKr"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kkpcSzgSwUGKm8YUVO2Rs+niNWANIm7vbMd1oxtCUM2TvubF61cHV/uYj2WoUjnY+IWTXQ1fm/TmBoPibkH4kQG4jdGSsVFgKL75fmhbD+PbsvqyM8kGZ8+IM4tTcRXc2FhhtKEVXqK2ycrZ+C5kln9hUZ+BpYsFwWd3cfQl9g0bgG67N4MFpOCFzT5eN/9XvDdDAVwP7yR39lQAUrtlqHa2VNP4FukA4FYGxi3d3taitAwDauueCsIx5p/ELyJxlNpKXhxg3C8l0XVT7BLmw2XNnibtL1EanZVf6xijuTP95Kcw5qM+iDIZfhnJT8NfbRDjTsZTjm4UaNq7cqUltw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+yFyZr2+sBfK/Gih/91ZF5j7L4ncEmrCv3w61SdtFVE=;
+ b=EJ5l2wONltMv/UW2ExNoFkBOht5ZczkT7wKh5ewfveijK+wTVqpdJ1i1Um5MX+M0nb4T86ubj77pCagHii8y9ogRGEXp/3wv8HV7WvBsofZs2zUO8hvuVVkyyyHwcfoN5ZqOLR5K8LHBqmv4oG4RoC5bYbRTL9mR0b1AlOMnjn/S7+UpCrs8Mnc3+QFUlGowB6fJjw/IO6dWOFGE1ByKIKgJkvdU6QbWWmiwWaDQnSb1GXT9uKR/VScWXbln6zmqF5c14oS3OSC2tg1ERZCVUF8y0YlVmpP6qWi3UV+0fZUa+RHv9r1A1uuCKZRkMEpvAnQ9yIKePp4MRic1m4j6zQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.23.195) smtp.rcpttodomain=208suo.com smtp.mailfrom=ti.com; dmarc=pass
+ (p=quarantine sp=none pct=100) action=none header.from=ti.com; dkim=none
+ (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+yFyZr2+sBfK/Gih/91ZF5j7L4ncEmrCv3w61SdtFVE=;
+ b=IL0PRxKrtKreuPOQY9qeqYE+m/x0AQTLeKDMQ3qp9Vm8Qt0hBnS+clRF6gf4Bbc3zWblTqv/h6Gu7NvaZktepMeZ6QwQkYx9V0GizaWHYgBFbRvkIVDoj3u0HlnxRzg275Bbzy5yvZueKIPUUP0Rxj+XmkwBqDlqJRBCOWUINSc=
+Received: from BN9PR03CA0773.namprd03.prod.outlook.com (2603:10b6:408:13a::28)
+ by SJ0PR10MB5720.namprd10.prod.outlook.com (2603:10b6:a03:3ef::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9870.25; Fri, 8 May
+ 2026 16:59:14 +0000
+Received: from BN2PEPF00004FC1.namprd04.prod.outlook.com
+ (2603:10b6:408:13a:cafe::11) by BN9PR03CA0773.outlook.office365.com
+ (2603:10b6:408:13a::28) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9891.19 via Frontend Transport; Fri,
+ 8 May 2026 16:59:14 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.195)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.23.195 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.23.195; helo=lewvzet201.ext.ti.com; pr=C
+Received: from lewvzet201.ext.ti.com (198.47.23.195) by
+ BN2PEPF00004FC1.mail.protection.outlook.com (10.167.243.187) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9891.9 via Frontend Transport; Fri, 8 May 2026 16:59:12 +0000
+Received: from DLEE211.ent.ti.com (157.170.170.113) by lewvzet201.ext.ti.com
+ (10.4.14.104) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.37; Fri, 8 May
+ 2026 11:59:12 -0500
+Received: from DLEE208.ent.ti.com (157.170.170.97) by DLEE211.ent.ti.com
+ (157.170.170.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.37; Fri, 8 May
+ 2026 11:59:12 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE208.ent.ti.com
+ (157.170.170.97) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.37 via Frontend
+ Transport; Fri, 8 May 2026 11:59:12 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 648GxBuJ1785509;
+	Fri, 8 May 2026 11:59:11 -0500
+Message-ID: <003e3057-971b-4b6b-8645-787d76de2387@ti.com>
+Date: Fri, 8 May 2026 11:59:11 -0500
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,161 +75,111 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 5/8] clk: qcom: gcc-msm8939: mark Venus core GDSCs as
- hardware controlled
-To: Erikas Bitovtas <xerikasxx@gmail.com>,
- Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
- Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- phone-devel@vger.kernel.org
-References: <20260507-msm8939-venus-rfc-v5-0-d7b5ea2ce591@gmail.com>
- <f5TsKnC12rLsH63vAi01aN4oXUFLrfgIhn14IQFDb9gcac6anLzzhJdkGNdQ2dRs4vYbFKUptfEgWuKdgIgGsQ==@protonmail.internalid>
- <20260507-msm8939-venus-rfc-v5-5-d7b5ea2ce591@gmail.com>
- <17c4626e-8926-4cad-842d-a1b171d1e962@kernel.org>
- <CYaHtccGOWlaUtl3QIKva44ybJiRHsPOZmHEkl2KKGmnDxJ8vTH-SVNMGbL7bjkYjI692nplORzOhpfjs3XJfg==@protonmail.internalid>
- <4f1ab5b8-3bfe-43a6-8b91-317456188544@gmail.com>
- <7df3bff7-b872-4b20-8e7c-698157a41f33@kernel.org>
- <tawGGT4rtpw22Ng-MgM--GhoEihBU7tY_TrFUHf8raMKApyqTcSkKHyfSuRIL_bqNp_5zWD4SBG_C4c8CB7_6Q==@protonmail.internalid>
- <18998766-62fe-4a5e-95d8-1bfae712d8fb@gmail.com>
- <614a087d-d219-49cb-85ee-772044558649@kernel.org>
- <Jxt4BbN1dL8VKh_Zjah1xecAjz3c9VfbhKSm4a0K2D1MNKfJKIFnCPLj2VvdW1q4LnMIQy8bCzV3YoVnLFYUlA==@protonmail.internalid>
- <0cee27b6-f566-4958-8634-2c43e099281e@gmail.com>
-From: Bryan O'Donoghue <bod@kernel.org>
+Subject: Re: [PATCH] clk: keystone: sci-clk: fix application of sizeof to
+ pointer
+To: Nishanth Menon <nm@ti.com>, Brian Masney <bmasney@redhat.com>, "Stephen
+ Boyd" <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	"Santosh Shilimkar" <ssantosh@kernel.org>, Tero Kristo <kristo@kernel.org>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, Jing Yangyang
+	<jing.yangyang@zte.com.cn>, Zeal Robot <zealci@zte.com.cn>, kernel test robot
+	<lkp@intel.com>, Julia Lawall <julia.lawall@inria.fr>, David Yang
+	<davidcomponentone@gmail.com>, Jing Yangyang <cgel.zte@gmail.com>, Ran Sun
+	<sunran001@208suo.com>
+References: <20260508152321.3683799-1-nm@ti.com>
 Content-Language: en-US
-Autocrypt: addr=bod@kernel.org; keydata=
- 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
-In-Reply-To: <0cee27b6-f566-4958-8634-2c43e099281e@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20260508152321.3683799-1-nm@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF00004FC1:EE_|SJ0PR10MB5720:EE_
+X-MS-Office365-Filtering-Correlation-Id: e54e38c9-3c0b-4951-9736-08dead232178
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700016|82310400026|376014|7416014|1800799024|56012099003|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info:
+	T0hYxj8eaCpvAxBdmtKtp4HbDkGqywA/Fx1dG+ybdDQPZjh7oP5ZZ322sn5wQra+EMwbVFOzaq9ZRbhWNtUFMCJF6XUcCs6KVIfHeg4NFTvTuFInDyQZkCGmklwN/d1QofFzvT/3md5yl1mqAXpKTgeybOWH6Scw7VmsOkPqlZ1g/QhTovaWMV9GEh/hN0dt00yRRzyorPOFIqdYi5lg540TKswnl5tF4B18D0Sb5ZnN9WJv/iJDMEKxKbTTSZaefTt7sBfmX0HOWoJ9OAstq1bLQ8t9LL+R7nnQSisP3DVoa7y7BpR6I2I0Vh6hUfE0XTm+ictBf6BRgc8UIgnZDSdINCoXWexMOkri/g4sKOiPjxaz+NFHQXyF1Hx4bZR9W8LohyGirXuzDy1zyxuzscDoAL2Mxd9v8U2jyvE8zDRsbzh40i9cNmk+o/zPqlHfs25c4xvegQc88hDNc879mtdP2rMThGBza12+ri467ekDka5nOSfvOvDim28erMkgQj7QB/EnIXgcv+7Y+zbF8AvwSj8vp6Rd5lYI8K0i2XblZOTD3ndEuDHDs2ILV3MsuPvssPezAEaeFdoNaA/D7jHYVEs5nQxxgP+F48YFmYv+J7jHcX3FtvunhLPDxsaZvyGotQF5aRJ095V8SNQsBWZkxi3sKo9zFqUlR3euaRBZ8HlXHo4sviRcqCTG7dJT
+X-Forefront-Antispam-Report:
+	CIP:198.47.23.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet201.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(82310400026)(376014)(7416014)(1800799024)(56012099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	C1kWvby/wOvZqCUC2DWH5jSC4LA0pPemcxCec6j6xLwb385AWg0wmWoj+NZnu8OP7z4SSCFLhDUQx9sZLoFCpvF7djPah1QcNPtAbiChEnk+QKKPvCiPmUrSFz2N8HnoqCmGqOfWv7MgMlK2r2kUpXKPEctuEhnDLdg/LRoMLhlVJBMgpIQQrOb98O7d1bQsUU70dI28kdRIbIakchxmHv3IzxyVmeWYlpMA4FyD65zywOi5fQhAoda3TJeQMfG2L5jAk2M5anIQEGQH1lrUD6pIrOJ91RkOI4T66OtNcye5XDU4DCioNm9gd+XOHUuKb42PpYfv1zYmbF8Bph86e6iBDvFyQE9PUjdX0NamYrA0fhd0L3vwxERT8XANI8zHrhDLAUtFP1xUInurbtcsDy+ZPHjeVn5huycFpC8NXmF+ynPgNi11c4nZ20GYBi+/
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2026 16:59:12.8935
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e54e38c9-3c0b-4951-9736-08dead232178
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.195];Helo=[lewvzet201.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF00004FC1.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB5720
 
-On 07/05/2026 16:51, Erikas Bitovtas wrote:
+On 5/8/26 10:23 AM, Nishanth Menon wrote:
+> From: Jing Yangyang <jing.yangyang@zte.com.cn>
 > 
+> Coccinelle (scripts/coccinelle/misc/noderef.cocci) reports:
 > 
-> On 5/7/26 4:37 PM, Bryan O'Donoghue wrote:
->> v4l2-ctl --verbose --set-fmt-video-
->> out=width=1280,height=720,pixelformat=NV12 --set-selection-output
->> target=crop,top=0,left=0,width=1280,height=720 --set-fmt-
->> video=pixelformat=H264 --stream-mmap --stream-out-mmap --stream-
->> from=cyclists_1280x720_92frames.yuv --stream-to=/tmp/
->> cyclists_1280x720_92frames.h264 -d /dev/video1
+>    drivers/clk/keystone/sci-clk.c:391:8-14: ERROR: application of
+>    sizeof to pointer
 > 
-> With the patch kept:
-> v4l2-ctl --verbose
-> --set-fmt-video-out=width=1280,height=720,pixelformat=NV12
-> --set-selection-output target=crop,top=0,left=0,width=1280,height=720
-> --set-fmt-video=pixelformat=H26
-> 4 --stream-mmap --stream-out-mmap
-> --stream-from=cyclists_1280x720_92frames.yuv
-> --stream-to=/tmp/cyclists_1280x720_92frames.h264 -d /dev/video1
-> VIDIOC_QUERYCAP: ok
-> VIDIOC_G_FMT: ok
-> VIDIOC_S_FMT: ok
-> Format Video Capture Multiplanar:
-> 	Width/Height      : 1280/736
-> 	Pixel Format      : 'H264' (H.264)
-> 	Field             : None
-> 	Number of planes  : 1
-> 	Flags             :
-> 	Colorspace        : Default
-> 	Transfer Function : Default
-> 	YCbCr/HSV Encoding: Default
-> 	Quantization      : Default
-> 	Plane 0           :
-> 	   Bytes per Line : 0
-> 	   Size Image     : 708608
-> VIDIOC_G_FMT: ok
-> VIDIOC_S_FMT: ok
-> Format Video Output Multiplanar:
-> 	Width/Height      : 1280/736
-> 	Pixel Format      : 'NV12' (Y/UV 4:2:0)
-> 	Field             : None
-> 	Number of planes  : 1
-> 	Flags             :
-> 	Colorspace        : Default
-> 	Transfer Function : Default
-> 	YCbCr/HSV Encoding: Default
-> 	Quantization      : Default
-> 	Plane 0           :
-> 	   Bytes per Line : 1280
-> 	   Size Image     : 1425408
-> VIDIOC_G_SELECTION: ok
-> VIDIOC_S_SELECTION: ok
-> 		VIDIOC_G_FMT returned 0 (No error information)
-> 		VIDIOC_G_FMT returned 0 (No error information)
-> 		VIDIOC_G_FMT returned 0 (No error information)
-> 		VIDIOC_REQBUFS returned -1 (Invalid argument)
+> provider->clocks is an array of struct sci_clk *, so bsearch()
+> expects the size of each element (struct sci_clk *). However,
+> sizeof(clk) evaluates to the size of a pointer-to-pointer.
 > 
-> With the patch reverted:
-> v4l2-ctl --verbose
-> --set-fmt-video-out=width=1280,height=720,pixelformat=NV12
-> --set-selection-output target=crop,top=0,left=0,width=1280,height=720
-> --set-fmt-video=pixelformat=H26
-> 4 --stream-mmap --stream-out-mmap
-> --stream-from=cyclists_1280x720_92frames.yuv
-> --stream-to=/tmp/cyclists_1280x720_92frames.h264 -d /dev/video1
-> VIDIOC_QUERYCAP: ok
-> VIDIOC_G_FMT: ok
-> The pixelformat 'H264' is invalid
-> VIDIOC_G_FMT: ok
-> The pixelformat 'NV12' is invalid
+> Use sizeof(*clk) to pass the correct element size.
 > 
-> Decoding breaks if I revert the patch as well, it fails with a power
-> collapse fail.
+> Reported-by: Zeal Robot <zealci@zte.com.cn>
+> Closes: https://lore.kernel.org/all/84a6ba16686347099a3dab2e5161a930e792eb6e.1629198281.git.jing.yangyang@zte.com.cn/
+> Reported-by: kernel test robot <lkp@intel.com>
+> Reported-by: Julia Lawall <julia.lawall@inria.fr>
+> Closes: https://lore.kernel.org/all/202512040525.zrHSDl5h-lkp@intel.com/
+> Link: https://lore.kernel.org/linux-clk/20211012021931.176727-1-davidcomponentone@gmail.com/
+> Signed-off-by: Jing Yangyang <jing.yangyang@zte.com.cn>
+> Signed-off-by: David Yang <davidcomponentone@gmail.com>
+> [nm@ti.com: Improved commit message]
+> Signed-off-by: Nishanth Menon <nm@ti.com>
+> ---
+> Cc: Jing Yangyang <cgel.zte@gmail.com>
+> Cc: Ran Sun <sunran001@208suo.com>
+> 
+>   - Functionality: No impact (on Linux architectures), thus no Fixes/Stable tag.
 
-If you declare both as decoders can you successfully decode @ video0 and 
-video1 ?
+Not sure what "on Linux architectures" means here, this should be true for any
+sane system, right? You are going from the sizeof(pointer-to-pointer) to the
+sizeof(pointer), both should be equal. This is just to be more technically
+correct and silence a Coccinelle warning. Anyway,
 
-ie be sure the error is encoder and not core specific.
+Reviewed-by: Andrew Davis <afd@ti.com>
 
----
-bod
+>   - History: This patch has long-standing history; I have attributed it to the
+>    earliest valid author found during a recent scrub.
+>   - Reports: Retained chronological attribution even where public reports (Zeal
+>    Robot) are unavailable.
+>   - Checkpatch: Acknowledging minor warning regarding tag ordering (Reported-by
+>    / Closes sequence); chosen to maintain link integrity for automated tools.
+>   - Testing: Verified on available K3 SoCs against 2026-05-07:
+>    https://gist.github.com/nmenon/afa9ac915e189334f048c177f16fe54f
+> 
+>   drivers/clk/keystone/sci-clk.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
+> index 9d5071223f4c..2fc1f050779b 100644
+> --- a/drivers/clk/keystone/sci-clk.c
+> +++ b/drivers/clk/keystone/sci-clk.c
+> @@ -388,7 +388,7 @@ static struct clk_hw *sci_clk_get(struct of_phandle_args *clkspec, void *data)
+>   	key.clk_id = clkspec->args[1];
+>   
+>   	clk = bsearch(&key, provider->clocks, provider->num_clocks,
+> -		      sizeof(clk), _cmp_sci_clk);
+> +		      sizeof(*clk), _cmp_sci_clk);
+>   
+>   	if (!clk)
+>   		return ERR_PTR(-ENODEV);
+
