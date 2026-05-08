@@ -1,93 +1,93 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732D53FBED4
-	for <linux-clk@vger.kernel.org>; Fri,  8 May 2026 21:23:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D34A63358D6
+	for <linux-clk@vger.kernel.org>; Fri,  8 May 2026 21:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.54
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778275423; cv=pass; b=VL+/gmDl5DRC+f3G0JXagb/+tPss30Sb3Cn88H2EEcQXAqDHlA8KeAp+AvWq9KWKPugO3ZnvAuTmjMbR9Va7WdquetlCgTi8GzadT0m3UrkG8/jW7bnDflb4ywsz12jRGVJz2tz/j8LWyBLYz8/EPt5Mmrexf2QR8tNKLimiwmo=
+	t=1778275689; cv=pass; b=SoNE/3JrzoytZlqQu2an8KlN1f/cm2qrJGlB2pk2MW8kjtL3cKwKBRG6WbPtydM/k7Asrh5xgg38ATgA8cXh9qmqhVe3Wv4/cU21NcEdDw7YK+Iskx5UZ7ELHLksknk7J4Qyu/7GhWheqPU4qwJIyfgbAPA5Q4wDzqiX+LtJlAw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778275423; c=relaxed/simple;
-	bh=JjzbFy2ZE5GCQkLQ2jpRAjPX4ddb2In753y94sylcBw=;
+	s=arc-20240116; t=1778275689; c=relaxed/simple;
+	bh=6A68+dfr/d+pHkYNchrRBxT3co+NdL/w8uNTbJYvy6g=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W6z7ESxK2XLk29DzpPYspoHmxWlV7n7rsJ8B5vF19OxcY7C3HUrzrTBDKmhL8xT5mLGBt6XM37IUBqPDy3m5JUOFT8MpCllPaVQ1ERWyBWwU7tXaWrh1qyh43f2t6Mk1GhHWj/buFXzbJjN8XuVAEnisknty6MXGOSIhf40A7F8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M7uyINkU; arc=pass smtp.client-ip=209.85.218.52
+	 To:Cc:Content-Type; b=uDJ5h2wZmMaAZnHdlxVJ6Z3oG494dB+3C2cPHqTYLqYGlKchPZRdbxGV+SOz0lmlW9cqmZsj/TbGWwWWxONVAf5NZKLio/FhJWk5voqt3ix6H328ikK50zg8GkjXigVKI3pKuQPnUZjcQOQvA6fqUwHiKp7yxJexOHnz0NrJyKA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SYSNzrjZ; arc=pass smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M7uyINkU"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-bc2301be8ecso419320266b.3
-        for <linux-clk@vger.kernel.org>; Fri, 08 May 2026 14:23:41 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1778275420; cv=none;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SYSNzrjZ"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b9358dd7f79so404656366b.1
+        for <linux-clk@vger.kernel.org>; Fri, 08 May 2026 14:28:07 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1778275686; cv=none;
         d=google.com; s=arc-20240605;
-        b=VM/wL6RAC50R/zdCGIzouujO0qlY8N+E+WhcI2eH7NThee5T13KqwbZWPJAJv0XaW4
-         2IMzT4BF8eOlg6aBYVvYDhn4A9e8QNqNr/yGuTuzF0OTAe9l1I1GvR0AwJyPwNTixoAu
-         QVLaR/ON8pziBeAAI+BRwsvdwpepsc9pmx6W5UfLluZwjqi/GOwukgR6iGmM9Uh/rAgu
-         w8KiCgJzoYX9WquJicgxaBW6EbPaZ8ttN2FgXKRkAsTEpk7xc7/34bvirz46ft3v1+t6
-         y4SIvokfWM86Vn+fBexH+PYc6qNboz76o0E/eo2iawgDdrJA+FAK9fmrWDueCdviEry1
-         b2dg==
+        b=YknVRqTLqKkF+h7ik3SQwqscwUlPT60quxH1qfxBfuRYeXioBUEQrS4DwyC28O1/sG
+         2Jk/S7/kEdhbozXoQejMzPN6vc6rOD75DCFDEEracO0ruDVRZEJ+vVMqiviQEKUMDeKX
+         p0l5UyEBmWET0NWTPBwKzxm9jC8AbtLD/k7hz3GJ29KmZBNIyRYOoF43Uu6TcdV1sB9M
+         a5cO2tSyNadZ3+eI8mA4Mh6bUOM+3jllR+Tysr06DTLris5Ea2Tn0Q9Lhprm/IjIPguT
+         tB1kJdq8dy2gyQv6LW23i2fD0UuPlI9aAGknPcyawSHHIZeaxX44AHc7MKV+7lFxbf2K
+         rb+A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:dkim-signature;
-        bh=zIq9ZcUws2t7WWIjJD6g+oZhRW8RJPBQCH68MpVs7Xs=;
-        fh=Fskkv3CltEvbpipfkdP/P7/x5W/p9UlqsdjRwNeqU+0=;
-        b=IRsRCqoQlsJHfUV1mO4GfVos6AY2eZLZF/obN0iYkMp9e1tr7+3XrNzsen39zzvojf
-         8mLHryw5W03i0EEm5g4+RSENXWbGpZnR5aLDavgRPuaAWr6TWaaKKDpayD9qMsMFzjIZ
-         Vd+eA+bvq0Ll5q82CB+TE6jG+mMbq3BPKLYJ4kTweFhYHUftgKBeKhNhKVSLzfCiF9LV
-         W9TGJYBv+2UjP6+yTrVNbi/Y2nxunljBsRNebo3noCmaVzQ4+xPZoFRmcXuB5LcWxvDb
-         GdVs0bcBMBE8M10bU/MqyrsIpsm6qSu8krjofwFCbpGmT/13gpl8FU6L52wKOspHMOIF
-         2blQ==;
+        bh=f+9T2opq2Jf9+yahtQzhCStP254LOW+LGHWIgTifG5A=;
+        fh=Fdq3QLzebNflRO7qXDIGp/gJ4RUX0gpvYA26awbHxek=;
+        b=aqkxHG0HxjoJFzRRu+VbRLf+JeMMuyWhZ1AzopEXGMP73OCnj2QhJhiDtFmLRfefQ+
+         EngsW+4xk6CX/NsKjAp3H9kDwzmMb3kfhq/CNREmQYISbKD6O/+HNPGO5vsTV2HcfF6e
+         RbzTQ2rwNlKls9ZgnhMT0aJ8RfiAbglxrM8YdK6WvW2EwYJn5TVF0NuCf6qgJWLYmNdY
+         YG4U2QDw8JywbMoGNhLbwrAvp8unK/AfJ3tDRkejlw/Xwpf9ITGokwnbBhcLpoW0JWjo
+         5PZHXql/W8tXz2uWTX9nNfJa3AAGChnpIZynkn3tXbLD2ZRXz7pld8e+8ONhmcF8tXmu
+         CjYA==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1778275420; x=1778880220; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1778275686; x=1778880486; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zIq9ZcUws2t7WWIjJD6g+oZhRW8RJPBQCH68MpVs7Xs=;
-        b=M7uyINkUoLx8IIpyFEjRSs5ccMtENsWh15L3FCRSEheigOPlV7VMcetlhkhH/nDJ8F
-         ymA74EjMovQ3N1+GZpVUjLhJeBOsqdsfy3p/vVYwyK70WhubXOGkuN5zvN2gVnNSQCN/
-         BXy6U5D5kajDvBgNu9Fes6pWya3EzZ8FtKM3F4M4fT97BG1q6lYVLH3bJ1pXDafW5Qjd
-         SSkpM49VTa2i9qaVffHZGIaS7OyMbmJa/9JYTp16MkqL/793VQINlPADrGgLM5xc83RS
-         IpG7ulC1zGjPsjiJ4XjasCzST8cO5JpVcBzTkzFX+O9nozOPEY9KQtiSdo8oAsXVCMrg
-         hbww==
+        bh=f+9T2opq2Jf9+yahtQzhCStP254LOW+LGHWIgTifG5A=;
+        b=SYSNzrjZxAkp+BQvd7UVXPTZvpfdqqvXeR01C0tPTrKJHKzu26ZMzjwr2N9xz8IJD8
+         658JQJCGZtDp2xtAg6YlMpyTHIUhvlg32Hn5sbztWB/IXIz9b6M03saPeGVQ7zfubU42
+         wh0txolqeAprk3/1MQeixqbB9e26FtVImhgmFKl/t08RtkJDK5JmPQlAIy10kZM9fGSk
+         1xnX+knmotI9VoBXAwbtRXcgii2k5i/OD84CJ5JeA5z4907ETETNaLUmKw1x4WYBhMIz
+         iXjQ8e+glDs+5u+DPmUoOVx0b0aPxU8Mf2mG3hoaeDY2UAm/mscJ/rsQ2/UeMINlY91W
+         gT0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778275420; x=1778880220;
+        d=1e100.net; s=20251104; t=1778275686; x=1778880486;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zIq9ZcUws2t7WWIjJD6g+oZhRW8RJPBQCH68MpVs7Xs=;
-        b=cKlCpLrZ61JxTg1sY0E3rsDfCz4t5sjqqiZrReJ67bkMbQBJsNX5CDStV4sjrQ7OA3
-         NELgP+0i8CYauwLvwUdR5Oquo6lXMDXC5ukZLAuecFxy1R207c91ms5WhGUcUiI2Z5mc
-         RFaVW2Y/vpI2P43Yo1iza65+H4BCkpNbSth0/vP00EOw7C5uOVAzaGCeszZqstO1WpAR
-         XES63W9StAg/XznBZMINESW2mCR21yKqlUR2JzpertTgZ7pIwx/rM9W/Kitj0uT2kxv6
-         UYK8tZ12RL5PnXaEr87tp8Th3FSfsGK/EZAA1AsXdLR/W3ZLE3IhqVAA6TBOms1O23Mo
-         mWgg==
-X-Forwarded-Encrypted: i=1; AFNElJ+w3u8e0b2N3LhWDCYtJMtsrMv6it8nKOnYg8gqTgVaIym3cpbOZencTxPGUIg8J8sJIoX59jAi968=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3UbPn/lAUdkkVvs55NrERrAEk19OirscK1JPYoDgDlo/I/AqP
-	e3jHrV89sHByIXzsEIcefMBiHzHYOXnz3s08CNq3v6hT7DY/ENEe+n2DnpEt+CWZgsK7vwXd23Z
-	zbUFWwVWdZWamj1NgfA0JZbtsiFPkPRB0OAgnqMh3DA==
-X-Gm-Gg: Acq92OEibiboKq82qZFxEJ0umy5Ds5KFLOFe+uQ8wk1VKWKL5JYufAGgM6xXFaZeasF
-	nwC6PPrbjb9HAqhTGoRUo1uzVw6GQIaI8poNofLmaZ688lqWj8ntzrgG2LV17DHfnGEMKJ1kz6H
-	37pYLgyS8AQeRp8VoCr78LtUl4ZPrGTrNoJVVxABMqrcwETY6EawUWmZqzHtyw9JDVwEYieiwIr
-	BaLf3rapc5mQp62oyVZfqtLH6DzQK9Gibx0WWB6IxnETpJSN7p3+ldMulD4LU7qSCUS/qJ7V7pT
-	TruiIU5lEChskBBp1y9mUIgk48UfHmXCraMrWxMHLA==
-X-Received: by 2002:a17:907:c06:b0:ba9:2611:31e6 with SMTP id
- a640c23a62f3a-bc56be3f762mr934940566b.6.1778275419723; Fri, 08 May 2026
- 14:23:39 -0700 (PDT)
+        bh=f+9T2opq2Jf9+yahtQzhCStP254LOW+LGHWIgTifG5A=;
+        b=daOpjDpu+Q5fT/SAhSRPFQo5J0w1rp06RcPyt6ToICLZ7nuU4EyfmILr+n8Cp9+2mN
+         f6xQ9R6ySwkYtGenUBr25sDHAyZUJYz2oNh7PSyxgeljBKuXaJsexgUG9UY4lLXNyZAB
+         gDBQQgTadi9RF0G4WRBbO0cPJKW3LXaHS7mohboNN3rnGoeDb10DOF9cQ9KzOkKedbVL
+         xs37pgfmER5m7XSfrF0d2h4PJCXJzA7+/jIWlTL+t+XzAzXxhrV8GDsBz+x4VQM5Azh9
+         3rmFMkh2ALtRgc7ehAtBXgiasuOMOEPh4qHjBhFH4Fe0os9zJkug2iaf+StuWcMbmTZw
+         BfpA==
+X-Forwarded-Encrypted: i=1; AFNElJ+SUfZ3P40rzgur0ZlvgSl6I/eiOdHoVJOIbOrEbothgBxLPh2aEepVPlCjyzi7Q4i71iH62V3GtIk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGUBw8gGhERdLOu3GOR7SyWh9OmDcbMHR+zzrWWHKQtZyuPxmh
+	+RG6T+X74CmDWgF3bpIEgtS+eAUlKPpFiB3t6RRtKRbtx8jDjCLMrHl+0B1SNbjVJk0qh3ar8vM
+	643T1MtZF3X5eQwbYVaPcJjSZ0LNTYkusbbV4DRpRCQ==
+X-Gm-Gg: Acq92OHI3UwdTFJaAje0HPlNSdA6M/zibs4YgdEZW7H/rUME1wabEmleGtDgMMpEGT1
+	IHLf2uvnZJZ810+sfG9vQUNiOfd6Z4ycVevIMZcjYBWDMm20YQujPNH+YpoVCSd4dzvSX9FXyDQ
+	oGdtEad998GIMtHsLGHwOrwePCPJrL0FomnxI2MpBzwAuo+0nG7bx5WxzRRX/Vg2tGEPPHIvTvE
+	a5LUpJm1eaBkDFMcdYopAgw6ePErb+pFhsUrbiNuf3L1AYzI8synB/mzTWFCkXatxxaDud4aBA+
+	kqvU7yFy3dqXnkXk7VUakHgA2VtnJoFnPUesBB2XUA==
+X-Received: by 2002:a17:907:868a:b0:bcb:ea69:39c8 with SMTP id
+ a640c23a62f3a-bcbea694c4fmr29891466b.38.1778275686056; Fri, 08 May 2026
+ 14:28:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260506-acpm-tmu-helpers-v1-0-a9cd5daf8355@linaro.org> <20260506-acpm-tmu-helpers-v1-3-a9cd5daf8355@linaro.org>
-In-Reply-To: <20260506-acpm-tmu-helpers-v1-3-a9cd5daf8355@linaro.org>
+References: <20260506-acpm-tmu-helpers-v1-0-a9cd5daf8355@linaro.org> <20260506-acpm-tmu-helpers-v1-4-a9cd5daf8355@linaro.org>
+In-Reply-To: <20260506-acpm-tmu-helpers-v1-4-a9cd5daf8355@linaro.org>
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Fri, 8 May 2026 22:23:27 +0100
-X-Gm-Features: AVHnY4LLKqUnG42bw1kGuZ5A8Ore_i8f_07LxVicEeYBN4fNYRTwN4DHlu-DLSI
-Message-ID: <CADrjBPqzKpcd9vuCmNUptCUPyPpPbHcc19-7kN-1c0RpW1e5DQ@mail.gmail.com>
-Subject: Re: [PATCH 3/6] firmware: samsung: acpm: Drop redundant _ops suffix
- in acpm_ops members
+Date: Fri, 8 May 2026 22:27:54 +0100
+X-Gm-Features: AVHnY4LpLOSjFyVaXAGyH7bOa_gQLppEIJLOzpAApaqZ0siC-A8__fDWDoAHaHo
+Message-ID: <CADrjBPry4yQXjc4MLVFvkhHbVCUPmVw5BFLVuMkE21wA2FAdfg@mail.gmail.com>
+Subject: Re: [PATCH 4/6] firmware: samsung: acpm: Make acpm_ops const and
+ access via pointer
 To: Tudor Ambarus <tudor.ambarus@linaro.org>
 Cc: Krzysztof Kozlowski <krzk@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
 	Stephen Boyd <sboyd@kernel.org>, Lee Jones <lee@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
@@ -100,38 +100,48 @@ Content-Type: text/plain; charset="UTF-8"
 
 On Wed, 6 May 2026 at 12:39, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
 >
-> Rename the `dvfs_ops` and `pmic_ops` members of `struct acpm_ops` to
-> `dvfs` and `pmic` respectively.
+> Replace the embedded `struct acpm_ops` inside `struct acpm_handle` with
+> a pointer to a `const struct acpm_ops`.
 >
-> Since these members are housed within the `acpm_ops` structure and
-> utilize the `acpm_*_ops` types, the `_ops` suffix on the variable names
-> creates unnecessary redundancy (e.g., `handle.ops.dvfs_ops`).
+> Previously, the operations structure was embedded directly within the
+> handle and populated dynamically at runtime via `acpm_setup_ops()`.
+> This resulted in mutable function pointers and unnecessary per-instance
+> memory overhead.
 >
-> This cleanup removes the stuttering, leading to cleaner consumer code.
+> By defining `exynos_acpm_driver_ops` statically as a `const` structure,
+> the function pointers are now safely housed in the read-only `.rodata`
+> section. This improves security by preventing function pointer
+> overwrites, saves memory, and slightly reduces initialization overhead
+> in `acpm_probe()`.
+>
+> Consequently, update all consumer drivers (clk, mfd) to access the
+> operations via the new pointer indirection (`->ops->`). Finally, fix
+> the previously empty kernel-doc description for the ops member to
+> reflect its new pointer nature.
 >
 > Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 > ---
 
 Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
 
->  drivers/clk/samsung/clk-acpm.c                        | 8 ++++----
->  drivers/firmware/samsung/exynos-acpm.c                | 4 ++--
->  drivers/mfd/sec-acpm.c                                | 6 +++---
->  include/linux/firmware/samsung/exynos-acpm-protocol.h | 4 ++--
->  4 files changed, 11 insertions(+), 11 deletions(-)
+>  drivers/clk/samsung/clk-acpm.c                     |  8 ++---
+>  drivers/firmware/samsung/exynos-acpm.c             | 36 ++++++++++------------
+>  drivers/mfd/sec-acpm.c                             |  6 ++--
+>  .../linux/firmware/samsung/exynos-acpm-protocol.h  |  4 +--
+>  4 files changed, 25 insertions(+), 29 deletions(-)
 >
 > diff --git a/drivers/clk/samsung/clk-acpm.c b/drivers/clk/samsung/clk-acpm.c
-> index d8944160793a..93667777094c 100644
+> index 93667777094c..953ca8d5720a 100644
 > --- a/drivers/clk/samsung/clk-acpm.c
 > +++ b/drivers/clk/samsung/clk-acpm.c
 > @@ -68,8 +68,8 @@ static unsigned long acpm_clk_recalc_rate(struct clk_hw *hw,
 >  {
 >         struct acpm_clk *clk = to_acpm_clk(hw);
 >
-> -       return clk->handle->ops.dvfs_ops.get_rate(clk->handle,
-> -                                       clk->mbox_chan_id, clk->id);
-> +       return clk->handle->ops.dvfs.get_rate(clk->handle, clk->mbox_chan_id,
-> +                                             clk->id);
+> -       return clk->handle->ops.dvfs.get_rate(clk->handle, clk->mbox_chan_id,
+> -                                             clk->id);
+> +       return clk->handle->ops->dvfs.get_rate(clk->handle, clk->mbox_chan_id,
+> +                                              clk->id);
 >  }
 >
 >  static int acpm_clk_determine_rate(struct clk_hw *hw,
@@ -139,38 +149,82 @@ Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
 >  {
 >         struct acpm_clk *clk = to_acpm_clk(hw);
 >
-> -       return clk->handle->ops.dvfs_ops.set_rate(clk->handle,
-> -                                       clk->mbox_chan_id, clk->id, rate);
-> +       return clk->handle->ops.dvfs.set_rate(clk->handle, clk->mbox_chan_id,
-> +                                             clk->id, rate);
+> -       return clk->handle->ops.dvfs.set_rate(clk->handle, clk->mbox_chan_id,
+> -                                             clk->id, rate);
+> +       return clk->handle->ops->dvfs.set_rate(clk->handle, clk->mbox_chan_id,
+> +                                              clk->id, rate);
 >  }
 >
 >  static const struct clk_ops acpm_clk_ops = {
 > diff --git a/drivers/firmware/samsung/exynos-acpm.c b/drivers/firmware/samsung/exynos-acpm.c
-> index fac88c427d2a..da960d3e1145 100644
+> index da960d3e1145..1a0d98b55439 100644
 > --- a/drivers/firmware/samsung/exynos-acpm.c
 > +++ b/drivers/firmware/samsung/exynos-acpm.c
-> @@ -676,8 +676,8 @@ static int acpm_channels_init(struct acpm_info *acpm)
->   */
->  static void acpm_setup_ops(struct acpm_info *acpm)
->  {
-> -       struct acpm_dvfs_ops *dvfs_ops = &acpm->handle.ops.dvfs_ops;
-> -       struct acpm_pmic_ops *pmic_ops = &acpm->handle.ops.pmic_ops;
-> +       struct acpm_dvfs_ops *dvfs_ops = &acpm->handle.ops.dvfs;
-> +       struct acpm_pmic_ops *pmic_ops = &acpm->handle.ops.pmic;
+> @@ -670,30 +670,26 @@ static int acpm_channels_init(struct acpm_info *acpm)
+>         return 0;
+>  }
 >
->         dvfs_ops->set_rate = acpm_dvfs_set_rate;
->         dvfs_ops->get_rate = acpm_dvfs_get_rate;
+> -/**
+> - * acpm_setup_ops() - setup the operations structures.
+> - * @acpm:      pointer to the driver data.
+> - */
+> -static void acpm_setup_ops(struct acpm_info *acpm)
+> -{
+> -       struct acpm_dvfs_ops *dvfs_ops = &acpm->handle.ops.dvfs;
+> -       struct acpm_pmic_ops *pmic_ops = &acpm->handle.ops.pmic;
+> -
+> -       dvfs_ops->set_rate = acpm_dvfs_set_rate;
+> -       dvfs_ops->get_rate = acpm_dvfs_get_rate;
+> -
+> -       pmic_ops->read_reg = acpm_pmic_read_reg;
+> -       pmic_ops->bulk_read = acpm_pmic_bulk_read;
+> -       pmic_ops->write_reg = acpm_pmic_write_reg;
+> -       pmic_ops->bulk_write = acpm_pmic_bulk_write;
+> -       pmic_ops->update_reg = acpm_pmic_update_reg;
+> -}
+> -
+>  static void acpm_clk_pdev_unregister(void *data)
+>  {
+>         platform_device_unregister(data);
+>  }
+>
+> +static const struct acpm_ops exynos_acpm_driver_ops = {
+> +       .dvfs = {
+> +               .set_rate = acpm_dvfs_set_rate,
+> +               .get_rate = acpm_dvfs_get_rate,
+> +       },
+> +
+> +       .pmic = {
+> +               .read_reg = acpm_pmic_read_reg,
+> +               .bulk_read = acpm_pmic_bulk_read,
+> +               .write_reg = acpm_pmic_write_reg,
+> +               .bulk_write = acpm_pmic_bulk_write,
+> +               .update_reg = acpm_pmic_update_reg,
+> +       },
+> +};
+> +
+>  static int acpm_probe(struct platform_device *pdev)
+>  {
+>         const struct acpm_match_data *match_data;
+> @@ -734,7 +730,7 @@ static int acpm_probe(struct platform_device *pdev)
+>         if (ret)
+>                 return ret;
+>
+> -       acpm_setup_ops(acpm);
+> +       acpm->handle.ops = &exynos_acpm_driver_ops;
+>
+>         platform_set_drvdata(pdev, acpm);
+>
 > diff --git a/drivers/mfd/sec-acpm.c b/drivers/mfd/sec-acpm.c
-> index 0e23b9d9f7ee..9e15b260b8df 100644
+> index 9e15b260b8df..3397d13d3b7f 100644
 > --- a/drivers/mfd/sec-acpm.c
 > +++ b/drivers/mfd/sec-acpm.c
 > @@ -391,7 +391,7 @@ static int sec_pmic_acpm_bus_write(void *context, const void *data,
 >  {
 >         struct sec_pmic_acpm_bus_context *ctx = context;
 >         struct acpm_handle *acpm = ctx->shared->acpm;
-> -       const struct acpm_pmic_ops *pmic_ops = &acpm->ops.pmic_ops;
-> +       const struct acpm_pmic_ops *pmic_ops = &acpm->ops.pmic;
+> -       const struct acpm_pmic_ops *pmic_ops = &acpm->ops.pmic;
+> +       const struct acpm_pmic_ops *pmic_ops = &acpm->ops->pmic;
 >         size_t val_count = count - BITS_TO_BYTES(ACPM_ADDR_BITS);
 >         const u8 *d = data;
 >         const u8 *vals = &d[BITS_TO_BYTES(ACPM_ADDR_BITS)];
@@ -178,8 +232,8 @@ Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
 >  {
 >         struct sec_pmic_acpm_bus_context *ctx = context;
 >         struct acpm_handle *acpm = ctx->shared->acpm;
-> -       const struct acpm_pmic_ops *pmic_ops = &acpm->ops.pmic_ops;
-> +       const struct acpm_pmic_ops *pmic_ops = &acpm->ops.pmic;
+> -       const struct acpm_pmic_ops *pmic_ops = &acpm->ops.pmic;
+> +       const struct acpm_pmic_ops *pmic_ops = &acpm->ops->pmic;
 >         const u8 *r = reg_buf;
 >         u8 reg;
 >
@@ -187,26 +241,28 @@ Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
 >  {
 >         struct sec_pmic_acpm_bus_context *ctx = context;
 >         struct acpm_handle *acpm = ctx->shared->acpm;
-> -       const struct acpm_pmic_ops *pmic_ops = &acpm->ops.pmic_ops;
-> +       const struct acpm_pmic_ops *pmic_ops = &acpm->ops.pmic;
+> -       const struct acpm_pmic_ops *pmic_ops = &acpm->ops.pmic;
+> +       const struct acpm_pmic_ops *pmic_ops = &acpm->ops->pmic;
 >
 >         return pmic_ops->update_reg(acpm, ctx->shared->acpm_chan_id, ctx->type, reg & 0xff,
 >                                     ctx->shared->speedy_channel, val, mask);
 > diff --git a/include/linux/firmware/samsung/exynos-acpm-protocol.h b/include/linux/firmware/samsung/exynos-acpm-protocol.h
-> index d4db2796a6fb..b206efa62be6 100644
+> index b206efa62be6..fbf1829b33db 100644
 > --- a/include/linux/firmware/samsung/exynos-acpm-protocol.h
 > +++ b/include/linux/firmware/samsung/exynos-acpm-protocol.h
-> @@ -36,8 +36,8 @@ struct acpm_pmic_ops {
->  };
->
->  struct acpm_ops {
-> -       struct acpm_dvfs_ops dvfs_ops;
-> -       struct acpm_pmic_ops pmic_ops;
-> +       struct acpm_dvfs_ops dvfs;
-> +       struct acpm_pmic_ops pmic;
->  };
+> @@ -42,10 +42,10 @@ struct acpm_ops {
 >
 >  /**
+>   * struct acpm_handle - Reference to an initialized protocol instance
+> - * @ops:
+> + * @ops:       pointer to the constant ACPM protocol operations.
+>   */
+>  struct acpm_handle {
+> -       struct acpm_ops ops;
+> +       const struct acpm_ops *ops;
+>  };
+>
+>  struct device;
 >
 > --
 > 2.54.0.545.g6539524ca2-goog
