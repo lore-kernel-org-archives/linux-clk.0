@@ -1,130 +1,142 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECEC1A6836
-	for <linux-clk@vger.kernel.org>; Sat,  9 May 2026 17:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F61115746F;
+	Sat,  9 May 2026 18:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778349507; cv=none; b=PNtjMJhWqeog829UVVg0CFiIAcGovfWlR51jjq330S0cabUnPLVDiTDpy8M9yWlxHWsi7o4fboyRfWLfcEMjfeYO2bPkKWueE6YVWlm2BJRWmCDTz4wDsQMqy2cN12Xb7bOQq3iWlUMz+LmF1G/dIVfJ+m4v6GzU/Sr09qEJqVg=
+	t=1778350958; cv=none; b=W/bZN+vbb+AtCNw3CxjaUws8x+hrHpFlG0yUgfo8iRjp46szyiAWu7aoVfrT/RnHevkZSxlvj6NVGEHld275pxwA2gNhEbVUdAbbhhTvy+iDwWZC+VVKOj74kco5KSKxKpCfSYR8DxwUjHA2+tVrFrXSqqd/JtcGsqdKFiQSXs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778349507; c=relaxed/simple;
-	bh=i8ZH/H0BHPRImxCZepw85JsZr7kU8N8MGko8hfIoCfs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eECfsI+01LYqY0+G7E0RlASennwuvTc3G6abr2bhmAEn4oAkSYnc4wUmjDO0ryEleNwntxCyvWbmjRbm9HHwvZW4rEgsd6Ji7UVpNyDwAfs4v1nNZpqTy1u4E/C1eqZ2L0VSPKKlcrMicwXeMLFu2KFYYBJU3Y2yRxrGEo99xxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C+b8/cTA; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1778350958; c=relaxed/simple;
+	bh=ZhGIZNKnVR0exJcAd5IFAHDvDHJZNJJv2gvh2LcOnRo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YOBk/xiFvS07rSApzEzv3Cq8T/3E7mG8ldIGAq7sbGRdM4D5HdyTBzocVH28X3Ik/k6la0uIJCnBcSA65PVEAIOKgOA8P+gPoax66Y7CwM4pb7dZf3om32QrP1wYqJSvq5wQ3SMygyKyuvFCMza/nUQTKviv8vTv4Lao8kyweBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bQVGqENC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C+b8/cTA"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4830b67aa6bso3751865e9.0
-        for <linux-clk@vger.kernel.org>; Sat, 09 May 2026 10:58:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778349504; x=1778954304; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yGeg/u5Pz9hVNyAZhRZWhPuLVPXIN8vusR2dk7eDnv4=;
-        b=C+b8/cTAMUsdRokcfgR7S1oADM1dKszqAM3SCkzryVHEF4z4lXXDZIDoRa7pj1G4RV
-         k8bRyceOyYJ7LxIaDfbEKFnRsApr27ZfT/ep2NXo20ClwV19LI42ua8raeLo49qxGF6z
-         PyM0lwmk29ndm+FO0xQMSQvD1NDatR5HYjRQPKIQGvehpKvaYF5zfF3J/F47+JptIjgE
-         TmNlc+ushOUa0YMkWTCtxlQs4f2kTlqMYBEGkwF0LGVWLlp7SievxUI9LxjZwEVWOqHz
-         dDeZOpy/PHlwlfS4ZEdBloyaiMuNbPFg1GQj8XtkksFzyfDZUAGbR9BJgOWMlCtXza1P
-         9rtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778349504; x=1778954304;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yGeg/u5Pz9hVNyAZhRZWhPuLVPXIN8vusR2dk7eDnv4=;
-        b=TJ7kMJaT8wnivL8yL38I7OOYg4Lhijqx9rBwJNrXb/1kTPMdQSt8OsKtP2xsz4E9Y9
-         yaoa8NFL++vc4ReB5p33HOYd1r8UDlAXFTK4mlRMPfLpaV3oYUInvQ4kOjN/Y3GvaQcO
-         mdkDOcppvCK7GNaIldc58OiDV41GSVFUkTsX7TGfVWFdCMgIoClPMvQlW3vkdPGxDRhS
-         q25scxidd0QQL3xIRWp4rpJX5QNRCkyat+IiAfrNjXlXvJ4MPLxsVK6CNcA7QKxcdYzR
-         z7qbOj0ozuTIQH3hIIMgKuZZaiBeE1ay5byGGijn6qe3YVJd7/n6kmOQ/2D/oS371QIx
-         mDsQ==
-X-Forwarded-Encrypted: i=1; AFNElJ+z60yAYl5FtKg2fQr4kjO6pm/iW4iRI65FnKX/MHrHWfkhBITJuX8s6HP3/JCBvQp/4+yp/6DCK2Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9CPkm0RYBg2Ndnk8+MqCh8Qg98w585KHWticcp8u7HYX6j4gU
-	zZ11LPIr+FQzWeDs3foad6pCsC/osbHU2TcUXIlZIQL566+3JyQDczkM
-X-Gm-Gg: Acq92OFmD8FXtm33OoEqBJGe8OkTj5RMiN4n7b0F3SVR5VLlFBYuBtCS2U86Z33pxyY
-	AvLBdjXIuoMR8fLHhnmFEz0s0pujmOOp0YRJQwVXvVO9QUDUDmXFWvSfcamTSHf/NEITOKMRFOJ
-	M11FdgxFqyx5ux9BvnC+i+hAwlakstRs3wZeThuTeaduX+6O2jlhEFLlQcQ3GeVfL7lUkietFOT
-	rZ6V0j9fizQeyR9IAbZ9vkKycCh2tBk26onpS7zG9JEdAEELZoz9L7tdgLcON0Bt/SCYL7eECXO
-	KZeQSuCgdt2z+A/OGD8yzLd5LW2kcfU+Qc8bJbRdFTGOTH3hg8iTkhofPO6C+X4DeZ5Eyaszg8Y
-	Udr1a4BGutBfA6iS6P6GvGDVi+oFhHLvRXjPHnviClokIx0MkNy//0VeJRoJaVgwq4pL9OiNboz
-	u3ZyNuOoxneXDuWrvJPvwhshqL0JpWVQeVyV1EejT5BCtgkz7Wirrpe6I=
-X-Received: by 2002:a05:600c:198c:b0:48a:58e1:6cf7 with SMTP id 5b1f17b1804b1-48e530bf915mr123256165e9.4.1778349503871;
-        Sat, 09 May 2026 10:58:23 -0700 (PDT)
-Received: from localhost.localdomain ([82.215.118.79])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-454919c13c9sm13383017f8f.27.2026.05.09.10.58.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 May 2026 10:58:23 -0700 (PDT)
-From: Stepan Ionichev <sozdayvek@gmail.com>
-To: daniel@thingy.jp
-Cc: romain.perier@gmail.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Stepan Ionichev <sozdayvek@gmail.com>
-Subject: [PATCH] clk: mstar: msc313-mpll: fix one-element shadow array overrun
-Date: Sat,  9 May 2026 15:42:54 +0500
-Message-Id: <20260509104255.15479-1-sozdayvek@gmail.com>
-X-Mailer: git-send-email 2.33.0.windows.2
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bQVGqENC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1ABB4C2BCB2;
+	Sat,  9 May 2026 18:22:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1778350958;
+	bh=ZhGIZNKnVR0exJcAd5IFAHDvDHJZNJJv2gvh2LcOnRo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bQVGqENCMk/G0RJHEZQWU9AH82pTLbTQHbxHvFf1CAp4vkaNM1OZJphCXbFhoJpSG
+	 3d6tH4qDaJoo84mEaPUVWXmyTc3G8+HBSbrmZmQyiNmD4T41IjHbglrLAVojY0NAks
+	 L07xI7RvZEhwgqM9gR5RzrEDYaJMwPZ9VZojo7MpUxaf2pF8b+V0xjIH1ObQpDTHYB
+	 XTfb0TosEFtuyazMQ9+6Hol3g6ZnmU+4lOIJdFbAHiNUwdiyjllg+0phigiLEj1f6E
+	 L/GenHMwVbiAF8nF5gaf6VVrJWLbRcR06iYEwGgwsj38Vpyg/8qNgpJbSM+l2m+P5j
+	 4iHAHpdyOB5PQ==
+Date: Sat, 9 May 2026 19:22:33 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Vyacheslav Yurkov <uvv.mail@gmail.com>
+Cc: Rob Herring <robh@kernel.org>,
+	Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/2] dt-bindings: Add clock guard DT description
+Message-ID: <20260509-cosigner-routine-fe98d5f6706f@spud>
+References: <20260318225510.GA639444-robh@kernel.org>
+ <7c7034a7-686a-42c2-bdba-6f31b5179f7c@gmail.com>
+ <20260319-yearly-wrongful-883f7fd86a69@spud>
+ <b45d9845-2d56-4fdd-a3ac-b0e0e27ba573@gmail.com>
+ <20260323-sanctuary-semantic-432089feb1c7@spud>
+ <d097826c-3db5-4902-acee-ffcff7436d4e@gmail.com>
+ <20260326-lustiness-borrower-530898a5ce28@spud>
+ <f3e27db5-d84d-4b6a-9d6f-25fcc9044efc@gmail.com>
+ <20260421-each-candy-67380b760d26@spud>
+ <30758adf-0ec1-4f20-ae3f-e5ca92bac730@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kk9Z8zfE2/upAnIV"
+Content-Disposition: inline
+In-Reply-To: <30758adf-0ec1-4f20-ae3f-e5ca92bac730@gmail.com>
 
-msc313_mpll_probe() defines
 
-	#define NUMOUTPUTS (ARRAY_SIZE(output_dividers) + 1)
+--kk9Z8zfE2/upAnIV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-and uses NUMOUTPUTS for the clock provider's clk_hw count
-(clk_data->num = NUMOUTPUTS) and writes that many entries:
+On Tue, Apr 28, 2026 at 12:13:41PM +0200, Vyacheslav Yurkov wrote:
+> On 21.04.2026 19:28, Conor Dooley wrote:
+>=20
+> > > Before I send a v2 I'd like to clarify a few more things:
+> > > - I provided a schematics by means of the URL. I believe there's no u=
+nified
+> > > way to provide something like that in the documentation, is there? So=
+ the
+> > > only way to describe it properly would be to summarize the descriptio=
+n from
+> > > the mailing list, right?
+> >=20
+> > I don't believe anything we have at the moment is what you're looking
+> > for.
+> >=20
+> > > - I'm going over the Common Clk Framework again, and perhaps I unders=
+tood it
+> > > wrong. You mentioned that I have to implement is_enabled, but I imple=
+mented
+> > > is_prepared. It seems that I just have to move my is_prepared impleme=
+ntation
+> > > to is_enabled. Does that sound correct?
+> >=20
+> > Effectively yes, I think.
+> >=20
+> > > - In my particular use case I don't need enable/disable ops, but to k=
+eep the
+> > > driver generic, I'd probably want to have the bulk_enable implementat=
+ion
+> > > inside, because I don't know which clocks are assigned in a device tr=
+ee. The
+> >=20
+> > Why don't you know this? I'd expect there to be 1:1 mapping of gpios to
+> > clocks, with an equal number of input and output clocks, since all
+> > you're doing is detecting if the clocks are ready to go?
+> >=20
+> > > clk_core_enable function only enables 1 parent clock, not the the lis=
+t of
+> > > parent clocks. Or I'm missing something here?
+> >=20
+>=20
+> Thanks for your support. Yes, I talked to the HW team and I have this
+> information.
+>=20
+> One last important bit, which I'm trying to figure out, is how to notify =
+the
+> users of the driver about the state change. I understand that Common Clock
+> Framework doesn't support clocks drifting to unlocked state, and I'm OK w=
+ith
+> this limitation. Right now what happens on the clock consumer side is that
+> it gets -EPROBE_DEFER when any providers are not there or not initialized.
+> But if the state of GPIO is not the expected one, then -EBUSY is propagat=
+ed
+> to the probe of the dependent driver. I can also change EBUSY to
+> EPROBE_DEFER, but how to trigger the deferred probe again is something I
+> don't know. The only alternative I can think of is a call to rmmod / insm=
+od
+> from the userspace.
+>=20
+> Is there any other way to achieve this?
 
-	mpll->clk_data->hws[0]    = &mpll->clk_hw;        /* parent */
-	for (i = 0; i < ARRAY_SIZE(output_dividers); i++) /* dividers */
-		mpll->clk_data->hws[i + 1] = divhw;
+I don't know, that's a question for the clock subsystem folks.
 
-So the function legitimately needs NUMOUTPUTS slots in the
-flexible 'hws' array.  However the array is allocated for only
-ARRAY_SIZE(output_dividers) (== NUMOUTPUTS - 1) slots:
+--kk9Z8zfE2/upAnIV
+Content-Type: application/pgp-signature; name="signature.asc"
 
-	mpll->clk_data = devm_kzalloc(dev, struct_size(mpll->clk_data, hws,
-			ARRAY_SIZE(output_dividers)), GFP_KERNEL);
+-----BEGIN PGP SIGNATURE-----
 
-The last loop iteration therefore writes one element past the
-allocation, and clk_data->num advertises a slot that does not
-exist to of_clk_hw_onecell_get().
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaf97aQAKCRB4tDGHoIJi
+0tmrAQDWMszIhDcCLwYZID/3TYRFcjYoUOmzV1ef2YOtlMIhlgEAqVNPiT5MTLL4
+TVp67lpani3Fb1vkJucb/tujHU/p9gk=
+=Qsli
+-----END PGP SIGNATURE-----
 
-smatch flags the underflow:
-
-  drivers/clk/mstar/clk-msc313-mpll.c:134 msc313_mpll_probe()
-  error: buffer overflow 'mpll->clk_data->hws' 7 <= 7
-
-Use NUMOUTPUTS in struct_size() so the allocation matches the
-declared count and the loop's last write.
-
-Signed-off-by: Stepan Ionichev <sozdayvek@gmail.com>
----
- drivers/clk/mstar/clk-msc313-mpll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/mstar/clk-msc313-mpll.c b/drivers/clk/mstar/clk-msc313-mpll.c
-index 61beb4e87..71bedb7e9 100644
---- a/drivers/clk/mstar/clk-msc313-mpll.c
-+++ b/drivers/clk/mstar/clk-msc313-mpll.c
-@@ -105,7 +105,7 @@ static int msc313_mpll_probe(struct platform_device *pdev)
- 		return PTR_ERR(mpll->loop_div_second);
- 
- 	mpll->clk_data = devm_kzalloc(dev, struct_size(mpll->clk_data, hws,
--			ARRAY_SIZE(output_dividers)), GFP_KERNEL);
-+			NUMOUTPUTS), GFP_KERNEL);
- 	if (!mpll->clk_data)
- 		return -ENOMEM;
- 
--- 
-2.43.0
-
+--kk9Z8zfE2/upAnIV--
