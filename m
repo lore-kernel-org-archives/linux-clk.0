@@ -1,118 +1,130 @@
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946E6396B8C
-	for <linux-clk@vger.kernel.org>; Sat,  9 May 2026 14:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECEC1A6836
+	for <linux-clk@vger.kernel.org>; Sat,  9 May 2026 17:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778337831; cv=none; b=JH7bVc2uKX1sicRHe28FQkyg1G1IKWRpBhlsCErJ5eoAiZYrIe8YnAqeYb+M/k6qhYlxXT2PYRNb+al33I/yCchliatQSKgnLkamzVbNUy3dC0kDF2VjjJNspPobE456UzrG3szkUMaH7+AbUPJi/dhEO3bAjBlEYsWxcNnEAYg=
+	t=1778349507; cv=none; b=PNtjMJhWqeog829UVVg0CFiIAcGovfWlR51jjq330S0cabUnPLVDiTDpy8M9yWlxHWsi7o4fboyRfWLfcEMjfeYO2bPkKWueE6YVWlm2BJRWmCDTz4wDsQMqy2cN12Xb7bOQq3iWlUMz+LmF1G/dIVfJ+m4v6GzU/Sr09qEJqVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778337831; c=relaxed/simple;
-	bh=dO/mpADzMV7Bgz+dNLvnHa5uezPUyzJiV1A8vcfRjcA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CQqjBkybe3fB5EgSdPnoRq/QeMbJRJM5mwrScL6uJzU86UwPvZGoNSo9+AGIUMl4dOFOA96qjkEB598CeO73fQFLA8cEoTG69A55P0TMewEJOOmmqdBp4SoQNXZjImewOHWFCrFx9kuQXFBzDnp46sIkphgSw579mmgCuQHA22A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cc+NYHr8; arc=none smtp.client-ip=209.85.208.46
+	s=arc-20240116; t=1778349507; c=relaxed/simple;
+	bh=i8ZH/H0BHPRImxCZepw85JsZr7kU8N8MGko8hfIoCfs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eECfsI+01LYqY0+G7E0RlASennwuvTc3G6abr2bhmAEn4oAkSYnc4wUmjDO0ryEleNwntxCyvWbmjRbm9HHwvZW4rEgsd6Ji7UVpNyDwAfs4v1nNZpqTy1u4E/C1eqZ2L0VSPKKlcrMicwXeMLFu2KFYYBJU3Y2yRxrGEo99xxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C+b8/cTA; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cc+NYHr8"
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-67f7caa33easo478453a12.1
-        for <linux-clk@vger.kernel.org>; Sat, 09 May 2026 07:43:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C+b8/cTA"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4830b67aa6bso3751865e9.0
+        for <linux-clk@vger.kernel.org>; Sat, 09 May 2026 10:58:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778337828; x=1778942628; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rTagnauLE+hhKKiT1zAZaD+hPibc/QQjA6EWs3KI5oU=;
-        b=Cc+NYHr8FMBLyFMItErNkK+Jr7HYawtfq+4HjEjytz9cyTd6sMGoZeUA8uJcDgdXka
-         8rR2ERGQ+ne3e9jFvzGg+Hz0Dnk/VIlbKewFnGRQdgd+vYfq7DWhbpo42T0kZoXOgto3
-         iGOWyIq1G1TbndkFjIeJJk11jlp5CS+oxW0mCJcVVzEXOtV/B479qDvpTXsTLCR03DkP
-         XXxPKcwpWzQEDqVV1SNR+GLSZEDl8lRyUGRo4paFZis32Z/mPJzTByEgt1RGkYU6+tVG
-         eIzVZjBY8UQk1VnfV9DGkKMw35DKTfJ6HC+Mbqil/6a8+QIPmVmcWk06b5ZVhFACl2Az
-         089A==
+        d=gmail.com; s=20251104; t=1778349504; x=1778954304; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yGeg/u5Pz9hVNyAZhRZWhPuLVPXIN8vusR2dk7eDnv4=;
+        b=C+b8/cTAMUsdRokcfgR7S1oADM1dKszqAM3SCkzryVHEF4z4lXXDZIDoRa7pj1G4RV
+         k8bRyceOyYJ7LxIaDfbEKFnRsApr27ZfT/ep2NXo20ClwV19LI42ua8raeLo49qxGF6z
+         PyM0lwmk29ndm+FO0xQMSQvD1NDatR5HYjRQPKIQGvehpKvaYF5zfF3J/F47+JptIjgE
+         TmNlc+ushOUa0YMkWTCtxlQs4f2kTlqMYBEGkwF0LGVWLlp7SievxUI9LxjZwEVWOqHz
+         dDeZOpy/PHlwlfS4ZEdBloyaiMuNbPFg1GQj8XtkksFzyfDZUAGbR9BJgOWMlCtXza1P
+         9rtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778337828; x=1778942628;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rTagnauLE+hhKKiT1zAZaD+hPibc/QQjA6EWs3KI5oU=;
-        b=Q+BoXrfJxmaMmxHXaTuWA4I34Kq9yojTFJ1Z+24wfuhAPcTkl6x3/wtNzE2mTs1zyp
-         nRoxUNmws7tJfjiW9MnxSApQkgRqPgl8JzLUnWOt+odpNWu30neZfUta3btnUH/3y34d
-         Em/7AubMRyBeAt2l0uSHjVxahNIhGboceym4bnCxs/h+Bx3fkjUWNEp535VclMY8SZpx
-         Gwm7n2y+0lJkQ95OgsCw09JJzWs3rCkpLBYlAQPNnVgpYRJINKeFYawlAoEtjcI3qzyx
-         q2ANTU3kCTxAw7aYwHSbEN7+bG/ubluls468eWUQMMIqvWh3ghSz0FhMjtmYtU1ZfaQ+
-         XaAg==
-X-Forwarded-Encrypted: i=1; AFNElJ/ESoRB6rgo4hQ/8nK2gGYAQG7GDJsndo85aalciS2n+dbbKxbk5xlT5KW/3iO8H2UnwLCLmjuEiAg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoKE7DvG7QCD0+DeGrK6oJ8DzfpaI7aoJFMNbdS+K6hw3jKdYA
-	9vvCHZ+iHs4v3TJC+THhB6a8jn9+uU1pdTncIeUEara/jQJfm1O4vw5x
-X-Gm-Gg: Acq92OFKlQYxKdzHbOoDl34nbcMw/2cl0Ti5smYNUHM3FF3TFz6k0MiSsXG96dyHfPe
-	w9CTwAHfc3xcFiQ1peeDD62JyfSTyotdePYGKuPbzGrMB6HtK+y2ijZ9C1WvodQFAvm5VnOfCpk
-	Rdglsix307iU9NvZ0bznJ86NKSzZq1fWy3lY0QZn3EbPY8Mo1ExEMsS7qcSr/b2uaW5RuiOqCOi
-	W0ROoDLqqjKEds36owv27F6dMeGmLK8tYiDehkPIjWvUu0A6sRvifD0FcXvk0WlkCpXT6go0v2E
-	dkmGAilGF62GQ4YoPE2Pi0eTI6PCqxiPi4J71Nb9UN15UdpMU4p0nAIGyJxQCCd/sv1YaVfsEF4
-	jz4sLYkoB5SHHpstTqBb1y+3Xz+fr14N+cDlOs+ZTd9ZnhMN3K0ByVAtXhGeUgEHRcRPC7iujy7
-	ETxNbkhpmvKWcB/TBIUoelqd7LBFupIClWUUvY+SV4ACx0Baq44mutnzP66jo+jsM5iUeG
-X-Received: by 2002:a05:6402:5407:b0:673:9b15:39d3 with SMTP id 4fb4d7f45d1cf-67d642b04ddmr8185100a12.16.1778337827665;
-        Sat, 09 May 2026 07:43:47 -0700 (PDT)
-Received: from ?IPV6:2a00:f502:160:4e2:a099:cad9:2ecd:93de? ([2a00:f502:160:4e2:a099:cad9:2ecd:93de])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-67ef0b6a11asm1820101a12.8.2026.05.09.07.43.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 09 May 2026 07:43:47 -0700 (PDT)
-Message-ID: <1ee77cbb-9894-4b16-ae2b-8e9035fd6cd5@gmail.com>
-Date: Sat, 9 May 2026 17:43:42 +0300
+        d=1e100.net; s=20251104; t=1778349504; x=1778954304;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yGeg/u5Pz9hVNyAZhRZWhPuLVPXIN8vusR2dk7eDnv4=;
+        b=TJ7kMJaT8wnivL8yL38I7OOYg4Lhijqx9rBwJNrXb/1kTPMdQSt8OsKtP2xsz4E9Y9
+         yaoa8NFL++vc4ReB5p33HOYd1r8UDlAXFTK4mlRMPfLpaV3oYUInvQ4kOjN/Y3GvaQcO
+         mdkDOcppvCK7GNaIldc58OiDV41GSVFUkTsX7TGfVWFdCMgIoClPMvQlW3vkdPGxDRhS
+         q25scxidd0QQL3xIRWp4rpJX5QNRCkyat+IiAfrNjXlXvJ4MPLxsVK6CNcA7QKxcdYzR
+         z7qbOj0ozuTIQH3hIIMgKuZZaiBeE1ay5byGGijn6qe3YVJd7/n6kmOQ/2D/oS371QIx
+         mDsQ==
+X-Forwarded-Encrypted: i=1; AFNElJ+z60yAYl5FtKg2fQr4kjO6pm/iW4iRI65FnKX/MHrHWfkhBITJuX8s6HP3/JCBvQp/4+yp/6DCK2Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9CPkm0RYBg2Ndnk8+MqCh8Qg98w585KHWticcp8u7HYX6j4gU
+	zZ11LPIr+FQzWeDs3foad6pCsC/osbHU2TcUXIlZIQL566+3JyQDczkM
+X-Gm-Gg: Acq92OFmD8FXtm33OoEqBJGe8OkTj5RMiN4n7b0F3SVR5VLlFBYuBtCS2U86Z33pxyY
+	AvLBdjXIuoMR8fLHhnmFEz0s0pujmOOp0YRJQwVXvVO9QUDUDmXFWvSfcamTSHf/NEITOKMRFOJ
+	M11FdgxFqyx5ux9BvnC+i+hAwlakstRs3wZeThuTeaduX+6O2jlhEFLlQcQ3GeVfL7lUkietFOT
+	rZ6V0j9fizQeyR9IAbZ9vkKycCh2tBk26onpS7zG9JEdAEELZoz9L7tdgLcON0Bt/SCYL7eECXO
+	KZeQSuCgdt2z+A/OGD8yzLd5LW2kcfU+Qc8bJbRdFTGOTH3hg8iTkhofPO6C+X4DeZ5Eyaszg8Y
+	Udr1a4BGutBfA6iS6P6GvGDVi+oFhHLvRXjPHnviClokIx0MkNy//0VeJRoJaVgwq4pL9OiNboz
+	u3ZyNuOoxneXDuWrvJPvwhshqL0JpWVQeVyV1EejT5BCtgkz7Wirrpe6I=
+X-Received: by 2002:a05:600c:198c:b0:48a:58e1:6cf7 with SMTP id 5b1f17b1804b1-48e530bf915mr123256165e9.4.1778349503871;
+        Sat, 09 May 2026 10:58:23 -0700 (PDT)
+Received: from localhost.localdomain ([82.215.118.79])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-454919c13c9sm13383017f8f.27.2026.05.09.10.58.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 09 May 2026 10:58:23 -0700 (PDT)
+From: Stepan Ionichev <sozdayvek@gmail.com>
+To: daniel@thingy.jp
+Cc: romain.perier@gmail.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Stepan Ionichev <sozdayvek@gmail.com>
+Subject: [PATCH] clk: mstar: msc313-mpll: fix one-element shadow array overrun
+Date: Sat,  9 May 2026 15:42:54 +0500
+Message-Id: <20260509104255.15479-1-sozdayvek@gmail.com>
+X-Mailer: git-send-email 2.33.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 5/8] clk: qcom: gcc-msm8939: mark Venus core GDSCs as
- hardware controlled
-To: Bryan O'Donoghue <bod@kernel.org>,
- Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
- Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- phone-devel@vger.kernel.org
-References: <20260507-msm8939-venus-rfc-v5-0-d7b5ea2ce591@gmail.com>
- <17c4626e-8926-4cad-842d-a1b171d1e962@kernel.org>
- <CYaHtccGOWlaUtl3QIKva44ybJiRHsPOZmHEkl2KKGmnDxJ8vTH-SVNMGbL7bjkYjI692nplORzOhpfjs3XJfg==@protonmail.internalid>
- <4f1ab5b8-3bfe-43a6-8b91-317456188544@gmail.com>
- <7df3bff7-b872-4b20-8e7c-698157a41f33@kernel.org>
- <tawGGT4rtpw22Ng-MgM--GhoEihBU7tY_TrFUHf8raMKApyqTcSkKHyfSuRIL_bqNp_5zWD4SBG_C4c8CB7_6Q==@protonmail.internalid>
- <18998766-62fe-4a5e-95d8-1bfae712d8fb@gmail.com>
- <614a087d-d219-49cb-85ee-772044558649@kernel.org>
- <Jxt4BbN1dL8VKh_Zjah1xecAjz3c9VfbhKSm4a0K2D1MNKfJKIFnCPLj2VvdW1q4LnMIQy8bCzV3YoVnLFYUlA==@protonmail.internalid>
- <0cee27b6-f566-4958-8634-2c43e099281e@gmail.com>
- <dd435489-0cf7-4274-99bf-a591a15e91e4@kernel.org>
- <-hM6afm_Cu_8Cha9U-hrlrg6CGDEb5D3PFpPPCfIh-QgkdFJp_r0Ah9k1dvAF4zkju2dPc3FZJxvOA4V4hupAA==@protonmail.internalid>
- <69f9a6b7-7431-442a-82a2-6305635a508a@gmail.com>
- <9bf43e04-f834-45b6-8942-bcae2e480371@kernel.org>
-Content-Language: en-US
-From: Erikas Bitovtas <xerikasxx@gmail.com>
-In-Reply-To: <9bf43e04-f834-45b6-8942-bcae2e480371@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-> OTOH if Core1 can't be coaxed into working in either mode, we are better
-> off either holding off on this series until the breakages is root caused
-> or leaving out Core1 entirely for now.
-> 
-> i.e. there is no utility in declaring an encoder or decoder to userspace
-> that is known to be broken.
-> Last time I tried to enable only 1 of the cores, the following would happen:
-- If core0 is enabled, HEVC decoding would work, but not the other codecs.
-- If core1 is enabled, the rest of codecs would work, but not HEVC.
-Given we don't really have a way to power up a core based on which codec
-we are dealing with, I suggest we leave both cores in the binding and
-enable them indiscriminately.
+msc313_mpll_probe() defines
+
+	#define NUMOUTPUTS (ARRAY_SIZE(output_dividers) + 1)
+
+and uses NUMOUTPUTS for the clock provider's clk_hw count
+(clk_data->num = NUMOUTPUTS) and writes that many entries:
+
+	mpll->clk_data->hws[0]    = &mpll->clk_hw;        /* parent */
+	for (i = 0; i < ARRAY_SIZE(output_dividers); i++) /* dividers */
+		mpll->clk_data->hws[i + 1] = divhw;
+
+So the function legitimately needs NUMOUTPUTS slots in the
+flexible 'hws' array.  However the array is allocated for only
+ARRAY_SIZE(output_dividers) (== NUMOUTPUTS - 1) slots:
+
+	mpll->clk_data = devm_kzalloc(dev, struct_size(mpll->clk_data, hws,
+			ARRAY_SIZE(output_dividers)), GFP_KERNEL);
+
+The last loop iteration therefore writes one element past the
+allocation, and clk_data->num advertises a slot that does not
+exist to of_clk_hw_onecell_get().
+
+smatch flags the underflow:
+
+  drivers/clk/mstar/clk-msc313-mpll.c:134 msc313_mpll_probe()
+  error: buffer overflow 'mpll->clk_data->hws' 7 <= 7
+
+Use NUMOUTPUTS in struct_size() so the allocation matches the
+declared count and the loop's last write.
+
+Signed-off-by: Stepan Ionichev <sozdayvek@gmail.com>
+---
+ drivers/clk/mstar/clk-msc313-mpll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/mstar/clk-msc313-mpll.c b/drivers/clk/mstar/clk-msc313-mpll.c
+index 61beb4e87..71bedb7e9 100644
+--- a/drivers/clk/mstar/clk-msc313-mpll.c
++++ b/drivers/clk/mstar/clk-msc313-mpll.c
+@@ -105,7 +105,7 @@ static int msc313_mpll_probe(struct platform_device *pdev)
+ 		return PTR_ERR(mpll->loop_div_second);
+ 
+ 	mpll->clk_data = devm_kzalloc(dev, struct_size(mpll->clk_data, hws,
+-			ARRAY_SIZE(output_dividers)), GFP_KERNEL);
++			NUMOUTPUTS), GFP_KERNEL);
+ 	if (!mpll->clk_data)
+ 		return -ENOMEM;
+ 
+-- 
+2.43.0
+
