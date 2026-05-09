@@ -1,142 +1,97 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F61115746F;
-	Sat,  9 May 2026 18:22:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7827F27F19F
+	for <linux-clk@vger.kernel.org>; Sat,  9 May 2026 18:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778350958; cv=none; b=W/bZN+vbb+AtCNw3CxjaUws8x+hrHpFlG0yUgfo8iRjp46szyiAWu7aoVfrT/RnHevkZSxlvj6NVGEHld275pxwA2gNhEbVUdAbbhhTvy+iDwWZC+VVKOj74kco5KSKxKpCfSYR8DxwUjHA2+tVrFrXSqqd/JtcGsqdKFiQSXs0=
+	t=1778352595; cv=none; b=qQh45wHNgq8+5WITihRlskTPKxytr4B+4FAdFrosr07uwJap4m7DuElv5skznJ7CNcBi5Od6U8edKyOz/N1hpbuMpkgmmhGG/6xaOU8beiywSsOawC0QRvppPeNM1EcNBvSLQroJuQJ01aZ2xf1GjR+ZaSZdmWIqWdBHRLAbcFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778350958; c=relaxed/simple;
-	bh=ZhGIZNKnVR0exJcAd5IFAHDvDHJZNJJv2gvh2LcOnRo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YOBk/xiFvS07rSApzEzv3Cq8T/3E7mG8ldIGAq7sbGRdM4D5HdyTBzocVH28X3Ik/k6la0uIJCnBcSA65PVEAIOKgOA8P+gPoax66Y7CwM4pb7dZf3om32QrP1wYqJSvq5wQ3SMygyKyuvFCMza/nUQTKviv8vTv4Lao8kyweBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bQVGqENC; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778352595; c=relaxed/simple;
+	bh=6XSQZ+zE7OvBYItJ+fT1jHCTZEPNcigVOgdTtn6IgEE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=KoVUCxYpuKJOCZnLSLtbhC6i2IM9PXKeKFGg6UDyUqXNaOhw9KoaKndASLtrI0VR8w7dV6Dk5AUev/elQQAt5ANZx55igNAdDvZ6+5beXSUXn+IcMscyVtBRzdYOXLlb8nsqq3LgM4WEjN70xW1+1qFsKDriNMOpNH/x+2/XNak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z5T8Z4gi; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bQVGqENC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1ABB4C2BCB2;
-	Sat,  9 May 2026 18:22:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778350958;
-	bh=ZhGIZNKnVR0exJcAd5IFAHDvDHJZNJJv2gvh2LcOnRo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bQVGqENCMk/G0RJHEZQWU9AH82pTLbTQHbxHvFf1CAp4vkaNM1OZJphCXbFhoJpSG
-	 3d6tH4qDaJoo84mEaPUVWXmyTc3G8+HBSbrmZmQyiNmD4T41IjHbglrLAVojY0NAks
-	 L07xI7RvZEhwgqM9gR5RzrEDYaJMwPZ9VZojo7MpUxaf2pF8b+V0xjIH1ObQpDTHYB
-	 XTfb0TosEFtuyazMQ9+6Hol3g6ZnmU+4lOIJdFbAHiNUwdiyjllg+0phigiLEj1f6E
-	 L/GenHMwVbiAF8nF5gaf6VVrJWLbRcR06iYEwGgwsj38Vpyg/8qNgpJbSM+l2m+P5j
-	 4iHAHpdyOB5PQ==
-Date: Sat, 9 May 2026 19:22:33 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Vyacheslav Yurkov <uvv.mail@gmail.com>
-Cc: Rob Herring <robh@kernel.org>,
-	Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/2] dt-bindings: Add clock guard DT description
-Message-ID: <20260509-cosigner-routine-fe98d5f6706f@spud>
-References: <20260318225510.GA639444-robh@kernel.org>
- <7c7034a7-686a-42c2-bdba-6f31b5179f7c@gmail.com>
- <20260319-yearly-wrongful-883f7fd86a69@spud>
- <b45d9845-2d56-4fdd-a3ac-b0e0e27ba573@gmail.com>
- <20260323-sanctuary-semantic-432089feb1c7@spud>
- <d097826c-3db5-4902-acee-ffcff7436d4e@gmail.com>
- <20260326-lustiness-borrower-530898a5ce28@spud>
- <f3e27db5-d84d-4b6a-9d6f-25fcc9044efc@gmail.com>
- <20260421-each-candy-67380b760d26@spud>
- <30758adf-0ec1-4f20-ae3f-e5ca92bac730@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z5T8Z4gi"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-44a786a9b8aso365997f8f.0
+        for <linux-clk@vger.kernel.org>; Sat, 09 May 2026 11:49:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1778352593; x=1778957393; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6XSQZ+zE7OvBYItJ+fT1jHCTZEPNcigVOgdTtn6IgEE=;
+        b=Z5T8Z4gid38N+U3COZacthkKiS9mQDnSeYXHekmSe32uKRXf5jIilG+G9EoD93mOs3
+         Yotwj287xsnvunCCBlQTopG0BRNlK6h5xUi5SJeCoXK2kRBMdbJ1ddrI4ITkAQKQ6LXD
+         SGFPWi4MHq30cOTzfZJI5LROCoZOr0dd5OVBnqzXgZVUDFFcKyWd6UkBE6MMqEBnEd9t
+         EbaOlrQXI5ePcQkrUUPb/9A1HkhlY3ngrddzL4WKZu3wtb/zKV2g/c4+JX7W9M4VUtFZ
+         P/FTZp0TRSaomTQZTrRE38rThMRuQQIz9WGU5kO0E4xqaXd9luA2X36TYOzNGoU6Yn5B
+         f8/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778352593; x=1778957393;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=6XSQZ+zE7OvBYItJ+fT1jHCTZEPNcigVOgdTtn6IgEE=;
+        b=SSHaP0A+rqfK4xw1VFvzozyh0etfPH3SDxen7SgzqYCfBX0Ze9lMiOoBv8g2xEMlH3
+         zHMM4/sczYFHTAHDTGn9Vj4zaNY+nn7zDjUZ9TrZ3hrCZ+clHdSqxnxDNI6RqNvB5zA7
+         6ICkb1yqnTyOQip/pTLGi2g1PuBSMuckOfl53NfO7cZo952HVD6yCtBi68U0lc9+9bLN
+         /6pEKHapmAnzbhph4HeF/aAi2QX0VrSX8Did0p50E99pP4lhdhFw8UoB7icY73jldYih
+         tDfHaSgLgQE7ahkahdnqpN6BYNwvMwrWj2UJoRHG/2Izb8qjldZQztX/IuC5BouDOELg
+         jqDw==
+X-Forwarded-Encrypted: i=1; AFNElJ8cU3H0wLJ6KXRtuBQBleXjMbrMeWoniIzGcGZ+B305PWtfphmtt44t45KGxhUXjIvOl4qxQuIT+wo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqT0V4ruxtJffqioHZ1DaomLh1Eqgvrf5+XV6Jcwd6GFSZyc/0
+	auQJ5RuvrnkbnKj0S3ua+gpeHveRWmNj9zbBEUZR0In/tljH7dgx8U2B
+X-Gm-Gg: Acq92OGHlMJsR6iTgHfSUIex9hkgRqeGx9lSxxepSSSIJK3Bhj8VlJnsiad7WEk6MEf
+	vqZk5rXEhE7jzQCBGicba6f1TBmSzP6xoyDHg6DdBrKOfygk7syNZDjRwDe92TDtEFnYjMhTwXn
+	RzuGYHctY5fhsUhImWeWJLGow0chMuSJ90wbwE2p7mhE5DRFeBYT1dgME+n6uop3JhRCJqyQhta
+	P5KyzF/xoQYoOuvOdHoTGs5dUV//8dI/MbexBjnKXxpppXlt16c/i9vp34qc6MRT83Q1OR3e+m2
+	ha1Rt3ObcJhx8wS1PbnijeRzqFwsVaxA51BZjBJmUG+Keuk2oGl6mFHzH3ZTVhhLXCW1Oz2iibK
+	JqiCoOF7mpO0O4HO4ZCQZCA5PXqv0is487kU/HUAUel9OT4xxpT6+HqYF7wFYfh0gjVIL++yROs
+	Ck5sSpGWW17d4cfwrZWKbaf6SBoMZKZXE4ItI71AzIQCSS
+X-Received: by 2002:a05:600c:4f82:b0:489:1dc6:d6e with SMTP id 5b1f17b1804b1-48e5325025fmr130325175e9.1.1778352592718;
+        Sat, 09 May 2026 11:49:52 -0700 (PDT)
+Received: from localhost.localdomain ([82.215.118.79])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48e702e5630sm60853005e9.8.2026.05.09.11.49.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 09 May 2026 11:49:52 -0700 (PDT)
+From: Stepan Ionichev <sozdayvek@gmail.com>
+To: nm@ti.com
+Cc: sboyd@kernel.org,
+	mturquette@baylibre.com,
+	afd@ti.com,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	sozdayvek@gmail.com
+Subject: Re: [PATCH] clk: keystone: sci-clk: fix application of sizeof to pointer
+Date: Sat,  9 May 2026 16:34:25 +0500
+Message-Id: <20260509113425.25402-1-sozdayvek@gmail.com>
+X-Mailer: git-send-email 2.33.0.windows.2
+In-Reply-To: <20260508152321.3683799-1-nm@ti.com>
+References: <20260508152321.3683799-1-nm@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kk9Z8zfE2/upAnIV"
-Content-Disposition: inline
-In-Reply-To: <30758adf-0ec1-4f20-ae3f-e5ca92bac730@gmail.com>
+Content-Transfer-Encoding: 8bit
 
+In sci_clk_get(), 'clk' is declared as 'struct sci_clk **', so
+sizeof(clk) is sizeof(struct sci_clk **) which is the size of a
+pointer rather than the size of an array element. provider->clocks
+is an array of 'struct sci_clk *', so the canonical size argument
+to bsearch() is sizeof(*clk) (i.e. sizeof(struct sci_clk *)).
 
---kk9Z8zfE2/upAnIV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The two values are equal on every supported architecture, so this
+is correctness/idiom, not a runtime fix, but the new form matches
+the rest of the bsearch() callers in the tree and silences the
+Coccinelle warning the script flagged.
 
-On Tue, Apr 28, 2026 at 12:13:41PM +0200, Vyacheslav Yurkov wrote:
-> On 21.04.2026 19:28, Conor Dooley wrote:
->=20
-> > > Before I send a v2 I'd like to clarify a few more things:
-> > > - I provided a schematics by means of the URL. I believe there's no u=
-nified
-> > > way to provide something like that in the documentation, is there? So=
- the
-> > > only way to describe it properly would be to summarize the descriptio=
-n from
-> > > the mailing list, right?
-> >=20
-> > I don't believe anything we have at the moment is what you're looking
-> > for.
-> >=20
-> > > - I'm going over the Common Clk Framework again, and perhaps I unders=
-tood it
-> > > wrong. You mentioned that I have to implement is_enabled, but I imple=
-mented
-> > > is_prepared. It seems that I just have to move my is_prepared impleme=
-ntation
-> > > to is_enabled. Does that sound correct?
-> >=20
-> > Effectively yes, I think.
-> >=20
-> > > - In my particular use case I don't need enable/disable ops, but to k=
-eep the
-> > > driver generic, I'd probably want to have the bulk_enable implementat=
-ion
-> > > inside, because I don't know which clocks are assigned in a device tr=
-ee. The
-> >=20
-> > Why don't you know this? I'd expect there to be 1:1 mapping of gpios to
-> > clocks, with an equal number of input and output clocks, since all
-> > you're doing is detecting if the clocks are ready to go?
-> >=20
-> > > clk_core_enable function only enables 1 parent clock, not the the lis=
-t of
-> > > parent clocks. Or I'm missing something here?
-> >=20
->=20
-> Thanks for your support. Yes, I talked to the HW team and I have this
-> information.
->=20
-> One last important bit, which I'm trying to figure out, is how to notify =
-the
-> users of the driver about the state change. I understand that Common Clock
-> Framework doesn't support clocks drifting to unlocked state, and I'm OK w=
-ith
-> this limitation. Right now what happens on the clock consumer side is that
-> it gets -EPROBE_DEFER when any providers are not there or not initialized.
-> But if the state of GPIO is not the expected one, then -EBUSY is propagat=
-ed
-> to the probe of the dependent driver. I can also change EBUSY to
-> EPROBE_DEFER, but how to trigger the deferred probe again is something I
-> don't know. The only alternative I can think of is a call to rmmod / insm=
-od
-> from the userspace.
->=20
-> Is there any other way to achieve this?
+Reviewed-by: Stepan Ionichev <sozdayvek@gmail.com>
 
-I don't know, that's a question for the clock subsystem folks.
-
---kk9Z8zfE2/upAnIV
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaf97aQAKCRB4tDGHoIJi
-0tmrAQDWMszIhDcCLwYZID/3TYRFcjYoUOmzV1ef2YOtlMIhlgEAqVNPiT5MTLL4
-TVp67lpani3Fb1vkJucb/tujHU/p9gk=
-=Qsli
------END PGP SIGNATURE-----
-
---kk9Z8zfE2/upAnIV--
+Stepan
