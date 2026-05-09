@@ -1,33 +1,66 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826C3233721;
-	Sat,  9 May 2026 14:32:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946E6396B8C
+	for <linux-clk@vger.kernel.org>; Sat,  9 May 2026 14:43:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778337120; cv=none; b=N8RPuZ8vjNCwp2Jg4nNNq07lxaLngpiEz8qvzZ8Oz3jeRZZop22DISMyGNiOvlQALcq9KFxg2jeJ6Gq2+R93o7dgMCSwk0klzm0U36rRW5mBfBNQxiEGlX9m9UN82U7UXaFIz0WIoMZm8pn1pxTINZxc6Y0SLFppJx5JHguBglI=
+	t=1778337831; cv=none; b=JH7bVc2uKX1sicRHe28FQkyg1G1IKWRpBhlsCErJ5eoAiZYrIe8YnAqeYb+M/k6qhYlxXT2PYRNb+al33I/yCchliatQSKgnLkamzVbNUy3dC0kDF2VjjJNspPobE456UzrG3szkUMaH7+AbUPJi/dhEO3bAjBlEYsWxcNnEAYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778337120; c=relaxed/simple;
-	bh=VX5H/b8D/jcGoHUTWnfBoI2QF3R6vdJoRsd3NHVE4yk=;
+	s=arc-20240116; t=1778337831; c=relaxed/simple;
+	bh=dO/mpADzMV7Bgz+dNLvnHa5uezPUyzJiV1A8vcfRjcA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QdvEub3MSqseqUlp8eOzR25FqmYOZJSs5C/Enfq4R9PfMKf0tuiLvjm32xK1auMT7OCTx2mJ7Mo7DOqrWITeuhSJ58slXZzYAsoEgz/U2fkte8l8gIsNjRyP9KMioCeL9SfejnD/HWnfgkHHJ5H91OfxM+tCR3PZsMEWaA8I6nE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qz2jVpNt; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=CQqjBkybe3fB5EgSdPnoRq/QeMbJRJM5mwrScL6uJzU86UwPvZGoNSo9+AGIUMl4dOFOA96qjkEB598CeO73fQFLA8cEoTG69A55P0TMewEJOOmmqdBp4SoQNXZjImewOHWFCrFx9kuQXFBzDnp46sIkphgSw579mmgCuQHA22A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cc+NYHr8; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qz2jVpNt"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 558B5C2BCB2;
-	Sat,  9 May 2026 14:31:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778337120;
-	bh=VX5H/b8D/jcGoHUTWnfBoI2QF3R6vdJoRsd3NHVE4yk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qz2jVpNt/pxXIqK88rCxab104cugpzmu2u5wAayQiQCqKGtGSKoFF2xhLPIpmU4ZM
-	 E1pvOIUYxCDKyjT9BriKtElrgc411THImGX3vvFjC0Q7XpVEaBqKUP3asBg8KJK4Cl
-	 NJb48a7eU6Cmjs7jo/a5SFBv6H5g1iiSdFz5JW1/g0SKjENOKMkIcYgjYMEnmoErhY
-	 MZR+T0YZVaPSUNlW0n6um1Rf3CyzDA4R3QHPIllSnkOWNFiw9Sk7UAzwCh6ZZzIEya
-	 o0vvE+OBfsqp9P+ugqWWaUV3ACDzI1dbPul7+htzT7Ymf3k0zuXK9Uhbkr2tPkaM1Z
-	 mBMrn93nhKBBw==
-Message-ID: <9bf43e04-f834-45b6-8942-bcae2e480371@kernel.org>
-Date: Sat, 9 May 2026 15:31:51 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cc+NYHr8"
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-67f7caa33easo478453a12.1
+        for <linux-clk@vger.kernel.org>; Sat, 09 May 2026 07:43:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1778337828; x=1778942628; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rTagnauLE+hhKKiT1zAZaD+hPibc/QQjA6EWs3KI5oU=;
+        b=Cc+NYHr8FMBLyFMItErNkK+Jr7HYawtfq+4HjEjytz9cyTd6sMGoZeUA8uJcDgdXka
+         8rR2ERGQ+ne3e9jFvzGg+Hz0Dnk/VIlbKewFnGRQdgd+vYfq7DWhbpo42T0kZoXOgto3
+         iGOWyIq1G1TbndkFjIeJJk11jlp5CS+oxW0mCJcVVzEXOtV/B479qDvpTXsTLCR03DkP
+         XXxPKcwpWzQEDqVV1SNR+GLSZEDl8lRyUGRo4paFZis32Z/mPJzTByEgt1RGkYU6+tVG
+         eIzVZjBY8UQk1VnfV9DGkKMw35DKTfJ6HC+Mbqil/6a8+QIPmVmcWk06b5ZVhFACl2Az
+         089A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778337828; x=1778942628;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rTagnauLE+hhKKiT1zAZaD+hPibc/QQjA6EWs3KI5oU=;
+        b=Q+BoXrfJxmaMmxHXaTuWA4I34Kq9yojTFJ1Z+24wfuhAPcTkl6x3/wtNzE2mTs1zyp
+         nRoxUNmws7tJfjiW9MnxSApQkgRqPgl8JzLUnWOt+odpNWu30neZfUta3btnUH/3y34d
+         Em/7AubMRyBeAt2l0uSHjVxahNIhGboceym4bnCxs/h+Bx3fkjUWNEp535VclMY8SZpx
+         Gwm7n2y+0lJkQ95OgsCw09JJzWs3rCkpLBYlAQPNnVgpYRJINKeFYawlAoEtjcI3qzyx
+         q2ANTU3kCTxAw7aYwHSbEN7+bG/ubluls468eWUQMMIqvWh3ghSz0FhMjtmYtU1ZfaQ+
+         XaAg==
+X-Forwarded-Encrypted: i=1; AFNElJ/ESoRB6rgo4hQ/8nK2gGYAQG7GDJsndo85aalciS2n+dbbKxbk5xlT5KW/3iO8H2UnwLCLmjuEiAg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoKE7DvG7QCD0+DeGrK6oJ8DzfpaI7aoJFMNbdS+K6hw3jKdYA
+	9vvCHZ+iHs4v3TJC+THhB6a8jn9+uU1pdTncIeUEara/jQJfm1O4vw5x
+X-Gm-Gg: Acq92OFKlQYxKdzHbOoDl34nbcMw/2cl0Ti5smYNUHM3FF3TFz6k0MiSsXG96dyHfPe
+	w9CTwAHfc3xcFiQ1peeDD62JyfSTyotdePYGKuPbzGrMB6HtK+y2ijZ9C1WvodQFAvm5VnOfCpk
+	Rdglsix307iU9NvZ0bznJ86NKSzZq1fWy3lY0QZn3EbPY8Mo1ExEMsS7qcSr/b2uaW5RuiOqCOi
+	W0ROoDLqqjKEds36owv27F6dMeGmLK8tYiDehkPIjWvUu0A6sRvifD0FcXvk0WlkCpXT6go0v2E
+	dkmGAilGF62GQ4YoPE2Pi0eTI6PCqxiPi4J71Nb9UN15UdpMU4p0nAIGyJxQCCd/sv1YaVfsEF4
+	jz4sLYkoB5SHHpstTqBb1y+3Xz+fr14N+cDlOs+ZTd9ZnhMN3K0ByVAtXhGeUgEHRcRPC7iujy7
+	ETxNbkhpmvKWcB/TBIUoelqd7LBFupIClWUUvY+SV4ACx0Baq44mutnzP66jo+jsM5iUeG
+X-Received: by 2002:a05:6402:5407:b0:673:9b15:39d3 with SMTP id 4fb4d7f45d1cf-67d642b04ddmr8185100a12.16.1778337827665;
+        Sat, 09 May 2026 07:43:47 -0700 (PDT)
+Received: from ?IPV6:2a00:f502:160:4e2:a099:cad9:2ecd:93de? ([2a00:f502:160:4e2:a099:cad9:2ecd:93de])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-67ef0b6a11asm1820101a12.8.2026.05.09.07.43.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 09 May 2026 07:43:47 -0700 (PDT)
+Message-ID: <1ee77cbb-9894-4b16-ae2b-8e9035fd6cd5@gmail.com>
+Date: Sat, 9 May 2026 17:43:42 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -37,7 +70,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v5 5/8] clk: qcom: gcc-msm8939: mark Venus core GDSCs as
  hardware controlled
-To: Erikas Bitovtas <xerikasxx@gmail.com>,
+To: Bryan O'Donoghue <bod@kernel.org>,
  Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
  Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
  Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -52,7 +85,6 @@ Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
  linux-clk@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
  phone-devel@vger.kernel.org
 References: <20260507-msm8939-venus-rfc-v5-0-d7b5ea2ce591@gmail.com>
- <20260507-msm8939-venus-rfc-v5-5-d7b5ea2ce591@gmail.com>
  <17c4626e-8926-4cad-842d-a1b171d1e962@kernel.org>
  <CYaHtccGOWlaUtl3QIKva44ybJiRHsPOZmHEkl2KKGmnDxJ8vTH-SVNMGbL7bjkYjI692nplORzOhpfjs3XJfg==@protonmail.internalid>
  <4f1ab5b8-3bfe-43a6-8b91-317456188544@gmail.com>
@@ -65,90 +97,22 @@ References: <20260507-msm8939-venus-rfc-v5-0-d7b5ea2ce591@gmail.com>
  <dd435489-0cf7-4274-99bf-a591a15e91e4@kernel.org>
  <-hM6afm_Cu_8Cha9U-hrlrg6CGDEb5D3PFpPPCfIh-QgkdFJp_r0Ah9k1dvAF4zkju2dPc3FZJxvOA4V4hupAA==@protonmail.internalid>
  <69f9a6b7-7431-442a-82a2-6305635a508a@gmail.com>
-From: Bryan O'Donoghue <bod@kernel.org>
+ <9bf43e04-f834-45b6-8942-bcae2e480371@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=bod@kernel.org; keydata=
- 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
-In-Reply-To: <69f9a6b7-7431-442a-82a2-6305635a508a@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Erikas Bitovtas <xerikasxx@gmail.com>
+In-Reply-To: <9bf43e04-f834-45b6-8942-bcae2e480371@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 09/05/2026 13:00, Erikas Bitovtas wrote:
-> across reboots, so when I reverted the patch, I was actually testing
-> against decoder, not encoder.
+> OTOH if Core1 can't be coaxed into working in either mode, we are better
+> off either holding off on this series until the breakages is root caused
+> or leaving out Core1 entirely for now.
 > 
-> So, the result is the same when the patch is applied, when it is
-> reverted, and when testing against v1 where the cores are enabled only
-> for decoding.
-
-OK but this is testing encoding
-
-v4l2-ctl --verbose
---set-fmt-video-out=width=1280,height=720,pixelformat=NV12
---set-selection-output target=crop,top=0,left=0,width=1280,height=720
---set-fmt-video=pixelformat=H26
-4 --stream-mmap --stream-out-mmap
---stream-from=cyclists_1280x720_92frames.yuv
---stream-to=/tmp/cyclists_1280x720_92frames.h264 -d /dev/video1
-
-I think the GDSC patch specifically isn't too much of a concern.
-
-1. Core0 works as decoder
-2. Core1 doesn't work right now.
-    So what I'm trying to ask is if we could test it both
-    as an encoder or as a decoder.
-
-If decoder works when both cores are declared decoder, we know there's a 
-problem with encoder and could potentially proceed with upstream decoder 
-x 2.
-
-OTOH if Core1 can't be coaxed into working in either mode, we are better 
-off either holding off on this series until the breakages is root caused 
-or leaving out Core1 entirely for now.
-
-i.e. there is no utility in declaring an encoder or decoder to userspace 
-that is known to be broken.
-
----
-bod
+> i.e. there is no utility in declaring an encoder or decoder to userspace
+> that is known to be broken.
+> Last time I tried to enable only 1 of the cores, the following would happen:
+- If core0 is enabled, HEVC decoding would work, but not the other codecs.
+- If core1 is enabled, the rest of codecs would work, but not HEVC.
+Given we don't really have a way to power up a core based on which codec
+we are dealing with, I suggest we leave both cores in the binding and
+enable them indiscriminately.
