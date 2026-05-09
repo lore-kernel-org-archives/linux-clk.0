@@ -1,148 +1,132 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CFA13914E1;
-	Fri,  8 May 2026 22:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941E3175D53
+	for <linux-clk@vger.kernel.org>; Sat,  9 May 2026 00:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778278454; cv=none; b=RQOsG1lgYEhsgnu5lCW5EV9xE7vfFtfQFfB5AA7TnLaeJPhBlXALksX1a8b4WaWjCgzK/IiXPDlv/HGgHt7N/zz/5CPv6FSkiELJf4iurcIfDDedV95mACcX4NJiyysa8Dz+4jnaW+dzF82ifY9WaV+yrghVHr70QLOtdwgnFEA=
+	t=1778286982; cv=none; b=TqB9A+R8istdKU2B8F0OQM1sKzA/LDjuUbFK6UBIdWm2ubci/LmHeohky5Q6Eh/ZNvpK9yRPFPj+3siC1sys06DwAppcQhgJIbTnXXZ0VFbNLmmuqTyopON9m++xILuOTspo34YGxVTckzkRMUoO/SmLKXPXSGzj1SAKdu84d14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778278454; c=relaxed/simple;
-	bh=j+3aKlygouCz5b+v8lfYPd6nsKPilgGpE0nlCIZpiSo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ljWkBUR79EeVl7HLxpJ1H75/EtEgvcHwwHwdj3zd3BgnXvm5A9stTk1Gn7ki1ulK4/p5mAPFYwLkC0ZvjJRYvQhpErmfwPdRcKx8P1F5fFasuHXNFcMk8Ee3Xqs2i8hSX8OQj0mb7/4DSQGkHCEiIhuRdVYt0cjr/N+I7teANo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XK13vrcn; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778286982; c=relaxed/simple;
+	bh=SoX9G1f2128v047CqPSyVLgjJ8UzLro5Z+kOziH0xUM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tNcYScTw/cV+yxtHFyxuJ1GjCrhRM2czok13lJBD0Q2lQ4epYwxT14dIoDZ6tmgDAZC/PqYGNHqNvb1yrrhLKr32gVcrfLOVV6fjWhWqmqeaZtP8f7qPOfdX5lML4oY1K2AEUbCIcs5fz768/pqg+gVzVN5Yzopuk8BhMvAnCJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JI5d0SuE; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XK13vrcn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90948C2BCB0;
-	Fri,  8 May 2026 22:14:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778278453;
-	bh=j+3aKlygouCz5b+v8lfYPd6nsKPilgGpE0nlCIZpiSo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XK13vrcn8bw5uQgKygpHNBE/wQrtn3RVeEJ0GkfJRGJ/cLFfB9EKGj4xdkmM1ZLlH
-	 r6PoQ1XK50wIJfnjg9pPEiwGVf8LUoBibWNT5of5kkmjeIaTQAAv+X7Q9LjGBuYGZ/
-	 B7FWByBEomN5KJq9PbmUPI/uCEDpyn7ya13I0Dr2sEf6VCKx50zgMAf0BVOlbhPTNQ
-	 gNzlxOrrBBSNU0yE4RFLqZvH64qWvpOotffYdotkx/ZfIfdkPKbZFD9WPsqFObrep3
-	 wnS6b/2Lj81241P7fBGG/v8EmknEY7cxuo5UldOl7hZUYdo5KQznX/YzwtwQN6xxfh
-	 T0rB8JGC86fdg==
-Message-ID: <0c116b90-1688-49f6-b97f-fbe78466221f@kernel.org>
-Date: Sat, 9 May 2026 01:14:01 +0300
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JI5d0SuE"
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-362e30526f8so1264497a91.3
+        for <linux-clk@vger.kernel.org>; Fri, 08 May 2026 17:36:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1778286981; x=1778891781; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TPu/RkDwR7YvogozdUsQJGqDvuX7QJ4yb5QSBtBcOm4=;
+        b=JI5d0SuEFFXpJidaYxSsH/2TQb4Gjvfl3RQop06FCPAj9oI8hA1DtN5xNpnM9tD+5C
+         N/aB4WQ4Q7kJGdenpP/iXMiiQYCWfEiKQ5Vph7sKFyaOFjfp7opXrVjmkdOi6sgjW1P2
+         VifTggqmQHSD1lqxv2qIRKPaMEgOJKlykviYvkrmj0FC/CbsGbt1JnWoQl60XrUhzRqg
+         VU4f0OXJz7qLL7ZWXztQqfD/1tsyu0QQLQXVutPLXxZU9SWRfU9nqSLpu8odu4CKKYt3
+         7u/V3J0pMwKkTOb4+AfCofGx5u8rX4O1j7Z0K4z0ZWwFQIrZav/A9JXXslRZVFDg2Cxc
+         pyVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778286981; x=1778891781;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TPu/RkDwR7YvogozdUsQJGqDvuX7QJ4yb5QSBtBcOm4=;
+        b=RK4PPIOJl3XkYC4iKRAeK7eoRMNDEO6rD7miMfDZxnHu479QUG/kBi0/gugjc1nL6k
+         t1CSXPnjjl7rmvSL494C7/SzVaUdhe8bTKcdmDxaPmg+aHyJawh6WzbxnRtdV7/rm/4b
+         Ov0TFmsv2lCfuei9WaJHjZSRnvqCSaMicdse9iNOE7pCm4BkNERN2j0zYsZPArl7zgZy
+         IHXIUKzlpZNtviKq3YPreyXijeMID0z6VmFIyvl+Laxr94+WhGTjxPXkeuY9c/1NFeWB
+         gicWA3K9y1vdVjt8EL7tfTLwe7zuprS5n3wk7O7AN5r9LSMbCJiBR5sSlVGcswAiAeQF
+         kIhg==
+X-Forwarded-Encrypted: i=1; AFNElJ/fMbTPQKfQ7ecvTpxFQUS9+XrRGKxU8vMpLBgTKNVJHmoRdiYEPyS6S1Zn+h55MryM4lw1WGIUvLE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxc8X6/lq9OZUEVYLO4ACwdaMarDW64Qti86ZYP/7kf1dU0Owc5
+	ykssbZpZSiP/GKudp3/ElRaWo4J8mhIUOJ59m6qVu1SUoZWFNAOcextX
+X-Gm-Gg: Acq92OF07n6c/Cn6CRqp6EbCvBx39FekOIZtNxnnl54xM1l9MvXahtal9FzS1pIse5h
+	4rwdi3kw8m08ONbgxIT/b1F1g5X0tNHohP2w8KUmv173yNv3ECtFCwbJ8vvqCO63IBgPoCiWaQX
+	fEBFsP/zfcHbqvr8S1yld+iVG4HMX+xsleGfxbQdnbyePQcWmqfo1NCV9iVMXTmWqlo0tYf2X+O
+	orr5CvXJs4dWnxHIWEsQ86Bs/IzwNxWzzDUpNWLemtpn3Ot/RbGsB22EPor5WDlRanRdWng3UQn
+	lY06nhjIxNxjr0GXyTngz1dI54lJkYQTH2CxHOaTlaeESQ/5OByTYhpvrGfGmSKsl9b4J7Pcj/p
+	JGqncZQev0TZUhyG8scPmwVGMbUlj6Ek9ctjvsJdOsEihJfPAvo8rMRSwQAZiywjxrRjTdtnAo1
+	gAAN33SRx+/Wuzn5zQ5CQgrcmpaJFZ6/NbAHNLYsmBAp0NWCcKZHL6ZjM7USBT63aTrT0YCfLZ8
+	AKhDZ82D4I2GrFmer8LTMXswzlOLnzXM8Y=
+X-Received: by 2002:a17:90b:5343:b0:367:d9cb:fdb3 with SMTP id 98e67ed59e1d1-367d9cc08dbmr72836a91.24.1778286980922;
+        Fri, 08 May 2026 17:36:20 -0700 (PDT)
+Received: from ryzen ([2601:644:8000:5b5d:7285:c2ff:fe45:8a32])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-367d609dd0asm288566a91.0.2026.05.08.17.36.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 May 2026 17:36:20 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: linux-rockchip@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney@redhat.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+	linux-kernel@vger.kernel.org (open list),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Rockchip SoC support),
+	llvm@lists.linux.dev (open list:CLANG/LLVM BUILD SUPPORT:Keyword:\b(?i:clang|llvm)\b)
+Subject: [PATCH] clk: rockchip: allow COMPILE_TEST builds
+Date: Fri,  8 May 2026 17:36:02 -0700
+Message-ID: <20260509003602.956186-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] interconnect: Add devm_of_icc_get_by_index() as
- exported API for users
-To: Bjorn Andersson <andersson@kernel.org>,
- Luca Weiss <luca.weiss@fairphone.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Mike Tipton <mike.tipton@oss.qualcomm.com>,
- Taniya Das <taniya.das@oss.qualcomm.com>,
- ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-References: <20260501-milos-camcc-icc-v2-0-bb83c1256cc3@fairphone.com>
- <20260501-milos-camcc-icc-v2-1-bb83c1256cc3@fairphone.com>
- <af08-zMGzSSsw_NR@baldur>
-From: Georgi Djakov <djakov@kernel.org>
-Content-Language: en-US
-In-Reply-To: <af08-zMGzSSsw_NR@baldur>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 5/8/26 4:32 AM, Bjorn Andersson wrote:
-> On Fri, May 01, 2026 at 11:18:29AM +0200, Luca Weiss wrote:
->> Users can use devm version of of_icc_get_by_index() to benefit from
->> automatic resource release.
->>
->> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
->> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> 
-> Georgi, can I have an ack on this, or an immutable branch and a ping
-> once it's available?
+COMMON_CLK_ROCKCHIP already gates the Rockchip clock objects inside the
+Rockchip clock Makefile.  Allow selecting it for COMPILE_TEST and use it
+for the parent Makefile descent instead of ARCH_ROCKCHIP.
 
-Hi Bjorn, please apply it.
+The per-SoC Rockchip clock symbols already have COMPILE_TEST dependencies,
+so this exposes the existing build coverage to other architectures without
+selecting the Rockchip platform.
 
-Acked-by: Georgi Djakov <djakov@kernel.org>
+Tested with:
+make LLVM=1 ARCH=loongarch drivers/clk/rockchip/
 
-Thanks,
-Georgi
-> 
-> Thanks,
-> Bjorn
-> 
->> ---
->>   drivers/interconnect/core.c  | 20 ++++++++++++++++++++
->>   include/linux/interconnect.h |  6 ++++++
->>   2 files changed, 26 insertions(+)
->>
->> diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
->> index 8569b78a1851..bc2e416dbcb2 100644
->> --- a/drivers/interconnect/core.c
->> +++ b/drivers/interconnect/core.c
->> @@ -443,6 +443,26 @@ struct icc_path *devm_of_icc_get(struct device *dev, const char *name)
->>   }
->>   EXPORT_SYMBOL_GPL(devm_of_icc_get);
->>   
->> +struct icc_path *devm_of_icc_get_by_index(struct device *dev, int idx)
->> +{
->> +	struct icc_path **ptr, *path;
->> +
->> +	ptr = devres_alloc(devm_icc_release, sizeof(*ptr), GFP_KERNEL);
->> +	if (!ptr)
->> +		return ERR_PTR(-ENOMEM);
->> +
->> +	path = of_icc_get_by_index(dev, idx);
->> +	if (!IS_ERR(path)) {
->> +		*ptr = path;
->> +		devres_add(dev, ptr);
->> +	} else {
->> +		devres_free(ptr);
->> +	}
->> +
->> +	return path;
->> +}
->> +EXPORT_SYMBOL_GPL(devm_of_icc_get_by_index);
->> +
->>   /**
->>    * of_icc_get_by_index() - get a path handle from a DT node based on index
->>    * @dev: device pointer for the consumer device
->> diff --git a/include/linux/interconnect.h b/include/linux/interconnect.h
->> index 4b12821528a6..75a32ad0482e 100644
->> --- a/include/linux/interconnect.h
->> +++ b/include/linux/interconnect.h
->> @@ -47,6 +47,7 @@ struct icc_path *of_icc_get(struct device *dev, const char *name);
->>   struct icc_path *devm_of_icc_get(struct device *dev, const char *name);
->>   int devm_of_icc_bulk_get(struct device *dev, int num_paths, struct icc_bulk_data *paths);
->>   struct icc_path *of_icc_get_by_index(struct device *dev, int idx);
->> +struct icc_path *devm_of_icc_get_by_index(struct device *dev, int idx);
->>   void icc_put(struct icc_path *path);
->>   int icc_enable(struct icc_path *path);
->>   int icc_disable(struct icc_path *path);
->> @@ -79,6 +80,11 @@ static inline struct icc_path *of_icc_get_by_index(struct device *dev, int idx)
->>   	return NULL;
->>   }
->>   
->> +static inline struct icc_path *devm_of_icc_get_by_index(struct device *dev, int idx)
->> +{
->> +	return NULL;
->> +}
->> +
->>   static inline void icc_put(struct icc_path *path)
->>   {
->>   }
->>
->> -- 
->> 2.54.0
->>
+Assisted-by: Codex:GPT-5.5
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+---
+ drivers/clk/Makefile         | 2 +-
+ drivers/clk/rockchip/Kconfig | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 3aa6241fd2ec..4b81757f9090 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -141,7 +141,7 @@ obj-$(CONFIG_COMMON_CLK_PXA)		+= pxa/
+ obj-$(CONFIG_COMMON_CLK_QCOM)		+= qcom/
+ obj-y					+= ralink/
+ obj-y					+= renesas/
+-obj-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip/
++obj-$(CONFIG_COMMON_CLK_ROCKCHIP)	+= rockchip/
+ obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
+ obj-$(CONFIG_CLK_SIFIVE)		+= sifive/
+ obj-y					+= socfpga/
+diff --git a/drivers/clk/rockchip/Kconfig b/drivers/clk/rockchip/Kconfig
+index 7e1433502061..85133498f013 100644
+--- a/drivers/clk/rockchip/Kconfig
++++ b/drivers/clk/rockchip/Kconfig
+@@ -3,7 +3,7 @@
+ 
+ config COMMON_CLK_ROCKCHIP
+ 	bool "Rockchip clock controller common support"
+-	depends on ARCH_ROCKCHIP
++	depends on ARCH_ROCKCHIP || COMPILE_TEST
+ 	default ARCH_ROCKCHIP
+ 	help
+ 	  Say y here to enable common clock controller for Rockchip platforms.
+-- 
+2.54.0
 
