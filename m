@@ -1,150 +1,206 @@
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [52.175.55.52])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E09253958;
-	Sat,  9 May 2026 02:53:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.175.55.52
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F38637647E
+	for <linux-clk@vger.kernel.org>; Sat,  9 May 2026 05:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778295211; cv=none; b=QToEvvuI82PeElvCKESJ9lEbZcxU2dLXwaxDydcZ8j3fgOeqMSZEc6GKaPHKTwm2ut2FGFb0oiq0Lb/jlpGcVZJaig8g3pEtkeh/rCSsix+pPCI6T8wUHYkmKnUz5V43VOP8ouXbhOa3YmLKKk8zpK5M0rqKKhDbBirbJqxZ2xw=
+	t=1778303490; cv=none; b=muVRY+dGbGtHylH+cYCdNFeK+6fzEmp4bBmRXrl9I3M6UdfIMv/qWnx2DBY8Y8PzMwARRvIRrJ896jQV46m0JQogOO2Rd7eVd/Nt8EGe9maqzrLXoYtKvjKlivOzPBN+pbW8601/kopMWDZonhQBBqL3FkeXmFKno5r6gvvZqbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778295211; c=relaxed/simple;
-	bh=7JXlZDMBCkxnAhqKsLwQIqVTj+Eh173BdCa4ql1nJdA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=XeDa9aHDtuH9921w9PLOF1fjlMZBGBT9yJ4+UNIHIRGhy06VQyB3+TeC9+0h3BJKvYlqYO4KSu5vtxhDZJ0Ypz4nanb/L7goLu0I11L5wErvRqZAYoh6NS6tAuBPMMlxgBs9KMvsNgJxbviYeC2jY9s52/h+vrRh68vUIoROtnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=52.175.55.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from dongxuyang$eswincomputing.com ( [10.12.96.41] ) by
- ajax-webmail-app2 (Coremail) ; Sat, 9 May 2026 10:53:11 +0800 (GMT+08:00)
-Date: Sat, 9 May 2026 10:53:11 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: "Xuyang Dong" <dongxuyang@eswincomputing.com>
-To: "Brian Masney" <bmasney@redhat.com>
-Cc: "Stephen Boyd" <sboyd@kernel.org>, mturquette@baylibre.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
-	huangyifeng@eswincomputing.com, benoit.monin@bootlin.com,
-	ningyu@eswincomputing.com, linmin@eswincomputing.com,
-	pinkesh.vaghela@einfochips.com
-Subject: Re: Re: Re: Re: Re: Re: [PATCH v3 2/3] clk: eswin: Add eic7700 HSP
- clock driver
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
- 20241203(6b039d88) Copyright (c) 2002-2026 www.mailtech.cn
- mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
-In-Reply-To: <afPc66GcXiSzQ6uN@redhat.com>
-References: <20260423091114.2326-1-dongxuyang@eswincomputing.com>
- <aeo8nn-eigzlojWx@redhat.com>
- <4e5c887.5a31.19dbf179fb6.Coremail.dongxuyang@eswincomputing.com>
- <CABx5tqK7p_XJHfXZ70gXhR88PzAteV7cVSFPoRzccgmjanADMw@mail.gmail.com>
- <177733570840.5403.12558106273673899411@lazor>
- <7a76d8cb.5bab.19dd3645d4e.Coremail.dongxuyang@eswincomputing.com>
- <177742748214.5403.15526965667317467444@localhost.localdomain>
- <4257942f.5c6d.19dd89b06f8.Coremail.dongxuyang@eswincomputing.com>
- <afINjhKluCxeb9LK@redhat.com>
- <1f0a2d11.5cd2.19ddcf8114a.Coremail.dongxuyang@eswincomputing.com>
- <afPc66GcXiSzQ6uN@redhat.com>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1778303490; c=relaxed/simple;
+	bh=vqf9cXRfFn9C97UZ7Rrp6ta1EJUwME/SlnC8suh7SYM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PR6BpXNCu/UMJKCvt1UEspjxEj9hpxtNOpzemg7LjCbOQgOt+KI48w5EvanqyozR8yjReqGFwTd21eIropsa/TfG/2Nfk/d7zL7fOyg4fTllOp7IpVeR0q3kLLEW9Bx1lZqheOHeDglrZUKyRS/+uWEwW8SA/UkT5LYZDXFXkHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dtRsF3r2; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dtRsF3r2"
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2ad9a9be502so16329715ad.0
+        for <linux-clk@vger.kernel.org>; Fri, 08 May 2026 22:11:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1778303488; x=1778908288; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zmbb0GtvOQ3Ohjh7GZ3z5cRx9zjtJUSAuN49gAkn1Qo=;
+        b=dtRsF3r2Iwz12n2qOSM79F42ZSsnKvNqcviDbQ5zhsCGN/BaZw3CmHSOYzivamzh/J
+         LwDIj5IfyytErcJ/TBjLr1c3atKSuphUrZ4QlQXPj6ZPZbrOLi96k6SsP4zPnEFhVkAA
+         hw93LedMY+bKbyokR4cHQuNzVxQkuWEUXwpCxt79+vzCb8od+Cp+RUq+Teb7dAEqrtHE
+         ecKbxkCHVwlHeYYh2ZOznVKLgGcKW4NKxaYXWYRKvmBzevNjPv9ssm0PKk9R6RJ2/uFS
+         IJke+/gqzowJ/Mh1oGLHnEK2gmuFqlL4BIEU7k8v17N1GnH/Q5C5qD6LXt2jsnbzU8Gc
+         qWTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778303488; x=1778908288;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Zmbb0GtvOQ3Ohjh7GZ3z5cRx9zjtJUSAuN49gAkn1Qo=;
+        b=dAI0onlIck+r86ndzjz834MmasPavLRX17MHPP19dQPxhiKIS8TaSBZBDFxYQfMZI7
+         l/iTjtDgqmNL16/p9keWse0BCZdzGS7mdOjPL1twyKykY/rw7nV/3tVFubPUkm91eyzC
+         JbKpP/4h6IgTHMYNzi6A1DBoSNxjz7PxOEoeWkV1b/KPM/XXq9dqLoUCo385ME6ISygh
+         jbZ7RFjfjoTUvjjZQSJahwRMh66niOFng3tsQlFx9YLQomxgvFNS7u1LevfgBy40FC7P
+         l1HbHTqc1mF2K94A9TrZz3v0Tu/z3BVuBHlg08ewxxLDisaZQ6rLgx4hRitfLjtjfxgx
+         SMSA==
+X-Gm-Message-State: AOJu0YxyCXiDjELHPXCO/nVX0SSzP/l2uj3vs0Twm9Rb5KzEMUNxxp2c
+	l2Bt6PlZdfSQ5BPUeRDNbtwWWtugMPnKxuZqSUbrHYCnkLTC+0Dbr/kkmg7Kar1/
+X-Gm-Gg: Acq92OGcJ/SRjdrOxS6b2P0FqWGvF3aaiioetlS7qOmXnmLsQ+V++jv+gSGv7FHUTzn
+	AHoSJDbdiziaAaHdDauLX00f/AwVh3KVzSj2BbrkyydhKLN/bHQpVnzyLxUYJNsUymOnS0AxwZr
+	oHD8Sn376/G1q3hw9sWtxZLc+Krkcw3gzWcdwsBV2bXphX7Bor/yAQOKjF77uvZP0YJItm+r9c9
+	0TgtWNHjpfa73916EDM6p+cB9YrEjULBhcmEMFOpzJN9ajDPVHCU8sYR+47rw9JjHyK+id6oVMl
+	03mirkI6ynRFNqVc3K/9k/T3WouOvyZIgmS91OYNAvNF5Hk1voWonRT4e3iw+TOTOdvSpXGq2nx
+	NP/y0REw6c3CLaoDS9aC8W4tNU82h5L0jYoEgmEEmngi/hfj8jd0cy0TBL3+fIm/wTSCJZxbGT9
+	jPKu2HaLHT8z7xATCVfgzPUnZmjZrxcwcPSQ8g8qA9w//9VmhElC9smoUFoKI4bCetPT8sxNjYI
+	83TFzWtTDsKzeoTjEyEWyHNaEWJ3+XHjxg=
+X-Received: by 2002:a17:903:1cd:b0:2ba:36f4:5844 with SMTP id d9443c01a7336-2ba78f63de4mr161628525ad.7.1778303487952;
+        Fri, 08 May 2026 22:11:27 -0700 (PDT)
+Received: from ryzen ([2601:644:8000:5b5d:7285:c2ff:fe45:8a32])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2baf1d2709bsm41892915ad.5.2026.05.08.22.11.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 May 2026 22:11:27 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney@redhat.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	linux-kernel@vger.kernel.org (open list),
+	llvm@lists.linux.dev (open list:CLANG/LLVM BUILD SUPPORT:Keyword:\b(?i:clang|llvm)\b)
+Subject: [PATCH] clk: hisilicon: allow COMPILE_TEST builds
+Date: Fri,  8 May 2026 22:11:10 -0700
+Message-ID: <20260509051110.1061393-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <ccff677.5f98.19e0aa7365e.Coremail.dongxuyang@eswincomputing.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:TQJkCgA3TJ+Xof5prwgYAA--.3673W
-X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/1tbiAgECAmn+EJEDs
-	wABsk
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+Content-Transfer-Encoding: 8bit
 
-PiAKPiBPbiBUaHUsIEFwciAzMCwgMjAyNiBhdCAwMTo1ODo1OFBNICswODAwLCBYdXlhbmcgRG9u
-ZyB3cm90ZToKPiA+ID4gT24gV2VkLCBBcHIgMjksIDIwMjYgYXQgMDU6Mzg6NTFQTSArMDgwMCwg
-WHV5YW5nIERvbmcgd3JvdGU6Cj4gPiA+ID4gPiA+IAo+ID4gPiA+ID4gPiBUaGUgY29tbW9uIGdh
-dGUgQVBJLCB0aGUgSFNQIHByaXZhdGUgQVBJLCBhbmQgdGhlIHJlc2V0IGRyaXZlciBhbGwgYWNj
-ZXNzwqAKPiA+ID4gPiA+ID4gdGhlIHNhbWUgcmVnaXN0ZXIgc3BhY2UuCj4gPiA+ID4gPiA+IFRo
-ZXJlZm9yZSwgdGhleSBuZWVkIHRvIGJlIHByb3RlY3RlZCBieSB0aGUgc2FtZSBkYXRhLT5sb2Nr
-Lgo+ID4gPiA+ID4gPiAKPiA+ID4gPiA+IAo+ID4gPiA+ID4gSWYgZXZlcnl0aGluZyBpcyBhY2Nl
-c3NpbmcgcmVnaXN0ZXJzIHRocm91Z2ggcmVnbWFwIHdoeSBhcmVuJ3Qgd2UgdXNpbmcKPiA+ID4g
-PiA+IHRoZSBidWlsdGluIGxvY2sgd2l0aCBzdHJ1Y3QgcmVnbWFwX2NvbmZpZzo6dXNlX3Jhd19z
-cGlubG9jaz8gSSBkb24ndAo+ID4gPiA+ID4gdW5kZXJzdGFuZCB3aHkgd2UncmUgcm9sbGluZyBv
-dXIgb3duIGhlcmUuCj4gPiA+ID4gCj4gPiA+ID4gSGkgU3RlcGhlbiwKPiA+ID4gPiAKPiA+ID4g
-PiBJbiB0aGUgSFNQIGNsb2NrIGRyaXZlciBhbmQgcmVzZXQgZHJpdmVyLCB0aGVyZSBhcmUgdGhy
-ZWUgY29tcG9uZW50cyB0aGF0Cj4gPiA+ID4gYWNjZXNzIHRoZSBIU1AgcmVnaXN0ZXIgc3BhY2U6
-IGEgY29tbW9uIGdhdGUgY2xvY2ssIGEgY3VzdG9tIGdhdGUgY2xvY2vCoAo+ID4gPiA+IChpLmUu
-LCAweDgwMCksIGFuZCBhIHJlc2V0Lgo+ID4gPiA+IAo+ID4gPiA+IDEuIFRoZSBjb21tb24gZ2F0
-ZSB1c2VzIGVzd2luX2Nsa19yZWdpc3Rlcl9nYXRlKCkgdG8gcmVnaXN0ZXIgYSBnYXRlIGNsb2Nr
-wqAKPiA+ID4gPiB2aWEgZGV2bV9jbGtfaHdfcmVnaXN0ZXJfZ2F0ZV9wYXJlbnRfZGF0YSgpLiBJ
-dCBhY2Nlc3NlcyB0aGUgcmVnaXN0ZXLCoAo+ID4gPiA+IHVzaW5nIGNsa19nYXRlX2VuZGlzYWJs
-ZSgpLgo+ID4gPiA+IAo+ID4gPiA+IHN0YXRpYyB2b2lkIGNsa19nYXRlX2VuZGlzYWJsZShzdHJ1
-Y3QgY2xrX2h3ICpodywgaW50IGVuYWJsZSkKPiA+ID4gPiB7Cj4gPiA+ID4gCXN0cnVjdCBjbGtf
-Z2F0ZSAqZ2F0ZSA9IHRvX2Nsa19nYXRlKGh3KTsKPiA+ID4gPiAJdW5zaWduZWQgbG9uZyBmbGFn
-czsKPiA+ID4gPiAKPiA+ID4gPiAJaWYgKGdhdGUtPmxvY2spCj4gPiA+ID4gCQlzcGluX2xvY2tf
-aXJxc2F2ZShnYXRlLT5sb2NrLCBmbGFncyk7Cj4gPiA+ID4gCWVsc2UKPiA+ID4gPiAJCV9fYWNx
-dWlyZShnYXRlLT5sb2NrKTsKPiA+ID4gPiAuLi4KPiA+ID4gPiAJaWYgKGdhdGUtPmxvY2spCj4g
-PiA+ID4gCQlzcGluX3VubG9ja19pcnFyZXN0b3JlKGdhdGUtPmxvY2ssIGZsYWdzKTsKPiA+ID4g
-PiAJZWxzZQo+ID4gPiA+IAkJX19yZWxlYXNlKGdhdGUtPmxvY2spOwo+ID4gPiA+IH0KPiA+ID4g
-PiAKPiA+ID4gPiBUaGUgZ2F0ZS0+bG9jayBpbiB1c2UgaXMgdGhlIGRhdGEtPmxvY2sgcGFzc2Vk
-IGluIGZyb20gdGhlIGNsb2NrIGRyaXZlci4KPiA+ID4gPiAKPiA+ID4gPiAyLiBUaGUgY3VzdG9t
-IGdhdGUgdXNlcyBoc3BfY2xrX3JlZ2lzdGVyX2dhdGUoKSB0byByZWdpc3RlciBhIGdhdGUgY2xv
-Y2suIAo+ID4gPiA+IEl0IGFjY2Vzc2VzIHRoZSByZWdpc3RlciB1c2luZyBoc3BfY2xrX2dhdGVf
-ZW5kaXNhYmxlKCkuCj4gPiA+ID4gCj4gPiA+ID4gc3RhdGljIHZvaWQgaHNwX2Nsa19nYXRlX2Vu
-ZGlzYWJsZShzdHJ1Y3QgY2xrX2h3ICpodywgaW50IGVuYWJsZSkKPiA+ID4gPiB7Cj4gPiA+ID4g
-CXN0cnVjdCBlaWM3NzAwX2hzcF9jbGtfZ2F0ZSAqZ2F0ZSA9IHRvX2dhdGVfY2xrKGh3KTsKPiA+
-ID4gPiAKPiA+ID4gPiAJZ3VhcmQoc3BpbmxvY2tfaXJxc2F2ZSkoZ2F0ZS0+bG9jayk7Cj4gPiA+
-ID4gLi4uCj4gPiA+ID4gfQo+ID4gPiA+IAo+ID4gPiA+IFRoZSBnYXRlLT5sb2NrIGluIHVzZSBp
-cyB0aGUgc2FtZSBkYXRhLT5sb2NrIHBhc3NlZCBpbiBmcm9tIHRoZSBjbG9ja8KgCj4gPiA+ID4g
-ZHJpdmVyLgo+ID4gPiA+IAo+ID4gPiA+IDMuIFRoZSByZXNldCB1c2VzIGVpYzc3MDBfaHNwX3Jl
-c2V0X2Fzc2VydCgpIGFuZMKgCj4gPiA+ID4gZWljNzcwMF9oc3BfcmVzZXRfZGVhc3NlcnQoKSwg
-d2hpY2ggY2FsbCByZWdtYXBfYXNzaWduX2JpdHMoKSB0byBhY2Nlc3PCoAo+ID4gPiA+IHRoZSBy
-ZWdpc3Rlci4KPiA+ID4gPiAKPiA+ID4gPiBBbGwgdGhyZWUgbWV0aG9kcyBhY2Nlc3MgdGhlIHNh
-bWUgcmVnaXN0ZXIgc3BhY2U7IHRoZXJlZm9yZSwgdGhleSBtdXN0IGJlwqAKPiA+ID4gPiBwcm90
-ZWN0ZWQgYnkgdGhlIHNhbWUgbG9jayAoZGF0YS0+bG9jaykuCj4gPiA+ID4gCj4gPiA+ID4gVGhh
-dCdzIHdoeSB3ZSBpbnRyb2R1Y2VkIGVpYzc3MDBfaHNwX3JlZ21hcF9sb2NrL3VubG9jayBmb3LC
-oAo+ID4gPiA+IGVpYzc3MDBfaHNwX3JlZ21hcF9jb25maWcuCj4gPiA+ID4gCWVpYzc3MDBfaHNw
-X3JlZ21hcF9jb25maWcgPSB7Cj4gPiA+ID4gCQkubG9jayA9IGVpYzc3MDBfaHNwX3JlZ21hcF9s
-b2NrLAo+ID4gPiA+IAkJLnVubG9jayA9IGVpYzc3MDBfaHNwX3JlZ21hcF91bmxvY2ssCj4gPiA+
-ID4gCQkubG9ja19hcmcgPSBsb2NrX2N0eCwKPiA+ID4gPiAJfTsKPiA+ID4gPiAKPiA+ID4gPiBU
-aGUgJ2xvY2tfY3R4LT5sb2NrJyBpbiBlaWM3NzAwX2hzcF9yZWdtYXBfbG9jay91bmxvY2sgaXMg
-dGhlICdkYXRhLT5sb2NrJy4KPiA+ID4gPiAJc3RhdGljIHZvaWQgZWljNzcwMF9oc3BfcmVnbWFw
-X2xvY2sodm9pZCAqYXJnKQo+ID4gPiA+IAlfX2FjcXVpcmVzKGxvY2tfY3R4LT5sb2NrKQo+ID4g
-PiA+IAl7Cj4gPiA+ID4gCQlzdHJ1Y3QgZWljNzcwMF9oc3BfcmVnbWFwX2xvY2sgKmNvbnN0IGxv
-Y2tfY3R4ID0gYXJnOwo+ID4gPiA+IAkJdW5zaWduZWQgbG9uZyBmbGFnczsKPiA+ID4gPiAJCj4g
-PiA+ID4gCQlzcGluX2xvY2tfaXJxc2F2ZShsb2NrX2N0eC0+bG9jaywgZmxhZ3MpOwo+ID4gPiA+
-IAkJbG9ja19jdHgtPmZsYWdzID0gZmxhZ3M7Cj4gPiA+ID4gCX0KPiA+ID4gPiAKPiA+ID4gPiBU
-aGUgc2ltaWxhciBhcHByb2FjaCBjYW4gYmUgZm91bmQgaW4gY2xrLWlteDh1bHAtc2ltLWxwYXYu
-Yy4KPiA+ID4gPiAKPiA+ID4gPiBUaGUgYW5ub3RhdGlvbnMgd2hhdCB3ZSBtZW50aW9uZWQgcHJl
-dmlvdXNseSBpcyB0aGUgYWJvdmXCoAo+ID4gPiA+ICJfX2FjcXVpcmVzKGxvY2tfY3R4LT5sb2Nr
-KSIuCj4gPiA+IAo+ID4gPiBJIHNlZSB3aGF0IFN0ZXBoZW4gaXMgc2F5aW5nLiBUYWtlIGEgbG9v
-ayBhdCBfX3JlZ21hcF9pbml0KCkgaW4KPiA+ID4gZHJpdmVycy9iYXNlL3JlZ21hcC9yZWdtYXAu
-Yy4gSWYgdGhlIGxvY2svdW5sb2NrIG9wcyBhcmUgbm90IHNwZWNpZmllZCwKPiA+ID4gdGhlbiB0
-aGUgZmluYWwgZWxzZSB3aWxsIGF1dG9tYXRpY2FsbHkgc2V0dXAgbG9ja2luZy4gQnkgZGVmYXVs
-dCwgaXQnbGwKPiA+ID4gdXNlIGEgbXV0ZXgsIGJ1dCB0aGVyZSBpcyB0aGUgYWJpbGl0eSB0byB1
-c2UgYSBzcGlubG9jay4KPiA+ID4gCj4gPiA+IFNvIHlvdSBjYW4gZHJvcCB0aGUgbG9jay91bmxv
-Y2sgb3BzIGZyb20gdGhlIGRyaXZlciwgYW5kIGFkZCB0byB0aGUgb3BzOgo+ID4gPiAKPiA+ID4g
-CWZhc3RfaW86IDEsCj4gPiA+IAl1c2VfcmF3X3NwaW5sb2NrOiAxLAo+ID4gPiAKPiA+ID4gR2l2
-ZW4gdGhlIGNyaXRjYWwgbmF0dXJlIG9mIGNsa3MsIEkgYWdyZWUgd2l0aCBTdGVwaGVuIHRoYXQg
-YSByYXcKPiA+ID4gc3BpbmxvY2sgc2hvdWxkIGJlIHVzZWQgaGVyZS4KPiA+ID4gCj4gPiAKPiA+
-IEhpIFN0ZXBoZW4gYW5kIEJyaWFuLAo+ID4gCj4gPiBJbiB0aGUgSFNQIGNsb2NrIGRyaXZlciwg
-aHNwX2Nsa19nYXRlX2VuZGlzYWJsZSgpIG9ubHkgYWNjZXNzZXMgdGhlwqAKPiA+IHJlZ2lzdGVy
-cyBhdCAweDgwMC8weDkwMCwgYW5kIHJlc2V0IGFjY2Vzc2VzIHRoZSBzYW1lIHJlZ2lzdGVycyBh
-cyB3ZWxsLMKgCj4gPiB3aGljaCBsZWFkcyB0byBjb25jdXJyZW50IFJNVyAocmVhZC1tb2RpZnkt
-d3JpdGUpIHJhY2VzLgo+ID4gCj4gPiBUaGVyZSBhcmUgdHdvIGFwcHJvYWNoZXMgdG8gc29sdmUg
-dGhlc2UgcmFjZXMuCj4gPiAKPiA+IFRoZSBmaXJzdCBtZXRob2QgaXMgdGhlIGN1cnJlbnQgaW1w
-bGVtZW50YXRpb24uIEFsbCB0aHJlZSBmdW5jdGlvbnPCoAo+ID4gKGNsa19nYXRlX2VuZGlzYWJs
-ZSgpLCBoc3BfY2xrX2dhdGVfZW5kaXNhYmxlKCkswqAKPiA+IGFuZCBlaWM3NzAwX2hzcF9yZXNl
-dF9hc3NlcnQoKSkgdXNlIGRhdGEtPmxvY2sgdG8gcHJldmVudCBjb25jdXJyZW50wqAKPiA+IFJN
-VyByYWNlcy4KPiA+IAo+ID4gVGhlIHNlY29uZCBtZXRob2QgaXMgYXMgU3RlcGhlbiBzYWlkLiBJ
-ZiBJIHVuZGVyc3RhbmQgY29ycmVjdGx5LCBpdCBpcyB0b8KgCj4gPiBjaGFuZ2UgdGhlIHJlZ2lz
-dGVyIHJlYWQvd3JpdGUgb3BlcmF0aW9ucyBpbiBoc3BfY2xrX2dhdGVfZW5kaXNhYmxlKCkgdG/C
-oAo+ID4gdXNlIHRoZSByZWdtYXAgQVBJIGFuZCB1c2UgdGhlIHNhbWUgbG9jayAobWFwLT5yYXdf
-c3BpbmxvY2spIGFzIHJlc2V0Lgo+ID4gCj4gPiBJcyB0aGUgc2Vjb25kIGFwcHJvYWNoIHByZWZl
-cmFibGU/Cj4gCj4gVXNlIHRoZSBzYW1lIHJlZ21hcCBldmVyeXdoZXJlLiBBbHNvIHlvdSBkb24n
-dCBoYXZlIHRvIGV4cGxpY2l0bHkgZGVmaW5lCj4gdGhlIHJhdyBzcGlubG9jayBpbiB5b3VyIGRy
-aXZlciBzaW5jZSB0aGUgcmVnbWFwIEFQSSB3aWxsIGNyZWF0ZSBhIHJhdwo+IHNwaW5sb2NrIGZv
-ciB5b3UgaWYgeW91IHVzZSB0aGUgZmFzdF9pbyAvIHVzZV9yYXdfc3BpbmxvY2sgb3B0aW9ucyBJ
-Cj4gZGVzY3JpYmVkIGFib3ZlLgo+IAoKSGkgQnJpYW4sCgpUaGFuayB5b3UgZm9yIHlvdXIgdGlt
-ZSBhbmQgY29tbWVudHMuIFNvcnJ5IGZvciB0aGUgbGF0ZSByZXBseS4KVGhpcyB3aWxsIGJlIGZp
-eGVkIGluIHRoZSBuZXh0IHZlcnNpb24uCgpCZXN0IHJlZ2FyZHMsClh1eWFuZyBEb25nCg==
+The HiSilicon clock symbols already depend on ARCH_HISI or COMPILE_TEST,
+but the parent clock Makefile only descends into the hisilicon directory
+when ARCH_HISI is enabled.
+
+Add a hidden family gate selected by the HiSilicon clock and reset symbols,
+default it for ARCH_HISI, and use it for the parent Makefile descent.  This
+keeps existing platform builds unchanged while allowing compile-test
+coverage.
+
+Tested with:
+make LLVM=1 ARCH=loongarch drivers/clk/hisilicon/
+
+Assisted-by: Codex:GPT-5.5
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+---
+ drivers/clk/Makefile          |  2 +-
+ drivers/clk/hisilicon/Kconfig | 14 ++++++++++++++
+ 2 files changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 4b81757f9090..b20a0445828b 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -120,7 +120,7 @@ obj-y					+= bcm/
+ obj-$(CONFIG_ARCH_BERLIN)		+= berlin/
+ obj-$(CONFIG_COMMON_CLK_DAVINCI)	+= davinci/
+ obj-$(CONFIG_COMMON_CLK_ESWIN)		+= eswin/
+-obj-$(CONFIG_ARCH_HISI)			+= hisilicon/
++obj-$(CONFIG_COMMON_CLK_HISI)		+= hisilicon/
+ obj-y					+= imgtec/
+ obj-y					+= imx/
+ obj-y					+= ingenic/
+diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
+index c1ec75aa4ccd..e70bcfa9105b 100644
+--- a/drivers/clk/hisilicon/Kconfig
++++ b/drivers/clk/hisilicon/Kconfig
+@@ -1,8 +1,13 @@
+ # SPDX-License-Identifier: GPL-2.0-only
++config COMMON_CLK_HISI
++	bool
++	default ARCH_HISI
++
+ config COMMON_CLK_HI3516CV300
+ 	tristate "HI3516CV300 Clock Driver"
+ 	depends on ARCH_HISI || COMPILE_TEST
+ 	select RESET_HISI
++	select COMMON_CLK_HISI
+ 	default ARCH_HISI
+ 	help
+ 	  Build the clock driver for hi3516cv300.
+@@ -11,6 +16,7 @@ config COMMON_CLK_HI3519
+ 	tristate "Hi3519 Clock Driver"
+ 	depends on ARCH_HISI || COMPILE_TEST
+ 	select RESET_HISI
++	select COMMON_CLK_HISI
+ 	default ARCH_HISI
+ 	help
+ 	  Build the clock driver for hi3519.
+@@ -19,6 +25,7 @@ config COMMON_CLK_HI3559A
+ 	bool "Hi3559A Clock Driver"
+ 	depends on ARCH_HISI || COMPILE_TEST
+ 	select RESET_HISI
++	select COMMON_CLK_HISI
+ 	default ARCH_HISI
+ 	help
+ 	  Build the clock driver for hi3559a.
+@@ -26,6 +33,7 @@ config COMMON_CLK_HI3559A
+ config COMMON_CLK_HI3660
+ 	bool "Hi3660 Clock Driver"
+ 	depends on ARCH_HISI || COMPILE_TEST
++	select COMMON_CLK_HISI
+ 	default ARCH_HISI
+ 	help
+ 	  Build the clock driver for hi3660.
+@@ -33,6 +41,7 @@ config COMMON_CLK_HI3660
+ config COMMON_CLK_HI3670
+ 	bool "Hi3670 Clock Driver"
+ 	depends on ARCH_HISI || COMPILE_TEST
++	select COMMON_CLK_HISI
+ 	default ARCH_HISI
+ 	help
+ 	  Build the clock driver for hi3670.
+@@ -41,6 +50,7 @@ config COMMON_CLK_HI3798CV200
+ 	tristate "Hi3798CV200 Clock Driver"
+ 	depends on ARCH_HISI || COMPILE_TEST
+ 	select RESET_HISI
++	select COMMON_CLK_HISI
+ 	default ARCH_HISI
+ 	help
+ 	  Build the clock driver for hi3798cv200.
+@@ -48,6 +58,7 @@ config COMMON_CLK_HI3798CV200
+ config COMMON_CLK_HI6220
+ 	bool "Hi6220 Clock Driver"
+ 	depends on ARCH_HISI || COMPILE_TEST
++	select COMMON_CLK_HISI
+ 	default ARCH_HISI
+ 	help
+ 	  Build the Hisilicon Hi6220 clock driver based on the common clock framework.
+@@ -55,6 +66,7 @@ config COMMON_CLK_HI6220
+ config RESET_HISI
+ 	bool "HiSilicon Reset Controller Driver"
+ 	depends on ARCH_HISI || COMPILE_TEST
++	select COMMON_CLK_HISI
+ 	select RESET_CONTROLLER
+ 	help
+ 	  Build reset controller driver for HiSilicon device chipsets.
+@@ -63,6 +75,7 @@ config STUB_CLK_HI6220
+ 	bool "Hi6220 Stub Clock Driver" if EXPERT
+ 	depends on (COMMON_CLK_HI6220 || COMPILE_TEST)
+ 	depends on MAILBOX
++	select COMMON_CLK_HISI
+ 	default COMMON_CLK_HI6220
+ 	help
+ 	  Build the Hisilicon Hi6220 stub clock driver.
+@@ -71,6 +84,7 @@ config STUB_CLK_HI3660
+ 	bool "Hi3660 Stub Clock Driver" if EXPERT
+ 	depends on (COMMON_CLK_HI3660 || COMPILE_TEST)
+ 	depends on MAILBOX
++	select COMMON_CLK_HISI
+ 	default COMMON_CLK_HI3660
+ 	help
+ 	  Build the Hisilicon Hi3660 stub clock driver.
+-- 
+2.54.0
+
