@@ -1,66 +1,33 @@
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E8C2E7635
-	for <linux-clk@vger.kernel.org>; Sat,  9 May 2026 12:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826C3233721;
+	Sat,  9 May 2026 14:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778328041; cv=none; b=MTK5B5TmVCrO1kz4L601BJY34ToMvsLEOgjbsupfgdVNhzsd5AZ/fKjez8b3tVP/UlMSesGntkSyjyzZd9bZ+xlJOtPuKoydjqVCeyPpqDRYd0dAV8eYu2lyRFA7MHm2AAN9xi+yRWN0A7Lzep1yB11W3Qp44MNoreh+nVmOsmo=
+	t=1778337120; cv=none; b=N8RPuZ8vjNCwp2Jg4nNNq07lxaLngpiEz8qvzZ8Oz3jeRZZop22DISMyGNiOvlQALcq9KFxg2jeJ6Gq2+R93o7dgMCSwk0klzm0U36rRW5mBfBNQxiEGlX9m9UN82U7UXaFIz0WIoMZm8pn1pxTINZxc6Y0SLFppJx5JHguBglI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778328041; c=relaxed/simple;
-	bh=iemCui2l8qqvzux3lam3RV5hSucVjjAACXX7LzCZHcA=;
+	s=arc-20240116; t=1778337120; c=relaxed/simple;
+	bh=VX5H/b8D/jcGoHUTWnfBoI2QF3R6vdJoRsd3NHVE4yk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K7lbEElEqM/2zOL7c+RjE5AEqxV0y5UBDdrkJCpSWU8Ged5L6FH9stnIlIZ5thBKfqAWp53dHNgoX1gXR+kSOs9bpqef055K5I0hzpZV+vA/gqRQ/o1lJ+xklfFvZtuTTPx5qUzSNIs+GwTlRpDW0ISG74uVRueEdm7dMfjUpFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A7TN+NgJ; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 In-Reply-To:Content-Type; b=QdvEub3MSqseqUlp8eOzR25FqmYOZJSs5C/Enfq4R9PfMKf0tuiLvjm32xK1auMT7OCTx2mJ7Mo7DOqrWITeuhSJ58slXZzYAsoEgz/U2fkte8l8gIsNjRyP9KMioCeL9SfejnD/HWnfgkHHJ5H91OfxM+tCR3PZsMEWaA8I6nE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qz2jVpNt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A7TN+NgJ"
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-bcc2b199c17so44669866b.3
-        for <linux-clk@vger.kernel.org>; Sat, 09 May 2026 05:00:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778328038; x=1778932838; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zmUf6SNpF4clO18ErlUoo6BNS+Vk6nKV8PcksNLHfkQ=;
-        b=A7TN+NgJDOiROdSbAmP7uh/zrwBSV+nGEFjf6F2Gp9Wbx1FCzxQxNvTT9cfw7JLzmd
-         gq+isEPxiAl7kKjsjKvZEYOxPBv/446cLEKUun52UKzI4zCbw/0tw8UmDSWANXcgP4y3
-         Cf8UcV3gdKmhKzUp9TTd4ZbngpmyZo8eDl7s3tQ+xGlbyf6qxMCBsSxkGH23W3oIHAcX
-         nP/fcModN7+s0dVCP4b9YtD4khIqFG5uoZDQa9ofKOTpmFHNyJ/ijVodp1PeU9K+6y9e
-         C4ZQECaBbPzW/XubM7Ijk4gG0JG5cfyg85ToHzxwqdi4i3UM01T4gaStKNbEzQYNc5Uw
-         yGlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778328038; x=1778932838;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zmUf6SNpF4clO18ErlUoo6BNS+Vk6nKV8PcksNLHfkQ=;
-        b=Wd3Mi+L1rAW8cksSDt6Cs18DYZpiyMh2ojbAJYk9JVMzj8CdbdUY4xtU1gXSlO2qi9
-         FoRbyZpeiDZLJMJfSSGpU4hfUWqLmgjReCK9e1SAbKfMeRxK1RnucjDle7EpbUiqwV2j
-         a/14RJk1cUU34Q+KNO387uI+IYaW9Ol6uRfEEhTIDSeFTuJdcg9KESiNI78zrcMNr10V
-         Rq3BnViuGr8W0J1ri1dwqYna3PXiNxrWQkqaMuP68gigHtw2B4jHfQjMef/SWPCkGgpZ
-         yr7LIHp1vC7AFs3dj8W+YxfMsoyfebORHqOoLPCQUf7DSY9+oPlrayZ0lki9lDqeQ42s
-         El1Q==
-X-Forwarded-Encrypted: i=1; AFNElJ85N773D2X3PLwPth5GdfdLeYZzwgcadmyVGGb4P29IecS4PbdNzfBPuz0tYDePpnWsqUga/YFq0oA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBYTUIVj8Rav81PBY8lUwA9CDbMyjsVioi4+jfzVK6aFVBKazE
-	5WPVE9QXxJKFagdRd/LwdVNKiezx5g05dKExTuhBMw0HGcia3ULWfqxE
-X-Gm-Gg: Acq92OG8O+Q6d5lrHtIg1oUNIsfm28DDbrjR5pGXGrpCAyj0yDcUTJUJvYVLxpSXQNy
-	9q2HAzLD0+Jsn8fKqtfXA7FW/9Wng9d2wkqjDPiYK9Kt1Cc3/fa/5ZFFJBMbW5/iomRMSO9WsPp
-	yqe+vYDwt0ijq0/iYUa5X+q4t66NrSF+2Owm8krpkphepfXKswBui5T0ULAoItwVaZTmowwiq18
-	cVrvDtO+dSw8zeZxB/+ny/78VnH4vHl+39Ddo8mfwCDP/fURYkC0hMhDQo/2WhBG2yMeCmW6cCL
-	p3TiIDpmUi2bpgX71I8OTdALsUleeyN7aFbkg6O4UmxJQSko8Nxsu6gBxgw8qPadCphwS9rcCgF
-	QO2yGIwvXtBNUcKid/sKjk4R3MYoIsdmXGdMnMu9aYQPiYT6JIF1LpbOnltPeAjQodDxo64hsY5
-	QOMgzfPE4gTOpnEMC0pw4MDIbf+h4fTdgy57vnw1vDVBa4e13QgzqbWJ9sm2AowabHsiHl
-X-Received: by 2002:a17:907:c817:b0:bae:456f:fbb2 with SMTP id a640c23a62f3a-bc56cd3b1ccmr1054228966b.23.1778328037744;
-        Sat, 09 May 2026 05:00:37 -0700 (PDT)
-Received: from ?IPV6:2a00:f502:160:4e2:a099:cad9:2ecd:93de? ([2a00:f502:160:4e2:a099:cad9:2ecd:93de])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-bcac4359ea4sm219872166b.50.2026.05.09.05.00.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 09 May 2026 05:00:37 -0700 (PDT)
-Message-ID: <69f9a6b7-7431-442a-82a2-6305635a508a@gmail.com>
-Date: Sat, 9 May 2026 15:00:34 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qz2jVpNt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 558B5C2BCB2;
+	Sat,  9 May 2026 14:31:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1778337120;
+	bh=VX5H/b8D/jcGoHUTWnfBoI2QF3R6vdJoRsd3NHVE4yk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qz2jVpNt/pxXIqK88rCxab104cugpzmu2u5wAayQiQCqKGtGSKoFF2xhLPIpmU4ZM
+	 E1pvOIUYxCDKyjT9BriKtElrgc411THImGX3vvFjC0Q7XpVEaBqKUP3asBg8KJK4Cl
+	 NJb48a7eU6Cmjs7jo/a5SFBv6H5g1iiSdFz5JW1/g0SKjENOKMkIcYgjYMEnmoErhY
+	 MZR+T0YZVaPSUNlW0n6um1Rf3CyzDA4R3QHPIllSnkOWNFiw9Sk7UAzwCh6ZZzIEya
+	 o0vvE+OBfsqp9P+ugqWWaUV3ACDzI1dbPul7+htzT7Ymf3k0zuXK9Uhbkr2tPkaM1Z
+	 mBMrn93nhKBBw==
+Message-ID: <9bf43e04-f834-45b6-8942-bcae2e480371@kernel.org>
+Date: Sat, 9 May 2026 15:31:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -70,7 +37,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v5 5/8] clk: qcom: gcc-msm8939: mark Venus core GDSCs as
  hardware controlled
-To: Bryan O'Donoghue <bod@kernel.org>,
+To: Erikas Bitovtas <xerikasxx@gmail.com>,
  Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
  Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
  Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -85,7 +52,6 @@ Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
  linux-clk@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
  phone-devel@vger.kernel.org
 References: <20260507-msm8939-venus-rfc-v5-0-d7b5ea2ce591@gmail.com>
- <f5TsKnC12rLsH63vAi01aN4oXUFLrfgIhn14IQFDb9gcac6anLzzhJdkGNdQ2dRs4vYbFKUptfEgWuKdgIgGsQ==@protonmail.internalid>
  <20260507-msm8939-venus-rfc-v5-5-d7b5ea2ce591@gmail.com>
  <17c4626e-8926-4cad-842d-a1b171d1e962@kernel.org>
  <CYaHtccGOWlaUtl3QIKva44ybJiRHsPOZmHEkl2KKGmnDxJ8vTH-SVNMGbL7bjkYjI692nplORzOhpfjs3XJfg==@protonmail.internalid>
@@ -97,93 +63,92 @@ References: <20260507-msm8939-venus-rfc-v5-0-d7b5ea2ce591@gmail.com>
  <Jxt4BbN1dL8VKh_Zjah1xecAjz3c9VfbhKSm4a0K2D1MNKfJKIFnCPLj2VvdW1q4LnMIQy8bCzV3YoVnLFYUlA==@protonmail.internalid>
  <0cee27b6-f566-4958-8634-2c43e099281e@gmail.com>
  <dd435489-0cf7-4274-99bf-a591a15e91e4@kernel.org>
+ <-hM6afm_Cu_8Cha9U-hrlrg6CGDEb5D3PFpPPCfIh-QgkdFJp_r0Ah9k1dvAF4zkju2dPc3FZJxvOA4V4hupAA==@protonmail.internalid>
+ <69f9a6b7-7431-442a-82a2-6305635a508a@gmail.com>
+From: Bryan O'Donoghue <bod@kernel.org>
 Content-Language: en-US
-From: Erikas Bitovtas <xerikasxx@gmail.com>
-In-Reply-To: <dd435489-0cf7-4274-99bf-a591a15e91e4@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=bod@kernel.org; keydata=
+ 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
+In-Reply-To: <69f9a6b7-7431-442a-82a2-6305635a508a@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 5/8/26 6:55 PM, Bryan O'Donoghue wrote:
-> On 07/05/2026 16:51, Erikas Bitovtas wrote:
->>
->>
->> On 5/7/26 4:37 PM, Bryan O'Donoghue wrote:
->>> v4l2-ctl --verbose --set-fmt-video-
->>> out=width=1280,height=720,pixelformat=NV12 --set-selection-output
->>> target=crop,top=0,left=0,width=1280,height=720 --set-fmt-
->>> video=pixelformat=H264 --stream-mmap --stream-out-mmap --stream-
->>> from=cyclists_1280x720_92frames.yuv --stream-to=/tmp/
->>> cyclists_1280x720_92frames.h264 -d /dev/video1
->>
->> With the patch kept:
->> v4l2-ctl --verbose
->> --set-fmt-video-out=width=1280,height=720,pixelformat=NV12
->> --set-selection-output target=crop,top=0,left=0,width=1280,height=720
->> --set-fmt-video=pixelformat=H26
->> 4 --stream-mmap --stream-out-mmap
->> --stream-from=cyclists_1280x720_92frames.yuv
->> --stream-to=/tmp/cyclists_1280x720_92frames.h264 -d /dev/video1
->> VIDIOC_QUERYCAP: ok
->> VIDIOC_G_FMT: ok
->> VIDIOC_S_FMT: ok
->> Format Video Capture Multiplanar:
->>     Width/Height      : 1280/736
->>     Pixel Format      : 'H264' (H.264)
->>     Field             : None
->>     Number of planes  : 1
->>     Flags             :
->>     Colorspace        : Default
->>     Transfer Function : Default
->>     YCbCr/HSV Encoding: Default
->>     Quantization      : Default
->>     Plane 0           :
->>        Bytes per Line : 0
->>        Size Image     : 708608
->> VIDIOC_G_FMT: ok
->> VIDIOC_S_FMT: ok
->> Format Video Output Multiplanar:
->>     Width/Height      : 1280/736
->>     Pixel Format      : 'NV12' (Y/UV 4:2:0)
->>     Field             : None
->>     Number of planes  : 1
->>     Flags             :
->>     Colorspace        : Default
->>     Transfer Function : Default
->>     YCbCr/HSV Encoding: Default
->>     Quantization      : Default
->>     Plane 0           :
->>        Bytes per Line : 1280
->>        Size Image     : 1425408
->> VIDIOC_G_SELECTION: ok
->> VIDIOC_S_SELECTION: ok
->>         VIDIOC_G_FMT returned 0 (No error information)
->>         VIDIOC_G_FMT returned 0 (No error information)
->>         VIDIOC_G_FMT returned 0 (No error information)
->>         VIDIOC_REQBUFS returned -1 (Invalid argument)
->>
->> With the patch reverted:
->> v4l2-ctl --verbose
->> --set-fmt-video-out=width=1280,height=720,pixelformat=NV12
->> --set-selection-output target=crop,top=0,left=0,width=1280,height=720
->> --set-fmt-video=pixelformat=H26
->> 4 --stream-mmap --stream-out-mmap
->> --stream-from=cyclists_1280x720_92frames.yuv
->> --stream-to=/tmp/cyclists_1280x720_92frames.h264 -d /dev/video1
->> VIDIOC_QUERYCAP: ok
->> VIDIOC_G_FMT: ok
->> The pixelformat 'H264' is invalid
->> VIDIOC_G_FMT: ok
->> The pixelformat 'NV12' is invalid
->>
->> Decoding breaks if I revert the patch as well, it fails with a power
->> collapse fail.
+On 09/05/2026 13:00, Erikas Bitovtas wrote:
+> across reboots, so when I reverted the patch, I was actually testing
+> against decoder, not encoder.
 > 
-> If you declare both as decoders can you successfully decode @ video0 and
-> video1 ?
-> Apparently device nodes for encoder and decoder are not persistent
-across reboots, so when I reverted the patch, I was actually testing
-against decoder, not encoder.
+> So, the result is the same when the patch is applied, when it is
+> reverted, and when testing against v1 where the cores are enabled only
+> for decoding.
 
-So, the result is the same when the patch is applied, when it is
-reverted, and when testing against v1 where the cores are enabled only
-for decoding.
+OK but this is testing encoding
+
+v4l2-ctl --verbose
+--set-fmt-video-out=width=1280,height=720,pixelformat=NV12
+--set-selection-output target=crop,top=0,left=0,width=1280,height=720
+--set-fmt-video=pixelformat=H26
+4 --stream-mmap --stream-out-mmap
+--stream-from=cyclists_1280x720_92frames.yuv
+--stream-to=/tmp/cyclists_1280x720_92frames.h264 -d /dev/video1
+
+I think the GDSC patch specifically isn't too much of a concern.
+
+1. Core0 works as decoder
+2. Core1 doesn't work right now.
+    So what I'm trying to ask is if we could test it both
+    as an encoder or as a decoder.
+
+If decoder works when both cores are declared decoder, we know there's a 
+problem with encoder and could potentially proceed with upstream decoder 
+x 2.
+
+OTOH if Core1 can't be coaxed into working in either mode, we are better 
+off either holding off on this series until the breakages is root caused 
+or leaving out Core1 entirely for now.
+
+i.e. there is no utility in declaring an encoder or decoder to userspace 
+that is known to be broken.
+
+---
+bod
