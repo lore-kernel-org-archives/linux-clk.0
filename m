@@ -1,92 +1,63 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D91D3612F1;
-	Sun, 10 May 2026 15:06:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B92D3A1D0F;
+	Sun, 10 May 2026 15:55:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778425597; cv=none; b=sNNKRVIuWpFkoBgr7kqODpdY1ex2O/zba2onsbcZCUcaf/ejdAIrocpkNnSj0jDYDqrvrBvCJly7a5cxKMH5yKp/7uK4EM44xxZWcbPyDAd34ycqawu7qYgJeL6OVOiWcPf0FxGC31Lac10mKA/YEvlR7ijSWp4eJ+WD5t5NKb0=
+	t=1778428521; cv=none; b=ixkPillv8hYmGuz2StWBB4Ek1IAuwomTDZbbhjOffPajd8S8WhkxJgyFKRBdjT+wLsbcjq0IVbVzlfAMiwbnXcPBc5L+EHihoaclTeNzr+bMvUxRnRCTNtp8MsnLJ4gh6HFtDsR08nU3LtHfttaY7OZWYhpk74WJXDSQUgSBsV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778425597; c=relaxed/simple;
-	bh=/3DLv4Sedj2ihc066Y80XUkodfCt5lvzhtpnaavR3cg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Fin2QQgECqnG5WrjrQHvpO32FErwZUBekdhhe63uCayFmsStIUS6K3mYQE1sytC/aWGcqI43nF8ePwJB6v6dPj6pfS+q084ajQH9i9iIGUWD20Ngi8UfS+h6f/GsCH/EerrRAIWBYNOWdDe5uFiFTZN6FaN9RhC1jbWrpG7KI/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VxwyZm3s; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778428521; c=relaxed/simple;
+	bh=1JHVuYHpBvYXVYQBhIwjs0lfVU8P1go9liWUhFSz1zM=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=gFYfVef5Hb5DydpE6AubxfvVvV5G1umQ2duJ0SSl8lJJGxAehfD21ETA39ZwRZnRnRnOUZD7FQgj9ai7kwB27aBYEEHxfgrNudNk0XNYYqNjo5ALL/LBF64Fth9Erh4iZ9/LK9ds6DXec8DIq8xX5/xzKh1wzS9fKhF4Pb+abtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sCoGGvK7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VxwyZm3s"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12E74C2BCB8;
-	Sun, 10 May 2026 15:06:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sCoGGvK7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE98EC2BCB8;
+	Sun, 10 May 2026 15:55:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778425597;
-	bh=/3DLv4Sedj2ihc066Y80XUkodfCt5lvzhtpnaavR3cg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=VxwyZm3sKLbC2dZdzfMeXCiCvzxZS+6BfasCGywv7jEdvCvt2yiXfHT7XVxEEnZf1
-	 hy2c+ZTVz4CRBnqR/mlbxqRXR22oYs+rgZ+bsuyi8uvq3vS2LB2TcTEZdSIUig8XMK
-	 z8tcJfUf0kn2FU+Mun/PK+TPXenbX/eGWwODJ1PdJO/zG0acLpYqSRfWQYSGFj7aD1
-	 ePUS3VFEMV7F28Ue7jQgLkch7nxZEoRPz0dUlaSQGUVZm4N3H4+ygd/rSbKeqldS3R
-	 161r+RB3hYbe3jwtKtEQ6v0d2vsk3ai/BtFU5dBkA7h1j47qq+2jDmpE0qYTjOENjc
-	 iIYTK5mtlWRuw==
-From: Stephen Boyd <sboyd@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v7.1-rc2
-Date: Sun, 10 May 2026 08:06:34 -0700
-Message-ID: <20260510150635.3330901-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.53.0
+	s=k20201202; t=1778428520;
+	bh=1JHVuYHpBvYXVYQBhIwjs0lfVU8P1go9liWUhFSz1zM=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=sCoGGvK7PmAtMTe2iGmqJb8V/P030cRGa7L/L9e9QcYH6gXjMNwJWRBHrhMpbVw6s
+	 JDvNae3BX5ZYNUIay79L+745U90kq4ziq3ded7efCE8ry4Q8+CcKhugchpmucBE35Q
+	 OdVPZTpGnHPv2tienoC7tm+6XTdsI0TBTELavl1vkhS0xw4BzQN5dBoVUqcHsC6NyU
+	 YYsKfC1MK8/LR26silcX1er7iF4R6NPMOBsN1gGW7zXh1hlUxtEnbLfvJH4j8S8VhX
+	 TONzBepP5MM+Btb4ndCNU30FpDMqOpVOmc/MUcOXyJmpIgmULY9oCXtonyxZNpTm8e
+	 qJy7ytuMzkA+A==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7CEB7393001B;
+	Sun, 10 May 2026 15:54:29 +0000 (UTC)
+Subject: Re: [GIT PULL] clk fixes for v7.1-rc2
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20260510150635.3330901-1-sboyd@kernel.org>
+References: <20260510150635.3330901-1-sboyd@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20260510150635.3330901-1-sboyd@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+X-PR-Tracked-Commit-Id: de019f203b0d472c98ead4081ad4f05d92c9b826
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: a1a10cdbc6551ba359169a3033f193b7f8c1b95d
+Message-Id: <177842846820.1418180.16571446141985188508.pr-tracker-bot@kernel.org>
+Date: Sun, 10 May 2026 15:54:28 +0000
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-The following changes since commit 254f49634ee16a731174d2ae34bc50bd5f45e731:
+The pull request you sent on Sun, 10 May 2026 08:06:34 -0700:
 
-  Linux 7.1-rc1 (2026-04-26 14:19:00 -0700)
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
-are available in the Git repository at:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/a1a10cdbc6551ba359169a3033f193b7f8c1b95d
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-
-for you to fetch changes up to de019f203b0d472c98ead4081ad4f05d92c9b826:
-
-  clk: rk808: fix OF node reference imbalance (2026-04-28 20:55:53 -0700)
-
-----------------------------------------------------------------
-Fixes for clk drivers:
-
- - Mark the DDR bus clk critical in the SpaceMiT driver so that
-   boot doesn't fail
- - Fix boot on Mobile EyeQ by creating the auxiliary device for
-   the ethernet PHY
- - Plug an OF node leak in Rockchip rk808 clk driver
-
-----------------------------------------------------------------
-Brian Masney (1):
-      MAINTAINERS: add myself as a reviewer for the clk subsystem
-
-Jerome Brunet (1):
-      clk: eyeq: use the auxiliary device creation helper
-
-Johan Hovold (1):
-      clk: rk808: fix OF node reference imbalance
-
-Théo Lebrun (2):
-      clk: eyeq: add EyeQ5 children auxiliary device for generic PHYs
-      reset: eyeq: drop device_set_of_node_from_dev() done by parent
-
-Troy Mitchell (1):
-      clk: spacemit: k3: mark top_dclk as CLK_IS_CRITICAL
-
- MAINTAINERS                   |  1 +
- drivers/clk/clk-eyeq.c        | 60 +++++++++++--------------------------------
- drivers/clk/clk-rk808.c       |  2 +-
- drivers/clk/spacemit/ccu-k3.c |  2 +-
- drivers/reset/reset-eyeq.c    | 24 ++---------------
- 5 files changed, 20 insertions(+), 69 deletions(-)
+Thank you!
 
 -- 
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
-https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
