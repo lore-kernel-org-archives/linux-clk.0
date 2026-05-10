@@ -1,37 +1,64 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF8E255F2D;
-	Sun, 10 May 2026 18:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF11A14F70
+	for <linux-clk@vger.kernel.org>; Sun, 10 May 2026 19:01:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778436399; cv=none; b=Wzk31Q+35AVOf2ip/G0fia9MTMqz7o6Ro9QYzPjB5Y7I86U7ooveNUHP/6dekkA/WqvhMsxjXXBV8Ny0aGzyCSz9ug2Q9zuRoc1g6u6m5LPuHuHUlA4JuV2/4XcKv3HwGzZo3LlDuPEYXbCTSj/zhC0/+pt5e8XpHE5OSb6qToE=
+	t=1778439681; cv=none; b=uewqASLQ8L/9pjF9rxCN/8c8eGmQ7DfYYmE/8sVAJ1hv4vcD9ZXv5JV4ijoPNi6Qz8JivXqn7oXQeLrJWdHwWPSbaZ/c8WhQWEqvWQEJIx2REz5ECx5LYbbRcq6+dQftTW8DFFvkGGZ82vAagCAKCsh++8kivyTdzP0YnZaApCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778436399; c=relaxed/simple;
-	bh=GxWvs9IlOoF/ZDN89rm4mDgQR+vWhSnqrzSjz2qJjhU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=K3gfIrAnyQRvVVCUh9pw7Ze6ah88pyDsDTDBO83nZy5Bt48ALTOBVKYTqEUlJB8K3J67e7LHuFUlHuCghjPOuxCK5xaE0GIl0/MmIyDfGxJwqxXsQU8iLKFNf+9S1OgwTfYPb72RMvD29OTAmi05EM0SHx04t8/2ZaNg9hKecYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YNwfzldh; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778439681; c=relaxed/simple;
+	bh=kT6u3aN0CxM1ye+M92QBMG9z2Lg5tOb/LLbLIToLikA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=c/vU1Z+CoQfbNu7//s3EiVin7piMe4XLnY2UQvOVglidU7i4xfketuqYfLVkCYFwCECzqoA3QeIiOnJPzSRnKUtJ0hsgXt/63Yn/H7yPc605xSmFKQ8DwS4bMVPnQx9iogtyX/UbtNlSI7a0zp0qRCuj4dZBX8CwiIYW7JFJNgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VYtcIKHL; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YNwfzldh"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 505E7C2BCF7;
-	Sun, 10 May 2026 18:06:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778436399;
-	bh=GxWvs9IlOoF/ZDN89rm4mDgQR+vWhSnqrzSjz2qJjhU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=YNwfzldh4SCbUX/7HiaKv/QNm0IRWPeKqb/aa7Xo7SLTjdHaQziFr7BUp7Dh+cBwA
-	 UDXZG6d2Jw5RxMGxTdYfV8Dv5dW4e02YuSsqVK7XZdql7MB8x9R+NuSqq92W2nE48H
-	 AMnakkUQIKPuem14uQaxSBhAyEhLDTQ3VTSABhF1x7dlYi8feZ88wmnGDNBMeotBNk
-	 N2qjDB6hsj55GU84sJ8Tegj9aKlkZCF+1En6U4CAo7Ur8AtL3Pw953/tB6B0Do+9Z4
-	 0YOe1DsoaEfeblnnQKJwEpkXKEDY9FLDKzyOia/LmNgKQ6yDQT31pjcGxmMwBwfkaz
-	 wbVDjbTho7KRg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40E64CD37B2;
-	Sun, 10 May 2026 18:06:39 +0000 (UTC)
-From: Vyacheslav Yurkov via B4 Relay <devnull+V.Yurkov.EXT.bruker.com@kernel.org>
-Date: Sun, 10 May 2026 18:06:22 +0000
-Subject: [PATCH v2 1/2] clk: Add gpio-locked clock driver
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VYtcIKHL"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-488d2079582so38741185e9.2
+        for <linux-clk@vger.kernel.org>; Sun, 10 May 2026 12:01:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1778439678; x=1779044478; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1BVTiXVZ5+SQnfIHWp/DmlViAPIxX5n2kT347/Og8OE=;
+        b=VYtcIKHLDboKB5pkqySwIRmT5ZMVDgUckLC9imKsiPGJDIuAjx8CRLdjWW3L9W2PUa
+         ytROsC8OuErTXEgej12Ez1RpG3DHlEo7bahnCS/RP8Ap//DqV80A2OD3/p9FRgBH+FdJ
+         9VQBgParoqXD/p0cYCjjCrh40SDNrNwyc+55G6wWO2UMJeglohd36SKiGgR9EPgklB8d
+         vApydUUkQ54PXfuobRjAPNKkZGhCwYyHdBI9MJoCscMHVb7qj1DUlHEqST3Knk/ZtXx8
+         D4+yQUMlxRFj4ZE4ntGckpeHJf2/Ak3bVkAjr7DLOp3f7q3ohHdLmMg2X9rqZrLYowNT
+         7Kcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778439678; x=1779044478;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1BVTiXVZ5+SQnfIHWp/DmlViAPIxX5n2kT347/Og8OE=;
+        b=E9if21GCGDYfRK2h+zAKFdRUxwHDewdaqDvJhf/B5J7o+SWnUkJdfU2jdTwMSzd7dS
+         CqlgSDNfIqHvHjSHTMxUUX2Lu3BUAwmtJ4qp1JY86Vxvba5elEV1W4enogaNSTKvQ4kb
+         kXEkZJwTxoEEwFxWy6z9fbtkzb0JtK2LYakG/BU2uwtb7Ym4wQPodBsLInnXWQNvcj+V
+         Nl5q2rRPZS8ZtzO5vnzT2g6pQ7B5r4sbZGkL9KjAuFTEscnSuA7Yveq+QIDyrDPVt8t/
+         LEv7Rusppi6oJj+cmPdSFyEgXCeGXB+m8Q48cjE/AWPvpqCYmlcPvaLD8NPViM9wlxQV
+         rifA==
+X-Gm-Message-State: AOJu0YwQj8BB2vvoeK5eXbzpBZTL+CZgxb2NaV7B32JLGP43wlIu5rev
+	HnmgDfiCWzZ/F9olvRyvh9THl1JE6A9Ma1xyMPoe2T3Y87Fpl6+X1XH8
+X-Gm-Gg: Acq92OG/cKy0J2RkFTuxVom0MVPyDvN5NVw5ZzCr6HSFf5EXJzRKxuQON0FMzi7YN+y
+	wPnXsyTn6VC2ferGz8Cp2++uoq7kETXkuUWXVodBZMoQwvr4+fjT/mtSo/ShPxCFaisFdsiOqNh
+	XAwSOFrAv42cRGhvti7KpAyQ+NQPzGd7EzZ3GpGe6ncJ51aGm+nDn9hFRUMfpw5cQQVpgI4dn+7
+	WuLaxTCi23l7QIoSojXKTNyYVlBY9zh3K0h6HjVyvQbejJ3pJKIzHGx/q2uQmCyKlwjXN1frZXz
+	NfnaE2TPUCShFRjI3rEqhcNyFdI59Si8Cfo0cPZ4ChRZk4toPNyshHPgmIHUd7aPUycLM/US2Pe
+	7BcvQWebvIxrnEGv5Pi5bHNXUdKo1lsfKsGVP0DtYYFNbYRnXhrg54jMJ7bSqFfHnU3gTNDKmIb
+	Pl7nrZSb96ao6NewXBapVj9dVU0o13PLFK3f4giwuyYudI
+X-Received: by 2002:a05:600c:c0c1:b0:48a:56de:d62a with SMTP id 5b1f17b1804b1-48e51e1ddb2mr251916185e9.11.1778439678005;
+        Sun, 10 May 2026 12:01:18 -0700 (PDT)
+Received: from [192.168.0.2] ([197.250.51.203])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48e701e9585sm132877475e9.5.2026.05.10.12.01.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 10 May 2026 12:01:17 -0700 (PDT)
+From: =?utf-8?q?Stefan_D=C3=B6singer?= <stefandoesinger@gmail.com>
+Subject: [PATCH RFC 0/4] ZTE zx297520v3 clock bindings and driver
+Date: Sun, 10 May 2026 22:00:59 +0300
+Message-Id: <20260510-zx29clk-v1-0-e1bacfffe967@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -39,370 +66,150 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260510-feature-clock-guard-v2-1-6c25458d5340@bruker.com>
-References: <20260510-feature-clock-guard-v2-0-6c25458d5340@bruker.com>
-In-Reply-To: <20260510-feature-clock-guard-v2-0-6c25458d5340@bruker.com>
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAOvVAGoC/02OwQ6CMBBEf4Xs2SbtUkqXq4kf4NVwwLJoo4BSJ
+ ETCv9ugB49vZjIzCwQePAcokgUGnnzwfRdB7RJw16q7sPB1ZECJRmZKiveM5O43gazrlDhVaB3
+ E9GPgxs9b0wmOhz2UX3Hg5yu2jj/nXAUWrm9bPxaJRMsNOTJMRlEeJ6zNnWwkoUZtckKyVcUW/
+ t8UyfZFKyMCd7XInLQsKePMUTFZKNf1AyLqqGzWAAAA
+X-Change-ID: 20260510-zx29clk-2e4d39e3128c
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, Vyacheslav Yurkov <uvv.mail@gmail.com>, 
- Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
+ Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ =?utf-8?q?Stefan_D=C3=B6singer?= <stefandoesinger@gmail.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1778436398; l=9042;
- i=V.Yurkov.EXT@bruker.com; s=20260318; h=from:subject:message-id;
- bh=4C7/G2slFiF6F6Z5DVeO2NVmK6a4RZ7pHLuONCV7JWw=;
- b=6Uy9WknK0a/tvQPLE4AtO8tcKjbT/VyULVGdTX2fMkUc2zEYSiu5qUkJBvfR+XKbSYpd4MhUN
- mEIJww08ewtAfeM+2IxodQ38b5U7k/cVKznuPcSgzfL5e18g4bBeLFJ
-X-Developer-Key: i=V.Yurkov.EXT@bruker.com; a=ed25519;
- pk=snJmgYVOKlp7aQtK9tWnEI7QTYxpPpJJvxdVsnxA7Fk=
-X-Endpoint-Received: by B4 Relay for V.Yurkov.EXT@bruker.com/20260318 with
- auth_id=686
-X-Original-From: Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
-Reply-To: V.Yurkov.EXT@bruker.com
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6050;
+ i=stefandoesinger@gmail.com; h=from:subject:message-id;
+ bh=kT6u3aN0CxM1ye+M92QBMG9z2Lg5tOb/LLbLIToLikA=;
+ b=owEBiQJ2/ZANAwAIAT0TvMhUTxoiAcsmYgBqANX0P2Cl0r21M/q2o+jb2oqnhUr26Ym8VJ0PX
+ vomztuGrO2JAk8EAAEIADkWIQRDFvS2qgVbJ5UyXWw9E7zIVE8aIgUCagDV9BsUgAAAAAAEAA5t
+ YW51MiwyLjUrMS4xMiwyLDIACgkQPRO8yFRPGiL7Nw//U1IzbqmoeXjG9hGU9ky9SmjDA9FA1Ek
+ NFpZOnGJFuhqkYiAGk4LTw4t7AYjuoZxrbC0C0qAF1naNE3TP8/VVXXtxYi694vx4E00K42X1OL
+ 8ejx/e478Noh6K1a+axlesPesRDDQKUriJ9p5Ot7SV5sXBOatJQaALfxLOe7yzFCN3tWZLNjGni
+ 8l4EIFO2/gle9ftAPISUBcFjafQ+Of31dcbC5H4ivhZNwCp/ihrf5OdVzbzokH1uQQf36Pk28Qb
+ yRtbHKLWjnE8eDahjoNhd1gL3hZPtA0zuux4/XuDuzbZkyNS4D0j286YII6kjhCRg6d260Soo9C
+ M4UaZY60DylOO+GDysDWdKtiodxfS2trIxrHi0h3Ucdxac0/Vmu90FGRAumZgOCcIseuz/ThP2l
+ qwGwA4EQ2nhUlelGz5W5AuvIuj+/11JdHKlO512ZFhvzuj7H8Ku+2/0yHZfa14T0rOY/928uzma
+ /AxzuQpPuRkWpHnrMkOCXd9hZGIheq9zR1Eua0adKGWEXxztiTxUwRi0u5walRsUOuZ6YJanqxN
+ +Wd4Mzygm3ucPYA0+vh7Dlwnbk1wqOYY9PyOzXbd0zF0ipd7s95k2KHZLsODFa8c4DNcTuhBjLz
+ Ty2sTHqPoDnbSPoTq0dLcfwPH9I6iRkRvlN0NrxJy15uJDxUazng=
+X-Developer-Key: i=stefandoesinger@gmail.com; a=openpgp;
+ fpr=4F9C2C8728019633893EBBB98CB81F9A72BBA155
 
-From: Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
+Hi,
 
-A gpio-locked clock aggregates one or more input clocks and/or one or
-more GPIOs. It's similar to a gated-fixed-clock, but GPIO direction is
-inverted. Consumers can use the output clock to wait until all input
-clocks are locked and only then initialize dependent peripherals.
+I am sending my clk driver for zx297520v3 boards for comment. The patch
+series sits on top of my previously sent patches for very basic support
+for this board [0]. The first caveat is that b4 dependencies don't seem
+to do what I expected, so I have backed out the MAINTAINERS and DTSI
+changes from this RFC submission. It should still be good enough to
+review the actual clock driver and bindings.
 
-Signed-off-by: Vyacheslav Yurkov <uvv.mail@gmail.com>
-Signed-off-by: Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
+I have pretty good understanding of the clock hardware, but a number of 
+questions about the prefered way of implementing such a driver. Either 
+the clock framework and its documentation are constantly evolving or I 
+am just bad at discovering things:
+
+1) The clock controls on this board consist of 3 controllers that I 
+called - following ZTE's nomenclature - top, matrix and LSP. The top 
+controller is fed by two oscillators and generates other frequencies 
+with PLLs. I have expressed this in the device tree: The clk driver 
+binding requires these two clocks.
+
+The matrix controller feeds 10 clocks to the LSP controller and can turn 
+them on and off on a per-clock bases. The DT bindings express this as 
+well - the LSP binding expects those 10 clock handles.
+
+There are no explicit HW controls for the top->matrix link, but the 
+muxes and gates in the matrix controller use the PLL outputs as parents. 
+I have not expressed that in the binding as it would require 25 or so 
+clock handles. Instead, the matrix driver quietly expects the right 
+parent clock names to be registered by the top driver. (OTOH having 60 
+or so clock parameters didn't stop st,stm32mp21-rcc)
+
+The entire LSP part (I guess the name stands for low speed peripherals) 
+looks like it might be reused on different baords. The top and matrix 
+part are very interdependent.
+
+2) The clk-reset interaction: Both clocks and resets are in the same IO 
+space, sometimes in the same registers. I see a number of clk drivers 
+that register a reset control. I noticed Yu-Chun Lin's RTD1625 clock 
+submission added an aux device and placed the reset code in 
+drivers/reset instead. Is there a preference for either way or any 
+guideline of which way to use in which circumstances?
+
+3) Unused clocks: I looked at recently introduced clk drivers 
+(mediatek,mt8196-clock.h, sun55i-a523-mcu-ccu.h) and they do add all a 
+lot of clocks that do not have an active consumer - which in a way means 
+unused ABI. Please let me know if you prefer to add clocks one by one as 
+their consumers are added.
+
+That said, there are a lot of clocks that I want to define for the sole 
+purpose of shutting them off. The boot loader leaves pretty much every 
+device enabled, including proprietary timers that I don't even plan to 
+write a driver for. Registering their clocks in the kernel will allow 
+the kernel to shut them off, so they aren't entirely unused.
+
+4) I took some naming from the old zx2967 code. In particular, each 
+device has two clocks: "WCLK" for the device operation and "PCLK" for 
+register access. Are there more standard names for them? Likewise I took 
+some device names from ZTE's downstream sources and I am open to better 
+suggestions.
+
+5) I took care to test unbinding and rebinding my clock driver to the 
+hardware. It works at least as no clock consumers are defined. It seems 
+mutually exclusive though with declaring static initialization data as 
+__initdata, as it will be gone after the first time the driver is bound. 
+I also don't see how unbinding and rebinding will be tested later on 
+when core peripherals are clock consumers.
+
+6) Clock name string matching vs passing pointers: A presentation by
+Chen-Yu Tsai from 2024 [1] gave me the impression that the kernel is
+trying to move away from building the clock tree with string matching. I 
+see APIs for passing a struct clk_hw * as parent instead of strings, but 
+that makes it more difficult to build static initialization tables. I 
+think the static tables make the code a lot easier to read and I prefer 
+that over boot time performance.
+
+I think the list of clocks in my driver is fairly complete; It is 
+certainly a lot better than what the downstream ZTE drivers have. I 
+deduced a lot of it by trial and error. I am sure there are some clocks 
+missing that will need to be added to the binding later. Afaiu adding 
+clocks is not an issue, but removing or reordering them is an ABI break.
+
+0: https://lore.kernel.org/linux-arm-kernel/20260506-send-v8-0-f1bdf3243b34@gmail.com/
+1: https://www.youtube.com/watch?v=d1VIAnVb3hI
+
+Signed-off-by: Stefan Dösinger <stefandoesinger@gmail.com>
 ---
- drivers/clk/Makefile          |   1 +
- drivers/clk/clk-gpio-locked.c | 306 ++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 307 insertions(+)
+Stefan Dösinger (4):
+      dt-bindings: clk: zte: Add zx297520v3 clock and reset bindings.
+      clk: zte: Introduce a driver for zx297520v3 top clocks and resets.
+      clk: zte: Introduce a driver for zx297520v3 matrix clocks and resets.
+      clk: zte: Introduce a driver for zx297520v3 LSP clocks and resets.
 
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index a3e2862ebd7e..464ca1c1d8a8 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -35,6 +35,7 @@ obj-$(CONFIG_CLK_FD_KUNIT_TEST) += clk-fractional-divider_test.o
- obj-$(CONFIG_COMMON_CLK)	+= clk-gpio.o
- ifeq ($(CONFIG_OF), y)
- obj-$(CONFIG_COMMON_CLK)	+= clk-conf.o
-+obj-$(CONFIG_COMMON_CLK)	+= clk-gpio-locked.o
- endif
- 
- # KUnit specific helpers
-diff --git a/drivers/clk/clk-gpio-locked.c b/drivers/clk/clk-gpio-locked.c
-new file mode 100644
-index 000000000000..79098f9b6532
---- /dev/null
-+++ b/drivers/clk/clk-gpio-locked.c
-@@ -0,0 +1,306 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+/*
-+ * Clock Controller Guard Driver
-+ *
-+ * Copyright 2026 Bruker Corporation
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+
-+#define MAX_INPUT_GPIO_COUNT 32
-+
-+/**
-+ * struct gpio_locked_clk_priv - private state for the whole driver
-+ * @dev:		platform device
-+ *
-+ * @clks:		array of input clock descriptors
-+ * @num_clks:		number of entries in @inputs
-+ *
-+ * @gpios:		array of GPIO descriptors
-+ * @gpio_names:		GPIO names
-+ * @num_gpios:		number of input GPIOs
-+ *
-+ * @output_hw_clk:      output clock HW descriptor
-+ * @output_clock_name:  output clock name
-+ */
-+struct gpio_locked_clk_priv {
-+	struct device *dev;
-+
-+	struct clk_bulk_data *clks;
-+	int num_clks;
-+
-+	struct gpio_descs *gpios;
-+	const char **gpio_names;
-+	int num_gpios;
-+
-+	struct clk_hw output_hw_clk;
-+	const char *output_clock_name;
-+};
-+
-+#define to_gpio_locked_clk_priv(_hw) \
-+	container_of(_hw, struct gpio_locked_clk_priv, output_hw_clk)
-+
-+static int is_gpio_ready(struct gpio_locked_clk_priv *priv)
-+{
-+	unsigned long values[BITS_TO_LONGS(MAX_INPUT_GPIO_COUNT)] = {0};
-+	int ret = 0;
-+
-+	if (priv->num_gpios == 0)
-+		return 0;
-+
-+	ret = gpiod_get_array_value(priv->gpios->ndescs,
-+		priv->gpios->desc,
-+		priv->gpios->info,
-+		values);
-+
-+	if (ret) {
-+		dev_err(priv->dev, "Failed to read GPIOs");
-+		return -EIO;
-+	}
-+
-+	for (int i = 0; i < priv->gpios->ndescs; i++) {
-+		if (!test_bit(i, values)) {
-+			dev_warn(priv->dev, "GPIO %s is not ready", priv->gpio_names[i]);
-+			return -EBUSY;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int gpio_locked_clk_is_enabled(struct clk_hw *hw)
-+{
-+	struct gpio_locked_clk_priv *priv = to_gpio_locked_clk_priv(hw);
-+	int ret = 0;
-+
-+	if (priv->num_gpios > 0) {
-+		ret = is_gpio_ready(priv);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	// Now check for the clocks
-+	for (int i = 0; i < priv->num_clks; i++) {
-+		struct clk_hw *hw_clk = __clk_get_hw(priv->clks[i].clk);
-+
-+		if (!clk_hw_is_enabled(hw_clk)) {
-+			dev_dbg(priv->dev, "Clock %i (%s) is not ready",
-+				i, priv->clks[i].id);
-+			return -EBUSY;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+/* We can't enable the clock, but the Common Clock Framework calls only
-+ * enable() not is_enabled()
-+ */
-+static int gpio_locked_clk_enable(struct clk_hw *hw)
-+{
-+	return gpio_locked_clk_is_enabled(hw);
-+}
-+
-+/* We have to implement it, but we are not going to control
-+ * parent clock selection
-+ */
-+static u8 gpio_locked_clk_get_parent(struct clk_hw *hw)
-+{
-+	return 0;
-+}
-+
-+static const struct clk_ops gpio_locked_clk_ops = {
-+	.enable =	gpio_locked_clk_enable,
-+	.is_enabled =	gpio_locked_clk_is_enabled,
-+	.get_parent =	gpio_locked_clk_get_parent,
-+};
-+
-+static int gpio_locked_clk_parse_inputs(struct gpio_locked_clk_priv *priv)
-+{
-+	struct device *dev = priv->dev;
-+	int ret;
-+
-+	ret = devm_clk_bulk_get_all(dev, &priv->clks);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to get input clocks: %d\n", ret);
-+		return ret ? ret : -ENOENT;
-+	}
-+
-+	priv->num_clks = ret;
-+
-+	if (priv->num_clks == 0)
-+		dev_info(dev, "No input clocks provided\n");
-+
-+	for (int i = 0; i < priv->num_clks; i++)
-+		dev_dbg(dev, "input clk[%d]: name='%s' rate=%lu Hz\n",
-+			i, priv->clks[i].id,
-+			clk_get_rate(priv->clks[i].clk));
-+
-+	return 0;
-+}
-+
-+static int gpio_locked_clk_parse_gpios(struct gpio_locked_clk_priv *priv)
-+{
-+	struct device *dev = priv->dev;
-+	struct device_node *np = dev->of_node;
-+	int i;
-+
-+	priv->gpios = devm_gpiod_get_array_optional(dev, "locked", GPIOD_ASIS);
-+	if (IS_ERR(priv->gpios)) {
-+		dev_err(dev, "failed to get GPIO array: %ld\n",
-+				PTR_ERR(priv->gpios));
-+		return PTR_ERR(priv->gpios);
-+	}
-+
-+	if (!priv->gpios) {
-+		dev_info(dev, "No GPIOs provided, continue\n");
-+		priv->num_gpios = 0;
-+		return 0;
-+	}
-+
-+	priv->num_gpios = priv->gpios->ndescs;
-+	if (priv->num_gpios > MAX_INPUT_GPIO_COUNT) {
-+		dev_err(priv->dev, "Maximum number of input GPIOs is 32\n");
-+		return -EINVAL;
-+	}
-+
-+	/* gpio_descs carries no names, so read "gpio-names" separately */
-+	priv->gpio_names = devm_kcalloc(dev, priv->num_gpios, sizeof(*priv->gpio_names),
-+			GFP_KERNEL);
-+	if (!priv->gpio_names)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < priv->num_gpios; i++) {
-+		of_property_read_string_index(np, "gpio-names", i,
-+				&priv->gpio_names[i]);
-+
-+		dev_dbg(dev, "gpio[%d]: name='%s'\n",
-+				i, priv->gpio_names[i] ? priv->gpio_names[i] : "(unnamed)");
-+	}
-+
-+	return 0;
-+}
-+
-+static int gpio_locked_clk_parse_outputs(struct gpio_locked_clk_priv *priv)
-+{
-+	struct device *dev = priv->dev;
-+	struct device_node *np = dev->of_node;
-+	struct clk_init_data init = {};
-+	int ret;
-+
-+	of_property_read_string_index(np, "clock-output-names", 0,
-+		&priv->output_clock_name);
-+
-+	if (!priv->output_clock_name)
-+		priv->output_clock_name = dev_name(priv->dev);
-+
-+	init.name = priv->output_clock_name;
-+	init.ops = &gpio_locked_clk_ops;
-+	init.flags = 0;
-+	init.num_parents = priv->num_clks;
-+
-+	if (priv->num_clks) {
-+		const char **parent_names;
-+		int j;
-+
-+		parent_names = devm_kcalloc(dev, priv->num_clks,
-+					    sizeof(*parent_names),
-+					    GFP_KERNEL);
-+		if (!parent_names)
-+			return -ENOMEM;
-+
-+		for (j = 0; j < priv->num_clks; j++)
-+			parent_names[j] = priv->clks[j].id;
-+
-+		init.parent_names = parent_names;
-+	}
-+
-+	priv->output_hw_clk.init = &init;
-+
-+	ret = devm_clk_hw_register(dev, &priv->output_hw_clk);
-+	if (ret) {
-+		dev_err(dev, "failed to register output clk'%s': %d\n",
-+			priv->output_clock_name, ret);
-+		return ret;
-+	}
-+
-+	dev_info(priv->dev, "Output clock '%s' registered\n", priv->output_clock_name);
-+
-+	return 0;
-+}
-+
-+static int gpio_locked_clk_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct gpio_locked_clk_priv *priv;
-+	int ret;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->dev = dev;
-+	platform_set_drvdata(pdev, priv);
-+
-+	ret = gpio_locked_clk_parse_inputs(priv);
-+	if (ret)
-+		return ret;
-+
-+	ret = gpio_locked_clk_parse_gpios(priv);
-+	if (ret)
-+		return ret;
-+
-+	if (priv->num_clks == 0 && priv->num_gpios == 0) {
-+		dev_err(priv->dev, "At least 1 input clock or input GPIO is required\n");
-+		return -EINVAL;
-+	}
-+
-+	ret = gpio_locked_clk_parse_outputs(priv);
-+	if (ret)
-+		return ret;
-+
-+	ret = devm_of_clk_add_hw_provider(priv->dev, of_clk_hw_simple_get,
-+		&priv->output_hw_clk);
-+	if (ret) {
-+		dev_err(priv->dev, "failed to register clock provider '%s': %d\n",
-+			priv->output_clock_name, ret);
-+		return ret;
-+	}
-+
-+	dev_info(dev, "registered %u input clocks, %u GPIOs\n",
-+		 priv->num_clks, priv->num_gpios);
-+
-+	return 0;
-+}
-+
-+static void gpio_locked_clk_remove(struct platform_device *pdev)
-+{
-+	dev_dbg(&pdev->dev, "removed\n");
-+}
-+
-+static const struct of_device_id gpio_locked_clk_of_match[] = {
-+	{ .compatible = "gpio-locked-fixed-clock" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, gpio_locked_clk_of_match);
-+
-+static struct platform_driver gpio_locked_clk_driver = {
-+	.probe  = gpio_locked_clk_probe,
-+	.remove = gpio_locked_clk_remove,
-+	.driver = {
-+		.name           = "gpio-locked-fixed-clock",
-+		.of_match_table = gpio_locked_clk_of_match,
-+	},
-+};
-+module_platform_driver(gpio_locked_clk_driver);
-+
-+MODULE_AUTHOR("Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>");
-+MODULE_DESCRIPTION("GPIO-locked clock driver");
-+MODULE_LICENSE("Dual BSD/GPL");
+ .../bindings/clock/zte,zx297520v3-clk.yaml         | 173 ++++
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/zte/Kconfig                            |  18 +
+ drivers/clk/zte/Makefile                           |   2 +
+ drivers/clk/zte/clk-zx297520v3.c                   | 980 +++++++++++++++++++++
+ include/dt-bindings/clock/zte,zx297520v3-clk.h     | 179 ++++
+ 7 files changed, 1354 insertions(+)
+---
+base-commit: 028ef9c96e96197026887c0f092424679298aae8
+change-id: 20260510-zx29clk-2e4d39e3128c
+prerequisite-change-id: 20260416-send-5c08e095e5c9:v8
+prerequisite-patch-id: 94a9b9f889829e5c1899cb1be89b7ee9899b2626
+prerequisite-patch-id: 8a849ffe79ba35ef560250fb38587487cc5009fb
+prerequisite-patch-id: ef282d0a261dc1097f05057cd43e9e75ae52d92b
+prerequisite-patch-id: 5d615c9f855fca6da461168f45a5670a3c3cde81
+prerequisite-patch-id: 980a7e66a1031cdcc244a5e461220d68c72309a5
+prerequisite-patch-id: 45b6fc60cee81a793cd69e704bf098f1a68769a9
 
+Best regards,
 -- 
-2.34.1
-
+Stefan Dösinger <stefandoesinger@gmail.com>
 
