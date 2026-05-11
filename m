@@ -1,598 +1,158 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243673CFF6A;
-	Mon, 11 May 2026 12:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B9313A4520
+	for <linux-clk@vger.kernel.org>; Mon, 11 May 2026 13:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778503658; cv=none; b=WsLONWayXyVyJprEuzr3v6ojrZdB6+yxR8gRyuXjO9LW4YBxjNGkZsxpxAS7/QTckLM+YzoU9sOcoXGdrSI0Sxovk5ZvJfOy1vX+swZzIftH8y2qlLj9lzHIMRkl9kGOMUPzrysEOE2rBMe1xVLDNzyU1Puq4xvj67m0mMSXjOg=
+	t=1778505475; cv=none; b=Po4BbonBmA1GwFhIgK7p3mke90wa598xini/1FzlVJMWEoyiORCiI7owIb0prufySW+a5LRwi4WGrIz58nTT6al1f6m+yinoGZrEsf+R4r4lSILHTanBSsCuci9JfJMc4BUL0lYmbVA9FuchcX4DtkP+wgRN2zow1kPfRsfXpK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778503658; c=relaxed/simple;
-	bh=Lfvh+dBQZ+MTctmytjC5st1lQ2bX2pMQb6GvmIPWIa8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dNORgBuoNLUTi/r0MdqvcthqWwHOSqJZB5Qe75uziNeBucivdn7LleCANzsZtrnQ8GHWuKNIbTCwuCQcvgJmNIibchU40mPsX2sgakmq0afEz6vsBX4U2k3LnnsQ75yOENP3bQpPFDMSeVpUPcAVQE6jDB6zbqxeLIRVIgtg1b0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TVmpHA/k; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778505475; c=relaxed/simple;
+	bh=70pRwaawB6fSxyFjY9MWQ2Wj667Hq0JjSk0kpFgv0o0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=uHjt66xbD5aJFTwHIkPqJD323WD3jsn6ehdjh3B/GfH8A7r5d/QHlmmBTOuDsMKOhA45tyci68yoXRdEfLG5rSHDRwoI0hlYhMN4DcRL4R2u0UPqP8iHlo3NH+qluSJbtCGiu2iv68a3icuu6E5zx6TI39war72mcJNHSSjI8c8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OKiZ5YAY; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TVmpHA/k"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id EA3ECC32782;
-	Mon, 11 May 2026 12:47:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778503658;
-	bh=Lfvh+dBQZ+MTctmytjC5st1lQ2bX2pMQb6GvmIPWIa8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=TVmpHA/kuuyUd8tCVdZbVKsv2XOwMr2dPHL/iY2qhHuPGKGNXgs+ui4SiAPCraRTd
-	 8Rc/nJ9H/op5Dr17Onsf+/dtADobiCDVzHDsept9Z/rcxa12GR/RkGGuvaTCZP+87G
-	 bGOecO63KobCOf5Lmd2jkieJYvEgGbLxwDvJ5Zbt5vMR+uFQqit2i2Nkuk5+kQgfAn
-	 ENgDnSBrH8mc1q4gMGvc8f2y7No6TlPRHwEjH32gopem54Y/i6xLnyF4HFhHTBxC7s
-	 fSVr0JOpmMweno0s62DV5b0ZvXwvbDOVRZUa9tzp9kfXaDimoMd13y3IB5CJRvoQ6w
-	 7ZLdTB6ZPQVyw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCF5DCD484A;
-	Mon, 11 May 2026 12:47:37 +0000 (UTC)
-From: Jian Hu via B4 Relay <devnull+jian.hu.amlogic.com@kernel.org>
-Date: Mon, 11 May 2026 20:47:32 +0800
-Subject: [PATCH 10/10] clk: amlogic: Add A9 AO clock controller driver
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OKiZ5YAY"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-44ccbd3290aso3409326f8f.2
+        for <linux-clk@vger.kernel.org>; Mon, 11 May 2026 06:17:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1778505473; x=1779110273; darn=vger.kernel.org;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VpBr89JbDstdIUMvCB+UAEmSrotPv1wv1lCMdlQElUc=;
+        b=OKiZ5YAYE5GosIW9lKyy4U4IQ6LOmSN909YdrCMzeucPYB/sKJ0yPm3hKVCQ9vW2nT
+         G3lDMvs8v/iwvkUo4xCLNSvxsaP54sJRcysgPeBBl695/hAMiqidXxRNaT/rwRit4Amd
+         RYgCS/ne+0R+xfxke34UlwcRq09huKA6yB2YXd+ftFPx1HBtvSOq/jEzogZTFXd1TWCd
+         lY1SHqHJPv+q2pSEFRpUWePdeSvdBPO5hpLbE9qF4pPjcGae3WGqhW0ypO6JrCxHXcdT
+         kiVNKNppC1oVavuE+0/xoLM1ZPqELlB33VkV+uWicfO6RlbfutFqaTgxJpNdDVO6W6Mf
+         EHYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778505473; x=1779110273;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VpBr89JbDstdIUMvCB+UAEmSrotPv1wv1lCMdlQElUc=;
+        b=hnztQkBXV6En2y4qQOO9iCYqJkeB4hQ+SkNjgMyIrTscicUVjNfWr4Dl6QUVpR7Vmq
+         /LqlW1UderVsrIOZqST/SyqG7w2DEpduUM1uf34JRQrG+hEQJDcksfQZUt26QVPbJV9T
+         YdYQwywFB7Fp8da24gk5c0hmUvxNTcgO4n5B5yZPVT9/ngecwI0uI8SXYAoUi6iEOSQD
+         WL0LGLw9WAv0AhUjKXDLfA2Fq//2HPIRzT5wpQKukEi5qCbs5aVJo/bw9sC0nOEoADM+
+         QfEmCngik852B9qLUQlfxYzmJ4vfHADXxEt6YRygxQmE3XQaS0BxO3W59sbq+Rh0gMtB
+         e62w==
+X-Forwarded-Encrypted: i=1; AFNElJ8h3REQfaWnZxFqNKhHJsg+h+V5xhBjlPjsIJZxC7IkQXBOSjXEDDGNyb/qu/68WKJpO0g40n8+77M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9K3AKhT1fx2Hs3sllj3Elo0D7bMBPcITHaoU7vYtkt0o3eN1Y
+	NCH4NZIZbEp7yV8BzgbyljFSKcG44ZbyD8zQZ4FFh+9+hy6wFXcz5MRt7nyKlhhP5zA=
+X-Gm-Gg: Acq92OH0ULvYtlPHdF/DF38xc1NConU4ERmxts5bpn4M4yv3AoGv7CvcOY1/UJiXuL+
+	yzBREVz5v2FPzXkWE5BXG765WoVhPLq3QMwtGJGOg8VIGLAFx258wolMu8XLelH9LGC/ZfDMEMv
+	9/Jg7Bq6+xw7yNzRPdRbvsR/yq4cuLjTVh0aRnEPZ1Nkt0KYZ/D4B6TjvAuVtflq1PoKEDeyTGz
+	AigLVSnOTSWII8Fqe0EQ11rVGo3yhakns5gPFudnA+4Wu2nsHNyD2NM94cr1AUPZHLDzU0oDsz7
+	KsrpHvPlJDcsJuMpvB/lf+w4VYs48qpN/ETnk6tosvh+6kRD3s0FMtqON/UKBy40GNGjOrP+H0k
+	3oxHy0SO4bCId0i4IrcrCm1PbSJtnTAeqC3dHAorjvLEJF2Jwy7tvdcr9K0wCSnGu1Gtie5eWBk
+	SZB2NETAdb2tuKrSB+PRobgemGWeG+luYTVBLOL6WyCAiWvERULxbtImYVIfzy86c6ZxIRVFZI0
+	ouTZKOC9ixgiYD/pQ==
+X-Received: by 2002:a5d:5d0b:0:b0:43d:c2bc:21b4 with SMTP id ffacd0b85a97d-4515b525d65mr37422228f8f.16.1778505472478;
+        Mon, 11 May 2026 06:17:52 -0700 (PDT)
+Received: from localhost ([2a00:2381:fd67:101:5acc:6281:995e:547f])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4549120f1f9sm25688565f8f.24.2026.05.11.06.17.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 May 2026 06:17:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260511-b4-a9_clk-v1-10-41cb4071b7c9@amlogic.com>
-References: <20260511-b4-a9_clk-v1-0-41cb4071b7c9@amlogic.com>
-In-Reply-To: <20260511-b4-a9_clk-v1-0-41cb4071b7c9@amlogic.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Jerome Brunet <jbrunet@baylibre.com>, 
- Xianwei Zhao <xianwei.zhao@amlogic.com>, 
- Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, Jian Hu <jian.hu@amlogic.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1778503655; l=16323;
- i=jian.hu@amlogic.com; s=20260415; h=from:subject:message-id;
- bh=tyqWC7XRbrBKYoioMbyFA0OB4CBbbbDYN+NFH9jI9WE=;
- b=TEptvt0C4N8ltwUJJpEroGzt5cZZAgVCg+8PZUmLyoUkIjTRDQlJjitDDQvYYyZanTWGImLjZ
- Cw/+uyn5mclBmP0nQjIZe6fjdsMP5Zv3EIrHEn58PV9kQQoBr2IN+A/
-X-Developer-Key: i=jian.hu@amlogic.com; a=ed25519;
- pk=zHUE+rNtH9z+Sb8au1/elWknjFQmy5QDVkBoxleuOIA=
-X-Endpoint-Received: by B4 Relay for jian.hu@amlogic.com/20260415 with
- auth_id=735
-X-Original-From: Jian Hu <jian.hu@amlogic.com>
-Reply-To: jian.hu@amlogic.com
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 11 May 2026 14:17:51 +0100
+Message-Id: <DIFVKM72KZDI.14EVGUMQ0NV9S@linaro.org>
+To: "Tudor Ambarus" <tudor.ambarus@linaro.org>
+Cc: "Krzysztof Kozlowski" <krzk@kernel.org>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Lee Jones"
+ <lee@kernel.org>, "Alim Akhtar" <alim.akhtar@samsung.com>, "Sylwester
+ Nawrocki" <s.nawrocki@samsung.com>, "Chanwoo Choi" <cw00.choi@samsung.com>,
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ <linux-kernel@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+ <peter.griffin@linaro.org>, <jyescas@google.com>,
+ <kernel-team@android.com>, "Krzysztof Kozlowski"
+ <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: [PATCH 5/6] firmware: samsung: acpm: Add TMU protocol support
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+X-Mailer: aerc 0.20.0
+References: <20260506-acpm-tmu-helpers-v1-0-a9cd5daf8355@linaro.org>
+ <20260506-acpm-tmu-helpers-v1-5-a9cd5daf8355@linaro.org>
+ <DIBOWQYHOPOU.3PCLCL8030WRL@linaro.org>
+ <806da86b-45b7-43cc-b364-97bade8f4041@linaro.org>
+In-Reply-To: <806da86b-45b7-43cc-b364-97bade8f4041@linaro.org>
 
-From: Jian Hu <jian.hu@amlogic.com>
+On Thu May 7, 2026 at 9:31 AM BST, Tudor Ambarus wrote:
+> On 5/6/26 6:13 PM, Alexey Klimov wrote:
+>> On Wed May 6, 2026 at 12:39 PM BST, Tudor Ambarus wrote:
 
-Add the Always-on clock controller driver for the Amlogic A9 SoC family.
+[..]
 
-Signed-off-by: Jian Hu <jian.hu@amlogic.com>
----
- drivers/clk/meson/Makefile   |   2 +-
- drivers/clk/meson/a9-aoclk.c | 494 +++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 495 insertions(+), 1 deletion(-)
+>>> new file mode 100644
+>>> index 000000000000..c68d60b4c0b3
+>>> --- /dev/null
+>>> +++ b/drivers/firmware/samsung/exynos-acpm-tmu.c
+>>=20
+>> [..]
+>>=20
+>>> +static int acpm_tmu_to_linux_err(s8 fw_err)
+>>> +{
+>>> +	/*
+>>> +	 * ACPM_TMU_INIT uses BIT(0) and BIT(1) of msg.rx.ret to flag APM
+>>> +	 * capabilities. Treat zero and all positive values as success.
+>>=20
+>> ACPM_TMU_INIT returns capabilities inside designated error field?
+>
+> yes
 
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index 2b5b67b14efc..91af609ce815 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -20,7 +20,7 @@ obj-$(CONFIG_COMMON_CLK_AXG_AUDIO) += axg-audio.o
- obj-$(CONFIG_COMMON_CLK_A1_PLL) += a1-pll.o
- obj-$(CONFIG_COMMON_CLK_A1_PERIPHERALS) += a1-peripherals.o
- obj-$(CONFIG_COMMON_CLK_A9_PLL) += a9-pll.o
--obj-$(CONFIG_COMMON_CLK_A9_PERIPHERALS) += a9-peripherals.o
-+obj-$(CONFIG_COMMON_CLK_A9_PERIPHERALS) += a9-peripherals.o a9-aoclk.o
- obj-$(CONFIG_COMMON_CLK_C3_PLL) += c3-pll.o
- obj-$(CONFIG_COMMON_CLK_C3_PERIPHERALS) += c3-peripherals.o
- obj-$(CONFIG_COMMON_CLK_GXBB) += gxbb.o gxbb-aoclk.o
-diff --git a/drivers/clk/meson/a9-aoclk.c b/drivers/clk/meson/a9-aoclk.c
-new file mode 100644
-index 000000000000..3c42eaf585d2
---- /dev/null
-+++ b/drivers/clk/meson/a9-aoclk.c
-@@ -0,0 +1,494 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
-+/*
-+ * Copyright (C) 2026 Amlogic, Inc. All rights reserved
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/platform_device.h>
-+#include <dt-bindings/clock/amlogic,a9-aoclkc.h>
-+#include "clk-regmap.h"
-+#include "clk-dualdiv.h"
-+#include "meson-clkc-utils.h"
-+
-+#define AO_OSCIN_CTRL			0x00
-+#define AO_SYS_CLK0			0x04
-+#define AO_PWM_CLK_A_CTRL		0x1c
-+#define AO_PWM_CLK_B_CTRL		0x20
-+#define AO_PWM_CLK_C_CTRL		0x24
-+#define AO_PWM_CLK_D_CTRL		0x28
-+#define AO_PWM_CLK_E_CTRL		0x2c
-+#define AO_PWM_CLK_F_CTRL		0x30
-+#define AO_PWM_CLK_G_CTRL		0x34
-+#define AO_CEC_CTRL0			0x38
-+#define AO_CEC_CTRL1			0x3c
-+#define AO_RTC_BY_OSCIN_CTRL0		0x50
-+#define AO_RTC_BY_OSCIN_CTRL1		0x54
-+
-+#define A9_COMP_SEL(_name, _reg, _shift, _mask, _pdata) \
-+	MESON_COMP_SEL(a9_, _name, _reg, _shift, _mask, _pdata, NULL, 0, 0)
-+
-+#define A9_COMP_DIV(_name, _reg, _shift, _width) \
-+	MESON_COMP_DIV(a9_, _name, _reg, _shift, _width, 0, CLK_SET_RATE_PARENT)
-+
-+#define A9_COMP_GATE(_name, _reg, _bit) \
-+	MESON_COMP_GATE(a9_, _name, _reg, _bit, CLK_SET_RATE_PARENT)
-+
-+static struct clk_regmap a9_ao_xtal_in = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = AO_OSCIN_CTRL,
-+		.bit_idx = 3,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "ao_xtal_in",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_data = &(const struct clk_parent_data) {
-+			.fw_name = "xtal",
-+		},
-+		.num_parents = 1,
-+		/*
-+		 * It may be ao_sys's parent clock, its child clocks mark
-+		 * CLK_IS_CRITICAL, So mark CLK_IS_CRITICAL for it.
-+		 */
-+		.flags = CLK_IS_CRITICAL,
-+	},
-+};
-+
-+static struct clk_regmap a9_ao_xtal = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = AO_OSCIN_CTRL,
-+		.mask = 0x1,
-+		.shift = 0,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "ao_xtal",
-+		.ops = &clk_regmap_mux_ops,
-+		/* ext_32k is from external PAD, do not automatically reparent */
-+		.parent_data = (const struct clk_parent_data []) {
-+			{ .hw = &a9_ao_xtal_in.hw },
-+			{ .fw_name = "ext_32k", },
-+		},
-+		.num_parents = 2,
-+		.flags = CLK_SET_RATE_NO_REPARENT,
-+	},
-+};
-+
-+static struct clk_regmap a9_ao_sys = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = AO_OSCIN_CTRL,
-+		.mask = 0x1,
-+		.shift = 1,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "ao_sys",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_data = (const struct clk_parent_data []) {
-+			{ .hw = &a9_ao_xtal.hw },
-+			{ .fw_name = "sys", },
-+		},
-+		.num_parents = 2,
-+		.flags = CLK_SET_PARENT_GATE,
-+	},
-+};
-+
-+static const struct clk_parent_data a9_ao_pclk_parents = { .hw = &a9_ao_sys.hw };
-+
-+#define A9_AO_PCLK(_name, _bit, _flags)		       \
-+	MESON_PCLK(a9_ao_sys_##_name, AO_SYS_CLK0, _bit, \
-+		   &a9_ao_pclk_parents, _flags)
-+
-+/*
-+ * A9 integrates a low-power microprocessor (Always-on CPU: AOCPU). Some AO sys
-+ * clocks control the AOCPU modules. Mark the AOCPU-related clocks with
-+ * CLK_IS_CRITICAL to avoid them being disabled and impacting AOCPU functionality.
-+ * AOCPU-related clocks list:
-+ * - clktree
-+ * - rst_ctrl
-+ * - pad
-+ * - irq
-+ * - pwrctrl
-+ * - aocpu
-+ * - sram
-+ */
-+static A9_AO_PCLK(i2c3,		0,	0);
-+static A9_AO_PCLK(rtc_reg,	1,	0);
-+static A9_AO_PCLK(clktree,	2,	CLK_IS_CRITICAL);
-+static A9_AO_PCLK(rst_ctrl,	3,	CLK_IS_CRITICAL);
-+static A9_AO_PCLK(pad,		4,	CLK_IS_CRITICAL);
-+static A9_AO_PCLK(rtc_dig,	5,	0);
-+static A9_AO_PCLK(irq,		6,	CLK_IS_CRITICAL);
-+static A9_AO_PCLK(pwrctrl,	7,	CLK_IS_CRITICAL);
-+static A9_AO_PCLK(pwm_a,	8,	0);
-+static A9_AO_PCLK(pwm_b,	9,	0);
-+static A9_AO_PCLK(pwm_c,	10,	0);
-+static A9_AO_PCLK(pwm_d,	11,	0);
-+static A9_AO_PCLK(pwm_e,	12,	0);
-+static A9_AO_PCLK(pwm_f,	13,	0);
-+static A9_AO_PCLK(pwm_g,	14,	0);
-+static A9_AO_PCLK(i2c_a,	15,	0);
-+static A9_AO_PCLK(i2c_b,	16,	0);
-+static A9_AO_PCLK(i2c_c,	17,	0);
-+static A9_AO_PCLK(i2c_d,	18,	0);
-+static A9_AO_PCLK(sed,		19,	0);
-+static A9_AO_PCLK(ir_ctrl,	20,	0);
-+static A9_AO_PCLK(uart_b,	21,	0);
-+static A9_AO_PCLK(uart_c,	22,	0);
-+static A9_AO_PCLK(uart_d,	23,	0);
-+static A9_AO_PCLK(uart_e,	24,	0);
-+static A9_AO_PCLK(spisg_0,	25,	0);
-+static A9_AO_PCLK(rtc_secure,	26,	0);
-+static A9_AO_PCLK(cec,		27,	0);
-+static A9_AO_PCLK(aocpu,	28,	CLK_IS_CRITICAL);
-+static A9_AO_PCLK(sram,		29,	CLK_IS_CRITICAL);
-+static A9_AO_PCLK(spisg_1,	30,	0);
-+static A9_AO_PCLK(spisg_2,	31,	0);
-+
-+static const struct clk_parent_data a9_ao_pwm_parents[] = {
-+	{ .hw = &a9_ao_xtal.hw },
-+	{ .fw_name = "fdiv5", },
-+	{ .fw_name = "fdiv4", },
-+	{ .fw_name = "fdiv3", }
-+};
-+
-+static A9_COMP_SEL(ao_pwm_a, AO_PWM_CLK_A_CTRL, 9, 0x7, a9_ao_pwm_parents);
-+static A9_COMP_DIV(ao_pwm_a, AO_PWM_CLK_A_CTRL, 0, 8);
-+static A9_COMP_GATE(ao_pwm_a, AO_PWM_CLK_A_CTRL, 8);
-+
-+static A9_COMP_SEL(ao_pwm_b, AO_PWM_CLK_B_CTRL, 9, 0x7, a9_ao_pwm_parents);
-+static A9_COMP_DIV(ao_pwm_b, AO_PWM_CLK_B_CTRL, 0, 8);
-+static A9_COMP_GATE(ao_pwm_b, AO_PWM_CLK_A_CTRL, 8);
-+
-+static A9_COMP_SEL(ao_pwm_c, AO_PWM_CLK_C_CTRL, 9, 0x7, a9_ao_pwm_parents);
-+static A9_COMP_DIV(ao_pwm_c, AO_PWM_CLK_C_CTRL, 0, 8);
-+static A9_COMP_GATE(ao_pwm_c, AO_PWM_CLK_C_CTRL, 8);
-+
-+static A9_COMP_SEL(ao_pwm_d, AO_PWM_CLK_D_CTRL, 9, 0x7, a9_ao_pwm_parents);
-+static A9_COMP_DIV(ao_pwm_d, AO_PWM_CLK_D_CTRL, 0, 8);
-+static A9_COMP_GATE(ao_pwm_d, AO_PWM_CLK_D_CTRL, 8);
-+
-+static A9_COMP_SEL(ao_pwm_e, AO_PWM_CLK_E_CTRL, 9, 0x7, a9_ao_pwm_parents);
-+static A9_COMP_DIV(ao_pwm_e, AO_PWM_CLK_E_CTRL, 0, 8);
-+static A9_COMP_GATE(ao_pwm_e, AO_PWM_CLK_E_CTRL, 8);
-+
-+static A9_COMP_SEL(ao_pwm_f, AO_PWM_CLK_F_CTRL, 9, 0x7, a9_ao_pwm_parents);
-+static A9_COMP_DIV(ao_pwm_f, AO_PWM_CLK_F_CTRL, 0, 8);
-+static A9_COMP_GATE(ao_pwm_f, AO_PWM_CLK_F_CTRL, 8);
-+
-+static A9_COMP_SEL(ao_pwm_g, AO_PWM_CLK_G_CTRL, 9, 0x7, a9_ao_pwm_parents);
-+static A9_COMP_DIV(ao_pwm_g, AO_PWM_CLK_G_CTRL, 0, 8);
-+static A9_COMP_GATE(ao_pwm_g, AO_PWM_CLK_G_CTRL, 8);
-+
-+static struct clk_regmap a9_ao_rtc_dualdiv_in = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = AO_RTC_BY_OSCIN_CTRL0,
-+		.bit_idx = 31,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "ao_rtc_duandiv_in",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&a9_ao_xtal.hw
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
-+static const struct meson_clk_dualdiv_param a9_ao_dualdiv_table[] = {
-+	{ 733, 732, 8, 11, 1 },
-+	{ /* sentinel */ }
-+};
-+
-+static struct clk_regmap a9_ao_rtc_dualdiv_div = {
-+	.data = &(struct meson_clk_dualdiv_data){
-+		.n1 = {
-+			.reg_off = AO_RTC_BY_OSCIN_CTRL0,
-+			.shift   = 0,
-+			.width   = 12,
-+		},
-+		.n2 = {
-+			.reg_off = AO_RTC_BY_OSCIN_CTRL0,
-+			.shift   = 12,
-+			.width   = 12,
-+		},
-+		.m1 = {
-+			.reg_off = AO_RTC_BY_OSCIN_CTRL1,
-+			.shift   = 0,
-+			.width   = 12,
-+		},
-+		.m2 = {
-+			.reg_off = AO_RTC_BY_OSCIN_CTRL1,
-+			.shift   = 12,
-+			.width   = 12,
-+		},
-+		.dual = {
-+			.reg_off = AO_RTC_BY_OSCIN_CTRL0,
-+			.shift   = 28,
-+			.width   = 1,
-+		},
-+		.table = a9_ao_dualdiv_table,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "a9_ao_rtc_dualdiv_div",
-+		.ops = &meson_clk_dualdiv_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&a9_ao_rtc_dualdiv_in.hw
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_regmap a9_ao_rtc_dualdiv_sel = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = AO_RTC_BY_OSCIN_CTRL1,
-+		.mask = 0x1,
-+		.shift = 24,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "ao_rtc_dualdiv_sel",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&a9_ao_rtc_dualdiv_div.hw,
-+			&a9_ao_rtc_dualdiv_in.hw,
-+		},
-+		.num_parents = 2,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap a9_ao_rtc_dualdiv = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = AO_RTC_BY_OSCIN_CTRL0,
-+		.bit_idx = 30,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "ao_rtc_dualdiv",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&a9_ao_rtc_dualdiv_sel.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap a9_ao_rtc = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = AO_RTC_BY_OSCIN_CTRL1,
-+		.mask = 0x1,
-+		.shift = 30,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "ao_rtc",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&a9_ao_xtal.hw,
-+			&a9_ao_rtc_dualdiv.hw,
-+		},
-+		.num_parents = 2,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap a9_ao_cec_dualdiv_in = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = AO_CEC_CTRL0,
-+		.bit_idx = 31,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "ao_cec_dualdiv_in",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&a9_ao_xtal.hw
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_regmap a9_ao_cec_dualdiv_div = {
-+	.data = &(struct meson_clk_dualdiv_data){
-+		.n1 = {
-+			.reg_off = AO_CEC_CTRL0,
-+			.shift   = 0,
-+			.width   = 12,
-+		},
-+		.n2 = {
-+			.reg_off = AO_CEC_CTRL0,
-+			.shift   = 12,
-+			.width   = 12,
-+		},
-+		.m1 = {
-+			.reg_off = AO_CEC_CTRL1,
-+			.shift   = 0,
-+			.width   = 12,
-+		},
-+		.m2 = {
-+			.reg_off = AO_CEC_CTRL1,
-+			.shift   = 12,
-+			.width   = 12,
-+		},
-+		.dual = {
-+			.reg_off = AO_CEC_CTRL0,
-+			.shift   = 28,
-+			.width   = 1,
-+		},
-+		.table = a9_ao_dualdiv_table,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "ao_cec_dualdiv_div",
-+		.ops = &meson_clk_dualdiv_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&a9_ao_cec_dualdiv_in.hw
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_regmap a9_ao_cec_dualdiv_sel = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = AO_CEC_CTRL1,
-+		.mask = 0x1,
-+		.shift = 24,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "ao_cec_dualdiv_sel",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&a9_ao_cec_dualdiv_div.hw,
-+			&a9_ao_cec_dualdiv_in.hw,
-+		},
-+		.num_parents = 2,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap a9_ao_cec_dualdiv = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = AO_CEC_CTRL0,
-+		.bit_idx = 30,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "ao_cec_dualdiv",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&a9_ao_cec_dualdiv_sel.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap a9_ao_cec = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = AO_CEC_CTRL1,
-+		.mask = 0x1,
-+		.shift = 30,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "ao_cec",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&a9_ao_cec_dualdiv.hw,
-+			&a9_ao_rtc.hw,
-+		},
-+		.num_parents = 2,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_hw *a9_ao_hw_clks[] = {
-+	[CLKID_AO_XTAL_IN]		= &a9_ao_xtal_in.hw,
-+	[CLKID_AO_XTAL]			= &a9_ao_xtal.hw,
-+	[CLKID_AO_SYS]			= &a9_ao_sys.hw,
-+	[CLKID_AO_SYS_I3C]		= &a9_ao_sys_i2c3.hw,
-+	[CLKID_AO_SYS_RTC_REG]		= &a9_ao_sys_rtc_reg.hw,
-+	[CLKID_AO_SYS_CLKTREE]		= &a9_ao_sys_clktree.hw,
-+	[CLKID_AO_SYS_RST_CTRL]		= &a9_ao_sys_rst_ctrl.hw,
-+	[CLKID_AO_SYS_PAD]		= &a9_ao_sys_pad.hw,
-+	[CLKID_AO_SYS_RTC_DIG]		= &a9_ao_sys_rtc_dig.hw,
-+	[CLKID_AO_SYS_IRQ]		= &a9_ao_sys_irq.hw,
-+	[CLKID_AO_SYS_PWRCTRL]		= &a9_ao_sys_pwrctrl.hw,
-+	[CLKID_AO_SYS_PWM_A]		= &a9_ao_sys_pwm_a.hw,
-+	[CLKID_AO_SYS_PWM_B]		= &a9_ao_sys_pwm_b.hw,
-+	[CLKID_AO_SYS_PWM_C]		= &a9_ao_sys_pwm_c.hw,
-+	[CLKID_AO_SYS_PWM_D]		= &a9_ao_sys_pwm_d.hw,
-+	[CLKID_AO_SYS_PWM_E]		= &a9_ao_sys_pwm_e.hw,
-+	[CLKID_AO_SYS_PWM_F]		= &a9_ao_sys_pwm_f.hw,
-+	[CLKID_AO_SYS_PWM_G]		= &a9_ao_sys_pwm_g.hw,
-+	[CLKID_AO_SYS_I2C_A]		= &a9_ao_sys_i2c_a.hw,
-+	[CLKID_AO_SYS_I2C_B]		= &a9_ao_sys_i2c_b.hw,
-+	[CLKID_AO_SYS_I2C_C]		= &a9_ao_sys_i2c_c.hw,
-+	[CLKID_AO_SYS_I2C_D]		= &a9_ao_sys_i2c_d.hw,
-+	[CLKID_AO_SYS_SED]		= &a9_ao_sys_sed.hw,
-+	[CLKID_AO_SYS_IR_CTRL]		= &a9_ao_sys_ir_ctrl.hw,
-+	[CLKID_AO_SYS_UART_B]		= &a9_ao_sys_uart_b.hw,
-+	[CLKID_AO_SYS_UART_C]		= &a9_ao_sys_uart_c.hw,
-+	[CLKID_AO_SYS_UART_D]		= &a9_ao_sys_uart_d.hw,
-+	[CLKID_AO_SYS_UART_E]		= &a9_ao_sys_uart_e.hw,
-+	[CLKID_AO_SYS_SPISG_0]		= &a9_ao_sys_spisg_0.hw,
-+	[CLKID_AO_SYS_RTC_SECURE]	= &a9_ao_sys_rtc_secure.hw,
-+	[CLKID_AO_SYS_CEC]		= &a9_ao_sys_cec.hw,
-+	[CLKID_AO_SYS_AOCPU]		= &a9_ao_sys_aocpu.hw,
-+	[CLKID_AO_SYS_SRAM]		= &a9_ao_sys_sram.hw,
-+	[CLKID_AO_SYS_SPISG_1]		= &a9_ao_sys_spisg_1.hw,
-+	[CLKID_AO_SYS_SPISG_2]		= &a9_ao_sys_spisg_2.hw,
-+	[CLKID_AO_PWM_A_SEL]		= &a9_ao_pwm_a_sel.hw,
-+	[CLKID_AO_PWM_A_DIV]		= &a9_ao_pwm_a_div.hw,
-+	[CLKID_AO_PWM_A]		= &a9_ao_pwm_a.hw,
-+	[CLKID_AO_PWM_B_SEL]		= &a9_ao_pwm_b_sel.hw,
-+	[CLKID_AO_PWM_B_DIV]		= &a9_ao_pwm_b_div.hw,
-+	[CLKID_AO_PWM_B]		= &a9_ao_pwm_b.hw,
-+	[CLKID_AO_PWM_C_SEL]		= &a9_ao_pwm_c_sel.hw,
-+	[CLKID_AO_PWM_C_DIV]		= &a9_ao_pwm_c_div.hw,
-+	[CLKID_AO_PWM_C]		= &a9_ao_pwm_c.hw,
-+	[CLKID_AO_PWM_D_SEL]		= &a9_ao_pwm_d_sel.hw,
-+	[CLKID_AO_PWM_D_DIV]		= &a9_ao_pwm_d_div.hw,
-+	[CLKID_AO_PWM_D]		= &a9_ao_pwm_d.hw,
-+	[CLKID_AO_PWM_E_SEL]		= &a9_ao_pwm_e_sel.hw,
-+	[CLKID_AO_PWM_E_DIV]		= &a9_ao_pwm_e_div.hw,
-+	[CLKID_AO_PWM_E]		= &a9_ao_pwm_e.hw,
-+	[CLKID_AO_PWM_F_SEL]		= &a9_ao_pwm_f_sel.hw,
-+	[CLKID_AO_PWM_F_DIV]		= &a9_ao_pwm_f_div.hw,
-+	[CLKID_AO_PWM_F]		= &a9_ao_pwm_f.hw,
-+	[CLKID_AO_PWM_G_SEL]		= &a9_ao_pwm_g_sel.hw,
-+	[CLKID_AO_PWM_G_DIV]		= &a9_ao_pwm_g_div.hw,
-+	[CLKID_AO_PWM_G]		= &a9_ao_pwm_g.hw,
-+	[CLKID_AO_RTC_DUALDIV_IN]	= &a9_ao_rtc_dualdiv_in.hw,
-+	[CLKID_AO_RTC_DUALDIV_DIV]	= &a9_ao_rtc_dualdiv_div.hw,
-+	[CLKID_AO_RTC_DUALDIV_SEL]	= &a9_ao_rtc_dualdiv_sel.hw,
-+	[CLKID_AO_RTC_DUALDIV]		= &a9_ao_rtc_dualdiv.hw,
-+	[CLKID_AO_RTC]			= &a9_ao_rtc.hw,
-+	[CLKID_AO_CEC_DUALDIV_IN]	= &a9_ao_cec_dualdiv_in.hw,
-+	[CLKID_AO_CEC_DUALDIV_DIV]	= &a9_ao_cec_dualdiv_div.hw,
-+	[CLKID_AO_CEC_DUALDIV_SEL]	= &a9_ao_cec_dualdiv_sel.hw,
-+	[CLKID_AO_CEC_DUALDIV]		= &a9_ao_cec_dualdiv.hw,
-+	[CLKID_AO_CEC]			= &a9_ao_cec.hw,
-+};
-+
-+static const struct meson_clkc_data a9_ao_clkc_data = {
-+	.hw_clks = {
-+		.hws = a9_ao_hw_clks,
-+		.num = ARRAY_SIZE(a9_ao_hw_clks),
-+	},
-+};
-+
-+static const struct of_device_id a9_ao_clkc_match_table[] = {
-+	{
-+		.compatible	= "amlogic,a9-aoclkc",
-+		.data		= &a9_ao_clkc_data,
-+	},
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, a9_ao_clkc_match_table);
-+
-+static struct platform_driver a9_ao_clkc_driver = {
-+	.probe		= meson_clkc_mmio_probe,
-+	.driver		= {
-+		.name	= "a9-aoclkc",
-+		.of_match_table = a9_ao_clkc_match_table,
-+	},
-+};
-+module_platform_driver(a9_ao_clkc_driver);
-+
-+MODULE_DESCRIPTION("Amlogic A9 Always-ON Clock Controller driver");
-+MODULE_AUTHOR("Jian Hu <jian.hu@amlogic.com>");
-+MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS("CLK_MESON");
+Heh. Okay.
 
--- 
-2.47.1
+>> What about other messages/commands? They just return error code there?
+>
+> all the other commands either return -1 for errors, regardless of the err=
+or
+> type, or 0 for success.
+>>=20
+>>> +	 */
+>>> +	if (fw_err >=3D 0)
+>>> +		return 0;
+>>> +
+>>> +	if (fw_err =3D=3D -1)
+>>> +		return -EACCES;
+>>> +
+>>> +	return -EIO;
+>>> +}
+>>=20
+>> Could we map these return values with better granularity instead of
+>> returning -EIO for everything else that is not minus one?
+>
+> I think we're good as we are now. The firmware returns either -1 for erro=
+rs,
+> zero for success, or BIT(0) and BIT(1) for TMU_INIT to flag some capabili=
+ties.
+> I can't tell if there are other commands that return capabilities as well=
+,
+> or if there are other capabilities for TMU_INIT, I don't have access to t=
+he
+> firmware code.
 
+On Exynos850 I see more than just one returned error codes. I definitely
+see 0xfe and 0xfd at least. I don't have any data to confirm that ff
+maps to -1 and fd-s, fe-s to -2,-3 though and what they mean. From my
+experiments I suspect that 0xfe means that call/msg type is not
+implemented or not accessible and 0xfd means that passed parameter is
+wrong or incorrect or not found.
+
+I am also not sure that I saw 0xff-s but, well, maybe that needs more
+experimenting.
+
+Thanks,
+Alexey
 
