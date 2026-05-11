@@ -1,94 +1,93 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CFEB274641
-	for <linux-clk@vger.kernel.org>; Mon, 11 May 2026 15:00:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E363232470A
+	for <linux-clk@vger.kernel.org>; Mon, 11 May 2026 15:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778511615; cv=none; b=tGuwh4M/+8p+Ciaewy0xknvTlFt2Rf+ztIBSeLlH83lNfMORmay9Cgf76zexosgBP3NNkTDl01qj4cEdla8zX2SBh/nrIVVFk5Gxfw8yn3/UGOHTtv8nbxymCjrOSw1QW0bOoo8X9TVABL1MTVa+ZQfM1NoOiVNcmhve2n0YEog=
+	t=1778512180; cv=none; b=gARu1604bcozj4ShdnOaDfuHp0tqbwerIpAKMLSuEqt7IOfXziCOI+BxqadjSdNEm3fWN849lkARymMDNpzAIwmWFMmhCOfg8Rbm6nZDVqrULYoMQPG/TMNiQqZFNsdMuTPlQ/ULu/KkJPvRVzAc7ZZG75DnD2DOVQEogUAScnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778511615; c=relaxed/simple;
-	bh=0fl1FVlc4728Jngyah/QPyBoBZjAKjC9+pOxoqQncpc=;
+	s=arc-20240116; t=1778512180; c=relaxed/simple;
+	bh=pDoOOoRbfnSiYt3NK45esXAiboYelbh9USbQXkCgS20=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sMS3oZ8rWWlMbaTYhFLvMXdpF6i0eQ0Am/2XLDgijH0IN+R14Vm+QLXcxjshMOZaWky5GZquTvFe/uDMW555BAGXT0cTZBLcr2RpiJGDi+QHURnK21hxxAY2lDPAICQ8Z/BMpQIpzZOZZcEokqeTFX5yO8WY44CD6avRcfru9UU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LNP0+Eof; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=LX9VnKLD; arc=none smtp.client-ip=170.10.133.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=pOFief46lWBNW6UFyrz0l4zSZgAro1sc2DUFRR4UfCwx4filx9ZcHldqm9Tzv9IrlLU0QN0G7IMcD5LMrej0gu4jfsziu6AeChJjq4pwXJi74r3uR0PRL/vQuicvMkCf1pLeVS+benMenz4hogAxY4ULcLdhzKEYSkR12A92JFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DovDn7M/; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=i8P81ube; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LNP0+Eof";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="LX9VnKLD"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DovDn7M/";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="i8P81ube"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1778511613;
+	s=mimecast20190719; t=1778512178;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=w/eD3OaTHJb0ey72pgYTA9xJ2tegXQL9CnlHMvp4NrM=;
-	b=LNP0+EofJ+XpzNQEtRmeYMb4H5i9twuuI24l5tHuioJSxW1lIzdHaMlThopkcZtzaqEB6m
-	Ht5wp0s9hgl+pJ4Qr0GKjkqzG0g2zqtbtm/wKqA93nhb7/9WWQ4k71NLC0E+nS6MNZzwQT
-	0zHIwNw5znSle1O0XnXuVeTL4nBg0qA=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=6fJ1KMpAkCCaRuC7BCMByjq+rlJoeF9q4cW8hbtF/+g=;
+	b=DovDn7M/lp2ONsjgz8011+8qRaC/70kEJ8YpKsGTcMj34tMy9CRJC6o8gjakF4MGS/+bQg
+	d+m/IJiByE444mpOtxxgWfGs+qTRHMCs8zdB4DSAfD5IWPwnvUY+nwOR0C08iQW5fZpd+D
+	6V0lpZGIrxjkr8hO3m2p9YBqOFqbl0Q=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-230-noOMOGFCOZuGUq7hVzBdLQ-1; Mon, 11 May 2026 11:00:12 -0400
-X-MC-Unique: noOMOGFCOZuGUq7hVzBdLQ-1
-X-Mimecast-MFC-AGG-ID: noOMOGFCOZuGUq7hVzBdLQ_1778511612
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-8b49424ad88so112747496d6.1
-        for <linux-clk@vger.kernel.org>; Mon, 11 May 2026 08:00:12 -0700 (PDT)
+ us-mta-455-qLMhqqVYOSO5Ix-BkzwslA-1; Mon, 11 May 2026 11:09:36 -0400
+X-MC-Unique: qLMhqqVYOSO5Ix-BkzwslA-1
+X-Mimecast-MFC-AGG-ID: qLMhqqVYOSO5Ix-BkzwslA_1778512175
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-8b459fa5f76so23989786d6.1
+        for <linux-clk@vger.kernel.org>; Mon, 11 May 2026 08:09:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1778511612; x=1779116412; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1778512175; x=1779116975; darn=vger.kernel.org;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=w/eD3OaTHJb0ey72pgYTA9xJ2tegXQL9CnlHMvp4NrM=;
-        b=LX9VnKLDV4lHjjMMv1krKDyhN5D0qgYy1IPyGn9gOLFUC4tr8RXBn/yyAkAYaWsqzI
-         wkLWh/+0X1BeQ9kEAYkag+ZkWkY97aMwI0B4hT6jnVbYcvGTs7cc06N0zyYxgoxAY2A/
-         47PWCHPkzcOTvJnXZRplnlE0MOPqEIW8pom3xL3otnQoub+bowSMw5sKbXgm21+x6pOP
-         a5baFSZWR5aBEkUQi77uvLR2F39CUIV5YOhZrWWX4QX2Iks4JSmdp8XgMufj8u4VDb7J
-         CRrPo0aumr5EUJwprlOU3xEYknnbHNlrsOrbG3KkeS2CgNbgCvXtRhk+MieFT5B0oqZb
-         7OqQ==
+        bh=6fJ1KMpAkCCaRuC7BCMByjq+rlJoeF9q4cW8hbtF/+g=;
+        b=i8P81ubedFDYCWI/d54uzWbgy0yjClFlMzy+hcyOYfUbHRqWryiWEZb4od1LguVc17
+         dOA/FdQYEZxPjR8I61LNgCCu0SakT42KK/QErdI4GE8wpmh71D56ZYLoFYgmhilVplvW
+         BaNblRACf73mp1K+sYVi8n3tgFzET0Jpj6jAbk80hm2O4qWkFUaf1v/O0PxLJdj8jfH/
+         OPRbFZbtdnfYuqmgofxUNhvRtpr9l78ja3S3tt0pdd6W5xOFLLKscnpGwiCrEYLDjv5H
+         dXwwwrzIWU6InHxZRLJXzD96GWvwkTEM1HOmrnSOfKYy2TCZOYZCi6saoOd5YHD7PBjj
+         2zNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778511612; x=1779116412;
+        d=1e100.net; s=20251104; t=1778512175; x=1779116975;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=w/eD3OaTHJb0ey72pgYTA9xJ2tegXQL9CnlHMvp4NrM=;
-        b=pXMri5EFOQlnhlx4e3YXNM0IeCkpTEsPcd1SEq0MR1IW1dX4RT+PjxUiPNBFuis4Kb
-         PLS0T2BDpKJcgG8aBL4R03NSskzJ7kCaLA/BtuRjKWLTKwMPBcBs8Zoitx0V0aorDdw8
-         Y+cb2a3pXuokNvW1lXQwTqL1KMkPs6FtwSSji29VzS1OcvYQWwUOakFbROkX0AU2CgBC
-         XQV3K4Q+k7n2iV8eAvZQyezqa4VuWylWcUTsOj+xlgOv1wDG/dcBiBqMGdm2jjITMAY9
-         HLP/6Fz3qJrfLFWi/AHWER7V1xIELEe9Knng8H9mrQXMfuA6QjyjbkkDKdxVakpoZV4u
-         8/9g==
-X-Gm-Message-State: AOJu0YxwmFWngnwa8X9qQtr2NFU64FchkMWw5usWrTvFZfPtUwqm2thg
-	EPOvmLXD2ZTdYK4GYLiTeOYpDmwqUlMzOvdkKJMlGXtib7IqIi2cUXeeCnCMBJBsLdZpOJ+KLLa
-	vxAaWgXyzg9CBOFk1g7qNGyT+MNvQAaLZAbfWBUsz4lg9h0kD7TPYUdtncO4cTw==
-X-Gm-Gg: Acq92OFICMntKJEUtuO4yFcutpiAqKZoN0inFA0iuTycSuHww7UUL9nxRWaS3mC32Vr
-	Uz6CVai8F1DkyATIZNgHV6VPFTMh/MuGbxH0FKhvhgHpzRGnmKYl2MJSRxiy/yl0HOX/0SoCJ7V
-	V1MThfo2ugjIYLaaOKGq1fc+8SytTRuELwES3XjnD8wQTFURC7qXyJmMHm19ndz2HasY1mZ7cO+
-	Y1vBWALqAG53Fr4ayOgJyHbxH9AJXpwOyjNdh200XzGuhIXXQH0J41If/8GATJcA6MxUbn639wa
-	aB4aG6/9u5kQEUph0WH1BXh8Lo32ZTwJvbUYif/anfJHIamHN6NTjH/yvHhV5BPgv1p/eoRoFVx
-	T5pEshPcJXPzDgnQ1s7eAwuGRSGxHZe3n8xRowCZL/yvRKcC2xbZyezX/
-X-Received: by 2002:ad4:5c64:0:b0:8bb:2e70:7a2a with SMTP id 6a1803df08f44-8bc441e5420mr357792586d6.31.1778511606273;
-        Mon, 11 May 2026 08:00:06 -0700 (PDT)
-X-Received: by 2002:ad4:5c64:0:b0:8bb:2e70:7a2a with SMTP id 6a1803df08f44-8bc441e5420mr357785966d6.31.1778511600814;
-        Mon, 11 May 2026 08:00:00 -0700 (PDT)
+        bh=6fJ1KMpAkCCaRuC7BCMByjq+rlJoeF9q4cW8hbtF/+g=;
+        b=kK2aFYEkicsGU2PMWRBz2JOPrq+UCe8xfqrZSGD/Waae38bvRwrilKb95ernr5ynuE
+         4ZD25MTn6pN/KplwekwRCQzZWfIt8rxyYgUuD6gSz8Y+gmS0zE/Sm0Mq5m9O3T/C3uB3
+         JeeS7p2a95AZ5QLd/ULfns6yjc8+B3HkUDMmhsqecSo8M1TAD/TkRLAFB/vlcU4A8FMa
+         XTcqy16R8UEM3zNwnO8+NlrAqDiUMQ+MfoVFJXM/jD2H222davYdLYyYEOtHotEz9cNd
+         Kdq8m/TaDvsuEzELRWZ1j5LEHyP6TTVkkCV/lncdMQfvblEBfoXWab+rpVgxCWtvroW5
+         piog==
+X-Forwarded-Encrypted: i=1; AFNElJ88r9XkA9EDzZtVlvGWDVaJPsllFvCyXihZxp3K95nwY0pftg5uu9lL+x6S5FI10SOWPyS/RXq+MEI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWGDDr3k9jis1kl5G6V8B7AUUsbdYjnBCvbRXGaR4gRHBVv0Pj
+	+5SEhRKR7gF04bZHFHnAKvnbASQ41eOdRJ7fCkn6RtNBSq8Rf8bmwPxOC9lOziQdY84RV3xXmfx
+	lmJ86jNlh8iBhUbxZPpcJOOy+q6lLbInWREZVa7RIVrOPOrJJdvRSj4+s9Em7A6zj7zRWYw==
+X-Gm-Gg: Acq92OFkeRjuiTuPVNuv4Qu89utNXnnlGwmPnC5m9sEjSM+K6h/NkPUrFBf2HHBFnOW
+	Mpef9kU0bhnkXWNKFstMkhxL6lWZ4gusWSBTPnp0KVUsz4ULxp9n6zmhe6hBVW9N+i2xtcolPc/
+	DqlEJ6+BRnwKbQv3Vv1JsVBYfrqxLL4YY7+aVlmLfQ3O7zPHnIqwn0f53aYotAfVVhsimIP3j8U
+	WN+P/SfoKyAlUeTpQ1+Cl9gWG0ln72ubaKMwlz3JE32qIzQaJHV0vcCd/VCpxf0/qhJyrYu2BoA
+	6JetoR6mBmbB9hRNkZUomJKNrA6N2w7yewUTXWEKVSKf79yLV+uZjEUCBHqbsLPFclQDXETWrbW
+	gAREHAUDGFXLZ+oXiG2HJ2kYi3zU+p603vJ+hBKpF2DthQvWQPT6JN8/y
+X-Received: by 2002:a05:6214:4989:b0:8b2:2474:8f3a with SMTP id 6a1803df08f44-8bc449aff3amr377914136d6.25.1778512175149;
+        Mon, 11 May 2026 08:09:35 -0700 (PDT)
+X-Received: by 2002:a05:6214:4989:b0:8b2:2474:8f3a with SMTP id 6a1803df08f44-8bc449aff3amr377913356d6.25.1778512174525;
+        Mon, 11 May 2026 08:09:34 -0700 (PDT)
 Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8bf3a438e3csm96354776d6.19.2026.05.11.07.59.59
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8bf3a906e65sm96046336d6.16.2026.05.11.08.09.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 May 2026 08:00:00 -0700 (PDT)
-Date: Mon, 11 May 2026 10:59:59 -0400
+        Mon, 11 May 2026 08:09:33 -0700 (PDT)
+Date: Mon, 11 May 2026 11:09:32 -0400
 From: Brian Masney <bmasney@redhat.com>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+To: Min zhang <zhangmin2026@yeah.net>
+Cc: Wei Xu <xuwei5@hisilicon.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:CLANG/LLVM BUILD SUPPORT:Keyword:b(?i:clang|llvm)b" <llvm@lists.linux.dev>
-Subject: Re: [PATCH] clk: hisilicon: allow COMPILE_TEST builds
-Message-ID: <agHu78VflprAM7Yj@redhat.com>
-References: <20260509051110.1061393-1-rosenp@gmail.com>
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: hisilicon: reset: Use devm_kzalloc to initialize
+ hisi_reset_controller
+Message-ID: <agHxLO-sl3pCYVY6@redhat.com>
+References: <20260511053216.538035-1-zhangmin2026@yeah.net>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -97,24 +96,24 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260509051110.1061393-1-rosenp@gmail.com>
+In-Reply-To: <20260511053216.538035-1-zhangmin2026@yeah.net>
 User-Agent: Mutt/2.3.1 (2026-03-20)
 
-On Fri, May 08, 2026 at 10:11:10PM -0700, Rosen Penev wrote:
-> The HiSilicon clock symbols already depend on ARCH_HISI or COMPILE_TEST,
-> but the parent clock Makefile only descends into the hisilicon directory
-> when ARCH_HISI is enabled.
+On Mon, May 11, 2026 at 01:32:14PM +0800, Min zhang wrote:
+> Using devm_kmalloc() does not zero-initialize the allocated structure.
+> Uninitialized members in struct hisi_reset_controller may contain garbage
+> data, which can cause reset_controller_register() to fail unexpectedly.
 > 
-> Add a hidden family gate selected by the HiSilicon clock and reset symbols,
-> default it for ARCH_HISI, and use it for the parent Makefile descent.  This
-> keeps existing platform builds unchanged while allowing compile-test
-> coverage.
+> Replace devm_kmalloc() with devm_kzalloc() to ensure all structure fields
+> are properly zero-initialized.
 > 
-> Tested with:
-> make LLVM=1 ARCH=loongarch drivers/clk/hisilicon/
-> 
-> Assisted-by: Codex:GPT-5.5
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> Fixes: reset controller registration failure due to invalid dirty data
 
+This is not a valid fixes tag. Please drop.
+
+> 
+> Signed-off-by: Min zhang <zhangmin2026@yeah.net>
+
+Fixes: 97b7129cd2afb ("reset: hisilicon: change the definition of hisi_reset_init")
 Reviewed-by: Brian Masney <bmasney@redhat.com>
 
