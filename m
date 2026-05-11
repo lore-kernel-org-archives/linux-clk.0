@@ -1,36 +1,38 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DF8426680
-	for <linux-clk@vger.kernel.org>; Mon, 11 May 2026 16:01:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E6F43D4E0;
+	Mon, 11 May 2026 16:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778515282; cv=none; b=TNWOuPRogm22Z/PnOwBnxB4oIRgVWXFQXNkGo3ORXBAFA0S05c5sIRS3Y8gFVM339TgJTFCI5EdaayKMqgdJpR+Fsfqw9GBvaNMY14FfOUhaSf6wGeJWI7jIA1CsQuEAnqsJYiSQPC+jVIqalevi4Kqls1F/PKBiKwy4asW5jIw=
+	t=1778515283; cv=none; b=ZWKIkzTJfq389AgKsnmY4DIMSNdmU314jmZd5jqN1Y1F+K+dF1MD2KEtEp84AyN9YPIEOIULWmtglw6aUX8MWFkbOtDYR+BGhGCxStj+amoz3h2LnWR90npc9gd05jdo8GKmEuY+/ix+LdKFqq50p8xlfvz2ZTzejv1Io9xRBsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778515282; c=relaxed/simple;
-	bh=ZaR3Okq+2s2Np8wkDtpHrIEgdLLFYTA6sznZ81NREBw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dN22Ie8m/0F8H/1uyKAqp95yr1Ngco0pH+WphStH7egm58IOlinF8rZDV+EAovJfgO8uAt3xLWeEHWS+/n1VgnKSXzfuHHPKZ14QK6Mv/77f516bGRFj5Sp3DkO5/oqq9QRxuhDmveoxgk9hfOQgzzDEsmGgZPdcLKWKbVpp8Gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=iTXtf1OI; arc=none smtp.client-ip=185.246.84.56
+	s=arc-20240116; t=1778515283; c=relaxed/simple;
+	bh=R9I/f75qY7Rz47zyfVcNUenIwxmv+W4uRzZz1ioK1WM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=jgnNpcyRIYkwGfOASUtasdRfm4PCre4P3TlQ8N1pALYypx/xdul54wfLuLpHFbHqMaCWWwxyG/cFW0BJgzQdgUceh+CGsCDrZJOwLrA2tDJSJ4+uq7M+cAmewRpI7nuTL6WJA/dhLeeAKibj+b1cXO7QwjVZDrFGQMuNGQ9cMqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GfWsNqXZ; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="iTXtf1OI"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GfWsNqXZ"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 722481A1DD5;
-	Mon, 11 May 2026 16:01:19 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 58A4DC5E154;
+	Mon, 11 May 2026 16:02:10 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 47B5060646;
-	Mon, 11 May 2026 16:01:19 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0AB2511AF9ED5;
-	Mon, 11 May 2026 18:01:16 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id C0C1E60646;
+	Mon, 11 May 2026 16:01:20 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 135E411AF9F28;
+	Mon, 11 May 2026 18:01:18 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1778515278; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=8wwnEr4E6ErCNBSatPbGyq4FU6v9HeDDxzhNKNaPjNw=;
-	b=iTXtf1OIqX/6/0fL7VGqwS1KgM2gSbZjGW+Itm0WhLKYx14bOFwaEfuPCwPAAnlPclyDCm
-	zK3VCYyweSXNu6bjOSB8SK2hRIS2TeIiSbO5DVppYAoHdCrc4hsEs5x3Aiw7cbWEZpWOVO
-	mcjKoFePsQShzNweVpj4W6rrbmAg2qEt5trcyoHX6rhTAmAZOBIHdAxwtaWdY8ZXT0Wb+2
-	D+5fdqnVXqPjUO+f33w9rU7BmRn7xdvKHmAdQiWhfQTstuqAHVV2s4NFZeApgrU7RipXZX
-	e9gqcZUPKpcIr72GDX++tFVCQR2TdUlg/WdGeF/1MKbhf9d3m7FqxbAFMDblsw==
+	t=1778515280; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=6oiAfU8MEqd8yhhPfwMPKZd93U5KjSCmMlrrYUL7Xn8=;
+	b=GfWsNqXZruqSVKMtOrd5h42JmzCR9YPjA0HFLSg51xFjkEVh9hKU75eTnJNq/JwQDHcH9M
+	7kJ2vfp207K1zAFvJ1OFrP1dBjeWDVI9estQcPXaoPXrBZd3sQeUGsHGfbocyfuBzZaeXt
+	3VmCydfrC7B5hbslEIeMWdns4b/nVUGbauSmzz/sED9mZJNRkH9e3Z0paaCscn4fzsk//W
+	lMZbYQCGtCqSW1LEaItWrtd+TiesxRr9RSBXAYpU5uKX2lTrtJ31awtgnJGetNtkYQTViT
+	liJ6Wrlk1kSsQMHv76svSVHHXJeddzBnwbNKmHrBs96NQ/FWaSyBQfGUYseOYA==
 From: Herve Codina <herve.codina@bootlin.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>
@@ -43,56 +45,46 @@ Cc: linux-clk@vger.kernel.org,
 	Luca Ceresoli <luca.ceresoli@bootlin.com>,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
 	Herve Codina <herve.codina@bootlin.com>
-Subject: [PATCH v7 0/1] lan966x pci device: Add support for SFPs, clock dependency part
-Date: Mon, 11 May 2026 18:01:11 +0200
-Message-ID: <20260511160113.34755-1-herve.codina@bootlin.com>
+Subject: [PATCH v7 1/1] clk: lan966x: Add MCHP_LAN966X_PCI dependency
+Date: Mon, 11 May 2026 18:01:12 +0200
+Message-ID: <20260511160113.34755-2-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.54.0
+In-Reply-To: <20260511160113.34755-1-herve.codina@bootlin.com>
+References: <20260511160113.34755-1-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-Hi,
+The lan966x clock controller depends on the LAN969x architecture or the
+LAN966x SoC.
 
-Previously, I sent a big picture series adding support for SFP ports
-available on the LAN966x PCI device [0].
+This clock controller can be used by the LAN966x PCI device and so it
+needs to be available when the LAN966x PCI device is enabled.
 
-In this series patches touch several parts and sub-system in the kernel.
-Reviews have be done and it makes sense to split the series and send
-parts separately.
-
-This current series is the extraction of a patch related to a clock
-build dependency issues.
-
-[0] https://lore.kernel.org/all/20260325143555.451852-1-herve.codina@bootlin.com/
-
-Best regards,
-Hervé
-
-Changes:
-
-v6 -> v7
-
-  Rebase on top v7.1-rc1
-
-  - Patch 1
-    No changes
-
-Older iterations:
-  Patches 18 in the big picture series
-  https://lore.kernel.org/all/20260325143555.451852-1-herve.codina@bootlin.com/
-
-Herve Codina (1):
-  clk: lan966x: Add MCHP_LAN966X_PCI dependency
-
+Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+---
  drivers/clk/Kconfig | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index b2efbe9f6acb..b52e2762b25c 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -278,7 +278,7 @@ config COMMON_CLK_LAN966X
+ 	tristate "Generic Clock Controller driver for LAN966X SoC"
+ 	depends on HAS_IOMEM
+ 	depends on OF
+-	depends on SOC_LAN966 || ARCH_LAN969X || COMPILE_TEST
++	depends on SOC_LAN966 || ARCH_LAN969X || MCHP_LAN966X_PCI || COMPILE_TEST
+ 	help
+ 	  This driver provides support for Generic Clock Controller(GCK) on
+ 	  LAN966X SoC. GCK generates and supplies clock to various peripherals
 -- 
 2.54.0
 
