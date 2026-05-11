@@ -1,90 +1,109 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E6F43D4E0;
-	Mon, 11 May 2026 16:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36A4421F0F;
+	Mon, 11 May 2026 16:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778515283; cv=none; b=ZWKIkzTJfq389AgKsnmY4DIMSNdmU314jmZd5jqN1Y1F+K+dF1MD2KEtEp84AyN9YPIEOIULWmtglw6aUX8MWFkbOtDYR+BGhGCxStj+amoz3h2LnWR90npc9gd05jdo8GKmEuY+/ix+LdKFqq50p8xlfvz2ZTzejv1Io9xRBsM=
+	t=1778515387; cv=none; b=rBuaXq+dNUmUjn9n8GeR5BURlySqcULs5FPeievGorx/GOABjSKb/j0wx5HTbVsCstfb+Pfk1/I9n+cX8BoSf0lTQ6HX+iYMRJFuvvqQpUR1uS1nVr4jSG3qo3tGLNEx9t7u6tAAnz+C38YcMIxfjxQ7XTIuTOhOGRWsMSxO7UY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778515283; c=relaxed/simple;
-	bh=R9I/f75qY7Rz47zyfVcNUenIwxmv+W4uRzZz1ioK1WM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jgnNpcyRIYkwGfOASUtasdRfm4PCre4P3TlQ8N1pALYypx/xdul54wfLuLpHFbHqMaCWWwxyG/cFW0BJgzQdgUceh+CGsCDrZJOwLrA2tDJSJ4+uq7M+cAmewRpI7nuTL6WJA/dhLeeAKibj+b1cXO7QwjVZDrFGQMuNGQ9cMqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GfWsNqXZ; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1778515387; c=relaxed/simple;
+	bh=BsBc4RLCe0pZ1tapkSrfPmLjK+4hJx4ENCrw3f1tS0A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GRbRX9q9GPQRWtgiIMRjKCixSFEyw7MmGNXuhFDeb2X0oiv5DJNFsR1qxvpnS8dBN/VVbN9TTR95i3AovOzkZ14okgOQYgQ1wtWb5nq1Flu+sYR8FqwsIinKsYgMueWXK11MHhLS5qUR41F4l5AcuGieDhWsYfyhA7/IHO+XfYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RsxFeY8q; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GfWsNqXZ"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 58A4DC5E154;
-	Mon, 11 May 2026 16:02:10 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id C0C1E60646;
-	Mon, 11 May 2026 16:01:20 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 135E411AF9F28;
-	Mon, 11 May 2026 18:01:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1778515280; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=6oiAfU8MEqd8yhhPfwMPKZd93U5KjSCmMlrrYUL7Xn8=;
-	b=GfWsNqXZruqSVKMtOrd5h42JmzCR9YPjA0HFLSg51xFjkEVh9hKU75eTnJNq/JwQDHcH9M
-	7kJ2vfp207K1zAFvJ1OFrP1dBjeWDVI9estQcPXaoPXrBZd3sQeUGsHGfbocyfuBzZaeXt
-	3VmCydfrC7B5hbslEIeMWdns4b/nVUGbauSmzz/sED9mZJNRkH9e3Z0paaCscn4fzsk//W
-	lMZbYQCGtCqSW1LEaItWrtd+TiesxRr9RSBXAYpU5uKX2lTrtJ31awtgnJGetNtkYQTViT
-	liJ6Wrlk1kSsQMHv76svSVHHXJeddzBnwbNKmHrBs96NQ/FWaSyBQfGUYseOYA==
-From: Herve Codina <herve.codina@bootlin.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Daniel Machon <daniel.machon@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Herve Codina <herve.codina@bootlin.com>
-Subject: [PATCH v7 1/1] clk: lan966x: Add MCHP_LAN966X_PCI dependency
-Date: Mon, 11 May 2026 18:01:12 +0200
-Message-ID: <20260511160113.34755-2-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260511160113.34755-1-herve.codina@bootlin.com>
-References: <20260511160113.34755-1-herve.codina@bootlin.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RsxFeY8q"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCC24C2BCB0;
+	Mon, 11 May 2026 16:03:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1778515387;
+	bh=BsBc4RLCe0pZ1tapkSrfPmLjK+4hJx4ENCrw3f1tS0A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RsxFeY8qOVENKd9VBkUy21SWWd+nV1JIZyGjBjdjlgsdXF7e9O3m8/FIGBEsoQULg
+	 oYMUjXGECrAqMtYEDJJ0qC1bx28UTAUE7NMqIQ0GA7fyDsrM4un/ucOIOL4wDRr4aM
+	 HkjUCKqiU6kxl7Jgo/xAc8Ag8qKQEtG5MJYUb++kyFnyBJ4WVbO78KcPGti+lAgZsd
+	 3QvzvjWhQOpBvoNk258KWofRduwjd0mjxUSdq0DpxRwnQS2RhTh1cHJKmP3qgADdZE
+	 OFgpEQd76uc/K3t+t3yle06sKVUsR7bbh5/pxnhGqtRgR0/9mItaWEK5Evh35kXA7g
+	 o7u08YbyJBwPA==
+Date: Mon, 11 May 2026 17:03:02 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Yixun Lan <dlan@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+	linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] clk: spacemit: k3: Fix PCIe clock register offset
+Message-ID: <20260511-emperor-washtub-15fba36bad60@spud>
+References: <20260511-06-pci-clk-fix-v2-0-c9a5e563bab3@kernel.org>
+ <20260511-06-pci-clk-fix-v2-2-c9a5e563bab3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fWRW5TuUHiA2tmNM"
+Content-Disposition: inline
+In-Reply-To: <20260511-06-pci-clk-fix-v2-2-c9a5e563bab3@kernel.org>
 
-The lan966x clock controller depends on the LAN969x architecture or the
-LAN966x SoC.
 
-This clock controller can be used by the LAN966x PCI device and so it
-needs to be available when the LAN966x PCI device is enabled.
+--fWRW5TuUHiA2tmNM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
----
- drivers/clk/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, May 11, 2026 at 02:59:10AM +0000, Yixun Lan wrote:
+> The offset of PCIe Clock CTRL register for port B and C controller was
+> wrongly swapped, correct it here.
+>=20
+> Fixes: 091d19cc2401 ("clk: spacemit: k3: extract common header")
+> Signed-off-by: Yixun Lan <dlan@kernel.org>
+> ---
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index b2efbe9f6acb..b52e2762b25c 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -278,7 +278,7 @@ config COMMON_CLK_LAN966X
- 	tristate "Generic Clock Controller driver for LAN966X SoC"
- 	depends on HAS_IOMEM
- 	depends on OF
--	depends on SOC_LAN966 || ARCH_LAN969X || COMPILE_TEST
-+	depends on SOC_LAN966 || ARCH_LAN969X || MCHP_LAN966X_PCI || COMPILE_TEST
- 	help
- 	  This driver provides support for Generic Clock Controller(GCK) on
- 	  LAN966X SoC. GCK generates and supplies clock to various peripherals
--- 
-2.54.0
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+pw-bot: not-applicable
 
+>  include/soc/spacemit/k3-syscon.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/include/soc/spacemit/k3-syscon.h b/include/soc/spacemit/k3-s=
+yscon.h
+> index 0299bea065a0..a68255dd641f 100644
+> --- a/include/soc/spacemit/k3-syscon.h
+> +++ b/include/soc/spacemit/k3-syscon.h
+> @@ -168,8 +168,8 @@
+>  #define APMU_CPU_C2_CLK_CTRL		0x394
+>  #define APMU_CPU_C3_CLK_CTRL		0x208
+>  #define APMU_PCIE_CLK_RES_CTRL_A	0x1f0
+> -#define APMU_PCIE_CLK_RES_CTRL_B	0x1c8
+> -#define APMU_PCIE_CLK_RES_CTRL_C	0x1d0
+> +#define APMU_PCIE_CLK_RES_CTRL_B	0x1d0
+> +#define APMU_PCIE_CLK_RES_CTRL_C	0x1c8
+>  #define APMU_PCIE_CLK_RES_CTRL_D	0x1e0
+>  #define APMU_PCIE_CLK_RES_CTRL_E	0x1e8
+>  #define APMU_EMAC0_CLK_RES_CTRL		0x3e4
+>=20
+> --=20
+> 2.54.0
+>=20
+
+--fWRW5TuUHiA2tmNM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCagH9tgAKCRB4tDGHoIJi
+0vaQAP48Kryv4oiIIywKTZrtlJBoXWha9X2EIyDK9bNcucrjQAEA6h0D6DGM7ZQH
+rRGPLGzFqFWbZnchRVV2n43wt3IX3gA=
+=zt8J
+-----END PGP SIGNATURE-----
+
+--fWRW5TuUHiA2tmNM--
