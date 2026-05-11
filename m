@@ -1,62 +1,64 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879D14C77A0
-	for <linux-clk@vger.kernel.org>; Mon, 11 May 2026 18:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F584C9003
+	for <linux-clk@vger.kernel.org>; Mon, 11 May 2026 18:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778525468; cv=none; b=WNGj/YRMPVUq5TSmQGi9Txi8jQXcG99kwyPvU2NOhgebR916HqkGew84PTXp995Y0iB9r2HaR4vSFbWp0yUHF6Y79l+HCIU1uwplPLfezuEjcqIZd87EqDlP8V/vm9xAEqQm27XE42oosp9qt/5xpPxZOlQr3dJdPNk+HJVetzE=
+	t=1778525469; cv=none; b=fzFD27M8mSTJGvj8mJPEUz67NzD5HSHm8WWXsbCwpEQV9qNsn4k0Ns2M0c4rPXqbBJgOwJY9NIzV1TKDscUn/pbER+Z5UmKLXT4f7EWOD48r2wspNjKRChD3LGoEFTGECn8EApyI/OFiTyGG5/RaOYSu4cqZHOiuWw5AmmHH26A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778525468; c=relaxed/simple;
-	bh=DT00nk2LP9Il6r5Jw/XCnU4nDevdgeglfjX5CCyi9ms=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CiqSxHLIpzNCTduvcKWtOXAv8n6DbBZgvU8S9HFSdcHpgVmjnYp3rWr5b1sB5BPUdWeXg2bp7fY7BSwwSvjOR8RHx/Ho92IWchtcrSDJMGrLfC1BBJ4Wfe7tuPaYbfNEaE+x6jvtHqrX1qYCInyvgCxVMgAk/F65xtVUj25czMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CoN7uiUm; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1778525469; c=relaxed/simple;
+	bh=L8qSGL7/R0cKnVz8Ctv0uV4rXSfX+m9YTi5M5pJ9WS4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=e4ePDdlI/gEXKDZve/jAMlePHXMlHgM3v56lUXpTxzeMqeFDrnyfO11+OfPj2Q/L4QNy05E43q0Rn/MJfIazHXbFs1IhVsY0Wev5aqk1BjJcoVBWhxdHQ0OP90sMw/VrBk5g2BDdrVXUcjapV2v7UD5O+KQWbubyAkYL9GHCyNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wppg+EpM; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CoN7uiUm"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-488ba840146so41672015e9.1
-        for <linux-clk@vger.kernel.org>; Mon, 11 May 2026 11:51:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wppg+EpM"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-488a14c31eeso32552205e9.0
+        for <linux-clk@vger.kernel.org>; Mon, 11 May 2026 11:51:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778525465; x=1779130265; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=789XEeQ4I50MnaW2OnqahHH0vEgS0bTPRF2lefmkIno=;
-        b=CoN7uiUmhC1IwDUitqX6Df+HS49PlSE7ASxWpNFZu/2e/ATuZPC06AWqKRZ23FLOGG
-         Q+HD86ULr3lWgTdrTTElPjO/3L/7pafYMgBFFaWngwXK0UNwdqA2HspRAAycGgth06qz
-         +4g4rJAYwRJq/YtLKjX80jK2dFVZIXTE6ICncM4vnjIn4YoJhn3sWdA0ejCnvLuUO/58
-         pd/JfgQmcw07GUGrND3vEkjMrM6xiJ5W8FiAc9fBpYOxstDwQrpcXa6a6+Dm6+L1Dywu
-         5+aT98Yku0lQ7BV66PhYXtpxS5eqjdFZMVIANmQZp1bJX2zhNaOKBcMQPYhl0PM8GgHw
-         ZgOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778525465; x=1779130265;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1778525466; x=1779130266; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=789XEeQ4I50MnaW2OnqahHH0vEgS0bTPRF2lefmkIno=;
-        b=elskRwPy2ETiV0fdyiRcn3jRhY2lahURM1jEJ8FMV1LuM4IjQrIczT537LHlV/H5Jt
-         rWaJzuRkmeHzpyd27iCyfB8SjT4/R6pYYKfrKBP8erZx5aKf00A9mr/VxXnq2wdS2wsj
-         iAHkUOs7newYdGltdB9bLvgI5BmHHpKcOqj0J08SEc+Ba0tZYMY0YNIhQJn0bzyM3q1J
-         NpCxqXr8iy/YhDd36/9ndKLnvkUx0vpmGPslFEKx93Kneo4ZygzNmvdZkteHeYOfIXoz
-         kEbc1/6ALnTRDkpxPhwFLQyZMLj4pIbJAi1QxN3glSjbWu67LL9vJg5izGSM3zI8282Y
-         XWbA==
-X-Forwarded-Encrypted: i=1; AFNElJ8cIrP6BuNxrr2ezc1UYt9xXsbYoUlsPU2i8f+kvbq6f6mY5/uCV/rxnPgkmNi5n/dPvmNicnA/zHM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHGExDXMyBLW+0/kS6LtoTE2eQbDfJ4JeEJ6gECZP5Xr8qAgPq
-	87WbCNpA4MTCe0QkGzx0jAcouHk0abI12iC25yuGcLv/qnVNXmp7T7P6
-X-Gm-Gg: Acq92OF99ES0iozOEwSyMloZS6WYLJ+5IiUdwaNcZDzrxzWHl26ZuILm4PSdywBBPsw
-	qn2FWjIRt24dD8h7lj1JJRmuDb7jRIt2hiyj6bl5MyhEJmSVbyJQ0kZuM3xv+WdNFb0y4+7m0mx
-	0gwB89tCPhy2CbMDLAk4WmXPNah0eVkjlD3VA4ROJCdSqWIgJjP6cJQV8j0IbD1t2D5GPcwHCU8
-	+cUBFTPpffa5/vnAnHPMy2JztV3ht9UGfZdtTkmLeHhi1R4lCDwOQvMATxz3wj0Ic+yhvxD7JW2
-	DGosHITGtwiUM3KtWjD0nEfJEa7yGarbP9O4uSNfQ819uX5AiSzVpIrAXcg4QBxPpRTzDQpQ04M
-	SH5t0RxdImMa6BEaXwGQHWWDl9foIpGCPetvO1qdEpYVF8j/5zD37JwyTSLQ0992e54QeMSDogG
-	ZMZqYfNPr3dGhvHWyTHCzx5gnq9+PDT1q6+4ZX1nRaR458WMwoydsHx+/qHePu81MPop9QwECuk
-	gImsEqicReSsm1HTPs+L6PVyR45v5EwUyHSJQ==
-X-Received: by 2002:a05:600c:c166:b0:48e:6f39:f7be with SMTP id 5b1f17b1804b1-48e6f39f7d2mr194207385e9.10.1778525464608;
-        Mon, 11 May 2026 11:51:04 -0700 (PDT)
+        bh=LMjDPGDJ+8xslo2jimMn/IGPGbD0V+wq+ySKoQFnLIE=;
+        b=Wppg+EpMpINu+lnhR4ET1GHIseBJKvpjE1Y0ron5Lu4tUfBE4MM6673SqBCAJLkKPT
+         9vxTuffieziEhwRvWvmKWYj3n5A1N6aw5MlqmzftKk7t0G5ZoyKqt1POqPkIev5eWQyr
+         7i155bC7JD29tF/WamggHcPqDY4VKpU8SrIS9BeooQA0BXvJNR50o3Zij6T+pJAwDZpM
+         veUZaseS2NAZdAnDcYwOtILYT3oXsvBRFIK4jsxR+bjuSZx1w7FbAvVDFMHXx5Ph4UTq
+         zXj5hNsvFq4K8hAOKxEJIlZokofB88ydAHj05/k1Xf5Fy/Zp0VdnwIrlDQhX/pMVb8aJ
+         4evg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778525466; x=1779130266;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=LMjDPGDJ+8xslo2jimMn/IGPGbD0V+wq+ySKoQFnLIE=;
+        b=LFQD0MidjNRosWKkUi3oomUnqXV8w2YDmtZg1lhxp2WV5nSnS7YXYC0jqrUF4qQYN8
+         Ghf3ax89qG0glMirR7/Ue3IuwAA6HZAIhOIOy+uLHPLFgXthAuD5khAdCjdLEPr2pcyh
+         M+G0WnTDQr9tgMtwJUfO+5OQjYElnxLzmNbuwNCqHruYyt2TMdPdQd5+/Wdwo7+8xq5o
+         S1RvWpBCG454EKJryNjj2hKHUABf56FMhqMjAXwOlmEck9jYgowQc81Z0h4OPmtC0QiB
+         5ImfgZYxQFlyP+bx/DQtVPYO6rZRX95nGNqAORLMjL2TGbChxEZ8U9ecVtNA2wwkC/jt
+         WBhA==
+X-Forwarded-Encrypted: i=1; AFNElJ+akGcD04ReLQWV4r8P/hGa3zYuJobgdd39+m87k6IpqssxFpLKekPlDgLZcv7sHx3R3RaspHC26Lg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaQ/WtWumjqWigXTg2UV+VQ+sSbH0BOSoXcIvo8eH/n9uIjKz3
+	2Ak29VAx5FmfzdfmMvSLFJNzm8i4vow30EDup7BQDvLmULmg8sb2W213
+X-Gm-Gg: Acq92OGWeEYC/hPQgI9nr+TEkdbGY4hgQbLfFq0E3eQ5sveRTSWW7f5SV9xKAB05YCG
+	w4vx8U2VdofDcCJ63WL8b1zQ+ojYi3O3/wUiW1CafNkf//C1TRG1PHRs513Xeace/rn+nL87Q1M
+	7SfbAkHvmZc/Kp0apZHNdmA7eN+2xQ3HLfE9XSDV32/Rn4I14uhqIGdQkhNTymQXYEq3HvkjDCE
+	fb9DQPsltpWL2X8OXeiUi9bCIadq6CfAevHApXa+iNjrVYws0BeHNyg+2dfWS5bKsQc4lGJ7LUG
+	bcHReK2Css1PAfFi35N2mCUuRJI4QoXvzBPPUOgv2ix2tC3TZUomvGwGrKQsIQw+lpRKWpQN1PL
+	oQ6uFHgX2Zj0R/MdI56cmJqM3FfjVnzHKvnLkz05lLULQ0P2jFgKn82NwkzFIWIPKQdvQ/JAOfx
+	uyZFYLl+g1bUExOUgt2i6cz59sZln62vhAssj8Gcr2r2buIo0vYLszwJfz3pt8Z3Ffg8j35zt6F
+	3EXHnumQVR5pnLIwgEeGrN5xacwT1jx81Wf1Q==
+X-Received: by 2002:a05:600c:4355:b0:48e:85b4:ac7b with SMTP id 5b1f17b1804b1-48e85b4ad2dmr36220615e9.18.1778525465458;
+        Mon, 11 May 2026 11:51:05 -0700 (PDT)
 Received: from iku.Home ([2a06:5906:61b:2d00:e687:6094:b849:9886])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48e8f3cf0cdsm854775e9.2.2026.05.11.11.51.03
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48e8f3cf0cdsm854775e9.2.2026.05.11.11.51.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 May 2026 11:51:04 -0700 (PDT)
+        Mon, 11 May 2026 11:51:05 -0700 (PDT)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -79,10 +81,12 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [RFC PATCH 0/9] Add System Controller support for RZ/T2H and RZ/N2H SoCs
-Date: Mon, 11 May 2026 19:50:49 +0100
-Message-ID: <20260511185058.1926869-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [RFC PATCH 1/9] dt-bindings: clock: renesas,cpg-mssr: Support RZ/T2H system controllers
+Date: Mon, 11 May 2026 19:50:50 +0100
+Message-ID: <20260511185058.1926869-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.54.0
+In-Reply-To: <20260511185058.1926869-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20260511185058.1926869-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -93,76 +97,81 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Hi All,
+The RZ/T2H SoC features system controller blocks for low-power management
+and access control that reside within the CPG/MSSR address space. To
+properly represent these hardware modules, allow them to be defined as
+child nodes of the CPG/MSSR controller.
 
-This series adds support for the System Controller (SYSC) blocks found on
-the Renesas RZ/T2H and RZ/N2H SoCs. These blocks handle critical low-power
-management and access control functions.
+Update the CPG/MSSR binding to support child nodes by adding
+system-controller child nodes using a patternProperty, requiring a reg
+property and a renesas,sys-block property to identify the controller
+instance.
 
-Hardware Architecture & Dependency Challenges:
-----------------------------------------------
-The SYSC in these SoCs is a multi-functional block responsible for:
-    - Clock & Reset Control
-    - Low Power Management
-    - Clock Monitor (CLMA)
-    - Access Control
+Restrict these new properties to the RZ/T2H SoC to ensure existing
+bindings for other Renesas SoCs remain unaffected.
 
-A key architectural detail is that these SYSC blocks are physically located
-within the CPG/MSSR (Clock Pulse Generator / Module Standby Software Reset)
-address space. While the CPG/MSSR driver is already implemented and
-functional for these SoCs, the integration of SYSC adds a layer of
-complexity due to a cyclic dependency:
-    - SYSC requires CPG: The system controller needs a clock to operate.
-    - CPG requires SYSC: Access control registers within the SYSC contain
-      bits necessary to control the PLLs managed by the CPG.
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ .../bindings/clock/renesas,cpg-mssr.yaml      | 39 +++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
-If implemented as a completely separate top-level system controller node, we
-would face a cyclic dependency between the CPG and SYSC drivers during the
-boot process.
-
-Proposed Implementation
-----------------------------
-To resolve this, the SYSC blocks are represented as child nodes of the
-CPG/MSSR controller in the device tree. The SYSC regmap is registered
-directly against the CPG device node. This hierarchy correctly models the
-hardware address space while allowing the drivers to share resources
-without deadlock.
-
-I am sending this as an RFC specifically to get feedback on the
-implementation of the SYSC as child nodes of the CPG to resolve the
-dependency cycle.
-
-I have also included patches which updates the WDT driver to use
-the SYS syscon for register access.
-
-Cheers,
-Prabhakar
-
-Lad Prabhakar (9):
-  dt-bindings: clock: renesas,cpg-mssr: Support RZ/T2H system
-    controllers
-  clk: renesas: r9a09g077: Add SYSC regmap support
-  arm64: dts: renesas: r9a09g077: Add system controller child nodes
-  arm64: dts: renesas: r9a09g087: Add system controller child nodes
-  dt-bindings: watchdog: renesas,r9a09g057-wdt: Add SYS syscon support
-  watchdog: rzv2h: Refactor WDTDCR start/stop handling
-  watchdog: rzv2h: Add syscon support for RZ/T2H and RZ/N2H WDT control
-    register
-  arm64: dts: renesas: r9a09g077: Use SYS syscon for WDTDCR access
-  arm64: dts: renesas: r9a09g087: Use SYS syscon for WDTDCR access
-
- .../bindings/clock/renesas,cpg-mssr.yaml      |  39 ++++
- .../watchdog/renesas,r9a09g057-wdt.yaml       |  29 ++-
- arch/arm64/boot/dts/renesas/r9a09g077.dtsi    |  38 ++--
- arch/arm64/boot/dts/renesas/r9a09g087.dtsi    |  38 ++--
- drivers/clk/renesas/Kconfig                   |   2 +
- drivers/clk/renesas/r9a09g077-cpg.c           | 180 ++++++++++++++++++
- drivers/clk/renesas/renesas-cpg-mssr.c        |   6 +
- drivers/clk/renesas/renesas-cpg-mssr.h        |   1 +
- drivers/watchdog/Kconfig                      |   1 +
- drivers/watchdog/rzv2h_wdt.c                  | 104 ++++++++--
- 10 files changed, 394 insertions(+), 44 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+index 655154534c0f..ec13fcaf763e 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+@@ -99,6 +99,41 @@ properties:
+       the datasheet.
+     const: 1
+ 
++  '#address-cells':
++    description:
++      Required for the RZ/T2H SoC to define the address space for child
++      system-controller nodes.
++    const: 2
++
++  '#size-cells':
++    description:
++      Required for the RZ/T2H SoC to define the size of the register
++      blocks for child system-controller nodes.
++    const: 2
++
++  ranges:
++    description:
++      Required for the RZ/T2H SoC to provide 1:1 address translation
++      from the child system-controller nodes to the CPU address space.
++
++patternProperties:
++  "^system-controller@[0-9a-f]+$":
++    type: object
++    description:
++      System controller child nodes representing sub-blocks for
++      Low Power Management (LPM) and Access Control.
++    properties:
++      reg:
++        maxItems: 1
++      renesas,sys-block:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        description: Index of the system controller instance.
++        enum: [0, 1]
++    required:
++      - reg
++      - renesas,sys-block
++    additionalProperties: false
++
+ required:
+   - compatible
+   - reg
+@@ -126,6 +161,10 @@ allOf:
+       properties:
+         reg:
+           maxItems: 1
++        '#address-cells': false
++        '#size-cells': false
++      patternProperties:
++        "^system-controller@[0-9a-f]+$": false
+   - if:
+       not:
+         properties:
 -- 
 2.54.0
 
