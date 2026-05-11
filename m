@@ -1,158 +1,122 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B9313A4520
-	for <linux-clk@vger.kernel.org>; Mon, 11 May 2026 13:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D523F0A88
+	for <linux-clk@vger.kernel.org>; Mon, 11 May 2026 14:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778505475; cv=none; b=Po4BbonBmA1GwFhIgK7p3mke90wa598xini/1FzlVJMWEoyiORCiI7owIb0prufySW+a5LRwi4WGrIz58nTT6al1f6m+yinoGZrEsf+R4r4lSILHTanBSsCuci9JfJMc4BUL0lYmbVA9FuchcX4DtkP+wgRN2zow1kPfRsfXpK8=
+	t=1778510185; cv=none; b=tLAMhJUbgXoHn+cL3BxJfsEBf2ieIqYQnnbtCLs1X2kM/rcKcH+zd90BvLqiaJrpSgNC2iWC09TjJm2dhHKDLEM61FHafzYSDs2fmLou1Q0N7RQJSaPql/8lef4tvnW1Gmwrr7ZhTZwT4EYki/kY/o38bdcMz1i78gjkjVApQQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778505475; c=relaxed/simple;
-	bh=70pRwaawB6fSxyFjY9MWQ2Wj667Hq0JjSk0kpFgv0o0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=uHjt66xbD5aJFTwHIkPqJD323WD3jsn6ehdjh3B/GfH8A7r5d/QHlmmBTOuDsMKOhA45tyci68yoXRdEfLG5rSHDRwoI0hlYhMN4DcRL4R2u0UPqP8iHlo3NH+qluSJbtCGiu2iv68a3icuu6E5zx6TI39war72mcJNHSSjI8c8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OKiZ5YAY; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1778510185; c=relaxed/simple;
+	bh=OD53JVPWJNXND+hhbRWk6qwD4LDdvpVx+u1whxdxWqM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P7/juaMlpCaWLPLyyfy6KbVjYUUb+oRKpraef/3PRjGkFY13Q0cojYMJZHAF5cDMvQ/euh5sm0gPXMgnhu1xOEIYGxWG6N4lMuUkcEai/1nQRd2TjOPnUSWx4C4oddFKHkcf4TR4XP7RzU3nDNYW8S+r/ZKyyK8bOqAUIvh0Qvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q9eb89z8; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=IukC+2mX; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OKiZ5YAY"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-44ccbd3290aso3409326f8f.2
-        for <linux-clk@vger.kernel.org>; Mon, 11 May 2026 06:17:54 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q9eb89z8";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="IukC+2mX"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1778510182;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TRmZZoSXD3Wj4LMAwAdt4eJuVkT2JvoyntYmnjZ3hZo=;
+	b=Q9eb89z8qNm/6r6dw/OBrHp3kCEUAhvHa0BLJVdhL4hjSre2K/rcf993mQxzaGQH4QmhQ4
+	zh6qxI6kdz4SbGhmtUvET8s7hC7ITE/4tNo0gG1nimnDmSO9QEmVYZhupMeDftfKGq2p72
+	WSlVHWQRtllIBHc69j91LW6J11BfrwE=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-647-TBNCov1qPuC6o8geI-rgpw-1; Mon, 11 May 2026 10:36:21 -0400
+X-MC-Unique: TBNCov1qPuC6o8geI-rgpw-1
+X-Mimecast-MFC-AGG-ID: TBNCov1qPuC6o8geI-rgpw_1778510181
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-8ee1a909037so814482885a.3
+        for <linux-clk@vger.kernel.org>; Mon, 11 May 2026 07:36:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1778505473; x=1779110273; darn=vger.kernel.org;
-        h=in-reply-to:references:from:subject:cc:to:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+        d=redhat.com; s=google; t=1778510181; x=1779114981; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VpBr89JbDstdIUMvCB+UAEmSrotPv1wv1lCMdlQElUc=;
-        b=OKiZ5YAYE5GosIW9lKyy4U4IQ6LOmSN909YdrCMzeucPYB/sKJ0yPm3hKVCQ9vW2nT
-         G3lDMvs8v/iwvkUo4xCLNSvxsaP54sJRcysgPeBBl695/hAMiqidXxRNaT/rwRit4Amd
-         RYgCS/ne+0R+xfxke34UlwcRq09huKA6yB2YXd+ftFPx1HBtvSOq/jEzogZTFXd1TWCd
-         lY1SHqHJPv+q2pSEFRpUWePdeSvdBPO5hpLbE9qF4pPjcGae3WGqhW0ypO6JrCxHXcdT
-         kiVNKNppC1oVavuE+0/xoLM1ZPqELlB33VkV+uWicfO6RlbfutFqaTgxJpNdDVO6W6Mf
-         EHYg==
+        bh=TRmZZoSXD3Wj4LMAwAdt4eJuVkT2JvoyntYmnjZ3hZo=;
+        b=IukC+2mX0Kt0XvpMgbaANkshrqCh+DvFB3a1h6awSF88ZOWytxcF1BfaAayrCifZXD
+         oL9uCLhJJGXkLP6phxUf8XFMZ2wvnO2TZBtrNaSGMh2C5Irle/2K6/Y0OF6ABugwz7TD
+         JsZwOtKXpcVV117PwEN2e5+Yng+RjUuyWHY421lyOfKYzFdOsTeYmpQQaqy5f62tXA4g
+         Qcw2S/1lLfKvH5q2yaL6+ko20GiDX/H/P/7gTsjOAl7MQ1jGtQUxA/4qg1k7QSj+Fugs
+         UCuU71qI5HU00OUHecjC9KomnrZcG+mW6A/VAd5YUgEU5fh/B6V5gCCA/H8bwPv1WN2o
+         AG8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778505473; x=1779110273;
-        h=in-reply-to:references:from:subject:cc:to:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VpBr89JbDstdIUMvCB+UAEmSrotPv1wv1lCMdlQElUc=;
-        b=hnztQkBXV6En2y4qQOO9iCYqJkeB4hQ+SkNjgMyIrTscicUVjNfWr4Dl6QUVpR7Vmq
-         /LqlW1UderVsrIOZqST/SyqG7w2DEpduUM1uf34JRQrG+hEQJDcksfQZUt26QVPbJV9T
-         YdYQwywFB7Fp8da24gk5c0hmUvxNTcgO4n5B5yZPVT9/ngecwI0uI8SXYAoUi6iEOSQD
-         WL0LGLw9WAv0AhUjKXDLfA2Fq//2HPIRzT5wpQKukEi5qCbs5aVJo/bw9sC0nOEoADM+
-         QfEmCngik852B9qLUQlfxYzmJ4vfHADXxEt6YRygxQmE3XQaS0BxO3W59sbq+Rh0gMtB
-         e62w==
-X-Forwarded-Encrypted: i=1; AFNElJ8h3REQfaWnZxFqNKhHJsg+h+V5xhBjlPjsIJZxC7IkQXBOSjXEDDGNyb/qu/68WKJpO0g40n8+77M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9K3AKhT1fx2Hs3sllj3Elo0D7bMBPcITHaoU7vYtkt0o3eN1Y
-	NCH4NZIZbEp7yV8BzgbyljFSKcG44ZbyD8zQZ4FFh+9+hy6wFXcz5MRt7nyKlhhP5zA=
-X-Gm-Gg: Acq92OH0ULvYtlPHdF/DF38xc1NConU4ERmxts5bpn4M4yv3AoGv7CvcOY1/UJiXuL+
-	yzBREVz5v2FPzXkWE5BXG765WoVhPLq3QMwtGJGOg8VIGLAFx258wolMu8XLelH9LGC/ZfDMEMv
-	9/Jg7Bq6+xw7yNzRPdRbvsR/yq4cuLjTVh0aRnEPZ1Nkt0KYZ/D4B6TjvAuVtflq1PoKEDeyTGz
-	AigLVSnOTSWII8Fqe0EQ11rVGo3yhakns5gPFudnA+4Wu2nsHNyD2NM94cr1AUPZHLDzU0oDsz7
-	KsrpHvPlJDcsJuMpvB/lf+w4VYs48qpN/ETnk6tosvh+6kRD3s0FMtqON/UKBy40GNGjOrP+H0k
-	3oxHy0SO4bCId0i4IrcrCm1PbSJtnTAeqC3dHAorjvLEJF2Jwy7tvdcr9K0wCSnGu1Gtie5eWBk
-	SZB2NETAdb2tuKrSB+PRobgemGWeG+luYTVBLOL6WyCAiWvERULxbtImYVIfzy86c6ZxIRVFZI0
-	ouTZKOC9ixgiYD/pQ==
-X-Received: by 2002:a5d:5d0b:0:b0:43d:c2bc:21b4 with SMTP id ffacd0b85a97d-4515b525d65mr37422228f8f.16.1778505472478;
-        Mon, 11 May 2026 06:17:52 -0700 (PDT)
-Received: from localhost ([2a00:2381:fd67:101:5acc:6281:995e:547f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4549120f1f9sm25688565f8f.24.2026.05.11.06.17.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 May 2026 06:17:52 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1778510181; x=1779114981;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=TRmZZoSXD3Wj4LMAwAdt4eJuVkT2JvoyntYmnjZ3hZo=;
+        b=IXoUZURIsAGaEOIUVN+CeLRHgP+nElAhfqfaOObVKSmSAu+F9vpStsucAmlPXYA4AD
+         uV0MhN4zreV5pyRdaWvHh2l9us3OGg4ySQvH0qq6zgPf29dfjb5GMuIjocWvq26Vmw5l
+         xZ6c+RJJVmhUKPNFDk1UqejoQQgXuGC7R+/RcxeNyGfY4uc5n3XhCsJyC3+wkJAH5w/M
+         dAcb9x5OkG9r24yFKQOzREIOy8MHOyw2Kiiw1UFZhH7z7xIqvBZ8lL6QM/+iQ74Cbzr7
+         azWkb+qrzbYTWbVdqwrzkvona+g3wwtatOeYsT2vu3ehv+aOxoHvK+2uANxpBYDEtxU4
+         DRQA==
+X-Forwarded-Encrypted: i=1; AFNElJ+x44Mr+oZOvJJGWiCt93ljJ5161XKYvl8ycC6gfoxwhpcnmv3UF6a9S9aGU0WkVyQ4MLq/7TJNbtg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyW0WuOQBXuZgdGV3xV04F2jtPCreZZr37WOd2ZKp27QF/MfzY
+	fASiALnLC7Zewpb2ZabXig14ItuU4m5wu2wnug5EPP1jWJWemAITZKtHHz7y9+Jyr3ZKAwVzthc
+	44rQQiBVT476RnQSD1h6Tf6BrOQIcqZR4wvURDsLXicRDNG9rH+o1lUg6ijIHgw==
+X-Gm-Gg: Acq92OG92mD5KRNTNKvbea4y9orW5iZ9PH0K4piZ1TENmkdvBdgY37HEiJ6ydzdyBhy
+	NokCwb7vu7uiXAypE6Ppfr2GeUF54O5/hDznpbWtpJxyzdOchTwvhVPira435Nc0AQRGcg7k/1B
+	IL0cAUubICtObi0A5vFLC8JmJ6veAvpej7MWpZwlx1o5LW4rkyAYorhLiknyaDRyuSet4V2Q6Wv
+	vtaG4qfHREMcKevvWDngDa8tNfseTqznTJAEhIAhgJ6+FNpEguCnVpyh0uvljpoKHWh75K0PSMV
+	/eiRYH/qg8yHqRZovWIihH/TAO4IetUA4CjVHcnMK2UctG60z1154owpqU/R+A3PH3LF/BtziR5
+	4J+jr7+Vdldi61jWATWbhcYkb3bEMa5C9lb9QwY8MSTmHjBP2gzNd6Rdu
+X-Received: by 2002:a05:620a:298f:b0:8cf:ed8d:20a3 with SMTP id af79cd13be357-907bb3e1b6fmr2203931785a.42.1778510180770;
+        Mon, 11 May 2026 07:36:20 -0700 (PDT)
+X-Received: by 2002:a05:620a:298f:b0:8cf:ed8d:20a3 with SMTP id af79cd13be357-907bb3e1b6fmr2203927285a.42.1778510180315;
+        Mon, 11 May 2026 07:36:20 -0700 (PDT)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8fc2cd04c68sm3128259285a.46.2026.05.11.07.36.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 May 2026 07:36:19 -0700 (PDT)
+Date: Mon, 11 May 2026 10:36:18 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: a-christidis@ti.com
+Cc: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, Michael Walle <mwalle@kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>, Randolph Sapp <rs@ti.com>
+Subject: Re: [PATCH v2] clk: keystone: don't cache clock rate
+Message-ID: <agHpYnkCgGfZp2-E@redhat.com>
+References: <20260507-clk-sci-v2-1-38f59b48777a@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 11 May 2026 14:17:51 +0100
-Message-Id: <DIFVKM72KZDI.14EVGUMQ0NV9S@linaro.org>
-To: "Tudor Ambarus" <tudor.ambarus@linaro.org>
-Cc: "Krzysztof Kozlowski" <krzk@kernel.org>, "Michael Turquette"
- <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Lee Jones"
- <lee@kernel.org>, "Alim Akhtar" <alim.akhtar@samsung.com>, "Sylwester
- Nawrocki" <s.nawrocki@samsung.com>, "Chanwoo Choi" <cw00.choi@samsung.com>,
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- <linux-kernel@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
- <peter.griffin@linaro.org>, <jyescas@google.com>,
- <kernel-team@android.com>, "Krzysztof Kozlowski"
- <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: Re: [PATCH 5/6] firmware: samsung: acpm: Add TMU protocol support
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-X-Mailer: aerc 0.20.0
-References: <20260506-acpm-tmu-helpers-v1-0-a9cd5daf8355@linaro.org>
- <20260506-acpm-tmu-helpers-v1-5-a9cd5daf8355@linaro.org>
- <DIBOWQYHOPOU.3PCLCL8030WRL@linaro.org>
- <806da86b-45b7-43cc-b364-97bade8f4041@linaro.org>
-In-Reply-To: <806da86b-45b7-43cc-b364-97bade8f4041@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260507-clk-sci-v2-1-38f59b48777a@ti.com>
+User-Agent: Mutt/2.3.1 (2026-03-20)
 
-On Thu May 7, 2026 at 9:31 AM BST, Tudor Ambarus wrote:
-> On 5/6/26 6:13 PM, Alexey Klimov wrote:
->> On Wed May 6, 2026 at 12:39 PM BST, Tudor Ambarus wrote:
+On Thu, May 07, 2026 at 11:09:34AM -0500, a-christidis@ti.com wrote:
+> From: Michael Walle <mwalle@kernel.org>
+> 
+> The TISCI firmware will return 0 if the clock or consumer is not
+> enabled although there is a stored value in the firmware. IOW a call to
+> set rate will work but at get rate will always return 0 if the clock is
+> disabled.
+> The clk framework will try to cache the clock rate when it's requested
+> by a consumer. If the clock or consumer is not enabled at that point,
+> the cached value is 0, which is wrong. Thus, disable the cache
+> altogether.
+> 
+> Signed-off-by: Michael Walle <mwalle@kernel.org>
+> Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+> Reviewed-by: Randolph Sapp <rs@ti.com>
+> Reviewed-by: Nishanth Menon <nm@ti.com>
+> Signed-off-by: Antonios Christidis <a-christidis@ti.com>
 
-[..]
-
->>> new file mode 100644
->>> index 000000000000..c68d60b4c0b3
->>> --- /dev/null
->>> +++ b/drivers/firmware/samsung/exynos-acpm-tmu.c
->>=20
->> [..]
->>=20
->>> +static int acpm_tmu_to_linux_err(s8 fw_err)
->>> +{
->>> +	/*
->>> +	 * ACPM_TMU_INIT uses BIT(0) and BIT(1) of msg.rx.ret to flag APM
->>> +	 * capabilities. Treat zero and all positive values as success.
->>=20
->> ACPM_TMU_INIT returns capabilities inside designated error field?
->
-> yes
-
-Heh. Okay.
-
->> What about other messages/commands? They just return error code there?
->
-> all the other commands either return -1 for errors, regardless of the err=
-or
-> type, or 0 for success.
->>=20
->>> +	 */
->>> +	if (fw_err >=3D 0)
->>> +		return 0;
->>> +
->>> +	if (fw_err =3D=3D -1)
->>> +		return -EACCES;
->>> +
->>> +	return -EIO;
->>> +}
->>=20
->> Could we map these return values with better granularity instead of
->> returning -EIO for everything else that is not minus one?
->
-> I think we're good as we are now. The firmware returns either -1 for erro=
-rs,
-> zero for success, or BIT(0) and BIT(1) for TMU_INIT to flag some capabili=
-ties.
-> I can't tell if there are other commands that return capabilities as well=
-,
-> or if there are other capabilities for TMU_INIT, I don't have access to t=
-he
-> firmware code.
-
-On Exynos850 I see more than just one returned error codes. I definitely
-see 0xfe and 0xfd at least. I don't have any data to confirm that ff
-maps to -1 and fd-s, fe-s to -2,-3 though and what they mean. From my
-experiments I suspect that 0xfe means that call/msg type is not
-implemented or not accessible and 0xfd means that passed parameter is
-wrong or incorrect or not found.
-
-I am also not sure that I saw 0xff-s but, well, maybe that needs more
-experimenting.
-
-Thanks,
-Alexey
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
