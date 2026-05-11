@@ -1,201 +1,176 @@
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4D0137AA98
-	for <linux-clk@vger.kernel.org>; Mon, 11 May 2026 03:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52F537AA8A
+	for <linux-clk@vger.kernel.org>; Mon, 11 May 2026 03:21:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778469370; cv=none; b=GorxzuK8tpoGlyVW54NOWc4IL3EcsnyZ0iva+61VL8LnJe5/lkQoq2DLN/9WOW03NsZ6KuUpV5RwLyAYFUcFkQWfF9+A4dWgqhNcDnH0UAf30tsUot3mA0XnhyXew3IulLkR0AAl1hqAiEJsStpXKJ6tSQ8gJV22oeS5hlCg2pY=
+	t=1778469701; cv=none; b=LNvqwfiLYrL/RMqX04P79vyLXvMJoJng0QyQFCw6MLCnDSlh+Z/jSQlSfR2m+ZcBZNK5ZldCUHyY+2lkFGT2oKF/AeAsaql6ESuoBpLSqDnSQHe1/yzqbk2ihKL3vOpRZRUuQKM3/9bSpUVXoIVwnq7bQPqi3RIWnVH2KgPWY0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778469370; c=relaxed/simple;
-	bh=QJD0kJuNVCBbkbyw6b+8pYpv8PU8c4zZlSaVQMB0qms=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mQpR5Z0QDX/9PB77xedonDy/5D0MJuLke+MGH7a7wEmy+aaTZsDKUZ50mO5Yt1ZGzaHwgl8wNDePAVZaGd1CYLujuB/fI6uui/bfmOVl2EARWtzIbHn9rnrAOjGePRedbh3Q42ly96OQvFCqO7/KNAt8T2whhVU+WW5uIen7LJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jHJz0XSO; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1778469701; c=relaxed/simple;
+	bh=eNRiDEIcluIRSwWhC80cEyHWCnUatRnuX2GHrSiDM30=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XEifeREyDx/rR080taC9wC+uJN+C4oTprVZR7Ze5G9lIPSj6k7r4yxnurK88meydhTx2J/1JI5V/MKbLzUhwWm01AlQAGirNPn1uXMUCaj1IqMdhppFLeWGcz3OZkuDJiSCOeZqLzeZMbKtoO4kz4OKWpVrYpw0E/IshlUvoOMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=a3Cbxw7K; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=FZlnF3Sd; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jHJz0XSO"
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2ba0fc8b1f0so23064095ad.3
-        for <linux-clk@vger.kernel.org>; Sun, 10 May 2026 20:16:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="a3Cbxw7K";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="FZlnF3Sd"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64B2ppds1343221
+	for <linux-clk@vger.kernel.org>; Mon, 11 May 2026 03:21:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=ot0AvZ++ETPuA0JLPkzl0nZT
+	3QrDG0/3gj0Tx8fDXqQ=; b=a3Cbxw7Kl1S1swM5iIsFNoI4TCsmooEMOyn8FK7B
+	20EXYxGH7whoOf3X/iL9dZeww+N5rBcJ2rmEsT6u15lPaI48QLfv/chJme+xJgwr
+	WfxyCOOguqwX7krjnVWuTovV9GZ0WP7vBDJfnTf54DouxpN8pzqnm9GQdaoPyfmt
+	c4ryzb8M7ORHQlEJuWazeQ4YUrLxlhHO8BqckmgCxQqkcLFEbO7MigzWWbMBl8Wa
+	nyoqIN4OD9O419U+b1L1CxOVO40KR1omHOX6w/6le0Y60tNlPzsPs+MFfLhye3Xv
+	6xTq4l8MgIuAdhqZcFFfT0Horxd2m9TdQ0fYwYiqJraBwA==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4e2dkstdme-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Mon, 11 May 2026 03:21:39 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-50d5d1c2289so93479471cf.2
+        for <linux-clk@vger.kernel.org>; Sun, 10 May 2026 20:21:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778469368; x=1779074168; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0v0XH5xCs/mRDozz4cBRqJtguyW98yPx1ByNmDePPT8=;
-        b=jHJz0XSOuLaDL1vMMcrUjfN/JR7UCxUGjiJrnx5E64QoHwqMNsaCDJPC9bE8Chl0p9
-         58f1VrLieGV+jlq1gLg3aTtRgqlvSvvlALGRgo+Po5djldLd1IW6HV80MGj8P4/9m1xc
-         UTlZ/FTTPTh9s+2V7vRbqpsi93rHGRTFaPkIFt+IpieN463RFiGO+1F+sPVTFuqJ2Jfs
-         jCIBC6aj3VXwy2HW8vOIOTABg+i1Cbw3iuZIWFToj6tKZ8RpHbJEr7ZIVR62LnHB6Pxx
-         ScjZ0+/KBgrTu/ML9icgukamQFWA/epXbsSSbYiJyvzX07iF/OBF3HBlVGUjowm+KVw1
-         GUrg==
+        d=oss.qualcomm.com; s=google; t=1778469698; x=1779074498; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ot0AvZ++ETPuA0JLPkzl0nZT3QrDG0/3gj0Tx8fDXqQ=;
+        b=FZlnF3Sdrpa3uDMn0A6uhCNbs+3S+Z4c4wiVJFubaanlNaEf17he2CCTL7GdDbVF8S
+         hPYTWiuoNH/2WXaXoCbEDA3m9Uz8ugO+BeHeE+lALKanGvmvLeOsKTuaR6IoHj2mEY2z
+         4x6tm1Pf4embQcHKh4Y98f3CauqnjzaBNDFGvIPZTivsArUo/oguzMPq3lq+foTYZu9r
+         4GBtb0dXmzyed45mqlqC1yA/d3Pq1xEWl1s0QSY57Pj5Q0c/blo/KTVbOpfp/l/u47Zh
+         Eu5HX0C5VRHKLQZEocfsWTC0qM6kPvP+f4xoNL25gBp5Y1U0KC03843Ez8tLPnslW+YL
+         5fiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778469368; x=1779074168;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=0v0XH5xCs/mRDozz4cBRqJtguyW98yPx1ByNmDePPT8=;
-        b=sgWHVaoayBSKb/zuUu5/QHBlTbJxeKB1hJBGOvWO2DpvbRGC86uSyDCjtlXNV9LRON
-         n2CjHpFZVdMbii+EgZAw3HMvxJon1gbtekopXOqxz31+OrGVwHXcrJ32hEOAPd6WxyVu
-         PY8UTQSIsMKR3jKSBMUb5GJHRusH142GPSvY2hI9Shjk4Eh61NCsHuQzEFlxnNqMEjiN
-         W+W9qAmqzD8qZz9XBhKqV9KEV1KEgjSi3zNNnQSTyvyzeiGf7Db+niuIZPo99ulu4Yrb
-         NAhqNWFSXgt0kbvn3uAhtqy74FA8B8CRK9Hqvzj4DD3FANyibYX6cE/z2vicziiPsN5S
-         UOQA==
-X-Forwarded-Encrypted: i=1; AFNElJ+J/WBL3mo5lX/ii8+rDxwAlqDPIH27V/ky61uIL9K7BHXLVE3g426t6lI0DvgvilhFJcZ0rgoxyjY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPPQPOatYP43FyU+kIgcIklG3ioIaYp+o7UuqToyaLh4ZkopUR
-	RyBtPLcrsXE7Df8JDDT3GCVTIVisSNDRsZA194zkdODTZpizdnfC04/m
-X-Gm-Gg: Acq92OG2SvcqwEok+W6NRl7BveUqyuUh+oBEmItSvhsaczkDXMcqYSGyVLLRj0dGwFe
-	XFq7T4SvYy9u3hQtdvZlBhpm+NX/MJubfEHU21h22ZtnNEfzpRgUpsebpTcE9CogUfww3817FRf
-	qQa4lSLAdMopheVyIVQEJ3Mo7kUMeVp0pF+A5B5D5woi3N1Fnx7+3JlQnXVSbi7kO0yBTKEITAk
-	F39evNaI/tBqXt7v8iaPpxqrbrqJnUFoSCCViZ1sSF6lG1K4yed8PubpparI9o/qtxxmEhrQpHy
-	85UljYRuqklnNjfxR2mpapslsAXfsLLsmyCBlX8nJUOqvA3gdBfp3CV6BCkb8RwdrdWfGFkhSrw
-	yLKf5icEl6ywi1LXoehHWPXbyIqu4mGm+Phd+kETTm9Nm8tfNbz4R9wK8Sy9VoIRaICtf0Zx0Sw
-	7fUn4Kt2dvLYWKRFlCAC54Q/sCuelDUqXqlEVPKpoOCwYMZzmcGjIpwlMJzah0DlFiCoT5JWDPW
-	+l9AGIRytjC5KhE9r3OPXY=
-X-Received: by 2002:a17:903:1d2:b0:2b2:539b:d2b1 with SMTP id d9443c01a7336-2ba78f63e3fmr250069855ad.16.1778469368094;
-        Sun, 10 May 2026 20:16:08 -0700 (PDT)
-Received: from localhost.localdomain (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2baf1d26944sm81585935ad.10.2026.05.10.20.16.06
+        d=1e100.net; s=20251104; t=1778469698; x=1779074498;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ot0AvZ++ETPuA0JLPkzl0nZT3QrDG0/3gj0Tx8fDXqQ=;
+        b=V4FIrzJCothd4caKoKnsqC4kgr+0o8cUySq76owEyIWR9tHoHk4CuVrxFajrtAC2F/
+         mBvbkxhD6zkwEEKUMojagXZpLo9qt7vI1uwVFwqxX2Dp+3DjfYrcwt7JRfrDBJ0ptzc8
+         CdVsEQffhpANpZLCv8wspJ6RtzsumSk6qVB4rZBfiU0CiFfMIFg7M9V7Ub+BYIyfc0AW
+         nX1T0Cnep5NE4cI/BUhY6+KIA0r4C+ymSadOYE6YNJBQcc9rN+UD8IOcEx9K5dkaTvhu
+         jl5cPcEZd2n+cRXshifbmgPS9ECT9gG4MMf7bMks79a771SzxXazEyRSxsW0378tjw3r
+         zfUA==
+X-Forwarded-Encrypted: i=1; AFNElJ9VN3OIz2B199K/UlX7QXyh051IG9YfVUY8uwodlH++6TcbG5O/99SXNGYbl9ig2VOT1drqpW0mVH8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkV/n3KbuezyNzPFqcOpUuc2S0CV/oNxZbuJdqP5PcCA7ptWDz
+	K68bsX6M9iN5xFD9okNP5CLGghHIsEi/833abmzgEqnXz//sgEOlncTRqmKdcqVg0958sNP2cY6
+	rU0hpwcjsmYlupyrtIqfAi68SYo0jRZyUQCjEg4D0T2FN0jERx7Sy1zWy818k/xg=
+X-Gm-Gg: Acq92OFWOVQeFmAXA5TVh5wRL9glXT8VTsdRfBnl0N3K8Puxp404MEkrwfskd9utDtH
+	LfRRfFWQY4ZBFaaTspUODsHWStRM7VtJEywcuTT6gi7Ma1cv5yCvKFuty6LYiffwElRv4drIet2
+	49Jp9gCtXfnmPh+ktnpZv/1V8UXirAV92X5mfXI/KI3jQqoHd1P6jeKINMKqgd4YiGTfpAJEgXZ
+	Mfp1sj5P+/aV8fb1OHgOZ0b+jspJ9DgLYjASsxcRV40yNMdCGNNMSFW2X98b6uS9wxY9ugdIpXF
+	985i12eZwy9nqozBJ8CwXq6I9d1WNvN374iHOzg/J7HiqbBkZMGqEnpAoyWr+ODA4c13tp1dX/j
+	k6cFA03T2ADK6Cpv48EL37gb7OnB+OwJP5kt8Bl81eCc55XgEg8Ikcej/k8QSxa8ZAk6IOKTSqW
+	EFRoVyocTyYNNzRyDrc0bPoqOKsQLpUuK8W0g=
+X-Received: by 2002:a05:622a:40c7:b0:50e:5f36:1da0 with SMTP id d75a77b69052e-5148e99c6b7mr178858661cf.49.1778469698178;
+        Sun, 10 May 2026 20:21:38 -0700 (PDT)
+X-Received: by 2002:a05:622a:40c7:b0:50e:5f36:1da0 with SMTP id d75a77b69052e-5148e99c6b7mr178858401cf.49.1778469697725;
+        Sun, 10 May 2026 20:21:37 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a8bd7d8974sm1274980e87.64.2026.05.10.20.21.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 May 2026 20:16:07 -0700 (PDT)
-From: Joey Lu <a0987203069@gmail.com>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: ychuang3@nuvoton.com,
-	schung@nuvoton.com,
-	yclu4@nuvoton.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Joey Lu <a0987203069@gmail.com>
-Subject: [PATCH 1/1] clk: nuvoton: ma35d1: fix PLL frequency calculation
-Date: Mon, 11 May 2026 11:15:59 +0800
-Message-ID: <20260511031600.31929-2-a0987203069@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260511031600.31929-1-a0987203069@gmail.com>
-References: <20260511031600.31929-1-a0987203069@gmail.com>
+        Sun, 10 May 2026 20:21:35 -0700 (PDT)
+Date: Mon, 11 May 2026 06:21:32 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Erikas Bitovtas <xerikasxx@gmail.com>
+Cc: Bryan O'Donoghue <bod@kernel.org>,
+        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+        Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        =?utf-8?B?QW5kcsOp?= Apitzsch <git@apitzsch.eu>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+        linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+        phone-devel@vger.kernel.org
+Subject: Re: [PATCH v5 5/8] clk: qcom: gcc-msm8939: mark Venus core GDSCs as
+ hardware controlled
+Message-ID: <s67ja4ae5ogjvidv4b6lzlpiskvowctlzki5idkku5warfdmto@gtfy6nvnf4lj>
+References: <Jxt4BbN1dL8VKh_Zjah1xecAjz3c9VfbhKSm4a0K2D1MNKfJKIFnCPLj2VvdW1q4LnMIQy8bCzV3YoVnLFYUlA==@protonmail.internalid>
+ <0cee27b6-f566-4958-8634-2c43e099281e@gmail.com>
+ <dd435489-0cf7-4274-99bf-a591a15e91e4@kernel.org>
+ <-hM6afm_Cu_8Cha9U-hrlrg6CGDEb5D3PFpPPCfIh-QgkdFJp_r0Ah9k1dvAF4zkju2dPc3FZJxvOA4V4hupAA==@protonmail.internalid>
+ <69f9a6b7-7431-442a-82a2-6305635a508a@gmail.com>
+ <9bf43e04-f834-45b6-8942-bcae2e480371@kernel.org>
+ <eiZczGoYszhu5QDfm96oeViUfzDjhlJ8JLLIm2YmOU6S2gfCQoBeo9K2T65EzVLvv9B4lSo0k1KCVWMGLnzL6Q==@protonmail.internalid>
+ <1ee77cbb-9894-4b16-ae2b-8e9035fd6cd5@gmail.com>
+ <6cbb9b37-9560-482a-9fa6-15d5370d258f@kernel.org>
+ <1c2cdaf2-fe30-4443-b164-c37c26f3dd05@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1c2cdaf2-fe30-4443-b164-c37c26f3dd05@gmail.com>
+X-Proofpoint-GUID: 0tVK2d-29gv1Y9VuLS7uxMVnIYixP3rg
+X-Authority-Analysis: v=2.4 cv=d93FDxjE c=1 sm=1 tr=0 ts=6a014b43 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22 a=bAtGagR5AAAA:20
+ a=e3rO1A9j5ybCLOvar8sA:9 a=CjuIK1q_8ugA:10 a=dawVfQjAaf238kedN5IG:22
+ a=bA3UWDv6hWIuX7UZL3qL:22
+X-Proofpoint-ORIG-GUID: 0tVK2d-29gv1Y9VuLS7uxMVnIYixP3rg
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTExMDAzNCBTYWx0ZWRfX8ZBnSucLeyvl
+ fd10PQ+EC76gnc0vx85mMGFc+tq62umc/m3PPS7czeTWAr6K1JWyOjYMNUgX92NvSiX9DdbvAUc
+ pefkxNfFb2vU0K3SZpCuLmAdBDGQ+ibVm0ZZ+C9Qx2mp+6+l5r6OJeNSlnhkZnD3XFSt8UZyRo8
+ Qmnqqbgc6mJgtFPMJo/GO6fg4sD1i6OZ1F+duK6Pq80u/izBzBhjmbdiqZDW+V6DeIvi8z/5zhf
+ XuZT9Q3h5jtmleUa4ozGcP/7lNWu324TvNAAgAd60s0iKwfY0Zn2B1yqvhdaqDS0EfCNY5ronm5
+ wSWXtCgg0TdzZmaRnUSA+xtU226Cgjo3jhB5RGqyPyYnKUnNAW8Z77L14WEGi4+bYvbJed13u3H
+ 0ck1gDIFLKRfDhrXOY/5+o1S8RzdlhpHwnGCIuMPIHROYCHznc3agUopcAPYK2BIEM4b01U1kub
+ NvKcOBSp5OK8eU6dxKg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-05-11_01,2026-05-08_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 impostorscore=0 clxscore=1015 bulkscore=0 adultscore=0
+ lowpriorityscore=0 priorityscore=1501 malwarescore=0 suspectscore=0
+ phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2604200000
+ definitions=main-2605110034
 
-Fix four bugs in the MA35D1 PLL driver:
+On Sun, May 10, 2026 at 01:14:02PM +0300, Erikas Bitovtas wrote:
+> 
+> >>> Last time I tried to enable only 1 of the cores, the following would
+> >>> happen:
+> >> - If core0 is enabled, HEVC decoding would work, but not the other
+> >> codecs.
+> >> - If core1 is enabled, the rest of codecs would work, but not HEVC.
+> > 
+> > Can you be a little clearer here do you mean - doesn't work on that core
+> > or doesn't work on all cores ?
+> > 
+> 
+> By that I mean that when I tried to play an HEVC video with mpv with
+> only core0 enabled, it would play fine, but trying to play videos in
+> another codec would result in power collapse fails. Likewise with core1,
+> but in other codecs.
+> 
+> I assume this is how cores are split - core0 does HEVC decoding and
+> core1 does the rest of codecs. This is confirmed by downstream code as
 
-1. PLL_CTL1_FRAC was defined as GENMASK(31, 24) (8 bits), but the
-   hardware fractional field spans bits [31:8] (24 bits). This caused
-   wrong frequency calculation in fractional and spread-spectrum modes.
+This is correct according to my knowledge.
 
-2. div_u64() does not modify its argument in-place; the quotient must
-   be assigned from the return value. Both ma35d1_calc_smic_pll_freq()
-   and ma35d1_calc_pll_freq() discarded the return value, leaving
-   pll_freq undivided and orders of magnitude too high.
+> well (although the cores are flipped - core0 is the rest of codecs
+> ("legacy") and core1 is HEVC):
+> https://github.com/msm8916-mainline/linux-downstream/blob/b20608408caff817ec874f325127b07609fbaeb8/arch/arm/boot/dts/qcom/msm8939-common.dtsi#L1589
+> https://github.com/msm8916-mainline/linux-downstream/blob/b20608408caff817ec874f325127b07609fbaeb8/Documentation/devicetree/bindings/media/video/msm-vidc.txt#L35
 
-3. The fractional-mode calculation divided x by FIELD_MAX(PLL_CTL1_FRAC)
-   to get 2 decimal digits. After correcting the mask to 24 bits, update
-   the arithmetic to use 3 decimal digits with proper 24-bit fixed-point
-   rounding.
-
-4. ma35d1_clk_pll_determine_rate() called ma35d1_pll_find_closest()
-   unconditionally before the switch, but then overwrote its result by
-   reading the current hardware registers for every PLL type. Move the
-   find_closest() call inside the configurable-PLL branch (APLL, EPLL,
-   VPLL). CAPLL and DDRPLL do not support runtime rate changes and
-   correctly return the current hardware rate.
-
-Fixes: 691521a367cf ("clk: nuvoton: Add clock driver for ma35d1 clock controller")
-Signed-off-by: Joey Lu <a0987203069@gmail.com>
----
- drivers/clk/nuvoton/clk-ma35d1-pll.c | 34 +++++++++++++--------------
- 1 file changed, 17 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/clk/nuvoton/clk-ma35d1-pll.c b/drivers/clk/nuvoton/clk-ma35d1-pll.c
-index 4620acfe47e8..314b81e7727c 100644
---- a/drivers/clk/nuvoton/clk-ma35d1-pll.c
-+++ b/drivers/clk/nuvoton/clk-ma35d1-pll.c
-@@ -48,7 +48,7 @@
- #define PLL_CTL1_PD		BIT(0)
- #define PLL_CTL1_BP		BIT(1)
- #define PLL_CTL1_OUTDIV		GENMASK(6, 4)
--#define PLL_CTL1_FRAC		GENMASK(31, 24)
-+#define PLL_CTL1_FRAC		GENMASK(31, 8)
- #define PLL_CTL2_SLOPE		GENMASK(23, 0)
- 
- #define INDIV_MIN		1
-@@ -92,7 +92,7 @@ static unsigned long ma35d1_calc_smic_pll_freq(u32 pll0_ctl0,
- 	p = FIELD_GET(SPLL0_CTL0_OUTDIV, pll0_ctl0);
- 	outdiv = 1 << p;
- 	pll_freq = (u64)parent_rate * n;
--	div_u64(pll_freq, m * outdiv);
-+	pll_freq = div_u64(pll_freq, m * outdiv);
- 	return pll_freq;
- }
- 
-@@ -110,12 +110,12 @@ static unsigned long ma35d1_calc_pll_freq(u8 mode, u32 *reg_ctl, unsigned long p
- 
- 	if (mode == PLL_MODE_INT) {
- 		pll_freq = (u64)parent_rate * n;
--		div_u64(pll_freq, m * p);
-+		pll_freq = div_u64(pll_freq, m * p);
- 	} else {
- 		x = FIELD_GET(PLL_CTL1_FRAC, reg_ctl[1]);
--		/* 2 decimal places floating to integer (ex. 1.23 to 123) */
--		n = n * 100 + ((x * 100) / FIELD_MAX(PLL_CTL1_FRAC));
--		pll_freq = div_u64(parent_rate * n, 100 * m * p);
-+		/* x is 24-bit fractional part, convert to 3 decimal digits */
-+		n = n * 1000 + (u32)(((u64)x * 1000 + 500) >> 24);
-+		pll_freq = div_u64((u64)parent_rate * n, 1000 * m * p);
- 	}
- 	return pll_freq;
- }
-@@ -255,32 +255,32 @@ static int ma35d1_clk_pll_determine_rate(struct clk_hw *hw,
- 	if (req->best_parent_rate < PLL_FREF_MIN_FREQ || req->best_parent_rate > PLL_FREF_MAX_FREQ)
- 		return -EINVAL;
- 
--	ret = ma35d1_pll_find_closest(pll, req->rate, req->best_parent_rate,
--				      reg_ctl, &pll_freq);
--	if (ret < 0)
--		return ret;
--
- 	switch (pll->id) {
- 	case CAPLL:
-+	case DDRPLL:
-+		/* Read-only PLLs: return current rate */
- 		reg_ctl[0] = readl_relaxed(pll->ctl0_base);
--		pll_freq = ma35d1_calc_smic_pll_freq(reg_ctl[0], req->best_parent_rate);
-+		if (pll->id == CAPLL) {
-+			pll_freq = ma35d1_calc_smic_pll_freq(reg_ctl[0], req->best_parent_rate);
-+		} else {
-+			reg_ctl[1] = readl_relaxed(pll->ctl1_base);
-+			pll_freq = ma35d1_calc_pll_freq(pll->mode, reg_ctl, req->best_parent_rate);
-+		}
- 		req->rate = pll_freq;
--
- 		return 0;
--	case DDRPLL:
- 	case APLL:
- 	case EPLL:
- 	case VPLL:
--		reg_ctl[0] = readl_relaxed(pll->ctl0_base);
--		reg_ctl[1] = readl_relaxed(pll->ctl1_base);
--		pll_freq = ma35d1_calc_pll_freq(pll->mode, reg_ctl, req->best_parent_rate);
-+		/* Configurable PLLs: find closest achievable rate */
-+		ret = ma35d1_pll_find_closest(pll, req->rate, req->best_parent_rate,
-+					      reg_ctl, &pll_freq);
-+		if (ret < 0)
-+			return ret;
- 		req->rate = pll_freq;
--
- 		return 0;
- 	}
- 
- 	req->rate = 0;
--
- 	return 0;
- }
- 
 -- 
-2.49.0
+With best wishes
+Dmitry
