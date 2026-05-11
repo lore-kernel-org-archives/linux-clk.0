@@ -1,176 +1,162 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52F537AA8A
-	for <linux-clk@vger.kernel.org>; Mon, 11 May 2026 03:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96EA81DE8BF
+	for <linux-clk@vger.kernel.org>; Mon, 11 May 2026 03:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778469701; cv=none; b=LNvqwfiLYrL/RMqX04P79vyLXvMJoJng0QyQFCw6MLCnDSlh+Z/jSQlSfR2m+ZcBZNK5ZldCUHyY+2lkFGT2oKF/AeAsaql6ESuoBpLSqDnSQHe1/yzqbk2ihKL3vOpRZRUuQKM3/9bSpUVXoIVwnq7bQPqi3RIWnVH2KgPWY0E=
+	t=1778469792; cv=none; b=KStqVNs3PYnr6mTr6t9KWl3A+3Z/KF+KseCeNBHwJ6ZUYaRss7R3RPTy1DStv/Npnywu2+W+9jYASHDtsH/cvAZ0zFoVZqnoxVLndQQFr7GiPgSHhV9tf/CtOysiB2DscAHhntGg5ExjSJeh75rVulstJx5DG/npjUdFDOxdvgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778469701; c=relaxed/simple;
-	bh=eNRiDEIcluIRSwWhC80cEyHWCnUatRnuX2GHrSiDM30=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XEifeREyDx/rR080taC9wC+uJN+C4oTprVZR7Ze5G9lIPSj6k7r4yxnurK88meydhTx2J/1JI5V/MKbLzUhwWm01AlQAGirNPn1uXMUCaj1IqMdhppFLeWGcz3OZkuDJiSCOeZqLzeZMbKtoO4kz4OKWpVrYpw0E/IshlUvoOMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=a3Cbxw7K; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=FZlnF3Sd; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1778469792; c=relaxed/simple;
+	bh=aRA9RqDbdkytdeD3fIcLbhFl+PjGHD37mS0atvssw4g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MMiOxyZRSc3zklyYABDDYE+AHY2G6tvSFiAYOTf6EiGwno8EhKaMfYhaisf5EiBk+3vCQwVK3D0n4wqEb1x9g+eOltAOSODKq2xnCe7xgvQZ9Hf94FdPzj/l4qlw20DugBiouLAlE5IQCOZY0S1P2wq2I8Zemd+LbxswWt7t660=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wm6vQEVb; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="a3Cbxw7K";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="FZlnF3Sd"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64B2ppds1343221
-	for <linux-clk@vger.kernel.org>; Mon, 11 May 2026 03:21:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=ot0AvZ++ETPuA0JLPkzl0nZT
-	3QrDG0/3gj0Tx8fDXqQ=; b=a3Cbxw7Kl1S1swM5iIsFNoI4TCsmooEMOyn8FK7B
-	20EXYxGH7whoOf3X/iL9dZeww+N5rBcJ2rmEsT6u15lPaI48QLfv/chJme+xJgwr
-	WfxyCOOguqwX7krjnVWuTovV9GZ0WP7vBDJfnTf54DouxpN8pzqnm9GQdaoPyfmt
-	c4ryzb8M7ORHQlEJuWazeQ4YUrLxlhHO8BqckmgCxQqkcLFEbO7MigzWWbMBl8Wa
-	nyoqIN4OD9O419U+b1L1CxOVO40KR1omHOX6w/6le0Y60tNlPzsPs+MFfLhye3Xv
-	6xTq4l8MgIuAdhqZcFFfT0Horxd2m9TdQ0fYwYiqJraBwA==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4e2dkstdme-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 11 May 2026 03:21:39 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-50d5d1c2289so93479471cf.2
-        for <linux-clk@vger.kernel.org>; Sun, 10 May 2026 20:21:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wm6vQEVb"
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2b4583f0a1aso23397455ad.3
+        for <linux-clk@vger.kernel.org>; Sun, 10 May 2026 20:23:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1778469698; x=1779074498; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ot0AvZ++ETPuA0JLPkzl0nZT3QrDG0/3gj0Tx8fDXqQ=;
-        b=FZlnF3Sdrpa3uDMn0A6uhCNbs+3S+Z4c4wiVJFubaanlNaEf17he2CCTL7GdDbVF8S
-         hPYTWiuoNH/2WXaXoCbEDA3m9Uz8ugO+BeHeE+lALKanGvmvLeOsKTuaR6IoHj2mEY2z
-         4x6tm1Pf4embQcHKh4Y98f3CauqnjzaBNDFGvIPZTivsArUo/oguzMPq3lq+foTYZu9r
-         4GBtb0dXmzyed45mqlqC1yA/d3Pq1xEWl1s0QSY57Pj5Q0c/blo/KTVbOpfp/l/u47Zh
-         Eu5HX0C5VRHKLQZEocfsWTC0qM6kPvP+f4xoNL25gBp5Y1U0KC03843Ez8tLPnslW+YL
-         5fiw==
+        d=gmail.com; s=20251104; t=1778469790; x=1779074590; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=z+2lgYT5AdwNVejrbpCLq1bID8j6vgX8/sYNGb+SUj8=;
+        b=Wm6vQEVbt9ewLsEPkvcJc8l7n+jW8WrKGkBvXjYcBx7D1VTpFadqopwmyVLelG16wP
+         JkqfY3FzgVI70naGkiPyTmt8ufIE3vm3G5czHCcViz/AjJB80KnGSYssgphP/iqea8Ki
+         kQuUG5PzG0T37r6HaMkGg7cNcyw4Qb1Qwf66S57gkIGGSjcTYXwftaCrfkkUIiijwQzG
+         sXC3RKMwv3pEGAsbY5/EgDWoSwsF5U+EK0+QoONqjUV1Ls/G2rTQvJghtkZjQgNm3T8P
+         pQiBQjVEgDhq9QqVNjsPE6sKYgSURx1UOLQ36y46iNyvt5TEpbK2UNBcRrgjzeHZmIoy
+         4Rcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778469698; x=1779074498;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ot0AvZ++ETPuA0JLPkzl0nZT3QrDG0/3gj0Tx8fDXqQ=;
-        b=V4FIrzJCothd4caKoKnsqC4kgr+0o8cUySq76owEyIWR9tHoHk4CuVrxFajrtAC2F/
-         mBvbkxhD6zkwEEKUMojagXZpLo9qt7vI1uwVFwqxX2Dp+3DjfYrcwt7JRfrDBJ0ptzc8
-         CdVsEQffhpANpZLCv8wspJ6RtzsumSk6qVB4rZBfiU0CiFfMIFg7M9V7Ub+BYIyfc0AW
-         nX1T0Cnep5NE4cI/BUhY6+KIA0r4C+ymSadOYE6YNJBQcc9rN+UD8IOcEx9K5dkaTvhu
-         jl5cPcEZd2n+cRXshifbmgPS9ECT9gG4MMf7bMks79a771SzxXazEyRSxsW0378tjw3r
-         zfUA==
-X-Forwarded-Encrypted: i=1; AFNElJ9VN3OIz2B199K/UlX7QXyh051IG9YfVUY8uwodlH++6TcbG5O/99SXNGYbl9ig2VOT1drqpW0mVH8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkV/n3KbuezyNzPFqcOpUuc2S0CV/oNxZbuJdqP5PcCA7ptWDz
-	K68bsX6M9iN5xFD9okNP5CLGghHIsEi/833abmzgEqnXz//sgEOlncTRqmKdcqVg0958sNP2cY6
-	rU0hpwcjsmYlupyrtIqfAi68SYo0jRZyUQCjEg4D0T2FN0jERx7Sy1zWy818k/xg=
-X-Gm-Gg: Acq92OFWOVQeFmAXA5TVh5wRL9glXT8VTsdRfBnl0N3K8Puxp404MEkrwfskd9utDtH
-	LfRRfFWQY4ZBFaaTspUODsHWStRM7VtJEywcuTT6gi7Ma1cv5yCvKFuty6LYiffwElRv4drIet2
-	49Jp9gCtXfnmPh+ktnpZv/1V8UXirAV92X5mfXI/KI3jQqoHd1P6jeKINMKqgd4YiGTfpAJEgXZ
-	Mfp1sj5P+/aV8fb1OHgOZ0b+jspJ9DgLYjASsxcRV40yNMdCGNNMSFW2X98b6uS9wxY9ugdIpXF
-	985i12eZwy9nqozBJ8CwXq6I9d1WNvN374iHOzg/J7HiqbBkZMGqEnpAoyWr+ODA4c13tp1dX/j
-	k6cFA03T2ADK6Cpv48EL37gb7OnB+OwJP5kt8Bl81eCc55XgEg8Ikcej/k8QSxa8ZAk6IOKTSqW
-	EFRoVyocTyYNNzRyDrc0bPoqOKsQLpUuK8W0g=
-X-Received: by 2002:a05:622a:40c7:b0:50e:5f36:1da0 with SMTP id d75a77b69052e-5148e99c6b7mr178858661cf.49.1778469698178;
-        Sun, 10 May 2026 20:21:38 -0700 (PDT)
-X-Received: by 2002:a05:622a:40c7:b0:50e:5f36:1da0 with SMTP id d75a77b69052e-5148e99c6b7mr178858401cf.49.1778469697725;
-        Sun, 10 May 2026 20:21:37 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a8bd7d8974sm1274980e87.64.2026.05.10.20.21.33
+        d=1e100.net; s=20251104; t=1778469790; x=1779074590;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z+2lgYT5AdwNVejrbpCLq1bID8j6vgX8/sYNGb+SUj8=;
+        b=sRztg9oaYBOkh/w5Ornfb+04QvOwT2r68EJxStCzdlEVZG1znRsv9/v9zAaQMYdQHn
+         4JNwnso4EESJjV+KRREOtEqF9TSPn9TWmT+ZLSzLZ41Jw2lyBcWhvSdnnZa0nmAXX0Tx
+         ljwKnj+Bx1KmMQp1H7FRlcLx+jsEkRTA897OR8mLOp+sfpkHlsTF1Ub+HLUr3hKuJX/f
+         DXUQaLg8CoYSKbvutP8D0Ln2c4Zc+rkjEOP4VObyXqWG4XUMAYU06imSY6Fakg5+TLbI
+         BYlQyElbffrIH6ec3Nk+WLIb9e1TfnqY4hlrahWz3g41t234JN4t9rSb35S/HNNgY3jo
+         e/3w==
+X-Gm-Message-State: AOJu0Yxj0GiJ22AgzWs1ru6UXA/fRBNcnanwoz/xxgQtkavHv3ZQOloc
+	xSjCUi78f/eWzQWvESU/faZWsADIlqqQ784mhqLBjfOmfSZzDPGra1iTVUEHQyV+
+X-Gm-Gg: Acq92OE/6vxHT2NTJnUj9uyQVCeomcTPVk1B1saI00T3vI0mHjoIIxqbfHsEiK/wLia
+	7xQW4YD6R4at89Rd43u5yz0aIYYemIfOU7WhgKqisyNTWgO7AoPFkhYeuSSbYauDE4PeNuOut0t
+	0aQSWw5h/RJ97oaqyphY29UMOELEHoUuaW8CKrgK4TCxCKLK5va/JF58e7LRvgoewyUTfr5zqrm
+	9vWQX/M2TdJlmbKh3aMNeX0OmbJTgsjnQmF03buAp9ZlQT0PR8x+ibkUQegT50YdrQn94u74D9W
+	uQXwoYT51rW2JRs6xE+kB5IDO5TbnyHKEof1UtqyGhGP+xhpPDbcfeStOihKLlANQospl8ZORb+
+	D1pZ0Jq5oEtc83nre287NxTCRMnPzVU0mfxLswDXe+qN4c8RZSbIkyHsLuMiJtF/DXWv25Oe6TM
+	PL2jXLszgA8alhVjtAF6uYuJVJYtiJ8iqsIMWT3/eBk74O3ZHVE+MR+qGRxSc+H0CUQq8WZA16Y
+	/r6Ukw6kgJZpTGebrcN6ZAC01VUj46JrIQ=
+X-Received: by 2002:a17:903:3c68:b0:2bc:8f9a:3642 with SMTP id d9443c01a7336-2bc8f9a370emr72908175ad.16.1778469790096;
+        Sun, 10 May 2026 20:23:10 -0700 (PDT)
+Received: from ryzen ([2601:644:8000:5b5d:7285:c2ff:fe45:8a32])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2baf1e35bcfsm83911855ad.38.2026.05.10.20.23.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 May 2026 20:21:35 -0700 (PDT)
-Date: Mon, 11 May 2026 06:21:32 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Erikas Bitovtas <xerikasxx@gmail.com>
-Cc: Bryan O'Donoghue <bod@kernel.org>,
-        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-        Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        =?utf-8?B?QW5kcsOp?= Apitzsch <git@apitzsch.eu>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-        linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
-        phone-devel@vger.kernel.org
-Subject: Re: [PATCH v5 5/8] clk: qcom: gcc-msm8939: mark Venus core GDSCs as
- hardware controlled
-Message-ID: <s67ja4ae5ogjvidv4b6lzlpiskvowctlzki5idkku5warfdmto@gtfy6nvnf4lj>
-References: <Jxt4BbN1dL8VKh_Zjah1xecAjz3c9VfbhKSm4a0K2D1MNKfJKIFnCPLj2VvdW1q4LnMIQy8bCzV3YoVnLFYUlA==@protonmail.internalid>
- <0cee27b6-f566-4958-8634-2c43e099281e@gmail.com>
- <dd435489-0cf7-4274-99bf-a591a15e91e4@kernel.org>
- <-hM6afm_Cu_8Cha9U-hrlrg6CGDEb5D3PFpPPCfIh-QgkdFJp_r0Ah9k1dvAF4zkju2dPc3FZJxvOA4V4hupAA==@protonmail.internalid>
- <69f9a6b7-7431-442a-82a2-6305635a508a@gmail.com>
- <9bf43e04-f834-45b6-8942-bcae2e480371@kernel.org>
- <eiZczGoYszhu5QDfm96oeViUfzDjhlJ8JLLIm2YmOU6S2gfCQoBeo9K2T65EzVLvv9B4lSo0k1KCVWMGLnzL6Q==@protonmail.internalid>
- <1ee77cbb-9894-4b16-ae2b-8e9035fd6cd5@gmail.com>
- <6cbb9b37-9560-482a-9fa6-15d5370d258f@kernel.org>
- <1c2cdaf2-fe30-4443-b164-c37c26f3dd05@gmail.com>
+        Sun, 10 May 2026 20:23:09 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney@redhat.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Rockchip SoC support),
+	linux-rockchip@lists.infradead.org (open list:ARM/Rockchip SoC support),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] clk: rockchip: Use flexible array for clock table
+Date: Sun, 10 May 2026 20:22:52 -0700
+Message-ID: <20260511032252.361906-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1c2cdaf2-fe30-4443-b164-c37c26f3dd05@gmail.com>
-X-Proofpoint-GUID: 0tVK2d-29gv1Y9VuLS7uxMVnIYixP3rg
-X-Authority-Analysis: v=2.4 cv=d93FDxjE c=1 sm=1 tr=0 ts=6a014b43 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22 a=bAtGagR5AAAA:20
- a=e3rO1A9j5ybCLOvar8sA:9 a=CjuIK1q_8ugA:10 a=dawVfQjAaf238kedN5IG:22
- a=bA3UWDv6hWIuX7UZL3qL:22
-X-Proofpoint-ORIG-GUID: 0tVK2d-29gv1Y9VuLS7uxMVnIYixP3rg
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTExMDAzNCBTYWx0ZWRfX8ZBnSucLeyvl
- fd10PQ+EC76gnc0vx85mMGFc+tq62umc/m3PPS7czeTWAr6K1JWyOjYMNUgX92NvSiX9DdbvAUc
- pefkxNfFb2vU0K3SZpCuLmAdBDGQ+ibVm0ZZ+C9Qx2mp+6+l5r6OJeNSlnhkZnD3XFSt8UZyRo8
- Qmnqqbgc6mJgtFPMJo/GO6fg4sD1i6OZ1F+duK6Pq80u/izBzBhjmbdiqZDW+V6DeIvi8z/5zhf
- XuZT9Q3h5jtmleUa4ozGcP/7lNWu324TvNAAgAd60s0iKwfY0Zn2B1yqvhdaqDS0EfCNY5ronm5
- wSWXtCgg0TdzZmaRnUSA+xtU226Cgjo3jhB5RGqyPyYnKUnNAW8Z77L14WEGi4+bYvbJed13u3H
- 0ck1gDIFLKRfDhrXOY/5+o1S8RzdlhpHwnGCIuMPIHROYCHznc3agUopcAPYK2BIEM4b01U1kub
- NvKcOBSp5OK8eU6dxKg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-05-11_01,2026-05-08_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 impostorscore=0 clxscore=1015 bulkscore=0 adultscore=0
- lowpriorityscore=0 priorityscore=1501 malwarescore=0 suspectscore=0
- phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2604200000
- definitions=main-2605110034
+Content-Transfer-Encoding: 8bit
 
-On Sun, May 10, 2026 at 01:14:02PM +0300, Erikas Bitovtas wrote:
-> 
-> >>> Last time I tried to enable only 1 of the cores, the following would
-> >>> happen:
-> >> - If core0 is enabled, HEVC decoding would work, but not the other
-> >> codecs.
-> >> - If core1 is enabled, the rest of codecs would work, but not HEVC.
-> > 
-> > Can you be a little clearer here do you mean - doesn't work on that core
-> > or doesn't work on all cores ?
-> > 
-> 
-> By that I mean that when I tried to play an HEVC video with mpv with
-> only core0 enabled, it would play fine, but trying to play videos in
-> another codec would result in power collapse fails. Likewise with core1,
-> but in other codecs.
-> 
-> I assume this is how cores are split - core0 does HEVC decoding and
-> core1 does the rest of codecs. This is confirmed by downstream code as
+Store the clock lookup table in the Rockchip clock provider
+allocation instead of allocating it separately.
 
-This is correct according to my knowledge.
+This ties the table lifetime directly to the provider and removes a
+separate allocation failure path while preserving the clk_onecell_data
+lookup interface.
 
-> well (although the cores are flipped - core0 is the rest of codecs
-> ("legacy") and core1 is HEVC):
-> https://github.com/msm8916-mainline/linux-downstream/blob/b20608408caff817ec874f325127b07609fbaeb8/arch/arm/boot/dts/qcom/msm8939-common.dtsi#L1589
-> https://github.com/msm8916-mainline/linux-downstream/blob/b20608408caff817ec874f325127b07609fbaeb8/Documentation/devicetree/bindings/media/video/msm-vidc.txt#L35
+Assisted-by: Codex:GPT-5.5
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+---
+ drivers/clk/rockchip/clk.c | 17 ++++-------------
+ drivers/clk/rockchip/clk.h |  2 ++
+ 2 files changed, 6 insertions(+), 13 deletions(-)
 
+diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+index ee8c79b938d3..dbb4b6f33abb 100644
+--- a/drivers/clk/rockchip/clk.c
++++ b/drivers/clk/rockchip/clk.c
+@@ -359,26 +359,21 @@ static struct rockchip_clk_provider *rockchip_clk_init_base(
+ 		unsigned long nr_clks, bool has_late_clocks)
+ {
+ 	struct rockchip_clk_provider *ctx;
+-	struct clk **clk_table;
+ 	struct clk *default_clk_val;
+ 	int i;
+ 
+ 	default_clk_val = ERR_PTR(has_late_clocks ? -EPROBE_DEFER : -ENOENT);
+ 
+-	ctx = kzalloc_obj(struct rockchip_clk_provider);
++	ctx = kzalloc_flex(*ctx, clk_table, nr_clks);
+ 	if (!ctx)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	clk_table = kzalloc_objs(struct clk *, nr_clks);
+-	if (!clk_table)
+-		goto err_free;
+-
+ 	for (i = 0; i < nr_clks; ++i)
+-		clk_table[i] = default_clk_val;
++		ctx->clk_table[i] = default_clk_val;
+ 
+-	ctx->reg_base = base;
+-	ctx->clk_data.clks = clk_table;
+ 	ctx->clk_data.clk_num = nr_clks;
++	ctx->clk_data.clks = ctx->clk_table;
++	ctx->reg_base = base;
+ 	ctx->cru_node = np;
+ 	spin_lock_init(&ctx->lock);
+ 
+@@ -388,10 +383,6 @@ static struct rockchip_clk_provider *rockchip_clk_init_base(
+ 						   "rockchip,grf");
+ 
+ 	return ctx;
+-
+-err_free:
+-	kfree(ctx);
+-	return ERR_PTR(-ENOMEM);
+ }
+ 
+ struct rockchip_clk_provider *rockchip_clk_init(struct device_node *np,
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index 9e3503e2ffc2..d4033bf750f5 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -604,6 +604,7 @@ struct rockchip_aux_grf {
+  * @grf: regmap of the general-register-files syscon
+  * @aux_grf_table: hashtable of auxiliary GRF regmaps, indexed by grf_type
+  * @lock: maintains exclusion between callbacks for a given clock-provider.
++ * @clk_table: clock lookup table.
+  */
+ struct rockchip_clk_provider {
+ 	void __iomem *reg_base;
+@@ -612,6 +613,7 @@ struct rockchip_clk_provider {
+ 	struct regmap *grf;
+ 	DECLARE_HASHTABLE(aux_grf_table, GRF_HASH_ORDER);
+ 	spinlock_t lock;
++	struct clk *clk_table[];
+ };
+ 
+ struct rockchip_pll_rate_table {
 -- 
-With best wishes
-Dmitry
+2.54.0
+
