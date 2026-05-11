@@ -1,82 +1,82 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 227A53FE357
-	for <linux-clk@vger.kernel.org>; Mon, 11 May 2026 14:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4ED370D52
+	for <linux-clk@vger.kernel.org>; Mon, 11 May 2026 14:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778510670; cv=none; b=pvK7ghQfUiaV9sOUmXn3G7Ny7bNN9fAVT6IyL1nPfE0mnjurezEoJ76XIRXoBdIc3avCKGGzTtrEfWqZb57Y3BXIXwJNg711mw4CKKyQ4VEj3oKq++NdFw5pE/RDnaWzOkHfuLctl8AcbYFszUIzx8Wd6bK38SIPMMpFcsInPc4=
+	t=1778510700; cv=none; b=BjMJfCB5mLFlMyuDfN97eq+b8+AFHev61frrKBg5Jp739UBHN28m8SdXQ9tOv0JgnEPz13QXF0QwMOJswOxetCJLg4oL+k94U/k/uQCbdofe8pmHuXd+HKxfP8OAPXz/tq4x598pOWX1vrC549bjsw7UA9Y9Ib/9A798cpTcH2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778510670; c=relaxed/simple;
-	bh=YeUj9wXNgdrewjn/2kxGJgL8PSFFtIVeng7DFODP/tM=;
+	s=arc-20240116; t=1778510700; c=relaxed/simple;
+	bh=MFiTN0Yfk5929QM8ZG3xqo3c4QVdL3MMPUViXHHZdag=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rns6dNeSuFgof46h4xdnTItVudPFZCxAtuIEwSj8b0FWFxGVimvjbscPiHOXG3BuNvpnTRRs3iJZgxmXDhHFXYFZzF1EwW8WzqDS79uj5OQZqzznk1ylUBlcs1gL4VBP6I5YFL2CDNYekTrdmlIT9Hp2uGOEgRSSBrg/On9p9d8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QWvdoJlk; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=iPHnMoLp; arc=none smtp.client-ip=170.10.133.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=hMmXJd0bUhNTIQ2Qs3IXHWZAQ8BCXFqmTrA45SlWrXlGkHcP66lCXt4KH1T5+Gk+JLKotrwafexXqdBoo9RyMlKuP+P+Fen8mYFNdJL6StlRy2uOdhINOhri/WRb231fz3Zf0WQ1ObnQh0oa74drSpao1wRt3vE0K7s9HZBGMIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I+5KAHlp; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=UbtGm/Fo; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QWvdoJlk";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="iPHnMoLp"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I+5KAHlp";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="UbtGm/Fo"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1778510668;
+	s=mimecast20190719; t=1778510697;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Eicqwhgs+eER0wAJIrvpo3UBssGzYDYUrthaa+7DjQ8=;
-	b=QWvdoJlkm226nC79juU7LLp4wEMKCYqu0wWmneg5IZ3h2O7hbaV7FUGD1r4GFBJl8JF+VW
-	jsA2dB+QB6uwvNcKjeXxDrjzVxFE17e4rmI4Spj03Wb8OlbG8ZODZp2/TRwZuFvdV9oOXV
-	xcXrqhdIi1YT075UgWzA3keSaQOksMU=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=FU31spM6LjzcyHuFHmDris1Hu7nsA7C7uZ0OzEouoRE=;
+	b=I+5KAHlp8+yv3JdACpupEtPAaer5R3en+mJ5BW/QdJNmNdp/dF+KS4Xvqg2mVuvP4GjZIK
+	F3hncqN9/CNuKLmGENGZFgmGZ1aX9wU3DAkrM7jsd5Hpq7GpBIn1Rf1IOuARddwbWRXxBC
+	9bF2S0r8xCn2RP85urZgf4pOBTgBBQg=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-574-vsq3PAMUOsC8t7q8QCpNpA-1; Mon, 11 May 2026 10:44:26 -0400
-X-MC-Unique: vsq3PAMUOsC8t7q8QCpNpA-1
-X-Mimecast-MFC-AGG-ID: vsq3PAMUOsC8t7q8QCpNpA_1778510666
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-8b7a1ea06bfso96821266d6.3
-        for <linux-clk@vger.kernel.org>; Mon, 11 May 2026 07:44:26 -0700 (PDT)
+ us-mta-271-JQfWAQzgMe-xUZoMoKqDrQ-1; Mon, 11 May 2026 10:44:55 -0400
+X-MC-Unique: JQfWAQzgMe-xUZoMoKqDrQ-1
+X-Mimecast-MFC-AGG-ID: JQfWAQzgMe-xUZoMoKqDrQ_1778510695
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-50d84b5f73bso43106851cf.0
+        for <linux-clk@vger.kernel.org>; Mon, 11 May 2026 07:44:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1778510666; x=1779115466; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1778510695; x=1779115495; darn=vger.kernel.org;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Eicqwhgs+eER0wAJIrvpo3UBssGzYDYUrthaa+7DjQ8=;
-        b=iPHnMoLpKC3JNAWBRNQE7n6c2ISTDcxzhNh3O0OTvKW100V3beNuH/vIgN9w8Oye4x
-         2XNMgt8AemLtZOmgnOmEpphGqKTfJMGYwLnFo1zYcEqa3SK+biNDEOtgUazc3ucCBd9G
-         bYQjdABRS2RiDCRKYYh5Y8ns4DDqc5p+sAi/W4AqVxoqX7gs00FMVBagRC4TbsnwHgN1
-         ospG3YuNQL1baSpe8eiAx0jMo7EIy/nyAKIuG5bYnjK40U8+cHImn3S9/l4sMHfrkMil
-         POnfoSs6Xh9lYZihmEYLf0WWm4qWJeo68sXtOP/DfVtxdGuasAzKE7pWx5U0Eymbb4rX
-         H8SA==
+        bh=FU31spM6LjzcyHuFHmDris1Hu7nsA7C7uZ0OzEouoRE=;
+        b=UbtGm/Fo+JfWxBIDdzkUFBMjn0FpzbT6ERhgOPmBIBjx+ndX+PSfzbuKdODEZf6OYd
+         ywtfWtnKMP15Trsl5ivhWPwQ2dnn7p5MwtiwnQb70ut8up9OPA0MhSD3NdbORf/0Mmjg
+         7U5KvN9uZrBxodoRbL/7HnqJMU/veqf4gHcP9wru53rMqETSXSh6sPe6hjEDgzp/kxYf
+         MgmxcNFcoBdiedm83deIU6cbUscSh/6KMGTCZQlnf2fAfVPvb9J102tc265XIdhAXrFr
+         zFS/JrPbGvbrSRDbLMVZm4MtBpZCC9rqtHX2lll5n9vonTI6Of3YjWOaRC0UeedDNGth
+         O3YA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778510666; x=1779115466;
+        d=1e100.net; s=20251104; t=1778510695; x=1779115495;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=Eicqwhgs+eER0wAJIrvpo3UBssGzYDYUrthaa+7DjQ8=;
-        b=CIRocG3DjQW0rsFpPihSgDy0uooobKRz5evyK9o0B7A2lj03hP3PlDCFgkueHOdqdY
-         NJVfW7uU5fkV2E48+5Nj68xXJNMCb34ALj4Taupz9kysBikaof8F2ag+uj65TDF3N1lX
-         pSv18u+KZmccfn9BJHBtLjNWSwIS2bMZzTu9xJo1757yuDa7aYaAf1N+tkJ6oR3TyWlK
-         lkiTNp0PQAg8hW/VUYefMUfUFVFmUOjCMFWquvRnwmkgpXF+pJV3vKksHtLw99U1w1ly
-         C/bKlG8uYSD0xztAESbEKRhW/XroTwJ6YVf/fF44zN/Uq03+y4VLbaTRtFz/axLQri/F
-         v8Dw==
-X-Forwarded-Encrypted: i=1; AFNElJ8FySlmE499+oCkFyyvhoKh5lS8QQwqONE9CfgrOjJhBKdUi8PTsL6ztJafFcPOaNFZ+Qoaeo4l3j0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9JXlHuXSfHFMUh7IAYIsIxW6W+1+LhWpTWW7TO3T8g1s08/sY
-	fvg7nYquxCfDdGsWAM8ZMm9kLf+La6MHPWRq3XGKwCAq8IQ2W8JvISt7LpwoIH47r7Er1TSeIVN
-	aeDcgSHLUEoDvk9L0bskfKIHC9KzjRlh73bKpuo2cqtyNUyDumBArBMAo72ZkTg==
-X-Gm-Gg: Acq92OFfs0/PO0J0fY/yGmOe9fD/L5mwfHOC5Ft5EwGieXa5+2cLDe1qeSHU5LtA1X8
-	AwSY8az8JQixflrrjNMyj7p0gQJCKL0wAjkP0xjWs49bUbnHHLncl/4+gsRxy2B6JR04NWVY0UX
-	kQ6LzsfhrJkJrzsD/t1ir0eyktWTaO/+dowcsZdbRxIUjys19dIslMllk6zF3aJfw4+3U+LbtXk
-	RfcGmv/lUjtUcCiDHWvm9xSNIQNMVvTLNV3TnXL5m0ClNxqkhlf657FwOXptnFXeXmuyEy0wL2Q
-	nGLfM8xHewbM3ZtVmW8wj1QT8NnfeNJnMBU3X3sUgeshVEIMASu/HVus1GwGO9uPiqSUiXnwEBg
-	Ja0oSGbOsEjyS9B+20hcd612MdAY+mLpcOH2JAFzebzkd2V6jYU/KSFG5
-X-Received: by 2002:a05:6214:242d:b0:8ae:6587:3d54 with SMTP id 6a1803df08f44-8bf4302e586mr246380056d6.26.1778510665815;
-        Mon, 11 May 2026 07:44:25 -0700 (PDT)
-X-Received: by 2002:a05:6214:242d:b0:8ae:6587:3d54 with SMTP id 6a1803df08f44-8bf4302e586mr246379126d6.26.1778510665344;
-        Mon, 11 May 2026 07:44:25 -0700 (PDT)
+        bh=FU31spM6LjzcyHuFHmDris1Hu7nsA7C7uZ0OzEouoRE=;
+        b=aFj8piUpf5Ld5dmdxJ9zcjbQ1ui1EBa9nofyGkx5S/eQJ4PakEbDrC9wKqi5o0V5s8
+         MYEdUSTYMIyt3f9bpZo0A8U8HuWlc9gBKbX76RVuvnOfjLkRTceSCSLB2FbzmXEd4y4C
+         fLH6sczQME6om9PzBxn/59LPYTFfBphtCxknnFRxM6yjzWAELbWEE0rnR3KzpSFqw+XX
+         b9Ot4QDeNhenWTm8BHJsE+dkm8mYaK/Y3e5CeqQd2jri3sJJdCCegjc/0WQ6xIEJtb33
+         VafgkF3oyxLWNy10+MDY2Fu6m6BP0H4RsM3IVvSUWg3sjwEy+gs/qP+51EAogxN2OsEA
+         rYQg==
+X-Forwarded-Encrypted: i=1; AFNElJ97XuhVCBCtz4pa0Ck4k9Y5adtqt0qmYmnidKcDFvHD8yIA2XZ1Kc6G8acygTgyZeabZYqqbdEgoDg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHakq5ZYgfY+bblkN3GGmnflswrfRZl05x92KWqpRJK+4Lmao2
+	lkijEyn5TVwn2d1t/f1idhi+Uodr+C5ZwJbkcLhQrNif601YXxOmU7wVqbmoTZsZABFL4XZ1r3B
+	rUiVvMc91CyO/Bci1SJLkYUBRkU+x68b0NBDPMfCNS4On1rRj+SVvMYaAnelHDg==
+X-Gm-Gg: Acq92OFoKpg/xqIoj5BPiN89GcDBshHVZzL0uR9yMxeuJ4WYeAxsthW1I2SYL/yTl+Y
+	F5SqY+sy1yCpZGpbtgVn8fWWp+u2piaPt3WpQVWKUjInmYSt/RF/aVToLcs9szklT/fzIxID0+t
+	7F8s7y0HVz1B1mbO1Ibnj7Y5NjUvNfew9/oN0u3SHgzkruVXQR9TI7IdlI0Ws9WIj5LUitcJ2qq
+	PVdFdOIfRlaziwdLtRU6bAWU7VmUCm4LyPOhx/KECx7/U/ldgmZqD+ag+WsnodYz+Nf6GeYOBkk
+	9fLLj7Z8s25HNjjmnG8MDKY7asDKwVPe7kgFp1OPShb0yKboFy9++j+C2qLkVz/hOKoo4rj8brQ
+	y6g3xwwxkxlE04fjoAlavtizzuOQPLc35bUzLij1+SjyRYY3VLUmRdcGI
+X-Received: by 2002:a05:622a:550e:b0:50d:6b06:a453 with SMTP id d75a77b69052e-51461e4fdcfmr344798901cf.18.1778510694841;
+        Mon, 11 May 2026 07:44:54 -0700 (PDT)
+X-Received: by 2002:a05:622a:550e:b0:50d:6b06:a453 with SMTP id d75a77b69052e-51461e4fdcfmr344798201cf.18.1778510694263;
+        Mon, 11 May 2026 07:44:54 -0700 (PDT)
 Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8b53c6b8398sm345352276d6.37.2026.05.11.07.44.23
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8bf39c82420sm105737256d6.33.2026.05.11.07.44.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 May 2026 07:44:24 -0700 (PDT)
-Date: Mon, 11 May 2026 10:44:22 -0400
+        Mon, 11 May 2026 07:44:53 -0700 (PDT)
+Date: Mon, 11 May 2026 10:44:51 -0400
 From: Brian Masney <bmasney@redhat.com>
 To: Cristian Marussi <cristian.marussi@arm.com>
 Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -89,10 +89,11 @@ Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	kuninori.morimoto.gx@renesas.com, marek.vasut+renesas@gmail.com,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v4 01/15] clk: scmi: Fix clock rate rounding
-Message-ID: <agHrRhvz_gHLpxPr@redhat.com>
+Subject: Re: [PATCH v4 03/15] clk: scmi: Use new determine_rate clock
+ operation
+Message-ID: <agHrY52NvBCWA2fi@redhat.com>
 References: <20260508153300.2224715-1-cristian.marussi@arm.com>
- <20260508153300.2224715-2-cristian.marussi@arm.com>
+ <20260508153300.2224715-4-cristian.marussi@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -101,21 +102,19 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260508153300.2224715-2-cristian.marussi@arm.com>
+In-Reply-To: <20260508153300.2224715-4-cristian.marussi@arm.com>
 User-Agent: Mutt/2.3.1 (2026-03-20)
 
-On Fri, May 08, 2026 at 04:32:46PM +0100, Cristian Marussi wrote:
-> While the do_div() helper used for rounding expects its divisor argument
-> to be a 32bits quantity, the currently provided divisor parameter is a
-> 64bit value that, as a consequence, is silently truncated and a possible
-> source of bugs.
+On Fri, May 08, 2026 at 04:32:48PM +0100, Cristian Marussi wrote:
+> Use the Clock protocol layer determine_rate logic to calculate the closest
+> rate that can be supported by a specific clock.
 > 
-> Fix by using the proper div64_ul helper.
+> No functional change.
 > 
+> Cc: Brian Masney <bmasney@redhat.com>
 > Cc: Michael Turquette <mturquette@baylibre.com>
 > Cc: Stephen Boyd <sboyd@kernel.org>
 > Cc: linux-clk@vger.kernel.org
-> Fixes: 7a8655e19bdb ("clk: scmi: Fix the rounding of clock rate")
 > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
 
 Reviewed-by: Brian Masney <bmasney@redhat.com>
