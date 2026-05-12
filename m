@@ -1,144 +1,202 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119A029C327
-	for <linux-clk@vger.kernel.org>; Tue, 12 May 2026 01:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.76.78.106])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AFEE38330E;
+	Tue, 12 May 2026 02:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.76.78.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778549747; cv=none; b=JZAPrDXu+v4gkLTpcShWc5scyWjlUQmoD+cIdbSpAojLRbMD6r0VWKSMcj6AEM5kBlDGe637u8Inj7ZXzlADmbbm8/SmR20/l8rs1/fMhOXe2s7wMpsRrsgdBSWDIis+0ujQ5pPMBqeIWPBsOMoojlrk7i+Q4wr1NeQa1C20OJs=
+	t=1778551507; cv=none; b=eq+or2bKPqw8+9YkZxcXKg1eqoxicHh3VujEdEFhovHcmc/Gm68fTM1EUm1SOariMxXZNWsKgPwAy5UgTp0d8DQvCdzYEve9HDZEoTng2XRQoOuimDZZyXgfPi96xAk/34Qsw7dSCHX9eZiOGhf8B+xhqcZY6h8YZObfnh9dvDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778549747; c=relaxed/simple;
-	bh=g+j2MFkZRvRsBFDhiFAG6DyUYIOKWDt1Nt42ezFjD6s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CYS+58x7/ZMHXVtPUaxcnQOuWy6xbQICFp4W5Aet2peywee7+rjA6MFHbE+/niUXT6BWymNi6BuNRWcT3rusByhNwL5bG6R4EJiPj19rl071SqOyLOoJCsBX5ohm1/yqOitgZWWSUYqbUpo1QwjfthhsgU3ERbm+/CA7NoH3fS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OHyBA6YG; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=m/k57CBu; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OHyBA6YG";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="m/k57CBu"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1778549744;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UxuGTicMxGGHlkwI+vY7fNgMYqkX8pEUM+UIKSypDBg=;
-	b=OHyBA6YGyc3/tpiTE3ZpV8ogKf8aFtU/a6u8h597amQ1BJVWuTCDJ9Guer6cVTX5mpFTiJ
-	waeuRqH4rKoBfG9/OZJs2AvSrcoPk46K/r6UtdPekOiE/2lfdA8gix5Nlh2z5gw2lRQh6t
-	lJq4qhIPiv9Hz0l4t1aIzNCoh4VZ8k8=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-399-gjdbDRKPPLGiChuJPLW0BQ-1; Mon, 11 May 2026 21:35:42 -0400
-X-MC-Unique: gjdbDRKPPLGiChuJPLW0BQ-1
-X-Mimecast-MFC-AGG-ID: gjdbDRKPPLGiChuJPLW0BQ_1778549742
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-8b7e68098dcso117466086d6.3
-        for <linux-clk@vger.kernel.org>; Mon, 11 May 2026 18:35:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1778549742; x=1779154542; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UxuGTicMxGGHlkwI+vY7fNgMYqkX8pEUM+UIKSypDBg=;
-        b=m/k57CBuxSjiINzG1D0RhbPmuoFU91HCWPop4N8iIVZM+4u55N02hv9zxB8eJS00gp
-         YEBriSZTeqSJR1Xg4eISVuQurZNm85UDypMlog17FFc5XMUsimrvK92ISV20RgFuMpoV
-         I5zKg/jLKoaLJtyCuXNUa94zoomIss8N78pWuowCOoTBkpkPhd2lK44BgkfwL3bNW4XV
-         gPv85evbx4aXMHTVFyoj3/N/mMLoXvloNkR6OqzMRd7g4VJyE4LP2qwHu4sb36mb390r
-         VI9p3i0oSJ54Cwrw+829TUVovO4xQ/QDuKr3FJN/Cz05XN9aFnk8NTlN0sdkBAV7Ox7P
-         YMkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778549742; x=1779154542;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=UxuGTicMxGGHlkwI+vY7fNgMYqkX8pEUM+UIKSypDBg=;
-        b=NgaWTJO6fF3mSvr+UffUoawdgdiWFyrX9Pn8vTiZf2d3nWcPH87SAqKq1PjzyGofKj
-         6b/dKv/sQ0/Jsi81aszikxMLMpcSSJ7eaXhW/AglSrNRmRBXgnoLf8AdxkL+fFTV7WPq
-         6isByJgzmxJojLCT9h7lDzXNN95R0qKO8Kip+4OzSrY50bUkCQ3rx3DHU5Eskz7R/CfX
-         tQBJcfmH922Xs3ymft8Zxw8okroxeBj1o01yAiCgvS5Hmu8CZMZQji8DgRHm7xoRZaEv
-         btBAxZxQj6LEkWHYOp4r5KNV95I4k9DoiCXvWXyVua4t42YGGOQE0Buy6ZEPIILEbuat
-         PnhA==
-X-Gm-Message-State: AOJu0YxR9/UZNUP+B//N9fTOmCMvu582MER2XIXAnsVCskN1nY2iRQI6
-	onRUyMALvEIaRPHggg9YpSEMkt8q+BsyE962LSaQ+K75jfQN/eF2czMtXuX0aALQ40l2VNVJyzx
-	THUc65bHR+Cxse8a6g4q3g/xWFBPJ1TWQc5PDg/fXg0CDQJuNUq6sp6CsHtkoTA==
-X-Gm-Gg: Acq92OGDMEO810qZqDi05601Y8LyeHr/ghDHwcC1ZpxWtGwEh8OxFkY+nkrsdzIu3B1
-	k3ab+NxxruLQXuVB32g3usM8xuOAKKKhKAqRe8S+Wmk97zkrCPrHK8qkVFZhXrbxEl9tmRie4Vp
-	FwFcEZo4dU88Xi0k47Gst/R/BBQFo1xyDXxcvX6+tRcMSLk9KZq09hKDZ92L3itg+d2KCCultUN
-	OENXrCTHutyQ/GmvYuK1vJC/vvOnbQQe+jmfuX4O25oYeYli5bhjQtWlLiMxSprt5/Te/PQ3tni
-	/1YLD5gQLigVLhfHfbplng6QJ8B+ExpiIku7f0LVahXi48ANmo09M4gG88jmDpUtHJtvW46mjdX
-	kTCq0faK4zCU0D/F0Xn126BKeA49wY2KTjsGpG6DzQVTfKt1GGfTaRp3qQXKEIA==
-X-Received: by 2002:a05:6214:478f:b0:8ae:6282:df2e with SMTP id 6a1803df08f44-8c1b0192344mr173898126d6.44.1778549742320;
-        Mon, 11 May 2026 18:35:42 -0700 (PDT)
-X-Received: by 2002:a05:6214:478f:b0:8ae:6282:df2e with SMTP id 6a1803df08f44-8c1b0192344mr173897886d6.44.1778549741856;
-        Mon, 11 May 2026 18:35:41 -0700 (PDT)
-Received: from [192.168.1.15] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8bf39c7e2e5sm109704006d6.34.2026.05.11.18.35.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 May 2026 18:35:41 -0700 (PDT)
-From: Brian Masney <bmasney@redhat.com>
-Date: Mon, 11 May 2026 21:35:07 -0400
-Subject: [PATCH v3 4/4] clk: test: convert constants to use HZ_PER_MHZ
+	s=arc-20240116; t=1778551507; c=relaxed/simple;
+	bh=A4PN3TJSuUq0eRisdFtIsVhQxKlF6uA9l8w37HcLddk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=fKVoBrk1Hj99Vow1lTfkc4d4Nc5mbd7rBVOiFGgviMJ4xg+eetM8EDbuoE2zKCspm42uNuxhWf0bfAsV5enlV//EQHemWY2Or8E3nFzSRdpz1/NogyVCjVLbBAcU+MnVNPo5o9f1/YePUihXYWuWvxbCDmsdjfX10ZMrVjiDg7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=13.76.78.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0005152DT.eswin.cn (unknown [10.12.96.41])
+	by app2 (Coremail) with SMTP id TQJkCgD3DaGyigJqJq4YAA--.43597S2;
+	Tue, 12 May 2026 10:04:36 +0800 (CST)
+From: dongxuyang@eswincomputing.com
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	p.zabel@pengutronix.de,
+	huangyifeng@eswincomputing.com,
+	dongxuyang@eswincomputing.com,
+	benoit.monin@bootlin.com,
+	bmasney@redhat.com
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	pinkesh.vaghela@einfochips.com
+Subject: [PATCH v4 0/3] Add driver support for ESWIN EIC7700 HSP clock and reset generator
+Date: Tue, 12 May 2026 10:04:32 +0800
+Message-Id: <20260512020432.671-1-dongxuyang@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260511-clk-docs-v3-4-ed67e1065809@redhat.com>
-References: <20260511-clk-docs-v3-0-ed67e1065809@redhat.com>
-In-Reply-To: <20260511-clk-docs-v3-0-ed67e1065809@redhat.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>, 
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-doc@vger.kernel.org, Brian Masney <bmasney@redhat.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1009; i=bmasney@redhat.com;
- s=20250903; h=from:subject:message-id;
- bh=g+j2MFkZRvRsBFDhiFAG6DyUYIOKWDt1Nt42ezFjD6s=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLKYmp+99HIpuHBYUXEXd+pW23U7/SaFLio0uFp27k+Hv
- +k7toyvHaUsDGJcDLJiiixLco0KIlJX2d67o8kCM4eVCWQIAxenAExkmwPDX7mJ26axOMeurTNj
- 2Xz6+m77C399buwNFGKYw1a0JKZZrJeR4VnV6nMn/b3MTIL1trk+/Tz5+vrO/b15fX+2Wz2K/Py
- ZjxMA
-X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
- fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:TQJkCgD3DaGyigJqJq4YAA--.43597S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxKw17Zr1UtF17AryruFWfXwb_yoWxXw18pF
+	WxGF95Kr1DArWI9rs7ta4I9FWfJa1xJFy5Cws7Ja47Zws0yryUJr40ka45AFZrZw1fXrWU
+	J3W7ta4F9FWUZFJanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBm14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26r
+	xl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+	6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
+	8cxan2IY04v7M4kE6xkIj40Ew7xC0wCY1x0262kKe7AKxVW8ZVWrXwCY02Avz4vE-syl42
+	xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWU
+	GwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI4
+	8JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4U
+	MIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I
+	8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRMD73DUUUU
+X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/
 
-Convert the DUMMY_CLOCK_* constants over to use HZ_PER_MHZ.
+From: Xuyang Dong <dongxuyang@eswincomputing.com>
 
-Signed-off-by: Brian Masney <bmasney@redhat.com>
----
- drivers/clk/clk_test.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Add support for the ESWIN EIC7700 HSP (high-speed peripherals). The drivers
+provide basic functionality to manage and control the clock and reset
+signals for EIC7700 HSP, including mmc, USB, ethernet, SATA and DMAC.
 
-diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
-index b1961daac5e2..497db4e54d03 100644
---- a/drivers/clk/clk_test.c
-+++ b/drivers/clk/clk_test.c
-@@ -7,6 +7,7 @@
- #include <linux/clk/clk-conf.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-+#include <linux/units.h>
- 
- /* Needed for clk_hw_get_clk() */
- #include "clk.h"
-@@ -21,9 +22,9 @@
- 
- static const struct clk_ops empty_clk_ops = { };
- 
--#define DUMMY_CLOCK_INIT_RATE	(42 * 1000 * 1000)
--#define DUMMY_CLOCK_RATE_1	(142 * 1000 * 1000)
--#define DUMMY_CLOCK_RATE_2	(242 * 1000 * 1000)
-+#define DUMMY_CLOCK_INIT_RATE		(42 * HZ_PER_MHZ)
-+#define DUMMY_CLOCK_RATE_1		(142 * HZ_PER_MHZ)
-+#define DUMMY_CLOCK_RATE_2		(242 * HZ_PER_MHZ)
- 
- struct clk_dummy_context {
- 	struct clk_hw hw;
+The clock and reset registers are mapped to overlapping I/O address ranges.
+This causes a resource conflict when two drivers attempt to request the
+same region. Use the auxiliary device framework: the main driver
+allocates the shared register region and passes it to auxiliary
+devices, avoiding resource contention and duplicate remapping.
 
--- 
-2.54.0
+Features:
+Implements support for the ESWIN EIC7700 HSP clock and reset controller.
+Provide API to manage clock and reset signals for the EIC7700 HSP.
+
+Supported chips:
+ESWIN EIC7700 series SoC.
+
+Test:
+Test this patch on the Sifive HiFive Premier P550 (which used the EIC7700
+SoC), include USB and other peripherals. All the drivers of these modules
+use the clock module and reset module.
+
+Updates:
+  Changes in v4:
+  - Clock driver:
+    - Remove "Reviewed-by: Benoît Monin <benoit.monin@bootlin.com>" and
+      "Reviewed-by: Brian Masney <bmasney@redhat.com>", because the clock
+      driver has been updated.
+    - Remove inclusion of io.h.
+    - Add struct regmap to eic7700_hsp_clk_gate.
+      Replace 'void __iomem *reg' with 'unsigned int reg'.
+      Replace 'void __iomem *ref_reg' with 'unsigned int ref_reg'.
+      Replace long with int for 'offset' and 'ref_offset'.
+      Remove 'spinlock_t *lock'.
+      Apply the same changes to hsp_clk_register_gate().
+    - Remove the structure eic7700_hsp_regmap_lock, and the functions
+      eic7700_hsp_regmap_lock() and eic7700_hsp_regmap_unlock().
+    - Remove the 'guard(spinlock_irqsave)(gate->lock)' in
+      hsp_clk_gate_endisable().
+    - Replace readl() and writel() with regmap_assign_bits() in
+      hsp_clk_gate_endisable().
+    - Change the parameter enable from int to bool.
+    - Replace readl() with regmap_read() in hsp_clk_gate_is_enabled().
+    - Remove the lock_ctx variable.
+    - Move eic7700_hsp_regmap_config from inside the probe function to global
+      scope.
+      Remove '.lock', '.unlock' and 'lock_arg'.
+      Add '.fast_io = true' and '.use_raw_spinlock = true'.
+  - Reset driver:
+    - Add "Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>" for reset.
+    - Drop the temporary variable, just return regmap_assign_bits(...) directly.
+    - Replace -EINVAL with -ENODEV for dev_get_regmap() check.
+    - Drop the '_dt'.
+
+  - Link to v3: https://lore.kernel.org/all/20260423090904.2108-1-dongxuyang@eswincomputing.com/
+
+  Changes in v3:
+  - Bindings:
+    - Added "Acked-by: Conor Dooley <conor.dooley@microchip.com>" for bindings.
+  - Clock driver:
+    - Remove 'gate_flags'.
+    - Add __acquires for eic7700_hsp_regmap_lock() and add __releases for
+      eic7700_hsp_regmap_unlock().
+    - Move writel(USB_REF_XTAL24M, gate->ref_reg) into enable. Because this
+      is only used for USB gate clock on the enable path. And modify the
+      comments.
+    - Simplify to: 'return !!(readl(gate->reg) & BIT(gate->bit_idx));'.
+    - Drop const from eic7700_hsp_regmap_config.
+    - Declare eic7700_hsp_regmap_config as a regular variable at the top.
+
+  - Link to v2: https://lore.kernel.org/all/20260420093929.1895-1-dongxuyang@eswincomputing.com/
+
+  Changes in v2:
+  - Bindings:
+    - Remove "hsp_" from clock-names.
+    - Replace "eswin,eic7700-clock.yaml" and "eswin,eic7700-hspcrg.yaml" with
+      "eswin,eic7700*".
+    - Replace "eswin,eic7700-clock.h" and "eswin,eic7700-hspcrg.h" with
+      "eswin,eic7700*".
+  - Clock driver:
+    - Use guard(spinlock_irqsave)(gate->lock) instead of spin_lock_irqsave()
+      and remove spin_unlock_irqrestore().
+    - Remove the newline in function hsp_clk_gate_is_enabled().
+    - Use struct clk_init_data init = {}.
+    - Replace 'static struct clk_parent_data' with
+      'static const struct clk_parent_data'.
+    - Change '.fw_name' to '.index', because the function
+      eswin_clk_register_fixed_factor() uses .index.
+    - The structures of clocks should use static struct. When registering a clock,
+      the 'hw' field in the structure will be assigned.
+    - Remove __force.
+    - Create the regmap in the clock driver and remove (__force void*)data->base.
+      The reset driver uses dev_get_regmap() to get the regmap from the clock.
+    - Move 'const struct regmap_config eic7700_hsp_regmap_config' from reset
+      driver to clock driver.
+    - The USB clock gate (hsp_clk_gate_endisable) and the reset driver both
+      perform read-modify-write cycles on registers 0x800 and 0x900. Use
+      custom regmap lock callbacks so that regmap operations hold data->lock
+      with IRQs disabled, the same lock the clock gate path uses, preventing
+      concurrent RMW races on those shared registers.
+    - Change to 'ret = eswin_clk_register_fixed_factor(dev, eic7700_hsp_factor_clks,'.
+      The next line will be over 80 characters and under 100 characters.
+  - Reset driver:
+    - Remove 'depends on COMMON_CLK_EIC7700_HSP' and 'default COMMON_CLK_EIC7700_HSP'.
+    - Use regmap_assign_bits() in assert and deassert functions.
+    - Remove eic7700_hsp_reset_reset().
+    - The clock driver creates the regmap, and the reset driver uses dev_get_regmap().
+    - Remove of_reset_n_cells.
+
+  - Link to v1: https://lore.kernel.org/all/20260403093459.612-1-dongxuyang@eswincomputing.com/
+
+Xuyang Dong (3):
+  dt-bindings: clock: Add ESWIN eic7700 HSP clock and reset generator
+  clk: eswin: Add eic7700 HSP clock driver
+  reset: eswin: Add eic7700 HSP reset driver
+
+ .../bindings/clock/eswin,eic7700-hspcrg.yaml  |  63 ++++
+ MAINTAINERS                                   |   5 +-
+ drivers/clk/eswin/Kconfig                     |  12 +
+ drivers/clk/eswin/Makefile                    |   1 +
+ drivers/clk/eswin/clk-eic7700-hsp.c           | 338 ++++++++++++++++++
+ drivers/reset/Kconfig                         |  11 +
+ drivers/reset/Makefile                        |   1 +
+ drivers/reset/reset-eic7700-hsp.c             | 112 ++++++
+ .../dt-bindings/clock/eswin,eic7700-hspcrg.h  |  33 ++
+ .../dt-bindings/reset/eswin,eic7700-hspcrg.h  |  21 ++
+ 10 files changed, 595 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/eswin,eic7700-hspcrg.yaml
+ create mode 100644 drivers/clk/eswin/clk-eic7700-hsp.c
+ create mode 100644 drivers/reset/reset-eic7700-hsp.c
+ create mode 100644 include/dt-bindings/clock/eswin,eic7700-hspcrg.h
+ create mode 100644 include/dt-bindings/reset/eswin,eic7700-hspcrg.h
+
+--
+2.34.1
 
