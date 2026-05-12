@@ -1,423 +1,267 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0EF3CAA3E
-	for <linux-clk@vger.kernel.org>; Tue, 12 May 2026 15:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2138C3C769D
+	for <linux-clk@vger.kernel.org>; Tue, 12 May 2026 15:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778600669; cv=none; b=mUmTMpEpl6U+wQQggbHJw9OH7ffSjtNadPcJglYCRsi++l+U4FXXuZmqhDYPPRNSL6Nr6dXC1LNPYmSlaOAkf+B2H1HBrROn/HYPWbkym4vfFggUeQMSzJqhB6Q3egYhUf6NRRHG3JDlfNls4z4Agir5qXdm3gVdhMXvJ/JawlM=
+	t=1778600726; cv=none; b=k4S01gZadBJy21FDjHdrpYFjQnq/saToLuMbCLvrCLDDhmcL8hIdT05mTrGsrlHbjhYsoDfYhJB+GjQZBKLoMDzhtq18B57x5SCjvok8uLGYqYDAMUfxCrpKV7PDrBxJh51onLiIl90FLd8emu3y4th6u8F+vDo+Zfm4LneDSbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778600669; c=relaxed/simple;
-	bh=ux9OVZqtuDTsqrys9zxanS/HEJU9ENuceEUnZaxE7vA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kK+2hJmZHBIj3HYCD38uWXcKNL/x35ujJXmsj3C5BLCaaY414NewiXuwHWmLvToCu0MeC1F+Mjbwm7C6yq0tJ2gat/40MfIHnsde4d6BRjgt5OlUgsNYqPl4ZtYiTqWtszHXhRsQPhDh5BLj/D8wUCJGKV4jKpHs0s5EignVIgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=omhLMDri; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1778600726; c=relaxed/simple;
+	bh=29A/M4xYVUS372XJHCDISmn4w9ov/gKfjHEVp9qR1aE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qGax+XDhtEWuy4j9qerG/ip1Ph+Gf1mScW5dsPdHYlLsVBmWJfdh+N9oNaDZCNPE7Lkv1QYXk9vjRyIvsI7+pDn+pQGtU+WNXz7kNHnDM0YXyHrB5mVaqjTzp3CE3wxVLsaRQQcbPGWL4Wl3S942D3w7tPxySVauGpwoce45FsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ck4EIG2J; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=bQDQBi/r; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="omhLMDri"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 3D9CF4E42C00;
-	Tue, 12 May 2026 15:44:18 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id F1D5560646;
-	Tue, 12 May 2026 15:44:17 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id AB84211AF8C84;
-	Tue, 12 May 2026 17:44:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1778600656; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=BURi5vkPxcxPKcJLIsmlkzLGP0wRjDvf8EYPEcCoD1I=;
-	b=omhLMDriLy7fOtPYzmTFgtuOpEWgUbD9lHNhu3jzp88xq8+RIQt2rrBpLoX2uZPiQb5Nw/
-	XGfVjrX0x+iJgs6NLuJJUM54WpGvIaDWfAmBCnqRlDn96rDOfFXz+Fl0yYiDYZ/BZfNzKE
-	fsEsh5WRzqpkNzs0i5GBiGnfeNLg5NB1MNJfT1mPgEb0s7Qtcl3zD6YP8tR9HyRdk/QGgE
-	v9YWPvqlpo8IhVNejFEthq8vqDKLkVicPsaAkJ8wXFITaOxOYBpjLK+fCxNNlbtTq73mjl
-	LJyMMaMLM4GNwrlmBYgTIVh9rvMrnwykeRvQUmIdKmNeJa4FV92Va+URZGQg1A==
-Message-ID: <110af14c-101e-48fb-8262-60bf395d4f0a@bootlin.com>
-Date: Tue, 12 May 2026 17:44:12 +0200
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ck4EIG2J";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="bQDQBi/r"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1778600724;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F/Rj20yJzwwrc5IUSlJqObsXWAOLzLYrlkLUj5Fyb3E=;
+	b=Ck4EIG2JWcczTpkqGjOWY8avQ173Fv16SleMpSXAL4ajVVUTWDnOi6xXBEQqYvs+XL+gqr
+	xeJ+s6pS/ScMMOGjIvL4eR9YDVtkWo87hA+8P1drrD12ydANnk+sAC4+g/otTOhKSCMob9
+	4ttGbf2HaufuOL/bvuzTVvMeiTLa1lA=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-94-3WtlwPgSM4irkGvJz9DTKQ-1; Tue, 12 May 2026 11:45:22 -0400
+X-MC-Unique: 3WtlwPgSM4irkGvJz9DTKQ-1
+X-Mimecast-MFC-AGG-ID: 3WtlwPgSM4irkGvJz9DTKQ_1778600722
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-909db142e45so545704085a.1
+        for <linux-clk@vger.kernel.org>; Tue, 12 May 2026 08:45:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1778600722; x=1779205522; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F/Rj20yJzwwrc5IUSlJqObsXWAOLzLYrlkLUj5Fyb3E=;
+        b=bQDQBi/rcQGU3rwhCC9Q0IWh8Uq123zdU0XsfZKJCJWEJhhZqEnOIiTWOnf/nl0NI9
+         uZVP77Jmj68eQFbXu36zSGHSqS4lYFFjDkpnfKL/++qg5rcF9N2qtrlhGH9laiU+5Da0
+         3DiS9AuVLLqhq6+USAYd1hRXM7BBxgSH+LyBqiVuOWBdJQMOSaTyr8xoi2r+Gqe5ViRA
+         BxcjSQNSCYXGIfe+EBV3OiZVPcanlfwOH9f4DiYEm8q++JHpunpIjv2aDA3SR1ueXNJp
+         XkUEPZyKOjxR4JxKmrYkHeT+ntLL51BONLEIlnIv4n+b1NU9VEPToA8apZf6SUYHvyqh
+         TOOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778600722; x=1779205522;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=F/Rj20yJzwwrc5IUSlJqObsXWAOLzLYrlkLUj5Fyb3E=;
+        b=JTXiA7JyNO24uvlQqwEzSI1eRfNugd1gFL2pTbmLdkkMXOPXrDOu1U2cTm88wy5A4I
+         L54NExoArQ+Vix9zkFHSEfGHp1INC94udBvrkH6Ue6Xm40zBdoriu04/Yy59Hp9Lvjw+
+         xcs0/sHmpMxKbVh8X+uPaSAGrPhaVL++/tqVSu5wZqAo98eM43d3A1IpsNGXtsF6ExFB
+         8Etsf6TvKdpRxMy+P6+c2qgJ3+VDzHDoqr7chql/OAz4bbAhjAJybNqZZcm8ICgWxEyF
+         H7pUtTTEuZ19iSZvqDyOIa+R2AMni845jxXDpaITxvjGWeLifF/Zx8gfs+/LhIhO5r6r
+         MENA==
+X-Forwarded-Encrypted: i=1; AFNElJ+Wuyzjs2Go31JgWhxG4HjM9j6pca6Y4sGm0dLM+yEeGxpDd7j5wky0GzfLHXZojSv7rCg5//e7qEs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+tGCLE9KVFTi87xh1wPSpKt4GDSwdrRiwwg01oAqeNgdKJdRG
+	8RKKvi62Ku/CekqCGceeti3x+GfiuOb9pbFH5Z3bvi8/Tgm06RFzezEjYv8/jZvcBmqH16wX7S/
+	fU3PNsMwL5bRY5ZR42h/uTgnazRgS1+VPk3yI8FMysr4PyuNMeznGI6Vkva122Q==
+X-Gm-Gg: Acq92OENvVkxKVWMV7mFMZHT11vWnBHY5FE5YI45G35PwrF1DZSZ1sSBR97LZzSS90C
+	79RdrfVoY2GnOLgTRw3bhIFNBnF8M/sEIds1yICofMwyLyXZFo8SX3NE20B27W1XU/jct2dUVbk
+	nJdQLVLoW1E8OpKQPmrpRRv3FYNNl405p8g66pw8Iij1qPuLIFAv9nmwKVxvm3nWa3/9tY28ufv
+	XyH9jl8OqPb6cmlwaIxYeiRl3NGl+y1wayq3jCPgeWq8kb5ke/Rchem0XvyhCQFYSikFlykJdrf
+	l2mJe0S53xQNXbB13/nnuX6+jtl2dWrfUDAW/tRnesI0TwAe9r5+nRPgjnYhSv20PDdsVh0AgEJ
+	czc6Q97XdM0tSoHyJX2Nf5zCy9b/OZTOHrPBLLXJieSYIPNDAu3teUp1a
+X-Received: by 2002:a05:620a:370f:b0:8f2:31f3:975a with SMTP id af79cd13be357-90cb6efb828mr596038685a.18.1778600721832;
+        Tue, 12 May 2026 08:45:21 -0700 (PDT)
+X-Received: by 2002:a05:620a:370f:b0:8f2:31f3:975a with SMTP id af79cd13be357-90cb6efb828mr596027585a.18.1778600721164;
+        Tue, 12 May 2026 08:45:21 -0700 (PDT)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8fc2c91b976sm3502993885a.39.2026.05.12.08.45.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 May 2026 08:45:20 -0700 (PDT)
+Date: Tue, 12 May 2026 11:45:18 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Xuyang Dong <dongxuyang@eswincomputing.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	p.zabel@pengutronix.de, huangyifeng@eswincomputing.com,
+	benoit.monin@bootlin.com, ningyu@eswincomputing.com,
+	linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com
+Subject: Re: [PATCH v4 2/3] clk: eswin: Add eic7700 HSP clock driver
+Message-ID: <agNLDkz0L67lL0_f@redhat.com>
+References: <20260512020432.671-1-dongxuyang@eswincomputing.com>
+ <20260512020747.993-1-dongxuyang@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/4] firmware: ti_sci: add support for restoring IRQs
- during resume
-To: Nishanth Menon <nm@ti.com>
-Cc: Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Gregory CLEMENT <gregory.clement@bootlin.com>,
- richard.genoud@bootlin.com, Udit Kumar <u-kumar1@ti.com>,
- Abhash Kumar <a-kumar2@ti.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, Dhruva Gole <d-gole@ti.com>,
- Kendall Willis <k-willis@ti.com>
-References: <20260506-ti-sci-jacinto-s2r-restore-irq-v7-0-037098a35215@bootlin.com>
- <20260506-ti-sci-jacinto-s2r-restore-irq-v7-2-037098a35215@bootlin.com>
- <20260506141508.2bko3ntcv7rkqfvn@certainty>
-Content-Language: en-US
-From: Thomas Richard <thomas.richard@bootlin.com>
-In-Reply-To: <20260506141508.2bko3ntcv7rkqfvn@certainty>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260512020747.993-1-dongxuyang@eswincomputing.com>
+User-Agent: Mutt/2.3.1 (2026-03-20)
 
-Hello Nishanth,
+Hi Xuyang,
 
-On 5/6/26 4:15 PM, Nishanth Menon wrote:
-> On 10:35-20260506, Thomas Richard (TI) wrote:
->> Some DM-Firmware are not able to restore the IRQ context after a
->> suspend-resume. The IRQ_CONTEXT_LOST firmware capability has been
->> introduced to identify this characteristic. In this case the
->> responsibility is delegated to the ti_sci driver, which maintains an
->> internal list of all requested IRQs. This list is updated on each
->> set()/free() operation, and all IRQs are restored during the resume_noirq()
->> phase.
->>
->> Reviewed-by: Dhruva Gole <d-gole@ti.com>
->> Reviewed-by: Kendall Willis <k-willis@ti.com>
->> Signed-off-by: Thomas Richard (TI) <thomas.richard@bootlin.com>
->> ---
+On Tue, May 12, 2026 at 10:07:47AM +0800, Xuyang Dong wrote:
+> Add driver for the ESWIN EIC7700 high-speed peripherals system
+> clock controller and register an auxiliary device for system
+> reset controller which is named as "hsp-reset".
 > 
-> coccicheck reports two additional warnings at this patch:
-> +drivers/firmware/ti_sci.c:2495:1-7: preceding lock on line 2454
-> +drivers/firmware/ti_sci.c:2420:1-7: preceding lock on line 2378
+> Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
+> ---
+>  drivers/clk/eswin/Kconfig           |  12 +
+>  drivers/clk/eswin/Makefile          |   1 +
+>  drivers/clk/eswin/clk-eic7700-hsp.c | 338 ++++++++++++++++++++++++++++
+>  3 files changed, 351 insertions(+)
+>  create mode 100644 drivers/clk/eswin/clk-eic7700-hsp.c
+> 
+> diff --git a/drivers/clk/eswin/Kconfig b/drivers/clk/eswin/Kconfig
+> index 0406ec499ec9..e6cc2a407bac 100644
+> --- a/drivers/clk/eswin/Kconfig
+> +++ b/drivers/clk/eswin/Kconfig
+> @@ -13,3 +13,15 @@ config COMMON_CLK_EIC7700
+>  	  SoC. The clock controller generates and supplies clocks to various
+>  	  peripherals within the SoC.
+>  	  Say yes here to support the clock controller on the EIC7700 SoC.
+> +
+> +config COMMON_CLK_EIC7700_HSP
+> +	tristate "EIC7700 HSP Clock Driver"
+> +	depends on ARCH_ESWIN || COMPILE_TEST
+> +	select AUXILIARY_BUS
+> +	select COMMON_CLK_EIC7700
+> +	select RESET_EIC7700_HSP if RESET_CONTROLLER
+> +	help
+> +	  This driver provides support for clock controller on ESWIN EIC7700
+> +	  HSP. The clock controller generates and supplies clocks to high
+> +	  speed peripherals within the SoC.
+> +	  Say yes here to support the clock controller on the EIC7700 HSP.
+> diff --git a/drivers/clk/eswin/Makefile b/drivers/clk/eswin/Makefile
+> index 4a7c2af82164..21a09a3396df 100644
+> --- a/drivers/clk/eswin/Makefile
+> +++ b/drivers/clk/eswin/Makefile
+> @@ -6,3 +6,4 @@
+>  obj-$(CONFIG_COMMON_CLK_ESWIN)		+= clk.o
+>  
+>  obj-$(CONFIG_COMMON_CLK_EIC7700)	+= clk-eic7700.o
+> +obj-$(CONFIG_COMMON_CLK_EIC7700_HSP)	+= clk-eic7700-hsp.o
+> diff --git a/drivers/clk/eswin/clk-eic7700-hsp.c b/drivers/clk/eswin/clk-eic7700-hsp.c
+> new file mode 100644
+> index 000000000000..0d5bd5b705dc
+> --- /dev/null
+> +++ b/drivers/clk/eswin/clk-eic7700-hsp.c
+> @@ -0,0 +1,338 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright 2026, Beijing ESWIN Computing Technology Co., Ltd..
+> + * All rights reserved.
+> + *
+> + * ESWIN EIC7700 HSP Clock Driver
+> + *
+> + * Authors: Xuyang Dong <dongxuyang@eswincomputing.com>
+> + */
+> +
+> +#include <linux/auxiliary_bus.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +
+> +#include <dt-bindings/clock/eswin,eic7700-hspcrg.h>
+> +
+> +#include "common.h"
+> +
+> +#define EIC7700_HSP_SATA_REG		0x300
+> +#define EIC7700_HSP_MSHC0_REG		0x510
+> +#define EIC7700_HSP_MSHC1_REG		0x610
+> +#define EIC7700_HSP_MSHC2_REG		0x710
+> +#define EIC7700_HSP_USB0_REG		0x800
+> +#define EIC7700_HSP_USB0_REF_REG	0x83c
+> +#define EIC7700_HSP_USB1_REG		0x900
+> +#define EIC7700_HSP_USB1_REF_REG	0x93c
+> +
+> +#define USB_REF_XTAL24M			0x2a
+> +#define EIC7700_HSP_NR_CLKS		(EIC7700_HSP_CLK_GATE_SATA + 1)
+> +
+> +struct eic7700_hsp_clk_gate {
+> +	struct clk_hw hw;
+> +	unsigned int id;
+> +	struct regmap *regmap;
+> +	unsigned int reg;
+> +	unsigned int ref_reg;
+> +	const char *name;
+> +	const struct clk_parent_data *parent_data;
+> +	unsigned long flags;
+> +	unsigned int offset;
+> +	unsigned int ref_offset;
+> +	u8 bit_idx;
+> +};
+> +
+> +static const struct regmap_config eic7700_hsp_regmap_config = {
+> +	.reg_bits = 32,
+> +	.val_bits = 32,
+> +	.max_register = 0x1ffc,
+> +	.reg_stride = 4,
+> +	.fast_io = true,
+> +	.use_raw_spinlock = true,
+> +};
+> +
+> +static inline struct eic7700_hsp_clk_gate *to_gate_clk(struct clk_hw *hw)
+> +{
+> +	return container_of(hw, struct eic7700_hsp_clk_gate, hw);
+> +}
+> +
+> +#define EIC7700_HSP_GATE(_id, _name, _pdata, _flags, _offset, _idx,	\
+> +			 _ref_offset)					\
+> +	{								\
+> +		.id		= _id,					\
+> +		.name		= _name,				\
+> +		.parent_data	= _pdata,				\
+> +		.flags		= _flags,				\
+> +		.offset		= _offset,				\
+> +		.ref_offset	= _ref_offset,				\
+> +		.bit_idx	= _idx,					\
+> +	}
+> +
+> +static void hsp_clk_gate_endisable(struct clk_hw *hw, bool enable)
+> +{
+> +	struct eic7700_hsp_clk_gate *gate = to_gate_clk(hw);
+> +
+> +	if (enable) {
+> +		/*
+> +		 * Hardware bug: The USB reference clock must be 24MHz.
+> +		 * The default register value after reset is invalid.
+> +		 * Workaround: Rewrite the correct value before enabling
+> +		 * the USB gate clock.
+> +		 */
+> +		regmap_update_bits(gate->regmap, gate->ref_reg, 0x3f,
+> +				   USB_REF_XTAL24M);
+> +	}
+> +	regmap_assign_bits(gate->regmap, gate->reg, BIT(gate->bit_idx), enable);
+> +}
+> +
+> +static int hsp_clk_gate_enable(struct clk_hw *hw)
+> +{
+> +	hsp_clk_gate_endisable(hw, true);
+> +
+> +	return 0;
+> +}
+> +
+> +static void hsp_clk_gate_disable(struct clk_hw *hw)
+> +{
+> +	hsp_clk_gate_endisable(hw, false);
+> +}
+> +
+> +static int hsp_clk_gate_is_enabled(struct clk_hw *hw)
+> +{
+> +	struct eic7700_hsp_clk_gate *gate = to_gate_clk(hw);
+> +	unsigned int val;
+> +
+> +	regmap_read(gate->regmap, gate->reg, &val);
+> +
+> +	return !!(val & BIT(gate->bit_idx));
 
-I do not see the potential deadlock in set_irq() and free_irq().
-I guess it is a false positive.
+If the regmap_read() fails, then val will be uninitialized.
 
-> 
->>  drivers/firmware/ti_sci.c | 201 +++++++++++++++++++++++++++++++++++++++++++---
->>  drivers/firmware/ti_sci.h |   2 +
->>  2 files changed, 191 insertions(+), 12 deletions(-)
->>
->> diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
->> index eaeaaae94142..531ac3aa38b8 100644
->> --- a/drivers/firmware/ti_sci.c
->> +++ b/drivers/firmware/ti_sci.c
->> @@ -12,11 +12,13 @@
->>  #include <linux/cpu.h>
->>  #include <linux/debugfs.h>
->>  #include <linux/export.h>
->> +#include <linux/hashtable.h>
->>  #include <linux/io.h>
->>  #include <linux/iopoll.h>
->>  #include <linux/kernel.h>
->>  #include <linux/mailbox_client.h>
->>  #include <linux/module.h>
->> +#include <linux/mutex.h>
->>  #include <linux/of.h>
->>  #include <linux/of_platform.h>
->>  #include <linux/platform_device.h>
->> @@ -87,6 +89,16 @@ struct ti_sci_desc {
->>  	int max_msg_size;
->>  };
->>  
->> +/**
->> + * struct ti_sci_irq - Description of allocated irqs
->> + * @node: Link to hash table
->> + * @desc: Description of the irq
->> + */
->> +struct ti_sci_irq {
->> +	struct hlist_node node;
->> +	struct ti_sci_msg_req_manage_irq desc;
->> +};
->> +
->>  /**
->>   * struct ti_sci_info - Structure representing a TI SCI instance
->>   * @dev:	Device pointer
->> @@ -101,6 +113,8 @@ struct ti_sci_desc {
->>   * @chan_rx:	Receive mailbox channel
->>   * @minfo:	Message info
->>   * @node:	list head
->> + * @irqs:	List of allocated irqs
->> + * @irq_lock:	Protection for irq hash list
->>   * @host_id:	Host ID
->>   * @fw_caps:	FW/SoC low power capabilities
->>   * @users:	Number of users of this instance
->> @@ -118,6 +132,8 @@ struct ti_sci_info {
->>  	struct mbox_chan *chan_rx;
->>  	struct ti_sci_xfers_info minfo;
->>  	struct list_head node;
->> +	DECLARE_HASHTABLE(irqs, 8);
->> +	struct mutex irq_lock;
-> 
-> No action needed: checkpatch flags this as not documented, when it is
-> clearly documented above.
-> 
->>  	u8 host_id;
->>  	u64 fw_caps;
->>  	/* protected by ti_sci_list_mutex */
->> @@ -2301,6 +2317,32 @@ static int ti_sci_manage_irq(const struct ti_sci_handle *handle,
->>  	return ret;
->>  }
->>  
->> +/**
->> + * ti_sci_irq_hash() - Helper API to compute irq hash for the hash table.
->> + * @irq:	irq to hash
->> + *
->> + * Return: the computed hash value.
->> + */
->> +static int ti_sci_irq_hash(struct ti_sci_msg_req_manage_irq *irq)
->> +{
->> +	return irq->src_id ^ irq->src_index;
->> +}
->> +
->> +/**
->> + * ti_sci_irq_equal() - Helper API to compare two irqs (generic headers are not
->> + *                       compared)
->> + * @irq_a:	irq_a to compare
->> + * @irq_b:	irq_b to compare
->> + *
->> + * Return: true if the two irqs are equal, else false.
->> + */
->> +static bool ti_sci_irq_equal(struct ti_sci_msg_req_manage_irq *irq_a,
->> +			     struct ti_sci_msg_req_manage_irq *irq_b)
->> +{
->> +	return !memcmp(&irq_a->valid_params, &irq_b->valid_params,
->> +		       sizeof(*irq_a) - sizeof(irq_a->hdr));
->> +}
->> +
->>  /**
->>   * ti_sci_set_irq() - Helper api to configure the irq route between the
->>   *		      requested source and destination
->> @@ -2324,15 +2366,60 @@ static int ti_sci_set_irq(const struct ti_sci_handle *handle, u32 valid_params,
->>  			  u16 dst_host_irq, u16 ia_id, u16 vint,
->>  			  u16 global_event, u8 vint_status_bit, u8 s_host)
->>  {
->> +	struct ti_sci_info *info = handle_to_ti_sci_info(handle);
->> +	struct ti_sci_msg_req_manage_irq *desc;
->> +	struct ti_sci_irq *irq;
->> +	int ret;
->> +
->> +	/*
->> +	 * Lock for set_irq() and free_irq() to keep the IRQ hash list
->> +	 * consistent only if MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST is set. Else
->> +	 * IRQ hash list is not used.
->> +	 */
->> +	if (info->fw_caps & MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST)
->> +		mutex_lock(&info->irq_lock);
->> +
->>  	pr_debug("%s: IRQ set with valid_params = 0x%x from src = %d, index = %d, to dst = %d, irq = %d,via ia_id = %d, vint = %d, global event = %d,status_bit = %d\n",
->>  		 __func__, valid_params, src_id, src_index,
->>  		 dst_id, dst_host_irq, ia_id, vint, global_event,
->>  		 vint_status_bit);
->>  
->> -	return ti_sci_manage_irq(handle, valid_params, src_id, src_index,
->> -				 dst_id, dst_host_irq, ia_id, vint,
->> -				 global_event, vint_status_bit, s_host,
->> -				 TI_SCI_MSG_SET_IRQ);
->> +	ret = ti_sci_manage_irq(handle, valid_params, src_id, src_index,
->> +				dst_id, dst_host_irq, ia_id, vint,
->> +				global_event, vint_status_bit, s_host,
->> +				TI_SCI_MSG_SET_IRQ);
->> +
->> +	if (ret || !(info->fw_caps & MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST))
->> +		goto end;
->> +
->> +	irq = kzalloc_obj(*irq, GFP_KERNEL);
->> +	if (!irq) {
->> +		ti_sci_manage_irq(handle, valid_params, src_id, src_index,
->> +				  dst_id, dst_host_irq, ia_id, vint,
->> +				  global_event, vint_status_bit, s_host,
->> +				  TI_SCI_MSG_FREE_IRQ);
->> +		ret = -ENOMEM;
->> +		goto end;
->> +	}
->> +
->> +	desc = &irq->desc;
->> +	desc->valid_params = valid_params;
->> +	desc->src_id = src_id;
->> +	desc->src_index = src_index;
->> +	desc->dst_id = dst_id;
->> +	desc->dst_host_irq = dst_host_irq;
->> +	desc->ia_id = ia_id;
->> +	desc->vint = vint;
->> +	desc->global_event = global_event;
->> +	desc->vint_status_bit = vint_status_bit;
->> +	desc->secondary_host = s_host;
->> +
->> +	hash_add(info->irqs, &irq->node, ti_sci_irq_hash(desc));
->> +
->> +end:
->> +	if (info->fw_caps & MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST)
->> +		mutex_unlock(&info->irq_lock);
->> +	return ret;
->>  }
->>  
->>  /**
->> @@ -2358,15 +2445,56 @@ static int ti_sci_free_irq(const struct ti_sci_handle *handle, u32 valid_params,
->>  			   u16 dst_host_irq, u16 ia_id, u16 vint,
->>  			   u16 global_event, u8 vint_status_bit, u8 s_host)
->>  {
->> +	struct ti_sci_info *info = handle_to_ti_sci_info(handle);
->> +	struct ti_sci_msg_req_manage_irq irq_desc;
->> +	struct device *dev = info->dev;
->> +	struct ti_sci_irq *this_irq;
->> +	struct hlist_node *tmp_node;
->> +	int ret;
->> +
->> +	if (info->fw_caps & MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST)
->> +		mutex_lock(&info->irq_lock);
->> +
->>  	pr_debug("%s: IRQ release with valid_params = 0x%x from src = %d, index = %d, to dst = %d, irq = %d,via ia_id = %d, vint = %d, global event = %d,status_bit = %d\n",
->>  		 __func__, valid_params, src_id, src_index,
->>  		 dst_id, dst_host_irq, ia_id, vint, global_event,
->>  		 vint_status_bit);
->>  
->> -	return ti_sci_manage_irq(handle, valid_params, src_id, src_index,
->> -				 dst_id, dst_host_irq, ia_id, vint,
->> -				 global_event, vint_status_bit, s_host,
->> -				 TI_SCI_MSG_FREE_IRQ);
->> +	ret = ti_sci_manage_irq(handle, valid_params, src_id, src_index,
->> +				dst_id, dst_host_irq, ia_id, vint,
->> +				global_event, vint_status_bit, s_host,
->> +				TI_SCI_MSG_FREE_IRQ);
->> +
->> +	if (ret || !(info->fw_caps & MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST))
->> +		goto end;
->> +
->> +	irq_desc.valid_params = valid_params;
->> +	irq_desc.src_id = src_id;
->> +	irq_desc.src_index = src_index;
->> +	irq_desc.dst_id = dst_id;
->> +	irq_desc.dst_host_irq = dst_host_irq;
->> +	irq_desc.ia_id = ia_id;
->> +	irq_desc.vint = vint;
->> +	irq_desc.global_event = global_event;
->> +	irq_desc.vint_status_bit = vint_status_bit;
->> +	irq_desc.secondary_host = s_host;
->> +
->> +	hash_for_each_possible_safe(info->irqs, this_irq, tmp_node, node,
->> +				    ti_sci_irq_hash(&irq_desc)) {
->> +		if (ti_sci_irq_equal(&irq_desc, &this_irq->desc)) {
->> +			hlist_del(&this_irq->node);
->> +			kfree(this_irq);
->> +			goto end;
->> +		}
->> +	}
->> +
->> +	dev_warn(dev, "%s: should not be here, IRQ was not found in hash list\n",
->> +		 __func__);
->> +
->> +end:
->> +	if (info->fw_caps & MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST)
->> +		mutex_unlock(&info->irq_lock);
->> +	return ret;
->>  }
->>  
->>  /**
->> @@ -3847,7 +3975,10 @@ static int ti_sci_suspend_noirq(struct device *dev)
->>  static int ti_sci_resume_noirq(struct device *dev)
->>  {
->>  	struct ti_sci_info *info = dev_get_drvdata(dev);
->> -	int ret = 0;
->> +	struct ti_sci_msg_req_manage_irq *irq_desc;
->> +	struct ti_sci_irq *irq;
->> +	struct hlist_node *tmp_node;
->> +	int ret = 0, err = 0, i;
->>  	u32 source;
->>  	u64 time;
->>  	u8 pin;
->> @@ -3859,13 +3990,50 @@ static int ti_sci_resume_noirq(struct device *dev)
->>  			return ret;
->>  	}
->>  
->> +	switch (pm_suspend_target_state) {
->> +	case PM_SUSPEND_MEM:
->> +		if (info->fw_caps & MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST) {
->> +			hash_for_each_safe(info->irqs, i, tmp_node, irq, node) {
->> +				irq_desc = &irq->desc;
->> +				ret = ti_sci_manage_irq(&info->handle,
->> +							irq_desc->valid_params,
->> +							irq_desc->src_id,
->> +							irq_desc->src_index,
->> +							irq_desc->dst_id,
->> +							irq_desc->dst_host_irq,
->> +							irq_desc->ia_id,
->> +							irq_desc->vint,
->> +							irq_desc->global_event,
->> +							irq_desc->vint_status_bit,
->> +							irq_desc->secondary_host,
->> +							TI_SCI_MSG_SET_IRQ);
->> +				if (ret) {
->> +					dev_err(dev, "failed to restore IRQ with valid_params = 0x%x from src = %d, index = %d, to dst = %d, irq = %d,via ia_id = %d, vint = %d, global event = %d,status_bit = %d\n",
-> 
-> space before via? overall this print is needed, but a bit umm.. we have
-> similar ones already..
+With that fixed:
 
-Yes I wanted to have consistent messages.
-Will fix the missing space.
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
-> 
->> +						irq_desc->valid_params,
->> +						irq_desc->src_id,
->> +						irq_desc->src_index,
->> +						irq_desc->dst_id,
->> +						irq_desc->dst_host_irq,
->> +						irq_desc->ia_id,
->> +						irq_desc->vint,
->> +						irq_desc->global_event,
->> +						irq_desc->vint_status_bit);
->> +					err = ret;
->> +				}
->> +			}
->> +		}
->> +		break;
->> +	default:
->> +		break;
->> +	}
->> +
->>  	ret = ti_sci_msg_cmd_lpm_wake_reason(&info->handle, &source, &time, &pin, &mode);
->>  	/* Do not fail to resume on error as the wake reason is not critical */
->>  	if (!ret)
->>  		dev_info(dev, "ti_sci: wakeup source:0x%x, pin:0x%x, mode:0x%x\n",
->>  			 source, pin, mode);
->>  
->> -	return 0;
->> +	return err;
->>  }
->>  
->>  static void ti_sci_pm_complete(struct device *dev)
->> @@ -4014,13 +4182,14 @@ static int ti_sci_probe(struct platform_device *pdev)
->>  	}
->>  
->>  	ti_sci_msg_cmd_query_fw_caps(&info->handle, &info->fw_caps);
->> -	dev_dbg(dev, "Detected firmware capabilities: %s%s%s%s%s%s\n",
->> +	dev_dbg(dev, "Detected firmware capabilities: %s%s%s%s%s%s%s\n",
->>  		info->fw_caps & MSG_FLAG_CAPS_GENERIC ? "Generic" : "",
->>  		info->fw_caps & MSG_FLAG_CAPS_LPM_PARTIAL_IO ? " Partial-IO" : "",
->>  		info->fw_caps & MSG_FLAG_CAPS_LPM_DM_MANAGED ? " DM-Managed" : "",
->>  		info->fw_caps & MSG_FLAG_CAPS_LPM_ABORT ? " LPM-Abort" : "",
->>  		info->fw_caps & MSG_FLAG_CAPS_IO_ISOLATION ? " IO-Isolation" : "",
->> -		info->fw_caps & MSG_FLAG_CAPS_LPM_BOARDCFG_MANAGED ? " BoardConfig-Managed" : ""
->> +		info->fw_caps & MSG_FLAG_CAPS_LPM_BOARDCFG_MANAGED ? " BoardConfig-Managed" : "",
->> +		info->fw_caps & MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST ? " IRQ-Context-Lost" : ""
->>  	);
->>  
->>  	ti_sci_setup_ops(info);
->> @@ -4053,6 +4222,14 @@ static int ti_sci_probe(struct platform_device *pdev)
->>  	list_add_tail(&info->node, &ti_sci_list);
->>  	mutex_unlock(&ti_sci_list_mutex);
->>  
->> +	if (info->fw_caps & MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST) {
->> +		ret = devm_mutex_init(dev, &info->irq_lock);
->> +		if (ret)
->> +			return ret;
-> 
-> If devm_mutex_init() fails, the function returns directly rather than
-> going through the out: label. All other error paths after the mailbox
-> channel allocations use goto out, which calls mbox_free_channel() for
-> both channels. Since mbox_request_channel_byname() is not a devm
-> allocation, those channels would not be freed by the devm cleanup path
-> on probe failure.
-> 
-> Does this leak info->chan_tx and info->chan_rx when devm_mutex_init()
-> returns an error?
-
-Indeed we should go to 'out'.
-
-Best Regards,
-Thomas
