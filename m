@@ -1,162 +1,236 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F08B3D45D4
-	for <linux-clk@vger.kernel.org>; Tue, 12 May 2026 17:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB7C3E0733;
+	Tue, 12 May 2026 17:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778606872; cv=none; b=IxEW/9z1uNy2qHpE+VLbLESv6CsQXwZ/KHqshLisDHkQix8uwIXOFXp995burQEOjKeFMz9n1tCbcYxjrwoWlnhT7OX/jFEOZ6nG+NDohy0TxBbFoPDGN4T8WTjligqd0d/nASsFT9LkuDTbe9JlJKgVhq73wBY3Hzn7BCPldg8=
+	t=1778607511; cv=none; b=IQJs3s0I8FOpeN4zN0+qQXlihhoAzzHA23DT5NBHFeIlH4YjVoivYxektMoT41/2waxLXVJPTGLW+jdQXmxJ+Bn4AL5kjwzjikqpKF/3h++G4oQJ4KwUiTddPIHmhQX0oXGc1AgSQs4S1txakImZz6RqZ7NL0iUbe2WTMpcJD8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778606872; c=relaxed/simple;
-	bh=urCd3imNr9U3d0H113lqR9foS3GfiVWT0uc0mm2Epdg=;
+	s=arc-20240116; t=1778607511; c=relaxed/simple;
+	bh=Lh4wZ2wxbXrL/PMypQSELTSMyjIJKr5egJCQ3MixpNs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HFWHWqC5qH2BgeAJjEj6MzGZ7rCXx21FRaba1NPRpn0jEWhVXYim5rvAMdlNA403O5TOb5EqV5Oj3L3DXVNTVtUcUuC5T5vRI8mhBmcsnmMl3aMd8iRouzlqWxYJL67kjvB0cACMCAcVTCtKdUVqFeXerCHLzNtD87CoNhWooHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MHbBEHq4; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=WWG/S5XC; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z7iHeqx0SB5b1uZem1xE5vbn5Mtc9W/jf+At3yE5tP1sSDD8Frc8CM/DhS5pmW8oo3zg3kx58WxnM2H8pWfkA5gP/nwIUIvvgiI8vPO0EXiwJZmoYPBQhyVbS8Lv7Z3JkdWUVaBngjsQTuRWKX8iVXT3FVSllpt9Sjl0HZZhVH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nBhAfbh/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MHbBEHq4";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="WWG/S5XC"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1778606870;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zFhFfaxYKQp+2MS88gk9p49P/5ACB62Km8g6Bv6AbKU=;
-	b=MHbBEHq4XIUv2eFQi9Q3Bha83Sjgci592752CPVN87w+vOTpRjmAKDGadKjrDx/P4YfX3x
-	fkTWLF06dGSvYsE8gt4k9GKPfYW0CkbRj4rUUQdae2wZVVOOprvZk1B4ZzxFRsDaZRHejs
-	SMOqaN+Anf55PKqGeWmyOIGkiWzwPWc=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-610-4JI85Rn9OPGG7hPikqF2IA-1; Tue, 12 May 2026 13:27:49 -0400
-X-MC-Unique: 4JI85Rn9OPGG7hPikqF2IA-1
-X-Mimecast-MFC-AGG-ID: 4JI85Rn9OPGG7hPikqF2IA_1778606869
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-8ae752c5273so124477316d6.2
-        for <linux-clk@vger.kernel.org>; Tue, 12 May 2026 10:27:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1778606869; x=1779211669; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zFhFfaxYKQp+2MS88gk9p49P/5ACB62Km8g6Bv6AbKU=;
-        b=WWG/S5XCXvZM1Zxyko9ma47my1kzLyp8hGNhd/WjOgufU3aa9f+qtO/uRYEj8lD2BV
-         jKfFzDtz+0BVBj+ie62UQjTvpdvnJKcGLwZAemuZ8SlVMnpIXrsO3QcEly2ajECoFBd4
-         p343A22rdFUzvajz6UONajYgKyTHxW5rrSs8S19mFNWQxeLfy3q2/LCFHwpoY0D6OBI5
-         z+yfD5cDZhtcn4BBCoFM1O2UFqvp4iEC3XS66whl5m3NUDM2MEuqYLSPY4oAhskRO9fw
-         gMzmF5PWUR/MOYW9rFWf9S3hqlGHsOtXFZ2Hyrnb9ptMbjj9NP1NThID7sb/qH0dihQd
-         0vLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778606869; x=1779211669;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=zFhFfaxYKQp+2MS88gk9p49P/5ACB62Km8g6Bv6AbKU=;
-        b=KxfzN7WdXmeN/CmI/3oTjwI0wscAON/gDpBCLEb4iEcFjXaJCfVDbr7Inw8HUOKGY9
-         fIhtj2sFYVzLsF4vyI1hoT93b7H5NEhjIFCCqhHKO34tVjTnkimoOi41ZdTmIY7VDl8F
-         GY9Tg0iyBctKlHUsntWczMt9yPZumHATClYElwVyU2IPgWJuWRJXNnSB4uqn66Zlx2AT
-         JIp40m8g6JNcF7fRR0Pzb89+dT1tpm4Xot+fPgZzy8mfFDBRB7pTv2bsJp1vwZntG8vC
-         gPpCORlkIwsSv4jvjlIsZESBcIgoo7pBe34G6YoNV53WyFrL5Kj3INBZaFcOlbsokvmt
-         NLpQ==
-X-Forwarded-Encrypted: i=1; AFNElJ+bb3Q/9ZlOikgqVP12Xp+FWBRa9MgG4nB72ZiRgvBfAbTJkCmM9aXrGMdFUVa9zxc6iEAVDNypi/o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwB5UsBEHORPZOcQ8s8XPlyn4ZWa8mbKK9agSq4JRUjnHjo7zVQ
-	KTydYKr5T7O1lwVvdypMUt0uUHHiNp8FpgAI5+1I2H5OyfRTywOgQgvOyt618FM2e3tpRi8BpYl
-	YA36yH9u63Ig+aCk5KwVFOcbGDFgbQAKk8snHbdRRHVfdr2QJTicO3p+Ww0tuIb3leK9PPQ==
-X-Gm-Gg: Acq92OFou6jUN0pc3sgBmGDCpm3Rz3dPwpSGyJ1aJMFvirIrqrQ52RdDHNKeNocY02l
-	jlSXJ7P205djRo32SyTNiXugiO8Ny6M7kYX6TVwEuEG/Ps8vKinKi3M6sVwHWf5zITVeiUxNzhy
-	SkLm5DdlceF4MzAkboRtBHhaYzG7A8hJh3RldKwQwlNm3NpCle1eMGlsK04/4ZU6axuogevARmZ
-	aZfuRM5aysttKyfwY0YTBJqwNY0xBTB/wVG7LoP6k3VeI627/x7+Awi4DCbjeyuL19P/WEBNpwd
-	7yGOb+LXFxbmqGTvSn/+cTmSPsrvMp2rXjL8liKuqOeDjjrFLb0QxO8XXuu/xKQZRQ46TP3xvhs
-	C3xnJBjDbk3j47ivGB52oaJKMdpQrhiSQNNFeJs+hX1n+VuyGTP5bPwMl
-X-Received: by 2002:a05:6214:5d8a:b0:8ac:8cbb:49bd with SMTP id 6a1803df08f44-8c663f6e991mr57494496d6.38.1778606868895;
-        Tue, 12 May 2026 10:27:48 -0700 (PDT)
-X-Received: by 2002:a05:6214:5d8a:b0:8ac:8cbb:49bd with SMTP id 6a1803df08f44-8c663f6e991mr57493836d6.38.1778606868187;
-        Tue, 12 May 2026 10:27:48 -0700 (PDT)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8bf3a43636fsm131095666d6.21.2026.05.12.10.27.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 May 2026 10:27:47 -0700 (PDT)
-Date: Tue, 12 May 2026 13:27:45 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: dongxuyang@eswincomputing.com, mturquette@baylibre.com,
-	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	p.zabel@pengutronix.de, huangyifeng@eswincomputing.com,
-	benoit.monin@bootlin.com, ningyu@eswincomputing.com,
-	linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v4 1/3] dt-bindings: clock: Add ESWIN eic7700 HSP clock
- and reset generator
-Message-ID: <agNjEcnlUdkpexqJ@redhat.com>
-References: <20260512020432.671-1-dongxuyang@eswincomputing.com>
- <20260512020511.726-1-dongxuyang@eswincomputing.com>
- <agNLuSCDlukeVGcS@redhat.com>
- <20260512-captivity-chatroom-0c46aa7ab0a3@spud>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nBhAfbh/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18981C2BCB0;
+	Tue, 12 May 2026 17:38:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1778607511;
+	bh=Lh4wZ2wxbXrL/PMypQSELTSMyjIJKr5egJCQ3MixpNs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nBhAfbh/Rz/3sOchPEJ7316+gfWx8Zlpfpur8Va/rByCxc3VKBhfXd09EcGAiDstx
+	 33B208k8iVJPVyVYzgqD3z0GEBEaNgeo8i8o8ISr5bQ3V00uWqf0I0YNi44RiWc4H6
+	 r1wY0DPFN4qllsDpjRAuEH8YyCV8fsHFHfRCEeA2IvZXo8LKNTp8o8pdaRQw2m8+VT
+	 r7PG6CUQdOMJBU99axUJZJr41QWnSiRLqaFa79yj+Qgl+x/FqW8bxJjdxtV65iuwmC
+	 r+z1fRRTSbaBezAXTEodCEfu6+YERtuKB5fWlLpbRFVwth8U5SrcnQIJbyw4PMPaJm
+	 OxUwwl1S+hrMw==
+Date: Tue, 12 May 2026 18:38:24 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Changhuang Liang <changhuang.liang@starfivetech.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney@redhat.com>, Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Alexey Charkov <alchark@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Keguang Zhang <keguang.zhang@gmail.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 01/12] dt-bindings: soc: starfive: Add StarFive JHB100
+ syscon modules
+Message-ID: <20260512-operator-vindicate-339bf407d7f3@spud>
+References: <20260512083521.3448-1-changhuang.liang@starfivetech.com>
+ <20260512083521.3448-2-changhuang.liang@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="e5f+9DcEecnTfzlC"
+Content-Disposition: inline
+In-Reply-To: <20260512083521.3448-2-changhuang.liang@starfivetech.com>
+
+
+--e5f+9DcEecnTfzlC
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260512-captivity-chatroom-0c46aa7ab0a3@spud>
-User-Agent: Mutt/2.3.1 (2026-03-20)
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 12, 2026 at 05:40:16PM +0100, Conor Dooley wrote:
-> On Tue, May 12, 2026 at 11:48:09AM -0400, Brian Masney wrote:
-> > Hi Xuyang,
-> > 
-> > On Tue, May 12, 2026 at 10:05:11AM +0800, dongxuyang@eswincomputing.com wrote:
-> > > From: Xuyang Dong <dongxuyang@eswincomputing.com>
-> > > 
-> > > Add bindings for the high-speed peripherals clock and reset generator
-> > > on the ESWIN EIC7700 HSP.
-> > > 
-> > > Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> > > Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
-> > > ---
-> > >  .../bindings/clock/eswin,eic7700-hspcrg.yaml  | 63 +++++++++++++++++++
-> > >  MAINTAINERS                                   |  5 +-
-> > >  .../dt-bindings/clock/eswin,eic7700-hspcrg.h  | 33 ++++++++++
-> > >  .../dt-bindings/reset/eswin,eic7700-hspcrg.h  | 21 +++++++
-> > >  4 files changed, 120 insertions(+), 2 deletions(-)
-> > >  create mode 100644 Documentation/devicetree/bindings/clock/eswin,eic7700-hspcrg.yaml
-> > >  create mode 100644 include/dt-bindings/clock/eswin,eic7700-hspcrg.h
-> > >  create mode 100644 include/dt-bindings/reset/eswin,eic7700-hspcrg.h
-> > 
-> > Does the MAINTAINERS file need to be updated for these paths? The entry
-> > in linux-next currently looks like this:
-> > 
-> > ESWIN EIC7700 CLOCK DRIVER
-> > M:      Yifeng Huang <huangyifeng@eswincomputing.com>
-> > M:      Xuyang Dong <dongxuyang@eswincomputing.com>
-> > S:      Maintained
-> > F:      Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml
-> > F:      drivers/clk/eswin/
-> > F:      include/dt-bindings/clock/eswin,eic7700-clock.h
-> 
+On Tue, May 12, 2026 at 01:35:10AM -0700, Changhuang Liang wrote:
+> Add documentation to describe StarFive JHB100 SoC System Controller
+> Registers.
+>=20
+> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+> ---
+>  .../soc/starfive/starfive,jhb100-syscon.yaml  | 107 ++++++++++++++++++
+>  MAINTAINERS                                   |   5 +
+>  2 files changed, 112 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/soc/starfive/starfi=
+ve,jhb100-syscon.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/soc/starfive/starfive,jhb1=
+00-syscon.yaml b/Documentation/devicetree/bindings/soc/starfive/starfive,jh=
+b100-syscon.yaml
+> new file mode 100644
+> index 000000000000..0add3d9727ac
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/soc/starfive/starfive,jhb100-sysc=
+on.yaml
+> @@ -0,0 +1,107 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/soc/starfive/starfive,jhb100-syscon.y=
+aml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: StarFive JHB100 SoC system controller
+> +
+> +maintainers:
+> +  - Kevin Xie <kevin.xie@starfivetech.com>
+> +  - Changhuang Liang <changhuang.liang@starfivetech.com>
+> +
+> +description:
+> +  The StarFive JHB100 SoC system controller contains MMIO registers used=
+ by
+> +  other hardware modules (e.g., PLL, eMMC, PCIe). These modules access
+> +  specific register offsets, bit masks, and shifts within the system
+> +  controller region for configuration and status.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - starfive,jhb100-b2h-syscon
+> +          - starfive,jhb100-gpu-syscon
+> +          - starfive,jhb100-h2b-syscon
+> +          - starfive,jhb100-host-syscon
+> +          - starfive,jhb100-husb-syscon
+> +          - starfive,jhb100-husbcmn-syscon
+> +          - starfive,jhb100-husbd-syscon
+> +          - starfive,jhb100-npu-syscon
+> +          - starfive,jhb100-pcieep-ecsr-syscon
+> +          - starfive,jhb100-pcierp-ecsr-syscon
+> +          - starfive,jhb100-pcierp-syscon
+> +          - starfive,jhb100-per0-syscon
+> +          - starfive,jhb100-per1-syscon
+> +          - starfive,jhb100-per2-syscon
+> +          - starfive,jhb100-per3-syscon
+> +          - starfive,jhb100-strap-syscon
+> +          - starfive,jhb100-sys0-syscon
+> +          - starfive,jhb100-sys1-syscon
+> +          - starfive,jhb100-sys2-syscon
+> +          - starfive,jhb100-usb-syscon
+> +          - starfive,jhb100-vout-syscon
+> +      - const: syscon
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  '#reset-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - starfive,jhb100-per0-syscon
+> +              - starfive,jhb100-per1-syscon
+> +              - starfive,jhb100-sys0-syscon
+> +    then:
+> +      required:
+> +        - clocks
+> +        - '#clock-cells'
+
+Probably missing and else: clocks/clock-cells: false?
+And the same below for resets?
+
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: starfive,jhb100-pcierp-syscon
+> +    then:
+> +      required:
+> +        - '#reset-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    syscon@13010000 {
+> +        compatible =3D "starfive,jhb100-sys0-syscon", "syscon";
+> +        reg =3D <0x13010000 0x2000>;
+> +        clocks =3D <&osc>;
+> +        #clock-cells =3D <1>;
+> +    };
+> +
+> +    syscon@13014000 {
+> +        compatible =3D "starfive,jhb100-sys1-syscon", "syscon";
+> +        reg =3D <0x13014000 0x4000>;
+> +    };
+> +
+> +    syscon@11719000 {
+> +        compatible =3D "starfive,jhb100-pcierp-syscon", "syscon";
+> +        reg =3D <0x11719000 0x1000>;
+> +        #reset-cells =3D <1>;
+> +    };
+> +
+> +...
 > diff --git a/MAINTAINERS b/MAINTAINERS
-> index b2040011a386..b7180863310c 100644
+> index 47e4b368347f..6f6aac7cea95 100644
 > --- a/MAINTAINERS
 > +++ b/MAINTAINERS
-> @@ -9548,9 +9548,10 @@ ESWIN EIC7700 CLOCK DRIVER
->  M:     Yifeng Huang <huangyifeng@eswincomputing.com>
->  M:     Xuyang Dong <dongxuyang@eswincomputing.com>
->  S:     Maintained
-> -F:     Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml
-> +F:     Documentation/devicetree/bindings/clock/eswin,eic7700*
->  F:     drivers/clk/eswin/
-> -F:     include/dt-bindings/clock/eswin,eic7700-clock.h
-> +F:     include/dt-bindings/clock/eswin,eic7700*
-> +F:     include/dt-bindings/reset/eswin,eic7700-hspcrg.h
-> 
-> 
-> Is this not sufficient for what you're looking for?
+> @@ -25613,6 +25613,11 @@ S:	Maintained
+>  F:	drivers/reset/starfive/reset-starfive-jhb1*
+>  F:	include/dt-bindings/reset/starfive,jhb1*.h
+> =20
+> +STARFIVE JHB100 SYSCON
+> +M:	Changhuang Liang <changhuang.liang@starfivetech.com>
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/soc/starfive/starfive,jhb100-syscon=
+=2Eyaml
+> +
+>  STATIC BRANCH/CALL
+>  M:	Peter Zijlstra <peterz@infradead.org>
+>  M:	Josh Poimboeuf <jpoimboe@kernel.org>
+> --=20
+> 2.25.1
+>=20
 
-I completely missed that. Sorry
+--e5f+9DcEecnTfzlC
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Brian
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCagNlkAAKCRB4tDGHoIJi
+0osyAP9nG5LpF/CsWXBrsbCldev1ga7IWfs9Nuw6cCVorDxtlwD8Da2mhdujsZzD
+dWkYJ8EY0O5iSm8tU81TxPJeGAoIHwQ=
+=/WCt
+-----END PGP SIGNATURE-----
+
+--e5f+9DcEecnTfzlC--
