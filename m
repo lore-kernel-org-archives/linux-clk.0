@@ -1,68 +1,68 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2915A37E2FA
-	for <linux-clk@vger.kernel.org>; Tue, 12 May 2026 20:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC9053C2797
+	for <linux-clk@vger.kernel.org>; Tue, 12 May 2026 20:41:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778618463; cv=none; b=L+bUIjwZZNUDzsvMdcsUKkNtA7WkupcHn+s6J8bKKAcd10lkHEDhEIZg8eNr3akGC8BK4PdSBFkYp5bXOkF/OE5mVU/pCNRdtPu2ghzlzcZjhew2o8iGm/yedjJhNp0P1jyPx/fDUjG7i5xYo1uxWPD52SjBLf6xbVLEGN/Mq3w=
+	t=1778618465; cv=none; b=ERdlW0fMDdbeFmEs3twxwBrV9zan9Ve78r2KQ/kZLP824kluvSvlWe0f6/M+TDX7M++QWQtmRyBq07IRw5Po4sc7HpjiKwrlkqj5Vd5vWB0+bsslc5RdFUiHxmuzexJtSrRhIEjLzHVCi7TPyEU6WKUc9YCf/ASpiDsyjOHfgTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778618463; c=relaxed/simple;
-	bh=KrqDyS0Yy3yf2NMt59+FCaahshEy2irhHS958tZyPSA=;
+	s=arc-20240116; t=1778618465; c=relaxed/simple;
+	bh=H0RLb9c0LURxO6koeJTD/k16aT3guXED0HIliuxHbOg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QwDWf9O3nON3YJrRzxw7DZ+18I2nOV29fUrulesZaNrI3LVDA8k0+6fxmEmx+BDgVIp5upQTkIrpypGhXvO37QJnX4/thsp8fBYoinUBKNSEguLHHD8AKst9M1YmlNjd6vxtnpR9mYj5ulakl8nThldf3kHPSVWDQl4PK8Rtk7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fFprHZDC; arc=none smtp.client-ip=209.85.128.49
+	 In-Reply-To:To:Cc; b=kozoP0p5y0KDBQjTl4oUGx/ZolEyRI0b/Od4Yoea6o1DVer5BjA6kFfkY64p/GkfCouU1pflfd+0feINikcxT9vsMZqnzdow+xi1ZorNziC1OkvJKBFJmA9+Gx/R4GEmyyHLpghmoGfwn6G4xr2h/jjuhi1kChlXLX73i4kBHdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eVuYCVem; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fFprHZDC"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-488b0046078so50027515e9.1
-        for <linux-clk@vger.kernel.org>; Tue, 12 May 2026 13:41:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eVuYCVem"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4890d945eb4so39750005e9.0
+        for <linux-clk@vger.kernel.org>; Tue, 12 May 2026 13:41:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1778618461; x=1779223261; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1778618462; x=1779223262; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ew8O/tYrRk/rxSyItBEjL6nrUs9soh50rr590jZ80xU=;
-        b=fFprHZDClHH9NWIt5gTps4JXaR1NzOx1ZEqgwywIbIopJUvjsu7p/LyfnjPClnMGFL
-         uKCQ4bVfgZcl22hoyGeIH7yHqUw2Z0v7vuClN6hCvczdtOaOJYveJ42UvTmtoHHHi9gw
-         vnXnr9lrlfnJ3z3JMwuxw9Az4ZyYFzHIkAW60XJnr3m3mt0oBisjya+ce2SVHtyzvUsg
-         yal0CxdYQQkVE5rfj27LvtjQ9okygBRUjOlOSyDUaoEWRFYqXeMuMvv7KKzfveHzi0Fu
-         hL8S5etBjhiS8rp4diAecEiYQSjYTm4VgTe9rVmm8OaGlcliiYhDSkKQn/+2Gre5RnFr
-         iycA==
+        bh=mroWW2HaShkmhTulJgY1nxFyaBNcYTZGN03Y3cw9Xbk=;
+        b=eVuYCVemeNu5EUSDrhQRjFPYxKv/YI4VG1JQOjgmMYNbQt0ycs+Y+iV9Sic/Vxpzx5
+         pRQVluTcHEKVfY3fOZ3ghgJmG7OxX5PAzWMD21EyJUBWOvLiQ6UD7n1PXIzpRVMyPgyM
+         ojiMDV6OH8Fy+U0TQ5IQP2lLrF+0av4AokqcqTH8MYvsh4N912m1yLj5T2/VfPpcvDEf
+         MnT0GE+d7YDhxYwQP/unln+kzZmBxHh4mL0yPAStUOXrR5WlBy5Dtftg1/+T3PHNi9xw
+         XdqjNESCP8+pySNC1WeS/1nEDssEYMMKOQDUo1ieoQRgevVCB0LLx+aOb4v7ov7hKty5
+         5Nrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778618461; x=1779223261;
+        d=1e100.net; s=20251104; t=1778618462; x=1779223262;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=ew8O/tYrRk/rxSyItBEjL6nrUs9soh50rr590jZ80xU=;
-        b=DxD05MnxpNXUL6/3Aml44aN2ZTA29Cb/xUIXWOSXgZk6olcNSKI1jZpBKDzXAvD0Aa
-         QEunTQwZbUMViL8KH+d5nrhowhSmQUskCNzojfsUeqgywwVn25QRW7KnKAGwXxYoflU3
-         q9QN/FbLj619Wo+bNhSQhxc3j8ANZX6aeqFL8ffugC9HeL51Cs9ovq+VKyQI9La+64T2
-         MP2tbIx2pXJ9SMH+xaZHoE/w6yD8n7reXD9SyUM5LqqQ/ximD1qY/ayDrBjGDaYQXVJt
-         yx/VpMHFbffHlWS0+7n0vakf7mREvu5bKV6e25i5PwMqU4vMBCe84JXdMZY2AIOo4F/D
-         ngQQ==
-X-Forwarded-Encrypted: i=1; AFNElJ/WBinjntUNCKS4OzwDSSIsbKG02HhL8D/lphF3HeH2l7MGVx4C6S7XtMaJSPB5NcwK2+VIldjuUek=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhDtm9rOml94sVX/M/Zoe9yejjOA6WhQ3SqfQ12BDM1MSQCq/6
-	sAr/BvVV75jAvsmq6+Ko202LAh0AmMHZgkM35i513YxgaAtbhelud1//LDSeOG35r/w=
-X-Gm-Gg: Acq92OHuNw/00A29GmzuLyXUTk3XZUPOdCagZfH+5TfnGLg/Nks0RSOeAql/M4gAn1b
-	+1BAft664pkzNZ7c4LuDsQic+t+CU1uS+kA7LTpgzG7cYAlH2KtnW/Mst6BytQSvmr5qHIkcq5g
-	G9pD/vML7tbR+qrhDmHmefyeAgsseTgDhRHA7N4VP2mDO8+FS5Alvz1pTmxAP6dEBOV6ySSJEri
-	reKSCJn/0d0h+DJBhfZVWkGJVIFqvtwukNwUpBT4XSK0jP48cCEmyQn/ECsWa9dBXmqRn7/+68E
-	pR1crhgmcu9olC2jGfvxyG/l+K+SdBCkjw9ECzSUOS+UO+4kZrmXltMnCYvBBJK7igNihFyJePS
-	L6QWRqp93audCBER+tqQlEpG75dVuahaptWgo/9ZKvuN5ouMCSgS9/Umvqw4Gv6d2MPGl7h8XsZ
-	/SWIOgcq0BPMZxo03oDA8RKROCmdZFx1kYw9TWcLuG9WxiVH9zj10LwyjxhEBqrvj77li2YPLkd
-	mzSv5JfSWLfimVZ
-X-Received: by 2002:a05:600c:3513:b0:48e:635a:18d9 with SMTP id 5b1f17b1804b1-48fc9a34ae6mr5561115e9.15.1778618460190;
-        Tue, 12 May 2026 13:41:00 -0700 (PDT)
+        bh=mroWW2HaShkmhTulJgY1nxFyaBNcYTZGN03Y3cw9Xbk=;
+        b=env7Q+KtxtCP5Lea7YZk8sXOrNhcL16DIeG6r1o5VY7FMkXImJNje0hhREqEsQj0Rk
+         as/u2DIIYAL+ORTY7O81ppnW9qjKEG2egB/EGKCzvykNN2UXIyyJ9OKxbHCh42OeU6aq
+         Mz2in4WwFQgJ364cZUxRlu6UQJodMusYtnPDGDZbK8sSUKeApk2DvN+c1VggEm2RjPWs
+         IA92Kk/pbG1x0BcxChFJ/OAiSlCDwWm60A47Tb62osg5hlPGH/dyhtCr8eWjsRM+PGUy
+         +KPiMn89Jk8cyvN+YsKIEo8lqaV1nP23azs/NvlrJ4liXF+yxemc8qZSMNakB17iGRpV
+         16hA==
+X-Forwarded-Encrypted: i=1; AFNElJ9UqRxruV7JxgMkTWow32IYkGtgI1nJo0pbpWlLwm9aZsw9Fl6Zmb/PK/k/PE2cVYpVg74ggTgJ01Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPa/jnUEIC2VTPXvIGO7AwZNg3Qk1kc3/cBvT34yCx3b0nI2VJ
+	TmmVjF1KU2139D/VB/BpC6hi/WZ3kjNozxftsMotzf1ZkcKKYZzyeYI31s3qL69tZgn6tcoU5wr
+	SRPYZps8=
+X-Gm-Gg: Acq92OECXLKcLaiwt9bOYyrUDvpnpNFd3TSdNqDnR5I+2/4yv4YLJ+hU18Yu5uHcnII
+	Ta4t6361DwkV4HU07TxqNzFlcoLa38iPjyk3wIj5Sj3h48Rja+AqGMJ6ZrCFuTD9QbdJuahI+0x
+	GbzQsLSq1juHEeSU8LT9WF98a+XQX8+GZ71dbZpSWuZ8XGljyq98VLv87xewZHrv+gA60YVzD9T
+	DdxGOMYji0qXs3HtpiP3GJN1U+Zpmx2nSypuYU0pGwgmkbJq464R6wXgXPf8XZG1+LwHX75ob5o
+	jcT/F34fzWZehDPo/9SVT+OuTGWUV7J8xffgqBsyv6bZvkstZ9TdOUt5duz1IFFwINZ3IH0pDuC
+	mHjBhFcqOItcWQhVD+C+FpDTcBa7BPossGEUbNmCfvtTKCUx9iuaYsLnFu9nFFpksVRV+sv9JUc
+	gohS7MuDIJnxoBdCDuTHgNEv1riPJomhhnev6ynEMAW+n1ei53ZoC3u5OGhLHN8UJunDqXESQqp
+	CFWk+pDq0y0vSKx
+X-Received: by 2002:a05:600c:45cd:b0:485:3c2e:60d5 with SMTP id 5b1f17b1804b1-48fc971f0ecmr6871455e9.2.1778618462098;
+        Tue, 12 May 2026 13:41:02 -0700 (PDT)
 Received: from [127.0.1.1] ([94.4.195.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48fc8d21c72sm18788095e9.7.2026.05.12.13.40.58
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48fc8d21c72sm18788095e9.7.2026.05.12.13.41.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 May 2026 13:40:59 -0700 (PDT)
+        Tue, 12 May 2026 13:41:00 -0700 (PDT)
 From: Alexey Klimov <alexey.klimov@linaro.org>
-Date: Tue, 12 May 2026 21:40:48 +0100
-Subject: [PATCH 1/2] clk: samsung: acpm: introduce driver data for
- SoC-specific clocks
+Date: Tue, 12 May 2026 21:40:49 +0100
+Subject: [PATCH 2/2] clk: samsung: acpm: add initial Exynos850 support
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -71,7 +71,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260512-exynos850-acpm-clk-v1-1-837532ddbf38@linaro.org>
+Message-Id: <20260512-exynos850-acpm-clk-v1-2-837532ddbf38@linaro.org>
 References: <20260512-exynos850-acpm-clk-v1-0-837532ddbf38@linaro.org>
 In-Reply-To: <20260512-exynos850-acpm-clk-v1-0-837532ddbf38@linaro.org>
 To: Sam Protsenko <semen.protsenko@linaro.org>, 
@@ -85,70 +85,63 @@ Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-kernel@vger.kernel.org
 X-Mailer: b4 0.14.3
 
-Currently, the ACPM clock driver hardcodes the GS101 clock variant
-arrays and counts directly in probe() routine. To support additional
-other SoCs (for instance Exynos850 SoC) that use the same ACPM protocol
-but have different clock trees, the driver needs to be more flexible.
+The Exynos850 SoC utilizes the APM co-processor for clock management
+via ACPM, similar to the GS101 SoC.
 
-Introduce driver data attached to the platform_device_id table.
-Update the probe function to dynamically extract the clock lists,
-number of clocks, its names and mailbox channel id based on the matching
-device ID.
+Add the Exynos850-specific clock variant array (including mif, int,
+cpucl0, cpucl1, g3d, aud, cam, disp, and cp) and wire it up to the
+driver data infrastructure. Add the "exynos850-acpm-clk" device ID
+to enable dynamic instantiation of these clocks during probe().
 
 Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
 ---
- drivers/clk/samsung/clk-acpm.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ drivers/clk/samsung/clk-acpm.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
 diff --git a/drivers/clk/samsung/clk-acpm.c b/drivers/clk/samsung/clk-acpm.c
-index d8944160793a..604604b5b814 100644
+index 604604b5b814..d9b2604db03a 100644
 --- a/drivers/clk/samsung/clk-acpm.c
 +++ b/drivers/clk/samsung/clk-acpm.c
-@@ -113,6 +113,8 @@ static int acpm_clk_register(struct device *dev, struct acpm_clk *aclk,
+@@ -40,6 +40,18 @@ struct acpm_clk_driver_data {
+ 		.name		= cname,		\
+ 	}
  
- static int acpm_clk_probe(struct platform_device *pdev)
- {
-+	const struct acpm_clk_driver_data *drv_data;
-+	const struct platform_device_id *id;
- 	struct acpm_handle *acpm_handle;
- 	struct clk_hw_onecell_data *clk_data;
- 	struct clk_hw **hws;
-@@ -126,8 +128,14 @@ static int acpm_clk_probe(struct platform_device *pdev)
- 		return dev_err_probe(dev, PTR_ERR(acpm_handle),
- 				     "Failed to get acpm handle\n");
- 
--	count = acpm_clk_gs101.nr_clks;
--	mbox_chan_id = acpm_clk_gs101.mbox_chan_id;
-+	id = platform_get_device_id(pdev);
-+	if (!id || !id->driver_data)
-+		return -ENODEV;
++static const struct acpm_clk_variant exynos850_acpm_clks[] = {
++	ACPM_CLK("mif"),
++	ACPM_CLK("int"),
++	ACPM_CLK("cpucl0"),
++	ACPM_CLK("cpucl1"),
++	ACPM_CLK("g3d"),
++	ACPM_CLK("aud"),
++	ACPM_CLK("cam"),
++	ACPM_CLK("disp"),
++	ACPM_CLK("cp"),
++};
 +
-+	drv_data  = (const struct acpm_clk_driver_data *)id->driver_data;
+ static const struct acpm_clk_variant gs101_acpm_clks[] = {
+ 	ACPM_CLK("mif"),
+ 	ACPM_CLK("int"),
+@@ -57,6 +69,12 @@ static const struct acpm_clk_variant gs101_acpm_clks[] = {
+ 	ACPM_CLK("bo"),
+ };
+ 
++static const struct acpm_clk_driver_data acpm_clk_exynos850 = {
++	.clks = exynos850_acpm_clks,
++	.nr_clks = ARRAY_SIZE(exynos850_acpm_clks),
++	.mbox_chan_id = 0,
++};
 +
-+	count = drv_data->nr_clks;
-+	mbox_chan_id = drv_data->mbox_chan_id;
- 
- 	clk_data = devm_kzalloc(dev, struct_size(clk_data, hws, count),
- 				GFP_KERNEL);
-@@ -154,8 +162,7 @@ static int acpm_clk_probe(struct platform_device *pdev)
- 
- 		hws[i] = &aclk->hw;
- 
--		err = acpm_clk_register(dev, aclk,
--					acpm_clk_gs101.clks[i].name);
-+		err = acpm_clk_register(dev, aclk, drv_data->clks[i].name);
- 		if (err)
- 			return dev_err_probe(dev, err,
- 					     "Failed to register clock\n");
-@@ -166,7 +173,7 @@ static int acpm_clk_probe(struct platform_device *pdev)
+ static const struct acpm_clk_driver_data acpm_clk_gs101 = {
+ 	.clks = gs101_acpm_clks,
+ 	.nr_clks = ARRAY_SIZE(gs101_acpm_clks),
+@@ -173,6 +191,7 @@ static int acpm_clk_probe(struct platform_device *pdev)
  }
  
  static const struct platform_device_id acpm_clk_id[] = {
--	{ "gs101-acpm-clk" },
-+	{ "gs101-acpm-clk", (kernel_ulong_t)&acpm_clk_gs101 },
++	{ "exynos850-acpm-clk", (kernel_ulong_t)&acpm_clk_exynos850 },
+ 	{ "gs101-acpm-clk", (kernel_ulong_t)&acpm_clk_gs101 },
  	{}
  };
- MODULE_DEVICE_TABLE(platform, acpm_clk_id);
 
 -- 
 2.51.0
