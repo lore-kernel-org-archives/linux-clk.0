@@ -1,303 +1,423 @@
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011049.outbound.protection.outlook.com [52.101.65.49])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A3F388876
-	for <linux-clk@vger.kernel.org>; Tue, 12 May 2026 15:12:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778598780; cv=fail; b=CetCG/T4L8/MyQ2BLWPCTELnXiuZT5pM0KnJ5negEOFCa6vy/aFyqk/brH5qmWlMDodYxKIHTUzAUJMuloUGaVc6R4knaasaNk+t93vC3BnA17bWdFpZ5UppEwzQhE+01Gv2XYzqnjihYieCWYSXD/nv79yldA9kP7kHc1tUmdA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778598780; c=relaxed/simple;
-	bh=pfArHd+XLjRyWkHh0exC1qRYMr/6O+x170WbJL1egfo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=ETUZXIbkHprUOlQ11IKCoF6yJWbm6Ry8kBRwWsz/RYKZI/l/o4EvcntZqDWdBspjftoDRN57J6C89QkjhUMuHVmSN8lSb1zeNBzWviqMqKYZjmwgg6KttPtdoc/KAB/JYsjnXxFdNXbHk4YLDR/q05IPj8E0+R+OULArCGhWcWY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Y242gxDB; arc=fail smtp.client-ip=52.101.65.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0EF3CAA3E
+	for <linux-clk@vger.kernel.org>; Tue, 12 May 2026 15:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778600669; cv=none; b=mUmTMpEpl6U+wQQggbHJw9OH7ffSjtNadPcJglYCRsi++l+U4FXXuZmqhDYPPRNSL6Nr6dXC1LNPYmSlaOAkf+B2H1HBrROn/HYPWbkym4vfFggUeQMSzJqhB6Q3egYhUf6NRRHG3JDlfNls4z4Agir5qXdm3gVdhMXvJ/JawlM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778600669; c=relaxed/simple;
+	bh=ux9OVZqtuDTsqrys9zxanS/HEJU9ENuceEUnZaxE7vA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kK+2hJmZHBIj3HYCD38uWXcKNL/x35ujJXmsj3C5BLCaaY414NewiXuwHWmLvToCu0MeC1F+Mjbwm7C6yq0tJ2gat/40MfIHnsde4d6BRjgt5OlUgsNYqPl4ZtYiTqWtszHXhRsQPhDh5BLj/D8wUCJGKV4jKpHs0s5EignVIgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=omhLMDri; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Y242gxDB"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nekuVKhQVcAtXlxUN8gulouwazI/76C+vFnAQPq8lghzrFBBNocOjj0mg8zvSNNZLkEjLj4U51Eh2PZUNCwTYcsNULbbYvgXaSQUH5dSJbJddpi8TeZblaTxqc5YySKFk5fECzpam5xfAkk74dZQ3G6jbv0lMjDBhNSsZuxV/d9iKuPuoGnT1TSf4JIAnra/425waR+MznhTKODMgEgX0oGkFwPmJjb7uvXueGI7qP/HowW4qep3agQ1F3KvLw7XJ8P4IobYzeGAjl+FCesoHKGvuYbuJkKZinH7mNFtp3qoH265LqzLItHC9vK/v/pdxcGqZnMRbtkIgFW4ok+Kew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ev8vh5ns96+Mwfb2pHRZUX8j/pGmczCVQ0yRoYyUO/4=;
- b=l3ZoEEyYijSvKZU6ffa0spVQtMP76gW+pjikJFPmJlyHbCOjrXYAV7hzuXmocnxKhuXvgIsvPcOCRjZFbuHSOsNL0KZfRunFQk1XbBAYjP0mCQjjYDhP/yNzGGuPwpUC9+8Q9i6dylxf0YxPAeJi9Sd5fY23QwSB1gDlYvgidxhDxf/ddmAOfuyTN6zw0C3KECQFCqEM0JsMXkKdYAzghLI1lWJ68XoaUCeFITof90Sag1RssZNgzU/AjlmeLaZE9QtDUr/w9HMyYQs+TmZtdsVTjJBP2YMC0oK1JSqbPrIARil3a2CrM56DIPoth0vTgB2H67Pzg9ipQPxONY1+gA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ev8vh5ns96+Mwfb2pHRZUX8j/pGmczCVQ0yRoYyUO/4=;
- b=Y242gxDBwXbnk9dTztkKn0okayy+/JVu/wFvj1+YuWgxYq+58vT5Zwfa5+4Sn72yUdt36lp/c1lQ32U411itQTiVFzMXQXx7+WS+feDcGWXMkDNCjeP+vI+1Sys2mS9QLu0343d62sr9ecvbTtxADKrvHmr2WVsT4kGYbpTxQqRi3eZF8f2kF4KpuTKjrg1ccROi2PSXGKURtSm6iHfwykozzCzL5jj3qHimHwfm08dQUsY11V34uyI6p4GmtrIbQu1FWCsrnsxOX34hFe3wFZ4YglNJMgvMpKlhx4vLCNq9TiYTHiWegS74f1t+rjTObsNGdleodpZtD/aPssKGBw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PA4PR04MB9366.eurprd04.prod.outlook.com (2603:10a6:102:2a9::8)
- by DUZPR04MB9966.eurprd04.prod.outlook.com (2603:10a6:10:4d9::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9891.23; Tue, 12 May
- 2026 15:12:55 +0000
-Received: from PA4PR04MB9366.eurprd04.prod.outlook.com
- ([fe80::75e4:8143:ddbc:6588]) by PA4PR04MB9366.eurprd04.prod.outlook.com
- ([fe80::75e4:8143:ddbc:6588%3]) with mapi id 15.20.9891.021; Tue, 12 May 2026
- 15:12:55 +0000
-Date: Tue, 12 May 2026 11:12:45 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Jacky Bai <ping.bai@nxp.com>
-Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: imx: Add audio PLL debugfs for K-divider control
-Message-ID: <agNDbQsJn2jcnA9q@lizhi-Precision-Tower-5810>
-References: <20260512-imx8m_pll_debugfs-v1-1-e1e44b21be90@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260512-imx8m_pll_debugfs-v1-1-e1e44b21be90@nxp.com>
-X-ClientProxiedBy: SJ0PR05CA0146.namprd05.prod.outlook.com
- (2603:10b6:a03:33d::31) To PA4PR04MB9366.eurprd04.prod.outlook.com
- (2603:10a6:102:2a9::8)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="omhLMDri"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 3D9CF4E42C00;
+	Tue, 12 May 2026 15:44:18 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id F1D5560646;
+	Tue, 12 May 2026 15:44:17 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id AB84211AF8C84;
+	Tue, 12 May 2026 17:44:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1778600656; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=BURi5vkPxcxPKcJLIsmlkzLGP0wRjDvf8EYPEcCoD1I=;
+	b=omhLMDriLy7fOtPYzmTFgtuOpEWgUbD9lHNhu3jzp88xq8+RIQt2rrBpLoX2uZPiQb5Nw/
+	XGfVjrX0x+iJgs6NLuJJUM54WpGvIaDWfAmBCnqRlDn96rDOfFXz+Fl0yYiDYZ/BZfNzKE
+	fsEsh5WRzqpkNzs0i5GBiGnfeNLg5NB1MNJfT1mPgEb0s7Qtcl3zD6YP8tR9HyRdk/QGgE
+	v9YWPvqlpo8IhVNejFEthq8vqDKLkVicPsaAkJ8wXFITaOxOYBpjLK+fCxNNlbtTq73mjl
+	LJyMMaMLM4GNwrlmBYgTIVh9rvMrnwykeRvQUmIdKmNeJa4FV92Va+URZGQg1A==
+Message-ID: <110af14c-101e-48fb-8262-60bf395d4f0a@bootlin.com>
+Date: Tue, 12 May 2026 17:44:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA4PR04MB9366:EE_|DUZPR04MB9966:EE_
-X-MS-Office365-Filtering-Correlation-Id: a2c1f0bc-9f2a-4e5c-5c2e-08deb038f15b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|7416014|52116014|376014|1800799024|366016|38350700014|11063799003|56012099003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	ak6mnD7QbAXRbhmoDh95bR9vJMBAnoXmahaDrXr/u/GaewJ/SvEmy+mhKIIyZX9Ht83ZFKL2WlCA2xC4H1mzjvwSheshm36t1WAldCnS/wFUqGY5qOMKDVXaXSdGMWeVzGgLLsBkCqoGeNRrJ64wzGjnzGpkYBPz+Cgg95rxS//1oJcnI2vZbTFomcEUTyBV/aX6OvuG6iin2ofKR32gY/tf/6mULwza0wMOMVixeYxt4vsXYO/dyIGD/sJTJiL+/Rv8BUT0HqzJ6mBS2hDPrq2OiPWxl8V7vs5QEzwE0F5olNwgZELhxfKhU1FVNDtrEaW3gqkXcxXdNotIcgXOq6aZgT6CH1tTR4CK9pAtkbiu4dGugJmAea6R0eqGugLH/WPbyfpb7NT6dF4bkzSaMNfZiPlYvi4t9uitJ3pFD4BSTCnMapYL7v2JimUqVQi6wIGtenDr4fh4lXsylxHix+7FhshZoNrY4DrIeE+xjBBki5AhWCRzbDxGdznInf5vNJmLCL85KU7vkyBlBEAhzkJbRUTy707b/Aiu8Wt0RjoVH/nNu51xbgOVwfo2yUQmEeQYJh1lVvV6lkP1Bra498WEjmGmQwnLu8b84dd4cNGLRre9eiwiFIssMLYAe3kgjel5EnwSAgGscAtsgkCgIZ09MkLpRwlj6Qru1jBPk7c6Jwt+8XDAGWmzF662IXJpPgyqCXu0gLb0vZEVbh06ngx1fxd7ypQZpTSgaCaSii1RgaN8/BcS8/tYQG0KRO2N
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB9366.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(7416014)(52116014)(376014)(1800799024)(366016)(38350700014)(11063799003)(56012099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?VHjNMUMSxuNHz5d7hGXDLtpG1psDNr4mz3W+O2JdFBBDgcsj+BfBH1LvDo+7?=
- =?us-ascii?Q?nknq7RmZPRoinHye5/piNmhij2SXiJKl6x7TpN26BCQoxzpJ2CAd/tnCWacH?=
- =?us-ascii?Q?0+lVeEStkfK2JoEVh84//3wweXdcO3WGLqfDHZXiuo98J2I7XQ3JEDXUWeKO?=
- =?us-ascii?Q?7BEa88RXxDUx7Usjf/jeV6/d1Y4XSacHvPvqGG4bBLNwokFMshSSUGAJMMgw?=
- =?us-ascii?Q?73WXLzsHH8LyAvzYvZQZvY4OhSDilmYOStQ+AZL0MRUdD3n2W+SVwKGSaGHd?=
- =?us-ascii?Q?KKFBoO4oGcNRVsfTV4Pki3HJ6Hiu4FoXQJp0B3ktsGYCZ/OlWo7gur5ySchm?=
- =?us-ascii?Q?nSY9MZU6rR+TpBYkhR/6KZuNph4KdrRHq3ZoLWfaESgd4U9ngA9/sPO4wG9b?=
- =?us-ascii?Q?GTjv22YBpCFdal6ykuPhshHj0P7jR1Ilwmi3KajyJdPTXwLV92SOMEqdk+ub?=
- =?us-ascii?Q?mam2Pjo9abWkuvHRJhtUeu5WT3UYfbcs/R42uoy2Kf5Xq6m5AD30Uzg4f2iP?=
- =?us-ascii?Q?c7xN+DxditW4PZdkVT2UAysDcHNWj2RX2OVnFAxbwjcpPclo0xiCUDO6XJBL?=
- =?us-ascii?Q?Egku2Yhiz/X9c9cjMThKK921T8cw0P0mIokbOnTKnj5WeXa1Dw2bdRvRZMaw?=
- =?us-ascii?Q?ANXGoYRo1VHZS9U9PsRxrwrffQiRoH1H3xWm1s9HQ4eRqrhgWg7QbFPnCMg/?=
- =?us-ascii?Q?HMopm8k4v6snEl+ovY29NpFjbWuGCPRPmd5rRMobtZVEzGanSx1LmRA8rlwu?=
- =?us-ascii?Q?zAggzN+7CSU6/Lxeuc/6zTD7s6Rjen4ZOBGtbqD05/cF+IrtdQtvOdOqnT9d?=
- =?us-ascii?Q?99kvOBnPoHf/Bb9NfwP9ZflClxR2BHsBUUQ0wcFnSQuAejVQ1OsnZ1pIY0MK?=
- =?us-ascii?Q?PBjdx6gtTs9clu4LGbtbntZ/0il7a2Jy2qME4w8gLcwj6TmepUqR2fFkKyES?=
- =?us-ascii?Q?wEKPPIPk4O6U35rXnrFmvmKYfKW28BGM4IdiOxz1/y6KiDdhKM+QQjy51Wbi?=
- =?us-ascii?Q?/TvIxmGKc+IVB4gdXWLisaEHBG5FR3RfDjHB8ZVPA76edU1ZEdTKjEd8oOfb?=
- =?us-ascii?Q?fytTY1ZpWOEGm80peSMcwJhzF+Iu0Rl2mAtwA6DeduV5zs2tIpsy4iR3gqHu?=
- =?us-ascii?Q?iBFNlPT7SU0sTMcT2OYW1M6o7v0LTW+AhG8Oa7HSWUJGfvjqOHmKqG4tN9ZI?=
- =?us-ascii?Q?JV4zq2ZNuoYcFN9RzLWsof219a/AaXA5vEtne2gBgcoTw57n8mD/Fl7+ew6E?=
- =?us-ascii?Q?6aAurN11VDJu8b1tPRtfBjoe3Ji0twQYHHSrOeLw+gi2qoS6cKAdNeI83+gx?=
- =?us-ascii?Q?RTRjGiaZydruvx6x3IQECTfpezxjNrXE6awvpdadOScgzcxNJBYS+NZ2clCw?=
- =?us-ascii?Q?WXPbthM8dBSN2sBe9ytNjElT6DPpoAxKtJZWeRX2IhO3/PNYK8w3mJOmPbIS?=
- =?us-ascii?Q?qoC5e0LDfGx5jx2viFcDkKuJZwXAjWuSZxuNtvsPwBgEXQGEJI3RB4NtF8o0?=
- =?us-ascii?Q?p/120C7glxslbwRiAIi8RfXV8b1fD8CuuQmED/WfdQQZJEXh6P7Vu+VLyxd1?=
- =?us-ascii?Q?VUy4LDcrieAfiINUPTRsSYJpPHP9sauadlbvdxzna0D4W/4qYnbNGegIlOHt?=
- =?us-ascii?Q?s2NoLQ5TTYJeZY5wd/sRF+WBpqkAO8QIoVubUG2LJ8XhC/j7VdN3hKSX2d+z?=
- =?us-ascii?Q?Zhut05IR2tyyoRYq3eRx3whfZvhjT247eiSEEqeYEUc/5sFn?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a2c1f0bc-9f2a-4e5c-5c2e-08deb038f15b
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB9366.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2026 15:12:54.8810
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Piq+HnruPQ7AyLpg1Qlmcm44DKzjzpwBfwcyP/CFvBuoIiYSJZA9Fl7zPewcuFIdhe6eeIxX9kUs3a3Ucf9n5Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DUZPR04MB9966
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 2/4] firmware: ti_sci: add support for restoring IRQs
+ during resume
+To: Nishanth Menon <nm@ti.com>
+Cc: Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Gregory CLEMENT <gregory.clement@bootlin.com>,
+ richard.genoud@bootlin.com, Udit Kumar <u-kumar1@ti.com>,
+ Abhash Kumar <a-kumar2@ti.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, Dhruva Gole <d-gole@ti.com>,
+ Kendall Willis <k-willis@ti.com>
+References: <20260506-ti-sci-jacinto-s2r-restore-irq-v7-0-037098a35215@bootlin.com>
+ <20260506-ti-sci-jacinto-s2r-restore-irq-v7-2-037098a35215@bootlin.com>
+ <20260506141508.2bko3ntcv7rkqfvn@certainty>
+Content-Language: en-US
+From: Thomas Richard <thomas.richard@bootlin.com>
+In-Reply-To: <20260506141508.2bko3ntcv7rkqfvn@certainty>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue, May 12, 2026 at 05:08:10PM +0800, Jacky Bai wrote:
-> Add debugfs support for runtime tuning of the audio PLL K divider,
-> which enables fine-grained frequency adjustments for audio PLL.
-> This is used for:
->   - Audio clock calibration and testing
->   - Debugging audio synchronization issues
->
-> Two debug interfaces are exported to userspace:
->   - delta_k: It is used to adjust the K divider in PLL based on small
->     steps
->   - pll_parameter: It is used for get PLL's current M-divider,
->     P-divider, S-divider & K-divider setting in PLL register
->
-> examples for the usage of the two interfaces:
->    1): Get the current PLL setting of dividers
->      cat /sys/kernel/debug/audio_pll_monitor/audio_pll1/pll_parameter
->
->    2): if want to adjust the K-divider by a delta_k '1', then
->      echo 1 > /sys/kernel/debug/audio_pll_monitor/audio_pll1/delta_k;
->
->    3): if want to adjust the K-divider by a delta_k '-1', then
->      echo -1 > /sys/kernel/debug/audio_pll_monitor/audio_pll1/delta_k;
+Hello Nishanth,
 
-Nit: needn't example, it is basic usage mode for debugfs.
+On 5/6/26 4:15 PM, Nishanth Menon wrote:
+> On 10:35-20260506, Thomas Richard (TI) wrote:
+>> Some DM-Firmware are not able to restore the IRQ context after a
+>> suspend-resume. The IRQ_CONTEXT_LOST firmware capability has been
+>> introduced to identify this characteristic. In this case the
+>> responsibility is delegated to the ti_sci driver, which maintains an
+>> internal list of all requested IRQs. This list is updated on each
+>> set()/free() operation, and all IRQs are restored during the resume_noirq()
+>> phase.
+>>
+>> Reviewed-by: Dhruva Gole <d-gole@ti.com>
+>> Reviewed-by: Kendall Willis <k-willis@ti.com>
+>> Signed-off-by: Thomas Richard (TI) <thomas.richard@bootlin.com>
+>> ---
+> 
+> coccicheck reports two additional warnings at this patch:
+> +drivers/firmware/ti_sci.c:2495:1-7: preceding lock on line 2454
+> +drivers/firmware/ti_sci.c:2420:1-7: preceding lock on line 2378
 
->
-> Signed-off-by: Jacky Bai <ping.bai@nxp.com>
-> ---
->  drivers/clk/imx/clk-imx8mm.c  |  6 ++++
->  drivers/clk/imx/clk-pll14xx.c | 79 +++++++++++++++++++++++++++++++++++++++++++
->  drivers/clk/imx/clk.h         |  1 +
->  3 files changed, 86 insertions(+)
->
-> diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
-> index 319af4deec01c188524807d39dff92bbd08f3601..6a031d7cd031c8b5f5b01e5531ce54360724ba44 100644
-> --- a/drivers/clk/imx/clk-imx8mm.c
-> +++ b/drivers/clk/imx/clk-imx8mm.c
-> @@ -298,6 +298,7 @@ static struct clk_hw **hws;
->
->  static int imx8mm_clocks_probe(struct platform_device *pdev)
->  {
-> +	struct clk_hw *audio_pll_hws[2];
->  	struct device *dev = &pdev->dev;
->  	struct device_node *np = dev->of_node;
->  	void __iomem *base;
-> @@ -610,6 +611,11 @@ static int imx8mm_clocks_probe(struct platform_device *pdev)
->
->  	imx_register_uart_clocks();
->
-> +	/* Add debug interface for audio PLLs */
-> +	audio_pll_hws[0] = hws[IMX8MM_AUDIO_PLL1];
-> +	audio_pll_hws[1] = hws[IMX8MM_AUDIO_PLL2];
-> +	audio_pll_debug_init(audio_pll_hws, ARRAY_SIZE(audio_pll_hws));
-> +
->  	return 0;
->
->  unregister_hws:
-> diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
-> index 39600ee22be3066683b562aa6f2a8b750d19c4cc..59f126f35474116bdad0aeda59777b9eb7f246cf 100644
-> --- a/drivers/clk/imx/clk-pll14xx.c
-> +++ b/drivers/clk/imx/clk-pll14xx.c
-> @@ -8,6 +8,7 @@
->  #include <linux/bitfield.h>
->  #include <linux/bits.h>
->  #include <linux/clk-provider.h>
-> +#include <linux/debugfs.h>
->  #include <linux/err.h>
->  #include <linux/export.h>
->  #include <linux/io.h>
-> @@ -551,3 +552,81 @@ struct clk_hw *imx_dev_clk_hw_pll14xx(struct device *dev, const char *name,
->  	return hw;
->  }
->  EXPORT_SYMBOL_GPL(imx_dev_clk_hw_pll14xx);
-> +
-> +/*
-> + * Debugfs interface for Audio PLL runtime monitoring and control
-> + *
-> + * This interface allows dynamic adjustment of the Audio PLL
-> + * K-divider for precise frequency tuning, particularly useful
-> + * for audio applications.
-> + *
-> + * examples for the usage of the two interfaces:
-> + *   1): Get the current PLL setting of dividers
-> + *     cat /sys/kernel/debug/audio_pll_monitor/audio_pll1/pll_parameter
-> + *
-> + *   2): if want to adjust the K-divider by a delta_k '1', then
-> + *     echo 1 > /sys/kernel/debug/audio_pll_monitor/audio_pll1/delta_k;
-> + *
-> + *   3): if want to adjust the K-divider by a delta_k '-1', then
-> + *     echo -1 > /sys/kernel/debug/audio_pll_monitor/audio_pll1/delta_k;
-> + */
+I do not see the potential deadlock in set_irq() and free_irq().
+I guess it is a false positive.
 
-2) and 3) keep one is enough, you better descript validate range for
-delta_k here, which is more valuable information.
+> 
+>>  drivers/firmware/ti_sci.c | 201 +++++++++++++++++++++++++++++++++++++++++++---
+>>  drivers/firmware/ti_sci.h |   2 +
+>>  2 files changed, 191 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
+>> index eaeaaae94142..531ac3aa38b8 100644
+>> --- a/drivers/firmware/ti_sci.c
+>> +++ b/drivers/firmware/ti_sci.c
+>> @@ -12,11 +12,13 @@
+>>  #include <linux/cpu.h>
+>>  #include <linux/debugfs.h>
+>>  #include <linux/export.h>
+>> +#include <linux/hashtable.h>
+>>  #include <linux/io.h>
+>>  #include <linux/iopoll.h>
+>>  #include <linux/kernel.h>
+>>  #include <linux/mailbox_client.h>
+>>  #include <linux/module.h>
+>> +#include <linux/mutex.h>
+>>  #include <linux/of.h>
+>>  #include <linux/of_platform.h>
+>>  #include <linux/platform_device.h>
+>> @@ -87,6 +89,16 @@ struct ti_sci_desc {
+>>  	int max_msg_size;
+>>  };
+>>  
+>> +/**
+>> + * struct ti_sci_irq - Description of allocated irqs
+>> + * @node: Link to hash table
+>> + * @desc: Description of the irq
+>> + */
+>> +struct ti_sci_irq {
+>> +	struct hlist_node node;
+>> +	struct ti_sci_msg_req_manage_irq desc;
+>> +};
+>> +
+>>  /**
+>>   * struct ti_sci_info - Structure representing a TI SCI instance
+>>   * @dev:	Device pointer
+>> @@ -101,6 +113,8 @@ struct ti_sci_desc {
+>>   * @chan_rx:	Receive mailbox channel
+>>   * @minfo:	Message info
+>>   * @node:	list head
+>> + * @irqs:	List of allocated irqs
+>> + * @irq_lock:	Protection for irq hash list
+>>   * @host_id:	Host ID
+>>   * @fw_caps:	FW/SoC low power capabilities
+>>   * @users:	Number of users of this instance
+>> @@ -118,6 +132,8 @@ struct ti_sci_info {
+>>  	struct mbox_chan *chan_rx;
+>>  	struct ti_sci_xfers_info minfo;
+>>  	struct list_head node;
+>> +	DECLARE_HASHTABLE(irqs, 8);
+>> +	struct mutex irq_lock;
+> 
+> No action needed: checkpatch flags this as not documented, when it is
+> clearly documented above.
+> 
+>>  	u8 host_id;
+>>  	u64 fw_caps;
+>>  	/* protected by ti_sci_list_mutex */
+>> @@ -2301,6 +2317,32 @@ static int ti_sci_manage_irq(const struct ti_sci_handle *handle,
+>>  	return ret;
+>>  }
+>>  
+>> +/**
+>> + * ti_sci_irq_hash() - Helper API to compute irq hash for the hash table.
+>> + * @irq:	irq to hash
+>> + *
+>> + * Return: the computed hash value.
+>> + */
+>> +static int ti_sci_irq_hash(struct ti_sci_msg_req_manage_irq *irq)
+>> +{
+>> +	return irq->src_id ^ irq->src_index;
+>> +}
+>> +
+>> +/**
+>> + * ti_sci_irq_equal() - Helper API to compare two irqs (generic headers are not
+>> + *                       compared)
+>> + * @irq_a:	irq_a to compare
+>> + * @irq_b:	irq_b to compare
+>> + *
+>> + * Return: true if the two irqs are equal, else false.
+>> + */
+>> +static bool ti_sci_irq_equal(struct ti_sci_msg_req_manage_irq *irq_a,
+>> +			     struct ti_sci_msg_req_manage_irq *irq_b)
+>> +{
+>> +	return !memcmp(&irq_a->valid_params, &irq_b->valid_params,
+>> +		       sizeof(*irq_a) - sizeof(irq_a->hdr));
+>> +}
+>> +
+>>  /**
+>>   * ti_sci_set_irq() - Helper api to configure the irq route between the
+>>   *		      requested source and destination
+>> @@ -2324,15 +2366,60 @@ static int ti_sci_set_irq(const struct ti_sci_handle *handle, u32 valid_params,
+>>  			  u16 dst_host_irq, u16 ia_id, u16 vint,
+>>  			  u16 global_event, u8 vint_status_bit, u8 s_host)
+>>  {
+>> +	struct ti_sci_info *info = handle_to_ti_sci_info(handle);
+>> +	struct ti_sci_msg_req_manage_irq *desc;
+>> +	struct ti_sci_irq *irq;
+>> +	int ret;
+>> +
+>> +	/*
+>> +	 * Lock for set_irq() and free_irq() to keep the IRQ hash list
+>> +	 * consistent only if MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST is set. Else
+>> +	 * IRQ hash list is not used.
+>> +	 */
+>> +	if (info->fw_caps & MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST)
+>> +		mutex_lock(&info->irq_lock);
+>> +
+>>  	pr_debug("%s: IRQ set with valid_params = 0x%x from src = %d, index = %d, to dst = %d, irq = %d,via ia_id = %d, vint = %d, global event = %d,status_bit = %d\n",
+>>  		 __func__, valid_params, src_id, src_index,
+>>  		 dst_id, dst_host_irq, ia_id, vint, global_event,
+>>  		 vint_status_bit);
+>>  
+>> -	return ti_sci_manage_irq(handle, valid_params, src_id, src_index,
+>> -				 dst_id, dst_host_irq, ia_id, vint,
+>> -				 global_event, vint_status_bit, s_host,
+>> -				 TI_SCI_MSG_SET_IRQ);
+>> +	ret = ti_sci_manage_irq(handle, valid_params, src_id, src_index,
+>> +				dst_id, dst_host_irq, ia_id, vint,
+>> +				global_event, vint_status_bit, s_host,
+>> +				TI_SCI_MSG_SET_IRQ);
+>> +
+>> +	if (ret || !(info->fw_caps & MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST))
+>> +		goto end;
+>> +
+>> +	irq = kzalloc_obj(*irq, GFP_KERNEL);
+>> +	if (!irq) {
+>> +		ti_sci_manage_irq(handle, valid_params, src_id, src_index,
+>> +				  dst_id, dst_host_irq, ia_id, vint,
+>> +				  global_event, vint_status_bit, s_host,
+>> +				  TI_SCI_MSG_FREE_IRQ);
+>> +		ret = -ENOMEM;
+>> +		goto end;
+>> +	}
+>> +
+>> +	desc = &irq->desc;
+>> +	desc->valid_params = valid_params;
+>> +	desc->src_id = src_id;
+>> +	desc->src_index = src_index;
+>> +	desc->dst_id = dst_id;
+>> +	desc->dst_host_irq = dst_host_irq;
+>> +	desc->ia_id = ia_id;
+>> +	desc->vint = vint;
+>> +	desc->global_event = global_event;
+>> +	desc->vint_status_bit = vint_status_bit;
+>> +	desc->secondary_host = s_host;
+>> +
+>> +	hash_add(info->irqs, &irq->node, ti_sci_irq_hash(desc));
+>> +
+>> +end:
+>> +	if (info->fw_caps & MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST)
+>> +		mutex_unlock(&info->irq_lock);
+>> +	return ret;
+>>  }
+>>  
+>>  /**
+>> @@ -2358,15 +2445,56 @@ static int ti_sci_free_irq(const struct ti_sci_handle *handle, u32 valid_params,
+>>  			   u16 dst_host_irq, u16 ia_id, u16 vint,
+>>  			   u16 global_event, u8 vint_status_bit, u8 s_host)
+>>  {
+>> +	struct ti_sci_info *info = handle_to_ti_sci_info(handle);
+>> +	struct ti_sci_msg_req_manage_irq irq_desc;
+>> +	struct device *dev = info->dev;
+>> +	struct ti_sci_irq *this_irq;
+>> +	struct hlist_node *tmp_node;
+>> +	int ret;
+>> +
+>> +	if (info->fw_caps & MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST)
+>> +		mutex_lock(&info->irq_lock);
+>> +
+>>  	pr_debug("%s: IRQ release with valid_params = 0x%x from src = %d, index = %d, to dst = %d, irq = %d,via ia_id = %d, vint = %d, global event = %d,status_bit = %d\n",
+>>  		 __func__, valid_params, src_id, src_index,
+>>  		 dst_id, dst_host_irq, ia_id, vint, global_event,
+>>  		 vint_status_bit);
+>>  
+>> -	return ti_sci_manage_irq(handle, valid_params, src_id, src_index,
+>> -				 dst_id, dst_host_irq, ia_id, vint,
+>> -				 global_event, vint_status_bit, s_host,
+>> -				 TI_SCI_MSG_FREE_IRQ);
+>> +	ret = ti_sci_manage_irq(handle, valid_params, src_id, src_index,
+>> +				dst_id, dst_host_irq, ia_id, vint,
+>> +				global_event, vint_status_bit, s_host,
+>> +				TI_SCI_MSG_FREE_IRQ);
+>> +
+>> +	if (ret || !(info->fw_caps & MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST))
+>> +		goto end;
+>> +
+>> +	irq_desc.valid_params = valid_params;
+>> +	irq_desc.src_id = src_id;
+>> +	irq_desc.src_index = src_index;
+>> +	irq_desc.dst_id = dst_id;
+>> +	irq_desc.dst_host_irq = dst_host_irq;
+>> +	irq_desc.ia_id = ia_id;
+>> +	irq_desc.vint = vint;
+>> +	irq_desc.global_event = global_event;
+>> +	irq_desc.vint_status_bit = vint_status_bit;
+>> +	irq_desc.secondary_host = s_host;
+>> +
+>> +	hash_for_each_possible_safe(info->irqs, this_irq, tmp_node, node,
+>> +				    ti_sci_irq_hash(&irq_desc)) {
+>> +		if (ti_sci_irq_equal(&irq_desc, &this_irq->desc)) {
+>> +			hlist_del(&this_irq->node);
+>> +			kfree(this_irq);
+>> +			goto end;
+>> +		}
+>> +	}
+>> +
+>> +	dev_warn(dev, "%s: should not be here, IRQ was not found in hash list\n",
+>> +		 __func__);
+>> +
+>> +end:
+>> +	if (info->fw_caps & MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST)
+>> +		mutex_unlock(&info->irq_lock);
+>> +	return ret;
+>>  }
+>>  
+>>  /**
+>> @@ -3847,7 +3975,10 @@ static int ti_sci_suspend_noirq(struct device *dev)
+>>  static int ti_sci_resume_noirq(struct device *dev)
+>>  {
+>>  	struct ti_sci_info *info = dev_get_drvdata(dev);
+>> -	int ret = 0;
+>> +	struct ti_sci_msg_req_manage_irq *irq_desc;
+>> +	struct ti_sci_irq *irq;
+>> +	struct hlist_node *tmp_node;
+>> +	int ret = 0, err = 0, i;
+>>  	u32 source;
+>>  	u64 time;
+>>  	u8 pin;
+>> @@ -3859,13 +3990,50 @@ static int ti_sci_resume_noirq(struct device *dev)
+>>  			return ret;
+>>  	}
+>>  
+>> +	switch (pm_suspend_target_state) {
+>> +	case PM_SUSPEND_MEM:
+>> +		if (info->fw_caps & MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST) {
+>> +			hash_for_each_safe(info->irqs, i, tmp_node, irq, node) {
+>> +				irq_desc = &irq->desc;
+>> +				ret = ti_sci_manage_irq(&info->handle,
+>> +							irq_desc->valid_params,
+>> +							irq_desc->src_id,
+>> +							irq_desc->src_index,
+>> +							irq_desc->dst_id,
+>> +							irq_desc->dst_host_irq,
+>> +							irq_desc->ia_id,
+>> +							irq_desc->vint,
+>> +							irq_desc->global_event,
+>> +							irq_desc->vint_status_bit,
+>> +							irq_desc->secondary_host,
+>> +							TI_SCI_MSG_SET_IRQ);
+>> +				if (ret) {
+>> +					dev_err(dev, "failed to restore IRQ with valid_params = 0x%x from src = %d, index = %d, to dst = %d, irq = %d,via ia_id = %d, vint = %d, global event = %d,status_bit = %d\n",
+> 
+> space before via? overall this print is needed, but a bit umm.. we have
+> similar ones already..
 
-> +#ifdef CONFIG_DEBUG_FS
-> +static int pll_delta_k_set(void *data, u64 val)
-> +{
-> +	struct clk_pll14xx *pll = to_clk_pll14xx(data);
-> +	s16 delta_k = (s16)val;
-> +	u32 div_ctl1;
-> +	s16 kdiv;
-> +
-> +	div_ctl1 = readl_relaxed(pll->base + DIV_CTL1);
-> +	kdiv = FIELD_GET(KDIV_MASK, div_ctl1) + delta_k;
-> +	writel_relaxed(FIELD_PREP(KDIV_MASK, kdiv), pll->base + DIV_CTL1);
-> +
-> +	return 0;
-> +}
-> +DEFINE_DEBUGFS_ATTRIBUTE_SIGNED(delta_k_fops, NULL, pll_delta_k_set, "%lld\n");
+Yes I wanted to have consistent messages.
+Will fix the missing space.
 
-generally, better also provide read for delta_k
+> 
+>> +						irq_desc->valid_params,
+>> +						irq_desc->src_id,
+>> +						irq_desc->src_index,
+>> +						irq_desc->dst_id,
+>> +						irq_desc->dst_host_irq,
+>> +						irq_desc->ia_id,
+>> +						irq_desc->vint,
+>> +						irq_desc->global_event,
+>> +						irq_desc->vint_status_bit);
+>> +					err = ret;
+>> +				}
+>> +			}
+>> +		}
+>> +		break;
+>> +	default:
+>> +		break;
+>> +	}
+>> +
+>>  	ret = ti_sci_msg_cmd_lpm_wake_reason(&info->handle, &source, &time, &pin, &mode);
+>>  	/* Do not fail to resume on error as the wake reason is not critical */
+>>  	if (!ret)
+>>  		dev_info(dev, "ti_sci: wakeup source:0x%x, pin:0x%x, mode:0x%x\n",
+>>  			 source, pin, mode);
+>>  
+>> -	return 0;
+>> +	return err;
+>>  }
+>>  
+>>  static void ti_sci_pm_complete(struct device *dev)
+>> @@ -4014,13 +4182,14 @@ static int ti_sci_probe(struct platform_device *pdev)
+>>  	}
+>>  
+>>  	ti_sci_msg_cmd_query_fw_caps(&info->handle, &info->fw_caps);
+>> -	dev_dbg(dev, "Detected firmware capabilities: %s%s%s%s%s%s\n",
+>> +	dev_dbg(dev, "Detected firmware capabilities: %s%s%s%s%s%s%s\n",
+>>  		info->fw_caps & MSG_FLAG_CAPS_GENERIC ? "Generic" : "",
+>>  		info->fw_caps & MSG_FLAG_CAPS_LPM_PARTIAL_IO ? " Partial-IO" : "",
+>>  		info->fw_caps & MSG_FLAG_CAPS_LPM_DM_MANAGED ? " DM-Managed" : "",
+>>  		info->fw_caps & MSG_FLAG_CAPS_LPM_ABORT ? " LPM-Abort" : "",
+>>  		info->fw_caps & MSG_FLAG_CAPS_IO_ISOLATION ? " IO-Isolation" : "",
+>> -		info->fw_caps & MSG_FLAG_CAPS_LPM_BOARDCFG_MANAGED ? " BoardConfig-Managed" : ""
+>> +		info->fw_caps & MSG_FLAG_CAPS_LPM_BOARDCFG_MANAGED ? " BoardConfig-Managed" : "",
+>> +		info->fw_caps & MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST ? " IRQ-Context-Lost" : ""
+>>  	);
+>>  
+>>  	ti_sci_setup_ops(info);
+>> @@ -4053,6 +4222,14 @@ static int ti_sci_probe(struct platform_device *pdev)
+>>  	list_add_tail(&info->node, &ti_sci_list);
+>>  	mutex_unlock(&ti_sci_list_mutex);
+>>  
+>> +	if (info->fw_caps & MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST) {
+>> +		ret = devm_mutex_init(dev, &info->irq_lock);
+>> +		if (ret)
+>> +			return ret;
+> 
+> If devm_mutex_init() fails, the function returns directly rather than
+> going through the out: label. All other error paths after the mailbox
+> channel allocations use goto out, which calls mbox_free_channel() for
+> both channels. Since mbox_request_channel_byname() is not a devm
+> allocation, those channels would not be freed by the devm cleanup path
+> on probe failure.
+> 
+> Does this leak info->chan_tx and info->chan_rx when devm_mutex_init()
+> returns an error?
 
-cat /sys/kernel/debug/audio_pll_monitor/audio_pll1/delta_k because user
-want to check value by read it back naturally.
+Indeed we should go to 'out'.
 
-Frank
-> +
-> +static int pll_setting_show(struct seq_file *s, void *data)
-> +{
-> +	struct clk_pll14xx *pll = to_clk_pll14xx(s->private);
-> +	u32 div_ctl0, div_ctl1;
-> +	u32 mdiv, pdiv, sdiv, kdiv;
-> +
-> +	div_ctl0 = readl_relaxed(pll->base + DIV_CTL0);
-> +	div_ctl1 = readl_relaxed(pll->base + DIV_CTL1);
-> +
-> +	mdiv = FIELD_GET(MDIV_MASK, div_ctl0);
-> +	pdiv = FIELD_GET(PDIV_MASK, div_ctl0);
-> +	sdiv = FIELD_GET(SDIV_MASK, div_ctl0);
-> +	kdiv = FIELD_GET(KDIV_MASK, div_ctl1);
-> +
-> +	seq_printf(s, "Mdiv: 0x%x; Pdiv: 0x%x; Sdiv: 0x%x; Kdiv: 0x%x\n",
-> +	mdiv, pdiv, sdiv, kdiv);
-> +
-> +	return 0;
-> +}
-> +DEFINE_SHOW_ATTRIBUTE(pll_setting);
-> +
-> +void audio_pll_debug_init(struct clk_hw *hws[], unsigned int num_plls)
-> +{
-> +	struct dentry *rootdir, *audio_pll_dir;
-> +	const char *pll_name;
-> +	int i;
-> +
-> +	rootdir = debugfs_create_dir("audio_pll_monitor", NULL);
-> +
-> +	for (i = 0; i < num_plls; i++) {
-> +		pll_name = clk_hw_get_name(hws[i]);
-> +		audio_pll_dir = debugfs_create_dir(pll_name, rootdir);
-> +		debugfs_create_file_unsafe("delta_k", 0200, audio_pll_dir,
-> +				hws[i], &delta_k_fops);
-> +		debugfs_create_file("pll_parameter", 0444, audio_pll_dir,
-> +				hws[i], &pll_setting_fops);
-> +	}
-> +}
-> +#else /* !CONFIG_DEBUG_FS */
-> +void audio_pll_debug_init(struct clk_hw *hws[], unsigned int num_plls)
-> +{
-> +}
-> +#endif /* CONFIG_DEBUG_FS */
-> +EXPORT_SYMBOL_GPL(audio_pll_debug_init);
-> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-> index aa5202f284f3d1b7c1b4bf65e2329831832b43a5..9611ab127dad6f23770c18e22e1acbe2fc22bd4e 100644
-> --- a/drivers/clk/imx/clk.h
-> +++ b/drivers/clk/imx/clk.h
-> @@ -487,4 +487,5 @@ struct clk_hw *imx_clk_gpr_mux(const char *name, const char *compatible,
->  			       u32 reg, const char **parent_names,
->  			       u8 num_parents, const u32 *mux_table, u32 mask);
->
-> +void audio_pll_debug_init(struct clk_hw **hws, unsigned int num_plls);
->  #endif
->
-> ---
-> base-commit: e98d21c170b01ddef366f023bbfcf6b31509fa83
-> change-id: 20260421-imx8m_pll_debugfs-246d0fbbb617
->
-> Best regards,
-> --
-> Jacky Bai <ping.bai@nxp.com>
->
+Best Regards,
+Thomas
