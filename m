@@ -1,46 +1,71 @@
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88AFD79DA;
-	Tue, 12 May 2026 00:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F71B246BCD
+	for <linux-clk@vger.kernel.org>; Tue, 12 May 2026 01:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778544490; cv=none; b=C70q0YVTbFfHZC2UDhT2fWkyzVOjmiaecAeuPILzcdcWwaaeGnfY7+NiIZ2LdSei72l4yjDHTIhGjAOnT0sLElw2g+Bp+PG9mhFzuhmEqxE+qMJm/kaK+Ki4MBaBWhro04e1YQhI9+9A/na4Kdbyrp6qy7AlEeQ/T9x53m6FF1M=
+	t=1778548199; cv=none; b=HvIDa+niv0TY86FdJV/oFZcTJA6nSNeHBDqe+cgeHcUCbiu8vsOXHlpkZv64ys4qVtsyyfcRnehvK4OU/u5xZvJYDvLPuWQpeCV70BVFI37gfVaxt6jwt68Gjc9t+dR7a/mgcxtwMjG7WCUYzEk4dY8VfFAPARYUejQG746z6pI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778544490; c=relaxed/simple;
-	bh=4VPJyqr4MdPR5OA20MzTqTWqY7bgxORLhU/yDJvWKCY=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Xx7RKL7gFMw9+SUwjvszkWfVhtY+vSt7H438DxUnO1dLNjTAHgxk9HpHu6/B9iaahMJ/Olg2Vje3JlOF0O5gW4yKKVf0Jdv+Uft8yRUny1DofmIGWhrk5u+xV8DMQZ8LCFxpu85ye/Pu8VeOk4bgSMwNm5NoEqZstjYZH0Q1z5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=IThg6+cD; arc=none smtp.client-ip=1.95.21.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+	s=arc-20240116; t=1778548199; c=relaxed/simple;
+	bh=bqil7zBaG9kspya4dNdqi2txgIzDULQeKLYoZtT7SdY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QFUCWxc6lm7v6EGdzjXeCSXqEo+OrwVJZ7QoR+SEgehrOYgr96eF1YhqHb1ZZE88c8RFngtpW/OYpFoVN+uOPLHuFZ1+VmdniAtfJJqcx5rocFeV3tXgmkOBHnKG1G0TkFbxXKVjSjSWswqOWwHqLUOOsHckV3sxOaoXP2DSHf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dbDLSMs8; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="IThg6+cD"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=av
-	z+NOZoxelkqUBopFSD9Q3Fs8G4Moa7r8elZtVjYK8=; b=IThg6+cDUVHGVZNTG4
-	CYITy9yOjw1PmrH3Gufpd+9aIehIqkwyFTDawGCqGwr8R3rL6TP72+x9I2V1Vp5g
-	Q48vzC3oLHsFO9Ac8GP3LX5MO8OCw+k/eIumGTYs7KMU9gyqsH/nDEs313WPr26B
-	jihTFCZZEPI8qlsX2pE0ryJLU=
-Received: from zero.localdomain (unknown [])
-	by gzsmtp2 (Coremail) with UTF8SMTPSA id Ms8vCgD3X487bwJq5X7vAg--.23849S4;
-	Tue, 12 May 2026 08:07:24 +0800 (CST)
-From: Min zhang <zhangmin2026@yeah.net>
-To: Wei Xu <xuwei5@hisilicon.com>,
-	Michael Turquette <mturquette@baylibre.com>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dbDLSMs8"
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2ba4a1a0325so34990865ad.0
+        for <linux-clk@vger.kernel.org>; Mon, 11 May 2026 18:09:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1778548197; x=1779152997; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=m3DBOM8+Fy+ckqlLDqnvesNP2xfgGGtX6J+w+g7xZ/w=;
+        b=dbDLSMs8dyfkrMsAB4iZXRS9B/03GlsYNyDX46ObcRZgJ5vndVY3OWFz/C0VqipjLi
+         iKDo/jwHSYZts2OFekyFi2STPSdqBb4F4dbypmNaskmnUbuuVEeXkL+RiRR+EgU60gEV
+         PWKc9X5z5BPsD3Z9DPdb33yB8VVSy1eNJmq6SwdqqmB0m/ygqoxIG+alqFv0qtTZu24K
+         2cTqphZVz5eTL2of6JL09CWOYXpSAREMtPNxPLhu3khzR+q7/e9umPqyuCsFBMIvhW+F
+         0/2S30FSIw5xrhLPBRg1fFxDE9PKnN1742JMjIWtJ6wPUFZddeL0XEhn1i9ZHFidLNqz
+         gvow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778548197; x=1779152997;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m3DBOM8+Fy+ckqlLDqnvesNP2xfgGGtX6J+w+g7xZ/w=;
+        b=UF/31ofZw24CXw1TU84RUSpc14kcb7aWCF4scK9Otd73SUxebj3FERXKRHRbE+sWtq
+         qUIRZbDUW2QRhVxnNCkljRqMd4TRLceNNbVHFldzbKbzmUD1OX8FnTD80vn74VLs5P3O
+         071C+GFVq1WPVG7Fuuc2Dm/cKUmvUFqgLMKVo5Dmhdba8SgNVthHO6xYIbr43/8Z0D1a
+         ZHcZ4Q1wQVB3e9W+qZG+UJ+arsAB7vOR6ygzpioQWre5dy7jukQ3cyj5zYJj58FNMGVK
+         LA025DSgKby4QnY6AuJpOsELC3PGoItv8NAgl8zFvimNPc2E7jJ0fE/q1vh2lyo2NltU
+         rjBQ==
+X-Gm-Message-State: AOJu0YyEgP5vyHaQDKj5V3mxDT37G4n7rWtPUcwJBPavKU+MwYppYYGy
+	FzprLmQccSJAD/sR3B1/4lVVIePZEX5TZGd/ulTv+JvdYiJ2XaMYN+PtENupGR5a
+X-Gm-Gg: Acq92OEzNpttDygsF5NTz8+nVeQm6wLl14Gz9Vma7RB/sSO6If8TRyVut0H8v8DF+yU
+	7RhnCKxTSNsrq4NMdo/+aid06+mScCbGo9yerHuABLJWmJv0s0xI1j9ka7ZZQm44AT8WrhVIqAe
+	tVpNn2x/au/oNR5aWYFXxlFZk9GyyogS9rA1rejeH0jMFVNKB0RV3JgqTMc6pnd6oqaJtdjTmU0
+	EhGCConUIGs3N6xZ8a0MQMYYgvhZzhZteht0Wp0tAgIzLPCeRPJr4gqaeaF3IZbfTIMi4pKUH89
+	3wJ1hTnvIc9XM0PESkxqfh5XTsvbb3htxuCizEDvvPZ7Gmza5J5OKIbgyhcM7at/faNXLOwhr2p
+	jf9blxpQAwZ+FSt0BFuiNcRZ30mnsUR8hkBJ6ZfGcZArzcebVNGKTbZH/Oa/xJ6EyKTdbCq1PpK
+	a2nW5BqCBSfLPWTWCEbQlLdbOFHHu/UQtuRZeKlqooTLa7hGE3QTIyPKyyU85hV6t4KG/6x7BFJ
+	pYfefaBR0OrZJLDVcaXDv7aKUqQYTKMvoQ=
+X-Received: by 2002:a17:902:e552:b0:2b2:5840:809c with SMTP id d9443c01a7336-2bc7a97bd6bmr137766125ad.1.1778548196643;
+        Mon, 11 May 2026 18:09:56 -0700 (PDT)
+Received: from ryzen ([2601:644:8000:5b5d:7285:c2ff:fe45:8a32])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2baf1d4057fsm112290605ad.21.2026.05.11.18.09.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 May 2026 18:09:56 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney@redhat.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Min zhang <zhangmin2026@yeah.net>,
-	Jiancheng Xue <xuejiancheng@hisilicon.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] clk: hisilicon: reset: Use devm_kzalloc to initialize hisi_reset_controller
-Date: Tue, 12 May 2026 08:06:42 +0800
-Message-Id: <20260512000646.15189-1-zhangmin2026@yeah.net>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260511170415.19848-1-zhangmin2026@yeah.net>
-References: <20260511170415.19848-1-zhangmin2026@yeah.net>
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] clk: pistachio: Use flexible array for clock table
+Date: Mon, 11 May 2026 18:09:38 -0700
+Message-ID: <20260512010938.41114-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,45 +73,70 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Ms8vCgD3X487bwJq5X7vAg--.23849S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Kr4kXw43KF1kZr47ZF4DCFg_yoW8Gr48pr
-	WfGanrJrWrXw4fZa17Xw4fZFy3Z3Z3tFWUGr9xZw4j9wnxK3yvgr13Ka48CFW5ZrsxuFWY
-	vF4xKw4FvF12yaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UhAwsUUUUU=
-X-CM-SenderInfo: x2kd0whplqjiysw65vtdko0vbw/1tbiNhwGqmoCbzxgGwAA3G
 
-Using devm_kmalloc() does not zero-initialize the allocated structure.
-Uninitialized members in struct hisi_reset_controller may contain garbage
-data, which can cause reset_controller_register() to fail unexpectedly.
+Store the clock lookup table in the Pistachio clock provider
+allocation instead of allocating it separately.
 
-Replace devm_kmalloc() with devm_kzalloc() to ensure all structure fields
-are properly zero-initialized.
+This ties the table lifetime directly to the provider and removes a
+separate allocation failure path while preserving the clk_onecell_data
+lookup interface.
 
-Fixes: 97b7129cd2afb ("reset: hisilicon: change the definition of hisi_reset_init")
-Reviewed-by: Brian Masney <bmasney@redhat.com>
-Signed-off-by: Min zhang <zhangmin2026@yeah.net>
+Assisted-by: Codex:GPT-5.5
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
 ---
-Changes in v3:
-- Remove the newline between Fixes and Reviewed-by tags.
-Changes in v2:
-- Drop the invalid fixes tag and use the standard format.
-- Add Reviewed-by tag from Brian Masney
- drivers/clk/hisilicon/reset.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/pistachio/clk.c | 15 ++++-----------
+ drivers/clk/pistachio/clk.h |  1 +
+ 2 files changed, 5 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/clk/hisilicon/reset.c b/drivers/clk/hisilicon/reset.c
-index 93cee17db8b1..c3b7daac9313 100644
---- a/drivers/clk/hisilicon/reset.c
-+++ b/drivers/clk/hisilicon/reset.c
-@@ -91,7 +91,7 @@ struct hisi_reset_controller *hisi_reset_init(struct platform_device *pdev)
+diff --git a/drivers/clk/pistachio/clk.c b/drivers/clk/pistachio/clk.c
+index 80c722c77a1b..03e28779011f 100644
+--- a/drivers/clk/pistachio/clk.c
++++ b/drivers/clk/pistachio/clk.c
+@@ -17,28 +17,21 @@ pistachio_clk_alloc_provider(struct device_node *node, unsigned int num_clks)
  {
- 	struct hisi_reset_controller *rstc;
+ 	struct pistachio_clk_provider *p;
  
--	rstc = devm_kmalloc(&pdev->dev, sizeof(*rstc), GFP_KERNEL);
-+	rstc = devm_kzalloc(&pdev->dev, sizeof(*rstc), GFP_KERNEL);
- 	if (!rstc)
- 		return NULL;
+-	p = kzalloc_obj(*p);
++	p = kzalloc_flex(*p, clks, num_clks);
+ 	if (!p)
+ 		return p;
  
+-	p->clk_data.clks = kzalloc_objs(struct clk *, num_clks);
+-	if (!p->clk_data.clks)
+-		goto free_provider;
++	p->clk_data.clks = p->clks;
+ 	p->clk_data.clk_num = num_clks;
+ 	p->node = node;
+ 	p->base = of_iomap(node, 0);
+ 	if (!p->base) {
+ 		pr_err("Failed to map clock provider registers\n");
+-		goto free_clks;
++		kfree(p);
++		return NULL;
+ 	}
+ 
+ 	return p;
+-
+-free_clks:
+-	kfree(p->clk_data.clks);
+-free_provider:
+-	kfree(p);
+-	return NULL;
+ }
+ 
+ void pistachio_clk_register_provider(struct pistachio_clk_provider *p)
+diff --git a/drivers/clk/pistachio/clk.h b/drivers/clk/pistachio/clk.h
+index 2f4ffbd98282..1b9b311b9656 100644
+--- a/drivers/clk/pistachio/clk.h
++++ b/drivers/clk/pistachio/clk.h
+@@ -142,6 +142,7 @@ struct pistachio_clk_provider {
+ 	struct device_node *node;
+ 	void __iomem *base;
+ 	struct clk_onecell_data clk_data;
++	struct clk *clks[];
+ };
+ 
+ extern struct pistachio_clk_provider *
 -- 
-2.34.1
+2.54.0
 
