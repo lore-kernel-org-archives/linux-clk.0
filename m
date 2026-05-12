@@ -1,48 +1,48 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8A7360ED9;
-	Tue, 12 May 2026 16:40:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94B823D5C05;
+	Tue, 12 May 2026 17:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778604022; cv=none; b=csBdROltgwJdSRBn3Fn0ayVrCj4fE7c+5QZ+IMkkQ+59MX9kWcnzMI164YyNe/SOuI2v1gpGrNw+amwNcz9EG5NtxAifAqLduc/B9a5n/sk2+ClwqCWMP008x3ork7cAAHFnruZbhFNZs2jfVi49vw5eiHmayksYdy6Q6jRvetE=
+	t=1778605327; cv=none; b=Q27HMTeaxozshoGqUm/iOxJ6MbZXiCJ4/4BAQDC8znt5wYqzW1etm76w9XfJ884+bbqP7J/xkSnIR1GJJ3xMJY9kvGZKRZGT1HhfJnX2P2W1ohEu2I2ut3Sfq4+/VP9TubugckaQaEWCvzE81r1DCOSdzcAA/kzkmlkyuEThtc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778604022; c=relaxed/simple;
-	bh=CxEb/AuqhVbUMg0w8S4wMIYLB1ZUNOxnKnOSynQOVZY=;
+	s=arc-20240116; t=1778605327; c=relaxed/simple;
+	bh=t7X3VU5Fnvb2pw09HJTrXmQN1bStwyMFOJNQ9PHYPPk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gUbYS84XUCg15H7IK0US1GuN7eetbTD61RONswZfMEFp2cXmA1GOgq/vhL+gNPNb3ZBaGH69C0BtGbcSm70NAsGP/+POZxCHws4iCnAjRUM9yKCMQCAdquB+YGkAsXMuc40uPayCDdSXqY2IqwxrvU9GnWwaFdr4PX938SHyACQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=honFm3Yi; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=OQNBFlAvW0uZNj5el+5XyrXddIy8qKP4m11SevnKM0nJz6HCIMWO6y3FoeRUnhOxLbU7EqH3KD9Lf83X5Vw3WbWfeY4OnX0slgiwRN4NXg/hqw/KEGti+fsl99qfV0qhBDNAgNEqzsX+WVTamsWrbijchRco2JuuilXlb8AAPRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tj/Mzrub; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="honFm3Yi"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D878AC2BCB0;
-	Tue, 12 May 2026 16:40:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tj/Mzrub"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 223A7C2BCB0;
+	Tue, 12 May 2026 17:02:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778604022;
-	bh=CxEb/AuqhVbUMg0w8S4wMIYLB1ZUNOxnKnOSynQOVZY=;
+	s=k20201202; t=1778605327;
+	bh=t7X3VU5Fnvb2pw09HJTrXmQN1bStwyMFOJNQ9PHYPPk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=honFm3Yih9VO5ZNFEMYD8Ht5IncBaQg8+5+PC059FOG4alzzA1MJlGH6rjCNKqvZQ
-	 99jKPsqmeI/eDTlkwmBhnmMvt/XBw4eDJosZ3PbTBOT9T9VfW9QTub0ig4sexGnxuV
-	 fw/SryTkTryCWreKk/Meuy+vMX9bJoEUnjl3xmdg/1tqGHD8UkbhCz2TyPFyu+TVZo
-	 Peg0JM+jUifilYxoR0m7S+ySA1lp3juyxgBjSR8i0IYUTlyNrd3Quw7ICQ8AOV6dvr
-	 eds7jv0+5IiJBoHY+FAMqXjxBgGANDtzlyCIwzRvsACG5xwMBn7fiGSwoJzYSExc74
-	 DQk5EHOHP7rDg==
-Date: Tue, 12 May 2026 17:40:16 +0100
+	b=tj/MzrubFmazjOzfMDlG+hsCo4L1k0j/prfntOVYe1FbH37Hc64KCifj8B3Dy3kJ9
+	 A4bt+/czHFtKjdWTYKqingjkUCIiLMi0ywHO9H13myTtxkOLUxkFEMRxyJp3324OFl
+	 gQ67lYmO6SyrysPM3PXBZ3pr0lZBxbx/E3UlUoaBBij8K+zgiNRW4S55/6bDj46GY6
+	 QFXboCTDoBhP+4Em7mHO2UiAjM03ItlsaShcf/l5hstMWGoml9SvCmnrkpRJLUfH98
+	 kpA9ltCfE54vRxMqN1TkMx1rSPp2Gfjo4BeO8SBPotMPu1SPNP3zM+KhAwG0ljTiDe
+	 gtCCSRV82n3mw==
+Date: Tue, 12 May 2026 18:02:03 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Brian Masney <bmasney@redhat.com>
-Cc: dongxuyang@eswincomputing.com, mturquette@baylibre.com,
-	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-clk@vger.kernel.org,
+To: Stefan =?iso-8859-1?Q?D=F6singer?= <stefandoesinger@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	p.zabel@pengutronix.de, huangyifeng@eswincomputing.com,
-	benoit.monin@bootlin.com, ningyu@eswincomputing.com,
-	linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v4 1/3] dt-bindings: clock: Add ESWIN eic7700 HSP clock
- and reset generator
-Message-ID: <20260512-captivity-chatroom-0c46aa7ab0a3@spud>
-References: <20260512020432.671-1-dongxuyang@eswincomputing.com>
- <20260512020511.726-1-dongxuyang@eswincomputing.com>
- <agNLuSCDlukeVGcS@redhat.com>
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH RFC v2 1/4] dt-bindings: clk: zte: Add zx297520v3 clock
+ and reset bindings.
+Message-ID: <20260512-musket-gaffe-376f0450a610@spud>
+References: <20260511-zx29clk-v2-0-29f0edc300f5@gmail.com>
+ <20260511-zx29clk-v2-1-29f0edc300f5@gmail.com>
+ <20260511-backstage-crewman-e44947ab6cfc@spud>
+ <DD71E384-1777-47B8-93C8-D6EFDA4BA74C@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,77 +50,78 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kvVilj8VlZPqAOMv"
+	protocol="application/pgp-signature"; boundary="M3uGp2e5R9ndKlm4"
 Content-Disposition: inline
-In-Reply-To: <agNLuSCDlukeVGcS@redhat.com>
+In-Reply-To: <DD71E384-1777-47B8-93C8-D6EFDA4BA74C@gmail.com>
 
 
---kvVilj8VlZPqAOMv
-Content-Type: text/plain; charset=us-ascii
+--M3uGp2e5R9ndKlm4
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 12, 2026 at 11:48:09AM -0400, Brian Masney wrote:
-> Hi Xuyang,
+On Tue, May 12, 2026 at 12:33:42AM +0300, Stefan D=F6singer wrote:
+> Hi Conor,
 >=20
-> On Tue, May 12, 2026 at 10:05:11AM +0800, dongxuyang@eswincomputing.com w=
-rote:
-> > From: Xuyang Dong <dongxuyang@eswincomputing.com>
+> Thanks for your reply!
+>=20
+> > Am 11.05.2026 um 19:07 schrieb Conor Dooley <conor@kernel.org>:
 > >=20
-> > Add bindings for the high-speed peripherals clock and reset generator
-> > on the ESWIN EIC7700 HSP.
-> >=20
-> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> > Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
-> > ---
-> >  .../bindings/clock/eswin,eic7700-hspcrg.yaml  | 63 +++++++++++++++++++
-> >  MAINTAINERS                                   |  5 +-
-> >  .../dt-bindings/clock/eswin,eic7700-hspcrg.h  | 33 ++++++++++
-> >  .../dt-bindings/reset/eswin,eic7700-hspcrg.h  | 21 +++++++
-> >  4 files changed, 120 insertions(+), 2 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/eswin,eic77=
-00-hspcrg.yaml
-> >  create mode 100644 include/dt-bindings/clock/eswin,eic7700-hspcrg.h
-> >  create mode 100644 include/dt-bindings/reset/eswin,eic7700-hspcrg.h
+> > How come the "matrixclk" has no constraints on clock properties?
 >=20
-> Does the MAINTAINERS file need to be updated for these paths? The entry
-> in linux-next currently looks like this:
+> Because I am not sure what the correct/preferred way to express the inter=
+face between top and matrix is - see the first question raised in my cover =
+letter.
 >=20
-> ESWIN EIC7700 CLOCK DRIVER
-> M:      Yifeng Huang <huangyifeng@eswincomputing.com>
-> M:      Xuyang Dong <dongxuyang@eswincomputing.com>
-> S:      Maintained
-> F:      Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml
-> F:      drivers/clk/eswin/
-> F:      include/dt-bindings/clock/eswin,eic7700-clock.h
+> In short, matrix potentially consumes all clocks available on the top con=
+troller. There is no obvious interface between them, like there is between =
+matrix and LSP. So I see two ways to handle this in the bindings:
+>=20
+> 1) List the top clk inputs, top clk PLL outputs and PLL fractionals as ma=
+trix input
+> 2) Be quiet about it
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b2040011a386..b7180863310c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9548,9 +9548,10 @@ ESWIN EIC7700 CLOCK DRIVER
- M:     Yifeng Huang <huangyifeng@eswincomputing.com>
- M:     Xuyang Dong <dongxuyang@eswincomputing.com>
- S:     Maintained
--F:     Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml
-+F:     Documentation/devicetree/bindings/clock/eswin,eic7700*
- F:     drivers/clk/eswin/
--F:     include/dt-bindings/clock/eswin,eic7700-clock.h
-+F:     include/dt-bindings/clock/eswin,eic7700*
-+F:     include/dt-bindings/reset/eswin,eic7700-hspcrg.h
+Unless you want to model top + matrix as a single node with two register
+regions, then list it all. Hiding the relationships is ill-advised IMO.
+
+>=20
+> It'd be about 20 clocks or so that I know are consumed. The bigger issue =
+than the number of clocks is that my knowledge of the board is from reverse=
+ engineering, not proper datasheets, so I might find out that a clock is mi=
+ssing or wrong.
+>=20
+> > Although, these two devices seem too different to be in the same
+> > dt-binding. Do they have anyhting in common other than the SoC they are
+> > part of?
+>=20
+> No, they don't have anything in common, other than that their concerns ar=
+e poorly separated in hardware.
+>=20
+> I take it from your question that the preferred way is to have separate b=
+indings for them in this case - I guess separate headers as well as separat=
+e yaml files. Is this correct?
+
+Separate headers if you like, separate bindings since the hardware and
+binding are completely different between devices.
+
+> The third clock controller - LSP - is nicely separated from the other two=
+=2E I would not be surprised to see this subsystem of the board show up on =
+a different ZTE board. If top and matrix should have different bindings, LS=
+P certainly should as well.
+
+The "two" I was referring to were the two with constraints, so top and
+lsp, so that should answer that!
 
 
-Is this not sufficient for what you're looking for?
-
---kvVilj8VlZPqAOMv
+--M3uGp2e5R9ndKlm4
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCagNX8AAKCRB4tDGHoIJi
-0lzQAQDtEHtKrQ3ALpt//1kuMaZBJrz5ekJ5KM9tzKOBR48t3wEAv9FsOLPQgwdJ
-aEGSiJadc6wyw2BMd9g1Aq4Cp3GWAAA=
-=4R5s
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCagNdCgAKCRB4tDGHoIJi
+0rCoAQCbIMHm+OHvyUfYu6hMCFpvypMIFKu/WsZo5gklt3xhlwD9FAiVUGWc9Rj/
+kCGsAImdqX5V2RKYeMsXRZ5JGRzBNAo=
+=/N43
 -----END PGP SIGNATURE-----
 
---kvVilj8VlZPqAOMv--
+--M3uGp2e5R9ndKlm4--
