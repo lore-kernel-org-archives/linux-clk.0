@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559DE397E6D;
-	Tue, 12 May 2026 08:57:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD6E3AC0F1;
+	Tue, 12 May 2026 09:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778576251; cv=none; b=tQoMcztZIH3fKfHsILnMP/jy4Qs6eyosTOcs7wXnj5hlfOgcv/r0ArwaffaGMnv5JRHFlARtpJWPSOeIVUGZeeXSwtVoKBaF553B9ytz5lpWX6wl1q2cfY4E5ABWdYbph5VJ6RVGWO97SCeFcR//85yNGewtNqaqCG1ABEw6JWA=
+	t=1778576508; cv=none; b=roOt0OqEpTuTMjlgo2DRbht9lVDgo3U9FTn0UxKyLggsYnttPaBPYP/+qRl03hkdQ7t/AvztILo2QPAbpA3ve0c5ygh+qJHeCGDFLueroMCJIytVCpxjGqwq9QgGxWQ7A9AWzU4L0NuWR0QikPBPOuuCeUNvaY4UXVYwGDf/E58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778576251; c=relaxed/simple;
-	bh=9RcgFbtI2EtyIuP/xuStrFIZ3slvf4MbBnKxWbKgI+k=;
+	s=arc-20240116; t=1778576508; c=relaxed/simple;
+	bh=eAzHhiiPWSg3PWo3TcqS7PW8QVjCvfpJc/kAsWYgKlU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bRZqdrS+m8GuOD9rhCvzoJ0wJJTMBJ9A5/biobSYnU1bdVDDJEmznvanpVGtFxKVz9yg4rKBaiKki/A9tgpUz9KEjz6Hyz3yOqweupNbIS25N6vY8k8OYyvn0jMn8uWNynvCB5kre2D0lsm+6qgoSa3heTM+3UCfHbnlEOFXyqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cFffOHHH; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=o+s79rfmBqkqVhfInJexPoP6OKOjXFhsCHkjjqVAG9QlgZ40pyXcTc0Rbh6okOD/TZdutdA9mGF0wwRsjPNuS6baE/ui31MSTyIbpSSeCSJNsBU3qvBrJ/vV4fzEMuoTAUvpWMon99XfFeG4+IF/jZafkeVxFwwrgnZVEDiiXls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tf7LNR3t; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cFffOHHH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7470CC2BCB0;
-	Tue, 12 May 2026 08:57:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tf7LNR3t"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9ADC6C2BCB0;
+	Tue, 12 May 2026 09:01:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778576249;
-	bh=9RcgFbtI2EtyIuP/xuStrFIZ3slvf4MbBnKxWbKgI+k=;
+	s=k20201202; t=1778576507;
+	bh=eAzHhiiPWSg3PWo3TcqS7PW8QVjCvfpJc/kAsWYgKlU=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cFffOHHHZs+xIhMeXFbyJW0RDBAQ5J/wh6vjtj71feqejDcYAQJNWj4CbF8sSM+uu
-	 Q+2CGVSTg2/0u+un6LwGMaMmTyoQp+TzChSGkpU0KDgnGC0NYVe45Lgux7EJN2bpSs
-	 C6A8zuY8K6XX/xApR6HVMdTRL8THqT/xDLjop1CwIkqcfljy/uf2bGSWE1XVzcZCG1
-	 PP+BZjTjND1JjfgqhJjMi3rfanpv9JpncnaVELqpqbhxjsuljf81q4lkEePC4Xevun
-	 SkHQnMCLnrZNyEgWHm91LR5vhBB/KnWA5ucUhTNnOmNIeGIqJuZ7q0y6ABj7fhU4MI
-	 2ga1p/Y2CH41Q==
-Message-ID: <7180ef28-e7fd-4ed3-978b-34bfa8e25eb1@kernel.org>
-Date: Tue, 12 May 2026 09:57:23 +0100
+	b=Tf7LNR3tDghk6trvcBJqQ5HUwytDQT318lLo2qNesuX256XLi0C8AalS2AI/ePJWx
+	 x1YNUiHZiZ2HPZziXRGJHk6DlwvMlGLZ+iIX79dllwmK6eoxAZlGDyjStfwca2Eqf0
+	 JOM3LwDvC5OILjbNKGVishnXYzYgZrZXKtzd/twe08YKJWg1C7yowLGQHS+GkFIkl0
+	 SP9c7hyV2VOYI7AaKZpUM+q0IOaiZr9YYDfgb1q+hN7h8Pbuq2o0VnPSS9VrzMJ4EE
+	 NDozBpsKnhJ5nDGX5vE3EGSxbQMsPjx3XCygmCdI7+N/hZTh2XOYRdGoN94YxtYAO9
+	 0fBMHKafEIu8A==
+Message-ID: <61bd3cff-a163-44fa-897e-202912b70192@kernel.org>
+Date: Tue, 12 May 2026 10:01:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,28 +35,31 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/9] media: qcom: venus: Add msm8939 resource struct
-To: Erikas Bitovtas <xerikasxx@gmail.com>,
- Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
- Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>,
+Subject: Re: [PATCH v2 8/8] arm64: dts: qcom: eliza: Add support for MM clock
+ controllers
+To: Taniya Das <taniya.das@oss.qualcomm.com>,
  Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+ Imran Shaik <imran.shaik@oss.qualcomm.com>,
+ Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- phone-devel@vger.kernel.org,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-References: <20260506-msm8939-venus-rfc-v4-0-994f5eb22acb@gmail.com>
- <0TaxINYCitQd2DsGsbhRviwmrQkaaVMaE9vABS3gSsSPNfrgS3JPTIo_kvTzyEhGOAZuMVq-k-5T8mqDM7dnIw==@protonmail.internalid>
- <20260506-msm8939-venus-rfc-v4-3-994f5eb22acb@gmail.com>
- <108401cb-040a-441c-b463-b69df195378e@kernel.org>
- <mouIchcg0mA9oAJqE0K9Cs3CGxN-Ug7Qnk5TUtdnFkIZzApBj0WsRqPNi3xYEPKiwyPm73Hr0eDaCWbSFCNhMw==@protonmail.internalid>
- <c99d1b63-b304-4440-9bd5-b119dd0042e5@gmail.com>
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org
+References: <20260409-eliza_mm_cc_v2-v2-0-bc0c6dd77bc5@oss.qualcomm.com>
+ <20260409-eliza_mm_cc_v2-v2-8-bc0c6dd77bc5@oss.qualcomm.com>
+ <cb5a40e8-e2e3-4ed9-a9c6-0daa9f408710@nxsw.ie>
+ <Z8a4y73p6MgF8gQkVtottkgG2Ok8-Vhm8zzckWEbiU_DUO84x2VlwPt-VBL2g0utw3ZwZK0aUvI4ev-p_YRGoQ==@protonmail.internalid>
+ <328b388c-438e-4f91-9384-0dad903355a5@oss.qualcomm.com>
+ <b280ad04-d4ae-4904-9e99-3d057e3d221b@kernel.org>
+ <IiyxizU467TNqMEwRaTlleMBKNEK2DMzxVCeG80fBWFmSRr7bRf0HHbnJDAA4N_q1QrCXkO_xwSt1XM5u4yNpA==@protonmail.internalid>
+ <f649f4a8-df16-4fed-b1ca-4362680252a4@oss.qualcomm.com>
 From: Bryan O'Donoghue <bod@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=bod@kernel.org; keydata=
@@ -102,41 +105,23 @@ Autocrypt: addr=bod@kernel.org; keydata=
  LKSGEglMpiX07M1AotgvylN5C8fjbouoK+/RAMsXkk8jba6rPfuuXPaDjCyyKn6zSVHETnHW
  3AJbgVY50T8STpnxayBQvWbCvu+6NOEjXCbyaOJig+5l0zlGN9XHjdANXC5HnwmyaGRL9YDq
  Jh2nVXVJDincOdQRdKcJjYLqaOAoWrYWSDi1iZGspHBTDrnOvfMQzzHY
-In-Reply-To: <c99d1b63-b304-4440-9bd5-b119dd0042e5@gmail.com>
+In-Reply-To: <f649f4a8-df16-4fed-b1ca-4362680252a4@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 12/05/2026 08:05, Erikas Bitovtas wrote:
+On 12/05/2026 09:52, Taniya Das wrote:
+> The clock controller drivers only request the minimum operating level
+> for the power domains. Since the cx and mx rails are already at the
+> minimum operating level when APPS is active, explicit voting for these
+> power domains is not required from camcc.
 > 
-> 
-> On 5/6/26 2:33 AM, Bryan O'Donoghue wrote:
->> On 05/05/2026 22:44, Erikas Bitovtas wrote:
->>> +    .vcodec_clks = { "core0", "core1" },
->>> +    .vcodec_clks_num = 2,
->>
->> This smells a bit dodgy to me.
->>
->> You already have
->>
->> struct clk *vcodec0_clks[VIDC_VCODEC_CLKS_NUM_MAX];
->> struct clk *vcodec1_clks[VIDC_VCODEC_CLKS_NUM_MAX];
->>
->> so why add vcodec_clks and put core0 and core1 into a new array.
->> vcodec0_clks and vcodec1_clks seem like a very natural place for core0
->> and core1 clocks to live ?
->>
-> Sashiko found some power management issues in my code, so I'm coming
-> back to this.
-> The idea is to call vcodec_clks_get only once for inline cores, thus
-> avoiding duplicate clock assignment. Attaching to vcodec{0,1}_clks
-> instead would mean we're adding the same clocks twice. I dropped it in
-> later revisions, but now I want to re-introduce this, then add them in
-> core_get_v1 instead of {vdec,venc}_get_v1.> ---
->> bod
-> 
+> --
+> Thanks,
+> Taniya Das
 
-That's fine just please give as much detail as possible in the commit 
-log to justify.
+Great, I'll drop those references.
+
+Thank you for the information.
 
 ---
 bod
