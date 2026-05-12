@@ -1,94 +1,96 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2138C3C769D
-	for <linux-clk@vger.kernel.org>; Tue, 12 May 2026 15:45:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938A83B9929
+	for <linux-clk@vger.kernel.org>; Tue, 12 May 2026 15:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778600726; cv=none; b=k4S01gZadBJy21FDjHdrpYFjQnq/saToLuMbCLvrCLDDhmcL8hIdT05mTrGsrlHbjhYsoDfYhJB+GjQZBKLoMDzhtq18B57x5SCjvok8uLGYqYDAMUfxCrpKV7PDrBxJh51onLiIl90FLd8emu3y4th6u8F+vDo+Zfm4LneDSbY=
+	t=1778600897; cv=none; b=eclWBs4tdkN4qPUWl78bhcqHv/nGFU8quTdKaxASIYM3yfxjUgaN/yd8PabyqEJXVArT84SaJK/bhW9kwCY3PpY9E+SpkqRE/6Sk/PgiD+XD03C7bNVKFpFrtBhvS9QdQrjOaEKPM2N2dHg8xqCIwNDDQZDwgC4+CuX2w7cXW0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778600726; c=relaxed/simple;
-	bh=29A/M4xYVUS372XJHCDISmn4w9ov/gKfjHEVp9qR1aE=;
+	s=arc-20240116; t=1778600897; c=relaxed/simple;
+	bh=Tc6Bg8J+jJKF6D2ctfjKeBriYeQhmdTGjP5iSl+ZSm0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qGax+XDhtEWuy4j9qerG/ip1Ph+Gf1mScW5dsPdHYlLsVBmWJfdh+N9oNaDZCNPE7Lkv1QYXk9vjRyIvsI7+pDn+pQGtU+WNXz7kNHnDM0YXyHrB5mVaqjTzp3CE3wxVLsaRQQcbPGWL4Wl3S942D3w7tPxySVauGpwoce45FsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ck4EIG2J; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=bQDQBi/r; arc=none smtp.client-ip=170.10.133.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=GxukJOYA3u9Rm7E77FH3VmrYG3jNiGDMtj+vGumOceIos+IxwAlPQ6VQ9Z0QUl3Qbpkqn31FFtLraDDlecEBLGes4aE9ldci1fyQwHmeCMoEspr4VAT1A/QsxvMn8noMou0aeMoG2Os9ORIDUcES+aXK6Qr5cwy7xYdNm9+kOiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MkdLf4/H; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=tKziIRbb; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ck4EIG2J";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="bQDQBi/r"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MkdLf4/H";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="tKziIRbb"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1778600724;
+	s=mimecast20190719; t=1778600894;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=F/Rj20yJzwwrc5IUSlJqObsXWAOLzLYrlkLUj5Fyb3E=;
-	b=Ck4EIG2JWcczTpkqGjOWY8avQ173Fv16SleMpSXAL4ajVVUTWDnOi6xXBEQqYvs+XL+gqr
-	xeJ+s6pS/ScMMOGjIvL4eR9YDVtkWo87hA+8P1drrD12ydANnk+sAC4+g/otTOhKSCMob9
-	4ttGbf2HaufuOL/bvuzTVvMeiTLa1lA=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=e1U0ouPtDtvkd6M4yD7vhJkd7OXbr3G9ScJ0rAPyXT8=;
+	b=MkdLf4/HAoXx+QfpwG0GSfAhtygeYbJsiWnren7Ogmf6iqDUKFT/Jlwp+oq62zfwYlKnPA
+	k/92wexj9AZrGn4e53o0hXCL6RBcCtw8133ftlxgjyMq3d8ovEWqsBAR86A5JRtn1caDWh
+	5iKcb/zPgss6zQOPEOaPOh8ObS49XmQ=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-94-3WtlwPgSM4irkGvJz9DTKQ-1; Tue, 12 May 2026 11:45:22 -0400
-X-MC-Unique: 3WtlwPgSM4irkGvJz9DTKQ-1
-X-Mimecast-MFC-AGG-ID: 3WtlwPgSM4irkGvJz9DTKQ_1778600722
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-909db142e45so545704085a.1
-        for <linux-clk@vger.kernel.org>; Tue, 12 May 2026 08:45:22 -0700 (PDT)
+ us-mta-608-tbDo9ZJMONGpd0Jpl2-tnA-1; Tue, 12 May 2026 11:48:13 -0400
+X-MC-Unique: tbDo9ZJMONGpd0Jpl2-tnA-1
+X-Mimecast-MFC-AGG-ID: tbDo9ZJMONGpd0Jpl2-tnA_1778600893
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-8bcb482b185so104160556d6.0
+        for <linux-clk@vger.kernel.org>; Tue, 12 May 2026 08:48:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1778600722; x=1779205522; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1778600893; x=1779205693; darn=vger.kernel.org;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=F/Rj20yJzwwrc5IUSlJqObsXWAOLzLYrlkLUj5Fyb3E=;
-        b=bQDQBi/rcQGU3rwhCC9Q0IWh8Uq123zdU0XsfZKJCJWEJhhZqEnOIiTWOnf/nl0NI9
-         uZVP77Jmj68eQFbXu36zSGHSqS4lYFFjDkpnfKL/++qg5rcF9N2qtrlhGH9laiU+5Da0
-         3DiS9AuVLLqhq6+USAYd1hRXM7BBxgSH+LyBqiVuOWBdJQMOSaTyr8xoi2r+Gqe5ViRA
-         BxcjSQNSCYXGIfe+EBV3OiZVPcanlfwOH9f4DiYEm8q++JHpunpIjv2aDA3SR1ueXNJp
-         XkUEPZyKOjxR4JxKmrYkHeT+ntLL51BONLEIlnIv4n+b1NU9VEPToA8apZf6SUYHvyqh
-         TOOQ==
+        bh=e1U0ouPtDtvkd6M4yD7vhJkd7OXbr3G9ScJ0rAPyXT8=;
+        b=tKziIRbbcVqI3LnP1mrMU6juGrXDziMkGrEgpgDsjvq8CE0UJ1+CzyYns6+CmWTQYV
+         I2Cr2m0nLoHBsJ/VT3KX8OEOYDyEpDSb1bu1skEyd5anTQcNomVuJkFvMLUYHKrn/SKE
+         d1JIkZkvxL5Ig+sUr+p8K0TuIwt23U9GACOe5ipMp7o49sjiU/P7XUKNukmDeVAWXsdo
+         HUQNVMyAlq53irksCHE/+uXZY3918TivWokhUbeREymlClzv9kdHjv8KQbvoo6qpVQxK
+         cSG+avDF6vwrKK8J/sv1/RU9QottDBc+UUF0j7w2+2HZC+hpN+9txFezcLXdSnNvEp3h
+         g+gQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778600722; x=1779205522;
+        d=1e100.net; s=20251104; t=1778600893; x=1779205693;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=F/Rj20yJzwwrc5IUSlJqObsXWAOLzLYrlkLUj5Fyb3E=;
-        b=JTXiA7JyNO24uvlQqwEzSI1eRfNugd1gFL2pTbmLdkkMXOPXrDOu1U2cTm88wy5A4I
-         L54NExoArQ+Vix9zkFHSEfGHp1INC94udBvrkH6Ue6Xm40zBdoriu04/Yy59Hp9Lvjw+
-         xcs0/sHmpMxKbVh8X+uPaSAGrPhaVL++/tqVSu5wZqAo98eM43d3A1IpsNGXtsF6ExFB
-         8Etsf6TvKdpRxMy+P6+c2qgJ3+VDzHDoqr7chql/OAz4bbAhjAJybNqZZcm8ICgWxEyF
-         H7pUtTTEuZ19iSZvqDyOIa+R2AMni845jxXDpaITxvjGWeLifF/Zx8gfs+/LhIhO5r6r
-         MENA==
-X-Forwarded-Encrypted: i=1; AFNElJ+Wuyzjs2Go31JgWhxG4HjM9j6pca6Y4sGm0dLM+yEeGxpDd7j5wky0GzfLHXZojSv7rCg5//e7qEs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+tGCLE9KVFTi87xh1wPSpKt4GDSwdrRiwwg01oAqeNgdKJdRG
-	8RKKvi62Ku/CekqCGceeti3x+GfiuOb9pbFH5Z3bvi8/Tgm06RFzezEjYv8/jZvcBmqH16wX7S/
-	fU3PNsMwL5bRY5ZR42h/uTgnazRgS1+VPk3yI8FMysr4PyuNMeznGI6Vkva122Q==
-X-Gm-Gg: Acq92OENvVkxKVWMV7mFMZHT11vWnBHY5FE5YI45G35PwrF1DZSZ1sSBR97LZzSS90C
-	79RdrfVoY2GnOLgTRw3bhIFNBnF8M/sEIds1yICofMwyLyXZFo8SX3NE20B27W1XU/jct2dUVbk
-	nJdQLVLoW1E8OpKQPmrpRRv3FYNNl405p8g66pw8Iij1qPuLIFAv9nmwKVxvm3nWa3/9tY28ufv
-	XyH9jl8OqPb6cmlwaIxYeiRl3NGl+y1wayq3jCPgeWq8kb5ke/Rchem0XvyhCQFYSikFlykJdrf
-	l2mJe0S53xQNXbB13/nnuX6+jtl2dWrfUDAW/tRnesI0TwAe9r5+nRPgjnYhSv20PDdsVh0AgEJ
-	czc6Q97XdM0tSoHyJX2Nf5zCy9b/OZTOHrPBLLXJieSYIPNDAu3teUp1a
-X-Received: by 2002:a05:620a:370f:b0:8f2:31f3:975a with SMTP id af79cd13be357-90cb6efb828mr596038685a.18.1778600721832;
-        Tue, 12 May 2026 08:45:21 -0700 (PDT)
-X-Received: by 2002:a05:620a:370f:b0:8f2:31f3:975a with SMTP id af79cd13be357-90cb6efb828mr596027585a.18.1778600721164;
-        Tue, 12 May 2026 08:45:21 -0700 (PDT)
+        bh=e1U0ouPtDtvkd6M4yD7vhJkd7OXbr3G9ScJ0rAPyXT8=;
+        b=lhBOxABjOeikPyUmWXnmnMdkm4Ym7nVWD4THz2edeOsrRheGfGxZOkVSDz3DJAEnaB
+         aLiaj8xjKCxE4jCcQxgz2hLjunr1fcdtwD7DowtEVwYmWFiFIL3ksqjrpTT/g5qwH4lF
+         WahGJg7pW1oEjKUxeNfW8YKp82g20XX9h6JxYhCsZLcTzr3rG4sHig/PLXeWPADLAiwb
+         IeHPX4ZRQ4Wm7CNpbs4z9r89RJAAKswVg+xb7x1WmaZAotln2dc4kWduTC5iSVLfUVmj
+         vSCygOnXbhsDTCaM3BR8PHVAof+ogaZwWqv0uEW1OqAv+/uADinzos7ERWg59KV2FPYI
+         z/hw==
+X-Forwarded-Encrypted: i=1; AFNElJ8bppXVwmc8ZRw6awKOet+mAqGpkUcxpP6BZjxZzp+/prfFp0I71Tp69mrc/F0EHwJVXIvNAL5NR48=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1z72Z/RbM+Qjk5BYN2MvSq1yfQPTCwnHwiKVvFPnVIIf7wBhk
+	ExQ5l3wZ91/krOheKEzGpYZGvyGxr3dCbBDSCRJR7Uos5s1RkMFr8uyvoo5Qc+m0FTQIeEnQVRx
+	DW//w/1XsixsBcgAWVLuTgrZTRJPDsJV0sTiWja3i2EZdEI0A+GLdmL1mV6nYWg==
+X-Gm-Gg: Acq92OHg0Ec2hzyLiRJFSEnM2xEpZaQZQk/kC09Fw2nXPoDsLQIq66lANaDUP0K7PXy
+	DseDbLJzZpHyUnDZDOu0hxPqbIAxK0Z4JQtCM9rqCmTpdYlFyPVOPTBpML+mUqv8xGYvRVVRaz5
+	DTNjPX5/9Rw1qXxMpPPPbFQSFECS4YLeaYcvU9yZ+y+x9TRO6+0E3h4Ip4EHnO4PyjzZeRhKVl8
+	+jCFEGK+eQdW5FAFJmE4O5EHUYk+8DEVBz+N60TDUqrbhFthXfAbIVkd507oskcJkTA7lSa8MRH
+	GTPleh5uJMO+qrd8ZEu1hRHHFrEHwVKfeSkagAW8tYJmjakZh2dfqXH/OuQkSp0PeVdO64qDVXU
+	i5ExbxEcWWRPgrnmEbHoCqNNKFVeXjT/h6bnV1503YHLpvih5693HvWcI
+X-Received: by 2002:a0c:f08e:0:b0:8ac:c651:bae5 with SMTP id 6a1803df08f44-8c1a37955e8mr217255546d6.20.1778600892548;
+        Tue, 12 May 2026 08:48:12 -0700 (PDT)
+X-Received: by 2002:a0c:f08e:0:b0:8ac:c651:bae5 with SMTP id 6a1803df08f44-8c1a37955e8mr217254936d6.20.1778600891943;
+        Tue, 12 May 2026 08:48:11 -0700 (PDT)
 Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8fc2c91b976sm3502993885a.39.2026.05.12.08.45.19
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8bf3b0fcfcasm128529486d6.2.2026.05.12.08.48.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 May 2026 08:45:20 -0700 (PDT)
-Date: Tue, 12 May 2026 11:45:18 -0400
+        Tue, 12 May 2026 08:48:11 -0700 (PDT)
+Date: Tue, 12 May 2026 11:48:09 -0400
 From: Brian Masney <bmasney@redhat.com>
-To: Xuyang Dong <dongxuyang@eswincomputing.com>
+To: dongxuyang@eswincomputing.com
 Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
 	krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
 	p.zabel@pengutronix.de, huangyifeng@eswincomputing.com,
 	benoit.monin@bootlin.com, ningyu@eswincomputing.com,
-	linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com
-Subject: Re: [PATCH v4 2/3] clk: eswin: Add eic7700 HSP clock driver
-Message-ID: <agNLDkz0L67lL0_f@redhat.com>
+	linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v4 1/3] dt-bindings: clock: Add ESWIN eic7700 HSP clock
+ and reset generator
+Message-ID: <agNLuSCDlukeVGcS@redhat.com>
 References: <20260512020432.671-1-dongxuyang@eswincomputing.com>
- <20260512020747.993-1-dongxuyang@eswincomputing.com>
+ <20260512020511.726-1-dongxuyang@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -97,171 +99,39 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260512020747.993-1-dongxuyang@eswincomputing.com>
+In-Reply-To: <20260512020511.726-1-dongxuyang@eswincomputing.com>
 User-Agent: Mutt/2.3.1 (2026-03-20)
 
 Hi Xuyang,
 
-On Tue, May 12, 2026 at 10:07:47AM +0800, Xuyang Dong wrote:
-> Add driver for the ESWIN EIC7700 high-speed peripherals system
-> clock controller and register an auxiliary device for system
-> reset controller which is named as "hsp-reset".
+On Tue, May 12, 2026 at 10:05:11AM +0800, dongxuyang@eswincomputing.com wrote:
+> From: Xuyang Dong <dongxuyang@eswincomputing.com>
 > 
+> Add bindings for the high-speed peripherals clock and reset generator
+> on the ESWIN EIC7700 HSP.
+> 
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
 > Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
 > ---
->  drivers/clk/eswin/Kconfig           |  12 +
->  drivers/clk/eswin/Makefile          |   1 +
->  drivers/clk/eswin/clk-eic7700-hsp.c | 338 ++++++++++++++++++++++++++++
->  3 files changed, 351 insertions(+)
->  create mode 100644 drivers/clk/eswin/clk-eic7700-hsp.c
-> 
-> diff --git a/drivers/clk/eswin/Kconfig b/drivers/clk/eswin/Kconfig
-> index 0406ec499ec9..e6cc2a407bac 100644
-> --- a/drivers/clk/eswin/Kconfig
-> +++ b/drivers/clk/eswin/Kconfig
-> @@ -13,3 +13,15 @@ config COMMON_CLK_EIC7700
->  	  SoC. The clock controller generates and supplies clocks to various
->  	  peripherals within the SoC.
->  	  Say yes here to support the clock controller on the EIC7700 SoC.
-> +
-> +config COMMON_CLK_EIC7700_HSP
-> +	tristate "EIC7700 HSP Clock Driver"
-> +	depends on ARCH_ESWIN || COMPILE_TEST
-> +	select AUXILIARY_BUS
-> +	select COMMON_CLK_EIC7700
-> +	select RESET_EIC7700_HSP if RESET_CONTROLLER
-> +	help
-> +	  This driver provides support for clock controller on ESWIN EIC7700
-> +	  HSP. The clock controller generates and supplies clocks to high
-> +	  speed peripherals within the SoC.
-> +	  Say yes here to support the clock controller on the EIC7700 HSP.
-> diff --git a/drivers/clk/eswin/Makefile b/drivers/clk/eswin/Makefile
-> index 4a7c2af82164..21a09a3396df 100644
-> --- a/drivers/clk/eswin/Makefile
-> +++ b/drivers/clk/eswin/Makefile
-> @@ -6,3 +6,4 @@
->  obj-$(CONFIG_COMMON_CLK_ESWIN)		+= clk.o
->  
->  obj-$(CONFIG_COMMON_CLK_EIC7700)	+= clk-eic7700.o
-> +obj-$(CONFIG_COMMON_CLK_EIC7700_HSP)	+= clk-eic7700-hsp.o
-> diff --git a/drivers/clk/eswin/clk-eic7700-hsp.c b/drivers/clk/eswin/clk-eic7700-hsp.c
-> new file mode 100644
-> index 000000000000..0d5bd5b705dc
-> --- /dev/null
-> +++ b/drivers/clk/eswin/clk-eic7700-hsp.c
-> @@ -0,0 +1,338 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright 2026, Beijing ESWIN Computing Technology Co., Ltd..
-> + * All rights reserved.
-> + *
-> + * ESWIN EIC7700 HSP Clock Driver
-> + *
-> + * Authors: Xuyang Dong <dongxuyang@eswincomputing.com>
-> + */
-> +
-> +#include <linux/auxiliary_bus.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +
-> +#include <dt-bindings/clock/eswin,eic7700-hspcrg.h>
-> +
-> +#include "common.h"
-> +
-> +#define EIC7700_HSP_SATA_REG		0x300
-> +#define EIC7700_HSP_MSHC0_REG		0x510
-> +#define EIC7700_HSP_MSHC1_REG		0x610
-> +#define EIC7700_HSP_MSHC2_REG		0x710
-> +#define EIC7700_HSP_USB0_REG		0x800
-> +#define EIC7700_HSP_USB0_REF_REG	0x83c
-> +#define EIC7700_HSP_USB1_REG		0x900
-> +#define EIC7700_HSP_USB1_REF_REG	0x93c
-> +
-> +#define USB_REF_XTAL24M			0x2a
-> +#define EIC7700_HSP_NR_CLKS		(EIC7700_HSP_CLK_GATE_SATA + 1)
-> +
-> +struct eic7700_hsp_clk_gate {
-> +	struct clk_hw hw;
-> +	unsigned int id;
-> +	struct regmap *regmap;
-> +	unsigned int reg;
-> +	unsigned int ref_reg;
-> +	const char *name;
-> +	const struct clk_parent_data *parent_data;
-> +	unsigned long flags;
-> +	unsigned int offset;
-> +	unsigned int ref_offset;
-> +	u8 bit_idx;
-> +};
-> +
-> +static const struct regmap_config eic7700_hsp_regmap_config = {
-> +	.reg_bits = 32,
-> +	.val_bits = 32,
-> +	.max_register = 0x1ffc,
-> +	.reg_stride = 4,
-> +	.fast_io = true,
-> +	.use_raw_spinlock = true,
-> +};
-> +
-> +static inline struct eic7700_hsp_clk_gate *to_gate_clk(struct clk_hw *hw)
-> +{
-> +	return container_of(hw, struct eic7700_hsp_clk_gate, hw);
-> +}
-> +
-> +#define EIC7700_HSP_GATE(_id, _name, _pdata, _flags, _offset, _idx,	\
-> +			 _ref_offset)					\
-> +	{								\
-> +		.id		= _id,					\
-> +		.name		= _name,				\
-> +		.parent_data	= _pdata,				\
-> +		.flags		= _flags,				\
-> +		.offset		= _offset,				\
-> +		.ref_offset	= _ref_offset,				\
-> +		.bit_idx	= _idx,					\
-> +	}
-> +
-> +static void hsp_clk_gate_endisable(struct clk_hw *hw, bool enable)
-> +{
-> +	struct eic7700_hsp_clk_gate *gate = to_gate_clk(hw);
-> +
-> +	if (enable) {
-> +		/*
-> +		 * Hardware bug: The USB reference clock must be 24MHz.
-> +		 * The default register value after reset is invalid.
-> +		 * Workaround: Rewrite the correct value before enabling
-> +		 * the USB gate clock.
-> +		 */
-> +		regmap_update_bits(gate->regmap, gate->ref_reg, 0x3f,
-> +				   USB_REF_XTAL24M);
-> +	}
-> +	regmap_assign_bits(gate->regmap, gate->reg, BIT(gate->bit_idx), enable);
-> +}
-> +
-> +static int hsp_clk_gate_enable(struct clk_hw *hw)
-> +{
-> +	hsp_clk_gate_endisable(hw, true);
-> +
-> +	return 0;
-> +}
-> +
-> +static void hsp_clk_gate_disable(struct clk_hw *hw)
-> +{
-> +	hsp_clk_gate_endisable(hw, false);
-> +}
-> +
-> +static int hsp_clk_gate_is_enabled(struct clk_hw *hw)
-> +{
-> +	struct eic7700_hsp_clk_gate *gate = to_gate_clk(hw);
-> +	unsigned int val;
-> +
-> +	regmap_read(gate->regmap, gate->reg, &val);
-> +
-> +	return !!(val & BIT(gate->bit_idx));
+>  .../bindings/clock/eswin,eic7700-hspcrg.yaml  | 63 +++++++++++++++++++
+>  MAINTAINERS                                   |  5 +-
+>  .../dt-bindings/clock/eswin,eic7700-hspcrg.h  | 33 ++++++++++
+>  .../dt-bindings/reset/eswin,eic7700-hspcrg.h  | 21 +++++++
+>  4 files changed, 120 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/eswin,eic7700-hspcrg.yaml
+>  create mode 100644 include/dt-bindings/clock/eswin,eic7700-hspcrg.h
+>  create mode 100644 include/dt-bindings/reset/eswin,eic7700-hspcrg.h
 
-If the regmap_read() fails, then val will be uninitialized.
+Does the MAINTAINERS file need to be updated for these paths? The entry
+in linux-next currently looks like this:
 
-With that fixed:
+ESWIN EIC7700 CLOCK DRIVER
+M:      Yifeng Huang <huangyifeng@eswincomputing.com>
+M:      Xuyang Dong <dongxuyang@eswincomputing.com>
+S:      Maintained
+F:      Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml
+F:      drivers/clk/eswin/
+F:      include/dt-bindings/clock/eswin,eic7700-clock.h
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+Brian
 
