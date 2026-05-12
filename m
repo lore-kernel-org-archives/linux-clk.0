@@ -1,74 +1,74 @@
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012050.outbound.protection.outlook.com [52.101.66.50])
+Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2134.outbound.protection.partner.outlook.cn [139.219.17.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5143ACF1C
-	for <linux-clk@vger.kernel.org>; Tue, 12 May 2026 09:05:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFB3137DE97;
+	Tue, 12 May 2026 09:09:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.134
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778576741; cv=fail; b=JvRx3jguPu5cb7Gid7JSm65UsLLdaODuOoLcMVl2zNboQC2TvBq4Zg9ahLlgnX09JL2IGZQXZ7OP29iCdD6bx5EkfIIuPlvwkd7NFVOwHFL2PSDh6iXzVlnet6deOASQY3IwqzY0Yf7kD2MMr8+FZBM6ukhcxdA8Pt9ZJI7YjOY=
+	t=1778576966; cv=fail; b=nud5tCBEVEOwLRMM8rb0J+m7Ldx88IzIVIWG8UrhitYgPDQDHYk21zD4+z4I5fle2f/pggTRKeVcFg9AtHhT12W2yLzbQ+f55Hy+juFJF45JIxrUMaPbxMA3SLrtlDYNiUSFROJVdLjfcR88QkER1g8nvs/raMW/8AzKVyaH8hQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778576741; c=relaxed/simple;
-	bh=ksnAda+S3StBuOVORPKyY/Utwq0uXLVgOK3kRpD/Kqw=;
-	h=From:Date:Subject:Content-Type:Message-Id:To:Cc:MIME-Version; b=toGEA6yhlM0DhjAOwCcPmKoyuns+9ONPietZlR9XwE82YUMR1pXC2ItirUyHoog2VP3IW6tpi5ICRJ7jU6v/hwH9GoeADFsiUO8gchIAQaXYXFM9aDHKG1Lp146+U+3qEjLDLJLNRHDT15IvU/vnsyShczV6IBO89M4DyFNiPfY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=n9tMNMvn; arc=fail smtp.client-ip=52.101.66.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="n9tMNMvn"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HCZ1zRvcJNOnxnm6MWD2xQjHTJs1IXtuH7bivrz26Tc4dqvrmyyOu5Fq2XI7u0GwGMnPibFCg8ppf+7gxgwdi/7Ap1IPWlacQIgrp0nkSVdjHaSGlaGvIYn1OVMGSl/EsfYfm4N6Ujp/He9u8EEnZKP1G9n5FC2Ewc1j0lU5tbQuqdYK0oa9GaXT0rta4CvGzLBsneMnD7SSSuGhDoJJ0yEFjJvQrCTwsUWjQvIzrnm0EHwprTmgQ4FmB/Dp5uyYtLDdBaTiUvO0VydQ64/kcnnPUISvcrTfGzKJndUToJIDxxWs535e4hE7gp7HKct8mQe3WFDVkV7DaMEyqfZ9/Q==
+	s=arc-20240116; t=1778576966; c=relaxed/simple;
+	bh=r/tCbZPAUX8w/gdY5yXcu8Qtk7uTC7P/YDriCqBUtvE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DX6bEjViADKNU03BThxiVwp23QNNeIaWwVyy45ogXG2Fbqw1etOh4JAYeUM3juK/kacoozw6SbpjbztY6U3dfk+1ExdcGqELvJJPpPm0PxBtjzqHKLJRPQY5JZqtm4D8phr5yxz/ipw7xYYeMOcJfGKPB0kgv5oRl9fZZ52C610=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=NeKbk1UTzmQV8t86AohCjMx0QgAguBsqCws7JwYAHjIgjcAKYj8Oj00AcxMsM27XQtGY9qEdpyD/IEheGVUVu6PXbqI+1G5h16QwQTVT++/eeZ9IZU1mrPqG/EqQlYiqMXfYMh3Z5uUsT/jDhshrUaGiJ5I9Ukey5DeEGR1SB1l5V2shY8d75dhhIuzLvA02cQOj8UxaGYW8PsIeCnEB9006X9Er9imVkFur5rIYIHr0O88jcyhtMLbbMjZyn6kkTgyHgEtCazWeIZ4L3zUFD5hMO51KwpT1cZ7YMEOrDtZvQjmf7EGuE69aQ/qm4Fw5L9OUnw51l33EcCagCmpkWA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
+ s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=48fRlDJ1AqQ6BIcOdbw64QCB+ytL2Gec1G5f13Z8bSc=;
- b=y7fBLEHsOD/nI+w47AXi8OOaByPH9gTnsK4ij9qyQBc9JZu1PNnjxMv27YplFA9Vhnln5IpRIIHp/e4fCuD7+6LgPas01iPFsawPBvT1Tu3DdaY8OFSRgXsLOkBQYHNCzUWWv853XHQh6Dos5EfxZo7QlSdoEzlsx6SpeL2g5siC/1MQPnsOkF/l6Kap3oHGETEHWr2wkhRu2P0LcGeyl7qpCye2NgSDQzik2sfNXVcRz/NNIL7vYUz4s5NkQBTU4rpLC6sds7ILroEHRwi4UwyCIIPzv+1Jrq5Y1bLwHNgAHMsjz2mG6dvGnYzjWgGnL4h/sB1SWa5hz5NiQPGK3g==
+ bh=FXgR+ROj6esv0ZUrqOh2ygbi9yBhpLyISbARGjBq0ig=;
+ b=F+ryNnT5DZg1EMG+FZ6w4n67sYxz8ktilw/aSX0P3X7P2Wc6GPzzv77iIs5PTCjdOq3hV967tyB/pZP8p9YB77NRi1v6m0HSVMb27wWYXlBOsJFJa/83B7yXtJlZtmO+D4J7MgNtmgo64UA3eE6NIVngJTqVLAwavLXaoiQ19KvuXqScfNlfUh0bo8Zb6UT1d5PAyFUxyUI5DRt4xqcPNlqCos/703Fmwiai+dgkRDaMIAnfiqMDb3d0Z2ULjZX56RIwqeye6nSG5GC1KE0fUZCspoxLMDcWn01AH+eaegfvVvMSlykhWa63Xle7s3wXrvJBRXUZuBxskjAmYzJxSw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=48fRlDJ1AqQ6BIcOdbw64QCB+ytL2Gec1G5f13Z8bSc=;
- b=n9tMNMvnOGLfXtqISNc2gQ6/Ng2HBhiN4Pr/Hsd5FePip9A6lKnuWFFijqUU47VS+9fPJRsAEgJSAdxt7tpkXITAgwTqmaPxKd0Iu4v3gcojFhgZ1HHmYwPKtLTpoDEErBw1x6y++uPs7hlsKJgqJJ4p0qWpgm0KC7K/jy8Xfk1XJ/5k0VDI1IHdU7MCnU8aMj3z7XFMsgFqhjqx6mqgNPNurVkfeExDZuF5laZFYywARjvq/TdPizLK3utGwVzv1JtWjNUiirp5DPLWobINFBXQ5MYD/8Rc+cRwjIBZu33AxcGfjycEJr70vPrG1M9I1DG1iSbpYPz+kjme50ziUw==
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from VI1PR04MB6861.eurprd04.prod.outlook.com (2603:10a6:803:13c::9)
- by AS8PR04MB8497.eurprd04.prod.outlook.com (2603:10a6:20b:340::17) with
- Microsoft SMTP Server (version=TLS1_2,
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:17::6) by ZQ4PR01MB1268.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:16::10) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9891.23; Tue, 12 May
- 2026 09:05:33 +0000
-Received: from VI1PR04MB6861.eurprd04.prod.outlook.com
- ([fe80::7f96:4bde:2e55:cd5]) by VI1PR04MB6861.eurprd04.prod.outlook.com
- ([fe80::7f96:4bde:2e55:cd5%4]) with mapi id 15.20.9913.009; Tue, 12 May 2026
- 09:05:32 +0000
-From: Jacky Bai <ping.bai@nxp.com>
-Date: Tue, 12 May 2026 17:08:10 +0800
-Subject: [PATCH] clk: imx: Add audio PLL debugfs for K-divider control
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260512-imx8m_pll_debugfs-v1-1-e1e44b21be90@nxp.com>
-X-B4-Tracking: v=1; b=H4sIAPntAmoC/x3MTQqAIBBA4avIrBNUxKKrREiTYw30h1IE0d2Tl
- t/ivQcyJaYMrXgg0cWZ961AVwLGedgmkhyKwSjjlDVa8no3qz+WxQfCc4pZGuuCiojodA2lOxJ
- Fvv9n17/vB5kYz7tjAAAA
-X-Change-ID: 20260421-imx8m_pll_debugfs-246d0fbbb617
-To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
- Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>
-Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, Jacky Bai <ping.bai@nxp.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1778576904; l=5882;
- i=ping.bai@nxp.com; s=20250804; h=from:subject:message-id;
- bh=ksnAda+S3StBuOVORPKyY/Utwq0uXLVgOK3kRpD/Kqw=;
- b=Pi8rdQCntgD1bel4UmsKb1KndS47EUN5TPJRCc/heCnkKeJnwQg5BdK0f6WBU4UkCkJxMsHYy
- SCsQlvZtYq/C8d5RJjDrsMb6ctLZR0E6bTwzDuniO/ElxDuFzOlT/Cj
-X-Developer-Key: i=ping.bai@nxp.com; a=ed25519;
- pk=ckFjCfRynXBjQGmSmzOVI5hggMD9XnnNlwj/jcO/j1U=
-X-ClientProxiedBy: SG2PR01CA0172.apcprd01.prod.exchangelabs.com
- (2603:1096:4:28::28) To VI1PR04MB6861.eurprd04.prod.outlook.com
- (2603:10a6:803:13c::9)
+ 2026 08:35:49 +0000
+Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
+ ([fe80::e7d4:256c:b066:850d]) by
+ ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn ([fe80::e7d4:256c:b066:850d%5])
+ with mapi id 15.20.9891.021; Tue, 12 May 2026 08:35:49 +0000
+From: Changhuang Liang <changhuang.liang@starfivetech.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney@redhat.com>,
+	Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Emil Renner Berthing <kernel@esmil.dk>
+Cc: Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Alexey Charkov <alchark@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Keguang Zhang <keguang.zhang@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Changhuang Liang <changhuang.liang@starfivetech.com>
+Subject: [PATCH v2 11/12] soc: starfive: Add socinfo driver for JHB100 SoC
+Date: Tue, 12 May 2026 01:35:20 -0700
+Message-Id: <20260512083521.3448-12-changhuang.liang@starfivetech.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20260512083521.3448-1-changhuang.liang@starfivetech.com>
+References: <20260512083521.3448-1-changhuang.liang@starfivetech.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BJSPR01CA0012.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c211:c::24) To ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:17::6)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -76,232 +76,250 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: VI1PR04MB6861:EE_|AS8PR04MB8497:EE_
-X-MS-Office365-Filtering-Correlation-Id: 51227032-dd12-4f3a-3b8c-08deb0059f3f
+X-MS-TrafficTypeDiagnostic: ZQ4PR01MB1202:EE_|ZQ4PR01MB1268:EE_
+X-MS-Office365-Filtering-Correlation-Id: ddd2b04c-f9b1-41ba-5f06-08deb0017884
 X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|52116014|366016|376014|19092799006|11063799003|56012099003|18002099003|38350700014;
+	BCL:0;ARA:13230040|52116014|7416014|376014|366016|1800799024|22082099003|18002099003|38350700014|921020|56012099003;
 X-Microsoft-Antispam-Message-Info:
-	nonMXJsw/WGCvHceZ0dZWWvlXdAhfsi187nxi22D9kMLUKv2GYyYx5G9NfbQ0avuiinZ4xEk51aSQd+8P/qcQTeUqXiF4vGMueEzWmfWJXxwkt39WNlEn8hnUVP7rOVGREBzxEvsa+W1CkSN8Mi37HV5tpLEZQKrAh4scdEbG/28twPr/ek278jCe7fN//63STJbGVXLh/2XvUcPi5fzMLrOrCk1CNkMrZWpXFLgqoCqLBzqswM04J2y6Ol8X7kyENRajLTVGFZx5LHHZSmRlgWWjZdP3NFPb0nI4sCDk1ZA48SorT3jcfnNgIr7VO14s1FbcJcQErgYR/WymsXnya6WqE/WlSi/EDDogsV4IqqqhdzaVvueygYEIvaDYtpwI4st1xa5QfJKqYX0h1OjVu09w6zPFg7GtceP2b3OCHHlFnlCa56VqYfDvv5OYbkK/IhxGGUeZ9IVXa40HNfukucE/aJy6m0Gh8PgdirSwHER5fCJ/Y51o6U4RM0b6ddE59twKnOp/F+4zGcglHw0Pmmu919J5/gpttdv0/hi0K/HpM0DbROlNVz9okm1Kw/j2WWx0bSZaXV+5DPjasdeSzM/EusspKbV7byxbvZBVGXhXwCMfJp4DZBZI+RrT4eHJMkSMY2i6GJoE9r9bvUdvZ41/3dPDU0Yunx85XS5ZTgEAubdxJoC6qBZYEM0gmTR1wGWxITU7lNACR77GqRHoKGMi4gDD6/F9iR7GHhWrkZ6tmMkQOCkOzocSIV6Q40V
+	OVd7jrgDXsBfBwIEAjCmRWadR0Arxw14OUBZwd6BRJ41YgdLOwFUMBl7jQsIDGT+6dCzsmRW9LHFT/N9+peOOR6xG+IAprI0SR1q9b3iwCPo82XUs9aKGN6asv0Murmz2pfqJauM1ZF61ehgubaSVUsb82VveBJYscCwquNuVCsXf84a4OWWDIhO4QvD8xUxtDx8AxePHs8GWHQu6Y5XtsiBCYc8ALutHdumG1/HWCPQwG5432ZQr7y7kV8y5wnE3SX9s0V4mk981Ktw4u1E70cIBVXyC8buvl3xhMIrv7fjTZ/wPy/irCCOelrz9Ao2mpSfitl9GkCAjEdrn56mi34EZXwxMPz4LIDo0zZcfFjVYHFLgMq4nurdEUxPz6m/DVEspkMqi2LwqO19vKDsPj+ZjgDOiKRWWain9Fv/MaqRrR54tyqBUudTpR16THOhejgMiunSn+p9svx2kNtu/BO4lMwyyn7RfvNqagwAiCJiJejWwCVbVj7QHHOafvk9qb93KSSsRO00W9SieWAlUOAtGOuNJLibfqdjKTlrGUhwjP8i41cv+Nq4czzMAOIyy/WzC1LDSnrD0NLYi7/SXA==
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB6861.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(52116014)(366016)(376014)(19092799006)(11063799003)(56012099003)(18002099003)(38350700014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(366016)(1800799024)(22082099003)(18002099003)(38350700014)(921020)(56012099003);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?KzRwT3pjVithWWt1UU9zOWJVZ0FXOGdHYjRKcFBGMURINTZVaTR6Nk4rRk5X?=
- =?utf-8?B?NVZDYS9wTFB1V1NNSlgzOEdRQW41M1RleTM3UzIyU1U1MERPbGIzd3ovNVh4?=
- =?utf-8?B?SVJIbDRzb1NlUFJoSTVnZmRrNDZHOW83STJXWk5Pc05LTTZZU2ZwZnhDR2ZH?=
- =?utf-8?B?WFZGUGllelVCd2pDQU12MmJyZ3NoT3lUSHF5SlNhN2FONC9IV3NhTWxDOEp6?=
- =?utf-8?B?ckI1TXAzbnA2OFgxUmIxNjlFWHlOOWJPWThsRjFTekN6Ty9QYUcrcXBFTU5u?=
- =?utf-8?B?L0hyK1ZBb2k0Tk9UcGlFMUtCMEVSZHFXa0lwRndOemd2a2pvdkFaN09SSktB?=
- =?utf-8?B?dC9yeUVRL05tRXlSU0Mvdk9ac2tEZmVOT2tJTjliTVl2dHM3MmE3R2NKL0l4?=
- =?utf-8?B?SHhZU3pVTHBWRjJOR0ZTcThrOThna1FUOTdYcVV0WDVrTURtbHg4TVRZa3p6?=
- =?utf-8?B?SXkwQjcwU3E5NGpYcCtycTRNdFdUNjBKZncveE9DTDVHWGV6cEFaYzFjVE92?=
- =?utf-8?B?U2RJRC93WWI1RG1tOWVOVmVFZjA4MHBoSXUrbnR3ZEpVRUVvYWdwUkphZ1pP?=
- =?utf-8?B?VGEyN0V2Wkd0Ui91MWpFN1J2a1lkQmtHOHlxbUxXQ0I0bDYrM2NpaUxiMkZw?=
- =?utf-8?B?RkJxYnFLaXdSQXUxcFF5bi9mS09WdVBJWUpnazVRUE5qb1RMeWkzZG9RSldJ?=
- =?utf-8?B?YXlRUlYzcjZqaEZCcHM5aktHYjVkVXJIR3FRZkh3Tk9FbHZwWHFzK05tUDdI?=
- =?utf-8?B?dWxQRThTRlZZeUlGNjBEbWVyNW1sNS9IdXB0Nk5XQi9HYkZsaDJVYU5PS0do?=
- =?utf-8?B?TmQxLzVIdDFFdHBHWDU4TThIcEpMSGdzVHdVcWQwaytNcEdaQk9QWjYyRXQ0?=
- =?utf-8?B?RmFtenkwcFlRLysxU0pjQ1lLMHpJcTY1YU9USW85ZURrdWRtZWZXdzVMOEVv?=
- =?utf-8?B?ckQyM1BVM05va080WFlsTzVMQ2xkd0RYdkVhZnJiYmRNOEdJMnVseDFsV3c5?=
- =?utf-8?B?bGREbHdrOGhCREN6ZmlnU0hvMUxabFE2THR1NVhEcFJnTHdhbzFmaW84TE41?=
- =?utf-8?B?TVM2U3ZLSFR4V0ZQVTMwc1NiTGd0b0FsU3dnM1YxN2l2RlpjV09oajRzcTla?=
- =?utf-8?B?dFV1NENQNmtldW04WXNtSy9qdjhaVVc4WktKZmlSbXdHWS8zdDVPZ1NSUGM4?=
- =?utf-8?B?SjBRUkt6V0h2TW1hc3BuNDBBb1YxUG1PNTZNUXg2U2lia3YwOEcwWWVOV0tL?=
- =?utf-8?B?OE0randjeUpwYUs3Y1ZEMUR5RDdhWm9nWG5rVi9LNGxzNlg5Rkl4SzA3Ync4?=
- =?utf-8?B?LytyTktkSjB1U0ZJVWhKMndyZEpySlZvSi9Id0FCQ0YvUUIyMGpDRFJNRlpI?=
- =?utf-8?B?ZG94enVkb1FsRGtibFJuVVpnZ29za1BITjhkcG9pZnc0RHpaSUlIb3oxdEtB?=
- =?utf-8?B?ZmFTNVJoV0YvbDkrOGNEa0tPVEkyd1VibS9BUEZPME83RDFmaUprT1lVcmxD?=
- =?utf-8?B?dzdlRk5oazU5eUx5M3FsVndNNWN0Q1RRTWJmdFdtcUNoSnFvaVhuRGNjQjA1?=
- =?utf-8?B?QUIwaVYvQ1BxZlFCa0pTenNhbURwTVBnbjg2V2EyVWNzKzBqWklsNzFPQkhr?=
- =?utf-8?B?VkFKVUV6OWhIbVh0UGtHeVZabmE5SXI1b1BMcWZUOUw4NVhCMkhqcnlNMHpa?=
- =?utf-8?B?WTJ3TElCaTR1dEY2OGR2Z0szM3M1ZnFHTHJZNFkyekFrYk8rTmlYLzBhUm9o?=
- =?utf-8?B?aDY2NThLRnQwVXZMaVI1S2QrTzRXMWtpMGRmaFZkNWQvM2JqUnA1cWdkVnVT?=
- =?utf-8?B?NzFJNHdnaVJLc01ES29lcjc5a29iYk80R1lPSmVQZGpBSUZHQUtROTlYQTRP?=
- =?utf-8?B?Uk9xR0Z0RHpNWkYyaEFucmNXVzJ0YVY3Tk0ybzI1cE9pN25FOUJEdCsyWVVp?=
- =?utf-8?B?ZVk3YlVkYkV0ekI0SDYwODhZR3RrZk80Sk84cWRhZTFxcUlaMy93NFBQMmYw?=
- =?utf-8?B?TG9ybi84ejlybnU0OTEzTCtSUHEwTkpTUk1YNW9LcUNLcTQxWENLaVlNcHUz?=
- =?utf-8?B?MWtoQTM2VXNUSUUwWHI5bSt0OXhhMCt4VEs3OTFoRUpNbTVkK3ZGRVEzZ09J?=
- =?utf-8?B?NWJuRWNVTmR1UWd1R0d3YzJXRVJaalVaNGE5T1NpVTBSY2IzMVIrYS9uWXBm?=
- =?utf-8?B?UW5rYVVRUXcraVE0RWRQMWlHcVhQdk5CcjJEejlHb1IvR2huWUdBY1gzWjEv?=
- =?utf-8?B?bC9hNVhzUHZQMnpDTWUrSis5ODNabGt6eGlPSXo3OFBxR2FvRGkzMXBQSkV5?=
- =?utf-8?B?MlUxc0hMRjVTbGdCZkdPYWtCbHJKdTNZdDZJT1hUcXAreW1mbjhJQT09?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 51227032-dd12-4f3a-3b8c-08deb0059f3f
-X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB6861.eurprd04.prod.outlook.com
+	=?us-ascii?Q?1/9nLcqOk2koliM2k4IzfRfPKIgmmLzUvKngmNDGs2lQvIi1LWgFrvx/CY4O?=
+ =?us-ascii?Q?IOVnHRVsdFBrkSiudEJ6ngpU5yGQcZeVsZyPS6Lz6aKiPVak8TL+ZCh/57I7?=
+ =?us-ascii?Q?TVw5iLErvXV2XvMTUvsJN6k4BEajfy9kRZjRx3uPC+uEMpBIpAC8zUyFHk3B?=
+ =?us-ascii?Q?RcbTy/gUj7ELH1VZV3WXY5QntdfuEmQAjH6zy2OwX5qSqDYaL9ua0WoTOWs9?=
+ =?us-ascii?Q?4LpZeniFwHDv5n41GSFvMGDA8K1C6eGNivfj+3TugZ6v9zEfwUE7dHuF2yLH?=
+ =?us-ascii?Q?Jg4hUEbcFPRzCJ/mATPiFuIYVdx9z1BOtusmNcCRqhZb9GMAMJ0XzBnq+nJn?=
+ =?us-ascii?Q?f9M4WXGlypZ03TIQ97k/oSrh6B586FYfGFrDWPqAb4LXa/hnrTX0RdrUiB92?=
+ =?us-ascii?Q?hDUNPqSuu4eY59MybG8NzSvan99nfsuR3sdN+TKLncZzSXa9fx5yZ/0mXI9t?=
+ =?us-ascii?Q?64a1DMaWdelAW1efYHAw+cNNlyobNFl9IgyN1fp92aB+zaCTWqJmpS8JflJT?=
+ =?us-ascii?Q?4UCISfp55fvdGIChJB6SXmRhMXwOH6DbClLRyjOchZawZTFXKxGIE7pQATkw?=
+ =?us-ascii?Q?d5MbZji/hU2lMfcWumtHs5eJc99tR1QZTxfs3oNZ792MIRErZy3JFF3otafp?=
+ =?us-ascii?Q?N1Z3WnRfrSNDNQTDkZi+DGDKBGCNIVR2Zn3D0HZzHW7qUsewjvf8rba6RyjM?=
+ =?us-ascii?Q?xnD2gJSBEXeojqOAgDtSDnyHq20YEQL+W1UyOKz9LfIWW1WJH1+P8jnsmFFO?=
+ =?us-ascii?Q?afliA05WkQ6kDGSgQCkE2CMfzUr+nKCT5qAGKxgKAqS28QPp+DI5e2FCKo/G?=
+ =?us-ascii?Q?wZtdfIwMGGwZH/1AGIYILjTuUukALjHvm4Tv4qSrhNn/8GRM2w29lgGMusQ1?=
+ =?us-ascii?Q?LNua4hUm/PRlcVrz1xkyfSaQMA7Ah9MY3btXcKS37oE9PpVKdO7OMgi9lGrU?=
+ =?us-ascii?Q?xK6uvv6QKZFF5rGuaaGzfBetscN0XfkPFmog7swmfUQnyNfec0Dxh2FA92Gj?=
+ =?us-ascii?Q?KsXt2o/7NfThPwyNPbIWHGDOASiCGiuF3LVGe64WKgBQZbjpV0GqIh5GpFvy?=
+ =?us-ascii?Q?PVyqO8hinWu+woC3VT05ke4GjihserSW9SYnoLxp+rzauXUt7Fbdm9jnsqyi?=
+ =?us-ascii?Q?mnrpzXkW3gR7eDUxgIBw3AUhV1WLa1mQkfledWAXlJtwZAEC+NKI9D545LMp?=
+ =?us-ascii?Q?kzB+6MpXBMpD2i5+krmoYFezaTY8+QcFUTwIzFs8zP/QwhKSAKRMInkA6/k0?=
+ =?us-ascii?Q?0zVl8+W+hAygy81/zurzd010zCA6dhSnbV4eoOJwknJsVDTagR6XNd7jpnM/?=
+ =?us-ascii?Q?3ZLJ0q5qNbWRwzfEfjKcYCOYuxIBHNmXrcLun8NnhM2lqWXshPq75d+xgyX7?=
+ =?us-ascii?Q?0mbBs/cjZL+efyqLByiHF05YC6S+I5Dr0Iz6ftuHp/OkAZR7FuGbH/DwGvUA?=
+ =?us-ascii?Q?GGd+VdGr3ft0u39qAdqtk/Bqz33p1EpB2k72IkMpwkyI5u/EioTExzoV+B2G?=
+ =?us-ascii?Q?JaXdSjWinkEOUaB3t/cfxM70w12SJtr0A3xeLkTom6vDz9wByI+SalWUD6MO?=
+ =?us-ascii?Q?y8BfzIDw5NyKLSiK2xYY+Gwni3QsCGjYjMOiDF7JzI5Chl+hE8JZoUNt29xZ?=
+ =?us-ascii?Q?KJwo2MEs4dwPFMpTjLsXfQiu4Vx0/dew9erb3BrPKdF3S+RaUvna46ok4Ka5?=
+ =?us-ascii?Q?fCehfPVjGpu5EmbDo6ic8MC4k8zq3aadjXXywrLan5nKCCzDCbZ4pLve4Ulk?=
+ =?us-ascii?Q?Uc0SABUD375kyOtWP/mVoELDRoJ86UdCcjSQdSxfzfmZf4F71Rph?=
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ddd2b04c-f9b1-41ba-5f06-08deb0017884
+X-MS-Exchange-CrossTenant-AuthSource: ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2026 09:05:32.8448
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2026 08:35:49.7803
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JZZgtnugmHUDgLP1srezF+289xFRzZNOr+UK65sG043QsOVWe/D9gBBHkTbt3NUSCnsM7rtsAtMqF7gVhumyVQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8497
+X-MS-Exchange-CrossTenant-UserPrincipalName: yn6gBwJOwsAcefg4JHp6yXQQS1N4rUuZjq1uFdF6k3jOysfMNqKfkeJ63bnXtH2KPnEMV7H4ulenmeqWwlb/MRBm99sWhnXqwYluvg7yPgNYNeEc1Q+0FrDhFDgioNSk
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ4PR01MB1268
 
-Add debugfs support for runtime tuning of the audio PLL K divider,
-which enables fine-grained frequency adjustments for audio PLL.
-This is used for:
-  - Audio clock calibration and testing
-  - Debugging audio synchronization issues
+Add socinfo driver for JHB100 SoC. Currently available for distinguishing
+between the two reversions, A0 and A1.
 
-Two debug interfaces are exported to userspace:
-  - delta_k: It is used to adjust the K divider in PLL based on small
-    steps
-  - pll_parameter: It is used for get PLL's current M-divider,
-    P-divider, S-divider & K-divider setting in PLL register
-
-examples for the usage of the two interfaces:
-   1): Get the current PLL setting of dividers
-     cat /sys/kernel/debug/audio_pll_monitor/audio_pll1/pll_parameter
-
-   2): if want to adjust the K-divider by a delta_k '1', then
-     echo 1 > /sys/kernel/debug/audio_pll_monitor/audio_pll1/delta_k;
-
-   3): if want to adjust the K-divider by a delta_k '-1', then
-     echo -1 > /sys/kernel/debug/audio_pll_monitor/audio_pll1/delta_k;
-
-Signed-off-by: Jacky Bai <ping.bai@nxp.com>
+Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
 ---
- drivers/clk/imx/clk-imx8mm.c  |  6 ++++
- drivers/clk/imx/clk-pll14xx.c | 79 +++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/imx/clk.h         |  1 +
- 3 files changed, 86 insertions(+)
+ MAINTAINERS                                   |  5 ++
+ drivers/soc/Kconfig                           |  1 +
+ drivers/soc/Makefile                          |  1 +
+ drivers/soc/starfive/Kconfig                  |  6 ++
+ drivers/soc/starfive/Makefile                 |  2 +
+ drivers/soc/starfive/socinfo/Kconfig          | 11 +++
+ drivers/soc/starfive/socinfo/Makefile         |  2 +
+ drivers/soc/starfive/socinfo/jhb100-socinfo.c | 80 +++++++++++++++++++
+ 8 files changed, 108 insertions(+)
+ create mode 100644 drivers/soc/starfive/Kconfig
+ create mode 100644 drivers/soc/starfive/Makefile
+ create mode 100644 drivers/soc/starfive/socinfo/Kconfig
+ create mode 100644 drivers/soc/starfive/socinfo/Makefile
+ create mode 100644 drivers/soc/starfive/socinfo/jhb100-socinfo.c
 
-diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
-index 319af4deec01c188524807d39dff92bbd08f3601..6a031d7cd031c8b5f5b01e5531ce54360724ba44 100644
---- a/drivers/clk/imx/clk-imx8mm.c
-+++ b/drivers/clk/imx/clk-imx8mm.c
-@@ -298,6 +298,7 @@ static struct clk_hw **hws;
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 6f6aac7cea95..66175f453d20 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -25613,6 +25613,11 @@ S:	Maintained
+ F:	drivers/reset/starfive/reset-starfive-jhb1*
+ F:	include/dt-bindings/reset/starfive,jhb1*.h
  
- static int imx8mm_clocks_probe(struct platform_device *pdev)
- {
-+	struct clk_hw *audio_pll_hws[2];
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
- 	void __iomem *base;
-@@ -610,6 +611,11 @@ static int imx8mm_clocks_probe(struct platform_device *pdev)
- 
- 	imx_register_uart_clocks();
- 
-+	/* Add debug interface for audio PLLs */
-+	audio_pll_hws[0] = hws[IMX8MM_AUDIO_PLL1];
-+	audio_pll_hws[1] = hws[IMX8MM_AUDIO_PLL2];
-+	audio_pll_debug_init(audio_pll_hws, ARRAY_SIZE(audio_pll_hws));
++STARFIVE JHB100 SOCINFO DRIVER
++M:	Changhuang Liang <changhuang.liang@starfivetech.com>
++S:	Maintained
++F:	drivers/soc/starfive/
 +
- 	return 0;
- 
- unregister_hws:
-diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
-index 39600ee22be3066683b562aa6f2a8b750d19c4cc..59f126f35474116bdad0aeda59777b9eb7f246cf 100644
---- a/drivers/clk/imx/clk-pll14xx.c
-+++ b/drivers/clk/imx/clk-pll14xx.c
-@@ -8,6 +8,7 @@
- #include <linux/bitfield.h>
- #include <linux/bits.h>
- #include <linux/clk-provider.h>
-+#include <linux/debugfs.h>
- #include <linux/err.h>
- #include <linux/export.h>
- #include <linux/io.h>
-@@ -551,3 +552,81 @@ struct clk_hw *imx_dev_clk_hw_pll14xx(struct device *dev, const char *name,
- 	return hw;
- }
- EXPORT_SYMBOL_GPL(imx_dev_clk_hw_pll14xx);
+ STARFIVE JHB100 SYSCON
+ M:	Changhuang Liang <changhuang.liang@starfivetech.com>
+ S:	Maintained
+diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
+index a2d65adffb80..b3b01fc38139 100644
+--- a/drivers/soc/Kconfig
++++ b/drivers/soc/Kconfig
+@@ -24,6 +24,7 @@ source "drivers/soc/renesas/Kconfig"
+ source "drivers/soc/rockchip/Kconfig"
+ source "drivers/soc/samsung/Kconfig"
+ source "drivers/soc/sophgo/Kconfig"
++source "drivers/soc/starfive/Kconfig"
+ source "drivers/soc/sunxi/Kconfig"
+ source "drivers/soc/tegra/Kconfig"
+ source "drivers/soc/ti/Kconfig"
+diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
+index c9e689080ceb..009f85ff891a 100644
+--- a/drivers/soc/Makefile
++++ b/drivers/soc/Makefile
+@@ -30,6 +30,7 @@ obj-y				+= renesas/
+ obj-y				+= rockchip/
+ obj-$(CONFIG_SOC_SAMSUNG)	+= samsung/
+ obj-y				+= sophgo/
++obj-y				+= starfive/
+ obj-y				+= sunxi/
+ obj-$(CONFIG_ARCH_TEGRA)	+= tegra/
+ obj-y				+= ti/
+diff --git a/drivers/soc/starfive/Kconfig b/drivers/soc/starfive/Kconfig
+new file mode 100644
+index 000000000000..04b020083d3e
+--- /dev/null
++++ b/drivers/soc/starfive/Kconfig
+@@ -0,0 +1,6 @@
++# SPDX-License-Identifier: GPL-2.0-only
++menu "StarFive SoC (System On Chip) specific Drivers"
 +
++source "drivers/soc/starfive/socinfo/Kconfig"
++
++endmenu
+diff --git a/drivers/soc/starfive/Makefile b/drivers/soc/starfive/Makefile
+new file mode 100644
+index 000000000000..ca1e609b8104
+--- /dev/null
++++ b/drivers/soc/starfive/Makefile
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0-only
++obj-y += socinfo/
+diff --git a/drivers/soc/starfive/socinfo/Kconfig b/drivers/soc/starfive/socinfo/Kconfig
+new file mode 100644
+index 000000000000..92bbab62895b
+--- /dev/null
++++ b/drivers/soc/starfive/socinfo/Kconfig
+@@ -0,0 +1,11 @@
++# SPDX-License-Identifier: GPL-2.0-only
++
++config STARFIVE_JHB100_SOCINFO
++	bool "StarFive JHB100 SoC Information"
++	depends on ARCH_STARFIVE || COMPILE_TEST
++	select SOC_BUS
++	default y
++	help
++	  Include support for the SoC bus socinfo for the StarFive JHB100 SoC
++	  platforms to provide information about the SoC family and variant
++	  to user space.
+diff --git a/drivers/soc/starfive/socinfo/Makefile b/drivers/soc/starfive/socinfo/Makefile
+new file mode 100644
+index 000000000000..26c2bdf1de3b
+--- /dev/null
++++ b/drivers/soc/starfive/socinfo/Makefile
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0-only
++obj-$(CONFIG_STARFIVE_JHB100_SOCINFO)	+= jhb100-socinfo.o
+diff --git a/drivers/soc/starfive/socinfo/jhb100-socinfo.c b/drivers/soc/starfive/socinfo/jhb100-socinfo.c
+new file mode 100644
+index 000000000000..9c5826d7c253
+--- /dev/null
++++ b/drivers/soc/starfive/socinfo/jhb100-socinfo.c
+@@ -0,0 +1,80 @@
++// SPDX-License-Identifier: GPL-2.0-only
 +/*
-+ * Debugfs interface for Audio PLL runtime monitoring and control
++ * Copyright (C) 2025 StarFive Technology Co., Ltd.
 + *
-+ * This interface allows dynamic adjustment of the Audio PLL
-+ * K-divider for precise frequency tuning, particularly useful
-+ * for audio applications.
-+ *
-+ * examples for the usage of the two interfaces:
-+ *   1): Get the current PLL setting of dividers
-+ *     cat /sys/kernel/debug/audio_pll_monitor/audio_pll1/pll_parameter
-+ *
-+ *   2): if want to adjust the K-divider by a delta_k '1', then
-+ *     echo 1 > /sys/kernel/debug/audio_pll_monitor/audio_pll1/delta_k;
-+ *
-+ *   3): if want to adjust the K-divider by a delta_k '-1', then
-+ *     echo -1 > /sys/kernel/debug/audio_pll_monitor/audio_pll1/delta_k;
++ * Author: Changhuang Liang <changhuang.liang@starfivetech.com>
 + */
-+#ifdef CONFIG_DEBUG_FS
-+static int pll_delta_k_set(void *data, u64 val)
++
++#include <linux/bitfield.h>
++#include <linux/init.h>
++#include <linux/mfd/syscon.h>
++#include <linux/of.h>
++#include <linux/regmap.h>
++#include <linux/sys_soc.h>
++
++#define JHB100_REV_ID			0x38
++#define JHB100_REV_ID_CHAR		GENMASK(3, 2)
++#define JHB100_REV_ID_NUM		GENMASK(1, 0)
++
++static int __init starfive_socinfo_init(void)
 +{
-+	struct clk_pll14xx *pll = to_clk_pll14xx(data);
-+	s16 delta_k = (s16)val;
-+	u32 div_ctl1;
-+	s16 kdiv;
++	struct soc_device_attribute *attrs;
++	struct soc_device *soc_dev;
++	const char *machine = NULL;
++	struct device_node *np;
++	struct regmap *regmap;
++	char rev_char;
++	u32 rev_id;
++	int ret;
 +
-+	div_ctl1 = readl_relaxed(pll->base + DIV_CTL1);
-+	kdiv = FIELD_GET(KDIV_MASK, div_ctl1) + delta_k;
-+	writel_relaxed(FIELD_PREP(KDIV_MASK, kdiv), pll->base + DIV_CTL1);
-+
-+	return 0;
-+}
-+DEFINE_DEBUGFS_ATTRIBUTE_SIGNED(delta_k_fops, NULL, pll_delta_k_set, "%lld\n");
-+
-+static int pll_setting_show(struct seq_file *s, void *data)
-+{
-+	struct clk_pll14xx *pll = to_clk_pll14xx(s->private);
-+	u32 div_ctl0, div_ctl1;
-+	u32 mdiv, pdiv, sdiv, kdiv;
-+
-+	div_ctl0 = readl_relaxed(pll->base + DIV_CTL0);
-+	div_ctl1 = readl_relaxed(pll->base + DIV_CTL1);
-+
-+	mdiv = FIELD_GET(MDIV_MASK, div_ctl0);
-+	pdiv = FIELD_GET(PDIV_MASK, div_ctl0);
-+	sdiv = FIELD_GET(SDIV_MASK, div_ctl0);
-+	kdiv = FIELD_GET(KDIV_MASK, div_ctl1);
-+
-+	seq_printf(s, "Mdiv: 0x%x; Pdiv: 0x%x; Sdiv: 0x%x; Kdiv: 0x%x\n",
-+	mdiv, pdiv, sdiv, kdiv);
-+
-+	return 0;
-+}
-+DEFINE_SHOW_ATTRIBUTE(pll_setting);
-+
-+void audio_pll_debug_init(struct clk_hw *hws[], unsigned int num_plls)
-+{
-+	struct dentry *rootdir, *audio_pll_dir;
-+	const char *pll_name;
-+	int i;
-+
-+	rootdir = debugfs_create_dir("audio_pll_monitor", NULL);
-+
-+	for (i = 0; i < num_plls; i++) {
-+		pll_name = clk_hw_get_name(hws[i]);
-+		audio_pll_dir = debugfs_create_dir(pll_name, rootdir);
-+		debugfs_create_file_unsafe("delta_k", 0200, audio_pll_dir,
-+				hws[i], &delta_k_fops);
-+		debugfs_create_file("pll_parameter", 0444, audio_pll_dir,
-+				hws[i], &pll_setting_fops);
++	np = of_find_compatible_node(NULL, NULL, "starfive,jhb100-sys0-syscon");
++	if (!of_device_is_available(np)) {
++		of_node_put(np);
++		return -ENODEV;
 +	}
++
++	regmap = syscon_node_to_regmap(np);
++	if (IS_ERR(regmap)) {
++		of_node_put(np);
++		return PTR_ERR(regmap);
++	}
++
++	ret = regmap_read(regmap, JHB100_REV_ID, &rev_id);
++	if (ret) {
++		of_node_put(np);
++		return ret;
++	}
++
++	of_node_put(np);
++
++	rev_char = (char)FIELD_GET(JHB100_REV_ID_CHAR, rev_id) + 'A';
++	rev_id = (u32)FIELD_GET(JHB100_REV_ID_NUM, rev_id);
++
++	attrs = kzalloc_obj(*attrs);
++	if (!attrs)
++		return -ENOMEM;
++
++	np = of_find_node_by_path("/");
++	of_property_read_string(np, "model", &machine);
++	if (machine)
++		attrs->machine = kstrdup(machine, GFP_KERNEL);
++	of_node_put(np);
++
++	attrs->revision = kasprintf(GFP_KERNEL, "%c%u", rev_char, rev_id);
++	attrs->family = "JH";
++	attrs->soc_id = "JHB100";
++
++	soc_dev = soc_device_register(attrs);
++	if (IS_ERR(soc_dev)) {
++		kfree(attrs->revision);
++		kfree(attrs->machine);
++		kfree(attrs);
++		return PTR_ERR(soc_dev);
++	}
++
++	pr_info("StarFive %s SoC rev(%s)\n", attrs->soc_id, attrs->revision);
++
++	return 0;
 +}
-+#else /* !CONFIG_DEBUG_FS */
-+void audio_pll_debug_init(struct clk_hw *hws[], unsigned int num_plls)
-+{
-+}
-+#endif /* CONFIG_DEBUG_FS */
-+EXPORT_SYMBOL_GPL(audio_pll_debug_init);
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index aa5202f284f3d1b7c1b4bf65e2329831832b43a5..9611ab127dad6f23770c18e22e1acbe2fc22bd4e 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -487,4 +487,5 @@ struct clk_hw *imx_clk_gpr_mux(const char *name, const char *compatible,
- 			       u32 reg, const char **parent_names,
- 			       u8 num_parents, const u32 *mux_table, u32 mask);
- 
-+void audio_pll_debug_init(struct clk_hw **hws, unsigned int num_plls);
- #endif
-
----
-base-commit: e98d21c170b01ddef366f023bbfcf6b31509fa83
-change-id: 20260421-imx8m_pll_debugfs-246d0fbbb617
-
-Best regards,
++
++early_initcall(starfive_socinfo_init);
 -- 
-Jacky Bai <ping.bai@nxp.com>
+2.25.1
 
