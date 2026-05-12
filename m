@@ -1,236 +1,216 @@
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [52.229.168.213])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89062DB795;
-	Tue, 12 May 2026 02:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.229.168.213
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F5825FA29
+	for <linux-clk@vger.kernel.org>; Tue, 12 May 2026 03:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778551717; cv=none; b=aYZ842ow+G8Eznbh5JbImxZ82uEdOPYw4lN/++4PLUk7+shoGcjV2mz6oWhHtaPCpyG7UHWvzWQytiIIbcZIbkabEgnB8BBOIL+xscMJiLSMBr3dl5fQZyrmy2HXnA9fNNXztiKcs3l+xwJgh7r9Kde9r6WYUpskorkU1e4+i5Y=
+	t=1778557775; cv=none; b=Icr58HaCAllD6fmKRAK5HnI8HMERS3+YbFTP9up9S7/5/Y6TCXyNPBY+JPjOl7/EAr6KCJe03gQx2CfZ5IjOJ0iIpJd3lDUWwTHhmtte0MBZ7SuG6vipDouvkS6iQ4pXQuhZMNzWCSma9ZvJu0Pw3+2Z8+93+4fxeaco50+MZwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778551717; c=relaxed/simple;
-	bh=kF448NO8dSgfEhleJ0R05SpPBrhpWEsmbat1P76r544=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=o3TUKbwEIqJBF4nhqqxGt9h9NNZ+GElmIWNsm8zEmx5ILKOJ5YJzSJ4hDFBLZA7XDNTd0933qu9S7TYunojkBmJkFFjaO9f9JtSIPfuJbeYD4jxFpNfa9QefrESa0mlROeXbOxJn0HWcFHV5ekuwepCU3XPMeqcoXXwTjqeKJf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=52.229.168.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from E0005152DT.eswin.cn (unknown [10.12.96.41])
-	by app2 (Coremail) with SMTP id TQJkCgBHXJ+RiwJqNa8YAA--.13862S2;
-	Tue, 12 May 2026 10:08:24 +0800 (CST)
-From: dongxuyang@eswincomputing.com
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	p.zabel@pengutronix.de,
-	huangyifeng@eswincomputing.com,
-	dongxuyang@eswincomputing.com,
-	benoit.monin@bootlin.com,
-	bmasney@redhat.com
-Cc: ningyu@eswincomputing.com,
-	linmin@eswincomputing.com,
-	pinkesh.vaghela@einfochips.com
-Subject: [PATCH v4 3/3] reset: eswin: Add eic7700 HSP reset driver
-Date: Tue, 12 May 2026 10:08:13 +0800
-Message-Id: <20260512020813.1045-1-dongxuyang@eswincomputing.com>
-X-Mailer: git-send-email 2.31.1.windows.1
-In-Reply-To: <20260512020432.671-1-dongxuyang@eswincomputing.com>
-References: <20260512020432.671-1-dongxuyang@eswincomputing.com>
+	s=arc-20240116; t=1778557775; c=relaxed/simple;
+	bh=t10Vxl8iRtuwRDoCa1y2ZxSBM2+oRY+4XLKTZGfwvBY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NYb/VKMumQK6Zlhgx/jFHOYgpFx0HOZ3vIivpdB/Pn1SgM4/eOTWPmzfgKO57unjyMPqqUCZlU3Tjx3XxHyByPtHmqP01b3aVT0rpMTY0oTXY97A7QKvvSBVYpBv6bn49G6G371EcD7XuRe3OHMkm3337It/W4GRi8rHXJI6aek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=oNjZRQZ/; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oNjZRQZ/"
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-36622412e97so3185572a91.2
+        for <linux-clk@vger.kernel.org>; Mon, 11 May 2026 20:49:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1778557774; x=1779162574; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=x/iG5bC/BJdPkF3jn2lGTYxhj70jgu4WHqDM6ahZHL0=;
+        b=oNjZRQZ/353iUoGCUcugK1xfw7iAYVJwryITDMwGFJiY3f/OApqeDjC/eriNDm6Yzk
+         9xqbK1jhsrfBWXgnA/2AJOpECxZEJBqWFjbGa7BCprq1HRS1H92HsjZFj2zwbwhR7cFn
+         VJIwkSkVrqR4VZ+H1YUyK39Ms7sycsBkT0zRskOOE9VM73LRbcqDwPnbW1HMQtlpMsZd
+         gcB71vkdyRsfbw3rvusZkKn9g201v8wfIAXOTU0YA3aCbAqxFE1cPMGFo5mNyXbg1dlQ
+         DgeykUBrP26f5tBX1VYkkTljH+Gc6TquAx1qDrZZ42WIftpivbeuoHWdpWVyJxW3e67J
+         yFOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778557774; x=1779162574;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x/iG5bC/BJdPkF3jn2lGTYxhj70jgu4WHqDM6ahZHL0=;
+        b=J2QPULjjfQ+wxLSB5ED7DyCfAg0lwNBb0StEKwt8MrIK7FLHvaE/0Hqdb61+FrEQx2
+         Trib5P0iPVWnsW6Ub+AT4mjc3K4i0ZVBvuqArp4XpcOpiT3Lw/3sYidaQENv+JqIzoh3
+         6cW0Yfz4wePtuAzo44albxj+9pzvkZhMIYP5D1tQMtiL3EYZy4f4f4wxW2OKhvgX6Hmz
+         hnkwxnt1xy1W0mPySm746TwxU0PvGzfn2Wdg/VfimrHvhPSDjAe41aYMp9M57VlhC+3T
+         tKiDajARmE009hi0TeBdY2D3UhnC7YuLvQvli6CXmslAMRi4sJArw2/r1+m0+09hh5Yz
+         Yzqg==
+X-Forwarded-Encrypted: i=1; AFNElJ/EIvmcm12eg3cUFCFJqbz0YDzOHtJUubpPcjVPb5JiZ55GYF3TX0mYqj2v9V8+MgmP1EDkxh3V5Cc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwyBmQmXgyPO0cTyTsbTpVZ0muQNphpIz1xKOj7nJYRS1m6a+A
+	q5I+9ZQfoFw5e5Fj3+RuAmAsNMZ5dTtao+D9i6DCAwBIjrqYTggecg+XzFXXgw==
+X-Gm-Gg: Acq92OFNpHejoRHystHNxoS68Zc4KCITkuJjPcU7tKYN0iFqdZclrGYulPlHCC5+a/Z
+	FElyoG8/J3f70xGWa6Susz6q+3A9ImW2Zd6nH20S2LePEE9ZAx3z2iJds7Scop9sVeAHDLvZuaM
+	bDspkPNqb1hw3V5z23l7N/Cob5pDSuNIqtjFTRUPxZ3zJbbgh79GYxD4GWKG61vp0gqDIczOy++
+	wCns070nZ0b6JCowqrG9T7r6ZDnXRqc+jBWA8Ai0wtedbhfAYvH3ocDbhth2cP2he8skK7FA/hn
+	UgFwGg2yoGyMmuNI6dctANPJegANO+iKBMvVLKruLtXyUTv92fd39C0VwdmU9F8fH7a6c3sXY8r
+	jac9E63QSrULNRSPPU2XODWCQeoXhR+gwUCiddFXGFZQvJ5k/CS+hFpc0+M+lhBrp3vFw3Ld5R8
+	Lc1aoXDcbAh21GMMuObC/sfQs7HQFp6O4hwsUYS+iyd5+QzQuGW8LmF3I/SyqMgnGqDqV9Nha/V
+	f3P
+X-Received: by 2002:a17:90b:1808:b0:366:33a6:9921 with SMTP id 98e67ed59e1d1-367d468c7f1mr12615310a91.4.1778557773606;
+        Mon, 11 May 2026 20:49:33 -0700 (PDT)
+Received: from [192.168.0.100] (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-367d687c565sm11705782a91.17.2026.05.11.20.49.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 May 2026 20:49:32 -0700 (PDT)
+Message-ID: <2c061342-850a-48c5-a75e-2a755bcfac4b@gmail.com>
+Date: Tue, 12 May 2026 11:49:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] clk: nuvoton: ma35d1: fix PLL frequency calculation
+To: Brian Masney <bmasney@redhat.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, ychuang3@nuvoton.com,
+ schung@nuvoton.com, yclu4@nuvoton.com, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260511031600.31929-1-a0987203069@gmail.com>
+ <20260511031600.31929-2-a0987203069@gmail.com> <agH7qJypv48vkZOr@redhat.com>
+Content-Language: en-US
+From: Joey Lu <a0987203069@gmail.com>
+In-Reply-To: <agH7qJypv48vkZOr@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:TQJkCgBHXJ+RiwJqNa8YAA--.13862S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxuFy3KF4DGr1fZw1rXF1DZFb_yoW7Kr48pF
-	WrCF13Ar4UXrWfGFZ7GF1qyFy3Xan3try5C3yxJ3WS9rsxWFyUJrWUta40yF9rJr9rGry5
-	JF1agF1xuFnIyrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26r
-	xl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r1q6rW5McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
-	8cxan2IY04v7M4kE6xkIj40Ew7xC0wCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE-syl42
-	xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWU
-	GwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI4
-	8JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4U
-	JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcV
-	C2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjW8BUUUUUU==
-X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/
 
-From: Xuyang Dong <dongxuyang@eswincomputing.com>
 
-Add auxiliary driver to support ESWIN EIC7700 high-speed peripherals
-system. The reset controller is created using the auxiliary device
-framework and set up in the clock driver.
+On 5/11/2026 11:54 PM, Brian Masney wrote:
+> Hi Joey,
+>
+> On Mon, May 11, 2026 at 11:15:59AM +0800, Joey Lu wrote:
+>> Fix four bugs in the MA35D1 PLL driver:
+>>
+>> 1. PLL_CTL1_FRAC was defined as GENMASK(31, 24) (8 bits), but the
+>>     hardware fractional field spans bits [31:8] (24 bits). This caused
+>>     wrong frequency calculation in fractional and spread-spectrum modes.
+>>
+>> 2. div_u64() does not modify its argument in-place; the quotient must
+>>     be assigned from the return value. Both ma35d1_calc_smic_pll_freq()
+>>     and ma35d1_calc_pll_freq() discarded the return value, leaving
+>>     pll_freq undivided and orders of magnitude too high.
+>>
+>> 3. The fractional-mode calculation divided x by FIELD_MAX(PLL_CTL1_FRAC)
+>>     to get 2 decimal digits. After correcting the mask to 24 bits, update
+>>     the arithmetic to use 3 decimal digits with proper 24-bit fixed-point
+>>     rounding.
+>>
+>> 4. ma35d1_clk_pll_determine_rate() called ma35d1_pll_find_closest()
+>>     unconditionally before the switch, but then overwrote its result by
+>>     reading the current hardware registers for every PLL type. Move the
+>>     find_closest() call inside the configurable-PLL branch (APLL, EPLL,
+>>     VPLL). CAPLL and DDRPLL do not support runtime rate changes and
+>>     correctly return the current hardware rate.
+>>
+>> Fixes: 691521a367cf ("clk: nuvoton: Add clock driver for ma35d1 clock controller")
+>> Signed-off-by: Joey Lu <a0987203069@gmail.com>
+> Thanks for the patch, however this should really be broken up into more
+> patches. If possible, one patch for each of the fixes.
+>
+> Brian
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
----
- drivers/reset/Kconfig             |  11 +++
- drivers/reset/Makefile            |   1 +
- drivers/reset/reset-eic7700-hsp.c | 112 ++++++++++++++++++++++++++++++
- 3 files changed, 124 insertions(+)
- create mode 100644 drivers/reset/reset-eic7700-hsp.c
+Thanks for the feedback.🙂
 
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index d009eb0849a3..f63e89ed6a4e 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -83,6 +83,17 @@ config RESET_EIC7700
- 	  The driver supports eic7700 series chips and provides functionality for
- 	  asserting and deasserting resets on the chip.
- 
-+config RESET_EIC7700_HSP
-+	tristate "EIC7700 HSP Reset controller"
-+	depends on ARCH_ESWIN || COMPILE_TEST
-+	select AUXILIARY_BUS
-+	help
-+	  This enables the HSP reset controller driver for ESWIN SoCs. This
-+	  driver is specific to ESWIN SoCs and should only be enabled if using
-+	  such hardware.
-+	  The driver supports EIC7700 series chips and provides functionality
-+	  for asserting and deasserting resets on the chip.
-+
- config RESET_EYEQ
- 	bool "Mobileye EyeQ reset controller"
- 	depends on EYEQ || COMPILE_TEST
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index 3e52569bd276..a75af831ef58 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -15,6 +15,7 @@ obj-$(CONFIG_RESET_BERLIN) += reset-berlin.o
- obj-$(CONFIG_RESET_BRCMSTB) += reset-brcmstb.o
- obj-$(CONFIG_RESET_BRCMSTB_RESCAL) += reset-brcmstb-rescal.o
- obj-$(CONFIG_RESET_EIC7700) += reset-eic7700.o
-+obj-$(CONFIG_RESET_EIC7700_HSP) += reset-eic7700-hsp.o
- obj-$(CONFIG_RESET_EYEQ) += reset-eyeq.o
- obj-$(CONFIG_RESET_GPIO) += reset-gpio.o
- obj-$(CONFIG_RESET_HSDK) += reset-hsdk.o
-diff --git a/drivers/reset/reset-eic7700-hsp.c b/drivers/reset/reset-eic7700-hsp.c
-new file mode 100644
-index 000000000000..bdd4f5e3d7a7
---- /dev/null
-+++ b/drivers/reset/reset-eic7700-hsp.c
-@@ -0,0 +1,112 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright 2026, Beijing ESWIN Computing Technology Co., Ltd..
-+ * All rights reserved.
-+ *
-+ * ESWIN EIC7700 HSP Reset Driver
-+ *
-+ * Authors: Xuyang Dong <dongxuyang@eswincomputing.com>
-+ */
-+
-+#include <linux/auxiliary_bus.h>
-+#include <linux/device.h>
-+#include <linux/regmap.h>
-+#include <linux/reset-controller.h>
-+
-+#include <dt-bindings/reset/eswin,eic7700-hspcrg.h>
-+
-+/**
-+ * struct eic7700_hsp_reset_data - reset controller information structure
-+ * @rcdev: reset controller entity
-+ * @regmap: regmap handle containing the memory-mapped reset registers
-+ */
-+struct eic7700_hsp_reset_data {
-+	struct reset_controller_dev rcdev;
-+	struct regmap *regmap;
-+};
-+
-+struct eic7700_hsp_reg {
-+	u32 reg;
-+	u32 bit;
-+	bool active_low;
-+};
-+
-+static inline struct eic7700_hsp_reset_data *
-+to_eic7700_hsp_reset(struct reset_controller_dev *rcdev)
-+{
-+	return container_of(rcdev, struct eic7700_hsp_reset_data, rcdev);
-+}
-+
-+static const struct eic7700_hsp_reg eic7700_hsp_reset[] = {
-+	[EIC7700_HSP_RST_SATA_P0]	= {0x340, BIT(0), false},
-+	[EIC7700_HSP_RST_SATA_PHY]	= {0x340, BIT(1), false},
-+	[EIC7700_HSP_RST_USB0]		= {0x800, BIT(24), true},
-+	[EIC7700_HSP_RST_USB1]		= {0x900, BIT(24), true},
-+	[EIC7700_HSP_RST_USB0_PHY]	= {0x800, BIT(25), false},
-+	[EIC7700_HSP_RST_USB1_PHY]	= {0x900, BIT(25), false},
-+};
-+
-+static int eic7700_hsp_reset_assert(struct reset_controller_dev *rcdev,
-+				    unsigned long id)
-+{
-+	struct eic7700_hsp_reset_data *data = to_eic7700_hsp_reset(rcdev);
-+
-+	return regmap_assign_bits(data->regmap, eic7700_hsp_reset[id].reg,
-+				  eic7700_hsp_reset[id].bit,
-+				  !eic7700_hsp_reset[id].active_low);
-+}
-+
-+static int eic7700_hsp_reset_deassert(struct reset_controller_dev *rcdev,
-+				      unsigned long id)
-+{
-+	struct eic7700_hsp_reset_data *data = to_eic7700_hsp_reset(rcdev);
-+
-+	return regmap_assign_bits(data->regmap, eic7700_hsp_reset[id].reg,
-+				  eic7700_hsp_reset[id].bit,
-+				  eic7700_hsp_reset[id].active_low);
-+}
-+
-+static const struct reset_control_ops eic7700_hsp_reset_ops = {
-+	.assert = eic7700_hsp_reset_assert,
-+	.deassert = eic7700_hsp_reset_deassert,
-+};
-+
-+static int eic7700_hsp_reset_probe(struct auxiliary_device *adev,
-+				   const struct auxiliary_device_id *id)
-+{
-+	struct eic7700_hsp_reset_data *data;
-+	struct device *dev = &adev->dev;
-+
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	data->regmap = dev_get_regmap(dev->parent, NULL);
-+	if (!data->regmap)
-+		return dev_err_probe(dev, -ENODEV, "failed to get regmap!\n");
-+
-+	data->rcdev.owner = THIS_MODULE;
-+	data->rcdev.ops = &eic7700_hsp_reset_ops;
-+	data->rcdev.of_node = dev->parent->of_node;
-+	data->rcdev.dev = dev;
-+	data->rcdev.nr_resets = ARRAY_SIZE(eic7700_hsp_reset);
-+
-+	return devm_reset_controller_register(dev, &data->rcdev);
-+}
-+
-+static const struct auxiliary_device_id eic7700_hsp_reset_ids[] = {
-+	{ .name = "clk_eic7700_hsp.hsp-reset", },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(auxiliary, eic7700_hsp_reset_ids);
-+
-+static struct auxiliary_driver eic7700_hsp_reset_driver = {
-+	.probe	= eic7700_hsp_reset_probe,
-+	.id_table = eic7700_hsp_reset_ids,
-+};
-+
-+module_auxiliary_driver(eic7700_hsp_reset_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Xuyang Dong <dongxuyang@eswincomputing.com>");
-+MODULE_DESCRIPTION("ESWIN EIC7700 HSP Reset Controller Driver");
--- 
-2.34.1
+I understand your point and will split the changes into several patches, 
+with each patch addressing one fix.
 
+>
+>> ---
+>>   drivers/clk/nuvoton/clk-ma35d1-pll.c | 34 +++++++++++++--------------
+>>   1 file changed, 17 insertions(+), 17 deletions(-)
+>>
+>> diff --git a/drivers/clk/nuvoton/clk-ma35d1-pll.c b/drivers/clk/nuvoton/clk-ma35d1-pll.c
+>> index 4620acfe47e8..314b81e7727c 100644
+>> --- a/drivers/clk/nuvoton/clk-ma35d1-pll.c
+>> +++ b/drivers/clk/nuvoton/clk-ma35d1-pll.c
+>> @@ -48,7 +48,7 @@
+>>   #define PLL_CTL1_PD		BIT(0)
+>>   #define PLL_CTL1_BP		BIT(1)
+>>   #define PLL_CTL1_OUTDIV		GENMASK(6, 4)
+>> -#define PLL_CTL1_FRAC		GENMASK(31, 24)
+>> +#define PLL_CTL1_FRAC		GENMASK(31, 8)
+>>   #define PLL_CTL2_SLOPE		GENMASK(23, 0)
+>>   
+>>   #define INDIV_MIN		1
+>> @@ -92,7 +92,7 @@ static unsigned long ma35d1_calc_smic_pll_freq(u32 pll0_ctl0,
+>>   	p = FIELD_GET(SPLL0_CTL0_OUTDIV, pll0_ctl0);
+>>   	outdiv = 1 << p;
+>>   	pll_freq = (u64)parent_rate * n;
+>> -	div_u64(pll_freq, m * outdiv);
+>> +	pll_freq = div_u64(pll_freq, m * outdiv);
+>>   	return pll_freq;
+>>   }
+>>   
+>> @@ -110,12 +110,12 @@ static unsigned long ma35d1_calc_pll_freq(u8 mode, u32 *reg_ctl, unsigned long p
+>>   
+>>   	if (mode == PLL_MODE_INT) {
+>>   		pll_freq = (u64)parent_rate * n;
+>> -		div_u64(pll_freq, m * p);
+>> +		pll_freq = div_u64(pll_freq, m * p);
+>>   	} else {
+>>   		x = FIELD_GET(PLL_CTL1_FRAC, reg_ctl[1]);
+>> -		/* 2 decimal places floating to integer (ex. 1.23 to 123) */
+>> -		n = n * 100 + ((x * 100) / FIELD_MAX(PLL_CTL1_FRAC));
+>> -		pll_freq = div_u64(parent_rate * n, 100 * m * p);
+>> +		/* x is 24-bit fractional part, convert to 3 decimal digits */
+>> +		n = n * 1000 + (u32)(((u64)x * 1000 + 500) >> 24);
+>> +		pll_freq = div_u64((u64)parent_rate * n, 1000 * m * p);
+>>   	}
+>>   	return pll_freq;
+>>   }
+>> @@ -255,32 +255,32 @@ static int ma35d1_clk_pll_determine_rate(struct clk_hw *hw,
+>>   	if (req->best_parent_rate < PLL_FREF_MIN_FREQ || req->best_parent_rate > PLL_FREF_MAX_FREQ)
+>>   		return -EINVAL;
+>>   
+>> -	ret = ma35d1_pll_find_closest(pll, req->rate, req->best_parent_rate,
+>> -				      reg_ctl, &pll_freq);
+>> -	if (ret < 0)
+>> -		return ret;
+>> -
+>>   	switch (pll->id) {
+>>   	case CAPLL:
+>> +	case DDRPLL:
+>> +		/* Read-only PLLs: return current rate */
+>>   		reg_ctl[0] = readl_relaxed(pll->ctl0_base);
+>> -		pll_freq = ma35d1_calc_smic_pll_freq(reg_ctl[0], req->best_parent_rate);
+>> +		if (pll->id == CAPLL) {
+>> +			pll_freq = ma35d1_calc_smic_pll_freq(reg_ctl[0], req->best_parent_rate);
+>> +		} else {
+>> +			reg_ctl[1] = readl_relaxed(pll->ctl1_base);
+>> +			pll_freq = ma35d1_calc_pll_freq(pll->mode, reg_ctl, req->best_parent_rate);
+>> +		}
+>>   		req->rate = pll_freq;
+>> -
+>>   		return 0;
+>> -	case DDRPLL:
+>>   	case APLL:
+>>   	case EPLL:
+>>   	case VPLL:
+>> -		reg_ctl[0] = readl_relaxed(pll->ctl0_base);
+>> -		reg_ctl[1] = readl_relaxed(pll->ctl1_base);
+>> -		pll_freq = ma35d1_calc_pll_freq(pll->mode, reg_ctl, req->best_parent_rate);
+>> +		/* Configurable PLLs: find closest achievable rate */
+>> +		ret = ma35d1_pll_find_closest(pll, req->rate, req->best_parent_rate,
+>> +					      reg_ctl, &pll_freq);
+>> +		if (ret < 0)
+>> +			return ret;
+>>   		req->rate = pll_freq;
+>> -
+>>   		return 0;
+>>   	}
+>>   
+>>   	req->rate = 0;
+>> -
+>>   	return 0;
+>>   }
+>>   
+>> -- 
+>> 2.49.0
