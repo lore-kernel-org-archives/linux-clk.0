@@ -1,325 +1,241 @@
-Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2134.outbound.protection.partner.outlook.cn [139.219.17.134])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFB3137DE97;
-	Tue, 12 May 2026 09:09:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.134
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778576966; cv=fail; b=nud5tCBEVEOwLRMM8rb0J+m7Ldx88IzIVIWG8UrhitYgPDQDHYk21zD4+z4I5fle2f/pggTRKeVcFg9AtHhT12W2yLzbQ+f55Hy+juFJF45JIxrUMaPbxMA3SLrtlDYNiUSFROJVdLjfcR88QkER1g8nvs/raMW/8AzKVyaH8hQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778576966; c=relaxed/simple;
-	bh=r/tCbZPAUX8w/gdY5yXcu8Qtk7uTC7P/YDriCqBUtvE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DX6bEjViADKNU03BThxiVwp23QNNeIaWwVyy45ogXG2Fbqw1etOh4JAYeUM3juK/kacoozw6SbpjbztY6U3dfk+1ExdcGqELvJJPpPm0PxBtjzqHKLJRPQY5JZqtm4D8phr5yxz/ipw7xYYeMOcJfGKPB0kgv5oRl9fZZ52C610=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NeKbk1UTzmQV8t86AohCjMx0QgAguBsqCws7JwYAHjIgjcAKYj8Oj00AcxMsM27XQtGY9qEdpyD/IEheGVUVu6PXbqI+1G5h16QwQTVT++/eeZ9IZU1mrPqG/EqQlYiqMXfYMh3Z5uUsT/jDhshrUaGiJ5I9Ukey5DeEGR1SB1l5V2shY8d75dhhIuzLvA02cQOj8UxaGYW8PsIeCnEB9006X9Er9imVkFur5rIYIHr0O88jcyhtMLbbMjZyn6kkTgyHgEtCazWeIZ4L3zUFD5hMO51KwpT1cZ7YMEOrDtZvQjmf7EGuE69aQ/qm4Fw5L9OUnw51l33EcCagCmpkWA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FXgR+ROj6esv0ZUrqOh2ygbi9yBhpLyISbARGjBq0ig=;
- b=F+ryNnT5DZg1EMG+FZ6w4n67sYxz8ktilw/aSX0P3X7P2Wc6GPzzv77iIs5PTCjdOq3hV967tyB/pZP8p9YB77NRi1v6m0HSVMb27wWYXlBOsJFJa/83B7yXtJlZtmO+D4J7MgNtmgo64UA3eE6NIVngJTqVLAwavLXaoiQ19KvuXqScfNlfUh0bo8Zb6UT1d5PAyFUxyUI5DRt4xqcPNlqCos/703Fmwiai+dgkRDaMIAnfiqMDb3d0Z2ULjZX56RIwqeye6nSG5GC1KE0fUZCspoxLMDcWn01AH+eaegfvVvMSlykhWa63Xle7s3wXrvJBRXUZuBxskjAmYzJxSw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:17::6) by ZQ4PR01MB1268.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:16::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9891.23; Tue, 12 May
- 2026 08:35:49 +0000
-Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
- ([fe80::e7d4:256c:b066:850d]) by
- ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn ([fe80::e7d4:256c:b066:850d%5])
- with mapi id 15.20.9891.021; Tue, 12 May 2026 08:35:49 +0000
-From: Changhuang Liang <changhuang.liang@starfivetech.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney@redhat.com>,
-	Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Emil Renner Berthing <kernel@esmil.dk>
-Cc: Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Alexey Charkov <alchark@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Keguang Zhang <keguang.zhang@gmail.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Changhuang Liang <changhuang.liang@starfivetech.com>
-Subject: [PATCH v2 11/12] soc: starfive: Add socinfo driver for JHB100 SoC
-Date: Tue, 12 May 2026 01:35:20 -0700
-Message-Id: <20260512083521.3448-12-changhuang.liang@starfivetech.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20260512083521.3448-1-changhuang.liang@starfivetech.com>
-References: <20260512083521.3448-1-changhuang.liang@starfivetech.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BJSPR01CA0012.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c211:c::24) To ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:17::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8B842B72B;
+	Tue, 12 May 2026 09:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778577446; cv=none; b=rOZaCuCZihASqLbGyRnGTVW6DxckguuzrljkvbPiYwuJslrunNX19Gy/JZ3IU1MKqIetg2Sfr30GvuEKh+5xVmyfqnOIy/nUfPPmOjDim5fDso9Wwo19ezdS26VS4dBalIubkhlnB9Hs8PgHM/9SWCoCB5RmtUcZgYiCJcGTlNg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778577446; c=relaxed/simple;
+	bh=8Y13EsEyZb7cILHRpxmoq+9zMBOXxuWDBruFP5HMvY8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WRZQ3UJuHkoCSBlq5w1PrVYQmrd8y0Id7NP9L5xoz0dAsUO90+SxlxmUOVrjS7Sd3hF6nY0+Le1hWOtVejfWZRswQswZIUFcKB8XKCpa1320oh4NjnxLPfWV+1jHiGZcpeb2Qt/yB54z4yvfp7TcJZJMtSfX6u47b1tQKQbxJUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C2nZCxqR; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C2nZCxqR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5E04C2BCB0;
+	Tue, 12 May 2026 09:17:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1778577444;
+	bh=8Y13EsEyZb7cILHRpxmoq+9zMBOXxuWDBruFP5HMvY8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=C2nZCxqRN5W9icnha1kAmS1md3NeWCLlm2GEP/Nq8jdq/z7pmGhAMjhMSLklFjkF4
+	 aVs7QXZrrAhy+OZB6srNT3ZuFGtivMYCqdoZH/R7MEVZ6aywkmjBAT8Chgyvth1aIQ
+	 j8YXxmnKIfh30qa7xK6BuHBnmj4oEHVfAMcGzUob/du24bsY8j8lcznntu5Sm6hJon
+	 +sFAyU7OlySium0xJtlhx4OsMI9/SDXKBEFSpr1N6u+y94MChYSHsA0pOwyHHk2579
+	 WUgC6dY+9gVEmm/UcQgPrEpimN8MPMcL/yhU9b/UiDafTOK2N9yQO+UAiPOq9DPVd9
+	 gGFKMMiHixHOQ==
+Message-ID: <9deb4b13-be1c-4163-a421-bcf5f3babd29@kernel.org>
+Date: Tue, 12 May 2026 10:17:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: ZQ4PR01MB1202:EE_|ZQ4PR01MB1268:EE_
-X-MS-Office365-Filtering-Correlation-Id: ddd2b04c-f9b1-41ba-5f06-08deb0017884
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|7416014|376014|366016|1800799024|22082099003|18002099003|38350700014|921020|56012099003;
-X-Microsoft-Antispam-Message-Info:
-	OVd7jrgDXsBfBwIEAjCmRWadR0Arxw14OUBZwd6BRJ41YgdLOwFUMBl7jQsIDGT+6dCzsmRW9LHFT/N9+peOOR6xG+IAprI0SR1q9b3iwCPo82XUs9aKGN6asv0Murmz2pfqJauM1ZF61ehgubaSVUsb82VveBJYscCwquNuVCsXf84a4OWWDIhO4QvD8xUxtDx8AxePHs8GWHQu6Y5XtsiBCYc8ALutHdumG1/HWCPQwG5432ZQr7y7kV8y5wnE3SX9s0V4mk981Ktw4u1E70cIBVXyC8buvl3xhMIrv7fjTZ/wPy/irCCOelrz9Ao2mpSfitl9GkCAjEdrn56mi34EZXwxMPz4LIDo0zZcfFjVYHFLgMq4nurdEUxPz6m/DVEspkMqi2LwqO19vKDsPj+ZjgDOiKRWWain9Fv/MaqRrR54tyqBUudTpR16THOhejgMiunSn+p9svx2kNtu/BO4lMwyyn7RfvNqagwAiCJiJejWwCVbVj7QHHOafvk9qb93KSSsRO00W9SieWAlUOAtGOuNJLibfqdjKTlrGUhwjP8i41cv+Nq4czzMAOIyy/WzC1LDSnrD0NLYi7/SXA==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(366016)(1800799024)(22082099003)(18002099003)(38350700014)(921020)(56012099003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?1/9nLcqOk2koliM2k4IzfRfPKIgmmLzUvKngmNDGs2lQvIi1LWgFrvx/CY4O?=
- =?us-ascii?Q?IOVnHRVsdFBrkSiudEJ6ngpU5yGQcZeVsZyPS6Lz6aKiPVak8TL+ZCh/57I7?=
- =?us-ascii?Q?TVw5iLErvXV2XvMTUvsJN6k4BEajfy9kRZjRx3uPC+uEMpBIpAC8zUyFHk3B?=
- =?us-ascii?Q?RcbTy/gUj7ELH1VZV3WXY5QntdfuEmQAjH6zy2OwX5qSqDYaL9ua0WoTOWs9?=
- =?us-ascii?Q?4LpZeniFwHDv5n41GSFvMGDA8K1C6eGNivfj+3TugZ6v9zEfwUE7dHuF2yLH?=
- =?us-ascii?Q?Jg4hUEbcFPRzCJ/mATPiFuIYVdx9z1BOtusmNcCRqhZb9GMAMJ0XzBnq+nJn?=
- =?us-ascii?Q?f9M4WXGlypZ03TIQ97k/oSrh6B586FYfGFrDWPqAb4LXa/hnrTX0RdrUiB92?=
- =?us-ascii?Q?hDUNPqSuu4eY59MybG8NzSvan99nfsuR3sdN+TKLncZzSXa9fx5yZ/0mXI9t?=
- =?us-ascii?Q?64a1DMaWdelAW1efYHAw+cNNlyobNFl9IgyN1fp92aB+zaCTWqJmpS8JflJT?=
- =?us-ascii?Q?4UCISfp55fvdGIChJB6SXmRhMXwOH6DbClLRyjOchZawZTFXKxGIE7pQATkw?=
- =?us-ascii?Q?d5MbZji/hU2lMfcWumtHs5eJc99tR1QZTxfs3oNZ792MIRErZy3JFF3otafp?=
- =?us-ascii?Q?N1Z3WnRfrSNDNQTDkZi+DGDKBGCNIVR2Zn3D0HZzHW7qUsewjvf8rba6RyjM?=
- =?us-ascii?Q?xnD2gJSBEXeojqOAgDtSDnyHq20YEQL+W1UyOKz9LfIWW1WJH1+P8jnsmFFO?=
- =?us-ascii?Q?afliA05WkQ6kDGSgQCkE2CMfzUr+nKCT5qAGKxgKAqS28QPp+DI5e2FCKo/G?=
- =?us-ascii?Q?wZtdfIwMGGwZH/1AGIYILjTuUukALjHvm4Tv4qSrhNn/8GRM2w29lgGMusQ1?=
- =?us-ascii?Q?LNua4hUm/PRlcVrz1xkyfSaQMA7Ah9MY3btXcKS37oE9PpVKdO7OMgi9lGrU?=
- =?us-ascii?Q?xK6uvv6QKZFF5rGuaaGzfBetscN0XfkPFmog7swmfUQnyNfec0Dxh2FA92Gj?=
- =?us-ascii?Q?KsXt2o/7NfThPwyNPbIWHGDOASiCGiuF3LVGe64WKgBQZbjpV0GqIh5GpFvy?=
- =?us-ascii?Q?PVyqO8hinWu+woC3VT05ke4GjihserSW9SYnoLxp+rzauXUt7Fbdm9jnsqyi?=
- =?us-ascii?Q?mnrpzXkW3gR7eDUxgIBw3AUhV1WLa1mQkfledWAXlJtwZAEC+NKI9D545LMp?=
- =?us-ascii?Q?kzB+6MpXBMpD2i5+krmoYFezaTY8+QcFUTwIzFs8zP/QwhKSAKRMInkA6/k0?=
- =?us-ascii?Q?0zVl8+W+hAygy81/zurzd010zCA6dhSnbV4eoOJwknJsVDTagR6XNd7jpnM/?=
- =?us-ascii?Q?3ZLJ0q5qNbWRwzfEfjKcYCOYuxIBHNmXrcLun8NnhM2lqWXshPq75d+xgyX7?=
- =?us-ascii?Q?0mbBs/cjZL+efyqLByiHF05YC6S+I5Dr0Iz6ftuHp/OkAZR7FuGbH/DwGvUA?=
- =?us-ascii?Q?GGd+VdGr3ft0u39qAdqtk/Bqz33p1EpB2k72IkMpwkyI5u/EioTExzoV+B2G?=
- =?us-ascii?Q?JaXdSjWinkEOUaB3t/cfxM70w12SJtr0A3xeLkTom6vDz9wByI+SalWUD6MO?=
- =?us-ascii?Q?y8BfzIDw5NyKLSiK2xYY+Gwni3QsCGjYjMOiDF7JzI5Chl+hE8JZoUNt29xZ?=
- =?us-ascii?Q?KJwo2MEs4dwPFMpTjLsXfQiu4Vx0/dew9erb3BrPKdF3S+RaUvna46ok4Ka5?=
- =?us-ascii?Q?fCehfPVjGpu5EmbDo6ic8MC4k8zq3aadjXXywrLan5nKCCzDCbZ4pLve4Ulk?=
- =?us-ascii?Q?Uc0SABUD375kyOtWP/mVoELDRoJ86UdCcjSQdSxfzfmZf4F71Rph?=
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ddd2b04c-f9b1-41ba-5f06-08deb0017884
-X-MS-Exchange-CrossTenant-AuthSource: ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2026 08:35:49.7803
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yn6gBwJOwsAcefg4JHp6yXQQS1N4rUuZjq1uFdF6k3jOysfMNqKfkeJ63bnXtH2KPnEMV7H4ulenmeqWwlb/MRBm99sWhnXqwYluvg7yPgNYNeEc1Q+0FrDhFDgioNSk
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ4PR01MB1268
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 0/8] media: qcom: venus: add MSM8939 support
+To: Erikas Bitovtas <xerikasxx@gmail.com>,
+ Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+ Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+ phone-devel@vger.kernel.org,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+References: <k-DF0RGht93wXW1P6HM3qlZuXIYqVpHIKYFu9l6z96km16C4l2xdRs_WRSg-CGedvnnjzaWo_VzIg05JKTNoIg==@protonmail.internalid>
+ <20260510-msm8939-venus-rfc-v6-0-e69465375900@gmail.com>
+From: Bryan O'Donoghue <bod@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=bod@kernel.org; keydata=
+ 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
+In-Reply-To: <20260510-msm8939-venus-rfc-v6-0-e69465375900@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Add socinfo driver for JHB100 SoC. Currently available for distinguishing
-between the two reversions, A0 and A1.
+On 10/05/2026 10:47, Erikas Bitovtas wrote:
+> This patch series adds support for Venus on MSM8939. It is mostly
+> similar to MSM8916 Venus, except it needs two additional cores to be
+> powered on before it can start decoding.
+> 
+> As per Dmitry's request, I am attaching Fluster results and
+> v4l2-compliance output. Fluster results were very inconsistent and
+> caused power collapse fails.
+> H.264: https://pastebin.com/C15qeq5W
+> H.265 (HEVC): https://pastebin.com/WDsnxvuk
+> VP8: https://pastebin.com/egAgEm15
+> v4l2-compliance: https://pastebin.com/VpBhEFc1
+> Power collapse fail log: https://pastebin.com/rTivMcpK
+> 
+> Signed-off-by: Erikas Bitovtas <xerikasxx@gmail.com>
+> ---
+> Changes in v6:
+> - Added a more generic mechanism on blacklisting codecs.
+> - Reworded a commit for setting Venus core GDSCs to hardware controlled.
+> - Reworded a commit for adding HEVC decoding to MSM8939.
+> - Link to v5: https://patch.msgid.link/20260507-msm8939-venus-rfc-v5-0-d7b5ea2ce591@gmail.com
 
-Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
----
- MAINTAINERS                                   |  5 ++
- drivers/soc/Kconfig                           |  1 +
- drivers/soc/Makefile                          |  1 +
- drivers/soc/starfive/Kconfig                  |  6 ++
- drivers/soc/starfive/Makefile                 |  2 +
- drivers/soc/starfive/socinfo/Kconfig          | 11 +++
- drivers/soc/starfive/socinfo/Makefile         |  2 +
- drivers/soc/starfive/socinfo/jhb100-socinfo.c | 80 +++++++++++++++++++
- 8 files changed, 108 insertions(+)
- create mode 100644 drivers/soc/starfive/Kconfig
- create mode 100644 drivers/soc/starfive/Makefile
- create mode 100644 drivers/soc/starfive/socinfo/Kconfig
- create mode 100644 drivers/soc/starfive/socinfo/Makefile
- create mode 100644 drivers/soc/starfive/socinfo/jhb100-socinfo.c
+Since you've indicated you are doing a v7 here's some more feedback on v6.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6f6aac7cea95..66175f453d20 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -25613,6 +25613,11 @@ S:	Maintained
- F:	drivers/reset/starfive/reset-starfive-jhb1*
- F:	include/dt-bindings/reset/starfive,jhb1*.h
- 
-+STARFIVE JHB100 SOCINFO DRIVER
-+M:	Changhuang Liang <changhuang.liang@starfivetech.com>
-+S:	Maintained
-+F:	drivers/soc/starfive/
-+
- STARFIVE JHB100 SYSCON
- M:	Changhuang Liang <changhuang.liang@starfivetech.com>
- S:	Maintained
-diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
-index a2d65adffb80..b3b01fc38139 100644
---- a/drivers/soc/Kconfig
-+++ b/drivers/soc/Kconfig
-@@ -24,6 +24,7 @@ source "drivers/soc/renesas/Kconfig"
- source "drivers/soc/rockchip/Kconfig"
- source "drivers/soc/samsung/Kconfig"
- source "drivers/soc/sophgo/Kconfig"
-+source "drivers/soc/starfive/Kconfig"
- source "drivers/soc/sunxi/Kconfig"
- source "drivers/soc/tegra/Kconfig"
- source "drivers/soc/ti/Kconfig"
-diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
-index c9e689080ceb..009f85ff891a 100644
---- a/drivers/soc/Makefile
-+++ b/drivers/soc/Makefile
-@@ -30,6 +30,7 @@ obj-y				+= renesas/
- obj-y				+= rockchip/
- obj-$(CONFIG_SOC_SAMSUNG)	+= samsung/
- obj-y				+= sophgo/
-+obj-y				+= starfive/
- obj-y				+= sunxi/
- obj-$(CONFIG_ARCH_TEGRA)	+= tegra/
- obj-y				+= ti/
-diff --git a/drivers/soc/starfive/Kconfig b/drivers/soc/starfive/Kconfig
-new file mode 100644
-index 000000000000..04b020083d3e
---- /dev/null
-+++ b/drivers/soc/starfive/Kconfig
-@@ -0,0 +1,6 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+menu "StarFive SoC (System On Chip) specific Drivers"
-+
-+source "drivers/soc/starfive/socinfo/Kconfig"
-+
-+endmenu
-diff --git a/drivers/soc/starfive/Makefile b/drivers/soc/starfive/Makefile
-new file mode 100644
-index 000000000000..ca1e609b8104
---- /dev/null
-+++ b/drivers/soc/starfive/Makefile
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+obj-y += socinfo/
-diff --git a/drivers/soc/starfive/socinfo/Kconfig b/drivers/soc/starfive/socinfo/Kconfig
-new file mode 100644
-index 000000000000..92bbab62895b
---- /dev/null
-+++ b/drivers/soc/starfive/socinfo/Kconfig
-@@ -0,0 +1,11 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+
-+config STARFIVE_JHB100_SOCINFO
-+	bool "StarFive JHB100 SoC Information"
-+	depends on ARCH_STARFIVE || COMPILE_TEST
-+	select SOC_BUS
-+	default y
-+	help
-+	  Include support for the SoC bus socinfo for the StarFive JHB100 SoC
-+	  platforms to provide information about the SoC family and variant
-+	  to user space.
-diff --git a/drivers/soc/starfive/socinfo/Makefile b/drivers/soc/starfive/socinfo/Makefile
-new file mode 100644
-index 000000000000..26c2bdf1de3b
---- /dev/null
-+++ b/drivers/soc/starfive/socinfo/Makefile
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+obj-$(CONFIG_STARFIVE_JHB100_SOCINFO)	+= jhb100-socinfo.o
-diff --git a/drivers/soc/starfive/socinfo/jhb100-socinfo.c b/drivers/soc/starfive/socinfo/jhb100-socinfo.c
-new file mode 100644
-index 000000000000..9c5826d7c253
---- /dev/null
-+++ b/drivers/soc/starfive/socinfo/jhb100-socinfo.c
-@@ -0,0 +1,80 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2025 StarFive Technology Co., Ltd.
-+ *
-+ * Author: Changhuang Liang <changhuang.liang@starfivetech.com>
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/init.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/of.h>
-+#include <linux/regmap.h>
-+#include <linux/sys_soc.h>
-+
-+#define JHB100_REV_ID			0x38
-+#define JHB100_REV_ID_CHAR		GENMASK(3, 2)
-+#define JHB100_REV_ID_NUM		GENMASK(1, 0)
-+
-+static int __init starfive_socinfo_init(void)
-+{
-+	struct soc_device_attribute *attrs;
-+	struct soc_device *soc_dev;
-+	const char *machine = NULL;
-+	struct device_node *np;
-+	struct regmap *regmap;
-+	char rev_char;
-+	u32 rev_id;
-+	int ret;
-+
-+	np = of_find_compatible_node(NULL, NULL, "starfive,jhb100-sys0-syscon");
-+	if (!of_device_is_available(np)) {
-+		of_node_put(np);
-+		return -ENODEV;
-+	}
-+
-+	regmap = syscon_node_to_regmap(np);
-+	if (IS_ERR(regmap)) {
-+		of_node_put(np);
-+		return PTR_ERR(regmap);
-+	}
-+
-+	ret = regmap_read(regmap, JHB100_REV_ID, &rev_id);
-+	if (ret) {
-+		of_node_put(np);
-+		return ret;
-+	}
-+
-+	of_node_put(np);
-+
-+	rev_char = (char)FIELD_GET(JHB100_REV_ID_CHAR, rev_id) + 'A';
-+	rev_id = (u32)FIELD_GET(JHB100_REV_ID_NUM, rev_id);
-+
-+	attrs = kzalloc_obj(*attrs);
-+	if (!attrs)
-+		return -ENOMEM;
-+
-+	np = of_find_node_by_path("/");
-+	of_property_read_string(np, "model", &machine);
-+	if (machine)
-+		attrs->machine = kstrdup(machine, GFP_KERNEL);
-+	of_node_put(np);
-+
-+	attrs->revision = kasprintf(GFP_KERNEL, "%c%u", rev_char, rev_id);
-+	attrs->family = "JH";
-+	attrs->soc_id = "JHB100";
-+
-+	soc_dev = soc_device_register(attrs);
-+	if (IS_ERR(soc_dev)) {
-+		kfree(attrs->revision);
-+		kfree(attrs->machine);
-+		kfree(attrs);
-+		return PTR_ERR(soc_dev);
-+	}
-+
-+	pr_info("StarFive %s SoC rev(%s)\n", attrs->soc_id, attrs->revision);
-+
-+	return 0;
-+}
-+
-+early_initcall(starfive_socinfo_init);
--- 
-2.25.1
+- A clear description of what has been tested and verified as working on
+   each core. I think we got lost in the weeds of discussing the GDSC
+   change, when what I was trying to understand was the bitmap
+   of working encoder/decoder, what is particular to each core.
+
+- HEVC decoder only works on 8939 afaict so there's no sense in
+   trying to make it do encoder
+
+- Ideally we have one node that works as an encoder and one as a
+   decoder - which is pretty standard and normal on this genration
+   of hardware.
+
+- If that is not possible then decoder/decoder is also acceptable
+   with the caveat that the declared list of decoder formats should
+   be true from the perspective of user-space.
+
+   We discussed blacklisting/whitelist particular codes, that's up
+   to you to decide in your submission.
+
+   For my part I think a list is better than a strcmp() as you never
+   know how complex the logic might end up getting.
+> 
+> Changes in v5:
+> - Undid the merge of vcodec_clks, they are split back to
+>    vcodec{0,1}_clks now.
+> - Extracted a dev_pm_domain_attach_list() call into a function of its
+>    own to reduce nesting.
+> - Added missing "power-domain-names" required property to device tree
+>    binding.
+> - Renamed vcodec clocks and power domains to match other Venus bindings.
+> - Reordered commits and grouped them by subsystems. Now first come DTB
+>    patches, then clock, then media.
+> - Removed "status = "disabled"" in the device tree example.
+> - Link to v4: https://patch.msgid.link/20260506-msm8939-venus-rfc-v4-0-994f5eb22acb@gmail.com
+> 
+> Changes in v4:
+> - Removed vcodec{0,1}_pmdomains and merged vcodec{0,1}_clks into
+>    vcodec_clks instead for MSM8939.
+> - Inlined video decoder and encoder device tree nodes in the driver and
+>    removed them from the binding.
+> - Kept vdec and venc methods for HFI v3 separate from HFI v1.
+> - {vdec,venc}_get() are now called as early as before, since it is no
+>    longer needed for us to attach power domains to dev_dec and dev_enc.
+> - Link to v3: https://patch.msgid.link/20260427-msm8939-venus-rfc-v3-0-288195bb7917@gmail.com
+> 
+> Changes in v3:
+> - Added missing vcodec1_clks to resource struct.
+> - Removed enc_nodename from resource struct since we include
+>    video-decoder now.
+> - Link to v2: https://patch.msgid.link/20260425-msm8939-venus-rfc-v2-0-f69e52b36207@gmail.com
+> 
+> Changes in v2:
+> - Enabled GDSCs during encoding as well.
+> - Merged vcodec{0,1}_pmdomains_num into vcodec_pmdomains_num.
+> - Reworded commit for marking GDSCs as hardware controlled. Same
+>    situation as in cdc59600bccf ("clk: qcom: gcc-msm8953: fix stuck venus0_core0 clock")
+> - Clarified the reason for missing firmware-name property in device
+>    tree.
+> - Clarified the reason for moving vdec_get and venc_get for later.
+> - Link to v1: https://patch.msgid.link/20260416-msm8939-venus-rfc-v1-0-a09fcf2c23df@gmail.com
+> 
+> To: Bryan O'Donoghue <bod@kernel.org>
+> To: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
+> To: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
+> To: Mauro Carvalho Chehab <mchehab@kernel.org>
+> To: Rob Herring <robh@kernel.org>
+> To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> To: Conor Dooley <conor+dt@kernel.org>
+> To: André Apitzsch <git@apitzsch.eu>
+> To: Erikas Bitovtas <xerikasxx@gmail.com>
+> To: Bjorn Andersson <andersson@kernel.org>
+> To: Konrad Dybcio <konradybcio@kernel.org>
+> To: Michael Turquette <mturquette@baylibre.com>
+> To: Stephen Boyd <sboyd@kernel.org>
+> To: Brian Masney <bmasney@redhat.com>
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: linux-media@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-clk@vger.kernel.org
+> 
+> ---
+> André Apitzsch (4):
+>        media: dt-bindings: venus: Add qcom,msm8939 schema
+>        arm64: dts: qcom: msm8939: Add venus node
+>        arm64: dts: qcom: msm8939-longcheer-l9100: Enable venus node
+>        media: qcom: venus: Add msm8939 resource struct
+> 
+> Erikas Bitovtas (4):
+>        arm64: dts: qcom: msm8939-asus-z00t: add Venus
+>        clk: qcom: gcc-msm8939: mark Venus core GDSCs as hardware controlled
+>        media: qcom: venus: add power domain enable logic for Venus cores
+>        media: qcom: venus: add codec blacklist mechanism
+> 
+>   .../bindings/media/qcom,msm8939-venus.yaml         |  79 +++++++++++
+>   arch/arm64/boot/dts/qcom/msm8939-asus-z00t.dts     |   8 ++
+>   .../boot/dts/qcom/msm8939-longcheer-l9100.dts      |   8 ++
+>   arch/arm64/boot/dts/qcom/msm8939.dtsi              |  23 ++++
+>   drivers/clk/qcom/gcc-msm8939.c                     |   4 +
+>   drivers/media/platform/qcom/venus/core.c           |  47 +++++++
+>   drivers/media/platform/qcom/venus/core.h           |   2 +
+>   drivers/media/platform/qcom/venus/hfi_parser.c     |  10 +-
+>   drivers/media/platform/qcom/venus/pm_helpers.c     | 149 ++++++++++++++++++++-
+>   9 files changed, 321 insertions(+), 9 deletions(-)
+> ---
+> base-commit: e98d21c170b01ddef366f023bbfcf6b31509fa83
+> change-id: 20260416-msm8939-venus-rfc-c025c4c74fae
+> 
+> Best regards,
+> --
+> Erikas Bitovtas <xerikasxx@gmail.com>
+> 
 
