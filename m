@@ -1,115 +1,139 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013067.outbound.protection.outlook.com [40.93.201.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7991737CD31
-	for <linux-clk@vger.kernel.org>; Tue, 12 May 2026 17:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778605387; cv=none; b=SjQYpWLGdvaQtdhsNND8QAxm9VJG1YbGPE30gTrnqNN1aYurQnxkl9wG/t9KfUuQgZqGY96ruzMn4oz1bacNFMnLuXWm8pHYDY3Zj65bnFyxXK+oTB7LwzdSGhMx1oLv1IneR6OVfyHV2Q0E1qAJm3BSS46hpA7UXJYDkN+YJSQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778605387; c=relaxed/simple;
-	bh=Le5r16+yUuDIPTMWqwePhLNM60I4TFMOT0tsNSaruGE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t0ipsD7c4+exOxpk0rk3Vn1i8qzvGDRXyiKz+K4xoECnY01oTQFuwsHIZo14w6yxp4Np4Y1a11X7icShO9hHRfayFjjjFlAEJQF5QxRCTO44jDpqR/pFB8ZJR7lh6oLVlg2mkuzveOFntwylhYAOE9oIccEqShNISXNCSsg8nyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KgCAyzcp; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75FEC385D6D;
+	Tue, 12 May 2026 17:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778606173; cv=fail; b=E/N1Tyw2gVMtTJa0Jx0wjrCo7vtnt4n9q/mYwFgvRx++KasXnKZmrypmqDW4uH1RwkxMOwmlVsc7bdrSvV1VPfwLGY1OFWxJMewnQ+D5biiojwpBU7kECrhp2eXEGPbZa/oAYK5tzd6yKxF1cSgDT3vK+8UNZJrDhu4KuZiQcG4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778606173; c=relaxed/simple;
+	bh=9CVtf7PAs6cstjnwTNYcERAF7SEpiUTyb0+BmjbNwYQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jtGxoSSN/R/O7dut3MOclYjFzc7xIC1I/WtKx419uYiD49dqwt2RGB2WYu8WiXPgN1Yc0TZotW/JcFVm/LAb5PbxTeendYqmN/xWfaOKsdPWXI+BANdLhwXbqCkHvjJ7oEvjorKS9OG2FWR0jPZ5awPy/cD0FC94Lq5Fg6NPU3U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=wwKoZZwM; arc=fail smtp.client-ip=40.93.201.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KgCAyzcp"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-488a14c31eeso40181335e9.0
-        for <linux-clk@vger.kernel.org>; Tue, 12 May 2026 10:03:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778605385; x=1779210185; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Le5r16+yUuDIPTMWqwePhLNM60I4TFMOT0tsNSaruGE=;
-        b=KgCAyzcpd9wagEez4Kh8pCeGyc5Zr7mKZ5ZqKQsE9jd6d49GyhahbZKT4R6nZB95z5
-         G+kfkrEmOZ+tz52vn8mXHnmfYdn9GG0xnBHxIpPawZE0XF6AfbILYFFl9WQ1eVTdvNzE
-         uel6bIyGQrhZjRc5iCRLSZTxKqibzA7P8ErVdKXednEFfaqLmsdRu68hfKJnNw8zWScT
-         5LKBYIbEcVBltuk1s8R/sL84bf9xokh3MbUE1S0z+GqHeuYcuTYWYtoMM4PPyJ2RlR1O
-         7DZ6nuwxa8QfGuH60CPwXwovpMQUW3ChHcfQzR69rBDWcoAFiAoOdySSl7CZhAORJ5kt
-         pYZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778605385; x=1779210185;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Le5r16+yUuDIPTMWqwePhLNM60I4TFMOT0tsNSaruGE=;
-        b=bmDmkHyJOa86ghw4P9pv+ftCds4Y1MbUBB5UJMcZE5oX9t54BtYCbPhK0Sz86z8bLC
-         TqOvy3pw/3gaHw7/dKz3EumZxMiLR8roBqCEOSn7qn8b+F5CzATdqCBgS1s0t5UK0KMv
-         8gQIOWyqihXIPHqqJedfzsfvsZAGrcFndadsQJWE3br5tAeYkI5OtsM0np2OA4ZJbnD8
-         /hsnHRQ/Fs09DlmC6qpRiFPYOixv6mqO++cFM0uuPYH6SFzDjmT5cJWapcIu07bgVnmS
-         HmcNLB2ysAogFcVxQwrgDcWvsLZOPSHdYsvl2Q59SL3XZ9aE0TeYho/nBkxB4XoJVYFW
-         7L1A==
-X-Forwarded-Encrypted: i=1; AFNElJ9CoFHlEJ7q8cqg/UyDEATF6yAWNVgrjNOzx6bnrk0mtR5TDrVPZkkdz2iyYlByucHUpeD6+IqnAZY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGUTuJUr1lDjSVLDrq9khy6RiP9YWBDZ11DzZIrCgLWFnCgCXf
-	Rx8a9UYu38jaNo1ty/+hzCgRzMVQEW6s6V0Pokmyo2Q64/DQa3scrTLmkqh+
-X-Gm-Gg: Acq92OFvNEpMwCamOed1gHMsmovZTsCrm32vm0YwL7Lw8/Vdds/WR3G/KqU8OXuieKH
-	nwQ7F0yk0r2kiXBRQRJaezfa6ZoSi0uaQN8P99D2TvfBv/yCJsL1wp+ofXYcMsdMXrlDPKFHpzy
-	4eFg3WL70p0fdXhs2o7tcyR8EQ0Xujop3e6oWtqwq//rm8Fw80FwZYTHhGQ5UpYzyYbjoI0tm4y
-	M1cbgI0Tmx4qwrWzAQmCwuIhjgvIRX0ltMX/g5iRg+aFOJEkcKuit95IG4Oe4cqnM+cC9BLR+p3
-	52atZyE7tgj4OMVey3wC13tsCvUD9uaAt3So0U2mH//nIDooCFRiBl6wh2K7u6HuHWPXqlUMJ06
-	DqAUDlpNJYC5JCv6DEegA3jlcMNROOS/6RsFQo5uxFhT1zBFZY6pHFYLcgnShgRSikXCZfWf6Y7
-	33a/EW19CvUVZP7prIoNZIXYHRBN9THwdMS/eEsnRpbSef2bzNKFHV6qmGB4WzJ9q8x9PByEsG3
-	K4TP1q3wwGlFetf3wlA
-X-Received: by 2002:a05:600c:2e87:b0:489:e696:8362 with SMTP id 5b1f17b1804b1-48e676a4d68mr193704045e9.13.1778605384783;
-        Tue, 12 May 2026 10:03:04 -0700 (PDT)
-Received: from sp9.home (2a01cb08052d7400bbd7ca83de4af625.ipv6.abo.wanadoo.fr. [2a01:cb08:52d:7400:bbd7:ca83:de4a:f625])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48fc8d624fbsm27177615e9.10.2026.05.12.10.03.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 May 2026 10:03:04 -0700 (PDT)
-From: =?UTF-8?q?J=C3=A9r=C3=B4me=20de=20Bretagne?= <jerome.debretagne@gmail.com>
-To: mitltlatltl@gmail.com
-Cc: andersson@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	johannes.goede@oss.qualcomm.com
-Subject: Re: [PATCH] clk: qcom: dispcc-sc8280xp: Don't park mdp_clk_src at registration time
-Date: Tue, 12 May 2026 19:02:51 +0200
-Message-ID: <20260512170257.8920-1-jerome.debretagne@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260303150152.90685-1-mitltlatltl@gmail.com>
-References: <20260303150152.90685-1-mitltlatltl@gmail.com>
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wwKoZZwM"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=K01ybbfeZWADEPsUMlmA3JpdKVu7lioU9rGfXy5JF4k/gSEmoKk0DxE0vJp6RhoDN2ydu6b3l9Hev1IQVxYkZQEJ6f5tV9dnrh0nBesu7WcPfGtfUm4RJxFhTDSdnNF3Mh0Bveq/CeHsi2UjOVTnWWSf3NTdHUQ7ARG9pQ3/snUOxtsocInqnVh0MPgeTKvf0mYU3LVrMuvwnjV6c8+Ir+Iu2In3J6LntN3J603vyYYJ0eXR3mUjpOZa0ZGZRTSwqYgRQ8MXxYDnvSOVxd7vVVyHAdk677+asfpoNcTyvRwG7HhgNKTrG8YeE25w2eBLHEYkd+ufFBSa5sZnPYuOUw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ye2EuyLWcnvncBYxQalplepFyMeY7Tpbew69nVoIh0w=;
+ b=UswwpEN1FLz+UQ0h3SLvelJ+jTbcQ69XK757wilcDg7X3VCAMWnW/vD6VeOoOdHt5aKMxe2tusFuu1U3H9m0gY0yr8mjNnzY1wwcIPWRizofycdzrGFKNwtWl60xCpxpXUwmEBe8Wi5XKLHWcQon5ji/aE3ZAfHXMejGruxYlGk7njsoTi8GJVN7nC5QWsLci43AZfKEcYE4V2iP/QQTB2qVw2XKIMNpRQVn/ZZGi7l9wmxU3B5TaKJUShkk7ju4oTuMRX6VS43AAks6M8i0IizbkrhZzSIGtoCqg9advIqbLeQSWiEAVlJWcCBIA7CDth9OBh4TwKPQDOIqMRSLqA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.23.194) smtp.rcpttodomain=baylibre.com smtp.mailfrom=ti.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ye2EuyLWcnvncBYxQalplepFyMeY7Tpbew69nVoIh0w=;
+ b=wwKoZZwMOQtFcjYEudYhG2XgFwsA8DYt0LkqmtNcNx5wSreV4WXuNdykNaVXovv0ANs+XrcpGcnsruwNEqEdpSwGIOgHmnzJEWi7hyBRCrsWT25nDBxknnnscy+tRYlbg9m6DsMt1L6nO0PRqPWMxLYU72tuyXV2Ng738TLv0ag=
+Received: from CH0PR03CA0400.namprd03.prod.outlook.com (2603:10b6:610:11b::20)
+ by MN0PR10MB5983.namprd10.prod.outlook.com (2603:10b6:208:3c9::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9891.23; Tue, 12 May
+ 2026 17:16:09 +0000
+Received: from CH2PEPF00000148.namprd02.prod.outlook.com
+ (2603:10b6:610:11b:cafe::d4) by CH0PR03CA0400.outlook.office365.com
+ (2603:10b6:610:11b::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9913.12 via Frontend Transport; Tue,
+ 12 May 2026 17:16:08 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.194)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.23.194 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.23.194; helo=lewvzet200.ext.ti.com; pr=C
+Received: from lewvzet200.ext.ti.com (198.47.23.194) by
+ CH2PEPF00000148.mail.protection.outlook.com (10.167.244.105) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.25.13 via Frontend Transport; Tue, 12 May 2026 17:16:08 +0000
+Received: from DLEE210.ent.ti.com (157.170.170.112) by lewvzet200.ext.ti.com
+ (10.4.14.103) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.37; Tue, 12 May
+ 2026 12:16:04 -0500
+Received: from DLEE205.ent.ti.com (157.170.170.85) by DLEE210.ent.ti.com
+ (157.170.170.112) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.37; Tue, 12 May
+ 2026 12:16:04 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE205.ent.ti.com
+ (157.170.170.85) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.37 via Frontend
+ Transport; Tue, 12 May 2026 12:16:04 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 64CHG4WT2248995;
+	Tue, 12 May 2026 12:16:04 -0500
+Date: Tue, 12 May 2026 12:16:04 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Brian Masney <bmasney@redhat.com>
+CC: <a-christidis@ti.com>, Tero Kristo <kristo@kernel.org>, Santosh Shilimkar
+	<ssantosh@kernel.org>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>, Michael Walle
+	<mwalle@kernel.org>, Kevin Hilman <khilman@baylibre.com>, Randolph Sapp
+	<rs@ti.com>
+Subject: Re: [PATCH v2] clk: keystone: don't cache clock rate
+Message-ID: <20260512171604.5ntgq65bmedb7jpc@stinger>
+References: <20260507-clk-sci-v2-1-38f59b48777a@ti.com>
+ <agHpYnkCgGfZp2-E@redhat.com>
+ <20260512104848.4axgjeto6i7ejvli@retorted>
+ <agM-VB-ToGFNphfu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <agM-VB-ToGFNphfu@redhat.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF00000148:EE_|MN0PR10MB5983:EE_
+X-MS-Office365-Filtering-Correlation-Id: 77a651c7-fe65-4416-411a-08deb04a2852
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|7416014|376014|36860700016|1800799024|56012099003|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	wPDphZCERGn2UoRjIrtQFCXgmIL00bLV0O9Vl9fpvuUQUGLIzXvSuxdH+3xwCIU6XaCAqkL/iRcNbUvteg1jKxpeC6uqRAmBGrz5bOkFt0yryGGNjDmKkdwRtj1jmw9eRzk1oogII83vdlipOYeBQ3MV1bW7WtWbszYV9vvGacR6duRJTqk0ncX46XHOgNTgq442If3ybjb9EegHdAO00Y4Re0FtW7Yq9V0iDwWcj3xwpwCOktVTqgBfbl/2SO/CWHdNlUuFe484MbXwqd2QKzn/6T29hGXINDXpijbTj8fi3+ir73Kcsrr88OXfJ0FN4EWCNEF2IuWOwQG+XfLkhrjQTwi6UhvvBnowlK+HR7/F9xLt4VuAmuEVObOJ5jfIfDZzjdc+O12jCC4bBvrc9rMz8YRXGoNJZ5IqAUeKWGV0FugUzShfG5gcsgWQOhzBIaNhTya5AplAER1kBwFngdvtz6UQxcERNR2pPY+gk2NaWl9VRT1ampaVDFXJL6R0nsWoffzI/JORGaNtvTzCZJZJ/7/N/JhZFXeoRrXIIfxtNxVdHd2k/ZOmotOrIHd8RYHHkyPFfR8zqWUfHVbsLPSz3ipoCreeqyNJEZccazfCYWyqWR3JIGr+joFLEaScXGk4rzxT7+AlSLf5lP14ecUs3cufPWHESfeKu0xJJLVBJXrf1OZ4dWsMU1RzH123+BS1bb5rGDiHmGT5FWpgvvvJQDOiEOqsISFnT/h7vtU=
+X-Forefront-Antispam-Report:
+	CIP:198.47.23.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet200.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(376014)(36860700016)(1800799024)(56012099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	VsqkLi/9n5cO9l6NDyZTKVlzzQm4UCSgB0fc7OhrwdlPgk6ddEpiKH1/VCtEMnqd2n4IuQkp3TaiTuky8ce6NbYUMyGT75zCkaa84ROvBchgcVAjmPIqJGRx5gMpFrAJbXn2+O/nsHmVGzYcIvrdVci41d1Z0H6ti9S4SurOYpwt+JtTVIryOTUw+9Fgu3Ug4tCyCYNZ1ZULmxnoCRh5uF82LmSh89fNO8O8BMvCnqzK8JJBeyTPdb8iHzjWnCZf40JmBQiwoGwDLfB3cw3B1iL8DN4D2vOJXrLiaVYIRFVd23EnDvDA1ChwBiVWw+W5MZVY/MKATKICHgSSBPkm0ewEMy4slXeT1prj6FqaXiIf0bitU/JdL5hmTG0eL9yEjAA0cy7zPpwyZRNi/QmIqSuqvruosHIOdraE7QXPWdOJTUrvvnUKdQgz4eFkUuCP
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2026 17:16:08.2567
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 77a651c7-fe65-4416-411a-08deb04a2852
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.194];Helo=[lewvzet200.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF00000148.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR10MB5983
 
-> Parking disp{0,1}_cc_mdss_mdp_clk_src clk broke simplefb on HUAWEI
-> Gaokun3, the image will stuck at grey for seconds until msm takes
-> over framebuffer. Use clk_rcg2_shared_no_init_park_ops to skip it.
->
-> Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
+On 10:51-20260512, Brian Masney wrote:
+> Hi Nishanth,
+> > Could you clarify if I need to take it via my tree to arnd or if this
+> > patch will go via the clk tree?
+> 
+> Sorry, I'm not sure what Stephen prefers here. An argument could be made
+> for either approach. I would just go with whatever you have done in the
+> past.
 
-This patch allows to keep the built-in display enabled on the Microsoft
-Surface Pro 9 5G (Arcata) using efifb and software rendering. This was
-achieved by passing the "module_blacklist=msm" option. It is really
-useful as the built-in display is not yet working thus not described
-in the arcata devicetree so far.
+Thanks Brian for the review.
 
-Thank you Pengyu.
+This usually will go via Stephen. Will wait, just trying to make sure
+there is no change in expectations (given this patch missed a window).
 
-Tested-by: Jérôme de Bretagne <jerome.debretagne@gmail.com>
-
-
-Without this patch, the initial EFI framebuffer gets disabled a few
-seconds after the initial boot messages. This has been a regression
-as it used to work when doing the initial bringup with Linux 6.9.
-
-As mentioned in the similar patchset for the x1e80100 dispcc driver
-https://lore.kernel.org/all/67a51928-1c16-48a6-ac65-f67c36297e5e@oss.qualcomm.com/
-according to Hans, this should be a fix for the following commit:
-
-Fixes: 01a0a6cc8cfd ("clk: qcom: Park shared RCGs upon registration")
-
-
+-- 
 Regards,
-Jérôme
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+https://ti.com/opensource
