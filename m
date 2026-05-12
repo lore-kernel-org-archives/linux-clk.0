@@ -1,49 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F05C3C09FF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057CA3CFF75;
 	Tue, 12 May 2026 20:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778617426; cv=none; b=BfPb3faPcynuC24JW81SsYLMPL9H9TNcNfVmStG4uwi+adYaHeKKeAB69F+Xnbgutbqo4ECMmWuqhpyUddLJSKmwgyf8dHFM0RbcBWwO3SQ3yCecRDTsFZI+WBA1MTR4J4Jqh8WpRt99nynZCoxZO3KvbejiOl6gza44IqHpZOE=
+	t=1778617427; cv=none; b=WLAUAtQRWn/jAvJS5DZG9NpNVpPXUMraNNE64QDUvttaUrCaDa4XZWfxZy5E2leNDs0DuryzP70AMWYuvzXRCOZ7gQTuUURintCWLLMccBI9F0zqiOLH0niSqVsggV32O0Sh1Rc5YL0TcAXcICP233YKuf9gy5Q/u0Wxf58QbWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778617426; c=relaxed/simple;
-	bh=D319QEG+olVaUvJn93cenq9kEFlVZX56VtrvxaCnlDs=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tZQf4QL/w9Wa1Q0nw+gmObtGUPAKKBPuOF2U/efX2qVwpiWmFyVSJz66JbOXjPh1dK5c26qRRCsNhjUOMZ/lWM3q9FwAj5gjxmhCpf90yc/QnS2SWa0Q13tRT0XILyXgmrEIQ22aUqdWiyM3L1k8odq5dShhQAE9hy9FB9m9An8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j1QfeG99; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778617427; c=relaxed/simple;
+	bh=PkrdvZBLkzDk+XHh6+BYl2o1Mc18EjXsuPplZEy+HMA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DPmToAOrBELtugztkvI8VMiE+MIf8eTbXd2VGZUCGZnukce3Z0VyzukOSZQ6tYs6kzMetDfO/D4clhe4lB9zyId7fFkpgMhYNprcsaoFiXqFU9f8OIaS48jv4oju0VV2FnDstNCdfob/1kenPWKOCPwtSfcZ83mJxdldBh4NmfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cQg3BEvG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j1QfeG99"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B425C2BCB0;
-	Tue, 12 May 2026 20:23:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cQg3BEvG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B52FC2BCFA;
+	Tue, 12 May 2026 20:23:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1778617426;
-	bh=D319QEG+olVaUvJn93cenq9kEFlVZX56VtrvxaCnlDs=;
-	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=j1QfeG99PlT4WQ0KANtZb5sUmtq3MxbYHyFRb+AVRzq2d09V99qtV+dNC2iv9hDnb
-	 oYp0uyqknkeiASOTgZsYn8IHrn+Rliu9atx5OmTFD6xja6kw3U2aKm1mszW8uqcOco
-	 ikU72XL4HTXRNfhKkYkc+MGzXlVCsKfSK6+rm1unhQzPjBhpTV7LgMlhxM3ybNyx6b
-	 ihWPS2AUPbtNYo5HuhHLa5nhYno7essVO6ZH8HOWP0rVzMgx38TPCYUmRDlcv2VFzv
-	 lsK4WkUGhQ/VHXlVh5S/6QquBpOHqehndhrgYuf7UivIsnRxIuG35EANSrF0r4sL8h
-	 qK+mj9y8Ef0OA==
+	bh=PkrdvZBLkzDk+XHh6+BYl2o1Mc18EjXsuPplZEy+HMA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=cQg3BEvG9XVzf/ijVZAan1rW224SEdk7vEG6RWKmvu/wc+M8BKjlo7AKwf8lIx7fv
+	 9fq91WAKkMaZUD0hn4nMRx9jRJIuFyRQkS1/mF/RMArkJEQI4XWU8mmdetg0RmBt1d
+	 z1jVg5FagkAraE7QM9qwfvaOvwrIURHG2hrm6A5uzS2w+wGvUQHmVPg6HY3wITu06A
+	 W5VL8/Daqt0b/JOlzZwxLQVN0jZjqgrKzne+iztJzh/E3dkgfZYwlISMo3U8YHv7BZ
+	 NhbnLRpfTRg8GAqzbSMraU35csGX4E3zcbDFvNt9BFlMFPUG5qSooRPnq9DTRy5BMD
+	 4dkba9YGKkA+Q==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Taniya Das <taniya.das@oss.qualcomm.com>,
 	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: Re: [PATCH] dt-bindings: clock: qcom,kaanapali-gxclkctl: Correctly use additionalProperties
-Date: Tue, 12 May 2026 15:22:57 -0500
-Message-ID: <177861739392.1242344.16530268271307335667.b4-ty@kernel.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Subject: Re: [PATCH v2] clk: qcom: Constify qcom_cc_driver_data and list of critical CBCR registers
+Date: Tue, 12 May 2026 15:22:58 -0500
+Message-ID: <177861739375.1242344.9659339507049804006.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260404105436.138110-2-krzysztof.kozlowski@oss.qualcomm.com>
-References: <20260404105436.138110-2-krzysztof.kozlowski@oss.qualcomm.com>
+In-Reply-To: <20260429170859.247165-2-krzysztof.kozlowski@oss.qualcomm.com>
+References: <20260429170859.247165-2-krzysztof.kozlowski@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -54,16 +50,17 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Sat, 04 Apr 2026 12:54:37 +0200, Krzysztof Kozlowski wrote:
-> The binding does not reference any other schema, thus should use
-> "additionalProperties: false" to disallow any undocumented properties.
+On Wed, 29 Apr 2026 19:09:00 +0200, Krzysztof Kozlowski wrote:
+> The static 'struct qcom_cc_driver_data' and array 'xxx_critical_cbcrs'
+> are already treated by common.c code as pointers to const, so constify
+> few remaining pieces.
 > 
 > 
 
 Applied, thanks!
 
-[1/1] dt-bindings: clock: qcom,kaanapali-gxclkctl: Correctly use additionalProperties
-      commit: 3357509593d2d7b1aa04bd2cf188477df7af447b
+[1/1] clk: qcom: Constify qcom_cc_driver_data and list of critical CBCR registers
+      commit: 402b68cdc8f923ef3985d1061bf324c8ba3965a8
 
 Best regards,
 -- 
