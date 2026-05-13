@@ -1,57 +1,60 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9E73AEF53;
-	Wed, 13 May 2026 19:09:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEEB63B27E9;
+	Wed, 13 May 2026 19:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778699380; cv=none; b=PqDUPrT1OePB9NOP4lmzlrUQJvgaeD3XEt3JnwoSOYQwBSOL7BEeKnclV0P6bTflag9rV7E18/yOIphstng9AE0VBptzMzSGdab4lyjDbyilXOkbLtpX6+B9jifmgjaWdo2N2h9odDEPkndNkfQxmsxd8G/Ij/fOtxwIrOvFrfI=
+	t=1778699385; cv=none; b=NGyUkkZI9iM8VtVGP+fisKieZbYbjAnMkkunCK+q1TEVWwI+fXNhORP5LYsGv0x/FGJLzbNVbnQDqwSchnEJJuB2w3Bj/4loE6uB0NuKsya2L/qMd5RZJ22x6UgodnwXBOlt/nTgsiWG/Uf1ETWWTlF+c/fRGHJbRhlcMItULbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778699380; c=relaxed/simple;
-	bh=GjXTErhWfgaViTlNzBXlqACYyaRYirJ3JqvibeBV9eU=;
+	s=arc-20240116; t=1778699385; c=relaxed/simple;
+	bh=ZrxSSOGRwTmT5lYy+RYdzMYoYwrG122Z6wsIuaPplk4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LsfpLfREHvoZPfFRLSYbtcU3smkhzGIZiGuuX2b9PQ6Zl9o25TID4OxgRpee+Xp6JrEMv9DI9rhKNdQN8pEw78pIdfaRpk8Mo3rKZoVrOyJb6NJk/azz58+V91lM8BER2Z6keSCfEKgcR4djzA+/SON+NnBEoNQy8rChBDf6FY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RDx8LXVd; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=JWZfF4XGAuyzJYKiaCATSYqGF7BZqFDNyEHVwWRy2rs7r6kEJ9ko4xmTEWKi+/KBa5n5SVNBHdlR5/tHVQv3g48Jy4cdjsiFaeyszLpcLG1H1jxfBR603NNb3/awwoMrEvkozLsH+9ycELsXzzyHD1v7vFlopDOdpKj9dEH46ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cQyfqJi+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RDx8LXVd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5ECFC19425;
-	Wed, 13 May 2026 19:09:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cQyfqJi+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A367EC2BCC6;
+	Wed, 13 May 2026 19:09:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778699379;
-	bh=GjXTErhWfgaViTlNzBXlqACYyaRYirJ3JqvibeBV9eU=;
+	s=k20201202; t=1778699385;
+	bh=ZrxSSOGRwTmT5lYy+RYdzMYoYwrG122Z6wsIuaPplk4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RDx8LXVdyCWSk60gIZ8HyyGN9yWDKYQgTJG8nYiO/eDtE/ijvo+vO4hiucPUE03jx
-	 +h2G1sDuxi0Y3sTkIlR0JB/xbZF7rRX5AIZBbDlh+yC3XYsbwiffBbYeS0j5Fz18vF
-	 J+AXDuf2FzgMDwmpWcqoau0IN6JtXCiKVFTBJ6sLDXsQvAxUKNApz4Ucb+S04vwQqF
-	 WrYSFO0xbAlnyp5u6+HEvl734RYD3XoTMNPD51As/uKRXGoUw5wLvIFTrxlOBfvqfS
-	 hgzNuf9dli5Mi5LvUsY7i5dayjKHfB1/HJyEjBwoN61y001LSnasOc+RFnaGo1IAYh
-	 FpP6zATEVOumw==
+	b=cQyfqJi+Y8I6p4u+Wi2u8asITSWWgtP/YVeAUjh4L6dAshDsOzOlC1dvczbFLQV/0
+	 BXNmS9b9Ep42mp/ML7azHJWg85osuYjkbo7TA2HRriDAKgjhir9X2k5QQapgAkNs3z
+	 mZ1McfvPt15s7Rqx98eJYyRaSenBo2xq3CB4q2O6N+vz1zhTHocF4bec4Hm0tLNHND
+	 QPgd/a0++4e6kQdbsFufACQ8VFfyaSrx8X1dzIvCdvKHSUS6oFSllCQEWi59ua6FS+
+	 sXZW1vDkav6uPw451Om17fuHm6LqOiJwiuDc5Y/XQQE3GxthWMa+5mjU2zpe5hJOL7
+	 vWdIRudyri4Zw==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Luo Jie <quic_luoj@quicinc.com>,
+To: Konrad Dybcio <konradybcio@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Luo Jie <jie.luo@oss.qualcomm.com>
+	Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Sean Young <sean@mess.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Martin Botka <martin.botka@somainline.org>,
+	Biswapriyo Nath <nathbappai@gmail.com>
 Cc: linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	quic_kkumarcs@quicinc.com,
-	quic_linchen@quicinc.com,
-	quic_leiwei@quicinc.com,
-	quic_pavir@quicinc.com,
-	quic_suruchia@quicinc.com,
+	linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	~postmarketos/upstreaming@lists.sr.ht,
+	phone-devel@vger.kernel.org,
+	kernel test robot <lkp@intel.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
 	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v2 0/5] Add CMN PLL clock controller support for IPQ5332
-Date: Wed, 13 May 2026 14:09:20 -0500
-Message-ID: <177869936432.1496622.9030891427127725229.b4-ty@kernel.org>
+Subject: Re: (subset) [PATCH v3 0/7] Add vibrator, IR transmitter and USB-C handling in xiaomi-ginkgo
+Date: Wed, 13 May 2026 14:09:24 -0500
+Message-ID: <177869936442.1496622.16143301143443320986.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260106-qcom_ipq5332_cmnpll-v2-0-f9f7e4efbd79@oss.qualcomm.com>
-References: <20260106-qcom_ipq5332_cmnpll-v2-0-f9f7e4efbd79@oss.qualcomm.com>
+In-Reply-To: <20260330-ginkgo-add-usb-ir-vib-v3-0-c4b778b0d7f8@gmail.com>
+References: <20260330-ginkgo-add-usb-ir-vib-v3-0-c4b778b0d7f8@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,24 +65,21 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Tue, 06 Jan 2026 21:35:09 -0800, Luo Jie wrote:
-> This patch series adds support for the CMN PLL block on the IPQ5332 SoC.
-> The CMN PLL implementation in IPQ5332 is largely similar to that of
-> IPQ9574, which is already supported by the driver. The primary difference
-> is that the fixed output clocks to PPE from the CMN PLL operate at 200 MHz.
+On Mon, 30 Mar 2026 10:13:47 +0000, Biswapriyo Nath wrote:
+> This patch series add support for various components in Xiaomi Redmi
+> Note 8.
 > 
-> Additionally, IPQ5332 provides a single 50 MHz clock to both UNIPHY (PCS)
-> instances, which in turn supply either 25 MHz or 50 MHz to the connected
-> Ethernet PHY or switch.
+> Most notably:
+> - IR transmitter
+> - USB-C OTG
+> - Vibrator
 > 
 > [...]
 
 Applied, thanks!
 
-[1/5] clk: qcom: cmnpll: Account for reference clock divider
-      commit: 88c543fff756450bcd04ec4560c4440be36c9e75
-[3/5] clk: qcom: cmnpll: Add IPQ5332 SoC support
-      commit: 1dcbf4195a262d57f4da812248cdbbcdc81bf8d8
+[2/7] dt-bindings: clock: qcom,sm6125-dispcc: reference qcom,gcc.yaml
+      commit: dbabf6a32ffb69a604f966ec01a20a060836939d
 
 Best regards,
 -- 
