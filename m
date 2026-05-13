@@ -1,62 +1,64 @@
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B483B19D5
-	for <linux-clk@vger.kernel.org>; Wed, 13 May 2026 05:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0B53B27DB
+	for <linux-clk@vger.kernel.org>; Wed, 13 May 2026 05:56:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778651807; cv=none; b=ChXxtR5TafZcclbNe4Y9/RFApfFPoSedrSqj8ZUo3V4s9aPb4eRNPzNktN1GoZZ/ArHk9BIPJgX9mCpDN4kviFk70lFvrRgxln0A1ELwSw3JPMLFDOGdEryI4mM45beng3LPFFEN2etN05CkP0zAahBFn0q2I7b8kgwlBPO8de0=
+	t=1778651810; cv=none; b=EW8bt6k5yABODSu3CI1XCmVoGh11n2FAPYg9nPzlEMcGwIBuViB07NYJWOnB1Urwbn/0BFvlUYS7jMZGQatCWxLOEXI9KJvwaZZa2H+HvK53gFWDtva8DlLjP9prXcc/5FCpOXki3TqjPhb6I0SMfDW2uJ1nK/oNM6AmHqv3B6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778651807; c=relaxed/simple;
-	bh=a/Y7s23XK1yuZZsanB+vxOxeClflBxCK/XJXdhhe2R8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y4b4yGFeDpktjkIEBFr0DJBfH9LnT/FMgI7MRRa/mHPHVvsgwTNSV580YmRjze1vL/QJX+qmlx5tQ46Fj79+k4c4HdH6AZGSyjzi+sPSpxKU2d2g7e/7BOo6crTRoFS8lzsNfuxDdNRaR9Tvr8YmjcggiKr9QoqFhFrirSqiwZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qj2jcW2N; arc=none smtp.client-ip=209.85.216.43
+	s=arc-20240116; t=1778651810; c=relaxed/simple;
+	bh=YoneJ14NuJ2KGDyxsoP31mSMcon3m5xuAOTGJJPt2kY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=XEn7BnFLMT+SZtgBckWXtKi7KXa68zXXzNxYSEVynKXJlSQl1wnj0p3h3SBl7ivxeehUtPeTjsx9pHcVxuJnrqusY8U8aDjy0t9+YOvXAa0PQFruh7lU0LKjDhTgnK8tG8VUhIrYL4FBUnHFJ/E1iurx1lGqD3n67CJv6q+IbX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mo2eQ8a8; arc=none smtp.client-ip=209.85.216.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qj2jcW2N"
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-362e50b4641so3922742a91.0
-        for <linux-clk@vger.kernel.org>; Tue, 12 May 2026 22:56:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mo2eQ8a8"
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-366375c43c2so3728497a91.2
+        for <linux-clk@vger.kernel.org>; Tue, 12 May 2026 22:56:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778651804; x=1779256604; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dkpgyOl0OeakKh0bSkim2LmtFin1UzqZ4Tfpbdh/KSE=;
-        b=Qj2jcW2NwV4rPKoM1NXEg0zSLjigvf0BDWRhtIpZESUr0a1duT9ZW3tugz2br2WXv7
-         hDkpQHUbjncB7lC3G9h2hB8tTLWcUWMb+8qMygzBPbSHj1n8wor0Oa/CHJ1qoR0+2ut9
-         MpkcqaGmzgn6l1komRbcjS723N4H232iHyS13sFPKSmYjaqgQpHBnW6aJjqBkAU80iKF
-         NH86Vt/DupCLl4ZpuufoilWQzLrQOh5ai0Q6RMW4qJOI6sNPLODAlxaxP+U01119cv3e
-         tj21j2MEsglK5whE2KV+Cwu9J5G+J0TeDnbQVkWmX6Zc5agNRBjPTWecu86XDvb2Y9x2
-         NIvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778651804; x=1779256604;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1778651806; x=1779256606; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dkpgyOl0OeakKh0bSkim2LmtFin1UzqZ4Tfpbdh/KSE=;
-        b=Hnf7QjPQM7QKJLM8mvjBI0aMDkhljYz/UE92yfrB0dFQD4uvCvNVYURsuimQanbceZ
-         IoGSiUNuHcYn23V4n1eapY9aYLRz5bDMiULjJfWZq0r1t65uwCr1TwrFXAoYKG1ziHWT
-         z/jTTSeGvEO2gUeLPmLAQqqDFUmPOjKuDUmfpMOAnNWXpaMyHKyD4Z02/b9Gs+SC1P/t
-         CKoR+PoWzcNAyx5dHvxm8MTRFkuFfFHmLodcVq9chdbL97jk+HW11kx3ufv3DsXzQfE0
-         pNcuyXoj6/E7O4kueuGSOOSsFwLptbMXvp5M+2EiF7R+WiGwDbY9VWpgkfqQoX2+UPN5
-         /voQ==
-X-Forwarded-Encrypted: i=1; AFNElJ9G6LV8FJWHtCFCKqMFCbXBFPFlXbqOSmHolHEkZql1PxrDJGUMHWzyDtocmn3kzyKxFsNucIBts0Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJb8OeDyeztzpwQF6cbFoOO6GtYcOufywRiFdtvYsA4EO0MyNs
-	YMM9LcbF8o7TdMTRNqtoTQKhI2+tN6zkOR+Gq/sFcf3Y3rBINUO0rE8+
-X-Gm-Gg: Acq92OFgaVt5BqtDDb0B21ttdH3b/0q8AQTioBM3+It82UNCdL94em/FQtncYNW26hi
-	XCFX+HsIXHXp+DO5Db+X2pHfM1VciIavqna4xEmnS4CUfVjoGk+gGimnsLdltIkEmUyaM1tNelt
-	8Ay+UZgZ8UbSAYkr5QQhmU4YFg8pFVTnwImA1XNATtAmMJrjjcwy403hRHJysyJXIb0u4bPLKk9
-	BfS/ky8R/T4N48vQUGGDxzlrJ54ethDqFITQ/GbPWJc3FapSRguh1aH6LVMFhxYhp4zIowZebBf
-	/JpB+4C12zWgRBZlgrZFR4hp5q6oItrs/51AVkFFKP9KLmni4AIWjIJW3pv7R+lYSrmuCiRtrvb
-	uwezbZsyYp8DutvNlDux13tCzqHG8ChwO6N8Hcavlh1ffgLAT+Quwr9nqw3KCJe58PzCYH6Twoa
-	G66v3d144Z38m5BHaanV7GWRJrCDR7r+1ZMnyqaXmzYNl0+Zpv7viUQpDHb92li02FJgSEQrwDk
-	IGWSKZ1J2B1
-X-Received: by 2002:a17:90b:2541:b0:368:78da:803 with SMTP id 98e67ed59e1d1-368f3ab6bb5mr2401771a91.12.1778651803953;
-        Tue, 12 May 2026 22:56:43 -0700 (PDT)
+        bh=Ra8FK+IjnzcQJElh4Bz008lPaSmGodsKw8/Zi9VAbNE=;
+        b=Mo2eQ8a8s7Jsbw0gt3miP4XT3sYMHkOSzDUSqtDB9X1BMyH9HOeW8a30u8oqo0+USp
+         kxv+SyMAgoUq7st2imtV+jkXxgnNDTwzLL5J8za6U0VKleOPtEIxtgaHOxCYwmVDfXaN
+         x/mVh18q/RgqJLfL6hyeofaPxWIkyuOFd/FNlnHBZGRdxP9SBXfXW+VOgemudWudClIM
+         wjDdw2M9KYRsaVNgQHtcRsjNFjYeUFJ9SG97FR6YuxrjFgl1dhMjBjLVRhC+Rvr3RwA1
+         o7+PchGetUlqQlJCNMVL+hmcAQJiB+OGN/rVx96uDmSYdAw4fiexNWcPKxe2n+jd4tp2
+         pWyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778651806; x=1779256606;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Ra8FK+IjnzcQJElh4Bz008lPaSmGodsKw8/Zi9VAbNE=;
+        b=HHIVu0aofjmpCxE7ADizG9nvKG2vxuqRPSNyy4ZtiEo8BVMQ9DgdZu+lpTOevepTGV
+         VshsI7IL1iUMMsNyCtxvfLG/fgQpz9BTB1YWOZv2J0i3F/s8Y6o/JihWPNA2QYxi9VK5
+         87l7D+6lHT+kzcPRTYJif3v6PX7WEuHawSWq8Ra1XbBY9c3nr8X454vRKzJRN+eSbkCb
+         r9tOIYRHejAQfJ22hdkZdq5I668aF/0ticB2NEfHafwPYD8tdpcuW2zdaBdreibD/ZAV
+         6VVHN77jPZokibIoBS4QorG5TlbytpwL2ljPUWLZZGLuaONOHiFjsJK5HkxH8ZFoy7IA
+         jS+A==
+X-Forwarded-Encrypted: i=1; AFNElJ/wFxVmIfV98e8/BVmbF/NhLfabY8M9X83o1IGA2mLHzDZk1yd7j2yUhdqpEOsd9dnezvgpn2dYMQM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5BkkIIgfAMA1DBBq5uAaX9/3iRqF+G7y8TIV0yLyDmBB4aNvQ
+	FYuvB4cQ3Ql410WOfJtWjUJpw2pLXsLtd9eOFY4evI6+OBzEDY039BImZeJKDw==
+X-Gm-Gg: Acq92OGv+8EsRJHQ43RCKr+nfdCC9tqk09xIOQlgXxL1zdHjgj72O1F9QcrrUD4N13f
+	ymImcD0T0V2GYvzupoJ1JHWCbU0n/oC8/5zObI+IU27Wm57OGk8UWQ5Za34tlsdRtUhWBLIw02e
+	XVTHn263kUFUWRPhpiLHDyaFkBYafD2LDdQAS5FU1CvA8u/LTOGG8Ah1QNOAFbUlmUqlTe2W0Zt
+	d87rXOqbwyF3WWmGZYRyIrfkBi608jtyF2Ipl+mvAT42iWPD9W8JJ8XB/0ZI3pWSCb8Ut4euBVl
+	ukk2B8VI19NfKqDYGVt5ZVm+SHeGZgb/5USgrDPp9Xnbku6WQugNU97J0fnKr3QH3nmSGRtp1xu
+	GMDdzKjZeXwsqNjuvRUa1p+g71urxjXZ0D9ZCpCFMAh1weSXO+DpNCx/bJicrv1fp9ZDSHE+6xT
+	F2+Mgws6hRYxpYXt9N2RZ1fqZp+eZeEr3GLC097J3E9aIShP2LoIE429G3UVfTub2cBd7GmveQ9
+	GmyCbPAcN5N
+X-Received: by 2002:a17:90b:1d4e:b0:368:2289:42cc with SMTP id 98e67ed59e1d1-368f4092542mr2283215a91.24.1778651806092;
+        Tue, 12 May 2026 22:56:46 -0700 (PDT)
 Received: from localhost.localdomain (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-368ee32822asm1785492a91.12.2026.05.12.22.56.41
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-368ee32822asm1785492a91.12.2026.05.12.22.56.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 May 2026 22:56:43 -0700 (PDT)
+        Tue, 12 May 2026 22:56:45 -0700 (PDT)
 From: Joey Lu <a0987203069@gmail.com>
 To: mturquette@baylibre.com,
 	sboyd@kernel.org
@@ -67,10 +69,12 @@ Cc: ychuang3@nuvoton.com,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Joey Lu <a0987203069@gmail.com>
-Subject: [PATCH v2 0/3] clk: nuvoton: ma35d1: fix PLL frequency calculation
-Date: Wed, 13 May 2026 13:56:23 +0800
-Message-ID: <20260513055626.1070533-1-a0987203069@gmail.com>
+Subject: [PATCH v2 1/3] clk: nuvoton: ma35d1: fix ignored div_u64 return values in PLL freq calculation
+Date: Wed, 13 May 2026 13:56:24 +0800
+Message-ID: <20260513055626.1070533-2-a0987203069@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260513055626.1070533-1-a0987203069@gmail.com>
+References: <20260513055626.1070533-1-a0987203069@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -79,31 +83,40 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Fix four bugs in the MA35D1 PLL clock driver that cause incorrect
-frequency values returned from recalc_rate() and determine_rate().
+div_u64() does not modify its argument in place; the return value must
+be assigned.  Both ma35d1_calc_smic_pll_freq() and ma35d1_calc_pll_freq()
+called div_u64() and discarded the result, leaving pll_freq holding the
+undivided product and thus returning a frequency orders of magnitude too
+high.
 
-v1 combined all fixes into a single commit.  At reviewer request,
-split into one patch per logical fix:
+Fixes: 691521a367cf ("clk: nuvoton: Add clock driver for ma35d1 clock controller")
+Signed-off-by: Joey Lu <a0987203069@gmail.com>
+---
+ drivers/clk/nuvoton/clk-ma35d1-pll.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-  1/3 - fix div_u64 return value being discarded (affects both
-        ma35d1_calc_smic_pll_freq and ma35d1_calc_pll_freq INT mode)
-
-  2/3 - fix PLL_CTL1_FRAC mask width (8-bit -> 24-bit) and update
-        the fractional-mode arithmetic accordingly
-
-  3/3 - fix ma35d1_clk_pll_determine_rate: move find_closest() into
-        the configurable-PLL branch; unify read-only PLL handling
-
-Joey Lu (3):
-  clk: nuvoton: ma35d1: fix ignored div_u64 return values in PLL freq
-    calculation
-  clk: nuvoton: ma35d1: fix PLL_CTL1_FRAC bit field width and fractional
-    calc
-  clk: nuvoton: ma35d1: fix ma35d1_clk_pll_determine_rate logic
-
- drivers/clk/nuvoton/clk-ma35d1-pll.c | 38 ++++++++++++++--------------
- 1 file changed, 19 insertions(+), 19 deletions(-)
-
+diff --git a/drivers/clk/nuvoton/clk-ma35d1-pll.c b/drivers/clk/nuvoton/clk-ma35d1-pll.c
+index 4620acfe47e8..bfedd45bd04b 100644
+--- a/drivers/clk/nuvoton/clk-ma35d1-pll.c
++++ b/drivers/clk/nuvoton/clk-ma35d1-pll.c
+@@ -92,7 +92,7 @@ static unsigned long ma35d1_calc_smic_pll_freq(u32 pll0_ctl0,
+ 	p = FIELD_GET(SPLL0_CTL0_OUTDIV, pll0_ctl0);
+ 	outdiv = 1 << p;
+ 	pll_freq = (u64)parent_rate * n;
+-	div_u64(pll_freq, m * outdiv);
++	pll_freq = div_u64(pll_freq, m * outdiv);
+ 	return pll_freq;
+ }
+ 
+@@ -110,7 +110,7 @@ static unsigned long ma35d1_calc_pll_freq(u8 mode, u32 *reg_ctl, unsigned long p
+ 
+ 	if (mode == PLL_MODE_INT) {
+ 		pll_freq = (u64)parent_rate * n;
+-		div_u64(pll_freq, m * p);
++		pll_freq = div_u64(pll_freq, m * p);
+ 	} else {
+ 		x = FIELD_GET(PLL_CTL1_FRAC, reg_ctl[1]);
+ 		/* 2 decimal places floating to integer (ex. 1.23 to 123) */
 -- 
 2.43.0
 
