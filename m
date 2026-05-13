@@ -1,274 +1,280 @@
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011048.outbound.protection.outlook.com [52.101.65.48])
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023119.outbound.protection.outlook.com [52.101.127.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 250202D6E66
-	for <linux-clk@vger.kernel.org>; Wed, 13 May 2026 08:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2063E3DD864;
+	Wed, 13 May 2026 08:51:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.119
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778659311; cv=fail; b=tCFOG8qko8yRiU2r4hIvyJJ416+Q25hMJvBpLCLko/6ikTFPQX6mhgc7CPQ/vGPeaXlOzRNM3CFyZVDirIKXLFikgnsuMDf1iU7zwsuKIb6TggYor6AwPQVoNQO/bo+glLdN+80yvSC3Hq29b+F29FErvNK1HPxnbMmPR22onMw=
+	t=1778662268; cv=fail; b=fdEndTS8i6i7iEgMid7iA3BBCigDYeDNfdT98bzMKFuKHYm5kG4mJ2NuV2ngornhs8h5uaUSUxzD9aoWFCY6txmuE8HgX4t0P3t5snJXCFiDe9xKoUeQFvBHVRwrLUWj8l0JSQFd64U7fTUEdd8iX/ShAUQY1eAFNjBoXQOoknk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778659311; c=relaxed/simple;
-	bh=6f6c6zzCI7nrli89g3SFkxImoMbTuBn+2FpQq8hJ7Uw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=BxKnd8NtQp0LoZTgy3dsK1jR/6BZgH6Qf9wOWJLtX9soY0KLUx8fFgKsQ5wphJRvMHLb7fSKl46RVMXz5AOq66XGXvDYaAWe4XZd/r/tKybDB5F1m1yOzbAlF5CYGPrvfVE/sHHeJG9yPVaQQq3C2s1bnuTRXFmwGCd1QuPTstw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=OqTesnlc; arc=fail smtp.client-ip=52.101.65.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	s=arc-20240116; t=1778662268; c=relaxed/simple;
+	bh=J3xgd1WeVZ7216kjt2heDyXtQuVAZWChXPG6++gKDdg=;
+	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=RUGVGUrUTrvWodFZVNtxxbcDyhu/ry1Mq+mqEByMkhk0odw+I9rFbXehsCHam8AT19/zHHbLvAP3qXNZwSMj5rjrcvt857/W5iQbyhqoq3UJAj/yYKt51QBIYZxqEbOAlFGz7LBEECOJHTknrdpnUeh9h2KhqIJRZlAyxhaJEOs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=neV+CQx2; arc=fail smtp.client-ip=52.101.127.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="OqTesnlc"
+	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="neV+CQx2"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=u/t4/n2E4ZX3qzvzMdD0CElCzl/y/4sUtaRsDOo0Vn/80ecf3qrWCw7wbtj6ymwkLauRepZoy44HzoZMrJ/KpDaZzFRieGqssImwfr3kGzjKu5yKbWZR5Uh5WJquS82H45R1nM5vZ+pMpUzoKKnnafZSnOPMPf7CiFdQ3nWH4knU2rZCTOyhkx6t+/0cNydBhhKw0Mf21QlT8cOw+RTZut17oPXmAXWI1qn4eimpd/bsQHw/1LwYwfv0xy9Fx7GQJ1P70+DiKnt0gOI8QOxVqLY3Zd00JNU4ashxTotZUfJ25xb5UHKrolJvjXMtwn1DpWMlZn2D/CV3ZIhFIh9YCw==
+ b=n5CZPwOZNOluNrmOftsfr27BfloJaXQo0Cn9+j29QvmjS43wg/oo1Gtop0eccFZ8Bqy99JOlb42jLbmEiWaPYmPsM8d4tWXDm3MiztcnuZSxG9+5ArgTBr4wUXkTeNhEW+ArSX3QQKY4Ac5FB4YsOlMaPrqwEVAk2IJUWTQoleFOHYDuldEtV0KjDVDkK6divNlVCurWukdF9h67APwaGiVk0wHggZfhA0v/ip0tIzO45GOUnOx7JHN2HbmopVkzGi73Oj43Ye0WcPme4sid/smO7BNoyctaHJ72SV9s4T/b1/fV3gnxLEIA2sRfYDMo9WipMTcskVc81Gq02m7bng==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=A6BgwBFtLA5xUK0sDwuQ1+RH5pp1UQTQgiMUA0OMuKM=;
- b=MqP5hzrrao3c2aSS3hE+RzCNJBVw6VFamodxFwciUbyhhccAFXzUL/IotBF2AQIYdLkDJ/p+P6UPpJgH27S3RF9KIi/IcLJthd+6XO/q1xzIxyvfENZSl9tm2K7YNewp3q0VG/ve5V+Bi9cFjBjMbe5IwFojXjfPW4BCLznk6bUq+/1ULlXGIEnl1wIY42+CVgEQn++C+r4a11iazAvC+Lr9L2DU2md9O95cmwnqDH71xVc+SLeq2cqo0FIbUNR7liMIJ8rO/t0GiMqm3PYutlM6Ji5MVz7zHmuFz8FsaiczgpJIwhYUoNtIdvFjtOaQoVsrChmMFSEDD/s/PmN5MA==
+ bh=ZHz2ZP/Yj/LVP4hC0jUYTBaLqWIPQwgf4nCmR7VfxG0=;
+ b=jkX2v94LJFt9o8frhvB0XzvZgulstSlepXDB7JDVcVgcxWEntUAC1pdImH7smCt34+q2AkblF2OlF1DM51WA21+eoFTdZ3mk7SI/z+UISMM8AgpEHUs9Pe0B8rJJMiu97Y7KFsHmqShVEl2i2sPAwTB3lRRW1htN3lmeG+x8xILvb/ilEBDA8gck120MKRJnLWEGMRA2Eu4tcDgwZJxIxE6k6kPIJfSXZsTqD11bufS0zVXHN2Fz6/V0Qw2E+sApumEI4duHmnPuAPhRv3a3SLYaQO+AALxJ0wC8qa0y22NV7RRuUj4CQVnYT1zCnnyIazvBT3vJGno0vJXTJvEmkA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
+ dkim=pass header.d=amlogic.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=A6BgwBFtLA5xUK0sDwuQ1+RH5pp1UQTQgiMUA0OMuKM=;
- b=OqTesnlcVshrGHjVEWeIVS3qsrG7RgGiRZCFzQ7tBtJgbq1geQSj4ddt2c8oCCn1APYU4yS44Ht+IQ++lK7t5Me6nooeg2kMk26pFwFpCepGhl4q68LY64HsvrUB8fDoPTSdESYhzU1OYWFWHn856ChBpfFPQPheZ3SXBMhERnF/UH01JdJssx6VEpl0uZoc+NAXWW0rUuAkub0K3QCok7KiXul671If4eOHSnFXVLC95QqtHdC6Gq7h/UTB2pAQAP8P2TtvLBH2QxhMWXHIJZhosq4kyZrOTqAeEvrii9bwz53QJ489iNm1WzSSN3vIHaERwuyjy0RnKRchDRrfbQ==
-Received: from VI1PR04MB6861.eurprd04.prod.outlook.com (2603:10a6:803:13c::9)
- by GVXPR04MB10234.eurprd04.prod.outlook.com (2603:10a6:150:1c1::20) with
+ bh=ZHz2ZP/Yj/LVP4hC0jUYTBaLqWIPQwgf4nCmR7VfxG0=;
+ b=neV+CQx2oxY1jYIkiUnpaicSxSrVuHsOg+aReKuy5YCINx34w4GYfFaLluBXfcJLUp+QVpwWJD32GRDlPn5Pb3BChJjn/exCyYYB2YNnHQ6p0OYsIEUN8h1Rrl+GFxjbpmGzINUqf4UMFDlJRPPzR2aD8qxz4mEHXo4emb6ZHlXkN29ty1SI/QMJqXJQMWksbRyf4UbAqlKJs0sC8p6YO48QcB6HdQ8gLzvlGB4dJclLlgcPVWQ4K8bcqeNGhMNcr/MXxT2Aknn26fV7AUIu2YkqmM2HQWcxn/6ILOOrulgXOTPZR09HSl4LJglY+ZTTqKm5tqxCKFOKzOVJ0wGhbA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amlogic.com;
+Received: from KL1PR03MB7149.apcprd03.prod.outlook.com (2603:1096:820:ca::7)
+ by SEZPR03MB7702.apcprd03.prod.outlook.com (2603:1096:101:10d::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9913.11; Wed, 13 May
- 2026 08:01:45 +0000
-Received: from VI1PR04MB6861.eurprd04.prod.outlook.com
- ([fe80::7f96:4bde:2e55:cd5]) by VI1PR04MB6861.eurprd04.prod.outlook.com
- ([fe80::7f96:4bde:2e55:cd5%4]) with mapi id 15.20.9913.009; Wed, 13 May 2026
- 08:01:45 +0000
-From: Jacky Bai <ping.bai@nxp.com>
-To: Frank Li <frank.li@nxp.com>
-CC: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Brian
- Masney <bmasney@redhat.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
-	<festevam@gmail.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH] clk: imx: Add audio PLL debugfs for K-divider control
-Thread-Topic: [PATCH] clk: imx: Add audio PLL debugfs for K-divider control
-Thread-Index: AQHc4e58tc5C9w/OBUW4877OM2GKnbYKf7WAgAEYs/A=
-Date: Wed, 13 May 2026 08:01:45 +0000
-Message-ID:
- <VI1PR04MB6861AA3907166EEDFD50311887062@VI1PR04MB6861.eurprd04.prod.outlook.com>
-References: <20260512-imx8m_pll_debugfs-v1-1-e1e44b21be90@nxp.com>
- <agNDbQsJn2jcnA9q@lizhi-Precision-Tower-5810>
-In-Reply-To: <agNDbQsJn2jcnA9q@lizhi-Precision-Tower-5810>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: VI1PR04MB6861:EE_|GVXPR04MB10234:EE_
-x-ms-office365-filtering-correlation-id: df7c2e98-394c-4be1-b1e1-08deb0c5e061
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|19092799006|7416014|376014|38070700021|56012099003|11063799003|22082099003|18002099003;
-x-microsoft-antispam-message-info:
- g6Tcwwj+f9ad+ADr1auu29vGcnH6VNN9ED6ysJM5GJ/P3rWcq9eMoEUuEDqxev+N2Eux7vCEOwGZHC1G6ZzdltBM40bBS1aBmUFyMyGwSxk/FhwHAhrVNWeWnBMuDyR60HG7GlYxoRflSuFRdHCzKnFJjr/Krr3zjZnPJWuVfpodOel/OY8sd5e6aRJ27yCMhjh5Osl97ZsGRZdXA0gzX/uFMML46LmNkYiGw1pvEj/hAsX06GhOaNJwPUOTesr8wxiUdAH9dg+92flbizI+Z4cyIHwwS2qCHPQwx3XzAvsy9PQFPbXWiKhdrXQBpFjRMDXkg8j7OgtiWjQ/c2YL0EQVm4JeV3O1kqJuYlqyBE9+h9wyQzG0jB34Jji8ClxdeIrAk5/0l3DWYdjdhzbZFovfNq3WFiGc2hGhB7+f/b6+roMzsm590nRhYNTUIzNrLUn03vcFGJedfF3yRZkq0FQrqmY2Fzfcu4gG04ezFSMs9/AhNC94OwQCgd6eGDO+0Q3PxDuo+G96/Xo2pKn3fixtZ/MmI17Xl2ImeSjJy9RehyH8ALjR9RTc1VmkDouZfdJRTxApPi3AiWqbUCYsRWELtfIJ2Yi5wLkjNSC5HfSggPkRqvI1hLiLysDBJ1Ib4gqUO2FpyD/Aj+/iwqDBbX2ns5kMLNPBQVHn4VzixINPJuwVrTf9OhQzPOIX9LIL90Ruh8r31NXkrLgq8Rj6M11zdnO91BgCVE/HGZFHkwePyrfrZmOSYtPG4UVoQ12g
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB6861.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(19092799006)(7416014)(376014)(38070700021)(56012099003)(11063799003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?0sKSWa+45RIs3sBVgFfPzJSUo3YqxgNnX3Z0r2d581mHdGk4PR6qDvkPdjvt?=
- =?us-ascii?Q?353bQS3q79AMpe14rLZbqTuqrl8i94J5Aqr2cN6nY0yLZrS1fzKPQhAuExoR?=
- =?us-ascii?Q?+nxbjSLSZN7RhWo6grDg8wTbG96omMguAykrnjOpE+D/VsHXlKrD/SD28yxz?=
- =?us-ascii?Q?50uq4NNbxix2yXaAOIiTjf8rboH2SY0L+lK6NnbVPdi4s5mMTC2n6DFWfHf+?=
- =?us-ascii?Q?eoOPAa6otCs+zld9vxUjFsBSCsU5vU3KMWdocUIJp31ezZyzXZYv4Ov74aqL?=
- =?us-ascii?Q?sEGJTf/3tP7U6R9H5ogdWLyCNBqmYp40DUkP3xlQkQOkvnZD2sZstDIHba+e?=
- =?us-ascii?Q?Dug2xAPax+regc1d4fcv+TA7HvRJY8DxtTxxu+JDIBsJjlAZLlJgaRAvqfjA?=
- =?us-ascii?Q?mWuicOUD2N1Oj7vMKlMZK9ZzqmsLTp+odDb2/oMx/9nflKzIEkmvRuOU2xYq?=
- =?us-ascii?Q?D4VjM+nF/W965USTtfI5PrJlU1x/xm274JkZsXDrWXx1gKpDwxsacfXbeOlB?=
- =?us-ascii?Q?2t5wxc6DRIWm1mCFtnsQXFr4cXGmNKYYjKchmSH5PE4oS07ZbNc/RwutDvvH?=
- =?us-ascii?Q?yhOFwwJPp0kYveN2sipuSYSlkZsYK0BkHobjZiF8GYnhcG67cfqAkBy7dxxo?=
- =?us-ascii?Q?X6HsfQztyk3bCY0ocBsQye+AC/P77oWcDeXJz+EaCNgp8+LeP8fx8Cco+SAC?=
- =?us-ascii?Q?O0ZCgLUYZ+ZSxfmSwCcG3Uc3TPiaseB/V1Fzy37PzeRJq+dC3QeaV4kIhXow?=
- =?us-ascii?Q?vBRmafrmeOZUOmiEpqWlBr4XsGssGiwQgEdQpAi66LG2ZubF3cU0+n9HtUAa?=
- =?us-ascii?Q?HZAJGaG48iAk29hui/+3uRadFVu99BFCfmO5OVtDxKRs/3/PLWeBOLHpjTip?=
- =?us-ascii?Q?ZwczC96Ka+ZaMEE+fgJkiJ8ezp/cgUq55x3ymtBVREoZtQkfdWC5y0Aaz1C7?=
- =?us-ascii?Q?8BFKcTMR8djOsAGPc6HJLrUop6IuFHxsBLNEocZ/zcRRT7iuJ7QZVLr774HJ?=
- =?us-ascii?Q?SKcd5HP3QXWWOpRK4v9IxiVOm/3OVRvtZD88oEnHU4yAxGvK5ANf9N5YUxQt?=
- =?us-ascii?Q?8FfFC2YDnaLVn6C1cPM1OJOSnakKybigP2skV2QiO1cpAFz7g/MR+6LnqUzt?=
- =?us-ascii?Q?ruUN7dqc6wQWJjvb0LUWwk4lgcezKkOQqk4MJccBLeUzFubRdx9glfZP8jrK?=
- =?us-ascii?Q?CTiR1SrZzZ1BbTzLTcGbnQvV9faN6tQ0O7WrF7K31dT8qQUBpOg+CaDsOiG+?=
- =?us-ascii?Q?8zqAvC2dezMUUnCKFpZa/2YQjXkWfea05UUcZXXOcMjGKuMZQe7Dc8gRDZeb?=
- =?us-ascii?Q?Zfe27g+UM5F304txBO8i0kipqAQ+MNgxeLD1i0S2wAaHB38EsiAWTlMhd3df?=
- =?us-ascii?Q?rsDtRo6uCy8ZhOIzsBGnUb2uaIZLJrZlHVV2OO++/zMT04Wwzw/MZ9FsErFG?=
- =?us-ascii?Q?J3ONCTXdvNCo+7llriiToevEX90kGa3jz/1XODHD+LEJkiJ2wKZRGhFyXqJP?=
- =?us-ascii?Q?Nd7vXKZPSQi/K3UIqiNPwtlY6tp/uE+XK8UFWAhGoXq8MSJzx9xhifjQwR5a?=
- =?us-ascii?Q?Ize5BBycXSdJ4wVYxqAlcK70O1UTcUDkytM56CR6mvCVW6vjpVIeJcpvPRNF?=
- =?us-ascii?Q?AKGzJq5qLRtt6ouNHPbl60VgUc+VwASAwOlyT5yrxCBjcFN/QTXChj5YOl2F?=
- =?us-ascii?Q?h2+ZDqYlZEM9WiTSWqZ+F7K+o7FG/UPR3NH3wFtgTaVwF9t9?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.25.17; Wed, 13 May
+ 2026 08:51:02 +0000
+Received: from KL1PR03MB7149.apcprd03.prod.outlook.com
+ ([fe80::2f06:12a:fff0:6506]) by KL1PR03MB7149.apcprd03.prod.outlook.com
+ ([fe80::2f06:12a:fff0:6506%5]) with mapi id 15.21.0025.012; Wed, 13 May 2026
+ 08:51:02 +0000
+Message-ID: <00d8ed18-f753-405a-9ba4-e044129bf33a@amlogic.com>
+Date: Wed, 13 May 2026 16:50:57 +0800
+User-Agent: Mozilla Thunderbird
+From: Jian Hu <jian.hu@amlogic.com>
+Subject: Re: [PATCH 09/10] clk: amlogic: Add A9 peripherals clock controller
+ driver
+To: Brian Masney <bmasney@redhat.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Jerome Brunet <jbrunet@baylibre.com>, Xianwei Zhao
+ <xianwei.zhao@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20260511-b4-a9_clk-v1-0-41cb4071b7c9@amlogic.com>
+ <20260511-b4-a9_clk-v1-9-41cb4071b7c9@amlogic.com>
+ <agH4_gClJW8CVV75@redhat.com>
+In-Reply-To: <agH4_gClJW8CVV75@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SL2P216CA0182.KORP216.PROD.OUTLOOK.COM
+ (2603:1096:101:1a::12) To KL1PR03MB7149.apcprd03.prod.outlook.com
+ (2603:1096:820:ca::7)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR03MB7149:EE_|SEZPR03MB7702:EE_
+X-MS-Office365-Filtering-Correlation-Id: 76c2b986-5668-46ef-e45a-08deb0ccc2c1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|11063799003|56012099003|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	hVPB+NcR/8jv68X8xZa+dwAPyqqCCGTLODwCR67vyXm8o5lKVK2bgF7t0oeOy9vpjRUPKKixsKzlQ38Wb9NnW2JRGNm39U5746GcHfRWF75DMfxJjR2ctHJVcHmJ2gKyLpGMOdHrkOJTp2QYtb2JTIjmE/d1bcIJrVb8iZ7en/uqk3vpNleic3OFYQNumXhrueP+VeEJ6bNa4DUL/05C3NOSGirq8MerwRhg1M2wwob5GsHrgnOaSbtuIulp3prBYZOO2stWEofoq045SG4ae6MlMB3npKKHXwVEpMcDkH7aVg6G7emwswwOYNm9h2kekiDntPmmVFIm+PhYjcJbi+wlRRTJEFJbYWbPNJsz8m1QY3qLLhW2BjJAww0wkyfuREPzOXdHKJbhPy9gRJ8hVOCIRnx3lbRL9b4nKPBRoPdSPR1drnKfj9DV5E/5KT7Nb37g4Kh1+CAV/j44fA7kMTB8UgxFvzJci+ORDj3JsEMU7+9yVLEo7ZGBVkGPR0Q0GHa0CPe5pWwR5uryAX2aBqpsFRfVWrn1u/HqL5vsZqRGHIAqLaSsl4B+pnKd6A4NLL2IcPlZwdODbU7eL7RkTD5B2DT5I6t+NTiXGDRzfjx+VKwoeGLsAmrZIJfJmg9gKL0GwelNaVvUdKRlLdNtt/ubRZZuLWxmU/zx9JJXTRw8ZuD3Z3yN7khSfIHcRfVM
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB7149.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(11063799003)(56012099003)(22082099003)(18002099003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TnpCcC8veUY3QThJMG01bEFIQ2s2azNlNk9pbEVldURndmZwZkpvNGRqa2lX?=
+ =?utf-8?B?T213WGpJY213aFl6M1NWcjBaRExMVldFY3kyWW5wM3h5YkZ6OHdSWVAybi85?=
+ =?utf-8?B?TGh5WWljRTdqQ0htaE4zdXFNdU50b1VPeUZGL0FrUjVqeFpjM2hRMzdtZVBu?=
+ =?utf-8?B?OU9MVFpIeGswdXdlT1d2K3JpN1NmTWtOamRHSktSbkxnWllhU2ljVndsenRX?=
+ =?utf-8?B?QzB1WDg0N0hMdVg2OHNTRVR4TnI3MlpUdWNVSlZkbFIwMmo5WEtUdjhQWm4y?=
+ =?utf-8?B?VGZlSjNNRkJ3VFZXMmwxZERXME56RlZQZDZVWFc4TDlDaW1YTTVnNmdFQWd5?=
+ =?utf-8?B?SXIxaktDdVc4bGdqR3NCRmdvcFdMNnJOUjduT2REelNyYk1vYmovTjhpZzNS?=
+ =?utf-8?B?dk1GeUVHK08rbTBvemhQZ09MeGF0R2FJYjBhZ0dWRFc0STV6R0xtTWVLSTNv?=
+ =?utf-8?B?d29VVGNEQVdqbEhKVGo2bUVMMVBVbVNKblpHM0FpbXVLRFBXalRjWGJQc1lG?=
+ =?utf-8?B?VTB6NkhTemJBU2dNVWhmeitXV0RyZGEvUjIzT1FYTTEvY2FQOW1BcjJUZ3Jy?=
+ =?utf-8?B?eWh6T21uWjJQUC9SZE4wZWhlNThEcmFOcWg3L2tTS1ZWRXRRWDRXY3BkZHpB?=
+ =?utf-8?B?VEdRQkxIdlRlY2pycjJnRlk2TFVFMkZzSmRJVnpLcGpIK2VuOE4rVDBwVmRW?=
+ =?utf-8?B?WXlVanZUV3ZHbmtRZjUyZHJWckZMMzR1amtvYmNJVEZud1pXeVE0TENWRXlp?=
+ =?utf-8?B?V2tVeTgrenRnVGhEMDEzRlJFRTJncFJmaGQ5YWRMSFM2aTl2LzNZbFgvY0pN?=
+ =?utf-8?B?TGREV1dYZjgrMFkwdUFGcGVxL0R5VEJsdXF1Z05UUXl2UVdUZkxJZ2MvbTk3?=
+ =?utf-8?B?bHRzWG5scUZyVGVwYjB0WCtUazFERVJyanNCUDU3MU00NkwveGhDMXgyRHFp?=
+ =?utf-8?B?M054VjdGb0lTU2VzbWg1ZUtocXZKRnpUbmtmVzAyOUF1V05WcGxxTmdGeUFX?=
+ =?utf-8?B?Q1ltVW04bm5nRy9LMldtNVBkVmF4dDBhc0c1UWdNS0w0MDRIWms1YlVwLzdR?=
+ =?utf-8?B?VWpSZ3gwTEhDNFMrMmtXbms1SG84SkFvR2c5MXBuYWplU1Voa1d3TGpjZCtF?=
+ =?utf-8?B?UFpHK0hIRWwyME1KRTVkQ0E0amhIN1FkTlY1ZXJCYWxxZStsYW1WRGZ1SWhR?=
+ =?utf-8?B?emk0MGlnaFBxaS83dE0rV2ZpQTJubXBJdzBsZUY0bU9FQm8ybmwrK0VjSExI?=
+ =?utf-8?B?dTFGWUt0RVV3UzhKL1dHb1NzNVF0TjYzSHN4QkxQcS9qeGJmZ2dKZ2Z3M2RC?=
+ =?utf-8?B?YWhFS2JsWEtuQVovTEZuYkkrWnhGaWJVRUp1WjJXa0xOaFNBZUhiYS9KZG5r?=
+ =?utf-8?B?LzIrUWRZYU1oMk5yVGV5blFqTi9nL2NWaGc2SVNUL3hBNFNLbmZJazVBNmZx?=
+ =?utf-8?B?a2k0MHZLK2RmREZvVm1CY1FoS3JNMzJ0SkdHdTBZTDZPRXJtMWUvVUQzcE1B?=
+ =?utf-8?B?Mk9mcE4xSmMzcVQ0bis2TEpydWZ0ekZhTjdlV2ZHSUdQNnpIcFZzN3MwenNo?=
+ =?utf-8?B?eGxHVEZsK01sbkZhTEFsVEhlT2hjdU5GcEMybXcrUWFrYnZ3TTMxc1JVUUdZ?=
+ =?utf-8?B?U3hwOCsycnlQZVlLcllmOGQ3b1RhZXl2QnBSWU1hbXM3L1VSV05yRjBIUWsy?=
+ =?utf-8?B?V2hpR1ZZRUFRNnJsSm1kYS9tZmpzSEhBQkFlT0NhNDlDVlREVkF3WmxHRVZI?=
+ =?utf-8?B?MDl6enlqcEZWWXRwS3JQeFdUdzVGQ0xXUTZQdEI4Mm9PU3hHLzM5TkFvelFK?=
+ =?utf-8?B?QXYzWkdGRzlqdTBQYUgra1kzOUJWUU5YV2tGRmMxa3ZHSkkxeXc4S0hCdEgr?=
+ =?utf-8?B?K2xjdmhJYlZQOFRFcERKclF2VTZMLzVhckdzRUg3czkwNWJ0OFdmOVAyZExT?=
+ =?utf-8?B?ZjJ1RDV5dEZsdkd5NUp2RDdrUTlueU53dmZCRzJJK05ka2grVGFaVU1Tamcw?=
+ =?utf-8?B?cXNCUU50SDlLMm8yWHNuZ3BzUXUwWkdDVisva0hlZFdnSFlWN2NyS1ZONzBu?=
+ =?utf-8?B?MEw0K05hR2lGTlAzRXE4NU9KZzJzT1RLVFRwU0srbDNjczgzcFlNbVZOeVJI?=
+ =?utf-8?B?M0ZLR3puTFR6eXJRV3huMnJsajZkbFF1SkYyMWZYUnlEYjdtaFJtck5Wb2Vl?=
+ =?utf-8?B?b3FPSUx4M3dZVEJiMFZkLzNRSjNQK29BTTB4dTJaZmo2MjdQWGdmV0FKMUNZ?=
+ =?utf-8?B?MWUrNTVzSGdvY3NTWENzTTN5b3BZODJkaDBMRFN3V3g4TG5ZY2k4OVl3UFNt?=
+ =?utf-8?B?YjBBWjBQbjd3bWRrTGFmUFN1aE1mWGM3Tk5YYThyMXFZZWJyZzA2UT09?=
+X-OriginatorOrg: amlogic.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 76c2b986-5668-46ef-e45a-08deb0ccc2c1
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB7149.apcprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB6861.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: df7c2e98-394c-4be1-b1e1-08deb0c5e061
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 May 2026 08:01:45.2192
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2026 08:51:02.2616
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: KKvttvY7WZGzvbTo2eYKngt0qKZp5iB+3AOsv/P3xhH6bEQlOHCocOpkPqNKx66qSyd/Y9a0E09gX19qGB2/Lw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10234
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4ci+4SUTKvG+XLdz5P5bk+hmrRI2mnPRnv6NXDRA3Y7ZPEZa8KKzuwHkF6LS6PqbSR8KCFuOJhaRCRJd80nBZg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR03MB7702
 
-> Subject: Re: [PATCH] clk: imx: Add audio PLL debugfs for K-divider contro=
-l
->=20
-> On Tue, May 12, 2026 at 05:08:10PM +0800, Jacky Bai wrote:
-> > Add debugfs support for runtime tuning of the audio PLL K divider,
-> > which enables fine-grained frequency adjustments for audio PLL.
-> > This is used for:
-> >   - Audio clock calibration and testing
-> >   - Debugging audio synchronization issues
-> >
-> > Two debug interfaces are exported to userspace:
-> >   - delta_k: It is used to adjust the K divider in PLL based on small
-> >     steps
-> >   - pll_parameter: It is used for get PLL's current M-divider,
-> >     P-divider, S-divider & K-divider setting in PLL register
-> >
-> > examples for the usage of the two interfaces:
-> >    1): Get the current PLL setting of dividers
-> >      cat /sys/kernel/debug/audio_pll_monitor/audio_pll1/pll_parameter
-> >
-> >    2): if want to adjust the K-divider by a delta_k '1', then
-> >      echo 1 > /sys/kernel/debug/audio_pll_monitor/audio_pll1/delta_k;
-> >
-> >    3): if want to adjust the K-divider by a delta_k '-1', then
-> >      echo -1 > /sys/kernel/debug/audio_pll_monitor/audio_pll1/delta_k;
->=20
-> Nit: needn't example, it is basic usage mode for debugfs.
->=20
+On 5/11/2026 11:42 PM, Brian Masney wrote:
+> [ EXTERNAL EMAIL ]
+>
+> Hi Jian,
+>
+> On Mon, May 11, 2026 at 08:47:31PM +0800, Jian Hu via B4 Relay wrote:
+>> From: Jian Hu <jian.hu@amlogic.com>
+>>
+>> Add the peripherals clock controller driver for the Amlogic A9 SoC family.
+>>
+>> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+>> ---
+>>   drivers/clk/meson/Kconfig          |   15 +
+>>   drivers/clk/meson/Makefile         |    1 +
+>>   drivers/clk/meson/a9-peripherals.c | 2317 ++++++++++++++++++++++++++++++++++++
+>>   3 files changed, 2333 insertions(+)
+>>
+>> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+>> index 3549e67d6988..48a15a5e1323 100644
+>> --- a/drivers/clk/meson/Kconfig
+>> +++ b/drivers/clk/meson/Kconfig
+>> @@ -145,6 +145,21 @@ config COMMON_CLK_A9_PLL
+>>          device, AKA A9. PLLs are required by most peripheral to operate.
+>>          Say Y if you want A9 PLL clock controller to work.
+>>
+>> +config COMMON_CLK_A9_PERIPHERALS
+>> +     tristate "Amlogic A9 SoC peripherals clock controller support"
+>> +     depends on ARM64
+> depends on ARM64 || COMPILE_TEST
 
-will drop it.
 
-> >
-> > Signed-off-by: Jacky Bai <ping.bai@nxp.com>
-> > ---
-> >  drivers/clk/imx/clk-imx8mm.c  |  6 ++++
-> > drivers/clk/imx/clk-pll14xx.c | 79
-> +++++++++++++++++++++++++++++++++++++++++++
-> >  drivers/clk/imx/clk.h         |  1 +
-> >  3 files changed, 86 insertions(+)
+Ok, I will add COMPILE_TEST in the next version.
 
-[...]
+>> +     default ARCH_MESON
+>> +     select COMMON_CLK_MESON_REGMAP
+>> +     select COMMON_CLK_MESON_CLKC_UTILS
+>> +     select COMMON_CLK_MESON_DUALDIV
+>> +     select COMMON_CLK_MESON_VID_PLL_DIV
+>> +     imply COMMON_CLK_SCMI
+>> +     imply COMMON_CLK_A9_PLL
+>> +     help
+>> +       Support for the peripherals clock controller on Amlogic A311Y3 based
+>> +       device, AKA A9. Peripherals are required by most peripheral to operate.
+>> +       Say Y if you want A9 peripherals clock controller to work.
+>> +
+>>   config COMMON_CLK_C3_PLL
+>>        tristate "Amlogic C3 PLL clock controller"
+>>        depends on ARM64
+>> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+>> index 77636033061f..2b5b67b14efc 100644
+>> --- a/drivers/clk/meson/Makefile
+>> +++ b/drivers/clk/meson/Makefile
+>> @@ -20,6 +20,7 @@ obj-$(CONFIG_COMMON_CLK_AXG_AUDIO) += axg-audio.o
+>>   obj-$(CONFIG_COMMON_CLK_A1_PLL) += a1-pll.o
+>>   obj-$(CONFIG_COMMON_CLK_A1_PERIPHERALS) += a1-peripherals.o
+>>   obj-$(CONFIG_COMMON_CLK_A9_PLL) += a9-pll.o
+>> +obj-$(CONFIG_COMMON_CLK_A9_PERIPHERALS) += a9-peripherals.o
+>>   obj-$(CONFIG_COMMON_CLK_C3_PLL) += c3-pll.o
+>>   obj-$(CONFIG_COMMON_CLK_C3_PERIPHERALS) += c3-peripherals.o
+>>   obj-$(CONFIG_COMMON_CLK_GXBB) += gxbb.o gxbb-aoclk.o
+>> diff --git a/drivers/clk/meson/a9-peripherals.c b/drivers/clk/meson/a9-peripherals.c
+>> new file mode 100644
+>> index 000000000000..338a91c473ea
+>> --- /dev/null
+>> +++ b/drivers/clk/meson/a9-peripherals.c
+>> @@ -0,0 +1,2317 @@
+>> +// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
+>> +/*
+>> + * Copyright (C) 2026 Amlogic, Inc. All rights reserved
+>> + */
+>> +
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/platform_device.h>
+>> +#include <dt-bindings/clock/amlogic,a9-peripherals-clkc.h>
+>> +#include "clk-regmap.h"
+>> +#include "clk-dualdiv.h"
+>> +#include "vid-pll-div.h"
+>> +#include "meson-clkc-utils.h"
+> Sort the headers.
 
-> > + *   3): if want to adjust the K-divider by a delta_k '-1', then
-> > + *     echo -1 >
-> /sys/kernel/debug/audio_pll_monitor/audio_pll1/delta_k;
-> > + */
->=20
-> 2) and 3) keep one is enough, you better descript validate range for delt=
-a_k
-> here, which is more valuable information.
->=20
 
-Ok, will refine the comment in next version.
+Ok, I will place them in order.
 
-> > +#ifdef CONFIG_DEBUG_FS
-> > +static int pll_delta_k_set(void *data, u64 val) {
-> > +	struct clk_pll14xx *pll =3D to_clk_pll14xx(data);
-> > +	s16 delta_k =3D (s16)val;
-> > +	u32 div_ctl1;
-> > +	s16 kdiv;
-> > +
-> > +	div_ctl1 =3D readl_relaxed(pll->base + DIV_CTL1);
-> > +	kdiv =3D FIELD_GET(KDIV_MASK, div_ctl1) + delta_k;
-> > +	writel_relaxed(FIELD_PREP(KDIV_MASK, kdiv), pll->base + DIV_CTL1);
-> > +
-> > +	return 0;
-> > +}
-> > +DEFINE_DEBUGFS_ATTRIBUTE_SIGNED(delta_k_fops, NULL,
-> pll_delta_k_set,
-> > +"%lld\n");
->=20
-> generally, better also provide read for delta_k
->=20
-> cat /sys/kernel/debug/audio_pll_monitor/audio_pll1/delta_k because user
-> want to check value by read it back naturally.
->=20
+After updated:
 
-Thx, will add it.
+#include <dt-bindings/clock/amlogic,a9-peripherals-clkc.h>
+#include <linux/clk-provider.h>
+#include <linux/platform_device.h>
+#include "clk-regmap.h"
+#include "clk-dualdiv.h"
+#include "meson-clkc-utils.h"
+#include "vid-pll-div.h"
 
-BR
-> Frank
-> > +
-> > +static int pll_setting_show(struct seq_file *s, void *data) {
-> > +	struct clk_pll14xx *pll =3D to_clk_pll14xx(s->private);
-> > +	u32 div_ctl0, div_ctl1;
-> > +	u32 mdiv, pdiv, sdiv, kdiv;
-> > +
-> > +	div_ctl0 =3D readl_relaxed(pll->base + DIV_CTL0);
-> > +	div_ctl1 =3D readl_relaxed(pll->base + DIV_CTL1);
-> > +
-> > +	mdiv =3D FIELD_GET(MDIV_MASK, div_ctl0);
-> > +	pdiv =3D FIELD_GET(PDIV_MASK, div_ctl0);
-> > +	sdiv =3D FIELD_GET(SDIV_MASK, div_ctl0);
-> > +	kdiv =3D FIELD_GET(KDIV_MASK, div_ctl1);
-> > +
-> > +	seq_printf(s, "Mdiv: 0x%x; Pdiv: 0x%x; Sdiv: 0x%x; Kdiv: 0x%x\n",
-> > +	mdiv, pdiv, sdiv, kdiv);
-> > +
-> > +	return 0;
-> > +}
-> > +DEFINE_SHOW_ATTRIBUTE(pll_setting);
-> > +
-> > +void audio_pll_debug_init(struct clk_hw *hws[], unsigned int
-> > +num_plls) {
-> > +	struct dentry *rootdir, *audio_pll_dir;
-> > +	const char *pll_name;
-> > +	int i;
-> > +
-> > +	rootdir =3D debugfs_create_dir("audio_pll_monitor", NULL);
-> > +
-> > +	for (i =3D 0; i < num_plls; i++) {
-> > +		pll_name =3D clk_hw_get_name(hws[i]);
-> > +		audio_pll_dir =3D debugfs_create_dir(pll_name, rootdir);
-> > +		debugfs_create_file_unsafe("delta_k", 0200, audio_pll_dir,
-> > +				hws[i], &delta_k_fops);
-> > +		debugfs_create_file("pll_parameter", 0444, audio_pll_dir,
-> > +				hws[i], &pll_setting_fops);
-> > +	}
-> > +}
-> > +#else /* !CONFIG_DEBUG_FS */
-> > +void audio_pll_debug_init(struct clk_hw *hws[], unsigned int
-> > +num_plls) { } #endif /* CONFIG_DEBUG_FS */
-> > +EXPORT_SYMBOL_GPL(audio_pll_debug_init);
-> > diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h index
-> >
-> aa5202f284f3d1b7c1b4bf65e2329831832b43a5..9611ab127dad6f23770c18e
-> 22e1a
-> > cbe2fc22bd4e 100644
-> > --- a/drivers/clk/imx/clk.h
-> > +++ b/drivers/clk/imx/clk.h
-> > @@ -487,4 +487,5 @@ struct clk_hw *imx_clk_gpr_mux(const char *name,
-> const char *compatible,
-> >  			       u32 reg, const char **parent_names,
-> >  			       u8 num_parents, const u32 *mux_table, u32 mask);
-> >
-> > +void audio_pll_debug_init(struct clk_hw **hws, unsigned int
-> > +num_plls);
-> >  #endif
-> >
-> > ---
-> > base-commit: e98d21c170b01ddef366f023bbfcf6b31509fa83
-> > change-id: 20260421-imx8m_pll_debugfs-246d0fbbb617
-> >
-> > Best regards,
-> > --
-> > Jacky Bai <ping.bai@nxp.com>
-> >
+[......]
+>> +static const struct clk_parent_data a9_nna_parents[] = {
+>> +     { .fw_name = "xtal", },
+>> +     { .fw_name = "fdiv2p5", },
+>> +     { .fw_name = "fdiv4", },
+>> +     { .fw_name = "fdiv3", },
+>> +     { .fw_name = "fdiv5", },
+>> +     { .fw_name = "fdiv2", },
+>> +     { .fw_name = "gp2", },
+>> +     { .fw_name = "hifi", }
+> hifi isn't in the dt bindings. Should this be hifi0 and/or hifi1?
+
+
+It should be hifi0，I will fix it in the next version.
+
+Thank you for pointing it out.
+
+[......]
+>> +
+>> +static struct clk_regmap a9_sc = {
+>> +     .data = &(struct clk_regmap_div_data) {
+>> +             .offset = SC_CLK_CTRL,
+>> +             .shift = 16,
+>> +             .width = 4,
+>> +     },
+>> +     .hw.init = &(struct clk_init_data) {
+>> +             .name = "sc",
+>> +             .ops = &clk_regmap_divider_ops,
+>> +             .parent_hws = (const struct clk_hw *[]) {
+>> +                     &a9_sc_pre.hw
+>> +             },
+>> +             .num_parents = 1,
+>> +             .flags = CLK_SET_RATE_PARENT,
+>> +     },
+> You can use CLK_HW_INIT_HWS() here.
+>
+> Brian
+
+
+Ok, I will use CLK_HW_INIT_HWS instead, and the same below.
+
+
+Best regards,
+
+Jian
+
+
