@@ -1,197 +1,198 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C98309EF4;
-	Wed, 13 May 2026 14:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DEB37C937
+	for <linux-clk@vger.kernel.org>; Wed, 13 May 2026 14:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778681543; cv=none; b=ZhgeXI6+HkwY6lroAmxGFVsSRX68jOyVTBczhgTubNnkf/BE81uocr9EPtoa8RBxTclcr7i7Eox1vIAEyPXlwngv/0FuA8Mzy1swzb9bNQu5qH50WdHvCEZF5vjYxmaXuOyi9Z5icBZL7WZNKvs8l2xPm9wXku2ikwtgudFpE7w=
+	t=1778682206; cv=none; b=T1aBl9F3bJXAPOe+0wg5tlc2u84M00/j+jqEC+/h4FsZsC0HPKhep/Nu4II4dvDYJ//4Sv1heiedOP3JRwXYFD8jwe4F4nGoXyY4IjRk7y0mo2F12cQco4HplFXiqagvnLnF9po9ig/2hKGo0b6Jus539qOKLq7YZjK6slVm1tI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778681543; c=relaxed/simple;
-	bh=FneLC5Y8ebM1bPUQXuiZSuwdyebbAuAFdFrj9Xpa0UI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q/h8DyyBHltnO7Yxo6ivid8bWPDPWJzJFV7Oce3P3pT4ycbt2vPyxgE1MHQ5j1Q3WgKZP2qC0BTOjlGdksgowak8mfZ1xUuE8tecvIIBaIE4P4LFsXQ1fND/5+87RjHvORh0awLeZkzBL0laI0xRqNxDZ9WSDLKhzdP7rScma34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ktYSF6U8; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778682206; c=relaxed/simple;
+	bh=4R/f9nuj5oke3QAWiV7q4TaukZ9lHkDNMVXoAcgz4O0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kn/R9zHKIP33UbmYLnQm5bpoiHN4d+OwUo5wZiSpvr8Z8+b9mzz3xpCsab7Cft8pfPCP2Y/RbzZtI0S3z8d/kIs4SM4oDpDjYGRz7Hh7kfpRFtpXILViTDj/Nqt41+cLftBJBdy3e/6TPp3xTZFB1pBe7dNxTARiGe9RBSizaLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XDZU+OE+; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=d6C1gVrw; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ktYSF6U8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB105C19425;
-	Wed, 13 May 2026 14:12:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778681543;
-	bh=FneLC5Y8ebM1bPUQXuiZSuwdyebbAuAFdFrj9Xpa0UI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ktYSF6U8y7nOrjFy0itrSUtBYWTHhFHQEIkQW8PDRyf4uOBw2DmnMZX83JvVZLsWH
-	 s1X2+AZLI55TNeI5DILq6kNEY7pUwOTZZrlZqjM8akjTkrmn5OcM86K7h/Fg8XpT4H
-	 l01axXQM+KGbHX137/Zhhlc64Six8BSdCBKdDtuDlxnLJ6FGY20xx5XELdH6JNRPoA
-	 POkIbqrnqPO/RMSUWeLVu78sr4VpFs0HjMvLAIPd5/WFnt7m6SDORVwdw/OWdn8s37
-	 uqamTULzvS/bl9NOZ7uVobJi3xgFqXDLm4Tbc6epeYFiwKb+T/csZCwncY4mEqfsgU
-	 v9+Uii1vfxcxw==
-Date: Wed, 13 May 2026 15:12:16 +0100
-From: Lee Jones <lee@kernel.org>
-To: Cosmin-Gabriel Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Thomas Gleixner <tglx@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	"magnus.damm" <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2 02/10] mfd: rz-mtu3: use device-managed reset deassert
-Message-ID: <20260513141216.GE305027@google.com>
-References: <20260410163530.383818-1-cosmin-gabriel.tanislav.xa@renesas.com>
- <20260410163530.383818-3-cosmin-gabriel.tanislav.xa@renesas.com>
- <20260507123903.GI305027@google.com>
- <TYYPR01MB156155B2A517931DADFBEA65B853C2@TYYPR01MB15615.jpnprd01.prod.outlook.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XDZU+OE+";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="d6C1gVrw"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64DAVIcC3430126
+	for <linux-clk@vger.kernel.org>; Wed, 13 May 2026 14:23:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=aXgSSn27XG5QktxMkuF7jA
+	mn6KmQ3QqMT73PjLfre2s=; b=XDZU+OE+cRby7iIoaJQu3bRDUpjLRAuDfY4cSJ
+	D6CMEdRvkpq65Rq1yZnQB+o0EcafSTCAyJMg88i0neUAs3xw12rqSF6QIF8vF79/
+	w6w39tkVwWdg0aBI8O27c+5eqA7BAyUgj85H8g3QL4uihOw/+5qoPfXcV4NRCCBG
+	ozlXcVGtn3R77wYhXGyEgDMx+v99TyLQgqhQJ851hfCWPmYrIOvAGGM993zsjv1c
+	uG4OLmrmYJIzq1cYGLhzl7oJyuCubXF7S224rHPzVEqKMtH2hGip3wlLMlGdDx8t
+	I7AV9rXm8U+O/HZ/cEMwt2Hqycz4porw0mlxvwuPH1zo/dvg==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4e4qmcgusv-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Wed, 13 May 2026 14:23:23 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2ba6ca20ceeso75708495ad.2
+        for <linux-clk@vger.kernel.org>; Wed, 13 May 2026 07:23:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1778682202; x=1779287002; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aXgSSn27XG5QktxMkuF7jAmn6KmQ3QqMT73PjLfre2s=;
+        b=d6C1gVrw5sJKyfXfN7LRI0gwx2p5QoXD62UtWgnsm9HmHugB4Xb2h/kdkjfa+OflSE
+         7h1U1ejUjFpXfSCi2Cgci8hUVNsHERiVNgiJ3pJ6u9EbpMtIRfE6TLXt1HKdek9XFHzf
+         1Vh19dqgwD1+d2PPlPTe8zA0Qnq46A+xE/iQupJFajiRHxihdSY7ROIWCOGU9//3Vg0l
+         HGsjmgZQuCqqoePbQT/VJvrP43lDYvXC+ZDwQx9PDz0wr7eDh2DNu45mK2LIOBBGy31B
+         NbGQC2upq8lir0Qyjj2cRaIk1j3Wlhv04/vjJnvSzHWpwg3mPzXs5ep63I7d0LPenbjv
+         RQxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778682202; x=1779287002;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aXgSSn27XG5QktxMkuF7jAmn6KmQ3QqMT73PjLfre2s=;
+        b=Ahm1ROzZU3gH8FDTquDVYLA0VqdL17D9OYJVMVaiVJF91Bj9dwpjOW1XcQnEmlaL2r
+         aerBafKz4eI532wsPTFgOobjGu1Vv0ia8aUg5P7qFoZ2tO5DltOvt2j1R27KcezkuqEs
+         BZXNZza3rnNHtYEv5lJiVcVcP5tulhHxYw9rjTPp192ExWiD3ABfgXee4Eqf9nkGjcjT
+         VlIeFQjd3OtTdfe41OfPGOmUdzMqjUlCRVT6DkQHbelB2F0cJhktZUNvrZ/bvuEr27WJ
+         T52GkvpJC50YMkqZJ2SSx7AYoJ9XRyzSpJ69+VOfSupZmEKWqL9GpNWEDufo6m81RyVX
+         IdCA==
+X-Forwarded-Encrypted: i=1; AFNElJ8zIe8lkhPOwkJUI9pI2RjSRGz3Z82kXuu1lI+2E2Yw4mZCm1xGp5yFEWEKInoJIdtw63MsenCjGsQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0IW9ohmma3nc4GMG8GeMfYmlpAK9GqEVD47iPyfDTk0tmKBIY
+	hz99DxfSszbTAQDDqgfueaKOas1856q51aHaWkGOJwxHzNcdC5D6jZTE+LMOEtxP/KNHNnxoRvX
+	HJFWbn0hvCfFuNjW4sD3XFCOvntINLh+LjhH+6d2Y6ZEb1JY+4i/wH+kdUIR2/fE=
+X-Gm-Gg: Acq92OG9ZvpV6iiKoMlf+J/YLxL22GxnJhEBLi40B+kZKhJfoQctDYcIQD8AV71u2zc
+	h5N66huCxO4bG1FR7tYhEqTn/FJ2SmuLTCDTfZ/t78dv2PWppzms+zaxAZQuDQ8IO9nWSeWCH+A
+	2GzEJXSZURmo7XAMa9LbNFimq2KQTtgTSxQUfOju5p1jV69/c+J3zsmobyNBqQXbGPP24k6ZEdB
+	JuuUngO8SCLdlCerO4obNXDGmaS6qgjNtiZ5PMZ5cAm5p8Ugcj2uAbKWutW/pyLJKZirmxeiHOf
+	uCjRVpZ5LKEp+qpEXtllCbWQcSSIkE/KNP+DVfO1eGdZVHgXIzKSXmWRe3mala9HryAFcjE5ggN
+	UPqwFoWWLNL8D/Csj+KWDwJF1gPI0MsVmKHoUK9bBjoNK8g==
+X-Received: by 2002:a17:902:c212:b0:2ba:359a:9b8e with SMTP id d9443c01a7336-2bd27158ce7mr31344855ad.10.1778682202362;
+        Wed, 13 May 2026 07:23:22 -0700 (PDT)
+X-Received: by 2002:a17:902:c212:b0:2ba:359a:9b8e with SMTP id d9443c01a7336-2bd27158ce7mr31344525ad.10.1778682201746;
+        Wed, 13 May 2026 07:23:21 -0700 (PDT)
+Received: from hu-tdas-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2baf1d40427sm179296105ad.24.2026.05.13.07.23.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 May 2026 07:23:21 -0700 (PDT)
+From: Taniya Das <taniya.das@oss.qualcomm.com>
+Subject: [PATCH v3 0/7] Add support for Video, Camera, Graphics clock
+ controllers on Eliza
+Date: Wed, 13 May 2026 19:53:05 +0530
+Message-Id: <20260513-eliza_mm_cc_v2-v3-0-b59c370dc281@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <TYYPR01MB156155B2A517931DADFBEA65B853C2@TYYPR01MB15615.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEqJBGoC/3WMwQrCMBBEf6Xs2ZSY1gY9+R9SSrNZ7ULT1ESLW
+ vLvxt6FYeANzFshUmCKcCpWCLRwZD9lqHYF4NBPNxJsM4OSqpG1PAoa+dN3znWI3aKElnusamu
+ NrgnyaQ505dcmvLSZB44PH96bf1G/9a8qRwqDEhtrtTZ4OPsYy/uzH9E7V+aCNqX0BSEHayezA
+ AAA
+X-Change-ID: 20260409-eliza_mm_cc_v2-701c34ddb74e
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Luca Weiss <luca.weiss@fairphone.com>
+Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org,
+        Taniya Das <taniya.das@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.15-dev-aa3f6
+X-Proofpoint-GUID: 0Q-a9YcmSQSzQOrtave-WqGzQp__XxnK
+X-Authority-Analysis: v=2.4 cv=Hu5G3UTS c=1 sm=1 tr=0 ts=6a04895b cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=8r5jHq557GnqU3WSqWgA:9 a=QEXdDO2ut3YA:10
+ a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTEzMDE0NyBTYWx0ZWRfX64QVoSL3sgfY
+ fa5dshLLo17tVTrfLapZ2uRV9H35WTsArbfpkhRdJVC47eA24mfH8YCFmCuDGqS9vgTWJP1At3R
+ gWDHizIIPoDHDEP5IcG0DTbwy8CsZJybXxt2TKPqp00KUxs8XAAitzv9QFzXMaoX12RdLvXdrZC
+ liwmHiFufGP//LR2v8JVQXfVEoLW/h3aB7D7MZwi8hIp3VdN0MP0NgGSA45E141UqPmgoHOpsRx
+ sBU4Vf1xf72Nvz4eatcS+0+9qGSfL4OyXqMEbtn0uberBhv7MysOcZuHVqDOFh9vWIRvT3Dc7qT
+ fcuxDiZ0CAaJPgVgaXTFiRpG+mxnAxFRQtHCGGL/UvobbA3VfyTITCFQiyPdrWCG55tn713A9J/
+ AVSN4kL2YdfSn6eW1YE/5qPOAVPRqXqKJ8kNg/BQ3TJgutgOj4mNmwCwKuin6xJ3HPHh6eUXrSD
+ zQbGxFx572e/xyC8JOA==
+X-Proofpoint-ORIG-GUID: 0Q-a9YcmSQSzQOrtave-WqGzQp__XxnK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-05-13_01,2026-05-13_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 malwarescore=0 impostorscore=0 priorityscore=1501 spamscore=0
+ clxscore=1015 bulkscore=0 suspectscore=0 adultscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2605050000 definitions=main-2605130147
 
-On Thu, 07 May 2026, Cosmin-Gabriel Tanislav wrote:
+Add driver for Eliza SoC camera, graphics and Video clock controllers.
+The camera clock controller supports the cambist clock controller and
+the regular camera clock controller.
 
-> > From: Lee Jones <lee@kernel.org>
-> > Sent: Thursday, May 7, 2026 3:39 PM
-> > 
-> > On Fri, 10 Apr 2026, Cosmin Tanislav wrote:
-> > 
-> > > Replace devm_reset_control_get_exclusive() and the manual
-> > > reset_control_deassert()/reset_control_assert() with handling by
-> > > devm_reset_control_get_exclusive_deasserted().
-> > >
-> > > While at it, remove struct rz_mtu3_priv::rstc and use a local variable
-> > > for it as it is not needed inside rz_mtu3_reset_assert().
-> > >
-> > > Rename rz_mtu3_reset_assert() to rz_mtu3_mfd_remove() to accurately
-> > > describe its usage since it no longer calls reset_control_assert().
-> > >
-> > > Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-> > > ---
-> > >
-> > > V2:
-> > >  * no changes
-> > >
-> > >  drivers/mfd/rz-mtu3.c | 23 +++++++----------------
-> > >  1 file changed, 7 insertions(+), 16 deletions(-)
-> > >
-> > > diff --git a/drivers/mfd/rz-mtu3.c b/drivers/mfd/rz-mtu3.c
-> > > index 9cdfef610398f..6b9c6831dffa9 100644
-> > > --- a/drivers/mfd/rz-mtu3.c
-> > > +++ b/drivers/mfd/rz-mtu3.c
-> > > @@ -21,7 +21,6 @@
-> > >
-> > >  struct rz_mtu3_priv {
-> > >  	void __iomem *mmio;
-> > > -	struct reset_control *rstc;
-> > >  	spinlock_t lock;
-> > >  };
-> > >
-> > > @@ -301,13 +300,9 @@ void rz_mtu3_disable(struct rz_mtu3_channel *ch)
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(rz_mtu3_disable);
-> > >
-> > > -static void rz_mtu3_reset_assert(void *data)
-> > > +static void rz_mtu3_mfd_remove(void *data)
-> > 
-> > Remove any mention of "mfd".
-> > 
-> 
-> _mfd here is to describe that it removes MFD devices, not that it is
-> part of a MFD driver.
-> 
-> What name would you prefer to use in this case?
+Eliza camcc and videocc are on CX and MX rails and doesn't have MMCX
+and MXC rails dependency. Since CX and MX rails are already ON when APPS
+is active, explicit power-domain voting is not required similar to Milos.
+Hence extended the Milos camcc & videocc documentation bindings for Eliza.
 
-If you want to be specific about what it's doing:
+The patches have been tested on Qualcomm Eliza MTP board.
 
-  rz_mtu3_remove_devices()
-  
-However, my advice would be to go with something more generic.
+Changes in v3:
+- Dropped new documentation bindings & extended Milos documentation bindings for Eliza videocc & camcc.
+- Dropped the defconfig patch and included the drivers as m from Kconfig itself.
+- Update the header inclusion in the milos.dtsi.
+- Link to v2: https://lore.kernel.org/r/20260409-eliza_mm_cc_v2-v2-0-bc0c6dd77bc5@oss.qualcomm.com
 
-  rz_mtu3_remove()
+Changes in v2:
+ - rebased the patches on the latest linux-next.
+ - Add new bindings for Video and Camcc.
+ - Remove commented code in GPUCC (limiter code).
+ - Add device nodes for the corresponding clock controllers.
+ - Add RB-by tags for VideoCC and CamCC/Cambistmclk from v1.
+ - Link to v1: https://lore.kernel.org/r/20260317-eliza_mm_clock_controllers_v1-v1-0-4696eeda8cfb@oss.qualcomm.com
 
-[...] 
+Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+---
+Taniya Das (7):
+      dt-bindings: clock: qcom: Add video clock controller on Qualcomm Eliza SoC
+      dt-bindings: clock: qcom: document the Eliza GPU Clock Controller
+      dt-bindings: clock: qcom: Add support for CAMCC for Eliza
+      clk: qcom: videocc: Add video clock controller driver for Eliza
+      clk: qcom: gpucc: Add GPU Clock Controller driver for Eliza
+      clk: qcom: camcc: Add support for camera clock controller for Eliza
+      arm64: dts: qcom: eliza: Add support for MM clock controllers
 
-> > >  static const struct mfd_cell rz_mtu3_devs[] = {
-> > > @@ -321,6 +316,7 @@ static const struct mfd_cell rz_mtu3_devs[] = {
-> > >
-> > >  static int rz_mtu3_probe(struct platform_device *pdev)
-> > >  {
-> > > +	struct reset_control *rstc;
-> > 
-> > This shouldn't go above the main device data structs.
-> > 
-> 
-> I was following reverse fir tree ordering, as required in some other
-> subsystems.
-> 
-> Is there an MFD-specific preferred style that I should follow?
-> 
-> Would you prefer having it right before unsigned int i?
+ .../bindings/clock/qcom,milos-camcc.yaml           |   11 +-
+ .../bindings/clock/qcom,milos-videocc.yaml         |    9 +-
+ .../bindings/clock/qcom,sm8450-gpucc.yaml          |    3 +
+ arch/arm64/boot/dts/qcom/eliza.dtsi                |   59 +
+ drivers/clk/qcom/Kconfig                           |   31 +
+ drivers/clk/qcom/Makefile                          |    3 +
+ drivers/clk/qcom/cambistmclkcc-eliza.c             |  465 ++++
+ drivers/clk/qcom/camcc-eliza.c                     | 2803 ++++++++++++++++++++
+ drivers/clk/qcom/gpucc-eliza.c                     |  621 +++++
+ drivers/clk/qcom/videocc-eliza.c                   |  404 +++
+ .../dt-bindings/clock/qcom,eliza-cambistmclkcc.h   |   32 +
+ include/dt-bindings/clock/qcom,eliza-camcc.h       |  151 ++
+ include/dt-bindings/clock/qcom,eliza-gpucc.h       |   52 +
+ include/dt-bindings/clock/qcom,eliza-videocc.h     |   37 +
+ 14 files changed, 4677 insertions(+), 4 deletions(-)
+---
+base-commit: db7efce4ae23ad5e42f5f55428f529ff62b86fab
+change-id: 20260409-eliza_mm_cc_v2-701c34ddb74e
 
-Reverse Christmas-tree order doesn't make sense in quite a lot of cases.
-
-I have no strong opinions, but _generally_ prefer to put the important
-and physically large ones at the top (structs) and the little ones at
-the bottom (ints and bools) - this also _mostly_ works out as RCT.
-
-The really important ones here are the device driver structs.
-
-> > >  	struct rz_mtu3_priv *priv;
-> > >  	struct rz_mtu3 *ddata;
-> > >  	unsigned int i;
-> > > @@ -340,15 +336,14 @@ static int rz_mtu3_probe(struct platform_device *pdev)
-> > >  	if (IS_ERR(priv->mmio))
-> > >  		return PTR_ERR(priv->mmio);
-> > >
-> > > -	priv->rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
-> > > -	if (IS_ERR(priv->rstc))
-> > > -		return PTR_ERR(priv->rstc);
-> > > +	rstc = devm_reset_control_get_exclusive_deasserted(&pdev->dev, NULL);
-> > > +	if (IS_ERR(rstc))
-> > > +		return PTR_ERR(rstc);
-> > >
-> > >  	ddata->clk = devm_clk_get(&pdev->dev, NULL);
-> > >  	if (IS_ERR(ddata->clk))
-> > >  		return PTR_ERR(ddata->clk);
-> > >
-> > > -	reset_control_deassert(priv->rstc);
-> > >  	spin_lock_init(&priv->lock);
-> > >  	platform_set_drvdata(pdev, ddata);
-> > >
-> > > @@ -361,14 +356,10 @@ static int rz_mtu3_probe(struct platform_device *pdev)
-> > >  	ret = mfd_add_devices(&pdev->dev, 0, rz_mtu3_devs,
-> > >  			      ARRAY_SIZE(rz_mtu3_devs), NULL, 0, NULL);
-> > >  	if (ret < 0)
-> > > -		goto err_assert;
-> > > +		return ret;
-> > >
-> > > -	return devm_add_action_or_reset(&pdev->dev, rz_mtu3_reset_assert,
-> > > +	return devm_add_action_or_reset(&pdev->dev, rz_mtu3_mfd_remove,
-> > >  					&pdev->dev);
-> > > -
-> > > -err_assert:
-> > > -	reset_control_assert(priv->rstc);
-> > > -	return ret;
-> > >  }
-> > >
-> > >  static const struct of_device_id rz_mtu3_of_match[] = {
-> > > --
-> > > 2.53.0
-> > 
-> > --
-> > Lee Jones
-
+Best regards,
 -- 
-Lee Jones
+Taniya Das <taniya.das@oss.qualcomm.com>
+
