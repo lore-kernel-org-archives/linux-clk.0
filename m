@@ -1,147 +1,103 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366D14266BE
-	for <linux-clk@vger.kernel.org>; Wed, 13 May 2026 12:46:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1FEC4C77A7
+	for <linux-clk@vger.kernel.org>; Wed, 13 May 2026 13:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778676408; cv=none; b=gMssP3yhjDEDp7ygI7t0xyEyicOcTLgb109nYLaTUKr3VsRmspV/ml51m3UTj/i5K10y96mj/82ohth/vGIyBuQqDnx/a7V8ZmFKeIODh4fsfdS98/l86mxF5R6A31rSkSidZBtxl6s0fY/qSrzaP9IpbOfJb9zzGP2WH/SzaEM=
+	t=1778677950; cv=none; b=sfnRc2C9VEV1vO2AG6nRw5j/SxtBvV5+qVJk7qVUXWKoG2Kdjmz8n/sysbKgExz8GFvve1lHvfThyOJVTKAJpsr9kM3U3BCLusqjTTk8kkxtJKAVYk2yiNLyHAMluaZdfJKx3iMJVM5htof9CtsJVCU6p9qIVeVFZswNqGsL2CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778676408; c=relaxed/simple;
-	bh=mn9v4Jci0YOwIvdmXT9J7xZkE341zUlyuNaWPr+XMHo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QzwZKSVFBSAmry2oCHWlE3GdUxoUJQW1TFe34VAuUYURDkUKY35LtAFDywXEZXP3jY1tLjPyhuypHX+twzbIxcguIpQyq4eK5HNqoUf03o+0DRMucDRwQPsjdzPgzGCue/o75PsyNsIRCu3AMh3lg+Uv94MHWkzNki/H9nDMUKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=tmXHKE1E; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="tmXHKE1E"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id D40554E42C90;
-	Wed, 13 May 2026 12:46:44 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id A82B85FE21;
-	Wed, 13 May 2026 12:46:44 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1C28611AF9021;
-	Wed, 13 May 2026 14:46:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1778676402; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=p14WDIXpDS2Y/643k25wA4EWCTYbuLSUg5gK5bpvta8=;
-	b=tmXHKE1Eh9ntOS2F2G/41OYWgbw2bAilGGKnpnzaW/+PY3QPapMZpRSQl9GStfeT0T64wy
-	qwJgU3DDyQvLi2IaSLmSwSs8I/jsZbVOTy8I5TDmBBtqSN04LHCX0ugyUCSn5scHVdY5Cm
-	rRVM/WClUuVftnHQd98erQQ2PcbRbwGvitXe3HundiHSNltadU9DKRWMLwyIUWIn7HU5Dz
-	ciFm70Kh9JrSYkVH63gZAZttSdzJ8Nqin2Wh0AXbRiOIsmCFEhyua7OeTKgiWHHHSFJhXN
-	fc/c7yiCWkcKmBy+Itgd/+IE7SZFtd2y3DUEwqgSEGHvmhKojOxNZrrmUHBmuw==
-From: "Thomas Richard (TI)" <thomas.richard@bootlin.com>
-Date: Wed, 13 May 2026 14:46:26 +0200
-Subject: [PATCH v8 4/4] firmware: ti_sci: add support for restoring clock
- context during resume
+	s=arc-20240116; t=1778677950; c=relaxed/simple;
+	bh=OUQHmjb7UkllJEpUp8KQM62kjPUwPzi6de+ciaj5zDQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CGB6fVcqAoM3UqIBeg5QCxR/39F9fGad9YhRXXiHUA8HPFy+ucXQKas7Dlqd99yAkEsRC+zGNvgB3Bqc4tBX8kelSZDQzpv6g69rGgkk1Tl4glHu7ojIRIt1VeKyOlLK7EHKEFFvQZ9F7VtEm9y7vQdTTy4T9yg1vDWL+KuIjwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-956948531a1so1802526241.2
+        for <linux-clk@vger.kernel.org>; Wed, 13 May 2026 06:12:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778677948; x=1779282748;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GE5Sc3I5fhZDV/Yx4xguTp5z/tXd0Rx77uBwtmUCg9g=;
+        b=nNWRwm0r+AEOZCgHsa9k2zZsdESlbR9UiaZrC4U48+czt19AqbNsT5Fh0umUIITUk+
+         zut+ai0M41yjPDtuLXADJbuVJz06IncTHLuF0WoWH0lDChdgGbqMZ0/TG+Jp4E9aO4A2
+         3VQ3Z8wwFC/ipTUglWvYu3hJWcmEwX+h9eyL7/vgDmgTJ+C0MdpPHSpdCDncc3iWMr4f
+         fmwG+aZLFjFm+uppcYtlAu8dX+J4myE6dEOnSJXSUl45qtG7m1rf85uyf4q3nY9l7EUJ
+         UO9yndsnbcbCm6DL77nRXaeobQKuEAQkvvUGT73/HqjCnMnWNgnDvvqe5hJ1kioSASUq
+         Hl1Q==
+X-Forwarded-Encrypted: i=1; AFNElJ+Wkh9fxUe81z+62FaH7yGoNTeQWmHx25JoljkWvoyNNtQCbsVPbr46Dth5YRoZFiavEVwhz9B6vgk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsY9rqG4RrKwS0meEjrImjFB2QhUdIHV9Vi2xfSObU2SpHKvaW
+	9U4LufUkmRHCD5+ALR320H1DC8W/zdl+84JkGMqfg+mAPqQIgBwqDnq4zjrUrEC9
+X-Gm-Gg: Acq92OF+2cogIseM2MoY4RyK0LsculfsV9sPDVQHf2t32KFqrSCgssNAuhCgqaE08XN
+	ZD4Hk5GHFYx21USUoI/6cPitjDt+hDaWu/h79K3W7xXqlyOkGZiJnCaER6zRi9mgHXebF0wUZf2
+	fT7hQZcErNbl9xsk9UiEyXkxQFvpc4GHmsjw9sZmAB2bkKFzzOOvwex8ugU2eQb88PlxlLbDtx6
+	JM39qQ8w8eEQclhDm6ESlnODskvx9nJ/QXmx8hJDsdiNTUJV8bE8LmBMQx1VbtYvzzJTnXnEY5+
+	FnWXU7mh/V2jb/RpdLHPbE66vkSdaS67S/bmaXSRHjvFLF/EE9j4R3Hzh+rKIVxLI8Ye1z6rZ5/
+	WfNunlM+06R5UxYYLOc1jMF1gR4P/38rF8NCwroIeit/8quaC3w/W/uk+iIuyis8fUePWH1ARSl
+	p8KzBFWV+trOORJ6NbWSYiVccyT9KIiAZJD0WF5GszOES06wOdvkys+8wxJ9q7LHTV
+X-Received: by 2002:a05:6102:3046:b0:634:d42d:15e2 with SMTP id ada2fe7eead31-63774761ed4mr1111646137.26.1778677947689;
+        Wed, 13 May 2026 06:12:27 -0700 (PDT)
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com. [209.85.221.171])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-6313fdbf5c4sm10936050137.0.2026.05.13.06.12.26
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 May 2026 06:12:27 -0700 (PDT)
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-57524e53749so2068848e0c.2
+        for <linux-clk@vger.kernel.org>; Wed, 13 May 2026 06:12:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ8L6FvSHcVOMTttL1saz4PDNQlbfdSIi2qPHWWFl8vxZ7RJ+Y14m36qpW5I5QP9J0Macb25QYmDye8=@vger.kernel.org
+X-Received: by 2002:a05:6122:6992:b0:575:352f:eac0 with SMTP id
+ 71dfb90a1353d-575e6fb88e4mr1415729e0c.7.1778677946052; Wed, 13 May 2026
+ 06:12:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260513-ti-sci-jacinto-s2r-restore-irq-v8-4-195b27f91519@bootlin.com>
-References: <20260513-ti-sci-jacinto-s2r-restore-irq-v8-0-195b27f91519@bootlin.com>
-In-Reply-To: <20260513-ti-sci-jacinto-s2r-restore-irq-v8-0-195b27f91519@bootlin.com>
-To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
- Santosh Shilimkar <ssantosh@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>
-Cc: Gregory CLEMENT <gregory.clement@bootlin.com>, 
- richard.genoud@bootlin.com, Udit Kumar <u-kumar1@ti.com>, 
- Abhash Kumar <a-kumar2@ti.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-clk@vger.kernel.org, 
- "Thomas Richard (TI)" <thomas.richard@bootlin.com>, 
- Dhruva Gole <d-gole@ti.com>, Kendall Willis <k-willis@ti.com>
-X-Mailer: b4 0.14.3
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20260502185557.93061-1-marek.vasut+renesas@mailbox.org> <20260502185557.93061-2-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20260502185557.93061-2-marek.vasut+renesas@mailbox.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 13 May 2026 15:12:14 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUGGEXa+S7DZABv6_VjzgKaFR_dgEt6HMsoLWE3vtpduw@mail.gmail.com>
+X-Gm-Features: AVHnY4I1ueP8c0lbfl8GeS1mAQp1h1WSM6acug8SaPsOhckX1RLhaKldCR-pmEE
+Message-ID: <CAMuHMdUGGEXa+S7DZABv6_VjzgKaFR_dgEt6HMsoLWE3vtpduw@mail.gmail.com>
+Subject: Re: [PATCH 1/4] dt-bindings: clock: renesas,cpg-clocks: Document
+ ZT/ZTR trace clock on R-Mobile APE6
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Some DM-Firmware are not able to restore the clock rates and the clock
-parents after a suspend-resume. The CLK_CONTEXT_LOST firmware capability
-has been introduced to identify this characteristic. In this case the
-responsibility is therefore delegated to the ti_sci driver, which uses
-clk_restore_context() to trigger the context_restore() operation for all
-registered clocks, including those managed by the sci-clk. The sci-clk
-driver implements the context_restore() operation to ensure rates and clock
-parents are correctly restored.
+On Sat, 2 May 2026 at 20:56, Marek Vasut
+<marek.vasut+renesas@mailbox.org> wrote:
+> Document ZT trace bus and ZTR trace clock on the R-Mobile APE6.
+> These clock supply the coresight tracing modules, PTM, TPIU,
+> ETB and replicator. Without these clock, the coresight tracing
+> can not be operated. While this does change the ABI, it does so
+> by extending the existing clock-output-names, therefore if an
+> old software is used with new DT, the coresight tracing parts
+> will likely fail to probe, otherwise if new software is used
+> with an old DT, there is no impact.
+>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
-Reviewed-by: Dhruva Gole <d-gole@ti.com>
-Reviewed-by: Kendall Willis <k-willis@ti.com>
-Signed-off-by: Thomas Richard (TI) <thomas.richard@bootlin.com>
----
- drivers/firmware/ti_sci.c | 9 +++++++--
- drivers/firmware/ti_sci.h | 3 +++
- 2 files changed, 10 insertions(+), 2 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue for v7.2 in a branch shared by clock and DTS.
 
-diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
-index 35ee8cc830c8..1e58560b1dd6 100644
---- a/drivers/firmware/ti_sci.c
-+++ b/drivers/firmware/ti_sci.c
-@@ -9,6 +9,7 @@
- #define pr_fmt(fmt) "%s: " fmt, __func__
- 
- #include <linux/bitmap.h>
-+#include <linux/clk.h>
- #include <linux/cpu.h>
- #include <linux/debugfs.h>
- #include <linux/export.h>
-@@ -4022,6 +4023,9 @@ static int ti_sci_resume_noirq(struct device *dev)
- 				}
- 			}
- 		}
-+
-+		if (info->fw_caps & MSG_FLAG_CAPS_LPM_CLK_CONTEXT_LOST)
-+			clk_restore_context();
- 		break;
- 	default:
- 		break;
-@@ -4182,14 +4186,15 @@ static int ti_sci_probe(struct platform_device *pdev)
- 	}
- 
- 	ti_sci_msg_cmd_query_fw_caps(&info->handle, &info->fw_caps);
--	dev_dbg(dev, "Detected firmware capabilities: %s%s%s%s%s%s%s\n",
-+	dev_dbg(dev, "Detected firmware capabilities: %s%s%s%s%s%s%s%s\n",
- 		info->fw_caps & MSG_FLAG_CAPS_GENERIC ? "Generic" : "",
- 		info->fw_caps & MSG_FLAG_CAPS_LPM_PARTIAL_IO ? " Partial-IO" : "",
- 		info->fw_caps & MSG_FLAG_CAPS_LPM_DM_MANAGED ? " DM-Managed" : "",
- 		info->fw_caps & MSG_FLAG_CAPS_LPM_ABORT ? " LPM-Abort" : "",
- 		info->fw_caps & MSG_FLAG_CAPS_IO_ISOLATION ? " IO-Isolation" : "",
- 		info->fw_caps & MSG_FLAG_CAPS_LPM_BOARDCFG_MANAGED ? " BoardConfig-Managed" : "",
--		info->fw_caps & MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST ? " IRQ-Context-Lost" : ""
-+		info->fw_caps & MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST ? " IRQ-Context-Lost" : "",
-+		info->fw_caps & MSG_FLAG_CAPS_LPM_CLK_CONTEXT_LOST ? " Clk-Context-Lost" : ""
- 	);
- 
- 	ti_sci_setup_ops(info);
-diff --git a/drivers/firmware/ti_sci.h b/drivers/firmware/ti_sci.h
-index ad69c765d614..8fccbcd1c9a2 100644
---- a/drivers/firmware/ti_sci.h
-+++ b/drivers/firmware/ti_sci.h
-@@ -154,6 +154,8 @@ struct ti_sci_msg_req_reboot {
-  *			for the DM via boardcfg
-  *		MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST: DM is not able to restore IRQ
-  *			context
-+ *		MSG_FLAG_CAPS_LPM_CLK_CONTEXT_LOST: DM is not able to restore
-+ *			Clock context
-  *
-  * Response to a generic message with message type TI_SCI_MSG_QUERY_FW_CAPS
-  * providing currently available SOC/firmware capabilities. SoC that don't
-@@ -168,6 +170,7 @@ struct ti_sci_msg_resp_query_fw_caps {
- #define MSG_FLAG_CAPS_IO_ISOLATION	TI_SCI_MSG_FLAG(7)
- #define MSG_FLAG_CAPS_LPM_BOARDCFG_MANAGED	TI_SCI_MSG_FLAG(12)
- #define MSG_FLAG_CAPS_LPM_IRQ_CONTEXT_LOST	TI_SCI_MSG_FLAG(14)
-+#define MSG_FLAG_CAPS_LPM_CLK_CONTEXT_LOST	TI_SCI_MSG_FLAG(15)
- #define MSG_MASK_CAPS_LPM		GENMASK_ULL(4, 1)
- 	u64 fw_caps;
- } __packed;
+Gr{oetje,eeting}s,
 
--- 
-2.53.0
+                        Geert
 
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
