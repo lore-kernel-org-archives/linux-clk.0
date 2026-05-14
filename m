@@ -1,105 +1,187 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3409F3EE1D4;
-	Thu, 14 May 2026 13:47:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6BC7407583;
+	Thu, 14 May 2026 14:09:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778766475; cv=none; b=naP4M7ChjirUoOFr8Z4iUhj+JFUmGeFoME/UHQxFEIB0DPZdVcJoUie3wncJnEhjhleGHsEKf/l9zTWI+pqkl74OP5NNqYuZ/5BP2VaNs0ydHmw0/O5YAhfhK/gl9ei9AU3/afrlZYgIle1xlDWjNYsUK3qwp9YtR2dVH55+WVg=
+	t=1778767764; cv=none; b=HdZdu3Jgtn6Q3WARqJf0ZI2VpXGALAuraPs+kLGWLz/iRRulGvBuQVV/S4n18ypdaMGnMGaKbAb4LSoaoHtEFO/VOm461+4eraerzSE7/D86F7HOKgnaP3utYapFFHfEpZ+9WUloD+1BxYao0f+EvA6F0D0k9lUDFr8Wp2sZViQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778766475; c=relaxed/simple;
-	bh=foSUTTciefKu/0q7fLl4eDlK+a00fo6AsT5VId1gV0g=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=qIqe67YJ4XyhDdQ4zdwCAipNunfyJEHDwk3RU1zzyUp93Kd21WPZHbzNUXC7oF/eLSw8XukTTkW2zQ+hM3kHzfNOZmm/EJuKjom6Ba75xYTw6t84gi0OsdO4IjduJHKZPwQyA4dP9KB98S/ZUFFjnb9NzSWVIh9ZbMJJM0tiNbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C7EXKpOW; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778767764; c=relaxed/simple;
+	bh=DzRDH4cbEVAi9XsADsayvcSyczdiqr82Oaapba9+ZrQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=a/quG7ALjfF28IQdFCw0rCK+yh2HbQTHzZCcnfVlGJn2Lb4bQqn5MZ2EWHRaBWj047lDgstqB/m0DALzb2DrNw9VTBPp4WuA0kiAFhJp2sRvYtlw2rrAhxjVz0lPaYNSGDkDRvBKyqB9HYZXhvkcTSevjCcxQdTR9BoSZorFegI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O2tJRYpN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C7EXKpOW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ABD9C2BCB3;
-	Thu, 14 May 2026 13:47:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O2tJRYpN"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 97340C4AF0B;
+	Thu, 14 May 2026 14:09:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778766474;
-	bh=foSUTTciefKu/0q7fLl4eDlK+a00fo6AsT5VId1gV0g=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=C7EXKpOWFDkvDfP/p5daDRdRVCwGfDPPZjOkgTeSJyoed/M0ElC97exv5FIfXjnQY
-	 cKtbTi+LBroo5O6Sn31YPv/w7Cb5UcvQsNO5HcoGAKD6cnB9ixP0D+iqlZ8lBocRLS
-	 hWiCYd4K+f4vXOPbDeE0vGGtOexTXdCEM+fAhd8vwK5kG6ifZtjtYNp18eXCje8kSk
-	 yEGcuC00P7s7lEdyCuU1pOqTHL+4SFtsVXJL6pLRTOcwc7Dy666CPCJUO99G9qHfll
-	 G6RNDJzKRmY6sms9uYMfuPFvVTJy2CdQcRSJGYW1+XIdfrnHq2eWL5VQ7zcsRqPILS
-	 BSSB6/uUW3yBg==
-Date: Thu, 14 May 2026 08:47:51 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1778767764;
+	bh=DzRDH4cbEVAi9XsADsayvcSyczdiqr82Oaapba9+ZrQ=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=O2tJRYpNA8HHVparbVybj/4WU816WvcOMBla0xpVOsPAskUS10eIBVC9hiG02RTLa
+	 5zZES2TvVdUqRRjtHqEr9Q2Kuk5iOVHnjFFt9GqIpAEGNQpzSk8nRC/bwqUrk3/hdI
+	 s8brPW1f/bqFZaU6mpBe+7k3/vmxa5WJ9aAT2GfxuOHsU8bY1NbZoRGaGYHcDOPy8b
+	 GpuP0E3igw5c0l0Rcok+rmf9Lhavynlba2YgPpWdS1wj0T0LZV8BDsQx0oOhx8jHH2
+	 Z82BL67FGDslfapZI+blt73PncBhKAeFky3ThmIFf8+dpeuQ1fYzyKVyaTftLrnPmJ
+	 KNvNVQSin1VfA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7637DCD4F3C;
+	Thu, 14 May 2026 14:09:24 +0000 (UTC)
+From: Antony Kurniawan Soemardi via B4 Relay <devnull+linux.smankusors.com@kernel.org>
+Date: Thu, 14 May 2026 21:08:30 +0700
+Subject: [PATCH v2 01/10] dt-bindings: clock: qcom,rpmcc: add msm8960
+ compatible
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, Jonas Karlman <jonas@kwiboo.se>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- David Airlie <airlied@gmail.com>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
- devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Michael Turquette <mturquette@baylibre.com>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, linux-clk@vger.kernel.org, 
- Simona Vetter <simona@ffwll.ch>, Stephen Boyd <sboyd@kernel.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Thomas Zimmermann <tzimmermann@suse.de>, 
- Marek Vasut <marek.vasut+renesas@mailbox.org>, 
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
- linux-renesas-soc@vger.kernel.org, Maxime Ripard <mripard@kernel.org>, 
- linux-kernel@vger.kernel.org, Andrzej Hajda <andrzej.hajda@intel.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, dri-devel@lists.freedesktop.org
-To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-In-Reply-To: <20260514-rcar-du-dsc-v1-2-d65f7a9e9841@ideasonboard.com>
-References: <20260514-rcar-du-dsc-v1-0-d65f7a9e9841@ideasonboard.com>
- <20260514-rcar-du-dsc-v1-2-d65f7a9e9841@ideasonboard.com>
-Message-Id: <177876647180.321742.13836175505095800376.robh@kernel.org>
-Subject: Re: [PATCH 2/5] dt-bindings: display: bridge: Document Renesas
- R-Car V4H DSC bindings
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260514-msm8960-wifi-v2-1-7cbae45dab5e@smankusors.com>
+References: <20260514-msm8960-wifi-v2-0-7cbae45dab5e@smankusors.com>
+In-Reply-To: <20260514-msm8960-wifi-v2-0-7cbae45dab5e@smankusors.com>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org, 
+ Rudraksha Gupta <guptarud@gmail.com>, 
+ Antony Kurniawan Soemardi <linux@smankusors.com>
+X-Mailer: b4 0.15.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1778767762; l=3572;
+ i=linux@smankusors.com; s=20250609; h=from:subject:message-id;
+ bh=yJDZ3oI+U0ik6kyM6Iek60rqNIUI/8S+jJgZ5v5/O/A=;
+ b=fmmYh5Gfdbg3cKUMUc+qEkC8K+LYzBMP75QRB7sMRRyPnKn1OvhRcnnevzpEkce4S0UXKA8j2
+ vqX/MP77qafDprIo0OWksbP+KA5IK26gDnql9Oc9WybYDhZ/TTLXWxq
+X-Developer-Key: i=linux@smankusors.com; a=ed25519;
+ pk=65wTy06fJl2/h/EJwjr704YG+yjHFhZObJBWzzK+N00=
+X-Endpoint-Received: by B4 Relay for linux@smankusors.com/20250609 with
+ auth_id=733
+X-Original-From: Antony Kurniawan Soemardi <linux@smankusors.com>
+Reply-To: linux@smankusors.com
 
+From: Antony Kurniawan Soemardi <linux@smankusors.com>
 
-On Thu, 14 May 2026 15:24:54 +0300, Tomi Valkeinen wrote:
-> From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> 
-> The Renesas DSC Display Stream Compression is a bridge embedded in the
-> Renesas R-Car V4H SoC. The bridge performs VESA DSC encoding of up to
-> 8k or 400 Mpixel/s .
-> 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> [tomi.valkeinen: fix the example]
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> ---
->  .../bindings/display/bridge/renesas,dsc.yaml       | 96 ++++++++++++++++++++++
->  1 file changed, 96 insertions(+)
-> 
+Document the qcom,rpmcc-msm8960 compatible.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+The MSM8960 platform shares the same RPM clock definitions as
+APQ8064, so extend the existing conditional schema to treat
+qcom,rpmcc-msm8960 the same as qcom,rpmcc-apq8064.
 
-yamllint warnings/errors:
+Signed-off-by: Antony Kurniawan Soemardi <linux@smankusors.com>
+---
+ .../devicetree/bindings/clock/qcom,rpmcc.yaml      | 77 +++++++++++++---------
+ 1 file changed, 47 insertions(+), 30 deletions(-)
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/bridge/renesas,dsc.example.dtb: dsc@feb8d000 (renesas,r8a779g0-dsc): reg: [[0, 4273524736], [0, 1024]] is too long
-	from schema $id: http://devicetree.org/schemas/display/bridge/renesas,dsc.yaml
+diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml b/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
+index ab97d4b7dba8..32ef7d08e0bb 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
+@@ -21,35 +21,40 @@ description: |
+ 
+ properties:
+   compatible:
+-    items:
+-      - enum:
+-          - qcom,rpmcc-apq8060
+-          - qcom,rpmcc-apq8064
+-          - qcom,rpmcc-ipq806x
+-          - qcom,rpmcc-mdm9607
+-          - qcom,rpmcc-msm8226
+-          - qcom,rpmcc-msm8660
+-          - qcom,rpmcc-msm8909
+-          - qcom,rpmcc-msm8916
+-          - qcom,rpmcc-msm8917
+-          - qcom,rpmcc-msm8936
+-          - qcom,rpmcc-msm8937
+-          - qcom,rpmcc-msm8940
+-          - qcom,rpmcc-msm8953
+-          - qcom,rpmcc-msm8974
+-          - qcom,rpmcc-msm8976
+-          - qcom,rpmcc-msm8992
+-          - qcom,rpmcc-msm8994
+-          - qcom,rpmcc-msm8996
+-          - qcom,rpmcc-msm8998
+-          - qcom,rpmcc-qcm2290
+-          - qcom,rpmcc-qcs404
+-          - qcom,rpmcc-sdm429
+-          - qcom,rpmcc-sdm660
+-          - qcom,rpmcc-sm6115
+-          - qcom,rpmcc-sm6125
+-          - qcom,rpmcc-sm6375
+-      - const: qcom,rpmcc
++    oneOf:
++      - items:
++          - enum:
++              - qcom,rpmcc-apq8060
++              - qcom,rpmcc-apq8064
++              - qcom,rpmcc-ipq806x
++              - qcom,rpmcc-mdm9607
++              - qcom,rpmcc-msm8226
++              - qcom,rpmcc-msm8660
++              - qcom,rpmcc-msm8909
++              - qcom,rpmcc-msm8916
++              - qcom,rpmcc-msm8917
++              - qcom,rpmcc-msm8936
++              - qcom,rpmcc-msm8937
++              - qcom,rpmcc-msm8940
++              - qcom,rpmcc-msm8953
++              - qcom,rpmcc-msm8974
++              - qcom,rpmcc-msm8976
++              - qcom,rpmcc-msm8992
++              - qcom,rpmcc-msm8994
++              - qcom,rpmcc-msm8996
++              - qcom,rpmcc-msm8998
++              - qcom,rpmcc-qcm2290
++              - qcom,rpmcc-qcs404
++              - qcom,rpmcc-sdm429
++              - qcom,rpmcc-sdm660
++              - qcom,rpmcc-sm6115
++              - qcom,rpmcc-sm6125
++              - qcom,rpmcc-sm6375
++          - const: qcom,rpmcc
++      - items:
++          - const: qcom,rpmcc-msm8960
++          - const: qcom,rpmcc-apq8064
++          - const: qcom,rpmcc
+ 
+   '#clock-cells':
+     const: 1
+@@ -90,7 +95,9 @@ allOf:
+       properties:
+         compatible:
+           contains:
+-            const: qcom,rpmcc-apq8064
++            enum:
++              - qcom,rpmcc-apq8064
++              - qcom,rpmcc-msm8960
+     then:
+       properties:
+         clocks:
+@@ -164,3 +171,13 @@ examples:
+             clock-names = "pxo";
+         };
+     };
++
++  - |
++    rpm {
++        clock-controller {
++            compatible = "qcom,rpmcc-msm8960", "qcom,rpmcc-apq8064", "qcom,rpmcc";
++            #clock-cells = <1>;
++            clocks = <&pxo_board>, <&cxo_board>;
++            clock-names = "pxo", "cxo";
++        };
++    };
 
-doc reference errors (make refcheckdocs):
+-- 
+2.34.1
 
-See https://patchwork.kernel.org/project/devicetree/patch/20260514-rcar-du-dsc-v1-2-d65f7a9e9841@ideasonboard.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
 
