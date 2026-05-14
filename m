@@ -1,102 +1,161 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CCA5397E80;
-	Thu, 14 May 2026 10:22:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A83436F919;
+	Thu, 14 May 2026 10:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778754140; cv=none; b=T4j+cZFkGrWKIp1O5f/kwIPuLX5emVq3cN4I3F0Q51Q0YMqw60QoqgHGh6vYccHEXZvF9nLab+pPe+pHAJvUo3bQR5VBRhZMnl9ul7c6R0SO3F8OolYZagzGYkkFIG0u3LxLxxqxzwaxvwDHFXGWu1Xhc9V8L9LiN09E1Rot+mI=
+	t=1778754924; cv=none; b=QBYUiiazv364OEuhcdSRNf5Jz1VtIT5eS4ebcYLKVYjXK+3jLybt+EAYgR9TIuSDr5MwLSxxAvYuDWLjy7Y+hT60EQPKM1B2QAnaAlIr4/In1eC1g/qalwwXLPx8luah/xvW3AcNp3k9i8iY0Uc6Tf6RrzroPWczqDlLr7EpFEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778754140; c=relaxed/simple;
-	bh=FtRbZ01KpPe7RoZcygOR6S/KKJge6UxcovG2oSv3GME=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n0Adem75NE6gyRipe6LchL4mWlguJdOdYQwpcKi9vvnezCwcdBSayr2SUtd5JHHH1X4p+Zp9J+rlNMWiRSb5EoWOS7R2XyOSxHwuKbcC6rFGGRP8Bo7Oj595l6z78iaHg9Be8nplNmpP0St8yRb/a3RxfL9E/0K/7j1pmn/tVhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YUJvu313; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778754924; c=relaxed/simple;
+	bh=SFTExNfcshhA5vgdKt8pXMMcQAxPMcduzrAcfsGVPGI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=H40chSHPANXGDYpINdjh1HSwKIQDdb1b1q2EbM4Fdt8zaisr12vs73PWGr9Nz1ozhCu4UU/7Bnl8smJJ/JUVr3AWXsiPg/kR5gNRVpCawn7B6hmro2Ve6sU51dgcEkP8MqiuEJ41YK18xDvKcgmsMCNAkL1ovN4F5KpExJXTtIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l+pmSoxn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YUJvu313"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9767C2BCB3;
-	Thu, 14 May 2026 10:22:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l+pmSoxn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3579EC2BCB3;
+	Thu, 14 May 2026 10:35:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778754139;
-	bh=FtRbZ01KpPe7RoZcygOR6S/KKJge6UxcovG2oSv3GME=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YUJvu313ULp0O4s/WSpjv1qEtO2qZteX9/qPvn4uH+0GVDU1NaJ7fl1LRV/IG/N07
-	 m4qWHZCwZU9cJAA1JwiYXbNQioI1LgC5+Vcn/d6rYfZ1D/RFM8ROlHtPbRb3kj4cn6
-	 YzS9SGXZ0bgqCBPQHNVjlXpwd3SNGLISSHqF47DRmf8JAM2y9Ch1420KwNUDG5AOwF
-	 370CE+Vlm5cgvukm13QxfBh+ZSpzGSa529fI3vZ0l9BlPFW2XFeXt/kbzsMhaQO0Ow
-	 MKUSE2YhxVy908zz/YFCZu2nAfuocHOF7Tq5GMfytNOGr36obii/ed7R+5mIjaJhc/
-	 98bx/iS0tbDVQ==
-Date: Thu, 14 May 2026 12:22:17 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Qiang Yu <qiang.yu@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Taniya Das <taniya.das@oss.qualcomm.com>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, krishna.chundru@oss.qualcomm.com
-Subject: Re: [PATCH v3 1/4] dt-bindings: clock: qcom: Add QREF regulator
- supplies for glymur
-Message-ID: <20260514-outgoing-literate-dove-2e2a73@quoll>
-References: <20260506-qref_vote_0506-v3-0-5ab71d2e6f16@oss.qualcomm.com>
- <20260506-qref_vote_0506-v3-1-5ab71d2e6f16@oss.qualcomm.com>
+	s=k20201202; t=1778754924;
+	bh=SFTExNfcshhA5vgdKt8pXMMcQAxPMcduzrAcfsGVPGI=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=l+pmSoxnsf/XpaGxLASlQj3hnOwYbDqh4WuE4EiHG3RAOPIgzsxbOiS3EeAWJ/edR
+	 5rP8MTWsFOQwI/SKr3twQVXV85qVTxn2m+y+czG6yiQ9bGImxaz5tYV5pM71HKG0Vn
+	 mweBw0QUNKCRRV2Wk985EkQJ4bTQ7BPWPHuVE907PHER6YpMWKdVg1nWPP/QxopFdd
+	 WhiuYNiXPCq7OcCWHFKWQ7Jn3Xji4AZpkCVdLVFHGmvfZ+ZZZkmr/uo4Rk78FD0g6f
+	 pttczcsujsvAlVoFfmRB4LPjv79GGkrXzHCtqp4bouXN6HqMneb09j094EIlQriv1M
+	 dQ6w18V54cU2A==
+Message-ID: <e495cf7c-a76c-4ecc-aa95-36fb0ee54b80@kernel.org>
+Date: Thu, 14 May 2026 12:35:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260506-qref_vote_0506-v3-1-5ab71d2e6f16@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/4] dt-bindings: clock: qcom: Add QREF regulator
+ supplies for glymur
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Qiang Yu <qiang.yu@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Taniya Das
+ <taniya.das@oss.qualcomm.com>, Konrad Dybcio <konradybcio@kernel.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ krishna.chundru@oss.qualcomm.com
+References: <20260506-qref_vote_0506-v3-0-5ab71d2e6f16@oss.qualcomm.com>
+ <20260506-qref_vote_0506-v3-1-5ab71d2e6f16@oss.qualcomm.com>
+ <20260514-outgoing-literate-dove-2e2a73@quoll>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20260514-outgoing-literate-dove-2e2a73@quoll>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 06, 2026 at 01:43:51AM -0700, Qiang Yu wrote:
-> Add regulator supply properties for the Glymur TCSR QREF/REFGEN blocks
-> required by clkref clocks.
+On 14/05/2026 12:22, Krzysztof Kozlowski wrote:
+> On Wed, May 06, 2026 at 01:43:51AM -0700, Qiang Yu wrote:
+>> Add regulator supply properties for the Glymur TCSR QREF/REFGEN blocks
+>> required by clkref clocks.
+>>
+>> The vdda-qreftx*, vdda-qrefrpt*, and vdda-qrefrx* supplies map to common
+>> QREF TX/RPT/RX components, while SoC-specific topology and instance count
+>> differ. Document them here for qcom,glymur-tcsr.
+>>
+>> Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
+>> ---
+>>  .../bindings/clock/qcom,sm8550-tcsr.yaml           | 57 ++++++++++++++++++++++
+>>  1 file changed, 57 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
+>> index 1ccdf4b0f5dd..57921cb63230 100644
+>> --- a/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
+>> @@ -51,6 +51,63 @@ properties:
+>>    '#reset-cells':
+>>      const: 1
+>>  
+>> +  vdda-refgen-0p9-supply: true
+>> +  vdda-refgen-1p2-supply: true
+>> +  vdda-qrefrx0-0p9-supply: true
+>> +  vdda-qrefrx1-0p9-supply: true
+>> +  vdda-qrefrx2-0p9-supply: true
+>> +  vdda-qrefrx4-0p9-supply: true
+>> +  vdda-qrefrx5-0p9-supply: true
+>> +  vdda-qreftx0-0p9-supply: true
+>> +  vdda-qreftx0-1p2-supply: true
+>> +  vdda-qreftx1-0p9-supply: true
+>> +  vdda-qrefrpt0-0p9-supply: true
+>> +  vdda-qrefrpt1-0p9-supply: true
+>> +  vdda-qrefrpt2-0p9-supply: true
+>> +  vdda-qrefrpt3-0p9-supply: true
+>> +  vdda-qrefrpt4-0p9-supply: true
 > 
-> The vdda-qreftx*, vdda-qrefrpt*, and vdda-qrefrx* supplies map to common
-> QREF TX/RPT/RX components, while SoC-specific topology and instance count
-> differ. Document them here for qcom,glymur-tcsr.
+> Either I do not understand your previous explanation:
+> CXO -> TX0 -> RPT0 -> RPT1 -> RPT2 -> RX2 -> PCIe4_PHY
 > 
-> Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
-> ---
->  .../bindings/clock/qcom,sm8550-tcsr.yaml           | 57 ++++++++++++++++++++++
->  1 file changed, 57 insertions(+)
+> or this is still wrong. There is no TCSR here, so this proves nothing.
+> If TCSR is TX0, then you do not have five of them...
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
-> index 1ccdf4b0f5dd..57921cb63230 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
-> @@ -51,6 +51,63 @@ properties:
->    '#reset-cells':
->      const: 1
->  
-> +  vdda-refgen-0p9-supply: true
-> +  vdda-refgen-1p2-supply: true
-> +  vdda-qrefrx0-0p9-supply: true
-> +  vdda-qrefrx1-0p9-supply: true
-> +  vdda-qrefrx2-0p9-supply: true
-> +  vdda-qrefrx4-0p9-supply: true
-> +  vdda-qrefrx5-0p9-supply: true
-> +  vdda-qreftx0-0p9-supply: true
-> +  vdda-qreftx0-1p2-supply: true
-> +  vdda-qreftx1-0p9-supply: true
-> +  vdda-qrefrpt0-0p9-supply: true
-> +  vdda-qrefrpt1-0p9-supply: true
-> +  vdda-qrefrpt2-0p9-supply: true
-> +  vdda-qrefrpt3-0p9-supply: true
-> +  vdda-qrefrpt4-0p9-supply: true
+> My previous comment stay - you are not describing the actual hardware
+> here.
 
-Either I do not understand your previous explanation:
-CXO -> TX0 -> RPT0 -> RPT1 -> RPT2 -> RX2 -> PCIe4_PHY
+And it should not be my task BUT YOURS to verify this in hardware
+programming guide or manual, but nevertheless I did verify and the
+manual DOES NOT mention these supplies. For Glymur, it mentions 8 reset
+ports and 5 clock ports.
 
-or this is still wrong. There is no TCSR here, so this proves nothing.
-If TCSR is TX0, then you do not have five of them...
+No supplies at all.
 
-My previous comment stay - you are not describing the actual hardware
-here.
+Then I went to QREF and it does mention few supplies but completely
+different, like mx, cx, px 0.88 and px1.2, so none of this matches QREF
+either.
 
 Best regards,
 Krzysztof
-
