@@ -1,163 +1,105 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C331395AEC;
-	Thu, 14 May 2026 12:25:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3409F3EE1D4;
+	Thu, 14 May 2026 13:47:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778761536; cv=none; b=JVSzH7zqO5B/1MhkyJmhSHxzZygShV70TxtfmAbnGddzxupPPQONgCVtzGGvroeR8cXuKC7yvs3C+Ia4+qqjOqpxY7bVusof9W/Us3vkid5+GJBFs7l72MjoW5/8n8fYpzhnIDJnglDQksGZTj+04WzDv9J7hDga5cvYwk2vMbo=
+	t=1778766475; cv=none; b=naP4M7ChjirUoOFr8Z4iUhj+JFUmGeFoME/UHQxFEIB0DPZdVcJoUie3wncJnEhjhleGHsEKf/l9zTWI+pqkl74OP5NNqYuZ/5BP2VaNs0ydHmw0/O5YAhfhK/gl9ei9AU3/afrlZYgIle1xlDWjNYsUK3qwp9YtR2dVH55+WVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778761536; c=relaxed/simple;
-	bh=CIep6fJfVAhn74HMjDE/V/v4KeGkg+5aWPNFXSJzT0U=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gSdfXpD9kF8grAlUtTgPLZd+HfYkhDFAx8drFaqRRIJc97B6nRibL6hfAbNf54HvaZdwRX+gg/TDe5OjOCj8QdByJtbc0n/qQFgVL/kDMBOQ+tQfFNZzxppI0mKuLgGJ4KDWb0/wJwQ3j8HPN94dZ1IDQUZXhuo0GR9ebNHchho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=YQYjIDhh; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1778766475; c=relaxed/simple;
+	bh=foSUTTciefKu/0q7fLl4eDlK+a00fo6AsT5VId1gV0g=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=qIqe67YJ4XyhDdQ4zdwCAipNunfyJEHDwk3RU1zzyUp93Kd21WPZHbzNUXC7oF/eLSw8XukTTkW2zQ+hM3kHzfNOZmm/EJuKjom6Ba75xYTw6t84gi0OsdO4IjduJHKZPwQyA4dP9KB98S/ZUFFjnb9NzSWVIh9ZbMJJM0tiNbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C7EXKpOW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="YQYjIDhh"
-Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D432D18E9;
-	Thu, 14 May 2026 14:25:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1778761521;
-	bh=CIep6fJfVAhn74HMjDE/V/v4KeGkg+5aWPNFXSJzT0U=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=YQYjIDhhkCHX8nArOf2h6dbnWacNVL70EWQkXCc2DJHlBaDUz85dJsBY97GCRVyFV
-	 mbr2VgnaU0nQriM19y1Tivxj8pdIf9d4pluL/qocq23/spJ4H1oGfKJmnbwZtmtiis
-	 gxUcFGHyeMBlAtjLkdJjTuYm8tjXqIeYmPthQbwo=
-From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Date: Thu, 14 May 2026 15:24:57 +0300
-Subject: [PATCH 5/5] arm64: dts: renesas: Add Renesas R-Car V4H DSC
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C7EXKpOW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ABD9C2BCB3;
+	Thu, 14 May 2026 13:47:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1778766474;
+	bh=foSUTTciefKu/0q7fLl4eDlK+a00fo6AsT5VId1gV0g=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=C7EXKpOWFDkvDfP/p5daDRdRVCwGfDPPZjOkgTeSJyoed/M0ElC97exv5FIfXjnQY
+	 cKtbTi+LBroo5O6Sn31YPv/w7Cb5UcvQsNO5HcoGAKD6cnB9ixP0D+iqlZ8lBocRLS
+	 hWiCYd4K+f4vXOPbDeE0vGGtOexTXdCEM+fAhd8vwK5kG6ifZtjtYNp18eXCje8kSk
+	 yEGcuC00P7s7lEdyCuU1pOqTHL+4SFtsVXJL6pLRTOcwc7Dy666CPCJUO99G9qHfll
+	 G6RNDJzKRmY6sms9uYMfuPFvVTJy2CdQcRSJGYW1+XIdfrnHq2eWL5VQ7zcsRqPILS
+	 BSSB6/uUW3yBg==
+Date: Thu, 14 May 2026 08:47:51 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260514-rcar-du-dsc-v1-5-d65f7a9e9841@ideasonboard.com>
-References: <20260514-rcar-du-dsc-v1-0-d65f7a9e9841@ideasonboard.com>
-In-Reply-To: <20260514-rcar-du-dsc-v1-0-d65f7a9e9841@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>, Jonas Karlman <jonas@kwiboo.se>, 
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
- Marek Vasut <marek.vasut+renesas@mailbox.org>, 
+ David Airlie <airlied@gmail.com>, 
  Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Michael Turquette <mturquette@baylibre.com>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, linux-clk@vger.kernel.org, 
+ Simona Vetter <simona@ffwll.ch>, Stephen Boyd <sboyd@kernel.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, 
+ Marek Vasut <marek.vasut+renesas@mailbox.org>, 
  Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- devicetree@vger.kernel.org, 
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2322;
- i=tomi.valkeinen+renesas@ideasonboard.com; h=from:subject:message-id;
- bh=zG6hvH8cY6/FnPokxtHg066A+36wEiN+1/jJynaivt4=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBqBb8wHjTOJGQXLyHTo6PmhuCSYT02JRE/rO4wV
- YUftPFPBdmJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCagW/MAAKCRD6PaqMvJYe
- 9fbkD/9R5Ih+b15fuThFLtbiiOt5NFTKqAxVt3j+l9D+ymrjBkXmlat1+kWdrwl2BizAvoX+NJj
- FOgZp68ziea6NeZsYr297co/P6SqSbK99C8nmi1YYZEE1BF+YOF23TZwFBusEs80iox/T40xEOK
- grGNDkKfrkKECs9rftl4ZCEO1vCV3NcM57dl4lKq61WsDcjVMxaBn5a9bC1qWbhhP4C2I0TROB2
- Abg1bgyLLPb1J9+OsuMH4J0+DKLLgMzikayLHEH6cHAlvtqzaX5H9E9JwrokrfdGnZbljUFVug1
- mTY0DS3fwCTgaq5Ce8/lLb+cbBqYSS8i23eJSyoMPh2zeoGkRaWruryhEP0Gc0/yQnZD4AASoZ0
- ei/hUnO2ywY3ywWerQu5hPLPJB8sfsJ++kRHryhjPzYyhWVPS5mCRG5u2SuIZE9Iz2E/vKHsV80
- D8+agw6/gRq4LTBr+Q/9l8zjEoOsl8RoiwZrFeGyJhiKqpyul9GUWbSlW6UeMSFQGIV+pF+58Ji
- OfCjMMmN5kYDlbVcCbyiEcNm0InHIGw1ZnJY5x5DsFNnBaSWPSkRay/b6UEG7bGzped+D+EHV9h
- ghuycW6O7aflAgzP6GMn5nAmK3wMOQuHXdYIbETGdgIc+FyOwnoldCjBiQCESWfhqDK8bjxqAwF
- 65A5IMq/z2e367g==
-X-Developer-Key: i=tomi.valkeinen+renesas@ideasonboard.com; a=openpgp;
- fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
+ linux-renesas-soc@vger.kernel.org, Maxime Ripard <mripard@kernel.org>, 
+ linux-kernel@vger.kernel.org, Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, dri-devel@lists.freedesktop.org
+To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+In-Reply-To: <20260514-rcar-du-dsc-v1-2-d65f7a9e9841@ideasonboard.com>
+References: <20260514-rcar-du-dsc-v1-0-d65f7a9e9841@ideasonboard.com>
+ <20260514-rcar-du-dsc-v1-2-d65f7a9e9841@ideasonboard.com>
+Message-Id: <177876647180.321742.13836175505095800376.robh@kernel.org>
+Subject: Re: [PATCH 2/5] dt-bindings: display: bridge: Document Renesas
+ R-Car V4H DSC bindings
 
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
-The Renesas DSC Display Stream Compression is a bridge embedded in the
-Renesas R-Car V4H SoC. The bridge is placed between DU and DSI1 units.
-Describe the bridge in DT and enable it on Retronix Sparrow Hawk board
-to keep DSI1 operational on this board.
+On Thu, 14 May 2026 15:24:54 +0300, Tomi Valkeinen wrote:
+> From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> 
+> The Renesas DSC Display Stream Compression is a bridge embedded in the
+> Renesas R-Car V4H SoC. The bridge performs VESA DSC encoding of up to
+> 8k or 400 Mpixel/s .
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> [tomi.valkeinen: fix the example]
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> ---
+>  .../bindings/display/bridge/renesas,dsc.yaml       | 96 ++++++++++++++++++++++
+>  1 file changed, 96 insertions(+)
+> 
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
----
- arch/arm64/boot/dts/renesas/r8a779g0.dtsi          | 31 +++++++++++++++++++++-
- .../boot/dts/renesas/r8a779g3-sparrow-hawk.dts     |  5 ++++
- 2 files changed, 35 insertions(+), 1 deletion(-)
+My bot found errors running 'make dt_binding_check' on your patch:
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-index 82a7278836e5..52a6176f9fd0 100644
---- a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-@@ -2298,6 +2298,35 @@ du_out_dsi0: endpoint {
- 				port@1 {
- 					reg = <1>;
- 					du_out_dsi1: endpoint {
-+						remote-endpoint = <&dsc_in_dsi1>;
-+					};
-+				};
-+			};
-+		};
-+
-+		dsc: dsc@feb8d000 {
-+			compatible = "renesas,r8a779g0-dsc";
-+			reg = <0 0xfeb8d000 0 0x400>;
-+			interrupts = <GIC_SPI 559 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 2819>;
-+			power-domains = <&sysc R8A779G0_PD_ALWAYS_ON>;
-+			resets = <&cpg 2819>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					dsc_in_dsi1: endpoint {
-+						remote-endpoint = <&du_out_dsi1>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					dsc_out_dsi1: endpoint {
- 						remote-endpoint = <&dsi1_in>;
- 					};
- 				};
-@@ -2534,7 +2563,7 @@ ports {
- 				port@0 {
- 					reg = <0>;
- 					dsi1_in: endpoint {
--						remote-endpoint = <&du_out_dsi1>;
-+						remote-endpoint = <&dsc_out_dsi1>;
- 					};
- 				};
- 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts b/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts
-index 812b133cf29e..f418998c6b05 100644
---- a/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts
-@@ -288,6 +288,11 @@ channel4 {
- 	};
- };
- 
-+/* Page 27 / DSI to Display */
-+&dsc {
-+	status = "okay";
-+};
-+
- /* Page 27 / DSI to Display */
- &dsi1 {
- 	status = "okay";
+yamllint warnings/errors:
 
--- 
-2.43.0
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/bridge/renesas,dsc.example.dtb: dsc@feb8d000 (renesas,r8a779g0-dsc): reg: [[0, 4273524736], [0, 1024]] is too long
+	from schema $id: http://devicetree.org/schemas/display/bridge/renesas,dsc.yaml
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.kernel.org/project/devicetree/patch/20260514-rcar-du-dsc-v1-2-d65f7a9e9841@ideasonboard.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
