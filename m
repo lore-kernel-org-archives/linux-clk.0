@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6BC7407583;
-	Thu, 14 May 2026 14:09:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77795401496;
+	Thu, 14 May 2026 14:09:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778767764; cv=none; b=HdZdu3Jgtn6Q3WARqJf0ZI2VpXGALAuraPs+kLGWLz/iRRulGvBuQVV/S4n18ypdaMGnMGaKbAb4LSoaoHtEFO/VOm461+4eraerzSE7/D86F7HOKgnaP3utYapFFHfEpZ+9WUloD+1BxYao0f+EvA6F0D0k9lUDFr8Wp2sZViQ=
+	t=1778767765; cv=none; b=e06wEOoQksy+qdJ+hAkVBvt4/VmZ163VHa1AbZ1sYGi9CU/WTOTeDxIBykjyxlOT0VZfdWq2inxKwT8SFqygLbSlReZRmSiQRXw5z8V+WQBV+2/TCVe/tWQGWwJvBMZ1WW64gh18MlIkaxnDhNx4o3ZSLLRptXK5/yWYV/vcFWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778767764; c=relaxed/simple;
-	bh=DzRDH4cbEVAi9XsADsayvcSyczdiqr82Oaapba9+ZrQ=;
+	s=arc-20240116; t=1778767765; c=relaxed/simple;
+	bh=H32RyrAYNn704sv/OiSnG1f5cuj33BcGs+Pg7BxLgMQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=a/quG7ALjfF28IQdFCw0rCK+yh2HbQTHzZCcnfVlGJn2Lb4bQqn5MZ2EWHRaBWj047lDgstqB/m0DALzb2DrNw9VTBPp4WuA0kiAFhJp2sRvYtlw2rrAhxjVz0lPaYNSGDkDRvBKyqB9HYZXhvkcTSevjCcxQdTR9BoSZorFegI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O2tJRYpN; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=aJ2YD6h3msY+Q3tZ/UifO/cbV4yvdaBmjrkuYpPBQdP7AMjFYOAenKBNp0Bvu/KGoOUoXHh3i0yWi2cmmI/tJv3G3JsSQZSTtEgXc5clYzTchptXhABRyAnKymxXrRN9sKFQF2pxNmHsRRFnUa0W8J9ygduj4I/5xItzmsXSoN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oG/cnk/p; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O2tJRYpN"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 97340C4AF0B;
-	Thu, 14 May 2026 14:09:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oG/cnk/p"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 54A95C2BCF5;
+	Thu, 14 May 2026 14:09:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778767764;
-	bh=DzRDH4cbEVAi9XsADsayvcSyczdiqr82Oaapba9+ZrQ=;
+	s=k20201202; t=1778767765;
+	bh=H32RyrAYNn704sv/OiSnG1f5cuj33BcGs+Pg7BxLgMQ=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=O2tJRYpNA8HHVparbVybj/4WU816WvcOMBla0xpVOsPAskUS10eIBVC9hiG02RTLa
-	 5zZES2TvVdUqRRjtHqEr9Q2Kuk5iOVHnjFFt9GqIpAEGNQpzSk8nRC/bwqUrk3/hdI
-	 s8brPW1f/bqFZaU6mpBe+7k3/vmxa5WJ9aAT2GfxuOHsU8bY1NbZoRGaGYHcDOPy8b
-	 GpuP0E3igw5c0l0Rcok+rmf9Lhavynlba2YgPpWdS1wj0T0LZV8BDsQx0oOhx8jHH2
-	 Z82BL67FGDslfapZI+blt73PncBhKAeFky3ThmIFf8+dpeuQ1fYzyKVyaTftLrnPmJ
-	 KNvNVQSin1VfA==
+	b=oG/cnk/pReMb8ZuVHNxmkWEtHGApT7HilOSphqBUDXZsZ4EpiefQVR/9GJS/UJmAr
+	 //mVbs6UrN0VUmy079m7RSqt/c7/RB0+mxygld/O+BJ4kosz3xeN6mXsD4SNquphrK
+	 SlAK/GGmb7qCHSA1itwR4eFGDI2bZ01OuM/yJmtjzM1wubV4cqhoO//QFerEKxSK49
+	 8piLQ5+doQWgVBDoV8+36Bu95VmAnI/zYaIYNYQuUCAW+/X8ukmzPhbFx4k0wRu85r
+	 KS5WcDgg6NlRJPzsEzEuwait/Y9XxETKjNA5lWvefBegRcNkPV0lFztq6LO9ZxMaih
+	 jaYiKVc6I8eEQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7637DCD4F3C;
-	Thu, 14 May 2026 14:09:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF3ECD4F3D;
+	Thu, 14 May 2026 14:09:25 +0000 (UTC)
 From: Antony Kurniawan Soemardi via B4 Relay <devnull+linux.smankusors.com@kernel.org>
-Date: Thu, 14 May 2026 21:08:30 +0700
-Subject: [PATCH v2 01/10] dt-bindings: clock: qcom,rpmcc: add msm8960
- compatible
+Date: Thu, 14 May 2026 21:08:34 +0700
+Subject: [PATCH v2 05/10] ARM: dts: qcom: msm8960: add RPM clock controller
+ and fix USB clocks
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260514-msm8960-wifi-v2-1-7cbae45dab5e@smankusors.com>
+Message-Id: <20260514-msm8960-wifi-v2-5-7cbae45dab5e@smankusors.com>
 References: <20260514-msm8960-wifi-v2-0-7cbae45dab5e@smankusors.com>
 In-Reply-To: <20260514-msm8960-wifi-v2-0-7cbae45dab5e@smankusors.com>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -56,11 +56,11 @@ Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-msm@vger.kernel.org,
  Rudraksha Gupta <guptarud@gmail.com>, 
  Antony Kurniawan Soemardi <linux@smankusors.com>
 X-Mailer: b4 0.15.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1778767762; l=3572;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1778767762; l=2427;
  i=linux@smankusors.com; s=20250609; h=from:subject:message-id;
- bh=yJDZ3oI+U0ik6kyM6Iek60rqNIUI/8S+jJgZ5v5/O/A=;
- b=fmmYh5Gfdbg3cKUMUc+qEkC8K+LYzBMP75QRB7sMRRyPnKn1OvhRcnnevzpEkce4S0UXKA8j2
- vqX/MP77qafDprIo0OWksbP+KA5IK26gDnql9Oc9WybYDhZ/TTLXWxq
+ bh=OqzAg6ZwPwD/+WIxsduY++izYopFU+h8fuvvy+0YmiA=;
+ b=2yFb6ilolHs2wJZqiUAws2yOSo6RlkJbWrKycebt2Ak8riqqMqmBHv3en7H9Kf12XJzRQqGwz
+ oTu3UJg3TEGCs469AiMGxPd3fWzH55ZqWbTEjH3MDXfnNjZelJCGIKR
 X-Developer-Key: i=linux@smankusors.com; a=ed25519;
  pk=65wTy06fJl2/h/EJwjr704YG+yjHFhZObJBWzzK+N00=
 X-Endpoint-Received: by B4 Relay for linux@smankusors.com/20250609 with
@@ -70,116 +70,72 @@ Reply-To: linux@smankusors.com
 
 From: Antony Kurniawan Soemardi <linux@smankusors.com>
 
-Document the qcom,rpmcc-msm8960 compatible.
+The RPM clock controller manages clocks shared between the application
+processor and the RPM firmware, including fabric and bus clocks required
+by several peripherals.
 
-The MSM8960 platform shares the same RPM clock definitions as
-APQ8064, so extend the existing conditional schema to treat
-qcom,rpmcc-msm8960 the same as qcom,rpmcc-apq8064.
+With the RPM clock controller now available in the device tree, the USB
+controller must explicitly declare its dependency on
+RPM_DAYTONA_FABRIC_CLK. Without this declaration, the clock framework
+would consider it unused and disable it, breaking USB functionality.
+
+This also corrects the previous misuse of USB_HS1_XCVR_CLK as the core
+clock. The XCVR clock is in fact used for PHY/reset handling rather than
+as the main core clock.
+
+A similar issue has been observed on APQ8064, where missing the RPM
+fabric clock dependency leads to broken USB.
 
 Signed-off-by: Antony Kurniawan Soemardi <linux@smankusors.com>
 ---
- .../devicetree/bindings/clock/qcom,rpmcc.yaml      | 77 +++++++++++++---------
- 1 file changed, 47 insertions(+), 30 deletions(-)
+ arch/arm/boot/dts/qcom/qcom-msm8960.dtsi | 20 ++++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml b/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
-index ab97d4b7dba8..32ef7d08e0bb 100644
---- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
-@@ -21,35 +21,40 @@ description: |
+diff --git a/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi b/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi
+index fd28401cebb5..0601680cd8dd 100644
+--- a/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi
++++ b/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi
+@@ -5,6 +5,7 @@
+ #include <dt-bindings/clock/qcom,gcc-msm8960.h>
+ #include <dt-bindings/reset/qcom,gcc-msm8960.h>
+ #include <dt-bindings/clock/qcom,lcc-msm8960.h>
++#include <dt-bindings/clock/qcom,rpmcc.h>
+ #include <dt-bindings/mfd/qcom-rpm.h>
+ #include <dt-bindings/soc/qcom,gsbi.h>
  
- properties:
-   compatible:
--    items:
--      - enum:
--          - qcom,rpmcc-apq8060
--          - qcom,rpmcc-apq8064
--          - qcom,rpmcc-ipq806x
--          - qcom,rpmcc-mdm9607
--          - qcom,rpmcc-msm8226
--          - qcom,rpmcc-msm8660
--          - qcom,rpmcc-msm8909
--          - qcom,rpmcc-msm8916
--          - qcom,rpmcc-msm8917
--          - qcom,rpmcc-msm8936
--          - qcom,rpmcc-msm8937
--          - qcom,rpmcc-msm8940
--          - qcom,rpmcc-msm8953
--          - qcom,rpmcc-msm8974
--          - qcom,rpmcc-msm8976
--          - qcom,rpmcc-msm8992
--          - qcom,rpmcc-msm8994
--          - qcom,rpmcc-msm8996
--          - qcom,rpmcc-msm8998
--          - qcom,rpmcc-qcm2290
--          - qcom,rpmcc-qcs404
--          - qcom,rpmcc-sdm429
--          - qcom,rpmcc-sdm660
--          - qcom,rpmcc-sm6115
--          - qcom,rpmcc-sm6125
--          - qcom,rpmcc-sm6375
--      - const: qcom,rpmcc
-+    oneOf:
-+      - items:
-+          - enum:
-+              - qcom,rpmcc-apq8060
-+              - qcom,rpmcc-apq8064
-+              - qcom,rpmcc-ipq806x
-+              - qcom,rpmcc-mdm9607
-+              - qcom,rpmcc-msm8226
-+              - qcom,rpmcc-msm8660
-+              - qcom,rpmcc-msm8909
-+              - qcom,rpmcc-msm8916
-+              - qcom,rpmcc-msm8917
-+              - qcom,rpmcc-msm8936
-+              - qcom,rpmcc-msm8937
-+              - qcom,rpmcc-msm8940
-+              - qcom,rpmcc-msm8953
-+              - qcom,rpmcc-msm8974
-+              - qcom,rpmcc-msm8976
-+              - qcom,rpmcc-msm8992
-+              - qcom,rpmcc-msm8994
-+              - qcom,rpmcc-msm8996
-+              - qcom,rpmcc-msm8998
-+              - qcom,rpmcc-qcm2290
-+              - qcom,rpmcc-qcs404
-+              - qcom,rpmcc-sdm429
-+              - qcom,rpmcc-sdm660
-+              - qcom,rpmcc-sm6115
-+              - qcom,rpmcc-sm6125
-+              - qcom,rpmcc-sm6375
-+          - const: qcom,rpmcc
-+      - items:
-+          - const: qcom,rpmcc-msm8960
-+          - const: qcom,rpmcc-apq8064
-+          - const: qcom,rpmcc
- 
-   '#clock-cells':
-     const: 1
-@@ -90,7 +95,9 @@ allOf:
-       properties:
-         compatible:
-           contains:
--            const: qcom,rpmcc-apq8064
-+            enum:
-+              - qcom,rpmcc-apq8064
-+              - qcom,rpmcc-msm8960
-     then:
-       properties:
-         clocks:
-@@ -164,3 +171,13 @@ examples:
-             clock-names = "pxo";
-         };
-     };
+@@ -98,6 +99,17 @@ rpm: rpm@108000 {
+ 			interrupt-names = "ack",
+ 					  "err",
+ 					  "wakeup";
 +
-+  - |
-+    rpm {
-+        clock-controller {
-+            compatible = "qcom,rpmcc-msm8960", "qcom,rpmcc-apq8064", "qcom,rpmcc";
-+            #clock-cells = <1>;
-+            clocks = <&pxo_board>, <&cxo_board>;
-+            clock-names = "pxo", "cxo";
-+        };
-+    };
++			rpmcc: clock-controller {
++				compatible = "qcom,rpmcc-msm8960",
++					     "qcom,rpmcc-apq8064",
++					     "qcom,rpmcc";
++				#clock-cells = <1>;
++				clocks = <&pxo_board>,
++					 <&cxo_board>;
++				clock-names = "pxo",
++					      "cxo";
++			};
+ 		};
+ 
+ 		ssbi: ssbi@500000 {
+@@ -507,8 +519,12 @@ usb1: usb@12500000 {
+ 			reg = <0x12500000 0x200>,
+ 			      <0x12500200 0x200>;
+ 			interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&gcc USB_HS1_XCVR_CLK>, <&gcc USB_HS1_H_CLK>;
+-			clock-names = "core", "iface";
++			clocks = <&rpmcc RPM_DAYTONA_FABRIC_CLK>,
++				 <&gcc USB_HS1_H_CLK>,
++				 <&gcc USB_HS1_XCVR_CLK>;
++			clock-names = "core",
++				      "iface",
++				      "fs";
+ 			assigned-clocks = <&gcc USB_HS1_XCVR_CLK>;
+ 			assigned-clock-rates = <60000000>;
+ 			resets = <&gcc USB_HS1_RESET>;
 
 -- 
 2.34.1
