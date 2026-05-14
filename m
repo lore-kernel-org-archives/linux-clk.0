@@ -1,153 +1,306 @@
-Received: from zg8tmtyylji0my4xnjeumjiw.icoremail.net (zg8tmtyylji0my4xnjeumjiw.icoremail.net [162.243.161.220])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84D4C2BDC16;
-	Thu, 14 May 2026 02:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.161.220
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778725841; cv=none; b=f4uuEqH7qVWe6H2zDE1dYIUQX/kp7o4s4AXQhF0rlWs+qtr9juXXU4o02TRxx2SunSgzTce6dGUDIcgxEr9WYaN6WoeylGpjXA7RJfJ1JCm++GjEBqaFpLTEFDq/GG7f3Fy9LIHwjIG8BuL0E03s3cCu9vhf/CX93Jetx7H8G4Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778725841; c=relaxed/simple;
-	bh=NeCLeU1JjmO8/xjfCX732AomAwmut5ef+HEzI8drKUY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=lIvDg+31GnAGuf03EAQAZithBrEai/wn6xieL+wSc+780j9ZeMkMVni/21TX6jgwQ5X46/+7Z/5SCu2JUHcxejVsVIapfw6WKPDMYPsUzKtN4PFn5OO5WfjEmyPPPQIgS45p3tEhSDZjWt0RgZmkZnrvyenIkTqCO0bpqLftAus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=162.243.161.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from dongxuyang$eswincomputing.com ( [10.12.96.41] ) by
- ajax-webmail-app2 (Coremail) ; Thu, 14 May 2026 10:30:11 +0800 (GMT+08:00)
-Date: Thu, 14 May 2026 10:30:11 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: "Xuyang Dong" <dongxuyang@eswincomputing.com>
-To: "Brian Masney" <bmasney@redhat.com>, sashiko-bot@kernel.org
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	p.zabel@pengutronix.de, huangyifeng@eswincomputing.com,
-	benoit.monin@bootlin.com, ningyu@eswincomputing.com,
-	linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com
-Subject: Re: Re: [PATCH v4 2/3] clk: eswin: Add eic7700 HSP clock driver
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
- 20241203(6b039d88) Copyright (c) 2002-2026 www.mailtech.cn
- mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
-In-Reply-To: <agNLDkz0L67lL0_f@redhat.com>
-References: <20260512020432.671-1-dongxuyang@eswincomputing.com>
- <20260512020747.993-1-dongxuyang@eswincomputing.com>
- <agNLDkz0L67lL0_f@redhat.com>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901433F413A;
+	Thu, 14 May 2026 02:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778726519; cv=pass; b=KW3vTUmzbu0JZuYwNfkqiXHR8C+Lt8p3V1XmtGI0mAjDQgBp/6MhGtOaO+bltPjv1LfnoUgKBMkpfR7sAJ4C5bGgv1G/6HsGBtbda/pfcxYxCsl/oIQKniw2kikMstvxbR+uaqm0gexq2nod5cUhzlXi+v3ey1o+L+970Tw8Vns=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778726519; c=relaxed/simple;
+	bh=GSTUi9r8Rm2Sz0PEhinBFhsqPBSJ7xLVnNiSPS/KJLQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=pdTUE75SyaqE27rJzEXBwd4VKojopbQRLnkYIzfRRnvULM260loMsBd92OkxDaeuDRFrWQS9nYTAcYSAILD9eVzCrnYjAFzEUS8eHDPKTGD8L2SlDf8X68Uj/Ls+VmWG+kxpXN3IBVuVu1/JQj2C4Y/RbDa3jx3RJuK+tD2s5lA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=JfegYDIN; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="JfegYDIN"
+ARC-Seal: i=1; a=rsa-sha256; t=1778726477; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Docj4EGI3Ug/msvdikxupE8lz7UGSUVoJJpumWdD4eTi8qgqFpfqp7D2H5t9tmEU3EuX/zWBhgdGT/Kb0V6YB8sgCJXNr5bI1171o4x+2NnklH7go6+oimb0JhVcisE2GnYPxENV+FzNu6SspN/S8pbo4QLuqCaz8me39W/MaD0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1778726477; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=V5kLc3tBRnQNBWeKfM6szSwbyCBrMxDQ5Luf/VfXq5c=; 
+	b=RtdVb+ZdergDJGJLu0Ki1tcdtGHVb0CDJyCJc231U+8MU6GTZY5wtcjpn+EPohxEyOAgJRkMc+o/Mpsy8VR7X7+ctq0CaTEu8FvJK2GAept5xJvoLRtw4yvCqwYrQUVXOLYcl0RntST/ixxgO4wfPAroI8JgriEPIDBQooTfwhQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=pigmoral.tech;
+	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
+	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1778726477;
+	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
+	h=Mime-Version:Content-Transfer-Encoding:Content-Type:Date:Date:Message-Id:Message-Id:From:From:To:To:Cc:Cc:Subject:Subject:References:In-Reply-To:Reply-To;
+	bh=V5kLc3tBRnQNBWeKfM6szSwbyCBrMxDQ5Luf/VfXq5c=;
+	b=JfegYDINIwg/6N+ugdeRkxpcKqPN+ScisKB0wJyvr2ap2/riUrji1MxxFsbK6MuJ
+	atZkatO3WkfMT9ZGwxRCIsOtX8fOUHwYOjlhfDV3yZqsVx3pGlEB1loNFFUDATdrlX0
+	P/edQNdD7VM6xWkVILNhZuk7zHeAPQPNLhvBCQtQ=
+Received: by mx.zohomail.com with SMTPS id 1778726475791212.1556488266575;
+	Wed, 13 May 2026 19:41:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <849a595.6278.19e2451f3d0.Coremail.dongxuyang@eswincomputing.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:TQJkCgDH3aCzMwVqj0MZAA--.5817W
-X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/1tbiAgEHAmoEqBIL4
-	AAAs5
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 14 May 2026 10:41:01 +0800
+Message-Id: <DII1WNKP34TU.34MR7JQVKLTGJ@pigmoral.tech>
+From: "Junhui Liu" <junhui.liu@pigmoral.tech>
+To: "Andre Przywara" <andre.przywara@arm.com>, "Junhui Liu"
+ <junhui.liu@pigmoral.tech>
+Cc: "Michael Turquette" <mturquette@baylibre.com>, "Stephen Boyd"
+ <sboyd@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Chen-Yu Tsai"
+ <wens@kernel.org>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Samuel
+ Holland" <samuel@sholland.org>, "Philipp Zabel" <p.zabel@pengutronix.de>,
+ "Paul Walmsley" <pjw@kernel.org>, "Palmer Dabbelt" <palmer@dabbelt.com>,
+ "Albert Ou" <aou@eecs.berkeley.edu>, "Alexandre Ghiti" <alex@ghiti.fr>,
+ "Richard Cochran" <richardcochran@gmail.com>, <linux-clk@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+ <linux-riscv@lists.infradead.org>, <netdev@vger.kernel.org>
+Subject: Re: [PATCH RFC 8/8] clk: sunxi-ng: a733: Add reset lines
+X-Mailer: aerc 0.21.0
+References: <20260310-a733-clk-v1-0-36b4e9b24457@pigmoral.tech>
+ <20260310-a733-clk-v1-8-36b4e9b24457@pigmoral.tech>
+ <20260514012226.691ae185@ryzen.lan>
+In-Reply-To: <20260514012226.691ae185@ryzen.lan>
+X-ZohoMailClient: External
 
-PiAKPiBPbiBUdWUsIE1heSAxMiwgMjAyNiBhdCAxMDowNzo0N0FNICswODAwLCBYdXlhbmcgRG9u
-ZyB3cm90ZToKPiA+IEFkZCBkcml2ZXIgZm9yIHRoZSBFU1dJTiBFSUM3NzAwIGhpZ2gtc3BlZWQg
-cGVyaXBoZXJhbHMgc3lzdGVtCj4gPiBjbG9jayBjb250cm9sbGVyIGFuZCByZWdpc3RlciBhbiBh
-dXhpbGlhcnkgZGV2aWNlIGZvciBzeXN0ZW0KPiA+IHJlc2V0IGNvbnRyb2xsZXIgd2hpY2ggaXMg
-bmFtZWQgYXMgImhzcC1yZXNldCIuCj4gPiAKPiA+IFNpZ25lZC1vZmYtYnk6IFh1eWFuZyBEb25n
-IDxkb25neHV5YW5nQGVzd2luY29tcHV0aW5nLmNvbT4KPiA+IC0tLQo+ID4gIGRyaXZlcnMvY2xr
-L2Vzd2luL0tjb25maWcgICAgICAgICAgIHwgIDEyICsKPiA+ICBkcml2ZXJzL2Nsay9lc3dpbi9N
-YWtlZmlsZSAgICAgICAgICB8ICAgMSArCj4gPiAgZHJpdmVycy9jbGsvZXN3aW4vY2xrLWVpYzc3
-MDAtaHNwLmMgfCAzMzggKysrKysrKysrKysrKysrKysrKysrKysrKysrKwo+ID4gIDMgZmlsZXMg
-Y2hhbmdlZCwgMzUxIGluc2VydGlvbnMoKykKPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVy
-cy9jbGsvZXN3aW4vY2xrLWVpYzc3MDAtaHNwLmMKPiA+IAo+ID4gZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvY2xrL2Vzd2luL0tjb25maWcgYi9kcml2ZXJzL2Nsay9lc3dpbi9LY29uZmlnCj4gPiBpbmRl
-eCAwNDA2ZWM0OTllYzkuLmU2Y2MyYTQwN2JhYyAxMDA2NDQKPiA+IC0tLSBhL2RyaXZlcnMvY2xr
-L2Vzd2luL0tjb25maWcKPiA+ICsrKyBiL2RyaXZlcnMvY2xrL2Vzd2luL0tjb25maWcKPiA+IEBA
-IC0xMywzICsxMywxNSBAQCBjb25maWcgQ09NTU9OX0NMS19FSUM3NzAwCj4gPiAgCSAgU29DLiBU
-aGUgY2xvY2sgY29udHJvbGxlciBnZW5lcmF0ZXMgYW5kIHN1cHBsaWVzIGNsb2NrcyB0byB2YXJp
-b3VzCj4gPiAgCSAgcGVyaXBoZXJhbHMgd2l0aGluIHRoZSBTb0MuCj4gPiAgCSAgU2F5IHllcyBo
-ZXJlIHRvIHN1cHBvcnQgdGhlIGNsb2NrIGNvbnRyb2xsZXIgb24gdGhlIEVJQzc3MDAgU29DLgo+
-ID4gKwo+ID4gK2NvbmZpZyBDT01NT05fQ0xLX0VJQzc3MDBfSFNQCj4gPiArCXRyaXN0YXRlICJF
-SUM3NzAwIEhTUCBDbG9jayBEcml2ZXIiCj4gPiArCWRlcGVuZHMgb24gQVJDSF9FU1dJTiB8fCBD
-T01QSUxFX1RFU1QKPiA+ICsJc2VsZWN0IEFVWElMSUFSWV9CVVMKPiA+ICsJc2VsZWN0IENPTU1P
-Tl9DTEtfRUlDNzcwMAo+ID4gKwlzZWxlY3QgUkVTRVRfRUlDNzcwMF9IU1AgaWYgUkVTRVRfQ09O
-VFJPTExFUgo+ID4gKwloZWxwCj4gPiArCSAgVGhpcyBkcml2ZXIgcHJvdmlkZXMgc3VwcG9ydCBm
-b3IgY2xvY2sgY29udHJvbGxlciBvbiBFU1dJTiBFSUM3NzAwCj4gPiArCSAgSFNQLiBUaGUgY2xv
-Y2sgY29udHJvbGxlciBnZW5lcmF0ZXMgYW5kIHN1cHBsaWVzIGNsb2NrcyB0byBoaWdoCj4gPiAr
-CSAgc3BlZWQgcGVyaXBoZXJhbHMgd2l0aGluIHRoZSBTb0MuCj4gPiArCSAgU2F5IHllcyBoZXJl
-IHRvIHN1cHBvcnQgdGhlIGNsb2NrIGNvbnRyb2xsZXIgb24gdGhlIEVJQzc3MDAgSFNQLgo+ID4g
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL2Vzd2luL01ha2VmaWxlIGIvZHJpdmVycy9jbGsvZXN3
-aW4vTWFrZWZpbGUKPiA+IGluZGV4IDRhN2MyYWY4MjE2NC4uMjFhMDlhMzM5NmRmIDEwMDY0NAo+
-ID4gLS0tIGEvZHJpdmVycy9jbGsvZXN3aW4vTWFrZWZpbGUKPiA+ICsrKyBiL2RyaXZlcnMvY2xr
-L2Vzd2luL01ha2VmaWxlCj4gPiBAQCAtNiwzICs2LDQgQEAKPiA+ICBvYmotJChDT05GSUdfQ09N
-TU9OX0NMS19FU1dJTikJCSs9IGNsay5vCj4gPiAgCj4gPiAgb2JqLSQoQ09ORklHX0NPTU1PTl9D
-TEtfRUlDNzcwMCkJKz0gY2xrLWVpYzc3MDAubwo+ID4gK29iai0kKENPTkZJR19DT01NT05fQ0xL
-X0VJQzc3MDBfSFNQKQkrPSBjbGstZWljNzcwMC1oc3Aubwo+ID4gZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvY2xrL2Vzd2luL2Nsay1laWM3NzAwLWhzcC5jIGIvZHJpdmVycy9jbGsvZXN3aW4vY2xrLWVp
-Yzc3MDAtaHNwLmMKPiA+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4gPiBpbmRleCAwMDAwMDAwMDAw
-MDAuLjBkNWJkNWI3MDVkYwo+ID4gLS0tIC9kZXYvbnVsbAo+ID4gKysrIGIvZHJpdmVycy9jbGsv
-ZXN3aW4vY2xrLWVpYzc3MDAtaHNwLmMKPiA+IEBAIC0wLDAgKzEsMzM4IEBACj4gPiArLy8gU1BE
-WC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjAKPiA+ICsvKgo+ID4gKyAqIENvcHlyaWdodCAy
-MDI2LCBCZWlqaW5nIEVTV0lOIENvbXB1dGluZyBUZWNobm9sb2d5IENvLiwgTHRkLi4KPiA+ICsg
-KiBBbGwgcmlnaHRzIHJlc2VydmVkLgo+ID4gKyAqCj4gPiArICogRVNXSU4gRUlDNzcwMCBIU1Ag
-Q2xvY2sgRHJpdmVyCj4gPiArICoKPiA+ICsgKiBBdXRob3JzOiBYdXlhbmcgRG9uZyA8ZG9uZ3h1
-eWFuZ0Blc3dpbmNvbXB1dGluZy5jb20+Cj4gPiArICovCj4gPiArCj4gPiArI2luY2x1ZGUgPGxp
-bnV4L2F1eGlsaWFyeV9idXMuaD4KPiA+ICsjaW5jbHVkZSA8bGludXgvY2xrLXByb3ZpZGVyLmg+
-Cj4gPiArI2luY2x1ZGUgPGxpbnV4L3BsYXRmb3JtX2RldmljZS5oPgo+ID4gKyNpbmNsdWRlIDxs
-aW51eC9yZWdtYXAuaD4KPiA+ICsKPiA+ICsjaW5jbHVkZSA8ZHQtYmluZGluZ3MvY2xvY2svZXN3
-aW4sZWljNzcwMC1oc3BjcmcuaD4KPiA+ICsKPiA+ICsjaW5jbHVkZSAiY29tbW9uLmgiCj4gPiAr
-Cj4gPiArI2RlZmluZSBFSUM3NzAwX0hTUF9TQVRBX1JFRwkJMHgzMDAKPiA+ICsjZGVmaW5lIEVJ
-Qzc3MDBfSFNQX01TSEMwX1JFRwkJMHg1MTAKPiA+ICsjZGVmaW5lIEVJQzc3MDBfSFNQX01TSEMx
-X1JFRwkJMHg2MTAKPiA+ICsjZGVmaW5lIEVJQzc3MDBfSFNQX01TSEMyX1JFRwkJMHg3MTAKPiA+
-ICsjZGVmaW5lIEVJQzc3MDBfSFNQX1VTQjBfUkVHCQkweDgwMAo+ID4gKyNkZWZpbmUgRUlDNzcw
-MF9IU1BfVVNCMF9SRUZfUkVHCTB4ODNjCj4gPiArI2RlZmluZSBFSUM3NzAwX0hTUF9VU0IxX1JF
-RwkJMHg5MDAKPiA+ICsjZGVmaW5lIEVJQzc3MDBfSFNQX1VTQjFfUkVGX1JFRwkweDkzYwo+ID4g
-Kwo+ID4gKyNkZWZpbmUgVVNCX1JFRl9YVEFMMjRNCQkJMHgyYQo+ID4gKyNkZWZpbmUgRUlDNzcw
-MF9IU1BfTlJfQ0xLUwkJKEVJQzc3MDBfSFNQX0NMS19HQVRFX1NBVEEgKyAxKQo+ID4gKwo+ID4g
-K3N0cnVjdCBlaWM3NzAwX2hzcF9jbGtfZ2F0ZSB7Cj4gPiArCXN0cnVjdCBjbGtfaHcgaHc7Cj4g
-PiArCXVuc2lnbmVkIGludCBpZDsKPiA+ICsJc3RydWN0IHJlZ21hcCAqcmVnbWFwOwo+ID4gKwl1
-bnNpZ25lZCBpbnQgcmVnOwo+ID4gKwl1bnNpZ25lZCBpbnQgcmVmX3JlZzsKPiA+ICsJY29uc3Qg
-Y2hhciAqbmFtZTsKPiA+ICsJY29uc3Qgc3RydWN0IGNsa19wYXJlbnRfZGF0YSAqcGFyZW50X2Rh
-dGE7Cj4gPiArCXVuc2lnbmVkIGxvbmcgZmxhZ3M7Cj4gPiArCXVuc2lnbmVkIGludCBvZmZzZXQ7
-Cj4gPiArCXVuc2lnbmVkIGludCByZWZfb2Zmc2V0Owo+ID4gKwl1OCBiaXRfaWR4Owo+ID4gK307
-Cj4gPiArCj4gPiArc3RhdGljIGNvbnN0IHN0cnVjdCByZWdtYXBfY29uZmlnIGVpYzc3MDBfaHNw
-X3JlZ21hcF9jb25maWcgPSB7Cj4gPiArCS5yZWdfYml0cyA9IDMyLAo+ID4gKwkudmFsX2JpdHMg
-PSAzMiwKPiA+ICsJLm1heF9yZWdpc3RlciA9IDB4MWZmYywKPiA+ICsJLnJlZ19zdHJpZGUgPSA0
-LAo+ID4gKwkuZmFzdF9pbyA9IHRydWUsCj4gPiArCS51c2VfcmF3X3NwaW5sb2NrID0gdHJ1ZSwK
-PiA+ICt9Owo+ID4gKwo+ID4gK3N0YXRpYyBpbmxpbmUgc3RydWN0IGVpYzc3MDBfaHNwX2Nsa19n
-YXRlICp0b19nYXRlX2NsayhzdHJ1Y3QgY2xrX2h3ICpodykKPiA+ICt7Cj4gPiArCXJldHVybiBj
-b250YWluZXJfb2YoaHcsIHN0cnVjdCBlaWM3NzAwX2hzcF9jbGtfZ2F0ZSwgaHcpOwo+ID4gK30K
-PiA+ICsKPiA+ICsjZGVmaW5lIEVJQzc3MDBfSFNQX0dBVEUoX2lkLCBfbmFtZSwgX3BkYXRhLCBf
-ZmxhZ3MsIF9vZmZzZXQsIF9pZHgsCVwKPiA+ICsJCQkgX3JlZl9vZmZzZXQpCQkJCQlcCj4gPiAr
-CXsJCQkJCQkJCVwKPiA+ICsJCS5pZAkJPSBfaWQsCQkJCQlcCj4gPiArCQkubmFtZQkJPSBfbmFt
-ZSwJCQkJXAo+ID4gKwkJLnBhcmVudF9kYXRhCT0gX3BkYXRhLAkJCQlcCj4gPiArCQkuZmxhZ3MJ
-CT0gX2ZsYWdzLAkJCQlcCj4gPiArCQkub2Zmc2V0CQk9IF9vZmZzZXQsCQkJCVwKPiA+ICsJCS5y
-ZWZfb2Zmc2V0CT0gX3JlZl9vZmZzZXQsCQkJCVwKPiA+ICsJCS5iaXRfaWR4CT0gX2lkeCwJCQkJ
-CVwKPiA+ICsJfQo+ID4gKwo+ID4gK3N0YXRpYyB2b2lkIGhzcF9jbGtfZ2F0ZV9lbmRpc2FibGUo
-c3RydWN0IGNsa19odyAqaHcsIGJvb2wgZW5hYmxlKQo+ID4gK3sKPiA+ICsJc3RydWN0IGVpYzc3
-MDBfaHNwX2Nsa19nYXRlICpnYXRlID0gdG9fZ2F0ZV9jbGsoaHcpOwo+ID4gKwo+ID4gKwlpZiAo
-ZW5hYmxlKSB7Cj4gPiArCQkvKgo+ID4gKwkJICogSGFyZHdhcmUgYnVnOiBUaGUgVVNCIHJlZmVy
-ZW5jZSBjbG9jayBtdXN0IGJlIDI0TUh6Lgo+ID4gKwkJICogVGhlIGRlZmF1bHQgcmVnaXN0ZXIg
-dmFsdWUgYWZ0ZXIgcmVzZXQgaXMgaW52YWxpZC4KPiA+ICsJCSAqIFdvcmthcm91bmQ6IFJld3Jp
-dGUgdGhlIGNvcnJlY3QgdmFsdWUgYmVmb3JlIGVuYWJsaW5nCj4gPiArCQkgKiB0aGUgVVNCIGdh
-dGUgY2xvY2suCj4gPiArCQkgKi8KPiA+ICsJCXJlZ21hcF91cGRhdGVfYml0cyhnYXRlLT5yZWdt
-YXAsIGdhdGUtPnJlZl9yZWcsIDB4M2YsCj4gPiArCQkJCSAgIFVTQl9SRUZfWFRBTDI0TSk7Cj4g
-PiArCX0KPiA+ICsJcmVnbWFwX2Fzc2lnbl9iaXRzKGdhdGUtPnJlZ21hcCwgZ2F0ZS0+cmVnLCBC
-SVQoZ2F0ZS0+Yml0X2lkeCksIGVuYWJsZSk7Cj4gPiArfQo+ID4gKwo+ID4gK3N0YXRpYyBpbnQg
-aHNwX2Nsa19nYXRlX2VuYWJsZShzdHJ1Y3QgY2xrX2h3ICpodykKPiA+ICt7Cj4gPiArCWhzcF9j
-bGtfZ2F0ZV9lbmRpc2FibGUoaHcsIHRydWUpOwo+ID4gKwo+ID4gKwlyZXR1cm4gMDsKPiA+ICt9
-Cj4gPiArCj4gPiArc3RhdGljIHZvaWQgaHNwX2Nsa19nYXRlX2Rpc2FibGUoc3RydWN0IGNsa19o
-dyAqaHcpCj4gPiArewo+ID4gKwloc3BfY2xrX2dhdGVfZW5kaXNhYmxlKGh3LCBmYWxzZSk7Cj4g
-PiArfQo+ID4gKwo+ID4gK3N0YXRpYyBpbnQgaHNwX2Nsa19nYXRlX2lzX2VuYWJsZWQoc3RydWN0
-IGNsa19odyAqaHcpCj4gPiArewo+ID4gKwlzdHJ1Y3QgZWljNzcwMF9oc3BfY2xrX2dhdGUgKmdh
-dGUgPSB0b19nYXRlX2Nsayhodyk7Cj4gPiArCXVuc2lnbmVkIGludCB2YWw7Cj4gPiArCj4gPiAr
-CXJlZ21hcF9yZWFkKGdhdGUtPnJlZ21hcCwgZ2F0ZS0+cmVnLCAmdmFsKTsKPiA+ICsKPiA+ICsJ
-cmV0dXJuICEhKHZhbCAmIEJJVChnYXRlLT5iaXRfaWR4KSk7Cj4gCj4gSWYgdGhlIHJlZ21hcF9y
-ZWFkKCkgZmFpbHMsIHRoZW4gdmFsIHdpbGwgYmUgdW5pbml0aWFsaXplZC4KCkhpIEJyaWFuIGFu
-ZCBTYXNoaWtvLAoKSSB3aWxsIHVwZGF0ZSB0aGUgZm9sbG93aW5nIGNvZGUgdG8gYWRkcmVzcyB0
-aGlzIGluIG5leHQgdmVyc2lvbi4KCisJaW50IHJldDsKKworCXJldCA9IHJlZ21hcF9yZWFkKGdh
-dGUtPnJlZ21hcCwgZ2F0ZS0+cmVnLCAmdmFsKTsKKwlpZiAocmV0ICE9IDApCisJCXJldHVybiBy
-ZXQ7CgpEb2VzIHRoaXMgY2hhbmdlIGxvb2sgYWNjZXB0YWJsZSB0byB5b3U/CgpCZXN0IHJlZ2Fy
-ZHMsClh1eWFuZyBEb25nCgo+IAo+IFdpdGggdGhhdCBmaXhlZDoKPiAKPiBSZXZpZXdlZC1ieTog
-QnJpYW4gTWFzbmV5IDxibWFzbmV5QHJlZGhhdC5jb20+Cg==
+Hi Andre,
+Thanks for your review.
+
+On Thu May 14, 2026 at 7:22 AM CST, Andre Przywara wrote:
+> On Tue, 10 Mar 2026 16:34:01 +0800
+> Junhui Liu <junhui.liu@pigmoral.tech> wrote:
+>
+> Hi,
+>
+> compare the list below against my version of the manual. You list more
+> than shown there, can you say where those extra reset bits come from?
+
+They are from the vendor BSP, I will add comments to explain them in the
+next version.
+
+>
+>> Add the reset lines for the Allwinner A733 SoC. These reset control bits
+>> are integrated into the Bus Gate Reset (BGR) registers, typically
+>> sharing the same register address with their corresponding bus clock
+>> gates. Integrate them into the main CCU driver using the existing
+>> sunxi-ng ccu_reset framework, allowing the CCU to also function as a
+>> reset controller for the SoC.
+>>=20
+>> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
+>> ---
+>>  drivers/clk/sunxi-ng/ccu-sun60i-a733.c | 128 ++++++++++++++++++++++++++=
++++++++
+>>  1 file changed, 128 insertions(+)
+>>=20
+>> diff --git a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c b/drivers/clk/sunxi-=
+ng/ccu-sun60i-a733.c
+>> index c0b09f9197d1..7d1ee9235436 100644
+>> --- a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
+>> +++ b/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
+>> @@ -17,6 +17,7 @@
+>>  #include "../clk.h"
+>> =20
+>>  #include "ccu_common.h"
+>> +#include "ccu_reset.h"
+>> =20
+>>  #include "ccu_div.h"
+>>  #include "ccu_gate.h"
+>> @@ -2169,11 +2170,138 @@ static struct clk_hw_onecell_data sun60i_a733_h=
+w_clks =3D {
+>>  	.num	=3D CLK_FANOUT3 + 1,
+>>  };
+>> =20
+>> +static struct ccu_reset_map sun60i_a733_ccu_resets[] =3D {
+>> +	[RST_BUS_ITS_PCIE]		=3D { 0x574, BIT(16) },
+>> +	[RST_BUS_NSI]			=3D { 0x580, BIT(30) },
+>
+> What is this NSI device? Some interconnect? Do we really want to handle
+> this reset and clock? Is there some device referencing this? Otherwise
+> the kernel will turn at least the clock off, which is probably fatal.
+> Also the manual says this is a secure register, so I feel like the
+> kernel must not mess with this.
+
+Yes, NSI appears to be a high-speed interconnect. The vendor kernel
+provides a sunxi-nsi driver for it accross sun8i, sun55i, and sun60i.
+Since the mainline kernel doesn't manage this interconnect for the
+already mainlined sun8i and sun55i platforms, I will drop the NSI clocks
+and resets in the next version.
+
+>
+>> +	[RST_BUS_NSI_CFG]		=3D { 0x584, BIT(16) },
+>
+> Similar here, I guess, though this might not be secure only.
+>
+>> +	[RST_BUS_IOMMU0_SYS]		=3D { 0x58c, BIT(16) },
+>> +	[RST_BUS_MSI_LITE0_AHB]		=3D { 0x594, BIT(16) },
+>> +	[RST_BUS_MSI_LITE0_MBUS]	=3D { 0x594, BIT(17) },
+>> +	[RST_BUS_MSI_LITE1_AHB]		=3D { 0x59c, BIT(16) },
+>> +	[RST_BUS_MSI_LITE1_MBUS]	=3D { 0x59c, BIT(17) },
+>> +	[RST_BUS_MSI_LITE2_AHB]		=3D { 0x5a4, BIT(16) },
+>> +	[RST_BUS_MSI_LITE2_MBUS]	=3D { 0x5a4, BIT(17) },
+>> +	[RST_BUS_IOMMU1_SYS]		=3D { 0x5b4, BIT(16) },
+>> +	[RST_BUS_DMA0]			=3D { 0x704, BIT(16) },
+>> +	[RST_BUS_DMA1]			=3D { 0x70c, BIT(16) },
+>> +	[RST_BUS_SPINLOCK]		=3D { 0x724, BIT(16) },
+>> +	[RST_BUS_MSGBOX]		=3D { 0x744, BIT(16) },
+>> +	[RST_BUS_PWM0]			=3D { 0x784, BIT(16) },
+>> +	[RST_BUS_PWM1]			=3D { 0x78c, BIT(16) },
+>> +	[RST_BUS_DBG]			=3D { 0x7a4, BIT(16) },
+>> +	[RST_BUS_SYSDAP]		=3D { 0x7ac, BIT(16) },
+>> +	[RST_BUS_TIMER0]		=3D { 0x850, BIT(16) },
+>> +	[RST_BUS_DE]			=3D { 0xa04, BIT(16) },
+>> +	[RST_BUS_DI]			=3D { 0xa24, BIT(16) },
+>> +	[RST_BUS_G2D]			=3D { 0xa44, BIT(16) },
+>> +	[RST_BUS_EINK]			=3D { 0xa6c, BIT(16) },
+>> +	[RST_BUS_DE_SYS]		=3D { 0xa74, BIT(16) },
+>> +	[RST_BUS_VE_ENC]		=3D { 0xa8c, BIT(16) },
+>
+> The manual calls this ENC0, and since bit 17 is not documented, I
+> wonder if there is an ENC1 used with some other packaging, maybe? So
+> maybe calling it ENC0 would be safer here.
+
+Okay, I will rename it to ENC0.
+
+>
+>> +	[RST_BUS_VE_DEC]		=3D { 0xa8c, BIT(18) },
+>> +	[RST_BUS_CE]			=3D { 0xac4, BIT(16) },
+>> +	[RST_BUS_CE_SYS]		=3D { 0xac4, BIT(17) },
+>> +	[RST_BUS_NPU_CORE]		=3D { 0xb04, BIT(16) },
+>> +	[RST_BUS_NPU_AXI]		=3D { 0xb04, BIT(17) },
+>> +	[RST_BUS_NPU_AHB]		=3D { 0xb04, BIT(18) },
+>> +	[RST_BUS_NPU_SRAM]		=3D { 0xb04, BIT(19) },
+>> +	[RST_BUS_GPU]			=3D { 0xb24, BIT(16) },
+>> +	[RST_BUS_DRAM]			=3D { 0xc0c, BIT(16) },
+>> +	[RST_BUS_NAND]			=3D { 0xc8c, BIT(16) },
+>> +	[RST_BUS_MMC0]			=3D { 0xd0c, BIT(16) },
+>> +	[RST_BUS_MMC1]			=3D { 0xd1c, BIT(16) },
+>> +	[RST_BUS_MMC2]			=3D { 0xd2c, BIT(16) },
+>> +	[RST_BUS_MMC3]			=3D { 0xd3c, BIT(16) },
+>> +	[RST_BUS_UFS_AHB]		=3D { 0xd8c, BIT(16) },
+>> +	[RST_BUS_UFS_AXI]		=3D { 0xd8c, BIT(17) },
+>> +	[RST_BUS_UFS_PHY]		=3D { 0xd8c, BIT(18) },
+>> +	[RST_BUS_UFS_CORE]		=3D { 0xd8c, BIT(19) },
+>> +	[RST_BUS_UART0]			=3D { 0xe00, BIT(16) },
+>> +	[RST_BUS_UART1]			=3D { 0xe04, BIT(16) },
+>> +	[RST_BUS_UART2]			=3D { 0xe08, BIT(16) },
+>> +	[RST_BUS_UART3]			=3D { 0xe0c, BIT(16) },
+>> +	[RST_BUS_UART4]			=3D { 0xe10, BIT(16) },
+>> +	[RST_BUS_UART5]			=3D { 0xe14, BIT(16) },
+>> +	[RST_BUS_UART6]			=3D { 0xe18, BIT(16) },
+>> +	[RST_BUS_I2C0]			=3D { 0xe80, BIT(16) },
+>> +	[RST_BUS_I2C1]			=3D { 0xe84, BIT(16) },
+>> +	[RST_BUS_I2C2]			=3D { 0xe88, BIT(16) },
+>> +	[RST_BUS_I2C3]			=3D { 0xe8c, BIT(16) },
+>> +	[RST_BUS_I2C4]			=3D { 0xe90, BIT(16) },
+>> +	[RST_BUS_I2C5]			=3D { 0xe94, BIT(16) },
+>> +	[RST_BUS_I2C6]			=3D { 0xe98, BIT(16) },
+>> +	[RST_BUS_I2C7]			=3D { 0xe9c, BIT(16) },
+>> +	[RST_BUS_I2C8]			=3D { 0xea0, BIT(16) },
+>> +	[RST_BUS_I2C9]			=3D { 0xea4, BIT(16) },
+>> +	[RST_BUS_I2C10]			=3D { 0xea8, BIT(16) },
+>> +	[RST_BUS_I2C11]			=3D { 0xeac, BIT(16) },
+>> +	[RST_BUS_I2C12]			=3D { 0xeb0, BIT(16) },
+>> +	[RST_BUS_SPI0]			=3D { 0xf04, BIT(16) },
+>> +	[RST_BUS_SPI1]			=3D { 0xf0c, BIT(16) },
+>> +	[RST_BUS_SPI2]			=3D { 0xf14, BIT(16) },
+>> +	[RST_BUS_SPIF]			=3D { 0xf1c, BIT(16) },
+>> +	[RST_BUS_SPI3]			=3D { 0xf24, BIT(16) },
+>> +	[RST_BUS_SPI4]			=3D { 0xf2c, BIT(16) },
+>
+> SPI4 isn't mentioned in my version of the manual.
+>
+>> +	[RST_BUS_GPADC]			=3D { 0xfc4, BIT(16) },
+>> +	[RST_BUS_THS]			=3D { 0xfe4, BIT(16) },
+>> +	[RST_BUS_IRRX]			=3D { 0x1004, BIT(16) },
+>> +	[RST_BUS_IRTX]			=3D { 0x100c, BIT(16) },
+>> +	[RST_BUS_LRADC]			=3D { 0x1024, BIT(16) },
+>> +	[RST_BUS_SGPIO]			=3D { 0x1064, BIT(16) },
+>> +	[RST_BUS_LPC]			=3D { 0x1084, BIT(16) },
+>
+> Where do those two come from? There are not in my version of the manual.
+>
+>> +	[RST_BUS_I2SPCM0]		=3D { 0x120c, BIT(16) },
+>> +	[RST_BUS_I2SPCM1]		=3D { 0x121c, BIT(16) },
+>> +	[RST_BUS_I2SPCM2]		=3D { 0x122c, BIT(16) },
+>> +	[RST_BUS_I2SPCM3]		=3D { 0x123c, BIT(16) },
+>> +	[RST_BUS_I2SPCM4]		=3D { 0x124c, BIT(16) },
+>> +	[RST_BUS_OWA]			=3D { 0x128c, BIT(16) },
+>> +	[RST_BUS_DMIC]			=3D { 0x12cc, BIT(16) },
+>> +	[RST_USB_PHY0]			=3D { 0x1300, BIT(30) },
+>> +	[RST_BUS_OHCI0]			=3D { 0x1304, BIT(16) },
+>> +	[RST_BUS_EHCI0]			=3D { 0x1304, BIT(20) },
+>> +	[RST_BUS_OTG]			=3D { 0x1304, BIT(24) },
+>> +	[RST_USB_PHY1]			=3D { 0x1308, BIT(30) },
+>> +	[RST_BUS_OHCI1]			=3D { 0x130c, BIT(16) },
+>> +	[RST_BUS_EHCI1]			=3D { 0x130c, BIT(20) },
+>> +	[RST_BUS_USB2]			=3D { 0x135c, BIT(16) },
+>> +	[RST_BUS_PCIE]			=3D { 0x138c, BIT(17) },
+>> +	[RST_BUS_PCIE_PWRUP]		=3D { 0x138c, BIT(16) },
+>
+> Just a nit, but those two are ordered wrongly.
+
+Will do.
+
+>
+>> +	[RST_BUS_SERDES]		=3D { 0x13c4, BIT(16) },
+>> +	[RST_BUS_GMAC0]			=3D { 0x141c, BIT(16) },
+>> +	[RST_BUS_GMAC0_AXI]		=3D { 0x141c, BIT(17) },
+>> +	[RST_BUS_GMAC1]			=3D { 0x142c, BIT(16) },
+>> +	[RST_BUS_GMAC1_AXI]		=3D { 0x142c, BIT(17) },
+>
+> GMAC1 is not listed in my manual, where does this come from?
+>
+>> +	[RST_BUS_TCON_LCD0]		=3D { 0x1504, BIT(16) },
+>> +	[RST_BUS_TCON_LCD1]		=3D { 0x150c, BIT(16) },
+>> +	[RST_BUS_TCON_LCD2]		=3D { 0x1514, BIT(16) },
+>
+> No LCD2 in my manual.
+>
+> The rest looks alright.
+>
+> Cheers,
+> Andre
+>
+>> +	[RST_BUS_LVDS0]			=3D { 0x1544, BIT(16) },
+>> +	[RST_BUS_LVDS1]			=3D { 0x154c, BIT(16) },
+>> +	[RST_BUS_DSI0]			=3D { 0x1584, BIT(16) },
+>> +	[RST_BUS_DSI1]			=3D { 0x158c, BIT(16) },
+>> +	[RST_BUS_TCON_TV0]		=3D { 0x1604, BIT(16) },
+>> +	[RST_BUS_TCON_TV1]		=3D { 0x160c, BIT(16) },
+>> +	[RST_BUS_EDP]			=3D { 0x164c, BIT(16) },
+>> +	[RST_BUS_HDMI_MAIN]		=3D { 0x168c, BIT(16) },
+>> +	[RST_BUS_HDMI_SUB]		=3D { 0x168c, BIT(17) },
+>> +	[RST_BUS_HDMI_HDCP]		=3D { 0x168c, BIT(18) },
+>> +	[RST_BUS_DPSS_TOP0]		=3D { 0x16c4, BIT(16) },
+>> +	[RST_BUS_DPSS_TOP1]		=3D { 0x16cc, BIT(16) },
+>> +	[RST_BUS_VIDEO_OUT0]		=3D { 0x16e4, BIT(16) },
+>> +	[RST_BUS_VIDEO_OUT1]		=3D { 0x16ec, BIT(16) },
+>> +	[RST_BUS_LEDC]			=3D { 0x1704, BIT(16) },
+>> +	[RST_BUS_DSC]			=3D { 0x1744, BIT(16) },
+>> +	[RST_BUS_CSI]			=3D { 0x1844, BIT(16) },
+>> +	[RST_BUS_VIDEO_IN]		=3D { 0x1884, BIT(16) },
+>> +	[RST_BUS_APB2JTAG]		=3D { 0x1c04, BIT(16) },
+>> +};
+>> +
+>>  static const struct sunxi_ccu_desc sun60i_a733_ccu_desc =3D {
+>>  	.ccu_clks	=3D sun60i_a733_ccu_clks,
+>>  	.num_ccu_clks	=3D ARRAY_SIZE(sun60i_a733_ccu_clks),
+>> =20
+>>  	.hw_clks	=3D &sun60i_a733_hw_clks,
+>> +
+>> +	.resets		=3D sun60i_a733_ccu_resets,
+>> +	.num_resets	=3D ARRAY_SIZE(sun60i_a733_ccu_resets),
+>>  };
+>> =20
+>>  static const u32 pll_regs[] =3D {
+>>=20
+
+--=20
+Best regards,
+Junhui Liu
+
