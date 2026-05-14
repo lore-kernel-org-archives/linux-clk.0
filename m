@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BF3299944;
-	Thu, 14 May 2026 14:25:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8821A1C8604;
+	Thu, 14 May 2026 14:25:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778768728; cv=none; b=jRd7UAOIJS5oXtahQIBRbe70Wf+2NmcEIkS3tSVEfXnwhN28wMJTczHtgofVBM7fM6Zg1G6kR7JKru+6YY2UQk4RPKIA4qRF42Z9QiEoffdViDEsSgx3e0TxKEBW3ZyxOCPnfK5evy5lWBcpJAvUSzx3iwErSuFh2Y55al2LU4E=
+	t=1778768757; cv=none; b=LPhQ7RD02zC/M4NjKUpShWSROesHSwMStjIJCuNkGe41LMB9vYhU6kyr0sUjtzCcOkqu2apcMcHran9iXh49tc8t291yM++pMP6kwSVf6euP5y0jZgTlalX+VEIK5Zil8KPfzgJDKujHergRKM5s1869NvHuRJfV4sJcK0fUmJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778768728; c=relaxed/simple;
-	bh=JUbQl0R27pKWbi7qGTHGffpZq8IULaeuk3QCuFOXHtE=;
+	s=arc-20240116; t=1778768757; c=relaxed/simple;
+	bh=QBCMy71W+x6FZenHh9pxUaSahN5xm0Tr8hOKeIfAIvw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FZWZRko0/eyjlr00LaaRzx10dkNmAeZQt5q5pRODIih+wV+BBK838caVFBk8iBkQ9MQFKsz5x48jCTVcEWxxfbiB/toPlMCGWjayNUE7aHXltbsMObgRTMtM9Jcg3hd9TH95LzdOGZC0qEA5wN/HxVjZPvUpomyRBdZDz5DsERI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GnOBuyyO; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=Pi1I9d9Khe8lpq+1xrNylXAwfqbZDGqCLdau2H4OCt9RTb488RJh4X4nmF/PRdOTe+y+fz0N3Jvg/ryNdUXcHrDoi4oqhW13w/grtF3oyj2Qqy6eJMcjbQUgdvb1cKif9Z80odn+feJY919rYP+hIB4l21jmHr8UrhHVc8K3e9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OeqONopT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GnOBuyyO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B5D7C2BCB8;
-	Thu, 14 May 2026 14:25:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OeqONopT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B54CEC2BCB3;
+	Thu, 14 May 2026 14:25:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778768727;
-	bh=JUbQl0R27pKWbi7qGTHGffpZq8IULaeuk3QCuFOXHtE=;
+	s=k20201202; t=1778768757;
+	bh=QBCMy71W+x6FZenHh9pxUaSahN5xm0Tr8hOKeIfAIvw=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GnOBuyyO97cXtgHvc4Z3YbNOBcTl6ticqVm85koW63IjVGdfkX8VQuXA1IJSTmPSQ
-	 j1mXlX8CFK2CAIU9zwE1gXpLCKu27kwaTEJtcY71Q0tcxunfDt6BSMyuiHrHLA95KM
-	 TTBotn6wommiY8FiBUJfwS56s+Khs8h69EE5byEZnH0aTcB7AxR1BaHs+d1kfUL/xx
-	 Vb3WZyP9uHYhv5FSug2Q6GvsdY9lqfQXRf5hj4pLyN77H5pT6kTwGN9YM0guJV0syk
-	 JMZAWpJsfCiW3nISf2cxvKDPVjZReCmZNqUbxs6/XufCVDAF0zUHNobpizzTDhiMKn
-	 roptBDuK9H9nw==
-Message-ID: <6f891c51-8149-4c53-ba1f-7c76f50091c4@kernel.org>
-Date: Thu, 14 May 2026 16:25:21 +0200
+	b=OeqONopTAkr+nVGdBNw2ADu2jtvAACFjFXr1eiwL6nQgBo6fW0agyWhoYOFxAWyQg
+	 pbHdq4oXj7WneMFB7wUOzOxvZE0c4cvugmF1ns9F5pZyBZFcfG/3D5eugAI57y+aBO
+	 e9F5I1N+Ts4aqQM5Ku1g52ALe9k7IM6Rqf/8X3fYt/d5Jz8djFsM6kuWPrPh/1mG3d
+	 PvHdraAgY8NW1sVtxpmZA1+NobiuW8ss0CnQ9AGTeWNXPqEQqtsK1l4/kDFKpnogDF
+	 MkFakORNHILQxCNNbdXPCE5DVcfU1hlj/BcXylCmIanTcMi0YjeTbRMi2Nfg7XSgon
+	 6ZNx9tZFagHGA==
+Message-ID: <cd428540-2dd1-4e4c-9207-e679a6657ab0@kernel.org>
+Date: Thu, 14 May 2026 16:25:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,7 +35,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/12] dt-bindings: clock: Add system-0 domain PLL
+Subject: Re: [PATCH v2 04/12] dt-bindings: clock: Add peripheral-0 domain PLL
  clock
 To: Changhuang Liang <changhuang.liang@starfivetech.com>,
  Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
@@ -52,7 +52,7 @@ Cc: Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto
  linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
  linux-riscv@lists.infradead.org
 References: <20260512083521.3448-1-changhuang.liang@starfivetech.com>
- <20260512083521.3448-3-changhuang.liang@starfivetech.com>
+ <20260512083521.3448-5-changhuang.liang@starfivetech.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -98,20 +98,30 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20260512083521.3448-3-changhuang.liang@starfivetech.com>
+In-Reply-To: <20260512083521.3448-5-changhuang.liang@starfivetech.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 12/05/2026 10:35, Changhuang Liang wrote:
-> Add system-0 domain PLL clock for StarFive JHB100 SoC.
+> Add peripheral-0 domain PLL clock for StarFive JHB100 SoC.
 > 
 > Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
 > ---
->  include/dt-bindings/clock/starfive,jhb100-crg.h | 6 ++++++
->  1 file changed, 6 insertions(+)
+>  include/dt-bindings/clock/starfive,jhb100-crg.h | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/include/dt-bindings/clock/starfive,jhb100-crg.h b/include/dt-bindings/clock/starfive,jhb100-crg.h
+> index 98b3cf28b677..37a4535472bf 100644
+> --- a/include/dt-bindings/clock/starfive,jhb100-crg.h
+> +++ b/include/dt-bindings/clock/starfive,jhb100-crg.h
+> @@ -14,6 +14,9 @@
+>  #define JHB100_SYS0PLL_PLL4_OUT				2
+>  #define JHB100_SYS0PLL_PLL5_OUT				3
+>  
+> +/* PER0PLL clocks */
+> +#define JHB100_PER0PLL_PLL6_OUT				0
 
-
-Why isn't this added with the binding for this device?
+Why are you sending patches per one define?
 
 Best regards,
 Krzysztof
