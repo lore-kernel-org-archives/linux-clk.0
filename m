@@ -1,127 +1,202 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8821A1C8604;
-	Thu, 14 May 2026 14:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C8142B73F
+	for <linux-clk@vger.kernel.org>; Thu, 14 May 2026 15:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778768757; cv=none; b=LPhQ7RD02zC/M4NjKUpShWSROesHSwMStjIJCuNkGe41LMB9vYhU6kyr0sUjtzCcOkqu2apcMcHran9iXh49tc8t291yM++pMP6kwSVf6euP5y0jZgTlalX+VEIK5Zil8KPfzgJDKujHergRKM5s1869NvHuRJfV4sJcK0fUmJA=
+	t=1778771470; cv=none; b=u49FcCvPWLh3ZUJCKSUiI7MCQ3HSEhk6NhvLenSW3x1tSPmGtcuxq+qz3rH33BwHoI1GzKSXH/ZR/yPx8Bh30661JqWqnzT9JCbITeTIKuy+VjmIKYERCK/SsjLy4ujygQ9crXZtI3gOFXVG20m15X9JVUd753sqEXc3ifY4bFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778768757; c=relaxed/simple;
-	bh=QBCMy71W+x6FZenHh9pxUaSahN5xm0Tr8hOKeIfAIvw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Pi1I9d9Khe8lpq+1xrNylXAwfqbZDGqCLdau2H4OCt9RTb488RJh4X4nmF/PRdOTe+y+fz0N3Jvg/ryNdUXcHrDoi4oqhW13w/grtF3oyj2Qqy6eJMcjbQUgdvb1cKif9Z80odn+feJY919rYP+hIB4l21jmHr8UrhHVc8K3e9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OeqONopT; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778771470; c=relaxed/simple;
+	bh=X29Tb+mU4TU588xEduaIV39ZONcE1lEFKkviuT7INIE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WF7nSydgX3q49ngqvIDDjy3O/N5v2J654HXi2qk1POeQ8oEyPLngdm+frvHDKKSsDOybmpuwdWUjNe5MzSCR/6qKouu1lJ7IPiXre3WCSdXIt1oHKkywjp+AIk/eUDOzd+vaJtNQN9G3xFMcVooj9YJ2ngdC4rycmffuXyg6F5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20251104.gappssmtp.com header.i=@baylibre-com.20251104.gappssmtp.com header.b=f+Jhf3rI; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OeqONopT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B54CEC2BCB3;
-	Thu, 14 May 2026 14:25:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778768757;
-	bh=QBCMy71W+x6FZenHh9pxUaSahN5xm0Tr8hOKeIfAIvw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OeqONopTAkr+nVGdBNw2ADu2jtvAACFjFXr1eiwL6nQgBo6fW0agyWhoYOFxAWyQg
-	 pbHdq4oXj7WneMFB7wUOzOxvZE0c4cvugmF1ns9F5pZyBZFcfG/3D5eugAI57y+aBO
-	 e9F5I1N+Ts4aqQM5Ku1g52ALe9k7IM6Rqf/8X3fYt/d5Jz8djFsM6kuWPrPh/1mG3d
-	 PvHdraAgY8NW1sVtxpmZA1+NobiuW8ss0CnQ9AGTeWNXPqEQqtsK1l4/kDFKpnogDF
-	 MkFakORNHILQxCNNbdXPCE5DVcfU1hlj/BcXylCmIanTcMi0YjeTbRMi2Nfg7XSgon
-	 6ZNx9tZFagHGA==
-Message-ID: <cd428540-2dd1-4e4c-9207-e679a6657ab0@kernel.org>
-Date: Thu, 14 May 2026 16:25:51 +0200
+	dkim=pass (2048-bit key) header.d=baylibre-com.20251104.gappssmtp.com header.i=@baylibre-com.20251104.gappssmtp.com header.b="f+Jhf3rI"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-44a044cb827so6467924f8f.0
+        for <linux-clk@vger.kernel.org>; Thu, 14 May 2026 08:11:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20251104.gappssmtp.com; s=20251104; t=1778771464; x=1779376264; darn=vger.kernel.org;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=02NHwmt4Q/1Wwv24vtMYzG1XiCeSXVTnDMbrgdzumy0=;
+        b=f+Jhf3rInAWJISlES/J2HSya/j83Xk83OmQUGQ0ULbRay7TjVRKSXlzWlhLlkCP/Bm
+         bxo50zm4ECPlqq1H/0fUiOsf0JeWfxfkAWyzzYwTCHbJlGWEeAaRSVEDjdoPWIEGY91M
+         9ATApBtJOmVIfmfs7EciJ40Sj3a8ONF3XqVFHF4ugLxosnwPDQmg7xKL3dO6lnb9LwN4
+         8ZAGavnrjm31qOQYoM+N0Aw3bE1KaWtgogZZCFIgSN8zldjSZRGkjJAM2KRlKTp+6ziQ
+         +zKwkmn7/Gquk/0mMnRc4iVeZtlfVCyvCVUsVMI7boI4N9X9r1Ed70skucDH7fuGbMgY
+         9Ycw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778771464; x=1779376264;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=02NHwmt4Q/1Wwv24vtMYzG1XiCeSXVTnDMbrgdzumy0=;
+        b=nHZpX49y3nQOpKP/ylboFF3JyFrV8VrkOPl5CjCUaKzdI2w0J+juTbE2ilfTy1Ttrw
+         kP9H3qkby9qgXwSkr2H4R7eplsZX51O7ve6hMm1l1U9kh/p1zq2LHo3sxKtoyom7Qyi7
+         MU5uQFXFuP+tYVAANN3HVqvcNxSSIVg8FKihIDekqQjiQIbsQK9zg6YIxkkLlyBnhYmd
+         uuVnNylFG98POJ0RUgylpY2gmTaeRWVtEfPx+wPdps+gHLQ41j/xTvhiHdWjOHwBlX++
+         RExN8ZIYO80VRK+PYvNl+fZE8AWbPy8SvssFA93QbZc5j9y1oVRm8MKOX/jLNQMAuSXu
+         L5cg==
+X-Forwarded-Encrypted: i=1; AFNElJ8hU7q5VOXDMoTILGqlLyEV4z5sGBLEJ/dkTT0+6/1FGXVZP3v1EpC0Z0hvFgyn1zXoH/e8RewQ3Jw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwolAvrRtb/79HE36MUJabYdZ3bm7gvRC9aXC9NJVJPC9wgIi2c
+	tvGzHi8t1Hs+bMfc2ghrCaP5yyB25KQEqTYBxLaCDScwv7BS9c9qB323qGmBzeu+XJ0NIcjoTom
+	q/Ebd
+X-Gm-Gg: Acq92OEtgYdHM2Rwh1ZzHsdkMJNSRTywZIYE4iij0C8oehM4gy4Mz8pLzMmX6m32rqo
+	9oqA6KiLjJo768gMSNbkRcbD1LStagQWngg9HkjfpiC/rrCFS/3gHclATEy3xURwjdeVjWu6Gue
+	rDY9y+WKLnnOmpsJcIDGc+kI0y3kjDbdHeQhXw9WevRT8v+NAoe6QyYrp0qXiMgegkhKMYg7Qri
+	Ccx33UayUQ/AWUHv5dJ7yNz8ax/7hatynFa6MiugR1m3tj5u+412KdhoQTeQNfL6qH3zBqJb83C
+	v+Tb5NsjrJeS7ZjenZeSnSWvFsP1Hr5JR73NI/CKmw3MQ7X7IbM3JmJuZO2FpWdbr6pbxe1cOwI
+	+Ssgw4SMfG5m8WqDqVFWj9TJs5Mu1dG7kRn4UcJ3Xxvlxri48jq+PO81uMAIGMO/yI/8PLIyEVB
+	O//C9nyvN7fbNliFLyFnkTKXrpP1dY1w==
+X-Received: by 2002:a05:6000:26c1:b0:439:c62a:6dc2 with SMTP id ffacd0b85a97d-45c7bb4a90emr12856516f8f.41.1778771463953;
+        Thu, 14 May 2026 08:11:03 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:8f63:bf1e:b5:28d8])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-45d9ed30110sm8047555f8f.13.2026.05.14.08.11.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 May 2026 08:11:03 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Jian Hu via B4 Relay <devnull+jian.hu.amlogic.com@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd
+ <sboyd@kernel.org>,  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
+ <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Neil Armstrong
+ <neil.armstrong@linaro.org>,  Xianwei Zhao <xianwei.zhao@amlogic.com>,
+  Kevin Hilman <khilman@baylibre.com>,  Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>,  jian.hu@amlogic.com,
+  linux-kernel@vger.kernel.org,  linux-clk@vger.kernel.org,
+  devicetree@vger.kernel.org,  linux-amlogic@lists.infradead.org,
+  linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 07/10] clk: amlogic: Support POWER_OF_TWO for PLL
+ pre-divider
+In-Reply-To: <20260511-b4-a9_clk-v1-7-41cb4071b7c9@amlogic.com> (Jian Hu via's
+	message of "Mon, 11 May 2026 20:47:29 +0800")
+References: <20260511-b4-a9_clk-v1-0-41cb4071b7c9@amlogic.com>
+	<20260511-b4-a9_clk-v1-7-41cb4071b7c9@amlogic.com>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Thu, 14 May 2026 17:11:01 +0200
+Message-ID: <1jy0hm6n7e.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 04/12] dt-bindings: clock: Add peripheral-0 domain PLL
- clock
-To: Changhuang Liang <changhuang.liang@starfivetech.com>,
- Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney@redhat.com>, Paul Walmsley <pjw@kernel.org>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Philipp Zabel <p.zabel@pengutronix.de>,
- Emil Renner Berthing <kernel@esmil.dk>
-Cc: Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto
- <inochiama@gmail.com>, Alexey Charkov <alchark@gmail.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Keguang Zhang <keguang.zhang@gmail.com>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-riscv@lists.infradead.org
-References: <20260512083521.3448-1-changhuang.liang@starfivetech.com>
- <20260512083521.3448-5-changhuang.liang@starfivetech.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20260512083521.3448-5-changhuang.liang@starfivetech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 12/05/2026 10:35, Changhuang Liang wrote:
-> Add peripheral-0 domain PLL clock for StarFive JHB100 SoC.
-> 
-> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+On lun. 11 mai 2026 at 20:47, Jian Hu via B4 Relay <devnull+jian.hu.amlogic.com@kernel.org> wrote:
+
+> From: Jian Hu <jian.hu@amlogic.com>
+>
+> The A9 PLL pre-divider uses a division factor of 2^n to ensure a clock
+> duty cycle of 50% after predivision.
+>
+> Add flag 'CLK_MESON_PLL_N_POWER_OF_TWO' to indicate that the PLL
+> pre-divider division factor is 2^n.
+
+I understand what you are doing here but I have to ask why this can't be
+implemented with independent dividers that already supports power of 2 ?
+
+>
+> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
 > ---
->  include/dt-bindings/clock/starfive,jhb100-crg.h | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/include/dt-bindings/clock/starfive,jhb100-crg.h b/include/dt-bindings/clock/starfive,jhb100-crg.h
-> index 98b3cf28b677..37a4535472bf 100644
-> --- a/include/dt-bindings/clock/starfive,jhb100-crg.h
-> +++ b/include/dt-bindings/clock/starfive,jhb100-crg.h
-> @@ -14,6 +14,9 @@
->  #define JHB100_SYS0PLL_PLL4_OUT				2
->  #define JHB100_SYS0PLL_PLL5_OUT				3
+>  drivers/clk/meson/clk-pll.c | 28 +++++++++++++++++++++++-----
+>  drivers/clk/meson/clk-pll.h |  2 ++
+>  2 files changed, 25 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+> index 8568ad6ba7b6..49483e431d44 100644
+> --- a/drivers/clk/meson/clk-pll.c
+> +++ b/drivers/clk/meson/clk-pll.c
+> @@ -66,6 +66,9 @@ static unsigned long __pll_params_to_rate(unsigned long parent_rate,
+>  		rate += DIV_ROUND_UP_ULL(frac_rate, frac_max);
+>  	}
 >  
-> +/* PER0PLL clocks */
-> +#define JHB100_PER0PLL_PLL6_OUT				0
+> +	if (pll->flags & CLK_MESON_PLL_N_POWER_OF_TWO)
+> +		n = 1 << n;
+> +
+>  	return DIV_ROUND_UP_ULL(rate, n);
+>  }
+>  
+> @@ -83,7 +86,7 @@ static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
+>  	 * it would result in a division by zero. The rate can't be
+>  	 * calculated in this case
+>  	 */
+> -	if (n == 0)
+> +	if (n == 0 && !(pll->flags & CLK_MESON_PLL_N_POWER_OF_TWO))
+>  		return 0;
+>  
+>  	m = meson_parm_read(clk->map, &pll->m);
+> @@ -103,7 +106,12 @@ static unsigned int __pll_params_with_frac(unsigned long rate,
+>  {
+>  	unsigned int frac_max = pll->frac_max ? pll->frac_max :
+>  						(1 << pll->frac.width);
+> -	u64 val = (u64)rate * n;
+> +	u64 val;
+> +
+> +	if (pll->flags & CLK_MESON_PLL_N_POWER_OF_TWO)
+> +		n = 1 << n;
+> +
+> +	val = (u64)rate * n;
+>  
+>  	/* Bail out if we are already over the requested rate */
+>  	if (rate < parent_rate * m / n)
+> @@ -142,7 +150,8 @@ static int meson_clk_get_pll_table_index(unsigned int index,
+>  					 unsigned int *n,
+>  					 struct meson_clk_pll_data *pll)
+>  {
+> -	if (!pll->table[index].n)
+> +	if (!pll->table[index].n &&
+> +	    !(pll->flags & CLK_MESON_PLL_N_POWER_OF_TWO))
+>  		return -EINVAL;
+>  
+>  	*m = pll->table[index].m;
+> @@ -156,7 +165,12 @@ static unsigned int meson_clk_get_pll_range_m(unsigned long rate,
+>  					      unsigned int n,
+>  					      struct meson_clk_pll_data *pll)
+>  {
+> -	u64 val = (u64)rate * n;
+> +	u64 val;
+> +
+> +	if (pll->flags & CLK_MESON_PLL_N_POWER_OF_TWO)
+> +		n = 1 << n;
+> +
+> +	val = (u64)rate * n;
+>  
+>  	if (__pll_round_closest_mult(pll))
+>  		return DIV_ROUND_CLOSEST_ULL(val, parent_rate);
+> @@ -173,11 +187,15 @@ static int meson_clk_get_pll_range_index(unsigned long rate,
+>  {
+>  	*n = index + 1;
+>  
+> +	if ((pll->flags & CLK_MESON_PLL_N_POWER_OF_TWO))
+> +		*n = index;
+> +
+>  	/* Check the predivider range */
+>  	if (*n >= (1 << pll->n.width))
+>  		return -EINVAL;
+>  
+> -	if (*n == 1) {
+> +	if ((*n == 1 && !(pll->flags & CLK_MESON_PLL_N_POWER_OF_TWO)) ||
+> +	    (*n == 0 && (pll->flags & CLK_MESON_PLL_N_POWER_OF_TWO))) {
+>  		/* Get the boundaries out the way */
+>  		if (rate <= pll->range->min * parent_rate) {
+>  			*m = pll->range->min;
+> diff --git a/drivers/clk/meson/clk-pll.h b/drivers/clk/meson/clk-pll.h
+> index 1be7e6e77631..60b2772a54c8 100644
+> --- a/drivers/clk/meson/clk-pll.h
+> +++ b/drivers/clk/meson/clk-pll.h
+> @@ -33,6 +33,8 @@ struct pll_mult_range {
+>  #define CLK_MESON_PLL_L_DETECT_ACTIVE_HIGH	BIT(2)
+>  /* rst signal is active-low (Power-on reset) */
+>  #define CLK_MESON_PLL_RST_ACTIVE_LOW	BIT(3)
+> +/* The division factor of the PLL pre-divider is 2^n */
+> +#define CLK_MESON_PLL_N_POWER_OF_TWO	BIT(4)
+>  
+>  struct meson_clk_pll_data {
+>  	struct parm en;
 
-Why are you sending patches per one define?
-
-Best regards,
-Krzysztof
+-- 
+Jerome
