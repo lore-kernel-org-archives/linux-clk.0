@@ -1,34 +1,35 @@
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 673DC3F7A9E;
-	Fri, 15 May 2026 07:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F7A3F7A87;
+	Fri, 15 May 2026 07:56:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778831808; cv=none; b=b6TDd/Pn3ZpCYinuRiyJPrP6OAz4IrPy5qMKDq6xc3NUinNpeFEC902OkfohbRIDR7mppq7S7nlJaapn9IBgjQKh8LRBlVcaxCZy52NRhUjBHmqxTOHnsHPxfu+ZrcSX7cE1KgcZodiXKcf4MxmTpPinHCU01XjQGE20mr5PncY=
+	t=1778831811; cv=none; b=uyalF+ovYAL6e3LOAeLQ+oqoysCxlEvGsHGCEyx3AIc2jB6B9IRwHO4alyuT2cpFbkZbNOjdvMSvpk2aWv4xiuqpwRZTbVqQVru1F8uS6L6DE8TivEjb3s+WcT8W2IOllwifvOFS5K6jYxt8UP7TMAqo+GH/cToUCbGQimEu3xE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778831808; c=relaxed/simple;
-	bh=5x7Ln4iaXdF3MSB6XJc9r1qugg8DjCeCJV/XznDnxs4=;
+	s=arc-20240116; t=1778831811; c=relaxed/simple;
+	bh=kHksZJfpFMV47h8nwdHcFDKgVfCurmMft/yFeQpokLU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=D7bwvfZZ4R1QsBDuMGjjNlcX27mc+Gx04m2BLHkpUyw8L0S+R+RurSbAnMizPKz2ws0/caFECd5Akookj7QL6xPoMtXYQFiNNTQCYNe6CKw43CCMOfj2xSAfDTUxhBjuTkGmjWw7xP1RZcnPxpcrNtneShmG2mLVkrdVOi67TYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=BLH7KkRX; arc=none smtp.client-ip=213.167.242.64
+	 In-Reply-To:To:Cc; b=iVfBrAIQ09SIOA9Jga3sn24D0TgmCRhRxCi5jHsk2WG2W13pceznnFAHVaYmNwhPurhMGEe2cJJHTf7CtNYsuYh3Wqe+bAVYGGPGH5nDABXlkuRnsrWBrFAM1B0nU79k1RDPbhqLKcAMbVUJCT471G6SEHG7tIStuPs6XEFKmSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=CjtyTl7B; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="BLH7KkRX"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="CjtyTl7B"
 Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2D0718FA;
-	Fri, 15 May 2026 09:56:32 +0200 (CEST)
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A6641DF3;
+	Fri, 15 May 2026 09:56:33 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1778831793;
-	bh=5x7Ln4iaXdF3MSB6XJc9r1qugg8DjCeCJV/XznDnxs4=;
+	s=mail; t=1778831795;
+	bh=kHksZJfpFMV47h8nwdHcFDKgVfCurmMft/yFeQpokLU=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=BLH7KkRXByjpKTqdiiNG0jC4Y/Y2WJ0TrN0Ql2omAR1JbpoCejkKTamtxXuZpBEMv
-	 Y1Xkp5zWOSPaB0dDgVNiaGJM23H/14cApmtKsfPoDkGH8KiXg6MPmtt4J6yCkYRjgB
-	 p1fZoyHux6+DtTQeyo80GCsx/kPLe+QsoKmjP16o=
+	b=CjtyTl7BKFORFxXGnJeNvzbmSSVUqrxquhD21HgFSdeVL8I8/1KCtAO01MdUovqHy
+	 lCZbSnK24bWQAcwqqT6v5mUzRaRlDBecdtKlizgrz8We81Pi0aJWQbNYeH1Ivpp88w
+	 EuWYHcQsWF2l3sRE0pLSBRRjwKXnbLr5VS/gGJAU=
 From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Date: Fri, 15 May 2026 10:56:14 +0300
-Subject: [PATCH v2 1/5] clk: renesas: r8a779g0: Add DSC clock
+Date: Fri, 15 May 2026 10:56:15 +0300
+Subject: [PATCH v2 2/5] dt-bindings: display: bridge: Document Renesas
+ R-Car V4H DSC bindings
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -37,7 +38,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260515-rcar-du-dsc-v2-1-f6b9240a1240@ideasonboard.com>
+Message-Id: <20260515-rcar-du-dsc-v2-2-f6b9240a1240@ideasonboard.com>
 References: <20260515-rcar-du-dsc-v2-0-f6b9240a1240@ideasonboard.com>
 In-Reply-To: <20260515-rcar-du-dsc-v2-0-f6b9240a1240@ideasonboard.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>, 
@@ -60,46 +61,139 @@ Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, 
  Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=929;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3100;
  i=tomi.valkeinen+renesas@ideasonboard.com; h=from:subject:message-id;
- bh=Sa58pHpMpn9uJbYQtT/HcZDpP5JrbrhbJQzUT3AA1cQ=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBqBtG2U9cU1ezkVTjg+KIlD7zGzcdR7RQsVSAuG
- dCHqlOgIQKJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCagbRtgAKCRD6PaqMvJYe
- 9WtKD/9TBSO8xPGVzKWm80tuSnVIdAilfZTNvmiMKO/LQk+QIfGqTbe6IhVRouBUJ4EB9mHTfJ2
- oxEdISJFctAvGUIcbXPrVNHkw+cAHe0PzL2hlbKcp/TYx4aXxgaX9InHh0VtfD56RueQaYgXGnq
- QjAWOrDQbRaDrrFeoYtjUC2sQpToT9ICpc1AXLnrpHZNkZiGBN/Nou1Zw+2gygUz0aplcLo45Fl
- SUnOL4g7I0Bc+ZNuUSjtjJk6OpC8rWaehpq1G5lvPXuJiye9Z7PlyHkilkhKspVbnk2zFXbeVyI
- l+UIu/jeVQJ8SPNCvHDIALH3QdmyWutjA2upFkVl5CuI+ohZ04IRyFL4RMfkaJY8wb+u0fF2F3G
- OlrCHFVVq8rR1Hp+5c9yPJe45xoDWIwATBwwJLMU0n8YlHH3ftEq+5BUAEKhRqKmVTOrDJSHq5f
- IUnXzvSS4Lrn8/KU8jTSwwjJh1QAAYhuXbO6ilhiX5+DQ/YvjXypCJrd/eIf53hLB9E6cpFJJWa
- ent1HrwnYSoyZzBgOrHIbEbMRoWiasMly6FKbOnZrJLDPgbFrfJNq5OhmIbWjXGj+MXv1QaXGlZ
- igiRll3Jrocd1T/8UKMSCZBO4pSrDHy3WrXZ/puCrhxsgmFPScawUvpdQkhWtmzKE4ZOZffhgV2
- 0St/9gVWiFhFgwA==
+ bh=2I8UDeCqT/cBmhnGJPNLMM2v8v1+nikKwEBiZMwtls4=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBqBtG2M72BZzHevVD8zRuqeGWA/kb2BC2cu1W8W
+ /sf8JS0C6GJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCagbRtgAKCRD6PaqMvJYe
+ 9SuND/97d4q15M/MxEJqemEDlJuPGo3MYsLEmpCOe4VcccZcdIasFG1Y8xuVhcKNeIRB4ceEBij
+ zxxiJM9HCZW985QX/XYqR0V7rznlqUpIxVFxs7kRpNY9QvWWrvoZoCl/RbheecYSiEIftyKD2SQ
+ nd7HtIK39JI5SZ+1aLHs6rEk5H7XEyaDxBVV5zBguOox6r1y2faVBheqey7io+23NVp/Fha7mao
+ +F7OGlt8mPSiLnp2ahTR7yAeLZkoWEPqfqnidmnYE190W2VQ+ywOofeiNlt1Hlu7NAUNkp2yrEm
+ nUiZTKnoAMDLfQalS71D5UJOwpFs4GRPLkkKOWEtdVU9wBZ7LIptfV6VyD8pUOyV/e+RaA9rkFl
+ YvuxEH73Iu1ZlnuRPHH0NSy17NO3UH1y8lMwzJtvJJFVCJ+I1CsSemopxPnOqnSZC3xVl9Yb5Ji
+ T6kVrMFDK7lYz1NPqzRAyP5tdoyIwZp7pLACOj66QBmAqNxBm/PISPwdlDmSH7l9/P28a55gDfA
+ VTnCQrO4YnSfiRNm5COKCKFkm5XM/czcN3KdXiSwpAR+0q/TQAdYH+s3pq3CSsnvDDTAWnrgPSo
+ iPB48b+xc5TOGQcSMlBkrM3d0p+P9cbprW4R5zeLQxM91R2312LjrHzQzIJPLjCH0MEn7EK3cOb
+ 9Bhmw/XB2E92Iiw==
 X-Developer-Key: i=tomi.valkeinen+renesas@ideasonboard.com; a=openpgp;
  fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
 From: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
-Add the DSC module clock for Renesas R-Car V4H (R8A779G0) SoC.
+The Renesas DSC Display Stream Compression is a bridge embedded in the
+Renesas R-Car V4H SoC. The bridge performs VESA DSC encoding of up to
+8k or 400 Mpixel/s .
 
 Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+[tomi.valkeinen: fix the example]
 Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 ---
- drivers/clk/renesas/r8a779g0-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+ .../bindings/display/bridge/renesas,dsc.yaml       | 96 ++++++++++++++++++++++
+ 1 file changed, 96 insertions(+)
 
-diff --git a/drivers/clk/renesas/r8a779g0-cpg-mssr.c b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-index 015b9773cc55..54ba76ff5ab0 100644
---- a/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-@@ -245,6 +245,7 @@ static const struct mssr_mod_clk r8a779g0_mod_clks[] __initconst = {
- 	DEF_MOD("fcpvx0",	1100,	R8A779G0_CLK_S0D1_VIO),
- 	DEF_MOD("fcpvx1",	1101,	R8A779G0_CLK_S0D1_VIO),
- 	DEF_MOD("tsn",		2723,	R8A779G0_CLK_S0D4_HSC),
-+	DEF_MOD("dsc",		2819,	R8A779G0_CLK_VIOBUSD2),
- 	DEF_MOD("ssiu",		2926,	R8A779G0_CLK_S0D6_PER),
- 	DEF_MOD("ssi",		2927,	R8A779G0_CLK_S0D6_PER),
- };
+diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,dsc.yaml b/Documentation/devicetree/bindings/display/bridge/renesas,dsc.yaml
+new file mode 100644
+index 000000000000..2918d592732b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/bridge/renesas,dsc.yaml
+@@ -0,0 +1,96 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/bridge/renesas,dsc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas R-Car DSC Display Stream Compression
++
++maintainers:
++  - Marek Vasut <marek.vasut+renesas@mailbox.org>
++
++description: |
++  This binding describes the VESA DSC Display Stream Compression encoder
++  embedded in the Renesas R-Car V4H SoC. The encoder supports all DSC1.1
++  encoding mechanisms, configurable bits-per-pixel, resolution up to 8k.
++
++properties:
++  compatible:
++    const: renesas,r8a779g0-dsc
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  power-domains:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++  ports:
++    $ref: /schemas/graph.yaml#/properties/ports
++
++    properties:
++      port@0:
++        $ref: /schemas/graph.yaml#/properties/port
++        description: R-Car DU input port
++
++      port@1:
++        $ref: /schemas/graph.yaml#/properties/port
++        description: R-Car DSI output port
++
++    required:
++      - port@0
++      - port@1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - interrupts
++  - power-domains
++  - resets
++  - ports
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/r8a779g0-cpg-mssr.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/power/r8a779g0-sysc.h>
++
++    dsc@feb8d000 {
++        compatible = "renesas,r8a779g0-dsc";
++        reg = <0xfeb8d000 0x400>;
++        interrupts = <GIC_SPI 559 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&cpg CPG_MOD 2819>;
++        power-domains = <&sysc R8A779G0_PD_ALWAYS_ON>;
++        resets = <&cpg 2819>;
++
++        ports {
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            port@0 {
++                reg = <0>;
++                dsc_in_dsi1: endpoint {
++                    remote-endpoint = <&du_out_dsi1>;
++                };
++            };
++
++            port@1 {
++                reg = <1>;
++                dsc_out_dsi1: endpoint {
++                    remote-endpoint = <&dsi1_in>;
++                };
++            };
++        };
++    };
++...
 
 -- 
 2.43.0
