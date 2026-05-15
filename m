@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD842D5941;
-	Fri, 15 May 2026 08:09:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC01E37BE8E;
+	Fri, 15 May 2026 08:10:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778832546; cv=none; b=kjmI2jNLgStrVQnyjnB0C/tuOCJWfzDLPcvzqZpZNolNHhNBlDV3MQwAuR16FoJg8NQZsc6LJ1QD2/aGQgyB3/VPEUC3ubyJZCJrVQ5uyXkPK+ts65g8G37CS0fz14WzcrRceMPFftiXd+Qit71bUIfWNPkvuq82sxtVai0auBg=
+	t=1778832640; cv=none; b=nNK9qH3Er/M7w/OATDYyqQPyqbITKE8a/9r3OERkAch8R6SBcsPCrhdefaGIMOORxVhXw7yJFV6pM6ji5NB/XePmC1BYiS+tc4DL/oh3ygb7ADY3EOM1ofJRIBFrGraCE8TiSKYFdp1dpt90G/OwHx+PJvRTv9/GnRHBo8ML6kU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778832546; c=relaxed/simple;
-	bh=Bg1YT47zyTBWhwh0sSsEf1oPFueOBupCLeeynnys2HI=;
+	s=arc-20240116; t=1778832640; c=relaxed/simple;
+	bh=gBhbHi0NNHhrL8d6+VY3N6+g1i4FaaoCLvTGFtKl2Pw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ozpem2nP5nE+d3vFJRZB6psIpsmK1SJWKv8FSBP8qUXVlKc/B48uHL3A7H94soJwe8KxvDUKSH2pyRDGQ/1+PViOZLYQBvY5nF/rka4+xuz3Z6Y5TcFpFkyBV4RYk2QxQyejXYICxNY+Kl0XaT13MM9Y+Ij838daNQmZbndxVME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vNTOm601; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=bPnowAJy6hWnq6kGxGQhiMHK8B8oPWnUo+edyQ02OXKe/r/Bned4nXVv1nPgC/93kTw9bqu/KrX5grOP+0LDKzcph8f6Dcgae0aSAwEjC+6erJbgxhqcWrYapNDFWpcQYqT7K9qIMibT2+JG9xgK1CQh+RtW+7LFVJPfOTG5DYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FIisNbMa; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vNTOm601"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70295C2BCB0;
-	Fri, 15 May 2026 08:09:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FIisNbMa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C324BC2BCB0;
+	Fri, 15 May 2026 08:10:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778832546;
-	bh=Bg1YT47zyTBWhwh0sSsEf1oPFueOBupCLeeynnys2HI=;
+	s=k20201202; t=1778832640;
+	bh=gBhbHi0NNHhrL8d6+VY3N6+g1i4FaaoCLvTGFtKl2Pw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vNTOm601qZQyM9NgdondIjlzH01Q1CG7YdS5AgL6NV15huyEn/G5DKJSeDw1NzIVu
-	 thjZF1bzS4pQhwkwA07lyUn25QBWDIqArSxr7+EoJ4IAjJKohxBLtRQ8JCqP/A684b
-	 p9aoJuB8si12qsbvVcaL8BDgsV8eaIybycR9kQv3qpRKmTIcVhyDFxiZc2H2oiJpF2
-	 Trq2LzeONPJPe8tcuiejcDJMBsDW+ioARKNuXmm46Bali1i87BpDyBy0/1GBA/+jxH
-	 8LSFT7lLUZHSTQMgkjRv3Fh0+gDzIQ0Y3kcwg4RDhyxX8IQB3cT/2dBeCC7+JbFw0n
-	 1pkY+tlnELCkQ==
-Date: Fri, 15 May 2026 10:09:03 +0200
+	b=FIisNbMahMfMg8P1xFwMV8fkdAzB6JeAP7J9qN5JVAv5AShhQ8A8hhuuUTJddX5U8
+	 +Kwfsy0yYf5LNChgUD9xOIUIifMjt0yZ1b7MDrzkkimPaAl4pYsyFB+xZscVPfokaF
+	 5J2wpPRuU/079FaRMfblnDwVCNVD/NtwUyOLl1Iagm/bkzjtQyUmQsOFyC+vhbhUpP
+	 cFmilDV+dk1luUGRU3W0jGx3DrOKwt0nQsllZ7EE8lYu1wpqTlsVTG5HfObLeH0TRC
+	 YMTa6Iuhi90/xDMngx62lOddNQRWofgO9AHB32hn4twFPbiA10Ia6aJgV6y3KhsRYY
+	 cKzaHo8xoGOVQ==
+Date: Fri, 15 May 2026 10:10:37 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Jian Hu <jian.hu@amlogic.com>
 Cc: Michael Turquette <mturquette@baylibre.com>, 
@@ -37,11 +37,11 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
 	devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, 
 	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 02/10] dt-bindings: clock: Add Amlogic A9 PLL clock
- controller
-Message-ID: <20260515-subtle-sepia-tuatara-cfee3d@quoll>
+Subject: Re: [PATCH 03/10] dt-bindings: clock: Add Amlogic A9 peripherals
+ clock controller
+Message-ID: <20260515-augmented-cyber-puffin-4db20f@quoll>
 References: <20260511-b4-a9_clk-v1-0-41cb4071b7c9@amlogic.com>
- <20260511-b4-a9_clk-v1-2-41cb4071b7c9@amlogic.com>
+ <20260511-b4-a9_clk-v1-3-41cb4071b7c9@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,31 +50,32 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260511-b4-a9_clk-v1-2-41cb4071b7c9@amlogic.com>
+In-Reply-To: <20260511-b4-a9_clk-v1-3-41cb4071b7c9@amlogic.com>
 
-On Mon, May 11, 2026 at 08:47:24PM +0800, Jian Hu wrote:
-> Add the PLL clock controller dt-bindings for the Amlogic A9 SoC family.
+On Mon, May 11, 2026 at 08:47:25PM +0800, Jian Hu wrote:
+> Add the peripherals clock controller dt-bindings for the Amlogic A9
+> SoC family.
 > 
 > Signed-off-by: Jian Hu <jian.hu@amlogic.com>
 > ---
->  .../bindings/clock/amlogic,a9-pll-clkc.yaml        | 110 +++++++++++++++++++++
->  include/dt-bindings/clock/amlogic,a9-pll-clkc.h    |  55 +++++++++++
->  2 files changed, 165 insertions(+)
+>  .../clock/amlogic,a9-peripherals-clkc.yaml         | 150 +++++++++
+>  .../clock/amlogic,a9-peripherals-clkc.h            | 352 +++++++++++++++++++++
+>  2 files changed, 502 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/amlogic,a9-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a9-pll-clkc.yaml
+> diff --git a/Documentation/devicetree/bindings/clock/amlogic,a9-peripherals-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a9-peripherals-clkc.yaml
 > new file mode 100644
-> index 000000000000..4ee6013ba1a1
+> index 000000000000..97e2c44d8630
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/amlogic,a9-pll-clkc.yaml
-> @@ -0,0 +1,110 @@
+> +++ b/Documentation/devicetree/bindings/clock/amlogic,a9-peripherals-clkc.yaml
+> @@ -0,0 +1,150 @@
 > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 > +# Copyright (C) 2026 Amlogic, Inc. All rights reserved
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/clock/amlogic,a9-pll-clkc.yaml#
+> +$id: http://devicetree.org/schemas/clock/amlogic,a9-peripherals-clkc.yaml#
 > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: Amlogic A9 Series PLL Clock Controller
+> +title: Amlogic A9 Series Peripherals Clock Controller
 > +
 > +maintainers:
 > +  - Neil Armstrong <neil.armstrong@linaro.org>
@@ -84,12 +85,7 @@ On Mon, May 11, 2026 at 08:47:24PM +0800, Jian Hu wrote:
 > +
 > +properties:
 > +  compatible:
-> +    enum:
-> +      - amlogic,a9-gp0-pll
-> +      - amlogic,a9-hifi0-pll
-> +      - amlogic,a9-hifi1-pll
-> +      - amlogic,a9-mclk0-pll
-> +      - amlogic,a9-mclk1-pll
+> +    const: amlogic,a9-peripherals-clkc
 > +
 > +  reg:
 > +    maxItems: 1
@@ -98,70 +94,79 @@ On Mon, May 11, 2026 at 08:47:24PM +0800, Jian Hu wrote:
 > +    const: 1
 > +
 > +  clocks:
+> +    minItems: 20
+
+I don't think so. How they could be optional in silicon? How does
+exactly work from silicon point of view?
+
 > +    items:
-> +      - description: pll input oscillator gate
-> +      - description: fixed input clock source for mclk_sel_0
-> +      - description: u3p2pll input clock source for mclk_sel_0 (optional)
-
-Second clock is also optional. Drop "(optional)" comment, just
-confusing.
-
-> +    minItems: 1
+> +      - description: input oscillator
+> +      - description: input fclk div 2
+> +      - description: input fclk div 3
+> +      - description: input fclk div 4
+> +      - description: input fclk div 5
+> +      - description: input fclk div 7
+> +      - description: input fclk div 2p5
+> +      - description: input sys clk
+> +      - description: input gp1 pll
+> +      - description: input gp2 pll
+> +      - description: input sys pll div 16
+> +      - description: input cpu clk div 16
+> +      - description: input a78 clk div 16
+> +      - description: input dsu clk div 16
+> +      - description: input rtc clk
+> +      - description: input gp0 pll
+> +      - description: input hifi0 pll
+> +      - description: input hifi1 pll
+> +      - description: input mclk0 pll
+> +      - description: input mclk1 pll
+> +      - description: input video1 pll (optional)
+> +      - description: input video2 pll (optional)
+> +      - description: input hdmi out2 clk (optional)
+> +      - description: input hdmi pixel clk (optional)
+> +      - description: input pixel0 pll (optional)
+> +      - description: input pixel1 pll (optional)
+> +      - description: input usb2 drd clk (optional)
+> +      - description: external input rmii oscillator (optional)
 > +
 > +  clock-names:
+> +    minItems: 20
 > +    items:
-> +      - const: in0
-> +      - const: in1
-> +      - const: in2
-
-Pretty pointless names, drop property.
-
-> +    minItems: 1
+> +      - const: xtal
+> +      - const: fdiv2
+> +      - const: fdiv3
+> +      - const: fdiv4
+> +      - const: fdiv5
+> +      - const: fdiv7
+> +      - const: fdiv2p5
+> +      - const: sys
+> +      - const: gp1
+> +      - const: gp2
+> +      - const: sysplldiv16
+> +      - const: cpudiv16
+> +      - const: a78div16
+> +      - const: dsudiv16
+> +      - const: rtc
+> +      - const: gp0
+> +      - const: hifi0
+> +      - const: hifi1
+> +      - const: mclk0
+> +      - const: mclk1
+> +      - const: vid1
+> +      - const: vid2
+> +      - const: hdmiout2
+> +      - const: hdmipix
+> +      - const: pix0
+> +      - const: pix1
+> +      - const: u2drd
+> +      - const: ext_rmii
 > +
 > +required:
 > +  - compatible
-> +  - '#clock-cells'
 > +  - reg
+> +  - '#clock-cells'
 > +  - clocks
 > +  - clock-names
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - amlogic,a9-mclk0-pll
-> +              - amlogic,a9-mclk1-pll
-> +
-> +    then:
-> +      properties:
-> +        clocks:
-> +          maxItems: 3
-
-No, minItems instead. maxItems is already 3, so what is the point of
-redefining it?
-
-> +
-> +        clock-names:
-> +          maxItems: 3
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - amlogic,a9-gp0-pll
-> +              - amlogic,a9-hifi0-pll
-> +              - amlogic,a9-hifi1-pll
-> +
-> +    then:
-> +      properties:
-> +        clocks:
-> +          maxItems: 1
-> +
-> +        clock-names:
-> +          maxItems: 1
 > +
 > +additionalProperties: false
 > +
@@ -169,29 +174,12 @@ redefining it?
 > +  - |
 > +    apb4 {
 
-soc
+Same comments as other patches. Do not come with your own style, but
+adjust to mainline. Do you see this anywhere?
 
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        clock-controller@8200 {
-> +            compatible = "amlogic,a9-gp0-pll";
-> +            reg = <0x0 0x8200 0x0 0x20>;
-> +            #clock-cells = <1>;
-> +            clocks = <&scmi_clk 0>;
-> +            clock-names = "in0";
-> +        };
-> +
-> +        clock-controller@8330 {
-> +            compatible = "amlogic,a9-mclk0-pll";
-> +            reg = <0x0 0x8330 0x0 0x14>;
-> +            #clock-cells = <1>;
-> +            clocks = <&scmi_clk 4>,
-> +                     <&scmi_clk 8>;
-> +            clock-names = "in0", "in1";
+git grep apb4 -- Documentation/devicetree/bindings/clock/
 
-One example is enough, you have exactly the same properties.
-
+So why coming with something COMPLETELY different?
 
 Best regards,
 Krzysztof
