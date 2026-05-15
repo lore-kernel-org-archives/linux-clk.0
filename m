@@ -1,161 +1,115 @@
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 335494218B3
-	for <linux-clk@vger.kernel.org>; Fri, 15 May 2026 08:53:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF0B438FF4
+	for <linux-clk@vger.kernel.org>; Fri, 15 May 2026 09:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778835233; cv=none; b=vFItxOA9cLRaomZrYGpFr1VMIYr6afEzsr/P5cc2qTAmezTAj+RWzzTKQgXCgLphnKfEmsgk2/HuIoCn3QxT5xWTCKAABNhvpbvWjQagmWwU5Em1ms2k5XdvKdZ7VJfYdFiJHmiTDELpg/CDAgPQZDAu3gOTEhGndF4L9AWoLZA=
+	t=1778835925; cv=none; b=YkKMSo4EgoCv47FuyGFj8LfNA19SHcDiAIYcIkLxx+I2L/nzj107nvLYkArrMZBh66RLqvILY1BlTpOckhJ8d7BpEjUdnrGkuN1bkASml8kHYQfncd0B031Nm23oo5mBXx7PC7nSSQqoCP5h/Erde/edIO4w8VgTzw/e2t7O7n0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778835233; c=relaxed/simple;
-	bh=5yHoGKC4E/Rf7XOzxXWV+p/WVrFvuJccWmdeQGZVtoM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OmnE+nt5OhOV5acxQWFluhehYYMyURfR4fsWr5Dtu7TtdS69O1besnDNmAeTzroqOH7q7w9tZZkV2oOSlcsfpc3pxiparDEQWMvOUI0hLzoBUaqIrmxSHt8yaOM1WU4MSdOpWLiLK47XGim8M3BioUbATHx0rzJrU8JzFTWQD2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2ba4a1a0325so61092215ad.0
-        for <linux-clk@vger.kernel.org>; Fri, 15 May 2026 01:53:52 -0700 (PDT)
+	s=arc-20240116; t=1778835925; c=relaxed/simple;
+	bh=uSw4iLWni+08K3Y2XPPthhXGT8z8eNuujhWRQ0NoO/Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g0NPoJt1lg1c9bLGIoiMGkfbkbIicnvRSu0anqdnIVCz3sycW30rj79Pprz1KNQ9T21V8dUHSX0OqUtqB/W9d0CTXax4YmnXdP1p4kqQxPBBvwBD4H+zo+hprrNLz8r2ynxEtv5wEZjtLBKsqYldpbvfloU80PRpoxu0AF2+D1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kHyyCsJe; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kHyyCsJe"
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5aa0862dda1so1971350e87.1
+        for <linux-clk@vger.kernel.org>; Fri, 15 May 2026 02:05:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1778835920; x=1779440720; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uSw4iLWni+08K3Y2XPPthhXGT8z8eNuujhWRQ0NoO/Y=;
+        b=kHyyCsJe2muVQQwvt5wzTDwFbOnpO8COGH0q1Pdfoium2jscGMdGqfANjXUVrUE3C9
+         VnMimtm9+Z4/jWxsOwkxKqH06B7crDANToskrImuzZZmyEDQI5LkBfXmHgCnCjeIMt/F
+         vglNcNGR0xahOFJallcd6yaIwYmzRlRgtyLXajTCN7l9vdELtSdSRAJ2M1UTqDHapTjH
+         +Yz4pvf0EtoJ7o8/ZfKeQJmhUTokJQ63FCH4yHaaMdA7oIeG4SlNGyE7tTwahzxeRMxW
+         6zcIjq4E3xbTjJ/O61qgrcXbwE2hBicr9E9UmN9PXmM0RVnfFy4BmejiKV8+3gRLe3n5
+         hg/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778835231; x=1779440031;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VVgJPqzdVEsAMlVw8p1sldLEqlhvUsFX5k1afv6GStQ=;
-        b=JKoDjMAs1Xml8vtQp5g+1Xqm5DqTkiQm0XXk63Vh+Z9EER7fpWgHy8mxcJ2RNcSLA1
-         BU1Eys8cfc8YaLXDiDlE1MJijezKkcP5a2PCBxVMwI5ra4TIZuGys3g/lH7T/eztK1W9
-         jNKvS6Sp1/yEEfLRJTSJLmfmG1pymeoYRCGYFX+wSk3DdiwVMfqcbhr8mt7ruTOTTxxV
-         uJvhkepKpREYVhvmFNvu0bMx6nW/Xlu4gjYsj/WhgzJwPxYr0acIN6ZDH+i14n/dOv0D
-         pDY3yiZKNexfkV7yNtD1GxHm01bmZ5qQdfX4ZbskIhxtNHPgyZvaNPXXwCrTr1vUfufE
-         KxLw==
-X-Forwarded-Encrypted: i=1; AFNElJ/r8bCeURet5tc86c2xZa26oFZQjRQgXpubKcoTEVU0m7/DRTRk3PsIUQ7O9d1OT0yWSNXgrZzW4Lc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwW7U9MEny4FjLt1evfPnDwsA3xaz8qSu9tcUwWrGjLHCw29Uta
-	i8SEaQ9Qm+X8vEnvVPptumv569YGBs74Nhmw+YUyw5sBzRe923crzkEDbJp7lubl
-X-Gm-Gg: Acq92OGm+3Y18/1UGVaEOyrWHJ/6F4xD6cMYlewHjEu7Aw9p2tWbH+t88zLsgnTpba3
-	KJXMLOQngxn4f/TD20Eh6svYhXwEG3g3gU1m+gFSOx67YxPaxCMsE0Dud0VoVx3KJO/iN5gdKo5
-	exsTBtZxwy9qSLcGrK2JzXzs2WB3chgqBF3dV7xN0rkrb5vMMYDdhnk9NtrqNw4/DcdVIDAAo8x
-	oxaquHho/Nw3A/TdrtvuIrO0uJprA0ZYtvkKgDzek1ODegyBEePAMOmUsxBezTbBTtnpxvFwLyj
-	aqnty+U3AwRLr08x5JCOsFb5eRrTwzFyoDbOACQfarYR20dJHhFXJwbrvY8bgKGzeHL/TYJvaKF
-	a/wfDxeBgmwJ0eZRCBGokJFbhwrxsLKaUCU40KiyyWoCPSZCwBEyG7Ux4conKhHhgxhUQ9shcte
-	qnkkEa2YDk5WFbceDve5hVwxUSjZcy47ftT3q9DRc9J9/kmZrnYFDlz18v83cb4Ac2
-X-Received: by 2002:a17:903:2490:b0:2b2:5840:809c with SMTP id d9443c01a7336-2bd7e77aec6mr25703015ad.1.1778835231359;
-        Fri, 15 May 2026 01:53:51 -0700 (PDT)
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com. [209.85.215.174])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2bd5cfe47c8sm51604605ad.51.2026.05.15.01.53.50
-        for <linux-clk@vger.kernel.org>
+        d=1e100.net; s=20251104; t=1778835920; x=1779440720;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uSw4iLWni+08K3Y2XPPthhXGT8z8eNuujhWRQ0NoO/Y=;
+        b=jNaRAYi1qif8I+JZVj4RXvPQTiAN3xTCdXqPnIuUMHIOzhOIHSmPuqQKGIXy2IrxE8
+         IglVzpyhdczgSI59sWj07Gcbvqv5+dKfEOVYIHaR5ZXLVo5zLpRFG5FfaSZZdeN0xL7Q
+         tVi4dQcy6pWYICAyQ5NnS3E4yVv68lGuzVEeePh26sc6qctBqFQ/JGoheJVC9pj7vo30
+         WmB79A/SReAqh4awBYcju9iP9gQoGMw5AosEcpd3CCsJl4335huUaZcsbMI3oRvmjujB
+         CE8B02Vf9bsqnLakOvugIZlTjrKXw1Nl4kPr2yQlLB5yeuFlnCHvO6FwvQEYQt1E9dm5
+         r/4g==
+X-Forwarded-Encrypted: i=1; AFNElJ+DS2Th0ZsaNFsUgV6NyQwQ18sMf7XjQ7jRGZthzoQdtp+WgLJeL+vttsI7IaMqevP6ybQ/Y/UKFEs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnSRkj/fth3cX7H2hRxqmx9ulkykqy60oXRM/1Sfcutbq4ckf1
+	EIt9gpijMHRYip5bsG34jd8hyifOxmbhLfViwGJb0ChVeItTEX6Wti0T4z1EdF+te8A=
+X-Gm-Gg: Acq92OEuEepdpmddDZtBhNofWDOwIHaLtAhCrUIj/SQ7t7gEn4RQAaHTAuHLKYcj8wn
+	c8jWdRpyKXvPlYr9yRittVQKHY0eYHIRmHfVNJuGwEriCu4muvkJANSxJfo18nAD34W6LAGun2f
+	og96Ml1ociy+LgGjWxgwzG/E3EV/BPxLs0hXEWtsCtJZcT3z8r8H73SbRFQuUSVy+sXvXYN8zeS
+	gzzQMK9ttGn029kuLCD71c0f1CeWFTCy9yM3nk0+2BRnG9WnfUQgEskBozxY1W+lXIknRM67T1A
+	m1oUQWvj9GfN08i1RvxY99SLVAi1obFUIyCn2mJZYDRcRFaeTKquRYW5kJOP0UxmCXUzALTonrJ
+	g0GcnodFmGmWbxSSp91Ao1WVguE9b2xH7cuRUSH31CqR4af/7vw7hShEkRrSPEY7ySARx1nEi9j
+	Ay1jICfKU1nZ5rqXhfahuj6Q0IaznvwmRp
+X-Received: by 2002:a05:6512:3ba4:b0:5a8:6cbc:60f3 with SMTP id 2adb3069b0e04-5aa0e769d53mr851416e87.34.1778835919654;
+        Fri, 15 May 2026 02:05:19 -0700 (PDT)
+Received: from [10.11.12.109] ([79.115.63.228])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45da15a562dsm13447979f8f.33.2026.05.15.02.05.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 May 2026 01:53:51 -0700 (PDT)
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-c796163fac5so6636050a12.1
-        for <linux-clk@vger.kernel.org>; Fri, 15 May 2026 01:53:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ81xgTOF7ipRXbevG92fSs6nys1KeCYCbF6U7+4O1hWVCJcpGhx174HFiK1Vi22Uu5vS/xdk58151A=@vger.kernel.org
-X-Received: by 2002:a05:6102:358e:b0:62f:34db:9474 with SMTP id
- ada2fe7eead31-63a3ee86884mr1297663137.20.1778834878086; Fri, 15 May 2026
- 01:47:58 -0700 (PDT)
+        Fri, 15 May 2026 02:05:19 -0700 (PDT)
+Message-ID: <e91af899-9ff2-456a-a54f-613b859260e7@linaro.org>
+Date: Fri, 15 May 2026 12:05:15 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260514-rcar-du-dsc-v1-0-d65f7a9e9841@ideasonboard.com>
- <20260514-rcar-du-dsc-v1-3-d65f7a9e9841@ideasonboard.com> <CAMuHMdVTgQp9WRiFpLX+pP7kOGF2v6oButALPu1B8QkYhVyvJA@mail.gmail.com>
- <6db159d9-56af-4d79-a1f1-9d5a6349b5ac@ideasonboard.com> <CAMuHMdVL9s=EHbw38kBzEVGa5-LawVY4YBUfSMA-6U+i3OSrbw@mail.gmail.com>
- <d7447f51-c2f7-4947-9fd0-ac0d45027c59@ideasonboard.com>
-In-Reply-To: <d7447f51-c2f7-4947-9fd0-ac0d45027c59@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 15 May 2026 10:47:46 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUS9jrsjqqPRKXJa9978kj1aYZ9aPrepv5kueiHGGLkCg@mail.gmail.com>
-X-Gm-Features: AVHnY4JCOAjr3bsj3LmrYGms2JUgvp1AhIShwYqx91e-BUfZ61J5zvr2A9mA72E
-Message-ID: <CAMuHMdUS9jrsjqqPRKXJa9978kj1aYZ9aPrepv5kueiHGGLkCg@mail.gmail.com>
-Subject: Re: [PATCH 3/5] drm/rcar-du: dsc: Add rudimentary Renesas R-Car V4H
- DSC driver
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Marek Vasut <marek.vasut+renesas@mailbox.org>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 03/10] firmware: samsung: acpm: Drop redundant _ops
+ suffix in acpm_ops members
+To: Lee Jones <lee@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Daniel Lezcano <daniel.lezcano@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, willmcvicker@google.com, jyescas@google.com,
+ shin.son@samsung.com, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-hardening@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20260420-acpm-tmu-v3-0-3dc8e93f0b26@linaro.org>
+ <20260420-acpm-tmu-v3-3-3dc8e93f0b26@linaro.org>
+ <20260507120003.GG305027@google.com>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20260507120003.GG305027@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Tomi,
 
-On Fri, 15 May 2026 at 10:17, Tomi Valkeinen
-<tomi.valkeinen@ideasonboard.com> wrote:
-> On 15/05/2026 11:05, Geert Uytterhoeven wrote:
-> > On Fri, 15 May 2026 at 10:03, Tomi Valkeinen
-> > <tomi.valkeinen@ideasonboard.com> wrote:
-> >> On 15/05/2026 10:49, Geert Uytterhoeven wrote:
-> >>> On Thu, 14 May 2026 at 14:25, Tomi Valkeinen
-> >>> <tomi.valkeinen+renesas@ideasonboard.com> wrote:
-> >>>> From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> >>>>
-> >>>> The Renesas DSC Display Stream Compression is a bridge embedded in the
-> >>>> Renesas R-Car V4H SoC. The bridge performs VESA DSC encoding of up to
-> >>>> 8k or 400 Mpixel/s . Add rudimentary driver, which currently acts as a
-> >>>> pass-through bridge and allows DSI1 to be operational on R-Car V4H.
-> >>>>
-> >>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> >>>> [tomi.valkeinen: use bridge->next_bridge, minor changes]
-> >>>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> >>>
-> >>> Thanks for your patch!
-> >>>
-> >>>> --- /dev/null
-> >>>> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_dsc.c
-> >>>
-> >>>> +
-> >>>> +static void rcar_dsc_atomic_enable(struct drm_bridge *bridge,
-> >>>> +                                  struct drm_atomic_state *state)
-> >>>> +{
-> >>>> +       struct rcar_dsc *dsc = bridge_to_rcar_dsc(bridge);
-> >>>> +
-> >>>> +       WARN_ON(clk_prepare_enable(dsc->clk));
-> >>
-> >> Ah, just missed your comment and sent the v2.
-> >>
-> >>> Who don't you use pm_runtime_resume_and_get() instead, like
-> >>> rcar_cmm.c? Then you don't need to get the clock at all, and the driver
-> >>
-> >> Hmm, why wouldn't I need to get the clock? What does the runtime PM do
-> >> on Renesas?
-> >
-> > Runtime PM powers on the power domain (if present), and starts
-> > the device by enabling its module clock.
-> >
-> >>> will keep on working if the DSC ever ends up in a power domain.
-> >> I can add runtime PM. I just felt that it was overcomplicating a "dummy"
-> >> driver that just needs to enable the clock when the video pipeline is
-> >> enabled.
-> >
-> > Funny, I would say you are overcomplicating a dummy driver by adding
-> > explicit clock control ;-)
-> Well, now that I know the runtime PM does magics behind the scenes, you
-> are right =).
->
-> How's "module clock" defined? Is it the first clock in the clocks DT
-> property?
 
-It's the clock pointing to the cpg device node, and having "CPG_MOD"
-as its first cell.  Usually it's the first clock.  Note that e.g. the
-DU is special, as it' is represented by a single device node with
-multiple module clocks (and multiple (but less) resets), due to the
-tight integration between the individual channels.
+On 5/7/26 3:00 PM, Lee Jones wrote:
+> Acked-by: Lee Jones <lee@kernel.org>
+Thanks, Lee!
 
-Gr{oetje,eeting}s,
+The set evolved [1], but this particular patch was not changed.
+I'm going to carry your Acked-by in the resend I'm going to do.
 
-                        Geert
+Cheers,
+ta
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Link: https://lore.kernel.org/linux-samsung-soc/CADrjBPqzKpcd9vuCmNUptCUPyPpPbHcc19-7kN-1c0RpW1e5DQ@mail.gmail.com/T/#mcce154a7e0c6cd1ca6cd5a1e37541ed7a85a84d4 [1]
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
