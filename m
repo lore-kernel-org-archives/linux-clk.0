@@ -1,203 +1,67 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F1743DA22;
-	Fri, 15 May 2026 09:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87FF43FE67C;
+	Fri, 15 May 2026 09:13:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778836212; cv=none; b=jdRnteCqk2drnqQJ5oyBR0oK3EAlhXs1gXljMAN/4hLtmBnpzEJd3Ijw1EQgdQBOKKMZ7DdlaqjDHeQNdsAopVuu9xdDpsXIn0LXV1mROp1lxAdMZ4STvoYd62GWQ7DVQbVT1ennl6c56bRgqqBgaVydjzHWEN14Cqamm7kzd/k=
+	t=1778836411; cv=none; b=SRDhChdtYvaUiYug3WQRRiWVBh9pv9NSPTVyA9hhbHRRMcrIylf0X/hCkQbp2BU2KvTXQKqKkwi7xq3a8PEfkQ3Znal8BEK/852uTaB4WlZKzX9rFB5oItRuzJaMwzjfH31Q2WioLl5Chz50Kn+cjpKvib1qSxZpdaADHb/ftto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778836212; c=relaxed/simple;
-	bh=sQ7dH7dQ/n7Rrc06bQe/1ItYvKBy46snwgvffXpYWQw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XRG+v/auLFJAx0fcD3fca3X20svBGCRtTbzd2Co4myasvDfSjHIYPEEE1FMae0dyYFiuDsV+pcLWSuIpVr1tBRUJX4QycAesn5ziUHVX0FvcSLm8p8ElnUalCog7OCZ3DyBmPJKpIBF4WGJpjJykxJBPM2bojhPadCTyevUGjIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=p0ryn/q/; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1778836411; c=relaxed/simple;
+	bh=zLRb1yIvUvA5lHs5BNZoLifNrajMLhxzNg0gMUhb7XE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HuaJl+AbomYPOAvIwt4KXOHne9gcF3Rl05rPM7ao3IFCLzGFfAC08HtWrIDvrJ3fl1rPZBXGwbrbzs090k39jnz3KedfsBE02/RDG9TvFZn5O/5WuOMbBDKkuI3/8zhoXQo1yLMJNb+v55QJJ1LVIFPhjn2r5covnsgjjTpgJpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vPXa7OLF; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="p0ryn/q/"
-Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E8BDC19EF;
-	Fri, 15 May 2026 11:09:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1778836198;
-	bh=sQ7dH7dQ/n7Rrc06bQe/1ItYvKBy46snwgvffXpYWQw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=p0ryn/q/koHB4EiO3lUEZBGJiilxYg2Ju3pwaRJUOMw68YWtiDt9cVXiQ4C+H8Did
-	 nObo5oRehPB4FD7buNzVMzIStwCmCtx1JqMGya1UjIQSfojdL2vHklf8+OHu2AfCXR
-	 VQyD1FQRerLK9u+x0h3Mb3yV3DKMtaMeUm0fsTdg=
-From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Date: Fri, 15 May 2026 12:09:32 +0300
-Subject: [PATCH v3 7/7] arm64: dts: renesas: white-hawk: Add second mini-DP
- output support
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vPXa7OLF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD05DC2BCB0;
+	Fri, 15 May 2026 09:13:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1778836411;
+	bh=zLRb1yIvUvA5lHs5BNZoLifNrajMLhxzNg0gMUhb7XE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vPXa7OLFSnq+DMHuyXiEWk6yF93IQTdX3Jbvg3nP+Z0vWF+pRBef4qBarEAnLqmFh
+	 IRfL23+HrHdMUG93nDQzVv9Nn/oNeWXUrW4SGWX2gTn7zAuVmtWLd7zQ0yj5fRVS0h
+	 Fwp14qEEhd4h0PobthVYm74E0FaeL7BO4Y+za1owUc+2VJVVtXSI/fYvbXDCNwPN3e
+	 bjl//ewt+HwL4H2OM2E74XcKLvYUyXUmqERtIfvPjpqFf+2E0S1BN87zT/d9DgP4Gh
+	 yqCJCXktTChzr1QZg3ZK9+NaX/hKFs6DKulFwJ1S87AOEGNASf6Q1+gnzgZlS/Slfe
+	 MJgZoK+Yn/zdA==
+Date: Fri, 15 May 2026 11:13:28 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Taniya Das <taniya.das@oss.qualcomm.com>, Shawn Guo <shengchao.guo@oss.qualcomm.com>, brgl@kernel.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: clock: qcom: add missing definition for
+ the USB2 PHY reset
+Message-ID: <20260515-invisible-ermine-of-memory-6d7dae@quoll>
+References: <20260513-nord-clk-usb2-phy-v1-0-8eafcb2d5129@oss.qualcomm.com>
+ <20260513-nord-clk-usb2-phy-v1-1-8eafcb2d5129@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260515-rcar-du-dsc-v3-7-164157820498@ideasonboard.com>
-References: <20260515-rcar-du-dsc-v3-0-164157820498@ideasonboard.com>
-In-Reply-To: <20260515-rcar-du-dsc-v3-0-164157820498@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
- Marek Vasut <marek.vasut+renesas@mailbox.org>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- devicetree@vger.kernel.org, 
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2737;
- i=tomi.valkeinen+renesas@ideasonboard.com; h=from:subject:message-id;
- bh=C9rP9GABvcYb9jE1vUzXF6HhHnFgCbKipQ/Ea+SbMGY=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBqBuLiiTqP0RYYEkYtroljiEpni+J1CY4V6VoG8
- JXMaS1cCKKJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCagbi4gAKCRD6PaqMvJYe
- 9SBaEACOaDZzTIQrGoWXa20lEGTRBsBiOPRk39I3W4jUj2vT/HXxsm754izvyNcLrExit01qCd+
- 0Dyqc8bdMokPw+kZ9tgcrgpNygj0GhyCKOQUgWNEIoQz8B4C9R9xbf7ytyhZV7RsDDLWKMTgbGo
- UFFvlY215G98Woio/0cc31juMbD/c2QIgS393VE57YTCnhibSXTgNx2pRBxg0l5IWLlMZZ7T09j
- cTCUq4mbClqGEXyjT6pQkj1357ODLklbv7DJexilLJdhTllNuiFD4C041C8oOyGhacqlF2q3gvf
- RpfEbfdmRpNxeDEiH0kckpiEUhSEC0NdrGf4wlH79b7kMisNDFib44xrT8Ou6k8iR801Mfr3dK7
- 8fBfvQjSZjm7bRCIcNpR6eCMekjYtFcRhknWIT1MypuQnO7+1vH6eFEeypoQ+r5pwfiyIBqL6zK
- vZaIn+4BG3qZHKGbnvuQCgy3cWxZTs0ujKIFCqfnb9xqmJNXtt+I75atA9Xi1F8syp6wvPg9Vyy
- hWTl5euKDxQE1vbl8FY+U7parLfPJgfOJCDJG3wpSMa5g08p63E/w+QR8E2fejHGYwSv7qqgIOU
- sxrmtu+HcF/Rl64O2XqqStalOCKhN4QxLswKXuDaweH3EZTkwHHCYSDezJrc+JmgXVehZIqKYTG
- jLnzcMA7RbZc6rg==
-X-Developer-Key: i=tomi.valkeinen+renesas@ideasonboard.com; a=openpgp;
- fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260513-nord-clk-usb2-phy-v1-1-8eafcb2d5129@oss.qualcomm.com>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Wed, May 13, 2026 at 05:35:29PM +0200, Bartosz Golaszewski wrote:
+> The USB2 PHY reset definition is missing from the negcc clock driver and
+> its bindings. Provide it in order to enable adding the USB nodes in DTS.
+> 
+> Fixes: 06498d59bb4e ("dt-bindings: clock: qcom: Add Nord Global Clock Controller")
 
-Add support for the mini-DisplayPort connector on the White Hawk
-BreakOut board.  This port is driven by a TI SN65DSI86 DSI to eDP
-bridge, which in turn gets the pixel data from the second DSI channel on
-the R-Car V4H SoC.  Note that this port is not present on the White Hawk
-Single development board.
+Same comments as for Eliza yesterday. Missing feature is not a bug, per
+se. We do add things incomplete and then grow (release early, release
+often). Please explain in the commit msg what was supposed to work in
+the initial commit but is not working due to the missing part.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[tomi.valkeinen: added status=okay for dsc]
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
----
- .../arm64/boot/dts/renesas/r8a779g0-white-hawk.dts | 94 ++++++++++++++++++++++
- 1 file changed, 94 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts b/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
-index 784d4e8b204c..89d60b83ac4f 100644
---- a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
-@@ -12,4 +12,98 @@
- / {
- 	model = "Renesas White Hawk CPU and Breakout boards based on r8a779g0";
- 	compatible = "renesas,white-hawk-breakout", "renesas,white-hawk-cpu", "renesas,r8a779g0";
-+
-+	sn65dsi86_refclk2: clk-x16 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <38400000>;
-+	};
-+
-+	mini-dp-con2 {
-+		compatible = "dp-connector";
-+		label = "CN15";
-+		type = "mini";
-+
-+		port {
-+			mini_dp_con_in2: endpoint {
-+				remote-endpoint = <&sn65dsi86_out2>;
-+			};
-+		};
-+	};
-+};
-+
-+&dsc {
-+	status = "okay";
-+};
-+
-+&dsi1 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			dsi1_out: endpoint {
-+				remote-endpoint = <&sn65dsi86_in2>;
-+				data-lanes = <1 2 3 4>;
-+			};
-+		};
-+	};
-+};
-+
-+&i2c4 {
-+	pinctrl-0 = <&i2c4_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+	clock-frequency = <400000>;
-+
-+	bridge@2c {
-+		pinctrl-0 = <&irq1_pins>;
-+		pinctrl-names = "default";
-+
-+		compatible = "ti,sn65dsi86";
-+		reg = <0x2c>;
-+
-+		clocks = <&sn65dsi86_refclk2>;
-+		clock-names = "refclk";
-+
-+		interrupts-extended = <&intc_ex 1 IRQ_TYPE_LEVEL_HIGH>;
-+
-+		enable-gpios = <&gpio1 27 GPIO_ACTIVE_HIGH>;
-+
-+		vccio-supply = <&reg_1p8v>;
-+		vpll-supply = <&reg_1p8v>;
-+		vcca-supply = <&reg_1p2v>;
-+		vcc-supply = <&reg_1p2v>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				sn65dsi86_in2: endpoint {
-+					remote-endpoint = <&dsi1_out>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				sn65dsi86_out2: endpoint {
-+					remote-endpoint = <&mini_dp_con_in2>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&pfc {
-+	i2c4_pins: i2c4 {
-+		groups = "i2c4";
-+		function = "i2c4";
-+	};
-+
-+	irq1_pins: irq1 {
-+		groups = "intc_ex_irq1_a";
-+		function = "intc_ex";
-+	};
- };
-
--- 
-2.43.0
+Best regards,
+Krzysztof
 
