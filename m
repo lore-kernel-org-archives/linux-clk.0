@@ -1,51 +1,63 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF0A73D9DB3;
-	Fri, 15 May 2026 17:23:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8610380FE7;
+	Fri, 15 May 2026 17:32:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778865790; cv=none; b=Ahw5wCJeYncSBzyNahQZizwIelVZJR8J/ikUDDJjzYXWjG2TC+TXWCooQEqD57EE7e071ie4xzLaI8N6JYAJR28f/0d6hlXPT20NkTXaUwTp8ZKjydeeH2kqN4LxwCVbltq0o/2YSyZTOr26ZAbKVjDBpMDDjFau2vZlIHOjG9I=
+	t=1778866355; cv=none; b=Ectb8KE3xmrdM7r4iJltqIj8Rv7d6nkkQ2mYj9RIEqUcQlzbKLsltkhCfp1XnjPuoN0p8MrYUsg4QWhoe+iq5j9+fKwIoQQEHFJ4KTXzkmISRFXAijTjXpBpGzvjLrQRxzHAOi/gl7gq4AMCjFXbQmJfBktNodAu6CtwAFRujRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778865790; c=relaxed/simple;
-	bh=NJbtkrvldJrUA2ASlYniPdQwFMjd8CvYOz7vTRRLKA0=;
+	s=arc-20240116; t=1778866355; c=relaxed/simple;
+	bh=+DB+r2QuZCt9cRXlZ6SZbjHw/zkrj85jxoOPFc8ej2c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kTQ9NvzgK5eZQ66/D+PPFZq+pTIKDoijcnltRxbn5+jFtdjdLCemv458NFZEUn8rkHiWWlAkdA0IlEdJUM/cyBTmcyxznURIA84uSbO9dP+WbQtqWzgClXpqk7esoccECPSgtwdrMMCNsDBvTlD/dk7cygHH6yYL+UXM81CePtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FD3967S5; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=YqdU/dlklA35BahOfYdey8Tny6kYAHmF4iODMzJa0lDzxpoiEDyigsGvD0bGV0LEwX8sgWkgcr3h/aCyKIT5jlNXPXx2V2wEDjiOX1vrK6Dw8vix9e/zErj3Q36fCmED8pClbZdUkwZXE6OyLHBGQF2zJn8l7LYY3YAOjIB0eBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oDIjNocx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FD3967S5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64C15C2BCB0;
-	Fri, 15 May 2026 17:23:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oDIjNocx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1299C2BCB3;
+	Fri, 15 May 2026 17:32:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778865790;
-	bh=NJbtkrvldJrUA2ASlYniPdQwFMjd8CvYOz7vTRRLKA0=;
+	s=k20201202; t=1778866354;
+	bh=+DB+r2QuZCt9cRXlZ6SZbjHw/zkrj85jxoOPFc8ej2c=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FD3967S5Y0Q8iN+/YzANF5+PypJyNWwU8fWoC3aWTNEhELobb+IVGiuiEUveI6pOS
-	 RJc0FmQ+iVdWOkJHb43aea2JazWZGkVwTn36CMTs/5nny8P3ZUipen3V0GWr+0E/Oz
-	 lzoM7MSKM13L5WG/7FDZ1Gl1HWpxRfJykZD+wEF7n4aefqG+R5hGBbZ/U47cpT08XB
-	 6mO8giTGKyBcL0irg8uMrKp2g3dwe/7HCxz/VguZBGTUnNEYPv0dW/F8CjIdzUImyT
-	 PA5pAAKaObsnYwad60X8komtqFn9m+/3F57Qnv9c4ByWiNAJILUQj+ysmGpngZ8E87
-	 rcnDu5MGNP2hg==
-Date: Fri, 15 May 2026 18:23:04 +0100
+	b=oDIjNocxi9GT9+5bJC32MLJccue9nzxCG9LlpQB34n1ZAH5ROOOSiGyRx/jriBtrH
+	 okdNB/ZwAxpY56i81tlQJXdDHs1I6WSOb/hd7OGB/0w9VksX9JBZDO3rRA1zr96A0k
+	 QQ8QkLsudDg/XmkXi7TUfoWmF9mlEAXwu+0qI58V/wxbfZzk7mpjQvLDd5DFUvSVwB
+	 jDlZ6RsZXM23jm9Cis6dwl2jMr5Tt5ZdMVgLuFPbycaVGgGVMzFWCjGOP3cHYLsekm
+	 GFHCY1TI6PAblaTJ3KWsaYRoRmQZAv+EG9FSqL3UnMLIWCHw77WYitgU6cSbBJbblf
+	 70xq+4VeGK+lg==
+Date: Fri, 15 May 2026 18:32:27 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Billy Tsai <billy_tsai@aspeedtech.com>
-Cc: Linus Walleij <linusw@kernel.org>, Tony Lindgren <tony@atomide.com>,
+To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Bartosz Golaszewski <brgl@kernel.org>, Lee Jones <lee@kernel.org>,
-	Ryan Chen <ryan_chen@aspeedtech.com>, patrickw3@meta.com,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org, BMC-SW@aspeedtech.com,
-	openbmc@lists.ozlabs.org, Andrew Jeffery <andrew@aj.id.au>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] dt-bindings: pinctrl: Add
- aspeed,ast2700-soc1-pinctrl
-Message-ID: <20260515-verify-awhile-cb0c72d49e91@spud>
-References: <20260515-pinctrl-single-bit-v3-0-e97da4312104@aspeedtech.com>
- <20260515-pinctrl-single-bit-v3-2-e97da4312104@aspeedtech.com>
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] dt-bindings: display: bridge: Document Renesas
+ R-Car V4H DSC bindings
+Message-ID: <20260515-fraying-trickle-7511a2eeaf44@spud>
+References: <20260515-rcar-du-dsc-v2-0-f6b9240a1240@ideasonboard.com>
+ <20260515-rcar-du-dsc-v2-2-f6b9240a1240@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -53,833 +65,164 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ovS5RWpK3acdRmpy"
+	protocol="application/pgp-signature"; boundary="BKUyMwCcAfsDfsPq"
 Content-Disposition: inline
-In-Reply-To: <20260515-pinctrl-single-bit-v3-2-e97da4312104@aspeedtech.com>
+In-Reply-To: <20260515-rcar-du-dsc-v2-2-f6b9240a1240@ideasonboard.com>
 
 
---ovS5RWpK3acdRmpy
+--BKUyMwCcAfsDfsPq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 15, 2026 at 05:37:38PM +0800, Billy Tsai wrote:
-> SoC1 in the AST2700 integrates its own pin controller responsible for
-> pin multiplexing and pin configuration.
+On Fri, May 15, 2026 at 10:56:15AM +0300, Tomi Valkeinen wrote:
+> From: Marek Vasut <marek.vasut+renesas@mailbox.org>
 >=20
-> The controller manages various peripheral functions such as eSPI, LPC,
-> VPI, SD, UART, I2C, I3C, PWM and others through SCU registers.
+> The Renesas DSC Display Stream Compression is a bridge embedded in the
+> Renesas R-Car V4H SoC. The bridge performs VESA DSC encoding of up to
+> 8k or 400 Mpixel/s .
 >=20
-> The binding reuses the standard pinmux and generic pin configuration
-> schemas and does not introduce custom Devicetree properties.
->=20
-> Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> [tomi.valkeinen: fix the example]
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 > ---
->  .../pinctrl/aspeed,ast2700-soc1-pinctrl.yaml       | 760 +++++++++++++++=
+>  .../bindings/display/bridge/renesas,dsc.yaml       | 96 ++++++++++++++++=
 ++++++
->  1 file changed, 760 insertions(+)
+>  1 file changed, 96 insertions(+)
 >=20
-> diff --git a/Documentation/devicetree/bindings/pinctrl/aspeed,ast2700-soc=
-1-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2700-s=
-oc1-pinctrl.yaml
+> diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,dsc=
+=2Eyaml b/Documentation/devicetree/bindings/display/bridge/renesas,dsc.yaml
 > new file mode 100644
-> index 000000000000..76944fd14e2c
+> index 000000000000..2918d592732b
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2700-soc1-pinct=
-rl.yaml
-> @@ -0,0 +1,760 @@
+> +++ b/Documentation/devicetree/bindings/display/bridge/renesas,dsc.yaml
+
+Filename matching the compatible please.
+
+pw-bot: changes-requested
+
+> @@ -0,0 +1,96 @@
 > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/pinctrl/aspeed,ast2700-soc1-pinctrl.y=
-aml#
+> +$id: http://devicetree.org/schemas/display/bridge/renesas,dsc.yaml#
 > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: ASPEED AST2700 SoC1 Pin Controller
+> +title: Renesas R-Car DSC Display Stream Compression
 > +
 > +maintainers:
-> +  - Billy Tsai <billy_tsai@aspeedtech.com>
+> +  - Marek Vasut <marek.vasut+renesas@mailbox.org>
 > +
-> +description:
-> +  The AST2700 features a dual-SoC architecture with two interconnected S=
-oCs,
-> +  each having its own System Control Unit (SCU) for independent pin cont=
-rol.
-> +  This pin controller manages the pin multiplexing for SoC1.
-> +
-> +  The SoC1 pin controller manages pin functions including eSPI, LPC and =
-I2C,
-> +  among others.
+> +description: |
+> +  This binding describes the VESA DSC Display Stream Compression encoder
+> +  embedded in the Renesas R-Car V4H SoC. The encoder supports all DSC1.1
+> +  encoding mechanisms, configurable bits-per-pixel, resolution up to 8k.
 > +
 > +properties:
 > +  compatible:
-> +    const: aspeed,ast2700-soc1-pinctrl
+> +    const: renesas,r8a779g0-dsc
+> +
 > +  reg:
 > +    maxItems: 1
 > +
-> +patternProperties:
-> +  '-state$':
-> +    description: |
-> +      Pin control state.
+> +  clocks:
+> +    maxItems: 1
 > +
-> +      If `function` is present, the node describes a pinmux state and mu=
-st
-> +      specify `groups`.
+> +  interrupts:
+> +    maxItems: 1
 > +
-> +      For pin configuration, exactly one of `groups` or `pins` must be
-> +      specified in each state node. Group-level configuration applies to=
- all
-> +      pins in the group. Pin-level configuration may be supplied in a
-> +      separate state node for individual pins; when both group-level and
-> +      pin-level configuration apply to the same pin, the pin-level
-> +      configuration takes precedence.
+> +  power-domains:
+> +    maxItems: 1
 > +
-> +    type: object
-> +    allOf:
-> +      - $ref: pinmux-node.yaml#
-> +      - $ref: pincfg-node.yaml#
-> +      - if:
-> +          required:
-> +            - function
-> +        then:
-> +          required:
-> +            - groups
-> +      - oneOf:
-> +          - required:
-> +              - groups
-> +          - required:
-> +              - pins
-> +    additionalProperties: false
+> +  resets:
+> +    maxItems: 1
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
 > +
 > +    properties:
-> +      function:
-> +        enum:
-> +          - ADC0
-> +          - ADC1
-
-It'd be nice if you could use the other enum format I think so that
-there's not 700 lines taken up by functions/groups/pins.
-
-Otherwise, I really don't like this approach but it seems to be standard
-on aspeed so whatever.
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-pw-bot: not-applicable
-
-Conor.
-
-
-> +          - ADC10
-> +          - ADC11
-> +          - ADC12
-> +          - ADC13
-> +          - ADC14
-> +          - ADC15
-> +          - ADC2
-> +          - ADC3
-> +          - ADC4
-> +          - ADC5
-> +          - ADC6
-> +          - ADC7
-> +          - ADC8
-> +          - ADC9
-> +          - AUXPWRGOOD0
-> +          - AUXPWRGOOD1
-> +          - CANBUS
-> +          - ESPI0
-> +          - ESPI1
-> +          - FSI0
-> +          - FSI1
-> +          - FSI2
-> +          - FSI3
-> +          - FWQSPI
-> +          - FWSPIABR
-> +          - FWWPN
-> +          - HBLED
-> +          - I2C0
-> +          - I2C1
-> +          - I2C10
-> +          - I2C11
-> +          - I2C12
-> +          - I2C13
-> +          - I2C14
-> +          - I2C15
-> +          - I2C2
-> +          - I2C3
-> +          - I2C4
-> +          - I2C5
-> +          - I2C6
-> +          - I2C7
-> +          - I2C8
-> +          - I2C9
-> +          - I2CF0
-> +          - I2CF1
-> +          - I2CF2
-> +          - I3C0
-> +          - I3C1
-> +          - I3C10
-> +          - I3C11
-> +          - I3C12
-> +          - I3C13
-> +          - I3C14
-> +          - I3C15
-> +          - I3C2
-> +          - I3C3
-> +          - I3C4
-> +          - I3C5
-> +          - I3C6
-> +          - I3C7
-> +          - I3C8
-> +          - I3C9
-> +          - JTAGM1
-> +          - LPC0
-> +          - LPC1
-> +          - LTPI
-> +          - MACLINK0
-> +          - MACLINK1
-> +          - MACLINK2
-> +          - MDIO0
-> +          - MDIO1
-> +          - MDIO2
-> +          - NCTS0
-> +          - NCTS1
-> +          - NCTS5
-> +          - NCTS6
-> +          - NDCD0
-> +          - NDCD1
-> +          - NDCD5
-> +          - NDCD6
-> +          - NDSR0
-> +          - NDSR1
-> +          - NDSR5
-> +          - NDSR6
-> +          - NDTR0
-> +          - NDTR1
-> +          - NDTR5
-> +          - NDTR6
-> +          - NRI0
-> +          - NRI1
-> +          - NRI5
-> +          - NRI6
-> +          - NRTS0
-> +          - NRTS1
-> +          - NRTS5
-> +          - NRTS6
-> +          - OSCCLK
-> +          - PCIERC
-> +          - PWM0
-> +          - PWM1
-> +          - PWM10
-> +          - PWM11
-> +          - PWM12
-> +          - PWM13
-> +          - PWM14
-> +          - PWM15
-> +          - PWM2
-> +          - PWM3
-> +          - PWM4
-> +          - PWM5
-> +          - PWM6
-> +          - PWM7
-> +          - PWM8
-> +          - PWM9
-> +          - QSPI0
-> +          - QSPI1
-> +          - QSPI2
-> +          - RGMII0
-> +          - RGMII1
-> +          - RMII0
-> +          - RMII0RCLKO
-> +          - RMII1
-> +          - RMII1RCLKO
-> +          - SALT0
-> +          - SALT1
-> +          - SALT10
-> +          - SALT11
-> +          - SALT12
-> +          - SALT13
-> +          - SALT14
-> +          - SALT15
-> +          - SALT2
-> +          - SALT3
-> +          - SALT4
-> +          - SALT5
-> +          - SALT6
-> +          - SALT7
-> +          - SALT8
-> +          - SALT9
-> +          - SD
-> +          - SGMII
-> +          - SGPM0
-> +          - SGPM1
-> +          - SGPS
-> +          - SIOONCTRLN0
-> +          - SIOONCTRLN1
-> +          - SIOPBIN0
-> +          - SIOPBIN1
-> +          - SIOPBON0
-> +          - SIOPBON1
-> +          - SIOPWREQN0
-> +          - SIOPWREQN1
-> +          - SIOPWRGD1
-> +          - SIOS3N0
-> +          - SIOS3N1
-> +          - SIOS5N0
-> +          - SIOS5N1
-> +          - SIOSCIN0
-> +          - SIOSCIN1
-> +          - SMON0
-> +          - SMON1
-> +          - SPI0
-> +          - SPI0ABR
-> +          - SPI0CS1
-> +          - SPI0WPN
-> +          - SPI1
-> +          - SPI1ABR
-> +          - SPI1CS1
-> +          - SPI1WPN
-> +          - SPI2
-> +          - SPI2CS1
-> +          - TACH0
-> +          - TACH1
-> +          - TACH10
-> +          - TACH11
-> +          - TACH12
-> +          - TACH13
-> +          - TACH14
-> +          - TACH15
-> +          - TACH2
-> +          - TACH3
-> +          - TACH4
-> +          - TACH5
-> +          - TACH6
-> +          - TACH7
-> +          - TACH8
-> +          - TACH9
-> +          - THRU0
-> +          - THRU1
-> +          - THRU2
-> +          - THRU3
-> +          - UART0
-> +          - UART1
-> +          - UART10
-> +          - UART11
-> +          - UART2
-> +          - UART3
-> +          - UART5
-> +          - UART6
-> +          - UART7
-> +          - UART8
-> +          - UART9
-> +          - USB2C
-> +          - USB2D
-> +          - USBUART
-> +          - VGA
-> +          - VPI
-> +          - WDTRST0N
-> +          - WDTRST1N
-> +          - WDTRST2N
-> +          - WDTRST3N
-> +          - WDTRST4N
-> +          - WDTRST5N
-> +          - WDTRST6N
-> +          - WDTRST7N
+> +      port@0:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description: R-Car DU input port
 > +
-> +      groups:
-> +        enum:
-> +          - ADC0
-> +          - ADC1
-> +          - ADC10
-> +          - ADC11
-> +          - ADC12
-> +          - ADC13
-> +          - ADC14
-> +          - ADC15
-> +          - ADC2
-> +          - ADC3
-> +          - ADC4
-> +          - ADC5
-> +          - ADC6
-> +          - ADC7
-> +          - ADC8
-> +          - ADC9
-> +          - AUXPWRGOOD0
-> +          - AUXPWRGOOD1
-> +          - CANBUS
-> +          - DI2C0
-> +          - DI2C1
-> +          - DI2C10
-> +          - DI2C11
-> +          - DI2C12
-> +          - DI2C13
-> +          - DI2C14
-> +          - DI2C15
-> +          - DI2C2
-> +          - DI2C3
-> +          - DI2C8
-> +          - DI2C9
-> +          - DSGPM0
-> +          - ESPI0
-> +          - ESPI1
-> +          - FSI0
-> +          - FSI1
-> +          - FSI2
-> +          - FSI3
-> +          - FWQSPI
-> +          - FWSPIABR
-> +          - FWWPN
-> +          - HBLED
-> +          - HVI3C0
-> +          - HVI3C1
-> +          - HVI3C12
-> +          - HVI3C13
-> +          - HVI3C14
-> +          - HVI3C15
-> +          - HVI3C2
-> +          - HVI3C3
-> +          - I2C0
-> +          - I2C1
-> +          - I2C10
-> +          - I2C11
-> +          - I2C12
-> +          - I2C13
-> +          - I2C14
-> +          - I2C15
-> +          - I2C2
-> +          - I2C3
-> +          - I2C4
-> +          - I2C5
-> +          - I2C6
-> +          - I2C7
-> +          - I2C8
-> +          - I2C9
-> +          - I2CF0
-> +          - I2CF1
-> +          - I2CF2
-> +          - I3C10
-> +          - I3C11
-> +          - I3C4
-> +          - I3C5
-> +          - I3C6
-> +          - I3C7
-> +          - I3C8
-> +          - I3C9
-> +          - JTAGM1
-> +          - LPC0
-> +          - LPC1
-> +          - LTPI
-> +          - LTPI_PS_I2C0
-> +          - LTPI_PS_I2C1
-> +          - LTPI_PS_I2C2
-> +          - LTPI_PS_I2C3
-> +          - MACLINK0
-> +          - MACLINK1
-> +          - MACLINK2
-> +          - MDIO0
-> +          - MDIO1
-> +          - MDIO2
-> +          - NCTS0
-> +          - NCTS1
-> +          - NCTS5
-> +          - NCTS6
-> +          - NDCD0
-> +          - NDCD1
-> +          - NDCD5
-> +          - NDCD6
-> +          - NDSR0
-> +          - NDSR1
-> +          - NDSR5
-> +          - NDSR6
-> +          - NDTR0
-> +          - NDTR1
-> +          - NDTR5
-> +          - NDTR6
-> +          - NRI0
-> +          - NRI1
-> +          - NRI5
-> +          - NRI6
-> +          - NRTS0
-> +          - NRTS1
-> +          - NRTS5
-> +          - NRTS6
-> +          - OSCCLK
-> +          - PE2SGRSTN
-> +          - PWM0
-> +          - PWM1
-> +          - PWM10
-> +          - PWM11
-> +          - PWM12
-> +          - PWM13
-> +          - PWM14
-> +          - PWM15
-> +          - PWM2
-> +          - PWM3
-> +          - PWM4
-> +          - PWM5
-> +          - PWM6
-> +          - PWM7
-> +          - PWM8
-> +          - PWM9
-> +          - QSPI0
-> +          - QSPI1
-> +          - QSPI2
-> +          - RGMII0
-> +          - RGMII1
-> +          - RMII0
-> +          - RMII0RCLKO
-> +          - RMII1
-> +          - RMII1RCLKO
-> +          - SALT0
-> +          - SALT1
-> +          - SALT10
-> +          - SALT11
-> +          - SALT12
-> +          - SALT13
-> +          - SALT14
-> +          - SALT15
-> +          - SALT2
-> +          - SALT3
-> +          - SALT4
-> +          - SALT5
-> +          - SALT6
-> +          - SALT7
-> +          - SALT8
-> +          - SALT9
-> +          - SD
-> +          - SGMII
-> +          - SGPM0
-> +          - SGPM1
-> +          - SGPS
-> +          - SIOONCTRLN0
-> +          - SIOONCTRLN1
-> +          - SIOPBIN0
-> +          - SIOPBIN1
-> +          - SIOPBON0
-> +          - SIOPBON1
-> +          - SIOPWREQN0
-> +          - SIOPWREQN1
-> +          - SIOPWRGD1
-> +          - SIOS3N0
-> +          - SIOS3N1
-> +          - SIOS5N0
-> +          - SIOS5N1
-> +          - SIOSCIN0
-> +          - SIOSCIN1
-> +          - SMON0
-> +          - SMON1
-> +          - SPI0
-> +          - SPI0ABR
-> +          - SPI0CS1
-> +          - SPI0WPN
-> +          - SPI1
-> +          - SPI1ABR
-> +          - SPI1CS1
-> +          - SPI1WPN
-> +          - SPI2
-> +          - SPI2CS1
-> +          - TACH0
-> +          - TACH1
-> +          - TACH10
-> +          - TACH11
-> +          - TACH12
-> +          - TACH13
-> +          - TACH14
-> +          - TACH15
-> +          - TACH2
-> +          - TACH3
-> +          - TACH4
-> +          - TACH5
-> +          - TACH6
-> +          - TACH7
-> +          - TACH8
-> +          - TACH9
-> +          - THRU0
-> +          - THRU1
-> +          - THRU2
-> +          - THRU3
-> +          - UART0
-> +          - UART1
-> +          - UART10
-> +          - UART11
-> +          - UART2
-> +          - UART3
-> +          - UART5
-> +          - UART6
-> +          - UART7
-> +          - UART8
-> +          - UART9
-> +          - USB2CD
-> +          - USB2CH
-> +          - USB2CU
-> +          - USB2CUD
-> +          - USB2DD
-> +          - USB2DH
-> +          - USBUART
-> +          - VGA
-> +          - VPI
-> +          - WDTRST0N
-> +          - WDTRST1N
-> +          - WDTRST2N
-> +          - WDTRST3N
-> +          - WDTRST4N
-> +          - WDTRST5N
-> +          - WDTRST6N
-> +          - WDTRST7N
+> +      port@1:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description: R-Car DSI output port
 > +
-> +      pins:
-> +        enum:
-> +          - A14
-> +          - A15
-> +          - A18
-> +          - A19
-> +          - A21
-> +          - A22
-> +          - A23
-> +          - A24
-> +          - A25
-> +          - A26
-> +          - A6
-> +          - A7
-> +          - A8
-> +          - AA12
-> +          - AA13
-> +          - AA14
-> +          - AA15
-> +          - AA16
-> +          - AA17
-> +          - AA18
-> +          - AA20
-> +          - AA21
-> +          - AA22
-> +          - AA23
-> +          - AA24
-> +          - AA25
-> +          - AA26
-> +          - AB15
-> +          - AB16
-> +          - AB17
-> +          - AB18
-> +          - AB19
-> +          - AB20
-> +          - AB21
-> +          - AB22
-> +          - AB23
-> +          - AB24
-> +          - AB25
-> +          - AB26
-> +          - AC15
-> +          - AC16
-> +          - AC17
-> +          - AC18
-> +          - AC19
-> +          - AC20
-> +          - AC22
-> +          - AC24
-> +          - AC25
-> +          - AC26
-> +          - AD15
-> +          - AD16
-> +          - AD17
-> +          - AD18
-> +          - AD19
-> +          - AD20
-> +          - AD22
-> +          - AD25
-> +          - AD26
-> +          - AE16
-> +          - AE17
-> +          - AE18
-> +          - AE19
-> +          - AE20
-> +          - AE21
-> +          - AE23
-> +          - AE25
-> +          - AE26
-> +          - AF16
-> +          - AF17
-> +          - AF18
-> +          - AF19
-> +          - AF20
-> +          - AF21
-> +          - AF23
-> +          - AF25
-> +          - AF26
-> +          - B10
-> +          - B11
-> +          - B12
-> +          - B13
-> +          - B14
-> +          - B15
-> +          - B16
-> +          - B18
-> +          - B19
-> +          - B21
-> +          - B22
-> +          - B23
-> +          - B24
-> +          - B25
-> +          - B26
-> +          - B6
-> +          - B7
-> +          - B8
-> +          - B9
-> +          - C10
-> +          - C11
-> +          - C12
-> +          - C13
-> +          - C14
-> +          - C15
-> +          - C16
-> +          - C17
-> +          - C18
-> +          - C19
-> +          - C20
-> +          - C23
-> +          - C26
-> +          - C6
-> +          - C7
-> +          - C8
-> +          - C9
-> +          - D10
-> +          - D12
-> +          - D14
-> +          - D15
-> +          - D19
-> +          - D20
-> +          - D24
-> +          - D26
-> +          - D7
-> +          - D8
-> +          - D9
-> +          - E10
-> +          - E11
-> +          - E12
-> +          - E13
-> +          - E14
-> +          - E26
-> +          - E7
-> +          - E8
-> +          - E9
-> +          - F10
-> +          - F11
-> +          - F12
-> +          - F13
-> +          - F14
-> +          - F26
-> +          - F7
-> +          - F8
-> +          - F9
-> +          - G10
-> +          - G11
-> +          - G7
-> +          - G8
-> +          - G9
-> +          - H10
-> +          - H11
-> +          - H7
-> +          - H8
-> +          - H9
-> +          - J10
-> +          - J11
-> +          - J12
-> +          - J13
-> +          - J9
-> +          - K12
-> +          - K13
-> +          - L12
-> +          - M13
-> +          - M14
-> +          - M15
-> +          - M16
-> +          - N13
-> +          - N14
-> +          - N15
-> +          - N25
-> +          - N26
-> +          - P13
-> +          - P14
-> +          - P25
-> +          - P26
-> +          - R14
-> +          - R25
-> +          - R26
-> +          - T23
-> +          - T24
-> +          - U21
-> +          - U22
-> +          - U25
-> +          - U26
-> +          - V14
-> +          - V16
-> +          - V17
-> +          - V18
-> +          - V19
-> +          - V20
-> +          - V21
-> +          - V22
-> +          - V23
-> +          - V24
-> +          - W14
-> +          - W16
-> +          - W17
-> +          - W18
-> +          - W20
-> +          - W21
-> +          - W22
-> +          - W25
-> +          - W26
-> +          - Y11
-> +          - Y15
-> +          - Y16
-> +          - Y17
-> +          - Y18
-> +          - Y20
-> +          - Y21
-> +          - Y22
-> +          - Y23
-> +          - Y24
-> +          - Y25
-> +          - Y26
-> +
-> +      drive-strength:
-> +        enum: [4, 8, 12, 16]
-> +
-> +      bias-disable: true
-> +      bias-pull-up: true
-> +      bias-pull-down: true
+> +    required:
+> +      - port@0
+> +      - port@1
 > +
 > +required:
 > +  - compatible
 > +  - reg
+> +  - clocks
+> +  - interrupts
+> +  - power-domains
+> +  - resets
+> +  - ports
 > +
-> +allOf:
-> +  - $ref: pinctrl.yaml#
-> +
-> +additionalProperties: false
+> +unevaluatedProperties: false
 > +
 > +examples:
 > +  - |
-> +    pinctrl@400 {
-> +        compatible =3D "aspeed,ast2700-soc1-pinctrl";
-> +        reg =3D <0x400 0x2A0>;
-> +        sgpm0-state {
-> +            function =3D "SGPM0";
-> +            groups =3D "SGPM0";
+> +    #include <dt-bindings/clock/r8a779g0-cpg-mssr.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/power/r8a779g0-sysc.h>
+> +
+> +    dsc@feb8d000 {
+
+Speaking of fixing the example, should this not be "decoder" or
+"bridge"?
+Not a big deal though.
+With the changed filename
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+
+Cheers,
+Conor.
+
+> +        compatible =3D "renesas,r8a779g0-dsc";
+> +        reg =3D <0xfeb8d000 0x400>;
+> +        interrupts =3D <GIC_SPI 559 IRQ_TYPE_LEVEL_HIGH>;
+> +        clocks =3D <&cpg CPG_MOD 2819>;
+> +        power-domains =3D <&sysc R8A779G0_PD_ALWAYS_ON>;
+> +        resets =3D <&cpg 2819>;
+> +
+> +        ports {
+> +            #address-cells =3D <1>;
+> +            #size-cells =3D <0>;
+> +
+> +            port@0 {
+> +                reg =3D <0>;
+> +                dsc_in_dsi1: endpoint {
+> +                    remote-endpoint =3D <&du_out_dsi1>;
+> +                };
+> +            };
+> +
+> +            port@1 {
+> +                reg =3D <1>;
+> +                dsc_out_dsi1: endpoint {
+> +                    remote-endpoint =3D <&dsi1_in>;
+> +                };
+> +            };
 > +        };
 > +    };
+> +...
 >=20
 > --=20
-> 2.34.1
+> 2.43.0
 >=20
 
---ovS5RWpK3acdRmpy
+--BKUyMwCcAfsDfsPq
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCagdWeAAKCRB4tDGHoIJi
-0k38APwKCap7FFz0S+ESoR6mGIuy6cupCZ+wkK/QVhbrPjzBpwEA8T3MG4W2wuhn
-D2ugJEkcjUVE9MTtzfohkfKtpTORfAM=
-=yfYj
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCagdYqwAKCRB4tDGHoIJi
+0tgFAQCWZr0VyJbUsmrykeSLd46OUSC5XEhD7J2xXWqd9lUphgEAhFyus39c0hs/
+Rg7UtXW22xP/EamsRO2R+icGF9YqcQg=
+=1aTv
 -----END PGP SIGNATURE-----
 
---ovS5RWpK3acdRmpy--
+--BKUyMwCcAfsDfsPq--
