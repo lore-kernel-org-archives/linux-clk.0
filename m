@@ -1,97 +1,198 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D433B8D48
-	for <linux-clk@vger.kernel.org>; Fri, 15 May 2026 08:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD842D5941;
+	Fri, 15 May 2026 08:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778832447; cv=none; b=U7CIxvpeY8deBOWuFf0IdNyqwncJXbekevexbgcd1zwWwxmc1VU3+lQc2IQzsgYsi6oe6blSDlP4Jpi72BdI4JUN1y5Bn/scIDKGYhIBieOK4N/sHh0iaU/H/qKRjomSAsBHojbqHjv3jzqCgiVrnowmnPtox1A+ZCi30xIDBno=
+	t=1778832546; cv=none; b=kjmI2jNLgStrVQnyjnB0C/tuOCJWfzDLPcvzqZpZNolNHhNBlDV3MQwAuR16FoJg8NQZsc6LJ1QD2/aGQgyB3/VPEUC3ubyJZCJrVQ5uyXkPK+ts65g8G37CS0fz14WzcrRceMPFftiXd+Qit71bUIfWNPkvuq82sxtVai0auBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778832447; c=relaxed/simple;
-	bh=9V6I4GZCvQ4hrO105EvkXgSgt7ay4sYDZs2i7Ub+jlc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cqS8EjpTrYhn3prSoV78LnuO+08SOQPu5bCJ4l6Dmjvo5C8m6k9M04jkBJLhaiVPzwoiQT3wBCAc6ofTTQNcSmOJ78j2jL9zSgz2KMQU3EPMD7Y1DQCnob/sOzvGYRDSnFletLJZvAGXxTEFsSbGU6WAKbRp5L60nHnB1GEAfWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Gyufspwc; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1778832546; c=relaxed/simple;
+	bh=Bg1YT47zyTBWhwh0sSsEf1oPFueOBupCLeeynnys2HI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ozpem2nP5nE+d3vFJRZB6psIpsmK1SJWKv8FSBP8qUXVlKc/B48uHL3A7H94soJwe8KxvDUKSH2pyRDGQ/1+PViOZLYQBvY5nF/rka4+xuz3Z6Y5TcFpFkyBV4RYk2QxQyejXYICxNY+Kl0XaT13MM9Y+Ij838daNQmZbndxVME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vNTOm601; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Gyufspwc"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-43d75312379so420186f8f.1
-        for <linux-clk@vger.kernel.org>; Fri, 15 May 2026 01:07:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1778832445; x=1779437245; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9V6I4GZCvQ4hrO105EvkXgSgt7ay4sYDZs2i7Ub+jlc=;
-        b=GyufspwcjQNRqQnWS5peKqpJq9HY2hgMsYqr+16b+YUYEhBJI773Tf52WJoLzKBdmo
-         jS190mLk61q5433HhZlKQSdgvoHjG4pa8oLAGwbkuTDvMTnoGqrgM9EeWH7MFGWt8iGx
-         5XKJk0WnCDVK/32mdjx43Up1QD/WFiJzi7TDMPTj2ZNIzyD7CTzQXu7QD1Fb7U/uV39N
-         ZA4vQ3JLmOMCrkiqYzVa5F60coZ+UVLBBZfDi9aoLbdHyexYUoHLRXWUR5gfXvCdPqy+
-         EXAaqsttEKtKrlx6QZPxH1+NekIUrQISM0W+XTtew7QbG5bY4QZC0oeAl14/WhFkmnDi
-         Qt4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778832445; x=1779437245;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9V6I4GZCvQ4hrO105EvkXgSgt7ay4sYDZs2i7Ub+jlc=;
-        b=obfL4knCuY28UkJS4RaXiAVjV1RRJXWoZ63szckr6VrMkXFiMgkX24EUJJ5pUUoLCC
-         lsZTqS97AYRzg2bJoTjo0CJt55QK61IXzmWlMgD9yuOEtjFPtL0afg6ITUSoJ9dD2fjF
-         SfdPdGM2ljK4xoEZEoDUGeXT3D5HNCG2pjH9Rlx2xMgupufjucHOpRY3QYDScPQ+TXqY
-         +gvk7mIhvU+djMKTYB2jxeoKaIXpWR5Xt/iUbhN6lfEWSGo2eDoZjWfYZKCmp7sM19zr
-         DL70P5yrJbQf1YAMsfj4qWv3ajtXEY8cMIhyGBmADOwga77BZWZQ2JeMVHnIs+vo/ImG
-         FwOg==
-X-Forwarded-Encrypted: i=1; AFNElJ/zTBNCJPLj0uucgu0eIHu0WxU6v2A0TZafWZgDEoQyU+ypPFWGHwYPbr6hxkCqLnMdf7yPbUcRYmA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAo9Fd69KjrYjWLz/ZB4kmrYR+51hxN/6Y5xLroFkCeE5BeAI8
-	KNgRrUzu5E8Z8bGmHvvhN+0+tKihWAdq+SgR+sDvZfLyHgQT9FYhdEHq9aWFXZywAn4=
-X-Gm-Gg: Acq92OEgSeOThN+eHi19OuY4iS5htlv9616T4pBMjAubsdWvejHdDEMz10evjpGp8ow
-	HVq4aK3rvMollq6SfgdSn786QIBX4PD5U2CZN/Ga3cA4Rz2HLwvGOnXTcnlht2OoI0mINUOBPNB
-	jB8fzpccRHeuBunV4XsuV4ym71BQHBm4q7SCpnsXhlUgqJZMi1sYcOwaKWf4uE/hLiQXuTOuxE9
-	D3KBaqIPow71GPn8v60gIbPSi50lrfkkB2QGls6tkyX6sCwBzDe1MWTKuHZLeFGQTzy7KHaLsCe
-	5uj7D08wZwNjSJOb9sMTN8FV++8BnN8S+y+9tvBi1whvPOPULlrHrJ5Q5vbq0wvi6+q1PztBE9S
-	7YBjGSoOwElHUvlFv+Erb4T/2e4iuOg2vQyvmdlV984CLIyDu1dTkZ3KX1BFt2PEmhNXiaaoHkc
-	sW3t/93tAE3PHTTsGK6BpBBfvmQck6XneaIWPmlKXMDLs=
-X-Received: by 2002:a05:600c:5010:b0:486:faa8:9e4 with SMTP id 5b1f17b1804b1-48fe5388407mr35383865e9.12.1778832444691;
-        Fri, 15 May 2026 01:07:24 -0700 (PDT)
-Received: from [10.11.12.109] ([79.115.63.228])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48feb029180sm15226925e9.4.2026.05.15.01.07.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 May 2026 01:07:24 -0700 (PDT)
-Message-ID: <cf52c805-a08d-4184-8520-4aa126360b6c@linaro.org>
-Date: Fri, 15 May 2026 11:07:20 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vNTOm601"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70295C2BCB0;
+	Fri, 15 May 2026 08:09:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1778832546;
+	bh=Bg1YT47zyTBWhwh0sSsEf1oPFueOBupCLeeynnys2HI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vNTOm601qZQyM9NgdondIjlzH01Q1CG7YdS5AgL6NV15huyEn/G5DKJSeDw1NzIVu
+	 thjZF1bzS4pQhwkwA07lyUn25QBWDIqArSxr7+EoJ4IAjJKohxBLtRQ8JCqP/A684b
+	 p9aoJuB8si12qsbvVcaL8BDgsV8eaIybycR9kQv3qpRKmTIcVhyDFxiZc2H2oiJpF2
+	 Trq2LzeONPJPe8tcuiejcDJMBsDW+ioARKNuXmm46Bali1i87BpDyBy0/1GBA/+jxH
+	 8LSFT7lLUZHSTQMgkjRv3Fh0+gDzIQ0Y3kcwg4RDhyxX8IQB3cT/2dBeCC7+JbFw0n
+	 1pkY+tlnELCkQ==
+Date: Fri, 15 May 2026 10:09:03 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Jian Hu <jian.hu@amlogic.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Xianwei Zhao <xianwei.zhao@amlogic.com>, Kevin Hilman <khilman@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 02/10] dt-bindings: clock: Add Amlogic A9 PLL clock
+ controller
+Message-ID: <20260515-subtle-sepia-tuatara-cfee3d@quoll>
+References: <20260511-b4-a9_clk-v1-0-41cb4071b7c9@amlogic.com>
+ <20260511-b4-a9_clk-v1-2-41cb4071b7c9@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/6] firmware: samsung: acpm: TMU support and cleanups
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Lee Jones <lee@kernel.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- peter.griffin@linaro.org, jyescas@google.com, kernel-team@android.com,
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-References: <20260506-acpm-tmu-helpers-v1-0-a9cd5daf8355@linaro.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20260506-acpm-tmu-helpers-v1-0-a9cd5daf8355@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260511-b4-a9_clk-v1-2-41cb4071b7c9@amlogic.com>
 
-Hi,
+On Mon, May 11, 2026 at 08:47:24PM +0800, Jian Hu wrote:
+> Add the PLL clock controller dt-bindings for the Amlogic A9 SoC family.
+> 
+> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+> ---
+>  .../bindings/clock/amlogic,a9-pll-clkc.yaml        | 110 +++++++++++++++++++++
+>  include/dt-bindings/clock/amlogic,a9-pll-clkc.h    |  55 +++++++++++
+>  2 files changed, 165 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/amlogic,a9-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a9-pll-clkc.yaml
+> new file mode 100644
+> index 000000000000..4ee6013ba1a1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/amlogic,a9-pll-clkc.yaml
+> @@ -0,0 +1,110 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +# Copyright (C) 2026 Amlogic, Inc. All rights reserved
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/amlogic,a9-pll-clkc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Amlogic A9 Series PLL Clock Controller
+> +
+> +maintainers:
+> +  - Neil Armstrong <neil.armstrong@linaro.org>
+> +  - Jerome Brunet <jbrunet@baylibre.com>
+> +  - Jian Hu <jian.hu@amlogic.com>
+> +  - Xianwei Zhao <xianwei.zhao@amlogic.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - amlogic,a9-gp0-pll
+> +      - amlogic,a9-hifi0-pll
+> +      - amlogic,a9-hifi1-pll
+> +      - amlogic,a9-mclk0-pll
+> +      - amlogic,a9-mclk1-pll
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: pll input oscillator gate
+> +      - description: fixed input clock source for mclk_sel_0
+> +      - description: u3p2pll input clock source for mclk_sel_0 (optional)
 
-I'm going to resend this as it seems sashiko couldn't apply it:
-https://sashiko.dev/#/patchset/20260506-acpm-tmu-helpers-v1-0-a9cd5daf8355%40linaro.org
+Second clock is also optional. Drop "(optional)" comment, just
+confusing.
 
-Cheers,
-ta
+> +    minItems: 1
+> +
+> +  clock-names:
+> +    items:
+> +      - const: in0
+> +      - const: in1
+> +      - const: in2
+
+Pretty pointless names, drop property.
+
+> +    minItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - '#clock-cells'
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - amlogic,a9-mclk0-pll
+> +              - amlogic,a9-mclk1-pll
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          maxItems: 3
+
+No, minItems instead. maxItems is already 3, so what is the point of
+redefining it?
+
+> +
+> +        clock-names:
+> +          maxItems: 3
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - amlogic,a9-gp0-pll
+> +              - amlogic,a9-hifi0-pll
+> +              - amlogic,a9-hifi1-pll
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          maxItems: 1
+> +
+> +        clock-names:
+> +          maxItems: 1
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    apb4 {
+
+soc
+
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        clock-controller@8200 {
+> +            compatible = "amlogic,a9-gp0-pll";
+> +            reg = <0x0 0x8200 0x0 0x20>;
+> +            #clock-cells = <1>;
+> +            clocks = <&scmi_clk 0>;
+> +            clock-names = "in0";
+> +        };
+> +
+> +        clock-controller@8330 {
+> +            compatible = "amlogic,a9-mclk0-pll";
+> +            reg = <0x0 0x8330 0x0 0x14>;
+> +            #clock-cells = <1>;
+> +            clocks = <&scmi_clk 4>,
+> +                     <&scmi_clk 8>;
+> +            clock-names = "in0", "in1";
+
+One example is enough, you have exactly the same properties.
+
+
+Best regards,
+Krzysztof
 
