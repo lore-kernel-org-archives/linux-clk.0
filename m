@@ -1,126 +1,170 @@
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC3135AC1D
-	for <linux-clk@vger.kernel.org>; Fri, 15 May 2026 07:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42E73E92B7
+	for <linux-clk@vger.kernel.org>; Fri, 15 May 2026 07:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778831368; cv=none; b=hsXOX8CNbaWiN2ApiIvyNsW9h9WdsOp9rKcQle1hK2j0uwSGL7O+ArEx/43IvvxgFh+EvVGOjquIdnCdmT2eeZ3TQT7xIkxh/c32+4PZshxuZinKTeomneePqlho3GDXomjy91bf7II1V7CMXXNA68PdT26vBnCBqsaEQAVtAzA=
+	t=1778831788; cv=none; b=IIDpoLfZ0VKIT/yGJaBc4QGlvwAD1VnYjkRjf2ceOX3AGcHVbKT4cgtCG12E+2ZigAC3mqJUFp8ZuEPMIBXAIJulWk0Ub9uitJ7t6Ldw/QVMRBZfLGi53QkJN6TSMDTpdekFXoBYiDkIXGq1WBJgSGYEK0cnXMdpdeWZsqB/jAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778831368; c=relaxed/simple;
-	bh=IF78aL4qhYcYFoQ/xoUYLUDn+1jiumlt7gMiBumVb88=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pbIZjT+GSx81ff+YaAlugzTzrZ8l2rB3XoiOpnhAXWhAZWvsDdMFzfJQbflT9W15u33Cod1Sy+Q7Gi68jTh7kt2VuUmh7XxN5qxOb4mQ1CS337WNCZwde8eiJIvJCD8zKBLyb4ItSbMhakWypDqvyi+GJkKZQiUFevxa1H8eCpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-57512b86273so5439000e0c.3
-        for <linux-clk@vger.kernel.org>; Fri, 15 May 2026 00:49:27 -0700 (PDT)
+	s=arc-20240116; t=1778831788; c=relaxed/simple;
+	bh=Jqx/gqWShhJ+18Tlq/ec/Xd+/qJ5jHenCuDTIMvA44s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KGzZk7DB0XN3XB9XH+43zeL3qe2CulImaFgOsspP2bsYlqR4PhB/1OSG7us70dlLqNknk0IqG14zR5r5gOqJszABnl/9Yym12HMyAYyyssqOLh/Dp6S3AlwgQNUbJmI+vUq1Gf9gRvd90q+jcwElv7LOTlAw/beg9VLgHLGWNXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UdM2fl5t; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UdM2fl5t"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-488b0e1b870so146149485e9.2
+        for <linux-clk@vger.kernel.org>; Fri, 15 May 2026 00:56:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1778831785; x=1779436585; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nE9mrH0UhzecibkTC58SxCDMEGe2+PqMAu5GxokQyLA=;
+        b=UdM2fl5tMOQO5s8H+YEBNJ6CaY15odFcoiWqlbbE1QJI3gIfRVt9NZ9T7H2YCuiuNE
+         bWFV9tC8lGTNhw2N4LZ41GY4dvvy8K0+KDq/wQVb6yWdvLpvjPvx4AenUwRxRKXnLanQ
+         kYi+jiV9g2R+LxXZWv77QLeNc9tze8esjwdbMwvz8SrvgN89X8jxZX4TzFzviSPLOror
+         Pr6LFfSWUeagmN67NbwTnNpbi2GPORZh7W2rb2nhgwBAtW8ppDOHlJ7Cvd5ZLWDAERI8
+         sFbg2nkEb1eR8PuKd27RYjMf7pbhVcguMYPQKSo0bCzR+rdRqW7gDIUYfMe9I4qzXemz
+         LBcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778831366; x=1779436166;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eAZHu6XpvwN5l5f2FSQxtIsJfHFz80+bclBZd6bS4os=;
-        b=LZDBlyfi2sifcWfGy/shw8Usd1LzYTBkG6qF2/eRbO+3kc3F6hmUKQYd7q76gzX/Ed
-         lgYYD7/ze5cTeifvPFowtONzVBIgVcu7EKLnoScMY/EahS970gjxgeXgbSIOvW3wD/AD
-         KXk9QIArL1C2BWIgKR2wbO/7Z5m++xjzLh/URnmwgecvD2nR8CiZHSSct94pv2eR5iMe
-         OFbrVkjLBbgY2QmaQXCo6CfXSghl5aB569zH5R5QngdBczNqjaFbEURZHshL4/uSGodE
-         uanTKxXDIU0/hRIHc+Qibmer3TPWyC4Gp13N2Jm6zGD6TDD7Y+VEYbypfmPgBxORfOiP
-         m1iQ==
-X-Forwarded-Encrypted: i=1; AFNElJ+Fcmh/z43+PIOb+aB06yWpK0oES5wzMoQULf0i3XGA6uP1gsmavw7rEehhbxMzcfq6XKYUURQmnpQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2dAO8bgkocFZLZQ24pgXM5GXcah4ycHuO3ZHpPTrl41gCdOrv
-	9jvSfFhTqpVjpo02VMLFu7QLBDKkppOOlmbos/jw9v6FVeOPyGm3DNZHQAe8Ynro
-X-Gm-Gg: Acq92OFthuhwHbBlxCx56UoPFfQoVn48mH6aDpM2we86fdqg57IPA6A2bvi4kWo07hG
-	0atf3nR25ocrYgHJAxVmBR2KyJklo/ZA3W+FZmHKIvBf2HTHwqobOW6VQqALCpyQ04HCqzV5uZV
-	xXjh2fNKSocM3mzNMlOHf1kxCtuB+3st/vwGeHiwgmbFtMByjZkCBzrsLKqIRYRUsTJ3HRZzmHr
-	nthoF0QfI5Nj+PtutKEeTCVw0x0dONst+g3LL7CM6id1lPhlVafmBr89gnuKPs09iEg1pj9XGdb
-	vzbP9YPFE+kPYKCWVEUEf09zRcsalfiic4blsG1dVobABLZE/J0LkAxYLjOs0d0TgimL0v+uTlb
-	u1UbmVvfTeJ8v2mjZ4K1qLPM0dR94uHyqbeSyUUs2IiuLoCKX3HyPDtxsHYA+9EykF08PyL+o2Z
-	s4TfbAWmHgG8MwTdZJ8wLt9PCDREEpSyLI1YxKFpq0NMwkMYAoLyDVtJUW6gwF
-X-Received: by 2002:a05:6122:3405:b0:575:e7e2:9c31 with SMTP id 71dfb90a1353d-5760c0ab5a5mr1725266e0c.10.1778831366487;
-        Fri, 15 May 2026 00:49:26 -0700 (PDT)
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5760fa5bfb6sm819083e0c.10.2026.05.15.00.49.25
-        for <linux-clk@vger.kernel.org>
+        d=1e100.net; s=20251104; t=1778831785; x=1779436585;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nE9mrH0UhzecibkTC58SxCDMEGe2+PqMAu5GxokQyLA=;
+        b=QKvoZanbpwU/TCAAEwe2WvW1/TKXFz3bImzkrblFWOw8CNfo9S3bqSLIjHAdN6+X5u
+         TuY0EbR1vCN5tyTQQfi7wZHQbF/VfCgyYdc+oamb4Pb229S8PuV85/5Jvkw+nUeUo1vn
+         RhWLUTGF49b5xRRvjronyytcvEKBycOrZ5GykFHt0t1+tZ56fj+sYKr2DUuJw/SYYXpv
+         +NgyNcQH5hkC5zdYkGN2tmq5nIpRGFvQubpoTyUaZX38Ew6fgpyQmi1hB9dEoLCHbJyj
+         29FgsX6r6XahjE3+sQRKyUlphZq+qU8Xq4gUg/eFeT9+S9qxH9fxdRD7sbkT3iFrmCjj
+         qW5Q==
+X-Forwarded-Encrypted: i=1; AFNElJ/etLI1/Bg2Y0/ZyuA/9sBKOl9f2bI5WRpf3jlX0YdYoP6cWUZuWzj18G2S3M3BorRpJ1pOrCjG8iw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZm3o0/7Tdon1uQxewyNCHhtYPTpu8EwuVRRsJc6HbWih6ID9Y
+	p1EI6fsx5oBrnzgvUr47ZMiV7MDjAf6yAZwepL79OqyuOKp2kDUi9RTT3UbKtecft7g=
+X-Gm-Gg: Acq92OFXodkWG8sisbjFirBc7oi4QNoj1PA3ZVKPeCoaOvfTZ2h/JT0aLYj4BvvsrL4
+	7y058X+WPj2fq8YFqqJl9uiaY7d2/zuhR2JxXVmWT0EPCyCIGnkFIeYoqTUrTSCVSCgQs6WYGJc
+	E06uKp4y26n6lWxtWYDohWRsMKMaIYs0j+c7wDK/D4xoahe2GdQvZDVykvUHVo1WPrTtNaUc85h
+	4xySef0xlGxQpYZ8d4tJgA3gkjM/oYB0eJwuhluONbQNAQ+3IblpBEc1JOsrgGXgO5qSXBWnf8O
+	8fHFOknDVXObBOqexevxtR9fgj+5qV9N7oQFTvA83RxKvXlvyBWf29igOm1f7E/6FoA9SDEwQam
+	nkkVNYFhYWb6fXc3NO7Al/LcfimfoHx3NmnZ+tCFEGddh0CaNs1PArC8+KyfNnC89XqvVZNS/ps
+	jXyfIVKqScqIphkw2Bo/rcnkTUX2kQdRA2
+X-Received: by 2002:a05:600c:6992:b0:48f:e230:2a20 with SMTP id 5b1f17b1804b1-48fe662a1b2mr36300395e9.31.1778831785070;
+        Fri, 15 May 2026 00:56:25 -0700 (PDT)
+Received: from [10.11.12.109] ([79.115.63.228])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48fe4c88e5asm43645835e9.6.2026.05.15.00.56.23
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 May 2026 00:49:25 -0700 (PDT)
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-63127c440ccso5418467137.3
-        for <linux-clk@vger.kernel.org>; Fri, 15 May 2026 00:49:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ/f+D2Vk6gZDWi53N5i4K3PHVbHapY65dSeirpeJorWVGwpKkUWEgU0HYNv/iE1NpT9JBOi5Nyfpr4=@vger.kernel.org
-X-Received: by 2002:a05:6102:3f05:b0:62e:63e8:427b with SMTP id
- ada2fe7eead31-63a39a5f9e4mr1494077137.0.1778831365156; Fri, 15 May 2026
- 00:49:25 -0700 (PDT)
+        Fri, 15 May 2026 00:56:24 -0700 (PDT)
+Message-ID: <a55690fc-7727-401d-9b3c-06bf3c2852d0@linaro.org>
+Date: Fri, 15 May 2026 10:56:20 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260514-rcar-du-dsc-v1-0-d65f7a9e9841@ideasonboard.com> <20260514-rcar-du-dsc-v1-3-d65f7a9e9841@ideasonboard.com>
-In-Reply-To: <20260514-rcar-du-dsc-v1-3-d65f7a9e9841@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 15 May 2026 09:49:14 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVTgQp9WRiFpLX+pP7kOGF2v6oButALPu1B8QkYhVyvJA@mail.gmail.com>
-X-Gm-Features: AVHnY4KQ6u1JetcDt3qGv1sa7SAF13W-c5qtL3drtJoKYhKLpQQVXnl4eLgch0w
-Message-ID: <CAMuHMdVTgQp9WRiFpLX+pP7kOGF2v6oButALPu1B8QkYhVyvJA@mail.gmail.com>
-Subject: Re: [PATCH 3/5] drm/rcar-du: dsc: Add rudimentary Renesas R-Car V4H
- DSC driver
-To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Marek Vasut <marek.vasut+renesas@mailbox.org>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/6] firmware: samsung: acpm: Add TMU protocol support
+To: Alexey Klimov <alexey.klimov@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Lee Jones <lee@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ peter.griffin@linaro.org, jyescas@google.com, kernel-team@android.com,
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+References: <20260506-acpm-tmu-helpers-v1-0-a9cd5daf8355@linaro.org>
+ <20260506-acpm-tmu-helpers-v1-5-a9cd5daf8355@linaro.org>
+ <DIBOWQYHOPOU.3PCLCL8030WRL@linaro.org>
+ <806da86b-45b7-43cc-b364-97bade8f4041@linaro.org>
+ <DIFVKM72KZDI.14EVGUMQ0NV9S@linaro.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <DIFVKM72KZDI.14EVGUMQ0NV9S@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Tomi,
 
-On Thu, 14 May 2026 at 14:25, Tomi Valkeinen
-<tomi.valkeinen+renesas@ideasonboard.com> wrote:
-> From: Marek Vasut <marek.vasut+renesas@mailbox.org>
->
-> The Renesas DSC Display Stream Compression is a bridge embedded in the
-> Renesas R-Car V4H SoC. The bridge performs VESA DSC encoding of up to
-> 8k or 400 Mpixel/s . Add rudimentary driver, which currently acts as a
-> pass-through bridge and allows DSI1 to be operational on R-Car V4H.
->
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> [tomi.valkeinen: use bridge->next_bridge, minor changes]
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 
-Thanks for your patch!
+On 5/11/26 4:17 PM, Alexey Klimov wrote:
+> On Thu May 7, 2026 at 9:31 AM BST, Tudor Ambarus wrote:
+>> On 5/6/26 6:13 PM, Alexey Klimov wrote:
+>>> On Wed May 6, 2026 at 12:39 PM BST, Tudor Ambarus wrote:
+> 
+> [..]
+> 
+>>>> new file mode 100644
+>>>> index 000000000000..c68d60b4c0b3
+>>>> --- /dev/null
+>>>> +++ b/drivers/firmware/samsung/exynos-acpm-tmu.c
+>>>
+>>> [..]
+>>>
+>>>> +static int acpm_tmu_to_linux_err(s8 fw_err)
+>>>> +{
+>>>> +	/*
+>>>> +	 * ACPM_TMU_INIT uses BIT(0) and BIT(1) of msg.rx.ret to flag APM
+>>>> +	 * capabilities. Treat zero and all positive values as success.
+>>>
+>>> ACPM_TMU_INIT returns capabilities inside designated error field?
+>>
+>> yes
+> 
+> Heh. Okay.
+> 
+>>> What about other messages/commands? They just return error code there?
+>>
+>> all the other commands either return -1 for errors, regardless of the error
+>> type, or 0 for success.
+>>>
+>>>> +	 */
+>>>> +	if (fw_err >= 0)
+>>>> +		return 0;
+>>>> +
+>>>> +	if (fw_err == -1)
+>>>> +		return -EACCES;
+>>>> +
+>>>> +	return -EIO;
+>>>> +}
+>>>
+>>> Could we map these return values with better granularity instead of
+>>> returning -EIO for everything else that is not minus one?
+>>
+>> I think we're good as we are now. The firmware returns either -1 for errors,
+>> zero for success, or BIT(0) and BIT(1) for TMU_INIT to flag some capabilities.
+>> I can't tell if there are other commands that return capabilities as well,
+>> or if there are other capabilities for TMU_INIT, I don't have access to the
+>> firmware code.
+> 
+> On Exynos850 I see more than just one returned error codes. I definitely
+> see 0xfe and 0xfd at least. I don't have any data to confirm that ff
+> maps to -1 and fd-s, fe-s to -2,-3 though and what they mean. From my
 
-> --- /dev/null
-> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_dsc.c
+for these error codes we will return -EIO which is alright. We can have
+a more granular approach depending on the SoC if you want.
 
-> +
-> +static void rcar_dsc_atomic_enable(struct drm_bridge *bridge,
-> +                                  struct drm_atomic_state *state)
-> +{
-> +       struct rcar_dsc *dsc = bridge_to_rcar_dsc(bridge);
-> +
-> +       WARN_ON(clk_prepare_enable(dsc->clk));
+For GS101 above is alright, it matches the info I got from the firmware guys.
 
-Who don't you use pm_runtime_resume_and_get() instead, like
-rcar_cmm.c? Then you don't need to get the clock at all, and the driver
-will keep on working if the DSC ever ends up in a power domain.
+> experiments I suspect that 0xfe means that call/msg type is not
+> implemented or not accessible and 0xfd means that passed parameter is
+> wrong or incorrect or not found.
+> 
+> I am also not sure that I saw 0xff-s but, well, maybe that needs more
+> experimenting.
+> 
 
-Gr{oetje,eeting}s,
+fe and ff will be covered as well by -EIO.
 
-                        Geert
+Let's keep this as it is for now, and if you need a more granular approach
+we can differentiate that for e850.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks,
+ta
