@@ -1,285 +1,176 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA772DECD3
-	for <linux-clk@vger.kernel.org>; Sun, 17 May 2026 18:51:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905A133D6EA
+	for <linux-clk@vger.kernel.org>; Sun, 17 May 2026 18:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779043872; cv=none; b=LBfE+tbMbUqkoFll/D5SkYaH+F0NRqdd/Ycuh4JFB6/Nf71+qbgKQpNPfDApGPqYU92YkiaSHIigQBpCH1MgQs3oTmZhDxRRIFpsTg7kv7v32VW29HBEaHlFS7v9AH9kiScTRC/4dUnEjBvNtc5HiLQAVlCm1yfiFDjxD5PcyqY=
+	t=1779043919; cv=none; b=CyputDLHm+HXyfTEkioXDi6TVsYpSB7GulGMmFko4AiLQsBt1dJ28YGAb9x0lbATHX0/hPyRxoc1CdXXxpsI5SApTnSPbMW2f4wo5Er8ek6ZkO+/Oik354GI7EC7SRVAQrOPLyYXLsHAVkjhs/jfRSE5PWiLcGfNOjTYk1XoC5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779043872; c=relaxed/simple;
-	bh=nCWFE4LWzC6+Oah4EmkPSev5ETPTLOEYYLJ/3xk6mEc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=tQ1G4zY/xqP7tMFpSO8ox029N01L8uRvkHJj0Ch8+GJCRIe3LaRdq57a/2GDwWWQP+exFn55TwUK70VA6WHh016/4WM+jQLQ2hMMoRQpTbUIQOqVdDiQEWjw83s06Zj0AihBak4Gobfkpg1puzKpnrz8YaChqb3Ta31Rx+Kx324=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CpdXZoZX; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Kd1S4csk; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1779043919; c=relaxed/simple;
+	bh=Y5i9WcyiDzQjtJSx79lz5XChtinSTRrDP5DUYMTy97Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fMLrHkk6z3M2ra25J1MTA2Kcy3YHxwdoDoOH2Zu/6hARxp65Rm3ahuV3WPGNAZqoAgWUUO2e/9FZN923MY9zul2SrXZibQWsG2jIjxyE29N05aUI5rbXnGCuqM6n9FKEdKcf4mWj2wDqPcCiucqAQXfCeb6C9sFIfQX1liYEDQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YqLG13MY; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=BNKU4PAA; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CpdXZoZX";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Kd1S4csk"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64H8b37M3355337
-	for <linux-clk@vger.kernel.org>; Sun, 17 May 2026 18:51:10 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YqLG13MY";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="BNKU4PAA"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64HANRuv1888240
+	for <linux-clk@vger.kernel.org>; Sun, 17 May 2026 18:51:56 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=GDzUCB0R01yGJ9xA53BA46
-	ickPsFjub9nOUlBXxPECQ=; b=CpdXZoZXiUCXCLT5SyAc4mpI/qvryC7XhYPCbv
-	MgGda1zgnPXKivT0hw1SaivkW9YTwj8A5qbDU9sv2uAlsSHTgJBfk4jQEs5ImKZa
-	utrqTHlNzUtTLgWA6SZNUCLdPQYvNS7eH8AKJMAgzILexpaLREy4/mZplM+8r0Yz
-	CxdZOe4Rtew1StxcTEhNRcufhDz6ZY0hxc2W7wfok4YPNVavHBAMSnhxZZ1D9H2S
-	inVhPbChMZRzFnfR7MsaRuXukyqra/ESXICa3RsGXZIVQLXlegGucNLi2t1jkorO
-	Okcxkn1CGpr4SKGlWqNgErtyRLXJV0WhJ61nZ3pRj63ZyjNg==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4e6tvcj9m1-1
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=w8qDcE/JkXAvARu8IjsWPZkQ
+	lthwgFQJ1bcCPlrXmHw=; b=YqLG13MYcGs2osLqpsGGB9+Ep4Lp7BVQA8pnn30n
+	jkCl2uge06yWxC1xdsrYDWBfPghOMZkIYeohGJmDgi/e9hRhVqjqg8u2y/RhdDqx
+	o1W3AgwnG9b2J9FjUEf+s2VAk5LM6c/1zKTytynM/QdjRxfC9aeE8SAYayA0r7wF
+	O5m+gOAec4uFNK5IGzqavxEDh/6ASx5DIhCnmEh0p0MUS1F1g4q+4tXbj+Ie86p+
+	3mm8v1l4npSsrls0yLneJYRfY/BDCgOJlf0S39CbRc6oOPIjQk61RhM4zYS+Zmr0
+	1RrQtnpX57ZmRTS+SsAytHuKx1YGusMguwe1jERRJB8qZg==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4e6gwmbdvx-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Sun, 17 May 2026 18:51:10 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-50d812c898cso44646431cf.1
-        for <linux-clk@vger.kernel.org>; Sun, 17 May 2026 11:51:09 -0700 (PDT)
+	for <linux-clk@vger.kernel.org>; Sun, 17 May 2026 18:51:56 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-50d5d1c2289so51679631cf.2
+        for <linux-clk@vger.kernel.org>; Sun, 17 May 2026 11:51:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1779043869; x=1779648669; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GDzUCB0R01yGJ9xA53BA46ickPsFjub9nOUlBXxPECQ=;
-        b=Kd1S4cskn4XeXS3Kd1ZO7QLZVJ1F2C8746Zux6WNnZLPCMjGCteD8+2gfx8NJW2TfF
-         +2fAGrscdC9z3P2pWwDoIPCquwLOplG+eagEObvlH1E7LnWYlSqnQgjoCAAZANcfiMtf
-         9kwD2x9RTtlA5ZVXtAg76166nYPU32ERz+wxF3y0/hknaHkdFv3HN7IDymv1nvpTLAJa
-         qDfPOdxYXETvWm2ZPeJ1vbjAwx80gWEEmz5Yhh5CmRJv38FtWD7ObCKHkI/I/dHU3nNr
-         c8hxdCPDVJ+e8tD/bDisoSDZK0g0urMKZIAZEjSdwaclQgMIUBv0dA2TMarvdpjd5Gor
-         pNRw==
+        d=oss.qualcomm.com; s=google; t=1779043916; x=1779648716; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=w8qDcE/JkXAvARu8IjsWPZkQlthwgFQJ1bcCPlrXmHw=;
+        b=BNKU4PAAl/d/4hFcuu1gCJ882A6UYQAOoA6+BIhE9U5Qvb1tdyQjSzKk81MbVz+cFS
+         JkeEqwVWdvWFi66iO1tDY2XQgB+q900XS5E+hdth+Qfz7Lsq8kB+609x3V/v79KOJsfm
+         e/yULAAwQSa3oSpva5IeUR9TfRaIvcgyrl9h1ZyinJfHyYkBopg/aJ8+4WWqfSXMQqw2
+         SBe7/px5067JENK4ZJNt38cYq83cs+y6FrqPxuuoVdAraD8hnA9z3HijUlok2kW3Q8wH
+         xQHVAW4lwhKExwdRWr6vIY3np3/5KT6U+tsykprzGBljHvaRYm1zToREOzEk9brF2t8W
+         0Y4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779043869; x=1779648669;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GDzUCB0R01yGJ9xA53BA46ickPsFjub9nOUlBXxPECQ=;
-        b=bRndI6alTqM3GRd8TtnGEaVaSSqJtwjrr7lCBlE1D18AQcL0M6EtvBDIucw/he5L63
-         DF4ZzTvQYQANkRH7yRHvqh0OMe+xK7LIOo21La807CCghVPqtzvu9q4H9MSc9DmA8vJY
-         feTHfGxut2dT9WsoYAxC0E2jU8V5Aw6cI2IVxFXRPkGn4YkunZ6K7lmlEmpy6It2i++s
-         pJeubu7+sD8uqBJOkIkjvOVw+/UvKBNWZ5V+V9y3vkOyEhiAosScTWyGJbZZwH8xTNIx
-         MXRjUC7o9srM1CK6XrQ0wYfTDd+rMxOhh/mk3wMVZ6EZZGX7qW1ZKzGIqKRJh7K3gsmT
-         uJeg==
-X-Forwarded-Encrypted: i=1; AFNElJ+WMUHbi0+JnvRJTbS9cKgHqoNkvme+vHcMujgQn9d1mZYD1l1AMPhwOwvXgoz+PPYUEpRdm9wvMy4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxz0sU6rKf4QgS4sd3MSKmvmGmpHW+OAqOtHJ97oa7KSDxbBPDz
-	+IpXM9e4lMH99ZRoyWQULTxbBrLbouogfZ80nC/U2azKY7XTBeqQpOHhq3y9SRNjOBPfpGbj3Y2
-	p8YLc9GS12b3IJtm3HhruXRgZEV8Ooj/KYJX/YnP8ApQvfPg+D65atyjxkdf6YHjUMbXcrUY=
-X-Gm-Gg: Acq92OGBImHXaMwRvmcMYwJTJJBb5I/cPAykSJ5/3Qyfud8S6f4M6WQIwaRtcxwmCQ2
-	ydvu6znoYky9hNKHEo/Kcl0XGDyEMyNb27JuzpXkmHJ+NkqnCKXRwh+/0iKMop2g+WLa8hIqANE
-	wjLuCavvWQHNmqLVsv/SLE3/4Sgt4LiB4vLQ33RG4jtspAoJzhBckDgsQ1EHXrpLiBrPnWueuqx
-	1x1Sf6PSZcvq8R6mvQ+7nzxXj2S8pPoHQLHTXdsR6QPmwIeLR8fyQDNP1OYW/GNKMiRTeg9ez8p
-	bMumvyYmWq9Rn38nW1WGkFqLrupoT1ar3IPvP/aaSuQ8XuZsf/XVM4n8P3R4RTvy5reBnhgbznt
-	GaCBOR/WPrl4iJjZ08J00dFyifqocty6sYLPZN/N1yWeCyqNt/cNDBr3d6nIokGw/IgCMIC3x8J
-	kKY2BLL0hZC6cDE93Qdj2CarTy8+2VO2dth14=
-X-Received: by 2002:a05:622a:d1:b0:509:1b76:e9b2 with SMTP id d75a77b69052e-5165a276812mr176979431cf.55.1779043869059;
-        Sun, 17 May 2026 11:51:09 -0700 (PDT)
-X-Received: by 2002:a05:622a:d1:b0:509:1b76:e9b2 with SMTP id d75a77b69052e-5165a276812mr176979181cf.55.1779043868649;
-        Sun, 17 May 2026 11:51:08 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1779043916; x=1779648716;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w8qDcE/JkXAvARu8IjsWPZkQlthwgFQJ1bcCPlrXmHw=;
+        b=riGetTFQ8sDbCt7YSy7t7hk8N9TSXEbgcTE+ZCGd4y+MJStwXNXNazycTy6zHc1BCh
+         IJ8jB9WQ9tTyLrJpekqcNMCsa/G9HeLiThUR74hncXEnb82o9+oDhAQJpHZWRMXzhx89
+         13FUYpgBinJKWoQIoUPRYCFqr4Z1jfrXLL4yfdhDjvp3mP2PmKRQbfaDrOUCUADpfwJW
+         qOwzM1h5yQ68ebfQ/7+bYu8XZbYSmYJ/VKyCu6Vk2f9eBaVUKmqYfJGcV8LZW2bTlICq
+         ivAimJ3g2Y8BcGdaiRl6//JZQuKQGOTvPrOadtqjxEgUxt4iAYShtFvzTom7ptXT8iJo
+         KffA==
+X-Forwarded-Encrypted: i=1; AFNElJ/WSgY1/KJwLJxQ26FMudEA+YoldmzN3Umz1vdCIZRXWpHyj+bGoqQRljVdeOOOHzBbsXTqISwmZsk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmLi1WG7QPbh9TQ/1XCWsUZ/MjccaJNqXICIkd9xhAb0aQYdBX
+	O0kmlscsMnL+ObLub8h0L9vMwDi3U3ku28mDCx4MRIYOHNdNJrJAQbdbkcDep+LZ/jCemqrJNrD
+	QO7QP4VyC3AK3xbjvmtyu69iv6xGSlr+neClgSzO7w2m1K0OfXPaD/9JaBGmGdf0=
+X-Gm-Gg: Acq92OFGr72HjGnxO7WQUWKTOSZdZOOpCcfWmqbd65llj5cABlpTBsN80hrVK5VZNW2
+	ErFgJisyIuHsE1uaDmwg5XWTXkWAYndsUablg0gz6G74h0NqrsLqhCwXkjGtxViS3sedZyKjVVP
+	75LFeI3b7sx9t2bucfFlVQnSGFMNW0YXmra51ZThPHuCYGgjqzv6UsA6r/s/rxx/xuOsTJsM5tr
+	GNwkUFUJHG/iO5woqgNvVLKTEZaYWZ36ECk5EgueTCDE3G/nBbtWoHPxA5uZRyFcKCYZLg9AH6y
+	jutgWrp01BPTfNqO4GeDwq9uxatxDsGph+cvtSu1GnHjpwaF1iY5JC0wdLYXWoUjHm7mRqlXjp9
+	3xbamOFtq5gP9kfFbICaNtz6avQOsxBLsVPllTkw02jxEPaza3XGgcZV9o5ZMn+kzwpX7mJXsaO
+	iwn6xFmMygeUZel+ja+Yc23mQBbH1S47CfmJE=
+X-Received: by 2002:a05:622a:4a0f:b0:50d:a4e6:997f with SMTP id d75a77b69052e-5165a03ad56mr162139291cf.15.1779043916042;
+        Sun, 17 May 2026 11:51:56 -0700 (PDT)
+X-Received: by 2002:a05:622a:4a0f:b0:50d:a4e6:997f with SMTP id d75a77b69052e-5165a03ad56mr162138991cf.15.1779043915619;
+        Sun, 17 May 2026 11:51:55 -0700 (PDT)
 Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a9164cf803sm2890502e87.76.2026.05.17.11.51.05
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-395882c74d6sm6943301fa.15.2026.05.17.11.51.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 May 2026 11:51:06 -0700 (PDT)
+        Sun, 17 May 2026 11:51:54 -0700 (PDT)
+Date: Sun, 17 May 2026 21:51:52 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Date: Sun, 17 May 2026 21:51:04 +0300
-Subject: [PATCH] clk: qcom: stop enforcing INTERCONNECT_CLK dependency for
- everybody
+To: Varadarajan Narayanan <varadarajan.narayanan@oss.qualcomm.com>
+Cc: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/3] clk: qcom: ipq5210: Use icc-clk for enabling NoC
+ related clocks
+Message-ID: <whx5dpg3ji7lj62o5wvcytwfi7wphtlooqznkeeeeixkhegw5k@7bli6m4w6frn>
+References: <20260514-icc-ipq5210-v1-0-b5070dfbe460@oss.qualcomm.com>
+ <20260514-icc-ipq5210-v1-2-b5070dfbe460@oss.qualcomm.com>
+ <5zdmbj56ndi7nrvdqadinrf3sneywft3uaplnoxugp5zetsfbj@5hazmuzyfz7u>
+ <agc+n28PfkrxwpuJ@hu-varada-blr.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260517-qcom-clk-icc-v1-1-1dc6ea8bdcd0@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIABcOCmoC/yXMTQqDQAxA4atI1gacFKfgVcSFE6NN6++MFkG8e
- 8e6/BbvHRDEqwQokgO8fDXoNEaYNAF+1WMnqE00UEY2y80TF54G5P6DyowtW0NEDyu5g5jMXlr
- d/7uyuh029xZerwec5w/giDE5cAAAAA==
-X-Change-ID: 20260517-qcom-clk-icc-fc6122236e5b
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4889;
- i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
- bh=nCWFE4LWzC6+Oah4EmkPSev5ETPTLOEYYLJ/3xk6mEc=;
- b=owGbwMvMwMXYbdNlx6SpcZXxtFoSQxYXn8SLbJXMlRdPq7gKl3WpfpaVE5u0fE/Tqnv9FcYzU
- 19OTLfpZDRmYWDkYpAVU2TxKWiZGrMpOezDjqn1MINYmUCmMHBxCsBEzG+y/5WU2fTn1d5LTHXF
- RRn6T4x134eezQ5YmBIm3HatOdyr5t3XQIXOU3sEnS1fX98TVNy+++2NzuOfmPQKXSf3uJ0o+8f
- o9XnfLW1zS5vHh1Ycy5oo/qWjfb/SAgvBRIucUL9PbHoX93ntKNjp1fNUOTjHuM5N77HoLRal7l
- S+3QVT8nd/dp1n7cPywzA8hedHdcNSjg3qPm+ivN9xfrrgm/bedvFPDt6POunXzrUkvD2vbJzan
- yY6S++JcNTHUrb/Cc/uhprVXmqXuZy4dWZrtNg/afZTCdaCHEoTTCwOf5L5/W89Q61WdDPrmYKo
- G+7L8qconOxdXCQoopuafzxt39trm45LzP4x//oXrrVHAA==
-X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
-X-Proofpoint-ORIG-GUID: WOvEnnMwtFwov7x5s-xesl5mGpMW4Ctz
-X-Authority-Analysis: v=2.4 cv=UIDt2ify c=1 sm=1 tr=0 ts=6a0a0e1e cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <agc+n28PfkrxwpuJ@hu-varada-blr.qualcomm.com>
+X-Proofpoint-ORIG-GUID: LCGZO8HIarOmS2aozZh4oo0K_Eegsj2P
+X-Proofpoint-GUID: LCGZO8HIarOmS2aozZh4oo0K_Eegsj2P
+X-Authority-Analysis: v=2.4 cv=W/AIkxWk c=1 sm=1 tr=0 ts=6a0a0e4c cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
  a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22 a=EUspDBNiAAAA:8
- a=PKtRt_AHGqzKJ450pQMA:9 a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22
-X-Proofpoint-GUID: WOvEnnMwtFwov7x5s-xesl5mGpMW4Ctz
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTE3MDIwMyBTYWx0ZWRfXwbwmP4UGn2bp
- X5yUkxDGGfvt0WjjYybN+TcOOCcqpi1x9XFGtStVM+xLVuXJf+4zzRkGokWL9dDStWVvGejcUbw
- LcNAwL5gI7bTpI4l1nFv0rWRaS3xBR9msdAMdt+BGZ/6vacZSFyy2vsJS1iSriHqcAg8t8BlxiM
- iF/dSC6c4UXLtur9iBaxHVfmxFuCSKW5lZaUBLR28CScTLFrio4THBiYqyxafNGQ0SOWfoZ+qWj
- YCy5ylbwkVpZR+xbXmi4bm/4OyhU1A5v6WM215aCUE7AGCW1VU5wI+htjJfvUxVsPvuaNhqJ9cG
- w3jxLe3qYp/fJVTE81TTNDaDoeq26Q5ZBBSYsdFwwBHwvCMw0aInuGCQLbbBpdvS9g+SbXQcpVp
- 8q96xYmY7PDSS6io7oEdX5L2FE3aKhStwKvkUpfUlz0Bix4EXIjATzgl1alm2LgOT5kl6AkhZyk
- bHYF6myeCYWveDSjtDA==
+ a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22 a=bC-a23v3AAAA:8
+ a=EUspDBNiAAAA:8 a=92o4APbqSy6JO7topJkA:9 a=CjuIK1q_8ugA:10
+ a=a_PwQJl-kcHnX1M80qC6:22 a=FO4_E8m0qiDe52t0p3_H:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTE3MDIwMyBTYWx0ZWRfX7yOG2/jMjEwd
+ y27GeHGs6baN3otjC0VR1T694Sh08Crq5HvWGsE+OkyrhpSJIPLxP0cexRQCCBqFkK1zofRKA7x
+ Nv5EURn2Vey6+NK/VuNOr3Bi2/eRFTDqACJmh6iJ3HiODmqdXNER+Heo15AIQJRLGQ26AXO5PCl
+ kHhwn0/acF8Rn7OaAzIBlA7nRntBpXm8otso6jcz9vbVHLJNs6c5UMhORkathPXAexRscqCgAzO
+ 4knXf2Z13lfLEvJs7f4RQY5THMSdAWyVJHm2cl+WYLLXowhDhit38/Fit2taxxtlAcR+WxPhAp7
+ haX2jvZEQsB8jw/8DTHp1dA8nTnRIZr+SzMWdWhgWlULROcuJcIIvf1a/XaJoHIMh3G5J4w6nIc
+ IFbyuySpw8chrKKor9bztPm9/bZXR7fc6kOqmHV+X1/ejhfIE40qtbGD5OYFbyFFsx9C4Zcgw+f
+ zrgiJzz6jes+nJ5Iatw==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-05-17_04,2026-05-15_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 impostorscore=0 phishscore=0 priorityscore=1501
- bulkscore=0 suspectscore=0 malwarescore=0 spamscore=0 clxscore=1015
- adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ spamscore=0 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ impostorscore=0 priorityscore=1501 adultscore=0 clxscore=1015
+ lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2605130000
  definitions=main-2605170203
 
-Only several (typically IPQ) platforms use INTERCONNECT_CLK to turn
-clocks into the interconnect providers. Stop inferring this dependency
-on everybody and set it only when required. As a safety measure, make
-sure that the coresponding clock description fields are not available if
-corresponding Kconfig option isn't enabled.
+On Fri, May 15, 2026 at 09:11:19PM +0530, Varadarajan Narayanan wrote:
+> On Fri, May 15, 2026 at 04:31:42PM +0300, Dmitry Baryshkov wrote:
+> > On Thu, May 14, 2026 at 09:35:36AM +0530, Varadarajan Narayanan wrote:
+> > > Use the icc-clk framework to enable few clocks to be able to
+> > > create paths and use the peripherals connected on those NoCs.
+> > >
+> > > Signed-off-by: Varadarajan Narayanan <varadarajan.narayanan@oss.qualcomm.com>
+> > > ---
+> > >  drivers/clk/qcom/gcc-ipq5210.c | 16 ++++++++++++++++
+> > >  1 file changed, 16 insertions(+)
+> > >
+> > > @@ -2642,6 +2657,7 @@ static struct platform_driver gcc_ipq5210_driver = {
+> > >  	.driver = {
+> > >  		.name   = "qcom,gcc-ipq5210",
+> > >  		.of_match_table = gcc_ipq5210_match_table,
+> > > +		.sync_state = icc_sync_state,
+> >
+> > in Kconfig:
+> >
+> > select INTERCONNECT
+> >
+> > OR
+> >
+> > depends on INTERCONNECT
+> 
+> In drivers/clk/qcom/Kconfig, IPQ_GCC_5210 can be selected only if
+> COMMON_CLK_QCOM is enabled. COMMON_CLK_QCOM selects both
+> INTERCONNECT and INTERCONNECT_CLK.
+> 
+> Is select (or) depends INTERCONNECT still needed for IPQ_GCC_5210.
+> Please let me know.
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
----
- drivers/clk/qcom/Kconfig  | 13 +++++++++++--
- drivers/clk/qcom/common.c | 11 ++++++++---
- drivers/clk/qcom/common.h |  2 ++
- 3 files changed, 21 insertions(+), 5 deletions(-)
+I've sent [1], let's see if it gets accepted or not.
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index d9cff5b0281d..de8485b5ed9e 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -7,6 +7,9 @@ config QCOM_GDSC
- 	bool
- 	select PM_GENERIC_DOMAINS if PM
- 
-+config QCOM_NEED_INTERCONNECT_CLK
-+	bool
-+
- menuconfig COMMON_CLK_QCOM
- 	tristate "Support for Qualcomm's clock controllers"
- 	depends on OF
-@@ -14,8 +17,8 @@ menuconfig COMMON_CLK_QCOM
- 	select RATIONAL
- 	select REGMAP_MMIO
- 	select RESET_CONTROLLER
--	select INTERCONNECT
--	select INTERCONNECT_CLK
-+	select INTERCONNECT if QCOM_NEED_INTERCONNECT_CLK
-+	select INTERCONNECT_CLK if QCOM_NEED_INTERCONNECT_CLK
- 
- if COMMON_CLK_QCOM
- 
-@@ -342,6 +345,7 @@ config IPQ_APSS_PLL
- config IPQ_APSS_5424
- 	tristate "IPQ5424 APSS Clock Controller"
- 	select IPQ_APSS_PLL
-+	select QCOM_NEED_INTERCONNECT_CLK
- 	default y if IPQ_GCC_5424
- 	help
- 	  Support for APSS Clock controller on Qualcomm IPQ5424 platform.
-@@ -395,6 +399,7 @@ config IPQ_GCC_5210
- config IPQ_GCC_5332
- 	tristate "IPQ5332 Global Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
-+	select QCOM_NEED_INTERCONNECT_CLK
- 	help
- 	  Support for the global clock controller on ipq5332 devices.
- 	  Say Y if you want to use peripheral devices such as UART, SPI,
-@@ -403,6 +408,7 @@ config IPQ_GCC_5332
- config IPQ_GCC_5424
- 	tristate "IPQ5424 Global Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
-+	select QCOM_NEED_INTERCONNECT_CLK
- 	help
- 	  Support for the global clock controller on ipq5424 devices.
- 	  Say Y if you want to use peripheral devices such as UART, SPI,
-@@ -444,6 +450,7 @@ config IPQ_GCC_8074
- 
- config IPQ_GCC_9574
- 	tristate "IPQ9574 Global Clock Controller"
-+	select QCOM_NEED_INTERCONNECT_CLK
- 	help
- 	  Support for global clock controller on ipq9574 devices.
- 	  Say Y if you want to use peripheral devices such as UART, SPI,
-@@ -464,6 +471,7 @@ config IPQ_NSSCC_5424
- 	tristate "IPQ5424 NSS Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
- 	depends on IPQ_GCC_5424
-+	select QCOM_NEED_INTERCONNECT_CLK
- 	help
- 	  Support for NSS clock controller on ipq5424 devices.
- 	  NSSCC receives the clock sources from GCC, CMN PLL and UNIPHY (PCS).
-@@ -475,6 +483,7 @@ config IPQ_NSSCC_9574
-         tristate "IPQ9574 NSS Clock Controller"
-         depends on ARM64 || COMPILE_TEST
-         depends on IPQ_GCC_9574
-+	select QCOM_NEED_INTERCONNECT_CLK
-         help
-           Support for NSS clock controller on ipq9574 devices.
- 
-diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-index eec369d2173b..2bac581efa02 100644
---- a/drivers/clk/qcom/common.c
-+++ b/drivers/clk/qcom/common.c
-@@ -255,6 +255,7 @@ static struct clk_hw *qcom_cc_clk_hw_get(struct of_phandle_args *clkspec,
- 	return cc->rclks[idx] ? &cc->rclks[idx]->hw : NULL;
- }
- 
-+#if IS_REACHABLE(CONFIG_INTERCONNECT_CLK)
- static int qcom_cc_icc_register(struct device *dev,
- 				const struct qcom_cc_desc *desc)
- {
-@@ -262,9 +263,6 @@ static int qcom_cc_icc_register(struct device *dev,
- 	struct clk_hw *hws;
- 	int i;
- 
--	if (!IS_ENABLED(CONFIG_INTERCONNECT_CLK))
--		return 0;
--
- 	if (!desc->icc_hws)
- 		return 0;
- 
-@@ -286,6 +284,13 @@ static int qcom_cc_icc_register(struct device *dev,
- 	return devm_icc_clk_register(dev, desc->icc_first_node_id,
- 						     desc->num_icc_hws, icd);
- }
-+#else
-+static int qcom_cc_icc_register(struct device *dev,
-+				const struct qcom_cc_desc *desc)
-+{
-+	return 0;
-+}
-+#endif
- 
- static int qcom_cc_clk_pll_configure(const struct qcom_cc_driver_data *data,
- 				     struct regmap *regmap)
-diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
-index 6f2406f8839e..1ebdfe831ac8 100644
---- a/drivers/clk/qcom/common.h
-+++ b/drivers/clk/qcom/common.h
-@@ -45,8 +45,10 @@ struct qcom_cc_desc {
- 	size_t num_gdscs;
- 	struct clk_hw **clk_hws;
- 	size_t num_clk_hws;
-+#if IS_REACHABLE(CONFIG_INTERCONNECT_CLK)
- 	const struct qcom_icc_hws_data *icc_hws;
- 	size_t num_icc_hws;
-+#endif
- 	unsigned int icc_first_node_id;
- 	bool use_rpm;
- 	const struct qcom_cc_driver_data *driver_data;
+[1] https://patch.msgid.link/20260517-qcom-clk-icc-v1-1-1dc6ea8bdcd0@oss.qualcomm.com
 
----
-base-commit: 230cbc83bec52234e456f33a01f400f78bfac0f9
-change-id: 20260517-qcom-clk-icc-fc6122236e5b
+> 
+> Thanks
+> Varada
 
-Best regards,
---  
+-- 
 With best wishes
 Dmitry
-
