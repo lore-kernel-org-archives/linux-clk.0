@@ -1,85 +1,184 @@
-Received: from mail.eswincomputing.com (mail.eswincomputing.com [123.124.195.78])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3993E025A;
-	Mon, 18 May 2026 06:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=123.124.195.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 698E53CCFCA
+	for <linux-clk@vger.kernel.org>; Mon, 18 May 2026 06:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779085334; cv=none; b=MjiXp5IHbkAscXbpR5wMlRtOAQoHwrBgUs/0blWJJ2+ygfpm1N1ZFWwhSH4AWAQZmS/cRYkLzma1E3ojc5NITEiYkqntmCauaqb6A13+Mt15ASG5StM5L2y2VMdHpHPqRzonFr0wXnFheKP4gyjsFLBHh4McZ1zP9ajPyqkwans=
+	t=1779087510; cv=none; b=L8QJCyK0Hk425ZZ5dYWz0TGOkA+tEH8yiBCBfS+SkEBra3Ggqb6xOLp+Sc6COV7ACJMFlY/FekCq684EPlT6+wYHjmJr4OtM9TNpTdA/H6Z9GgjxoxsZiYsFCp5SmKb1dl331nUmqD88+GXe7uazqgqJHLu3/36EcVypMk8FnrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779085334; c=relaxed/simple;
-	bh=Y20Ds8Qt4A+0IswD78M8o8++pnWh8jQGVCd/QoQilJI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=qvAWlMltA3+38XmT7oiWO7mfZfIouoaEXwrWkp8xOX3qMf4MLmTWSABDUwegCwkYxw78puB51EhYSl8GCZ5EFaoezOznvZojrgbAY5GW9F7TJOFCSEtIBDVNsIpPsO+Wf/MZMi3dlomC6TSTFtkGq4twOaqj/JR/qLTtmOyLzVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=123.124.195.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from dongxuyang$eswincomputing.com ( [10.12.96.41] ) by
- ajax-webmail-app2 (Coremail) ; Mon, 18 May 2026 14:21:11 +0800 (GMT+08:00)
-Date: Mon, 18 May 2026 14:21:11 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: "Xuyang Dong" <dongxuyang@eswincomputing.com>
-To: sashiko-reviews@lists.linux.dev
-Cc: p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, huangyifeng@eswincomputing.com,
-	dongxuyang@eswincomputing.com, benoit.monin@bootlin.com,
-	bmasney@redhat.com, ningyu@eswincomputing.com,
-	linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com
-Subject: Re: Re: [PATCH v5 3/3] reset: eswin: Add eic7700 HSP reset driver
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
- 20241203(6b039d88) Copyright (c) 2002-2026 www.mailtech.cn
- mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
-In-Reply-To: <20260514195305.C4132C2BCB3@smtp.kernel.org>
-References: <20260514114738.1641-1-dongxuyang@eswincomputing.com>
- <20260514195305.C4132C2BCB3@smtp.kernel.org>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1779087510; c=relaxed/simple;
+	bh=ckpbqgs5shqJPvCBzMZPnwjiNzzYTA3QidB3KHAt51U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WqrTROpObgARctfTzh4eD3D40eT/nmZ0GD75Oz4fbyUyGCwfjheEz3HFb3O9y2NO0OeJiUMGYJz9w1AnKzHIHZ9LTesnR47heHhM+JNePCtv1xlUftISOxuAAldAXiiLlAyRqUC89duL43YhywN+BMF1ykbs9Mqo9SrM8MiPl1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=g7nlHgDu; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=aMp9tbtL; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="g7nlHgDu";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="aMp9tbtL"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64I5enpX1255259
+	for <linux-clk@vger.kernel.org>; Mon, 18 May 2026 06:58:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=BNm0P/bZjFz50FHQ/dGvilOp
+	pAsbdM8goRfGTDaWVD0=; b=g7nlHgDuv4DoaJItVPkAN7izhmqHDWExDMqkusZ6
+	+oqh5uRTL7mDem2MD6z7a+lpUc7KnCWU1x7EbVF3XUQZo0e5aZgNpSRF5n2peHub
+	YGj21uooHZSFUA68f9qCAJNq0zxM02N00XDO0c4b9Cd1GAvWjctESjGUDyKyrT8B
+	MtF9h1/E4icY74Oxv3sVTHy0iEXlAYZxbdOWZGWWsORuxuPr63tZM2EgJh0IcmWW
+	D3KkxmGOx3/Ux8ucDkuquwrYPzVLbAa4U47QljHwZYSybQ+a5bim3W4XmUrSh86o
+	p/VdVUhz/U58aThViaa8RY8wLN4x/I/Who8JTW/eLgAkKw==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4e6tvckx5j-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Mon, 18 May 2026 06:58:28 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-515224a8aa0so14697951cf.0
+        for <linux-clk@vger.kernel.org>; Sun, 17 May 2026 23:58:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1779087507; x=1779692307; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BNm0P/bZjFz50FHQ/dGvilOppAsbdM8goRfGTDaWVD0=;
+        b=aMp9tbtLzEcTHrqdKFQNZX1s0a7xs5Tj7y3uJEWi67NOgSOP1D/WDtov2DmReRZAeC
+         kAEj34zOBEC/dKbj8+oXyKJbt2r8RbYRTZG4AZ2B21DbA66CMo4CGsp6yYpJhJGLYMqu
+         44lbZYyqWNP7RmCpdAPxzEQLQXeYOEeA/xH8T7If8ej8zFNU/UfFmWDpNCSWmgrzlwey
+         /WCtqhm0WcgwXFCmrhyHEAXmJK0ZWhwVwhNeCeda94l3y1yCMcUPpxQemQmFPh2R2hLi
+         ESQoK3PdBrZMrfSxw3Soq2vWEOXq7uDxnjaXuEyby/hF5Aaj2+nsFu9CyZJGGh9D8vuB
+         ZKJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779087507; x=1779692307;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BNm0P/bZjFz50FHQ/dGvilOppAsbdM8goRfGTDaWVD0=;
+        b=PsQiWk+EyOCoYxCb6f2Jpjm9HSXj4wsdFztTXznOfpWNW7VhRfWLIqP2T32j00JkwY
+         5T0xDotaPsm81g+qwk6nDOy13FdIHJFZ7cB/OF3Sl4EUF8smcbyOhVAZ6IDxxsdVPj11
+         0d+9dkf2xbjFfG83AGGqt1fg7dId/9FMSUKoc6bS/u9Vo1/iZ9doN5EZipN48jveGaME
+         LIwEoI0e8HzgLoFob+mp5tIKAiCuQwJi56ljvcydBd2M4ac/uGmCna7jfhEYIUCVVcge
+         eyaQQnLvMe1gipsKHBJUJoVze1ypXx9987Z2pVg8Gd1BXmQ8MWIIGH1V0rBidi7caI8j
+         zWeQ==
+X-Forwarded-Encrypted: i=1; AFNElJ/L4AcYdipErf9TXxYGelmNsEIT68eZIA5QJTSgi5oyYm7krV1zlX/e99tq656wx1jEOFeB6NVq3UI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySV7MSKrJUB9Qcy4c3bKI3A6ovNpe+ZXPqkZEjAtLLUWBEMfXT
+	5BU4zGDrN6sEuv/eYR74PLwhD7JSJKOfAwkfnKtgEoj3siy3DMixCYQ10jUey4cXKUaVIvCJv4z
+	n57k46zRUdOL50xSAa+ZohrK5hdEYgN6CtGrVGnXPZDZlozK/x58a4PT8+XJeYhs=
+X-Gm-Gg: Acq92OGvcYaXJjydN3KueNt3nNqWfK51i6RgJgJGSrVK8cx9NIVcsSs2PvT4RPefCsN
+	z9uTpixZ9GQli506Mn6d5GwAc/NK7Ysdk1eHSOuFSXMlZ0mV5vNw1NtlzkQhSBSzEiKdD1AY4oH
+	S3hLLWANIxrZBAQxG0m3MGct7BcE9N1ua5lNq867BAzPerjFliW2g6jeasaBJS3hBvPOIxZP1e4
+	0wCHSbE+0xPngCj0IBW+6S/onRcbxIK5iWi5iNLUibhNz+OXZHvvnVq0vu3XUvgWhk4c3c3YOcK
+	l7AtNkKOVoldzUwOowCjH/HI1ZseI42TclyzLulkSx1cuFDiz3ubXgjqU43PQuHWFpWnbJQYbq8
+	TqoPhQuqWKuM/YImMb1HLbMGJ3XOuzdYybG8=
+X-Received: by 2002:ac8:7f8a:0:b0:50f:b732:202a with SMTP id d75a77b69052e-5165a04b49cmr191471031cf.27.1779087507081;
+        Sun, 17 May 2026 23:58:27 -0700 (PDT)
+X-Received: by 2002:ac8:7f8a:0:b0:50f:b732:202a with SMTP id d75a77b69052e-5165a04b49cmr191470791cf.27.1779087506469;
+        Sun, 17 May 2026 23:58:26 -0700 (PDT)
+Received: from oss.qualcomm.com ([188.24.162.19])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45da15a6454sm35167840f8f.34.2026.05.17.23.58.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 May 2026 23:58:25 -0700 (PDT)
+Date: Mon, 18 May 2026 09:58:23 +0300
+From: Abel Vesa <abel.vesa@oss.qualcomm.com>
+To: Paul Geurts <paul.geurts@prodrive-technologies.com>
+Cc: "abelvesa@kernel.org" <abelvesa@kernel.org>,
+        "peng.fan@nxp.com" <peng.fan@nxp.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "Frank.Li@nxp.com" <Frank.Li@nxp.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "imx@lists.linux.dev" <imx@lists.linux.dev>,
+        "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>
+Subject: Re: [PATCH] clk: clk-imx8mm: Initialize clocks in arch_initcall
+Message-ID: <cr4z2qzawe3hlhcr4lvdf5zmlnt4cfbec7p7jhyiwgk7dkkwlp@3gu36sd3afoi>
+References: <20260408101313.2082125-1-paul.geurts@prodrive-technologies.com>
+ <l5fcjw4okcpk3nl243xqn7y57nr2mjjspjdfl6m3pi6smx4phb@2qp722n22lyq>
+ <GVXPR02MB109688D7C86DC2A63D8BA146FBD2C2@GVXPR02MB10968.eurprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <46181743.64a6.19e39bee0c7.Coremail.dongxuyang@eswincomputing.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:TQJkCgAnPJ_XrwpqtFcaAA--.4269W
-X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/1tbiAgELAmoJ7hIa-
-	gAAsx
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <GVXPR02MB109688D7C86DC2A63D8BA146FBD2C2@GVXPR02MB10968.eurprd02.prod.outlook.com>
+X-Proofpoint-ORIG-GUID: fKpGgtknxK_uKko1PWq5svUXn8pOzNdm
+X-Authority-Analysis: v=2.4 cv=UIDt2ify c=1 sm=1 tr=0 ts=6a0ab894 cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=eYxG+yUyFZr/0hLq1CKHgQ==:17
+ a=kj9zAlcOel0A:10 a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22
+ a=926zIK9uAAAA:8 a=GegrNMS54E6FrsLxTi4A:9 a=CjuIK1q_8ugA:10
+ a=uxP6HrT_eTzRwkO_Te1X:22 a=LlT7wNnaD8DP1V76ktP_:22
+X-Proofpoint-GUID: fKpGgtknxK_uKko1PWq5svUXn8pOzNdm
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTE4MDA2NCBTYWx0ZWRfX2Lv3jfGAQLFm
+ qX/a8Ww82w8VrmeMCVuQHr8yceIdJ62V9dyxjA0JV7twdcLZBQEh2twfxuNTZQtZBQN+N+8FHhS
+ Zb+ip65N8Pyuy+3stS5LpHtfYgF/0kjaZN8UbVeBBo5cHNA+20bJrid7FAmavMQtx1VjAPSt1rV
+ b36o7F5/TBSjkT6rp2yI8FU8bumxTUxQh8Rc1U4uBOP4+CaQ64zMK+OMUOYtO7jNGy3oCX4oY1V
+ +dQfhXyaMqlwncqCDkajk/dfJszxFib7kiwD+69UXSh3emhlf6x1FXgRTj94Xka7JyJXU1HHZKq
+ Y55kVB28UCsUEh1aXiaGug6UAxTt8+seODe3Co9YW75jcD0MDzquOIpmojkm480CuZt6XSENMqJ
+ k+JBdCrgXMz/MlWZxMTuuKNCe/zuq6Hr0V1Em6V86lDTWZ3ZkYRDAeU9lFNwdJJ1F4yxUPUgUd2
+ Q9ElB9JjTXtK1xNmiYw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-05-18_01,2026-05-15_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 impostorscore=0 phishscore=0 priorityscore=1501
+ bulkscore=0 suspectscore=0 malwarescore=0 spamscore=0 clxscore=1015
+ adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2605130000
+ definitions=main-2605180064
 
-PiAKPiBUaGFuayB5b3UgZm9yIHlvdXIgY29udHJpYnV0aW9uISBTYXNoaWtvIEFJIHJldmlldyBm
-b3VuZCAxIHBvdGVudGlhbCBpc3N1ZShzKSB0byBjb25zaWRlcjoKPiAtIFtMb3ddIE1pc3Npbmcg
-YCNpbmNsdWRlIDxsaW51eC9tb2R1bGUuaD5gIGZvciBtb2R1bGUgbWFjcm9zLgo+IC0tCj4gCj4g
-Y29tbWl0IDA4MjgxZjA1OTZhNzY0ZTE5MWNiZWNmZDlkYzEyYjBiNTFmNjczMGYKPiBBdXRob3I6
-IFh1eWFuZyBEb25nIDxkb25neHV5YW5nQGVzd2luY29tcHV0aW5nLmNvbT4KPiAKPiByZXNldDog
-ZXN3aW46IEFkZCBlaWM3NzAwIEhTUCByZXNldCBkcml2ZXIKPiAKPiBUaGlzIGNvbW1pdCBhZGRz
-IGFuIGF1eGlsaWFyeSBkcml2ZXIgdG8gc3VwcG9ydCB0aGUgRVNXSU4gRUlDNzcwMCBoaWdoLXNw
-ZWVkCj4gcGVyaXBoZXJhbHMgc3lzdGVtLiBUaGUgcmVzZXQgY29udHJvbGxlciBpcyBjcmVhdGVk
-IHVzaW5nIHRoZSBhdXhpbGlhcnkgZGV2aWNlCj4gZnJhbWV3b3JrLgo+IAo+ID4gZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvcmVzZXQvcmVzZXQtZWljNzcwMC1oc3AuYyBiL2RyaXZlcnMvcmVzZXQvcmVz
-ZXQtZWljNzcwMC1oc3AuYwo+ID4gbmV3IGZpbGUgbW9kZSAxMDA2NDQKPiA+IGluZGV4IDAwMDAw
-MDAwMDAwMDAuLmJkZDRmNWUzZDdhNzYKPiA+IC0tLSAvZGV2L251bGwKPiA+ICsrKyBiL2RyaXZl
-cnMvcmVzZXQvcmVzZXQtZWljNzcwMC1oc3AuYwo+ID4gQEAgLTAsMCArMSwxMTIgQEAKPiA+ICsv
-LyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMAo+ID4gKy8qCj4gPiArICogQ29weXJp
-Z2h0IDIwMjYsIEJlaWppbmcgRVNXSU4gQ29tcHV0aW5nIFRlY2hub2xvZ3kgQ28uLCBMdGQuLgo+
-ID4gKyAqIEFsbCByaWdodHMgcmVzZXJ2ZWQuCj4gPiArICoKPiA+ICsgKiBFU1dJTiBFSUM3NzAw
-IEhTUCBSZXNldCBEcml2ZXIKPiA+ICsgKgo+ID4gKyAqIEF1dGhvcnM6IFh1eWFuZyBEb25nIDxk
-b25neHV5YW5nQGVzd2luY29tcHV0aW5nLmNvbT4KPiA+ICsgKi8KPiA+ICsKPiA+ICsjaW5jbHVk
-ZSA8bGludXgvYXV4aWxpYXJ5X2J1cy5oPgo+ID4gKyNpbmNsdWRlIDxsaW51eC9kZXZpY2UuaD4K
-PiA+ICsjaW5jbHVkZSA8bGludXgvcmVnbWFwLmg+Cj4gPiArI2luY2x1ZGUgPGxpbnV4L3Jlc2V0
-LWNvbnRyb2xsZXIuaD4KPiAKPiBUaGlzIGlzbid0IGEgYnVnLCBidXQgc2hvdWxkIHRoaXMgZmls
-ZSBleHBsaWNpdGx5IGluY2x1ZGUgPGxpbnV4L21vZHVsZS5oPj8KPiAKCkhpIFNhc2hpa28sCgo8
-bGludXgvbW9kdWxlLmg+wqB3aWxsIGJlIGluY2x1ZGVkIGluIHRoZSBuZXh0IHZlcnNpb24uCgpC
-ZXN0IHJlZ2FyZHMsClh1eWFuZyBEb25nCgo+IFRoZSBjb2RlIHJlbGllcyBvbiBtb2R1bGUtc3Bl
-Y2lmaWMgbWFjcm9zIHN1Y2ggYXMgVEhJU19NT0RVTEUsCj4gTU9EVUxFX0RFVklDRV9UQUJMRSwg
-TU9EVUxFX0xJQ0VOU0UsIE1PRFVMRV9BVVRIT1IsIGFuZCBNT0RVTEVfREVTQ1JJUFRJT04KPiBs
-YXRlciBpbiB0aGUgZmlsZS4gUmVseWluZyBvbiBhbiBpbXBsaWNpdCBpbmNsdWRlIGNvdWxkIGxl
-YWQgdG8gdW5leHBlY3RlZAo+IGJ1aWxkIGZhaWx1cmVzIGlmIGhlYWRlciBkZXBlbmRlbmNpZXMg
-Y2hhbmdlIGluIHRoZSBmdXR1cmUuCj4gCj4gLS0gCj4gU2FzaGlrbyBBSSByZXZpZXcgwrcgaHR0
-cHM6Ly9zYXNoaWtvLmRldi8jL3BhdGNoc2V0LzIwMjYwNTE0MTE0MjEyLjkwMy0xLWRvbmd4dXlh
-bmdAZXN3aW5jb21wdXRpbmcuY29tP3BhcnQ9Mwo=
+On 26-04-21 11:14:27, Paul Geurts wrote:
+> > On 26-04-08 12:13:13, Paul Geurts wrote:
+> >> The i.MX8MM clock driver is implemented as module_platform_driver();,
+> >> which makes it initialize in device_initcall(). This means that all
+> >> drivers referencing the clock driver nodes in the device tree are
+> >> deferred by fw_devlink, which are most of the i.MX8M platform drivers.
+> >>
+> >> Explicitly initialize the clock driver in arch_initcall(), to make sure
+> >> the clock driver is ready when the rest of the drivers are probed.
+> >>
+> >> Fixes: af7e7ee0e428 ("clk: imx8mm: Switch to platform driver")
+> >> Signed-off-by: Paul Geurts <paul.geurts@prodrive-technologies.com>
+> > 
+> > Nack.
+> > 
+> > Nothing wrong with probe deferring. It is there to ensure the order
+> > the drivers probe in is correct.
+> > 
+> > Plus, moving it to arch_initcall won't solve anything.
+> I disagree, as it solves a _lot_ on my setup. But I think the next section
+> explains it better.
+
+Nope. If your setup has issues with the clock controller not probing
+early enough, then your setup isn't following the upstream model.
+
+Please describe exactly what are the issues with your setup. Maybe we
+can find a proper solution.
+
+> 
+> > 
+> > fw_devlink will not stop the driver from probing if there is no provider
+> > that this driver is waiting for. And if there is a provider that is
+> > needed by this clock controller, moving it to arch_initcall won't
+> > magically skip waiting for the provider anyway.
+> I think you have the issue backwards. There is no provider that is needed
+> by the clock controller. The clock controller is needed by everything else.
+> So the clock controller is not deferred. All other things are deferred because
+> of the clock controller.
+> 
+> I understand that probe deferring is not there for nothing. But I would also
+> argue that the initcall levels are also not there for nothing. IMO a chip
+> clock controller is an architecture driver, and belongs in arch_. Whether this
+> is the correct way to do it, or whether this driver should be able to be
+> compiled as a module is a separate discussion.
+
+By the looks of it, you are obviously confusing terms here. A clock
+controller is never an "architecture driver" and it definitely doesn't
+"belong in arch_". A clock controller is most of the time a platform
+driver. There is a big difference.
