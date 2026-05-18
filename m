@@ -1,34 +1,41 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6BBD37C0F3;
-	Mon, 18 May 2026 02:59:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6D7219E8;
+	Mon, 18 May 2026 03:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779073141; cv=none; b=LuOvOwsCdfj6VUGZSMQKCW2TzJO3wMj9a4GWGy+Cneu2nNvHXfwtE3XR7gdz+MICvDyQUrZQNWr40upSBreo8fRw1LWJGUnL7gsSrDoR//KyUPY5J+bk9BKRMKN3VMOkGGZwp/8/678V9q4wnY8vasGw2WvnNRCKUBrIu2gePNA=
+	t=1779075242; cv=none; b=FW0e8nQkZRYz8oPSsvuUKevo3Ygca9ITyWoXEbjnHv69pkEvY1IgCvzPz1gyb1ipXhBFZC96qV2uYxg5ncaMfNdJWIe0VjtoHDAHZN7Tqtd+F9nliOTLSq2XfUJEkt7IONShuTbP4LIaO8ZgLkLW+AJ953SqWQsjPjHP0R2JE30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779073141; c=relaxed/simple;
-	bh=XxdEmKf8DS55rZAzMNuHJSIOWTeQpZR6aHl3tGKnq/A=;
+	s=arc-20240116; t=1779075242; c=relaxed/simple;
+	bh=Q7iJZ6VUq1H8Bt3WwDMb4K4clOEXomOap5ooldumwW4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OzejnTzQsjvkDTAV6JUnTE99mhDvdzsYe9YFvyS1QfbpG05P4NS6Z1QeXPIhwbwDgsj7Sp5WH+2A07gbWa9LglHQZDcMEfjOgyPWevjWuR5ja2gL+rfPGQPexgOG2OwGnsVQtLQXoIV2Z7/qlCrtKesuuO+/CDVrqwhBjWyGjJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Da7WudO0; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=rdSmmMoTwIQ3kD+9tnyB82RyQqx1Dmwiphyf4rzW3sA7QOSyqKqRzJ5u2llxz4W92nZ7gHashZZSE0htBHJJFbc9MZ2kHVA8C6Lh0e2mu4yJlKO/b6TelN1n4HlQb+HHu7zWYhcCwh8yGX16JuMwNCg6WoWApq9Hwqx8sZg5ZAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=Hv+Ec8hg; arc=none smtp.client-ip=54.254.200.128
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Da7WudO0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 760D3C4AF0D;
-	Mon, 18 May 2026 02:58:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1779073141;
-	bh=XxdEmKf8DS55rZAzMNuHJSIOWTeQpZR6aHl3tGKnq/A=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Da7WudO0HE8s5xqa86YcxMA9/x7IAUwGlSaK0AaQir+YkB7pWy3FxMIknQwbh6NVT
-	 P619raV3EuOdXwk5LDDXPRg1VqDv7kp9m87Q405ZoBUDSbAH3VgQ+qezNfSlfPQSPQ
-	 OuvyjYv5TOThVod6MIzGLRsKZQIZ/GsGN4VytgU4pdLxnO07khgXDjHuKytax56Kly
-	 O5wCjgX0oikGz1Mv7QVIErECbERVa8bQYs9pO0rmvAlrrenHozVla61gr16FGnzIkG
-	 cmUQxwOD/eB9WT+72usczdbXHtzC8LptC+dXfnOyjhpECLxni57uE/NM5oLswnSzSw
-	 jgLJSge3637KQ==
-From: Yixun Lan <dlan@kernel.org>
-Date: Mon, 18 May 2026 02:58:37 +0000
-Subject: [PATCH 2/2] reset: spacemit: k3: fix USB2 ahb reset
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="Hv+Ec8hg"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1779075179;
+	bh=gy+vLIjyMT6857Vtois325dTt+YrnhLSIrioPPR6St8=;
+	h=From:Date:Subject:MIME-Version:Message-Id:To;
+	b=Hv+Ec8hgUmMLye2OnkQiMFf6pNZglDWaHNm5otFpf3mbNPl5A1P047LEhZolhwCTL
+	 amNTCigG8Og5Y8hmBiSfG0RwyPcS/3cQUE0osyzpbZCpdReQUy3SK/2QcDYkJBNulc
+	 F3VaOhavKdoBGuRAeeladZdrp2Ei56vQy+z8hg2M=
+X-QQ-mid: zesmtpgz9t1779075171tf46ec625
+X-QQ-Originating-IP: DRI+fk7/Uf0YrY164m/MNKWpAys+m6hYORxEOfYA7Og=
+Received: from = ( [61.145.255.150])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 18 May 2026 11:32:47 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 2042237181081148708
+EX-QQ-RecipientCnt: 21
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Date: Mon, 18 May 2026 11:32:41 +0800
+Subject: [PATCH v6 1/4] dt-bindings: dmaengine: Add SpacemiT K3 DMA
+ compatible string
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -37,61 +44,83 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260518-06-clk-reset-usb-fix-v1-2-14fc235e692b@kernel.org>
-References: <20260518-06-clk-reset-usb-fix-v1-0-14fc235e692b@kernel.org>
-In-Reply-To: <20260518-06-clk-reset-usb-fix-v1-0-14fc235e692b@kernel.org>
-To: Philipp Zabel <p.zabel@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org, 
- spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, 
- Yixun Lan <dlan@kernel.org>, Junzhong Pan <panjunzhong@linux.spacemit.com>
+Message-Id: <20260518-k3-pdma-v6-1-67fdf319a8f8@linux.spacemit.com>
+References: <20260518-k3-pdma-v6-0-67fdf319a8f8@linux.spacemit.com>
+In-Reply-To: <20260518-k3-pdma-v6-0-67fdf319a8f8@linux.spacemit.com>
+To: Vinod Koul <vkoul@kernel.org>, Frank Li <Frank.Li@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@kernel.org>, 
+ Guodong Xu <guodong@riscstar.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Paul Walmsley <pjw@kernel.org>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>
+Cc: dmaengine@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ Troy Mitchell <troy.mitchell@linux.spacemit.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1442; i=dlan@kernel.org;
- h=from:subject:message-id; bh=XxdEmKf8DS55rZAzMNuHJSIOWTeQpZR6aHl3tGKnq/A=;
- b=owEB6QIW/ZANAwAKATGq6kdZTbvtAcsmYgBqCoBqIyhwbnCf8GhDiubAMBbGYAuQ7egUVaHEG
- AGig3UheUaJAq8EAAEKAJkWIQS1urjJwxtxFWcCI9wxqupHWU277QUCagqAahsUgAAAAAAEAA5t
- YW51MiwyLjUrMS4xMiwyLDJfFIAAAAAALgAoaXNzdWVyLWZwckBub3RhdGlvbnMub3BlbnBncC5
- maWZ0aGhvcnNlbWFuLm5ldEI1QkFCOEM5QzMxQjcxMTU2NzAyMjNEQzMxQUFFQTQ3NTk0REJCRU
- QACgkQMarqR1lNu+2EYg//byp11dyLr30tTs4QfbIupcvVoRaoMOYXjdn/452MbESYQlTbDME0C
- +b+eSCNdjCNlTA82gPzkMRkjq0ySHexOWYJ4+Bq0D0MQ8GY3zAiulwDcLPNrljkg8PkTdpVmEEj
- 1ei+7mOp9ZaH+WkaayDk+oesl46hCwCAP02YVPAZ0csm7Sp/YdiI2Wz9HDmc7XTI0npCPC7ngRS
- QWzw49cdhjsT9amC7wuXjElaC2l3cpm5O/du/JdDMbyb/tMFY8xfIx166nPhYIO2cx9frzxmcR5
- Z/BAghJand+pNucUyrPfMYgHZfGIIgvonKikoV0HUT70Yv+PPdRSR0PKEu2yP1k2fr1onZ8z+te
- LwhEo5Z3//2xg7xRWrR0RDA6TiUxObaTFYY1l6W5GsHyN4H2T14h7eiOXQiIOXvXolIlTQMfTzf
- w8bRXU+HzuNlBo2WVITrkp/W0tDLCJka/307tAS7cZHyB/YvElb0+NVTSHEo6bL7uz+He9NNJ4f
- MOzMBcLyNjgiBGD7/dEoHrJsQnH7xx5q1C34XRh8oe9qYzlqfzPK53zjTneipskzsix9nJyKCRY
- 4bRFqs5UvOkJlsARTglefRzb3iZFk5M/Vs6/DlJyLZXpDxdle1LLhkeetmocyIv3nhcvsMJ2g7H
- OPkzw0DY2KRglPTWfqW6mPT0kELScI=
-X-Developer-Key: i=dlan@kernel.org; a=openpgp;
- fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1779075161; l=1136;
+ i=troy.mitchell@linux.spacemit.com; s=20250710; h=from:subject:message-id;
+ bh=yaSmXSO5vYt5nKO5ZoIxkQx6dxueeCXO+Z09BlgFE88=;
+ b=W+5F5yNPpwe5k4aNvILetfG8MTdaq9zRwfU6oC4yYxh+ievsDveayf932kijLZHal5EV7LC30
+ PZvbYXimU2DAWfDHmLPX+hwbP9b2HvQFH3223XiI8PRhWzmrEK18hCk
+X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=ed25519;
+ pk=lQa7BzLrq8DfZnChqmwJ5qQk8fP2USmY/4xZ2/MSsXc=
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpgz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
+X-QQ-XMAILINFO: M8UYpcaD4/AyTVxWAAid9s0jQq/BAhkHQDxth8iqqpCeSeac47mut5LG
+	k6jnognRm1gzKbPOc3aXX9xe2gs6wNeyNVqOzXXOUw7/Vwtciw+PsE0W8Nthm5FLLUCozrd
+	5qn8yh5MLMjTluoXNLp35PLP+wKza6/8xkvugg82cKVoBNDJXDY+4UJEVsfxPicVwKXRPMq
+	GV4PLya2EFlYNM8gWjllIkwhyPz9eTVR4UkBoxWl/BpI8kWz8+9uFTAQz1sA8e9LM3sfx6F
+	iihIxirk4b6LZ9OusD9HLPIABOLDGeagjIWfxlezfdD1vjzJ7dPGuC53AuLQYrXXbrTy4u/
+	+USwITUWmmy5WrzO77Kjm+gelIeIg9pNBLoTKxpayctCrHgWrr+TQk89W1qI1Bp1oCXRzAg
+	3LSl5C43E7XFP30TlVII0x5ZgfwNJhxhaUjSzSaA8b7cfbP9sch3OgeaeH6cIIN+oC3QawA
+	hXiEOAarfuKhwOUFboe/Ydf70Ijo6OWdHEYnOtE5op5lSOXqSPV4e3yDxbBPyoPdByIJxbU
+	f2D7o5s7AKNIOcebZnxA0yE1NDKCOkupGMNFQ4G+DqMXnk8k/7gUWGC+oHnAFs6Hl3nD4w5
+	2ZdoOgg2r6Th4A7UszCvYzG4VL4piz7XTc4USzY1Aa/aFwK9rX7sSd1/sefx3JO7n488w6e
+	Y43Lw0yS7PyAUyb3oOKpYdZYiWE8jIEdDAPbR9fNkJMJiZcnr7EgnBuGQ6Q3XbEosvph58X
+	0rwc22E3AFpZzTh3jTsFGeJhkNp1XUNUds0RZchr5z4YXzCE+9v5W414ZCYX4XHPdXoq8LH
+	iu4DA7pIjK59ZeuKE5Yu1bUS1zXPw3SMiUgQWNXV08gc2sjf7dYandyZdCgt69DASOViZUM
+	7oFJJpA7FGpMm6ZnrfnaGv0Ub0uRmFtPtHY+uulZrJBLjZnxV51Cti4foKcVqZvnft7BrP3
+	rMjKJq7EZ0ONHPlKDJsrTC82LIo/cEArKz19GiJlKaPL+DPPkJlX860AjgC5MLFsj97rM0/
+	GSdbhzaDl7+XvEc1NMajSdnA0FeC8DoVV53qtUfUh+G4ihYCAqHWoKspNW0IZstM6yfcoXi
+	5AQJ6jhkMwEUplRqnF5S3sUsOieLXoyspkW9lWaNyJUqE3QfxC7cxpOKJOIzI5M2Q==
+X-QQ-XMRINFO: NyFYKkN4Ny6FuXrnB5Ye7Aabb3ujjtK+gg==
+X-QQ-RECHKSPAM: 0
 
-According to SpacemiT K3's updated docs, the USB2 ahb reset and USB2 bus
-clock enable bit was wrongly swapped, the correct one should be:
+From: Guodong Xu <guodong@riscstar.com>
 
-Register : APMU_USB_CLK_RES_CTRL
-bit[1]   : usb2_port_bus_clk_en
-bit[0]   : usb2_port_ahb_rstn
+Add the "spacemit,k3-pdma" compatible string for the SpacemiT K3 SoC.
 
-Fixes: a0e0c2f8c5f3 ("reset: spacemit: k3: Decouple composite reset lines")
-Reported-by: Junzhong Pan <panjunzhong@linux.spacemit.com>
-Signed-off-by: Yixun Lan <dlan@kernel.org>
+While the K3 PDMA IP reuses most of the design found on the earlier
+K1 SoC, a new compatible string is required because the DRCMR
+(DMA Request/Command Register) base address for extended DMA request
+numbers (>= 64) differs from the K1 implementation.
+
+Signed-off-by: Guodong Xu <guodong@riscstar.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
 ---
- drivers/reset/spacemit/reset-spacemit-k3.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/dma/spacemit,k1-pdma.yaml | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/reset/spacemit/reset-spacemit-k3.c b/drivers/reset/spacemit/reset-spacemit-k3.c
-index 9841f5e057b2..2e87f320cf11 100644
---- a/drivers/reset/spacemit/reset-spacemit-k3.c
-+++ b/drivers/reset/spacemit/reset-spacemit-k3.c
-@@ -112,7 +112,7 @@ static const struct ccu_reset_data k3_apmu_resets[] = {
- 	[RESET_APMU_SDH0]	= RESET_DATA(APMU_SDH0_CLK_RES_CTRL,	0, BIT(1)),
- 	[RESET_APMU_SDH1]	= RESET_DATA(APMU_SDH1_CLK_RES_CTRL,	0, BIT(1)),
- 	[RESET_APMU_SDH2]	= RESET_DATA(APMU_SDH2_CLK_RES_CTRL,	0, BIT(1)),
--	[RESET_APMU_USB2_AHB]	= RESET_DATA(APMU_USB_CLK_RES_CTRL,	0, BIT(1)),
-+	[RESET_APMU_USB2_AHB]	= RESET_DATA(APMU_USB_CLK_RES_CTRL,	0, BIT(0)),
- 	[RESET_APMU_USB2_VCC]	= RESET_DATA(APMU_USB_CLK_RES_CTRL,	0, BIT(2)),
- 	[RESET_APMU_USB2_PHY]	= RESET_DATA(APMU_USB_CLK_RES_CTRL,	0, BIT(3)),
- 	[RESET_APMU_USB3_A_AHB]	= RESET_DATA(APMU_USB_CLK_RES_CTRL,	0, BIT(5)),
+diff --git a/Documentation/devicetree/bindings/dma/spacemit,k1-pdma.yaml b/Documentation/devicetree/bindings/dma/spacemit,k1-pdma.yaml
+index ec06235baf5c..62ce6d81526b 100644
+--- a/Documentation/devicetree/bindings/dma/spacemit,k1-pdma.yaml
++++ b/Documentation/devicetree/bindings/dma/spacemit,k1-pdma.yaml
+@@ -14,7 +14,9 @@ allOf:
+ 
+ properties:
+   compatible:
+-    const: spacemit,k1-pdma
++    enum:
++      - spacemit,k1-pdma
++      - spacemit,k3-pdma
+ 
+   reg:
+     maxItems: 1
 
 -- 
 2.54.0
