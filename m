@@ -1,50 +1,33 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316EB37268C;
-	Mon, 18 May 2026 07:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4DC7327204;
+	Mon, 18 May 2026 07:35:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779089288; cv=none; b=qhZ8eMHBMOi3JIqsZ/0eL/KYGUyFm5TUAHK5g+/93C2oZ6tEfrUrlkQkrr4EgK2oKfBptuxqSn2xjlxvLt8yUsnhBbDVdndAqHJjk6IMT3FX8rYJs09m9+vSGRvKoJE6HLkqbZJyobJWdOvdnVSaQVVBaYnK1kDvVLwZscEwfAg=
+	t=1779089745; cv=none; b=KXybBYgljvy5xbHA7GiHHk7t5GSjlUUrZFkPYG0WxVzPbsSkIS+f7tv/De6d5fJOzZ9XReE1hyRaElHvlvrnpDjU3+9jX7oZMdr5J8LSkAaYVbRSnou15ZWGbFVNYmhe0u5HX+upCj5wi45dwrsZeBwrrvuEJJhW7NBxPq00hpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779089288; c=relaxed/simple;
-	bh=mTL4AmldJLzLoADrNv/OW3KIjhSEDw/stTd1/0S4/Kk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KZOoI79AGbtdyIu9uPkVblDpD4buINdbL8+pDtj12KJl0Day452p6SxnpfDknvymL7l0NByfvmpFORhN0Bd4TzwS+esgKugCkiV5gdaxZM1LXe6wxQdP5hutBeNEIODmVHu2hI/O0QAji9FU7ZaSl1ZKt20ltehZxn1DABX849E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=xlOnUpHh; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1779089745; c=relaxed/simple;
+	bh=DZP5bA04e6FVVPiUG8CbKzwq2Gxba5sxEcObMwpzS6I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Aw/PAn/1qnBzr3MjmT9MrZDDS+lbmnHZEH596Eb3TgTobNU0vxkPCOnbEL9wq50B4HB9v8TziOXJKs/hqHOoA2QkJgjbGj/rHSRd4tbqi4JQzVKs2zctwWn0MncIYNZEwwegjiyKY9pBNIAuwznGvEgHoq8LfzTbRKciPWEYBRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tUoXKBfu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="xlOnUpHh"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1779089287; x=1810625287;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=mTL4AmldJLzLoADrNv/OW3KIjhSEDw/stTd1/0S4/Kk=;
-  b=xlOnUpHh63/lTf+biY+PgV65rZOlHa6ChgQ3sKxM5tO/IQQIbQgHaXHJ
-   VJY+qXrrIS95hEbS30+37c/FrZPG0bts600AWfS5b87qA24ibWiXFRG0Y
-   A/Ojkls0qIWAMMXlFGj19iYllEi63onnPHEOGanBJIgK1yUnKCxMtVgIZ
-   MkVe6BxNQ4HGtcoheDVpvI8SQmQ3wUPu/kFwcaMgAeww+RR178COa463Y
-   WPLVxqwx76n+gFsTsM6AipKcHGjbE9uVMCBv+XqXX5n0iRdGcHuXM/f7r
-   gSN+d83KEWx0xDYNLPfNbhDnEomadc0HbUDCfonkWZjlWvxANYMa5W08F
-   A==;
-X-CSE-ConnectionGUID: J2ZZy5+7R6SKTOgX18Itgw==
-X-CSE-MsgGUID: 09Eij195QgmMOObYXG9Vhg==
-X-IronPort-AV: E=Sophos;i="6.23,241,1770620400"; 
-   d="scan'208";a="66398712"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2026 00:27:59 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.87.152) by
- chn-vm-ex1.mchp-main.com (10.10.87.30) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.37; Mon, 18 May 2026 00:27:59 -0700
-Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Mon, 18 May 2026 00:27:54 -0700
-Message-ID: <0ae90352-2099-4d3d-a55c-40a6e090fde4@microchip.com>
-Date: Mon, 18 May 2026 09:27:55 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tUoXKBfu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94B63C2BCB7;
+	Mon, 18 May 2026 07:35:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1779089745;
+	bh=DZP5bA04e6FVVPiUG8CbKzwq2Gxba5sxEcObMwpzS6I=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tUoXKBfuY0uSjmPsZ/smlowxghSHlY1v77tFftL6Ork2uA737X3qxOZqwB5xha/+y
+	 5BJRCPBPFHYjusHgvC6M3oyWq8VR5w1J95yRHu8ilsvnfGIyK+UlQ4A3w1BD5kZAX0
+	 tUyTkdU6QaAOq2pA1NEMYLK0bOWGfeQOdAgotvrrF45YGJPr4ypE+N6+ncGypdJRot
+	 EuPHq4jbGZ7Fliisj5gyCSLWBTVVkQBuwFTaTHtF9vvoqV0Mtqqixwl6ZE5mlhGGHz
+	 K27Gh5hnhlhnJzeO7FiTxjsnb01nTuwlXJkQWiqGEvgpOmapej31VkJvmhLMz1i+wK
+	 dx62WHP9ZZpFA==
+Message-ID: <8bd4365e-0171-425c-9738-0b186047cb15@kernel.org>
+Date: Mon, 18 May 2026 08:35:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -52,112 +35,96 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/5] ARM: dts: microchip: add I3C controller
-To: Manikandan M - I67131 <Manikandan.M@microchip.com>, Claudiu Beznea
-	<claudiu.beznea@tuxon.dev>
-CC: "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-	"Frank.Li@nxp.com" <Frank.Li@nxp.com>, "robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
-	<conor+dt@kernel.org>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@kernel.org"
-	<sboyd@kernel.org>, "tytso@mit.edu" <tytso@mit.edu>, Aubin Constans - M51280
-	<Aubin.Constans@microchip.com>, Ryan Wanner - C70674
-	<Ryan.Wanner@microchip.com>, Romain Sioen - M70749
-	<Romain.Sioen@microchip.com>, "durai.manickamkr@microchip.com"
-	<durai.manickamkr@microchip.com>, Cristian Birsan - M91496
-	<Cristian.Birsan@microchip.com>, "adrian.hunter@intel.com"
-	<adrian.hunter@intel.com>, "jarkko.nikula@linux.intel.com"
-	<jarkko.nikula@linux.intel.com>, "npitre@baylibre.com" <npitre@baylibre.com>,
-	"linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>
-References: <20260507084805.481737-1-manikandan.m@microchip.com>
- <20260507084805.481737-5-manikandan.m@microchip.com>
- <da83523d-f3ac-42e3-83a2-fb7e7d64ebf9@tuxon.dev>
- <515e89f3-fca9-477c-be4d-be9ed9428d5f@microchip.com>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Content-Language: en-US, fr
-Organization: microchip
-In-Reply-To: <515e89f3-fca9-477c-be4d-be9ed9428d5f@microchip.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v4 2/3] clk: qcom: camcc-glymur: Add camera clock
+ controller driver
+To: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Taniya Das <taniya.das@oss.qualcomm.com>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+References: <20260517-glymur_camcc-v4-0-9d00acffdbf7@oss.qualcomm.com>
+ <20260517-glymur_camcc-v4-2-9d00acffdbf7@oss.qualcomm.com>
+From: Bryan O'Donoghue <bod@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=bod@kernel.org; keydata=
+ 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
+In-Reply-To: <20260517-glymur_camcc-v4-2-9d00acffdbf7@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 18/05/2026 at 08:10, Manikandan M - I67131 wrote:
-> Hi Claudiu,
-> 
-> On 16/05/26 9:37 pm, Claudiu Beznea wrote:
->> EXTERNAL EMAIL: Do not click links or open attachments unless you know
->> the content is safe
->>
->> Hi, Manikandan,
->>
->> On 5/7/26 11:48, Manikandan Muralidharan wrote:
->>> From: Durai Manickam KR <durai.manickamkr@microchip.com>
->>>
->>> Add I3C controller for sama7d65 SoC.
->>>
->>> Signed-off-by: Durai Manickam KR <durai.manickamkr@microchip.com>
->>> Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
->>> ---
->>> Changes in v3:
->>> - Remove clock-names property as driver enables the clk in bulk
->>>
->>>    arch/arm/boot/dts/microchip/sama7d65.dtsi | 8 ++++++++
->>>    1 file changed, 8 insertions(+)
->>>
->>> diff --git a/arch/arm/boot/dts/microchip/sama7d65.dtsi
->>> b/arch/arm/boot/dts/microchip/sama7d65.dtsi
->>> index 67253bbc08df..ec200848c153 100644
->>> --- a/arch/arm/boot/dts/microchip/sama7d65.dtsi
->>> +++ b/arch/arm/boot/dts/microchip/sama7d65.dtsi
->>> @@ -1055,5 +1055,13 @@ gic: interrupt-controller@e8c11000 {
->>>                        #address-cells = <0>;
->>>                        interrupt-controller;
->>>                };
->>> +
->>> +             i3c: i3c@e9000000 {
->>> +                     compatible = "microchip,sama7d65-i3c-hci";
->>> +                     reg = <0xe9000000 0x300>;
->>
->>   From manual at [1] I see the size of I3CC region is 0x1000. Unless that is
->> wrong I think we should use 0x1000 to properly describe de HW. Please
->> let me
->> know and I can do it while applying.
+On 17/05/2026 18:33, Jagadeesh Kona wrote:
+> +/* 1200.0 MHz Configuration */
+> +static const struct alpha_pll_config cam_cc_pll0_config = {
+> +	.l = 0x3e,
+> +	.alpha = 0x8000,
+> +	.config_ctl_val = 0x25c400e7,
+> +	.config_ctl_hi_val = 0x0a8060e0,
+> +	.config_ctl_hi1_val = 0xf51dea20,
+> +	.user_ctl_val = 0x00008408,
+> +	.user_ctl_hi_val = 0x00000002,
+> +};
 
-The memory map simply describes what is the next memory boundary 
-assigned (or void in this case), not the actual size of the IP user 
-interface.
-So we took the opportunity to avoid mapping unused memory.
+I'll again push back on these magic numbers.
 
-> According to Table 78.6 (Register Summary), the I3CC register space
-> extends up to offset 0x258, Ideally the mapping should have been 0x400
+At the very least you should be mentioning in the cover letter log why 
+you _aren't_ making that change.
 
-The underlying memory mapping certainly does what is best, so I would 
-cling to being the closest to last register described. So your 0x300 
-value looks very good to me.
+Just reposting and hoping it slips by the person making the comment 
+isn't too cool.
 
-Best regards,
-   Nicolas
+Why can't qcom update the python? script that generates this code to 
+enumerate fields instead of magic numbers here ?
 
-> (next power of 2 considering the memory region alignment), using 0x1000
-> is also acceptable. Please advise which value is preferred.
-> 
->> Thank you,
->> Claudiu
->>
->> [1]
->> https://ww1.microchip.com/downloads/aemDocuments/documents/MPU32/ProductDocuments/DataSheets/SAMA7D6-Series-Data-Sheet-DS60001851.pdf
->>
->>> +                     interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
->>> +                     clocks = <&pmc PMC_TYPE_PERIPHERAL 105>, <&pmc
->>> PMC_TYPE_GCK 105>;
->>> +                     status = "disabled";
->>> +             };
->>>        };
->>>    };
->>
-> 
+I get you don't want to do it but, just ignoring the review feedback is 
+no OK.
 
+What gives ?
+
+---
+bod
