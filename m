@@ -1,34 +1,34 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC40F37BE9C;
-	Mon, 18 May 2026 02:58:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC1437C112;
+	Mon, 18 May 2026 02:58:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779073137; cv=none; b=uOM5Qwt2Mb0CnYKeyAAUMEUMk5Ix3M5fuK6G5CZV3R7Kj70FiyM8Hos7Jam6lP/wtVpd+ZRalAmxeccnNo/jGkBDzo+mih6H9TWAhtGO6oypNzwClT7PdR6r8LCYx+h8IZj3wRiEvraArHwyWcp/s9FViLifGT2ed+E/mAPs+18=
+	t=1779073139; cv=none; b=BSThpnpkWESOrxmJ8DzCMTHxhmvUlezdHFf53az1p0uVxZ5lNtAiBetsPa7wZH5cALn4hOb4a28ccdmxppvgvPe+0t970g0zsGIUDP52j215P0EKNiy+Vt/fNz/zh9+j4JD2IYomaQvgbbof2suQXJQ1Dcon7yFgfabsK/6b9Xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779073137; c=relaxed/simple;
-	bh=J8F9I7OUuLtL7qSnbHsC8O6vF6f01cUlWQd2bPJnrxo=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=gQurf8A1yPuTZW/W4HcKAsXUJDCn5fdmgHA+1lRplTqeLob8mApealVZcIg08dcq1RUn+OvHsL4IY8FXjGZ/ToQeSRvDQrTLxr4BF3n1t+2xa62ZuF76nyy6DZ1uaR3uE+Ln7ZRlF0r/aPXy46RGhbuMNv+BdTq++m7ifjqMffU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cC9AA0/N; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1779073139; c=relaxed/simple;
+	bh=glMTiY++tgALwLhBNGfpjYuRggBZLhInFSckW+5Ix54=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=IWE5zishPdEl65/HqIXhh5sIiL6P1VEOWuTpPo89k/9XyRz5O4qJDhN2BFfMUzW1CPZjgDK0rxIanTleDTx2j9AzOisQNFO24i/ivn1u0lFF6QIhjUyRyM2NUFd3W2aD3KGboR7Av+G+y+uvKoVWfzFNGIGxfr5fzN9N5VosZbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jdn4qGUJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cC9AA0/N"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FE11C2BCB0;
-	Mon, 18 May 2026 02:58:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jdn4qGUJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F4A5C2BCB3;
+	Mon, 18 May 2026 02:58:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1779073136;
-	bh=J8F9I7OUuLtL7qSnbHsC8O6vF6f01cUlWQd2bPJnrxo=;
-	h=From:Subject:Date:To:Cc:From;
-	b=cC9AA0/NCacgindZAA59WNrehIEPr1V5gi0xoQaQwLSlF+H2DRXGRt9xoJzgRvwpf
-	 1x79RwtfVAh/ZY4cvY33+hAhF3g/ZV5tJxpeqECeDX1Z1m0RUuCFe1aLwxfPEDGygG
-	 nzD2ExLvuwdmMf5aidXuX7itZn2KwjbQaGeW7eu7ui/t1zwxh9GRpNQo0d8ZZnW/r1
-	 Hdic2WxpD/Pu/CZ3ngLLpTsMus8+3PckDqM3lwL+K6dZcDItOqSw7Ej1V3tllIUPiv
-	 KTffRnThhsyn4bp8bnc6OXA9WzSA/IuVtry3LZI1oB944VM9rOanmtrNuKKDcHwVvr
-	 WfxjUyRZZ23xg==
+	s=k20201202; t=1779073139;
+	bh=glMTiY++tgALwLhBNGfpjYuRggBZLhInFSckW+5Ix54=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=Jdn4qGUJ093iqa6byfUuPKv+ZEfIiA15pvmTXxxuGoAkEew7EWOLaZEYn2ETiVQLS
+	 2/T9tliso6CLyox925kQUIQyRS1ui97ShUwXnoAqpBVBwnjWEwJBJHf2czV1T7jbE5
+	 pl/oY81XrqNnmUN0EGXmvcdH1Lr+SmEM0ti60OJRhioyCgfdjr9MngNssjwSSi4HqV
+	 FfuOp5t/n+/yGvOtoxq5FfGHk/qhnMQ9teatGIWj2rTLKSjZKdEi37Cq/1/cFtK+UP
+	 VoKtuRz+zqtuZL9Z+K5wFFC4aoDWR7Rprx/hoGf6LJVVuYQRVDQJ7J6PzCbj+vgdHT
+	 Q9AwTwIYKSSKQ==
 From: Yixun Lan <dlan@kernel.org>
-Subject: [PATCH 0/2] spacemit: fix USB2 clock and reset
-Date: Mon, 18 May 2026 02:58:35 +0000
-Message-Id: <20260518-06-clk-reset-usb-fix-v1-0-14fc235e692b@kernel.org>
+Date: Mon, 18 May 2026 02:58:36 +0000
+Subject: [PATCH 1/2] clk: spacemit: k3: fix USB2 bus clock
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -37,62 +37,62 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAFuACmoC/x2M3QpAQBQGX0Xn2qm12ORV5MLPhxOhPUjJu9tcz
- tTMQwovUCqjhzwuUdnWAEkcUTc16wiWPjBZY53JbMHGcbfM7KE4+NSWB7m5sS7vMxSpQ04h3T2
- C/rdV/b4foIy2uGYAAAA=
-X-Change-ID: 20260428-06-clk-reset-usb-fix-a265d4e836e5
+Message-Id: <20260518-06-clk-reset-usb-fix-v1-1-14fc235e692b@kernel.org>
+References: <20260518-06-clk-reset-usb-fix-v1-0-14fc235e692b@kernel.org>
+In-Reply-To: <20260518-06-clk-reset-usb-fix-v1-0-14fc235e692b@kernel.org>
 To: Philipp Zabel <p.zabel@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
  Michael Turquette <mturquette@baylibre.com>
 Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org, 
  spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, 
  Yixun Lan <dlan@kernel.org>, Junzhong Pan <panjunzhong@linux.spacemit.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1092; i=dlan@kernel.org;
- h=from:subject:message-id; bh=J8F9I7OUuLtL7qSnbHsC8O6vF6f01cUlWQd2bPJnrxo=;
- b=owEB6QIW/ZANAwAKATGq6kdZTbvtAcsmYgBqCoBkXj/fqaL6ldz5Rryf1UFY1mBr2lxe/L0JK
- o+q/z0USieJAq8EAAEKAJkWIQS1urjJwxtxFWcCI9wxqupHWU277QUCagqAZBsUgAAAAAAEAA5t
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1380; i=dlan@kernel.org;
+ h=from:subject:message-id; bh=glMTiY++tgALwLhBNGfpjYuRggBZLhInFSckW+5Ix54=;
+ b=owEB6QIW/ZANAwAKATGq6kdZTbvtAcsmYgBqCoBnvVc5VsIJY3iE7FPBru751ARzOjXHZta3g
+ EHS7zkv1NWJAq8EAAEKAJkWIQS1urjJwxtxFWcCI9wxqupHWU277QUCagqAZxsUgAAAAAAEAA5t
  YW51MiwyLjUrMS4xMiwyLDJfFIAAAAAALgAoaXNzdWVyLWZwckBub3RhdGlvbnMub3BlbnBncC5
  maWZ0aGhvcnNlbWFuLm5ldEI1QkFCOEM5QzMxQjcxMTU2NzAyMjNEQzMxQUFFQTQ3NTk0REJCRU
- QACgkQMarqR1lNu+3fJA/7B2dyhMYKqci5xLGf3cwXN//l+YRcBcu5qbldJMMz82RF/GkMGFU8u
- 8oekpebq31Ep2gyWczXhXgUq7PlM5WFg1YUf3xQjbtNYkLxdNWQYPIVj5VXnFVebUNvqTgX6xmB
- 4LdPaaVb8+/CCOG1AgfLI+CxLMhUEYSVVgqPXtQ1Mkh+Po8+iai4eqrdjyJY+qLJ2Q6TxTTr9J/
- FxdFU5O97oou22ZO8DBMzuRoCrsemuRhyDREO7EwS6NRjAIwlHmdAU3RQdkaFvl/G31Ge/cnIct
- xe4M0F9+itzEhrtv+2FE/PPkC2jxDd72HHYWgB5ICalWZcXVg+gDKd+hbF3Ei3SU2wyNY7XZ3mp
- s5fMBmmVcY3v2vAYf0VNbndmTRFthn3Ak7dOyy8k23Xr+141b6mmHRDbGUdJmVW3RsIIyx/W/7i
- Bz30MqSDYhM76QblOYU83l0ub6i+8CHcGxS+7v61Xllg5OVwIs0o3neObp4B71ILLEeHPbifbP0
- iQJ1S+RLM/i6YmDHN9o6FMFYiNeEwP00U9h1p+KGa9IZbSbow9HDrdFmqxjFZF7pcINSsNb20YZ
- LR8CVXqg1XoJCY9k85A+6+zac22LsMWWQimc/gRqElSNPRkY9UJaQElZdj6vKhMlznUkAKvqMJS
- 3yT/BFipvs76YXZ72RKGIlNdSb+dH8=
+ QACgkQMarqR1lNu+0lRxAAjzNNR56QG+N0hHf62fCU46L0GxPSLvwT7VcYBb/LLr7AuTJYWBV4B
+ pW6hC1Nv6mw8e2AMyV2awse1vGq2jsvN2HRpSFpg2S9c660o844B4pagh8sj5HZA0jKFKgGEufy
+ s4O8t6I+604uJ8TN5FSjBZn42rlUS3bXE0zNGJIsqQENFp3eR7U+SwIOsJuyVnMMc5olaJ82/lq
+ 8UTO9fSxjNjwiV1PPAopa5/VbBmu468pybNPuRfFBCyDU0ZsvOKGmcGWV/+fvXMGk7j1Q5VeWrB
+ SGVox32S/Qge6gI4OZBNp8YSK4+9wgi54jv1a4IJvUjwoTyUS2WNr4bjT9NblDQsLGiHBIRaIPt
+ I4dEpjdAegU0GB/AEI+aWrqteb4VQ6BRB1PsOsu+8jG/SV6kgT35pMVsbmLq7boOgC6w2jT1OaV
+ YEcCiCYR2Rf8O7TWA7EUTf3KT1luOTBSyLI8GF3qYNqNgltiWzOpmBw4Pv0VUY1BitciFVW29aa
+ 5N/h5MML++IuKZ/onDaIi4QvMVnxlXtqZMKksZ/zeTQmp8wHYiVYBMNw1zehTqmh9O2P67sIV6M
+ nwYicZDGkj5fa/xBXdX7tZvOjjk+utWV53Qgc6XnQtRD+bUVTers1uBZd3e29abCv+EhfVblMAj
+ 80S8aio8BojPVrVeVpo+GM7HKsGqIE=
 X-Developer-Key: i=dlan@kernel.org; a=openpgp;
  fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
 
-In current code (v7.1-rc1), the register bit of bus clock and ahb reset
-for USB2 were wrongly swapped, but this didn't cause any problem, because
-from setting the register bits perspective, the de-assert reset operation
-is effectly equivalent to enabling the clock bit, both of them will set
-value 1.
+According to SpacemiT K3's updated docs, the USB2 ahb reset and USB2 bus
+clock enable bit was wrongly swapped, the correct one should be:
 
-This issue was found during suspend/resume test with vendor's internal
-kernel.
+Register : APMU_USB_CLK_RES_CTRL
+bit[1]   : usb2_port_bus_clk_en
+bit[0]   : usb2_port_ahb_rstn
 
-I've combined these two patches in one series, but would expect each
-patch to go via its own subsystem as bug fix, The USB2 driver is not yet
-enabled in v7.1 cycle, so it's safe that we won't break any USB2 driver.
-
+Fixes: e371a77255b8 ("clk: spacemit: k3: add the clock tree")
+Reported-by: Junzhong Pan <panjunzhong@linux.spacemit.com>
 Signed-off-by: Yixun Lan <dlan@kernel.org>
 ---
-Yixun Lan (2):
-      clk: spacemit: k3: fix USB2 bus clock
-      reset: spacemit: k3: fix USB2 ahb reset
+ drivers/clk/spacemit/ccu-k3.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/clk/spacemit/ccu-k3.c              | 2 +-
- drivers/reset/spacemit/reset-spacemit-k3.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
----
-base-commit: 254f49634ee16a731174d2ae34bc50bd5f45e731
-change-id: 20260428-06-clk-reset-usb-fix-a265d4e836e5
+diff --git a/drivers/clk/spacemit/ccu-k3.c b/drivers/clk/spacemit/ccu-k3.c
+index e98afd59f05c..3d430f11d608 100644
+--- a/drivers/clk/spacemit/ccu-k3.c
++++ b/drivers/clk/spacemit/ccu-k3.c
+@@ -777,7 +777,7 @@ static const struct clk_parent_data sdh2_parents[] = {
+ CCU_MUX_DIV_GATE_FC_DEFINE(sdh2_clk, sdh2_parents, APMU_SDH2_CLK_RES_CTRL, 8, 3,
+ 			   BIT(11), 5, 3, BIT(4), 0);
+ 
+-CCU_GATE_DEFINE(usb2_bus_clk, CCU_PARENT_HW(axi_clk), APMU_USB_CLK_RES_CTRL, BIT(0), 0);
++CCU_GATE_DEFINE(usb2_bus_clk, CCU_PARENT_HW(axi_clk), APMU_USB_CLK_RES_CTRL, BIT(1), 0);
+ CCU_GATE_DEFINE(usb3_porta_bus_clk, CCU_PARENT_HW(axi_clk), APMU_USB_CLK_RES_CTRL, BIT(4), 0);
+ CCU_GATE_DEFINE(usb3_portb_bus_clk, CCU_PARENT_HW(axi_clk), APMU_USB_CLK_RES_CTRL, BIT(8), 0);
+ CCU_GATE_DEFINE(usb3_portc_bus_clk, CCU_PARENT_HW(axi_clk), APMU_USB_CLK_RES_CTRL, BIT(12), 0);
 
-Best regards,
---  
-Yixun Lan <dlan@kernel.org>
+-- 
+2.54.0
 
