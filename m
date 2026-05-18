@@ -1,174 +1,178 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF683E7BB5
-	for <linux-clk@vger.kernel.org>; Mon, 18 May 2026 09:40:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1331C3DDDAB
+	for <linux-clk@vger.kernel.org>; Mon, 18 May 2026 10:24:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779097239; cv=none; b=jyVTAi25k0vonOylzMDcwUywWcE+i4P6Kl68Zfdr2+0+jUcmDjTiXnxH/l3wDYbkzSYHiYF4TVVzychVSkAbjIQOL3NTXyBzB1Uk0/orGy+My+/ozboTUG3OUkjJSLzm3PtthoJa0B4LyZNgh9uri8iIznbxrwnVqWm/ia4JVvU=
+	t=1779099844; cv=none; b=S2epgxHIo378jCtDKvKepZmjh22aG+lmFns91yqoQq25pXOoWTVNedsubWE1Gzr9kVxLhhSvfLJhnFdtf+7agPtjQ7Gz2+nXzNLWZDK9Kf1LFVIUvdDo6ND+qhto82Y+av04VwLwzt3lIcIPx2jXSeMR1fUQvBRl9O5UAD0Vkwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779097239; c=relaxed/simple;
-	bh=PSZvLruQWF9KVcxGgzFEq6toAggI29FIiDOylO9wsB4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=e2GQV5Xmj+MJuzDAtywCUSmAGpHQHyVJf9+7Trivj8RESgOxCb6cICptjS+/kO+jajx+bT1U6jP8Kjfu8jg3w+WEqAAxqkHNAZcsiAmIVs8TH5L774/amAXDAjyPOrVUBCcXT+XZ0jCvYsJDAcRdxLExV2Uy+mouYFmo8JvMlC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=rVzixRLY; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1779099844; c=relaxed/simple;
+	bh=zej2Cpyl6kSQWSK0UynwC/MbemQJBK/YK0lG75EKZwU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O5A78wxgBD6+GSJsIjNs/L9fuwRNkNCnCYd3x5wLosexRHM+RhdZv7iPVhDOk/DLmfhGIP68xh1TLy0qzo8YKOPP2HQSfJbv5WrxL5KJec2cwPlRpygDlHBuSf4IopNldH+BzMYpUDq/JGSAkQKuYEHXq5hIIhs6xbpRiSdCkzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Dv1s9rIX; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=H/AaEFTP; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rVzixRLY"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-488b0046078so18085485e9.1
-        for <linux-clk@vger.kernel.org>; Mon, 18 May 2026 02:40:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Dv1s9rIX";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="H/AaEFTP"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64IAGx8O3595488
+	for <linux-clk@vger.kernel.org>; Mon, 18 May 2026 10:24:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	SA8886K6poJcpjofD22W11q9F+U2c/JpSKSwDMQIEm0=; b=Dv1s9rIX3+Tjr+2S
+	TGEZDsVk9nR/3/xNb833XAcEk9IOGs84YjruEuDA8P1QN7uaV4WlzuPmH0kcuD+e
+	2a9qOu8nAN1PhMLaHKT+4iDIMfuVh6qXa7y90Ukn0kuEEVnpMBs7xnNAan2gjkJQ
+	/3eruFmAFjfdJoNOB2VlmPFmareCwU8+FnC5g/unGsXY+f3eyzx0gu5Hh3uMt+K2
+	4kb6E4lPMqkiWEt14/OaaKJHYj3HJa77zy6HePr6kk5lvIlRyl3iBHCDVXx01LKl
+	58BOzRM9DC/bW/dn/iEFiIotOiV56Awg18WDPUPtygNUsUS4+/ZbtqDs4TQUOJNC
+	P8AZcg==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4e6h0qe04p-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Mon, 18 May 2026 10:24:02 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2bc7f9b2213so16336175ad.0
+        for <linux-clk@vger.kernel.org>; Mon, 18 May 2026 03:24:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779097234; x=1779702034; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R/38OFBmgQJL/SrbqQX032t4prIcTBJUh9cxQa+r5c8=;
-        b=rVzixRLYxsVjOfUnvWqy35E/Q//MDsTbqGdeF6vWdy9lyOR0X5xlJNoF5+r9IHzl3l
-         5s/2fjP11wGKYrr84V4p2syU2e7YQmsZI9mbIgWoP+xlyx51EcZ82lnPtJUB1K4NO7qO
-         HkTxHdAOKJ9L36SLqzWWouPgEcn/iWVCHsICMU2bm8NXmjvqrYjs6Q0dms6sg4BpXVTd
-         SoqdIlWu6FlroRYS5UANz2zgBjzoW+f6qa1xlFn52azhsFcsTzA031kGaDuCLemwsrEz
-         VtgQN81HhxD5lmsiCVnxbqDCqdOYaKpDKxAEdyaqSwR5sSNgfa67ZB3DQpXuiPVqxCJr
-         EeLg==
+        d=oss.qualcomm.com; s=google; t=1779099841; x=1779704641; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SA8886K6poJcpjofD22W11q9F+U2c/JpSKSwDMQIEm0=;
+        b=H/AaEFTPmtKqCYxPBwQu1EHCC4Z5VB7qXr1lTkXEoHQNXS6Qo3HknFPwV7EwpBayHx
+         rg4YYxduxI+2J1JSJTP5v8xwpvj97RHsQNOQgeaO4g88uwAODrjypnsBuSXXIq+gx1Ds
+         6lJ/eeoRvHkDhHwxP7XhLGLgWzxfJkzC2GXrEWy74g6rDbZ0ONvogtlQX3aU0To8gT/Y
+         kmEy6tllNH5fvvJT8VqXpHggkvOSyYr/MZYBucuNWBLmqRYlWr2y6uB7B1FUzdFIc/xL
+         tcBR7jrrCci6SLK9y48SZvlLuTaLAAU/ybUCuzvgUKwSOzfvwjrgbTx02npLfsjgVDh5
+         O9lA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779097234; x=1779702034;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=R/38OFBmgQJL/SrbqQX032t4prIcTBJUh9cxQa+r5c8=;
-        b=fsUT8Z1KgbjO+6mbR/UvBO5FaT/BN27DLkSQbnIfv0m/4TiaOL475Z1kfI1n6REr6j
-         kCj8WQAwERNTuAV5trEftf5ozmSIegBPsFQhnLcMghD6rGc4tzXBJ01HAd30BnuKT4bu
-         d7gq8MqhW2/gef4gxzUTKq3Hxx0PINP4LjuCcoyukjCrNOpRT5jdIe5VSGvUiCCxLp3a
-         h5481nDBmQRt21O8oIPcL3R0os1x8yibtjA+dE+8HfF/T9gQkkvDTkW02xjG6nnvGoGz
-         Wjb6zczXOkuugC4TEhpBz5fVNaOifWUCVGKxlGYIvprCqj2HsnsScM6AT9+qqUZ5k0Y1
-         GJ5A==
-X-Forwarded-Encrypted: i=1; AFNElJ9lq7t4M+I92FErMXqLBhMxrPcRxyUZ/DG/rlpdodbmxkS4I8DxOato7bEccXAAg7x3yJVZztZx2T4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziSBCrWyyxhQtKjdzbOcbb9Cn2xtwqS3YAjWS8IjGj7bEJLT2x
-	pbwMcOT/9ntGVRNlLV9J+ORoBfnfJcIT1vtGxGFg0tGUnUw6M1Sx4Ksl
-X-Gm-Gg: Acq92OEWNkLbpOcsaBu49WJOxxqyGQoNpLXAL7nWIvuHC2pAdVgNz0w5IsnS99ouwCW
-	+eG95o6pQQvs8HffDn8rvaE/ksldcc2l8s1HiW1z6SK7QbnFUJAPPeiioU2J40yhF2aGV+tkat4
-	XhvSWviY3x7mLQ8PrVlKOxZS+33nLLKvAO+jcYqTVCjS7rF5fDOtjiXplcCsmTaIDvGwhtkHjyr
-	2nbE0LZcFCFBN7XQumE6OaJ2N1ShQg1eBrPwvX5uyj+TIHJtV68Y/U7SU+Ul58JlP9/MqOLTaSq
-	tNdEvXCcdtI5T0X1nibf4q5P4qAbtJuvDL/uFq92kgLwiDZbjQMRfKm0sClh54bDT7csJe/5tgk
-	qmVEjvBbOp+DPN6k84NUVM1dKtrzw8uJ3e/Eit9qWW9NbE0IgJ7pkYpk0Cl26exMmmmujFaR+Pz
-	aNBTjD1EnzRnTlUThbyd6T1SWizdvN8ob8k50z+X7oRrjFZKGrMYZHlZ1Ndl4=
-X-Received: by 2002:a05:600c:1d99:b0:488:c078:bfda with SMTP id 5b1f17b1804b1-48fe631389bmr202326865e9.26.1779097233874;
-        Mon, 18 May 2026 02:40:33 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:23c4:a758:8a01:cd4f:119b:90b0:3b9d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48ff43f8799sm127975135e9.2.2026.05.18.02.40.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 May 2026 02:40:33 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Brian Masney <bmasney@redhat.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v2 3/3] clk: renesas: rzg2l: Rename RZG3L-prefixed PLL macros to CPG-prefixed ones
-Date: Mon, 18 May 2026 10:40:16 +0100
-Message-ID: <20260518094027.95700-4-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260518094027.95700-1-biju.das.jz@bp.renesas.com>
-References: <20260518094027.95700-1-biju.das.jz@bp.renesas.com>
+        d=1e100.net; s=20251104; t=1779099841; x=1779704641;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SA8886K6poJcpjofD22W11q9F+U2c/JpSKSwDMQIEm0=;
+        b=kdq2V3weBLA2dILlomUkrCXQiJm+rDwrKhLiG28TzSfFDftBpWqndFnbrA+QZ4lweq
+         nhM3LePkv2fRougKz8CjO3+4vO+PybG3hs26Du5/NX13++H8jfjV7tHQrF2ec4lZmrdR
+         PdPnaJCk+V46thlO7PNbMtnN1h0NdvCj4WPOSeUsRcjZ4vkP13ghqZfTMq8HNf+P0rB+
+         /ddngSmWq2R0Lgw8aY8MMs1o0BIiGuJxR0He+76Ui80EHVoGYIVCXUK+y6lK26TXWNI7
+         /GYjJ1lwm6dviSIeuXJpz21cyfIlIjPg6YclTf8tstGCqy67hPTqLiaRVxEra2K9KHWD
+         s2Xg==
+X-Forwarded-Encrypted: i=1; AFNElJ9CHTNjCB5YJf9m+wl3aqAgN4r82rfhKEtusMxO2uKzMv0l0X6lQDKLVYjK5y2CYnfUnnNg7NSuivs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxM50gRpXBV3mSrUCdrLJmVSvAo1TE5CvfigGpw5IpPeVE5OXJX
+	6UCPxWYooF91L4l6kETdEhgVUL84ZIovJsdxgXjP8hZ/lKJGMapN8UdmnGvVnb3SnzVtY+5994r
+	yIFPhJhCtvTb4Nbzq4/WjA5Blmoio/IY+xWVPbA4b1o38mqKi0bWdiUp/x9zslQs=
+X-Gm-Gg: Acq92OFkiazw+xi8UisKszR6RNF+4i8RSmB06LygGVlrJ3jzhvQCJaqB7YjG4UHlWhy
+	zIcKnXR2lr7JABaQKzOA8UQZH7nntiRifhcYMiqtty+2TtBYDtMf9TKra3TphLyYwIudaie2rw9
+	sWTjswUedRz3cD6ulLOsZSG4PdtEU630rolepDXfqWYflwh1SZfnaYJ5LVlVdw//eEoJU4IdRs5
+	Ey6KOsOJjXQbDVqm5Ca/4pUeD0+fjUIXbudEmfNbRK3g5k+9G55Cd+p+4Z/+0EaEVuNSWtSZaRk
+	LvByFnbFiUFxVZDTE94hrf1dNpKPnqY1WBu5oZtjW7usl3XEtfC+MJ1I8lFX2wRA/2eL6nD5CSY
+	NP8mBsH0AetemTq9nSvtzcxW4mmXzamhYkk1fb76YWTA8TcN7gu7m
+X-Received: by 2002:a17:903:987:b0:2ba:5a20:1d94 with SMTP id d9443c01a7336-2bd7e8459ddmr171304285ad.13.1779099841092;
+        Mon, 18 May 2026 03:24:01 -0700 (PDT)
+X-Received: by 2002:a17:903:987:b0:2ba:5a20:1d94 with SMTP id d9443c01a7336-2bd7e8459ddmr171304015ad.13.1779099840607;
+        Mon, 18 May 2026 03:24:00 -0700 (PDT)
+Received: from [10.218.5.182] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2bd5d12e38dsm145269515ad.77.2026.05.18.03.23.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 May 2026 03:24:00 -0700 (PDT)
+Message-ID: <2a496bdf-4728-47b9-84ba-063712a6e5b6@oss.qualcomm.com>
+Date: Mon, 18 May 2026 15:53:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/3] clk: qcom: camcc-glymur: Add camera clock
+ controller driver
+To: Bryan O'Donoghue <bod@kernel.org>, Bjorn Andersson
+ <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Taniya Das <taniya.das@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+References: <20260517-glymur_camcc-v4-0-9d00acffdbf7@oss.qualcomm.com>
+ <20260517-glymur_camcc-v4-2-9d00acffdbf7@oss.qualcomm.com>
+ <8bd4365e-0171-425c-9738-0b186047cb15@kernel.org>
+Content-Language: en-US
+From: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+In-Reply-To: <8bd4365e-0171-425c-9738-0b186047cb15@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: niyirWNIUc6k1apZ9JejywLf19eZa4oe
+X-Proofpoint-GUID: niyirWNIUc6k1apZ9JejywLf19eZa4oe
+X-Authority-Analysis: v=2.4 cv=fIMJG5ae c=1 sm=1 tr=0 ts=6a0ae8c2 cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=1leAgmdG7ggDTx2EHhMA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=GvdueXVYPmCkWapjIL-Q:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTE4MDEwMCBTYWx0ZWRfXz9octlnEGMqF
+ oILFe6xJEH5wtg6cel31Wwtyv06YfAjZ9qeQQlevFWbcdqWoJeIFTgkUNEvvD1ZIpRF4GEGaaat
+ SWpPmMf8df3aMMuXXHGu/bEw9O02i6GxeGhHfxi16rXHSPHg116TJ20RfnPWTD/IVTE0FaNWExt
+ XnXLjpZQpmUfADr8WSVx9XrOwjikz3F3teCP2y3/hrdPNMbxr1DU/YFG49TII21VGxBgBMLLcZQ
+ DDpoYiYPILp+f1yl67K8Lt/0jHS/QOpWyqQn0w15uPK79lLBB2allL/L5On5Mj8yAwmlKnVJOIV
+ VaZX5KtYVpyd+lr4sgW37ZaaA8+WJLWLwqYDxNMgfMf3TYsWvhy1f9ZlCC6Z+yMtJlS5qZmoPji
+ aPMXuUul3KSAPq9+BgIcA2SoIR44gSz1++s604FAjCJmIm10EkXZGjdyt44xjgHRXSWb6FsoKgM
+ 5/M8/fBs6Q0baIJ5hWQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-05-18_02,2026-05-15_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 impostorscore=0 spamscore=0 bulkscore=0 phishscore=0
+ priorityscore=1501 adultscore=0 suspectscore=0 lowpriorityscore=0
+ malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2605130000
+ definitions=main-2605180100
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Rename RZG3L_PLL_STBY_OFFSET(), RZG3L_PLL_STBY_RESETB,
-RZG3L_PLL_STBY_RESETB_WEN, RZG3L_PLL_MON_OFFSET(), RZG3L_PLL_MON_RESETB,
-and RZG3L_PLL_MON_LOCK to their CPG_PLL_* equivalents to reflect that
-these macros are not RZG3L-specific and are shared across SoCs.
 
-Also fold CPG_PLL_MON_OFFSET() into rzg2l-cpg.c alongside the other
-CPG_PLL_*_OFFSET() helpers introduced in previous patches.
+On 5/18/2026 1:05 PM, Bryan O'Donoghue wrote:
+> On 17/05/2026 18:33, Jagadeesh Kona wrote:
+>> +/* 1200.0 MHz Configuration */
+>> +static const struct alpha_pll_config cam_cc_pll0_config = {
+>> +    .l = 0x3e,
+>> +    .alpha = 0x8000,
+>> +    .config_ctl_val = 0x25c400e7,
+>> +    .config_ctl_hi_val = 0x0a8060e0,
+>> +    .config_ctl_hi1_val = 0xf51dea20,
+>> +    .user_ctl_val = 0x00008408,
+>> +    .user_ctl_hi_val = 0x00000002,
+>> +};
+> 
+> I'll again push back on these magic numbers.
+> 
+> At the very least you should be mentioning in the cover letter log why you _aren't_ making that change.
+> 
+> Just reposting and hoping it slips by the person making the comment isn't too cool.
+> 
+> Why can't qcom update the python? script that generates this code to enumerate fields instead of magic numbers here ?
+> 
+> I get you don't want to do it but, just ignoring the review feedback is no OK.
+> 
+> What gives ?
+> 
 
-No functional changes.
+Hi Bryan,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v1->v2:
- * Moved CPG_PLL_STBY_{RESETB_WEN,RESETB} near to CPG_PLL_STBY_OFFSET.
- * Reorderd the above macros
- * Moved CPG_PLL_MON_{LOCK,RESETB} near to CPG_PLL_MON_OFFSET.
- * Reorderd the above macros
- * Dropped a blank line.
- * Retained the tag as it is trivial changes.
----
- drivers/clk/renesas/rzg2l-cpg.c | 26 ++++++++++++--------------
- 1 file changed, 12 insertions(+), 14 deletions(-)
+I haven't ignored your comments & already responded to your earlier comment on why the bit fields are not
+defined. Most of these values are static settings we get from PLL HW team and we program them only once
+as is during bootup and are never reused again anywhere from PLL code, so these bits are not defined.
 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index 096901e25317..0abe00e2960b 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -60,15 +60,13 @@
- 
- #define CPG_PLL1_SETTING_OFFSET(conf)	FIELD_GET(GENMASK(11, 0), (conf))
- #define CPG_PLL_STBY_OFFSET(conf)	FIELD_GET(GENMASK(23, 12), (conf))
-+#define CPG_PLL_STBY_RESETB_WEN		BIT(16)
-+#define CPG_PLL_STBY_RESETB		BIT(0)
- #define CPG_PLL_CLK1_OFFSET(x)		(CPG_PLL_STBY_OFFSET(x) + 0x4)
- #define CPG_PLL_CLK2_OFFSET(x)		(CPG_PLL_STBY_OFFSET(x) + 0x8)
--
--#define RZG3L_PLL_STBY_OFFSET(x)	(CPG_PLL_STBY_OFFSET(x))
--#define RZG3L_PLL_STBY_RESETB		BIT(0)
--#define RZG3L_PLL_STBY_RESETB_WEN	BIT(16)
--#define RZG3L_PLL_MON_OFFSET(x)		(CPG_PLL_STBY_OFFSET(x) + 0xc)
--#define RZG3L_PLL_MON_RESETB		BIT(0)
--#define RZG3L_PLL_MON_LOCK		BIT(4)
-+#define CPG_PLL_MON_OFFSET(x)		(CPG_PLL_STBY_OFFSET(x) + 0xc)
-+#define CPG_PLL_MON_LOCK		BIT(4)
-+#define CPG_PLL_MON_RESETB		BIT(0)
- 
- #define CLK_ON_R(reg)		(reg)
- #define CLK_MON_R(reg)		(0x180 + (reg))
-@@ -1188,8 +1186,8 @@ static int rzg3l_cpg_pll_clk_is_enabled(struct clk_hw *hw)
- {
- 	struct pll_clk *pll_clk = to_pll(hw);
- 	struct rzg2l_cpg_priv *priv = pll_clk->priv;
--	u32 val = readl(priv->base + RZG3L_PLL_MON_OFFSET(pll_clk->conf));
--	u32 mon_val = RZG3L_PLL_MON_RESETB | RZG3L_PLL_MON_LOCK;
-+	u32 val = readl(priv->base + CPG_PLL_MON_OFFSET(pll_clk->conf));
-+	u32 mon_val = CPG_PLL_MON_RESETB | CPG_PLL_MON_LOCK;
- 
- 	/* Ensure both RESETB and LOCK bits are set */
- 	return (mon_val == (val & mon_val));
-@@ -1199,17 +1197,17 @@ static int rzg3l_cpg_pll_clk_endisable(struct clk_hw *hw, bool enable)
- {
- 	struct pll_clk *pll_clk = to_pll(hw);
- 	struct rzg2l_cpg_priv *priv = pll_clk->priv;
--	u32 mon_mask = RZG3L_PLL_MON_RESETB | RZG3L_PLL_MON_LOCK;
--	u32 val = RZG3L_PLL_STBY_RESETB_WEN;
-+	u32 mon_mask = CPG_PLL_MON_RESETB | CPG_PLL_MON_LOCK;
-+	u32 val = CPG_PLL_STBY_RESETB_WEN;
- 	u32 stby_offset, mon_offset;
- 	u32 mon_val = 0;
- 	int ret;
- 
--	stby_offset = RZG3L_PLL_STBY_OFFSET(pll_clk->conf);
--	mon_offset = RZG3L_PLL_MON_OFFSET(pll_clk->conf);
-+	stby_offset = CPG_PLL_STBY_OFFSET(pll_clk->conf);
-+	mon_offset = CPG_PLL_MON_OFFSET(pll_clk->conf);
- 
- 	if (enable) {
--		val |= RZG3L_PLL_STBY_RESETB;
-+		val |= CPG_PLL_STBY_RESETB;
- 		mon_val = mon_mask;
- 	}
- 
--- 
-2.43.0
+Please find the earlier responses for your comments below:
+https://lore.kernel.org/all/b92a2cbb-fe8d-4378-aa02-d91e2e4dfff4@oss.qualcomm.com/ 
+https://lore.kernel.org/all/009ecdbb-2297-44eb-862d-233e3290691c@oss.qualcomm.com/
 
+Thanks,
+Jagadeesh
