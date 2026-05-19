@@ -1,123 +1,87 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98212F7EF5
-	for <linux-clk@vger.kernel.org>; Tue, 19 May 2026 15:46:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB4C343894;
+	Tue, 19 May 2026 17:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779205581; cv=none; b=WDGuh7/DMT6or0b1rdy+QAFHDCkTiR2mg1WnHU+VgvfrU/xwvaBJZz8RcABiQ3NF83HiXWOq5wUVrL3N2OfHXtvCnvPxyq8EnwDA/pmwVOAHGpOmNIpCdj1qLz8JWE96YXKt5GWoy1dr+vDKIQ84sxlbSPw6Xa/AEmyGm3P8f44=
+	t=1779212450; cv=none; b=a+5gaCNGT99N6pskptG0wQcv6cbBN4UIGpY+LnYos1j5ojnBki/q9h0TGIUXJah4bJWirBv5cjgEMnst6/Q8CtMk6jOEM/mqLH/Qf6CoTpM3Nh2FOHj02B5GKaesuzLyHdXuitpEHYELtdoRwl5ZR5GHjKxBWWv4HLoiNjVGLGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779205581; c=relaxed/simple;
-	bh=5T+dGixDG5fmBL/dmq6WzOVfoP6DUYuLr5vjU9kA3wA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fIEYe8O0+i8CkGlVqpBJKzNI+riFLa5r2kAFFTfGMlJne6cXqlgJxTnmyMen+Liad5jgtzvW0iotgDQax9mC6We56Q/+uRRBdvL9z4szzMypiv31NVFVkVTSf9av7qLOFSZRAxe95BpoDMyf6ic8MWZhFKaCwirJnjWz1+J5Bjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P5o5p2/u; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1779212450; c=relaxed/simple;
+	bh=roncchQ6gRIvDa6f3EmKw01L4C9zHft5fUpPmg64Ig4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=duPgeeN2VhGTRyMb8PEVq2Sv1fso6e6p9UXaj3ZatQDE9MuF8PcRn5Ebi5Os/YNdns9RiVz4kA+bYHQ5r4slhGvcCgd4N6D6BaDekgUkybjg/1bovTuRX74UkXJliozld48xw29U5s0EDgrpfzWVnTTG0yceF7AwovPUwR9B9k4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d3ZEqBwD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P5o5p2/u"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-48fe26a177cso27700155e9.1
-        for <linux-clk@vger.kernel.org>; Tue, 19 May 2026 08:46:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1779205578; x=1779810378; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cNEYJ0/3OL6V5KtaRvLweTOXbANv4SgmKSvooy29LIM=;
-        b=P5o5p2/us21ERwcjXlCUCV3w2XDJiLvqzH3sMy3g5u0Czyl6cV8Td8hygZfyob/FoR
-         wOb6omBvdJiHNXdlyvXkKW8QJ8ud0MwmMbKxmTtHlQWruz7RlIVQ3mybtTIVCB/JzC3k
-         dmVpguypTG4gTmIKSshCHQYku/40bKcLmmt/yx0Ozro4uV3ptJhVh75rIzkjVLM7W1S4
-         uWR7+w45Z1kQ5hxT0WybTKy3oi3eiVdHGMPcwm0Rtsdq5Ia6RgEXXrjz893+oLUJRlS2
-         9gke22KZeRV3V/KAcvri8HyCCre+sTTR4Y3hujiuAPEM/uBlbIspea2JfFfWt2MI2Aj6
-         gVcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779205578; x=1779810378;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cNEYJ0/3OL6V5KtaRvLweTOXbANv4SgmKSvooy29LIM=;
-        b=fJ7C4g8+bucbBoSBWRKb8hNBogvqfCUih2YxIk2OndFii5lyOBZPoUqelkYwoJZYEQ
-         tSy9yuKctcmnU3PKMM0YfXMoQQ+cNB/ajhneXgSLlCfnOXcy2/w2pLb58cBucFtTJSOI
-         /dOXhUkqJOUp+Blu2nG+cdc8n43YLbTSworxK2lBOslMvgJ4CykUIizbYDw/hDqbneHE
-         CJAfwOOnKq2U56IO8byVREN/Cg2diiHR9MpaPXMdYZVw/Wdl4UaT6D0KuDPhoIzSc/ns
-         bQAOEd9IXuhybOO8G4m4cqZWc2yNtG9+YxQ027OCXp0F2fClnBCqx2T4mrSVt48jILRs
-         mHfw==
-X-Forwarded-Encrypted: i=1; AFNElJ+OqFI52/R0xos2jlQe6FIXdKJwSa/GZWFk8zDMnJ953Py9AFvaMHwXvTkLhPwgKy93WkAdBrJAKe0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxbEQPUtTdDgK1A1lsoinc9hLSLmumrisoQsXwCqroMesCZnbb
-	L/V5kNquRuxHd/PIkJvUF79uSwEDzWJNoEWjKKurhIURnn23SzA+6Mtue9tWb9g96j0=
-X-Gm-Gg: Acq92OGBoP/tXNmL/seXARWl5lEMZj5c4see2EGh/sLVSzW57Hxx2ahNm/d9HmbkCyN
-	ZK94MzgoS0aLV8aRiJ/++A+D5019SbWIsxIRAdobclGTNT13EhmB8wd+eKE+QfAhN6pfaGB0cme
-	DBFyDX0fRk6GljNPwds1J+BNRGMLnU9QA2txLzq52tCOtIRkkFPEonEXBa7SSnM5D11dvpkzT5l
-	28S40s2dDEmQmrswwMyKo1Lf2iMlsCqmikUvXsHhw7z5u79AJchii6ILzh/FOLOYV4PMHrOA88d
-	NoXpaEQl2cQOg6zcHGyDqgMbkitmyddY+Y6Svzs3synHiVbNZxvFIfPSOp67DMHSktasExEESmT
-	UjfK9TbOV9PuQTOr8tJQ3krUt0IrnBkkrzq6HmqxExNRzZ0BvPC/4iVcpVkzlphk2C3UWc7fpy3
-	7e6oRy76LytyXaJLrgxFHREjPhEJ5qku0=
-X-Received: by 2002:a05:600c:34cc:b0:48e:60a3:220a with SMTP id 5b1f17b1804b1-48fe59af1cemr336906785e9.0.1779205578122;
-        Tue, 19 May 2026 08:46:18 -0700 (PDT)
-Received: from [10.11.12.109] ([82.76.215.73])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48fe4862209sm333119405e9.0.2026.05.19.08.46.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 May 2026 08:46:17 -0700 (PDT)
-Message-ID: <73f18a2c-e729-45d7-9376-7c0e60ed35c7@linaro.org>
-Date: Tue, 19 May 2026 18:46:14 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d3ZEqBwD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 194C8C2BCB3;
+	Tue, 19 May 2026 17:40:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1779212450;
+	bh=roncchQ6gRIvDa6f3EmKw01L4C9zHft5fUpPmg64Ig4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=d3ZEqBwDa0DWUqJMsmhhTGT6C+kFcGKS5uTqPAQOpmOobLBT0fgvJcqyeRw+ryL9h
+	 uKPsi8d8WIT8FLjU4PE0psjZj8upRSI2NCeBS/9H4JDA6kNuTfBFNBL+BTvjHc5Epj
+	 Cn58lvbDWYVTNY79TkHeFQl2NuxqSy0eDsv51JUNatQeGGG4fuyu5vKH7kg0vBbkwW
+	 gUM/UJr/r67cSryalNsrSgXMH9bx4cJgeEEEJhdio39kwEYFZz1CBS/llPTL2UZ28A
+	 SzzDExhuaWi+f8a9llPCX8rD5T78XW20un6Hk0QMZzzneefZAlKvZIVzU29m4b6iEY
+	 LT0IUyJsw8Q4A==
+From: Vinod Koul <vkoul@kernel.org>
+To: Frank Li <Frank.Li@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@kernel.org>, 
+ Guodong Xu <guodong@riscstar.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Paul Walmsley <pjw@kernel.org>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>, 
+ Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Cc: dmaengine@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ Conor Dooley <conor.dooley@microchip.com>
+In-Reply-To: <20260518-k3-pdma-v6-0-67fdf319a8f8@linux.spacemit.com>
+References: <20260518-k3-pdma-v6-0-67fdf319a8f8@linux.spacemit.com>
+Subject: Re: (subset) [PATCH v6 0/4] dmaengine: Add Peripheral DMA support
+ for SpacemiT K3 SoC
+Message-Id: <177921244361.339411.17197667376748873904.b4-ty@kernel.org>
+Date: Tue, 19 May 2026 23:10:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6] firmware: samsung: acpm: Add TMU protocol support
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Lee Jones <lee@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- peter.griffin@linaro.org, jyescas@google.com, kernel-team@android.com,
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-References: <20260506-acpm-tmu-helpers-v1-0-a9cd5daf8355@linaro.org>
- <20260506-acpm-tmu-helpers-v1-5-a9cd5daf8355@linaro.org>
- <DIBOWQYHOPOU.3PCLCL8030WRL@linaro.org>
- <806da86b-45b7-43cc-b364-97bade8f4041@linaro.org>
- <DIFVKM72KZDI.14EVGUMQ0NV9S@linaro.org>
- <a55690fc-7727-401d-9b3c-06bf3c2852d0@linaro.org>
- <DILRJBWU9SKV.2P7EJN7ECEJB7@linaro.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <DILRJBWU9SKV.2P7EJN7ECEJB7@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-Hi, Alexey,
 
-On 5/18/26 2:24 PM, Alexey Klimov wrote:
-> Thinking further about this I'd humbly suggest that even
+On Mon, 18 May 2026 11:32:40 +0800, Troy Mitchell wrote:
+> This patch series introduces Peripheral DMA (PDMA) support for the
+> SpacemiT K3 SoC, leveraging the existing mmp_pdma driver.
 > 
-> 	if (fw_err >= 0)
-> 		return 0;
+> The K3 PDMA IP is largely based on the design found in the previous
+> SpacemiT K1 SoC, but introduces a few key architectural differences:
+> 1. It features a variable extended DRCMR base address for DMA request
+>    numbers (>= 64) depending on the hardware implementation.
+> 2. Unlike the K1 SoC, where some DMA masters had memory addressing
+>    limitations (requiring a dedicated dma-bus), the K3 DMA masters
+>    have full memory addressing capabilities.
 > 
-> 	pr_debug_ratelimited("ACPM tmu call returned: %x\n", fw_err);
-> 	or pr_debug(...);
-> 
-> 	if (fw_err == -1)
-> 		return -EACCES;
-> 
-> some debug message would do.
-> Perhaps we need some convertation, for instance as it is done in scmi
-> code (scmi_to_linux_errno(), scmi_linux_errmap[]). But I don't have any
-> data for mapping acpm errors to some human meanings.
+> [...]
 
-I did that for the pmic helpers. I don't need any debug prints for
-gs101 TMU as I have clear instructions from firmware: 0 for success,
--1 for error.
+Applied, thanks!
 
-You may update it for e850 later on if you need it.
+[1/4] dt-bindings: dmaengine: Add SpacemiT K3 DMA compatible string
+      commit: 55620b11186c81757b05fb8e2df9ddc7127d6fd2
+[2/4] dmaengine: mmp_pdma: refactor DRCMR access with helper function
+      commit: f46b47623e70dea8b03794a5420ffba060425e85
+[3/4] dmaengine: mmp_pdma: add SpacemiT K3 support
+      commit: 6587b8661a0b61c2f4b260bfc9f0e9ef9de0ea2e
 
-Cheers,
-ta
+Best regards,
+-- 
+~Vinod
+
+
