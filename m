@@ -1,159 +1,134 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEFD731E846
-	for <linux-clk@vger.kernel.org>; Tue, 19 May 2026 14:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0235C3AFCEB
+	for <linux-clk@vger.kernel.org>; Tue, 19 May 2026 15:07:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779202441; cv=none; b=dSX7cfRU/ps55JGxT5Ywde0FqElukQZMVq8K6zhFFaQ9lH52Q3mOfozuOhp7Xt4v6MKo+7Fy67EKrWiBRYnO3vUxF6Ra/mON2UVk+IWXmTsLbuE0UAVlhW29OP0+bgx6HlPCxVG+DKLHf7JrbqB0cwugvwM1EfO9qNR7OBAXg1c=
+	t=1779203231; cv=none; b=lT8Lr9hMrai2XrCsEsMEvppZNeQhHA0DtQJBowjE2mKlkwIR4MYA7GI4P6MmLagyId+pGn3luQ2mrcIX8UE9N+IktVwzJprH5Z4BX+Blbwz4E7GidlYwPY94u3UhJ+emLJIhXIIIHbXAke8f7bjbRBqukGTLwgA60Sa+yDk/wwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779202441; c=relaxed/simple;
-	bh=OXBIkjSU758c6rNMkYEXqLZB8lqyHUA/jgPib0CXRAs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DhUvVnmIeRnYEP7OwICfkEp0fVrZdada9deR7uCkhBHjgENSYImZgO9SOKn7s2XNzjgxp0Izd3XtlP2PCYRtYSAdZqFwnzIRU0smCvpXeei+al6yiCHd01XsyRLr5FdykH7qm6aFsMhBy1Di76MafozH3PG8S0gD1wKpxk8AnPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g9uHXDXs; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=U3+o5zhN; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1779203231; c=relaxed/simple;
+	bh=EjYJ7A5Qy1sodLBAVGnmWXpV2T6Zyw7nNfKiG2nplrc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=TKAoX1ykFCL3LHawxddi182nZlmzvRefratF5HimBndP1ru3nwWZawHUeVlVoyhKfsaTI4FZ/+RwtI5Cy364oAFZBa7cmPT5PKTMEC5/StkJyDBzL3J56O5EceZY2dp0IypTZXVQiornJnhFXXwusHO1A7HkqrUlkpWXH/FKHyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ARUywXHy; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g9uHXDXs";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="U3+o5zhN"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1779202438;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kgOjCtbQGBrweVM88K0nxcsUl5DkIty1+EqPf4mT7VY=;
-	b=g9uHXDXsCAiz1Iq6J+zKPtjQA3rbPxcFndO8AhPwZQ7lachODOIkUHbjB52Wjf9WvffO66
-	KoTGJi8eqkqClLcvLCIdoypdrvqCJOUhjQC0IO4l3Te9RgxWsr/2hQHyqDFK/DKBDWjke6
-	kUXlWOxjCfpWA3pyPDd5vd0z/9jH87w=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-584-sC3AS-4YMTCN7hG8HBVbyw-1; Tue, 19 May 2026 10:53:56 -0400
-X-MC-Unique: sC3AS-4YMTCN7hG8HBVbyw-1
-X-Mimecast-MFC-AGG-ID: sC3AS-4YMTCN7hG8HBVbyw_1779202436
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-5156c85538cso107621541cf.3
-        for <linux-clk@vger.kernel.org>; Tue, 19 May 2026 07:53:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1779202436; x=1779807236; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kgOjCtbQGBrweVM88K0nxcsUl5DkIty1+EqPf4mT7VY=;
-        b=U3+o5zhN8OEkQhcdaqte/R+bnZm5uYuLdlCi+4tUxzmqIbjFkqj0MHHjMA/e+WVHwa
-         MuQRsfcxtvk+Ty797ZKE3CXWO13qqVL62RH4C5FiIi2IyZ4/nSILhiinjmCcYuQDx30A
-         fC2zJhK/zKdxpIEpitRdfoCW3aTHQWCHflizcjaLjKGoYQmzePj+OCq5By4Cn4CoJSL0
-         vvjNHh+p/7BRruC+dlfrs/n/BLX5KYjbk3d98zlIBZvpvBiHVmGMbs2KBpNSFcUsdpti
-         vi6ztY4rBXOd7tkvnFg8wXQKb/+ive/v0mkHX+1zLW3DuLGuGG6gQa2RBXll1s1A1xi6
-         gvbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779202436; x=1779807236;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=kgOjCtbQGBrweVM88K0nxcsUl5DkIty1+EqPf4mT7VY=;
-        b=tU+BJjn5dQMSrBHCD6voWk07NKAk1uji9Rh3eknEpGMo6U4USNUOIE/q6opRKEYX3N
-         NzkIzFaO9crks41IXumv2rmD8HJugLJ5V212HPkYbxAEua6GfDr3d6DLyn+gVe7bgIB0
-         Y8zQBbfauRJgn+sThDImAQJIS7EDLvXsV09eGufeuWrfIUwAhGlQFxQYvwmIDpzjpr93
-         mbZw20+K7U8gcJzR8r3KfL/X9IeLcBWXtnketg+YZDY8uCBZpQteefYTqytze2hrDbsx
-         zxDyVHXhRLUmwGjrIqhvo63cK8mUQ4hBRr/6rYF6971Wka+tYrFt+IEElod1nmcqJsN1
-         WbYg==
-X-Forwarded-Encrypted: i=1; AFNElJ/8+kNOENmVR98ktUh0wFnN0d2fz8uYz58l6v4cU9DUyam+jQF3/uU6OvxNm9XHkaxKlfCvpCK+aZA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqS73b93AX2toV3JiW5kvw5hJ6GojS0qHdqzXLmufrN5O5I1Hk
-	aeDmxgw8VSBZ2aJrdUEgKjI+K/FKq6iRVRd/+F0SmkD4u4WxG0kbOMtGmJY7MZ07xBeMHxP0SIA
-	RASBWf5G8SNy/kfuf4BXkhsujFWlVEcD0JvZPdkkh3KajU3ZXIrPP8kmiuF6DJg==
-X-Gm-Gg: Acq92OHoYrK+0e490Qwl1f+QhAdOhALBtB9uj41Emrcgy7g6m/7ae/VEgbzo5m1UGxU
-	JCkJs8bgUG2uxUVPwccDqj9BLOJQPQ9gRz5wKUYKZ9t6mfQJszRCfunE5yR6UTwLf/Xv2CNPPbL
-	P2Mbpg+9K3CcQeqgCgI75yREsZH6oCVh2HyZ9Oe7/Q9TqivRJNBGmhz+ilZu2EnTvzUnOG5PW8d
-	LTpNjHqX/WCVd/JPGdMUCXpKvayEDdlu93E/NCkKJwL7lP0/bdSXuskAUvqfZzL1fRXgrrECBAC
-	dIuiJeZ5xCP+lYqUhbF+AVJBnJz+xguC/dwoVMfLwx5X7/X7+H23cAq8coD4wcz/lYw4gMD76Ur
-	oJr+rH95tf2dbnALzsE0jtA5A0y7XjFCxJ6XpZQMxpKEFNvXJbkq/GOJS
-X-Received: by 2002:a05:622a:5908:b0:50d:736a:6259 with SMTP id d75a77b69052e-51659fbe97cmr273640401cf.3.1779202435789;
-        Tue, 19 May 2026 07:53:55 -0700 (PDT)
-X-Received: by 2002:a05:622a:5908:b0:50d:736a:6259 with SMTP id d75a77b69052e-51659fbe97cmr273639801cf.3.1779202435169;
-        Tue, 19 May 2026 07:53:55 -0700 (PDT)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5164568a275sm165644671cf.5.2026.05.19.07.53.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 May 2026 07:53:54 -0700 (PDT)
-Date: Tue, 19 May 2026 10:53:53 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Joey Lu <a0987203069@gmail.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, ychuang3@nuvoton.com,
-	schung@nuvoton.com, yclu4@nuvoton.com,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] clk: nuvoton: ma35d1: fix PLL_CTL1_FRAC bit field
- width and fractional calc
-Message-ID: <agx5gTfaByMNjkX4@redhat.com>
-References: <20260513055626.1070533-1-a0987203069@gmail.com>
- <20260513055626.1070533-3-a0987203069@gmail.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ARUywXHy"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 5D1F24E42CF0;
+	Tue, 19 May 2026 15:07:08 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 2A3A75FFC8;
+	Tue, 19 May 2026 15:07:08 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id ED7CB107E9446;
+	Tue, 19 May 2026 17:07:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1779203226; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=Gr9vUBUUEIYJs7gctY1dhD6Mbvo1bpv8AgjGvmqCtXo=;
+	b=ARUywXHy0BshGKFva57stisbd+gcOoqyRttY4lexAcxOj4JFtc6L2Fbt3+h8IA+mXZRkeE
+	6N3SfivS7zgrm5CpDv2xgfqn3UQ78vTnCz4mwJxIQkkVpo+bIxGEr5lMGcMdPmUh1zv1XA
+	+Sl6ileyGYjaMyyh2zwEnmDU7zuZPUbo9/2rWApZvNA+HrSIqpXwejkH2SLWEEVAPVIqhu
+	7+z/Azf98R3/gJfpiZb53PeZwJWpBN0cP/75DZ/hTQJRSOMWGBMu3KUZ7JU+7oByIDbhIN
+	mdZCgIP8jawJG1Ktc3F6TohuxxXjqq8RVMCdbRKPTYAbziEFkPcsy7gA/08I/g==
+From: "Thomas Richard (TI)" <thomas.richard@bootlin.com>
+Date: Tue, 19 May 2026 17:06:56 +0200
+Subject: [PATCH v9 1/4] firmware: ti_sci: add BOARDCFG_MANAGED mode support
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260513055626.1070533-3-a0987203069@gmail.com>
-User-Agent: Mutt/2.3.1 (2026-03-20)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260519-ti-sci-jacinto-s2r-restore-irq-v9-1-c550a8ae0f31@bootlin.com>
+References: <20260519-ti-sci-jacinto-s2r-restore-irq-v9-0-c550a8ae0f31@bootlin.com>
+In-Reply-To: <20260519-ti-sci-jacinto-s2r-restore-irq-v9-0-c550a8ae0f31@bootlin.com>
+To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
+ Santosh Shilimkar <ssantosh@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>
+Cc: Gregory CLEMENT <gregory.clement@bootlin.com>, 
+ richard.genoud@bootlin.com, Udit Kumar <u-kumar1@ti.com>, 
+ Abhash Kumar <a-kumar2@ti.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-clk@vger.kernel.org, 
+ "Thomas Richard (TI)" <thomas.richard@bootlin.com>, 
+ Dhruva Gole <d-gole@ti.com>, Kendall Willis <k-willis@ti.com>
+X-Mailer: b4 0.14.3
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Joey,
+In BOARDCFG_MANAGED mode, the low power mode configuration is done
+statically for the DM via the boardcfg. Constraints are not supported, and
+prepare_sleep() is not needed.
 
-On Wed, May 13, 2026 at 01:56:25PM +0800, Joey Lu wrote:
-> PLL_CTL1_FRAC was defined as GENMASK(31, 24), covering only 8 bits.
-> The hardware fractional field occupies bits [31:8] (24 bits), so the
-> mask must be GENMASK(31, 8).
-> 
-> The previous fractional-mode calculation used FIELD_MAX(PLL_CTL1_FRAC)
-> as the denominator to obtain 2 decimal places.  With the corrected 24-bit
-> mask the old divisor is wrong; replace the arithmetic with a proper
-> 24-bit fixed-point rounding to 3 decimal places:
-> 
->   n_frac = n * 1000 + (x * 1000 + 500) >> 24
-> 
-> The +500 term provides round-to-nearest before the right shift.
-> 
-> Fixes: 691521a367cf ("clk: nuvoton: Add clock driver for ma35d1 clock controller")
-> Signed-off-by: Joey Lu <a0987203069@gmail.com>
-> ---
->  drivers/clk/nuvoton/clk-ma35d1-pll.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/nuvoton/clk-ma35d1-pll.c b/drivers/clk/nuvoton/clk-ma35d1-pll.c
-> index bfedd45bd04b..7e6b30d20c01 100644
-> --- a/drivers/clk/nuvoton/clk-ma35d1-pll.c
-> +++ b/drivers/clk/nuvoton/clk-ma35d1-pll.c
-> @@ -48,7 +48,7 @@
->  #define PLL_CTL1_PD		BIT(0)
->  #define PLL_CTL1_BP		BIT(1)
->  #define PLL_CTL1_OUTDIV		GENMASK(6, 4)
-> -#define PLL_CTL1_FRAC		GENMASK(31, 24)
-> +#define PLL_CTL1_FRAC		GENMASK(31, 8)
->  #define PLL_CTL2_SLOPE		GENMASK(23, 0)
->  
->  #define INDIV_MIN		1
-> @@ -113,9 +113,9 @@ static unsigned long ma35d1_calc_pll_freq(u8 mode, u32 *reg_ctl, unsigned long p
->  		pll_freq = div_u64(pll_freq, m * p);
->  	} else {
->  		x = FIELD_GET(PLL_CTL1_FRAC, reg_ctl[1]);
-> -		/* 2 decimal places floating to integer (ex. 1.23 to 123) */
-> -		n = n * 100 + ((x * 100) / FIELD_MAX(PLL_CTL1_FRAC));
-> -		pll_freq = div_u64(parent_rate * n, 100 * m * p);
-> +		/* x is 24-bit fractional part, convert to 3 decimal digits */
-> +		n = n * 1000 + (u32)(((u64)x * 1000 + 500) >> 24);
-                                           ^^^^^^^^^^^^^^^^^^^^^
-You should be able to use DIV_ROUND_CLOSEST_ULL() here.
+Reviewed-by: Dhruva Gole <d-gole@ti.com>
+Reviewed-by: Kendall Willis <k-willis@ti.com>
+Signed-off-by: Thomas Richard (TI) <thomas.richard@bootlin.com>
+---
+ drivers/firmware/ti_sci.c | 10 +++++++---
+ drivers/firmware/ti_sci.h |  3 +++
+ 2 files changed, 10 insertions(+), 3 deletions(-)
 
-Brian
+diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
+index dd9911b1cc11..eaeaaae94142 100644
+--- a/drivers/firmware/ti_sci.c
++++ b/drivers/firmware/ti_sci.c
+@@ -3772,8 +3772,11 @@ static int ti_sci_prepare_system_suspend(struct ti_sci_info *info)
+ 			return ti_sci_cmd_prepare_sleep(&info->handle,
+ 							TISCI_MSG_VALUE_SLEEP_MODE_DM_MANAGED,
+ 							0, 0, 0);
++		} else if (info->fw_caps & MSG_FLAG_CAPS_LPM_BOARDCFG_MANAGED) {
++			/* Nothing to do in the BOARDCFG_MANAGED mode */
++			return 0;
+ 		} else {
+-			/* DM Managed is not supported by the firmware. */
++			/* DM Managed and BoardCfg Managed are not supported by the firmware. */
+ 			dev_err(info->dev, "Suspend to memory is not supported by the firmware\n");
+ 			return -EOPNOTSUPP;
+ 		}
+@@ -4011,12 +4014,13 @@ static int ti_sci_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	ti_sci_msg_cmd_query_fw_caps(&info->handle, &info->fw_caps);
+-	dev_dbg(dev, "Detected firmware capabilities: %s%s%s%s%s\n",
++	dev_dbg(dev, "Detected firmware capabilities: %s%s%s%s%s%s\n",
+ 		info->fw_caps & MSG_FLAG_CAPS_GENERIC ? "Generic" : "",
+ 		info->fw_caps & MSG_FLAG_CAPS_LPM_PARTIAL_IO ? " Partial-IO" : "",
+ 		info->fw_caps & MSG_FLAG_CAPS_LPM_DM_MANAGED ? " DM-Managed" : "",
+ 		info->fw_caps & MSG_FLAG_CAPS_LPM_ABORT ? " LPM-Abort" : "",
+-		info->fw_caps & MSG_FLAG_CAPS_IO_ISOLATION ? " IO-Isolation" : ""
++		info->fw_caps & MSG_FLAG_CAPS_IO_ISOLATION ? " IO-Isolation" : "",
++		info->fw_caps & MSG_FLAG_CAPS_LPM_BOARDCFG_MANAGED ? " BoardConfig-Managed" : ""
+ 	);
+ 
+ 	ti_sci_setup_ops(info);
+diff --git a/drivers/firmware/ti_sci.h b/drivers/firmware/ti_sci.h
+index 4616127e33ff..d5e06769b01c 100644
+--- a/drivers/firmware/ti_sci.h
++++ b/drivers/firmware/ti_sci.h
+@@ -150,6 +150,8 @@ struct ti_sci_msg_req_reboot {
+  *		MSG_FLAG_CAPS_LPM_DM_MANAGED: LPM can be managed by DM
+  *		MSG_FLAG_CAPS_LPM_ABORT: Abort entry to LPM
+  *		MSG_FLAG_CAPS_IO_ISOLATION: IO Isolation support
++ *		MSG_FLAG_CAPS_LPM_BOARDCFG_MANAGED: LPM config done statically
++ *			for the DM via boardcfg
+  *
+  * Response to a generic message with message type TI_SCI_MSG_QUERY_FW_CAPS
+  * providing currently available SOC/firmware capabilities. SoC that don't
+@@ -162,6 +164,7 @@ struct ti_sci_msg_resp_query_fw_caps {
+ #define MSG_FLAG_CAPS_LPM_DM_MANAGED	TI_SCI_MSG_FLAG(5)
+ #define MSG_FLAG_CAPS_LPM_ABORT		TI_SCI_MSG_FLAG(9)
+ #define MSG_FLAG_CAPS_IO_ISOLATION	TI_SCI_MSG_FLAG(7)
++#define MSG_FLAG_CAPS_LPM_BOARDCFG_MANAGED	TI_SCI_MSG_FLAG(12)
+ #define MSG_MASK_CAPS_LPM		GENMASK_ULL(4, 1)
+ 	u64 fw_caps;
+ } __packed;
 
-
-> +		pll_freq = div_u64((u64)parent_rate * n, 1000 * m * p);
->  	}
->  	return pll_freq;
->  }
-> -- 
-> 2.43.0
-> 
+-- 
+2.53.0
 
