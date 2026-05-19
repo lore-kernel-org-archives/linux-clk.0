@@ -1,192 +1,202 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010046.outbound.protection.outlook.com [52.101.229.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5819C49218A;
-	Tue, 19 May 2026 11:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779189928; cv=none; b=Ob+vef6ljqVMXvBpKcopESBDQqt9A8RhYE4Rr4ne7G4QpiQIp4pFI61+bWY+eURraKmoCHVs5Srwyu5MwCDwR43aFTNcYeqBuBXT25Yjb9M38hKkopaDvBPem2+qEd801pM7AGLXblQN+00vE4+mv0pokKIO6XTF3wW4s0KoJnQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779189928; c=relaxed/simple;
-	bh=EmqHJcTGfASrppByPNtgHT7+wLU6xgPxfMGzfAsp/v4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qObaZTYrNXSFi09mDJSNTlqqt5K8PEuSQdxQaDcdueRhUbL4W8I8ltoZKM68PNsayChgmWS/KwsRGk0PbXh9kdj4V7xwBFpZs+u122rfSlIpquCKMJJNDYiNzrLVzOYnIkN1duVbqjinVI9Iawuw7zBcq8AlOMHzdjQSeNh9iYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h/1vH08o; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49BC94DC540;
+	Tue, 19 May 2026 12:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779194789; cv=fail; b=uAWVV/3+ExWElI4FAn18oGJgYJZv79aU6LOpcS0WcDQAPcIilE/gUcWwZUSPB4BYTWCKWuBWUDP7AiMUJIVSy133n0qMzrstKmPOhxwT9NlHplaP13efnzqTjo6aNuoHlJEMmZD1DcU55Hfk1htTSJPRO1oKdFZgmVWaBATOkY4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779194789; c=relaxed/simple;
+	bh=EG/f+ej1tFdqEIKq4S/3xCNW+5rcR3hJyZU/8I9sigQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=DfrCyP6awI499A335Kdtz/eFY53+vByvs9n2W4yR27YOTMinTZ23lhMvoJlGjbJKd/ZaPSM28bZghkemaOsbWz0Ro/AqzbO2ikuN17hwPXu9QXmBdMvnX6Rd/od5yB8+jIsP3FgJh+aKsrIesvECvRhWIScHvNX2h8XEw6dpID4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=SbAqgK2P; arc=fail smtp.client-ip=52.101.229.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h/1vH08o"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09D6DC2BCC6;
-	Tue, 19 May 2026 11:25:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1779189928;
-	bh=EmqHJcTGfASrppByPNtgHT7+wLU6xgPxfMGzfAsp/v4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h/1vH08oGe7srABj7rJQon0MMMA/hIpQYg9F2qsl9fvZ6jq0W79JsgbF3/HBTC2M/
-	 9p7XOxGUD6txRU4y8KiCAgGMZTc3T/ZI4v4M17VIGRTtmzftZGGLxzOQxN3x6Z615E
-	 0T1hgMibmcsGxVeBAFHg4ZufokiI4dbmijuNloMZQgo3YVk97bgVpTZr3ccXOltPFl
-	 6wwRxpmGlizdhbQ7B22vZsG5HwFDhVlLVhTdunQ+8WJlptoy4Zk44CYKdXycgOswtg
-	 vwRrm4xQcn4grOPF0B08F5tlsY4wBTVylJXICYi3J5UD+DjlWnL2ApA5oRyw8nyP41
-	 +mqlbokrxz+Pw==
-Date: Tue, 19 May 2026 16:55:19 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Qiang Yu <qiang.yu@oss.qualcomm.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Taniya Das <taniya.das@oss.qualcomm.com>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, krishna.chundru@oss.qualcomm.com
-Subject: Re: [PATCH v3 1/4] dt-bindings: clock: qcom: Add QREF regulator
- supplies for glymur
-Message-ID: <4byxm3ybi5eqrsqmqi6u4abd37uxliagyolsqs6rtrexut6p5f@uotbli3vh6ja>
-References: <20260506-qref_vote_0506-v3-0-5ab71d2e6f16@oss.qualcomm.com>
- <20260506-qref_vote_0506-v3-1-5ab71d2e6f16@oss.qualcomm.com>
- <20260514-outgoing-literate-dove-2e2a73@quoll>
- <aglUmonGmr2goyOI@hu-qianyu-lv.qualcomm.com>
- <408f587b-76c2-4fdd-bbe1-89414270b4ee@kernel.org>
- <agqMgkRwKqr05rms@hu-qianyu-lv.qualcomm.com>
- <bbd5e74d-99c0-4a18-bc80-b3658b235bf6@kernel.org>
- <agq/Hl8qWn6wpbF4@hu-qianyu-lv.qualcomm.com>
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="SbAqgK2P"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YZrBON7tAqhzmDnDngQJOXwuwqs0PXAGl7lRD2qH043O5SwvF/M2y8eZbbtMkfMlhHOQo7hkI49x7vR35uO5mTHqjYlZkzKrehlFvbF0ilVGGmJTojFGy035KC7IR1mDNlA8+AVctFSijkhLiX6y2eeQX0EHp2MLQLNh671iOFIDCgdai7FQ7C9J/mr9T3XJloQ/sCN9LROCwerZvGSEHod+dXNvsHsiFA0gFaB10swq+flQzfP3i/6LYlJHvxUIEeL20jXWBJLvNrIni3fL6Fj/cDAH6kch0sGz56mHATeMRMJMQwJZm8FM/ZINXWNTRcZMfwRY5emDPgMdnYp5Cw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=h1/ZI5TdirXSVSkQ6N4dNytvlWno0afDEgUzhqxevPc=;
+ b=LOKCVp705g0+CWQCEz6/YlAsHIMJTimp7wozGMLV4F/hnA+9dbaiEonwDngLM3PE6Tx3JSwGy2h6ZOQpQldIvvM/A9exwlpuKBeUW1Pp4p5XjQOK2lD9vCxQSWBcwdgETyStpBaQGdDBGWYm/0ZfvJAZBahfXuA/YFVDCYy2ZiifhTKxfqL5vKrMpr2ePtx8LiVPI+sIwb52TjOnyl1om0LKf6kREpu8AAJhbowIeB51na34jU7gYZVlejbfmfULaL8ypnKLkoCmcB/FG9fLiCztuR28WhzZEj6CZBMkPCgBjCSxv1cXJd4rCyshfGXklUOHSbQQeEX+1Mfg9tmKGw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=h1/ZI5TdirXSVSkQ6N4dNytvlWno0afDEgUzhqxevPc=;
+ b=SbAqgK2PR1siwDWDa89fTOj9488muPfVaWUp1NIDe6btB0S/nhoKrPwEZcwRa2+Wm3COri7nUMBBhreBSMG9i468PwH8eY+Fd3FIDNtxdIF7a/c1EVnGdd6k7kly6UNb1tPdTc67dvyz+N1RYNZdzXRp7mwXpYBI9Bj3U4IOohk=
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
+ by TY3PR01MB10503.jpnprd01.prod.outlook.com (2603:1096:400:314::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.25.24; Tue, 19 May
+ 2026 12:46:23 +0000
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::87d1:4928:d55:97de]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::87d1:4928:d55:97de%4]) with mapi id 15.21.0025.023; Tue, 19 May 2026
+ 12:46:18 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: biju.das.au <biju.das.au@gmail.com>, Geert Uytterhoeven
+	<geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+CC: Brian Masney <bmasney@redhat.com>, "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Prabhakar Mahadev Lad
+	<prabhakar.mahadev-lad.rj@bp.renesas.com>, biju.das.au
+	<biju.das.au@gmail.com>
+Subject: RE: [PATCH v2 0/3] clk: renesas: rzg2l: Unify SAM PLL configuration
+ macros
+Thread-Topic: [PATCH v2 0/3] clk: renesas: rzg2l: Unify SAM PLL configuration
+ macros
+Thread-Index: AQHc5qphcw57ZoK6/kGZK5TkHVVze7YVTMnA
+Date: Tue, 19 May 2026 12:46:17 +0000
+Message-ID:
+ <TY3PR01MB113468F9A9F4483D6EC68D14886002@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20260518094027.95700-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20260518094027.95700-1-biju.das.jz@bp.renesas.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TY3PR01MB10503:EE_
+x-ms-office365-filtering-correlation-id: 64aa926e-edf6-413f-634b-08deb5a49f01
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|366016|1800799024|38070700021|11063799006|22082099003|18002099003|56012099003;
+x-microsoft-antispam-message-info:
+ Xg8HIJloWUfga1dKQkAKPuHgIbJLWMpGdlcgQSsy0P+motV7sumxpORwJWCj+UXvDvkeal90z7xcSENI++BzY8+kmG2HYpeD3z65VpnpDgFF86fl46vF5O0CLjLovuehObOTdUnwSynL8I+ds4QTg82HDBVFS4+3k/UORy3FT02bRvllrIf6deJho1qDLKFw1eZ6Hrn5JxqYxTQ+CMfl0t0H8mo1Sn5RiRpCEwH5pz+nXDREjjrOuTa0vC+c2Od58+75n3PrHRnX9sBE/g9XEHpXWsKgdsqoBLuhw0sk+gtDM31TKlAxYd+jgrnyENtaRPoFKBDCUm3GlXxB1IqEFOwx7IrY22Bvv7VmORbUjg6uAlHZx7YQdQSkUyKeC0iGQgmPyMXg2Pr/lcxVrpm1CCy3yxb88P7XyqA3J/cmHKbKtcwA05YXyoXQRetmKL9LSACoddGAxGfpDvsS7Kc1OOlpyNl8Ah0pD0rgwqepVOup2kboTrrocGk0Py9EM+dV/ABkM9j+iJULcW9wh0F2qUEtzS5k9sxTEwEggY47i7iBSuqlodPHJXDMqzUZIgmcsv/9n1oM6cMQFGEQS8jyfvRCP3s0V8FzcD4jD7Px8I4jQn4TmlomtAdp4WY7MfiYNG3qGP330h6+d2gCxJGmgEjUrZGgRXOtFJ4p9/lBoCvf57WOgSmQTUHd+JReIdvukL9t7nZgdXcxmrzb/YHWaQFlcyjvqInnd6PYqsOrjK6bfK3Ro3843Nf5OlwJwhxb
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700021)(11063799006)(22082099003)(18002099003)(56012099003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?SSoB9fek55Danm6NHwopdi6aWA9Fr9R5SjvswEQtctqUfn3jV7EuNicOu5gZ?=
+ =?us-ascii?Q?Aeg4tq639CG1eg5aR/ji1etp8EI8YWd/IRYo6Zho1m7t2JjT69GvQpxvlVEs?=
+ =?us-ascii?Q?hw51P16WODtxViHdAJiqOqF9NadWL2lllTYSJKdCVzf0cLsEdrkFE0lOBJs0?=
+ =?us-ascii?Q?bZJWohV71zh69of+ukH2JtykluVNIKRb2SekW+ABGlXgqVB+pMzD10rzXHyF?=
+ =?us-ascii?Q?KTOmuLphlbfapphufE9JvriOtOp34wA37WxhykpSgVCEYJbmpcMpatt9+txC?=
+ =?us-ascii?Q?TGELW9gJFLNo5DUsWL9LKgv8Ub1rcUUIpVrbznkSgY4F/tmvM9mZTA8PB24k?=
+ =?us-ascii?Q?ZrY5DE6Y0Sw5JHOkBGA8NgFTwQfbdHIRFrnvCt2XDE02hPNbcaoWdLQi14+w?=
+ =?us-ascii?Q?EvIXCxFSClx/ThfpjnLm6AXNa5nBC9Bf1GydAnzElyc/1DWE4BoMPR4OCJEm?=
+ =?us-ascii?Q?HmHqm5xe1kixpk9mwyQVW3mqZAECwBX5hv3fIDBdVWf4LBrTv38r3H6waEOu?=
+ =?us-ascii?Q?Azd0MiBIwBmHPRoBYTrxDTOcBMdpcrXzUzdi4eGJjZwtkcq4I10P/ckLiN9s?=
+ =?us-ascii?Q?/u2UnJo95HxoST9a8kLthTLfvVpznHdCa/RYiV2Tv1fGLYQTGrQT3uVOccMh?=
+ =?us-ascii?Q?WWhqgDuMvjfpBABlEtpUNixMlONsS9XJjAzluyajfid5zdNjvg5Iq0mHsFHZ?=
+ =?us-ascii?Q?YlqYFxL/bOHvhKkcMjZpDbCtw80ArzX9e4DlnsBDB/thILAPzcqZ6RBHjkoW?=
+ =?us-ascii?Q?ALZiCBSJHls5ysYixrTUAwsT8Yk6ZBEhtha65qcyuz/BdsdduFZa6NNaeOuz?=
+ =?us-ascii?Q?jk6R3WlnwC9IiO5i5q4pgj419iLJeY93hLEP18EU2MyLf5zwsigeHlb/723Q?=
+ =?us-ascii?Q?kENCVEhA5EOHupCTEmcOwsD0EwgXAJol9ORZMyG+SJn+2c5R/vzh/P2zdUW+?=
+ =?us-ascii?Q?6ozP+Spqe5wKSW+phPiEo6giuuDPF6xN24wfrQg+QBHxAuEvZPcKl0xiMkH2?=
+ =?us-ascii?Q?GI/x1uMoA3zSVLX1Pt+jyAFCr81GqvHbHklAwpW9E1bAvDX2eUwOfIij512+?=
+ =?us-ascii?Q?yjIJ2XfgHGA8epkIz6JjXUy/c8KRRAWUCfDDO7ZSuthl80cEr1nCp/khwSEQ?=
+ =?us-ascii?Q?l1slD1aBJ+4x9lgn92qGiRjj2lwBgIA/WtV/fvAds0oAERxLMt0WuBmaOMHW?=
+ =?us-ascii?Q?SEf77oap4QMZkC5KCoBUmL0ERXNP5RRkuRkwJ3tlArRVkaIFTIw8+5oVA/xx?=
+ =?us-ascii?Q?CboHN67lUm+8oXfVIwWfWJIZRGEg70wFom1VDcrjn1VobYdHZlRrcpvBU1pP?=
+ =?us-ascii?Q?jqUMAun+wMUw9BlvNyF3kLTuqJfrDnNMXJu0d9Y1ofuD+BuZkCwBn5c1dxdF?=
+ =?us-ascii?Q?u9TzG+RTJ06m7Rx78qYBFpgg8q630xIQejj+Am+qqqJz49EVd9TIas3b/i0U?=
+ =?us-ascii?Q?/xiKN9q+3izOa8ZB4We91q8xZkLguJAfNXYCvxCTIv2FOuTguJgscKlkIsQ0?=
+ =?us-ascii?Q?mA4McUSk2Z9iaDw3HKjkw5N+Gtu9fjlbGZ8Irvc+l2oHM943zAoHzf/b31jH?=
+ =?us-ascii?Q?kxe/o9Mc/NHbH0SW35Tl+HhM0XcdHKVRC1//eRBaiy7DjusEPInvliKKVYD2?=
+ =?us-ascii?Q?iYEqgTyeFpfSQIUp9zCNiSpB8t3QMFAcUhNvzxEGrP9gwQeBhfpHFGCYqwMZ?=
+ =?us-ascii?Q?dggqgv7DvFo3zIlsB9Q40kDU73EeJvpogrReZnklQM1OscK3hxksesaUZ4H6?=
+ =?us-ascii?Q?l1+8yN47ew=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <agq/Hl8qWn6wpbF4@hu-qianyu-lv.qualcomm.com>
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 64aa926e-edf6-413f-634b-08deb5a49f01
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 May 2026 12:46:17.9691
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: HvvN8suAq+nzS8ln4oKTbVKsrcwSVMHqbPCOHBXf2H0RTSXfbQH5hRgE7Xf/NIV9wV5vC3Pv8enFIJdAHX+t7T4DuchaIcbeICRxGQHrqPM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB10503
 
-On Mon, May 18, 2026 at 12:26:22AM -0700, Qiang Yu wrote:
-> On Mon, May 18, 2026 at 09:00:33AM +0200, Krzysztof Kozlowski wrote:
-> > On 18/05/2026 05:50, Qiang Yu wrote:
-> > > On Sun, May 17, 2026 at 10:27:39AM +0200, Krzysztof Kozlowski wrote:
-> > >> On 17/05/2026 07:39, Qiang Yu wrote:
-> > >>> On Thu, May 14, 2026 at 12:22:17PM +0200, Krzysztof Kozlowski wrote:
-> > >>>> On Wed, May 06, 2026 at 01:43:51AM -0700, Qiang Yu wrote:
-> > >>>>> Add regulator supply properties for the Glymur TCSR QREF/REFGEN blocks
-> > >>>>> required by clkref clocks.
-> > >>>>>
-> > >>>>> The vdda-qreftx*, vdda-qrefrpt*, and vdda-qrefrx* supplies map to common
-> > >>>>> QREF TX/RPT/RX components, while SoC-specific topology and instance count
-> > >>>>> differ. Document them here for qcom,glymur-tcsr.
-> > >>>>>
-> > >>>>> Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
-> > >>>>> ---
-> > >>>>>  .../bindings/clock/qcom,sm8550-tcsr.yaml           | 57 ++++++++++++++++++++++
-> > >>>>>  1 file changed, 57 insertions(+)
-> > >>>>>
-> > >>>>> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
-> > >>>>> index 1ccdf4b0f5dd..57921cb63230 100644
-> > >>>>> --- a/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
-> > >>>>> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
-> > >>>>> @@ -51,6 +51,63 @@ properties:
-> > >>>>>    '#reset-cells':
-> > >>>>>      const: 1
-> > >>>>>  
-> > >>>>> +  vdda-refgen-0p9-supply: true
-> > >>>>> +  vdda-refgen-1p2-supply: true
-> > >>>>> +  vdda-qrefrx0-0p9-supply: true
-> > >>>>> +  vdda-qrefrx1-0p9-supply: true
-> > >>>>> +  vdda-qrefrx2-0p9-supply: true
-> > >>>>> +  vdda-qrefrx4-0p9-supply: true
-> > >>>>> +  vdda-qrefrx5-0p9-supply: true
-> > >>>>> +  vdda-qreftx0-0p9-supply: true
-> > >>>>> +  vdda-qreftx0-1p2-supply: true
-> > >>>>> +  vdda-qreftx1-0p9-supply: true
-> > >>>>> +  vdda-qrefrpt0-0p9-supply: true
-> > >>>>> +  vdda-qrefrpt1-0p9-supply: true
-> > >>>>> +  vdda-qrefrpt2-0p9-supply: true
-> > >>>>> +  vdda-qrefrpt3-0p9-supply: true
-> > >>>>> +  vdda-qrefrpt4-0p9-supply: true
-> > >>>>
-> > >>>> Either I do not understand your previous explanation:
-> > >>>> CXO -> TX0 -> RPT0 -> RPT1 -> RPT2 -> RX2 -> PCIe4_PHY
-> > >>>>
-> > >>>> or this is still wrong. There is no TCSR here, so this proves nothing.
-> > >>>> If TCSR is TX0, then you do not have five of them...
-> > >>>>
-> > >>>> My previous comment stay - you are not describing the actual hardware
-> > >>>> here.
-> > >>>>
-> > >>> The CXO network "-> TX0 -> RPT0 -> RPT1 -> RPT2 -> RX2 ->" is referred to
-> > >>> as the QREF block, and each component is controlled by the tcsr_clkref_en
-> > >>> registers.
-> > >>
-> > >> Still no clue what this -> relation is. Again, describe the hardware.
-> > >>
-> > >>>
-> > >>> If a PHY receives its reference clock from QREF, it will have a clkref_en
-> > >>> register. However, this register may be located in different regions
-> > >>> depending on the target. On glymur it resides in TCSR, so I added these
-> > >>> LDOs QREF required in tcsr yaml.
-> > >> Registers are not described as supplies.
-> > > 
-> > > I'm not descirbing register as supply.
-> > > 
-> > >     tx0-0p9/1p2  rpt0-0p9   rpt1-0p9    rpt2-0p9    rx2-0p9
-> > >        |             |           |        |           |
-> > >        |             |           |        |           |
-> > > CXO -> TX0 -------> RPT0 ------> RPT1 -> RPT2 -----> RX2 -> PCIe4_PHY
-> > >        |             |           |        |           |
-> > >        |             |           |        |           |
-> > >        ---------------------------------------------------tcsr_clkref_en
-> > > 
-> > > These components(TX/RTP/RX) can be disabled/enabled by tcsr_clkref_en
-> > > register, and they require power supplies.
-> > 
-> > So I told you more than once - none of these are supplies to the TCSR.
-> > You clearly misunderstand what a supply is.
-> >
-> 
-> The TCSR binding here describes the tcsr_clkref_en clock gate, not the
-> TCSR register block itself. The clock gate controls whether the reference
-> clock is forwarded through the QREF chain to the PHY.
-> 
-> The QREF components (TX/RPT/RX) sit between the clock gate and the PHY.
-> They require LDO supplies to operate, and those supplies must be enabled
-> before the clock gate is asserted and disabled after it is deasserted.
-> This enable/disable sequencing is the responsibility of the clock gate
-> driver, not the PHY driver.
-> 
-> Since the supplies are managed as part of the clock gate operation, they
-> are modeled as properties of the clock gate node. The node happens to live
-> in TCSR on glymur, but the supplies describe what the clock gate needs to
-> do its job, not what TCSR itself needs.
-> 
+Hi all,
 
-Just to add a bit more context:
+I noticed that there is a patch conflict with renesas-clk/next for patch#2.
+I will rebase and send v3. Sorry for the inconvenience.
 
-The QREF block supplies the reference clock to the PHY IPs. But the digital
-logic (register interface) to control this QREF block lives inside TCSR in some
-SoCs like Glymur. But AFAIK, the analog QREF circuitry is not inside TCSR, but
-somewhere near to PHYs.
+Cheers,
+Biju
 
-Also, QREF needs its own LDOs to operate and supply reference clocks to PHYs.
-Initially, we tried to add these QREF supplies to PHY node itself. But that was
-pushed back by Johan [1]. His argument was that since these LDOs power QREFs,
-not the PHY IPs, these supplies should not be added to the PHY nodes. And since
-we do not have a dedicated QREF DT node due to the fact that the QREF registers
-gets moved between various IPs based on the available space in the RTL. (It used
-to live in GCC, but now it is in TCSR and in the future it could be in some
-other IPs. Unfortunately, we cannot control this design)
+> -----Original Message-----
+> From: Biju <biju.das.au@gmail.com>
+> Sent: 18 May 2026 10:40
+> Subject: [PATCH v2 0/3] clk: renesas: rzg2l: Unify SAM PLL configuration =
+macros
+>=20
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+>=20
+> This series cleans up and unifies the SAM PLL configuration macros across=
+ the RZ/G2L, RZ/G3S, RZ/G3L,
+> and RZ/V2M CPG drivers.
+>=20
+> Currently, each SoC family defines its own local macro for encoding PLL r=
+egister offsets into a conf
+> field (PLL146_CONF, G3S_PLL146_CONF, G3L_PLL1467_CONF, PLL4_CONF), and th=
+e driver uses separate decode
+> macros (GET_REG_SAMPLL_CLK1, GET_REG_SAMPLL_CLK2, GET_REG_SAMPLL_SETTING)=
+ to retrieve register offsets
+> at runtime. This leads to duplicated logic and implicit coupling between =
+PLL index and register layout.
+>=20
+> The series introduces a pair of shared macros, CPG_SAM_PLL_CONF(stby) and=
+ CPG_PLL_CONF(stby, setting),
+> that encode only the standby offset and optional setting field. CLK1/CLK2=
+ register offsets are then
+> derived from the standby offset using fixed +0x4/+0x8 deltas via new CPG_=
+PLL_*_OFFSET() helpers,
+> removing the need for separate CLK1/CLK2 fields in the conf value.
+>=20
+> Finally, the RZG3L-prefixed STBY/MON macros are renamed to CPG-prefixed e=
+quivalents to reflect their
+> shared nature across SoC families.
+>=20
+> v1->v2:
+>  * Dropped the dependency from the cover letter as the patch hits next.
+>  * Collected the tag
+>  * Updated commit description for patch#2.
+>  * Fixed the macro RZG3L_PLL_STBY_OFFSET by using CPG_PLL_STBY_OFFSET.
+>  * Moved CPG_PLL_STBY_{RESETB_WEN,RESETB} near to CPG_PLL_STBY_OFFSET.
+>  * Reorderd the above macros
+>  * Moved CPG_PLL_MON_{LOCK,RESETB} near to CPG_PLL_MON_OFFSET.
+>  * Reorderd the above macros
+>  * Dropped a blank line.
+>=20
+> Biju Das (3):
+>   clk: renesas: rzg2l: Simplify SAM PLL configuration macro
+>   clk: renesas: rzg3s/rzg3l: Simplify PLL configuration macro
+>   clk: renesas: rzg2l: Rename RZG3L-prefixed PLL macros to CPG-prefixed
+>     ones
+>=20
+>  drivers/clk/renesas/r9a07g043-cpg.c |  2 +-  drivers/clk/renesas/r9a07g0=
+44-cpg.c |  2 +-
+> drivers/clk/renesas/r9a08g045-cpg.c |  5 +---  drivers/clk/renesas/r9a08g=
+046-cpg.c |  7 ++---
+> drivers/clk/renesas/r9a09g011-cpg.c |  7 +----
+>  drivers/clk/renesas/rzg2l-cpg.c     | 40 ++++++++++++++---------------
+>  drivers/clk/renesas/rzg2l-cpg.h     |  7 ++---
+>  7 files changed, 28 insertions(+), 42 deletions(-)
+>=20
+> --
+> 2.43.0
 
-So he suggested to add these supplies to TCSR node which acts as a control
-interface to QREF, even though it is not an accurate hw representation either.
-
-And this patchset is based on that feedback only.
-
-But your argument is also valid that these supplies are not supplying the TCSR
-block in hw, but just the QREF analog circuitry living close to PHY.
-
-We are open to suggestions here as we do not know what is the accurate hardware
-description for these supplies/QREF.
-
-- Mani
-
-[1] https://lore.kernel.org/lkml/aBHUmXx6N72_sCH9@hovoldconsulting.com/
-
--- 
-மணிவண்ணன் சதாசிவம்
