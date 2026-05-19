@@ -1,175 +1,134 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A5C3ED3C8
-	for <linux-clk@vger.kernel.org>; Tue, 19 May 2026 14:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE7A4028DD
+	for <linux-clk@vger.kernel.org>; Tue, 19 May 2026 14:15:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779199582; cv=none; b=O6UU4D8QYR5EsrZ/QLHMsjrm6ebzfFSaYvoxIN3Ti0uNL6MoeXC7jBWNFchELfA4j9UETcMTVEwT9quuTi7RrjIEV0gbWJ4jW05vpZte+V5GrfQUdXlq45ZYoJmtYCAdfCnYd+8fhOze/0fKM/KAkpr81/IIpM0o7CbLWIcOZVQ=
+	t=1779200125; cv=none; b=rKnx76asZvU2fgQC01eykrxtUX5hDUWlSuMEx55eOfMC4wr6HbYA7NezSyKccuxPXk2xYAUKIeHxPmekoFL+BLv0rzZCOqb9Lsxy6zGSAzhC6iy6CKcvJNi0Ocwuo9PigKdlB3oBjiWqGKfUGdI2CPHLt3kCC0RU1altye6Ar1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779199582; c=relaxed/simple;
-	bh=yXR/8vsDWfBlIw16XhJL16Hga3EGXjRfXGeaN88k5Co=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c0uuVmStdaa/VyAAyqlWUD0b8DNME3fkwO2JRaKQfkV3Ssd1Yqzd/kn0giRUn4ta+iRmL6nVNLASTQHeXuwhb/qXI9iDuUD2m+0+0UyS6geLqfm5xKxQ9tOCuh2vys4WMaHYcKdUZ8LjXUMFCzqJkgCmzAEy596GfvdHgdKFKts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ca+Y41O8; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q8h9fZyn; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1779200125; c=relaxed/simple;
+	bh=PGSkh6LvZVlA0BnCf3uh1OaxJ8WJjnqLWqIGmm6MjzE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UTWmVQyAhx5ckm9YwdjPrccAZtOTReOykH3+ra3HUkXWRr5xTMqh1irGVp0zQXFTwo6xrGTw6g70n0wDWRzLy15HPnV5XTywRH4sNMr9LebhkLMtDHf4rwAaCF6FWmCs/EqlHok+5ys8nuQQ4Gom6MNXIeJF5oZgHt+Z5CvCtnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QrfR1H4+; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ca+Y41O8";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q8h9fZyn"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1779199575;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vw8Hh4r9dRAzD/JG3jLtKlSPp2FykYGxNH+YocMZs0c=;
-	b=ca+Y41O88ng/qBM8JMobKkQdMHoKR/sxK2GITOK0AlH6raVS/0ba8oOFAcDT3wiqIwUv3W
-	1C9/xzAhxRQ5d8jtbYJ8POc+zi3PmujRqgkpBqRE47ChebsiFIXBR3J8njmhFr6U8JrTWC
-	IPtwws//hLfV+WW7+2tnt1Y1F36LH9Q=
-Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com
- [209.85.161.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-441-FPh5o0VyPNGT63l8KlfZxQ-1; Tue, 19 May 2026 10:06:07 -0400
-X-MC-Unique: FPh5o0VyPNGT63l8KlfZxQ-1
-X-Mimecast-MFC-AGG-ID: FPh5o0VyPNGT63l8KlfZxQ_1779199566
-Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-696307c7f2eso7834868eaf.0
-        for <linux-clk@vger.kernel.org>; Tue, 19 May 2026 07:06:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QrfR1H4+"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-48d146705b4so39558205e9.3
+        for <linux-clk@vger.kernel.org>; Tue, 19 May 2026 07:15:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1779199566; x=1779804366; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vw8Hh4r9dRAzD/JG3jLtKlSPp2FykYGxNH+YocMZs0c=;
-        b=Q8h9fZynj7jtYjZvZmVLiwZ3YlCEj+MkzBcR7Ma5vEOUUj1CvwvjJ2tfWtOjkmPn5I
-         1E4DZBh72+897rJofBLIXbflONUSvjeHZdgL32IYIgEDcv5GYoru8UMSy/G5tOI63HeY
-         58rBCRPsi2xEJK3m5BJ8iZRmMCWzi604zaGsw0llvVNAr6Gj0r4PQ2ji87hsoyCrg9Kf
-         d1Ch8ULnQPHSqT7jREpBw++ACGNRNIbv2IeKwLF22FhWwUg2FV3jMU52wjB8kfSKQzeN
-         SodpfODJYPW5Yx9B358XAgEtIaKgpRd+m3wDKs9YP4TEAv6fAx2+PPBirad3KeUaCkkB
-         zyUQ==
+        d=gmail.com; s=20251104; t=1779200122; x=1779804922; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4RxATEsy8GcAphXScChSyablU/KR+6BWc5WdwPA2R0s=;
+        b=QrfR1H4+9a3Tn9cvEnq34YdhPrtkCLm5OaKXFab7+ADitJ3DgcEzSMB1TkMEC4kfta
+         NbzPrvLKfGwUeAU0uHi9QeKPuGmFuzLOYINE0LRLoRhA+2THDf/s1VN3QzoMtYW+/Bg+
+         /K72sZPjYOR7WfW5D3l64aTdiUIHSQyIpOBp7NXaw2WWc1Xk7sufuN+xkAPE4HtuqdNf
+         wWk0TecS/BmDTQM59zHPYezOxlWZ9exraAybNQCp38tH8GTvWlbE2/Kujz45HPVNK9yz
+         U2+A6wwWhCWY+tkmGJ+sTvA2AIrSMPgeg2IN+z5HzFPFP8RxNvLa+7wsIHxRGokeQ2eV
+         NO4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779199566; x=1779804366;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=vw8Hh4r9dRAzD/JG3jLtKlSPp2FykYGxNH+YocMZs0c=;
-        b=F2uiu9bFuPKQ6kTuZAdfsKblM+evJiiMwSEYSBtBXrMpf1JVp5byoDkA6JptE5ItyM
-         fxkJCtdN1I4B0x/JIj18wXvQu2lruIYebJ2ePpOPWK2iQjhW6Mm0AUZigEOx1GzuTaN8
-         TrLbOeHZX4pZBcCqYk2N5ZjDoKC6+J/mwN/8dt6UFawi2UV5gjr7ecnm0/y8ggumLTpO
-         3YKxWwvUb+Ed+CE3e1gXrKe/5n4owByje4FqqLr6qMQHIfNSNbCNAPbyTuaaB0ihVIzR
-         8KZOiK1S3GAJ0/n9mKXi2aPtrf26lbt023JXQtbYZSoKDxLW5SY+c0Et+dQV+TWjz0F9
-         TwRg==
-X-Gm-Message-State: AOJu0YwoPXlDx8tkxA9N4behCQmhcy7/JYgn/HaFHNYdjNd4lDekTs1s
-	rXxP8XeO1nPra1JJEthtipYVxBwF1iN8LHYxRz399mtxx5bE+EkupnBJRi17xH5LaZMnNN2quyY
-	KYta3DFqcpaFUwswQuli82cv6EA2JVsv/vpB6XTtWDbPIbVRcsbHrI8Zs2RwBNg==
-X-Gm-Gg: Acq92OF1PMLViNLiDYhaxSLGr3XObqygPCDkHdvDRb8pdH/KlQKyghMVhC3X3R6NT1M
-	+ctovbtMftpqBv8qKaXHLn4uvM/MPz9wVvu8Im5P7nlp5TnQ6OMJwT9qtvM8PR1AhwUim1pC+B7
-	0GOvAGkpA/5aQ7FxLO/Dcs97wHe5nr54zxQ1p2y1/bDG8DrZDcKFJhV4dC96sg1bYmHUu2LD/E+
-	L4r5rX/KLsRbwOvFc94+iFKAYJHL7t6zFe35+5Zx+13ZQA6Q7yrR4sx34EDdsYtSLao8woSoH/g
-	+3gmko8Fo4jhUVazJSaoxi3stL5uNW9ajpy9XTiHT013Eo/MF+ZqWZM6OY6j5EyalyZJX4tzmea
-	zi60lgYiljcTCZk1FNfz49EitdC/ZdWx0s8SqaAvniQL+Mi+xbJELGQum
-X-Received: by 2002:a05:6820:6189:b0:69d:521d:a4f1 with SMTP id 006d021491bc7-69d521da817mr581311eaf.55.1779199566339;
-        Tue, 19 May 2026 07:06:06 -0700 (PDT)
-X-Received: by 2002:a05:6820:6189:b0:69d:521d:a4f1 with SMTP id 006d021491bc7-69d521da817mr581253eaf.55.1779199565643;
-        Tue, 19 May 2026 07:06:05 -0700 (PDT)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8ca3608bb6bsm91862306d6.6.2026.05.19.07.06.02
+        d=1e100.net; s=20251104; t=1779200122; x=1779804922;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4RxATEsy8GcAphXScChSyablU/KR+6BWc5WdwPA2R0s=;
+        b=MAaNWjch9RjUso4lFK5T498zy6VonUIVewPVQahkFSeYv4X/0x1+DLK7JJ6lV+7uuG
+         YUDDbUJap5V12lnwatLdMpZ24iA94yDEo0XWzBUgu1ITiNqY4gcERj2d8S1UEX401/RH
+         4JLw2PGVGk89qZEKxSVM2PaTNzcjlbRvr8cyzTLQxigqmdApU5JY+g+JkBxvt1IosxDp
+         +HKAmbOGlNrDEFVwEeyqA5Ea7Xo8ey6nHKecSL3Mm0hDTbHSnPINE/j9v4whh/h4Fe3o
+         UmhehoYn6tp88d+RyNTqLNL9O3RKRxJxVbqSWVSxHVXJmB99/Blnt3Gqe3wYq9Fj6Q8I
+         eLEw==
+X-Forwarded-Encrypted: i=1; AFNElJ+iM1QZsk9A/SfAAc6LUQ93xD2bzLL7JYRKc+Ci2ZyJ+yA9TrUjIP0PhfJjnylkxnjEK1TYO+b0yFo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzB/R7bhjb/y/N3ykwvakj8tsuKofX5FzLFnAxjoqEEpJi96bft
+	dTlhJgknnP9Z5cMW8REXR4G1Ae45YxRlMb5GM75ZAmJMmuPyAYkGpWba
+X-Gm-Gg: Acq92OEdjUCLhmSuUDPb3fSfRwxa7N7VPGNnoo6DeVRL78dB9D3N7+Q+tb6M6Gb17eb
+	273cGrzEzk2TxCblUYwxlbJZ/Fv/Tu3QyWhBgVDrYqyu/lFXCqR/POUzrOFdLhfgZcVi3UczReL
+	2fSnB18xl3Vy8S3OWMuQGFhW6SCsnowU0WvKt3GoASA0QqgfED9O+TAeZL5sfpjGTcSTNI6Ot0d
+	KuwLlPwM6r4MD2Q8ENT02DUBLq5sfMcNRr6LXDLBGIJt7wcGR208UFAVslHjYKXGPp/OgnoGBIM
+	aQXnlYK4KEnkfFzRfScfkQdozmOY3bjvAJph0SJpglTkkvRtph4/Z0avIJKnjwiOXuvtRx47Ys1
+	szzE3mLvJ/RgyiD7p7d9BalyYiWGb5htt7NjkEXPGzGzzA7Q8Y5g2FJ/ZeDg46j4RRnEeVrP6Hb
+	F2MLlYq9kIClgw1CTGF8bJIjW5VCyg39OFDehbQNR3wsVT847/
+X-Received: by 2002:a05:600d:b:b0:48e:8741:fd42 with SMTP id 5b1f17b1804b1-48fe60ee64amr233439125e9.12.1779200121457;
+        Tue, 19 May 2026 07:15:21 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:23c4:a700:7301:4abf:a82a:41d5:6663])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48fe4c8344asm557912205e9.1.2026.05.19.07.15.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 May 2026 07:06:04 -0700 (PDT)
-Date: Tue, 19 May 2026 10:06:02 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>,
-	"moderated list:ARM/STM32 ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	"open list:CLANG/LLVM BUILD SUPPORT:Keyword:b(?i:clang|llvm)b" <llvm@lists.linux.dev>
-Subject: Re: [PATCH] clk: stm32: allow STM32MP COMPILE_TEST builds
-Message-ID: <agxuSsAhreZJVYcc@redhat.com>
-References: <20260518221230.19879-1-rosenp@gmail.com>
+        Tue, 19 May 2026 07:15:21 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Brian Masney <bmasney@redhat.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v3 0/3] clk: renesas: rzg2l: Unify SAM PLL configuration macros
+Date: Tue, 19 May 2026 15:15:12 +0100
+Message-ID: <20260519141518.389670-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260518221230.19879-1-rosenp@gmail.com>
-User-Agent: Mutt/2.3.1 (2026-03-20)
+Content-Transfer-Encoding: 8bit
 
-Hi Rosen,
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-On Mon, May 18, 2026 at 03:12:30PM -0700, Rosen Penev wrote:
-> COMMON_CLK_STM32MP already allows COMPILE_TEST, but the parent clock
-> Makefile only descends into drivers/clk/stm32 for ARCH_STM32.  Use the
-> STM32MP clock symbol for that directory gate instead.
-> 
-> Building the STM32MP21 and STM32MP25 clock drivers then requires direct
-> linux/bitfield.h includes for FIELD_GET(), so add them as part of exposing
-> that compile-test coverage.
+This series cleans up and unifies the SAM PLL configuration macros across
+the RZ/G2L, RZ/G3S, RZ/G3L, and RZ/V2M CPG drivers.
 
-The second one needs to be it's own separate patch, along with a Fixes
-tag.
+Currently, each SoC family defines its own local macro for encoding PLL
+register offsets into a conf field (PLL146_CONF, G3S_PLL146_CONF,
+G3L_PLL1467_CONF, PLL4_CONF), and the driver uses separate decode macros
+(GET_REG_SAMPLL_CLK1, GET_REG_SAMPLL_CLK2, GET_REG_SAMPLL_SETTING) to
+retrieve register offsets at runtime. This leads to duplicated logic and
+implicit coupling between PLL index and register layout.
 
-Brian
+The series introduces a pair of shared macros, CPG_SAM_PLL_CONF(stby) and
+CPG_PLL_CONF(stby, setting), that encode only the standby offset and
+optional setting field. CLK1/CLK2 register offsets are then derived from
+the standby offset using fixed +0x4/+0x8 deltas via new CPG_PLL_*_OFFSET()
+helpers, removing the need for separate CLK1/CLK2 fields in the conf value.
 
-> 
-> Tested with:
-> make LLVM=1 ARCH=loongarch drivers/clk/stm32/
-> 
-> Assisted-by: Codex:GPT-5.5
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> ---
->  drivers/clk/Makefile              | 2 +-
->  drivers/clk/stm32/clk-stm32mp21.c | 1 +
->  drivers/clk/stm32/clk-stm32mp25.c | 1 +
->  3 files changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index 9c3a9703ad92..0cd2223de3ca 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -150,7 +150,7 @@ obj-y					+= spacemit/
->  obj-$(CONFIG_PLAT_SPEAR)		+= spear/
->  obj-y					+= sprd/
->  obj-$(CONFIG_ARCH_STI)			+= st/
-> -obj-$(CONFIG_ARCH_STM32)		+= stm32/
-> +obj-$(CONFIG_COMMON_CLK_STM32MP)	+= stm32/
->  obj-y					+= starfive/
->  obj-$(CONFIG_ARCH_SUNXI)		+= sunxi/
->  obj-y					+= sunxi-ng/
-> diff --git a/drivers/clk/stm32/clk-stm32mp21.c b/drivers/clk/stm32/clk-stm32mp21.c
-> index c8a37b716bd5..3c143371c77e 100644
-> --- a/drivers/clk/stm32/clk-stm32mp21.c
-> +++ b/drivers/clk/stm32/clk-stm32mp21.c
-> @@ -5,6 +5,7 @@
->   */
->  
->  #include <linux/bus/stm32_firewall_device.h>
-> +#include <linux/bitfield.h>
->  #include <linux/clk-provider.h>
->  #include <linux/io.h>
->  #include <linux/platform_device.h>
-> diff --git a/drivers/clk/stm32/clk-stm32mp25.c b/drivers/clk/stm32/clk-stm32mp25.c
-> index 52f0e8a12926..cc95fac66449 100644
-> --- a/drivers/clk/stm32/clk-stm32mp25.c
-> +++ b/drivers/clk/stm32/clk-stm32mp25.c
-> @@ -5,6 +5,7 @@
->   */
->  
->  #include <linux/bus/stm32_firewall_device.h>
-> +#include <linux/bitfield.h>
->  #include <linux/clk-provider.h>
->  #include <linux/io.h>
->  #include <linux/platform_device.h>
-> -- 
-> 2.54.0
-> 
+Finally, the RZG3L-prefixed STBY/MON macros are renamed to CPG-prefixed
+equivalents to reflect their shared nature across SoC families.
+
+v2->v3:
+ * Rebased to renesas-clk and fixed patch#2 conflict.
+v1->v2:
+ * Dropped the dependency from the cover letter as the patch hits next.
+ * Collected the tag
+ * Updated commit description for patch#2.
+ * Fixed the macro RZG3L_PLL_STBY_OFFSET by using CPG_PLL_STBY_OFFSET.
+ * Moved CPG_PLL_STBY_{RESETB_WEN,RESETB} near to CPG_PLL_STBY_OFFSET.
+ * Reorderd the above macros
+ * Moved CPG_PLL_MON_{LOCK,RESETB} near to CPG_PLL_MON_OFFSET.
+ * Reorderd the above macros
+ * Dropped a blank line.
+
+Biju Das (3):
+  clk: renesas: rzg2l: Simplify SAM PLL configuration macro
+  clk: renesas: rzg3s/rzg3l: Simplify PLL configuration macro
+  clk: renesas: rzg2l: Rename RZG3L-prefixed PLL macros to CPG-prefixed
+    ones
+
+ drivers/clk/renesas/r9a07g043-cpg.c |  2 +-
+ drivers/clk/renesas/r9a07g044-cpg.c |  2 +-
+ drivers/clk/renesas/r9a08g045-cpg.c |  5 +---
+ drivers/clk/renesas/r9a08g046-cpg.c |  7 ++---
+ drivers/clk/renesas/r9a09g011-cpg.c |  7 +----
+ drivers/clk/renesas/rzg2l-cpg.c     | 40 ++++++++++++++---------------
+ drivers/clk/renesas/rzg2l-cpg.h     |  7 ++---
+ 7 files changed, 28 insertions(+), 42 deletions(-)
+
+-- 
+2.43.0
 
