@@ -1,134 +1,172 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from twmbx01.aspeedtech.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D978C370AD2;
-	Tue, 19 May 2026 10:36:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F293A6418;
+	Tue, 19 May 2026 10:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779186982; cv=none; b=gf37lcOchZZbGDQqbTP3nZPeb0FcDB7B/eeANSVTx8EAapC6YUMdFp8742hmJKj/nsnHpp5EPqIgA1rL30/A9M1anpieGyfum2xj2e2qzLK2tju9wNJKMT10x9vLvbszyN/zDj+9DfST7okf1LyBxSEI1GAbi0u/Hpm5drs9bBU=
+	t=1779187111; cv=none; b=pOdy4P03TAhwztUALfIv3vIXUe1h0/3r/AF9idkAaUtoLvvUDA1MFwJx+eo24p/itlH/UMAyB4c9sZZGXuWXZ4wgfQijmqOfgjPKw0EOXZCZTlIMQmIFiT3mbsMKCQiwLZESyeVBVzee9euolAK0bjAaVIDH2A9WF1mk/N31Npc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779186982; c=relaxed/simple;
-	bh=FSPUfi9gDEuhVckzvwrIxZrRN6HpmokRGTOqQKxY8Jg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GY78HX6yZZC1H/Vf9WenPO9mPYlwWE3hOkyXVi60bskRudnd9bJlORl7wD2Djt7GuIG/uQ4xANLYdOlhRfVOUznauXGDqqHoIjyaatMmnTBm9GNklT3rt5cfXtYMgZoJ9FU4W4xmpyPrfDlEaxgvVMZpcBAmbh/AuY9MDdBtwSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D4A8C2BCFB;
-	Tue, 19 May 2026 10:36:21 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] clk: renesas: Updates for v7.2
-Date: Tue, 19 May 2026 12:36:18 +0200
-Message-ID: <cover.1779185560.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1779187111; c=relaxed/simple;
+	bh=L1iLfDQrZwxvnw6/O3AJV6ahyxO2sv21yD4ZkfxrN4k=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=r+e8dua0kZXwv6nuyhRc3GPhXRH+vSD8H0dC01UQUHLrhFAgNCvjys7fmn4M0824dLPxODtbDCDhel6QlCly/bmZBxR0LBMN81SwBjF3UzR4Kujw1zhR/nE6xfQ7SXEN1MgrMlmt77dt7WsunmUcldjC4l5kaBZ+5d56+zms22s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 19 May
+ 2026 18:38:20 +0800
+Received: from [127.0.1.1] (192.168.10.13) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Tue, 19 May 2026 18:38:20 +0800
+From: Billy Tsai <billy_tsai@aspeedtech.com>
+Subject: [PATCH v4 0/3] pinctrl: aspeed: Add AST2700 SoC1 support
+Date: Tue, 19 May 2026 18:38:11 +0800
+Message-ID: <20260519-pinctrl-single-bit-v4-0-5fe568a8ffde@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJQ9DGoC/23NTQqDMBCG4atI1k3JTPztqvcoXcQ40QGrkoi0F
+ O/eVCgu6vL9YJ55i0CeKYhL8haeFg48DjHSUyJsZ4aWJDexBSrMFQLIiQc7+14GHtqeZM2zbAy
+ CdliirTIRDydPjp8bervH7jjMo39tPxb4rj9OH3ELSCVtrhy6ulTk6qsJE1Ezk+3OdnyIr7ng7
+ miVHzoYnaKqoLTO1HkKh47enQyyQ0dHh6qiMakGBJX+Oeu6fgAMHxhKSQEAAA==
+X-Change-ID: 20260211-pinctrl-single-bit-da213f282c95
+To: Linus Walleij <linusw@kernel.org>, Tony Lindgren <tony@atomide.com>, "Rob
+ Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery
+	<andrew@codeconstruct.com.au>, Bartosz Golaszewski <brgl@kernel.org>, "Lee
+ Jones" <lee@kernel.org>, Ryan Chen <ryan_chen@aspeedtech.com>
+CC: <patrickw3@meta.com>, <linux-gpio@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
+	<BMC-SW@aspeedtech.com>, <openbmc@lists.ozlabs.org>, Andrew Jeffery
+	<andrew@aj.id.au>, <linux-clk@vger.kernel.org>, Billy Tsai
+	<billy_tsai@aspeedtech.com>, Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1779187100; l=5847;
+ i=billy_tsai@aspeedtech.com; s=20251118; h=from:subject:message-id;
+ bh=L1iLfDQrZwxvnw6/O3AJV6ahyxO2sv21yD4ZkfxrN4k=;
+ b=yZ+Y7S6UBimAwm6wBTS+wu7ylZooUUWR9axObgWXnkPI/Jy4ScwWNWwQ/oxN2gtcn+HpJoFaY
+ ms+njnXKTm3CoP/9uIqxvjO8JBWuxqkTALyd4RU0IwVRomo0NoCI+tE
+X-Developer-Key: i=billy_tsai@aspeedtech.com; a=ed25519;
+ pk=/A8qvgZ6CPfnwKgT6/+k+nvXOkN477MshEGJvVdzeeQ=
 
-	Hi Mike, Stephen,
+Legacy ASPEED pin controllers have historically not had a coherent
+register interface. Control fields often had no consistent mapping to
+individual pins, and configuring a function frequently required
+coordinating multiple control bits across several registers. As a
+result, the existing ASPEED pinctrl drivers rely on complex macro
+infrastructure to describe the dependencies between pins, functions,
+and register fields.
 
-The following changes since commit 254f49634ee16a731174d2ae34bc50bd5f45e731:
+The pin controller for SoC1 in the AST2700 breaks from this legacy
+design.
 
-  Linux 7.1-rc1 (2026-04-26 14:19:00 -0700)
+For SoC1, each pin maps directly to a dedicated function field in the
+SCU register space that determines the active mux function for that
+pin. This results in a much more regular register layout compared to
+previous generations.
 
-are available in the Git repository at:
+While the behaviour is conceptually similar to pinctrl-single, the
+register layout and configuration model differ enough that reusing
+pinctrl-single directly is not practical. Therefore this driver is
+implemented as a SoC-specific pinctrl driver using static data tables
+to describe the register layout.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v7.2-tag1
+The binding reuses the standard pinmux and generic pin configuration
+schemas and does not introduce any custom Devicetree properties.
 
-for you to fetch changes up to 4f42053949324867dc40d67829f18a01539e6322:
+Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
+---
+Changes in v4:
+- Fix SGMII0 mux register: SGMII0's control bit is at SCU47C[0],
+  outside the contiguous pin-indexed MUX register range. Handle it as
+  a special case in set_mux (analogous to PCIERC2_PERST) using
+  field.mask = 0x1 to avoid clobbering adjacent bits in SCU47C.
+- Use devm_pinctrl_register_and_init() and pinctrl_enable(): populate
+  all groups and functions before enabling the controller, closing the
+  race window where a consumer could observe zero groups/functions.
+- pin_config_get: return -EINVAL when BIAS_DISABLE is not active; return
+  -ENOTSUPP for BIAS_PULL_UP and BIAS_PULL_DOWN because the hardware
+  has a single 1-bit enable/disable field per pin and pull direction
+  cannot be read back from the register.
+- Probe: preserve const qualification in the pinctrl_generic_add_group()
+  pin array cast.
+- Binding: retain additionalProperties: false for the state-node schema.
+  The state-node properties block re-declares the four pincfg properties
+  the hardware supports (bias-disable, bias-pull-up, bias-pull-down,
+  drive-strength) and intentionally rejects all others.
+  unevaluatedProperties: false was suggested as an alternative, but that
+  would permit the full set of pincfg-node.yaml properties
+  (input-schmitt-enable, slew-rate, etc.) even though the hardware does
+  not support them. additionalProperties: false is the correct mechanism
+  when the goal is to restrict the accepted properties to a known subset.
+- Link to v3: https://lore.kernel.org/r/20260515-pinctrl-single-bit-v3-0-e97da4312104@aspeedtech.com
 
-  clk: renesas: r8a73a4: Add ZT/ZTR trace clocks (2026-05-15 11:30:51 +0200)
+Changes in v3:
+- Added pin configuration group support for AST2700 SoC1 by
+  implementing `pin_config_group_get()` and `pin_config_group_set()`.
+- Restricted AST2700 SoC1 `drive-strength` settings to the supported
+  4/8/12/16 mA values in the pinctrl driver.
+- Convert kernel-doc comment for aspeed_g7_soc1_drv_map to a regular
+  comment to avoid kernel-doc warning reported by kernel test robot.
+- Update the AST2700 SoC1 pinctrl binding to describe the `reg`
+  property and require it.
+- Allow standard pinconf properties in pin state nodes.
+- Add a binding example for the AST2700 SoC1 pinctrl node.
+- Add state-node description, function+groups dependency constraint,
+  and oneOf groups/pins constraint to the binding, matching the SoC0
+  binding style.
+- Add pins enum (212 entries) to the binding to cover all physical pins
+  that support per-pin configuration.
+- Add UART modem-line signals as independent functions/groups:
+  NCTS0/1/5/6, NDCD0/1/5/6, NDSR0/1/5/6, NDTR0/1/5/6,
+  NRI0/1/5/6, NRTS0/1/5/6; remove those pins from UART0/1/5/6 groups.
+- Add LTPI_PS_I2C0/1/2/3 functions/groups for I2C-over-LTPI;
+  extend I2C0/1/2/3 functions with the new LTPI groups.
+- Fix typo: rename RMII0RCKO/RMII1RCKO to RMII0RCLKO/RMII1RCLKO.
+- Fix wrong index: rename DSGPM1 to DSGPM0.
+- Kconfig: use "Aspeed G7 SoC1 pin control" to match neighbouring entries.
+- pin_config_get: fix BIAS_DISABLE readback (val=!val must be skipped
+  for BIAS_DISABLE since hardware bit=1 means pull disabled).
+- set_mux: remove dead null check on grp; propagate regmap_update_bits()
+  return value.
+- gpio_request_enable: propagate regmap_update_bits() return value.
+- Link to v2: https://lore.kernel.org/r/20260306-pinctrl-single-bit-v2-0-79918cfab641@aspeedtech.com
 
-----------------------------------------------------------------
-clk: renesas: Updates for v7.2
+Changes in v2:
+- Updated the series title to focus on AST2700 SoC1 support.
+- Reworked implementation to use static SoC-specific layout tables
+  instead of a generic packed-field model.
+- Dropped the generic "pinctrl-packed" driver approach.
+- Removed custom Devicetree properties.
+- Updated binding to reuse standard pinmux and generic pin
+  configuration schemas.
+- Link to v1: https://lore.kernel.org/r/20260213-pinctrl-single-bit-v1-0-c60f2fb80efb@aspeedtech.com
 
-  - Add Ethernet, GPIO, CPU core, watchdog, serial, I2C, sound, and SPI
-    clocks and resets on RZ/G3L,
-  - Add the timer (MTU3) clock on RZ/T2H and RZ/N2H,
-  - Add Coresight trace clocks on R-Mobile A1 and APE6,
-  - Add display clocks and resets on RZ/G3E,
-  - Miscellaneous fixes and improvements.
+---
+Billy Tsai (3):
+      dt-bindings: mfd: aspeed,ast2x00-scu: Support AST2700 SoC1 pinctrl
+      dt-bindings: pinctrl: Add aspeed,ast2700-soc1-pinctrl
+      pinctrl: aspeed: Add AST2700 SoC1 support
 
-Note that this includes:
-  - DT binding definition updates for the R-Mobile A1 and APE6 SoCs,
-    which are shared by the clock subsystem and DT source files,
-  - RZ/G3E Clock Pulse Generator PLLDSI limits, which are shared by
-    clock and MIPI DSI driver source files.
+ .../bindings/mfd/aspeed,ast2x00-scu.yaml           |    1 +
+ .../pinctrl/aspeed,ast2700-soc1-pinctrl.yaml       |  760 +++++++++
+ drivers/pinctrl/aspeed/Kconfig                     |   14 +
+ drivers/pinctrl/aspeed/Makefile                    |    1 +
+ drivers/pinctrl/aspeed/pinctrl-aspeed-g7-soc1.c    | 1754 ++++++++++++++++++++
+ 5 files changed, 2530 insertions(+)
+---
+base-commit: e532a5a81d0db872acd2c0a92d2639580ca3da44
+change-id: 20260211-pinctrl-single-bit-da213f282c95
 
-Thanks for pulling!
+Best regards,
+-- 
+Billy Tsai <billy_tsai@aspeedtech.com>
 
-----------------------------------------------------------------
-Biju Das (13):
-      clk: renesas: rzg2l: Drop always-false check in rzg3s_cpg_pll_clk_recalc_rate()
-      clk: renesas: rzg2l: Add support for enabling PLLs
-      clk: renesas: r8a08g046: Add support for PLL6
-      clk: renesas: r9a08g046: Add GBETH clocks and resets
-      clk: renesas: r9a08g046: Add GPIO clocks/resets
-      clk: renesas: r9a08g046: Add CA55 core clocks
-      clk: renesas: r9a08g046: Add WDT clocks and reset
-      clk: renesas: r9a08g046: Add SCIF{1..5} clocks and resets
-      clk: renesas: r9a08g046: Add I2C clocks and resets
-      clk: renesas: r9a08g046: Add IA55_PCLK to critical module clocks
-      clk: renesas: r9a08g046: Add RSCI clocks and resets
-      clk: renesas: r9a08g046: Add SSIF-2 clocks and resets
-      clk: renesas: r9a08g046: Add RSPI clocks and resets
-
-Cosmin Tanislav (1):
-      clk: renesas: r9a09g077: Add MTU3 module clock
-
-Geert Uytterhoeven (6):
-      Merge tag 'renesas-r8a7740-dt-binding-defs-tag1' into renesas-clk-for-v7.2
-      Merge tag 'clk-renesas-rzg3e-plldsi-tag' into renesas-clk-for-v7.2
-      clk: renesas: rzg2l: Consolidate DEF_MUX() and DEF_MUX_FLAGS()
-      clk: renesas: rzg2l: Refactor rzg3l_cpg_pll_clk_endisable()
-      clk: renesas: cpg-mssr: Add number of clock cells check
-      Merge tag 'renesas-r8a73a4-dt-binding-defs-tag1' into renesas-clk-for-v7.2
-
-Marek Vasut (4):
-      dt-bindings: clock: renesas,cpg-clocks: Document ZT/ZTR trace clock on R-Mobile A1
-      clk: renesas: r8a7740: Add ZT/ZTR trace clocks
-      dt-bindings: clock: renesas,cpg-clocks: Document ZT/ZTR trace clock on R-Mobile APE6
-      clk: renesas: r8a73a4: Add ZT/ZTR trace clocks
-
-Tommaso Merciai (8):
-      clk: renesas: rzv2h: Add PLLDSI clk mux support
-      clk: renesas: r9a09g047: Add CLK_PLLETH_LPCLK support
-      clk: renesas: r9a09g047: Add CLK_PLLDSI{0,1} clocks
-      clk: renesas: r9a09g047: Add CLK_PLLDSI{0,1}_DIV7 clocks
-      clk: renesas: r9a09g047: Add CLK_PLLDSI{0,1}_CSDIV clocks
-      clk: renesas: r9a09g047: Add support for SMUX2_DSI{0,1}_CLK
-      clk: renesas: r9a09g047: Add support for DSI clocks and resets
-      clk: renesas: r9a09g047: Add support for LCDC{0,1} clocks and resets
-
- .../bindings/clock/renesas,cpg-clocks.yaml         |   8 +-
- drivers/clk/renesas/clk-r8a73a4.c                  |   2 +
- drivers/clk/renesas/clk-r8a7740.c                  |   2 +
- drivers/clk/renesas/r9a08g046-cpg.c                | 358 +++++++++++++++++++++
- drivers/clk/renesas/r9a09g047-cpg.c                |  84 +++++
- drivers/clk/renesas/r9a09g077-cpg.c                |   1 +
- drivers/clk/renesas/renesas-cpg-mssr.c             |   3 +
- drivers/clk/renesas/rzg2l-cpg.c                    |  68 +++-
- drivers/clk/renesas/rzg2l-cpg.h                    |  11 +-
- drivers/clk/renesas/rzv2h-cpg.c                    | 181 +++++++++++
- drivers/clk/renesas/rzv2h-cpg.h                    |  12 +
- include/dt-bindings/clock/r8a73a4-clock.h          |   2 +
- include/dt-bindings/clock/r8a7740-clock.h          |   2 +
- include/linux/clk/renesas.h                        |  20 ++
- 14 files changed, 747 insertions(+), 7 deletions(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
