@@ -1,85 +1,157 @@
-Received: from mta.al2klimov.de (mta.al2klimov.de [162.55.223.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B3FD3F54DB;
-	Wed, 20 May 2026 17:56:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.55.223.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A97379ED4
+	for <linux-clk@vger.kernel.org>; Wed, 20 May 2026 21:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779299819; cv=none; b=parfXsBo5B17L1YlD/dEqA//NH2xuJZyNUmVLJCT7WF3oCcYJeRSLyYHNlZjtVl6IqVlPapFzIsswR48kCxqcT/Od9GZEHQdNMebLKPnWkvq5lyzxl42u+CJpOVsyhyV+dMjDt02vSTGNOwdcmbJnEKKHGEPyEu1t9FsQmDXisg=
+	t=1779310884; cv=none; b=d6mQvgqg0PsHZYGUmS05krNkZGc6Gth6qGVgwjGx4L/PFlNt1SmeWVU7F7CAa8N3FLMBKlZcj3SYbFpgeTVzrrrYJcuFT1Gz6M4fqLPRr7IaaFhqckRmRW25dTeiZikaZq8WM31UeZpEHioMQjGZ7B1XxWIf1mzqPVPq+zQRv4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779299819; c=relaxed/simple;
-	bh=HiINtu7xk5Hd/gfZP1vBv9F2KUFICGVhIjDayIdomb4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BkZ1DB9OMcUdA4aU3JMprQow/hYzpjw166RgwSgu6Az6C3sliTzVzGdlqhOv6cG3MmXVO8+NJcXxi4taUPjdlCjbX47/c5knc12rD0n2SSWQPcjR+1m9yU65RyhAb20ZlsP7hchVTfUdbWDJtOljX1ezgroOVVvfbzeb4HrtUqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=al2klimov.de; spf=pass smtp.mailfrom=al2klimov.de; dkim=pass (2048-bit key) header.d=al2klimov.de header.i=@al2klimov.de header.b=WaH1xHxB; arc=none smtp.client-ip=162.55.223.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=al2klimov.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=al2klimov.de
+	s=arc-20240116; t=1779310884; c=relaxed/simple;
+	bh=9hgVEVQXcU4FuyUUNnkUzIz33hv8SRF0xUI91RTLQ6Y=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=eoWGpbsImOuhdxf/Mz1RZuDauNLxPDv+5XIxF8JSaNXr2A0FxJvzzkrKtqAWsa0ZFkKvfldzYAGZgU2tq+G7Z5v3hbGVvXqSfVj3P777vySoiqkbZv7cIaNX47PgzwMa1NkF4ryYDc6A1CRsHH+vhY3BpA7GpVdxslIl3F7W3mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aic1Y9RX; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=al2klimov.de header.i=@al2klimov.de header.b="WaH1xHxB"
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; s=default; bh=HiINtu7xk5Hd
-	/gfZP1vBv9F2KUFICGVhIjDayIdomb4=; h=date:subject:cc:to:from;
-	d=al2klimov.de; b=WaH1xHxBHC3lzlXHrot3Q02lvc2OiIAMSPLittTbKOFXfiQpzHtE
-	NWyGd/6KSAKnY1nfXoBvEAyb6pxWAFy7SwQRZc8BBlZudOXJBhOikSQUpiv7Fg2H6rfa+Q
-	jqp/b6tlKPjbbY/zShQkkVowswr94Tm6XKmNJy4egklJ86yX5SLScB7kwVRnEisgyJi3Oo
-	IDFmQIQzrPA630p1wru4NghyUHyoYgBnC/h1qz9Xjdvu93XwIzvMEpgQ5RRHUwNXtLujgZ
-	zQRXCTmtmU7aUZheIEgKmvXBmyzSBLANFjtTVostzcb0/JQl9L83nDGq033B3z/IH7/aPU
-	KiW2wFLyhw==
-Received: from cachy-ak (2a02-2455-18e9-e011-4d8a-aad2-c25c-50e5.dyn6.pyur.net [2a02:2455:18e9:e011:4d8a:aad2:c25c:50e5])
-	by mta.al2klimov.de (OpenSMTPD) with ESMTPSA id de9eb2c3 (TLSv1.3:TLS_CHACHA20_POLY1305_SHA256:256:NO);
-	Wed, 20 May 2026 17:56:47 +0000 (UTC)
-From: "Alexander A. Klimov" <grandmaster@al2klimov.de>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney@redhat.com>,
-	Jonas Jensen <jonas.jensen@gmail.com>,
-	Mike Turquette <mturquette@linaro.org>,
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/MOXA ART SOC),
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-	linux-kernel@vger.kernel.org (open list)
-Cc: "Alexander A. Klimov" <grandmaster@al2klimov.de>
-Subject: [PATCH] clk: moxart: fix refcount leak
-Date: Wed, 20 May 2026 19:55:50 +0200
-Message-ID: <20260520175552.537603-1-grandmaster@al2klimov.de>
-X-Mailer: git-send-email 2.54.0
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aic1Y9RX"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-48e6db3ff7eso27782845e9.0
+        for <linux-clk@vger.kernel.org>; Wed, 20 May 2026 14:01:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1779310881; x=1779915681; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uNWw9DWW+f/uHjT/RqJlGuJEj3EDU+LfC71q1l4z5Ng=;
+        b=aic1Y9RXov/dOudrSLpENDu1ghrssIPtz+anGrFNmzr04T5ifA50Cg8Hy7IUTyyWQ1
+         05LKeJEJNWRgk6RQDjhhHmv10S4w6JMELUvoSkCm1y1eBewT+5QzOzeKu9WGk0aA+9Jp
+         JkHI05sBxGhRMyTQygG0sZzvBjx1HDJamI2ZCHhJAUvcNyHxFBeZ9X509TNQb2T1i7qD
+         Ff4XBojMOaBqn6+3p4WW5rxxb0oh5MXt3P7RPy2zXIY4aYqjBsPvMjVE4Dh8IJNFeWB1
+         dVaGbk1xU5NJNvxfBWDc9KBmpY/i4mmwWPcWqq3J97/Yw51XWkhFZ+0fN6eaekcoNqDv
+         6+Qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779310881; x=1779915681;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uNWw9DWW+f/uHjT/RqJlGuJEj3EDU+LfC71q1l4z5Ng=;
+        b=Trm3g8NJwoxT7ITC93uLdbfdG5Kr7nJQcoxFSAm9T7k8ngEa1r6zMXAR7Ls+ev0SSu
+         n1wjHbCfRb/ahzh5FXiWpZfEp8dGJ3m3eZ62iuOFX+26bN8qSHNRwYdi49ehpVul1Rnn
+         bTVmFg0IykuPiNYuyyeYKULc2gLnKcItJPZa5J2YjlNnSdg0NI/ZJ1WmO0oD5ZN3PqOt
+         klfeRCWlFQefUApGll5HTLPb/haVoOG1A7rEDreNT8oM0GXQ2lHfdt69h83/0HV/2dFw
+         4DzleZ8Xv5XL+wXMMtjcnFkYptzYBsmZ9x0NjB3mtUsJxX/YHZGwAiV/8+ZL7z+08jch
+         aLYA==
+X-Forwarded-Encrypted: i=1; AFNElJ9RXqiRMr47YjB4A54dtuulglvfMb/y9yh1bXdNkRbWGenburKzb2VXCBZngC68iEUHI7wAST6vQV4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIbOhrNQNpUMAbUy1t0PaHCQouvpGQPf8L3P3T1IwP4kXW0NPa
+	T06icwvmn2fxEajfYEskhN+FJQ4oTKPEl+XVkXzeAQ4YG32xg9Sx7X+w5gYnDKXOWUw=
+X-Gm-Gg: Acq92OE3W1rkNIGMgNO50JY8sWFn9XhFubrNF3tuNRkQcgTpvkKN6PpFOqlS0U4YZ95
+	SzIjpraozSAEsLmvdGqlkEmSr+/N4XbMVnXOkIYf3uxKixJ0nx9tjBR9NP5QDmIfBsybNawfTgx
+	LqcEE1COwXz9EnnwzAReg/Io7gLDjGU6mBl+QMYaNqhGeMXH9LcjZ5cfb+tyQivsUpaiP6ld0nN
+	cV3W87fiFsbY7EBBHGu+wSb9SraXKQz3DBsL0ZodoPN/etJZ7lhNr6sgzjKeINOvVmqXozjV9VY
+	+0fBr5o0mmPQ/uBmyJDyLY8OYy0BwDNCNTgsE26MIw3Vfa4jl9Iab0VFfsPV7rl1+G1Vhi0D6hK
+	TXbWjWoLYuxU3zrL0XPyzMznvySAhvY8Zt/KTLexbzFA5Ge/whwdYeCHYxfFcn0uPhHHEJUQxXF
+	90jqqD8brp6/KQxbIbF40r9mlOUHDbwza8YvvSASK2T14APVM+OSYpFuEz9h5qDzlpeo3NITB5c
+	IWiwJI5K/Hzsg==
+X-Received: by 2002:a05:600c:17d1:b0:48a:54a6:b29f with SMTP id 5b1f17b1804b1-48feea9dda7mr217316295e9.17.1779310881027;
+        Wed, 20 May 2026 14:01:21 -0700 (PDT)
+Received: from localhost ([94.4.195.193])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49035c45734sm849305e9.11.2026.05.20.14.01.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 May 2026 14:01:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 20 May 2026 22:01:19 +0100
+Message-Id: <DINT2DFDVWFX.BGTG7LOC91RH@linaro.org>
+Cc: "Krzysztof Kozlowski" <krzk@kernel.org>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Lee Jones"
+ <lee@kernel.org>, "Alim Akhtar" <alim.akhtar@samsung.com>, "Sylwester
+ Nawrocki" <s.nawrocki@samsung.com>, "Chanwoo Choi" <cw00.choi@samsung.com>,
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ <linux-kernel@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+ <peter.griffin@linaro.org>, <jyescas@google.com>,
+ <kernel-team@android.com>, "Krzysztof Kozlowski"
+ <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: [PATCH 5/6] firmware: samsung: acpm: Add TMU protocol support
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Tudor Ambarus" <tudor.ambarus@linaro.org>
+X-Mailer: aerc 0.21.0
+References: <20260506-acpm-tmu-helpers-v1-0-a9cd5daf8355@linaro.org>
+ <20260506-acpm-tmu-helpers-v1-5-a9cd5daf8355@linaro.org>
+ <DIBOWQYHOPOU.3PCLCL8030WRL@linaro.org>
+ <806da86b-45b7-43cc-b364-97bade8f4041@linaro.org>
+ <DIFVKM72KZDI.14EVGUMQ0NV9S@linaro.org>
+ <a55690fc-7727-401d-9b3c-06bf3c2852d0@linaro.org>
+ <DILRJBWU9SKV.2P7EJN7ECEJB7@linaro.org>
+ <73f18a2c-e729-45d7-9376-7c0e60ed35c7@linaro.org>
+In-Reply-To: <73f18a2c-e729-45d7-9376-7c0e60ed35c7@linaro.org>
 
-Every value returned from of_clk_get() is supposed to be cleaned up
-via clk_put() once not needed anymore.
-The values here are used only for error checking,
-but weren't cleaned up until now.
+Hi Tudor,
 
-Fixes: c7bb4fc16ead ("clk: add MOXA ART SoCs clock driver")
-Signed-off-by: Alexander A. Klimov <grandmaster@al2klimov.de>
----
- drivers/clk/clk-moxart.c | 2 ++
- 1 file changed, 2 insertions(+)
+On Tue May 19, 2026 at 4:46 PM BST, Tudor Ambarus wrote:
+> Hi, Alexey,
+>
+> On 5/18/26 2:24 PM, Alexey Klimov wrote:
+>> Thinking further about this I'd humbly suggest that even
+>>=20
+>> 	if (fw_err >=3D 0)
+>> 		return 0;
+>>=20
+>> 	pr_debug_ratelimited("ACPM tmu call returned: %x\n", fw_err);
+>> 	or pr_debug(...);
+>>=20
+>> 	if (fw_err =3D=3D -1)
+>> 		return -EACCES;
+>>=20
+>> some debug message would do.
+>> Perhaps we need some convertation, for instance as it is done in scmi
+>> code (scmi_to_linux_errno(), scmi_linux_errmap[]). But I don't have any
+>> data for mapping acpm errors to some human meanings.
+>
+> I did that for the pmic helpers. I don't need any debug prints for
+> gs101 TMU as I have clear instructions from firmware: 0 for success,
+> -1 for error.
 
-diff --git a/drivers/clk/clk-moxart.c b/drivers/clk/clk-moxart.c
-index 3786a0153ad1..7e191b1481bb 100644
---- a/drivers/clk/clk-moxart.c
-+++ b/drivers/clk/clk-moxart.c
-@@ -39,6 +39,7 @@ static void __init moxart_of_pll_clk_init(struct device_node *node)
- 		pr_err("%pOF: of_clk_get failed\n", node);
- 		return;
- 	}
-+	clk_put(ref_clk);
- 
- 	hw = clk_hw_register_fixed_factor(NULL, name, parent_name, 0, mul, 1);
- 	if (IS_ERR(hw)) {
-@@ -83,6 +84,7 @@ static void __init moxart_of_apb_clk_init(struct device_node *node)
- 		pr_err("%pOF: of_clk_get failed\n", node);
- 		return;
- 	}
-+	clk_put(pll_clk);
- 
- 	hw = clk_hw_register_fixed_factor(NULL, name, parent_name, 0, 1, div);
- 	if (IS_ERR(hw)) {
--- 
-2.54.0
+This doesn't look like a right approach for upstreaming a ACPM TMU
+framework.
+
+You are trying to submit a gs101-specific implementation masquerading
+it as a generic ACPM TMU framework, while explicitly pushing the
+refactoring work onto the next developer to add support for other
+SoCs in this generic ACPM code.
+
+The ACPM TMU protocol implementation on Exynos850 is different: it uses
+different error codes, and half of the calls in this 'generic' driver
+are not even implemented in the Exynos850 firmware. Relying on a
+hardcoded if (fw_err =3D=3D -1) in a driver named generic ACPM is broken
+by design and may silently swallow critical firmware errors on other
+SoCs.
+
+What about such options below?
+- rename the driver to reflect reality: rename this specifically to
+gs101-acpm-tmu-something to reflect that it is tailored for gs101-s;
+
+or=20
+- abstract the firmware error handling paths through driver_data or
+a dedicated ops structure now, so that other SoCs can cleanly hook into
+it without having to rewrite the logic later.
+
+Maybe we can utilise build info date from SRAM initdata base to
+distinguish between different version of ACPM firmware implementations.
+Sadly I was told that specs doesn't provide any version info.
+Or probe for implemented calls but that may break ACPM firmware
+potentially.
+
+You also mentioned that there are capabilities returned by TMU init
+call. Maybe that one can be used somehow.
+
+Thanks,
+Alexey
 
