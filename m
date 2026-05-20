@@ -1,150 +1,243 @@
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022074.outbound.protection.outlook.com [40.107.75.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5B322A4E9
-	for <linux-clk@vger.kernel.org>; Wed, 20 May 2026 02:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779243286; cv=none; b=OaXJ2PI5KmRjI9j+/LFLmEBGn92MzXk8q1J7Oq0ddb0EsoSQwZkZWYBxWmgUZBVURY0fuAK5UKshjfOjDs9Ht+b16DadY0lbUe8VLYEO/ijz9PKwNFLR68FiQoHnh8wM7JJVqFKbecTpPd+VTy1KRRUsQORYRSTaOdwO8rihH5U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779243286; c=relaxed/simple;
-	bh=LeCd7eN9HG6E+3BXM4Y9D+fbj7hAG02oX7UkV1/QE9g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oVmoMe1YjLmGrw6tTCIoWapFsAJ7A/4ga13Ron998OCO/NUZQtFWk0P+AIXHNmEFOkEzXVuoQLwnRyRPVkTX6SMWy9+yJw+tKoIYWxTTXOXCvRR7yYzA3y5wvmgM/ae9vnFBAMB9w72dk+/9qX17QQFlajy+lLVh9xIojto/B/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bhBcHfTh; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B94BF305686;
+	Wed, 20 May 2026 03:16:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779247018; cv=fail; b=Cl1jxUz+QTWGGNzqrJOhj3f+s2DnPY2TI4eedBbCfXfOiCVuFmC8RdgcWZJOJ17pFlaMkgfmUUTWL783Et/vadX5BAMwNWQqKH0uzRHg5rMhp5aOhndQmsN32wZMpZXjvZQ1zZEUxXJjpyQEU4ZXFLlv+YxUfXa8tsLYsQNrUt4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779247018; c=relaxed/simple;
+	bh=y+wrTDPXSQrwwKIjetPGdTn15UdStmrLdjx5yIEOSwk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=sCGxPpKER3TFYm3XKLHrjEXX1jFnOHUnKFK5I8DgkHVZZhU1RGoQqWpzC7zG3UI4xpm933BTuUaujelcNOsvYxxdmS9v6FTWxv9ZKYURRcBXne/krXQ47k/BuXlkAbPwGPbS6iMv9icUGAfKeKXm1YUKUWrVNQiY6oxeNJcwlPs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=NIeXDBUs; arc=fail smtp.client-ip=40.107.75.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bhBcHfTh"
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-3680540a6efso2237489a91.2
-        for <linux-clk@vger.kernel.org>; Tue, 19 May 2026 19:14:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779243284; x=1779848084; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rDqYEEUd2xJtmq5d3RcJIE6f0InLIvSKDj5hsY/X7po=;
-        b=bhBcHfTh9BSSuuzE4pC57J9y6iRio8MOZ9m5N/XWOfq5PZ2gqFgGHCK7I7CIWWd/5J
-         7KUkStYklKbTwov+OBmxdqp9DTcGtFmdTSWJ6IQoE56Os7WO9htx0y73Zftu+dhJ4PaJ
-         dcUN5yV1Lqp+jsHRyo3nwBK5tqFKbUpYuXMWMSVzL6o/2ONY5UKnWOcoQvo2XKr7mLup
-         wTj0kmwHWCxgyZuhnOXi0sDI4e58ueTkzrkUea1vBSe5nOp9NH5H28lZxvc5Hi9xvQN2
-         7C+J7mdMXz3W0XBJojodd/XKTtm74/qGUNa6Rzhydg822hUnutYMWCvw1H9H8CFd1yLe
-         g8JA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779243284; x=1779848084;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rDqYEEUd2xJtmq5d3RcJIE6f0InLIvSKDj5hsY/X7po=;
-        b=OIC8avibAGt/lHeWJ0/5ghRq32aLDY3iT+D36tzuAV9esTx3PXKAjSYKbb6TGWAA6G
-         VPZF1iJBaTQcPMuP0pJtiDfF+zpiVn/Xn+jDBOe6WFkCz22OrC99bAcEQhEWJRtIRrLL
-         8Zo2AbUDIgipl6FNJA5x53C6vZfyR6tTR/nzapQgT/kSJUjcqhvhOBWnnlzj8shwz2i3
-         7WI39+oG6BMdEoLDtxT+ZzAA+Vo2q+5mubrJ18gau2u9lU9FGLwfAViRLO3sVaQBsuKm
-         UB/ZQdq6LVHGYPbjdQicfartFrQrXoRHn3NAG512e66MZIrrvfr6FvQN6RIjEwyKQeyw
-         B9Ew==
-X-Forwarded-Encrypted: i=1; AFNElJ/7QHoRlDEDfZGDXgg87pKLA//i8HVjQsASugDvyNABGw4q4Gd+88jAaDljYeNlOkJYRODqftxd2rI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3dptFj4J9HB/HE6eRI01T1vf1NkYMvFkcCcuJak7wsCf0SwYC
-	cuzd3I8MzE4sqrh17qypCmMvx8UW3WkqhPJoK++9VCs/HEjOkJiCALN6
-X-Gm-Gg: Acq92OG21lCK19oduMqCkH/4+4wDaTfo+OLK2WFuqkp73BV4PEy9rscSr1TWYpGGsa1
-	xchn7wHsY2PzcE3Faxg+9lzxPIl8wVZ5fVIPMOrBsjA/su/RJApOuZzgqgG80zoAIBfgBkORheN
-	i1XSzGE2+wWhRdox67vQJJz1UY5bfsHXZVSbwHOvhj0PJceztw97sGGnR8hORsFCBIEMhPLGp/I
-	8p9z1qgp151H5f0bP+1AA1u4pxx0/QOqBHpGWyZBdUE9W/44qHZYqokdRFufp2fsKWSCK4qjNZJ
-	sbtLKtOAyFukvEozqIEHxrGs+beK1PfKj2ebB0BEwsoyq5r3XijdEHuLXbum+huShRSZGCAm60o
-	NDXVtY99xpdkidsdH/c0FDThd5xavATP3ssJYNEJ5yiIpNSAEmnc5PJLPn/5Xk9bKRgfGJIFczJ
-	64Rbs56Hz8uQnLnIiaUZ27Pu3CDNIBfgNdSMBT5CWpBH7sRfmo0W4vwfl5lJfrEvsYyUC70Hmqi
-	0UW
-X-Received: by 2002:a17:90b:4a03:b0:369:7003:4e30 with SMTP id 98e67ed59e1d1-36970035860mr16664323a91.15.1779243284521;
-        Tue, 19 May 2026 19:14:44 -0700 (PDT)
-Received: from [192.168.0.100] (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-369c4bb4d4dsm4170018a91.1.2026.05.19.19.14.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 May 2026 19:14:44 -0700 (PDT)
-Message-ID: <2a49734a-c4e7-4818-a024-6c944af93020@gmail.com>
-Date: Wed, 20 May 2026 10:14:38 +0800
+	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="NIeXDBUs"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KsLZ3v3GlhMcc6qVIUPHbPv/wZ+98Oodaz8VbOssDfyaVXhvK4lDA7q2+dqvxttAe6J2SxfXbCMqDCk795AvO9OyWYdiqp/A3va5eUR4TQp/7jiV9NHl/RkTeUG+nHFk7G/uQfsl6XAIVCZCnLWg+L3uM0ziOi61c/4qrya5NQ0VBMyOxxGktKJh387N76BxAAmMKxXwYxX1OovIySeTAIFtNsacHrgQWtUQQvFrWupyOvfrp0WYi/+rz+5abObGA/Supsf+0siPMI01VGsyeuji7/Dgcdd3ORpT1IO9im98NJ/yy/sQ28P8pawewUwhw9Qox4tutB87CL5enn/KqQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=L+/0/paUgtXrjIkMBmLPOXrwFXUICv6TZ+qjnS+1pow=;
+ b=fvP3AHxz4d0CVUI2wW6Bsp6J/hNGcfApFWM5tzGntos82HyjD58B6EpnnmGM1tODlfd2vMrR6+1rV+wUAfsro732elOYNI51pMP1QQuYo0YQBDwAtdRkjSNjkomPcHTBxpE1zfRLHewGoLhS1BC6ulrW6weaFboETaU2Q4f1EW98qqlsfYO6WgLINc1axkTYLpxOXGt+LedDGGnDehxkv3knsHWEH9/SF6wHyWkcqaHFsIBp9QK+o07Bri80D8tv16l7XgO88Zzm+0I9y0HaHAgjoSYmUp22T4LljxJdwrmmojVKuOkBSLzCH9jwF4koCh/2icQ+R4Z7YWogHJI6tQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
+ dkim=pass header.d=amlogic.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=L+/0/paUgtXrjIkMBmLPOXrwFXUICv6TZ+qjnS+1pow=;
+ b=NIeXDBUst4CU8TJvEDjvTJLpCDnDOng4/86igGjAF59OkEQxZAgOKPzuZc77JUIJx9uKJnH8HM5PnXS3NVzpx/Ebh0W2QvL34r92vLbtj/Y4kP+HwLPMpgkwVeTyt/86nvKan8J5nZcEE8i5LrIzv8+f3oJD15IVrGAPKjlhCZT2cgAkBsn7GdBgEejYL+SGaBktjOwUPjEknHhgQTt9VcVjbEs6MOjmQyCkixOP0bwxfPenno0Ie48RjYv47xJH1rFPdDqX1Z8YeZqvpYJdoNa6T2YCuFXTSGd3BfXTNlK/RDJhhFlwwwLjlh52yE/ylrC8VvhW08+kjf6x9r36vQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amlogic.com;
+Received: from KL1PR03MB7149.apcprd03.prod.outlook.com (2603:1096:820:ca::7)
+ by SEZPR03MB7659.apcprd03.prod.outlook.com (2603:1096:101:126::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.48.15; Wed, 20 May
+ 2026 03:16:53 +0000
+Received: from KL1PR03MB7149.apcprd03.prod.outlook.com
+ ([fe80::2f06:12a:fff0:6506]) by KL1PR03MB7149.apcprd03.prod.outlook.com
+ ([fe80::2f06:12a:fff0:6506%5]) with mapi id 15.21.0048.010; Wed, 20 May 2026
+ 03:16:53 +0000
+Message-ID: <609d9fb6-13e3-4105-bbab-19744b73fd82@amlogic.com>
+Date: Wed, 20 May 2026 11:16:49 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/10] dt-bindings: clock: Add Amlogic A9 peripherals
+ clock controller
+To: Jerome Brunet <jbrunet@baylibre.com>,
+ Jian Hu via B4 Relay <devnull+jian.hu.amlogic.com@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Xianwei Zhao <xianwei.zhao@amlogic.com>, Kevin Hilman
+ <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20260511-b4-a9_clk-v1-0-41cb4071b7c9@amlogic.com>
+ <20260511-b4-a9_clk-v1-3-41cb4071b7c9@amlogic.com>
+ <1jbjei6k75.fsf@starbuckisacylon.baylibre.com>
+From: Jian Hu <jian.hu@amlogic.com>
+In-Reply-To: <1jbjei6k75.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SEWP216CA0044.KORP216.PROD.OUTLOOK.COM
+ (2603:1096:101:2bd::7) To KL1PR03MB7149.apcprd03.prod.outlook.com
+ (2603:1096:820:ca::7)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] clk: nuvoton: ma35d1: fix PLL_CTL1_FRAC bit field
- width and fractional calc
-To: Brian Masney <bmasney@redhat.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, ychuang3@nuvoton.com,
- schung@nuvoton.com, yclu4@nuvoton.com, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260513055626.1070533-1-a0987203069@gmail.com>
- <20260513055626.1070533-3-a0987203069@gmail.com>
- <agx5gTfaByMNjkX4@redhat.com>
-Content-Language: en-US
-From: Joey Lu <a0987203069@gmail.com>
-In-Reply-To: <agx5gTfaByMNjkX4@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR03MB7149:EE_|SEZPR03MB7659:EE_
+X-MS-Office365-Filtering-Correlation-Id: ca4b6816-806a-44aa-f91c-08deb61e3d91
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|4143699003|18002099003|22082099003|56012099003|11063799006|3023799007;
+X-Microsoft-Antispam-Message-Info:
+	PEZzwJnuFLtC4EEXd8qIO2sRbsUdtpQsk96zC3weccLlMxQMr3xrHjLxQbNhIerAHv5zRid0LmVeH4oFWGsW33IaCA6x+pKgfnT7dmVRQaLpbEUZESNsZUu85X+tIIuoxfQBxXqUuxxPHDJec7b8jpjmVifB4eJyb3Xor8YVJ2wfi+qlL8nl27O4PCuoyY82yVLsixffkQwsCjtDZuw3Py1O3k7jUX8vHxJYzTZlvfphEKBMoRZAZjgt6a+glHAFi1+Tv2vt4D1DTS4ottzbrhqv58dL08DKlOND8vIh0tMj2XwcClPmqFOafuv2WbFS1G52VcK5AguwntgcOeYFsXZw84FzM/6PwjK6fJzmpO6lg/U09pAZY73iGs5uw3vVPDb4bmdIzqHgo0XjN4JpN1iSp9L+xFW4Rnx/oZZ7fRBNZDBMGbcW8PfuEfG9SQXdUNah8+DOusFfHwdGAlrbQfXUBg02DV9+uhzOIzxU0v6VlcoviZAyOrhVOJU7M7o57HDZZCHi2g2My6renKw/udUXaXLgYebW8JYnNzfo/HEAKRbx/pfZ5Wcuch6K0TvVs3eELsdOcAU50FNti6eZ4eQVjtPX5PoMFt4U6RS4TktfGE1m/JKQN5nDlpr4XdoQVbYoMPKbmhBLQ8i0iJirPQ==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB7149.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(4143699003)(18002099003)(22082099003)(56012099003)(11063799006)(3023799007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eHdGc01tTFFQeDhUbFFKbXY4d1lKbnNwRXVqV1Zvb2l3UE9LQ09lbzRKK1ly?=
+ =?utf-8?B?eE0yWVN1MnA2SU5UQWlES2lxcXVBZWtpcWNzZHgvWjV6bGpKS2hDMVV4UjJO?=
+ =?utf-8?B?U1JGeU1LdTErdEluWVBsUzVKSmNtUm91TW9SR09kemVLYWdOeG5ZVW1lZFVr?=
+ =?utf-8?B?dU02NlVuR21OYjhoVENUdHJ6aHlhYXlyQ0h6OTlIV1F6VTdvZklPUVlqNGl4?=
+ =?utf-8?B?SW1iSnZja1M5SjFRUnNLQnI3Z3hBRlhLU3J2cHhOK2FGTk9tT0Z5YTM3RUZR?=
+ =?utf-8?B?RmRKcE8vTVVVc0dxaTBNZFpZNXRybjh2enpoUU9YRzZVR1BIaEJxYS93Zkd3?=
+ =?utf-8?B?bGNOQTQyVmZDYWYzMGlycUwrY1NtSmt4ODdoeitqNGUxYlpUcVhmZi9Ja3NU?=
+ =?utf-8?B?aVVNSkgwMWJWM3Yrb0FQZkNTNTN6S0lIREI5VE5UelVjTmlhMDZtYVhmdXlI?=
+ =?utf-8?B?cGVwVXBXSHFhdUZ2TVJXR014a3RqRWM1cGlkYnRlTFBsZ3l6L0NYRDY4ZzRz?=
+ =?utf-8?B?eDdOdVI2ZlByWHlJMHpHemRrOVdyRnplbzdVTk0rM2ZpMlZjOWoxVGhpYVEr?=
+ =?utf-8?B?RzQ4VDZDQlFWanFyT0FiS2g0Y2l5cjVPekdUR3VSYXMyckZhQVYzeTRjdWc3?=
+ =?utf-8?B?SS9VbW5zYko5YkhHY0lsV3B6cmZVV1U2cmFPbU5sbVMyZGIzb1ZWR2VyaEFt?=
+ =?utf-8?B?N3RmL2pFN2V1bEcwNHBWeFQ5RmliYVF2cm9iSE5ZZWNjUjZ3SkRFSzEyaWJM?=
+ =?utf-8?B?Q2NLSndmVzJBcm5ERDkzSjB6NlJ0WkJQL1ZaVzFVV0ZJVm54U0s4UmVYcXlj?=
+ =?utf-8?B?d2VKTUYwSHIyMW00dllsdXlzSGFSS3lEb1JtdHNmV0JUaW93TGdoNm40RS9D?=
+ =?utf-8?B?ZnMzcWREYjFtWHRSbGFMRzRZaXRyY0lIL2dYSnUxbjVvSWlZREJOR1ZObU1Z?=
+ =?utf-8?B?a0s2STFKQ0FIdXUrTkU1LzdaK09zd3pIYTJWRWV3ZU9MRDZiK2RTeWNtVUg4?=
+ =?utf-8?B?Zlc1eGkvNDNjbzBOTnZuN1orb2RCWFhXa3lCMHJ6a0tka0pJZkRTNXJMZExX?=
+ =?utf-8?B?SmxTYVNpRGR5MHpnTnhZb1MyMENnenErMXVXZEwyb2hCQ1o0dlNzd2lvc1gx?=
+ =?utf-8?B?eEZHVXV0WmhZL2VmbmJld0FlQkpvL3pURDdaUU44RFBoMGRrZ0pEUzJqQWZB?=
+ =?utf-8?B?Wk5DTjZmSkdvZEV2Zmo4ekNXUDE2NlVLQlJlbk1scDRianNmUDlXdG1JT2hS?=
+ =?utf-8?B?ZElWbU5KZHQvNVdYdktEUUk2R01yUFBLcGlHM1pUaWY3VG9nQnhRZW1PR0Uz?=
+ =?utf-8?B?Q1NzVXBETDhzclJtdml3R0xTRmhpRGJqNDl2VFdaaVNtOGh6ODBjS25xODhL?=
+ =?utf-8?B?L2hZNUJ0QWg2RWRKcjI2WTFHSlMyaVUwbGhQK20yZWc0anFlRDZYcFVhWmM1?=
+ =?utf-8?B?Nm5CVzdUVDgzeENuc1JvazJlVXdCNGR3R0xKWjNXZGNpaXVqbC9Id2x0Mm5U?=
+ =?utf-8?B?QlFHSSszdnFaL01ocVFtOWNFd0V0aFdFRkNTcGlWdWRYWHNzcmFXUjZJZnFo?=
+ =?utf-8?B?UTdWRi9LcG1pQjc0Vko4UVRMQTdWZE8wTSszT2FFVVhTaDl6bWZOd3RhdVdt?=
+ =?utf-8?B?NUdiRXlNbnRiZTk1cUFsY0J0M0RkMTBmSjVzQXpiRlVpaTRmNk5kVFJtcFJz?=
+ =?utf-8?B?RlQ1dHZRS1Rkb242OElwMjhGREhsUVFUMTR6Zy9SeVRITkg1V3J6eS9pYWRi?=
+ =?utf-8?B?b3Y1aFZzZmNhbGYxYTQwNkxoVDFEYitob0lXQjBXZ1pmNkpqRXZlRGlVK0tD?=
+ =?utf-8?B?T1VBcHJIL0FNUWVIR2dZTXRhL3VqemVxMTNYbWk4MkxUajhTVzd6VDhJcVgy?=
+ =?utf-8?B?SGNScCtmTzAvMWE5S2ZUZlc5SzhiRHJnQmpIOUd5RFVGSUpneUQwMW45Q1RY?=
+ =?utf-8?B?VmVrWkxnd3h3YXlXVXpyUi81R0Q0eVNvWWkrRll5dk1uTHN2bUlabDVyczRQ?=
+ =?utf-8?B?dlVxM0krbHExYzFQT1RrNE5iN281ak1IdklRTUVreEg3OGw3YVd0b1hLVExm?=
+ =?utf-8?B?WmFsNlVXbjBFcGN5WVhvU1AvNGFkMkJIZjVGN3VYcWo2dlVSSEpPWFY3SjU5?=
+ =?utf-8?B?VEI0elk1RUhINFd0VXQ0dkI0VTdMQW03Q0tUUG9lbHZvSTlCS2l0cWs3Znpm?=
+ =?utf-8?B?SDl1bDlMQitSaTdtbUNVaE1Hb0dCU1ZxMFlHRTlxQUQrcWprL3NzRTcxTWVp?=
+ =?utf-8?B?YW5DQTJLQUg3TEZmVWcxckxhRXh5Zjkvb1Aza3JIQlZLTHFyZGJjaUZPcVhs?=
+ =?utf-8?B?WENMaGxkVVFFZlc1WUJZdXFCTnNwaFkvUnBMRjRUOG53QTl0cE5BQT09?=
+X-OriginatorOrg: amlogic.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ca4b6816-806a-44aa-f91c-08deb61e3d91
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB7149.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2026 03:16:53.3587
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Uj/eoDRM03vzVdsulYqxtDM2/3uUGvxPo7m/behhhFOIWB0pBarIXKCZJ67/Nfub53kGtizw/K4RW90sKyrEmA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR03MB7659
 
+Hi Jerome,
 
-On 5/19/2026 10:53 PM, Brian Masney wrote:
-> Hi Joey,
+Thanks for your review.
+
+On 5/15/2026 12:15 AM, Jerome Brunet wrote:
+> [ EXTERNAL EMAIL ]
 >
-> On Wed, May 13, 2026 at 01:56:25PM +0800, Joey Lu wrote:
->> PLL_CTL1_FRAC was defined as GENMASK(31, 24), covering only 8 bits.
->> The hardware fractional field occupies bits [31:8] (24 bits), so the
->> mask must be GENMASK(31, 8).
+> On lun. 11 mai 2026 at 20:47, Jian Hu via B4 Relay <devnull+jian.hu.amlogic.com@kernel.org> wrote:
+>
+>> From: Jian Hu <jian.hu@amlogic.com>
 >>
->> The previous fractional-mode calculation used FIELD_MAX(PLL_CTL1_FRAC)
->> as the denominator to obtain 2 decimal places.  With the corrected 24-bit
->> mask the old divisor is wrong; replace the arithmetic with a proper
->> 24-bit fixed-point rounding to 3 decimal places:
+>> Add the peripherals clock controller dt-bindings for the Amlogic A9
+>> SoC family.
 >>
->>    n_frac = n * 1000 + (x * 1000 + 500) >> 24
->>
->> The +500 term provides round-to-nearest before the right shift.
->>
->> Fixes: 691521a367cf ("clk: nuvoton: Add clock driver for ma35d1 clock controller")
->> Signed-off-by: Joey Lu <a0987203069@gmail.com>
+>> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
 >> ---
->>   drivers/clk/nuvoton/clk-ma35d1-pll.c | 8 ++++----
->>   1 file changed, 4 insertions(+), 4 deletions(-)
+>>   .../clock/amlogic,a9-peripherals-clkc.yaml         | 150 +++++++++
+>>   .../clock/amlogic,a9-peripherals-clkc.h            | 352 +++++++++++++++++++++
+>>   2 files changed, 502 insertions(+)
 >>
->> diff --git a/drivers/clk/nuvoton/clk-ma35d1-pll.c b/drivers/clk/nuvoton/clk-ma35d1-pll.c
->> index bfedd45bd04b..7e6b30d20c01 100644
->> --- a/drivers/clk/nuvoton/clk-ma35d1-pll.c
->> +++ b/drivers/clk/nuvoton/clk-ma35d1-pll.c
->> @@ -48,7 +48,7 @@
->>   #define PLL_CTL1_PD		BIT(0)
->>   #define PLL_CTL1_BP		BIT(1)
->>   #define PLL_CTL1_OUTDIV		GENMASK(6, 4)
->> -#define PLL_CTL1_FRAC		GENMASK(31, 24)
->> +#define PLL_CTL1_FRAC		GENMASK(31, 8)
->>   #define PLL_CTL2_SLOPE		GENMASK(23, 0)
->>   
->>   #define INDIV_MIN		1
->> @@ -113,9 +113,9 @@ static unsigned long ma35d1_calc_pll_freq(u8 mode, u32 *reg_ctl, unsigned long p
->>   		pll_freq = div_u64(pll_freq, m * p);
->>   	} else {
->>   		x = FIELD_GET(PLL_CTL1_FRAC, reg_ctl[1]);
->> -		/* 2 decimal places floating to integer (ex. 1.23 to 123) */
->> -		n = n * 100 + ((x * 100) / FIELD_MAX(PLL_CTL1_FRAC));
->> -		pll_freq = div_u64(parent_rate * n, 100 * m * p);
->> +		/* x is 24-bit fractional part, convert to 3 decimal digits */
->> +		n = n * 1000 + (u32)(((u64)x * 1000 + 500) >> 24);
->                                             ^^^^^^^^^^^^^^^^^^^^^
-> You should be able to use DIV_ROUND_CLOSEST_ULL() here.
->
-> Brian
+>> diff --git
+>> a/Documentation/devicetree/bindings/clock/amlogic,a9-peripherals-clkc.yaml
+>> b/Documentation/devicetree/bindings/clock/amlogic,a9-peripherals-clkc.yaml
+>> new file mode 100644
+>> index 000000000000..97e2c44d8630
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/amlogic,a9-peripherals-clkc.yaml
+>> @@ -0,0 +1,150 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +# Copyright (C) 2026 Amlogic, Inc. All rights reserved
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/amlogic,a9-peripherals-clkc.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Amlogic A9 Series Peripherals Clock Controller
+>> +
+>> +maintainers:
+>> +  - Neil Armstrong <neil.armstrong@linaro.org>
+>> +  - Jerome Brunet <jbrunet@baylibre.com>
+>> +  - Jian Hu <jian.hu@amlogic.com>
+>> +  - Xianwei Zhao <xianwei.zhao@amlogic.com>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: amlogic,a9-peripherals-clkc
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  '#clock-cells':
+>> +    const: 1
+>> +
+>> +  clocks:
+>> +    minItems: 20
+>> +    items:
+>> +      - description: input oscillator
+>> +      - description: input fclk div 2
+>> +      - description: input fclk div 3
+>> +      - description: input fclk div 4
+>> +      - description: input fclk div 5
+>> +      - description: input fclk div 7
+>> +      - description: input fclk div 2p5
+>> +      - description: input sys clk
+>> +      - description: input gp1 pll
+>> +      - description: input gp2 pll
+>> +      - description: input sys pll div 16
+>> +      - description: input cpu clk div 16
+>> +      - description: input a78 clk div 16
+>> +      - description: input dsu clk div 16
+>> +      - description: input rtc clk
+>> +      - description: input gp0 pll
+>> +      - description: input hifi0 pll
+>> +      - description: input hifi1 pll
+>> +      - description: input mclk0 pll
+>> +      - description: input mclk1 pll
+>> +      - description: input video1 pll (optional)
+>> +      - description: input video2 pll (optional)
+>> +      - description: input hdmi out2 clk (optional)
+>> +      - description: input hdmi pixel clk (optional)
+>> +      - description: input pixel0 pll (optional)
+>> +      - description: input pixel1 pll (optional)
+>> +      - description: input usb2 drd clk (optional)
+> Why are those optional ? they seem internal to the SoC.
+> If so, they don't have a reason to be optional
 
-Thanks for the suggestion! I'll update this to use DIV_ROUND_CLOSEST_ULL 
-in the next version.
 
-BR, Joey
+Yes , these clocks are sourced from other analog modules and will be 
+added in the future.
 
->
->> +		pll_freq = div_u64((u64)parent_rate * n, 1000 * m * p);
->>   	}
->>   	return pll_freq;
->>   }
->> -- 
->> 2.43.0
->>
+I will remove the optional in the next version.
+
+>> +      - description: external input rmii oscillator (optional)
+>> +
+[...]
+> --
+> Jerome
+
+Best regards,
+
+Jian
+
