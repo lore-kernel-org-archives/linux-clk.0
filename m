@@ -1,157 +1,113 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A97379ED4
-	for <linux-clk@vger.kernel.org>; Wed, 20 May 2026 21:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C291638F23D
+	for <linux-clk@vger.kernel.org>; Wed, 20 May 2026 22:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779310884; cv=none; b=d6mQvgqg0PsHZYGUmS05krNkZGc6Gth6qGVgwjGx4L/PFlNt1SmeWVU7F7CAa8N3FLMBKlZcj3SYbFpgeTVzrrrYJcuFT1Gz6M4fqLPRr7IaaFhqckRmRW25dTeiZikaZq8WM31UeZpEHioMQjGZ7B1XxWIf1mzqPVPq+zQRv4Q=
+	t=1779315058; cv=none; b=peD4zPuKNNsTChJvfGGvLdeGpFMEIs49i8K9pxQIlZe0a2xOdJUYMhmO06TZMxBp7EjTuxwL+pAG9Mv/Zrn+D/5TyddiJw98x5lMT5E4NoyoyCExBz4rUlFGyh92wu6Ffs/UhWCfP/8vXuiFQaDP5kj9J3+AT3FOicdUEXrb6DE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779310884; c=relaxed/simple;
-	bh=9hgVEVQXcU4FuyUUNnkUzIz33hv8SRF0xUI91RTLQ6Y=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=eoWGpbsImOuhdxf/Mz1RZuDauNLxPDv+5XIxF8JSaNXr2A0FxJvzzkrKtqAWsa0ZFkKvfldzYAGZgU2tq+G7Z5v3hbGVvXqSfVj3P777vySoiqkbZv7cIaNX47PgzwMa1NkF4ryYDc6A1CRsHH+vhY3BpA7GpVdxslIl3F7W3mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aic1Y9RX; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1779315058; c=relaxed/simple;
+	bh=BH3JPXyp4zfTsYas6J33aQkbFuzLymEQ+6qzrG5KRZs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mS2IuS+N4XeDHHlH1FtBN6/5ySo7rfoPrXwGCJazDjNw0Rlcj61hETPznhVha26pMoO+c9URQlrue/mE9/6KQ7hkzcTJpLqPKdWn/UgnNURai3Ru9eaxDGqdK8hfp6vtUvNUGM3ddbCxQ6NZMEaeTC9jDRvEr3TypfecutUches=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CwdgPJI5; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=kShmDB4Z; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aic1Y9RX"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-48e6db3ff7eso27782845e9.0
-        for <linux-clk@vger.kernel.org>; Wed, 20 May 2026 14:01:22 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CwdgPJI5";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="kShmDB4Z"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1779315055;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WUlhTj/LDnGR8NwnkPfh/TBbgWAfcMJHYKZWXxRTj+o=;
+	b=CwdgPJI5enHFtdkCsS5ZCwZJeFbYn3T6H7GUMjBbAFcLoy8nZP6+3CvhsLhYdbqQAGJO6R
+	f22Mztnmd96EzIewK0bWP5K4xNZSg83TLmFdsJOD+NyX8KP+2c5kndrxWTuiVpJ8rXBg5e
+	oj3JMSLHvcJdX3QiC0jmAYb1MQhtoLk=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-396-h5xKmKPEOQusHFm34zhqkA-1; Wed, 20 May 2026 18:10:54 -0400
+X-MC-Unique: h5xKmKPEOQusHFm34zhqkA-1
+X-Mimecast-MFC-AGG-ID: h5xKmKPEOQusHFm34zhqkA_1779315054
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-90fbc9782c9so1327002185a.0
+        for <linux-clk@vger.kernel.org>; Wed, 20 May 2026 15:10:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1779310881; x=1779915681; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+        d=redhat.com; s=google; t=1779315054; x=1779919854; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uNWw9DWW+f/uHjT/RqJlGuJEj3EDU+LfC71q1l4z5Ng=;
-        b=aic1Y9RXov/dOudrSLpENDu1ghrssIPtz+anGrFNmzr04T5ifA50Cg8Hy7IUTyyWQ1
-         05LKeJEJNWRgk6RQDjhhHmv10S4w6JMELUvoSkCm1y1eBewT+5QzOzeKu9WGk0aA+9Jp
-         JkHI05sBxGhRMyTQygG0sZzvBjx1HDJamI2ZCHhJAUvcNyHxFBeZ9X509TNQb2T1i7qD
-         Ff4XBojMOaBqn6+3p4WW5rxxb0oh5MXt3P7RPy2zXIY4aYqjBsPvMjVE4Dh8IJNFeWB1
-         dVaGbk1xU5NJNvxfBWDc9KBmpY/i4mmwWPcWqq3J97/Yw51XWkhFZ+0fN6eaekcoNqDv
-         6+Qg==
+        bh=WUlhTj/LDnGR8NwnkPfh/TBbgWAfcMJHYKZWXxRTj+o=;
+        b=kShmDB4ZZo1L1RbrvDdC8gT+vHfSGeoShxBffKwMAb6IwuX3aNkN6beo10IzaU5J/8
+         O5ja6CjtwiMkRnGpCJzCtkHBc8YQrJwfUko9ytXsPjksPUlIhTYMo+voLA3D4mx28pCP
+         TQdDMBKXK3SfaLlJZmrxdSVGX1oKr1VO+HVH74qcGcH0KAv5cJzdYixpMcXsF8BCXZWK
+         EzShUaiJq+KgZBeB3xIeen67KTNbFYPSJC+2h7FuwnCZTtbO71xT2OGgjbUudSkBE/Jp
+         LHBB9i/+/TCmSiPXUOXRvWZcDESMN+CVTflWpEa5RfV0Ol9Y2XMkaqiaJAcsQFZxkwCC
+         D0Rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779310881; x=1779915681;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uNWw9DWW+f/uHjT/RqJlGuJEj3EDU+LfC71q1l4z5Ng=;
-        b=Trm3g8NJwoxT7ITC93uLdbfdG5Kr7nJQcoxFSAm9T7k8ngEa1r6zMXAR7Ls+ev0SSu
-         n1wjHbCfRb/ahzh5FXiWpZfEp8dGJ3m3eZ62iuOFX+26bN8qSHNRwYdi49ehpVul1Rnn
-         bTVmFg0IykuPiNYuyyeYKULc2gLnKcItJPZa5J2YjlNnSdg0NI/ZJ1WmO0oD5ZN3PqOt
-         klfeRCWlFQefUApGll5HTLPb/haVoOG1A7rEDreNT8oM0GXQ2lHfdt69h83/0HV/2dFw
-         4DzleZ8Xv5XL+wXMMtjcnFkYptzYBsmZ9x0NjB3mtUsJxX/YHZGwAiV/8+ZL7z+08jch
-         aLYA==
-X-Forwarded-Encrypted: i=1; AFNElJ9RXqiRMr47YjB4A54dtuulglvfMb/y9yh1bXdNkRbWGenburKzb2VXCBZngC68iEUHI7wAST6vQV4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIbOhrNQNpUMAbUy1t0PaHCQouvpGQPf8L3P3T1IwP4kXW0NPa
-	T06icwvmn2fxEajfYEskhN+FJQ4oTKPEl+XVkXzeAQ4YG32xg9Sx7X+w5gYnDKXOWUw=
-X-Gm-Gg: Acq92OE3W1rkNIGMgNO50JY8sWFn9XhFubrNF3tuNRkQcgTpvkKN6PpFOqlS0U4YZ95
-	SzIjpraozSAEsLmvdGqlkEmSr+/N4XbMVnXOkIYf3uxKixJ0nx9tjBR9NP5QDmIfBsybNawfTgx
-	LqcEE1COwXz9EnnwzAReg/Io7gLDjGU6mBl+QMYaNqhGeMXH9LcjZ5cfb+tyQivsUpaiP6ld0nN
-	cV3W87fiFsbY7EBBHGu+wSb9SraXKQz3DBsL0ZodoPN/etJZ7lhNr6sgzjKeINOvVmqXozjV9VY
-	+0fBr5o0mmPQ/uBmyJDyLY8OYy0BwDNCNTgsE26MIw3Vfa4jl9Iab0VFfsPV7rl1+G1Vhi0D6hK
-	TXbWjWoLYuxU3zrL0XPyzMznvySAhvY8Zt/KTLexbzFA5Ge/whwdYeCHYxfFcn0uPhHHEJUQxXF
-	90jqqD8brp6/KQxbIbF40r9mlOUHDbwza8YvvSASK2T14APVM+OSYpFuEz9h5qDzlpeo3NITB5c
-	IWiwJI5K/Hzsg==
-X-Received: by 2002:a05:600c:17d1:b0:48a:54a6:b29f with SMTP id 5b1f17b1804b1-48feea9dda7mr217316295e9.17.1779310881027;
-        Wed, 20 May 2026 14:01:21 -0700 (PDT)
-Received: from localhost ([94.4.195.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49035c45734sm849305e9.11.2026.05.20.14.01.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 May 2026 14:01:20 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1779315054; x=1779919854;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=WUlhTj/LDnGR8NwnkPfh/TBbgWAfcMJHYKZWXxRTj+o=;
+        b=L8ob0hIO9rS8JnKVQ1ySXmfIJTtuEg7TbSZWtIyzdVOT/QxpSU2fAGGAVfOYcLibdX
+         gSHWFlYYSXYIYyF2Nut94LMm/Rf7ddakYX/csECRYvdo4oNlDDRo+4zYFhLOVbu6bu/T
+         7Hk2h06OrN+hqcqV1t7elcwWp+SKku27jOEqf/jy5aBO0x0ByShfqF4apOeua3AzoYJ3
+         JWK8zztY2Otk8+L5vLYLkm6kEjl8NC7L0udsN96MCpGcqcJOQMOScEko7fvDytOA/dDw
+         qPTIx86NyGzffFB8Wj9ZvaueD9IggJx+aDHOEjnl3sHYA/thAR/AvfeoAVlAajjVG35o
+         OOag==
+X-Gm-Message-State: AOJu0Yza8uT83vp4WbeqR0VEmyyckRN3BAov/PqgZdU/i93Ev6+DnQx1
+	MtUEkECZofsP+dPyERjAk+2/5gvh3gpJ2sZ8nY8wwFpZM7CnTvCsGWjvNjmoYXLqAl7kDQCq4Fw
+	7MJ8RgMww98IGxVvQlf+kxXSVHSGKkD4/OTuS5uDdbhx/pwhCdflHDHBhwVoUmw==
+X-Gm-Gg: Acq92OG5a0qbTfjBDpyIhohwFCT9KOY58dnazFQp/tfwvRCcvYCF/fCHkLX9+8A0rss
+	b9YZtNUWwfZOhtc55IyJ7mILzOINLSU1cOalpsQGfawBEfcyK8ENGg84PsMuW8lGp5kFE2N3X/l
+	XhsRDefxyfznkLdylK+rJDsZLmLx7jxxgfjTRhsNTqKqZoacZfoVrJEnOr19TZoZuPXPQF4+lHT
+	8hPzeI0wPmiD04Cd7+AhRLaXoAXJWyF9vbKuXnTtoWpDKkcJrKYzFY3HsVz4CWFbhgANreUarEo
+	5n0iNrVSqPt2ZFLHK7fnalS/J2sNkbonJQgngM8R2AAq+mpHBt1GvUCnx2x6s7xLstJ/IOQTqn8
+	ydbJo+YIGhESjmX5U/QGLUW+uwYc=
+X-Received: by 2002:a05:620a:370a:b0:8cd:8938:f000 with SMTP id af79cd13be357-914a2ce9f9amr16390285a.28.1779315053923;
+        Wed, 20 May 2026 15:10:53 -0700 (PDT)
+X-Received: by 2002:a05:620a:370a:b0:8cd:8938:f000 with SMTP id af79cd13be357-914a2ce9f9amr16384985a.28.1779315053518;
+        Wed, 20 May 2026 15:10:53 -0700 (PDT)
+Received: from redhat.com ([69.43.42.202])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-910bab3a207sm2240740085a.15.2026.05.20.15.10.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 May 2026 15:10:52 -0700 (PDT)
+Date: Wed, 20 May 2026 18:10:51 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
+	Alok Tiwari <alok.a.tiwari@oracle.com>,
+	Nicolas Le Bayon <nicolas.le.bayon@foss.st.com>,
+	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>,
+	"moderated list:ARM/STM32 ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: stm32: add missing bitfield.h header
+Message-ID: <ag4xa-WmnGti3naD@redhat.com>
+References: <20260519222639.34508-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 20 May 2026 22:01:19 +0100
-Message-Id: <DINT2DFDVWFX.BGTG7LOC91RH@linaro.org>
-Cc: "Krzysztof Kozlowski" <krzk@kernel.org>, "Michael Turquette"
- <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Lee Jones"
- <lee@kernel.org>, "Alim Akhtar" <alim.akhtar@samsung.com>, "Sylwester
- Nawrocki" <s.nawrocki@samsung.com>, "Chanwoo Choi" <cw00.choi@samsung.com>,
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- <linux-kernel@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
- <peter.griffin@linaro.org>, <jyescas@google.com>,
- <kernel-team@android.com>, "Krzysztof Kozlowski"
- <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: Re: [PATCH 5/6] firmware: samsung: acpm: Add TMU protocol support
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: "Tudor Ambarus" <tudor.ambarus@linaro.org>
-X-Mailer: aerc 0.21.0
-References: <20260506-acpm-tmu-helpers-v1-0-a9cd5daf8355@linaro.org>
- <20260506-acpm-tmu-helpers-v1-5-a9cd5daf8355@linaro.org>
- <DIBOWQYHOPOU.3PCLCL8030WRL@linaro.org>
- <806da86b-45b7-43cc-b364-97bade8f4041@linaro.org>
- <DIFVKM72KZDI.14EVGUMQ0NV9S@linaro.org>
- <a55690fc-7727-401d-9b3c-06bf3c2852d0@linaro.org>
- <DILRJBWU9SKV.2P7EJN7ECEJB7@linaro.org>
- <73f18a2c-e729-45d7-9376-7c0e60ed35c7@linaro.org>
-In-Reply-To: <73f18a2c-e729-45d7-9376-7c0e60ed35c7@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260519222639.34508-1-rosenp@gmail.com>
+User-Agent: Mutt/2.3.1 (2026-03-20)
 
-Hi Tudor,
+On Tue, May 19, 2026 at 03:26:39PM -0700, Rosen Penev wrote:
+> It seems some ARM header includes this and the build passes there, but
+> nowhere else. Note that the driver has COMPILE_TEST in depends.
+> 
+> Fixes: 37ae8501cdb0 ("clk: stm32: introduce clocks for STM32MP21 platfor")
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
 
-On Tue May 19, 2026 at 4:46 PM BST, Tudor Ambarus wrote:
-> Hi, Alexey,
->
-> On 5/18/26 2:24 PM, Alexey Klimov wrote:
->> Thinking further about this I'd humbly suggest that even
->>=20
->> 	if (fw_err >=3D 0)
->> 		return 0;
->>=20
->> 	pr_debug_ratelimited("ACPM tmu call returned: %x\n", fw_err);
->> 	or pr_debug(...);
->>=20
->> 	if (fw_err =3D=3D -1)
->> 		return -EACCES;
->>=20
->> some debug message would do.
->> Perhaps we need some convertation, for instance as it is done in scmi
->> code (scmi_to_linux_errno(), scmi_linux_errmap[]). But I don't have any
->> data for mapping acpm errors to some human meanings.
->
-> I did that for the pmic helpers. I don't need any debug prints for
-> gs101 TMU as I have clear instructions from firmware: 0 for success,
-> -1 for error.
-
-This doesn't look like a right approach for upstreaming a ACPM TMU
-framework.
-
-You are trying to submit a gs101-specific implementation masquerading
-it as a generic ACPM TMU framework, while explicitly pushing the
-refactoring work onto the next developer to add support for other
-SoCs in this generic ACPM code.
-
-The ACPM TMU protocol implementation on Exynos850 is different: it uses
-different error codes, and half of the calls in this 'generic' driver
-are not even implemented in the Exynos850 firmware. Relying on a
-hardcoded if (fw_err =3D=3D -1) in a driver named generic ACPM is broken
-by design and may silently swallow critical firmware errors on other
-SoCs.
-
-What about such options below?
-- rename the driver to reflect reality: rename this specifically to
-gs101-acpm-tmu-something to reflect that it is tailored for gs101-s;
-
-or=20
-- abstract the firmware error handling paths through driver_data or
-a dedicated ops structure now, so that other SoCs can cleanly hook into
-it without having to rewrite the logic later.
-
-Maybe we can utilise build info date from SRAM initdata base to
-distinguish between different version of ACPM firmware implementations.
-Sadly I was told that specs doesn't provide any version info.
-Or probe for implemented calls but that may break ACPM firmware
-potentially.
-
-You also mentioned that there are capabilities returned by TMU init
-call. Maybe that one can be used somehow.
-
-Thanks,
-Alexey
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
