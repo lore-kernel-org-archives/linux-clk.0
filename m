@@ -1,95 +1,98 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06EC6367B75
-	for <linux-clk@vger.kernel.org>; Wed, 20 May 2026 22:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A785363C6A
+	for <linux-clk@vger.kernel.org>; Wed, 20 May 2026 22:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779316167; cv=none; b=EFJIPUFb/6IqbuovRMOJxNRh8uIlhv5Ace6bg0KVDfUpsZo8n/ItGmBfcn73IGnhk5zabGdUoxfy/Rr8iatv1p/8T4bEq8CwDYoCEyRuBpMKNCLP4rHiivmQuaF/7DPqRD3HH5I89l45Q0MKvsXRnTIp09atbsBdOCbXOxS8MZs=
+	t=1779317640; cv=none; b=CgLdZNMup51UoR+20fDsjK/XRnEuu/ZamHc0Leq5aQNwZ6GhCtjcE7c7dld/2uaG9LTPYqLn1iMYpABrUUZM90UBsuG/B63OdOjowF+LtPU2UV/azI6yiV0Ykb6vnU0MbbAjFLBJBolnGN7zE+QzNyg/6q0aHRSvvwAIIs2b2b8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779316167; c=relaxed/simple;
-	bh=7MBZkYsBsy2oyFqW6yXMH44AbYezEh7Bmtf2l+C7Rmk=;
+	s=arc-20240116; t=1779317640; c=relaxed/simple;
+	bh=xz5sbl1et1Zg0+e1v9ss1rtdhz7lsvw1T1O6UGhgYt0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fj7uL6h0eBjRMcs5m08eKNkKJvfWJQX2cjGYhxy2qbn02ZgH/X7HTZtVCzCmFtaGreSIbDBwc3bZkIDg0uk3NXjHpUVUa8B/B79EOK83dOtKhN2gETrJ71R9OQheGmVavkiZLMX1Z2tY5ZR3kP2NbQkliRpmQ/AG+kuReH0EI6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=icoIbltz; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=QXz/E3fj; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=ahmXeQ80/VlkHZoF3dPNyEVx0bZjbr9hWiioLRTJF1WMY6t47Bl3Zi4Ux80etWKcQ3bbRC2cY7qo5rBp/9Ld8x2vhG5z7H6jmj09TJbiIgmdg9QCaNtQrPjGwu+k6kZI5vqbB3EIYl3JTLy8VkVuhWajQjZZbGK81NcD5ya0kw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SJFrP+tJ; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=dfD/xHFp; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="icoIbltz";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="QXz/E3fj"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SJFrP+tJ";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="dfD/xHFp"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1779316165;
+	s=mimecast20190719; t=1779317636;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=hnKR4/jVCPRHXvU9flP+lAeiZ2nPUtm5A71+jIeJCOc=;
-	b=icoIbltzAYYM1KkwEPOoSdc4oTcD8qfd2eOz81h4qtWBI+5naB6OrJQVJ5LNtDc6Dlj7dp
-	HPC0/sUPWNcQjPPAjSjSqxctmymAJH+7+92P9Kj2AKRtRMyFJZyIIc9oSUIg/4JA/UDAjJ
-	o+wSWbaQif0yMkHWVShfxbx9PuDl1Gs=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=ehQ7mVBa+qZzMlqKHomdvNj5vjtqdC5856eNsb/cSyQ=;
+	b=SJFrP+tJzWBAjpgjCNy3K1i+kEVTUR75Sd7FfnoErQQCxj1iufSr5t2uG6+AeROcZzcv0K
+	Eha+0bBs6HUUuW3g6NquVlWL62rWNsrWCfd2yedKxvvOWghADw1+qc2JtJtEKaJ1TCUnjZ
+	/9Iss0xmPE4n1t/ij9r0fgr1RHHS2dc=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-93-INwDEk3DN7GVbMgKh4sTfw-1; Wed, 20 May 2026 18:29:23 -0400
-X-MC-Unique: INwDEk3DN7GVbMgKh4sTfw-1
-X-Mimecast-MFC-AGG-ID: INwDEk3DN7GVbMgKh4sTfw_1779316163
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-8b58065ea15so162385606d6.2
-        for <linux-clk@vger.kernel.org>; Wed, 20 May 2026 15:29:23 -0700 (PDT)
+ us-mta-610-jP3ezRbXNk2vjhedZNP25Q-1; Wed, 20 May 2026 18:53:55 -0400
+X-MC-Unique: jP3ezRbXNk2vjhedZNP25Q-1
+X-Mimecast-MFC-AGG-ID: jP3ezRbXNk2vjhedZNP25Q_1779317634
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-5162ee45a77so142646331cf.1
+        for <linux-clk@vger.kernel.org>; Wed, 20 May 2026 15:53:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1779316163; x=1779920963; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1779317634; x=1779922434; darn=vger.kernel.org;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hnKR4/jVCPRHXvU9flP+lAeiZ2nPUtm5A71+jIeJCOc=;
-        b=QXz/E3fjtz3mq5uxKDwkooeu1tcn2Ts3QxqTS7wV+L42pZCpjV3Yxa9UKYpgUuQqri
-         B01NgvZvhSFWgaI2/GB82WXNQrzNSqhqCLO8FiTs/YKJTBLuoxjRTXC913+MjVNy5tm4
-         fKG70MlpsT2Rj3UDKkC5Pa9a1ZjJaGL9QovOjcVcJ1kXatB0N+ZAfFSsDJXmzuiM7tgR
-         NKbXzEQR4TRtcF3uAKKvvr4XsruN8F2egOY+Iwt+zGmybkaxAYP6gt21KEYRY1Csq7rd
-         vuoyhfVP5bcXRTcLV08+fak+ioH5KuaKiZQObRvRGXWHK4o77c+azg4xWV7qQE0KfmEG
-         /lzw==
+        bh=ehQ7mVBa+qZzMlqKHomdvNj5vjtqdC5856eNsb/cSyQ=;
+        b=dfD/xHFpNWtZb036dOF9E5313PugolBY2fpCdbNi5tDY+LrpGUQ1T1ivGkrktY1UQO
+         YL01Fl1ddFIg5ywbaWE6wq56jIxyR7SHYUaaPjx7M64Ceux4d3WsRxmtkcYnPdJYAr7x
+         U0MGKUEGGX1W7vllD/INtJTwnVxo0EEFdML628ixe1bRGUGMikaDhzwbL2WlC/fezq3+
+         ghyT+42oAtf/dEwWsnOZactQF4tHJLEU1oFPsYzKlvLaeK8vDyi8XuioQdRFeDUVHnvP
+         JZAMsxLuhYdWNzHXZ+9A5FY/xCwmnbb01XmuBYKREzkL7vYq2apysr7Xx6LJYimllwkg
+         Zghw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779316163; x=1779920963;
+        d=1e100.net; s=20251104; t=1779317634; x=1779922434;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=hnKR4/jVCPRHXvU9flP+lAeiZ2nPUtm5A71+jIeJCOc=;
-        b=sC3LjMTsYIFvSu/UH08ODMVwSKVcxeW0InUygqcAeMRfmrhjOfsrRx2X9c0if5WNCH
-         HuXR6uHdvFnhhIg5LjgKmlR9FP+y1p2gjT7XKdGkd63lQeFJgS86W3FclqSGNcS78CsL
-         ea7kZ0HyXKPHnct/nRWL2zEEY4J7ed/3cxJFKPj8yM1yVioQOFCQ4TfpVCHKrQltVgIi
-         KsZYU+V7AN9P/pH/EOPQcQMqm8+7xy4RBrd/0lNJQmxFdV01GrO5Knuzk3Y/YDE3rBjF
-         1sTloXqHmfH9QQ/HHDPdSqMJTeTFCZpCdz8sNm7i8CyOsxOOL6ZmMNi/1cYOmPwPVFCv
-         koVA==
-X-Forwarded-Encrypted: i=1; AFNElJ8RU05ctQqzP1aaVwTXR+AbjGoS0il7LJWtQ54gUI0mHQzjUUTR2QYozBHUBjEmzMfRmNnN59/zVQA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7XHx4/+ujfseP03P5SUyLsEV7+LtwMfFRnR4QOsZhBQ83EtoQ
-	n2X4SlpxELV2dPU75JiZNt2oSa1tcAAe//2QVlOOZRGJwJzG0ZbyEYBKxfau2p2MQVs2Re+klrX
-	aseqeyfv44h85czzagxvy6Ilb6aL1Affgqpc/2DfmCWsVlFk+k1n8NcocXChs+A==
-X-Gm-Gg: Acq92OGzF4AfYEEtfKE2ooAUi8TeiYi7pV3oqdulqVppOQrbN17wPdaE7z6+Vyj9RPM
-	jiKpJHlwFzjsCtJ/plZX7d/FLzTj0gzYG7kFppsIsAO9JJfBqx/ryeHhkwMufmYGqRmczOjWZPS
-	NoBsEzF1xLumeJ51fv7yQAqCTUdy2YcLcSUwuatPB+hS3YimbxKxuuDOgdX58UcpsDmCZ03tTFg
-	3A8nXMJTzM0ZGhBVlE7arL0zbNnF3KtESKJi7jWRNleJ+yhs4wTeP6GVmCMFuGMUx5U2bnftQgh
-	W2sYX8VM/I/h2kcGkT+fVI7ZloHRFYwqnsDOJatyd6oTsj/AHbLhS9eUrX/7Krr9LjTg6i7zlE/
-	fLFAmayWubOTzeMIw
-X-Received: by 2002:a05:622a:244c:b0:50f:ca25:fb45 with SMTP id d75a77b69052e-516c53e81b2mr6357221cf.8.1779316162937;
-        Wed, 20 May 2026 15:29:22 -0700 (PDT)
-X-Received: by 2002:a05:622a:244c:b0:50f:ca25:fb45 with SMTP id d75a77b69052e-516c53e81b2mr6356821cf.8.1779316162374;
-        Wed, 20 May 2026 15:29:22 -0700 (PDT)
+        bh=ehQ7mVBa+qZzMlqKHomdvNj5vjtqdC5856eNsb/cSyQ=;
+        b=GXIBxGz89cZCzYM6ZgK+oVDUKCsSmdwdCbDAecI6/PB8AUJrSmJ360EI9zMqDteRVO
+         jW4rq6VAHdlfglcdMnytmQASchSXrQW00vFbxQbOqAEi1l+rYPATkxxICaTCC9hzHs1s
+         Z2rEEqplQJ5tbopHjpn83y8bNLJ7DSJMPhSSojGFv66JS5tEpjhYJnOpuOlssocglanT
+         fOYww2Ee1icM4Ii1DAdheTQQfREiP2rSxUNR52e4qXBoRfOAwUfz6GaA4w9IYONEg379
+         bmYLCJkdM47/Z2olCv8ubeaawHuibipBQfSXABqIVZ5XfSDYljqej4FrkBw1PeRNvhpo
+         uYQg==
+X-Forwarded-Encrypted: i=1; AFNElJ8Txvj2sZPJIuLWN3q66+DYZq2AORAJO8BWA0ptapeMKcYKH30LK5aWVA2TayQuT3b7sfN/QsAX34E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRhSn357/iyi7ovppEzDb88doqjPI8j29/GGZaFXOMXfZutT84
+	rsIpFQoE9MhV1tl2RCDy914+i3KInpuLumOkmXfM2ntIbhmsfwDgtj18HzHbWt4Jp2115UpuG1/
+	rcu0ICsJBP3xC9YR6JWFkkaSA9VJBVUvMl3F+ORhL+JHTkevikH2dMX+pOEoQjQ==
+X-Gm-Gg: Acq92OFSobJp/QiZzWy3eVqHd6bjRlFHrOF4i7Vss1FHLDlxGZXHVoYry+7KGdOHFT0
+	OtFD6NtJbIOtPTjMcAyVUZsIdRvVE/y6dbwcTqxKqZ1UoutWu6AaEzwKN03nVOgVxbC9sQsen31
+	x1VQqq0pTtu46+g7lUazKXT5flD7sw+U7NxLnjAlduCrI8Xb/g8i/+l+Jw6E3wTIJM1uAOx+w65
+	IPgNxY128FFOabxNoprf3cUEUw/PMaLFkpPO2jR3DkGyCeuKN3VsV66RiZ2uta1pkJzN5kiW9k+
+	wxG/Yv2b0rBhHxIoDzSTa4ew5OIlFtKOZtrGLMG45ddCrlYLCJJ1CPuqETikrYx+AxDuWcuD3iH
+	vfp3XNsJc/7I3EhzfY50ckr6pgXk=
+X-Received: by 2002:ac8:5d4c:0:b0:50e:6399:eed3 with SMTP id d75a77b69052e-516c54557c3mr7170061cf.20.1779317634532;
+        Wed, 20 May 2026 15:53:54 -0700 (PDT)
+X-Received: by 2002:ac8:5d4c:0:b0:50e:6399:eed3 with SMTP id d75a77b69052e-516c54557c3mr7169681cf.20.1779317634055;
+        Wed, 20 May 2026 15:53:54 -0700 (PDT)
 Received: from redhat.com ([69.43.42.202])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-516456b6cf7sm204755301cf.8.2026.05.20.15.29.20
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-516514e0b91sm191843371cf.15.2026.05.20.15.53.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 May 2026 15:29:21 -0700 (PDT)
-Date: Wed, 20 May 2026 18:29:20 -0400
+        Wed, 20 May 2026 15:53:52 -0700 (PDT)
+Date: Wed, 20 May 2026 18:53:51 -0400
 From: Brian Masney <bmasney@redhat.com>
-To: "Alexander A. Klimov" <grandmaster@al2klimov.de>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Jonas Jensen <jonas.jensen@gmail.com>,
-	Mike Turquette <mturquette@linaro.org>,
-	"moderated list:ARM/MOXA ART SOC" <linux-arm-kernel@lists.infradead.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: moxart: fix refcount leak
-Message-ID: <ag41wJBhdK7-Zynb@redhat.com>
-References: <20260520175552.537603-1-grandmaster@al2klimov.de>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Lorenzo Bianconi <lorenzo@kernel.org>, Felix Fietkau <nbd@nbd.name>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-phy@lists.infradead.org
+Subject: Re: [PATCH v8 3/5] clk: en7523: Add support for selecting the Serdes
+ port in SCU
+Message-ID: <ag47f8ZgCEZJurHE@redhat.com>
+References: <20260520150912.11614-1-ansuelsmth@gmail.com>
+ <20260520150912.11614-4-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -98,44 +101,110 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260520175552.537603-1-grandmaster@al2klimov.de>
+In-Reply-To: <20260520150912.11614-4-ansuelsmth@gmail.com>
 User-Agent: Mutt/2.3.1 (2026-03-20)
 
-Hi Alexander,
+Hi Christian,
 
-On Wed, May 20, 2026 at 07:55:50PM +0200, Alexander A. Klimov wrote:
-> Every value returned from of_clk_get() is supposed to be cleaned up
-> via clk_put() once not needed anymore.
-> The values here are used only for error checking,
-> but weren't cleaned up until now.
+On Wed, May 20, 2026 at 05:09:08PM +0200, Christian Marangi wrote:
+> In the SCU register for clock and reset, there are also some register to
+> select the Serdes port mode. The Airoha AN7581 SoC have 4 different Serdes
+> that can switch between PCIe, USB or Ethernet mode.
 > 
-> Fixes: c7bb4fc16ead ("clk: add MOXA ART SoCs clock driver")
-> Signed-off-by: Alexander A. Klimov <grandmaster@al2klimov.de>
+> Add a simple PHY provider that expose the .set_mode OP to toggle the
+> requested mode for the Serdes port.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 > ---
->  drivers/clk/clk-moxart.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  drivers/clk/Kconfig      |   1 +
+>  drivers/clk/clk-en7523.c | 216 ++++++++++++++++++++++++++++++++++++++-
+>  2 files changed, 214 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/clk/clk-moxart.c b/drivers/clk/clk-moxart.c
-> index 3786a0153ad1..7e191b1481bb 100644
-> --- a/drivers/clk/clk-moxart.c
-> +++ b/drivers/clk/clk-moxart.c
-> @@ -39,6 +39,7 @@ static void __init moxart_of_pll_clk_init(struct device_node *node)
->  		pr_err("%pOF: of_clk_get failed\n", node);
->  		return;
->  	}
-> +	clk_put(ref_clk);
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index b2efbe9f6acb..e60a824b5117 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -221,6 +221,7 @@ config COMMON_CLK_EN7523
+>  	bool "Clock driver for Airoha/EcoNet SoC system clocks"
+>  	depends on OF
+>  	depends on ARCH_AIROHA || ECONET || COMPILE_TEST
+> +	select GENERIC_PHY
+>  	default ARCH_AIROHA
+>  	help
+>  	  This driver provides the fixed clocks and gates present on Airoha
+> diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
+> index 1ab0e2eca5d3..d4b73c5f15b9 100644
+> --- a/drivers/clk/clk-en7523.c
+> +++ b/drivers/clk/clk-en7523.c
+> @@ -6,14 +6,18 @@
+>  #include <linux/io.h>
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/phy.h>
+> +#include <linux/phy/phy.h>
+>  #include <linux/property.h>
+>  #include <linux/regmap.h>
+>  #include <linux/reset-controller.h>
+> +#include <linux/spinlock.h>
+>  #include <dt-bindings/clock/en7523-clk.h>
+>  #include <dt-bindings/reset/airoha,en7523-reset.h>
+>  #include <dt-bindings/reset/airoha,en7581-reset.h>
+>  #include <dt-bindings/clock/econet,en751221-scu.h>
+>  #include <dt-bindings/reset/econet,en751221-scu.h>
+> +#include <dt-bindings/soc/airoha,scu-ssr.h>
 >  
->  	hw = clk_hw_register_fixed_factor(NULL, name, parent_name, 0, mul, 1);
->  	if (IS_ERR(hw)) {
-> @@ -83,6 +84,7 @@ static void __init moxart_of_apb_clk_init(struct device_node *node)
->  		pr_err("%pOF: of_clk_get failed\n", node);
->  		return;
->  	}
-> +	clk_put(pll_clk);
+>  #define RST_NR_PER_BANK			32
+>  
+> @@ -40,9 +44,22 @@
+>  #define   REG_HIR_MASK			GENMASK(31, 16)
+>  /* EN7581 */
+>  #define REG_NP_SCU_PCIC			0x88
+> +#define REG_NP_SCU_SSR3			0x94
+> +#define REG_SSUSB_HSGMII_SEL_MASK	BIT(29)
+> +#define REG_SSUSB_HSGMII_SEL_HSGMII	FIELD_PREP_CONST(REG_SSUSB_HSGMII_SEL_MASK, 0x0)
+> +#define REG_SSUSB_HSGMII_SEL_USB	FIELD_PREP_CONST(REG_SSUSB_HSGMII_SEL_MASK, 0x1)
+>  #define REG_NP_SCU_SSTR			0x9c
+>  #define REG_PCIE_XSI0_SEL_MASK		GENMASK(14, 13)
+> +#define REG_PCIE_XSI0_SEL_PCIE		FIELD_PREP_CONST(REG_PCIE_XSI0_SEL_MASK, 0x0)
+> +#define REG_PCIE_XSI0_SEL_XFI		FIELD_PREP_CONST(REG_PCIE_XSI0_SEL_MASK, 0x1)
+> +#define REG_PCIE_XSI0_SEL_HSGMII	FIELD_PREP_CONST(REG_PCIE_XSI0_SEL_MASK, 0x2)
+>  #define REG_PCIE_XSI1_SEL_MASK		GENMASK(12, 11)
+> +#define REG_PCIE_XSI1_SEL_PCIE		FIELD_PREP_CONST(REG_PCIE_XSI1_SEL_MASK, 0x0)
+> +#define REG_PCIE_XSI1_SEL_XFI		FIELD_PREP_CONST(REG_PCIE_XSI1_SEL_MASK, 0x1)
+> +#define REG_PCIE_XSI1_SEL_HSGMII	FIELD_PREP_CONST(REG_PCIE_XSI1_SEL_MASK, 0x2)
+> +#define REG_USB_PCIE_SEL_MASK		BIT(3)
+> +#define REG_USB_PCIE_SEL_PCIE		FIELD_PREP_CONST(REG_USB_PCIE_SEL_MASK, 0x0)
+> +#define REG_USB_PCIE_SEL_USB		FIELD_PREP_CONST(REG_USB_PCIE_SEL_MASK, 0x1)
+>  #define REG_CRYPTO_CLKSRC2		0x20c
+>  /* EN751221 */
+>  #define EN751221_REG_SPI_DIV		0x0cc
+> @@ -81,6 +98,8 @@ enum en_hir {
+>  	HIR_MAX		= 14,
+>  };
+>  
+> +#define EN_SERDES_PHY_NUM		4
+> +
+>  struct en_clk_desc {
+>  	int id;
+>  	const char *name;
+> @@ -113,6 +132,18 @@ struct en_rst_data {
+>  	struct reset_controller_dev rcdev;
+>  };
+>  
+> +struct en_serdes_phy_instance {
+> +	struct phy *phy;
+> +	unsigned int serdes_port;
+> +};
+> +
+> +struct en_clk_priv {
+> +	void __iomem *base;
+> +	/* protect SCU register */
+> +	spinlock_t lock;
 
-So this immediately drops the reference to the clk after of_clk_get() is
-called. Can we just remove these two of_clk_get() calls since they don't
-appear to be used?
+This spinlock is not initialized with spin_lock_init(). You can do this in
+en7523_clk_probe() after devm_kzalloc().
 
-Brian
+With that fixed:
+
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
