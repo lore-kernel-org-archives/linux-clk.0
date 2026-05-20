@@ -1,62 +1,64 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7FF72701C4
-	for <linux-clk@vger.kernel.org>; Wed, 20 May 2026 15:09:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AACE2E62B7
+	for <linux-clk@vger.kernel.org>; Wed, 20 May 2026 15:09:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779289772; cv=none; b=RbVz1zH6r8ZiFW9yKrqWkaVMjsLRn7YNm683m23dN5KWYHqQzelS5bOoHiVAREKDcKDHPP8RBcpkFwggO7H6PLMRnV9caOEl4us+JBGyuefJ8/OPIHJjofFA6Kt9K1W8x6knG+VnaYDGnA3Yjvc6CGLdu2XJ+W01Btr7yaYXawQ=
+	t=1779289774; cv=none; b=dKtCP9+Ws3e0n6Yc7QIY4rdHW6vHz0QUWwAkZUOLCWkMgMhR+jj45kUoIkU1A8LK2NgXUIwtJdXsSJHSP8SzCX9owPkgmMOnEsDK0jQZN9BNlgd3nOGbp3reNTGR2WWdyXCK8to39s1XDQFtWw8evfaubANxoFFYPje8SVuwfmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779289772; c=relaxed/simple;
-	bh=iK+ZuZ9BR1rFtDYZz+Aooke9+Bk5hQhX85c0ae+iTQk=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=qeA6t95IOlebzoVGixtHYoYB70b5UlIjEoq0fAdeOeYEAq1eynUf+NEo5VuXLdD5G+JegC43kK36Hf0kqN0MnOlD7NmksIeYt3YsoLMWxixH0BrbspqSyDw4veGBDbYmj9CkcEb3KSbOH6oFSsRgVASes67HgAsSI7KER5gCffE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NiBZ+GGf; arc=none smtp.client-ip=209.85.128.53
+	s=arc-20240116; t=1779289774; c=relaxed/simple;
+	bh=ZFCPxnBsn7l/q5muCwmNmTDcY6bBCEJ2vd6Wy7/pDdM=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=MRQVwF2tZ5zUanFLAiVNpSzNHGmBOEvVvrFTf3Q+oGKa3LNCl6PBvLkXZc54PuBff3NQmjQeCFa7JVPQFmQ5NWYIIkSoFCjED1FP0kDzmIcE2UnhaM1runqLZ4b0NEpaebMlEa8DKadDpRVgA7M7p/0S+PvOVNsNVADa9QIBORE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LWbRuiOg; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NiBZ+GGf"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-488af96f6b2so54069815e9.0
-        for <linux-clk@vger.kernel.org>; Wed, 20 May 2026 08:09:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LWbRuiOg"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-449d6c68ed8so2184489f8f.0
+        for <linux-clk@vger.kernel.org>; Wed, 20 May 2026 08:09:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779289769; x=1779894569; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DVZ1aHDip8CwzjzzjcHFHeqEyzf02kvl0N1Yqf9H390=;
-        b=NiBZ+GGfUAjOlXhZphhQNg9HXcpmt2/eUhP2sa6y1Cgk71hmL9o4WqxKuRMB/vaUWY
-         lS7ax/NjE12Rfys7tTsMCpqdKoWbbmY0L/IbxNOuy9YClBF//s3+WprP6Y1U1ZZvYFxV
-         Vwhzk9AzUduzCuOH2diXmCiS4QU9t9gOIPaNsjZEMjPUc88LFIkFvb4yOTfa9+qBPjNc
-         9u3R+ML3nhzSgDPjoyQDnvarUf6V5ewZIeoI2x73tlvO4hnbHdjXeuqnXh8TIR5QDb+m
-         oDZ/h2euM3x5ZyjiqVAs6yUX/IRcuoMEAcxaMtIb1EyUSXyc5wuROIjsWrjTUpax1K4X
-         6Z8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779289769; x=1779894569;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20251104; t=1779289771; x=1779894571; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=DVZ1aHDip8CwzjzzjcHFHeqEyzf02kvl0N1Yqf9H390=;
-        b=Us7GUOdIE1E/+J3CGIQAyZbMe5J3bDRndBcIKc+bj8F7SAUNcfWi3HLuFfnosd+0r3
-         Hce75+P2rnUvJW9n4e0Mn9nNWe6GUG1IjY82vvP09wiXE3qbgf0HmiOFhnyYXeGUGVYI
-         zrw3SMMCX9t6iINA64OlHYjOdl32q6KpCb3YJlk5dkaA3pcPTIX+cly/PqrhmKv9mrOA
-         O/6vd0ilNvrfTH69+NMxv45104UhjtkpbheUf0Ljj8H6JcQ4fMdnKq/9W9rnwH592U4r
-         Ugu351WVz2JMLzvMMVKdJX3Kn638OcVYYqNhxGzzx5eCt+NKPS/jmWxJKWbtrR3bX7tN
-         Kwew==
-X-Forwarded-Encrypted: i=1; AFNElJ+7HCIHQzE80smfU5ROfnlVhOqFLh+VgmgczQCImFYeU0G6O0f88SOSWwoJcgKF9vQ6X1/F+7pQIzM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywdc/UYyMASSnA0A/7WcealKPjnqDVVZ1XOLzAqEQj8V5MPXGBE
-	Hwy56nezKeo+/c/coBCu6p2D9fyVfI45OnLDhNKPmPY0OBOpPPgn2EV9
-X-Gm-Gg: Acq92OE6JIHUjd75XYbgIzZHH6sR85F9kPmPHSOkqAJUMqOsFs5uhquAp7du/WbTZsY
-	E2eWE+hwZhcx24XmXqoFpKkEExTY11izmk9avo7TN05EbX6e3y56z3dKdZVBpEEh9/5jaw4tL7p
-	djV+F23u010BlSBTM+H0SXlR0rXjZaYopBMxZ8mgozgJAEmuWiatxeUPdcMBKBNayIQKpdp0rV7
-	Hn+N04e6azSUsXov/9VJ0xJFTKjFiF9PnTzAVP5eEiS9hXLRULd1et6yjKidq1CavBvr5H7hbHG
-	w6/V7Id1kfrJ4j/wV242FTuyM7DMQVGFEqesAWjIhnTFbYzVgAirLfEVyO5krgLjbAIJ8yY6aRW
-	vXgtYSAtlIP6cADNrTQzWVwdi0NnY1YrStO96RG4O/VWDt8gH7DLkGrg4YPQp3CFIc5tT4TqdsN
-	e7e3hdeIChXJlhVRAxGV3l4QXKLsEfR9acu8GgSX8DWr4bhh1WVrO51ongLFFcNiggMWcyP+vN6
-	w==
-X-Received: by 2002:a05:600c:4504:b0:48f:d1b8:9a9c with SMTP id 5b1f17b1804b1-48fe60e14bamr359822535e9.7.1779289768965;
-        Wed, 20 May 2026 08:09:28 -0700 (PDT)
+        bh=jNa4hPs6+EpEb0GIRuEgBVkSu+eNRa7QDRsXvqoVr38=;
+        b=LWbRuiOg4Orvt8OGvEjCgKYJ+SN9IvVWMPzxtX1pomrFyMN8IoC2OairjswLJJWDkq
+         bhfjT+87OT0PYMGm7MKjfZFR9aGu5JyJ7IZO5wgQyh8PaBhE/Mqlf6Y7dg1bePFkqF6P
+         AJK4yAkEC2qPaKhl8pQoheAQEDkkVUuCmTosZfBjpkdMXTr350JNFRlHcUZEBEBQEkkn
+         pct6t0EL6JBh/8y8t7qRDU+kCXqCSoPMxVsDIP3BAwJW1YaawwtUVI1HFNUqVIGyC6G4
+         BPidk/QCDW4n7lMCvq4Bqv2dzICBDZCR9lDFkqjLwcYoQnIBnTlpZaXdZxLsFrN8Eb+t
+         HSIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779289771; x=1779894571;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=jNa4hPs6+EpEb0GIRuEgBVkSu+eNRa7QDRsXvqoVr38=;
+        b=rrRdOVHnIb5DRYRK1q0WzSHu7CjL8yRJoEFZ2MfmV3HiPaawLPrdFVhUiKhUrOV61x
+         wBiFqmgkxOn74RBtf8wFR10S1PILbgPYXGTTdnTqcbg1XFZraFQQm7XIoIMh10Yyu5Yu
+         AMyBKuFWxT8LL0UvDt5mwgpRel4Odd42CUIjIDcOFJPZLfmrgY/xOJ1bAO3kO5jI0+3k
+         RM8/6c6WRzxnCh5278+66bP4egPI8Iim2c+hDq91/rHbIYiBxex0+3l4DOvE1dDmy94A
+         WXeukxxPoEpnjJied2oQ5sDNvCS7fwkcoL5/19ecLUBNT0lLt3idKidJefk4475e8XOq
+         YviQ==
+X-Forwarded-Encrypted: i=1; AFNElJ9rh4S5eo9uZeKMZAGS7u9ZpdTEQ2BRbMWcVV8FdgySEe0GYeJ7GY1A17n3YdqP97ih8CtBmaJQruM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbTp7k0U3FeCyNLX6R1KDk7hX/BYM4eEeIR64EwGtKZlOjxnfx
+	6B/YBUcVBS0ZWIyHCGH7ks7U1fZCKDDfHhxbkxVFPal9rQW+C3DtXdIL
+X-Gm-Gg: Acq92OFWBAvypK2AJ9Fr9PAf4nIzetD0KHBazgHresDA7Nvh/2h/B5rNlommWuehs6x
+	4UWqomFU1UQ/dtQLCxZYrBR5Q99i5ZhtokBq26M9n64+2kmG+Ya0NM2X35GMpOxGFBO88Oj5rjq
+	H7usormR7j+emEV7HFeKGine3Jl19KWIqoVaZZgBIdT7GM8b52le5MRMLiRwyl1eBBAApJaeCn4
+	SNO2puBfKUfNbGltbLwie8bXis14lGFK/rYxkYu0bLzQqRHX40zUUS+4wBV5UuXgR0F94pOYg9i
+	bo42GSwc7J5ClDGmuAR0AeNqGpMmPf9F/TBtm8TmZblW8p3xjWfj96omoD5ZRkC5W+Z2I8/UQBH
+	DiHHgOrbLXp+ZJnsAXKpPH4ZNP5qTwef7NVOmYM6iO2QK6diijq16AqRg1e7xPLNvDkScjQDPkg
+	DRgTMpHRhyzk7IhCTpBUgCbrg3RYpY6yvmKRMiN7OA0tLt1ndF5wVjBehJ1qR5HHTb7yqj8t6sV
+	g==
+X-Received: by 2002:a05:6000:2503:b0:43f:e43a:f4a6 with SMTP id ffacd0b85a97d-45e5c35e7bdmr39357421f8f.6.1779289770707;
+        Wed, 20 May 2026 08:09:30 -0700 (PDT)
 Received: from Ansuel-XPS24 (host-79-22-5-99.retail.telecomitalia.it. [79.22.5.99])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-45d9ec39806sm53639804f8f.9.2026.05.20.08.09.27
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-45d9ec39806sm53639804f8f.9.2026.05.20.08.09.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 May 2026 08:09:28 -0700 (PDT)
+        Wed, 20 May 2026 08:09:30 -0700 (PDT)
 From: Christian Marangi <ansuelsmth@gmail.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -74,10 +76,12 @@ To: Michael Turquette <mturquette@baylibre.com>,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-phy@lists.infradead.org
-Subject: [PATCH v8 0/5] airoha: an7581: USB support
-Date: Wed, 20 May 2026 17:09:05 +0200
-Message-ID: <20260520150912.11614-1-ansuelsmth@gmail.com>
+Subject: [PATCH v8 1/5] dt-bindings: clock: airoha: Add PHY binding for Serdes port
+Date: Wed, 20 May 2026 17:09:06 +0200
+Message-ID: <20260520150912.11614-2-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260520150912.11614-1-ansuelsmth@gmail.com>
+References: <20260520150912.11614-1-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -86,100 +90,83 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This is a major rework of the old v2 series.
+Add PHY cell property for Serdes port selection. Currently supported only
+for Airoha AN7581 SoC, that support up to 4 Serdes port.
 
-The SoC always support USB 2.0 but for USB 3.0 it needs additional
-configuration for the Serdes port. Such port can be either configured
-for USB usage or for PCIe lines or HSGMII and these are configured
-in the SCU space.
+The Serdes port can support both PCIe, USB3 or Ethernet mode.
 
-The previous implementation of a dedicated SSR driver was too
-complex and fragile for the simple task of configuring a register
-hence it was dropped and the handling is entirely in the PHY driver.
+- PCIe1 Serdes can support PCIe or Ethernet mode.
+- PCIe2 Serdes can support PCIe or Ethernet mode.
+- USB1 Serdes can support USB3 or HSGMII mode.
+- USB2 Serdes can support USB3 or PCIe mode.
 
-Everything was reducted to the dt-bindings to describe the Serdes line.
+Add bindings to permit correct reference of the Serdes ports in DT.
+Values are just symbolic and enumerates the Serdes port with a specific
+number for precise reference.
 
-Also the property for the PHY are renamed to a more suitable name and
-everything is now mandatory to simplify the implementation.
-(the PHY are always present and active on the SoC)
+The available Serdes port can be selected following the dt-binding header
+in [2].
 
-Also other unrelated patch are dropped from this series.
+[2] <include/dt-bindings/soc/airoha,scu-ssr.h>
 
-Changes v8:
-- Squash header to clk Documentation patch
-- Address comments from AI Bot
-
-Changes v7:
-- Rework to double PHY implementation
-  (suggested by Rob)
-  Now the clk driver expose a PHY for Serdes port
-  USB PHY driver selects it
-- Rebase on top of linux-next
-  Link: https://lore.kernel.org/all/20260306190156.22297-1-ansuelsmth@gmail.com/
-
-Changes v6:
-- Fix kernel test robot (sparse warning)
-  Link: https://lore.kernel.org/all/20260306190156.22297-1-ansuelsmth@gmail.com/
-
-Changes v5:
-- Add Ack and Review tag from Connor
-- Implement Ethernet support in the USB driver
-  (testing support for this Serdes on a special reference board)
-- Use an7581 prefix for USB PHY driver
-  Link: https://lore.kernel.org/all/20251107160251.2307088-1-ansuelsmth@gmail.com/
-
-Changes v4:
-- Rename PCIe and USB PHY to AN7581
-- Drop airoha,scu (handled directly in driver)
-- Drop dt-bindings for monitor clock in favor of raw values
-- Better describe the usage of airoha,usb3-serdes
-- Simplify values of dt-bindings SSR SERDES
-  Link: https://lore.kernel.org/all/20251107160251.2307088-1-ansuelsmth@gmail.com/
-
-Changes v3:
-- Drop clk changes
-- Drop SSR driver
-- Rename property in Documentation
-- Simplify PHY handling
-- Move SSR handling inside the PHY driver
-  Link: https://lore.kernel.org/all/20251029173713.7670-1-ansuelsmth@gmail.com/
-
-Changes v2:
-- Drop changes for simple-mfd
-- Rework PHY node structure to single node
-- Drop port-id property in favor of serdes-port and
-  usb2-monitor-clock-sel
-- Make the SSR driver probe from the clock driver
-
-Christian Marangi (5):
-  dt-bindings: clock: airoha: Add PHY binding for Serdes port
-  dt-bindings: phy: Add documentation for Airoha AN7581 USB PHY
-  clk: en7523: Add support for selecting the Serdes port in SCU
-  phy: move and rename Airoha PCIe PHY driver to dedicated directory
-  phy: airoha: Add support for Airoha AN7581 USB PHY
-
- .../bindings/clock/airoha,en7523-scu.yaml     |   9 +
- .../bindings/phy/airoha,an7581-usb-phy.yaml   |  62 ++
- MAINTAINERS                                   |  11 +-
- drivers/clk/Kconfig                           |   1 +
- drivers/clk/clk-en7523.c                      | 216 ++++++-
- drivers/phy/Kconfig                           |  11 +-
- drivers/phy/Makefile                          |   4 +-
- drivers/phy/airoha/Kconfig                    |  24 +
- drivers/phy/airoha/Makefile                   |   4 +
- .../phy-an7581-pcie-regs.h}                   |   2 +-
- .../phy-an7581-pcie.c}                        |   6 +-
- drivers/phy/airoha/phy-an7581-usb.c           | 554 ++++++++++++++++++
- include/dt-bindings/soc/airoha,scu-ssr.h      |  11 +
- 13 files changed, 894 insertions(+), 21 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/phy/airoha,an7581-usb-phy.yaml
- create mode 100644 drivers/phy/airoha/Kconfig
- create mode 100644 drivers/phy/airoha/Makefile
- rename drivers/phy/{phy-airoha-pcie-regs.h => airoha/phy-an7581-pcie-regs.h} (99%)
- rename drivers/phy/{phy-airoha-pcie.c => airoha/phy-an7581-pcie.c} (99%)
- create mode 100644 drivers/phy/airoha/phy-an7581-usb.c
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+---
+ .../devicetree/bindings/clock/airoha,en7523-scu.yaml  |  9 +++++++++
+ include/dt-bindings/soc/airoha,scu-ssr.h              | 11 +++++++++++
+ 2 files changed, 20 insertions(+)
  create mode 100644 include/dt-bindings/soc/airoha,scu-ssr.h
 
+diff --git a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+index eb24a5687639..913ddc16182b 100644
+--- a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
++++ b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+@@ -23,6 +23,7 @@ description: |
+ 
+   All these identifiers can be found in:
+   [1]: <include/dt-bindings/clock/en7523-clk.h>.
++  [2]: <include/dt-bindings/soc/airoha,scu-ssr.h>.
+ 
+   The clocks are provided inside a system controller node.
+ 
+@@ -50,6 +51,12 @@ properties:
+     description: ID of the controller reset line
+     const: 1
+ 
++  '#phy-cells':
++    description:
++      The first cell indicates the serdes phy number, see [2] for the
++      available serdes port.
++    const: 1
++
+ required:
+   - compatible
+   - reg
+@@ -65,6 +72,8 @@ allOf:
+         reg:
+           minItems: 2
+ 
++        '#phy-cells': false
++
+   - if:
+       properties:
+         compatible:
+diff --git a/include/dt-bindings/soc/airoha,scu-ssr.h b/include/dt-bindings/soc/airoha,scu-ssr.h
+new file mode 100644
+index 000000000000..33c64844ada3
+--- /dev/null
++++ b/include/dt-bindings/soc/airoha,scu-ssr.h
+@@ -0,0 +1,11 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++
++#ifndef __DT_BINDINGS_AIROHA_SCU_SSR_H
++#define __DT_BINDINGS_AIROHA_SCU_SSR_H
++
++#define AIROHA_SCU_SERDES_PCIE1		0
++#define AIROHA_SCU_SERDES_PCIE2		1
++#define AIROHA_SCU_SERDES_USB1		2
++#define AIROHA_SCU_SERDES_USB2		3
++
++#endif /* __DT_BINDINGS_AIROHA_SCU_SSR_H */
 -- 
 2.53.0
 
