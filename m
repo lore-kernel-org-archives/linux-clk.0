@@ -1,96 +1,95 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C291638F23D
-	for <linux-clk@vger.kernel.org>; Wed, 20 May 2026 22:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06EC6367B75
+	for <linux-clk@vger.kernel.org>; Wed, 20 May 2026 22:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779315058; cv=none; b=peD4zPuKNNsTChJvfGGvLdeGpFMEIs49i8K9pxQIlZe0a2xOdJUYMhmO06TZMxBp7EjTuxwL+pAG9Mv/Zrn+D/5TyddiJw98x5lMT5E4NoyoyCExBz4rUlFGyh92wu6Ffs/UhWCfP/8vXuiFQaDP5kj9J3+AT3FOicdUEXrb6DE=
+	t=1779316167; cv=none; b=EFJIPUFb/6IqbuovRMOJxNRh8uIlhv5Ace6bg0KVDfUpsZo8n/ItGmBfcn73IGnhk5zabGdUoxfy/Rr8iatv1p/8T4bEq8CwDYoCEyRuBpMKNCLP4rHiivmQuaF/7DPqRD3HH5I89l45Q0MKvsXRnTIp09atbsBdOCbXOxS8MZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779315058; c=relaxed/simple;
-	bh=BH3JPXyp4zfTsYas6J33aQkbFuzLymEQ+6qzrG5KRZs=;
+	s=arc-20240116; t=1779316167; c=relaxed/simple;
+	bh=7MBZkYsBsy2oyFqW6yXMH44AbYezEh7Bmtf2l+C7Rmk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mS2IuS+N4XeDHHlH1FtBN6/5ySo7rfoPrXwGCJazDjNw0Rlcj61hETPznhVha26pMoO+c9URQlrue/mE9/6KQ7hkzcTJpLqPKdWn/UgnNURai3Ru9eaxDGqdK8hfp6vtUvNUGM3ddbCxQ6NZMEaeTC9jDRvEr3TypfecutUches=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CwdgPJI5; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=kShmDB4Z; arc=none smtp.client-ip=170.10.133.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fj7uL6h0eBjRMcs5m08eKNkKJvfWJQX2cjGYhxy2qbn02ZgH/X7HTZtVCzCmFtaGreSIbDBwc3bZkIDg0uk3NXjHpUVUa8B/B79EOK83dOtKhN2gETrJ71R9OQheGmVavkiZLMX1Z2tY5ZR3kP2NbQkliRpmQ/AG+kuReH0EI6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=icoIbltz; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=QXz/E3fj; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CwdgPJI5";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="kShmDB4Z"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="icoIbltz";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="QXz/E3fj"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1779315055;
+	s=mimecast20190719; t=1779316165;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=WUlhTj/LDnGR8NwnkPfh/TBbgWAfcMJHYKZWXxRTj+o=;
-	b=CwdgPJI5enHFtdkCsS5ZCwZJeFbYn3T6H7GUMjBbAFcLoy8nZP6+3CvhsLhYdbqQAGJO6R
-	f22Mztnmd96EzIewK0bWP5K4xNZSg83TLmFdsJOD+NyX8KP+2c5kndrxWTuiVpJ8rXBg5e
-	oj3JMSLHvcJdX3QiC0jmAYb1MQhtoLk=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=hnKR4/jVCPRHXvU9flP+lAeiZ2nPUtm5A71+jIeJCOc=;
+	b=icoIbltzAYYM1KkwEPOoSdc4oTcD8qfd2eOz81h4qtWBI+5naB6OrJQVJ5LNtDc6Dlj7dp
+	HPC0/sUPWNcQjPPAjSjSqxctmymAJH+7+92P9Kj2AKRtRMyFJZyIIc9oSUIg/4JA/UDAjJ
+	o+wSWbaQif0yMkHWVShfxbx9PuDl1Gs=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-396-h5xKmKPEOQusHFm34zhqkA-1; Wed, 20 May 2026 18:10:54 -0400
-X-MC-Unique: h5xKmKPEOQusHFm34zhqkA-1
-X-Mimecast-MFC-AGG-ID: h5xKmKPEOQusHFm34zhqkA_1779315054
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-90fbc9782c9so1327002185a.0
-        for <linux-clk@vger.kernel.org>; Wed, 20 May 2026 15:10:54 -0700 (PDT)
+ us-mta-93-INwDEk3DN7GVbMgKh4sTfw-1; Wed, 20 May 2026 18:29:23 -0400
+X-MC-Unique: INwDEk3DN7GVbMgKh4sTfw-1
+X-Mimecast-MFC-AGG-ID: INwDEk3DN7GVbMgKh4sTfw_1779316163
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-8b58065ea15so162385606d6.2
+        for <linux-clk@vger.kernel.org>; Wed, 20 May 2026 15:29:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1779315054; x=1779919854; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1779316163; x=1779920963; darn=vger.kernel.org;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WUlhTj/LDnGR8NwnkPfh/TBbgWAfcMJHYKZWXxRTj+o=;
-        b=kShmDB4ZZo1L1RbrvDdC8gT+vHfSGeoShxBffKwMAb6IwuX3aNkN6beo10IzaU5J/8
-         O5ja6CjtwiMkRnGpCJzCtkHBc8YQrJwfUko9ytXsPjksPUlIhTYMo+voLA3D4mx28pCP
-         TQdDMBKXK3SfaLlJZmrxdSVGX1oKr1VO+HVH74qcGcH0KAv5cJzdYixpMcXsF8BCXZWK
-         EzShUaiJq+KgZBeB3xIeen67KTNbFYPSJC+2h7FuwnCZTtbO71xT2OGgjbUudSkBE/Jp
-         LHBB9i/+/TCmSiPXUOXRvWZcDESMN+CVTflWpEa5RfV0Ol9Y2XMkaqiaJAcsQFZxkwCC
-         D0Rg==
+        bh=hnKR4/jVCPRHXvU9flP+lAeiZ2nPUtm5A71+jIeJCOc=;
+        b=QXz/E3fjtz3mq5uxKDwkooeu1tcn2Ts3QxqTS7wV+L42pZCpjV3Yxa9UKYpgUuQqri
+         B01NgvZvhSFWgaI2/GB82WXNQrzNSqhqCLO8FiTs/YKJTBLuoxjRTXC913+MjVNy5tm4
+         fKG70MlpsT2Rj3UDKkC5Pa9a1ZjJaGL9QovOjcVcJ1kXatB0N+ZAfFSsDJXmzuiM7tgR
+         NKbXzEQR4TRtcF3uAKKvvr4XsruN8F2egOY+Iwt+zGmybkaxAYP6gt21KEYRY1Csq7rd
+         vuoyhfVP5bcXRTcLV08+fak+ioH5KuaKiZQObRvRGXWHK4o77c+azg4xWV7qQE0KfmEG
+         /lzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779315054; x=1779919854;
+        d=1e100.net; s=20251104; t=1779316163; x=1779920963;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=WUlhTj/LDnGR8NwnkPfh/TBbgWAfcMJHYKZWXxRTj+o=;
-        b=L8ob0hIO9rS8JnKVQ1ySXmfIJTtuEg7TbSZWtIyzdVOT/QxpSU2fAGGAVfOYcLibdX
-         gSHWFlYYSXYIYyF2Nut94LMm/Rf7ddakYX/csECRYvdo4oNlDDRo+4zYFhLOVbu6bu/T
-         7Hk2h06OrN+hqcqV1t7elcwWp+SKku27jOEqf/jy5aBO0x0ByShfqF4apOeua3AzoYJ3
-         JWK8zztY2Otk8+L5vLYLkm6kEjl8NC7L0udsN96MCpGcqcJOQMOScEko7fvDytOA/dDw
-         qPTIx86NyGzffFB8Wj9ZvaueD9IggJx+aDHOEjnl3sHYA/thAR/AvfeoAVlAajjVG35o
-         OOag==
-X-Gm-Message-State: AOJu0Yza8uT83vp4WbeqR0VEmyyckRN3BAov/PqgZdU/i93Ev6+DnQx1
-	MtUEkECZofsP+dPyERjAk+2/5gvh3gpJ2sZ8nY8wwFpZM7CnTvCsGWjvNjmoYXLqAl7kDQCq4Fw
-	7MJ8RgMww98IGxVvQlf+kxXSVHSGKkD4/OTuS5uDdbhx/pwhCdflHDHBhwVoUmw==
-X-Gm-Gg: Acq92OG5a0qbTfjBDpyIhohwFCT9KOY58dnazFQp/tfwvRCcvYCF/fCHkLX9+8A0rss
-	b9YZtNUWwfZOhtc55IyJ7mILzOINLSU1cOalpsQGfawBEfcyK8ENGg84PsMuW8lGp5kFE2N3X/l
-	XhsRDefxyfznkLdylK+rJDsZLmLx7jxxgfjTRhsNTqKqZoacZfoVrJEnOr19TZoZuPXPQF4+lHT
-	8hPzeI0wPmiD04Cd7+AhRLaXoAXJWyF9vbKuXnTtoWpDKkcJrKYzFY3HsVz4CWFbhgANreUarEo
-	5n0iNrVSqPt2ZFLHK7fnalS/J2sNkbonJQgngM8R2AAq+mpHBt1GvUCnx2x6s7xLstJ/IOQTqn8
-	ydbJo+YIGhESjmX5U/QGLUW+uwYc=
-X-Received: by 2002:a05:620a:370a:b0:8cd:8938:f000 with SMTP id af79cd13be357-914a2ce9f9amr16390285a.28.1779315053923;
-        Wed, 20 May 2026 15:10:53 -0700 (PDT)
-X-Received: by 2002:a05:620a:370a:b0:8cd:8938:f000 with SMTP id af79cd13be357-914a2ce9f9amr16384985a.28.1779315053518;
-        Wed, 20 May 2026 15:10:53 -0700 (PDT)
+        bh=hnKR4/jVCPRHXvU9flP+lAeiZ2nPUtm5A71+jIeJCOc=;
+        b=sC3LjMTsYIFvSu/UH08ODMVwSKVcxeW0InUygqcAeMRfmrhjOfsrRx2X9c0if5WNCH
+         HuXR6uHdvFnhhIg5LjgKmlR9FP+y1p2gjT7XKdGkd63lQeFJgS86W3FclqSGNcS78CsL
+         ea7kZ0HyXKPHnct/nRWL2zEEY4J7ed/3cxJFKPj8yM1yVioQOFCQ4TfpVCHKrQltVgIi
+         KsZYU+V7AN9P/pH/EOPQcQMqm8+7xy4RBrd/0lNJQmxFdV01GrO5Knuzk3Y/YDE3rBjF
+         1sTloXqHmfH9QQ/HHDPdSqMJTeTFCZpCdz8sNm7i8CyOsxOOL6ZmMNi/1cYOmPwPVFCv
+         koVA==
+X-Forwarded-Encrypted: i=1; AFNElJ8RU05ctQqzP1aaVwTXR+AbjGoS0il7LJWtQ54gUI0mHQzjUUTR2QYozBHUBjEmzMfRmNnN59/zVQA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7XHx4/+ujfseP03P5SUyLsEV7+LtwMfFRnR4QOsZhBQ83EtoQ
+	n2X4SlpxELV2dPU75JiZNt2oSa1tcAAe//2QVlOOZRGJwJzG0ZbyEYBKxfau2p2MQVs2Re+klrX
+	aseqeyfv44h85czzagxvy6Ilb6aL1Affgqpc/2DfmCWsVlFk+k1n8NcocXChs+A==
+X-Gm-Gg: Acq92OGzF4AfYEEtfKE2ooAUi8TeiYi7pV3oqdulqVppOQrbN17wPdaE7z6+Vyj9RPM
+	jiKpJHlwFzjsCtJ/plZX7d/FLzTj0gzYG7kFppsIsAO9JJfBqx/ryeHhkwMufmYGqRmczOjWZPS
+	NoBsEzF1xLumeJ51fv7yQAqCTUdy2YcLcSUwuatPB+hS3YimbxKxuuDOgdX58UcpsDmCZ03tTFg
+	3A8nXMJTzM0ZGhBVlE7arL0zbNnF3KtESKJi7jWRNleJ+yhs4wTeP6GVmCMFuGMUx5U2bnftQgh
+	W2sYX8VM/I/h2kcGkT+fVI7ZloHRFYwqnsDOJatyd6oTsj/AHbLhS9eUrX/7Krr9LjTg6i7zlE/
+	fLFAmayWubOTzeMIw
+X-Received: by 2002:a05:622a:244c:b0:50f:ca25:fb45 with SMTP id d75a77b69052e-516c53e81b2mr6357221cf.8.1779316162937;
+        Wed, 20 May 2026 15:29:22 -0700 (PDT)
+X-Received: by 2002:a05:622a:244c:b0:50f:ca25:fb45 with SMTP id d75a77b69052e-516c53e81b2mr6356821cf.8.1779316162374;
+        Wed, 20 May 2026 15:29:22 -0700 (PDT)
 Received: from redhat.com ([69.43.42.202])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-910bab3a207sm2240740085a.15.2026.05.20.15.10.52
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-516456b6cf7sm204755301cf.8.2026.05.20.15.29.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 May 2026 15:10:52 -0700 (PDT)
-Date: Wed, 20 May 2026 18:10:51 -0400
+        Wed, 20 May 2026 15:29:21 -0700 (PDT)
+Date: Wed, 20 May 2026 18:29:20 -0400
 From: Brian Masney <bmasney@redhat.com>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+To: "Alexander A. Klimov" <grandmaster@al2klimov.de>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
-	Alok Tiwari <alok.a.tiwari@oracle.com>,
-	Nicolas Le Bayon <nicolas.le.bayon@foss.st.com>,
-	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>,
-	"moderated list:ARM/STM32 ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	Jonas Jensen <jonas.jensen@gmail.com>,
+	Mike Turquette <mturquette@linaro.org>,
+	"moderated list:ARM/MOXA ART SOC" <linux-arm-kernel@lists.infradead.org>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
 	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: stm32: add missing bitfield.h header
-Message-ID: <ag4xa-WmnGti3naD@redhat.com>
-References: <20260519222639.34508-1-rosenp@gmail.com>
+Subject: Re: [PATCH] clk: moxart: fix refcount leak
+Message-ID: <ag41wJBhdK7-Zynb@redhat.com>
+References: <20260520175552.537603-1-grandmaster@al2klimov.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -99,15 +98,44 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260519222639.34508-1-rosenp@gmail.com>
+In-Reply-To: <20260520175552.537603-1-grandmaster@al2klimov.de>
 User-Agent: Mutt/2.3.1 (2026-03-20)
 
-On Tue, May 19, 2026 at 03:26:39PM -0700, Rosen Penev wrote:
-> It seems some ARM header includes this and the build passes there, but
-> nowhere else. Note that the driver has COMPILE_TEST in depends.
-> 
-> Fixes: 37ae8501cdb0 ("clk: stm32: introduce clocks for STM32MP21 platfor")
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+Hi Alexander,
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+On Wed, May 20, 2026 at 07:55:50PM +0200, Alexander A. Klimov wrote:
+> Every value returned from of_clk_get() is supposed to be cleaned up
+> via clk_put() once not needed anymore.
+> The values here are used only for error checking,
+> but weren't cleaned up until now.
+> 
+> Fixes: c7bb4fc16ead ("clk: add MOXA ART SoCs clock driver")
+> Signed-off-by: Alexander A. Klimov <grandmaster@al2klimov.de>
+> ---
+>  drivers/clk/clk-moxart.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/clk/clk-moxart.c b/drivers/clk/clk-moxart.c
+> index 3786a0153ad1..7e191b1481bb 100644
+> --- a/drivers/clk/clk-moxart.c
+> +++ b/drivers/clk/clk-moxart.c
+> @@ -39,6 +39,7 @@ static void __init moxart_of_pll_clk_init(struct device_node *node)
+>  		pr_err("%pOF: of_clk_get failed\n", node);
+>  		return;
+>  	}
+> +	clk_put(ref_clk);
+>  
+>  	hw = clk_hw_register_fixed_factor(NULL, name, parent_name, 0, mul, 1);
+>  	if (IS_ERR(hw)) {
+> @@ -83,6 +84,7 @@ static void __init moxart_of_apb_clk_init(struct device_node *node)
+>  		pr_err("%pOF: of_clk_get failed\n", node);
+>  		return;
+>  	}
+> +	clk_put(pll_clk);
+
+So this immediately drops the reference to the clk after of_clk_get() is
+called. Can we just remove these two of_clk_get() calls since they don't
+appear to be used?
+
+Brian
 
