@@ -1,174 +1,199 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BFEB34BA5A
-	for <linux-clk@vger.kernel.org>; Thu, 21 May 2026 08:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779351951; cv=pass; b=FhlJvIniu769+VghF0vNpaEepxQuykUx70OXIM6iGvqare6gmLpwlBokU9a69986X+VSsH5/4xDHaTGnnkeyfSjqtPwTKqaM0D4n41XBQAteOzTSAXTXORMyFXD+b3Ro2OwJvwJSDDvM8T24FdRTm7kjT/vMzUvY357PC4E7lE4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779351951; c=relaxed/simple;
-	bh=/xfuVj+8C9HSpfq1RyMslkzeYrWVJnmNTKz5dovIclE=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE1F35B63D
+	for <linux-clk@vger.kernel.org>; Thu, 21 May 2026 08:34:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779352495; cv=none; b=JV5dGe2k5Q0DupO4XlHPI6/2Cc9sKtuK/b+nJnk3XzU3MlCH6QuwO0OpOGqNJ/Iy0d8HsmNufzGOEk/fgKpES+zt7GnBk8RofSEWsgKLcjEtYDNIKVkEtLC4qGrbo/qPj8bfqYTGOHV4I8W/f1H0Y7RN1ccSMXqd5QLqY72kcHM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779352495; c=relaxed/simple;
+	bh=8s7H6XW7k7X7xmSxjH45D5K9tIbgL0en//u1liivD3U=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A39RTNZQ+0Ssw9bY6UhOVZ3TDw5wl5AhlP+Ec/1PGlZZjtkWyoNwThlLP+3aaeele6Y9Ck7Atv7bp+DF5rucJjlEWA0NNCfKMmQITOReXsHZUOgjNQOWNgkg5qhFJ5R4prBScnjntp2A2TcqxW3JzCQvIm7Za03KL+06fJFrnkE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f+1xpUA3; arc=pass smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f+1xpUA3"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-687e7edaafeso1559050a12.1
-        for <linux-clk@vger.kernel.org>; Thu, 21 May 2026 01:25:49 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1779351948; cv=none;
-        d=google.com; s=arc-20240605;
-        b=gHbw1gdMnn9is4hffsmQTDEnEjNfB89nu3jUBjnMCQ/9cW52pmFgFgtibZLSb16ShJ
-         CSbuJCxVthizV9R5QhD/sOxFi8vZlid+e9VaNsTz6mNGGVvl0r7SBRK1SKFQHQKHmNeS
-         dYyTEjsJ21lZefACY17sX6F0fPD7iEZQzvO+zabWQ45ey7xw305UEcv776IJmF+p+SQ5
-         MposeDm9NWaEdog3ECN0qxWPLUQyws5OtjzfLpvP2xlyGZNbQ2GW5JcEfLxG8dMkHSKI
-         DzZJ7NPUduuYbaBalXXVIiqyRMXhOmfiRb89h1GT9+N5Pi2XOG7q34OeOuWdPrZn4kB8
-         Vhpw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=HftGKTFDQHz46tZbCrQonIA0wDZTxmOItHnP/B1pm30=;
-        fh=qECk+n9izNZabni4Nkm+6BNhj8lYQQKMx7KxWaW4+FQ=;
-        b=RlTAizR2svX5F3uS4INyHjVM7/ElJxHX3vbj2kDQ2mPdaytUPYCKqvh0CWyH+WlS55
-         aJc3DrwTDHGun4ndtdQcbOtuclwTUJ9F3WWNtp8Lid9AATaHlMkwAS0X+rDrOXnHPErb
-         UxWdcMOJdH9d6mw1HXL1mU+TV3ZyIpLRacb60/xi+F6jBs36u6veRsy67QsVbRGM9wyX
-         mhLTx7VnsMP7UD2gqkBN22rajVFZ3QV17O26sgJUtY84u31wqc/CpIU5D7LilPSBvzGS
-         +e0SQAGf+GwqHBiKkQwKdGzcG8ZFnkaXtSNnaIrclaOVMEvvelzRlxnBAVy+DnIESwO2
-         1leg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1779351948; x=1779956748; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HftGKTFDQHz46tZbCrQonIA0wDZTxmOItHnP/B1pm30=;
-        b=f+1xpUA3gG3wFCqSAVsmh1j3eGnVXPydgxmUfJltKFSfDuIw1XjLwDPICCn8dS/wyA
-         l/gvgznACC4POx/+Mdp5RrMuqBvGowa/GXOsE+Wmy85KQoH/vuuuAFaZ1/vzWky1SoxL
-         SLk0SrGRIoOB80ZF323CCzXsTymULFUVWSzFmwzLDddeuaczb2hZxpin9K1NDtKLPxgM
-         CR022P//YvgxGNkxPwi/atHOXayzKAdbQSrwGEAPmD6IIu544lQ4hgHVobDHrSmawgeZ
-         Zt1bf0UrcI0m2myUcoL7Naap06CmGLMMBdtq9i0JLT1tPhIMgIsKBXZwKs02qwLDkj/K
-         bAQA==
+	 To:Cc:Content-Type; b=SK11Zfqoxt4RYbDLNAZKXJItUmyhJ9elc1hvQ/wKOTIFWR8tXA1d1Tr3opv5OC1nmv7PRPNcf4Z3xOdoufMaf+mq781mUFsNR4bweMcGuKt4RpBgpG1XKrN4h7hg4syNhxQ2eISfxPKWQFdoS0TE48WPEIqlqN5GJXYepVr4gxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-83ef1d17904so5834469b3a.1
+        for <linux-clk@vger.kernel.org>; Thu, 21 May 2026 01:34:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779351948; x=1779956748;
+        d=1e100.net; s=20251104; t=1779352493; x=1779957293;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HftGKTFDQHz46tZbCrQonIA0wDZTxmOItHnP/B1pm30=;
-        b=gqQ/y1MNwo+whTu/XJOf8uD6G4MZxLln1XkmuU5RDsZxYF7o3ALcm9ty31T4ebbsHa
-         YBjgYIqHRQEfFITfREGJCQikMir7ZJeN/QHhdrF4hR7Shn41Gv+wvkp5M5jGLblgVuuc
-         mssMKUTcfejQH0MvKyUKUW6VGV7J+QOg0XUscv8vGIJVhVxeVP/wplJcpLmLYpeOhGDu
-         yKIcdYjjn1SeRYVteKsXIgFziWcUqyAlOH5GM56yL/76ZPtVTPcRTGeyBEajnjxYniFG
-         eW7H1SbDwTvCyHs22xXwTeKcvUjGX27G9nwkcadhrR/2MG2ADggq2AmOHS2iPShrkJxi
-         OHVw==
-X-Forwarded-Encrypted: i=1; AFNElJ9H7T48Rgkov5DM5JmR3tqVQxeKyfvnZlZeUgsjwyvNekPnsAyNuRDaGNytKHIQPXgGmVgnT1RXFeo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUo8pYzE9C9CsrQQeToWEb6EdAAe0zTE0aH8XVtQHuXXGrbQ+b
-	uV0aKrNdbYHs32Sto2xwS43RXsv5p66NV8Ho7ABBTYu3ot/J1zMr9BPxrKLEWenPjXQiAnxLu8n
-	WYMy6zse61rJYT0w8rzUmIEOwJboS4ncUUAJH4TGG4A==
-X-Gm-Gg: Acq92OEg4OXwJiyhGe7P+D7mWEvKpHGZs2SUMI6cNpMvfvWDW+/SbaHTQRSvb/zZ3X1
-	m3agu3jriZTQ4zRslVymhQkl6CC/OCmqY8a5B85pzLbdQzMgi7+I98LMY0WYMMhhI+MI9qrwl8G
-	aKRrWtGw/8c1sYElpx8DBFSBPIhe9FHvlk8ifFUqbEXv4opMGaFETNdudL0W68nxLYmVkdaN9e4
-	JFQTR/BcsId4biFWdDq5ROEhptcC3g8LF1ABa3VF7FjQtiOUi+SCuY7ZJ2m6x8gvFwW5QV159Sw
-	3s5pe01jP/9FLmE/4DG7pg98SOHFmUL0KE3rHsHk93o7f5x/7Fae
-X-Received: by 2002:a05:6402:5306:b0:672:8f26:8a9a with SMTP id
- 4fb4d7f45d1cf-68835bf6a4amr868802a12.8.1779351947791; Thu, 21 May 2026
- 01:25:47 -0700 (PDT)
+        bh=YJBmBePAR5zxYZavdDNae1lt8A1fnyv8gTHT/WQkGDg=;
+        b=UDkRmn9ws/r806DJV3vZ+HU+hku26efT9Lhmvv9RoqmKJuMOwxV19/kiSXkiL4YMMj
+         mU8H4Id0VqSvkeoDqHGNKwO30+beN3aQMDur56arWk1tWyy77bjMu0yJsawQkd2gZmLs
+         yVkXzfbXKKi5Xj/hW/0w0CcO2xhGXpCNeU54O/QI2pFUM5679mFCTXzDQzZm/txyD37f
+         HsUNujaCcY1FpWThod7RXms0nR4zaEr96aykJeIvPYJdgdXBMWA22pO7GZSuEeCj73t/
+         N9RkAPWewyv5fG82MrCrqKpS1Pd70uC3AsvjZq38xq4GyQQfa3guMnU75dFezNeernB4
+         ZCsQ==
+X-Forwarded-Encrypted: i=1; AFNElJ+0lTr2yYZ5b+OaRdP4tNVHKKsms2KrHXvTtSR9Q1WFto4AMrzcyBUNtIvX4XkpxB9pIprzYCUcovU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxl1SMA5UqV4miR8GESY/R98J4EEaVxPdQJts9yp3KhTfUFEdbI
+	g4cw/toPQy354G799tsV3oEBhL+iBf3IWPg14xuUN9o0W3IY5A4M30VEC/1eglaejIA=
+X-Gm-Gg: Acq92OGit87+1kCqRcjJFVF+kNLxbLPskU6nxJfOouox4obhZOejOnSx/b7Ht6pFVTT
+	zxJaBaGJcIPyV4ap3st7A4nFzeHhNYeT0Ubjy2OORevd6tNyTiZ3uD5hYaWQuBjPdZxvIfxs3e8
+	q56K0Mxmmwy43twsHHA/jFQKmmpOPTzMs1sr6o92xT+wie2mk5lnA4NS2LulldNmsTnnNhh+xbT
+	g3m3E1V0Ls7NMrbBZVFlvyY5oK4dEH8JdcrUaBqDjCyIULPqhlO8GFFsqQIVAFEHTs9aX77W28D
+	j+kC7ex4AsQruUbtTxy575FzWqb89D+ygVM7iiZIK+S5B1abNGcPFWAKpbjh1lWT2gfbU3Ykksn
+	kNfgapKvFVE32cR8PiyASqZWk+28/3vKvjab0mDdK5gzk7PsWCzxGfZG7qKdoN5m+9je/s+SYs4
+	6hketxrXj/TT0exT9sVOZM8jEQloPVbMmq2EZEjzXcLKa0AdryoYn+jowortMJ
+X-Received: by 2002:a05:6a00:845:b0:835:6d99:3f94 with SMTP id d2e1a72fcca58-8414adf542bmr2078328b3a.25.1779352492896;
+        Thu, 21 May 2026 01:34:52 -0700 (PDT)
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com. [209.85.216.43])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84154a20a7fsm597468b3a.24.2026.05.21.01.34.52
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 May 2026 01:34:52 -0700 (PDT)
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-3698e34a567so5103608a91.2
+        for <linux-clk@vger.kernel.org>; Thu, 21 May 2026 01:34:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ9uRmzNGyIv+7uVDQ9Z6tbozT4N2LInmvBOnI6xs6Vx4dnVobUulfwgKuTSoFL3iRrPbJCs+rZ494o=@vger.kernel.org
+X-Received: by 2002:a05:6122:1c10:b0:56e:f071:d4ef with SMTP id
+ 71dfb90a1353d-584257c283dmr596427e0c.8.1779352064209; Thu, 21 May 2026
+ 01:27:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260506-acpm-tmu-helpers-v1-0-a9cd5daf8355@linaro.org>
- <20260506-acpm-tmu-helpers-v1-5-a9cd5daf8355@linaro.org> <DIBOWQYHOPOU.3PCLCL8030WRL@linaro.org>
- <806da86b-45b7-43cc-b364-97bade8f4041@linaro.org> <DIFVKM72KZDI.14EVGUMQ0NV9S@linaro.org>
- <a55690fc-7727-401d-9b3c-06bf3c2852d0@linaro.org> <DILRJBWU9SKV.2P7EJN7ECEJB7@linaro.org>
- <73f18a2c-e729-45d7-9376-7c0e60ed35c7@linaro.org> <DINT2DFDVWFX.BGTG7LOC91RH@linaro.org>
-In-Reply-To: <DINT2DFDVWFX.BGTG7LOC91RH@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Thu, 21 May 2026 09:25:34 +0100
-X-Gm-Features: AVHnY4JhWIGAx26PwOK0C45852TVZfJmuG1qn6e3lCf-fVcwgDGuhhZK4l_Sw9Y
-Message-ID: <CADrjBPqiooFC9o56bOAg-j7908ssPtrzff1reNe6eXmu7hcA=w@mail.gmail.com>
-Subject: Re: [PATCH 5/6] firmware: samsung: acpm: Add TMU protocol support
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	jyescas@google.com, kernel-team@android.com, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+References: <cover.1776793163.git.geert+renesas@glider.be> <72e2a0e7a5abda02fe36b3f5851842f7a77b2593.1776793163.git.geert+renesas@glider.be>
+ <aekXUvIPb8nkhdKu@pluto> <CAMuHMdWJvMH+a1RqozbaCxxH_8M569JcruTFa8PW+87FysnjHw@mail.gmail.com>
+ <ae6Zp54NhKlVes8J@pluto> <CAMuHMdWK3Noh5ZQVWT9C0EKyXZePMaJ97C0A_syK+xCb_=abeQ@mail.gmail.com>
+ <agooKghZJw3iElvp@pluto> <CAMuHMdU8VRCOZtLrM2EoHFmhd5XFs8cwXc2A1tPTTr01KvUx0g@mail.gmail.com>
+In-Reply-To: <CAMuHMdU8VRCOZtLrM2EoHFmhd5XFs8cwXc2A1tPTTr01KvUx0g@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 21 May 2026 10:27:32 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUo9=J0hpNfVDfiFGoAqfC73QQxvMCYyahBTTbKT8_6VA@mail.gmail.com>
+X-Gm-Features: AVHnY4IdjfB7BITVFZv-z-ao_K498dR56La7qQvqwgCb0qZYOOtkE_cpqTj8o-w
+Message-ID: <CAMuHMdUo9=J0hpNfVDfiFGoAqfC73QQxvMCYyahBTTbKT8_6VA@mail.gmail.com>
+Subject: Re: [PATCH/RFC 05/14] firmware: arm_scmi: Add scmi_get_base_info()
+To: Cristian Marussi <cristian.marussi@arm.com>
+Cc: Sudeep Holla <sudeep.holla@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Saravana Kannan <saravanak@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Ulf Hansson <ulfh@kernel.org>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Marek Vasut <marek.vasut+renesas@mailbox.org>, 
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, arm-scmi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Alexey,
-
-On Wed, 20 May 2026 at 22:01, Alexey Klimov <alexey.klimov@linaro.org> wrote:
->
-> Hi Tudor,
->
-> On Tue May 19, 2026 at 4:46 PM BST, Tudor Ambarus wrote:
-> > Hi, Alexey,
+On Thu, 21 May 2026 at 09:53, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On Sun, 17 May 2026 at 22:42, Cristian Marussi <cristian.marussi@arm.com> wrote:
+> > On Fri, May 08, 2026 at 12:26:19PM +0200, Geert Uytterhoeven wrote:
+> > > On Mon, 27 Apr 2026 at 01:03, Cristian Marussi <cristian.marussi@arm.com> wrote:
+> > > > On Fri, Apr 24, 2026 at 02:08:55PM +0200, Geert Uytterhoeven wrote:
+> > > > > On Wed, 22 Apr 2026 at 20:45, Cristian Marussi <cristian.marussi@arm.com> wrote:
+> > > > > > Also because this should be one of the selling point of the SCMI stack
+> > > > > > in a virtualized environment: you can ship the same kernel drivers with
+> > > > > > the same DT and you know that ID=<N> will always identify the specific
+> > > > > > resource that is needed by your driver without worrying about the fact
+> > > > > > that in reality in the backstage the effectively managed physical resource
+> > > > > > could be different across different platforms, because that does not matter
+> > > > >
+> > > > > This sounds strange to me, do I understand it correctly?
+> > > > > So the ID should (1) be tied to the use-case, and not to the underlying
+> > > > > hardware, and (2) be the same for different platforms?
+> > > > >
+> > > > > For (1): Then we must not put these IDs in DT at all, as DT is supposed
+> > > > >     to describe the hardware (and firmware IDs in DT were IMHO already
+> > > > >     a stretch before).
+> > > > > For (2): How can there be a contiguous list of IDs, as not all platforms
+> > > > >     may have the same underlying hardware?
+> > > >
+> > > > I would NOT say that an SCMI FW must behave like this regarding IDs, but it
+> > > > is a possible SCMI deployed setup that can be useful in virtualized setups
+> > > >
+> > > > I mean, the DT describes the hardware of course BUT when you refer to
+> > > > some of this hardware DT bits from some other subsystem by referencing a
+> > > > phandle, even in the non-SCMI world, you are in fact selecting a specific
+> > > > resource that fit you use case, right ? Can we say this ?
+> > > > I mean you needed that specific clock or regulator that you described
+> > > > previously so as to be able to enable some other piece of HW...
+> > > >
+> > > > Now, the SCMI provides an abstraction on top of this, since you really
+> > > > discover domain IDs of a specific class (clocks/regulators etc) you are
+> > > > in fact describing an HW abstraction that you then refer with the usual
+> > > > phandle...also because there is NOT so much SCMI hardware to describe,
+> > > > given that the HW is handled transparently (opaquely really :P) by the
+> > > > driver on the FW side...
+> > > >
+> > > > ...you basically obtain such domain ID, usable as phandles through dynamic
+> > > > SCMI enumeration so that you can use it all over your DT to make use of such
+> > > > resources...
+> > > >
+> > > > ...on top of this, consider that the SCMI server CAN provide to its agents
+> > > > a per-agent-view of the world, IOW it can (and should) expose to a specific
+> > > > agent ONLY the resources needed by that agent, i.e. it can expose the set
+> > > > of resources 1-N to two distinct agents and that does NOT mean that the
+> > > > underlying physical resource mapped by ID=3 in both agents has to be
+> > > > effectively the same piece of hardware: it could be the case, and this
+> > > > would be useful to exposed and managed properly a shared resource, or
+> > > > it could also be that the same ID=3 could refer to completely distinct
+> > > > pieces of the same class of hardware...(same protocol same class of
+> > > > resource...)
+> > >
+> > > Exposing only the clocks/reset/power domains the agent can use,
+> > > in a contiguous list of IDS, means that the number space changes,
+> > > depending on which resources are exposed.
 > >
-> > On 5/18/26 2:24 PM, Alexey Klimov wrote:
-> >> Thinking further about this I'd humbly suggest that even
-> >>
-> >>      if (fw_err >= 0)
-> >>              return 0;
-> >>
-> >>      pr_debug_ratelimited("ACPM tmu call returned: %x\n", fw_err);
-> >>      or pr_debug(...);
-> >>
-> >>      if (fw_err == -1)
-> >>              return -EACCES;
-> >>
-> >> some debug message would do.
-> >> Perhaps we need some convertation, for instance as it is done in scmi
-> >> code (scmi_to_linux_errno(), scmi_linux_errmap[]). But I don't have any
-> >> data for mapping acpm errors to some human meanings.
+> > Yes, potentially, it depedns on how the HW/FW stack was designed I
+> > suppose...
 > >
-> > I did that for the pmic helpers. I don't need any debug prints for
-> > gs101 TMU as I have clear instructions from firmware: 0 for success,
-> > -1 for error.
+> > > Suppose you have a system where you want to assign a specific hardware
+> > > block in the SoC to the realtime CPU core instead of the application
+> > > CPU core running Linux.
+> >
+> > Ok, so this is definitely a considerable change.
+> >
+> > > That means all resources used by that block must no longer be exposed
+> > > to the Linux agent, and the corresponding IDs must be removed from
+> > > the ID space exposed to Linux.  As the ID space must be sequential
+> > > and contiguous, the IDs must be renumbered, impacting resources that
+> > > are exposed to Linux.  As these IDs are used in the SoC .dtsi, they
+> > > must be changed there, too, However, these IDs have become part of
+> > > the stable DT ABI, and thus cannot be changed.
+> >
+> > Well, you have to ship a final DTB blob that is crafted to describe the
+> > actual HW at the end, right ?
+> >
+> > I mean, in your example, it seems to me that you have changed considerably
+> > the HW surface by moving a clock (and its related resources) away from the
+> > reach of Linux as a whole, so should not be expected to have an updated
+> > DTB shipped ?
 >
-> This doesn't look like a right approach for upstreaming a ACPM TMU
-> framework.
+> It is not necessary to ship an updated DTB.
+> The bootloader stack can just change the "status" properties of devices
+> nodes that are be taken away from Linux from "okay" to "reserved":
 >
-> You are trying to submit a gs101-specific implementation masquerading
-> it as a generic ACPM TMU framework, while explicitly pushing the
-> refactoring work onto the next developer to add support for other
-> SoCs in this generic ACPM code.
+> Devicetree Specification, Release v0.4, Table 2.4: Values for statu
+> property states:
 >
-> The ACPM TMU protocol implementation on Exynos850 is different: it uses
-> different error codes, and half of the calls in this 'generic' driver
-> are not even implemented in the Exynos850 firmware. Relying on a
-> hardcoded if (fw_err == -1) in a driver named generic ACPM is broken
-> by design and may silently swallow critical firmware errors on other
-> SoCs.
+>     Value: "reserved"
+>     Description:
+>         Indicates that the device is operational, but should not be
+>         used. Typically this is used for devices that are controlled
+>         by another software component, such as platform firmware.
 >
-> What about such options below?
-> - rename the driver to reflect reality: rename this specifically to
-> gs101-acpm-tmu-something to reflect that it is tailored for gs101-s;
->
-> or
-> - abstract the firmware error handling paths through driver_data or
-> a dedicated ops structure now, so that other SoCs can cleanly hook into
-> it without having to rewrite the logic later.
+> When all SCMI IDs change, too, much more work needs to be done.
 
-AFAIK it's pretty normal not to add new hooks before they are
-required. I think the approach taken in this series makes sense, as
-it's the developer adding support for SoC #2 who best knows what the
-differences are on their platform versus what exists upstream.
-Similarly, the developer adding support for SoC #3 may have different
-requirements to e850 and gs101 and that developer is best placed to
-refactor and add hooks or quirks that are required for that platform.
+It's a pity we cannot use strings in e.g. clock specifiers.
+Then we could look them up by name (which would hopefully be more
+stable) instead of by ID...
 
-Let's not try to boil the ocean with this series, it's targeting GS101
-support. We can evolve it for future SoCs as those requirements and
-differences become clear.
+Gr{oetje,eeting}s,
 
-Peter
+                        Geert
 
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Peter
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
