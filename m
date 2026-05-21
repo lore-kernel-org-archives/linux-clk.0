@@ -1,166 +1,253 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0822D7DF1
-	for <linux-clk@vger.kernel.org>; Thu, 21 May 2026 09:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 953AA384243;
+	Thu, 21 May 2026 10:13:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779357318; cv=none; b=RCVboH/LVAWnW2ogh+7o0OlxvHANuz76vJO4/YhzZYeI1JrxRT5tzn+B5bzo0Flit2gz+kVlsu9Fu3ZHnKkVoQtKIeTQRV+1EDnvRqwn5tZqjOYEI5oWC5cQC90FSOD4932bSRER3EqgASDDuBr0ft8ongZFji5TXLN/zxj7bto=
+	t=1779358418; cv=none; b=D5mJUu7KBFiYym5shFHKDalkpB+j0sBL9SHc4CnuzmnLPSv4TsZwrRnPnMHfNza5vkJysbz1r4vIRuOi7u+pjxinUWTnOTjiApmVXgZbm6HWITrygl+BAHVxh9jxndmbGNqKmhrmkv+S1J8045VbXSceQvI0QwgB9sAArhvSjXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779357318; c=relaxed/simple;
-	bh=acZGlIX+KXcHtOOGMD6pjNe+wuSPLmh6mZ6H9ohkhfU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pft8LmUKf4DNQVH1nO9oQtBFeDDkjyT35bJ6m5ntBo61KFKp8ZZVheJbMwf8iTEmf1W2QV/3zrpOQNyXnD6hufQQ8ZHkkd5UNdqOoTkZvtCA+W6RgZi8Z+amyUW5aDlkNn8WfJjpaSvNMrk1ZSs4nU86BAWZ0hqpgIg6NKyCD4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=R+Fh9Dyq; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Qlzcn1H2; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1779358418; c=relaxed/simple;
+	bh=UvUDUo8CnuMBFaEuDUmGzKGSsB0mzNlko0srZ+NMyjc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s/eoR52wMIdBdJupvtIvg6hmg/SOYOAyorFI9i7hTSMQ4U1uxrr5CSmNM+8AmSrN4+klkCxg2hVDkKCABVuuYQnNLhF6V4WVvBmZgX76SNF+aybMze/lfWkeYAmbdqBjHCL4fQij+enN/u15nqzvJvSlNZQ8qtEiekGS/J1i3zU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TuVK0Q/q; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="R+Fh9Dyq";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Qlzcn1H2"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64L9AKgh620413
-	for <linux-clk@vger.kernel.org>; Thu, 21 May 2026 09:55:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0j+pvHdvitas62dgDJHr1H+ijvn6S0ZrLgrBvSkCvG0=; b=R+Fh9DyqwH8ZNOp/
-	4W25sBa2l0kCVUiDGgjTbmtXW4TWg8h3xo45PGjIvvZVsQ04nKGTVlNqDfVixU+d
-	7jeX8pjDNKqTtyP+lq+vIgyHsOZmmkq+PO/W5qsALm5B4G9AWQwJfNDbzitNw/sK
-	jfTC2B2IU7xtD6uYHhTNpBmN8W8VYUB6IAqd/ZCtsqhPr4H5sB7V7ggZK1YgBFW4
-	ovWoF7X9z1TtRF/GCJcWrJI+2I2oMNjUP4UfcfqJEPCcavp6vhjLWlfhW8KCUUXe
-	p85oPd6ErvEdQ2YNzd3iWNm+8DOUBDC4si67JuLQf0JnWlfIvMnY59GJMt3mVx4O
-	iZ9kaQ==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4e9dxu4cwq-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Thu, 21 May 2026 09:55:16 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-50d9f1bccd7so15312841cf.1
-        for <linux-clk@vger.kernel.org>; Thu, 21 May 2026 02:55:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1779357316; x=1779962116; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0j+pvHdvitas62dgDJHr1H+ijvn6S0ZrLgrBvSkCvG0=;
-        b=Qlzcn1H2DqmeW10Hj0jY7xDlCEyo9mlKDlkjknh3nuHPWxpGW2oURn4kaNLW7CHJL6
-         ogM8arz+A6tl8D2tfhDhHi2N4ImoVhzBCCD40BdTXZvUcRAd7Pw/vQymrSdLqZhHNTYP
-         l0JjGUKa+Imv8EzonmnSLRPT4UnKQeZSNjP8peB6GCSrVdC61f21o4JK9H6zmMP1gZTh
-         KFHQTmv2gqQhyAsqlPUMSPzGGWxcLmxwJY4mRCWfe0yFczCaOsUqneGCj8qf5buZaUPs
-         WhkfOpeF2ab1a+Vu/rUw9teDACfHp+WQ7F3afKDQh4qhaVMgJQDdVe3U3zJq84r9ma6z
-         UGIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779357316; x=1779962116;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0j+pvHdvitas62dgDJHr1H+ijvn6S0ZrLgrBvSkCvG0=;
-        b=kwmvjgWXr/AFy4ZKlD1JBTvSr0pzt9AtBmABWnAIBWVfb5F1U04sqg5dMq3h55I/X7
-         YKWcsdp9qw5MfommcFZZpIAeePza4T4eLe0EYWDL9qL5wwvzFDBID9/wL73VR/0aoJ7A
-         /eakTrdJp/gAK/EjH4pqMynwkCHvHnsXwQeIbgBBRBRcFfjfjjMNPhgR9dDo9K94h2Cl
-         SX18UFxkjBfYfj8zrDX3sTSkuL4t5ph8g56ZPKiRWZPnHGorli83Ki3OYQ+FwYLI1EyZ
-         YfwynB1AidEG4jD7/K2ZvAhLPIs+Y1l1IM1rKzqrSby+GVGnjvT6YrfBdJBx0R2STSWd
-         L1WA==
-X-Forwarded-Encrypted: i=1; AFNElJ80J/Wyds8kcRMwundb/4v+k4S470ekGmpHhqYYynEICsXDwJJD+BrKvr5e59L/IDnDvUU1DjALZhM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwA0vlfDq1ycAepHOV9pAF62YHQI4RYH/RQ0bwTeLP8lQOnqkK9
-	7O5OaXa+p9LplIFTAsnLH9mjTl0KgwwUgk7283I3M1+QcULdOh5kV1eQF1lX2nF7vrZozM1/iPz
-	VmAiUUqHcARnG6ZnssIR5pViJtygjYiaHEQdyg8seHQHh9SEy+F3v0OtvodCkaFxVHOHOvog=
-X-Gm-Gg: Acq92OEyIJ3Hy4uMeixmKvD/v9C8r4/hZbcAWnYFkA4WL6cBX253y4AkNqM9gwNfCuG
-	mB+5hrG90FJmJyW0yd2BFNe9oJsNOWMb0gAoCXLr04Kg6Z9AfsBXGl/iaY6i8p5Fcm4Yuogt+ia
-	b7vWTOX8Mu+bzcdunL3x9M4EBcnBnt4yMxz9aC67lq4shbhtLnyrcy+lubblitqWhdTjUHrEpB8
-	tu5058kcaYHoNS4He7a99zqTUG3GdqnkcWdsnD8lkpGWb63wqbmPpXZ32UDgBgDfbGrIPKYpjkv
-	hw3W2i+wSwnMTd6J6LPGubcaypc5FD9EzKMlRuiXn0PWaBtNNOyPnh9ua98tMC0VLrgjpoAaECe
-	edVB1sXA/760MkZmGRJ9PANoLZQPts0wlfSh4qekq/sj0vfmt0gXHfCy7EqKZ79HVMOOvFh7hQz
-	hmUao=
-X-Received: by 2002:a05:622a:607:b0:50f:a53b:9d5 with SMTP id d75a77b69052e-516c550fa2bmr18614911cf.2.1779357315583;
-        Thu, 21 May 2026 02:55:15 -0700 (PDT)
-X-Received: by 2002:a05:622a:607:b0:50f:a53b:9d5 with SMTP id d75a77b69052e-516c550fa2bmr18614691cf.2.1779357315109;
-        Thu, 21 May 2026 02:55:15 -0700 (PDT)
-Received: from [192.168.119.254] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-bdc878912e9sm25044766b.1.2026.05.21.02.55.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 May 2026 02:55:14 -0700 (PDT)
-Message-ID: <b8ca632c-310c-4647-b91d-0514feb50fa6@oss.qualcomm.com>
-Date: Thu, 21 May 2026 11:55:12 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TuVK0Q/q"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAFF71F000E9;
+	Thu, 21 May 2026 10:13:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1779358417;
+	bh=yJeHngwTjx7iNIdwSm6fHexQ8q+sCx+IVxLkKopKarU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=TuVK0Q/qAfpjOGxYzuqJ3o6qbYhgM3EhNpWORTVle5w6GmwzVfh4LvX7F6KQFUlUa
+	 lQ0kkLurG5uYLYCxgQMJOhc0Uk0J4Vf9F8YOh7x3IlMONQ5i+PQr2ml4lShMnUBtna
+	 YDHaS2O67rBYSfIyj1DgDDjkMQuvH87vM+TdChh8juyQiDu2nXhpi/j3P8ixy3t60S
+	 TPkW9MLExBAVxP+bQWB/WoumU6wpIJXvP5cewVqZrnBENKw/D27NEi8/OQQoB9E7c9
+	 Tq3bT2kTqAdGKN5YP2IWi0PEwHbmz8y99w9Zu50FzDYZpqTmDDbfgUoWi6Qgnf1AZi
+	 /ohoTqq5tQQGQ==
+Date: Thu, 21 May 2026 12:13:34 +0200
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org
+Subject: Re: [PATCH v8 4/5] phy: move and rename Airoha PCIe PHY driver to
+ dedicated directory
+Message-ID: <ag7azmxlWspK_iVS@lore-desk>
+References: <20260520150912.11614-1-ansuelsmth@gmail.com>
+ <20260520150912.11614-5-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: stop enforcing INTERCONNECT_CLK dependency for
- everybody
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20260517-qcom-clk-icc-v1-1-1dc6ea8bdcd0@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20260517-qcom-clk-icc-v1-1-1dc6ea8bdcd0@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTIxMDA5OCBTYWx0ZWRfXzc/ehPmQwn6o
- YhbdnWk5crJ0J9cwCv/5PJyUZmCY4v8MljeIHHhlLGAbNEfxtQkVAFx026r8Q6z8uGPkohLRAIr
- fmLfPhq51Yl9+cqpoR8EuFFY/LKmT+UI9245t8j3dNrsT7j+lmZ0rlPKEjjCcfw3xfcmP9411hM
- G8YKSkN5DE3xNklhqTHYrncl9TlRHopm+vlOIxRABBfDKtYsICQYaRuzN8GyTBHAcka6xiJq3eC
- Mls1I392OSvZro6/7xP7uVsBb8+TitUxjBsNTPgbkw83Vv2riJF481NZR09eQVaN9As6K5LN9Lf
- STEyu55NqRQoUPCJolQcLdCetmsC9ldwBZ+YshPMYc3L7noW9MY0lYOlf+cLbQ/LD5CRzd0gg7g
- 7HRXumjmArrDBHhczg2U2rRfO5tvZYGq7Q9rb14bUasjxKtwcsL9z44PlXL6mKvh52qp6dlUeFD
- CGZAOX30qtwJFMW/BoQ==
-X-Authority-Analysis: v=2.4 cv=Zckt8MVA c=1 sm=1 tr=0 ts=6a0ed684 cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
- a=EUspDBNiAAAA:8 a=EUmBB4W1OTKWQytM8RYA:9 a=QEXdDO2ut3YA:10
- a=kacYvNCVWA4VmyqE58fU:22
-X-Proofpoint-GUID: YVAvkBlYp85E8kFRaJ_c8GxsWj-NlpSl
-X-Proofpoint-ORIG-GUID: YVAvkBlYp85E8kFRaJ_c8GxsWj-NlpSl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-05-21_01,2026-05-18_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 adultscore=0 priorityscore=1501 malwarescore=0 clxscore=1015
- phishscore=0 bulkscore=0 lowpriorityscore=0 impostorscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2605130000 definitions=main-2605210098
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="+GwfGcxHJb0ERKyP"
+Content-Disposition: inline
+In-Reply-To: <20260520150912.11614-5-ansuelsmth@gmail.com>
 
-On 5/17/26 8:51 PM, Dmitry Baryshkov wrote:
-> Only several (typically IPQ) platforms use INTERCONNECT_CLK to turn
-> clocks into the interconnect providers. Stop inferring this dependency
-> on everybody and set it only when required. As a safety measure, make
-> sure that the coresponding clock description fields are not available if
-> corresponding Kconfig option isn't enabled.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+
+--+GwfGcxHJb0ERKyP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+> To keep the generic PHY directory tidy, move the PCIe PHY driver for
+> Airoha AN7581 SoC to a dedicated directory.
+>=20
+> Also rename the driver and add the relevant SoC name to the .c and .h
+> file in preparation for support of PCIe and USB PHY driver for Airoha
+> AN7583 SoC that use a completely different implementation and
+> calibration for PHYs and will have their own dedicated drivers.
+>=20
+> The rename permits to better identify the specific usage of the driver
+> in the future once the airoha PHY directory will have multiple driver
+> for multiple SoC.
+>=20
+> The config is changed from PHY_AIROHA_PCIE to PHY_AIROHA_AN7581_PCIE.
+>=20
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+
+Acked-by: Lorenzo Bianconi <lorenzo@kernel.org>
+
 > ---
-
-[...]
-
-> @@ -395,6 +399,7 @@ config IPQ_GCC_5210
->  config IPQ_GCC_5332
->  	tristate "IPQ5332 Global Clock Controller"
->  	depends on ARM64 || COMPILE_TEST
-> +	select QCOM_NEED_INTERCONNECT_CLK
+>  MAINTAINERS                                         |  4 ++--
+>  drivers/phy/Kconfig                                 | 11 +----------
+>  drivers/phy/Makefile                                |  4 ++--
+>  drivers/phy/airoha/Kconfig                          | 13 +++++++++++++
+>  drivers/phy/airoha/Makefile                         |  3 +++
+>  .../phy-an7581-pcie-regs.h}                         |  2 +-
+>  .../{phy-airoha-pcie.c =3D> airoha/phy-an7581-pcie.c} |  6 +++---
+>  7 files changed, 25 insertions(+), 18 deletions(-)
+>  create mode 100644 drivers/phy/airoha/Kconfig
+>  create mode 100644 drivers/phy/airoha/Makefile
+>  rename drivers/phy/{phy-airoha-pcie-regs.h =3D> airoha/phy-an7581-pcie-r=
+egs.h} (99%)
+>  rename drivers/phy/{phy-airoha-pcie.c =3D> airoha/phy-an7581-pcie.c} (99=
+%)
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 932044785a39..7bea8c620da8 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -759,8 +759,8 @@ M:	Lorenzo Bianconi <lorenzo@kernel.org>
+>  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+>  S:	Maintained
+>  F:	Documentation/devicetree/bindings/phy/airoha,en7581-pcie-phy.yaml
+> -F:	drivers/phy/phy-airoha-pcie-regs.h
+> -F:	drivers/phy/phy-airoha-pcie.c
+> +F:	drivers/phy/airoha/phy-an7581-pcie-regs.h
+> +F:	drivers/phy/airoha/phy-an7581-pcie.c
+> =20
+>  AIROHA SPI SNFI DRIVER
+>  M:	Lorenzo Bianconi <lorenzo@kernel.org>
+> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+> index 227b9a4c612e..f9cd765a3ccc 100644
+> --- a/drivers/phy/Kconfig
+> +++ b/drivers/phy/Kconfig
+> @@ -46,16 +46,6 @@ config GENERIC_PHY_MIPI_DPHY
+>  	  Provides a number of helpers a core functions for MIPI D-PHY
+>  	  drivers to us.
+> =20
+> -config PHY_AIROHA_PCIE
+> -	tristate "Airoha PCIe-PHY Driver"
+> -	depends on ARCH_AIROHA || COMPILE_TEST
+> -	depends on OF
+> -	select GENERIC_PHY
+> -	help
+> -	  Say Y here to add support for Airoha PCIe PHY driver.
+> -	  This driver create the basic PHY instance and provides initialize
+> -	  callback for PCIe GEN3 port.
+> -
+>  config PHY_CAN_TRANSCEIVER
+>  	tristate "CAN transceiver PHY"
+>  	select GENERIC_PHY
+> @@ -133,6 +123,7 @@ config PHY_XGENE
 >  	help
->  	  Support for the global clock controller on ipq5332 devices.
->  	  Say Y if you want to use peripheral devices such as UART, SPI,
+>  	  This option enables support for APM X-Gene SoC multi-purpose PHY.
+> =20
+> +source "drivers/phy/airoha/Kconfig"
+>  source "drivers/phy/allwinner/Kconfig"
+>  source "drivers/phy/amlogic/Kconfig"
+>  source "drivers/phy/apple/Kconfig"
+> diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
+> index f49d83f00a3d..84062279fa63 100644
+> --- a/drivers/phy/Makefile
+> +++ b/drivers/phy/Makefile
+> @@ -7,7 +7,6 @@ obj-$(CONFIG_PHY_COMMON_PROPS)		+=3D phy-common-props.o
+>  obj-$(CONFIG_PHY_COMMON_PROPS_TEST)	+=3D phy-common-props-test.o
+>  obj-$(CONFIG_GENERIC_PHY)		+=3D phy-core.o
+>  obj-$(CONFIG_GENERIC_PHY_MIPI_DPHY)	+=3D phy-core-mipi-dphy.o
+> -obj-$(CONFIG_PHY_AIROHA_PCIE)		+=3D phy-airoha-pcie.o
+>  obj-$(CONFIG_PHY_CAN_TRANSCEIVER)	+=3D phy-can-transceiver.o
+>  obj-$(CONFIG_PHY_GOOGLE_USB)		+=3D phy-google-usb.o
+>  obj-$(CONFIG_USB_LGM_PHY)		+=3D phy-lgm-usb.o
+> @@ -17,7 +16,8 @@ obj-$(CONFIG_PHY_PISTACHIO_USB)		+=3D phy-pistachio-usb=
+=2Eo
+>  obj-$(CONFIG_PHY_SNPS_EUSB2)		+=3D phy-snps-eusb2.o
+>  obj-$(CONFIG_PHY_XGENE)			+=3D phy-xgene.o
+> =20
+> -obj-$(CONFIG_GENERIC_PHY)		+=3D allwinner/	\
+> +obj-$(CONFIG_GENERIC_PHY)		+=3D airoha/	\
+> +					   allwinner/	\
+>  					   amlogic/	\
+>  					   apple/	\
+>  					   broadcom/	\
+> diff --git a/drivers/phy/airoha/Kconfig b/drivers/phy/airoha/Kconfig
+> new file mode 100644
+> index 000000000000..9a1b625a7701
+> --- /dev/null
+> +++ b/drivers/phy/airoha/Kconfig
+> @@ -0,0 +1,13 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +#
+> +# Phy drivers for Airoha devices
+> +#
+> +config PHY_AIROHA_AN7581_PCIE
+> +	tristate "Airoha AN7581 PCIe-PHY Driver"
+> +	depends on ARCH_AIROHA || COMPILE_TEST
+> +	depends on OF
+> +	select GENERIC_PHY
+> +	help
+> +	  Say Y here to add support for Airoha AN7581 PCIe PHY driver.
+> +	  This driver create the basic PHY instance and provides initialize
+> +	  callback for PCIe GEN3 port.
+> diff --git a/drivers/phy/airoha/Makefile b/drivers/phy/airoha/Makefile
+> new file mode 100644
+> index 000000000000..912f3e11a061
+> --- /dev/null
+> +++ b/drivers/phy/airoha/Makefile
+> @@ -0,0 +1,3 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +obj-$(CONFIG_PHY_AIROHA_AN7581_PCIE)	+=3D phy-an7581-pcie.o
+> diff --git a/drivers/phy/phy-airoha-pcie-regs.h b/drivers/phy/airoha/phy-=
+an7581-pcie-regs.h
+> similarity index 99%
+> rename from drivers/phy/phy-airoha-pcie-regs.h
+> rename to drivers/phy/airoha/phy-an7581-pcie-regs.h
+> index 58572c793722..b938a7b468fe 100644
+> --- a/drivers/phy/phy-airoha-pcie-regs.h
+> +++ b/drivers/phy/airoha/phy-an7581-pcie-regs.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0-only */
+> +// SPDX-License-Identifier: GPL-2.0-only
+>  /*
+>   * Copyright (c) 2024 AIROHA Inc
+>   * Author: Lorenzo Bianconi <lorenzo@kernel.org>
+> diff --git a/drivers/phy/phy-airoha-pcie.c b/drivers/phy/airoha/phy-an758=
+1-pcie.c
+> similarity index 99%
+> rename from drivers/phy/phy-airoha-pcie.c
+> rename to drivers/phy/airoha/phy-an7581-pcie.c
+> index 56e9ade8a9fd..81ddf0e7638b 100644
+> --- a/drivers/phy/phy-airoha-pcie.c
+> +++ b/drivers/phy/airoha/phy-an7581-pcie.c
+> @@ -13,7 +13,7 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/slab.h>
+> =20
+> -#include "phy-airoha-pcie-regs.h"
+> +#include "phy-an7581-pcie-regs.h"
+> =20
+>  #define LEQ_LEN_CTRL_MAX_VAL	7
+>  #define FREQ_LOCK_MAX_ATTEMPT	10
+> @@ -1279,12 +1279,12 @@ MODULE_DEVICE_TABLE(of, airoha_pcie_phy_of_match);
+>  static struct platform_driver airoha_pcie_phy_driver =3D {
+>  	.probe	=3D airoha_pcie_phy_probe,
+>  	.driver	=3D {
+> -		.name =3D "airoha-pcie-phy",
+> +		.name =3D "airoha-an7581-pcie-phy",
+>  		.of_match_table =3D airoha_pcie_phy_of_match,
+>  	},
+>  };
+>  module_platform_driver(airoha_pcie_phy_driver);
+> =20
+> -MODULE_DESCRIPTION("Airoha PCIe PHY driver");
+> +MODULE_DESCRIPTION("Airoha AN7581 PCIe PHY driver");
+>  MODULE_AUTHOR("Lorenzo Bianconi <lorenzo@kernel.org>");
+>  MODULE_LICENSE("GPL");
+> --=20
+> 2.53.0
+>=20
 
-There's a number of entries where there's spaces instead of tabs,
-Krzysztof fixed that up for interconnect earlier today
+--+GwfGcxHJb0ERKyP
+Content-Type: application/pgp-signature; name=signature.asc
 
-[...]
+-----BEGIN PGP SIGNATURE-----
 
-> +#if IS_REACHABLE(CONFIG_INTERCONNECT_CLK)
->  	const struct qcom_icc_hws_data *icc_hws;
->  	size_t num_icc_hws;
-> +#endif
->  	unsigned int icc_first_node_id;
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCag7azgAKCRA6cBh0uS2t
+rFl9AP9jI7aQgapV/BhGPwx6KIRaUVocpOpElFOYjVyAYUrVWAEAlzn1Hem7Kfsm
+7AaS1RgEi0GfQMSjQgzQ81hdjLzT8Ag=
+=O8tV
+-----END PGP SIGNATURE-----
 
-this uint is also only present in drivers that use icc-clk
-
-Konrad
+--+GwfGcxHJb0ERKyP--
