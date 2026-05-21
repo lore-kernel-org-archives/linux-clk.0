@@ -1,64 +1,64 @@
 Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2005630C366
-	for <linux-clk@vger.kernel.org>; Thu, 21 May 2026 01:42:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188983033DE
+	for <linux-clk@vger.kernel.org>; Thu, 21 May 2026 01:42:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779327757; cv=none; b=FfUDFD1y3QxIbl30f7FwW2papE+4AVFi3NhPfA/kYww1Tz0+NNvMS2jK6mtRETjdyEAE04XN5g42CC0bYqG9RWwrFADiCqvWlrlWZuLk8a8g0URP+z45vA4yH1dsscOg6ZzkAoSJycpPK/oNiAOJSh5vgzLtwto5j9KepAQUDUU=
+	t=1779327762; cv=none; b=YE94GgIx1erMDxIR6yWqIxlYffcCVsXV1p3YMejPSPVk873ghz76HRDRRr09wmEFFDO8UA+EKUIxx/aMSJegqso8eMa7Qd9huOiaxwcGPhmCor2hZDeHVQAu19PXfdcaWMF+F5TsEC62h2/UzP0SL1sgWu0ZiKpYZbPf2+H1XuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779327757; c=relaxed/simple;
-	bh=y0eLfdlKOsnXKLcqHgoMoE6tZoZpJ5wRnAmYHP8/7DA=;
+	s=arc-20240116; t=1779327762; c=relaxed/simple;
+	bh=3QjoFwvYtFGSj7HucuLDgEEIU1vwshWyt15pjIaKNU4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=R9tFrY3zAoiIrBpmO4MXTJpo+3EZgdjVk3aOirQf97M0C22hGUHgnsclJzQe5g8K7Oz4H4qggZ+VAEtJVL6WqGPEKAW3TfPweTB5aOsRFlaykl4W6RaLpvj79s0TggIjLVdCqGAaBmhXxs5vshOy1t4OXcxw4bf8xN31eTnmsVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L1BK6VZx; arc=none smtp.client-ip=209.85.210.175
+	 MIME-Version; b=aXJ239WzBbI98ouryEp8TqmRm5HfccJqFy2FH1UD5KaTIt4N/8j13WUED6yJfphIJgEpIvRKa0zWENHe1dyeezPs4vPKhLEcEEGQtQ1r1ZyTsFZftybGDZmu3e9UjP0pKCNcAxMTsBT567fAKrEB2nuQZkCcwnvF1K4g4qdJrPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=irKk8JrO; arc=none smtp.client-ip=209.85.210.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L1BK6VZx"
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-8354461da74so2489933b3a.1
-        for <linux-clk@vger.kernel.org>; Wed, 20 May 2026 18:42:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="irKk8JrO"
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-835386ff122so5686224b3a.3
+        for <linux-clk@vger.kernel.org>; Wed, 20 May 2026 18:42:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779327751; x=1779932551; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1779327753; x=1779932553; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XQHAOKYoNq3MrKqMcGhimP9jof0s1tqXQowtY/BWP0g=;
-        b=L1BK6VZx19VgAMtp65r9FWnqF7rP1jOl0JYYjN+Tt4HRrum/ClJ3HCvDrXduYkNlnJ
-         Dq0SPZazzpE4I33zmPGut+mglgPsfw0OfZkGADudCLd99wQPSOIQorITloL5L/tJkpkA
-         m95kUIL8NhDdnuqjBg03MIQFdyC9W0osynyAI27cqYPr/Jajn0Mj2UB1vozz3GeDVC9e
-         ULHpN/V48l4EIvXztKWeMOZx93edWx7kmqi9v4lr9CcIte/thtPK0fG5OgEMzo2kx+cL
-         P7yph36LPIXwh8YibohcjJSe1dKzzj/K4oDW6ij+GJwKQ6KqMofry5fKyV2dWKALpag7
-         mRjQ==
+        bh=xBzG8ZBOhqwEqdTqOTAwTbc1kw7Fn4SE9BojLVsipUQ=;
+        b=irKk8JrO0IjqURTeLF/UrOvY4U8X/hWJHG/39evelLl8UUYcrkPCC/UA6WU/pKh+pO
+         qmE0P5EoeJtKCrlibuIqDdxwP9DhzVC6v+jTI+vSBX4+A9TVrKSh1S6T5yl/Jfv8jNcN
+         f5SCBoKqKlKu2Hmb7DZaiJGiUesRaPB5bFV75uYvp0MV4MzId5bQJ/T38u7jVBFXeUT/
+         VQ/j+yF/K7MaWJazBSFjgqD56vuTyCrnSgp4KiLcK5J7ZCgdjlP7267Cn/iBqFT3uwZS
+         kqbMMdzzhsYCkas7vQ+xok0bjgfNI9aOlGr1KSgb3gRvIm8DCetGHNJyeSlzIjh5JTYs
+         WGHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779327751; x=1779932551;
+        d=1e100.net; s=20251104; t=1779327753; x=1779932553;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=XQHAOKYoNq3MrKqMcGhimP9jof0s1tqXQowtY/BWP0g=;
-        b=HzGIW0mSgRHzZdpx70CQUi3djpMPBVsZX9QHKwDeI2pgdYmlWN6GRJ6qDz+DJX8hK8
-         3rT5XbbqVoxPo011LoP7qZ4YAFqkwUw/wVubwDV2Ix1S5feXPMprKJ7+ByJWLEctBut0
-         qKZusjvmFGCvk3lrdWtVD0m7MFw4gKSjg3BS/gtlWlAhmXgyqQTxWTAphpnHM1Z7hYJo
-         3f3+GCEjQRRO6YHVRge+c+8nzcoxYt4fCdGxODVcm54lMkIe9GYN/5i+o5+tUr0zqKN3
-         X3s8Pa7DSgEqsb0h0vd/BBbRUBjRzlsagp4YrVC22fusmPL2ZAd7fwOOmAmclN+5Nh+M
-         o1NA==
-X-Forwarded-Encrypted: i=1; AFNElJ+R0JK0cu3MD793XAVtHJz7LuGHDvuSLnAze51ZjHNYnPSdQ+H4mypQRfZmihm8FqdPUV+MqFBvqHM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywrk7RNnxmrlKcAQd2IC32wYhq4aIIcMlaF5BJ/lFFG/lleaQLf
-	ClCi8J5mah9ZUkeLFl1Rs7zQmUS7j4IHL+PHCss/3WDEFT1NCaUMBOCx
-X-Gm-Gg: Acq92OGxkdv2/TjAbPqjQ+2pbsTAJXn7AsCTlNgBNcn59R6z3T9nHVSYtEhQkHUlM3O
-	QBJVcIsK41ErLd3EZe7mbwSzprvdCM/hlPTJUq+JkoKnP1wgH1C4nKoPlk6htiG2aIwV0C/YCjT
-	rnlIpXrCFKETgFwzTN2cgKTn0rC0kk7ixqK0cF0DuAnaOH0JVHom2YNr0VwH5DCfJm7zz7jcgCW
-	WSdnouXOhjdIV/k+0cvftvOULTbD6A8lBlXcv5uLC5r07N3pj6yal18JbCURrRRmUHLFfod3iI/
-	jsfH7BSIs+sS2xuW5V9mGvWbsSWwD7VEo0PsQL39Eij0cg36fmn0TeJbleOnCiXtOLTsJH7Bfqa
-	id53HPK7vzMzKXxnuz2xCQtRHd04dgZZK6RTIeaU08n9gkmLiDhc3rVYsWSX9M2QTvJhk+sDUWg
-	00I3Bgxm08kGqbFfBUkQ9lX+qCnkEAB+lWFhPB7HmgQhRhsA3eqXPYJPhg8/znBwBinDaWfNJ/n
-	zw4eTnb5o4y
-X-Received: by 2002:a05:6a00:2e9e:b0:82f:61f5:1d7 with SMTP id d2e1a72fcca58-8414ade9c4dmr784283b3a.25.1779327750726;
-        Wed, 20 May 2026 18:42:30 -0700 (PDT)
+        bh=xBzG8ZBOhqwEqdTqOTAwTbc1kw7Fn4SE9BojLVsipUQ=;
+        b=T5QxYdzr5ICCq2FlkaDt3zyMMJW+Gty+mTB16P7T7b3eD7oGAa0EH8DFGeqTP0Y/VG
+         ML2yahtoto62aKlRFKCm9AmoMujDTtumNXq39PYa86Ed4ORfAi0YDHcjxncXItMDmuli
+         ILCmxn//9RSVtRm6SKWlbDraqtweEuKbZ9GZtHOcdS1FupmgFBwP+drfpmOWShZtzEE3
+         ShcaZOm1Kr0CmdP/igXpxK3HpU7uTpF90dyqVMhcSFfsqSu1gVP5G6li3b0SmRd24ENb
+         eWzRQuZAVzr8cMXy3/E4qUnZQCHctWrKHBp9T/uAikW07FnnYxOcTndySNh2zhPaAduA
+         UMdw==
+X-Forwarded-Encrypted: i=1; AFNElJ+BBjiI6c9fabjLLTACT9W8sUcN1dbJTqlSeq04s/fLI7stZLyb1X1ZwPwvRVG9d0KnSfMTISk5/yI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPaTigmCXLvCeX4bh9OX4hkBFRnx1QF7wqu9qn1TFL6QNx0jm9
+	uwcAKgwMyBkFdA+V75fNGg16MzN7VVgn+3HyKAVrLyu1leAd1PmtZG8i
+X-Gm-Gg: Acq92OHaIZX2YbKa7u3MInXjSRiNzmhFeM5DItt5yeSEBJLu/1wRl+asSNcGE/dcr8k
+	NCxBzOrH749hup/+XWtdbE9sCAO3Cn133bHm2NU7WJoy2XX4Kv+en8s0ttZWxpD6xU6juEWBa2r
+	TWsFHXzMUIpM93w69sbZNxD8/Ch3+g6P8Cu8Wrw8HilwcpUjIOnKTY2avPjP1xvDMGZki7Ljl6R
+	wk4/cSvK7HOOtFHIYfI2QsfKCoC9QfJjEfzlXF+/YJFInXjGBSFXGxS4KLOWLjGy6d888be2mcT
+	gJ6glZbuWpC1nOyRCL29RnT1J+w75QtQeLoIKHpNawWBY2gM3ah0Z7IyhlwHOc5goFJfBwSyaNU
+	pWgoIbYeoggjvrqHeBp9R6N3YhTsFmguOpuLY5pb2myTaNywKZN50yWMzxgk87gAklYHEiuYDOw
+	AXF7ZFXWOtsxBgJL9upLgcggpv807f7nYd9mGqNhcCFavEJoH046HE/THEPwgAwonDK6na2iS4C
+	C5TYnVkLR5I
+X-Received: by 2002:a05:6a00:94fe:b0:83e:d996:92fa with SMTP id d2e1a72fcca58-8414acbacc9mr918900b3a.11.1779327752983;
+        Wed, 20 May 2026 18:42:32 -0700 (PDT)
 Received: from localhost.localdomain (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-83f19fa869esm26411475b3a.61.2026.05.20.18.42.28
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-83f19fa869esm26411475b3a.61.2026.05.20.18.42.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 May 2026 18:42:30 -0700 (PDT)
+        Wed, 20 May 2026 18:42:32 -0700 (PDT)
 From: Joey Lu <a0987203069@gmail.com>
 To: mturquette@baylibre.com,
 	sboyd@kernel.org
@@ -69,9 +69,9 @@ Cc: ychuang3@nuvoton.com,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Joey Lu <a0987203069@gmail.com>
-Subject: [PATCH v3 2/3] clk: nuvoton: ma35d1: fix PLL_CTL1_FRAC bit field width and fractional calc
-Date: Thu, 21 May 2026 09:42:19 +0800
-Message-ID: <20260521014220.77955-3-a0987203069@gmail.com>
+Subject: [PATCH v3 3/3] clk: nuvoton: ma35d1: fix ma35d1_clk_pll_determine_rate logic
+Date: Thu, 21 May 2026 09:42:20 +0800
+Message-ID: <20260521014220.77955-4-a0987203069@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260521014220.77955-1-a0987203069@gmail.com>
 References: <20260521014220.77955-1-a0987203069@gmail.com>
@@ -83,50 +83,75 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-PLL_CTL1_FRAC was defined as GENMASK(31, 24), covering only 8 bits.
-The hardware fractional field occupies bits [31:8] (24 bits), so the
-mask must be GENMASK(31, 8).
+ma35d1_clk_pll_determine_rate() called ma35d1_pll_find_closest()
+unconditionally before the switch statement, and then every case
+branch overwrote pll_freq by reading the current hardware registers.
+For CAPLL and DDRPLL this means find_closest() ran unnecessarily
+(and incorrectly, since those PLLs are read-only) and its result
+was silently discarded.
 
-The previous fractional-mode calculation used FIELD_MAX(PLL_CTL1_FRAC)
-as the denominator to obtain 2 decimal places.  With the corrected 24-bit
-mask the old divisor is wrong; replace the arithmetic with a proper
-24-bit fixed-point rounding to 3 decimal places using the kernel's
-DIV_ROUND_CLOSEST_ULL helper:
-
-  n_frac = n * 1000 + DIV_ROUND_CLOSEST_ULL(x * 1000, 1 << 24)
+Fix by moving the find_closest() call inside the APLL/EPLL/VPLL
+branch where it belongs.  Group CAPLL and DDRPLL together as
+read-only PLLs that simply report their current rate; handle them
+with an explicit if/else to keep the CAPLL (SMIC design) and DDRPLL
+(standard design) paths distinct.
 
 Fixes: 691521a367cf ("clk: nuvoton: Add clock driver for ma35d1 clock controller")
 Signed-off-by: Joey Lu <a0987203069@gmail.com>
 ---
- drivers/clk/nuvoton/clk-ma35d1-pll.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/nuvoton/clk-ma35d1-pll.c | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/clk/nuvoton/clk-ma35d1-pll.c b/drivers/clk/nuvoton/clk-ma35d1-pll.c
-index bfedd45bd04b..eb9d69d2077b 100644
+index eb9d69d2077b..c7c0dc91a012 100644
 --- a/drivers/clk/nuvoton/clk-ma35d1-pll.c
 +++ b/drivers/clk/nuvoton/clk-ma35d1-pll.c
-@@ -48,7 +48,7 @@
- #define PLL_CTL1_PD		BIT(0)
- #define PLL_CTL1_BP		BIT(1)
- #define PLL_CTL1_OUTDIV		GENMASK(6, 4)
--#define PLL_CTL1_FRAC		GENMASK(31, 24)
-+#define PLL_CTL1_FRAC		GENMASK(31, 8)
- #define PLL_CTL2_SLOPE		GENMASK(23, 0)
+@@ -255,32 +255,32 @@ static int ma35d1_clk_pll_determine_rate(struct clk_hw *hw,
+ 	if (req->best_parent_rate < PLL_FREF_MIN_FREQ || req->best_parent_rate > PLL_FREF_MAX_FREQ)
+ 		return -EINVAL;
  
- #define INDIV_MIN		1
-@@ -113,9 +113,9 @@ static unsigned long ma35d1_calc_pll_freq(u8 mode, u32 *reg_ctl, unsigned long p
- 		pll_freq = div_u64(pll_freq, m * p);
- 	} else {
- 		x = FIELD_GET(PLL_CTL1_FRAC, reg_ctl[1]);
--		/* 2 decimal places floating to integer (ex. 1.23 to 123) */
--		n = n * 100 + ((x * 100) / FIELD_MAX(PLL_CTL1_FRAC));
--		pll_freq = div_u64(parent_rate * n, 100 * m * p);
-+		/* convert 24-bit fraction to 3 decimal digits, rounding to closest */
-+		n = n * 1000 + DIV_ROUND_CLOSEST_ULL((u64)x * 1000, 1ULL << 24);
-+		pll_freq = div_u64((u64)parent_rate * n, 1000 * m * p);
+-	ret = ma35d1_pll_find_closest(pll, req->rate, req->best_parent_rate,
+-				      reg_ctl, &pll_freq);
+-	if (ret < 0)
+-		return ret;
+-
+ 	switch (pll->id) {
+ 	case CAPLL:
++	case DDRPLL:
++		/* Read-only PLLs: return current rate */
+ 		reg_ctl[0] = readl_relaxed(pll->ctl0_base);
+-		pll_freq = ma35d1_calc_smic_pll_freq(reg_ctl[0], req->best_parent_rate);
++		if (pll->id == CAPLL) {
++			pll_freq = ma35d1_calc_smic_pll_freq(reg_ctl[0], req->best_parent_rate);
++		} else {
++			reg_ctl[1] = readl_relaxed(pll->ctl1_base);
++			pll_freq = ma35d1_calc_pll_freq(pll->mode, reg_ctl, req->best_parent_rate);
++		}
+ 		req->rate = pll_freq;
+-
+ 		return 0;
+-	case DDRPLL:
+ 	case APLL:
+ 	case EPLL:
+ 	case VPLL:
+-		reg_ctl[0] = readl_relaxed(pll->ctl0_base);
+-		reg_ctl[1] = readl_relaxed(pll->ctl1_base);
+-		pll_freq = ma35d1_calc_pll_freq(pll->mode, reg_ctl, req->best_parent_rate);
++		/* Configurable PLLs: find closest achievable rate */
++		ret = ma35d1_pll_find_closest(pll, req->rate, req->best_parent_rate,
++					      reg_ctl, &pll_freq);
++		if (ret < 0)
++			return ret;
+ 		req->rate = pll_freq;
+-
+ 		return 0;
  	}
- 	return pll_freq;
+ 
+ 	req->rate = 0;
+-
+ 	return 0;
  }
+ 
 -- 
 2.43.0
 
