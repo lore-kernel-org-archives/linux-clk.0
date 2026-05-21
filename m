@@ -1,57 +1,56 @@
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8312339EF3D
-	for <linux-clk@vger.kernel.org>; Thu, 21 May 2026 08:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A4239AD3B
+	for <linux-clk@vger.kernel.org>; Thu, 21 May 2026 08:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779350417; cv=none; b=TwyhNq1Ljy3LeKruMIWrUPGskqKea1vXZJpeE5D1d+1PRX/CMF+YruK9NHBEbiJcphP2Bd6eCeBDcLYeKiz2UXtuV8u94IBdR6I6DhnJVrPERdWD7gaP7WqITfR4XCpIDvqJMqgli69AFCYkqxpL69F7t+8N8ArdIDgdMDAn0+8=
+	t=1779350906; cv=none; b=AwPJUTrPrIeYqac8jHCyAy4fSszIkn3kT+25gpwKUQIAz6+Plqg44KLmMxVNTTiqlIvdKMf+LC+WK491tCWVM9StVT3zj3mx4NpGCT+nMBtWIEdd/+VystWWwZTtIjbXcpWEaB4Q0aVKdoQrxlAdv0TvkNxNINTJOPxAtE5SYwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779350417; c=relaxed/simple;
-	bh=Elps9fBi5BZscgNouP94RbYaiN1UBZynj82GY8eI3js=;
+	s=arc-20240116; t=1779350906; c=relaxed/simple;
+	bh=+RDLim/geriyK6BHkVN+y+fbAsLHqr+xXa+qxaKtufQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Tful8KAsP8cwMiXnp/oGYAWCrLeyTexyqY6Ya94fVGb5fJgPrKbAHVdXac4+ohY+BGtIyLPiaDJwl7dX864JIKpS6YP10Y5gAe3QX8R709UVUVt36fA2qlKr35zOx7SpKTlHArLsep1u98j49oXU1C8hv0gbB2M2pUaKTlN6/6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.169
+	 To:Cc:Content-Type; b=SH//ry0Lopl5djAZkHwbDMxyQH+KNW9HJCGKObkCt51HJsI3yUXKITgO4MtsfDDiBDE3ZjO+GZdC8aFW7HwiWpO85ITGpPHI3mKYDUzbmahMG3mtOoPtmTiZGkkOjkRCD40XEXm7a97OlQE0JukiSoZuBr1kiJq4X07BbwLfpTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-83ef1d17904so5802921b3a.1
-        for <linux-clk@vger.kernel.org>; Thu, 21 May 2026 01:00:15 -0700 (PDT)
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-479eb8bcacbso3924175b6e.1
+        for <linux-clk@vger.kernel.org>; Thu, 21 May 2026 01:08:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779350415; x=1779955215;
+        d=1e100.net; s=20251104; t=1779350903; x=1779955703;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8G/x4JJtOPaC66y0xIpsyhNcO8UWKG9STKYzUChGp/o=;
-        b=ZQJHOtchYvNM7ej0tInEtQgFKTDf6kKPTnqpOYzr7BCEuhyJOjkMYVXMCCnl0CNQoO
-         NjvjpP1dGT0YWNFbTAeda62Lgo+hx86e95zmfz91gbXhtmiIT6hiRG3LK8slfWwLK6Ma
-         wqJcDwthyiq2qfCFZt+Y7mWRUTz5BdOF4fQDmyXOMeAl0EI9ljYWaFsCFvACrTbSx8r4
-         oKyprVybQMTBBtx695ACiVR1rw9yIN506p4eMGtLqSJlA5+YBCcE1pPuDKca9uPvyO5y
-         ROUDF2Kco1bfH3zkUPwPw9/etgZAd6Jpmm68Ak7VsWhoyCGr/stnVGv+Rh8Ywd+jX7dc
-         d/ig==
-X-Forwarded-Encrypted: i=1; AFNElJ/c1Rw7sJbpXYTYB3Hz6pChIF6kePpZX+MUrkTJR6qS8wQJG9T/k9RdyP49LVtpAlt6R/wuxczNqgI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2NRrZDeBkLpYmubOTnZJjCyIEyTtBfXRuPoS98vrp1BYZwrnP
-	B07rhFFeLNIwCdfrNC2oNDQwAqCzfXY3wmbVB0rA+cissL6lhccgwTNQhIfK0y32ff8=
-X-Gm-Gg: Acq92OFMAZZ79YZSn1p+8AzbZMSi3X/EbdcTP4Etgx/77To2gdaV69VA558/LinseMe
-	F1lmtCEJZtDSJaVClOa8bHCJPeXn6IOBHxp+KMpKXz1lopwEPbUY44h4Ivy0WMlrPjaIIE+cTZa
-	AwGlBqZCLxYjlcpvFu0d7+oiIWKG7Gw7crFg+XM8ItNTdsWfOlYY9ogwcEcVWCmTt8UqhTpWh+T
-	hNMSiwTL1UiVzcbjGQlrn00v9B5RS2x3B18qf5koqlAT8g4jcT9XgSIl1/VQgetWGSscJxQQ57m
-	I+DX/CgTul7CCogjTcGbdHcv5GvoW+KG7OH5RzIWcGgO/Yp74jc/h0gI6/0LIE0tkyRBpxHfSnG
-	LOium4J5LNaLXfZz8PgdWJ5iTmdm4xGqe8PZVfj/w094j0YrxRwizGhQMTd3jUijx1qwOj0b84X
-	cCdzudDyeIxpgGpPjkqI3xdKz7+j/LYuiQVH0X3RecS9XKxq7aUftiR0ZNtMuU72QYO7XZQzQ3Z
-	14=
-X-Received: by 2002:a05:6a00:301c:b0:82f:6858:3f6 with SMTP id d2e1a72fcca58-8414aaf4c25mr1987137b3a.0.1779350413786;
-        Thu, 21 May 2026 01:00:13 -0700 (PDT)
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com. [209.85.215.176])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84154a04990sm432039b3a.21.2026.05.21.01.00.13
+        bh=kh5ilGfgBOd7IY4hv5kPF1I4gBzJqYiKUxJVuEQxYWY=;
+        b=Q8QqgaN+fJhSvXR/4dEg5Gw1LUdfDsjsOVMXT1B7GdqVehfHtsCHDKP3b7N9CYcCE/
+         KefgmNR+aXg6iT402SZvAZTgGBxwIvl70YxgrVb+bH/oXfQQ957PNi0b7+NmAL5K7+F3
+         ZhYiDvBQohYRNC2UqMVr3vgtmGQCXPu34NQ87kBZXa6bzzlk6AK7gH0bxU2iqXhKYwqi
+         n91vHLMP+pBQPDZpIVOroZrDRZOtSIRouOQdSRVkBmPKUXdqRv6Hxo06TQtBJAQXNYMj
+         rQoJwm3gawdwg8q4GduJCIgkjjrJebak7//RyetNNh4QOBPzINa5FtVKHwQPS2Xasw1w
+         DdvQ==
+X-Forwarded-Encrypted: i=1; AFNElJ8vtClre1kIXGq9QMpbXt6Kr33GfCPRn8y80A639oEL1j1Pkbxy21c+3uFqyyuUVzH77uo8S5oQ6Mg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvhTlMw0pZpaYEMapG1RYmjYp2L3gwML9KG4SgzIVcQNX6/uzY
+	NpCnCjVuLPPpzCG5M5MVydXU4Nisu/Vgmm8oltx6c/nK6lMBY9ZQ6ed6QNejaaDH7NU=
+X-Gm-Gg: Acq92OGLXCb5oVtPVh3nIr8nWwlCJ9IjFxsV/YylaV4THKHAY7+qSipJH7Hi1kIOmy1
+	OWOpi6oJDghMn0mA4mHUzuaRy9Dp6H1xC2A33wjut3JV6tuSDrtgNklbEcT5j3TOyL3ozG2tHdB
+	hdGdRN+khw+H+/hYS2FfX3czWPrkIcFMWACvi0EkBmwY3SjI0fI4PQ41/6Yz5yt0f6tS5qvWDYX
+	flzVDN9i9KE0KkhUfaywUc+zO5Bdx4XHRpeTo65BWnKsGIQmD3+GeyycmyBL0aJXy+6By0hQaIx
+	J1WPlWXxCAbL7N8CsQChTmVuMaH4LTU9RAww4hE5Qw2IsGzvlyE72ayUuUSmq3Nh7lVPKVLOaTW
+	UtlqsOEYT2+D/bReEmnkqhN8W75epazFs7SM+NnyCjBxGrMm5DeonjH1CPGvfwNqctHgVih7P6D
+	CXHNUPkeILkYeLj22Urv0ea8V7yPNptQJtgQF6noS/fVZttHQYi0mYWwye2Vug
+X-Received: by 2002:a05:6808:2395:b0:464:3d5d:d9d4 with SMTP id 5614622812f47-4852ed7cc84mr929461b6e.39.1779350903180;
+        Thu, 21 May 2026 01:08:23 -0700 (PDT)
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com. [209.85.160.48])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-482ee533acbsm9451686b6e.13.2026.05.21.01.08.22
         for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 May 2026 01:00:13 -0700 (PDT)
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-c795f441ff7so4649953a12.2
-        for <linux-clk@vger.kernel.org>; Thu, 21 May 2026 01:00:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ9CeTsC7He2xlvY5JmpG7twY6TaK1Y2Y1prwexATZeiJXRouOOfMCMyIUVeRoH5xUa8bRMKSEYjLjo=@vger.kernel.org
-X-Received: by 2002:a05:6122:235:b0:575:a5b5:3233 with SMTP id
- 71dfb90a1353d-58424155ad5mr536200e0c.4.1779350001458; Thu, 21 May 2026
- 00:53:21 -0700 (PDT)
+        Thu, 21 May 2026 01:08:22 -0700 (PDT)
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-439c00ed7e0so5253767fac.0
+        for <linux-clk@vger.kernel.org>; Thu, 21 May 2026 01:08:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ8vDTywUGw5qqdUN/ATs/F07/C5R+MjobYvvQJzbv04lazNVqyZVEmrnnRinZzlAeRtgz2Dvj7pZE0=@vger.kernel.org
+X-Received: by 2002:a05:6102:952:b0:660:cba2:b6a5 with SMTP id
+ ada2fe7eead31-6738d46a2c9mr965451137.7.1779350455953; Thu, 21 May 2026
+ 01:00:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -59,19 +58,18 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <cover.1776793163.git.geert+renesas@glider.be> <72e2a0e7a5abda02fe36b3f5851842f7a77b2593.1776793163.git.geert+renesas@glider.be>
- <aekXUvIPb8nkhdKu@pluto> <CAMuHMdWJvMH+a1RqozbaCxxH_8M569JcruTFa8PW+87FysnjHw@mail.gmail.com>
- <ae6Zp54NhKlVes8J@pluto> <CAMuHMdWK3Noh5ZQVWT9C0EKyXZePMaJ97C0A_syK+xCb_=abeQ@mail.gmail.com>
- <agooKghZJw3iElvp@pluto>
-In-Reply-To: <agooKghZJw3iElvp@pluto>
+ <aekXUvIPb8nkhdKu@pluto> <CAMuHMdX8b9C3D8fV5th6GCgs6JAq7HZbF_SrOKz_gDy2H8ksow@mail.gmail.com>
+ <agor5HJ0JFBoX3sZ@pluto>
+In-Reply-To: <agor5HJ0JFBoX3sZ@pluto>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 21 May 2026 09:53:09 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU8VRCOZtLrM2EoHFmhd5XFs8cwXc2A1tPTTr01KvUx0g@mail.gmail.com>
-X-Gm-Features: AVHnY4LC2rjbQG8RkBy_xv_1xXXocYwPF3Jc-uBUk0RJlVpVup9HQXGw37O9RpM
-Message-ID: <CAMuHMdU8VRCOZtLrM2EoHFmhd5XFs8cwXc2A1tPTTr01KvUx0g@mail.gmail.com>
+Date: Thu, 21 May 2026 10:00:44 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWJrXcp7_S-KTKQJ8NuVhywiCWEHXMVvWkTFZwnmQayyA@mail.gmail.com>
+X-Gm-Features: AVHnY4LKAf9GYj9Cj8Ma9x6mjosVr-AC-oJEzWQ_9yBj7Yua2eAsFSXzEFT0UeE
+Message-ID: <CAMuHMdWJrXcp7_S-KTKQJ8NuVhywiCWEHXMVvWkTFZwnmQayyA@mail.gmail.com>
 Subject: Re: [PATCH/RFC 05/14] firmware: arm_scmi: Add scmi_get_base_info()
 To: Cristian Marussi <cristian.marussi@arm.com>
-Cc: Sudeep Holla <sudeep.holla@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Sudeep Holla <sudeep.holla@kernel.org>, 
 	Magnus Damm <magnus.damm@gmail.com>, Saravana Kannan <saravanak@kernel.org>, 
 	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
 	Philipp Zabel <p.zabel@pengutronix.de>, Ulf Hansson <ulfh@kernel.org>, 
@@ -87,148 +85,95 @@ Content-Type: text/plain; charset="UTF-8"
 
 Hi Cristian,
 
-On Sun, 17 May 2026 at 22:42, Cristian Marussi <cristian.marussi@arm.com> wrote:
-> On Fri, May 08, 2026 at 12:26:19PM +0200, Geert Uytterhoeven wrote:
-> > On Mon, 27 Apr 2026 at 01:03, Cristian Marussi <cristian.marussi@arm.com> wrote:
-> > > On Fri, Apr 24, 2026 at 02:08:55PM +0200, Geert Uytterhoeven wrote:
-> > > > On Wed, 22 Apr 2026 at 20:45, Cristian Marussi <cristian.marussi@arm.com> wrote:
-> > > > > Also because this should be one of the selling point of the SCMI stack
-> > > > > in a virtualized environment: you can ship the same kernel drivers with
-> > > > > the same DT and you know that ID=<N> will always identify the specific
-> > > > > resource that is needed by your driver without worrying about the fact
-> > > > > that in reality in the backstage the effectively managed physical resource
-> > > > > could be different across different platforms, because that does not matter
-> > > >
-> > > > This sounds strange to me, do I understand it correctly?
-> > > > So the ID should (1) be tied to the use-case, and not to the underlying
-> > > > hardware, and (2) be the same for different platforms?
-> > > >
-> > > > For (1): Then we must not put these IDs in DT at all, as DT is supposed
-> > > >     to describe the hardware (and firmware IDs in DT were IMHO already
-> > > >     a stretch before).
-> > > > For (2): How can there be a contiguous list of IDs, as not all platforms
-> > > >     may have the same underlying hardware?
+On Sun, 17 May 2026 at 22:58, Cristian Marussi <cristian.marussi@arm.com> wrote:
+> On Fri, May 15, 2026 at 05:39:45PM +0200, Geert Uytterhoeven wrote:
+> > On Wed, 22 Apr 2026 at 20:45, Cristian Marussi <cristian.marussi@arm.com> wrote:
+> > > On Tue, Apr 21, 2026 at 08:11:38PM +0200, Geert Uytterhoeven wrote:
+> > > > Currently non-SCMI drivers cannot find out what the specific versions of
+> > > > each SCMI provider implementation on the running system are.
 > > >
-> > > I would NOT say that an SCMI FW must behave like this regarding IDs, but it
-> > > is a possible SCMI deployed setup that can be useful in virtualized setups
+> > > Thanks for your patches....this is not a proper full review of the series,
+> > > BUT this patch catched my eye..
 > > >
-> > > I mean, the DT describes the hardware of course BUT when you refer to
-> > > some of this hardware DT bits from some other subsystem by referencing a
-> > > phandle, even in the non-SCMI world, you are in fact selecting a specific
-> > > resource that fit you use case, right ? Can we say this ?
-> > > I mean you needed that specific clock or regulator that you described
-> > > previously so as to be able to enable some other piece of HW...
+> > > Indeed, yes, it is deliberate that the SCMI version information is NOT
+> > > exposed out of the SCMI world, since being the SCMI an attempt to
+> > > standardize a common FW interface (as in [1] of course), you should not
+> > > know what runs inside the black-box, it should be irrelevant...
 > > >
-> > > Now, the SCMI provides an abstraction on top of this, since you really
-> > > discover domain IDs of a specific class (clocks/regulators etc) you are
-> > > in fact describing an HW abstraction that you then refer with the usual
-> > > phandle...also because there is NOT so much SCMI hardware to describe,
-> > > given that the HW is handled transparently (opaquely really :P) by the
-> > > driver on the FW side...
-> > >
-> > > ...you basically obtain such domain ID, usable as phandles through dynamic
-> > > SCMI enumeration so that you can use it all over your DT to make use of such
-> > > resources...
-> > >
-> > > ...on top of this, consider that the SCMI server CAN provide to its agents
-> > > a per-agent-view of the world, IOW it can (and should) expose to a specific
-> > > agent ONLY the resources needed by that agent, i.e. it can expose the set
-> > > of resources 1-N to two distinct agents and that does NOT mean that the
-> > > underlying physical resource mapped by ID=3 in both agents has to be
-> > > effectively the same piece of hardware: it could be the case, and this
-> > > would be useful to exposed and managed properly a shared resource, or
-> > > it could also be that the same ID=3 could refer to completely distinct
-> > > pieces of the same class of hardware...(same protocol same class of
-> > > resource...)
+> > > ...indeed the versioning is used inside the SCMI stack to deal properly
+> > > with different protocol versions implemented by the server OR to apply
+> > > proper quirks when needed, but all the rest should be standard....
 > >
-> > Exposing only the clocks/reset/power domains the agent can use,
-> > in a contiguous list of IDS, means that the number space changes,
-> > depending on which resources are exposed.
+> > [...]
+> >
+> > > I watched a bit of the LPC discussions around this (from Marek I think)
+> > > but sincerely most of those problems had one (not necessarily simple)
+> > > solution: fix your firmwares AND/OR apply quirks in the meantime...
+> >
+> > So let's forward to the future, where the firmware is fixed, is fully
+> > compliant with the SCMI spec, and all IDs are stable, so no quirks are
+> > needed.
+> >
+> > Where do we specify the SCMI IDs to use?  Unless when using the
+> > remapping driver proposed in this patch series, they must end up in the
+> > DTB.  Existing upstream users put them either in the SoC-specific .dtsi,
+> > or in board-specific .dts.
+> >
+> > The SCMI server is supposed to expose to an agent (e.g. Linux) a
+> > sequential and contiguous list of IDs that represent only resources that
+> > the agent is allowed to use.
+> >   - We cannot put the SCMI IDs in the SoC-specific .dtsi, as that
+> >     describes all hardware in the SoC, which is typically much more than
+> >     Linux can or even wants to use when running on a specific board.
+> >   - You would think we could put the SCMI IDs in the board-specific
+> >     .dts.  However, that would limit actual use cases later, which do
+> >     not necessarily depend on the board solely.
+> >       - E.g. when moving control of the CAN-FD controller from Linux to
+> >         the Realtime OS, the CAN-FD node must be disabled in the DTB (by
+> >         overriding status to "reserved", or by just deleting the CAN-FD
+> >         node, both of which can be done by the boot loader). However,
+> >         with SCMI, the IDs corresponding to CAN-FD resources must be
+> >         removed from the ID space, causing a full renumbering. Who is
+> >         supposed to update the IDs in the DTB?
 >
-> Yes, potentially, it depedns on how the HW/FW stack was designed I
-> suppose...
->
-> > Suppose you have a system where you want to assign a specific hardware
-> > block in the SoC to the realtime CPU core instead of the application
-> > CPU core running Linux.
->
-> Ok, so this is definitely a considerable change.
->
-> > That means all resources used by that block must no longer be exposed
-> > to the Linux agent, and the corresponding IDs must be removed from
-> > the ID space exposed to Linux.  As the ID space must be sequential
-> > and contiguous, the IDs must be renumbered, impacting resources that
-> > are exposed to Linux.  As these IDs are used in the SoC .dtsi, they
-> > must be changed there, too, However, these IDs have become part of
-> > the stable DT ABI, and thus cannot be changed.
->
-> Well, you have to ship a final DTB blob that is crafted to describe the
-> actual HW at the end, right ?
->
-> I mean, in your example, it seems to me that you have changed considerably
-> the HW surface by moving a clock (and its related resources) away from the
-> reach of Linux as a whole, so should not be expected to have an updated
-> DTB shipped ?
+> As per my previous email, after such a breaking change I would expect a
+> new DTB describing the new HW to be needed anyway.
 
-It is not necessary to ship an updated DTB.
-The bootloader stack can just change the "status" properties of devices
-nodes that are be taken away from Linux from "okay" to "reserved":
+The underlying hardware would still be the same...
 
-Devicetree Specification, Release v0.4, Table 2.4: Values for statu
-property states:
-
-    Value: "reserved"
-    Description:
-        Indicates that the device is operational, but should not be
-        used. Typically this is used for devices that are controlled
-        by another software component, such as platform firmware.
-
-When all SCMI IDs change, too, much more work needs to be done.
-
-The remap driver could also help here: it could scan for device nodes
-that are marked "reserved", remove SCMI IDs used in these nodes from
-its internal tables, and adjust all later (higher) IDs.
-
-E.g. the existing drivers/clk/renesas/renesas-cpg-mssr.c already handles
-(ignores) clocks used by reserved nodes.
-
-> And I am NOT saying to do this by changing the base SoC dtsi, but via build
-> time overrides and/or runtime overlays so as to derive from that same SoC
-> base dtsi a properly reviewed final DTB that describes how the HW has actually
-> changed, becasue beside the renumbering that you mention there will be
-> also a bunch of HW pieces that were relying on that clock that now will
-> have to be removed from the DTB if no more usable (or remapped to use a
-> different, maybe non SCMI resource)
+> >       - E.g. when partitioning a single Linux system in multiple VMs,
+> >         and distributing hardware across these VMs, all VMs need
+> >         different DTBs, each describing a subset of the hardware.  With
+> >         SCMI, each VM needs different SCMI ID spaces, causing not a
+> >         simple partitioning of the devices in the DTB, but also a
+> >         renumbering of all IDs.
 >
-> I maybe too naive and not used to very complex DTBs, but why all of the
-> above cannot be done along the lines of how is done as an example in
-> JUNO [1], where some initial base dtsi was overriden by virtue of includes
-> and overrides to properly describe the board at hand (r0/r1/r2), even going
-> to the extreme, funny enough, to move from the old SCPI to SCMI.
->
-> [1]: https://elixir.bootlin.com/linux/v7.0.8/source/arch/arm64/boot/dts/arm/juno-scmi.dts
+> Ok now I am lost..why do you need a distinct IDs space for each VM ?
 
-As long as the IDs in arch/arm64/boot/dts/arm/juno-scmi.dtsi
-match the actual SCMI implementation, that works...
+Aren't the different VMs different SCMI agents?  If not, how do you
+prevent them from stepping on each other's resources?
 
-> > This patch series fixes that issue, too, by describing the actual
-> > hardware in DT, and doing the mapping to exposed SCMI features in the
-> > kernel, based on which firmware version is running on the SCP.
->
-> Which seems to me to go in the opposite direction to what SCMI expects:
-> but I understand that we have to deal and cope with the existing already
-> shipped FW, so my concern is not really around enabling this in particular,
-> is much more the fact that we open the door and normalize this kind of
-> design even with future, still to be developed, SCMI FWs.
->
-> ...otherwise...have the spec changed/clarified to allow for such
-> non-contiguos IDs...
->
-> ...anyway let's hear Sudeep opinion on this general issue of contiguos
-> remapped IDs and being able to peek into SCMI version from outside the
-> SCMI world...
+> In a virtualized env, I would expect to leverage the SCMI stack to
+> realize the exact opposite: same set of IDs advertised to each VM (and
+> so same DTB potentially) by the server which in turn can decide to
+> assign the same device (and handle the sharing) to some ID or assign
+> different devices to the same or different IDs on each VM: i.e. you
+> have a set of virtual_IDs that is what the server exposes to each VM
+> SCMI agent, and then a bunch of real physical IDs, without any contraint
+> on their numbering, that the server uses in the backstage to refer to
+> the real resources and that it properly remaps to each per-VM set of
+> exposed virtual_IDs during the build and/or boot board configuration
+> phase....i.e. when the FW adapts and reconfigures to the specific
+> board that is finally running on.
 
-As long as the ID space becomes stable.
+Again[1], how would that work?  Clock, resets, and power domains are
+not the final resources that are used by the OS.  They are merely
+resources for devices that are described in DTB with other resources
+(MMIO register ranges, interrupt numbers, ...) which are not handled
+by SCMI.  If the server remaps e.g. a clock to a different clock,
+it will no longer work with the corresponding device described in DT.
+
+[1] https://lore.kernel.org/all/CAMuHMdVunEehM01pLa3t5a6o0NmMOCQRwh7n5J+OkDk2YR9kUA@mail.gmail.com
 
 Gr{oetje,eeting}s,
 
