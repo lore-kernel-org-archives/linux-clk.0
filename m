@@ -1,67 +1,79 @@
-Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53FD738B122;
-	Fri, 22 May 2026 13:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779454856; cv=pass; b=Q47HyvoQ83xIojeBgvvw5paltdSKsMiATp3K8DUwb4grOlIXljS7f34VNpsZFx//QyTkONiSXqZEuSVtcjiVFLmBAGHM/ZhD3Z8S3A7tlZoVMpHLgsRcKLMDvNVpmlQ0BKVYCYOOAUblXrdmhNYHdhXets3B/dnXijVIqCgAmR4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779454856; c=relaxed/simple;
-	bh=2a2Ues8oit5F0hamVRvNnhy1TDmBusJ+DQa9IX5JqNQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZMBEKrB4Ldx0xeLTWQC+YpK4oXSfU2Bl4yMjNX1pSOYD/v175fJpnQxhKz3wZCNNxbg4vrXGOi/qO5wpFCk9XSOmed13Mft/7/xYs36LQvCwoFGRWrdDOJUF229y8GUZRg94YqH9M9QfAMMi2sFa7alVd9v2b6z9ojq1owWKvno=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=LZNgU1Uw; arc=pass smtp.client-ip=136.143.188.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB57F3BBA08
+	for <linux-clk@vger.kernel.org>; Fri, 22 May 2026 13:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779456643; cv=none; b=DvZHQQ9vJGPaPnr7Fqv+TO/loEv8/NGD76vp8622NPCLiZD9gU2eVJACe8qJ8RoSyq8EpW4QltKr+mjXU05ziEM1VbDZV2Zettlh+w11NoY08W60Q/jQj4jcdROy1CF6RZ5EeqRVrwtLYKuVyqfcxx177OuSNfTR1sb7m6DchdY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779456643; c=relaxed/simple;
+	bh=50z5aLe/utRyMRS+DG9tTAyot6zu9u8aqp2TcBzvdwU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j2+9xI9UjuPS0Vm4eyGH3J7YBAJY5xzgVG1y41ICzyWZ20Sdoyo5d5ySJyWsdz3+owXgnRXcj/ip146hmVUGLmeI/YQkaxH8krlulmGJdw+Le/NHPjTNDEPbz5n+55YMbuuQx9H7SsBe/3dkESRzyPJWR0wyKN2GwHuO/1NvrEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XfYe2Dbu; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="LZNgU1Uw"
-ARC-Seal: i=1; a=rsa-sha256; t=1779454836; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=mXHalvZ2De87nqdd+Qu9KejK7X7MjBsUkinnEita0NpFch6ur7DdcDRoqF5KC5Fj2Omk3eO8X5XSy6IlZ6FHTc1qMRoWoKvCSOM2xNmqSoXRG9Z151NwXa/ZrEkNpJxzXONpLjgP5qtYE5n+/WFiun4t0GzFG9TtpQus8BHteIM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1779454836; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=JX4/HzHgr9Ln2K8EGkhp70E2oDhc6Dp0qS3CpdjxcfQ=; 
-	b=JEB+Q9kwAq8S+OunkVsGFsekfZ9tc+ZY9ZUMJmV+1qFYAqVV40vfTA/POq7At6oj0T26IfumIjLbAg5GyJtMeJbZPE+BTP4wW/psuUaiygKGa+C7vmIA7SbuyIZqA2UqH+8eKTWPuAyyt8LElyvywS9ai0Em995/TpUUQI5qzu4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
-	dmarc=pass header.from=<kingxukai@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1779454836;
-	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Reply-To;
-	bh=JX4/HzHgr9Ln2K8EGkhp70E2oDhc6Dp0qS3CpdjxcfQ=;
-	b=LZNgU1UwZJKElt8ZqwmVKwQcyAxKscQZEb7E8wVgPi/WkeBfHNVYQnTs6MOWtlOc
-	BAI7vOXBBOJLSH2zzdyPXRvm8cGL1feHbggGYDzMDI4ECTwwOOE9R1hw18GPbhSWHrc
-	UKP6Xgu8diFjXdUgXtSu5j6JyS9wyLvvbZsq5C2Y=
-Received: by mx.zohomail.com with SMTPS id 1779454831935958.224223537089;
-	Fri, 22 May 2026 06:00:31 -0700 (PDT)
-From: Xukai Wang <kingxukai@zohomail.com>
-To: Conor Dooley <conor.dooley@microchip.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Conor Dooley <conor@kernel.org>,
-	Xukai Wang <kingxukai@zohomail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XfYe2Dbu"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2b9fcf7c91bso79212665ad.0
+        for <linux-clk@vger.kernel.org>; Fri, 22 May 2026 06:30:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1779456641; x=1780061441; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XCbc6evCAnW5/Lk0bejiMZ9J5LObQXJ3ouBPH/v5c+8=;
+        b=XfYe2DbuB34FZb8SQXY4wpNoPLDesRoVUR4xPnZFLs+eQ8DA7SpBzNDsFTUJaZHzGf
+         zFUsoIN30IGqV7ub0vN382Zq84aLiW50NcxLuJfg4kgQAkTiXQIj0ZWd5mVi6Tqz9V7t
+         T+roTdbpH3NuvqWQiBBdtiUSvNcSEtJwRSr/JhCjlB44zrx1Z70Nb6zZXA3Pk516FK4T
+         oFfUPU8aRjdm55ZBVGUOFkBgVMXOxwCLyBHbZkewiopcrfOV1KI/6W88Bg+kLh2kCiix
+         lZzmCOoo5E42Bhh9Vbh3r1tCK8K0THHMWHRqcyuJKMlQPEeX+ZphLtZpVVgjQs5CzmZ9
+         +IVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779456641; x=1780061441;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XCbc6evCAnW5/Lk0bejiMZ9J5LObQXJ3ouBPH/v5c+8=;
+        b=ZjmrGajZvdvJEZ5bzbFl/U5iJIHcLfcC4y46A1zf4yU3csgI2spOVqFykJS9HwkJd0
+         eqAaljTmCPut9wXNEDg4Jd0Dt0RpmITXwH+2dwaQYjq8PsKU0idRwg8DODXuqXcknrKa
+         +yDZBjIpiuoshbwn8DU2TZ2EnkrLypAls2WIuAJGEKWN4/i3aAag0ztM8ryRr2EUcamt
+         X1wbpbhxSdS/I5yRxhABwGAsiuvNrtp4oluuMHXQAvnG55nwEA+MG3kp7WoyFVvfHcAD
+         rXMoSNBUCxEy/c8b2LHgLAzDBjs3q/DioR9nBj45kZmvPgTS00kib7yChxZhLPgo+y0V
+         uC1g==
+X-Gm-Message-State: AOJu0YyKyPOZUlxLIA1i+QeayC0sPntKNU+vvo7q3Nvk7krWaBtn3Y+5
+	mSN3yd+aF5Sa7ZYUTiBGO+WPJ4AIxcCkG3OdRZB5xAguxdedpykQxY4U
+X-Gm-Gg: Acq92OEwpdCrvLCaTjYN3WdJQtH+R6InkIhgmDCiA9IY3YLSgJD72Ah68xwoo1jisun
+	Xi9RxrEPDHg16FWGyE+XsxhkygUzDT0eCpxCQx6EMcY2n9F+kaglNfFawD2Twd7bH44WmpmFyeX
+	9UXvPEQDEryxS2shGekd8hrOQ3pwNP+KTtdnVvivU7WS7LT0zmiZTZ0GnCROJgZOvU33M0NAzAy
+	hPo3ad6j3MvihUK8tnRBvosn8bU9/m9nOnbo/NnV1wnBoRTllldMexd0wuNhdWXBOv4+t3bjAzz
+	CPDT+M1PgCJ7GVZmBlkF5rrW2z+/QBOjFfXUwez4EtggSPL4LYggQ20vWdC+/P0L2R4aAn7u1Rw
+	yUCq8lpWHAUGF22Z1VPeC2FJ0JrS62UalPVziG5L+qxYovhly48XnknaJXe9/TSYOk3fjucAwmw
+	p+NXoa0bn+aUhSjEQF9Iy3jMLi3AwiYx+XCLMmUSVZ2uY3RFpJCjsCLT0u8V/5OnnJuh0U298av
+	25KVRU=
+X-Received: by 2002:a17:902:ce84:b0:2bd:3bfd:74f2 with SMTP id d9443c01a7336-2beb0593137mr38054985ad.10.1779456641134;
+        Fri, 22 May 2026 06:30:41 -0700 (PDT)
+Received: from buffalo-ssd.taila54753.ts.net (M014013071096.v4.enabler.ne.jp. [14.13.71.96])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2beb5695f05sm25147605ad.6.2026.05.22.06.30.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 May 2026 06:30:40 -0700 (PDT)
+From: Akari Tsuyukusa <akkun11.open@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	bmasney@redhat.com,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	wenst@chromium.org,
+	laura.nao@collabora.com
 Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Troy Mitchell <TroyMitchell988@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH] clk: canaan: k230: Fix sparse warnings reported by LKP
-Date: Fri, 22 May 2026 20:59:12 +0800
-Message-Id: <dee4605ca30f9bbd55ccb4fcce9590ceee1fa10b.1779453284.git.kingxukai@zohomail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260522-eligible-vivacious-3ce9bc30dd53@wendy>
-References: <20260522-eligible-vivacious-3ce9bc30dd53@wendy>
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Akari Tsuyukusa <akkun11.open@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] clk: mediatek: mt8196: Select REGMAP_MMIO for vlpckgen
+Date: Fri, 22 May 2026 22:30:23 +0900
+Message-ID: <20260522133023.355404-1-akkun11.open@gmail.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -69,52 +81,34 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Feedback-ID: zu08011227c6335346a63148b9f6cec2f70000b3c03c513edafb3405058bc9ea8ac70ec1c949f9169db7a4fa:ZohoMail
-X-Zoho-CM-AccountID: 2ee5dd3c83366259b2ba1e9826250ffebed1ef2dd213857d649ad25aba73b429
-X-ZohoMailClient: External
 
-Fix all sparse warnings detected during LKP randconfig testing:
-- Replace plain integer 0 with NULL.
-- Add static modifier to k230_plls and k230_pll_divs.
+The MediaTek MT8196 vlpckgen clock driver uses
+__devm_regmap_init_mmio_clk() by devm_regmap_init_mmio(),
+which is defined in drivers/base/regmap/regmap-mmio.c.
+However, the driver's Kconfig entry does not select REGMAP_MMIO.
+This causes a linker error when REGMAP_MMIO is not enabled.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202605220724.j4ZeM3KI-lkp@intel.com/
-Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
+Fix this by selecting REGMAP_MMIO in the Kconfig entry.
+
+Fixes: 2f8b3ae6f0cb ("clk: mediatek: Add MT8196 vlpckgen clock support")
+Cc: stable@vger.kernel.org
+Signed-off-by: Akari Tsuyukusa <akkun11.open@gmail.com>
 ---
- drivers/clk/clk-k230.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/clk/mediatek/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/clk-k230.c b/drivers/clk/clk-k230.c
-index d883a1e1118e..cfc437038e4e 100644
---- a/drivers/clk/clk-k230.c
-+++ b/drivers/clk/clk-k230.c
-@@ -270,12 +270,12 @@ static const struct clk_ops k230_clk_ops_mul_div = {
- 	.recalc_rate	= k230_clk_get_rate_mul_div,
- };
- 
--K230_CLK_PLL_FORMAT(pll0, 0, CLK_IS_CRITICAL, 0);
--K230_CLK_PLL_FORMAT(pll1, 1, CLK_IS_CRITICAL, 0);
--K230_CLK_PLL_FORMAT(pll2, 2, CLK_IS_CRITICAL, 0);
--K230_CLK_PLL_FORMAT(pll3, 3, CLK_IS_CRITICAL, 0);
-+K230_CLK_PLL_FORMAT(pll0, 0, CLK_IS_CRITICAL, NULL);
-+K230_CLK_PLL_FORMAT(pll1, 1, CLK_IS_CRITICAL, NULL);
-+K230_CLK_PLL_FORMAT(pll2, 2, CLK_IS_CRITICAL, NULL);
-+K230_CLK_PLL_FORMAT(pll3, 3, CLK_IS_CRITICAL, NULL);
- 
--struct k230_pll *k230_plls[] = {
-+static struct k230_pll *k230_plls[] = {
- 	&pll0,
- 	&pll1,
- 	&pll2,
-@@ -296,7 +296,7 @@ K230_CLK_FIXED_FACTOR_FORMAT(pll3_div2, 1, 2, 0, &pll3.hw);
- K230_CLK_FIXED_FACTOR_FORMAT(pll3_div3, 1, 3, 0, &pll3.hw);
- K230_CLK_FIXED_FACTOR_FORMAT(pll3_div4, 1, 4, 0, &pll3.hw);
- 
--struct clk_fixed_factor *k230_pll_divs[] = {
-+static struct clk_fixed_factor *k230_pll_divs[] = {
- 	&pll0_div2,
- 	&pll0_div3,
- 	&pll0_div4,
+diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+index 2c09fd729bab..fd8440122ec2 100644
+--- a/drivers/clk/mediatek/Kconfig
++++ b/drivers/clk/mediatek/Kconfig
+@@ -1006,6 +1006,7 @@ config COMMON_CLK_MT8196
+ 	tristate "Clock driver for MediaTek MT8196"
+ 	depends on ARM64 || COMPILE_TEST
+ 	select COMMON_CLK_MEDIATEK
++	select REGMAP_MMIO
+ 	default ARCH_MEDIATEK
+ 	help
+ 	  This driver supports MediaTek MT8196 basic clocks.
 -- 
-2.34.1
+2.54.0
 
