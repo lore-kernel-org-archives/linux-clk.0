@@ -1,153 +1,416 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27DB3793A5
-	for <linux-clk@vger.kernel.org>; Fri, 22 May 2026 12:14:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D2C39D3D4;
+	Fri, 22 May 2026 12:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779452084; cv=none; b=hAsShZ/fIMVz1pNWEmpNXwUIN78YL1e1PoXX4N6VgQaVgxdEFn3v2+v2jJ5eThjwH4S9qLm+TZ5PrI/Eoxgj3u4A8nP/hJzJ3c7iMYbBP/fjqoP066jCoC6C91Xk3Wg3RquCqfPhqkDeJm+woQVAvyWvOPfKGph+h91swDoCVbU=
+	t=1779453098; cv=none; b=NQhsOi23ZAmoYxkUv+tYcooGObpsn5GILBX/8TTNPMAb9ty5wxyhKDsGLzg0vJhyRauHw1Ap7wU1IB6dff+BEOWscmbpsCN2lESZgaYMVGIjcZQmBX3+HruAKqCbuEmq6LDJKQwP5FAcoYWZAMQfd6RlIsKt6B5Y/k3HE5q8Dsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779452084; c=relaxed/simple;
-	bh=BoewX65LG8Pdfndl1vDtiqts2qaJrLH8LBPXD1duB8Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HGegxwj/X1bESnq84lxG0bchpf6VXnl5eFerF8K3ZcF9wIvekKJV8ocnj4+c9SOoL6+iZbHLKdLql2i4uSv2x5jEWvwlOe8VQ33bApswR7qpxs5U8D3kwy+4Hi2RvS27uaglJDexQiulND6cGVvdZZhCnFXhQr/GM1rLTetZ4Ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FugQIAt0; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=AT0CMmra; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1779453098; c=relaxed/simple;
+	bh=0yEB1VRx+BhUukphFfkpRM8R29Qf0lvpljYa2FTp5ZA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=CGmwWIdy45iwOQf5LeuhwJMotX+PsqE2uKaiq8Wh+s8Xik6Gq4L3euQfQMh07FvAnBDe76abMyEx+frmirgE9ycKyWQhJVJR4iEEjJOEgSkCqHFk9srFqGIYVT2FbaRreRV4zD/U2sTs5zRnOXmyZCPaND0Eauwm0sxyozssT1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=0Zvir98g; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FugQIAt0";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="AT0CMmra"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64M8nrKw3005260
-	for <linux-clk@vger.kernel.org>; Fri, 22 May 2026 12:14:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	FrOX2NAuJ/71Lo50yoEFGRol8WMdvMuDoXrsc/R/vY4=; b=FugQIAt0Y0vZOnpn
-	3T4xrzy0T2ZCd59gvPtKOItV3Z6562kZxq6ne01WslIBDaqAwycNCG+jBxqLG3fD
-	76TRkOJ7WqqH/W8YxcNQ9jyci2SYoO0DDv356X80oj6MAoAiBLco0NwYRdkm5TEH
-	Mxt6oUoE2ZdQi85xeRce42m36z0uJEJztVeNOjRYlWWk0+7FxW7wUAovxXm5LmoL
-	y1vwJe/xPBlAeplVlRb8Nn5jiHZBIjZsvA1rnWLxUQViUUu+mHM8hoKaPo5Hri+1
-	1w9mNh1G2rqFbOE++tWXIQBVfo9wj2WO5agXSJ72Jw7exjsuR1CX75tkvtXtVmb0
-	xPU+yA==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4eafrt9vwg-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 22 May 2026 12:14:41 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8cb39de5c54so173671985a.0
-        for <linux-clk@vger.kernel.org>; Fri, 22 May 2026 05:14:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1779452081; x=1780056881; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FrOX2NAuJ/71Lo50yoEFGRol8WMdvMuDoXrsc/R/vY4=;
-        b=AT0CMmra04gdQS7TxPA2TwODQeE+eEjKn3n/pccRmJXWHN8ifSEAgznU3t5ZLpV9qp
-         K+H2QGLFOPfxNLg5Vai0PV6eEvgrOphRn4nhs3ttUW63mikqjFOmmg++vgz/H7SfXDFF
-         iaZRB78MTWfvLQw4U94T8ObQIY5m+YvPeHTX0NKK/PbCyhiZuAuPDlAEUN5ymqdGj1vM
-         w4MX+ieVTLSTkqCBTHyFBpgG4khz/ijEh5SdswLfleNE6FQYJ37L515Vk8mR9b9zlMTW
-         OXPAxVhFhC4JA7Rk1kH3hYivmUjoYQzpRUkc5GnD1Q3iwGqkBXEogIdVrUOuN6+aghrL
-         ksBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779452081; x=1780056881;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FrOX2NAuJ/71Lo50yoEFGRol8WMdvMuDoXrsc/R/vY4=;
-        b=I0fqk5hKZ/giicqNgVyPXoXV/NtGZ/4XxiN1uLMwixR5dICqxx+gaxxrnCKQ2d6oWc
-         XBgoRuqw1jH4nhNu7MRqUS2sXnNgSHf+DPN8RyP9X2p950oudD3fM9IY/2sFmgiWrgl4
-         sEa0oq744Fv85tmedn9IZD8TMAnUMC2flsONyqvSLPt6HgsFiG5D9ME+RWBYH9pnqVyZ
-         3WHyv2SBk+80CaJGD39xG7b1hp4pc+nSONMv/AZXQ2aZw98L5b6RgxDhFZEcBVAVLhAc
-         6IKntw+rx+1rGP9UtVNmrVp+43OtYghbVXhKkPknw9wQyGtUHHwDsOESIOHyE6BEHmOe
-         ez4Q==
-X-Forwarded-Encrypted: i=1; AFNElJ+U8Y74HTAtzMAbHxVb2JN7hRD3jgvTq0jT41amEvICpAAUwqxs4mzK8B5OFzAXbW7vdmfbCii+ATI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjJx9vt9z4Gelf1GFG9C13eyGCP+B4V76+nIhSt1XRrPKfy0Na
-	g1OH+/JSU3jGHM9htU+JDgZovRNA0JgcUBfE7GGcC2TC+nrfPHdY+Lh/TJ9cwGewnVhJpXiyCpQ
-	U0ruv9f7OcESTASL6zksT+n0kqyzIuE7fsuIjyPhJPAT+kVouS0kvA7A9Nu8NVfw=
-X-Gm-Gg: Acq92OGvxnMEK92NEqIs614EICK6P+fMNaBxTAR0iv/E/ZgXmvzB93m4MGgP7Xd4JPw
-	89AwDdnu8J5/eJuGt76iOxEsoDYFbqRS+liF1XbEthLH/oOCmt7LJy2cbid66coyw9Y/OYuZlTq
-	nBEnxaXS0UdWqKoo4YHV4+rXyOjktHLGp/uGjIvcz3EQ2xwnufcbGAdaCe3VoldZaNnDLyL9RoB
-	wjA53MiJstIaUtEHT1RhMQOXCBgH4ujpXkasnSylrzYxW/5EMfleIKCXCMSSIbrB/4/tQqLjI7s
-	TfXsidXf+d5ub8kFTyvzTQa54vgcA8qq5lCxT7V1g1Igh2NOaJ2hjbfFxESgI6xbFNd9IvFs7Dn
-	I+LikAaqlznynSCaYQ67bzqG2hTGS0bv+2EhPIjlfvYNSsw==
-X-Received: by 2002:a05:620a:2985:b0:914:aa0d:aa79 with SMTP id af79cd13be357-914b4a2ac9cmr338174785a.6.1779452080916;
-        Fri, 22 May 2026 05:14:40 -0700 (PDT)
-X-Received: by 2002:a05:620a:2985:b0:914:aa0d:aa79 with SMTP id af79cd13be357-914b4a2ac9cmr338170285a.6.1779452080513;
-        Fri, 22 May 2026 05:14:40 -0700 (PDT)
-Received: from [192.168.119.254] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-bddc264dd5bsm50436466b.5.2026.05.22.05.14.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 May 2026 05:14:39 -0700 (PDT)
-Message-ID: <5f5950f1-397b-4a7e-b88f-b6b74388e310@oss.qualcomm.com>
-Date: Fri, 22 May 2026 14:14:36 +0200
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="0Zvir98g"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id BE5A64E42D26;
+	Fri, 22 May 2026 12:31:32 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 90DB36003C;
+	Fri, 22 May 2026 12:31:32 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 97F7E10811372;
+	Fri, 22 May 2026 14:31:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1779453091; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=xfd3WnP2DqLvbnytiE6CadS+H4S7uD87MeB857iqQeY=;
+	b=0Zvir98g52Lkc8LHXQ/VokfsQUUgOQNsaQQSoS9teklL6Hl0glEjsZ/ni7W/zaGRcUcBqc
+	rGHDGQNyrnSX1tZPhuQtzHiW5UnpQ/FYgKjyPjjf8oA5zOrRVU2IPE1J3Lu5CpjIgZ/Akb
+	IABGFvR9OeaT4cpdNNvwdXXohFJdJEr4N5cfZPXtxkcwzmgMIVJInRBk0EZaNfb3xTnY4u
+	wA8yy5Yyx5AmrgdVFY5UTQjG5r0zPYYjULA3DN+FflzgN+nwnpnaZN/yy8Uv4S/MSs8YoI
+	tSIhN8fCJkPxOX2AYatOWUd69vLh1793rQ1HxvzOhC7+J369hONwYWBJz2UhBQ==
+From: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
+Date: Fri, 22 May 2026 14:31:10 +0200
+Subject: [PATCH v7 1/9] dt-bindings: soc: mobileye: Add EyeQ7H OLB
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] arm64: dts: qcom: sm6115: add venus device
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>,
-        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-        Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-        Bryan O'Donoghue <bod@kernel.org>,
-        Mauro Carvalho Chehab
- <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20260515-iris-sm6115-v2-0-2ab75229de61@oss.qualcomm.com>
- <20260515-iris-sm6115-v2-3-2ab75229de61@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20260515-iris-sm6115-v2-3-2ab75229de61@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=JN0LdcKb c=1 sm=1 tr=0 ts=6a1048b2 cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
- a=IkcTkHD0fZMA:10 a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22
- a=EUspDBNiAAAA:8 a=N9Plf5D_esIoL16y4e0A:9 a=QEXdDO2ut3YA:10
- a=PEH46H7Ffwr30OY-TuGO:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTIyMDEyMiBTYWx0ZWRfX8LkSwS6OAbpj
- OZhO4A+xwqM7Ju5RY+2wCzUqQxHEEEpdjaSO960yB7ZvdLnUT3sVzgoP/hg2dkjnJLo70jgCB+e
- C40KGoVI0+lu1rWqNsQmQp7mvEAUajTPuB3uggCTwEIX0XDRJMEj0ke/kTqJrLjxf5phSfFn94T
- FKqhqiMCiweUio69/IlvDfDrstaDCzk9514HvHWECULZBOOaA3p9aavBIb0jpRnRwvm2V7nRdZF
- NYt4RZGHDBGadRiTKibVQuE0KNdnZYyCgC2ArnTqi0JxHr33jW7QlCecIUCj/mEQbTnsZSX8y1t
- WiJgp+ABil7fFX25n4y3ZFe+RvkFU2I42WDnvd88u+xEnJEyc9dupIPm595F33UrXL3KVpZeRD+
- M7z9ONeHh0g3eRLFuWm82rjab3LBOhi5JwzNo0deseUTUhoJbewbzzWbBeakcq8jiTpsiJ4Uj5B
- dCv/jWZsncPGzhWufkw==
-X-Proofpoint-GUID: WUeVq2gnSizQsk-mBCNmrXz-7hSA2XBw
-X-Proofpoint-ORIG-GUID: WUeVq2gnSizQsk-mBCNmrXz-7hSA2XBw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-05-22_03,2026-05-18_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 lowpriorityscore=0 suspectscore=0 malwarescore=0 impostorscore=0
- phishscore=0 bulkscore=0 clxscore=1015 spamscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2605130000 definitions=main-2605220122
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20260522-clk-eyeq7-v7-1-14ad6c2c5213@bootlin.com>
+References: <20260522-clk-eyeq7-v7-0-14ad6c2c5213@bootlin.com>
+In-Reply-To: <20260522-clk-eyeq7-v7-0-14ad6c2c5213@bootlin.com>
+To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ Gregory CLEMENT <gregory.clement@bootlin.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-mips@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-clk@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+X-Mailer: b4 0.15.2
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 5/15/26 1:59 PM, Dmitry Baryshkov wrote:
-> Define the video en/decoding device present on the SM6115 platform. The
-> core, AR50LT, is mostly compatible with the one present on the Agatti
-> devices, so it uses qcom,qcm2290-venus as a fallback.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
+The Other Logic Blocks (OLB) found in Mobileye SoCs contain hardware
+sub-functions grouped in a logical device.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+The EyeQ7H features 14 such OLB. The main differences with the previous
+generation of SoC are that some blocks have two clock sources instead
+of one and that the clock source can be the one of the clock output of
+another OLB instead of the main oscillator.
 
-Konrad
+For the blocks with a single parent clock, the name of that clock is
+"ref", similar to what is done for the OLB of the previous SoC. The
+blocks with two parent clocks use either "ref" for the main oscillator,
+"ref_100p0" for a 100MHz reference clock or "ref_106p6" for 106.6MHz
+reference clock.
+
+Some OLB also contain a reset controller with one or more reset domain,
+like the blocks found in the EyeQ6H.
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
+---
+ .../bindings/soc/mobileye/mobileye,eyeq7h-olb.yaml | 192 +++++++++++++++++++++
+ include/dt-bindings/clock/mobileye,eyeq7h-clk.h    | 119 +++++++++++++
+ 2 files changed, 311 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq7h-olb.yaml b/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq7h-olb.yaml
+new file mode 100644
+index 000000000000..2958ca9e330b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq7h-olb.yaml
+@@ -0,0 +1,192 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/soc/mobileye/mobileye,eyeq7h-olb.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Mobileye EyeQ7H SoC system controller
++
++maintainers:
++  - Benoît Monin <benoit.monin@bootlin.com>
++  - Grégory Clement <gregory.clement@bootlin.com>
++  - Théo Lebrun <theo.lebrun@bootlin.com>
++  - Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
++
++description:
++  OLB ("Other Logic Block") is a hardware system controller grouping
++  smaller blocks. Clocks and resets are generated by those blocks and
++  used by internal controllers of the SoC. The EyeQ7H SoC hosts 14
++  different OLB.
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - mobileye,eyeq7h-acc0-olb
++          - mobileye,eyeq7h-acc1-olb
++          - mobileye,eyeq7h-ddr0-olb
++          - mobileye,eyeq7h-ddr1-olb
++          - mobileye,eyeq7h-east-olb
++          - mobileye,eyeq7h-mips0-olb
++          - mobileye,eyeq7h-mips1-olb
++          - mobileye,eyeq7h-mips2-olb
++          - mobileye,eyeq7h-periph-east-olb
++          - mobileye,eyeq7h-periph-west-olb
++          - mobileye,eyeq7h-south-olb
++          - mobileye,eyeq7h-west-olb
++          - mobileye,eyeq7h-xnn0-olb
++          - mobileye,eyeq7h-xnn1-olb
++      - const: syscon
++
++  reg:
++    maxItems: 1
++
++  '#reset-cells':
++    description:
++      First cell is domain and optional if compatible has a single reset domain.
++      Second cell is reset index inside that domain.
++    enum: [ 1, 2 ]
++
++  '#clock-cells':
++    const: 1
++
++  clocks:
++    minItems: 1
++    maxItems: 2
++
++  clock-names:
++    minItems: 1
++    maxItems: 2
++
++required:
++  - compatible
++  - reg
++  - '#clock-cells'
++  - clocks
++  - clock-names
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - mobileye,eyeq7h-ddr0-olb
++              - mobileye,eyeq7h-ddr1-olb
++              - mobileye,eyeq7h-mips0-olb
++              - mobileye,eyeq7h-mips1-olb
++              - mobileye,eyeq7h-mips2-olb
++              - mobileye,eyeq7h-periph-east-olb
++              - mobileye,eyeq7h-south-olb
++    then:
++      properties:
++        clocks:
++          items:
++            - description: Reference input clock.
++        clock-names:
++          items:
++            - const: ref
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - mobileye,eyeq7h-east-olb
++              - mobileye,eyeq7h-west-olb
++    then:
++      properties:
++        clocks:
++          items:
++            - description: Reference input clock from the main oscillator.
++            - description: 100MHz reference input clock.
++        clock-names:
++          items:
++            - const: ref
++            - const: ref_100p0
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - mobileye,eyeq7h-acc0-olb
++              - mobileye,eyeq7h-acc1-olb
++              - mobileye,eyeq7h-periph-west-olb
++              - mobileye,eyeq7h-xnn0-olb
++              - mobileye,eyeq7h-xnn1-olb
++    then:
++      properties:
++        clocks:
++          items:
++            - description: 100MHz reference input clock.
++            - description: 106.6MHz reference input clock.
++        clock-names:
++          items:
++            - const: ref_100p0
++            - const: ref_106p6
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - mobileye,eyeq7h-ddr0-olb
++              - mobileye,eyeq7h-ddr1-olb
++              - mobileye,eyeq7h-east-olb
++              - mobileye,eyeq7h-periph-east-olb
++              - mobileye,eyeq7h-periph-west-olb
++              - mobileye,eyeq7h-west-olb
++    then:
++      properties:
++        '#reset-cells':
++          const: 1
++      required:
++        - '#reset-cells'
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - mobileye,eyeq7h-acc0-olb
++              - mobileye,eyeq7h-acc1-olb
++              - mobileye,eyeq7h-south-olb
++              - mobileye,eyeq7h-xnn0-olb
++              - mobileye,eyeq7h-xnn1-olb
++    then:
++      properties:
++        '#reset-cells':
++          const: 2
++      required:
++        - '#reset-cells'
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - mobileye,eyeq7h-mips0-olb
++              - mobileye,eyeq7h-mips1-olb
++              - mobileye,eyeq7h-mips2-olb
++    then:
++      properties:
++        '#reset-cells': false
++
++additionalProperties: false
++
++examples:
++  - |
++    soc {
++      #address-cells = <2>;
++      #size-cells = <2>;
++
++      system-controller0@45000000 {
++        compatible = "mobileye,eyeq7h-acc0-olb", "syscon";
++        reg = <0x0 0x45000000 0x0 0x1000>;
++        #reset-cells = <2>;
++        #clock-cells = <1>;
++        clocks = <&olb_south 7>, <&olb_east 5>;
++        clock-names = "ref_100p0", "ref_106p6";
++      };
++    };
+diff --git a/include/dt-bindings/clock/mobileye,eyeq7h-clk.h b/include/dt-bindings/clock/mobileye,eyeq7h-clk.h
+new file mode 100644
+index 000000000000..76e06a0abd02
+--- /dev/null
++++ b/include/dt-bindings/clock/mobileye,eyeq7h-clk.h
+@@ -0,0 +1,119 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (C) 2025 Mobileye Vision Technologies Ltd.
++ */
++
++#ifndef _DT_BINDINGS_CLOCK_MOBILEYE_EYEQ7H_CLK_H
++#define _DT_BINDINGS_CLOCK_MOBILEYE_EYEQ7H_CLK_H
++
++/* ACC0 and ACC1 OLBs PLL and dividers */
++#define EQ7HC_ACC_PLL_VMP	0
++#define EQ7HC_ACC_PLL_MPC	1
++#define EQ7HC_ACC_PLL_PMA	2
++#define EQ7HC_ACC_PLL_NOC	3
++#define EQ7HC_ACC_DIV_PMA	4
++#define EQ7HC_ACC_DIV_NCORE	5
++#define EQ7HC_ACC_DIV_CFG	6
++
++/* DDR0 and DDR1 OLBs PLL and dividers */
++#define EQ7HC_DDR_PLL		0
++#define EQ7HC_DDR_DIV_APB	1
++#define EQ7HC_DDR_DIV_PLLREF	2
++#define EQ7HC_DDR_DIV_DFI	3
++
++/* east OLB PLL and dividers */
++#define EQ7HC_EAST_PLL_106P6		0
++#define EQ7HC_EAST_DIV_REF_106P6	1
++#define EQ7HC_EAST_PLL_NOC		2
++#define EQ7HC_EAST_PLL_ISP		3
++#define EQ7HC_EAST_PLL_VEU		4
++#define EQ7HC_EAST_DIV_REF_DDR_PHY	5
++#define EQ7HC_EAST_DIV_CORE		6
++#define EQ7HC_EAST_DIV_CORE_MBIST	7
++#define EQ7HC_EAST_DIV_ISRAM_MBIST	8
++#define EQ7HC_EAST_DIV_CFG		9
++#define EQ7HC_EAST_DIV_VEU_CORE		10
++#define EQ7HC_EAST_DIV_VEU_MBIST	11
++#define EQ7HC_EAST_DIV_VEU_OCP		12
++#define EQ7HC_EAST_DIV_LBITS		13
++#define EQ7HC_EAST_DIV_ISP0_CORE	14
++
++/* MIPS0, MIPS1 and MIPS2 OLBs PLL and dividers */
++#define EQ7HC_MIPS_PLL_CPU	0
++#define EQ7HC_MIPS_DIV_CM	1
++
++/* periph east OLB PLL and dividers */
++#define EQ7HC_PERIPH_EAST_PLL_PER	0
++#define EQ7HC_PERIPH_EAST_DIV_PER	1
++
++/* periph west OLB PLL and dividers */
++#define EQ7HC_PERIPH_WEST_PLL_PER	0
++#define EQ7HC_PERIPH_WEST_PLL_I2S	1
++#define EQ7HC_PERIPH_WEST_DIV_PER	2
++#define EQ7HC_PERIPH_WEST_DIV_I2S	3
++
++/* south OLB PLL and dividers */
++#define EQ7HC_SOUTH_PLL_100P0		0
++#define EQ7HC_SOUTH_DIV_REF_100P0	1
++#define EQ7HC_SOUTH_PLL_XSPI		2
++#define EQ7HC_SOUTH_PLL_VDIO		3
++#define EQ7HC_SOUTH_PLL_PER		4
++#define EQ7HC_SOUTH_DIV_VDO_DSI_SYS	5
++#define EQ7HC_SOUTH_DIV_PMA_CMN_REF	6
++#define EQ7HC_SOUTH_DIV_REF_UFS		7
++#define EQ7HC_SOUTH_DIV_XSPI_SYS	8
++#define EQ7HC_SOUTH_DIV_XSPI_MBIST	9
++#define EQ7HC_SOUTH_DIV_NOC_S		10
++#define EQ7HC_SOUTH_DIV_PCIE_SYS	11
++#define EQ7HC_SOUTH_DIV_PCIE_SYS_MBIST	12
++#define EQ7HC_SOUTH_DIV_PCIE_GBE_PHY	13
++#define EQ7HC_SOUTH_DIV_UFS_CORE	14
++#define EQ7HC_SOUTH_DIV_UFS_SMS		15
++#define EQ7HC_SOUTH_DIV_UFS_ROM_SMS	16
++#define EQ7HC_SOUTH_DIV_ETH_SYS		17
++#define EQ7HC_SOUTH_DIV_ETH_MBIST	18
++#define EQ7HC_SOUTH_DIV_CFG_S		19
++#define EQ7HC_SOUTH_DIV_TSU		20
++#define EQ7HC_SOUTH_DIV_VDIO		21
++#define EQ7HC_SOUTH_DIV_VDIO_CORE	22
++#define EQ7HC_SOUTH_DIV_VDIO_CORE_MBIST	23
++#define EQ7HC_SOUTH_DIV_VDO_CORE_MBIST	24
++#define EQ7HC_SOUTH_DIV_VDO_P		25
++#define EQ7HC_SOUTH_DIV_VDIO_CFG	26
++#define EQ7HC_SOUTH_DIV_VDIO_TXCLKESC	27
++
++/* west OLB PLL and dividers */
++#define EQ7HC_WEST_PLL_106P6		0
++#define EQ7HC_WEST_DIV_REF_106P6	1
++#define EQ7HC_WEST_PLL_NOC		2
++#define EQ7HC_WEST_PLL_GPU		3
++#define EQ7HC_WEST_PLL_SSI		4
++#define EQ7HC_WEST_DIV_GPU		5
++#define EQ7HC_WEST_DIV_GPU_MBIST	6
++#define EQ7HC_WEST_DIV_LBITS		7
++#define EQ7HC_WEST_DIV_MIPS_TIMER	8
++#define EQ7HC_WEST_DIV_SSI_CORE		9
++#define EQ7HC_WEST_DIV_SSI_CORE_MBIST	10
++#define EQ7HC_WEST_DIV_SSI_ROM		11
++#define EQ7HC_WEST_DIV_SSI_ROM_MBIST	12
++#define EQ7HC_WEST_DIV_REF_DDR_PHY	13
++#define EQ7HC_WEST_DIV_CORE		14
++#define EQ7HC_WEST_DIV_CORE_MBIST	15
++#define EQ7HC_WEST_DIV_CFG		16
++#define EQ7HC_WEST_DIV_CAU		17
++#define EQ7HC_WEST_DIV_CAU_MBIST	18
++
++/* XNN0 and XNN1 OLBs PLL and dividers */
++#define EQ7HC_XNN_PLL_XNN0	0
++#define EQ7HC_XNN_PLL_XNN1	1
++#define EQ7HC_XNN_PLL_XNN2	2
++#define EQ7HC_XNN_PLL_CLSTR	3
++#define EQ7HC_XNN_DIV_XNN0	4
++#define EQ7HC_XNN_DIV_XNN1	5
++#define EQ7HC_XNN_DIV_XNN2	6
++#define EQ7HC_XNN_DIV_CLSTR	7
++#define EQ7HC_XNN_DIV_I2	8
++#define EQ7HC_XNN_DIV_I2_SMS	9
++#define EQ7HC_XNN_DIV_CFG	10
++
++#endif
+
+-- 
+2.54.0
+
