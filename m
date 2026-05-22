@@ -1,40 +1,42 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D2583A169F;
-	Fri, 22 May 2026 12:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82043A3833;
+	Fri, 22 May 2026 12:31:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779453100; cv=none; b=RaZ0cq2PbjNY3/Jzop6neq8zIsNsEeQj5Er3ivonBSq/Cr0GpD1AQ+pCqexgC6KcVgyqaLlzneWI9pioRWf7X9m/jklM9ZAcnfp1CJ5HS7QUym7kX+0SaWc36JhwOQ5KIc5UO4o5XoR3idveMxqzOcsLKqT8hsKK0KAf8Lid00E=
+	t=1779453102; cv=none; b=jwiHcWpttppV8O4qhWc3GwJ+RRNaXyBjs6SuxH+JEDHe/6L/vL9Zmel95/Lgky+Qbsk/fwxSM3apYxekjKvwBV3/zMoNirpPd3t2vSdjtpRlE7W6C2/vM2UXkXQMcSD2rjsplEfc4pcA/g2G7nHI2H2bySfeYWvbMKsvZdOlkjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779453100; c=relaxed/simple;
-	bh=ZdyanZvPjMCYLyOa13F62WT/ughxibJfWVnKWzxAX4U=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=IHTE9XDFr6IKgjqDXfc0Y6yRhD0pZmc6woRE3ja5soqasNHEnwvW5bRXytNfKh/4qLAqjPsgm+l0z2WpYZe5rT8MRUdnKpo92GytypG/wvAri32m0Gwzl2MogsnrknFkO0lDDW3S2a04ViTQOFUrZHj6kvsrv79snfSsujodRTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kEGX4X+d; arc=none smtp.client-ip=185.246.84.56
+	s=arc-20240116; t=1779453102; c=relaxed/simple;
+	bh=H0tYZvWu/kFbvf1yCQKkNc09uNP5U4t9m6Ni+iRVScs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=WRwaCtAzCPFam+X3+832NpYiCeAwp3DA4B57BRdQwrwph4ZXV+eh1z8KM3O2Uqa2U3TVKXhZeWMO5xUe+1UZF+YRIAfwiGPfSchwUMU5h7Lk+Z64mGoPLlar/6xT+091mw/gtywYRI4lGV0wnne99mg/zEXAxRMHfSp4Gh44zto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fdTO1TcP; arc=none smtp.client-ip=185.246.85.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kEGX4X+d"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fdTO1TcP"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id C49081A366C;
-	Fri, 22 May 2026 12:31:30 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id A21C94E42D2A;
+	Fri, 22 May 2026 12:31:38 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 953346003C;
-	Fri, 22 May 2026 12:31:30 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 28CB310811314;
-	Fri, 22 May 2026 14:31:25 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 738C36003C;
+	Fri, 22 May 2026 12:31:38 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D9D3010811371;
+	Fri, 22 May 2026 14:31:35 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1779453089; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=90TuC17oPDZ9l6OZNDbUQZQWto0TVENgMFWVHEcFwkU=;
-	b=kEGX4X+dyKsfqiTEZpcsxc3yNBjbV6ylo5h0U3LdVG+73oKOc/dM1N4ww45HUBRk7N6h5F
-	vARW09+Floh1+UApGt23Dizt459jpFhkaSi7ILqQuPg8xt9r6w/UpzQeP1U++Aj6WBP/Z5
-	MCl/MgNcvE5Bpf3dkDhZ9um+hwUeffW0hgbDj1a0cXAKAfp4Lq8MK3LzapA9Ipsci2YS8Z
-	WcorHMZKHQOAUIwXxixHQ95GjDj6GuWoGKC5G5ht6PN1yiCJIws6EPuITlFDPrKUhgsgte
-	r4gkFjgyRd7JSpX1IwqnPTPNgICl4g7rNj5upvnvkDsyGU+Xk+tctP7LQKkTAA==
+	t=1779453097; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=Wm8Y9HZlyA8AIclPeNH4UhbBAkUmpW9OpuwkC5TxRE4=;
+	b=fdTO1TcPfqzBqrn84zTqa2ZLLMt2P8BnWCGAWHrrJNeZiCnQQqSN1DVqDapaf8jgsAa+Ej
+	6CBnG2rjARgMMnU1xHnkfBb7YIj/ju/Se87a0/oyHD+kf2f0BpARE+si8uSOnHqVfD2Sqw
+	NwOjOKCxB8L9nKQoZRgGCD6Vhl+H/wU3mPLQmQ4469aVGG/s5t07Yj8T89fYl9o+EeDXX6
+	URMsrXgzIscxOmzJRup7TkrezAolU/zh0gSF0K7EqCptXPiqNEPO8vkaSplnE1HZ4vsjqP
+	lr/fRGUeo2XCJ4QQuomAsKE7d478Barc2XPNmszLFNYeEpGkSe/+DERRlwrTXg==
 From: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
-Subject: [PATCH v7 0/9] Add clock and reset support for Mobileye EyeQ7H
-Date: Fri, 22 May 2026 14:31:09 +0200
-Message-Id: <20260522-clk-eyeq7-v7-0-14ad6c2c5213@bootlin.com>
+Date: Fri, 22 May 2026 14:31:13 +0200
+Subject: [PATCH v7 4/9] clk: fixed-factor: Export
+ __clk_hw_register_fixed_factor()
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -43,13 +45,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAI1MEGoC/2XRS27CMBAG4Ksgr2vk8TNh1XtUXfgxKVYhASeNi
- hB374SoJTTLsef7Zc9cWY8lY892mysrOOY+dy0V7mXD4t63H8hzoppJIY2ohOPx8MnxgmfHmzp
- a9FolUBWj/lPBJn/fs97eqd7nfujK5R49wnQ6p9RCLVJG4IKrxgipg0kW5WvouuGQ223sjmzKG
- eWfBSn10kqyFTitE9BtqtdW/VorAJ6smiyGFLwLApRaW/2wSjxZTbZONqQ60bMxrq1ZWFhObTR
- kbWOT9zJKZd3a2oelHy+tJSuMFjEiVE34N6vbvISC5y/a4zBvggXfI6f7Yx52m9FtgZeoqPn2A
- 2nuxbD8AQAA
-X-Change-ID: 20250807-clk-eyeq7-f9c6ea43d138
+Message-Id: <20260522-clk-eyeq7-v7-4-14ad6c2c5213@bootlin.com>
+References: <20260522-clk-eyeq7-v7-0-14ad6c2c5213@bootlin.com>
+In-Reply-To: <20260522-clk-eyeq7-v7-0-14ad6c2c5213@bootlin.com>
 To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
  Gregory CLEMENT <gregory.clement@bootlin.com>, 
  =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
@@ -61,138 +59,199 @@ To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
 Cc: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>, 
  Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-mips@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-clk@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
- Sari Khoury <sari.khoury@mobileye.com>
+ linux-clk@vger.kernel.org
 X-Mailer: b4 0.15.2
 X-Last-TLS-Session-Version: TLSv1.3
 
-This patchset brings the support of the Other Logic Blocks (OLB)
-found in the first Mobileye SoC based on the RISC-V architecture, the
-EyeQ7H. Despite the change from MIPS to RISC-V, the Other Logic Blocks
-provide similar clock and reset functions to the controllers of the
-chip. This series introduces the device tree bindings of the SoC and
-the necessary changes to the clock and reset eyeq drivers.
+Make the base registration function for fixed-factor clocks public and
+re-implement the various registration functions that are a direct call
+to __clk_hw_register_fixed_factor() as macros.
 
-Since this series affects drivers used on Mobileye MIPS SoCs, mainly
-clk-eyeq, I tested that it does not introduce regressions on EyeQ5,
-EyeQ6H, and EyeQ6Lplus evaluation boards.
-    
-In detail, the first patch adds the dt-bindings yaml and headers for
-the EyeQ7H OLB.
+This is similar to how the registration functions of divider, mux and
+other clocks are implemented.
 
-Patch 2 adds the compatible entries to the reset-eyeq driver, and the
-necessary changes for the reset domains found in the EyeQ7H OLB.
+Add a new macro clk_hw_register_fixed_factor_pdata() to register
+a fixed-factor clock with its parent clock passed as a struct
+clk_parent_data.
 
-Patches 3 and 4 rework the handling of parent clocks in
-__clk_hw_register_fixed_factor() to make it identical to other clock types
-like divider or gate. This allows simplifying the registration functions
-built on top of the now exported __clk_hw_register_fixed_factor(). A
-new clk_hw_register_fixed_factor_pdata() is added that will be used in
-clk-eyeq later in the series.
-
-Patch 5 renames the defines and functions related to the PLL with the
-PLL type fracg, to make room for the other types of PLL found the in
-EyeQ7H OLB.
-
-Patch 6 introduces a new generic type of clock structure that can
-represents all clocks found in OLB. Then patch 7 and 8 converts all
-clocks defined in the driver to the new struct eqc_clock and remove all
-the previous separate clocks structures.
-
-Patch 9 adds the list of clocks as match data for the 14 OLB present
-in the EyeQ7H SoC, and the functions needed to probe the two PLL types
-found in the chip.
-
-This series is based on v7.1-rc3 as all the prerequisites have been
-merged. It also applies cleanly on the clk-next branch.
-
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
 ---
-Changes in v7:
-- Fixed DDR OLB reset controller type (the comment and sashiko were right)
-  and the comment for the reset offsets for west OLB in reset-eyeq.
-- Made sure the parent clock is valid before accessing it
-  in clk_factor_determine_rate().
-- Fixed error paths mistakenly returning IS_ERR(ret) instead of PTR_ERR(ret)
-  in clk-eyeq.
-- Declared the DDR OLB dividers as read-only.
-- Ensured that the mult and div computed in eqc_pll_parse_fracg() fit in 32 bits.
-- Link to v6: https://patch.msgid.link/20260512-clk-eyeq7-v6-0-0540cce18fb2@bootlin.com
+ drivers/clk/clk-fixed-factor.c | 52 ++-------------------------------------
+ include/linux/clk-provider.h   | 56 +++++++++++++++++++++++++++++++++---------
+ 2 files changed, 46 insertions(+), 62 deletions(-)
 
-Changes in v6:
-- Rebased on v7.1-rc3.
-- Dropped the MAINTAINER update for now, this will go with the SoC series.
-- Link to v5: https://lore.kernel.org/r/20260317-clk-eyeq7-v5-0-6f6daa2c2367@bootlin.com
+diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
+index 60e32482d347..ae473e0af903 100644
+--- a/drivers/clk/clk-fixed-factor.c
++++ b/drivers/clk/clk-fixed-factor.c
+@@ -94,7 +94,7 @@ static void devm_clk_hw_register_fixed_factor_release(struct device *dev, void *
+ 	clk_hw_unregister(&fix->hw);
+ }
+ 
+-static struct clk_hw *
++struct clk_hw *
+ __clk_hw_register_fixed_factor(struct device *dev, struct device_node *np,
+ 		const char *name, const char *parent_name,
+ 		const struct clk_hw *parent_hw, const struct clk_parent_data *pdata,
+@@ -152,6 +152,7 @@ __clk_hw_register_fixed_factor(struct device *dev, struct device_node *np,
+ 
+ 	return hw;
+ }
++EXPORT_SYMBOL_GPL(__clk_hw_register_fixed_factor);
+ 
+ /**
+  * devm_clk_hw_register_fixed_factor_index - Register a fixed factor clock with
+@@ -177,46 +178,6 @@ struct clk_hw *devm_clk_hw_register_fixed_factor_index(struct device *dev,
+ }
+ EXPORT_SYMBOL_GPL(devm_clk_hw_register_fixed_factor_index);
+ 
+-/**
+- * devm_clk_hw_register_fixed_factor_parent_hw - Register a fixed factor clock with
+- * pointer to parent clock
+- * @dev: device that is registering this clock
+- * @name: name of this clock
+- * @parent_hw: pointer to parent clk
+- * @flags: fixed factor flags
+- * @mult: multiplier
+- * @div: divider
+- *
+- * Return: Pointer to fixed factor clk_hw structure that was registered or
+- * an error pointer.
+- */
+-struct clk_hw *devm_clk_hw_register_fixed_factor_parent_hw(struct device *dev,
+-		const char *name, const struct clk_hw *parent_hw,
+-		unsigned long flags, unsigned int mult, unsigned int div)
+-{
+-	return __clk_hw_register_fixed_factor(dev, NULL, name, NULL, parent_hw,
+-					      NULL, flags, mult, div, 0, 0, true);
+-}
+-EXPORT_SYMBOL_GPL(devm_clk_hw_register_fixed_factor_parent_hw);
+-
+-struct clk_hw *clk_hw_register_fixed_factor_parent_hw(struct device *dev,
+-		const char *name, const struct clk_hw *parent_hw,
+-		unsigned long flags, unsigned int mult, unsigned int div)
+-{
+-	return __clk_hw_register_fixed_factor(dev, NULL, name, NULL, parent_hw,
+-					      NULL, flags, mult, div, 0, 0, false);
+-}
+-EXPORT_SYMBOL_GPL(clk_hw_register_fixed_factor_parent_hw);
+-
+-struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
+-		const char *name, const char *parent_name, unsigned long flags,
+-		unsigned int mult, unsigned int div)
+-{
+-	return __clk_hw_register_fixed_factor(dev, NULL, name, parent_name, NULL,
+-					      NULL, flags, mult, div, 0, 0, false);
+-}
+-EXPORT_SYMBOL_GPL(clk_hw_register_fixed_factor);
+-
+ struct clk_hw *clk_hw_register_fixed_factor_fwname(struct device *dev,
+ 		struct device_node *np, const char *name, const char *fw_name,
+ 		unsigned long flags, unsigned int mult, unsigned int div)
+@@ -290,15 +251,6 @@ void clk_hw_unregister_fixed_factor(struct clk_hw *hw)
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_unregister_fixed_factor);
+ 
+-struct clk_hw *devm_clk_hw_register_fixed_factor(struct device *dev,
+-		const char *name, const char *parent_name, unsigned long flags,
+-		unsigned int mult, unsigned int div)
+-{
+-	return __clk_hw_register_fixed_factor(dev, NULL, name, parent_name, NULL,
+-			NULL, flags, mult, div, 0, 0, true);
+-}
+-EXPORT_SYMBOL_GPL(devm_clk_hw_register_fixed_factor);
+-
+ struct clk_hw *devm_clk_hw_register_fixed_factor_fwname(struct device *dev,
+ 		struct device_node *np, const char *name, const char *fw_name,
+ 		unsigned long flags, unsigned int mult, unsigned int div)
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index b01a38fef8cf..aba71f5dcc21 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -1152,13 +1152,16 @@ struct clk_fixed_factor {
+ #define to_clk_fixed_factor(_hw) container_of(_hw, struct clk_fixed_factor, hw)
+ 
+ extern const struct clk_ops clk_fixed_factor_ops;
++struct clk_hw *
++__clk_hw_register_fixed_factor(struct device *dev, struct device_node *np,
++		const char *name, const char *parent_name,
++		const struct clk_hw *parent_hw, const struct clk_parent_data *pdata,
++		unsigned long flags, unsigned int mult, unsigned int div,
++		unsigned long acc, unsigned int fixflags, bool devm);
+ struct clk *clk_register_fixed_factor(struct device *dev, const char *name,
+ 		const char *parent_name, unsigned long flags,
+ 		unsigned int mult, unsigned int div);
+ void clk_unregister_fixed_factor(struct clk *clk);
+-struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
+-		const char *name, const char *parent_name, unsigned long flags,
+-		unsigned int mult, unsigned int div);
+ struct clk_hw *clk_hw_register_fixed_factor_fwname(struct device *dev,
+ 		struct device_node *np, const char *name, const char *fw_name,
+ 		unsigned long flags, unsigned int mult, unsigned int div);
+@@ -1170,9 +1173,6 @@ struct clk_hw *clk_hw_register_fixed_factor_index(struct device *dev,
+ 		const char *name, unsigned int index, unsigned long flags,
+ 		unsigned int mult, unsigned int div);
+ void clk_hw_unregister_fixed_factor(struct clk_hw *hw);
+-struct clk_hw *devm_clk_hw_register_fixed_factor(struct device *dev,
+-		const char *name, const char *parent_name, unsigned long flags,
+-		unsigned int mult, unsigned int div);
+ struct clk_hw *devm_clk_hw_register_fixed_factor_fwname(struct device *dev,
+ 		struct device_node *np, const char *name, const char *fw_name,
+ 		unsigned long flags, unsigned int mult, unsigned int div);
+@@ -1184,13 +1184,45 @@ struct clk_hw *devm_clk_hw_register_fixed_factor_index(struct device *dev,
+ 		const char *name, unsigned int index, unsigned long flags,
+ 		unsigned int mult, unsigned int div);
+ 
+-struct clk_hw *devm_clk_hw_register_fixed_factor_parent_hw(struct device *dev,
+-		const char *name, const struct clk_hw *parent_hw,
+-		unsigned long flags, unsigned int mult, unsigned int div);
++#define clk_hw_register_fixed_factor(dev, name, parent_name,                  \
++				     flags, mult, div)                        \
++	__clk_hw_register_fixed_factor((dev), NULL, (name), (parent_name),    \
++				       NULL,  NULL, (flags), (mult), (div),   \
++				       0, 0, false)
++#define clk_hw_register_fixed_factor_pdata(dev, np, name, pdata,              \
++					   flags, mult, div, acc, fixflags)   \
++	__clk_hw_register_fixed_factor((dev), (np), (name), NULL, NULL,       \
++				       (pdata), (flags), (mult), (div),       \
++				       (acc), (fixflags), false)
++#define devm_clk_hw_register_fixed_factor(dev, name, parent_name, flags,      \
++					  mult, div)                          \
++	__clk_hw_register_fixed_factor((dev), NULL, (name), (parent_name),    \
++				       NULL, NULL, (flags), (mult), (div), 0, \
++				       0, true)
++/**
++ * devm_clk_hw_register_fixed_factor_parent_hw - Register a fixed factor clock with
++ * pointer to parent clock
++ * @dev: device that is registering this clock
++ * @name: name of this clock
++ * @parent_hw: pointer to parent clk
++ * @flags: fixed factor flags
++ * @mult: multiplier
++ * @div: divider
++ *
++ * Return: Pointer to fixed factor clk_hw structure that was registered or
++ * an error pointer.
++ */
++#define devm_clk_hw_register_fixed_factor_parent_hw(dev, name, parent_hw,     \
++						    flags, mult, div)         \
++	__clk_hw_register_fixed_factor((dev), NULL, (name), NULL,             \
++				       (parent_hw), NULL, (flags), (mult),    \
++				       (div), 0, 0, true)
+ 
+-struct clk_hw *clk_hw_register_fixed_factor_parent_hw(struct device *dev,
+-		const char *name, const struct clk_hw *parent_hw,
+-		unsigned long flags, unsigned int mult, unsigned int div);
++#define clk_hw_register_fixed_factor_parent_hw(dev, name, parent_hw, flags,   \
++					       mult, div)                     \
++	__clk_hw_register_fixed_factor((dev), NULL, (name), NULL,             \
++				       (parent_hw), NULL, (flags), (mult),    \
++				       (div), 0, 0, false)
+ /**
+  * struct clk_fractional_divider - adjustable fractional divider clock
+  *
 
-Changes in v5:
-- Rebased in v7.0-rc1 + version 4 of eyeq6plus series.
-- Remove an superfluous whitespace and tidy up macros in clk-provider.h.
-- Link to v4: https://lore.kernel.org/r/20260304-clk-eyeq7-v4-0-9d6bd9d24bec@bootlin.com
-
-Changes in v4:
-- Rebased on v7.0-rc1 + version 3 of eyeq6plus series.
-- Link to v3: https://lore.kernel.org/r/20260114-clk-eyeq7-v3-0-8ebdba7b0133@bootlin.com
-
-Changes in v3:
-- Fix eyeq7h-olb DT bindings following Krzysztof review.
-- Link to v2: https://lore.kernel.org/r/20251224-clk-eyeq7-v2-0-81744d1025d9@bootlin.com
-
-Changes in v2:
-- Move the dt-bindings to their own files and sort the compatibles.
-- Reorder the changes in reset-eyeq and make the register access more
-  readable.
-- Drop the validity check on even divider. Unnecessary since it is
-  always called from a clock .set_rate().
-- Drop the parameters check on divider registration. Will be posted
-  separately.
-- Switch to a new generic struct for describing the clocks.
-- Add an entry to MAINTAINERS.
-- Link to v1: https://lore.kernel.org/r/20250903-clk-eyeq7-v1-0-3f5024b5d6e2@bootlin.com
-
-To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
-To: Benoît Monin <benoit.monin@bootlin.com>
-To: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Théo Lebrun <theo.lebrun@bootlin.com>
-To: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Conor Dooley <conor+dt@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>
-To: Brian Masney <bmasney@redhat.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc: linux-mips@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-
----
-Benoît Monin (9):
-      dt-bindings: soc: mobileye: Add EyeQ7H OLB
-      reset: eyeq: Add EyeQ7H compatibles
-      clk: fixed-factor: Rework initialization with parent clocks
-      clk: fixed-factor: Export __clk_hw_register_fixed_factor()
-      clk: eyeq: Prefix the PLL registers with the PLL type
-      clk: eyeq: Introduce a generic clock type
-      clk: eyeq: Convert clocks declaration to eqc_clock
-      clk: eyeq: Drop PLL, dividers, and fixed factors structs
-      clk: eyeq: Add EyeQ7H compatibles
-
- .../bindings/soc/mobileye/mobileye,eyeq7h-olb.yaml |  192 +++
- drivers/clk/clk-eyeq.c                             | 1262 +++++++++++++-------
- drivers/clk/clk-fixed-factor.c                     |   78 +-
- drivers/reset/reset-eyeq.c                         |  268 ++++-
- include/dt-bindings/clock/mobileye,eyeq7h-clk.h    |  119 ++
- include/linux/clk-provider.h                       |   56 +-
- 6 files changed, 1480 insertions(+), 495 deletions(-)
----
-base-commit: bb1459368dd795c43380057523f571d5eb0ddded
-change-id: 20250807-clk-eyeq7-f9c6ea43d138
-
-Best regards,
---  
-Benoît Monin, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+-- 
+2.54.0
 
