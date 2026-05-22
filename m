@@ -1,114 +1,118 @@
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB57F3BBA08
-	for <linux-clk@vger.kernel.org>; Fri, 22 May 2026 13:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B94402448
+	for <linux-clk@vger.kernel.org>; Fri, 22 May 2026 13:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779456643; cv=none; b=DvZHQQ9vJGPaPnr7Fqv+TO/loEv8/NGD76vp8622NPCLiZD9gU2eVJACe8qJ8RoSyq8EpW4QltKr+mjXU05ziEM1VbDZV2Zettlh+w11NoY08W60Q/jQj4jcdROy1CF6RZ5EeqRVrwtLYKuVyqfcxx177OuSNfTR1sb7m6DchdY=
+	t=1779457410; cv=none; b=e08aA6a0vXsrfSzzg22AHSVkhGqpApTnCEZZU9wlVcVxnBx1RKeOTWzWWaqC35s6BJ2grg2m4lt72IRCjdpVYEbrVgiox0j/lv9XPblyT9rebTT/gAytaLlDHrV/Xb7dicjuDK+gW/SFJcH4OebVcQARJkjv9FdZJ40V8J3L+d4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779456643; c=relaxed/simple;
-	bh=50z5aLe/utRyMRS+DG9tTAyot6zu9u8aqp2TcBzvdwU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j2+9xI9UjuPS0Vm4eyGH3J7YBAJY5xzgVG1y41ICzyWZ20Sdoyo5d5ySJyWsdz3+owXgnRXcj/ip146hmVUGLmeI/YQkaxH8krlulmGJdw+Le/NHPjTNDEPbz5n+55YMbuuQx9H7SsBe/3dkESRzyPJWR0wyKN2GwHuO/1NvrEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XfYe2Dbu; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1779457410; c=relaxed/simple;
+	bh=HEs2rq79YCoAiEGVJOXZDcuuCnNnzEJW3mYI9DGQ2fM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lx3bv/IzEtZwODyYx4xHVb/zDA5mfXrYfAc2fzzkI02IuzGumGUAT9GOxmICP2pZnecfXbPRRdzfNO0iwXbbjTxq//Q1xCZ8EF7BjpmLtFljsz6paAn4vIzSk5QytJKkMZyN4XKh+XOnGkdHhummEc3CZXncKupNblSC0hvQwNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XfYe2Dbu"
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2b9fcf7c91bso79212665ad.0
-        for <linux-clk@vger.kernel.org>; Fri, 22 May 2026 06:30:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779456641; x=1780061441; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XCbc6evCAnW5/Lk0bejiMZ9J5LObQXJ3ouBPH/v5c+8=;
-        b=XfYe2DbuB34FZb8SQXY4wpNoPLDesRoVUR4xPnZFLs+eQ8DA7SpBzNDsFTUJaZHzGf
-         zFUsoIN30IGqV7ub0vN382Zq84aLiW50NcxLuJfg4kgQAkTiXQIj0ZWd5mVi6Tqz9V7t
-         T+roTdbpH3NuvqWQiBBdtiUSvNcSEtJwRSr/JhCjlB44zrx1Z70Nb6zZXA3Pk516FK4T
-         oFfUPU8aRjdm55ZBVGUOFkBgVMXOxwCLyBHbZkewiopcrfOV1KI/6W88Bg+kLh2kCiix
-         lZzmCOoo5E42Bhh9Vbh3r1tCK8K0THHMWHRqcyuJKMlQPEeX+ZphLtZpVVgjQs5CzmZ9
-         +IVg==
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-961780b0ba1so190144241.1
+        for <linux-clk@vger.kernel.org>; Fri, 22 May 2026 06:43:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779456641; x=1780061441;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20251104; t=1779457404; x=1780062204;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XCbc6evCAnW5/Lk0bejiMZ9J5LObQXJ3ouBPH/v5c+8=;
-        b=ZjmrGajZvdvJEZ5bzbFl/U5iJIHcLfcC4y46A1zf4yU3csgI2spOVqFykJS9HwkJd0
-         eqAaljTmCPut9wXNEDg4Jd0Dt0RpmITXwH+2dwaQYjq8PsKU0idRwg8DODXuqXcknrKa
-         +yDZBjIpiuoshbwn8DU2TZ2EnkrLypAls2WIuAJGEKWN4/i3aAag0ztM8ryRr2EUcamt
-         X1wbpbhxSdS/I5yRxhABwGAsiuvNrtp4oluuMHXQAvnG55nwEA+MG3kp7WoyFVvfHcAD
-         rXMoSNBUCxEy/c8b2LHgLAzDBjs3q/DioR9nBj45kZmvPgTS00kib7yChxZhLPgo+y0V
-         uC1g==
-X-Gm-Message-State: AOJu0YyKyPOZUlxLIA1i+QeayC0sPntKNU+vvo7q3Nvk7krWaBtn3Y+5
-	mSN3yd+aF5Sa7ZYUTiBGO+WPJ4AIxcCkG3OdRZB5xAguxdedpykQxY4U
-X-Gm-Gg: Acq92OEwpdCrvLCaTjYN3WdJQtH+R6InkIhgmDCiA9IY3YLSgJD72Ah68xwoo1jisun
-	Xi9RxrEPDHg16FWGyE+XsxhkygUzDT0eCpxCQx6EMcY2n9F+kaglNfFawD2Twd7bH44WmpmFyeX
-	9UXvPEQDEryxS2shGekd8hrOQ3pwNP+KTtdnVvivU7WS7LT0zmiZTZ0GnCROJgZOvU33M0NAzAy
-	hPo3ad6j3MvihUK8tnRBvosn8bU9/m9nOnbo/NnV1wnBoRTllldMexd0wuNhdWXBOv4+t3bjAzz
-	CPDT+M1PgCJ7GVZmBlkF5rrW2z+/QBOjFfXUwez4EtggSPL4LYggQ20vWdC+/P0L2R4aAn7u1Rw
-	yUCq8lpWHAUGF22Z1VPeC2FJ0JrS62UalPVziG5L+qxYovhly48XnknaJXe9/TSYOk3fjucAwmw
-	p+NXoa0bn+aUhSjEQF9Iy3jMLi3AwiYx+XCLMmUSVZ2uY3RFpJCjsCLT0u8V/5OnnJuh0U298av
-	25KVRU=
-X-Received: by 2002:a17:902:ce84:b0:2bd:3bfd:74f2 with SMTP id d9443c01a7336-2beb0593137mr38054985ad.10.1779456641134;
-        Fri, 22 May 2026 06:30:41 -0700 (PDT)
-Received: from buffalo-ssd.taila54753.ts.net (M014013071096.v4.enabler.ne.jp. [14.13.71.96])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2beb5695f05sm25147605ad.6.2026.05.22.06.30.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 May 2026 06:30:40 -0700 (PDT)
-From: Akari Tsuyukusa <akkun11.open@gmail.com>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	bmasney@redhat.com,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	wenst@chromium.org,
-	laura.nao@collabora.com
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Akari Tsuyukusa <akkun11.open@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] clk: mediatek: mt8196: Select REGMAP_MMIO for vlpckgen
-Date: Fri, 22 May 2026 22:30:23 +0900
-Message-ID: <20260522133023.355404-1-akkun11.open@gmail.com>
-X-Mailer: git-send-email 2.54.0
+        bh=uWzbSNX3RGbee5XiT1xV4dZKM9nwjUk9YQDs6iPG2rk=;
+        b=gzrTEkDTw8WLgM8B2nlz4Guy+32FkxYCzEBBO/Ld+UVauo77SstZzs5f6sxxZDsG2T
+         aBdOgZPa/OhzWrBLc+og4qa+rZO3Ib/95xX75BXeU7UOx5H536ZMLPODZ/vTCjYkjK/P
+         8ryUdMPPuLud0BUFSjsNX7F+Qh2BjPO61MWrX2hRl/EBne99YLojE68JV8UrepQLj2a2
+         TitR+Hf6TpqxYPVm0yNBJT7w6Di9vTHoePp/giMrqpeFqTVYI2N0hZZn5cLgkowyfvEM
+         XL3U3d+TfFkq9vDcffg438KBfH6wt+xOL92QQANvOGtKQ5HKcaR+7s69ASzrnK4F9/VY
+         Dn9A==
+X-Forwarded-Encrypted: i=1; AFNElJ9dzCV7aDLg3FhVp7xcsH32WyvH/MULalvb8R81K/pIFn55l2SSsPKuVXYWIo7V/HQD3MQBWzMctT4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOC/bcPVhf5qX7drBMfEy41lURCTiFdbPo+KYtXX/hpmptjbHn
+	+TDGM6fZMuP4Wyr8paSJeMGXg6okueO8N1nBaPF74VQ4qkVCUM0JzP2WuFhz4hVhHiw=
+X-Gm-Gg: Acq92OGiOphbHpxuVLaHPnd/cc0uKoauZcZgqzdkYK25xWqFdj40za5MHVPkAxwzEQV
+	UxPXrAAzNCF58hrROTMP2NlqrX7BWM5wI71wDvCmOpca++ooOXh9z9v2yuJU9UaGi+JX/M/ogwy
+	DmEg0UA/eg+u5vkeGhlMB9tfkbJtRF9MSYhKMVuJVqfSavPwpSRpZbv/GxKaepjlHa+70h562RD
+	99ICpaDaNfCcdE0svcc1eumdfItbWsht+GS5YNYBvpnH96CIyF7VjGNUg75QWRexZy2zGAbLwa9
+	RDnmj2UHUoqQhITf3mmiI3eKVZnQUUdZcDPLNU33XIsM9QpchuMh4la5BYXuu5ZGQzmGi6JnqG/
+	T5PmWnPN6JNa1jtKNqVNLroDdMvC+zzTXTvP6I8ysUeiRfjaAKIATVSsUr1QvMGp1D06+J+wDpY
+	F/xV43gMSxMnJp3vPe6Veg/HHH/YgvI795BuVHphCvkSpeTgC8S/qGhd2YX4FEHsNCzfzpoCy49
+	XA=
+X-Received: by 2002:a05:6102:15ac:b0:631:3b92:9d9f with SMTP id ada2fe7eead31-67c80d68607mr1630834137.23.1779457404418;
+        Fri, 22 May 2026 06:43:24 -0700 (PDT)
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com. [209.85.221.176])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-67fc9a0fd00sm1419599137.0.2026.05.22.06.43.22
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 May 2026 06:43:22 -0700 (PDT)
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-5752b27958fso2577873e0c.1
+        for <linux-clk@vger.kernel.org>; Fri, 22 May 2026 06:43:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ+4l+hG6pb3vFHTUmYVA1H28MB14saW1m/aWqJQbRzEGBR9txbYgQ6z1llZJnYNQAVsJFweACSsaQs=@vger.kernel.org
+X-Received: by 2002:a05:6122:ca1:b0:575:3b34:28b6 with SMTP id
+ 71dfb90a1353d-586624cee61mr1849670e0c.11.1779457402270; Fri, 22 May 2026
+ 06:43:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260410163530.383818-1-cosmin-gabriel.tanislav.xa@renesas.com> <20260410163530.383818-9-cosmin-gabriel.tanislav.xa@renesas.com>
+In-Reply-To: <20260410163530.383818-9-cosmin-gabriel.tanislav.xa@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 22 May 2026 15:43:11 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVEbmX0QqVQE7YhnCO325=2djd5S=ynr8DZnspKKK7WoQ@mail.gmail.com>
+X-Gm-Features: AVHnY4KCEtGxHGei_0qihwJrEjH83nV_Z2btTPs2i2CQslPWM7eGYi7MBkb4Nkc
+Message-ID: <CAMuHMdVEbmX0QqVQE7YhnCO325=2djd5S=ynr8DZnspKKK7WoQ@mail.gmail.com>
+Subject: Re: [PATCH v2 08/10] arm64: dts: renesas: r9a07g0{43,44,54}: remove
+ TCIU8 interrupt from MTU3
+To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
+	Thomas Gleixner <tglx@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-iio@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The MediaTek MT8196 vlpckgen clock driver uses
-__devm_regmap_init_mmio_clk() by devm_regmap_init_mmio(),
-which is defined in drivers/base/regmap/regmap-mmio.c.
-However, the driver's Kconfig entry does not select REGMAP_MMIO.
-This causes a linker error when REGMAP_MMIO is not enabled.
+On Fri, 10 Apr 2026 at 18:37, Cosmin Tanislav
+<cosmin-gabriel.tanislav.xa@renesas.com> wrote:
+> The TCIU8 interrupt used to be documented in earlier revisions of the
+> user manuals, but has since been removed. The corresponding entry is now
+> marked as reserved in the interrupt mapping tables of all supported
+> SoCs.
+>
+>  * Page 486, Table 8.2 Interrupt mapping (7/13) in the Renesas RZ/G2UL
+>    Rev.1.40 User Manual
+>  * Page 363, Table 8.2 Interrupt Mapping (6/13) in the Renesas RZ/Five
+>    Rev.1.30 User Manual
+>  * Page 528, Table 8.2 Interrupt mapping (7/13) in the Renesas RZ/G2L
+>    and RZ/G2LC Rev.1.50 User Manual
+>  * Page 540, Table 8.2 Interrupt mapping (7/13) in the Renesas RZ/V2L
+>    Rev.1.50 User Manual
+>
+> Remove the TCIU8 interrupt. This does not cause any breakage as the
+> driver does not make use of the interrupts.
+>
+> Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+> ---
+>
+> V2:
+>  * reword to mention that TCIU8 used to exist
 
-Fix this by selecting REGMAP_MMIO in the Kconfig entry.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v7.2.
 
-Fixes: 2f8b3ae6f0cb ("clk: mediatek: Add MT8196 vlpckgen clock support")
-Cc: stable@vger.kernel.org
-Signed-off-by: Akari Tsuyukusa <akkun11.open@gmail.com>
----
- drivers/clk/mediatek/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index 2c09fd729bab..fd8440122ec2 100644
---- a/drivers/clk/mediatek/Kconfig
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -1006,6 +1006,7 @@ config COMMON_CLK_MT8196
- 	tristate "Clock driver for MediaTek MT8196"
- 	depends on ARM64 || COMPILE_TEST
- 	select COMMON_CLK_MEDIATEK
-+	select REGMAP_MMIO
- 	default ARCH_MEDIATEK
- 	help
- 	  This driver supports MediaTek MT8196 basic clocks.
+                        Geert
+
 -- 
-2.54.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
