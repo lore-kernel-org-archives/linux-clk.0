@@ -1,157 +1,173 @@
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543BA1FE47B;
-	Fri, 22 May 2026 15:45:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779464724; cv=pass; b=S5GiFWY4B0yWCYDTC/02FC9Fr45d1DflSpPy39KZkTnxkRYjYrVd/Zuklq4JAHOeIOCmPRyebtK9GTPx4o1NXAYbcIyQvYzx4M6GIEEQ9+M4PX+cwy/dpjp5Tk/OfG2TGgBYPfBSfD310YFZyojmqhSVzcH4pY9QGt99+AjgsPY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779464724; c=relaxed/simple;
-	bh=BT0LQpZc5DdB7CC6nvR4n0Dsh9l34r2HolGf6mimgXw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gzq0BPN7jeJfNnHL8hQAJghofU3up/ktsyHAvfgvbAxL8m8I5yLevdY6hLbCT8xmGtmfyYh8vRknRasMT1jn7T6brJO/tdC04Y864RaP0oTF9U9dvmuiUk/tx7USYmlu9d3DiYP+5wZ796uy5CXIIPHoF+h4n5R7C1wtuMDbwpY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ziyao.cc; spf=pass smtp.mailfrom=ziyao.cc; dkim=pass (1024-bit key) header.d=ziyao.cc header.i=me@ziyao.cc header.b=eCf3Oa8h; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ziyao.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziyao.cc
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ziyao.cc header.i=me@ziyao.cc header.b="eCf3Oa8h"
-ARC-Seal: i=1; a=rsa-sha256; t=1779464700; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=MthQAsQ7VaS2cV01SOjYqaKVzYj+V8Mq47BxTV1TfQiPQi9L9NTJMHPv9NKFnWEsZLnLKQ7+0+JGuWdl4I/KvmSTsQwzWfJPEYweUNWz1yKbcZyTiMTbzHu75EAYqrLxccbboXmgRi3N2l6lkdkHglCxYgS+YRAyq9bjuoI7Zbo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1779464700; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=SHKeFZi+B9S1Z91e4v9pT5BCHHl/avL5yLlkuQ2GHFA=; 
-	b=js1SN6rkkAObJZzpvj+4Vh/hgT13iRJHwtfbF8dtz/42bXgzmQS4fr7AqWaY2k+FUtlb7/tmiZa7vMk4pT+qi7PDrkn8MFGcKDbzy+QtoiLu94uLKl99pjwtfgPJATPFSWDLth7NotxstgJ7MuKaoCVUGt8XF2THM/6ypIqfOxU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=ziyao.cc;
-	spf=pass  smtp.mailfrom=me@ziyao.cc;
-	dmarc=pass header.from=<me@ziyao.cc>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1779464700;
-	s=zmail; d=ziyao.cc; i=me@ziyao.cc;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
-	bh=SHKeFZi+B9S1Z91e4v9pT5BCHHl/avL5yLlkuQ2GHFA=;
-	b=eCf3Oa8hV3BblpYL5pdzwHtwwJjKC606O1P+5d7RltJGsDH5Y3vBGd4Qvd1Oce5U
-	46HBNAthfonZZgvFdnyUSmQvysLn1eHAIE+guJycJdACshY7FwO5QCTaiFwYAlL/UyA
-	z4j7YAoy/xBo8RXneq8Zd21YXA/+9kus9sTLJ8iE=
-Received: by mx.zohomail.com with SMTPS id 1779464697907144.61503187448898;
-	Fri, 22 May 2026 08:44:57 -0700 (PDT)
-Date: Fri, 22 May 2026 15:44:40 +0000
-From: Yao Zi <me@ziyao.cc>
-To: Chuanhong Guo <gch981213@gmail.com>
-Cc: Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 4/4] clk: add support for siflower sf21-topcrm
-Message-ID: <ahB46uuoFQxKgr7r@pie>
-References: <20260517-sf21-topcrm-v1-0-438f2e0513ff@gmail.com>
- <20260517-sf21-topcrm-v1-4-438f2e0513ff@gmail.com>
- <agsEWo_mo5rzUAAH@pie>
- <CAJsYDVJZW2VYFaxzJRg2+CJZbvqq_iRXaf7+zYvidQn0AiviKQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E219460
+	for <linux-clk@vger.kernel.org>; Fri, 22 May 2026 15:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779464845; cv=none; b=Tm+97k/ukpdF4rWakhFmsjS+ar/M856wm7/BWw3Y4bZW7/MS0OJBPHSf9IXoS/14d46/oOdreLVnR75Y6ID1BRtrLnGvhCq2XL+LnxQEZUmYdqB31sop9UFmIgXLeiSrluTbTnnL75+rnnLcVHIrjAnghjdrveErnmXQLBFLvfE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779464845; c=relaxed/simple;
+	bh=J9pqhe3rEd28EB+7QM4Mt7JtYR/l/3S7v8/M/aaqFQc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DPPP9EeTZggw4UCBzLBkfx5QHi7k8y7FNWERHmH+6204ZbC3hLvNws9aLw4nRCRDvmPK0yX8H/ooEd651SWm8Ha/Kdu7nWzZCNZtM1TvpP0dDcHmCpBwvQ50ZrZso/CeeKF3HApV0upm1HOxouJ/aZB1wkoNXV3RMa26saQrBv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-5751e12c524so2697693e0c.1
+        for <linux-clk@vger.kernel.org>; Fri, 22 May 2026 08:47:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779464842; x=1780069642;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mat1V267K7OB4qn2fEb5sEkdQiWDnrER2vm5Q5jlK3U=;
+        b=cAcoOFHE5zBeJFLwmJB+No9ntDuTwtU8iqZiUwUSC1boiOFV55tkDxBTbIJk7gRa3t
+         DOWLYXUbBAOkOi9hzZCfdwe262xLaKTWluANFa7Jhgs38Thf5ZxlXZL5kJnzEUajVxOa
+         Dl9BRhYphYjFoeP9Kppfbn0mVTqlY5MwNCxBt23mcSyihF6NOFJoyS4LVrJir8MIXChZ
+         /+WrcfvmTk3wTrVwIZ54TyexKbKghKiBjDtly86htfhUv9Pkrne4SsNpqBkABeMqQL/x
+         ZIh0cZBuAL37iQVBRAmb3XRsxd+hOtC8vSiWpetrgzqkTFN4wmPXcYrLa09XiVt/JNlM
+         xvBg==
+X-Forwarded-Encrypted: i=1; AFNElJ8VQ3n+58+37wDMGvoEirVx1Z5sCg51PN51GMjr0+avzInLT3bGwF1TkK4YDc9767XEml3qGHIiyhU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/mMPcRgXvoTbKU1fd19Uc8Y1iik1aDdyrOQ1bWYEBaadHmAed
+	JfC7uCy+o4Cgm3dexQV+enFj6uGJ3U1JNi3kVjpFx5lOJaAjOrdwVqWCBcq4/Mur9lg=
+X-Gm-Gg: Acq92OHVWmzLgC61NFzFxcQnNeaE/ycZqRkDADuhrRHxjzT47SGWTUqnbeize72giHO
+	fGIJCovNycvMl7yhOdztDVd0rjJskdDuirWmIaqmBy4RVfvgJHjPWnn8k/26IpCmXdK8DTA3HfH
+	G9XU5oydDe9Z7KC8vHE07e6v89P2yxfEKLjTJz6Dabl74vrEUzfWRW7fbJ1ly7252eXeIKvtRCa
+	8osXOnNjnCKK1mPeRCu0SubHByjdc33f5zgtphjhh/jYPZ8p2fZIMufZQA1YCHd5REfv7iWWzKH
+	CGIiB0zi/sGBEZb42b+kOi8DOgz15icNK1HUoFxXJwXu3Oe+3gveizYNPQk7tkUTL8xEb1j0vRt
+	r7dCfdRTV++MXKzAhmSAYZ2Bgwmi8Ldm5AjJB05eprRWw2HHB0Ofv+87aZ3U9gymqlkOkuwP/7w
+	KP+QkbwC2jlI2DEKycXAyORMCkMtngA9FATvZWiayOCKdQ3qhBrEFHxnyUErAxWxBC
+X-Received: by 2002:a05:6122:905:b0:56e:f262:9113 with SMTP id 71dfb90a1353d-586626bb34dmr2349982e0c.14.1779464842439;
+        Fri, 22 May 2026 08:47:22 -0700 (PDT)
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com. [209.85.221.182])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-961737bbf42sm1998940241.2.2026.05.22.08.47.20
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 May 2026 08:47:20 -0700 (PDT)
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-577500ac0e4so2487503e0c.0
+        for <linux-clk@vger.kernel.org>; Fri, 22 May 2026 08:47:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ/nu+mkFT0JWZC31rgmheJ+Ga/sPZJdppdSRrhmM3ug7UceOiOYrfDlHCHxglVtx5Hxc3Jj8URLZXw=@vger.kernel.org
+X-Received: by 2002:a05:6122:3402:b0:56a:fff5:b4d6 with SMTP id
+ 71dfb90a1353d-5865e2b5250mr2614239e0c.4.1779464839874; Fri, 22 May 2026
+ 08:47:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJsYDVJZW2VYFaxzJRg2+CJZbvqq_iRXaf7+zYvidQn0AiviKQ@mail.gmail.com>
-X-ZohoMailClient: External
+References: <20260504144534.43745-1-marek.vasut+renesas@mailbox.org> <20260504144534.43745-8-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20260504144534.43745-8-marek.vasut+renesas@mailbox.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 22 May 2026 17:47:07 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWwantdbvPSFoYm=+_OoQQkKwz+K=qwWgy-7tSp1BNJBw@mail.gmail.com>
+X-Gm-Features: AVHnY4IbX-4yvb6-_QqYAmKEvB5Pw7JiMigOp3rN1DUejXGr6NhPRl6ad5aF2d4
+Message-ID: <CAMuHMdWwantdbvPSFoYm=+_OoQQkKwz+K=qwWgy-7tSp1BNJBw@mail.gmail.com>
+Subject: Re: [PATCH v2 7/7] arm64: dts: renesas: r8a779md: Add support for
+ R-Car M3Le R8A779MD Geist
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-arm-kernel@lists.infradead.org, 
+	Nguyen Tran <nguyen.tran.pz@bp.renesas.com>, Brian Masney <bmasney@redhat.com>, 
+	Conor Dooley <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+	Magnus Damm <magnus.damm@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Ulf Hansson <ulfh@kernel.org>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, May 18, 2026 at 09:34:17PM +0800, Chuanhong Guo wrote:
-> Hi!
-> 
-> On Mon, May 18, 2026 at 8:22 PM Yao Zi <me@ziyao.cc> wrote:
-> >
-> > On Sun, May 17, 2026 at 10:12:58PM +0800, Chuanhong Guo wrote:
+Hi Marek,
 
-...
+On Mon, 4 May 2026 at 16:46, Marek Vasut
+<marek.vasut+renesas@mailbox.org> wrote:
+> From: Nguyen Tran <nguyen.tran.pz@bp.renesas.com>
+>
+> Add support for the Geist board based on the Renesas R-Car R8A779MD (M3Le)
+> SoC, a register-compatible variant of the R8A77965 (M3-N) with reduced set
+> of peripherals.
+>
+> Signed-off-by: Nguyen Tran <nguyen.tran.pz@bp.renesas.com>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
-> >
-> > [...]
-> >
-> > Besides field/register offsets, the only difference I could tell between
-> > cmnpll_postdiv and pciepll_fout is that pciepll_fout clocks could be
-> > gated.
-> >
-> > Would it be a good idea to describe the gating function separately as a
-> > clock, and merge the common part of pciepll_fout and cmnpll_postdiv? In
-> > which way you could save a lot of mostly duplicated code.
-> 
-> I don't think so. Since the majority of the existing code are register
-> operations, and the register bit layout are completely different,
-> there isn't much to share between these two PLLs.
-> Writing a struct to describe both register layouts together seems
-> unnecessarily complicated and harder to read.
+> V2: - Drop CS2500 variant suffix
+>     - Drop cells from rcar_sound ports {}
+>     - Drop ehci1, ohci1, usb2_phy1
+>     - Drop Salvator-X reference from commit message
+>     - Split panel DTO into separate patch
+>     - Drop FCNL node
+>     - Add another memory node for the second 2 GiB of DRAM,
+>       although the DRAM layout is patched in by U-Boot
+>     - Drop FIXME from audio-clkout {}
+>     - Sort nodes without unit address
+>     - Rename regulators, use npmv suffix for n.m V regulators
+>     - Rename x12 node to x12-clock node
+>     - Add PHY compatible string
+>     - Use interrupts-extended in PHY node
+>     - Rename clk_multiplier/clock-generator to clock-controller
+>     - Use interrupts-extended
+>     - Reinstate port@0 to rsound
+>     - Drop iommus from SDHI2
+>     - Drop DU until it can be tested
 
-I'm not suggesting merging the implementation of the two PLLs
-themselves, but only the two types of clocks derived from them,
-i.e. cmnpll_postdiv and pciepll_fout.
+Thanks for the update!
 
-> BTW the CMNPLL and PCIEPLL are actually different hardware.
-> The former is an integer PLL while the latter actually supports
-> fractional operations. I didn't add support for the fractional part
-> due to the lack of use cases and documentation. PCIE and GMAC
-> clocks are fed by this PLL and require exact clock frequencies
-> which can be achieved using only the integer mode.
-> 
-> >
-> > > +     .recalc_rate = sf21_pciepll_fout_recalc_rate,
-> > > +     .determine_rate = sf21_pciepll_fout_determine_rate,
-> > > +     .set_rate = sf21_pciepll_fout_set_rate,
-> > > +};
-> > [...]
-> > > +
-> > > +     spin_lock_irqsave(cmn_priv->lock, flags);
-> > > +     if (index)
-> > > +             sf_rmw(cmn_priv, mux_reg, 0, BIT(mux_offs));
-> > > +     else
-> > > +             sf_rmw(cmn_priv, mux_reg, BIT(mux_offs), 0);
-> > > +
-> > > +     spin_unlock_irqrestore(cmn_priv->lock, flags);
-> > > +     return 0;
-> > > +}
-> >
-> > I believe besides the divider reloading part, clk_mux_ops,
-> > clk_divider_ops, and clk_gate_ops have already provided the logic
-> > you implemented here. So it might be a better option to composite them
-> > together to implement your clocks instead of building from scratch.
-> 
-> The divider reloading is the exact reason I chose to not compose them
-> with the function you mentioned. The reloading bit need to be set on
-> both clock divider change and clock enabling, because the clock divider
-> loading only happens when the clock is running. Since I already have
-> to write two of the three parts you mentioned, trying to reuse
-> clk_mux_ops doesn't seem to reduce the code complexity here.
+--- /dev/null
+> +++ b/arch/arm64/boot/dts/renesas/r8a779md-geist.dts
 
-You don't have to write divider/gate operations from scratch, but only
-wrappers that first call clk_{divider,gate}_ops.* then trigger frequency
-reloading.
+> +&avb {
+> +       pinctrl-0 = <&avb_pins>;
+> +       pinctrl-names = "default";
+> +       phy-handle = <&phy0>;
+> +       tx-internal-delay-ps = <2000>;
+> +       status = "okay";
+> +
+> +       phy0: ethernet-phy@0 {
+> +               compatible = "ethernet-phy-id0022.1622";
+> +               rxc-skew-ps = <1500>;
+> +               reg = <0>;
+> +               interrupts-extended = <&gpio2 11 IRQ_TYPE_LEVEL_LOW>;
+> +               reset-gpios = <&gpio2 10 GPIO_ACTIVE_LOW>;
+> +               reset-assert-us = <100>;
 
-> It's just trading get_parent and set_parent call with one more level
-> in the clock tree for every clock and more code to wire them together
-> in the probe function.
-> 
-> >
-> > > +static const struct clk_ops sf21_clk_muxdiv_ops = {
-> > > +     .enable = sf21_muxdiv_enable,
-> > > +     .disable = sf21_muxdiv_disable,
-> > > +     .is_enabled = sf21_muxdiv_is_enabled,
-> > > +     .recalc_rate = sf21_muxdiv_recalc_rate,
-> > > +     .determine_rate = sf21_muxdiv_determine_rate,
-> > > +     .set_rate = sf21_muxdiv_set_rate,
-> > > +     .get_parent = sf21_muxdiv_get_parent,
-> > > +     .set_parent = sf21_muxdiv_set_parent,
-> > > +};
+10000?
 
-Regards,
-Yao Zi
+> +               reset-deassert-us = <100>;
+
+300?
+
+> +       };
+> +};
+
+> +&pfc {
+
+> +       pwm2_pins: pwm2 {
+> +               groups = "pwm2_a";
+> +               function = "pwm2";
+> +       };
+
+Shall I drop this while applying?
+
+> +&pwm2 {
+> +       pinctrl-0 = <&pwm2_pins>;
+> +       pinctrl-names = "default";
+> +
+> +       status = "okay";
+> +};
+
+Shall I drop this while applying?
+
+With the above fixed:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
