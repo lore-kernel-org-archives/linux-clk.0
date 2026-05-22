@@ -1,148 +1,217 @@
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013003.outbound.protection.outlook.com [40.93.196.3])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB3CB3A6B66;
-	Fri, 22 May 2026 09:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.3
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779440848; cv=fail; b=MINUknLDz1IMHEeAapnJ9MLsmor56c8ndji20SfqTuXFvdmLVRNyKBDMhdriBqUEW4oY0nILv+1HXGFI+n2sI4mbANOj3cSDXNEgh/EPAwrxn5W+v9bBJvpVv6Fn17uZmhqGcAf8a+KO0EbR9fhlOrWHTbzByyZFjvUKpFlnmcs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779440848; c=relaxed/simple;
-	bh=D8V8MYZK6pHlrNjmGKyrE5Hywl074VQxEvREANIonwo=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=knnLatOINViplyl2r6TrWcttkxvH5WV33ohgS2nmyDcatflEUs3KV6TNwDhqjBxUW9O2qPqyHqMLg8mCt/uyro3W2RfR1J9WqXdsVxTaBora/uUa6DH1+KIJHi4W4Jq0X/pOrAGB70lChfGSmQwdoe8EEq/tu9nEOix2MQs95QE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=swWG8VQH; arc=fail smtp.client-ip=40.93.196.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 598AB3A7F46
+	for <linux-clk@vger.kernel.org>; Fri, 22 May 2026 09:09:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779440977; cv=none; b=T+5SOFYPMIBywggQJy5rslCoegSc8XvInPysJNSkKaqmQ6i4pEUFHhQU9i9HPMt4a48mj1kZ/4TIFbliPzqT338fOX6Q8dpB0i4oaR892OZFSWEpRDJc++v3TV/KBFdQrz3LzKTkrIDMa7kPfsZtrKkjbJExZG06zTVaMZFbcK4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779440977; c=relaxed/simple;
+	bh=tvjnb+Uet6RnFiJb1YynFAL6Q40GRLj1mRo6yq1TEdg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YfeiuKrN3AD+vAGsIOUbvVDOHHfHx5aX34dgXw3IZuoQrlKHhoeNsig3BZO5c/2sPkH8vgM1aZMMzXohrmechGPZ/klm4pnRfXeHrLNf8kT9YE7JYGl+CX5JaYthHMVIV/3/aXlegvWwYP+Yq/CkVSPW2eyE/XQRM6bPxe1DYGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Kt2PDFcW; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=JVOH+J9I; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="swWG8VQH"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MzbNIOFsDzm3cKj8EOnqM/KZJl+rvPxqK/b+rU7cefrHiALrduPSD8xRdgwg7UOKeJj1N8uMqK2FgQoyRF348aGBi81ejY0epLI+17VRorY7IICkienCxa60TXwBipD0iNKzF7xcDib9m6wnbmPsVI8QFmQmbSpLYt2Az+5tM3AvNLX89U6g2KntQKI8dskui2QlkcUsywKGojYvav5eh248nSlRpMoV90JT3MllmrtzLFUu4TuS/RXewUVLPRz4mM2B6n2Z0QYwKhHEpqUe2BZBHdMqZx46g9I1MtPlSRnWPIa1PL5vR96wc0a9j+aauAKhX2i+1cwLfWHfoGF2NA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3XxNsz2iXuU7tsNf5PrIb9rCd3gQXNN0K8O+BFYOczE=;
- b=i5MJj3J4Fa0PbdmhboFfcCBDZCgtoUjwJR4FSAOvwigsObS4ZY0AJw0D0ZX4iBypy3hrUGv26OoyOIhB/fSs4OFTwvTbUcEDdLtBJibXaUygGWo5BkowRY1nc4uWIHIZYSNdapkP4qeglYxaUNgknT1F0GYOF+FxW0hApotnL7Anvv39ddiNERdkWoUd4ib/HZ1+8/4vDEfN4ubYYZImhAizd11bG786irRq8f27/dGBVoYuMmPAgjew8rSWJvFqFd0948ZIssbggHoHh5konsnRG6P5Z5ieblBCnP4uHoH1ZeWkPmtgcNCuCL++bKms/69JS+ZYOjSuik/vrEyv0w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
- dkim=pass header.d=altera.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3XxNsz2iXuU7tsNf5PrIb9rCd3gQXNN0K8O+BFYOczE=;
- b=swWG8VQHljSIX8PfjYLgRRB5wqcdfMEyFk+pv+mkYm8V/m7mqRomhSph0aSJgOxJ/WgeUAWIHjdZgiUJ4DQBD0slrR3gOUj7JsqADI4POGnTQOMXkef9sUD4aFUwZXdzOD52rzkzrV2YuNoOfwk76QTBXIpjPPFvlDgGq2YPdGZcr05VXdJNQ9RsRls1JWMQIk+HamS+JFzplhjL//KFKalvwd7ugyOY2dL98XnvktHTbtuNaG3fwMFDlckLlf7LLrmbs9etwCfbOasUcjZImMppKfpE2AxgsYl7DlrMhjVt+SSe4GsDst5mIFBsq8OnLgh8awLFfhuFF9rUmmGdyQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=altera.com;
-Received: from DM8PR03MB6230.namprd03.prod.outlook.com (2603:10b6:8:3c::13) by
- SA5PR03MB8451.namprd03.prod.outlook.com (2603:10b6:806:476::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.48.17; Fri, 22 May
- 2026 09:07:24 +0000
-Received: from DM8PR03MB6230.namprd03.prod.outlook.com
- ([fe80::abad:9d80:7a13:9542]) by DM8PR03MB6230.namprd03.prod.outlook.com
- ([fe80::abad:9d80:7a13:9542%4]) with mapi id 15.21.0048.016; Fri, 22 May 2026
- 09:07:24 +0000
-From: Adrian Ng Ho Yin <adrian.ho.yin.ng@altera.com>
-To: Dinh Nguyen <dinguyen@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney@redhat.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Adrian Ng Ho Yin <adrian.ho.yin.ng@altera.com>
-Subject: [PATCH] clk: socfpga: agilex: implement l3_main_free_clk
-Date: Fri, 22 May 2026 17:02:54 +0800
-Message-ID: <9f35b944a8bfc79ff17e645d2d3662824e57cffa.1779439821.git.adrian.ho.yin.ng@altera.com>
-X-Mailer: git-send-email 2.49.GIT
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SJ0PR03CA0339.namprd03.prod.outlook.com
- (2603:10b6:a03:39c::14) To DM8PR03MB6230.namprd03.prod.outlook.com
- (2603:10b6:8:3c::13)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Kt2PDFcW";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="JVOH+J9I"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64M6u9O2779268
+	for <linux-clk@vger.kernel.org>; Fri, 22 May 2026 09:09:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	QE39ajGQ40BKpXOOWM/P7CokESwSbt3jOVzNBooRXFU=; b=Kt2PDFcWVOG+KN9i
+	/EDTBKBhXa2iF0r2ZCfF05sTkCyXC3LEu7HfJhosoS4lkqq4tq00j5osv0jFwD4W
+	kc5NyHNbe9trU310IH9AP5jVGAPdeyrKqqi4xNJFtTH4oEd8I3SyidER282OmtbA
+	orHkfNJ6y3psHYYdkaJrKL1Yn4GNYFc8ATFi0sE1UYT5J+1DTkZ+0Gvw8vDNYwcS
+	lVqsYxUQ+0Y68CQaG303nMczNHwe2GBXCx3R+j3/gyLNuSunvqvUtkgvaMtYYaRQ
+	b5EtNPly7WX2feSuicLf4/+ttJg7/j2AZS6IDwP0RqVs8j2ITDQGyWAz0TOBz+8K
+	Xg/12g==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4eac7asy1y-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Fri, 22 May 2026 09:09:34 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-36781927b4dso9185402a91.0
+        for <linux-clk@vger.kernel.org>; Fri, 22 May 2026 02:09:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1779440973; x=1780045773; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QE39ajGQ40BKpXOOWM/P7CokESwSbt3jOVzNBooRXFU=;
+        b=JVOH+J9IJrM+MT9khwiwlNkyvYAaU3OY4ksnfaIYiTpaRxvzmQdmGtVz6REhkyGAEG
+         G1Fvhzy8gm9uJvfgz5ZVQzWAV4pSnRUoZKt9x5u710TTR+/dELLC1kIrEITd43KKxQfs
+         +WhstFPD4T/sy31F/81QqctPpbYITI8mdZXlbFA7eaaotx5SnB+dth4ZhlNMtGt3eaVH
+         uyI6zjduXPOWIGZNEDUjX44dZJ4OZOZUDYyfVqdERHAS/c5jkrZj2cQAYBOg9OZvs4FB
+         yJ41uXuW6gGN+yhFHziEXGCpvMmIPfIjbWazBZsgms5sQ9uvp0cKk45qM4cKY5JdqzmJ
+         ASGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779440973; x=1780045773;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QE39ajGQ40BKpXOOWM/P7CokESwSbt3jOVzNBooRXFU=;
+        b=CnEDjUbkz43OdXzEEsSSHPmezY/nlA2U3b0WHy9sPt/xwKPOVRBV4noTA2sVXZ2w/H
+         bVu6Jp5ZeFVIKyd3zeCRyRP52By+w2YZHsa7Scf6Ym25c4ocDLzJ/6cg2d3nFuljZNnB
+         sDV3WXv+ueiSLAmfQDOLjtHQgekrBJhCQ746Gw90lejizmm5CuD1A0fkNNL7H+JtXzoL
+         9/bjRkBDJduftJPPPLobO9VIPjSi+0yYlczbFxSFflDLCCGWa4/Fc5u3NuIpDWeTSDsQ
+         nlrAs62vnHr4H7ppjHJTx8xjr38UAkfj1qUu9FjRc4SqafjLLxFO19Axx6SnwT4XgAaj
+         yKVQ==
+X-Forwarded-Encrypted: i=1; AFNElJ8XOXVxhTC/5v/xL87DOuJmg/b7fsMH20Tk3SymjecLATjq6tKC5pfJq0ZTHdLHt2ZmeZ9VYfILcaQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7zvTbYxOPiXYJa/42J0Gj1Ity7PHr8PGG6ET7nYkBffydLmHO
+	2qP+HOVzTmyEk7RxGEXC0XsFyJOI4CSUrvizPvUq20vhrg8nQaRrzvhlbx1Gv8IOziS3Duj4hzv
+	tzWG1jOjvKzGqqtAlgAanAd+RLD9NN/o49BSBKkdgjMPkkBNCzPSqrIdHu06AreE=
+X-Gm-Gg: Acq92OEJRV4/TjPzyi1p2HhJ+0ivA/ZeqlLOHryYy1MOD5EeatPqq/cbKf1rl5j4Jdw
+	boXQ2H9nlR+syEiT0QQbZLtZYcs7BNZ4/kWqCuYktiqXk74BrllqGgC0BSna2ExuEMg/KqFiFyI
+	pWht3BfK69Uz3w9f/E7AptvNu7CBIhKc7OT2RFEYhrPD9mcer/fZqvPwfPmtY7RI6dV1mvO/G/O
+	fCe9/3cXSzqIzB22bRwhlf+61ygvwv0qQoKansj6HdHNVhQAZ+cpum7lCqLPAnGRIkL/XK6n67f
+	J2pjsiIAPoKxMccjZ9aHq1tMZ6rzxUz++5V8mRrFcvawEImvx7dH+p+xI6/vNzmfcdglioT8sNc
+	MofjCLedOtwdzHMJDTgay2kQo+o2vG7ifYkMwLOkL84HqkOd3
+X-Received: by 2002:a17:90b:564f:b0:368:ed92:6f3 with SMTP id 98e67ed59e1d1-36a677ce506mr2573575a91.18.1779440973255;
+        Fri, 22 May 2026 02:09:33 -0700 (PDT)
+X-Received: by 2002:a17:90b:564f:b0:368:ed92:6f3 with SMTP id 98e67ed59e1d1-36a677ce506mr2573549a91.18.1779440972660;
+        Fri, 22 May 2026 02:09:32 -0700 (PDT)
+Received: from [10.218.5.114] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-36a72188499sm717523a91.4.2026.05.22.02.09.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 May 2026 02:09:32 -0700 (PDT)
+Message-ID: <143e095c-471b-4cd7-9395-1fa06fa50625@oss.qualcomm.com>
+Date: Fri, 22 May 2026 14:39:01 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM8PR03MB6230:EE_|SA5PR03MB8451:EE_
-X-MS-Office365-Filtering-Correlation-Id: 876c336e-d73b-4ac9-d873-08deb7e18989
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|56012099003|18002099003|55112099003|11063799006;
-X-Microsoft-Antispam-Message-Info:
-	XgGNozdM+/3lwcu9Dln/c3AYd+y+ic9IqaJJeJeBIesQr6lB35WD4pjn5vyORM5RJDiDFA4CK4jqibYLnEUyRvFtZM06Kg9W+5zypzRHfUjGNmUAMtDnsmqxyztgjgmUBxx+ywDzpr0FkFPyub1kS7q690eHUu96BEU0MGKc4QT5UwQ6MRtn9mtUsKbivTe5X5j2vo5jzXZvvPEKWnbse8DDTxD+dZMxOEORG6R9cG98WfIsdBFV6XQcBUS3e37vNbeYZZKdIaryP/4LI0U0NaGbc5ZpPoyBXNmKE/nM2g3dns+qWr5hMg0Om5QjhPAYV0spjvDndEPgnVS41kZvQmQSR8SXJT73tbQtmpR9adHzpEfYzXH3M6fAdttKv+N0pRliRK3ufSsMr2USHT9ctQ7fAoUfQCT2YLBHD1L0KND2ZmUOz1HMWsCYqxogOIyO+CbCP6aW/d0KwrpyzyWBVzrlBNYR79gES4w9RKpW3J54aCwGTcDXJ557NIxJUdRf3T4LZmBjdERb5Vi4imKE1sbrR2Rj+2Fs+fCQ8PVe+FG5Pu0ufxHlDMkf0cj8kM49VkfjgE+9Y5eIpfn+QiYeCqPd/DGgXkCHMhhAQx7OawS4EYrr8v8rS1y21/2SfMFWsoyiUYBVfTA6bQfcuRACr/1LAIPfalcU62LsNwj6FBIJLNEs8a4+BXrZ3iRKlOvn
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR03MB6230.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(56012099003)(18002099003)(55112099003)(11063799006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Jz1+2OUIzI2149JKrE4VHLdQl3ZG/p0XoY4sylJXDPAg0kcUuZrc6ffjMKJb?=
- =?us-ascii?Q?dBVzj15aiuuRdRahMOFMRmd22X5GBsIGM4/ssiuumTX1TJaW3vFf+Eznu8wl?=
- =?us-ascii?Q?oPqnS3eohmNj5DugdHZJ7XVKatrIB3i3lGQdTIyVPgaEKQbqqKE1SxaD5DUa?=
- =?us-ascii?Q?7pqwyh+hOrS3YEgHhBL1l5cyLKCBZQkSf0Id7lqq0kAoHi5iYm0RkZnO9qr/?=
- =?us-ascii?Q?AkLnsEPK/8p0y8XO7pwkSKbhqoX2zylrAkomV/mpYBKNs7QWGT3FakI8hHI+?=
- =?us-ascii?Q?7OTLEv5zJu8LwlANDY5UQ1B2NB2DZQnAve5n6ODnp9CpozULtm38k6Qq8e/U?=
- =?us-ascii?Q?+rINYxFXfh0e9mauOI+uDTOqzKldgBakaWrR4weQ7KTR9Ef1rDcia9JzkWBB?=
- =?us-ascii?Q?8gVmSazwEoGvCv6/DSJahlBNpe8Jg3sQgUjTeuhG0KVCcbp/KvTxukqBChLD?=
- =?us-ascii?Q?Ad31XpH06Bs90VcLOSVi7qgd526ayj0CXOIb05Hv0pfXQLSEiRKOOaejPkt2?=
- =?us-ascii?Q?5asc2nQJ44fIg2f/CTLUZVnBqaYUy1jy1YQYaI/sA255iwL6xdTX2QM0pxj7?=
- =?us-ascii?Q?zmEsj4jgHj1EqSjxlyz+zxk3y7faBq0cDD3iX9EATnbrcngMnXfkIh2lIK/2?=
- =?us-ascii?Q?DwoeHuhoT2wvt+s5OUgaZcIQXclUwhMeqwDDQWddsz0xuCBMAlwV7Dn45hhy?=
- =?us-ascii?Q?1lvQqCKaRtQ/ummAGzOfbsWRqLJWSvlAqnQJLBSyvMzlv/p8fhkIflydK2EE?=
- =?us-ascii?Q?KYHD+e9vNOV2JPKKqRQzbZWIsxCxCLERF3OL7unRWBYiIvFa4/22xrhebyER?=
- =?us-ascii?Q?BQj5+Z7GOBzijEkELRrM6QY4SlWSpFh8HM13qpMWYq2JMkMbznwlPDZ5OZNm?=
- =?us-ascii?Q?QSh6z4SYvgS12Mk06LnDkx+niVDwT29F4WzPWknqgDJMH1TkUpzI7sDFfeI4?=
- =?us-ascii?Q?lvTOJvYE1sLiBLYuK0ervl+2elOswaB1AILBJkaI7rAfdhdgz691qISIfgZf?=
- =?us-ascii?Q?u8Cpy0MGSX272zON6cWIng3hckO79JVHhNl2j3neO5lXvVh+xqhqykVB91BU?=
- =?us-ascii?Q?xUD9AcTLpPgpoOSCKlrWTEgYyjHv4o/8gjebCA+x+hYS+IhoJhvwD3i2UsCd?=
- =?us-ascii?Q?VcIKQi+gWTXZuu7MhbJZhf1YRI9soAPXihs8nlS1V+p1q61dtlV4/K89XFfL?=
- =?us-ascii?Q?5e0WvwuA51tEDFFmc1vJWIOUxu2jhTyoXDOm6ErUJBPIGMRjt91s25Ic3arI?=
- =?us-ascii?Q?DnfORQmS3yBXHB3Lykxhh7u6fQRAxYFN8ahEZeeAU+zuUlTi1BSyIWVw1YdJ?=
- =?us-ascii?Q?+oGXu2RZOFQTRmz9zLBIoWYZ81HOitRGfEqhmHMi2Jj/MwXoJCFxGSE5xXy8?=
- =?us-ascii?Q?w9+F5j+ZWcAn0VVCEAvk+Nt/mbjom6NdDR6BAAj0mZ1roj75Kp0OAl0BV4io?=
- =?us-ascii?Q?yeRyI9nfGkhWIiM8jp3i8D2MzBfEIWh/+2gc4DouFgtGRCR4qQooWWOqoNyD?=
- =?us-ascii?Q?obHH3T99NkVS/cRwZfuWAl6k/f12y87+I+2sB60JTPcVl5Ez4Dk2yxtFwG4i?=
- =?us-ascii?Q?AOPP2/Se+OpN/youVtrLLaBm24T53i84p7UpVTGi5kpi7k7b3KRpkKpKyNM/?=
- =?us-ascii?Q?vSkp3rMfRnG4FaXOujMXycfuzJ37SOiSZViRPv1YxHJnavBT+7jSgxo+jtVk?=
- =?us-ascii?Q?7S4UhHb+Vorq1yCRVXzeYHvN1UvOXHkjG4+atY1EI+GTZAeUAivvsswWeRZ5?=
- =?us-ascii?Q?UxGYVh1EywL293Xv0SxRjMRkT5vZxOI=3D?=
-X-OriginatorOrg: altera.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 876c336e-d73b-4ac9-d873-08deb7e18989
-X-MS-Exchange-CrossTenant-AuthSource: DM8PR03MB6230.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2026 09:07:24.0794
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Mgq60GjJhl/taQAm6n/D6w+CY/opBBmvyg4K9hygumOKlnjUdzzueMWLaaO4lxSrT4OC7BFuC20I02lMGW+wlPRuz/A5ngz/9bx7QtT6asU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PR03MB8451
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] clk: qcom: Add support for Display Clock Controller
+ on Shikra
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Taniya Das <taniya.das@oss.qualcomm.com>,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260513-shikra-dispcc-gpucc-v1-0-5fd673146ab2@oss.qualcomm.com>
+ <20260513-shikra-dispcc-gpucc-v1-3-5fd673146ab2@oss.qualcomm.com>
+ <n4wgnno2td3xmdsgwadvdtvr4ncitzio3ufufg5bp7wnga4ouw@mj76764e3uus>
+ <dt5j7khzvgoj5qdrnfoi6ssye23jve5gjta5qx2ubuvufjzr2w@puacv5jgosmb>
+ <1cf064d0-14b9-489f-964f-614aeed4fcbd@oss.qualcomm.com>
+ <qg2n6pwjcoz7262eylept4mec2l74h2owfbhjykfxap6qwgzuq@oawiwgok4hhi>
+ <1c0bb8ff-eaca-4779-9b2f-4d564abd8670@oss.qualcomm.com>
+ <dv5rw3gkmy7evlv3bm5ryewy6ppojxgcklamqmc3x567isomtx@3oonu5gtzwq6>
+Content-Language: en-US
+From: Imran Shaik <imran.shaik@oss.qualcomm.com>
+In-Reply-To: <dv5rw3gkmy7evlv3bm5ryewy6ppojxgcklamqmc3x567isomtx@3oonu5gtzwq6>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: aSz0Gdk-mno6kBYzs4BJ8lWhXKlxbQqj
+X-Authority-Analysis: v=2.4 cv=JrbBas4C c=1 sm=1 tr=0 ts=6a101d4e cx=c_pps
+ a=0uOsjrqzRL749jD1oC5vDA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
+ a=EUspDBNiAAAA:8 a=0XXBx609mjK7aBirURsA:9 a=QEXdDO2ut3YA:10
+ a=mQ_c8vxmzFEMiUWkPHU9:22
+X-Proofpoint-GUID: aSz0Gdk-mno6kBYzs4BJ8lWhXKlxbQqj
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTIyMDA4OSBTYWx0ZWRfX6GuqCLNo6reK
+ X0FPMdJRTCWH/wr8+kn92g5Mm/li5+dKkVp5C6LVZ6HB4bZL/T7CerekLGvVDBM+GB6V7lxuZuD
+ kJ1D9mOI9IHq7jukUqAyX7yZzMbjoRYK8fafigDUeIFvQ5dDzU5diYCN9ce4X0kkcd/ncsKcoO2
+ GV6smCFdZc9CjmnksKZZYF2IwZ/IPncVxcJxs/IWLwWDPqD8IOjBLgmIB7qbfCfa3KCWymVcscZ
+ QOQx8tEP0iHI8PZYq7bziqkv7I+3QPPxpY25GrubzERhAjyVUvV3cU1POqIc7JkNSreZf7eRAx1
+ 8lIx6NOx8muAT5qCuv9Ae/jP0q18xYpQkkgd2m4WxTaeh+cMN6EbBPSw2Fz2M8dNKp3KtsaYi/3
+ fRcC79hFI+O2FA2NPd9Pnf4p9WtkkfAHXLWqFXOIRYUtIC0pDajBLGxZxK9yijLgZPFoGq4scWJ
+ s7tLceDs2BOvSvmRNmA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-05-22_02,2026-05-18_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 impostorscore=0 suspectscore=0 clxscore=1015 adultscore=0
+ lowpriorityscore=0 spamscore=0 malwarescore=0 phishscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2605130000 definitions=main-2605220089
 
-The AGILEX_L3_MAIN_FREE_CLK is defined in the dt-bindings header but
-was never implemented in the clock driver. Per the Agilex TRM,
-l3_main_free_clk has no divider or mux and is a fixed 1:1 derivative
-of noc_free_clk that clocks most of the interconnect datapath.
 
-Signed-off-by: Adrian Ng Ho Yin <adrian.ho.yin.ng@altera.com>
----
- drivers/clk/socfpga/clk-agilex.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/socfpga/clk-agilex.c b/drivers/clk/socfpga/clk-agilex.c
-index 8dd94f64756b..2bdea1997b5e 100644
---- a/drivers/clk/socfpga/clk-agilex.c
-+++ b/drivers/clk/socfpga/clk-agilex.c
-@@ -259,6 +259,8 @@ static const struct stratix10_perip_cnt_clock agilex_main_perip_cnt_clks[] = {
- 	   0, 0x3C, 0, 0, 0},
- 	{ AGILEX_NOC_FREE_CLK, "noc_free_clk", NULL, noc_free_mux, ARRAY_SIZE(noc_free_mux),
- 	  0, 0x40, 0, 0, 0},
-+	{ AGILEX_L3_MAIN_FREE_CLK, "l3_main_free_clk", "noc_free_clk", NULL,
-+	  1, 0, 0, 1, 0, 0},
- 	{ AGILEX_L4_SYS_FREE_CLK, "l4_sys_free_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0,
- 	  0, 4, 0x30, 1},
- 	{ AGILEX_EMAC_A_FREE_CLK, "emaca_free_clk", NULL, emaca_free_mux, ARRAY_SIZE(emaca_free_mux),
--- 
-2.49.GIT
+On 20-05-2026 09:59 pm, Dmitry Baryshkov wrote:
+> On Tue, May 19, 2026 at 09:34:09AM +0530, Imran Shaik wrote:
+>>
+>>
+>> On 13-05-2026 08:38 pm, Dmitry Baryshkov wrote:
+>>> On Wed, May 13, 2026 at 04:51:03PM +0200, Konrad Dybcio wrote:
+>>>> On 5/13/26 4:06 PM, Dmitry Baryshkov wrote:
+>>>>> On Wed, May 13, 2026 at 05:01:16PM +0300, Dmitry Baryshkov wrote:
+>>>>>> On Wed, May 13, 2026 at 07:10:38PM +0530, Imran Shaik wrote:
+>>>>>>> Add a driver for the Display clock controller on Qualcomm Shikra SoC.
+>>>>>>>
+>>>>>>> Signed-off-by: Imran Shaik <imran.shaik@oss.qualcomm.com>
+>>>>>>> ---
+>>>>>>>    drivers/clk/qcom/Kconfig         |  10 +
+>>>>>>>    drivers/clk/qcom/Makefile        |   1 +
+>>>>>>>    drivers/clk/qcom/dispcc-shikra.c | 565 +++++++++++++++++++++++++++++++++++++++
+>>>>>>>    3 files changed, 576 insertions(+)
+>>>>>>>
+>>>>>>
+>>>>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+>>>>>
+>>>>> After comparing the files...
+>>>>>
+>>>>> Can we use dispcc-qcm2290.c instead? It uses clock-names instead of
+>>>>> clock-indices, but I think it should be fine to use clock-names as a
+>>>>> one-off.
+>>>>
+>>>> Or we can convert it to use indices, since those are stable for agatti
+>>>> too - the names would remain in the binding, just unused by the driver
+>>>
+>>> Either is fine for me.
+>>>
+>>
+>> Hi,
+>>
+>> In Agatti, apart from the clock-names difference, I see that the AHB/XO
+>> clocks are not handled as always-on via the probe and instead rely on pm_clk
+> 
+> There is no pm_clk handling in Agatti driver.
+> 
+>> style handling, whereas Shikra follows the newer pattern by marking required
+>> CBCRs as critical during probe. I think that attempting to modify this
+>> approach into Agatti may introduce unnecessary complexity.
+> 
+> Well, you can start by explaining what caused the difference and the
+> result of those differences.
+> 
+>>
+>> And the Agatti DISPCC doesn't have the DT_DSI1 bindings exposed, and
+>> updating this might break the ABI with respect to bindings, and DT.
+> 
+> You can add Shikra-specific bindings. See how it's handled for other
+> dispcc drivers.
+> 
+>> Given these and considering that Agatti is already stable, keeping the
+>> Shikra as separate GPUCC/DISPCC drivers is better to avoid the risk of
+>> regressions and complexity.
+> 
+> I think you've provided arguments for merging two drivers. It would
+> allow us to modernize Agatti driver and also to make sure that both
+> platforms use the well-tested code pattern.
+> 
+
+Sure Dmitry, but we would like to proceed with Shikra as-is now since it 
+already follows the latest upstream conventions, and will handle Agatti 
+modernization as a follow-up series to align and reuse Shikra drivers.
+
+Thanks,
+Imran
 
