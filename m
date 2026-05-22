@@ -1,109 +1,120 @@
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46CBD1A23A6
-	for <linux-clk@vger.kernel.org>; Fri, 22 May 2026 12:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779454448; cv=none; b=s1OIbCXZTMk0vEiqqkF0EnASq44Ry3GnrZuXQ+z3D9xEfcTKAsMq4c7p3XEPGp+WX0CQ57UVB5+5k3cLkX5TBaHOehOt7lGbOtDcu5E61Ffd0rR7tNOUjo6K1JcKmVLYR/MvNp5D+iKu1xN6G+YbBxUX3NkKWBA5VG53BFa90Vk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779454448; c=relaxed/simple;
-	bh=y0f0zDcXdnnkLBeUUpPjjNjoTVeherK6Gnt2N+WMLIM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u+y8LfzbLx8zVKm/DM8ChmJNOPaYgKjzcvR+/H558W3SGjRqRwpwbd72ThN5xx0wwSJVEMtHINS5MidnHRev5i1pxsFTLQvpsWTgiOIoRSk4cVhmpAEeJ/pcbgBHWc6Pt+VEoDJdbWCNEBOFA+Z+ekB1NfnDpxrkfjop8YCe+14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-57513733658so2475371e0c.3
-        for <linux-clk@vger.kernel.org>; Fri, 22 May 2026 05:54:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779454445; x=1780059245;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3quGHjyGKvPfNTVLHbhsH4A9LYn3Ygi87Pw363YCUbE=;
-        b=AQN9FD58NPNRmiopgx+jm535Eff7EvxQBz3DiQztZ83mKSAdPurBGjPlf1CsNYWvLY
-         XjQjT6uj32OvaalN0QByG2Tr2NH6iJaXYriU3u0VTmB8p1ppVCKwpd5BhjLrJgs/73ay
-         hPRvfNhjggC08rWwAEKMTfPljVtdY0DZqbJLilMhnLbCg1JRt5uG9n+NIyvSQZstQh2e
-         /eHCgNp42K25nqH3rOEVWlCmS+GjKAu6SaGxg5XdDLleLD5qTaFLWlLlSpcb6Ua8Ao6G
-         MJw7TeZ4uwUG1jMnPJEXg7EICKd5LdB+YhpiM0hs6TN8Rk1442TgUhCKJowOpcLQDyYe
-         GB4Q==
-X-Forwarded-Encrypted: i=1; AFNElJ8G96YnXza7k09wFdgfSx63fqh+rZzycgQbYEG3TXtl7Qe7+tcwo7GvXfhMtaz7u3bg6UAUoXZ/MvU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMEC2iEwO1OVM/luHPKVptwNT/kVhIyzQ5lvJlpV/7hXJO/2RK
-	xnQKkuhS0IgbB+UHpg6kmPCsJt2TFMWwoyIDMAd92hr8x38F3HpKMd4B++oygdRl
-X-Gm-Gg: Acq92OEyiPcwRnP/rQJDKr4+5ST14L2iX5PvFWY/leHCnlRBbIwwTY4vFJPf5D+lvGH
-	rkFyjrdhIHHoQPhaCfUqdvQHRXLvMZNmuch6oy7iyJeit2ERCOy/8qx9Gr5mnCrnb96SzPRqJTo
-	bBOQCIWvTVZtY5pGhJiUHJJOWC2yUnpWN51Hm+67MvT8WyvEQ48+sMhPcGl7TrTV+fWImbV7OJK
-	cKUXLnOgAUEOGrBQjVQIxflo4zq1tR3ER6T5ukC01PohSpsw6FYMKuFZ79vRu4kO91qxRGkkLpR
-	UBqTyrfXmiGM7AnkQQlIFWvBQnsGpeRwfxXcKwO1bnXkRiqeVXHZaBbn80uQrct4pF/fNfcVvKA
-	JJjXB3QHFfuWwgnz6Q6dfRX6oLhVCHcc7Vn9iEMFRtJzH52H3+q7QsMIKocmPQylB2XBcwsbPI3
-	ltx6wnrdCRMQvsdbcXf4PcGr79BbP9lvudnoFKqa+xvUzW2FHLwLmviGzBWmxy
-X-Received: by 2002:a05:6122:3405:b0:575:36c4:8900 with SMTP id 71dfb90a1353d-5866395ff77mr1593721e0c.14.1779454445101;
-        Fri, 22 May 2026 05:54:05 -0700 (PDT)
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-586f8f6cd40sm2033889e0c.16.2026.05.22.05.54.03
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 May 2026 05:54:04 -0700 (PDT)
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-63270abd14fso2385839137.1
-        for <linux-clk@vger.kernel.org>; Fri, 22 May 2026 05:54:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ+PNliikq7W4LaeeWFYOrCgbpYWuNGsv8oR3bB6O1gFQEN2eRXocZa986cFMd3mAfO287ajXdqAg0w=@vger.kernel.org
-X-Received: by 2002:a05:6102:c89:b0:65a:fcea:5a4 with SMTP id
- ada2fe7eead31-67c749055f5mr1527775137.4.1779454443355; Fri, 22 May 2026
- 05:54:03 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53FD738B122;
+	Fri, 22 May 2026 13:00:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779454856; cv=pass; b=Q47HyvoQ83xIojeBgvvw5paltdSKsMiATp3K8DUwb4grOlIXljS7f34VNpsZFx//QyTkONiSXqZEuSVtcjiVFLmBAGHM/ZhD3Z8S3A7tlZoVMpHLgsRcKLMDvNVpmlQ0BKVYCYOOAUblXrdmhNYHdhXets3B/dnXijVIqCgAmR4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779454856; c=relaxed/simple;
+	bh=2a2Ues8oit5F0hamVRvNnhy1TDmBusJ+DQa9IX5JqNQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ZMBEKrB4Ldx0xeLTWQC+YpK4oXSfU2Bl4yMjNX1pSOYD/v175fJpnQxhKz3wZCNNxbg4vrXGOi/qO5wpFCk9XSOmed13Mft/7/xYs36LQvCwoFGRWrdDOJUF229y8GUZRg94YqH9M9QfAMMi2sFa7alVd9v2b6z9ojq1owWKvno=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=LZNgU1Uw; arc=pass smtp.client-ip=136.143.188.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="LZNgU1Uw"
+ARC-Seal: i=1; a=rsa-sha256; t=1779454836; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=mXHalvZ2De87nqdd+Qu9KejK7X7MjBsUkinnEita0NpFch6ur7DdcDRoqF5KC5Fj2Omk3eO8X5XSy6IlZ6FHTc1qMRoWoKvCSOM2xNmqSoXRG9Z151NwXa/ZrEkNpJxzXONpLjgP5qtYE5n+/WFiun4t0GzFG9TtpQus8BHteIM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1779454836; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=JX4/HzHgr9Ln2K8EGkhp70E2oDhc6Dp0qS3CpdjxcfQ=; 
+	b=JEB+Q9kwAq8S+OunkVsGFsekfZ9tc+ZY9ZUMJmV+1qFYAqVV40vfTA/POq7At6oj0T26IfumIjLbAg5GyJtMeJbZPE+BTP4wW/psuUaiygKGa+C7vmIA7SbuyIZqA2UqH+8eKTWPuAyyt8LElyvywS9ai0Em995/TpUUQI5qzu4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
+	dmarc=pass header.from=<kingxukai@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1779454836;
+	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Reply-To;
+	bh=JX4/HzHgr9Ln2K8EGkhp70E2oDhc6Dp0qS3CpdjxcfQ=;
+	b=LZNgU1UwZJKElt8ZqwmVKwQcyAxKscQZEb7E8wVgPi/WkeBfHNVYQnTs6MOWtlOc
+	BAI7vOXBBOJLSH2zzdyPXRvm8cGL1feHbggGYDzMDI4ECTwwOOE9R1hw18GPbhSWHrc
+	UKP6Xgu8diFjXdUgXtSu5j6JyS9wyLvvbZsq5C2Y=
+Received: by mx.zohomail.com with SMTPS id 1779454831935958.224223537089;
+	Fri, 22 May 2026 06:00:31 -0700 (PDT)
+From: Xukai Wang <kingxukai@zohomail.com>
+To: Conor Dooley <conor.dooley@microchip.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Conor Dooley <conor@kernel.org>,
+	Xukai Wang <kingxukai@zohomail.com>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Troy Mitchell <TroyMitchell988@gmail.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH] clk: canaan: k230: Fix sparse warnings reported by LKP
+Date: Fri, 22 May 2026 20:59:12 +0800
+Message-Id: <dee4605ca30f9bbd55ccb4fcce9590ceee1fa10b.1779453284.git.kingxukai@zohomail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260522-eligible-vivacious-3ce9bc30dd53@wendy>
+References: <20260522-eligible-vivacious-3ce9bc30dd53@wendy>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260520092947.70596-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20260520092947.70596-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 22 May 2026 14:53:52 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWjp2bWkvPraNz13afhENWU0zdu3Zy0VP1dpU5HPB0PzA@mail.gmail.com>
-X-Gm-Features: AVHnY4LtzrzzorNjSfvxyjhEkppUb04Rmj1TXYpE3QgN6Qn4KvJMw-KEJ4D4Cvw
-Message-ID: <CAMuHMdWjp2bWkvPraNz13afhENWU0zdu3Zy0VP1dpU5HPB0PzA@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: rzg2l: Rename iterator in
- for_each_mod_clock() to avoid shadowing
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Feedback-ID: zu08011227c6335346a63148b9f6cec2f70000b3c03c513edafb3405058bc9ea8ac70ec1c949f9169db7a4fa:ZohoMail
+X-Zoho-CM-AccountID: 2ee5dd3c83366259b2ba1e9826250ffebed1ef2dd213857d649ad25aba73b429
+X-ZohoMailClient: External
 
-On Wed, 20 May 2026 at 11:29, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Rename the internal loop iterator variable in the for_each_mod_clock()
-> macro from 'i' to '__i'.
->
-> The current naming conflicts with local loop variables named 'i' inside
-> code blocks that utilize the macro, triggering compiler warnings due to
-> variable shadowing:
->
->   drivers/clk/renesas/rzg2l-cpg.c:1494:36: warning: declaration of `i` shadows a previous local [-Wshadow]
->    1494 |                  for (unsigned int i = 0; i < clk->num_shared_mstop_clks; i++)
->
-> Using a unique identifier for the macro-internal iterator resolves the
-> shadowing warnings globally across all macro expansions.
->
-> Fixes: 3fd4a8bb4b63 ("clk: renesas: rzg2l: Add macro to loop through module clocks")
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Fix all sparse warnings detected during LKP randconfig testing:
+- Replace plain integer 0 with NULL.
+- Add static modifier to k230_plls and k230_pll_divs.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v7.2.
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202605220724.j4ZeM3KI-lkp@intel.com/
+Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
+---
+ drivers/clk/clk-k230.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/clk/clk-k230.c b/drivers/clk/clk-k230.c
+index d883a1e1118e..cfc437038e4e 100644
+--- a/drivers/clk/clk-k230.c
++++ b/drivers/clk/clk-k230.c
+@@ -270,12 +270,12 @@ static const struct clk_ops k230_clk_ops_mul_div = {
+ 	.recalc_rate	= k230_clk_get_rate_mul_div,
+ };
+ 
+-K230_CLK_PLL_FORMAT(pll0, 0, CLK_IS_CRITICAL, 0);
+-K230_CLK_PLL_FORMAT(pll1, 1, CLK_IS_CRITICAL, 0);
+-K230_CLK_PLL_FORMAT(pll2, 2, CLK_IS_CRITICAL, 0);
+-K230_CLK_PLL_FORMAT(pll3, 3, CLK_IS_CRITICAL, 0);
++K230_CLK_PLL_FORMAT(pll0, 0, CLK_IS_CRITICAL, NULL);
++K230_CLK_PLL_FORMAT(pll1, 1, CLK_IS_CRITICAL, NULL);
++K230_CLK_PLL_FORMAT(pll2, 2, CLK_IS_CRITICAL, NULL);
++K230_CLK_PLL_FORMAT(pll3, 3, CLK_IS_CRITICAL, NULL);
+ 
+-struct k230_pll *k230_plls[] = {
++static struct k230_pll *k230_plls[] = {
+ 	&pll0,
+ 	&pll1,
+ 	&pll2,
+@@ -296,7 +296,7 @@ K230_CLK_FIXED_FACTOR_FORMAT(pll3_div2, 1, 2, 0, &pll3.hw);
+ K230_CLK_FIXED_FACTOR_FORMAT(pll3_div3, 1, 3, 0, &pll3.hw);
+ K230_CLK_FIXED_FACTOR_FORMAT(pll3_div4, 1, 4, 0, &pll3.hw);
+ 
+-struct clk_fixed_factor *k230_pll_divs[] = {
++static struct clk_fixed_factor *k230_pll_divs[] = {
+ 	&pll0_div2,
+ 	&pll0_div3,
+ 	&pll0_div4,
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.34.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
