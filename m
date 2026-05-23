@@ -1,89 +1,216 @@
-Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F6A2DCF4C;
-	Sat, 23 May 2026 07:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935413314C5
+	for <linux-clk@vger.kernel.org>; Sat, 23 May 2026 09:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.43
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779519649; cv=pass; b=VT9k6GFd90AOnrfsFPt7o8rGALGPdFnC+mKNjZ0wQXfo0AslMtthmiM3V0V092/uPjR95Zonlzj4F4f08xVZ7iMfu0AvQMY48we9h75szSPNNU7gWtv5K2hpXgLD1+V+BIZ1GVDSQIEkpLC0BoaYH6sQa3L4nW+I+lSy93pSoyk=
+	t=1779527380; cv=pass; b=nEn+/nDg8Hma6N8qsLl+drGr0hmsFwaonMAWWHV6v20NoeTDh9+e10bMosWhji16OV1jZBRehf/7C077c1SREdY7rMfntbLmLWJTqwZPJFxcb8vklMNY0W7/3RilSvh49Rb1bQTaXapRdB0arZoORn8pmtFuE72QAuJlA1v8kFE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779519649; c=relaxed/simple;
-	bh=yVSvniizSgFfcNsHMwJCuBWZhW/bAqIz7Zf8cWSp5K8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qEoVp8zhhkN0vlhsCjPqD6KxBPP6lBSiAgNttGC9fBx9wVhoVbdU2jx0a5NKyVTxuiF8Bidipwwr4Q/5UVyJQriGWz6N9jIFFFFP2n13bVXFRliZUdHNs38CJrUA0yYqmM+tvRZo59lGghKvGBIaimKHyyaQCogYua715laLNo4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=KdnDz4Qt; arc=pass smtp.client-ip=136.143.188.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+	s=arc-20240116; t=1779527380; c=relaxed/simple;
+	bh=1dxnGYQ/a05dBHJxbBi7J8RWtve9OyuUFwPBBfCIC8w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DRU8Hfn5cFnR/go0DVc8pIhgymsh0QVM/Dvfl3VGE6AWCt1CQ3JJrjznotftL1HhHrIWw53agcfk4GyOdvT8pIp6yGP5rxzImqsKupY+diP04tZG7U4V9MIFt8rzvmPn6WP90B/9MMRtF+XxZ033vqOs4QhMeiGRZ26PPLW9PHo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=sGFlggw1; arc=pass smtp.client-ip=209.85.160.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="KdnDz4Qt"
-ARC-Seal: i=1; a=rsa-sha256; t=1779519629; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=M34utHEyQKZAMeobS3B35LkIVRP25eNflVynpQ/IfP0sjWB2KDqJVg2viFgdEkprc8iLYc0R2MPi7JTfC2JbtNv7I8VtS5/Dy5M8XKjo17modpyVu76h7GIQDQcQsIp1cGjbEwl9pp1YSRNqF1v9AVmq2pID2dJGGuj1NT4pA2k=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1779519629; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=yeWxZcjLCzcDxdHmfowF+eUIDI+tNtFTvg63nH+kw1Q=; 
-	b=BXynZf7gWW8KbKvxcBGiqpK6MGGvy8LWbFWB30Pc9QndJ3Iyy6wI+JtZuHuU+vI3dh6JjuyNi1qIxQP3XawomyF/ofEWz2GCdjyCel0irsbMCWdleRu8J1ALgHbHZ13nRLGx9zou4ojBeghEiuzmX7T0UrtGelGXpfh0qM3yu7o=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
-	dmarc=pass header.from=<kingxukai@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1779519629;
-	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=yeWxZcjLCzcDxdHmfowF+eUIDI+tNtFTvg63nH+kw1Q=;
-	b=KdnDz4QtS88d7j9j2CMmRe5JttX/njeKEpc8QpMsLGFzoPUjf7YQfAt17GR9628f
-	Py3fhlA4M1ZsOcvLFynRM4vpVHn7RAxPudAAerNHP8LDI9Jl35U9w7AQ3hVEJMOhWBh
-	reVO7UJ4c2FzYTeIGs2KZOc1LwfHb9P/+kkHCpr0=
-Received: by mx.zohomail.com with SMTPS id 1779519625819699.4345382578165;
-	Sat, 23 May 2026 00:00:25 -0700 (PDT)
-Message-ID: <1f74efd2-444f-4330-a1e8-62f75e85ecfa@zohomail.com>
-Date: Sat, 23 May 2026 15:00:15 +0800
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sGFlggw1"
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-40423dbe98bso3758616fac.2
+        for <linux-clk@vger.kernel.org>; Sat, 23 May 2026 02:09:38 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1779527377; cv=none;
+        d=google.com; s=arc-20240605;
+        b=R0VovqqwymQbzI5lR87i65K0dqWd26IU6tsfxvR1INWReoj2rt9RD+xDODaNux9c4B
+         SFdVK1tJeLzlxER/pqO/1ddhcRhnZh2/L+0KZa0AvVh02CY32S88RE6B5kQsw5m4D1hm
+         R2+j0+sX2NKS3x4mSr0fuOVjYfbeLyPn5ZrS0lyurX5J1As9HYiyzZHrBMC4kjsW6MOP
+         D7duDki1RRDaIet2PYtNcqSJreAXKWVzCRE1J5JkL1slMuGV0JuQ5BnsApqOTD1Kl9bR
+         g7MANL6HrLo8bBznR1z0WHdafR6/3rDMFfUFcLUxNkwhyOPKjtMSEYZok6qOEwOV6+AH
+         2ooQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=ejKlmW0zzmF8irdxZs3kE5YHW68V4KSA3AOJZ+dT/PQ=;
+        fh=bpgshrwEA9o9ey8Pocd2UdeCB1MxDlx/WT768789LjY=;
+        b=EHeMb6IFAyOgfPKdvO3jZGs+lwTKeMg+7t3rC24ApS41zbHhU/Wr6IJubDiaOwqCVh
+         tX0qV5WhD+JZzUTH/EubT//Z+dJqAfIowkWeNjYQJwYuf1uScgGBPrmU6tCzOcgomewX
+         3JxH3mEmINOFx90JqqTJBs3LCsKoaSoHrY6kYAzrTbMgPlkZdmkSsgifaP+yS4SmwdSS
+         Q1X6T35uOOzDnQcVBlMJDNI1V36poQFt9zKpY0mGvdmFOfeV9/8pzymoEn2geHhiT9DB
+         Uq+h00QrDgKdKONHm72jOm1dnp50AG+2gjjEdOdlYmbDx3C6uLFVzgoDlvoEh5v3/07y
+         8lcg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1779527377; x=1780132177; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ejKlmW0zzmF8irdxZs3kE5YHW68V4KSA3AOJZ+dT/PQ=;
+        b=sGFlggw1Ec3APX/tb5+lz5O98ejYQPedntg6+T7ny9+YfZtWnkqE563NtlbWNju8bd
+         b3LKlfQAtORU1rYKkY5drwY1cV9HVwBhFe22/8SWeR+W++W3IuA8ZHsuj8lmD2ajY13b
+         sZl0YRpEXaSYb4hFJZWKITOpLXRaCKHmxt8VI7ZoRqF6X9qA2YGvQbvt1goKNT6IlXIh
+         UFN8S3iE50OU41FmgwxhAL/l/7gykClAgZVZAW4kS23rfx0/isAMOTovW+i5lBM4egMT
+         E85CaGfcXokdXZo+aBsTVBHHeBIOD6tpBKdU5BycxUh9+9ABqNtP77xQe1SbM1sVmCWc
+         SywA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779527377; x=1780132177;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=ejKlmW0zzmF8irdxZs3kE5YHW68V4KSA3AOJZ+dT/PQ=;
+        b=ht2hNilVywfIMG4ZcSP0xnc2tB/ZLn9OjGumyf04RZGPywhvqF25EpcB08oB7b9OYK
+         8kJMTsoQCPOazedEeCPvEkIesr9YNVFXrZcivIXJmQBspFtxO9AdUEjrvehu5aAQXQxI
+         Ed5aO//f7aIXUnWCUkyaJ6kUOGc1O3HOaN7M89MdRtSLlOHLeuu6zp2gLvjNPYwuHupU
+         EGVm0tphdgIHZoT/xE1f+sc3lZr6JNnGLtq+LX9S7qL7DOYUZ/iJLtfT8Iu5eUB2ipuL
+         CElGC6ym5VjReAeWy76IcIcm2NhSXSfVcJWVQUWxz0Ya0XJa1Oj6vcJm0nO1IUlx6mzM
+         icLw==
+X-Forwarded-Encrypted: i=1; AFNElJ8qHEP5DweF7mWzoIzkbrn4yNoeRFzF9Ubl++zyWIW6lzAGfkr7J81GWyQNvnIE+Df72ZJx5xTzbL4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEKxeSSd7luNuYOP4vh41HnnFoa32K2JRrIo5ljKCVGZMhQ/G2
+	4L5vjovx8i6R7eal5ReUS0Tkk7Tgpi63Nv1VDAceYxs6H+jNRwsX2MZoWdaJTOJ/kVgGn3YfCKV
+	kvzT8gjnk0Yyfi8Bkkrm5Rpp/A4sOsQ8=
+X-Gm-Gg: Acq92OHugRYD1ErtblJw7oaXf/zwL3cO2YK3z9D++5s0h1QeqJzOAUXXh7S3J7sm7bu
+	5YZfNzptZxCCQYEm/Il+a9IsVTO8PdCBTnMnmPkRrCa0yEHzqK6PWkyflczBlkoyuJd28UBH2j7
+	eXUHojYdxQO64avJcRC9KaSpVKOeRJap0lYk29a9z8uKIw3SesDwtuJAuAcumWOHZiTLI7e1Hyz
+	1H0VH5AV4+R0boD9pRO/CVpfy486oliMvnvxlozMibEjwmGqZ0pC1gGLb2TCeC99hBzi7ZNlo/L
+	v2OxnVc=
+X-Received: by 2002:a05:6808:80a6:b0:46e:df55:23fa with SMTP id
+ 5614622812f47-4854a0e00d5mr4060915b6e.17.1779527377468; Sat, 23 May 2026
+ 02:09:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: canaan: k230: Fix sparse warnings reported by LKP
-To: Conor Dooley <conor@kernel.org>
-Cc: Conor Dooley <conor.dooley@microchip.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- Samuel Holland <samuel.holland@sifive.com>,
- Troy Mitchell <TroyMitchell988@gmail.com>,
- Krzysztof Kozlowski <krzk@kernel.org>
-References: <20260522-eligible-vivacious-3ce9bc30dd53@wendy>
- <dee4605ca30f9bbd55ccb4fcce9590ceee1fa10b.1779453284.git.kingxukai@zohomail.com>
- <20260522-removed-lyricism-7c879febc3b3@spud>
-From: Xukai Wang <kingxukai@zohomail.com>
-Content-Language: en-US
-In-Reply-To: <20260522-removed-lyricism-7c879febc3b3@spud>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Feedback-ID: zu080112270f3b225d59c968fc3f003e8e0000419f44ed1e2083cdf9e0d7358856c5c545f8380336d5a2d4bc:ZohoMail
-X-Zoho-CM-AccountID: 2ee5dd3c83366259b2ba1e9826250ffebed1ef2dd213857d649ad25aba73b429
-X-ZohoMailClient: External
+References: <20260517-sf21-topcrm-v1-0-438f2e0513ff@gmail.com>
+ <20260517-sf21-topcrm-v1-4-438f2e0513ff@gmail.com> <agsEWo_mo5rzUAAH@pie>
+ <CAJsYDVJZW2VYFaxzJRg2+CJZbvqq_iRXaf7+zYvidQn0AiviKQ@mail.gmail.com> <ahB46uuoFQxKgr7r@pie>
+In-Reply-To: <ahB46uuoFQxKgr7r@pie>
+From: Chuanhong Guo <gch981213@gmail.com>
+Date: Sat, 23 May 2026 17:09:26 +0800
+X-Gm-Features: AVHnY4Lk36CbWgZqCYBOQQ0bLGYLlT53IZSzrrfoEn7qhEuTPaAPNqycRD4gpcY
+Message-ID: <CAJsYDV+cSbUu6EtgMjWT=3vjFX9w7DMNPhhBPRN2pzF0wJGwsA@mail.gmail.com>
+Subject: Re: [PATCH 4/4] clk: add support for siflower sf21-topcrm
+To: Yao Zi <me@ziyao.cc>
+Cc: Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, May 22, 2026 at 11:45=E2=80=AFPM Yao Zi <me@ziyao.cc> wrote:
+>
+> On Mon, May 18, 2026 at 09:34:17PM +0800, Chuanhong Guo wrote:
+> > Hi!
+> >
+> > On Mon, May 18, 2026 at 8:22=E2=80=AFPM Yao Zi <me@ziyao.cc> wrote:
+> > >
+> > > On Sun, May 17, 2026 at 10:12:58PM +0800, Chuanhong Guo wrote:
+>
+> ...
+>
+> > >
+> > > [...]
+> > >
+> > > Besides field/register offsets, the only difference I could tell betw=
+een
+> > > cmnpll_postdiv and pciepll_fout is that pciepll_fout clocks could be
+> > > gated.
+> > >
+> > > Would it be a good idea to describe the gating function separately as=
+ a
+> > > clock, and merge the common part of pciepll_fout and cmnpll_postdiv? =
+In
+> > > which way you could save a lot of mostly duplicated code.
+> >
+> > I don't think so. Since the majority of the existing code are register
+> > operations, and the register bit layout are completely different,
+> > there isn't much to share between these two PLLs.
+> > Writing a struct to describe both register layouts together seems
+> > unnecessarily complicated and harder to read.
+>
+> I'm not suggesting merging the implementation of the two PLLs
+> themselves, but only the two types of clocks derived from them,
+> i.e. cmnpll_postdiv and pciepll_fout.
 
-On 2026/5/23 04:39, Conor Dooley wrote:
-> On Fri, May 22, 2026 at 08:59:12PM +0800, Xukai Wang wrote:
->> Fix all sparse warnings detected during LKP randconfig testing:
->> - Replace plain integer 0 with NULL.
->> - Add static modifier to k230_plls and k230_pll_divs.
->>
->> Reported-by: kernel test robot <lkp@intel.com>
->> Closes: https://lore.kernel.org/oe-kbuild-all/202605220724.j4ZeM3KI-lkp@intel.com/
->> Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
-> Forgot to reply earlier, but I went and squashed this in.
-Thanks Conor!
+I don't feel like arbitrarily splitting a single clock into two and exposin=
+g
+an internal clock unused by anything outside the PLL block is a good idea.
+I'll try reusing the ops and omit the enable/disable call for cmnpll_postdi=
+v.
 
--- 
-Best regards,
-Xukai Wang
+>
+> > BTW the CMNPLL and PCIEPLL are actually different hardware.
+> > The former is an integer PLL while the latter actually supports
+> > fractional operations. I didn't add support for the fractional part
+> > due to the lack of use cases and documentation. PCIE and GMAC
+> > clocks are fed by this PLL and require exact clock frequencies
+> > which can be achieved using only the integer mode.
+> >
+> > >
+> > > > +     .recalc_rate =3D sf21_pciepll_fout_recalc_rate,
+> > > > +     .determine_rate =3D sf21_pciepll_fout_determine_rate,
+> > > > +     .set_rate =3D sf21_pciepll_fout_set_rate,
+> > > > +};
+> > > [...]
+> > > > +
+> > > > +     spin_lock_irqsave(cmn_priv->lock, flags);
+> > > > +     if (index)
+> > > > +             sf_rmw(cmn_priv, mux_reg, 0, BIT(mux_offs));
+> > > > +     else
+> > > > +             sf_rmw(cmn_priv, mux_reg, BIT(mux_offs), 0);
+> > > > +
+> > > > +     spin_unlock_irqrestore(cmn_priv->lock, flags);
+> > > > +     return 0;
+> > > > +}
+> > >
+> > > I believe besides the divider reloading part, clk_mux_ops,
+> > > clk_divider_ops, and clk_gate_ops have already provided the logic
+> > > you implemented here. So it might be a better option to composite the=
+m
+> > > together to implement your clocks instead of building from scratch.
+> >
+> > The divider reloading is the exact reason I chose to not compose them
+> > with the function you mentioned. The reloading bit need to be set on
+> > both clock divider change and clock enabling, because the clock divider
+> > loading only happens when the clock is running. Since I already have
+> > to write two of the three parts you mentioned, trying to reuse
+> > clk_mux_ops doesn't seem to reduce the code complexity here.
+>
+> You don't have to write divider/gate operations from scratch, but only
+> wrappers that first call clk_{divider,gate}_ops.* then trigger frequency
+> reloading.
 
+The wrapper needs to be spinlock + frequency reloading trigger,
+because the built-in spinlock routine only covers the divider/gate.
+writing. I see no point wrapping all the callbacks and writing a way
+more complicated probe routine just to reuse a few lines of
+calculations + register ops.
+
+>
+> > It's just trading get_parent and set_parent call with one more level
+> > in the clock tree for every clock and more code to wire them together
+> > in the probe function.
+
+I just learned that clk_hw_register_composite won't result in
+one more level of clock. but the second part still is true.
+In order to reuse the mentioned kernel function I have to give
+up on my current single for-loop probe function, add a separated
+array of clocks with mux/div/gate, mux-only, div-only, gate-only
+clocks, and write separated probe routines for them because
+the clock composition is different. The current static pointers
+in struct sf21_hw_clks will also need to be replaced because
+clk_hw_register_composite allocates its own clk_hw instead.
+
+I'd argue that the point of reusing code is to reduce code
+duplication and simplify the driver.
+In this case I could only see the driver getting way more
+complex in order to reuse the routine you mentioned.
+
+--=20
+Regards,
+Chuanhong Guo
