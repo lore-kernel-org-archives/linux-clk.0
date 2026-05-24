@@ -1,107 +1,140 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11DB2701CF
-	for <linux-clk@vger.kernel.org>; Sun, 24 May 2026 08:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 977F32F7EE6
+	for <linux-clk@vger.kernel.org>; Sun, 24 May 2026 13:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779611224; cv=none; b=HL9czi6IQ3yI2paE8vuU3BqzeOelyHHxPrFz4XvY/NWbV2zBJI/PpGyI1ttAGegNS4ehVn56hq7v5fTh1VQ6z0dGZoPNHGuF8seoSa5rholZ7wMvfps7mGR5+tMchG0IqoFXbV/MdUA5u7G+eKEkRmAZudYk/VprvOkGRo7lXnI=
+	t=1779628428; cv=none; b=dzisxSIT4TGbxK5ZJG5VGsEKcndmg85WZSu5+wzIVM0bdT7K4Y/jHb0+gz17jnZt9HGSU/cbbVB89mBY7ph8JtdoS09t1yKbhtsIOi2IJiRuZM812UfQiPe+tLeY3zE2Gi1vn0wtNE/UD+B7qYlPzX1qelCpLq0OClTf+/DzGJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779611224; c=relaxed/simple;
-	bh=34dp9f5T9YrXRKgyAocDQRHMx/8sQhWIOEfGzLLGqGs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dRrdKvcR6CtBehrj5KMgJlTftFaDCE81CiREwa4+zAnpft6bLxOVSOkX/K2mwhPmUWlIrtStIUrQ4sGKw/XdIef957vyKF0g3R0arEaPILsqRpHzJp0Aez5azb9CSbyVNnjBjxcbMUfXWKguKZvnGTCOf7HNRAUBk9yOV1VrOiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LQAUT7Op; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1779628428; c=relaxed/simple;
+	bh=I1J+h10KnGbXFqzg6AyIcXhgiGUtuuhHZ4fC5cNtor0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=d5UBRBZNKqn7BLPAwQk5dmi2dCOOhjLSv7nHXMyCFtnsjx7TPbglhkU1Z5c53UM4+y+G3rqHaLB4Hg84L+cTqqHkIQ5b6pL3QFbac8Uj/hhkRTtXJAdM/jEYVCbw6eRxAsSrdaXJ9IR5h8iYg5uRkN5xXudGnhCyI3h3obHUUp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ErwmFcxa; arc=none smtp.client-ip=209.85.215.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LQAUT7Op"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4903974854dso27548005e9.3
-        for <linux-clk@vger.kernel.org>; Sun, 24 May 2026 01:27:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ErwmFcxa"
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-c736261ee8dso3997979a12.1
+        for <linux-clk@vger.kernel.org>; Sun, 24 May 2026 06:13:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779611221; x=1780216021; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7qdTAUWZwMStvqigprrXqH9hWjCxZHQLI8rGUkZZZlk=;
-        b=LQAUT7Op12qOXhtHVB2LySn92qY2m+9kNMyi1DQKp69pMJDUzzcxW/NxjnyeCk/sSb
-         c7gy+u19fOwHOv0kUv+xGKYmqmGpHCjidCKonwT+mCmuvVMdA4Btyl5QV5VRIJ2kRpZY
-         2LS81a23qFrumWJqg5F9y09LEYiFuACEI7BQJWRTypnsJcx3hVg3lt6P7vr3JpOY9kF9
-         6f3BcQ7h4LHub7n+SiIzJ05YrpYheIkqdmWQcvZSiQJYNxxs07rObd3vkmPjHLoEnNnm
-         PpJHoHd7hCBFKMhnG2QV5dmGcSWwnZnstOPm3wOTZAYSuOKO+MV0ultJb+NRxnTsclpX
-         lABg==
+        d=gmail.com; s=20251104; t=1779628426; x=1780233226; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KH7lD2kPuCDnCeLXXndiPaFJorhGJZaX8sM6bkfuBZU=;
+        b=ErwmFcxahpHNcRxWuPnwpD3PstLJdgSYYsLktHKPyYzeD0zBfv56tUY6Bfb0gF6eWa
+         o8papIPissGmTXD4W+lat9xavX26mYXHxyYpYw+rsHHhioMFD2PvctDUXcJOHpEZi8nx
+         IZlIo24EAsCh+zuAMLcbWwleHj+KJFCopRCzryS19jV30VRRzOKe8qg5r77m/3b1FcBT
+         cenfsrWI2o2RhITzhagbkjxxm7mt+9EtXOrmlgSrLiy0877syentbP8yAJ7lNJq2ryWZ
+         0tqzjOEBmdzBCi9UW8qRkjV2N6UcBJFsQIAOJVt2u4TSZVJEwB6hLmFzMIZPfmTTlyA1
+         jpcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779611221; x=1780216021;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20251104; t=1779628426; x=1780233226;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7qdTAUWZwMStvqigprrXqH9hWjCxZHQLI8rGUkZZZlk=;
-        b=Ne9fNpCxXZpwsCnUyLnCMHvg0NLciyk5QrfFK7GHxOta38OL/j3ZW9mDedRE1XFHwI
-         prCd0mEGLFExAF9LxQwJtRYU77C71LUONUt9xQi8eJ6sjZ1LQI3P9Bxg4fuwxf7HVUd3
-         MaZqkIxVbsVYaInvn3byG9Fc0lZBAGy2hAQ7V2y9xDsNy9S356tufz9vWgRH0ya88/74
-         relGL14ZVj0W/xSS57Z7S0j+My166+Q7a7FmRHlwiNTjhgk6Yidv86Xin/yBMcaV9A6d
-         Dg0czKaJ7AJvONhtryJ0mbWfIH+Zgc+tzdXxuOaG67/G+MUDnIa8KrWwDgk23sLb6j8M
-         DOYQ==
-X-Forwarded-Encrypted: i=1; AFNElJ/FYvl3youuY2l7teTjz/G0yCWFopntYvKe+hJggGGf91Kk91f2RfttedqC7OzBOVSDx8SShgw/zWw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRJ8mb7BwlWr3BMyFnandy9AbMfcQuwzsD0IQYnkY5vkW33DYv
-	Z+Hlo4tMSV9s0McknNJi+y/aey877sxXNgASjf/cX7rNvw6Zjdbz9jGn
-X-Gm-Gg: Acq92OEPgcc2z4LGBZVz4aLyc5XNo+sGspF4w/6fyKzHoFtUnwQOg8Lp+MUO0MZRkOv
-	XvJKg5RzkCzWKOzYEHxyhkK3ifNYXRZ+5OoN67v6TA4sD5/Yil0md1CADi3QUQsIdcoI+Y+m8WE
-	NaoDRUNekp3Buwbj6NGJDBfmBc2nCW76OYnl36uoLzsiN6x5Cmg/cJPPPazUsdsPmZ/PWmQxjQy
-	abYNfx0nhaE7UMSOwmPVhHpI5uxvoT4oHRggt0BFEei9eOs9RFTH+fRjogFE0ah15X4G3bfzg7R
-	oO1/cbCvpiNJczUmqWpiA6omtoTMxDJ/LszillpTCOSmZv2L6Ccju6dHAMtBGQlJSP4eAEVfJKY
-	mXYMNJ+VV4EQudkI4oGvyi3p9Pm1vJMW4r9Lts0cdf3TLmTSg2h39d7jw/puFqGUc49a7VP8lO9
-	+GX5A6R2DJx/C8u039AYrHWcdjMG0hjkoLjBS8jErJ7f3YzJ2X1RHuO93R7Kg=
-X-Received: by 2002:a05:600c:1c0b:b0:490:44eb:c1dc with SMTP id 5b1f17b1804b1-49044ebc2e0mr172726285e9.20.1779611220498;
-        Sun, 24 May 2026 01:27:00 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:23c4:a700:7301:ae73:a12b:ca55:91be])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49059fb42dasm47284715e9.7.2026.05.24.01.26.59
+        bh=KH7lD2kPuCDnCeLXXndiPaFJorhGJZaX8sM6bkfuBZU=;
+        b=ld3k1tehO7vPUYUHhSRahJMeNCdpweuh4vl63s6gvLxXNJP6P1U+XLUD9y71Gfv4Mv
+         Es8qGY/WlqHI+KEpNlJ0uk88ntVTW02XadgMhRqcPKPefXxQgzvfro9JfIGzNzPmNfmX
+         ldiP8KJJyldxPLDiOIPfeKs4zlc93khu5YVpb3W7/HMV6bowKoJWwJiFkciXgef+Cpdw
+         gnf5BKgKrv73+gAcwkwY8q68Ppj7NQ2xOu7aHbhQ3qrgFnfW+3KqyY5fiXjWnhj8RBMU
+         aGurbH/LzF3LsAlB8JvtREFG/QFlPnYbY7kn8Y2Fa6MTeVb6YWHyFInmr/lvWdrnujD+
+         gpyw==
+X-Forwarded-Encrypted: i=1; AFNElJ9EAt4QxMDrJZzTuTLD2KiXXu124WD2RrOHJKR3u4i4+wv0E/o7D31eNQb7SfjkPmpnUt+qnKW8U+4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7WPwziXqMGWQBGD1laR581OMENQiwscNhK6NC9aGsfzl/OZ9d
+	MW6GHs9nEj8GTsb+qZdODXT7Q3CkLutGjnyxrnuLX93KWJ50E4Wvv6Xr
+X-Gm-Gg: Acq92OFqLXbh95A/6vgb8Q5Bk/yz8yUr/h61mzWvxCtQhLLNB127mP8fCUR7b933yK2
+	P7+XjsGoZea4R9gTC1+JooO1KYoBzVbonRlAXwrechnXM+wR4HX8OL88nlUVUEaPZFke3us7zh9
+	Gtxbu3/LxyBbDp+k6A6uSSbSI2vtcqEvlsnrd6c6EniB2v7qlcK1yBIAGAspUV/w4GFjdR5IITe
+	G+qLIdePbKaOGLlMrUUxqp2EZeom1Z3/UxF7YKiTWsp53VXCNtESmG0ghjxvP9R1gEz9gcmpd7j
+	HHRF7L62aBkTqAdTnsFiDksV3Cn1Rb3YbK9jeRnwXZXeNU8GyL73pXp1TvHyqlGgGzAGBqNwaRj
+	GKQfZvH6YKEbGPsOcYREgKXYdN8lEQu0Hyn2dfZxGEP3uw0d57+nG1VeBluW+bVkNizc9smH58d
+	U2gDznfYVi+H5YXzCmYGKxQ7JGKhI=
+X-Received: by 2002:a05:6a00:a383:b0:82f:21ee:270e with SMTP id d2e1a72fcca58-8415f6d0bb4mr10541125b3a.42.1779628426474;
+        Sun, 24 May 2026 06:13:46 -0700 (PDT)
+Received: from guoguo-lecoo.lan ([104.28.159.63])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84164fb28d5sm7163128b3a.41.2026.05.24.06.13.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 May 2026 01:27:00 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Brian Masney <bmasney@redhat.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH] clk: renesas: r9a08g045-cpg: Drop unused pm_domain header file
-Date: Sun, 24 May 2026 09:26:50 +0100
-Message-ID: <20260524082657.19335-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+        Sun, 24 May 2026 06:13:46 -0700 (PDT)
+From: Chuanhong Guo <gch981213@gmail.com>
+Subject: [PATCH v2 0/3] clk: add Siflower SF21 topcrm support
+Date: Sun, 24 May 2026 21:13:05 +0800
+Message-Id: <20260524-sf21-topcrm-v2-0-4527aae05c3d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/1XMTQrCMBCG4auUWTuSHxODK+8hXdSYtAOmKUkJS
+ sndjQUXLt8ZvmeD7BK5DJdug+QKZYpzC3HowE7DPDqkR2sQTGimuMLsBcc1LjYF5EZpy9Rdc2m
+ gLZbkPL127da3niivMb13vPDv9eec/5zCkeFJGi9c+0nvr2MY6Hm0MUBfa/0A4l5N6KYAAAA=
+X-Change-ID: 20260515-sf21-topcrm-1856c05b6138
+To: Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
+ Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Yao Zi <me@ziyao.cc>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ Chuanhong Guo <gch981213@gmail.com>
+X-Mailer: b4 0.14.3
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+Siflower SF21A6826 and SF21H8898 are RISC-V chips with quad-core
+T-Head C908 for home routers and gateways.
+This series adds the initial RISC-V Kconfig entry for Siflower SoCs and
+support for the toplevel clock and reset module on Siflower SF21 socs.
 
-The linux/pm_domain.h header is not used in this file. Remove it to keep
-the includes clean.
-
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Signed-off-by: Chuanhong Guo <gch981213@gmail.com>
 ---
- drivers/clk/renesas/r9a08g045-cpg.c | 1 -
- 1 file changed, 1 deletion(-)
+Changes in v2:
+- drop "if TTY" condition in ARCH_SIFLOWER
+- drop "xin25m" in dt bindings for the possibility of a different
+  xtal frequency.
+- use index instead of fw_name for xtal clock in the driver.
+- drop unnecessary fixed-clock node in dt binding example.
+- name the top node "soc" instead of "/" to fix binding check
+  failure on missing "model" and "compatible".
+- drop SF21_RESET_MAX, rename SF21_CLK_MAX to SF21_NUM_CLKS and
+  define it in driver instead of binding header.
+- split dt binding header into separated clock and reset headers.
+- sort headers in the driver
+- add a shared sf21_dual_dividers for the two dividers in series
+  in CMNPLL and PCIEPLL.
+- multiply before divide for PLL VCO calculations.
+- change cpu and pic clock flags from ignore_unused to is_critical.
+- use guard macro for spinlocks.
+- split clock and reset locks and use raw_spinlock for clock lock.
+- select RATIONAL in Kconfig for clk driver.
+- use FIELD_MAX instead of BIT(x) - 1 for field max value.
 
-diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9a08g045-cpg.c
-index 9610676058de..29b47469d814 100644
---- a/drivers/clk/renesas/r9a08g045-cpg.c
-+++ b/drivers/clk/renesas/r9a08g045-cpg.c
-@@ -9,7 +9,6 @@
- #include <linux/device.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
--#include <linux/pm_domain.h>
- 
- #include <dt-bindings/clock/r9a08g045-cpg.h>
- 
+- Link to v1: https://lore.kernel.org/r/20260517-sf21-topcrm-v1-0-438f2e0513ff@gmail.com
+
+---
+Chuanhong Guo (3):
+      riscv: add Siflower RISC-V SoC family Kconfig support
+      dt-bindings: clock: add header/doc for Siflower sf21-topcrm
+      clk: add support for siflower sf21-topcrm
+
+ .../bindings/clock/siflower,sf21-topcrm.yaml       |   60 ++
+ arch/riscv/Kconfig.socs                            |    7 +
+ drivers/clk/Kconfig                                |    1 +
+ drivers/clk/Makefile                               |    1 +
+ drivers/clk/siflower/Kconfig                       |   23 +
+ drivers/clk/siflower/Makefile                      |    1 +
+ drivers/clk/siflower/clk-sf21-topcrm.c             | 1017 ++++++++++++++++++++
+ include/dt-bindings/clock/siflower,sf21-topcrm.h   |   42 +
+ include/dt-bindings/reset/siflower,sf21-topcrm.h   |   25 +
+ 9 files changed, 1177 insertions(+)
+---
+base-commit: c1ecb239fa3456529a32255359fc78b69eb9d847
+change-id: 20260515-sf21-topcrm-1856c05b6138
+
+Best regards,
 -- 
-2.43.0
+Chuanhong Guo <gch981213@gmail.com>
 
