@@ -1,86 +1,98 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A63F233939;
-	Sun, 24 May 2026 18:47:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4085212566;
+	Sun, 24 May 2026 19:40:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779648430; cv=none; b=Lur/td8vDlocQjbwAH7smgf8gRTBxfvP5Iqc57H7xbzQOM7lU+GWujWxmPZg1ZR0dQr0pocP7zQFejiUAfzPTTj6WxN/UZzv3kjCpB/a4pWV38r+NykTC0Fn0DuylBJJC5mdH3uu8flIwhsnUt3Y7K+TTEdajmXZRqEBjrKJJ1o=
+	t=1779651627; cv=none; b=RmMKXCjTJO0xLUG4B30uJHZQoitNeMqbV5CLy5WHnc54nnKkmm5vuvI/SBdI5dkWRqtgspOWHaoUF2qz0fIAGKnf7ZiEZR15ei3GEBVWlkH9iKtUCkL0vfUt0AmYT5/PUWvn6LVpBfXnsCXPkiPccyXbWDFAhxHDpQxRiLw9sRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779648430; c=relaxed/simple;
-	bh=LCtZAW+AcOeEbyi7sL4pq6RsgIrX7MuL0JX2JoHAQiI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p+/e8VpCLQugAaP/afJH6UfP1XxTQDWByeiCgwe7fIdpn99JSrPIB5Vyv7qjFLfCU49QAmLDSZrA4AIgvK+dViD1BNUlqi0vLDVnQyV/CmSxRn4AeC7vUN70T4bU1IHkg98731stevEVGy73hFFHDRmyO7Zxx1oWFHSjJBTkONE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y6/SYUGg; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1779651627; c=relaxed/simple;
+	bh=pZi3EF6xN37OjVhYJB8UhsAvxbJn68Ognpf5Zqdr4AQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WKnw4KOg0/u8Atd+d7brqK5/NF4GAPRvWdprXf8mWg2sIE5TQw5Y8LqlcanK7p54CjNvShxHIjD5e3JAOH33sl4Iz1LBJLC4v+Z/YGn0cirtCz7UV4BGi5TT+FKZBJ9VheXX0u1hneQZoWa1+WkhOOdKSRcGEYkjXaoB8nTM8Vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MFGzQLmp; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y6/SYUGg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AB9C1F000E9;
-	Sun, 24 May 2026 18:47:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MFGzQLmp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 240FA1F000E9;
+	Sun, 24 May 2026 19:40:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779648428;
-	bh=niOxQJJsZUKwCVBFs/P9XxBLtyrby3KTijl8MALkwNY=;
-	h=From:To:Cc:Subject:Date;
-	b=Y6/SYUGgdMAnxTk4WX2Ajtjizi1Mibnv2EZc72p74H/+K7SmhWI511tKcKRpQL52k
-	 CMXSNMle+279VbjGLeidDcnMfRNzqD5mUZ6Wklt1XtL5X4l0fc3o+FivBIYVWIOXDy
-	 IfhOXD1fGvpOWulZo2CLHhPX7Jxb7e7CfxuMzJ7HPaJMm1bgF40hfDzzsDYphKz3v7
-	 mUlw2JtdGGxAFsoR+8ln9TFk7xLwoxK2Xl76LKuZcoGhRAxexWoMSknTYHOHVpOGaG
-	 kiYYtiubAJ402upToAFS1DvJOycyZGFZHb/02vrEQjgpXQCMzwScLf4CX5PI4TGvYZ
-	 ca4PR30XvBzsQ==
+	s=k20260515; t=1779651626;
+	bh=zBoEyETmzb2pJlpxlvi4ncneIXhLBRL6QQqybLVV9FE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=MFGzQLmpiaeKnuF+BM8KzwbenS20tYHbSkw9xPD5TPep2Z52ZXIAiiTGOIFoZUaKY
+	 2lqwKU+6CuTMJOT2WSJrsMSVBDNLBgi8itVkoaKVTZU3Knl2g+tpnSSVSXCtybX8Y8
+	 2yubHksc0qDF22CiyV7AMjpBGWMH53ovGgUkUCi4LHLZDhuZYo3aEub0ziAh16RxjB
+	 gDY63PCt6vbFeJW9ka1ZoI6MJCTABHb03My+oFUI9qIuG3QkPUkOBDpFkL4NYZuNjS
+	 mgeVM3Om4MdM/d6JUjcgHg4i7A7CzKRAhPsk0VssE4AvxrQmYEhXD0cIPmsQthzBqU
+	 kpYMQuvafXklQ==
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
+	Stephen Boyd <sboyd@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>
 Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	linux-clk@vger.kernel.org,
-	Sylwester Nawrocki <snawrocki@kernel.org>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
+	linux-kernel@vger.kernel.org,
 	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk: samsung: fixes for v7.1
-Date: Sun, 24 May 2026 20:47:02 +0200
-Message-ID: <20260524184701.16599-2-krzk@kernel.org>
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	peter.griffin@linaro.org,
+	jyescas@google.com,
+	kernel-team@android.com,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: [PATCH v2 0/6] firmware: samsung: acpm: TMU support and cleanups
+Date: Sun, 24 May 2026 21:40:10 +0200
+Message-ID: <177965159562.32222.17454581524471571236.b4-ty@b4>
 X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260515-acpm-tmu-helpers-v2-0-8ca011d5a965@linaro.org>
+References: <20260515-acpm-tmu-helpers-v2-0-8ca011d5a965@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1093; i=krzk@kernel.org; h=from:subject; bh=LCtZAW+AcOeEbyi7sL4pq6RsgIrX7MuL0JX2JoHAQiI=; b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBqE0em10qaZuuG4+y717Zph3hsoxQ7QMtqD8Iqp t2on+ea1AKJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCahNHpgAKCRDBN2bmhouD 16nmD/4pCnIRNSmTu0pj0BC2Z4WqEtRAl+3rdcvTtgTtIjMuK7IWDO0lOv67a437yI1tTjUhNfW gZyEhKVkmVOKKtZ3+O+3DlMyZ/vbzZkYl2XnS78H6hlI7IuzvB7DkhXhCoEdXfFBM6SjLQfjvWZ HI5WsjvfDivp/flbZ9ZQBDX5NmR26YRN3YyBDR9FqYmm4jruB83PcPskmkrlapU0WeeolNOpHUa PQOQAZ6na5OKVmeFYzB+8QzZLwCtJHOGFS8v/yDqtAhca/SL6iGD7Z5aqqk6tQ1ESCyTLI1SdW9 GkzlIhDr0kEBJByIuPpKV1tJXAEmoh3S/ZCmhGDarejH+vd4UhrjD31CjN+f3vREmiDonvevh31 CvPGVkEztAlvIuAEXA8t+W86U6UyyhuhBAgGJzVMFlVCxrAp7K699NaD4sUBYqtVCX6enraH/e9 7zMrMX0CwlTXRVz/JAvK2fs9Q8wxDNWg1kGxg+V0aim8QXpirji/g27ViwJRHBH5nxcEqihwe/I /MtEMDt/EjNR/fwdIsA6DXpgGm2LsfI+0CwNEq6RD3K2mOY/xsDX50DyLnMPuc9yI9lJNh+SVMW ZCaOmPr6y6g9R6AhgvkGlkL3lXxV8LJoFOoujtPYQ3kX56vH75NhLlQh1sFrlzTL5twGcI82Jph 3uBR7XChUr7sdEA==
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1595; i=krzk@kernel.org; h=from:subject:message-id; bh=EMNz44iBB8o+uKlLf5742Rp89BhbFRUqwRB/9Ltg7nE=; b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBqE1QaXz5H4urOzMhB25S55CD9H55mMZKGNh5/A 6Pysa50nMyJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCahNUGgAKCRDBN2bmhouD 132zD/sHKWyAZBE34mXd5FejTh7Fp9zwjblu8FUeHimyj2wPWqEWm2ZivqZFjMyn7aA5uymbheH KS06Gcbkkqi1a9chSXmVVQ6MyUU3v5R1Sd6OrYPZlg6WyKzAMfcYB5eC/WF3nnHsVEDlO4Y3A+o qRYUMWnr2tIGbMihwIf3t3duzY8ZC9uAH/hsdA+Nid4qgsBiVqf9q3D8lTWxyZesYn4VEGOZHEX OPpKHKUM0W7QFbLIH9YKjUFMAnSugU+CG9miEVJ9G57vJiGI2adzMRvOya6txYbg7nOxgvZxTuA Ovogrp8uSpDpK0orOoiCoQg0YQVk1dFpLjky1DGMlsGXtqVoV3AYT56O35tDdAh7jZeJwCFfymz fvSwOUhtDd5urBSLed1KXW/BGitK2RclcGIWzOKnZjEeiyvYK1sgh6w/l0EJEH03DOgmRMEp99Y Jx73K+7Duc63/iRPAjAkv+td67OrUOgQJxSUmG5bp0HDj5dDbNjO3g8vm4rfHahNdm+c6g2xSto b7sC7N4Sk5+XfGvhcE0EDMqmqeec/pXsLYyna8M9XLpXiu0U3h2X01sOHC6lHFVqJ/NgElO5sv8 Iuu1woUxKNOojkzuItonSAoHuzZFMwXNWpHznWexhfLT9aVeVjoon/v8Ap7HkHq5wgLgFmT8VMJ oqfWZgPJIkBRi
+ 2A==
 X-Developer-Key: i=krzk@kernel.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 Content-Transfer-Encoding: 8bit
 
-Hi Stephen and Michael,
 
-Just one fix for current cycle.
+On Fri, 15 May 2026 09:32:24 +0000, Tudor Ambarus wrote:
+> This series introduces protocol support for the Exynos
+> Thermal Management Unit (TMU) to the ACPM driver, alongside several
+> cleanups.
+> 
+> Dependencies
+> ============
+> Krzysztof, these patches together with the acpm fixes from your `fixes`
+> branch will be needed by the thermal maintainers. I'm going to send the
+> ACPM TMU (thermal) driver for review. In case they'll take it for the
+> next release, we'll need an immutable tag with the acpm fixes, cleanup
+> and thermal helpers. Thanks!
+> 
+> [...]
+
+Applied, thanks!
+
+[1/6] firmware: samsung: acpm: Consolidate transfer initialization helper
+      https://git.kernel.org/krzk/linux/c/43d3733b7ffd82b2bfeda69befa2a179335dfe6c
+[2/6] firmware: samsung: acpm: Annotate rx_data->cmd with __counted_by_ptr
+      https://git.kernel.org/krzk/linux/c/7b20fd06f783c1e901d34305c68df16212cdf669
+[3/6] firmware: samsung: acpm: Drop redundant _ops suffix in acpm_ops members
+      https://git.kernel.org/krzk/linux/c/ef1109e4b6120a52be1ea66d486d6744d0c5ac47
+[4/6] firmware: samsung: acpm: Make acpm_ops const and access via pointer
+      https://git.kernel.org/krzk/linux/c/e694e19bf7db26ee324ff6bb450cc523592f5bee
+[5/6] firmware: samsung: acpm: Add TMU protocol support
+      https://git.kernel.org/krzk/linux/c/f6af402de525d0848fc4a50f25ff01f56fc68d98
+[6/6] firmware: samsung: acpm: Add devm_acpm_get_by_phandle helper
+      https://git.kernel.org/krzk/linux/c/8ad2c29d53e69df5cc1c1d00513c6a0f96d2d452
 
 Best regards,
-Krzysztof
-
-
-The following changes since commit 254f49634ee16a731174d2ae34bc50bd5f45e731:
-
-  Linux 7.1-rc1 (2026-04-26 14:19:00 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-fixes-7.1
-
-for you to fetch changes up to 78ee734b36284d82454e87a92094fdb926985b47:
-
-  clk: samsung: gs101: Fix missing USI7_USI DIV clock in peric0_clk_regs (2026-05-14 18:48:05 +0200)
-
-----------------------------------------------------------------
-Samsung clock controller fixes for v7.1
-
-Google GS101: Correct the register name for saving and restoring state
-during system suspend and resume.  Lack of proper save/restore leads to
-incorrect clock values after system resume.
-
-----------------------------------------------------------------
-Kuan-Wei Chiu (1):
-      clk: samsung: gs101: Fix missing USI7_USI DIV clock in peric0_clk_regs
-
- drivers/clk/samsung/clk-gs101.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+-- 
+Krzysztof Kozlowski <krzk@kernel.org>
