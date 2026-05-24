@@ -1,100 +1,107 @@
-Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0851519B4;
-	Sun, 24 May 2026 08:16:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779610604; cv=pass; b=NNNK+wcH1L0YgDKsc+Pwy9UQQai9iP0reD+VGbRDFIrg9EaOhIqUohdCABCg4hPGP3r0yEsCSuX+89xn9VcJQYpqLhl5Rwjmnm932UzRsWnUq19uNOIFQM42Fg3NL/R+nWW9g4KA3Zee4dsUMmx9fXmz1LIS8V1Vh7ej65ee334=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779610604; c=relaxed/simple;
-	bh=LIOTkxHHoupeefog3sB7TdaW9PQIuAHiPYH6C5s2qZM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wg6JGxTRcEOo4LoRDSZ/YmU/FIzGtL/O0i+opgEtNQZwrPC1a0cKpLg6xTB3FlXIXpKIIawl80vkqL9gt1hFuFS1tKE2ACtfQ4y3kSG9rOUubwcXklA1b/ZiThD5oVb7bGZzr4JRiCFnqh6zrLCwHpmllBLTBGOp34vm+LW94dA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=AedBdfyX; arc=pass smtp.client-ip=136.143.188.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11DB2701CF
+	for <linux-clk@vger.kernel.org>; Sun, 24 May 2026 08:27:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779611224; cv=none; b=HL9czi6IQ3yI2paE8vuU3BqzeOelyHHxPrFz4XvY/NWbV2zBJI/PpGyI1ttAGegNS4ehVn56hq7v5fTh1VQ6z0dGZoPNHGuF8seoSa5rholZ7wMvfps7mGR5+tMchG0IqoFXbV/MdUA5u7G+eKEkRmAZudYk/VprvOkGRo7lXnI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779611224; c=relaxed/simple;
+	bh=34dp9f5T9YrXRKgyAocDQRHMx/8sQhWIOEfGzLLGqGs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dRrdKvcR6CtBehrj5KMgJlTftFaDCE81CiREwa4+zAnpft6bLxOVSOkX/K2mwhPmUWlIrtStIUrQ4sGKw/XdIef957vyKF0g3R0arEaPILsqRpHzJp0Aez5azb9CSbyVNnjBjxcbMUfXWKguKZvnGTCOf7HNRAUBk9yOV1VrOiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LQAUT7Op; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="AedBdfyX"
-ARC-Seal: i=1; a=rsa-sha256; t=1779610587; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=cUOwPIx6qfiFmgLCH5f3QxNtUdUWMlcLeq+/824dVkd4j+AS+EcnDJcUlsA5KhfnowH+99Zu9asZcxv+8bIA9QeRGlb6ZGv1vb5oT78yQypTPlTSvT5qJYXJCl8cJMzfGNk7th7jwZemJFodGRFmgvWf/D2vUOypwO19e+xFB3w=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1779610587; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=f+BcqMfSRMkHNRkV+bnfbEWhWrwUx4sqId1SmAVeFZA=; 
-	b=dmC8iQDcB3WUrZgX9T0Pqs9fXuqSXhN/uRaXxOZqoFBMPVJMlFu93GJvpA5P1eYFw4PGhaqvFAY+yyd3OKsSjy8ILSDaCz12ReRf7U15trYjIaRd05QCw+U4ttOzXsgNrr4dZ0X1L2REYQSGRwEljQE5f3HRyVj7skKen8sg4mE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
-	dmarc=pass header.from=<kingxukai@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1779610587;
-	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=f+BcqMfSRMkHNRkV+bnfbEWhWrwUx4sqId1SmAVeFZA=;
-	b=AedBdfyXsgDs6fl69lPu03X3jaQMDrHVby1SRFy69EV4IQjkerMKUcGdj/H+CU45
-	z8DRnGJ1oUKVPf2QqwGUhNEkiz8Z9L2L+J8f68+gUVurFwoHvyDGjPIAyTwsEhJbvU6
-	6yzaYu/R9fRE4HGsn4gMaQBDvmB5ys+wOrChUfLY=
-Received: by mx.zohomail.com with SMTPS id 1779610584243760.6124410802614;
-	Sun, 24 May 2026 01:16:24 -0700 (PDT)
-Message-ID: <89885938-f126-4e1b-aedb-3edb2da5df2d@zohomail.com>
-Date: Sun, 24 May 2026 16:16:06 +0800
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LQAUT7Op"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4903974854dso27548005e9.3
+        for <linux-clk@vger.kernel.org>; Sun, 24 May 2026 01:27:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1779611221; x=1780216021; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7qdTAUWZwMStvqigprrXqH9hWjCxZHQLI8rGUkZZZlk=;
+        b=LQAUT7Op12qOXhtHVB2LySn92qY2m+9kNMyi1DQKp69pMJDUzzcxW/NxjnyeCk/sSb
+         c7gy+u19fOwHOv0kUv+xGKYmqmGpHCjidCKonwT+mCmuvVMdA4Btyl5QV5VRIJ2kRpZY
+         2LS81a23qFrumWJqg5F9y09LEYiFuACEI7BQJWRTypnsJcx3hVg3lt6P7vr3JpOY9kF9
+         6f3BcQ7h4LHub7n+SiIzJ05YrpYheIkqdmWQcvZSiQJYNxxs07rObd3vkmPjHLoEnNnm
+         PpJHoHd7hCBFKMhnG2QV5dmGcSWwnZnstOPm3wOTZAYSuOKO+MV0ultJb+NRxnTsclpX
+         lABg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779611221; x=1780216021;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7qdTAUWZwMStvqigprrXqH9hWjCxZHQLI8rGUkZZZlk=;
+        b=Ne9fNpCxXZpwsCnUyLnCMHvg0NLciyk5QrfFK7GHxOta38OL/j3ZW9mDedRE1XFHwI
+         prCd0mEGLFExAF9LxQwJtRYU77C71LUONUt9xQi8eJ6sjZ1LQI3P9Bxg4fuwxf7HVUd3
+         MaZqkIxVbsVYaInvn3byG9Fc0lZBAGy2hAQ7V2y9xDsNy9S356tufz9vWgRH0ya88/74
+         relGL14ZVj0W/xSS57Z7S0j+My166+Q7a7FmRHlwiNTjhgk6Yidv86Xin/yBMcaV9A6d
+         Dg0czKaJ7AJvONhtryJ0mbWfIH+Zgc+tzdXxuOaG67/G+MUDnIa8KrWwDgk23sLb6j8M
+         DOYQ==
+X-Forwarded-Encrypted: i=1; AFNElJ/FYvl3youuY2l7teTjz/G0yCWFopntYvKe+hJggGGf91Kk91f2RfttedqC7OzBOVSDx8SShgw/zWw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRJ8mb7BwlWr3BMyFnandy9AbMfcQuwzsD0IQYnkY5vkW33DYv
+	Z+Hlo4tMSV9s0McknNJi+y/aey877sxXNgASjf/cX7rNvw6Zjdbz9jGn
+X-Gm-Gg: Acq92OEPgcc2z4LGBZVz4aLyc5XNo+sGspF4w/6fyKzHoFtUnwQOg8Lp+MUO0MZRkOv
+	XvJKg5RzkCzWKOzYEHxyhkK3ifNYXRZ+5OoN67v6TA4sD5/Yil0md1CADi3QUQsIdcoI+Y+m8WE
+	NaoDRUNekp3Buwbj6NGJDBfmBc2nCW76OYnl36uoLzsiN6x5Cmg/cJPPPazUsdsPmZ/PWmQxjQy
+	abYNfx0nhaE7UMSOwmPVhHpI5uxvoT4oHRggt0BFEei9eOs9RFTH+fRjogFE0ah15X4G3bfzg7R
+	oO1/cbCvpiNJczUmqWpiA6omtoTMxDJ/LszillpTCOSmZv2L6Ccju6dHAMtBGQlJSP4eAEVfJKY
+	mXYMNJ+VV4EQudkI4oGvyi3p9Pm1vJMW4r9Lts0cdf3TLmTSg2h39d7jw/puFqGUc49a7VP8lO9
+	+GX5A6R2DJx/C8u039AYrHWcdjMG0hjkoLjBS8jErJ7f3YzJ2X1RHuO93R7Kg=
+X-Received: by 2002:a05:600c:1c0b:b0:490:44eb:c1dc with SMTP id 5b1f17b1804b1-49044ebc2e0mr172726285e9.20.1779611220498;
+        Sun, 24 May 2026 01:27:00 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:23c4:a700:7301:ae73:a12b:ca55:91be])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49059fb42dasm47284715e9.7.2026.05.24.01.26.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 May 2026 01:27:00 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Brian Masney <bmasney@redhat.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH] clk: renesas: r9a08g045-cpg: Drop unused pm_domain header file
+Date: Sun, 24 May 2026 09:26:50 +0100
+Message-ID: <20260524082657.19335-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: canaan: k230: Fix sparse warnings reported by LKP
-To: Conor Dooley <conor@kernel.org>
-Cc: Conor Dooley <conor.dooley@microchip.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- Samuel Holland <samuel.holland@sifive.com>,
- Troy Mitchell <TroyMitchell988@gmail.com>,
- Krzysztof Kozlowski <krzk@kernel.org>
-References: <20260522-eligible-vivacious-3ce9bc30dd53@wendy>
- <dee4605ca30f9bbd55ccb4fcce9590ceee1fa10b.1779453284.git.kingxukai@zohomail.com>
- <20260522-removed-lyricism-7c879febc3b3@spud>
- <1f74efd2-444f-4330-a1e8-62f75e85ecfa@zohomail.com>
- <20260523-punctual-backslid-712c06f0db61@spud>
-From: Xukai Wang <kingxukai@zohomail.com>
-Content-Language: en-US
-In-Reply-To: <20260523-punctual-backslid-712c06f0db61@spud>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Feedback-ID: zu08011227a77cded047123cf15881bd2500005897bdee7dc29404c51879fd2aa9d5b7ee1f6dec0232dff2a8:ZohoMail
-X-Zoho-CM-AccountID: 2ee5dd3c83366259b2ba1e9826250ffebed1ef2dd213857d649ad25aba73b429
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
 
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-On 2026/5/23 22:02, Conor Dooley wrote:
-> On Sat, May 23, 2026 at 03:00:15PM +0800, Xukai Wang wrote:
->> On 2026/5/23 04:39, Conor Dooley wrote:
->>> On Fri, May 22, 2026 at 08:59:12PM +0800, Xukai Wang wrote:
->>>> Fix all sparse warnings detected during LKP randconfig testing:
->>>> - Replace plain integer 0 with NULL.
->>>> - Add static modifier to k230_plls and k230_pll_divs.
->>>>
->>>> Reported-by: kernel test robot <lkp@intel.com>
->>>> Closes: https://lore.kernel.org/oe-kbuild-all/202605220724.j4ZeM3KI-lkp@intel.com/
->>>> Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
->>> Forgot to reply earlier, but I went and squashed this in.
->> Thanks Conor!
-> I dunno if you saw my message about giving what I have in my
-> branches a go, but if you could try what's in the riscv-soc-for-next
-> branch, that'd be great. Just to make sure that I have all the bits in
-> place.
-I have successfully tested your riscv-soc-for-next branch on K230
-hardware. The clock controller probes correctly, and clk_summary shows
-all PLLs and clocks are running as expected.
+The linux/pm_domain.h header is not used in this file. Remove it to keep
+the includes clean.
 
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/clk/renesas/r9a08g045-cpg.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9a08g045-cpg.c
+index 9610676058de..29b47469d814 100644
+--- a/drivers/clk/renesas/r9a08g045-cpg.c
++++ b/drivers/clk/renesas/r9a08g045-cpg.c
+@@ -9,7 +9,6 @@
+ #include <linux/device.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+-#include <linux/pm_domain.h>
+ 
+ #include <dt-bindings/clock/r9a08g045-cpg.h>
+ 
 -- 
-Best regards,
-Xukai Wang
+2.43.0
 
