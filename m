@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A02D1E1E16;
-	Sun, 24 May 2026 18:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7E72F6577;
+	Sun, 24 May 2026 18:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779646858; cv=none; b=JDnl0XfPW5rPZPA2jL050i/FrlqbH6HOxGP6ycE96aS4Yi0zmR+HSfT8CJpG0RaLfn/xN1dhyuGz+EDpEZZI4qHv20vWHDhqKSa3YXFqXFdykKNEWFo8ig3Fz1CgB68kTkKm0KSP1FHeYk500mdc2v973gW3r84MFTCJ1VXu+Lw=
+	t=1779647908; cv=none; b=uG8u4wMELLEUpWnMHTQHGS/JOmkSHkxU2xbvYfDrD/vAi5tO2SaC3SY4xllkg1AfgOhVM9RcoNy08Zm7XuHBE1F4awRHGcFZnIyjZJFXVBB5wtgwQ/oKSaLcKM9mr/m0mNIwLA4egzN4wgdq3B4b0OBb5hYea3Kbc5hNowGicow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779646858; c=relaxed/simple;
-	bh=1lOzmvtqA2Sa8jOHX43PmPT+2J9Ysw9MUcZ4ZGJmxW8=;
+	s=arc-20240116; t=1779647908; c=relaxed/simple;
+	bh=IO+dfqOPU1OQnZl0EDdGJfT4DX140il3RMsKNnHZZ/Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WBzoKIRNL3focLjmMIF92wP7IV8/r3Tk25O8ZdqHhU2VrlhHgW+HnuAptkDO6kNHsQ7xnpnx6IevJNDj4OQbuQneZirKeQk1JNBRNq4qL+RDCAEwtGxNzlg4FkyKvvh3G2bSqbR2MYwchuFkKfamQSBu04DYMjJk6lXr8tg1rog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=amOuWBZR; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=XtEVLx5gh225BgqOYnK3qSo4SXs0AnaKeADQ7X6+c58GSSrsKOa+99cmtCoo4o0iTXhA0BmqcKUO8/djvKNetvmRVqXmML4ZseM7oDIKfxpKnPHHgwKSyF4Ff+Cy+rKAF0PGRh5SqaB1vaQYFPyCzptlRHJfLakFAwHQoMzZt2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yxr9A7PG; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="amOuWBZR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3D8C1F000E9;
-	Sun, 24 May 2026 18:20:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yxr9A7PG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E5831F000E9;
+	Sun, 24 May 2026 18:38:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779646856;
-	bh=ti+0QCXGT7ETl1POeyETi1M8HN2lZW4xpw/OVCjE8eQ=;
+	s=k20260515; t=1779647906;
+	bh=8m48+eL9JfN/Id0suNsmlDaRpKXkarKgtM7T17ZOtWo=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=amOuWBZRkpbbzWRXSo0gLh2BW8aM/+huZFF2HgwpnPIrHiaifu58+cgFfxhkF4Yu9
-	 4tjk0xP50i8CFEvfYatq3JDxwCU7iykVppJ/J1PD5sD7WMqceQ0YtJhWw36nQTdFxF
-	 rEp77CXtuolc9w+Gcc+YkxFjC3WnAt0U9VWh5Y4QsOHBMryussGc2P09HAdmAuAM56
-	 znOWGWHlv/Q9JcIRiqSdAUKHZFQUtaxuKOJLBjj4Q7YwRb4VYtWE8Seiu22Gqw0h2D
-	 HVMbttNmUIiRokX5YHhFZLOoU6u0/5xCymzbnz+Wg4HV6KEh/c1PGtP1UXD/dNuFnz
-	 OlRdFgjSuZykQ==
-Message-ID: <74eb56fb-546d-4b2c-9bbc-01a40937f5d3@kernel.org>
-Date: Sun, 24 May 2026 20:20:52 +0200
+	b=Yxr9A7PGh5/t2la/4HVorvBsDsG6fTvkZVJkkNPLrJyHv65KXWt/jwXyTCf1PrjmI
+	 l1fGaAZmY4QCMapG9D07QCJ8gqx+0A0ChnrKwlQQ4ZWbDez49bycNPIUqPXnIzIO9X
+	 TZwGC20i9rlDeODY0cr1e4nmSs1SIwBqveHJg7kTQmRtCRQCE1AKDoj+9N+uyKae4l
+	 +7Yzy2wCYeMi8iedndO1heLKNzRmzpsSUZmo80uVRlN3+KqFyy7TapIf+2xsjQfn9t
+	 xYmjmOJq50eZ9UDPDe8szxRmewwvoTwjSW3DfXMlN0WxdtJjYO/kcntnc4qs3rfuNS
+	 cxp4RNrYJ5UfA==
+Message-ID: <12dc00e8-98be-4386-b2d0-25e525cabdc6@kernel.org>
+Date: Sun, 24 May 2026 20:38:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,33 +35,28 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] dt-bindings: connector: Add fsl,io-connector binding
-To: Frank Li <Frank.li@nxp.com>
-Cc: "Chancel Liu (OSS)" <chancel.liu@oss.nxp.com>,
- Chancel Liu <chancel.liu@nxp.com>, "robh@kernel.org" <robh@kernel.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
- "festevam@gmail.com" <festevam@gmail.com>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>,
- "kernel@pengutronix.de" <kernel@pengutronix.de>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "imx@lists.linux.dev" <imx@lists.linux.dev>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-References: <20260509024846.2094049-1-chancel.liu@nxp.com>
- <20260509024846.2094049-3-chancel.liu@nxp.com>
- <20260515-resourceful-singing-roadrunner-ce25ec@quoll>
- <AM9PR04MB8353FE81D06852D45514E460E3032@AM9PR04MB8353.eurprd04.prod.outlook.com>
- <d2b13e51-1684-4acb-a5ed-294c8aa95906@kernel.org>
- <AM9PR04MB83538C4A07A6835FF8A74793E3002@AM9PR04MB8353.eurprd04.prod.outlook.com>
- <20260519-macho-degu-from-nibiru-960af2@quoll>
- <AM9PR04MB8353B563519EBC1AD6C5BFE1E3012@AM9PR04MB8353.eurprd04.prod.outlook.com>
- <e23a610f-e1ad-4536-80fb-8b5707e77f39@kernel.org>
- <ag3GMdmxw60B15Oe@lizhi-Precision-Tower-5810>
+Subject: Re: [PATCH v3 1/4] dt-bindings: clock: qcom: Add QREF regulator
+ supplies for glymur
+To: Manivannan Sadhasivam <mani@kernel.org>,
+ Qiang Yu <qiang.yu@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Taniya Das
+ <taniya.das@oss.qualcomm.com>, Konrad Dybcio <konradybcio@kernel.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ krishna.chundru@oss.qualcomm.com
+References: <20260506-qref_vote_0506-v3-0-5ab71d2e6f16@oss.qualcomm.com>
+ <20260506-qref_vote_0506-v3-1-5ab71d2e6f16@oss.qualcomm.com>
+ <20260514-outgoing-literate-dove-2e2a73@quoll>
+ <aglUmonGmr2goyOI@hu-qianyu-lv.qualcomm.com>
+ <408f587b-76c2-4fdd-bbe1-89414270b4ee@kernel.org>
+ <agqMgkRwKqr05rms@hu-qianyu-lv.qualcomm.com>
+ <bbd5e74d-99c0-4a18-bc80-b3658b235bf6@kernel.org>
+ <agq/Hl8qWn6wpbF4@hu-qianyu-lv.qualcomm.com>
+ <4byxm3ybi5eqrsqmqi6u4abd37uxliagyolsqs6rtrexut6p5f@uotbli3vh6ja>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -107,106 +102,139 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <ag3GMdmxw60B15Oe@lizhi-Precision-Tower-5810>
+In-Reply-To: <4byxm3ybi5eqrsqmqi6u4abd37uxliagyolsqs6rtrexut6p5f@uotbli3vh6ja>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 20/05/2026 16:33, Frank Li wrote:
-> On Wed, May 20, 2026 at 09:08:42AM +0200, Krzysztof Kozlowski wrote:
->> On 20/05/2026 07:02, Chancel Liu (OSS) wrote:
->>>>>>>>> +description:
->>>>>>>>> +  The NXP I/O connector represents a physically present I/O
->>>>>>>>> +connector on the
->>>>>>>>> +  base board. It acts as a nexus that exposes a constrained set
->>>> of
->>>>>>>>> +I/O
->>>>>>>>> +  resources, such as GPIOs, clocks, PWMs and interrupts, through
->>>>>>>>> +fixed
->>>>>>>>> +  electrical wiring. All actual hardware providers reside on the
->>>> base
->>>>>> board.
->>>>>>>>> +  The connector node only defines index-based mappings to those
->>>>>>>> providers.
->>>>>>>>> +
->>>>>>>>> +properties:
->>>>>>>>> +  compatible:
->>>>>>>>> +    const: fsl,io-connector
+On 19/05/2026 13:25, Manivannan Sadhasivam wrote:
+> On Mon, May 18, 2026 at 12:26:22AM -0700, Qiang Yu wrote:
+>> On Mon, May 18, 2026 at 09:00:33AM +0200, Krzysztof Kozlowski wrote:
+>>> On 18/05/2026 05:50, Qiang Yu wrote:
+>>>> On Sun, May 17, 2026 at 10:27:39AM +0200, Krzysztof Kozlowski wrote:
+>>>>> On 17/05/2026 07:39, Qiang Yu wrote:
+>>>>>> On Thu, May 14, 2026 at 12:22:17PM +0200, Krzysztof Kozlowski wrote:
+>>>>>>> On Wed, May 06, 2026 at 01:43:51AM -0700, Qiang Yu wrote:
+>>>>>>>> Add regulator supply properties for the Glymur TCSR QREF/REFGEN blocks
+>>>>>>>> required by clkref clocks.
 >>>>>>>>
->>>>>>>> Everything is IO. Everything is connector, so your compatible does
->>>>>>>> not match requirements from writing bindings.
+>>>>>>>> The vdda-qreftx*, vdda-qrefrpt*, and vdda-qrefrx* supplies map to common
+>>>>>>>> QREF TX/RPT/RX components, while SoC-specific topology and instance count
+>>>>>>>> differ. Document them here for qcom,glymur-tcsr.
 >>>>>>>>
+>>>>>>>> Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
+>>>>>>>> ---
+>>>>>>>>  .../bindings/clock/qcom,sm8550-tcsr.yaml           | 57 ++++++++++++++++++++++
+>>>>>>>>  1 file changed, 57 insertions(+)
+>>>>>>>>
+>>>>>>>> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
+>>>>>>>> index 1ccdf4b0f5dd..57921cb63230 100644
+>>>>>>>> --- a/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
+>>>>>>>> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
+>>>>>>>> @@ -51,6 +51,63 @@ properties:
+>>>>>>>>    '#reset-cells':
+>>>>>>>>      const: 1
+>>>>>>>>  
+>>>>>>>> +  vdda-refgen-0p9-supply: true
+>>>>>>>> +  vdda-refgen-1p2-supply: true
+>>>>>>>> +  vdda-qrefrx0-0p9-supply: true
+>>>>>>>> +  vdda-qrefrx1-0p9-supply: true
+>>>>>>>> +  vdda-qrefrx2-0p9-supply: true
+>>>>>>>> +  vdda-qrefrx4-0p9-supply: true
+>>>>>>>> +  vdda-qrefrx5-0p9-supply: true
+>>>>>>>> +  vdda-qreftx0-0p9-supply: true
+>>>>>>>> +  vdda-qreftx0-1p2-supply: true
+>>>>>>>> +  vdda-qreftx1-0p9-supply: true
+>>>>>>>> +  vdda-qrefrpt0-0p9-supply: true
+>>>>>>>> +  vdda-qrefrpt1-0p9-supply: true
+>>>>>>>> +  vdda-qrefrpt2-0p9-supply: true
+>>>>>>>> +  vdda-qrefrpt3-0p9-supply: true
+>>>>>>>> +  vdda-qrefrpt4-0p9-supply: true
 >>>>>>>
->>>>>>> Yes, this compatible is too generic. I will rename the compatible to
->>>>>>> fsl,aud-io-connector.
->>>>>>
->>>>>> aud is not much better. Which boards have it? What's the pinout?
->>>> What's
->>>>>> standard? Is it described anywhere? If so, provide reference to
->>>> spec/docs.
->>>>>>
+>>>>>>> Either I do not understand your previous explanation:
+>>>>>>> CXO -> TX0 -> RPT0 -> RPT1 -> RPT2 -> RX2 -> PCIe4_PHY
+>>>>>>>
+>>>>>>> or this is still wrong. There is no TCSR here, so this proves nothing.
+>>>>>>> If TCSR is TX0, then you do not have five of them...
+>>>>>>>
+>>>>>>> My previous comment stay - you are not describing the actual hardware
+>>>>>>> here.
+>>>>>>>
+>>>>>> The CXO network "-> TX0 -> RPT0 -> RPT1 -> RPT2 -> RX2 ->" is referred to
+>>>>>> as the QREF block, and each component is controlled by the tcsr_clkref_en
+>>>>>> registers.
 >>>>>
->>>>> This is not an industry standard electrical interface. This connector
+>>>>> Still no clue what this -> relation is. Again, describe the hardware.
+>>>>>
+>>>>>>
+>>>>>> If a PHY receives its reference clock from QREF, it will have a clkref_en
+>>>>>> register. However, this register may be located in different regions
+>>>>>> depending on the target. On glymur it resides in TCSR, so I added these
+>>>>>> LDOs QREF required in tcsr yaml.
+>>>>> Registers are not described as supplies.
 >>>>
->>>> Then if you do not have standard, then you have board specific layouts
->>>> thus you need board-specific compatibles. You can use fallbacks. Generic
->>>> fallback could work, but both io-connector and aud-io-connector are just
->>>> too generic. Every connector is "connector" and "io", thus absolutely
->>>> anything can be "io-connector". "aud" improves it only a bit, thus
->>>> honestly I would go with board specific fallback as well.
+>>>> I'm not descirbing register as supply.
 >>>>
+>>>>     tx0-0p9/1p2  rpt0-0p9   rpt1-0p9    rpt2-0p9    rx2-0p9
+>>>>        |             |           |        |           |
+>>>>        |             |           |        |           |
+>>>> CXO -> TX0 -------> RPT0 ------> RPT1 -> RPT2 -----> RX2 -> PCIe4_PHY
+>>>>        |             |           |        |           |
+>>>>        |             |           |        |           |
+>>>>        ---------------------------------------------------tcsr_clkref_en
+>>>>
+>>>> These components(TX/RTP/RX) can be disabled/enabled by tcsr_clkref_en
+>>>> register, and they require power supplies.
 >>>
->>> How about board specific + common fallback compatible like this:
->>>   compatible:
->>>     items:
->>>       - enum:
->>>           - fsl,imx95-19x19-evk-aud-io-connector
->>>           - fsl,imx952-evk-aud-io-connector
->>>       - const: fsl,imx-aud-io-connector
->>> Since the daughter board is named “IMX-AUD-IO” in publicly available
->>
->> I don't think it is named like that.
->>
->> git grep -i imx-aud-io
->>
->>> documentation, common compatible clearly indicates that this connector
->>> is intended for that.
+>>> So I told you more than once - none of these are supplies to the TCSR.
+>>> You clearly misunderstand what a supply is.
 >>>
->>> Also, I want to talk about the topic of generic connector. It's a common
->>> design that daughter board is connected to base board through a
->>> connector. This connector more often acts as a nexus that exposes a
->>> constrained subset of GPIO, clock, PWM and interrupt resources to the
->>> daughter board. Can we document this kind of connector as a generic
->>> binding?
 >>
->> So this binding is the connector between carrier and some addon? Then
->> you don't get a compatible for that at all, because it is not necessary,
->> not useful and NEVER used. Do you see socket LGA "connector" bindings? No.
+>> The TCSR binding here describes the tcsr_clkref_en clock gate, not the
+>> TCSR register block itself. The clock gate controls whether the reference
+>> clock is forwarded through the QREF chain to the PHY.
+>>
+>> The QREF components (TX/RPT/RX) sit between the clock gate and the PHY.
+>> They require LDO supplies to operate, and those supplies must be enabled
+>> before the clock gate is asserted and disabled after it is deasserted.
+>> This enable/disable sequencing is the responsibility of the clock gate
+>> driver, not the PHY driver.
+>>
+>> Since the supplies are managed as part of the clock gate operation, they
+>> are modeled as properties of the clock gate node. The node happens to live
+>> in TCSR on glymur, but the supplies describe what the clock gate needs to
+>> do its job, not what TCSR itself needs.
+>>
 > 
-> Not exactly. Any connector connects a carrier board with an add-on board.
-> The key point here is that this connector type is reused across different
-> boards, even though it is not an industry-standard connector. Both the
-> signal definitions and the mechanical layout are defined.
+> Just to add a bit more context:
 > 
-> The same add-on boards can therefore be reused across different base boards
-> that use this type of connector.
+> The QREF block supplies the reference clock to the PHY IPs. But the digital
+> logic (register interface) to control this QREF block lives inside TCSR in some
+> SoCs like Glymur. But AFAIK, the analog QREF circuitry is not inside TCSR, but
+> somewhere near to PHYs.
 > 
-> There are also GPIO mappings involved. For example, pin 1 on the connector
-> may represent reset-gpios, but it could be connected to GPIO0 on board A
-> and GPIO1 on board B.
+> Also, QREF needs its own LDOs to operate and supply reference clocks to PHYs.
+> Initially, we tried to add these QREF supplies to PHY node itself. But that was
+> pushed back by Johan [1]. His argument was that since these LDOs power QREFs,
+> not the PHY IPs, these supplies should not be added to the PHY nodes. And since
+> we do not have a dedicated QREF DT node due to the fact that the QREF registers
+> gets moved between various IPs based on the available space in the RTL. (It used
+> to live in GCC, but now it is in TCSR and in the future it could be in some
+> other IPs. Unfortunately, we cannot control this design)
 > 
-> Without a connector definition layer, this would create an N × M
-> combination problem. The Nexus node discussion already covered this topic:
-> https://osseu2025.sched.com/event/25Vrw
+> So he suggested to add these supplies to TCSR node which acts as a control
+> interface to QREF, even though it is not an accurate hw representation either.
 > 
-> An LGA socket is a CPU socket, where the signals are completely transparent
-> to software, so it is not a good comparison. A PCIe M.2 Key-M/E connector
-> would be a more appropriate comparison.
->
+> And this patchset is based on that feedback only.
+> 
+> But your argument is also valid that these supplies are not supplying the TCSR
+> block in hw, but just the QREF analog circuitry living close to PHY.
+> 
+> We are open to suggestions here as we do not know what is the accurate hardware
+> description for these supplies/QREF.
 
-So the terminology of daughter and carrier boards was confusing. If this
-is a hat, mezzanine or other addon, it's fine.
-
-I still insist on board specific compatibles - fallback and specific.
+As I understood these are real supplies to QREF which on these SoCs is
+part of TCSR, so in general it is fine. Should be in its own binding
+file, though.
 
 Best regards,
 Krzysztof
