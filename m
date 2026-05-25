@@ -1,55 +1,54 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C0F3D5643
-	for <linux-clk@vger.kernel.org>; Mon, 25 May 2026 08:04:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BFFC3D8909
+	for <linux-clk@vger.kernel.org>; Mon, 25 May 2026 08:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779696247; cv=none; b=le4NijMj8ccWQ31ucnrCNUDFkOZXKIZdKX8vZR+6g6jve5+sGIUkaJBpxFo3t3gyw21vT+1BZM9PPIme6ttS+RU3M8fyr7ztpNIbyRLgSkkykz70Nge1E+Vt2VJfq/CiLN0Xp5XFs4xgqj5Vp5p+fkN3BcaUusFbaQXnMwI9mMI=
+	t=1779696398; cv=none; b=GBz03RMyvBo5wxjHWEGzi6V2+bZNGSD7UDVS4nOk77wbIACksXI0Jbu3fzhLuvtwEQrQtr1AXJ+hYGmNPFU3boUZShTTawHbBmXB1S9mGRCgTuiLfAYNozT2zjobH6pLCTFCHsMwF78KPHi4LjeJnIfJCH7RKd4S4Zo30kIjryU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779696247; c=relaxed/simple;
-	bh=4vllGicUbdN0Bqlbgpv612IvW1fY5Ga0NBXa/j5YjIk=;
+	s=arc-20240116; t=1779696398; c=relaxed/simple;
+	bh=XBdwrpDpVLZphgnQqjfINiqHGCa1lpywck29IxJWjLU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=enEk+XTZVVrZPmqUV2pq1k5vQB45bqjS1bW9YFlFPwS4B2t+tWHloIqRZy7yzy/bK6z8gF1Dw45lqugrMoIA2EdpSca6ZuxW/2O2CqI613vM7ttjCJwHlCVnSe/JGAtlmaBWl6tahJz/UpuUE7A88BgyXSTJrRerQzZ8WwXqdDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ONAbaRd5; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=c1hL45sdeQPDIXlVqX/24ibEhWLRF3ACZolAhsQrI0pnoyu0m3PhgqTV6bH3SkPb4S4AIOMw9jvQmUJ3w/Cm5dfKAIYNEugP6qyGSW8bhFmq4yr732noxCLjaud7V83PoZFShELDdIvdYZ2Feh3vuJl+Tasd4i+Oz0oOFDjwLNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fDLEwigv; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ONAbaRd5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A43541F000E9
-	for <linux-clk@vger.kernel.org>; Mon, 25 May 2026 08:04:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fDLEwigv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11A2C1F01560
+	for <linux-clk@vger.kernel.org>; Mon, 25 May 2026 08:06:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779696244;
-	bh=4vllGicUbdN0Bqlbgpv612IvW1fY5Ga0NBXa/j5YjIk=;
+	s=k20260515; t=1779696397;
+	bh=XBdwrpDpVLZphgnQqjfINiqHGCa1lpywck29IxJWjLU=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=ONAbaRd5hqziXmIjbcC45rSuMKkCRwKMzaE5TnBLMmpKaBNi2XQTIHCByRBlPx94U
-	 D0P927r+Dy99NpqkcQvUqZWEaAqOFGFfnEs5lHaRE2WGyJv7xuLufbCsGcJ2oRfLbj
-	 gKaHHVcaKTqOAvznP2yIgagbACgHVBeY2UYDElQJ3Mui3JaEOF003cyzcFNZhN+R24
-	 T5Ew2lb3JwFp4FZpTOByXSTyVg0JzCkrQsxAkhl8GCCRDUCoExzF/aJgKQaUr3Tx8r
-	 dSeLfEcsUr18+bjRAchySs1/M5kmAJ4cKFtzjeP6gVrnaPOxT4VR3tU1zzmn1ztxkG
-	 W39EL/s9uPKMw==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5a8cb92f26aso9996145e87.1
-        for <linux-clk@vger.kernel.org>; Mon, 25 May 2026 01:04:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ90jo2en1dvRaSE9wZAGb9bgXKacCo0LeTG8nfkVCnCJVmtjvPn/gaw4RxvWzKD15RBj4se+s4e3W8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzljhQgn7CTbFCSa6F0Hx79W4uVcbfLifAw1Wxc6IlCgne1yOUL
-	B2tLfrUIugwg0KI6QXO3L+oLvG3SJnSUOG5q4Vcdvb6FUuof5p1WXf8eq6MCYUr/Lho9b+ax3bW
-	pHIMZI10pbZVOny4PMa+jfHoOip1Gf3A=
-X-Received: by 2002:a05:6512:3ca7:b0:5a8:8825:15fc with SMTP id
- 2adb3069b0e04-5aa3238ba06mr4490982e87.3.1779696243482; Mon, 25 May 2026
- 01:04:03 -0700 (PDT)
+	b=fDLEwigvfx3SKEy+abqKr/OzEu8M1uZr5lZwv82fmKYtK+YvG9058zhlwLGw4oST5
+	 0478577WUe+Uc5wobNxLnJxUxHa0w2WEc4p42UrWv0+7pcuOFtgl5uQywyTZ7VPHod
+	 m5h2YUwU66j6aPQnq84kLOkJiAEg6CCu5bJ6qOal41l2D+aYc8NwfZslUrXD3TEXEo
+	 mdqDKnNJXIYIGlGCmp01Qc8O939wTaNiQ0pd7s7tO2h+dEgrhDnjIz6ydkBi29LCXe
+	 UCHXvyb1Ig/C7O67TkPG3ciG5fITPX7NAAC6/M4R671dFZbM76Lk0FYLmh0crQXTpu
+	 Imm1SJsoC+Ebg==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5a87edf88b3so9320707e87.0
+        for <linux-clk@vger.kernel.org>; Mon, 25 May 2026 01:06:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ/ng6g8b+FQZo0KIgvBP6wMm/Vk6qW719h62/Sf6nAVj/PSljgSJ/FdEszXWRFGmsak9JRVFW66oHs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw75/Ft+vfER3GSDm1RWTFHc+S6tT81Wt0Oal1zhI685i0oSfnW
+	bEbFwYvnKj/04j8qitVTEuc6DSzYlGawHrmc6HGLu0NXKkqL9rEEQAJt62dKya/sr/a6AKusw+O
+	0mkcdEWAg6mSdCl4i42V1jfuwIBi1jC4=
+X-Received: by 2002:a05:6512:692:b0:5a8:fc25:3843 with SMTP id
+ 2adb3069b0e04-5aa323a49d0mr3894276e87.39.1779696395729; Mon, 25 May 2026
+ 01:06:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260521-pinctrl-single-bit-v5-0-308be2c160fc@aspeedtech.com> <20260521-pinctrl-single-bit-v5-1-308be2c160fc@aspeedtech.com>
-In-Reply-To: <20260521-pinctrl-single-bit-v5-1-308be2c160fc@aspeedtech.com>
+References: <20260521-pinctrl-single-bit-v5-0-308be2c160fc@aspeedtech.com>
+In-Reply-To: <20260521-pinctrl-single-bit-v5-0-308be2c160fc@aspeedtech.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Mon, 25 May 2026 10:03:50 +0200
-X-Gmail-Original-Message-ID: <CAD++jLm5Jsrdpg=H8xowFzx9omJhGpamjjcg0LYN2R9HCeW5tw@mail.gmail.com>
-X-Gm-Features: AVHnY4Lr6P_gJlk6yPcaGrv6903bIHaJS623wqRPa4vQc7mnCclEd4yYEBmZPTc
-Message-ID: <CAD++jLm5Jsrdpg=H8xowFzx9omJhGpamjjcg0LYN2R9HCeW5tw@mail.gmail.com>
-Subject: Re: [PATCH v5 1/3] dt-bindings: mfd: aspeed,ast2x00-scu: Support
- AST2700 SoC1 pinctrl
+Date: Mon, 25 May 2026 10:06:23 +0200
+X-Gmail-Original-Message-ID: <CAD++jLnxMGux88CCXH70hwEGiQXn9FCJ=vucLaS=JLhp_C48VQ@mail.gmail.com>
+X-Gm-Features: AVHnY4LaI0HREPthKKhQrYPPwj27_NpiZglEh2S216je37LkMgP9M9Luyc3lYsg
+Message-ID: <CAD++jLnxMGux88CCXH70hwEGiQXn9FCJ=vucLaS=JLhp_C48VQ@mail.gmail.com>
+Subject: Re: [PATCH v5 0/3] pinctrl: aspeed: Add AST2700 SoC1 support
 To: Billy Tsai <billy_tsai@aspeedtech.com>
 Cc: Tony Lindgren <tony@atomide.com>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
@@ -66,24 +65,39 @@ Content-Transfer-Encoding: quoted-printable
 On Thu, May 21, 2026 at 11:17=E2=80=AFAM Billy Tsai <billy_tsai@aspeedtech.=
 com> wrote:
 
-> The AST2700 SoC integrates two interconnected SoC instances, each
-> managed by its own System Control Unit (SCU).
+> Legacy ASPEED pin controllers have historically not had a coherent
+> register interface. Control fields often had no consistent mapping to
+> individual pins, and configuring a function frequently required
+> coordinating multiple control bits across several registers. As a
+> result, the existing ASPEED pinctrl drivers rely on complex macro
+> infrastructure to describe the dependencies between pins, functions,
+> and register fields.
 >
-> Allow the AST2700 SoC1 pin controller to be described as a child
-> node of the SCU by extending the compatible strings accepted by
-> the SCU binding.
+> The pin controller for SoC1 in the AST2700 breaks from this legacy
+> design.
 >
-> There is no functional change to the SCU binding beyond permitting
-> the aspeed,ast2700-soc1-pinctrl compatible string.
+> For SoC1, each pin maps directly to a dedicated function field in the
+> SCU register space that determines the active mux function for that
+> pin. This results in a much more regular register layout compared to
+> previous generations.
 >
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> While the behaviour is conceptually similar to pinctrl-single, the
+> register layout and configuration model differ enough that reusing
+> pinctrl-single directly is not practical. Therefore this driver is
+> implemented as a SoC-specific pinctrl driver using static data tables
+> to describe the register layout.
+>
+> The binding reuses the standard pinmux and generic pin configuration
+> schemas and does not introduce any custom Devicetree properties.
+>
 > Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
 
-Reviewed-by: Linus Walleij <linusw@kernel.org>
+Patches 2 & 3 applied to the pinctrl tree, thanks Billy!
 
-Lee can you pick this up at your convenience?
-
-I'll apply patches 2 & 3.
+Sashiko is moaning about something, look into it but my confidence
+is low since it is using weasel words like "critical" for things that are
+certainly not critical, if there is some validty to these comments it
+can certainly be fixed up in-tree.
 
 Yours,
 Linus Walleij
