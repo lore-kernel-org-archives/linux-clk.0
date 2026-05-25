@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE35274B39;
-	Mon, 25 May 2026 12:10:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2238C35F19A;
+	Mon, 25 May 2026 12:25:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779711045; cv=none; b=YA+tY/0lW5lIruh3eVorP1MheQ1W70w+61Ylj5AiV7fbzYEMjFQ/RipN6xgq4Aam1ykscU+IVR3s+gCQVoSBmKCAzzueVGCuHJF7ayw3O1ksdJMZvkCn7ERp82ID1kGr7so7GXtmrsEqNxI2a6QjFdNySSjY87+wRGnNDtFc/Hc=
+	t=1779711932; cv=none; b=qB1umAK6UnzwXtmODBOA77V+9nwVtKBxVWc/biiRmVVrlyQ/KCoDFlANCsQ0MvqoGsGKkv51jdlQZM8ddkphUVPBJ81QAkWfzC+opgKczs4qYl9ifKsAYG0VzTlcIgC/BMPEcj1GNxibm9rcZXjKWkyQYQ/Kw0/HK/E+0qaHF78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779711045; c=relaxed/simple;
-	bh=H2XbRLZ5+GvP7BqNSiSKxXoYhCdSSYs7gZmgnwscKHE=;
+	s=arc-20240116; t=1779711932; c=relaxed/simple;
+	bh=U41gSXy/xuz6n3TNZXFyuVZkJL37LUWKDYgEvfeeheU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bgMxPj4V3UxKMKet16KcCGhDOcevD/IxVu6EZ3ZTlXMn6B9sQD1C+wiDtXLnMrva1470ktjC6jeBQz8Q9NRZlbjOyFPDXRmteOuuWsO9dsnfg1kH+roqVycI4NSDCiRYDgHRDeOnbUoJbpvUSx9u4v5IokB34+bZ1sgcOE1RR8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e0vfZklM; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=S//P17u6L4LokWDFVdEstb19zx80ZXxtIczaYkLjvKVr1AJ8nMu46xflc+NjX/pr7ovfkHxkufjD8oqY0ua9mbX8EFWJzvYfNF0CJw8SXEW+wj2D3kBA5Jq9MQ7kU2TSuP27q7ZrRuDDoD5beWnRy+naqso/XL0ybkRgAE7vrOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fw3mttdF; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e0vfZklM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A5F01F000E9;
-	Mon, 25 May 2026 12:10:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fw3mttdF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C5F41F000E9;
+	Mon, 25 May 2026 12:25:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779711044;
-	bh=cY3kcG400HFwYsUxYZRg6ciJDEvU+8cftVFMVGBbPaY=;
+	s=k20260515; t=1779711930;
+	bh=8KHtOlsr90yhD2rGuVVnFxT47aP8oLr2JK50jkH/W9E=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=e0vfZklMVREIcM48htGLKBOoKgczK+3z159ZNICbWDo5cIBwe8Y1T3i34odJaqUQ2
-	 Vld1PyeCsRJZe7OpBupoSgSawZaKa0GVVGj43du8T0L77MVrAk7j96PmyYIpo4Xg/7
-	 XK61MwNjMJZTU30cuggpqK+i0sis5A8GNivm1LrbtFvBuYhzR2B/R0HUdqmU6xlKUq
-	 e7MCvKSDwh1X+csDniDFg40DRIsufkKdV2cJR0m3vM7Fkvzrr3TK8PrMMo+gA+B69F
-	 4UScN3rtheKMHVDbCCOqxJ5h/doX9qgRH1dalJxGOj6tNVZqW4DfvNSX42NnaSwFMd
-	 1WpRMRpVdM5cA==
-Message-ID: <032c1099-40ab-470e-8cc3-af6d3cad22d4@kernel.org>
-Date: Mon, 25 May 2026 14:10:38 +0200
+	b=Fw3mttdFwKIGyqQvkdD80S0Jqg8+gB1hpM57uQ1bWe0+dYInP09EBKc3EQFGelKY8
+	 /Vz3KcNLIAPXAKXj1NzPDHsq/RcWWRZtf2ykOjBDK0hJrrNdWnQrGknl/cJBGHlaFn
+	 RCGAEi3qr6dMh1uJ0O/GPYkvFitkDN6v0gDF/lOAvjFU72vSMtWQtABv5nwfcipL/f
+	 VGiasHVHACNYzqfjbj1DMBiHO1Tfpjk1QPurRaVKNyRYnM6KbbxOlbI+GSJvvqaggh
+	 /mYqLXF/LeQesG0pmaJfDpRPV/4es3MWsbucciUb/2BNuSfQA/CjHc5B9jS0IBTQ5t
+	 gXuYpMv2mxSrg==
+Message-ID: <a59c6e3a-6092-4114-8961-c2a71a812959@kernel.org>
+Date: Mon, 25 May 2026 14:25:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,20 +35,22 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 7/8] dt-bindings: display: allwinner: Split H616 DE33
- layer reg space
-To: wens@kernel.org
-Cc: Jernej Skrabec <jernej.skrabec@gmail.com>, samuel@sholland.org,
- mripard@kernel.org, maarten.lankhorst@linux.intel.com, tzimmermann@suse.de,
- airlied@gmail.com, simona@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20260509190015.79086-1-jernej.skrabec@siol.net>
- <20260509190015.79086-8-jernej.skrabec@siol.net>
- <20260514-valiant-ape-of-discourse-a4f5a9@quoll>
- <ahNuuaVlDl0KvOSj@home.wens.tw>
+Subject: Re: [PATCH v2 0/6] firmware: samsung: acpm: TMU support and cleanups
+To: Alexey Klimov <alexey.klimov@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Lee Jones <lee@kernel.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ peter.griffin@linaro.org, jyescas@google.com, kernel-team@android.com,
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+References: <20260515-acpm-tmu-helpers-v2-0-8ca011d5a965@linaro.org>
+ <177965159562.32222.17454581524471571236.b4-ty@b4>
+ <DIR9DLGP2EN5.21HR8BY11G5SF@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -94,56 +96,54 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <ahNuuaVlDl0KvOSj@home.wens.tw>
+In-Reply-To: <DIR9DLGP2EN5.21HR8BY11G5SF@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 24/05/2026 23:33, Chen-Yu Tsai wrote:
-> Hi,
-> 
-> (resent from new email)
-> 
-> On Thu, May 14, 2026 at 2:04 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On 25/05/2026 00:26, Alexey Klimov wrote:
+> On Sun May 24, 2026 at 8:40 PM BST, Krzysztof Kozlowski wrote:
 >>
->> On Sat, May 09, 2026 at 09:00:14PM +0200, Jernej Skrabec wrote:
->>> From: Jernej Skrabec <jernej.skrabec@gmail.com>
+>> On Fri, 15 May 2026 09:32:24 +0000, Tudor Ambarus wrote:
+>>> This series introduces protocol support for the Exynos
+>>> Thermal Management Unit (TMU) to the ACPM driver, alongside several
+>>> cleanups.
 >>>
->>> As it turns out, current H616 DE33 binding was written based on
->>> incomplete understanding of DE33 design. Namely, planes are shared
->>> resource and not tied to specific mixer, which was the case for previous
->>> generations of Display Engine (DE3 and earlier).
+>>> Dependencies
+>>> ============
+>>> Krzysztof, these patches together with the acpm fixes from your `fixes`
+>>> branch will be needed by the thermal maintainers. I'm going to send the
+>>> ACPM TMU (thermal) driver for review. In case they'll take it for the
+>>> next release, we'll need an immutable tag with the acpm fixes, cleanup
+>>> and thermal helpers. Thanks!
 >>>
->>> This means that current DE33 binding doesn't properly reflect HW and
->>> using it would mean that second mixer (used for second display output)
->>> can't be supported.
->>>
->>> Remove layer register space, which will be represented with additional
->>> node, and replace it with phandle, which will point to that new, shared
->>> node. That way, all mixers can share same layers.
->>>
->>> There is no user of this binding yet, so changes can be made safely,
->>> without breaking any backward compatibility.
+>>> [...]
 >>
->> There is user. git grep gives me:
->> drivers/gpu/drm/sun4i/sun8i_mixer.c
+>> Applied, thanks!
 >>
->> which means this is a released ABI. As I understood, the old code was
+>> [1/6] firmware: samsung: acpm: Consolidate transfer initialization helper
+>>       https://git.kernel.org/krzk/linux/c/43d3733b7ffd82b2bfeda69befa2a179335dfe6c
+>> [2/6] firmware: samsung: acpm: Annotate rx_data->cmd with __counted_by_ptr
+>>       https://git.kernel.org/krzk/linux/c/7b20fd06f783c1e901d34305c68df16212cdf669
+>> [3/6] firmware: samsung: acpm: Drop redundant _ops suffix in acpm_ops members
+>>       https://git.kernel.org/krzk/linux/c/ef1109e4b6120a52be1ea66d486d6744d0c5ac47
+>> [4/6] firmware: samsung: acpm: Make acpm_ops const and access via pointer
+>>       https://git.kernel.org/krzk/linux/c/e694e19bf7db26ee324ff6bb450cc523592f5bee
+>> [5/6] firmware: samsung: acpm: Add TMU protocol support
+>>       https://git.kernel.org/krzk/linux/c/f6af402de525d0848fc4a50f25ff01f56fc68d98
 > 
-> We held off on merging the DT changes so that we could rework this.
-> I can't find the actual request though. It was probably over IRC.
+> That commit contained the questionable error conversion which works
+> only for gs101 -- acpm_tmu_to_linux_err() hides some sensible errors into -EIO.
+> There were on-going discussion on maillist.
 > 
->> working fine but just did not support all use cases. Why this cannot be
->> kept backwards compatible?
-> 
-> AFAIK the "planes" block is shared between two display mixers. As the
-> commit message explains, this prevents using the second mixer, since
-> only one of them can claim and map the register space. And on the H700
-> (which is the same die as the H616 discussed here but with more exposed
-> interfaces), there could actually be a use case for the second mixer.
+> Now, it is needed to ignore that or generalise that or split it to have
+> different SoCs if needed. Some re-work will be needed.
 
-It explains why you want to make the changes but not why you cannot keep
-it backwards compatible.
-
+That patch was looking correct in its scope. It solved one particular
+case (GS101) without stopping anyone to grow this to support other cases
+(Exynos850 etc)., so it is in kernel spirit to take such things. Solving
+these other cases is simply not necessary now. It's also not blocked, so
+just build on top and improve that code to match both use cases, when
+you have exynos850 consumer of this.
 
 Best regards,
 Krzysztof
