@@ -1,103 +1,90 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BFFC3D8909
-	for <linux-clk@vger.kernel.org>; Mon, 25 May 2026 08:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0929A3E5A0A;
+	Mon, 25 May 2026 08:46:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779696398; cv=none; b=GBz03RMyvBo5wxjHWEGzi6V2+bZNGSD7UDVS4nOk77wbIACksXI0Jbu3fzhLuvtwEQrQtr1AXJ+hYGmNPFU3boUZShTTawHbBmXB1S9mGRCgTuiLfAYNozT2zjobH6pLCTFCHsMwF78KPHi4LjeJnIfJCH7RKd4S4Zo30kIjryU=
+	t=1779698769; cv=none; b=kHEy0Xu9Gs3g7HSN1xOI+0bCVpfGh1gOKBpIYbm9zY7MDMMZbRtTDK28UFQ1oU9TKBtX67KfRquuDGFAIOGLKTaKG2HdLmuq/gGBLDfCE7T/ZdXgOgS+iwblVu9pifFXhy0T1lNiHwiG7eO7hhUHDTGF4pw0gmYVziM40z25HVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779696398; c=relaxed/simple;
-	bh=XBdwrpDpVLZphgnQqjfINiqHGCa1lpywck29IxJWjLU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c1hL45sdeQPDIXlVqX/24ibEhWLRF3ACZolAhsQrI0pnoyu0m3PhgqTV6bH3SkPb4S4AIOMw9jvQmUJ3w/Cm5dfKAIYNEugP6qyGSW8bhFmq4yr732noxCLjaud7V83PoZFShELDdIvdYZ2Feh3vuJl+Tasd4i+Oz0oOFDjwLNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fDLEwigv; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1779698769; c=relaxed/simple;
+	bh=G9Tat5XVlt3hSUrqlBT9oU7ZJpYohFdZokySMUaIDIc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VI6UuqL7pVAxsfQthq0ZPwoeBQbXzcDCJmftxVDdpYhGMXy70Mv7sxDG1Fzng4CwTjNrU5EXEFyGz1FpbJa2bzOAJKtrLsEG0q2Yey9u9sfugxjo6VyE2XvpkxCid3Gc7TGbdg/FxWEJbPmxr+RgtE088lYnrR5dyPXhcLdyRDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SEPybhqM; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fDLEwigv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11A2C1F01560
-	for <linux-clk@vger.kernel.org>; Mon, 25 May 2026 08:06:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779696397;
-	bh=XBdwrpDpVLZphgnQqjfINiqHGCa1lpywck29IxJWjLU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=fDLEwigvfx3SKEy+abqKr/OzEu8M1uZr5lZwv82fmKYtK+YvG9058zhlwLGw4oST5
-	 0478577WUe+Uc5wobNxLnJxUxHa0w2WEc4p42UrWv0+7pcuOFtgl5uQywyTZ7VPHod
-	 m5h2YUwU66j6aPQnq84kLOkJiAEg6CCu5bJ6qOal41l2D+aYc8NwfZslUrXD3TEXEo
-	 mdqDKnNJXIYIGlGCmp01Qc8O939wTaNiQ0pd7s7tO2h+dEgrhDnjIz6ydkBi29LCXe
-	 UCHXvyb1Ig/C7O67TkPG3ciG5fITPX7NAAC6/M4R671dFZbM76Lk0FYLmh0crQXTpu
-	 Imm1SJsoC+Ebg==
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5a87edf88b3so9320707e87.0
-        for <linux-clk@vger.kernel.org>; Mon, 25 May 2026 01:06:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ/ng6g8b+FQZo0KIgvBP6wMm/Vk6qW719h62/Sf6nAVj/PSljgSJ/FdEszXWRFGmsak9JRVFW66oHs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw75/Ft+vfER3GSDm1RWTFHc+S6tT81Wt0Oal1zhI685i0oSfnW
-	bEbFwYvnKj/04j8qitVTEuc6DSzYlGawHrmc6HGLu0NXKkqL9rEEQAJt62dKya/sr/a6AKusw+O
-	0mkcdEWAg6mSdCl4i42V1jfuwIBi1jC4=
-X-Received: by 2002:a05:6512:692:b0:5a8:fc25:3843 with SMTP id
- 2adb3069b0e04-5aa323a49d0mr3894276e87.39.1779696395729; Mon, 25 May 2026
- 01:06:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SEPybhqM"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1779698766;
+	bh=G9Tat5XVlt3hSUrqlBT9oU7ZJpYohFdZokySMUaIDIc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SEPybhqMb7/lv52S+LVmFGv3hBCKyhqYfsnBmONXkFqYIKPvVkvPRNQoZFL8anlzV
+	 Y1hqBJfSyYsfNSip+7BJcmK7QwaG9JNPVIFb1Gq5J09QVYcTaAk/j7lNw6KPUpwuet
+	 bbeQl+oLDTDknbl7Muy6sKCicTMGsU37K02KFBSv+gH7TosQytPRmtFpb+xIVfpUqJ
+	 vP3lmlMtv60LT9/0DvIC+SDzDgUUBBnEBgH5QEP/MEoo2tNLveve13CXErtmo1HQqU
+	 EVqP+9ICWwy5blUa9i3EPrJzDJ9NWgKgq/G3gJmFnLxAE0iUK5cH/nrmAfyixovqa3
+	 cJVia8ZjQdtgw==
+Received: from [100.64.1.21] (unknown [100.64.1.21])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5E05D17E0CAC;
+	Mon, 25 May 2026 10:46:05 +0200 (CEST)
+Message-ID: <1b430dea-6d84-4ba5-845f-bdea1c0fa569@collabora.com>
+Date: Mon, 25 May 2026 10:46:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260521-pinctrl-single-bit-v5-0-308be2c160fc@aspeedtech.com>
-In-Reply-To: <20260521-pinctrl-single-bit-v5-0-308be2c160fc@aspeedtech.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Mon, 25 May 2026 10:06:23 +0200
-X-Gmail-Original-Message-ID: <CAD++jLnxMGux88CCXH70hwEGiQXn9FCJ=vucLaS=JLhp_C48VQ@mail.gmail.com>
-X-Gm-Features: AVHnY4LaI0HREPthKKhQrYPPwj27_NpiZglEh2S216je37LkMgP9M9Luyc3lYsg
-Message-ID: <CAD++jLnxMGux88CCXH70hwEGiQXn9FCJ=vucLaS=JLhp_C48VQ@mail.gmail.com>
-Subject: Re: [PATCH v5 0/3] pinctrl: aspeed: Add AST2700 SoC1 support
-To: Billy Tsai <billy_tsai@aspeedtech.com>
-Cc: Tony Lindgren <tony@atomide.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
-	Andrew Jeffery <andrew@codeconstruct.com.au>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Lee Jones <lee@kernel.org>, Ryan Chen <ryan_chen@aspeedtech.com>, patrickw3@meta.com, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-aspeed@lists.ozlabs.org, BMC-SW@aspeedtech.com, 
-	openbmc@lists.ozlabs.org, Andrew Jeffery <andrew@aj.id.au>, linux-clk@vger.kernel.org, 
-	Conor Dooley <conor.dooley@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: mediatek: mt8196: Select REGMAP_MMIO for vlpckgen
+To: Akari Tsuyukusa <akkun11.open@gmail.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, bmasney@redhat.com, matthias.bgg@gmail.com,
+ wenst@chromium.org, laura.nao@collabora.com
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ stable@vger.kernel.org
+References: <20260522133023.355404-1-akkun11.open@gmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20260522133023.355404-1-akkun11.open@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 21, 2026 at 11:17=E2=80=AFAM Billy Tsai <billy_tsai@aspeedtech.=
-com> wrote:
+On 5/22/26 15:30, Akari Tsuyukusa wrote:
+> The MediaTek MT8196 vlpckgen clock driver uses
+> __devm_regmap_init_mmio_clk() by devm_regmap_init_mmio(),
+> which is defined in drivers/base/regmap/regmap-mmio.c.
+> However, the driver's Kconfig entry does not select REGMAP_MMIO.
+> This causes a linker error when REGMAP_MMIO is not enabled.
+> 
+> Fix this by selecting REGMAP_MMIO in the Kconfig entry.
+> 
+> Fixes: 2f8b3ae6f0cb ("clk: mediatek: Add MT8196 vlpckgen clock support")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Akari Tsuyukusa <akkun11.open@gmail.com>
 
-> Legacy ASPEED pin controllers have historically not had a coherent
-> register interface. Control fields often had no consistent mapping to
-> individual pins, and configuring a function frequently required
-> coordinating multiple control bits across several registers. As a
-> result, the existing ASPEED pinctrl drivers rely on complex macro
-> infrastructure to describe the dependencies between pins, functions,
-> and register fields.
->
-> The pin controller for SoC1 in the AST2700 breaks from this legacy
-> design.
->
-> For SoC1, each pin maps directly to a dedicated function field in the
-> SCU register space that determines the active mux function for that
-> pin. This results in a much more regular register layout compared to
-> previous generations.
->
-> While the behaviour is conceptually similar to pinctrl-single, the
-> register layout and configuration model differ enough that reusing
-> pinctrl-single directly is not practical. Therefore this driver is
-> implemented as a SoC-specific pinctrl driver using static data tables
-> to describe the register layout.
->
-> The binding reuses the standard pinmux and generic pin configuration
-> schemas and does not introduce any custom Devicetree properties.
->
-> Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Patches 2 & 3 applied to the pinctrl tree, thanks Billy!
+> ---
+>   drivers/clk/mediatek/Kconfig | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+> index 2c09fd729bab..fd8440122ec2 100644
+> --- a/drivers/clk/mediatek/Kconfig
+> +++ b/drivers/clk/mediatek/Kconfig
+> @@ -1006,6 +1006,7 @@ config COMMON_CLK_MT8196
+>   	tristate "Clock driver for MediaTek MT8196"
+>   	depends on ARM64 || COMPILE_TEST
+>   	select COMMON_CLK_MEDIATEK
+> +	select REGMAP_MMIO
+>   	default ARCH_MEDIATEK
+>   	help
+>   	  This driver supports MediaTek MT8196 basic clocks.
 
-Sashiko is moaning about something, look into it but my confidence
-is low since it is using weasel words like "critical" for things that are
-certainly not critical, if there is some validty to these comments it
-can certainly be fixed up in-tree.
-
-Yours,
-Linus Walleij
