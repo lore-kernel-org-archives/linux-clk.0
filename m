@@ -1,90 +1,102 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0929A3E5A0A;
-	Mon, 25 May 2026 08:46:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B868125AA;
+	Mon, 25 May 2026 09:24:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779698769; cv=none; b=kHEy0Xu9Gs3g7HSN1xOI+0bCVpfGh1gOKBpIYbm9zY7MDMMZbRtTDK28UFQ1oU9TKBtX67KfRquuDGFAIOGLKTaKG2HdLmuq/gGBLDfCE7T/ZdXgOgS+iwblVu9pifFXhy0T1lNiHwiG7eO7hhUHDTGF4pw0gmYVziM40z25HVc=
+	t=1779701085; cv=none; b=FV3y5HFpDRg0m8EzE+0maTA5IIfdvEshJgPIKAxuKVtQoxcO9cb7LGhv+tcTzQkSKHHqf1WlGcyVocKE28SaQz2Gm+IvFD07D7pImAp1yAL7eHtjqKfyoDyVoXJII8UDwuVgCYDYbVVgaDZiEP/I/QTfiJLiuAV00AoB0+asQAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779698769; c=relaxed/simple;
-	bh=G9Tat5XVlt3hSUrqlBT9oU7ZJpYohFdZokySMUaIDIc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VI6UuqL7pVAxsfQthq0ZPwoeBQbXzcDCJmftxVDdpYhGMXy70Mv7sxDG1Fzng4CwTjNrU5EXEFyGz1FpbJa2bzOAJKtrLsEG0q2Yey9u9sfugxjo6VyE2XvpkxCid3Gc7TGbdg/FxWEJbPmxr+RgtE088lYnrR5dyPXhcLdyRDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SEPybhqM; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1779701085; c=relaxed/simple;
+	bh=VToW2tkGDjYtYxUbLXPSzNOeI+eD0zBQHgakEB8gWtg=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HOdjxFeh+8LORk+Rk+snn9OpB9MXRaX8En5klRxIAeR2Gk8ndciGLrDuQnxIeSNqIpdZ8bxZaw5auvYxkrqU9SJ5nBkUgF56poACneaFgATP53qN406YiiabA5FvfbcRmnrJV1k1zedZ4wo4biYR1mYz9WGjadBZeNXZ2T6I79I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=m+rB4pkk; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SEPybhqM"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1779698766;
-	bh=G9Tat5XVlt3hSUrqlBT9oU7ZJpYohFdZokySMUaIDIc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SEPybhqMb7/lv52S+LVmFGv3hBCKyhqYfsnBmONXkFqYIKPvVkvPRNQoZFL8anlzV
-	 Y1hqBJfSyYsfNSip+7BJcmK7QwaG9JNPVIFb1Gq5J09QVYcTaAk/j7lNw6KPUpwuet
-	 bbeQl+oLDTDknbl7Muy6sKCicTMGsU37K02KFBSv+gH7TosQytPRmtFpb+xIVfpUqJ
-	 vP3lmlMtv60LT9/0DvIC+SDzDgUUBBnEBgH5QEP/MEoo2tNLveve13CXErtmo1HQqU
-	 EVqP+9ICWwy5blUa9i3EPrJzDJ9NWgKgq/G3gJmFnLxAE0iUK5cH/nrmAfyixovqa3
-	 cJVia8ZjQdtgw==
-Received: from [100.64.1.21] (unknown [100.64.1.21])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5E05D17E0CAC;
-	Mon, 25 May 2026 10:46:05 +0200 (CEST)
-Message-ID: <1b430dea-6d84-4ba5-845f-bdea1c0fa569@collabora.com>
-Date: Mon, 25 May 2026 10:46:05 +0200
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="m+rB4pkk"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1779701084; x=1811237084;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=VToW2tkGDjYtYxUbLXPSzNOeI+eD0zBQHgakEB8gWtg=;
+  b=m+rB4pkkK3FE4Xi5e26BFyCg8RQfAcuzz9dtGMiVcPIMUVSceC28aMfB
+   7+6YnJn+t3boyTt7wrlmP5ggV3V3BdLRAB4wD+zcEul1RVW1m/z8P+fYA
+   /tJRbByQVT1yV5//45oHhzKS68BmTcxZYFJCkpShCByC47gSL6pbXmu8A
+   EjkB2KjzhnCFYM8gFaHT2BLRKcj3m5eLm0BC51OOh4xF3JdtzCeXUnzqB
+   42eVV/1Dv7aBRlCNNHS1XYWaRs+AYJJAmq/XYaRs09jvpDdW72/4TtkpV
+   kWBQNr6fUbb3XwU+dG578g5dIeHpkQrklQLhwweQkYjkkpQniH9maMD6M
+   g==;
+X-CSE-ConnectionGUID: vqde+N29RQu654XIWvLctw==
+X-CSE-MsgGUID: yu61C2IcRBK2mUEiEzYbnA==
+X-IronPort-AV: E=Sophos;i="6.24,167,1774335600"; 
+   d="scan'208";a="57215508"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 May 2026 02:24:38 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Mon, 25 May 2026 02:24:38 -0700
+Received: from che-lt-i67131.microchip.com (10.10.85.11) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.58 via Frontend Transport; Mon, 25 May 2026 02:24:29 -0700
+From: Manikandan Muralidharan <manikandan.m@microchip.com>
+To: <alexandre.belloni@bootlin.com>, <Frank.Li@nxp.com>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <nicolas.ferre@microchip.com>,
+	<claudiu.beznea@tuxon.dev>, <linux@armlinux.org.uk>,
+	<mturquette@baylibre.com>, <sboyd@kernel.org>, <bmasney@redhat.com>,
+	<aubin.constans@microchip.com>, <Ryan.Wanner@microchip.com>,
+	<romain.sioen@microchip.com>, <tytso@mit.edu>,
+	<cristian.birsan@microchip.com>, <adrian.hunter@intel.com>,
+	<npitre@baylibre.com>, <linux-i3c@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+CC: Durai Manickam KR <durai.manickamkr@microchip.com>, "Manikandan
+ Muralidharan" <manikandan.m@microchip.com>
+Subject: [PATCH v7 2/5] clk: at91: sama7d65: add peripheral clock for I3C
+Date: Mon, 25 May 2026 14:54:02 +0530
+Message-ID: <20260525092405.1514213-3-manikandan.m@microchip.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20260525092405.1514213-1-manikandan.m@microchip.com>
+References: <20260525092405.1514213-1-manikandan.m@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: mediatek: mt8196: Select REGMAP_MMIO for vlpckgen
-To: Akari Tsuyukusa <akkun11.open@gmail.com>, mturquette@baylibre.com,
- sboyd@kernel.org, bmasney@redhat.com, matthias.bgg@gmail.com,
- wenst@chromium.org, laura.nao@collabora.com
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- stable@vger.kernel.org
-References: <20260522133023.355404-1-akkun11.open@gmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20260522133023.355404-1-akkun11.open@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 5/22/26 15:30, Akari Tsuyukusa wrote:
-> The MediaTek MT8196 vlpckgen clock driver uses
-> __devm_regmap_init_mmio_clk() by devm_regmap_init_mmio(),
-> which is defined in drivers/base/regmap/regmap-mmio.c.
-> However, the driver's Kconfig entry does not select REGMAP_MMIO.
-> This causes a linker error when REGMAP_MMIO is not enabled.
-> 
-> Fix this by selecting REGMAP_MMIO in the Kconfig entry.
-> 
-> Fixes: 2f8b3ae6f0cb ("clk: mediatek: Add MT8196 vlpckgen clock support")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Akari Tsuyukusa <akkun11.open@gmail.com>
+From: Durai Manickam KR <durai.manickamkr@microchip.com>
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Add peripheral clock description for I3C.
 
-> ---
->   drivers/clk/mediatek/Kconfig | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-> index 2c09fd729bab..fd8440122ec2 100644
-> --- a/drivers/clk/mediatek/Kconfig
-> +++ b/drivers/clk/mediatek/Kconfig
-> @@ -1006,6 +1006,7 @@ config COMMON_CLK_MT8196
->   	tristate "Clock driver for MediaTek MT8196"
->   	depends on ARM64 || COMPILE_TEST
->   	select COMMON_CLK_MEDIATEK
-> +	select REGMAP_MMIO
->   	default ARCH_MEDIATEK
->   	help
->   	  This driver supports MediaTek MT8196 basic clocks.
+Signed-off-by: Durai Manickam KR <durai.manickamkr@microchip.com>
+Reviewed-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
+---
+Changes in v3:
+- Fixed indentation issues in the clock table entry
+
+ drivers/clk/at91/sama7d65.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/at91/sama7d65.c b/drivers/clk/at91/sama7d65.c
+index 7dee2b160ffb..ba8ff413fa2c 100644
+--- a/drivers/clk/at91/sama7d65.c
++++ b/drivers/clk/at91/sama7d65.c
+@@ -677,6 +677,7 @@ static struct {
+ 	{ .n = "uhphs_clk",	.p = PCK_PARENT_HW_MCK5, .id = 101, },
+ 	{ .n = "dsi_clk",	.p = PCK_PARENT_HW_MCK3, .id = 103, },
+ 	{ .n = "lvdsc_clk",	.p = PCK_PARENT_HW_MCK3, .id = 104, },
++	{ .n = "i3cc_clk",	.p = PCK_PARENT_HW_MCK8, .id = 105, },
+ };
+ 
+ /*
+-- 
+2.25.1
 
