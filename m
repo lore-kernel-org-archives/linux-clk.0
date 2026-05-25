@@ -1,207 +1,316 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011064.outbound.protection.outlook.com [52.101.70.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47C35478D
-	for <linux-clk@vger.kernel.org>; Mon, 25 May 2026 07:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779692807; cv=none; b=UtDwNS7Xf0DywFgZDy0sGzYrNMwQ0DDkTiuEMi02I7ol2tNE5kDvjS9hHaoDuDgmwCO/3/qZ7h4M4/CvZti74xKZYM6Ic59ZTHyUUluKZSFfEvMTd/aEjGubbL3WUl+2NOJWU8NVaZ98Ci65oOrdcY7gNqzDssn2aELda4rwbJ8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779692807; c=relaxed/simple;
-	bh=m9oogMcTFdVycGrltx0hH1QPpPdlBZgo0o40YOuoCZE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i/Q35bSAx5BmIY5qELqjAxSW/QMk80ohr72cmCotNWLX4w3+xP/LsMOl1lDj49eiGT/r1oR3pe5rzoU+e/+QV5LRyP/OCL9XIqF7G+/iOheHfj+ite5ySPgb1vbEW6Tj+UBFXe66IibTmtTrWt35Js/J8R5IAGjOV13KIZBQfV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VBavmqBT; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=INTU6Wr5; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B1837269F
+	for <linux-clk@vger.kernel.org>; Mon, 25 May 2026 07:20:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779693623; cv=fail; b=NI2gGq3+SMchxNqIHQQQilC7NCKc2JrpO2BXsgDVRm41FDP1Lx6vyMsMbtY5iUBZbIaiN6V7rdSlZ4lwFkwvOfyAOZmNobIj6wNbsDxRvwkGvNryF02+gBnOH5A8B/KXZrYbLs04BCG4Yn212bCjmDA9R6/Eq0hRmmj/2RiQTm4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779693623; c=relaxed/simple;
+	bh=i2S4JIO98+N6j4ooMscbmjSjtV5477gAfb9SYXJB5+I=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=PsE6Q93x5FXOgh3QeLo50qy1P+qQL+QmjL8I5l6RS4V3ddXC/3v4iKa5QeXsN9qxnzB5A3YdIX12Oe6bAgerrVefFX4fvKTe0aRvTczNK39nyKCCye6L8xnnQUk665DGiC4sPPMci4XT/CUfOZoRLaMCrvoJbKpS7Q35RyuRfiQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=WkV4Stiu; arc=fail smtp.client-ip=52.101.70.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VBavmqBT";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="INTU6Wr5"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64OMtahK1962821
-	for <linux-clk@vger.kernel.org>; Mon, 25 May 2026 07:06:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	PztoOF4NbfiDG8yee7TktqGlOi6z/P5gJ41vD8fwEK4=; b=VBavmqBTPXTLJHsp
-	avOpVTI8iw/wpN/3SASQZA+myXg1PGacSa+Yt4zGJVE7AohDiFaOROFdsro4jMYN
-	AB/csJYymjpLHlVpQYjQFMpjVIEgiVxmeCLIUNtc7yECkatsAn+0rU6Opn93TEtL
-	FtBkD0q9Fxwy/Jt8NxDE6f1lAGLVyGsuNur5CfWxOu8bR6j5gyc3+ehjV0N2m3Im
-	haV+xzYQDIrD5cvPedQKacRVBszRIO8d7wMpXVXV3IHbT+qjqRvqMLbeq1UfuPKR
-	fUTefWeQSE+v/7bs3X3vvkG9W72rlyWLDWyNh0ZXibqOs6l88u7sWBAE6KrEGypr
-	ImupaQ==
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4eb3jgwk6x-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 25 May 2026 07:06:44 +0000 (GMT)
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-82fa6c3a77cso5376196b3a.3
-        for <linux-clk@vger.kernel.org>; Mon, 25 May 2026 00:06:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1779692804; x=1780297604; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PztoOF4NbfiDG8yee7TktqGlOi6z/P5gJ41vD8fwEK4=;
-        b=INTU6Wr5BglVY5o9dHdNwgM5WamnYaT3F9se/vzYHNAZOC4y3LbQYYC+LTUUAdn1Ax
-         RWFEHQoAEHUvW0OeZrhOxZj8jtXJxclfTclO8fgN4TN9gL6BpSI5R+JJsme9sm9ZXD/C
-         Sa/BfGohL52LIW51t3TeLpP5fTeaKJeriZ2waE71+kIksUdhJFTbq34wmxyImm98pw7B
-         l3DwOzU/MnTQRan9ZajnslXt0si4q222sFfyIvzpydLI2fwGNbH+HOtdb9AGx1fgNC+4
-         gPCQghGk9EPU4mmy5il33c/z3pEbMvP0wheFt6OG0p9UmlHlhYae/TVVLyRqns7JWwOH
-         mn0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779692804; x=1780297604;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PztoOF4NbfiDG8yee7TktqGlOi6z/P5gJ41vD8fwEK4=;
-        b=G1UmQY+20Q5Ro0u4ZSB8obXIzVFLHDY2C1nEvVGNbrH1j1NGKFGRtC7LGaMQKE+H6e
-         qwttlNRjWbmmn7hATmIfKVd9NlXDn3D7zd5mTRVaIKRfxUpv2UdivLzkObfC5m8GAdxh
-         uQQo8E9186Vy95xq0Zz74rLeym12rf1h0RqdiTH0oBElHqSqGsW8rF3lHeq5t95rULw4
-         m6pNXSHbQnLxpJ/QZ9oOnuOkdjHHlbhzRL840xFQjIy/vTe0weertwzqi8R5/63dkMIA
-         ucaFYPkOp/6YaBXa0ZooefgP2NIjAgxrj+z/g2p26O7aMNXMkYsLlquvOpYw+PfqC93S
-         Bdfg==
-X-Forwarded-Encrypted: i=1; AFNElJ+g231qGDOz9tdnAiXrB4ea7sOdFcZCoxjCmdDMGQkS/QJCRVe5DZkwGcdpUo0xFwfxtwUg8px+7uc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNcuc8foZfElg4hT/mwrZx69fhR7u5mW9QHVi/PKVhUt9JoNkC
-	HyBJZvgTnPXP2tn5cNDr7TJVGX2w4lbHYOpztFU6j+o0KmEzmnhI7AmL9R3VNB+jKUq8p2nW2+w
-	v7ong26mD3xJdyTuQFgVk7VQ9tyJTDtqeJ4Ix09Zo02LNShf1D7G+7ccEPPSmSlk=
-X-Gm-Gg: Acq92OHmRqs2prcjrfypmPZHfmnC7JkmQK2I5hHSNZ1TwQ/gTDkiqoho9I0N2B3xSNC
-	1EsVc5MqaiW8PaaWJjB5D1VRS0VB3WDArkVZqEZnGGJrJqZCflzVIQ25lKjGabKgq/m+L2Xs8Pq
-	rKybFsSw5Hq4RvlObgKz103bvjGZ1tn4wZyPk9i46+5sqpUe+dH7Q3dyoNYrE+JNUB7kDSRHOg6
-	tDAQ82p1bS4Z4JXx1Y7KI20Cicdddu7zpc6KBlY2/E52Xpxn/ju4qVnBxHQD2sg480M+p2oeifG
-	FF0zJ4RQsJpWUC9USaIMEiElaDviS3MZGzg4lxxgUsAtSfgxkUu0ulosU67+4K3ntqxZCr382fG
-	XJHP35k2T7Jyar+uViLB5ygNouSpjI4U64HTiOkRxyK8EX7DaOAoeIXe+qZgQdck=
-X-Received: by 2002:a05:6a00:22c6:b0:836:900e:8743 with SMTP id d2e1a72fcca58-8415f35d58amr13665916b3a.36.1779692803476;
-        Mon, 25 May 2026 00:06:43 -0700 (PDT)
-X-Received: by 2002:a05:6a00:22c6:b0:836:900e:8743 with SMTP id d2e1a72fcca58-8415f35d58amr13665874b3a.36.1779692802978;
-        Mon, 25 May 2026 00:06:42 -0700 (PDT)
-Received: from [10.218.5.182] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84164fbb66bsm8423647b3a.45.2026.05.25.00.06.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 May 2026 00:06:42 -0700 (PDT)
-Message-ID: <66335474-d600-45ab-9ac6-e946f24142c8@oss.qualcomm.com>
-Date: Mon, 25 May 2026 12:36:36 +0530
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="WkV4Stiu"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=m7kH7H6BAdRtZLnVitVsLp5mKCfN2KYlwwQX+H7JyfFzXJmKMI2a/1m+EjUkEggs7VIUjKnHR0RCq2vUwzwHEnov+5B5uYwxjr+2CRWH5WNGvu1qTheQ/PgbNTMhCBr14oYJxanitc2vUXduT8KgacQV8KbqTuqZx9ZB2cecTiE/LX6iFGPhFxvmLurY1zviEpoMdn3reuxBJD9vnKZOhl7Qh0knx0XUkrTRkv8/VP2k8hat/p5Jf4KFTRICzb9HVUkVrPzXnwou81Y8Zf2cnJe3sFP8auCX2YOJ/S6HeGdfj9W6kQK/1Dj2OQHqfPbPLIYxegzHiQUgDIjMisadvA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nvz/3c0iqqfEba98/7Pb4bzqQZOCIZzo7DDGhFpNTFY=;
+ b=hT1x7y1RrMtVNctKAeq4PgIodtxzlOMmOyyVNenIAW169dFQ5M0d8QyFkxHsweyYo0fjLrPNgrem9VE4NWexWzMcBDB6ZBrUr5sdAni+hThx1YuxV3J8e0zab7+xnElBlzXLi0P9X9fFTXgZ0/V/aYA7a5OOwxNvyQoH6+UFBIcP3agZKmcgtb/9bXSNEwHM1pPyJVq25PeGUXTRnibbVgOtMGDhmKinL6rs6dOgmyZn8Pw9XtQEZ5e8w5G/otD0Px8HfO6t1wihFd3MSXgxh9i3MRySxhBhqxgBbRkadVxifJ591I/3LWO+hHb2j0FN1AYOL6WbImZZJAs2aDmVSA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nvz/3c0iqqfEba98/7Pb4bzqQZOCIZzo7DDGhFpNTFY=;
+ b=WkV4StiuLlSZyFvuWoiQlgTikhQtCaX02qN6wWw3cjrtcryaG+izAcasJdau2S7I3Y7qDOQKpJS3aUMJQjGWiD8vE6Z+ZTTqd/ZeEkEE9QWGN/b8JZet+6r5cGU/WQAD0tE8hUd1wnGFK3rrX2ytdCekc8dkk6P53u6GvOZJI3MfQ3Z6omN8HcFsEZ1aF36w97AM7mP+7AoqZYy8eOSHf1iu3p5Ab44cs7zXdsjdNUx7EWJL0xrd7Rlykh3BeSMgW3kLGU6wWX0FcF6o7BJa29ZeXrewzta/Yz8pjq3EUGLqGlmtEAP6Aa8ZNHi9nvyd3vs+SR4AojkQdD4iuG0yRA==
+Received: from VI1PR04MB6861.eurprd04.prod.outlook.com (2603:10a6:803:13c::9)
+ by GV1PR04MB10965.eurprd04.prod.outlook.com (2603:10a6:150:207::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.48.19; Mon, 25 May
+ 2026 07:20:17 +0000
+Received: from VI1PR04MB6861.eurprd04.prod.outlook.com
+ ([fe80::7f96:4bde:2e55:cd5]) by VI1PR04MB6861.eurprd04.prod.outlook.com
+ ([fe80::7f96:4bde:2e55:cd5%6]) with mapi id 15.21.0048.016; Mon, 25 May 2026
+ 07:20:17 +0000
+From: Jacky Bai <ping.bai@nxp.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+CC: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Brian
+ Masney <bmasney@redhat.com>, Frank Li <frank.li@nxp.com>, Sascha Hauer
+	<s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v2] clk: imx: Add audio PLL debugfs for K-divider control
+Thread-Topic: [PATCH v2] clk: imx: Add audio PLL debugfs for K-divider control
+Thread-Index: AQHc53BBecI129rZHUiMAZsFreUNOLYeAS0AgAAJrpA=
+Date: Mon, 25 May 2026 07:20:16 +0000
+Message-ID:
+ <VI1PR04MB6861629A3AD94F135B2CCFF1870A2@VI1PR04MB6861.eurprd04.prod.outlook.com>
+References: <20260519-imx8m_pll_debugfs-v2-1-20e1d88526b0@nxp.com>
+ <ahOpfhw/UaXoILzE@shlinux89>
+In-Reply-To: <ahOpfhw/UaXoILzE@shlinux89>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: VI1PR04MB6861:EE_|GV1PR04MB10965:EE_
+x-ms-office365-filtering-correlation-id: 673e89da-4015-489b-3f6f-08deba2e1238
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|7416014|1800799024|19092799006|366016|38070700021|4143699003|11063799006|22082099003|56012099003|18002099003;
+x-microsoft-antispam-message-info:
+ 68Xucj9UWUMfb11Ib40A/vg5371+jGIoWtKiF/9cUNAuof7Cc8Z6JLDqGBPVtNmPtY1oAyiMoRac7d5olWeX+hSa85MsVJgHbNGmUmKV0j16HwPG1twi2I+EoaPA/mOmh/qBP3FQuf++8w0gtbWWglLfiWphYFb70oMmLAZiH4WV4npzwFgKeVEXOM6lc7GgaNB1oIJYRmOSb6UC8FBthNiVgQ9T0lOah0xJCKMDgWnZvqqvaTVgRxRlsZtcFFCXQ01zuvNFhzPtf31t8W4m0iTwELvIvmZi1CYPb5ncO6DX1E7MzW6LlP9mb/1DhWe6c55atIFh6OXd9AN0OdXsG7LTWqStYIRpFc/Us08EIX49JgRkv2CAowm0l3O75SCd048dCzACTIXWyXTL9Lw+EZFiU47CfxjXCOFmaibQHivvdA4syty283Vl5NaILAnmHriRe4EfhZIEigTh5mDWP06kLnpXG+cVRj1+D/zOfSOp6nWdHiGlOE0EqV6evlcRJVwnZDIm7ZeL29dgmU6hd/4Arn4AcovgaptHazP30bbqHba43Bn5BSAGsuOzqxdN3cvIYiiS+q+vBP905zzfoIv3/AGGvbieIjl+dZ7YMc+lzb1bg3E2q0YsDUFAc0G2CA+udKZFxH5Te4Hy6dGi3oT0deRxHcDCs43OuHYKPdnzOaZe+mT5yg1R14Ye7uwYkyYTSGRBRHxA+5ZiRBT7qw==
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB6861.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(19092799006)(366016)(38070700021)(4143699003)(11063799006)(22082099003)(56012099003)(18002099003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?EdKPNVmwcA9NTft1FIE8a8OwvCr3xKeGp1SnGpU7rHBUW6zM3kBLkNeGmkph?=
+ =?us-ascii?Q?bJdov4+d/cizxYjfuD1DS3bgm39T0Qdilo+ksQJcOlOSPAvDcKpnWTb7jPdK?=
+ =?us-ascii?Q?SKA3YVlKmkEt/pGQ8qnVK6dVHMXPVI++HYnOYgC4XanKcByzS62OlwebCWEV?=
+ =?us-ascii?Q?cgztfdrOnL0Ezik8Rq05ErLIOrgC8W9ipGQTo7NTC8yCd/F37CpsPY1F/rKL?=
+ =?us-ascii?Q?4zmBlqrzz+18ExfH5Yn2LIh5KvLQ0RI3WmiJ+jKe8Clf/Vj5JaGOgFBgZ+Gk?=
+ =?us-ascii?Q?0xwUxQkSO0Rh94z7B3qhzPs6WaMQbO/HjKmuf9l2aJxaz+hrgQBwxyKfxu8h?=
+ =?us-ascii?Q?TzhkbC8NW8FJuL9Kk8PYMIvLa2FWBwDy2meDNP5ei3KNAavKMoYo6WGkJCqI?=
+ =?us-ascii?Q?+bIzpx+/KPkIFYOMP+OsPSe84OXhX44ovRzSqKliMlj53UCDhVIoYP/pI3mB?=
+ =?us-ascii?Q?L/5yYxT859VF1GFShwpjolI4DnUI2hDX0g0qFBHPE4NZytVTtqt7GWnIBcYa?=
+ =?us-ascii?Q?MoATMJ0HiJYdSkIFjvEbyemJK/ajlLDXh/ZOjHOxLA0a2ldXk0AGEmOlE55X?=
+ =?us-ascii?Q?P+diXxJgSiDYpLTpyR0bZK2/PGXwvb+UZ0S7Ud9gV50UxWGfXfiAz8DyRX0s?=
+ =?us-ascii?Q?l8q+yo+nBoVDCxucXlLHg7dKJS/9TExVfYeyez2qtbV1/WL0l8Tvf1+3jy3l?=
+ =?us-ascii?Q?td7vSOVP9oQJo0RqRTc2BkZ7cIeq9Z18ZrNzcfOlj4PDNSwYuJWBit1niYOF?=
+ =?us-ascii?Q?jJPW3D0W+G0jKn06hO2z+2Lmgn9JU6c7mI92CxCxf5Ge450MehgdulyKq86e?=
+ =?us-ascii?Q?/TNnDUwRuEfxNp13TjAJOnQQVCampLO7oaSw7VFp15BbJmMAMN0Yl049X/mN?=
+ =?us-ascii?Q?64jeOdoiAyhvbqWcltrrSXmEe9nKK3G02N6X757m/G3O6ACGR54lrqM930Sd?=
+ =?us-ascii?Q?Z4Cpb3+eeKyNq7Z4ibuivIuzLWV3fa/pKNQQNioTd1St/E+7R8ELmGg5qCa5?=
+ =?us-ascii?Q?56V73i2U31Vs2CzHGNt3qym9tw1EUBXcXROXZshU/yggaYjpmWQamYmhPJ92?=
+ =?us-ascii?Q?efeDkbVSeK77g7S0UoHKmJ3ZSt/KOuATFkLgOwacfXzinzazfbaYSBWUOEFI?=
+ =?us-ascii?Q?c0tZOMJBNcIEDjOJyXFOMQrh5qq6WkXf2HX09rV2u5Ce7F1s0RWKgRxnrBhk?=
+ =?us-ascii?Q?l26OPMpy+qQYoYJczqtkxdaNm9pp005QtXNUT98UAJk+dsuX1aSaAFryoisB?=
+ =?us-ascii?Q?NdL/BG6kqc57862PhwuvusrQmX7WEpiVxUkFU3H9rPJn5h2oWORWe/4JbDSB?=
+ =?us-ascii?Q?N6ITBWJFXDnYj3BcMSE5YvqlmgrSRRSty/AD94cgobTZfsOu6sGW351FeZe3?=
+ =?us-ascii?Q?EXwl8oHz4lA/AiAHVNaQ9OZTkB3C7i+1LJKiCHeTRtFSPl4jKyqHihmFzsq0?=
+ =?us-ascii?Q?EjZDmHGFDHdXYKsy5nx2/WEeQKDGpojck9OBpkBmsWbS36OZpOXaIEX5FyxA?=
+ =?us-ascii?Q?/czt6Rh/ttEub1+WPlGWoHthDRRxBVTnbOjojNDJUz5lG/de1vz8WocmIv+D?=
+ =?us-ascii?Q?NTtK6TCrKJLT6ig5iyq9j9rU/u3W7VZhWjTiRg0VXipRx+nCbCmllPA3Yw88?=
+ =?us-ascii?Q?ZG1EI3saAu3XuKLSsjLBqaAsD4jL5BUVsHK1W7pzAA8wXqGaBFxnC453KbAR?=
+ =?us-ascii?Q?cHShnhck3LjkmAHrvDH5AI6VvpUdVhwX4v2J8eZr24ExyIPF?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] clk: qcom: camcc-glymur: Add camera clock
- controller driver
-To: Bryan O'Donoghue <bod@kernel.org>, Bjorn Andersson
- <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Taniya Das <taniya.das@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20260517-glymur_camcc-v4-0-9d00acffdbf7@oss.qualcomm.com>
- <20260517-glymur_camcc-v4-2-9d00acffdbf7@oss.qualcomm.com>
- <8bd4365e-0171-425c-9738-0b186047cb15@kernel.org>
- <upcLoSPzJejUNhFiNYlTVH4d8Sh_Pv2o9OZfXsY-CMCDKw19_ci2gL9B3ZwqL1hV1pQeQMLDL8tNLbPzs0JIIg==@protonmail.internalid>
- <2a496bdf-4728-47b9-84ba-063712a6e5b6@oss.qualcomm.com>
- <0a197b43-a672-4849-91c7-6e5bfe3175f7@kernel.org>
-Content-Language: en-US
-From: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
-In-Reply-To: <0a197b43-a672-4849-91c7-6e5bfe3175f7@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: n6_lbeCsb4kKk8AbqR6N0BSByO7VHNy7
-X-Proofpoint-ORIG-GUID: n6_lbeCsb4kKk8AbqR6N0BSByO7VHNy7
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTI1MDA2OSBTYWx0ZWRfX/c4cpb34ZvX8
- Bwbq8Ch3OTpI7ex4fbanYXV2+j+blfaG+d3ALTI+FBPvkWhPYimhXxq9X9yVrNyIGoRCkT5+wig
- 4RSFQc487bt7Xh3D9LvwmmI80+ldjNhYy39VPwoGGBD1gU4tkuxcSJg6mMS6A6a2LnlhAfR4P28
- GcTSp3jMi/7vPbhkH14iFlYITH/c/P22ilWL7hqErDwtvQnY1J6C1hgeRko8DWMqRWmK3bK9htA
- //fJPIcK9FR8PHb3pP6bz2AozF4ACOyLH1sH+NTKczB+5L/CWE/M+fL6INZX519+2RzrFLNtGRB
- yxtCZy4YQ7/R/v/G3lkqJfiQA+Lgl3yTQ7eI2zdx80CAXDM5qwYXzXbzAagDYZZ+IKhQklr/oZz
- /aPzcOOpWmXuDdVE9v0+vYs3TtiMWcboYLcf/HbBP9oJViLxesidr5nCMq0ZM+R+RdfXjb0c4K0
- puJtiXsRKHmJ93BQCtA==
-X-Authority-Analysis: v=2.4 cv=Do9mPm/+ c=1 sm=1 tr=0 ts=6a13f504 cx=c_pps
- a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=tk3pCZAdYsx0TBu0sJAA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=zc0IvFSfCIW2DFIPzwfm:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-05-25_02,2026-05-18_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 impostorscore=0 suspectscore=0 malwarescore=0 adultscore=0
- clxscore=1015 priorityscore=1501 phishscore=0 lowpriorityscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2605130000 definitions=main-2605250069
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB6861.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 673e89da-4015-489b-3f6f-08deba2e1238
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 May 2026 07:20:16.9895
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: +zJqQ3sW3nXip7yFT/QslWcjaEp34Sp6dHiIwLx7XiM9oKBu3+H3sYH3LGNCcVaa1XfvWzTwZ0IsCdwzDqB/Ag==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10965
 
+> Subject: Re: [PATCH v2] clk: imx: Add audio PLL debugfs for K-divider con=
+trol
+>=20
+[..]
 
+> >@@ -374,9 +379,13 @@ static int clk_pll1443x_set_rate(struct clk_hw *hw,
+> unsigned long drate,
+> > 		div_ctl0 |=3D FIELD_PREP(SDIV_MASK, rate.sdiv);
+> > 		writel_relaxed(div_ctl0, pll->base + DIV_CTL0);
+> >
+> >+		spin_lock_irqsave(&pll->lock, flags);
+>=20
+> Should this lock also protect the setting to DIV_CTL0?
+>
 
-On 5/18/2026 5:51 PM, Bryan O'Donoghue wrote:
-> On 18/05/2026 11:23, Jagadeesh Kona wrote:
->>
->>
->> On 5/18/2026 1:05 PM, Bryan O'Donoghue wrote:
->>> On 17/05/2026 18:33, Jagadeesh Kona wrote:
->>>> +/* 1200.0 MHz Configuration */
->>>> +static const struct alpha_pll_config cam_cc_pll0_config = {
->>>> +    .l = 0x3e,
->>>> +    .alpha = 0x8000,
->>>> +    .config_ctl_val = 0x25c400e7,
->>>> +    .config_ctl_hi_val = 0x0a8060e0,
->>>> +    .config_ctl_hi1_val = 0xf51dea20,
->>>> +    .user_ctl_val = 0x00008408,
->>>> +    .user_ctl_hi_val = 0x00000002,
->>>> +};
->>>
->>> I'll again push back on these magic numbers.
->>>
->>> At the very least you should be mentioning in the cover letter log why you _aren't_ making that change.
->>>
->>> Just reposting and hoping it slips by the person making the comment isn't too cool.
->>>
->>> Why can't qcom update the python? script that generates this code to enumerate fields instead of magic numbers here ?
->>>
->>> I get you don't want to do it but, just ignoring the review feedback is no OK.
->>>
->>> What gives ?
->>>
->>
->> Hi Bryan,
->>
->> I haven't ignored your comments & already responded to your earlier comment on why the bit fields are not
->> defined. Most of these values are static settings we get from PLL HW team and we program them only once
->> as is during bootup and are never reused again anywhere from PLL code, so these bits are not defined.
->>
->> Please find the earlier responses for your comments below:
->> https://lore.kernel.org/all/b92a2cbb-fe8d-4378-aa02-d91e2e4dfff4@oss.qualcomm.com/
->> https://lore.kernel.org/all/009ecdbb-2297-44eb-862d-233e3290691c@oss.qualcomm.com/
->>
->> Thanks,
->> Jagadeesh
-> 
-> That's not in your overview letter so generally I'd advise to include things like "did X because Y" - "didn't do Q because Z" anyway, how does it make a difference if the values are static ?
-> 
-> They are no less magic numbers that way.
-> 
-> What exactly is the resistance to defining the bits ?
-> 
-> I'll state again - when a vendor is submitting something upstream where that vendor 100% controls their own documentation - there's no reason at all to be presenting magic hex numbers - even more the case with generated code.
-> 
-> Just update the script to enumerate the bit fields, I honestly don't get the aversion.
-> 
+I can add the DIV_CTL0 into the lock scope in next version.
 
-Hi Bryan,
+The AI review agent's comment for the spinlock stuff is just let the code l=
+ooks
+like correct and useful, but useless in this audio pll debugfs real use cas=
+e.
 
-There’s no standard interface for these bits, and bit definitions/fields vary across PLL types.
-So, common macros aren’t feasible and would need redefinitions per controller. Since these bits
-are not reused elsewhere, IMO directly using values from the hardware documentation keeps the
-implementation simpler, avoids unnecessary abstraction, and makes debugging—through direct
-comparison with the hardware spec easier.
+BR
 
-Thanks,
-Jagadeesh
-
+> >+
+> > 		writel_relaxed(FIELD_PREP(KDIV_MASK, rate.kdiv),
+> > 			       pll->base + DIV_CTL1);
+> >
+> >+		spin_unlock_irqrestore(&pll->lock, flags);
+> >+
+> > 		return 0;
+> > 	}
+> >
+> >@@ -394,8 +403,12 @@ static int clk_pll1443x_set_rate(struct clk_hw *hw,
+> unsigned long drate,
+> > 		   FIELD_PREP(SDIV_MASK, rate.sdiv);
+> > 	writel_relaxed(div_ctl0, pll->base + DIV_CTL0);
+> >
+> >+	spin_lock_irqsave(&pll->lock, flags);
+>=20
+> Ditto.
+>=20
+> >+
+> > 	writel_relaxed(FIELD_PREP(KDIV_MASK, rate.kdiv), pll->base +
+> > DIV_CTL1);
+> >
+> >+	spin_unlock_irqrestore(&pll->lock, flags);
+> >+
+> > 	/*
+> > 	 * According to SPEC, t3 - t2 need to be greater than
+> > 	 * 1us and 1/FREF, respectively.
+> >@@ -508,6 +521,8 @@ struct clk_hw *imx_dev_clk_hw_pll14xx(struct
+> device *dev, const char *name,
+> > 	if (!pll)
+> > 		return ERR_PTR(-ENOMEM);
+> >
+> >+	spin_lock_init(&pll->lock);
+> >+
+> > 	init.name =3D name;
+> > 	init.flags =3D pll_clk->flags;
+> > 	init.parent_names =3D &parent_name;
+> >@@ -551,3 +566,95 @@ struct clk_hw *imx_dev_clk_hw_pll14xx(struct
+> device *dev, const char *name,
+> > 	return hw;
+> > }
+> > EXPORT_SYMBOL_GPL(imx_dev_clk_hw_pll14xx);
+> >+
+> >+/*
+> >+ * Debugfs interface for Audio PLL runtime monitoring and control
+> >+ *
+> >+ * This interface allows dynamic adjustment of the Audio PLL
+> >+ * K-divider for precise frequency tuning, particularly useful
+> >+ * for audio applications.
+> >+ *
+> >+ * examples for the usage of the two interfaces:
+> >+ *   1): Get the current PLL setting of dividers
+> >+ *     cat
+> /sys/kernel/debug/audio_pll_monitor/audio_pll1/pll_parameter
+> >+ *
+> >+ *   2): Adjust the K-divider by a small delta_k
+> >+ *     echo 1 > /sys/kernel/debug/audio_pll_monitor/audio_pll1/delta_k;
+> >+ */
+> >+#ifdef CONFIG_DEBUG_FS
+> >+static int pll_delta_k_get(void *data, u64 *val) {
+> >+	struct clk_pll14xx *pll =3D to_clk_pll14xx(data);
+> >+	*val =3D pll->delta_k;
+> >+	return 0;
+> >+}
+> >+
+> >+static int pll_delta_k_set(void *data, u64 val) {
+> >+	struct clk_pll14xx *pll =3D to_clk_pll14xx(data);
+> >+	unsigned long flags;
+> >+	u32 div_ctl1;
+> >+	s16 kdiv, delta_k;
+> >+
+> >+	delta_k =3D (s16)clamp_t(long, val, KDIV_MIN, KDIV_MAX);
+> >+	pll->delta_k =3D delta_k;
+> >+
+> >+	spin_lock_irqsave(&pll->lock, flags);
+> >+
+> >+	div_ctl1 =3D readl_relaxed(pll->base + DIV_CTL1);
+> >+	kdiv =3D (s16)FIELD_GET(KDIV_MASK, div_ctl1);
+> >+	kdiv =3D (s16)clamp_t(s32, (s32)kdiv + delta_k, KDIV_MIN, KDIV_MAX);
+> >+	writel_relaxed(FIELD_PREP(KDIV_MASK, kdiv), pll->base + DIV_CTL1);
+> >+
+> >+	spin_unlock_irqrestore(&pll->lock, flags);
+> >+
+> >+	return 0;
+> >+}
+> >+DEFINE_DEBUGFS_ATTRIBUTE_SIGNED(delta_k_fops, pll_delta_k_get,
+> >+pll_delta_k_set, "%lld\n");
+> >+
+> >+static int pll_setting_show(struct seq_file *s, void *data) {
+> >+	struct clk_pll14xx *pll =3D to_clk_pll14xx(s->private);
+> >+	u32 div_ctl0, div_ctl1;
+> >+	u32 mdiv, pdiv, sdiv, kdiv;
+> >+
+> >+	div_ctl0 =3D readl_relaxed(pll->base + DIV_CTL0);
+> >+	div_ctl1 =3D readl_relaxed(pll->base + DIV_CTL1);
+>=20
+> sashiko-bot brings a valid concern, you may need to protect the read
+> operation.
+>=20
+> [1]https://lore.kernel.org/all/20260519095044.996B7C2BCB3@smtp.kernel.
+> org/
+>=20
+>=20
+> Regards
+> Peng
+>=20
+> >+
+> >+	mdiv =3D FIELD_GET(MDIV_MASK, div_ctl0);
+> >+	pdiv =3D FIELD_GET(PDIV_MASK, div_ctl0);
+> >+	sdiv =3D FIELD_GET(SDIV_MASK, div_ctl0);
+> >+	kdiv =3D FIELD_GET(KDIV_MASK, div_ctl1);
+> >+
+> >+	seq_printf(s, "Mdiv: 0x%x; Pdiv: 0x%x; Sdiv: 0x%x; Kdiv: 0x%x\n",
+> >+		   mdiv, pdiv, sdiv, kdiv);
+> >+
+> >+	return 0;
+> >+}
+> >+DEFINE_SHOW_ATTRIBUTE(pll_setting);
+> >+
+> >+void imx_audio_pll_debug_init(struct clk_hw *hws[], unsigned int
+> >+num_plls) {
+> >+	struct dentry *rootdir, *audio_pll_dir;
+> >+	const char *pll_name;
+> >+	int i;
+> >+
+> >+	rootdir =3D debugfs_create_dir("audio_pll_monitor", NULL);
+> >+
+> >+	for (i =3D 0; i < num_plls; i++) {
+> >+		if (!IS_ERR_OR_NULL(hws[i])) {
+> >+			pll_name =3D clk_hw_get_name(hws[i]);
+> >+			audio_pll_dir =3D debugfs_create_dir(pll_name, rootdir);
+> >+			debugfs_create_file_unsafe("delta_k", 0600, audio_pll_dir,
+> >+					hws[i], &delta_k_fops);
+> >+			debugfs_create_file("pll_parameter", 0444, audio_pll_dir,
+> >+					hws[i], &pll_setting_fops);
+> >+		}
+> >+	}
+> >+}
+> >+#else /* !CONFIG_DEBUG_FS */
+> >+void imx_audio_pll_debug_init(struct clk_hw *hws[], unsigned int
+> >+num_plls) { } #endif /* CONFIG_DEBUG_FS */
+> >+EXPORT_SYMBOL_GPL(imx_audio_pll_debug_init);
+> >diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h index
+> >aa5202f284f3d1b7c1b4bf65e2329831832b43a5..16e0bafa0c9b99cb4eee37
+> a216e0a
+> >274d27f11fc 100644
+> >--- a/drivers/clk/imx/clk.h
+> >+++ b/drivers/clk/imx/clk.h
+> >@@ -487,4 +487,5 @@ struct clk_hw *imx_clk_gpr_mux(const char *name,
+> const char *compatible,
+> > 			       u32 reg, const char **parent_names,
+> > 			       u8 num_parents, const u32 *mux_table, u32 mask);
+> >
+> >+void imx_audio_pll_debug_init(struct clk_hw **hws, unsigned int
+> >+num_plls);
+> > #endif
+> >
+> >---
+> >base-commit: e98d21c170b01ddef366f023bbfcf6b31509fa83
+> >change-id: 20260421-imx8m_pll_debugfs-246d0fbbb617
+> >
+> >Best regards,
+> >--
+> >Jacky Bai <ping.bai@nxp.com>
+> >
