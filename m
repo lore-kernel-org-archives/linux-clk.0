@@ -1,94 +1,89 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46DBF3D413B;
-	Mon, 25 May 2026 07:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C0F3D5643
+	for <linux-clk@vger.kernel.org>; Mon, 25 May 2026 08:04:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779695392; cv=none; b=MZVUMj0nkpTd/xYMO/vcxzMP+b+9dZ+0NOqv6DuC9b+nunjWbWhcjaEDGbfjQktdWDJVKqZ85CnvUCyoJD3PKb9JAyrJy2803VoQ8a9Tpqh0UXDMJD/w4KjheAU4EhtHqqpoctfTvYeTm4fRzZP2t4+dkg0C4t1Zh0YvnX6qifc=
+	t=1779696247; cv=none; b=le4NijMj8ccWQ31ucnrCNUDFkOZXKIZdKX8vZR+6g6jve5+sGIUkaJBpxFo3t3gyw21vT+1BZM9PPIme6ttS+RU3M8fyr7ztpNIbyRLgSkkykz70Nge1E+Vt2VJfq/CiLN0Xp5XFs4xgqj5Vp5p+fkN3BcaUusFbaQXnMwI9mMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779695392; c=relaxed/simple;
-	bh=MG5VQdE8wH9duQMq6GRWZ/icXsNufIafal21mAh2S5U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R6TtGZ2tz4iD4V/EN+HtwMOeFw+J3NSg/pdRyWa2iU0uhk0463Mx+rP2eJiKGSqPIdr0lDB3TqQZpxzcdyB8lodjSLrHnauvD/J+NSi2SODZ1V8zNtScCoxUo+mlNYl9ePnMoiscDEmj4jXtQY4ZOWICannoJL88SzvYuNArxP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jGP5Q6N4; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1779696247; c=relaxed/simple;
+	bh=4vllGicUbdN0Bqlbgpv612IvW1fY5Ga0NBXa/j5YjIk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=enEk+XTZVVrZPmqUV2pq1k5vQB45bqjS1bW9YFlFPwS4B2t+tWHloIqRZy7yzy/bK6z8gF1Dw45lqugrMoIA2EdpSca6ZuxW/2O2CqI613vM7ttjCJwHlCVnSe/JGAtlmaBWl6tahJz/UpuUE7A88BgyXSTJrRerQzZ8WwXqdDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ONAbaRd5; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jGP5Q6N4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 371D41F000E9;
-	Mon, 25 May 2026 07:49:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ONAbaRd5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A43541F000E9
+	for <linux-clk@vger.kernel.org>; Mon, 25 May 2026 08:04:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779695390;
-	bh=I7vMJj5EtpdgmLSXjR+hKtvIpjLBCA8z3OnWj07DlmQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=jGP5Q6N4zoAVCKIIpzFCpdo+Xy1zHeo1dbQSwrNUyQxirtJIgAxBT//taizMKjs3M
-	 an1aNHzbSpWhRC/2OJimJkti7tGnY5fcLSkjwVZgNR4UgOkpsFPHLkZKZyex0TpgLN
-	 gvVPVe4gcmyV/6G1oR2Y6dtYpcTwpWikPEQwqExAB25W8qO0WnaOj2AOLtmu01j9UG
-	 vF6Qi6rfHSg7br0DVE+a9wTq+qmkR4kIwGsxyPS9Ejcr0ruQcvOS98XT1QjFIqIlhz
-	 Jb8P95PxKovAD4JTuzCo+meu9QaY8ffhfjdJK+Yh1w0/PkmwZPJIQ6Dyk71YccfUr5
-	 5jaWX+upuMJug==
-Message-ID: <639c94f9-6f62-4502-ad7e-5ae60f5f6d02@kernel.org>
-Date: Mon, 25 May 2026 08:49:46 +0100
+	s=k20260515; t=1779696244;
+	bh=4vllGicUbdN0Bqlbgpv612IvW1fY5Ga0NBXa/j5YjIk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=ONAbaRd5hqziXmIjbcC45rSuMKkCRwKMzaE5TnBLMmpKaBNi2XQTIHCByRBlPx94U
+	 D0P927r+Dy99NpqkcQvUqZWEaAqOFGFfnEs5lHaRE2WGyJv7xuLufbCsGcJ2oRfLbj
+	 gKaHHVcaKTqOAvznP2yIgagbACgHVBeY2UYDElQJ3Mui3JaEOF003cyzcFNZhN+R24
+	 T5Ew2lb3JwFp4FZpTOByXSTyVg0JzCkrQsxAkhl8GCCRDUCoExzF/aJgKQaUr3Tx8r
+	 dSeLfEcsUr18+bjRAchySs1/M5kmAJ4cKFtzjeP6gVrnaPOxT4VR3tU1zzmn1ztxkG
+	 W39EL/s9uPKMw==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5a8cb92f26aso9996145e87.1
+        for <linux-clk@vger.kernel.org>; Mon, 25 May 2026 01:04:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ90jo2en1dvRaSE9wZAGb9bgXKacCo0LeTG8nfkVCnCJVmtjvPn/gaw4RxvWzKD15RBj4se+s4e3W8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzljhQgn7CTbFCSa6F0Hx79W4uVcbfLifAw1Wxc6IlCgne1yOUL
+	B2tLfrUIugwg0KI6QXO3L+oLvG3SJnSUOG5q4Vcdvb6FUuof5p1WXf8eq6MCYUr/Lho9b+ax3bW
+	pHIMZI10pbZVOny4PMa+jfHoOip1Gf3A=
+X-Received: by 2002:a05:6512:3ca7:b0:5a8:8825:15fc with SMTP id
+ 2adb3069b0e04-5aa3238ba06mr4490982e87.3.1779696243482; Mon, 25 May 2026
+ 01:04:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] clk: qcom: camcc-glymur: Add camera clock
- controller driver
-To: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Taniya Das <taniya.das@oss.qualcomm.com>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20260517-glymur_camcc-v4-0-9d00acffdbf7@oss.qualcomm.com>
- <20260517-glymur_camcc-v4-2-9d00acffdbf7@oss.qualcomm.com>
- <8bd4365e-0171-425c-9738-0b186047cb15@kernel.org>
- <upcLoSPzJejUNhFiNYlTVH4d8Sh_Pv2o9OZfXsY-CMCDKw19_ci2gL9B3ZwqL1hV1pQeQMLDL8tNLbPzs0JIIg==@protonmail.internalid>
- <2a496bdf-4728-47b9-84ba-063712a6e5b6@oss.qualcomm.com>
- <0a197b43-a672-4849-91c7-6e5bfe3175f7@kernel.org>
- <amL4e4IHe75_j1HTIsmqE_GyurvudlyHQCPW14zs7ivHz0UnalN-yoknJwzaVRgHTT6ftSRCqDyCodh6ABCLxw==@protonmail.internalid>
- <66335474-d600-45ab-9ac6-e946f24142c8@oss.qualcomm.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bod@kernel.org>
-In-Reply-To: <66335474-d600-45ab-9ac6-e946f24142c8@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20260521-pinctrl-single-bit-v5-0-308be2c160fc@aspeedtech.com> <20260521-pinctrl-single-bit-v5-1-308be2c160fc@aspeedtech.com>
+In-Reply-To: <20260521-pinctrl-single-bit-v5-1-308be2c160fc@aspeedtech.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Mon, 25 May 2026 10:03:50 +0200
+X-Gmail-Original-Message-ID: <CAD++jLm5Jsrdpg=H8xowFzx9omJhGpamjjcg0LYN2R9HCeW5tw@mail.gmail.com>
+X-Gm-Features: AVHnY4Lr6P_gJlk6yPcaGrv6903bIHaJS623wqRPa4vQc7mnCclEd4yYEBmZPTc
+Message-ID: <CAD++jLm5Jsrdpg=H8xowFzx9omJhGpamjjcg0LYN2R9HCeW5tw@mail.gmail.com>
+Subject: Re: [PATCH v5 1/3] dt-bindings: mfd: aspeed,ast2x00-scu: Support
+ AST2700 SoC1 pinctrl
+To: Billy Tsai <billy_tsai@aspeedtech.com>
+Cc: Tony Lindgren <tony@atomide.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+	Andrew Jeffery <andrew@codeconstruct.com.au>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Lee Jones <lee@kernel.org>, Ryan Chen <ryan_chen@aspeedtech.com>, patrickw3@meta.com, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-aspeed@lists.ozlabs.org, BMC-SW@aspeedtech.com, 
+	openbmc@lists.ozlabs.org, Andrew Jeffery <andrew@aj.id.au>, linux-clk@vger.kernel.org, 
+	Conor Dooley <conor.dooley@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 25/05/2026 08:06, Jagadeesh Kona wrote:
->> That's not in your overview letter so generally I'd advise to include things like "did X because Y" - "didn't do Q because Z" anyway, how does it make a difference if the values are static ?
->>
->> They are no less magic numbers that way.
->>
->> What exactly is the resistance to defining the bits ?
->>
->> I'll state again - when a vendor is submitting something upstream where that vendor 100% controls their own documentation - there's no reason at all to be presenting magic hex numbers - even more the case with generated code.
->>
->> Just update the script to enumerate the bit fields, I honestly don't get the aversion.
->>
-> Hi Bryan,
-> 
-> There’s no standard interface for these bits, and bit definitions/fields vary across PLL types.
-> So, common macros aren’t feasible and would need redefinitions per controller. Since these bits
-> are not reused elsewhere
+On Thu, May 21, 2026 at 11:17=E2=80=AFAM Billy Tsai <billy_tsai@aspeedtech.=
+com> wrote:
 
-- Asking for named bits not common macros
-- Reuse isn't why you name a bit
+> The AST2700 SoC integrates two interconnected SoC instances, each
+> managed by its own System Control Unit (SCU).
+>
+> Allow the AST2700 SoC1 pin controller to be described as a child
+> node of the SCU by extending the compatible strings accepted by
+> the SCU binding.
+>
+> There is no functional change to the SCU binding beyond permitting
+> the aspeed,ast2700-soc1-pinctrl compatible string.
+>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
 
-, IMO directly using values from the hardware documentation keeps the
-> implementation simpler, avoids unnecessary abstraction, and makes debugging—through direct
-> comparison with the hardware spec easier.
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
-How are hex values in upstream code easier to debug ?
+Lee can you pick this up at your convenience?
 
-Without the spec you can't change or understand hex values in upstream 
-code, which is the whole point I'm making here.
+I'll apply patches 2 & 3.
 
----
-bod
+Yours,
+Linus Walleij
