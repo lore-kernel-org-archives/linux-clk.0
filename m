@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2238C35F19A;
-	Mon, 25 May 2026 12:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E16381AE0;
+	Mon, 25 May 2026 12:28:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779711932; cv=none; b=qB1umAK6UnzwXtmODBOA77V+9nwVtKBxVWc/biiRmVVrlyQ/KCoDFlANCsQ0MvqoGsGKkv51jdlQZM8ddkphUVPBJ81QAkWfzC+opgKczs4qYl9ifKsAYG0VzTlcIgC/BMPEcj1GNxibm9rcZXjKWkyQYQ/Kw0/HK/E+0qaHF78=
+	t=1779712118; cv=none; b=D+c5N9GxmP2jIA9vyJrQSjhdNKDCALqb42/+6T6kDc+LnahNc8sWZM4iunYrA/aRu+/D5E3wxm9hqwhgJZDM/+0rQGbPSRYL60toUPbUkxDAPYhMeuzpELgQd07Dnq5L65pdXFqarenthm7Q4RHySQ7ZlhYX2QtjudbnBWrkaRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779711932; c=relaxed/simple;
-	bh=U41gSXy/xuz6n3TNZXFyuVZkJL37LUWKDYgEvfeeheU=;
+	s=arc-20240116; t=1779712118; c=relaxed/simple;
+	bh=s6EajfLMOM1LDpJPwMs/oSCiSOte87+x4aYrsrt3nac=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S//P17u6L4LokWDFVdEstb19zx80ZXxtIczaYkLjvKVr1AJ8nMu46xflc+NjX/pr7ovfkHxkufjD8oqY0ua9mbX8EFWJzvYfNF0CJw8SXEW+wj2D3kBA5Jq9MQ7kU2TSuP27q7ZrRuDDoD5beWnRy+naqso/XL0ybkRgAE7vrOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fw3mttdF; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=YLTU3kCVF3FQsE7C2iJ2GkiVCKNhceorh5jQwtmHI08lcFhR4OQ3u4YZubComPFqd09AhUHT+2pqTWs9mFWDUaQs4cnarNuA+SYX2G0ZrycF0OjW+zWuVjxdsgsiLOpXjvWxWbYj06SXqAZx3rq9FQOmcI+WZL/oKtKUm5wRWXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N4zc4RPZ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fw3mttdF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C5F41F000E9;
-	Mon, 25 May 2026 12:25:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N4zc4RPZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7B1B1F00A3A;
+	Mon, 25 May 2026 12:28:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779711930;
-	bh=8KHtOlsr90yhD2rGuVVnFxT47aP8oLr2JK50jkH/W9E=;
+	s=k20260515; t=1779712117;
+	bh=rG5FSAIqm0gl60Kib+PBHlUScNgwLQMgHAfVV2AI5gQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=Fw3mttdFwKIGyqQvkdD80S0Jqg8+gB1hpM57uQ1bWe0+dYInP09EBKc3EQFGelKY8
-	 /Vz3KcNLIAPXAKXj1NzPDHsq/RcWWRZtf2ykOjBDK0hJrrNdWnQrGknl/cJBGHlaFn
-	 RCGAEi3qr6dMh1uJ0O/GPYkvFitkDN6v0gDF/lOAvjFU72vSMtWQtABv5nwfcipL/f
-	 VGiasHVHACNYzqfjbj1DMBiHO1Tfpjk1QPurRaVKNyRYnM6KbbxOlbI+GSJvvqaggh
-	 /mYqLXF/LeQesG0pmaJfDpRPV/4es3MWsbucciUb/2BNuSfQA/CjHc5B9jS0IBTQ5t
-	 gXuYpMv2mxSrg==
-Message-ID: <a59c6e3a-6092-4114-8961-c2a71a812959@kernel.org>
-Date: Mon, 25 May 2026 14:25:25 +0200
+	b=N4zc4RPZFO/rbuANzKKx7I46HlsqHS8Yv+8jr8VildSSNtdFex5zb/pCwqMDCo7rf
+	 FD/qAaevgeIZNz8vwkRHhgtEjCShBlYOx7mAN5JqUkBn1ahvnYQb4SEaMctG7BpC91
+	 8C7EfQ7udA07EkKbQTcBNlnyRdJktiIRy5Fs4A4gfeg+RfdkFT5Fpm0ebSXa5m2NSi
+	 auxhxZLfp+/DNU7/iYdRi/hqWzeH9k9g92Ysw4WdZjoyUYNzbEynfQlgseeErCd+1f
+	 lKSMfQ3fXBnULPHqn0B4SxDlVBKQLLW5btQOpf77QKmEiQZYElc6TPmeV2ctUvHgtH
+	 56cXvPgYUXxLQ==
+Message-ID: <8046287e-87a2-4d18-ad3d-248620a752a9@kernel.org>
+Date: Mon, 25 May 2026 14:28:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,22 +35,34 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/6] firmware: samsung: acpm: TMU support and cleanups
-To: Alexey Klimov <alexey.klimov@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Lee Jones <lee@kernel.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- peter.griffin@linaro.org, jyescas@google.com, kernel-team@android.com,
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-References: <20260515-acpm-tmu-helpers-v2-0-8ca011d5a965@linaro.org>
- <177965159562.32222.17454581524471571236.b4-ty@b4>
- <DIR9DLGP2EN5.21HR8BY11G5SF@linaro.org>
+Subject: Re: [PATCH 2/5] dt-bindings: connector: Add fsl,io-connector binding
+To: "Chancel Liu (OSS)" <chancel.liu@oss.nxp.com>, Frank Li <frank.li@nxp.com>
+Cc: Chancel Liu <chancel.liu@nxp.com>, "robh@kernel.org" <robh@kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+ "festevam@gmail.com" <festevam@gmail.com>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ "kernel@pengutronix.de" <kernel@pengutronix.de>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "imx@lists.linux.dev" <imx@lists.linux.dev>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+References: <20260509024846.2094049-1-chancel.liu@nxp.com>
+ <20260509024846.2094049-3-chancel.liu@nxp.com>
+ <20260515-resourceful-singing-roadrunner-ce25ec@quoll>
+ <AM9PR04MB8353FE81D06852D45514E460E3032@AM9PR04MB8353.eurprd04.prod.outlook.com>
+ <d2b13e51-1684-4acb-a5ed-294c8aa95906@kernel.org>
+ <AM9PR04MB83538C4A07A6835FF8A74793E3002@AM9PR04MB8353.eurprd04.prod.outlook.com>
+ <20260519-macho-degu-from-nibiru-960af2@quoll>
+ <AM9PR04MB8353B563519EBC1AD6C5BFE1E3012@AM9PR04MB8353.eurprd04.prod.outlook.com>
+ <e23a610f-e1ad-4536-80fb-8b5707e77f39@kernel.org>
+ <ag3GMdmxw60B15Oe@lizhi-Precision-Tower-5810>
+ <74eb56fb-546d-4b2c-9bbc-01a40937f5d3@kernel.org>
+ <AM9PR04MB835333895276201A81251210E30A2@AM9PR04MB8353.eurprd04.prod.outlook.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -96,54 +108,135 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <DIR9DLGP2EN5.21HR8BY11G5SF@linaro.org>
+In-Reply-To: <AM9PR04MB835333895276201A81251210E30A2@AM9PR04MB8353.eurprd04.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 25/05/2026 00:26, Alexey Klimov wrote:
-> On Sun May 24, 2026 at 8:40 PM BST, Krzysztof Kozlowski wrote:
->>
->> On Fri, 15 May 2026 09:32:24 +0000, Tudor Ambarus wrote:
->>> This series introduces protocol support for the Exynos
->>> Thermal Management Unit (TMU) to the ACPM driver, alongside several
->>> cleanups.
+On 25/05/2026 08:26, Chancel Liu (OSS) wrote:
+>>>>>>>>>>> +description:
+>>>>>>>>>>> +  The NXP I/O connector represents a physically present I/O
+>>>>>>>>>>> +connector on the
+>>>>>>>>>>> +  base board. It acts as a nexus that exposes a constrained
+>>>>>>>>>>> +set
+>>>>>> of
+>>>>>>>>>>> +I/O
+>>>>>>>>>>> +  resources, such as GPIOs, clocks, PWMs and interrupts,
+>>>>>>>>>>> +through fixed
+>>>>>>>>>>> +  electrical wiring. All actual hardware providers reside on
+>>>>>>>>>>> +the
+>>>>>> base
+>>>>>>>> board.
+>>>>>>>>>>> +  The connector node only defines index-based mappings to
+>>>>>>>>>>> + those
+>>>>>>>>>> providers.
+>>>>>>>>>>> +
+>>>>>>>>>>> +properties:
+>>>>>>>>>>> +  compatible:
+>>>>>>>>>>> +    const: fsl,io-connector
+>>>>>>>>>>
+>>>>>>>>>> Everything is IO. Everything is connector, so your compatible
+>>>>>>>>>> does not match requirements from writing bindings.
+>>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> Yes, this compatible is too generic. I will rename the
+>>>>>>>>> compatible to fsl,aud-io-connector.
+>>>>>>>>
+>>>>>>>> aud is not much better. Which boards have it? What's the pinout?
+>>>>>> What's
+>>>>>>>> standard? Is it described anywhere? If so, provide reference to
+>>>>>> spec/docs.
+>>>>>>>>
+>>>>>>>
+>>>>>>> This is not an industry standard electrical interface. This
+>>>>>>> connector
+>>>>>>
+>>>>>> Then if you do not have standard, then you have board specific
+>>>>>> layouts thus you need board-specific compatibles. You can use
+>>>>>> fallbacks. Generic fallback could work, but both io-connector and
+>>>>>> aud-io-connector are just too generic. Every connector is
+>>>>>> "connector" and "io", thus absolutely anything can be
+>>>>>> "io-connector". "aud" improves it only a bit, thus honestly I would
+>> go with board specific fallback as well.
+>>>>>>
+>>>>>
+>>>>> How about board specific + common fallback compatible like this:
+>>>>>   compatible:
+>>>>>     items:
+>>>>>       - enum:
+>>>>>           - fsl,imx95-19x19-evk-aud-io-connector
+>>>>>           - fsl,imx952-evk-aud-io-connector
+>>>>>       - const: fsl,imx-aud-io-connector Since the daughter board is
+>>>>> named “IMX-AUD-IO” in publicly available
+>>>>
+>>>> I don't think it is named like that.
+>>>>
+>>>> git grep -i imx-aud-io
+>>>>
+>>>>> documentation, common compatible clearly indicates that this
+>>>>> connector is intended for that.
+>>>>>
+>>>>> Also, I want to talk about the topic of generic connector. It's a
+>>>>> common design that daughter board is connected to base board through
+>>>>> a connector. This connector more often acts as a nexus that exposes
+>>>>> a constrained subset of GPIO, clock, PWM and interrupt resources to
+>>>>> the daughter board. Can we document this kind of connector as a
+>>>>> generic binding?
+>>>>
+>>>> So this binding is the connector between carrier and some addon? Then
+>>>> you don't get a compatible for that at all, because it is not
+>>>> necessary, not useful and NEVER used. Do you see socket LGA "connector"
+>> bindings? No.
 >>>
->>> Dependencies
->>> ============
->>> Krzysztof, these patches together with the acpm fixes from your `fixes`
->>> branch will be needed by the thermal maintainers. I'm going to send the
->>> ACPM TMU (thermal) driver for review. In case they'll take it for the
->>> next release, we'll need an immutable tag with the acpm fixes, cleanup
->>> and thermal helpers. Thanks!
+>>> Not exactly. Any connector connects a carrier board with an add-on
+>> board.
+>>> The key point here is that this connector type is reused across
+>>> different boards, even though it is not an industry-standard
+>>> connector. Both the signal definitions and the mechanical layout are
+>> defined.
 >>>
->>> [...]
+>>> The same add-on boards can therefore be reused across different base
+>>> boards that use this type of connector.
+>>>
+>>> There are also GPIO mappings involved. For example, pin 1 on the
+>>> connector may represent reset-gpios, but it could be connected to
+>>> GPIO0 on board A and GPIO1 on board B.
+>>>
+>>> Without a connector definition layer, this would create an N × M
+>>> combination problem. The Nexus node discussion already covered this
+>> topic:
+>>> https://osseu2025.sched.com/event/25Vrw
+>>>
+>>> An LGA socket is a CPU socket, where the signals are completely
+>>> transparent to software, so it is not a good comparison. A PCIe M.2
+>>> Key-M/E connector would be a more appropriate comparison.
+>>>
 >>
->> Applied, thanks!
+>> So the terminology of daughter and carrier boards was confusing. If this
+>> is a hat, mezzanine or other addon, it's fine.
 >>
->> [1/6] firmware: samsung: acpm: Consolidate transfer initialization helper
->>       https://git.kernel.org/krzk/linux/c/43d3733b7ffd82b2bfeda69befa2a179335dfe6c
->> [2/6] firmware: samsung: acpm: Annotate rx_data->cmd with __counted_by_ptr
->>       https://git.kernel.org/krzk/linux/c/7b20fd06f783c1e901d34305c68df16212cdf669
->> [3/6] firmware: samsung: acpm: Drop redundant _ops suffix in acpm_ops members
->>       https://git.kernel.org/krzk/linux/c/ef1109e4b6120a52be1ea66d486d6744d0c5ac47
->> [4/6] firmware: samsung: acpm: Make acpm_ops const and access via pointer
->>       https://git.kernel.org/krzk/linux/c/e694e19bf7db26ee324ff6bb450cc523592f5bee
->> [5/6] firmware: samsung: acpm: Add TMU protocol support
->>       https://git.kernel.org/krzk/linux/c/f6af402de525d0848fc4a50f25ff01f56fc68d98
 > 
-> That commit contained the questionable error conversion which works
-> only for gs101 -- acpm_tmu_to_linux_err() hides some sensible errors into -EIO.
-> There were on-going discussion on maillist.
+> The IMX-AUD-IO is an add-on board that attaches to the base board. To
+> make it clearer, I will replace "daughter board" with "add-on board"
+> throughout descriptions.
 > 
-> Now, it is needed to ignore that or generalise that or split it to have
-> different SoCs if needed. Some re-work will be needed.
+>> I still insist on board specific compatibles - fallback and specific.
+>>
+> 
+> The base board has a slot component that is mechanically compatible
+> with a PCIe x8 connector. However, it carries no PCIe signals and the
+> pins are repurposed to carry fixed board-level audio I/O related
+> signals.
+> 
+> I think we can name a compatible reflects a standard mechanical form
+> factor.
+> For the compatibles (specific + fallback) I propose:
+> - enum:
+>     - fsl,imx95-19x19-evk-aud-io-pcie-x8-slot 
+>     - fsl,imx952-evk-aud-io-pcie-x8-slot
+> - const: fsl,aud-io-pcie-x8-slot
 
-That patch was looking correct in its scope. It solved one particular
-case (GS101) without stopping anyone to grow this to support other cases
-(Exynos850 etc)., so it is in kernel spirit to take such things. Solving
-these other cases is simply not necessary now. It's also not blocked, so
-just build on top and improve that code to match both use cases, when
-you have exynos850 consumer of this.
+Does not solve my request, so I won't ack it. Maybe you will get ack
+from other DT maintainer then.
 
 Best regards,
 Krzysztof
