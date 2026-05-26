@@ -1,150 +1,141 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA5B410D37
-	for <linux-clk@vger.kernel.org>; Tue, 26 May 2026 17:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8951F421F11
+	for <linux-clk@vger.kernel.org>; Tue, 26 May 2026 17:59:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779817550; cv=none; b=DA1Lqw5edXNDy6KvXdWVtLx4PJ0M2W2PfkTrj4dxDaUz7ckp6WReRkchANOfP8VCXsAp4zdD+s6cUEl144+tYMR5ZisR3Ww3tlPwLFhjvjUfHxniwiItmMpNjfmRu+mGh1EY3pt15qPvWUWc7CMsQcVfA38/gHBe4Nono8JvaII=
+	t=1779818375; cv=none; b=dn0HLiMYhJCgY3CfxGbLdX2u7Kt2MQZJjcLCr9SdWkQiRZtCEV+3/aPC4Pf6BBDJ0thPkjC3eNEDPyW2MfqPts6KxhsqTq1wOAjXd3bHkvWCGD+SMGRr0rW/o2gmsWcnkZbNHGST+FmZQSG79rpgAkBb58iemIk00NrR6uyTpvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779817550; c=relaxed/simple;
-	bh=9e3R1JIz9AoVV75bq5Tsx1/a/1z7ES3mBGeTf8KXXvM=;
+	s=arc-20240116; t=1779818375; c=relaxed/simple;
+	bh=S02hdHNrlyNXo+DoiglBQ0OphGNn6axHScvr0PU8oCU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jfn+Bl9Cfp3/3/EdnOmYljPeC4/jykrWBt09SLfU5Ooj5GaLlg9NmcjdYqruVmdtFwfjWvhnTd0BYRXRLfJhgOmgfA1H/8Xjye9Ifa3tltpTduuz2WfH94i+BVYp0oJyMK3j1Im1M2PqgAbZIldgL9IXQmDzfkwdeNQWEI1bqYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WwTkPJ0G; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=FI/O0IW6; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=REj7Y6wCXyjCJEExVtEj68IERcoxo0WZEzTeECaKMwEBwwuUVff95nW4DQATrFal/FgjChFR0F/N5y93lpp8FKUHxWUsX0vYO9rm4yPJ5GCTcYiK8NMkrRXBND7MpH6VKbyYJgwCT13lYaJ99jL9hRbq5fNRPZsx3BJwAP9xGLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VBP/XVmP; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=pv/MlFTj; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WwTkPJ0G";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="FI/O0IW6"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VBP/XVmP";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="pv/MlFTj"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1779817548;
+	s=mimecast20190719; t=1779818372;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3v7j5t9/Ei/dvkrhTWLvbnWZo0gJn6tOy3Bo7O728j8=;
-	b=WwTkPJ0GqlggEnrysvGRcu3rBSYSp7rLgcWxyHYJKSjf2UaTUmhqVYhgTgt7kbm2sBTYEd
-	8chDu+L36HcPi9QreajEMvaPaLTVgH+W4qK+kLHOJpFvtNZjSSVa3MHik8/9dTSSanMoIP
-	pQVa6qEDk8XMNZKSbxVVdU4Emm0LGlY=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=J0WlLC0Nh1azJwNxju4dNnGV/Z/3xMSajCPbgT1W2wo=;
+	b=VBP/XVmP+SaxyFbVBWkbkQSNQsiCdVXNv5glUvgNgQQwqaUXOQYj+nHTHBgbVjOHFaSeoN
+	ADzYyYyFCmhSMwFmDjdkBnNj2k5VndlDB2iShW+mEQC4G7Erx8HGEI89LyXpVKJQk1vvXu
+	YUb6mWQalEiBKs8i3ZFbIG1Eze3jJSw=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-571-bBAMBAj6N_GNR3EeWb82-A-1; Tue, 26 May 2026 13:45:46 -0400
-X-MC-Unique: bBAMBAj6N_GNR3EeWb82-A-1
-X-Mimecast-MFC-AGG-ID: bBAMBAj6N_GNR3EeWb82-A_1779817546
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-514cbe73d00so296923521cf.1
-        for <linux-clk@vger.kernel.org>; Tue, 26 May 2026 10:45:46 -0700 (PDT)
+ us-mta-403-YfB_ScJyOheXuIqMSjIpFQ-1; Tue, 26 May 2026 13:59:29 -0400
+X-MC-Unique: YfB_ScJyOheXuIqMSjIpFQ-1
+X-Mimecast-MFC-AGG-ID: YfB_ScJyOheXuIqMSjIpFQ_1779818369
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-8badccc9194so9216426d6.1
+        for <linux-clk@vger.kernel.org>; Tue, 26 May 2026 10:59:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1779817546; x=1780422346; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3v7j5t9/Ei/dvkrhTWLvbnWZo0gJn6tOy3Bo7O728j8=;
-        b=FI/O0IW6TfiEuUN1O2J//OuGszohr6AYwkFdLtMKowa2GzRZLuWwzy/w9ri3VCHQNL
-         ov2ToayJKydiLWpM5jM+5HCUN84/3jKJS44GKegtKtO69V/TaF7YMCJ/u2VmKFBeHaJ3
-         wpmKCx5EH81+Bv+iXPqT8BhF/0R1MeiVJR+SWRUStjvP5mNQc942KhhZojmP5igt8tSb
-         OfT5K2Rzj9zJWMPVwH0OX1SdvGKCgv3hsKxkJms/hIToQlka/2JaCFXNbmiu6uGsO09I
-         eS4AHIhh/016gshywDhToh/IMQWjUmN9PgIdHt2cqYEI8YKUBNVEFyV3lDGy8BFdBvns
-         rYfA==
+        d=redhat.com; s=google; t=1779818369; x=1780423169; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=J0WlLC0Nh1azJwNxju4dNnGV/Z/3xMSajCPbgT1W2wo=;
+        b=pv/MlFTjdDnmu0LUbzE3W3hn9NPfpVVGjo+Qx1XL0TkjsY5n1q/ndOSvxhHL1WVABC
+         iHVgaZXxaU19Ow/tbou4Vk8SMGjHginFkJvvbp9vHU7470h5xH49iB8Iv9sU2PcwfoH4
+         JfIjOYhMOx/jjmHqMFKt/qp+T32azeFkAfZo07OLjyQPR2BKN8Hwqo+Q8q6PrRb/9gR6
+         dEyhPn07iWAmULChaMHCL19D8UlLrWwLpqHPHzPaLbvMOKU2q6kMRJW5D5bze/c9xbUN
+         qzeX6s92O6Ed3+6mD7cIihn7QpnDNQfqhrIilLv0X3K+0F4shgI3/mnnUHMx92qfPLiT
+         7Thw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779817546; x=1780422346;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=3v7j5t9/Ei/dvkrhTWLvbnWZo0gJn6tOy3Bo7O728j8=;
-        b=tUTrUpQ1x5Dw9JD/MnrP8fRHBu7MvEbLwa2A4eyDtCty0GWEF9eXymoFwRPixuk1zF
-         4Y03w3nuUJ4AQAVcbbzJN7qB5fVzw+8zdgPs1ZTpQbZT1qxGpKNyZosNz9NKvCZ+Drs6
-         AqUOXYOYJdh8RO4eM8xKt1KATJu+Huzl+fwHJGryW6Y7dpqww573zC88laSawsas4m04
-         MAcYG1IotwpfQMdvxqXFVnR2ywakviMAtABex8L4dg5jszzd3eeTQc3MOts/bdLdb+7B
-         PftJ8V2G9NLti80cHT8Lp7adLSRgMeoRHAsgfGvsKagU3MdNc4IFpvSpGsCCopFz5gI1
-         3u+Q==
-X-Forwarded-Encrypted: i=1; AFNElJ+ct4KhCbYu2pNFi5ZwLEeGZTwLrtSmpoVCowLkMFmWdpu8BBQGqDCpUWNZ+3un5YaLF//3HRS6PCM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6KzgPiujV2F4MB58eOsXmFDDUHzbf8GnzL64oIgti1YiVxfl6
-	R2KvrNCQgRhz7UDDpfpitSdRVdLSP3O6rxl8O39xhbz88SIG+FnrkYtYjA/xLPoKCsfJQDN08PJ
-	II4a1zxKg7fXwPwm1iijqrsE+Ns/XntYd5JL7hZBT+C6D3/qmGB0rX8g3X5R+YQ==
-X-Gm-Gg: Acq92OFksDzKk2b1lTITx8ezc0Pk6exTRjWsBIWyzWOEvlrgniNS8Nte6U5xOFdyI+F
-	p03QTNKl6PTh0LNrwlULoBwDe60oy4QwhuueogUDRpgJiOhlF17cvtVNLYryB5diMuKKRBFKxTc
-	LLY2EFSKN4dCxKyA7FPuow1aAGCvQntoXlX8g88EnmAbYtIPnPdsZNwga7S6dH+tBBXCC0DYNeV
-	YxZ3RPiyl7zA8mLIKebz+u5zPeWWjo3RLflt548pVcP0ys1sP0jfsKAMJQNzqhd6e83JRIJlDgq
-	EXbaa+M1yyEZfvBzw17tlJen9KvpiVN0eu1V2e9xEmKClsM9+JAtpNDAUwPquFm+LLEYs1ZVT6r
-	peDp4Zu5fNwdVj3uCx2EriFNxjCfhFIDhjQoyrJNLusSqEFu9dWR+HFoE
-X-Received: by 2002:a05:622a:1c10:b0:516:e033:f5a8 with SMTP id d75a77b69052e-516e033f8a8mr202373741cf.59.1779817545799;
-        Tue, 26 May 2026 10:45:45 -0700 (PDT)
-X-Received: by 2002:a05:622a:1c10:b0:516:e033:f5a8 with SMTP id d75a77b69052e-516e033f8a8mr202373121cf.59.1779817545155;
-        Tue, 26 May 2026 10:45:45 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1779818369; x=1780423169;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J0WlLC0Nh1azJwNxju4dNnGV/Z/3xMSajCPbgT1W2wo=;
+        b=LrGxzUZtAqs1+JEfSAyqyIdOm28ZMjd59bp/XHEGkXGmu/9BTcz7zqALCWV8pxkgt5
+         PfpD8o1uJitsN2QM3sakG31CpeGzEf1hg8vlhEYQWKzd8dr2vK1Aw2zoB33yHaj9uvSm
+         qT9m1LjlyYVd6X4GyEDw33h69JVCQL9ZYmyQ4Mr+sFKuSqZ6qHJX6orIOC23WqIcbbME
+         0c8L+WTFg1+FnsflLbX636Y/O791cWPI6Qmk8bORMsUdSJxhR1cl1/EPGFMb310MbgV0
+         kxNHYZufDCz8LouOx5nKMkr+d3snxm/fnuEGU7RzzJ2q920Uifr24Xii2eyPOyVZTuUR
+         Vxtg==
+X-Forwarded-Encrypted: i=1; AFNElJ979xR9OA+297wpUt33QPawrqtv1YoYiqPonNwWk0wgqrzZSTEuHdL3s7G+6C9uGmTV8Q2ScvdG8Yg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeCI12U9Kxt73BD5yNrZ/usE2TdjBVK4yArEqNES05muM9u5nV
+	fG6jTgxRjtw/8fqUdH2ELr3XtFrRRDf4Bevomw4uKfwXlLHlYSAfB5SxrQqGnm4yFKatCxZeir7
+	N/uABOYo5aIvzNuMjBsuxDkX3IxN06FND5ZHlxOpxOA8vricbAoDqmQkfPW6SkQ==
+X-Gm-Gg: Acq92OHaqXIK5107aoClXvgzvj4uZIis2ZBl0yvjtIGQeYJf2mewRBAeMcyxjVOShBA
+	c9Al0wYP1N88TlRuGW+BDLnOhrU+hsw0oT9r62r8XZBvfFLG7I7ERhuwf1yjNg467d6p59S+Tk0
+	8p+CD1e3s8MlbPomEnLzg4cWnToRbkBK1F92iQq3jRFXK2l6D5O+B5d4xBclSiEsIADs5Qji2Fm
+	AQJ2s5gUei3cspzjqkYKz8aCntWrKwT+FtnRi2tWoCiUMBE5xV/vPJEm33UwV0v/yaLLZltn996
+	J5MrpgMM+mrV6GJRB+CWtxYG22T8TWe80NYTlYajSn35rStHEKB3G7yKPEk5Wg2HWtyu/++shgE
+	oWECyjZJ1Hi4jcTNunedMoZjSrFGRtUJwIY9pwJBzf9PioGz7fBB0htJR
+X-Received: by 2002:a05:6214:450b:b0:8ac:7627:8a71 with SMTP id 6a1803df08f44-8cc7b645335mr322548586d6.49.1779818369321;
+        Tue, 26 May 2026 10:59:29 -0700 (PDT)
+X-Received: by 2002:a05:6214:450b:b0:8ac:7627:8a71 with SMTP id 6a1803df08f44-8cc7b645335mr322547986d6.49.1779818368684;
+        Tue, 26 May 2026 10:59:28 -0700 (PDT)
 Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5170c403529sm10457421cf.10.2026.05.26.10.45.43
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8cc80decd3csm147576726d6.12.2026.05.26.10.59.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 May 2026 10:45:44 -0700 (PDT)
-Date: Tue, 26 May 2026 13:45:43 -0400
+        Tue, 26 May 2026 10:59:28 -0700 (PDT)
+Date: Tue, 26 May 2026 13:59:26 -0400
 From: Brian Masney <bmasney@redhat.com>
-To: "Alexander A. Klimov" <grandmaster@al2klimov.de>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+To: =?iso-8859-1?Q?Beno=EEt?= Monin <benoit.monin@bootlin.com>
+Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Jonas Jensen <jonas.jensen@gmail.com>,
-	Mike Turquette <mturquette@linaro.org>,
-	"moderated list:ARM/MOXA ART SOC" <linux-arm-kernel@lists.infradead.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: moxart: fix refcount leak
-Message-ID: <ahXcR-T6pyWmV1_e@redhat.com>
-References: <20260520175552.537603-1-grandmaster@al2klimov.de>
- <ag41wJBhdK7-Zynb@redhat.com>
- <cb81262a-5327-41bb-9ef6-9cd91f1be0f7@al2klimov.de>
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v7 3/9] clk: fixed-factor: Rework initialization with
+ parent clocks
+Message-ID: <ahXfftxBTE_5LzEU@redhat.com>
+References: <20260522-clk-eyeq7-v7-0-14ad6c2c5213@bootlin.com>
+ <20260522-clk-eyeq7-v7-3-14ad6c2c5213@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <cb81262a-5327-41bb-9ef6-9cd91f1be0f7@al2klimov.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260522-clk-eyeq7-v7-3-14ad6c2c5213@bootlin.com>
 User-Agent: Mutt/2.3.1 (2026-03-20)
 
-Hi Alexander,
+On Fri, May 22, 2026 at 02:31:12PM +0200, Benoît Monin wrote:
+> Use the same sequence as clk-divider, clk-gate and other to set the
+> parent_names, parent_hws and parent_data in the init struct when
+> registering a fixed-factor clock. The number of parent clocks is now
+> only set to one if a parent clock is provided.
+> 
+> Previously the number of parent clocks was always one, forcing callers
+> of __clk_hw_register_fixed_factor() to provide a dummy parent_data
+> struct with an invalid clock index in case they were not provided with
+> a non-NULL parent_name or parent_hw. Drop this dummy parent_data as is
+> not necessary anymore.
+> 
+> This change only has a small impact on mis-configured fixed-factor. Now a
+> call to clk_hw_register_fixed_factor() with a NULL parent will register
+> a fixed-factor with zero parent while previously it was registered with
+> one invalid parent. In both cases the rate of the fixed-factor is 0Hz
+> but it is no longer shown as orphaned.
+> 
+> This has no impact on properly configured fixed-factors clocks which
+> have a valid parent set.
+> 
+> In clk_factor_determine_rate(), make sure the parent clock is valid
+> before accessing it because the mis-configured fixed-factor now have a
+> NULL parent.
+> 
+> Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
 
-On Thu, May 21, 2026 at 06:16:38AM +0200, Alexander A. Klimov wrote:
-> On 5/21/26 00:29, Brian Masney wrote:
-> > On Wed, May 20, 2026 at 07:55:50PM +0200, Alexander A. Klimov wrote:
-> > > Every value returned from of_clk_get() is supposed to be cleaned up
-> > > via clk_put() once not needed anymore.
-> > > The values here are used only for error checking,
-> > > but weren't cleaned up until now.
-> > > 
-> > > Fixes: c7bb4fc16ead ("clk: add MOXA ART SoCs clock driver")
-> > > Signed-off-by: Alexander A. Klimov <grandmaster@al2klimov.de>
-> > > ---
-> > >   drivers/clk/clk-moxart.c | 2 ++
-> > >   1 file changed, 2 insertions(+)
-> > > 
-> > > diff --git a/drivers/clk/clk-moxart.c b/drivers/clk/clk-moxart.c
-> > > index 3786a0153ad1..7e191b1481bb 100644
-> > > --- a/drivers/clk/clk-moxart.c
-> > > +++ b/drivers/clk/clk-moxart.c
-> > > @@ -39,6 +39,7 @@ static void __init moxart_of_pll_clk_init(struct device_node *node)
-> > >   		pr_err("%pOF: of_clk_get failed\n", node);
-> > >   		return;
-> > >   	}
-> > > +	clk_put(ref_clk);
-> > >   	hw = clk_hw_register_fixed_factor(NULL, name, parent_name, 0, mul, 1);
-> > >   	if (IS_ERR(hw)) {
-> > > @@ -83,6 +84,7 @@ static void __init moxart_of_apb_clk_init(struct device_node *node)
-> > >   		pr_err("%pOF: of_clk_get failed\n", node);
-> > >   		return;
-> > >   	}
-> > > +	clk_put(pll_clk);
-> > 
-> > So this immediately drops the reference to the clk after of_clk_get() is
-> > called. Can we just remove these two of_clk_get() calls since they don't
-> > appear to be used?
-> Not if their purpose is to... idk...
-> check whether device_node is a clock at all, maybe?
-
-The clk driver already calls of_clk_get_parent_name(), and it validates
-the clock-output-names is valid. The of_clk_get() validations in this driver
-are redundant, unless I'm missing something.
-
-Brian
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
