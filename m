@@ -1,77 +1,89 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 894B840586A;
-	Tue, 26 May 2026 15:04:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7089F3F39DD;
+	Tue, 26 May 2026 16:45:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779807897; cv=none; b=lFNXXYcnzn83DGyVJyBSy5kS5m4SXrVnWxiz/Q09NG398qMSyAKsWrHu7HpAHEnMajCV1ukVpEgdVZhJoOCU+6UBh9dOsgv0YXxlri43tlWDv6X5XGU9YBJUlMjts02lH+f+JAN27eF47rjOHkBdZVnRKRHFZk9yNOEzrNlYPuk=
+	t=1779813923; cv=none; b=U4WwaqsNT4mO/ElZ/rEJzm4Yw52lQRr4on8+Fs/OZG5pJP0jlPOd1WfxtAQN7ftITjzKMJ19x1dQg0SZEUcrZesX0taXazcHLDChYbqhBbu5vYFFsCmD6JIpSTzHblOKQsdoxuEiBOugU07k6tF+fYu3TF3JAGlV+3BpC+mfqBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779807897; c=relaxed/simple;
-	bh=pqrWOF0YcwG98Q16FhrqoneQdMDa3LZFDePiexWc9vc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TFX3hlfaINFcqaH6vaXfPWoBzmnlSa42uHVbJSVlH33DPAEFZtTLtbh+iqG8uFYsCu8N3wf9ZNDTDKLtKlRNYEl6yCGnVhjmix9gW6H11hbKu4chdcNMAI3wardbmlvVVkW+iL2ZyonUxy65v2UYh7d/u32hjPTCEjQp4NkWRlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=REmtypH9; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1779813923; c=relaxed/simple;
+	bh=4YuWWIChWk0yUgGUXU1F+I0lhuLlhRPeMLXGEXAPs28=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f7FLQteFylTfr6n7kvW8UkL1wzrO9RCrYf+Z5qbHmw75JdPutyFvxFwknMe31BdcPTqgnl6CvlZ5h4lYadQjL8Pid7L6ILJG5WJm26TX8dUcByJ0jw4c0LTEVph3s38H3u5L/ckF8UyPu6Qsix5Uwi9Eh/iMrY41ifK5PYaJlhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kU9oDuNc; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="REmtypH9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F2C61F000E9;
-	Tue, 26 May 2026 15:04:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kU9oDuNc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 771461F000E9;
+	Tue, 26 May 2026 16:45:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779807896;
-	bh=iSHZzxB1V5d/KC/KiS02pRO5TZqWUvOFP3PykJDrFrU=;
-	h=From:To:Cc:Subject:Date;
-	b=REmtypH9FP71uzmEDVThS57AEynhrn7JF4BuwZGdv+01ujaJxTaD1YR4RpUr6bRKP
-	 fHvCjP6GagzDgzjkkbr7sMvjdGQKQAVJ71pP9JOL5rXIUj2tJ1IslDmtkKIzxiyaaI
-	 p976qfBHypo/3wljRmRcWI+ECL1oeFG0LQkHrzd1+apLRzVoCpQIzDA15DlLRUSgeN
-	 rBAvmtEW0HmB0+jPXTzUOk9UdoKPLgZb9j2Wh95aIs1oGxvp3G+5STPmOJMQ1gKrFk
-	 g5CcQ5VCf6trKKjMfjpU2T19oBujICIsjWcAoRE/KZkxnmdjbjsYafCZ1M+a2HwwC0
-	 I2m2hOivuguYw==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Hans de Goede <johannes.goede@oss.qualcomm.com>,
-	Pengyu Luo <mitltlatltl@gmail.com>
-Subject: [GIT PULL] Qualcomm clock fixes for v7.1
-Date: Tue, 26 May 2026 10:04:54 -0500
-Message-ID: <20260526150454.4281-1-andersson@kernel.org>
-X-Mailer: git-send-email 2.53.0
+	s=k20260515; t=1779813920;
+	bh=4YuWWIChWk0yUgGUXU1F+I0lhuLlhRPeMLXGEXAPs28=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=kU9oDuNcoTuvDqZ9Wz0Ekupccbo+RQmdoM8U0EVV8yQjju8SNIxYlqY026mKu2E7y
+	 WY0IS7ZDgmHo13iaRn6a2dhZf+5xwoBTE+nqyM5eW5OzpQzJ2Mp5ZJQZj+ofSvtA7u
+	 63/TZhl7XbX8LHL/4ZvGbr/2UJxrpXooPOTzhOk6lbm6F7HEwjWg63RVecI/AJW2rX
+	 vKZl35OosHQmjgophyUgD1h8YMf+JNh0BDvhu5nhs/zu8xOL2EDuGt+grOHwm5DwE4
+	 OFoz2gAyh6AJSn4LOqsWBC4hveIZoPAKlLNHpoMFspXP+NIO41/a8918N74cQcj2rT
+	 Y4CU7rU/zPaeg==
+Date: Tue, 26 May 2026 17:45:15 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Chuanhong Guo <gch981213@gmail.com>
+Cc: Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Yao Zi <me@ziyao.cc>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] dt-bindings: clock: add header/doc for Siflower
+ sf21-topcrm
+Message-ID: <20260526-outbreak-triceps-48ac74ceea05@spud>
+References: <20260524-sf21-topcrm-v2-0-4527aae05c3d@gmail.com>
+ <20260524-sf21-topcrm-v2-2-4527aae05c3d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="FzGP7dsmN1NUJIaP"
+Content-Disposition: inline
+In-Reply-To: <20260524-sf21-topcrm-v2-2-4527aae05c3d@gmail.com>
 
 
-The following changes since commit 254f49634ee16a731174d2ae34bc50bd5f45e731:
+--FzGP7dsmN1NUJIaP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  Linux 7.1-rc1 (2026-04-26 14:19:00 -0700)
+On Sun, May 24, 2026 at 09:13:07PM +0800, Chuanhong Guo wrote:
+> Add the device tree binding header and binding doc for
+> Siflower SF21A6826/SF21H8898 toplevel clock and reset module.
+>=20
+> CLK_ETH_REF_P is a clock name that exists in the vendor datasheet.
+> This clock connects directly to CLK_PCIEPLL_FOUT2 and there's no
+> clock gate/mux in between. An alias is created for this clock
+> to make available clock names align with the datasheet.
+>=20
+> Signed-off-by: Chuanhong Guo <gch981213@gmail.com>
 
-are available in the Git repository at:
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+pw-bot: not-applicable
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qcom-clk-fixes-for-7.1
+--FzGP7dsmN1NUJIaP
+Content-Type: application/pgp-signature; name="signature.asc"
 
-for you to fetch changes up to 5285b046757844435d1db96c1b5c3a6621b2979a:
+-----BEGIN PGP SIGNATURE-----
 
-  clk: qcom: dispcc-sc8280xp: Don't park mdp_clk_src at registration time (2026-05-21 22:45:49 -0500)
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCahXOGwAKCRB4tDGHoIJi
+0sPuAQCmij/iq15WxKbT7Sk29Pt6Mx4jeETaq//KaAOiasXL5QEAiTcmMKmssmw2
+6N4ZR50/hHMSMwZfyHd4FvdXI+pa4QY=
+=TsNU
+-----END PGP SIGNATURE-----
 
-----------------------------------------------------------------
-Qualcomm clock fixes for v7.1
-
-The parking of shared RCGs during registration parks the MDP source
-clock, disabling display until the msm display driver successfully
-initializes the hardware again. Mark this clock on Makena and Hamoa as
-"no_init_park" to retain a working recovery console etc.
-
-----------------------------------------------------------------
-Hans de Goede (1):
-      clk: qcom: x1e80100-dispcc: Stop disp_cc_mdss_mdp_clk_src from getting parked
-
-Pengyu Luo (1):
-      clk: qcom: dispcc-sc8280xp: Don't park mdp_clk_src at registration time
-
- drivers/clk/qcom/dispcc-sc8280xp.c | 4 ++--
- drivers/clk/qcom/dispcc-x1e80100.c | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+--FzGP7dsmN1NUJIaP--
