@@ -1,239 +1,158 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F6113F8ECC
-	for <linux-clk@vger.kernel.org>; Tue, 26 May 2026 12:27:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6E1238D54
+	for <linux-clk@vger.kernel.org>; Tue, 26 May 2026 12:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779798438; cv=none; b=gsZG6JMQVfaPVu2DuJ0umTtKh506punV2HAsfge+QaTPo9bG0fHDA3Ll3RdepSswfNbuQU6ZhgORbd9I37GOD+XQ1uE3LtyTrbglz+dZW4dr6ukpynTqlkvnOMLt6YjoU8KLZ8ufmJ01GUzp8S3b4VkCoK9jQnzm8gNiQVQ/sz4=
+	t=1779800106; cv=none; b=h3cFoH5WLhmnRdp1QZKP6pA9dYFCQBlgY/eC/2Fq/+apInPQ4Kt9QZguEP9ZgLxV2nCykaj5UAWlmZSyvZc+nXgn6q/vaQKKqJ1cmMKNBOa2YQw1TRnCn+oKycHT3PEC1D9BcqZMPKRzgGrO5zmYx8zb9UJuySBwBZwaibzLdug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779798438; c=relaxed/simple;
-	bh=qRnUxvygp1KcdF2l04pnogmsyxmTPyetgRbXjdsRehE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=XViPyQtcL6TD51u/A8Xr78RRDpTrs62UCJ/nzyuoJ7SqKon6LbtG3vU5B8NCE1SdRyJyfMzTDHPloZT6eqFxtf7g01UTyB05rqKP4pDNi8FqyEYOfPeA3/A22C5Lo+K//PReVpGv9XKZjYUbGQKvAioJ/kc7B+mllXzJyXqGOEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=ptZXLKJ7; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1779800106; c=relaxed/simple;
+	bh=CnRPiuF81lBuCpoHlCurFFGdm2XmAncBNOM3KmceBW8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=POd8BY8flxFj5XV9YCy0EMYsu+kQpSScvkpvlSzHMJ+vsybHU0WA+tRf0lQ0QY8vpB6w7vF1j03RSYaO4zxPr3gQNvxGfWbWHxS0kNjY9KEhjKWBd9iSy0xMTya2WxYXVi2ge8q3+mIBC3QCsRMO/vSEItGBN9lTqPJTb79Vono=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RWptDCEj; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=PIjVC33b; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="ptZXLKJ7"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-4526a8170ceso5323127f8f.2
-        for <linux-clk@vger.kernel.org>; Tue, 26 May 2026 05:27:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RWptDCEj";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="PIjVC33b"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64QCsB0P2554447
+	for <linux-clk@vger.kernel.org>; Tue, 26 May 2026 12:55:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=IFDcglAGXjSDv6I35QrERo
+	oEJdRQga4AJsVg1Timyjs=; b=RWptDCEjFdY2iNxdRLynLUsGu0KCCmEb+yWGoR
+	lchKghPw60HsX/xxY9w2EoXdxMz35ahruTp3oCYOUdO+bpGrZnxYoUE7SSWXLEEN
+	130HvIhjU0SedSWWdBZ7ySAiu0nw+FEZbbaOXeym+t/4/zgaS7+rVWL4UfDgTKA0
+	2SqXMPqtHWf9RNKzVryhiJaMeg3fWH2rW35S5wfP5zgZ2eP1CjVFSspyCia0rxnx
+	iQxYmPanYNcjriKQbHAj7ts6S05GyWoiMU/+Yz/dP7L+wFWAFGe9G/7QjtBT1kAw
+	j3kAqvSmoANN+ZF3WSHyG2yjzLWduMQAKne90jWncS2qJ4BQ==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ed5v3ssmt-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 26 May 2026 12:55:03 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2bd5b20aaa6so111084445ad.2
+        for <linux-clk@vger.kernel.org>; Tue, 26 May 2026 05:55:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1779798434; x=1780403234; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:user-agent
-         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3cGdeRIyed7u9Vu7ldN0+lFeh1o2iiXjimB366st4kA=;
-        b=ptZXLKJ7vVSlo9eQltDXhMGdyc1bbQb21NUD6EcnRWM0p21m0qOfWM7NG2/zyPgcge
-         C4KbOIJJIQNPTqUbESio3N/GNIrxma6UyPQ1LJaKhp2c/QWFmaQdZmUbDJo57nPbyEXb
-         d+5LFyFkCT7WnOGlg8EHvL41YYT57mpqFeDvYk4OESIRwSGN+SJFh2RhJBbPq5tz82PH
-         1mj8yFAeuwMcsgwWCmPFwM6ow9b5jHbuQaJtbLv3YqjyKVKWwduhA99IQwi7+WN2P4Zd
-         dh7VeZJwQIjgDgNgJte+WPb9wyGeH/tXWTyBhGF3PcdDS3d7ItJjkCGxIDhMpdwTjyI/
-         PEtg==
+        d=oss.qualcomm.com; s=google; t=1779800102; x=1780404902; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IFDcglAGXjSDv6I35QrERooEJdRQga4AJsVg1Timyjs=;
+        b=PIjVC33b+N4eCY7jjH+S4Wo6rTMQOB014dz8RLFVxNvkXHM3N1PIsBiE7ADXRxA5HQ
+         IUQMBEU5Wb4hB+DmtQW9AR2ItlbpYcTcsj07t4DK5OeLU+kaWJWs174sbD3elOVIE6L7
+         L16HcNHp5Gyr9SXThswA1UI3JnItrQnrIXyW/199FDigLNTFLY8ox5NPXcNHWOTfehvD
+         YUVf4HWfxITaQVmFK/6coVJAzrLPnCdP1nY/vQiHWvZaURWZehQDkbrVmJdndn/e3hZM
+         c58Kpp/JIkRyO5E1EHfCeT232LZ/DBoVBQCiGFZ+TXiv041UTeIGAGQoLM5SAeMUxrh6
+         v2yA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779798434; x=1780403234;
-        h=content-transfer-encoding:mime-version:message-id:date:user-agent
-         :references:in-reply-to:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3cGdeRIyed7u9Vu7ldN0+lFeh1o2iiXjimB366st4kA=;
-        b=TynAQ6/w4HBFOUHsI6sQG+nf055/kFYjgnb0A70sSt8SJQdg0Apxrp0OT0EIlwrjA6
-         KkJP30BN+of1Ya5usD8uHY3nm/jdaNxa8YzRxg4c19mtMOgdgLQUjC62LS/fMsvCJDbe
-         Xog+/5d+hftjBMSUq5ee0sgl9hB4F8Y9OvKMIBil/OclHfTbTA4ICc7usUdZ36bkY6SP
-         E2NgDa+UfRdQXvUSn7QA/uDZpJ8whyBTJPKZCgVt22cqhnNdugSwQtcziNPPnlZlDo8h
-         22TyIwtjimWALk9u/w+0JdXSXZr3lNPFb9iivBJ0cj2jKyEPoa3DSvo2d1kJ/hQuXEWh
-         E3bg==
-X-Forwarded-Encrypted: i=1; AFNElJ/gbur5p63jlZqgGz/NjzHXABKD/HlLbdt8mN0ntsKl9WbkriDKQDU6JU6TxPV2zhQNAyF/D0CGoRI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx60td17VvSYGUM69CN045mixNxf5sLQsngAiTZwTj8qxdYnG/V
-	t13Jnn1gFZ9o76UB/ZoPLk0KIzu+KQOJpgXkXQz3Hbk4AtIy7+xI5PQa5dglIa33a/Q=
-X-Gm-Gg: Acq92OEIYoDUkdQMBTN8riB26uTa3U1EWB/jzLiMMBFKqqm9USjKqKiE5nd+xQbSnK1
-	okwanJBjTV+SdxPX6P9qks6BUpkuBUkGKAmFkE9TuW7HnwPVZoxOQYjpGcVhIhbwJ9uQ/n9W4tf
-	bv18mPYFNb4gsafTxmhihzwYL0ndPh0S0UbtlypzqEk6PYir+rmINEmqoON+0ZOOBBrUfFh3lFO
-	1PC9z//8ZDa82CCe6PpQsQeHOgMxrvbZnhiJcE05MVbtVxtcdrXf9tOEU1qk3OnSGBL9BfppbEC
-	wffvr41+nfk6OmCLer/aLBsny69DGe8ImEPZY5UtVeI7ofyKJ8cJ/HIYt/GNgeW3Ei9rvN5c5lN
-	RO3RsTl0Mroa5xyRwvgi8rHxqDgRUxDSUBPYarnCfB5RtwZntTxAtIt39uFFN8Yukv7Zu3VI+Dz
-	mxdeoM1YLUpefspqUgueoZEigci2gXLS9j
-X-Received: by 2002:a05:6000:2408:b0:45e:941e:77b3 with SMTP id ffacd0b85a97d-45eb38c9299mr32625100f8f.41.1779798434376;
-        Tue, 26 May 2026 05:27:14 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:4a0c:b15a:3467:f4ed])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-45eb6d5cb9asm38009953f8f.27.2026.05.26.05.27.13
+        d=1e100.net; s=20251104; t=1779800102; x=1780404902;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IFDcglAGXjSDv6I35QrERooEJdRQga4AJsVg1Timyjs=;
+        b=LNYMMFF6tuOi2qg6rCdpFYu2V+aA/m0zBCOxhw/MzPvHw0MrO2LaHth/E9LkIlyEIY
+         tJgom09ThFJ8s5GZamz77sZL5I5TFauaA/gQzvxkHRgMPGNt0NlpK9pCgVKr/IRz7LMt
+         ZfpU2tzEygUDiHh5y8971V/dqpAFqW8DClSHDgLzE/zUTbkDf/r+Y8dAhRyxKDW1UDuc
+         ZKYxaWtNLrMdhOL7YMZzVvCbVBH2bv21jmrTat6aj0TjFD0MxSbRdk4G3ZqU4Wu+XaYa
+         LConZI/dsYpXHRe6JsjkNGsMrlJR+sVKA6z63Xd125EBUKweeGi+eFnSf8dId4m3OcNV
+         5woA==
+X-Forwarded-Encrypted: i=1; AFNElJ8i4mWn+yk3MkLrPuqAWTal9LqWymjqtSe53T5a9BIERSXDkcwaWHbq6Vx3Z0Qd/hWqI+EOdWFHkNw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwCbNPgkdT2FMxtA3mV/FK/cZso/bA5Nw6YO4Q7AuBDxocBbPJ
+	ZKaP0y21sfPVIpfM07CgFl+z7uC8NOlwN4Eo9pco7d9a4QLyep/48ek34kxkSF2qprx6iti2X15
+	gw9ZJ+A8A3C+xWxNrdwJZ1EQHUuJIkch9W8CmI2nLqWp0N3fDYzUaf2Fkq6pjApc=
+X-Gm-Gg: Acq92OH3UJq5XuVxGypAQcxc1z8mmh9aJNgJREhrM+9sYYVBU88c06cYq0apGozXpvV
+	X6q9nLZNQXF1buWCJkpPde2UrJ+Vnww2ub1dHCAKpaKRrTYdQA3RF5CvSy5FlEp671pfqtcnbFe
+	Bwcv63x7xzwwOH5q+3+wQBl90F5JSfvBcSXs31YnAmdcJU074j1IM+n34MiLmWVbfn5Ei4Oe4R7
+	QYgvzw27Y7bwwgVZPktbpaku0J8XrM57CILpqGp+Mlk0+E2si+04vGIi7uA0hpmyKeLuN11nLk+
+	A4KRCdJ+6hZoFDpMM4eX6JdqIjZQG1ummq6abtiew8cE9XswAMKIyc4Wq0tIuLdzIrx1SHAMqiB
+	K0+6KpwLQksI6vie2nF52iRSI8clY/v5uZJDhkbXDmqKTO1vz2EYbIjMERMv+FcU=
+X-Received: by 2002:a17:903:f8b:b0:2b2:5503:1b8c with SMTP id d9443c01a7336-2beb06c4f36mr195265515ad.11.1779800102319;
+        Tue, 26 May 2026 05:55:02 -0700 (PDT)
+X-Received: by 2002:a17:903:f8b:b0:2b2:5503:1b8c with SMTP id d9443c01a7336-2beb06c4f36mr195265155ad.11.1779800101871;
+        Tue, 26 May 2026 05:55:01 -0700 (PDT)
+Received: from hu-imrashai-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2beb58e4fcfsm129000165ad.71.2026.05.26.05.54.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 May 2026 05:27:13 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Jian Hu <jian.hu@amlogic.com>
-Cc: Jian Hu via B4 Relay <devnull+jian.hu.amlogic.com@kernel.org>,  Michael
- Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,
-  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>,  Neil Armstrong
- <neil.armstrong@linaro.org>,  Xianwei Zhao <xianwei.zhao@amlogic.com>,
-  Kevin Hilman <khilman@baylibre.com>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>,  linux-kernel@vger.kernel.org,
-  linux-clk@vger.kernel.org,  devicetree@vger.kernel.org,
-  linux-amlogic@lists.infradead.org,  linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 07/10] clk: amlogic: Support POWER_OF_TWO for PLL
- pre-divider
-In-Reply-To: <3fda1592-f7d0-4e86-8615-602804673414@amlogic.com> (Jian Hu's
-	message of "Tue, 26 May 2026 17:58:19 +0800")
-References: <20260511-b4-a9_clk-v1-0-41cb4071b7c9@amlogic.com>
-	<20260511-b4-a9_clk-v1-7-41cb4071b7c9@amlogic.com>
-	<1jy0hm6n7e.fsf@starbuckisacylon.baylibre.com>
-	<8d89b669-e72e-4663-9596-999a12922d32@amlogic.com>
-	<1jqzn65y9l.fsf@starbuckisacylon.baylibre.com>
-	<3fda1592-f7d0-4e86-8615-602804673414@amlogic.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Tue, 26 May 2026 14:27:12 +0200
-Message-ID: <1ja4tm5pb3.fsf@starbuckisacylon.baylibre.com>
+        Tue, 26 May 2026 05:55:01 -0700 (PDT)
+From: Imran Shaik <imran.shaik@oss.qualcomm.com>
+Subject: [PATCH 0/2] clk: qcom: gcc-shikra: Add support for the USB3 DP PHY
+ reset
+Date: Tue, 26 May 2026 18:24:43 +0530
+Message-Id: <20260526-shikra-gcc-usb-resets-v1-0-6d9e7fee2998@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABOYFWoC/03MQQ7CIBCF4as0rCWZUqDSq5guYDpUotXKtMbEe
+ HfRLnQzyT/J+56CKSdi0VVPkemeOF0vJepdJfDoLyPJNJQWCpQFo6zkYzplL0dEuXKQmZgWloO
+ BGPfeYlM7UbZzppgeX/fQb53pthZ+2Z4/vau+tlbu387zVC6eTywVOE1DjLEJ0N3Vhw+eSeJ1m
+ tLSVc612lmHtYam9uDawQZtAobWgw1Be2+UQQ2if73eVcTeivAAAAA=
+X-Change-ID: 20260526-shikra-gcc-usb-resets-d50ff8a6c319
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Taniya Das <taniya.das@oss.qualcomm.com>,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTI2MDExMiBTYWx0ZWRfXyfCblyvZUaaV
+ 8NR3CzwW0r9LwBU4058Gihh7/n/8PjQO7yzWpMjOew2mfv6RfH9FjWTrES3BF8DBKzavSgpzQOf
+ hyHJWZfW7+lruRRMiyNqsHqIHNlWmgnfTT9B0+ygCf7nRjXc7cn3VQbDGWoaK759NVOvv+uZUFA
+ JX2qIOFTKVcm0ZRFg78vKCzPc3kPUWNSdOaOyEMB3n/CrJta3sJiEakJM6ZQEFJJEfdNnYVK74i
+ 07uFjWp9Sh5MuwYe0yt6m4CXIn0RG+qhpp1rXpKzDfmi+N2MhTb59zEOPEwcR4fqogj5IoSTdUE
+ nCk6YPBRep6E+8z9HE186zVW2ApT1bKqD4YzPp/snCJdHUR+ipOMboBejEp7lxXEZPTM8IEFkEK
+ +VB+7h7VkuPlaVJ7kBZs+mmmsu+9vzbz+Mg+57fEiaMOZUpD4jJY/yTiNJot31D0AKa9QCIoc1N
+ iZZiG+vFJsEZ2F3hH+w==
+X-Authority-Analysis: v=2.4 cv=Zc4t8MVA c=1 sm=1 tr=0 ts=6a159827 cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=gowsoOTTUOVcmtlkKump:22
+ a=EUspDBNiAAAA:8 a=AmwuVZndQLEihibSxTgA:9 a=QEXdDO2ut3YA:10
+ a=GvdueXVYPmCkWapjIL-Q:22
+X-Proofpoint-ORIG-GUID: qwRNOlYakXWXsq7H9aizKQG_r11HUUDX
+X-Proofpoint-GUID: qwRNOlYakXWXsq7H9aizKQG_r11HUUDX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-05-26_03,2026-05-26_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 spamscore=0 impostorscore=0 bulkscore=0 adultscore=0
+ phishscore=0 clxscore=1015 priorityscore=1501 lowpriorityscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2605130000
+ definitions=main-2605260112
 
-On mar. 26 mai 2026 at 17:58, Jian Hu <jian.hu@amlogic.com> wrote:
+Add bindings and driver support for GCC USB3 DP PHY reset on
+Qualcomm Shikra SoC.
 
-> On 5/20/2026 3:35 PM, Jerome Brunet wrote:
->> [ EXTERNAL EMAIL ]
->>
->> On mer. 20 mai 2026 at 13:47, Jian Hu <jian.hu@amlogic.com> wrote:
->>
->>> On 5/14/2026 11:11 PM, Jerome Brunet wrote:
->>>> [ EXTERNAL EMAIL ]
->>>>
->>>> On lun. 11 mai 2026 at 20:47, Jian Hu via B4 Relay <devnull+jian.hu.am=
-logic.com@kernel.org> wrote:
->>>>
->>>>> From: Jian Hu <jian.hu@amlogic.com>
->>>>>
->>>>> The A9 PLL pre-divider uses a division factor of 2^n to ensure a clock
->>>>> duty cycle of 50% after predivision.
->>>>>
->>>>> Add flag 'CLK_MESON_PLL_N_POWER_OF_TWO' to indicate that the PLL
->>>>> pre-divider division factor is 2^n.
->>>> I understand what you are doing here but I have to ask why this can't =
-be
->>>> implemented with independent dividers that already supports power of 2=
- ?
->>>
->>> If we use independent dividers, the n member would have to be removed f=
-rom
->>> meson_clk_pll_data.
->>>
->>> However, n is referenced 35 times in clk-pll.c, which means we would ne=
-ed
->>> to modify all
->>> related logic across the file. This would be a relatively large
->>> change.
->> Yes
->>
->>>
->>> Moreover, for all Amlogic chips, the n divider is an indispensable part=
- of
->>> the DCO clock.
->> There is hardly a justification here
->>
->>> The difference between SoC generations is as follows:
->>>      Previous SoCs PLL: n =3D 1, 2, 3, 4... (linear divider)
->>>      A9 SoC PLL:            n =3D 2^0, 2^1, 2^2, 2^3, 2^4... (power-of-=
-two
->>> divider)
->> Yes that was fairly obvious
->>
->>> Therefore, splitting out the n divider from the DCO clock might not be a
->>> good design choice.
->> I'm not sure I agree and you've only stated your point of view without
->> providing any technical justification here.
->>
->>  From the datasheets of the different SoC we have, the documented
->> limitation is always the DCO output rate range. Nothing related to n (or
->> m, or the mult-range for that matter). This is a legacy problem, we
->> started with monolithic driver and slowly simplified it.
->>
->> As far as I can see now, reworking the PLL driver to be a simple
->> multiplier driver with range output rate constraint could actually be
->> simpler than the current code. I would also make simpler to accomodate
->> differences such as the one presented here.
->>
->> Unless you can provide technical reasons why going in this direction
->> would be incorrect, that's where I'd prefer to go.
->>
->>> [...]
->>>
->>> Best regards,
->>>
->>> Jian
->> --
->> Jerome
->
->
-> I agree that having an independent N divider would simplify the PLL rate
-> calculation.
->
-> A separate pre-divider for N is technically possible, but there are some
-> hardware constraints that need to be considered:
->
-> N =3D 1 is the preferred operating mode except a few fixed-frequency PLLs.
-> Larger N values reduce the PLL phase detector frequency, which may
-> negatively impact
-> jitter performance and overall PLL stability.
+Signed-off-by: Imran Shaik <imran.shaik@oss.qualcomm.com>
+---
+Imran Shaik (2):
+      dt-bindings: clock: qcom: Add the definition for the USB3 DP PHY reset
+      clk: qcom: gcc-shikra: Add support for the USB3 DP PHY reset
 
-Understood. You could really make a difference by going deeper and
-explaining what those constraints are, especially since you ask question
-internally at Amlogic.
+ drivers/clk/qcom/gcc-shikra.c               | 1 +
+ include/dt-bindings/clock/qcom,shikra-gcc.h | 1 +
+ 2 files changed, 2 insertions(+)
+---
+base-commit: 9974969c14031a097d6b45bcb7a06bb4aa525c40
+change-id: 20260526-shikra-gcc-usb-resets-d50ff8a6c319
+prerequisite-change-id: 20260429-shikra-gcc-rpmcc-clks-2094edfff3b0:v2
+prerequisite-patch-id: 5a0fbdd458785da2d0e850c851a05046672ecadf
+prerequisite-patch-id: 1f98e515a52bbeb25e2a960a804afe16c6a472a1
+prerequisite-patch-id: a64476b2ba6e0f2a55928baf72ec32672ee0123c
+prerequisite-patch-id: d0c8651205232862b40f942929e1efdaa3084eb3
 
-At the moment what is documented is a range regarding the output rate of
-the PLLs. A PLL is made of a pre-divider and fractional multiplier.
-and you are saying that for the multiplier to work and lock, there is
-actually a constraint the input rate too.
+Best regards,
+-- 
+Imran Shaik <imran.shaik@oss.qualcomm.com>
 
-If you can discuss with your HW team and clarify what the constraints
-really are, that would help to better model the PLL. In then more likely
-for us to figure out the best way to drive it.
-
-
->
-> Because of this, we cannot guarantee stable system operation when arbitra=
-ry
-> larger
-> N values are used.
->
-> Some PLLs require non-1 N values to generate specific fixed output
-> frequencies because
-> the target rate cannot be achieved with N =3D 1 while keeping the PLL whi=
-le
-> keeping the
-> PLL within its valid operating range. So N is designed to have other valu=
-es
-> =E2=80=8B=E2=80=8Bto
-> satisfy this requirement.
-
-Again it seems like the constraints we are using are not the real
-limitation, just by-products, which the situation unclear.
-
->
-> For example, the AXG PCIe PLL uses N =3D 3 to generate the required 100 M=
-Hz
-> output frequency,
-> since the target frequency cannot be achieved with N =3D 1.
->
-
-PCIe is a topic in itself. It uses different ops for historic reasons though
-I suspect, with proper constraints, it would not really need to.
-
->
-> Additionally, is the refactored pre-divider N implemented as a separate
-> patchset,
-> independent from the A9 PLL changes?
-
-I could be seen as a pre-requisite.
-
->
->
-> Best regards,
->
->
-> Jian
-
---=20
-Jerome
