@@ -1,67 +1,66 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94823FA5D2
-	for <linux-clk@vger.kernel.org>; Tue, 26 May 2026 13:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0203FCB14
+	for <linux-clk@vger.kernel.org>; Tue, 26 May 2026 13:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779802315; cv=none; b=IDQsQylITxgRfnet6WUyXvyHWWdVGJGfRRWWp2S44+O5OIXSE8H83JEncGuc39Cg+FF/BMZ7EgmXF44/4TSrZ1iHtuKiokb3+d4gVSUqX597Zs/nDrtJhK/fKUc8F44LJ35ArEz4ZgxbMdhktBzpsNaxNT71vmKqMqS6WWykhew=
+	t=1779802317; cv=none; b=RxEf+5pjC6uHEfRTVD7p1LskfvraglKvR1dCZmpYgtr4wmqXZ+pZfz6RW4YNDL3sw8wjxhseO99K+V0UMqruo5MrqGMHXOKoJFtEV82cgqNALds4s6zeTy0jdNi7qa4y6bMBCVFMG7qGv36USGcUEBWoK34wvFeO3KrbHHUjRoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779802315; c=relaxed/simple;
-	bh=16AoPtmHTYpJSipw80SylHAI5EPglqbbZ9EkozbD51k=;
+	s=arc-20240116; t=1779802317; c=relaxed/simple;
+	bh=u1ZxeAc19H3I75eYjPO22qxUQ5RQA6sI/ieAA9yHFvU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=derOuKmawAkG20K6pBRjZx+BsKpkzBVdX/Eh9vyS3qdVvRkwtMzZq3fy0VI2xeBMfxGp2Advp9CpMm88Rl24I8zGlIfXW02B/x6Q94VSXpdYxfsGpsGEbDeGrl8culwzji4aHXjlhisy0rBMJPBrIznE9S9EUAE0y3EebLrtVfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eTsUz0n7; arc=none smtp.client-ip=209.85.128.51
+	 In-Reply-To:To:Cc; b=Flq73zNJmnyiTM/uGGURJlogIiECdYfvl/L0XknXtAyDdtDiyonsAurniKpvTVgu46PGcy13anTWy4yNPb8zXM3gjbz6U0IXcDgTeasmIjm+D3hFw2XjAQZTRdZdk0/Vp3PMLfWa7ybOIxh+q5KiOgpoF3zonkRAKrEoNIXxyU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FaFpYZiY; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eTsUz0n7"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-49050ff7cbdso29926435e9.2
-        for <linux-clk@vger.kernel.org>; Tue, 26 May 2026 06:31:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FaFpYZiY"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-44e5624c053so6349043f8f.2
+        for <linux-clk@vger.kernel.org>; Tue, 26 May 2026 06:31:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779802306; x=1780407106; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1779802308; x=1780407108; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=MD8vAn9/wfDPga+z35YKtSQ1Eizg0RFa87mkXotuc18=;
-        b=eTsUz0n7yYcM2Nx55/K+Lme1gYXcoWxuIdcD4LTBanSDP7tAbZGEaQyQnkP+21/ll4
-         fnjSIy9wisKrcVcX965J3qlylj5P8r/GpnqMELwKtmnYFO5pWVGt8C8yV23oBE52yJ+i
-         bBIW0d6F7TEJcpiNtB0lQKVmsn4dKNCMNEPMhZ/RIPKN1ur3IMMuFBTz49pt619DIHEF
-         FSrfcmpXLOaTNdZayxi33u1efq4/098YBdlk7uNy2EnF7cW4zWad7WHPdjvLoQXOycdJ
-         E+wiwJmOTpHqsKgHGvu6MYLhxqefHmMiVNCTOjIEpmixKp7HJFP03inNgkdCZykjRy5r
-         dTHg==
+        bh=xLO7DOU1ouh67wd4NrLBkCSh/jnFkIqwlgXZjoPnVfo=;
+        b=FaFpYZiYG8kkPPU8xAUK0V1ai0Yrr41pASF/JQ+2Ywq7KfHjbjK9CWyTrczbjy04Pt
+         DLq8Oxg1534SpO1GC5aMMNMIE90jX6JvXqHP0+eoBA6H0HoMaBX7pvW/nUrar+YKMtYc
+         iPbwNUPNemE6g1gJ6YVrQ1iyYXdu7JfafFLgfJtrFy6NhgiQUZR81y+1y3087PhFbqZW
+         uXg9kNrku8POn98YwlSrcaKysrobJ+7YKFMZej+oyHkY8u7+fi6xBbhiW6jDJjmzRHmk
+         0iKD8hVITO3N1AEOM5nILjyAemFyrbZiVwyTe5OVvNSLuyx2+XAdcPQOVIvWTOkHgIT8
+         ixWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779802306; x=1780407106;
+        d=1e100.net; s=20251104; t=1779802308; x=1780407108;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=MD8vAn9/wfDPga+z35YKtSQ1Eizg0RFa87mkXotuc18=;
-        b=eeSAHytExr0KgffbcZeJikvk6BkEYu+QMR0Cr5kldWutlGezeiCaiHoS/Rj/pBKYlr
-         +IupTyEs4AmMs4KJTymK+Jf5FNvyt9jUEIxxWVTnLPP+Cug1rXDFYeJsLyk/ABJDv7Jr
-         te+PfAohu6nQrp7bdPuJzjDJEx/8RyK2CPl/2yXGu5hby+HGP0PweUW6C9vb3Z04izwP
-         AJKamx3gmdCsxYXSqReYNgArfV0rvlaQfHFA7BbvA9xNtYPpb2RdUSoxH/bzNK8ARmv+
-         eYjdvmXIcfG1Zl81tKR3M4bOCW9YkmA1+CQ+VKjVl2odg51zPt3SEcX6LY7bg8n0tIau
-         A4SQ==
-X-Forwarded-Encrypted: i=1; AFNElJ/KKSVy7z4TFPYZgYyPy93QNC+evJsdaklIR8vTuix/NsmAha5HHUIuSIYdrkK0NExBKXfQ/pTFfy0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1s3HxfLVF4Rr4Lty3BH3un5AgLxeaeBwzsjZS+D6j4OOjWQFb
-	F50+ep25JIERM+bOwtmfD15I3DfLEXfVJpfGCymel7sdmOx7TbcurMb/
-X-Gm-Gg: Acq92OFK7KZZDBbfAjCnLybVzA5Wsay5mBQFtk0CZgc6hJlwrhryZuzybkc/abxmEwL
-	nBdp07qpxTQyCQnneJKOxk5+Ustwa7bWu6xPhMmgtj43pLL2ESHK4Bx3/SOXsqV4EpQaLcFeJD1
-	SdXxw02xhdfipjn14X01GSh2yrQZYL+1Se1J9DMAKwv5wNpgKhpqg3ouEhR++1Wh20/gmYXU/ux
-	x7EpLJvtALw6D6AeDP5TCf2kakp5NaKnTUHmx94juEqnQtNtLUVCai5nY5ehTqcL4LjH+rCMlIU
-	+udSPew6s1ftUK9mqwGcgGD1jYJbe9kToGZcELw9p5JfHT2hslnzyWNLHFJXEJCRLhJqrwFOgfF
-	Jy3CSMapOL6L99d+v9yo2TTEwIAk3faEueuM2TQV12M1CLiOcuwC25VzUVz0vL9QysPCmX9/GNw
-	7Ahgtqgeud61vGQLjhSQXsjo/9kg==
-X-Received: by 2002:a05:600c:3b12:b0:490:545c:7a8a with SMTP id 5b1f17b1804b1-490545c7c2emr215250765e9.20.1779802305717;
-        Tue, 26 May 2026 06:31:45 -0700 (PDT)
+        bh=xLO7DOU1ouh67wd4NrLBkCSh/jnFkIqwlgXZjoPnVfo=;
+        b=EfHcpAtmJQXA2YzFIGk43jeaRqhIr4FbQu9ogL8GzSwX4s0QSW8ENTFCv07X8QiV0p
+         SuWg98IYO0ZwLa/a1+gfTvdoLAsz6x0Crro1/5gCJVEYtCUrZqRjs0iz4NNgDMiduIzI
+         9QKIH1bZCWVRqcQ+fkyYBLz+nrMoyYtjjVKsK+r+x9bY+MnL/wgK8fvlggXk9uDViepD
+         xljTXeynRo0+nuAKMgmTQBN5Z88LV8ae9uxbqW/mZet+2mrb3sFh6C8blmtjuThqRXAB
+         f43K7eIdfAqraz3hJmy32OLaSwEF1ixMESEbU4ReVeL6daex+BrsA5y37utao1FOrAOP
+         ymkQ==
+X-Forwarded-Encrypted: i=1; AFNElJ9zUQsm4zu5GzSp6rdCN943tvcZ98sOIwIr0DSnanAQVXtRZ4gLxSwDx42Qv//H3121BUnaiAp2eG0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHeMNkwwPUqOBknPalUCoUDs2ZIug//wFuNEgmA1AVrlYJkj3Q
+	yQAp42mFhusgDAYY0U6jxnMuEHVA2kYwpD+lVvsUPYAqZfwkcurDxZfy
+X-Gm-Gg: Acq92OFPv7n2xblGIpJIRlDX5MfPYtUCZDhqDadmKqq18Bw0lq5s2Ikj3f+kAH7Mi9W
+	b7zXS424E2R3EQ61JjDGnZxjtG0iHi0b9BCoj3jEiHba1H4NCaJY1YMa9vUPmovnAFbAer3RAXK
+	QknaP5BQoDqqQ5o9nhPltAz6oMUM8S7+1Z5MjZlqaJmEbkjw0Aqz7PM49CzU4WC2oQpk+oC0rNJ
+	aNO3YJ73t1mDNRyqkSUo25TbJdE9o9tXpMl4GYr6SaDGl3xdahE6coDypJycAsz4yd0Hl0kByZU
+	i6l1YyoXX/Ia3xV7RrlA2enzTvalHhlklD9xPYLP/aQOtFAzkFCb7kjpGOI31giUv40+Bm+pvJq
+	lAgq2i2uGecl8qfP2Ua055VQdhdR3HCEXkh4OVGXJUHfu9QXjpdOeztqkoXAu1RQL210PMp4lKw
+	0S8OuFvesd0LsjgTAAhzZCDPpzSw==
+X-Received: by 2002:a05:600c:a402:b0:490:3f7a:108b with SMTP id 5b1f17b1804b1-490426c5be8mr262860365e9.16.1779802307589;
+        Tue, 26 May 2026 06:31:47 -0700 (PDT)
 Received: from [192.168.0.39] ([79.133.247.80])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490452580dfsm170958895e9.1.2026.05.26.06.31.43
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490452580dfsm170958895e9.1.2026.05.26.06.31.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 May 2026 06:31:45 -0700 (PDT)
+        Tue, 26 May 2026 06:31:47 -0700 (PDT)
 From: Erikas Bitovtas <xerikasxx@gmail.com>
-Date: Tue, 26 May 2026 16:24:30 +0300
-Subject: [PATCH v9 7/8] arm64: dts: qcom: msm8939-longcheer-l9100: Enable
- venus node
+Date: Tue, 26 May 2026 16:24:31 +0300
+Subject: [PATCH v9 8/8] arm64: dts: qcom: msm8939-asus-z00t: add Venus
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -69,8 +68,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20260526-msm8939-venus-rfc-v9-7-bb1069f3fe02@gmail.com>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260526-msm8939-venus-rfc-v9-8-bb1069f3fe02@gmail.com>
 References: <20260526-msm8939-venus-rfc-v9-0-bb1069f3fe02@gmail.com>
 In-Reply-To: <20260526-msm8939-venus-rfc-v9-0-bb1069f3fe02@gmail.com>
 To: Bryan O'Donoghue <bod@kernel.org>, 
@@ -89,25 +88,22 @@ Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
  phone-devel@vger.kernel.org, Erikas Bitovtas <xerikasxx@gmail.com>
 X-Mailer: b4 0.15.2
 
-From: André Apitzsch <git@apitzsch.eu>
+Enable Venus video encoder/decoder for Asus ZenFone 2 Laser/Selfie.
 
-Enable the venus node so that the video encoder/decoder will start
-working.
+Default firmware paths work on Asus ZenFone 2 Laser/Selfie, which
+means firmware-name property can be left out.
 
-Default paths for firmware work on BQ Aquaris M5, which means
-firmware-name property can be left out.
-
-Signed-off-by: André Apitzsch <git@apitzsch.eu>
 Reviewed-by: Bryan O'Donoghue <bod@kernel.org>
+Signed-off-by: Erikas Bitovtas <xerikasxx@gmail.com>
 ---
- arch/arm64/boot/dts/qcom/msm8939-longcheer-l9100.dts | 8 ++++++++
+ arch/arm64/boot/dts/qcom/msm8939-asus-z00t.dts | 8 ++++++++
  1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8939-longcheer-l9100.dts b/arch/arm64/boot/dts/qcom/msm8939-longcheer-l9100.dts
-index 13422a19c26a..48514c3df718 100644
---- a/arch/arm64/boot/dts/qcom/msm8939-longcheer-l9100.dts
-+++ b/arch/arm64/boot/dts/qcom/msm8939-longcheer-l9100.dts
-@@ -314,6 +314,14 @@ &usb_hs_phy {
+diff --git a/arch/arm64/boot/dts/qcom/msm8939-asus-z00t.dts b/arch/arm64/boot/dts/qcom/msm8939-asus-z00t.dts
+index 90e966242720..231a3e9c1929 100644
+--- a/arch/arm64/boot/dts/qcom/msm8939-asus-z00t.dts
++++ b/arch/arm64/boot/dts/qcom/msm8939-asus-z00t.dts
+@@ -267,6 +267,14 @@ &usb_hs_phy {
  	extcon = <&usb_id>;
  };
  
