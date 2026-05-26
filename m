@@ -1,140 +1,121 @@
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80FA23C1F5E
-	for <linux-clk@vger.kernel.org>; Tue, 26 May 2026 21:24:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8EC3C2B82
+	for <linux-clk@vger.kernel.org>; Tue, 26 May 2026 22:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779830642; cv=none; b=YwHDA2PTR3VNM6xfciBGqYr+HE7qYvI1KbTk48WgWHq9b9Bkdg3pA2nFRulg0S9QJjiDgm5yT9tJVe2BY41ucZxZWJA1VsTc7opCdVTWUjFcdkVblBwUarCVmZrGIqfSC8dgk0jGlwpMl+325kRzIj4Gp1X6wHKYJ92v/grBsL4=
+	t=1779835153; cv=none; b=aJIUBXheTHzRBPHfqTEPpIbUu9X/pk9b9/5ztZQUDwKQ5g3xU16W3MsiB5uargXNiQ50yR/qaj4H+6Gc/5DGbBnGOXJdj1BrQZEih7gALMzrViKjTSsmdkhyKKlgqYAw8v6e1CdWjm+dqwENtu5KpJ7Zn6DWgshm/hXnX0afcWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779830642; c=relaxed/simple;
-	bh=5XCm0mxhUO1U1pNKN+c43ad7JSKnMj/75FUb3dLm4OI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=BHsjFZFpcJZSmhWIMWGiXJ2ORb/mA5q8YFgSsxZFxjbQdlNR1r4upTjGZlItkqg6ghjLQ2jF3dHpIX75BsaAUeSEPk1p8nkN+LZaSkgR1T1bznd64Dbvc7AlYJf6F1aeqlxPfj3CfCtzyhZlg1R4ddaFzonDwkQrEhYwDrVYJHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ubuntu.com; spf=pass smtp.mailfrom=fe-bounces.ubuntu.com; dkim=pass (2048-bit key) header.d=ubuntu.com header.i=@ubuntu.com header.b=TaG+Azgd; arc=none smtp.client-ip=149.28.215.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ubuntu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.ubuntu.com
+	s=arc-20240116; t=1779835153; c=relaxed/simple;
+	bh=dQ6K9GZz1ihE8mqFaYgclXUtiyeYTS0M6BDxAmiVaTg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DjvctKnEAyTMkE7afxu9yEt2Lil1KUti3uxtXNnTLUFfdw19SWTQSWSNw5Olhn+yltzdBy6f6imikNRmyFco222HDX7HYZcfQ10sluWHGSIizDsQxLQbqBYNpf90JPOH3MSlaitLY9lBP+pbsAJcbVsRHO0dc+2xEASTIXiCtAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RnW0B3aG; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZxDxywdq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ubuntu.com header.i=@ubuntu.com header.b="TaG+Azgd"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ubuntu.com;
- h=In-Reply-To: References: Subject: Cc: To: From: Message-Id: Date:
- Content-Type: Content-Transfer-Encoding: Mime-Version; q=dns/txt;
- s=fe-953a8a3ca9; t=1779830639;
- bh=TLiaAaePJ0nS2kNrU35GiokBmFClWrieiPd16SmJ37s=;
- b=TaG+Azgd/rNjntfmKLGf/ltywOvCHq22V84x6ouAtvOOy6iis7NKx2JO6TuBpHf1QGlh21pEm
- FBACGK/T6Q5wDLzmdLDxGTm0A0+1wfg/Ypt4RrITaq5cY9p9IoPHuimY6MY1vLzbLolS9+KX/e6
- vO573FpXf7bEcZ/cqoF+SkGnZ9DMSqLCv9Yh6yn4Bhv+O41Imz1fK37lkPkOoyY7i0YtYSh8UHt
- +b6WbciIvUUbGrOKvivj5ZyhuLlvuSup+1azoBajdM6tblj2fQxjYx22suRBibizMkGjFdAibky
- xZFDM1jBp5KseUGtqQa8dxIRleXQyOQI06eirQOYriwg==
-X-Forward-Email-ID: 6a160cf098bf2b93c43882df
-X-Forward-Email-Sender: rfc822; jpeisach@ubuntu.com, smtp.forwardemail.net,
- 149.28.215.223
-X-Forward-Email-Version: 2.8.15
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RnW0B3aG";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZxDxywdq"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1779835151;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nTo+rj9jPpTZ6MzOUwsfpt4ByYvJX/zAd699vG59KFk=;
+	b=RnW0B3aGdvMQI4Ey2x0ycnR1gPvClDLCXVAiKyEMjjt/YsPbtNGmsonsAYB8cw/Rha/AKI
+	Ba+xcWxcfZ7A5zu6ICaB9JkYUGxgRwSPg9f2PaK2QpHwQ4oGhXsG6T4/zilP5fqt4MzXYk
+	WV/DfVsaIBS96u9wTvENjq7x8WBrLec=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-439-1n7inoM1Nw6RAQQMKeRn6w-1; Tue, 26 May 2026 18:39:09 -0400
+X-MC-Unique: 1n7inoM1Nw6RAQQMKeRn6w-1
+X-Mimecast-MFC-AGG-ID: 1n7inoM1Nw6RAQQMKeRn6w_1779835148
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-914af005f4cso691645985a.3
+        for <linux-clk@vger.kernel.org>; Tue, 26 May 2026 15:39:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1779835148; x=1780439948; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nTo+rj9jPpTZ6MzOUwsfpt4ByYvJX/zAd699vG59KFk=;
+        b=ZxDxywdq3hIB06j0Dw3OmpwLb25CtDkc4slKZ4nkBV9PFurMybudHafUnRLCWbbrpE
+         ETDuCQZfUQ81aMmYXUJv9oWcrWS83dAdZSqQLsiLMZwOH2DIshYqU51d7DWgVp/rOU1n
+         dDu0Y2GDfP1Vc6LxhZekE6fSst9TK4xv0twcHAZ/A/UvoICquTcEzq2d5qfuUoVQv0TL
+         VaK/yxN0XM0hZxQ0zt7lhHYrMF15JFJLPZtBTMhhLILAlZRfBLhrH8IBbaj6e2vjGNEl
+         lcRrFs6l2boKoDTEwWXU3dw/gEE/e9VRwxaMsCB1g95yRAKj9S4mdnEqWvIqe1a0l8EL
+         29xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779835148; x=1780439948;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=nTo+rj9jPpTZ6MzOUwsfpt4ByYvJX/zAd699vG59KFk=;
+        b=kE1KBm0PShwb+lliXUm72I691n5SuINqht8WNOBAScPbBI2DG1cJcktIOIg1W/YpPo
+         HbKVGJNYrrH3gTkgb57SsYRlLxTrmHnroHxcAsiXgq9VDTBT49a3+j0mtIt3zDDNIa6o
+         hf+DuJ1Y+44pNpO9AN2G5DD39dMiAEpSSrFSg+KqR2+WqRMzu3Vh/K9tScSVkvEdyAy+
+         2Jnt8CQQZlXdrdblLsXlY+cFXcvPugQBJSWhaQ6paNSX4qu3oNIL47S8AKmBAt4Gng/Z
+         PuZJ8wYkiQ56PYsiCiNN5A721J45YaK3bEX0Z6K67h3m+zjcYSWxz0SrZET7idFj7ecw
+         RScg==
+X-Forwarded-Encrypted: i=1; AFNElJ+3nGJKi5EUvpnJ6yPwKa5Uq7gWf9gFzU8SVmsTFmDCuXt7H+Y48zkqfO9TdhMEH77sbsjMH1fkGic=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTzfuawbI9wuc84ax1WiJfYK0q5AJtt5x40DPwLkNp04UaPiC2
+	oNnTc3Cf+OO5KHKcsDy5VFK4kWNQJCNYCG+py1DSPqhXNACn6QQNWLq1do48rB6hN7j+1WDVXcp
+	izvrEbh3u2QL/tvro5kb/4T02laEz4bemtIiGe876RYjvNGFk0xvvhumjxwaJZA==
+X-Gm-Gg: Acq92OEJt89u67kPFo/+E/w0zUMFiWsaKnVw/nJUGRaWpJgwYvjujN0K4ACzcFT81fg
+	M8vv+799K8O2KQBnLZc3ox3aGqKLUjXcV73ZkODzoOsbhjtZUzFr8GxDq7Mrph+c+eX7MPfC+xI
+	t9bClm2tIl3dldTiifvPhxEPvgU1CsEx038anGUMcM8er4PCfpgzHRyf+ru8jnr6slIiUG9JBhu
+	I8WmkBdF002HAZEcLDmKceM3+qTgbJWIA91bWowpfUwKQHjDOyIw6TseWMqWLwl4oJZSmqLmzkZ
+	xO5c8pm0/OdigS2FPCQY58n1FMmN6YD1RRP6Q6xTwgZ40aUtFvi3YwQc+za78Je0IfiZh4JPeAy
+	mHb6D6zJLh5FaG4dVzSRZRypejvlmqXJxSQ1CfsxeFDlXSTzff3lf5a2GIEojFYGfuhI=
+X-Received: by 2002:a05:620a:690f:b0:914:cad9:fa2b with SMTP id af79cd13be357-914cad9fac8mr1968269185a.55.1779835148467;
+        Tue, 26 May 2026 15:39:08 -0700 (PDT)
+X-Received: by 2002:a05:620a:690f:b0:914:cad9:fa2b with SMTP id af79cd13be357-914cad9fac8mr1968266585a.55.1779835148050;
+        Tue, 26 May 2026 15:39:08 -0700 (PDT)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-914f8713144sm314985185a.21.2026.05.26.15.39.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 May 2026 15:39:07 -0700 (PDT)
+Date: Tue, 26 May 2026 18:39:04 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: "Alexander A. Klimov" <grandmaster@al2klimov.de>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Jonas Jensen <jonas.jensen@gmail.com>,
+	Mike Turquette <mturquette@linaro.org>,
+	"moderated list:ARM/MOXA ART SOC" <linux-arm-kernel@lists.infradead.org>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: moxart: remove unused variables, fix refcount leak
+Message-ID: <ahYhCJ_ShikWTVc9@redhat.com>
+References: <20260526204227.23181-1-grandmaster@al2klimov.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8; format=Flowed
-Date: Tue, 26 May 2026 17:13:19 -0400
-Message-Id: <DISX2U1QNLUH.31OXTXE7F1C6X@ubuntu.com>
-From: "Joshua Peisach" <jpeisach@ubuntu.com>
-To: "John Stultz" <jstultz@google.com>, "Joshua Peisach"
- <jpeisach@ubuntu.com>
-Cc: <linux-kernel@vger.kernel.org>, "Thomas Gleixner" <tglx@kernel.org>,
- "Stephen Boyd" <sboyd@kernel.org>, <linux-clk@vger.kernel.org>
-Subject: Re: [RFC] Timekeeping for other planets
-X-Mailer: aerc 0.21.0
-References: <DISNUOIOA8JK.2K904WSZH2X9T@ubuntu.com>
- <CANDhNCq8W0tY4EMWo5987+CP_LJJ8f1FQrn8zGQvmLc0hTFCiA@mail.gmail.com>
-In-Reply-To: <CANDhNCq8W0tY4EMWo5987+CP_LJJ8f1FQrn8zGQvmLc0hTFCiA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260526204227.23181-1-grandmaster@al2klimov.de>
+User-Agent: Mutt/2.3.1 (2026-03-20)
 
-On Tue May 26, 2026 at 4:14 PM EDT, John Stultz wrote:
-> On Tue, May 26, 2026 at 6:59=E2=80=AFAM Joshua Peisach <jpeisach@ubuntu.c=
-om> wrote:
->>
->> For a while I've thought about timekeeping on other planets. If humans
->> ever make it to other planets, there will likely be other systems for
->> keeping track of time, because the length of a day is not the same
->> across all planets. Mars, for example, has a longer day than Earth.
->> There are some proposed systems for timekeeping on Mars, the most
->> interesting one being the Darian calendar system[1], but there are
->> things like "Mars Sol Date" and Coordinated Mars Time (MTC).
->>
->> So my internal, curious and enthusiastic personality lead me to try
->> making a C library that would try to handle time and date conversions
->> for other planets. But it actually gets quite difficult and confusing,
->> because (to save you the time and story) there ends up being "so what is
->> an Earth second and what is a Mars second"?
->>
->> Now that I've made some kernel contributions (I still consider myself a
->> newbie), I think about how there may actually be good reasons for trying
->> to handle non-Earth times in the kernel, compared to the silly people
->> like me having their timekeeping systems in userspace. For example,
->> things like log timestamps. A machine that is running Linux on another
->> planet (I know, it's ambitious, but humor me), will report events in
->> terms of seconds. But, that's in terms of Earth seconds. For humans, it
->> would make sense to use a time system that applies to Mars for its own
->> calendars. So if someone is reading the logs and they see "one million
->> seconds", how would they know exactly when the message occurred? One
->> million Earth seconds does not equate to one million Mars seconds.
->>
->> (I try not to think about the "how long is a second" thing..)
->>
->> My point is, if humans adopt timekeeping systems for other planets,
->> there may (or may not?) be a good reason for the kernel to keep track
->> of time outside of Earth.
->>
->> Now, I am being ambitious, very optimistic, and potentially delusional
->> for thinking that people would want to use other timekeeping systems in
->> other planets, and still have Linux be around in the far future, and
->> choose to have timekeeping in the kernel instead of in userspace. But,
->> I know I'm not the only person interested in this topic. There is NASA's
->> Mars24 Sunclock[2] which does track time in terms of hours, minutes and
->> seconds, but at the rate that it does on Mars.
->>
->> So, the problem: There is currently no way to handle or provide
->> timekeeping on other planets, aside from conversions. But maybe that
->> should only stay in userspace. The users affected: well, as of writing,
->> astronomers and space enthusiasts, looking to track events and time
->> using other planetary timekeeping systems and calendars.
->>
->> I admittedly don't know much about timekeeping in the kernel, but there
->> are functions for atomic time, which could actually get some use!
->
-> Appreciate your interest!  When adding functionality to the kernel, we
-> do have to ask what is the benefit gained from moving logic into the
-> kernel if it could otherwise be done from userland.  Logic we add to
-> the kernel that has uABI visibility requires indefinite maintenance,
-> potentially introduces bugs, etc. So there has to be a clear benefit
-> to do so.
->
+On Tue, May 26, 2026 at 10:42:26PM +0200, Alexander A. Klimov wrote:
+> Not only these error checks are redundand,
+> those of_clk_get() return values weren't cleaned up via clk_put().
+> 
+> Fixes: c7bb4fc16ead ("clk: add MOXA ART SoCs clock driver")
+> Signed-off-by: Alexander A. Klimov <grandmaster@al2klimov.de>
 
-I understand. Maybe I could try to do some benchmarking to determine if
-the time it takes to query the time is sufficient.
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
-> For the most part, timezone handling is already dealt with in
-> userland, so it seems like using CLOCK_TAI + similar userland handling
-> would be the a reasonable approach to what you want without having to
-> add more complexity to the kernel.
->
-> thanks
-> -john
+For the future: Include the version number (v2) on the subject, and include a
+changelog below the --- with what changed since the last version. You may want
+to consider using b4 since it'll help set this up for you. Plus it's a
+much improved contribution experience.
 
-This isn't just timezones (though there are timezones on Mars), the
-entire calendar system would have changed, and hence things like the
-length of a second would as well.
+https://b4.docs.kernel.org/en/latest/contributor/overview.html
 
-I actually watched Stephen's presentation earlier today about
-timekeeping in the kernel. If there was to be some "implementation",
-maybe it would have to be with changing that multiplier in the mult
-then shift function - but as you said, without a "clear benefit", no
-use at the moment.
+Brian
 
--Josh
