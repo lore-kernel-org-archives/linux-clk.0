@@ -1,243 +1,163 @@
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023119.outbound.protection.outlook.com [40.107.44.119])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4FF3D3332;
-	Tue, 26 May 2026 10:05:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.119
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779789909; cv=fail; b=IL/s4SgA9+ebRdDP2dFpdulvzLoPdtsWhCmYvniZHBhJmAov120hzZJwr154aRTa4mVAtvkabw2ns/tfGPqD7u2VKWlhBHlDLwsLAvOiEiK0tZ5hzVMhdMidbqPosZ+GAlLZgtpxQdHPsZAU2LLDNpR/EEs6/rwSiMNdTlUTHqY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779789909; c=relaxed/simple;
-	bh=gIMCloW4Iv7eJU31+gV98mhwv+QKn7LZEYg/VKuzVEM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Y2fRRf2X2Wxjy4WpO/sHEcnfYWiorIqsJLsToqkFUf9u+oKEyJDtMsJFlaO6b+GwM4k7/dRADCgLW4QGkP5cJN9/uNKqn4V4yU/opvmYQ+1HQu9pmUvJyuHsR/SiHNh51NU6p7M8y50x5qeWpH4Fq6sGKht/tST2v4F2Bxdvjw4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=Mmt65k0S; arc=fail smtp.client-ip=40.107.44.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B7133E2AC5
+	for <linux-clk@vger.kernel.org>; Tue, 26 May 2026 11:38:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779795531; cv=none; b=Ed5WuePO+qffKwFNG8aqeI9N3q2RdO9yN76Tlfujid82a1qQggOCMPd61ks16+FpmiRtVn5XASiexMUjzT22cH+eFWhQS6wU3VKFu6E0AAbxFHkCu9G+zGdsjE9mbFRh4IVnQCXTcsSK/lo+8fWTKdy1Ac4BWi+8YPD/gMveWLU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779795531; c=relaxed/simple;
+	bh=Y4EyEFYSbb/f+hsFEfhvNwUGVQsnvSEVf8ZkcHQkZEo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SD+XP4MzOabhak6lgDePdrcFiUfjDRHjxjC9PytL9vrFCmJ/lXiJpUTqJuGUuLJ00dgUyq3khB8pdr7A56LyHiySU3YZTMStKNBlKaXNMC7i3qfhLBOcdE+AhzA2KgRvli2mlbW8InBe301DFXr7zeh0Xqycm1patEZwDCF1+fY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nOIOhAeh; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=SfF5zEk+; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="Mmt65k0S"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QGPj9DHHKzMD00YbZ+2b6/j7nsIXlGKJO11SbOAHK9PJ1vq0dZsiNYYBTysRoYpvjpHosFux9NH0H9114hI59DThr2Qz+YFh9J+1hxlsEcTnMfNdXeRF/FJNoG/huHs67KryMm9EVz7m8Kx6tbH/EurEPAB2rJTpYYFcjtt4NCZpGMvTk2BGsLz+WQm1GcRwoxb4/vBFklLwiFezxKjfcFikW18aXiulR6iq45P8PHSoXGWM/gUWvAjc62Fi0jdZlQNuHeO4wM0MwrRB+Ib1aITomvvZ61mY4ESxVINFBGQbAzu/HlsDHBuQZ2Z47EtCqlLac+ZsqVXWEEaktwynwA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dx/aHakB5b67ZP7m5mxnQWU93moPDO1qqwjeqSIbUsk=;
- b=AKYmFdeKX5Ds3tN73fsupiNd1BryEMleNdJzzbq2Whe95AFgPHSAbl0Ffflq4lt+QwYZ4PQf/4S2UpQd0iSQUhAtVPCPsysj41PXp8ZByiY9JtFNNYDU1fcSipOcrJoipH0u6JSvZQ5MbZ+p5kJWo4JmpWRJ2ReARi4IppbdK5bnjk76z3agh4xQiXgB0UZyZFgkwkrstQW6Rmo8i8xi0A0jnxwMX4mKInFDquGALFClVI9mGDO9tKIIaCTvx5XgnDh65s9u7ihJ0Hv5Hdk7Kh5Pg++Ov9AfBjAyh6ETm4er+FUj61Otb0IUFy1Pj8C8H6tHiezwWN5SAvuYMqqgDw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dx/aHakB5b67ZP7m5mxnQWU93moPDO1qqwjeqSIbUsk=;
- b=Mmt65k0Sz4820ht85axiYq9NHQeOZgxGKJtrtRiy/oEIEmAFzgKGTUyz1O9xJfhRDtZ5jm9ZGy4doMZYYTTdrijntp2ApO5FJoMWrZJCrP3VG8ISqcw8zvNr1NHrYBx0b0CBauA/hExJCaU3UU0JUUG+NBP9r00iCDoEfO4LnXJn4f/Ri/Z60mGFRNltPsUOT0M1DysP56pk0dBmVW1NXBAKkdBVycB1c+kO4AP0dspPcLddAJZJdnwM74TLRjkGwXfNWPNz4es4jnPwcQnjXdlboeH6OodJa6RoyUuWEUt0etmYpcrnJYe/KyUoFXn9u9t+Q3m7iqd3hCoSazxVgw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from KL1PR03MB7149.apcprd03.prod.outlook.com (2603:1096:820:ca::7)
- by KL1PR03MB8305.apcprd03.prod.outlook.com (2603:1096:820:115::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.7; Tue, 26 May 2026
- 10:05:03 +0000
-Received: from KL1PR03MB7149.apcprd03.prod.outlook.com
- ([fe80::2f06:12a:fff0:6506]) by KL1PR03MB7149.apcprd03.prod.outlook.com
- ([fe80::2f06:12a:fff0:6506%5]) with mapi id 15.21.0071.005; Tue, 26 May 2026
- 10:05:03 +0000
-Message-ID: <13da0733-32cf-4923-a923-21e517d1594a@amlogic.com>
-Date: Tue, 26 May 2026 18:05:01 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/10] Add support for A9 family clock controller
-To: Jerome Brunet <jbrunet@baylibre.com>,
- Jian Hu via B4 Relay <devnull+jian.hu.amlogic.com@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
- Xianwei Zhao <xianwei.zhao@amlogic.com>, Kevin Hilman
- <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org
-References: <20260511-b4-a9_clk-v1-0-41cb4071b7c9@amlogic.com>
- <1jldd662x1.fsf@starbuckisacylon.baylibre.com>
-From: Jian Hu <jian.hu@amlogic.com>
-In-Reply-To: <1jldd662x1.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2PR02CA0131.apcprd02.prod.outlook.com
- (2603:1096:4:188::6) To KL1PR03MB7149.apcprd03.prod.outlook.com
- (2603:1096:820:ca::7)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nOIOhAeh";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="SfF5zEk+"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64Q6mSqe3263539
+	for <linux-clk@vger.kernel.org>; Tue, 26 May 2026 11:38:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	CHAu3B+RqoYdQwFHmyU/h5KRrBLinAR+rlG1dzIMfnc=; b=nOIOhAehciDL0r8X
+	yax84JZEqX9g+t2judWawswD2Uerl1ZRRmEoIDY3F49rDrIMpX+nQIJV036GH+UK
+	n9GPI+W0ZH9zTRySlJ8ihStHDQKr7wNUGGYtEG5QAo5zEe5BNxFrVstAjhMFQqhR
+	GGm9pMteCbYenttuAHge1wF1wJjOdE8MHm28ur5+tWpZ2oJqnv3w3VgCaFp1MvWk
+	m2knHSnGOsgJ3pN2y9eYgspWZftFMBlhzq2a+b0cZwuz1szHo+v6DGCCi7QujOX0
+	7ophqcMsUtW9GbcDsH29o0b8uBE+VcR+SavBsOc4M1ZdcZGUtsMxfpOIdCSyYvyM
+	zjqHUA==
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ecnhs48hb-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 26 May 2026 11:38:40 +0000 (GMT)
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-837cc5bc6deso6718403b3a.3
+        for <linux-clk@vger.kernel.org>; Tue, 26 May 2026 04:38:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1779795519; x=1780400319; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CHAu3B+RqoYdQwFHmyU/h5KRrBLinAR+rlG1dzIMfnc=;
+        b=SfF5zEk+Ij3OiSDNbYiE72+rsgNZCMhb+8dgr0sDzexKqhxcqmrv4uvyIs8zBxBkec
+         cWIvu533YXXpYUyYVcn68txSqMJxOUMC7LTLwSzXlUCLQGCoZ1WF/WU36cUnkO1B9CtT
+         lG3lnxvQQTD8EyiZrreYiiLRsMdqILuGkmWOw193y7+FHFrjV6BlREIyl7j6gFut6IW+
+         6Gl0yN31toRW1iJ0g0Gb7nLDgrt6DbZvReoXCR7PJMoirHJCDt+R7SyagIa2VI5zTPb0
+         xhIC7BAaqo0bMlZSZYWLfiCRihPiRq4sQ0AFnBqKsK9EmVmQOrebH1blpvl/LdrUVZtC
+         QPgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779795519; x=1780400319;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CHAu3B+RqoYdQwFHmyU/h5KRrBLinAR+rlG1dzIMfnc=;
+        b=kp2l+9j1zGwUGD4Wart0VyVkUb7qcwhUpzTV/uLqJmxpyKlY1AVeC2KOuSWJw15MMq
+         kSyn+PL2UucWYy2pn7Ai/BszJtbNYYChvm93WeiVQpa5PMliggtmg0nb3HNy3n6v2KgB
+         bRaP8tc/j2GAX7pSnkSUeIKSaiWxZ0V+7RqCqjt6TgUiXzCgv4HozoKtyuRgqqnoZfor
+         m40aOIYHJEEsBadS6IpkId55pD/NeA3YeN7lCl4qcVsZPBvMIrOQNX2cHiYmsI2BS4YQ
+         kCK/gBgfNX2ML/Nk9CXMOP+ClKPbBofxDHy+PT4zyJBLORMsyAjnODt6zB/5alR+DwIL
+         G59Q==
+X-Forwarded-Encrypted: i=1; AFNElJ84CGHJs9yHJtwMUTinz+EDIcWB+BeUscRO105saXs5kWC5YQxAdUTmY03r2CxssAt1wTlmJbG4b48=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyhyb/v4yM13mh8VCcAUEeMUA+fLgM9nR5aaRO7WWitheMBGRWj
+	diz2wzCOs3Twy+vhfRbP1cX/GnStFlpRQrX9Cr0vyYjzjK7oat1tM04RjVN+8eh/TcM9DY2ckax
+	fvm1Wz0ZbmPW3D6338wl5El1cFRMDld5TzUZPYCRLuNH1C6nHmlubJUwR3uZkV7Y=
+X-Gm-Gg: Acq92OHbb5vASVPYqwqs8DkfokwEUnMT93d3wFhSThYChlgLiLs5Yob82/iy2WVjY62
+	dX9tiu0juO27eSOqE/BDJutYkiTFlrlr3F2aI4K4OHOy80W2WDjBrDIubF74CNzIoVlIaReLs4N
+	8V4/PUz9RAjxGPG5Tnny+4XR9GLeCbBny61kTn37cePEW4MakOtMkDe1TtWOKQgLPFSslhOT/0Q
+	aEMV7tGhqwC6HqDtmRBMQChTyLGRCQLIOIdqqvi2NsxXGKNximIqroYhmHnsu7jHL3gqR0howMD
+	3zXEOS0n0xjhjreAyDiAF1z+efVooB91FP75N6Q4KR+jFnyJmHnpF2+wNHk5K7yXtGjdCvFJusO
+	+41v+9Nqi5bAuJKD+7liWTPv+d7vNULQEJ3iHw2o+mr+HcPLu
+X-Received: by 2002:a05:6a00:6b91:10b0:841:71fd:60c4 with SMTP id d2e1a72fcca58-84171fd649fmr10382861b3a.4.1779795519483;
+        Tue, 26 May 2026 04:38:39 -0700 (PDT)
+X-Received: by 2002:a05:6a00:6b91:10b0:841:71fd:60c4 with SMTP id d2e1a72fcca58-84171fd649fmr10382828b3a.4.1779795519008;
+        Tue, 26 May 2026 04:38:39 -0700 (PDT)
+Received: from [10.217.216.23] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84164af10b5sm11685360b3a.15.2026.05.26.04.38.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 May 2026 04:38:38 -0700 (PDT)
+Message-ID: <2140a893-8959-49d5-83e2-464ec79e0801@oss.qualcomm.com>
+Date: Tue, 26 May 2026 17:08:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR03MB7149:EE_|KL1PR03MB8305:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1c58434d-9a35-481b-39ff-08debb0e4177
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|22082099003|56012099003|18002099003|6133799003|11063799006|4143699003;
-X-Microsoft-Antispam-Message-Info:
-	AApCtd6baxP5EGPCeI2wgy5pVHQslXvU2ESYImQ/hWCXXUyfN8E6g6Li9go+QZryxWerNYEyh3xNrZAnCV5cXNn5GJdXEVg3bJUtPoWKGdZfmYPsU+188bdWF75cNzdbbTRy9oRqDdQZalD4mg33r9t4prbR2vl/Jcfe2qdAMGyfXdKf5pE/n0NuIHpa0oETHWuvNwnbpV6ebj+ipobQ+U22llieWXnsiOjOOYZKkM9he5GdKHPce9zYRTzU0gTkaitV0D8pLdgNApU+fYGTxgVE0gi3snj6jBt7IhZEUcZgr6UpareB3ip2DimZiCMBedyo0uOLbzQknkupwaeYQpKP8LFFt/OEHgOxf/iv0q0Q0A5t7sqBuwCKAR6EX0Lh40OEdLzuFVwCUuFTVS74lChVB6d49HAqR8SxS+00LHR672+vXSiRoInOSfL/szx9zTadPfLmf99uLgt22410dG3+joT5VI3n1QDvSrsPVtXjvJquEFJYV34gjpx8VCpstsCOtqUA5xR2skELa+W9JGP0VsGPV9kPaUH7ZqXVa6s2mKBnxhTjqBOJ+zouUHrTuo0iWDkGOy1ASwEl95jJ+GiaxG6DSIUIKXPrx1wa4y2prYhNLFCTfzi1gMEeknvjSi03ScDA7JEpcwdmaADs5rhGPmJ1O8Jzhkq2HhySEIKUOOSrUcNb6gPzVzhQA/Iv
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB7149.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(22082099003)(56012099003)(18002099003)(6133799003)(11063799006)(4143699003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eGRKWXBPY2M4dHRSVGRwWUpSbFppK2FvL040NU5UOXBCb3Jrek1XV0pUdXpZ?=
- =?utf-8?B?TUdYeUQzNGs1WGtVKzFiZWZUUWdUZUtzVmdnTHMrcGsxUDJkdjZ2NU9HYnp6?=
- =?utf-8?B?V3JFOW91U0xLK1FKRXI0blVXZ201TUNmenRGckFtQ3RXN0NycUhwS29QazVo?=
- =?utf-8?B?Uk1HK041cCtjbVZEMlpuclRZM2RDWTBtdk1jck9QM28wS2RoN0R5RFhlY1Qx?=
- =?utf-8?B?K1gveVEyYnJrM3RMQm5aU0FReXo5emI2ODF6ek5FY2RwY09Mdkl4eEF0b1ha?=
- =?utf-8?B?WGlFbWtLU3MzOS9Nbnc0UGxFOHRkME1URHhPRklRVGIyVHUyNTBGNmgzYURw?=
- =?utf-8?B?MzUzcmVLeHJkNXp0Q2hVWXFlNkpFYk1VR0w4ajNrejNCUzlsQU1rK1BoUmNM?=
- =?utf-8?B?SUVGUkZ0Uk1weXBTTGFDanFGcXpGTCtmejEvSFM0cnAxN2QvU3BtWHNyNmJv?=
- =?utf-8?B?azBrZmh6TURnZWJ1cC9jOUZNR0p3UzVWbHZQUWNoOE9TL3BmRlNaaGt6NzhL?=
- =?utf-8?B?dkxTQjhpdzFIc3Y4NTB6QTdDYUNxWElQNmdQZm44ZzdiZ2dKMTlGU3R6SUt1?=
- =?utf-8?B?RS9HSlhvRXJuQzZNWFlQS01qekxNNGk3OWxPbEVVK05ldzlzZkc5Rk9pVzRr?=
- =?utf-8?B?L0JXTzVoUDloNFhYNDZPUUszTVhJczZIejYrbitsN2hLY1VaUFBwV2FybGZP?=
- =?utf-8?B?ZWdXR0JvQ2lqaTJML1BCSmowOWtCbXJYMFQ0cEp2U2VxajBjU0FoL2NpR1Vm?=
- =?utf-8?B?aW1oRk5qQllteGxkdFpscHpqN1o1WEVWS0x4Rjl2eEpFYXUwVHY4V1RFM0tG?=
- =?utf-8?B?c21CZzcrZm5ZdERsMjBDQ0xlbnZuTXRVVUFER1NGem1uWExoYUo1R3BETmEz?=
- =?utf-8?B?R1Vqb0pKQTdyWEZVOU5QbFlhcHUwelhIK1JJSTNrSEVNTWI5T1JGcjlwdWlN?=
- =?utf-8?B?TUQ1RjRldXM3dGNtVmFZZmd6czJpTXVWVTRwQjRDaGR2a29zSGt5bXV6eE8z?=
- =?utf-8?B?R254a3NaS0Q2aWt3UlE5ZU9pU2lBSDhBaVJOanFOY2FSL1J4WDIyajkrYjA5?=
- =?utf-8?B?Q1piVVpyQzZiUnpMTXF3c01OVi92L3RZVlR2ZnlrL1NVcGh5MjVPTkY4cExi?=
- =?utf-8?B?dHVPK3FtbDNOM25WU3ZIRGFKUWZTd0ZiYVo3WjRKVHhNMGhaNUlpMDl3YkdM?=
- =?utf-8?B?VVIxZWsyd0FyRStQRkJMUkJKUGd3UmZhZFJpR2ZVL0V0UEJQYmNWRU0xMmdt?=
- =?utf-8?B?bmJrWFJCZG5wZGpobS8vUlNua1BiUzM1RmcwczVMa2s5Z2ttaEpiS3pJVUtj?=
- =?utf-8?B?NEgyRm1uSHY5TmM5ckNRWTRETXZyT1hQZUFjdXRneEJWWHBPV2lRbG9STmhH?=
- =?utf-8?B?ZkhaWnZJc1RnTEhCMUVTYTlaOW9GQllzWCt0Z2ZmK2ZIU0RiVHpwWUFpMFJL?=
- =?utf-8?B?VW5NY2llVnZ0U0RRQU1nUldHK041SmtTN1hzdGYycU5uY3BQT1I4eDc5V1BM?=
- =?utf-8?B?TURySmhrTTdMcTlqZEVrNCtHRFBaVElGWXBrV2FhK0tyV2pqU21WemFVQ3NY?=
- =?utf-8?B?Q2k0bkRvb2JPVnNjYmovL1ZWcTNwUFRzTmg4a1dwMi84SlNVNUg1cXcra1ZN?=
- =?utf-8?B?U1kycnFzWW1rQW02d1VaQ0hjc1JidG9hc2RBb0c2NUovZlpXeDNBTDI5SmRY?=
- =?utf-8?B?UVhXN2tWZHRDK00wb2MwdWJNTG8xK0tPZmdIRVJzeDhEMnNvT1NtUEZ2dzkz?=
- =?utf-8?B?NnpWZUVEOTljSXJLU2dZRGRpV2dNaU82RnJKMTBvUERlRFdMUW5RSEo1MkEz?=
- =?utf-8?B?RzM0YnppOCtpVlk5SlhLSWE0NldOQ1EyVWVLMkFBZ1FTOERsZDJxY3BBVmZo?=
- =?utf-8?B?bjRVbmtVbkFJWFQ1OHhVRjR5bnROV3B5YlpsR3JSU1o3MXlVMGlNMGVsVmZY?=
- =?utf-8?B?VE5EbUN3dDBibEpMcmRnT2EwS0o5MTNGRFdNSXhaeFhUVmJlQWpPZXNTYVNL?=
- =?utf-8?B?MExqMkh4dXJ3b2E2aEtBTTdKeTNQRlloa2RHRVY5SzdRTDJhUTRyN1duYVEr?=
- =?utf-8?B?THhBUFRSZHpGMHQwYkhVeFFFUUZnNE4vclR1a1pYbTVUdm13Q2ZkdlFnY3do?=
- =?utf-8?B?RnNNTkg0Sm1McElyYjNaK2k1dUZQREJwcUFjbWVJUnB4YnU2SkNoQWUrMi9M?=
- =?utf-8?B?dHYyakdldUwvUisrM09TNVliTnlJRDVGcFZkdHdOYUZubUFFVGJTWmJoT1V0?=
- =?utf-8?B?STVBK0ViV09wcjFwL1RjVGgvQzIyTHZycjFWdFN5MnFSU0tOWHZqVit1T3Fx?=
- =?utf-8?B?MFNoZmp5Qi85Sy9sL2lkd3BLTHlybWlZV2drbnRLOU5nNG1MbUF5Zz09?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1c58434d-9a35-481b-39ff-08debb0e4177
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB7149.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 May 2026 10:05:03.6568
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7rZl+wUA3ZMmpm5GqFJMwGripan8sfLMhlyEhuHt7flIDW8vKPehyAdFsdxuI0RQ5Nvh/qywZJVttGTa1c7zSg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR03MB8305
-
-On 5/26/2026 3:33 PM, Jerome Brunet wrote:
-> [ EXTERNAL EMAIL ]
->
-> On lun. 11 mai 2026 at 20:47, Jian Hu via B4 Relay <devnull+jian.hu.amlogic.com@kernel.org> wrote:
->
->> There are 4 clock controllers in A9 SoC:
->> - SCMI clock controller: these clocks are managed by the
->>    Trusted Firmware-A(TF-A) and handled through SCMI.
->> - PLL clock controller.
->> - peripheral clock controller.
->> - AO clock controller.
->>
->> There are reserved register regions placed between individual PLLs, so a
->> separate driver is implemented for each PLL, similar to T7.
->>
->> Compared to previous SoCs PLLs, the A9 PLL controller introduces 4 new features:
->> 1.PLL l_detect signal supports active-high configuration.
->>    Previous A7 and T7 l_detect signals are active-low.
->> 2.PLL reset signal supports active-low configuration.
->>    Previous reset signals are active-high.
->> 3.Support POWER_OF_TWO for the PLL pre-divider N;
->>    the N pre-divider follows the same calculation rule as OD.
->> 4.The PLL input path includes an inherent divide-by-2 divider.
->>
->> Implement the first three features in clk-pll.c (verified on A9 and T7),
->> with no impact to PLL logic on existing SoCs. Add a fixed divide-by-2 to
->> A9 PLL driver for the fourth feature.
->>
->> A9 PLL is composed as follows:
->>
->>                         PLL
->>            +---------------------------------+
->>            |                                 |
->>            |             +--+                |
->>     in/2 >>---[ /2^N ]-->|  |      +-----+   |
->>            |             |  |------| DCO |----->> out
->>            |  +--------->|  |      +--v--+   |
->>            |  |          +--+         |      |
->>            |  |                       |      |
->>            |  +--[ *(M + (F/Fmax) ]<--+      |
->>            |                                 |
->>            +---------------------------------+
->>
->>    out = in / 2  * (m + frac / frac_max) / 2^n
->>
->> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
->> ---
->> Jian Hu (10):
->>        dt-bindings: clock: Add Amlogic A9 SCMI clock controller
->>        dt-bindings: clock: Add Amlogic A9 PLL clock controller
->>        dt-bindings: clock: Add Amlogic A9 peripherals clock controller
->>        dt-bindings: clock: Add Amlogic A9 AO clock controller
->>        clk: amlogic: PLL l_detect signal supports active-high configuration
->>        clk: amlogic: PLL reset signal supports active-low configuration
->>        clk: amlogic: Support POWER_OF_TWO for PLL pre-divider
->>        clk: amlogic: Add A9 PLL clock controller driver
->>        clk: amlogic: Add A9 peripherals clock controller driver
->>        clk: amlogic: Add A9 AO clock controller driver
->>
->>   .../bindings/clock/amlogic,a9-aoclkc.yaml          |   76 +
->>   .../clock/amlogic,a9-peripherals-clkc.yaml         |  150 ++
->>   .../bindings/clock/amlogic,a9-pll-clkc.yaml        |  110 +
->>   drivers/clk/meson/Kconfig                          |   28 +
->>   drivers/clk/meson/Makefile                         |    2 +
->>   drivers/clk/meson/a9-aoclk.c                       |  494 +++++
->>   drivers/clk/meson/a9-peripherals.c                 | 2317 ++++++++++++++++++++
->>   drivers/clk/meson/a9-pll.c                         |  831 +++++++
->>   drivers/clk/meson/clk-pll.c                        |   79 +-
->>   drivers/clk/meson/clk-pll.h                        |    6 +
->>   include/dt-bindings/clock/amlogic,a9-aoclkc.h      |   76 +
->>   .../clock/amlogic,a9-peripherals-clkc.h            |  352 +++
->>   include/dt-bindings/clock/amlogic,a9-pll-clkc.h    |   55 +
->>   include/dt-bindings/clock/amlogic,a9-scmi-clkc.h   |   51 +
->>   14 files changed, 4609 insertions(+), 18 deletions(-)
-> For the next version, please split things up.
-> There is no hard dependency between the different controllers. This will
-> ease the review.
->
-> The PLL controllers are bringing a new contraints in. The global/static
-> nature of the controllers is something that has been bothering me for a
-> while but there was no real reason to address it so far. Please give me
-> some time to think about. Feel free to re-post the other controllers in the
-> meantime.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 6/7] clk: qcom: camcc: Add support for camera clock
+ controller for Eliza
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Luca Weiss <luca.weiss@fairphone.com>,
+        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+References: <20260525-eliza_mm_cc_v2-v5-0-a1d125619a5a@oss.qualcomm.com>
+ <20260525-eliza_mm_cc_v2-v5-6-a1d125619a5a@oss.qualcomm.com>
+ <lbixqj4cgausikhelm3iq5kamgmxf6ibhv67p6aya3fyqpdck5@ygy2yzntbo35>
+Content-Language: en-US
+From: Taniya Das <taniya.das@oss.qualcomm.com>
+In-Reply-To: <lbixqj4cgausikhelm3iq5kamgmxf6ibhv67p6aya3fyqpdck5@ygy2yzntbo35>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=Vd3H+lp9 c=1 sm=1 tr=0 ts=6a158640 cx=c_pps
+ a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
+ a=StVILoaL_uWnGg5ebB4A:9 a=QEXdDO2ut3YA:10 a=IoOABgeZipijB_acs4fv:22
+X-Proofpoint-GUID: Pqj9HlK2mYuP7KwiiZEsRa0WAdN_NlRc
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTI2MDEwMSBTYWx0ZWRfX1W+j90vUqelw
+ Hj+7NFkRbq76bmKFxd0NRAVcyRluaTnX2A0lMbAyzIWTjb6VrCpgzM/2pJ5o+KkskiFLbxvHjW7
+ Y43mt1ANLXnpCs/dQBALL66nht0wEj2DTC0FqkjX0hGE8pGUYpCBQ7Z6+I38ZckMwybM+RdZUXp
+ +GCSk5nFVCwD8VUw9ldXsNCGXtbSfrK26nqWn95uYXwgAO5JmktQhLGm4gCZ6deKLmu0XXhPgd+
+ AXoNpLBj8hq/kFvYfYdnO176+D3UUQZYVGLt0FzeaQmGRwmXUvGOb67NZJv53F8vDeteWigbKIC
+ Fk/wFrAEnCAy1Av0I8R0OVGRnPssR5CBgBl7dDtnsL4t/q4sM0TPDxTYoRb7oaPjtAFuBBCH0ou
+ 2k2+E98WT415bKAQLfMblKHShIHRcGoHib0Xn+rYueA81ULYDpGEYU/PTM/aQWXvDHoQbnm4aus
+ Lc+MSLHADn5lHt6zCvw==
+X-Proofpoint-ORIG-GUID: Pqj9HlK2mYuP7KwiiZEsRa0WAdN_NlRc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-05-26_02,2026-05-26_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 suspectscore=0 malwarescore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 phishscore=0 adultscore=0 priorityscore=1501 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2605130000 definitions=main-2605260101
 
 
-Ok. I will split the series and re-post the SCMI, peripherals, and aoclk
 
-controllers separately.
+On 5/25/2026 4:42 PM, Dmitry Baryshkov wrote:
+> The camcc and cambistmclkccc drivers looks pretty close to SM8750,
+> except for using a different PLLs. Would it make sense to have common
+> drivers instead?
 
+Dmitry, on Eliza, CAMCC and CAMBISTMCLKCC are powered by the CX and MX
+rails, whereas on SM8750 they use the MMCX and MXC rails. The PLL
+types/configurations differ across the two platforms and the frequencies
+across rcgs are also updated.
 
-Best regards,
+Due to these differences in power domains, PLLs and frequency plans
+update reusing the SM8750 drivers for Eliza was not considered.
 
-
-Jian
-
->> ---
->> base-commit: ca89c88bcf69daca829044c638a8163d5ce47af0
->> change-id: 20260511-b4-a9_clk-67652c1ae56e
->>
->> Best regards,
-> --
-> Jerome
-
+-- 
+Thanks,
+Taniya Das
 
