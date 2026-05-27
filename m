@@ -1,238 +1,258 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C86A33D6D2
-	for <linux-clk@vger.kernel.org>; Wed, 27 May 2026 14:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B4C36D51E
+	for <linux-clk@vger.kernel.org>; Wed, 27 May 2026 15:09:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779891789; cv=none; b=f8A8qoeLPJQF8UwRZChsw1qlCBOKypoF+KFoFPT3KsT/eFfZtLhPGOO/oJIUKinPaC4fh16hCy3LhrcepDov2dULG49xN/o2cHvmA5O9AeCGFtxP17YARiyhX+deyt8PpleB/6bMePi8Gaxj/PE9nP0pa612pqrB+EhKm+9yypE=
+	t=1779894587; cv=none; b=na/toryUbJ1tPxjy/jJ+R8qIEfXltzOb2W3V/epJga3Y3FdkSoFUorVMBa9kfr+t7DlAGUrG2EtSNugk2i/LnjvGaNP5Z/iae6Bsg7MvJT7EErnEmA4dhIThNSM49JBcH10FfyNbUSsqSOdJqV62TlnyvpGzo4U/eoN0Q2IwdHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779891789; c=relaxed/simple;
-	bh=+3l+6y9ewRC4AXsaL+0Jmm/WnR4XE92YiTVGpA0ishE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tudKnneNbN79RJgaG2+iYDps43nIipfzGycF4QyD2Q5gzzhirCY1GPKDKgxzOFosMd+JDQhZxh9zjK2WuHlvP4A+uND2o74FhJUOZOXHWmXGIYXFyAlhM87/vFXr1ufjhGb/K5bOMtGdyJJgj0qzhitpK6Lt+ArkmD7H8eGIp7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-bdb3eb93e20so1096991566b.0
-        for <linux-clk@vger.kernel.org>; Wed, 27 May 2026 07:23:07 -0700 (PDT)
+	s=arc-20240116; t=1779894587; c=relaxed/simple;
+	bh=+XdeolksbaozResEhfrTpQeKUsa1AH2ofVxlbfYrZfM=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=SQduZdQQYzEijFO+iUBuvX/aA746MAXvPR55AsZxqVK7oSg6FPgw6j2vkt90FSFRzrmkNqN7vRqArAFcX0qLuxuQRua02mgkfO/V/P9lnaZJGvfqEc9IMlyOJtO9riCEZJxfDG+ojv4S1/9eigyr9rFEKSn7KgoItuTUh9FDX4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VU0HqmB+; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=SPGzbDCz; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VU0HqmB+";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="SPGzbDCz"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64R8mXHh1176613
+	for <linux-clk@vger.kernel.org>; Wed, 27 May 2026 15:09:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ufMpfNyxnplHu867LBcoTwXEhS7HS0xoMB7D0cXK4Ko=; b=VU0HqmB+22HdnLmS
+	aG0oxzVe+S0LRW8Bn5GH/DecXErIcy5Kgza6RStdgEaSh0fe6u/9F0fuppObKRPy
+	jX6TOxh+yciQeXCp43Q3EHCxqH9Kzn7amzXbaRJN5OSd1hEY9k1KYrqxCXZ2i8Wh
+	jV4iJdj5UI/QKqF513y5Ax4Br3N10SMpdfvv6IWFousNnyD2W7e9lR4bKm1d+ki1
+	SPtoJmz1DQaoOV7+dtbbf5HHxYHdgkGBFAq7gczOV4CbcEraEAKVGCJqWVcE5XpM
+	GZTyHfHnL+RSR1c0/+uj0IFcnq1yfR/i9qxkuTtnM4TK/LAglfaj3KMYoc0GEosR
+	HjMsTA==
+Received: from mail-vk1-f200.google.com (mail-vk1-f200.google.com [209.85.221.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4edndnk45j-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Wed, 27 May 2026 15:09:44 +0000 (GMT)
+Received: by mail-vk1-f200.google.com with SMTP id 71dfb90a1353d-5752c4a82ebso9602090e0c.3
+        for <linux-clk@vger.kernel.org>; Wed, 27 May 2026 08:09:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1779894584; x=1780499384; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ufMpfNyxnplHu867LBcoTwXEhS7HS0xoMB7D0cXK4Ko=;
+        b=SPGzbDCzZ0lEzRBvdrq+iIp3onRQyvFTqQ5O4ZV6i5BQtAvPrcRjW/ZTQX79FmXhFk
+         bONv9P6UQ/opWaiVSP/E60sG96EDlrSDRFz90fsZhE6UJCzD0j89CtZ8UE6dhipzuzy9
+         UuZ/+IlQwTEFHfZNWZ60J3EUJbQNlcPYfOWx60nbpWGaEKh9FyFDiVBWV/yt536CZ91I
+         jDAkpA/7aTLCB294EQfuHqEcI0I8QiWnp5QwRuL+Pxa4EN+ZuiQLaLWSCM7tGQSWyI1v
+         a8fMgncImy558K89aXU+ZXfGnO1nBKnpKZAGEwH1UPEy3lse1+k9OUCqw0irdZm85tvn
+         X9CQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779891786; x=1780496586;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c3prSOuZ3fI29cRYCO/JPEKU1fRK4LWYePkpcpuj9ak=;
-        b=fl0XicnGQIMIdvUsmphezsBTGwALtfOIdGRaWO/QDZc5D1BdVSffbwWB5z88bur0+5
-         dAyCJelWnhEMTDxDgvNZg7qKir/j4w6gnZvxLlu+yXSkhoLkSOkeUBrXmPxTR+aU8S3Q
-         4IreiUBUtv3PjnSjoXZmvgVOZqsCBOQUJ71uz3AE3RkW585KEHwKN0iKuzzUVnHz1VHN
-         aNzciDRn3K0V9TlRYmTtomhIjBg0A91QFdx9Potk+du7zFwgX5wy3LMspxQuuZXWPg3J
-         5dURwM8Jro8DXpBHNcav2gIZSVNWtxMwAkv+nKIpBhz0ZtxyQHDacLwlTn56UQYydqVS
-         6tsg==
-X-Forwarded-Encrypted: i=1; AFNElJ9YXjQnWrIEHO1IoC/AzCq3RdrJC+AOHNCuZfnJa1bIctFqdOObU8XW/98WhjUJSMcHWaSEEXUJixI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybCsRgQ/XhB78swV3OMazOXgrz2FHQksKOmWrOBI/4rvk9FFID
-	c9zYF+BlCAdSIjAXgx3u0Ox/tujeKsoMh56FiGs0f7QdwVQXikcVS6tuaSTj8WzRMVM=
-X-Gm-Gg: Acq92OFjyWKfIr7MefiG6n3R6XK9+Ap1HiyIEsptC2+/yAO96aTB0tDv/1ahjsuxfoB
-	fsVg9LTZNPDI1ENpZ6FDYVtWJQqhJFI6+9bOE7Jx2j7y/o1ujrquRrFdptz5zcIhBHg5Ee7mD3u
-	cz0mO/X90dVmnheIjWRvYhOzMvJ+eXqMZn2d4gwbM734Mcxp9ChguUHZ+WRcEtj/5OoRBhJ8vCR
-	W6aYuaYe6iKKl/1HpOXuJpDt3Y8/4H6C7DyEjmZlmcoX58jDj1tWnroFyEe+3QOxlkYT2prQJ59
-	C84sZcCM7dRcp7DHiVW8CGi1PzYinDcMseaIelJqbTjeRAdZiJX7cAjkEi/scd23Ni1KmwgwdUK
-	cF1FGpttdJBPX74Tm81lynqBY1JBDNIyAr6GTS9FfdNcwjqZf0cXOLQJBEhUmB+ML0nS0wbEZLG
-	GdOER7DEq1LlaSvkTSPfghAoUKjeN4qId+YvuUNDssGehM9FAoJxtKdTFxPG3rF8E6+Kubr28=
-X-Received: by 2002:a17:906:9c9:b0:bcb:d9c7:c6f with SMTP id a640c23a62f3a-bdd22a454a7mr999400066b.7.1779891786319;
-        Wed, 27 May 2026 07:23:06 -0700 (PDT)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com. [209.85.218.47])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-68a6fb4115csm817655a12.30.2026.05.27.07.23.03
-        for <linux-clk@vger.kernel.org>
+        d=1e100.net; s=20251104; t=1779894584; x=1780499384;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ufMpfNyxnplHu867LBcoTwXEhS7HS0xoMB7D0cXK4Ko=;
+        b=rTDLgDCbi0XFG5l9Ro9A5h2LRxaQcyjl5at8JwX9woPnNC2G8SUNBVcM0CXXC3U54l
+         j42ABcm8bG7zegA9ojPmQChRnswXXAQQ0zjHMFCKPIEm8hwzTfFctHk3pAdcKyArMZF5
+         sVAE+T6CIS/Ko2QpN6f5rtxpo5zThFiT6HhK/kNaspvEqFs5SJUjSINJWJ7/o9PGD5Oq
+         a0RinwMn+rxucqwRnvQ6G31yzrJ9vQZPX9WETupXRU2CXsFYvz72z3ceEWhOJGlah7po
+         OYxDzsqYq97Ix1sJ9/kzISi4wqpT/BisqVf6nObp+Np0+OnozF/sC0lXKNkNVEme6v/M
+         svMQ==
+X-Forwarded-Encrypted: i=1; AFNElJ/02blpOLwPxYreeGvk+a2m5s7HNxIODArytY2mDejDAp5vlrH2d8LooJI5jid2WdagzPkU1aRDfI0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3YP7uDIxLNr/EKL6QOaeGkTP2FfdjcYKbiTTedj5rlSnGoHe+
+	2yJIfEh0+YIJR8BxRcezVYchun7DpK1YIISyZWk+MDIhIuS3IBzf1S3HVi47Rikw8aHoCUWl9Pp
+	EDREgFczwXS6mUtFKqCuMSM3ZgqczJ4PKaDLbpUPmyZKdfW1zx9WAfnNOxOdz3hQ=
+X-Gm-Gg: Acq92OG095jnBDRYuuOO6LeYEeJ2rQSa4aMy2gzSjHW8fy3Q3//52gIW31ysXyAW0jv
+	P82qRxd/7lt1dWMLUIggsaDJg2WxqDosyRFa31r8zxlZXo5EG7eFyKYZFhZ8xXJnXj7+j0j0DEa
+	M+dzimtviaUOz97/fM8QEpQFahha7/35K5c5kOMtKnazzEIkPUpdOHOQFhQ9f8ZcZqHT1tmtMer
+	aAgY3vdwMrmFoiJ6u17Vwyv/lNIQj93n0WYPCleKh9sBTH7ZL7JbeNwoziiHx0Dy7pzjdiC8LF5
+	lXBq5qDRgsB477S3EVMwzKgnTRigi+ANcQiy8J9AR7sS3yW1yg2rRCkFHiCBLxNZA0SPlzFgo1+
+	Bmrz+M9TNgHdvm+IL03ZUO7iZwMQbed5veGRPkmthkvsCLr+nmXqFg2faCzGJVImCsz8bZdEVDf
+	HPHXSnaj/wNWTSSgvQil1+hNDdrltgzylh8vVoQG7B5hqY6bzSR/PC+R9OwiGL+pxVPoZjL1BNu
+	tQdEGs77sbVbSRIkoW2w2P6iS4=
+X-Received: by 2002:a05:6122:a0b:b0:56f:2aaa:450c with SMTP id 71dfb90a1353d-5865e4a60f4mr11772647e0c.1.1779894583862;
+        Wed, 27 May 2026 08:09:43 -0700 (PDT)
+X-Received: by 2002:a05:6122:a0b:b0:56f:2aaa:450c with SMTP id 71dfb90a1353d-5865e4a60f4mr11772589e0c.1.1779894583407;
+        Wed, 27 May 2026 08:09:43 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-68a6faadb8fsm893905a12.6.2026.05.27.08.09.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 May 2026 07:23:04 -0700 (PDT)
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-bdb3eb93e20so1096983766b.0
-        for <linux-clk@vger.kernel.org>; Wed, 27 May 2026 07:23:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ/a9ORVmnxrJUHUuxh6HGlvHibhBmYXAV7ja37MkHyxIZ9HbuitOOUoL/RUsfa4wR2OvI+wFKxf40w=@vger.kernel.org
-X-Received: by 2002:a17:906:9c9:b0:bcb:d9c7:c6f with SMTP id
- a640c23a62f3a-bdd22a454a7mr999392966b.7.1779891783475; Wed, 27 May 2026
- 07:23:03 -0700 (PDT)
+        Wed, 27 May 2026 08:09:41 -0700 (PDT)
+Message-ID: <4f34c957-817d-45fe-ac13-02b98e77f010@oss.qualcomm.com>
+Date: Wed, 27 May 2026 17:09:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260525110603.4018170-1-john.madieu.xa@bp.renesas.com> <20260525110603.4018170-5-john.madieu.xa@bp.renesas.com>
-In-Reply-To: <20260525110603.4018170-5-john.madieu.xa@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 27 May 2026 16:22:50 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXj8o+K5M+t_D-G_CGRGYgc1jBz0z21ye6UhAzWs0iJ8g@mail.gmail.com>
-X-Gm-Features: AVHnY4KJG1smVEhyqmGQ6O4ZxxblTfhIdfIGaVVy0daiVThaQXAOe2q8bvr14ho
-Message-ID: <CAMuHMdXj8o+K5M+t_D-G_CGRGYgc1jBz0z21ye6UhAzWs0iJ8g@mail.gmail.com>
-Subject: Re: [PATCH v4 4/8] arm64: dts: renesas: r9a09g047: Add RZ/G3E Sound support
-To: John Madieu <john.madieu.xa@bp.renesas.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
-	bmasney@redhat.com, prabhakar.mahadev-lad.rj@bp.renesas.com, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	biju.das.jz@bp.renesas.com, john.madieu@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+From: Hans de Goede <johannes.goede@oss.qualcomm.com>
+Subject: Re: [PATCH 0/3] clk: Add __clk_disable_unprepare_counts_only() and
+ use this in simple[fb|drm]
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Helge Deller <deller@gmx.de>, Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Rob Clark <robin.clark@oss.qualcomm.com>, linux-clk@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, ~postmarketos/upstreaming@lists.sr.ht
+References: <20260527094811.116977-1-johannes.goede@oss.qualcomm.com>
+ <20260527-flawless-chowchow-of-fruition-edbe8a@houat>
+ <496facc4-60bc-4646-b426-30e7ac545d9f@oss.qualcomm.com>
+ <20260527-armored-spiked-jacamar-0bb19e@houat>
+Content-Language: en-US, nl
+In-Reply-To: <20260527-armored-spiked-jacamar-0bb19e@houat>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=PpSjqQM3 c=1 sm=1 tr=0 ts=6a170938 cx=c_pps
+ a=wuOIiItHwq1biOnFUQQHKA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22 a=VwQbUJbxAAAA:8
+ a=vTr9H3xdAAAA:8 a=eS7AplsvlCe1A2W4UzQA:9 a=QEXdDO2ut3YA:10
+ a=XD7yVLdPMpWraOa8Un9W:22
+X-Proofpoint-ORIG-GUID: 0LMeCcvrLdy-kc7IOm6PYI5bG6e1T_Ve
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTI3MDE1MCBTYWx0ZWRfX508cVq0TxGcG
+ AlTOmcCLUHHTNtj2Y1UDrhAcB6dbLP/4Xq5LTnWVTWVmbtG4S8Zv3d3f0yKJpyZCMq4Xgel3sZ4
+ t0r5S/idnIATueAgseYWLTCzav5Ifi5mgMf68ZURcRR7XQVqYXRjW4PGl2PRoIxtZbUmCnsgPUJ
+ E2d08EX6bEPzpSJAPeeL/u3A1gRHyyZUli+iCM9/bFOjsJ0j4jghY0Hk0MI8V0Ow+WYOfNnmsnI
+ 1FZBcbUuBWiuhxdcLQ8lw5MhZfZYgPKbSFFW2O2eqADe4Kxp/ogX+iOoGdXJ/ZZWJ7DI6dFvom9
+ zH4IH/doxQGT4dHFiW9NK3nMjnB68dhGRHRh13c4sdbOjItORN4n7U/Sn4iVKbFAsR7rOm24iBy
+ bMK4sPuyueuoxUtls1IwNgJpbv7PR7w/8/lWEbGJyFAJGMCHfOBgP1M305yvhflUFNGZBZeQpE1
+ yAvxDkkl1q+RRrakumQ==
+X-Proofpoint-GUID: 0LMeCcvrLdy-kc7IOm6PYI5bG6e1T_Ve
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-05-27_02,2026-05-26_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 priorityscore=1501 malwarescore=0 suspectscore=0 clxscore=1015
+ adultscore=0 phishscore=0 impostorscore=0 lowpriorityscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2605130000 definitions=main-2605270150
 
-Hi John,
+Hi Maxime,
 
-On Mon, 25 May 2026 at 13:07, John Madieu <john.madieu.xa@bp.renesas.com> wrote:
-> Add the snd_rzg3e node for the RZ/G3E SoC with all sub-components:
->
-> - SSI (Serial Sound Interface) units 0-9
-> - SSIU (Serial Sound Interface Unit) units 0-27
-> - SRC (Sample Rate Converter) units 0-9
-> - CTU (Channel Transfer Unit) units 0-7
-> - DVC (Digital Volume Control) units 0-1
-> - MIX (Mixer) units 0-1
->
-> Sub-node names follow the new RZ/G3E sound binding: unprefixed
-> 'ssi', 'ssiu', 'src', 'dvc', 'mix', 'ctu' wrapper nodes instead of
-> the legacy 'rcar_sound,xxx' R-Car prefix.
->
-> Wire up all 5 DMA controllers (dmac0-dmac4) for each audio sub-node
-> with repeated channel names, so that the DMA core can pick the first
-> available controller.
->
-> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
-> ---
->
-> Changes:
->
-> v4:
->  - Rename the indexed clock-names and reset-names from the dotted
->    form (ssi.N, src.N, adg.ssi.N, clk_a, clk_b, clk_c, clk_i) to the
->    hyphenated form (ssi-N, src-N, adg-ssi-N, audio-clka, audio-clkb,
->    audio-clkc, audio-clki), matching the new RZ/G3E sound binding.
->  - Rename the sub-nodes from the legacy rcar_sound,{ctu,dvc,mix,src,
->    ssi,ssiu} prefix to the unprefixed ctu/dvc/mix/src/ssi/ssiu names
->    used by the new RZ/G3E sound binding.
->  - Reorder the clocks and resets phandle lists into ascending index
->    order and annotate each entry with a per-line comment naming the
->    clock / reset.
->  - Drop the #sound-dai-cells and #clock-cells explanatory comment
->    blocks from the node.
->  - Align the continuation lines of the dmas property.
->  - Fix the commit message: the node label is snd_rzg3e (v3 referred
->    to it as rzg3e_sound), and add a paragraph noting the unprefixed
->    sub-node names.
+On 27-May-26 14:48, Maxime Ripard wrote:
+> On Wed, May 27, 2026 at 02:21:50PM +0200, Hans de Goede wrote:
+>>>> clk_prepare_enable() is fine, the clocks are already on so no
+>>>> ordering worries and it ensures that the clocks and their parents cannot
+>>>> get turned off by incrementing their enable, prepare and protect counts.
+>>>>
+>>>> clk_disable_unprepare() is a problem though since it actually turns the
+>>>> clocks off. Instead something is needed which only decrements those counts.
+>>>>
+>>>> This series introduces a new clk-core function called
+>>>> __clk_disable_unprepare_counts_only() (1) which does just that. Prefixed
+>>>> with '__' to indicate that normally drivers should not use this.
+>>>>
+>>>> Michael, Stephen sorry for needing to add a new clk-core function for this,
+>>>> but I see no other way of solving this (2)(3). The changes are not that
+>>>> big / not too bad.
+>>>>
+>>>> I've also considered making __clk_disable_unprepare_counts_only() implement
+>>>> all the logic itself instead of adding the extra parameter to
+>>>> clk_core_unprepare() and clk_core_disable() but that leads in duplicating
+>>>> quite a bit of logic (4) so this seems better.
+>>>>
+>>>> The other 2 patches just replace the clk_disable_unprepare() calls in
+>>>> the simple[fb|drm] driver with the new helper.
+>>>>
+>>>> This series fixes the display not coming up after switching to the msm
+>>>> driver when a simple-framebuffer node with clocks listed is used.
+>>>>
+>>>> 1) I'm open to changing the name, this is the best I could come up with.
+>>>>
+>>>> 2) One option considered was detaching the simple-framebuffer driver later,
+>>>>    after the real display driver has had a chance to claim the clocks. But
+>>>>    this won't work in cases where the real display driver picks different
+>>>>    parent clocks then the boot firmware did and needs to reparent clocks.
+>>>>
+>>>>    Basically the goal is for things to behave as if the simple-framebuffer
+>>>>    driver was not there at all, because that leaves the hw in the state
+>>>>    the real display driver expects.
+>>>
+>>> So I know it's not really what you had in mind, but if you are only
+>>> concerned about the transition from the bootloader to the DRM driver,
+>>> then I think supporting the following work would help:
+>>>
+>>> https://lore.kernel.org/r/20260423-drm-state-readout-v2-0-8549f87cb978@kernel.org
+>>>
+>>> With that series, we can build the initial KMS state from the hardware
+>>> state, which means that if you were to change the resolution at boot, it
+>>> would be executed just like any mode change in KMS.
+>>
+>> Hmm, so your suggestion would be to have the initial KMS driver probe()
+>> only do a read back without touching anything. Then claim clks matching
+>> the read back config and then only release the simple* driver and thus
+>> the clocks after this?
+> 
+> Almost. Part of the call to drm_mode_config_create_initial_state() if
+> needed to make it grab its resources. See atomic_install_state in that
+> series. So probe wouldn't have anything more to do.
+> 
+>> That is certainly an interesting proposal but IMHO almost orthogonal
+>> to this one (1).
+> 
+> Why do you think it's orthogonal?
+> It would completely fix your problem.
 
-Thanks for the update!
+AFAICT in its current version it does not contain a mechanism to
+delay the remove conflicting framebuffer call, so no it does not
+fix my problem.
 
-> --- a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-> @@ -912,6 +912,482 @@ rsci9: serial@12803000 {
->                         status = "disabled";
->                 };
->
-> +               snd_rzg3e: sound@13c00000 {
-> +                       compatible = "renesas,r9a09g047-sound";
-> +                       reg = <0 0x13c00000 0 0x10000>, /* SCU */
-> +                             <0 0x13c20000 0 0x10000>, /* ADG */
-> +                             <0 0x13c30000 0 0x1000>,  /* SSIU */
-> +                             <0 0x13c31000 0 0x1F000>, /* SSI */
-> +                             <0 0x13c50000 0 0x10000>; /* Audio DMAC peri peri */
-> +                       reg-names = "scu", "adg", "ssiu", "ssi", "audmapp";
-> +                       clocks = <&cpg CPG_MOD 245>,    /* ssi-all */
-> +                                <&cpg CPG_MOD 385>,    /* ssi-0 */
-> +                                <&cpg CPG_MOD 386>,    /* ssi-1 */
-> +                                <&cpg CPG_MOD 387>,    /* ssi-2 */
-> +                                <&cpg CPG_MOD 388>,    /* ssi-3 */
-> +                                <&cpg CPG_MOD 389>,    /* ssi-4 */
-> +                                <&cpg CPG_MOD 390>,    /* ssi-5 */
-> +                                <&cpg CPG_MOD 391>,    /* ssi-6 */
-> +                                <&cpg CPG_MOD 392>,    /* ssi-7 */
-> +                                <&cpg CPG_MOD 393>,    /* ssi-8 */
-> +                                <&cpg CPG_MOD 394>,    /* ssi-9 */
-> +                                <&cpg CPG_MOD 372>,    /* src-0 */
-> +                                <&cpg CPG_MOD 373>,    /* src-1 */
-> +                                <&cpg CPG_MOD 374>,    /* src-2 */
-> +                                <&cpg CPG_MOD 375>,    /* src-3 */
-> +                                <&cpg CPG_MOD 376>,    /* src-4 */
-> +                                <&cpg CPG_MOD 377>,    /* src-5 */
-> +                                <&cpg CPG_MOD 378>,    /* src-6 */
-> +                                <&cpg CPG_MOD 379>,    /* src-7 */
-> +                                <&cpg CPG_MOD 380>,    /* src-8 */
-> +                                <&cpg CPG_MOD 381>,    /* src-9 */
-> +                                <&cpg CPG_MOD 370>,    /* mix-0 */
-> +                                <&cpg CPG_MOD 371>,    /* mix-1 */
-> +                                <&cpg CPG_MOD 370>,    /* ctu-0 */
-> +                                <&cpg CPG_MOD 371>,    /* ctu-1 */
-> +                                <&cpg CPG_MOD 368>,    /* dvc-0 */
-> +                                <&cpg CPG_MOD 369>,    /* dvc-1 */
-> +                                <&cpg CPG_MOD 251>,    /* audio-clka */
-> +                                <&cpg CPG_MOD 252>,    /* audio-clkb */
-> +                                <&cpg CPG_MOD 253>,    /* audio-clkc */
-> +                                <&cpg CPG_MOD 250>,    /* audio-clki */
-> +                                <&cpg CPG_MOD 384>,    /* ssif_supply */
-> +                                <&cpg CPG_MOD 246>,    /* scu */
-> +                                <&cpg CPG_MOD 247>,    /* scu_x2 */
-> +                                <&cpg CPG_MOD 382>,    /* scu_supply */
-> +                                <&cpg CPG_MOD 352>,    /* adg-ssi-0 */
-> +                                <&cpg CPG_MOD 353>,    /* adg-ssi-1 */
-> +                                <&cpg CPG_MOD 354>,    /* adg-ssi-2 */
-> +                                <&cpg CPG_MOD 355>,    /* adg-ssi-3 */
-> +                                <&cpg CPG_MOD 356>,    /* adg-ssi-4 */
-> +                                <&cpg CPG_MOD 357>,    /* adg-ssi-5 */
-> +                                <&cpg CPG_MOD 358>,    /* adg-ssi-6 */
-> +                                <&cpg CPG_MOD 359>,    /* adg-ssi-7 */
-> +                                <&cpg CPG_MOD 360>,    /* adg-ssi-8 */
-> +                                <&cpg CPG_MOD 361>,    /* adg-ssi-9 */
-> +                                <&cpg CPG_MOD 248>,    /* audmapp */
-> +                                <&cpg CPG_MOD 249>;    /* adg */
+>> Even if it may fix the issue in the end, it seems that that work is
+>> still quite a way from going upstream
+> 
+> It's likely to be merged in the next few weeks.
+> 
+>> and even then initially it only potentially fixes this for the TIDSS
+>> driver since that solution needs a lot of per driver work.
+> 
+> I mean, yeah, but the good thing is that you only have one driver to
+> care about, right?
 
-Please drop these comments...
+I would prefer my proposed KISS solution, which works everywhere, over
+your quite complex solution which requires complex per driver changes.
 
-> +                       clock-names = "ssi-all",
-> +                                     "ssi-0", "ssi-1", "ssi-2",
-> +                                     "ssi-3", "ssi-4", "ssi-5",
-> +                                     "ssi-6", "ssi-7", "ssi-8", "ssi-9",
-> +                                     "src-0", "src-1", "src-2",
-> +                                     "src-3", "src-4", "src-5",
-> +                                     "src-6", "src-7", "src-8", "src-9",
-> +                                     "mix-0", "mix-1",
-> +                                     "ctu-0", "ctu-1",
-> +                                     "dvc-0", "dvc-1",
-> +                                     "audio-clka", "audio-clkb",
-> +                                     "audio-clkc", "audio-clki",
-> +                                     "ssif_supply",
-> +                                     "scu", "scu_x2", "scu_supply",
-> +                                     "adg-ssi-0", "adg-ssi-1",
-> +                                     "adg-ssi-2", "adg-ssi-3",
-> +                                     "adg-ssi-4", "adg-ssi-5",
-> +                                     "adg-ssi-6", "adg-ssi-7",
-> +                                     "adg-ssi-8", "adg-ssi-9",
-> +                                     "audmapp", "adg";
+When I was still working on:
 
-... as clock-names already serves this purpose.
+https://fedoraproject.org/wiki/Changes/FlickerFreeBoot
+
+I needed to constantly fix i915 fastset support and when I stopped
+fixing it due to -ENOTIME it pretty much was broken most of the time.
+
+Last time I check modern (Alderlake +) laptops never had working
+fastset support and there always is a visible most set on newer
+laptop models because of this.
+
+This state-readback stuff is quite complicated, as the list of
+known issues in your cover-letter shows. I wish you all the best
+with it, but I really do not see this as a good alternative for
+fixing the issues *this* series tries to address given the huge
+disparity in complexity between the 2 fixes.
+
+I'm also worried that the readback stuff is likely going to be fragile
+so might end up being disabled or automatically detect some issue and
+disable itself at which point we're back to having the original
+problem this series tries to fix.
+
+Also atm AFAIK there are no plans to add state readback support to
+msm and there are a lot of other higher priority items to work on.
+
+###
+
+Anyways since your patch-series will not work for msm in its
+current state, I would still very much like to hear from the clock
+maintainers what they think of the approach suggested here.
+
+Regards,
+
+Hans
 
 
-> +                       power-domains = <&cpg>;
-> +                       resets = <&cpg 225>,    /* ssi-all */
-> +                                <&cpg 226>, <&cpg 227>, <&cpg 228>,
-> +                                <&cpg 229>, <&cpg 230>, <&cpg 231>,
-> +                                <&cpg 232>, <&cpg 233>, <&cpg 234>,
-> +                                <&cpg 235>,
-> +                                <&cpg 236>,    /* scu */
-> +                                <&cpg 238>,    /* adg */
-> +                                <&cpg 237>;    /* audmapp */
-> +                       reset-names = "ssi-all",
-> +                                     "ssi-0", "ssi-1", "ssi-2",
-> +                                     "ssi-3", "ssi-4", "ssi-5",
-> +                                     "ssi-6", "ssi-7", "ssi-8", "ssi-9",
-> +                                     "scu", "adg", "audmapp";
-
-Same for resets and reset-names.
-
-> +                       status = "disabled";
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
