@@ -1,93 +1,97 @@
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD073D1CDB
-	for <linux-clk@vger.kernel.org>; Wed, 27 May 2026 12:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3860E410D1E
+	for <linux-clk@vger.kernel.org>; Wed, 27 May 2026 13:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779886319; cv=none; b=TLYcILjtoefDONQD7aNj/6IpngmmQ4F5BNWkeQkMCBw7ZIDfU/XJd0NDVt6SyZNxeOKmQEGUWbXQ7T4at2VZ+aoHrqtSy9SxJtS6QR7Cthk11pN+hCC7Ao6Q3UvcH7RQy7uW2olcVByI7y/C0wXvvJXTsQdliP9ouxyMPC60uSA=
+	t=1779888920; cv=none; b=s5xaCKgE8e1usaDAIK7ZciFvHZIV+ud2SC9fUwGsspxTNbRfevvGJ/fK/iDs37+KTRtGpV1otVZEwR9Vp96qOibSrwEjCg/ZmumYZ8j1xwkNdhN6tdSYPZnogI7+6WWolbSwaHeJd+MWHH9RGFJIX+673gLFwN/9/BD4nG9mtOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779886319; c=relaxed/simple;
-	bh=kqktGqpqwvczwM0VR2SPhNu80C/+HjpMr/FFlTiSoeI=;
+	s=arc-20240116; t=1779888920; c=relaxed/simple;
+	bh=mEcrfUMvusxTikKtH8K1dnfTNnQJfa+aFYGiWe/y/NM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QvHUtGb3Z5CcpGTkS6Ym1A3mgJRz8FwVKEOLk9Symg3GhdvIKJPZQDQ/FLcWOajVmd+vg5/DkeKxCGFUyLEeXrsYQj++kSSLAyDwhm/SKgi+psu2bFpRrvCS5+TSJXEW07oExDJEr3QfP9oiy0SB0Em7kDQFsurhMpZRd7O4YJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.51
+	 To:Cc:Content-Type; b=ZQ8/yTuwV5g66+2fsNRu/zPrTJxzbyNkFQS1Vyu/O5VaxyHULFt3DXXgpMHcebyO5B/z0Vq18iDpEVjG3024FEYtCc2c7iOoRFwH4hr4wCtnpBNvX6KeN3wLCT8LnuOw27ObdZRfYUNZ6zacgGgRI0kX7cgNIMK2UZOMcpDNO2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-7e615efd7d7so3839998a34.2
-        for <linux-clk@vger.kernel.org>; Wed, 27 May 2026 05:51:57 -0700 (PDT)
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-5751a9020faso8703919e0c.1
+        for <linux-clk@vger.kernel.org>; Wed, 27 May 2026 06:35:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779886317; x=1780491117;
+        d=1e100.net; s=20251104; t=1779888916; x=1780493716;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vxoZNqOSzYfBwMiwQrf9ojD/Y5NqNn7W22JpIB2VCXQ=;
-        b=TC6NbTBbvwn9/TYcxNx/c04IfceFyHSyIFnMT+12tsyLN010YLmXCQvCFbLxIO248f
-         WRhOEU1KSJREgofMeJ+O5KlGebY8DGE+kEVnBdV802bPdq5NoSurosJAlxp956TLtCGd
-         PP+kitWnEfEtWU6YLObDwSp9HqX4Kkx0d58RFurC1uHAr6SPAMZ2C5aVKQZOOkZjM+nB
-         4/iddOlMzQBdoRM1s9e4ib9lcgCr90lmDvNA6o8RRfgTBPKG7d4zOFcx4qFAV/Ei4fM2
-         +yz5jZ821942mLDYBy0LSZoEKgIDfa8h/L8jQhHh/av1IDdS4qm4cOmCweor/AHzfjnM
-         Facw==
-X-Forwarded-Encrypted: i=1; AFNElJ+YVuVSS0fnIyfJfLye7dbnJ2f6UnkJvpz8huLPS67KVmuaXEz/D3/79u5sREGMsSwbkG8WDMEdmFQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4hsyZYWTpkO3nlNae2oI27E0QubxuAxqvyRIfsdtylE6Hr1K6
-	h9lOA4jzMf/4o6c/6MW95rjXBr1kfBnnw19OG9Zm7AWeSSfUdfqL0fAHfKg6SU/sCk4=
-X-Gm-Gg: Acq92OH0rkmSI5J2gnJ6XeSpipcmICmCvwUQkOI4feuG55deEj/rGtbS/8EtrwAM46D
-	hdRLahadTJi+UD1gC/Os/t/FZKuKCRDrBCmHVLdP35kwax1dec8CfJ2Em1LrrXpu3qgy6M6u8OF
-	h8e5s8yQ7kDta1UJbboTVBZ7VKASoufJV2lps91XJCZRtdh6Ri+azqEHtyalR2hWqoRGO6ppmFA
-	oW6tCXRg1DJz8zJY6Dwc2p0MpteeD8efBCKopV1sznyOxqdKHCAzzlsUA40riqzHVzKjZgjT+nV
-	fvQGrtHpTLu4Wki+NhWrsTOlH9CluAv0cLwsOXpX/ltQoKXGVICm6AGswhdS4FmgEjWESjRTrs5
-	5ovZWQPKdOvcGaVvQFc1j2FveM/7OifeIcRrW3d4+GPhJ6JIvOL1W6iK53bUf8ea7TSgtuJh5Np
-	jmaBlZcmPIuFexN96vblWfijbKSMlWKPWYHBWl2Ej66395fPBeMT6dVvwm5jbVYlut2hp/B2k=
-X-Received: by 2002:a05:6830:6007:b0:7dc:d0e3:5bc1 with SMTP id 46e09a7af769-7e5feeb9b5bmr13646342a34.13.1779886317080;
-        Wed, 27 May 2026 05:51:57 -0700 (PDT)
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com. [209.85.160.48])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7e60648257csm11513158a34.9.2026.05.27.05.51.56
+        bh=bNs9y+loQ3B7k+4+DTGFYd+r0HnydJFAxPOIKSPX9Cg=;
+        b=Tni4UEPtfyQetgLEu2ptdi6OK0MED2XY2c6iW1frKMcNE6kzzC//Jhp+vxFyh3g448
+         OM6VKGkHQQIQBMJ+HOj+dvv76pOYpaLcNsvVkk840HPJAK5/sYhraa4X6gGpsIE4Ogu6
+         S1X2lDDoZkoANPqRqgv6Ca4pgbqW0rHg/iSeOTfUweF7MY5UVZOdkkNB/FWLqn57PGMl
+         8mGHI9LbN6pq9xmf3HWedmrMiBhtl/jukCZJyzskf7mJuyzTaqK1tGrAkp16KQyjAglL
+         Hyz0JXPM/0uWSYZKVV3JzJpD159MHsmv3SSgAwIy1uOTwl+5wstFkYB/0DYDQc8LSHY8
+         VL0g==
+X-Forwarded-Encrypted: i=1; AFNElJ9+0ctD2O4FkMqLMXn3mIYz8nT+IWtdLLWOZIQpi1uAqRKY+IWvgRiHahMYswHaqjguoYQuPBhe0pg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEoWF4mrZQlgmzcPC1HBkvcIlmU9kYaZlyngd1VYfPI6DmXvpI
+	JtGVrtTcquqxnvhu134cAnPejbkWGI0G+V32h2hBtJcu1aXVmBWOE3bzCkQQMJ+NxRM=
+X-Gm-Gg: Acq92OFwmVEXfsBFtvyPn08TgiMJ5tvZdGuj+eEz8pXUYgSP7M1A4mMaUGJHjBAEn+1
+	6Fv5oii09VZyuMrfo0CcyfLDDUYFM5C9tEiHj7B1C8oMoUpCnMo4I/xb76DPKStiLXarw1cNWRi
+	IEs+UVe9aeeKYyqjwA9vTwhm2AjY+gIT1bme0SbJPrKgCq2l39/CzSYo4XSknjaeCV8U3+JY88u
+	3gOYzyCKIkRIMOfcQzpe9mnSgwzjALmZQ2TIIx3YQ6S9QznGDT6riBKcKKIFjYzOg3IB2gkiokC
+	iOboHEinXp+3GrDYlaU+gaPHOD2UspM7EcN2HTUHU+p5D2jELoXo8oLe8P2R51+wgw3cUxeV48X
+	8emtEHn60vCZpbV6W8cOi4VKNpVziSm1sadqBFvcf0rRa1Tb5I++wUBK12umDkWQDs2RcdvQjy3
+	SX3ZBT8WnKEBCbQ/DrgSJw4jrWC4nDO7GhB9jkVYuupPG1tWQ9LeOY21FOvFg3
+X-Received: by 2002:a05:6122:459a:b0:575:178f:62d2 with SMTP id 71dfb90a1353d-58664224614mr11602068e0c.14.1779888915850;
+        Wed, 27 May 2026 06:35:15 -0700 (PDT)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-586f8f6cd40sm21275855e0c.16.2026.05.27.06.35.00
         for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 May 2026 05:51:56 -0700 (PDT)
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-439acb393f7so12937742fac.1
-        for <linux-clk@vger.kernel.org>; Wed, 27 May 2026 05:51:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ9tr3WQm2JBaqifYATFmBQ0oz7/agl+VaK3bmPbAXEAju+X0xwZNF8hLHHJxob9l5PBU28prcTgllM=@vger.kernel.org
-X-Received: by 2002:a05:6122:2203:b0:56e:e80c:bb25 with SMTP id
- 71dfb90a1353d-586649efacfmr12944471e0c.13.1779885965769; Wed, 27 May 2026
- 05:46:05 -0700 (PDT)
+        Wed, 27 May 2026 06:35:11 -0700 (PDT)
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-95d0476492bso8607886241.2
+        for <linux-clk@vger.kernel.org>; Wed, 27 May 2026 06:35:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ9i7+nwEXRHdtOuMKWha7WEt7n/hM84AqhmH+nI89cFpTa0XLkdxblkUUq+TijDAYlYfEhx0++AFhY=@vger.kernel.org
+X-Received: by 2002:a05:6122:32c5:b0:575:2ac3:4166 with SMTP id
+ 71dfb90a1353d-5865fdf6488mr11991906e0c.6.1779888899429; Wed, 27 May 2026
+ 06:34:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260525110603.4018170-1-john.madieu.xa@bp.renesas.com> <20260525110603.4018170-2-john.madieu.xa@bp.renesas.com>
-In-Reply-To: <20260525110603.4018170-2-john.madieu.xa@bp.renesas.com>
+References: <20260515-rcar-du-dsc-v3-0-164157820498@ideasonboard.com> <20260515-rcar-du-dsc-v3-1-164157820498@ideasonboard.com>
+In-Reply-To: <20260515-rcar-du-dsc-v3-1-164157820498@ideasonboard.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 27 May 2026 14:45:54 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUqiHE06_pw3dJ00f30ohSuT_Hv_k7SoK9bACeDqE6i0A@mail.gmail.com>
-X-Gm-Features: AVHnY4LUPp8GTEwUz2koHfZTdHXj-kQ8ZH0SWOlUn5c1woQCDpOdaxSIe2lwISM
-Message-ID: <CAMuHMdUqiHE06_pw3dJ00f30ohSuT_Hv_k7SoK9bACeDqE6i0A@mail.gmail.com>
-Subject: Re: [PATCH v4 1/8] dt-bindings: clock: renesas: Add audio clock
- inputs for RZ/V2H family
-To: John Madieu <john.madieu.xa@bp.renesas.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
-	bmasney@redhat.com, prabhakar.mahadev-lad.rj@bp.renesas.com, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	biju.das.jz@bp.renesas.com, john.madieu@gmail.com
+Date: Wed, 27 May 2026 15:34:48 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXQ5TDEx1Qj+3_LAGLrgNkiYxADkDox70pApZUtbam9Jw@mail.gmail.com>
+X-Gm-Features: AVHnY4JU-pRdfRlPcY6GhkzF7rJsa1sewBAKfT1mHVG-dL_G2g5Q1LYyK6-SKY8
+Message-ID: <CAMuHMdXQ5TDEx1Qj+3_LAGLrgNkiYxADkDox70pApZUtbam9Jw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/7] clk: renesas: r8a779g0: Add DSC clock
+To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Marek Vasut <marek.vasut+renesas@mailbox.org>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 25 May 2026 at 13:07, John Madieu <john.madieu.xa@bp.renesas.com> wrote:
-> RZ/V2H, RZ/V2N, and RZ/G3E support two optional external audio clock
-> inputs (AUDIO_CLKB and AUDIO_CLKC) that can be used by the Audio Clock
-> Generator (ADG) to derive internal audio clocks. The third ADG input
-> (AUDIO_CLKA) is fed internally by the AUDIO_EXTAL pin and does not need
-> a separate binding entry.
+On Fri, 15 May 2026 at 11:10, Tomi Valkeinen
+<tomi.valkeinen+renesas@ideasonboard.com> wrote:
+> From: Marek Vasut <marek.vasut+renesas@mailbox.org>
 >
-> Update the bindings to allow these optional clocks for all RZ/V2H family
-> SoCs.
+> Add the DSC module clock for Renesas R-Car V4H (R8A779G0) SoC.
 >
-> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v7.2.
 
 Gr{oetje,eeting}s,
 
