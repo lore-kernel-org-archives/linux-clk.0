@@ -1,172 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEDB5286A7
-	for <linux-clk@vger.kernel.org>; Wed, 27 May 2026 12:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD073D1CDB
+	for <linux-clk@vger.kernel.org>; Wed, 27 May 2026 12:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779886112; cv=none; b=dq8trGExOmzBVLbv6u94NpJQfGKY60SCCSmrc2kQuUAlDWKsaNOevg4cxz4pSRgI/QduGZPe9kamcRDX7PWXaB7ZjcfYsjugLBwkhKV8RPE7kCB2c/Ltoqo4hKvFctnp7nn6dYIpmozGutGLOvA93KA6uqJH1PHiybmFe6OpJKw=
+	t=1779886319; cv=none; b=TLYcILjtoefDONQD7aNj/6IpngmmQ4F5BNWkeQkMCBw7ZIDfU/XJd0NDVt6SyZNxeOKmQEGUWbXQ7T4at2VZ+aoHrqtSy9SxJtS6QR7Cthk11pN+hCC7Ao6Q3UvcH7RQy7uW2olcVByI7y/C0wXvvJXTsQdliP9ouxyMPC60uSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779886112; c=relaxed/simple;
-	bh=8Apa7Y0FdlJU1i1mnoA8SScteyA31i6BTihhq84RXE4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HWpEeTVQNaqCbElHubyz4btcyPmJDiqkdjfPB0nbwS1cex+dLTHJS6BExUy0MqJbLuww2H+V3S9O3JkGwdvMR2F+9CYww/SdBVXpcMCVtP02iMTNqWDUy4kxEbctUG3mmiWg1g05FB54oOgtAZWJ7J1DaZYLNAg7KrTXVE8iFMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Aeva639t; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aeva639t"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F34AA1F000E9;
-	Wed, 27 May 2026 12:48:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779886111;
-	bh=LeF8K1xqorIXJChfv3Pk+hYMvvkdRA8TxlyqfuR9Qp0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Aeva639tIDZSmxsPM9nT6oAFbfyTXXiigvfj/oVj9B72igEU7hm3KO7Uhh4tsVOQ4
-	 Pq+r1rpeBjXw8GKIuNybJ2P66gyLEAi5tk7pYgLwLRqPOeea4F8+Mzl3l4LXRIcYNB
-	 zJ8vzxSaMFt7NolsYEi9FuFPCXfW5R+L+GPCuBU9MqTuBZfgQiSmB7nZeR65XN7H+V
-	 uUnAJl7aAH4S+aUqApP8CJ7Wp0Z2T3Ycobpg3HeWFVlfabR87sLHVZzxBvoXQeaMYg
-	 h8M7oNpDQ1hZF8aeq+vBC7XcWRnaVJr+zY6D8teYG5Z3omPFW48/CmLnUhB4xsgthD
-	 ThSmebN02rMbw==
-Date: Wed, 27 May 2026 14:48:28 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Hans de Goede <johannes.goede@oss.qualcomm.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Javier Martinez Canillas <javierm@redhat.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Helge Deller <deller@gmx.de>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Rob Clark <robin.clark@oss.qualcomm.com>, linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH 0/3] clk: Add __clk_disable_unprepare_counts_only() and
- use this in simple[fb|drm]
-Message-ID: <20260527-armored-spiked-jacamar-0bb19e@houat>
-References: <20260527094811.116977-1-johannes.goede@oss.qualcomm.com>
- <20260527-flawless-chowchow-of-fruition-edbe8a@houat>
- <496facc4-60bc-4646-b426-30e7ac545d9f@oss.qualcomm.com>
+	s=arc-20240116; t=1779886319; c=relaxed/simple;
+	bh=kqktGqpqwvczwM0VR2SPhNu80C/+HjpMr/FFlTiSoeI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QvHUtGb3Z5CcpGTkS6Ym1A3mgJRz8FwVKEOLk9Symg3GhdvIKJPZQDQ/FLcWOajVmd+vg5/DkeKxCGFUyLEeXrsYQj++kSSLAyDwhm/SKgi+psu2bFpRrvCS5+TSJXEW07oExDJEr3QfP9oiy0SB0Em7kDQFsurhMpZRd7O4YJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-7e615efd7d7so3839998a34.2
+        for <linux-clk@vger.kernel.org>; Wed, 27 May 2026 05:51:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779886317; x=1780491117;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vxoZNqOSzYfBwMiwQrf9ojD/Y5NqNn7W22JpIB2VCXQ=;
+        b=TC6NbTBbvwn9/TYcxNx/c04IfceFyHSyIFnMT+12tsyLN010YLmXCQvCFbLxIO248f
+         WRhOEU1KSJREgofMeJ+O5KlGebY8DGE+kEVnBdV802bPdq5NoSurosJAlxp956TLtCGd
+         PP+kitWnEfEtWU6YLObDwSp9HqX4Kkx0d58RFurC1uHAr6SPAMZ2C5aVKQZOOkZjM+nB
+         4/iddOlMzQBdoRM1s9e4ib9lcgCr90lmDvNA6o8RRfgTBPKG7d4zOFcx4qFAV/Ei4fM2
+         +yz5jZ821942mLDYBy0LSZoEKgIDfa8h/L8jQhHh/av1IDdS4qm4cOmCweor/AHzfjnM
+         Facw==
+X-Forwarded-Encrypted: i=1; AFNElJ+YVuVSS0fnIyfJfLye7dbnJ2f6UnkJvpz8huLPS67KVmuaXEz/D3/79u5sREGMsSwbkG8WDMEdmFQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4hsyZYWTpkO3nlNae2oI27E0QubxuAxqvyRIfsdtylE6Hr1K6
+	h9lOA4jzMf/4o6c/6MW95rjXBr1kfBnnw19OG9Zm7AWeSSfUdfqL0fAHfKg6SU/sCk4=
+X-Gm-Gg: Acq92OH0rkmSI5J2gnJ6XeSpipcmICmCvwUQkOI4feuG55deEj/rGtbS/8EtrwAM46D
+	hdRLahadTJi+UD1gC/Os/t/FZKuKCRDrBCmHVLdP35kwax1dec8CfJ2Em1LrrXpu3qgy6M6u8OF
+	h8e5s8yQ7kDta1UJbboTVBZ7VKASoufJV2lps91XJCZRtdh6Ri+azqEHtyalR2hWqoRGO6ppmFA
+	oW6tCXRg1DJz8zJY6Dwc2p0MpteeD8efBCKopV1sznyOxqdKHCAzzlsUA40riqzHVzKjZgjT+nV
+	fvQGrtHpTLu4Wki+NhWrsTOlH9CluAv0cLwsOXpX/ltQoKXGVICm6AGswhdS4FmgEjWESjRTrs5
+	5ovZWQPKdOvcGaVvQFc1j2FveM/7OifeIcRrW3d4+GPhJ6JIvOL1W6iK53bUf8ea7TSgtuJh5Np
+	jmaBlZcmPIuFexN96vblWfijbKSMlWKPWYHBWl2Ej66395fPBeMT6dVvwm5jbVYlut2hp/B2k=
+X-Received: by 2002:a05:6830:6007:b0:7dc:d0e3:5bc1 with SMTP id 46e09a7af769-7e5feeb9b5bmr13646342a34.13.1779886317080;
+        Wed, 27 May 2026 05:51:57 -0700 (PDT)
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com. [209.85.160.48])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7e60648257csm11513158a34.9.2026.05.27.05.51.56
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 May 2026 05:51:56 -0700 (PDT)
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-439acb393f7so12937742fac.1
+        for <linux-clk@vger.kernel.org>; Wed, 27 May 2026 05:51:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ9tr3WQm2JBaqifYATFmBQ0oz7/agl+VaK3bmPbAXEAju+X0xwZNF8hLHHJxob9l5PBU28prcTgllM=@vger.kernel.org
+X-Received: by 2002:a05:6122:2203:b0:56e:e80c:bb25 with SMTP id
+ 71dfb90a1353d-586649efacfmr12944471e0c.13.1779885965769; Wed, 27 May 2026
+ 05:46:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="ymi3fo6ezsefbz5n"
-Content-Disposition: inline
-In-Reply-To: <496facc4-60bc-4646-b426-30e7ac545d9f@oss.qualcomm.com>
+References: <20260525110603.4018170-1-john.madieu.xa@bp.renesas.com> <20260525110603.4018170-2-john.madieu.xa@bp.renesas.com>
+In-Reply-To: <20260525110603.4018170-2-john.madieu.xa@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 27 May 2026 14:45:54 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUqiHE06_pw3dJ00f30ohSuT_Hv_k7SoK9bACeDqE6i0A@mail.gmail.com>
+X-Gm-Features: AVHnY4LUPp8GTEwUz2koHfZTdHXj-kQ8ZH0SWOlUn5c1woQCDpOdaxSIe2lwISM
+Message-ID: <CAMuHMdUqiHE06_pw3dJ00f30ohSuT_Hv_k7SoK9bACeDqE6i0A@mail.gmail.com>
+Subject: Re: [PATCH v4 1/8] dt-bindings: clock: renesas: Add audio clock
+ inputs for RZ/V2H family
+To: John Madieu <john.madieu.xa@bp.renesas.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
+	bmasney@redhat.com, prabhakar.mahadev-lad.rj@bp.renesas.com, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	biju.das.jz@bp.renesas.com, john.madieu@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
+On Mon, 25 May 2026 at 13:07, John Madieu <john.madieu.xa@bp.renesas.com> wrote:
+> RZ/V2H, RZ/V2N, and RZ/G3E support two optional external audio clock
+> inputs (AUDIO_CLKB and AUDIO_CLKC) that can be used by the Audio Clock
+> Generator (ADG) to derive internal audio clocks. The third ADG input
+> (AUDIO_CLKA) is fed internally by the AUDIO_EXTAL pin and does not need
+> a separate binding entry.
+>
+> Update the bindings to allow these optional clocks for all RZ/V2H family
+> SoCs.
+>
+> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
 
---ymi3fo6ezsefbz5n
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 0/3] clk: Add __clk_disable_unprepare_counts_only() and
- use this in simple[fb|drm]
-MIME-Version: 1.0
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Wed, May 27, 2026 at 02:21:50PM +0200, Hans de Goede wrote:
-> >> clk_prepare_enable() is fine, the clocks are already on so no
-> >> ordering worries and it ensures that the clocks and their parents cann=
-ot
-> >> get turned off by incrementing their enable, prepare and protect count=
-s.
-> >>
-> >> clk_disable_unprepare() is a problem though since it actually turns the
-> >> clocks off. Instead something is needed which only decrements those co=
-unts.
-> >>
-> >> This series introduces a new clk-core function called
-> >> __clk_disable_unprepare_counts_only() (1) which does just that. Prefix=
-ed
-> >> with '__' to indicate that normally drivers should not use this.
-> >>
-> >> Michael, Stephen sorry for needing to add a new clk-core function for =
-this,
-> >> but I see no other way of solving this (2)(3). The changes are not that
-> >> big / not too bad.
-> >>
-> >> I've also considered making __clk_disable_unprepare_counts_only() impl=
-ement
-> >> all the logic itself instead of adding the extra parameter to
-> >> clk_core_unprepare() and clk_core_disable() but that leads in duplicat=
-ing
-> >> quite a bit of logic (4) so this seems better.
-> >>
-> >> The other 2 patches just replace the clk_disable_unprepare() calls in
-> >> the simple[fb|drm] driver with the new helper.
-> >>
-> >> This series fixes the display not coming up after switching to the msm
-> >> driver when a simple-framebuffer node with clocks listed is used.
-> >>
-> >> 1) I'm open to changing the name, this is the best I could come up wit=
-h.
-> >>
-> >> 2) One option considered was detaching the simple-framebuffer driver l=
-ater,
-> >>    after the real display driver has had a chance to claim the clocks.=
- But
-> >>    this won't work in cases where the real display driver picks differ=
-ent
-> >>    parent clocks then the boot firmware did and needs to reparent cloc=
-ks.
-> >>
-> >>    Basically the goal is for things to behave as if the simple-framebu=
-ffer
-> >>    driver was not there at all, because that leaves the hw in the state
-> >>    the real display driver expects.
-> >=20
-> > So I know it's not really what you had in mind, but if you are only
-> > concerned about the transition from the bootloader to the DRM driver,
-> > then I think supporting the following work would help:
-> >=20
-> > https://lore.kernel.org/r/20260423-drm-state-readout-v2-0-8549f87cb978@=
-kernel.org
-> >=20
-> > With that series, we can build the initial KMS state from the hardware
-> > state, which means that if you were to change the resolution at boot, it
-> > would be executed just like any mode change in KMS.
->=20
-> Hmm, so your suggestion would be to have the initial KMS driver probe()
-> only do a read back without touching anything. Then claim clks matching
-> the read back config and then only release the simple* driver and thus
-> the clocks after this?
+Gr{oetje,eeting}s,
 
-Almost. Part of the call to drm_mode_config_create_initial_state() if
-needed to make it grab its resources. See atomic_install_state in that
-series. So probe wouldn't have anything more to do.
+                        Geert
 
-> That is certainly an interesting proposal but IMHO almost orthogonal
-> to this one (1).
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Why do you think it's orthogonal? It would completely fix your problem.
-
-> Even if it may fix the issue in the end, it seems that that work is
-> still quite a way from going upstream
-
-It's likely to be merged in the next few weeks.
-
-> and even then initially it only potentially fixes this for the TIDSS
-> driver since that solution needs a lot of per driver work.
-
-I mean, yeah, but the good thing is that you only have one driver to
-care about, right?
-
-> Where as my proposed fix here is much simpler and fixes the issue
-> for all drivers in one go.
-
-At the expense of exposing an unsafe function for only a single user and
-usecase.
-
-Maxime
-
---ymi3fo6ezsefbz5n
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCahboHAAKCRAnX84Zoj2+
-dtx3AYDjU1eNIR6nWTN4Gf6INqlGbmMEfGww4g/lSNuzj96nTz3Tqr+gM6X6h4U0
-77KX96EBf29d4m+QaVyOV2L9+B0CxJ778OJtF9REEDQuHYeIH6ZdbKdS+tDqXnNm
-PiggXzVJFg==
-=OCZ7
------END PGP SIGNATURE-----
-
---ymi3fo6ezsefbz5n--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
