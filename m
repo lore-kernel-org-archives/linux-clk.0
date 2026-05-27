@@ -1,96 +1,187 @@
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A876A3EFFD0
-	for <linux-clk@vger.kernel.org>; Wed, 27 May 2026 10:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B04F5256C8B
+	for <linux-clk@vger.kernel.org>; Wed, 27 May 2026 12:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779879562; cv=none; b=Jtl2mQ531eV5OGfao4ZkascZPfl37uDDYOGlkN7rbNwkhwP0D6L0xg5QiZ4snsMUBGze/IB84qxTFRdv7vRSNfc/AmPMEeXYH92HVSSe+57Grul3LcY3sab6+CQRBajqHpv+c3PR+K9XGzGoRk1IYZQ3QwGmBVTXoD5C+fsBhd8=
+	t=1779883471; cv=none; b=WvyRH/ZfLj3f6/5w0yXocrSbu3hLw2HDvgSEfx32Q5qQ/DcRD/B3Cgg7Irqp6JqWxabkYPnRRHZFYvdQKHsuXej3YQZr7QmbZplepOPWjA2Y3oy6yptSBGGic1yq6oV7lcP1PptrGNpBULs4jU5MqbKKsHDj6BrgV/znxJtz7mQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779879562; c=relaxed/simple;
-	bh=jLHyjOxl5RN+EeAG2bOgVdUtQ1t6XARnJM9A9fgyjQM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SJ9IPXRx8O3pNf6+v5pJECta4C7W0kNJN1he5BzcEK91jBjhPbKNqJQfXtDtcQircEeqShI6ov8adFKoq06U2dvnBHXN9b0yFN2e9vyh5eYBHEFV/CKrwc4nEAsSbT06fVdvT6DNMc+0CXF4bhwtSMdbhhh42os+9TY7T6vIujo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-57754ec3462so7752731e0c.0
-        for <linux-clk@vger.kernel.org>; Wed, 27 May 2026 03:59:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779879558; x=1780484358;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MGrazzxeRDGIU/r1E+qrR5xkaxHzvbTfJG1/y7af1Ec=;
-        b=WUsQb+ar6RnBB8hSsd2R1Kf6mFTxQHub1iE/yL1XwZKEsKUMr2LoQ0WKpZ5KJibDB9
-         yQVMdNfm3XqZE+CTMrznhNRa8q6tuazjFnNwbiCZpeBrO+LFqpEp2l9rEfm+7W1Xbcj3
-         Img2mQo1bS5om83snvm6ItXhzg4nbfYUvAwzCsRFi+m33RW5nKZNPX+qMa8e1ez91zAB
-         LsiLHIYBx9USAbtRZW8S6JgqOQi92KdLJP0dbFagMcLCiPqcIdT1k7qPETp6xuUG30fs
-         bTKQIyqtIUCKgniPFOsqK9LKQLK6sW2OPAeh0kg0rACoNC2iBCHrgp1eweB2r14n9ZiU
-         BQDg==
-X-Forwarded-Encrypted: i=1; AFNElJ8SLxdzvfn+qz47FbZJgexzc6YUAyYX9uEzg9tAWj8Kp70uK1dtycUDKwEyQoKbsMmE8ZlSn23LFAE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdVZF8FvnayvVzHm0IQT6IK+ecCIzMYu63cUBf8M77j7pUjNJx
-	vQdQuqCKX/aeBf9fP5PSR+d6SMY9ED1CH5g6js6Xfv5v6jJPBpVQjE+uXk2fFXb2gDY=
-X-Gm-Gg: Acq92OEi9j4SQGoJYmoBvKEYktYgRvgA5TU4v8y6frO/hbuFouhQzma96PtanlsqNnt
-	b/94R+aTIdG/1Iy8hFCecdpWCc6nhEsjrixZY8efSCoTE/xrVRtL/1W7bOEczUuzyZVvE8lK3Jc
-	cqR2qIRZYa9vpAQY03fdVv62vl3mxTVT9AosIDkbIJlcRA7xYQ+3DH3WYIG46HTo1oQUlOY29Ze
-	2UHJ1ZkVl7W8IPaRb5l6EVz0wg8wLpQZZPE/gDslJoRNZegmTUzk3uMplrJU3t4mA15uZMqI9gz
-	OkniauEvkNY6bTu1F/imFJdywsF+nK/ZP5mvnqKYpYdgUOkujyqkhhy0MQINnLL5Ny2zLR0aQVF
-	CuXljZ9eQk4b8/dPbg9QWOeV/wwe0Xmz02W8s98ffChB84XsNofA9uF1In4HPg8kId+LAr2bRDE
-	XqbAy0TuycRInxBvC54Zxd0h648mXu0OOwOvaUgXn8q7/jN81dd0bOrw8Dhr9HV9Fu
-X-Received: by 2002:a05:6122:3a0f:b0:56f:8f5:b135 with SMTP id 71dfb90a1353d-58664038c9dmr11851413e0c.14.1779879557854;
-        Wed, 27 May 2026 03:59:17 -0700 (PDT)
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com. [209.85.221.177])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-961737bbf42sm16451254241.2.2026.05.27.03.59.17
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 May 2026 03:59:17 -0700 (PDT)
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-57516bb40b9so8014965e0c.1
-        for <linux-clk@vger.kernel.org>; Wed, 27 May 2026 03:59:17 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ9pcn4Q3r7oNGOTGbM7S2wyEdE8ayp9DP0J15vpQn1qCssfqf6zWnqv3CPzRJ3BN1P+cxloZ8n8mGI=@vger.kernel.org
-X-Received: by 2002:a05:6102:3f4b:b0:631:9366:da8c with SMTP id
- ada2fe7eead31-67c898c33e4mr12526499137.14.1779879556821; Wed, 27 May 2026
- 03:59:16 -0700 (PDT)
+	s=arc-20240116; t=1779883471; c=relaxed/simple;
+	bh=86hz3H1CFtG4eQz/D3z7ZZfdBkhfb2rMWT1rZvA3HRE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rBYCAnUvRqOyBO08C+t1Xz++8YaUhb5U7E1omK/N9ZvUeZr8L+GmyslHlAsuVHCsTrb+o1MXlrm9bXacmhb6RlX2yEBIrCwE6Kx1vXzcKyKxsubqMOH2/OWXet8wWlel0DFQiWM/zj2ZaMuWIT3Xztvge0laAvv5z91zt4ATJjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jD9183lA; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jD9183lA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18A351F000E9;
+	Wed, 27 May 2026 12:04:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1779883470;
+	bh=XMfF5DnL7dDcq9KjDboiINYmJ7YqWFYoHGh7UlSTB7g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=jD9183lArneaw8BloQcTcrcKlkT4/u0tTmoiY4xz7P3Gxdeesy1iRrg4d7fsjNqwQ
+	 bMYM8xcWGEqxnXknJPhzB7VmpL/fSj2b11cdxGJOb+BtdkuZzjaNR1bq8z1dBvjGiy
+	 7Vwd/zzd7YIA2muFHD+vFtg/P9nJcM9bO4kWCHQiMRb4bwtoBA1aehg9uQleq4mkpr
+	 sHll4qpCvCOXIhZ5ryPt+uYc013SnhCFsuaRhkuppGXBCXsvIka5FDWT5YpdlZuNAc
+	 VixYHMHuhwZSekWwwptRzzJbyaxP3b7HzNS/5VYCOyHmS4iCjhzC7C2jnTE0gCKCGG
+	 9ej5NtT+FR7sA==
+Date: Wed, 27 May 2026 14:04:27 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Hans de Goede <johannes.goede@oss.qualcomm.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Javier Martinez Canillas <javierm@redhat.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Helge Deller <deller@gmx.de>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, 
+	Rob Clark <robin.clark@oss.qualcomm.com>, linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH 0/3] clk: Add __clk_disable_unprepare_counts_only() and
+ use this in simple[fb|drm]
+Message-ID: <20260527-flawless-chowchow-of-fruition-edbe8a@houat>
+References: <20260527094811.116977-1-johannes.goede@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260524082657.19335-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20260524082657.19335-1-biju.das.jz@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 27 May 2026 12:59:05 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWQCaiMV2Oqc05OB7EQg++0gj-cbGYjjdy8vM0uvO4qnQ@mail.gmail.com>
-X-Gm-Features: AVHnY4LwFhicj5_5tir-adZ8YWCLaBs_fNGP50ccLA8lGaFPhJJtQHDMx2r0DRw
-Message-ID: <CAMuHMdWQCaiMV2Oqc05OB7EQg++0gj-cbGYjjdy8vM0uvO4qnQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r9a08g045-cpg: Drop unused pm_domain header file
-To: Biju <biju.das.au@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Brian Masney <bmasney@redhat.com>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="poecqeshwt7yxrvn"
+Content-Disposition: inline
+In-Reply-To: <20260527094811.116977-1-johannes.goede@oss.qualcomm.com>
 
-On Sun, 24 May 2026 at 10:27, Biju <biju.das.au@gmail.com> wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
+
+--poecqeshwt7yxrvn
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 0/3] clk: Add __clk_disable_unprepare_counts_only() and
+ use this in simple[fb|drm]
+MIME-Version: 1.0
+
+Hi Hans,
+
+On Wed, May 27, 2026 at 11:48:08AM +0200, Hans de Goede wrote:
+> Hi Michael, Stephen, et al.,
+>=20
+> The device-tree simple-framebuffer device is special in that it does not
+> describe actual hardware, but it allows firmware (e.g. u-boot) to pass a
+> firmware initialized framebuffer to the OS to use as display during boot.
+>=20
+> To avoid clocks used by the firmware framebuffer getting touched while in
+> use, the DT node contains a list of clocks which should not be touched
+> while the simple-framebuffer is in use.
+>=20
+> Conceptually this is fine, in practice the *do not touch* is implemented =
+as
+> a clk_prepare_enable() + clk_disable_unprepare() pair, with the disabling
+> happening when the simple-framebuffer driver gets replaced by the real
+> display-engine driver.
+
+Which is also pretty fragile because it doesn't lock the rate either.
+
+> The simple-framebuffer concept assumes that the order in which resources
+> are acquired does not matter since they are already on, so power-sequenci=
+ng
+> is not an issue. But clk_disable_unprepare() actually turns the clock off,
+> messing with the hardware state before the real display driver loads,
+> without any knowledge of the proper power-off sequence for the display.
+>=20
+> The turning off of the clocks outside of a proper power-off sequence caus=
+es
+> the following error when the msm display driver tries to re-enable them:
+>=20
+> [    2.980181] disp_cc_mdss_dptx3_pixel0_clk_src: rcg didn't update its c=
+onfiguration.
+> [    2.980272] WARNING: drivers/clk/qcom/clk-rcg2.c:136 at update_config+=
+0xdc/0x100
+>=20
+> Resulting in a non working display.
+>=20
+> To fix this, we need a way to properly implement the "do not touch" conce=
+pt
+> for clocks.
+
+I'm not sure it's something we can enforce, really. The firmware can
+modify clocks behind our back. Other clocks might change this one as a
+side-effect of a rate change or reparenting, etc. It's just not
+something we can commit to.
+
+> clk_prepare_enable() is fine, the clocks are already on so no
+> ordering worries and it ensures that the clocks and their parents cannot
+> get turned off by incrementing their enable, prepare and protect counts.
+>=20
+> clk_disable_unprepare() is a problem though since it actually turns the
+> clocks off. Instead something is needed which only decrements those count=
+s.
+>=20
+> This series introduces a new clk-core function called
+> __clk_disable_unprepare_counts_only() (1) which does just that. Prefixed
+> with '__' to indicate that normally drivers should not use this.
+>=20
+> Michael, Stephen sorry for needing to add a new clk-core function for thi=
+s,
+> but I see no other way of solving this (2)(3). The changes are not that
+> big / not too bad.
+>=20
+> I've also considered making __clk_disable_unprepare_counts_only() impleme=
+nt
+> all the logic itself instead of adding the extra parameter to
+> clk_core_unprepare() and clk_core_disable() but that leads in duplicating
+> quite a bit of logic (4) so this seems better.
+>=20
+> The other 2 patches just replace the clk_disable_unprepare() calls in
+> the simple[fb|drm] driver with the new helper.
+>=20
+> This series fixes the display not coming up after switching to the msm
+> driver when a simple-framebuffer node with clocks listed is used.
 >
-> The linux/pm_domain.h header is not used in this file. Remove it to keep
-> the includes clean.
->
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> 1) I'm open to changing the name, this is the best I could come up with.
+>=20
+> 2) One option considered was detaching the simple-framebuffer driver late=
+r,
+>    after the real display driver has had a chance to claim the clocks. But
+>    this won't work in cases where the real display driver picks different
+>    parent clocks then the boot firmware did and needs to reparent clocks.
+>=20
+>    Basically the goal is for things to behave as if the simple-framebuffer
+>    driver was not there at all, because that leaves the hw in the state
+>    the real display driver expects.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v7.2.
+So I know it's not really what you had in mind, but if you are only
+concerned about the transition from the bootloader to the DRM driver,
+then I think supporting the following work would help:
 
-Gr{oetje,eeting}s,
+https://lore.kernel.org/r/20260423-drm-state-readout-v2-0-8549f87cb978@kern=
+el.org
 
-                        Geert
+With that series, we can build the initial KMS state from the hardware
+state, which means that if you were to change the resolution at boot, it
+would be executed just like any mode change in KMS.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+The initial state allocation is now fallible as well, so if you remove
+simple-framebuffer after drm_mode_config_create_initial_state has been
+called and has succeeded, then you know that the driver is now in
+charge, picked up the configuration, and has taken all the resources
+needed to continue running. And if it fails for any reason,
+simple-framebuffer is still functional.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+This should help mitigate your initial problem, even though it's a
+widely different solution.
+
+Maxime
+
+--poecqeshwt7yxrvn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCahbdywAKCRAnX84Zoj2+
+doYEAYCJSKbYb5ovBP1Tk4I/neeBWAd0rAXIxQ4ItF/x8n1yMsBNqaD+sYb0l5ej
+8yKxe1EBgJXJaa1J/HCXRaAWJqpc4/P8PV6oMIF9/Ph5dplnMb+5cOU5Iul4Hq3C
+fXaTVRpKyQ==
+=zoaU
+-----END PGP SIGNATURE-----
+
+--poecqeshwt7yxrvn--
