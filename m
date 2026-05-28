@@ -1,115 +1,230 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AACF03CF675
-	for <linux-clk@vger.kernel.org>; Thu, 28 May 2026 10:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779965613; cv=pass; b=HYQOkSeuznHQGl2F3aX2hI4n+AUKGYWlqbI9VmA9iexYNxyzpEaGkAQ35e4NqyrUTn9a+TLC+zWJRkpmwmRLseR90kZBQv2iDzxao4ZUU1FXYlvbM+YaKJs6CebgOVyZT4xcSUuzBtNWnMBbMZkxFNbr3HLjM5KGOShma8BY+qM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779965613; c=relaxed/simple;
-	bh=C2MMTPABAqL5fNcNPCH5MBiBXN1fNpt/Y5x9yYSqznY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QP1IeIY+bxvO/tql05vegud1SJx8lEWs7Hgff9jPFoejbO6oNqlOUpQCCp/MUJ3gIZIXxAGBsS+o3GITG/gGr4NFDs1IaaTYjLceDOJA4VZ8/W4kdePD2Hq4dngCEMY364C+RDAwrDY2qUpoFqhTb5SmAfpUPkPo2WYrZfPb9kI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U4yD0LOU; arc=pass smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A9B13BCD0A
+	for <linux-clk@vger.kernel.org>; Thu, 28 May 2026 12:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779969693; cv=none; b=XSZ0A9llKOt2TNMFs1qBKlewVEWfwrJOWtyrAo+e5xkcx4e8VSC1vDMPMmxhWUBGjnYXwieBSNjsDT7nX9k1QSmgutrC2mq0MWzzuNCDBoaANEGkOsLru/m0pEV34cR76774tH4Xyacxe5lAIm1MaXHClUg8Jie8TCXMLP3tuR4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779969693; c=relaxed/simple;
+	bh=CAYKryhcjO+rdk9Uk8YQcneFsEufzSs7pBlfSyp7TEI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kjTDyvecJFgEoTHSflFBJY8cesS1Vpc1GajUVVuI3WOBpt6lSxR10x6wnQfTVCT/LCHsjsv4jSrrsrtZyQtal8H0wS2ghzTYO+gyUOCNqt6X5CMTqIeB0Kh2F6O6ttvthj5cBBL3QOfUi/Dm0ZrKO0EtEFoVkMDtEc15mYdGEX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T3XmokJC; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U4yD0LOU"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-67da63ae541so8968004a12.0
-        for <linux-clk@vger.kernel.org>; Thu, 28 May 2026 03:53:30 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1779965608; cv=none;
-        d=google.com; s=arc-20240605;
-        b=Jf1c7rXEaOojUAJel46n1IdDbUD87pUOqh3U+Tbxx8ybXYNE1zA1IYvpqDT4NJ5s3r
-         zBeRYJqyMKcoGDPKkswFk9hzcT9xRxKG0BiGMkSMgSiGTN0sUJP4W9Z1jQpwi+G+6+ex
-         ZL7wnXA6iFCJtaJgJxsKV74JdlzZIzUcuLfQkeJu+fIcM+g4oRTCkK/DIm7UNzXZKbxs
-         eDOKOrafwQWM+i0DO86E5AyZor6Es6XcwP4JEVzZC1w2jlVQ1Xjav9NfKreFfPnhZo1K
-         GVocy3XXGkTtxPLrBnH3wgA2FispU8vP9pTN9V+Lh34VE1U1fTzjXhU0g+9nQCte+rlB
-         kDoA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=C2MMTPABAqL5fNcNPCH5MBiBXN1fNpt/Y5x9yYSqznY=;
-        fh=Q/ZATrYFw4AFp6HL8C4MK6gjiTspgMuXFBqma07tZyc=;
-        b=IbuWOQY/mFbHKyE+m6wB564UmN+CwEXiKKLLfh08iuaEllx94sqmAvZO4boArKrpdc
-         cgHYzaPbuNUd4eknGrf4Qw0Sd3qpt7NH20cexQVz8vHS4tkLFArDDBatFd81K1bx71Dw
-         QhCaPp7UHCxEnbmLPHYbvLfA1/xdkZhnqJvWp6gBvqFM8D3FlXrMGT0joRPrAMIml98O
-         QEIz9T35UzhJRR0QMymKLjmI7grZ6evDmr/BdCdBrRHIEx8A3J+mVnAYZ8WVybNQyB/z
-         80A3/PQuq/GmovmtC4WQCXuMzsPQ0UxKdmNjMEe6U7o+rTKf8H0sCwmdLYpsuoJJLFWB
-         K9rQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1779965608; x=1780570408; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C2MMTPABAqL5fNcNPCH5MBiBXN1fNpt/Y5x9yYSqznY=;
-        b=U4yD0LOUjB7wQKLRSPr1RO0Izma3y1ooS13O379GSHZw8RLHlUgRJM2Vgdorf+Yhra
-         +SEk8WAzZD0yH10x8Op5kHbnBcfAaUSmG0Xm+yA4jaJEGUkrTHJcIqvDPktG6aC01R1/
-         Gag1cLqlFshDIN7VfbU53f6KiBLgNvZoGXDPDMvaqJlDK7/VJYRuvgaaUf57mrVcA27s
-         WWE8LMsg4wuu0VtJBRKRglrrbPQvA9TnDFGz41fjzAvS/s4d8TNPu4anE6zoK62XlXKh
-         yW8SMFXYcgZafkA2V5hBllyM2jPrYpMntGFzL48tFHSbm7j3vl44l5AL956FxpmQLhHy
-         MMAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779965608; x=1780570408;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=C2MMTPABAqL5fNcNPCH5MBiBXN1fNpt/Y5x9yYSqznY=;
-        b=OIp3+VzzJ3V144EjrlR1exHYESO8qAeRMXmDS0Dza5CvdfOWmgLGizxcFhm/osnw1z
-         qTm4Fzf0hbLM3c29dE6GltqRxsO49a1SOnTf76fwjyl3wCL5cgjS3H665qEAKnVaC5Or
-         Y/f6okIi+i0u7RyVZYxQBhfgIODkOJdkb4pnTx09RTb7zWPBKGU4u2Xy7Hk+kEvalcwJ
-         +ufKB9/cPmjyhz/tU68W1bYv7XiztUWWJ5AqseNOY+ImoJtNnC0JJC5mDX+CbuSs/cxw
-         5H+t+qOKOzr5uQV3nD9W3wyZdTT+tDNBNQLP3VNPxzQWEkAfjoJ4amDsRnX5pl28S7w3
-         +DHg==
-X-Forwarded-Encrypted: i=1; AFNElJ9m5oUcvc1jNQ/09jnbsy25r9wtNEm9BkTRPtNJh3SVq2zfgtVlgX3m3S7qbjKgq74q1M7W9ZfEJeY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLOBmxmqEm0oqNbhWbxbhMfAmDuo3uF1wMiLLvW+rmO720jZaS
-	0gMIRGeEMDtexCwBdTu2X5/B+j3pIUe6f8/ysH89jH6mbs57d0WpVNH9PbQIsAo9vJHCDTDpCGo
-	LFuQ302syiKBqeeUAOWpIujOx+Vspoh+iImOWjMPIQQ==
-X-Gm-Gg: Acq92OHToLoraYau6tFld1wwnZhCU0nY5ZQLWRymlpShC63Dl57ZWCYvJS0Yb492aT8
-	33Nk+1oY+Mv7eRstf0CwqYIE9d3Q2zb27M89o5S6X037zzjGkp+LShlz7gIvacvyZoEhxpfZtD3
-	7+ZwJ0RCmsXUyi8vIzJ6/EpVGp6uvcDiwzcNHwpUjBNXrf37COLzMDr3+6TnPMLrGbFUyVmB9Ak
-	/qI6OaYzsL88MvTLRLVe0197pgiFawgGOFUx5vzv8ISmOEYgA6V7u8qUoTQ0QLPsAUNLzJPgEId
-	PWhka+pK4pY/DotEmsD5sZiazmkiwAnxYEKaEqFzLjGNlgr24seS
-X-Received: by 2002:a05:6402:3907:b0:687:f18:c37f with SMTP id
- 4fb4d7f45d1cf-6889cc6c63emr14062696a12.22.1779965608447; Thu, 28 May 2026
- 03:53:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T3XmokJC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67A0A1F000E9;
+	Thu, 28 May 2026 12:01:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1779969691;
+	bh=41DrVZ4xS7vhXVEgxGgxSNJ1PMDaMkbDls2BuQg9ydM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=T3XmokJC8kLStgVwqlglA/5Bsw+rFxERoxPBiSoVO8bZIms8ozh4thDeTAyFwitst
+	 UIGIp0ohUitgCRsC8k7yEfP8GrI/6E6gYoxG0tE4qjW3eeeopRe2dLOlzgaBKPTSP7
+	 /tdsUmlrCPR61I7xb/S+Y65x5DzbnZgKdJpw7u2lYfmTjRzwNhe64OGGIg9Qs1bYCY
+	 gAgHkRIJAl5oJYfsVCjTubthS5zOj+vHtPu96WbgVk7NxNVxxy+GPrVbLirWbBasCQ
+	 u+sJwul5IiLAT0QbVvFx10KwnGbLHDxwVBOIx0/xjU5ErZMtTdX7Gs6bs5dRYFQRVT
+	 z5TRbnhQvHF5A==
+Date: Thu, 28 May 2026 14:01:29 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Hans de Goede <johannes.goede@oss.qualcomm.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Javier Martinez Canillas <javierm@redhat.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Helge Deller <deller@gmx.de>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, 
+	Rob Clark <robin.clark@oss.qualcomm.com>, linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH 0/3] clk: Add __clk_disable_unprepare_counts_only() and
+ use this in simple[fb|drm]
+Message-ID: <20260528-solemn-chowchow-of-psychology-cc0ae4@houat>
+References: <20260527094811.116977-1-johannes.goede@oss.qualcomm.com>
+ <20260527-flawless-chowchow-of-fruition-edbe8a@houat>
+ <496facc4-60bc-4646-b426-30e7ac545d9f@oss.qualcomm.com>
+ <20260527-armored-spiked-jacamar-0bb19e@houat>
+ <4f34c957-817d-45fe-ac13-02b98e77f010@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <841cf835a24bb2f3acb99a97bb58e583220e03a2.1779963984.git.u.kleine-koenig@baylibre.com>
-In-Reply-To: <841cf835a24bb2f3acb99a97bb58e583220e03a2.1779963984.git.u.kleine-koenig@baylibre.com>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Thu, 28 May 2026 11:53:17 +0100
-X-Gm-Features: AVHnY4IH3mvkMMS_g1hQ3ZJ8qesRqjWnH3mxTBj-F0Of2pKxAmtKM5oLFn6FugI
-Message-ID: <CADrjBPrY+8Cn28+LaM5xqk9ymdAc4oAoGyDm3k2yM5ADszRoCg@mail.gmail.com>
-Subject: Re: [PATCH v1] clk: Use named initializers for platform_device_id arrays
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Matti Vaittinen <mazziesaccount@gmail.com>, Brian Masney <bmasney@redhat.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="ojuvfkqckxhkyq4k"
+Content-Disposition: inline
+In-Reply-To: <4f34c957-817d-45fe-ac13-02b98e77f010@oss.qualcomm.com>
+
+
+--ojuvfkqckxhkyq4k
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 0/3] clk: Add __clk_disable_unprepare_counts_only() and
+ use this in simple[fb|drm]
+MIME-Version: 1.0
 
-On Thu, 28 May 2026 at 11:34, Uwe Kleine-K=C3=B6nig (The Capable Hub)
-<u.kleine-koenig@baylibre.com> wrote:
->
-> Named initializers are better readable and more robust to changes of the
-> struct definition. This robustness is relevant for a planned change to
-> struct platform_device_id replacing .driver_data by an anonymous union.
->
-> While touching these arrays unify spacing and usage of commas.
->
-> Signed-off-by: Uwe Kleine-K=C3=B6nig (The Capable Hub) <u.kleine-koenig@b=
-aylibre.com>
-> ---
+On Wed, May 27, 2026 at 05:09:39PM +0200, Hans de Goede wrote:
+> Hi Maxime,
+>=20
+> On 27-May-26 14:48, Maxime Ripard wrote:
+> > On Wed, May 27, 2026 at 02:21:50PM +0200, Hans de Goede wrote:
+> >>>> clk_prepare_enable() is fine, the clocks are already on so no
+> >>>> ordering worries and it ensures that the clocks and their parents ca=
+nnot
+> >>>> get turned off by incrementing their enable, prepare and protect cou=
+nts.
+> >>>>
+> >>>> clk_disable_unprepare() is a problem though since it actually turns =
+the
+> >>>> clocks off. Instead something is needed which only decrements those =
+counts.
+> >>>>
+> >>>> This series introduces a new clk-core function called
+> >>>> __clk_disable_unprepare_counts_only() (1) which does just that. Pref=
+ixed
+> >>>> with '__' to indicate that normally drivers should not use this.
+> >>>>
+> >>>> Michael, Stephen sorry for needing to add a new clk-core function fo=
+r this,
+> >>>> but I see no other way of solving this (2)(3). The changes are not t=
+hat
+> >>>> big / not too bad.
+> >>>>
+> >>>> I've also considered making __clk_disable_unprepare_counts_only() im=
+plement
+> >>>> all the logic itself instead of adding the extra parameter to
+> >>>> clk_core_unprepare() and clk_core_disable() but that leads in duplic=
+ating
+> >>>> quite a bit of logic (4) so this seems better.
+> >>>>
+> >>>> The other 2 patches just replace the clk_disable_unprepare() calls in
+> >>>> the simple[fb|drm] driver with the new helper.
+> >>>>
+> >>>> This series fixes the display not coming up after switching to the m=
+sm
+> >>>> driver when a simple-framebuffer node with clocks listed is used.
+> >>>>
+> >>>> 1) I'm open to changing the name, this is the best I could come up w=
+ith.
+> >>>>
+> >>>> 2) One option considered was detaching the simple-framebuffer driver=
+ later,
+> >>>>    after the real display driver has had a chance to claim the clock=
+s. But
+> >>>>    this won't work in cases where the real display driver picks diff=
+erent
+> >>>>    parent clocks then the boot firmware did and needs to reparent cl=
+ocks.
+> >>>>
+> >>>>    Basically the goal is for things to behave as if the simple-frame=
+buffer
+> >>>>    driver was not there at all, because that leaves the hw in the st=
+ate
+> >>>>    the real display driver expects.
+> >>>
+> >>> So I know it's not really what you had in mind, but if you are only
+> >>> concerned about the transition from the bootloader to the DRM driver,
+> >>> then I think supporting the following work would help:
+> >>>
+> >>> https://lore.kernel.org/r/20260423-drm-state-readout-v2-0-8549f87cb97=
+8@kernel.org
+> >>>
+> >>> With that series, we can build the initial KMS state from the hardware
+> >>> state, which means that if you were to change the resolution at boot,=
+ it
+> >>> would be executed just like any mode change in KMS.
+> >>
+> >> Hmm, so your suggestion would be to have the initial KMS driver probe()
+> >> only do a read back without touching anything. Then claim clks matching
+> >> the read back config and then only release the simple* driver and thus
+> >> the clocks after this?
+> >=20
+> > Almost. Part of the call to drm_mode_config_create_initial_state() if
+> > needed to make it grab its resources. See atomic_install_state in that
+> > series. So probe wouldn't have anything more to do.
+> >=20
+> >> That is certainly an interesting proposal but IMHO almost orthogonal
+> >> to this one (1).
+> >=20
+> > Why do you think it's orthogonal?
+> > It would completely fix your problem.
+>=20
+> AFAICT in its current version it does not contain a mechanism to
+> delay the remove conflicting framebuffer call, so no it does not
+> fix my problem.
 
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+The conflicting framebuffer is removed by drivers through an explicit
+call to aperture_remove_all_conflicting_devices(). Just move that call
+after the call to drm_mode_config_create_initial_state, there's nothing
+to integrate.
+
+> >> Even if it may fix the issue in the end, it seems that that work is
+> >> still quite a way from going upstream
+> >=20
+> > It's likely to be merged in the next few weeks.
+> >=20
+> >> and even then initially it only potentially fixes this for the TIDSS
+> >> driver since that solution needs a lot of per driver work.
+> >=20
+> > I mean, yeah, but the good thing is that you only have one driver to
+> > care about, right?
+>=20
+> I would prefer my proposed KISS solution, which works everywhere, over
+> your quite complex solution which requires complex per driver changes.
+>=20
+> When I was still working on:
+>=20
+> https://fedoraproject.org/wiki/Changes/FlickerFreeBoot
+>=20
+> I needed to constantly fix i915 fastset support and when I stopped
+> fixing it due to -ENOTIME it pretty much was broken most of the time.
+>=20
+> Last time I check modern (Alderlake +) laptops never had working
+> fastset support and there always is a visible most set on newer
+> laptop models because of this.
+>=20
+> This state-readback stuff is quite complicated, as the list of
+> known issues in your cover-letter shows.
+
+It's kind of a bad faith argument. This list is 4 issues. One is getting
+fixed in the next version, the other two are specific to tidss which you
+don't care about.
+
+> I wish you all the best with it, but I really do not see this as a
+> good alternative for fixing the issues *this* series tries to address
+> given the huge disparity in complexity between the 2 fixes.
+>=20
+> I'm also worried that the readback stuff is likely going to be fragile
+> so might end up being disabled or automatically detect some issue and
+> disable itself at which point we're back to having the original
+> problem this series tries to fix.
+>=20
+> Also atm AFAIK there are no plans to add state readback support to
+> msm and there are a lot of other higher priority items to work on.
+>=20
+> ###
+>=20
+> Anyways since your patch-series will not work for msm in its
+> current state, I would still very much like to hear from the clock
+> maintainers what they think of the approach suggested here.
+
+I really don't get this argument either. Sure, it doesn't work for msm.
+But the clock framework didn't have that unsafe function call either,
+and yet you did the work to add it.
+
+Maxime
+
+--ojuvfkqckxhkyq4k
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCahgukgAKCRAnX84Zoj2+
+dmPbAX9kzaVNfopFtItZV7bN6W6OTPHb5TksLkDo8ZT/Mn1fLV3o+Tpco8mLqNLr
+KfJSRvoBf35JDMX2p9pZNDE+xIK8FSS13TguR1SqQA70p96NkUhuEXNLwold4Y2/
+bqsqrKK8HA==
+=mMoe
+-----END PGP SIGNATURE-----
+
+--ojuvfkqckxhkyq4k--
