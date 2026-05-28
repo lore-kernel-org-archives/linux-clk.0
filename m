@@ -1,83 +1,84 @@
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C298A3EFFBE
-	for <linux-clk@vger.kernel.org>; Thu, 28 May 2026 13:42:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 781833EFD39
+	for <linux-clk@vger.kernel.org>; Thu, 28 May 2026 13:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779975770; cv=none; b=cUyVeBZ6KyeXqIyo8Nih5Vy8B6QjZVi2aur/nLUy3ENmLOlQ7JfYY1ElXQV/NWQJ2Dtw9EaE/FBjNdxD3kag3PxUfH9Fmn7iHHRX7oEjmC46XHp7+FPgXkYjq4O/c+VAn5LF8PY/v5apjftIWTIg3OJfRnHI4s7y8UiBMnqTayk=
+	t=1779975891; cv=none; b=aaEhJZSosk5QPydiiuN99vjOVG3EJXNzbWPCUN55BhjDyyUkEsnUBN9q+YrCerLVOXgN2tNfmOJjV4eBS0TQU+YuqPJvY9bzKF2ccKhT+r/ngC2wWL303uWJKfgzbotno19c6AuN7KNWQdlFEfM5lqg0xnX9ZU5gXI3HJ8WOSeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779975770; c=relaxed/simple;
-	bh=X1yvQOHHcKIqW+0JMUmRIDNrnij+vlvJkT6jzIaN93U=;
+	s=arc-20240116; t=1779975891; c=relaxed/simple;
+	bh=Sy13wBJI+iwNOmJjVB58t+ogoFGFmXoUWkZJnA0Sagw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZuiKUf3FlvjGfneLIyl0BxrnsNii5DrA87hPYQ5n7s7XEHHHfMWKjvF+Z24GqxOP5djfLjHCOaDHW/RRrhN3SBnHADr44Gtt3Af0T2YAjDo2NPAdIQTXOyaMqx4Nr0y/Mao+Q1+Sy9Jm2QmR9yv7otfURx6iRCv1NCyWlJgdjTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pgEcujT9; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=QVd4yQ9U; arc=none smtp.client-ip=205.220.168.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=KJ0XvrbwGQzo1cgRJ4wQ8G8YGzO/z0Yq8beFZyh8C6UBmBY5dMUm/wfne3WJFBhikLfcEob1Kg2gCjd+GvewsuL5tbicuiH1C8imP+mimcykKTOekqG0Eb1nVwiP/JKqg10Mzl+Wr+wKJTEXwiVCQsDlPKCJa4fzS+eOvgT92Bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=b2vsfwyE; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=O19iVE3W; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pgEcujT9";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="QVd4yQ9U"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64S8vUh73203255
-	for <linux-clk@vger.kernel.org>; Thu, 28 May 2026 13:42:48 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="b2vsfwyE";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="O19iVE3W"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64S8vNJd3545336
+	for <linux-clk@vger.kernel.org>; Thu, 28 May 2026 13:44:48 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=Uw7ADZQk/DeDxbVXK+KsE/yp
-	H8Hb1Yi8tUS3qSN/21s=; b=pgEcujT9E/TW2UD1bidW6DPcQuGBi9hU/OTQiNjV
-	c2higF5Or3wquesgxePN80VUrGE1TKAaCbFCDuBWO0LGgSOuayJmPBh/Yc0QBp2i
-	BYDvjBntKGVU446Ddwxk56f+6sQTxkB4dH0SodVcp3Xym5ZzLql6A3hsl4gLNd68
-	ZZ9PQSfCifrFEoy9JVsssM0cjf6OM2RJfbnYX5xs+llJZAuhFAJZJ+Cn3UNO73h2
-	Mz7Y3hGe/vLgjsJL/FwnNv9bLz4x9NCAnnCH5FH5jzrHzzbRqPSDvvICHIjBbHQo
-	Xv0+enoCcYmG/1NH37LAUhoOxKucdTDggV2t4kFtm+px3g==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ee7ynjxgt-1
+	:references:subject:to; s=qcppdkim1; bh=5lRMaClYbA5HtXQ6LSesoJBK
+	usUYgwxDIQ+oX8XsvsY=; b=b2vsfwyEiH6+ctQ+pgljyNh/FaRzxaT+XG/cDcVC
+	httP0uSeY+G0EQ8BD083G01rvAYlfcf3FZ5RZDNz5NR7gvZbAcUzEBvelXi96B+f
+	dsbPxWfgcyFCuCSTZmz/BiPodR2HZih/zL4vUPMadwhIgEn7ELMjbS+oc1FIaBIu
+	VGFWaYsjUOGO+C2ISqoDWQcecQypkaWXk5LuihRHp3sxqfd4jURwFcPXBNJdEI4/
+	pY8aBamXEtX6DHqK0dGfnvPSibB0QuAqZSUeJT85Fdaau+E1RC7M6JrBFRqQV13F
+	DVFugxxayL6ZPPmIruludn7MsgVmz58XDp7MeT7EBsASug==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ee7y3tx65-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Thu, 28 May 2026 13:42:47 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-5165d10e036so226622701cf.3
-        for <linux-clk@vger.kernel.org>; Thu, 28 May 2026 06:42:47 -0700 (PDT)
+	for <linux-clk@vger.kernel.org>; Thu, 28 May 2026 13:44:48 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-50f13da9684so154992041cf.3
+        for <linux-clk@vger.kernel.org>; Thu, 28 May 2026 06:44:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1779975767; x=1780580567; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1779975887; x=1780580687; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Uw7ADZQk/DeDxbVXK+KsE/ypH8Hb1Yi8tUS3qSN/21s=;
-        b=QVd4yQ9U0mPIaRJq5PQsaio/tcwlTvlpVDHa5L8DMefakMeVcXPiZsuP1JYyLVTcDE
-         WUdAyj0wv3YQU+n66fsccF6c0POZrsjKsRrcOrsXU5LpVoHmQtmkVcnkeuZOnDGOXO3/
-         pj1Hq/V4iyNPFg8kW+CELrU66SqpiiRYQJC4Kx6VaU71wnLRFZ5ZXRsaav9qnqs0Qha5
-         4mE1ooVOFidOVG8++MqE4cZkTUt01ze1OH/TFUwn9vHsE9DTTpxd0ojO4STaUmmYtNCB
-         Pru0eW6aevv6hx18bDXmv1XtWB/SXoxZQPeI4pzaGWFxvPW6uMiDAHI7ehm8n2N0/De3
-         XJFQ==
+        bh=5lRMaClYbA5HtXQ6LSesoJBKusUYgwxDIQ+oX8XsvsY=;
+        b=O19iVE3WP/ItHU9t+bHrYRaE4Qz3yes0zTTbewA9YodWLDyjXYMPVUTHIG3vhHq2mj
+         0sgJveaT1CFIznmbOdJqIv5yGYSxztSiIdYJQbZ63VU8jPdyfyCm2k7og1xE0fm4hFB5
+         NjvKV4yZEwIqa2YMaLZNDcQDDoJBTlUjkNdpcf33Zw9lRKYwmnAZMWkEJCM39uHPi7AH
+         pboZtcfHR/rE44HChQh5hBOsrRYtq13v2rOMwGDuGypwC1Mz5TGLUMjk5u9rj3qMTA0C
+         6oiEjxu2KFCYLI8r0omtWG4qPjsn/YzV5tSMks9OlmNonv/DUGINhUB23rENt0Je6qk3
+         6Sig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779975767; x=1780580567;
+        d=1e100.net; s=20251104; t=1779975887; x=1780580687;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Uw7ADZQk/DeDxbVXK+KsE/ypH8Hb1Yi8tUS3qSN/21s=;
-        b=Y2pMV7ouLZN3B03d9B542wr1c2vKI8qZ4Ul72ZhtXXOR2Btvc2gSDDc67UaFy6IVFC
-         O1yigL1uf9vhmVP8He+7l3mQbLSdy8kx6wrjJhhk/HfkDl7/cLfHmuCXlwc4ZW2v/8v0
-         TpkWe2BIFdvtlUdWTBu0EaT0sS81Caz50hbv8wKBH0svvkC7gMhCVw8yrZKfJBE22u+t
-         HSQxWpY3zqREksVAaoDtO7EUf9eXvJlVFn/V53verGlx1fD+J63FIyoTbxmTKPJQTYzL
-         SGvVkqQxeA+66FLXiD6ZCkbP8J7PNRDgiH8iEgrqrN2Eav5r4iktGrG52ZFwZJhQObn/
-         7C2Q==
-X-Forwarded-Encrypted: i=1; AFNElJ+9/pKZeCAZtmwhjSPVcZl9bDPezAwtNr6hnmEPVcxNHWKsInIbcVMKhHYOgdjQ93syqxtnKxleBgI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyA6B1HAmutb3Xfv6n9BifQLV9su225dFql3xSfSP2oNVwuNRAI
-	K0tG9QejMoDLjWiKXuoRT4RIT6k1Oh97XbTY0+f/F8muEfrcYy/m+BTTu4Fk1GagqX6WjiTdDGp
-	xiLezvS/vMhuCbLut+QxtSRDqCVF6dFpEw6LSpnFhFpglP+XRlanikDHQrnFmeFc=
-X-Gm-Gg: Acq92OGdeO7+hUT9sN1kWYVE9jTL3dOyZUZ7uEJsOWD2qEhQeL/9xRyFqoRCKbcaMC7
-	s10cBX9uGZz+b9f/0HcbQtZR/kKmnnJ62z1lMOWtdN0WLNL2nC/itsufAAEDXbvz3caS1t4I+dY
-	eeNj39klMwObtDWmqx6Qwq2YWJdBLh41ffCdEUzzzSilZfXd/+Jdmye2jYIZG6ll2+ZWhoPduAt
-	SIAD3hKvkOXd5k7SKYx3I9VyFrsslXB5NOL5q2NANyYPEyFm1Io3T3PUGqmtMvOxqlDoqyTsN8t
-	IzRYacf/64OCqtkLudN5KQrdPgmYE4DQyYz67qJ+Yhuip/mroc2MdEammahVAdFzSG9A64gALLk
-	N+7e5S2R/QQIOcw3i9WktUSJvc2Sks7zA/aFJRhhbXKlUCRgDaUpcKvotY8E8lHuvlO2cH6Iu0D
-	g6m087IC6bcOC4Ya9H3WLH4PNwl0F7cMiPrGShWXBPUUx5qA==
-X-Received: by 2002:ac8:594d:0:b0:516:e062:1a83 with SMTP id d75a77b69052e-516e0622067mr306191671cf.51.1779975766891;
-        Thu, 28 May 2026 06:42:46 -0700 (PDT)
-X-Received: by 2002:ac8:594d:0:b0:516:e062:1a83 with SMTP id d75a77b69052e-516e0622067mr306191291cf.51.1779975766442;
-        Thu, 28 May 2026 06:42:46 -0700 (PDT)
+        bh=5lRMaClYbA5HtXQ6LSesoJBKusUYgwxDIQ+oX8XsvsY=;
+        b=Pi+XquTJ6tizZAvLYQhXBOPNuMQZ2bTON33ME8Z6g8vIEjw5u/ZVsOaImcb6ANpI1+
+         fMeNHGqG7zWlj35JcKxbTu+PYDDaKMjYhdUEoi1R2JmmTghDODyRY7HE0y0TLRsDQ0Fj
+         izG0rEbVUSbdAEStQlf1+Vdek/T0DEjycOwdvj/hRPdmR4g4AGptpSmI4zQD1AemNJFB
+         D4DdSGNq5VscISHSJG6cnMHMwf9EwV/KKTRVXuSZ42tDxGTvtgcSBM0nkifNKuCPm4Jn
+         GeI/yRZhHp+DQf0+QSwl6JjaOlV5YtA06x8sUbf5xsgsFYrHx9kzT3bXTOX9sg8aXjxg
+         VmrA==
+X-Forwarded-Encrypted: i=1; AFNElJ8I0ax8GN5smxKPDN+vpxyodIiRROyR5sj5wunAvoHNBXtW2gcWOtECf+rEic/jZPP+G5Orb2Qv/j4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwePB67DxMlLeNxSp3MomBW1VROGjVgUrSBpL33uP0Isu5pewhk
+	sfaavOs9WmF/d3BaZgwIk5uwOEktyWn7u+fWZ1+GNfoIwfp7bc5aUyEwRRKZpb057589wzRcNW1
+	7+ZxjQ3AoVeqOnXJCBJ3B2dfnTyIMmcVr43rWtXp+ubljj9qw/mSQVYgEeaG2ukcflr9khplpcg
+	==
+X-Gm-Gg: Acq92OEv8r4As0btxGtRSesOMbl4ycXQ4N8wq34LiA2cgiWw/P88NRtllWNF8418rW7
+	1c+5yoCd3V9kKSSxPut4Iuuo8yY+BGizcsrJvbC07aiKuOK4CQk4F0Xdi0+G9XF//Nuv6gDdeBV
+	iaRbtTe3S+u0/fBABI6YOhxQsI4RFuDTRuMdC8tC18/A+9JmTyThnyMkXmEuqkZDL2knseL1Mf0
+	f9p8VvhBzNOIi2E3ReD5EZHp1ZEEfXkyI3OQlYJP/bUTNJXMI53XA0Cif91Am9MLSsAP6O1RtUO
+	67wZ1rngvS697vb/2VjkklpUWlvoFQBg0ahN4t++O5g0Wbk++lTcASDwNZLPZdxJ94iqRyHyBBe
+	iOgVZNbmYRlJtG7dnz5mOcihMfUy6nRhgREgaRctOfxHlLp30qGcNVA81peoP3KM0tcWSPDkB3E
+	cnZ3kC0wMZTyHw4PQShCfgdN7xdYiC+LiqjqBEPupHWUm36g==
+X-Received: by 2002:a05:622a:4207:b0:516:c8d8:9a27 with SMTP id d75a77b69052e-516d429354emr407633801cf.8.1779975886922;
+        Thu, 28 May 2026 06:44:46 -0700 (PDT)
+X-Received: by 2002:a05:622a:4207:b0:516:c8d8:9a27 with SMTP id d75a77b69052e-516d429354emr407633141cf.8.1779975886418;
+        Thu, 28 May 2026 06:44:46 -0700 (PDT)
 Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5aa4634d967sm1962643e87.83.2026.05.28.06.42.44
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5aa46322331sm1923204e87.42.2026.05.28.06.44.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 May 2026 06:42:45 -0700 (PDT)
-Date: Thu, 28 May 2026 16:42:43 +0300
+        Thu, 28 May 2026 06:44:45 -0700 (PDT)
+Date: Thu, 28 May 2026 16:44:43 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 To: Imran Shaik <imran.shaik@oss.qualcomm.com>
 Cc: Bjorn Andersson <andersson@kernel.org>,
@@ -92,11 +93,11 @@ Cc: Bjorn Andersson <andersson@kernel.org>,
         Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] clk: qcom: dispcc-qcm2290: Add support for
- Qualcomm Shikra DISPCC
-Message-ID: <qumelrcom3wxzgcibou6vmw2jc5tushr4z2tvmudflgpiqin7w@raf436u5gksb>
+Subject: Re: [PATCH v2 2/5] dt-bindings: clock: qcom: Add Qualcomm Shikra
+ Display clock controller
+Message-ID: <5nghgd3lt6vyewd3a7l4kahlxiidxdhgtu42tuyb7xeq62ztvu@tvclo336xtpi>
 References: <20260528-shikra-dispcc-gpucc-v2-0-953f246a0fbb@oss.qualcomm.com>
- <20260528-shikra-dispcc-gpucc-v2-4-953f246a0fbb@oss.qualcomm.com>
+ <20260528-shikra-dispcc-gpucc-v2-2-953f246a0fbb@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -105,131 +106,149 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260528-shikra-dispcc-gpucc-v2-4-953f246a0fbb@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTI4MDEzOCBTYWx0ZWRfX1exqDxTiYDWq
- Jb0lVcTXWUspTdMYHiB4WQAKI8neHGjPQmUk6kZz0Evqko1hhHr0cyNbB5gLBqEGchfcbjCSDXc
- 3wN5ui5OUN78bINujljg3J39g9GK+eI82eKuON/AiHbyH737IxUEmbJBb8VsYpX1u4lVNtnKAP0
- 2Axo6+f/uLyYSyPY1aQmK8aOv3cNAaBVInQrU7Mxe9TInlib+zZ8RRifYswSH7Eed28IVEMafBi
- 2qaIU9gm/1geQcYvgt3dBpcXbwadl7URxE56G2cEfyIuBKSFoS8rukD+KT6HETRAafgrvKA/oHV
- Y5zWyPgZy22WCNpJk6Eqm0fJFaN6IZpMUt34pk3HvW+CqxfBESn4D7htoSc11GZkKwBX6OPMQU4
- gPvx3lAQqNjcZ30Ln4oU27z2l5hTePiXF5P0CS4QT+QjCezLYVquQvROp41d7WqA80I8vyTHDua
- YkHK3sF11qspK8Mfz+A==
-X-Proofpoint-ORIG-GUID: B0FR8CsLpLGpdEoKrJaFddl9PKqhAuHc
-X-Proofpoint-GUID: B0FR8CsLpLGpdEoKrJaFddl9PKqhAuHc
-X-Authority-Analysis: v=2.4 cv=EdL4hvmC c=1 sm=1 tr=0 ts=6a184657 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+In-Reply-To: <20260528-shikra-dispcc-gpucc-v2-2-953f246a0fbb@oss.qualcomm.com>
+X-Proofpoint-ORIG-GUID: Ocsg69I-9f_PR9-jXlDe7lS8zXRtOkkP
+X-Authority-Analysis: v=2.4 cv=JMYLdcKb c=1 sm=1 tr=0 ts=6a1846d0 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
  a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22 a=EUspDBNiAAAA:8
- a=wzTQxFFrBE7TaT9E-pwA:9 a=CjuIK1q_8ugA:10 a=uxP6HrT_eTzRwkO_Te1X:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22 a=EUspDBNiAAAA:8
+ a=1tq0Uks3jRvWVWNWfJsA:9 a=CjuIK1q_8ugA:10 a=kacYvNCVWA4VmyqE58fU:22
+X-Proofpoint-GUID: Ocsg69I-9f_PR9-jXlDe7lS8zXRtOkkP
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTI4MDEzOCBTYWx0ZWRfX9GXOY3lvxAaB
+ k/4J90aG9aSupcZ2pBKunCfT5ZKFVz9zFJv7lAMM7XASLweWFt8ejTpreQu3rGKToRkkJc3RPNp
+ B2ZwX6JMvlO0O3kMSFVRXFAtysgeHzdGKCMcBYnf391xifATk5Z9UWV1Xb2v5brezLQ7Hnqpp3P
+ obDbhLalzUaVb1hzd6LVbWGOzy+QmqKkmSgpEXV0hcZ8GyN8GI4rHYeorGCGARxcBEPijxAr99Q
+ gQcdc5AuuIGIJLsU0196e1QV5VajMKFpRu9tZ1I3uDOlJdG26nE0Q0LPrJZBX7p41tGem9Oab8a
+ Pgjyp52Eo6oereatcoA/7c1SvZ3zGjtajj9GEP5LN47teU+XgkL8P5HJxIM/7K1MqI13cKGgJWE
+ vQabU1hOTl54+KyeUUaq7nR/RcnJSD/VnDeP+lbisjBI37W1/D100LtMblkDM/a13ufBdipPU1C
+ 7ulmrLpucOIRkPOypXw==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
  definitions=2026-05-28_03,2026-05-28_03,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 priorityscore=1501 phishscore=0 clxscore=1015 bulkscore=0
- spamscore=0 adultscore=0 malwarescore=0 impostorscore=0 lowpriorityscore=0
+ clxscore=1015 spamscore=0 malwarescore=0 suspectscore=0 priorityscore=1501
+ adultscore=0 phishscore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2605210000 definitions=main-2605280138
 
-On Thu, May 28, 2026 at 03:37:05PM +0530, Imran Shaik wrote:
+On Thu, May 28, 2026 at 03:37:03PM +0530, Imran Shaik wrote:
 > The Qualcomm Shikra Display clock controller reuses the QCM2290 DISPCC,
-> but has minor differences. Update the parent data of mdss ahb/mdp clocks
-> accordingly to the hardware clock plan and correct the GDSC *_wait_val and
-> flags which are applicable for both QCM2290 and Shikra SoC, and add the
-> support for DSI1 PHY source.
+> but has minor differences with the number of input clocks. Update the
+> existing QCM2290 DISPCC bindings using conditional schema so that the
+> QCM2290 requirements remain unchanged while accommodating the additional
+> clocks required for Shikra.
+
+According to the IPcat, display clock controller also has (unused)
+inputs for the DSI1. Please extend the ABI for Agatti, then extend add
+Shikra.
+
 > 
 > Signed-off-by: Imran Shaik <imran.shaik@oss.qualcomm.com>
 > ---
->  drivers/clk/qcom/dispcc-qcm2290.c | 18 +++++++++++++-----
->  1 file changed, 13 insertions(+), 5 deletions(-)
+>  .../bindings/clock/qcom,qcm2290-dispcc.yaml        | 75 +++++++++++++++++-----
+>  1 file changed, 60 insertions(+), 15 deletions(-)
 > 
-> diff --git a/drivers/clk/qcom/dispcc-qcm2290.c b/drivers/clk/qcom/dispcc-qcm2290.c
-> index 6d88d067337fa132114b0d8666931b449f86de17..19c997f3fe9f197d2c252a9dd1e8169947200f5f 100644
-> --- a/drivers/clk/qcom/dispcc-qcm2290.c
-> +++ b/drivers/clk/qcom/dispcc-qcm2290.c
-> @@ -2,6 +2,7 @@
->  /*
->   * Copyright (c) 2020, The Linux Foundation. All rights reserved.
->   * Copyright (c) 2021, Linaro Ltd.
-> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
->   */
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,qcm2290-dispcc.yaml b/Documentation/devicetree/bindings/clock/qcom,qcm2290-dispcc.yaml
+> index 4a533b45eec2d8e7b866c3436bfe6f80fcd714fb..b24095814d9e67a355321d9013e144f245077322 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,qcm2290-dispcc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,qcm2290-dispcc.yaml
+> @@ -17,25 +17,21 @@ description: |
 >  
->  #include <linux/clk-provider.h>
-> @@ -32,6 +33,8 @@ enum {
->  	P_GPLL0_OUT_DIV,
->  	P_GPLL0_OUT_MAIN,
->  	P_SLEEP_CLK,
-> +	P_DSI1_PHY_PLL_OUT_BYTECLK,
-> +	P_DSI1_PHY_PLL_OUT_DSICLK,
->  };
+>  properties:
+>    compatible:
+> -    const: qcom,qcm2290-dispcc
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - qcom,shikra-dispcc
+> +          - const: qcom,qcm2290-dispcc
+> +      - enum:
+> +          - qcom,qcm2290-dispcc
 >  
->  static const struct pll_vco spark_vco[] = {
-> @@ -84,7 +87,7 @@ static const struct clk_parent_data disp_cc_parent_data_1[] = {
+>    clocks:
+> -    items:
+> -      - description: Board XO source
+> -      - description: Board active-only XO source
+> -      - description: GPLL0 source from GCC
+> -      - description: GPLL0 div source from GCC
+> -      - description: Byte clock from DSI PHY
+> -      - description: Pixel clock from DSI PHY
+> +    minItems: 6
+> +    maxItems: 9
 >  
->  static const struct parent_map disp_cc_parent_map_2[] = {
->  	{ P_BI_TCXO_AO, 0 },
-> -	{ P_GPLL0_OUT_DIV, 4 },
-> +	{ P_GPLL0_OUT_MAIN, 4 },
-
-Why?
-
->  };
+>    clock-names:
+> -    items:
+> -      - const: bi_tcxo
+> -      - const: bi_tcxo_ao
+> -      - const: gcc_disp_gpll0_clk_src
+> -      - const: gcc_disp_gpll0_div_clk_src
+> -      - const: dsi0_phy_pll_out_byteclk
+> -      - const: dsi0_phy_pll_out_dsiclk
+> +    minItems: 6
+> +    maxItems: 9
 >  
->  static const struct clk_parent_data disp_cc_parent_data_2[] = {
-> @@ -101,17 +104,19 @@ static const struct parent_map disp_cc_parent_map_3[] = {
->  static const struct clk_parent_data disp_cc_parent_data_3[] = {
->  	{ .fw_name = "bi_tcxo" },
->  	{ .hw = &disp_cc_pll0.clkr.hw },
-> -	{ .fw_name = "gcc_disp_gpll0_clk_src" },
-> +	{ .fw_name = "gcc_disp_gpll0_div_clk_src" },
-
-Do you realize that this is an undocumented ABI chance?
-
->  };
+>  required:
+>    - compatible
+> @@ -45,6 +41,55 @@ required:
 >  
->  static const struct parent_map disp_cc_parent_map_4[] = {
->  	{ P_BI_TCXO, 0 },
->  	{ P_DSI0_PHY_PLL_OUT_DSICLK, 1 },
-> +	{ P_DSI1_PHY_PLL_OUT_DSICLK, 2 },
->  };
+>  allOf:
+>    - $ref: qcom,gcc.yaml#
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: qcom,shikra-dispcc
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: Board XO source
+> +            - description: Board active-only XO source
+> +            - description: GPLL0 source from GCC
+> +            - description: GPLL0 div source from GCC
+> +            - description: Byte clock from DSI PHY0
+> +            - description: Pixel clock from DSI PHY0
+> +            - description: Byte clock from DSI PHY1
+> +            - description: Pixel clock from DSI PHY1
+> +            - description: Board sleep clock
+> +
+> +        clock-names:
+> +          items:
+> +            - const: bi_tcxo
+> +            - const: bi_tcxo_ao
+> +            - const: gcc_disp_gpll0_clk_src
+> +            - const: gcc_disp_gpll0_div_clk_src
+> +            - const: dsi0_phy_pll_out_byteclk
+> +            - const: dsi0_phy_pll_out_dsiclk
+> +            - const: dsi1_phy_pll_out_byteclk
+> +            - const: dsi1_phy_pll_out_dsiclk
+> +            - const: sleep_clk
+> +    else:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: Board XO source
+> +            - description: Board active-only XO source
+> +            - description: GPLL0 source from GCC
+> +            - description: GPLL0 div source from GCC
+> +            - description: Byte clock from DSI PHY
+> +            - description: Pixel clock from DSI PHY
+> +
+> +        clock-names:
+> +          items:
+> +            - const: bi_tcxo
+> +            - const: bi_tcxo_ao
+> +            - const: gcc_disp_gpll0_clk_src
+> +            - const: gcc_disp_gpll0_div_clk_src
+> +            - const: dsi0_phy_pll_out_byteclk
+> +            - const: dsi0_phy_pll_out_dsiclk
 >  
->  static const struct clk_parent_data disp_cc_parent_data_4[] = {
->  	{ .fw_name = "bi_tcxo" },
->  	{ .fw_name = "dsi0_phy_pll_out_dsiclk" },
-> +	{ .fw_name = "dsi1_phy_pll_out_dsiclk" },
->  };
+>  unevaluatedProperties: false
 >  
->  static const struct parent_map disp_cc_parent_map_5[] = {
-> @@ -153,8 +158,8 @@ static struct clk_regmap_div disp_cc_mdss_byte0_div_clk_src = {
->  
->  static const struct freq_tbl ftbl_disp_cc_mdss_ahb_clk_src[] = {
->  	F(19200000, P_BI_TCXO_AO, 1, 0, 0),
-> -	F(37500000, P_GPLL0_OUT_DIV, 8, 0, 0),
-> -	F(75000000, P_GPLL0_OUT_DIV, 4, 0, 0),
-> +	F(37500000, P_GPLL0_OUT_MAIN, 8, 0, 0),
-> +	F(75000000, P_GPLL0_OUT_MAIN, 4, 0, 0),
-
-Why? It's not mentioned in the commit message.
-
->  	{ }
->  };
->  
-> @@ -450,11 +455,14 @@ static const struct qcom_reset_map disp_cc_qcm2290_resets[] = {
->  
->  static struct gdsc mdss_gdsc = {
->  	.gdscr = 0x3000,
-> +	.en_rest_wait_val = 0x2,
-> +	.en_few_wait_val = 0x2,
-> +	.clk_dis_wait_val = 0xf,
->  	.pd = {
->  		.name = "mdss_gdsc",
->  	},
->  	.pwrsts = PWRSTS_OFF_ON,
-> -	.flags = HW_CTRL,
-> +	.flags = HW_CTRL_TRIGGER | POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
-
-And this also needs explanation. 
-
->  };
+> 
+> -- 
+> 2.34.1
+> 
 
 -- 
 With best wishes
