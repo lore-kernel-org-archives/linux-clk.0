@@ -1,204 +1,196 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F203AEF4C
-	for <linux-clk@vger.kernel.org>; Thu, 28 May 2026 10:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14F730C359
+	for <linux-clk@vger.kernel.org>; Thu, 28 May 2026 10:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779963136; cv=none; b=MM6ix9gSPjVyKRBgtZ2FzD3dneV8MA3Vqn6ZsrD5nxSkEJgIe2KNtAURfWoYm44qfCnrdXhdJfjLCE3Gm6NH1Wzrv2RO1O79p4P8nsS/AoKF7GWn95TL3PVsXwJxRTOFC1GauhmrAnbj8vbrdm+XmaJHTDmRuuewD2Q16nK0Wmo=
+	t=1779964191; cv=none; b=cgiK9AKDRriiDxQgqQRJnFlbjFnWESTY/+2xdnDrDX6AlIFDnEG7gZvEeo2pAbnoxMCkf2PXX1WqnQMQ2rckrC30VyhSnwddSOuNTFnpM+BLa+lqg57NzxB8tT2EO8rw78VK1+Ket1xUWwAoApYeTBiL0fUzeGCQk8s6k23+/U0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779963136; c=relaxed/simple;
-	bh=tFHmAG9i/JBtD0JCXwNSHIn1d1WbXLJb5KNtV1E+krw=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=OdU57JLnI9bsOH+h+MhFj0ru6lMqY1yen/Lm9HZ6YoR1mu404IHjeQyEenYayBbl7Nm+j3Uqq18Jd3KXbwxr/6Xp8fcKNzUJvxOTkm4VeXKK4u1V6+fansf0sn2qo3s2ffv2KvcLP/NXSH9+qkYg8FeS0uuE4bAkCGrWkq7wHz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RejT8wCN; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=gYvZKjuw; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1779964191; c=relaxed/simple;
+	bh=zDeV/QjELvue1DDZEmJSTZtOOPUgKnSkuDpqYuEAmHk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QTJmEF0Wfs63tOBH3y8e0sVbJsa6lYiFim/g9vjO2e6MqcxKPEEFLpCFLJMjxxkgsAmOsvSXngkGqmBm5amsNN/rvLBgJLSI8/75Mmh0TrjNYGWVZHsYrMpWO/C/Ww7XHCt2cZymfgFj0yR8ZNvk1yl2BFyg5LrtBQHW6gP3TDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=kO3PjU6l; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RejT8wCN";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="gYvZKjuw"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64S8vkiO298205
-	for <linux-clk@vger.kernel.org>; Thu, 28 May 2026 10:12:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	AuMlQ94hzZYHxomsU+L+MfA3oE3xtzzIMmJ6zw8DcuY=; b=RejT8wCNdPCXNUbr
-	XGZGjTn8BCWHFhCIFGuj5Dk2yHWcyJofFMJI0GgXn0mmR1VLJFSjHN3bsBFDC4dm
-	owvJpQCZd3eodp+mwcoNqMkRFU/BT2sNWOlvF1NJt999EHVFtD0IjwNThT9P8+cy
-	UqD5bfoRqLw7/ae0UBcCF+4p5M5gK58Edz2FCsxwi5LS89++FbcAFDjMNvCR1QMX
-	n1O7Cm7Uedk1pDDhI24TFxjLfosmjIOyljZXSEpRVqpdsKYQmRMvD5ZMet+M3Bhr
-	KAbCprsmlqln/JkRPd6MpVlZlBHIDguCaobrK52cgpaPZZBAzraKnmFrQB7CPZ1l
-	IVMWJA==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ee7yajajq-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Thu, 28 May 2026 10:12:13 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-516d38bfe83so138538151cf.3
-        for <linux-clk@vger.kernel.org>; Thu, 28 May 2026 03:12:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="kO3PjU6l"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-44ccbd3290aso10943793f8f.2
+        for <linux-clk@vger.kernel.org>; Thu, 28 May 2026 03:29:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1779963133; x=1780567933; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=AuMlQ94hzZYHxomsU+L+MfA3oE3xtzzIMmJ6zw8DcuY=;
-        b=gYvZKjuw1lJ5sLmHJuUmScyKUIaVRyNK6Z+MOjhQBTCBd6Z3mzATk8UBU0ZkGee+LK
-         L5Ub5bFp1GfPAklS9/zzSKc1aUD7MQB37J4p5QKyTc2HsIG9Qlxbh6rvre8kX3myiFb1
-         HcqrrN2kr1BBdnOuC4ZRwazuBxZg0eRqnbTtnWnu0ZyeqhrekICK/pl94f7/a5vEFvPh
-         3m1O55FolAnBKNvW6rCOM4RfIzOTmAK8+AMJKjon1O6J7dJ0A6o+d3LFHy2WioNC5j1I
-         1CAfn5FRVYVIFdDrXzOG0Rpy5+lAvwki+yuVQKtnvutwckZDVjcedXQN7QNczYW/GjxY
-         uqsQ==
+        d=baylibre.com; s=google; t=1779964186; x=1780568986; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=61U37PkYxDP7srwfy7W6MENJC9Lvy4YJE9j3WlMCKWk=;
+        b=kO3PjU6lG+im8EyP6E+RqTHrvdtIhWHOzHmqQRKIGKaK0gBcCuJoZu3ENBAjpjlWnn
+         sMajUvTYI4V5nsLorpDKsoMew71mI82WeHXWu9X76DuENMVQv3lFRUsFmw+ezmbclb/O
+         kEikFGTuyhiPnWpDIui8nHaLDtr8ub0nlZi1a0OnvgNf+LbcXHscC8EBnE8QC7fe1IcQ
+         bP4LqX3CBegm1XmwF+fz3dYOJC6FiuSiDdQ4y1yrdOFhb+F62NFBZNbf8r3ngHogZSuP
+         5mgo0KANWazlmIM91YAN172ANzhSu16SqUnASKNXu3v1n4FWel8oVKucA6uoZVo23bpP
+         j4Pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779963133; x=1780567933;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AuMlQ94hzZYHxomsU+L+MfA3oE3xtzzIMmJ6zw8DcuY=;
-        b=LJYJvQIGU78uCrWe62Ts75XL5fo9txKOGxts9L6SwPKboVIlOgSC1JmcmQhQ5IQYOM
-         AxJaO1VJKBIvGqCV+miIZJZAzk1ZTWH2wJM7oXbHzw0OuQJsg/HUL+LmLQJXYuDtycG5
-         +9YMDW47v6wBu3jqv5TBNCO7AgK2cPIqHin3lVWEwNjSYO5jvMLA9WL9rm978ZV/zYHY
-         3vwn0fqrE0He05iHW+byo4bA+SIa+gexNymiXi8x2471MZb1/JRK5Cv1qFsWW2eSYKxq
-         o+9qJZ/XuEcJe+ZHPUgnCQ35zOTGx25ZI5oMrLg4h+xKDS3oePax6EIWDgUE8gcR0YqE
-         4G8w==
-X-Forwarded-Encrypted: i=1; AFNElJ+6uUwqMV5etrY3eZ7DKUpkxAaUo0RWr68cnzbaILSaMBr+G1Vav5+j2lpS27ofoywDgoijwCaLcW4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylYFWiTkcI2vTTa5AtNg+6kKtVaO+MuLQE5wbpVWGt6QAaYpLA
-	cR01FlOHSZ4gV5hGnWcU/za9ryAQQzOBpPBK4OBsENYmJQ/dbhiP4Yqwq6kvxl2bkN2bSYgqsWv
-	5YztdsWSCtEboh6pfz1ppjaFDndfXX50V7cwRfWF6+Areyu0QJ0CzLfnAWjglCrE=
-X-Gm-Gg: Acq92OHvl7S+iMoZCnRdVf0+TGqHK66hmE/RQeMq7VkTXMhIlNfatvQH6waF3tIfWgn
-	N738CPkPf2GDPv/EZXsJ8GzziSkCfspW9Th1UP0euZICiVXCcLeWpHSSTZKVJqpdzQw3d2Wz/oR
-	cPVml82FigiFOdXfKtBVUNJUk7lp7EgXf7+tOSI+gW1tVtdFuIdLVif7mSOIKRd+xuGS9zMduqp
-	qfd/DdZQupSrbAaTeKZYlbx7aFHGjxgF4I1yz+yr5a3medEakqQL3qx2vSfXp5oc4qy4/fqX8Lr
-	2xaZweAY69AzlTVTGSq4H7OYmUniZ2H7PYo0Q3CGuSkEqICk5s+BxfMazztF5LP67ie5loRnD8c
-	JeF/hrmC+o6bq7j/Srw23N6XyC0oS5huY5YelU1DuTRSdIsEpfrWHkJ5L4LRqYkLxqq1wYfYJ3a
-	LffL5DIctlsfOBCgllPSb8KDJq20i/4ojBc9R4Ld/BDzF0jxBZyAqSgBHy6nVCPf/QWnex1L+L6
-	viAjIqxL7qtttBbWgdfvTGDmug=
-X-Received: by 2002:a05:622a:2298:b0:50f:c67e:d52c with SMTP id d75a77b69052e-516d466fc0cmr364940171cf.55.1779963133305;
-        Thu, 28 May 2026 03:12:13 -0700 (PDT)
-X-Received: by 2002:a05:622a:2298:b0:50f:c67e:d52c with SMTP id d75a77b69052e-516d466fc0cmr364939791cf.55.1779963132858;
-        Thu, 28 May 2026 03:12:12 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:2a07:3a01:8e96:3679:b9c:de47? (2001-1c00-2a07-3a01-8e96-3679-0b9c-de47.cable.dynamic.v6.ziggo.nl. [2001:1c00:2a07:3a01:8e96:3679:b9c:de47])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-68a6faae4basm1682979a12.5.2026.05.28.03.12.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 May 2026 03:12:11 -0700 (PDT)
-Message-ID: <66a76d9f-fe04-4a72-b6fe-42c2922fe9d9@oss.qualcomm.com>
-Date: Thu, 28 May 2026 12:12:10 +0200
+        d=1e100.net; s=20251104; t=1779964186; x=1780568986;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=61U37PkYxDP7srwfy7W6MENJC9Lvy4YJE9j3WlMCKWk=;
+        b=Gdaru/QYlpqGn2cHMZdGE1G875XIpmwAjUaLsXOxMrc2FCDYupyhMrNmimitNzomKz
+         dRXZDik+Qr9bg7j2eQGyzzP1t3TNz3Q7R8uAZD3RVUgEul/lbhRwPbWX82DKUkhjl9HD
+         P+L5pYs89Astt/7Qav/W9xli8sUBUqQNXkVFVvwTcgnkAYlSxmYtFRYgM0Pajm5yA8H7
+         tHx7hqzezWYQKDIfJRwNcDznctdYIQtBcrmlRXo3NYEb8RA61ExeCbT/hJsheWFTBHPm
+         W4I7bFdM20w71/dfahS1Ipgu5ocqlWgnyJ4xe4a3jQVvO3wz+fv1YB3lulHzfMzWsKgk
+         wvrQ==
+X-Forwarded-Encrypted: i=1; AFNElJ+MEE72lxqdXASXeEwm644arHdFQaByZQyrU89FYR+x4D3mzGSfmE7khlOlWWTVbDbwtJ/VzyVD7aE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt5FIwQOL/kWRbqB9nbt72HMj1TfuSxcQXUuHno6FFF37OkLbu
+	URj2FQLik5Joh9TyKb+PVKoPhkla0nec01/0U2/VS1LWvCiy4ZwNJg2lAMBkZCyNOe8=
+X-Gm-Gg: Acq92OFLNJco1X3LZk2fWyKzWGssjEp7osd6Eaeg226DfWxh3q2qfgYZcc7sE5WA3iz
+	YetsKrdJj7UzOAFHyIZyGFxSImkJiLAEh8SC39LNEAE3ANW83qSYlUvfAzCm5qgpkpHA/s6+FI6
+	8GG6M+72JNSJVsLn83sW2CfUrymStdzdHvUpM5yUMLRwoGmU2T4MlorAE285ZzUFAMt+B1l4fJm
+	m2Hw00L3X+YdjClf/u2R2p3JmqrPLMcEmztDSNI64mbqx2/9mXp1wAAzo2n/+3CLB6HrvXFkHVn
+	NAHv2QKXdR4CDBphg/sjaVy4GMOpzFqoRnRCQkmytDgMY0U5gMEL6JwsIa6z17lE2sbbeO4HZEs
+	CEGq0eIxKu7vN9h7ZOJ4OKx+ET8YLHm42cAWljZTOs8P6QE5U89VWv1nJMTJYBC9CX7lxXag1pL
+	lRagP9V1bMEW4z2eNfBm6DnaGxcuNBpRJLIC4gs5mXI++mENezh2uhMYxEUQuPbIBPVtn28+MJe
+	bZPTsZx9IFWYEYis+iaqS127A==
+X-Received: by 2002:a05:6000:2383:b0:449:cfea:ca91 with SMTP id ffacd0b85a97d-45eb38c9090mr46024721f8f.37.1779964186165;
+        Thu, 28 May 2026 03:29:46 -0700 (PDT)
+Received: from localhost (p200300f65f47db04e95e43453a0d1648.dip0.t-ipconnect.de. [2003:f6:5f47:db04:e95e:4345:3a0d:1648])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-45edb557679sm22133274f8f.10.2026.05.28.03.29.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 May 2026 03:29:45 -0700 (PDT)
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig=20=28The=20Capable=20Hub=29?= <u.kleine-koenig@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Brian Masney <bmasney@redhat.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	=?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v1] clk: Use named initializers for platform_device_id arrays
+Date: Thu, 28 May 2026 12:29:38 +0200
+Message-ID:  <841cf835a24bb2f3acb99a97bb58e583220e03a2.1779963984.git.u.kleine-koenig@baylibre.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Hans de Goede <johannes.goede@oss.qualcomm.com>
-Subject: Re: [PATCH 0/3] clk: Add __clk_disable_unprepare_counts_only() and
- use this in simple[fb|drm]
-To: Brian Masney <bmasney@redhat.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>, Helge Deller <deller@gmx.de>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Rob Clark <robin.clark@oss.qualcomm.com>, linux-clk@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, ~postmarketos/upstreaming@lists.sr.ht
-References: <20260527094811.116977-1-johannes.goede@oss.qualcomm.com>
- <ahd4XgTo3KZqGS9M@redhat.com>
-Content-Language: en-US, nl
-In-Reply-To: <ahd4XgTo3KZqGS9M@redhat.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: _ivIeXN9BSgXR9Xrap6_sGipWS79ag7N
-X-Proofpoint-ORIG-GUID: _ivIeXN9BSgXR9Xrap6_sGipWS79ag7N
-X-Authority-Analysis: v=2.4 cv=CaE4Irrl c=1 sm=1 tr=0 ts=6a1814fe cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22 a=b01-GHMo7TsF7J3Xm3IA:9
- a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTI4MDEwMyBTYWx0ZWRfXzU5Rdnfe5YOi
- tgKOeSyruf7usyiVOJr1fjpl61R7wKB/B2bYjgUlgKCoatRzbXquBeTWecjKykAN+Rn4F4j9Qyl
- aOzUBqAwa9P5KuxPEyuRyFXXuAaIPjqbUjyC+YZU0KuiBlajTGLkcvwfV5MuAeCvse2JGH9L+m7
- aiXk4+EqgDWlcYm9Ka8wLmmALyb12hLQQBXPH3v+bj3I6hCSWIffODt9IE+j8Lfjx/vpZEB1JBb
- Ma9J/PKFHGzfdAlXeQSWdpGjrHcGvYISZ8BOnBPCMasa3+vEqqw+XT8lK8dnPFMGv8AyfYyE/N3
- +kilDh1TQThI+y+taGim1U5d09EldTAumCn5djkWPnoMe5B/Jsaxv56NWUvTtYsKzdOGrnv6/HH
- mlDej/g8jbaiU2dlpV7eF6IZp/5xeegK8Ns0cNiyIwyi/BZx+ar3OhDWhLpNfRGiDD/envLNgzg
- cS/GaGa7xfWbSCWscPg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-05-28_03,2026-05-26_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 phishscore=0 impostorscore=0 clxscore=1015 bulkscore=0
- lowpriorityscore=0 suspectscore=0 priorityscore=1501 spamscore=0 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2605210000 definitions=main-2605280103
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3890; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=zDeV/QjELvue1DDZEmJSTZtOOPUgKnSkuDpqYuEAmHk=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBqGBkS4W14E07miYgxXfZ5P0Nms7qGfWBHWxrl1 XXk8rIRYGaJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCahgZEgAKCRCPgPtYfRL+ TqhfCACacCiHDmcj2A4BRNtqxk/gD9elR6r0+Hthg0xplEdU7Dqo89q9+oFpzIx0x6bRVucToXF f+T/0oN5HXPYiS6s8ghodEAx6+PX26gba+9T8x5driWb88R92ipEpt3LlSp86Gus6f2OzabD6Dk YV2bH02s4P7CntM4wkk3lVD6gzEKKkXSGlOkU0UIF//o+Foc2Pr1yU0UDWs2+n72ptVp1iKbx5D DNmiZJmwfmsUv0mFx/Na3djnx9QWeI4VzjAkeCRa9jDvPcJLmkGDU/+g4Sh8SfQftw166pnyKAY FZtoL+shxJBs45GA5394PHmr7UsFpCagSGg0UWTJQ2riRY5z
+X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
 
-Hi Brian,
+Named initializers are better readable and more robust to changes of the
+struct definition. This robustness is relevant for a planned change to
+struct platform_device_id replacing .driver_data by an anonymous union.
 
-On 28-May-26 1:03 AM, Brian Masney wrote:
-> Hi Hans,
-> 
-> On Wed, May 27, 2026 at 11:48:08AM +0200, Hans de Goede wrote:
->> 2) One option considered was detaching the simple-framebuffer driver later,
->>    after the real display driver has had a chance to claim the clocks. But
->>    this won't work in cases where the real display driver picks different
->>    parent clocks then the boot firmware did and needs to reparent clocks.
-> 
-> Why won't that work in the case where different parent clocks are selected?
-> I'll describe a scenario below.
-> 
->>
->>    Basically the goal is for things to behave as if the simple-framebuffer
->>    driver was not there at all, because that leaves the hw in the state
->>    the real display driver expects.
-> 
-> I think the deferred unbinding could have some potential here where
-> there is some kind of notification mechanism between simple-framebuffer
-> and the real drm driver. So:
-> 
-> - simple-framebuffer driver takes reference(s) to the clk(s).
-> 
-> - real drm driver eventually loads, takes reference(s) to the necessary
->   clk(s).
-> 
-> - real drm driver sends a notification to simple-framebuffer that it's
->   done, and has control.
-> 
-> - simple-framebuffer can unbind and release its references to the clks.
-> 
-> No clks will be shutdown prematurely in this scenario.
-> 
-> If the real drm driver needs a different parent, then presumably things
-> should be setup correctly, and simple-framebuffer can have the clocks
-> shut down when it calls clk_disable_unprepare().
+While touching these arrays unify spacing and usage of commas.
 
-If the real drm driver needs a different parent, then how does it
-do the reparenting while the simple-framebuffer driver is holding
-a reference to the clock ?  In that case the clock might have
-a protected_count of non 0 (depends on the core-clk flags) and
-reparenting won't work.
+Signed-off-by: Uwe Kleine-König (The Capable Hub) <u.kleine-koenig@baylibre.com>
+---
+Hello,
 
-We could have the drm driver claim the clks, then call some release
-function and only then do the reparenting. But this makes things
-somewhat complicated for the drm drivers.
+see e.g.
+https://lore.kernel.org/all/cover.1779893336.git.u.kleine-koenig@baylibre.com/
+for details about my quest to modify platform_device_id.
 
-So my conclusion is that having a clk equivalent of e.g.
-pm_runtime_put_noidle() which just lowers the counts without
-actually doing anything is still the most KISS approach here.
+Best regards
+Uwe
 
-With the downside of needing a new clk-core function for this.
+ drivers/clk/clk-bd718x7.c      | 12 ++++++------
+ drivers/clk/clk-max77686.c     |  8 ++++----
+ drivers/clk/clk-s2mps11.c      | 12 ++++++------
+ drivers/clk/samsung/clk-acpm.c |  4 ++--
+ 4 files changed, 18 insertions(+), 18 deletions(-)
 
-> If the real drm driver
-> needed those clks, then it should hold a reference to them.
->
-> I'm intentionally not going through how to do the notification mechanism> here.
+diff --git a/drivers/clk/clk-bd718x7.c b/drivers/clk/clk-bd718x7.c
+index 1cae974e6d1d..8ddb50c67757 100644
+--- a/drivers/clk/clk-bd718x7.c
++++ b/drivers/clk/clk-bd718x7.c
+@@ -147,12 +147,12 @@ static int bd71837_clk_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct platform_device_id bd718x7_clk_id[] = {
+-	{ "bd71837-clk", ROHM_CHIP_TYPE_BD71837 },
+-	{ "bd71847-clk", ROHM_CHIP_TYPE_BD71847 },
+-	{ "bd71828-clk", ROHM_CHIP_TYPE_BD71828 },
+-	{ "bd71815-clk", ROHM_CHIP_TYPE_BD71815 },
+-	{ "bd72720-clk", ROHM_CHIP_TYPE_BD72720 },
+-	{ },
++	{ .name = "bd71837-clk", .driver_data = ROHM_CHIP_TYPE_BD71837 },
++	{ .name = "bd71847-clk", .driver_data = ROHM_CHIP_TYPE_BD71847 },
++	{ .name = "bd71828-clk", .driver_data = ROHM_CHIP_TYPE_BD71828 },
++	{ .name = "bd71815-clk", .driver_data = ROHM_CHIP_TYPE_BD71815 },
++	{ .name = "bd72720-clk", .driver_data = ROHM_CHIP_TYPE_BD72720 },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(platform, bd718x7_clk_id);
+ 
+diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
+index 9149ce4f702d..e6fde914c5ef 100644
+--- a/drivers/clk/clk-max77686.c
++++ b/drivers/clk/clk-max77686.c
+@@ -264,10 +264,10 @@ static int max77686_clk_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct platform_device_id max77686_clk_id[] = {
+-	{ "max77686-clk", .driver_data = CHIP_MAX77686, },
+-	{ "max77802-clk", .driver_data = CHIP_MAX77802, },
+-	{ "max77620-clock", .driver_data = CHIP_MAX77620, },
+-	{},
++	{ .name = "max77686-clk", .driver_data = CHIP_MAX77686 },
++	{ .name = "max77802-clk", .driver_data = CHIP_MAX77802 },
++	{ .name = "max77620-clock", .driver_data = CHIP_MAX77620 },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(platform, max77686_clk_id);
+ 
+diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+index ff7ce12a5da6..fa5ac8f673f6 100644
+--- a/drivers/clk/clk-s2mps11.c
++++ b/drivers/clk/clk-s2mps11.c
+@@ -225,12 +225,12 @@ static void s2mps11_clk_remove(struct platform_device *pdev)
+ }
+ 
+ static const struct platform_device_id s2mps11_clk_id[] = {
+-	{ "s2mpg10-clk", S2MPG10},
+-	{ "s2mps11-clk", S2MPS11X},
+-	{ "s2mps13-clk", S2MPS13X},
+-	{ "s2mps14-clk", S2MPS14X},
+-	{ "s5m8767-clk", S5M8767X},
+-	{ },
++	{ .name = "s2mpg10-clk", .driver_data = S2MPG10 },
++	{ .name = "s2mps11-clk", .driver_data = S2MPS11X },
++	{ .name = "s2mps13-clk", .driver_data = S2MPS13X },
++	{ .name = "s2mps14-clk", .driver_data = S2MPS14X },
++	{ .name = "s5m8767-clk", .driver_data = S5M8767X },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(platform, s2mps11_clk_id);
+ 
+diff --git a/drivers/clk/samsung/clk-acpm.c b/drivers/clk/samsung/clk-acpm.c
+index 953ca8d5720a..25cfa953ccac 100644
+--- a/drivers/clk/samsung/clk-acpm.c
++++ b/drivers/clk/samsung/clk-acpm.c
+@@ -166,8 +166,8 @@ static int acpm_clk_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct platform_device_id acpm_clk_id[] = {
+-	{ "gs101-acpm-clk" },
+-	{}
++	{ .name = "gs101-acpm-clk" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(platform, acpm_clk_id);
+ 
 
-Ack.
-
-Regards,
-
-Hans
-
-
+base-commit: e7d700e14934e68f86338c5610cf2ae76798b663
+-- 
+2.47.3
 
