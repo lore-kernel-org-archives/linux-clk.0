@@ -1,49 +1,48 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A9B13BCD0A
-	for <linux-clk@vger.kernel.org>; Thu, 28 May 2026 12:01:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED9BE1E5714
+	for <linux-clk@vger.kernel.org>; Thu, 28 May 2026 12:08:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779969693; cv=none; b=XSZ0A9llKOt2TNMFs1qBKlewVEWfwrJOWtyrAo+e5xkcx4e8VSC1vDMPMmxhWUBGjnYXwieBSNjsDT7nX9k1QSmgutrC2mq0MWzzuNCDBoaANEGkOsLru/m0pEV34cR76774tH4Xyacxe5lAIm1MaXHClUg8Jie8TCXMLP3tuR4=
+	t=1779970095; cv=none; b=p0u/T2y/j3+zwPMQ6IInUMDBScpw6hVF3Xmf0vUS4/xRbqGeqNUYc357EDdqS39thRuv1RGna+ksyd42Vq7wbcScef2HOWVmw9lUn30KxE1CGt7KaXCZvRaiKwQ2X9JW7sv48rUKEfhO96DHrUbUpzToRKqo2M2THzoTE2tMITU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779969693; c=relaxed/simple;
-	bh=CAYKryhcjO+rdk9Uk8YQcneFsEufzSs7pBlfSyp7TEI=;
+	s=arc-20240116; t=1779970095; c=relaxed/simple;
+	bh=AQHisDNqogmQvZgezzDUBs28nFIfXOCPs5dPiHXS798=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kjTDyvecJFgEoTHSflFBJY8cesS1Vpc1GajUVVuI3WOBpt6lSxR10x6wnQfTVCT/LCHsjsv4jSrrsrtZyQtal8H0wS2ghzTYO+gyUOCNqt6X5CMTqIeB0Kh2F6O6ttvthj5cBBL3QOfUi/Dm0ZrKO0EtEFoVkMDtEc15mYdGEX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T3XmokJC; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=ICY0gcpO+5SBUWWaS0nsHGqt/zq+HOO6RJfdvhyy2ByzRccJKxE1k4DecpP3RIb1CTRQoOnGfhq6qTsvMQRDASSKszVHL3IJXnpEb8IoRj7uue3r9vzslBw9w+rN1rVJIpWOV+GDhIl498Ubiq6vhc+pW1ljsZwZi8yhE1tcGBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R0Pkp/by; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T3XmokJC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67A0A1F000E9;
-	Thu, 28 May 2026 12:01:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R0Pkp/by"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08BED1F000E9;
+	Thu, 28 May 2026 12:08:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779969691;
-	bh=41DrVZ4xS7vhXVEgxGgxSNJ1PMDaMkbDls2BuQg9ydM=;
+	s=k20260515; t=1779970093;
+	bh=jZdiQWfbNCmHdbL0qPXuLtZ2WwmAbORNr9dD2tiwIWU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=T3XmokJC8kLStgVwqlglA/5Bsw+rFxERoxPBiSoVO8bZIms8ozh4thDeTAyFwitst
-	 UIGIp0ohUitgCRsC8k7yEfP8GrI/6E6gYoxG0tE4qjW3eeeopRe2dLOlzgaBKPTSP7
-	 /tdsUmlrCPR61I7xb/S+Y65x5DzbnZgKdJpw7u2lYfmTjRzwNhe64OGGIg9Qs1bYCY
-	 gAgHkRIJAl5oJYfsVCjTubthS5zOj+vHtPu96WbgVk7NxNVxxy+GPrVbLirWbBasCQ
-	 u+sJwul5IiLAT0QbVvFx10KwnGbLHDxwVBOIx0/xjU5ErZMtTdX7Gs6bs5dRYFQRVT
-	 z5TRbnhQvHF5A==
-Date: Thu, 28 May 2026 14:01:29 +0200
+	b=R0Pkp/bywSa5wZecNxWFjvuNmmOhKGsGCZCd/TN/Ov9dyhzqhy0orYmp518YA/+7f
+	 J+byUKSIf0dg2TAmDwR7DToNwbv/siyAHsRgIOwrd5/jsRz8v6mzDrQ+PSz7p+hB8h
+	 qwP1gYGMJHBFn42Yw/N0wVISvOSZuC/og4Xcn6+Wi7Wy/GYv7fAwBT9a9ccwumkFS7
+	 hEgUqUZU6G4Gmxwp5WBklDnhE+SjJ+GlAmcPan0QeYxBJGldZMobwsEOP/ITKnZbsN
+	 FCeS5zj6I100j/8LAM/2pcPSge6F+7HkKOI5BOXFG6Eaylg77ku1y3MoWyYgQMhKqo
+	 JW1fMvLuRomSw==
+Date: Thu, 28 May 2026 14:08:10 +0200
 From: Maxime Ripard <mripard@kernel.org>
 To: Hans de Goede <johannes.goede@oss.qualcomm.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Javier Martinez Canillas <javierm@redhat.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Helge Deller <deller@gmx.de>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Rob Clark <robin.clark@oss.qualcomm.com>, linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+Cc: Brian Masney <bmasney@redhat.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Javier Martinez Canillas <javierm@redhat.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Helge Deller <deller@gmx.de>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Dmitry Baryshkov <lumag@kernel.org>, Rob Clark <robin.clark@oss.qualcomm.com>, 
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
 	~postmarketos/upstreaming@lists.sr.ht
 Subject: Re: [PATCH 0/3] clk: Add __clk_disable_unprepare_counts_only() and
  use this in simple[fb|drm]
-Message-ID: <20260528-solemn-chowchow-of-psychology-cc0ae4@houat>
+Message-ID: <20260528-sloth-of-delightful-chaos-1f02dc@houat>
 References: <20260527094811.116977-1-johannes.goede@oss.qualcomm.com>
- <20260527-flawless-chowchow-of-fruition-edbe8a@houat>
- <496facc4-60bc-4646-b426-30e7ac545d9f@oss.qualcomm.com>
- <20260527-armored-spiked-jacamar-0bb19e@houat>
- <4f34c957-817d-45fe-ac13-02b98e77f010@oss.qualcomm.com>
+ <ahd4XgTo3KZqGS9M@redhat.com>
+ <66a76d9f-fe04-4a72-b6fe-42c2922fe9d9@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,12 +50,12 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="ojuvfkqckxhkyq4k"
+	protocol="application/pgp-signature"; boundary="sloh5l5jsj3qmgsm"
 Content-Disposition: inline
-In-Reply-To: <4f34c957-817d-45fe-ac13-02b98e77f010@oss.qualcomm.com>
+In-Reply-To: <66a76d9f-fe04-4a72-b6fe-42c2922fe9d9@oss.qualcomm.com>
 
 
---ojuvfkqckxhkyq4k
+--sloh5l5jsj3qmgsm
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -64,167 +63,81 @@ Subject: Re: [PATCH 0/3] clk: Add __clk_disable_unprepare_counts_only() and
  use this in simple[fb|drm]
 MIME-Version: 1.0
 
-On Wed, May 27, 2026 at 05:09:39PM +0200, Hans de Goede wrote:
-> Hi Maxime,
+On Thu, May 28, 2026 at 12:12:10PM +0200, Hans de Goede wrote:
+> Hi Brian,
 >=20
-> On 27-May-26 14:48, Maxime Ripard wrote:
-> > On Wed, May 27, 2026 at 02:21:50PM +0200, Hans de Goede wrote:
-> >>>> clk_prepare_enable() is fine, the clocks are already on so no
-> >>>> ordering worries and it ensures that the clocks and their parents ca=
-nnot
-> >>>> get turned off by incrementing their enable, prepare and protect cou=
-nts.
-> >>>>
-> >>>> clk_disable_unprepare() is a problem though since it actually turns =
-the
-> >>>> clocks off. Instead something is needed which only decrements those =
-counts.
-> >>>>
-> >>>> This series introduces a new clk-core function called
-> >>>> __clk_disable_unprepare_counts_only() (1) which does just that. Pref=
-ixed
-> >>>> with '__' to indicate that normally drivers should not use this.
-> >>>>
-> >>>> Michael, Stephen sorry for needing to add a new clk-core function fo=
-r this,
-> >>>> but I see no other way of solving this (2)(3). The changes are not t=
-hat
-> >>>> big / not too bad.
-> >>>>
-> >>>> I've also considered making __clk_disable_unprepare_counts_only() im=
-plement
-> >>>> all the logic itself instead of adding the extra parameter to
-> >>>> clk_core_unprepare() and clk_core_disable() but that leads in duplic=
-ating
-> >>>> quite a bit of logic (4) so this seems better.
-> >>>>
-> >>>> The other 2 patches just replace the clk_disable_unprepare() calls in
-> >>>> the simple[fb|drm] driver with the new helper.
-> >>>>
-> >>>> This series fixes the display not coming up after switching to the m=
-sm
-> >>>> driver when a simple-framebuffer node with clocks listed is used.
-> >>>>
-> >>>> 1) I'm open to changing the name, this is the best I could come up w=
-ith.
-> >>>>
-> >>>> 2) One option considered was detaching the simple-framebuffer driver=
- later,
-> >>>>    after the real display driver has had a chance to claim the clock=
-s. But
-> >>>>    this won't work in cases where the real display driver picks diff=
-erent
-> >>>>    parent clocks then the boot firmware did and needs to reparent cl=
-ocks.
-> >>>>
-> >>>>    Basically the goal is for things to behave as if the simple-frame=
-buffer
-> >>>>    driver was not there at all, because that leaves the hw in the st=
-ate
-> >>>>    the real display driver expects.
-> >>>
-> >>> So I know it's not really what you had in mind, but if you are only
-> >>> concerned about the transition from the bootloader to the DRM driver,
-> >>> then I think supporting the following work would help:
-> >>>
-> >>> https://lore.kernel.org/r/20260423-drm-state-readout-v2-0-8549f87cb97=
-8@kernel.org
-> >>>
-> >>> With that series, we can build the initial KMS state from the hardware
-> >>> state, which means that if you were to change the resolution at boot,=
- it
-> >>> would be executed just like any mode change in KMS.
+> On 28-May-26 1:03 AM, Brian Masney wrote:
+> > Hi Hans,
+> >=20
+> > On Wed, May 27, 2026 at 11:48:08AM +0200, Hans de Goede wrote:
+> >> 2) One option considered was detaching the simple-framebuffer driver l=
+ater,
+> >>    after the real display driver has had a chance to claim the clocks.=
+ But
+> >>    this won't work in cases where the real display driver picks differ=
+ent
+> >>    parent clocks then the boot firmware did and needs to reparent cloc=
+ks.
+> >=20
+> > Why won't that work in the case where different parent clocks are selec=
+ted?
+> > I'll describe a scenario below.
+> >=20
 > >>
-> >> Hmm, so your suggestion would be to have the initial KMS driver probe()
-> >> only do a read back without touching anything. Then claim clks matching
-> >> the read back config and then only release the simple* driver and thus
-> >> the clocks after this?
+> >>    Basically the goal is for things to behave as if the simple-framebu=
+ffer
+> >>    driver was not there at all, because that leaves the hw in the state
+> >>    the real display driver expects.
 > >=20
-> > Almost. Part of the call to drm_mode_config_create_initial_state() if
-> > needed to make it grab its resources. See atomic_install_state in that
-> > series. So probe wouldn't have anything more to do.
+> > I think the deferred unbinding could have some potential here where
+> > there is some kind of notification mechanism between simple-framebuffer
+> > and the real drm driver. So:
 > >=20
-> >> That is certainly an interesting proposal but IMHO almost orthogonal
-> >> to this one (1).
+> > - simple-framebuffer driver takes reference(s) to the clk(s).
 > >=20
-> > Why do you think it's orthogonal?
-> > It would completely fix your problem.
+> > - real drm driver eventually loads, takes reference(s) to the necessary
+> >   clk(s).
+> >=20
+> > - real drm driver sends a notification to simple-framebuffer that it's
+> >   done, and has control.
+> >=20
+> > - simple-framebuffer can unbind and release its references to the clks.
+> >=20
+> > No clks will be shutdown prematurely in this scenario.
+> >=20
+> > If the real drm driver needs a different parent, then presumably things
+> > should be setup correctly, and simple-framebuffer can have the clocks
+> > shut down when it calls clk_disable_unprepare().
 >=20
-> AFAICT in its current version it does not contain a mechanism to
-> delay the remove conflicting framebuffer call, so no it does not
-> fix my problem.
+> If the real drm driver needs a different parent, then how does it
+> do the reparenting while the simple-framebuffer driver is holding
+> a reference to the clock ?  In that case the clock might have
+> a protected_count of non 0 (depends on the core-clk flags) and
+> reparenting won't work.
 
-The conflicting framebuffer is removed by drivers through an explicit
-call to aperture_remove_all_conflicting_devices(). Just move that call
-after the call to drm_mode_config_create_initial_state, there's nothing
-to integrate.
+The only case where it should reparent you listed was that you might
+need to pick up a different resolution. However, that can only be
+enforced by an ioctl or a client.
 
-> >> Even if it may fix the issue in the end, it seems that that work is
-> >> still quite a way from going upstream
-> >=20
-> > It's likely to be merged in the next few weeks.
-> >=20
-> >> and even then initially it only potentially fixes this for the TIDSS
-> >> driver since that solution needs a lot of per driver work.
-> >=20
-> > I mean, yeah, but the good thing is that you only have one driver to
-> > care about, right?
->=20
-> I would prefer my proposed KISS solution, which works everywhere, over
-> your quite complex solution which requires complex per driver changes.
->=20
-> When I was still working on:
->=20
-> https://fedoraproject.org/wiki/Changes/FlickerFreeBoot
->=20
-> I needed to constantly fix i915 fastset support and when I stopped
-> fixing it due to -ENOTIME it pretty much was broken most of the time.
->=20
-> Last time I check modern (Alderlake +) laptops never had working
-> fastset support and there always is a visible most set on newer
-> laptop models because of this.
->=20
-> This state-readback stuff is quite complicated, as the list of
-> known issues in your cover-letter shows.
+simplefb/drm is removed in msm_drm_kms_init. The device is published
+drm_dev_register called right after msm_drm_kms_init, and the clients
+are registered in msm_drm_kms_post_init, called after drm_dev_register.
 
-It's kind of a bad faith argument. This list is 4 issues. One is getting
-fixed in the next version, the other two are specific to tidss which you
-don't care about.
-
-> I wish you all the best with it, but I really do not see this as a
-> good alternative for fixing the issues *this* series tries to address
-> given the huge disparity in complexity between the 2 fixes.
->=20
-> I'm also worried that the readback stuff is likely going to be fragile
-> so might end up being disabled or automatically detect some issue and
-> disable itself at which point we're back to having the original
-> problem this series tries to fix.
->=20
-> Also atm AFAIK there are no plans to add state readback support to
-> msm and there are a lot of other higher priority items to work on.
->=20
-> ###
->=20
-> Anyways since your patch-series will not work for msm in its
-> current state, I would still very much like to hear from the clock
-> maintainers what they think of the approach suggested here.
-
-I really don't get this argument either. Sure, it doesn't work for msm.
-But the clock framework didn't have that unsafe function call either,
-and yet you did the work to add it.
+There's no way in the current msm architecture to have a modeset happen
+while the simpledrm driver is still active.
 
 Maxime
 
---ojuvfkqckxhkyq4k
+--sloh5l5jsj3qmgsm
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCahgukgAKCRAnX84Zoj2+
-dmPbAX9kzaVNfopFtItZV7bN6W6OTPHb5TksLkDo8ZT/Mn1fLV3o+Tpco8mLqNLr
-KfJSRvoBf35JDMX2p9pZNDE+xIK8FSS13TguR1SqQA70p96NkUhuEXNLwold4Y2/
-bqsqrKK8HA==
-=mMoe
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCahgwKgAKCRAnX84Zoj2+
+dlOJAX96DdfsdZKRS3tZrj8a1VUU2rzbl1mUZaskqOqZfG/kbz3+Lb+Zvn8k3mk6
+RSr8TkABfRhGxxwt/MTLRFMANNnZcBbeKvb9D5JxMC/ptdCTInr5jsGu4L6IBHU/
+pYaPdM2CiQ==
+=EqOj
 -----END PGP SIGNATURE-----
 
---ojuvfkqckxhkyq4k--
+--sloh5l5jsj3qmgsm--
