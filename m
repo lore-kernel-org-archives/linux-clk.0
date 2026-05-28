@@ -1,33 +1,87 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C493EF664;
-	Thu, 28 May 2026 12:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C225937B007
+	for <linux-clk@vger.kernel.org>; Thu, 28 May 2026 13:02:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779971661; cv=none; b=CpGJ/kzvjZszDoT5FDtbw342L5TxSLrflF7kGeei95UBLR/gCVsZmwN9KOSMKnQR12iAtfplYuhFN6lGFD8G+gy92ukI+DoUngtoA61ysOcI0BsSe5fDbaOMzRedNha1WYNgDcRcl2yAHv0Qoaq+aWwXDmypLxQA5SwOJET4HAM=
+	t=1779973337; cv=none; b=h6R/ohzBVBIh8v+BV2Rq9Zv5Wt1H+TMI+Ukiuyn1lCWKbWN3bKj564X7tIGgIXKn6CeXy/W/SFUbP7BNadhc9coqxMWgb3oQw0shDNU1L6iNmQAKafHe/AyNgqAWZo32f+E8EoP8CF/8ubQgmmfTQuYgTAxZ8btLyPDFRNQgsic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779971661; c=relaxed/simple;
-	bh=jg9dqhaI3ThWhvuH4Cnt6wUc+Jm72VTsM3QEvBMh8yk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QkevniflTsKtP7279bk39/uaiVNz02S1rsXlTWGyOz8KrCXDYIo7tJvfNiGd/1lgyRSwICzMqmdIWMd3YOQpMkt1s5LIF2Rw09bpjJ+rrxPF4AJIBZ2Qto0bPWU3e8JH2LJyuTdiwgtNxnZBe4CIOJiDmGZV+Lrw8vJ+eMb+NUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RY9jZjpA; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1779973337; c=relaxed/simple;
+	bh=W0QfAz+n49BWFSb2Arc5Cy4M5Uv5LAQxqgQqFj/3k1Q=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=gTT/31a8rStae7qMxsFeRHh7o3+/Tslw/d+D7Ix+2CeeRi+jaHR6NDSqiLHQmTAR1nO68Uj1dReBjqXZKLQkxmlkuH3mjF3qoqRHxaPL6X8yi5jLI1jE50WdIEvcb7/t202snzVHgLsW8hG+c0eHdVEtq6XCkEYWT+2ibooP33E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nmxdgFaP; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Kukee54B; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RY9jZjpA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FBAB1F000E9;
-	Thu, 28 May 2026 12:34:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779971659;
-	bh=nVcCTVvdM7JxrmMWIuC4ry/s3wDoT5P8EwN0Gwi02W0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=RY9jZjpAwNF3bkFtQRTfo/fatB7VcXi+96lhggh9o2I4+qRKp7pdH0ohhmluihL2K
-	 53cQeR3ZSnCBqTxlY79ABBjq7yUOuGwC4cmTMKV39LkQ4PXs4A+GX1oVm2sZsGGdN0
-	 PEIliKWi+ne9rOUMCSnXcGPnMhWmGDl2COP8VIPSi5bYyA1k1A0fHO61OubQOfiDmv
-	 wKkodgMmF2PX8Xsc46dumhI9mtcWm5QL9nlnYRoVUzZNev1eYyOgcZiU5rTe1k9l9Q
-	 Kk0NkAwnKNfPlOXXImbruBKd/R9z87Kdt2rUSwKenRmAaer3qm3ztBYitwlg9f6yh3
-	 rqOZD/RW2LLDA==
-Message-ID: <79515bd5-a1c8-4317-bd15-71569f43e522@kernel.org>
-Date: Thu, 28 May 2026 14:34:14 +0200
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nmxdgFaP";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Kukee54B"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64S8vm5R1697973
+	for <linux-clk@vger.kernel.org>; Thu, 28 May 2026 13:02:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	QkLBgrFATghw43YvF1sCEhlToO5Oy4l+TSxs1/G9Cfc=; b=nmxdgFaP9ycgIT+W
+	Vzcx5XQ7QsrfZOMUaQmCJCGhEhcrVUvKGs+gSyiZLIqgsDcFr+5sauDNp1AqyHYg
+	m7+BdatKUt5tHUrMScyUrHSLdeeLXY7aMmHY5I8/SFtUBrIDMkTuSWaHetdOHnwu
+	FE9/nALG8S41XVLuXRGEr4DIg2BiBd3YxbAw2RqAOuH3PDEfRcrobTGVeUePsWO2
+	uhEUXYnjGLSxN8eCbNZrJCRPpGZzo87cLlwDcd/bNr7SOXOLzpi8hI/xkD3zV/pX
+	E+sYPA003hqn+IGhuXpnT2aNWg2Gqe6xspy51PRmC6xMHIFH8RDflhcMGsm71nF0
+	RYX0Ig==
+Received: from mail-oo1-f70.google.com (mail-oo1-f70.google.com [209.85.161.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ee7yajtge-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Thu, 28 May 2026 13:02:14 +0000 (GMT)
+Received: by mail-oo1-f70.google.com with SMTP id 006d021491bc7-69d9197c60bso6542797eaf.0
+        for <linux-clk@vger.kernel.org>; Thu, 28 May 2026 06:02:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1779973334; x=1780578134; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=QkLBgrFATghw43YvF1sCEhlToO5Oy4l+TSxs1/G9Cfc=;
+        b=Kukee54BCEtXj+8vt284IGCmQjJDMcbRLZM6/Gp9g//thiNqNR1U0dzLPfb/Wm+j6H
+         uTFNsPPjFSZ8Vm+IQ0aA5gbDKO5lK+zM7mQ4DovHg2fI+EXI5upuiSLqgKedEg8fDqn9
+         B8EN4u5HI9bcvJvHXjrxt4Y6KJYP3LH2YIM1rw3Az3lbLL7SRnEWSgX//Ue5fNA24kwm
+         1dgSmNHY6E0MjoDT5lNYGrCfYhodVW99AmbNBG3ukbPNB/wrMszMmKaTNvyqdastVCxs
+         kUWSbBKtweoGyB3/rEKWabJxuw1KbQoKCXRDmImWdj/epNStQu43OdkgwcXQRSbkCNor
+         DV4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779973334; x=1780578134;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QkLBgrFATghw43YvF1sCEhlToO5Oy4l+TSxs1/G9Cfc=;
+        b=KqvRCLNz0ZcYGz8gxblgJ8q9NbQ9GNnDUEZmZLPgXnXrjHhEw7eGrkVYL1P2Hp26Bv
+         8dmHv9tPiTz5rntvgYbAz/+E5hbxvTI2/DZUx47yLXX9SdeGnMajO6J2+gmS6+hfvn7a
+         DDmV+ciuL0VX0ynhpa5ar8ZZo8nGjmTM+W4EdUCxlz2z9CeO7+FFEztqbv0GZ7NLWIwz
+         K3MJBeEEkLPef32Afi8pV/v24U61HHPj3e5/27QAqrCxp0KowOLAL20XYAKg72/rixsx
+         pY4S/y2Ab+wbkm13SG+veqmj0VRXyKQPa7N7iXf07k/u7nIMjBGCNx+YJ5Qex8lk4ESk
+         vQbA==
+X-Forwarded-Encrypted: i=1; AFNElJ9/XFzIikLGzinc9mGewm58v/7JgYw0mv8PmdKVHKGineUYJ10YsywTR5kLLttYZZDOGwXpuudM06o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsyDqpE6YhdbbuTKlM58ngwgzUaJiz2FF+QkD2yUG2rKMNhOdG
+	wt2rYWTsat1w/zPjpRuhlJDTyqYt4pKgINtE1A0dH4tB10F/XqeoaaLIvA1mQznSC/r3ToPjgqb
+	9tvhdqtw0h9QJ/97te8pLhyFGviQsYBeUAXy8etk48XA2Pi4ksyY8y4n2M6FteEY=
+X-Gm-Gg: Acq92OFvzX+cqlggmtFrFYQKjUf9VUdbUct/6sp4QNgqR9BpdRaIWQwLyEbDZrdpkLG
+	70wnL2a9hElXD3raj2QFgQo6PlMmKEE51l3IO+U4R0VyoZ8srvhhNCb19WhET161p5ylL07XSaz
+	mDVVrKWxQ0EMhXAxcga3DN4CXZF9ebvKo2rV4wUUl7Rinh7Rdz87/YzsPoqvlb5iBIGUvwpOBVa
+	DHnbnBhvh6zQ7qVFD3mOu5AUNbWYd8HhXuXbk6/zj8K+151moeqPl0VgGOYwxsiD5Uih8HVbeLG
+	aGwQTpE61IOetApgKcPe1DYAIZ5qfyJjJnzxX6LOj6BzMFmjUnNuSLOELyN51sd3e/H06oZ7dXM
+	HcblkNclHPyk9olNLhKvZRI0JfB7pF7kvgVLlWb1hdj/cz61gIfVIZznmq3js8EwpuwqTN1w0lA
+	vhIJoFt1Edx6VkwbkclcDnplVwIiEXicygGmGl5mFYBA0snOPD0AlC69J5R9krkizR57MSWu191
+	s9Du/izsl7za/Zi6cM0BfiVqgs=
+X-Received: by 2002:a05:6830:660c:b0:7dc:d0cc:91b with SMTP id 46e09a7af769-7e5fefcb86bmr17463614a34.26.1779973333907;
+        Thu, 28 May 2026 06:02:13 -0700 (PDT)
+X-Received: by 2002:a05:6830:660c:b0:7dc:d0cc:91b with SMTP id 46e09a7af769-7e5fefcb86bmr17463543a34.26.1779973333375;
+        Thu, 28 May 2026 06:02:13 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:2a07:3a01:8e96:3679:b9c:de47? (2001-1c00-2a07-3a01-8e96-3679-0b9c-de47.cable.dynamic.v6.ziggo.nl. [2001:1c00:2a07:3a01:8e96:3679:b9c:de47])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-68b9d51a60csm115745a12.11.2026.05.28.06.02.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 May 2026 06:02:12 -0700 (PDT)
+Message-ID: <4b09bd91-9a08-407a-9b01-216dd4d7aae0@oss.qualcomm.com>
+Date: Thu, 28 May 2026 15:02:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,103 +89,138 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/7] dt-bindings: clock: qcom,sm8550-tcsr: Add
- QREF/REFGEN supply properties for glymur and mahua
-To: Qiang Yu <qiang.yu@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Taniya Das
- <taniya.das@oss.qualcomm.com>, Konrad Dybcio <konradybcio@kernel.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- krishna.chundru@oss.qualcomm.com
-References: <20260527-tcsr_qref_0527-v4-0-ded83866c9d9@oss.qualcomm.com>
- <20260527-tcsr_qref_0527-v4-1-ded83866c9d9@oss.qualcomm.com>
- <20260528-adamant-termite-of-drizzle-0c39de@quoll>
- <ahg04dmgSWPuA4Tk@hu-qianyu-lv.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <ahg04dmgSWPuA4Tk@hu-qianyu-lv.qualcomm.com>
+From: Hans de Goede <johannes.goede@oss.qualcomm.com>
+Subject: Re: [PATCH 0/3] clk: Add __clk_disable_unprepare_counts_only() and
+ use this in simple[fb|drm]
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Brian Masney <bmasney@redhat.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Helge Deller <deller@gmx.de>, Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Rob Clark <robin.clark@oss.qualcomm.com>, linux-clk@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, ~postmarketos/upstreaming@lists.sr.ht
+References: <20260527094811.116977-1-johannes.goede@oss.qualcomm.com>
+ <ahd4XgTo3KZqGS9M@redhat.com>
+ <66a76d9f-fe04-4a72-b6fe-42c2922fe9d9@oss.qualcomm.com>
+ <20260528-sloth-of-delightful-chaos-1f02dc@houat>
+Content-Language: en-US, nl
+In-Reply-To: <20260528-sloth-of-delightful-chaos-1f02dc@houat>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: x5pH0c-neE_EI4krvrwPtdRu-z2Ok0Q6
+X-Proofpoint-GUID: x5pH0c-neE_EI4krvrwPtdRu-z2Ok0Q6
+X-Authority-Analysis: v=2.4 cv=E/r9Y6dl c=1 sm=1 tr=0 ts=6a183cd6 cx=c_pps
+ a=lkkFf9KBb43tY3aOjL++dA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22 a=jBUPtkGcZuGRmuA17X4A:9
+ a=QEXdDO2ut3YA:10 a=k4UEASGLJojhI9HsvVT1:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTI4MDEzMiBTYWx0ZWRfX1UXt+5NOpeTH
+ P4X9MdZSRK222E35Wp3+7Ko+yG3Pl8RUTtDW6BpaMyMZvdb/luVRrHxQTKsZTZQWjLOclADtFC5
+ 5zyCwLwrmbCW3O6gAVZxmy2ZA5+g9iUkYVffd3GQPg647V/Bjd+PRHAXvFnDZOXrdXL9g2AM6bb
+ SHtCcwKTkJXHZqzSRtUYkei5/+efOTjSPe0Ft4xP09FxW2v3YvwWjg1/GjQCbJteQz9mXyjMb8L
+ pcQtKnRyOqzaszdYvrSt/wo2Wam8IsBTWikdtXT3IJbYgoQhFwBD4xjWFtY6AEDZmB7RGBba9UN
+ TqMDmkOr1BG1eS3tti1RYjgl+8ZzopJed4yYtqRhAwKKWzcG/qg+m3n4Qc9jT6AyYuKLCKvF+sc
+ X+PfTccNfybxgj0PjF7m3qWtK2cpIyPHB6SBa/WE1nhqOksCU5ay1VY1S9hi9PA/IPvJ+yRdxsO
+ SWUkK5ZzfGbhJvEK4lA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-05-28_03,2026-05-28_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 lowpriorityscore=0 adultscore=0 priorityscore=1501 phishscore=0
+ impostorscore=0 bulkscore=0 malwarescore=0 suspectscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2605210000 definitions=main-2605280132
 
-On 28/05/2026 14:28, Qiang Yu wrote:
-> On Thu, May 28, 2026 at 09:57:10AM +0200, Krzysztof Kozlowski wrote:
->> On Wed, May 27, 2026 at 07:29:12PM -0700, Qiang Yu wrote:
->>> The QREF block supplies reference clocks to PCIe PHYs and requires
->>> dedicated LDO supplies to operate. The digital control interface for
->>> QREF (clkref_en registers) resides in TCSR on glymur and mahua. Since
->>> QREF has no dedicated DT node of its own, these supply properties are
->>> placed in the TCSR node which acts as the control interface for QREF.
->>>
->>> Document the supply properties for qcom,glymur-tcsr and qcom,mahua-tcsr.
->>> Both SoCs share the same QREF TX/RPT/RX component naming, but differ in
->>> topology:
->>>
->>> Glymur has two independent QREF blocks fed by REFGEN3 and REFGEN4. Mahua
->>> has a single QREF block fed by REFGEN3 only.
->>>
->>> Mark the relevant supplies as required per compatible using allOf/if/then
->>> conditionals.
+Hi,
+
+On 28-May-26 2:08 PM, Maxime Ripard wrote:
+> On Thu, May 28, 2026 at 12:12:10PM +0200, Hans de Goede wrote:
+>> Hi Brian,
 >>
->> I don't think you implemented my last comments. You need own binding
->> file.
+>> On 28-May-26 1:03 AM, Brian Masney wrote:
+>>> Hi Hans,
+>>>
+>>> On Wed, May 27, 2026 at 11:48:08AM +0200, Hans de Goede wrote:
+>>>> 2) One option considered was detaching the simple-framebuffer driver later,
+>>>>    after the real display driver has had a chance to claim the clocks. But
+>>>>    this won't work in cases where the real display driver picks different
+>>>>    parent clocks then the boot firmware did and needs to reparent clocks.
+>>>
+>>> Why won't that work in the case where different parent clocks are selected?
+>>> I'll describe a scenario below.
+>>>
+>>>>
+>>>>    Basically the goal is for things to behave as if the simple-framebuffer
+>>>>    driver was not there at all, because that leaves the hw in the state
+>>>>    the real display driver expects.
+>>>
+>>> I think the deferred unbinding could have some potential here where
+>>> there is some kind of notification mechanism between simple-framebuffer
+>>> and the real drm driver. So:
+>>>
+>>> - simple-framebuffer driver takes reference(s) to the clk(s).
+>>>
+>>> - real drm driver eventually loads, takes reference(s) to the necessary
+>>>   clk(s).
+>>>
+>>> - real drm driver sends a notification to simple-framebuffer that it's
+>>>   done, and has control.
+>>>
+>>> - simple-framebuffer can unbind and release its references to the clks.
+>>>
+>>> No clks will be shutdown prematurely in this scenario.
+>>>
+>>> If the real drm driver needs a different parent, then presumably things
+>>> should be setup correctly, and simple-framebuffer can have the clocks
+>>> shut down when it calls clk_disable_unprepare().
 >>
+>> If the real drm driver needs a different parent, then how does it
+>> do the reparenting while the simple-framebuffer driver is holding
+>> a reference to the clock ?  In that case the clock might have
+>> a protected_count of non 0 (depends on the core-clk flags) and
+>> reparenting won't work.
 > 
-> Thanks. Do you mean qcom,glymur-tcsr and qcom,mahua-tcsr should be moved
-> out of qcom,sm8550-tcsr.yaml into their own binding file, e.g.
+> The only case where it should reparent you listed was that you might
+> need to pick up a different resolution. However, that can only be
+> enforced by an ioctl or a client.
+> 
+> simplefb/drm is removed in msm_drm_kms_init. The device is published
+> drm_dev_register called right after msm_drm_kms_init, and the clients
+> are registered in msm_drm_kms_post_init, called after drm_dev_register.
+> 
+> There's no way in the current msm architecture to have a modeset happen
+> while the simpledrm driver is still active.
 
-Yes.
+Ok, new plan, please let me know what you think about this:
 
-> qcom,glymur-tcsr.yaml? Can I use a single file for Glymur and Mahua?
+1. Add a new "disable" callback argument to
+devm_aperture_acquire_for_platform_device() and store this in
+struct aperture_range
 
-Single file should be fine.
+2. Add a new aperture_disable_conflicting_devices() which
+calls the disable callback for matching devices.
+
+3. Have the simple[fd|drm] drivers implement a disable callback
+which unregisters the drm dev and releases any claims on the
+aperture mem-region, while keeping clks, regulators, etc.
+enabled. And have them check if disable was called on remove()
+and if not do the disable() things on remove(0
+
+4. Have msm call aperture_disable_conflicting_devices() where it
+now call aperture_remove_conflicting_devices() and call
+aperture_remove_conflicting_devices() at the point where it has
+claimed any clks it needs.
+
+Does this sound like something which would be acceptable ?
+
+Regards,
+
+Hans
 
 
-Best regards,
-Krzysztof
