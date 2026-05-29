@@ -1,94 +1,194 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED3136493E;
-	Thu, 28 May 2026 21:55:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7881355F3A
+	for <linux-clk@vger.kernel.org>; Fri, 29 May 2026 01:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780005325; cv=none; b=uq4iZk8luPlZcBhoF2BDFx+VAvFRSE6LTYDjyEvecjiQpy3NhG00379apYWfCfLuUc63m5vLKSak+xi6c/aIU2ToIuPEaTNrT32U6VWf5eeDlJ9W3ijycb+ePPoBK0sUgo9vJDeGGG0L5E+lHPeyjSPKInE8zgxp+QZBhnipAxc=
+	t=1780017049; cv=none; b=FvasjbnrqpeXf/GeJlBBLD0SMac4JTf+cWePs1upKlxw1mf2P/a7GB7s6nmjQn83TYbw6EvBPS6rVxYAQ5mfKosX9xFS3P4FCm+oiUs64Bwu8sTy04tz+EL6Q+BYEreYZgZA4YonfxAxL32Eu/16yisywEtHUClLMyzS7Sn9cNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780005325; c=relaxed/simple;
-	bh=WmdQSvkbmDNt//9do3DrpEA8QdzyV/lmXMbqqHY1oU4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YFKiBRxyV6Y8728In+JD7+3twpsE6htaGpWVEMGCbu7UCGeYLZOpGBO6VrdoFOyKniO2QhkSPXiX0waRSeT1arZeJNKqWa2trIDN6VnolwIer02DpV9MiEFYRzEjs0JcM/O0O8vQTI7RIM2hfktrunHzTKuIpKyJNdxHmF4PrMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xd0FWhC6; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780017049; c=relaxed/simple;
+	bh=3HgbklMkFFcdOufEzpAr23OlOouec0egYoQeV8Kj2ew=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=gd2jj1uA3bzTQB2K6U/tdyvX7ZXn47ILmGHhpwyOYyiwfKZn1s1nkKOn5hQdei02BMj9RJHfi/g97GrMu6b00toux7tzNCDHK3JLERa61/fZ7+tKqmGZJPxxxqhTA5dORZ5TtIOnGNNDUZxOw/NC+0L/f+biB7Jhlp9OWAOvtZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kyd/RcmH; arc=none smtp.client-ip=209.85.222.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xd0FWhC6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C28BF1F00A3F;
-	Thu, 28 May 2026 21:55:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780005324;
-	bh=SAa76yh84Qd44sLoOd1TgRCB4ZjpaArNsn8/noDu15o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Xd0FWhC6wMNsebE+Xj/IMQm7E5iWEy3S+pXL6lmO+nxSeDgGH4OSr+Gf7H8m+wzft
-	 oPh2EkdtW5OxnsH1jj6DahHeYijtY/OSVSacu16lsbQC+CIAxdDHlymiol4E5gkz3N
-	 tFGr7i2+DXzjtsfs3JW0WSgkaMPj1e1VXO4f8ojlpIeBOU8inCzZu1a7BKyY9Z1gX7
-	 NNYUw6UKCtbLRjlL+ABhmoxmyLjmLbDt2GhjC/4IAtGBotUteanz0sGpVIZ23RZwsX
-	 lPFoM2Zb+2AsB+T+QJ0HZcUm/rWqlF81j1+rqof1DxDBbu6b8WBuzUGApD6H54zV8g
-	 eHWVve4eVkGqQ==
-Date: Thu, 28 May 2026 23:55:21 +0200
-From: Thierry Reding <thierry.reding@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] clk: tegra: support 48MHz clock for pll_p_out1
-Message-ID: <ahi5w_cXMD1cKcMJ@orome>
-References: <20260427132447.118272-1-clamor95@gmail.com>
- <20260427132447.118272-2-clamor95@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kyd/RcmH"
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-963a997dea4so113195241.2
+        for <linux-clk@vger.kernel.org>; Thu, 28 May 2026 18:10:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1780017047; x=1780621847; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+9rCaR21M/nc3/i6qSSe04SnKU+FWJmA2yPT3FUP/WY=;
+        b=kyd/RcmHOQbYxnITQIEkQLytunQB7VbtsO9TVTBobkiygs1k66jGmsjhsEdx5CX7sN
+         YMx9jaBL7dgb/D0bltk9l+flHmaNWSCIBffcvvqDhbaRgJFrhrUwZQAzuM/bCOo12v+2
+         Kyq8x53jkGNgVpYAlUgsaZaf/eRHi7nbSSNswyUb9OGZXvvvwveaVI5VWTUCgfpzJp6J
+         bFP2Yua5XbFi3A2RAnUbqBg50ZryHXUWZW5/gJ0v7AAeor1tlkGT1uDNc7Y6igOOUI9g
+         GQ/b9Naxc4MP9OGkL2UfW/T9y16RETvnBasfPLlZtZRbRj9dLCNIS84z+z5Sk1IpEEES
+         gZ6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780017047; x=1780621847;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+9rCaR21M/nc3/i6qSSe04SnKU+FWJmA2yPT3FUP/WY=;
+        b=PHOyMAvUuCHi+uC0Dc1GA+JbyPzSwiqbgpJvrKOzOZQDt8S/oqDsTu0bRqX2BBahsf
+         ke6J3VPdgyE22NoYZvP2+9WTHhvNkrxmyV1+awkh9CGwKe3tw+EVD6xsRhirtlZ4JH7N
+         G8+dOS/xhqjD28LBvtBSWq3WfhUMUkvQZVybCTQDipocgwBukFsyrW+h/xeAVKx5zBg4
+         Y/jw/dpcWdeJ7YwytSpJkAoM104peSLXn8uVWS2qoZVqNtWic1Rr11CJt1C8VggsTEwa
+         OzY49fTF6FDIZXYDkAy0YkL6PeJPfQ7LO7+5xS5IJzMyjAFMm13ca4HR+Ih8QJ7Vg1hL
+         SFFA==
+X-Forwarded-Encrypted: i=1; AFNElJ8uQ/c9C7EjsJKWroInaxwDElMyCfAY5RJ76yCEVwtLOYF64iOg7mKp+vgNgqEjWXQkBLE6FTQZFZQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxnes9eH1Qbn7UdEA270k2/Zo/XhOugoCDUbsNwcMQB5tlMFmMp
+	2dfeLJMV+5kUYaF/7l+TCrAE0Z9Tr4PkP5Yfmu6eow06URt/SNSLvdtZ
+X-Gm-Gg: Acq92OHek8V49sk1FtoFDhchwtkxw4Ch/Qqz/Zzl8Y1zsK5ZNFOYdHAOygM2SyKnLVR
+	kkGrV8XTS0TaDN+zeKKd1zjCK7p0iYWhtylN+A+/e9NOKfKaOEo7+nBo/hi9MJHezgIo7NNqRF/
+	7EMelAcNhzqY9EGDn8fBBDs40orIVMSGw5J1ovZxjZfpqHUrB8Te07iZ6dzTtH/8px0YIINigjb
+	1CG3w0FRvDepdJau1zVKFBazupiFvI5r55J04t0uq6wBx/PfKpdrqaGqKEF3weFjRSAnw48+QlD
+	HT7KwPQ7BKMNxOLpIi5b4Bn7xnrGuwGXMrKKe5xPKAXk9bSzM7izDyvQ+HT7ullgxNoHtXGmfE4
+	hruhNALeRKbauqcgLTe5uE2VUCvtB5Fg2PpgaXqt318tER+IqpVpjFZ6JYY92aLvmiNnjKP5UgC
+	MVOcFPhcv57JDf7TaE8wLHxcw=
+X-Received: by 2002:a05:6122:3401:b0:56c:3a57:aee2 with SMTP id 71dfb90a1353d-599f67cea76mr184555e0c.6.1780017046650;
+        Thu, 28 May 2026 18:10:46 -0700 (PDT)
+Received: from [127.0.0.1] ([2a02:6ea0:5505:7199::29])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-599d3c9662esm311912e0c.3.2026.05.28.18.10.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 May 2026 18:10:46 -0700 (PDT)
+From: Denzeel Oliva <wachiturroxd150@gmail.com>
+Date: Thu, 28 May 2026 20:10:39 -0500
+Subject: [PATCH] clk: samsung: exynos990: Fix PERIS gate clock parents and
+ add TMU_SUB
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ldsvib3nptlmbhtz"
-Content-Disposition: inline
-In-Reply-To: <20260427132447.118272-2-clamor95@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260528-exynos990-peris-fix-v1-1-5b65aa7def2d@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAI7nGGoC/yWMwQrCQAwFf6XkbGAN3dL1V8SDXV81HrZlo1Ip/
+ XejHmdgZiVDVRgdmpUqXmo6FYf9rqF8O5crWC/OJEG6EKVnLO8yWUqBZy+NR11YokSkrm9HZPJ
+ yrnD9ux5Pf7bncEd+fFe0bR8Py/AydwAAAA==
+X-Change-ID: 20260528-exynos990-peris-fix-2525e9684fec
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Denzeel Oliva <wachiturroxd150@gmail.com>
+X-Mailer: b4 0.15.1
 
+Correct eight PERIS gate clock parents to match the hardware clock
+tree, reorder the GIC mux parents, and add the missing TMU_SUB_PCLK
+gate.
 
---ldsvib3nptlmbhtz
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 1/1] clk: tegra: support 48MHz clock for pll_p_out1
-MIME-Version: 1.0
+Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
+---
+ drivers/clk/samsung/clk-exynos990.c           | 24 ++++++++++++++----------
+ include/dt-bindings/clock/samsung,exynos990.h |  1 +
+ 2 files changed, 15 insertions(+), 10 deletions(-)
 
-On Mon, Apr 27, 2026 at 04:24:47PM +0300, Svyatoslav Ryhel wrote:
-> From: Dmitry Osipenko <digetx@gmail.com>
->=20
-> UEFI on Surface2 sets pll_p_out1 to 48MHz which is not supported by kernel
-> and causes BUG() early on. Add 48MHz clock support for pll_p_out1.
->=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> Signed-off-by: Jonas Schw=C3=B6bel <jonasschwoebel@yahoo.de>
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  drivers/clk/tegra/clk-pll.c | 1 +
->  1 file changed, 1 insertion(+)
+diff --git a/drivers/clk/samsung/clk-exynos990.c b/drivers/clk/samsung/clk-exynos990.c
+index 6277dd557..f1f5297f5 100644
+--- a/drivers/clk/samsung/clk-exynos990.c
++++ b/drivers/clk/samsung/clk-exynos990.c
+@@ -21,7 +21,7 @@
+ #define CLKS_NR_HSI0 (CLK_GOUT_HSI0_LHS_ACEL_D_HSI0_CLK + 1)
+ #define CLKS_NR_PERIC0 (CLK_GOUT_PERIC0_SYSREG_PCLK + 1)
+ #define CLKS_NR_PERIC1 (CLK_GOUT_PERIC1_XIU_P_ACLK + 1)
+-#define CLKS_NR_PERIS (CLK_GOUT_PERIS_OTP_CON_TOP_OSCCLK + 1)
++#define CLKS_NR_PERIS (CLK_GOUT_PERIS_TMU_SUB_PCLK + 1)
+ 
+ /* ---- CMU_TOP ------------------------------------------------------------- */
+ 
+@@ -2572,7 +2572,7 @@ static const unsigned long peris_clk_regs[] __initconst = {
+ 
+ /* Parent clock list for CMU_PERIS muxes */
+ PNAME(mout_peris_bus_user_p)		= { "oscclk", "mout_cmu_peris_bus" };
+-PNAME(mout_peris_clk_peris_gic_p)	= { "oscclk", "mout_peris_bus_user" };
++PNAME(mout_peris_clk_peris_gic_p)	= { "mout_peris_bus_user", "oscclk" };
+ 
+ static const struct samsung_mux_clock peris_mux_clks[] __initconst = {
+ 	MUX(CLK_MOUT_PERIS_BUS_USER, "mout_peris_bus_user",
+@@ -2605,15 +2605,15 @@ static const struct samsung_gate_clock peris_gate_clks[] __initconst = {
+ 	     CLK_CON_GAT_GOUT_BLK_PERIS_UID_RSTNSYNC_CLK_PERIS_BUSP_IPCLKPORT_CLK,
+ 	     21, 0, 0),
+ 	GATE(CLK_GOUT_PERIS_CLK_PERIS_OSCCLK_CLK,
+-	     "gout_peris_clk_peris_oscclk_clk", "mout_peris_bus_user",
++	     "gout_peris_clk_peris_oscclk_clk", "oscclk",
+ 	     CLK_CON_GAT_CLK_BLK_PERIS_UID_RSTNSYNC_CLK_PERIS_OSCCLK_IPCLKPORT_CLK,
+ 	     21, 0, 0),
+ 	GATE(CLK_GOUT_PERIS_CLK_PERIS_GIC_CLK,
+-	     "gout_peris_clk_peris_gic_clk", "mout_peris_bus_user",
++	     "gout_peris_clk_peris_gic_clk", "mout_peris_clk_peris_gic",
+ 	     CLK_CON_GAT_GOUT_BLK_PERIS_UID_RSTNSYNC_CLK_PERIS_GIC_IPCLKPORT_CLK,
+ 	     21, 0, 0),
+ 	GATE(CLK_GOUT_PERIS_AD_AXI_P_PERIS_ACLKM,
+-	     "gout_peris_ad_axi_p_peris_aclkm", "mout_peris_bus_user",
++	     "gout_peris_ad_axi_p_peris_aclkm", "mout_peris_clk_peris_gic",
+ 	     CLK_CON_GAT_GOUT_BLK_PERIS_UID_AD_AXI_P_PERIS_IPCLKPORT_ACLKM,
+ 	     21, CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_GOUT_PERIS_OTP_CON_BIRA_PCLK,
+@@ -2621,27 +2621,31 @@ static const struct samsung_gate_clock peris_gate_clks[] __initconst = {
+ 	     CLK_CON_GAT_GOUT_BLK_PERIS_UID_OTP_CON_BIRA_IPCLKPORT_PCLK,
+ 	     21, 0, 0),
+ 	GATE(CLK_GOUT_PERIS_GIC_CLK,
+-	     "gout_peris_gic_clk", "mout_peris_bus_user",
++	     "gout_peris_gic_clk", "mout_peris_clk_peris_gic",
+ 	     CLK_CON_GAT_GOUT_BLK_PERIS_UID_GIC_IPCLKPORT_CLK,
+ 	     21, CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_GOUT_PERIS_LHM_AXI_P_PERIS_CLK,
+-	     "gout_peris_lhm_axi_p_peris_clk", "oscclk",
++	     "gout_peris_lhm_axi_p_peris_clk", "mout_peris_bus_user",
+ 	     CLK_CON_GAT_GOUT_BLK_PERIS_UID_LHM_AXI_P_PERIS_IPCLKPORT_I_CLK,
+ 	     21, CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_GOUT_PERIS_MCT_PCLK,
+-	     "gout_peris_mct_pclk", "mout_peris_clk_peris_gic",
++	     "gout_peris_mct_pclk", "mout_peris_bus_user",
+ 	     CLK_CON_GAT_GOUT_BLK_PERIS_UID_MCT_IPCLKPORT_PCLK,
+ 	     21, 0, 0),
+ 	GATE(CLK_GOUT_PERIS_OTP_CON_TOP_PCLK,
+-	     "gout_peris_otp_con_top_pclk", "mout_peris_clk_peris_gic",
++	     "gout_peris_otp_con_top_pclk", "mout_peris_bus_user",
+ 	     CLK_CON_GAT_GOUT_BLK_PERIS_UID_OTP_CON_TOP_IPCLKPORT_PCLK,
+ 	     21, 0, 0),
+ 	GATE(CLK_GOUT_PERIS_D_TZPC_PERIS_PCLK,
+ 	     "gout_peris_d_tzpc_peris_pclk", "mout_peris_bus_user",
+ 	     CLK_CON_GAT_GOUT_BLK_PERIS_UID_D_TZPC_PERIS_IPCLKPORT_PCLK,
+ 	     21, 0, 0),
++	GATE(CLK_GOUT_PERIS_TMU_SUB_PCLK,
++	     "gout_peris_tmu_sub_pclk", "mout_peris_bus_user",
++	     CLK_CON_GAT_GOUT_BLK_PERIS_UID_TMU_SUB_IPCLKPORT_PCLK,
++	     21, 0, 0),
+ 	GATE(CLK_GOUT_PERIS_TMU_TOP_PCLK,
+-	     "gout_peris_tmu_top_pclk", "mout_peris_clk_peris_gic",
++	     "gout_peris_tmu_top_pclk", "mout_peris_bus_user",
+ 	     CLK_CON_GAT_GOUT_BLK_PERIS_UID_TMU_TOP_IPCLKPORT_PCLK,
+ 	     21, 0, 0),
+ 	GATE(CLK_GOUT_PERIS_OTP_CON_BIRA_OSCCLK,
+diff --git a/include/dt-bindings/clock/samsung,exynos990.h b/include/dt-bindings/clock/samsung,exynos990.h
+index 47540307c..c06f591d9 100644
+--- a/include/dt-bindings/clock/samsung,exynos990.h
++++ b/include/dt-bindings/clock/samsung,exynos990.h
+@@ -434,5 +434,6 @@
+ #define CLK_GOUT_PERIS_TMU_TOP_PCLK		17
+ #define CLK_GOUT_PERIS_OTP_CON_BIRA_OSCCLK	18
+ #define CLK_GOUT_PERIS_OTP_CON_TOP_OSCCLK	19
++#define CLK_GOUT_PERIS_TMU_SUB_PCLK		20
+ 
+ #endif
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+---
+base-commit: e7d700e14934e68f86338c5610cf2ae76798b663
+change-id: 20260528-exynos990-peris-fix-2525e9684fec
 
---ldsvib3nptlmbhtz
-Content-Type: application/pgp-signature; name="signature.asc"
+Best regards,
+--  
+Denzeel Oliva <wachiturroxd150@gmail.com>
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmoYuckACgkQ3SOs138+
-s6GCLw//Y/ywVSaL8SmWfKMwofVkFUNnxK4S0ZUcIIr/qdFN+VtdJjk9Rr0RywxH
-J8abTuTR/7Lxh//2GsLcJxTtnc1YTMI4SAgm0uxWIuazO4qni+IhTaEMDkh1TAQS
-9HhkeoKkJKkmAw8IMiXLSu4/g9/Kt+waI9NFlg5xE3mFTvD78gtSOpZr9zvYm0TO
-zaqPlw1koxXcBVwdTGZxfmEIGjBod+Uj6MaB+wtNW4FMaOqx7dAlul844ROorim/
-ifaZ++oo8Hq9b2kyq3hnKivksvhBWedaX998bahmjmHEFq5uHvxJSvtv7IRUGfZE
-Rk/LtFc+RledJIvHG1yxm/c0cPFW/YhvVcl7YZnHf97JUsEa2FDhvV9OH3AXxQ5Y
-bAci/3RgRMLDesDy2lueQFpm5FrIci/2i/gXIMHDtGB5JrpSCIFmX+Z4KhkEGBzG
-B3p9DPAN1aZhNcwh5+UCwwMbK6TPzkUHkp3+M68TZ5rTEBMEtjyc15h2/Lh20VAD
-5iOWUF+rhtOMZoEtjC98lGNYwa4L9pz9jdzuNTu09RLAqy3qstbq9/qR/FzeqqJL
-HksSlTmFNyrZm4xmvGL1yVvfh0YYz6/6KZw0LS/kDCsDXAY5PG42aFq83DVJn1QX
-KNjT/FcnVSLhm8pXHjifQ7pk4pZHcCjIYL6shNFnOJ14H7AGBRo=
-=cEw/
------END PGP SIGNATURE-----
-
---ldsvib3nptlmbhtz--
