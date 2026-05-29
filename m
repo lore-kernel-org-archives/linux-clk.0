@@ -1,73 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9834038F624;
-	Fri, 29 May 2026 17:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4781F37C902
+	for <linux-clk@vger.kernel.org>; Fri, 29 May 2026 21:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780076359; cv=none; b=nZEqEKSOG79mVd2ouW6QAkh2e0+ly1mPq06zUgmtHLJe/1J58TF0m1tNNEoViVv6kj9t5HXU6SNGrJmPZgcbQQ3UwiwoxMtcn1F5KQcD9k4TXa7WpCV7QO5aHMx2lK4yT1+qU94ny279Ojd1UHsbpsKLpnXR5TD5tOlketigUZg=
+	t=1780088572; cv=none; b=WTwHwOiFYAlc0q4dDAUDarpHradad3j5X8k1pjk6VL/FzKXA96zwcB5IuRNXn27tzUXUH7jpdNXOOPqioktppPBk4nhvv8xbBy7teF2IXis1rPTmRlC4CuI3teA/szIdW5VB094pMiFow4TTqrZgvNKMaGO3P+fr424UdBZ3LEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780076359; c=relaxed/simple;
-	bh=i9dmdrh8P0mPnuTykY7zBbJa2sOb/zd8oWALM/pZtig=;
+	s=arc-20240116; t=1780088572; c=relaxed/simple;
+	bh=lVuPikF/wKCQSLI48O9pSb4IgnPDV3UiwJUjwwMF+zc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SL+OZcWSXpxtcrRxL9RJkEkkCpyg63R0jKFoYe6DFAyjwYbJSIk/hbAT2s0LCRzR+7VDt/0ZKDRbLolzkT+Iw/uLmhvDZfddg8HY8rYvk9d83RHZ7wsYZ4lJLCv2ThDR25+gcCe7Rw1jiBmYP4gUfxf4bDzY0T+HoBchS8SfhSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z310wI/J; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=EVSLRx+CBI/+xgAFUVCc8B8IZaoveNEBBHboxGF53gDmddLdRHSWUegHReEsSi3GvJM/l8mn34aLMHXghVd0+aFAsfoe20tTu1ejwDB4eTWr0buAUAMSVqwXc/oMKS4SnUtSqDAN6s5vbW4tTBril0gp8RIcwWTPUIK7bzXx0z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=M8O8mcXZ; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z310wI/J"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F22C31F00893;
-	Fri, 29 May 2026 17:39:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780076358;
-	bh=0WI4qQyv1EBpPKFRUbV0AQ8EnBM8UW7h22nNav4ht4s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Z310wI/JnTJ55UPI2NaUhuoQKsf2EhdkhQdN8jU3oDCtKPpmWt+FK14n2kUk9JHRF
-	 j0m5swxjsiuXc7sIomdwRUXJAQKApd8tESOB2MaBefqP2BZ1HgZZP434x1eA9BEySw
-	 pJFHz2nsjpLZWLfqlwcXBzgXGJVyvznOrcxDKoCyL6eKfilULbvurOgoADNF1SfYpx
-	 ASmT5Ks5kF+CwQkdtb7304ywS0f6XQaUpdCaqZ1kOIYPV72AUOMbaQ9VfNiGV1jWf1
-	 C3FWloTyFBPzluVScwSsbiQ0YfgNM3LKilJncymHrSsdRd9HTpdGbrQYPHzoaeC+Ao
-	 Pb63skQKRLliA==
-Date: Fri, 29 May 2026 19:39:16 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Luca Weiss <luca.weiss@fairphone.com>, 
-	Ajit Pandey <ajit.pandey@oss.qualcomm.com>, Imran Shaik <imran.shaik@oss.qualcomm.com>, 
-	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 3/7] dt-bindings: clock: qcom: Add support for CAMCC
- for Eliza
-Message-ID: <20260529-jade-weasel-of-perspective-c2e0aa@quoll>
-References: <20260525-eliza_mm_cc_v2-v5-0-a1d125619a5a@oss.qualcomm.com>
- <20260525-eliza_mm_cc_v2-v5-3-a1d125619a5a@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="M8O8mcXZ"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 58AB54E42D90;
+	Fri, 29 May 2026 21:02:48 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id B980A601FA;
+	Fri, 29 May 2026 21:02:47 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4FB5510888054;
+	Fri, 29 May 2026 23:02:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1780088566; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=Ew7EaXDf+CetOXIPNgp4VIOFryqMnNlS6SuVadEO47g=;
+	b=M8O8mcXZxK9rJoNSMB5rnm8quxy6IVgY6oZBPO5DnbxV0hnjayRtTcRDfeNFPhDf9ynznQ
+	m2Aa9MVU91cS/LDH7Zy9O42I4Bo2ADUwAVnJOEhtsv60qp8eOC94k0/3Ro0mua8TGsKlLt
+	PSNS7usl4x5uRbmJhhPRDeaquKz99AnVAzFUnR4TTUCsAqJMsVSgQ++PFGKAl3mmfauhOx
+	ZV3T/OhSmwLjLT/CarI+s3G+tncMJR5C2JVipCC9AKL5FFEMBUT2HTXD/n0RHfE/YWe7x9
+	jsOEMduGogQX0X4VViTfxpUSY3dbRor+7juh3P6MznSdyTUX2pn8pvJ96HvXPw==
+Date: Fri, 29 May 2026 23:02:43 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Yuho Choi <dbgh9129@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Brian Masney <bmasney@redhat.com>, Kees Cook <kees@kernel.org>,
+	"Rafael J. Wysocki (Intel)" <rafael@kernel.org>,
+	Thierry Reding <treding@nvidia.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] clk: at91: keep securam node alive while mapping it
+Message-ID: <20260529210243877820a5@mail.local>
+References: <20260529042051.1626978-1-dbgh9129@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260525-eliza_mm_cc_v2-v5-3-a1d125619a5a@oss.qualcomm.com>
+In-Reply-To: <20260529042051.1626978-1-dbgh9129@gmail.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon, May 25, 2026 at 04:16:05PM +0530, Taniya Das wrote:
-> Eliza camera clock controller is on CX and MX rails similar to Milos.
-> Add compatible string for Eliza camera and camera BIST clock
-> controller to the existing Milos camcc binding and add the
-> dt-bindings header for Eliza.
+On 29/05/2026 00:20:51-0400, Yuho Choi wrote:
+> pmc_register_ops() gets an owned reference to the
+> "atmel,sama5d2-securam" node with of_find_compatible_node().  The
+> success path dropped that reference before passing the node to
+> of_iomap(), leaving of_iomap() to consume a node pointer after the caller
+> had released its reference.
 > 
-> The camera clock controller provides power domains, so 'power-domain-cells'
-> must be present in the device tree node. Add this to required properties
-> to enforce it in the binding schema.
+> Move of_node_put() after of_iomap() so the node remains referenced for
+> the mapping operation.  The unavailable-node error path already releases
+> the reference.
 > 
-> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> Fixes: 4d21be864092 ("clk: at91: pmc: execute suspend/resume only for backup mode")
+> Signed-off-by: Yuho Choi <dbgh9129@gmail.com>
+Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+
 > ---
+>  drivers/clk/at91/pmc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+> index b618a5e00b00..03a6c31d6aa8 100644
+> --- a/drivers/clk/at91/pmc.c
+> +++ b/drivers/clk/at91/pmc.c
+> @@ -180,9 +180,9 @@ static int __init pmc_register_ops(void)
+>  		of_node_put(np);
+>  		return -ENODEV;
+>  	}
+> -	of_node_put(np);
+>  
+>  	at91_pmc_backup_suspend = of_iomap(np, 0);
+> +	of_node_put(np);
+>  	if (!at91_pmc_backup_suspend) {
+>  		pr_warn("%s(): unable to map securam\n", __func__);
+>  		return -ENOMEM;
+> -- 
+> 2.43.0
+> 
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-
-Best regards,
-Krzysztof
-
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
