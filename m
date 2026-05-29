@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DED23F167C;
-	Fri, 29 May 2026 16:48:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F9F3F39F2;
+	Fri, 29 May 2026 16:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780073290; cv=none; b=sX/dVwBEa7x5P69vwCPyubHJMKBQPSyjWky95+l1cbkIryVHx1hsiPehQXGA5TIAoMcmHqBVfihmYTtuXJ1RnRA7sljGbtVeQ0HXdrepRKEyB+up2726HrZ8VT92mbqQVSKeZLfLz0je6m2Stw3FcfaMwaVF0lOY1Radz2LABF0=
+	t=1780073373; cv=none; b=OmIfUyHMzFLIAlnf+/pDsJUMYbdgLokz1eR383BqwSUAoeUfLps6J4SCxOma9LjYBBTB4xGDmc5ulD5lULbovECQO3/Z/OA+esvjvAgy8SY8TBmFPTAUK7FwM5jX7eqT1n5vzlOmFP2NgMDQsD/1CBKEhBTCNJbMS+a8uOXQLoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780073290; c=relaxed/simple;
-	bh=/zgA3yp6fJMT8M18vhaI6lNB3yCq4N81P0fXuvffUIo=;
+	s=arc-20240116; t=1780073373; c=relaxed/simple;
+	bh=oUpgO5p3xosTXWARfE9/EBDzZAa/N3R5rhN8enXVEjc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PVinE3TjodUy5X6JjVZyfqPM8bA37EgvyXq8KMEs4MhkS6N1t/BMKdmjGzHaEikJjpD0914zToorRFBdSCpMRutNCuKNNqSLs63NqjzkYD4fwuA05wO46p8odLLkMjp6iLVX25+/dJ1yyjbIp4d2+vuBGOL+jWwffhH9NhtEwvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WOeAnlTL; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=dl182J7SPNvMZn/aDBK+DqMYKTTZIiuyBI8tOD3u7QrP/VTdYYSPq6CxO9pw56sFKqdy01HYeQcvsCuNi2nt4LHnk2tNKGXJ1RZBo0F+59bG1fpSuoetTvk2x+xxg6xe5HfhnvX7lRNdwiipTx3i+4vlbBNMccaxnAa2zq/GcC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HYvhkWub; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WOeAnlTL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 560031F00893;
-	Fri, 29 May 2026 16:48:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HYvhkWub"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F4551F00893;
+	Fri, 29 May 2026 16:49:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780073288;
-	bh=bs6a6rB5aI/Hka37QMJwNctCWzcOa52N3mCrHuWGm3U=;
+	s=k20260515; t=1780073371;
+	bh=lwfdphpnNxuajP1SfK7U6y2PR8IZ0jJwzcVdnBMd6nA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=WOeAnlTLPLmawbXgDWlqkTuNi4tHXPBPP079Ithuy/3FhicMNSyMfuEV4+esoa2fn
-	 oavNEvUChfbGTHyNm/251QopxKJjRsKleYv2+4D1bsvNBEnCZXUEW0yM5402UWiJ3G
-	 bb0oGngwTcapoB0eQIZLRT7SiPNC1Fy//BCnsnSDfOOb5ccEIIbTvQ7lNY7neX2Qkl
-	 RhNZV6CtUDYuY32UXetXudyA4nMXj6M09Xh7uOFTxnJVnWa8/4zhFnkAivnLgJ08aW
-	 q6Vg0ST7sXxmr90ueD7ipBZrF2vjYX/ZJt+JayCaSQ5bBboYdAnp/BA9irZGnh03jP
-	 nCTsJDB7wayOA==
-Date: Fri, 29 May 2026 17:48:04 +0100
+	b=HYvhkWubGms+xcSqFGgV+A4XLqcgjZT85EHj4REmJI1M0I2vpo7geJNfgbRBHsgZp
+	 whEMQVzUe0sflshBaReOWx8me6PbiLYCAzUz64zRIKjtze6K7Ugb4TEKlBuPG5grM0
+	 004X6A+CdTQA2JJFGTdBCSpVSvJYkZdngo1ZdHC6grPPL3iQ5CpQkkdndBBfTfFFmE
+	 XmTXmu3ah/6uGIXgrplvlL/KiP+YDKmgoo880MplkZT0JZjhLRIPmPWgcIqsW2+ZAr
+	 X+9WYwmpLpWTpPuVHIzOi6WGa01c/ffbVZadih2j80+jqo+1eaAVKt/q20HRb39Vye
+	 RVjkIeET8xq3w==
+Date: Fri, 29 May 2026 17:49:27 +0100
 From: Conor Dooley <conor@kernel.org>
 To: Stefan =?iso-8859-1?Q?D=F6singer?= <stefandoesinger@gmail.com>
 Cc: Michael Turquette <mturquette@baylibre.com>,
@@ -37,11 +37,11 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	Brian Masney <bmasney@redhat.com>, linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH RFC v3 1/5] dt-bindings: clk: zte: Add zx297520v3 top
+Subject: Re: [PATCH RFC v3 2/5] dt-bindings: clk: zte: Add zx297520v3 LSP
  clock and reset bindings.
-Message-ID: <20260529-multiply-engraved-aab583ea4519@spud>
+Message-ID: <20260529-hypocrisy-clump-abf596df704d@spud>
 References: <20260529-zx29clk-v3-0-c7fe54ea388f@gmail.com>
- <20260529-zx29clk-v3-1-c7fe54ea388f@gmail.com>
+ <20260529-zx29clk-v3-2-c7fe54ea388f@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -49,74 +49,77 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="YBxRIz2Jfcjr4jMm"
+	protocol="application/pgp-signature"; boundary="Itt2pNgWFbhrwYID"
 Content-Disposition: inline
-In-Reply-To: <20260529-zx29clk-v3-1-c7fe54ea388f@gmail.com>
+In-Reply-To: <20260529-zx29clk-v3-2-c7fe54ea388f@gmail.com>
 
 
---YBxRIz2Jfcjr4jMm
+--Itt2pNgWFbhrwYID
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 29, 2026 at 12:52:58AM +0300, Stefan D=F6singer wrote:
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/zte,zx297520v3-clk.h>
+On Fri, May 29, 2026 at 12:52:59AM +0300, Stefan D=F6singer wrote:
+> +properties:
+> +  compatible:
+> +    const: zte,zx297520v3-lspclk
 > +
-> +    osc26m: osc26m {
-> +      compatible =3D "fixed-clock";
-> +      clock-frequency =3D <26000000>;
-> +      #clock-cells =3D <0>;
-> +    };
+> +  clocks:
+> +    items:
+> +      - description: Main PLL divided by 5 output from topclk (124.8 MHz)
+> +      - description: Main PLL divided by 4 output from topclk (156 MHz)
+> +      - description: Main PLL divided by 6 output from topclk (104 MHz)
+> +      - description: Main PLL divided by 8 output from topclk (78 MHz)
+> +      - description: Main PLL divided by 12 output from topclk (52 MHz)
+> +      - description: Main oscillator output from topclk (26 MHz)
+> +      - description: Timer oscillator output from topclk (32 KHz)
+> +      - description: LSP pclk output from topclk (26 MHz)
+> +      - description: TDM wclk mux output from topclk
+> +      - description: DPLL divided by 4 output from topclk (122.88 MHz)
 > +
-> +    osc32k: osc32k {
-> +      compatible =3D "fixed-clock";
-> +      clock-frequency =3D <32768>;
-> +      #clock-cells =3D <0>;
-> +    };
-
-Drop these two nodes, the tooling will "fake" them when validating the
-example.
-
+> +  clock-names:
+> +    items:
+> +      - const: mpll_d5
+> +      - const: mpll_d4
+> +      - const: mpll_d6
+> +      - const: mpll_d8
+> +      - const: mpll_d12
+> +      - const: osc26m
+> +      - const: osc32k
+> +      - const: pclk
+> +      - const: tdm_wclk
+> +      - const: dpll_d4
 > +
-> +    topclk: clk@13b000 {
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  "#reset-cells":
+> +    const: 1
+> +
+> +  reg:
+> +    items:
+> +      - description: IO memory region of the LSP controller
 
-And drop the unused "topclk" label here.
+Just make this "maxItems: 1".
 
-> +        compatible =3D "zte,zx297520v3-topclk";
-> +        reg =3D <0x0013b000 0x400>,
-> +              <0x01306000 0x400>;
-> +        reg-names =3D "top", "matrix";
-> +        #clock-cells =3D <1>;
-> +        #reset-cells =3D <1>;
-> +        clocks =3D <&osc26m>, <&osc32k>;
-> +        clock-names =3D "osc26m", "osc32k";
-> +    };
+Also, sort reg after compatible please.
 
-> +#define ZX297520V3_TOPCLK_END			79
-
-> +#define ZX297520V3_TOPRST_END			29
-
-These are not permitted in bindings, please remove them.
-Half the time they end up changing because people find other clocks, and
-they never actually get used in a dts. If you need the definitions, add
-them to the driver.
+Same comments apply here about the example and using _END defines.
 
 pw-bot: changes-requested
 
 Cheers,
 Conor.
 
---YBxRIz2Jfcjr4jMm
+--Itt2pNgWFbhrwYID
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCahnDRAAKCRB4tDGHoIJi
-0hbiAPwNGAaPIyaReYqC+GSpDiH3tTgNnUmNDAzwD74p1ZTdLwEA7vQjl++6fHjP
-3lt3ClNJwXDOdqTyumqbVJvnZTC8jQY=
-=KNnD
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCahnDlgAKCRB4tDGHoIJi
+0isBAP992+dVrtcpmiLKLuTlJrY2DJkqogyJJVFoNxdYD6jcXgD/b15qvDe703x3
+bPfmU+yYyoX/O3iQkIUsVeePrR0mtwc=
+=axFd
 -----END PGP SIGNATURE-----
 
---YBxRIz2Jfcjr4jMm--
+--Itt2pNgWFbhrwYID--
