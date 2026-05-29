@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD7D36F8F9;
-	Fri, 29 May 2026 17:37:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9834038F624;
+	Fri, 29 May 2026 17:39:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780076224; cv=none; b=D/+b62HCaVSU6y6NL4MrioVcDTsg0YB+t8+IpOW7G06D+8akLDB22MqEzIRLjxhPzXgUF9H4TJqAcGEmiV4dfQAUiFTS+yWORVTBuc/RCSB/Xa97lYgdNSKjyz1pPpVQLB+YuQ3T1ML7I84uV3TsrnRpIHMfKM1AlIvVhKGx5q0=
+	t=1780076359; cv=none; b=nZEqEKSOG79mVd2ouW6QAkh2e0+ly1mPq06zUgmtHLJe/1J58TF0m1tNNEoViVv6kj9t5HXU6SNGrJmPZgcbQQ3UwiwoxMtcn1F5KQcD9k4TXa7WpCV7QO5aHMx2lK4yT1+qU94ny279Ojd1UHsbpsKLpnXR5TD5tOlketigUZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780076224; c=relaxed/simple;
-	bh=93RFzScorvodA3t6mzDa4EOufCgnlS106vXRgKoHeFQ=;
+	s=arc-20240116; t=1780076359; c=relaxed/simple;
+	bh=i9dmdrh8P0mPnuTykY7zBbJa2sOb/zd8oWALM/pZtig=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FJd886rcc6yEiAWiuhhB64o4bQxvH/bJkpP94va0Seh6LomlcWSiL1FcnU7wm2u2f4KxxXc6UUb+tSJhFFpaqoPyBfTHA2m/oVWPrrAAIOIqSkFrkkRFQBwDIsbuXu8OjAZUC+Y24h5Xrhz17ndzm4p+JpUN7GAyqJ1mL6gnY8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XyPCHAU0; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=SL+OZcWSXpxtcrRxL9RJkEkkCpyg63R0jKFoYe6DFAyjwYbJSIk/hbAT2s0LCRzR+7VDt/0ZKDRbLolzkT+Iw/uLmhvDZfddg8HY8rYvk9d83RHZ7wsYZ4lJLCv2ThDR25+gcCe7Rw1jiBmYP4gUfxf4bDzY0T+HoBchS8SfhSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z310wI/J; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XyPCHAU0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9BD61F00893;
-	Fri, 29 May 2026 17:37:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z310wI/J"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F22C31F00893;
+	Fri, 29 May 2026 17:39:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780076223;
-	bh=Gkuk1hSYF7azCaKHz/S3pZc2XU3K06FzR8lRjatZQwc=;
+	s=k20260515; t=1780076358;
+	bh=0WI4qQyv1EBpPKFRUbV0AQ8EnBM8UW7h22nNav4ht4s=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=XyPCHAU055g5ZN7YMdDu61wHTj2INteS4tKl7VRuD1bN8aKrsNK9viwY5qoL9mtGk
-	 L7u0p3sRKKV9oeaoVoQsrKwl+EbB76H7gaokCR4TMYIbJC0m7i6wCTJIvH7ydwPbjZ
-	 WBMncnMKC03ne5NRA1Sz6MmtemeRvtrATJkZnVvCf7++zDWRFJdfJV5/dNZ18twMH+
-	 frmdzmc4u9ey980lzvzqhgccf31Qj6TSaHn73ea885R++JKooTRvRTrOb2OBHcu3CF
-	 IAdnjwa7U0P1q/n/5TgsVQsg5qodfYeEZjAZltiLu229k2mJWqTMR9aTtAWkFkxtu3
-	 262jQgwYtbyiA==
-Date: Fri, 29 May 2026 19:37:01 +0200
+	b=Z310wI/JnTJ55UPI2NaUhuoQKsf2EhdkhQdN8jU3oDCtKPpmWt+FK14n2kUk9JHRF
+	 j0m5swxjsiuXc7sIomdwRUXJAQKApd8tESOB2MaBefqP2BZ1HgZZP434x1eA9BEySw
+	 pJFHz2nsjpLZWLfqlwcXBzgXGJVyvznOrcxDKoCyL6eKfilULbvurOgoADNF1SfYpx
+	 ASmT5Ks5kF+CwQkdtb7304ywS0f6XQaUpdCaqZ1kOIYPV72AUOMbaQ9VfNiGV1jWf1
+	 C3FWloTyFBPzluVScwSsbiQ0YfgNM3LKilJncymHrSsdRd9HTpdGbrQYPHzoaeC+Ao
+	 Pb63skQKRLliA==
+Date: Fri, 29 May 2026 19:39:16 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Taniya Das <taniya.das@oss.qualcomm.com>
 Cc: Bjorn Andersson <andersson@kernel.org>, 
@@ -38,11 +38,11 @@ Cc: Bjorn Andersson <andersson@kernel.org>,
 	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 2/7] dt-bindings: clock: qcom: document the Eliza GPU
- Clock Controller
-Message-ID: <20260529-bipedal-notorious-macaque-a999f4@quoll>
+Subject: Re: [PATCH v5 3/7] dt-bindings: clock: qcom: Add support for CAMCC
+ for Eliza
+Message-ID: <20260529-jade-weasel-of-perspective-c2e0aa@quoll>
 References: <20260525-eliza_mm_cc_v2-v5-0-a1d125619a5a@oss.qualcomm.com>
- <20260525-eliza_mm_cc_v2-v5-2-a1d125619a5a@oss.qualcomm.com>
+ <20260525-eliza_mm_cc_v2-v5-3-a1d125619a5a@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,16 +51,20 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260525-eliza_mm_cc_v2-v5-2-a1d125619a5a@oss.qualcomm.com>
+In-Reply-To: <20260525-eliza_mm_cc_v2-v5-3-a1d125619a5a@oss.qualcomm.com>
 
-On Mon, May 25, 2026 at 04:16:04PM +0530, Taniya Das wrote:
-> Add bindings documentation for the Eliza Graphics Clock Controller.
+On Mon, May 25, 2026 at 04:16:05PM +0530, Taniya Das wrote:
+> Eliza camera clock controller is on CX and MX rails similar to Milos.
+> Add compatible string for Eliza camera and camera BIST clock
+> controller to the existing Milos camcc binding and add the
+> dt-bindings header for Eliza.
+> 
+> The camera clock controller provides power domains, so 'power-domain-cells'
+> must be present in the device tree node. Add this to required properties
+> to enforce it in the binding schema.
 > 
 > Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
 > ---
->  .../bindings/clock/qcom,sm8450-gpucc.yaml          |  3 ++
->  include/dt-bindings/clock/qcom,eliza-gpucc.h       | 51 ++++++++++++++++++++++
->  2 files changed, 54 insertions(+)
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
