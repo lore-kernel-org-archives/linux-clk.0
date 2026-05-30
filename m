@@ -1,146 +1,127 @@
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022092.outbound.protection.outlook.com [40.107.75.92])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80805317161;
-	Sat, 30 May 2026 02:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.92
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780107416; cv=fail; b=PlG5Aycw+7+8MN/bd5dEl87F9GWVg5/gYmdRY6HAF3EWb26cVRZQhA44tknuSMSbxbAG+Dv0t5FqY8748uXoywTcPAx/ow46ob+f2QoUFX1lbE0UREKb1WnO3wZMtompPxseR7w7qHgU5TE0Muo7sYnbYp/3f72UjavveXDlr9M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780107416; c=relaxed/simple;
-	bh=Ldh8eJPTAu/O0UCsEYFw6q3BMharNq+gOjt2vpZFWF0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hxkBvIVsqPzmr4SxXYlU0rg8pWaVV4q5SDVwgTimSdDig8XXh9rsD0dc2aNaQafbR/phWx/XKAZIat7KMGVZkyhYYFP5pwoTcteT5wXBmPJfYy9/DU7YuNbJzKDXO2/RplL28WBK0es58DJuTjZucWuigX/kQYsDRi84Li9pMQE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.75.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gu4UKUAqOotYhN5YaB+mpLgKRj/cWqZJFGnftTzgfkVKJZvB4ODz8uNJEC6Fhbo5/cn1SPL2P8HStzLsjmTqFxfBJ4zqKcZfFZZrAfgE1nHBAWI0PJ/ZYLd9GDhzNpWYKtGhObCM6TaPE8m1kcMqgTR0vzWRv+LXwAw/pSqo7K+d/Xnd5wAJqWxa+TBxt8v7OzOiLQLqEhlkNSoGBIIyMuzrQh+frDsahMDabjBGgkyEJlIRJ1nVaqANOpszbv0hRTgI9iFuAxODuh23IQa2zvPJs9c3vO1UsKSf1DRJCwmEPUso70/49DQRLbz0OJ0S5SqXHyyopXxtVtm+J1U5pA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZXh3Wti8eKnuCMAC9ieYkoT+PIOonInKzjyxMon3bR0=;
- b=K2dfPAAN/Z10K2grPa0SHHjRnad4JcbFhhGdjGTWcINLPfI5Rxop+B91dhtC841I/D9GkFjFyUmDFXERrPr8FONGVPCmZWEbkuNxA9iLvcVqLzXjzmnq+ZZvOrTO+A02TSumKRH/224IcjyR+qsPPvrQSIpMUfrRogu8/mrX9GEEbUmLg1rAEhOPstUcKx/PsGTzYA1eiEIxMPUxsZs6+oYuIK7vCctjqL/Nnef97uI7YGqkpc+GP/4cMZmhw33VI3PIqkovecLd/cshAoGfaGJNOFKz5Xw/C8EoyKpGt+R2fvEaZC3Lkz4eT6vFea0A8da5SvM8fpPzWmneGQjp7g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=baylibre.com smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-Received: from SI2PR01CA0001.apcprd01.prod.exchangelabs.com
- (2603:1096:4:191::13) by SEYPR06MB5985.apcprd06.prod.outlook.com
- (2603:1096:101:de::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.15; Sat, 30 May
- 2026 02:16:52 +0000
-Received: from SG2PEPF000B66C9.apcprd03.prod.outlook.com
- (2603:1096:4:191:cafe::87) by SI2PR01CA0001.outlook.office365.com
- (2603:1096:4:191::13) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.71.15 via Frontend Transport; Sat, 30
- May 2026 02:16:51 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
- smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- SG2PEPF000B66C9.mail.protection.outlook.com (10.167.240.20) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.92.5 via Frontend Transport; Sat, 30 May 2026 02:16:50 +0000
-Received: from cix (unknown [172.18.64.61])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id B471940A5A03;
-	Sat, 30 May 2026 10:16:47 +0800 (CST)
-From: joakim.zhang@cixtech.com
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	p.zabel@pengutronix.de,
-	lgirdwood@gmail.com,
-	broonie@kernel.org
-Cc: cix-kernel-upstream@cixtech.com,
-	linux-clk@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	Joakim Zhang <joakim.zhang@cixtech.com>
-Subject: [PATCH v1 6/7] dt-bindings: sound: cix,sky1-ipbloq-hda: add hda dma memory-region
-Date: Sat, 30 May 2026 10:16:41 +0800
-Message-ID: <20260530021642.64059-7-joakim.zhang@cixtech.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20260530021642.64059-1-joakim.zhang@cixtech.com>
-References: <20260530021642.64059-1-joakim.zhang@cixtech.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387E630E85C;
+	Sat, 30 May 2026 09:07:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780132026; cv=none; b=cSojU8Xco5jsHifxq4WrzZVx9VCub9fMpMAsVverdPGsDSnP+/0mrz/kOSJ8pv9c/TBPA2GjH1E4sNlBn8/dLF7cluzqKnh0ygeUlQwR7TIypEjDI0ziare00nkCZVBpqlLQiYWGCEjy6lUrN0ryR0oIugqKlo8hNAz5H6jLM9Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780132026; c=relaxed/simple;
+	bh=y2bnu1z4ftBjTAkJSqBNWG5Q404nrZHjIXhCazq/HPA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Tqr7ortgcyC5pet+XxOlozjVJCZSRdzAzaic54dMgzrxj9jMt2xSJD+Sd9YVozm6d1UdWfwUp1gIc1yKSJsTsY3goac9BGl0hmHeTe1/2yKEgVxm5FaeZzHzsGxue9RjWy33BdNP1iMYkKOwZXim5gK68n1lPyK242UzKbrEVRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nVUHdSgl; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nVUHdSgl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 206731F00893;
+	Sat, 30 May 2026 09:07:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1780132024;
+	bh=0wPwekrAJMyJrvUsYooem6jFeeV+7ej27mkxiGkL5gk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=nVUHdSglv6OThv8FCgKUSqd4TCX8yMlF4p4XIozQR9KDXQTOC4XGzXYJCiveemB8n
+	 VNvlh38h/TYRfYEEGDDWm/wk4ybDdifXhk/4H10d9XRY07X1ECEDA1/hBYZfUWnJdr
+	 0YSHmewNPsopzC7LVNz+Roj2GlXnW1QIlLdhMRW9vII338zmPchhoBNlQNWreQcjIE
+	 ZVAUufBkHqrsnyxfHsMGiy1l7A5LEFLAVAydfCzzzXJGWKa1YZSims69o8KWnKeN3A
+	 VIgfyhR3yUcXiVe4HkLNPcWuFq+StWkFISSy9yc8xDQuUK7lE7pfgGuhMPvLQ/uY3D
+	 UadpLTMyLndwQ==
+Message-ID: <efb0b14d-9dbb-4e64-85f2-1a7f9da121c1@kernel.org>
+Date: Sat, 30 May 2026 11:07:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG2PEPF000B66C9:EE_|SEYPR06MB5985:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 6ffe7d3f-d4da-48e2-7533-08debdf1828f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|82310400026|36860700016|22082099003|18002099003|56012099006;
-X-Microsoft-Antispam-Message-Info:
-	Ht1O4gv16uLmphr/MmTo4TQDq7qAF38Mq7TygX6C5n38THgqkcceNbSpSxIu05wGU2vYmerNkPGrkhIXRCljDoZBv5X+cJtdEGPpDL0tVAMR43+wWkYZ4GGE562IKQXoQ8RaAG4GaI2v66f8ZlXAdD1EFt7EfYwgJhVbLca6IEyhVO2rNcmTZ2/21yg2ApMK4WbjakIMc7AtBrF3E91STTqqxrxCLBUj1iQ/e484xezaFB3LV7WIXJtelw8Fev1n8hjO6ltlZ7GZzQkSlqnxzoCJvyHQM3mOjs6+Ck2m8wY/AECW08DfSwEronaJqbMnzvHCKRsxN5lCEVX+F105SnOLEKzsoFs5CEcQ8X6p669E9PkAqeF05F5lVi62lpHLeQNKDPAjOBp2woK+xe5c9jKhQamNVbhmHVXoSxT4SkUn2rMvjhEr0Mu1jIF+JFuGlTiGIm1Rf5Y5NCvT0zsj1y1v7N38eDMJOywENzhbOQOKYHdL89Tqop4JBb2Mc88sZ6c9RtnZ+zT5u7WgVcyO5GQE69cVr3+8UTOL6PAq9uinnq5USTXO31em0iDWMsK0uk/XfonHRsJtbcdGkbyRuiEzDt/gPD+CXh4ZYv4/RQyLw0vS7K3TzYmXyNI6dZRVVbX/sQ7cuBJuSE7V6BiyKBmHnF6XyEZMBHHZkzEqtGHK9IOnbFXo87qEOyV9m4DgOPDUH/c8MlV9IR3kwpT6AS7eu+2mJx4XlEnrzxlAAvI=
-X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(82310400026)(36860700016)(22082099003)(18002099003)(56012099006);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	MBdzi/0htgt2MDI0PKSjc5EQr1SyCH3LxlZt/f2nDXlfIfms56JunA+2j5g8R67nasvgSM2Q2DlzaVlYdSJyftDyNMAheyiSCpLAUdmJmCFXxHqo0wzkIbLlan9q+JrTgkKz6SZjJ4JZ6zVGab2rx8ycie+q7TMfys+Petl61z/K1xFgWyxm7N47suci/3DXiS3dmFr4ZVnBjtSk0RjOSBmx63DymDQnIlS9z8iFySnhzIupiClpIDhyXYV4dJVBi4l+q/ewBaSHnTFw5sg/1g1K/TlKYNx5ugs7DL83xABmSr7Wmj7lxRs6+KJf6gf1600vhQcET3RT8AQRzSNKVV3JpVc5oX6ImIiav+8YNfg71PwpxuzHMSWMnEdiamDfkzc64aoTYpcpm5R+HlJTjSYkd+aNs9OuxqzqXoE939XR8sX4rNEFZ2q4EpS4QlYu
-X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2026 02:16:50.6525
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6ffe7d3f-d4da-48e2-7533-08debdf1828f
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SG2PEPF000B66C9.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB5985
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/7] dt-bindings: soc: cix,sky1-audss-cru: add audss
+ cru system controller
+To: joakim.zhang@cixtech.com, mturquette@baylibre.com, sboyd@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ p.zabel@pengutronix.de, lgirdwood@gmail.com, broonie@kernel.org
+Cc: cix-kernel-upstream@cixtech.com, linux-clk@vger.kernel.org,
+ linux-sound@vger.kernel.org
+References: <20260530021642.64059-1-joakim.zhang@cixtech.com>
+ <20260530021642.64059-2-joakim.zhang@cixtech.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20260530021642.64059-2-joakim.zhang@cixtech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Joakim Zhang <joakim.zhang@cixtech.com>
+On 30/05/2026 04:16, joakim.zhang@cixtech.com wrote:
+> From: Joakim Zhang <joakim.zhang@cixtech.com>
+> 
+> Add devicetree schema for the Cix Sky1 audio subsystem CRU syscon/MFD
+> parent. Child clock-controller and reset-controller nodes are described
+> via references to the AUDSS clock and reset bindings.
+> 
+> Signed-off-by: Joakim Zhang <joakim.zhang@cixtech.com>
 
-Document the reserved memory region used for IPBLOQ HDA DMA buffers and
-require it in board DTS.
 
-Signed-off-by: Joakim Zhang <joakim.zhang@cixtech.com>
----
- .../devicetree/bindings/sound/cix,sky1-ipbloq-hda.yaml      | 6 ++++++
- 1 file changed, 6 insertions(+)
+This wasn't ever tested and obviously fails (non-bisectable).
 
-diff --git a/Documentation/devicetree/bindings/sound/cix,sky1-ipbloq-hda.yaml b/Documentation/devicetree/bindings/sound/cix,sky1-ipbloq-hda.yaml
-index 02ac5f1aa926..512250290ca3 100644
---- a/Documentation/devicetree/bindings/sound/cix,sky1-ipbloq-hda.yaml
-+++ b/Documentation/devicetree/bindings/sound/cix,sky1-ipbloq-hda.yaml
-@@ -36,6 +36,10 @@ properties:
-   resets:
-     maxItems: 1
- 
-+  memory-region:
-+    maxItems: 1
-+    description: Reserved memory region used for HDA DMA buffers.
-+
- required:
-   - compatible
-   - reg
-@@ -43,6 +47,7 @@ required:
-   - clocks
-   - clock-names
-   - resets
-+  - memory-region
- 
- unevaluatedProperties: false
- 
-@@ -59,4 +64,5 @@ examples:
-         clock-names = "ipg", "per";
-         resets = <&audss_rst 14>;
-         model = "CIX SKY1 EVB HDA";
-+        memory-region = <&audio_alsa_hda>;
-     };
--- 
-2.50.1
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC. It might happen, that command when run on an older
+kernel, gives you outdated entries. Therefore please be sure you base
+your patches on recent Linux kernel.
 
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline) or work on fork of kernel
+(don't, instead use mainline). Just use b4 and everything should be
+fine, although remember about `b4 prep --auto-to-cc` if you added new
+patches to the patchset.
+
+You missed at least devicetree list (maybe more), so this won't be
+tested by automated tooling. Performing review on untested code might be
+a waste of time.
+
+Please kindly resend and include all necessary To/Cc entries.
+
+Best regards,
+Krzysztof
