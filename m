@@ -1,94 +1,214 @@
-Received: from outbound11.mail.transip.nl (outbound11.mail.transip.nl [136.144.136.18])
+Received: from outbound1.mail.transip.nl (outbound1.mail.transip.nl [149.210.149.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2929B28852E;
-	Sat, 30 May 2026 14:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.144.136.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF70E17A2F6;
+	Sat, 30 May 2026 14:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.210.149.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780149608; cv=none; b=oTe/lUEenxFKOmU1OIv622BGvLKqE84phH14JEyWfV1/+ZwuJM8JsOAhv6CpBPMPmj79dlxXpOnqAcsv6/sXvPg/0we5AT1kymssq+DK9vPKUpALa3wH8qcMaWNFtjEYYX2GzJvtWr4KXj916bya4kdz3wc+edKIy75TcN2yz80=
+	t=1780149826; cv=none; b=grqcXh7MTPuZ1Xdto+faM4xIhrjHb9d6JRU506D9dz6DJ4ZarCt+DdW7bo3EirZvKvm6b2kHgxRiPI2LiVFv+TXTERMWZxtsaMu41a014f44Swg7CgRtqVB4twSf5oTQTD2PrUQNpiilpOZUmtf6dBGltLyoHya6Ct5bruojcQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780149608; c=relaxed/simple;
-	bh=SfntRBquUTLwHkwcATy4frzMHYwEPsXqjXMqldvcvZw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=F92op7njxVSWRfPu6skypxPYZq2Ob6oXWFAp07wxl5xeEa4RcFFwUFDzBBTs3rwZ1XQat01rvuvmioMz4GdT3tT47t7x6gjPD1EEy9avWUOXi2q04XUMqTntTjXTgZxcOuEQNL/Jrr5BMceEABSrnYbhhdzrzo0ii5Trx15fwmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=herrie.org; spf=pass smtp.mailfrom=herrie.org; dkim=pass (2048-bit key) header.d=herrie.org header.i=@herrie.org header.b=hKT9bd0M; arc=none smtp.client-ip=136.144.136.18
+	s=arc-20240116; t=1780149826; c=relaxed/simple;
+	bh=7GVEU4din37FjDdBmZSuCuPSKPUqbKeNE/zhEIn25T8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qUoQbGm+J7O8jn6YuYs1/GShWvUicfupoC23N3X65yHXwif3YWkAzxTSLF8Rl+CeF45p59UgKc91qn7Sj0k1ZISoQxDwQC3HJV4p8oIbQBtTUXtH3L2MJfqTYuUzphb3LcESvSqyYuJ4JnsrhBm2ADMbgQj7RSOn+M58Z89REb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=herrie.org; spf=pass smtp.mailfrom=herrie.org; dkim=pass (2048-bit key) header.d=herrie.org header.i=@herrie.org header.b=Cx6EN28M; arc=none smtp.client-ip=149.210.149.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=herrie.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=herrie.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=herrie.org header.i=@herrie.org header.b="hKT9bd0M"
+	dkim=pass (2048-bit key) header.d=herrie.org header.i=@herrie.org header.b="Cx6EN28M"
 Received: from submission5.mail.transip.nl (unknown [10.103.8.156])
-	by outbound11.mail.transip.nl (Postfix) with ESMTP id 4gSML76lxPzkQNZb;
-	Sat, 30 May 2026 15:59:59 +0200 (CEST)
+	by outbound1.mail.transip.nl (Postfix) with ESMTP id 4gSMJH0vP8zRjSp;
+	Sat, 30 May 2026 15:58:23 +0200 (CEST)
 Received: from herrie-desktop.. (180-93-184-31.ftth.glasoperator.nl [31.184.93.180])
-	by submission5.mail.transip.nl (Postfix) with ESMTPA id 4gSML72n5wz2pRDjH;
-	Sat, 30 May 2026 15:59:59 +0200 (CEST)
+	by submission5.mail.transip.nl (Postfix) with ESMTPA id 4gSMJG3zntz2pRDjH;
+	Sat, 30 May 2026 15:58:22 +0200 (CEST)
 From: Herman van Hazendonk <github.com@herrie.org>
 To: Bjorn Andersson <andersson@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-kernel@vger.kernel.org,
 	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH 0/2] clk: qcom: add MSM8x60 LPASS Clock Controller
-Date: Sat, 30 May 2026 15:59:56 +0200
-Message-ID: <cover.1780148149.git.github.com@herrie.org>
+	devicetree@vger.kernel.org
+Cc: Herman van Hazendonk <github.com@herrie.org>
+Subject: [PATCH 1/3] dt-bindings: clock: qcom: add mmcc-msm8660 clock IDs
+Date: Sat, 30 May 2026 15:58:10 +0200
+Message-ID: <bab6d4e4c147c02987423141c0841bcc5d1eb045.1780148149.git.github.com@herrie.org>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1780148149.git.github.com@herrie.org>
+References: <cover.1780148149.git.github.com@herrie.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: ClueGetter at submission5.mail.transip.nl
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=transip-a; d=herrie.org; t=1780149599; h=from:subject:to:date:
- mime-version; bh=bDNJtYIKqAXGfVDLt8vxmYCmjiMIq2LFxwX7WsDZzXU=;
- b=hKT9bd0MKxa0qZ1iD7XVWXn1qDd+XVQrYX13yM6niO1wgxBVGsDq6IUOdTH7Sou8qyHmbp
- TzTAmKbWaoRnnFQ3HL82nhvsQ8eqP/DrDi3x3t4Ye8SJZ6+QJHaVbKR8qcROMooNXLQd4H
- q1gg+/oRiDVOxTnTdDakDkQea//v2j2MF7IpU9XH0sXabI5311HDz7qw6nJichhKn5NcK1
- STjPbhz9FjnN+aTX7UxLlN8FmvYeH8TfOY7djb6ZYLQexfRRBYNZY9a0njZUVLo82H5GGj
- VuE3dCRM1K2wgjxDeWPPJ/DJig5mVTQiG1P1BJJDpLg8k5/ZRsPFwZ9SdHjRQw==
+ s=transip-a; d=herrie.org; t=1780149502; h=from:subject:to:cc:
+ references:in-reply-to:date:mime-version:content-type;
+ bh=S+oVwmky282VbH+PAA7JnEpBKm9iw52aNdvDCKXBJ+w=;
+ b=Cx6EN28MXFjlqnFZq/KMHlHO6f0T5l9vIwlYokX3IV4Ru1jJGRMwbNeMPMI9QxNJxYAM0C
+ 5S4cVVu+kfmFGRSTqba20e6fUKH8Bt3SI3nngqV6eaXHeuhHkoGOpPVpoaClRZjl6myo8J
+ mfotERtaanUj9P3OQ8smVRcfFC6mifjrfKhXtnFasbT7ab3URJAVz51vi06PliV7Se975F
+ adJIkT5/Bm9zkZGaWK83Kyerabk39e/OVnI0v3tUKMznppxxL7dySJ0Ra/JkIASsPuLTeQ
+ xEIFj1PL9Tfr6HRs5Cxl2U1e5W948L2J8ZKtIhyNAICCQZzx+BEIs8X1sW0WnQ==
 X-Report-Abuse-To: abuse@transip.nl
 
-Hi all,
+Add the dt-binding clock-ID header for the MSM8x60 family
+(MSM8260/MSM8660/APQ8060) Multimedia Clock Controller (MMCC). The
+header enumerates the clocks and power-domains consumed by the
+multimedia subsystem (MDP4 display, Adreno A220 GPU, CAMSS image
+pipeline, VFE, Gemini JPEG, video codec, rotator, VPE and the GFX2D
+Z180 cores).
 
-This series adds the LPASS (Low Power Audio SubSystem) Clock Controller
-driver for the MSM8x60 family of SoCs (MSM8260/MSM8660/APQ8060) - the
-Scorpion-class generation that preceded MSM8960's Krait CPUs.
+IDs intentionally match the numeric values used by the original
+shared mmcc-msm8960.h so the driver's clk array indexing is preserved;
+only the clocks actually implemented by mmcc-msm8660.c are defined.
 
-The register layout, parent muxing and divider topology of the LPASS
-PLL/clk fabric differ from MSM8960's LCC enough that a clean separate
-driver is simpler than parameterising lcc-msm8960.c. Both drivers can
-coexist (different Kconfig, match table and compatible).
+Signed-off-by: Herman van Hazendonk <github.com@herrie.org>
+---
+ include/dt-bindings/clock/qcom,mmcc-msm8660.h | 126 ++++++++++++++++++
+ 1 file changed, 126 insertions(+)
+ create mode 100644 include/dt-bindings/clock/qcom,mmcc-msm8660.h
 
-Used on the HP TouchPad (Tenderloin) where the LPASS Q6 audio DSP needs
-functional MI2S / SLIMBus / PCM clocks before audio playback or capture
-works.
-
-The new binding header is dual-licensed (GPL-2.0-only OR BSD-2-Clause)
-per current qcom-binding convention.
-
-Companion to the MSM8x60 MMCC series.
-
-Thanks,
-Herman
-
-Herman van Hazendonk (2):
-  dt-bindings: clock: qcom: add lcc-msm8660 LPASS clock IDs
-  clk: qcom: add MSM8x60 LCC (LPASS) driver
-
- drivers/clk/qcom/Kconfig                     |   9 +
- drivers/clk/qcom/Makefile                    |   1 +
- drivers/clk/qcom/lcc-msm8660.c               | 517 +++++++++++++++++++
- include/dt-bindings/clock/qcom,lcc-msm8660.h |  48 ++
- 4 files changed, 575 insertions(+)
- create mode 100644 drivers/clk/qcom/lcc-msm8660.c
- create mode 100644 include/dt-bindings/clock/qcom,lcc-msm8660.h
-
+diff --git a/include/dt-bindings/clock/qcom,mmcc-msm8660.h b/include/dt-bindings/clock/qcom,mmcc-msm8660.h
+new file mode 100644
+index 000000000000..00c3a75e8b71
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,mmcc-msm8660.h
+@@ -0,0 +1,126 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) 2013, The Linux Foundation. All rights reserved.
++ *
++ * Clock and power-domain bindings for the MSM8x60 family (MSM8260/MSM8660/APQ8060)
++ * Multimedia Clock Controller (MMCC).
++ *
++ * MSM8260, MSM8660 and APQ8060 are the same Scorpion-class MSM8x60 SoC
++ * with different bin/feature labels. MSM8960 is a newer generation (Krait)
++ * — its bindings live in
++ * <dt-bindings/clock/qcom,mmcc-msm8960.h> and must not be reused here.
++ *
++ * IDs below intentionally match the numeric values used by the original
++ * shared mmcc-msm8960.h so the driver's clk array indexing is preserved;
++ * only the clocks actually implemented by mmcc-msm8660.c are defined.
++ */
++
++#ifndef _DT_BINDINGS_CLK_MSM_MMCC_8660_H
++#define _DT_BINDINGS_CLK_MSM_MMCC_8660_H
++
++#define TV_ENC_AHB_CLK					3
++#define AMP_AHB_CLK					4
++#define JPEGD_AHB_CLK					6
++#define GFX2D0_AHB_CLK					7
++#define DSI_S_AHB_CLK					8
++#define VPE_AHB_CLK					10
++#define SMMU_AHB_CLK					11
++#define HDMI_M_AHB_CLK					12
++#define VFE_AHB_CLK					13
++#define ROT_AHB_CLK					14
++#define VCODEC_AHB_CLK					15
++#define MDP_AHB_CLK					16
++#define DSI_M_AHB_CLK					17
++#define CSI0_AHB_CLK					18
++#define MMSS_IMEM_AHB_CLK				19
++#define IJPEG_AHB_CLK					20
++#define HDMI_S_AHB_CLK					21
++#define GFX3D_AHB_CLK					22
++#define GFX2D1_AHB_CLK					23
++#define JPEGD_AXI_CLK					28
++#define GMEM_AXI_CLK					29
++#define MDP_AXI_CLK					30
++#define MMSS_IMEM_AXI_CLK				31
++#define IJPEG_AXI_CLK					32
++#define GFX3D_AXI_CLK					33
++#define VCODEC_AXI_CLK					34
++#define VFE_AXI_CLK					35
++#define VPE_AXI_CLK					36
++#define ROT_AXI_CLK					37
++#define VCODEC_AXI_A_CLK				38
++#define VCODEC_AXI_B_CLK				39
++#define CSI0_SRC					47
++#define CSI0_CLK					48
++#define CSI0_PHY_CLK					49
++#define CSI1_SRC					50
++#define CSI1_CLK					51
++#define CSI1_PHY_CLK					52
++#define DSI_SRC						56
++#define DSI_CLK						57
++#define CSI_PIX_CLK					58
++#define CSI_RDI_CLK					59
++#define MDP_VSYNC_CLK					60
++#define HDMI_APP_CLK					62
++#define GFX2D0_SRC					66
++#define GFX2D0_CLK					67
++#define GFX2D1_SRC					68
++#define GFX2D1_CLK					69
++#define GFX3D_SRC					70
++#define GFX3D_CLK					71
++#define IJPEG_SRC					72
++#define IJPEG_CLK					73
++#define JPEGD_SRC					74
++#define JPEGD_CLK					75
++#define MDP_SRC						76
++#define MDP_CLK						77
++#define MDP_LUT_CLK					78
++#define DSI1_BYTE_SRC					83
++#define DSI1_BYTE_CLK					84
++#define DSI1_ESC_SRC					87
++#define DSI1_ESC_CLK					88
++#define ROT_SRC						91
++#define ROT_CLK						92
++#define TV_ENC_CLK					93
++#define TV_DAC_CLK					94
++#define HDMI_TV_CLK					95
++#define MDP_TV_CLK					96
++#define TV_SRC						97
++#define VCODEC_SRC					98
++#define VCODEC_CLK					99
++#define VFE_SRC						100
++#define VFE_CLK						101
++#define VFE_CSI0_CLK					102
++#define VPE_SRC						103
++#define VPE_CLK						104
++#define DSI_PIXEL_SRC					105
++#define DSI_PIXEL_CLK					106
++#define CAMCLK0_SRC					107
++#define CAMCLK0_CLK					108
++#define CAMCLK1_SRC					109
++#define CAMCLK1_CLK					110
++#define CSIPHYTIMER_SRC					113
++#define CSIPHY1_TIMER_CLK				115
++#define CSIPHY0_TIMER_CLK				116
++#define PLL2						118
++#define MDP_PIXEL_SRC					129
++#define MDP_PIXEL_CLK					130
++#define MDP_LCDC_CLK					131
++#define VFE_CSI1_CLK					132
++#define CSI1_AHB_CLK					133
++
++/*
++ * MSM8x60 legacy footswitch power domains.
++ * Used with the MMCC power-domain provider (#power-domain-cells = <1>).
++ * Numbering is independent of the clock ID space above.
++ */
++#define GFX2D0_GDSC					0
++#define GFX2D1_GDSC					1
++#define GFX3D_GDSC					2
++#define IJPEG_GDSC					3
++#define MDP_GDSC					4
++#define ROT_GDSC					5
++#define VED_GDSC					6
++#define VFE_GDSC					7
++#define VPE_GDSC					8
++
++#endif
 -- 
 2.43.0
 
