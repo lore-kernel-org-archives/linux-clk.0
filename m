@@ -1,292 +1,127 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D95333F5BD
-	for <linux-clk@vger.kernel.org>; Sat, 30 May 2026 16:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF6931DD96;
+	Sat, 30 May 2026 16:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780157314; cv=none; b=egDYAB/EM2wm9u5EYSfvEiwYYfssAijpUOKMpOZHe1jYWYDNIHRABi/yBkNQ5DUt001xjjurhQrNlJ2Fdmxh7g7ZD+Z1JHHWwcd08CHhF/7sO1riwr762P5CVzv3O/siYyt0XjUYCRSlCmDwPzN2rgYcj7ZaQ0AiNupSwtoPjkI=
+	t=1780158383; cv=none; b=EkbR1Ih15khyyIW1TZ9B1sNCOi4Wa4ZP4gJdZGW/a+LElZC7kWemTIe8+GCf0acatMQkzA0vTgMVDTNTcZ2z8GupDE3ofSehd7fkPtlpfUT8u1xWdhK6dM/536P1anZBn7Cu4Wxf/awqRmXSFanpoEU42pxYNT3okFHB3RnTfz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780157314; c=relaxed/simple;
-	bh=yVok12zJ6pkXd2JbmIH9j57MbvpuLpmDlwHO7XGGBzw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=o3N9yKLiB2kABdgaOlCzEK268NiSUh54qPN7aV8ODcZWCAvkT5nubwlz7G+Q8Oe71L1AkjSnmSPh4ltzwTjpuKRbzW7b8Rks+pY8/l/cEg3u8iMAy2gF/PEYLf/Uj65jhe9GDEQnCW8zsWO+xy8uoumhK1xy62EcMzyCjIfxn9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LPyuEcHF; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1780158383; c=relaxed/simple;
+	bh=qlHxfMos35v51O0er4BbrOYYWfzDPpaJjp6LvhIQKGI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=dlmLi/DF88woSk+r97qEhJkxtfFua1cEyJ6SBPUXQuNnMGf3eOfmX6c/0+LWWP0f1d0PBCtyLIfOMdv3iZwNka3mFFFrB1+5KQPLzfAt3xtUP6U9YNYCXqMP425P9UGHXYhMlWemIou9qWcrSR+nVbjNjou1qgJPUaR55Gp///A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c+1UPdVO; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LPyuEcHF"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-45ef779c1c2so633591f8f.1
-        for <linux-clk@vger.kernel.org>; Sat, 30 May 2026 09:08:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780157311; x=1780762111; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JgIKGTQO7gPrOe26sxdu+A8xLu1XQ8EnCHCpNZxODoA=;
-        b=LPyuEcHF4w02kR9lLEMRHyC0XJOrwwU+ZNvPmGkLJubOpgSPttz69Mav8LV1R8aHB/
-         Lt+gxmA2ynSgXrDGFXO5OL660LvyHRmUrT5Rj3LIQKHHAyeVrMX7O/KtJuiDRbfMnTfm
-         4tG+5uFTkg1xNq1xdhDPF9/l30UfMZ6eKpkeStDpax0PGjPoqLkVOp4Da5gOK3HeoFni
-         THZH/7rmH/ZC/mfY0P6shvfW8HL0qTAfPY5BY0bUaESHCr0eeWPcnrH7Q2OyUEHy4iz4
-         Z1Fk/lX3Pz/nkYKqsvXagXhdgkfDQqIuexfgFYrKL/8Hh1QUB/DhgpCWr5DDex7Tg+Sq
-         YfqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780157311; x=1780762111;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=JgIKGTQO7gPrOe26sxdu+A8xLu1XQ8EnCHCpNZxODoA=;
-        b=rYSHkzRKKR7tEnjuWwJ7Zjspp9UMD7DALeA2m5TiEVtis6WT38mUxacsAQy0krdMck
-         kxFcak9Fubx7VJkU3CsLuTX/9pb/4hF0LWHvP0ixUFbmfFstRdXM2GZD9MDBxCrtdz1+
-         Ym7wnnFYwQaXXFTgzlOCDtYuiJxu0uqfXGoMzENZ4bGSQPxxePKBRU1LTuDl3ig8F4dy
-         uYv1pZIdx6l8ZAitZ1y02J5EQ17IqI9dy2COe6FEEXOOHcD+IJeoXpYdus05Yq6w7db8
-         9QDgVvFR0ehAbtBMGX4Sb4SbsTGM5yDfPo9P+4RCQQ2P4wXd3oaLgcKKXHRajxmjQnLX
-         Buog==
-X-Forwarded-Encrypted: i=1; AFNElJ95xj2Nq5OAJ6qKuec/YpRylnDx2QNpdjTqvWEeYDxLk2axOaO5iU45RL3u7ZcJdNKomcCx93AewRw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJrF35u82fZPbVIXAex1r28VH33G3zDE94O88YailcTkwA+5fy
-	mN2EWNlRNAV4ipojZutozIL/2geGGhpGR2L497AS+97fC6/oeAmEgkBI
-X-Gm-Gg: Acq92OFHFHXqLL0mL3VDCAVHqK7J/K53/C3AipsHch8h3vu9LQsSiIcUrHkpLQ7CThM
-	5tPr6a2g1X0ioGNeUGF4+qVgbpEtcLKtof5TM73dEypre+XlpMYDJ1nRnXU5NyNOXJLHNO5hNz+
-	13Sqk/feyYjV8/MKGgbAQs0PK28uNFuygmMO7Xnv6m2GivnopsAQ6EAYye16O4+3K8DV4/h8sZM
-	AD1CE0e8PF752MROpNmu6SC8gEuaHp2fHY79xSAtyMx9meLcPrUEup6mCuwAlH954LTlsvLqQ9K
-	7WdT5Rs+hXAJdE9KkN9r2AoPpN8pekvjxDwaHMG6we2PvMYNt8gmHcxawz6ctKn7hVOxfTHoyEd
-	89TyYI2vRc1re3ae8yveD8A0ZJPbVoXPQeFUUv7P3aUZs9aJu7Owfouns7a1PYourGsYUfl/P4L
-	6AuqIOIdq5Fj2croS30KKLAmkS0QX8mvg+LjW1bD+qIiNECewH7ESotyPXIyY=
-X-Received: by 2002:a05:6000:1a54:b0:43d:7c1b:b8c7 with SMTP id ffacd0b85a97d-45ef6b4f243mr6227493f8f.21.1780157310749;
-        Sat, 30 May 2026 09:08:30 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:23c4:a700:7301:5db6:a512:6ab4:aa07])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45ef35874b7sm12170799f8f.35.2026.05.30.09.08.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 May 2026 09:08:30 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Brian Masney <bmasney@redhat.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH 02/17] clk: renesas: r9a08g046: Add clock and reset entries for SDHI
-Date: Sat, 30 May 2026 17:07:56 +0100
-Message-ID: <20260530160823.130907-3-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260530160823.130907-1-biju.das.jz@bp.renesas.com>
-References: <20260530160823.130907-1-biju.das.jz@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c+1UPdVO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 069E41F00893;
+	Sat, 30 May 2026 16:26:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1780158382;
+	bh=kf1yFA+TKskL8Zi0fpxDX8oAztYylpMtshIm1bL0BQQ=;
+	h=Date:Subject:To:References:From:In-Reply-To;
+	b=c+1UPdVO5srG8lfyuKWy7ViF9so80AJZufY1C1LHnSBorJZ12tEmwCuGT6wpqnGey
+	 +G2N9ghphh2ZTcRWQudZxb+27sDZ4zGCoditshAWrmQgDmkAG0NG9+JwUfubTuWIeq
+	 eEvPQ1eDvBWQSR0jaH4563oBwzfc6ydze4tpIPtii7YLMLwipyosv570d5bqYU9XVJ
+	 cfDYVC3soxDOPxBDquCDceLlhrKuAgzdQKMTGubtX4kkUC3xK0feU5TOon7gHJK51L
+	 6496HwtVzuSb72Ji/3JNd3xBanTlYREL3cOV7B/y+wP7xyoFOCiNL8kZaGMoCHc293
+	 c+w4ThdkCONRQ==
+Message-ID: <54284b18-e310-474e-9b64-63645804c1e0@kernel.org>
+Date: Sat, 30 May 2026 18:26:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: samsung: exynos5410: fix refcount leak
+To: "Alexander A. Klimov" <grandmaster@al2klimov.de>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+ "open list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>,
+ "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+ "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
+ <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20260526061321.6123-1-grandmaster@al2klimov.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20260526061321.6123-1-grandmaster@al2klimov.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+On 26/05/2026 08:13, Alexander A. Klimov wrote:
+> Every value returned from of_clk_get() is supposed to be cleaned up
+> via clk_put() once not needed anymore.
+> 
+> Fixes: be95d2c7d918 ("clk: samsung: Add support for EPLL on exynos5410")
+> Signed-off-by: Alexander A. Klimov <grandmaster@al2klimov.de>
 
-Add clock and reset entries for SDHI.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- drivers/clk/renesas/r9a08g046-cpg.c | 92 +++++++++++++++++++++++++++++
- 1 file changed, 92 insertions(+)
+Does not apply - you messed somehow sending these.
 
-diff --git a/drivers/clk/renesas/r9a08g046-cpg.c b/drivers/clk/renesas/r9a08g046-cpg.c
-index a57638734ce7..272922b76e1e 100644
---- a/drivers/clk/renesas/r9a08g046-cpg.c
-+++ b/drivers/clk/renesas/r9a08g046-cpg.c
-@@ -17,10 +17,13 @@
- /* RZ/G3L Specific registers. */
- #define G3L_CPG_PL2_DDIV		(0x204)
- #define G3L_CPG_PL3_DDIV		(0x208)
-+#define G3L_CPG_SDHI_DDIV		(0x218)
- #define G3L_CPG_CA55CORE_DDIV		(0x234)
- #define G3L_CPG_RSCI_DDIV		(0x238)
- #define G3L_CPG_RSPI_DDIV		(0x23c)
-+#define G3L_CPG_SDHI_DSEL		(0x244)
- #define G3L_CLKDIVSTATUS		(0x280)
-+#define G3L_CLKSELSTATUS		(0x284)
- #define G3L_CPG_ETH_SSEL		(0x410)
- #define G3L_CPG_RSCI_SSEL		(0x414)
- #define G3L_CPG_RSPI_SSEL		(0x418)
-@@ -30,6 +33,9 @@
- #define G3L_DIVPL2A		DDIV_PACK(G3L_CPG_PL2_DDIV, 0, 2)
- #define G3L_DIVPL2B		DDIV_PACK(G3L_CPG_PL2_DDIV, 4, 2)
- #define G3L_DIVPL3A		DDIV_PACK(G3L_CPG_PL3_DDIV, 0, 2)
-+#define G3L_DIV_SDHI0		DDIV_PACK(G3L_CPG_SDHI_DDIV, 0, 2)
-+#define G3L_DIV_SDHI1		DDIV_PACK(G3L_CPG_SDHI_DDIV, 4, 2)
-+#define G3L_DIV_SDHI2		DDIV_PACK(G3L_CPG_SDHI_DDIV, 8, 2)
- #define G3L_DIV_CA55_CORE0	DDIV_PACK(G3L_CPG_CA55CORE_DDIV, 0, 3)
- #define G3L_DIV_CA55_CORE1	DDIV_PACK(G3L_CPG_CA55CORE_DDIV, 4, 3)
- #define G3L_DIV_CA55_CORE2	DDIV_PACK(G3L_CPG_CA55CORE_DDIV, 8, 3)
-@@ -61,8 +67,18 @@
- #define G3L_DIV_RSPI0_STS	DDIV_PACK(G3L_CLKDIVSTATUS, 20, 1)
- #define G3L_DIV_RSPI1_STS	DDIV_PACK(G3L_CLKDIVSTATUS, 21, 1)
- #define G3L_DIV_RSPI2_STS	DDIV_PACK(G3L_CLKDIVSTATUS, 22, 1)
-+#define G3L_DIV_SDHI0_STS	DDIV_PACK(G3L_CLKDIVSTATUS, 24, 1)
-+#define G3L_DIV_SDHI1_STS	DDIV_PACK(G3L_CLKDIVSTATUS, 25, 1)
-+#define G3L_DIV_SDHI2_STS	DDIV_PACK(G3L_CLKDIVSTATUS, 26, 1)
-+
-+#define G3L_SEL_SDHI0_STS	SEL_PLL_PACK(G3L_CLKSELSTATUS, 16, 1)
-+#define G3L_SEL_SDHI1_STS	SEL_PLL_PACK(G3L_CLKSELSTATUS, 17, 1)
-+#define G3L_SEL_SDHI2_STS	SEL_PLL_PACK(G3L_CLKSELSTATUS, 18, 1)
- 
- /* RZ/G3L Specific clocks select. */
-+#define G3L_SEL_SDHI0		SEL_PLL_PACK(G3L_CPG_SDHI_DSEL, 0, 2)
-+#define G3L_SEL_SDHI1		SEL_PLL_PACK(G3L_CPG_SDHI_DSEL, 4, 2)
-+#define G3L_SEL_SDHI2		SEL_PLL_PACK(G3L_CPG_SDHI_DSEL, 8, 2)
- #define G3L_SEL_ETH0_TX		SEL_PLL_PACK(G3L_CPG_ETH_SSEL, 0, 1)
- #define G3L_SEL_ETH0_RX		SEL_PLL_PACK(G3L_CPG_ETH_SSEL, 1, 1)
- #define G3L_SEL_ETH0_RM		SEL_PLL_PACK(G3L_CPG_ETH_SSEL, 2, 1)
-@@ -94,6 +110,7 @@ enum clk_ids {
- 
- 	/* Internal Core Clocks */
- 	CLK_PLL1,
-+	CLK_PLL1_DIV2,
- 	CLK_PLL2,
- 	CLK_PLL2_DIV2,
- 	CLK_PLL2_DIV2_4,
-@@ -117,16 +134,29 @@ enum clk_ids {
- 	CLK_SEL_RSPI0,
- 	CLK_SEL_RSPI1,
- 	CLK_SEL_RSPI2,
-+	CLK_SEL_SDHI0,
-+	CLK_SEL_SDHI1,
-+	CLK_SEL_SDHI2,
- 	CLK_ETH0_TR,
- 	CLK_ETH0_RM,
- 	CLK_ETH1_TR,
- 	CLK_ETH1_RM,
-+	CLK_SD0_DIV2,
-+	CLK_SD1_DIV2,
-+	CLK_SD2_DIV2,
- 
- 	/* Module Clocks */
- 	MOD_CLK_BASE,
- };
- 
- /* Divider tables */
-+static const struct clk_div_table dtable_1_4[] = {
-+	{ 0, 1 },
-+	{ 1, 2 },
-+	{ 2, 4 },
-+	{ 0, 0 },
-+};
-+
- static const struct clk_div_table dtable_1_8[] = {
- 	{ 0, 1 },
- 	{ 1, 2 },
-@@ -190,11 +220,15 @@ static const char * const sel_eth1_tx[] = { ".div_eth1_tr", "eth1_txc_tx_clk" };
- static const char * const sel_eth1_rx[] = { ".div_eth1_tr", "eth1_rxc_rx_clk" };
- static const char * const sel_eth1_rm[] = { ".pll6_div10", "eth1_rxc_rx_clk" };
- static const char * const sel_rsci_rspi[] = { ".pll2_div5", ".pll2_div6", ".pll2_div7", ".pll2_div2_4" };
-+static const char * const sel_sdhi[] = { ".pll2_div2", ".pll1_div2",  ".pll6", ".pll2_div6" };
- static const char * const sel_eth0_clk_tx_i[] = { ".sel_eth0_tx", ".div_eth0_rm" };
- static const char * const sel_eth0_clk_rx_i[] = { ".sel_eth0_rx", ".div_eth0_rm" };
- static const char * const sel_eth1_clk_tx_i[] = { ".sel_eth1_tx", ".div_eth1_rm" };
- static const char * const sel_eth1_clk_rx_i[] = { ".sel_eth1_rx", ".div_eth1_rm" };
- 
-+/* Mux clock indices tables. */
-+static const u32 mtable_sd[] = { 0, 1, 2, 3 };
-+
- static const struct cpg_core_clk r9a08g046_core_clks[] __initconst = {
- 	/* External Clock Inputs */
- 	DEF_INPUT("extal", CLK_EXTAL),
-@@ -210,6 +244,7 @@ static const struct cpg_core_clk r9a08g046_core_clks[] __initconst = {
- 	DEF_FIXED(".pll3", CLK_PLL3, CLK_EXTAL, 200, 3),
- 	DEF_G3L_PLL(".pll6", CLK_PLL6, CLK_EXTAL, CPG_PLL_CONF(0x50, 0),
- 		    500000000UL),
-+	DEF_FIXED(".pll1_div2", CLK_PLL1_DIV2, CLK_PLL1, 1, 2),
- 	DEF_FIXED(".pll2_div2", CLK_PLL2_DIV2, CLK_PLL2, 1, 2),
- 	DEF_FIXED(".pll2_div2_4", CLK_PLL2_DIV2_4, CLK_PLL2_DIV2, 1, 4),
- 	DEF_FIXED(".pll2_div5", CLK_PLL2_DIV5, CLK_PLL2, 1, 5),
-@@ -217,6 +252,12 @@ static const struct cpg_core_clk r9a08g046_core_clks[] __initconst = {
- 	DEF_FIXED(".pll2_div7", CLK_PLL2_DIV7, CLK_PLL2, 1, 7),
- 	DEF_FIXED(".pll3_div2", CLK_PLL3_DIV2, CLK_PLL3, 1, 2),
- 	DEF_FIXED(".pll6_div10", CLK_PLL6_DIV10, CLK_PLL6, 1, 10),
-+	DEF_SD_MUX(".sel_sdhi0", CLK_SEL_SDHI0, G3L_SEL_SDHI0, G3L_SEL_SDHI0_STS, sel_sdhi,
-+		   mtable_sd, 0, NULL),
-+	DEF_SD_MUX(".sel_sdhi1", CLK_SEL_SDHI1, G3L_SEL_SDHI1, G3L_SEL_SDHI1_STS, sel_sdhi,
-+		   mtable_sd, 0, NULL),
-+	DEF_SD_MUX(".sel_sdhi2", CLK_SEL_SDHI2, G3L_SEL_SDHI2, G3L_SEL_SDHI2_STS, sel_sdhi,
-+		   mtable_sd, 0, NULL),
- 	DEF_MUX(".sel_rsci0", CLK_SEL_RSCI0, G3L_SEL_RSCI0, sel_rsci_rspi),
- 	DEF_MUX(".sel_rsci1", CLK_SEL_RSCI1, G3L_SEL_RSCI1, sel_rsci_rspi),
- 	DEF_MUX(".sel_rsci2", CLK_SEL_RSCI2, G3L_SEL_RSCI2, sel_rsci_rspi),
-@@ -264,6 +305,18 @@ static const struct cpg_core_clk r9a08g046_core_clks[] __initconst = {
- 		    dtable_1_8, 0, 200000000UL, 0, NULL),
- 	DEF_G3S_DIV("P19", R9A08G046_CLK_P19, CLK_SEL_RSPI2, G3L_DIV_RSPI2, G3L_DIV_RSPI2_STS,
- 		    dtable_1_8, 0, 200000000UL, 0, NULL),
-+	DEF_G3S_DIV("SD0", R9A08G046_CLK_SD0, CLK_SEL_SDHI0, G3L_DIV_SDHI0, G3L_DIV_SDHI0_STS,
-+		    dtable_1_4, 800000000UL, 600000000UL, CLK_SET_RATE_PARENT,
-+		    rzg3s_cpg_div_clk_notifier),
-+	DEF_G3S_DIV("SD1", R9A08G046_CLK_SD1, CLK_SEL_SDHI1, G3L_DIV_SDHI1, G3L_DIV_SDHI1_STS,
-+		    dtable_1_4, 800000000UL, 600000000UL, CLK_SET_RATE_PARENT,
-+		    rzg3s_cpg_div_clk_notifier),
-+	DEF_G3S_DIV("SD2", R9A08G046_CLK_SD2, CLK_SEL_SDHI2, G3L_DIV_SDHI2, G3L_DIV_SDHI2_STS,
-+		    dtable_1_4, 800000000UL, 600000000UL, CLK_SET_RATE_PARENT,
-+		    rzg3s_cpg_div_clk_notifier),
-+	DEF_FIXED(".sd0_div2", CLK_SD0_DIV2, R9A08G046_CLK_SD0, 1, 2),
-+	DEF_FIXED(".sd1_div2", CLK_SD1_DIV2, R9A08G046_CLK_SD1, 1, 2),
-+	DEF_FIXED(".sd2_div2", CLK_SD2_DIV2, R9A08G046_CLK_SD2, 1, 2),
- 	DEF_FIXED("HP", R9A08G046_CLK_HP, CLK_PLL6_DIV10, 1, 1),
- 	DEF_MUX_FLAGS("ETHTX01", R9A08G046_CLK_ETHTX01, G3L_SEL_ETH0_CLK_TX_I, sel_eth0_clk_tx_i,
- 		      CLK_SET_RATE_PARENT),
-@@ -297,6 +350,36 @@ static const struct rzg2l_mod_clk r9a08g046_mod_clks[] = {
- 					MSTOP(BUS_REG0, BIT(0))),
- 	DEF_MOD("wdt0_clk",		R9A08G046_WDT0_CLK, R9A08G046_OSCCLK, 0x548, 1,
- 					MSTOP(BUS_REG0, BIT(0))),
-+	DEF_MOD("sdhi0_imclk",		R9A08G046_SDHI0_IMCLK, CLK_SD0_DIV2, 0x554, 0,
-+					MSTOP(BUS_PERI_COM, BIT(0))),
-+	DEF_MOD("sdhi0_imclk2",		R9A08G046_SDHI0_IMCLK2, CLK_SD0_DIV2, 0x554, 1,
-+					MSTOP(BUS_PERI_COM, BIT(0))),
-+	DEF_MOD("sdhi0_clk_hs",		R9A08G046_SDHI0_CLK_HS, R9A08G046_CLK_SD0, 0x554, 2,
-+					MSTOP(BUS_PERI_COM, BIT(0))),
-+	DEF_MOD("sdhi0_iaclks",		R9A08G046_SDHI0_IACLKS, R9A08G046_CLK_P1, 0x554, 3,
-+					MSTOP(BUS_PERI_COM, BIT(0))),
-+	DEF_MOD("sdhi0_iaclkm",		R9A08G046_SDHI0_IACLKM, R9A08G046_CLK_P1, 0x554, 12,
-+					MSTOP(BUS_PERI_COM, BIT(0))),
-+	DEF_MOD("sdhi1_imclk",		R9A08G046_SDHI1_IMCLK, CLK_SD1_DIV2, 0x554, 4,
-+					MSTOP(BUS_PERI_COM, BIT(1))),
-+	DEF_MOD("sdhi1_imclk2",		R9A08G046_SDHI1_IMCLK2, CLK_SD1_DIV2, 0x554, 5,
-+					MSTOP(BUS_PERI_COM, BIT(1))),
-+	DEF_MOD("sdhi1_clk_hs",		R9A08G046_SDHI1_CLK_HS, R9A08G046_CLK_SD1, 0x554, 6,
-+					MSTOP(BUS_PERI_COM, BIT(1))),
-+	DEF_MOD("sdhi1_iaclks",		R9A08G046_SDHI1_IACLKS, R9A08G046_CLK_P1, 0x554, 7,
-+					MSTOP(BUS_PERI_COM, BIT(1))),
-+	DEF_MOD("sdhi1_iaclkm",		R9A08G046_SDHI1_IACLKM, R9A08G046_CLK_P1, 0x554, 13,
-+					MSTOP(BUS_PERI_COM, BIT(1))),
-+	DEF_MOD("sdhi2_imclk",		R9A08G046_SDHI2_IMCLK, CLK_SD2_DIV2, 0x554, 8,
-+					MSTOP(BUS_PERI_COM, BIT(11))),
-+	DEF_MOD("sdhi2_imclk2",		R9A08G046_SDHI2_IMCLK2, CLK_SD2_DIV2, 0x554, 9,
-+					MSTOP(BUS_PERI_COM, BIT(11))),
-+	DEF_MOD("sdhi2_clk_hs",		R9A08G046_SDHI2_CLK_HS, R9A08G046_CLK_SD2, 0x554, 10,
-+					MSTOP(BUS_PERI_COM, BIT(11))),
-+	DEF_MOD("sdhi2_iaclks",		R9A08G046_SDHI2_IACLKS, R9A08G046_CLK_P1, 0x554, 11,
-+					MSTOP(BUS_PERI_COM, BIT(11))),
-+	DEF_MOD("sdhi2_iaclkm",		R9A08G046_SDHI2_IACLKM, R9A08G046_CLK_P1, 0x554, 14,
-+					MSTOP(BUS_PERI_COM, BIT(11))),
- 	DEF_MOD("ssi0_pclk2",		R9A08G046_SSI0_PCLK2, R9A08G046_CLK_P0,	0x570, 0,
- 					MSTOP(BUS_MCPU1, BIT(10))),
- 	DEF_MOD("ssi0_pclk_sfr",	R9A08G046_SSI0_PCLK_SFR, R9A08G046_CLK_P0, 0x570, 1,
-@@ -412,6 +495,15 @@ static const struct rzg2l_reset r9a08g046_resets[] = {
- 	DEF_RST(R9A08G046_DMAC_ARESETN, 0x82c, 0),
- 	DEF_RST(R9A08G046_DMAC_RST_ASYNC, 0x82c, 1),
- 	DEF_RST(R9A08G046_WDT0_PRESETN, 0x848, 0),
-+	DEF_RST(R9A08G046_SDHI0_IXRST, 0x854, 0),
-+	DEF_RST(R9A08G046_SDHI1_IXRST, 0x854, 1),
-+	DEF_RST(R9A08G046_SDHI2_IXRST, 0x854, 2),
-+	DEF_RST(R9A08G046_SDHI0_IXRSTAXIM, 0x854, 3),
-+	DEF_RST(R9A08G046_SDHI0_IXRSTAXIS, 0x854, 4),
-+	DEF_RST(R9A08G046_SDHI1_IXRSTAXIM, 0x854, 5),
-+	DEF_RST(R9A08G046_SDHI1_IXRSTAXIS, 0x854, 6),
-+	DEF_RST(R9A08G046_SDHI2_IXRSTAXIM, 0x854, 7),
-+	DEF_RST(R9A08G046_SDHI2_IXRSTAXIS, 0x854, 8),
- 	DEF_RST(R9A08G046_SSI0_RST_M2_REG, 0x870, 0),
- 	DEF_RST(R9A08G046_SSI1_RST_M2_REG, 0x870, 1),
- 	DEF_RST(R9A08G046_SSI2_RST_M2_REG, 0x870, 2),
--- 
-2.43.0
+Grabbing thread from
+lore.kernel.org/all/20260526061321.6123-1-grandmaster@al2klimov.de/t.mbox.gz
+Checking for newer revisions
+Grabbing search results from lore.kernel.org
+Analyzing 13 messages in the thread
+WARNING: duplicate messages found at index 1
+   Subject 1: dmaengine: ioatdma: use !kstrtoint(), not sscanf()!=-1
+   Subject 2: tlclk: if sscanf() fails, fall back to 0, not random value
+  2 is not a reply... assume additional patch
+WARNING: duplicate messages found at index 1
+   Subject 1: clk: samsung: exynos5410: fix refcount leak
+   Subject 2: dmaengine: ioatdma: use !kstrtoint(), not sscanf()!=-1
+  2 is not a reply... assume additional patch
+Assuming new revision: v2 ([PATCH] clk: tegra: tegra124-emc: fix
+krealloc() memory leak)
 
+
+Best regards,
+Krzysztof
