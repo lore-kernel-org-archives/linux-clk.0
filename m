@@ -1,26 +1,26 @@
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11022115.outbound.protection.outlook.com [52.101.126.115])
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023105.outbound.protection.outlook.com [52.101.127.105])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394792E7635;
-	Sat, 30 May 2026 12:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F0D3A9D99;
+	Sat, 30 May 2026 12:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.105
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780142645; cv=fail; b=I40Qyy8aAWsxiBhxBeFinUyz1/03yONDcXi85HEXJB7jSLOW5tAc7O9vnCuY06WnZOMvtMW856QIPVwY/ZDdhK3sYPmTEY8xXJCnH7yC2V1vGflO2bDN7QBSKLa72NDyr+bIsdfa3bL25taQTHCBi1HihmZnw2pkZm/tzeQXWhU=
+	t=1780142658; cv=fail; b=OyqTHqJwDNgD6YLVmz9grhO/lU6B0ZYUUIYJvrhMwmy+HvCYX8FRY80wyvQxNzNdfywlWqz35lu7fBLE03U+6DYxj2Lfc7hKmlgWi4h6J0wz8jXfFk/xBewxgXum+UuC0PijOyPT5mTWmnlLBjbv3dDeRezUlpfJahCGHEm/YnY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780142645; c=relaxed/simple;
-	bh=pfuJpqnxVuRJ0trwZKAu5njhNgTRlC2v+7Cjvz3zn6k=;
+	s=arc-20240116; t=1780142658; c=relaxed/simple;
+	bh=Vx+nHBH3XEoxQFNYSstwyP+oSYZQA4L8WY+Xi3Q/3u4=;
 	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=BkzfvYfz1Uym7DoF7R7wm0owYSRiPCzRtRdBTvqoSdCArBnNoejgdf/+VKtno4VwAszWjWo2avSBYHahHEhjDzYtgbAkRuWVH+bcpKmbOFhpgLtXaZTJqejB8MYmqiPq1VJemrClbO4f/9RBF83DgVVXjJ5Skc/61wG0+3NqJKQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=52.101.126.115
+	 Content-Type:MIME-Version; b=KXcptaNZu6AsyQuUWvedFbESgX/GdyQR5Es7T/MMBZTZeAdW9wmPguFALuHcTaFB92A0mteaXD9gIqIuSKdGw+J89L3vKWbShkOi+k80e+BsXA7S5Or5Q5SHAVnKoE8aQZIk+6NPz0RLSp61YQl9xp79q8IOwhiiprnH2GMSZ2c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=52.101.127.105
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hXnRjjNFhegXQ7vawNzaPbw4pyxSl7OQ+R/OkTVvj//h8He2+ZB7y9eur3cSLlrbY0nilF6PeT3D+iQY/LAIq8Gh2DpPse7pw7Hdr20mXNyUtGHSkN3Dq0mEwEESsVg3Bu/LnWZVjPQSWYjT7Ii6hymGmVC+Jl7sE8tR72r4kdcNnAvJBCfmtwAAQ/v0aWh+czzPZizzH6lre/0VgbZhC2DLunFDiJ0myvXlqpNdADe3i7np7md5nafTMbawloBQNsj6exeVIWEBGdLX0ljcjABeQLW8TgvVaSfadcXfSpHf25Soy79JIb/Sk0vjUXEkuemWoFBzqAHL0HD9YOaclw==
+ b=derdc7E5fjYea6uophdNTQ7Z5cnYqwKBZNepqlGGW0MaETQwq8F/1VrD/4TR9OWB2526hezzolFMayHngrk+Ay7duiT4wxgiywvAS1HwZIfTm0amWOG2+GfDr8KyaTPod+MffSIR7YLzBgg2ksj4TeEMPbqcrA8ypxISEii/37gVtCzWyT5jL6+XoVz9QrYka8AWBwSiO9nYAjM+7jlRVob6p70JTqf3gHasF5HlRhBIgjVgF/CK9xq3QqZSKq0VjibCE2sd1HbZVgpYvA5zUeBBKkP0cBxyKkCq+pDTcSKS3yfjWfHETAUuDGrECqONqrmBzUcfXEvalF8Fq9kTag==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pfuJpqnxVuRJ0trwZKAu5njhNgTRlC2v+7Cjvz3zn6k=;
- b=Gl6YZLo5OyQkxScxuYjG9F3mSIpwjJzklZ/JUfuSytsVo0BbV9F7kteuj/aT9J0jdB0J+FPTY3PKRO3BUknjlVgsrKRLJb8zUgl8omjTPCM17Sxu9d5WawhRlT2duOzaQAd8+X0tD0mPmF+KOLI/EA7LMqR8QZbdAXIT1uG4aQZXxuXf4fcQbrG3/UF0y6dp0KuBk26GASC9ePk0IuZhfsjg//e+nVPT65eRT+LGMF/xFSSGkYxZfQLRcRa9JteOHUkODimoUC5Ex7EYHemY85KLrXcP7nW5B9Mk9mqffbzFZqK04f7r2y4j/XvXFWkUomLMlpqnrTpEly1QVyOmwg==
+ bh=8twPjZPd8A+NWe2dpBKPDAsajVozrKnaYUDfbjp6gVU=;
+ b=N+MilLIaS5tNpPYEXRwWxsB6NWYUe+kAvYIQ9Ny53yewE2e8pPo3lvetqFvsLu5gN9vyFVBI9yOdlJJRVIefkXFKstmPgG3GRB9e0fqt5FAumQJvlCDnU01OBpya89g90VrJlrG8URofmEkttV+ZHzw8ALtmHjNW1su9dm6c5DR1sN/CwWNL//m1fDtRAWxPm9KWatBRWWKlXorOJp5WBZP2+n+j5MCSeoE5faa4cpdxjwC8rNxZZsql8OKQ2PS+kj4IA/LZgHJFOF5yLsxIf04Ey1U66+TGhywURDSO6OBYxZLkIJYaCuwNwCXGoHn+zSRakwchmWpR5RTPRvubdQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=cixtech.com; dmarc=pass action=none header.from=cixtech.com;
  dkim=pass header.d=cixtech.com; arc=none
@@ -28,11 +28,11 @@ Received: from KL1PR06MB6236.apcprd06.prod.outlook.com (2603:1096:820:d7::11)
  by TYUPR06MB6193.apcprd06.prod.outlook.com (2603:1096:400:351::8) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.16; Sat, 30 May
- 2026 12:04:01 +0000
+ 2026 12:04:14 +0000
 Received: from KL1PR06MB6236.apcprd06.prod.outlook.com
  ([fe80::2c9b:c257:fe54:16e7]) by KL1PR06MB6236.apcprd06.prod.outlook.com
  ([fe80::2c9b:c257:fe54:16e7%5]) with mapi id 15.21.0071.015; Sat, 30 May 2026
- 12:04:01 +0000
+ 12:04:14 +0000
 From: "Joakim  Zhang" <joakim.zhang@cixtech.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>, "mturquette@baylibre.com"
 	<mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
@@ -43,18 +43,18 @@ To: Krzysztof Kozlowski <krzk@kernel.org>, "mturquette@baylibre.com"
 CC: cix-kernel-upstream <cix-kernel-upstream@cixtech.com>,
 	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
 	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>
-Subject: RE: [PATCH v1 1/7] dt-bindings: soc: cix,sky1-audss-cru: add audss
- cru system controller
-Thread-Topic: [PATCH v1 1/7] dt-bindings: soc: cix,sky1-audss-cru: add audss
- cru system controller
-Thread-Index: AQHc79pgh2WhPE9Mr0yM1r0gwhMZf7YmR6MAgAATuhA=
-Date: Sat, 30 May 2026 12:04:01 +0000
+Subject: RE: [PATCH v1 4/7] dt-bindings: reset: cix,sky1-audss-reset: add
+ aduss reset controller
+Thread-Topic: [PATCH v1 4/7] dt-bindings: reset: cix,sky1-audss-reset: add
+ aduss reset controller
+Thread-Index: AQHc79pg3e8btjBSt0qe7LG9PgjwBbYmSNcAgAAu4SA=
+Date: Sat, 30 May 2026 12:04:14 +0000
 Message-ID:
- <KL1PR06MB6236C253721CE9E38458EC0782172@KL1PR06MB6236.apcprd06.prod.outlook.com>
+ <KL1PR06MB6236ED153961B695117A0B9A82172@KL1PR06MB6236.apcprd06.prod.outlook.com>
 References: <20260530021642.64059-1-joakim.zhang@cixtech.com>
- <20260530021642.64059-2-joakim.zhang@cixtech.com>
- <efb0b14d-9dbb-4e64-85f2-1a7f9da121c1@kernel.org>
-In-Reply-To: <efb0b14d-9dbb-4e64-85f2-1a7f9da121c1@kernel.org>
+ <20260530021642.64059-5-joakim.zhang@cixtech.com>
+ <dba033ec-1939-40b8-8aa0-26750b9bd591@kernel.org>
+In-Reply-To: <dba033ec-1939-40b8-8aa0-26750b9bd591@kernel.org>
 Accept-Language: zh-CN, en-US
 Content-Language: zh-CN
 X-MS-Has-Attach:
@@ -63,47 +63,47 @@ authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=cixtech.com;
 x-ms-publictraffictype: Email
 x-ms-traffictypediagnostic: KL1PR06MB6236:EE_|TYUPR06MB6193:EE_
-x-ms-office365-filtering-correlation-id: 8075d223-3d4e-4ab5-5d1d-08debe4389ab
+x-ms-office365-filtering-correlation-id: ce125586-5c47-43f0-d040-08debe439172
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|376014|3023799007|18002099003|22082099003|6133799003|4143699003|56012099006|38070700021;
+ BCL:0;ARA:13230040|366016|1800799024|376014|3023799007|18002099003|22082099003|4143699003|56012099006|38070700021;
 x-microsoft-antispam-message-info:
- RtPgx6OwktwFCD/cL1BvsJDp2ZHElQWjVtrOTu7aCQGkMsR97yPxTLijgUyzlGzdx4ze7LVSyX4557oR2PwmOp0Pzc3u8i3JCLWwbyEzG5xgKFPlJfCEFNwafmdu90ePZuVTmU7knjauVYL6cR1fsTxWGlPNwYZu9i6FiHBLOTCKD0nZPWDgfvc8XG/qGFgoJAEZ8XlN3lYk4CBZbW7Zy6G4zgkPc9No33j+PAUy2dHyckp5t75rV/KmNeR9+UG4BANAtBFuf5DzBmflMusWiSgEHo1Hq9LmeTyVR5LxQaD5CjZ9NgH7iPvbUF7UHfnZyxN5pnGljBicKuawOjCRWmAciI6sT2+MYl6AXjyke3G4VnkLjqurPFKr8yN6NdQorrxjFdGreLlEVDDR1xP0gwuRwdp5Wg8cYJiND1POJ89dhNm5zSOOeIcLFeC9qAe8BI/WexNRQzgIJT7dtIsrAiInTYaltczf1bxAWFqWJW4W+4kyQiM4VGlKT1AlAO5ftoA5r5rBwyog5snxU4F7oykFQmYNaBsTFxNk2fhjVB1l8MoBsA6oxwI0X8Co4VmHgWCXlWwVe/QuT32Ys9sJq2O/8utYuWdAqk7ZshxvjTWMuAjVt1rUPoSRoGi4kjpj60OuRVEsmqSkWvDCAt4HFKjDRyFCOFqLB6u5Qxs+WHcWkYd7GvWyqFENeGw9gPdkkHww/+a5kWUlVe/QL8K0XCFSrziqmfpPonSoLE2qxnyTs7tk4235py2tBMvsViE+
+ M5uSd9MHlLnSnTUagRZ64JGnlTyF6GOQOI917O4dNKzPiT8vlYGGgJ2bw27Aoovuhy3b+SAMVLZw2cLUkjoPpbl101wBjWbJb8HrmaGLyzG9dJXgv5snaqa6daiw9mGIWNZSi7uqajxy+dYPD+kiAz1oWm0BnoOYMrXMq0+uhqdRFbsazYhiBYOmMviuuq2kiK0NDwutE080nmQOhosnlV/AtxK5nYWlBYEbxP4gx7665VuBXKqm8PrXvDNSU5cnFOw8Gn97IdPN7DOW0YKsnXgAFELP5udOInx14EvVoJCcGJHZIUvWurMc/qZ+INMfjHXicld4owXGOplCR0RnPBSzgwe9M+9mTuAMTu+q8Q+czN2t7ZmZmMhhlthMU4CwPBUZSYHLsUK1DuICDXOFwghPUJkPoV3zqZ/tM/ykR0L1FpU7IIWPlTN89LAhZR19Ug024xlQ/YNhEsD6fghdymdl9AsBkmcWLc1WbKv7GMJTb6SUrt2oMHA85IRQrPcbx5OkfbksfX0if55v102mzKE0l6G4lIGApTVctlfZ9sjSfY9NavYZYakQ9hLt8ItwhIDfGifhE3NJfMXr/J0rXHWzEsxYmcTIQ7qPO+64NcJxKL78Kmkp2/OaFjPHeX8uSrpO3OgDDd/bKg4e2ha2iLVED3RKgxfigqCurXHrsFCsUmgZaMCRsvtnMJCnPjomBlpkHnH1fo7X9Gxae8/N5w==
 x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6236.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(3023799007)(18002099003)(22082099003)(6133799003)(4143699003)(56012099006)(38070700021);DIR:OUT;SFP:1102;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6236.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(3023799007)(18002099003)(22082099003)(4143699003)(56012099006)(38070700021);DIR:OUT;SFP:1102;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?3NKCubDzKuIL0guqi0eGMZiwfIx5tS928hxklHOxVJHxm9wyybQ2co41x29s?=
- =?us-ascii?Q?jTjs43M4KRDK/Ngo08LBqrX2zI3FZUnhQlq9UGOjvnpueXMkqe2cvLQMtQ7q?=
- =?us-ascii?Q?m9xs4rRrBKKhP9Q7hMDQjxvVLYVHX7vzU01PQHCAxfSA6Rmqpeewd1DCqfAE?=
- =?us-ascii?Q?b/JvMJ7nRpoy4XhG3LZL9Ngxw9OG771SL0FqgMNQyfrPLSfLLURPphllLovi?=
- =?us-ascii?Q?Mauy9naJE+kurKiFaj1vP6YSJfDdjjv4PiwsyWx8F0g2qQihTluZep31KciJ?=
- =?us-ascii?Q?EzYQDPVEBXcpl9hRlx7JogXFMfHnxF6jtcfLMJa4rIiIsSocvHEm4MGZi6eJ?=
- =?us-ascii?Q?LN/psoQ574HB4v0BtDkZIYkLdZNineYtxJGJ41Jj0eN0U0O076a7q9HUpqb7?=
- =?us-ascii?Q?o4XVpblBKgO3y8aQpxkXFlWxgxVkH2Zob6KW3fsB8eMCcSNguv74HLujibc2?=
- =?us-ascii?Q?w2oHo9L74TlalwA36qT2XNZzqe5nKm7/S8XtC/D1XAg0ick0C4GFU6vopNdu?=
- =?us-ascii?Q?FvrQmym61OCfSxyhyeu9EPTtjfOjK+4dLP02iZ+3aFcWTuzY3goez/Cf7eab?=
- =?us-ascii?Q?klho39J5JWCKsZZIjbNn6QsAHv58FWsi+xir+TOStBM3gn6iJn4bXzKSvga2?=
- =?us-ascii?Q?Z8PS7/RoaJLWlMBR0tmp2bms93x2X4tJn9DLfaJuy2TnCY3hWIIDfLidOngw?=
- =?us-ascii?Q?u7gu4KHW11Eh4gRLEvJAxebFp4ioCV/XtCrCc3covMKKdH6yLQ4ZSvGHNaPy?=
- =?us-ascii?Q?6etaIm2Wmd/f/PFpaq2Fbis3FuuBmfGsheNqFtRa3ddabFuuh4cqKdRJMp+p?=
- =?us-ascii?Q?CFzZBcTQZsxfJlpL3PDHoza2jpZeempiHTxN38NCDa6ob57Iq2efzMFNvCng?=
- =?us-ascii?Q?g5ZqNxO3NScBKYXaj4bKbL022Ki0h4/RbyRy7aPZLOxWnlFwOCbSZajmKI9p?=
- =?us-ascii?Q?CYIBesMFvpAH4Y8vfjp4Nr3upqPUWZ1m9RbOGoAabKgIny4M3r7sXlOJM+ul?=
- =?us-ascii?Q?vdtou6ft+RSsfnCLf7vUYvhISXJRFwpd52DaXJcNVFPu1SEW9MElwE5O7Fh8?=
- =?us-ascii?Q?Q3PGhHomLL65uY61J8BVi9DzG2LREZ+VI1Or4SxFDFtJRMdV75ZLDGMg/McC?=
- =?us-ascii?Q?9dqzRnAL6SWWZl4mtuHeAwwTggt7+d7gAX0LSo20Mbdp+GqU0bJPHd4pCUnT?=
- =?us-ascii?Q?ClhWZQ8PuoDkwjdm/tykS16wrmfD+ubzwYYaByYOERDnKtiOHl+5AZmBRceE?=
- =?us-ascii?Q?ln6wIHFciUv66rDg2rm+JnRs0kKL4MlU6lA8S4+rPmF0JQ8ehBTG7sz+4qbP?=
- =?us-ascii?Q?seNA0akGwLU6iaG+s9LHQZGknyQ9TGexAYF6wsDYFXgEN5/VVkkns36Z/9dj?=
- =?us-ascii?Q?znPsDqkeWD08m03U8nsB4y86YI7scoM8Myh+4/AN1MOBtJcf9OfcQuQRzOMP?=
- =?us-ascii?Q?R24OSSgKokht4VIMjdSfgNdGdJUmdU8nhkEdHENzERACWNEUNHzLTc/Gsxo9?=
- =?us-ascii?Q?gBQ65o/+ZbETsqzY6/I/0188dA3eHkiGyIruIDB7ll6Spybe7t+NgnAPaMkl?=
- =?us-ascii?Q?tHjCkEj1iT0I/vROIvjvE1juZO/G05L7GAsgyZvKJZB6RUK90BpHto7tSFyl?=
- =?us-ascii?Q?7TNnBaQfvOp+alg3+ulX1Nz6i3g+xUmcdwG4lr/R+RVPMT6RfAdNfL0o48cS?=
- =?us-ascii?Q?gKdyYqijM35YH+h0a7Bpv3oqKesSwGW4J4opVgzhn1OYwJeZ7SQsoNJ/lMLF?=
- =?us-ascii?Q?7NL/iY7cIQ=3D=3D?=
+ =?us-ascii?Q?uCgS7KRqaHdcZU87zD1VpvyB+YwiNs0RzvBKnC4SFzYUfGqB7JHit9Cw43eY?=
+ =?us-ascii?Q?7LdIEO2bj/LQlWxNmEZtuGzfJN3fzfE/TIebnxf8OyfFbVazdbFKu8yuhkgv?=
+ =?us-ascii?Q?RRfhK5P6Blzzdp1zeW0Eo00dCGpagF778GVlrqxOZbcHsTKMKUYcs9/b7hhW?=
+ =?us-ascii?Q?/rpSw5+dMrxUOGoOh5GVuJ0NJ/0VBqgjiPXQHSVfcq7fIlnuVxgxFS9Al+nk?=
+ =?us-ascii?Q?Iy2MwGs6a/Vr1p0PfyA9TXZ93udnTePV55c3GNI/aHyvPiTk6NzQqFmX4Pri?=
+ =?us-ascii?Q?5MQXQlutS6CMYxn7JNaRr8uA4WyNVZ0xtdY81xRN/NHdLRmFY16olkCz7PnN?=
+ =?us-ascii?Q?gwTd5g0bQkhtKdtl2HC/CqzgFgTlZZMKodgTAF17a+bwHVCPnwZ+o2F0Zbgd?=
+ =?us-ascii?Q?9VTZK8ewrTNKGThFUVjTNdS9YeMDxrtO8cfejlRTvyP9jFwoVlVGlVuDursU?=
+ =?us-ascii?Q?owLQwsvLmQAKxFeicrAMwirJgsKAzs4vceVSqiy2L9siDvFW6bbvljfa/XjL?=
+ =?us-ascii?Q?9+avvvV7XpcoGhlPkw+E3XkOEgLDgwRUcjYduJ3Pa+Wbm+AIjcg26R0fvpCm?=
+ =?us-ascii?Q?HNhKO3zaiE6qF6erloBMmEdkZh8roKW0rByHKficnPgaGXrLQyolwSg9meYj?=
+ =?us-ascii?Q?/dSLG2QDZxA6f5rkdbFLOX8GTvSxa8dxprbhcN8at/W7PhSBtEjlGc1vtUHG?=
+ =?us-ascii?Q?dMc4Evg7R8pqMFAdbZITT0SmH8uygDcyhxtt08P+4Ul+czLOWORv8fo2cFy1?=
+ =?us-ascii?Q?OwQCNMrd++/sDsb0/+RdWkfMWNN8OivZlHWnZYp0HeHyZdniLOR/ywmqIzwE?=
+ =?us-ascii?Q?+lj/lX/+INvdr+kbL1zwPBOCNKWsK+zGJibQVFQJr4qweQPycK1klccIxYmu?=
+ =?us-ascii?Q?s0/avrgmmTjXocl878wAU660EOZs8PktML5De2wtvfxbaJsO5nodpaolQI93?=
+ =?us-ascii?Q?F+0aVmaYLhLoWIk4V3b7Q16jZFOrkcSWupVikv7nm3zZjcBVN1I/Jcg1MAh5?=
+ =?us-ascii?Q?JlmiyCXaazM3q2Li16hLaQnKTlOz5b+uiGEYDu7pYI4O4ivQnto0zbKoCIR/?=
+ =?us-ascii?Q?kcH3piOuhPWyaGIWUfxEORE3tsag8rZ50u0x6gPn4NwH212qtuE0zivZRPKs?=
+ =?us-ascii?Q?ZqQ6SNScWFMxFrUnt3oqaKgIfgFT3WDQZBLMNrjPWGzNYwtiGe9FzTaveF2Q?=
+ =?us-ascii?Q?PWkmo+718AG0+ZMqAy5LdCxIb7SQ19moPh7pwXjSC+8lB0sVqcrmaDD9RXh3?=
+ =?us-ascii?Q?/TxhuVfOBqQrM+dJFCwxFwdin7s9p3fxNj+7/j6Iouh35xbsDOuSXBjrhJUE?=
+ =?us-ascii?Q?6laxdZP7i2/c1DMiKKTE5XmJ7PXlp2uXldhfCNtyqenfahcAe9Z7z1AznyQQ?=
+ =?us-ascii?Q?Pbv0geu7bJUtWWQPYm9Vzm+Ij0ESCJ9ONa2VjcaQQO0yjy0g9K2thGUW8D2q?=
+ =?us-ascii?Q?BzY51uHnOkf3/EmMfHw2rauxLxBrHzYdIPsorUckVyHu8DQ0Y3sjTGsKs4T4?=
+ =?us-ascii?Q?/X3lEcB4hYeWs1jAvYd5rUN899hvNEnQRUCPVWux2Q71nZb1W+TmBHpfSa3G?=
+ =?us-ascii?Q?kequTyHiqqremlpdSj8B62eino6lAEOy5eCS/uWN3xGk28ZdEWVZJCFeU7yY?=
+ =?us-ascii?Q?ARdUk1HRrh1io9yfM/h5UmZg8S1t019p/O8k3CWs/xHkvEasZOPGKmkfaCS1?=
+ =?us-ascii?Q?8zuGwDZ5HfMgtLogUMwCdh7bzjm4vK+V/zl38Wxe+0LKbAh30rWqLgpHQooL?=
+ =?us-ascii?Q?Lul7qwhmIg=3D=3D?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
@@ -115,71 +115,105 @@ MIME-Version: 1.0
 X-OriginatorOrg: cixtech.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6236.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8075d223-3d4e-4ab5-5d1d-08debe4389ab
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 May 2026 12:04:01.4900
+X-MS-Exchange-CrossTenant-Network-Message-Id: ce125586-5c47-43f0-d040-08debe439172
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 May 2026 12:04:14.5413
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 0409f77a-e53d-4d23-943e-ccade7cb4811
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: BiS2lOVtQX8GXtFDNXJY2YvI0X3vE8rpW5XdE8N3AQW73EoIxNDBOQA6TSO/i+Lo7ukPeSnwHHBf4fCh2nTkfxFccK1vlNAuzkpOaBajVPw=
+X-MS-Exchange-CrossTenant-userprincipalname: tdrUqs6IfGyQEBSG98g+zrf2gGpjb2JV6OckxSOorboxYVX21s2nMrSBTb2iAinIE5yFsig3gLRVsMx6OSj+IaFDy48Gm79kbi2R6+oCkV0=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYUPR06MB6193
+
 
 
 Hi,
 
 > -----Original Message-----
 > From: Krzysztof Kozlowski <krzk@kernel.org>
-> Sent: Saturday, May 30, 2026 5:07 PM
+> Sent: Saturday, May 30, 2026 5:11 PM
 > To: Joakim Zhang <joakim.zhang@cixtech.com>; mturquette@baylibre.com;
 > sboyd@kernel.org; robh@kernel.org; krzk+dt@kernel.org;
 > conor+dt@kernel.org; p.zabel@pengutronix.de; lgirdwood@gmail.com;
 > broonie@kernel.org
 > Cc: cix-kernel-upstream <cix-kernel-upstream@cixtech.com>; linux-
 > clk@vger.kernel.org; linux-sound@vger.kernel.org
-> Subject: Re: [PATCH v1 1/7] dt-bindings: soc: cix,sky1-audss-cru: add aud=
-ss cru
-> system controller
+> Subject: Re: [PATCH v1 4/7] dt-bindings: reset: cix,sky1-audss-reset: add=
+ aduss
+> reset controller
 >=20
 > EXTERNAL EMAIL
 >=20
 > On 30/05/2026 04:16, joakim.zhang@cixtech.com wrote:
 > > From: Joakim Zhang <joakim.zhang@cixtech.com>
 > >
-> > Add devicetree schema for the Cix Sky1 audio subsystem CRU syscon/MFD
-> > parent. Child clock-controller and reset-controller nodes are
-> > described via references to the AUDSS clock and reset bindings.
+> > Add schema and reset IDs for the Cix Sky1 audio subsystem (AUDSS)
+> > reset controller.
+> >
+> > The compatible string is cix,sky1-audss-reset. Reset indices are
+> > defined in include/dt-bindings/reset/sky1-reset-audss.h.
 > >
 > > Signed-off-by: Joakim Zhang <joakim.zhang@cixtech.com>
+> > ---
+> >  .../bindings/reset/cix,sky1-audss-reset.yaml  | 50
+> > +++++++++++++++++++  include/dt-bindings/reset/sky1-reset-audss.h  |
+> > 29 +++++++++++
+> >  2 files changed, 79 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/reset/cix,sky1-audss-reset.yaml
+> >  create mode 100644 include/dt-bindings/reset/sky1-reset-audss.h
+> >
+> > diff --git
+> > a/Documentation/devicetree/bindings/reset/cix,sky1-audss-reset.yaml
+> > b/Documentation/devicetree/bindings/reset/cix,sky1-audss-reset.yaml
+> > new file mode 100644
+> > index 000000000000..8e02ddd2517d
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/reset/cix,sky1-audss-reset.yam
+> > +++ l
+> > @@ -0,0 +1,50 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/reset/cix,sky1-audss-reset.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Cix Sky1 audio subsystem reset controller
+> > +
+> > +maintainers:
+> > +  - Joakim Zhang <joakim.zhang@cixtech.com>
+> > +
+> > +description: |
+> > +  Reset provider for the Cix Sky1 audio subsystem (AUDSS).
+> > +
+> > +  This node is a child of a cix,sky1-audss-cru MFD/syscon node (see
+> > + cix,sky1-audss-cru.yaml). It does not have a reg property; software
+> > + reset  bits are accessed through the parent CRU regmap.
+> > +
+> > +  Each #reset-cells index maps to a software reset line for an AUDSS
+> > + block  (I2S, HDA, DMA, mailbox, watchdog, timer, etc.). Indices are
+> > + defined in  sky1-reset-audss.h.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: cix,sky1-audss-reset
+> > +
+> > +  '#reset-cells':
+> > +    const: 1
+> > +    description:
+> > +      Reset indices are defined in include/dt-bindings/reset/sky1-rese=
+t-
+> audss.h.
+> > +
 >=20
 >=20
-> This wasn't ever tested and obviously fails (non-bisectable).
->=20
-> Please use scripts/get_maintainers.pl to get a list of necessary people a=
-nd lists
-> to CC. It might happen, that command when run on an older kernel, gives y=
-ou
-> outdated entries. Therefore please be sure you base your patches on recen=
-t
-> Linux kernel.
->=20
-> Tools like b4 or scripts/get_maintainer.pl provide you proper list of peo=
-ple, so
-> fix your workflow. Tools might also fail if you work on some ancient tree=
- (don't,
-> instead use mainline) or work on fork of kernel (don't, instead use mainl=
-ine).
-> Just use b4 and everything should be fine, although remember about `b4 pr=
-ep -
-> -auto-to-cc` if you added new patches to the patchset.
->=20
-> You missed at least devicetree list (maybe more), so this won't be tested=
- by
-> automated tooling. Performing review on untested code might be a waste of
-> time.
->=20
-> Please kindly resend and include all necessary To/Cc entries.
+> I am not really reviewing this, since you never tested it and did not fol=
+low the
+> process, but to spare you one review cycle - no resources here, so this i=
+s NOT a
+> separate node. Please read writing bindings or
+> DTS101 slides.
 
-Sorry, will submit the patches in batches and To/Cc all entries.
+Sorry, that's the meaning of " so this is NOT a separate node ",  could you=
+ please explain it more, so I can update later.
 
 Thanks,
 Joakim
