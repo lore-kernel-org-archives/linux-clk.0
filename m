@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387E630E85C;
-	Sat, 30 May 2026 09:07:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F5735B63B;
+	Sat, 30 May 2026 09:07:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780132026; cv=none; b=cSojU8Xco5jsHifxq4WrzZVx9VCub9fMpMAsVverdPGsDSnP+/0mrz/kOSJ8pv9c/TBPA2GjH1E4sNlBn8/dLF7cluzqKnh0ygeUlQwR7TIypEjDI0ziare00nkCZVBpqlLQiYWGCEjy6lUrN0ryR0oIugqKlo8hNAz5H6jLM9Y=
+	t=1780132064; cv=none; b=DmaHo2hgIW9WutqNoM80qQ5dArPQujEkLETLJYUVoXp9/WeJOvVAOxRJ13cZQjXhcrfOPa3OY2OauViL1Dcy+zLW5xPJsGwoubcN28IuqqWDiU1WwCk2K3bkF89lvPnHHRXufraMd0Aodg+h+TJ3G8X1J+cDRYIMByAiZF3xhWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780132026; c=relaxed/simple;
-	bh=y2bnu1z4ftBjTAkJSqBNWG5Q404nrZHjIXhCazq/HPA=;
+	s=arc-20240116; t=1780132064; c=relaxed/simple;
+	bh=yn66HElcfXy3ADHRMQdCNnfagQIg2KdxyR5NL90pobY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tqr7ortgcyC5pet+XxOlozjVJCZSRdzAzaic54dMgzrxj9jMt2xSJD+Sd9YVozm6d1UdWfwUp1gIc1yKSJsTsY3goac9BGl0hmHeTe1/2yKEgVxm5FaeZzHzsGxue9RjWy33BdNP1iMYkKOwZXim5gK68n1lPyK242UzKbrEVRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nVUHdSgl; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=V1EjDKF0cUAROETsLmETwozozuaqqf3nYEo8FeP8l0tTc9/L/93+zLH3JftxHJvfJlAEiua3G6F2g5ZH/6atuAHPigCodjelZeTxt8z+H2f7m11HEaAMkfLLhukJv1xPIHiWyK4ftj8bVmIFgwl4yijmyuEcw/YPe/XGGQJY/wQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bmkPjIEd; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nVUHdSgl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 206731F00893;
-	Sat, 30 May 2026 09:07:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bmkPjIEd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB6E51F00893;
+	Sat, 30 May 2026 09:07:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780132024;
-	bh=0wPwekrAJMyJrvUsYooem6jFeeV+7ej27mkxiGkL5gk=;
+	s=k20260515; t=1780132063;
+	bh=eh6vH1NzwqKuUTPIZiPWB2xNT8lrQxfIA02cNL7FETA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=nVUHdSglv6OThv8FCgKUSqd4TCX8yMlF4p4XIozQR9KDXQTOC4XGzXYJCiveemB8n
-	 VNvlh38h/TYRfYEEGDDWm/wk4ybDdifXhk/4H10d9XRY07X1ECEDA1/hBYZfUWnJdr
-	 0YSHmewNPsopzC7LVNz+Roj2GlXnW1QIlLdhMRW9vII338zmPchhoBNlQNWreQcjIE
-	 ZVAUufBkHqrsnyxfHsMGiy1l7A5LEFLAVAydfCzzzXJGWKa1YZSims69o8KWnKeN3A
-	 VIgfyhR3yUcXiVe4HkLNPcWuFq+StWkFISSy9yc8xDQuUK7lE7pfgGuhMPvLQ/uY3D
-	 UadpLTMyLndwQ==
-Message-ID: <efb0b14d-9dbb-4e64-85f2-1a7f9da121c1@kernel.org>
-Date: Sat, 30 May 2026 11:07:00 +0200
+	b=bmkPjIEdltwNWtPX2k44gknYsUptqZkgXqCIxhhR6h4jZNMTlsVlA8tr/7l0IhEsl
+	 sTwv8z7Ty/znuBMU6tyCQENF9YqcRwfG8XB95XCgUYl5AsvjLIgS6USNTPqBA+o8pW
+	 GdJs5lrNvBH4h6xTjuNu+Q5Q4Rl9NG07Mylpo1N+GId4UPAt8+QDvTH9B61xuGP0fH
+	 TtfNJQ0pqpuB439RCHmZYnVBM3t7SZU6FE+oP2NaC77/SSpn+i3cTvvYyGs0W3P7Zu
+	 ejBYo8LcoX/4KALKkZ8wWrqMBvSa3Kx2bIZpoP29T1vmDrtkHh/fR6G/Yq9yzh6wGe
+	 yXO30MtiSDfiA==
+Message-ID: <c68f29a0-1d5e-4568-bc70-52926c275623@kernel.org>
+Date: Sat, 30 May 2026 11:07:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,15 +35,14 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/7] dt-bindings: soc: cix,sky1-audss-cru: add audss
- cru system controller
+Subject: Re: [PATCH v1 7/7] arm64: dts: cix: sky1: add audss device nodes
 To: joakim.zhang@cixtech.com, mturquette@baylibre.com, sboyd@kernel.org,
  robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
  p.zabel@pengutronix.de, lgirdwood@gmail.com, broonie@kernel.org
 Cc: cix-kernel-upstream@cixtech.com, linux-clk@vger.kernel.org,
  linux-sound@vger.kernel.org
 References: <20260530021642.64059-1-joakim.zhang@cixtech.com>
- <20260530021642.64059-2-joakim.zhang@cixtech.com>
+ <20260530021642.64059-8-joakim.zhang@cixtech.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -89,39 +88,129 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20260530021642.64059-2-joakim.zhang@cixtech.com>
+In-Reply-To: <20260530021642.64059-8-joakim.zhang@cixtech.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 30/05/2026 04:16, joakim.zhang@cixtech.com wrote:
 > From: Joakim Zhang <joakim.zhang@cixtech.com>
 > 
-> Add devicetree schema for the Cix Sky1 audio subsystem CRU syscon/MFD
-> parent. Child clock-controller and reset-controller nodes are described
-> via references to the AUDSS clock and reset bindings.
+> Add audss support for cix sky1 platform, including
+> clock, reset and hda controllers.
 > 
 > Signed-off-by: Joakim Zhang <joakim.zhang@cixtech.com>
+> ---
+>  arch/arm64/boot/dts/cix/sky1-orion-o6.dts | 34 ++++++++++++++
+>  arch/arm64/boot/dts/cix/sky1.dtsi         | 56 +++++++++++++++++++++++
+>  2 files changed, 90 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/cix/sky1-orion-o6.dts b/arch/arm64/boot/dts/cix/sky1-orion-o6.dts
+> index e39c87774c12..1700ecbfa1ce 100644
+> --- a/arch/arm64/boot/dts/cix/sky1-orion-o6.dts
+> +++ b/arch/arm64/boot/dts/cix/sky1-orion-o6.dts
+> @@ -66,6 +66,20 @@ pins {
+>  			drive-strength = <8>;
+>  		};
+>  	};
+> +
+> +	pinctrl_audss_hda: hda-cfg {
+> +		pins {
+> +			pinmux = <CIX_PAD_HDA_BITCLK_FUNC_HDA_BITCLK>,
+> +			       <CIX_PAD_HDA_RST_L_FUNC_HDA_RST_L>,
+> +			       <CIX_PAD_HDA_SDIN0_FUNC_HDA_SDIN0>,
+> +			       <CIX_PAD_HDA_SDOUT0_FUNC_HDA_SDOUT0>,
+> +			       <CIX_PAD_HDA_SYNC_FUNC_HDA_SYNC>,
+> +			       <CIX_PAD_HDA_SDIN1_FUNC_HDA_SDIN1>,
+> +			       <CIX_PAD_HDA_SDOUT1_FUNC_HDA_SDOUT1>;
+> +			bias-pull-down;
+> +			drive-strength = <20>;
+> +		};
+> +	};
+>  };
+>  
+>  &iomuxc_s5 {
+> @@ -82,6 +96,26 @@ pins {
+>  	};
+>  };
+>  
+> +&audss_cru {
+> +	status = "okay";
+> +};
+> +
+> +&audss_clk {
+> +	status = "okay";
+> +};
+> +
+> +&audss_rst {
+> +	status = "okay";
+> +};
+> +
+> +&audss_ipb_hda {
+> +	model = "Radxa Orion O6 HDA";
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_audss_hda>;
+> +	memory-region = <&audio_alsa_hda>;
+> +	status = "okay";
+> +};
+> +
+>  &pcie_x8_rc {
+>  	status = "okay";
+>  };
+> diff --git a/arch/arm64/boot/dts/cix/sky1.dtsi b/arch/arm64/boot/dts/cix/sky1.dtsi
+> index bb5cfb1f2113..fe096ab95f3b 100644
+> --- a/arch/arm64/boot/dts/cix/sky1.dtsi
+> +++ b/arch/arm64/boot/dts/cix/sky1.dtsi
+> @@ -6,6 +6,10 @@
+>  
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  #include <dt-bindings/clock/cix,sky1.h>
+> +#include <dt-bindings/clock/sky1-audss.h>
+> +#include <dt-bindings/reset/cix,sky1-system-control.h>
+> +#include <dt-bindings/reset/cix,sky1-s5-system-control.h>
+> +#include <dt-bindings/reset/sky1-reset-audss.h>
+>  #include "sky1-power.h"
+>  
+>  / {
+> @@ -155,6 +159,18 @@ core11 {
+>  		};
+>  	};
+>  
+> +	reserved-memory {
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+> +
+> +		audio_alsa_hda: audio_alsa_hda@d0c00000 {
+> +			compatible = "shared-dma-pool";
+> +			reg = <0x0 0xd0c00000 0x0 0x200000>;
+> +			no-map;
+> +		};
+> +	};
+> +
+>  	firmware {
+>  		ap_to_pm_scmi: scmi {
+>  			compatible = "arm,scmi";
+> @@ -488,6 +504,46 @@ mbox_pm2ap: mailbox@65a0080 {
+>  			cix,mbox-dir = "rx";
+>  		};
+>  
+> +		audss_ipb_hda: hda@70c0000 {
+> +			compatible = "cix,sky1-ipbloq-hda";
+> +			reg = <0x0 0x070c0000 0x0 0x10000>;
+> +			interrupts = <GIC_SPI 234 IRQ_TYPE_LEVEL_HIGH 0>;
+> +			clocks = <&audss_clk CLK_HDA_SYS>,
+> +				 <&audss_clk CLK_HDA_HDA>;
+> +			clock-names = "ipg", "per";
+> +			resets = <&audss_rst AUDSS_HDA_SW_RST_N>;
+> +			status = "disabled";
+> +		};
+> +
+> +		audss_cru: system-controller@7110000 {
+> +			compatible = "cix,sky1-audss-cru", "simple-mfd", "syscon";
+> +			reg = <0x0 0x07110000 0x0 0x10000>;
+> +			status = "disabled";
 
-
-This wasn't ever tested and obviously fails (non-bisectable).
-
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC. It might happen, that command when run on an older
-kernel, gives you outdated entries. Therefore please be sure you base
-your patches on recent Linux kernel.
-
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
-
-You missed at least devicetree list (maybe more), so this won't be
-tested by automated tooling. Performing review on untested code might be
-a waste of time.
-
-Please kindly resend and include all necessary To/Cc entries.
+What is missing on the board side? Why SoC component is disabled?
 
 Best regards,
 Krzysztof
