@@ -1,44 +1,81 @@
-Received: from outbound7.mail.transip.nl (outbound7.mail.transip.nl [136.144.136.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049D22F39B5;
-	Sat, 30 May 2026 14:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.144.136.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D95333F5BD
+	for <linux-clk@vger.kernel.org>; Sat, 30 May 2026 16:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780150111; cv=none; b=JcTlLLWfx4onrv32ZZFzbMdRrnDrG0X6FkI6Ni4kx7eAbRZouhtvEYq8cR0YBZVKaOSXnwOkJt4iWWSYfzk5uigXceo05E1+Y7u6eIusqC8ONar95Ys4sg8ZiseFGhkd+yVMaUZ26Mn9g4CHX+14zcDR49TP0UJexS/5Ld+uwSM=
+	t=1780157314; cv=none; b=egDYAB/EM2wm9u5EYSfvEiwYYfssAijpUOKMpOZHe1jYWYDNIHRABi/yBkNQ5DUt001xjjurhQrNlJ2Fdmxh7g7ZD+Z1JHHWwcd08CHhF/7sO1riwr762P5CVzv3O/siYyt0XjUYCRSlCmDwPzN2rgYcj7ZaQ0AiNupSwtoPjkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780150111; c=relaxed/simple;
-	bh=kYxL+qyGFYq+Eu5PRSx8j1K3TZspk7ZFarI/hL6/obo=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rx3A3m0h0itdr3kKQ3QXuC4PL57ngxyFTNGYOFrh0DL4gK65L6stMf2YJmyb22O75ThxNMWGKChQ9Z7D4clpZSi1f3mtnZ/BwXJ22KV18sJ+fBV41mnq31nMR6DbYLJmaXIBaPmCI38mRZEsdAVBOwRY4m2YiiOkKmSC/S4hp8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=herrie.org; spf=pass smtp.mailfrom=herrie.org; dkim=pass (2048-bit key) header.d=herrie.org header.i=@herrie.org header.b=KeQNqPCA; arc=none smtp.client-ip=136.144.136.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=herrie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=herrie.org
+	s=arc-20240116; t=1780157314; c=relaxed/simple;
+	bh=yVok12zJ6pkXd2JbmIH9j57MbvpuLpmDlwHO7XGGBzw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=o3N9yKLiB2kABdgaOlCzEK268NiSUh54qPN7aV8ODcZWCAvkT5nubwlz7G+Q8Oe71L1AkjSnmSPh4ltzwTjpuKRbzW7b8Rks+pY8/l/cEg3u8iMAy2gF/PEYLf/Uj65jhe9GDEQnCW8zsWO+xy8uoumhK1xy62EcMzyCjIfxn9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LPyuEcHF; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=herrie.org header.i=@herrie.org header.b="KeQNqPCA"
-Received: from submission5.mail.transip.nl (unknown [10.103.8.156])
-	by outbound7.mail.transip.nl (Postfix) with ESMTP id 4gSML91zjNzQvvLB;
-	Sat, 30 May 2026 16:00:01 +0200 (CEST)
-Received: from herrie-desktop.. (180-93-184-31.ftth.glasoperator.nl [31.184.93.180])
-	by submission5.mail.transip.nl (Postfix) with ESMTPA id 4gSML84hJBz2pRDjK;
-	Sat, 30 May 2026 16:00:00 +0200 (CEST)
-From: Herman van Hazendonk <github.com@herrie.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LPyuEcHF"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-45ef779c1c2so633591f8f.1
+        for <linux-clk@vger.kernel.org>; Sat, 30 May 2026 09:08:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1780157311; x=1780762111; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JgIKGTQO7gPrOe26sxdu+A8xLu1XQ8EnCHCpNZxODoA=;
+        b=LPyuEcHF4w02kR9lLEMRHyC0XJOrwwU+ZNvPmGkLJubOpgSPttz69Mav8LV1R8aHB/
+         Lt+gxmA2ynSgXrDGFXO5OL660LvyHRmUrT5Rj3LIQKHHAyeVrMX7O/KtJuiDRbfMnTfm
+         4tG+5uFTkg1xNq1xdhDPF9/l30UfMZ6eKpkeStDpax0PGjPoqLkVOp4Da5gOK3HeoFni
+         THZH/7rmH/ZC/mfY0P6shvfW8HL0qTAfPY5BY0bUaESHCr0eeWPcnrH7Q2OyUEHy4iz4
+         Z1Fk/lX3Pz/nkYKqsvXagXhdgkfDQqIuexfgFYrKL/8Hh1QUB/DhgpCWr5DDex7Tg+Sq
+         YfqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780157311; x=1780762111;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=JgIKGTQO7gPrOe26sxdu+A8xLu1XQ8EnCHCpNZxODoA=;
+        b=rYSHkzRKKR7tEnjuWwJ7Zjspp9UMD7DALeA2m5TiEVtis6WT38mUxacsAQy0krdMck
+         kxFcak9Fubx7VJkU3CsLuTX/9pb/4hF0LWHvP0ixUFbmfFstRdXM2GZD9MDBxCrtdz1+
+         Ym7wnnFYwQaXXFTgzlOCDtYuiJxu0uqfXGoMzENZ4bGSQPxxePKBRU1LTuDl3ig8F4dy
+         uYv1pZIdx6l8ZAitZ1y02J5EQ17IqI9dy2COe6FEEXOOHcD+IJeoXpYdus05Yq6w7db8
+         9QDgVvFR0ehAbtBMGX4Sb4SbsTGM5yDfPo9P+4RCQQ2P4wXd3oaLgcKKXHRajxmjQnLX
+         Buog==
+X-Forwarded-Encrypted: i=1; AFNElJ95xj2Nq5OAJ6qKuec/YpRylnDx2QNpdjTqvWEeYDxLk2axOaO5iU45RL3u7ZcJdNKomcCx93AewRw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJrF35u82fZPbVIXAex1r28VH33G3zDE94O88YailcTkwA+5fy
+	mN2EWNlRNAV4ipojZutozIL/2geGGhpGR2L497AS+97fC6/oeAmEgkBI
+X-Gm-Gg: Acq92OFHFHXqLL0mL3VDCAVHqK7J/K53/C3AipsHch8h3vu9LQsSiIcUrHkpLQ7CThM
+	5tPr6a2g1X0ioGNeUGF4+qVgbpEtcLKtof5TM73dEypre+XlpMYDJ1nRnXU5NyNOXJLHNO5hNz+
+	13Sqk/feyYjV8/MKGgbAQs0PK28uNFuygmMO7Xnv6m2GivnopsAQ6EAYye16O4+3K8DV4/h8sZM
+	AD1CE0e8PF752MROpNmu6SC8gEuaHp2fHY79xSAtyMx9meLcPrUEup6mCuwAlH954LTlsvLqQ9K
+	7WdT5Rs+hXAJdE9KkN9r2AoPpN8pekvjxDwaHMG6we2PvMYNt8gmHcxawz6ctKn7hVOxfTHoyEd
+	89TyYI2vRc1re3ae8yveD8A0ZJPbVoXPQeFUUv7P3aUZs9aJu7Owfouns7a1PYourGsYUfl/P4L
+	6AuqIOIdq5Fj2croS30KKLAmkS0QX8mvg+LjW1bD+qIiNECewH7ESotyPXIyY=
+X-Received: by 2002:a05:6000:1a54:b0:43d:7c1b:b8c7 with SMTP id ffacd0b85a97d-45ef6b4f243mr6227493f8f.21.1780157310749;
+        Sat, 30 May 2026 09:08:30 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:23c4:a700:7301:5db6:a512:6ab4:aa07])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45ef35874b7sm12170799f8f.35.2026.05.30.09.08.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 May 2026 09:08:30 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Brian Masney <bmasney@redhat.com>,
+	linux-renesas-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH 2/2] clk: qcom: add MSM8x60 LCC (LPASS) driver
-Date: Sat, 30 May 2026 15:59:58 +0200
-Message-ID: <10180e08af4d55e776963932a4c5e60f0f197a96.1780148149.git.github.com@herrie.org>
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH 02/17] clk: renesas: r9a08g046: Add clock and reset entries for SDHI
+Date: Sat, 30 May 2026 17:07:56 +0100
+Message-ID: <20260530160823.130907-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1780148149.git.github.com@herrie.org>
-References: <cover.1780148149.git.github.com@herrie.org>
+In-Reply-To: <20260530160823.130907-1-biju.das.jz@bp.renesas.com>
+References: <20260530160823.130907-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -46,595 +83,210 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: ClueGetter at submission5.mail.transip.nl
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=transip-a; d=herrie.org; t=1780149600; h=from:subject:to:references:
- in-reply-to:date:mime-version;
- bh=i8BLZW/TmTrd0Zazw7/R+GodYvJYbHCORFIZKVETotY=;
- b=KeQNqPCAjex9ZYCdZkKLIQqlcgwVLXZ+8A4yDa6ylvTGW+7POVCI+c6ebfSH3i+pP9pNxA
- woYPpONvoelSV28y3F2u1EowG/gym8AeEvGiK9bjRZTZSStbxntwgfZMDE/WzUCK/8uM1b
- ceauqXs1v1UaqGIfRHWQp966yI+q+DcaUEjV6D5oTfic3Cumvduv0P6u9z2KO/2t7QE+Dt
- Jcjxhl3GAPpoUH+eWP4qkO1UUl9lFSY3zoifOJ6LJ+GbE4Rp6XIvwChquLXUCjhSGWrmHv
- SJbSYdxfM+N7O7/2us+IrQeZD9d1RzrpBtLz+i1ugiGJ5PrAwvaxSocAeq0Wxw==
-X-Report-Abuse-To: abuse@transip.nl
 
-Add a clock driver for the LPASS (Low Power Audio SubSystem) Clock
-Controller on the MSM8x60 family (MSM8260/MSM8660/APQ8060) - the
-Scorpion-class generation that preceded MSM8960's Krait CPUs.
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-The register layout, parent muxing and divider topology of the LPASS
-PLL/clk fabric differ from MSM8960's LCC enough that a clean separate
-driver is simpler than parameterising mmcc-msm8960.c. Both drivers
-can coexist in tree (different KConfig options, different match
-table, different device-tree compatible).
+Add clock and reset entries for SDHI.
 
-Used on the HP TouchPad (Tenderloin) where the LPASS Q6 audio DSP
-needs functional MI2S / SLIMBus / PCM clocks before audio playback
-or capture works.
-
-Signed-off-by: Herman van Hazendonk <github.com@herrie.org>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/clk/qcom/Kconfig       |   9 +
- drivers/clk/qcom/Makefile      |   1 +
- drivers/clk/qcom/lcc-msm8660.c | 517 +++++++++++++++++++++++++++++++++
- 3 files changed, 527 insertions(+)
- create mode 100644 drivers/clk/qcom/lcc-msm8660.c
+ drivers/clk/renesas/r9a08g046-cpg.c | 92 +++++++++++++++++++++++++++++
+ 1 file changed, 92 insertions(+)
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index d9cff5b0281d..2ea95f69355e 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -547,6 +547,15 @@ config MSM_LCC_8960
- 	  Say Y if you want to use audio devices such as i2s, pcm,
- 	  SLIMBus, etc.
+diff --git a/drivers/clk/renesas/r9a08g046-cpg.c b/drivers/clk/renesas/r9a08g046-cpg.c
+index a57638734ce7..272922b76e1e 100644
+--- a/drivers/clk/renesas/r9a08g046-cpg.c
++++ b/drivers/clk/renesas/r9a08g046-cpg.c
+@@ -17,10 +17,13 @@
+ /* RZ/G3L Specific registers. */
+ #define G3L_CPG_PL2_DDIV		(0x204)
+ #define G3L_CPG_PL3_DDIV		(0x208)
++#define G3L_CPG_SDHI_DDIV		(0x218)
+ #define G3L_CPG_CA55CORE_DDIV		(0x234)
+ #define G3L_CPG_RSCI_DDIV		(0x238)
+ #define G3L_CPG_RSPI_DDIV		(0x23c)
++#define G3L_CPG_SDHI_DSEL		(0x244)
+ #define G3L_CLKDIVSTATUS		(0x280)
++#define G3L_CLKSELSTATUS		(0x284)
+ #define G3L_CPG_ETH_SSEL		(0x410)
+ #define G3L_CPG_RSCI_SSEL		(0x414)
+ #define G3L_CPG_RSPI_SSEL		(0x418)
+@@ -30,6 +33,9 @@
+ #define G3L_DIVPL2A		DDIV_PACK(G3L_CPG_PL2_DDIV, 0, 2)
+ #define G3L_DIVPL2B		DDIV_PACK(G3L_CPG_PL2_DDIV, 4, 2)
+ #define G3L_DIVPL3A		DDIV_PACK(G3L_CPG_PL3_DDIV, 0, 2)
++#define G3L_DIV_SDHI0		DDIV_PACK(G3L_CPG_SDHI_DDIV, 0, 2)
++#define G3L_DIV_SDHI1		DDIV_PACK(G3L_CPG_SDHI_DDIV, 4, 2)
++#define G3L_DIV_SDHI2		DDIV_PACK(G3L_CPG_SDHI_DDIV, 8, 2)
+ #define G3L_DIV_CA55_CORE0	DDIV_PACK(G3L_CPG_CA55CORE_DDIV, 0, 3)
+ #define G3L_DIV_CA55_CORE1	DDIV_PACK(G3L_CPG_CA55CORE_DDIV, 4, 3)
+ #define G3L_DIV_CA55_CORE2	DDIV_PACK(G3L_CPG_CA55CORE_DDIV, 8, 3)
+@@ -61,8 +67,18 @@
+ #define G3L_DIV_RSPI0_STS	DDIV_PACK(G3L_CLKDIVSTATUS, 20, 1)
+ #define G3L_DIV_RSPI1_STS	DDIV_PACK(G3L_CLKDIVSTATUS, 21, 1)
+ #define G3L_DIV_RSPI2_STS	DDIV_PACK(G3L_CLKDIVSTATUS, 22, 1)
++#define G3L_DIV_SDHI0_STS	DDIV_PACK(G3L_CLKDIVSTATUS, 24, 1)
++#define G3L_DIV_SDHI1_STS	DDIV_PACK(G3L_CLKDIVSTATUS, 25, 1)
++#define G3L_DIV_SDHI2_STS	DDIV_PACK(G3L_CLKDIVSTATUS, 26, 1)
++
++#define G3L_SEL_SDHI0_STS	SEL_PLL_PACK(G3L_CLKSELSTATUS, 16, 1)
++#define G3L_SEL_SDHI1_STS	SEL_PLL_PACK(G3L_CLKSELSTATUS, 17, 1)
++#define G3L_SEL_SDHI2_STS	SEL_PLL_PACK(G3L_CLKSELSTATUS, 18, 1)
  
-+config MSM_LCC_8660
-+	tristate "MSM8x60 LPASS Clock Controller"
-+	depends on ARM || COMPILE_TEST
-+	help
-+	  Support for the LPASS clock controller on the MSM8x60 family
-+	  (MSM8260/MSM8660/APQ8060). MSM8960 is the newer
-+	  Krait-based generation handled separately by MSM_LCC_8960.
-+	  Say Y if you want to use audio devices such as i2s, pcm, SLIMBus.
-+
- config MDM_GCC_9607
- 	tristate "MDM9607 Global Clock Controller"
- 	depends on ARM || COMPILE_TEST
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index e100cfd6a52d..41c973d7db59 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -77,6 +77,7 @@ obj-$(CONFIG_MSM_GCC_8974) += gcc-msm8974.o
- obj-$(CONFIG_MSM_GCC_8976) += gcc-msm8976.o
- obj-$(CONFIG_MSM_GCC_8994) += gcc-msm8994.o
- obj-$(CONFIG_MSM_GCC_8996) += gcc-msm8996.o
-+obj-$(CONFIG_MSM_LCC_8660) += lcc-msm8660.o
- obj-$(CONFIG_MSM_LCC_8960) += lcc-msm8960.o
- obj-$(CONFIG_MSM_GCC_8998) += gcc-msm8998.o
- obj-$(CONFIG_MSM_GPUCC_8998) += gpucc-msm8998.o
-diff --git a/drivers/clk/qcom/lcc-msm8660.c b/drivers/clk/qcom/lcc-msm8660.c
-new file mode 100644
-index 000000000000..7f13279467f9
---- /dev/null
-+++ b/drivers/clk/qcom/lcc-msm8660.c
-@@ -0,0 +1,517 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2014, The Linux Foundation. All rights reserved.
-+ Herman van Hazendonk <github.com@herrie.org>
-+ *
-+ * Qualcomm MSM8x60 family (MSM8260/MSM8660/APQ8060) LPASS Clock Controller driver.
-+ *
-+ * Split from lcc-msm8960.c because the MSM8x60 family is a separate
-+ * SoC generation (Scorpion) from MSM8960 (Krait). The clock topology is
-+ * compatible but PLL4 runs at a different rate (540.672 MHz, L=22) and the
-+ * driver has no need for the MDM9615 CXO patch or the 492 MHz frequency plan.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/bitops.h>
-+#include <linux/err.h>
-+#include <linux/platform_device.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/clk-provider.h>
-+#include <linux/regmap.h>
-+
-+#include <dt-bindings/clock/qcom,lcc-msm8660.h>
-+
-+#include "common.h"
-+#include "clk-regmap.h"
-+#include "clk-pll.h"
-+#include "clk-rcg.h"
-+#include "clk-branch.h"
-+#include "clk-regmap-divider.h"
-+#include "clk-regmap-mux.h"
-+
-+static struct clk_pll pll4 = {
-+	.l_reg = 0x4,
-+	.m_reg = 0x8,
-+	.n_reg = 0xc,
-+	.config_reg = 0x14,
-+	.mode_reg = 0x0,
-+	.status_reg = 0x18,
-+	.status_bit = 16,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "pll4",
-+		.parent_data = &(const struct clk_parent_data){
-+			.fw_name = "pxo", .name = "pxo_board",
-+		},
-+		.num_parents = 1,
-+		.ops = &clk_pll_ops,
-+	},
+ /* RZ/G3L Specific clocks select. */
++#define G3L_SEL_SDHI0		SEL_PLL_PACK(G3L_CPG_SDHI_DSEL, 0, 2)
++#define G3L_SEL_SDHI1		SEL_PLL_PACK(G3L_CPG_SDHI_DSEL, 4, 2)
++#define G3L_SEL_SDHI2		SEL_PLL_PACK(G3L_CPG_SDHI_DSEL, 8, 2)
+ #define G3L_SEL_ETH0_TX		SEL_PLL_PACK(G3L_CPG_ETH_SSEL, 0, 1)
+ #define G3L_SEL_ETH0_RX		SEL_PLL_PACK(G3L_CPG_ETH_SSEL, 1, 1)
+ #define G3L_SEL_ETH0_RM		SEL_PLL_PACK(G3L_CPG_ETH_SSEL, 2, 1)
+@@ -94,6 +110,7 @@ enum clk_ids {
+ 
+ 	/* Internal Core Clocks */
+ 	CLK_PLL1,
++	CLK_PLL1_DIV2,
+ 	CLK_PLL2,
+ 	CLK_PLL2_DIV2,
+ 	CLK_PLL2_DIV2_4,
+@@ -117,16 +134,29 @@ enum clk_ids {
+ 	CLK_SEL_RSPI0,
+ 	CLK_SEL_RSPI1,
+ 	CLK_SEL_RSPI2,
++	CLK_SEL_SDHI0,
++	CLK_SEL_SDHI1,
++	CLK_SEL_SDHI2,
+ 	CLK_ETH0_TR,
+ 	CLK_ETH0_RM,
+ 	CLK_ETH1_TR,
+ 	CLK_ETH1_RM,
++	CLK_SD0_DIV2,
++	CLK_SD1_DIV2,
++	CLK_SD2_DIV2,
+ 
+ 	/* Module Clocks */
+ 	MOD_CLK_BASE,
+ };
+ 
+ /* Divider tables */
++static const struct clk_div_table dtable_1_4[] = {
++	{ 0, 1 },
++	{ 1, 2 },
++	{ 2, 4 },
++	{ 0, 0 },
 +};
 +
-+enum {
-+	P_PXO,
-+	P_PLL4,
-+};
+ static const struct clk_div_table dtable_1_8[] = {
+ 	{ 0, 1 },
+ 	{ 1, 2 },
+@@ -190,11 +220,15 @@ static const char * const sel_eth1_tx[] = { ".div_eth1_tr", "eth1_txc_tx_clk" };
+ static const char * const sel_eth1_rx[] = { ".div_eth1_tr", "eth1_rxc_rx_clk" };
+ static const char * const sel_eth1_rm[] = { ".pll6_div10", "eth1_rxc_rx_clk" };
+ static const char * const sel_rsci_rspi[] = { ".pll2_div5", ".pll2_div6", ".pll2_div7", ".pll2_div2_4" };
++static const char * const sel_sdhi[] = { ".pll2_div2", ".pll1_div2",  ".pll6", ".pll2_div6" };
+ static const char * const sel_eth0_clk_tx_i[] = { ".sel_eth0_tx", ".div_eth0_rm" };
+ static const char * const sel_eth0_clk_rx_i[] = { ".sel_eth0_rx", ".div_eth0_rm" };
+ static const char * const sel_eth1_clk_tx_i[] = { ".sel_eth1_tx", ".div_eth1_rm" };
+ static const char * const sel_eth1_clk_rx_i[] = { ".sel_eth1_rx", ".div_eth1_rm" };
+ 
++/* Mux clock indices tables. */
++static const u32 mtable_sd[] = { 0, 1, 2, 3 };
 +
-+static const struct parent_map lcc_pxo_pll4_map[] = {
-+	{ P_PXO, 0 },
-+	{ P_PLL4, 2 }
-+};
-+
-+static const struct clk_parent_data lcc_pxo_pll4[] = {
-+	{ .fw_name = "pxo", .name = "pxo_board" },
-+	{ .fw_name = "pll4_vote", .name = "pll4_vote" },
-+};
-+
-+/*
-+ * MSM8x60 PLL4 runs at 540.672 MHz (24.576 MHz * 22, L=0x16).
-+ * Divisors taken from the legacy webOS clock-8x60.c driver.
-+ * AIF_OSR has an 8-bit M/N counter, so 512000 Hz is not achievable with
-+ * this PLL frequency and is intentionally omitted from the 540 MHz tables.
-+ */
-+static const struct freq_tbl clk_tbl_aif_osr_540[] = {
-+	{   768000, P_PLL4, 4, 1, 176 },
-+	{  1024000, P_PLL4, 4, 1, 132 },
-+	{  1536000, P_PLL4, 4, 1,  88 },
-+	{  2048000, P_PLL4, 4, 1,  66 },
-+	{  3072000, P_PLL4, 4, 1,  44 },
-+	{  4096000, P_PLL4, 4, 1,  33 },
-+	{  6144000, P_PLL4, 4, 1,  22 },
-+	{  8192000, P_PLL4, 2, 1,  33 },
-+	{ 12288000, P_PLL4, 4, 1,  11 },
-+	{ 24576000, P_PLL4, 2, 1,  11 },
-+	{ 27000000, P_PXO,  1, 0,   0 },
-+	{ }
-+};
-+
-+static const struct freq_tbl clk_tbl_aif_osr_393[] = {
-+	{   512000, P_PLL4, 4, 1, 192 },
-+	{   768000, P_PLL4, 4, 1, 128 },
-+	{  1024000, P_PLL4, 4, 1,  96 },
-+	{  1536000, P_PLL4, 4, 1,  64 },
-+	{  2048000, P_PLL4, 4, 1,  48 },
-+	{  3072000, P_PLL4, 4, 1,  32 },
-+	{  4096000, P_PLL4, 4, 1,  24 },
-+	{  6144000, P_PLL4, 4, 1,  16 },
-+	{  8192000, P_PLL4, 4, 1,  12 },
-+	{ 12288000, P_PLL4, 4, 1,   8 },
-+	{ 24576000, P_PLL4, 4, 1,   4 },
-+	{ 27000000, P_PXO,  1, 0,   0 },
-+	{ }
-+};
-+
-+#define CLK_AIF_OSR_SRC(prefix, _ns, _md)			\
-+static struct clk_rcg prefix##_osr_src = {			\
-+	.ns_reg = _ns,						\
-+	.md_reg = _md,						\
-+	.mn = {							\
-+		.mnctr_en_bit = 8,				\
-+		.mnctr_reset_bit = 7,				\
-+		.mnctr_mode_shift = 5,				\
-+		.n_val_shift = 24,				\
-+		.m_val_shift = 8,				\
-+		.width = 8,					\
-+	},							\
-+	.p = {							\
-+		.pre_div_shift = 3,				\
-+		.pre_div_width = 2,				\
-+	},							\
-+	.s = {							\
-+		.src_sel_shift = 0,				\
-+		.parent_map = lcc_pxo_pll4_map,			\
-+	},							\
-+	.freq_tbl = clk_tbl_aif_osr_393,			\
-+	.clkr = {						\
-+		.enable_reg = _ns,				\
-+		.enable_mask = BIT(9),				\
-+		.hw.init = &(struct clk_init_data){		\
-+			.name = #prefix "_osr_src",		\
-+			.parent_data = lcc_pxo_pll4,		\
-+			.num_parents = ARRAY_SIZE(lcc_pxo_pll4), \
-+			.ops = &clk_rcg_ops,			\
-+			.flags = CLK_SET_RATE_GATE,		\
-+		},						\
-+	},							\
-+};								\
-+
-+#define CLK_AIF_OSR_CLK(prefix, _ns, hr, en_bit)		\
-+static struct clk_branch prefix##_osr_clk = {			\
-+	.halt_reg = hr,						\
-+	.halt_bit = 1,						\
-+	.halt_check = BRANCH_HALT_ENABLE,			\
-+	.clkr = {						\
-+		.enable_reg = _ns,				\
-+		.enable_mask = BIT(en_bit),			\
-+		.hw.init = &(struct clk_init_data){		\
-+			.name = #prefix "_osr_clk",		\
-+			.parent_hws = (const struct clk_hw*[]){	\
-+				&prefix##_osr_src.clkr.hw,	\
-+			},					\
-+			.num_parents = 1,			\
-+			.ops = &clk_branch_ops,			\
-+			.flags = CLK_SET_RATE_PARENT,		\
-+		},						\
-+	},							\
-+};								\
-+
-+#define CLK_AIF_OSR_DIV_CLK(prefix, _ns, _width)		\
-+static struct clk_regmap_div prefix##_div_clk = {		\
-+	.reg = _ns,						\
-+	.shift = 10,						\
-+	.width = _width,					\
-+	.clkr = {						\
-+		.hw.init = &(struct clk_init_data){		\
-+			.name = #prefix "_div_clk",		\
-+			.parent_hws = (const struct clk_hw*[]){	\
-+				&prefix##_osr_src.clkr.hw,	\
-+			},					\
-+			.num_parents = 1,			\
-+			.ops = &clk_regmap_div_ops,		\
-+		},						\
-+	},							\
-+};								\
-+
-+#define CLK_AIF_OSR_BIT_DIV_CLK(prefix, _ns, hr, en_bit)	\
-+static struct clk_branch prefix##_bit_div_clk = {		\
-+	.halt_reg = hr,						\
-+	.halt_bit = 0,						\
-+	.halt_check = BRANCH_HALT_ENABLE,			\
-+	.clkr = {						\
-+		.enable_reg = _ns,				\
-+		.enable_mask = BIT(en_bit),			\
-+		.hw.init = &(struct clk_init_data){		\
-+			.name = #prefix "_bit_div_clk",		\
-+			.parent_hws = (const struct clk_hw*[]){	\
-+				&prefix##_div_clk.clkr.hw,	\
-+			},					\
-+			.num_parents = 1,			\
-+			.ops = &clk_branch_ops,			\
-+			.flags = CLK_SET_RATE_PARENT,		\
-+		},						\
-+	},							\
-+};								\
-+
-+#define CLK_AIF_OSR_BIT_CLK(prefix, _ns, _shift)		\
-+static struct clk_regmap_mux prefix##_bit_clk = {		\
-+	.reg = _ns,						\
-+	.shift = _shift,					\
-+	.width = 1,						\
-+	.clkr = {						\
-+		.hw.init = &(struct clk_init_data){		\
-+			.name = #prefix "_bit_clk",		\
-+			.parent_data = (const struct clk_parent_data[]){ \
-+				{ .hw = &prefix##_bit_div_clk.clkr.hw, }, \
-+				{ .fw_name = #prefix "_codec_clk", \
-+				  .name = #prefix "_codec_clk", }, \
-+			},					\
-+			.num_parents = 2,			\
-+			.ops = &clk_regmap_mux_closest_ops,	\
-+			.flags = CLK_SET_RATE_PARENT,		\
-+		},						\
-+	},							\
-+};
-+
-+CLK_AIF_OSR_SRC(mi2s, 0x48, 0x4c)
-+CLK_AIF_OSR_CLK(mi2s, 0x48, 0x50, 17)
-+CLK_AIF_OSR_DIV_CLK(mi2s, 0x48, 4)
-+CLK_AIF_OSR_BIT_DIV_CLK(mi2s, 0x48, 0x50, 15)
-+CLK_AIF_OSR_BIT_CLK(mi2s, 0x48, 14)
-+
-+/*
-+ * CLK_AIF_OSR_DIV - Audio Interface with divider clocks.
-+ * Enable bits per legacy MSM8660 kernel:
-+ *   - OSR branch enable: BIT(17)
-+ *   - BIT_DIV branch enable: BIT(15)
-+ */
-+#define CLK_AIF_OSR_DIV(prefix, _ns, _md, hr)			\
-+	CLK_AIF_OSR_SRC(prefix, _ns, _md)			\
-+	CLK_AIF_OSR_CLK(prefix, _ns, hr, 17)			\
-+	CLK_AIF_OSR_DIV_CLK(prefix, _ns, 8)			\
-+	CLK_AIF_OSR_BIT_DIV_CLK(prefix, _ns, hr, 15)		\
-+	CLK_AIF_OSR_BIT_CLK(prefix, _ns, 18)
-+
-+CLK_AIF_OSR_DIV(codec_i2s_mic, 0x60, 0x64, 0x68);
-+CLK_AIF_OSR_DIV(spare_i2s_mic, 0x78, 0x7c, 0x80);
-+CLK_AIF_OSR_DIV(codec_i2s_spkr, 0x6c, 0x70, 0x74);
-+CLK_AIF_OSR_DIV(spare_i2s_spkr, 0x84, 0x88, 0x8c);
-+
-+/* PCM frequency table for MSM8x60 with PLL4 at 540.672 MHz */
-+static const struct freq_tbl clk_tbl_pcm_540[] = {
-+	{   256000, P_PLL4, 4, 1, 528 },
-+	{   512000, P_PLL4, 4, 1, 264 },
-+	{   768000, P_PLL4, 4, 1, 176 },
-+	{  1024000, P_PLL4, 4, 1, 132 },
-+	{  1536000, P_PLL4, 4, 1,  88 },
-+	{  2048000, P_PLL4, 4, 1,  66 },
-+	{  3072000, P_PLL4, 4, 1,  44 },
-+	{  4096000, P_PLL4, 4, 1,  33 },
-+	{  6144000, P_PLL4, 4, 1,  22 },
-+	{  8192000, P_PLL4, 2, 1,  33 },
-+	{ 12288000, P_PLL4, 4, 1,  11 },
-+	{ 24576000, P_PLL4, 2, 1,  11 },
-+	{ 27000000, P_PXO,  1, 0,   0 },
-+	{ }
-+};
-+
-+static const struct freq_tbl clk_tbl_pcm_393[] = {
-+	{   256000, P_PLL4, 4, 1, 384 },
-+	{   512000, P_PLL4, 4, 1, 192 },
-+	{   768000, P_PLL4, 4, 1, 128 },
-+	{  1024000, P_PLL4, 4, 1,  96 },
-+	{  1536000, P_PLL4, 4, 1,  64 },
-+	{  2048000, P_PLL4, 4, 1,  48 },
-+	{  3072000, P_PLL4, 4, 1,  32 },
-+	{  4096000, P_PLL4, 4, 1,  24 },
-+	{  6144000, P_PLL4, 4, 1,  16 },
-+	{  8192000, P_PLL4, 4, 1,  12 },
-+	{ 12288000, P_PLL4, 4, 1,   8 },
-+	{ 24576000, P_PLL4, 4, 1,   4 },
-+	{ }
-+};
-+
-+static struct clk_rcg pcm_src = {
-+	.ns_reg = 0x54,
-+	.md_reg = 0x58,
-+	.mn = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 16,
-+		.m_val_shift = 16,
-+		.width = 16,
-+	},
-+	.p = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.s = {
-+		.src_sel_shift = 0,
-+		.parent_map = lcc_pxo_pll4_map,
-+	},
-+	.freq_tbl = clk_tbl_pcm_393,
-+	.clkr = {
-+		.enable_reg = 0x54,
-+		.enable_mask = BIT(9),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "pcm_src",
-+			.parent_data = lcc_pxo_pll4,
-+			.num_parents = ARRAY_SIZE(lcc_pxo_pll4),
-+			.ops = &clk_rcg_ops,
-+			.flags = CLK_SET_RATE_GATE,
-+		},
-+	},
-+};
-+
-+static struct clk_branch pcm_clk_out = {
-+	.halt_reg = 0x5c,
-+	.halt_bit = 0,
-+	.halt_check = BRANCH_HALT_ENABLE,
-+	.clkr = {
-+		.enable_reg = 0x54,
-+		.enable_mask = BIT(11),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "pcm_clk_out",
-+			.parent_hws = (const struct clk_hw*[]){
-+				&pcm_src.clkr.hw
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static struct clk_regmap_mux pcm_clk = {
-+	.reg = 0x54,
-+	.shift = 10,
-+	.width = 1,
-+	.clkr = {
-+		.hw.init = &(struct clk_init_data){
-+			.name = "pcm_clk",
-+			.parent_data = (const struct clk_parent_data[]){
-+				{ .hw = &pcm_clk_out.clkr.hw },
-+				{ .fw_name = "pcm_codec_clk", .name = "pcm_codec_clk" },
-+			},
-+			.num_parents = 2,
-+			.ops = &clk_regmap_mux_closest_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static struct clk_rcg slimbus_src = {
-+	.ns_reg = 0xcc,
-+	.md_reg = 0xd0,
-+	.mn = {
-+		.mnctr_en_bit = 8,
-+		.mnctr_reset_bit = 7,
-+		.mnctr_mode_shift = 5,
-+		.n_val_shift = 24,
-+		.m_val_shift = 8,
-+		.width = 8,
-+	},
-+	.p = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 2,
-+	},
-+	.s = {
-+		.src_sel_shift = 0,
-+		.parent_map = lcc_pxo_pll4_map,
-+	},
-+	.freq_tbl = clk_tbl_aif_osr_393,
-+	.clkr = {
-+		.enable_reg = 0xcc,
-+		.enable_mask = BIT(9),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "slimbus_src",
-+			.parent_data = lcc_pxo_pll4,
-+			.num_parents = ARRAY_SIZE(lcc_pxo_pll4),
-+			.ops = &clk_rcg_ops,
-+			.flags = CLK_SET_RATE_GATE,
-+		},
-+	},
-+};
-+
-+static struct clk_branch audio_slimbus_clk = {
-+	.halt_reg = 0xd4,
-+	.halt_bit = 0,
-+	.halt_check = BRANCH_HALT_ENABLE,
-+	.clkr = {
-+		.enable_reg = 0xcc,
-+		.enable_mask = BIT(10),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "audio_slimbus_clk",
-+			.parent_hws = (const struct clk_hw*[]){
-+				&slimbus_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static struct clk_branch sps_slimbus_clk = {
-+	.halt_reg = 0xd4,
-+	.halt_bit = 1,
-+	.halt_check = BRANCH_HALT_ENABLE,
-+	.clkr = {
-+		.enable_reg = 0xcc,
-+		.enable_mask = BIT(12),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "sps_slimbus_clk",
-+			.parent_hws = (const struct clk_hw*[]){
-+				&slimbus_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static struct clk_regmap *lcc_msm8660_clks[] = {
-+	[PLL4] = &pll4.clkr,
-+	[MI2S_OSR_SRC] = &mi2s_osr_src.clkr,
-+	[MI2S_OSR_CLK] = &mi2s_osr_clk.clkr,
-+	[MI2S_DIV_CLK] = &mi2s_div_clk.clkr,
-+	[MI2S_BIT_DIV_CLK] = &mi2s_bit_div_clk.clkr,
-+	[MI2S_BIT_CLK] = &mi2s_bit_clk.clkr,
-+	[PCM_SRC] = &pcm_src.clkr,
-+	[PCM_CLK_OUT] = &pcm_clk_out.clkr,
-+	[PCM_CLK] = &pcm_clk.clkr,
-+	[SLIMBUS_SRC] = &slimbus_src.clkr,
-+	[AUDIO_SLIMBUS_CLK] = &audio_slimbus_clk.clkr,
-+	[SPS_SLIMBUS_CLK] = &sps_slimbus_clk.clkr,
-+	[CODEC_I2S_MIC_OSR_SRC] = &codec_i2s_mic_osr_src.clkr,
-+	[CODEC_I2S_MIC_OSR_CLK] = &codec_i2s_mic_osr_clk.clkr,
-+	[CODEC_I2S_MIC_DIV_CLK] = &codec_i2s_mic_div_clk.clkr,
-+	[CODEC_I2S_MIC_BIT_DIV_CLK] = &codec_i2s_mic_bit_div_clk.clkr,
-+	[CODEC_I2S_MIC_BIT_CLK] = &codec_i2s_mic_bit_clk.clkr,
-+	[SPARE_I2S_MIC_OSR_SRC] = &spare_i2s_mic_osr_src.clkr,
-+	[SPARE_I2S_MIC_OSR_CLK] = &spare_i2s_mic_osr_clk.clkr,
-+	[SPARE_I2S_MIC_DIV_CLK] = &spare_i2s_mic_div_clk.clkr,
-+	[SPARE_I2S_MIC_BIT_DIV_CLK] = &spare_i2s_mic_bit_div_clk.clkr,
-+	[SPARE_I2S_MIC_BIT_CLK] = &spare_i2s_mic_bit_clk.clkr,
-+	[CODEC_I2S_SPKR_OSR_SRC] = &codec_i2s_spkr_osr_src.clkr,
-+	[CODEC_I2S_SPKR_OSR_CLK] = &codec_i2s_spkr_osr_clk.clkr,
-+	[CODEC_I2S_SPKR_DIV_CLK] = &codec_i2s_spkr_div_clk.clkr,
-+	[CODEC_I2S_SPKR_BIT_DIV_CLK] = &codec_i2s_spkr_bit_div_clk.clkr,
-+	[CODEC_I2S_SPKR_BIT_CLK] = &codec_i2s_spkr_bit_clk.clkr,
-+	[SPARE_I2S_SPKR_OSR_SRC] = &spare_i2s_spkr_osr_src.clkr,
-+	[SPARE_I2S_SPKR_OSR_CLK] = &spare_i2s_spkr_osr_clk.clkr,
-+	[SPARE_I2S_SPKR_DIV_CLK] = &spare_i2s_spkr_div_clk.clkr,
-+	[SPARE_I2S_SPKR_BIT_DIV_CLK] = &spare_i2s_spkr_bit_div_clk.clkr,
-+	[SPARE_I2S_SPKR_BIT_CLK] = &spare_i2s_spkr_bit_clk.clkr,
-+};
-+
-+static const struct regmap_config lcc_msm8660_regmap_config = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.max_register	= 0xfc,
-+	.fast_io	= true,
-+};
-+
-+static const struct qcom_cc_desc lcc_msm8660_desc = {
-+	.config = &lcc_msm8660_regmap_config,
-+	.clks = lcc_msm8660_clks,
-+	.num_clks = ARRAY_SIZE(lcc_msm8660_clks),
-+};
-+
-+static const struct of_device_id lcc_msm8660_match_table[] = {
-+	{ .compatible = "qcom,lcc-msm8660" },
-+	{ .compatible = "qcom,lcc-apq8060" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, lcc_msm8660_match_table);
-+
-+static int lcc_msm8660_probe(struct platform_device *pdev)
-+{
-+	struct regmap *regmap;
-+	u32 val;
-+
-+	regmap = qcom_cc_map(pdev, &lcc_msm8660_desc);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	/*
-+	 * MSM8x60 should always boot with PLL4 L=22 (540.672 MHz).
-+	 * Detect anyway so a board with a non-standard L value still gets a
-+	 * coherent frequency plan instead of silently producing wrong rates.
-+	 */
-+	regmap_read(regmap, 0x4, &val);
-+	if (val == 0x16) {
-+		dev_info(&pdev->dev,
-+			 "PLL4 L=0x%x, using 540MHz frequency plan\n", val);
-+		slimbus_src.freq_tbl = clk_tbl_aif_osr_540;
-+		mi2s_osr_src.freq_tbl = clk_tbl_aif_osr_540;
-+		codec_i2s_mic_osr_src.freq_tbl = clk_tbl_aif_osr_540;
-+		spare_i2s_mic_osr_src.freq_tbl = clk_tbl_aif_osr_540;
-+		codec_i2s_spkr_osr_src.freq_tbl = clk_tbl_aif_osr_540;
-+		spare_i2s_spkr_osr_src.freq_tbl = clk_tbl_aif_osr_540;
-+		pcm_src.freq_tbl = clk_tbl_pcm_540;
-+	} else {
-+		dev_info(&pdev->dev,
-+			 "PLL4 L=0x%x, using fallback 393MHz frequency plan\n",
-+			 val);
-+	}
-+
-+	/* Enable PLL4 source on the LPASS Primary PLL Mux */
-+	regmap_write(regmap, 0xc4, 0x1);
-+
-+	return qcom_cc_really_probe(&pdev->dev, &lcc_msm8660_desc, regmap);
-+}
-+
-+static struct platform_driver lcc_msm8660_driver = {
-+	.probe		= lcc_msm8660_probe,
-+	.driver		= {
-+		.name	= "lcc-msm8660",
-+		.of_match_table = lcc_msm8660_match_table,
-+	},
-+};
-+module_platform_driver(lcc_msm8660_driver);
-+
-+MODULE_DESCRIPTION("Qualcomm MSM8x60 LPASS Clock Controller driver");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:lcc-msm8660");
+ static const struct cpg_core_clk r9a08g046_core_clks[] __initconst = {
+ 	/* External Clock Inputs */
+ 	DEF_INPUT("extal", CLK_EXTAL),
+@@ -210,6 +244,7 @@ static const struct cpg_core_clk r9a08g046_core_clks[] __initconst = {
+ 	DEF_FIXED(".pll3", CLK_PLL3, CLK_EXTAL, 200, 3),
+ 	DEF_G3L_PLL(".pll6", CLK_PLL6, CLK_EXTAL, CPG_PLL_CONF(0x50, 0),
+ 		    500000000UL),
++	DEF_FIXED(".pll1_div2", CLK_PLL1_DIV2, CLK_PLL1, 1, 2),
+ 	DEF_FIXED(".pll2_div2", CLK_PLL2_DIV2, CLK_PLL2, 1, 2),
+ 	DEF_FIXED(".pll2_div2_4", CLK_PLL2_DIV2_4, CLK_PLL2_DIV2, 1, 4),
+ 	DEF_FIXED(".pll2_div5", CLK_PLL2_DIV5, CLK_PLL2, 1, 5),
+@@ -217,6 +252,12 @@ static const struct cpg_core_clk r9a08g046_core_clks[] __initconst = {
+ 	DEF_FIXED(".pll2_div7", CLK_PLL2_DIV7, CLK_PLL2, 1, 7),
+ 	DEF_FIXED(".pll3_div2", CLK_PLL3_DIV2, CLK_PLL3, 1, 2),
+ 	DEF_FIXED(".pll6_div10", CLK_PLL6_DIV10, CLK_PLL6, 1, 10),
++	DEF_SD_MUX(".sel_sdhi0", CLK_SEL_SDHI0, G3L_SEL_SDHI0, G3L_SEL_SDHI0_STS, sel_sdhi,
++		   mtable_sd, 0, NULL),
++	DEF_SD_MUX(".sel_sdhi1", CLK_SEL_SDHI1, G3L_SEL_SDHI1, G3L_SEL_SDHI1_STS, sel_sdhi,
++		   mtable_sd, 0, NULL),
++	DEF_SD_MUX(".sel_sdhi2", CLK_SEL_SDHI2, G3L_SEL_SDHI2, G3L_SEL_SDHI2_STS, sel_sdhi,
++		   mtable_sd, 0, NULL),
+ 	DEF_MUX(".sel_rsci0", CLK_SEL_RSCI0, G3L_SEL_RSCI0, sel_rsci_rspi),
+ 	DEF_MUX(".sel_rsci1", CLK_SEL_RSCI1, G3L_SEL_RSCI1, sel_rsci_rspi),
+ 	DEF_MUX(".sel_rsci2", CLK_SEL_RSCI2, G3L_SEL_RSCI2, sel_rsci_rspi),
+@@ -264,6 +305,18 @@ static const struct cpg_core_clk r9a08g046_core_clks[] __initconst = {
+ 		    dtable_1_8, 0, 200000000UL, 0, NULL),
+ 	DEF_G3S_DIV("P19", R9A08G046_CLK_P19, CLK_SEL_RSPI2, G3L_DIV_RSPI2, G3L_DIV_RSPI2_STS,
+ 		    dtable_1_8, 0, 200000000UL, 0, NULL),
++	DEF_G3S_DIV("SD0", R9A08G046_CLK_SD0, CLK_SEL_SDHI0, G3L_DIV_SDHI0, G3L_DIV_SDHI0_STS,
++		    dtable_1_4, 800000000UL, 600000000UL, CLK_SET_RATE_PARENT,
++		    rzg3s_cpg_div_clk_notifier),
++	DEF_G3S_DIV("SD1", R9A08G046_CLK_SD1, CLK_SEL_SDHI1, G3L_DIV_SDHI1, G3L_DIV_SDHI1_STS,
++		    dtable_1_4, 800000000UL, 600000000UL, CLK_SET_RATE_PARENT,
++		    rzg3s_cpg_div_clk_notifier),
++	DEF_G3S_DIV("SD2", R9A08G046_CLK_SD2, CLK_SEL_SDHI2, G3L_DIV_SDHI2, G3L_DIV_SDHI2_STS,
++		    dtable_1_4, 800000000UL, 600000000UL, CLK_SET_RATE_PARENT,
++		    rzg3s_cpg_div_clk_notifier),
++	DEF_FIXED(".sd0_div2", CLK_SD0_DIV2, R9A08G046_CLK_SD0, 1, 2),
++	DEF_FIXED(".sd1_div2", CLK_SD1_DIV2, R9A08G046_CLK_SD1, 1, 2),
++	DEF_FIXED(".sd2_div2", CLK_SD2_DIV2, R9A08G046_CLK_SD2, 1, 2),
+ 	DEF_FIXED("HP", R9A08G046_CLK_HP, CLK_PLL6_DIV10, 1, 1),
+ 	DEF_MUX_FLAGS("ETHTX01", R9A08G046_CLK_ETHTX01, G3L_SEL_ETH0_CLK_TX_I, sel_eth0_clk_tx_i,
+ 		      CLK_SET_RATE_PARENT),
+@@ -297,6 +350,36 @@ static const struct rzg2l_mod_clk r9a08g046_mod_clks[] = {
+ 					MSTOP(BUS_REG0, BIT(0))),
+ 	DEF_MOD("wdt0_clk",		R9A08G046_WDT0_CLK, R9A08G046_OSCCLK, 0x548, 1,
+ 					MSTOP(BUS_REG0, BIT(0))),
++	DEF_MOD("sdhi0_imclk",		R9A08G046_SDHI0_IMCLK, CLK_SD0_DIV2, 0x554, 0,
++					MSTOP(BUS_PERI_COM, BIT(0))),
++	DEF_MOD("sdhi0_imclk2",		R9A08G046_SDHI0_IMCLK2, CLK_SD0_DIV2, 0x554, 1,
++					MSTOP(BUS_PERI_COM, BIT(0))),
++	DEF_MOD("sdhi0_clk_hs",		R9A08G046_SDHI0_CLK_HS, R9A08G046_CLK_SD0, 0x554, 2,
++					MSTOP(BUS_PERI_COM, BIT(0))),
++	DEF_MOD("sdhi0_iaclks",		R9A08G046_SDHI0_IACLKS, R9A08G046_CLK_P1, 0x554, 3,
++					MSTOP(BUS_PERI_COM, BIT(0))),
++	DEF_MOD("sdhi0_iaclkm",		R9A08G046_SDHI0_IACLKM, R9A08G046_CLK_P1, 0x554, 12,
++					MSTOP(BUS_PERI_COM, BIT(0))),
++	DEF_MOD("sdhi1_imclk",		R9A08G046_SDHI1_IMCLK, CLK_SD1_DIV2, 0x554, 4,
++					MSTOP(BUS_PERI_COM, BIT(1))),
++	DEF_MOD("sdhi1_imclk2",		R9A08G046_SDHI1_IMCLK2, CLK_SD1_DIV2, 0x554, 5,
++					MSTOP(BUS_PERI_COM, BIT(1))),
++	DEF_MOD("sdhi1_clk_hs",		R9A08G046_SDHI1_CLK_HS, R9A08G046_CLK_SD1, 0x554, 6,
++					MSTOP(BUS_PERI_COM, BIT(1))),
++	DEF_MOD("sdhi1_iaclks",		R9A08G046_SDHI1_IACLKS, R9A08G046_CLK_P1, 0x554, 7,
++					MSTOP(BUS_PERI_COM, BIT(1))),
++	DEF_MOD("sdhi1_iaclkm",		R9A08G046_SDHI1_IACLKM, R9A08G046_CLK_P1, 0x554, 13,
++					MSTOP(BUS_PERI_COM, BIT(1))),
++	DEF_MOD("sdhi2_imclk",		R9A08G046_SDHI2_IMCLK, CLK_SD2_DIV2, 0x554, 8,
++					MSTOP(BUS_PERI_COM, BIT(11))),
++	DEF_MOD("sdhi2_imclk2",		R9A08G046_SDHI2_IMCLK2, CLK_SD2_DIV2, 0x554, 9,
++					MSTOP(BUS_PERI_COM, BIT(11))),
++	DEF_MOD("sdhi2_clk_hs",		R9A08G046_SDHI2_CLK_HS, R9A08G046_CLK_SD2, 0x554, 10,
++					MSTOP(BUS_PERI_COM, BIT(11))),
++	DEF_MOD("sdhi2_iaclks",		R9A08G046_SDHI2_IACLKS, R9A08G046_CLK_P1, 0x554, 11,
++					MSTOP(BUS_PERI_COM, BIT(11))),
++	DEF_MOD("sdhi2_iaclkm",		R9A08G046_SDHI2_IACLKM, R9A08G046_CLK_P1, 0x554, 14,
++					MSTOP(BUS_PERI_COM, BIT(11))),
+ 	DEF_MOD("ssi0_pclk2",		R9A08G046_SSI0_PCLK2, R9A08G046_CLK_P0,	0x570, 0,
+ 					MSTOP(BUS_MCPU1, BIT(10))),
+ 	DEF_MOD("ssi0_pclk_sfr",	R9A08G046_SSI0_PCLK_SFR, R9A08G046_CLK_P0, 0x570, 1,
+@@ -412,6 +495,15 @@ static const struct rzg2l_reset r9a08g046_resets[] = {
+ 	DEF_RST(R9A08G046_DMAC_ARESETN, 0x82c, 0),
+ 	DEF_RST(R9A08G046_DMAC_RST_ASYNC, 0x82c, 1),
+ 	DEF_RST(R9A08G046_WDT0_PRESETN, 0x848, 0),
++	DEF_RST(R9A08G046_SDHI0_IXRST, 0x854, 0),
++	DEF_RST(R9A08G046_SDHI1_IXRST, 0x854, 1),
++	DEF_RST(R9A08G046_SDHI2_IXRST, 0x854, 2),
++	DEF_RST(R9A08G046_SDHI0_IXRSTAXIM, 0x854, 3),
++	DEF_RST(R9A08G046_SDHI0_IXRSTAXIS, 0x854, 4),
++	DEF_RST(R9A08G046_SDHI1_IXRSTAXIM, 0x854, 5),
++	DEF_RST(R9A08G046_SDHI1_IXRSTAXIS, 0x854, 6),
++	DEF_RST(R9A08G046_SDHI2_IXRSTAXIM, 0x854, 7),
++	DEF_RST(R9A08G046_SDHI2_IXRSTAXIS, 0x854, 8),
+ 	DEF_RST(R9A08G046_SSI0_RST_M2_REG, 0x870, 0),
+ 	DEF_RST(R9A08G046_SSI1_RST_M2_REG, 0x870, 1),
+ 	DEF_RST(R9A08G046_SSI2_RST_M2_REG, 0x870, 2),
 -- 
 2.43.0
 
