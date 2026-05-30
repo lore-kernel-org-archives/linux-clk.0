@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36E53ABD90;
-	Sat, 30 May 2026 11:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DDB26A0D5;
+	Sat, 30 May 2026 11:32:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780140648; cv=none; b=bmkt4/9OWT8/5h1aZc4bxA4G7yY8WGp93sUE/9V6GC1zL/+hAsRJyvS0aMuQ/ONZ2T00EpxhqJEKebBZav7jFEWmXwf0j+vw/SjVQ524ObNdByekAT/GHuGDPHUqb4jpMklT+1Tuju8kxIV+nvTz2fSOTMrotNSKrU5zwjSAPcY=
+	t=1780140757; cv=none; b=EZQzTWyjILFVG2AVw1OkiqusZxdpUukGmCwZRg/s2zwLxosDSSFw0jA7/9OyIjwzCOzdRt+TlJXjuJKnYBQn6mGW50ykf3B6hEi2heaCgwoww9IkRyOvhohRb1rhWw4DOH7M8ALwkMcTU9u0kGLR/mnnltCtlZdbhdE+hKxcG8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780140648; c=relaxed/simple;
-	bh=UT9YarYLzjkoLSmWmmg8M3bHnr8fXcuY80xbE9bpf3c=;
+	s=arc-20240116; t=1780140757; c=relaxed/simple;
+	bh=iw/iBTqnt/wdfmAetP4wwNxQVpdIqF/qkIZAaqGW+lo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=irZyrLry6FD10ewNiuv1Rb9YWZ+mr84tg59Rb8pkCvQ0F/wnb8f2bvezXqt7IVaF4U0Me9Q0a7XA8vws4k5kqe78Mo6TscOWVqcm9atozo9rqS4sGbFUNzuHwk4vIMqLyyWXyCZ6X/vWd2xI40VKr7SdMvQtBjMv/4ovCbbnZjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g/Mvmmt2; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=sySfOGGv07S/vfTubApoeuQ0+kgOl4UuJjxEPK25i9lh/2iQoliX/B61IAkiVDhXegvaxFAJpmBxnCLfXFz4xACqFGiaYeTQ7GasUdU/fYGaOcM3pu0FTooiKZcnc4Iy2ayYLayPAriP08xcvaxhFVyp1dPLx9EdyT/EnWv/6ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FKrsXYJz; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g/Mvmmt2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11F431F00893;
-	Sat, 30 May 2026 11:30:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FKrsXYJz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64AC71F00893;
+	Sat, 30 May 2026 11:32:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780140646;
-	bh=PDXnpd8pXVyeUoBJWFqsb0Q/OESIpN/2mfD5/IPGGmE=;
+	s=k20260515; t=1780140755;
+	bh=GI1x8/6OdfVDZl1aPmam21V1ywS/iL4vmoXMEImOod8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=g/Mvmmt2yV8Q1QyP0MU57xFf9SK5i/qOH/uJhmpvU6cmLbgZNszLsfgCmoajpRPt5
-	 ktB6KD/fBHxD93ESS1WvTmgpBmLcjWAo6uh4iyV2vMJX4VcSviD4xqoW6M7s2TZh/v
-	 qvVDyFD236xVHTbKl7GwJ2ivbUaNwsAbudaetGTLdcBvSQ71I1Cyd0GzgCOrJb0oFi
-	 QjQ1KaAJng+nOt9FDQkLsYFTcserMXpwT3UB1qcvludFtiUFepXhycbOAefvOy7LpP
-	 o3Csrtm9n157M5iwM6aOtlUvhcPqJGn7AxbsRMf2L40BWiT2p5jGnHRFNqZUt2cnj2
-	 S3BJrFbhFekWg==
-Message-ID: <7f5fa664-6de6-4b54-9e60-92176e6c6500@kernel.org>
-Date: Sat, 30 May 2026 13:30:41 +0200
+	b=FKrsXYJzfGx7vRT8v6eVr9IGDTaQ32MpvHe+1HCl7z29JtjSiD4+u/UyOOdVjtB65
+	 dZR2FeIu1U1ONgYKNqEXMhL2es6Fl6X+jZUKeXq8TthZ6d0RjL6yIVNi9Gb3vB5YzP
+	 uHUBTQJXkBLcjff9ff5rZvmtYpjyzaungMSdxZktEaM7hNmCCBVbYmF2wRJZ/vMY5b
+	 sNlYceKG6XAHW345/TjYEw6BeaPl3Sd7UDmmtTOBiO61XKPkERfMiRm22MwPjpURz/
+	 arX+38RGoFQnO4wsXLbPnjABXj1Uvcjmv9xWBKQxYe9QaTNHlpDhCBnbFRMzzZkM2f
+	 7Zpjn6pNosRQQ==
+Message-ID: <7221c136-f126-421d-8b2a-8fed17aba6f2@kernel.org>
+Date: Sat, 30 May 2026 13:32:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,21 +35,23 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: clock: qcom: Add Shikra Display clock
- controller
+Subject: Re: [PATCH v2 2/4] dt-bindings: clock: qcom: Add Qualcomm Shikra SoC
+ Global Clock Controller
 To: Imran Shaik <imran.shaik@oss.qualcomm.com>,
  Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+ <conor+dt@kernel.org>, Richard Cochran <richardcochran@gmail.com>
 Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
  Taniya Das <taniya.das@oss.qualcomm.com>,
  Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
  linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260513-shikra-dispcc-gpucc-v1-0-5fd673146ab2@oss.qualcomm.com>
- <20260513-shikra-dispcc-gpucc-v1-1-5fd673146ab2@oss.qualcomm.com>
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+References: <20260508-shikra-gcc-rpmcc-clks-v2-0-83238ba24060@oss.qualcomm.com>
+ <20260508-shikra-gcc-rpmcc-clks-v2-2-83238ba24060@oss.qualcomm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -95,22 +97,20 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20260513-shikra-dispcc-gpucc-v1-1-5fd673146ab2@oss.qualcomm.com>
+In-Reply-To: <20260508-shikra-gcc-rpmcc-clks-v2-2-83238ba24060@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 13/05/2026 15:40, Imran Shaik wrote:
-> Add device tree bindings for the Display clock controller on the
-> Qualcomm Shikra SoC.
+On 08/05/2026 06:51, Imran Shaik wrote:
+> Add device tree bindings for the global clock controller on Qualcomm
+> Shikra SoC.
 > 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 > Signed-off-by: Imran Shaik <imran.shaik@oss.qualcomm.com>
-> ---
->  .../bindings/clock/qcom,shikra-dispcc.yaml         | 62 ++++++++++++++++++++++
->  include/dt-bindings/clock/qcom,shikra-dispcc.h     | 39 ++++++++++++++
->  2 files changed, 101 insertions(+)
 
-Incomplete. You already sent fixes for this just creating churn - us
-accepting incomplete code and having to review fixup immediately.
+
+NAK, turns out incomplete.
+
 
 Best regards,
 Krzysztof
