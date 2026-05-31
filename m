@@ -1,27 +1,27 @@
-Received: from outbound2.mail.transip.nl (outbound2.mail.transip.nl [149.210.149.73])
+Received: from outbound9.mail.transip.nl (outbound9.mail.transip.nl [136.144.136.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE01118FC97;
-	Sun, 31 May 2026 04:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.210.149.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F7323EAA0;
+	Sun, 31 May 2026 04:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.144.136.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780200552; cv=none; b=fSr/r6GT5XBzQtKrKi/VyFqkJwu3BbDAURxLj70F8s97rczVx/ngTRdhbjDnmXH9BR+RjTjCbco4N45P5sVpsb0WvG76BNllcET9T2uhT/QmyUXsNVQU103P7rQBqHRZUJIl0ecBRqt8vklpKZeho/FKsFoQLFD3QGl1pKSIruk=
+	t=1780200550; cv=none; b=Wp0FxrFc1sIDaahp+Bw8L9HqK5GN1yViQ2m9sQxKtzsXNMTiSb4lICjNtUCdzkyoKaOuVjhQPX/F531rQB86jeCebjUDEtJ2Zmck5z1NzfL6082oXwXCqst1WlQKPsBpDXBHYJyKMmMTXJuKjjUdTEf7nUFTriM5vQxGRf8P4dM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780200552; c=relaxed/simple;
-	bh=xoUwn38H9GawF5YvrH36v0ZDTvRmkLCfKCp5ksGopes=;
+	s=arc-20240116; t=1780200550; c=relaxed/simple;
+	bh=0pF0rhg2hHdPbQ2Luyn/7WqsTAcxwqew8Vs8I2dTWc4=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VNzQX+2zGVSpPFqYGyAVcRQDcCqL1v6Wj8KIcoNCgUnlsATNrx7peWwsvDe6XaXHCx8reLJsgmqvQMh4k99YJVtk2LgFjoGSysWhkMCuAlhH15OfFyx98Js7G105p47h+LKz9YmIsj7BSZGxamueDg89hEvEMwczfp02uZq17GI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=herrie.org; spf=pass smtp.mailfrom=herrie.org; dkim=pass (2048-bit key) header.d=herrie.org header.i=@herrie.org header.b=L9MogA63; arc=none smtp.client-ip=149.210.149.73
+	 MIME-Version; b=YVp4D1UOO3ZO3TKWJkIiuLjjTcvH+rmEz81T3wYevJ0QwkyDRnhkE/Vdp3n9QbI6gAh2h1Nqp8E+niMtAgjHmFETggbSmPsNc1nNaVMoS/4yB88fIGFcnmqxTTordI11CySsSwleZNKUzkfHjO0sn95WDXxWBMtCjPXwMrfNijA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=herrie.org; spf=pass smtp.mailfrom=herrie.org; dkim=pass (2048-bit key) header.d=herrie.org header.i=@herrie.org header.b=lhURLWz7; arc=none smtp.client-ip=136.144.136.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=herrie.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=herrie.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=herrie.org header.i=@herrie.org header.b="L9MogA63"
+	dkim=pass (2048-bit key) header.d=herrie.org header.i=@herrie.org header.b="lhURLWz7"
 Received: from submission10.mail.transip.nl (unknown [10.103.8.161])
-	by outbound2.mail.transip.nl (Postfix) with ESMTP id 4gSk9q3lFDzYdtc;
-	Sun, 31 May 2026 06:09:03 +0200 (CEST)
+	by outbound9.mail.transip.nl (Postfix) with ESMTP id 4gSk9r5r6wzTPNc5;
+	Sun, 31 May 2026 06:09:04 +0200 (CEST)
 Received: from herrie-desktop.. (180-93-184-31.ftth.glasoperator.nl [31.184.93.180])
-	by submission10.mail.transip.nl (Postfix) with ESMTPA id 4gSk9p50Jvz1g92mY;
-	Sun, 31 May 2026 06:09:02 +0200 (CEST)
+	by submission10.mail.transip.nl (Postfix) with ESMTPA id 4gSk9r1WYyz1g92mX;
+	Sun, 31 May 2026 06:09:04 +0200 (CEST)
 From: Herman van Hazendonk <github.com@herrie.org>
 To: Bjorn Andersson <andersson@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
@@ -33,12 +33,12 @@ To: Bjorn Andersson <andersson@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Rob Herring <robh@kernel.org>,
 	Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH v2 0/3] clk: qcom: add MSM8x60 LPASS Clock Controller
-Date: Sun, 31 May 2026 06:08:59 +0200
-Message-ID: <cover.1780197511.git.github.com@herrie.org>
+Subject: [PATCH v2 2/3] dt-bindings: clock: qcom: add lcc-msm8660 LPASS clock IDs
+Date: Sun, 31 May 2026 06:09:01 +0200
+Message-ID: <be69409cac5f6b316a609e182e609f0ce6133bbe.1780197511.git.github.com@herrie.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1780148149.git.github.com@herrie.org>
-References: <cover.1780148149.git.github.com@herrie.org>
+In-Reply-To: <cover.1780197511.git.github.com@herrie.org>
+References: <cover.1780148149.git.github.com@herrie.org> <cover.1780197511.git.github.com@herrie.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,85 +48,85 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: ClueGetter at submission10.mail.transip.nl
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=transip-a; d=herrie.org; t=1780200542; h=from:subject:to:references:
+ s=transip-a; d=herrie.org; t=1780200544; h=from:subject:to:references:
  in-reply-to:date:mime-version;
- bh=sem2EJz+GUEFSEJmBaAWhgsqjpE7SXQxYB+1kJ/qnGs=;
- b=L9MogA63x3NkYZMLrRYv9dNu0y1sfNsbg2lsTv2geV5xc94e9U1kyVncD6epHia2uxar1/
- yfYNktGvcVDSP7K/ispzx+qKdJJvD0wdS2InqIaXEYamXapmdmpy+ORn9iDqiYR6fhOt4q
- 4svgl707pEKw7i3riUrkTiK2QROoC0KzbylQX5bUutP7YWLlVDu/LTnVzUyODxj9fe1UdA
- XaS+ZrBQlat0AV5WCrNxtJm/LeFaooq9WWh3wSPBmfcL/9d4YPUJvHAGK+xXVOK/UZa0+N
- p9kGG9+tTsU+3hdJcp0WRzOKd6yCoXKVmN+wh4FiKMSXH4C5ra/OyB83RJenOg==
+ bh=rW2SLXzGi1/eJwT7d4iDn2tWeHOxsLuq9eRAWU8zmV8=;
+ b=lhURLWz7ZnRrHIp9Jwlh3Fardp4gWacXCQ/I+7kgXLEFqM/apkUSdsVom09GWPADEA7yf9
+ BfKWZuhi+w/5fkr49RsUONYlAV8eJxE0GskJtQOrvfIwXV64MfE8ZiJ8AI//1dnkZWfBRi
+ Hs6w3QPAlyeQPf3DlVc/FQyGrn1Si0muv4PqoJjKrCeRWT60zsnQONwjNAary4P+7PWhTd
+ ziqy8YoJfswsE9sUmSfmqLi+ZeMz6Y0WrciQSN1znriTCoKPQX/iD0Xt3aAaHntNlXRUkk
+ nFdmtCPYj5aD8ilrnROcUnHpYMoFqXB4KCYJSYGUxPvlMcaZB9qKGsIznSSHLw==
 X-Report-Abuse-To: abuse@transip.nl
 
-Hi all,
+Add the dt-binding clock-ID header for the MSM8x60 family
+(MSM8260/MSM8660/APQ8060) Low Power Audio SubSystem Clock Controller
+(LCC). The header enumerates the LPASS clocks consumed by the
+qcom,apq8060-lpaif sound card and the codec/AIF nodes downstream of
+it. It mirrors the format and ID range of the existing LCC headers
+for newer Qualcomm SoCs (lcc-msm8960, lcc-msm8974) so the
+drivers/clk/qcom/lcc-msm8660.c driver can be hooked up the same way
+once it lands.
 
-Self-review (with Sashiko AI assist) caught five issues in v1 before
-maintainer review reached them. v1:
-
-  https://lore.kernel.org/linux-arm-msm/cover.1780148149.git.github.com@herrie.org/
-
-v2 changes:
-
-  - NEW patch 1/3: extend Documentation/devicetree/bindings/clock/
-    qcom,lcc.yaml with the three MSM8x60 family compatibles
-    (qcom,lcc-msm8260, qcom,lcc-msm8660, qcom,lcc-apq8060) and add
-    them to the existing apq8064/msm8960 conditional block. Without
-    this, board DTs using the new compatibles fail dt_binding_check.
-
-  - patch 2/3: dt-bindings clock-ID header for lcc-msm8660,
-    unchanged from v1.
-
-  - patch 3/3: LCC driver. Five fixes folded in:
-
-      * CLK_AIF_OSR_DIV macro: divider width was 8, which made the
-        bit-divider field span bits 10 through 17 on the _ns
-        register. On MSM8x60 BIT(15) (BIT_DIV branch enable) and
-        BIT(17) (OSR branch enable) sit inside that range, so any
-        clk_regmap_div read-modify-write would clobber both branch
-        gates. Width 4 (bits 10 through 13) matches the standalone
-        mi2s div clock and the legacy downstream Samsung MSM8660 /
-        webOS clock-8x60.c register layout. Added a block comment
-        documenting the verified bit assignments and the rationale
-        for the width change.
-
-      * Match table: add qcom,lcc-msm8260 alongside the existing
-        qcom,lcc-msm8660 and qcom,lcc-apq8060. MSM8x60 covers all
-        three variants.
-
-      * clk_tbl_pcm_393: add the 27 MHz PXO fallback entry that
-        clk_tbl_pcm_540 already carries, so the 393 plan can also
-        fall back to the board PXO source.
-
-      * lcc_msm8660_probe(): check the return value of regmap_read()
-        on PLL4 L. v1 ignored it, so a regmap failure would have
-        left val as uninitialised stack memory and steered the rest
-        of probe down a random branch. Use dev_err_probe() on
-        failure.
-
-      * lcc_msm8660_probe(): assign the freq_tbl pointers on the
-        static clk_rcg structs unconditionally on both PLL4 plans
-        instead of mutating-on-540 / leaving-mutated-on-393. The
-        driver is effectively singleton today, but explicit
-        assignment also restores the defaults if the driver is ever
-        rebound on a system whose PLL4 has been reprogrammed.
-
-Thanks,
-Herman
-
-Herman van Hazendonk (3):
-  dt-bindings: clock: qcom,lcc: add MSM8x60 family compatibles
-  dt-bindings: clock: qcom: add lcc-msm8660 LPASS clock IDs
-  clk: qcom: add MSM8x60 LCC (LPASS) driver
-
- .../devicetree/bindings/clock/qcom,lcc.yaml   |   6 +
- drivers/clk/qcom/Kconfig                      |   9 +
- drivers/clk/qcom/Makefile                     |   1 +
- drivers/clk/qcom/lcc-msm8660.c                | 551 ++++++++++++++++++
- include/dt-bindings/clock/qcom,lcc-msm8660.h  |  48 ++
- 5 files changed, 615 insertions(+)
- create mode 100644 drivers/clk/qcom/lcc-msm8660.c
+Signed-off-by: Herman van Hazendonk <github.com@herrie.org>
+---
+ include/dt-bindings/clock/qcom,lcc-msm8660.h | 48 ++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
  create mode 100644 include/dt-bindings/clock/qcom,lcc-msm8660.h
 
+diff --git a/include/dt-bindings/clock/qcom,lcc-msm8660.h b/include/dt-bindings/clock/qcom,lcc-msm8660.h
+new file mode 100644
+index 000000000000..d5d9b0d71a78
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,lcc-msm8660.h
+@@ -0,0 +1,48 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) 2014, The Linux Foundation. All rights reserved.
++ */
++
++#ifndef _DT_BINDINGS_CLK_LCC_MSM8660_H
++#define _DT_BINDINGS_CLK_LCC_MSM8660_H
++
++/*
++ * MSM8x60 family (MSM8260/MSM8660/APQ8060) LPASS Clock Controller (LCC)
++ * clock IDs. These are compatible with MSM8960 LCC as MSM8x60 and
++ * MSM8960 share the same audio subsystem clock architecture.
++ */
++
++#define PLL4				0
++#define MI2S_OSR_SRC			1
++#define MI2S_OSR_CLK			2
++#define MI2S_DIV_CLK			3
++#define MI2S_BIT_DIV_CLK		4
++#define MI2S_BIT_CLK			5
++#define PCM_SRC				6
++#define PCM_CLK_OUT			7
++#define PCM_CLK				8
++#define SLIMBUS_SRC			9
++#define AUDIO_SLIMBUS_CLK		10
++#define SPS_SLIMBUS_CLK			11
++#define CODEC_I2S_MIC_OSR_SRC		12
++#define CODEC_I2S_MIC_OSR_CLK		13
++#define CODEC_I2S_MIC_DIV_CLK		14
++#define CODEC_I2S_MIC_BIT_DIV_CLK	15
++#define CODEC_I2S_MIC_BIT_CLK		16
++#define SPARE_I2S_MIC_OSR_SRC		17
++#define SPARE_I2S_MIC_OSR_CLK		18
++#define SPARE_I2S_MIC_DIV_CLK		19
++#define SPARE_I2S_MIC_BIT_DIV_CLK	20
++#define SPARE_I2S_MIC_BIT_CLK		21
++#define CODEC_I2S_SPKR_OSR_SRC		22
++#define CODEC_I2S_SPKR_OSR_CLK		23
++#define CODEC_I2S_SPKR_DIV_CLK		24
++#define CODEC_I2S_SPKR_BIT_DIV_CLK	25
++#define CODEC_I2S_SPKR_BIT_CLK		26
++#define SPARE_I2S_SPKR_OSR_SRC		27
++#define SPARE_I2S_SPKR_OSR_CLK		28
++#define SPARE_I2S_SPKR_DIV_CLK		29
++#define SPARE_I2S_SPKR_BIT_DIV_CLK	30
++#define SPARE_I2S_SPKR_BIT_CLK		31
++
++#endif
 -- 
 2.43.0
 
