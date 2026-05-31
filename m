@@ -1,127 +1,104 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 360FB379C37;
-	Sun, 31 May 2026 07:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A994C3603C3
+	for <linux-clk@vger.kernel.org>; Sun, 31 May 2026 08:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780214294; cv=none; b=Q6+JzG7OW29bNWf5kH3IyNQed7S6qP4cWU/u2Na8E7QYrwG42C62DLiLxvraohRlh5MCj23pvK5Io30brXU7SADl24M8XEj60lsRIThnEVQgn4futfMqT/x6vUv//lONbHX7HSZ8HAXPCCFj6shwZuhCa2mOtvG+21pJpOsZIDM=
+	t=1780216619; cv=none; b=RG48Kkl54qSqgLF3itnEBQYPqKwdmrci2FMoSDUJQ0v5PopFWA0sEqwYhRay9Z0jo6nDAaDRigbp3qB4eOWc+E18XQsi2ummfwwM9jJazV74M0URQd5I/a5xo25zQPlMCuhGWdo8Dr5k13lCslZRTsSPBSlvhu5578h3FkfI2iE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780214294; c=relaxed/simple;
-	bh=qk8hkjd3fm6/yW++Rrwg0D7ejjhNxUFxDGV1kEqHIi4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=CLlebHfwcdIggo8fYG7ipmycYQbIwerT0myz1lXaArWB0efaS5NHLVTypIjQHNGlOlYzN+OmInQb/FCVBRYhMKnbNJ0wjPpOQyoHSh2V/kjPonNZn/pciQGX6noohNJS9L+y0eoOzl942xGyjO+RLSK1IEZWyDWWXt3ONA/El7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EDoQNICF; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EDoQNICF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 788481F00893;
-	Sun, 31 May 2026 07:58:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780214292;
-	bh=FErEgjjoRkxXTeZ9R+h/cJsxzYoFSbe9cqq5fK7XSg4=;
-	h=Date:Subject:To:References:From:In-Reply-To;
-	b=EDoQNICFzIlxazkbR/UpTI+CCVaW6PqGT+eWxc/SisacnilzZW3mTOgohyubDpdym
-	 odhwppi4ti+/1chz/qCBuCP4ytBCcOVsRZYMpRMRhvuIz6Gazaa6Xw5PDqamvAFIP6
-	 1zFe5HqEB8eQQ7XGaIHavpoN6Q1tuN6aOapbqriXWMWmaA+xiw3asfEj51TmB3YgA/
-	 p4xT5EqmBN3/uEqy4TZfIs2LaR3mokMTlq6FG6a6HjSx/6Df0OEjJU8uu27GwyvIv+
-	 A9KcpG7uL+MW2I1SZFpixdkl8BKDbcRlyLS0Lh0XnRqOfpoxYpgPhgYyhWEA/+x6e+
-	 wlgWUP+mFqpIg==
-Message-ID: <a2964b07-2d3c-46bc-9037-801d9c65a572@kernel.org>
-Date: Sun, 31 May 2026 09:58:09 +0200
+	s=arc-20240116; t=1780216619; c=relaxed/simple;
+	bh=VRoCK7u4CxDAaDhSmUkIbsYdQb82r8KYQ5s/yqVlez0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tbjrGQtx4a92EgmNUWQhqnYFmjN0rhRLZxiurTJ7N1bupoicH701dcO+eHebl2Rv2018tXTawCAB5U6UIwQFXZ1QBWIhonLmhnX6zj9ScYpAxpl+Rw+uYebUsZzGUupyHmJoBoiNPB8iLtR1vBNXjGTRu/UG4gB7VMDyRgNpw0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-6cfcad4f979so381371137.1
+        for <linux-clk@vger.kernel.org>; Sun, 31 May 2026 01:36:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780216617; x=1780821417;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KBvM2ORohpXQB4d5IQuHmDJKKy3F6iaCOKJvYc8ytZg=;
+        b=reHP4lA8g37e7nAgPXAvej3owadURn7YPWqPoljFzYAMBrS4eyEQ3XkPzd6yjk1sca
+         oDOhOo/eFKaItyxRF5q622ZqYGQOdrAJFUg8a399wMI00iq6zQmpoMBO3jjbcEFeP3MK
+         zRDW7sl9LJWdKlhB1nEMi7mh+Ta1uILF1tqywJYzAGEEGPUXkAJw7GUC9qaJpYmQL97R
+         Ilfv6lRhowIsoFPJOG9fuS9NbUWIu/dg5BTf8s6z0qQc2dRwYvpofreqPPsv9AwCm5Bd
+         aUSN6RLu1VrXiv/0w95RgWj02NuifWCB0Hb0bwfXrzqnyui73vdUmpEUSljsnOhKJzLO
+         QJMA==
+X-Forwarded-Encrypted: i=1; AFNElJ8Sw7p0d/JXu6i3iS4/YfXqAJ1NuWMpsePe6tpdeutf6qM00KnNDrL9Pr+dzHCjXJBBy9NAwAm0+UA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKG8kMsJoxUybAuCYNxuR0i0HgxYlPnssZUyMl8Z/iXFAkJ7nf
+	3WTXzbaE+8iGBHivplofCllw6bktN5aQxbuugAOwHOwn5FBZsNODm3IUTqz3Gw3t
+X-Gm-Gg: Acq92OFUJsHgztkhsxRDtVTiL9UCBb/KEtW1lUUuH3PLGCpj1HpkiPH6ZpKKRbjj56E
+	vvfeeuVoBgvnFKtDQz36TB7Lt2wMTR1nCgB+T1/LU5QqN4qUAaHvixQbUvOO+6WFm7akKM1pcea
+	ixim0fIRjm10KvdxfgL2Ldkon8MdkGaMbl2O6jjal5dxsfB/0UQmm9iFP1G7Y53wiBgo3OP/5dI
+	7eu51hzJYGV0Pwysx0XHl6k6F79d9TBkN8F+bM33jPmyBSrSsniYYhcMZhdRplUz+jv7wFy5H6n
+	Z4shuwYXbwzKcQsEumgVLE+TjzhRJqHBBlkx7O0o9s9WLqczXacp6sSt85tG8SeX/X/KiltcKS1
+	a3Lx7JTkRb4JD22JZNggw/XIAWPXF/JZRRpQ71nDJ+r+C6cRsBRztHjYAv9RZuM9XfzEY3Qv5mK
+	ZKMW0pLhtHhAfCjXBcFWe/csDTtmIOUzPDS66Q0vrSNqz53esWnHHQIiVQidOEedIF1WEtdIE=
+X-Received: by 2002:a05:6102:2911:b0:633:3040:ca5c with SMTP id ada2fe7eead31-6c698a060e2mr2753341137.30.1780216616723;
+        Sun, 31 May 2026 01:36:56 -0700 (PDT)
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-6bfc81ab8a5sm4113748137.9.2026.05.31.01.36.56
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 31 May 2026 01:36:56 -0700 (PDT)
+Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-6cfcad4f979so381361137.1
+        for <linux-clk@vger.kernel.org>; Sun, 31 May 2026 01:36:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ9+nTxDDRT+74Ly+gJBPQZSbZOpo4B7faHrZyUsYHj73fuIvC2rN0zwqp+PMhfrRwBTV4mJ5h04ldU=@vger.kernel.org
+X-Received: by 2002:a05:6102:5344:b0:631:4cda:3ebb with SMTP id
+ ada2fe7eead31-6c693a257bfmr2158834137.24.1780216616348; Sun, 31 May 2026
+ 01:36:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: clock: qcom,lcc: add MSM8x60 family
- compatibles
-To: Herman van Hazendonk <github.com@herrie.org>,
- Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
- Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-References: <cover.1780148149.git.github.com@herrie.org>
- <cover.1780197511.git.github.com@herrie.org>
- <44986bb00724bd127e95651a8cc54fd018430c96.1780197511.git.github.com@herrie.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <44986bb00724bd127e95651a8cc54fd018430c96.1780197511.git.github.com@herrie.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20260504144534.43745-1-marek.vasut+renesas@mailbox.org>
+ <20260504144534.43745-4-marek.vasut+renesas@mailbox.org> <CAMuHMdWdqDpU+AZrwz5ccbZPjJfp5DspoVscYi=Q+w-nniuuCQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdWdqDpU+AZrwz5ccbZPjJfp5DspoVscYi=Q+w-nniuuCQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sun, 31 May 2026 10:36:44 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVcmFz0vr+YadbKOy111PgDFYCm6kgRMWjKxyNj4mxbWg@mail.gmail.com>
+X-Gm-Features: AVHnY4JIRr68RiPmOxbgFI01Y083MJgBCtNRl2Ceai1FVE5g6dLCk5lLsnDcPaA
+Message-ID: <CAMuHMdVcmFz0vr+YadbKOy111PgDFYCm6kgRMWjKxyNj4mxbWg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/7] dt-bindings: clock: cs2000-cp: document CS2500
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-arm-kernel@lists.infradead.org, 
+	Conor Dooley <conor.dooley@microchip.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+	Magnus Damm <magnus.damm@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Rob Herring <robh@kernel.org>, Ulf Hansson <ulfh@kernel.org>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 31/05/2026 06:09, Herman van Hazendonk wrote:
-> Add "qcom,lcc-msm8260", "qcom,lcc-msm8660" and "qcom,lcc-apq8060" to
-> the qcom,lcc enum and to the existing parent-clock-name conditional
-> block that already covers apq8064/msm8960.
-> 
-> The MSM8x60 family (MSM8260/MSM8660/APQ8060) is the Scorpion-class
-> generation preceding MSM8960; its LPASS Clock Controller is fed by
-> the same pxo board source and pll4_vote parents as apq8064/msm8960,
-> and the codec-fed slave-mode I2S/PCM clocks have the same names, so
-> the existing apq8064/msm8960 conditional block applies unchanged
-> once the new compatibles are listed.
-> 
-> This allows board DTs using the new compatibles to pass
-> dt_binding_check; the actual driver support is added by a later
-> patch in this series.
-> 
-> Signed-off-by: Herman van Hazendonk <github.com@herrie.org>
-> ---
->  Documentation/devicetree/bindings/clock/qcom,lcc.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
+On Wed, 6 May 2026 at 12:19, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On Mon, 4 May 2026 at 16:46, Marek Vasut
+> <marek.vasut+renesas@mailbox.org> wrote:
+> > Document backward compatibility support for CS2500 chip, which
+> > is a drop-in replacement for CS2000 chip.
+> >
+> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> > Acked-by: Stephen Boyd <sboyd@kernel.org>
+> > Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This is a complete mess - one thread has like 10 different patchsets and
-versions.
+Thanks, will queue in renesas-devel for v7.2.
 
-I have no clue what to do here. I am dropping everything from DT patchwork.
+Gr{oetje,eeting}s,
 
-Please read carefully submitting patches.
+                        Geert
 
-Best regards,
-Krzysztof
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
