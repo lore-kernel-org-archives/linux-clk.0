@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 920AD349CC3;
-	Sun, 31 May 2026 07:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 360FB379C37;
+	Sun, 31 May 2026 07:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780214231; cv=none; b=HzsZsyuW+LHevtl5wN7fC5hZHY+M6LsCZqonjF5ibQ1jCOPAYmuzI4abxzPvDPA0xKsae4Xa2bfixxdBLnVaDHpAksIRn8Vdvi3Qys413dUdVQha7d3sBI3ySRRYBQ9i+cXXBqSfzBSAu5thW1XV4k7gGTitlybbEOWSFO4syic=
+	t=1780214294; cv=none; b=Q6+JzG7OW29bNWf5kH3IyNQed7S6qP4cWU/u2Na8E7QYrwG42C62DLiLxvraohRlh5MCj23pvK5Io30brXU7SADl24M8XEj60lsRIThnEVQgn4futfMqT/x6vUv//lONbHX7HSZ8HAXPCCFj6shwZuhCa2mOtvG+21pJpOsZIDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780214231; c=relaxed/simple;
-	bh=irvTTUTLlvj4AEQyPcLPJj91XvCV1iZlj0XXmGxCtWg=;
+	s=arc-20240116; t=1780214294; c=relaxed/simple;
+	bh=qk8hkjd3fm6/yW++Rrwg0D7ejjhNxUFxDGV1kEqHIi4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=MlrhHSe0xH4M+1tnoLlltLSDvCcIbkdfEt3vDzEIZr+pcy92jbNeSidhjF4uKO/vVSiPdWWQx1L9IvbmvUYtyEQEkRabeoKbrtjl3eHSggX1nAFriVSx6W+xRftMTUGZYEi8YEALJfpwb8cWBoB0pdoXlB7WGWiE0ImJwgH6DOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P4sGrwJ/; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=CLlebHfwcdIggo8fYG7ipmycYQbIwerT0myz1lXaArWB0efaS5NHLVTypIjQHNGlOlYzN+OmInQb/FCVBRYhMKnbNJ0wjPpOQyoHSh2V/kjPonNZn/pciQGX6noohNJS9L+y0eoOzl942xGyjO+RLSK1IEZWyDWWXt3ONA/El7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EDoQNICF; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P4sGrwJ/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDB781F00893;
-	Sun, 31 May 2026 07:57:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EDoQNICF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 788481F00893;
+	Sun, 31 May 2026 07:58:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780214230;
-	bh=loocp/gvKa76qk+WZbfYIck0ZliOTr9KHh6WGqB0ZcM=;
+	s=k20260515; t=1780214292;
+	bh=FErEgjjoRkxXTeZ9R+h/cJsxzYoFSbe9cqq5fK7XSg4=;
 	h=Date:Subject:To:References:From:In-Reply-To;
-	b=P4sGrwJ/eCEu8SarQ107Zf7ABZmy10yGH9mMhjc8evugz4wv92P/zvhX6uroUc2EH
-	 kNPFqSLia0VHtJFyvaklh3s9HRDDEial5XLWuRNOMIJ83nAR/vVr9kSRhg1IP24KoK
-	 4SghTdJeyKR2dZ67lVyA6Q98lsmR7fadUc9qCt65ayVHTHYXUhllp7qfUC0v+FZZKp
-	 AlF/gXkgJy+azU1X4w+r2zcTANKb5oVDnpPjBPgnPqdNNTTGerhJt/eNOu8d3ulMg+
-	 L2bNOf7EDrWoKzOvTqKXVmuRaHnuMcHWY4wGjqwYepVxwjFG2IbKVeApEinGq2Uui+
-	 W2C/caNFQ31AA==
-Message-ID: <53f65444-0560-4e4b-8929-ebc01009294b@kernel.org>
-Date: Sun, 31 May 2026 09:57:05 +0200
+	b=EDoQNICFzIlxazkbR/UpTI+CCVaW6PqGT+eWxc/SisacnilzZW3mTOgohyubDpdym
+	 odhwppi4ti+/1chz/qCBuCP4ytBCcOVsRZYMpRMRhvuIz6Gazaa6Xw5PDqamvAFIP6
+	 1zFe5HqEB8eQQ7XGaIHavpoN6Q1tuN6aOapbqriXWMWmaA+xiw3asfEj51TmB3YgA/
+	 p4xT5EqmBN3/uEqy4TZfIs2LaR3mokMTlq6FG6a6HjSx/6Df0OEjJU8uu27GwyvIv+
+	 A9KcpG7uL+MW2I1SZFpixdkl8BKDbcRlyLS0Lh0XnRqOfpoxYpgPhgYyhWEA/+x6e+
+	 wlgWUP+mFqpIg==
+Message-ID: <a2964b07-2d3c-46bc-9037-801d9c65a572@kernel.org>
+Date: Sun, 31 May 2026 09:58:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,16 +35,17 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: clock: qcom,gcc-msm8660: add CE2_P_CLK,
- PLL4_VOTE + per-clock annotations
+Subject: Re: [PATCH v2 1/3] dt-bindings: clock: qcom,lcc: add MSM8x60 family
+ compatibles
 To: Herman van Hazendonk <github.com@herrie.org>,
  Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
  devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-kernel@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
  Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-References: <20260530135731.185313-1-github.com@herrie.org>
- <c36dcf40802d89a4b43255394386fff974a6301c.1780197117.git.github.com@herrie.org>
+References: <cover.1780148149.git.github.com@herrie.org>
+ <cover.1780197511.git.github.com@herrie.org>
+ <44986bb00724bd127e95651a8cc54fd018430c96.1780197511.git.github.com@herrie.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -90,33 +91,37 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <c36dcf40802d89a4b43255394386fff974a6301c.1780197117.git.github.com@herrie.org>
+In-Reply-To: <44986bb00724bd127e95651a8cc54fd018430c96.1780197511.git.github.com@herrie.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 31/05/2026 06:08, Herman van Hazendonk wrote:
-> Annotate each clock with provenance and consumer information cross-
-> referenced against the GCC driver, the downstream HTC/Samsung/Palm
-> sources and the legacy TouchPad / Pre3 vendor trees, so reviewers
-> adding new MSM8x60 board DTs can tell at a glance whether a given
-> clock is wired up in the GCC driver, in the device tree, or both.
-
-I don't understand what problem you are solving. ABI is fixed, you
-cannot change it. This document does not describe usage, but ABI with
-clock IDs.
-
-I suggest to start commit msg with clear description of existing problem.
-
+On 31/05/2026 06:09, Herman van Hazendonk wrote:
+> Add "qcom,lcc-msm8260", "qcom,lcc-msm8660" and "qcom,lcc-apq8060" to
+> the qcom,lcc enum and to the existing parent-clock-name conditional
+> block that already covers apq8064/msm8960.
 > 
-> Add two clocks that the in-tree driver and downstream consumers
-> already use but which were missing from the header:
+> The MSM8x60 family (MSM8260/MSM8660/APQ8060) is the Scorpion-class
+> generation preceding MSM8960; its LPASS Clock Controller is fed by
+> the same pxo board source and pll4_vote parents as apq8064/msm8960,
+> and the codec-fed slave-mode I2S/PCM clocks have the same names, so
+> the existing apq8064/msm8960 conditional block applies unchanged
+> once the new compatibles are listed.
 > 
->   - CE2_P_CLK (Crypto Engine 2 APB) - needed by drivers/crypto/qce
->     for the MSM8x60 CE2 path that the qcom,msm8660-qce binding adds.
->   - PLL4_VOTE - software-vote handle for the LPASS PLL4 used by both
->     lcc-msm8660 and the modem subsystem.
+> This allows board DTs using the new compatibles to pass
+> dt_binding_check; the actual driver support is added by a later
+> patch in this series.
+> 
+> Signed-off-by: Herman van Hazendonk <github.com@herrie.org>
+> ---
+>  Documentation/devicetree/bindings/clock/qcom,lcc.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
 
-Don't mix up completely independent work.
+This is a complete mess - one thread has like 10 different patchsets and
+versions.
+
+I have no clue what to do here. I am dropping everything from DT patchwork.
+
+Please read carefully submitting patches.
 
 Best regards,
 Krzysztof
