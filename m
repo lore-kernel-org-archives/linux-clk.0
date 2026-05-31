@@ -1,60 +1,62 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045C733508E
-	for <linux-clk@vger.kernel.org>; Sun, 31 May 2026 09:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 305D834404A
+	for <linux-clk@vger.kernel.org>; Sun, 31 May 2026 09:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780219676; cv=none; b=r/jgwZ9+J9GNIpYFw7qujbzsGLxPyIzs3o2CSONxloZeMFqsclAjBEenc629h4iQ+OXeaEXRUS8dNVdsvS16/RMDycf+goi4aiXycde6gVEyB5MNcvdBAszMqV0oWBo66nxmpZHlgdf6cFlGKKwygnQm1SM8/p/ADHwK3BifpII=
+	t=1780219677; cv=none; b=Glj6zmv8m7K3nccd/nuEvl1NxjNHDSMYw29WIg3WMHl71oODSUZ+KSh8qLXdRGb1W6bWFs5+CTQw52uYM7Q/lChjVjY13rToMbP5tXIIOwBomvJQoZafSzqsp1NNPMqsytyATggjPRiV+VR1HCybo6LH2OkAJ6vNH11+L3KggLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780219676; c=relaxed/simple;
-	bh=BNG/Nt3+CmK9Hyh4BW3hQ4JifMYdLAzHQ5ZifotMSIw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=of8CkeaT9jDboLHDnqLkOuNHQ+xigWLNhqtCfAaBPRDuQH9i/SW9DDeALLTWCuD53NDM4PX5shlX8bpmYnkTuIWgXuqKxDIAeefqPX3WIJ5FRU6iqQDaFpgwMiJR/cQPVSRM0gJK75X3+ws0jGYjnjyivcq9ZLalVo6idsOyfRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kXmkAQSy; arc=none smtp.client-ip=209.85.221.50
+	s=arc-20240116; t=1780219677; c=relaxed/simple;
+	bh=YDcPrHkJi/CP0+hH5Z5P2PG3DE1JTmfY9E3YspgvTXA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MIO/e5PLBkcr0NxLpNmMvCrm6NnscG2rYR1IAPABBqTeDoFJyIO3RTKWW7gnWS6SWvRfxgTo3jVrzbx2ClmKTTrizsxhBdr2K3M0iGe+HaC/NDZ5HsDuH3WMY7p897cPbrfnpXru4fqeF+3zJZ5ZpFniDlxZQ6jrVuIDVh1unI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jt3hjbJ3; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kXmkAQSy"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-45ef5146b56so1032710f8f.0
-        for <linux-clk@vger.kernel.org>; Sun, 31 May 2026 02:27:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jt3hjbJ3"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-490a7876f8cso2802465e9.3
+        for <linux-clk@vger.kernel.org>; Sun, 31 May 2026 02:27:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780219673; x=1780824473; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tIxTISlKz5zUY/5EeJFoGXkyj7v9D4tIsE5w4iprCUU=;
-        b=kXmkAQSyWX5LouCuyJ+zfXZbCZPYC88HbyYchCtYp14qq+eeiXmfmQcINOCKKP+k8j
-         T7rZu08lvEg4T5veFOKGVhTHHevJ3DXUidc345/0qYJiIUuUlapLFzjDnd+18RNmNB0T
-         RC+mNiRmWLI6IJnnO691KOsQUzTy1OvkDktfjuSf/06XIwFOkqx/3dYRzFSWmTEhCaUY
-         dPkzWSOAB9V22QGgURpFJPDwoh/2vvbSbe9WSVQ6RTYDtDerWTofgI0sbrVFbzYHHTJI
-         lbU+h8/PCz2J3KBql0TT3heIwWHMnKV2LqD07uiKmOFuSIWEMD/+gkSX/DMgQ7GaL0Mk
-         WfSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780219673; x=1780824473;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1780219675; x=1780824475; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tIxTISlKz5zUY/5EeJFoGXkyj7v9D4tIsE5w4iprCUU=;
-        b=sNJWipjJvd5qGnhy5Y80Sx0I+Fw1fdBilOaGZTAaI/MtemBdOqs0eoUYQhbEsVuDR0
-         rp2ZbXu9t8JLtBE0gmoaHkXc1tbAWU7i3jXL2w2GJ5B4BqCPgtkCVRIyV6xqjzPU+Pt5
-         AvPTUTBaWAx4S8RLMWJuelM5ArEYNFtcBfJTsMdLl8qk4u6/B9pjMw9VSZwPf0rri0bx
-         txWALxk8GTGNS+mMiVcwXAoClJspcdFT1tP7lf1eLr++kYMzjgAtEt3hATBp29pGQf8N
-         xqFkoSQZMvnMQUqCyXIntgtgB+B1SJBomYCC0TeOsCoDDODa/ipZWA0Rf66F1PmWoDCK
-         Qj5A==
-X-Gm-Message-State: AOJu0YybFYu3BoPVA5fxzG7Zr1ebk/47/FMinEYFuLsr4JSwhUax1h2b
-	kAELbWHJ0aFIQvOXu3WsmYz9MFG0QUiyTngleue07zOUN0ZWyixwMqch
-X-Gm-Gg: Acq92OFDdWGWyRR2oOWukNZT7I1bqYllnjM5mCz5Tx8xqtXFcx1YfDjw3Kjkgto4HH8
-	jDm+mP5PGoSpXMx9SOocR1eHCU1zqgyb1u8T3X2LWK1PtLid0/xhslSjXHyopnYjh6UJ0SGvRYk
-	l0uT1q6szr8zZW3soZ8vbNlYC4K7gnlM4Cw+wyMKW608w9And6XGWxn5TkmHth210F/HBYdbfnb
-	dqxksdxvHxMhHCT1aAnH9BXVg/veyIEfM8I8SmfCFdV/zIN+StK7pzBDb8XosB5kLmqwurVBXE1
-	+gUBhuFIV9JvyySHMKQ8iupqnmZOcHyZFh+TynPcC83UknzbXQ0hru8lM9j/9Qp7CCu0lqbTB5W
-	NOkwp9qq3aVgTMgegs6v5Yqy8jnmIsuBxZ/R+HROongVE0vKFXTqwodRep576z9vicH/bbSpJXO
-	Ier1zrytIGyaY1Hd05cr52ZxyVCi1JUkW68w==
-X-Received: by 2002:a05:600c:64c8:b0:489:1abb:5559 with SMTP id 5b1f17b1804b1-490a2a1f07cmr88176025e9.5.1780219673463;
-        Sun, 31 May 2026 02:27:53 -0700 (PDT)
+        bh=hQyviYMg+aVt/DDakTKU2XMmEryhOoH3fsRqzwGPnVE=;
+        b=jt3hjbJ3Dy89ZKLdRni2aD7Wk/ciUHmiwVAI9BWU2IJOoneB3NB2may6iJ669+g+sa
+         S3jFw69TXTCNs1KJOE7TT89to7AXo39lsny1y40BwNrBTW6QBkxO27HPf55vXL32UnV+
+         MtK2D7KRQpEJwiwgFwXQrW6FvvKWKEoSJB9+wl4I0eGLXnGk1qHMmdssZFuZFjdHUNLt
+         H0gakAE0Dfu8sQDBsGLxyRJYWimh4kTsLjbeo9BGExh++2ONl9+Vk7ys8diqAVJzjapR
+         n6t/rwJtVfRfusudsG/RKjcgfY9E4m+4zcadGDss5pvuQYHCiBcnZrzUdGLvAazSBiWM
+         QuBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780219675; x=1780824475;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=hQyviYMg+aVt/DDakTKU2XMmEryhOoH3fsRqzwGPnVE=;
+        b=g3VtIkDb9TrFHX6+BYlk12bCY6H55UAtSQ1mZ9/A1FgJ/dblYhdDzLUowONDTp4ruC
+         vkWgL2jH57alXo4x00+izqyHW8ExBpTMS6NByfDHqRe9HQFDw2SDuv9rpYUl0mm5mKHo
+         92p5Qtyfbj5+ktP+gECNuZDNTw7Kwr7xArvpzP0r4I4xAEoRbZm4KMyoUCpJugERGgUB
+         teMapE/Kq6wtZG+/GO3KLRiMdQ/dpV3Q+owcmd8A9aQJNG9nHtXYfTpAhF/25gJhLKRC
+         Z+cpXnJGDc7CYUead6ka7h/OD1vJNFTsiHV72uAAaAz5RxTf4vMEA1IE03Mdvx6kkpmo
+         DDWA==
+X-Gm-Message-State: AOJu0YyHOh7LaItUzpmo3G5dfq/l3ZX3cPlEuqaEJZh/1BxuNWZdeIoh
+	dKRPzwYKo9ShubvHqO17uK1PCozS2LLQaKa4EfRmBza6mKxW2lefIl7a
+X-Gm-Gg: Acq92OEvay4PS9oLCJfuMewml/uB305ob5bY+8lVO4EOu0P8fbFjQcnHN1wntnajFfi
+	F5DFC5KYjCsqbJrP8ymFllyh9hpdWlwADaNjOQkjP2YkTOy1AUQj8+UeGTHIM0z0Mt5AQ3gdA4U
+	gZPSIyh2fMwNGFqk7s6MWLtT2qMKdRg0gCQ1G67R7dVyJuGSEuiyTtgviqOIrFREoQFE6mNbJk7
+	fGm9kdvXDZCZQFeQUB69rC9vSjITCvA3HMc0wVF6bp1I6sJfGCpPFv8DHN/Lp1LbHNl7PzliFrS
+	26Ubk6GkvbXpZiaHEJEbjVlCWZK+zm9IMZZ+Map65kMe1WgbnCIntJ21cacDKxEbthNLmVXAvBC
+	CjZtbriqAbKp75zuQIJi944XQs7joS47GA96qTQ9IB7aXiPwNEDu8Yn3N9867GQM7xsI1Obs++6
+	p1HMBbNEjXcvWDRUIwn2QOmdc=
+X-Received: by 2002:a05:600c:1c21:b0:48a:58ae:993b with SMTP id 5b1f17b1804b1-490a2941cb5mr129987905e9.16.1780219674543;
+        Sun, 31 May 2026 02:27:54 -0700 (PDT)
 Received: from xeon ([188.163.112.61])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4909d6a0e42sm163976435e9.8.2026.05.31.02.27.52
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4909d6a0e42sm163976435e9.8.2026.05.31.02.27.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 May 2026 02:27:52 -0700 (PDT)
+        Sun, 31 May 2026 02:27:54 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Prashant Gaikwad <pgaikwad@nvidia.com>,
 	Michael Turquette <mturquette@baylibre.com>,
@@ -65,10 +67,12 @@ To: Prashant Gaikwad <pgaikwad@nvidia.com>,
 Cc: linux-clk@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/1 RESEND] clk: tegra: support 48MHz clock for pll_p_out1
-Date: Sun, 31 May 2026 12:27:44 +0300
-Message-ID: <20260531092745.12738-1-clamor95@gmail.com>
+Subject: [PATCH v2 1/1 RESEND] clk: tegra: support 48MHz clock for pll_p_out1
+Date: Sun, 31 May 2026 12:27:45 +0300
+Message-ID: <20260531092745.12738-2-clamor95@gmail.com>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260531092745.12738-1-clamor95@gmail.com>
+References: <20260531092745.12738-1-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -78,22 +82,31 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-UEFI on Surface2 sets pll_p_out1 to 48MHz which is not supported
-by kernel and causes BUG() early on. Fix this by adding 48MHz
-clock support for pll_p_out1 along with 48MHz support for pll_a,
-main pll_p_out1 descendant.
+From: Dmitry Osipenko <digetx@gmail.com>
 
+UEFI on Surface2 sets pll_p_out1 to 48MHz which is not supported by kernel
+and causes BUG() early on. Add 48MHz clock support for pll_p_out1.
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Jonas Schwöbel <jonasschwoebel@yahoo.de>
+Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
-Changes in v2:
-- aligned with downstream 3.4 kernel for tegra114 logic
----
-
-Dmitry Osipenko (1):
-  clk: tegra: support 48MHz clock for pll_p_out1
-
  drivers/clk/tegra/clk-pll.c | 1 +
  1 file changed, 1 insertion(+)
 
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index d86003b6d94f..adfb74f111ef 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -575,6 +575,7 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+ 		break;
+ 	case 9600000:
+ 	case 28800000:
++	case 48000000:
+ 		/*
+ 		 * PLL_P_OUT1 rate is not listed in PLLA table
+ 		 */
 -- 
 2.51.0
 
