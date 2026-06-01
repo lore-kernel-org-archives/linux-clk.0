@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7DE3644AF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8733644BC;
 	Mon,  1 Jun 2026 08:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780304029; cv=none; b=edOIWxfTPryoKSO7fhX6s5vz5mzLtRjPrYxQacsmmWlZqq4CG4RfsGQXRp765HDm4TyAX70JRx3y8iDqJhhkuZ0U1PraX8iNeKRYC+dIskKa2MqxDvWryzKY9uh2jItm+/dHRh/9OGhfqe/Y+SA9e/ls6kDY+QHIkJDpU615kXc=
+	t=1780304029; cv=none; b=ZOLLoTy5K2z+9COYesDMvy2xygrmm/npoE3mVIX1uqM10wsNwI/fRI6MAGRMYmlTeuMX8OqJMmmDLvpEH5/846oCqn+Pn4T1MeR+eDz/BfX6hNV2GTGjRqXZ9m3k8xOV2aYmKgwPMOmPefTl34I429HTcdQis8xMvj3gzhrpcUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1780304029; c=relaxed/simple;
-	bh=lnU/ETWVaTLqo4OljQ3OPBQa3qRvEVA67HVfBOt4oo0=;
+	bh=/4rjZalZ5mFm3x1ZsEYV/FcZLpxa8KrBZFIzN0uWi50=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FhWdbHQmljN6MkmR5PV1yeZZP93rbNc/SuQLU448wnQF7ToWmQTkZ+bSr7U4gCipuW++RoOhD+EFoANzgyfvN38fJH+FcZSOWB6O55GJ0xEEwJHvJyiStDdYAVUqG7rBCYGGDH8d+goDLI9dAQ+4cKL49Qtr7CWZRHntZrHb1ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=crbhhmkU; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=PVQzofclLYjcf9hoLCHl2tBHmEOMpq6Qhbv1E7gF8yzPTef0oaWLfPsmxGOXF5aJQ0YgEbI7BJQJlgcxS3ub33JPaEnPjwLRyssb0Qt993E+Ue9ft7mOuwoV/1Z/uNFx6lKW9B9GZsEa6AAKk3FbocgyJBicLPwBuXBf3HW4wrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cdi5Y7G3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="crbhhmkU"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 43533C2BCC7;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cdi5Y7G3"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 35F4FC2BCB8;
 	Mon,  1 Jun 2026 08:53:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1780304029;
-	bh=lnU/ETWVaTLqo4OljQ3OPBQa3qRvEVA67HVfBOt4oo0=;
+	bh=/4rjZalZ5mFm3x1ZsEYV/FcZLpxa8KrBZFIzN0uWi50=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=crbhhmkU2ruaShxKFOeqpRRR9NHeGJlUXvAFUdadnMWFiNJ5DXMlec36RXLVfZKhM
-	 ZnC3RlUHaXpK065vkN2ugY6pUwgdxZXZHzKSn3q0WV/fepLVXpyCjWT1BYQAu5iKlA
-	 0+jF4Bpvwvvt7m+nksb3gs26Uxp+lLaV9lsj38kl8JxZsxBQST4vGQF+LPb7pq0slq
-	 6R7XsgidP8wj17hHjO5IjAxmqV1adMhm1jS4vDk37xB9EJZV6jmVvteETKMOXWr4Lo
-	 d/h9+PFd1YDDckYJkhkb2IXLfiwk04HRvvq+JfZp8SsTRFZaROrH79mnakrjwR5j2S
-	 RzMRI7ckXKmaA==
+	b=Cdi5Y7G3Guwvet2xbM3fQuvaiyiryy2kbZjMp1Vaa55ASsCYE7qtxFQ1h7pHxkpqE
+	 RoAvtb0+dB02epgTfrpA/b/3QSK8yvBCoqbrJ2Jxc71iMK281jW19qz27vyUkbhaEN
+	 XEsx3e+cUMqP2uNeKCsy+28zuvXoae4YuL7Srl9D2PKiUuAZpUhU+zvU3Da1gBtKD/
+	 e8YrL+mMxtp2F8xATpjzIJgm42okUIqd+e6Is+jNIJyDZoVRd9OnDckeUCijnlzBvk
+	 kc7AoznaSjRdyowBCYh7YVAV47bh4F6FazHMGK/IwINgcNkFnvopBD8Yy1hKy1w1cH
+	 hsp1oWlQbpUEA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38261CD6E60;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B28ECD5BD1;
 	Mon,  1 Jun 2026 08:53:49 +0000 (UTC)
 From: Antony Kurniawan Soemardi via B4 Relay <devnull+linux.smankusors.com@kernel.org>
-Date: Mon, 01 Jun 2026 15:51:15 +0700
-Subject: [PATCH v3 02/10] dt-bindings: mfd: syscon: add
- qcom,msm8960-sps-sic
+Date: Mon, 01 Jun 2026 15:51:14 +0700
+Subject: [PATCH v3 01/10] dt-bindings: clock: qcom,rpmcc: add msm8960
+ compatible
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260601-msm8960-wifi-v3-2-fec6ac8dba02@smankusors.com>
+Message-Id: <20260601-msm8960-wifi-v3-1-fec6ac8dba02@smankusors.com>
 References: <20260601-msm8960-wifi-v3-0-fec6ac8dba02@smankusors.com>
 In-Reply-To: <20260601-msm8960-wifi-v3-0-fec6ac8dba02@smankusors.com>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -54,14 +54,13 @@ Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-msm@vger.kernel.org,
  linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org, 
  Rudraksha Gupta <guptarud@gmail.com>, 
- Antony Kurniawan Soemardi <linux@smankusors.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+ Antony Kurniawan Soemardi <linux@smankusors.com>
 X-Mailer: b4 0.15.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1780304027; l=1190;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1780304027; l=2923;
  i=linux@smankusors.com; s=20250609; h=from:subject:message-id;
- bh=3x4Sjl/Z93v5wyWFXzyT8HeKEXnoUXo1SQv4Qmdyns8=;
- b=i5k/lpqnkCnxZvQlX21Yab33DtDEn7qllymOMC/ZHP735xg/7eicdkYp6GAUvz8yTkSM2ak8N
- Zxq1Vh0TPRRClt/RFn3R5KsPjT+M1YIbBppH8wpPTLTYN4bFs6ZFnXJ
+ bh=32ZymvMrhIo7H/CNyMPinvKnQWUexCVZ/Ovdq4FH2Hk=;
+ b=sOsRUlMVC7iUDDw/6huUA68WGxnRZnJOoTenq/tYFXKvkRiZYKYVhZ4cdlq/EOmIqRHCLuKw1
+ Lr4G5o3PVyfCYhVvcI8zDI2YnPtny/StmMTGyAarGSbpeFCBDXOZGT1
 X-Developer-Key: i=linux@smankusors.com; a=ed25519;
  pk=65wTy06fJl2/h/EJwjr704YG+yjHFhZObJBWzzK+N00=
 X-Endpoint-Received: by B4 Relay for linux@smankusors.com/20250609 with
@@ -71,35 +70,91 @@ Reply-To: linux@smankusors.com
 
 From: Antony Kurniawan Soemardi <linux@smankusors.com>
 
-Add compat for Smart Peripheral System (SPS) Interrupt Controller (SIC)
-present on Qualcomm MSM8960 SoC.
+Document the qcom,rpmcc-msm8960 compatible.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+The MSM8960 platform shares the same RPM clock definitions as
+APQ8064, so extend the existing conditional schema to treat
+qcom,rpmcc-msm8960 the same as qcom,rpmcc-apq8064.
+
 Signed-off-by: Antony Kurniawan Soemardi <linux@smankusors.com>
 ---
- Documentation/devicetree/bindings/mfd/syscon.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ .../devicetree/bindings/clock/qcom,rpmcc.yaml      | 63 ++++++++++++----------
+ 1 file changed, 34 insertions(+), 29 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mfd/syscon.yaml b/Documentation/devicetree/bindings/mfd/syscon.yaml
-index e57add2bacd3..39a24c3ff9cf 100644
---- a/Documentation/devicetree/bindings/mfd/syscon.yaml
-+++ b/Documentation/devicetree/bindings/mfd/syscon.yaml
-@@ -106,6 +106,7 @@ select:
-           - nxp,s32g3-gpr
-           - qcom,apq8064-mmss-sfpb
-           - qcom,apq8064-sps-sic
-+          - qcom,msm8960-sps-sic
-           - rockchip,px30-qos
-           - rockchip,rk3036-qos
-           - rockchip,rk3066-qos
-@@ -219,6 +220,7 @@ properties:
-               - nxp,s32g3-gpr
-               - qcom,apq8064-mmss-sfpb
-               - qcom,apq8064-sps-sic
-+              - qcom,msm8960-sps-sic
-               - rockchip,px30-qos
-               - rockchip,rk3036-qos
-               - rockchip,rk3066-qos
+diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml b/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
+index ab97d4b7dba8..de8c2a96d8d4 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
+@@ -21,35 +21,40 @@ description: |
+ 
+ properties:
+   compatible:
+-    items:
+-      - enum:
+-          - qcom,rpmcc-apq8060
+-          - qcom,rpmcc-apq8064
+-          - qcom,rpmcc-ipq806x
+-          - qcom,rpmcc-mdm9607
+-          - qcom,rpmcc-msm8226
+-          - qcom,rpmcc-msm8660
+-          - qcom,rpmcc-msm8909
+-          - qcom,rpmcc-msm8916
+-          - qcom,rpmcc-msm8917
+-          - qcom,rpmcc-msm8936
+-          - qcom,rpmcc-msm8937
+-          - qcom,rpmcc-msm8940
+-          - qcom,rpmcc-msm8953
+-          - qcom,rpmcc-msm8974
+-          - qcom,rpmcc-msm8976
+-          - qcom,rpmcc-msm8992
+-          - qcom,rpmcc-msm8994
+-          - qcom,rpmcc-msm8996
+-          - qcom,rpmcc-msm8998
+-          - qcom,rpmcc-qcm2290
+-          - qcom,rpmcc-qcs404
+-          - qcom,rpmcc-sdm429
+-          - qcom,rpmcc-sdm660
+-          - qcom,rpmcc-sm6115
+-          - qcom,rpmcc-sm6125
+-          - qcom,rpmcc-sm6375
+-      - const: qcom,rpmcc
++    oneOf:
++      - items:
++          - enum:
++              - qcom,rpmcc-apq8060
++              - qcom,rpmcc-apq8064
++              - qcom,rpmcc-ipq806x
++              - qcom,rpmcc-mdm9607
++              - qcom,rpmcc-msm8226
++              - qcom,rpmcc-msm8660
++              - qcom,rpmcc-msm8909
++              - qcom,rpmcc-msm8916
++              - qcom,rpmcc-msm8917
++              - qcom,rpmcc-msm8936
++              - qcom,rpmcc-msm8937
++              - qcom,rpmcc-msm8940
++              - qcom,rpmcc-msm8953
++              - qcom,rpmcc-msm8974
++              - qcom,rpmcc-msm8976
++              - qcom,rpmcc-msm8992
++              - qcom,rpmcc-msm8994
++              - qcom,rpmcc-msm8996
++              - qcom,rpmcc-msm8998
++              - qcom,rpmcc-qcm2290
++              - qcom,rpmcc-qcs404
++              - qcom,rpmcc-sdm429
++              - qcom,rpmcc-sdm660
++              - qcom,rpmcc-sm6115
++              - qcom,rpmcc-sm6125
++              - qcom,rpmcc-sm6375
++          - const: qcom,rpmcc
++      - items:
++          - const: qcom,rpmcc-msm8960
++          - const: qcom,rpmcc-apq8064
++          - const: qcom,rpmcc
+ 
+   '#clock-cells':
+     const: 1
 
 -- 
 2.34.1
