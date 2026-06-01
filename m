@@ -1,71 +1,86 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24541F0991
-	for <linux-clk@vger.kernel.org>; Mon,  1 Jun 2026 11:42:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455E71A9F85;
+	Mon,  1 Jun 2026 11:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780314140; cv=none; b=uwtvfThZQiZ3IMJWRn3V9H7r+grKYHks2rKVDRoAtXiWN3xgNDIlE0cq7QMCB1DaBq9nRadlWhHJmCXVjx4xmNWodGJ9sLta6B/3X3bivda0yhSxPLAZoIyxhi5nansF8khr2DMyW4ti3JNbhnhStDyLEQ/p+CQlNTS6M2mqV2I=
+	t=1780315091; cv=none; b=I+SyuMHOD9YnUPearh6OQJTyOQOnX/8neQ9zO5XrOUCLWqcIQFIkMi6B639xl1VRjvaBMiiU7+0lt+p4ntzISmRnszJ3EGshuCy9teG2ZZ8jZ6VZgjNjNQUluS1X4cWQzRmYovBeRQFJcVIthmeGJeMGwIUpBysLT5bfis7IljQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780314140; c=relaxed/simple;
-	bh=BdNRVq2atRBZarTKl8e8ZcvM5PWuwjW3N5EwPhTTIDQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hGeIqjbWtuxpYaRoeWlcQL1anVu4haEIeYs6prDJPV2gE/6WxZ6bdnl8eDr3+NuDX9DZa5czR1uXPRDSWhIlGkPncz2zVS0wVaBuH0vw0WV4VqfYPjC+zQgUZ0rO2st2YHir8rkNtSpFPoT/8n+IIorplPCLSxnAjG5WVUH5rLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72AF21F00893;
-	Mon,  1 Jun 2026 11:42:16 +0000 (UTC)
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-To: sboyd@kernel.org,
-	mturquette@baylibre.com,
-	linux-clk@vger.kernel.org
-Cc: claudiu.beznea@tuxon.dev,
-	nicolas.ferre@microchip.com,
-	alexandre.belloni@bootlin.com,
-	conor.dooley@microchip.com
-Subject: [GIT PULL] Microchip clock fixes for v7.1
-Date: Mon,  1 Jun 2026 14:42:14 +0300
-Message-ID: <20260601114214.2652969-1-claudiu.beznea@tuxon.dev>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1780315091; c=relaxed/simple;
+	bh=gV80S2Prpyh3JVlmesAo80VwX/qBGpVerSUaZhFwKr8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qR0uBeGWYmVpibQ3cuzYTz/ZcdAwOz46pdkxi/4ggTHyIcSCJ8oqBghjHhM4jlWDz7HU2JJ/QSAsSNNAM4EGuQl/TVdAPcx5fHUTMzpjVfTZmX33lK6Rw3CBURM9uoOk/x9qY2m65VmXfLQ1nHcGUb0Vh8Y5K6frNThRaAW/8xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=axP2IBgM; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="axP2IBgM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D55491F00893;
+	Mon,  1 Jun 2026 11:58:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1780315089;
+	bh=gV80S2Prpyh3JVlmesAo80VwX/qBGpVerSUaZhFwKr8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=axP2IBgMMTMyGMBeGAiVLHUo4Wz5ifiaj9GgFRUZxcdu3oSILLQOyNkng9O/0sCSr
+	 AJztpZPXtwW6+u4al/T8VTY7GkOKTVm4cohoEa96tiG/onjH/+KHKe9WyCiqW+9XiJ
+	 z0i4ja5EyU5x0DZjKu7O0KkmuIQ7VJHNEOF6cKOPkCcCeApjzeQYUZ1taglGyPGmhV
+	 HcSgjkpkxWtvuSUGei/kB7XWlmvc39lAOdmQhznAqB/Z5S8TSOFLPoBqCjpNvShfLl
+	 WNpVH75sY8BL2UO1PI2DfMk08t7vU37tomaACM5WVVfHpd8b1nHLUTOlvrB1umwPCz
+	 8jAIBBwxnaolA==
+Date: Mon, 1 Jun 2026 12:58:05 +0100
+From: Mark Brown <broonie@kernel.org>
+To: joakim.zhang@cixtech.com
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de,
+	lgirdwood@gmail.com, cix-kernel-upstream@cixtech.com,
+	linux-clk@vger.kernel.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH v1 6/7] dt-bindings: sound: cix,sky1-ipbloq-hda: add hda
+ dma memory-region
+Message-ID: <413c7fa5-0a48-477f-b256-1b6eb5c1fcab@sirena.org.uk>
+References: <20260530021642.64059-1-joakim.zhang@cixtech.com>
+ <20260530021642.64059-7-joakim.zhang@cixtech.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="LoJCld3jqIwa58iJ"
+Content-Disposition: inline
+In-Reply-To: <20260530021642.64059-7-joakim.zhang@cixtech.com>
+X-Cookie: Have a nice day!
 
-The following changes since commit 254f49634ee16a731174d2ae34bc50bd5f45e731:
 
-  Linux 7.1-rc1 (2026-04-26 14:19:00 -0700)
+--LoJCld3jqIwa58iJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-are available in the Git repository at:
+On Sat, May 30, 2026 at 10:16:41AM +0800, joakim.zhang@cixtech.com wrote:
+> From: Joakim Zhang <joakim.zhang@cixtech.com>
+>=20
+> Document the reserved memory region used for IPBLOQ HDA DMA buffers and
+> require it in board DTS.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git tags/clk-microchip-fixes-7.1
+Please submit patches using subject lines reflecting the style for the
+subsystem, this makes it easier for people to identify relevant patches.
+Look at what existing commits in the area you're changing are doing and
+make sure your subject lines visually resemble what they're doing.
+There's no need to resubmit to fix this alone.
 
-for you to fetch changes up to 22fa1c39ba6fe726b547c877c924379b7fee260a:
+--LoJCld3jqIwa58iJ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  clk: at91: keep securam node alive while mapping it (2026-05-31 17:17:55 +0300)
+-----BEGIN PGP SIGNATURE-----
 
-----------------------------------------------------------------
-Microchip clock fixes for v7.1
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmodc8wACgkQJNaLcl1U
+h9CIDwgAgPIwpt2jYN5quv+o4VXlicNz49mjzlODDmJ2ktyn4ak5XdjwIsXbED6w
+Ze0X2iNNEmD+sezpmRJvwnPRf/oqr/KUCPKHUlee/1kG+v6VB34D+Zzw0ZNk858y
+hGp18H70jBrbuvQ0O5Ga/rd/OV6wFAweIhxDlaFkXCLcqC96tpg9kIa32Q0Lqwc4
+u7O0j2AHFEm2rE6x/w9ho4ZDBK8fHNSzgtvZfhhN9UUCRy+YXfVs8fVMwwfIYqHi
+xqBx9rzak+DXQ4RsalQXMNVXdgpi6T0nbPfhxxBfKKm0zKdssPwDxi3OpOdh9pYZ
+P/oaN6Er/pjkxJr0dWF7vwE8qpL8JQ==
+=vnSs
+-----END PGP SIGNATURE-----
 
-This update includes:
-- fix the GMAC GCLK clock ID for the SAM9X7 SoC
-- properly decrement the reference count of a struct device_node
-  in pmc_register_ops() after it is no longer needed
-- fix the MPFS peripheral driver registration failures by using the proper
-  size and mapping for the output clocks array
-
-----------------------------------------------------------------
-Conor Dooley (1):
-      clk: microchip: mpfs-ccc: fix peripheral driver registration failures after oob fix
-
-Mihai Sain (1):
-      clk: at91: sam9x7: Fix gmac_gclk clock definition
-
-Yuho Choi (1):
-      clk: at91: keep securam node alive while mapping it
-
- drivers/clk/at91/pmc.c               |  2 +-
- drivers/clk/at91/sam9x7.c            | 18 +++++++++---------
- drivers/clk/microchip/clk-mpfs-ccc.c | 15 ++++-----------
- 3 files changed, 14 insertions(+), 21 deletions(-)
+--LoJCld3jqIwa58iJ--
