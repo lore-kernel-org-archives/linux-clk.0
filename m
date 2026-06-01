@@ -1,149 +1,173 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44B3347535
-	for <linux-clk@vger.kernel.org>; Mon,  1 Jun 2026 08:48:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7EF3403E8;
+	Mon,  1 Jun 2026 08:53:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780303709; cv=none; b=NG2e8s5V6XUP8Z+LJxVTbOLJckeJDQFRnLN/VQF0hPci73FO0Y6Ef537jc4JEqAQE+O91HrPfzr8lIW0NQUXFqyb4m0CzVDzFENMTV3i3v40f53+civfUZ1Ron39DyHqUSF3RGQiCu11BJ5C/wAytF8ktPvyBw5sno7xQDV9fJI=
+	t=1780304029; cv=none; b=TjAT8SUPzbd+UdA2rqTtf1Kjo/y8vcvjvJg0qZVywLO70uX3Sv3Gek9uNVFX8nsFiQMKMqtAF53nHC6EGCbjYwy1h9b+yEARg9w6bc1We49Dy7oCqUV7xwpxeJdcnHz9HL8+XftKfPdyllkKi3QnAv0ERRhNt51rLF5Rg0TaXQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780303709; c=relaxed/simple;
-	bh=fk629VZBGTRm9OfLwrzcQ1hhc5VKHeUR7OD/kkF1Kgw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LwlyaxdHDl2brF2Vy5DkNgQ1OV271AnwqZEfQSNZ69ms31YTWySkIeoHNtJzxaT0qIIRQfRjHjUm2ounglswpjEKySx7uw0w+q4PSr4M0rNnVqQ+PbtAcJqakQbbH87CY47VJunGdkWCwkUavS6bVwjzsjTiLpv4UqGHi75sOlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=pR5oT5Ik; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1780304029; c=relaxed/simple;
+	bh=DsSVLPwsghD+jL0LVJUHYWW+HUk1VORiOmwqCQCX6G0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=S1LdankaKLT1SqkgxJmihB97qR1Gt2u0gowymZckJiJZ7q0hKI+BmbFTKQvVdJd2PnuS42PNDYiVMrxIJFbiis6LSF4Bdhx1c4k6+C47y0s8OU+crWtrHGw3zsgWsZdjcLZ8RbqF5qatzLpjPgZp5VWM0eeyrYvEE9QVugneL0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mNnTg8dJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pR5oT5Ik"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-45ef616daf6so2418944f8f.3
-        for <linux-clk@vger.kernel.org>; Mon, 01 Jun 2026 01:48:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780303706; x=1780908506; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=e6R97isaU/cFcZ2I9WM2rO8XYaMDHSz/qiNm9k/zmx4=;
-        b=pR5oT5IkeJQ4SZNBGG4/EXkm2HmFeONoBn2YSWyyVn3gTy/vfKU7B8bGUv7Wbpq6ts
-         PYSFMY0EkGQK8UwXUOk7OWeSSgfP8aBLhFsBpZxDOQMappRG60cGDZE0aysqda65T6UR
-         WPhlwTrDG5Qq4j6TmGH8o8xEJliTdM8YYSFOA5qLsOQ5iRJm9MWyWCIP3yM2RbaQ4i5J
-         Rdv7kwUjEZEcYl58vN5v0pfP4Wbo4b4lRHZ//NzWdTZkQ25+La7zKWTUpWeafHGAPFPY
-         uvbDFZG7601ba+VVAGx/U/l6bQb+/mP5IjACDF/Q2lt2i0GeYYRRH40Ksv1TBGTzIIn2
-         SBIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780303706; x=1780908506;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=e6R97isaU/cFcZ2I9WM2rO8XYaMDHSz/qiNm9k/zmx4=;
-        b=awUnrUR0/r5FSVQdQeEN4i5gElFQSUMf/gLKnJq5wX0FUpNEKcbyvBLp92rNfhDqq6
-         0dzX3A1mr1jlkjauW3SojMhjfv7GD8DzS4tyHgrzcXUDLlH65sDfkBNpqD7tTzmDqJQ0
-         MhfvOo6InmhYPAo2Ho64OtXva7x3BU6oIcJVgKQJFh4oyeIpTSHVOC7VDzrevMVsi/6S
-         zSMM3Ax4EtYtF8PK2weo6d8U3tM0BRZUB4T2yBWysCw4A0sMN1cXjGTKVZFomQL/JfBS
-         XtsXpiFkLZYrIHikkqxx+/mvX1JKT5GFUxWq2CWPiRgBf7pAavYaJWB5mun2pksKLxrI
-         E2BQ==
-X-Forwarded-Encrypted: i=1; AFNElJ8QYaLhkoJ14UhM3cYyNDQH+TTfdyypUY/1IxyrDJAu5vkygKsNZbXnAE3YDclcQ3dUlCXGfVaUgSo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZY6Bwe5tw3a47vp4Xh5LRvTec8DKXQGxaN43/pp7SlBTv++ls
-	dt/oJLfrfJUE+9agZVOpzJO/Ml/0WJDaPl2CXTGjblySL0cgib0qnkap
-X-Gm-Gg: Acq92OGqrCxcHmCB9iC0clelLdPaHasB6+/kkbjugotogaGFiD8VB1WVYdQUtPzlzhA
-	TJCTIzEJl4M9NYXi6oNnAhGrkJXJY4YCFDkF8+0iI/ryVvdtNg9bWTo41fbb9znak0VVZiDQ3eU
-	UI1D7Yg1f9YX2WDqWBgVVfzQlV4nkpFeJHWbBO6yHeHylTmovAhXtn7tIR5ij0DmhxBD+dcvf0/
-	aP7zzpdm2G2gFR1ZMJbImtycliDd0mgst1UT6gP/P7N5VH5AV6w+pir5Vg+fQcaoJey2XUB83Ar
-	CEoZ7/uqQObTEUO8VazNDc32EZs1ONnHfmsKmGnHVUzz2HXEhYAt77+1fnaSoTBrhSI02YbDi6q
-	EneoQvw6qZpZwA4BaztMr7TBsF3Ir/aGNgIgXqfuUtqf3+a1/0LSVhKJCbqrBzFunDGWW0WUMFY
-	I2cTidVIyO3w/QyFUUzcJaUclgDJXWxgh50GwLdF70fiWstsYpTLRcAVNdbAQQcDjhE/cj7Xbhj
-	RM59slOOg==
-X-Received: by 2002:a5d:49c2:0:b0:455:7d77:1d25 with SMTP id ffacd0b85a97d-45ef6b75cf8mr13497273f8f.27.1780303705968;
-        Mon, 01 Jun 2026 01:48:25 -0700 (PDT)
-Received: from ?IPV6:2a00:f502:260:28a1:17cc:dada:92e7:2b6a? ([2a00:f502:260:28a1:17cc:dada:92e7:2b6a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45ef34a0374sm21522883f8f.2.2026.06.01.01.48.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Jun 2026 01:48:25 -0700 (PDT)
-Message-ID: <22f344ff-acc4-47f8-935b-d1c3be7073ee@gmail.com>
-Date: Mon, 1 Jun 2026 11:48:23 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mNnTg8dJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 29F35C2BCC6;
+	Mon,  1 Jun 2026 08:53:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1780304029;
+	bh=DsSVLPwsghD+jL0LVJUHYWW+HUk1VORiOmwqCQCX6G0=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=mNnTg8dJlqUNrJWix1hBMquQRH+V96l5SM1nlgftEkSSyrgOxEmXowhqXROgHTTUg
+	 NH5qjH8zvAUyfyDNlGqoeme2+klYeJvjXwBZTV7R1TevFQJdt5SDFVdmMus1NdVZbv
+	 K1c4WnPLHOGZyDlO3Wjb0XYG42Qx+1LYgtpMSVItDxip6QmQr008IAQH7m51fEaO2W
+	 tEP4JO9RTRjhgF57RhGu48bhEsuFhueo1HbfyHGxd+ST8Vj1ah/RXFJ6wY+D3ntYYq
+	 rFqHgHvIrpSzT1xlazpyjUjJx9ObZWP7pjon4ln8Mz4PLlEnwwnH2R4eRONizj2PNj
+	 NSk3/zbQC/jdg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B1EFCD6E56;
+	Mon,  1 Jun 2026 08:53:49 +0000 (UTC)
+From: Antony Kurniawan Soemardi via B4 Relay <devnull+linux.smankusors.com@kernel.org>
+Subject: [PATCH v3 00/10] ARM: qcom: msm8960: enable WCNSS (Bluetooth &
+ Wi-Fi)
+Date: Mon, 01 Jun 2026 15:51:13 +0700
+Message-Id: <20260601-msm8960-wifi-v3-0-fec6ac8dba02@smankusors.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 2/9] clk: qcom: gcc-msm8939: mark Venus core GDSCs as
- hardware controlled
-To: Taniya Das <taniya.das@oss.qualcomm.com>,
- Bryan O'Donoghue <bod@kernel.org>,
- Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
- Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- phone-devel@vger.kernel.org
-References: <20260519-msm8939-venus-rfc-v8-0-542ec7557ebc@gmail.com>
- <e7WD-tbtAA7Bx0uDnXgPHto9hACWxgblhI2eitNHX4VYEgxOOceuY0sOS6KQnGiyTaDYaKudZt4k50z_vJVpnw==@protonmail.internalid>
- <20260519-msm8939-venus-rfc-v8-2-542ec7557ebc@gmail.com>
- <608dc53d-17a8-4230-9ebb-48a94bf03675@kernel.org>
- <6ae3a89c-f205-45c5-87c0-5550f78502d6@oss.qualcomm.com>
- <01f9a303-846a-4048-8115-c94b9b78078a@gmail.com>
- <ecaa113a-02d7-48b6-a94e-9299a684b0be@oss.qualcomm.com>
- <4JzpVyRt008YHZIv34VGG-Z_etL_fh9cE8AL30d-uekLUAxGmZNV9os6xkESzPAyzDHFHA9XXyPgWxzBlEfnhQ==@protonmail.internalid>
- <d8177e27-7cd6-43f2-b88b-2dbce936421b@gmail.com>
- <82f7a200-ab07-4ff4-b84e-305351f78460@kernel.org>
- <4ab6aa28-6b0b-436f-95d3-23b54d73a992@oss.qualcomm.com>
-Content-Language: en-US
-From: Erikas Bitovtas <xerikasxx@gmail.com>
-In-Reply-To: <4ab6aa28-6b0b-436f-95d3-23b54d73a992@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAJIHWoC/2XQ20rEMBAG4FcpuXYk5x4Q8T3Ei0kytWFt6ybdq
+ iz77qZdQXQv/8B8M3/OLFOKlFlXnVmiNeY4TyWou4r5AadXghhKZpJLI6S0MOaxaS2Hj9hHcEQ
+ +tNZbqy0rI++J+vi5c88vJQ8xL3P62vVVbK8bZLkW+i+0CuDAed0HbIMVSj/lEafDKc8p3/t5Z
+ Ju2yl/B3AiyCLV3SNoEdIZuhMv1wETHU6m5XK9kI+WMe82uevihLRzLBPgIQ0ge/NvsD1CKbUs
+ EIJJvglKBI/5b8rh9gsNMUMIYl66quWq54SKIVuugybimr5WRjkTDe09OodZCyXLe5RsqozLcj
+ QEAAA==
+X-Change-ID: 20251226-msm8960-wifi-beecd96c6646
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org, 
+ Rudraksha Gupta <guptarud@gmail.com>, 
+ Antony Kurniawan Soemardi <linux@smankusors.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.15.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1780304027; l=4535;
+ i=linux@smankusors.com; s=20250609; h=from:subject:message-id;
+ bh=DsSVLPwsghD+jL0LVJUHYWW+HUk1VORiOmwqCQCX6G0=;
+ b=UFxuBmGAcYFNBE9kQNLgpo0vidcpULQcnVhDoLvbkYDPDSlV0aV7Alb9ACv36CvqsHx8AXLwp
+ RHNS0aXgOSVC/JnTvqVpJwxu9O4xQ/wEYpYGJNwK16Aeocv0JTzdihX
+X-Developer-Key: i=linux@smankusors.com; a=ed25519;
+ pk=65wTy06fJl2/h/EJwjr704YG+yjHFhZObJBWzzK+N00=
+X-Endpoint-Received: by B4 Relay for linux@smankusors.com/20250609 with
+ auth_id=733
+X-Original-From: Antony Kurniawan Soemardi <linux@smankusors.com>
+Reply-To: linux@smankusors.com
+
+Enable the WCNSS (Riva) subsystem on MSM8960-based devices to support
+Bluetooth and Wi-Fi.
+
+Add the required device tree nodes and resources, including memory
+regions, clocks, interconnects, and communication interfaces used by
+the WCNSS firmware and drivers.
+
+Changes:
+- Add Riva (WCNSS) nodes: firmware memory, WCN3660 iris radio,
+  Bluetooth and Wi-Fi subdevices, and pinctrl states
+- Add SMSM and SPS nodes for coordination with the WCNSS subsystem
+- Add shared memory and hardware lock for inter-processor communication
+- Add SCM node for secure channel manager interaction
+- Add RPM clock controller and required QDSS clock resource
+- Add bindings for SPS interrupt controller and RPM clocks
+
+This series supersedes the earlier dt-bindings-only submission [1] and
+includes the corresponding driver and DT integration changes.
+
+This patch series depends on:
+  [2] "dt-bindings: usb: ci-hdrc-usb2: allow up to 3 clocks for
+  qcom,ci-hdrc"
+for fixing the USB controller clock configuration on MSM8960.
+
+Tested on:
+- Sony Xperia SP
+- Samsung Galaxy Express (SGH-I437) - requires additional work for
+  firmware loading (separate series pending)
+
+Known limitations (not addressed in this series):
+The wcn36xx driver appears to misclassify 2.4 GHz networks as 5 GHz
+during hardware scanning, preventing association with 2.4 GHz networks.
+This issue has also been observed on MSM8916 and MSM8953 platforms
+using WCN3620 [3][4].
+
+[1] https://lore.kernel.org/all/20260218-msm8960-sps-rpm-bindings-v1-0-bbc11c0d4f24@smankusors.com/
+[2] https://lore.kernel.org/all/20260516-qcom-ci-hdrc-clock-fix-v2-1-aaec8d33d0aa@smankusors.com/
+[3] https://github.com/msm8916-mainline/linux/commit/cc4abc694fcf2c942410136bc58a61e79bf21e83
+[4] https://github.com/msm8953-mainline/linux/commit/779c9627ec0b971bf466588e64fe530cf78a414d
+
+Signed-off-by: Antony Kurniawan Soemardi <linux@smankusors.com>
+---
+Changes in v3:
+- Dropped unnecessary pxo and cxo clock validations for
+  qcom,rpmcc-msm8960
+- Dropped unnecessary example for rpmcc bindings
+- Reorder USB clock entries to match the updated ci-hdrc binding, using
+  iface, core, fs order.
+- Link to v2: https://patch.msgid.link/20260514-msm8960-wifi-v2-0-7cbae45dab5e@smankusors.com
+
+Changes in v2:
+- Updated cover letter about the previous dt-bindings only submission
+  and the dependency on the USB controller clock fix series
+- Drop the apq8064 reference from the commit message for adding msm8960
+  QDSS clock resource
+- Add fallback compatible "qcom,rpmcc-apq8064" in the rpmcc node
+- Updated qcom,rpmcc dt-bindings to allow for fallback compatible
+- Put clocks, clock-names, reg, reg-names, interrupt-names, &
+  smem-states entries one per line in the rpmcc, riva, and wifi nodes
+- Move riva pinctrl assignments to SoC DTSI
+- Renamed hwmutex to hwlock for consistency with the dt-bindings
+- Link to v1: https://patch.msgid.link/20260414-msm8960-wifi-v1-0-007fda9d6134@smankusors.com
+- Note: an incomplete v1 also exists at https://lore.kernel.org/all/20260414-msm8960-wifi-v1-0-01c081e54610@smankusors.com/
+  due to SMTP rate limit. Please ignore that thread.
+
+---
+Antony Kurniawan Soemardi (10):
+      dt-bindings: clock: qcom,rpmcc: add msm8960 compatible
+      dt-bindings: mfd: syscon: add qcom,msm8960-sps-sic
+      mfd: qcom_rpm: add msm8960 QDSS clock resource
+      clk: qcom: clk-rpm: add msm8960 compatible
+      ARM: dts: qcom: msm8960: add RPM clock controller and fix USB clocks
+      ARM: dts: qcom: msm8960: add SCM
+      ARM: dts: qcom: msm8960: add SMEM & hwlock
+      ARM: dts: qcom: msm8960: add SMSM & SPS
+      ARM: dts: qcom: msm8960: add Riva
+      ARM: dts: qcom: msm8960: huashan: enable Wi-Fi and Bluetooth
+
+ .../devicetree/bindings/clock/qcom,rpmcc.yaml      |  63 ++++----
+ Documentation/devicetree/bindings/mfd/syscon.yaml  |   2 +
+ .../boot/dts/qcom/qcom-msm8960-sony-huashan.dts    |  15 ++
+ arch/arm/boot/dts/qcom/qcom-msm8960.dtsi           | 170 ++++++++++++++++++++-
+ drivers/clk/qcom/clk-rpm.c                         |   1 +
+ drivers/mfd/qcom_rpm.c                             |   1 +
+ 6 files changed, 221 insertions(+), 31 deletions(-)
+---
+base-commit: 70390501d1944d4e5b8f7352be180fceb3a44132
+change-id: 20251226-msm8960-wifi-beecd96c6646
+prerequisite-message-id: <20260516-qcom-ci-hdrc-clock-fix-v2-1-aaec8d33d0aa@smankusors.com>
+prerequisite-patch-id: 37c7328450164a1a8997da541eba1e8ec144724a
+
+Best regards,
+--  
+Antony Kurniawan Soemardi <linux@smankusors.com>
 
 
-
-On 6/1/26 11:29 AM, Taniya Das wrote:
-> 
-> 
-> On 5/26/2026 4:20 AM, Bryan O'Donoghue wrote:
->> On 25/05/2026 10:56, Erikas Bitovtas wrote:
->>> +    for (; i < res->vcodec_pmdomains_num; i++) {
->>> +        pd_dev = core->pmdomains->pd_devs[i];
->>> +        ret = pm_runtime_resume_and_get(pd_dev);
->>> +        if (ret)
->>> +            goto err;
->>> +
->>> +        ret = dev_pm_genpd_set_hwmode(pd_dev, true);
->>> +        if (ret && ret != -EOPNOTSUPP) {
->>> +            pm_runtime_put_sync(pd_dev);
->>> +            goto err;
->>> +        }
->>> +    }
->>
->> In Iris we do
->>
->> - enable_power_domains
->> - enable_clocks
->> - set hwmode
->>
-> 
-> This sequence will always ensure clock can be polled as the GDSC is
-> still in SW mode.
-> 
-> 
->> Instead of
->>
->> - enable_power_domains
->> - set hwmode
->> - enable clocks
->>
-> 
-> This sequence will require the clock to have SKIP or DELAY as the GDSC
-> is moved to HW mode and it is not guaranteed to match the SW expectation.
-> 
-> 
-Thank you for the explanation. I fixed the sequence in v9 - clocks are
-now enabled before switching to HW mode, not after.
