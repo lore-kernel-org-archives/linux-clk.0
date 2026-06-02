@@ -1,87 +1,87 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD07C3EDE57
-	for <linux-clk@vger.kernel.org>; Tue,  2 Jun 2026 15:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B99D23EFFDB
+	for <linux-clk@vger.kernel.org>; Tue,  2 Jun 2026 15:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780413737; cv=none; b=MWYmyEyd4DKL/2SFv68ScPxZ3GCDpd3Ol541idFIq2Ol4jeyD47B3+kzyLmO/hNLYuka6hai0UdGcN+2vA9wjFQ/CJ5162l8johnPwiMiTH2YvaPYGij6X6yXkL0c5Ofv4HkfQ9xwpzOe+NX05VmQVKoRu0zNj3AIL0kD2gxjUk=
+	t=1780413744; cv=none; b=CtB97S/h+tVCEoPz+p90Io7LdMcWN/unRltVkHscuGH+oIVs1A4qFwc5+1kRV74L5yBlUfoQ4Awyt44VXpgp1c7waY0e/apboI4EZfVcOAzY31UY7gJ3u1++bpvIcTexcoXpgr60unZesnKzhwwZEAh8DPa/QfvCzKV49FJc+fE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780413737; c=relaxed/simple;
-	bh=1vdQRDwfdLjItGddnhWnfWFV7jqHElgyRnb5iEra5UY=;
+	s=arc-20240116; t=1780413744; c=relaxed/simple;
+	bh=drZJ3ZgjFEHArF7GLWJVFaud3uQEkhUjrL574rDJUu0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SIkeVf3C8Ot1NaDQ4SpVrBmbY7Qiq200HjC9zljWOAcaup7FTAQ4kAeIXVpAPu4RfAYDFhDtgx6gTOWJyh6oo5Sycosqb2l5HrCLi+Qw1r8abWiRG57FQYGg260vh7zwckONmqjLnn1hPqPGKMmfmwovVc5JS+d/QucToN9awuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AR7lZ1uj; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=AVUuz3xB; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:To:Cc; b=TYaNLlvCmt8bOUb3RLSDamBjcQK9Plo4pIVzgB36HhwkbAb/T9ekiuhw7o//X955IEPpHpSXsPPcGLJukhstFCC0BHNhceC25jLaDIfhNKqXQCrb8e2TAqUBvMqXBS2wq6MLIm50seNRQc5mcfvckN5FeIKrUOUzSbrayvUoOmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fa6s6VUV; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=QtZEeYws; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AR7lZ1uj";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="AVUuz3xB"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 652F1rXl3430258
-	for <linux-clk@vger.kernel.org>; Tue, 2 Jun 2026 15:22:15 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fa6s6VUV";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="QtZEeYws"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 652E9LHw1639570
+	for <linux-clk@vger.kernel.org>; Tue, 2 Jun 2026 15:22:21 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	v1ujocze5l5WOhdc0MZh0kZJ1I5Y+xYkTRZ1YFq3Teg=; b=AR7lZ1uj5AfibhgU
-	YhGVGjUKg5j+Kz+nEY1QGlaaYhoZWi9u1/JBGNFIS5+UhwpB4sDgmfDZQ0FRgL2B
-	Kow7z0irCjoxU2mog7i8wlh4z8lC93ZIoS4Ip0JdzomFLUgzYFZH8Q91Z3IYnuT+
-	rtJ/V0hpKHiXN8fuqaGw14mAPKTgwxzMy7hzNrnlotDHOI45vkNmCd5ldIQKvrvf
-	DNTWu+gS+j9tT3g2Eyk3dzsmGEBtEqVXgR5GqfkV+97KR8KDPcWiN19z4HkCa5Ke
-	RrvP/X/TAYDqQMsZEfZPIxMjbhUVGPUogrtm3KH40cWNo3t1Jy4hKDvt9NacTWhB
-	UCa/Pw==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ehn8mk6ss-1
+	a5Co9A3aIvLKh8iqOJ6Aa43KQiBGm8s3d3/lC8D60dQ=; b=fa6s6VUVVZL/lsV+
+	uv7GROZem/vzaoqVCdtTQHOE3AqIhIfM2N/KcQIV7K6scsasOI0OP8xO4zy/rs4n
+	5ifvg7y3X047+yYmUCpohCtKxsL82NBwjInDcg3VAytayIqhnsN7+x8iypSrKIIl
+	XKRBUYyXBlmiZIe6YK9IQq9Ad4+Pyb943RwFaX4X5l3r+8+fQ/9EBK0/7BiqBI9i
+	n1S2uK3omqWBer8zS857AEj7z5LMKbkty80n8JNm4apcvAB0SVjKJgy/G7RAPPge
+	56+PLHLtHojdygi55+pDmdIEzWiM8I1dgIZ2ntkBYA9sTrLLe+daSPWLp6zRyOoP
+	g1hQpg==
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ehu1chuc2-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 02 Jun 2026 15:22:14 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2c0532a6588so32167015ad.0
-        for <linux-clk@vger.kernel.org>; Tue, 02 Jun 2026 08:22:14 -0700 (PDT)
+	for <linux-clk@vger.kernel.org>; Tue, 02 Jun 2026 15:22:21 +0000 (GMT)
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-c856470fe9fso3511029a12.2
+        for <linux-clk@vger.kernel.org>; Tue, 02 Jun 2026 08:22:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1780413734; x=1781018534; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1780413741; x=1781018541; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=v1ujocze5l5WOhdc0MZh0kZJ1I5Y+xYkTRZ1YFq3Teg=;
-        b=AVUuz3xBOB4gUJMncRlwglRChlXe9COWMAz9A5vbxJHpdk4HOmAbKg5FXQT0nLbnZ6
-         5UmCCOfsL0FNBCmoNLQjEInwsp4s/460KknCfvYWXljRsDwsWrl2qfOWx0s1c5ZFCwoP
-         tFStih/EauD33qNiELfgKmfTlcRw76NEKiPD5VozGOCz+X7MxuhLdUtfnmd8n7yZPlH0
-         BwKcVa4ti/2Tr/YbQ2Ai2a8UGvlE3+LU7AipdPNpsTeZI0Rax8HykU1dBhiePaGVFabj
-         IcVwh0gxAjFfVlA+2J4a0YIC8djRJDylMREntRQBwgeSRKJs+uy0t3cMsSBE+Tmjcnqa
-         Nebw==
+        bh=a5Co9A3aIvLKh8iqOJ6Aa43KQiBGm8s3d3/lC8D60dQ=;
+        b=QtZEeYws0jJqBpy432Og6lH7CsudYr9v8Eh2wxh3enXll9TuGhZ1JoQd7VtaxAJbvW
+         98WHluLaTiuwC7VZwPmSGJnKvFf7lMEhEG8SdEW098JqKn2igiECyhq1SK7YZrOr0Ape
+         IEd1U9Dkm0b8NsYHJwmVKWdmQIyMZKElD04gQT0t0+R0CDwMz/swrwp8SCBHtVVRzhYd
+         QWqb6/kCgkO4AyblrWFC4PEGarDCuRJhvdqZryEOOpbMN1Z9Tfd9jTP653nFX8eu/UYB
+         lEpktSp+LzTgMmOOfLTOTa5iQz7wdhvaf1Gl2HQVIHBzWqM2jciT23BiSL+DQ6T374aP
+         U/+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780413734; x=1781018534;
+        d=1e100.net; s=20251104; t=1780413741; x=1781018541;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=v1ujocze5l5WOhdc0MZh0kZJ1I5Y+xYkTRZ1YFq3Teg=;
-        b=SV69Y/C9SbqlyX39z8czFbtexfBdpNoKp6dLVU76pebWcZ02bz4Xez/w1fYNWtm/Zj
-         Cn2r8vEkRU2gDi8pB1XzT3e7wFF4iGiK9v4wVZRIbhG8V0ueXvAvsl1M57K6xuvFYI9D
-         hdPPTlkVcfNUmB48UaeoJjVDoVWz6wwRYcPgAke5hBmsjzxgU3oDBWDaI+o0qfiTNryH
-         JH/e91UaCP4z8PAvsaBu/PeNi92dIV0/SzKSEjIxZtQIu1Vsj0cnLdO7rD2dW7pwEZ/F
-         p3PkCxPQogazPh0ThZWmUfrgoGQf7ZC1dHymkjGqaPQRciLRKWB70swI4+8Xqu4d6LHU
-         Cxjg==
-X-Forwarded-Encrypted: i=1; AFNElJ/MjrLNcKiDcNX6WBfw8csPjLIrsrAbxHeJlxMwsoQkMwMxxLW1CK/QCZ5UXOeaGLZe9ritBrRCJPM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyENJt9TlAHuv0h+qaKu/+hcSL5mAZe0WeY/PQ8RZx+SWoYjbfE
-	uvBDohfaDzD8D2bDlbwKFGcYAqsOCcsn9aTvA++ct7UtgIz7cElIkD76BZX0jdEGinZsYjForUp
-	PLPFnGRd/jLTgSiV/51+EqWnJIpqw9mOs4lTULfNXJcxn5YgL4iAeX0+I2nG786w=
-X-Gm-Gg: Acq92OGB93GiyCpOOPIcNg8Xa9g7ng5zW8W33hgk5a7scolM5lwgKrxIdeOYK8Iz7aA
-	ar1yjj6OtoAbLWdZNrV8GZS6qXUQ0k3UumavWUuczbbu9IMKEORsPbT0XgcU16qVDXVZdbEi+JB
-	IrDlYXwi3sVMa3jMrU33KswldZO4PWisNBb9tJWiybtlRgNSn1jdzL3pSi/FjPWxgTIrLSKp4VB
-	VgwRGzS4qb5dTVnZKidJODs8v7z7p4k60R3L5t4fSDwJQ46Rdi0cLRyzA3vSJm/DOeslnQ1LgEm
-	J2/b+FvclSAPIVPL9DxP3eseiGlbvZxcDhfHdkQ7lNYyQQgSEBeOPy2g0LSS+ClwKTUwa+U+hwQ
-	A9TnI23ZescxbK/KeDgi2Rl8YWyA557p5mj58GV4OgmROoNnUtoH24zTl
-X-Received: by 2002:a17:902:ecc7:b0:2c0:b319:fb36 with SMTP id d9443c01a7336-2c0b31a00c7mr153525365ad.28.1780413734146;
-        Tue, 02 Jun 2026 08:22:14 -0700 (PDT)
-X-Received: by 2002:a17:902:ecc7:b0:2c0:b319:fb36 with SMTP id d9443c01a7336-2c0b31a00c7mr153524825ad.28.1780413733559;
-        Tue, 02 Jun 2026 08:22:13 -0700 (PDT)
+        bh=a5Co9A3aIvLKh8iqOJ6Aa43KQiBGm8s3d3/lC8D60dQ=;
+        b=JAqYjwDzDQ5fM6xn42sqvKqpVvH75yVNLzRcEf6PQ7IAi1sAPSpgaZN+410IEDuW+u
+         okTDtZeukWdsiNsPpZeGzE1v62JG38pQvNFTEoyVcFfCqbEktDrgVN+xtmXMnqeiNlsM
+         OIvp3L9lxq2cJrI4KKqunc3dXliz+RlzmWcRw02jZCLr5UoznLmNYDHp/kMyCcNhU2w3
+         KmhpI5SYt+IIbIfD9aVnNlTrp95nvTiWUYdfMF7b6nxMzGfr3gstN/OWqtZy/lPS7OzF
+         xdpVl1AwiNOc5nfElWOP+kgriG/yVdHVv3QYg9UamKiY2nWs+EYvMGV4nEhCcADoJemd
+         X50w==
+X-Forwarded-Encrypted: i=1; AFNElJ9EkWo+PKPrgKLlwhoPNkvgqEBEQCxnZSLAr2wvvgK5dpiL04EiYOHGDOcEJ8ldlk5wBWUHfCbIXI4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCu4+c/VnkJ02g8DKXFwtlSab7QQgrsk43JuRU5r129rWzNU6i
+	Ea8OTcAhsqGAgsvsPx9Pt+b9Owzuwj+I83SQDTTnjk6DI0T/Yb0UpCFWFFtwoFgAmhg/UmP7EPM
+	79KFlw/7tMzfuR1/B+QUbykxbzgwWqwqujh7O/8eSNR2cLipLDdqkZjWsJ+75nqw=
+X-Gm-Gg: Acq92OHWC1uNdJXZmq8HH0m1XIoqjZkB5zN+3bdFN2xqf3rcjcuAc39VB6ptHWIVjgg
+	fhlyrXbCYTW5pjfG/PEOgdh/svKs6mxf9wBHZJijMiNCUWl7ieTgK2dSkPC/MlVuLJemgJgjF8a
+	hR1T27Di+Kvyas9XBZPwe2kZKVKJPKq4UqSnVqi6BQZ+xlxB3NO1DjvOS3jTjaokBb/ed3srx9A
+	5rJUz1Nwvn/DyMayJo65oilnCotxv/mURpTnTDBBVcmL4z9LZbbIux33612s/q3/dB2FKus71DA
+	ZZKx5eBhsnjOWFFRy9tfR+h5LVxraTc/f8Kwzdp5brodtVvpjgRT8Uee41zEumUDKd1bcGtQf0T
+	ifs1T9eFZNxxkBYV1Cs7ffN+gzJzeuVLzhwFxBLFcm+ypULq4+tC2MId9
+X-Received: by 2002:a17:902:cec4:b0:2c0:fa4e:91f5 with SMTP id d9443c01a7336-2c0fa4e936emr71096565ad.15.1780413740362;
+        Tue, 02 Jun 2026 08:22:20 -0700 (PDT)
+X-Received: by 2002:a17:902:cec4:b0:2c0:fa4e:91f5 with SMTP id d9443c01a7336-2c0fa4e936emr71096195ad.15.1780413739767;
+        Tue, 02 Jun 2026 08:22:19 -0700 (PDT)
 Received: from hu-tdas-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2bf239e71cbsm135136465ad.15.2026.06.02.08.22.07
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2bf239e71cbsm135136465ad.15.2026.06.02.08.22.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jun 2026 08:22:13 -0700 (PDT)
+        Tue, 02 Jun 2026 08:22:19 -0700 (PDT)
 From: Taniya Das <taniya.das@oss.qualcomm.com>
-Date: Tue, 02 Jun 2026 20:51:50 +0530
-Subject: [PATCH 2/5] clk: qcom: Add a driver for PDM GP_MN fractional clock
- divider
+Date: Tue, 02 Jun 2026 20:51:51 +0530
+Subject: [PATCH 3/5] pinctrl: qcom: Add gp_mn mux function for QCS8300,
+ SA8775P and SC7280
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -90,7 +90,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260602-pdm_clk_gp_mnd_v1-v1-2-1522662b6c53@oss.qualcomm.com>
+Message-Id: <20260602-pdm_clk_gp_mnd_v1-v1-3-1522662b6c53@oss.qualcomm.com>
 References: <20260602-pdm_clk_gp_mnd_v1-v1-0-1522662b6c53@oss.qualcomm.com>
 In-Reply-To: <20260602-pdm_clk_gp_mnd_v1-v1-0-1522662b6c53@oss.qualcomm.com>
 To: Bjorn Andersson <andersson@kernel.org>,
@@ -109,432 +109,168 @@ Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
         linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
         Taniya Das <taniya.das@oss.qualcomm.com>
 X-Mailer: b4 0.15-dev-aa3f6
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjAyMDE0OCBTYWx0ZWRfX3sDwFCWzKoiB
- z1He410KwO7JCJElbv9W3AW/TZowzgQHeKMDDbHT+6bdVjyW8WMoycePZjAvtYNbrf6Xc4zI3+e
- pQylS1q+JYIbBJGrxit44twn3YykDxZ0QsR8RXhO8AXWVNG4zxaSOH/j6kSXEeJzlCzXwti+eP0
- +OcdvPHbwaypgxp8WwvGPkIxHA8RW08yYmFb4+uq7Ht3hjcIll8vq1l4LUXAJ0KgoUABNTfAKC2
- 0W/7KKId4HP/MRTFXONH5FnwWFIl/bicPviSIneUHinAsZ7W6B3KJJFyYt38nxMMNeIWKJqtHtm
- OYwbdZ+nS56UvwzHHlp5R2sGgKlE/zRfs2EYsRernX9ZL3WzkoJjQHIh5CtZT4GEo5z0ofYXXuV
- UH1y6W4irhremvde+rgWhXC71AA8GPkQKkvTRy7ME2fBsE9v4ALaltbPgNSBPxoXQb+zE4VH7kO
- 9Irsu9//jUMNnAtP5/g==
-X-Authority-Analysis: v=2.4 cv=d5nFDxjE c=1 sm=1 tr=0 ts=6a1ef527 cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+X-Proofpoint-ORIG-GUID: 5Kz1sWeuBmnSWO6kQ6qXCifMRViYFbUw
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjAyMDE0OCBTYWx0ZWRfX9BSPew/9pWpe
+ TodzUQq816/kwQTUNJZckjiCQngF3LAKrIxGFC3EgjhZhqen9nY6+Vy3oT5RSSiYDJ4aSTVwRGN
+ AF0ZWmrBBAeiZcCMgCLeI2TIUwpFa9nACAwt9lRdxUlhRoFQOYz6ZwamhUmM8BB+46vi+CAXJME
+ m09bMdOGKyIp0Yg4xct9uWew+tFaOS8AmPylZmN1nJ/BhPUWL6trJ0SPkmQ16qchNTvV4HbiqVt
+ NE2QcSfjcWv5nYxBihDK3gwW25ODhECgPW4vSbyvJBpn7R6WQwCi6cH8bGJK7EYX7wqYRWW1ALS
+ kt0zBn6SKZvYfwKDdIj5SmCY9bHBUBBy57NBDMW44w9REOfXGqknO5YhesiW4LOzKmEnpkmAqi7
+ lF9LuWviNWez3e/vxWCb6heV8NzR1lK5gl82if9FCUtmHAwg2gr50TQNJCx7TnSQD4eBx1A41+b
+ 2tywwbXLmwmg888oiLw==
+X-Proofpoint-GUID: 5Kz1sWeuBmnSWO6kQ6qXCifMRViYFbUw
+X-Authority-Analysis: v=2.4 cv=O6IJeh9W c=1 sm=1 tr=0 ts=6a1ef52d cx=c_pps
+ a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
  a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
- a=EUspDBNiAAAA:8 a=9rGeCgy22yGQcie6hdYA:9 a=QEXdDO2ut3YA:10
- a=324X-CrmTo6CU4MGRt3R:22
-X-Proofpoint-ORIG-GUID: peJ5PiVCaL57MLVwC_OamrPcVJA1gU9v
-X-Proofpoint-GUID: peJ5PiVCaL57MLVwC_OamrPcVJA1gU9v
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22
+ a=EUspDBNiAAAA:8 a=BWecY5n4_7i4tiiDEVoA:9 a=QEXdDO2ut3YA:10 a=O8hF6Hzn-FEA:10
+ a=_Vgx9l1VpLgwpw_dHYaR:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
  definitions=2026-06-02_02,2026-05-28_03,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 impostorscore=0 malwarescore=0 clxscore=1015 adultscore=0
- spamscore=0 lowpriorityscore=0 bulkscore=0 phishscore=0 suspectscore=0
+ clxscore=1015 suspectscore=0 bulkscore=0 malwarescore=0 lowpriorityscore=0
+ impostorscore=0 spamscore=0 adultscore=0 phishscore=0 priorityscore=1501
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2605210000 definitions=main-2606020148
 
-The PDM (Pulse Density Modulation) hardware block on Qualcomm SoCs
-contains a GP_MN clock divider that produces a fractional output
-frequency from a fixed input clock (typically TCXO4):
+Add the gp_mn pin mux function to the TLMM pin controllers for the
+QCS8300, SA8775P and SC7280 SoCs. This function exposes the GP M/N
+divider clock output on a dedicated GPIO pin, allowing the clock signal
+to be routed externally.
 
-  Fout = Fin * (M / N)
-
-The hardware encodes the period in the NDIV register as the 1's
-complement of (N - M), and controls the duty cycle via a separate
-DUTY register that counts the number of low-phase native clock
-cycles over the period N.
-
-Add a standalone platform driver for this block that uses
-rational_best_approximation() to find the closest M/N pair within
-the 9-bit M and 13-bit N hardware limits, programs the MDIV, NDIV,
-and DUTY registers via regmap, and implements the full clk_ops
-surface including determine_rate, set_rate, recalc_rate,
-get_duty_cycle, and set_duty_cycle. The PDM AHB bus clock is gated
-around every register access.
+- QCS8300: gpio32
+- SA8775P: gpio35
+- SC7280:  gpio60
 
 Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
 ---
- drivers/clk/qcom/Kconfig      |  15 ++
- drivers/clk/qcom/Makefile     |   1 +
- drivers/clk/qcom/clk-gp-mnd.c | 333 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 349 insertions(+)
+ drivers/pinctrl/qcom/pinctrl-qcs8300.c | 9 ++++++++-
+ drivers/pinctrl/qcom/pinctrl-sa8775p.c | 8 +++++++-
+ drivers/pinctrl/qcom/pinctrl-sc7280.c  | 8 +++++++-
+ 3 files changed, 22 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index d9cff5b0281d8cc373b8ab14683370cb9b7f8bf3..df27aa10243435a20a57cca3ed4644284630d11e 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -1759,4 +1759,19 @@ config SM_VIDEOCC_8450
- 	  SM8450 or SM8475 devices.
- 	  Say Y if you want to support video devices and functionality such as
- 	  video encode/decode.
-+
-+config QCOM_CLK_GP_MND
-+	tristate "Qualcomm PDM GP_MN clock divider"
-+	depends on ARM64 || COMPILE_TEST
-+	help
-+	  Support for the Qualcomm PDM GP_MN clock divider found in PDM
-+	  (Pulse Density Modulation) hardware blocks.
-+	  Given an input clock of frequency Fin (TCXO4), the output
-+	  frequency is Fout = Fin * (M / N).  For every N input cycles
-+	  the divider produces M output cycles.  D controls the duty
-+	  cycle: it is the number of native clock cycles in which the
-+	  GP_MN output is low, counted over 8192 native clock cycles.
-+
-+	  Say Y or M if you want to support GP_MN-based frequency and
-+	  duty-cycle configuration on Qualcomm SoCs.
- endif
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index e100cfd6a52de9f88f11720d9c2043db5e553618..438f59b25c009ee72308fe41707d6efff6613690 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -207,6 +207,7 @@ obj-$(CONFIG_SM_VIDEOCC_8550) += videocc-sm8550.o
- obj-$(CONFIG_SM_VIDEOCC_8750) += videocc-sm8750.o
- obj-$(CONFIG_SM_VIDEOCC_MILOS) += videocc-milos.o
- obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
-+obj-$(CONFIG_QCOM_CLK_GP_MND) += clk-gp-mnd.o
- obj-$(CONFIG_KPSS_XCC) += kpss-xcc.o
- obj-$(CONFIG_QCOM_HFPLL) += hfpll.o
- obj-$(CONFIG_KRAITCC) += krait-cc.o
-diff --git a/drivers/clk/qcom/clk-gp-mnd.c b/drivers/clk/qcom/clk-gp-mnd.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..826b6b62ddc7b272511accde1ca0e885018a8064
---- /dev/null
-+++ b/drivers/clk/qcom/clk-gp-mnd.c
-@@ -0,0 +1,333 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/pinctrl/consumer.h>
-+#include <linux/platform_device.h>
-+#include <linux/rational.h>
-+#include <linux/regmap.h>
-+
-+/*
-+ * PDM GP_MND clock divider register offsets.
-+ *
-+ * The hardware computes:
-+ *   Fout = Fin * (M / N)
-+ *
-+ * with duty cycle controlled by D, where M < D < (N - M).
-+ *
-+ * Register encoding:
-+ *   MDIV  = M
-+ *   NDIV  = ~(N - M)  [1's complement of (N - M), masked to N_REG_WIDTH bits]
-+ *   DUTY  = D
-+ */
-+#define GP_MND_MDIV_REG		0x0
-+#define GP_MND_NDIV_REG		0x4
-+#define GP_MND_DUTY_REG		0x8
-+
-+#define GP_MND_M_WIDTH		9
-+#define GP_MND_N_WIDTH		13
-+
-+#define GP_MND_MAX_M		GENMASK(GP_MND_M_WIDTH - 1, 0)
-+#define GP_MND_MAX_N		GENMASK(GP_MND_N_WIDTH - 1, 0)
-+
-+/**
-+ * struct clk_gp_mnd - GP_MND fractional clock divider
-+ * @pdm_ahb_clk:	AHB bus clock required for register access
-+ * @regmap:		register map for the PDM block
-+ * @hw:			handle between common and hardware-specific interfaces
-+ * @m_val:		M value (numerator)
-+ * @n_val:		N value (period)
-+ */
-+struct clk_gp_mnd {
-+	struct clk		*pdm_ahb_clk;
-+	struct regmap		*regmap;
-+	struct clk_hw		hw;
-+	unsigned int		m_val;
-+	unsigned int		n_val;
+diff --git a/drivers/pinctrl/qcom/pinctrl-qcs8300.c b/drivers/pinctrl/qcom/pinctrl-qcs8300.c
+index 852cd36df6d5fc6d0aece7d57f8f59fe48c0cfee..1430abd9258989bdbd8a12249196bbf4e9bbbde3 100644
+--- a/drivers/pinctrl/qcom/pinctrl-qcs8300.c
++++ b/drivers/pinctrl/qcom/pinctrl-qcs8300.c
+@@ -429,6 +429,7 @@ enum qcs8300_functions {
+ 	msm_mux_gcc_gp3,
+ 	msm_mux_gcc_gp4,
+ 	msm_mux_gcc_gp5,
++	msm_mux_gp_mn,
+ 	msm_mux_hs0_mi2s,
+ 	msm_mux_hs1_mi2s,
+ 	msm_mux_hs2_mi2s,
+@@ -656,6 +657,10 @@ static const char *const gcc_gp5_groups[] = {
+ 	"gpio76", "gpio77",
+ };
+ 
++static const char *const gp_mn_groups[] = {
++	"gpio32",
 +};
 +
-+#define to_clk_gp_mnd(_hw) container_of(_hw, struct clk_gp_mnd, hw)
-+
-+static int gp_mnd_clk_determine_rate(struct clk_hw *hw,
-+				     struct clk_rate_request *req)
-+{
-+	unsigned long m = 0, n = 0;
-+
-+	rational_best_approximation(req->rate, req->best_parent_rate,
-+				    (unsigned long)GP_MND_MAX_M,
-+				    (unsigned long)GP_MND_MAX_N,
-+				    &m, &n);
-+
-+	if (!m || !n)
-+		return -EINVAL;
-+
-+	/* N = 2M + 1 leaves no valid D satisfying M < D < (N - M) */
-+	if (n == 2 * m + 1)
-+		return -EINVAL;
-+
-+	req->rate = DIV_ROUND_CLOSEST_ULL((u64)req->best_parent_rate * m, n);
-+
-+	return 0;
-+}
-+
-+static int gp_mnd_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-+		unsigned long parent_rate)
-+{
-+	struct clk_gp_mnd *gp = to_clk_gp_mnd(hw);
-+	unsigned long m = 0, n = 0;
-+	unsigned int d_val, n_val;
-+	int ret;
-+
-+	rational_best_approximation(rate, parent_rate,
-+				    (unsigned long)GP_MND_MAX_M,
-+				    (unsigned long)GP_MND_MAX_N,
-+				    &m, &n);
-+
-+	if (!m || !n)
-+		return -EINVAL;
-+
-+	/*
-+	 * When N = 2M + 1 the valid D range [M+1, M] is empty; no duty
-+	 * cycle can satisfy M < D < (N - M).  Reject before touching hw.
-+	 */
-+	if (n == 2 * m + 1)
-+		return -EINVAL;
-+
-+	ret = clk_prepare_enable(gp->pdm_ahb_clk);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_write(gp->regmap, GP_MND_MDIV_REG, m);
-+	if (ret)
-+		goto err_unprepare;
-+
-+	/* N divider holds the 1's complement of (N - M), N_WIDTH bits wide */
-+	n_val = ~(n - m) & GP_MND_MAX_N;
-+	ret = regmap_write(gp->regmap, GP_MND_NDIV_REG, n_val);
-+	if (ret)
-+		goto err_unprepare;
-+
-+	/* Program the closest-to-50% duty cycle. */
-+	d_val = n / 2;
-+	ret = regmap_write(gp->regmap, GP_MND_DUTY_REG, d_val);
-+	if (ret)
-+		goto err_unprepare;
-+
-+	gp->m_val = m;
-+	gp->n_val = n;
-+
-+err_unprepare:
-+	clk_disable_unprepare(gp->pdm_ahb_clk);
-+
-+	return ret;
-+}
-+
-+static unsigned long gp_mnd_clk_recalc_rate(struct clk_hw *hw,
-+		unsigned long parent_rate)
-+{
-+	struct clk_gp_mnd *gp = to_clk_gp_mnd(hw);
-+	unsigned int m_val, n_val;
-+	int ret;
-+
-+	ret = clk_prepare_enable(gp->pdm_ahb_clk);
-+	if (ret)
-+		return 0;
-+
-+	ret = regmap_read(gp->regmap, GP_MND_MDIV_REG, &m_val);
-+	if (ret)
-+		goto out_unprepare;
-+
-+	m_val &= GP_MND_MAX_M;
-+
-+	ret = regmap_read(gp->regmap, GP_MND_NDIV_REG, &n_val);
-+	if (ret)
-+		goto out_unprepare;
-+
-+	/* Reverse the 1's complement encoding: N = ~NDIV_REG + M */
-+	n_val = (~n_val & GP_MND_MAX_N) + m_val;
-+
-+out_unprepare:
-+	clk_disable_unprepare(gp->pdm_ahb_clk);
-+
-+	if (ret)
-+		return 0;
-+
-+	if (!n_val)
-+		return 0;
-+
-+	gp->m_val = m_val;
-+	gp->n_val = n_val;
-+
-+	return DIV_ROUND_CLOSEST_ULL((u64)parent_rate * m_val, n_val);
-+}
-+
-+static int gp_mnd_clk_get_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
-+{
-+	struct clk_gp_mnd *gp = to_clk_gp_mnd(hw);
-+	unsigned int d_val;
-+	int ret;
-+
-+	if (!gp->n_val) {
-+		duty->num = 1;
-+		duty->den = 2;
-+		return 0;
-+	}
-+
-+	ret = clk_prepare_enable(gp->pdm_ahb_clk);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_read(gp->regmap, GP_MND_DUTY_REG, &d_val);
-+
-+	clk_disable_unprepare(gp->pdm_ahb_clk);
-+
-+	if (ret)
-+		return ret;
-+
-+	duty->num = d_val;
-+	duty->den = gp->n_val;
-+
-+	return 0;
-+}
-+
-+static int gp_mnd_clk_set_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
-+{
-+	struct clk_gp_mnd *gp = to_clk_gp_mnd(hw);
-+	unsigned int d_val;
-+	int ret;
-+
-+	if (!gp->n_val || !gp->m_val)
-+		return -EINVAL;
-+
-+	/* D = (1 - duty) * N, giving the low-phase count */
-+	d_val = DIV_ROUND_UP((u64)(duty->den - duty->num) * gp->n_val, duty->den);
-+
-+	/* Hardware constraint: M < D < (N - M) */
-+	if (d_val <= gp->m_val || d_val >= (gp->n_val - gp->m_val))
-+		return -EINVAL;
-+
-+	ret = clk_prepare_enable(gp->pdm_ahb_clk);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_write(gp->regmap, GP_MND_DUTY_REG, d_val);
-+
-+	clk_disable_unprepare(gp->pdm_ahb_clk);
-+
-+	return ret;
-+}
-+
-+static const struct clk_ops clk_gp_mnd_ops = {
-+	.determine_rate	= gp_mnd_clk_determine_rate,
-+	.set_rate	= gp_mnd_clk_set_rate,
-+	.recalc_rate	= gp_mnd_clk_recalc_rate,
-+	.get_duty_cycle	= gp_mnd_clk_get_duty_cycle,
-+	.set_duty_cycle	= gp_mnd_clk_set_duty_cycle,
+ static const char * const hs0_mi2s_groups[] = {
+ 	"gpio106", "gpio107", "gpio108", "gpio109",
+ };
+@@ -960,6 +965,7 @@ static const struct pinfunction qcs8300_functions[] = {
+ 	MSM_PIN_FUNCTION(gcc_gp3),
+ 	MSM_PIN_FUNCTION(gcc_gp4),
+ 	MSM_PIN_FUNCTION(gcc_gp5),
++	MSM_PIN_FUNCTION(gp_mn),
+ 	MSM_PIN_FUNCTION(hs0_mi2s),
+ 	MSM_PIN_FUNCTION(hs1_mi2s),
+ 	MSM_PIN_FUNCTION(hs2_mi2s),
+@@ -1067,7 +1073,8 @@ static const struct msm_pingroup qcs8300_groups[] = {
+ 	[30] = PINGROUP(30, qup0_se4, cci_i2c_scl, cci_async, emac0_ptp_pps,
+ 			tgu_ch3, _, _, _, _, _, _),
+ 	[31] = PINGROUP(31, qup0_se4, cci_i2c_sda, cci_async, emac0_ptp_aux, _, _, _, _, _, _, _),
+-	[32] = PINGROUP(32, qup0_se4, cci_i2c_scl, emac0_ptp_aux, mdp_vsync, _, _, _, _, _, _, _),
++	[32] = PINGROUP(32, qup0_se4, cci_i2c_scl, emac0_ptp_aux, mdp_vsync, gp_mn, _, _, _, _,
++			_, _),
+ 	[33] = PINGROUP(33, qup0_se2, qdss_gpio, _, _, _, _, _, _, _, _, _),
+ 	[34] = PINGROUP(34, qup0_se2, qdss_gpio, _, _, _, _, _, _, _, _, _),
+ 	[35] = PINGROUP(35, qup0_se2, gcc_gp1, _, _, _, _, _, _, _, _, _),
+diff --git a/drivers/pinctrl/qcom/pinctrl-sa8775p.c b/drivers/pinctrl/qcom/pinctrl-sa8775p.c
+index e9a510d3583f5c392acb833be4ce67c6b421cd48..2c29743cca7a259b5a41e73de347c536d373a01e 100644
+--- a/drivers/pinctrl/qcom/pinctrl-sa8775p.c
++++ b/drivers/pinctrl/qcom/pinctrl-sa8775p.c
+@@ -486,6 +486,7 @@ enum sa8775p_functions {
+ 	msm_mux_gcc_gp3,
+ 	msm_mux_gcc_gp4,
+ 	msm_mux_gcc_gp5,
++	msm_mux_gp_mn,
+ 	msm_mux_hs0_mi2s,
+ 	msm_mux_hs1_mi2s,
+ 	msm_mux_hs2_mi2s,
+@@ -834,6 +835,10 @@ static const char * const gcc_gp5_groups[] = {
+ 	"gpio34", "gpio42",
+ };
+ 
++static const char * const gp_mn_groups[] = {
++	"gpio35",
 +};
 +
-+static const struct regmap_config gp_mnd_regmap_config = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.fast_io	= true,
+ static const char * const hs0_mi2s_groups[] = {
+ 	"gpio114", "gpio115", "gpio116", "gpio117",
+ };
+@@ -1236,6 +1241,7 @@ static const struct pinfunction sa8775p_functions[] = {
+ 	MSM_PIN_FUNCTION(gcc_gp3),
+ 	MSM_PIN_FUNCTION(gcc_gp4),
+ 	MSM_PIN_FUNCTION(gcc_gp5),
++	MSM_PIN_FUNCTION(gp_mn),
+ 	MSM_PIN_FUNCTION(hs0_mi2s),
+ 	MSM_PIN_FUNCTION(hs1_mi2s),
+ 	MSM_PIN_FUNCTION(hs2_mi2s),
+@@ -1367,7 +1373,7 @@ static const struct msm_pingroup sa8775p_groups[] = {
+ 	[32] = PINGROUP(32, qup0_se4, phase_flag, _, _, _, _, _, _, _),
+ 	[33] = PINGROUP(33, qup0_se4, gcc_gp4, _, ddr_pxi0, _, _, _, _,	_),
+ 	[34] = PINGROUP(34, qup0_se4, gcc_gp5, _, ddr_pxi0, _, _, _, _,	_),
+-	[35] = PINGROUP(35, qup0_se4, phase_flag, _, _, _, _, _, _, _),
++	[35] = PINGROUP(35, qup0_se4, phase_flag, gp_mn, _, _, _, _, _, _),
+ 	[36] = PINGROUP(36, qup0_se2, qup0_se5, phase_flag, tgu_ch2, _, _, _, _, _),
+ 	[37] = PINGROUP(37, qup0_se2, qup0_se5, phase_flag, tgu_ch3, _, _, _, _, _),
+ 	[38] = PINGROUP(38, qup0_se5, qup0_se2, qdss_cti, phase_flag, tgu_ch4, _, _, _, _),
+diff --git a/drivers/pinctrl/qcom/pinctrl-sc7280.c b/drivers/pinctrl/qcom/pinctrl-sc7280.c
+index bb32a56649df6faf1aecd470435d74558c20db27..5e210b399f88f5beb68e511bca9c0dd93a1b75dc 100644
+--- a/drivers/pinctrl/qcom/pinctrl-sc7280.c
++++ b/drivers/pinctrl/qcom/pinctrl-sc7280.c
+@@ -515,6 +515,7 @@ enum sc7280_functions {
+ 	msm_mux_gcc_gp1,
+ 	msm_mux_gcc_gp2,
+ 	msm_mux_gcc_gp3,
++	msm_mux_gp_mn,
+ 	msm_mux_gpio,
+ 	msm_mux_host2wlan_sol,
+ 	msm_mux_ibi_i3c,
+@@ -788,6 +789,10 @@ static const char * const gcc_gp2_groups[] = {
+ static const char * const gcc_gp3_groups[] = {
+ 	"gpio78", "gpio107",
+ };
++
++static const char *const gp_mn_groups[] = {
++	"gpio60",
 +};
-+
-+static int clk_gp_mnd_probe(struct platform_device *pdev)
-+{
-+	struct clk_parent_data parent_data = { .index = 0 };
-+	struct clk_init_data init = {
-+		.ops		= &clk_gp_mnd_ops,
-+		.parent_data	= &parent_data,
-+		.num_parents	= 1,
-+		.flags		= CLK_GET_RATE_NOCACHE,
-+	};
-+	struct device *dev = &pdev->dev;
-+	struct clk_gp_mnd *gp;
-+	struct clk *clk;
-+	struct pinctrl *pin;
-+	struct pinctrl_state *pin_default_state;
-+	void __iomem *base;
-+	int ret;
-+
-+	gp = devm_kzalloc(dev, sizeof(*gp), GFP_KERNEL);
-+	if (!gp)
-+		return -ENOMEM;
-+
-+	gp->pdm_ahb_clk = devm_clk_get(dev, "ahb_clk");
-+	if (IS_ERR(gp->pdm_ahb_clk))
-+		return dev_err_probe(dev, PTR_ERR(gp->pdm_ahb_clk),
-+				     "failed to get ahb_clk\n");
-+
-+	clk = devm_clk_get(dev, "pdm_clk");
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	/* Set default rate if not already configured */
-+	if (!clk_get_rate(clk)) {
-+		ret = clk_set_rate(clk, 19200000);
-+		if (ret)
-+			dev_warn(dev, "failed to set default pdm_clk rate\n");
-+	}
-+
-+	base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(base))
-+		return dev_err_probe(dev, PTR_ERR(base),
-+				     "failed to map PDM registers\n");
-+
-+	gp->regmap = devm_regmap_init_mmio(dev, base, &gp_mnd_regmap_config);
-+	if (IS_ERR(gp->regmap))
-+		return dev_err_probe(dev, PTR_ERR(gp->regmap),
-+				     "failed to init regmap\n");
-+
-+	ret = of_property_read_string_index(dev->of_node,
-+					    "clock-output-names", 0,
-+					    &init.name);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "missing clock-output-names\n");
-+
-+	gp->hw.init = &init;
-+
-+	pin = devm_pinctrl_get(dev);
-+	if (IS_ERR(pin))
-+		return dev_err_probe(dev, PTR_ERR(pin), "missing pinctrl device\n");
-+
-+	pin_default_state = pinctrl_lookup_state(pin, "active");
-+	if (IS_ERR(pin_default_state))
-+		return dev_err_probe(dev, PTR_ERR(pin_default_state),
-+				     "missing pinctrl default state\n");
-+
-+	ret = pinctrl_select_state(pin, pin_default_state);
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+				     "failed to select pinctrl default state\n");
-+
-+	ret = devm_clk_hw_register(dev, &gp->hw);
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+				     "failed to register gp_mnd clock\n");
-+
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, &gp->hw);
-+}
-+
-+static const struct of_device_id clk_gp_mnd_match_table[] = {
-+	{ .compatible = "qcom,clk-gp-mnd" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, clk_gp_mnd_match_table);
-+
-+static struct platform_driver clk_gp_mnd_driver = {
-+	.probe  = clk_gp_mnd_probe,
-+	.driver = {
-+		.name		= "qcom-clk-gp-mnd",
-+		.of_match_table	= clk_gp_mnd_match_table,
-+	},
-+};
-+module_platform_driver(clk_gp_mnd_driver);
-+
-+MODULE_DESCRIPTION("Qualcomm PDM GP_MND clock divider driver");
-+MODULE_LICENSE("GPL");
+ static const char * const host2wlan_sol_groups[] = {
+ 	"gpio26",
+ };
+@@ -1154,6 +1159,7 @@ static const struct pinfunction sc7280_functions[] = {
+ 	MSM_PIN_FUNCTION(gcc_gp1),
+ 	MSM_PIN_FUNCTION(gcc_gp2),
+ 	MSM_PIN_FUNCTION(gcc_gp3),
++	MSM_PIN_FUNCTION(gp_mn),
+ 	MSM_GPIO_PIN_FUNCTION(gpio),
+ 	MSM_PIN_FUNCTION(host2wlan_sol),
+ 	MSM_PIN_FUNCTION(ibi_i3c),
+@@ -1325,7 +1331,7 @@ static const struct msm_pingroup sc7280_groups[] = {
+ 	[57] = PINGROUP(57, qup16, ddr_bist, phase_flag, _, _, _, _, _, _),
+ 	[58] = PINGROUP(58, qup16, ddr_bist, phase_flag, qdss, _, _, _, _, _),
+ 	[59] = PINGROUP(59, qup16, ddr_bist, phase_flag, qdss, _, _, _, _, _),
+-	[60] = PINGROUP(60, qup17, edp_hot, _, phase_flag, _, _, _, _, _),
++	[60] = PINGROUP(60, qup17, edp_hot, gp_mn, phase_flag, _, _, _, _, _),
+ 	[61] = PINGROUP(61, qup17, sd_write, phase_flag, tsense_pwm1, tsense_pwm2, _, _, _, _),
+ 	[62] = PINGROUP(62, qup17, qup16, phase_flag, _, _, _, _, _, _),
+ 	[63] = PINGROUP(63, qup17, qup16, phase_flag, _, _, _, _, _, _),
 
 -- 
 2.34.1
