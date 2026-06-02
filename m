@@ -1,88 +1,87 @@
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244843C1989
-	for <linux-clk@vger.kernel.org>; Tue,  2 Jun 2026 08:08:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C003C3443
+	for <linux-clk@vger.kernel.org>; Tue,  2 Jun 2026 08:08:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780387702; cv=none; b=lEZsVJjEkSF4MU7n6hv8A+0DfzhABy/J/YOJCT/sS6seuHe3/5Wyz1XtWaD8YZmGIiXx1H3k9NCDoSoJh+twSL88lEzS/vOStJSAVJ2un8beEDAsOVwivWZwlEvgIDr+7kKdQ3oIg6LSBVf7j70wE4jBgGNlORKGNoT6RMNimC4=
+	t=1780387703; cv=none; b=fOMU02Pxjuhp6PNtLUn1r2rzd6Z+hzKd2wswfXbWCfl9NdRfyuQP/VtTNs/GGUIMdfQYUoZ802NIJ2vU1oDSGGsD5ghOtQoJ80bEkDERlqteGaP9u4bqs2GAPQt+QV0rg9rZp/LsoQS83T9c9Rj0/Pe7P7Ttb0YXvejVsufcV5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780387702; c=relaxed/simple;
-	bh=FAKBWcIX5mgY1WAddlCaxXrp5BD2oKuWSr+axNOz1nY=;
+	s=arc-20240116; t=1780387703; c=relaxed/simple;
+	bh=biMxfBro4OCz1lNFjFkEHgyX+aT7jFd0C3ahchsJPvM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ttwkKm99siZ/MTe9XlqcK9j+Fai5SQNlu9Dv2ivU4Z1MIy0EBPP86C2p746yVw/xrCw5Bsrz7NMh0rDHM4yVcytmkONXA0gKjOmXupcRUR9WBbQmebDfai2dZyH/1VWTRTJlRvvLS40W7JCxnDdBobYNHZrJrvPjfC65R026LHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pgaDKcdB; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=VM9ZnHHE; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:To:Cc; b=bqEGbfG/iusfhtpUXyNJurqCbIq3CrYUlXfSBSQ7n3o1+ani1HHy4CgYb6XMaBrpOL+AClp1L1MToWD4DHAAkmteMIKKl7HFNDrKKV4T+G66K9YzBd9snlTPCMlHr4KERJ0djHBcaILAqIpil3CMzgG11DbTTS7FMokNKhHHg18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jqDKwlPG; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=YnetDlBZ; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pgaDKcdB";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="VM9ZnHHE"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jqDKwlPG";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="YnetDlBZ"
 Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6526MpTb2767719
-	for <linux-clk@vger.kernel.org>; Tue, 2 Jun 2026 08:08:16 GMT
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6526MWUa2767178
+	for <linux-clk@vger.kernel.org>; Tue, 2 Jun 2026 08:08:18 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	mXkGOYbueCyT4J0CjhRvb3NcVZM42lkIzicfj3kzcb4=; b=pgaDKcdBBWggE3Tn
-	AIeuXKbdn3vjydi/dLflDl5oPbjTbn+Gz0HbtiEAX4HVoSj0I5BKg7rU90/Xqbe5
-	CP+lRJcq5rAVpeuxIDeYUmZAo03C8SqAX30fmmlxhcnINZ+wNBjSaBOr0DuX5muF
-	8+knWdDFa01LY43J4jTJ16H0vTbcMyPxDK3v1lf4HUXXhFFUM9ieq8n3rZvgvpCb
-	Q8Z/UFh8OF7uT7My5jVI+/SREm7ZsMd56EDjO60OMhnT1Kf4if8f0tCf7tlX6Vuq
-	+t/cJXenIxqq5qeLhuKKZiisj31Cl5rzu0kiQkyto14C5/jHqe3gXSviAmo/nMZg
-	pLMNhg==
-Received: from mail-dl1-f72.google.com (mail-dl1-f72.google.com [74.125.82.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ehsus0e45-1
+	BC8+KvM4ktclbNeYL53kbETH/PFdc4eYHOUBNJHUcFg=; b=jqDKwlPGT68Nowkb
+	UXcFjXS+fkhPTKmRSDUrwo/I7TFCQmgM9e7h/lSoFO1/i2uSFfMAL5L1ScUcdlzd
+	R7xIL+e8y3AQmU8dySMybdELVGRHNz3kXX6Q2b4RFX9zwxXkN4cpA3NsZulWOZfk
+	OAbWdFXs8WX29OsLzI3MfU8DNSuvzS09FlN+a6xJ1rEXcEMO3QueCR72MKKOsBK1
+	FdEqNWloCCv8Y2sK7icEPb7aY+ZOCfcndXGPz0oHb8+pbbeo8VwUEXC88RzBowHo
+	EByx+dMC6sLeOK3fMhUeVRr6+ItY+SK9awyc1EP4uck/REup74KO0tYFwLje+zuY
+	sfRl0w==
+Received: from mail-dy1-f200.google.com (mail-dy1-f200.google.com [74.125.82.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ehsus0e4d-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 02 Jun 2026 08:08:16 +0000 (GMT)
-Received: by mail-dl1-f72.google.com with SMTP id a92af1059eb24-137d4309062so7798928c88.0
-        for <linux-clk@vger.kernel.org>; Tue, 02 Jun 2026 01:08:16 -0700 (PDT)
+	for <linux-clk@vger.kernel.org>; Tue, 02 Jun 2026 08:08:18 +0000 (GMT)
+Received: by mail-dy1-f200.google.com with SMTP id 5a478bee46e88-304f1820babso4892554eec.1
+        for <linux-clk@vger.kernel.org>; Tue, 02 Jun 2026 01:08:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1780387696; x=1780992496; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1780387698; x=1780992498; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=mXkGOYbueCyT4J0CjhRvb3NcVZM42lkIzicfj3kzcb4=;
-        b=VM9ZnHHECOrgXOgnqiymNKStdYvGIbom7mlG55ug+DgYHc94L4EO0WWByNya+FFrQM
-         XrS6TnXM7HqT1BK18DviKv1o11Ak31YGcTMuw6Zpb0z3KxsGawmFuwJZ2zn/mz1FhojS
-         AjsxPYVzJhcU0McYj2opYjetVGi1jdO7toCeteLh8+unEWYmtWSKrUYiSMvxVh+YMbwj
-         m20eGRebbGegn9L3gWn2Bql2a1lk2K1TmgWvyW+XujMeGh4gg5W64ammlpNgIwB45RnL
-         cePv62SPfktrbcRvhxHkBjtz74a3XlSThEaafgZTCaKWX+VmYnNqMCqhdQAWjWJIyTjr
-         c7AA==
+        bh=BC8+KvM4ktclbNeYL53kbETH/PFdc4eYHOUBNJHUcFg=;
+        b=YnetDlBZWyYGNdbT1+Rg3MZRZ+U50TcZ2Z5CltXeik/nNCjnnXmreucnIYPcbPymWN
+         tet7k6u1iNeSMo1LI8Wm4dumIAhXAeutZMauGjhM7t2r1pHTPRkB/ctSSvzaLSEGM9c1
+         1T4SSg2T/T37CJ7B+ucP1rqJFSjj3mYZmKb3uKGYjANPIBH9YwBfeEjzVoaXRMyXRXWD
+         8FDXyHj07ERf7x1sNUqaRovBt95RFM9EsHWNBCV+ah5KMUrNpgLEPLUBlSZCmfVDW8a1
+         cS2oVwNEvqeMI1pJTJZXmKTGHStyvdagDqYbZAfO14RX8Emzk4Q0DjuWZ48QtekmsPwB
+         wYDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780387696; x=1780992496;
+        d=1e100.net; s=20251104; t=1780387698; x=1780992498;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=mXkGOYbueCyT4J0CjhRvb3NcVZM42lkIzicfj3kzcb4=;
-        b=ZQdTrc2eUSwSUW8zQGOdc17L8ZDfItfB+nlkuoIaOhvYKl1MuZMnW1/duJKl8QWjqc
-         LjVbhDd4mhyxWTAeXY0kOx4hAkSV3t66SDtTdB/juHX6jzkbxGP7AX02Fl7r81TZ9iLd
-         /QKe7BnwdQ1/C7eyPfPhmKS9geM9hkTlkc18qRJDom9u4CwGqThq0v9QraKYXhYen4SG
-         nHvHI+SdoUSjTh7+HCLyI75N51O29WEF567tzXpq6qOBcSMoF8WVa3HEbfWrzAJGAJ3z
-         jiDyWK2/ZSNvCRguLwRW1/SmrEAxIPZOS8eWQ4GWw1izBuYBee+J9z2MetgzIdU5veXc
-         vsiQ==
-X-Forwarded-Encrypted: i=1; AFNElJ/Q/94dyEnmH7p2icuQGi+b9f86H09wrE/Wu/j9ojBzO35RC0ykli4j52DqDpPL7es5s6fDr/CatPQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlV7rSQx5JeDg6owQEbC/yK7I91QrBZ8h2iUzvbNJPcSZyFqM6
-	l5Dmxs8dq9CVfNn6s80Rt+1nIjO4Gn/gRqjFps89VH3+wdaA+WBhsF8LSnlQYRgXDiO5fOWEwgL
-	NDeNDBLflRACQghYviV2iPogOB5jRs6HZXT6drZ4JuXL2g57eViOmNto+lXSHq+Q=
-X-Gm-Gg: Acq92OFZ+pDF2FlTGsC2EDn0Sy4WGV6ymcbeKKzFS9CK+L/IQ+d9dT9GhL5IECE30GG
-	o7w3m6ycs+oXd6/KMlX57d/F3TdKkxMGympwtKv3oVIqu3pCSF2BYqUZkt2lsUkO3SLKFoO3yau
-	f9uWOqCTRMyDVqKYfY3sYv/091WNWyaGCGl/C+5vu1u3WJ1DJUAlJLxc8k9g25OLm84fz+MaBBv
-	CzvyF2y4tzOwLa+e2JVFmNJRV9uVGu3sWlMFaQ762E+q15ope3f/IYrE84poYz7oY3297p1DwlE
-	q0pj8PdKv1YSs8wvXmuIKj1xfL13hU+Mqqtbm0X6iF8rM8SdNgI4kZbkNRgWlzpSOJUkzFuOCEY
-	UrpGPZL9W4tA4I4yCYTqKhw+WrOH+RCbkXVXM01F7tX24c8qtIQEjE0P/wZ8/2TXRnJ2vJTATLK
-	OdVb0=
-X-Received: by 2002:a05:701b:230c:b0:137:f10d:dfc5 with SMTP id a92af1059eb24-137f10de331mr190758c88.9.1780387695554;
-        Tue, 02 Jun 2026 01:08:15 -0700 (PDT)
-X-Received: by 2002:a05:701b:230c:b0:137:f10d:dfc5 with SMTP id a92af1059eb24-137f10de331mr190747c88.9.1780387695060;
-        Tue, 02 Jun 2026 01:08:15 -0700 (PDT)
+        bh=BC8+KvM4ktclbNeYL53kbETH/PFdc4eYHOUBNJHUcFg=;
+        b=ssiT7PrN736StXUgFVUq9jgHeEtWv0REscTY9axryU9AkqOUBH0DrVa+J/32nujiC2
+         PVMhfZzFTdO7etfTHw8UBS2ouZJqd1W+xiwCKKufaJGM0m44fe8HdXAm/gYfSCsu/2T/
+         27nSwwXxroKbdzK/Sitc+mImnbs5JUwY79Y+7yFQeUVSnqzd8cTKd3FTwTZuP+EJgnHc
+         roLGx0FssVoclLPyhGJ45yqekISx55pz53eVhltxoNz5PR2rVjVrjOd74R5UKaoDi9X7
+         UbnQb0QnHkpyiKcCorVhfvzp/Qv3mFxQdnemy775gvD7X7ffYEJ1HvW3dExPz3bOc02x
+         Kj9w==
+X-Forwarded-Encrypted: i=1; AFNElJ+i8h99dsPHuECtq3O/hhndYSB0P+es3qGKwfotjn6RSJMFZsJ8HsKw/W+rSdXXHnFIRrbMF5BaUwA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBHhk3WLOCxt+5N9NmqNwRm79HLBKP265O69RRs0VhEUsXPQ3X
+	Uqxk8acD5iTzUQ0LpW9h786oZG19uOTQEsbXkFFUlbtPhAHg+79q+qcR8MSJtEjhN5cCQchZs++
+	C/5nYIbqu0zyB5MvXsX7KhzRzQKbcfDK6wMuMUett8sjmLjTNWYfRXFVWdY6NA9Y=
+X-Gm-Gg: Acq92OGe4I8/qGOWltre2gFfG42trWJ38YH41fbGQ7vFsAeDBvZ/2R1ZwRssS2R88am
+	dcjstRtoY2PevP+DwNLqaCWzLmZ+XPOwbFYs7mQ7VdkDun3QSAfU2XYrujqsfnsAkYjgKRAUQQb
+	ynZwJXD1BUKzwPHCCl2wSUERPGyLYJkC7NAYzlv3JZ1JnJsXg+M1mSPlc2T05ABGPTWf9ksXD5y
+	jCPQfO0h4ejD3ex24/OauD9vw3/hl4lyXErzLRubNU6bkVwzcXy99BSjL0itHVKbhdDYxH7GTZD
+	oVmODPl/EVigjP77xYVllegZ1ai50pmDcTotoiroVPa1C1sf66m1wwSFLgBXiokHxO8ASpInhHm
+	xAS434SYESlxEuDs4zZ8Qp8JogU4T87aGnhG5iVAMrG8TVrYUnpky5MA5owI5D5NvsIR39uIjcc
+	IH9/A=
+X-Received: by 2002:a05:7022:527:b0:132:f27:5302 with SMTP id a92af1059eb24-137d3f1828amr6027782c88.3.1780387697358;
+        Tue, 02 Jun 2026 01:08:17 -0700 (PDT)
+X-Received: by 2002:a05:7022:527:b0:132:f27:5302 with SMTP id a92af1059eb24-137d3f1828amr6027776c88.3.1780387696675;
+        Tue, 02 Jun 2026 01:08:16 -0700 (PDT)
 Received: from hu-qianyu-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-137b3d8f839sm8006025c88.15.2026.06.02.01.08.14
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-137b3d8f839sm8006025c88.15.2026.06.02.01.08.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jun 2026 01:08:14 -0700 (PDT)
+        Tue, 02 Jun 2026 01:08:15 -0700 (PDT)
 From: Qiang Yu <qiang.yu@oss.qualcomm.com>
-Date: Tue, 02 Jun 2026 01:02:17 -0700
-Subject: [PATCH v5 1/7] dt-bindings: clock: qcom: Move glymur TCSR to own
- binding and add mahua
+Date: Tue, 02 Jun 2026 01:02:18 -0700
+Subject: [PATCH v5 2/7] clk: qcom: Add generic clkref_en support
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -91,7 +90,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260602-tcsr_qref_0527-v5-1-8ea174a59d7e@oss.qualcomm.com>
+Message-Id: <20260602-tcsr_qref_0527-v5-2-8ea174a59d7e@oss.qualcomm.com>
 References: <20260602-tcsr_qref_0527-v5-0-8ea174a59d7e@oss.qualcomm.com>
 In-Reply-To: <20260602-tcsr_qref_0527-v5-0-8ea174a59d7e@oss.qualcomm.com>
 To: Bjorn Andersson <andersson@kernel.org>,
@@ -106,29 +105,29 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Qiang Yu <qiang.yu@oss.qualcomm.com>, krishna.chundru@oss.qualcomm.com
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1780387692; l=6370;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1780387692; l=9195;
  i=qiang.yu@oss.qualcomm.com; s=20250513; h=from:subject:message-id;
- bh=FAKBWcIX5mgY1WAddlCaxXrp5BD2oKuWSr+axNOz1nY=;
- b=UddEBnN7GiB2L2JeGtrEwfLrn6/aTN2yJqcAiOPX6043r20fVlM5xWlkUG5GoM5GJnnys/eaJ
- gNaHTe/eZIyAK+opBgOXFASZwqHoDuvEoUEUfQ7UNVneS/kSQa6aZPa
+ bh=biMxfBro4OCz1lNFjFkEHgyX+aT7jFd0C3ahchsJPvM=;
+ b=U2TYgph7cxl3BPyUWrkAOuKfqfZuXY+l1FNCH4siD8BfClukxyIGxUVz5q0fMxeRgx3lUmsYO
+ xqzh1X7/+LLCJa003wzFHmoJgjbU6J3rVhYBC44GlOMDYrFc2Zhosys
 X-Developer-Key: i=qiang.yu@oss.qualcomm.com; a=ed25519;
  pk=Rr94t+fykoieF1ngg/bXxEfr5KoQxeXPtYxM8fBQTAI=
-X-Proofpoint-ORIG-GUID: zw9BqqcgPNQ__jV0EI8ISRp_fmd3i-Nm
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjAyMDA3NSBTYWx0ZWRfX4fodZR4WCx8O
- hYBl4tDvfziR93lYqT+Kv8qhU/bL0OL5EpKQZYpqCeAL5znlC7UpWjm0qwOOrEAQCj9Dgz88l+k
- CiksPNZ1M1fbE7KnGKWFjhjCjEJbOe//Cv3v9/3OdgvQW2h6c4Hjk/78c9Puu6KNQNybbCx6D1a
- uWApQjnaFUXnXETB8LkGIoLzN14VF6pgKcpnFRHiaT/Q8PqtzvsLWJhbQa6BPwcdZEqusMs7BeE
- 7qv04v1rSL0IZG/dJopEW0p+2F8tnHJstM5ZtHZ2KHLKfrxRuACoQylVgnw+ysFnPh2W4b9dyfD
- oA1S+MAZ4Mi4bT3jKZcI302cfqLtwBlWZql+fxpdV4/4Ej72pghpyurT1gU9+5glHToYweEpEUh
- 5sA2u8AjE73Co77NpS/9oKY2aw1h1FmijE9KITaSIWo6vzSR8r2R8NfxfLr0LySZF9s+QoZfaaK
- Sns50BUuj2FY8QF59vg==
-X-Authority-Analysis: v=2.4 cv=ZYAt8MVA c=1 sm=1 tr=0 ts=6a1e8f70 cx=c_pps
- a=bS7HVuBVfinNPG3f6cIo3Q==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+X-Proofpoint-ORIG-GUID: oqIphQNvPUzujSdvgYuv3Re8pzZIGsK6
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjAyMDA3NSBTYWx0ZWRfXz75asTXhOFta
+ JTxgy0hxVYtTj0zURw1WjtxPKQh8k0aLQSxhT1jPxOGHqOLTF8DRMS25c1VpK1FzaHrldKYs9dm
+ URI6i5DN80CEea6rHSeRmmlaKXaN609iVyMtBCgfc27WvAdfegEl48o09hVLIn9qpgaa1vkuwzK
+ XBi6Z1B4rujJcZyH11uccArIRu3rqhb9BXmDPhYu9yXLNEN7JavepwuOfCY4N8tCWWm06EuDAmf
+ lKINZcNowk3p6HgJmkOAb6vbhZjpiPMxUGYtFFVDlXzdlmHNtT/o+gnPGSoVRpAdqkX6J813nhv
+ lfj9unmZaDHwuEW3/hBFuVlU+01qvP1kjOuz5hoDUO4Qr9FIP4hEczpL4sZYXuvKCCMqu+uawQo
+ TVHLLgY7lTWamYffaGKODO/LOPFsc5WcMYdw53TOHZUXlUbzevUisLSZoH4E5p/dr5G/VmKgale
+ idpXLTB/pGk1yLFEnAQ==
+X-Authority-Analysis: v=2.4 cv=ZYAt8MVA c=1 sm=1 tr=0 ts=6a1e8f72 cx=c_pps
+ a=PfFC4Oe2JQzmKTvty2cRDw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
  a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
  a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
- a=gEfo2CItAAAA:8 a=EUspDBNiAAAA:8 a=VwQbUJbxAAAA:8 a=fCDs2mesohUn3a4l0kMA:9
- a=QEXdDO2ut3YA:10 a=vBUdepa8ALXHeOFLBtFW:22 a=sptkURWiP4Gy88Gu7hUp:22
-X-Proofpoint-GUID: zw9BqqcgPNQ__jV0EI8ISRp_fmd3i-Nm
+ a=EUspDBNiAAAA:8 a=r4lB9QUgC6LPr1KdvdsA:9 a=QEXdDO2ut3YA:10
+ a=6Ab_bkdmUrQuMsNx7PHu:22
+X-Proofpoint-GUID: oqIphQNvPUzujSdvgYuv3Re8pzZIGsK6
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
  definitions=2026-06-01_07,2026-05-28_03,2025-10-01_01
@@ -138,200 +137,326 @@ X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2605210000 definitions=main-2606020075
 
-The QREF block supplies reference clocks to PCIe PHYs and requires
-dedicated LDO supplies to operate. The digital control interface for
-QREF (clkref_en registers) resides in TCSR on glymur and mahua. Since
-QREF has no dedicated DT node of its own, these supply properties are
-placed in the TCSR node which acts as the control interface for QREF.
+Before XO refclk is distributed to PCIe/USB/eDP PHYs, it passes through
+a QREF block. QREF is powered by dedicated LDO rails, and the clkref_en
+register controls whether refclk is gated through to the PHY side.
 
-Add a dedicated binding file for qcom,glymur-tcsr and qcom,mahua-tcsr and
-document the supply properties. Both SoCs share the same QREF TX/RPT/RX
-component naming, but differ in topology:
+These clkref controls are different from typical GCC branch clocks:
+- only a single enable bit is present, without branch-style config bits
+- regulators must be voted before enable and unvoted after disable
 
-Glymur has two independent QREF blocks fed by REFGEN3 and REFGEN4. Mahua
-has a single QREF block fed by REFGEN3 only.
+Model this as a dedicated clk_ref clock type with custom clk_ops instead
+of reusing struct clk_branch semantics.
 
-Mark the relevant supplies as required per compatible using allOf/if/then
-conditionals.
+Also provide a common registration/probe API so the same clkref model
+can be reused regardless of where clkref_en registers are placed, e.g.
+TCSR on glymur and TLMM on SM8750.
 
 Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
 ---
- .../bindings/clock/qcom,glymur-tcsr.yaml           | 146 +++++++++++++++++++++
- .../bindings/clock/qcom,sm8550-tcsr.yaml           |   2 -
- 2 files changed, 146 insertions(+), 2 deletions(-)
+ drivers/clk/qcom/Makefile  |   1 +
+ drivers/clk/qcom/clk-ref.c | 205 +++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/clk/qcom.h   |  69 +++++++++++++++
+ 3 files changed, 275 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,glymur-tcsr.yaml b/Documentation/devicetree/bindings/clock/qcom,glymur-tcsr.yaml
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index e100cfd6a52d..c5b02360861d 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -8,6 +8,7 @@ clk-qcom-y += clk-pll.o
+ clk-qcom-y += clk-rcg.o
+ clk-qcom-y += clk-rcg2.o
+ clk-qcom-y += clk-branch.o
++clk-qcom-y += clk-ref.o
+ clk-qcom-y += clk-regmap-divider.o
+ clk-qcom-y += clk-regmap-mux.o
+ clk-qcom-y += clk-regmap-mux-div.o
+diff --git a/drivers/clk/qcom/clk-ref.c b/drivers/clk/qcom/clk-ref.c
 new file mode 100644
-index 000000000000..2b6422627165
+index 000000000000..af82e344ddc4
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,glymur-tcsr.yaml
-@@ -0,0 +1,146 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/qcom,glymur-tcsr.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/drivers/clk/qcom/clk-ref.c
+@@ -0,0 +1,205 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2026, Qualcomm Technologies, Inc. and/or its subsidiaries.
++ */
 +
-+title: Qualcomm TCSR Clock Controller on Glymur
++#include <linux/clk-provider.h>
++#include <linux/clk/qcom.h>
++#include <linux/delay.h>
++#include <linux/err.h>
++#include <linux/export.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++#include <linux/regulator/consumer.h>
++#include <linux/slab.h>
 +
-+maintainers:
-+  - Bjorn Andersson <andersson@kernel.org>
-+  - Taniya Das <taniya.das@oss.qualcomm.com>
++#define QCOM_CLK_REF_EN_MASK BIT(0)
 +
-+description: |
-+  Qualcomm TCSR clock control module provides the clocks, resets and
-+  power domains on Glymur
++struct qcom_clk_ref_provider {
++	struct qcom_clk_ref *refs;
++	size_t num_refs;
++};
 +
-+  See also:
-+  - include/dt-bindings/clock/qcom,glymur-tcsr.h
++static inline struct qcom_clk_ref *to_qcom_clk_ref(struct clk_hw *hw)
++{
++	return container_of(hw, struct qcom_clk_ref, hw);
++}
 +
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - qcom,glymur-tcsr
-+          - qcom,mahua-tcsr
-+      - const: syscon
++static const struct clk_parent_data qcom_clk_ref_parent_data = {
++	.index = 0,
++};
 +
-+  clocks:
-+    items:
-+      - description: TCXO pad clock
++static int qcom_clk_ref_prepare(struct clk_hw *hw)
++{
++	struct qcom_clk_ref *rclk = to_qcom_clk_ref(hw);
++	int ret;
 +
-+  reg:
-+    maxItems: 1
++	if (!rclk->desc.num_regulators)
++		return 0;
 +
-+  '#clock-cells':
-+    const: 1
++	ret = regulator_bulk_enable(rclk->desc.num_regulators, rclk->regulators);
++	if (ret)
++		pr_err("Failed to enable regulators for %s: %d\n",
++		       clk_hw_get_name(hw), ret);
 +
-+  '#reset-cells':
-+    const: 1
++	return ret;
++}
 +
-+  vdda-qrefrpt0-0p9-supply: true
-+  vdda-qrefrpt1-0p9-supply: true
-+  vdda-qrefrpt2-0p9-supply: true
-+  vdda-qrefrpt3-0p9-supply: true
-+  vdda-qrefrpt4-0p9-supply: true
-+  vdda-qrefrpt5-0p9-supply: true
-+  vdda-qrefrx0-0p9-supply: true
-+  vdda-qrefrx1-0p9-supply: true
-+  vdda-qrefrx2-0p9-supply: true
-+  vdda-qrefrx3-0p9-supply: true
-+  vdda-qrefrx4-0p9-supply: true
-+  vdda-qrefrx5-0p9-supply: true
-+  vdda-qreftx0-0p9-supply: true
-+  vdda-qreftx0-1p2-supply: true
-+  vdda-qreftx1-0p9-supply: true
-+  vdda-refgen3-0p9-supply: true
-+  vdda-refgen3-1p2-supply: true
-+  vdda-refgen4-0p9-supply: true
-+  vdda-refgen4-1p2-supply: true
++static void qcom_clk_ref_unprepare(struct clk_hw *hw)
++{
++	struct qcom_clk_ref *rclk = to_qcom_clk_ref(hw);
 +
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: qcom,glymur-tcsr
-+    then:
-+      required:
-+        - vdda-qrefrpt0-0p9-supply
-+        - vdda-qrefrpt1-0p9-supply
-+        - vdda-qrefrpt2-0p9-supply
-+        - vdda-qrefrpt3-0p9-supply
-+        - vdda-qrefrpt4-0p9-supply
-+        - vdda-qrefrx0-0p9-supply
-+        - vdda-qrefrx1-0p9-supply
-+        - vdda-qrefrx2-0p9-supply
-+        - vdda-qrefrx4-0p9-supply
-+        - vdda-qrefrx5-0p9-supply
-+        - vdda-qreftx0-0p9-supply
-+        - vdda-qreftx0-1p2-supply
-+        - vdda-qreftx1-0p9-supply
-+        - vdda-refgen3-0p9-supply
-+        - vdda-refgen3-1p2-supply
-+        - vdda-refgen4-0p9-supply
-+        - vdda-refgen4-1p2-supply
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: qcom,mahua-tcsr
-+    then:
-+      required:
-+        - vdda-qrefrpt0-0p9-supply
-+        - vdda-qrefrpt1-0p9-supply
-+        - vdda-qrefrpt2-0p9-supply
-+        - vdda-qrefrpt3-0p9-supply
-+        - vdda-qrefrpt4-0p9-supply
-+        - vdda-qrefrpt5-0p9-supply
-+        - vdda-qrefrx1-0p9-supply
-+        - vdda-qrefrx2-0p9-supply
-+        - vdda-qrefrx3-0p9-supply
-+        - vdda-qreftx1-0p9-supply
-+        - vdda-refgen3-0p9-supply
-+        - vdda-refgen3-1p2-supply
++	if (rclk->desc.num_regulators)
++		regulator_bulk_disable(rclk->desc.num_regulators, rclk->regulators);
++}
 +
-+required:
-+  - compatible
-+  - clocks
++static int qcom_clk_ref_enable(struct clk_hw *hw)
++{
++	struct qcom_clk_ref *rclk = to_qcom_clk_ref(hw);
++	int ret;
 +
-+additionalProperties: false
++	ret = regmap_update_bits(rclk->regmap, rclk->desc.offset, QCOM_CLK_REF_EN_MASK,
++				 QCOM_CLK_REF_EN_MASK);
++	if (ret)
++		return ret;
 +
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,rpmh.h>
++	udelay(10);
 +
-+    soc {
-+      #address-cells = <2>;
-+      #size-cells = <2>;
++	return 0;
++}
 +
-+      clock-controller@1fd5000 {
-+        compatible = "qcom,glymur-tcsr", "syscon";
-+        reg = <0x0 0x1fd5000 0x0 0x21000>;
-+        clocks = <&rpmhcc RPMH_CXO_CLK>;
-+        #clock-cells = <1>;
-+        #reset-cells = <1>;
-+        vdda-qrefrpt0-0p9-supply = <&vreg_l1a>;
-+        vdda-qrefrpt1-0p9-supply = <&vreg_l1a>;
-+        vdda-qrefrpt2-0p9-supply = <&vreg_l1a>;
-+        vdda-qrefrpt3-0p9-supply = <&vreg_l1a>;
-+        vdda-qrefrpt4-0p9-supply = <&vreg_l1a>;
-+        vdda-qrefrx0-0p9-supply = <&vreg_l1a>;
-+        vdda-qrefrx1-0p9-supply = <&vreg_l1a>;
-+        vdda-qrefrx2-0p9-supply = <&vreg_l1a>;
-+        vdda-qrefrx4-0p9-supply = <&vreg_l1a>;
-+        vdda-qrefrx5-0p9-supply = <&vreg_l1a>;
-+        vdda-qreftx0-0p9-supply = <&vreg_l1a>;
-+        vdda-qreftx0-1p2-supply = <&vreg_l2a>;
-+        vdda-qreftx1-0p9-supply = <&vreg_l1a>;
-+        vdda-refgen3-0p9-supply = <&vreg_l1a>;
-+        vdda-refgen3-1p2-supply = <&vreg_l2a>;
-+        vdda-refgen4-0p9-supply = <&vreg_l1a>;
-+        vdda-refgen4-1p2-supply = <&vreg_l2a>;
-+      };
-+    };
++static void qcom_clk_ref_disable(struct clk_hw *hw)
++{
++	struct qcom_clk_ref *rclk = to_qcom_clk_ref(hw);
 +
-+...
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
-index 08824f848973..19ae0634b922 100644
---- a/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
-@@ -16,7 +16,6 @@ description: |
- 
-   See also:
-   - include/dt-bindings/clock/qcom,eliza-tcsr.h
--  - include/dt-bindings/clock/qcom,glymur-tcsr.h
-   - include/dt-bindings/clock/qcom,hawi-tcsrcc.h
-   - include/dt-bindings/clock/qcom,nord-tcsrcc.h
-   - include/dt-bindings/clock/qcom,sm8550-tcsr.h
-@@ -28,7 +27,6 @@ properties:
-     items:
-       - enum:
-           - qcom,eliza-tcsr
--          - qcom,glymur-tcsr
-           - qcom,hawi-tcsrcc
-           - qcom,kaanapali-tcsr
-           - qcom,milos-tcsr
++	regmap_update_bits(rclk->regmap, rclk->desc.offset, QCOM_CLK_REF_EN_MASK, 0);
++	udelay(10);
++}
++
++static int qcom_clk_ref_is_enabled(struct clk_hw *hw)
++{
++	struct qcom_clk_ref *rclk = to_qcom_clk_ref(hw);
++	u32 val;
++	int ret;
++
++	ret = regmap_read(rclk->regmap, rclk->desc.offset, &val);
++	if (ret)
++		return 0;
++
++	return !!(val & QCOM_CLK_REF_EN_MASK);
++}
++
++static const struct clk_ops qcom_clk_ref_ops = {
++	.prepare = qcom_clk_ref_prepare,
++	.unprepare = qcom_clk_ref_unprepare,
++	.enable = qcom_clk_ref_enable,
++	.disable = qcom_clk_ref_disable,
++	.is_enabled = qcom_clk_ref_is_enabled,
++};
++
++static int qcom_clk_ref_register(struct device *dev, struct regmap *regmap,
++				 struct qcom_clk_ref *clk_refs,
++				 const struct qcom_clk_ref_desc *descs,
++				 size_t num_clk_refs)
++{
++	const struct qcom_clk_ref_desc *desc;
++	struct qcom_clk_ref *clk_ref;
++	size_t clk_idx;
++	unsigned int i;
++	int ret;
++
++	for (clk_idx = 0; clk_idx < num_clk_refs; clk_idx++) {
++		clk_ref = &clk_refs[clk_idx];
++		desc = &descs[clk_idx];
++
++		if (!desc->name)
++			continue;
++
++		clk_ref->regmap = regmap;
++		clk_ref->desc = *desc;
++
++		if (clk_ref->desc.num_regulators) {
++			clk_ref->regulators = devm_kcalloc(dev, clk_ref->desc.num_regulators,
++							   sizeof(*clk_ref->regulators),
++							   GFP_KERNEL);
++			if (!clk_ref->regulators)
++				return -ENOMEM;
++
++			for (i = 0; i < clk_ref->desc.num_regulators; i++)
++				clk_ref->regulators[i].supply =
++					clk_ref->desc.regulator_names[i];
++
++			ret = devm_regulator_bulk_get(dev, clk_ref->desc.num_regulators,
++						      clk_ref->regulators);
++			if (ret)
++				return dev_err_probe(dev, ret,
++						     "Failed to get regulators for %s\n",
++						     clk_ref->desc.name);
++		}
++
++		clk_ref->init_data.name = clk_ref->desc.name;
++		clk_ref->init_data.parent_data = &qcom_clk_ref_parent_data;
++		clk_ref->init_data.num_parents = 1;
++		clk_ref->init_data.ops = &qcom_clk_ref_ops;
++		clk_ref->hw.init = &clk_ref->init_data;
++
++		ret = devm_clk_hw_register(dev, &clk_ref->hw);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++
++static struct clk_hw *qcom_clk_ref_provider_get(struct of_phandle_args *clkspec, void *data)
++{
++	struct qcom_clk_ref_provider *provider = data;
++	unsigned int idx = clkspec->args[0];
++
++	if (idx >= provider->num_refs)
++		return ERR_PTR(-EINVAL);
++
++	if (!provider->refs[idx].regmap)
++		return ERR_PTR(-ENOENT);
++
++	return &provider->refs[idx].hw;
++}
++
++int qcom_clk_ref_probe(struct platform_device *pdev,
++		       const struct regmap_config *config,
++		       const struct qcom_clk_ref_desc *descs,
++		       size_t num_clk_refs)
++{
++	struct qcom_clk_ref_provider *provider;
++	struct device *dev = &pdev->dev;
++	struct regmap *regmap;
++	void __iomem *base;
++	int ret;
++
++	base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	regmap = devm_regmap_init_mmio(dev, base, config);
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
++
++	provider = devm_kzalloc(dev, sizeof(*provider), GFP_KERNEL);
++	if (!provider)
++		return -ENOMEM;
++
++	provider->refs = devm_kcalloc(dev, num_clk_refs, sizeof(*provider->refs),
++				      GFP_KERNEL);
++	if (!provider->refs)
++		return -ENOMEM;
++
++	provider->num_refs = num_clk_refs;
++
++	ret = qcom_clk_ref_register(dev, regmap, provider->refs, descs,
++				    provider->num_refs);
++	if (ret)
++		return ret;
++
++	return devm_of_clk_add_hw_provider(dev, qcom_clk_ref_provider_get, provider);
++}
++EXPORT_SYMBOL_GPL(qcom_clk_ref_probe);
+diff --git a/include/linux/clk/qcom.h b/include/linux/clk/qcom.h
+new file mode 100644
+index 000000000000..09e2e3178cfb
+--- /dev/null
++++ b/include/linux/clk/qcom.h
+@@ -0,0 +1,69 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2026, Qualcomm Technologies, Inc. and/or its subsidiaries.
++ */
++
++#ifndef __LINUX_CLK_QCOM_H
++#define __LINUX_CLK_QCOM_H
++
++#include <linux/clk-provider.h>
++#include <linux/errno.h>
++#include <linux/kconfig.h>
++#include <linux/regmap.h>
++#include <linux/types.h>
++
++struct device;
++struct platform_device;
++struct regulator_bulk_data;
++
++/**
++ * struct qcom_clk_ref_desc - descriptor for a clkref_en gate clock
++ * @name: clock name exposed to the common clock framework
++ * @offset: clkref_en register offset from the block base
++ * @regulator_names: optional supply names enabled while preparing the clock
++ * @num_regulators: number of entries in @regulator_names
++ */
++struct qcom_clk_ref_desc {
++	const char *name;
++	u32 offset;
++	const char * const *regulator_names;
++	unsigned int num_regulators;
++};
++
++/**
++ * struct qcom_clk_ref - per-clock data for a clkref_en gate clock
++ * @hw: common clock framework hardware clock handle
++ * @init_data: common clock framework registration data
++ * @regmap: register map backing the clkref_en register
++ * @desc: clock descriptor copied at registration time
++ * @regulators: optional bulk regulator handles for @desc.regulator_names
++ */
++struct qcom_clk_ref {
++	struct clk_hw hw;
++	struct clk_init_data init_data;
++	struct regmap *regmap;
++	struct qcom_clk_ref_desc desc;
++	struct regulator_bulk_data *regulators;
++};
++
++#if IS_ENABLED(CONFIG_COMMON_CLK_QCOM)
++
++int qcom_clk_ref_probe(struct platform_device *pdev,
++		       const struct regmap_config *config,
++		       const struct qcom_clk_ref_desc *descs,
++		       size_t num_clk_refs);
++
++#else
++
++static inline int
++qcom_clk_ref_probe(struct platform_device *pdev,
++		   const struct regmap_config *config,
++		   const struct qcom_clk_ref_desc *descs,
++		   size_t num_clk_refs)
++{
++	return -EOPNOTSUPP;
++}
++
++#endif
++
++#endif
 
 -- 
 2.34.1
