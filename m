@@ -1,27 +1,27 @@
-Received: from outbound10.mail.transip.nl (outbound10.mail.transip.nl [136.144.136.17])
+Received: from outbound0.mail.transip.nl (outbound0.mail.transip.nl [149.210.149.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C013B36C598;
-	Tue,  2 Jun 2026 04:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.144.136.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C101726FDBF;
+	Tue,  2 Jun 2026 04:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.210.149.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780374483; cv=none; b=YCAp4no/lvxj1ibvhVRlb6fUojB+iQpYwYv5MNiOs25Dg80ijW7TQfni3zwKkTLgqd7Lj3vypNiOmILY+D9hhT9A4thnZ2wnDWAmjMEBswti6sAhW5neXOVMtwlFbMr3mppROi2vJ9B+imIJyqfpLAEbmuaPXGK7nGvu0DOv+lg=
+	t=1780374993; cv=none; b=sA9zIaunS8LYDnSAKlP8brrhZhZ5EzF11Pi+2mpCt/ICXulGmRphUt4kCSntun8O5bk4LdKeWHbMGkZ7aguhKwDJML9PVxiE9OOohATy1Aw0u0S7t2GYb15+WkNU4RGWSG3ELdMKjVxJgEXocfZzenfAYi1Ym2tWGDBA2KB9pL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780374483; c=relaxed/simple;
-	bh=VSSf7JsYhPtkpa4irpQThN2KbJrXq0Gamlkn9rF9B/w=;
+	s=arc-20240116; t=1780374993; c=relaxed/simple;
+	bh=7GVEU4din37FjDdBmZSuCuPSKPUqbKeNE/zhEIn25T8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=M3JoQ8SPnvC6e8ll7HDBcZtwcijS7FJ/UiKmpAUbyUfsZp2OkfPjiT6azIrd44TQF0bqhV8IS44zODctlOy5UPBvZmaEWmI3W9kvcP2/jeylwZWmCZs7dpNq1ZHvHCjkZJx0fnU0DTar4YoP/VNuSUcByxuoxP5FHzbQ2WMe6+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=herrie.org; spf=pass smtp.mailfrom=herrie.org; dkim=pass (2048-bit key) header.d=herrie.org header.i=@herrie.org header.b=TVjmjVox; arc=none smtp.client-ip=136.144.136.17
+	 MIME-Version:Content-Type; b=LGSUuX7HfXSeV6OkZcXDoNZsqLl5NnVzCER7BTdeo7g9BeJio2zK/06DO6f18oqe2E2kGfS65JmUqJT84fxMS3tpZ/UShINjajes8nQ5yWfABxQFO3lI2TnPKZ7b/SR+CzMVbMb+b+pSuXe45hWYuVyWnpXhm9YSf36bF/fORd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=herrie.org; spf=pass smtp.mailfrom=herrie.org; dkim=pass (2048-bit key) header.d=herrie.org header.i=@herrie.org header.b=FHLeFLcl; arc=none smtp.client-ip=149.210.149.69
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=herrie.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=herrie.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=herrie.org header.i=@herrie.org header.b="TVjmjVox"
-Received: from submission15.mail.transip.nl (unknown [10.103.8.166])
-	by outbound10.mail.transip.nl (Postfix) with ESMTP id 4gTyVZ746bzTPNW8;
-	Tue,  2 Jun 2026 06:27:50 +0200 (CEST)
+	dkim=pass (2048-bit key) header.d=herrie.org header.i=@herrie.org header.b="FHLeFLcl"
+Received: from submission4.mail.transip.nl (unknown [10.103.8.155])
+	by outbound0.mail.transip.nl (Postfix) with ESMTP id 4gTyhS6gVlzxPQ7;
+	Tue,  2 Jun 2026 06:36:24 +0200 (CEST)
 Received: from herrie-desktop.. (180-93-184-31.ftth.glasoperator.nl [31.184.93.180])
-	by submission15.mail.transip.nl (Postfix) with ESMTPA id 4gTyVZ2qhtz3R3nyb;
-	Tue,  2 Jun 2026 06:27:50 +0200 (CEST)
+	by submission4.mail.transip.nl (Postfix) with ESMTPA id 4gTyhS2JXXz3R3nyf;
+	Tue,  2 Jun 2026 06:36:24 +0200 (CEST)
 From: Herman van Hazendonk <github.com@herrie.org>
 To: sboyd@kernel.org
 Cc: Herman van Hazendonk <github.com@herrie.org>,
@@ -30,98 +30,185 @@ Cc: Herman van Hazendonk <github.com@herrie.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
+	linux-kernel@vger.kernel.org,
 	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org
-Subject: [PATCH 2/2] clk: qcom: gcc-msm8660: register PLL4_VOTE for LPASS
-Date: Tue,  2 Jun 2026 06:27:45 +0200
-Message-ID: <20260602042747.277270-3-github.com@herrie.org>
+Subject: [PATCH 1/3] dt-bindings: clock: qcom: add mmcc-msm8660 clock IDs
+Date: Tue,  2 Jun 2026 06:36:17 +0200
+Message-ID: <20260602043623.285901-2-github.com@herrie.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260602042747.277270-1-github.com@herrie.org>
-References: <20260602042747.277270-1-github.com@herrie.org>
+In-Reply-To: <20260602043623.285901-1-github.com@herrie.org>
+References: <20260602043623.285901-1-github.com@herrie.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: ClueGetter at submission15.mail.transip.nl
+X-Scanned-By: ClueGetter at submission4.mail.transip.nl
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=transip-a; d=herrie.org; t=1780374470; h=from:subject:to:cc:
- references:in-reply-to:date:mime-version;
- bh=g3ROW7hBNhkKFHDQavHcox1vYNkJIWsOzzdzMxdC0i0=;
- b=TVjmjVox6kZxVyyiiLost18MWfUNz9ZIB9vn5FiWh8G50PnJ5Hsm6l3m9ImMYknx0Xml88
- lGL/8VI0Rj2ux3mS8uCUYi7/22TMJlCvrxkwXZFJnbR+w/NY5yJjhVpRk0Dr9aOwrx6JqC
- FuFDOkA0vcwvtmAJflvS3DlMNLTv01chohqo3kJCleVd9Xu1QB/6yErd/SRl4PhCgRCj9W
- U8qwVZoQTC4o3+//1pXUHYPeMwI/eKRtZ2XI/AFsGzBS+yOTvqyInjgN+MIF22q3dOhyZV
- KfRSg2hnq6ObnNVHSgdfFj/BpcmP0DXgMKpX14znj6JYlyRajr9tSEr6axb+4w==
+ s=transip-a; d=herrie.org; t=1780374984; h=from:subject:to:cc:
+ references:in-reply-to:date:mime-version:content-type;
+ bh=S+oVwmky282VbH+PAA7JnEpBKm9iw52aNdvDCKXBJ+w=;
+ b=FHLeFLcl5n1YABkTk4XGkzIo2BibfMmCfCRuVfVegMumWVx3nGjgVbF0W6uI/Uvc11sfZQ
+ rFCvQpUgh3M6YYSBAG+xVh8rZVXTkPfYar3WzU0jhV74Z3Y07V8+PNAthrGhu/APTJXifj
+ V3ua6pNZe9mtAW0TDUjsa1A2r/+Ea6lhbstCiMkg3j3T8eoIYxwvMgwhCOXhqQF9Vyp741
+ njC5weEVFldecpp6M5NWGQQGbtLUwpa4bJi2Nnp1nUzen/XUTnXBRk0dU8LwTAz2ENz8TL
+ 3gb+t+7Q7pjl4BHEuYN/tSqvbl47MICJqaswkYhOvCwDL5gf2EmcmVdIDQxoJQ==
 X-Report-Abuse-To: abuse@transip.nl
 
-Add the CPU-side software vote register for LPASS PLL4. PLL4 itself
-lives in the LCC (Low Power Audio Subsystem clock controller); GCC
-holds the apps-processor vote in PLL_ENA_SC0 (0x34c0) BIT(4). The
-LCC driver references "pll4" as the parent of its slimbus / SAIF /
-audio mclk roots, so without this vote PLL4 is gated off when the
-apps processor is the only consumer and LCC clocks silently fail to
-enable.
+Add the dt-binding clock-ID header for the MSM8x60 family
+(MSM8260/MSM8660/APQ8060) Multimedia Clock Controller (MMCC). The
+header enumerates the clocks and power-domains consumed by the
+multimedia subsystem (MDP4 display, Adreno A220 GPU, CAMSS image
+pipeline, VFE, Gemini JPEG, video codec, rotator, VPE and the GFX2D
+Z180 cores).
 
-Expose it as a single clk_regmap with clk_pll_vote_ops and append
-the dt-binding ID at the next free slot (258) after the existing
-PLL12 (257), so DT ABI for boards already using the prior header is
-preserved.
+IDs intentionally match the numeric values used by the original
+shared mmcc-msm8960.h so the driver's clk array indexing is preserved;
+only the clocks actually implemented by mmcc-msm8660.c are defined.
 
 Signed-off-by: Herman van Hazendonk <github.com@herrie.org>
 ---
- drivers/clk/qcom/gcc-msm8660.c               | 15 +++++++++++++++
- include/dt-bindings/clock/qcom,gcc-msm8660.h |  1 +
- 2 files changed, 16 insertions(+)
+ include/dt-bindings/clock/qcom,mmcc-msm8660.h | 126 ++++++++++++++++++
+ 1 file changed, 126 insertions(+)
+ create mode 100644 include/dt-bindings/clock/qcom,mmcc-msm8660.h
 
-diff --git a/drivers/clk/qcom/gcc-msm8660.c b/drivers/clk/qcom/gcc-msm8660.c
-index e81b8851a786..cd392e140e95 100644
---- a/drivers/clk/qcom/gcc-msm8660.c
-+++ b/drivers/clk/qcom/gcc-msm8660.c
-@@ -54,6 +54,20 @@ static struct clk_regmap pll8_vote = {
- 	},
- };
- 
-+/* PLL4 is the LPASS PLL, defined in LCC. This is the voting clock. */
-+static struct clk_regmap pll4_vote = {
-+	.enable_reg = 0x34c0,
-+	.enable_mask = BIT(4),
-+	.hw.init = &(struct clk_init_data){
-+		.name = "pll4_vote",
-+		.parent_data = &(const struct clk_parent_data){
-+			.fw_name = "pll4", .name = "pll4",
-+		},
-+		.num_parents = 1,
-+		.ops = &clk_pll_vote_ops,
-+	},
-+};
+diff --git a/include/dt-bindings/clock/qcom,mmcc-msm8660.h b/include/dt-bindings/clock/qcom,mmcc-msm8660.h
+new file mode 100644
+index 000000000000..00c3a75e8b71
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,mmcc-msm8660.h
+@@ -0,0 +1,126 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) 2013, The Linux Foundation. All rights reserved.
++ *
++ * Clock and power-domain bindings for the MSM8x60 family (MSM8260/MSM8660/APQ8060)
++ * Multimedia Clock Controller (MMCC).
++ *
++ * MSM8260, MSM8660 and APQ8060 are the same Scorpion-class MSM8x60 SoC
++ * with different bin/feature labels. MSM8960 is a newer generation (Krait)
++ * — its bindings live in
++ * <dt-bindings/clock/qcom,mmcc-msm8960.h> and must not be reused here.
++ *
++ * IDs below intentionally match the numeric values used by the original
++ * shared mmcc-msm8960.h so the driver's clk array indexing is preserved;
++ * only the clocks actually implemented by mmcc-msm8660.c are defined.
++ */
 +
- enum {
- 	P_PXO,
- 	P_PLL8,
-@@ -2543,6 +2557,7 @@ static struct clk_branch rpm_msg_ram_h_clk = {
- static struct clk_regmap *gcc_msm8660_clks[] = {
- 	[PLL8] = &pll8.clkr,
- 	[PLL8_VOTE] = &pll8_vote,
-+	[PLL4_VOTE] = &pll4_vote,
- 	[GSBI1_UART_SRC] = &gsbi1_uart_src.clkr,
- 	[GSBI1_UART_CLK] = &gsbi1_uart_clk.clkr,
- 	[GSBI2_UART_SRC] = &gsbi2_uart_src.clkr,
-diff --git a/include/dt-bindings/clock/qcom,gcc-msm8660.h b/include/dt-bindings/clock/qcom,gcc-msm8660.h
-index 4777c002711a..51d2e97441c8 100644
---- a/include/dt-bindings/clock/qcom,gcc-msm8660.h
-+++ b/include/dt-bindings/clock/qcom,gcc-msm8660.h
-@@ -264,5 +264,6 @@
- #define PLL10					255
- #define PLL11					256
- #define PLL12					257
-+#define PLL4_VOTE				258
- 
- #endif
++#ifndef _DT_BINDINGS_CLK_MSM_MMCC_8660_H
++#define _DT_BINDINGS_CLK_MSM_MMCC_8660_H
++
++#define TV_ENC_AHB_CLK					3
++#define AMP_AHB_CLK					4
++#define JPEGD_AHB_CLK					6
++#define GFX2D0_AHB_CLK					7
++#define DSI_S_AHB_CLK					8
++#define VPE_AHB_CLK					10
++#define SMMU_AHB_CLK					11
++#define HDMI_M_AHB_CLK					12
++#define VFE_AHB_CLK					13
++#define ROT_AHB_CLK					14
++#define VCODEC_AHB_CLK					15
++#define MDP_AHB_CLK					16
++#define DSI_M_AHB_CLK					17
++#define CSI0_AHB_CLK					18
++#define MMSS_IMEM_AHB_CLK				19
++#define IJPEG_AHB_CLK					20
++#define HDMI_S_AHB_CLK					21
++#define GFX3D_AHB_CLK					22
++#define GFX2D1_AHB_CLK					23
++#define JPEGD_AXI_CLK					28
++#define GMEM_AXI_CLK					29
++#define MDP_AXI_CLK					30
++#define MMSS_IMEM_AXI_CLK				31
++#define IJPEG_AXI_CLK					32
++#define GFX3D_AXI_CLK					33
++#define VCODEC_AXI_CLK					34
++#define VFE_AXI_CLK					35
++#define VPE_AXI_CLK					36
++#define ROT_AXI_CLK					37
++#define VCODEC_AXI_A_CLK				38
++#define VCODEC_AXI_B_CLK				39
++#define CSI0_SRC					47
++#define CSI0_CLK					48
++#define CSI0_PHY_CLK					49
++#define CSI1_SRC					50
++#define CSI1_CLK					51
++#define CSI1_PHY_CLK					52
++#define DSI_SRC						56
++#define DSI_CLK						57
++#define CSI_PIX_CLK					58
++#define CSI_RDI_CLK					59
++#define MDP_VSYNC_CLK					60
++#define HDMI_APP_CLK					62
++#define GFX2D0_SRC					66
++#define GFX2D0_CLK					67
++#define GFX2D1_SRC					68
++#define GFX2D1_CLK					69
++#define GFX3D_SRC					70
++#define GFX3D_CLK					71
++#define IJPEG_SRC					72
++#define IJPEG_CLK					73
++#define JPEGD_SRC					74
++#define JPEGD_CLK					75
++#define MDP_SRC						76
++#define MDP_CLK						77
++#define MDP_LUT_CLK					78
++#define DSI1_BYTE_SRC					83
++#define DSI1_BYTE_CLK					84
++#define DSI1_ESC_SRC					87
++#define DSI1_ESC_CLK					88
++#define ROT_SRC						91
++#define ROT_CLK						92
++#define TV_ENC_CLK					93
++#define TV_DAC_CLK					94
++#define HDMI_TV_CLK					95
++#define MDP_TV_CLK					96
++#define TV_SRC						97
++#define VCODEC_SRC					98
++#define VCODEC_CLK					99
++#define VFE_SRC						100
++#define VFE_CLK						101
++#define VFE_CSI0_CLK					102
++#define VPE_SRC						103
++#define VPE_CLK						104
++#define DSI_PIXEL_SRC					105
++#define DSI_PIXEL_CLK					106
++#define CAMCLK0_SRC					107
++#define CAMCLK0_CLK					108
++#define CAMCLK1_SRC					109
++#define CAMCLK1_CLK					110
++#define CSIPHYTIMER_SRC					113
++#define CSIPHY1_TIMER_CLK				115
++#define CSIPHY0_TIMER_CLK				116
++#define PLL2						118
++#define MDP_PIXEL_SRC					129
++#define MDP_PIXEL_CLK					130
++#define MDP_LCDC_CLK					131
++#define VFE_CSI1_CLK					132
++#define CSI1_AHB_CLK					133
++
++/*
++ * MSM8x60 legacy footswitch power domains.
++ * Used with the MMCC power-domain provider (#power-domain-cells = <1>).
++ * Numbering is independent of the clock ID space above.
++ */
++#define GFX2D0_GDSC					0
++#define GFX2D1_GDSC					1
++#define GFX3D_GDSC					2
++#define IJPEG_GDSC					3
++#define MDP_GDSC					4
++#define ROT_GDSC					5
++#define VED_GDSC					6
++#define VFE_GDSC					7
++#define VPE_GDSC					8
++
++#endif
 -- 
 2.43.0
 
