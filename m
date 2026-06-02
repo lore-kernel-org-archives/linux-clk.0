@@ -1,83 +1,58 @@
-Received: from outbound2.mail.transip.nl (outbound2.mail.transip.nl [149.210.149.73])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 908662571DA;
-	Tue,  2 Jun 2026 06:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.210.149.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948042571DA;
+	Tue,  2 Jun 2026 06:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780382979; cv=none; b=NTaxjGkc/uezDmQmt6q4+R83NVLbnm+hluROW1tpjasOypQyvUVjvyVTpuZ406JfpAe/7vyDTdT9Rg8NA3//W2jngJMV3UVs62nm2EPOhLIGdknM9rL+aczhZLCMg+B0idnVKJW0BrEvfk7ufb+4kSmH8lLI9rsH981fS7vRvPI=
+	t=1780383087; cv=none; b=HlgW/XQCXvOHdzMwZrIvD1R3CMWW418N+SZ6aoESxXCp9sj4iSo2AQE8wXvGwR/w3+sDz9HU8yjZ7LpUW9qpHFjyH2ZZX0wvOVZ/dT9T64BYJc5oj3cbgvYnLtWCobfAaCrwWEwaV/SpEI9WOlhxNRKR/AerDZ0uxptvuxNBKyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780382979; c=relaxed/simple;
-	bh=Pi5ioL7+QlwhK2xj+V87banDOdI/HytqblsE8PVdBww=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MSD0H6NTYG1IgHWE/aiYMKMqSI+9NdF0SReEmbS4A/KEuC1BuvLAubCmUwKYfJNtgd6R48hRDOMkyTJAcHkckkof0G6JIxegQSbZUfFVNa9rlTaFvJAfvy/v3frcJzg+rf27lNfIdoxunUPoja/TTcpBLg9MQ7gozrYMrx1K5tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=herrie.org; spf=pass smtp.mailfrom=herrie.org; dkim=pass (2048-bit key) header.d=herrie.org header.i=@herrie.org header.b=EDQEy4eg; arc=none smtp.client-ip=149.210.149.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=herrie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=herrie.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=herrie.org header.i=@herrie.org header.b="EDQEy4eg"
-Received: from submission6.mail.transip.nl (unknown [10.103.8.157])
-	by outbound2.mail.transip.nl (Postfix) with ESMTP id 4gV1dy1Fl8zYdx2;
-	Tue,  2 Jun 2026 08:49:26 +0200 (CEST)
-Received: from herrie-desktop.. (180-93-184-31.ftth.glasoperator.nl [31.184.93.180])
-	by submission6.mail.transip.nl (Postfix) with ESMTPA id 4gV1dw5XZmz3ZVDrf;
-	Tue,  2 Jun 2026 08:49:24 +0200 (CEST)
-From: Herman van Hazendonk <github.com@herrie.org>
-To: sboyd@kernel.org
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Herman van Hazendonk <github.com@herrie.org>
-Subject: Re: [PATCH 2/2] clk: qcom: gcc-msm8660: register PLL4_VOTE for LPASS
-Date: Tue,  2 Jun 2026 08:49:23 +0200
-Message-ID: <20260602064923.877894-1-github.com@herrie.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260602054643.452049-1-github.com@herrie.org>
-References: <20260602054643.452049-1-github.com@herrie.org>
+	s=arc-20240116; t=1780383087; c=relaxed/simple;
+	bh=dlD+K7ZMV8ywi6W2vwFGICDOBzhL02lerZ46DebjTpI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Uvgm0QWJA223NmaBBSsD/FGr3jR9sdDWaSNZOtN6D/1+DHmuYOEtA9lgUxyXOVqbQu8ge8Uz+e2CgutkqnclFln9auY0DOh5aYjxOz9stEGiAA/QF/od9sZgVeM6EApjHLGVpen2PpCUU3v8HIyimIbBK2poiih/2oUOhjaU+Vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C66D41F00893;
+	Tue,  2 Jun 2026 06:51:23 +0000 (UTC)
+Message-ID: <17775f6d-3f72-4a05-865a-897d76f6feb3@tuxon.dev>
+Date: Tue, 2 Jun 2026 09:51:20 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: ClueGetter at submission6.mail.transip.nl
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=transip-a; d=herrie.org; t=1780382965; h=from:subject:to:cc:
- references:in-reply-to:date:mime-version;
- bh=DwGPgZw0x+TRPp6LTlJJ324kksikw7sHJ9OQ2L+/eME=;
- b=EDQEy4egoOReHmEEzJZatwxtKWiaOx7OWdUUNupCG5oyOUX+m8XIW2M61M8fe/+LwHo9XL
- sZ+Pl9faQioEc8GpKUFKijOvqTn4vkIPb9YvexEwWzQxkEf7KO1QDdwECW/NpurhnBlFbY
- cCYNYa3FPy+t2wvN1Vh7vNBR2o9DouBCjpcQ7eYHBOV5L6Vm4+LOpw00vboOfxgvgwBRNq
- lsj1YVzEb1UGV/IYDPryb8S9UrZGliwm/yeQjfpcLhAplHgTZV8qp+VsZ4vODPJpIa/PoA
- fkGu6pqqASY6ISXUFNKca7gqY9q4NZyVA5KJTnznzLuLW/hdTw4pl2gAZLE5XQ==
-X-Report-Abuse-To: abuse@transip.nl
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] clk: at91: keep securam node alive while mapping it
+To: Yuho Choi <dbgh9129@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Brian Masney <bmasney@redhat.com>, Kees Cook <kees@kernel.org>,
+ "Rafael J. Wysocki (Intel)" <rafael@kernel.org>,
+ Thierry Reding <treding@nvidia.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20260529042051.1626978-1-dbgh9129@gmail.com>
+Content-Language: en-US
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20260529042051.1626978-1-dbgh9129@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi,
 
-The promised clk-pll.c NULL-check fix is on linux-clk now:
 
-  https://lore.kernel.org/linux-clk/20260602062927.467249-1-github.com@herrie.org/
+On 5/29/26 07:20, Yuho Choi wrote:
+> pmc_register_ops() gets an owned reference to the
+> "atmel,sama5d2-securam" node with of_find_compatible_node().  The
+> success path dropped that reference before passing the node to
+> of_iomap(), leaving of_iomap() to consume a node pointer after the caller
+> had released its reference.
+> 
+> Move of_node_put() after of_iomap() so the node remains referenced for
+> the mapping operation.  The unavailable-node error path already releases
+> the reference.
+> 
+> Fixes: 4d21be864092 ("clk: at91: pmc: execute suspend/resume only for backup mode")
+> Signed-off-by: Yuho Choi<dbgh9129@gmail.com>
 
-  [PATCH] clk: qcom: clk-pll: reject vote enable on orphan parent
-
-Single hunk in drivers/clk/qcom/clk-pll.c::clk_pll_vote_enable():
-resolve clk_hw_get_parent() first, return -ENODEV when it is NULL,
-only then call wait_for_pll() with the resolved parent. Same change
-benefits gcc-msm8960/apq8064/msm8660 and any future cross-controller
-pll4_vote pattern.
-
-Once that lands I will roll v2 of this gcc-msm8660 series with the
-yaml maxItems=3 + pll4 clock-name addition (replied earlier in this
-thread) as PATCH 1/3, the existing CE2 + PLL4_VOTE driver patches as
-PATCH 2/3 and 3/3, and a cover-letter pointer to the clk-pll.c fix
-as the parent-orphan precondition.
-
-Thanks,
-Herman
+Missed to mention, applied to clk-microchip-fixes, thanks!
