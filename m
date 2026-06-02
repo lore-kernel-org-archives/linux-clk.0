@@ -1,27 +1,26 @@
-Received: from outbound2.mail.transip.nl (outbound2.mail.transip.nl [149.210.149.73])
+Received: from outbound7.mail.transip.nl (outbound7.mail.transip.nl [136.144.136.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D32D3E8C6F;
-	Tue,  2 Jun 2026 14:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.210.149.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988232222C5;
+	Tue,  2 Jun 2026 14:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.144.136.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780409383; cv=none; b=LwNTDAnjQZqWRC5F0HmaPU/wQ/lqYLxXbc225/3ptcC6zHNuf/tKZ1K+0JUFx+c/acPA+RbA1hE9E/slGApgCaQoXETp8IWqYDyvwCiOdQ7ooJaY6FhNd58XIcYyb1WxmqaXYccnQIRe4Qw+q9/alQXpJ5r5L1HX2SvaRqrff5s=
+	t=1780409384; cv=none; b=buRDxUDX+uq89RruCa6yCJio4OfXxd2HGusElnZCIbQ4wo64t88IOEFsj66TukbTsW4MyusOPyc88avlNom9qQbtcCz1qoEZZcbYzhnYzBHqoQnKBqca7XmDzvfvNnX7noMpzu+lPtQOAaUDMoKj7++uEg/Qln808n4MUCuIF88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780409383; c=relaxed/simple;
-	bh=jEYAFMVR4q9BFgvwfZI1gidudx/a0P4jlxW3mjA6/74=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LEXNg+jW8CLhxOPqp+RAW8yzZXzg9DMKceUCP+xh18w8njZK5AcrunD7EUuVM5i2KQLhu2JUZKKfOqq3/MtpjsUfJSU+GHW2kDrgdtBryLXUWNYoEQuVUPK2ETgVDsw5ymO4VaNVmuSQS7Lnik8YEn3zzhib3dK09S9JAiVi7GU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=herrie.org; spf=pass smtp.mailfrom=herrie.org; dkim=pass (2048-bit key) header.d=herrie.org header.i=@herrie.org header.b=af23kXT6; arc=none smtp.client-ip=149.210.149.73
+	s=arc-20240116; t=1780409384; c=relaxed/simple;
+	bh=5KWqCFMcUxryMxItr1z/O7TedGEJQx4UDIsOUebuyp0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DzlLJhtBm7DvNxzXhP7aprEeMkvAdwN27EXfo7ivFT7dbU+hL2RF+rFtbIrLYTXKPr5YrpxrUi8NrjancgHu+qBTpCFK8WrV32ElV+GFVOkEPK97e6icJGsj4wSu6wc7x//Lxn4pEPnTJAoiXwRp7dsxQgpZUtN2ajPNf9jn+Dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=herrie.org; spf=pass smtp.mailfrom=herrie.org; dkim=pass (2048-bit key) header.d=herrie.org header.i=@herrie.org header.b=hLKT2g9V; arc=none smtp.client-ip=136.144.136.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=herrie.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=herrie.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=herrie.org header.i=@herrie.org header.b="af23kXT6"
+	dkim=pass (2048-bit key) header.d=herrie.org header.i=@herrie.org header.b="hLKT2g9V"
 Received: from submission2.mail.transip.nl (unknown [10.100.4.71])
-	by outbound2.mail.transip.nl (Postfix) with ESMTP id 4gVCPr5f4lzYdX5;
-	Tue,  2 Jun 2026 16:09:36 +0200 (CEST)
+	by outbound7.mail.transip.nl (Postfix) with ESMTP id 4gVCPq3wt2zQvvLC;
+	Tue,  2 Jun 2026 16:09:35 +0200 (CEST)
 Received: from herrie-desktop.. (180-93-184-31.ftth.glasoperator.nl [31.184.93.180])
-	by submission2.mail.transip.nl (Postfix) with ESMTPA id 4gVCPr1SXczJjhXt;
-	Tue,  2 Jun 2026 16:09:36 +0200 (CEST)
+	by submission2.mail.transip.nl (Postfix) with ESMTPA id 4gVCPp6nmlzJjhXw;
+	Tue,  2 Jun 2026 16:09:34 +0200 (CEST)
 From: Herman van Hazendonk <github.com@herrie.org>
 To: Bjorn Andersson <andersson@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
@@ -30,12 +29,10 @@ Cc: linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Herman van Hazendonk <github.com@herrie.org>
-Subject: [PATCH 2/3] clk: qcom: gdsc: propagate gdsc_enable() failure for ALWAYS_ON domains
-Date: Tue,  2 Jun 2026 16:09:33 +0200
-Message-ID: <20260602140934.796697-3-github.com@herrie.org>
+Subject: [PATCH 0/3] clk: qcom: gdsc: three pre-existing correctness fixes
+Date: Tue,  2 Jun 2026 16:09:31 +0200
+Message-ID: <20260602140934.796697-1-github.com@herrie.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260602140934.796697-1-github.com@herrie.org>
-References: <20260602140934.796697-1-github.com@herrie.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -45,62 +42,73 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: ClueGetter at submission2.mail.transip.nl
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=transip-a; d=herrie.org; t=1780409376; h=from:subject:to:cc:
- references:in-reply-to:date:mime-version;
- bh=QO4+t0ZHSxRITTqc5+EzQDA+h8c/0AsbUZFLsaOlT9o=;
- b=af23kXT6WsDbfC67lDZsPUNBaxZR98uvBYimfdc0cVVUtxAoflaaK2QH4OHKruiLgnStWJ
- aF49q109S62X9NLAbSKVxQuwkYzwuJSyMwqIp81w9HUs6rcfk9XWmSZJrqJxyDzdB5yctL
- 8/GTaPckf5AGjJz6ns0BOzWmctoo5fIK/mk1xBTirm+UMyfWSWPmJvqCqxhhLyEeAFfn0d
- +iF+Y8NDmlogoIaNzB9tCLgl7bJnRLx8aNibU1V2dNjI3O+fefc/9+mHTEHl4Qun1JNg3X
- E0ZVQvWKbxjHVELUa48l7VY8au52Mfo1l5zCwKP8foNQo1Ii++BZ0pCPKYGr3Q==
+ s=transip-a; d=herrie.org; t=1780409375; h=from:subject:to:cc:date:
+ mime-version; bh=NxLXJtPfFfqWQ1Ke4/5Lq5bjEY56fWonFGkWetDXPqA=;
+ b=hLKT2g9VMsYWsj13WOgZnLN3ChEe2h8/85hbDbi4SjITge5L4zoLp9oUUMeGJfX+PN3oj3
+ UFMkg4Yrj0XysRQzJroxWjU3sA+ZRB7ZIpwkfMcWRlfgUTpGhXXzqJJlDMHvobEXxWzsjo
+ h8E/T7xTcEYws3GwhqzFCsrEckUtAt4lWEymnJjoDXmZ/OWuslm7LWrHf+gYaD7MvPsRDI
+ 44IuspC1bCyXo0Jokf0o6rfPeRDvXF/06Hz2+TVbb38qpsKrTrKVlmjEVk968tbbs+nRHV
+ AoSByaZgq3jhX7UFYPPvBsWHAytZxw+NfezSHC2IZhRtGTGsTV13fzgZVf9GCw==
 X-Report-Abuse-To: abuse@transip.nl
 
-GENPD_FLAG_ALWAYS_ON requires the underlying domain to be on at
-genpd_init() time -- the framework will refuse to register the domain
-otherwise. When the cold readback in gdsc_init() finds an ALWAYS_ON
-GDSC powered down, the driver tries to bring it back up:
+While preparing MSM8x60 support for the GDSC core (a separate series,
+adding LEGACY_FOOTSWITCH and RPM_ALWAYS_ON), code review surfaced
+three pre-existing correctness issues in drivers/clk/qcom/gdsc.c that
+are independent of any new SoC enabling work. This series collects
+those three fixes so each can be reviewed and queued on its own
+schedule without blocking the MSM8x60 series.
 
-	} else if (sc->flags & ALWAYS_ON) {
-		/* If ALWAYS_ON GDSCs are not ON, turn them ON */
-		gdsc_enable(&sc->pd);
-		on = true;
-	}
+  1/3 - gdsc_poll_status: propagate gdsc_check_status() errno
 
-but discards the return value: if gdsc_enable() fails (regmap write
-error, the long-form sequence's status poll times out, or the
-HW_CTRL hand-off errors) the code still sets on=true and falls
-through to pm_genpd_init(..., !on) -- which then registers the
-domain in the ON state and sets GENPD_FLAG_ALWAYS_ON, even though
-the silicon is actually off. Subsequent consumer probes will see
-genpd report "on" while accessing dead registers and hang or read
-garbage.
+      The polling helper treats any non-zero gdsc_check_status() return
+      as "reached the target state". gdsc_check_status() returns < 0
+      on regmap_read() failure (e.g. parent regmap unbinding, bus
+      protection, debug-tool CSR removal). The boolean test promotes
+      that negative errno to "true" and the poll returns success with
+      the hardware state unknown -- silently misleading
+      gdsc_toggle_logic() and the gdsc_init() sync path.
 
-Catch the failure and surface it: returning the error from
-gdsc_init() makes the provider probe fail with the underlying errno,
-which propagates to consumers as -EPROBE_DEFER (or fatal if the
-hardware really is broken) rather than silently lying about the
-rail state.
+  2/3 - gdsc_init: propagate gdsc_enable() failure for ALWAYS_ON
 
-Signed-off-by: Herman van Hazendonk <github.com@herrie.org>
----
- drivers/clk/qcom/gdsc.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+      GENPD_FLAG_ALWAYS_ON requires the domain to be ON at
+      pm_genpd_init() time. When the cold readback finds an ALWAYS_ON
+      GDSC powered down, gdsc_init() tries to bring it back up but
+      discards the gdsc_enable() return value. If the enable fails the
+      code still sets on=true and registers the domain as ALWAYS_ON,
+      so genpd reports "on" while the silicon is actually off and
+      consumer probes hang on dead registers.
 
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index b9b47f584f6d..a80a489763ed 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -481,7 +481,9 @@ static int gdsc_init(struct gdsc *sc)
- 
- 	} else if (sc->flags & ALWAYS_ON) {
- 		/* If ALWAYS_ON GDSCs are not ON, turn them ON */
--		gdsc_enable(&sc->pd);
-+		ret = gdsc_enable(&sc->pd);
-+		if (ret)
-+			return ret;
- 		on = true;
- 	}
- 
--- 
+  3/3 - gdsc_unregister: tear down per-domain genpds + reorder
+
+      gdsc_unregister() removes the OF provider entry and tears down
+      the parent/subdomain wiring, but never calls pm_genpd_remove()
+      on the individual generic_pm_domain structures registered by
+      gdsc_init(). The dangling entries on gpd_list cause the next
+      gdsc_init() to fail with -EEXIST on deferred-probe replay,
+      module reload, or OF-overlay teardown. While here, of_genpd_-
+      del_provider() is moved ahead of gdsc_pm_subdomain_remove() so
+      that a racing of_genpd_get_from_provider() cannot attach to a
+      domain that is mid-removal.
+
+The three changes are independent and could in principle be sent as
+separate one-off patches, but they share a single file and the cover
+letter makes it easier to reason about them together. Apply order is
+not significant: each patch stands on its own.
+
+Built and boot-tested on an HP TouchPad (APQ8060) in conjunction with
+the MSM8x60 GDSC enabling series.
+
+Herman van Hazendonk (3):
+  clk: qcom: gdsc: propagate gdsc_check_status() errors from
+    gdsc_poll_status
+  clk: qcom: gdsc: propagate gdsc_enable() failure for ALWAYS_ON domains
+  clk: qcom: gdsc: tear down per-domain genpds in gdsc_unregister()
+
+ drivers/clk/qcom/gdsc.c | 25 +++++++++++++++++++++----
+ 1 file changed, 21 insertions(+), 4 deletions(-)
+
+
+base-commit: 944125b4c454b58d2fe6e35f1087a932b2050dff
+--
 2.43.0
 
