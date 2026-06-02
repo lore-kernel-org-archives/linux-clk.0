@@ -1,41 +1,46 @@
 Received: from outbound8.mail.transip.nl (outbound8.mail.transip.nl [136.144.136.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9CF82F6562;
-	Tue,  2 Jun 2026 05:08:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCC9122156C;
+	Tue,  2 Jun 2026 05:28:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.144.136.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780376934; cv=none; b=Vh74ZUpK4Luwr42TBqmwuffyJYSPqMLONyUf52zD+S5LgeNFbIjGxrsv2oSzjnmA1cgUBvPWxrcL+JQ5n4ETFoykrSnCqFYo4L6vCihgpWNVN0PQ+0FbuO4gvnT1ShwG2VQnA+Lbw6+bBOWO/Mwqw9WGtE86PL8lrAHpM74fpb0=
+	t=1780378114; cv=none; b=mZOsmNm1SsnZnh9gKbPbCgw0EbbwzNlpndxJRreStSAQFhesHbIc2hAtF8PWX9Vf3qU0CgsRCvYtRuyJPy57QIg5pzxkzkSVkVKZ/VopKSocyi6BRNLFnakvvO03d6lCecuHjo6cxy+q97rMZ0SZQhyO5T8G9J8pnd1/TwLuzFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780376934; c=relaxed/simple;
-	bh=Cmjxj2wiF8u1sHHEj9jShD68h3zUTLE9XEce5rurbVU=;
+	s=arc-20240116; t=1780378114; c=relaxed/simple;
+	bh=ZJlCPiOCKyk+XfRK590W7ZXZrI06mSN30JJY28kCl3k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bOO3sRw6ozX6AX5Xs/iTvHVnZn5MzCjKajhkwwDpUn3nAze2EKA5TJu3f/THwhCHIZ927an5s5k5cKzFNdQQme/QpWvGut4r7KP4ePnY76T8FlrdDb08YhML24063dOjnXXR/QHuDR63ws9pMX6vUqsBW0gw2va/EdbPBdFUw+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=herrie.org; spf=pass smtp.mailfrom=herrie.org; dkim=pass (2048-bit key) header.d=herrie.org header.i=@herrie.org header.b=DwAOXYdH; arc=none smtp.client-ip=136.144.136.8
+	 MIME-Version; b=DUqC6qF8TeisVef8nuLAeAGrcMASewklesk66ODibQ08qfMV1TOt3Oz02qUQtvMOsInj1ZnXsDtYBfAcsAECI997rbPp/Kfu67Llk0GbpOpc61uueablXf3rK+1m8JGWUq42qCbcFPPoD/iugDRUxppef2SROnVNQmhlGSyQrvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=herrie.org; spf=pass smtp.mailfrom=herrie.org; dkim=pass (2048-bit key) header.d=herrie.org header.i=@herrie.org header.b=cE9x7GUu; arc=none smtp.client-ip=136.144.136.8
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=herrie.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=herrie.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=herrie.org header.i=@herrie.org header.b="DwAOXYdH"
-Received: from submission2.mail.transip.nl (unknown [10.100.4.71])
-	by outbound8.mail.transip.nl (Postfix) with ESMTP id 4gTzPl0sDPzY75Yh;
-	Tue,  2 Jun 2026 07:08:43 +0200 (CEST)
+	dkim=pass (2048-bit key) header.d=herrie.org header.i=@herrie.org header.b="cE9x7GUu"
+Received: from submission5.mail.transip.nl (unknown [10.103.8.156])
+	by outbound8.mail.transip.nl (Postfix) with ESMTP id 4gTzrS6d38zY76KF;
+	Tue,  2 Jun 2026 07:28:24 +0200 (CEST)
 Received: from herrie-desktop.. (180-93-184-31.ftth.glasoperator.nl [31.184.93.180])
-	by submission2.mail.transip.nl (Postfix) with ESMTPA id 4gTzPk43fJzJjhXx;
-	Tue,  2 Jun 2026 07:08:42 +0200 (CEST)
+	by submission5.mail.transip.nl (Postfix) with ESMTPA id 4gTzrR4BWrz2pRDjL;
+	Tue,  2 Jun 2026 07:28:23 +0200 (CEST)
 From: Herman van Hazendonk <github.com@herrie.org>
 To: sboyd@kernel.org
-Cc: Herman van Hazendonk <github.com@herrie.org>,
-	Bjorn Andersson <andersson@kernel.org>,
+Cc: Bjorn Andersson <andersson@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
 	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] clk: qcom: gdsc: add RPM_ALWAYS_ON flag
-Date: Tue,  2 Jun 2026 07:08:38 +0200
-Message-ID: <20260602050840.435933-3-github.com@herrie.org>
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Herman van Hazendonk <github.com@herrie.org>
+Subject: Re: [PATCH 3/3] clk: qcom: add MSM8x60 MMCC driver
+Date: Tue,  2 Jun 2026 07:28:23 +0200
+Message-ID: <20260602052823.444262-1-github.com@herrie.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260602050840.435933-1-github.com@herrie.org>
-References: <20260602050840.435933-1-github.com@herrie.org>
+In-Reply-To: <20260602043623.285901-4-github.com@herrie.org>
+References: <20260602043623.285901-4-github.com@herrie.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -43,80 +48,47 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: ClueGetter at submission2.mail.transip.nl
+X-Scanned-By: ClueGetter at submission5.mail.transip.nl
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=transip-a; d=herrie.org; t=1780376922; h=from:subject:to:cc:
+ s=transip-a; d=herrie.org; t=1780378103; h=from:subject:to:cc:
  references:in-reply-to:date:mime-version;
- bh=xFtJj1B1CMj58yblyln1H6UDnsMOa86FbyIpKGGyomc=;
- b=DwAOXYdH8lQh0TqznRGo5pj0C4ol9TGBTvc3hYn1gAD6VKrbxivwuvv2dVXSlSivwG9/PU
- FrzDoNSnCaqSKZOZmMar30r+yrvHZyIZPbHoABaOQdinvERbbNVmbQ9vTtllBYfT+A8m0D
- cdiaxDfkHV/KQjNM15V9Tr9m58gNDd2oUJyXYiGKiacUXTawYJdAxqvKXGTKFI7cmKBl96
- 4meP30Ec4/L2XrpN5i+H3Q91Z+KebmW+lW+CM0ERGegX7F40dWiPK/VTziOwB0IRUiWasB
- ppOe39+4GvAsMQpuoIiAZGlyalS3RGdy8GXOrht38UyaxRI8UqNkirs4KWVVyQ==
+ bh=87rnEHMd/uLYzgepf4vNP3TGJSp9mihLKhCGfxTLAhs=;
+ b=cE9x7GUuUIxJRSBJnF4Z5a3EQnddwFa11TYd9xx4wyKoke+uUtJc7p6NomgQg1/8m5ZAuM
+ trQxfGWe4EHmal1t1M8qEJvkVJPWmnFAzMlwgZ0SZcv5sQ8JCOfRbTXcEOqgquRvW8P66K
+ D5BWInys4HqmpvuRiqLyTm8GEyilxutxcXQp8FSgB98qrxfa4D7YlETd/ZMAHlXt271DHL
+ U03q7JcMUZLKntKjquv7Zxs9m1Tti9khqF1eNaOH00/HH20JEysTvKvdInCFnpaDRvoxEB
+ Qm7oKnAjfwew5QNFBts6gJorqsBB9ZWPwqbw0UWtUxT/emqK1+6mNP4nw6z6HQ==
 X-Report-Abuse-To: abuse@transip.nl
 
-Some power domains need to stay powered across runtime PM even though
-their clocks may still gate, and only collapse on full system suspend.
-Add an RPM_ALWAYS_ON flag that maps to the existing
-GENPD_FLAG_RPM_ALWAYS_ON on the underlying generic_pm_domain.
+Hi,
 
-This is distinct from the existing ALWAYS_ON flag (which keeps the
-domain permanently enabled and prevents collapse even during system
-suspend) and from leaving the flag unset (which allows the domain to
-collapse on every runtime-idle transition).
+Confirmed -- thanks for catching this. mmcc_msm8660_resets[] jumps
+straight from FABRIC_AHB_RESET (29) to GFX3D_AHB_RESET (32). Array
+indices 30 (GFX2D0_AHB_RESET) and 31 (GFX2D1_AHB_RESET) were
+implicitly zero-initialised, so when gfx2d0_gdsc / gfx2d1_gdsc
+power-cycle the GDSC the qcom_reset_set_assert() path does a RMW
+on { .reg = 0, .bit = 0 } -- toggling bit 0 of register 0x0000
+(MMSS PLL0 mode register) on every transition. Genuine silent
+clock-controller corruption, not just a missing reset toggle.
 
-The first user is the upcoming MSM8x60 MMCC driver, which needs
-RPM_ALWAYS_ON on the a2xx (Adreno 220) GFX3D footswitch: cold-cycling
-the GPU rail on every runtime idle forces an a2xx_hw_init microcode
-reload whose MMIO burst can stall the shared MMSS AXI fabric when it
-coincides with an MDP display client-switch underrun, hard-hanging
-the SoC. Letting the rail stay up during runtime PM (clocks still
-gate, idle power is still saved) and only collapsing on system
-suspend avoids the corner case while still allowing full power-down
-during deep sleep.
+v2 will add:
 
-Signed-off-by: Herman van Hazendonk <github.com@herrie.org>
----
- drivers/clk/qcom/gdsc.c |  2 ++
- drivers/clk/qcom/gdsc.h | 12 ++++++++++++
- 2 files changed, 14 insertions(+)
+    [GFX2D0_AHB_RESET] = { 0x020c, 12 },
+    [GFX2D1_AHB_RESET] = { 0x020c, 11 },
 
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index 64a9b315a9c2..e319b905c31b 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -632,6 +632,8 @@ static int gdsc_init(struct gdsc *sc)
- 
- 	if (sc->flags & ALWAYS_ON)
- 		sc->pd.flags |= GENPD_FLAG_ALWAYS_ON;
-+	if (sc->flags & RPM_ALWAYS_ON)
-+		sc->pd.flags |= GENPD_FLAG_RPM_ALWAYS_ON;
- 	if (!sc->pd.power_off)
- 		sc->pd.power_off = gdsc_disable;
- 	if (!sc->pd.power_on)
-diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-index 13ca09f93a01..27acf20e8d68 100644
---- a/drivers/clk/qcom/gdsc.h
-+++ b/drivers/clk/qcom/gdsc.h
-@@ -75,6 +75,18 @@ struct gdsc {
-  * transition completed after a fixed delay rather than polling status.
-  */
- #define LEGACY_FOOTSWITCH	BIT(10)
-+/*
-+ * Keep the domain powered across runtime PM (its clocks may still gate via
-+ * the clock framework) and only allow it to power-collapse on system
-+ * suspend. Maps to GENPD_FLAG_RPM_ALWAYS_ON on the underlying genpd. Useful
-+ * for blocks whose cold-start sequence is expensive enough that runtime
-+ * power cycling causes user-visible latency or hardware corner-case bugs --
-+ * e.g. the MSM8x60 a2xx (Adreno 220) graphics footswitch, whose first
-+ * power-up after collapse forces a full microcode reload that can stall
-+ * the shared MMSS AXI fabric when it coincides with an MDP display
-+ * underrun.
-+ */
-+#define RPM_ALWAYS_ON	BIT(11)
- 	struct reset_controller_dev	*rcdev;
- 	unsigned int			*resets;
- 	unsigned int			reset_count;
--- 
-2.43.0
+between the FABRIC_AHB_RESET and GFX3D_AHB_RESET entries. Bit
+positions match the sibling mmcc-msm8960.c driver -- same hardware
+IP, same MMSS_AHB_RESET register layout.
 
+Fix is in my local tree and on-device validated; will land in v2
+alongside the unhalt_fabric_ports() -EPROBE_DEFER fix and the
+cover-letter dependency on the gdsc framework series:
+
+    https://lore.kernel.org/linux-clk/20260602050840.435933-1-github.com@herrie.org/
+
+On the "MSSS vs MMSS" naming nit: agreed it should be MMSS_, but
+that one I'll leave for a separate cleanup so v2 doesn't churn DT
+ABI alongside the functional fixes.
+
+Thanks,
+Herman
