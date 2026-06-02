@@ -1,58 +1,145 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from outbound2.mail.transip.nl (outbound2.mail.transip.nl [149.210.149.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948042571DA;
-	Tue,  2 Jun 2026 06:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923843A9601;
+	Tue,  2 Jun 2026 07:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.210.149.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780383087; cv=none; b=HlgW/XQCXvOHdzMwZrIvD1R3CMWW418N+SZ6aoESxXCp9sj4iSo2AQE8wXvGwR/w3+sDz9HU8yjZ7LpUW9qpHFjyH2ZZX0wvOVZ/dT9T64BYJc5oj3cbgvYnLtWCobfAaCrwWEwaV/SpEI9WOlhxNRKR/AerDZ0uxptvuxNBKyE=
+	t=1780384476; cv=none; b=er9CIgrxPF1FIVUgNmCKgs4VmUJJvxZqYagOGTf/sSLdGqPmtAGIml5fh6eN+bDGhxcip2FT3YwEU2fo9ft1QflceYp5R1ocOKV8im5unhuwIyAh54CHfv8+2AL5N5acoshfuBI2Exmiursv0YltHuTKIljfSkACVVL/GSCEJng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780383087; c=relaxed/simple;
-	bh=dlD+K7ZMV8ywi6W2vwFGICDOBzhL02lerZ46DebjTpI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Uvgm0QWJA223NmaBBSsD/FGr3jR9sdDWaSNZOtN6D/1+DHmuYOEtA9lgUxyXOVqbQu8ge8Uz+e2CgutkqnclFln9auY0DOh5aYjxOz9stEGiAA/QF/od9sZgVeM6EApjHLGVpen2PpCUU3v8HIyimIbBK2poiih/2oUOhjaU+Vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C66D41F00893;
-	Tue,  2 Jun 2026 06:51:23 +0000 (UTC)
-Message-ID: <17775f6d-3f72-4a05-865a-897d76f6feb3@tuxon.dev>
-Date: Tue, 2 Jun 2026 09:51:20 +0300
+	s=arc-20240116; t=1780384476; c=relaxed/simple;
+	bh=Gj/r5QUg7A/QXq3itAwYNsrU2+XVRdz7h/xXuvpjcRk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Y1KhILxoXeAzSXr8ekclmvmkBnfITUyMYhnw72cUbT4xzBXpDUiEK1almqNJ+vAnpU9Kpc5WRnxgVVcpCn1u+u+dXWuRj8xJTWLEUtEwCxu3/j6KF2S9mueD33aIV60DjXi5s2GLfSOOB7gdq7preq8X8JOyhKkliamh8pUqztc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=herrie.org; spf=pass smtp.mailfrom=herrie.org; dkim=pass (2048-bit key) header.d=herrie.org header.i=@herrie.org header.b=AL8oNF15; arc=none smtp.client-ip=149.210.149.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=herrie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=herrie.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=herrie.org header.i=@herrie.org header.b="AL8oNF15"
+Received: from submission6.mail.transip.nl (unknown [10.103.8.157])
+	by outbound2.mail.transip.nl (Postfix) with ESMTP id 4gV2Bq39lhzYdrM;
+	Tue,  2 Jun 2026 09:14:27 +0200 (CEST)
+Received: from herrie-desktop.. (180-93-184-31.ftth.glasoperator.nl [31.184.93.180])
+	by submission6.mail.transip.nl (Postfix) with ESMTPA id 4gV2Bp57c9z3ZVDrg;
+	Tue,  2 Jun 2026 09:14:26 +0200 (CEST)
+From: Herman van Hazendonk <github.com@herrie.org>
+To: sboyd@kernel.org
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Herman van Hazendonk <github.com@herrie.org>
+Subject: Re: [PATCH 3/3] clk: qcom: add MSM8x60 MMCC driver
+Date: Tue,  2 Jun 2026 09:14:25 +0200
+Message-ID: <20260602071426.1057324-1-github.com@herrie.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260602043623.285901-4-github.com@herrie.org>
+References: <20260602043623.285901-4-github.com@herrie.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] clk: at91: keep securam node alive while mapping it
-To: Yuho Choi <dbgh9129@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Brian Masney <bmasney@redhat.com>, Kees Cook <kees@kernel.org>,
- "Rafael J. Wysocki (Intel)" <rafael@kernel.org>,
- Thierry Reding <treding@nvidia.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20260529042051.1626978-1-dbgh9129@gmail.com>
-Content-Language: en-US
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20260529042051.1626978-1-dbgh9129@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: ClueGetter at submission6.mail.transip.nl
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=transip-a; d=herrie.org; t=1780384467; h=from:subject:to:cc:
+ references:in-reply-to:date:mime-version;
+ bh=nxE0F+TFdlccFuPwMmOYD9rX+zpVkgN8oTJtXG4QvV0=;
+ b=AL8oNF15eZyA7WBerWWVHaMIAbc6za4GAPOdKZxPyS4sKvnWNYwhFu81KLfWnia5KClaGO
+ 6q/vbFW6DrWfnZadWYk85h9nVYJHCEdPlha14oWX5SSeFblgPC85o7XwPbVLJzDfoesLe9
+ UxUOZg8rifF0BDM2mF19gvYPhhUPEWqylpgaYjDApucWX3LEHxf9t2sN/+SSkjknFf+wcO
+ PS8j31BfwUcX5GFt329P5LaiDLfeCBR3dpnnYlaeZMF7UwMrin626ZoxJozewWOzCi9q6h
+ 0P6r/EHW5IO9e99aFsDhR16pTYjwnFSeTkkoFYhlJo9B3t3UHLWG46/RJoaEVg==
+X-Report-Abuse-To: abuse@transip.nl
 
+Hi,
 
+Thanks for the thorough pass. All 5 items confirmed and queued for
+v2. Triage:
 
-On 5/29/26 07:20, Yuho Choi wrote:
-> pmc_register_ops() gets an owned reference to the
-> "atmel,sama5d2-securam" node with of_find_compatible_node().  The
-> success path dropped that reference before passing the node to
-> of_iomap(), leaving of_iomap() to consume a node pointer after the caller
-> had released its reference.
-> 
-> Move of_node_put() after of_iomap() so the node remains referenced for
-> the mapping operation.  The unavailable-node error path already releases
-> the reference.
-> 
-> Fixes: 4d21be864092 ("clk: at91: pmc: execute suspend/resume only for backup mode")
-> Signed-off-by: Yuho Choi<dbgh9129@gmail.com>
+[Medium] Kconfig: select QCOM_COMMON_CLK is a bogus symbol.
 
-Missed to mention, applied to clk-microchip-fixes, thanks!
+Confirmed -- that symbol does not exist. The qcom clk infra is pulled
+in transitively via select QCOM_GDSC + select MSM_GCC_8660. The
+sibling MSM_MMCC_8960 stanza carries no analogous select either.
+v2 will drop the line.
+
+[High] DSI src/byte/esc clocks use clk_rcg_bypass_ops with empty or
+missing freq_tbl.
+
+Confirmed. clk_rcg_bypass_ops dereferences freq_tbl[0] for src and
+pre_div: with the empty/placeholder table, src resolves to P_PXO and
+pre_div to (0 - 1) = 255, shifting outside the bitmask and corrupting
+NS-register bits 14..21. dsi1_byte_src and dsi1_esc_src were even
+worse -- no freq_tbl at all, so the deref hits a NULL.
+
+Fix matches the table-less ops mainline mmcc-msm8960.c uses for the
+same hardware (cross-checked against the legacy vendor 2.6.35-palm
+arch/arm/mach-msm/clock-8x60.c's clk_tbl_dsi_byte and the parent-PLL
+"src = SRC_NONE" comment that documents the divider-only intent):
+
+  dsi1_src       -> clk_rcg_bypass2_ops + CLK_SET_RATE_PARENT
+  dsi1_byte_src  -> clk_rcg_bypass2_ops + CLK_SET_RATE_PARENT
+  dsi1_esc_src   -> clk_rcg_esc_ops     + CLK_SET_RATE_PARENT
+  dsi1_pixel_src -> clk_rcg_pixel_ops   + CLK_SET_RATE_PARENT
+
+The clk_tbl_dsi placeholder is removed.
+
+[High] vcodec_axi_clk / _a / _b missing BRANCH_HALT_SKIP.
+
+Confirmed. The rot_axi_clk and gfx3d_axi_clk entries already note
+the MMSS-fabric-stuck-at-on case, and rot_axi_clk's comment even
+calls out vcodec_axi_b_clk by name as a peer -- I just forgot to
+actually carry the flag onto the three vcodec_axi branches. v2 will
+add .halt_check = BRANCH_HALT_SKIP to all three.
+
+[High] mmcc_msm8660_unhalt_fabric_ports() UAF window during RPM
+probe failure.
+
+Confirmed, and well caught. device_link_add() does not block on
+supplier->bound; it can succeed against a supplier mid-probe, with
+drvdata set early but a still-to-fail probe path that re-clears
+drvdata and frees the qcom_rpm structure via devres.
+
+The earlier -EPROBE_DEFER fix I sent covers the "drvdata still NULL"
+case but does not close the "drvdata went non-NULL transiently and
+will be freed after we sampled it" window. Fix: take
+device_lock(&rpm_pdev->dev) and check device_is_bound() (exported
+by drivers/base/dd.c) before reading drvdata, and hold the lock
+across the single qcom_rpm_write() commit. The lock does not nest
+with anything qcom_rpm_write touches (rpm->lock + the mailbox
+subsystem; neither takes device_lock).
+
+The legacy 2.6.35-palm vendor kernel does not exhibit this race
+because it accesses RPM as a global singleton via msm_rpm_set_*
+APIs -- no platform_device, no drvdata, no device_link. The race is
+intrinsic to the modern discrete-driver split, so the fix needs to
+live here.
+
+All four are applied to my local tree and on-device validated.
+v2 reroll will batch:
+
+  - Kconfig drop
+  - DSI ops fix + clk_tbl_dsi removal
+  - vcodec_axi BRANCH_HALT_SKIP
+  - device_lock + device_is_bound around unhalt drvdata read
+  - (earlier rounds) GFX2D[01]_AHB_RESET entries
+  - (earlier rounds) unhalt -EPROBE_DEFER
+
+plus cover-letter pointers to the gdsc framework prereq
+(LEGACY_FOOTSWITCH / RPM_ALWAYS_ON, sent separately as
+20260602050840.435933-1-github.com@herrie.org).
+
+Holding v2 until the first round of v1 feedback has had a chance
+to settle and the prereq series have review traction.
+
+Thanks,
+Herman
