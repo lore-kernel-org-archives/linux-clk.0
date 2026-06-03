@@ -1,123 +1,141 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 697C13AD52B;
-	Wed,  3 Jun 2026 16:08:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE8053E3C4C
+	for <linux-clk@vger.kernel.org>; Wed,  3 Jun 2026 16:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780502893; cv=none; b=N2uAdcrjs6EOEfQODopsgfrCwZvQivGhcgUWH6sqKkcYzOGeEv3mK8ylfayjxFK34mFe+b+wL3gjGk3yRr9aAa54aIrZnntEa+sKJXMlIuBadqZYgLaePcUdRIy1YpB5duNX6klvjNv9q5Z98IRbkkNi0VHB5fsAcztJPp3mpE8=
+	t=1780505368; cv=none; b=N0Io7d9WwZdKMasV78yQR2IJMZ945NlkIUJDhFzisHyRTpfaT7dONxJHhNxoEzQeRXMR6zk/el5dyl9U7sBFRClU+A6DRMIkmMC9d3lPToXBvghSxxWofW12/6PahjIwhPguYFz3V8o0FMdSDD/V72JtB6HOeTX0BCu0VUcDPdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780502893; c=relaxed/simple;
-	bh=FA0xQoILQqub+rvtajqFi3ePzhMoUg83iC4gxCGEUDo=;
+	s=arc-20240116; t=1780505368; c=relaxed/simple;
+	bh=94BXKxm9QIjyJLcl2DOZyyBik9elibbRNROTBUTTbso=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tYseWrxx5qt/5rp7pDVN+1aaAozi5S6OTwDuCLQ4VnuMCrekakjqAQXOUW53e4ntZMYANr0oUXTHCdvwagiq+5NrdIbCQiB8VCVXsEQvRMLJyBFZaz9iB6MkW2udTpqJKwYfuBmZFvRC2DNdd3D9dxXVqo4d/wyKCqlxSzhiM/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VUSO/A7x; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=ED9r0V5sb0+w9LFhZGU5B0zyehsnzhW4HmVF8qWk8ZzmWTRyY/TurC1JdXVCHdxD6e8H5ilbuSZBm4BgdL7sOLMZ4UKB8VAwXkvAYQHVdDWJbMeq1/qmzs9DT4c1y6FDeM1IiFQTnyZicnxhvbZ/NKAXqr3zoEhr2owyLr3hFnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AKLRKwvp; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=b3rvlWm0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VUSO/A7x"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C14AD1F00893;
-	Wed,  3 Jun 2026 16:08:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780502892;
-	bh=F3mD29aDqfpJd7nw1lljndcL5wp80gSNpUcOx+2pKgg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=VUSO/A7xKYz+1rOAXkU1k3JZTgN8sbe+hTxg+YLKB8OuwYpN2Yz47ZhD+ZxND99wK
-	 yw/OGRIOvBtis38calrE5rSwDHhVWHwyWvbQd8oxv4ShYT5uRSnTHbyWllS0uAKSeA
-	 BD1y/0EZevBdLD0q1Sw8zcwVbdj2xNI2htPaDOm6cMKSF9yNPJeXq+c9LlyGJg3VLo
-	 nbW9q2QoQpFzWDp3Tvq/7kZHiJpIQsGKWlKheAStOsrnOy6nC9iaMVULH23g5XHUeN
-	 uQBCffBhpyIHWVsSwe6Lx6GdVuKHxqVL1gSemFjix68nZ5gb8xpKdCF9daTdR+fQlX
-	 JQlQ2V7sg1Oxg==
-Date: Wed, 3 Jun 2026 17:08:07 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Michal Simek <michal.simek@amd.com>
-Cc: linux-kernel@vger.kernel.org, monstr@monstr.eu, git@amd.com,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AKLRKwvp";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="b3rvlWm0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1780505365;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H0xSjr3/s1klHevj+Rk+NoDkA/+B2Ij31Shj5ijEvbc=;
+	b=AKLRKwvpW+x++E8+tfT1Yv7lGQCg+CgxvCEY0n1ZCEkrT9D/RGxrAo5MJ3/EcG46KbGbmq
+	XC0YFVB2II7BNfdk+spFXHjH/xJ/hF5JK1rcOrXovaZqDEEDy/SEUM4mT+Hz9PZrobWFsg
+	fIFdSBITitIjxYhhNPWenkeB/GvbxUE=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-482-cJZcN8qZOt2WbMhytRywJA-1; Wed, 03 Jun 2026 12:49:24 -0400
+X-MC-Unique: cJZcN8qZOt2WbMhytRywJA-1
+X-Mimecast-MFC-AGG-ID: cJZcN8qZOt2WbMhytRywJA_1780505364
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-91574ad6871so486008485a.0
+        for <linux-clk@vger.kernel.org>; Wed, 03 Jun 2026 09:49:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1780505364; x=1781110164; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H0xSjr3/s1klHevj+Rk+NoDkA/+B2Ij31Shj5ijEvbc=;
+        b=b3rvlWm0fU5WrWUdT/gS4+bK3TNj7rfeFbFXdL3lnzvY9TU/s+iKGJK3DokK5AijHV
+         HQODvpjAFGUH6LbOGWhHNA//FF3O0WErEZb75UXKy2q7dqkcExvDYnDzoK6RJM+CJphv
+         iLIfifgcWiq9Lavw/vBJ6Hvos4ctMGes/X4VVzZZ1FRAYPgnARkhJdbVOq0E3nYZDZ94
+         BLgrrVjRLHtKTgQaGcy/yYYkWZhbrG8Iy2ghQBOZlixzZmMHc5BU1VuXLFjosWFX8QNc
+         lUkqSZj/hbgfJ53+tKbRXCRjuoZkB360cSYf7IPtG1ayXgPgbAPxwzS0+Qk8LS/DtjxP
+         pzQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780505364; x=1781110164;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=H0xSjr3/s1klHevj+Rk+NoDkA/+B2Ij31Shj5ijEvbc=;
+        b=UgVdGHlzue9UUiAPo1glFTjzAlzLiIh6h38jZ9e4+1tjoAFyXBNJ3urT4XqaLbUbh6
+         s3KPu1MqOv20z/oEkSuqX3bbGSOc4pakZzc0kXunGD7AuApJbgmtyoBU25cl8RFOjRYt
+         f/4gf3/4+C8ZXr4n0t7YPfcuwsgkkwfi21EMeWIiqNy/EVklJRTjCeMTWOI+7Ab0SUSD
+         eQtDMeAki11EzaLO2kcV7BtC+0gZv3eJk2U8JOsUV+DIwwN2aLmJszVft6N0CccPYlff
+         EJOzn1nOE5Z5yT3L9F5ES3jiOJR0mn9yz6LfPeoKLy1RZhQx0uYHhCQC4F3fA9wXy4JP
+         fnGw==
+X-Forwarded-Encrypted: i=1; AFNElJ/KfhxPO9b0UVlZigionL8yxxAKmBXUHz6eiXy7t/FKm9vdxqRxCJcGxsQiNo1ZSHOWU2ORxKX7Zhs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0UQAgGpR74L0917R94GMo9YX2XCRGkGU29qXwrpe5IrUrimlb
+	rbAEyJDBuD0rh0FypcAe2OmLhVZTC2MxUms0uQPINCaRFlswglTGRDUH3Dz2c9SPl3hm1d38ZcQ
+	GvW7+MMI9FaSJKMCY7kmfwaEZX5ghHtPVhD0QGAWhONTDV23A1OXAjDCTbXDCQg==
+X-Gm-Gg: Acq92OGMnHdhAI3O1uSxV3XReKG0xbJ03iaQDW01V6aSFUlxhVBfafdPnjzYXC967jS
+	h69q82q474YQPiKu9ik+WxswtwCf25TKaAF1ugv1S3R/Rm97PCRw12SC9hYbuZJ8d6yvCxL/5QI
+	Zdz734w8ZZ/sM2OgBe+P2Q0hdpu7OLjD/KQxf7Yr9eZLXOEpcQDJvUSvGS/L342qlQxN4rd0Ow7
+	14AYt6ZIini8u99HnaymBiQJCEyk716bRg23uEejzk1UY2JOHVkQOOWzuPeVEen0V1eaxpHvUml
+	zFksRgzaBhxN491tFjus9w+DAKJQ0pTs3Js3CUNDUjevI8b9tof/ky3tEt8Ej/eEjIcB+URaHYg
+	qvp6o6/DyTU4FOG6Bxy7h/FVcUA==
+X-Received: by 2002:a05:620a:294b:b0:914:c8aa:34ea with SMTP id af79cd13be357-9158a83cd2emr683491085a.56.1780505363901;
+        Wed, 03 Jun 2026 09:49:23 -0700 (PDT)
+X-Received: by 2002:a05:620a:294b:b0:914:c8aa:34ea with SMTP id af79cd13be357-9158a83cd2emr683478185a.56.1780505362817;
+        Wed, 03 Jun 2026 09:49:22 -0700 (PDT)
+Received: from redhat.com ([23.25.77.22])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-9158a37c50bsm294228485a.24.2026.06.03.09.49.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jun 2026 09:49:22 -0700 (PDT)
+Date: Wed, 3 Jun 2026 12:49:19 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Nishanth Menon <nm@ti.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, a-christidis@ti.com,
+	Tero Kristo <kristo@kernel.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v3 2/5] dt-bindings: clock: versal-clk: Fix mio_clk index
- range in clock-names pattern
-Message-ID: <20260603-parasite-hefty-8da6d54deb0a@spud>
-References: <cover.1780499520.git.michal.simek@amd.com>
- <5662c24a9e65310fc6520afc95f1a639fe6d221e.1780499520.git.michal.simek@amd.com>
- <20260603-catlike-uncrushed-b98b66dc92c1@spud>
- <c33b3684-bf96-4c2f-8251-9ac7c1444c3f@amd.com>
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, Michael Walle <mwalle@kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>, Randolph Sapp <rs@ti.com>
+Subject: Re: [PATCH v2] clk: keystone: don't cache clock rate
+Message-ID: <aiBbD2Y6s-1NKnhT@redhat.com>
+References: <20260507-clk-sci-v2-1-38f59b48777a@ti.com>
+ <agHpYnkCgGfZp2-E@redhat.com>
+ <20260512104848.4axgjeto6i7ejvli@retorted>
+ <agM-VB-ToGFNphfu@redhat.com>
+ <20260512171604.5ntgq65bmedb7jpc@stinger>
+ <20260603160034.fbemt5n6pqyrmwke@strode>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="l4BagllEPKb3euRk"
-Content-Disposition: inline
-In-Reply-To: <c33b3684-bf96-4c2f-8251-9ac7c1444c3f@amd.com>
-
-
---l4BagllEPKb3euRk
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20260603160034.fbemt5n6pqyrmwke@strode>
+User-Agent: Mutt/2.3.1 (2026-03-20)
 
-On Wed, Jun 03, 2026 at 05:35:37PM +0200, Michal Simek wrote:
->=20
->=20
-> On 6/3/26 17:33, Conor Dooley wrote:
-> > On Wed, Jun 03, 2026 at 05:12:07PM +0200, Michal Simek wrote:
-> > > The clock-names pattern "^mio_clk[00-77]+.*$" was intended to constra=
-in
-> > > the MIO index to the valid range 00..77 (ZynqMP has 78 MIO pins),
-> > > but a regex character class cannot express a multi-digit decimal rang=
-e.
-> > > Replace the bogus character class with an explicit alternation that
-> > > enumerates the two-digit decimal values 00..77.
-> > >=20
-> > > Fixes: 03d4a1004053 ("dt-bindings: clock: versal: Convert the xlnx,zy=
-nqmp-clk.txt to yaml")
-> > > Signed-off-by: Michal Simek <michal.simek@amd.com>
-> > > ---
-> > >=20
-> > > Changes in v3:
-> > > - New patch in series
-> > >=20
-> > >   Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/clock/xlnx,versal-clk.=
-yaml b/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
-> > > index bef109d163a8..d843d95801b5 100644
-> > > --- a/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
-> > > +++ b/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
-> > > @@ -116,7 +116,7 @@ allOf:
-> > >               - const: pss_alt_ref_clk
-> > >               - const: aux_ref_clk
-> > >               - const: gt_crx_ref_clk
-> > > -            - pattern: "^mio_clk[00-77]+.*$"
-> > > +            - pattern: "^mio_clk(0[0-9]|[1-6][0-9]|7[0-7])+.*$"
-> >=20
-> > What am I missing that prevents 0[0-9] and [1-6][0-9] being merged?
->=20
-> correct it can be put together [0-6][0-9].
-> Was playing with [0-9||[1-6][0-9] or with leading zero and decided to use=
- 00
-> as was intention in past.
+Hi Nishanth,
 
-Ah, right. In that case,
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-pw-bot: not-applicable
+On Wed, Jun 03, 2026 at 11:00:34AM -0500, Nishanth Menon wrote:
+> On 12:16-20260512, Nishanth Menon wrote:
+> > On 10:51-20260512, Brian Masney wrote:
+> > > > Could you clarify if I need to take it via my tree to arnd or if this
+> > > > patch will go via the clk tree?
+> > > 
+> > > Sorry, I'm not sure what Stephen prefers here. An argument could be made
+> > > for either approach. I would just go with whatever you have done in the
+> > > past.
+> > 
+> > Thanks Brian for the review.
+> > 
+> > This usually will go via Stephen. Will wait, just trying to make sure
+> > there is no change in expectations (given this patch missed a window).
+> > 
+> 
+> Stephen, I'd like to clarify: would you pick this patch up directly,
+> or would like me to send you a PR after collecting sci_clk patches? I am
+> OK with either, would prefer to not have wrong expectations.
+> 
+> I see two patches pending to be queued:
+> * this one
+> * https://lore.kernel.org/linux-arm-kernel/20260512110028.2999471-1-nm@ti.com/
 
---l4BagllEPKb3euRk
-Content-Type: application/pgp-signature; name="signature.asc"
+Since Stephen hasn't replied yet, I would just include it in your pull
+to him to make sure it gets in.
 
------BEGIN PGP SIGNATURE-----
+If he has an issue, then it will be straight forward to make a v2 pull
+without this patch.
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaiBRZwAKCRB4tDGHoIJi
-0kPDAP0bzLSAEF9NzU/d4L2MiiDBNCaRVDo6n4KAjWuF1yW1OAD+JOTJnYNp75Zv
-6zPL2XVrogdE+lNiBwltDexh9yyQSAk=
-=Mmmy
------END PGP SIGNATURE-----
+Brian
 
---l4BagllEPKb3euRk--
