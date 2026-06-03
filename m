@@ -1,574 +1,197 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011009.outbound.protection.outlook.com [52.101.62.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49EE381B0D
-	for <linux-clk@vger.kernel.org>; Wed,  3 Jun 2026 14:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780497002; cv=none; b=Wsa1oBjKuNgkyl16DvyxiktaFZrDrZCIw9QdpGnUUdubpBvEspvAknDHUJ553+aWVz0isa8k81psG1oH51hOiQehrZoGBJksexeQZjiX5Kq/iA/PNlPl0PRB56GyPHz8p+pFormXOKTGZUksurFqYnIzjHhLdTkrlV+TOQYPbhk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780497002; c=relaxed/simple;
-	bh=EaLKQitjIkKiP6uCsFTCuHCpd0uS0l3HOBSvjx/FKwY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=m2G/pxTwpnGLeRXjGxidiF7ELzy4QnbTJPUxsy7doUCO3ODcAigLLWbFxVDVgmln2KGuGM/5jSPxu0z285HI+68NDCV+qQKwoxmsuWQ3ro2bcgPBTr0QMHXfVCZdrcyEUPwp3ukroKfPIL3cY5dz35TzR3xyaLusqzeKgSHnQmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=pLvQX32I; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB37425CC74;
+	Wed,  3 Jun 2026 15:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780499540; cv=fail; b=uMJwJweDJMTviBI9XKNviQ88p+jCMUTouWaEi+zWo3VytiFCmDOkV5UUtg50giM75acIqsheRHLiFN1FWuRPBd1vQcL2MlAxgYotAxFs0kkW45k7a23aZvLXzAL9p/YoqLG6NHwjqaJmjUXxk+LWzURf+yn7+P0RLUpT5YNcReg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780499540; c=relaxed/simple;
+	bh=qvEBZsq0/KH8mNsey45GvHVUh3ulgHnVYtvXBBpONf8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Zca343lkh86oK2vEkhD/yCDZT+7EV0ys4huEvzH04T2YWPyc3u9nz501OqjOmbskPtEhC1VkLAKOAUqhw+3I3HASAdPq+vwxOD9T5AgUcxn0xO4pTU3x9QtrPc/gL0y+Zo+fzTtecVD2eFMa0w5I15CpcelUQIvG+gdjwuodoo0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=JTwBBHCf; arc=fail smtp.client-ip=52.101.62.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="pLvQX32I"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-45ef1629ff4so4263360f8f.0
-        for <linux-clk@vger.kernel.org>; Wed, 03 Jun 2026 07:29:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1780496995; x=1781101795; darn=vger.kernel.org;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WjLkLQjimBoS5NNM+Kb3Wr+Ik260X4ylnwaKXyAaJuw=;
-        b=pLvQX32IVviU3lYWGI4MFgHYXf1egEhj7nAa2DLQHtYVQUPnjiBojngZ2uEZriWjTo
-         mo+8eKXot9OGDz1X9qrigN/PJZmW955jwBE39Dw5KwMyWU4yh17PMa982140OkkICNsE
-         VKPKpfXqbZ5+Zp9VC9A1erLtkjOKOnlvxaZS7uMquSPT4AEpYIhW2VUGFF8ydE0I47Fa
-         ha5lQXkPkk57LZ861OA2GDRGtlfZvuZdM+94FMdOr5AxpHf8ApR91GnXwMt2Osec6TnM
-         rKhfyEj9uCQcDdDrKIw8BS58DjYv4aqa9aoYmErelq4ZDjbCuRYUfYH0Dr4QkNdV5jeP
-         TfNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780496995; x=1781101795;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WjLkLQjimBoS5NNM+Kb3Wr+Ik260X4ylnwaKXyAaJuw=;
-        b=Qe6GFNye4zJdVI9zBP5aws2XpmmZbEInBWL9kcsnGtjhhrtqi7R7h4PSE1XvXtqzei
-         fiQckgSuFoFjDR4V4JmxBSfjZcL3ePB7WYcSSH+PpW0k8FBni+ET2xXfTvRwLYAqXk1f
-         3z41D5E9pQfbKMmsMtiDeXhuKymPDP7FWPy35NJiHMDlN3WJgBTngduRSKNFFwIrY6f4
-         T5pIF4wZjn9zTYnSb40Jq6oRea4pM6UTixazE8Up084lf6moKVPwYSJJ6P0MaJpLAP+B
-         1vOPvsVO6jiMBxl1Mux8EL1Gqbi+SX0tCq89gQEm6mO80j+u+a7tgWyyGwbaeE3Cqr3j
-         O1Sw==
-X-Forwarded-Encrypted: i=1; AFNElJ/cepPyCdu0pplCvjI2qG8GI+3AqeGnwUWj3EXJQIiXA2xnD4aNTQ6VbUHMiQUE3fbQDfGjEazjEik=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3GXb2EyPyMT+UjjaExKHOelvKaD5GLF8nle514c9YyknCTeAI
-	t2PdObpm9UwSKCzxG2Py7hAR7jj3fFLp1D2GrpksEXjwltG9g9l0K79FAMydkBkGb64=
-X-Gm-Gg: Acq92OGaTJ3uYXcus65Dgn04KZ5K08N9tkCXc3BQAkeCnY1iAYVzj+oF4GUu9apqIPO
-	By7zlH64JBEHLH9+fEOwCOXEJgyx+HbWQDZdKwDFX4kp1ELIoDEjXBAFALb3KHrMy45HM5a5v4n
-	vpFcfPRD/RciIGEoYTIsTZN9scgronycGqSgtX5doLIKDNpMsqeJNH3wjEzrj1ntmnCU2IRV/16
-	whGbqT+Lxk6rU8p5kLO3zga0Oog9zdWwKOM/8VGxn1FLX0f8I7IjNzLqH5uxJanbapTiZ2skegb
-	wI6GF4vJysqqKSnOGPICT02xeaPjOwWjmbw+3YzENc1T++1kMc8vETcKK+xk4veFKgMEYyxO9Ae
-	yjHBxNRSW1dlD+/w1zRFol+2717cF2JybnVU4DuhMUNUoOaIvPoIXo4nn68gKb6hA117l/5kuVm
-	wQKKfdUq2oM/JXza+9328ZfNWvYQ==
-X-Received: by 2002:a05:6000:b82:b0:452:65d:e108 with SMTP id ffacd0b85a97d-46021781f1fmr3883128f8f.3.1780496995112;
-        Wed, 03 Jun 2026 07:29:55 -0700 (PDT)
-Received: from localhost ([82.67.6.57])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-4601f35fb24sm8502157f8f.34.2026.06.03.07.29.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jun 2026 07:29:54 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Jian Hu via B4 Relay <devnull+jian.hu.amlogic.com@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,  Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Rob Herring
- <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor
- Dooley <conor+dt@kernel.org>,  Xianwei Zhao <xianwei.zhao@amlogic.com>,
-  Kevin Hilman <khilman@baylibre.com>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>,  jian.hu@amlogic.com,
-  linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org,
-  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 2/2] clk: amlogic: Add A9 AO clock controller driver
-In-Reply-To: <20260603-a9_aoclk-v2-2-f47ea616ee78@amlogic.com> (Jian Hu via's
-	message of "Wed, 03 Jun 2026 20:17:53 +0800")
-References: <20260603-a9_aoclk-v2-0-f47ea616ee78@amlogic.com>
-	<20260603-a9_aoclk-v2-2-f47ea616ee78@amlogic.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Wed, 03 Jun 2026 16:29:52 +0200
-Message-ID: <1j7bofd7dr.fsf@starbuckisacylon.baylibre.com>
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="JTwBBHCf"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=O7bhNC1Nmvjq7mt2uAfVSGuJVAx0s7oS9WSN7nn0kayxA+V3eJWe77M+BREtsqyt+yYnr4D6GlK7WP/Tt/E1RV1Zx9goK6qzC9Kep5925SI/7j5fLINFAY1Xm/L2gv1qHMAot5p8E+npebmDeOjIXNY8mjzWVOIHUY+H8gqNw7arP+gNvFsjz6Th2Xs+xQJxqwcnlwc89QXeeWdczU1GCJZJCh1Ly6AXXcJ8GmhhgybS28P9hEQ8uQ1FScRbwuTPUWpd1OUHNhIrOiEkQKVVvZTuSlzjbMsS2mAYHHrFAZeF5N0Nsi9cZKI55D6M09Io2D53yyViX7Y1FBhy8+6HkA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ji9geGKiPwUw41rRXwy6+GiuzTDi/MOPDKkW36W3VNg=;
+ b=Dj5CtRxwRAOv1yW1kRET63Yp6VG3/vh2lvscuWd7HkmpNV7TRv03pxOOQ4GxnGsTrmzDQjvmonmRGHuOE8/PaWmj6kKIEmXDYlPHunS0oFqrKGoTDnKx3f7a8tI97lSjHb++mHgSZCIfEyAyQY5Qcb9I5e9oKGM0Qh/wA/6gYxl7kK5x+K8326VPL+Gy6mxqIwYbIKmRabiXU/KGOXeWJFQBC7HLmRq71Xsr2VhJIsSMx8V76pi5VbKkRTwtQyo1EXLCP9BUGB8XaCRw+mqvvJO39u2kIpPGaCROsmYdALvAIZHbXW15yhQJaFltmoKvnXC+iZHsQ5GFQkB8tQ0RIg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ji9geGKiPwUw41rRXwy6+GiuzTDi/MOPDKkW36W3VNg=;
+ b=JTwBBHCfDIOFLHj6YVYfucZJgtuQXrQ7cBFA74XjLTQriASK3mG+32ih5D3idn9F0DFDDAjI/78QVWVZxUMxk7Tod9vpp50QOgQ+fDt758BIatLUpQCn1/177QvDRPeKVfsI9Ef8hHCrfXP5ifzfM7tL9hs8Qif1oMLl9V3FnM0=
+Received: from MN2PR15CA0051.namprd15.prod.outlook.com (2603:10b6:208:237::20)
+ by SA1PR12MB7247.namprd12.prod.outlook.com (2603:10b6:806:2bb::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.92.7; Wed, 3 Jun 2026
+ 15:12:14 +0000
+Received: from MN1PEPF0000ECD9.namprd02.prod.outlook.com
+ (2603:10b6:208:237:cafe::54) by MN2PR15CA0051.outlook.office365.com
+ (2603:10b6:208:237::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.92.7 via Frontend Transport; Wed, 3
+ Jun 2026 15:12:14 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ MN1PEPF0000ECD9.mail.protection.outlook.com (10.167.242.138) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.92.5 via Frontend Transport; Wed, 3 Jun 2026 15:12:14 +0000
+Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.41; Wed, 3 Jun
+ 2026 10:12:14 -0500
+Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb10.amd.com
+ (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.41; Wed, 3 Jun
+ 2026 10:12:13 -0500
+Received: from localhost (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.41 via Frontend
+ Transport; Wed, 3 Jun 2026 10:12:12 -0500
+From: Michal Simek <michal.simek@amd.com>
+To: <linux-kernel@vger.kernel.org>, <monstr@monstr.eu>,
+	<michal.simek@amd.com>, <git@amd.com>
+CC: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, "Rob
+ Herring" <robh@kernel.org>, Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+	Stephen Boyd <sboyd@kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED
+ DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, kishore Manne
+	<nava.kishore.manne@amd.com>, "moderated list:ARM/ZYNQ ARCHITECTURE"
+	<linux-arm-kernel@lists.infradead.org>, "open list:COMMON CLK FRAMEWORK"
+	<linux-clk@vger.kernel.org>
+Subject: [PATCH v3 0/5] clock: versal-clk: Fix Versal NET clock binding and switch to CCF
+Date: Wed, 3 Jun 2026 17:12:05 +0200
+Message-ID: <cover.1780499520.git.michal.simek@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3501; i=michal.simek@amd.com; h=from:subject:message-id; bh=qvEBZsq0/KH8mNsey45GvHVUh3ulgHnVYtvXBBpONf8=; b=owGbwMvMwCG2mv3fB7+vgl8ZT6slMWQpuLiZr08TC3v0umfhuilMnD6L7vYX3P71xHVuifen7 1vDezsDO0pZGMQ4GGTFFFmmM+k4rPl2banY8sh8mDmsTCBDGLg4BWAiB/8wMrRcn18g8Ha1zttP CScnmV08N7FW/lFKwZyLanV+PZKBnOYMf2X5vjZk/DE/duaU6qbwuxL2qRyMfWmun/6v125g+3r 5IicA
+X-Developer-Key: i=michal.simek@amd.com; a=openpgp; fpr=67350C9BF5CCEE9B5364356A377C7F21FE3D1F91
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000ECD9:EE_|SA1PR12MB7247:EE_
+X-MS-Office365-Filtering-Correlation-Id: ac8c0d0e-2654-406d-7bd6-08dec1827e6a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700016|82310400026|376014|7416014|1800799024|6133799003|56012099006|11063799006|3023799007|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	qwXSWj/OnuJjnUz9xELQJ6HX8ZJd++OiXKT1h9tWr6FCEkiNVhj7WZEZ2GHyZXqb0WXEPJBFVkBlz14oUuoqLqmkHuQnHA7rtVDxF0kJcBvfCuoiAiXHxjS+1qfH8CL74wGQ1KVlu/22+9JOkivDUdNeB1Po7jswkKTBgIdjbZzQXqg3ByB82tok2heUabvNLBv5gGeFaH+J5eQeFSONECdrFAyFQhqLYnvotP7rOS4ZYeK5CHfkZP8Z8BR3Av1QZ8P0NYs/kPEn3Qxapa1GGEefoT+gmnrsMETSR3xB5UIdsEbTzs7RZ/Fo0BHFZjyZGjpmD7HZ6/waPxQN/O6B3SHvNVGxsAaHheY551GTLZ+6CEPqE1ZZ2qMMC81LraFTi62WnVF05KHLYAFglsQjrRDI/GGm9jPhuvvUM8tyMxQMepoHrfhLsraLqMh0T1R+fc6/lgxDaQnTfurVtIwTjpUhipZ1M8LdF7nBpsyvgKEtc54hCh8IIn6QwF9a26YzvuZM8X5uHC9aXMFtyTJB8vxEmTwqvbron/rdaOtneXZKTax7XyntDyOOZ+qe2PmBdKtk1QpvQV3l4zxzSr66dCISG2QWQF2OPZxz8/m7SoK2Yct0Asp/+elWNJPkq/5A0kOSKGy5WizbJolIEQVEIaYHqVuPP1NlHvVFucadLytN/qN5EAKKacwQtR6XVNlLsUe0tw4LNu/Y4lNE+OLFMTtD3c2hSqd6uF74aQrjU9E=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(82310400026)(376014)(7416014)(1800799024)(6133799003)(56012099006)(11063799006)(3023799007)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	BvAyBTc+PGZpv6IljbkLAVCO68nE+xhWhNWGrwIZVaEoS+VlfnYH3MfLYBCykOy5ZCnCcxj8fCfMTnYrf6m0NAUcv0q6/2tQSggOEN0JBFUK9oWFfzK+WtTV1p7gOTAhP4FqQUGgC/ypseSy/EoiGNAdoHZd+xEceUj88RDXBSUTOW5B4QYjWWjU20wajwt9n6cqkKlxlohjfsSIm0uT7XtX7EoDPI8U4I8cjjvTZH6Qk7hW6Sx9QIVqR6zZnpptSOoK9tKzVngGFkpNAaN8TQddgHehwRm+hNQH9c5GchfZKd5UN/UK858R6cjI4wVEC8YaRPfXWFO1OC9COeFiqsI8s5TwttYbB/WynirVhpCrK3XTbOhzmupM6m0ARhrwVzMfSI96Z8mdUMmB7vdh1RVmxnCRC6QIHshRILC4b5+TV8bmv8TdwJS4wXDvCm41
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2026 15:12:14.3552
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ac8c0d0e-2654-406d-7bd6-08dec1827e6a
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MN1PEPF0000ECD9.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7247
 
-On Wed 03 Jun 2026 at 20:17, Jian Hu via B4 Relay <devnull+jian.hu.amlogic.com@kernel.org> wrote:
+This series fixes the Versal NET clock controller DT binding validation
+and switches the platform to use the firmware-based CCF clock interface.
 
-> From: Jian Hu <jian.hu@amlogic.com>
->
-> Add the Always-on clock controller driver for the Amlogic A9 SoC family.
->
-> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
-> ---
->  drivers/clk/meson/Kconfig    |  13 ++
->  drivers/clk/meson/Makefile   |   1 +
->  drivers/clk/meson/a9-aoclk.c | 419 +++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 433 insertions(+)
->
-> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-> index cf8cf3f9e4ee..625e6788b940 100644
-> --- a/drivers/clk/meson/Kconfig
-> +++ b/drivers/clk/meson/Kconfig
-> @@ -132,6 +132,19 @@ config COMMON_CLK_A1_PERIPHERALS
->  	  device, A1 SoC Family. Say Y if you want A1 Peripherals clock
->  	  controller to work.
->  
-> +config COMMON_CLK_A9_AO
-> +	tristate "Amlogic A9 SoC AO clock controller support"
-> +	depends on ARM64
-> +	default ARCH_MESON || COMPILE_TEST
-> +	select COMMON_CLK_MESON_REGMAP
-> +	select COMMON_CLK_MESON_CLKC_UTILS
-> +	select COMMON_CLK_MESON_DUALDIV
-> +	imply COMMON_CLK_SCMI
-> +	help
-> +	  Support for the AO clock controller on Amlogic A311Y3 based
-> +	  device, AKA A9.
-> +	  Say Y if you want A9 AO clock controller to work.
-> +
->  config COMMON_CLK_C3_PLL
->  	tristate "Amlogic C3 PLL clock controller"
->  	depends on ARM64
-> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-> index c6719694a242..f89d027c282c 100644
-> --- a/drivers/clk/meson/Makefile
-> +++ b/drivers/clk/meson/Makefile
-> @@ -19,6 +19,7 @@ obj-$(CONFIG_COMMON_CLK_AXG) += axg.o axg-aoclk.o
->  obj-$(CONFIG_COMMON_CLK_AXG_AUDIO) += axg-audio.o
->  obj-$(CONFIG_COMMON_CLK_A1_PLL) += a1-pll.o
->  obj-$(CONFIG_COMMON_CLK_A1_PERIPHERALS) += a1-peripherals.o
-> +obj-$(CONFIG_COMMON_CLK_A9_AO) += a9-aoclk.o
->  obj-$(CONFIG_COMMON_CLK_C3_PLL) += c3-pll.o
->  obj-$(CONFIG_COMMON_CLK_C3_PERIPHERALS) += c3-peripherals.o
->  obj-$(CONFIG_COMMON_CLK_GXBB) += gxbb.o gxbb-aoclk.o
-> diff --git a/drivers/clk/meson/a9-aoclk.c b/drivers/clk/meson/a9-aoclk.c
-> new file mode 100644
-> index 000000000000..b7b3ca231a42
-> --- /dev/null
-> +++ b/drivers/clk/meson/a9-aoclk.c
-> @@ -0,0 +1,419 @@
-> +// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
-> +/*
-> + * Copyright (C) 2026 Amlogic, Inc. All rights reserved
-> + */
-> +
-> +#include <dt-bindings/clock/amlogic,a9-aoclkc.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/platform_device.h>
-> +#include "clk-regmap.h"
-> +#include "clk-dualdiv.h"
-> +#include "meson-clkc-utils.h"
-> +
-> +#define AO_OSCIN_CTRL			0x00
-> +#define AO_SYS_CLK0			0x04
-> +#define AO_PWM_CLK_A_CTRL		0x1c
-> +#define AO_PWM_CLK_B_CTRL		0x20
-> +#define AO_PWM_CLK_C_CTRL		0x24
-> +#define AO_PWM_CLK_D_CTRL		0x28
-> +#define AO_PWM_CLK_E_CTRL		0x2c
-> +#define AO_PWM_CLK_F_CTRL		0x30
-> +#define AO_PWM_CLK_G_CTRL		0x34
-> +#define AO_CEC_CTRL0			0x38
-> +#define AO_CEC_CTRL1			0x3c
-> +#define AO_RTC_BY_OSCIN_CTRL0		0x50
-> +#define AO_RTC_BY_OSCIN_CTRL1		0x54
-> +
-> +#define A9_COMP_SEL(_name, _reg, _shift, _mask, _pdata) \
-> +	MESON_COMP_SEL(a9_ao_, _name, _reg, _shift, _mask, _pdata, NULL, 0, 0)
-> +
-> +#define A9_COMP_DIV(_name, _reg, _shift, _width) \
-> +	MESON_COMP_DIV(a9_ao_, _name, _reg, _shift, _width, 0, CLK_SET_RATE_PARENT)
-> +
-> +#define A9_COMP_GATE(_name, _reg, _bit) \
-> +	MESON_COMP_GATE(a9_ao_, _name, _reg, _bit, CLK_SET_RATE_PARENT)
-> +
-> +static struct clk_regmap a9_ao_xtal_in = {
-> +	.data = &(struct clk_regmap_gate_data){
-> +		.offset = AO_OSCIN_CTRL,
-> +		.bit_idx = 3,
-> +	},
-> +	/*
-> +	 * It may be ao_sys's parent clock, its child clocks mark
-> +	 * CLK_IS_CRITICAL, So mark CLK_IS_CRITICAL for it.
-> +	 */
+Patch 1 extracts zynqmp to own DT binding file.
 
-I don't really get what you mean ... Could you rephrase ?
+Patch 2 restructures the if/then conditions in the versal-clk binding
+schema so that xlnx,versal-net-clk is matched first before falling back
+to xlnx,versal-clk. This fixes false "too long" validation errors caused
+by both conditions matching simultaneously when the fallback compatible
+is present. A dedicated example for the Versal NET 3-clock configuration
+is added and all examples are split into separate blocks for independent
+validation.
 
-> +	.hw.init = CLK_HW_INIT_FW_NAME("ao_xtal_in", "xtal",
-> +				       &clk_regmap_gate_ops, CLK_IS_CRITICAL),
+Patch 3 switches Versal NET from static fixed-clock definitions to the
+firmware-based clock interface, enabling proper clock management
+through platform firmware. DT macro headers for clocks, power domains
+and resets are added.
 
-I'm honestly not sure about this. It is correct, sure and the macro exist to be
-used but ... It does not really help readability here, does it ?
+Thanks,
+Michal
 
-(I know that was a feedback you've got on v1)
+Changes in v3:
+- new patch in series
+- New patch in series
+- Cover change in zynqmp-firmware.yaml
+- Move clock-cells to be the last in the example
+- Remove comment around (Optional clock) which is obvious from schema
+  itself
+- Move clock-cells to be the last property in the example
+- use 2 spaces for indentation in example to follow the same style which is
+  already used
+- Add fixed tag
+- Remove interrupt from zynqmp-power - Versal NET is using event framework
+  instead. No interrupt is required.
+- Remove unused GEM{0,1}_REF_{R,T}X macros
+- Update commit message
+- s/zynqmp/versal-net/ in subject
+- Update copyrights
+- Make all macro values lower case
+- Fix guarding macro names
 
-Other than that, this looks good to me.
+Changes in v2:
+- New patch in series
+- Split zynqmp-clk from versal-clk
+- Update logic without ZynqMP part in this file and have if/else only
+  around min/maxItems
+- use clock-<HZ> node name for fixed clocks
+- Reuse existing versal-net-clk.dtsi file
 
-> +};
-> +
-> +static struct clk_regmap a9_ao_xtal = {
-> +	.data = &(struct clk_regmap_mux_data) {
-> +		.offset = AO_OSCIN_CTRL,
-> +		.mask = 0x1,
-> +		.shift = 0,
-> +	},
-> +	/* ext_32k is from external PAD, do not automatically reparent */
-> +	.hw.init = CLK_HW_INIT_PARENTS_DATA("ao_xtal",
-> +			((const struct clk_parent_data []) {
-> +				{ .hw = &a9_ao_xtal_in.hw },
-> +				{ .fw_name = "ext_32k" }
-> +			}), &clk_regmap_mux_ops, CLK_SET_RATE_NO_REPARENT),
-> +};
-> +
-> +static struct clk_regmap a9_ao_sys = {
-> +	.data = &(struct clk_regmap_mux_data) {
-> +		.offset = AO_OSCIN_CTRL,
-> +		.mask = 0x1,
-> +		.shift = 1,
-> +	},
-> +	.hw.init = CLK_HW_INIT_PARENTS_DATA("ao_sys",
-> +			((const struct clk_parent_data []) {
-> +				{ .hw = &a9_ao_xtal.hw },
-> +				{ .fw_name = "sys" }
-> +			}), &clk_regmap_mux_ops, 0),
-> +};
-> +
-> +static const struct clk_parent_data a9_ao_pclk_parents = { .hw = &a9_ao_sys.hw };
-> +
-> +#define A9_AO_PCLK(_name, _bit, _flags)		       \
-> +	MESON_PCLK(a9_ao_sys_##_name, AO_SYS_CLK0, _bit, \
-> +		   &a9_ao_pclk_parents, _flags)
-> +
-> +/*
-> + * A9 integrates a low-power microprocessor (Always-on CPU: AOCPU). Some AO sys
-> + * clocks control the AOCPU modules. Mark the AOCPU-related clocks with
-> + * CLK_IS_CRITICAL to avoid them being disabled and impacting AOCPU functionality.
-> + * AOCPU-related clocks list:
-> + * - clktree
-> + * - rst_ctrl
-> + * - pad
-> + * - irq
-> + * - pwrctrl
-> + * - aocpu
-> + * - sram
-> + */
-> +static A9_AO_PCLK(i2c3,		0,	0);
-> +static A9_AO_PCLK(rtc_reg,	1,	0);
-> +static A9_AO_PCLK(clktree,	2,	CLK_IS_CRITICAL);
-> +static A9_AO_PCLK(rst_ctrl,	3,	CLK_IS_CRITICAL);
-> +static A9_AO_PCLK(pad,		4,	CLK_IS_CRITICAL);
-> +static A9_AO_PCLK(rtc_dig,	5,	0);
-> +static A9_AO_PCLK(irq,		6,	CLK_IS_CRITICAL);
-> +static A9_AO_PCLK(pwrctrl,	7,	CLK_IS_CRITICAL);
-> +static A9_AO_PCLK(pwm_a,	8,	0);
-> +static A9_AO_PCLK(pwm_b,	9,	0);
-> +static A9_AO_PCLK(pwm_c,	10,	0);
-> +static A9_AO_PCLK(pwm_d,	11,	0);
-> +static A9_AO_PCLK(pwm_e,	12,	0);
-> +static A9_AO_PCLK(pwm_f,	13,	0);
-> +static A9_AO_PCLK(pwm_g,	14,	0);
-> +static A9_AO_PCLK(i2c_a,	15,	0);
-> +static A9_AO_PCLK(i2c_b,	16,	0);
-> +static A9_AO_PCLK(i2c_c,	17,	0);
-> +static A9_AO_PCLK(i2c_d,	18,	0);
-> +static A9_AO_PCLK(sed,		19,	0);
-> +static A9_AO_PCLK(ir_ctrl,	20,	0);
-> +static A9_AO_PCLK(uart_b,	21,	0);
-> +static A9_AO_PCLK(uart_c,	22,	0);
-> +static A9_AO_PCLK(uart_d,	23,	0);
-> +static A9_AO_PCLK(uart_e,	24,	0);
-> +static A9_AO_PCLK(spisg_0,	25,	0);
-> +static A9_AO_PCLK(rtc_secure,	26,	0);
-> +static A9_AO_PCLK(cec,		27,	0);
-> +static A9_AO_PCLK(aocpu,	28,	CLK_IS_CRITICAL);
-> +static A9_AO_PCLK(sram,		29,	CLK_IS_CRITICAL);
-> +static A9_AO_PCLK(spisg_1,	30,	0);
-> +static A9_AO_PCLK(spisg_2,	31,	0);
-> +
-> +static const struct clk_parent_data a9_ao_pwm_parents[] = {
-> +	{ .hw = &a9_ao_xtal.hw },
-> +	{ .fw_name = "fdiv5", },
-> +	{ .fw_name = "fdiv4", },
-> +	{ .fw_name = "fdiv3", }
-> +};
-> +
-> +static A9_COMP_SEL(pwm_a, AO_PWM_CLK_A_CTRL, 9, 0x7, a9_ao_pwm_parents);
-> +static A9_COMP_DIV(pwm_a, AO_PWM_CLK_A_CTRL, 0, 8);
-> +static A9_COMP_GATE(pwm_a, AO_PWM_CLK_A_CTRL, 8);
-> +
-> +static A9_COMP_SEL(pwm_b, AO_PWM_CLK_B_CTRL, 9, 0x7, a9_ao_pwm_parents);
-> +static A9_COMP_DIV(pwm_b, AO_PWM_CLK_B_CTRL, 0, 8);
-> +static A9_COMP_GATE(pwm_b, AO_PWM_CLK_B_CTRL, 8);
-> +
-> +static A9_COMP_SEL(pwm_c, AO_PWM_CLK_C_CTRL, 9, 0x7, a9_ao_pwm_parents);
-> +static A9_COMP_DIV(pwm_c, AO_PWM_CLK_C_CTRL, 0, 8);
-> +static A9_COMP_GATE(pwm_c, AO_PWM_CLK_C_CTRL, 8);
-> +
-> +static A9_COMP_SEL(pwm_d, AO_PWM_CLK_D_CTRL, 9, 0x7, a9_ao_pwm_parents);
-> +static A9_COMP_DIV(pwm_d, AO_PWM_CLK_D_CTRL, 0, 8);
-> +static A9_COMP_GATE(pwm_d, AO_PWM_CLK_D_CTRL, 8);
-> +
-> +static A9_COMP_SEL(pwm_e, AO_PWM_CLK_E_CTRL, 9, 0x7, a9_ao_pwm_parents);
-> +static A9_COMP_DIV(pwm_e, AO_PWM_CLK_E_CTRL, 0, 8);
-> +static A9_COMP_GATE(pwm_e, AO_PWM_CLK_E_CTRL, 8);
-> +
-> +static A9_COMP_SEL(pwm_f, AO_PWM_CLK_F_CTRL, 9, 0x7, a9_ao_pwm_parents);
-> +static A9_COMP_DIV(pwm_f, AO_PWM_CLK_F_CTRL, 0, 8);
-> +static A9_COMP_GATE(pwm_f, AO_PWM_CLK_F_CTRL, 8);
-> +
-> +static A9_COMP_SEL(pwm_g, AO_PWM_CLK_G_CTRL, 9, 0x7, a9_ao_pwm_parents);
-> +static A9_COMP_DIV(pwm_g, AO_PWM_CLK_G_CTRL, 0, 8);
-> +static A9_COMP_GATE(pwm_g, AO_PWM_CLK_G_CTRL, 8);
-> +
-> +static struct clk_regmap a9_ao_rtc_dualdiv_in = {
-> +	.data = &(struct clk_regmap_gate_data){
-> +		.offset = AO_RTC_BY_OSCIN_CTRL0,
-> +		.bit_idx = 31,
-> +	},
-> +	.hw.init = CLK_HW_INIT_HW("ao_rtc_dualdiv_in", &a9_ao_xtal.hw,
-> +				   &clk_regmap_gate_ops, 0),
-> +};
-> +
-> +static const struct meson_clk_dualdiv_param a9_ao_dualdiv_table[] = {
-> +	{ 733, 732, 8, 11, 1 },
-> +	{ /* sentinel */ }
-> +};
-> +
-> +static struct clk_regmap a9_ao_rtc_dualdiv_div = {
-> +	.data = &(struct meson_clk_dualdiv_data){
-> +		.n1 = {
-> +			.reg_off = AO_RTC_BY_OSCIN_CTRL0,
-> +			.shift   = 0,
-> +			.width   = 12,
-> +		},
-> +		.n2 = {
-> +			.reg_off = AO_RTC_BY_OSCIN_CTRL0,
-> +			.shift   = 12,
-> +			.width   = 12,
-> +		},
-> +		.m1 = {
-> +			.reg_off = AO_RTC_BY_OSCIN_CTRL1,
-> +			.shift   = 0,
-> +			.width   = 12,
-> +		},
-> +		.m2 = {
-> +			.reg_off = AO_RTC_BY_OSCIN_CTRL1,
-> +			.shift   = 12,
-> +			.width   = 12,
-> +		},
-> +		.dual = {
-> +			.reg_off = AO_RTC_BY_OSCIN_CTRL0,
-> +			.shift   = 28,
-> +			.width   = 1,
-> +		},
-> +		.table = a9_ao_dualdiv_table,
-> +	},
-> +	.hw.init = CLK_HW_INIT_HW("a9_ao_rtc_dualdiv_div", &a9_ao_rtc_dualdiv_in.hw,
-> +				   &meson_clk_dualdiv_ops, 0),
-> +};
-> +
-> +static struct clk_regmap a9_ao_rtc_dualdiv_sel = {
-> +	.data = &(struct clk_regmap_mux_data) {
-> +		.offset = AO_RTC_BY_OSCIN_CTRL1,
-> +		.mask = 0x1,
-> +		.shift = 24,
-> +	},
-> +	.hw.init = CLK_HW_INIT_PARENTS_HW("ao_rtc_dualdiv_sel",
-> +			((const struct clk_hw *[]) {
-> +				&a9_ao_rtc_dualdiv_div.hw,
-> +				&a9_ao_rtc_dualdiv_in.hw,
-> +			}), &clk_regmap_mux_ops, CLK_SET_RATE_PARENT),
-> +};
-> +
-> +static struct clk_regmap a9_ao_rtc_dualdiv = {
-> +	.data = &(struct clk_regmap_gate_data){
-> +		.offset = AO_RTC_BY_OSCIN_CTRL0,
-> +		.bit_idx = 30,
-> +	},
-> +	.hw.init = CLK_HW_INIT_HW("ao_rtc_dualdiv", &a9_ao_rtc_dualdiv_sel.hw,
-> +				   &clk_regmap_gate_ops, CLK_SET_RATE_PARENT),
-> +};
-> +
-> +static struct clk_regmap a9_ao_rtc = {
-> +	.data = &(struct clk_regmap_mux_data) {
-> +		.offset = AO_RTC_BY_OSCIN_CTRL1,
-> +		.mask = 0x1,
-> +		.shift = 30,
-> +	},
-> +	.hw.init = CLK_HW_INIT_PARENTS_HW("ao_rtc",
-> +			((const struct clk_hw *[]) {
-> +				&a9_ao_xtal.hw,
-> +				&a9_ao_rtc_dualdiv.hw,
-> +			}), &clk_regmap_mux_ops, CLK_SET_RATE_PARENT),
-> +};
-> +
-> +static struct clk_regmap a9_ao_cec_dualdiv_in = {
-> +	.data = &(struct clk_regmap_gate_data){
-> +		.offset = AO_CEC_CTRL0,
-> +		.bit_idx = 31,
-> +	},
-> +	.hw.init = CLK_HW_INIT_HW("ao_cec_dualdiv_in", &a9_ao_xtal.hw,
-> +				   &clk_regmap_gate_ops, 0),
-> +};
-> +
-> +static struct clk_regmap a9_ao_cec_dualdiv_div = {
-> +	.data = &(struct meson_clk_dualdiv_data){
-> +		.n1 = {
-> +			.reg_off = AO_CEC_CTRL0,
-> +			.shift   = 0,
-> +			.width   = 12,
-> +		},
-> +		.n2 = {
-> +			.reg_off = AO_CEC_CTRL0,
-> +			.shift   = 12,
-> +			.width   = 12,
-> +		},
-> +		.m1 = {
-> +			.reg_off = AO_CEC_CTRL1,
-> +			.shift   = 0,
-> +			.width   = 12,
-> +		},
-> +		.m2 = {
-> +			.reg_off = AO_CEC_CTRL1,
-> +			.shift   = 12,
-> +			.width   = 12,
-> +		},
-> +		.dual = {
-> +			.reg_off = AO_CEC_CTRL0,
-> +			.shift   = 28,
-> +			.width   = 1,
-> +		},
-> +		.table = a9_ao_dualdiv_table,
-> +	},
-> +	.hw.init = CLK_HW_INIT_HW("ao_cec_dualdiv_div", &a9_ao_cec_dualdiv_in.hw,
-> +				   &meson_clk_dualdiv_ops, 0),
-> +};
-> +
-> +static struct clk_regmap a9_ao_cec_dualdiv_sel = {
-> +	.data = &(struct clk_regmap_mux_data) {
-> +		.offset = AO_CEC_CTRL1,
-> +		.mask = 0x1,
-> +		.shift = 24,
-> +	},
-> +	.hw.init = CLK_HW_INIT_PARENTS_HW("ao_cec_dualdiv_sel",
-> +			((const struct clk_hw *[]) {
-> +				&a9_ao_cec_dualdiv_div.hw,
-> +				&a9_ao_cec_dualdiv_in.hw,
-> +			}), &clk_regmap_mux_ops, CLK_SET_RATE_PARENT),
-> +};
-> +
-> +static struct clk_regmap a9_ao_cec_dualdiv = {
-> +	.data = &(struct clk_regmap_gate_data){
-> +		.offset = AO_CEC_CTRL0,
-> +		.bit_idx = 30,
-> +	},
-> +	.hw.init = CLK_HW_INIT_HW("ao_cec_dualdiv", &a9_ao_cec_dualdiv_sel.hw,
-> +				   &clk_regmap_gate_ops, CLK_SET_RATE_PARENT),
-> +};
-> +
-> +static struct clk_regmap a9_ao_cec = {
-> +	.data = &(struct clk_regmap_mux_data) {
-> +		.offset = AO_CEC_CTRL1,
-> +		.mask = 0x1,
-> +		.shift = 30,
-> +	},
-> +	.hw.init = CLK_HW_INIT_PARENTS_HW("ao_cec",
-> +			((const struct clk_hw *[]) {
-> +				&a9_ao_cec_dualdiv.hw,
-> +				&a9_ao_rtc.hw,
-> +			}), &clk_regmap_mux_ops, CLK_SET_RATE_PARENT),
-> +};
-> +
-> +static struct clk_hw *a9_ao_hw_clks[] = {
-> +	[CLKID_AO_XTAL_IN]		= &a9_ao_xtal_in.hw,
-> +	[CLKID_AO_XTAL]			= &a9_ao_xtal.hw,
-> +	[CLKID_AO_SYS]			= &a9_ao_sys.hw,
-> +	[CLKID_AO_SYS_I3C]		= &a9_ao_sys_i2c3.hw,
-> +	[CLKID_AO_SYS_RTC_REG]		= &a9_ao_sys_rtc_reg.hw,
-> +	[CLKID_AO_SYS_CLKTREE]		= &a9_ao_sys_clktree.hw,
-> +	[CLKID_AO_SYS_RST_CTRL]		= &a9_ao_sys_rst_ctrl.hw,
-> +	[CLKID_AO_SYS_PAD]		= &a9_ao_sys_pad.hw,
-> +	[CLKID_AO_SYS_RTC_DIG]		= &a9_ao_sys_rtc_dig.hw,
-> +	[CLKID_AO_SYS_IRQ]		= &a9_ao_sys_irq.hw,
-> +	[CLKID_AO_SYS_PWRCTRL]		= &a9_ao_sys_pwrctrl.hw,
-> +	[CLKID_AO_SYS_PWM_A]		= &a9_ao_sys_pwm_a.hw,
-> +	[CLKID_AO_SYS_PWM_B]		= &a9_ao_sys_pwm_b.hw,
-> +	[CLKID_AO_SYS_PWM_C]		= &a9_ao_sys_pwm_c.hw,
-> +	[CLKID_AO_SYS_PWM_D]		= &a9_ao_sys_pwm_d.hw,
-> +	[CLKID_AO_SYS_PWM_E]		= &a9_ao_sys_pwm_e.hw,
-> +	[CLKID_AO_SYS_PWM_F]		= &a9_ao_sys_pwm_f.hw,
-> +	[CLKID_AO_SYS_PWM_G]		= &a9_ao_sys_pwm_g.hw,
-> +	[CLKID_AO_SYS_I2C_A]		= &a9_ao_sys_i2c_a.hw,
-> +	[CLKID_AO_SYS_I2C_B]		= &a9_ao_sys_i2c_b.hw,
-> +	[CLKID_AO_SYS_I2C_C]		= &a9_ao_sys_i2c_c.hw,
-> +	[CLKID_AO_SYS_I2C_D]		= &a9_ao_sys_i2c_d.hw,
-> +	[CLKID_AO_SYS_SED]		= &a9_ao_sys_sed.hw,
-> +	[CLKID_AO_SYS_IR_CTRL]		= &a9_ao_sys_ir_ctrl.hw,
-> +	[CLKID_AO_SYS_UART_B]		= &a9_ao_sys_uart_b.hw,
-> +	[CLKID_AO_SYS_UART_C]		= &a9_ao_sys_uart_c.hw,
-> +	[CLKID_AO_SYS_UART_D]		= &a9_ao_sys_uart_d.hw,
-> +	[CLKID_AO_SYS_UART_E]		= &a9_ao_sys_uart_e.hw,
-> +	[CLKID_AO_SYS_SPISG_0]		= &a9_ao_sys_spisg_0.hw,
-> +	[CLKID_AO_SYS_RTC_SECURE]	= &a9_ao_sys_rtc_secure.hw,
-> +	[CLKID_AO_SYS_CEC]		= &a9_ao_sys_cec.hw,
-> +	[CLKID_AO_SYS_AOCPU]		= &a9_ao_sys_aocpu.hw,
-> +	[CLKID_AO_SYS_SRAM]		= &a9_ao_sys_sram.hw,
-> +	[CLKID_AO_SYS_SPISG_1]		= &a9_ao_sys_spisg_1.hw,
-> +	[CLKID_AO_SYS_SPISG_2]		= &a9_ao_sys_spisg_2.hw,
-> +	[CLKID_AO_PWM_A_SEL]		= &a9_ao_pwm_a_sel.hw,
-> +	[CLKID_AO_PWM_A_DIV]		= &a9_ao_pwm_a_div.hw,
-> +	[CLKID_AO_PWM_A]		= &a9_ao_pwm_a.hw,
-> +	[CLKID_AO_PWM_B_SEL]		= &a9_ao_pwm_b_sel.hw,
-> +	[CLKID_AO_PWM_B_DIV]		= &a9_ao_pwm_b_div.hw,
-> +	[CLKID_AO_PWM_B]		= &a9_ao_pwm_b.hw,
-> +	[CLKID_AO_PWM_C_SEL]		= &a9_ao_pwm_c_sel.hw,
-> +	[CLKID_AO_PWM_C_DIV]		= &a9_ao_pwm_c_div.hw,
-> +	[CLKID_AO_PWM_C]		= &a9_ao_pwm_c.hw,
-> +	[CLKID_AO_PWM_D_SEL]		= &a9_ao_pwm_d_sel.hw,
-> +	[CLKID_AO_PWM_D_DIV]		= &a9_ao_pwm_d_div.hw,
-> +	[CLKID_AO_PWM_D]		= &a9_ao_pwm_d.hw,
-> +	[CLKID_AO_PWM_E_SEL]		= &a9_ao_pwm_e_sel.hw,
-> +	[CLKID_AO_PWM_E_DIV]		= &a9_ao_pwm_e_div.hw,
-> +	[CLKID_AO_PWM_E]		= &a9_ao_pwm_e.hw,
-> +	[CLKID_AO_PWM_F_SEL]		= &a9_ao_pwm_f_sel.hw,
-> +	[CLKID_AO_PWM_F_DIV]		= &a9_ao_pwm_f_div.hw,
-> +	[CLKID_AO_PWM_F]		= &a9_ao_pwm_f.hw,
-> +	[CLKID_AO_PWM_G_SEL]		= &a9_ao_pwm_g_sel.hw,
-> +	[CLKID_AO_PWM_G_DIV]		= &a9_ao_pwm_g_div.hw,
-> +	[CLKID_AO_PWM_G]		= &a9_ao_pwm_g.hw,
-> +	[CLKID_AO_RTC_DUALDIV_IN]	= &a9_ao_rtc_dualdiv_in.hw,
-> +	[CLKID_AO_RTC_DUALDIV_DIV]	= &a9_ao_rtc_dualdiv_div.hw,
-> +	[CLKID_AO_RTC_DUALDIV_SEL]	= &a9_ao_rtc_dualdiv_sel.hw,
-> +	[CLKID_AO_RTC_DUALDIV]		= &a9_ao_rtc_dualdiv.hw,
-> +	[CLKID_AO_RTC]			= &a9_ao_rtc.hw,
-> +	[CLKID_AO_CEC_DUALDIV_IN]	= &a9_ao_cec_dualdiv_in.hw,
-> +	[CLKID_AO_CEC_DUALDIV_DIV]	= &a9_ao_cec_dualdiv_div.hw,
-> +	[CLKID_AO_CEC_DUALDIV_SEL]	= &a9_ao_cec_dualdiv_sel.hw,
-> +	[CLKID_AO_CEC_DUALDIV]		= &a9_ao_cec_dualdiv.hw,
-> +	[CLKID_AO_CEC]			= &a9_ao_cec.hw,
-> +};
-> +
-> +static const struct meson_clkc_data a9_ao_clkc_data = {
-> +	.hw_clks = {
-> +		.hws = a9_ao_hw_clks,
-> +		.num = ARRAY_SIZE(a9_ao_hw_clks),
-> +	},
-> +};
-> +
-> +static const struct of_device_id a9_ao_clkc_match_table[] = {
-> +	{
-> +		.compatible	= "amlogic,a9-aoclkc",
-> +		.data		= &a9_ao_clkc_data,
-> +	},
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, a9_ao_clkc_match_table);
-> +
-> +static struct platform_driver a9_ao_clkc_driver = {
-> +	.probe		= meson_clkc_mmio_probe,
-> +	.driver		= {
-> +		.name	= "a9-aoclkc",
-> +		.of_match_table = a9_ao_clkc_match_table,
-> +	},
-> +};
-> +module_platform_driver(a9_ao_clkc_driver);
-> +
-> +MODULE_DESCRIPTION("Amlogic A9 Always-ON Clock Controller driver");
-> +MODULE_AUTHOR("Jian Hu <jian.hu@amlogic.com>");
-> +MODULE_LICENSE("GPL");
-> +MODULE_IMPORT_NS("CLK_MESON");
+Michal Simek (5):
+  dt-bindings: firmware: xilinx: Add missing example for ZynqMP
+  dt-bindings: clock: versal-clk: Fix mio_clk index range in clock-names
+    pattern
+  dt-bindings: clock: Move xlnx,zynqmp-clk to its own schema
+  dt-bindings: clock: versal-clk: Fix Versal NET clock validation
+  arm64: versal-net: Switch Versal NET to firmware clock interface
+
+ .../bindings/clock/xlnx,versal-clk.yaml       |  89 +----
+ .../bindings/clock/xlnx,zynqmp-clk.yaml       |  68 ++++
+ .../firmware/xilinx/xlnx,zynqmp-firmware.yaml |  15 +-
+ .../arm64/boot/dts/xilinx/versal-net-clk.dtsi | 345 +++++++++++++-----
+ arch/arm64/boot/dts/xilinx/xlnx-versal-clk.h  | 123 +++++++
+ .../boot/dts/xilinx/xlnx-versal-net-clk.h     |  74 ++++
+ .../boot/dts/xilinx/xlnx-versal-net-power.h   |  38 ++
+ .../boot/dts/xilinx/xlnx-versal-net-resets.h  |  53 +++
+ .../arm64/boot/dts/xilinx/xlnx-versal-power.h |  55 +++
+ .../boot/dts/xilinx/xlnx-versal-resets.h      | 106 ++++++
+ 10 files changed, 795 insertions(+), 171 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.yaml
+ create mode 100644 arch/arm64/boot/dts/xilinx/xlnx-versal-clk.h
+ create mode 100644 arch/arm64/boot/dts/xilinx/xlnx-versal-net-clk.h
+ create mode 100644 arch/arm64/boot/dts/xilinx/xlnx-versal-net-power.h
+ create mode 100644 arch/arm64/boot/dts/xilinx/xlnx-versal-net-resets.h
+ create mode 100644 arch/arm64/boot/dts/xilinx/xlnx-versal-power.h
+ create mode 100644 arch/arm64/boot/dts/xilinx/xlnx-versal-resets.h
 
 -- 
-Jerome
+2.43.0
+
+base-commit: 254f49634ee16a731174d2ae34bc50bd5f45e731
+branch: xnext/versal-net
