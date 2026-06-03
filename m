@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01774508E0;
-	Wed,  3 Jun 2026 11:16:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D0925B0A3;
+	Wed,  3 Jun 2026 11:45:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780485411; cv=none; b=o0TwMjTjaea7s5fDRG0vzLPqujjk95CecYljiTCH9hzFbNywrbWv98LnRYZad41u2a/cNuho8uujM8iVydDkh2lKWMdahBAyfoYtsvH1U58oTAwTXn/Sj1qKS4uJor3giuOiofPUVohGdn7h/oFDSX32ZcrCQ5xV5VZj44iiRlA=
+	t=1780487155; cv=none; b=jRHYR2p/czyefGnCtP7+2x/eAJ3Yaq1rIOJL+3jtpzg+xrwJ7dpxy9+Njv/IuTmvwQbuEER9pnaN6Uisi9Evim3Pqmul7NpfAXsE5iixinYtfebSh7M9hbynqxSmljF23eHaw3TZHQuHeeWNFPrZ4bfTnUh3gK6kwTAJdOUJpRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780485411; c=relaxed/simple;
-	bh=dNFTTHDuY+Om6VmhdSLSv1xmv0DWBxzrVmPGrzuqlh8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mGTlDabbMxb67ym3M1kZRBtg/rMHbWUPpCCQE2CQP4KbPcBzPvT1zJS3moajhx3d8DF3kRRvgx1rJIaf3genXpJUIMgwQV5TlvnF+YJ157W3Y0ED7FGta808ZrG45Mj5qmO+iLadbNbxQoZFu+mOe0PMSthnfcr3sSkNyJg+V2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=USDi7DNn; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1780487155; c=relaxed/simple;
+	bh=erZZYLoL2fFSnZFZmVdvpm9X0XCxh04ugXIzHWzMMAg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=eFG+/xJ/I9Ki1dcKQkgsloYm5lPkgnpd4+V0atpZbBHYCwE7vGP2fQyCGTaM8q97eh1PNJVv9c8xjSN8LVFdknX4qre9JeSehMPlYJK+PtqVLf0Npsx6QCq0/pM6KNafqptJ/LVttIpA1o+NACfwFZGOoQ73wo4hhd+pb37uoII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gswIWTJ1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="USDi7DNn"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 67582C2BCC7;
-	Wed,  3 Jun 2026 11:16:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gswIWTJ1"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id EAD20C2BCC6;
+	Wed,  3 Jun 2026 11:45:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1780485408;
-	bh=dNFTTHDuY+Om6VmhdSLSv1xmv0DWBxzrVmPGrzuqlh8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=USDi7DNnaG5BiCIhIRpB6gHa3HyU8dBqP3T14/UMre6bDbHM8ybqP2+zyhHYRQLz5
-	 ub6da/aNNjmF1Ng6vyEVGYx/zX4hjCQWZrUtv5967xTuBUneOGkeYS+f8W8wxq10fB
-	 Dj1gEoX5M2BoroapezBksU9vgItMdhxZROSqLGMvm/UYWKVrzqzYLPvm2sE+I4SvJR
-	 E2PkJr5WRXJgDA6vUuAGVcsKZB1nK2NbQwsm+24gCWLM/2PusySwcrkeohv4NdqTsU
-	 ByiavUimjpf1s1+RXSdOQm4jX9v+KGcgFrVwEttIPQ1OpLA2Grlr6UPwohisXxpG1/
-	 +z2Vfw7vITREA==
+	s=k20201202; t=1780487155;
+	bh=erZZYLoL2fFSnZFZmVdvpm9X0XCxh04ugXIzHWzMMAg=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=gswIWTJ1BXBkdr3U/CTvDaTH9CqERI7Az8bH7us8arDmrr2DJVyjdj1xhGhp75bXU
+	 k3Zm8kKD4AQs7rzxd6Q6G3N63MHaaUnt7v0tjmSjKI4n8vbaPOVd+C9/hyPITAAKeK
+	 uE3utB0wEnIlDSMiVpNAUSZ6aLAL3wp5Har5M1vPW4lnVloAWQUHbA66VIWJrnddRL
+	 +bbn1NhHB4YlGlEgCzFze7JdYG19O3o7GxOAf/gKfMNcTsJDu3ynohce76XTdBuwbL
+	 2LmrmySbQmBj7rJeOowol1LlY7YgU9OK5oiB/gwBUlIR20249rwyEdZgN9otRW2op5
+	 8rZ65d2C2qKmg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51D07CD6E6A;
-	Wed,  3 Jun 2026 11:16:48 +0000 (UTC)
-From: Vyacheslav Yurkov via B4 Relay <devnull+V.Yurkov.EXT.bruker.com@kernel.org>
-Date: Wed, 03 Jun 2026 11:16:43 +0000
-Subject: [PATCH v3 2/2] clk: Add gpio-locked fixed clock driver
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1EFACD6E55;
+	Wed,  3 Jun 2026 11:45:54 +0000 (UTC)
+From: Jian Hu via B4 Relay <devnull+jian.hu.amlogic.com@kernel.org>
+Date: Wed, 03 Jun 2026 19:45:49 +0800
+Subject: [PATCH v2] dt-bindings: clock: Add Amlogic A9 SCMI clock
+ controller
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -40,371 +40,112 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260603-feature-clock-guard-v3-2-01cca0aa04a5@bruker.com>
-References: <20260603-feature-clock-guard-v3-0-01cca0aa04a5@bruker.com>
-In-Reply-To: <20260603-feature-clock-guard-v3-0-01cca0aa04a5@bruker.com>
+Message-Id: <20260603-a9_scmi-v2-1-350aec9ab10a@amlogic.com>
+X-B4-Tracking: v=1; b=H4sIAO0TIGoC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHQUlJIzE
+ vPSU3UzU4B8JSMDIzMDMwNj3UTL+OLk3Exdk0QjE2PDJAOLlFQLJaDqgqLUtMwKsEnRsbW1AFl
+ EC89ZAAAA
+X-Change-ID: 20260603-a9_scmi-4a2431b08de8
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Brian Masney <bmasney@redhat.com>
+ Conor Dooley <conor+dt@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, Vyacheslav Yurkov <uvv.mail@gmail.com>, 
- Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
+ devicetree@vger.kernel.org, Jian Hu <jian.hu@amlogic.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1780485407; l=9156;
- i=V.Yurkov.EXT@bruker.com; s=20260318; h=from:subject:message-id;
- bh=K53Ou1Wv2xlXRrlhO3njWZoK913ers18g+GoLE+qDXg=;
- b=1ukFdBjLrmRVjTLC/xBhZDQoJ4Aj+iYjiSqn7yiBIIRKuYU4V4jpOKMyXBfnaPz8SAwTGNF/B
- iE6khMC5U1UCuIypbTeOzYSJI6HpsjAiGDMyp3XfsI+PXbBvXGcdlWR
-X-Developer-Key: i=V.Yurkov.EXT@bruker.com; a=ed25519;
- pk=snJmgYVOKlp7aQtK9tWnEI7QTYxpPpJJvxdVsnxA7Fk=
-X-Endpoint-Received: by B4 Relay for V.Yurkov.EXT@bruker.com/20260318 with
- auth_id=686
-X-Original-From: Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
-Reply-To: V.Yurkov.EXT@bruker.com
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1780487153; l=2724;
+ i=jian.hu@amlogic.com; s=20260415; h=from:subject:message-id;
+ bh=lR+o3x3gboUZWAVXeJmwYp2k19Y4CpRBHj71GeANfYk=;
+ b=K2iCLdnGW4o8mWxGa+Ki1c9z0W/B0AvIVHFt4tvUVEaNJ6YlPoAfVTyJ+9usy0ZcziDf7Olq7
+ jnXubItgcd+DV1iUTecqImKDh3RTjXCK+osfKMjWlhLg/A3ePUdNNub
+X-Developer-Key: i=jian.hu@amlogic.com; a=ed25519;
+ pk=zHUE+rNtH9z+Sb8au1/elWknjFQmy5QDVkBoxleuOIA=
+X-Endpoint-Received: by B4 Relay for jian.hu@amlogic.com/20260415 with
+ auth_id=735
+X-Original-From: Jian Hu <jian.hu@amlogic.com>
+Reply-To: jian.hu@amlogic.com
 
-From: Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
+From: Jian Hu <jian.hu@amlogic.com>
 
-A gpio-locked clock aggregates one or more input clocks and/or one or
-more GPIOs. It's a FPGA-assisted clocking design where peripheral clocks
-are generated by FPGA PLLs that are outside CPU control, with
-clock-valid/PLL-lock status exposed through GPIO signals.
-Consumers can use the output clock to wait until all input
-clocks are locked and only then initialize dependent peripherals.
+Add the SCMI clock controller dt-bindings for the Amlogic A9 SoC family.
 
-Signed-off-by: Vyacheslav Yurkov <uvv.mail@gmail.com>
-Signed-off-by: Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
+Signed-off-by: Jian Hu <jian.hu@amlogic.com>
 ---
- drivers/clk/Makefile          |   1 +
- drivers/clk/clk-gpio-locked.c | 306 ++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 307 insertions(+)
+Changes in v2:
+- Split the A9 clock driver and send the SCMI clock separately.
+  The A9 PLL introduces several new features, and the Meson PLL framework
+  needs to be refactored to support them. Since this work requires more
+  time and there is no hard dependency between the different A9 clock
+  controllers, split out the A9 clock driver and submit it separately to
+  ease review.
+- Link to v1: https://lore.kernel.org/all/20260511-b4-a9_clk-v1-1-41cb4071b7c9@amlogic.com/
+---
+ include/dt-bindings/clock/amlogic,a9-scmi-clkc.h | 51 ++++++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
 
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index a3e2862ebd7e..464ca1c1d8a8 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -35,6 +35,7 @@ obj-$(CONFIG_CLK_FD_KUNIT_TEST) += clk-fractional-divider_test.o
- obj-$(CONFIG_COMMON_CLK)	+= clk-gpio.o
- ifeq ($(CONFIG_OF), y)
- obj-$(CONFIG_COMMON_CLK)	+= clk-conf.o
-+obj-$(CONFIG_COMMON_CLK)	+= clk-gpio-locked.o
- endif
- 
- # KUnit specific helpers
-diff --git a/drivers/clk/clk-gpio-locked.c b/drivers/clk/clk-gpio-locked.c
+diff --git a/include/dt-bindings/clock/amlogic,a9-scmi-clkc.h b/include/dt-bindings/clock/amlogic,a9-scmi-clkc.h
 new file mode 100644
-index 000000000000..79098f9b6532
+index 000000000000..d543db9fe035
 --- /dev/null
-+++ b/drivers/clk/clk-gpio-locked.c
-@@ -0,0 +1,306 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++++ b/include/dt-bindings/clock/amlogic,a9-scmi-clkc.h
+@@ -0,0 +1,51 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
 +/*
-+ * Clock Controller Guard Driver
-+ *
-+ * Copyright 2026 Bruker Corporation
++ * Copyright (C) 2026 Amlogic, Inc. All rights reserved.
 + */
 +
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
++#ifndef __AMLOGIC_A9_SCMI_CLKC_H
++#define __AMLOGIC_A9_SCMI_CLKC_H
 +
-+#define MAX_INPUT_GPIO_COUNT 32
++#define CLKID_GP0_PLL_OSC			0
++#define CLKID_GP1_PLL_OSC			1
++#define CLKID_HIFI_PLL_OSC			2
++#define CLKID_GP2_PLL_OSC			3
++#define CLKID_MCLK_PLL_OSC			4
++#define CLKID_FIXED_PLL				5
++#define CLKID_FCLK_50M_PREDIV			6
++#define CLKID_FCLK_50M_DIV			7
++#define CLKID_FCLK_50M				8
++#define CLKID_FCLK_DIV2_DIV			9
++#define CLKID_FCLK_DIV2				10
++#define CLKID_FCLK_DIV2P5_DIV			11
++#define CLKID_FCLK_DIV2P5			12
++#define CLKID_FCLK_DIV3_DIV			13
++#define CLKID_FCLK_DIV3				14
++#define CLKID_FCLK_DIV4_DIV			15
++#define CLKID_FCLK_DIV4				16
++#define CLKID_FCLK_DIV5_DIV			17
++#define CLKID_FCLK_DIV5				18
++#define CLKID_FCLK_DIV7_DIV			19
++#define CLKID_FCLK_DIV7				20
++#define CLKID_SYS_CLK				21
++#define CLKID_SYS_AO_SYS			22
++#define CLKID_SYS_MMC_APB			23
++#define CLKID_SYS_CPU_APB			24
++#define CLKID_SYS_GIC				25
++#define CLKID_AXI_CLK				26
++#define CLKID_AXI_SYS_NIC			27
++#define CLKID_AXI_RAMA				28
++#define CLKID_CPU_CLK				29
++#define CLKID_A78_CLK				30
++#define CLKID_DSU_CLK				31
++#define CLKID_ACLKM				32
++#define CLKID_GP1_PLL				33
++#define CLKID_GP2_PLL				34
++#define CLKID_SYS_PLL_DIV16			35
++#define CLKID_CPU_CLK_DIV16			36
++#define CLKID_A78_CLK_DIV16			37
++#define CLKID_DSU_CLK_DIV16			38
++#define CLKID_GIC_CLK				39
++#define CLKID_RTC				40
 +
-+/**
-+ * struct gpio_locked_clk_priv - private state for the whole driver
-+ * @dev:		platform device
-+ *
-+ * @clks:		array of input clock descriptors
-+ * @num_clks:		number of entries in @inputs
-+ *
-+ * @gpios:		array of GPIO descriptors
-+ * @gpio_names:		GPIO names
-+ * @num_gpios:		number of input GPIOs
-+ *
-+ * @output_hw_clk:      output clock HW descriptor
-+ * @output_clock_name:  output clock name
-+ */
-+struct gpio_locked_clk_priv {
-+	struct device *dev;
-+
-+	struct clk_bulk_data *clks;
-+	int num_clks;
-+
-+	struct gpio_descs *gpios;
-+	const char **gpio_names;
-+	int num_gpios;
-+
-+	struct clk_hw output_hw_clk;
-+	const char *output_clock_name;
-+};
-+
-+#define to_gpio_locked_clk_priv(_hw) \
-+	container_of(_hw, struct gpio_locked_clk_priv, output_hw_clk)
-+
-+static int is_gpio_ready(struct gpio_locked_clk_priv *priv)
-+{
-+	unsigned long values[BITS_TO_LONGS(MAX_INPUT_GPIO_COUNT)] = {0};
-+	int ret = 0;
-+
-+	if (priv->num_gpios == 0)
-+		return 0;
-+
-+	ret = gpiod_get_array_value(priv->gpios->ndescs,
-+		priv->gpios->desc,
-+		priv->gpios->info,
-+		values);
-+
-+	if (ret) {
-+		dev_err(priv->dev, "Failed to read GPIOs");
-+		return -EIO;
-+	}
-+
-+	for (int i = 0; i < priv->gpios->ndescs; i++) {
-+		if (!test_bit(i, values)) {
-+			dev_warn(priv->dev, "GPIO %s is not ready", priv->gpio_names[i]);
-+			return -EBUSY;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int gpio_locked_clk_is_enabled(struct clk_hw *hw)
-+{
-+	struct gpio_locked_clk_priv *priv = to_gpio_locked_clk_priv(hw);
-+	int ret = 0;
-+
-+	if (priv->num_gpios > 0) {
-+		ret = is_gpio_ready(priv);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	// Now check for the clocks
-+	for (int i = 0; i < priv->num_clks; i++) {
-+		struct clk_hw *hw_clk = __clk_get_hw(priv->clks[i].clk);
-+
-+		if (!clk_hw_is_enabled(hw_clk)) {
-+			dev_dbg(priv->dev, "Clock %i (%s) is not ready",
-+				i, priv->clks[i].id);
-+			return -EBUSY;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+/* We can't enable the clock, but the Common Clock Framework calls only
-+ * enable() not is_enabled()
-+ */
-+static int gpio_locked_clk_enable(struct clk_hw *hw)
-+{
-+	return gpio_locked_clk_is_enabled(hw);
-+}
-+
-+/* We have to implement it, but we are not going to control
-+ * parent clock selection
-+ */
-+static u8 gpio_locked_clk_get_parent(struct clk_hw *hw)
-+{
-+	return 0;
-+}
-+
-+static const struct clk_ops gpio_locked_clk_ops = {
-+	.enable =	gpio_locked_clk_enable,
-+	.is_enabled =	gpio_locked_clk_is_enabled,
-+	.get_parent =	gpio_locked_clk_get_parent,
-+};
-+
-+static int gpio_locked_clk_parse_inputs(struct gpio_locked_clk_priv *priv)
-+{
-+	struct device *dev = priv->dev;
-+	int ret;
-+
-+	ret = devm_clk_bulk_get_all(dev, &priv->clks);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to get input clocks: %d\n", ret);
-+		return ret ? ret : -ENOENT;
-+	}
-+
-+	priv->num_clks = ret;
-+
-+	if (priv->num_clks == 0)
-+		dev_info(dev, "No input clocks provided\n");
-+
-+	for (int i = 0; i < priv->num_clks; i++)
-+		dev_dbg(dev, "input clk[%d]: name='%s' rate=%lu Hz\n",
-+			i, priv->clks[i].id,
-+			clk_get_rate(priv->clks[i].clk));
-+
-+	return 0;
-+}
-+
-+static int gpio_locked_clk_parse_gpios(struct gpio_locked_clk_priv *priv)
-+{
-+	struct device *dev = priv->dev;
-+	struct device_node *np = dev->of_node;
-+	int i;
-+
-+	priv->gpios = devm_gpiod_get_array_optional(dev, "locked", GPIOD_ASIS);
-+	if (IS_ERR(priv->gpios)) {
-+		dev_err(dev, "failed to get GPIO array: %ld\n",
-+				PTR_ERR(priv->gpios));
-+		return PTR_ERR(priv->gpios);
-+	}
-+
-+	if (!priv->gpios) {
-+		dev_info(dev, "No GPIOs provided, continue\n");
-+		priv->num_gpios = 0;
-+		return 0;
-+	}
-+
-+	priv->num_gpios = priv->gpios->ndescs;
-+	if (priv->num_gpios > MAX_INPUT_GPIO_COUNT) {
-+		dev_err(priv->dev, "Maximum number of input GPIOs is 32\n");
-+		return -EINVAL;
-+	}
-+
-+	/* gpio_descs carries no names, so read "gpio-names" separately */
-+	priv->gpio_names = devm_kcalloc(dev, priv->num_gpios, sizeof(*priv->gpio_names),
-+			GFP_KERNEL);
-+	if (!priv->gpio_names)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < priv->num_gpios; i++) {
-+		of_property_read_string_index(np, "gpio-names", i,
-+				&priv->gpio_names[i]);
-+
-+		dev_dbg(dev, "gpio[%d]: name='%s'\n",
-+				i, priv->gpio_names[i] ? priv->gpio_names[i] : "(unnamed)");
-+	}
-+
-+	return 0;
-+}
-+
-+static int gpio_locked_clk_parse_outputs(struct gpio_locked_clk_priv *priv)
-+{
-+	struct device *dev = priv->dev;
-+	struct device_node *np = dev->of_node;
-+	struct clk_init_data init = {};
-+	int ret;
-+
-+	of_property_read_string_index(np, "clock-output-names", 0,
-+		&priv->output_clock_name);
-+
-+	if (!priv->output_clock_name)
-+		priv->output_clock_name = dev_name(priv->dev);
-+
-+	init.name = priv->output_clock_name;
-+	init.ops = &gpio_locked_clk_ops;
-+	init.flags = 0;
-+	init.num_parents = priv->num_clks;
-+
-+	if (priv->num_clks) {
-+		const char **parent_names;
-+		int j;
-+
-+		parent_names = devm_kcalloc(dev, priv->num_clks,
-+					    sizeof(*parent_names),
-+					    GFP_KERNEL);
-+		if (!parent_names)
-+			return -ENOMEM;
-+
-+		for (j = 0; j < priv->num_clks; j++)
-+			parent_names[j] = priv->clks[j].id;
-+
-+		init.parent_names = parent_names;
-+	}
-+
-+	priv->output_hw_clk.init = &init;
-+
-+	ret = devm_clk_hw_register(dev, &priv->output_hw_clk);
-+	if (ret) {
-+		dev_err(dev, "failed to register output clk'%s': %d\n",
-+			priv->output_clock_name, ret);
-+		return ret;
-+	}
-+
-+	dev_info(priv->dev, "Output clock '%s' registered\n", priv->output_clock_name);
-+
-+	return 0;
-+}
-+
-+static int gpio_locked_clk_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct gpio_locked_clk_priv *priv;
-+	int ret;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->dev = dev;
-+	platform_set_drvdata(pdev, priv);
-+
-+	ret = gpio_locked_clk_parse_inputs(priv);
-+	if (ret)
-+		return ret;
-+
-+	ret = gpio_locked_clk_parse_gpios(priv);
-+	if (ret)
-+		return ret;
-+
-+	if (priv->num_clks == 0 && priv->num_gpios == 0) {
-+		dev_err(priv->dev, "At least 1 input clock or input GPIO is required\n");
-+		return -EINVAL;
-+	}
-+
-+	ret = gpio_locked_clk_parse_outputs(priv);
-+	if (ret)
-+		return ret;
-+
-+	ret = devm_of_clk_add_hw_provider(priv->dev, of_clk_hw_simple_get,
-+		&priv->output_hw_clk);
-+	if (ret) {
-+		dev_err(priv->dev, "failed to register clock provider '%s': %d\n",
-+			priv->output_clock_name, ret);
-+		return ret;
-+	}
-+
-+	dev_info(dev, "registered %u input clocks, %u GPIOs\n",
-+		 priv->num_clks, priv->num_gpios);
-+
-+	return 0;
-+}
-+
-+static void gpio_locked_clk_remove(struct platform_device *pdev)
-+{
-+	dev_dbg(&pdev->dev, "removed\n");
-+}
-+
-+static const struct of_device_id gpio_locked_clk_of_match[] = {
-+	{ .compatible = "gpio-locked-fixed-clock" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, gpio_locked_clk_of_match);
-+
-+static struct platform_driver gpio_locked_clk_driver = {
-+	.probe  = gpio_locked_clk_probe,
-+	.remove = gpio_locked_clk_remove,
-+	.driver = {
-+		.name           = "gpio-locked-fixed-clock",
-+		.of_match_table = gpio_locked_clk_of_match,
-+	},
-+};
-+module_platform_driver(gpio_locked_clk_driver);
-+
-+MODULE_AUTHOR("Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>");
-+MODULE_DESCRIPTION("GPIO-locked clock driver");
-+MODULE_LICENSE("Dual BSD/GPL");
++#endif /* __AMLOGIC_A9_SCMI_CLKC_H */
 
+---
+base-commit: ca89c88bcf69daca829044c638a8163d5ce47af0
+change-id: 20260603-a9_scmi-4a2431b08de8
+
+Best regards,
 -- 
-2.34.1
+Jian Hu <jian.hu@amlogic.com>
 
 
