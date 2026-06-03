@@ -1,268 +1,135 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C6737F73D
-	for <linux-clk@vger.kernel.org>; Wed,  3 Jun 2026 09:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [4.193.249.245])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD12C25B088;
+	Wed,  3 Jun 2026 09:46:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=4.193.249.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780478070; cv=none; b=hLJNjWgNYXG75XLSTaSwcnrvliHxpvqZ+nS66jcSlIwCLvWTgzrud7DOXZBs73InOxadgCOMwq8wsQ/I1mAv6tKf4CzB4+5bC0sQln9NQZz9WYTRetbbCe+i5BRyRjvuH/HG/q1Ca/tZTadCz7CFWZbFj69SH/T3fOdaLM/+S94=
+	t=1780479964; cv=none; b=E1qbakqN9c4G6d9e4u8l1sDBaEt4AmNkd0yQQxyZDfzDnPe9cpXbOyf7uX2uL3vbUpzmHb20FWNBp7Jhk6Wcs4KT2ZWimEoZv+h6/x/GI/iSIOQ1HodTVkPd1fbXcNMan5RjlQS8Ez3jeOZwwj+AdIFH4pe5PrSXsnrPFh0cICc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780478070; c=relaxed/simple;
-	bh=LnBZEwhoBmkIRgJfE/R+bY0lRndadHwTjPkNbZtn9qc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hXrNeXlqTt6Qj2M39sbRD2E+Br1nvw9FaK65JFpJVLYf/pBakoZs6hBPR/ttY9cxCM7AHJtdT2M0b9xhlZjGL84k56kFLG7FPp0uuOxwvhxyWBdgUScNoo5uvle1EYMkqew6d7h6+4uFny7rAIt3oyG2DU1KYdgDWxCK+pgQU2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1wUhg5-0000qw-Ok; Wed, 03 Jun 2026 11:14:21 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1wUhg5-000tFC-18;
-	Wed, 03 Jun 2026 11:14:21 +0200
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1wUhg5-000000004In-18Cd;
-	Wed, 03 Jun 2026 11:14:21 +0200
-Message-ID: <99743c29fe81a90d3c1f51889d42ef9d4766de3c.camel@pengutronix.de>
-Subject: Re: [PATCH RFC v3 3/5] clk: zte: Introduce a driver for zx297520v3
- top clocks and resets.
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Stefan =?ISO-8859-1?Q?D=F6singer?= <stefandoesinger@gmail.com>,  Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob
- Herring <robh@kernel.org>,  Krzysztof Kozlowski	 <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Brian Masney	 <bmasney@redhat.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Date: Wed, 03 Jun 2026 11:14:21 +0200
-In-Reply-To: <20260529-zx29clk-v3-3-c7fe54ea388f@gmail.com>
-References: <20260529-zx29clk-v3-0-c7fe54ea388f@gmail.com>
-	 <20260529-zx29clk-v3-3-c7fe54ea388f@gmail.com>
-Content-Type: text/markdown; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+	s=arc-20240116; t=1780479964; c=relaxed/simple;
+	bh=hfMwMWIeD40JBlf358ChxZk6WC+tzRlI80zaLBP6KBw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=tvQeL9h66Hkn7jo4vdH0jHYBZhxY4Ql5tHhkO6i+e1mODdYPZWLZntNJKGocsmm3R/W8xUgmRGhGSs16tGQL2OEjMbAN/vFv7Kee848LxEVlVND1pZfSJbAnZS5KE6vimoXfmF/6E73P8d6mRO7KAqrA5XI4M9QHCmZiGZMLg+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=4.193.249.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from dongxuyang$eswincomputing.com ( [10.12.96.41] ) by
+ ajax-webmail-app2 (Coremail) ; Wed, 3 Jun 2026 17:45:38 +0800 (GMT+08:00)
+Date: Wed, 3 Jun 2026 17:45:38 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: "Xuyang Dong" <dongxuyang@eswincomputing.com>
+To: sashiko-reviews@lists.linux.dev
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	p.zabel@pengutronix.de, huangyifeng@eswincomputing.com,
+	benoit.monin@bootlin.com, bmasney@redhat.com,
+	ningyu@eswincomputing.com, linmin@eswincomputing.com,
+	pinkesh.vaghela@einfochips.com
+Subject: Re: Re: Re: [PATCH v6 2/3] clk: eswin: Add eic7700 HSP clock driver
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
+ 20241203(6b039d88) Copyright (c) 2002-2026 www.mailtech.cn
+ mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
+In-Reply-To: <61fe8681.6622.19e44532865.Coremail.dongxuyang@eswincomputing.com>
+References: <20260519081627.1591-1-dongxuyang@eswincomputing.com>
+ <20260519090034.CCED6C2BCB3@smtp.kernel.org>
+ <61fe8681.6622.19e44532865.Coremail.dongxuyang@eswincomputing.com>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Message-ID: <848663b.6e91.19e8cdfcf1a.Coremail.dongxuyang@eswincomputing.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:TQJkCgDH3aDC9x9qHSghAA--.7097W
+X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/1tbiAgEHAmofBhUfl
+	gAAsp
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+	daVFxhVjvjDU=
 
-On Fr, 2026-05-29 at 00:53 +0300, Stefan D=C3=B6singer wrote:
-
-> ```
-This register space controls core devices: PLLs, the AHB bus, a lot of
-timers, the USB controller, the Cortex M0 processor that boots the board
-and a few other devices. For some reason the LTE coprocessor is also
-partially controlled by it. The main application processor and DDR
-memory are not found here though.
-
->=20
-The register to reboot the board is also found here.
-
->=20
-Signed-off-by: Stefan D=C3=B6singer <stefandoesinger@gmail.com>
-
->=20
----
-
->=20
-Patch changlog:
-
->=20
-v2:
-*) Add code to set up PLLs
-*) Merge top and matrix controllers into one device
-*) Bugfixes pointed out by Sashiko
----
- MAINTAINERS                      |   1 +
- drivers/clk/Kconfig              |   1 +
- drivers/clk/Makefile             |   1 +
- drivers/clk/zte/Kconfig          |  18 +
- drivers/clk/zte/Makefile         |   5 +
- drivers/clk/zte/clk-zx297520v3.c | 775 +++++++++++++++++++++++++++++++++++=
-++++
- drivers/clk/zte/pll.c            | 450 +++++++++++++++++++++++
- drivers/clk/zte/pll.h            |  23 ++
- 8 files changed, 1274 insertions(+)
-
->=20
-```
-
-[...]
-
-> ```
-diff --git a/drivers/clk/zte/clk-zx297520v3.c b/drivers/clk/zte/clk-zx29752=
-0v3.c
-new file mode 100644
-index 000000000000..986042dd4caf
---- /dev/null
-+++ b/drivers/clk/zte/clk-zx297520v3.c
-@@ -0,0 +1,775 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2026 Stefan D=C3=B6singer
-+ */
-+#include <dt-bindings/clock/zte,zx297520v3-clk.h>
-+#include <linux/reset-controller.h>
-+#include <linux/platform_device.h>
-+#include <linux/clk-provider.h>
-+#include <linux/of_address.h>
-+#include <linux/reboot.h>
-+#include <linux/iopoll.h>
-+#include <linux/delay.h>
-+#include <linux/clk.h>
-+#include <linux/io.h>
-+
-+#include "pll.h"
-+
-+/* All LSP and some Matrix registers contain both resets and clock gates, =
-so access to them needs
-+ * to be synchronized between the reset and clock callbacks.
-+ */
-+static DEFINE_SPINLOCK(reg_lock);
-+
-+struct zx29_reset_reg {
-+	void __iomem *reg;
-+	u32 mask, wait_mask;
-+};
-+
-+struct zx29_clk_controller {
-+	struct clk_hw_onecell_data *clocks;
-+	struct reset_controller_dev rcdev;
-+	struct zx29_reset_reg resets[];
-+};
-+
-+static int __zx297520v3_rst_assert(struct reset_controller_dev *rcdev, uns=
-igned long id)
-+{
-+	struct zx29_clk_controller *data =3D container_of(rcdev, struct zx29_clk_=
-controller,
-+							    rcdev);
-+	u32 val;
-+
-+	val =3D readl(data->resets[id].reg);
-+	val &=3D ~data->resets[id].mask;
-+	writel(val, data->resets[id].reg);
-+
-+	return 0;
-+}
-+
-+static int zx297520v3_rst_assert(struct reset_controller_dev *rcdev, unsig=
-ned long id)
-+{
-+	unsigned long flags;
-+	int res;
-+
-+	spin_lock_irqsave(&reg_lock, flags);
-+	res =3D __zx297520v3_rst_assert(rcdev, id);
-+	spin_unlock_irqrestore(&reg_lock, flags);
-+
-+	return res;
-+}
-+
-+static int __zx297520v3_rst_deassert(struct reset_controller_dev *rcdev, u=
-nsigned long id)
-+{
-+	struct zx29_clk_controller *data =3D container_of(rcdev, struct zx29_clk_=
-controller,
-+							    rcdev);
-+	u32 val;
-+
-+	val =3D readl(data->resets[id].reg);
-+	val |=3D data->resets[id].mask;
-+	writel(val, data->resets[id].reg);
-```
-
-
-I'd move the spinlock in here ...
-
-
-> ```
-+	/* This is a special case used only by USB reset */
-+	if (data->resets[id].wait_mask) {
-+		return readl_poll_timeout(data->resets[id].reg + 4, val,
-+					  val & data->resets[id].wait_mask, 1, 100);
-```
-
-
-... because this might sleep.
-
-
-> ```
-+	}
-+
-+	return 0;
-+}
-+
-+static int zx297520v3_rst_deassert(struct reset_controller_dev *rcdev, uns=
-igned long id)
-+{
-+	unsigned long flags;
-+	int res;
-+
-+	spin_lock_irqsave(&reg_lock, flags);
-+	res =3D __zx297520v3_rst_deassert(rcdev, id);
-+	spin_unlock_irqrestore(&reg_lock, flags);
-+
-+	return res;
-+}
-+
-+static int zx297520v3_rst_reset(struct reset_controller_dev *rcdev, unsign=
-ed long id)
-+{
-+	unsigned long flags;
-+	int res;
-+
-+	spin_lock_irqsave(&reg_lock, flags);
-+
-+	res =3D __zx297520v3_rst_assert(rcdev, id);
-+	if (res)
-+		goto unlock;
-+	udelay(100);
-```
-
-
-Is this delay long enough for all potential users of reset_control_reset()?=
- Are there actually any at all?
-
-Why delay under the global spinlock? =20
-You could use fsleep() instead and only lock the read-modify-write cycles.
-
-
-> ```
-+	res =3D __zx297520v3_rst_deassert(rcdev, id);
-+
-+unlock:
-+	spin_unlock_irqrestore(&reg_lock, flags);
-+	return res;
-+}
-+
-+static int zx297520v3_rst_status(struct reset_controller_dev *rcdev,
-+			       unsigned long id)
-+{
-+	struct zx29_clk_controller *data =3D container_of(rcdev, struct zx29_clk_=
-controller,
-+							    rcdev);
-+	u32 val;
-+
-+	val =3D readl(data->resets[id].reg);
-+
-+	return val & data->resets[id].mask;
-```
-
-
-This will return a negative value for bit BIT(31), I'd wrap this with a dou=
-ble negation.
-
-regards =20
-Philipp
-
+PiAKPiA+IAo+ID4gVGhhbmsgeW91IGZvciB5b3VyIGNvbnRyaWJ1dGlvbiEgU2FzaGlrbyBBSSBy
+ZXZpZXcgZm91bmQgMiBwb3RlbnRpYWwgaXNzdWUocykgdG8gY29uc2lkZXI6Cj4gPiAtIFtMb3dd
+IEdsb2JhbCBzdGF0aWMgY2xvY2sgYXJyYXlzIGFyZSBtb2RpZmllZCBkdXJpbmcgcHJvYmUgd2l0
+aG91dCBsb2NraW5nLCBicmVha2luZyBzdXBwb3J0IGZvciBtdWx0aXBsZSBpbnN0YW5jZXMuCj4g
+PiAtIFtMb3ddIFRoZSBLY29uZmlnIHN5bWJvbCBgQ09NTU9OX0NMS19FSUM3NzAwX0hTUGAgbGFj
+a3MgdGhlIGBkZWZhdWx0IEFSQ0hfRVNXSU5gIHByb3BlcnR5LCB3aGljaCBpcyBpbmNvbnNpc3Rl
+bnQgd2l0aCB0aGUgYmFzZSBjbG9jayBkcml2ZXIuCj4gPiAtLQo+ID4gCj4gPiBjb21taXQgNWM4
+N2Y4NjVjYThhZTc0NmQ4MGZmNzFmZGJiY2U3M2Y3YmU1MDJlYwo+ID4gQXV0aG9yOiBYdXlhbmcg
+RG9uZyA8ZG9uZ3h1eWFuZ0Blc3dpbmNvbXB1dGluZy5jb20+Cj4gPiAKPiA+IGNsazogZXN3aW46
+IEFkZCBlaWM3NzAwIEhTUCBjbG9jayBkcml2ZXIKPiA+IAo+ID4gQWRkIGRyaXZlciBmb3IgdGhl
+IEVTV0lOIEVJQzc3MDAgaGlnaC1zcGVlZCBwZXJpcGhlcmFscyBzeXN0ZW0gY2xvY2sKPiA+IGNv
+bnRyb2xsZXIgYW5kIHJlZ2lzdGVyIGFuIGF1eGlsaWFyeSBkZXZpY2UgZm9yIHN5c3RlbSByZXNl
+dCBjb250cm9sbGVyCj4gPiB3aGljaCBpcyBuYW1lZCBhcyAiaHNwLXJlc2V0Ii4KPiA+IAo+ID4g
+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvZXN3aW4vS2NvbmZpZyBiL2RyaXZlcnMvY2xrL2Vz
+d2luL0tjb25maWcKPiA+ID4gaW5kZXggMDQwNmVjNDk5ZWM5Yy4uMzc4NTdiZDc3MzM1NiAxMDA2
+NDQKPiA+ID4gLS0tIGEvZHJpdmVycy9jbGsvZXN3aW4vS2NvbmZpZwo+ID4gPiArKysgYi9kcml2
+ZXJzL2Nsay9lc3dpbi9LY29uZmlnCj4gPiBbIC4uLiBdCj4gPiA+IEBAIC0xMywzICsxMywxNiBA
+QCBjb25maWcgQ09NTU9OX0NMS19FSUM3NzAwCj4gPiA+ICAJICBTb0MuIFRoZSBjbG9jayBjb250
+cm9sbGVyIGdlbmVyYXRlcyBhbmQgc3VwcGxpZXMgY2xvY2tzIHRvIHZhcmlvdXMKPiA+ID4gIAkg
+IHBlcmlwaGVyYWxzIHdpdGhpbiB0aGUgU29DLgo+ID4gPiAgCSAgU2F5IHllcyBoZXJlIHRvIHN1
+cHBvcnQgdGhlIGNsb2NrIGNvbnRyb2xsZXIgb24gdGhlIEVJQzc3MDAgU29DLgo+ID4gPiArCj4g
+PiA+ICtjb25maWcgQ09NTU9OX0NMS19FSUM3NzAwX0hTUAo+ID4gPiArCXRyaXN0YXRlICJFSUM3
+NzAwIEhTUCBDbG9jayBEcml2ZXIiCj4gPiA+ICsJZGVwZW5kcyBvbiBBUkNIX0VTV0lOIHx8IENP
+TVBJTEVfVEVTVAo+ID4gCj4gPiBUaGlzIGlzbid0IGEgYnVnLCBidXQgc2hvdWxkIHRoaXMgY29u
+ZmlnIGhhdmUgZGVmYXVsdCBBUkNIX0VTV0lOIHRvIG1hdGNoCj4gPiB0aGUgYmFzZSBjbG9jayBk
+cml2ZXI/IFdpdGhvdXQgaXQsIHRoZSBoaWdoLXNwZWVkIHBlcmlwaGVyYWwgY2xvY2tzIG1pZ2h0
+Cj4gPiBiZSB1bmV4cGVjdGVkbHkgZGlzYWJsZWQgYnkgZGVmYXVsdCBvbiBFU1dJTiBwbGF0Zm9y
+bXMuCj4gPiAKPiAKPiBIaSBTYXNoaWtvLAo+IAo+IFRoZSBIU1AgY2xvY2sgcmVzZXQgZGV2aWNl
+IGNhbiBiZSBidWlsdCBhcyBhIGtlcm5lbCBtb2R1bGUuwqAKPiBIb3dldmVyLCBpZiAnZGVmYXVs
+dCBBUkNIX0VTV0lOJyBpcyBzZXQsIGl0IHdpbGwgYmUgY29tcGlsZWQgZGlyZWN0bHnCoAo+IGlu
+dG8gdGhlIGtlcm5lbCBpbnN0ZWFkIG9mIGFzIGEgbW9kdWxlLgo+IAo+ID4gPiArCXNlbGVjdCBB
+VVhJTElBUllfQlVTCj4gPiA+ICsJc2VsZWN0IENPTU1PTl9DTEtfRUlDNzcwMAo+ID4gPiArCXNl
+bGVjdCBSRVNFVF9FSUM3NzAwX0hTUCBpZiBSRVNFVF9DT05UUk9MTEVSCj4gPiA+ICsJc2VsZWN0
+IFJFR01BUF9NTUlPCj4gPiAKPiA+IFsgLi4uIF0KPiA+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+Y2xrL2Vzd2luL2Nsay1laWM3NzAwLWhzcC5jIGIvZHJpdmVycy9jbGsvZXN3aW4vY2xrLWVpYzc3
+MDAtaHNwLmMKPiA+ID4gbmV3IGZpbGUgbW9kZSAxMDA2NDQKPiA+ID4gaW5kZXggMDAwMDAwMDAw
+MDAwMC4uMzM4M2FhNjQ5NDhhNgo+ID4gPiAtLS0gL2Rldi9udWxsCj4gPiA+ICsrKyBiL2RyaXZl
+cnMvY2xrL2Vzd2luL2Nsay1laWM3NzAwLWhzcC5jCj4gPiBbIC4uLiBdCj4gPiA+ICtzdGF0aWMg
+c3RydWN0IGVzd2luX2ZpeGVkX2ZhY3Rvcl9jbG9jayBlaWM3NzAwX2hzcF9mYWN0b3JfY2xrc1td
+ID0gewo+ID4gPiArCUVTV0lOX0ZBQ1RPUihFSUM3NzAwX0hTUF9DTEtfRkFDX0NGR19ESVYyLCAi
+ZmFjdG9yX2hzcF9jZmdfZGl2MiIsCj4gPiA+ICsJCSAgICAgaHNwX2NmZywgMSwgMiwgMCksCj4g
+PiA+ICsJRVNXSU5fRkFDVE9SKEVJQzc3MDBfSFNQX0NMS19GQUNfQ0ZHX0RJVjQsICJmYWN0b3Jf
+aHNwX2NmZ19kaXY0IiwKPiA+ID4gKwkJICAgICBoc3BfY2ZnLCAxLCA0LCAwKSwKPiA+ID4gKwlF
+U1dJTl9GQUNUT1IoRUlDNzcwMF9IU1BfQ0xLX0ZBQ19NTUNfRElWMTAsICJmYWN0b3JfaHNwX21t
+Y19kaXYxMCIsCj4gPiA+ICsJCSAgICAgaHNwX21tYywgMSwgMTAsIDApLAo+ID4gPiArfTsKPiA+
+IFsgLi4uIF0KPiA+ID4gK3N0YXRpYyBpbnQgZWljNzcwMF9oc3BfY2xrX3Byb2JlKHN0cnVjdCBw
+bGF0Zm9ybV9kZXZpY2UgKnBkZXYpCj4gPiA+ICt7Cj4gPiA+ICsJc3RydWN0IGRldmljZSAqZGV2
+ID0gJnBkZXYtPmRldjsKPiA+ID4gKwlzdHJ1Y3QgYXV4aWxpYXJ5X2RldmljZSAqYWRldjsKPiA+
+ID4gKwlzdHJ1Y3QgZXN3aW5fY2xvY2tfZGF0YSAqZGF0YTsKPiA+ID4gKwlzdHJ1Y3QgcmVnbWFw
+ICpyZWdtYXA7Cj4gPiA+ICsJc3RydWN0IGNsa19odyAqaHc7Cj4gPiA+ICsJaW50IGksIHJldDsK
+PiA+ID4gKwo+ID4gPiArCWRhdGEgPSBlc3dpbl9jbGtfaW5pdChwZGV2LCBFSUM3NzAwX0hTUF9O
+Ul9DTEtTKTsKPiA+ID4gKwlpZiAoSVNfRVJSKGRhdGEpKQo+ID4gPiArCQlyZXR1cm4gZGV2X2Vy
+cl9wcm9iZShkZXYsIFBUUl9FUlIoZGF0YSksCj4gPiA+ICsJCQkJICAgICAiZmFpbGVkIHRvIGdl
+dCBjbGsgZGF0YSFcbiIpOwo+ID4gPiArCj4gPiA+ICsJcmVnbWFwID0gZGV2bV9yZWdtYXBfaW5p
+dF9tbWlvKGRldiwgZGF0YS0+YmFzZSwKPiA+ID4gKwkJCQkgICAgICAgJmVpYzc3MDBfaHNwX3Jl
+Z21hcF9jb25maWcpOwo+ID4gPiArCWlmIChJU19FUlIocmVnbWFwKSkKPiA+ID4gKwkJcmV0dXJu
+IGRldl9lcnJfcHJvYmUoZGV2LCBQVFJfRVJSKHJlZ21hcCksCj4gPiA+ICsJCQkJICAgICAiZmFp
+bGVkIHRvIGdldCByZWdtYXAhXG4iKTsKPiA+ID4gKwo+ID4gPiArCXJldCA9IGVzd2luX2Nsa19y
+ZWdpc3Rlcl9maXhlZF9mYWN0b3IoZGV2LCBlaWM3NzAwX2hzcF9mYWN0b3JfY2xrcywKPiA+ID4g
+KwkJCQkJICAgICAgQVJSQVlfU0laRShlaWM3NzAwX2hzcF9mYWN0b3JfY2xrcyksCj4gPiA+ICsJ
+CQkJCSAgICAgIGRhdGEpOwo+ID4gCj4gPiBJcyBpdCBzYWZlIHRvIHBhc3MgdGhlIGdsb2JhbCBz
+dGF0aWMgYXJyYXkgZWljNzcwMF9oc3BfZmFjdG9yX2Nsa3MgdG8gdGhpcwo+ID4gZnVuY3Rpb24/
+Cj4gPiAKPiA+IExvb2tpbmcgYXQgZXN3aW5fY2xrX3JlZ2lzdGVyX2ZpeGVkX2ZhY3RvcigpIGlu
+IGRyaXZlcnMvY2xrL2Vzd2luL2Nsay5jLCBpdAo+ID4gbW9kaWZpZXMgdGhlIGFycmF5IGR1cmlu
+ZyBwcm9iZToKPiA+IAo+ID4gaW50IGVzd2luX2Nsa19yZWdpc3Rlcl9maXhlZF9mYWN0b3IoLi4u
+KQo+ID4gewo+ID4gICAgIC4uLgo+ID4gICAgICAgICBjbGtzW2ldLmh3ID0gKmNsa19odzsKPiA+
+ICAgICAgICAgZGF0YS0+Y2xrX2RhdGEuaHdzW2Nsa3NbaV0uaWRdID0gY2xrX2h3Owo+ID4gICAg
+IC4uLgo+ID4gfQo+ID4gCj4gPiBJZiBtdWx0aXBsZSBpbnN0YW5jZXMgb2YgdGhpcyBkcml2ZXIg
+cHJvYmUgY29uY3VycmVudGx5IG9yIGRlZmVyLCBjb3VsZCB0aGlzCj4gPiBkYXRhIHJhY2UgY29y
+cnVwdCB0aGUgQ0NGIHBhcmVudC1jaGlsZCBsaW5rYWdlcz8gVGhlIHNhbWUgcGF0dGVybiBhcHBl
+YXJzCj4gPiB0byBhZmZlY3QgZWljNzcwMF9oc3BfZ2F0ZV9jbGtzIGFuZCBlaWM3NzAwX2hzcF9t
+dXhfY2xrcy4KPiA+IAo+IAo+IE5vLiBUaGVyZSBpcyBvbmx5IG9uZSBjb21wYXRpYmxlIHN0cmlu
+ZyBpbiB0aGUgRFRTLCBzbyB0aGVyZSB3aWxsIG9ubHkgYmUKPiBhIHNpbmdsZSBkcml2ZXIgaW5z
+dGFuY2UuIFRoZXJlZm9yZSwgY29uY3VycmVudCBwcm9iaW5nIGNhbm5vdCBvY2N1ciwgYW5kwqAK
+PiB0aGUgQ0NGIHBhcmVudC1jaGlsZCBsaW5rYWdlcyB3aWxsIG5vdCBiZSBjb3JydXB0ZWQgYnkg
+YSBkYXRhIHJhY2UuwqAKPiAKCkhpIFNhc2hpa28sCgpJIGhhdmUgY2xhcmlmaWVkIHlvdXIgY29t
+bWVudHMgYWJvdmUuIFBsZWFzZSBsZXQgbWUga25vdyBpZiBteSByZXBsaWVzwqAKYXJlIGFjY2Vw
+dGFibGUuwqAKSWYgdGhlcmUgYXJlIG5vIGZ1cnRoZXIgaXNzdWVzLCBJIHdpbGwgc2VuZCB0aGUg
+bmV4dCB2ZXJzaW9uIG9mIHRoZSBwYXRjaC4KCkJlc3QgcmVnYXJkcywKWHV5YW5nIERvbmcKCj4g
+Cj4gPiAtLSAKPiA+IFNhc2hpa28gQUkgcmV2aWV3IMK3IGh0dHBzOi8vc2FzaGlrby5kZXYvIy9w
+YXRjaHNldC8yMDI2MDUxOTA4MTQzMS4xNDI0LTEtZG9uZ3h1eWFuZ0Blc3dpbmNvbXB1dGluZy5j
+b20/cGFydD0yCg==
