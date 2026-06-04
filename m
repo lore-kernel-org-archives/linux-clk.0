@@ -1,93 +1,122 @@
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A8D33B96B;
-	Thu,  4 Jun 2026 06:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7881A8F84
+	for <linux-clk@vger.kernel.org>; Thu,  4 Jun 2026 07:56:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780555417; cv=none; b=u6iHQcuzRE+UD+vOzRnOuM3emhn71+D3WqBGWD+4/6qMb/b2gf41YWcq/frZXEAli00Z7Z94GMsDccV7oNLD5N5laOHUlANse7xkZZdf/yWVZc0KBvaN4Ib3QqCCiyitvwITnJwM8uSNn1O80XOkE1pSvtbGgd7EPpOfpiBwA1Y=
+	t=1780559783; cv=none; b=EfJPSb2HI3pLS3DofYmdkCzSwBPktLmNgM+7Z+Xnk8t8YSdHz7dRAnEcJI4h3zr8xK35XiNeI1he4zq+JiDRAD8NdPVJoUmPbCj2y0VAoFowB6I37idA78W+9DelWHB8UfqCwNZzQqq9woGWu+rNL7PadiIG94KmO9RIZlCuEa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780555417; c=relaxed/simple;
-	bh=1A2IlRhNKKK12gaOIo7EQoqQHSCpbZ2M+LQFF3VGAU4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qnY+eO98KusyFhCEdl3Huw/rGBWAd848viM6Ak5Qo4dIWAe/UI2hBejmTJV12r3hEK1PnrO50qGnmqwf2PZLunL8aL1GLrcaQsWzL7iGgtoJ3TM11xKY8ZHq+ul4HESl5NAuv4XiZZ9ORgQHlnd3979PYJ7FPn2eZ9Fzl5nJpJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from dfae2b116770.home.arpa (unknown [36.110.52.2])
-	by APP-03 (Coremail) with SMTP id rQCowADnBt6LHiFqGq2UEw--.7116S2;
-	Thu, 04 Jun 2026 14:43:23 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: kernel@esmil.dk,
-	hal.feng@starfivetech.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: bmasney@redhat.com,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] clk: starfive: jh7110-isp: fix refcount leak in jh7110_ispcrg_probe()
-Date: Thu,  4 Jun 2026 06:43:14 +0000
-Message-Id: <20260604064314.3772678-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1780559783; c=relaxed/simple;
+	bh=OL32CLJ5nvjq/kYgIG+An4e4KDrch9ZQ2Nw7UZaXiQE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RxdIJsyvAU67D659C0Xv8QCBbyB8W1Bzp97fdMpYywhtc9iplQsJgcl4EkuoXuNCfqkr9HtWMPEloFnKSLun6tKqfP69Z1q7B8FAJ/wKUkoz8mC1WPWogWXPCkHLjPf/rZoong8cjD18UgKSHim1XybBRoXcpmqVCjaO3i+wf9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-68f1e28f258so674701a12.3
+        for <linux-clk@vger.kernel.org>; Thu, 04 Jun 2026 00:56:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780559781; x=1781164581;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1/rC1fo+bW1nAFIVdIH1ju8UCCu+wCVbA2zMBO1aJME=;
+        b=fG703OrbuFMv1uPYKW8ZL2UKqP6EBGZJCBMy40pcNdQ5CIypX4ISms6Q9GPjBbBlcF
+         B4/t72Xe4M5GvN8zQgUTNRp3VsnuHHgk8FbU+GWN3piB+m7rmBytsMCw2c4lpRW4xPSQ
+         YdM4I9LYiGhUx4Z+x4/NcP+C/vmRaeSkuAuO87j7XcmlNCBRt7q5xr+9T4n3pccfaRWh
+         NeJd7htJa3Ul2P8eRNxjOEwgKSx8rrxvPCHqIlGUoKU6QQ5qosrPk4a7oBVD6/DbvH8s
+         d4KbShxorykQoanQeSYa3Wvy/RTX1Yw8e/p/kbRxIIPmoFbTBUDVK+9HEPeWaRlQBjDs
+         ahiQ==
+X-Forwarded-Encrypted: i=1; AFNElJ/cHnFk2F9enhA3koXC1xoge9UqkZQ92/y7QGjBLFd0Ze9caH2qDA4HRBMvMsJSRWBmgfBzvdDChwo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybZslLbSDoiekOOUqAK83uD5Etr/JkhrqkwNgRAYHBAmrSbCNV
+	3MjyYRThxOA5kg5srhsU6ruLmFoekYx1wzwXOC5nvSsoHCEJZ0BnIvezJIsicy08KpU=
+X-Gm-Gg: Acq92OFuQewj6H3eqTyx4BCthMYGW55m8n2iDEavZSBIVbETNjUuWCwfCyCpo8PosQB
+	8gnFemT2MUbt7+flYtV7ktgvTBNHMdEu3sZ/IRdXyp60kN9gi3wkywLneGW2+JZqcT1WFBTLJcg
+	Qjg6DKGyfsH2314F54ulWgQ6iYSOBvbTHZxbmiXBTeclzbP5fwuvRlQf86HomRlwsAPb8bX8YdP
+	eB2p85EkTCw7bPDJaJKH1arCwqEgSnLd9R/RsxyOOujP5xeubKLXsqYnpN56u9J7Duzg9pArTxt
+	sLfWs92O+/ls/Cgdn4XF10lAKfcGilY06NVitCVm2rRDCoDDkJUwgcdode7U71YLILAwf9RYlb9
+	pHm0kmsj2bsrAAgUiC5bSWROWY50yhyXFt217GugQSfiIMTx/z/SVIETKkdETy2F2ySnzcm/grX
+	s01IfNYgIa/yp8wlFqx1NzeIWM9QCT1v1IIqfPkl0gOrQ7hdZ8t3cMZZVXtMLgA4F/ImRbRY0=
+X-Received: by 2002:a05:6402:2681:b0:689:b30c:4205 with SMTP id 4fb4d7f45d1cf-68e6b8cdd2amr3348860a12.0.1780559780753;
+        Thu, 04 Jun 2026 00:56:20 -0700 (PDT)
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com. [209.85.208.44])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-68e65868049sm2065573a12.24.2026.06.04.00.56.18
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Jun 2026 00:56:18 -0700 (PDT)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-68bd9fce347so645246a12.2
+        for <linux-clk@vger.kernel.org>; Thu, 04 Jun 2026 00:56:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ9Bx8OiW1/OmV8O9SxC9BByw4NW7bAaC2/HAf9BpPGpJh5pkuLn/OOcl3y1thXy1fr5TuV3jSjbc8s=@vger.kernel.org
+X-Received: by 2002:a17:907:7748:b0:bf1:8faf:d94e with SMTP id
+ a640c23a62f3a-bf18fb047c0mr166351166b.40.1780559777705; Thu, 04 Jun 2026
+ 00:56:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowADnBt6LHiFqGq2UEw--.7116S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kw15Kr4ktr13uw48Jr4kCrg_yoW8XFW5pr
-	s8AF9YyFy3Xr4xJa90yr4qvFyru3yDKFy7XFs7Zw1qvw1rG3WUtw10k3sIgFn2yrWkJan8
-	Jan2va13AF4UtFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v2
-	6r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
-	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCI
-	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
-	AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
-	Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbtl1P
-	UUUUU==
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBwsIA2og-aBxuAAAsZ
+References: <20260603213726.1025094-1-heiko@sntech.de>
+In-Reply-To: <20260603213726.1025094-1-heiko@sntech.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 4 Jun 2026 09:56:04 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUAoUmCNMBVRGgZzSt9SbZqV6SVW2brkvsBKuHrfWHKvw@mail.gmail.com>
+X-Gm-Features: AVHnY4IvkoGavCb3kflRroLCR9W-9Zf0z8gdDvwCFWuBrY3WYcj_OOUKtkUAgL4
+Message-ID: <CAMuHMdUAoUmCNMBVRGgZzSt9SbZqV6SVW2brkvsBKuHrfWHKvw@mail.gmail.com>
+Subject: Re: [PATCH] clk: rockchip: don't COMPILE_TEST builds on M68K
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: rosenp@gmail.com, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org, 
+	kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-In jh7110_ispcrg_probe(), the error path for pm_runtime_get_sync()
-failure directly returns without releasing the runtime PM reference
-count. The call to __pm_runtime_resume() increments the usage count
-unconditionally before attempting to resume, and does not decrement it
-on failure. Thus the leaked reference makes it impossible to suspend
-the device later.
+Hi Heiko,
 
-All other error paths correctly jump to err_exit and call
-pm_runtime_put_sync(). Fix this by replacing pm_runtime_get_sync()
-with pm_runtime_resume_and_get(), which properly balances the
-reference count on error.
+On Wed, 3 Jun 2026 at 23:37, Heiko Stuebner <heiko@sntech.de> wrote:
+> Rockchip clock drivers use hash-tables with enums as inputs.
+>
+> M68K does interesting things in its __hash_32() implementation, casting
+> that u32 input to an u16 and therefore triggering warnings like:
+>
+>    drivers/clk/rockchip/clk-rk3528.c: note: in included file (through include/linux/hash.h, include/linux/slab.h):
+>      arch/m68k/include/asm/hash.h:57:24: sparse: sparse: cast truncates bits from constant value (18720 becomes 8720)
+>      arch/m68k/include/asm/hash.h:57:24: sparse: sparse: cast truncates bits from constant value (1e8e8 becomes e8e8)
+>
+> As M68K should never ever need Rockchip clock drivers, simply disable
+> compile-tests for M68K.
+>
+> Fixes: 7edfb7fb58ee ("clk: rockchip: allow COMPILE_TEST builds")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202605191434.PQkj2Rki-lkp@intel.com/
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 
-Cc: stable@vger.kernel.org
-Fixes: 81279f5d0812 ("clk: starfive: Add StarFive JH7110 Image-Signal-Process clock driver")
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
----
- drivers/clk/starfive/clk-starfive-jh7110-isp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for your patch!
 
-diff --git a/drivers/clk/starfive/clk-starfive-jh7110-isp.c b/drivers/clk/starfive/clk-starfive-jh7110-isp.c
-index f3fa069db193..c02c8b29a123 100644
---- a/drivers/clk/starfive/clk-starfive-jh7110-isp.c
-+++ b/drivers/clk/starfive/clk-starfive-jh7110-isp.c
-@@ -130,7 +130,7 @@ static int jh7110_ispcrg_probe(struct platform_device *pdev)
- 
- 	/* enable power domain and clocks */
- 	pm_runtime_enable(priv->dev);
--	ret = pm_runtime_get_sync(priv->dev);
-+	ret = pm_runtime_resume_and_get(priv->dev);
- 	if (ret < 0)
- 		return dev_err_probe(priv->dev, ret, "failed to turn on power\n");
- 
+> --- a/drivers/clk/rockchip/Kconfig
+> +++ b/drivers/clk/rockchip/Kconfig
+> @@ -4,6 +4,7 @@
+>  config COMMON_CLK_ROCKCHIP
+>         bool "Rockchip clock controller common support"
+>         depends on ARCH_ROCKCHIP || COMPILE_TEST
+> +       depends on !M68K
+>         default ARCH_ROCKCHIP
+>         help
+>           Say y here to enable common clock controller for Rockchip platforms.
+
+Obviously this is the wrong fix ;-)
+
+I have sent a better one, fixing the issue for every user:
+"[PATCH] m68k: hash: Use lower_16_bits() helper"
+https://lore.kernel.org/b55e9bd0532c0cad519809c86e0a8400060d75a1.1780559561.git.geert@linux-m68k.org
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.34.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
