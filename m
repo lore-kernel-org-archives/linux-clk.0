@@ -1,71 +1,71 @@
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B1644D03E
-	for <linux-clk@vger.kernel.org>; Thu,  4 Jun 2026 12:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988A83E024B
+	for <linux-clk@vger.kernel.org>; Thu,  4 Jun 2026 12:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780575942; cv=none; b=NQ9X8rx+DN4nKNwGscyVFyoDSq1WVc8iEouKXBzFbhqzSq2a/gqLHBhnG31EVZYuC+8nzH6fCY3KHC63bIEUbmzVSuJO5pZjQAeGOmichkwvuH85TXCVCLc+JKhBiqCK/euFPvIqrqm57PTVUqkofdbHJGB3uO9xIDzpyE7GJAU=
+	t=1780576490; cv=none; b=e6TKEQxG6p/jxLzZgJ8FXMOEk7HWEXiHraYz/HLYzPJabnOgAoCxc54TmZF3coZIO6cn+y8/slcXfWLfVShhipoFjhH8SXRyF0xsaIPBUhEB+C/oe4DxLjQYzDT1zWyBqV4KUThhe99qBi51/xTwlp4dcgKtspPo0wkPj/E4SJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780575942; c=relaxed/simple;
-	bh=ZVR9x8tWd6AFCeFuB4BHv4sPK8zCkEI3GNQIoDCb/Xo=;
+	s=arc-20240116; t=1780576490; c=relaxed/simple;
+	bh=yW03jyIaXvDzqIO05bz6BGBjkIGqHU8ZE+ZN1NOsK4I=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C9aGwNZSvs+G1Hr106AKVKClk4nqu4CjgenGPYvC6BXENFjaI7nBNpdkYyBdRKdQSoT2V4x86UBzwRoyfu3Pr4iI+extJ4DXlJDeiTGxgtXr0S5C45CEriyivx3NyaxrSX9EgC+6sAXL3z1s7nfgWo70ek4l0oGr3ilfBVfDjMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.45
+	 To:Cc:Content-Type; b=A5X8NNX/WrSRxbgZrVFCc6Rs9hCjjhBt1wQnoqFr3H28h4sFF1XQrVtX6L7IBCkXzWqSMvVLA93aAPP3CUxOKYFf2a+Adc4aB22KOBg974QrQvOBw44zuRzrmYmQ0CDx2jgl9znhCotp5EwAmCaDuJT3jJu/HRuYUgT24TABkeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-963a7e48493so510228241.1
-        for <linux-clk@vger.kernel.org>; Thu, 04 Jun 2026 05:25:40 -0700 (PDT)
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-5a1490272bfso454640e0c.0
+        for <linux-clk@vger.kernel.org>; Thu, 04 Jun 2026 05:34:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780575940; x=1781180740;
+        d=1e100.net; s=20251104; t=1780576488; x=1781181288;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iyWpTw37mylw5bzav8uUBiWBa2W/YfP061QKPLyDS7o=;
-        b=cM2xmxzTebFzlzD/S+c6d3Nl9VHPNbMfOAdxAFOe309fDDGJdnLZCc8VsYckhqgiri
-         2oR9wdyQYeSwMGR5ydmbma9a1P0SrNDw3Kl8KimwLfp2/t047fBl6DnRZeZ8FHfZiSJV
-         iySHEcTgPEaWv1F9O7o8+p8AXo+r4V5qCeCTfceaQpvmF7GBd4NalBDqqdATIK1rG+GC
-         r9zLHGW2udEoCKMeMS8qZk+LiNHu6vyPw5yGHWxaPj24OBYXNQuon1CXNUyjfztqU3Bs
-         VTPhPVyoONiOeTpPOgCIxW5I5A1ssfbRH15APmh3E7gkRFREAC4EtAfVAYiYsLbnI7nC
-         FlbA==
-X-Forwarded-Encrypted: i=1; AFNElJ+gFeFn+ZVpp2tyRkSPC5emBONIbYb0S8TbQU39HJ3FM3Pgh/gwMZKRrfc9ptfT+VP/hAeWeeMwKOQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUsCMj27VTvVcUS8fNf7qe0LZqKveSWvsDi+IEe57EyZcYJxud
-	2Tdem8s9fN4lHV0bebvswfJwnPisigFKKKUidi0UMua/NXUBfTk8prFaoPHsb3te05E=
-X-Gm-Gg: Acq92OEWFjKaAF+cS8CJ/18ZQvEbyk5wAfDFNLEvN4wV0U3Fc8BXQPsiRsqos8FX71x
-	hbBuhlpAAkpp/haHsjLGMfgZ9h9522atw4RNW8uDOXKaZM0/VsrTlIGHEmgOcSZUSEEt4LFX31X
-	KoUbvjssbtD1uJCAz7kc6qTmdZJ3ZVydu984lHoxNDLDfIZWNDiTRnddCatZNasDC0Z1PtTknb2
-	TYH5BDYVETEWRVj+ElTs/9zdn+F7HeET+MiSbtAYN9+ydoabz0Om8syC9Ps+qnomntqgF3oPxVm
-	+htkcyLGMrwixHFJ5my29wA4wBN+J3GKO/VmrXLGdk4bahLMUFmLKrWahsyQbenT9OxrHB4xs5N
-	NYTLRNj4ei745P6Zm4V455UJKU75MI46kthQWC/e0RcbV3zrGDwWkLycResDpDYiRnZbWTnTH0r
-	2pWniE1jVsC1oyM4l8r/GcBIKbke7OcNXTedmV7NwDek9w8VnSv20+jg8TYjRYYJpma5gv/bLW9
-	VY=
-X-Received: by 2002:a05:6102:d87:b0:631:4c79:b1d2 with SMTP id ada2fe7eead31-6ec4b271de0mr4459314137.25.1780575938557;
-        Thu, 04 Jun 2026 05:25:38 -0700 (PDT)
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com. [209.85.221.173])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-6eb6668702fsm4688633137.10.2026.06.04.05.25.37
+        bh=ocjXr/qWGa2IO/F+fdPQn1MjiaT2nZR31qV/kAYxrTI=;
+        b=aK6yl+4nbcEBD6/mmczLJ1X/oxfMVdXuTYcHng0Jd3nv3gm+1F624fpYDRMOUEVsVj
+         hAZA+t5Y0ciXsjwBzlm2ugLvbL5aV+T7lDzhOyhICw8LOkoVf40jGSaFObdLHZeHcNHE
+         +qGiq+DaW9JXStX8CZhoXCgIrQ7gH5SDBDuTQfgfxEkg8xtm/Z9PKqZ+thXiKe6+Y17+
+         TmzPqiKE5Hxvc5AWrBRCUAVtUK+G9g4iD1mlcr6BH2tDbrFtCA5tSGPhKzJnqXtFrFeV
+         6N712fZ5flLrhQFRcBocWIcy2p80X8IRuQVrHsz17gZEVbajsRnQxJsy37kd018j7VJZ
+         x7ig==
+X-Forwarded-Encrypted: i=1; AFNElJ9IZ3EvRByAnHs3vztl3OVt287fGwYm2ymqiuJgCyMW/EUerU0dLMmRSQtCjxABwx2mdsASjYLFy0M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx47xyceBdCzzcdJpU1J2MxtEtjzZIviFgZJEPyhRBjEaun6eUo
+	LTUZHJdJNYzE/TRKI+ATiwiJaHlD6n5M5c94UDA1dHbM9KrlQ0DtvznMYrkb/dZ6mlQ=
+X-Gm-Gg: Acq92OG5osDqPWwRo/+BxgxKyzRtqGYqCWhu418ukNH+IYQELClje4htQpdrNRSY0/d
+	NhaONt4bi1rCuhcyHcWhBxOIcUeveBPLZnlr43GsIwKsaYvxYa5mE4OtMRB7vhg6vumUDTDNV/J
+	hwuLXPYN2hHvTstO2oWPhJigKVIz+sCTHEtfFwOcERSEUCey3RFjk95utYjizzmBU+713OAQZC5
+	7BgTcYy6jpHBhBzPo8ovcbyk5BoVq8CKzqIZyFzgBB1tlvMiijC1vf2gY+PuLui9JGF14123MPE
+	db4Lb5XTMY7yK4PenLKlXejCCf/f7VIMOssl/eltae43y6mUqk1hMVjI5HLohjc7h4IHjwLi9ox
+	/0fPL5iS95ZaPnWrjPKZt+OEg2KQtlun39Lvs+K3IBbiEfPYuhOGJcBbbSkkTet3bI2nOaIGqZA
+	kMLGpkL3XoqJWTS+6ptcG/C2ynsNsPnBJNBophDpmeio9AFPJW58UScDBeq1LARRttDiixJA8=
+X-Received: by 2002:a05:6122:1699:b0:56b:8ba0:fd58 with SMTP id 71dfb90a1353d-5a96d9925acmr1513380e0c.6.1780576488520;
+        Thu, 04 Jun 2026 05:34:48 -0700 (PDT)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5a6dd501a90sm5103334e0c.17.2026.06.04.05.34.47
         for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Jun 2026 05:25:37 -0700 (PDT)
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-59bbe027424so503568e0c.3
-        for <linux-clk@vger.kernel.org>; Thu, 04 Jun 2026 05:25:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ+PcratGZ/rxAN60afj5rup+0cW08/2RfKOrFsCLH8y5e1hG6Et1pZjKXGvTBHRhym/7KjacYBLvqI=@vger.kernel.org
-X-Received: by 2002:a05:6122:e14e:b0:5a0:3d17:f939 with SMTP id
- 71dfb90a1353d-5a6e7e57815mr4955258e0c.9.1780575936747; Thu, 04 Jun 2026
- 05:25:36 -0700 (PDT)
+        Thu, 04 Jun 2026 05:34:47 -0700 (PDT)
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-9638f7e9896so1184779241.1
+        for <linux-clk@vger.kernel.org>; Thu, 04 Jun 2026 05:34:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ+p1Rog0Se2Kvqubn/0fwC/Chx4KXi+Sl42MSf/pmJCZpwGfLaB1Q6sniCDQ53ZZuHgEfOS8tTHQoM=@vger.kernel.org
+X-Received: by 2002:a67:fdcf:0:b0:6c5:94a0:37cf with SMTP id
+ ada2fe7eead31-6f544240339mr1047511137.8.1780576487197; Thu, 04 Jun 2026
+ 05:34:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260525110603.4018170-1-john.madieu.xa@bp.renesas.com> <20260525110603.4018170-5-john.madieu.xa@bp.renesas.com>
-In-Reply-To: <20260525110603.4018170-5-john.madieu.xa@bp.renesas.com>
+References: <20260525110603.4018170-1-john.madieu.xa@bp.renesas.com> <20260525110603.4018170-6-john.madieu.xa@bp.renesas.com>
+In-Reply-To: <20260525110603.4018170-6-john.madieu.xa@bp.renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 4 Jun 2026 14:25:25 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdX5ivj=WdCH=kQUwaAwqiS-pDaTgq3tyf_CF5SRT+qzQA@mail.gmail.com>
-X-Gm-Features: AVVi8Cf4Ujm0MLmye5A9UxakzZtSS845oRUcwVlQZvUP1y9AtjAcdgWbu9vD6MY
-Message-ID: <CAMuHMdX5ivj=WdCH=kQUwaAwqiS-pDaTgq3tyf_CF5SRT+qzQA@mail.gmail.com>
-Subject: Re: [PATCH v4 4/8] arm64: dts: renesas: r9a09g047: Add RZ/G3E Sound support
+Date: Thu, 4 Jun 2026 14:34:32 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVSgVe4ufTEvrD0ATwApF1xwiVa8t=P9O3rxh=sBegV_A@mail.gmail.com>
+X-Gm-Features: AVVi8CcBcbjPZ-LGjktNLR06D20t6UAro7xtsfCHuzIIFQf2Ba_2cx9aOlEskTc
+Message-ID: <CAMuHMdVSgVe4ufTEvrD0ATwApF1xwiVa8t=P9O3rxh=sBegV_A@mail.gmail.com>
+Subject: Re: [PATCH v4 5/8] arm64: dts: renesas: rzg3e-smarc-som: Add Versa3
+ clock generator
 To: John Madieu <john.madieu.xa@bp.renesas.com>
 Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
 	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
@@ -78,88 +78,51 @@ Content-Type: text/plain; charset="UTF-8"
 Hi John,
 
 On Mon, 25 May 2026 at 13:07, John Madieu <john.madieu.xa@bp.renesas.com> wrote:
-> Add the snd_rzg3e node for the RZ/G3E SoC with all sub-components:
+> Add the Renesas 5P35023 (Versa3) programmable clock generator on the
+> I2C2 bus along with its 24MHz input clock (x2 oscillator) to feed the
+> audio subsystem.
 >
-> - SSI (Serial Sound Interface) units 0-9
-> - SSIU (Serial Sound Interface Unit) units 0-27
-> - SRC (Sample Rate Converter) units 0-9
-> - CTU (Channel Transfer Unit) units 0-7
-> - DVC (Digital Volume Control) units 0-1
-> - MIX (Mixer) units 0-1
+> The Versa3 provides the following audio-related clock outputs:
+> - Output 0: 24MHz (reference)
+> - Output 1: 12.288MHz (audio, 48kHz family)
+> - Output 2: 11.2896MHz (audio, 44.1kHz family)
+> - Output 3: 12.288MHz (audio)
 >
-> Sub-node names follow the new RZ/G3E sound binding: unprefixed
-> 'ssi', 'ssiu', 'src', 'dvc', 'mix', 'ctu' wrapper nodes instead of
-> the legacy 'rcar_sound,xxx' R-Car prefix.
->
-> Wire up all 5 DMA controllers (dmac0-dmac4) for each audio sub-node
-> with repeated channel names, so that the DMA core can pick the first
-> available controller.
+> These clocks are required for the audio codec found on the RZ/G3E SMARC
+> EVK.
 >
 > Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
-> ---
+
+Thanks for your patch!
+
+> --- a/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
+
+> @@ -130,6 +136,20 @@ raa215300: pmic@12 {
 >
-> Changes:
->
-> v4:
->  - Rename the indexed clock-names and reset-names from the dotted
->    form (ssi.N, src.N, adg.ssi.N, clk_a, clk_b, clk_c, clk_i) to the
->    hyphenated form (ssi-N, src-N, adg-ssi-N, audio-clka, audio-clkb,
->    audio-clkc, audio-clki), matching the new RZ/G3E sound binding.
->  - Rename the sub-nodes from the legacy rcar_sound,{ctu,dvc,mix,src,
->    ssi,ssiu} prefix to the unprefixed ctu/dvc/mix/src/ssi/ssiu names
->    used by the new RZ/G3E sound binding.
->  - Reorder the clocks and resets phandle lists into ascending index
->    order and annotate each entry with a per-line comment naming the
->    clock / reset.
->  - Drop the #sound-dai-cells and #clock-cells explanatory comment
->    blocks from the node.
->  - Align the continuation lines of the dmas property.
->  - Fix the commit message: the node label is snd_rzg3e (v3 referred
->    to it as rzg3e_sound), and add a paragraph noting the unprefixed
->    sub-node names.
+>                 interrupts-extended = <&pinctrl RZG3E_GPIO(S, 1) IRQ_TYPE_EDGE_FALLING>;
+>         };
+> +
+> +       versa3: clock-generator@68 {
+> +               compatible = "renesas,5p35023";
+> +               reg = <0x68>;
+> +               #clock-cells = <1>;
+> +               clocks = <&x2>;
+> +
+> +               assigned-clocks = <&versa3 0>, <&versa3 1>,
+> +                                 <&versa3 2>, <&versa3 3>,
+> +                                 <&versa3 4>, <&versa3 5>;
+> +               assigned-clock-rates = <24000000>, <12288000>,
+> +                                      <11289600>, <12288000>,
+> +                                      <25000000>, <25000000>;
 
-Thanks for the update!
+Please add output 4 (DIFF1) in the patch description; it is needed
+for Ethernet.
 
-> --- a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-> @@ -912,6 +912,482 @@ rsci9: serial@12803000 {
->                         status = "disabled";
->                 };
->
-> +               snd_rzg3e: sound@13c00000 {
-> +                       compatible = "renesas,r9a09g047-sound";
-> +                       reg = <0 0x13c00000 0 0x10000>, /* SCU */
+Please drop output 5 (DIFF2), as it is not connected.
 
-size 0x20000. to include the SCU DMAC?
-
-> +                             <0 0x13c20000 0 0x10000>, /* ADG */
-> +                             <0 0x13c30000 0 0x1000>,  /* SSIU */
-> +                             <0 0x13c31000 0 0x1F000>, /* SSI */
-
-0x1f000 (lower case)
-
-> +                             <0 0x13c50000 0 0x10000>; /* Audio DMAC peri peri */
-> +                       reg-names = "scu", "adg", "ssiu", "ssi", "audmapp";
-> +                       clocks = <&cpg CPG_MOD 245>,    /* ssi-all */
-> +                                <&cpg CPG_MOD 385>,    /* ssi-0 */
-
-Please use hexadecimal module clock numbers, for easier matching with
-the documentation.
-
-[...]
-
-> +                       power-domains = <&cpg>;
-> +                       resets = <&cpg 225>,    /* ssi-all */
-> +                                <&cpg 226>, <&cpg 227>, <&cpg 228>,
-
-Please use hexadecimal module reset numbers.
-
-> +                                <&cpg 229>, <&cpg 230>, <&cpg 231>,
-> +                                <&cpg 232>, <&cpg 233>, <&cpg 234>,
-> +                                <&cpg 235>,
-> +                                <&cpg 236>,    /* scu */
-> +                                <&cpg 238>,    /* adg */
-> +                                <&cpg 237>;    /* audmapp */
+> +       };
+>  };
 
 Gr{oetje,eeting}s,
 
