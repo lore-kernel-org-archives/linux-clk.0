@@ -1,115 +1,227 @@
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B935B3FE667;
-	Fri,  5 Jun 2026 05:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+Received: from zg8tmtyylji0my4xnjeumjiw.icoremail.net (zg8tmtyylji0my4xnjeumjiw.icoremail.net [162.243.161.220])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32EE36E497;
+	Fri,  5 Jun 2026 06:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.161.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780639101; cv=none; b=cqMNkyCl0bYCa1Q93pc75p9Pxk5KU255xVAM5Y44RoxSPqowrKtLdLFB9wKl6foSt37kUGIRXPQvyaPiMWuFlBW/RDiBsMKcW5Hz57vIhSUfe32/1p4NlY6Xe0dlNwLn0lEK3leng5UzZildJYk03yH+B8r9TFmDyl3RPbZyyMw=
+	t=1780639711; cv=none; b=CMrRYgLsMe+CeknY8q14sbVvEjCApGr9Ned4WN+oDR13OC0dFuTqtAP8CNwZ1kiz/ubiatsXP8MtvD1I3keV7J6VjodUArfusJOlWlOx8evFqcx7zOnLfU5YSUrBFml1RKh9jMQIYN3zZoWnZYqrSfHkt4dV+Y3shN8d3UdcaxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780639101; c=relaxed/simple;
-	bh=BAcxVz7Dy+1NQW4ajsjRQaUxXlrsy4JR4V4XNqrr+OA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=c1kE6Iu9ctHvmprrx4q6g27vDircpejkw7EZ9XkC/VKy2tmeBY4/yydAw9bnVN77mLSvUQi7mW+NW2jlnBpbTBKJjsDjFjXaZCxl3PZc4N1ti3DjavwiAoLhd+JleQK4/ersfZMR0yJilN9O2YuXzhDpYjoV09bbkjELjjgTvPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=DbmCziOv; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="DbmCziOv"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=GD
-	2Kr06zQNFkIwrVrOalWnuCkNJUXETOOuvMASHG1wc=; b=DbmCziOv5IknDVlK99
-	daj1ffrq+HwEfO5hUp3zaUPHJ4mWsF+C0X1NdDeCRGSFmnlioqmZ+X+YV/rurLl9
-	mBh+mTkxRqhtKkkPog+n9w1wGobIRA0raergS38laMxKw/+RLEz+nlQ58ctS4w4i
-	6LLVuZ74B58zsqIPOawbfVo34=
-Received: from haiyue-pc.localdomain (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id PCgvCgAXkGE7ZSJqxsLwAQ--.65168S4;
-	Fri, 05 Jun 2026 13:57:18 +0800 (CST)
-From: Haiyue Wang <haiyuewa@163.com>
-To: linux-clk@vger.kernel.org,
+	s=arc-20240116; t=1780639711; c=relaxed/simple;
+	bh=jrKzgIUVnWcFHE6D6WtBO56REGOCP3OxAr0WPtWVD4o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=KG/v8+1r0GmOQHFMoAge7EwL973lmm4m72luPVkRJOyXOZtqxttUlGvO7a5kGKa7nqZkchfjmw7PjEbX4mnBkHP5xAVz2QNzrwM8e+8XOQt9/24bxfE+Q81Jcp/neziXE4NgAthtTAJ0ZkQTlH5Ip4rD2f7NEpncn3i4B9ck0WI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=162.243.161.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0005152DT.eswin.cn (unknown [10.12.96.41])
+	by app2 (Coremail) with SMTP id TQJkCgDn_aDFZyJqajwiAA--.2222S2;
+	Fri, 05 Jun 2026 14:08:07 +0800 (CST)
+From: dongxuyang@eswincomputing.com
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	bmasney@redhat.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-aspeed@lists.ozlabs.org
-Cc: Haiyue Wang <haiyuewa@163.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Hans Verkuil <hverkuil+cisco@kernel.org>,
-	Jammy Huang <jammy_huang@aspeedtech.com>,
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/ASPEED MACHINE SUPPORT),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v4 2/2] ARM: dts: aspeed: add 'resets' to video node
-Date: Fri,  5 Jun 2026 13:52:43 +0800
-Message-ID: <20260605055712.118501-3-haiyuewa@163.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260605055712.118501-1-haiyuewa@163.com>
-References: <20260605055712.118501-1-haiyuewa@163.com>
+	linux-kernel@vger.kernel.org,
+	p.zabel@pengutronix.de,
+	huangyifeng@eswincomputing.com,
+	dongxuyang@eswincomputing.com,
+	benoit.monin@bootlin.com
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	pinkesh.vaghela@einfochips.com
+Subject: [PATCH v7 0/3] Add driver support for ESWIN EIC7700 HSP clock and reset generator
+Date: Fri,  5 Jun 2026 14:07:30 +0800
+Message-Id: <20260605060730.1605-1-dongxuyang@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PCgvCgAXkGE7ZSJqxsLwAQ--.65168S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Zr48Kr18WFy5Kw1UtF43Wrg_yoW8ury5pa
-	y7Cr4kX3ySgF45t34UGFyDKr1DAay5JF4rKrsIk34UXry3X3sYqr1ftrsag34UXrs5uw1S
-	gF1xXr9Fqw1DXaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zE3xhJUUUUU=
-X-CM-SenderInfo: 5kdl53xhzdqiywtou0bp/xtbCzh+L9moiZT+z1QAA3Y
+X-CM-TRANSID:TQJkCgDn_aDFZyJqajwiAA--.2222S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxKw17Zr1UtF17Cr1fWry5twb_yoW3Jr1kpF
+	WxGF93Gr1DZrWI9r4kta4I9FyfJa1xJFy5Cws7Ja47Zws0yr1UCr40ka45ZFWDZwn3Xw4U
+	J3W2qa409FyUAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBv14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxkIecxEwVCm-wCF04
+	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
+	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr4
+	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
+	IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
+	A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUmjgxUUUUU=
+X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/
 
-The aspeed video (be compatible for ast2400, ast2500, ast2600) now needs
-the reset DTS handle specified, otherwise it will fail to load:
+From: Xuyang Dong <dongxuyang@eswincomputing.com>
 
-[    4.809494] aspeed-video 1e700000.video: irq 57
-[    4.809977] aspeed-video 1e700000.video: Unable to get reset
-[    4.810341] aspeed-video 1e700000.video: probe with driver aspeed-video failed with error -2
+Add support for the ESWIN EIC7700 HSP (high-speed peripherals). The drivers
+provide basic functionality to manage and control the clock and reset
+signals for EIC7700 HSP, including mmc, USB, ethernet, SATA and DMAC.
 
-Fixes: e83f8dd668ea ("media: aspeed: Fix dram hang at res-change")
-Signed-off-by: Haiyue Wang <haiyuewa@163.com>
----
- arch/arm/boot/dts/aspeed/aspeed-g4.dtsi | 1 +
- arch/arm/boot/dts/aspeed/aspeed-g5.dtsi | 1 +
- arch/arm/boot/dts/aspeed/aspeed-g6.dtsi | 1 +
- 3 files changed, 3 insertions(+)
+The clock and reset registers are mapped to overlapping I/O address ranges.
+This causes a resource conflict when two drivers attempt to request the
+same region. Use the auxiliary device framework: the main driver
+allocates the shared register region and passes it to auxiliary
+devices, avoiding resource contention and duplicate remapping.
 
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-g4.dtsi b/arch/arm/boot/dts/aspeed/aspeed-g4.dtsi
-index c3d4d916c69b..1547e28d77e2 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-g4.dtsi
-+++ b/arch/arm/boot/dts/aspeed/aspeed-g4.dtsi
-@@ -242,6 +242,7 @@ video: video@1e700000 {
- 					 <&syscon ASPEED_CLK_GATE_ECLK>;
- 				clock-names = "vclk", "eclk";
- 				interrupts = <7>;
-+				resets = <&syscon ASPEED_RESET_VIDEO>;
- 				status = "disabled";
- 			};
- 
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-g5.dtsi b/arch/arm/boot/dts/aspeed/aspeed-g5.dtsi
-index 39500bdb4747..793570ca2518 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-g5.dtsi
-+++ b/arch/arm/boot/dts/aspeed/aspeed-g5.dtsi
-@@ -296,6 +296,7 @@ video: video@1e700000 {
- 					 <&syscon ASPEED_CLK_GATE_ECLK>;
- 				clock-names = "vclk", "eclk";
- 				interrupts = <7>;
-+				resets = <&syscon ASPEED_RESET_VIDEO>;
- 				status = "disabled";
- 			};
- 
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-g6.dtsi b/arch/arm/boot/dts/aspeed/aspeed-g6.dtsi
-index 189bc3bbb47c..3adf48987a17 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-g6.dtsi
-+++ b/arch/arm/boot/dts/aspeed/aspeed-g6.dtsi
-@@ -428,6 +428,7 @@ video: video@1e700000 {
- 					 <&syscon ASPEED_CLK_GATE_ECLK>;
- 				clock-names = "vclk", "eclk";
- 				interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+				resets = <&syscon ASPEED_RESET_VIDEO>;
- 				status = "disabled";
- 			};
- 
--- 
-2.54.0
+Features:
+Implements support for the ESWIN EIC7700 HSP clock and reset controller.
+Provide API to manage clock and reset signals for the EIC7700 HSP.
+
+Supported chips:
+ESWIN EIC7700 series SoC.
+
+Test:
+Test this patch on the Sifive HiFive Premier P550 (which used the EIC7700
+SoC), include USB and other peripherals. All the drivers of these modules
+use the clock module and reset module.
+
+Updates:
+  Changes in v7:
+  - Clock driver:
+    - Add the 'CLK_IGNORE_UNUSED' flag to all gate clocks; otherwise,
+      board bring-up fails unless 'clk_ignore_unused' is passed on the
+      kernel command line.
+    - Sashiko's comments: not addressed in this version 
+      (see email for explanation)
+
+  - Link to v6: https://lore.kernel.org/all/20260519081431.1424-1-dongxuyang@eswincomputing.com/
+
+  Changes in v6:
+  - Clock driver:
+    - Add 'select REGMAP_MMIO' for Kconfig entry (Sashiko review of v5).
+  - Reset driver:
+    - Add <linux/module.h> (Sashiko review of v5).
+
+  - Link to v5: https://lore.kernel.org/all/20260514114212.903-1-dongxuyang@eswincomputing.com/
+
+  Changes in v5:
+  - Clock driver:
+    - Add check for regmap_read().
+    - Add "Reviewed-by: Brian Masney <bmasney@redhat.com>".
+
+  - Link to v4: https://lore.kernel.org/all/20260512020432.671-1-dongxuyang@eswincomputing.com/
+
+  Changes in v4:
+  - Clock driver:
+    - Remove "Reviewed-by: Benoît Monin <benoit.monin@bootlin.com>" and
+      "Reviewed-by: Brian Masney <bmasney@redhat.com>", because the clock
+      driver has been updated.
+    - Remove inclusion of io.h.
+    - Add struct regmap to eic7700_hsp_clk_gate.
+      Replace 'void __iomem *reg' with 'unsigned int reg'.
+      Replace 'void __iomem *ref_reg' with 'unsigned int ref_reg'.
+      Replace long with int for 'offset' and 'ref_offset'.
+      Remove 'spinlock_t *lock'.
+      Apply the same changes to hsp_clk_register_gate().
+    - Remove the structure eic7700_hsp_regmap_lock, and the functions
+      eic7700_hsp_regmap_lock() and eic7700_hsp_regmap_unlock().
+    - Remove the 'guard(spinlock_irqsave)(gate->lock)' in
+      hsp_clk_gate_endisable().
+    - Replace readl() and writel() with regmap_assign_bits() in
+      hsp_clk_gate_endisable().
+    - Change the parameter enable from int to bool.
+    - Replace readl() with regmap_read() in hsp_clk_gate_is_enabled().
+    - Remove the lock_ctx variable.
+    - Move eic7700_hsp_regmap_config from inside the probe function to global
+      scope.
+      Remove '.lock', '.unlock' and 'lock_arg'.
+      Add '.fast_io = true' and '.use_raw_spinlock = true'.
+  - Reset driver:
+    - Add "Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>" for reset.
+    - Drop the temporary variable, just return regmap_assign_bits(...) directly.
+    - Replace -EINVAL with -ENODEV for dev_get_regmap() check.
+    - Drop the '_dt'.
+
+  - Link to v3: https://lore.kernel.org/all/20260423090904.2108-1-dongxuyang@eswincomputing.com/
+
+  Changes in v3:
+  - Bindings:
+    - Added "Acked-by: Conor Dooley <conor.dooley@microchip.com>" for bindings.
+  - Clock driver:
+    - Remove 'gate_flags'.
+    - Add __acquires for eic7700_hsp_regmap_lock() and add __releases for
+      eic7700_hsp_regmap_unlock().
+    - Move writel(USB_REF_XTAL24M, gate->ref_reg) into enable. Because this
+      is only used for USB gate clock on the enable path. And modify the
+      comments.
+    - Simplify to: 'return !!(readl(gate->reg) & BIT(gate->bit_idx));'.
+    - Drop const from eic7700_hsp_regmap_config.
+    - Declare eic7700_hsp_regmap_config as a regular variable at the top.
+
+  - Link to v2: https://lore.kernel.org/all/20260420093929.1895-1-dongxuyang@eswincomputing.com/
+
+  Changes in v2:
+  - Bindings:
+    - Remove "hsp_" from clock-names.
+    - Replace "eswin,eic7700-clock.yaml" and "eswin,eic7700-hspcrg.yaml" with
+      "eswin,eic7700*".
+    - Replace "eswin,eic7700-clock.h" and "eswin,eic7700-hspcrg.h" with
+      "eswin,eic7700*".
+  - Clock driver:
+    - Use guard(spinlock_irqsave)(gate->lock) instead of spin_lock_irqsave()
+      and remove spin_unlock_irqrestore().
+    - Remove the newline in function hsp_clk_gate_is_enabled().
+    - Use struct clk_init_data init = {}.
+    - Replace 'static struct clk_parent_data' with
+      'static const struct clk_parent_data'.
+    - Change '.fw_name' to '.index', because the function
+      eswin_clk_register_fixed_factor() uses .index.
+    - The structures of clocks should use static struct. When registering a clock,
+      the 'hw' field in the structure will be assigned.
+    - Remove __force.
+    - Create the regmap in the clock driver and remove (__force void*)data->base.
+      The reset driver uses dev_get_regmap() to get the regmap from the clock.
+    - Move 'const struct regmap_config eic7700_hsp_regmap_config' from reset
+      driver to clock driver.
+    - The USB clock gate (hsp_clk_gate_endisable) and the reset driver both
+      perform read-modify-write cycles on registers 0x800 and 0x900. Use
+      custom regmap lock callbacks so that regmap operations hold data->lock
+      with IRQs disabled, the same lock the clock gate path uses, preventing
+      concurrent RMW races on those shared registers.
+    - Change to 'ret = eswin_clk_register_fixed_factor(dev, eic7700_hsp_factor_clks,'.
+      The next line will be over 80 characters and under 100 characters.
+  - Reset driver:
+    - Remove 'depends on COMMON_CLK_EIC7700_HSP' and 'default COMMON_CLK_EIC7700_HSP'.
+    - Use regmap_assign_bits() in assert and deassert functions.
+    - Remove eic7700_hsp_reset_reset().
+    - The clock driver creates the regmap, and the reset driver uses dev_get_regmap().
+    - Remove of_reset_n_cells.
+
+  - Link to v1: https://lore.kernel.org/all/20260403093459.612-1-dongxuyang@eswincomputing.com/
+
+Xuyang Dong (3):
+  dt-bindings: clock: Add ESWIN eic7700 HSP clock and reset generator
+  clk: eswin: Add eic7700 HSP clock driver
+  reset: eswin: Add eic7700 HSP reset driver
+
+ .../bindings/clock/eswin,eic7700-hspcrg.yaml  |  63 ++++
+ MAINTAINERS                                   |   5 +-
+ drivers/clk/eswin/Kconfig                     |  13 +
+ drivers/clk/eswin/Makefile                    |   1 +
+ drivers/clk/eswin/clk-eic7700-hsp.c           | 345 ++++++++++++++++++
+ drivers/reset/Kconfig                         |  11 +
+ drivers/reset/Makefile                        |   1 +
+ drivers/reset/reset-eic7700-hsp.c             | 113 ++++++
+ .../dt-bindings/clock/eswin,eic7700-hspcrg.h  |  33 ++
+ .../dt-bindings/reset/eswin,eic7700-hspcrg.h  |  21 ++
+ 10 files changed, 604 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/eswin,eic7700-hspcrg.yaml
+ create mode 100644 drivers/clk/eswin/clk-eic7700-hsp.c
+ create mode 100644 drivers/reset/reset-eic7700-hsp.c
+ create mode 100644 include/dt-bindings/clock/eswin,eic7700-hspcrg.h
+ create mode 100644 include/dt-bindings/reset/eswin,eic7700-hspcrg.h
+
+--
+2.34.1
 
